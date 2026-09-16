@@ -7,40 +7,71 @@ spec:
   productCode: DP-ENTERPRISE-ACTIVITY
   rules:
     - id: QA-COMPANY-ID-COMPLETE
+      stage: PRODUCT
       dimension: COMPLETENESS
       target: company_id
       expression: "non_null_rate(company_id) >= 0.999"
       severity: CRITICAL
+
     - id: QA-CANONICAL-UNIQUE
+      stage: ENTITY_RESOLUTION
       dimension: CONSISTENCY
       target: company_id
       expression: "unique_mapping_rate(company_id) >= 0.99"
       severity: HIGH
+
     - id: QA-ENTITY-UNRESOLVED
+      stage: ENTITY_RESOLUTION
       dimension: CONSISTENCY
       target: entity_resolution
       expression: "unresolved_entity_rate <= 0.005"
       severity: HIGH
+
     - id: QA-ENERGY-NONNEGATIVE
+      stage: STANDARDIZED
       dimension: ACCURACY
       target: energy_kwh
       expression: "accepted_record_negative_rate(energy_kwh) == 0"
       severity: CRITICAL
+      note: Negative RAW records may exist but must be quarantined and excluded from accepted standardized energy data.
+
     - id: QA-PERIOD-PRESENT
+      stage: PRODUCT
       dimension: COMPLETENESS
       target: period
       expression: "non_null_rate(period) == 1"
       severity: CRITICAL
+
     - id: QA-ACTIVITY-SCORE-RANGE
+      stage: PRODUCT
       dimension: CONFORMITY
       target: activity_score
-      expression: "min(activity_score) >= 0 and max(activity_score) <= 100"
+      expression: "all_non_null_values_between(activity_score, 0, 100)"
       severity: CRITICAL
+
+    - id: QA-ACTIVITY-LEVEL-CONSISTENCY
+      stage: PRODUCT
+      dimension: CONSISTENCY
+      target: activity_level
+      expression: >-
+        every_row((activity_score IS NULL AND activity_level == 'INSUFFICIENT_DATA')
+        OR (activity_score IS NOT NULL AND activity_level IN ['HIGH','MEDIUM','LOW']))
+      severity: CRITICAL
+
+    - id: QA-INDICATOR-COVERAGE-RANGE
+      stage: PRODUCT
+      dimension: CONFORMITY
+      target: indicator_coverage
+      expression: "all_non_null_values_between(indicator_coverage, 0, 100)"
+      severity: CRITICAL
+
     - id: QA-FRESHNESS
+      stage: PRODUCT
       dimension: TIMELINESS
       target: product_dataset
       expression: "freshness_hours <= 24"
       severity: CRITICAL
+
   gate:
     criticalFailure: FAIL
     highFailure: REVIEW
