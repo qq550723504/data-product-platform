@@ -1,0 +1,61 @@
+apiVersion: dataprod.platform/v1alpha1
+kind: EntityMatchingPolicy
+metadata:
+  name: park-company-match
+  version: 1.0.0
+spec:
+  entityType: COMPANY
+  normalization:
+    companyName:
+      trim: true
+      normalizeWhitespace: true
+      normalizeFullWidthHalfWidth: true
+      aliases:
+        - suffix: "有限责任公司"
+          canonical: "有限公司"
+    address:
+      trim: true
+      normalizeWhitespace: true
+    unifiedSocialCreditCode:
+      uppercase: true
+      trim: true
+  rules:
+    - id: COMPANY-USCC-EXACT
+      priority: 10
+      when:
+        all:
+          - field: unified_social_credit_code
+            operator: EXACT_NON_EMPTY
+      decision: AUTO_MATCH
+      confidence: 1.0
+    - id: COMPANY-NAME-ADDRESS-EXACT
+      priority: 20
+      when:
+        all:
+          - field: normalized_company_name
+            operator: EXACT
+          - field: normalized_registered_address
+            operator: EXACT
+      decision: AUTO_MATCH
+      confidence: 0.98
+    - id: COMPANY-NAME-LEGAL-REVIEW
+      priority: 30
+      when:
+        all:
+          - field: normalized_company_name
+            operator: SIMILARITY_GTE
+            value: 0.88
+          - field: legal_representative
+            operator: EXACT_NON_EMPTY
+      decision: REVIEW
+      confidence: 0.85
+    - id: COMPANY-DEFAULT
+      priority: 999
+      decision: UNRESOLVED
+  thresholds:
+    autoMatchMinimum: 0.95
+    reviewMinimum: 0.75
+  evidence:
+    recordRuleVersion: true
+    recordConfidence: true
+    requireReviewerReasonForManualDecision: true
