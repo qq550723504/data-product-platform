@@ -1,0 +1,38 @@
+apiVersion: dataprod.platform/v1alpha1
+kind: CompliancePolicySet
+metadata:
+  name: enterprise-activity-compliance
+  version: 1.0.0
+spec:
+  productCode: DP-ENTERPRISE-ACTIVITY
+  principle: MINIMUM_NECESSARY_DATA
+  fieldPolicies:
+    - match:
+        names: [contact_name, legal_contact_name]
+      category: PII_PERSON_NAME
+      action: REMOVE
+    - match:
+        names: [mobile, phone, contact_phone]
+      category: PII_PHONE
+      action: REMOVE
+    - match:
+        names: [email, contact_email]
+      category: PII_EMAIL
+      action: REMOVE
+    - match:
+        names: [id_card, identity_number]
+      category: SENSITIVE_PII_NATIONAL_ID
+      action: BLOCK
+    - match:
+        names: [company_id, company_name, period, tenancy_stability, rent_performance, energy_stability, activity_score, activity_level]
+      category: BUSINESS_PRODUCT_DATA
+      action: KEEP
+  delivery:
+    rawSourceExport: DENY
+    productDatasetApi: ALLOW
+    redistribution: DENY
+    marketingUse: DENY
+  evidence:
+    recordFindings: true
+    recordActions: true
+    rescanAfterTransformation: true
