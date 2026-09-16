@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	complianceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/application"
+	complianceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/infrastructure"
+	compliancehttp "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/transport/http"
 	contractapp "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/application"
 	contractinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/infrastructure"
 	contracthttp "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/transport/http"
@@ -30,6 +33,9 @@ import (
 	productapp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/application"
 	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
 	producthttp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/transport/http"
+	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
+	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	qualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http"
 	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	resourcehttp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/transport/http"
@@ -131,6 +137,14 @@ func main() {
 	contractService := contractapp.NewService(txManager, contractRepo)
 	contractHandler := contracthttp.NewHandler(contractService, contractRepo)
 
+	qualityRepo := qualityinfra.NewPostgresRepository(db)
+	qualityService := qualityapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, qualityRepo, objectStore)
+	qualityHandler := qualityhttp.NewHandler(qualityService, qualityRepo)
+
+	complianceRepo := complianceinfra.NewPostgresRepository(db)
+	complianceService := complianceapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, complianceRepo, objectStore)
+	complianceHandler := compliancehttp.NewHandler(complianceService, complianceRepo)
+
 	traceabilityHandler := traceabilityhttp.NewHandler(
 		evidence.NewQueryRepository(db),
 		cost.NewQueryRepository(db),
@@ -146,6 +160,8 @@ func main() {
 			productHandler.Register,
 			rightsHandler.Register,
 			contractHandler.Register,
+			qualityHandler.Register,
+			complianceHandler.Register,
 			traceabilityHandler.Register,
 		),
 		ReadHeaderTimeout: 5 * time.Second,
