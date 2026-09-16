@@ -6,33 +6,80 @@ metadata:
 spec:
   productCode: DP-ENTERPRISE-ACTIVITY
   principle: MINIMUM_NECESSARY_DATA
+
   fieldPolicies:
     - match:
         names: [contact_name, legal_contact_name]
       category: PII_PERSON_NAME
       action: REMOVE
+
     - match:
         names: [mobile, phone, contact_phone]
       category: PII_PHONE
       action: REMOVE
+
     - match:
         names: [email, contact_email]
       category: PII_EMAIL
       action: REMOVE
+
     - match:
         names: [id_card, identity_number]
       category: SENSITIVE_PII_NATIONAL_ID
       action: BLOCK
+
     - match:
-        names: [company_id, company_name, period, tenancy_stability, rent_performance, energy_stability, activity_score, activity_level]
+        names: [legal_representative]
+      category: PERSONAL_OR_BUSINESS_IDENTIFIER
+      action: REMOVE
+      reason: Not required by the V1 Product Contract.
+
+    - match:
+        names: [registered_address]
+      category: BUSINESS_SOURCE_DETAIL
+      action: REMOVE
+      reason: Used for entity resolution only; not required in product output.
+
+    - match:
+        names: [rent_amount]
+      category: BUSINESS_SOURCE_DETAIL
+      action: REMOVE
+      reason: V1 exposes payment-performance indicator, not raw rent amount.
+
+    - match:
+        names: [meter_id]
+      category: SOURCE_TECHNICAL_IDENTIFIER
+      action: REMOVE
+      reason: Source-level technical identifier is not required by consumers.
+
+    - match:
+        names:
+          - company_id
+          - company_name
+          - period
+          - tenancy_stability
+          - rent_performance
+          - energy_stability
+          - activity_score
+          - activity_level
+          - indicator_coverage
+          - generated_at
       category: BUSINESS_PRODUCT_DATA
       action: KEEP
+
+  productOutput:
+    allowOnlyContractFields: true
+    unknownFieldAction: REVIEW
+
   delivery:
     rawSourceExport: DENY
     productDatasetApi: ALLOW
     redistribution: DENY
     marketingUse: DENY
+    soleUnderwritingDecision: DENY
+
   evidence:
     recordFindings: true
     recordActions: true
+    recordPolicyVersion: true
     rescanAfterTransformation: true
