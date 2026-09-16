@@ -24,15 +24,15 @@ type ObjectReader interface {
 }
 
 type StartJobCommand struct {
-	WorkspaceID            uuid.UUID
-	InputDatasetVersionID  uuid.UUID
-	OutputDatasetID        uuid.UUID
-	SourceType             string
-	SourceRef              string
-	SourceRole             domain.SourceRole
-	PolicyRef              string
-	ActorID                *uuid.UUID
-	TraceID                string
+	WorkspaceID           uuid.UUID
+	InputDatasetVersionID uuid.UUID
+	OutputDatasetID       uuid.UUID
+	SourceType            string
+	SourceRef             string
+	SourceRole            domain.SourceRole
+	PolicyRef             string
+	ActorID               *uuid.UUID
+	TraceID               string
 }
 
 type MatchService struct {
@@ -156,9 +156,9 @@ func (s *MatchService) Start(ctx context.Context, cmd StartJobCommand) (domain.M
 		return domain.MatchJob{}, err
 	}
 
-	if status == domain.JobSucceeded {
+	if status == domain.JobRunning {
 		if err := s.finalize(ctx, job.ID, cmd.ActorID, cmd.TraceID); err != nil {
-			return domain.MatchJob{}, err
+			return domain.MatchJob{}, s.failJob(ctx, job, err)
 		}
 	}
 	return s.entityRepo.GetJob(ctx, job.ID)
