@@ -11,19 +11,19 @@ import (
 )
 
 type Event struct {
-	ID           uuid.UUID
-	WorkspaceID  *uuid.UUID
-	ActorType    string
-	ActorID      *uuid.UUID
-	Action       string
-	ObjectType   string
-	ObjectID     uuid.UUID
-	BeforeState  any
-	AfterState   any
-	Reason       string
-	TraceID      string
-	Metadata     any
-	OccurredAt   time.Time
+	ID          uuid.UUID
+	WorkspaceID *uuid.UUID
+	ActorType   string
+	ActorID     *uuid.UUID
+	Action      string
+	ObjectType  string
+	ObjectID    uuid.UUID
+	BeforeState any
+	AfterState  any
+	Reason      string
+	TraceID     string
+	Metadata    any
+	OccurredAt  time.Time
 }
 
 func Append(ctx context.Context, tx pgx.Tx, event Event) error {
