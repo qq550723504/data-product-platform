@@ -1,0 +1,47 @@
+apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: enterprise-activity-quality
+  version: 1.0.0
+spec:
+  productCode: DP-ENTERPRISE-ACTIVITY
+  rules:
+    - id: QA-COMPANY-ID-COMPLETE
+      dimension: COMPLETENESS
+      target: company_id
+      expression: "non_null_rate(company_id) >= 0.999"
+      severity: CRITICAL
+    - id: QA-CANONICAL-UNIQUE
+      dimension: CONSISTENCY
+      target: company_id
+      expression: "unique_mapping_rate(company_id) >= 0.99"
+      severity: HIGH
+    - id: QA-ENTITY-UNRESOLVED
+      dimension: CONSISTENCY
+      target: entity_resolution
+      expression: "unresolved_entity_rate <= 0.005"
+      severity: HIGH
+    - id: QA-ENERGY-NONNEGATIVE
+      dimension: ACCURACY
+      target: energy_kwh
+      expression: "accepted_record_negative_rate(energy_kwh) == 0"
+      severity: CRITICAL
+    - id: QA-PERIOD-PRESENT
+      dimension: COMPLETENESS
+      target: period
+      expression: "non_null_rate(period) == 1"
+      severity: CRITICAL
+    - id: QA-ACTIVITY-SCORE-RANGE
+      dimension: CONFORMITY
+      target: activity_score
+      expression: "min(activity_score) >= 0 and max(activity_score) <= 100"
+      severity: CRITICAL
+    - id: QA-FRESHNESS
+      dimension: TIMELINESS
+      target: product_dataset
+      expression: "freshness_hours <= 24"
+      severity: CRITICAL
+  gate:
+    criticalFailure: FAIL
+    highFailure: REVIEW
+    warningFailure: PASS_WITH_WARNING
