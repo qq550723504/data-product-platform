@@ -21,10 +21,10 @@ import (
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/matching"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/indicator"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
 const (
@@ -66,9 +66,9 @@ type canonicalCompany struct {
 }
 
 type sourceRecord struct {
-	SourceKey string
+	SourceKey   string
 	CompanyName string
-	Fields    map[string]string
+	Fields      map[string]string
 }
 
 func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.ProcessingResult, error) {
