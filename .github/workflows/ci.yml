@@ -72,3 +72,10 @@ jobs:
           go build ./cmd/api
           go build ./cmd/worker
           go build ./cmd/migrate
+
+      - name: Upload generated module lock
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-module-lock
+          path: apps/platform/go.sum
+          if-no-files-found: error
