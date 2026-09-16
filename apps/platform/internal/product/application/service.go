@@ -240,6 +240,7 @@ type ReadinessResult struct {
 	Overall   string                 `json:"overall"`
 	Checks    map[string]CheckStatus `json:"checks"`
 	Blockers  []string               `json:"blockers"`
+	Details   map[string]any         `json:"details,omitempty"`
 }
 
 func (s *Service) ValidateRelease(ctx context.Context, cmd ValidateReleaseCommand) (ReadinessResult, error) {
@@ -378,6 +379,7 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 		"delivery":   CheckFail,
 	}
 	blockers := make([]string, 0)
+	details := map[string]any{}
 
 	if facts.TargetDatasetVersionID != nil {
 		checks["production"] = CheckPass
@@ -389,13 +391,12 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 	} else {
 		blockers = append(blockers, "DATASET_NOT_USABLE")
 	}
-	if !facts.RightsSnapshotExists {
-		blockers = append(blockers, "RIGHTS_SNAPSHOT_MISSING")
-	} else if !facts.RightsSnapshotWorkspaceMatch || !facts.RightsCurrentlyValid {
-		blockers = append(blockers, "RIGHTS_INVALID")
-	} else {
-		checks["rights"] = CheckPass
-	}
+
+	rightsStatus, rightsBlockers, rightsDetails := evaluateRightsReadiness(facts)
+	checks["rights"] = rightsStatus
+	blockers = append(blockers, rightsBlockers...)
+	details["rights"] = rightsDetails
+
 	if !facts.ContractExists {
 		blockers = append(blockers, "CONTRACT_VERSION_MISSING")
 	} else if !facts.ContractMatchesProduct {
@@ -446,7 +447,7 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 	if allPass {
 		overall = "READY"
 	}
-	return ReadinessResult{ReleaseID: release.ID, Overall: overall, Checks: checks, Blockers: blockers}, nil
+	return ReadinessResult{ReleaseID: release.ID, Overall: overall, Checks: checks, Blockers: blockers, Details: details}, nil
 }
 
 func appendEvent(ctx context.Context, tx pgx.Tx, aggregateType string, aggregateID uuid.UUID, eventType string, payload map[string]any) error {
