@@ -1,28 +1,51 @@
-.PHONY: help dev test lint fmt migrate-up migrate-down
+.PHONY: help dev-up dev-down dev-logs api worker test lint fmt tidy migrate-up migrate-down
+
+COMPOSE_FILE := deploy/docker-compose/docker-compose.yml
+PLATFORM_DIR := apps/platform
 
 help:
 	@echo "Targets:"
-	@echo "  dev          Run local development stack (to be implemented)"
-	@echo "  test         Run project tests"
-	@echo "  lint         Run linters"
-	@echo "  fmt          Format source code"
-	@echo "  migrate-up   Apply database migrations"
-	@echo "  migrate-down Roll back database migrations"
+	@echo "  dev-up       Start PostgreSQL, Redis and MinIO"
+	@echo "  dev-down     Stop local infrastructure"
+	@echo "  dev-logs     Follow local infrastructure logs"
+	@echo "  api          Run the Go API process"
+	@echo "  worker       Run the Go worker process"
+	@echo "  test         Run Go tests"
+	@echo "  lint         Run go vet"
+	@echo "  fmt          Format Go source"
+	@echo "  tidy         Update Go module metadata"
+	@echo "  migrate-up   Apply pending database migrations"
+	@echo "  migrate-down Roll back the latest database migration"
 
-dev:
-	@echo "TODO: add local development command"
+dev-up:
+	docker compose -f $(COMPOSE_FILE) up -d
+
+dev-down:
+	docker compose -f $(COMPOSE_FILE) down
+
+dev-logs:
+	docker compose -f $(COMPOSE_FILE) logs -f
+
+api:
+	cd $(PLATFORM_DIR) && go run ./cmd/api
+
+worker:
+	cd $(PLATFORM_DIR) && go run ./cmd/worker
 
 test:
-	@echo "TODO: add tests once code is initialized"
+	cd $(PLATFORM_DIR) && go test ./...
 
 lint:
-	@echo "TODO: add linters once code is initialized"
+	cd $(PLATFORM_DIR) && go vet ./...
 
 fmt:
-	@echo "TODO: add formatters once code is initialized"
+	cd $(PLATFORM_DIR) && gofmt -w $$(find . -path './$(PLATFORM_DIR)/*.go' -o -path './$(PLATFORM_DIR)/**/*.go' 2>/dev/null)
+
+tidy:
+	cd $(PLATFORM_DIR) && go mod tidy
 
 migrate-up:
-	@echo "TODO: wire migration tool"
+	go run ./$(PLATFORM_DIR)/cmd/migrate -direction up -dir migrations
 
 migrate-down:
-	@echo "TODO: wire migration tool"
+	go run ./$(PLATFORM_DIR)/cmd/migrate -direction down -dir migrations
