@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/application"
@@ -188,9 +189,7 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 	}
 }
 
-func mustExec(t *testing.T, ctx context.Context, pool interface {
-	Exec(context.Context, string, ...any) (interface{}, error)
-}, query string, args ...any) {
+func mustExec(t *testing.T, ctx context.Context, pool *pgxpool.Pool, query string, args ...any) {
 	t.Helper()
 	if _, err := pool.Exec(ctx, query, args...); err != nil {
 		t.Fatalf("execute fixture SQL: %v", err)
