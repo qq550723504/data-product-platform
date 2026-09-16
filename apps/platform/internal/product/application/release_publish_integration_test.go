@@ -2,7 +2,6 @@ package application_test
 
 import (
 	"context"
-	"errors"
 	"os"
 	"testing"
 	"time"
