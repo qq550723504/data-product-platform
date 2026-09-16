@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
@@ -36,15 +37,66 @@ func TestAuditAndOutboxCommitAtomically(t *testing.T) {
 		}
 
 		expectedErr := errors.New("force rollback")
-		err = manager.Do(ctx, func(ctx context.Context, tx interfaceTx) error {
-			return nil
+		err = manager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+			if err := audit.Append(ctx, tx, audit.Event{
+				Action:     "TEST_ROLLBACK",
+				ObjectType: "TEST",
+				ObjectID:   objectID,
+			}); err != nil {
+				return err
+			}
+			if err := outbox.Append(ctx, tx, event); err != nil {
+				return err
+			}
+			return expectedErr
 		})
-		_ = err
-		_ = expectedErr
-		_ = event
+		if !errors.Is(err, expectedErr) {
+			t.Fatalf("transaction error = %v, want %v", err, expectedErr)
+		}
+
+		assertCount(t, ctx, pool, `SELECT count(*) FROM audit_event WHERE object_id = $1`, objectID, 0)
+		assertCount(t, ctx, pool, `SELECT count(*) FROM outbox_event WHERE aggregate_id = $1`, objectID, 0)
+	})
+
+	t.Run("commit persists both records", func(t *testing.T) {
+		objectID := uuid.New()
+		event, err := outbox.NewEvent("TEST", objectID, "TestEventCommitted", map[string]any{"ok": true})
+		if err != nil {
+			t.Fatalf("new outbox event: %v", err)
+		}
+
+		if err := manager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+			if err := audit.Append(ctx, tx, audit.Event{
+				Action:     "TEST_COMMIT",
+				ObjectType: "TEST",
+				ObjectID:   objectID,
+			}); err != nil {
+				return err
+			}
+			return outbox.Append(ctx, tx, event)
+		}); err != nil {
+			t.Fatalf("commit transaction: %v", err)
+		}
+
+		assertCount(t, ctx, pool, `SELECT count(*) FROM audit_event WHERE object_id = $1`, objectID, 1)
+		assertCount(t, ctx, pool, `SELECT count(*) FROM outbox_event WHERE aggregate_id = $1`, objectID, 1)
+
+		_, _ = pool.Exec(ctx, `DELETE FROM audit_event WHERE object_id = $1`, objectID)
+		_, _ = pool.Exec(ctx, `DELETE FROM outbox_event WHERE aggregate_id = $1`, objectID)
 	})
 }
 
-// interfaceTx placeholder is intentionally not used; see the concrete atomicity test below.
-// It keeps this file focused on public transaction behavior once pgx.Tx is supplied.
-type interfaceTx interface{}
+func assertCount(t *testing.T, ctx context.Context, pool queryRower, query string, objectID uuid.UUID, want int) {
+	t.Helper()
+	var got int
+	if err := pool.QueryRow(ctx, query, objectID).Scan(&got); err != nil {
+		t.Fatalf("query count: %v", err)
+	}
+	if got != want {
+		t.Fatalf("count = %d, want %d", got, want)
+	}
+}
+
+type queryRower interface {
+	QueryRow(context.Context, string, ...any) pgx.Row
+}
