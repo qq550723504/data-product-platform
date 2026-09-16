@@ -107,8 +107,12 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 	if err := tx.QueryRow(ctx, `SELECT current_version_id FROM dataset WHERE id = $1 FOR UPDATE`, version.DatasetID).Scan(&previousVersionID); err != nil {
 		return fmt.Errorf("lock dataset current version: %w", err)
 	}
+	metadata, err := json.Marshal(version.Metadata)
+	if err != nil {
+		return fmt.Errorf("marshal dataset version metadata: %w", err)
+	}
 
-	_, err := tx.Exec(ctx, `
+	_, err = tx.Exec(ctx, `
 		UPDATE dataset_version
 		SET status = $2,
 		    storage_type = $3,
@@ -118,7 +122,9 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 		    byte_size = $7,
 		    checksum_algorithm = $8,
 		    checksum_value = $9,
-		    ready_at = $10
+		    generated_by_execution_id = $10,
+		    metadata = $11,
+		    ready_at = $12
 		WHERE id = $1 AND status IN ('CREATED','PROCESSING')
 	`,
 		version.ID,
@@ -130,6 +136,8 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 		version.ByteSize,
 		version.ChecksumAlgorithm,
 		version.ChecksumValue,
+		version.GeneratedByExecutionID,
+		metadata,
 		version.ReadyAt,
 	)
 	if err != nil {

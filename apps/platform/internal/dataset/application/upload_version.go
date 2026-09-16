@@ -24,12 +24,14 @@ type ObjectStore interface {
 }
 
 type UploadVersionCommand struct {
-	DatasetID   uuid.UUID
-	Filename    string
-	ContentType string
-	Content     []byte
-	ActorID     *uuid.UUID
-	TraceID     string
+	DatasetID              uuid.UUID
+	Filename               string
+	ContentType            string
+	Content                []byte
+	ActorID                *uuid.UUID
+	TraceID                string
+	GeneratedByExecutionID *uuid.UUID
+	Metadata               map[string]any
 }
 
 type UploadVersionService struct {
@@ -91,6 +93,10 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 	if err := version.MarkReady("OBJECT_STORAGE", storageURI, cmd.ContentType, "SHA256", checksum, rowCount, int64(len(cmd.Content))); err != nil {
 		return domain.DatasetVersion{}, err
 	}
+	version.GeneratedByExecutionID = cmd.GeneratedByExecutionID
+	if cmd.Metadata != nil {
+		version.Metadata = cmd.Metadata
+	}
 
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		if err := s.repo.SetReady(ctx, tx, version); err != nil {
@@ -98,11 +104,12 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 		}
 
 		event, err := outbox.NewEvent("DATASET_VERSION", version.ID, "DatasetVersionCreated", map[string]any{
-			"datasetVersionId": version.ID,
-			"datasetId":        version.DatasetID,
-			"versionNo":        version.VersionNo,
-			"status":           version.Status,
-			"checksum":         version.ChecksumValue,
+			"datasetVersionId":       version.ID,
+			"datasetId":              version.DatasetID,
+			"versionNo":              version.VersionNo,
+			"status":                 version.Status,
+			"checksum":               version.ChecksumValue,
+			"generatedByExecutionId": version.GeneratedByExecutionID,
 		})
 		if err != nil {
 			return fmt.Errorf("create dataset version event: %w", err)
@@ -118,12 +125,13 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 			ObjectType: "DATASET_VERSION",
 			ObjectID:   version.ID,
 			AfterState: map[string]any{
-				"datasetId":  version.DatasetID,
-				"versionNo":  version.VersionNo,
-				"status":     version.Status,
-				"storageUri": version.StorageURI,
-				"checksum":   version.ChecksumValue,
-				"rowCount":   rowCount,
+				"datasetId":              version.DatasetID,
+				"versionNo":              version.VersionNo,
+				"status":                 version.Status,
+				"storageUri":             version.StorageURI,
+				"checksum":               version.ChecksumValue,
+				"rowCount":               rowCount,
+				"generatedByExecutionId": version.GeneratedByExecutionID,
 			},
 			TraceID: cmd.TraceID,
 		})

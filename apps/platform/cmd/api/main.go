@@ -25,6 +25,10 @@ import (
 	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	resourcehttp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/transport/http"
+	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
+	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
+	workflowhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/http"
+	workflowqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue"
 )
 
 func main() {
@@ -97,12 +101,19 @@ func main() {
 	)
 	entityHandler := entityhttp.NewHandler(entityService, entityRepo)
 
+	workflowRepo := workflowinfra.NewPostgresRepository(db)
+	workflowVersionService := workflowapp.NewWorkflowVersionService(txManager, workflowRepo)
+	workflowQueueClient := workflowqueue.NewClient(queueClient)
+	executionService := workflowapp.NewExecutionService(txManager, workflowRepo, workflowQueueClient)
+	workflowHandler := workflowhttp.NewHandler(workflowVersionService, executionService, workflowRepo)
+
 	server := &http.Server{
 		Addr: cfg.HTTPAddr,
 		Handler: httpserver.NewMux(
 			resourceHandler.Register,
 			datasetHandler.Register,
 			entityHandler.Register,
+			workflowHandler.Register,
 		),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
