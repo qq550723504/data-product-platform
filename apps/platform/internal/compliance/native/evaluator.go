@@ -69,11 +69,11 @@ func Evaluate(policy Policy, table tabular.Table) ([]domain.Finding, map[string]
 	}
 
 	summary := map[string]any{
-		"fieldCount":  len(table.Headers),
-		"kept":        kept,
-		"blocked":     blocked,
-		"review":      reviewed,
-		"principle":   policy.Spec.Principle,
+		"fieldCount": len(table.Headers),
+		"kept":       kept,
+		"blocked":    blocked,
+		"review":     reviewed,
+		"principle":  policy.Spec.Principle,
 	}
 	return findings, summary
 }
