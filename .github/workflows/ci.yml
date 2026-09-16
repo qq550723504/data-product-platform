@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   go-platform:
@@ -72,6 +72,20 @@ jobs:
           go build ./cmd/api
           go build ./cmd/worker
           go build ./cmd/migrate
+
+      - name: Persist generated module lock
+        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/sprint-0-foundation'
+        working-directory: .
+        run: |
+          CHANGES="$(git status --porcelain -- apps/platform/go.mod apps/platform/go.sum)"
+          if [ -z "$CHANGES" ]; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/platform/go.mod apps/platform/go.sum
+          git commit -m "chore: sync Go module lock"
+          git push
 
       - name: Upload generated module lock
         uses: actions/upload-artifact@v4
