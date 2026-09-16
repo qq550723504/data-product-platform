@@ -179,11 +179,19 @@ func (r *PostgresRepository) Invalidate(ctx context.Context, tx pgx.Tx, version 
 
 func (r *PostgresRepository) GetVersion(ctx context.Context, versionID uuid.UUID) (domain.DatasetVersion, error) {
 	return scanVersion(r.pool.QueryRow(ctx, `
-		SELECT id, dataset_id, version_no, status, schema_version, storage_type, storage_uri,
-		       content_type, row_count, byte_size, checksum_algorithm, checksum_value,
-		       generated_by_execution_id, rights_snapshot_id, quality_status, compliance_status,
+		SELECT id, dataset_id, version_no, status,
+		       COALESCE(schema_version, ''),
+		       COALESCE(storage_type, ''),
+		       COALESCE(storage_uri, ''),
+		       COALESCE(content_type, ''),
+		       row_count, byte_size,
+		       COALESCE(checksum_algorithm, ''),
+		       COALESCE(checksum_value, ''),
+		       generated_by_execution_id, rights_snapshot_id,
+		       COALESCE(quality_status, ''),
+		       COALESCE(compliance_status, ''),
 		       snapshot_from, snapshot_to, metadata, created_at, created_by, ready_at,
-		       invalidated_at, invalidation_reason
+		       invalidated_at, COALESCE(invalidation_reason, '')
 		FROM dataset_version WHERE id = $1
 	`, versionID))
 }
