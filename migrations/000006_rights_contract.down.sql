@@ -13,4 +13,4 @@ DROP TABLE IF EXISTS data_contract;
 DROP TABLE IF EXISTS rights_snapshot_authorization;
 DROP TABLE IF EXISTS rights_snapshot;
 DROP TABLE IF EXISTS authorization_resource;
-DROP TABLE IF EXISTS authorization;
+DROP TABLE IF EXISTS data_authorization;
