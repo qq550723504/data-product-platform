@@ -10,12 +10,14 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	datasethttp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/transport/http"
 	entityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	entityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/transport/http"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
@@ -25,6 +27,7 @@ import (
 	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	resourcehttp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/transport/http"
+	traceabilityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/traceability/transport/http"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 	workflowhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/http"
@@ -107,6 +110,11 @@ func main() {
 	executionService := workflowapp.NewExecutionService(txManager, workflowRepo, workflowQueueClient)
 	workflowHandler := workflowhttp.NewHandler(workflowVersionService, executionService, workflowRepo)
 
+	traceabilityHandler := traceabilityhttp.NewHandler(
+		evidence.NewQueryRepository(db),
+		cost.NewQueryRepository(db),
+	)
+
 	server := &http.Server{
 		Addr: cfg.HTTPAddr,
 		Handler: httpserver.NewMux(
@@ -114,6 +122,7 @@ func main() {
 			datasetHandler.Register,
 			entityHandler.Register,
 			workflowHandler.Register,
+			traceabilityHandler.Register,
 		),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
