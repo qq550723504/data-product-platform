@@ -126,10 +126,11 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 		return workflowapp.ProcessingResult{}, err
 	}
 
+	generatedAt := time.Now().UTC().Format(time.RFC3339)
 	rows := make([][]string, 0, len(companies)+1)
 	rows = append(rows, []string{
-		"canonical_company_id", "company_name", "target_period", "tenancy_stability",
-		"rent_performance", "energy_stability", "activity_score", "activity_level", "indicator_coverage",
+		"company_id", "company_name", "period", "tenancy_stability",
+		"rent_performance", "energy_stability", "activity_score", "activity_level", "indicator_coverage", "generated_at",
 	})
 	companyIDs := make([]uuid.UUID, 0, len(companies))
 	for companyID := range companies {
@@ -156,6 +157,7 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 			formatOptional(result.ActivityScore),
 			result.ActivityLevel,
 			fmt.Sprintf("%.2f", result.IndicatorCoverage),
+			generatedAt,
 		})
 	}
 
@@ -171,13 +173,15 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 		TraceID:                request.ExecutionID.String(),
 		GeneratedByExecutionID: &request.ExecutionID,
 		Metadata: map[string]any{
-			"workflowVersionId":   request.WorkflowVersion.ID,
-			"workflowVersion":     request.WorkflowVersion.Version,
-			"indicatorSet":        "park-enterprise-activity@1.0.0",
-			"entityPolicyVersion": companyPolicy.Metadata.Version,
-			"targetPeriod":        request.TargetPeriod,
-			"quarantineCount":     quarantineCount,
-			"gateStatus":          "DEFERRED_TO_RIGHTS_QUALITY_COMPLIANCE_GATE",
+			"workflowVersionId":         request.WorkflowVersion.ID,
+			"workflowVersion":           request.WorkflowVersion.Version,
+			"indicatorSet":              "park-enterprise-activity@1.0.0",
+			"entityPolicyVersion":       companyPolicy.Metadata.Version,
+			"targetPeriod":              request.TargetPeriod,
+			"quarantineCount":           quarantineCount,
+			"unresolvedEntityRate":      0.0,
+			"acceptedNegativeEnergyRate": 0.0,
+			"gateStatus":                "PENDING_GOVERNANCE_GATES",
 		},
 	})
 	if err != nil {
@@ -351,6 +355,7 @@ func (e *Engine) attachEnergy(ctx context.Context, executionID uuid.UUID, rows [
 				return mapped, quarantineCount, err
 			}
 			quarantineCount++
+			continue
 		}
 		input := inputs[companyID]
 		input.EnergyReadings = append(input.EnergyReadings, indicator.EnergyReading{
