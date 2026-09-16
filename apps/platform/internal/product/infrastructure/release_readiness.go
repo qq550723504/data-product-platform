@@ -19,6 +19,11 @@ type ReadinessFacts struct {
 	RightsSnapshotExists         bool
 	RightsSnapshotWorkspaceMatch bool
 	RightsCurrentlyValid         bool
+	RightsCoverageKnown          bool
+	RightsCoverageComplete       bool
+	RequiredResourceIDs          []uuid.UUID
+	MissingResourceIDs           []uuid.UUID
+	MissingActions               map[string][]string
 	ContractExists               bool
 	ContractPublished            bool
 	ContractMatchesProduct       bool
@@ -67,8 +72,10 @@ func (r *PostgresRepository) SaveReleaseStatus(ctx context.Context, tx pgx.Tx, r
 
 func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.ProductRelease, product domain.DataProduct, version domain.ProductVersion, now time.Time) (ReadinessFacts, error) {
 	facts := ReadinessFacts{AllDatasetsUsable: len(release.Datasets) > 0}
+	releaseDatasetVersionIDs := make([]uuid.UUID, 0, len(release.Datasets))
 
 	for _, binding := range release.Datasets {
+		releaseDatasetVersionIDs = append(releaseDatasetVersionIDs, binding.DatasetVersionID)
 		var datasetID uuid.UUID
 		var status string
 		var generatedBy *uuid.UUID
@@ -131,6 +138,15 @@ func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.
 			facts.RightsSnapshotExists = true
 			facts.RightsSnapshotWorkspaceMatch = snapshotWorkspace == product.WorkspaceID
 			facts.RightsCurrentlyValid = authorizationCount > 0 && currentlyValid
+			coverage, err := r.EvaluateRightsCoverage(ctx, *release.RightsSnapshotID, releaseDatasetVersionIDs, now)
+			if err != nil {
+				return ReadinessFacts{}, err
+			}
+			facts.RightsCoverageKnown = coverage.Known
+			facts.RightsCoverageComplete = coverage.Complete
+			facts.RequiredResourceIDs = coverage.RequiredResources
+			facts.MissingResourceIDs = coverage.MissingResources
+			facts.MissingActions = coverage.MissingActions
 		} else if !errors.Is(err, pgx.ErrNoRows) {
 			return ReadinessFacts{}, fmt.Errorf("read rights snapshot readiness: %w", err)
 		}
