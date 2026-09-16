@@ -2,8 +2,6 @@ package evidence
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -38,6 +36,7 @@ func Append(ctx context.Context, tx pgx.Tx, record Record, relations ...Relation
 	if record.CreatedAt.IsZero() {
 		record.CreatedAt = time.Now().UTC()
 	}
+	record.CreatedAt = NormalizeCreatedAt(record.CreatedAt)
 	if record.Metadata == nil {
 		record.Metadata = map[string]any{}
 	}
@@ -46,16 +45,18 @@ func Append(ctx context.Context, tx pgx.Tx, record Record, relations ...Relation
 	if err != nil {
 		return Record{}, fmt.Errorf("marshal evidence metadata: %w", err)
 	}
-	digest := sha256.Sum256(metadata)
-	hashValue := hex.EncodeToString(digest[:])
+	hashValue, err := ComputeHash(record, HashAlgorithmEvidenceV1)
+	if err != nil {
+		return Record{}, err
+	}
 
 	_, err = tx.Exec(ctx, `
 		INSERT INTO evidence (
 			id, workspace_id, evidence_type, title, source_type, source_id,
 			storage_uri, hash_algorithm, hash_value, metadata, created_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,'SHA256',$8,$9,$10,$11)
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
 	`, record.ID, record.WorkspaceID, record.EvidenceType, record.Title, record.SourceType, record.SourceID,
-		record.StorageURI, hashValue, metadata, record.CreatedAt, record.CreatedBy)
+		record.StorageURI, HashAlgorithmEvidenceV1, hashValue, metadata, record.CreatedAt, record.CreatedBy)
 	if err != nil {
 		return Record{}, fmt.Errorf("insert evidence: %w", err)
 	}
