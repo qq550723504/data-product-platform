@@ -3,54 +3,79 @@ kind: DataContract
 metadata:
   name: enterprise-activity
   version: 1.0.0
+  status: POC
 spec:
   product:
     code: DP-ENTERPRISE-ACTIVITY
     name: 企业经营活跃度
+    disclaimer: >-
+      This reference product is used to validate the Data Product production
+      lifecycle. Its scores are not a validated credit/underwriting model.
+
   consumers:
     - LICENSED_BANK
     - GUARANTEE_INSTITUTION
+
   purposes:
     - ENTERPRISE_CREDIT_RISK_SUPPORT
+
   freshness:
     updateFrequency: DAILY
     maxDelay: 24h
+
   delivery:
     api: true
     datasetExport: false
     rawSourceExport: false
+
   usage:
     redistribution: false
     marketing: false
+    soleUnderwritingDecision: false
+
+  indicatorSet:
+    ref: park-enterprise-activity@1.0.0
+
   schema:
     - name: company_id
       type: string
       nullable: false
       description: 平台 Canonical Company ID
+
     - name: period
       type: string
       nullable: false
       description: 统计周期，格式 YYYY-MM
+      pattern: "^[0-9]{4}-(0[1-9]|1[0-2])$"
+
     - name: tenancy_stability
       type: decimal
-      nullable: false
+      nullable: true
       minimum: 0
       maximum: 100
+      description: 入驻稳定度；数据不足时为 null
+
     - name: rent_performance
       type: decimal
-      nullable: false
+      nullable: true
       minimum: 0
       maximum: 100
+      description: 租赁付款履约度；有效到期事件不足时为 null
+
     - name: energy_stability
       type: decimal
-      nullable: false
+      nullable: true
       minimum: 0
       maximum: 100
+      description: 能耗数据连续/稳定度；有效月份不足时为 null
+
     - name: activity_score
       type: decimal
-      nullable: false
+      nullable: true
       minimum: 0
       maximum: 100
+      description: 三项必需指标均可用时计算，否则为 null
+
     - name: activity_level
       type: string
       nullable: false
@@ -59,24 +84,61 @@ spec:
         - MEDIUM
         - LOW
         - INSUFFICIENT_DATA
+
+    - name: indicator_coverage
+      type: decimal
+      nullable: false
+      minimum: 0
+      maximum: 100
+      description: 可用必需指标数量 / 3 * 100
+
     - name: generated_at
       type: timestamp
       nullable: false
+
+  missingData:
+    silentImputation: false
+    activityScoreRequiresAllComponents: true
+    whenAnyRequiredComponentMissing:
+      activity_score: null
+      activity_level: INSUFFICIENT_DATA
+
   quality:
     companyIdCompleteness:
       target: ">= 99.9%"
       severity: CRITICAL
+
     canonicalUniqueMappingRate:
       target: ">= 99%"
       severity: HIGH
+
     unresolvedEntityRate:
       target: "<= 0.5%"
       severity: HIGH
+
     scoreRange:
-      target: "0 <= activity_score <= 100"
+      target: "activity_score IS NULL OR (0 <= activity_score <= 100)"
       severity: CRITICAL
+
+    levelConsistency:
+      target: >-
+        activity_score IS NOT NULL OR activity_level = INSUFFICIENT_DATA
+      severity: CRITICAL
+
     freshness:
       target: "<= 24h"
       severity: CRITICAL
+
+  compliance:
+    minimumNecessaryData: true
+    forbiddenProductFields:
+      - contact_name
+      - mobile
+      - email
+      - legal_representative
+      - registered_address
+      - rent_amount
+      - meter_id
+
   compatibility:
     breakingChangesRequireMajorVersion: true
