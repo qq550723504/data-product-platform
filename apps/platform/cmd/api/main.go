@@ -13,6 +13,9 @@ import (
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	datasethttp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/transport/http"
+	entityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
+	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
+	entityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
@@ -75,18 +78,31 @@ func main() {
 	resourceHandler := resourcehttp.NewHandler(resourceapp.NewCreateService(txManager, resourceRepo))
 
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
+	datasetWriter := datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore)
 	datasetHandler := datasethttp.NewHandler(
 		datasetapp.NewCreateDatasetService(txManager, datasetRepo),
-		datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore),
+		datasetWriter,
 		datasetapp.NewInvalidateVersionService(txManager, datasetRepo),
 		datasetRepo,
 	)
+
+	entityRepo := entityinfra.NewPostgresRepository(db)
+	entityService := entityapp.NewMatchService(
+		cfg.IndustryPackRoot,
+		txManager,
+		entityRepo,
+		datasetRepo,
+		datasetWriter,
+		objectStore,
+	)
+	entityHandler := entityhttp.NewHandler(entityService, entityRepo)
 
 	server := &http.Server{
 		Addr: cfg.HTTPAddr,
 		Handler: httpserver.NewMux(
 			resourceHandler.Register,
 			datasetHandler.Register,
+			entityHandler.Register,
 		),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
