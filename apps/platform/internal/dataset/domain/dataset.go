@@ -33,14 +33,14 @@ const (
 )
 
 var (
-	ErrInvalidWorkspace      = errors.New("workspace id is required")
-	ErrInvalidDatasetCode    = errors.New("dataset code is required")
-	ErrInvalidDatasetName    = errors.New("dataset name is required")
-	ErrInvalidDatasetType    = errors.New("invalid dataset type")
-	ErrInvalidVersion        = errors.New("version number must be positive")
-	ErrInvalidTransition     = errors.New("invalid dataset version state transition")
-	ErrImmutableVersion      = errors.New("dataset version is immutable")
-	ErrInvalidReadyMetadata  = errors.New("ready dataset version requires storage URI and checksum")
+	ErrInvalidWorkspace     = errors.New("workspace id is required")
+	ErrInvalidDatasetCode   = errors.New("dataset code is required")
+	ErrInvalidDatasetName   = errors.New("dataset name is required")
+	ErrInvalidDatasetType   = errors.New("invalid dataset type")
+	ErrInvalidVersion       = errors.New("version number must be positive")
+	ErrInvalidTransition    = errors.New("invalid dataset version state transition")
+	ErrImmutableVersion     = errors.New("dataset version is immutable")
+	ErrInvalidReadyMetadata = errors.New("ready dataset version requires storage URI and checksum")
 )
 
 type Dataset struct {

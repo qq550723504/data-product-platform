@@ -38,24 +38,24 @@ var (
 )
 
 type DataResource struct {
-	ID                uuid.UUID
-	WorkspaceID       uuid.UUID
-	ProjectID         *uuid.UUID
-	Code              string
-	Name              string
-	Description       string
-	DomainCode        string
-	ResourceType      ResourceType
-	OwnerID           *uuid.UUID
-	SensitivityLevel  string
-	RightsStatus      string
-	QualityStatus     string
-	LifecycleStatus   LifecycleStatus
-	BusinessMetadata  map[string]any
-	Extension         map[string]any
-	Revision          int64
-	CreatedAt         time.Time
-	CreatedBy         *uuid.UUID
+	ID               uuid.UUID
+	WorkspaceID      uuid.UUID
+	ProjectID        *uuid.UUID
+	Code             string
+	Name             string
+	Description      string
+	DomainCode       string
+	ResourceType     ResourceType
+	OwnerID          *uuid.UUID
+	SensitivityLevel string
+	RightsStatus     string
+	QualityStatus    string
+	LifecycleStatus  LifecycleStatus
+	BusinessMetadata map[string]any
+	Extension        map[string]any
+	Revision         int64
+	CreatedAt        time.Time
+	CreatedBy        *uuid.UUID
 }
 
 func NewDataResource(id, workspaceID uuid.UUID, code, name string, resourceType ResourceType, createdBy *uuid.UUID) (DataResource, error) {
