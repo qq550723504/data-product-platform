@@ -70,8 +70,8 @@ type ValidateReleaseCommand struct {
 	RightsSnapshotID   uuid.UUID
 	QualityResultID    uuid.UUID
 	ComplianceResultID uuid.UUID
-	ActorID             *uuid.UUID
-	TraceID             string
+	ActorID            *uuid.UUID
+	TraceID            string
 }
 
 func (s *Service) CreateProduct(ctx context.Context, cmd CreateProductCommand) (domain.DataProduct, error) {

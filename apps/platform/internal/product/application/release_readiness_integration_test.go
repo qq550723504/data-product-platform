@@ -147,15 +147,15 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		t.Fatalf("create product: %v", err)
 	}
 	version, err := service.CreateVersion(ctx, application.CreateVersionCommand{
-		ProductID:        product.ID,
-		MajorVersion:     1,
-		MinorVersion:     0,
-		PatchVersion:     0,
+		ProductID:         product.ID,
+		MajorVersion:      1,
+		MinorVersion:      0,
+		PatchVersion:      0,
 		ContractVersionID: &contractVersionID,
 		Assets: []domain.AssetSpec{{
-			AssetType: domain.AssetDataset,
-			Name:      "enterprise_activity_curated",
-			DatasetID: &datasetID,
+			AssetType:      domain.AssetDataset,
+			Name:           "enterprise_activity_curated",
+			DatasetID:      &datasetID,
 			DeliveryConfig: map[string]any{"mode": "DATASET"},
 		}},
 		TraceID: "release-readiness-e2e",
@@ -167,8 +167,8 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		ProductID:        product.ID,
 		ProductVersionID: version.ID,
 		ReleaseNo:        "R-READINESS-001",
-		Datasets: []domain.ReleaseDataset{{DatasetVersionID: datasetVersionID, Role: domain.DatasetPrimary}},
-		TraceID: "release-readiness-e2e",
+		Datasets:         []domain.ReleaseDataset{{DatasetVersionID: datasetVersionID, Role: domain.DatasetPrimary}},
+		TraceID:          "release-readiness-e2e",
 	})
 	if err != nil {
 		t.Fatalf("create ProductRelease: %v", err)
@@ -180,7 +180,7 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		RightsSnapshotID:   rightsSnapshotID,
 		QualityResultID:    qualityResultID,
 		ComplianceResultID: complianceResultID,
-		TraceID:             "release-readiness-e2e",
+		TraceID:            "release-readiness-e2e",
 	})
 	if err != nil {
 		t.Fatalf("validate ProductRelease: %v", err)
@@ -200,8 +200,8 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		ProductID:        product.ID,
 		ProductVersionID: version.ID,
 		ReleaseNo:        "R-READINESS-002",
-		Datasets: []domain.ReleaseDataset{{DatasetVersionID: datasetVersionID, Role: domain.DatasetPrimary}},
-		TraceID: "release-readiness-e2e",
+		Datasets:         []domain.ReleaseDataset{{DatasetVersionID: datasetVersionID, Role: domain.DatasetPrimary}},
+		TraceID:          "release-readiness-e2e",
 	})
 	if err != nil {
 		t.Fatalf("create blocking ProductRelease: %v", err)
@@ -221,7 +221,7 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		RightsSnapshotID:   rightsSnapshotID,
 		QualityResultID:    badQualityID,
 		ComplianceResultID: complianceResultID,
-		TraceID:             "release-readiness-e2e",
+		TraceID:            "release-readiness-e2e",
 	})
 	if err != nil {
 		t.Fatalf("validate blocking release: %v", err)

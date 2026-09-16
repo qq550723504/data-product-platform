@@ -64,8 +64,8 @@ func (h *Handler) validateRelease(w http.ResponseWriter, r *http.Request) {
 		RightsSnapshotID:   rightsSnapshotID,
 		QualityResultID:    qualityResultID,
 		ComplianceResultID: complianceResultID,
-		ActorID:             actorID,
-		TraceID:             httpserver.RequestID(r.Context()),
+		ActorID:            actorID,
+		TraceID:            httpserver.RequestID(r.Context()),
 	})
 	if err != nil {
 		status := http.StatusBadRequest
