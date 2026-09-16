@@ -2,17 +2,45 @@
 
 ## 1. Purpose
 
-Reference Use Case: 企业融资风险辅助。
+Reference Use Case: **企业融资风险辅助**。
 
 Reference Data Product: **企业经营活跃度 V1.0**。
 
-目标不是构建银行授信模型，而是用一个可解释场景验证完整 Data Product 生产链。
+目标不是构建银行授信模型，而是用一个可解释、可版本化的场景验证完整 Data Product 生产链：
 
-## 2. Input Sources
+```text
+Raw Data
+→ Data Resource
+→ DatasetVersion
+→ Entity Resolution
+→ Processing
+→ Compliance Gate
+→ Quality Gate
+→ Data Contract
+→ Data Product Version
+→ Product Release
+→ Evidence + Cost
+```
 
-### enterprise.csv
+> V1 的指标、权重和等级阈值仅用于 POC 语义验证，不是经过真实金融数据验证的信用评分、授信决策或违约概率模型。
 
-Planned fields:
+## 2. Canonical specifications
+
+实现时以下文件是 V1 的规范来源：
+
+- Company matching policy: `industry-packs/park/matching/company-match-policy-v1.yaml`
+- Indicator set: `industry-packs/park/indicators/enterprise-activity-v1.yaml`
+- Human-readable indicator formulas: `examples/enterprise-activity/indicators-v1.md`
+- Production workflow: `examples/enterprise-activity/workflow/workflow-v1.yaml`
+- Data Contract: `examples/enterprise-activity/contract/data-contract-v1.yaml`
+- Park quality rules: `industry-packs/park/quality/`
+- Park compliance rules: `industry-packs/park/compliance/`
+
+若代码中的常量、缺失值处理或公式与上述版本化规范冲突，应修改代码而不是静默修改产品语义。
+
+## 3. Input Sources
+
+### `enterprise.csv`
 
 ```text
 source_company_id
@@ -22,11 +50,12 @@ legal_representative
 registered_address
 entry_date
 company_status
+contact_name
+mobile
+email
 ```
 
-### lease.csv
-
-Planned fields:
+### `lease.csv`
 
 ```text
 lease_id
@@ -40,9 +69,7 @@ payment_date
 lease_status
 ```
 
-### energy.csv
-
-Planned fields:
+### `energy.csv`
 
 ```text
 meter_id
@@ -52,18 +79,19 @@ reading_time
 energy_kwh
 ```
 
-POC sample data should intentionally contain dirty cases such as:
+POC fixtures intentionally contain dirty cases such as:
 
 - inconsistent company names
 - missing unified social credit codes
 - source-system IDs that do not match across files
-- duplicate rows
 - inconsistent dates
-- negative/invalid energy records
-- late rent payments
-- company aliases or renamed companies
+- invalid/negative energy records
+- late or unpaid rent events
+- aliases / shortened company names
 
-## 3. Company Entity Resolution V1
+These records exist to exercise standardization, entity matching, quarantine, Quality and Evidence behavior.
+
+## 4. Company Entity Resolution V1
 
 Canonical output key:
 
@@ -71,140 +99,104 @@ Canonical output key:
 canonical_company_id = COMPANY-xxxxxx
 ```
 
-Initial rules:
+Initial policy:
 
-1. Unified social credit code exact match → AUTO_MATCH, confidence 1.0.
+1. Unified social credit code exact match → `AUTO_MATCH`, confidence 1.0.
 2. Normalized company name exact + normalized address exact → high-confidence match.
-3. Similar company name + same legal representative → REVIEW candidate.
-4. Otherwise → UNRESOLVED.
+3. Similar company name + same legal representative → `REVIEW` candidate.
+4. Otherwise → `UNRESOLVED` until a later engine/manual decision resolves it.
 
-Every non-trivial mapping records:
+Every non-trivial mapping records source identity, canonical entity, match method, policy version, confidence, review status and evidence. RAW data is never rewritten to force the match.
 
-- source system / source key
-- canonical company
-- match method
-- policy version
-- confidence
-- review status
-- reviewer / reason where applicable
-- evidence reference
+## 5. Indicator semantics
 
-## 4. Initial Indicators
+The V1 product contains four business indicators:
 
-The first version remains explainable and rule-based.
+- `tenancy_stability`
+- `rent_performance`
+- `energy_stability`
+- `activity_score`
 
-### tenancy_stability
+Exact formulas and parameters are frozen in the V1 indicator spec. Important semantics:
 
-Represents enterprise tenancy/occupancy continuity using available entry and contract history.
+- component scores may be `null` when minimum observations are not satisfied;
+- no missing component is silently imputed as zero or a neutral value;
+- `activity_score` requires all three component indicators in V1;
+- when a required component is unavailable, `activity_score=null` and `activity_level=INSUFFICIENT_DATA`;
+- `indicator_coverage` reports available required components / 3 × 100;
+- negative energy observations are quarantined, not rewritten as zero.
 
-### rent_performance
+## 6. Product Dataset
 
-Represents lease payment performance based on expected vs on-time payment events.
-
-### energy_stability
-
-Represents stability/continuity of recent monthly energy usage. Technical data errors must be distinguished from meaningful business changes where possible.
-
-### activity_score
-
-Composite score built from the three indicators above. POC weights are configuration parameters and must not be presented as a validated financial risk model.
-
-## 5. Product Dataset
-
-Planned output schema:
+V1 output schema:
 
 ```text
 company_id
 period
-tenancy_stability
-rent_performance
-energy_stability
-activity_score
-activity_level
-generated_at
+tenancy_stability          nullable
+rent_performance            nullable
+energy_stability            nullable
+activity_score              nullable
+activity_level              non-null
+indicator_coverage          non-null
+generated_at                non-null
 ```
 
-Raw personal contact information must not appear in the Product Dataset.
+The Product Dataset must not expose unnecessary raw personal/contact or source-level fields such as `contact_name`, `mobile`, `email`, `legal_representative`, `registered_address`, raw `rent_amount` or `meter_id`.
 
-## 6. Initial Quality Rules
+## 7. Quality and Compliance
 
-Candidate rules:
+Quality and business activity score are separate concepts. A Dataset can contain a low-activity company while still having excellent data quality.
 
-- `company_id` completeness >= 99.9%
-- canonical company unique mapping rate >= 99%
-- unresolved entity rate <= 0.5%
-- `energy_kwh >= 0` for accepted records
-- `activity_score` in [0, 100]
-- period must be present
-- Product Dataset freshness <= 24h for the reference contract
+The Quality Gate evaluates data fitness (identity completeness, mapping rate, score range, freshness, etc.). The Compliance Gate evaluates permitted output and minimum-necessary-data handling.
 
-Thresholds are POC targets and must be calibrated with real data before production claims are made.
+A blocking Quality/Compliance decision prevents Product Release readiness; it does not modify historical DatasetVersions in place.
 
-## 7. Initial Compliance Rules
+## 8. Data Contract
 
-Reference Product Dataset follows minimum-necessary-data principle.
+The reference contract currently defines:
 
-Example handling:
-
-```text
-contact_name → REMOVE
-mobile       → REMOVE
-email        → REMOVE
-company_id   → KEEP
-activity indicators → KEEP
-```
-
-## 8. Data Contract Draft
-
-Consumer types:
-
-- licensed bank
-- guarantee institution
-
-Purpose:
-
-- enterprise credit-risk support / operating-status reference
-
-Delivery:
-
-- API allowed
-- raw source export forbidden
-
-Usage:
-
-- redistribution forbidden
-- marketing use forbidden
-
-Freshness:
-
-- target T+1 / max delay 24h for the POC
+- consumers: licensed banks and guarantee institutions;
+- purpose: enterprise operating-status / credit-risk support;
+- freshness target: daily, max delay 24h;
+- delivery: API allowed, dataset/raw-source export disabled;
+- redistribution and marketing use forbidden;
+- V1 output schema and missing-data semantics;
+- product is not to be used as the sole underwriting decision.
 
 ## 9. Production Flow
 
 ```text
-enterprise / lease / energy RAW datasets
+enterprise / lease / energy RAW DatasetVersions
 → standardization
-→ Company Entity Resolution
-→ standardized datasets
-→ aggregation / join
-→ indicator calculation
-→ CURATED activity dataset
+→ Company Entity Resolution + Human Review
+→ STANDARDIZED DatasetVersions
+→ energy monthly aggregation
+→ V1 indicator calculation
+→ CURATED activity DatasetVersion
 → Compliance Gate
 → Quality Gate
-→ Data Contract
-→ Data Product Version 1.0
+→ published Data Contract V1
+→ Data Product Version 1.0.0
 → Product Release
 → EvidenceSnapshot + Cost Events
 ```
+
+OpenMetadata, Apache Hop and Splink are deliberately not required for the Core POC. They are later adapters used to validate the Engine SPI architecture.
 
 ## 10. Acceptance Questions
 
 The finished reference implementation must answer:
 
-1. Which raw records produced a company's result?
-2. Why were source company records matched together?
-3. Which entity policy and workflow version were used?
-4. Why did Quality and Compliance pass/fail?
-5. Which exact DatasetVersion was released?
-6. What Evidence supports the Release?
-7. What production costs were recorded?
+1. Which RAW records and DatasetVersions produced a company's result?
+2. Why were source company records matched to the same canonical Entity?
+3. Which entity policy, indicator set and workflow versions were used?
+4. Which technical records were quarantined and why?
+5. Why did Quality and Compliance pass/fail?
+6. Which exact DatasetVersion and Data Contract were frozen in the ProductRelease?
+7. What Evidence supports the Release?
+8. What Cost Events were recorded?
+
+## 11. POC backlog
+
+The Core POC is tracked under GitHub Epic `#1`. The reference semantics are frozen through the spec-first work in `#12` and related implementation issues.
