@@ -101,13 +101,13 @@ func newCandidate(jobID uuid.UUID, record matching.CompanyRecord, normalized mat
 
 func normalizedMap(company matching.NormalizedCompany) map[string]string {
 	return map[string]string{
-		"source_company_id":              company.SourceCompanyID,
-		"normalized_company_name":        company.CompanyName,
-		"unified_social_credit_code":     company.UnifiedSocialCreditCode,
-		"legal_representative":           company.LegalRepresentative,
+		"source_company_id":             company.SourceCompanyID,
+		"normalized_company_name":       company.CompanyName,
+		"unified_social_credit_code":    company.UnifiedSocialCreditCode,
+		"legal_representative":          company.LegalRepresentative,
 		"normalized_registered_address": company.RegisteredAddress,
-		"entry_date":                     company.EntryDate,
-		"company_status":                 company.CompanyStatus,
+		"entry_date":                    company.EntryDate,
+		"company_status":                company.CompanyStatus,
 	}
 }
 
