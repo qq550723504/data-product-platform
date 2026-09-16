@@ -14,10 +14,10 @@ import (
 const publishCommandType = "PUBLISH_PRODUCT_RELEASE"
 
 type PublishReleaseCommand struct {
-	ReleaseID       uuid.UUID
-	IdempotencyKey  string
-	ActorID         *uuid.UUID
-	TraceID         string
+	ReleaseID      uuid.UUID
+	IdempotencyKey string
+	ActorID        *uuid.UUID
+	TraceID        string
 }
 
 func (s *Service) PublishRelease(ctx context.Context, cmd PublishReleaseCommand) (domain.ProductRelease, error) {
