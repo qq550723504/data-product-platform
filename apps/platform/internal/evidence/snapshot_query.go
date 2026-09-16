@@ -58,7 +58,17 @@ func (r *QueryRepository) GetSnapshot(ctx context.Context, snapshotID uuid.UUID)
 	if err := rows.Err(); err != nil {
 		return SnapshotView{}, fmt.Errorf("iterate evidence snapshot items: %w", err)
 	}
-	encoded, err := json.Marshal(snapshot.Manifest)
+
+	// Historical snapshots were hashed while evidenceItems was a []SnapshotItem.
+	// JSONB decodes nested objects into maps and changes their key order when
+	// marshaled again, so reconstruct the original typed representation before
+	// recomputing the digest.
+	verificationManifest := make(map[string]any, len(snapshot.Manifest))
+	for key, value := range snapshot.Manifest {
+		verificationManifest[key] = value
+	}
+	verificationManifest["evidenceItems"] = snapshot.Items
+	encoded, err := json.Marshal(verificationManifest)
 	if err != nil {
 		return SnapshotView{}, fmt.Errorf("marshal evidence snapshot for verification: %w", err)
 	}
