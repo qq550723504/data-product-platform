@@ -1,0 +1,151 @@
+apiVersion: dataprod.platform/v1alpha1
+kind: IndicatorTestVectorSet
+metadata:
+  name: enterprise-activity-v1
+  version: 1.0.0
+spec:
+  indicatorSetRef: park-enterprise-activity@1.0.0
+  targetPeriod: 2025-03
+  rounding:
+    mode: HALF_UP
+    decimals: 2
+
+  fixtureExpectations:
+    - case: COMPANY-STAR-CLOUD
+      sourceAliases:
+        enterprise: [ENT-001, ENT-005]
+        lease: [LEASE-C001]
+        energy: [ENERGY-C001]
+      inputs:
+        entry_date: 2022-03-01
+        activeLeaseOverlapsTargetPeriod: true
+        rentEvents:
+          - due: 2025-01-05
+            paid: 2025-01-04
+            class: ON_TIME
+            score: 100
+          - due: 2025-02-05
+            paid: 2025-02-07
+            class: LATE_1_TO_7_DAYS
+            score: 70
+          - due: 2025-03-05
+            paid: 2025-03-05
+            class: ON_TIME
+            score: 100
+        validMonthlyEnergyKwh: [12850, 13120, 12990]
+      expected:
+        tenancy_stability: 100.00
+        rent_performance: 90.00
+        energy_stability: 98.02
+        activity_score: 96.01
+        activity_level: HIGH
+        indicator_coverage: 100.00
+
+    - case: COMPANY-QINGHE
+      sourceAliases:
+        enterprise: [ENT-002]
+        lease: [LEASE-C002]
+        energy: [ENERGY-C002]
+      inputs:
+        entry_date: 2023-07-15
+        expectedFullTenureMonths: 20
+        activeLeaseOverlapsTargetPeriod: true
+        rentEvents:
+          - {due: 2025-01-05, paid: 2025-01-05, class: ON_TIME, score: 100}
+          - {due: 2025-02-05, paid: 2025-02-05, class: ON_TIME, score: 100}
+          - {due: 2025-03-05, paid: 2025-03-18, class: LATE_8_TO_30_DAYS, score: 40}
+        validMonthlyEnergyKwh: [8240, 8160, 7990]
+      expected:
+        tenancy_stability: 68.89
+        rent_performance: 80.00
+        energy_stability: 97.01
+        activity_score: 81.97
+        activity_level: HIGH
+        indicator_coverage: 100.00
+
+    - case: COMPANY-LANTU
+      sourceAliases:
+        enterprise: [ENT-003]
+        lease: [LEASE-C003]
+        energy: [ENERGY-C003]
+      inputs:
+        entry_date: 2021-01-10
+        activeLeaseOverlapsTargetPeriod: true
+        rentEvents:
+          - {due: 2025-01-05, paid: 2025-01-03, class: ON_TIME, score: 100}
+          - {due: 2025-02-05, paid: 2025-02-03, class: ON_TIME, score: 100}
+        validMonthlyEnergyKwh: [22400, 21800, 22150]
+      expected:
+        tenancy_stability: 100.00
+        rent_performance: 100.00
+        energy_stability: 97.40
+        activity_score: 99.13
+        activity_level: HIGH
+        indicator_coverage: 100.00
+
+    - case: COMPANY-YUNFAN-INSUFFICIENT
+      sourceAliases:
+        enterprise: [ENT-004]
+        lease: [LEASE-C004]
+        energy: [ENERGY-C004]
+      inputs:
+        entry_date: 2024-02-20
+        expectedFullTenureMonths: 13
+        activeLeaseOverlapsTargetPeriod: true
+        dueEventCount: 1
+        validMonthlyEnergyKwh: [6100, 6250]
+      expected:
+        tenancy_stability: 55.28
+        rent_performance: null
+        energy_stability: null
+        activity_score: null
+        activity_level: INSUFFICIENT_DATA
+        indicator_coverage: 33.33
+
+    - case: COMPANY-HAIYUE-QUARANTINE
+      sourceAliases:
+        enterprise: [ENT-006]
+        lease: [LEASE-C005]
+        energy: [ENERGY-C005]
+      inputs:
+        entry_date: 2020-06-08
+        activeLeaseOverlapsTargetPeriod: true
+        dueEventCount: 1
+        rawMonthlyEnergyKwh: [15400, -999, 14980]
+        quarantinedEnergyRecordCount: 1
+        validMonthlyEnergyKwh: [15400, 14980]
+      expected:
+        tenancy_stability: 100.00
+        rent_performance: null
+        energy_stability: null
+        activity_score: null
+        activity_level: INSUFFICIENT_DATA
+        indicator_coverage: 33.33
+
+  boundaryVectors:
+    activityLevel:
+      - components: [80, 80, 80]
+        expectedScore: 80.00
+        expectedLevel: HIGH
+      - components: [60, 60, 60]
+        expectedScore: 60.00
+        expectedLevel: MEDIUM
+      - components: [59.99, 59.99, 59.99]
+        expectedScore: 59.99
+        expectedLevel: LOW
+      - components: [100, null, 100]
+        expectedScore: null
+        expectedLevel: INSUFFICIENT_DATA
+        expectedCoverage: 66.67
+
+    rentEventClassification:
+      - {due: 2025-03-05, paid: 2025-03-05, expectedClass: ON_TIME, expectedScore: 100}
+      - {due: 2025-03-05, paid: 2025-03-06, expectedClass: LATE_1_TO_7_DAYS, expectedScore: 70}
+      - {due: 2025-03-05, paid: 2025-03-12, expectedClass: LATE_1_TO_7_DAYS, expectedScore: 70}
+      - {due: 2025-03-05, paid: 2025-03-13, expectedClass: LATE_8_TO_30_DAYS, expectedScore: 40}
+      - {due: 2025-03-05, paid: 2025-04-05, expectedClass: LATE_OVER_30_DAYS, expectedScore: 20}
+      - {due: 2025-03-05, paid: null, asOf: 2025-03-31, expectedClass: OVERDUE_UNPAID, expectedScore: 0}
+
+  notes:
+    - Fixture mappings assume human review resolves short-name aliases to the canonical companies where strong identifiers are absent.
+    - Expected values are for the POC V1 semantics only and must change with a new version if formulas/parameters change.
