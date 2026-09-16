@@ -158,6 +158,7 @@ func main() {
 			entityHandler.Register,
 			workflowHandler.Register,
 			productHandler.Register,
+			productHandler.RegisterValidation,
 			rightsHandler.Register,
 			contractHandler.Register,
 			qualityHandler.Register,
