@@ -14,7 +14,7 @@ func TestExecutionLifecycleAndRetry(t *testing.T) {
 	inputVersionID := uuid.New()
 
 	execution, err := NewExecution(workspaceID, workflowVersionID, outputDatasetID, "2025-03", []InputBinding{{
-		Name: "enterprise_standardized",
+		Name:             "enterprise_standardized",
 		DatasetVersionID: inputVersionID,
 	}}, nil)
 	if err != nil {

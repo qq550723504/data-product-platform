@@ -11,17 +11,17 @@ import (
 )
 
 type Event struct {
-	ID           uuid.UUID
-	WorkspaceID  uuid.UUID
-	ExecutionID  *uuid.UUID
-	CostType     string
-	Quantity     float64
-	Unit         string
-	Amount       *float64
-	Currency     string
-	PricingMode  string
-	Metadata     map[string]any
-	OccurredAt   time.Time
+	ID          uuid.UUID
+	WorkspaceID uuid.UUID
+	ExecutionID *uuid.UUID
+	CostType    string
+	Quantity    float64
+	Unit        string
+	Amount      *float64
+	Currency    string
+	PricingMode string
+	Metadata    map[string]any
+	OccurredAt  time.Time
 }
 
 func Append(ctx context.Context, tx pgx.Tx, event Event) error {

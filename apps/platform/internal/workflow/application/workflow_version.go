@@ -16,15 +16,15 @@ import (
 )
 
 type CreateWorkflowVersionCommand struct {
-	WorkspaceID   uuid.UUID
-	Code          string
-	Name          string
-	Description   string
-	Version       string
-	DefinitionRef string
+	WorkspaceID    uuid.UUID
+	Code           string
+	Name           string
+	Description    string
+	Version        string
+	DefinitionRef  string
 	DefinitionYAML []byte
-	ActorID       *uuid.UUID
-	TraceID       string
+	ActorID        *uuid.UUID
+	TraceID        string
 }
 
 type WorkflowVersionService struct {
@@ -63,11 +63,11 @@ func (s *WorkflowVersionService) Create(ctx context.Context, cmd CreateWorkflowV
 			return err
 		}
 		event, err := outbox.NewEvent("WORKFLOW_VERSION", version.ID, "WorkflowVersionCreated", map[string]any{
-			"workflowId": version.WorkflowID,
+			"workflowId":        version.WorkflowID,
 			"workflowVersionId": version.ID,
-			"version": version.Version,
-			"definitionRef": version.DefinitionRef,
-			"definitionSha256": version.DefinitionSHA256,
+			"version":           version.Version,
+			"definitionRef":     version.DefinitionRef,
+			"definitionSha256":  version.DefinitionSHA256,
 		})
 		if err != nil {
 			return err
@@ -77,15 +77,15 @@ func (s *WorkflowVersionService) Create(ctx context.Context, cmd CreateWorkflowV
 		}
 		return audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &cmd.WorkspaceID,
-			ActorType: actorType(cmd.ActorID),
-			ActorID: cmd.ActorID,
-			Action: "WORKFLOW_VERSION_CREATED",
-			ObjectType: "WORKFLOW_VERSION",
-			ObjectID: version.ID,
+			ActorType:   actorType(cmd.ActorID),
+			ActorID:     cmd.ActorID,
+			Action:      "WORKFLOW_VERSION_CREATED",
+			ObjectType:  "WORKFLOW_VERSION",
+			ObjectID:    version.ID,
 			AfterState: map[string]any{
-				"workflowId": version.WorkflowID,
-				"version": version.Version,
-				"definitionRef": version.DefinitionRef,
+				"workflowId":       version.WorkflowID,
+				"version":          version.Version,
+				"definitionRef":    version.DefinitionRef,
 				"definitionSha256": version.DefinitionSHA256,
 			},
 			TraceID: cmd.TraceID,

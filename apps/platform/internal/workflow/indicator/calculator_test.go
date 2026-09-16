@@ -74,7 +74,7 @@ func TestReferenceVectorsV1(t *testing.T) {
 		{
 			name: "YUNFAN-INSUFFICIENT",
 			input: CompanyInput{
-				EntryDate: ptrDate(t, "2024-02-20"),
+				EntryDate:   ptrDate(t, "2024-02-20"),
 				LeaseEvents: []LeaseEvent{lease(t, "2025-02-20", "2026-02-19", "2025-03-05", "2025-03-05")},
 				EnergyReadings: []EnergyReading{
 					energy(t, "M-004-02", "2025-02-28T23:59:00+08:00", 6100),
@@ -86,7 +86,7 @@ func TestReferenceVectorsV1(t *testing.T) {
 		{
 			name: "HAIYUE-QUARANTINE",
 			input: CompanyInput{
-				EntryDate: ptrDate(t, "2020-06-08"),
+				EntryDate:   ptrDate(t, "2020-06-08"),
 				LeaseEvents: []LeaseEvent{leaseUnpaid(t, "2025-01-01", "2025-12-31", "2025-01-05")},
 				EnergyReadings: []EnergyReading{
 					energy(t, "M-005-01", "2025-01-31T23:59:00+08:00", 15400),

@@ -34,12 +34,12 @@ type QuarantinedReading struct {
 }
 
 type CompanyResult struct {
-	TenancyStability *float64
-	RentPerformance  *float64
-	EnergyStability  *float64
-	ActivityScore    *float64
-	ActivityLevel    string
-	IndicatorCoverage float64
+	TenancyStability   *float64
+	RentPerformance    *float64
+	EnergyStability    *float64
+	ActivityScore      *float64
+	ActivityLevel      string
+	IndicatorCoverage  float64
 	TenancyExplanation map[string]any
 	RentExplanation    map[string]any
 	EnergyExplanation  map[string]any
@@ -130,7 +130,7 @@ func calculateTenancy(params IndicatorParameters, targetStart, targetEnd time.Ti
 
 func calculateRent(params IndicatorParameters, targetEnd time.Time, leases []LeaseEvent) (*float64, map[string]any) {
 	explanation := map[string]any{
-		"due_event_count":       0,
+		"due_event_count":      0,
 		"on_time_count":        0,
 		"late_1_to_7_count":    0,
 		"late_8_to_30_count":   0,

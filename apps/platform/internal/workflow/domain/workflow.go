@@ -23,16 +23,16 @@ const (
 )
 
 var (
-	ErrInvalidWorkspace        = errors.New("workspace id is required")
-	ErrInvalidWorkflowCode     = errors.New("workflow code is required")
-	ErrInvalidWorkflowName     = errors.New("workflow name is required")
-	ErrInvalidWorkflowVersion  = errors.New("workflow version is required")
-	ErrInvalidDefinition       = errors.New("workflow definition reference and sha256 are required")
-	ErrInvalidTargetPeriod     = errors.New("target period must be YYYY-MM")
-	ErrInvalidExecutionInput   = errors.New("execution requires at least one input DatasetVersion")
-	ErrInvalidExecutionOutput  = errors.New("execution output Dataset is required")
-	ErrInvalidTransition       = errors.New("invalid execution state transition")
-	ErrRetryRequiresFailure    = errors.New("only failed or cancelled execution can be retried")
+	ErrInvalidWorkspace       = errors.New("workspace id is required")
+	ErrInvalidWorkflowCode    = errors.New("workflow code is required")
+	ErrInvalidWorkflowName    = errors.New("workflow name is required")
+	ErrInvalidWorkflowVersion = errors.New("workflow version is required")
+	ErrInvalidDefinition      = errors.New("workflow definition reference and sha256 are required")
+	ErrInvalidTargetPeriod    = errors.New("target period must be YYYY-MM")
+	ErrInvalidExecutionInput  = errors.New("execution requires at least one input DatasetVersion")
+	ErrInvalidExecutionOutput = errors.New("execution output Dataset is required")
+	ErrInvalidTransition      = errors.New("invalid execution state transition")
+	ErrRetryRequiresFailure   = errors.New("only failed or cancelled execution can be retried")
 )
 
 type Workflow struct {
