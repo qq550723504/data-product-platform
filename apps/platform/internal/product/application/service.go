@@ -3,6 +3,8 @@ package application
 import (
 	"context"
 	"fmt"
+	"sort"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -60,6 +62,16 @@ type CreateReleaseCommand struct {
 	Metadata         map[string]any
 	ActorID          *uuid.UUID
 	TraceID          string
+}
+
+type ValidateReleaseCommand struct {
+	ReleaseID          uuid.UUID
+	ContractVersionID  uuid.UUID
+	RightsSnapshotID   uuid.UUID
+	QualityResultID    uuid.UUID
+	ComplianceResultID uuid.UUID
+	ActorID             *uuid.UUID
+	TraceID             string
 }
 
 func (s *Service) CreateProduct(ctx context.Context, cmd CreateProductCommand) (domain.DataProduct, error) {
@@ -230,48 +242,211 @@ type ReadinessResult struct {
 	Blockers  []string               `json:"blockers"`
 }
 
+func (s *Service) ValidateRelease(ctx context.Context, cmd ValidateReleaseCommand) (ReadinessResult, error) {
+	release, err := s.repo.GetRelease(ctx, cmd.ReleaseID)
+	if err != nil {
+		return ReadinessResult{}, err
+	}
+	product, err := s.repo.GetProduct(ctx, release.ProductID)
+	if err != nil {
+		return ReadinessResult{}, err
+	}
+	before := release.Status
+	if err := release.BeginValidation(cmd.ContractVersionID, cmd.RightsSnapshotID, cmd.QualityResultID, cmd.ComplianceResultID); err != nil {
+		return ReadinessResult{}, err
+	}
+
+	if err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if err := s.repo.SaveReleaseValidation(ctx, tx, release); err != nil {
+			return err
+		}
+		if err := appendEvent(ctx, tx, "PRODUCT_RELEASE", release.ID, "ProductReleaseValidationStarted", map[string]any{
+			"releaseId":          release.ID,
+			"contractVersionId":  release.ContractVersionID,
+			"rightsSnapshotId":   release.RightsSnapshotID,
+			"qualityResultId":    release.QualityResultID,
+			"complianceResultId": release.ComplianceResultID,
+		}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &product.WorkspaceID,
+			ActorType:   actorType(cmd.ActorID),
+			ActorID:     cmd.ActorID,
+			Action:      "PRODUCT_RELEASE_VALIDATION_STARTED",
+			ObjectType:  "PRODUCT_RELEASE",
+			ObjectID:    release.ID,
+			BeforeState: map[string]any{"status": before},
+			AfterState: map[string]any{
+				"status":             release.Status,
+				"contractVersionId":  release.ContractVersionID,
+				"rightsSnapshotId":   release.RightsSnapshotID,
+				"qualityResultId":    release.QualityResultID,
+				"complianceResultId": release.ComplianceResultID,
+			},
+			TraceID: cmd.TraceID,
+		})
+	}); err != nil {
+		return ReadinessResult{}, err
+	}
+
+	readiness, err := s.Readiness(ctx, release.ID)
+	if err != nil {
+		return ReadinessResult{}, err
+	}
+	if readiness.Overall != "READY" {
+		return readiness, nil
+	}
+	if err := release.MarkReady(); err != nil {
+		return ReadinessResult{}, err
+	}
+	if err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if err := s.repo.SaveReleaseStatus(ctx, tx, release.ID, domain.ReleaseValidating, domain.ReleaseReady); err != nil {
+			return err
+		}
+		if err := appendEvent(ctx, tx, "PRODUCT_RELEASE", release.ID, "ProductReleaseReady", map[string]any{
+			"releaseId": release.ID,
+			"status":    domain.ReleaseReady,
+		}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &product.WorkspaceID,
+			ActorType:   actorType(cmd.ActorID),
+			ActorID:     cmd.ActorID,
+			Action:      "PRODUCT_RELEASE_READY",
+			ObjectType:  "PRODUCT_RELEASE",
+			ObjectID:    release.ID,
+			BeforeState: map[string]any{"status": domain.ReleaseValidating},
+			AfterState:  map[string]any{"status": domain.ReleaseReady},
+			TraceID:     cmd.TraceID,
+		})
+	}); err != nil {
+		return ReadinessResult{}, err
+	}
+	return readiness, nil
+}
+
 func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (ReadinessResult, error) {
 	release, err := s.repo.GetRelease(ctx, releaseID)
 	if err != nil {
 		return ReadinessResult{}, err
 	}
+
+	// Before explicit validation, preserve the design-stage view: production and frozen
+	// dataset bindings are known, while governance/delivery checks remain pending.
+	if release.Status == domain.ReleaseDraft {
+		checks := map[string]CheckStatus{
+			"production": CheckPass,
+			"dataset":    CheckPass,
+			"rights":     CheckPending,
+			"quality":    CheckPending,
+			"compliance": CheckPending,
+			"contract":   CheckPending,
+			"evidence":   CheckPending,
+			"delivery":   CheckPending,
+		}
+		return ReadinessResult{
+			ReleaseID: release.ID,
+			Overall:   "NOT_READY",
+			Checks:    checks,
+			Blockers:  []string{"rights", "quality", "compliance", "contract", "evidence", "delivery"},
+		}, nil
+	}
+
+	product, err := s.repo.GetProduct(ctx, release.ProductID)
+	if err != nil {
+		return ReadinessResult{}, err
+	}
+	version, err := s.repo.GetVersion(ctx, release.ProductVersionID)
+	if err != nil {
+		return ReadinessResult{}, err
+	}
+	facts, err := s.repo.ReadinessFacts(ctx, release, product, version, time.Now().UTC())
+	if err != nil {
+		return ReadinessResult{}, err
+	}
+
 	checks := map[string]CheckStatus{
-		"production": CheckPass,
-		"dataset":    CheckPass,
-		"rights":     CheckPending,
-		"quality":    CheckPending,
-		"compliance": CheckPending,
-		"contract":   CheckPending,
-		"evidence":   CheckPending,
-		"delivery":   CheckPending,
-	}
-	if release.RightsSnapshotID != nil {
-		checks["rights"] = CheckPass
-	}
-	if release.QualityResultID != nil {
-		checks["quality"] = CheckPass
-	}
-	if release.ComplianceResultID != nil {
-		checks["compliance"] = CheckPass
-	}
-	if release.ContractVersionID != nil {
-		checks["contract"] = CheckPass
-	}
-	if release.EvidenceSnapshotID != nil {
-		checks["evidence"] = CheckPass
+		"production": CheckFail,
+		"dataset":    CheckFail,
+		"rights":     CheckFail,
+		"quality":    CheckFail,
+		"compliance": CheckFail,
+		"contract":   CheckFail,
+		"evidence":   CheckFail,
+		"delivery":   CheckFail,
 	}
 	blockers := make([]string, 0)
-	for name, status := range checks {
+
+	if facts.TargetDatasetVersionID != nil {
+		checks["production"] = CheckPass
+	} else {
+		blockers = append(blockers, "PRODUCTION_DATASET_MISSING")
+	}
+	if facts.AllDatasetsUsable && facts.TargetDatasetVersionID != nil {
+		checks["dataset"] = CheckPass
+	} else {
+		blockers = append(blockers, "DATASET_NOT_USABLE")
+	}
+	if !facts.RightsSnapshotExists {
+		blockers = append(blockers, "RIGHTS_SNAPSHOT_MISSING")
+	} else if !facts.RightsSnapshotWorkspaceMatch || !facts.RightsCurrentlyValid {
+		blockers = append(blockers, "RIGHTS_INVALID")
+	} else {
+		checks["rights"] = CheckPass
+	}
+	if !facts.ContractExists {
+		blockers = append(blockers, "CONTRACT_VERSION_MISSING")
+	} else if !facts.ContractMatchesProduct {
+		blockers = append(blockers, "CONTRACT_VERSION_MISMATCH")
+	} else if !facts.ContractPublished {
+		blockers = append(blockers, "CONTRACT_NOT_PUBLISHED")
+	} else {
+		checks["contract"] = CheckPass
+	}
+	if !facts.QualityResultExists {
+		blockers = append(blockers, "QUALITY_RESULT_MISSING")
+	} else if !facts.QualityDatasetMatches {
+		blockers = append(blockers, "QUALITY_DATASET_MISMATCH")
+	} else if facts.QualityDecision != "PASS" && facts.QualityDecision != "PASS_WITH_WARNING" {
+		blockers = append(blockers, "QUALITY_GATE_BLOCKING")
+	} else {
+		checks["quality"] = CheckPass
+	}
+	if !facts.ComplianceResultExists {
+		blockers = append(blockers, "COMPLIANCE_RESULT_MISSING")
+	} else if !facts.ComplianceDatasetMatches {
+		blockers = append(blockers, "COMPLIANCE_DATASET_MISMATCH")
+	} else if facts.ComplianceDecision != "PASS" {
+		blockers = append(blockers, "COMPLIANCE_GATE_BLOCKING")
+	} else {
+		checks["compliance"] = CheckPass
+	}
+	if facts.EvidenceCount >= 2 {
+		checks["evidence"] = CheckPass
+	} else {
+		blockers = append(blockers, "EVIDENCE_INCOMPLETE")
+	}
+	if facts.DeliveryAvailable {
+		checks["delivery"] = CheckPass
+	} else {
+		blockers = append(blockers, "DELIVERY_ASSET_MISSING")
+	}
+
+	sort.Strings(blockers)
+	overall := "NOT_READY"
+	allPass := true
+	for _, status := range checks {
 		if status != CheckPass {
-			blockers = append(blockers, name)
+			allPass = false
+			break
 		}
 	}
-	return ReadinessResult{
-		ReleaseID: release.ID,
-		Overall:   "NOT_READY",
-		Checks:    checks,
-		Blockers:  blockers,
-	}, nil
+	if allPass {
+		overall = "READY"
+	}
+	return ReadinessResult{ReleaseID: release.ID, Overall: overall, Checks: checks, Blockers: blockers}, nil
 }
 
 func appendEvent(ctx context.Context, tx pgx.Tx, aggregateType string, aggregateID uuid.UUID, eventType string, payload map[string]any) error {
