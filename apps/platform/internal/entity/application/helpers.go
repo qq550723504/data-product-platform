@@ -101,13 +101,13 @@ func newCandidate(jobID uuid.UUID, record matching.CompanyRecord, normalized mat
 
 func normalizedMap(company matching.NormalizedCompany) map[string]string {
 	return map[string]string{
-		"source_company_id":             company.SourceCompanyID,
-		"normalized_company_name":       company.CompanyName,
-		"unified_social_credit_code":    company.UnifiedSocialCreditCode,
-		"legal_representative":          company.LegalRepresentative,
+		"source_company_id":              company.SourceCompanyID,
+		"normalized_company_name":        company.CompanyName,
+		"unified_social_credit_code":     company.UnifiedSocialCreditCode,
+		"legal_representative":           company.LegalRepresentative,
 		"normalized_registered_address": company.RegisteredAddress,
-		"entry_date":                    company.EntryDate,
-		"company_status":                company.CompanyStatus,
+		"entry_date":                     company.EntryDate,
+		"company_status":                 company.CompanyStatus,
 	}
 }
 
@@ -167,6 +167,9 @@ func (s *MatchService) finalize(ctx context.Context, jobID uuid.UUID, actorID *u
 	}
 
 	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if err := s.datasetRepo.AddLineage(ctx, tx, version.ID, job.InputDatasetVersionID, "ENTITY_RESOLUTION", nil); err != nil {
+			return err
+		}
 		if err := s.entityRepo.CompleteJob(ctx, tx, job.ID, version.ID); err != nil {
 			return err
 		}
