@@ -173,15 +173,15 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 		TraceID:                request.ExecutionID.String(),
 		GeneratedByExecutionID: &request.ExecutionID,
 		Metadata: map[string]any{
-			"workflowVersionId":         request.WorkflowVersion.ID,
-			"workflowVersion":           request.WorkflowVersion.Version,
-			"indicatorSet":              "park-enterprise-activity@1.0.0",
-			"entityPolicyVersion":       companyPolicy.Metadata.Version,
-			"targetPeriod":              request.TargetPeriod,
-			"quarantineCount":           quarantineCount,
-			"unresolvedEntityRate":      0.0,
+			"workflowVersionId":          request.WorkflowVersion.ID,
+			"workflowVersion":            request.WorkflowVersion.Version,
+			"indicatorSet":               "park-enterprise-activity@1.0.0",
+			"entityPolicyVersion":        companyPolicy.Metadata.Version,
+			"targetPeriod":               request.TargetPeriod,
+			"quarantineCount":            quarantineCount,
+			"unresolvedEntityRate":       0.0,
 			"acceptedNegativeEnergyRate": 0.0,
-			"gateStatus":                "PENDING_GOVERNANCE_GATES",
+			"gateStatus":                 "PENDING_GOVERNANCE_GATES",
 		},
 	})
 	if err != nil {
