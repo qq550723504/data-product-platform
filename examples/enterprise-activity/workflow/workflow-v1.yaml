@@ -1,0 +1,187 @@
+apiVersion: dataprod.platform/v1alpha1
+kind: WorkflowDefinition
+metadata:
+  name: enterprise-activity-production
+  version: 1.0.0
+spec:
+  purpose: >-
+    Produce the CURATED enterprise-activity DatasetVersion used by the
+    Enterprise Activity V1 reference Data Product.
+
+  inputs:
+    - name: enterprise_raw
+      datasetType: RAW
+      required: true
+    - name: lease_raw
+      datasetType: RAW
+      required: true
+    - name: energy_raw
+      datasetType: RAW
+      required: true
+
+  tasks:
+    - id: standardize_enterprise
+      type: TRANSFORM
+      executor: NATIVE
+      inputs: [enterprise_raw]
+      outputs: [enterprise_standardized_pre_entity]
+      rules:
+        - normalize company name / whitespace / full-width-half-width
+        - uppercase and trim unified social credit code
+        - normalize entry_date to ISO date
+        - preserve original source identifiers
+        - retain PII fields only in controlled intermediate data; they are not Product fields
+
+    - id: resolve_company_entities
+      type: ENTITY_RESOLUTION
+      executor: NATIVE
+      dependsOn: [standardize_enterprise]
+      inputs: [enterprise_standardized_pre_entity]
+      outputs: [enterprise_standardized]
+      policyRef: industry-packs/park/matching/company-match-policy-v1.yaml
+      onReviewRequired:
+        taskType: HUMAN_REVIEW
+        blocking: true
+      evidence:
+        recordPolicyVersion: true
+        recordDecision: true
+        recordReviewerReason: true
+
+    - id: standardize_lease
+      type: TRANSFORM
+      executor: NATIVE
+      inputs: [lease_raw]
+      outputs: [lease_standardized_pre_entity]
+      rules:
+        - normalize company name
+        - normalize contract/payment dates to ISO date
+        - parse rent_amount as decimal
+        - preserve original source identifiers
+
+    - id: map_lease_to_company
+      type: ENTITY_RESOLUTION
+      executor: NATIVE
+      dependsOn: [resolve_company_entities, standardize_lease]
+      inputs: [lease_standardized_pre_entity, enterprise_standardized]
+      outputs: [lease_standardized]
+      policyRef: industry-packs/park/matching/company-match-policy-v1.yaml
+      onReviewRequired:
+        taskType: HUMAN_REVIEW
+        blocking: true
+
+    - id: standardize_energy
+      type: TRANSFORM
+      executor: NATIVE
+      inputs: [energy_raw]
+      outputs: [energy_standardized_pre_entity]
+      quarantineOutput: energy_quarantine
+      rules:
+        - normalize company name
+        - normalize reading_time to offset-aware timestamp
+        - parse energy_kwh as decimal
+        - quarantine energy_kwh < 0
+        - preserve original source identifiers and rejected-record reason
+
+    - id: map_energy_to_company
+      type: ENTITY_RESOLUTION
+      executor: NATIVE
+      dependsOn: [resolve_company_entities, standardize_energy]
+      inputs: [energy_standardized_pre_entity, enterprise_standardized]
+      outputs: [energy_standardized]
+      policyRef: industry-packs/park/matching/company-match-policy-v1.yaml
+      onReviewRequired:
+        taskType: HUMAN_REVIEW
+        blocking: true
+
+    - id: aggregate_energy_monthly
+      type: TRANSFORM
+      executor: NATIVE
+      dependsOn: [map_energy_to_company]
+      inputs: [energy_standardized]
+      outputs: [energy_monthly]
+      operation:
+        groupBy: [canonical_company_id, year_month]
+        aggregate:
+          energy_kwh: SUM
+
+    - id: calculate_tenancy_stability
+      type: INDICATOR
+      executor: NATIVE
+      dependsOn: [resolve_company_entities, map_lease_to_company]
+      inputs: [enterprise_standardized, lease_standardized]
+      outputs: [tenancy_indicator]
+      indicatorRef: park-enterprise-activity@1.0.0#tenancy_stability
+
+    - id: calculate_rent_performance
+      type: INDICATOR
+      executor: NATIVE
+      dependsOn: [map_lease_to_company]
+      inputs: [lease_standardized]
+      outputs: [rent_indicator]
+      indicatorRef: park-enterprise-activity@1.0.0#rent_performance
+
+    - id: calculate_energy_stability
+      type: INDICATOR
+      executor: NATIVE
+      dependsOn: [aggregate_energy_monthly]
+      inputs: [energy_monthly]
+      outputs: [energy_indicator]
+      indicatorRef: park-enterprise-activity@1.0.0#energy_stability
+
+    - id: build_activity_dataset
+      type: TRANSFORM
+      executor: NATIVE
+      dependsOn:
+        - calculate_tenancy_stability
+        - calculate_rent_performance
+        - calculate_energy_stability
+      inputs:
+        - tenancy_indicator
+        - rent_indicator
+        - energy_indicator
+      outputs: [activity_curated_pre_gate]
+      rules:
+        - calculate activity_score from indicator spec 1.0.0
+        - calculate activity_level
+        - calculate indicator_coverage
+        - include only canonical company identity plus product indicator fields
+
+    - id: compliance_gate
+      type: COMPLIANCE_CHECK
+      executor: NATIVE
+      dependsOn: [build_activity_dataset]
+      inputs: [activity_curated_pre_gate]
+      policyRef: industry-packs/park/compliance/enterprise-activity-compliance-v1.yaml
+      outputs: [activity_compliance_checked]
+      blockingOn: [BLOCK]
+
+    - id: quality_gate
+      type: QUALITY_CHECK
+      executor: NATIVE
+      dependsOn: [compliance_gate]
+      inputs: [activity_compliance_checked]
+      ruleSetRef: industry-packs/park/quality/enterprise-activity-quality-v1.yaml
+      outputs: [activity_quality_checked]
+      blockingOn: [FAIL]
+
+    - id: write_curated_dataset
+      type: DATA_OUTPUT
+      executor: NATIVE
+      dependsOn: [quality_gate]
+      inputs: [activity_quality_checked]
+      outputDataset:
+        code: DS-ENTERPRISE-ACTIVITY
+        datasetType: CURATED
+        immutableVersion: true
+
+  evidence:
+    recordInputDatasetVersions: true
+    recordWorkflowVersion: true
+    recordIndicatorSetVersion: true
+    recordEntityPolicyVersion: true
+    recordTaskExecutions: true
+    recordQuarantineCounts: true
+
+  cost:
+    generateCostEvents: true
+    initialMode: POC_ESTIMATE
