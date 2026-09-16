@@ -83,6 +83,8 @@ type ExecutionTrace struct {
 
 type EntityMatchJobTrace struct {
 	ID                     uuid.UUID  `json:"id"`
+	WorkspaceID            uuid.UUID  `json:"workspaceId"`
+	EntityTypeID           uuid.UUID  `json:"entityTypeId"`
 	InputDatasetVersionID  uuid.UUID  `json:"inputDatasetVersionId"`
 	OutputDatasetVersionID *uuid.UUID `json:"outputDatasetVersionId,omitempty"`
 	SourceType             string     `json:"sourceType"`
@@ -290,7 +292,7 @@ func (r *Repository) entityMatchJobsForDatasets(ctx context.Context, datasets []
 		return []EntityMatchJobTrace{}, nil
 	}
 	rows, err := r.pool.Query(ctx, `
-		SELECT id, input_dataset_version_id, output_dataset_version_id,
+		SELECT id, workspace_id, entity_type_id, input_dataset_version_id, output_dataset_version_id,
 		       source_type, source_ref, policy_ref, policy_version, status
 		FROM entity_match_job
 		WHERE output_dataset_version_id=ANY($1::uuid[])
@@ -304,7 +306,7 @@ func (r *Repository) entityMatchJobsForDatasets(ctx context.Context, datasets []
 	for rows.Next() {
 		var item EntityMatchJobTrace
 		if err := rows.Scan(
-			&item.ID, &item.InputDatasetVersionID, &item.OutputDatasetVersionID,
+			&item.ID, &item.WorkspaceID, &item.EntityTypeID, &item.InputDatasetVersionID, &item.OutputDatasetVersionID,
 			&item.SourceType, &item.SourceRef, &item.PolicyRef, &item.PolicyVersion, &item.Status,
 		); err != nil {
 			return nil, fmt.Errorf("scan release entity match job: %w", err)
@@ -319,13 +321,15 @@ func (r *Repository) entityMappingsForJobs(ctx context.Context, jobs []EntityMat
 	seen := map[uuid.UUID]struct{}{}
 	for _, job := range jobs {
 		rows, err := r.pool.Query(ctx, `
-			SELECT id, entity_id, source_type, source_ref, source_key, COALESCE(source_name,''),
-			       match_method, COALESCE(match_rule_id,''), match_policy_version, COALESCE(confidence,0),
-			       status, reviewed_by, reviewed_at, COALESCE(reviewer_reason,''), evidence_id
-			FROM entity_mapping
-			WHERE source_type=$1 AND source_ref=$2
-			ORDER BY source_key, id
-		`, job.SourceType, job.SourceRef)
+			SELECT em.id, em.entity_id, em.source_type, em.source_ref, em.source_key, COALESCE(em.source_name,''),
+			       em.match_method, COALESCE(em.match_rule_id,''), em.match_policy_version, COALESCE(em.confidence,0),
+			       em.status, em.reviewed_by, em.reviewed_at, COALESCE(em.reviewer_reason,''), em.evidence_id
+			FROM entity_mapping em
+			JOIN entity e ON e.id=em.entity_id
+			WHERE em.source_type=$1 AND em.source_ref=$2
+			  AND e.workspace_id=$3 AND e.entity_type_id=$4
+			ORDER BY em.source_key, em.id
+		`, job.SourceType, job.SourceRef, job.WorkspaceID, job.EntityTypeID)
 		if err != nil {
 			return nil, fmt.Errorf("query release entity mappings: %w", err)
 		}
