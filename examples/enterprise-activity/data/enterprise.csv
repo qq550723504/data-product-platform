@@ -1,0 +1,7 @@
+source_company_id,company_name,unified_social_credit_code,legal_representative,registered_address,entry_date,company_status,contact_name,mobile,email
+ENT-001,深圳星云科技有限公司,91440300MA000001X,张华,广东省深圳市南山区科技园科苑路1号,2022-03-01,ACTIVE,张华,13800000001,zhanghua@example.test
+ENT-002,广州青禾智能科技有限公司,91440101MA000002Y,李敏,广东省广州市黄埔区科学大道88号,2023-07-15,ACTIVE,李敏,13800000002,limin@example.test
+ENT-003,武汉蓝图装备制造有限公司,91420100MA000003Z,王强,湖北省武汉市东湖高新区光谷大道99号,2021-01-10,ACTIVE,王强,13800000003,wangqiang@example.test
+ENT-004,杭州云帆数据科技有限公司,91330100MA000004A,陈晨,浙江省杭州市余杭区文一西路100号,2024-02-20,ACTIVE,陈晨,13800000004,chenchen@example.test
+ENT-005,深圳市星云科技有限公司,,张华,广东省深圳市南山区科技园科苑路1号,2022-03-01,ACTIVE,张华,,alias@example.test
+ENT-006,上海海岳生物科技有限公司,,赵宁,上海市浦东新区张江路66号,2020/06/08,ACTIVE,赵宁,13800000006,zhaoning@example.test
