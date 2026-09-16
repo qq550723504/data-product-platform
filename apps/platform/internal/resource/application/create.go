@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
@@ -46,7 +47,7 @@ func (s *CreateService) Handle(ctx context.Context, cmd CreateDataResourceComman
 	resource.OwnerID = cmd.OwnerID
 	resource.SensitivityLevel = cmd.SensitivityLevel
 
-	err = s.tx.Do(ctx, func(ctx context.Context, tx pgxTx) error {
+	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		if err := s.repo.Insert(ctx, tx, resource); err != nil {
 			return err
 		}
