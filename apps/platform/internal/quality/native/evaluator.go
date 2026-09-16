@@ -1,6 +1,7 @@
 package native
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -11,10 +12,10 @@ import (
 )
 
 type DatasetContext struct {
-	Table     tabular.Table
-	Metadata  map[string]any
-	ReadyAt   *time.Time
-	Now       time.Time
+	Table    tabular.Table
+	Metadata map[string]any
+	ReadyAt  *time.Time
+	Now      time.Time
 }
 
 func Evaluate(policy Policy, ctx DatasetContext) ([]domain.Finding, map[string]any, error) {
