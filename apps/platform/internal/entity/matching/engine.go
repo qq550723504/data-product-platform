@@ -45,7 +45,9 @@ func (e *Engine) Match(ctx context.Context, entityTypeID uuid.UUID, company Norm
 			continue
 		}
 		result.RuleID = rule.ID
-		result.Confidence = rule.Confidence
+		if result.Confidence == 0 {
+			result.Confidence = rule.Confidence
+		}
 		result.Decision = domain.MatchDecision(rule.Decision)
 		if result.Method == "" {
 			result.Method = rule.ID
@@ -60,7 +62,6 @@ func (e *Engine) evaluateRule(ctx context.Context, entityTypeID uuid.UUID, compa
 		return Result{Decision: domain.MatchDecision(rule.Decision), Method: "DEFAULT"}, true, nil
 	}
 
-	// Strong identifier rule.
 	if hasPredicate(rule, "unified_social_credit_code", "EXACT_NON_EMPTY") {
 		if company.UnifiedSocialCreditCode == "" {
 			return Result{}, false, nil
@@ -75,7 +76,6 @@ func (e *Engine) evaluateRule(ctx context.Context, entityTypeID uuid.UUID, compa
 		return Result{Entity: entity, Method: "USCC_EXACT"}, true, nil
 	}
 
-	// Deterministic normalized business-key rule.
 	if hasPredicate(rule, "normalized_company_name", "EXACT") && hasPredicate(rule, "normalized_registered_address", "EXACT") {
 		entity, err := e.lookup.FindByNameAddress(ctx, entityTypeID, company.CompanyName, company.RegisteredAddress)
 		if err != nil {
@@ -87,7 +87,6 @@ func (e *Engine) evaluateRule(ctx context.Context, entityTypeID uuid.UUID, compa
 		return Result{Entity: entity, Method: "NAME_ADDRESS_EXACT"}, true, nil
 	}
 
-	// Review candidate rule: fuzzy normalized name + exact legal representative.
 	threshold, hasSimilarity := predicateThreshold(rule, "normalized_company_name", "SIMILARITY_GTE")
 	if hasSimilarity && hasPredicate(rule, "legal_representative", "EXACT_NON_EMPTY") {
 		if company.LegalRepresentative == "" || company.CompanyName == "" {
