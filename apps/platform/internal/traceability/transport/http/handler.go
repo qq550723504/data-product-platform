@@ -11,14 +11,6 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 )
 
-type EvidenceReader interface {
-	ListForObject(ctx interface{ Done() <-chan struct{} }, objectType string, objectID uuid.UUID) ([]evidence.Item, error)
-}
-
-type CostReader interface {
-	ListByExecution(ctx interface{ Done() <-chan struct{} }, executionID uuid.UUID) ([]cost.Item, error)
-}
-
 type Handler struct {
 	evidenceRepo *evidence.QueryRepository
 	costRepo     *cost.QueryRepository
