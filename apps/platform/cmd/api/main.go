@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	contractapp "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/application"
+	contractinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/infrastructure"
+	contracthttp "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -30,6 +33,9 @@ import (
 	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	resourcehttp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/transport/http"
+	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
+	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
+	rightshttp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/transport/http"
 	traceabilityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/traceability/transport/http"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
@@ -117,6 +123,14 @@ func main() {
 	productService := productapp.NewService(txManager, productRepo)
 	productHandler := producthttp.NewHandler(productService, productRepo)
 
+	rightsRepo := rightsinfra.NewPostgresRepository(db)
+	rightsService := rightsapp.NewService(txManager, rightsRepo)
+	rightsHandler := rightshttp.NewHandler(rightsService, rightsRepo)
+
+	contractRepo := contractinfra.NewPostgresRepository(db)
+	contractService := contractapp.NewService(txManager, contractRepo)
+	contractHandler := contracthttp.NewHandler(contractService, contractRepo)
+
 	traceabilityHandler := traceabilityhttp.NewHandler(
 		evidence.NewQueryRepository(db),
 		cost.NewQueryRepository(db),
@@ -130,6 +144,8 @@ func main() {
 			entityHandler.Register,
 			workflowHandler.Register,
 			productHandler.Register,
+			rightsHandler.Register,
+			contractHandler.Register,
 			traceabilityHandler.Register,
 		),
 		ReadHeaderTimeout: 5 * time.Second,
