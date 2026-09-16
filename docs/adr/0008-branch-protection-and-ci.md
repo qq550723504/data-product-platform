@@ -5,7 +5,9 @@
 
 ## Context
 
-The platform is entering implementation. The default branch must not accept unreviewed or unvalidated changes, and branch protection must not depend on an unstable implementation-specific job name.
+The platform is entering implementation. The default branch must not accept unvalidated changes, and branch protection must not depend on an unstable implementation-specific job name.
+
+The repository currently has a solo-maintainer workflow, so requiring an approving review from the PR author would deadlock normal development. Review requirements should be tightened when another regular human reviewer is available.
 
 ## Decision
 
@@ -13,18 +15,23 @@ The platform is entering implementation. The default branch must not accept unre
 
 The CI workflow may evolve internally, but it must continue to publish the stable `required` gate. The gate succeeds only when all required CI jobs succeed.
 
-Recommended repository rules for `main`:
+Recommended repository rules for `main` now:
 
 - Require a pull request before merging.
-- Require at least 1 approving review.
-- Dismiss stale approvals when new commits are pushed.
+- Required approvals: `0` while the repository has only one regular maintainer; raise to `1` when a second reviewer is available.
 - Require conversation resolution before merging.
 - Require status checks to pass before merging.
 - Require branches to be up to date before merging.
 - Required status check: `required`.
 - Block force pushes.
 - Block branch deletion.
-- Apply rules to administrators as well, except for explicit emergency bypass.
+- Do not permit routine direct pushes to `main`.
+- Keep administrator/emergency bypass available only for exceptional recovery, and treat every bypass as auditable.
+
+When a second regular human reviewer is added, also enable:
+
+- Required approvals: `1`.
+- Dismiss stale approvals when new commits are pushed.
 
 ## CI policy
 
@@ -44,4 +51,5 @@ Required validation currently includes:
 
 - Direct pushes to `main` are disallowed once the repository rule is enabled.
 - CI implementation can be split into more jobs later without changing the branch-protection check name; only the `required` gate must remain stable.
+- The `required` gate is intentionally separate from implementation jobs such as `go-platform`.
 - Any emergency bypass should be auditable and exceptional.
