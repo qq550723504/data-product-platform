@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/contract/application"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/contract/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/contract/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 )
@@ -108,10 +109,18 @@ func (h *Handler) publishVersion(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, versionResponse(version))
 }
 
-func versionResponse(version interface {
-	Semver() string
-}) map[string]any {
-	return map[string]any{"version": version.Semver()}
+func versionResponse(version domain.ContractVersion) map[string]any {
+	return map[string]any{
+		"id":           version.ID,
+		"contractId":   version.ContractID,
+		"version":      version.Semver(),
+		"status":       version.Status,
+		"document":     version.Document,
+		"sourceRef":    version.SourceRef,
+		"sourceSha256": version.SourceSHA256,
+		"createdAt":    version.CreatedAt,
+		"publishedAt":  version.PublishedAt,
+	}
 }
 
 func parseActorID(r *http.Request) (*uuid.UUID, error) {
