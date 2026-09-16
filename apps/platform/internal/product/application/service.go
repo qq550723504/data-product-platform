@@ -147,8 +147,8 @@ func (s *Service) CreateVersion(ctx context.Context, cmd CreateVersionCommand) (
 			ObjectType:  "PRODUCT_VERSION",
 			ObjectID:    version.ID,
 			AfterState: map[string]any{
-				"productId": product.ID,
-				"version":   version.Semver(),
+				"productId":  product.ID,
+				"version":    version.Semver(),
 				"assetCount": len(version.Assets),
 			},
 			TraceID: cmd.TraceID,
@@ -224,10 +224,10 @@ const (
 )
 
 type ReadinessResult struct {
-	ReleaseID  uuid.UUID              `json:"releaseId"`
-	Overall    string                 `json:"overall"`
-	Checks     map[string]CheckStatus `json:"checks"`
-	Blockers   []string               `json:"blockers"`
+	ReleaseID uuid.UUID              `json:"releaseId"`
+	Overall   string                 `json:"overall"`
+	Checks    map[string]CheckStatus `json:"checks"`
+	Blockers  []string               `json:"blockers"`
 }
 
 func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (ReadinessResult, error) {

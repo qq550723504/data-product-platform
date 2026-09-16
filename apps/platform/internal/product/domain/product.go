@@ -20,16 +20,16 @@ type AssetType string
 type DatasetRole string
 
 const (
-	ProductDraft       ProductStatus = "DRAFT"
-	ProductDesigning   ProductStatus = "DESIGNING"
-	ProductDeveloping  ProductStatus = "DEVELOPING"
-	ProductTesting     ProductStatus = "TESTING"
-	ProductReady       ProductStatus = "READY"
-	ProductPublished   ProductStatus = "PUBLISHED"
-	ProductActive      ProductStatus = "ACTIVE"
-	ProductSuspended   ProductStatus = "SUSPENDED"
-	ProductDeprecated  ProductStatus = "DEPRECATED"
-	ProductRetired     ProductStatus = "RETIRED"
+	ProductDraft      ProductStatus = "DRAFT"
+	ProductDesigning  ProductStatus = "DESIGNING"
+	ProductDeveloping ProductStatus = "DEVELOPING"
+	ProductTesting    ProductStatus = "TESTING"
+	ProductReady      ProductStatus = "READY"
+	ProductPublished  ProductStatus = "PUBLISHED"
+	ProductActive     ProductStatus = "ACTIVE"
+	ProductSuspended  ProductStatus = "SUSPENDED"
+	ProductDeprecated ProductStatus = "DEPRECATED"
+	ProductRetired    ProductStatus = "RETIRED"
 
 	HealthUnknown   ProductHealth = "UNKNOWN"
 	HealthHealthy   ProductHealth = "HEALTHY"
@@ -85,31 +85,31 @@ type DataProduct struct {
 }
 
 type ProductVersion struct {
-	ID                  uuid.UUID
-	ProductID           uuid.UUID
-	MajorVersion        int
-	MinorVersion        int
-	PatchVersion        int
-	WorkflowVersionID   *uuid.UUID
-	ContractVersionID   *uuid.UUID
-	EntityPolicyRef     string
-	IndicatorSetRef     string
-	DefinitionSnapshot  map[string]any
-	Assets              []ProductAsset
-	CreatedAt           time.Time
-	CreatedBy           *uuid.UUID
+	ID                 uuid.UUID
+	ProductID          uuid.UUID
+	MajorVersion       int
+	MinorVersion       int
+	PatchVersion       int
+	WorkflowVersionID  *uuid.UUID
+	ContractVersionID  *uuid.UUID
+	EntityPolicyRef    string
+	IndicatorSetRef    string
+	DefinitionSnapshot map[string]any
+	Assets             []ProductAsset
+	CreatedAt          time.Time
+	CreatedBy          *uuid.UUID
 }
 
 type ProductAsset struct {
 	ID               uuid.UUID
 	ProductVersionID uuid.UUID
-	AssetType         AssetType
-	Name              string
-	DatasetID         *uuid.UUID
-	ExternalRef       string
-	DeliveryConfig    map[string]any
-	SchemaSnapshot    map[string]any
-	CreatedAt         time.Time
+	AssetType        AssetType
+	Name             string
+	DatasetID        *uuid.UUID
+	ExternalRef      string
+	DeliveryConfig   map[string]any
+	SchemaSnapshot   map[string]any
+	CreatedAt        time.Time
 }
 
 type ReleaseDataset struct {
@@ -118,23 +118,23 @@ type ReleaseDataset struct {
 }
 
 type ProductRelease struct {
-	ID                   uuid.UUID
-	ProductID            uuid.UUID
-	ProductVersionID     uuid.UUID
-	ReleaseNo             string
-	Status                ReleaseStatus
-	ContractVersionID     *uuid.UUID
-	RightsSnapshotID      *uuid.UUID
-	QualityResultID       *uuid.UUID
-	ComplianceResultID    *uuid.UUID
-	EvidenceSnapshotID    *uuid.UUID
-	Datasets              []ReleaseDataset
-	ReleaseNotes          string
-	Metadata              map[string]any
-	CreatedAt             time.Time
-	CreatedBy             *uuid.UUID
-	ReleasedAt            *time.Time
-	ReleasedBy            *uuid.UUID
+	ID                 uuid.UUID
+	ProductID          uuid.UUID
+	ProductVersionID   uuid.UUID
+	ReleaseNo          string
+	Status             ReleaseStatus
+	ContractVersionID  *uuid.UUID
+	RightsSnapshotID   *uuid.UUID
+	QualityResultID    *uuid.UUID
+	ComplianceResultID *uuid.UUID
+	EvidenceSnapshotID *uuid.UUID
+	Datasets           []ReleaseDataset
+	ReleaseNotes       string
+	Metadata           map[string]any
+	CreatedAt          time.Time
+	CreatedBy          *uuid.UUID
+	ReleasedAt         *time.Time
+	ReleasedBy         *uuid.UUID
 }
 
 type AssetSpec struct {

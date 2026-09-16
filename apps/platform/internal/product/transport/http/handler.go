@@ -115,13 +115,13 @@ func (h *Handler) getProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 type createVersionRequest struct {
-	Version           string             `json:"version"`
-	WorkflowVersionID string             `json:"workflowVersionId"`
-	ContractVersionID string             `json:"contractVersionId"`
-	EntityPolicyRef   string             `json:"entityPolicyRef"`
-	IndicatorSetRef   string             `json:"indicatorSetRef"`
-	Definition        map[string]any     `json:"definition"`
-	Assets            []assetRequest     `json:"assets"`
+	Version           string         `json:"version"`
+	WorkflowVersionID string         `json:"workflowVersionId"`
+	ContractVersionID string         `json:"contractVersionId"`
+	EntityPolicyRef   string         `json:"entityPolicyRef"`
+	IndicatorSetRef   string         `json:"indicatorSetRef"`
+	Definition        map[string]any `json:"definition"`
+	Assets            []assetRequest `json:"assets"`
 }
 
 type assetRequest struct {
@@ -366,21 +366,21 @@ func releaseResponse(release domain.ProductRelease) map[string]any {
 		})
 	}
 	return map[string]any{
-		"id":                   release.ID,
-		"productId":            release.ProductID,
-		"productVersionId":     release.ProductVersionID,
-		"releaseNo":            release.ReleaseNo,
-		"status":               release.Status,
-		"contractVersionId":    release.ContractVersionID,
-		"rightsSnapshotId":     release.RightsSnapshotID,
-		"qualityResultId":      release.QualityResultID,
-		"complianceResultId":   release.ComplianceResultID,
-		"evidenceSnapshotId":   release.EvidenceSnapshotID,
-		"datasets":             datasets,
-		"releaseNotes":         release.ReleaseNotes,
-		"metadata":             release.Metadata,
-		"createdAt":            release.CreatedAt,
-		"releasedAt":           release.ReleasedAt,
+		"id":                 release.ID,
+		"productId":          release.ProductID,
+		"productVersionId":   release.ProductVersionID,
+		"releaseNo":          release.ReleaseNo,
+		"status":             release.Status,
+		"contractVersionId":  release.ContractVersionID,
+		"rightsSnapshotId":   release.RightsSnapshotID,
+		"qualityResultId":    release.QualityResultID,
+		"complianceResultId": release.ComplianceResultID,
+		"evidenceSnapshotId": release.EvidenceSnapshotID,
+		"datasets":           datasets,
+		"releaseNotes":       release.ReleaseNotes,
+		"metadata":           release.Metadata,
+		"createdAt":          release.CreatedAt,
+		"releasedAt":         release.ReleasedAt,
 	}
 }
 
