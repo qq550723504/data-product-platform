@@ -7,11 +7,12 @@ import (
 )
 
 type Config struct {
-	Environment string
-	HTTPAddr    string
-	PostgresDSN string
-	Redis       RedisConfig
-	Storage     StorageConfig
+	Environment      string
+	HTTPAddr         string
+	PostgresDSN      string
+	IndustryPackRoot string
+	Redis            RedisConfig
+	Storage          StorageConfig
 }
 
 type RedisConfig struct {
@@ -40,9 +41,10 @@ func Load() (Config, error) {
 	}
 
 	cfg := Config{
-		Environment: stringEnv("APP_ENV", "development"),
-		HTTPAddr:    stringEnv("APP_HTTP_ADDR", ":8080"),
-		PostgresDSN: stringEnv("POSTGRES_DSN", "postgres://postgres:postgres@localhost:5432/data_product_platform?sslmode=disable"),
+		Environment:      stringEnv("APP_ENV", "development"),
+		HTTPAddr:         stringEnv("APP_HTTP_ADDR", ":8080"),
+		PostgresDSN:      stringEnv("POSTGRES_DSN", "postgres://postgres:postgres@localhost:5432/data_product_platform?sslmode=disable"),
+		IndustryPackRoot: stringEnv("INDUSTRY_PACK_ROOT", "../../industry-packs"),
 		Redis: RedisConfig{
 			Addr:     stringEnv("REDIS_ADDR", "localhost:6379"),
 			Password: os.Getenv("REDIS_PASSWORD"),
@@ -65,6 +67,9 @@ func Load() (Config, error) {
 	}
 	if cfg.Storage.Endpoint == "" || cfg.Storage.Bucket == "" {
 		return Config{}, fmt.Errorf("object storage endpoint and bucket must not be empty")
+	}
+	if cfg.IndustryPackRoot == "" {
+		return Config{}, fmt.Errorf("INDUSTRY_PACK_ROOT must not be empty")
 	}
 
 	return cfg, nil
