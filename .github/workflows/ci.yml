@@ -1,0 +1,79 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+      - 'feat/**'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  go-platform:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: data_product_platform
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d data_product_platform"
+          --health-interval 3s
+          --health-timeout 3s
+          --health-retries 20
+    env:
+      POSTGRES_DSN: postgres://postgres:postgres@localhost:5432/data_product_platform?sslmode=disable
+      TEST_POSTGRES_DSN: postgres://postgres:postgres@localhost:5432/data_product_platform?sslmode=disable
+    defaults:
+      run:
+        working-directory: apps/platform
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache-dependency-path: apps/platform/go.mod
+
+      - name: Verify dependency lock is tidy
+        run: |
+          cp go.mod /tmp/go.mod.before
+          cp go.sum /tmp/go.sum.before
+          go mod tidy
+          diff -u /tmp/go.mod.before go.mod
+          diff -u /tmp/go.sum.before go.sum
+
+      - name: Format check
+        run: |
+          UNFORMATTED="$(gofmt -l .)"
+          if [ -n "$UNFORMATTED" ]; then
+            echo "$UNFORMATTED"
+            exit 1
+          fi
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Validate local compose file
+        run: docker compose -f ../../deploy/docker-compose/docker-compose.yml config >/dev/null
+
+      - name: Apply database migrations
+        run: go run ./cmd/migrate -direction up -dir ../../migrations
+
+      - name: Test
+        run: go test ./...
+
+      - name: Build API / worker / migrate
+        run: |
+          go build ./cmd/api
+          go build ./cmd/worker
+          go build ./cmd/migrate
