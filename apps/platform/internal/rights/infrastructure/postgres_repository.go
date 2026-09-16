@@ -28,7 +28,7 @@ func (r *PostgresRepository) InsertAuthorization(ctx context.Context, tx pgx.Tx,
 		return fmt.Errorf("marshal authorization metadata: %w", err)
 	}
 	_, err = tx.Exec(ctx, `
-		INSERT INTO authorization (
+		INSERT INTO data_authorization (
 			id, workspace_id, code, grantor_ref, grantee_ref, purpose, status,
 			valid_from, valid_to, metadata, created_at, created_by, updated_at, updated_by
 		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
@@ -62,7 +62,7 @@ func (r *PostgresRepository) GetAuthorization(ctx context.Context, authorization
 	err := r.pool.QueryRow(ctx, `
 		SELECT id, workspace_id, code, grantor_ref, grantee_ref, purpose, status,
 		       valid_from, valid_to, metadata, created_at, created_by, updated_at, updated_by
-		FROM authorization WHERE id=$1
+		FROM data_authorization WHERE id=$1
 	`, authorizationID).Scan(
 		&authorization.ID, &authorization.WorkspaceID, &authorization.Code, &authorization.GrantorRef,
 		&authorization.GranteeRef, &authorization.Purpose, &authorization.Status,
@@ -107,7 +107,7 @@ func (r *PostgresRepository) GetAuthorization(ctx context.Context, authorization
 
 func (r *PostgresRepository) SaveAuthorizationState(ctx context.Context, tx pgx.Tx, authorization domain.Authorization) error {
 	commandTag, err := tx.Exec(ctx, `
-		UPDATE authorization
+		UPDATE data_authorization
 		SET status=$2, updated_at=$3, updated_by=$4
 		WHERE id=$1
 	`, authorization.ID, authorization.Status, authorization.UpdatedAt, authorization.UpdatedBy)
