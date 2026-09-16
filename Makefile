@@ -39,13 +39,13 @@ lint:
 	cd $(PLATFORM_DIR) && go vet ./...
 
 fmt:
-	cd $(PLATFORM_DIR) && gofmt -w $$(find . -path './$(PLATFORM_DIR)/*.go' -o -path './$(PLATFORM_DIR)/**/*.go' 2>/dev/null)
+	cd $(PLATFORM_DIR) && gofmt -w $$(find . -name '*.go' -type f)
 
 tidy:
 	cd $(PLATFORM_DIR) && go mod tidy
 
 migrate-up:
-	go run ./$(PLATFORM_DIR)/cmd/migrate -direction up -dir migrations
+	cd $(PLATFORM_DIR) && go run ./cmd/migrate -direction up -dir ../../migrations
 
 migrate-down:
-	go run ./$(PLATFORM_DIR)/cmd/migrate -direction down -dir migrations
+	cd $(PLATFORM_DIR) && go run ./cmd/migrate -direction down -dir ../../migrations
