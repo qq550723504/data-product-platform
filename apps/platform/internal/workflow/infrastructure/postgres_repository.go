@@ -101,9 +101,27 @@ func (r *PostgresRepository) ValidateExecutionReferences(ctx context.Context, tx
 			}
 			return fmt.Errorf("validate input %s: %w", input.Name, err)
 		}
-		if status != "READY" {
-			return fmt.Errorf("input %s DatasetVersion must be READY, got %s", input.Name, status)
+		if status != "READY" && status != "SUPERSEDED" {
+			return fmt.Errorf("input %s DatasetVersion must be immutable and usable (READY or SUPERSEDED), got %s", input.Name, status)
 		}
+	}
+	return nil
+}
+
+func (r *PostgresRepository) ValidateOutputVersion(ctx context.Context, tx pgx.Tx, outputDatasetID, outputVersionID uuid.UUID) error {
+	var datasetID uuid.UUID
+	var status string
+	if err := tx.QueryRow(ctx, `SELECT dataset_id, status FROM dataset_version WHERE id=$1`, outputVersionID).Scan(&datasetID, &status); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("output DatasetVersion: %w", ErrNotFound)
+		}
+		return fmt.Errorf("validate output DatasetVersion: %w", err)
+	}
+	if datasetID != outputDatasetID {
+		return fmt.Errorf("output DatasetVersion belongs to dataset %s, expected %s", datasetID, outputDatasetID)
+	}
+	if status != "READY" {
+		return fmt.Errorf("output DatasetVersion must be READY, got %s", status)
 	}
 	return nil
 }
