@@ -26,13 +26,18 @@ type Handler func(context.Context, PublishedEvent) error
 type Publisher struct {
 	pool         *pgxpool.Pool
 	pollInterval time.Duration
+	claimTTL     time.Duration
 }
 
 func NewPublisher(pool *pgxpool.Pool, pollInterval time.Duration) *Publisher {
 	if pollInterval <= 0 {
 		pollInterval = time.Second
 	}
-	return &Publisher{pool: pool, pollInterval: pollInterval}
+	return &Publisher{
+		pool:         pool,
+		pollInterval: pollInterval,
+		claimTTL:     30 * time.Second,
+	}
 }
 
 func (p *Publisher) Run(ctx context.Context, handler Handler) error {
@@ -63,7 +68,7 @@ func (p *Publisher) publishOne(ctx context.Context, handler Handler) error {
 	err = tx.QueryRow(ctx, `
 		SELECT id, aggregate_type, aggregate_id, event_type, payload, attempts
 		FROM outbox_event
-		WHERE status IN ('PENDING', 'FAILED')
+		WHERE status IN ('PENDING', 'FAILED', 'PROCESSING')
 		  AND available_at <= now()
 		ORDER BY created_at
 		FOR UPDATE SKIP LOCKED
@@ -85,9 +90,12 @@ func (p *Publisher) publishOne(ctx context.Context, handler Handler) error {
 
 	_, err = tx.Exec(ctx, `
 		UPDATE outbox_event
-		SET status = 'PROCESSING', attempts = attempts + 1, last_error = NULL
+		SET status = 'PROCESSING',
+		    attempts = attempts + 1,
+		    available_at = $2,
+		    last_error = NULL
 		WHERE id = $1
-	`, event.ID)
+	`, event.ID, time.Now().UTC().Add(p.claimTTL))
 	if err != nil {
 		return fmt.Errorf("mark outbox processing: %w", err)
 	}
@@ -112,7 +120,10 @@ func (p *Publisher) publishOne(ctx context.Context, handler Handler) error {
 
 	_, err = p.pool.Exec(ctx, `
 		UPDATE outbox_event
-		SET status = 'PUBLISHED', published_at = now(), last_error = NULL
+		SET status = 'PUBLISHED',
+		    published_at = now(),
+		    available_at = now(),
+		    last_error = NULL
 		WHERE id = $1
 	`, event.ID)
 	if err != nil {
