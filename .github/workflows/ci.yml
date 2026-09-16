@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   go-platform:
@@ -43,6 +43,20 @@ jobs:
         with:
           go-version: '1.24.x'
           cache-dependency-path: apps/platform/go.mod
+
+      - name: Auto-format Sprint 1 branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/sprint-1-dataset' && github.actor != 'github-actions[bot]'
+        working-directory: .
+        run: |
+          gofmt -w apps/platform
+          if git diff --quiet -- 'apps/platform/**/*.go'; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/platform
+          git commit -m "style: gofmt Sprint 1 Go sources"
+          git push
 
       - name: Verify dependency lock is tidy
         run: |
