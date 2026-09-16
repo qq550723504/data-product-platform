@@ -24,6 +24,9 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	productapp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/application"
+	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
+	producthttp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/transport/http"
 	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	resourcehttp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/transport/http"
@@ -110,6 +113,10 @@ func main() {
 	executionService := workflowapp.NewExecutionService(txManager, workflowRepo, workflowQueueClient)
 	workflowHandler := workflowhttp.NewHandler(workflowVersionService, executionService, workflowRepo)
 
+	productRepo := productinfra.NewPostgresRepository(db)
+	productService := productapp.NewService(txManager, productRepo)
+	productHandler := producthttp.NewHandler(productService, productRepo)
+
 	traceabilityHandler := traceabilityhttp.NewHandler(
 		evidence.NewQueryRepository(db),
 		cost.NewQueryRepository(db),
@@ -122,6 +129,7 @@ func main() {
 			datasetHandler.Register,
 			entityHandler.Register,
 			workflowHandler.Register,
+			productHandler.Register,
 			traceabilityHandler.Register,
 		),
 		ReadHeaderTimeout: 5 * time.Second,
