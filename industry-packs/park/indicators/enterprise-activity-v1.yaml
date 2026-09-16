@@ -1,0 +1,183 @@
+apiVersion: dataprod.platform/v1alpha1
+kind: IndicatorSet
+metadata:
+  name: park-enterprise-activity
+  version: 1.0.0
+  status: POC
+  disclaimer: >-
+    This indicator set is an explainable POC reference used to validate the
+    Data Product lifecycle. It is not a validated credit score, underwriting
+    model, probability-of-default model, or investment/risk recommendation.
+spec:
+  rounding:
+    mode: HALF_UP
+    decimals: 2
+
+  indicators:
+    - code: tenancy_stability
+      type: DERIVED
+      outputRange: [0, 100]
+      inputs:
+        - enterprise.entry_date
+        - lease.contract_start
+        - lease.contract_end
+        - lease.lease_status
+      parameters:
+        tenureFullScoreMonths: 36
+        tenureWeight: 0.70
+        currentLeaseWeight: 0.30
+      calculation:
+        tenureMonths: >-
+          Full calendar months from entry_date through the end of the target
+          period, clamped to [0, tenureFullScoreMonths].
+        tenureScore: >-
+          min(100, 100 * tenureMonths / tenureFullScoreMonths)
+        currentLeaseScore: >-
+          100 when at least one ACTIVE lease overlaps the target period;
+          otherwise 0.
+        formula: >-
+          tenancy_stability = tenureWeight * tenureScore +
+          currentLeaseWeight * currentLeaseScore
+      missingData:
+        ifEntryDateMissing: INSUFFICIENT_DATA
+        ifLeaseDataMissing: INSUFFICIENT_DATA
+      explanation:
+        fields:
+          - tenure_months
+          - tenure_score
+          - current_lease_active
+          - current_lease_score
+
+    - code: rent_performance
+      type: DERIVED
+      outputRange: [0, 100]
+      inputs:
+        - lease.payment_due_date
+        - lease.payment_date
+      parameters:
+        lookbackMonths: 12
+        minimumDueEvents: 2
+        eventScores:
+          ON_TIME: 100
+          LATE_1_TO_7_DAYS: 70
+          LATE_8_TO_30_DAYS: 40
+          LATE_OVER_30_DAYS: 20
+          OVERDUE_UNPAID: 0
+      calculation:
+        eventSelection: >-
+          Select payment obligations whose payment_due_date is on or before
+          the target period end and within the trailing lookback window.
+        eventScore: >-
+          ON_TIME when payment_date <= payment_due_date; otherwise classify by
+          positive late days. If payment_date is null and due date is already
+          past the target period end, classify as OVERDUE_UNPAID.
+        formula: >-
+          rent_performance = arithmetic mean of selected event scores.
+      missingData:
+        ifDueEventsBelowMinimum: INSUFFICIENT_DATA
+      explanation:
+        fields:
+          - due_event_count
+          - on_time_count
+          - late_1_to_7_count
+          - late_8_to_30_count
+          - late_over_30_count
+          - overdue_unpaid_count
+
+    - code: energy_stability
+      type: DERIVED
+      outputRange: [0, 100]
+      inputs:
+        - energy.reading_time
+        - energy.energy_kwh
+      parameters:
+        lookbackMonths: 6
+        minimumValidMonths: 3
+        maximumReferenceCv: 0.30
+        variabilityWeight: 0.70
+        coverageWeight: 0.30
+      preprocessing:
+        monthlyAggregation: SUM
+        invalidRecords:
+          condition: energy_kwh < 0
+          action: QUARANTINE
+      calculation:
+        expectedMonths: >-
+          Months from the first observed month inside the lookback window
+          through the target period, capped by lookbackMonths.
+        validMonthCount: >-
+          Number of expected months with at least one accepted non-negative
+          energy record after aggregation.
+        coverageScore: >-
+          100 * validMonthCount / expectedMonths.
+        coefficientOfVariation: >-
+          population standard deviation of valid monthly totals divided by
+          their arithmetic mean. If the mean is <= 0, the indicator is
+          INSUFFICIENT_DATA.
+        variabilityScore: >-
+          clamp(100 * (1 - coefficientOfVariation / maximumReferenceCv),
+          0, 100).
+        formula: >-
+          energy_stability = variabilityWeight * variabilityScore +
+          coverageWeight * coverageScore
+      missingData:
+        ifValidMonthsBelowMinimum: INSUFFICIENT_DATA
+        ifMeanNonPositive: INSUFFICIENT_DATA
+      explanation:
+        fields:
+          - expected_months
+          - valid_months
+          - coverage_score
+          - monthly_mean_kwh
+          - monthly_stddev_kwh
+          - coefficient_of_variation
+          - variability_score
+          - quarantined_record_count
+
+    - code: activity_score
+      type: COMPOSITE
+      outputRange: [0, 100]
+      inputs:
+        - tenancy_stability
+        - rent_performance
+        - energy_stability
+      parameters:
+        weights:
+          tenancy_stability: 0.3333333333
+          rent_performance: 0.3333333333
+          energy_stability: 0.3333333334
+        levels:
+          HIGH:
+            minimumInclusive: 80
+          MEDIUM:
+            minimumInclusive: 60
+            maximumExclusive: 80
+          LOW:
+            minimumInclusive: 0
+            maximumExclusive: 60
+      calculation:
+        formula: >-
+          Weighted arithmetic mean of the three required component indicators.
+      missingData:
+        requiredComponents: ALL
+        ifAnyComponentMissing:
+          activity_score: null
+          activity_level: INSUFFICIENT_DATA
+      explanation:
+        fields:
+          - component_scores
+          - component_weights
+          - indicator_coverage
+          - activity_level
+
+  productOutput:
+    indicatorCoverage:
+      formula: >-
+        100 * count(non-null required component indicators) / 3.
+      outputRange: [0, 100]
+
+  implementationRules:
+    - All constants above are versioned configuration, not magic numbers.
+    - No missing component value may be silently imputed as zero or a neutral score.
+    - Every output must retain this indicator-set version in execution/release evidence.
+    - Technical invalid records must remain traceable to the RAW DatasetVersion.
