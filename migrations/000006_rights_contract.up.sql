@@ -1,4 +1,4 @@
-CREATE TABLE authorization (
+CREATE TABLE data_authorization (
     id              uuid PRIMARY KEY,
     workspace_id    uuid NOT NULL,
     code            varchar(64) NOT NULL,
@@ -20,12 +20,12 @@ CREATE TABLE authorization (
     CONSTRAINT ck_authorization_validity CHECK(valid_to IS NULL OR valid_from IS NULL OR valid_to > valid_from)
 );
 
-CREATE INDEX idx_authorization_workspace_status ON authorization(workspace_id, status);
-CREATE INDEX idx_authorization_valid_to ON authorization(valid_to) WHERE status='ACTIVE' AND valid_to IS NOT NULL;
+CREATE INDEX idx_authorization_workspace_status ON data_authorization(workspace_id, status);
+CREATE INDEX idx_authorization_valid_to ON data_authorization(valid_to) WHERE status='ACTIVE' AND valid_to IS NOT NULL;
 
 CREATE TABLE authorization_resource (
     id                uuid PRIMARY KEY,
-    authorization_id  uuid NOT NULL REFERENCES authorization(id),
+    authorization_id  uuid NOT NULL REFERENCES data_authorization(id),
     data_resource_id  uuid NOT NULL REFERENCES data_resource(id),
     actions           text[] NOT NULL DEFAULT ARRAY[]::text[],
     scope             jsonb NOT NULL DEFAULT '{}'::jsonb,
@@ -53,7 +53,7 @@ CREATE INDEX idx_rights_snapshot_release ON rights_snapshot(product_release_id);
 
 CREATE TABLE rights_snapshot_authorization (
     rights_snapshot_id  uuid NOT NULL REFERENCES rights_snapshot(id),
-    authorization_id    uuid NOT NULL REFERENCES authorization(id),
+    authorization_id    uuid NOT NULL REFERENCES data_authorization(id),
     PRIMARY KEY(rights_snapshot_id, authorization_id)
 );
 
