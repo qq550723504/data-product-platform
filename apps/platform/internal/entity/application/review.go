@@ -39,14 +39,14 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 			SourceType:   "ENTITY_MATCH_CANDIDATE",
 			SourceID:     &candidate.ID,
 			Metadata: map[string]any{
-				"decision":           "CONFIRMED",
-				"sourceKey":          candidate.SourceKey,
-				"candidateEntityId":  candidate.CandidateEntityID,
-				"matchMethod":        candidate.MatchMethod,
-				"matchRuleId":        candidate.MatchRuleID,
-				"confidence":         candidate.Confidence,
-				"policyVersion":      job.PolicyVersion,
-				"reviewerReason":     candidate.ReviewerReason,
+				"decision":          "CONFIRMED",
+				"sourceKey":         candidate.SourceKey,
+				"candidateEntityId": candidate.CandidateEntityID,
+				"matchMethod":       candidate.MatchMethod,
+				"matchRuleId":       candidate.MatchRuleID,
+				"confidence":        candidate.Confidence,
+				"policyVersion":     job.PolicyVersion,
+				"reviewerReason":    candidate.ReviewerReason,
 			},
 			CreatedBy: &cmd.ReviewerID,
 		}, evidence.Relation{ObjectType: "ENTITY_MATCH_CANDIDATE", ObjectID: candidate.ID, RelationType: "SUPPORTS"},
@@ -77,8 +77,8 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 			ObjectID:    candidate.ID,
 			BeforeState: map[string]any{"status": domain.CandidatePending},
 			AfterState: map[string]any{
-				"status":    candidate.Status,
-				"entityId":  candidate.CandidateEntityID,
+				"status":     candidate.Status,
+				"entityId":   candidate.CandidateEntityID,
 				"evidenceId": record.ID,
 			},
 			Reason:  candidate.ReviewerReason,
@@ -93,7 +93,7 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 	if err != nil {
 		return domain.MatchJob{}, err
 	}
-	if job.Status == domain.JobSucceeded && job.OutputDatasetVersionID == nil {
+	if job.Status == domain.JobRunning && job.OutputDatasetVersionID == nil {
 		if err := s.finalize(ctx, job.ID, &cmd.ReviewerID, cmd.TraceID); err != nil {
 			return domain.MatchJob{}, fmt.Errorf("finalize reviewed entity match job: %w", err)
 		}
@@ -168,7 +168,7 @@ func (s *MatchService) Reject(ctx context.Context, cmd ReviewCommand) (domain.Ma
 	if err != nil {
 		return domain.MatchJob{}, err
 	}
-	if job.Status == domain.JobSucceeded && job.OutputDatasetVersionID == nil {
+	if job.Status == domain.JobRunning && job.OutputDatasetVersionID == nil {
 		if err := s.finalize(ctx, job.ID, &cmd.ReviewerID, cmd.TraceID); err != nil {
 			return domain.MatchJob{}, fmt.Errorf("finalize reviewed entity match job: %w", err)
 		}
