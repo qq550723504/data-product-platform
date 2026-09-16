@@ -19,9 +19,9 @@ type Policy struct {
 		ProductCode string `yaml:"productCode"`
 		Rules       []Rule `yaml:"rules"`
 		Gate        struct {
-			CriticalFailure  string `yaml:"criticalFailure"`
-			HighFailure      string `yaml:"highFailure"`
-			WarningFailure   string `yaml:"warningFailure"`
+			CriticalFailure string `yaml:"criticalFailure"`
+			HighFailure     string `yaml:"highFailure"`
+			WarningFailure  string `yaml:"warningFailure"`
 		} `yaml:"gate"`
 	} `yaml:"spec"`
 }
