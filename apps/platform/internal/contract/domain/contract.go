@@ -33,19 +33,19 @@ type DataContract struct {
 }
 
 type ContractVersion struct {
-	ID            uuid.UUID
-	ContractID    uuid.UUID
-	MajorVersion  int
-	MinorVersion  int
-	PatchVersion  int
-	Status        VersionStatus
-	Document      map[string]any
-	SourceRef     string
-	SourceSHA256  string
-	CreatedAt     time.Time
-	CreatedBy     *uuid.UUID
-	PublishedAt   *time.Time
-	PublishedBy   *uuid.UUID
+	ID           uuid.UUID
+	ContractID   uuid.UUID
+	MajorVersion int
+	MinorVersion int
+	PatchVersion int
+	Status       VersionStatus
+	Document     map[string]any
+	SourceRef    string
+	SourceSHA256 string
+	CreatedAt    time.Time
+	CreatedBy    *uuid.UUID
+	PublishedAt  *time.Time
+	PublishedBy  *uuid.UUID
 }
 
 func NewDataContract(workspaceID uuid.UUID, code, name, productCode string, actorID *uuid.UUID) (DataContract, error) {

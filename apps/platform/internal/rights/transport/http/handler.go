@@ -172,12 +172,12 @@ func (h *Handler) transitionAuthorization(w http.ResponseWriter, r *http.Request
 }
 
 type createSnapshotRequest struct {
-	WorkspaceID      string   `json:"workspaceId"`
-	ProductReleaseID string   `json:"productReleaseId"`
-	Purpose          string   `json:"purpose"`
-	ConsumerRef      string   `json:"consumerRef"`
+	WorkspaceID      string     `json:"workspaceId"`
+	ProductReleaseID string     `json:"productReleaseId"`
+	Purpose          string     `json:"purpose"`
+	ConsumerRef      string     `json:"consumerRef"`
 	AsOf             *time.Time `json:"asOf"`
-	AuthorizationIDs []string `json:"authorizationIds"`
+	AuthorizationIDs []string   `json:"authorizationIds"`
 }
 
 func (h *Handler) createSnapshot(w http.ResponseWriter, r *http.Request) {

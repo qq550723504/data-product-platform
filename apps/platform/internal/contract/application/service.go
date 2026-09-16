@@ -28,11 +28,11 @@ func NewService(tx *transaction.Manager, repo *infrastructure.PostgresRepository
 }
 
 type CreateVersionFromYAMLCommand struct {
-	WorkspaceID uuid.UUID
-	SourceRef   string
+	WorkspaceID  uuid.UUID
+	SourceRef    string
 	DocumentYAML []byte
-	ActorID     *uuid.UUID
-	TraceID     string
+	ActorID      *uuid.UUID
+	TraceID      string
 }
 
 type PublishVersionCommand struct {
