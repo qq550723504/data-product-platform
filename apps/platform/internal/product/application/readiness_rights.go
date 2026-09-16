@@ -4,13 +4,13 @@ import "github.com/qq550723504/data-product-platform/apps/platform/internal/prod
 
 func evaluateRightsReadiness(facts infrastructure.ReadinessFacts) (CheckStatus, []string, map[string]any) {
 	details := map[string]any{
-		"snapshotExists":         facts.RightsSnapshotExists,
-		"workspaceMatch":         facts.RightsSnapshotWorkspaceMatch,
-		"currentlyValid":         facts.RightsCurrentlyValid,
-		"coverageKnown":          facts.RightsCoverageKnown,
-		"coverageComplete":       facts.RightsCoverageComplete,
-		"requiredResourceIds":    facts.RequiredResourceIDs,
-		"missingResourceIds":     facts.MissingResourceIDs,
+		"snapshotExists":           facts.RightsSnapshotExists,
+		"workspaceMatch":           facts.RightsSnapshotWorkspaceMatch,
+		"currentlyValid":           facts.RightsCurrentlyValid,
+		"coverageKnown":            facts.RightsCoverageKnown,
+		"coverageComplete":         facts.RightsCoverageComplete,
+		"requiredResourceIds":      facts.RequiredResourceIDs,
+		"missingResourceIds":       facts.MissingResourceIDs,
 		"missingActionsByResource": facts.MissingActions,
 	}
 
