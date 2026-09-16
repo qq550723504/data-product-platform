@@ -4,14 +4,13 @@ on:
   push:
     branches:
       - main
-      - 'feat/sprint-3-product-release-publish'
   pull_request:
     branches:
       - main
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -51,20 +50,6 @@ jobs:
         with:
           go-version: '1.24.x'
           cache-dependency-path: apps/platform/go.sum
-
-      - name: Auto-format feature branch
-        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/sprint-3-product-release-publish' && github.actor != 'github-actions[bot]'
-        working-directory: .
-        run: |
-          gofmt -w apps/platform
-          if git diff --quiet -- apps/platform; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/platform
-          git commit -m "style: gofmt release publish sources"
-          git push
 
       - name: Verify dependency lock is tidy
         run: |
