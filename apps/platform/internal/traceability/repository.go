@@ -40,16 +40,16 @@ type ReleaseTrace struct {
 	EntityMappings   []EntityMappingTrace   `json:"entityMappings"`
 	Evidence         []evidence.Item        `json:"evidence"`
 	CostEvents       []cost.Item            `json:"costEvents"`
-	AuditEvents      []AuditEventTrace       `json:"auditEvents"`
+	AuditEvents      []AuditEventTrace      `json:"auditEvents"`
 }
 
 type EvidenceSnapshotTrace struct {
-	ID             uuid.UUID          `json:"id"`
-	RootHash       string             `json:"rootHash"`
-	IntegrityValid bool               `json:"integrityValid"`
-	Manifest       map[string]any     `json:"manifest"`
+	ID             uuid.UUID               `json:"id"`
+	RootHash       string                  `json:"rootHash"`
+	IntegrityValid bool                    `json:"integrityValid"`
+	Manifest       map[string]any          `json:"manifest"`
 	Items          []evidence.SnapshotItem `json:"items"`
-	CreatedAt      time.Time          `json:"createdAt"`
+	CreatedAt      time.Time               `json:"createdAt"`
 }
 
 type DatasetVersionTrace struct {
@@ -102,7 +102,7 @@ type EntityMappingTrace struct {
 	MatchMethod        string     `json:"matchMethod"`
 	MatchRuleID        string     `json:"matchRuleId,omitempty"`
 	MatchPolicyVersion string     `json:"matchPolicyVersion"`
-	Confidence         *float64   `json:"confidence,omitempty"`
+	Confidence         float64    `json:"confidence"`
 	Status             string     `json:"status"`
 	ReviewedBy         *uuid.UUID `json:"reviewedBy,omitempty"`
 	ReviewedAt         *time.Time `json:"reviewedAt,omitempty"`
@@ -320,7 +320,7 @@ func (r *Repository) entityMappingsForJobs(ctx context.Context, jobs []EntityMat
 	for _, job := range jobs {
 		rows, err := r.pool.Query(ctx, `
 			SELECT id, entity_id, source_type, source_ref, source_key, COALESCE(source_name,''),
-			       match_method, COALESCE(match_rule_id,''), match_policy_version, confidence,
+			       match_method, COALESCE(match_rule_id,''), match_policy_version, COALESCE(confidence,0),
 			       status, reviewed_by, reviewed_at, COALESCE(reviewer_reason,''), evidence_id
 			FROM entity_mapping
 			WHERE source_type=$1 AND source_ref=$2
