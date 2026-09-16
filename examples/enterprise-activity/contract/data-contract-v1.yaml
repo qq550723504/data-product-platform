@@ -1,0 +1,82 @@
+apiVersion: dataprod.platform/v1alpha1
+kind: DataContract
+metadata:
+  name: enterprise-activity
+  version: 1.0.0
+spec:
+  product:
+    code: DP-ENTERPRISE-ACTIVITY
+    name: 企业经营活跃度
+  consumers:
+    - LICENSED_BANK
+    - GUARANTEE_INSTITUTION
+  purposes:
+    - ENTERPRISE_CREDIT_RISK_SUPPORT
+  freshness:
+    updateFrequency: DAILY
+    maxDelay: 24h
+  delivery:
+    api: true
+    datasetExport: false
+    rawSourceExport: false
+  usage:
+    redistribution: false
+    marketing: false
+  schema:
+    - name: company_id
+      type: string
+      nullable: false
+      description: 平台 Canonical Company ID
+    - name: period
+      type: string
+      nullable: false
+      description: 统计周期，格式 YYYY-MM
+    - name: tenancy_stability
+      type: decimal
+      nullable: false
+      minimum: 0
+      maximum: 100
+    - name: rent_performance
+      type: decimal
+      nullable: false
+      minimum: 0
+      maximum: 100
+    - name: energy_stability
+      type: decimal
+      nullable: false
+      minimum: 0
+      maximum: 100
+    - name: activity_score
+      type: decimal
+      nullable: false
+      minimum: 0
+      maximum: 100
+    - name: activity_level
+      type: string
+      nullable: false
+      allowedValues:
+        - HIGH
+        - MEDIUM
+        - LOW
+        - INSUFFICIENT_DATA
+    - name: generated_at
+      type: timestamp
+      nullable: false
+  quality:
+    companyIdCompleteness:
+      target: ">= 99.9%"
+      severity: CRITICAL
+    canonicalUniqueMappingRate:
+      target: ">= 99%"
+      severity: HIGH
+    unresolvedEntityRate:
+      target: "<= 0.5%"
+      severity: HIGH
+    scoreRange:
+      target: "0 <= activity_score <= 100"
+      severity: CRITICAL
+    freshness:
+      target: "<= 24h"
+      severity: CRITICAL
+  compatibility:
+    breakingChangesRequireMajorVersion: true
