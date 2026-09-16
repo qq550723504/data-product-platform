@@ -2,13 +2,17 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/hibiken/asynq"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue"
 )
 
@@ -23,6 +27,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	db, err := database.Open(ctx, cfg.PostgresDSN)
+	if err != nil {
+		logger.Error("open postgres", "error", err)
+		os.Exit(1)
+	}
+	defer db.Close()
+
 	server := queue.NewServer(queue.Config{
 		Addr:     cfg.Redis.Addr,
 		Password: cfg.Redis.Password,
@@ -35,10 +46,29 @@ func main() {
 		return nil
 	})
 
-	errCh := make(chan error, 1)
+	errCh := make(chan error, 2)
 	go func() {
-		logger.Info("platform worker started", "redis", cfg.Redis.Addr, "env", cfg.Environment)
+		logger.Info("asynq worker started", "redis", cfg.Redis.Addr, "env", cfg.Environment)
 		if err := server.Run(mux); err != nil {
+			errCh <- err
+		}
+	}()
+
+	publisher := outbox.NewPublisher(db, time.Second)
+	go func() {
+		logger.Info("outbox publisher started")
+		err := publisher.Run(ctx, func(_ context.Context, event outbox.PublishedEvent) error {
+			logger.Info(
+				"domain event published",
+				"event_id", event.ID,
+				"event_type", event.EventType,
+				"aggregate_type", event.AggregateType,
+				"aggregate_id", event.AggregateID,
+				"attempt", event.Attempts,
+			)
+			return nil
+		})
+		if err != nil && !errors.Is(err, context.Canceled) {
 			errCh <- err
 		}
 	}()
