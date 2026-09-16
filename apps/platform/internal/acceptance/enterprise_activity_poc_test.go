@@ -306,7 +306,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 		IndicatorSetRef:   indicatorSetRef,
 		Definition: map[string]any{
 			"referenceImplementation": "enterprise-activity",
-			"workflowVersion":        workflowVersion.Version,
+			"workflowVersion":         workflowVersion.Version,
 		},
 		Assets: []productdomain.AssetSpec{{
 			AssetType:      productdomain.AssetDataset,
