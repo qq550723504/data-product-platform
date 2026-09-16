@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"net/url"
+	"strings"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -46,6 +48,41 @@ func (s *Store) Put(ctx context.Context, objectName string, reader io.Reader, si
 		return "", fmt.Errorf("put object %q: %w", objectName, err)
 	}
 	return fmt.Sprintf("s3://%s/%s", s.bucket, objectName), nil
+}
+
+func (s *Store) Get(ctx context.Context, storageURI string) (io.ReadCloser, error) {
+	bucket, objectName, err := parseStorageURI(storageURI)
+	if err != nil {
+		return nil, err
+	}
+	if bucket != s.bucket {
+		return nil, fmt.Errorf("storage URI bucket %q does not match configured bucket %q", bucket, s.bucket)
+	}
+
+	object, err := s.client.GetObject(ctx, bucket, objectName, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("get object %q: %w", objectName, err)
+	}
+	if _, err := object.Stat(); err != nil {
+		_ = object.Close()
+		return nil, fmt.Errorf("stat object %q: %w", objectName, err)
+	}
+	return object, nil
+}
+
+func parseStorageURI(storageURI string) (string, string, error) {
+	parsed, err := url.Parse(strings.TrimSpace(storageURI))
+	if err != nil {
+		return "", "", fmt.Errorf("parse storage URI: %w", err)
+	}
+	if parsed.Scheme != "s3" || parsed.Host == "" {
+		return "", "", fmt.Errorf("unsupported storage URI %q", storageURI)
+	}
+	objectName := strings.TrimPrefix(parsed.Path, "/")
+	if objectName == "" {
+		return "", "", fmt.Errorf("storage URI %q does not contain an object key", storageURI)
+	}
+	return parsed.Host, objectName, nil
 }
 
 func (s *Store) Bucket() string {

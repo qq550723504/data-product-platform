@@ -7,6 +7,7 @@ require (
 	github.com/hibiken/asynq v0.25.1
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/minio/minio-go/v7 v7.0.83
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
