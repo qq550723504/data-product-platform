@@ -61,9 +61,9 @@ jobs:
 
       - name: Format check
         run: |
-          UNFORMATTED="$(gofmt -l .)"
-          if [ -n "$UNFORMATTED" ]; then
-            echo "$UNFORMATTED"
+          FORMAT_DIFF="$(gofmt -d .)"
+          if [ -n "$FORMAT_DIFF" ]; then
+            echo "$FORMAT_DIFF"
             exit 1
           fi
 
