@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -62,31 +61,28 @@ func (r *PostgresRepository) InsertCandidate(ctx context.Context, tx pgx.Tx, can
 }
 
 func (r *PostgresRepository) RefreshJobCountsAndStatus(ctx context.Context, tx pgx.Tx, jobID uuid.UUID) (domain.JobStatus, error) {
-	var confirmedCount, reviewCount, unresolvedCount, rejectedCount int64
+	var autoCount, reviewCount, pendingCount, unresolvedCount, rejectedCount int64
 	if err := tx.QueryRow(ctx, `
 		SELECT
-			count(*) FILTER (WHERE status IN ('AUTO_CONFIRMED','CONFIRMED')),
+			count(*) FILTER (WHERE status='AUTO_CONFIRMED'),
+			count(*) FILTER (WHERE decision='REVIEW'),
 			count(*) FILTER (WHERE status='PENDING'),
 			count(*) FILTER (WHERE status='UNRESOLVED'),
 			count(*) FILTER (WHERE status='REJECTED')
 		FROM entity_match_candidate WHERE job_id=$1
-	`, jobID).Scan(&confirmedCount, &reviewCount, &unresolvedCount, &rejectedCount); err != nil {
+	`, jobID).Scan(&autoCount, &reviewCount, &pendingCount, &unresolvedCount, &rejectedCount); err != nil {
 		return "", fmt.Errorf("count entity match candidates: %w", err)
 	}
-	status := domain.JobSucceeded
-	var finishedAt *time.Time
-	if reviewCount > 0 {
+	status := domain.JobRunning
+	if pendingCount > 0 {
 		status = domain.JobWaitingReview
-	} else {
-		now := time.Now().UTC()
-		finishedAt = &now
 	}
 	_, err := tx.Exec(ctx, `
 		UPDATE entity_match_job
 		SET status=$2, auto_match_count=$3, review_count=$4,
-		    unresolved_count=$5, rejected_count=$6, finished_at=$7
+		    unresolved_count=$5, rejected_count=$6, finished_at=NULL
 		WHERE id=$1
-	`, jobID, status, confirmedCount, reviewCount, unresolvedCount, rejectedCount, finishedAt)
+	`, jobID, status, autoCount, reviewCount, unresolvedCount, rejectedCount)
 	if err != nil {
 		return "", fmt.Errorf("update entity match job counts: %w", err)
 	}
@@ -197,8 +193,8 @@ func (r *PostgresRepository) ListCandidates(ctx context.Context, jobID uuid.UUID
 func (r *PostgresRepository) CompleteJob(ctx context.Context, tx pgx.Tx, jobID, outputVersionID uuid.UUID) error {
 	_, err := tx.Exec(ctx, `
 		UPDATE entity_match_job
-		SET status='SUCCEEDED', output_dataset_version_id=$2, finished_at=now(), review_count=0
-		WHERE id=$1
+		SET status='SUCCEEDED', output_dataset_version_id=$2, finished_at=now()
+		WHERE id=$1 AND status='RUNNING'
 	`, jobID, outputVersionID)
 	if err != nil {
 		return fmt.Errorf("complete entity match job: %w", err)
