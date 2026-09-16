@@ -4,16 +4,23 @@ on:
   push:
     branches:
       - main
-      - 'feat/**'
   pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   go-platform:
+    name: go-platform
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     services:
       postgres:
         image: postgres:16-alpine
@@ -42,21 +49,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.24.x'
-          cache-dependency-path: apps/platform/go.mod
-
-      - name: Auto-format Sprint 1 branch
-        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/sprint-1-dataset' && github.actor != 'github-actions[bot]'
-        working-directory: .
-        run: |
-          gofmt -w apps/platform
-          if git diff --quiet -- 'apps/platform/**/*.go'; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/platform
-          git commit -m "style: gofmt Sprint 1 Go sources"
-          git push
+          cache-dependency-path: apps/platform/go.sum
 
       - name: Verify dependency lock is tidy
         run: |
@@ -91,3 +84,14 @@ jobs:
           go build ./cmd/api
           go build ./cmd/worker
           go build ./cmd/migrate
+
+  required:
+    name: required
+    if: ${{ always() }}
+    needs:
+      - go-platform
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require all CI jobs to succeed
+        run: test "${{ needs.go-platform.result }}" = "success"
