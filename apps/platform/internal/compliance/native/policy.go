@@ -16,8 +16,8 @@ type Policy struct {
 		Version string `yaml:"version"`
 	} `yaml:"metadata"`
 	Spec struct {
-		ProductCode  string        `yaml:"productCode"`
-		Principle    string        `yaml:"principle"`
+		ProductCode   string        `yaml:"productCode"`
+		Principle     string        `yaml:"principle"`
 		FieldPolicies []FieldPolicy `yaml:"fieldPolicies"`
 		ProductOutput struct {
 			AllowOnlyContractFields bool   `yaml:"allowOnlyContractFields"`
