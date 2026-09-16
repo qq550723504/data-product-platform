@@ -11,18 +11,20 @@ import (
 )
 
 type Item struct {
-	ID            uuid.UUID      `json:"id"`
-	EvidenceType  string         `json:"evidenceType"`
-	Title         string         `json:"title,omitempty"`
-	SourceType    string         `json:"sourceType,omitempty"`
-	SourceID      *uuid.UUID     `json:"sourceId,omitempty"`
-	StorageURI    string         `json:"storageUri,omitempty"`
-	HashAlgorithm string         `json:"hashAlgorithm,omitempty"`
-	HashValue     string         `json:"hashValue,omitempty"`
-	Metadata      map[string]any `json:"metadata"`
-	RelationType  string         `json:"relationType"`
-	CreatedAt     time.Time      `json:"createdAt"`
-	CreatedBy     *uuid.UUID     `json:"createdBy,omitempty"`
+	ID             uuid.UUID      `json:"id"`
+	WorkspaceID    uuid.UUID      `json:"workspaceId"`
+	EvidenceType   string         `json:"evidenceType"`
+	Title          string         `json:"title,omitempty"`
+	SourceType     string         `json:"sourceType,omitempty"`
+	SourceID       *uuid.UUID     `json:"sourceId,omitempty"`
+	StorageURI     string         `json:"storageUri,omitempty"`
+	HashAlgorithm  string         `json:"hashAlgorithm,omitempty"`
+	HashValue      string         `json:"hashValue,omitempty"`
+	IntegrityValid bool           `json:"integrityValid"`
+	Metadata       map[string]any `json:"metadata"`
+	RelationType   string         `json:"relationType"`
+	CreatedAt      time.Time      `json:"createdAt"`
+	CreatedBy      *uuid.UUID     `json:"createdBy,omitempty"`
 }
 
 type QueryRepository struct {
@@ -35,7 +37,7 @@ func NewQueryRepository(pool *pgxpool.Pool) *QueryRepository {
 
 func (r *QueryRepository) ListForObject(ctx context.Context, objectType string, objectID uuid.UUID) ([]Item, error) {
 	rows, err := r.pool.Query(ctx, `
-		SELECT e.id, e.evidence_type, COALESCE(e.title,''), COALESCE(e.source_type,''), e.source_id,
+		SELECT e.id, e.workspace_id, e.evidence_type, COALESCE(e.title,''), COALESCE(e.source_type,''), e.source_id,
 		       COALESCE(e.storage_uri,''), COALESCE(e.hash_algorithm,''), COALESCE(e.hash_value,''),
 		       e.metadata, er.relation_type, e.created_at, e.created_by
 		FROM evidence_relation er
@@ -54,6 +56,7 @@ func (r *QueryRepository) ListForObject(ctx context.Context, objectType string, 
 		var metadata []byte
 		if err := rows.Scan(
 			&item.ID,
+			&item.WorkspaceID,
 			&item.EvidenceType,
 			&item.Title,
 			&item.SourceType,
@@ -76,6 +79,18 @@ func (r *QueryRepository) ListForObject(ctx context.Context, objectType string, 
 		if item.Metadata == nil {
 			item.Metadata = map[string]any{}
 		}
+		item.IntegrityValid = VerifyHash(Record{
+			ID:           item.ID,
+			WorkspaceID:  item.WorkspaceID,
+			EvidenceType: item.EvidenceType,
+			Title:        item.Title,
+			SourceType:   item.SourceType,
+			SourceID:     item.SourceID,
+			StorageURI:   item.StorageURI,
+			Metadata:     item.Metadata,
+			CreatedAt:    item.CreatedAt,
+			CreatedBy:    item.CreatedBy,
+		}, item.HashAlgorithm, item.HashValue)
 		items = append(items, item)
 	}
 	if err := rows.Err(); err != nil {

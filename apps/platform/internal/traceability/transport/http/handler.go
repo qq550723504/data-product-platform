@@ -2,26 +2,37 @@ package traceabilityhttp
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/traceability"
 )
 
 type Handler struct {
 	evidenceRepo *evidence.QueryRepository
 	costRepo     *cost.QueryRepository
+	releaseRepo  *traceability.Repository
 }
 
-func NewHandler(evidenceRepo *evidence.QueryRepository, costRepo *cost.QueryRepository) *Handler {
-	return &Handler{evidenceRepo: evidenceRepo, costRepo: costRepo}
+func NewHandler(evidenceRepo *evidence.QueryRepository, costRepo *cost.QueryRepository, releaseRepo ...*traceability.Repository) *Handler {
+	handler := &Handler{evidenceRepo: evidenceRepo, costRepo: costRepo}
+	if len(releaseRepo) > 0 {
+		handler.releaseRepo = releaseRepo[0]
+	}
+	return handler
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/traceability/{objectType}/{objectId}", h.getTraceability)
+	if h.releaseRepo != nil {
+		mux.HandleFunc("GET /api/v1/traceability/product-releases/{releaseId}", h.getProductReleaseTraceability)
+	}
 }
 
 type response struct {
@@ -63,6 +74,26 @@ func (h *Handler) getTraceability(w http.ResponseWriter, r *http.Request) {
 		Evidence:   evidenceItems,
 		CostEvents: costItems,
 	})
+}
+
+func (h *Handler) getProductReleaseTraceability(w http.ResponseWriter, r *http.Request) {
+	releaseID, err := uuid.Parse(r.PathValue("releaseId"))
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_RELEASE_ID", "releaseId must be a UUID", nil)
+		return
+	}
+	result, err := h.releaseRepo.ProductRelease(r.Context(), releaseID)
+	if err != nil {
+		status := http.StatusInternalServerError
+		code := "PRODUCT_RELEASE_TRACEABILITY_FAILED"
+		if errors.Is(err, pgx.ErrNoRows) {
+			status = http.StatusNotFound
+			code = "PRODUCT_RELEASE_NOT_FOUND"
+		}
+		httpserver.WriteError(w, r, status, code, err.Error(), nil)
+		return
+	}
+	writeJSON(w, http.StatusOK, result)
 }
 
 func writeJSON(w http.ResponseWriter, status int, body any) {
