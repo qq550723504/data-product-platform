@@ -42,6 +42,7 @@ import (
 	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
 	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 	rightshttp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/transport/http"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/traceability"
 	traceabilityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/traceability/transport/http"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
@@ -148,6 +149,7 @@ func main() {
 	traceabilityHandler := traceabilityhttp.NewHandler(
 		evidence.NewQueryRepository(db),
 		cost.NewQueryRepository(db),
+		traceability.NewRepository(db),
 	)
 
 	server := &http.Server{
