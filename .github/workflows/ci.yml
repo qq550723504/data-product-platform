@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   go-platform:
@@ -44,8 +44,13 @@ jobs:
           go-version: '1.24.x'
           cache-dependency-path: apps/platform/go.mod
 
-      - name: Tidy dependency graph
-        run: go mod tidy
+      - name: Verify dependency lock is tidy
+        run: |
+          cp go.mod /tmp/go.mod.before
+          cp go.sum /tmp/go.sum.before
+          go mod tidy
+          diff -u /tmp/go.mod.before go.mod
+          diff -u /tmp/go.sum.before go.sum
 
       - name: Format check
         run: |
@@ -72,24 +77,3 @@ jobs:
           go build ./cmd/api
           go build ./cmd/worker
           go build ./cmd/migrate
-
-      - name: Persist generated module lock
-        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/sprint-0-foundation'
-        working-directory: .
-        run: |
-          CHANGES="$(git status --porcelain -- apps/platform/go.mod apps/platform/go.sum)"
-          if [ -z "$CHANGES" ]; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/platform/go.mod apps/platform/go.sum
-          git commit -m "chore: sync Go module lock"
-          git push
-
-      - name: Upload generated module lock
-        uses: actions/upload-artifact@v4
-        with:
-          name: go-module-lock
-          path: apps/platform/go.sum
-          if-no-files-found: error
