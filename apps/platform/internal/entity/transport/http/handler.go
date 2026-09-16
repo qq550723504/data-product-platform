@@ -202,20 +202,20 @@ func jobResponse(job domain.MatchJob) map[string]any {
 
 func candidateResponse(candidate domain.MatchCandidate) map[string]any {
 	return map[string]any{
-		"id":                  candidate.ID,
-		"jobId":               candidate.JobID,
-		"sourceKey":           candidate.SourceKey,
-		"sourceName":          candidate.SourceName,
-		"candidateEntityId":   candidate.CandidateEntityID,
-		"decision":            candidate.Decision,
-		"status":              candidate.Status,
-		"matchMethod":         candidate.MatchMethod,
-		"matchRuleId":         candidate.MatchRuleID,
-		"confidence":          candidate.Confidence,
-		"source":              candidate.SourcePayload,
-		"normalized":          candidate.NormalizedPayload,
-		"reviewerReason":      candidate.ReviewerReason,
-		"evidenceId":          candidate.EvidenceID,
+		"id":                candidate.ID,
+		"jobId":             candidate.JobID,
+		"sourceKey":         candidate.SourceKey,
+		"sourceName":        candidate.SourceName,
+		"candidateEntityId": candidate.CandidateEntityID,
+		"decision":          candidate.Decision,
+		"status":            candidate.Status,
+		"matchMethod":       candidate.MatchMethod,
+		"matchRuleId":       candidate.MatchRuleID,
+		"confidence":        candidate.Confidence,
+		"source":            candidate.SourcePayload,
+		"normalized":        candidate.NormalizedPayload,
+		"reviewerReason":    candidate.ReviewerReason,
+		"evidenceId":        candidate.EvidenceID,
 	}
 }
 

@@ -69,8 +69,8 @@ type Thresholds struct {
 }
 
 type Evidence struct {
-	RecordRuleVersion                       bool `yaml:"recordRuleVersion"`
-	RecordConfidence                        bool `yaml:"recordConfidence"`
+	RecordRuleVersion                      bool `yaml:"recordRuleVersion"`
+	RecordConfidence                       bool `yaml:"recordConfidence"`
 	RequireReviewerReasonForManualDecision bool `yaml:"requireReviewerReasonForManualDecision"`
 }
 

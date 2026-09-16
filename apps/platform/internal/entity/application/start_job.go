@@ -180,12 +180,12 @@ func (s *MatchService) processRecord(ctx context.Context, job domain.MatchJob, r
 		entity := result.Entity
 		if entity == nil && result.Decision == domain.DecisionUnresolved && job.SourceRole == domain.SourceAnchor {
 			seeded, err := domain.NewEntity(job.WorkspaceID, job.EntityTypeID, normalized.UnifiedSocialCreditCode, record.CompanyName, map[string]any{
-				"normalized_company_name":        normalized.CompanyName,
+				"normalized_company_name":       normalized.CompanyName,
 				"normalized_registered_address": normalized.RegisteredAddress,
-				"legal_representative":           normalized.LegalRepresentative,
-				"registered_address":             record.RegisteredAddress,
-				"entry_date":                     normalized.EntryDate,
-				"company_status":                 normalized.CompanyStatus,
+				"legal_representative":          normalized.LegalRepresentative,
+				"registered_address":            record.RegisteredAddress,
+				"entry_date":                    normalized.EntryDate,
+				"company_status":                normalized.CompanyStatus,
 			}, actorID)
 			if err != nil {
 				return err
