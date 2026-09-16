@@ -12,10 +12,15 @@ type Health struct {
 	RequestID string `json:"requestId,omitempty"`
 }
 
-func NewMux() http.Handler {
+func NewMux(registrars ...func(*http.ServeMux)) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health/live", healthHandler)
 	mux.HandleFunc("GET /health/ready", healthHandler)
+	for _, register := range registrars {
+		if register != nil {
+			register(mux)
+		}
+	}
 	return WithRequestID(mux)
 }
 

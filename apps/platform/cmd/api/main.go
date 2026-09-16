@@ -10,11 +10,18 @@ import (
 	"syscall"
 	"time"
 
+	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
+	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
+	datasethttp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
+	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
+	resourcehttp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/transport/http"
 )
 
 func main() {
@@ -62,9 +69,25 @@ func main() {
 		os.Exit(1)
 	}
 
+	txManager := transaction.NewManager(db)
+
+	resourceRepo := resourceinfra.NewPostgresRepository()
+	resourceHandler := resourcehttp.NewHandler(resourceapp.NewCreateService(txManager, resourceRepo))
+
+	datasetRepo := datasetinfra.NewPostgresRepository(db)
+	datasetHandler := datasethttp.NewHandler(
+		datasetapp.NewCreateDatasetService(txManager, datasetRepo),
+		datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore),
+		datasetapp.NewInvalidateVersionService(txManager, datasetRepo),
+		datasetRepo,
+	)
+
 	server := &http.Server{
-		Addr:              cfg.HTTPAddr,
-		Handler:           httpserver.NewMux(),
+		Addr: cfg.HTTPAddr,
+		Handler: httpserver.NewMux(
+			resourceHandler.Register,
+			datasetHandler.Register,
+		),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
