@@ -27,6 +27,8 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/entity-match-jobs/{jobId}/reviews", h.listReviews)
 	mux.HandleFunc("POST /api/v1/entity-match-reviews/{candidateId}/confirm", h.confirm)
 	mux.HandleFunc("POST /api/v1/entity-match-reviews/{candidateId}/reject", h.reject)
+	mux.HandleFunc("GET /api/v1/entity-mappings", h.getMappingBySource)
+	mux.HandleFunc("GET /api/v1/entities/{entityId}/mappings", h.listEntityMappings)
 }
 
 type startJobRequest struct {
@@ -124,6 +126,44 @@ func (h *Handler) listReviews(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]any{"items": result})
 }
 
+func (h *Handler) getMappingBySource(w http.ResponseWriter, r *http.Request) {
+	sourceType := r.URL.Query().Get("sourceType")
+	sourceRef := r.URL.Query().Get("sourceRef")
+	sourceKey := r.URL.Query().Get("sourceKey")
+	if sourceType == "" || sourceRef == "" || sourceKey == "" {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "SOURCE_MAPPING_QUERY_REQUIRED", "sourceType, sourceRef and sourceKey are required", nil)
+		return
+	}
+	mapping, err := h.repo.GetMappingBySource(r.Context(), sourceType, sourceRef, sourceKey)
+	if err != nil {
+		if errors.Is(err, infrastructure.ErrNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "ENTITY_MAPPING_NOT_FOUND", "entity mapping not found", nil)
+			return
+		}
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "ENTITY_MAPPING_READ_FAILED", err.Error(), nil)
+		return
+	}
+	writeJSON(w, http.StatusOK, mappingResponse(mapping))
+}
+
+func (h *Handler) listEntityMappings(w http.ResponseWriter, r *http.Request) {
+	entityID, err := uuid.Parse(r.PathValue("entityId"))
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ENTITY_ID", "entityId must be a UUID", nil)
+		return
+	}
+	mappings, err := h.repo.ListMappingsByEntity(r.Context(), entityID)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "ENTITY_MAPPINGS_READ_FAILED", err.Error(), nil)
+		return
+	}
+	items := make([]map[string]any, 0, len(mappings))
+	for _, mapping := range mappings {
+		items = append(items, mappingResponse(mapping))
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"items": items})
+}
+
 type reviewRequest struct {
 	Reason string `json:"reason"`
 }
@@ -216,6 +256,26 @@ func candidateResponse(candidate domain.MatchCandidate) map[string]any {
 		"normalized":        candidate.NormalizedPayload,
 		"reviewerReason":    candidate.ReviewerReason,
 		"evidenceId":        candidate.EvidenceID,
+	}
+}
+
+func mappingResponse(mapping domain.EntityMapping) map[string]any {
+	return map[string]any{
+		"id":                 mapping.ID,
+		"entityId":           mapping.EntityID,
+		"sourceType":         mapping.SourceType,
+		"sourceRef":          mapping.SourceRef,
+		"sourceKey":          mapping.SourceKey,
+		"sourceName":         mapping.SourceName,
+		"matchMethod":        mapping.MatchMethod,
+		"matchRuleId":        mapping.MatchRuleID,
+		"matchPolicyVersion": mapping.MatchPolicyVersion,
+		"confidence":         mapping.Confidence,
+		"status":             mapping.Status,
+		"reviewedBy":         mapping.ReviewedBy,
+		"reviewedAt":         mapping.ReviewedAt,
+		"reviewerReason":     mapping.ReviewerReason,
+		"evidenceId":         mapping.EvidenceID,
 	}
 }
 
