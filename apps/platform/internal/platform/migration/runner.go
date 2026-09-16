@@ -118,7 +118,8 @@ func (r *Runner) apply(ctx context.Context, file File, up bool) error {
 	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(810042001)`); err != nil {
 		return fmt.Errorf("lock migrations: %w", err)
 	}
-	if _, err := tx.Exec(ctx, string(sqlBytes)); err != nil {
+	// Migration files can contain multiple SQL statements, so force pgx simple protocol.
+	if _, err := tx.Exec(ctx, string(sqlBytes), pgx.QueryExecModeSimpleProtocol); err != nil {
 		return fmt.Errorf("execute migration %s: %w", file.Name, err)
 	}
 
