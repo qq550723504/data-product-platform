@@ -10,10 +10,19 @@ import (
 	"time"
 
 	"github.com/hibiken/asynq"
+	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
+	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
+	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
+	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
+	nativeengine "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/native"
+	workflowqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue"
 )
 
 func main() {
@@ -34,16 +43,56 @@ func main() {
 	}
 	defer db.Close()
 
+	objectStore, err := storage.New(
+		cfg.Storage.Endpoint,
+		cfg.Storage.AccessKey,
+		cfg.Storage.SecretKey,
+		cfg.Storage.Bucket,
+		cfg.Storage.UseSSL,
+	)
+	if err != nil {
+		logger.Error("create object storage client", "error", err)
+		os.Exit(1)
+	}
+	if err := objectStore.EnsureBucket(ctx); err != nil {
+		logger.Error("ensure object storage bucket", "error", err)
+		os.Exit(1)
+	}
+
 	server := queue.NewServer(queue.Config{
 		Addr:     cfg.Redis.Addr,
 		Password: cfg.Redis.Password,
 		DB:       cfg.Redis.DB,
 	})
 
+	txManager := transaction.NewManager(db)
+	datasetRepo := datasetinfra.NewPostgresRepository(db)
+	entityRepo := entityinfra.NewPostgresRepository(db)
+	workflowRepo := workflowinfra.NewPostgresRepository(db)
+	datasetWriter := datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore)
+	executionService := workflowapp.NewExecutionService(txManager, workflowRepo, nil)
+	processingEngine := nativeengine.NewEngine(
+		cfg.IndustryPackRoot,
+		txManager,
+		datasetRepo,
+		entityRepo,
+		workflowRepo,
+		datasetWriter,
+		objectStore,
+	)
+	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine)
+
 	mux := asynq.NewServeMux()
 	mux.HandleFunc(queue.TaskHealthPing, func(_ context.Context, task *asynq.Task) error {
 		logger.Info("worker health ping consumed", "task_type", task.Type())
 		return nil
+	})
+	mux.HandleFunc(workflowqueue.TaskExecute, func(ctx context.Context, task *asynq.Task) error {
+		err := workflowTaskHandler.Handle(ctx, task)
+		if err != nil {
+			logger.Error("workflow execution task failed", "task_type", task.Type(), "error", err)
+		}
+		return err
 	})
 
 	errCh := make(chan error, 2)
