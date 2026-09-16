@@ -121,9 +121,9 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 	`, productID, workspaceID, "DP-PUBLISH-"+uuid.NewString())
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_version (
-			id, product_id, major_version, minor_version, patch_version, status,
+			id, product_id, major_version, minor_version, patch_version,
 			contract_version_id, definition_snapshot, created_at
-		) VALUES ($1,$2,1,0,0,'DRAFT',$3,'{"reference":"enterprise-activity"}'::jsonb,now())
+		) VALUES ($1,$2,1,0,0,$3,'{"reference":"enterprise-activity"}'::jsonb,now())
 	`, productVersionID, productID, contractVersionID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_asset (
