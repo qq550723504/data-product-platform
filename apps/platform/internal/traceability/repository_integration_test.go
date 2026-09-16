@@ -126,8 +126,8 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 		SourceType:   "ENTITY_MATCH_JOB",
 		SourceID:     &matchJobID,
 		Metadata: map[string]any{
-			"decision":      "CONFIRMED",
-			"policyVersion": "1.0.0",
+			"decision":       "CONFIRMED",
+			"policyVersion":  "1.0.0",
 			"reviewerReason": "verified against source registry",
 		},
 	}, evidence.Relation{ObjectType: "ENTITY_MATCH_JOB", ObjectID: matchJobID, RelationType: "SUPPORTS"},
