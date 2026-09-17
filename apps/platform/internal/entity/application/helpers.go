@@ -121,6 +121,7 @@ func mappingFromCandidate(job domain.MatchJob, candidate domain.MatchCandidate, 
 	}
 	return domain.EntityMapping{
 		ID:                 uuid.New(),
+		WorkspaceID:        job.WorkspaceID,
 		EntityID:           *candidate.CandidateEntityID,
 		SourceType:         job.SourceType,
 		SourceRef:          job.SourceRef,

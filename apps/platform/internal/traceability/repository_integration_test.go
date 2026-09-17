@@ -153,11 +153,11 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 
 	mustExec(t, ctx, pool, `
 		INSERT INTO entity_mapping (
-			id, entity_id, source_type, source_ref, source_key, source_name, match_method,
+			id, workspace_id, entity_id, source_type, source_ref, source_key, source_name, match_method,
 			match_rule_id, match_policy_version, confidence, status, reviewer_reason, evidence_id
-		) VALUES ($1,$2,'CSV','enterprise.csv','SRC-001','示例科技有限公司','MANUAL_REVIEW',
-		          'REVIEW-001','1.0.0',1.0,'CONFIRMED','verified against source registry',$3)
-	`, mappingID, entityID, entityEvidence.ID)
+		) VALUES ($1,$2,$3,'CSV','enterprise.csv','SRC-001','示例科技有限公司','MANUAL_REVIEW',
+		          'REVIEW-001','1.0.0',1.0,'CONFIRMED','verified against source registry',$4)
+	`, mappingID, workspaceID, entityID, entityEvidence.ID)
 
 	legacyMetadata := map[string]any{"source": "legacy-import"}
 	legacyHash, err := evidence.ComputeHash(evidence.Record{Metadata: legacyMetadata}, evidence.HashAlgorithmLegacy)

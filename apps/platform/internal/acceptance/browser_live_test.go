@@ -163,7 +163,7 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 			t.Fatalf("candidate %s has no persisted review evidence with the browser reason", id)
 		}
 	}
-	mapping, err := entityRepo.GetMappingBySource(ctx, "CSV", enterpriseName, "ENT-005")
+	mapping, err := entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", enterpriseName, "ENT-005")
 	liveOK(t, err, "read persisted alias mapping")
 	if mapping.ReviewedBy == nil || *mapping.ReviewedBy != reviewerID || mapping.ReviewerReason != reason || mapping.EvidenceID == nil {
 		t.Fatalf("persisted mapping lost browser reviewer/reason/evidence: %+v", mapping)

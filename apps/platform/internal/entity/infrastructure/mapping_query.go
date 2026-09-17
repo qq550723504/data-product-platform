@@ -10,18 +10,22 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 )
 
-func (r *PostgresRepository) GetMappingBySource(ctx context.Context, sourceType, sourceRef, sourceKey string) (domain.EntityMapping, error) {
+// GetMappingBySource resolves the current mapping for one source triple inside a
+// workspace. The workspace is mandatory: the same external source key can be
+// mapped independently by different workspaces, so a workspace-less lookup would
+// be able to return another workspace's mapping.
+func (r *PostgresRepository) GetMappingBySource(ctx context.Context, workspaceID uuid.UUID, sourceType, sourceRef, sourceKey string) (domain.EntityMapping, error) {
 	var mapping domain.EntityMapping
 	err := r.pool.QueryRow(ctx, `
-		SELECT id, entity_id, source_type, source_ref, source_key, COALESCE(source_name,''),
+		SELECT id, workspace_id, entity_id, source_type, source_ref, source_key, COALESCE(source_name,''),
 		       match_method, COALESCE(match_rule_id,''), match_policy_version,
 		       match_engine_name, match_engine_version, match_model_version,
 		       COALESCE(confidence,0), status, reviewed_by, reviewed_at,
 		       COALESCE(reviewer_reason,''), evidence_id, created_at
 		FROM entity_mapping
-		WHERE source_type=$1 AND source_ref=$2 AND source_key=$3
-	`, sourceType, sourceRef, sourceKey).Scan(
-		&mapping.ID, &mapping.EntityID, &mapping.SourceType, &mapping.SourceRef, &mapping.SourceKey,
+		WHERE workspace_id=$1 AND source_type=$2 AND source_ref=$3 AND source_key=$4
+	`, workspaceID, sourceType, sourceRef, sourceKey).Scan(
+		&mapping.ID, &mapping.WorkspaceID, &mapping.EntityID, &mapping.SourceType, &mapping.SourceRef, &mapping.SourceKey,
 		&mapping.SourceName, &mapping.MatchMethod, &mapping.MatchRuleID, &mapping.MatchPolicyVersion,
 		&mapping.MatchEngineName, &mapping.MatchEngineVersion, &mapping.MatchModelVersion,
 		&mapping.Confidence, &mapping.Status, &mapping.ReviewedBy, &mapping.ReviewedAt,
@@ -36,17 +40,20 @@ func (r *PostgresRepository) GetMappingBySource(ctx context.Context, sourceType,
 	return mapping, nil
 }
 
-func (r *PostgresRepository) ListMappingsByEntity(ctx context.Context, entityID uuid.UUID) ([]domain.EntityMapping, error) {
+// ListMappingsByEntity lists the current mappings of one entity. The workspace
+// filter keeps a cross-workspace entity id from returning mappings that do not
+// belong to the caller's workspace.
+func (r *PostgresRepository) ListMappingsByEntity(ctx context.Context, workspaceID, entityID uuid.UUID) ([]domain.EntityMapping, error) {
 	rows, err := r.pool.Query(ctx, `
-		SELECT id, entity_id, source_type, source_ref, source_key, COALESCE(source_name,''),
+		SELECT id, workspace_id, entity_id, source_type, source_ref, source_key, COALESCE(source_name,''),
 		       match_method, COALESCE(match_rule_id,''), match_policy_version,
 		       match_engine_name, match_engine_version, match_model_version,
 		       COALESCE(confidence,0), status, reviewed_by, reviewed_at,
 		       COALESCE(reviewer_reason,''), evidence_id, created_at
 		FROM entity_mapping
-		WHERE entity_id=$1
+		WHERE workspace_id=$1 AND entity_id=$2
 		ORDER BY source_type, source_ref, source_key
-	`, entityID)
+	`, workspaceID, entityID)
 	if err != nil {
 		return nil, fmt.Errorf("list entity mappings: %w", err)
 	}
@@ -56,7 +63,7 @@ func (r *PostgresRepository) ListMappingsByEntity(ctx context.Context, entityID 
 	for rows.Next() {
 		var mapping domain.EntityMapping
 		if err := rows.Scan(
-			&mapping.ID, &mapping.EntityID, &mapping.SourceType, &mapping.SourceRef, &mapping.SourceKey,
+			&mapping.ID, &mapping.WorkspaceID, &mapping.EntityID, &mapping.SourceType, &mapping.SourceRef, &mapping.SourceKey,
 			&mapping.SourceName, &mapping.MatchMethod, &mapping.MatchRuleID, &mapping.MatchPolicyVersion,
 			&mapping.MatchEngineName, &mapping.MatchEngineVersion, &mapping.MatchModelVersion,
 			&mapping.Confidence, &mapping.Status, &mapping.ReviewedBy, &mapping.ReviewedAt,
@@ -68,6 +75,46 @@ func (r *PostgresRepository) ListMappingsByEntity(ctx context.Context, entityID 
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("iterate entity mappings: %w", err)
+	}
+	return result, nil
+}
+
+// ListMappingDecisions returns the immutable decision history for one source
+// triple, oldest first. Prior decisions are never overwritten, so callers can
+// reconstruct how the current mapping was reached.
+func (r *PostgresRepository) ListMappingDecisions(ctx context.Context, workspaceID uuid.UUID, sourceType, sourceRef, sourceKey string) ([]domain.MappingDecision, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key,
+		       COALESCE(source_name,''), match_method, COALESCE(match_rule_id,''), match_policy_version,
+		       match_engine_name, match_engine_version, match_model_version,
+		       COALESCE(confidence,0), status, reviewed_by, reviewed_at,
+		       COALESCE(reviewer_reason,''), evidence_id, decided_at, decided_by
+		FROM entity_mapping_decision
+		WHERE workspace_id=$1 AND source_type=$2 AND source_ref=$3 AND source_key=$4
+		ORDER BY decided_seq
+	`, workspaceID, sourceType, sourceRef, sourceKey)
+	if err != nil {
+		return nil, fmt.Errorf("list entity mapping decisions: %w", err)
+	}
+	defer rows.Close()
+
+	result := make([]domain.MappingDecision, 0)
+	for rows.Next() {
+		var decision domain.MappingDecision
+		if err := rows.Scan(
+			&decision.ID, &decision.WorkspaceID, &decision.MappingID, &decision.EntityID,
+			&decision.SourceType, &decision.SourceRef, &decision.SourceKey,
+			&decision.SourceName, &decision.MatchMethod, &decision.MatchRuleID, &decision.MatchPolicyVersion,
+			&decision.MatchEngineName, &decision.MatchEngineVersion, &decision.MatchModelVersion,
+			&decision.Confidence, &decision.Status, &decision.ReviewedBy, &decision.ReviewedAt,
+			&decision.ReviewerReason, &decision.EvidenceID, &decision.DecidedAt, &decision.DecidedBy,
+		); err != nil {
+			return nil, fmt.Errorf("scan entity mapping decision: %w", err)
+		}
+		result = append(result, decision)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate entity mapping decisions: %w", err)
 	}
 	return result, nil
 }

@@ -59,6 +59,9 @@ var (
 	// ErrOutputDatasetType rejects entity resolution output written into a
 	// dataset that is not a STANDARDIZED dataset.
 	ErrOutputDatasetType = errors.New("entity resolution output dataset must be STANDARDIZED")
+	// ErrMappingWorkspaceRequired rejects a mapping that is not bound to a
+	// workspace, because mappings are only unique inside one workspace.
+	ErrMappingWorkspaceRequired = errors.New("entity mapping workspace is required")
 )
 
 type EntityType struct {
@@ -87,6 +90,7 @@ type Entity struct {
 
 type EntityMapping struct {
 	ID                 uuid.UUID
+	WorkspaceID        uuid.UUID
 	EntityID           uuid.UUID
 	SourceType         string
 	SourceRef          string
@@ -105,6 +109,34 @@ type EntityMapping struct {
 	ReviewerReason     string
 	EvidenceID         *uuid.UUID
 	CreatedAt          time.Time
+}
+
+// MappingDecision is one immutable entry in the decision history of a mapping.
+// The current projection lives in EntityMapping; every accepted decision is also
+// appended here so prior decisions are never overwritten.
+type MappingDecision struct {
+	ID                 uuid.UUID
+	WorkspaceID        uuid.UUID
+	MappingID          uuid.UUID
+	EntityID           uuid.UUID
+	SourceType         string
+	SourceRef          string
+	SourceKey          string
+	SourceName         string
+	MatchMethod        string
+	MatchRuleID        string
+	MatchPolicyVersion string
+	MatchEngineName    string
+	MatchEngineVersion string
+	MatchModelVersion  string
+	Confidence         float64
+	Status             MappingStatus
+	ReviewedBy         *uuid.UUID
+	ReviewedAt         *time.Time
+	ReviewerReason     string
+	EvidenceID         *uuid.UUID
+	DecidedAt          time.Time
+	DecidedBy          *uuid.UUID
 }
 
 type MatchJob struct {
