@@ -4,6 +4,11 @@ import { ReviewQueue } from "@/components/review-queue";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 import { reviewConfigurationError } from "@/lib/review-command";
 
+// POC workspace/reviewer settings are deployment-time server configuration.
+// Do not freeze the SetupRequired/read-only branch during `next build`; the
+// same production artifact must be usable with different trusted runtime envs.
+export const dynamic = "force-dynamic";
+
 export default async function ReviewsPage({ searchParams }: { searchParams: Promise<{ offset?: string }> }) {
   if (!configuredWorkspaceId()) {
     return <><PageHeader eyebrow="Entity Resolution" title="实体审核" description="低置信度候选进入统一人工审核队列。" /><SetupRequired /></>;
