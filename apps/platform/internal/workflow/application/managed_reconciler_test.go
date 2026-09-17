@@ -76,7 +76,7 @@ func (b *fakeManagedBridge) Finalize(context.Context, ProcessingRequest, EngineR
 	return ProcessingResult{
 		OutputDatasetVersionID: b.outputID,
 		EngineExecutionID:      "hop-run-1",
-		Metrics:                 map[string]any{"outputReused": false},
+		Metrics:                map[string]any{"outputReused": false},
 	}, nil
 }
 
@@ -84,7 +84,7 @@ func TestManagedReconcilerRetriesFinalizationAfterRemoteSuccess(t *testing.T) {
 	execution := runningHopExecution()
 	repo := &fakeManagedRepo{
 		execution: execution,
-		version:   domain.WorkflowVersion{
+		version: domain.WorkflowVersion{
 			ID: execution.WorkflowVersionID,
 		},
 	}
