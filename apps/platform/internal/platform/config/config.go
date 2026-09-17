@@ -13,6 +13,7 @@ type Config struct {
 	IndustryPackRoot string
 	Redis            RedisConfig
 	Storage          StorageConfig
+	OpenMetadata     OpenMetadataConfig
 }
 
 type RedisConfig struct {
@@ -29,6 +30,13 @@ type StorageConfig struct {
 	UseSSL    bool
 }
 
+type OpenMetadataConfig struct {
+	Enabled bool
+	BaseURL string
+	Token   string
+	Domain  string
+}
+
 func Load() (Config, error) {
 	redisDB, err := intEnv("REDIS_DB", 0)
 	if err != nil {
@@ -36,6 +44,10 @@ func Load() (Config, error) {
 	}
 
 	useSSL, err := boolEnv("OBJECT_STORAGE_USE_SSL", false)
+	if err != nil {
+		return Config{}, err
+	}
+	openMetadataEnabled, err := boolEnv("OPENMETADATA_ENABLED", false)
 	if err != nil {
 		return Config{}, err
 	}
@@ -57,6 +69,12 @@ func Load() (Config, error) {
 			Bucket:    stringEnv("OBJECT_STORAGE_BUCKET", "data-product-platform"),
 			UseSSL:    useSSL,
 		},
+		OpenMetadata: OpenMetadataConfig{
+			Enabled: openMetadataEnabled,
+			BaseURL: os.Getenv("OPENMETADATA_BASE_URL"),
+			Token:   os.Getenv("OPENMETADATA_TOKEN"),
+			Domain:  os.Getenv("OPENMETADATA_DOMAIN"),
+		},
 	}
 
 	if cfg.PostgresDSN == "" {
@@ -70,6 +88,14 @@ func Load() (Config, error) {
 	}
 	if cfg.IndustryPackRoot == "" {
 		return Config{}, fmt.Errorf("INDUSTRY_PACK_ROOT must not be empty")
+	}
+	if cfg.OpenMetadata.Enabled {
+		if cfg.OpenMetadata.BaseURL == "" {
+			return Config{}, fmt.Errorf("OPENMETADATA_BASE_URL must not be empty when OpenMetadata is enabled")
+		}
+		if cfg.OpenMetadata.Domain == "" {
+			return Config{}, fmt.Errorf("OPENMETADATA_DOMAIN must not be empty when OpenMetadata is enabled")
+		}
 	}
 
 	return cfg, nil
