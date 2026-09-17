@@ -137,7 +137,15 @@ func (h *Handler) listDatasetVersions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dataset, err := h.repo.GetDataset(r.Context(), datasetID)
-	if err != nil || dataset.WorkspaceID != workspaceID {
+	if err != nil {
+		if errors.Is(err, readmodel.ErrNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "DATASET_NOT_FOUND", "dataset not found in workspace", nil)
+			return
+		}
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "DATASET_READ_FAILED", err.Error(), nil)
+		return
+	}
+	if dataset.WorkspaceID != workspaceID {
 		httpserver.WriteError(w, r, http.StatusNotFound, "DATASET_NOT_FOUND", "dataset not found in workspace", nil)
 		return
 	}
