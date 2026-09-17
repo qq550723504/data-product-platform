@@ -11,10 +11,11 @@ import (
 )
 
 type fakeLookup struct {
-	byKey  *domain.Entity
-	byName *domain.Entity
-	legal  []domain.Entity
-	active []domain.Entity
+	byKey     *domain.Entity
+	byName    *domain.Entity
+	legal     []domain.Entity
+	active    []domain.Entity
+	activeErr error
 }
 
 func (f *fakeLookup) FindByCanonicalKey(context.Context, uuid.UUID, string) (*domain.Entity, error) {
@@ -27,6 +28,9 @@ func (f *fakeLookup) ListByLegalRepresentative(context.Context, uuid.UUID, strin
 	return append([]domain.Entity(nil), f.legal...), nil
 }
 func (f *fakeLookup) ListActive(context.Context, uuid.UUID) ([]domain.Entity, error) {
+	if f.activeErr != nil {
+		return nil, f.activeErr
+	}
 	return append([]domain.Entity(nil), f.active...), nil
 }
 
@@ -149,6 +153,25 @@ func TestCandidateEngineFailureFallsBackToDeterministicReview(t *testing.T) {
 	}
 	if result.Decision != domain.DecisionReview || result.EngineName != ruleEngineName || result.RuleID != "COMPANY-NAME-LEGAL-REVIEW" {
 		t.Fatalf("expected deterministic REVIEW fallback, got %#v", result)
+	}
+}
+
+func TestCandidateReferenceLookupFailureIsPropagated(t *testing.T) {
+	lookupErr := errors.New("database unavailable")
+	lookup := &fakeLookup{activeErr: lookupErr}
+	generator := &fakeCandidateGenerator{
+		descriptor: resolution.EngineDescriptor{Name: "SPLINK", Version: "4.0.17", ModelVersion: "1.0.0"},
+	}
+
+	_, err := NewEngineWithCandidateGenerator(lookup, generator).Match(context.Background(), uuid.New(), NormalizedCompany{
+		SourceCompanyID: "SRC-LOOKUP-FAIL",
+		CompanyName:     "UNKNOWN COMPANY",
+	}, testPolicy())
+	if !errors.Is(err, lookupErr) {
+		t.Fatalf("expected Core lookup failure to propagate, got %v", err)
+	}
+	if generator.calls != 0 {
+		t.Fatalf("candidate generator must not run after reference lookup failure, calls=%d", generator.calls)
 	}
 }
 
