@@ -1,0 +1,17 @@
+**
+!apps/
+!apps/web/
+!apps/web/**
+!deploy/
+!deploy/demo/
+!deploy/demo/start-web.mjs
+**/.env*
+**/node_modules
+**/.next
+**/.git
+**/.artifacts
+**/.review-tests
+**/.release-tests
+**/.trace-tests
+**/test-results
+**/playwright-report

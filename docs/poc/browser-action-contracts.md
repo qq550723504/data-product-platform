@@ -1,6 +1,6 @@
 # Browser action contracts and Release readiness hardening
 
-Follow-up: #85, #75, #13. This increment preserves the ProductRelease and trace
+Follow-up: #85, #75, #13. Consolidation details: `pr-consolidation.md`. This increment preserves the ProductRelease and trace
 features from #81/#83. It does not implement a new domain or a production IAM layer.
 
 ## Fixed boundary mismatch
@@ -20,9 +20,9 @@ gap was not a demonstrated bypass of Core's publish validation.
 
 | Layer | What it establishes | What it does not establish |
 | --- | --- | --- |
-| 34 new Node regressions | Runtime response validation and no publish POST for contradictory/incomplete readiness | Browser hydration or actual Core behavior |
+| 39 Node readiness regressions | Runtime response validation and no publish POST for contradictory/incomplete readiness | Browser hydration or actual Core behavior |
 | 7 fixture-server contracts | Deterministic test fixture controls and HTTP request observation | Real database state, audit or evidence |
-| 12 Playwright Chromium cases | Built Next UI, populated review/release forms, real Server Actions, HTTP request headers and refresh/error handling | Real Go/PostgreSQL/Hop end-to-end acceptance |
+| 13 Playwright Chromium cases | Built Next UI, populated review/release forms, real Server Actions, HTTP request headers and refresh/error handling | Real Go/PostgreSQL/Hop end-to-end acceptance |
 
 The browser suite covers readonly runtime flags, whitespace/mandatory reasons,
 confirm/reject, eight displayed gates, successful publish, empty/missing/null

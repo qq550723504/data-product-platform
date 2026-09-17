@@ -1,0 +1,16 @@
+FROM node:22-bookworm-slim AS build
+WORKDIR /app
+COPY apps/web/package*.json ./
+RUN npm install --no-audit --no-fund
+COPY apps/web/ ./
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build && mkdir -p public && \
+    cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/
+
+FROM node:22-bookworm-slim
+WORKDIR /app
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
+COPY --from=build --chown=node:node /app/.next/standalone/ ./
+COPY --chown=node:node deploy/demo/start-web.mjs ./demo-start.mjs
+USER node
+CMD ["node", "demo-start.mjs"]

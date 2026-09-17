@@ -12,10 +12,12 @@ const invalid = [
   ["array checks", { ...ready, checks: [] }],
   ["missing blockers", { overall: "READY", checks }],
   ["null blockers", { ...ready, blockers: null }],
+  ["string blockers", { ...ready, blockers: "none" }],
   ["invalid blocker", { ...ready, blockers: [42] }],
   ["remaining blocker", { ...ready, blockers: ["RIGHTS_REVOKED"] }],
   ["blank blocker", { ...ready, blockers: [""] }],
   ["unknown gate pending", { ...ready, checks: { ...checks, futureGate: "PENDING" } }],
+  ...["FAIL", "REVIEW", null, true].map((status) => [`extra gate ${String(status)}`, { ...ready, checks: { ...checks, futureGate: status } }]),
   ...gates.flatMap((gate) => [
     [`missing ${gate}`, { ...ready, checks: Object.fromEntries(Object.entries(checks).filter(([name]) => name !== gate)) }],
     [`failed ${gate}`, { ...ready, checks: { ...checks, [gate]: "FAIL" } }],

@@ -19,6 +19,7 @@ test.beforeEach(async ({ request }) => { await scenario(request, "ready", true);
 test("readonly runtime never enables review or publishing", async ({ page, request }) => {
   await page.goto("http://127.0.0.1:3101/reviews");
   await expect(page.getByText("当前为只读审核队列")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "测试来源记录", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "确认匹配" })).toHaveCount(0);
   await page.goto(`http://127.0.0.1:3101${productPath}`);
   await expect(page.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
@@ -37,6 +38,7 @@ for (const [decision, label, status] of [["confirm", "确认匹配", "CONFIRMED"
     await form.getByLabel("审核理由（必填）").fill("  已核对测试来源  ");
     await button.click();
     await expect(page.getByText("当前页没有待审核候选")).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: "候选；任务状态：SUCCEEDED" }).first()).toBeVisible();
     const result = await state(request);
     expect(result.candidateStatus).toBe(status);
     const commands = await writes(request);
@@ -64,7 +66,7 @@ test("populated eight-gate readiness publishes once with a server idempotency ke
   expect(await writes(request)).toHaveLength(1);
 });
 
-for (const value of ["empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate"]) {
+for (const value of ["empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights"]) {
   test(`${value}: no false success banner or enabled publish button`, async ({ page, request }) => {
     await scenario(request, value);
     await page.goto(productPath);

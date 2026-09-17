@@ -13,7 +13,7 @@ export const ids = {
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
-const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "review-conflict", "publish-conflict"]);
+const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "review-conflict", "publish-conflict"]);
 const pass = { production: "PASS", dataset: "PASS", rights: "PASS", quality: "PASS", compliance: "PASS", contract: "PASS", evidence: "PASS", delivery: "PASS" };
 function readiness(scenario) {
   const result = { releaseId: ids.release, overall: "READY", checks: { ...pass }, blockers: [], details: {} };
@@ -22,6 +22,7 @@ function readiness(scenario) {
   if (scenario === "missing-evidence") delete result.checks.evidence;
   if (scenario === "blocker") result.blockers = ["RIGHTS_REVOKED"];
   if (scenario === "future-gate") result.checks.futureGate = "FAIL";
+  if (scenario === "failed-rights") result.checks.rights = "FAIL";
   return result;
 }
 async function bodyOf(req) {

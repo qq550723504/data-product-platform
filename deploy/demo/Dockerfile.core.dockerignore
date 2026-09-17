@@ -1,0 +1,15 @@
+**
+!apps/
+!apps/platform/
+!apps/platform/**
+!industry-packs/
+!industry-packs/**
+!examples/
+!examples/enterprise-activity/
+!examples/enterprise-activity/**
+!migrations/
+!migrations/**
+**/.env*
+**/node_modules
+**/.git
+**/.artifacts

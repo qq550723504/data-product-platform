@@ -9,7 +9,7 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test:reviews": "tsc lib/review-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .review-tests && node --test tests/review-command.test.mjs",
-    "test:releases": "tsc lib/release-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .release-tests && node --test tests/release-command.test.mjs",
+    "test:releases": "tsc lib/release-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .release-tests && node --test tests/release-command.test.mjs tests/release-readiness.test.mjs",
     "test:trace": "tsc lib/trace-scope.ts lib/traceability.ts lib/pagination.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .trace-tests && node --test tests/trace-scope.test.mjs tests/pagination.test.mjs"
   },
   "dependencies": {
