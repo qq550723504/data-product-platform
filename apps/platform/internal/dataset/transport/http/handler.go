@@ -100,6 +100,10 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 			status = http.StatusBadRequest
 			code = "INVALID_DATASET"
 		}
+		if errors.Is(err, domain.ErrSourceResourceWorkspace) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "SOURCE_RESOURCE_WORKSPACE_MISMATCH", "source resource must belong to the dataset workspace", nil)
+			return
+		}
 		httpserver.WriteError(w, r, status, code, err.Error(), nil)
 		return
 	}

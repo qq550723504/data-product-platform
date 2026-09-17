@@ -112,7 +112,7 @@ func main() {
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
 	datasetWriter := datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore)
 	datasetHandler := datasethttp.NewHandler(
-		datasetapp.NewCreateDatasetService(txManager, datasetRepo),
+		datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceRepo),
 		datasetWriter,
 		datasetapp.NewInvalidateVersionService(txManager, datasetRepo),
 		datasetRepo,

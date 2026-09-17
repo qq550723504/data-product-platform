@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -20,6 +21,7 @@ import (
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 )
 
 type memoryStore struct {
@@ -71,7 +73,7 @@ func TestCompanyEntityResolutionReferenceSlice(t *testing.T) {
 	txManager := transaction.NewManager(pool)
 	datasetRepo := datasetinfra.NewPostgresRepository(pool)
 	store := newMemoryStore()
-	createDataset := application.NewCreateDatasetService(txManager, datasetRepo)
+	createDataset := application.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
 	uploadDataset := application.NewUploadVersionService(txManager, datasetRepo, store)
 	entityRepo := entityinfra.NewPostgresRepository(pool)
 
@@ -186,6 +188,126 @@ func TestCompanyEntityResolutionReferenceSlice(t *testing.T) {
 	}
 	if evidenceCount != 1 {
 		t.Fatalf("review evidence count = %d, want 1", evidenceCount)
+	}
+}
+
+func TestMatchJobRejectsDatasetsFromAnotherWorkspaceOrType(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	store := newMemoryStore()
+	createDataset := application.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
+	uploadDataset := application.NewUploadVersionService(txManager, datasetRepo, store)
+	entityRepo := entityinfra.NewPostgresRepository(pool)
+
+	workspaceID := uuid.New()
+	otherWorkspaceID := uuid.New()
+	rawDataset, err := createDataset.Handle(ctx, application.CreateDatasetCommand{
+		WorkspaceID: workspaceID,
+		Code:        "ENTERPRISE-RAW-" + uuid.NewString(),
+		Name:        "Enterprise RAW",
+		DatasetType: datasetdomain.DatasetTypeRaw,
+		TraceID:     "entity-tenant-boundary",
+	})
+	if err != nil {
+		t.Fatalf("create raw dataset: %v", err)
+	}
+	standardizedDataset, err := createDataset.Handle(ctx, application.CreateDatasetCommand{
+		WorkspaceID: workspaceID,
+		Code:        "ENTERPRISE-STD-" + uuid.NewString(),
+		Name:        "Enterprise standardized",
+		DatasetType: datasetdomain.DatasetTypeStandardized,
+		TraceID:     "entity-tenant-boundary",
+	})
+	if err != nil {
+		t.Fatalf("create standardized dataset: %v", err)
+	}
+	foreignDataset, err := createDataset.Handle(ctx, application.CreateDatasetCommand{
+		WorkspaceID: otherWorkspaceID,
+		Code:        "ENTERPRISE-STD-FOREIGN-" + uuid.NewString(),
+		Name:        "Foreign standardized",
+		DatasetType: datasetdomain.DatasetTypeStandardized,
+		TraceID:     "entity-tenant-boundary",
+	})
+	if err != nil {
+		t.Fatalf("create foreign standardized dataset: %v", err)
+	}
+
+	rawVersion, err := uploadDataset.Handle(ctx, application.UploadVersionCommand{
+		DatasetID:   rawDataset.ID,
+		Filename:    "enterprise.csv",
+		ContentType: "text/csv",
+		Content:     readFixture(t, "enterprise.csv"),
+		TraceID:     "entity-tenant-boundary",
+	})
+	if err != nil {
+		t.Fatalf("upload raw dataset: %v", err)
+	}
+
+	service := entityapp.NewMatchService(repoPath(t, "industry-packs"), txManager, entityRepo, datasetRepo, uploadDataset, store)
+	base := entityapp.StartJobCommand{
+		InputDatasetVersionID: rawVersion.ID,
+		SourceType:            "CSV",
+		SourceRef:             "enterprise.csv",
+		SourceRole:            domain.SourceAnchor,
+		PolicyRef:             "park/matching/company-match-policy-v1.yaml",
+		TraceID:               "entity-tenant-boundary",
+	}
+
+	// A job declared in another workspace must not consume this workspace's data.
+	foreignInput := base
+	foreignInput.WorkspaceID = otherWorkspaceID
+	foreignInput.OutputDatasetID = foreignDataset.ID
+	if _, err := service.Start(ctx, foreignInput); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
+		t.Fatalf("cross workspace input error = %v, want ErrDatasetWorkspace", err)
+	}
+
+	// The output dataset must belong to the same workspace as the job.
+	foreignOutput := base
+	foreignOutput.WorkspaceID = workspaceID
+	foreignOutput.OutputDatasetID = foreignDataset.ID
+	if _, err := service.Start(ctx, foreignOutput); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
+		t.Fatalf("cross workspace output error = %v, want ErrDatasetWorkspace", err)
+	}
+
+	// Entity resolution writes STANDARDIZED data; RAW output is a domain error.
+	wrongType := base
+	wrongType.WorkspaceID = workspaceID
+	wrongType.OutputDatasetID = rawDataset.ID
+	if _, err := service.Start(ctx, wrongType); !errors.Is(err, domain.ErrOutputDatasetType) {
+		t.Fatalf("non standardized output error = %v, want ErrOutputDatasetType", err)
+	}
+
+	var jobCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM entity_match_job WHERE workspace_id IN ($1, $2)`, workspaceID, otherWorkspaceID).Scan(&jobCount); err != nil {
+		t.Fatalf("count match jobs: %v", err)
+	}
+	if jobCount != 0 {
+		t.Fatalf("match jobs created for rejected commands = %d, want 0", jobCount)
+	}
+
+	// Positive control: the guards must not block a legitimate command.
+	valid := base
+	valid.WorkspaceID = workspaceID
+	valid.OutputDatasetID = standardizedDataset.ID
+	if _, err := service.Start(ctx, valid); err != nil {
+		t.Fatalf("start valid match job: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM entity_match_job WHERE workspace_id = $1`, workspaceID).Scan(&jobCount); err != nil {
+		t.Fatalf("count match jobs after valid command: %v", err)
+	}
+	if jobCount != 1 {
+		t.Fatalf("match jobs after valid command = %d, want 1", jobCount)
 	}
 }
 

@@ -77,7 +77,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 	resourceRepo := resourceinfra.NewPostgresRepository()
 	resourceService := resourceapp.NewCreateService(txManager, resourceRepo)
 	datasetRepo := datasetinfra.NewPostgresRepository(pool)
-	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo)
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceRepo)
 	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, store)
 	entityRepo := entityinfra.NewPostgresRepository(pool)
 	entityService := entityapp.NewMatchService(industryPackRoot, txManager, entityRepo, datasetRepo, uploadDataset, store)

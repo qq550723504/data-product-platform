@@ -41,6 +41,11 @@ var (
 	ErrInvalidTransition    = errors.New("invalid dataset version state transition")
 	ErrImmutableVersion     = errors.New("dataset version is immutable")
 	ErrInvalidReadyMetadata = errors.New("ready dataset version requires storage URI and checksum")
+	// ErrSourceResourceWorkspace rejects a dataset whose source DataResource
+	// belongs to another workspace.
+	ErrSourceResourceWorkspace = errors.New("source resource belongs to a different workspace")
+	// ErrDatasetWorkspace rejects work that mixes datasets from another workspace.
+	ErrDatasetWorkspace = errors.New("dataset belongs to a different workspace")
 )
 
 type Dataset struct {

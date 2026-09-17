@@ -13,6 +13,7 @@ import (
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
@@ -55,7 +56,7 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 
 	txManager := transaction.NewManager(pool)
 	datasetRepo := datasetinfra.NewPostgresRepository(pool)
-	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo)
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
 	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, integrationStore{})
 
 	workspaceID := uuid.New()

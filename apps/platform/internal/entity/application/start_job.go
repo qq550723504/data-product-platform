@@ -86,6 +86,28 @@ func (s *MatchService) Start(ctx context.Context, cmd StartJobCommand) (domain.M
 		return domain.MatchJob{}, fmt.Errorf("input DatasetVersion must be READY")
 	}
 
+	// A match job reads one DatasetVersion and writes another Dataset. Both, and
+	// the job itself, must belong to the same workspace: a foreign key proves
+	// they exist but not who owns them, so a job declared in one workspace could
+	// otherwise consume another tenant's data and publish into its datasets.
+	inputWorkspace, _, err := s.datasetRepo.GetWorkspaceAndType(ctx, inputVersion.DatasetID)
+	if err != nil {
+		return domain.MatchJob{}, fmt.Errorf("resolve input DatasetVersion dataset: %w", err)
+	}
+	if inputWorkspace != cmd.WorkspaceID {
+		return domain.MatchJob{}, fmt.Errorf("%w: input DatasetVersion %s belongs to workspace %s", datasetdomain.ErrDatasetWorkspace, cmd.InputDatasetVersionID, inputWorkspace)
+	}
+	outputWorkspace, outputType, err := s.datasetRepo.GetWorkspaceAndType(ctx, cmd.OutputDatasetID)
+	if err != nil {
+		return domain.MatchJob{}, fmt.Errorf("resolve output dataset: %w", err)
+	}
+	if outputWorkspace != cmd.WorkspaceID {
+		return domain.MatchJob{}, fmt.Errorf("%w: output dataset %s belongs to workspace %s", datasetdomain.ErrDatasetWorkspace, cmd.OutputDatasetID, outputWorkspace)
+	}
+	if outputType != datasetdomain.DatasetTypeStandardized {
+		return domain.MatchJob{}, fmt.Errorf("%w: output dataset %s is %s", domain.ErrOutputDatasetType, cmd.OutputDatasetID, outputType)
+	}
+
 	entityType, err := domain.NewEntityType(cmd.WorkspaceID, policy.Spec.EntityType, "Company", cmd.PolicyRef, policy.Metadata.Version)
 	if err != nil {
 		return domain.MatchJob{}, err
