@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
@@ -25,8 +26,57 @@ type ProcessingResult struct {
 	Metrics                map[string]any
 }
 
-// ProcessingEngine is the replaceable execution SPI. The initial adapter is native;
-// Apache Hop and other engines can implement this interface in later sprints.
+// ProcessingEngine is the synchronous execution SPI used by the current native engine.
+// Remote engines can be bridged to this contract by an orchestrator/reconciler without
+// changing Workflow, Dataset, ProductVersion or ProductRelease domain models.
 type ProcessingEngine interface {
 	Execute(ctx context.Context, request ProcessingRequest) (ProcessingResult, error)
+}
+
+type EngineRunState string
+
+const (
+	EngineRunQueued    EngineRunState = "QUEUED"
+	EngineRunRunning   EngineRunState = "RUNNING"
+	EngineRunSucceeded EngineRunState = "SUCCEEDED"
+	EngineRunFailed    EngineRunState = "FAILED"
+	EngineRunCancelled EngineRunState = "CANCELLED"
+	EngineRunUnknown   EngineRunState = "UNKNOWN"
+)
+
+// ManagedSubmitRequest is an opaque provider-neutral remote execution request.
+// Definition contains the engine-specific immutable execution package; Core never stores
+// or interprets its format. DefinitionRef is a stable human-readable reference for audit.
+type ManagedSubmitRequest struct {
+	Name          string
+	DefinitionRef string
+	Definition    []byte
+	ContentType   string
+	Parameters    map[string]string
+}
+
+type EngineRun struct {
+	ID           string
+	Name         string
+	State        EngineRunState
+	StartedAt    *time.Time
+	FinishedAt   *time.Time
+	ErrorMessage string
+	Metrics      map[string]any
+}
+
+type EngineLogPage struct {
+	Text       string
+	From       int
+	NextOffset int
+}
+
+// ManagedProcessingEngine models the lifecycle exposed by remote runtimes such as
+// Apache Hop Server. The external run ID remains separate from Core Execution.ID.
+type ManagedProcessingEngine interface {
+	Submit(ctx context.Context, request ManagedSubmitRequest) (EngineRun, error)
+	Status(ctx context.Context, name, runID string) (EngineRun, error)
+	Cancel(ctx context.Context, name, runID string) error
+	Logs(ctx context.Context, name, runID string, from int) (EngineLogPage, error)
+	Metrics(ctx context.Context, name, runID string) (map[string]any, error)
 }
