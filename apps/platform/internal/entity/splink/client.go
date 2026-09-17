@@ -19,6 +19,7 @@ import (
 var (
 	ErrUnavailable     = errors.New("entity resolution engine unavailable")
 	ErrInvalidResponse = errors.New("entity resolution engine returned an invalid response")
+	ErrPolicyMismatch  = errors.New("entity resolution model does not support the active matching policy")
 )
 
 type Config struct {
@@ -27,15 +28,19 @@ type Config struct {
 	ExpectedEngineVersion string
 	ModelRef              string
 	ModelVersion          string
+	PolicyRef             string
+	PolicyVersion         string
 	Timeout               time.Duration
 }
 
 type Client struct {
-	baseURL    string
-	token      string
-	descriptor resolution.EngineDescriptor
-	modelRef   string
-	httpClient *http.Client
+	baseURL       string
+	token         string
+	descriptor    resolution.EngineDescriptor
+	modelRef      string
+	policyRef     string
+	policyVersion string
+	httpClient    *http.Client
 }
 
 type Health struct {
@@ -54,8 +59,13 @@ func NewClient(cfg Config, httpClient *http.Client) (*Client, error) {
 	}
 	modelRef := strings.TrimSpace(cfg.ModelRef)
 	modelVersion := strings.TrimSpace(cfg.ModelVersion)
+	policyRef := strings.TrimSpace(cfg.PolicyRef)
+	policyVersion := strings.TrimSpace(cfg.PolicyVersion)
 	if modelRef == "" || modelVersion == "" {
 		return nil, fmt.Errorf("Splink model ref and version are required")
+	}
+	if policyRef == "" || policyVersion == "" {
+		return nil, fmt.Errorf("Splink matching policy ref and version are required")
 	}
 	timeout := cfg.Timeout
 	if timeout <= 0 {
@@ -72,8 +82,10 @@ func NewClient(cfg Config, httpClient *http.Client) (*Client, error) {
 			Version:      strings.TrimSpace(cfg.ExpectedEngineVersion),
 			ModelVersion: modelVersion,
 		},
-		modelRef:   modelRef,
-		httpClient: httpClient,
+		modelRef:      modelRef,
+		policyRef:     policyRef,
+		policyVersion: policyVersion,
+		httpClient:    httpClient,
 	}, nil
 }
 
@@ -88,16 +100,18 @@ func (c *Client) Probe(ctx context.Context) (Health, error) {
 	}
 	if !strings.EqualFold(strings.TrimSpace(health.Status), "ok") ||
 		!strings.EqualFold(strings.TrimSpace(health.EngineName), "SPLINK") ||
-		strings.TrimSpace(health.EngineVersion) == "" {
+		strings.TrimSpace(health.EngineVersion) == "" ||
+		strings.TrimSpace(health.ModelRef) == "" ||
+		strings.TrimSpace(health.ModelVersion) == "" {
 		return Health{}, fmt.Errorf("%w: health contract", ErrInvalidResponse)
 	}
 	if expected := strings.TrimSpace(c.descriptor.Version); expected != "" && health.EngineVersion != expected {
 		return Health{}, fmt.Errorf("%w: expected Splink %s, service reports %s", ErrInvalidResponse, expected, health.EngineVersion)
 	}
-	if health.ModelRef != "" && health.ModelRef != c.modelRef {
+	if health.ModelRef != c.modelRef {
 		return Health{}, fmt.Errorf("%w: expected model ref %s, service reports %s", ErrInvalidResponse, c.modelRef, health.ModelRef)
 	}
-	if health.ModelVersion != "" && health.ModelVersion != c.descriptor.ModelVersion {
+	if health.ModelVersion != c.descriptor.ModelVersion {
 		return Health{}, fmt.Errorf("%w: expected model version %s, service reports %s", ErrInvalidResponse, c.descriptor.ModelVersion, health.ModelVersion)
 	}
 	return health, nil
@@ -140,6 +154,16 @@ type candidateResponse struct {
 }
 
 func (c *Client) Generate(ctx context.Context, request resolution.CandidateRequest) ([]resolution.Candidate, error) {
+	if strings.TrimSpace(request.PolicyRef) != c.policyRef || strings.TrimSpace(request.PolicyVersion) != c.policyVersion {
+		return nil, fmt.Errorf(
+			"%w: model %s@%s is bound to policy %s@%s",
+			ErrPolicyMismatch,
+			c.modelRef,
+			c.descriptor.ModelVersion,
+			c.policyRef,
+			c.policyVersion,
+		)
+	}
 	payload := candidateRequest{
 		EntityType:    request.EntityType,
 		Source:        matchRecord{ID: request.Source.ID, Name: request.Source.Name, Fields: request.Source.Fields},
