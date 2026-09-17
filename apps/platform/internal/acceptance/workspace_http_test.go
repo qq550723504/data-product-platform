@@ -75,6 +75,11 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 	owner, foreign, actor := uuid.New(), uuid.New(), uuid.New()
 	workspaces := []uuid.UUID{owner, foreign}
 	source := mustCreateResource(t, ctx, resourceapp.NewCreateService(tx, resources), owner, "BOUNDARY", "Synthetic boundary source", &actor, "boundary-setup")
+	deletedSource := mustCreateResource(t, ctx, resourceapp.NewCreateService(tx, resources), owner, "BOUNDARY-DELETED", "Synthetic unavailable source", &actor, "boundary-setup")
+	liveOK(t, func() error {
+		_, err := pool.Exec(ctx, `UPDATE data_resource SET deleted_at=now() WHERE id=$1`, deletedSource.ID)
+		return err
+	}(), "soft-delete synthetic source fixture")
 	raw := mustCreateDataset(t, ctx, create, owner, "BOUNDARY-RAW", "RAW", datasetdomain.DatasetTypeRaw, &source.ID, &actor, "boundary-setup")
 	standardized := mustCreateDataset(t, ctx, create, owner, "BOUNDARY-STD", "STD", datasetdomain.DatasetTypeStandardized, nil, &actor, "boundary-setup")
 	foreignOutput := mustCreateDataset(t, ctx, create, foreign, "BOUNDARY-FOREIGN", "Foreign STD", datasetdomain.DatasetTypeStandardized, nil, &actor, "boundary-setup")
@@ -122,6 +127,8 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 		name, route, code string
 		body              map[string]any
 	}{
+		{"missing resource", "/api/v1/datasets", "SOURCE_RESOURCE_NOT_FOUND", map[string]any{"workspaceId": owner, "code": "BOUNDARY-MISSING", "name": "Rejected", "datasetType": "RAW", "sourceResourceId": uuid.New()}},
+		{"soft-deleted resource", "/api/v1/datasets", "SOURCE_RESOURCE_NOT_FOUND", map[string]any{"workspaceId": owner, "code": "BOUNDARY-DELETED-SOURCE", "name": "Rejected", "datasetType": "RAW", "sourceResourceId": deletedSource.ID}},
 		{"foreign resource", "/api/v1/datasets", "SOURCE_RESOURCE_WORKSPACE_MISMATCH", map[string]any{"workspaceId": foreign, "code": "BOUNDARY-BAD", "name": "Rejected", "datasetType": "RAW", "sourceResourceId": source.ID}},
 		{"foreign input", "/api/v1/entity-match-jobs", "DATASET_WORKSPACE_MISMATCH", jobBody(foreign, foreignOutput.ID)},
 		{"foreign output", "/api/v1/entity-match-jobs", "DATASET_WORKSPACE_MISMATCH", jobBody(owner, foreignOutput.ID)},
