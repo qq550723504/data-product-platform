@@ -2,6 +2,7 @@ package matching
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -15,6 +16,8 @@ const (
 	ruleEngineName    = "RULES"
 	ruleEngineVersion = "1"
 )
+
+var ErrCandidateGeneration = errors.New("probabilistic candidate generation failed")
 
 type Lookup interface {
 	FindByCanonicalKey(ctx context.Context, entityTypeID uuid.UUID, canonicalKey string) (*domain.Entity, error)
@@ -57,9 +60,9 @@ func (e *Engine) Match(ctx context.Context, entityTypeID uuid.UUID, company Norm
 		EngineName:    ruleEngineName,
 		EngineVersion: ruleEngineVersion,
 	}
+	var deterministicReview *Result
+
 	for _, rule := range rules {
-		// An unconditional UNRESOLVED rule is a deterministic fallback, not a reason
-		// to bypass an optional probabilistic candidate generator.
 		if rule.When == nil && domain.MatchDecision(rule.Decision) == domain.DecisionUnresolved {
 			fallback = Result{
 				Decision:      domain.DecisionUnresolved,
@@ -89,17 +92,39 @@ func (e *Engine) Match(ctx context.Context, entityTypeID uuid.UUID, company Norm
 		}
 		result.EngineName = ruleEngineName
 		result.EngineVersion = ruleEngineVersion
-		return result, nil
+
+		switch result.Decision {
+		case domain.DecisionAutoMatch:
+			return result, nil
+		case domain.DecisionReview:
+			if deterministicReview == nil {
+				copy := result
+				deterministicReview = &copy
+			}
+		}
 	}
 
 	if e.candidate != nil {
 		result, found, err := e.probabilisticCandidate(ctx, entityTypeID, company, policy)
 		if err != nil {
-			return Result{}, err
+			if !errors.Is(err, ErrCandidateGeneration) {
+				return Result{}, err
+			}
+		} else if found {
+			if result.Decision == domain.DecisionAutoMatch || result.Decision == domain.DecisionReview {
+				return result, nil
+			}
+			if deterministicReview == nil {
+				return result, nil
+			}
 		}
-		if found {
-			return result, nil
-		}
+		// A provider-side candidate generation failure is optional and may fall
+		// back to deterministic Core rules. Core repository/invariant failures
+		// are propagated above and must never be converted into UNRESOLVED.
+	}
+
+	if deterministicReview != nil {
+		return *deterministicReview, nil
 	}
 	return fallback, nil
 }
@@ -145,7 +170,7 @@ func (e *Engine) probabilisticCandidate(ctx context.Context, entityTypeID uuid.U
 		PolicyVersion: policy.Metadata.Version,
 	})
 	if err != nil {
-		return Result{}, false, fmt.Errorf("generate probabilistic entity candidates: %w", err)
+		return Result{}, false, fmt.Errorf("%w: %v", ErrCandidateGeneration, err)
 	}
 	if len(generated) == 0 {
 		return Result{}, false, nil
@@ -191,8 +216,6 @@ func (e *Engine) probabilisticCandidate(ctx context.Context, entityTypeID uuid.U
 		result.Decision = domain.DecisionReview
 		result.Entity = entityByID[best.EntityID]
 	default:
-		// Keep low-confidence proposals out of canonical state. The score and engine
-		// remain useful for diagnostics, while Core treats the record as unresolved.
 		result.Decision = domain.DecisionUnresolved
 	}
 	return result, true, nil

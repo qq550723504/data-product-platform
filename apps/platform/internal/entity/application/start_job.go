@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,6 +15,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/matching"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
@@ -208,8 +210,41 @@ func (s *MatchService) processRecord(ctx context.Context, job domain.MatchJob, r
 		if entity != nil {
 			candidate.CandidateEntityID = &entity.ID
 		}
+
+		if strings.TrimSpace(candidate.MatchEngineName) != "" && !strings.EqualFold(candidate.MatchEngineName, "RULES") {
+			record, err := evidence.Append(ctx, tx, evidence.Record{
+				WorkspaceID:  job.WorkspaceID,
+				EvidenceType: "ENTITY_MATCH_CANDIDATE_GENERATED",
+				Title:        "Probabilistic entity match candidate generated",
+				SourceType:   "ENTITY_MATCH_CANDIDATE",
+				SourceID:     &candidate.ID,
+				Metadata: map[string]any{
+					"jobId":              job.ID,
+					"sourceKey":          candidate.SourceKey,
+					"candidateEntityId":  candidate.CandidateEntityID,
+					"decision":           candidate.Decision,
+					"confidence":         candidate.Confidence,
+					"matchMethod":        candidate.MatchMethod,
+					"matchRuleId":        candidate.MatchRuleID,
+					"engineName":         candidate.MatchEngineName,
+					"engineVersion":      candidate.MatchEngineVersion,
+					"modelVersion":       candidate.MatchModelVersion,
+					"matchPolicyRef":     policy.Metadata.Name,
+					"matchPolicyVersion": policy.Metadata.Version,
+				},
+				CreatedBy: actorID,
+			},
+				evidence.Relation{ObjectType: "ENTITY_MATCH_JOB", ObjectID: job.ID, RelationType: "SUPPORTS"},
+				evidence.Relation{ObjectType: "ENTITY_MATCH_CANDIDATE", ObjectID: candidate.ID, RelationType: "SUPPORTS"},
+			)
+			if err != nil {
+				return err
+			}
+			candidate.EvidenceID = &record.ID
+		}
+
 		if candidate.Status == domain.CandidateAutoConfirmed && candidate.CandidateEntityID != nil {
-			mapping := mappingFromCandidate(job, candidate, domain.MappingAutoMatched, nil)
+			mapping := mappingFromCandidate(job, candidate, domain.MappingAutoMatched, candidate.EvidenceID)
 			if err := s.entityRepo.InsertMapping(ctx, tx, mapping); err != nil {
 				return err
 			}
