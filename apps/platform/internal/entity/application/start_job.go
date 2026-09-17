@@ -199,6 +199,9 @@ func (s *MatchService) processRecord(ctx context.Context, job domain.MatchJob, r
 			candidate.Status = domain.CandidateAutoConfirmed
 			candidate.MatchMethod = "ANCHOR_SEED"
 			candidate.MatchRuleID = "ANCHOR_SEED"
+			candidate.MatchEngineName = "RULES"
+			candidate.MatchEngineVersion = "1"
+			candidate.MatchModelVersion = ""
 			candidate.Confidence = 1
 		}
 

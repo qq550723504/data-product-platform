@@ -15,6 +15,7 @@ func (r *PostgresRepository) GetMappingBySource(ctx context.Context, sourceType,
 	err := r.pool.QueryRow(ctx, `
 		SELECT id, entity_id, source_type, source_ref, source_key, COALESCE(source_name,''),
 		       match_method, COALESCE(match_rule_id,''), match_policy_version,
+		       match_engine_name, match_engine_version, match_model_version,
 		       COALESCE(confidence,0), status, reviewed_by, reviewed_at,
 		       COALESCE(reviewer_reason,''), evidence_id, created_at
 		FROM entity_mapping
@@ -22,6 +23,7 @@ func (r *PostgresRepository) GetMappingBySource(ctx context.Context, sourceType,
 	`, sourceType, sourceRef, sourceKey).Scan(
 		&mapping.ID, &mapping.EntityID, &mapping.SourceType, &mapping.SourceRef, &mapping.SourceKey,
 		&mapping.SourceName, &mapping.MatchMethod, &mapping.MatchRuleID, &mapping.MatchPolicyVersion,
+		&mapping.MatchEngineName, &mapping.MatchEngineVersion, &mapping.MatchModelVersion,
 		&mapping.Confidence, &mapping.Status, &mapping.ReviewedBy, &mapping.ReviewedAt,
 		&mapping.ReviewerReason, &mapping.EvidenceID, &mapping.CreatedAt,
 	)
@@ -38,6 +40,7 @@ func (r *PostgresRepository) ListMappingsByEntity(ctx context.Context, entityID 
 	rows, err := r.pool.Query(ctx, `
 		SELECT id, entity_id, source_type, source_ref, source_key, COALESCE(source_name,''),
 		       match_method, COALESCE(match_rule_id,''), match_policy_version,
+		       match_engine_name, match_engine_version, match_model_version,
 		       COALESCE(confidence,0), status, reviewed_by, reviewed_at,
 		       COALESCE(reviewer_reason,''), evidence_id, created_at
 		FROM entity_mapping
@@ -55,6 +58,7 @@ func (r *PostgresRepository) ListMappingsByEntity(ctx context.Context, entityID 
 		if err := rows.Scan(
 			&mapping.ID, &mapping.EntityID, &mapping.SourceType, &mapping.SourceRef, &mapping.SourceKey,
 			&mapping.SourceName, &mapping.MatchMethod, &mapping.MatchRuleID, &mapping.MatchPolicyVersion,
+			&mapping.MatchEngineName, &mapping.MatchEngineVersion, &mapping.MatchModelVersion,
 			&mapping.Confidence, &mapping.Status, &mapping.ReviewedBy, &mapping.ReviewedAt,
 			&mapping.ReviewerReason, &mapping.EvidenceID, &mapping.CreatedAt,
 		); err != nil {

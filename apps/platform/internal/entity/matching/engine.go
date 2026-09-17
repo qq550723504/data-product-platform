@@ -8,35 +8,70 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/resolution"
+)
+
+const (
+	ruleEngineName    = "RULES"
+	ruleEngineVersion = "1"
 )
 
 type Lookup interface {
 	FindByCanonicalKey(ctx context.Context, entityTypeID uuid.UUID, canonicalKey string) (*domain.Entity, error)
 	FindByNameAddress(ctx context.Context, entityTypeID uuid.UUID, normalizedName, normalizedAddress string) (*domain.Entity, error)
 	ListByLegalRepresentative(ctx context.Context, entityTypeID uuid.UUID, legalRepresentative string) ([]domain.Entity, error)
+	ListActive(ctx context.Context, entityTypeID uuid.UUID) ([]domain.Entity, error)
 }
 
 type Result struct {
-	Entity     *domain.Entity
-	Decision   domain.MatchDecision
-	Method     string
-	RuleID     string
-	Confidence float64
+	Entity        *domain.Entity
+	Decision      domain.MatchDecision
+	Method        string
+	RuleID        string
+	Confidence    float64
+	EngineName    string
+	EngineVersion string
+	ModelVersion  string
 }
 
 type Engine struct {
-	lookup Lookup
+	lookup    Lookup
+	candidate resolution.CandidateGenerator
 }
 
 func NewEngine(lookup Lookup) *Engine {
 	return &Engine{lookup: lookup}
 }
 
+func NewEngineWithCandidateGenerator(lookup Lookup, generator resolution.CandidateGenerator) *Engine {
+	return &Engine{lookup: lookup, candidate: generator}
+}
+
 func (e *Engine) Match(ctx context.Context, entityTypeID uuid.UUID, company NormalizedCompany, policy Policy) (Result, error) {
 	rules := append([]Rule(nil), policy.Spec.Rules...)
 	sort.SliceStable(rules, func(i, j int) bool { return rules[i].Priority < rules[j].Priority })
 
+	fallback := Result{
+		Decision:      domain.DecisionUnresolved,
+		Method:        "NO_POLICY_RULE",
+		EngineName:    ruleEngineName,
+		EngineVersion: ruleEngineVersion,
+	}
 	for _, rule := range rules {
+		// An unconditional UNRESOLVED rule is a deterministic fallback, not a reason
+		// to bypass an optional probabilistic candidate generator.
+		if rule.When == nil && domain.MatchDecision(rule.Decision) == domain.DecisionUnresolved {
+			fallback = Result{
+				Decision:      domain.DecisionUnresolved,
+				Method:        "DEFAULT",
+				RuleID:        rule.ID,
+				Confidence:    rule.Confidence,
+				EngineName:    ruleEngineName,
+				EngineVersion: ruleEngineVersion,
+			}
+			continue
+		}
+
 		result, matched, err := e.evaluateRule(ctx, entityTypeID, company, rule)
 		if err != nil {
 			return Result{}, err
@@ -52,9 +87,115 @@ func (e *Engine) Match(ctx context.Context, entityTypeID uuid.UUID, company Norm
 		if result.Method == "" {
 			result.Method = rule.ID
 		}
+		result.EngineName = ruleEngineName
+		result.EngineVersion = ruleEngineVersion
 		return result, nil
 	}
-	return Result{Decision: domain.DecisionUnresolved, Method: "NO_POLICY_RULE"}, nil
+
+	if e.candidate != nil {
+		result, found, err := e.probabilisticCandidate(ctx, entityTypeID, company, policy)
+		if err != nil {
+			return Result{}, err
+		}
+		if found {
+			return result, nil
+		}
+	}
+	return fallback, nil
+}
+
+func (e *Engine) probabilisticCandidate(ctx context.Context, entityTypeID uuid.UUID, company NormalizedCompany, policy Policy) (Result, bool, error) {
+	entities, err := e.lookup.ListActive(ctx, entityTypeID)
+	if err != nil {
+		return Result{}, false, err
+	}
+	if len(entities) == 0 {
+		return Result{}, false, nil
+	}
+
+	references := make([]resolution.ReferenceRecord, 0, len(entities))
+	entityByID := make(map[uuid.UUID]*domain.Entity, len(entities))
+	for i := range entities {
+		entity := entities[i]
+		entityCopy := entity
+		entityByID[entity.ID] = &entityCopy
+		references = append(references, resolution.ReferenceRecord{
+			EntityID: entity.ID,
+			Name:     entity.CanonicalName,
+			Fields:   entityFields(entity),
+		})
+	}
+
+	generated, err := e.candidate.Generate(ctx, resolution.CandidateRequest{
+		EntityType: policy.Spec.EntityType,
+		Source: resolution.MatchRecord{
+			ID:   company.SourceCompanyID,
+			Name: company.CompanyName,
+			Fields: map[string]string{
+				"unified_social_credit_code":    company.UnifiedSocialCreditCode,
+				"normalized_company_name":       company.CompanyName,
+				"legal_representative":          company.LegalRepresentative,
+				"normalized_registered_address": company.RegisteredAddress,
+				"entry_date":                    company.EntryDate,
+				"company_status":                company.CompanyStatus,
+			},
+		},
+		References:    references,
+		PolicyRef:     policy.Metadata.Name,
+		PolicyVersion: policy.Metadata.Version,
+	})
+	if err != nil {
+		return Result{}, false, fmt.Errorf("generate probabilistic entity candidates: %w", err)
+	}
+	if len(generated) == 0 {
+		return Result{}, false, nil
+	}
+
+	descriptor := e.candidate.Descriptor()
+	candidates := append([]resolution.Candidate(nil), generated...)
+	for i := range candidates {
+		if candidates[i].Engine.Name == "" {
+			candidates[i].Engine = descriptor
+		}
+		if err := candidates[i].Validate(); err != nil {
+			return Result{}, false, fmt.Errorf("invalid candidate %d: %w", i, err)
+		}
+		if _, ok := entityByID[candidates[i].EntityID]; !ok {
+			return Result{}, false, fmt.Errorf("candidate engine returned unknown entity %s", candidates[i].EntityID)
+		}
+	}
+	sort.SliceStable(candidates, func(i, j int) bool {
+		if candidates[i].Score == candidates[j].Score {
+			return candidates[i].EntityID.String() < candidates[j].EntityID.String()
+		}
+		return candidates[i].Score > candidates[j].Score
+	})
+	best := candidates[0]
+	result := Result{
+		Confidence:    best.Score,
+		Method:        strings.TrimSpace(best.Method),
+		RuleID:        "PROBABILISTIC_CANDIDATE",
+		EngineName:    strings.ToUpper(strings.TrimSpace(best.Engine.Name)),
+		EngineVersion: strings.TrimSpace(best.Engine.Version),
+		ModelVersion:  strings.TrimSpace(best.Engine.ModelVersion),
+	}
+	if result.Method == "" {
+		result.Method = "PROBABILISTIC"
+	}
+
+	switch {
+	case best.Score >= policy.Spec.Thresholds.AutoMatchMinimum:
+		result.Decision = domain.DecisionAutoMatch
+		result.Entity = entityByID[best.EntityID]
+	case best.Score >= policy.Spec.Thresholds.ReviewMinimum:
+		result.Decision = domain.DecisionReview
+		result.Entity = entityByID[best.EntityID]
+	default:
+		// Keep low-confidence proposals out of canonical state. The score and engine
+		// remain useful for diagnostics, while Core treats the record as unresolved.
+		result.Decision = domain.DecisionUnresolved
+	}
+	return result, true, nil
 }
 
 func (e *Engine) evaluateRule(ctx context.Context, entityTypeID uuid.UUID, company NormalizedCompany, rule Rule) (Result, bool, error) {
@@ -121,6 +262,16 @@ func (e *Engine) evaluateRule(ctx context.Context, entityTypeID uuid.UUID, compa
 	}
 
 	return Result{}, false, fmt.Errorf("unsupported matching rule %q", rule.ID)
+}
+
+func entityFields(entity domain.Entity) map[string]string {
+	fields := make(map[string]string, len(entity.Attributes)+2)
+	fields["canonical_key"] = entity.CanonicalKey
+	fields["canonical_name"] = entity.CanonicalName
+	for key, value := range entity.Attributes {
+		fields[key] = strings.TrimSpace(fmt.Sprint(value))
+	}
+	return fields
 }
 
 func hasPredicate(rule Rule, field, operator string) bool {
