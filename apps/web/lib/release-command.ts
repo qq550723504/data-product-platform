@@ -139,7 +139,13 @@ export async function executePublish(
     const checks = record(readiness.checks);
     const blockingCheck = Object.entries(checks).find(([, status]) => status !== "PASS");
     if (blockingCheck) {
-      throw new ReleaseCommandError(`Readiness Gate ${blockingCheck[0]} 未通过，已阻止发布。`, "READINESS_NOT_PASSING");
+      // `overall=READY` together with a non-PASS gate is internally inconsistent.
+      // Fail closed and force a fresh read instead of trusting the stale summary.
+      return {
+        ok: false,
+        message: `Readiness Gate ${blockingCheck[0]} 未通过；Core 状态需要刷新核对，已阻止发布。`,
+        refreshRequired: true,
+      };
     }
 
     attemptedWrite = true;
