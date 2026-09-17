@@ -176,6 +176,31 @@ COMPANY-004,外部科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	// still leave a foreign-workspace count at zero.
 	assertNoGovernanceFactsForVersion(t, ctx, pool, foreignVersion.ID)
 
+	// Ownership must be resolved before the status check: a foreign version that is no
+	// longer READY must still be rejected as a workspace mismatch, not surface its status
+	// through the generic QUALITY_CHECK_FAILED / COMPLIANCE_CHECK_FAILED path.
+	invalidateVersion := datasetapp.NewInvalidateVersionService(txManager, datasetRepo)
+	if _, err := invalidateVersion.Handle(ctx, datasetapp.InvalidateVersionCommand{VersionID: foreignVersion.ID, Reason: "governance-ordering", TraceID: "governance-rejected"}); err != nil {
+		t.Fatalf("invalidate foreign version: %v", err)
+	}
+	if _, err := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID:      workspaceID,
+		DatasetVersionID: foreignVersion.ID,
+		RuleSetRef:       "park/quality/enterprise-activity-quality-v1.yaml",
+		TraceID:          "governance-rejected",
+		Now:              foreignVersion.ReadyAt.Add(30 * 60 * 1e9),
+	}); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
+		t.Fatalf("foreign non-READY quality error = %v, want ErrDatasetWorkspace", err)
+	}
+	if _, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		WorkspaceID:      workspaceID,
+		DatasetVersionID: foreignVersion.ID,
+		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:          "governance-rejected",
+	}); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
+		t.Fatalf("foreign non-READY compliance error = %v, want ErrDatasetWorkspace", err)
+	}
+
 	var evidenceCount int
 	if err := pool.QueryRow(ctx, `SELECT count(*) FROM evidence WHERE evidence_type IN ('QUALITY_RESULT','COMPLIANCE_RESULT') AND metadata->>'datasetVersionId'=$1`, passVersion.ID.String()).Scan(&evidenceCount); err != nil {
 		t.Fatalf("count governance evidence: %v", err)
