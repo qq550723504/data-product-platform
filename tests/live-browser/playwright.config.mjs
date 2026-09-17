@@ -4,10 +4,10 @@ import { join } from "node:path";
 
 if (process.env.LIVE_BROWSER_ACCEPTANCE !== "1") throw new Error("Run the opt-in Go live acceptance coordinator");
 const phase = process.env.LIVE_BROWSER_PHASE;
-if (!["review", "publish", "history"].includes(phase)) throw new Error("Missing live browser phase");
+if (!["review", "publish", "history", "ingest"].includes(phase)) throw new Error("Missing live browser phase");
 const root = fileURLToPath(new URL("../../.artifacts/live-browser/", import.meta.url));
 export default defineConfig({
-  testDir: ".", testMatch: "live.spec.mjs", fullyParallel: false, workers: 1, retries: 0,
+  testDir: ".", testMatch: phase === "ingest" ? "ingest.spec.mjs" : "live.spec.mjs", fullyParallel: false, workers: 1, retries: 0,
   forbidOnly: true, timeout: 60000,
   expect: { timeout: 15000 },
   outputDir: join(root, `results-${phase}`),

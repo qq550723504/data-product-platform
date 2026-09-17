@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
-	"encoding/csv"
 	"fmt"
 	"io"
 	"path/filepath"
@@ -15,6 +14,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/csvinput"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
@@ -149,7 +149,7 @@ func countRows(filename, contentType string, content []byte) (int64, error) {
 		return 0, nil
 	}
 
-	reader := csv.NewReader(bytes.NewReader(content))
+	reader := csvinput.NewReader(bytes.NewReader(content))
 	var records int64
 	first := true
 	for {

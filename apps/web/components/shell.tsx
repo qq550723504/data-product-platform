@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const navigation = [
   { href: "/", label: "工作台", mark: "W" },
+  { href: "/ingest", label: "数据接入", mark: "I" },
   { href: "/resources", label: "数据资源", mark: "R" },
   { href: "/datasets", label: "数据集", mark: "D" },
   { href: "/production", label: "数据生产", mark: "P" },

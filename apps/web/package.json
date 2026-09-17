@@ -5,12 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "start": "next start",
-    "build": "npm run test:reviews && npm run test:releases && npm run test:trace && next build",
+    "build": "npm run test:reviews && npm run test:releases && npm run test:trace && npm run test:ingest && next build",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test:reviews": "tsc lib/review-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .review-tests && node --test tests/review-command.test.mjs",
     "test:releases": "tsc lib/release-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .release-tests && node --test tests/release-command.test.mjs tests/release-readiness.test.mjs",
-    "test:trace": "tsc lib/trace-scope.ts lib/traceability.ts lib/pagination.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .trace-tests && node --test tests/trace-scope.test.mjs tests/pagination.test.mjs"
+    "test:trace": "tsc lib/trace-scope.ts lib/traceability.ts lib/pagination.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .trace-tests && node --test tests/trace-scope.test.mjs tests/pagination.test.mjs",
+    "test:ingest": "tsc lib/ingest-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .ingest-tests && node --test tests/csv-inspection.test.mjs tests/ingest-command.test.mjs"
   },
   "dependencies": {
     "next": "15.5.24",

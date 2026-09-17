@@ -42,7 +42,7 @@ export default async function DatasetDetailPage({ params }: { params: Promise<{ 
               <tbody>
                 {versions.items.map((version) => (
                   <tr key={version.id}>
-                    <td className="primary-cell"><strong>v{version.versionNo}</strong><span className="mono">{shortId(version.id)}</span></td>
+                    <td className="primary-cell"><strong>v{version.versionNo}</strong><span className="mono">{shortId(version.id)}</span>{dataset.datasetType === "RAW" && dataset.code.startsWith("CSV-") && version.status === "READY" ? <Link href={`/ingest?version=${version.id}`}>继续主体解析</Link> : null}</td>
                     <td><Badge value={version.status} /></td>
                     <td>{version.rowCount ?? "—"}</td>
                     <td>{formatBytes(version.byteSize)}</td>

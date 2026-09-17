@@ -4,6 +4,7 @@ import { ids } from "./fixture-server.mjs";
 const webRoot = fileURLToPath(new URL("../../apps/web/", import.meta.url));
 const webEnv = {
   PLATFORM_API_BASE_URL: "http://127.0.0.1:4400", POC_WORKSPACE_ID: ids.workspace,
+  POC_ENABLE_INGEST_ACTIONS: "false", POC_INGEST_ACTOR_ID: "",
   POC_REVIEWER_ID: ids.actor, POC_RELEASE_ACTOR_ID: ids.actor, NEXT_TELEMETRY_DISABLED: "1",
 };
 function consoleServer(port, enabled) {
@@ -14,7 +15,7 @@ function consoleServer(port, enabled) {
   };
 }
 export default defineConfig({
-  testDir: ".", testMatch: "actions.spec.mjs", fullyParallel: false, workers: 1,
+  testDir: ".", testMatch: ["actions.spec.mjs", "ingest-readonly.spec.mjs"], fullyParallel: false, workers: 1,
   forbidOnly: Boolean(process.env.CI), retries: 0, timeout: 30000,
   expect: { timeout: 10000 },
   reporter: [["list"], ["html", { open: "never" }]],

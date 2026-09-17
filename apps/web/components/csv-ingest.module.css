@@ -1,0 +1,12 @@
+.flow { display: grid; gap: 22px; }
+.form { display: grid; gap: 14px; margin-top: 16px; }
+.form label { display: grid; gap: 6px; font-size: 14px; }
+.form input:not([type=checkbox]), .form textarea { box-sizing: border-box; width: 100%; border: 1px solid #bdcad6; border-radius: 8px; padding: 10px 12px; font: inherit; background: white; }
+.form textarea { resize: vertical; }
+.form .check { display: flex; align-items: flex-start; gap: 9px; line-height: 1.6; }
+.form button { justify-self: start; border: 1px solid #285c71; border-radius: 8px; padding: 10px 16px; background: #285c71; color: white; font: inherit; cursor: pointer; }
+.form button:disabled { opacity: .45; cursor: not-allowed; }
+.form input:focus-visible, .form textarea:focus-visible, .form button:focus-visible { outline: 3px solid #61a0ba; outline-offset: 3px; }
+.result { display: grid; gap: 8px; margin-top: 16px; overflow-wrap: anywhere; }
+.table { overflow-x: auto; margin-top: 12px; }
+.meta { color: #536b80; font-size: 13px; line-height: 1.7; }
