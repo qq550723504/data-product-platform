@@ -64,6 +64,9 @@ jobs:
           UNFORMATTED="$(gofmt -l .)"
           if [ -n "$UNFORMATTED" ]; then
             echo "$UNFORMATTED"
+            for file in $UNFORMATTED; do
+              gofmt -d "$file" || true
+            done
             exit 1
           fi
 
