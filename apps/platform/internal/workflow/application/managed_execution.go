@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 )
 
 // ManagedExecutionBridge connects one provider-neutral Core Execution to a
@@ -18,6 +18,17 @@ type ManagedExecutionBridge interface {
 	Submit(ctx context.Context, request ProcessingRequest) (EngineRun, error)
 	Status(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error)
 	Finalize(ctx context.Context, request ProcessingRequest, run EngineRun) (ProcessingResult, error)
+}
+
+type ManagedExecutionRepository interface {
+	ListRunningExecutionIDsByEngine(ctx context.Context, engineType string, limit int) ([]uuid.UUID, error)
+	GetExecution(ctx context.Context, executionID uuid.UUID) (domain.Execution, error)
+	GetVersion(ctx context.Context, versionID uuid.UUID) (domain.WorkflowVersion, error)
+}
+
+type ManagedExecutionStateService interface {
+	Succeed(ctx context.Context, executionID, outputDatasetVersionID uuid.UUID, metrics map[string]any, traceID string) (domain.Execution, error)
+	Fail(ctx context.Context, executionID uuid.UUID, code, message string, metrics map[string]any, traceID string) (domain.Execution, error)
 }
 
 func ProcessingRequestFromExecution(execution domain.Execution, version domain.WorkflowVersion) ProcessingRequest {
@@ -63,13 +74,13 @@ func stringMap(value any) (map[string]any, bool) {
 }
 
 type ManagedReconciler struct {
-	service *ExecutionService
-	repo    *infrastructure.PostgresRepository
+	service ManagedExecutionStateService
+	repo    ManagedExecutionRepository
 	bridges map[string]ManagedExecutionBridge
 	limit   int
 }
 
-func NewManagedReconciler(service *ExecutionService, repo *infrastructure.PostgresRepository, bridges ...ManagedExecutionBridge) *ManagedReconciler {
+func NewManagedReconciler(service ManagedExecutionStateService, repo ManagedExecutionRepository, bridges ...ManagedExecutionBridge) *ManagedReconciler {
 	registry := make(map[string]ManagedExecutionBridge, len(bridges))
 	for _, bridge := range bridges {
 		if bridge == nil {
@@ -92,7 +103,7 @@ func (r *ManagedReconciler) RunOnce(ctx context.Context) error {
 			continue
 		}
 		for _, executionID := range ids {
-			if err := r.reconcileOne(ctx, bridge, executionID.String()); err != nil {
+			if err := r.reconcileOne(ctx, bridge, executionID); err != nil {
 				failures = append(failures, err)
 			}
 		}
@@ -100,12 +111,8 @@ func (r *ManagedReconciler) RunOnce(ctx context.Context) error {
 	return errors.Join(failures...)
 }
 
-func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExecutionBridge, executionID string) error {
-	parsedID, err := parseExecutionID(executionID)
-	if err != nil {
-		return err
-	}
-	execution, err := r.repo.GetExecution(ctx, parsedID)
+func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExecutionBridge, executionID uuid.UUID) error {
+	execution, err := r.repo.GetExecution(ctx, executionID)
 	if err != nil {
 		return fmt.Errorf("load managed execution %s: %w", executionID, err)
 	}
