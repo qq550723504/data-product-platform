@@ -17,9 +17,22 @@ Core remains responsible for:
 
 ## Runtime version
 
-The reference runtime pins Splink `4.0.17` and uses the DuckDB backend. The Go adapter performs a `/health` capability/version check before enabling the candidate generator.
+The reference runtime pins Splink `4.0.17` and uses the DuckDB backend. The Go adapter performs a `/health` capability/version/model check before enabling the candidate generator.
 
 Splink 5 development releases are intentionally not used by this reference implementation.
+
+## Model-policy binding
+
+A statistical model is valid only for the matching policy it was trained/evaluated against. The reference model is bound to:
+
+```text
+model:  park-company-v1@1.0.0
+policy: park-company-match@1.0.0
+```
+
+The Go adapter rejects another active policy before making a provider call, and the Python runtime independently enforces the same binding. This prevents a Park COMPANY model from being applied to another industry's COMPANY policy simply because the entity type happens to match.
+
+For anchor COMPANY entities, Core stores the Unified Social Credit Code as `canonical_key`. The runtime maps that reference field to the model column `unified_social_credit_code`, keeping source/reference statistical schemas aligned.
 
 ## Endpoints
 
@@ -59,6 +72,8 @@ Provider exceptions and Python tracebacks stay inside the runtime logs; the Go a
 SPLINK_MODEL_PATH=./models/park-company-v1/model.json
 SPLINK_MODEL_REF=park-company-v1
 SPLINK_MODEL_VERSION=1.0.0
+SPLINK_POLICY_REF=park-company-match
+SPLINK_POLICY_VERSION=1.0.0
 SPLINK_API_TOKEN=
 SPLINK_MAX_REFERENCES=100000
 ```
