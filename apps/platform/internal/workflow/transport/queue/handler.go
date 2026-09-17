@@ -60,7 +60,7 @@ func (h *Handler) Handle(ctx context.Context, task *asynq.Task) error {
 	// input or output. Revalidate before dispatch so a worker never reads a foreign input
 	// or writes a foreign output; an inconsistent row is quarantined, not executed.
 	if err := h.repo.ValidateExecutionOwnership(ctx, execution); err != nil {
-		if errors.Is(err, domain.ErrWorkspaceMismatch) || errors.Is(err, workflowinfra.ErrNotFound) {
+		if errors.Is(err, domain.ErrWorkspaceMismatch) || errors.Is(err, workflowinfra.ErrNotFound) || errors.Is(err, domain.ErrExecutionReferenceUnusable) {
 			return h.quarantine(ctx, execution, err)
 		}
 		return fmt.Errorf("validate execution %s ownership: %w", execution.ID, err)
@@ -80,9 +80,11 @@ func (h *Handler) Handle(ctx context.Context, task *asynq.Task) error {
 
 func (h *Handler) quarantine(ctx context.Context, execution domain.Execution, cause error) error {
 	code, message := "EXECUTION_REFERENCE_MISSING", "an execution reference no longer exists"
-	if errors.Is(cause, domain.ErrWorkspaceMismatch) {
-		code = "EXECUTION_REFERENCE_WORKSPACE_MISMATCH"
-		message = "execution references are not owned by one workspace"
+	switch {
+	case errors.Is(cause, domain.ErrWorkspaceMismatch):
+		code, message = "EXECUTION_REFERENCE_WORKSPACE_MISMATCH", "execution references are not owned by one workspace"
+	case errors.Is(cause, domain.ErrExecutionReferenceUnusable):
+		code, message = "EXECUTION_REFERENCE_UNUSABLE", "an execution input is no longer immutable and usable"
 	}
 	if _, err := h.service.Fail(ctx, execution.ID, code, message, map[string]any{"quarantined": true}, execution.ID.String()); err != nil && !errors.Is(err, domain.ErrInvalidTransition) {
 		return fmt.Errorf("quarantine execution %s: %w", execution.ID, err)

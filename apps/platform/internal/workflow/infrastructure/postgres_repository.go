@@ -134,7 +134,7 @@ func (r *PostgresRepository) ValidateExecutionReferences(ctx context.Context, tx
 			return fmt.Errorf("input %s: %w", input.Name, domain.ErrWorkspaceMismatch)
 		}
 		if status != "READY" && status != "SUPERSEDED" {
-			return fmt.Errorf("input %s DatasetVersion must be immutable and usable (READY or SUPERSEDED), got %s", input.Name, status)
+			return fmt.Errorf("input %s: %w (must be READY or SUPERSEDED, got %s)", input.Name, domain.ErrExecutionReferenceUnusable, status)
 		}
 	}
 	return nil

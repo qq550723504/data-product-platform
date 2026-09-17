@@ -91,6 +91,7 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 	store := &boundaryStore{memoryStore: newMemoryStore()}
 	create := datasetapp.NewCreateDatasetService(tx, datasets, resources)
 	upload := datasetapp.NewUploadVersionService(tx, datasets, store)
+	invalidate := datasetapp.NewInvalidateVersionService(tx, datasets)
 	match := entityapp.NewMatchService(repoPath(t, "industry-packs"), tx, entities, datasets, upload, store)
 	datasetHandler := datasethttp.NewHandler(create, upload, datasetapp.NewInvalidateVersionService(tx, datasets), datasets)
 	entityHandler := entityhttp.NewHandler(match, entities)
@@ -322,6 +323,42 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 		liveOK(t, pool.QueryRow(ctx, `SELECT status, COALESCE(error_code,'') FROM execution WHERE id=$1`, legacyID).Scan(&status, &code), "read quarantined execution")
 		if status != "FAILED" || code != "EXECUTION_REFERENCE_WORKSPACE_MISMATCH" {
 			t.Fatalf("quarantined execution status=%s code=%s, want FAILED/EXECUTION_REFERENCE_WORKSPACE_MISMATCH", status, code)
+		}
+	})
+
+	t.Run("worker quarantines a queued execution whose input was invalidated", func(t *testing.T) {
+		// An input that was READY when the Execution was queued can be invalidated later.
+		// That is permanent, so the worker must quarantine instead of retrying forever.
+		liveOK(t, func() error {
+			_, err := invalidate.Handle(ctx, datasetapp.InvalidateVersionCommand{VersionID: version.ID, Reason: "boundary-invalidation", TraceID: "boundary-setup"})
+			return err
+		}(), "invalidate queued execution input")
+		legacyID := uuid.New()
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution (
+				id, workspace_id, workflow_version_id, output_dataset_id,
+				target_period, status, attempt, engine_type, metrics, created_at
+			) VALUES ($1,$2,$3,$4,'2025-03','QUEUED',1,'NATIVE','{}'::jsonb,now())`,
+				legacyID, owner, ownerWorkflow.ID, standardized.ID)
+			return err
+		}(), "insert queued execution with invalidated input")
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution_input (execution_id, input_name, dataset_version_id) VALUES ($1,'stale_input',$2)`, legacyID, version.ID)
+			return err
+		}(), "insert invalidated execution input")
+
+		engine := &countingNativeEngine{}
+		handler := workflowqueue.NewHandler(executions, workflowRepo, engine)
+		task := asynq.NewTask(workflowqueue.TaskExecute, []byte(`{"executionId":"`+legacyID.String()+`"}`))
+		liveOK(t, handler.Handle(ctx, task), "worker handles execution with invalidated input")
+
+		if calls := engine.calls.Load(); calls != 0 {
+			t.Fatalf("worker executed an execution with an invalidated input %d time(s)", calls)
+		}
+		var status, code string
+		liveOK(t, pool.QueryRow(ctx, `SELECT status, COALESCE(error_code,'') FROM execution WHERE id=$1`, legacyID).Scan(&status, &code), "read unusable-input execution")
+		if status != "FAILED" || code != "EXECUTION_REFERENCE_UNUSABLE" {
+			t.Fatalf("unusable-input execution status=%s code=%s, want FAILED/EXECUTION_REFERENCE_UNUSABLE", status, code)
 		}
 	})
 }
