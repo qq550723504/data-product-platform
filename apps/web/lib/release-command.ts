@@ -1,3 +1,5 @@
+import { evaluateReleaseReadiness } from "./release-readiness";
+
 /** Framework-independent ProductRelease publish boundary. Core remains authoritative for readiness and status. */
 export type ReleaseCommandConfig = {
   enabled: boolean;
@@ -133,17 +135,12 @@ export async function executePublish(
     if (!sameId(readiness.releaseId, releaseId)) {
       throw new ReleaseCommandError("Readiness 返回了不匹配的 Release。", "READINESS_MISMATCH");
     }
-    if (release.status !== "READY" || readiness.overall !== "READY") {
-      return { ok: false, message: "Core 尚未将此 Release 判定为 READY；发布按钮不会绕过任何 Gate。", refreshRequired: true };
-    }
-    const checks = record(readiness.checks);
-    const blockingCheck = Object.entries(checks).find(([, status]) => status !== "PASS");
-    if (blockingCheck) {
-      // `overall=READY` together with a non-PASS gate is internally inconsistent.
-      // Fail closed and force a fresh read instead of trusting the stale summary.
+
+    const evaluation = evaluateReleaseReadiness(release.status, readiness);
+    if (!evaluation.ready) {
       return {
         ok: false,
-        message: `Readiness Gate ${blockingCheck[0]} 未通过；Core 状态需要刷新核对，已阻止发布。`,
+        message: `Core Release Readiness 不完整或未通过（${evaluation.problems.join(" · ")}），已阻止发布，请刷新后核对。`,
         refreshRequired: true,
       };
     }
