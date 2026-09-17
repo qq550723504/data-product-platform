@@ -207,9 +207,11 @@ jobs:
           CHANGED="$(git diff --name-only "$BASE" HEAD -- \
             'engines/splink/**' \
             'apps/platform/internal/entity/splink/**' \
+            'apps/platform/internal/entity/matching/**' \
+            'apps/platform/internal/entity/application/**' \
             'industry-packs/park/matching/company-match-policy-v1.yaml' \
             'industry-packs/park/matching/splink-company-model-v1.yaml' \
-            'examples/enterprise-activity/entity-resolution-evaluation/**')"
+            'examples/entity-resolution-evaluation/**')"
           if [ -n "$CHANGED" ]; then
             echo "$CHANGED"
             echo "run_splink=true" >> "$GITHUB_OUTPUT"
