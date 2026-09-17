@@ -34,6 +34,10 @@ var (
 	ErrInvalidExecutionOutput = errors.New("execution output Dataset is required")
 	ErrInvalidTransition      = errors.New("invalid execution state transition")
 	ErrRetryRequiresFailure   = errors.New("only failed or cancelled execution can be retried")
+	// ErrWorkspaceMismatch means a referenced workflow/input/output belongs to a
+	// different workspace than the Execution. It is deliberately opaque so callers
+	// never learn foreign workspace identifiers.
+	ErrWorkspaceMismatch = errors.New("referenced object belongs to a different workspace")
 )
 
 type Workflow struct {

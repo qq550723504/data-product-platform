@@ -85,21 +85,53 @@ func (r *PostgresRepository) GetVersion(ctx context.Context, versionID uuid.UUID
 	return version, nil
 }
 
-func (r *PostgresRepository) ValidateExecutionReferences(ctx context.Context, tx pgx.Tx, outputDatasetID uuid.UUID, inputs []domain.InputBinding) error {
-	var outputExists bool
-	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM dataset WHERE id=$1 AND deleted_at IS NULL)`, outputDatasetID).Scan(&outputExists); err != nil {
-		return fmt.Errorf("validate output dataset: %w", err)
+func (r *PostgresRepository) ValidateExecutionReferences(ctx context.Context, tx pgx.Tx, workspaceID, workflowVersionID, outputDatasetID uuid.UUID, inputs []domain.InputBinding) error {
+	// A reference existing is not proof it belongs to the declared workspace. Every
+	// reference is resolved through its owning scope and compared with workspaceID
+	// before the caller persists the Execution or dispatches a queue task.
+	var workflowWorkspace uuid.UUID
+	if err := tx.QueryRow(ctx, `
+		SELECT w.workspace_id
+		FROM workflow_version wv
+		JOIN workflow w ON w.id = wv.workflow_id
+		WHERE wv.id=$1
+	`, workflowVersionID).Scan(&workflowWorkspace); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("workflow version: %w", ErrNotFound)
+		}
+		return fmt.Errorf("validate workflow version workspace: %w", err)
 	}
-	if !outputExists {
-		return fmt.Errorf("output dataset: %w", ErrNotFound)
+	if workflowWorkspace != workspaceID {
+		return fmt.Errorf("workflow version: %w", domain.ErrWorkspaceMismatch)
 	}
+
+	var outputWorkspace uuid.UUID
+	if err := tx.QueryRow(ctx, `SELECT workspace_id FROM dataset WHERE id=$1 AND deleted_at IS NULL`, outputDatasetID).Scan(&outputWorkspace); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("output dataset: %w", ErrNotFound)
+		}
+		return fmt.Errorf("validate output dataset workspace: %w", err)
+	}
+	if outputWorkspace != workspaceID {
+		return fmt.Errorf("output dataset: %w", domain.ErrWorkspaceMismatch)
+	}
+
 	for _, input := range inputs {
+		var inputWorkspace uuid.UUID
 		var status string
-		if err := tx.QueryRow(ctx, `SELECT status FROM dataset_version WHERE id=$1`, input.DatasetVersionID).Scan(&status); err != nil {
+		if err := tx.QueryRow(ctx, `
+			SELECT d.workspace_id, v.status
+			FROM dataset_version v
+			JOIN dataset d ON d.id = v.dataset_id
+			WHERE v.id=$1
+		`, input.DatasetVersionID).Scan(&inputWorkspace, &status); err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
 				return fmt.Errorf("input %s: %w", input.Name, ErrNotFound)
 			}
-			return fmt.Errorf("validate input %s: %w", input.Name, err)
+			return fmt.Errorf("validate input %s workspace: %w", input.Name, err)
+		}
+		if inputWorkspace != workspaceID {
+			return fmt.Errorf("input %s: %w", input.Name, domain.ErrWorkspaceMismatch)
 		}
 		if status != "READY" && status != "SUPERSEDED" {
 			return fmt.Errorf("input %s DatasetVersion must be immutable and usable (READY or SUPERSEDED), got %s", input.Name, status)

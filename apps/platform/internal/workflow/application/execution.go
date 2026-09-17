@@ -40,15 +40,12 @@ func NewExecutionService(tx *transaction.Manager, repo *infrastructure.PostgresR
 }
 
 func (s *ExecutionService) Create(ctx context.Context, cmd CreateExecutionCommand) (domain.Execution, error) {
-	if _, err := s.repo.GetVersion(ctx, cmd.WorkflowVersionID); err != nil {
-		return domain.Execution{}, err
-	}
 	execution, err := domain.NewExecution(cmd.WorkspaceID, cmd.WorkflowVersionID, cmd.OutputDatasetID, cmd.TargetPeriod, cmd.Inputs, cmd.ActorID)
 	if err != nil {
 		return domain.Execution{}, err
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if err := s.repo.ValidateExecutionReferences(ctx, tx, execution.OutputDatasetID, execution.Inputs); err != nil {
+		if err := s.repo.ValidateExecutionReferences(ctx, tx, execution.WorkspaceID, execution.WorkflowVersionID, execution.OutputDatasetID, execution.Inputs); err != nil {
 			return err
 		}
 		if err := s.repo.InsertExecution(ctx, tx, execution); err != nil {
@@ -224,7 +221,7 @@ func (s *ExecutionService) Retry(ctx context.Context, executionID uuid.UUID, act
 		return domain.Execution{}, err
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if err := s.repo.ValidateExecutionReferences(ctx, tx, retry.OutputDatasetID, retry.Inputs); err != nil {
+		if err := s.repo.ValidateExecutionReferences(ctx, tx, retry.WorkspaceID, retry.WorkflowVersionID, retry.OutputDatasetID, retry.Inputs); err != nil {
 			return err
 		}
 		if err := s.repo.InsertExecution(ctx, tx, retry); err != nil {
