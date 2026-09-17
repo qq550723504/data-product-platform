@@ -3,13 +3,17 @@ import { BackLink, Badge, DefinitionList, LoadError, PageHeader, SetupRequired, 
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 
 export default async function ExecutionDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  if (!configuredWorkspaceId()) {
+  const workspaceId = configuredWorkspaceId();
+  if (!workspaceId) {
     return <><PageHeader title="Execution 详情" /><SetupRequired /></>;
   }
   const { id } = await params;
 
   try {
     const execution = await platform.execution(id);
+    if (execution.workspaceId !== workspaceId) {
+      throw new Error("Execution 不属于当前 POC Workspace");
+    }
     return (
       <>
         <BackLink href="/production">返回数据生产</BackLink>
