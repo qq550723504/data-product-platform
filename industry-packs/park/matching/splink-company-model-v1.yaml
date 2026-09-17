@@ -11,6 +11,10 @@ spec:
   entityType: COMPANY
   linkType: link_only
 
+  matchingPolicy:
+    name: park-company-match
+    version: 1.0.0
+
   # The canonical Entity ID is passed to Splink as unique_id on the reference side.
   uniqueId: unique_id
 
@@ -26,6 +30,10 @@ spec:
     - normalized_registered_address
     - legal_representative
     - unified_social_credit_code
+
+  referenceFieldMapping:
+    # Anchor COMPANY entities keep USCC as Entity.CanonicalKey in Core.
+    canonical_key: unified_social_credit_code
 
   recommendedComparisons:
     normalized_company_name:
@@ -58,5 +66,6 @@ spec:
 
   notes:
     - Exact USCC matches are decided before Splink and cannot be overridden.
+    - This model must not be used with a different matching policy name/version.
     - Training/evaluation data and threshold calibration are completed in Sprint 6.3.
     - This file describes the reference statistical model contract; the trained model.json is a generated artifact.
