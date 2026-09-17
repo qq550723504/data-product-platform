@@ -34,6 +34,36 @@ func TestExecutionSelectEngine(t *testing.T) {
 	}
 }
 
+func TestExecutionBeginManagedSubmissionClaimsBeforeRemoteStart(t *testing.T) {
+	execution, err := NewExecution(
+		uuid.New(),
+		uuid.New(),
+		uuid.New(),
+		"2026-09",
+		[]InputBinding{{Name: "energy_standardized", DatasetVersionID: uuid.New()}},
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("new execution: %v", err)
+	}
+
+	if err := execution.BeginManagedSubmission(" hop "); err != nil {
+		t.Fatalf("begin managed submission: %v", err)
+	}
+	if execution.Status != ExecutionSubmitting || execution.EngineType != "HOP" || execution.StartedAt == nil {
+		t.Fatalf("unexpected submitting state: %#v", execution)
+	}
+	if err := execution.BeginManagedSubmission("HOP"); err != ErrInvalidTransition {
+		t.Fatalf("duplicate submission claim should fail, got %v", err)
+	}
+	if err := execution.Start("hop-run-1"); err != nil {
+		t.Fatalf("start remote execution: %v", err)
+	}
+	if execution.Status != ExecutionRunning || execution.EngineExecutionID != "hop-run-1" {
+		t.Fatalf("unexpected running state: %#v", execution)
+	}
+}
+
 func TestExecutionSelectEngineRejectsEmpty(t *testing.T) {
 	execution, err := NewExecution(
 		uuid.New(),
