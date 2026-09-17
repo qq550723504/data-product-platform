@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "start": "next start",
     "build": "npm run test:reviews && npm run test:releases && npm run test:trace && next build",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
