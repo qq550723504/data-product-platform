@@ -18,12 +18,12 @@ import (
 )
 
 type Service struct {
-	provider    metadatadomain.Provider
-	domainFQN   string
-	tx          *transaction.Manager
-	repo        *metadatainfra.PostgresRepository
-	products    *productinfra.PostgresRepository
-	engine      metadataengine.Engine
+	provider  metadatadomain.Provider
+	domainFQN string
+	tx        *transaction.Manager
+	repo      *metadatainfra.PostgresRepository
+	products  *productinfra.PostgresRepository
+	engine    metadataengine.Engine
 }
 
 func NewService(provider metadatadomain.Provider, domainFQN string, tx *transaction.Manager, repo *metadatainfra.PostgresRepository, products *productinfra.PostgresRepository, engine metadataengine.Engine) *Service {
