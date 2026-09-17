@@ -119,6 +119,38 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Smoke production console routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm start -- --hostname 127.0.0.1 --port 3000 > "$RUNNER_TEMP/web-console.log" 2>&1 &
+          WEB_PID=$!
+          trap 'kill "$WEB_PID" 2>/dev/null || true; cat "$RUNNER_TEMP/web-console.log"' EXIT
+
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then
+              break
+            fi
+            if ! kill -0 "$WEB_PID" 2>/dev/null; then
+              cat "$RUNNER_TEMP/web-console.log"
+              exit 1
+            fi
+            sleep 1
+          done
+
+          for route in \
+            / \
+            /resources \
+            /datasets \
+            /production \
+            /reviews \
+            /products \
+            /evidence \
+            /products/11111111-1111-4111-8111-111111111111 \
+            /products/11111111-1111-4111-8111-111111111111/releases/22222222-2222-4222-8222-222222222222; do
+            curl -fsS "http://127.0.0.1:3000${route}" >/dev/null
+          done
+
   hop-smoke:
     name: hop-smoke
     runs-on: ubuntu-latest
