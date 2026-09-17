@@ -31,11 +31,11 @@ type Config struct {
 }
 
 type Client struct {
-	baseURL      string
-	token        string
-	descriptor   resolution.EngineDescriptor
-	modelRef     string
-	httpClient   *http.Client
+	baseURL    string
+	token      string
+	descriptor resolution.EngineDescriptor
+	modelRef   string
+	httpClient *http.Client
 }
 
 type Health struct {
@@ -104,13 +104,13 @@ func (c *Client) Probe(ctx context.Context) (Health, error) {
 }
 
 type candidateRequest struct {
-	EntityType    string                       `json:"entityType"`
-	Source        matchRecord                  `json:"source"`
-	References    []referenceRecord            `json:"references"`
-	PolicyRef     string                       `json:"policyRef"`
-	PolicyVersion string                       `json:"policyVersion"`
-	ModelRef      string                       `json:"modelRef"`
-	ModelVersion  string                       `json:"modelVersion"`
+	EntityType    string            `json:"entityType"`
+	Source        matchRecord       `json:"source"`
+	References    []referenceRecord `json:"references"`
+	PolicyRef     string            `json:"policyRef"`
+	PolicyVersion string            `json:"policyVersion"`
+	ModelRef      string            `json:"modelRef"`
+	ModelVersion  string            `json:"modelVersion"`
 }
 
 type matchRecord struct {
