@@ -1,0 +1,160 @@
+import Link from "next/link";
+import { BackLink, Badge, DefinitionList, EmptyState, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
+import { configuredWorkspaceId, platform, type DataProduct, type ProductRelease } from "@/lib/platform";
+import { validateReleaseTraceScope } from "@/lib/trace-scope";
+import { productReleaseTrace } from "@/lib/traceability";
+
+async function scopedProduct(productId: string): Promise<DataProduct> {
+  const page = await platform.products(100, 0);
+  const product = page.items.find((item) => item.id.toLowerCase() === productId.toLowerCase());
+  if (!product) throw new Error("当前 Workspace 中不存在此数据产品。");
+  return product;
+}
+
+async function scopedRelease(productId: string, releaseId: string): Promise<ProductRelease> {
+  const page = await platform.releases(productId, 100, 0);
+  const release = page.items.find((item) => item.id.toLowerCase() === releaseId.toLowerCase());
+  if (!release || release.productId.toLowerCase() !== productId.toLowerCase()) {
+    throw new Error("当前数据产品中不存在此 Release。");
+  }
+  return release;
+}
+
+export default async function ProductReleaseTracePage({ params }: { params: Promise<{ id: string; releaseId: string }> }) {
+  const workspaceId = configuredWorkspaceId();
+  if (!workspaceId) {
+    return <><PageHeader title="Release 证据链" /><SetupRequired /></>;
+  }
+  const { id, releaseId } = await params;
+
+  try {
+    const product = await scopedProduct(id);
+    const scoped = await scopedRelease(product.id, releaseId);
+    const trace = await productReleaseTrace(scoped.id);
+    validateReleaseTraceScope(trace, { workspaceId, productId: product.id, releaseId: scoped.id });
+
+    return (
+      <>
+        <BackLink href={`/products/${product.id}`}>返回 {product.name}</BackLink>
+        <PageHeader
+          eyebrow={`Release ${trace.releaseNo}`}
+          title="ProductRelease 证据链"
+          description="从冻结的 Release 快照向上追溯 DatasetVersion、Execution、实体解析、Evidence、Cost 与 Audit。"
+          action={<div className="badge-row"><Badge value={trace.status} /><Badge value={trace.evidenceSnapshot?.integrityValid ? "INTEGRITY_OK" : "NO_VALID_SNAPSHOT"} tone={trace.evidenceSnapshot?.integrityValid ? "good" : "warn"} /></div>}
+        />
+
+        <section className="detail-card" style={{ marginBottom: 18 }}>
+          <div className="panel-header"><h2>Release Root</h2><span className="eyebrow">Immutable Snapshot</span></div>
+          <DefinitionList items={[
+            { label: "Product", value: <Link className="text-link" href={`/products/${product.id}`}>{product.name}</Link> },
+            { label: "Release ID", value: <span className="mono">{trace.releaseId}</span> },
+            { label: "ProductVersion", value: <span className="mono">{trace.productVersionId}</span> },
+            { label: "Release No", value: trace.releaseNo },
+            { label: "Status", value: <Badge value={trace.status} /> },
+          ]} />
+        </section>
+
+        <section className="detail-card" style={{ marginBottom: 18 }}>
+          <div className="panel-header"><h2>EvidenceSnapshot</h2><span className="eyebrow">Frozen Evidence Set</span></div>
+          {!trace.evidenceSnapshot ? (
+            <EmptyState title="没有 EvidenceSnapshot" description="该 Release 尚未冻结证据快照；界面不会从其他记录推测一个快照。" />
+          ) : (
+            <>
+              <DefinitionList items={[
+                { label: "Snapshot ID", value: <span className="mono">{trace.evidenceSnapshot.id}</span> },
+                { label: "Root Hash", value: <span className="mono">{trace.evidenceSnapshot.rootHash}</span> },
+                { label: "Integrity", value: <Badge value={trace.evidenceSnapshot.integrityValid ? "VALID" : "INVALID"} tone={trace.evidenceSnapshot.integrityValid ? "good" : "bad"} /> },
+                { label: "Evidence Items", value: trace.evidenceSnapshot.items.length },
+                { label: "Created", value: formatDate(trace.evidenceSnapshot.createdAt) },
+              ]} />
+              {trace.evidenceSnapshot.items.length ? (
+                <div className="table-card" style={{ marginTop: 16 }}><table className="data-table"><thead><tr><th>Category</th><th>Evidence ID</th></tr></thead><tbody>{trace.evidenceSnapshot.items.map((item) => <tr key={`${item.category}-${item.evidenceId}`}><td><Badge value={item.category} tone="info" /></td><td className="mono">{item.evidenceId}</td></tr>)}</tbody></table></div>
+              ) : <EmptyState title="快照未列出 EvidenceItem" description="Core 返回的 EvidenceSnapshot items 为空。" />}
+              <details style={{ marginTop: 14 }}><summary>Snapshot manifest</summary><pre className="json-preview">{JSON.stringify(trace.evidenceSnapshot.manifest, null, 2)}</pre></details>
+            </>
+          )}
+        </section>
+
+        <section style={{ marginBottom: 22 }}>
+          <div className="panel-header"><h2>DatasetVersion Lineage</h2><span className="eyebrow">{trace.datasetVersions.length} Versions</span></div>
+          {trace.datasetVersions.length === 0 ? <EmptyState title="没有 DatasetVersion 血缘" description="Core traceability 没有返回该 Release 的数据版本链。" /> : (
+            <div className="table-card"><table className="data-table"><thead><tr><th>Dataset</th><th>版本/类型</th><th>Release Role</th><th>状态</th><th>生产执行</th><th>Source Resource</th><th>Checksum</th></tr></thead><tbody>
+              {trace.datasetVersions.map((version) => (
+                <tr key={version.id}>
+                  <td className="primary-cell"><Link className="text-link" href={`/datasets/${version.datasetId}`}><strong>{version.datasetCode}</strong></Link><span className="mono">{shortId(version.id)}</span></td>
+                  <td>v{version.versionNo} · <Badge value={version.datasetType} tone="info" /></td>
+                  <td>{version.releaseRole || "—"}</td>
+                  <td><Badge value={version.status} /></td>
+                  <td>{version.generatedByExecutionId ? <Link className="text-link mono" href={`/production/${version.generatedByExecutionId}`}>{shortId(version.generatedByExecutionId)}</Link> : "—"}</td>
+                  <td>{version.sourceResourceId ? <Link className="text-link mono" href={`/resources/${version.sourceResourceId}`}>{shortId(version.sourceResourceId)}</Link> : "—"}</td>
+                  <td className="mono">{version.checksumValue ? `${version.checksumAlgorithm || "hash"}:${version.checksumValue.slice(0, 16)}…` : "—"}</td>
+                </tr>
+              ))}
+            </tbody></table></div>
+          )}
+        </section>
+
+        <section style={{ marginBottom: 22 }}>
+          <div className="panel-header"><h2>Execution Provenance</h2><span className="eyebrow">{trace.executions.length} Executions</span></div>
+          {trace.executions.length === 0 ? <EmptyState title="没有生产 Execution" description="血缘中没有 DatasetVersion 关联到 Core Execution。" /> : (
+            <div className="table-card"><table className="data-table"><thead><tr><th>Execution</th><th>状态</th><th>Workflow Version</th><th>Runtime</th><th>Target</th><th>Definition Hash</th></tr></thead><tbody>{trace.executions.map((execution) => (
+              <tr key={execution.id}>
+                <td className="primary-cell"><Link className="text-link mono" href={`/production/${execution.id}`}>{shortId(execution.id)}</Link><span>attempt {execution.attempt}</span></td>
+                <td><Badge value={execution.status} /></td>
+                <td>{execution.workflowVersion} · <span className="mono">{shortId(execution.workflowVersionId)}</span></td>
+                <td>{execution.engineType}{execution.engineExecutionId ? ` · ${execution.engineExecutionId}` : ""}</td>
+                <td>{execution.targetPeriod}</td>
+                <td className="mono">{execution.workflowDefinitionHash ? `${execution.workflowDefinitionHash.slice(0, 16)}…` : "—"}</td>
+              </tr>
+            ))}</tbody></table></div>
+          )}
+          {trace.executions.some((execution) => Object.keys(execution.metrics ?? {}).length) ? <details style={{ marginTop: 12 }}><summary>Execution metrics</summary><pre className="json-preview">{JSON.stringify(Object.fromEntries(trace.executions.map((item) => [item.id, item.metrics])), null, 2)}</pre></details> : null}
+        </section>
+
+        <section style={{ marginBottom: 22 }}>
+          <div className="panel-header"><h2>Entity Resolution</h2><span className="eyebrow">Policy + Human Review Provenance</span></div>
+          {trace.entityMatchJobs.length === 0 ? <EmptyState title="没有 EntityMatchJob" description="该 Release 血缘没有经过实体解析，或 Core 未返回相关实体解析事实。" /> : (
+            <div className="table-card"><table className="data-table"><thead><tr><th>Job</th><th>状态</th><th>Policy</th><th>Source</th><th>Input → Output</th></tr></thead><tbody>{trace.entityMatchJobs.map((job) => (
+              <tr key={job.id}><td className="mono">{shortId(job.id)}</td><td><Badge value={job.status} /></td><td>{job.policyRef}@{job.policyVersion}</td><td>{job.sourceType} · {job.sourceRef}</td><td className="mono">{shortId(job.inputDatasetVersionId)} → {shortId(job.outputDatasetVersionId)}</td></tr>
+            ))}</tbody></table></div>
+          )}
+          {trace.entityMappings.length === 0 ? <div style={{ marginTop: 12 }}><EmptyState title="没有 EntityMapping" description="Core traceability 没有返回与这些解析作业相关的映射。" /></div> : (
+            <div className="table-card" style={{ marginTop: 14 }}><table className="data-table"><thead><tr><th>Source</th><th>Entity</th><th>Decision</th><th>Method / Rule</th><th>Confidence</th><th>Review Evidence</th></tr></thead><tbody>{trace.entityMappings.map((mapping) => (
+              <tr key={mapping.id}><td className="primary-cell"><strong>{mapping.sourceName || mapping.sourceKey}</strong><span>{mapping.sourceType} · {mapping.sourceRef}</span></td><td className="mono">{shortId(mapping.entityId)}</td><td><Badge value={mapping.status} /></td><td>{mapping.matchMethod}{mapping.matchRuleId ? ` · ${mapping.matchRuleId}` : ""}<br /><small>{mapping.matchPolicyVersion}</small></td><td>{(mapping.confidence * 100).toFixed(1)}%</td><td>{mapping.evidenceId ? <span className="mono">{shortId(mapping.evidenceId)}</span> : "—"}{mapping.reviewerReason ? <><br /><small>{mapping.reviewerReason}</small></> : null}</td></tr>
+            ))}</tbody></table></div>
+          )}
+        </section>
+
+        <section style={{ marginBottom: 22 }}>
+          <div className="panel-header"><h2>Evidence Records</h2><span className="eyebrow">{trace.evidence.length} Facts</span></div>
+          {trace.evidence.length === 0 ? <EmptyState title="没有 Evidence 记录" description="Core traceability 没有返回支持该 Release 的 Evidence。" /> : (
+            <div className="table-card"><table className="data-table"><thead><tr><th>Evidence</th><th>Source</th><th>Relation</th><th>Integrity</th><th>Hash</th><th>Time</th></tr></thead><tbody>{trace.evidence.map((item) => (
+              <tr key={`${item.id}-${item.relationType}`}><td className="primary-cell"><strong>{item.title || item.evidenceType}</strong><span>{item.evidenceType} · {shortId(item.id)}</span></td><td>{item.sourceType || "—"} {item.sourceId ? <span className="mono">{shortId(item.sourceId)}</span> : null}</td><td>{item.relationType}</td><td><Badge value={item.integrityValid ? "VALID" : "INVALID"} tone={item.integrityValid ? "good" : "bad"} /></td><td className="mono">{item.hashValue ? `${item.hashAlgorithm}:${item.hashValue.slice(0, 14)}…` : "—"}</td><td>{formatDate(item.createdAt)}</td></tr>
+            ))}</tbody></table></div>
+          )}
+          {trace.evidence.some((item) => Object.keys(item.metadata ?? {}).length) ? <details style={{ marginTop: 12 }}><summary>Evidence metadata</summary><pre className="json-preview">{JSON.stringify(Object.fromEntries(trace.evidence.map((item) => [item.id, item.metadata])), null, 2)}</pre></details> : null}
+        </section>
+
+        <section style={{ marginBottom: 22 }}>
+          <div className="panel-header"><h2>Cost Ledger</h2><span className="eyebrow">{trace.costEvents.length} Events</span></div>
+          {trace.costEvents.length === 0 ? <EmptyState title="没有 CostEvent" description="该 Release 的生产 Execution 暂无成本事件。" /> : (
+            <div className="table-card"><table className="data-table"><thead><tr><th>Cost Type</th><th>Execution</th><th>Quantity</th><th>Amount</th><th>Pricing</th><th>Time</th></tr></thead><tbody>{trace.costEvents.map((item) => (
+              <tr key={item.id}><td>{item.costType}</td><td>{item.executionId ? <Link className="text-link mono" href={`/production/${item.executionId}`}>{shortId(item.executionId)}</Link> : "—"}</td><td>{item.quantity} {item.unit}</td><td>{item.amount === undefined ? "—" : `${item.amount} ${item.currency || ""}`}</td><td>{item.pricingMode}</td><td>{formatDate(item.occurredAt)}</td></tr>
+            ))}</tbody></table></div>
+          )}
+        </section>
+
+        <section>
+          <div className="panel-header"><h2>Audit Trail</h2><span className="eyebrow">{trace.auditEvents.length} Events</span></div>
+          {trace.auditEvents.length === 0 ? <EmptyState title="没有 AuditEvent" description="Core traceability 没有返回与此 Release 链相关的审计事件。" /> : (
+            <div className="table-card"><table className="data-table"><thead><tr><th>Action</th><th>Object</th><th>Actor</th><th>Reason</th><th>Time</th></tr></thead><tbody>{trace.auditEvents.map((item) => (
+              <tr key={item.id}><td>{item.action}</td><td>{item.objectType} · <span className="mono">{shortId(item.objectId)}</span></td><td>{item.actorType}{item.actorId ? ` · ${shortId(item.actorId)}` : ""}</td><td>{item.reason || "—"}</td><td>{formatDate(item.occurredAt)}</td></tr>
+            ))}</tbody></table></div>
+          )}
+        </section>
+      </>
+    );
+  } catch (error) {
+    return <><BackLink href={`/products/${id}`}>返回数据产品</BackLink><PageHeader title="Release 证据链" /><LoadError error={error} /></>;
+  }
+}
