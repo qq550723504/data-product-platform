@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { BackLink, Badge, DefinitionList, EmptyState, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { configuredWorkspaceId, platform, type DataProduct, type ProductRelease } from "@/lib/platform";
-import { productReleaseTrace, type ReleaseTrace } from "@/lib/traceability";
+import { validateReleaseTraceScope } from "@/lib/trace-scope";
+import { productReleaseTrace } from "@/lib/traceability";
 
 async function scopedProduct(productId: string): Promise<DataProduct> {
   const page = await platform.products(100, 0);
@@ -19,21 +20,6 @@ async function scopedRelease(productId: string, releaseId: string): Promise<Prod
   return release;
 }
 
-function verifyTraceScope(trace: ReleaseTrace, productId: string, releaseId: string, workspaceId: string) {
-  if (trace.releaseId.toLowerCase() !== releaseId.toLowerCase() || trace.productId.toLowerCase() !== productId.toLowerCase()) {
-    throw new Error("Traceability 返回范围与当前 ProductRelease 不一致。");
-  }
-  if (trace.evidence.some((item) => item.workspaceId.toLowerCase() !== workspaceId.toLowerCase())) {
-    throw new Error("Traceability 包含不属于当前 Workspace 的 Evidence。");
-  }
-  if (trace.costEvents.some((item) => item.workspaceId.toLowerCase() !== workspaceId.toLowerCase())) {
-    throw new Error("Traceability 包含不属于当前 Workspace 的 CostEvent。");
-  }
-  if (trace.entityMatchJobs.some((item) => item.workspaceId.toLowerCase() !== workspaceId.toLowerCase())) {
-    throw new Error("Traceability 包含不属于当前 Workspace 的 EntityMatchJob。");
-  }
-}
-
 export default async function ProductReleaseTracePage({ params }: { params: Promise<{ id: string; releaseId: string }> }) {
   const workspaceId = configuredWorkspaceId();
   if (!workspaceId) {
@@ -45,7 +31,7 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
     const product = await scopedProduct(id);
     const scoped = await scopedRelease(product.id, releaseId);
     const trace = await productReleaseTrace(scoped.id);
-    verifyTraceScope(trace, product.id, scoped.id, workspaceId);
+    validateReleaseTraceScope(trace, { workspaceId, productId: product.id, releaseId: scoped.id });
 
     return (
       <>
