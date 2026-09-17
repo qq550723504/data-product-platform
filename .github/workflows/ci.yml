@@ -302,7 +302,7 @@ jobs:
           PYTHONPATH=engines/splink python - <<'PY'
           from importlib.metadata import version
           from splink import DuckDBAPI, Linker
-          from app.main import POLICY_REF, POLICY_VERSION, ReferenceRecord, _reference_row
+          from app.main import POLICY_REF, POLICY_VERSION, ReferenceRecord, _probability, _reference_row
 
           assert version('splink') == '4.0.17', version('splink')
           assert DuckDBAPI is not None and Linker is not None
@@ -314,6 +314,14 @@ jobs:
               fields={'canonical_key': '91440300TESTUSCC'},
           ))
           assert reference['unified_social_credit_code'] == '91440300TESTUSCC', reference
+
+          # Non-finite probabilities must not be clamped into a confident match.
+          assert _probability(None) == 0.0
+          assert _probability(0.87) == 0.87
+          assert _probability(-1) == 0.0
+          assert _probability(2) == 1.0
+          for unusable in (float('nan'), 'nan', float('inf'), float('-inf'), 'not-a-number'):
+              assert _probability(unusable) is None, unusable
           print('validated Splink', version('splink'), 'and COMPANY reference schema')
           PY
 

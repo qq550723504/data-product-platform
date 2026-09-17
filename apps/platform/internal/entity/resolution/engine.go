@@ -3,6 +3,7 @@ package resolution
 import (
 	"context"
 	"fmt"
+	"math"
 	"sort"
 	"strings"
 
@@ -55,6 +56,12 @@ type Candidate struct {
 func (c Candidate) Validate() error {
 	if c.EntityID == uuid.Nil {
 		return fmt.Errorf("candidate entity id is required")
+	}
+	// NaN and ±Inf compare false against every bound, so they must be rejected
+	// explicitly. Otherwise an engine that returns a non-finite score would be
+	// accepted and could win the confidence ranking in matching.
+	if math.IsNaN(c.Score) || math.IsInf(c.Score, 0) {
+		return fmt.Errorf("candidate score must be a finite number, got %v", c.Score)
 	}
 	if c.Score < 0 || c.Score > 1 {
 		return fmt.Errorf("candidate score %.6f must be between 0 and 1", c.Score)
