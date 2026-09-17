@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -154,6 +155,30 @@ func (r *PostgresRepository) ValidateExecutionOwnership(ctx context.Context, exe
 		return err
 	}
 	return tx.Commit(ctx)
+}
+
+// LockExecutionInputVersions blocks a claiming transaction against a concurrent
+// invalidation of the DatasetVersions the Execution reads. Combined with
+// ValidateExecutionReferences in the same transaction, an invalidation either commits
+// first (validation observes INVALID and the caller quarantines) or waits until the
+// claim commits. Locks are taken in a deterministic order so two claims cannot deadlock.
+func (r *PostgresRepository) LockExecutionInputVersions(ctx context.Context, tx pgx.Tx, inputs []domain.InputBinding) error {
+	if len(inputs) == 0 {
+		return nil
+	}
+	ids := make([]uuid.UUID, 0, len(inputs))
+	for _, input := range inputs {
+		ids = append(ids, input.DatasetVersionID)
+	}
+	sort.Slice(ids, func(i, j int) bool { return ids[i].String() < ids[j].String() })
+	rows, err := tx.Query(ctx, `SELECT id FROM dataset_version WHERE id = ANY($1::uuid[]) ORDER BY id FOR SHARE`, ids)
+	if err != nil {
+		return fmt.Errorf("lock execution input versions: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+	}
+	return rows.Err()
 }
 
 func (r *PostgresRepository) ValidateOutputVersion(ctx context.Context, tx pgx.Tx, outputDatasetID, outputVersionID uuid.UUID) error {

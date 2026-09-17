@@ -119,6 +119,10 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 	product := mustCreateDataset(t, ctx, create, owner, "BOUNDARY-PRODUCT", "Product", datasetdomain.DatasetTypeProduct, nil, &actor, "boundary-setup")
 	filename := "boundary-" + uuid.NewString() + ".csv"
 	version := mustUploadCSV(t, ctx, upload, raw.ID, filename, []byte("source_company_id,company_name\nTEST-1,Synthetic boundary company\n"), nil, nil, &actor, "boundary-setup")
+	// A separate READY input isolates the claim-serialization test from the fixture that
+	// the invalidation test mutates.
+	atomicRaw := mustCreateDataset(t, ctx, create, owner, "BOUNDARY-ATOMIC", "Atomic RAW", datasetdomain.DatasetTypeRaw, &source.ID, &actor, "boundary-setup")
+	atomicVersion := mustUploadCSV(t, ctx, upload, atomicRaw.ID, "atomic-"+uuid.NewString()+".csv", []byte("source_company_id,company_name\nA-1,Atomic boundary company\n"), nil, nil, &actor, "boundary-setup")
 
 	// A second, fully isolated workspace supplies foreign workflow/input/output references.
 	foreignSource := mustCreateResource(t, ctx, resourceapp.NewCreateService(tx, resources), foreign, "BOUNDARY-FOREIGN", "Foreign source", &actor, "boundary-setup")
@@ -359,6 +363,60 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 		liveOK(t, pool.QueryRow(ctx, `SELECT status, COALESCE(error_code,'') FROM execution WHERE id=$1`, legacyID).Scan(&status, &code), "read unusable-input execution")
 		if status != "FAILED" || code != "EXECUTION_REFERENCE_UNUSABLE" {
 			t.Fatalf("unusable-input execution status=%s code=%s, want FAILED/EXECUTION_REFERENCE_UNUSABLE", status, code)
+		}
+	})
+
+	t.Run("worker claim serializes with an in-flight input invalidation", func(t *testing.T) {
+		atomicID := uuid.New()
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution (
+				id, workspace_id, workflow_version_id, output_dataset_id,
+				target_period, status, attempt, engine_type, metrics, created_at
+			) VALUES ($1,$2,$3,$4,'2025-03','QUEUED',1,'NATIVE','{}'::jsonb,now())`,
+				atomicID, owner, ownerWorkflow.ID, standardized.ID)
+			return err
+		}(), "insert claim-serialization execution")
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution_input (execution_id, input_name, dataset_version_id) VALUES ($1,'atomic_input',$2)`, atomicID, atomicVersion.ID)
+			return err
+		}(), "insert claim-serialization execution input")
+
+		// Hold an exclusive lock on the referenced version without committing, the way an
+		// invalidation in flight does. A claim that validated without taking a shared lock
+		// would read the old READY value and dispatch while this transaction is still open.
+		invalidTx, err := pool.Begin(ctx)
+		liveOK(t, err, "begin in-flight invalidation")
+		liveOK(t, func() error {
+			_, err := invalidTx.Exec(ctx, `UPDATE dataset_version SET status='INVALID' WHERE id=$1`, atomicVersion.ID)
+			return err
+		}(), "lock referenced version for invalidation")
+
+		engine := &countingNativeEngine{}
+		handler := workflowqueue.NewHandler(executions, workflowRepo, engine)
+		task := asynq.NewTask(workflowqueue.TaskExecute, []byte(`{"executionId":"`+atomicID.String()+`"}`))
+		done := make(chan error, 1)
+		go func() { done <- handler.Handle(ctx, task) }()
+
+		select {
+		case err := <-done:
+			liveOK(t, invalidTx.Rollback(ctx), "rollback unexpected invalidation")
+			t.Fatalf("worker finished before the in-flight invalidation resolved: %v", err)
+		case <-time.After(400 * time.Millisecond):
+		}
+		if calls := engine.calls.Load(); calls != 0 {
+			liveOK(t, invalidTx.Rollback(ctx), "rollback after premature dispatch")
+			t.Fatalf("worker dispatched %d time(s) while the input invalidation was uncommitted", calls)
+		}
+
+		liveOK(t, invalidTx.Commit(ctx), "commit in-flight invalidation")
+		liveOK(t, <-done, "worker handles execution after invalidation committed")
+		if calls := engine.calls.Load(); calls != 0 {
+			t.Fatalf("worker executed an invalidated input %d time(s)", calls)
+		}
+		var status, code string
+		liveOK(t, pool.QueryRow(ctx, `SELECT status, COALESCE(error_code,'') FROM execution WHERE id=$1`, atomicID).Scan(&status, &code), "read claim-serialization execution")
+		if status != "FAILED" || code != "EXECUTION_REFERENCE_UNUSABLE" {
+			t.Fatalf("claim-serialization execution status=%s code=%s, want FAILED/EXECUTION_REFERENCE_UNUSABLE", status, code)
 		}
 	})
 }
