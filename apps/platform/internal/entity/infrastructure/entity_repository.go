@@ -84,19 +84,37 @@ func (r *PostgresRepository) FindByCanonicalKey(ctx context.Context, entityTypeI
 	`, entityTypeID, canonicalKey)
 }
 
-func (r *PostgresRepository) FindByNameAddress(ctx context.Context, entityTypeID uuid.UUID, normalizedName, normalizedAddress string) (*domain.Entity, error) {
+// FindByNameAddress returns the ACTIVE entities that share the same normalized
+// name and address, capped at two rows because callers only need to distinguish
+// "exactly one" from "ambiguous". The schema permits duplicates, and picking one
+// arbitrarily would attach a source row to the wrong canonical entity.
+func (r *PostgresRepository) FindByNameAddress(ctx context.Context, entityTypeID uuid.UUID, normalizedName, normalizedAddress string) ([]domain.Entity, error) {
 	if normalizedName == "" || normalizedAddress == "" {
 		return nil, nil
 	}
-	return r.findOne(ctx, `
+	rows, err := r.pool.Query(ctx, `
 		SELECT id, workspace_id, entity_type_id, COALESCE(canonical_key,''), canonical_name,
 		       attributes, status, created_at, created_by
 		FROM entity
 		WHERE entity_type_id=$1 AND status='ACTIVE'
 		  AND attributes->>'normalized_company_name'=$2
 		  AND attributes->>'normalized_registered_address'=$3
-		LIMIT 1
+		ORDER BY id
+		LIMIT 2
 	`, entityTypeID, normalizedName, normalizedAddress)
+	if err != nil {
+		return nil, fmt.Errorf("find entities by name and address: %w", err)
+	}
+	defer rows.Close()
+	entities := make([]domain.Entity, 0, 2)
+	for rows.Next() {
+		entity, err := scanEntity(rows)
+		if err != nil {
+			return nil, err
+		}
+		entities = append(entities, entity)
+	}
+	return entities, rows.Err()
 }
 
 func (r *PostgresRepository) ListByLegalRepresentative(ctx context.Context, entityTypeID uuid.UUID, legalRepresentative string) ([]domain.Entity, error) {
@@ -109,6 +127,7 @@ func (r *PostgresRepository) ListByLegalRepresentative(ctx context.Context, enti
 		FROM entity
 		WHERE entity_type_id=$1 AND status='ACTIVE'
 		  AND attributes->>'legal_representative'=$2
+		ORDER BY id
 	`, entityTypeID, legalRepresentative)
 	if err != nil {
 		return nil, fmt.Errorf("list entities by legal representative: %w", err)

@@ -1,28 +1,28 @@
-# ADR-0006: Cost and Evidence Are Captured During Production
+# ADR-0006：成本与证据在生产过程中采集
 
-- Status: Accepted
+- 状态：已接受
 
-## Context
+## 背景
 
-Cost reconstruction and audit evidence become unreliable when they are collected only after a project or accounting exercise is complete.
+如果等到项目结束或会计作业完成之后才收集，成本还原与审计证据都会变得不可靠。
 
-## Decision
+## 决策
 
-CostEvent and Evidence are first-class business objects generated throughout production.
+CostEvent 与 Evidence 是一等业务对象，贯穿生产过程持续产生。
 
-Key activities should produce them whenever applicable, including:
+关键活动在适用时都应产生它们，包括：
 
-- ingestion
-- transformation
-- entity review
-- quality remediation
-- compliance review
-- external services
-- product release
-- product usage
+- 数据接入
+- 数据转换
+- 实体人工复核
+- 质量整改
+- 合规审查
+- 外部服务
+- 产品发布
+- 产品使用
 
-## Consequences
+## 后果
 
-- Product Cost Ledger can be derived from production facts.
-- Evidence Packages can be assembled instead of manually reconstructed.
-- POC implementations must include Cost/Evidence hooks even when the initial monetary values are approximate.
+- 产品成本账本（Product Cost Ledger）可由生产事实推导得出。
+- 证据包（Evidence Package）可通过组装形成，而无需人工重建。
+- POC 实现即使初始金额值是近似值，也必须包含 Cost/Evidence 埋点。

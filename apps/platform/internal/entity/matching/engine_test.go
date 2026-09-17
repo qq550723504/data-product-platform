@@ -12,7 +12,7 @@ import (
 
 type fakeLookup struct {
 	byKey     *domain.Entity
-	byName    *domain.Entity
+	byName    []domain.Entity
 	legal     []domain.Entity
 	active    []domain.Entity
 	activeErr error
@@ -21,8 +21,8 @@ type fakeLookup struct {
 func (f *fakeLookup) FindByCanonicalKey(context.Context, uuid.UUID, string) (*domain.Entity, error) {
 	return f.byKey, nil
 }
-func (f *fakeLookup) FindByNameAddress(context.Context, uuid.UUID, string, string) (*domain.Entity, error) {
-	return f.byName, nil
+func (f *fakeLookup) FindByNameAddress(context.Context, uuid.UUID, string, string) ([]domain.Entity, error) {
+	return append([]domain.Entity(nil), f.byName...), nil
 }
 func (f *fakeLookup) ListByLegalRepresentative(context.Context, uuid.UUID, string) ([]domain.Entity, error) {
 	return append([]domain.Entity(nil), f.legal...), nil
@@ -248,6 +248,86 @@ func TestRuleOnlyFallbackRemainsUnchangedWhenNoCandidateEngineConfigured(t *test
 	}
 	if result.Decision != domain.DecisionUnresolved || result.RuleID != "COMPANY-DEFAULT" || result.EngineName != ruleEngineName {
 		t.Fatalf("unexpected rule-only fallback: %#v", result)
+	}
+}
+
+func testNameAddressPolicy() Policy {
+	var policy Policy
+	policy.Metadata.Name = "park-company-match"
+	policy.Metadata.Version = "1.0.0"
+	policy.Spec.EntityType = "COMPANY"
+	policy.Spec.Thresholds.AutoMatchMinimum = 0.95
+	policy.Spec.Thresholds.ReviewMinimum = 0.75
+	policy.Spec.Rules = []Rule{
+		{
+			ID:       "COMPANY-NAME-ADDRESS-EXACT",
+			Priority: 20,
+			When: &Condition{All: []Predicate{
+				{Field: "normalized_company_name", Operator: "EXACT"},
+				{Field: "normalized_registered_address", Operator: "EXACT"},
+			}},
+			Decision:   string(domain.DecisionAutoMatch),
+			Confidence: 0.98,
+		},
+	}
+	return policy
+}
+
+func TestNameAddressExactMatchAutoMatchesTheOnlyCanonicalEntity(t *testing.T) {
+	entity := testEntity("")
+	result, err := NewEngine(&fakeLookup{byName: []domain.Entity{entity}}).Match(
+		context.Background(), uuid.New(), NormalizedCompany{
+			SourceCompanyID:   "SRC-NAME-1",
+			CompanyName:       "ACME TECHNOLOGY CO LTD",
+			RegisteredAddress: "1 MAIN ROAD",
+		}, testNameAddressPolicy(),
+	)
+	if err != nil {
+		t.Fatalf("match: %v", err)
+	}
+	if result.Decision != domain.DecisionAutoMatch || result.Entity == nil || result.Entity.ID != entity.ID {
+		t.Fatalf("unexpected single candidate result: %#v", result)
+	}
+	if result.Ambiguous || result.Method != "NAME_ADDRESS_EXACT" {
+		t.Fatalf("unexpected single candidate method: %#v", result)
+	}
+}
+
+func TestAmbiguousNameAddressMatchRequiresReviewInsteadOfPickingAnEntity(t *testing.T) {
+	first := testEntity("91440300AAAA")
+	second := testEntity("91440300BBBB")
+	generator := &fakeCandidateGenerator{
+		descriptor: resolution.EngineDescriptor{Name: "FAKE", Version: "1"},
+		candidates: []resolution.Candidate{{EntityID: first.ID, Score: 0.99}},
+	}
+	result, err := NewEngineWithCandidateGenerator(
+		&fakeLookup{byName: []domain.Entity{first, second}, active: []domain.Entity{first, second}},
+		generator,
+	).Match(context.Background(), uuid.New(), NormalizedCompany{
+		SourceCompanyID:   "SRC-NAME-2",
+		CompanyName:       "ACME TECHNOLOGY CO LTD",
+		RegisteredAddress: "1 MAIN ROAD",
+	}, testNameAddressPolicy())
+	if err != nil {
+		t.Fatalf("match: %v", err)
+	}
+	if !result.Ambiguous {
+		t.Fatalf("expected ambiguity to be reported: %#v", result)
+	}
+	if result.Decision != domain.DecisionReview {
+		t.Fatalf("ambiguous match must stay under review: %#v", result)
+	}
+	if result.Entity != nil {
+		t.Fatalf("ambiguous match must not select a canonical entity: %#v", result.Entity)
+	}
+	if result.Confidence != 0 {
+		t.Fatalf("ambiguous match must not claim the rule confidence: %#v", result)
+	}
+	if result.Method != "NAME_ADDRESS_AMBIGUOUS" || result.RuleID != "COMPANY-NAME-ADDRESS-EXACT" {
+		t.Fatalf("unexpected ambiguous method: %#v", result)
+	}
+	if generator.calls != 0 {
+		t.Fatalf("ambiguity must not fall through to the probabilistic engine: calls=%d", generator.calls)
 	}
 }
 

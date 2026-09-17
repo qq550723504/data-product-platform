@@ -1,16 +1,16 @@
-# ADR-0007: Industry-Specific Semantics Live in Industry Packs
+# ADR-0007：行业专属语义放在行业包（Industry Pack）中
 
-- Status: Accepted
+- 状态：已接受
 
-## Context
+## 背景
 
-The first implementation uses a park scenario, but the Core Platform must remain reusable across manufacturing, government, finance, healthcare and other domains.
+第一个实现采用园区场景，但核心平台必须能跨制造、政务、金融、医疗等领域复用。
 
-## Decision
+## 决策
 
-Industry-specific semantics are packaged under `industry-packs/<industry>/` as rules, templates and configuration.
+行业专属语义以规则、模板与配置的形式打包在 `industry-packs/<industry>/` 下。
 
-Industry Packs may define:
+行业包可以定义：
 
 - Entity Types
 - Glossary / Domains
@@ -21,10 +21,10 @@ Industry Packs may define:
 - Compliance Rules
 - Product Templates
 
-Core domain code must not contain scattered industry switches such as `if industry == PARK`.
+核心领域代码中不得散落 `if industry == PARK` 之类的行业分支判断。
 
-## Consequences
+## 后果
 
-- Park is a Reference Implementation, not the boundary of the product.
-- New industries can reuse Core lifecycle, version, rights, cost and evidence models.
-- Pack contracts and validation need to become explicit as the ecosystem grows.
+- Park 只是一个参考实现（Reference Implementation），并非产品的边界。
+- 新行业可以复用核心的生命周期、版本、权利、成本与证据模型。
+- 随着生态成长，行业包的契约与校验需要显式化。

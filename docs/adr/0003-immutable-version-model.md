@@ -1,14 +1,14 @@
-# ADR-0003: Versioned Production Facts Are Immutable
+# ADR-0003：带版本的生产事实不可变
 
-- Status: Accepted
+- 状态：已接受
 
-## Context
+## 背景
 
-The platform must reproduce historical product releases and prove which data, rules and contracts were used at the time of publication.
+平台必须能够复现历史产品发布，并证明发布当时使用了哪些数据、规则与契约。
 
-## Decision
+## 决策
 
-Treat the following as immutable history once frozen/published:
+以下对象一旦冻结/发布，即视为不可变历史：
 
 - DatasetVersion
 - WorkflowVersion
@@ -17,11 +17,11 @@ Treat the following as immutable history once frozen/published:
 - ProductRelease
 - EvidenceSnapshot
 
-Errors are corrected by creating a new version/release rather than editing historical facts.
+修正错误的方式是创建新的版本/发布，而不是编辑历史事实。
 
-## Consequences
+## 后果
 
-- Historical releases remain reproducible.
-- Audit and Evidence remain trustworthy.
-- Storage grows over time and requires retention/archival policies.
-- APIs must expose explicit version creation instead of generic update semantics.
+- 历史发布保持可复现。
+- 审计与 Evidence 保持可信。
+- 存储会随时间增长，需要保留/归档策略。
+- API 必须暴露显式的"创建版本"语义，而不是通用更新语义。

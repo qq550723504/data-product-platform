@@ -1,55 +1,55 @@
-# ADR-0008: Protect `main` and use a stable required CI gate
+# ADR-0008：保护 `main` 分支并使用稳定的必需 CI 门禁
 
-- Status: Accepted
-- Date: 2026-09-16
+- 状态：已接受
+- 日期：2026-09-16
 
-## Context
+## 背景
 
-The platform is entering implementation. The default branch must not accept unvalidated changes, and branch protection must not depend on an unstable implementation-specific job name.
+平台已进入实现阶段。默认分支不得接受未经验证的变更，而分支保护不应依赖某个不稳定的、与具体实现绑定的 job 名称。
 
-The repository currently has a solo-maintainer workflow, so requiring an approving review from the PR author would deadlock normal development. Review requirements should be tightened when another regular human reviewer is available.
+当前仓库是单人维护流程，因此要求 PR 作者之外的批准人会导致正常开发被锁死。当有另一位常规人工评审者时，应收紧评审要求。
 
-## Decision
+## 决策
 
-`main` is protected with pull-request-only changes and a required GitHub Actions status check named `required`.
+`main` 受到保护：仅允许通过 Pull Request 变更，并配置一个必需的 GitHub Actions 状态检查，名称为 `required`。
 
-The CI workflow may evolve internally, but it must continue to publish the stable `required` gate. The gate succeeds only when all required CI jobs succeed.
+CI workflow 内部可以演进，但必须持续发布稳定的 `required` 门禁。只有当所有必需的 CI job 都成功时，该门禁才算通过。
 
-Recommended repository rules for `main` now:
+当前针对 `main` 的推荐仓库规则：
 
-- Require a pull request before merging.
-- Required approvals: `0` while the repository has only one regular maintainer; raise to `1` when a second reviewer is available.
-- Require conversation resolution before merging.
-- Require status checks to pass before merging.
-- Require branches to be up to date before merging.
-- Required status check: `required`.
-- Block force pushes.
-- Block branch deletion.
-- Do not permit routine direct pushes to `main`.
-- Keep administrator/emergency bypass available only for exceptional recovery, and treat every bypass as auditable.
+- 合并前必须经过 Pull Request。
+- 必需批准数：仓库只有一位常规维护者时为 `0`；有第二位评审者时提升为 `1`。
+- 合并前必须解决所有会话（conversation）。
+- 合并前必须通过状态检查。
+- 合并前分支必须是最新的。
+- 必需状态检查：`required`。
+- 阻止强制推送（force push）。
+- 阻止分支删除。
+- 不允许对 `main` 进行日常直接推送。
+- 管理员/紧急绕过仅保留用于异常恢复，并且每次绕过都应可审计。
 
-When a second regular human reviewer is added, also enable:
+当新增第二位常规人工评审者后，还应启用：
 
-- Required approvals: `1`.
-- Dismiss stale approvals when new commits are pushed.
+- 必需批准数：`1`。
+- 当有新提交被推送时，清除过期的批准。
 
-## CI policy
+## CI 策略
 
-Pull requests targeting `main` and pushes to `main` run CI. Feature branch pushes do not run a duplicate workflow when a PR already exists.
+针对 `main` 的 Pull Request 以及推送到 `main` 都会运行 CI。如果已存在 PR，特性分支的推送不会重复运行同一 workflow。
 
-Required validation currently includes:
+当前必需的校验包括：
 
-- Go module lock verification (`go mod tidy` must not change `go.mod` or `go.sum`).
-- `gofmt` check.
-- `go vet ./...`.
-- Docker Compose configuration validation.
-- PostgreSQL migration application.
-- `go test ./...` including PostgreSQL-backed integration tests.
-- Builds of API, worker, and migration binaries.
+- Go module 锁定校验（`go mod tidy` 不得改变 `go.mod` 或 `go.sum`）。
+- `gofmt` 检查。
+- `go vet ./...`。
+- Docker Compose 配置校验。
+- 应用 PostgreSQL 迁移。
+- `go test ./...`，包括基于 PostgreSQL 的集成测试。
+- 构建 API、worker 与 migration 二进制文件。
 
-## Consequences
+## 后果
 
-- Direct pushes to `main` are disallowed once the repository rule is enabled.
-- CI implementation can be split into more jobs later without changing the branch-protection check name; only the `required` gate must remain stable.
-- The `required` gate is intentionally separate from implementation jobs such as `go-platform`.
-- Any emergency bypass should be auditable and exceptional.
+- 一旦启用该仓库规则，就不允许直接推送到 `main`。
+- 之后 CI 实现可以拆分为更多 job，而无需改变分支保护检查名称；只有 `required` 门禁必须保持稳定。
+- `required` 门禁刻意与诸如 `go-platform` 这类具体实现 job 分离。
+- 任何紧急绕过都应是可审计且例外的。

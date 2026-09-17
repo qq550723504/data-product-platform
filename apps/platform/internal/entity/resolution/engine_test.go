@@ -2,6 +2,7 @@ package resolution
 
 import (
 	"context"
+	"math"
 	"testing"
 
 	"github.com/google/uuid"
@@ -43,5 +44,15 @@ func TestCandidateValidation(t *testing.T) {
 	candidate.Score = 1.01
 	if err := candidate.Validate(); err == nil {
 		t.Fatal("expected score validation error")
+	}
+	for _, score := range []float64{
+		math.NaN(),
+		math.Inf(1),
+		math.Inf(-1),
+	} {
+		candidate.Score = score
+		if err := candidate.Validate(); err == nil {
+			t.Fatalf("expected validation error for non-finite score %v", score)
+		}
 	}
 }

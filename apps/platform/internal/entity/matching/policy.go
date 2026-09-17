@@ -2,6 +2,7 @@ package matching
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -113,6 +114,15 @@ func LoadPolicy(path string) (Policy, error) {
 }
 
 func validateThresholds(thresholds Thresholds) error {
+	// A non-finite threshold compares false against every bound below and would
+	// silently disable the decision it guards: NaN makes every comparison the
+	// matcher performs fall through to the reject branch.
+	if !isFinite(thresholds.ReviewMinimum) {
+		return fmt.Errorf("reviewMinimum must be a finite number")
+	}
+	if !isFinite(thresholds.AutoMatchMinimum) {
+		return fmt.Errorf("autoMatchMinimum must be a finite number")
+	}
 	if thresholds.ReviewMinimum <= 0 || thresholds.ReviewMinimum > 1 {
 		return fmt.Errorf("reviewMinimum must be > 0 and <= 1")
 	}
@@ -123,4 +133,8 @@ func validateThresholds(thresholds Thresholds) error {
 		return fmt.Errorf("reviewMinimum must be <= autoMatchMinimum")
 	}
 	return nil
+}
+
+func isFinite(value float64) bool {
+	return !math.IsNaN(value) && !math.IsInf(value, 0)
 }

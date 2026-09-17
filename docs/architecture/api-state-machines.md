@@ -1,6 +1,6 @@
-# API and State Machines V1.0
+# API 与状态机 V1.0
 
-## 1. API Rule
+## 1. API 规则
 
 业务动作使用 Command API，基础资料使用 CRUD API。
 
@@ -21,7 +21,7 @@ POST /api/v1/product-releases/{id}/withdraw
 PATCH /product-releases/{id} { "status": "PUBLISHED" }
 ```
 
-## 2. Command Flow
+## 2. Command 流程
 
 ```text
 HTTP Request
@@ -35,7 +35,7 @@ HTTP Request
 
 关键 Command 需要考虑幂等性。
 
-## 3. DatasetVersion State Machine
+## 3. DatasetVersion 状态机
 
 ```text
 CREATED
@@ -48,7 +48,7 @@ CREATED
 
 `READY` 表示数据已经产生并冻结，不代表 Quality / Compliance 通过。
 
-## 4. DataProduct State Machine
+## 4. DataProduct 状态机
 
 ```text
 DRAFT
@@ -65,7 +65,7 @@ DRAFT
 
 重大变更通过创建新 ProductVersion，而不是修改历史版本。
 
-## 5. ProductRelease State Machine
+## 5. ProductRelease 状态机
 
 ```text
 DRAFT
@@ -79,7 +79,7 @@ DRAFT
 
 Published Release 不允许替换 DatasetVersion、Rights、Quality、Compliance、Contract 或 EvidenceSnapshot。
 
-## 6. Authorization State Machine
+## 6. Authorization 状态机
 
 ```text
 DRAFT
@@ -92,9 +92,9 @@ DRAFT
       └→ EXPIRED
 ```
 
-AuthorizationExpired 事件应触发 Impact Analysis。
+AuthorizationExpired 事件应触发影响分析（Impact Analysis）。
 
-## 7. Execution State Machine
+## 7. Execution 状态机
 
 ```text
 QUEUED
@@ -134,7 +134,7 @@ Retry 必须创建新的 Execution，并记录 `retry_of`。
 - NOT_READY
 - REVIEW_REQUIRED
 
-## 9. Core Command APIs
+## 9. 核心 Command API
 
 ### Data Resource / Dataset
 
@@ -197,9 +197,9 @@ POST /api/v1/product-releases/{id}/validate
 POST /api/v1/product-releases/{id}/publish
 ```
 
-## 10. Domain Events
+## 10. 领域事件
 
-Initial event vocabulary:
+初始事件词汇表：
 
 ```text
 UseCaseApproved
@@ -224,9 +224,9 @@ CostEventRecorded
 EvidenceCreated
 ```
 
-## 11. Error Model
+## 11. 错误模型
 
-Business APIs return structured errors, e.g.:
+业务 API 返回结构化错误，例如：
 
 ```json
 {
@@ -239,22 +239,22 @@ Business APIs return structured errors, e.g.:
 }
 ```
 
-Engine-specific raw errors must not leak as Core business errors.
+引擎专属的原始错误不得作为核心业务错误向外泄漏。
 
-## 12. Override
+## 12. 覆盖（Override）
 
-Gate Override is allowed only as an explicit audited command.
+Gate Override 仅允许通过显式且可审计的 Command 执行。
 
-It must preserve both:
+它必须同时保留：
 
-- original decision
-- effective decision
+- 原始决策（original decision）
+- 生效决策（effective decision）
 
-and record:
+并记录：
 
-- reason
-- approver
-- scope
-- expiry
+- 原因（reason）
+- 审批人（approver）
+- 范围（scope）
+- 有效期（expiry）
 - AuditEvent
 - Evidence

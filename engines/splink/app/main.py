@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 from importlib.metadata import version
 from pathlib import Path
@@ -132,11 +133,17 @@ def candidates(request: CandidateRequest, _: None = Depends(authorize)) -> Candi
         entity_id = _reference_id(row, request.source.id)
         if not entity_id:
             continue
-        probability = float(row.get("match_probability") or 0.0)
+        probability = _probability(row.get("match_probability"))
+        if probability is None:
+            # Splink reports NaN when a pair has no comparable features. Such a
+            # score carries no matching signal, and clamping it would turn it
+            # into a maximum-confidence auto-match. Drop it instead; Core also
+            # rejects non-finite candidate scores.
+            continue
         output.append(
             Candidate(
                 entityId=entity_id,
-                score=max(0.0, min(1.0, probability)),
+                score=probability,
                 metadata={
                     "matchWeight": row.get("match_weight"),
                     "matchKey": row.get("match_key"),
@@ -145,6 +152,19 @@ def candidates(request: CandidateRequest, _: None = Depends(authorize)) -> Candi
         )
     output.sort(key=lambda candidate: (-candidate.score, candidate.entityId))
     return _response(output)
+
+
+def _probability(value: Any) -> float | None:
+    """Return a clamped probability, or None when the value is not usable."""
+    if value is None:
+        return 0.0
+    try:
+        probability = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(probability):
+        return None
+    return max(0.0, min(1.0, probability))
 
 
 def _source_row(record: MatchRecord) -> dict[str, str]:

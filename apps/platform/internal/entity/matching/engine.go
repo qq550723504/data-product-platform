@@ -19,9 +19,12 @@ const (
 
 var ErrCandidateGeneration = errors.New("probabilistic candidate generation failed")
 
+// Lookup reads canonical entities for deterministic Core matching rules. It
+// returns every equally valid candidate rather than one arbitrary row, so the
+// engine can route ambiguity to human review instead of guessing.
 type Lookup interface {
 	FindByCanonicalKey(ctx context.Context, entityTypeID uuid.UUID, canonicalKey string) (*domain.Entity, error)
-	FindByNameAddress(ctx context.Context, entityTypeID uuid.UUID, normalizedName, normalizedAddress string) (*domain.Entity, error)
+	FindByNameAddress(ctx context.Context, entityTypeID uuid.UUID, normalizedName, normalizedAddress string) ([]domain.Entity, error)
 	ListByLegalRepresentative(ctx context.Context, entityTypeID uuid.UUID, legalRepresentative string) ([]domain.Entity, error)
 	ListActive(ctx context.Context, entityTypeID uuid.UUID) ([]domain.Entity, error)
 }
@@ -35,6 +38,12 @@ type Result struct {
 	EngineName    string
 	EngineVersion string
 	ModelVersion  string
+
+	// Ambiguous marks a deterministic rule that found several equally valid
+	// canonical entities. The decision stays with a human reviewer and must not
+	// be replaced by the rule's configured decision or by a probabilistic
+	// auto-match, because any single choice would be arbitrary.
+	Ambiguous bool
 }
 
 type Engine struct {
@@ -81,6 +90,15 @@ func (e *Engine) Match(ctx context.Context, entityTypeID uuid.UUID, company Norm
 		}
 		if !matched {
 			continue
+		}
+		if result.Ambiguous {
+			// Several canonical entities fit this source row equally well. Keep
+			// the human-review decision and stop: neither a lower-priority rule
+			// nor the probabilistic engine may pick one of them for the caller.
+			result.RuleID = rule.ID
+			result.EngineName = ruleEngineName
+			result.EngineVersion = ruleEngineVersion
+			return result, nil
 		}
 		result.RuleID = rule.ID
 		if result.Confidence == 0 {
@@ -241,14 +259,27 @@ func (e *Engine) evaluateRule(ctx context.Context, entityTypeID uuid.UUID, compa
 	}
 
 	if hasPredicate(rule, "normalized_company_name", "EXACT") && hasPredicate(rule, "normalized_registered_address", "EXACT") {
-		entity, err := e.lookup.FindByNameAddress(ctx, entityTypeID, company.CompanyName, company.RegisteredAddress)
+		entities, err := e.lookup.FindByNameAddress(ctx, entityTypeID, company.CompanyName, company.RegisteredAddress)
 		if err != nil {
 			return Result{}, false, err
 		}
-		if entity == nil {
+		switch len(entities) {
+		case 0:
 			return Result{}, false, nil
+		case 1:
+			match := entities[0]
+			return Result{Entity: &match, Method: "NAME_ADDRESS_EXACT"}, true, nil
+		default:
+			// The schema permits several ACTIVE entities with the same
+			// normalized name and address. Matching any of them automatically
+			// would assign the source row to an arbitrary canonical entity, so
+			// surface the conflict for review with no candidate entity.
+			return Result{
+				Decision:  domain.DecisionReview,
+				Method:    "NAME_ADDRESS_AMBIGUOUS",
+				Ambiguous: true,
+			}, true, nil
 		}
-		return Result{Entity: entity, Method: "NAME_ADDRESS_EXACT"}, true, nil
 	}
 
 	threshold, hasSimilarity := predicateThreshold(rule, "normalized_company_name", "SIMILARITY_GTE")
