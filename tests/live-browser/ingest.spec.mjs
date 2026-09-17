@@ -37,7 +37,7 @@ test("new CSV -> original RAW -> explicit resolution -> manual review, without s
   await page.getByRole("link",{name:"继续主体解析"}).click();
   await page.getByRole("form",{name:"启动主体解析"}).getByRole("checkbox").check();
   await page.getByRole("button",{name:"启动解析并进入审核"}).click();
-  await expect(page.getByRole("alert")).toContainText("此版本已有解析输出容器");
+  await expect(page.getByRole("alert").filter({hasText:"此版本已有解析输出容器"})).toBeVisible();
   await expect(page.getByRole("button",{name:"启动解析并进入审核"})).toBeDisabled();
   await page.getByRole("link",{name:"查看解析输出数据集"}).click();
   await expect(page.getByRole("heading",{name:"不可变版本历史"})).toBeVisible();
