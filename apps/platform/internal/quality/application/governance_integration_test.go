@@ -3,6 +3,7 @@ package application_test
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -143,6 +144,45 @@ COMPANY-003,敏感科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	}
 	if badComplianceResult.GateDecision != compliancedomain.GateFail {
 		t.Fatalf("bad compliance gate = %s, want FAIL", badComplianceResult.GateDecision)
+	}
+
+	// A QualityResult workspace is derived from the Dataset. A caller naming another
+	// workspace's DatasetVersion must be rejected without writing result/evidence facts.
+	foreignWorkspaceID := uuid.New()
+	foreignDataset := createDatasetForTest(t, ctx, createDataset, foreignWorkspaceID, "GOV-FOREIGN")
+	foreignVersion := uploadCSV(t, ctx, uploadDataset, foreignDataset.ID, "product-foreign.csv", `company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at
+COMPANY-004,外部科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
+`, map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0})
+	if _, err := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID:      workspaceID,
+		DatasetVersionID: foreignVersion.ID,
+		RuleSetRef:       "park/quality/enterprise-activity-quality-v1.yaml",
+		TraceID:          "governance-e2e",
+		Now:              foreignVersion.ReadyAt.Add(30 * 60 * 1e9),
+	}); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
+		t.Fatalf("cross workspace quality error = %v, want ErrDatasetWorkspace", err)
+	}
+	var foreignQualityResults int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM quality_result WHERE workspace_id=$1`, foreignWorkspaceID).Scan(&foreignQualityResults); err != nil {
+		t.Fatalf("count rejected foreign quality results: %v", err)
+	}
+	if foreignQualityResults != 0 {
+		t.Fatal("rejected cross workspace quality check persisted a result")
+	}
+	if _, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		WorkspaceID:      workspaceID,
+		DatasetVersionID: foreignVersion.ID,
+		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:          "governance-e2e",
+	}); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
+		t.Fatalf("cross workspace compliance error = %v, want ErrDatasetWorkspace", err)
+	}
+	var foreignComplianceResults int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM compliance_result WHERE workspace_id=$1`, foreignWorkspaceID).Scan(&foreignComplianceResults); err != nil {
+		t.Fatalf("count rejected foreign compliance results: %v", err)
+	}
+	if foreignComplianceResults != 0 {
+		t.Fatal("rejected cross workspace compliance check persisted a result")
 	}
 
 	var evidenceCount int

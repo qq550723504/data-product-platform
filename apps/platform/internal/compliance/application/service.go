@@ -58,6 +58,15 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (compliancedomain.Res
 	if version.Status != datasetdomain.VersionReady && version.Status != datasetdomain.VersionSuperseded {
 		return compliancedomain.Result{}, fmt.Errorf("compliance checks require READY or SUPERSEDED DatasetVersion, got %s", version.Status)
 	}
+	// The result workspace is derived from the Dataset, not trusted from the caller.
+	// A DatasetVersion foreign key proves the row exists, not which workspace owns it.
+	datasetWorkspace, _, err := s.datasetRepo.GetWorkspaceAndType(ctx, version.DatasetID)
+	if err != nil {
+		return compliancedomain.Result{}, fmt.Errorf("resolve DatasetVersion dataset: %w", err)
+	}
+	if datasetWorkspace != cmd.WorkspaceID {
+		return compliancedomain.Result{}, fmt.Errorf("%w: DatasetVersion %s belongs to workspace %s", datasetdomain.ErrDatasetWorkspace, version.ID, datasetWorkspace)
+	}
 	policyPath, err := industrypack.ResolvePath(s.industryPackRoot, cmd.PolicyRef)
 	if err != nil {
 		return compliancedomain.Result{}, err

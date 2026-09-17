@@ -236,6 +236,61 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	if storedBlockingRelease.Status != domain.ReleaseValidating {
 		t.Fatalf("blocking release status = %s, want VALIDATING", storedBlockingRelease.Status)
 	}
+
+	// A release may not bind a DatasetVersion owned by another workspace, even when
+	// every other governance fact is valid for the product's workspace.
+	foreignWorkspaceID := uuid.New()
+	foreignDatasetID := uuid.New()
+	foreignDatasetVersionID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset (
+			id, workspace_id, code, name, dataset_type, lifecycle_status, metadata,
+			created_at, updated_at
+		) VALUES ($1,$2,$3,'Foreign curated dataset','CURATED','ACTIVE','{}'::jsonb,now(),now())
+	`, foreignDatasetID, foreignWorkspaceID, "READINESS-FOREIGN-"+uuid.NewString()); err != nil {
+		t.Fatalf("insert foreign dataset: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version (
+			id, dataset_id, version_no, status, storage_type, storage_uri,
+			content_type, checksum_algorithm, checksum_value, generated_by_execution_id,
+			metadata, created_at, ready_at
+		) VALUES ($1,$2,1,'READY','OBJECT_STORAGE','s3://test-bucket/foreign.csv',
+		          'text/csv','SHA256',$3,$4,'{}'::jsonb,now(),now())
+	`, foreignDatasetVersionID, foreignDatasetID, repeatHex(7), uuid.New()); err != nil {
+		t.Fatalf("insert foreign DatasetVersion: %v", err)
+	}
+	foreignRelease, err := service.CreateRelease(ctx, application.CreateReleaseCommand{
+		ProductID:        product.ID,
+		ProductVersionID: version.ID,
+		ReleaseNo:        "R-READINESS-FOREIGN",
+		Datasets:         []domain.ReleaseDataset{{DatasetVersionID: foreignDatasetVersionID, Role: domain.DatasetPrimary}},
+		TraceID:          "release-readiness-e2e",
+	})
+	if err != nil {
+		t.Fatalf("create foreign ProductRelease: %v", err)
+	}
+	foreignReadiness, err := service.ValidateRelease(ctx, application.ValidateReleaseCommand{
+		ReleaseID:          foreignRelease.ID,
+		ContractVersionID:  contractVersionID,
+		RightsSnapshotID:   rightsSnapshotID,
+		QualityResultID:    qualityResultID,
+		ComplianceResultID: complianceResultID,
+		TraceID:            "release-readiness-e2e",
+	})
+	if err != nil {
+		t.Fatalf("validate foreign release: %v", err)
+	}
+	if foreignReadiness.Overall != "NOT_READY" || !slices.Contains(foreignReadiness.Blockers, "DATASET_NOT_USABLE") {
+		t.Fatalf("foreign readiness = %s blockers=%v, want DATASET_NOT_USABLE", foreignReadiness.Overall, foreignReadiness.Blockers)
+	}
+	storedForeignRelease, err := repo.GetRelease(ctx, foreignRelease.ID)
+	if err != nil {
+		t.Fatalf("get foreign release: %v", err)
+	}
+	if storedForeignRelease.Status != domain.ReleaseValidating {
+		t.Fatalf("foreign release status = %s, want VALIDATING", storedForeignRelease.Status)
+	}
 }
 
 func repeatHex(seed int) string {

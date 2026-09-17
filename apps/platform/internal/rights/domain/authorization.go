@@ -25,6 +25,9 @@ var (
 	ErrInvalidAuthorization = errors.New("authorization is invalid")
 	ErrInvalidTransition    = errors.New("authorization state transition is invalid")
 	ErrAuthorizationInvalid = errors.New("authorization is not valid for the requested snapshot")
+	// ErrResourceWorkspace rejects a grant whose DataResource belongs to another
+	// workspace. A resource foreign key proves the row exists, not who owns it.
+	ErrResourceWorkspace = errors.New("authorization resource belongs to a different workspace")
 )
 
 type ResourceGrant struct {
