@@ -2,6 +2,7 @@ package matching
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -15,6 +16,8 @@ const (
 	ruleEngineName    = "RULES"
 	ruleEngineVersion = "1"
 )
+
+var ErrCandidateGeneration = errors.New("probabilistic candidate generation failed")
 
 type Lookup interface {
 	FindByCanonicalKey(ctx context.Context, entityTypeID uuid.UUID, canonicalKey string) (*domain.Entity, error)
@@ -103,7 +106,11 @@ func (e *Engine) Match(ctx context.Context, entityTypeID uuid.UUID, company Norm
 
 	if e.candidate != nil {
 		result, found, err := e.probabilisticCandidate(ctx, entityTypeID, company, policy)
-		if err == nil && found {
+		if err != nil {
+			if !errors.Is(err, ErrCandidateGeneration) {
+				return Result{}, err
+			}
+		} else if found {
 			if result.Decision == domain.DecisionAutoMatch || result.Decision == domain.DecisionReview {
 				return result, nil
 			}
@@ -111,8 +118,9 @@ func (e *Engine) Match(ctx context.Context, entityTypeID uuid.UUID, company Norm
 				return result, nil
 			}
 		}
-		// An optional candidate-engine failure deliberately falls back to the
-		// deterministic path instead of failing the Core match job.
+		// A provider-side candidate generation failure is optional and may fall
+		// back to deterministic Core rules. Core repository/invariant failures
+		// are propagated above and must never be converted into UNRESOLVED.
 	}
 
 	if deterministicReview != nil {
@@ -162,7 +170,7 @@ func (e *Engine) probabilisticCandidate(ctx context.Context, entityTypeID uuid.U
 		PolicyVersion: policy.Metadata.Version,
 	})
 	if err != nil {
-		return Result{}, false, fmt.Errorf("generate probabilistic entity candidates: %w", err)
+		return Result{}, false, fmt.Errorf("%w: %v", ErrCandidateGeneration, err)
 	}
 	if len(generated) == 0 {
 		return Result{}, false, nil
