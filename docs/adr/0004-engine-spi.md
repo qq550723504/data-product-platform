@@ -1,14 +1,14 @@
-# ADR-0004: External Capabilities Use Engine SPIs
+# ADR-0004：外部能力通过 Engine SPI 接入
 
-- Status: Accepted
+- 状态：已接受
 
-## Context
+## 背景
 
-The platform may use OpenMetadata, Apache Hop, Python, Spark, Splink, Soda, Great Expectations or Presidio, but none of these should define Core business semantics.
+平台可能使用 OpenMetadata、Apache Hop、Python、Spark、Splink、Soda、Great Expectations 或 Presidio，但这些组件都不应定义核心业务语义。
 
-## Decision
+## 决策
 
-Core depends only on ports such as:
+核心只依赖以下端口（port）：
 
 - MetadataEngine
 - ProcessingEngine
@@ -17,11 +17,11 @@ Core depends only on ports such as:
 - ComplianceEngine
 - EvidenceStore
 
-Concrete products are implemented as adapters.
+具体产品以适配器方式实现。
 
-## Consequences
+## 后果
 
-- Engines can be replaced independently.
-- Adapter contract tests are required.
-- Core tables store external execution/reference IDs only as external references.
-- Engine-specific configuration must remain outside Core domain objects wherever possible.
+- 各引擎可独立替换。
+- 必须提供适配器契约测试（adapter contract tests）。
+- 核心表只把外部执行/引用 ID 作为外部引用存储。
+- 引擎专属配置应尽可能保留在核心领域对象之外。

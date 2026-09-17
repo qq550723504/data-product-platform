@@ -1,22 +1,22 @@
-# ADR-0005: Key State Changes Emit Domain Events and Audit Events
+# ADR-0005：关键状态变化产生领域事件与审计事件
 
-- Status: Accepted
+- 状态：已接受
 
-## Context
+## 背景
 
-The platform needs asynchronous projections, impact analysis and traceability across production, rights, quality, compliance and releases.
+平台需要在生产、权利、质量、合规与发布等环节实现异步投影、影响分析与可追溯性。
 
-## Decision
+## 决策
 
-Key state changes emit Domain Events. Human-meaningful or accountability-relevant changes also create AuditEvents.
+关键状态变化产生领域事件（Domain Event）。具有人类语义或与责任归属相关的变化还会创建 AuditEvent。
 
-Domain events are first written to a Transactional Outbox in the same database transaction as the aggregate update.
+领域事件首先写入事务性 Outbox（Transactional Outbox），与聚合更新处于同一个数据库事务中。
 
-AuditEvent is business data and is not replaced by application logs.
+AuditEvent 属于业务数据，不能被应用日志所替代。
 
-## Consequences
+## 后果
 
-- External side effects can retry independently.
-- Core transactions do not depend on OpenMetadata or other engines being available.
-- Event handlers must be idempotent.
-- A stable event vocabulary and versioning discipline are required.
+- 外部副作用可以独立重试。
+- 核心事务不依赖 OpenMetadata 或其他引擎可用。
+- 事件处理器必须幂等。
+- 需要稳定的事件词汇表（event vocabulary）与版本管理规范。

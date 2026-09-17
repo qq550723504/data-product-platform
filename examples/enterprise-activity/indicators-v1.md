@@ -1,120 +1,120 @@
-# Enterprise Activity Indicator Specification V1.0
+# 企业活跃度指标规范 V1.0
 
-This document is the human-readable companion to:
+本文档是以下文件的人类可读配套说明：
 
 `industry-packs/park/indicators/enterprise-activity-v1.yaml`
 
-The V1 indicators are deliberately transparent and rule-based so the POC can validate versioning, explainability, Quality/Compliance gates, evidence and release reproducibility.
+V1 指标刻意设计为透明且基于规则，使 POC 能够验证版本管理、可解释性、Quality/Compliance 门禁、证据与发布可复现性。
 
-> **Important:** these scores are POC product indicators. They are not a validated bank credit score, underwriting decision, probability-of-default model, or investment/risk recommendation. Real financial use requires domain-owner definition, real-data calibration, validation and consumer agreement.
+> **重要提示：** 这些得分是 POC 产品指标。它们不是经过验证的银行信用评分、授信决策、违约概率模型，也不是投资/风险建议。真实的金融用途需要领域负责人定义、真实数据校准、验证以及消费者认可。
 
-## 1. Target period
+## 1. 目标期间
 
-The reference implementation calculates one output row per canonical company and target month (`YYYY-MM`). Dates are evaluated using the target period end unless a rule says otherwise.
+参考实现按权威企业（canonical company）与目标月份（`YYYY-MM`）计算一行输出。除规则另有说明外，日期均以目标期间结束日为准进行评估。
 
-All scores are rounded to 2 decimal places using HALF_UP after the unrounded indicator has been calculated.
+所有得分在计算完未圆整的指标值之后，使用 HALF_UP 四舍五入到 2 位小数。
 
 ## 2. `tenancy_stability`
 
-Purpose: provide an explainable signal for how long the enterprise has been present and whether it has an active lease covering the target month.
+目的：提供一个可解释的信号，说明企业存续时长，以及是否存在覆盖目标月份的生效租约。
 
-Inputs:
+输入：
 
 - `enterprise.entry_date`
 - `lease.contract_start`
 - `lease.contract_end`
 - `lease.lease_status`
 
-V1 parameters:
+V1 参数：
 
-- full-tenure reference: 36 months
-- tenure weight: 70%
-- current active lease weight: 30%
+- 完整存续期基准：36 个月
+- 存续时长权重：70%
+- 当前生效租约权重：30%
 
-Calculation:
+计算：
 
 ```text
-tenure_months = full calendar months from entry_date to target-period end
-                clamped to 0..36
+tenure_months = 从 entry_date 到目标期间结束日的完整自然月数
+                并截断到 0..36
 
 tenure_score = min(100, tenure_months / 36 * 100)
 
 current_lease_score = 100
-  if at least one ACTIVE lease overlaps the target period
-  else 0
+  若至少存在一份覆盖目标期间的 ACTIVE 租约
+  否则为 0
 
 tenancy_stability = 0.70 * tenure_score
                   + 0.30 * current_lease_score
 ```
 
-Missing-data rule:
+缺失数据规则：
 
-- missing `entry_date` → indicator is `null`
-- no usable lease data → indicator is `null`
+- 缺失 `entry_date` → 指标为 `null`
+- 无可用租约数据 → 指标为 `null`
 
-The implementation must retain the components used for explanation: `tenure_months`, `tenure_score`, whether an active lease was found, and `current_lease_score`.
+实现必须保留用于解释的分项：`tenure_months`、`tenure_score`、是否找到生效租约，以及 `current_lease_score`。
 
 ## 3. `rent_performance`
 
-Purpose: summarize payment-event performance without hiding late or unpaid events.
+目的：汇总缴付事件的表现，同时不掩盖逾期或未缴事件。
 
-Inputs:
+输入：
 
 - `lease.payment_due_date`
 - `lease.payment_date`
 
-V1 window:
+V1 窗口：
 
-- trailing 12 months ending at the target-period end
-- minimum 2 due events required
+- 截至目标期间结束日的近 12 个月
+- 至少需要 2 个到期事件
 
-Event score:
+事件得分：
 
-| Event | Score |
+| 事件 | 得分 |
 | --- | ---: |
-| paid on/before due date | 100 |
-| 1–7 days late | 70 |
-| 8–30 days late | 40 |
-| more than 30 days late | 20 |
-| overdue and unpaid as of target period end | 0 |
+| 在到期日或之前缴付 | 100 |
+| 逾期 1–7 天 | 70 |
+| 逾期 8–30 天 | 40 |
+| 逾期超过 30 天 | 20 |
+| 截至目标期间结束时逾期未缴 | 0 |
 
 ```text
-rent_performance = arithmetic mean(event_scores)
+rent_performance = 各事件得分的算术平均值
 ```
 
-A future-due unpaid event is not included until its due date has passed.
+尚未到期的事件在其到期日到来之前不计入。
 
-If fewer than 2 due events are available, the result is `null` (`INSUFFICIENT_DATA` for this component).
+如果可用的到期事件少于 2 个，结果为 `null`（该分项为 `INSUFFICIENT_DATA`）。
 
-The explanation should retain due-event counts by classification.
+解释信息应保留按分类统计的到期事件计数。
 
 ## 4. `energy_stability`
 
-Purpose: measure continuity and month-to-month stability of valid energy observations. It intentionally does not claim that rising/falling energy is good or bad for credit risk.
+目的：衡量有效能耗观测的连续性与逐月稳定性。它刻意不宣称能耗上升/下降对信用风险是好是坏。
 
-Inputs:
+输入：
 
 - `energy.reading_time`
 - `energy.energy_kwh`
 
-Preprocessing:
+预处理：
 
-1. `energy_kwh < 0` is technically invalid for the POC and is **quarantined**, never rewritten to zero.
-2. Accepted readings are summed to monthly totals per canonical company.
-3. Use up to the trailing 6 months ending at the target month.
+1. 对 POC 而言 `energy_kwh < 0` 在技术上无效，会被**隔离**，绝不改写为零。
+2. 被接受的读数按权威企业汇总为月度总量。
+3. 使用截至目标月份的近 6 个月。
 
-Minimum data:
+最小数据要求：
 
-- at least 3 valid monthly totals
-- arithmetic mean of valid monthly totals must be greater than zero
+- 至少 3 个有效月度总量
+- 有效月度总量的算术平均值必须大于零
 
-Expected months are counted from the first observed month inside the lookback window through the target month, capped at 6. This avoids penalizing a company merely because the POC dataset starts later than the six-month window.
+期望月份数从回溯窗口内第一个观测月份起计至目标月份，并上限为 6。这避免了仅仅因为 POC 数据集晚于六个月窗口才开始，就对某企业产生惩罚。
 
 ```text
-coverage_score = valid_month_count / expected_month_count * 100
+coverage_score = 有效月份数 / 期望月份数 * 100
 
-cv = population_stddev(valid_monthly_totals)
-     / mean(valid_monthly_totals)
+cv = 总体标准差(有效月度总量)
+     / 平均(有效月度总量)
 
 variability_score = clamp(100 * (1 - cv / 0.30), 0, 100)
 
@@ -122,26 +122,26 @@ energy_stability = 0.70 * variability_score
                  + 0.30 * coverage_score
 ```
 
-`0.30` is a POC reference CV threshold and is deliberately stored in versioned configuration. It must be calibrated before production claims are made.
+`0.30` 是 POC 参考 CV 阈值，刻意保存在版本化配置中。在做出生产级结论之前必须对其进行校准。
 
-Explanation output should retain:
+解释输出应保留：
 
-- expected/valid months
-- coverage score
-- monthly mean/stddev
-- coefficient of variation
-- variability score
-- quarantined record count
+- 期望/有效月份
+- coverage 得分
+- 月度均值/标准差
+- 变异系数（coefficient of variation）
+- variability 得分
+- 被隔离记录数
 
 ## 5. `activity_score`
 
-V1 requires all three component indicators:
+V1 要求三个分项指标全部可用：
 
 - `tenancy_stability`
 - `rent_performance`
 - `energy_stability`
 
-The initial composite uses equal weights to avoid implying an empirically validated risk weighting:
+初始合成使用等权重，以避免暗示某种经实证验证的风险权重：
 
 ```text
 activity_score = 1/3 * tenancy_stability
@@ -149,60 +149,60 @@ activity_score = 1/3 * tenancy_stability
                + 1/3 * energy_stability
 ```
 
-If any component is `null`:
+如果任一分项为 `null`：
 
 ```text
 activity_score = null
 activity_level = INSUFFICIENT_DATA
 ```
 
-There is **no silent zero, neutral-score, median, or forward-fill imputation**.
+**不存在静默的零值、中性得分、中位数或前值填充（forward-fill）补插。**
 
-POC activity levels:
+POC 活跃度等级：
 
 ```text
 HIGH   >= 80
-MEDIUM >= 60 and < 80
-LOW    >= 0 and < 60
-INSUFFICIENT_DATA when activity_score is null
+MEDIUM >= 60 且 < 80
+LOW    >= 0 且 < 60
+activity_score 为 null 时为 INSUFFICIENT_DATA
 ```
 
-These level thresholds are POC presentation semantics, not validated financial thresholds.
+这些等级阈值是 POC 展示语义，不是经过验证的金融阈值。
 
 ## 6. `indicator_coverage`
 
-The product exposes a simple explainability/availability measure:
+产品暴露一个简单的可解释性/可用性度量：
 
 ```text
-indicator_coverage = available_required_components / 3 * 100
+indicator_coverage = 可用的必需分项数 / 3 * 100
 ```
 
-Examples:
+示例：
 
-- 3/3 available → 100
-- 2/3 available → 66.67
-- 1/3 available → 33.33
-- 0/3 available → 0
+- 3/3 可用 → 100
+- 2/3 可用 → 66.67
+- 1/3 可用 → 33.33
+- 0/3 可用 → 0
 
-A coverage below 100 means `activity_score` is null in V1.
+覆盖率低于 100 意味着在 V1 中 `activity_score` 为 null。
 
-## 7. Quality vs business indicator semantics
+## 7. 质量与业务指标语义的区别
 
-`activity_score` describes the reference product's business indicator output.
+`activity_score` 描述参考产品的业务指标输出。
 
-It must **not** be reused as a Data Quality score. Data fitness is independently evaluated by Quality Rules / Quality Gate.
+它**不得**被复用为数据质量（Data Quality）得分。数据适用性由 Quality Rules / Quality Gate 独立评估。
 
-A company can have a low `activity_score` in a perfectly high-quality Dataset, and a high calculated activity score can still be blocked from release if Data Quality fails.
+一个企业的 `activity_score` 可以很低，而其 Dataset 质量可以极好；反之，一个计算出的高活跃度得分，如果数据质量不通过，仍可能被阻止发布。
 
-## 8. Versioning and evidence
+## 8. 版本管理与证据
 
-Every execution producing these indicators must retain:
+每一次产出这些指标的执行都必须保留：
 
-- indicator set name/version
-- exact input DatasetVersions
-- workflow version
-- entity matching policy version
-- quarantined/invalid record counts
-- component explanation values
+- 指标集名称/版本
+- 确切的输入 DatasetVersion
+- 工作流版本
+- 实体匹配策略版本
+- 被隔离/无效记录计数
+- 分项解释值
 
-A published ProductRelease freezes these references in its evidence snapshot.
+已发布的 ProductRelease 会在其证据快照中冻结这些引用。

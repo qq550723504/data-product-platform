@@ -1,20 +1,20 @@
-# ADR-0001: Use a Modular Monolith for the Core POC
+# ADR-0001：核心 POC 采用模块化单体（Modular Monolith）
 
-- Status: Accepted
+- 状态：已接受
 
-## Context
+## 背景
 
-The main risk is domain-model correctness, not horizontal scalability. Splitting the system into many services would add RPC, distributed transaction, deployment and versioning complexity before the boundaries are validated.
+主要风险在于领域模型的正确性，而非水平扩展能力。在边界尚未验证之前，就把系统拆分为多个服务，会引入 RPC、分布式事务、部署与版本管理等额外复杂度。
 
-## Decision
+## 决策
 
-Build the first Core Platform as a Modular Monolith with clear domain modules and a separate worker process.
+将第一个核心平台构建为模块化单体，具有清晰的领域模块，并配一个独立的 worker 进程。
 
-Initial modules include resource, dataset, entity, workflow, rights, quality, compliance, contract, product, cost and evidence.
+初始模块包括 resource、dataset、entity、workflow、rights、quality、compliance、contract、product、cost 与 evidence。
 
-## Consequences
+## 后果
 
-- Faster vertical-slice development.
-- Easier transactional consistency.
-- Domain boundaries remain explicit so modules can be extracted later if needed.
-- No microservice split is allowed solely for architectural aesthetics during the POC.
+- 垂直切片（vertical slice）开发更快。
+- 事务一致性更易保证。
+- 领域边界保持显式，后续如有需要可将模块抽取为独立服务。
+- POC 阶段不得仅出于架构审美而做微服务拆分。

@@ -4,7 +4,7 @@
 
 本项目目标不是重新实现一个元数据平台、ETL 平台、可信数据空间或财务系统，而是提供一套通用的数据产品生产内核，把分散、异构、权利边界不清晰的原始数据，持续生产为可理解、可治理、可交付、可流通、可审计的数据产品。
 
-## Start here
+## Start here（从这里开始）
 
 建议按这个顺序阅读/执行：
 
@@ -118,14 +118,14 @@ data-product-platform/
 
 ## POC 路线
 
-- Sprint 0：工程骨架、PostgreSQL、Redis、MinIO、Outbox、Audit（`#2`）
-- Sprint 1：DataResource / Dataset / DatasetVersion / Entity / Evidence（`#3`、`#4`、`#8`）
-- Sprint 2：Workflow / Execution / DataProduct / ProductRelease（`#5`、`#7`）
-- Sprint 3：Rights / Quality / Compliance / Data Contract + full release test（`#6`、`#12`、`#14`、`#16`）
-- POC UI：`#13`
-- Sprint 4：OpenMetadata Adapter（`#9`）
-- Sprint 5：Apache Hop Adapter（`#10`）
-- Sprint 6：Splink Adapter（`#11`）
+- Sprint 0：工程骨架、PostgreSQL、Redis、MinIO、Outbox、Audit（`#2`）— 已完成
+- Sprint 1：DataResource / Dataset / DatasetVersion / Entity / Evidence（`#3`、`#4`、`#8`）— 已完成
+- Sprint 2：Workflow / Execution / DataProduct / ProductRelease（`#5`、`#7`）— 已完成
+- Sprint 3：Rights / Quality / Compliance / Data Contract + full release test（`#6`、`#12`、`#14`、`#16`）— 已完成
+- POC UI：`#13` — 已完成（实况浏览器验收待完成）
+- Sprint 4：OpenMetadata Adapter（`#9`）— 已完成
+- Sprint 5：Apache Hop Adapter（`#10`）— 已完成
+- Sprint 6：Splink Adapter（`#11`）— 已完成
 
 POC 成功标准不是“组件全部部署成功”，而是能从三组原始数据真实生产出一个不可变、可追溯的 `Product Release V1.0`，并能回答：
 
@@ -137,6 +137,29 @@ POC 成功标准不是“组件全部部署成功”，而是能从三组原始�
 
 ## 当前阶段
 
-当前处于：**Reference Implementation V1 已冻结到可编码规格；下一步执行 Sprint 0 / 第一条 Vertical Slice**。
+当前处于：**核心 POC 已跑通，进入收尾与验收阶段**。
 
-注意：仓库目前为 Public。真实客户数据、合同、非公开规则或凭证进入仓库前，应先完成仓库可见性决策（见 `#15`）。
+已完成：
+
+- Sprint 0–3：`DataResource → DatasetVersion → Entity Resolution → Workflow/Execution → Rights / Quality / Compliance / Data Contract → DataProduct / ProductVersion / ProductRelease → Evidence / Cost` 全链路，并带有全路径验收测试（`apps/platform/internal/acceptance/enterprise_activity_poc_test.go`）。
+- POC UI（`#13`）：工作台、数据资源、数据集、数据生产、实体复核、数据产品、证据中心，以及 Release → DatasetVersion → Execution → Evidence 追溯。
+- Sprint 4–6：OpenMetadata 治理投影、Apache Hop 处理、Splink 概率化候选三个适配器均已实现；Core 仅通过 Engine SPI 依赖外部引擎。
+
+尚未完成：
+
+- 浏览器验收闭环（`#85`）：Release readiness 需 fail-closed，并用 Playwright 驱动真实浏览器动作（复核、发布、就绪状态过期与冲突处理）。`#13` / `#75` 已关闭，但 `docs/poc/final-ui-acceptance.md` 的实况演示检查清单仍需在真实 POC 环境执行。
+- NDI 集成探针（Epic `#47`，子任务 `#84` / `#86` / `#87`）：按 ADR-0009 在 ProductRelease 稳定后启动——提供方中立的身份/标识/发布模型 → 适配器端口与对账 → 外部使用证据入图。
+- 生产 IAM / 安全加固与对外部署：明确不在 POC 范围内（当前 UI 写操作依赖 POC 开关与服务端配置的 actor）。
+
+## 仓库可见性
+
+仓库可见性决策（`#15`）已确定：仓库维持 **Public**。因此真实客户数据、合同、非公开规则或凭证不进入仓库。
+
+当前已采取的约束：
+
+- `.gitignore` 忽略 `.env` 与 `.env.*`，仅保留 `!.env.example`；
+- `.env.example` 与 `apps/web/.env.example` 只包含本地开发占位值，外部引擎 token / 密码字段留空；
+- `examples/` 与 `engines/splink` 评估集使用合成数据，不含真实企业或个人数据；
+- `examples/enterprise-activity/` 的合规规则与 Data Contract 禁止转售与营销用途，并限制原始字段输出。
+
+Public 仓库中不得提交真实 Use Case 数据、租约/能耗原始记录、客户合同或任何生产凭证。

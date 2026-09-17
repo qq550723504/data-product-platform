@@ -1,10 +1,10 @@
-# Park Industry Pack
+# Park 行业包
 
 园区行业包是 Data Product Platform 的第一个 Reference Industry Pack。
 
 它不是 Core Platform 的边界，而是验证 Industry Pack 机制的第一套行业实现。
 
-## Planned Contents
+## 计划内容
 
 ```text
 industry-packs/park/
@@ -17,7 +17,7 @@ industry-packs/park/
 └── products/
 ```
 
-## Initial Entity Types
+## 初始实体类型
 
 - COMPANY
 - PARK
@@ -27,7 +27,7 @@ industry-packs/park/
 
 POC 第一阶段主要使用 `COMPANY`。
 
-## Company Strong Identifier
+## 企业强标识符
 
 第一优先级标识：统一社会信用代码。
 
@@ -40,7 +40,7 @@ POC 第一阶段主要使用 `COMPANY`。
 
 具体阈值应通过 POC 数据校准，不在 Core 中硬编码。
 
-## Initial Domains
+## 初始领域
 
 - ENTERPRISE
 - LEASING
@@ -51,7 +51,7 @@ POC 第一阶段主要使用 `COMPANY`。
 - SECURITY
 - PARKING
 
-## Initial Product Templates
+## 初始产品模板
 
 第一批候选模板：
 
@@ -64,7 +64,7 @@ POC 第一阶段主要使用 `COMPANY`。
 
 POC 只实现 `enterprise-activity`。
 
-## Pack Contract
+## Pack 契约
 
 Industry Pack 可以提供规则与模板，但不得改变：
 
