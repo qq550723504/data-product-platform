@@ -23,4 +23,6 @@ python engines/splink/scripts/evaluate_reference.py \
 
 The report records `autoMatched`, `review`, `unresolved`, `conflicts`, `falsePositive`, and `falseNegative`. A correct Human Review candidate is not counted as a false negative because Core intentionally requires human confirmation.
 
-Reference thresholds validate the Park POC only. Production thresholds must be calibrated against customer-labelled data before enabling automatic decisions.
+The committed synthetic training set is intentionally small. Splink can therefore report comparison levels whose `m` or `u` probabilities were not observed and use its defaults for those levels. That is acceptable for this POC regression fixture, but the generated reference model is not a production-calibrated statistical artifact.
+
+Reference thresholds validate the Park POC only. Production thresholds and statistical parameters must be calibrated against a materially larger, customer-labelled dataset before enabling automatic decisions.
