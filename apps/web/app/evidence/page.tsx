@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Badge, EmptyState, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
+import { collectAllPages } from "@/lib/pagination";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 
 export default async function EvidencePage() {
@@ -8,11 +9,15 @@ export default async function EvidencePage() {
   }
 
   try {
-    const products = await platform.products(100, 0);
-    const rows = (await Promise.all(products.items.map(async (product) => {
-      const releases = await platform.releases(product.id, 20, 0);
-      return releases.items.map((release) => ({ product, release }));
-    }))).flat().sort((a, b) => Date.parse(b.release.createdAt) - Date.parse(a.release.createdAt));
+    const products = await collectAllPages((limit, offset) => platform.products(limit, offset));
+    const rows: Array<{ product: (typeof products)[number]; release: Awaited<ReturnType<typeof platform.releases>>["items"][number] }> = [];
+    // Keep release enumeration sequential to avoid an unbounded request fan-out
+    // when a workspace contains many products.
+    for (const product of products) {
+      const releases = await collectAllPages((limit, offset) => platform.releases(product.id, limit, offset));
+      rows.push(...releases.map((release) => ({ product, release })));
+    }
+    rows.sort((a, b) => Date.parse(b.release.createdAt) - Date.parse(a.release.createdAt));
 
     return (
       <>
@@ -31,7 +36,7 @@ export default async function EvidencePage() {
               </span>
             ))}
           </div>
-          <p style={{ marginTop: 14 }}>Release 必须先从当前 Workspace 的 Data Product 发现；证据页不会要求操作者粘贴任意 UUID。</p>
+          <p style={{ marginTop: 14 }}>Release 必须先从当前 Workspace 的 Data Product 发现；证据页会遍历全部分页，不会遗漏不可变历史，也不会要求操作者粘贴任意 UUID。</p>
         </section>
 
         <div className="panel-header"><h2>可追溯 ProductRelease</h2><span className="eyebrow">{rows.length} Releases</span></div>
