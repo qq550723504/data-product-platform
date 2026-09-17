@@ -14,6 +14,7 @@ type Config struct {
 	Redis            RedisConfig
 	Storage          StorageConfig
 	OpenMetadata     OpenMetadataConfig
+	Hop              HopConfig
 }
 
 type RedisConfig struct {
@@ -37,6 +38,13 @@ type OpenMetadataConfig struct {
 	Domain  string
 }
 
+type HopConfig struct {
+	Enabled  bool
+	BaseURL  string
+	Username string
+	Password string
+}
+
 func Load() (Config, error) {
 	redisDB, err := intEnv("REDIS_DB", 0)
 	if err != nil {
@@ -48,6 +56,10 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 	openMetadataEnabled, err := boolEnv("OPENMETADATA_ENABLED", false)
+	if err != nil {
+		return Config{}, err
+	}
+	hopEnabled, err := boolEnv("HOP_ENABLED", false)
 	if err != nil {
 		return Config{}, err
 	}
@@ -75,6 +87,12 @@ func Load() (Config, error) {
 			Token:   os.Getenv("OPENMETADATA_TOKEN"),
 			Domain:  os.Getenv("OPENMETADATA_DOMAIN"),
 		},
+		Hop: HopConfig{
+			Enabled:  hopEnabled,
+			BaseURL:  os.Getenv("HOP_SERVER_URL"),
+			Username: os.Getenv("HOP_SERVER_USERNAME"),
+			Password: os.Getenv("HOP_SERVER_PASSWORD"),
+		},
 	}
 
 	if cfg.PostgresDSN == "" {
@@ -95,6 +113,14 @@ func Load() (Config, error) {
 		}
 		if cfg.OpenMetadata.Domain == "" {
 			return Config{}, fmt.Errorf("OPENMETADATA_DOMAIN must not be empty when OpenMetadata is enabled")
+		}
+	}
+	if cfg.Hop.Enabled {
+		if cfg.Hop.BaseURL == "" {
+			return Config{}, fmt.Errorf("HOP_SERVER_URL must not be empty when Apache Hop is enabled")
+		}
+		if cfg.Hop.Username == "" || cfg.Hop.Password == "" {
+			return Config{}, fmt.Errorf("HOP_SERVER_USERNAME and HOP_SERVER_PASSWORD must not be empty when Apache Hop is enabled")
 		}
 	}
 
