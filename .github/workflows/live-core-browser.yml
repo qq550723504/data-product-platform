@@ -1,0 +1,66 @@
+name: live-core-browser
+
+on:
+  # Includes stacked PRs: this incremental suite can be reviewed before its predecessor merges.
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-core-browser-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  live-core-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      NEXT_TELEMETRY_DISABLED: '1'
+      POC_WORKSPACE_ID: ''
+      POC_ENABLE_REVIEW_ACTIONS: 'false'
+      POC_ENABLE_RELEASE_ACTIONS: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache-dependency-path: apps/platform/go.sum
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check new Go source formatting
+        run: test -z "$(gofmt -l apps/platform/internal/acceptance/browser_live_test.go)"
+      - name: Install application and isolated browser dependencies
+        run: |
+          npm --prefix apps/web install --no-audit --no-fund
+          npm --prefix tests/live-browser install --no-audit --no-fund
+      - name: Build and prepare actual standalone console
+        run: |
+          npm --prefix apps/web run build
+          npm --prefix tests/live-browser run prepare:standalone
+      - name: Install Chromium
+        working-directory: tests/live-browser
+        run: npx playwright install --with-deps chromium
+      - name: Real Core and PostgreSQL browser acceptance
+        env:
+          LIVE_BROWSER_ACCEPTANCE: '1'
+        run: bash tests/live-browser/run.sh
+      - name: Save actual verification, screenshots, traces and service logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-core-browser-${{ github.run_attempt }}
+          retention-days: 7
+          include-hidden-files: true
+          path: |
+            .artifacts/live-browser/*.log
+            .artifacts/live-browser/*.json
+            .artifacts/live-browser/*.txt
+            .artifacts/live-browser/html-*/
+            .artifacts/live-browser/results-*/
+            tests/live-browser/package-lock.json
