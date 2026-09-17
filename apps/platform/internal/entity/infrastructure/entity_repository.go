@@ -155,18 +155,24 @@ func (r *PostgresRepository) InsertMapping(ctx context.Context, tx pgx.Tx, mappi
 	_, err := tx.Exec(ctx, `
 		INSERT INTO entity_mapping (
 			id, entity_id, source_type, source_ref, source_key, source_name,
-			match_method, match_rule_id, match_policy_version, confidence, status,
-			reviewed_by, reviewed_at, reviewer_reason, evidence_id, created_at
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+			match_method, match_rule_id, match_policy_version,
+			match_engine_name, match_engine_version, match_model_version,
+			confidence, status, reviewed_by, reviewed_at, reviewer_reason, evidence_id, created_at
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
 		ON CONFLICT (source_type, source_ref, source_key) DO UPDATE SET
 			entity_id=EXCLUDED.entity_id, source_name=EXCLUDED.source_name,
 			match_method=EXCLUDED.match_method, match_rule_id=EXCLUDED.match_rule_id,
-			match_policy_version=EXCLUDED.match_policy_version, confidence=EXCLUDED.confidence,
+			match_policy_version=EXCLUDED.match_policy_version,
+			match_engine_name=EXCLUDED.match_engine_name,
+			match_engine_version=EXCLUDED.match_engine_version,
+			match_model_version=EXCLUDED.match_model_version,
+			confidence=EXCLUDED.confidence,
 			status=EXCLUDED.status, reviewed_by=EXCLUDED.reviewed_by,
 			reviewed_at=EXCLUDED.reviewed_at, reviewer_reason=EXCLUDED.reviewer_reason,
 			evidence_id=EXCLUDED.evidence_id
 	`, mapping.ID, mapping.EntityID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey,
 		mapping.SourceName, mapping.MatchMethod, mapping.MatchRuleID, mapping.MatchPolicyVersion,
+		mapping.MatchEngineName, mapping.MatchEngineVersion, mapping.MatchModelVersion,
 		mapping.Confidence, mapping.Status, mapping.ReviewedBy, mapping.ReviewedAt,
 		mapping.ReviewerReason, mapping.EvidenceID, mapping.CreatedAt)
 	if err != nil {
