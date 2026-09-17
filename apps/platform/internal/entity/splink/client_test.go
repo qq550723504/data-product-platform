@@ -3,8 +3,10 @@ package splink
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -35,6 +37,9 @@ func TestProbeAndGenerateCandidates(t *testing.T) {
 			if req["modelRef"] != "park-company-v1" || req["modelVersion"] != "1.0.0" {
 				t.Fatalf("unexpected model binding: %#v", req)
 			}
+			if req["policyRef"] != "park-company-match" || req["policyVersion"] != "1.0.0" {
+				t.Fatalf("unexpected policy binding: %#v", req)
+			}
 			_ = json.NewEncoder(w).Encode(map[string]any{
 				"engine": map[string]any{
 					"name":         "SPLINK",
@@ -54,13 +59,7 @@ func TestProbeAndGenerateCandidates(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client, err := NewClient(Config{
-		BaseURL:               server.URL,
-		Token:                 "secret",
-		ExpectedEngineVersion: "4.0.17",
-		ModelRef:              "park-company-v1",
-		ModelVersion:          "1.0.0",
-	}, nil)
+	client, err := newTestClient(server.URL, "secret")
 	if err != nil {
 		t.Fatalf("new client: %v", err)
 	}
@@ -75,7 +74,8 @@ func TestProbeAndGenerateCandidates(t *testing.T) {
 		References: []resolution.ReferenceRecord{{
 			EntityID: entityID, Name: "Acme Technology", Fields: map[string]string{"normalized_company_name": "ACME TECHNOLOGY"},
 		}},
-		PolicyRef: "park-company-match",
+		PolicyRef:     "park-company-match",
+		PolicyVersion: "1.0.0",
 	})
 	if err != nil {
 		t.Fatalf("generate: %v", err)
@@ -93,18 +93,40 @@ func TestGenerateMapsProviderFailureToStableError(t *testing.T) {
 		http.Error(w, "python traceback with private details", http.StatusInternalServerError)
 	}))
 	defer server.Close()
-	client, err := NewClient(Config{
-		BaseURL: server.URL, ExpectedEngineVersion: "4.0.17", ModelRef: "m", ModelVersion: "1",
-	}, nil)
+	client, err := newTestClient(server.URL, "")
 	if err != nil {
 		t.Fatalf("new client: %v", err)
 	}
-	_, err = client.Generate(context.Background(), resolution.CandidateRequest{})
-	if err == nil || !errorsIs(err, ErrUnavailable) {
+	_, err = client.Generate(context.Background(), resolution.CandidateRequest{
+		PolicyRef: "park-company-match", PolicyVersion: "1.0.0",
+	})
+	if err == nil || !errors.Is(err, ErrUnavailable) {
 		t.Fatalf("expected ErrUnavailable, got %v", err)
 	}
-	if contains(err.Error(), "traceback") || contains(err.Error(), "private") {
+	if strings.Contains(err.Error(), "traceback") || strings.Contains(err.Error(), "private") {
 		t.Fatalf("raw provider error leaked: %v", err)
+	}
+}
+
+func TestGenerateRejectsMismatchedPolicyBeforeProviderCall(t *testing.T) {
+	calls := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		calls++
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+	client, err := newTestClient(server.URL, "")
+	if err != nil {
+		t.Fatalf("new client: %v", err)
+	}
+	_, err = client.Generate(context.Background(), resolution.CandidateRequest{
+		PolicyRef: "manufacturing-company-match", PolicyVersion: "1.0.0",
+	})
+	if !errors.Is(err, ErrPolicyMismatch) {
+		t.Fatalf("expected ErrPolicyMismatch, got %v", err)
+	}
+	if calls != 0 {
+		t.Fatalf("policy mismatch must not reach Splink provider, calls=%d", calls)
 	}
 }
 
@@ -116,37 +138,39 @@ func TestProbeRejectsUnexpectedVersion(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	client, err := NewClient(Config{
-		BaseURL: server.URL, ExpectedEngineVersion: "4.0.17", ModelRef: "park-company-v1", ModelVersion: "1.0.0",
-	}, nil)
+	client, err := newTestClient(server.URL, "")
 	if err != nil {
 		t.Fatalf("new client: %v", err)
 	}
-	if _, err := client.Probe(context.Background()); err == nil || !errorsIs(err, ErrInvalidResponse) {
+	if _, err := client.Probe(context.Background()); err == nil || !errors.Is(err, ErrInvalidResponse) {
 		t.Fatalf("expected version contract failure, got %v", err)
 	}
 }
 
-func errorsIs(err, target error) bool {
-	for err != nil {
-		if err == target {
-			return true
-		}
-		type unwrapper interface{ Unwrap() error }
-		u, ok := err.(unwrapper)
-		if !ok {
-			return false
-		}
-		err = u.Unwrap()
+func TestProbeRejectsMissingModelIdentity(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"status": "ok", "engineName": "SPLINK", "engineVersion": "4.0.17",
+		})
+	}))
+	defer server.Close()
+	client, err := newTestClient(server.URL, "")
+	if err != nil {
+		t.Fatalf("new client: %v", err)
 	}
-	return false
+	if _, err := client.Probe(context.Background()); err == nil || !errors.Is(err, ErrInvalidResponse) {
+		t.Fatalf("expected missing model identity failure, got %v", err)
+	}
 }
 
-func contains(value, sub string) bool {
-	for i := 0; i+len(sub) <= len(value); i++ {
-		if value[i:i+len(sub)] == sub {
-			return true
-		}
-	}
-	return false
+func newTestClient(baseURL, token string) (*Client, error) {
+	return NewClient(Config{
+		BaseURL:               baseURL,
+		Token:                 token,
+		ExpectedEngineVersion: "4.0.17",
+		ModelRef:              "park-company-v1",
+		ModelVersion:          "1.0.0",
+		PolicyRef:             "park-company-match",
+		PolicyVersion:         "1.0.0",
+	}, nil)
 }
