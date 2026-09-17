@@ -25,6 +25,7 @@ node_modules/
 out/
 .turbo/
 coverage/
+*.tsbuildinfo
 
 # Python
 __pycache__/
