@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
@@ -26,12 +27,12 @@ type ObjectStore interface {
 }
 
 type Bridge struct {
-	engine       workflowapp.ManagedProcessingEngine
-	artifactRoot string
-	tx           *transaction.Manager
-	datasetRepo  *datasetinfra.PostgresRepository
+	engine        workflowapp.ManagedProcessingEngine
+	artifactRoot  string
+	tx            *transaction.Manager
+	datasetRepo   *datasetinfra.PostgresRepository
 	datasetWriter *datasetapp.UploadVersionService
-	store        ObjectStore
+	store         ObjectStore
 }
 
 func NewBridge(engine workflowapp.ManagedProcessingEngine, artifactRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, datasetWriter *datasetapp.UploadVersionService, store ObjectStore) (*Bridge, error) {
@@ -146,13 +147,13 @@ func (b *Bridge) Finalize(ctx context.Context, request workflowapp.ProcessingReq
 		TraceID:                request.ExecutionID.String(),
 		GeneratedByExecutionID: &request.ExecutionID,
 		Metadata: map[string]any{
-			"workflowVersionId":  request.WorkflowVersion.ID,
-			"workflowVersion":    request.WorkflowVersion.Version,
-			"engineType":         "HOP",
-			"engineExecutionId":  run.ID,
-			"hopDefinitionRef":   cfg.DefinitionRef,
-			"stagingOutputUri":   outputURI,
-			"targetPeriod":       request.TargetPeriod,
+			"workflowVersionId":   request.WorkflowVersion.ID,
+			"workflowVersion":     request.WorkflowVersion.Version,
+			"engineType":          "HOP",
+			"engineExecutionId":   run.ID,
+			"hopDefinitionRef":    cfg.DefinitionRef,
+			"stagingOutputUri":    outputURI,
+			"targetPeriod":        request.TargetPeriod,
 			"remoteEngineMetrics": run.Metrics,
 		},
 	})
@@ -170,7 +171,7 @@ func (b *Bridge) Finalize(ctx context.Context, request workflowapp.ProcessingReq
 	}, nil
 }
 
-func (b *Bridge) ensureLineage(ctx context.Context, request workflowapp.ProcessingRequest, outputVersionID [16]byte) error {
+func (b *Bridge) ensureLineage(ctx context.Context, request workflowapp.ProcessingRequest, outputVersionID uuid.UUID) error {
 	return b.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		for _, input := range request.Inputs {
 			if err := b.datasetRepo.AddLineage(ctx, tx, outputVersionID, input.DatasetVersionID, "DERIVED_FROM", &request.ExecutionID); err != nil {
@@ -258,7 +259,7 @@ func (b *Bridge) loadDefinition(cfg managedConfig) ([]byte, error) {
 }
 
 func (b *Bridge) executionParameters(ctx context.Context, request workflowapp.ProcessingRequest, cfg managedConfig) (map[string]string, string, error) {
-	params := make(map[string]string, len(cfg.Parameters)+len(request.Inputs)+4)
+	params := make(map[string]string, len(cfg.Parameters)+len(request.Inputs)*2+4)
 	for key, value := range cfg.Parameters {
 		params[key] = value
 	}
@@ -276,8 +277,9 @@ func (b *Bridge) executionParameters(ctx context.Context, request workflowapp.Pr
 		if version.Status != datasetdomain.VersionReady && version.Status != datasetdomain.VersionSuperseded {
 			return nil, "", fmt.Errorf("input %s DatasetVersion %s is not usable: %s", input.Name, version.ID, version.Status)
 		}
-		params["INPUT_"+parameterName(input.Name)+"_URI"] = version.StorageURI
-		params["INPUT_"+parameterName(input.Name)+"_VERSION_ID"] = version.ID.String()
+		prefix := "INPUT_" + parameterName(input.Name)
+		params[prefix+"_URI"] = version.StorageURI
+		params[prefix+"_VERSION_ID"] = version.ID.String()
 	}
 	return params, outputURI, nil
 }
@@ -289,10 +291,6 @@ func (b *Bridge) stagingOutput(request workflowapp.ProcessingRequest, cfg manage
 	}
 	base := fmt.Sprintf("s3://%s/managed-executions/%s/output", b.store.Bucket(), request.ExecutionID)
 	return base, base + extension
-}
-
-func (b *Bridge) ensureLineage(ctx context.Context, request workflowapp.ProcessingRequest, outputVersionID interface{ String() string }) error {
-	return fmt.Errorf("unreachable")
 }
 
 func finalizeMetrics(version datasetdomain.DatasetVersion, run workflowapp.EngineRun, reused bool) map[string]any {
