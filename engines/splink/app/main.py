@@ -15,6 +15,8 @@ ENGINE_NAME = "SPLINK"
 ENGINE_VERSION = version("splink")
 MODEL_REF = os.getenv("SPLINK_MODEL_REF", "park-company-v1")
 MODEL_VERSION = os.getenv("SPLINK_MODEL_VERSION", "1.0.0")
+POLICY_REF = os.getenv("SPLINK_POLICY_REF", "park-company-match")
+POLICY_VERSION = os.getenv("SPLINK_POLICY_VERSION", "1.0.0")
 MODEL_PATH = Path(os.getenv("SPLINK_MODEL_PATH", "./models/park-company-v1/model.json"))
 API_TOKEN = os.getenv("SPLINK_API_TOKEN", "").strip()
 MAX_REFERENCES = int(os.getenv("SPLINK_MAX_REFERENCES", "100000"))
@@ -70,6 +72,8 @@ def authorize(authorization: str | None = Header(default=None)) -> None:
 
 
 def _validate_model_contract() -> None:
+    if not MODEL_REF or not MODEL_VERSION or not POLICY_REF or not POLICY_VERSION:
+        raise RuntimeError("Splink model and matching-policy identities must be configured")
     if not MODEL_PATH.exists():
         raise RuntimeError(f"Splink model not found: {MODEL_PATH}")
     try:
@@ -102,6 +106,8 @@ def candidates(request: CandidateRequest, _: None = Depends(authorize)) -> Candi
         raise HTTPException(status_code=400, detail="unsupported entity type")
     if request.modelRef != MODEL_REF or request.modelVersion != MODEL_VERSION:
         raise HTTPException(status_code=409, detail="model binding mismatch")
+    if request.policyRef != POLICY_REF or request.policyVersion != POLICY_VERSION:
+        raise HTTPException(status_code=409, detail="matching policy binding mismatch")
     if len(request.references) > MAX_REFERENCES:
         raise HTTPException(status_code=413, detail="reference set exceeds configured limit")
     if not request.references:
@@ -152,6 +158,12 @@ def _reference_row(record: ReferenceRecord) -> dict[str, str]:
     result = {"unique_id": record.entityId}
     result.update(record.fields)
     result.setdefault("company_name", record.name)
+
+    # Core stores an anchor COMPANY's Unified Social Credit Code as
+    # Entity.CanonicalKey. The Park Splink model names that feature explicitly,
+    # so make both sides use the same statistical column.
+    if not result.get("unified_social_credit_code") and result.get("canonical_key"):
+        result["unified_social_credit_code"] = result["canonical_key"]
     return result
 
 
