@@ -147,8 +147,8 @@ POC 成功标准不是“组件全部部署成功”，而是能从三组原始�
 
 尚未完成：
 
-- 真实 POC 环境下的最终浏览器验收（`#13` / `#75` 的实况演示检查清单，见 `docs/poc/final-ui-acceptance.md`）。
-- NDI 集成探针：按 ADR-0009，需在 ProductRelease 稳定后启动（见 `docs/architecture/ndi-integration.md`）。
+- 浏览器验收闭环（`#85`）：Release readiness 需 fail-closed，并用 Playwright 驱动真实浏览器动作（复核、发布、就绪状态过期与冲突处理）。`#13` / `#75` 已关闭，但 `docs/poc/final-ui-acceptance.md` 的实况演示检查清单仍需在真实 POC 环境执行。
+- NDI 集成探针（Epic `#47`，子任务 `#84` / `#86` / `#87`）：按 ADR-0009 在 ProductRelease 稳定后启动——提供方中立的身份/标识/发布模型 → 适配器端口与对账 → 外部使用证据入图。
 - 生产 IAM / 安全加固与对外部署：明确不在 POC 范围内（当前 UI 写操作依赖 POC 开关与服务端配置的 actor）。
 
 ## 仓库可见性
