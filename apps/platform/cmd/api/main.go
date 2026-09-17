@@ -22,6 +22,7 @@ import (
 	datasethttp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/transport/http"
 	entityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
+	entitysplink "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/splink"
 	entityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
@@ -123,6 +124,33 @@ func main() {
 		datasetWriter,
 		objectStore,
 	)
+	if cfg.Splink.Enabled {
+		splinkClient, err := entitysplink.NewClient(entitysplink.Config{
+			BaseURL:               cfg.Splink.BaseURL,
+			Token:                 cfg.Splink.Token,
+			ExpectedEngineVersion: cfg.Splink.ExpectedEngineVersion,
+			ModelRef:              cfg.Splink.ModelRef,
+			ModelVersion:          cfg.Splink.ModelVersion,
+			Timeout:               time.Duration(cfg.Splink.TimeoutSeconds) * time.Second,
+		}, nil)
+		if err != nil {
+			logger.Error("create Splink candidate engine", "error", err)
+			os.Exit(1)
+		}
+		health, err := splinkClient.Probe(ctx)
+		if err != nil {
+			logger.Error("probe Splink candidate engine", "error", err)
+			os.Exit(1)
+		}
+		entityService.UseCandidateGenerator(splinkClient)
+		logger.Info(
+			"Splink candidate engine enabled",
+			"base_url", cfg.Splink.BaseURL,
+			"engine_version", health.EngineVersion,
+			"model_ref", cfg.Splink.ModelRef,
+			"model_version", cfg.Splink.ModelVersion,
+		)
+	}
 	entityHandler := entityhttp.NewHandler(entityService, entityRepo)
 
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
