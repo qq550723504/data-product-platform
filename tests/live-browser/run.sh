@@ -29,7 +29,7 @@ cleanup() {
 trap cleanup EXIT
 "${COMPOSE[@]}" config --quiet
 "${COMPOSE[@]}" up -d --wait --wait-timeout 90
-for image in postgres:16-alpine redis:7-alpine minio/minio:RELEASE.2025-04-22T22-12-26Z; do
+for image in postgres:16-alpine redis:7-alpine quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z; do
   docker image inspect "$image" --format '{{json .RepoDigests}}'
 done > "$ARTIFACTS/images.txt"
 git -C "$ROOT" rev-parse HEAD > "$ARTIFACTS/source-sha.txt"
