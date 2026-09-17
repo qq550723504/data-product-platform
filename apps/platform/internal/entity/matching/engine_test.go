@@ -11,10 +11,10 @@ import (
 )
 
 type fakeLookup struct {
-	byKey   *domain.Entity
-	byName  *domain.Entity
-	legal   []domain.Entity
-	active  []domain.Entity
+	byKey  *domain.Entity
+	byName *domain.Entity
+	legal  []domain.Entity
+	active []domain.Entity
 }
 
 func (f *fakeLookup) FindByCanonicalKey(context.Context, uuid.UUID, string) (*domain.Entity, error) {
