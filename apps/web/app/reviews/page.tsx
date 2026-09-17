@@ -1,56 +1,36 @@
-import { Badge, EmptyState, LoadError, PageHeader, SetupRequired, formatDate } from "@/components/ui";
+import Link from "next/link";
+import { Badge, LoadError, PageHeader, SetupRequired } from "@/components/ui";
+import { ReviewQueue } from "@/components/review-queue";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
+import { reviewConfigurationError } from "@/lib/review-command";
 
-export default async function ReviewsPage() {
+export default async function ReviewsPage({ searchParams }: { searchParams: Promise<{ offset?: string }> }) {
   if (!configuredWorkspaceId()) {
     return <><PageHeader eyebrow="Entity Resolution" title="实体审核" description="低置信度候选进入统一人工审核队列。" /><SetupRequired /></>;
   }
-
+  const query = await searchParams;
+  const requestedOffset = Number(query.offset ?? 0);
+  const offset = Number.isSafeInteger(requestedOffset) && requestedOffset >= 0 ? Math.min(requestedOffset, 2147483647) : 0;
+  const configurationError = reviewConfigurationError({
+    enabled: process.env.POC_ENABLE_REVIEW_ACTIONS === "true",
+    workspaceId: configuredWorkspaceId(),
+    actorId: process.env.POC_REVIEWER_ID?.trim(),
+    apiBaseUrl: process.env.PLATFORM_API_BASE_URL ?? "http://localhost:8080",
+  });
   try {
-    const reviews = await platform.reviews("PENDING");
+    const reviews = await platform.reviews("PENDING", 25, offset);
     return (
       <>
-        <PageHeader
-          eyebrow="Entity Resolution"
-          title="实体审核"
-          description="这里呈现需要人判断的候选关系。匹配引擎、模型和分数是诊断证据，不是产品导航层。确认/拒绝操作将在下一阶段接入。"
-          action={<Badge value={reviews.page.total ? "PENDING" : "READY"} />}
-        />
-
-        {reviews.items.length === 0 ? (
-          <EmptyState title="没有待审核候选" description="确定性强键、规则匹配和概率候选均已完成决策，或当前没有实体解析任务。" />
-        ) : (
-          <div className="table-card">
-            {reviews.items.map((review) => (
-              <article className="review-card" key={review.candidateId}>
-                <div>
-                  <div className="badge-row" style={{ marginBottom: 10 }}>
-                    <Badge value={review.status} />
-                    <Badge value={review.decision} tone="info" />
-                  </div>
-                  <h3>{review.sourceName || review.sourceKey}</h3>
-                  <p>
-                    来源键 <span className="mono">{review.sourceKey}</span> · Policy {review.policyVersion} · {formatDate(review.createdAt)}
-                  </p>
-                  <div className="json-preview">{JSON.stringify(review.normalized, null, 2)}</div>
-                </div>
-                <div>
-                  <div className="review-score">
-                    <span className="eyebrow">Confidence</span>
-                    <strong>{(review.confidence * 100).toFixed(1)}%</strong>
-                  </div>
-                  <div className="status-stack" style={{ marginTop: 14 }}>
-                    <div className="status-row"><span>匹配方法</span><strong>{review.matchMethod || "—"}</strong></div>
-                    <div className="status-row"><span>规则</span><span className="mono">{review.matchRuleId || "—"}</span></div>
-                    <div className="status-row"><span>候选实体</span><span className="mono">{review.candidateEntityId ? `${review.candidateEntityId.slice(0, 8)}…` : "—"}</span></div>
-                    <div className="status-row"><span>诊断引擎</span><span>{review.engineName || "RULES"}{review.engineVersion ? ` ${review.engineVersion}` : ""}</span></div>
-                    <div className="status-row"><span>模型版本</span><span>{review.modelVersion || "—"}</span></div>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+        <PageHeader eyebrow="Entity Resolution" title="实体审核"
+          description="核对来源、规则和候选实体后，填写理由并确认或拒绝。任务状态、映射和证据由 Core 命令维护。"
+          action={<Badge value={reviews.page.total ? "PENDING" : "NO_PENDING"} />} />
+        {configurationError ? <div className="callout callout-warn"><strong>当前为只读审核队列</strong><p>{configurationError}</p></div> : <div className="callout callout-warn"><strong>POC 审核模式</strong><p>当前使用服务端配置的演示审核人；此配置不是登录认证或角色授权，请勿开放至不可信网络。</p></div>}
+        <ReviewQueue items={reviews.items} actionsEnabled={!configurationError} />
+        <nav aria-label="审核队列分页" className="badge-row" style={{ marginTop: 16 }}>
+          {offset > 0 ? <Link href={`/reviews?offset=${Math.max(0, offset - 25)}`}>上一页</Link> : null}
+          <span>本页 {reviews.items.length} 条 · 待审核共 {reviews.page.total} 条</span>
+          {offset + reviews.items.length < reviews.page.total ? <Link href={`/reviews?offset=${offset + 25}`}>下一页</Link> : null}
+        </nav>
       </>
     );
   } catch (error) {
