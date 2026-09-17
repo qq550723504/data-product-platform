@@ -13,12 +13,17 @@ import (
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
+	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
+	metadatadomain "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain"
+	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 	nativeengine "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/native"
@@ -82,6 +87,24 @@ func main() {
 	)
 	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine)
 
+	var metadataService *metadataapp.Service
+	if cfg.OpenMetadata.Enabled {
+		metadataEngine, err := openmetadata.NewClient(cfg.OpenMetadata.BaseURL, cfg.OpenMetadata.Token, nil)
+		if err != nil {
+			logger.Error("create OpenMetadata client", "error", err)
+			os.Exit(1)
+		}
+		metadataService = metadataapp.NewService(
+			metadatadomain.ProviderOpenMetadata,
+			cfg.OpenMetadata.Domain,
+			txManager,
+			metadatainfra.NewPostgresRepository(db),
+			productinfra.NewPostgresRepository(db),
+			metadataEngine,
+		)
+		logger.Info("OpenMetadata governance projection enabled", "base_url", cfg.OpenMetadata.BaseURL, "domain", cfg.OpenMetadata.Domain)
+	}
+
 	mux := asynq.NewServeMux()
 	mux.HandleFunc(queue.TaskHealthPing, func(_ context.Context, task *asynq.Task) error {
 		logger.Info("worker health ping consumed", "task_type", task.Type())
@@ -106,7 +129,20 @@ func main() {
 	publisher := outbox.NewPublisher(db, time.Second)
 	go func() {
 		logger.Info("outbox publisher started")
-		err := publisher.Run(ctx, func(_ context.Context, event outbox.PublishedEvent) error {
+		err := publisher.Run(ctx, func(eventCtx context.Context, event outbox.PublishedEvent) error {
+			if metadataService != nil {
+				if err := metadataService.HandleOutboxEvent(eventCtx, event); err != nil {
+					logger.Error(
+						"governance projection failed",
+						"event_id", event.ID,
+						"event_type", event.EventType,
+						"aggregate_id", event.AggregateID,
+						"attempt", event.Attempts,
+						"error", err,
+					)
+					return err
+				}
+			}
 			logger.Info(
 				"domain event published",
 				"event_id", event.ID,
