@@ -15,11 +15,12 @@ const (
 	WorkflowActive   WorkflowStatus = "ACTIVE"
 	WorkflowArchived WorkflowStatus = "ARCHIVED"
 
-	ExecutionQueued    ExecutionStatus = "QUEUED"
-	ExecutionRunning   ExecutionStatus = "RUNNING"
-	ExecutionSucceeded ExecutionStatus = "SUCCEEDED"
-	ExecutionFailed    ExecutionStatus = "FAILED"
-	ExecutionCancelled ExecutionStatus = "CANCELLED"
+	ExecutionQueued     ExecutionStatus = "QUEUED"
+	ExecutionSubmitting ExecutionStatus = "SUBMITTING"
+	ExecutionRunning    ExecutionStatus = "RUNNING"
+	ExecutionSucceeded  ExecutionStatus = "SUCCEEDED"
+	ExecutionFailed     ExecutionStatus = "FAILED"
+	ExecutionCancelled  ExecutionStatus = "CANCELLED"
 )
 
 var (
@@ -174,12 +175,14 @@ func NewExecution(workspaceID, workflowVersionID, outputDatasetID uuid.UUID, tar
 }
 
 func (e *Execution) Start(engineExecutionID string) error {
-	if e.Status != ExecutionQueued {
+	if e.Status != ExecutionQueued && e.Status != ExecutionSubmitting {
 		return ErrInvalidTransition
 	}
-	now := time.Now().UTC()
+	if e.StartedAt == nil {
+		now := time.Now().UTC()
+		e.StartedAt = &now
+	}
 	e.Status = ExecutionRunning
-	e.StartedAt = &now
 	e.EngineExecutionID = strings.TrimSpace(engineExecutionID)
 	return nil
 }
@@ -202,7 +205,7 @@ func (e *Execution) Succeed(outputVersionID uuid.UUID, metrics map[string]any) e
 }
 
 func (e *Execution) Fail(code, message string, metrics map[string]any) error {
-	if e.Status != ExecutionRunning && e.Status != ExecutionQueued {
+	if e.Status != ExecutionRunning && e.Status != ExecutionQueued && e.Status != ExecutionSubmitting {
 		return ErrInvalidTransition
 	}
 	now := time.Now().UTC()
@@ -218,7 +221,7 @@ func (e *Execution) Fail(code, message string, metrics map[string]any) error {
 }
 
 func (e *Execution) Cancel() error {
-	if e.Status != ExecutionQueued && e.Status != ExecutionRunning {
+	if e.Status != ExecutionQueued && e.Status != ExecutionSubmitting && e.Status != ExecutionRunning {
 		return ErrInvalidTransition
 	}
 	now := time.Now().UTC()
