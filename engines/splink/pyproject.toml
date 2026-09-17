@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=80", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "data-product-platform-splink-engine"
 version = "0.1.0"
@@ -15,6 +19,12 @@ test = [
   "httpx>=0.28,<1",
   "pytest>=8.4,<9",
 ]
+
+# The container copies the FastAPI runtime after installing dependencies. This
+# distribution intentionally carries dependency metadata only; do not let
+# setuptools auto-discover the sibling `models/` directory as a package.
+[tool.setuptools]
+packages = []
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
