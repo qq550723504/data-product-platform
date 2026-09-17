@@ -181,19 +181,19 @@ type DataProduct struct {
 }
 
 type ProductRelease struct {
-	ID                   uuid.UUID  `json:"id"`
-	ProductID            uuid.UUID  `json:"productId"`
-	ProductVersionID     uuid.UUID  `json:"productVersionId"`
-	ReleaseNo            string     `json:"releaseNo"`
-	Status               string     `json:"status"`
-	ContractVersionID    *uuid.UUID `json:"contractVersionId,omitempty"`
-	RightsSnapshotID     *uuid.UUID `json:"rightsSnapshotId,omitempty"`
-	QualityResultID      *uuid.UUID `json:"qualityResultId,omitempty"`
-	ComplianceResultID   *uuid.UUID `json:"complianceResultId,omitempty"`
-	EvidenceSnapshotID   *uuid.UUID `json:"evidenceSnapshotId,omitempty"`
-	ReleaseNotes         string     `json:"releaseNotes"`
-	CreatedAt            time.Time  `json:"createdAt"`
-	ReleasedAt           *time.Time `json:"releasedAt,omitempty"`
+	ID                 uuid.UUID  `json:"id"`
+	ProductID          uuid.UUID  `json:"productId"`
+	ProductVersionID   uuid.UUID  `json:"productVersionId"`
+	ReleaseNo          string     `json:"releaseNo"`
+	Status             string     `json:"status"`
+	ContractVersionID  *uuid.UUID `json:"contractVersionId,omitempty"`
+	RightsSnapshotID   *uuid.UUID `json:"rightsSnapshotId,omitempty"`
+	QualityResultID    *uuid.UUID `json:"qualityResultId,omitempty"`
+	ComplianceResultID *uuid.UUID `json:"complianceResultId,omitempty"`
+	EvidenceSnapshotID *uuid.UUID `json:"evidenceSnapshotId,omitempty"`
+	ReleaseNotes       string     `json:"releaseNotes"`
+	CreatedAt          time.Time  `json:"createdAt"`
+	ReleasedAt         *time.Time `json:"releasedAt,omitempty"`
 }
 
 type Repository struct {
