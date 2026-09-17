@@ -77,18 +77,27 @@ func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.
 	for _, binding := range release.Datasets {
 		releaseDatasetVersionIDs = append(releaseDatasetVersionIDs, binding.DatasetVersionID)
 		var datasetID uuid.UUID
+		var datasetWorkspace uuid.UUID
 		var status string
 		var generatedBy *uuid.UUID
 		err := r.pool.QueryRow(ctx, `
-			SELECT dataset_id, status, generated_by_execution_id
-			FROM dataset_version WHERE id=$1
-		`, binding.DatasetVersionID).Scan(&datasetID, &status, &generatedBy)
+			SELECT v.dataset_id, d.workspace_id, v.status, v.generated_by_execution_id
+			FROM dataset_version v
+			JOIN dataset d ON d.id = v.dataset_id
+			WHERE v.id=$1
+		`, binding.DatasetVersionID).Scan(&datasetID, &datasetWorkspace, &status, &generatedBy)
 		if errors.Is(err, pgx.ErrNoRows) {
 			facts.AllDatasetsUsable = false
 			continue
 		}
 		if err != nil {
 			return ReadinessFacts{}, fmt.Errorf("read release DatasetVersion %s: %w", binding.DatasetVersionID, err)
+		}
+		if datasetWorkspace != product.WorkspaceID {
+			// A ProductRelease may only bind DatasetVersions owned by its own workspace.
+			// The foreign key proves the version exists, not who owns it.
+			facts.AllDatasetsUsable = false
+			continue
 		}
 		if status != "READY" && status != "SUPERSEDED" {
 			facts.AllDatasetsUsable = false
@@ -104,8 +113,14 @@ func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.
 	if facts.TargetDatasetVersionID == nil && len(release.Datasets) > 0 {
 		binding := release.Datasets[0]
 		var datasetID uuid.UUID
+		var datasetWorkspace uuid.UUID
 		var generatedBy *uuid.UUID
-		if err := r.pool.QueryRow(ctx, `SELECT dataset_id, generated_by_execution_id FROM dataset_version WHERE id=$1`, binding.DatasetVersionID).Scan(&datasetID, &generatedBy); err == nil {
+		if err := r.pool.QueryRow(ctx, `
+			SELECT v.dataset_id, d.workspace_id, v.generated_by_execution_id
+			FROM dataset_version v
+			JOIN dataset d ON d.id = v.dataset_id
+			WHERE v.id=$1
+		`, binding.DatasetVersionID).Scan(&datasetID, &datasetWorkspace, &generatedBy); err == nil && datasetWorkspace == product.WorkspaceID {
 			targetVersionID := binding.DatasetVersionID
 			facts.TargetDatasetVersionID = &targetVersionID
 			facts.TargetDatasetID = &datasetID
