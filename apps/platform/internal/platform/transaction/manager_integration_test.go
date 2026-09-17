@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -84,6 +85,56 @@ func TestAuditAndOutboxCommitAtomically(t *testing.T) {
 		_, _ = pool.Exec(ctx, `DELETE FROM audit_event WHERE object_id = $1`, objectID)
 		_, _ = pool.Exec(ctx, `DELETE FROM outbox_event WHERE aggregate_id = $1`, objectID)
 	})
+}
+
+func TestAdvisoryLockSerializesCriticalSection(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+	manager := transaction.NewManager(pool)
+
+	entered := make(chan struct{})
+	release := make(chan struct{})
+	firstDone := make(chan error, 1)
+	key := "test-finalize-" + uuid.NewString()
+
+	go func() {
+		firstDone <- manager.WithAdvisoryLock(ctx, key, func(context.Context) error {
+			close(entered)
+			<-release
+			return nil
+		})
+	}()
+
+	select {
+	case <-entered:
+	case <-time.After(3 * time.Second):
+		t.Fatal("first advisory lock was not acquired")
+	}
+
+	err = manager.WithAdvisoryLock(ctx, key, func(context.Context) error {
+		t.Fatal("second critical section must not run while lock is held")
+		return nil
+	})
+	if !errors.Is(err, transaction.ErrAdvisoryLockBusy) {
+		t.Fatalf("second lock error = %v, want ErrAdvisoryLockBusy", err)
+	}
+
+	close(release)
+	if err := <-firstDone; err != nil {
+		t.Fatalf("first lock holder: %v", err)
+	}
+	if err := manager.WithAdvisoryLock(ctx, key, func(context.Context) error { return nil }); err != nil {
+		t.Fatalf("lock should be reusable after release: %v", err)
+	}
 }
 
 func assertCount(t *testing.T, ctx context.Context, pool queryRower, query string, objectID uuid.UUID, want int) {

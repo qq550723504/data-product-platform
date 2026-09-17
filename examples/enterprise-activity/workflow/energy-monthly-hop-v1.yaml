@@ -1,0 +1,60 @@
+apiVersion: dataprod.platform/v1alpha1
+kind: WorkflowDefinition
+metadata:
+  name: enterprise-activity-energy-monthly-hop
+  version: 1.0.0
+spec:
+  purpose: >-
+    Execute the deterministic monthly energy aggregation step through Apache Hop
+    while preserving Core Execution, DatasetVersion lineage, Evidence and CostEvent semantics.
+
+  inputs:
+    - name: energy_standardized
+      datasetType: STANDARDIZED
+      required: true
+      schema:
+        - canonical_company_id
+        - year_month
+        - energy_kwh
+
+  managedExecution:
+    engine: HOP
+    name: enterprise-activity-energy-monthly-hop
+    definitionRef: examples/enterprise-activity/hop/aggregate-energy-monthly.hpl
+    definitionSha256: 106b318e6ab6e26a14d8306bf5908f0eedc36b42e1e824e49f02916f583d3083
+    contentType: application/xml
+    outputFilename: energy-monthly.csv
+    outputContentType: text/csv; charset=utf-8
+
+  output:
+    datasetType: CURATED
+    schema:
+      - canonical_company_id
+      - year_month
+      - energy_kwh
+    semantics:
+      energy_kwh: SUM by canonical_company_id and year_month
+
+  runtimeContract:
+    parameters:
+      INPUT_ENERGY_STANDARDIZED_URI: supplied from the immutable Core input DatasetVersion
+      OUTPUT_BASE_URI: supplied as an execution-scoped object-storage staging prefix
+      CORE_EXECUTION_ID: supplied by Core
+      TARGET_PERIOD: supplied by Core
+    storageRequirement: >-
+      Hop Server must be able to read and write the configured object-storage URI scheme.
+      For the POC this is the same MinIO/S3-compatible bucket used by Core.
+
+  reconciliation:
+    coreRunningWhileRemoteNonTerminal: true
+    finalizeOnlyAfterRemoteSuccess: true
+    retryFinalizationWhenStagedOutputNotYetVisible: true
+    failedRemoteRunCreatesNoDatasetVersion: true
+    explicitRetryCreatesNewCoreExecution: true
+
+  evidence:
+    recordWorkflowVersion: true
+    recordInputDatasetVersions: true
+    recordExternalExecutionId: true
+    recordOutputDatasetVersion: true
+    recordEngineMetrics: true

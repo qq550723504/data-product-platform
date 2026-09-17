@@ -85,11 +85,12 @@ func (s *ExecutionService) Start(ctx context.Context, executionID uuid.UUID, eng
 		return domain.Execution{}, err
 	}
 	before := executionAuditState(execution)
+	expected := execution.Status
 	if err := execution.Start(engineExecutionID); err != nil {
 		return domain.Execution{}, err
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if err := s.repo.SaveExecutionState(ctx, tx, execution); err != nil {
+		if err := s.repo.SaveExecutionState(ctx, tx, execution, expected); err != nil {
 			return err
 		}
 		if err := appendExecutionEvent(ctx, tx, execution, "ExecutionStarted"); err != nil {
@@ -115,6 +116,7 @@ func (s *ExecutionService) Succeed(ctx context.Context, executionID, outputDatas
 		return domain.Execution{}, err
 	}
 	before := executionAuditState(execution)
+	expected := execution.Status
 	if err := execution.Succeed(outputDatasetVersionID, metrics); err != nil {
 		return domain.Execution{}, err
 	}
@@ -122,7 +124,9 @@ func (s *ExecutionService) Succeed(ctx context.Context, executionID, outputDatas
 		if err := s.repo.ValidateOutputVersion(ctx, tx, execution.OutputDatasetID, outputDatasetVersionID); err != nil {
 			return err
 		}
-		if err := s.repo.SaveExecutionState(ctx, tx, execution); err != nil {
+		// This compare-and-set must happen before Cost/Evidence/Audit/Outbox facts.
+		// Only one reconciler is allowed to win RUNNING -> SUCCEEDED.
+		if err := s.repo.SaveExecutionState(ctx, tx, execution, expected); err != nil {
 			return err
 		}
 		executionIDCopy := execution.ID
@@ -184,11 +188,12 @@ func (s *ExecutionService) Fail(ctx context.Context, executionID uuid.UUID, code
 		return domain.Execution{}, err
 	}
 	before := executionAuditState(execution)
+	expected := execution.Status
 	if err := execution.Fail(code, message, metrics); err != nil {
 		return domain.Execution{}, err
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if err := s.repo.SaveExecutionState(ctx, tx, execution); err != nil {
+		if err := s.repo.SaveExecutionState(ctx, tx, execution, expected); err != nil {
 			return err
 		}
 		if err := appendExecutionEvent(ctx, tx, execution, "ExecutionFailed"); err != nil {
@@ -272,6 +277,8 @@ func executionAuditState(execution domain.Execution) map[string]any {
 		"attempt":                execution.Attempt,
 		"workflowVersionId":      execution.WorkflowVersionID,
 		"targetPeriod":           execution.TargetPeriod,
+		"engineType":             execution.EngineType,
+		"engineExecutionId":      execution.EngineExecutionID,
 		"outputDatasetVersionId": execution.OutputDatasetVersionID,
 		"errorCode":              execution.ErrorCode,
 	}

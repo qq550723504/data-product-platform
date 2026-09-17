@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -25,6 +26,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
+	workflowhop "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/hop"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 	nativeengine "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/native"
 	workflowqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue"
@@ -85,7 +87,26 @@ func main() {
 		datasetWriter,
 		objectStore,
 	)
-	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine)
+
+	managedBridges := make([]workflowapp.ManagedExecutionBridge, 0, 1)
+	var managedReconciler *workflowapp.ManagedReconciler
+	if cfg.Hop.Enabled {
+		hopClient, err := workflowhop.NewClient(cfg.Hop.BaseURL, cfg.Hop.Username, cfg.Hop.Password, nil)
+		if err != nil {
+			logger.Error("create Apache Hop client", "error", err)
+			os.Exit(1)
+		}
+		artifactRoot := filepath.Dir(filepath.Clean(cfg.IndustryPackRoot))
+		hopBridge, err := workflowhop.NewBridge(hopClient, artifactRoot, txManager, datasetRepo, datasetWriter, objectStore)
+		if err != nil {
+			logger.Error("create Apache Hop bridge", "error", err)
+			os.Exit(1)
+		}
+		managedBridges = append(managedBridges, hopBridge)
+		managedReconciler = workflowapp.NewManagedReconciler(executionService, workflowRepo, hopBridge)
+		logger.Info("Apache Hop managed execution enabled", "base_url", cfg.Hop.BaseURL, "artifact_root", artifactRoot)
+	}
+	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine, managedBridges...)
 
 	var metadataService *metadataapp.Service
 	if cfg.OpenMetadata.Enabled {
@@ -125,6 +146,26 @@ func main() {
 			errCh <- err
 		}
 	}()
+
+	if managedReconciler != nil {
+		go func() {
+			ticker := time.NewTicker(2 * time.Second)
+			defer ticker.Stop()
+			logger.Info("managed execution reconciler started")
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-ticker.C:
+					if err := managedReconciler.RunOnce(ctx); err != nil && !errors.Is(err, context.Canceled) {
+						// Remote engines are independent runtimes. A transient status/finalization
+						// failure must not stop the worker; the next tick retries reconciliation.
+						logger.Warn("managed execution reconciliation failed", "error", err)
+					}
+				}
+			}
+		}()
+	}
 
 	publisher := outbox.NewPublisher(db, time.Second)
 	go func() {

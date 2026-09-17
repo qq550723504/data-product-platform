@@ -120,8 +120,8 @@ func (r *PostgresRepository) ValidateOutputVersion(ctx context.Context, tx pgx.T
 	if datasetID != outputDatasetID {
 		return fmt.Errorf("output DatasetVersion belongs to dataset %s, expected %s", datasetID, outputDatasetID)
 	}
-	if status != "READY" {
-		return fmt.Errorf("output DatasetVersion must be READY, got %s", status)
+	if status != "READY" && status != "SUPERSEDED" {
+		return fmt.Errorf("output DatasetVersion must be immutable and usable (READY or SUPERSEDED), got %s", status)
 	}
 	return nil
 }
@@ -201,23 +201,34 @@ func (r *PostgresRepository) GetExecution(ctx context.Context, executionID uuid.
 	return execution, nil
 }
 
-func (r *PostgresRepository) SaveExecutionState(ctx context.Context, tx pgx.Tx, execution domain.Execution) error {
+// SaveExecutionState is a compare-and-set transition. The expected status is
+// part of the UPDATE predicate so stale workers cannot emit duplicate terminal
+// facts after another worker has already completed the same Execution.
+func (r *PostgresRepository) SaveExecutionState(ctx context.Context, tx pgx.Tx, execution domain.Execution, expectedStatus domain.ExecutionStatus) error {
 	metrics, err := json.Marshal(execution.Metrics)
 	if err != nil {
 		return fmt.Errorf("marshal execution metrics: %w", err)
 	}
 	commandTag, err := tx.Exec(ctx, `
 		UPDATE execution
-		SET status=$2, output_dataset_version_id=$3, engine_execution_id=$4,
-		    error_code=$5, error_message=$6, metrics=$7, started_at=$8, finished_at=$9
-		WHERE id=$1
-	`, execution.ID, execution.Status, execution.OutputDatasetVersionID, nullableString(execution.EngineExecutionID),
-		nullableString(execution.ErrorCode), nullableString(execution.ErrorMessage), metrics, execution.StartedAt, execution.FinishedAt)
+		SET status=$2,
+		    output_dataset_version_id=$3,
+		    engine_type=$4,
+		    engine_execution_id=$5,
+		    error_code=$6,
+		    error_message=$7,
+		    metrics=$8,
+		    started_at=$9,
+		    finished_at=$10
+		WHERE id=$1 AND status=$11
+	`, execution.ID, execution.Status, execution.OutputDatasetVersionID, execution.EngineType,
+		nullableString(execution.EngineExecutionID), nullableString(execution.ErrorCode), nullableString(execution.ErrorMessage),
+		metrics, execution.StartedAt, execution.FinishedAt, expectedStatus)
 	if err != nil {
 		return fmt.Errorf("save execution state: %w", err)
 	}
 	if commandTag.RowsAffected() != 1 {
-		return ErrNotFound
+		return domain.ErrInvalidTransition
 	}
 	return nil
 }
