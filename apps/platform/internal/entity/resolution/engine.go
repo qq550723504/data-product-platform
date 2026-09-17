@@ -45,11 +45,11 @@ type CandidateRequest struct {
 
 // Candidate is a provider-neutral proposed link. Score is normalized to [0,1].
 type Candidate struct {
-	EntityID      uuid.UUID
-	Score         float64
-	Method        string
-	Engine        EngineDescriptor
-	Metadata      map[string]any
+	EntityID uuid.UUID
+	Score    float64
+	Method   string
+	Engine   EngineDescriptor
+	Metadata map[string]any
 }
 
 func (c Candidate) Validate() error {
