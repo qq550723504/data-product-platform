@@ -123,16 +123,16 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 		return workflowapp.ProcessingResult{}, fmt.Errorf("enterprise input has no successful entity-resolution output for lineage")
 	}
 
-	companies, inputs, err := e.buildCanonicalCompanies(ctx, enterpriseRows, enterpriseRef, companyPolicy)
+	companies, inputs, err := e.buildCanonicalCompanies(ctx, request.WorkspaceID, enterpriseRows, enterpriseRef, companyPolicy)
 	if err != nil {
 		return workflowapp.ProcessingResult{}, err
 	}
 
-	leaseMapped, err := e.attachLease(ctx, request.ExecutionID, leaseRows, leaseRef, companyPolicy, companies, inputs)
+	leaseMapped, err := e.attachLease(ctx, request.WorkspaceID, leaseRows, leaseRef, companyPolicy, companies, inputs)
 	if err != nil {
 		return workflowapp.ProcessingResult{}, err
 	}
-	energyMapped, quarantineCount, err := e.attachEnergy(ctx, request.ExecutionID, energyRows, energyRef, companyPolicy, companies, inputs)
+	energyMapped, quarantineCount, err := e.attachEnergy(ctx, request.ExecutionID, request.WorkspaceID, energyRows, energyRef, companyPolicy, companies, inputs)
 	if err != nil {
 		return workflowapp.ProcessingResult{}, err
 	}
@@ -247,7 +247,7 @@ func (e *Engine) readInput(ctx context.Context, versionID uuid.UUID) (version st
 	return version, rows, storageBasename(datasetVersion.StorageURI), nil
 }
 
-func (e *Engine) buildCanonicalCompanies(ctx context.Context, rows []map[string]string, sourceRef string, policy matching.Policy) (map[uuid.UUID]*canonicalCompany, map[uuid.UUID]indicator.CompanyInput, error) {
+func (e *Engine) buildCanonicalCompanies(ctx context.Context, workspaceID uuid.UUID, rows []map[string]string, sourceRef string, policy matching.Policy) (map[uuid.UUID]*canonicalCompany, map[uuid.UUID]indicator.CompanyInput, error) {
 	companies := map[uuid.UUID]*canonicalCompany{}
 	inputs := map[uuid.UUID]indicator.CompanyInput{}
 	for _, row := range rows {
@@ -255,7 +255,7 @@ func (e *Engine) buildCanonicalCompanies(ctx context.Context, rows []map[string]
 		if sourceKey == "" {
 			return nil, nil, fmt.Errorf("enterprise record missing source_company_id")
 		}
-		mapping, err := e.entityRepo.GetMappingBySource(ctx, "CSV", sourceRef, sourceKey)
+		mapping, err := e.entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", sourceRef, sourceKey)
 		if err != nil {
 			if errors.Is(err, entityinfra.ErrNotFound) {
 				return nil, nil, fmt.Errorf("enterprise %s has no canonical EntityMapping; run entity resolution before workflow execution", sourceKey)
@@ -297,10 +297,10 @@ func (e *Engine) buildCanonicalCompanies(ctx context.Context, rows []map[string]
 	return companies, inputs, nil
 }
 
-func (e *Engine) attachLease(ctx context.Context, executionID uuid.UUID, rows []map[string]string, sourceRef string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany, inputs map[uuid.UUID]indicator.CompanyInput) (int, error) {
+func (e *Engine) attachLease(ctx context.Context, workspaceID uuid.UUID, rows []map[string]string, sourceRef string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany, inputs map[uuid.UUID]indicator.CompanyInput) (int, error) {
 	mapped := 0
 	for _, row := range rows {
-		companyID, err := e.resolveSourceCompany(ctx, executionID, "lease_raw", sourceRef, row["source_company_id"], row["company_name"], policy, companies)
+		companyID, err := e.resolveSourceCompany(ctx, workspaceID, "lease_raw", sourceRef, row["source_company_id"], row["company_name"], policy, companies)
 		if err != nil {
 			return mapped, err
 		}
@@ -334,9 +334,9 @@ func (e *Engine) attachLease(ctx context.Context, executionID uuid.UUID, rows []
 	return mapped, nil
 }
 
-func (e *Engine) attachEnergy(ctx context.Context, executionID uuid.UUID, rows []map[string]string, sourceRef string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany, inputs map[uuid.UUID]indicator.CompanyInput) (mapped int, quarantineCount int, err error) {
+func (e *Engine) attachEnergy(ctx context.Context, executionID, workspaceID uuid.UUID, rows []map[string]string, sourceRef string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany, inputs map[uuid.UUID]indicator.CompanyInput) (mapped int, quarantineCount int, err error) {
 	for _, row := range rows {
-		companyID, err := e.resolveSourceCompany(ctx, executionID, "energy_raw", sourceRef, row["source_company_id"], row["company_name"], policy, companies)
+		companyID, err := e.resolveSourceCompany(ctx, workspaceID, "energy_raw", sourceRef, row["source_company_id"], row["company_name"], policy, companies)
 		if err != nil {
 			return mapped, quarantineCount, err
 		}
@@ -381,12 +381,12 @@ func (e *Engine) attachEnergy(ctx context.Context, executionID uuid.UUID, rows [
 	return mapped, quarantineCount, nil
 }
 
-func (e *Engine) resolveSourceCompany(ctx context.Context, executionID uuid.UUID, inputName, sourceRef, sourceKey, companyName string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany) (uuid.UUID, error) {
+func (e *Engine) resolveSourceCompany(ctx context.Context, workspaceID uuid.UUID, inputName, sourceRef, sourceKey, companyName string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany) (uuid.UUID, error) {
 	sourceKey = strings.TrimSpace(sourceKey)
 	if sourceKey == "" {
 		return uuid.Nil, fmt.Errorf("%s record is missing source_company_id", inputName)
 	}
-	mapping, err := e.entityRepo.GetMappingBySource(ctx, "CSV", sourceRef, sourceKey)
+	mapping, err := e.entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", sourceRef, sourceKey)
 	if err == nil {
 		if mapping.Status == entitydomain.MappingAutoMatched || mapping.Status == entitydomain.MappingConfirmed {
 			return mapping.EntityID, nil
@@ -404,6 +404,7 @@ func (e *Engine) resolveSourceCompany(ctx context.Context, executionID uuid.UUID
 	}
 	mapping = entitydomain.EntityMapping{
 		ID:                 uuid.New(),
+		WorkspaceID:        workspaceID,
 		EntityID:           entityID,
 		SourceType:         "CSV",
 		SourceRef:          sourceRef,
@@ -421,7 +422,6 @@ func (e *Engine) resolveSourceCompany(ctx context.Context, executionID uuid.UUID
 	}); err != nil {
 		return uuid.Nil, err
 	}
-	_ = executionID // retained in signature so mapping Evidence can be attached without changing the engine contract.
 	return entityID, nil
 }
 

@@ -12,6 +12,7 @@ import (
 // Engine-specific configuration belongs to the adapter boundary, not to Core domain state.
 type ProcessingRequest struct {
 	ExecutionID     uuid.UUID
+	WorkspaceID     uuid.UUID
 	WorkflowVersion domain.WorkflowVersion
 	Inputs          []domain.InputBinding
 	OutputDatasetID uuid.UUID

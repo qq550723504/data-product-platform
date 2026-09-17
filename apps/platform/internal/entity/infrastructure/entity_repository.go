@@ -181,15 +181,22 @@ func (r *PostgresRepository) InsertMapping(ctx context.Context, tx pgx.Tx, mappi
 	if strings.TrimSpace(mapping.MatchEngineVersion) == "" {
 		mapping.MatchEngineVersion = "1"
 	}
+	if mapping.WorkspaceID == uuid.Nil {
+		return domain.ErrMappingWorkspaceRequired
+	}
 
-	_, err := tx.Exec(ctx, `
+	// entity_mapping is the mutable current projection: one row per
+	// (workspace, source triple). The conflict target is workspace-scoped so two
+	// workspaces can map the same external source independently.
+	mappingID := mapping.ID
+	err := tx.QueryRow(ctx, `
 		INSERT INTO entity_mapping (
-			id, entity_id, source_type, source_ref, source_key, source_name,
+			id, workspace_id, entity_id, source_type, source_ref, source_key, source_name,
 			match_method, match_rule_id, match_policy_version,
 			match_engine_name, match_engine_version, match_model_version,
 			confidence, status, reviewed_by, reviewed_at, reviewer_reason, evidence_id, created_at
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
-		ON CONFLICT (source_type, source_ref, source_key) DO UPDATE SET
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
+		ON CONFLICT (workspace_id, source_type, source_ref, source_key) DO UPDATE SET
 			entity_id=EXCLUDED.entity_id, source_name=EXCLUDED.source_name,
 			match_method=EXCLUDED.match_method, match_rule_id=EXCLUDED.match_rule_id,
 			match_policy_version=EXCLUDED.match_policy_version,
@@ -200,13 +207,32 @@ func (r *PostgresRepository) InsertMapping(ctx context.Context, tx pgx.Tx, mappi
 			status=EXCLUDED.status, reviewed_by=EXCLUDED.reviewed_by,
 			reviewed_at=EXCLUDED.reviewed_at, reviewer_reason=EXCLUDED.reviewer_reason,
 			evidence_id=EXCLUDED.evidence_id
-	`, mapping.ID, mapping.EntityID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey,
+		RETURNING id
+	`, mapping.ID, mapping.WorkspaceID, mapping.EntityID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey,
 		mapping.SourceName, mapping.MatchMethod, mapping.MatchRuleID, mapping.MatchPolicyVersion,
 		mapping.MatchEngineName, mapping.MatchEngineVersion, mapping.MatchModelVersion,
 		mapping.Confidence, mapping.Status, mapping.ReviewedBy, mapping.ReviewedAt,
-		mapping.ReviewerReason, mapping.EvidenceID, mapping.CreatedAt)
+		mapping.ReviewerReason, mapping.EvidenceID, mapping.CreatedAt).Scan(&mappingID)
 	if err != nil {
 		return fmt.Errorf("insert entity mapping: %w", err)
+	}
+
+	// Append the immutable decision that produced the current projection. The
+	// prior decision of an upsert is preserved here instead of being overwritten.
+	if _, err := tx.Exec(ctx, `
+		INSERT INTO entity_mapping_decision (
+			id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key,
+			source_name, match_method, match_rule_id, match_policy_version,
+			match_engine_name, match_engine_version, match_model_version,
+			confidence, status, reviewed_by, reviewed_at, reviewer_reason, evidence_id,
+			decided_at, decided_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$17)
+	`, uuid.New(), mapping.WorkspaceID, mappingID, mapping.EntityID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey,
+		mapping.SourceName, mapping.MatchMethod, mapping.MatchRuleID, mapping.MatchPolicyVersion,
+		mapping.MatchEngineName, mapping.MatchEngineVersion, mapping.MatchModelVersion,
+		mapping.Confidence, mapping.Status, mapping.ReviewedBy, mapping.ReviewedAt,
+		mapping.ReviewerReason, mapping.EvidenceID, mapping.CreatedAt); err != nil {
+		return fmt.Errorf("insert entity mapping decision: %w", err)
 	}
 	return nil
 }
