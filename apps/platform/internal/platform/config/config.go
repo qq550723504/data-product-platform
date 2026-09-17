@@ -53,6 +53,8 @@ type SplinkConfig struct {
 	ExpectedEngineVersion string
 	ModelRef              string
 	ModelVersion          string
+	PolicyRef             string
+	PolicyVersion         string
 	TimeoutSeconds        int
 }
 
@@ -119,6 +121,8 @@ func Load() (Config, error) {
 			ExpectedEngineVersion: stringEnv("SPLINK_EXPECTED_VERSION", "4.0.17"),
 			ModelRef:              stringEnv("SPLINK_MODEL_REF", "park-company-v1"),
 			ModelVersion:          stringEnv("SPLINK_MODEL_VERSION", "1.0.0"),
+			PolicyRef:             stringEnv("SPLINK_POLICY_REF", "park-company-match"),
+			PolicyVersion:         stringEnv("SPLINK_POLICY_VERSION", "1.0.0"),
 			TimeoutSeconds:        splinkTimeoutSeconds,
 		},
 	}
@@ -157,6 +161,9 @@ func Load() (Config, error) {
 		}
 		if cfg.Splink.ExpectedEngineVersion == "" || cfg.Splink.ModelRef == "" || cfg.Splink.ModelVersion == "" {
 			return Config{}, fmt.Errorf("Splink expected version, model ref and model version must not be empty when Splink is enabled")
+		}
+		if cfg.Splink.PolicyRef == "" || cfg.Splink.PolicyVersion == "" {
+			return Config{}, fmt.Errorf("Splink matching policy ref and version must not be empty when Splink is enabled")
 		}
 		if cfg.Splink.TimeoutSeconds <= 0 {
 			return Config{}, fmt.Errorf("SPLINK_TIMEOUT_SECONDS must be positive")
