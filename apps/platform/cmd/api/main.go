@@ -131,6 +131,8 @@ func main() {
 			ExpectedEngineVersion: cfg.Splink.ExpectedEngineVersion,
 			ModelRef:              cfg.Splink.ModelRef,
 			ModelVersion:          cfg.Splink.ModelVersion,
+			PolicyRef:             cfg.Splink.PolicyRef,
+			PolicyVersion:         cfg.Splink.PolicyVersion,
 			Timeout:               time.Duration(cfg.Splink.TimeoutSeconds) * time.Second,
 		}, nil)
 		if err != nil {
@@ -149,6 +151,8 @@ func main() {
 			"engine_version", health.EngineVersion,
 			"model_ref", cfg.Splink.ModelRef,
 			"model_version", cfg.Splink.ModelVersion,
+			"policy_ref", cfg.Splink.PolicyRef,
+			"policy_version", cfg.Splink.PolicyVersion,
 		)
 	}
 	entityHandler := entityhttp.NewHandler(entityService, entityRepo)
