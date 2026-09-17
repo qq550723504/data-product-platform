@@ -28,12 +28,12 @@ assert.deepEqual(status(), initial, "premature advance or unconfirmed reset chan
 cli(["up"]);
 assert.deepEqual(status(), initial, "second up recreated data or identity");
 
-let browser;
+let browser, context, page;
 try {
   browser = await chromium.launch();
-  let context = await browser.newContext();
+  context = await browser.newContext();
   await context.tracing.start({ screenshots: true, snapshots: true });
-  let page = await context.newPage();
+  page = await context.newPage();
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(initial.reviewURL);
@@ -88,7 +88,7 @@ try {
   page = await context.newPage();
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(published.traceURL);
-  await expect(page.getByRole("heading", { name: "Release 证据链", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "ProductRelease 证据链", exact: true })).toBeVisible();
   await expect(page.getByText(reason, { exact: true }).first()).toBeVisible();
   await expect(page.getByText(verified.rootHash, { exact: true }).first()).toBeVisible();
   await page.screenshot({ path: `${artifacts}/03-restarted-trace.png`, fullPage: true });
@@ -104,6 +104,10 @@ try {
   assert.deepEqual(bindings, [{ HostIp: "127.0.0.1", HostPort: "3180" }], "unexpected host-exposed service port");
   writeFileSync(`${artifacts}/verification.json`, JSON.stringify({ ...verified, reviewedCandidates: reviews, duplicateUpUnchanged: true, duplicateAdvanceUnchanged: true, downUpPreservedHistory: true, unconfirmedResetRejected: true, onlyLoopbackConsolePublished: true, counts: published.counts }, null, 2));
   console.log("DEMO_LIFECYCLE_VERIFIED", JSON.stringify(verified));
+} catch (error) {
+  if (page && !page.isClosed()) await page.screenshot({ path: `${artifacts}/failure.png`, fullPage: true }).catch(() => {});
+  if (context) await context.tracing.stop({ path: `${artifacts}/failure-trace.zip` }).catch(() => {});
+  throw error;
 } finally {
   if (browser) await browser.close();
 }
