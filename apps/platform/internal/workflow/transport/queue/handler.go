@@ -2,6 +2,7 @@ package workflowqueue
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -42,14 +43,13 @@ func (h *Handler) Handle(ctx context.Context, task *asynq.Task) error {
 		return fmt.Errorf("load execution %s: %w", executionID, err)
 	}
 
-	// Delivery retries must never create duplicate output for the same Core Execution.
-	// Operational retries are explicit and create a new Execution through ExecutionService.Retry.
+	// Delivery retries must never create duplicate output or duplicate remote jobs
+	// for the same Core Execution. Operational retries are explicit and create a
+	// new Execution through ExecutionService.Retry.
 	switch execution.Status {
 	case domain.ExecutionSucceeded, domain.ExecutionFailed, domain.ExecutionCancelled:
 		return nil
-	case domain.ExecutionRunning:
-		// Remote executions are completed by ManagedReconciler. A duplicate queue
-		// delivery must never submit the same external job twice.
+	case domain.ExecutionSubmitting, domain.ExecutionRunning:
 		return nil
 	case domain.ExecutionQueued:
 	default:
@@ -73,43 +73,55 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 	if !ok {
 		if _, err := h.service.Fail(ctx, execution.ID, "PROCESSING_ENGINE_UNAVAILABLE", "managed processing engine "+engineType+" is not configured", map[string]any{
 			"engineType": engineType,
-		}, execution.ID.String()); err != nil {
+		}, execution.ID.String()); err != nil && !errors.Is(err, domain.ErrInvalidTransition) {
 			return fmt.Errorf("persist unavailable engine failure for execution %s: %w", execution.ID, err)
 		}
 		return nil
 	}
 
-	if execution.EngineType != engineType {
-		selected, err := h.service.SelectEngine(ctx, execution.ID, engineType, execution.ID.String())
-		if err != nil {
-			return fmt.Errorf("select %s engine for execution %s: %w", engineType, execution.ID, err)
+	// Persist QUEUED -> SUBMITTING before any remote network call. If another
+	// worker already claimed this Execution, it wins and this delivery is a no-op.
+	claimed, err := h.service.BeginManagedSubmission(ctx, execution.ID, engineType, execution.ID.String())
+	if err != nil {
+		if errors.Is(err, domain.ErrInvalidTransition) {
+			return nil
 		}
-		execution = selected
+		return fmt.Errorf("claim %s submission for execution %s: %w", engineType, execution.ID, err)
 	}
+	execution = claimed
+	request = workflowapp.ProcessingRequestFromExecution(execution, request.WorkflowVersion)
 
 	run, err := bridge.Submit(ctx, request)
 	if err != nil {
-		if _, failErr := h.service.Fail(ctx, execution.ID, "REMOTE_SUBMIT_FAILED", err.Error(), map[string]any{
-			"engineType": engineType,
-		}, execution.ID.String()); failErr != nil {
-			return fmt.Errorf("remote submit failed: %v; persist failure: %w", err, failErr)
+		if _, failErr := h.service.Fail(
+			ctx,
+			execution.ID,
+			"REMOTE_SUBMIT_FAILED",
+			"remote processing engine submission failed",
+			map[string]any{"engineType": engineType},
+			execution.ID.String(),
+		); failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
+			return fmt.Errorf("persist remote submit failure for execution %s: %w", execution.ID, failErr)
 		}
 		return nil
 	}
 	if strings.TrimSpace(run.ID) == "" {
-		if _, failErr := h.service.Fail(ctx, execution.ID, "REMOTE_SUBMIT_INVALID", "managed engine returned an empty external execution id", map[string]any{
+		if _, failErr := h.service.Fail(ctx, execution.ID, "REMOTE_SUBMIT_INVALID", "remote processing engine returned no durable execution id", map[string]any{
 			"engineType": engineType,
-		}, execution.ID.String()); failErr != nil {
+		}, execution.ID.String()); failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
 			return fmt.Errorf("persist invalid remote submit result: %w", failErr)
 		}
 		return nil
 	}
 
 	if _, err := h.service.Start(ctx, execution.ID, run.ID, execution.ID.String()); err != nil {
+		if errors.Is(err, domain.ErrInvalidTransition) {
+			return nil
+		}
 		return fmt.Errorf("mark managed execution %s running: %w", execution.ID, err)
 	}
 	// Even if the remote runtime reports a terminal state immediately, completion
-	// is delegated to ManagedReconciler so output import follows one idempotent path.
+	// is delegated to ManagedReconciler so output import follows one serialized path.
 	return nil
 }
 
@@ -120,19 +132,20 @@ func (h *Handler) executeNative(ctx context.Context, execution domain.Execution,
 	engineExecutionID := "native:" + execution.ID.String()
 	started, err := h.service.Start(ctx, execution.ID, engineExecutionID, execution.ID.String())
 	if err != nil {
+		if errors.Is(err, domain.ErrInvalidTransition) {
+			return nil
+		}
 		return fmt.Errorf("start execution %s: %w", execution.ID, err)
 	}
 	request = workflowapp.ProcessingRequestFromExecution(started, request.WorkflowVersion)
 
 	result, err := h.native.Execute(ctx, request)
 	if err != nil {
-		if _, failErr := h.service.Fail(ctx, started.ID, "PROCESSING_FAILED", err.Error(), map[string]any{
+		if _, failErr := h.service.Fail(ctx, started.ID, "PROCESSING_FAILED", "processing engine execution failed", map[string]any{
 			"engineType": started.EngineType,
-		}, started.ID.String()); failErr != nil {
-			return fmt.Errorf("processing failed: %v; persist failure: %w", err, failErr)
+		}, started.ID.String()); failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
+			return fmt.Errorf("persist processing failure for execution %s: %w", started.ID, failErr)
 		}
-		// The Core execution is now terminal FAILED. Returning nil prevents the queue
-		// transport from replaying the same execution and accidentally duplicating output.
 		return nil
 	}
 	if result.Metrics == nil {
@@ -142,6 +155,9 @@ func (h *Handler) executeNative(ctx context.Context, execution domain.Execution,
 		result.Metrics["adapterExecutionId"] = result.EngineExecutionID
 	}
 	if _, err := h.service.Succeed(ctx, started.ID, result.OutputDatasetVersionID, result.Metrics, started.ID.String()); err != nil {
+		if errors.Is(err, domain.ErrInvalidTransition) {
+			return nil
+		}
 		return fmt.Errorf("complete execution %s: %w", started.ID, err)
 	}
 	return nil
