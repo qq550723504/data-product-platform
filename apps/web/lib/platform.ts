@@ -179,6 +179,34 @@ export type DataProduct = {
   updatedAt: string;
 };
 
+export type ProductAsset = {
+  id: string;
+  assetType: string;
+  name: string;
+  datasetId?: string;
+  externalRef: string;
+  deliveryConfig: Record<string, unknown>;
+  schemaSnapshot: Record<string, unknown>;
+};
+
+export type ProductVersion = {
+  id: string;
+  productId: string;
+  version: string;
+  workflowVersionId?: string;
+  contractVersionId?: string;
+  entityPolicyRef: string;
+  indicatorSetRef: string;
+  definition: Record<string, unknown>;
+  assets: ProductAsset[];
+  createdAt: string;
+};
+
+export type ReleaseDataset = {
+  datasetVersionId: string;
+  role: string;
+};
+
 export type ProductRelease = {
   id: string;
   productId: string;
@@ -190,9 +218,20 @@ export type ProductRelease = {
   qualityResultId?: string;
   complianceResultId?: string;
   evidenceSnapshotId?: string;
+  datasets?: ReleaseDataset[];
   releaseNotes: string;
+  metadata?: Record<string, unknown>;
   createdAt: string;
   releasedAt?: string;
+};
+
+export type ReleaseCheckStatus = "PASS" | "FAIL" | "PENDING" | string;
+export type ReleaseReadiness = {
+  releaseId: string;
+  overall: "READY" | "NOT_READY" | string;
+  checks: Record<string, ReleaseCheckStatus>;
+  blockers: string[];
+  details?: Record<string, unknown>;
 };
 
 export class PlatformError extends Error {
@@ -274,4 +313,10 @@ export const platform = {
     apiGet<PageResult<ProductRelease>>(
       workspacePath(`/data-products/${encodeURIComponent(productId)}/releases?limit=${limit}&offset=${offset}`),
     ),
+  productVersion: (versionId: string) =>
+    apiGet<ProductVersion>(`/api/v1/product-versions/${encodeURIComponent(versionId)}`),
+  release: (releaseId: string) =>
+    apiGet<ProductRelease>(`/api/v1/product-releases/${encodeURIComponent(releaseId)}`),
+  releaseReadiness: (releaseId: string) =>
+    apiGet<ReleaseReadiness>(`/api/v1/product-releases/${encodeURIComponent(releaseId)}/readiness`),
 };
