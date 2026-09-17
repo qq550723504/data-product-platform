@@ -42,6 +42,8 @@ import (
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
 	qualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel"
+	readmodelhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel/transport/http"
 	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	resourcehttp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/transport/http"
@@ -102,6 +104,7 @@ func main() {
 	}
 
 	txManager := transaction.NewManager(db)
+	readModelHandler := readmodelhttp.NewHandler(readmodel.NewRepository(db))
 
 	resourceRepo := resourceinfra.NewPostgresRepository()
 	resourceHandler := resourcehttp.NewHandler(resourceapp.NewCreateService(txManager, resourceRepo))
@@ -211,6 +214,7 @@ func main() {
 	server := &http.Server{
 		Addr: cfg.HTTPAddr,
 		Handler: httpserver.NewMux(
+			readModelHandler.Register,
 			resourceHandler.Register,
 			datasetHandler.Register,
 			entityHandler.Register,
