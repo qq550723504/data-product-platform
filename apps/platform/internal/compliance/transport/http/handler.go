@@ -10,6 +10,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/infrastructure"
+	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 )
 
@@ -65,6 +66,10 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 		TraceID:          httpserver.RequestID(r.Context()),
 	})
 	if err != nil {
+		if errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "DATASET_WORKSPACE_MISMATCH", "the DatasetVersion must belong to the declared workspace", nil)
+			return
+		}
 		httpserver.WriteError(w, r, http.StatusBadRequest, "COMPLIANCE_CHECK_FAILED", err.Error(), nil)
 		return
 	}

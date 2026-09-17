@@ -99,6 +99,10 @@ func (h *Handler) createAuthorization(w http.ResponseWriter, r *http.Request) {
 		TraceID:     httpserver.RequestID(r.Context()),
 	})
 	if err != nil {
+		if errors.Is(err, domain.ErrResourceWorkspace) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "DATA_RESOURCE_WORKSPACE_MISMATCH", "every granted data resource must belong to the authorization workspace", nil)
+			return
+		}
 		httpserver.WriteError(w, r, http.StatusBadRequest, "AUTHORIZATION_CREATE_FAILED", err.Error(), nil)
 		return
 	}

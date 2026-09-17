@@ -84,6 +84,35 @@ func TestAuthorizationSnapshotAndContractLifecycle(t *testing.T) {
 		t.Fatalf("authorization status = %s, want ACTIVE", authorization.Status)
 	}
 
+	// A grant declared in one workspace must not name another workspace's resource.
+	foreignWorkspace := uuid.New()
+	foreignResourceID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO data_resource (id, workspace_id, code, name, resource_type)
+		VALUES ($1,$2,$3,$4,'TABLE_LIKE')
+	`, foreignResourceID, foreignWorkspace, "FOREIGN-"+uuid.NewString(), "Foreign resource"); err != nil {
+		t.Fatalf("insert foreign data resource: %v", err)
+	}
+	foreignCode := "AUTH-FOREIGN-" + uuid.NewString()
+	if _, err := rightsService.Create(ctx, rightsapp.CreateAuthorizationCommand{
+		WorkspaceID: workspaceID,
+		Code:        foreignCode,
+		GrantorRef:  "PARK-OPERATOR",
+		GranteeRef:  "DATA-PRODUCT-PLATFORM",
+		Purpose:     "ENTERPRISE_CREDIT_RISK_SUPPORT",
+		Resources:   []rightsdomain.ResourceGrantSpec{{DataResourceID: foreignResourceID, Actions: []string{"READ"}}},
+		TraceID:     "rights-contract-e2e",
+	}); !errors.Is(err, rightsdomain.ErrResourceWorkspace) {
+		t.Fatalf("cross workspace grant error = %v, want ErrResourceWorkspace", err)
+	}
+	var foreignAuthorizationCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM data_authorization WHERE code=$1`, foreignCode).Scan(&foreignAuthorizationCount); err != nil {
+		t.Fatalf("count rejected foreign authorization: %v", err)
+	}
+	if foreignAuthorizationCount != 0 {
+		t.Fatal("rejected cross workspace authorization was persisted")
+	}
+
 	snapshot, err := rightsService.CreateSnapshot(ctx, rightsapp.CreateSnapshotCommand{
 		WorkspaceID:      workspaceID,
 		Purpose:          "ENTERPRISE_CREDIT_RISK_SUPPORT",

@@ -40,6 +40,19 @@ func (r *PostgresRepository) InsertAuthorization(ctx context.Context, tx pgx.Tx,
 		return fmt.Errorf("insert authorization: %w", err)
 	}
 	for _, resource := range authorization.Resources {
+		// The authorization and every resource it grants must share one workspace so a
+		// grant declared in one workspace cannot name another tenant's resource.
+		var resourceWorkspace uuid.UUID
+		err := tx.QueryRow(ctx, `SELECT workspace_id FROM data_resource WHERE id=$1`, resource.DataResourceID).Scan(&resourceWorkspace)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("authorization resource %s: %w", resource.DataResourceID, ErrNotFound)
+		}
+		if err != nil {
+			return fmt.Errorf("read authorization resource workspace: %w", err)
+		}
+		if resourceWorkspace != authorization.WorkspaceID {
+			return fmt.Errorf("authorization resource %s: %w", resource.DataResourceID, domain.ErrResourceWorkspace)
+		}
 		scope, err := json.Marshal(resource.Scope)
 		if err != nil {
 			return fmt.Errorf("marshal authorization resource scope: %w", err)

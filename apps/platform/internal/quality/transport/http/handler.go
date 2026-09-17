@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
@@ -67,6 +68,10 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 		Now:              time.Now().UTC(),
 	})
 	if err != nil {
+		if errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "DATASET_WORKSPACE_MISMATCH", "the DatasetVersion must belong to the declared workspace", nil)
+			return
+		}
 		httpserver.WriteError(w, r, http.StatusBadRequest, "QUALITY_CHECK_FAILED", err.Error(), nil)
 		return
 	}
