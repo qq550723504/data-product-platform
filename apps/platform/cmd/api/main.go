@@ -24,6 +24,11 @@ import (
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	entityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
+	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
+	metadatadomain "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain"
+	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata"
+	metadatahttp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
@@ -146,6 +151,25 @@ func main() {
 	complianceService := complianceapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, complianceRepo, objectStore)
 	complianceHandler := compliancehttp.NewHandler(complianceService, complianceRepo)
 
+	metadataRepo := metadatainfra.NewPostgresRepository(db)
+	var metadataService *metadataapp.Service
+	if cfg.OpenMetadata.Enabled {
+		metadataEngine, err := openmetadata.NewClient(cfg.OpenMetadata.BaseURL, cfg.OpenMetadata.Token, nil)
+		if err != nil {
+			logger.Error("create OpenMetadata client", "error", err)
+			os.Exit(1)
+		}
+		metadataService = metadataapp.NewService(
+			metadatadomain.ProviderOpenMetadata,
+			cfg.OpenMetadata.Domain,
+			txManager,
+			metadataRepo,
+			productRepo,
+			metadataEngine,
+		)
+	}
+	metadataHandler := metadatahttp.NewHandler(metadataService, metadataRepo)
+
 	traceabilityHandler := traceabilityhttp.NewHandler(
 		evidence.NewQueryRepository(db),
 		cost.NewQueryRepository(db),
@@ -166,6 +190,7 @@ func main() {
 			contractHandler.Register,
 			qualityHandler.Register,
 			complianceHandler.Register,
+			metadataHandler.Register,
 			traceabilityHandler.Register,
 		),
 		ReadHeaderTimeout: 5 * time.Second,
