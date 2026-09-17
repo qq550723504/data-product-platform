@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/hibiken/asynq"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -30,6 +31,7 @@ import (
 	workflowdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 	workflowhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/http"
+	workflowqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue"
 )
 
 // Only this focused HTTP/DB test uses an instrumented memory store. The separate
@@ -58,6 +60,16 @@ type countingQueue struct {
 func (q *countingQueue) EnqueueExecution(_ context.Context, executionID uuid.UUID) error {
 	q.enqueued = append(q.enqueued, executionID)
 	return nil
+}
+
+// countingNativeEngine proves a quarantined execution never reaches the engine.
+type countingNativeEngine struct {
+	calls atomic.Int64
+}
+
+func (e *countingNativeEngine) Execute(context.Context, workflowapp.ProcessingRequest) (workflowapp.ProcessingResult, error) {
+	e.calls.Add(1)
+	return workflowapp.ProcessingResult{}, nil
 }
 
 // This checks cross-object ownership, not caller authentication. Configured
@@ -277,6 +289,39 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 		// The tamper itself changed the Execution row; compare everything except that row.
 		if after := snapshot(t); after != before {
 			t.Fatal("rejected retry changed persisted facts")
+		}
+	})
+
+	t.Run("worker quarantines a queued execution with a foreign reference", func(t *testing.T) {
+		// Simulate a row queued before reference scoping existed by inserting it directly,
+		// binding a foreign DatasetVersion as input. Create/Retry validation is bypassed, so
+		// only the worker's own revalidation can stop foreign data from being processed.
+		legacyID := uuid.New()
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution (
+				id, workspace_id, workflow_version_id, output_dataset_id,
+				target_period, status, attempt, engine_type, metrics, created_at
+			) VALUES ($1,$2,$3,$4,'2025-03','QUEUED',1,'NATIVE','{}'::jsonb,now())`,
+				legacyID, owner, ownerWorkflow.ID, standardized.ID)
+			return err
+		}(), "insert legacy queued execution")
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution_input (execution_id, input_name, dataset_version_id) VALUES ($1,'legacy_input',$2)`, legacyID, foreignVersion.ID)
+			return err
+		}(), "insert legacy execution input")
+
+		engine := &countingNativeEngine{}
+		handler := workflowqueue.NewHandler(executions, workflowRepo, engine)
+		task := asynq.NewTask(workflowqueue.TaskExecute, []byte(`{"executionId":"`+legacyID.String()+`"}`))
+		liveOK(t, handler.Handle(ctx, task), "worker handles legacy queued execution")
+
+		if calls := engine.calls.Load(); calls != 0 {
+			t.Fatalf("worker executed a quarantined execution %d time(s)", calls)
+		}
+		var status, code string
+		liveOK(t, pool.QueryRow(ctx, `SELECT status, COALESCE(error_code,'') FROM execution WHERE id=$1`, legacyID).Scan(&status, &code), "read quarantined execution")
+		if status != "FAILED" || code != "EXECUTION_REFERENCE_WORKSPACE_MISMATCH" {
+			t.Fatalf("quarantined execution status=%s code=%s, want FAILED/EXECUTION_REFERENCE_WORKSPACE_MISMATCH", status, code)
 		}
 	})
 }

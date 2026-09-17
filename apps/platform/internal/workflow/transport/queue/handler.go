@@ -56,6 +56,16 @@ func (h *Handler) Handle(ctx context.Context, task *asynq.Task) error {
 		return fmt.Errorf("execution %s has unsupported status %s", execution.ID, execution.Status)
 	}
 
+	// A row queued before reference scoping existed can still bind a foreign workflow,
+	// input or output. Revalidate before dispatch so a worker never reads a foreign input
+	// or writes a foreign output; an inconsistent row is quarantined, not executed.
+	if err := h.repo.ValidateExecutionOwnership(ctx, execution); err != nil {
+		if errors.Is(err, domain.ErrWorkspaceMismatch) || errors.Is(err, workflowinfra.ErrNotFound) {
+			return h.quarantine(ctx, execution, err)
+		}
+		return fmt.Errorf("validate execution %s ownership: %w", execution.ID, err)
+	}
+
 	workflowVersion, err := h.repo.GetVersion(ctx, execution.WorkflowVersionID)
 	if err != nil {
 		return fmt.Errorf("load workflow version %s: %w", execution.WorkflowVersionID, err)
@@ -66,6 +76,18 @@ func (h *Handler) Handle(ctx context.Context, task *asynq.Task) error {
 		return h.submitManaged(ctx, execution, request, engineType)
 	}
 	return h.executeNative(ctx, execution, request)
+}
+
+func (h *Handler) quarantine(ctx context.Context, execution domain.Execution, cause error) error {
+	code, message := "EXECUTION_REFERENCE_MISSING", "an execution reference no longer exists"
+	if errors.Is(cause, domain.ErrWorkspaceMismatch) {
+		code = "EXECUTION_REFERENCE_WORKSPACE_MISMATCH"
+		message = "execution references are not owned by one workspace"
+	}
+	if _, err := h.service.Fail(ctx, execution.ID, code, message, map[string]any{"quarantined": true}, execution.ID.String()); err != nil && !errors.Is(err, domain.ErrInvalidTransition) {
+		return fmt.Errorf("quarantine execution %s: %w", execution.ID, err)
+	}
+	return nil
 }
 
 func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution, request workflowapp.ProcessingRequest, engineType string) error {

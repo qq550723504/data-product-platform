@@ -140,6 +140,22 @@ func (r *PostgresRepository) ValidateExecutionReferences(ctx context.Context, tx
 	return nil
 }
 
+// ValidateExecutionOwnership re-checks a persisted Execution right before a worker
+// dispatches it. Executions queued before the ownership rule existed can still bind a
+// foreign workflow, input or output, so delivery must not rely only on the check made by
+// Create/Retry.
+func (r *PostgresRepository) ValidateExecutionOwnership(ctx context.Context, execution domain.Execution) error {
+	tx, err := r.pool.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("begin execution ownership validation: %w", err)
+	}
+	defer func() { _ = tx.Rollback(ctx) }()
+	if err := r.ValidateExecutionReferences(ctx, tx, execution.WorkspaceID, execution.WorkflowVersionID, execution.OutputDatasetID, execution.Inputs); err != nil {
+		return err
+	}
+	return tx.Commit(ctx)
+}
+
 func (r *PostgresRepository) ValidateOutputVersion(ctx context.Context, tx pgx.Tx, outputDatasetID, outputVersionID uuid.UUID) error {
 	var datasetID uuid.UUID
 	var status string
