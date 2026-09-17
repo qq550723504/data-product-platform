@@ -1,68 +1,68 @@
-# NDI Integration Architecture
+# NDI 集成架构
 
-## 1. Positioning
+## 1. 定位
 
-The Data Product Platform is positioned as a **data-product production and governance capability platform** that can participate in external data-infrastructure ecosystems as a business-node capability, rather than implementing a regional/full-domain infrastructure node itself.
+Data Product Platform 的定位是**数据产品生产与治理能力平台**，它作为业务节点能力参与外部数据基础设施生态，而不是自身实现一个区域级/全域级的基础设施节点。
 
-The platform should produce a stable `ProductRelease` first, then publish it through external adapters.
+平台应当先产出稳定的 `ProductRelease`，再通过外部适配器将其发布出去。
 
 ```text
-Raw / Source Data
+原始 / 源数据
       ↓
 Data Product Platform
       ↓
 ProductRelease
       ↓
-External Integration Layer
+外部集成层
       ├── NDI
-      ├── Trusted Data Space
-      ├── Data Exchange
-      └── Other channels
+      ├── 可信数据空间
+      ├── 数据交易所
+      └── 其他渠道
 ```
 
-## 2. Layered architecture
+## 2. 分层架构
 
 ```text
 ┌──────────────────────────────────────────────┐
-│ External data infrastructure                │
+│ 外部数据基础设施                             │
 │                                              │
-│ NDI / trusted data space / exchange          │
-│ identity · identifier · catalog · connector  │
+│ NDI / 可信数据空间 / 数据交易所              │
+│ 身份 · 标识 · 目录 · 连接器                  │
 └──────────────────────▲───────────────────────┘
-                       │ adapters
+                       │ 适配器
 ┌──────────────────────┴───────────────────────┐
-│ Data Product Platform                       │
+│ Data Product Platform                        │
 │                                              │
 │ UseCase · Rights · Dataset · Entity          │
 │ Workflow · Quality · Compliance · Contract   │
 │ Product · Release · Cost · Evidence          │
 └──────────────────────▲───────────────────────┘
-                       │ governance projection
+                       │ 治理投影
 ┌──────────────────────┴───────────────────────┐
-│ Metadata / governance engines               │
-│ OpenMetadata and future alternatives         │
+│ 元数据 / 治理引擎                            │
+│ OpenMetadata 及未来的替代实现                │
 └──────────────────────────────────────────────┘
 ```
 
-The layers answer different questions:
+各层回答的是不同的问题：
 
-- Metadata engine: **what data exists and how is it governed technically?**
-- Core Platform: **how is data produced into a governed Data Product?**
-- External infrastructure: **how is a released product identified, discovered, delivered, and used across organizations?**
+- 元数据引擎：**存在哪些数据，以及这些数据在技术上如何被治理？**
+- 核心平台：**数据如何被生产为一个受治理的数据产品？**
+- 外部基础设施：**一个已发布的产品如何被跨组织地标识、发现、交付和使用？**
 
-## 3. Core-to-external mapping
+## 3. 核心对象到外部的映射
 
-| Core object | External concern | Mapping rule |
+| 核心对象 | 外部关注点 | 映射规则 |
 | --- | --- | --- |
-| Subject / Organization | external identity | bind, never replace internal ID |
-| DataResource | external resource identifier / catalog entry | publish through adapter |
-| DataProduct | product catalog description | project metadata only |
-| ProductRelease | concrete publishable version | publication unit |
-| Authorization / Rights | usage eligibility | source for external usage policy |
-| DataContract | schema / SLA / delivery contract | map selected contract fields |
-| Evidence | runtime / publication evidence | import external logs as evidence |
+| Subject / Organization | 外部身份 | 绑定，绝不替换内部 ID |
+| DataResource | 外部资源标识 / 目录条目 | 通过适配器发布 |
+| DataProduct | 产品目录描述 | 仅投影元数据 |
+| ProductRelease | 可发布的具体版本 | 发布单元 |
+| Authorization / Rights | 使用资格 | 外部使用策略的来源 |
+| DataContract | Schema / SLA / 交付契约 | 映射契约中的选定字段 |
+| Evidence | 运行时 / 发布证据 | 将外部日志导入为证据 |
 
-## 4. Publication flow
+## 4. 发布流程
 
 ```text
 ProductRelease = PUBLISHED
@@ -71,49 +71,49 @@ ExternalPublicationRequested
         ↓
 Provider Adapter
         ↓
-Identity / identifier checks
+身份 / 标识校验
         ↓
-Catalog registration
+目录注册
         ↓
-Connector / delivery configuration
+连接器 / 交付配置
         ↓
 ExternalPublication = PUBLISHED
         ↓
-Usage events / connector logs
+使用事件 / 连接器日志
         ↓
 Evidence Graph
 ```
 
-The external publication process must not mutate the original ProductRelease snapshot.
+外部发布过程不得修改原始 ProductRelease 快照。
 
-## 5. Identity and identifier model
+## 5. 身份与标识模型
 
-Internal IDs remain canonical inside the platform.
+内部 ID 在平台内部始终保持权威地位。
 
-Examples:
+示例：
 
 ```text
-Internal Product ID
+内部产品 ID
 DP-ACTIVITY-001
 
-Internal Release ID
+内部 Release ID
 REL-2026-001
 ```
 
-External identifiers are stored separately:
+外部标识符单独存储：
 
 ```text
 provider = NDI
 object_type = DATA_PRODUCT
-object_id = <internal UUID>
-external_id = <provider identifier>
+object_id = <内部 UUID>
+external_id = <提供方标识符>
 ```
 
-This allows one object to have multiple external identifiers at the same time.
+这使得同一个对象可以同时拥有多个外部标识符。
 
-## 6. Policy vs enforcement
+## 6. 策略与执行
 
-Core Platform owns policy definition:
+核心平台拥有策略定义权：
 
 ```text
 Subject
@@ -125,13 +125,13 @@ Subject
 = Decision
 ```
 
-External connectors may enforce the resulting decision during delivery.
+外部连接器可在交付过程中执行该决策结果。
 
-The connector is therefore an enforcement/runtime component, not the source of truth for business authorization.
+因此，连接器是执行/运行时组件，而不是业务授权的真相来源。
 
-## 7. Evidence integration
+## 7. 证据集成
 
-External infrastructure evidence is appended to the existing Evidence Graph.
+外部基础设施产生的证据被追加到既有 Evidence Graph 中。
 
 ```text
 Rights Evidence
@@ -147,34 +147,34 @@ External Registration Evidence
 Connector Usage Evidence
 ```
 
-External runtime logs do not replace upstream production evidence.
+外部运行时日志不会替代上游的生产证据。
 
-## 8. Implementation phases
+## 8. 实施阶段
 
-### Core POC — no dependency on NDI
+### 核心 POC —— 不依赖 NDI
 
-Continue Sprint 1-3 without blocking on external integration.
+继续 Sprint 1-3，不以外部集成为阻塞条件。
 
-### Integration Spike
+### 集成探针（Integration Spike）
 
-After ProductRelease stabilizes, implement provider-neutral models:
+在 ProductRelease 稳定之后，实现提供方中立的模型：
 
 - `external_identity_binding`
 - `external_identifier`
 - `external_publication`
-- adapter ports
+- 适配器端口（adapter ports）
 
-Then implement an `adapters/ndi` proof of concept against the formal interface specification/test environment available at implementation time.
+随后，依据实施时点可获得的正式接口规范/测试环境，实现 `adapters/ndi` 的概念验证。
 
-### Production integration
+### 生产集成
 
-Only after formal interface documentation and testbed validation should NDI-specific production behavior be finalized.
+只有在具备正式接口文档并通过测试床验证之后，才最终确定 NDI 专属的生产行为。
 
-## 9. Non-goals
+## 9. 非目标
 
-The project does not currently aim to implement:
+本项目目前不打算实现：
 
-- an NDI full-domain node;
-- a regional/industry functional node;
-- a replacement for a standard access connector;
-- an NDI-specific Core Domain model.
+- 一个 NDI 全域节点；
+- 一个区域级/行业级功能节点；
+- 一个标准接入连接器的替代品；
+- 一个 NDI 专属的核心领域模型。

@@ -1,18 +1,18 @@
-# Park COMPANY Splink model artifact
+# Park COMPANY Splink 模型产物
 
-The runtime expects a **trained Splink 4 model** at:
+运行时期望在以下位置存在一个**已训练的 Splink 4 模型**：
 
 ```text
 models/park-company-v1/model.json
 ```
 
-The model file is a generated statistical artifact, not Core domain state. It must use:
+模型文件是生成的统计产物，不是核心领域状态。它必须使用：
 
 - `link_type = link_only`
 - Splink `4.0.17`
-- model ref `park-company-v1`
-- model version `1.0.0`
+- 模型 ref `park-company-v1`
+- 模型版本 `1.0.0`
 
-The model is intentionally not hand-authored in Sprint 6.2. Sprint 6.3 owns the committed labelled evaluation set, training/evaluation procedure, and the decision about whether a trained reference artifact should be checked into the repository or produced by CI/release tooling.
+在 Sprint 6.2 中，该模型刻意不由人工手写。Sprint 6.3 负责已提交的标注评估集、训练/评估流程，以及关于"训练得到的参考产物应签入仓库还是由 CI/发布工具生成"的决策。
 
-The service fails fast when the configured model file is absent or is not a `link_only` model. This prevents silently falling back to an untrained or incompatible statistical model.
+当配置的模型文件缺失或不是 `link_only` 模型时，服务会快速失败。这可防止静默回退到未训练或不兼容的统计模型。

@@ -1,29 +1,29 @@
-# Entity Resolution Engine Boundary
+# 实体解析引擎边界
 
-## Decision
+## 决策
 
-The Core Platform owns canonical `Entity`, `EntityMapping`, `MatchJob`, Human Review, Evidence, and matching policy history.
+核心平台拥有权威的 `Entity`、`EntityMapping`、`MatchJob`、人工审核（Human Review）、Evidence 以及匹配策略历史。
 
-Probabilistic systems such as Splink are **candidate generators only**. They may propose ranked links to existing canonical entities, but they do not create, merge, or persist canonical state.
+Splink 一类的概率化系统**仅作为候选生成器**。它们可以针对已有权威实体提出带排序的关联建议，但不得创建、合并或持久化权威状态。
 
-## Decision order
+## 决策顺序
 
-For COMPANY resolution the Core decision pipeline is:
+对于 COMPANY 的解析，核心决策流水线为：
 
 ```text
-Strong identifier rules
-  -> normalized deterministic rules
-  -> optional probabilistic candidate engine
-  -> policy thresholds
+强标识符规则
+  -> 归一化后的确定性规则
+  -> 可选的概率化候选引擎
+  -> 策略阈值
   -> AUTO_MATCH / REVIEW / UNRESOLVED
-  -> Core EntityMapping / Human Review
+  -> 核心 EntityMapping / 人工审核
 ```
 
-Exact Unified Social Credit Code matches therefore remain authoritative and are never overridden by a probabilistic score.
+因此，统一社会信用代码完全一致时仍具有权威性，永远不会被概率得分所覆盖。
 
-## Provider-neutral contract
+## 提供方中立的契约
 
-`internal/entity/resolution` defines:
+`internal/entity/resolution` 定义：
 
 - `MatchRecord`
 - `ReferenceRecord`
@@ -33,25 +33,25 @@ Exact Unified Social Credit Code matches therefore remain authoritative and are 
 - `CandidateGenerator`
 - `Registry`
 
-Provider configuration, training data, blocking strategies, SQL dialects, model files, and runtime-specific payloads must remain outside the Core Entity domain.
+提供方配置、训练数据、分块（blocking）策略、SQL 方言、模型文件以及运行时相关的载荷，都必须保留在核心 Entity 领域之外。
 
-## Provenance
+## 溯源
 
-Candidates and accepted mappings persist:
+候选结果与被接受的映射会持久化记录：
 
-- policy version
-- match method / rule
-- normalized confidence score
-- engine name
-- engine version
-- model version
+- 策略版本（policy version）
+- 匹配方法 / 规则
+- 归一化后的置信度得分
+- 引擎名称
+- 引擎版本
+- 模型版本
 
-This makes probabilistic decisions auditable without making the external engine the system of record.
+这使得概率化决策可审计，同时又不让外部引擎成为真相来源。
 
-## Failure / disable semantics
+## 失败 / 停用语义
 
-No probabilistic engine is required for the existing rule-only path. When no candidate generator is configured, the existing deterministic behavior is unchanged. Runtime-specific fallback/error behavior is implemented by adapters and application policy, not by canonical Entity state.
+既有的纯规则路径不依赖任何概率化引擎。当未配置候选生成器时，既有的确定性行为保持不变。运行时相关的降级/错误行为由适配器与应用策略实现，而非由权威 Entity 状态实现。
 
-## Current POC boundary
+## 当前 POC 边界
 
-The first generic implementation enumerates active canonical entities as the reference set. This is deliberately simple for the reference POC. Production-scale blocking/indexing is an adapter/runtime concern and can be replaced without changing the `Entity` or `EntityMapping` model.
+第一个通用实现将活跃的权威实体枚举为参照集（reference set）。对于参照用 POC 而言这是刻意保持简单的做法。生产规模的分块/索引属于适配器/运行时的关注点，可以在不改变 `Entity` 或 `EntityMapping` 模型的前提下替换。

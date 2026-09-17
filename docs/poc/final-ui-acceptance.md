@@ -1,50 +1,50 @@
-# Enterprise Activity POC UI — Final Acceptance Map
+# 企业活跃度 POC UI —— 最终验收对照表
 
-This document maps the minimal POC console to issue #13 and parent UI milestone #75. It deliberately validates the Core product model rather than exposing OpenMetadata, Apache Hop, or Splink as top-level product concepts.
+本文档将最小化的 POC 控制台映射到 issue #13 与父级 UI 里程碑 #75。它刻意验证核心产品模型，而不是把 OpenMetadata、Apache Hop 或 Splink 暴露为顶层产品概念。
 
-## Operator route map
+## 操作员路由对照表
 
-| #13 requirement | POC route | Core/read-model source | Automated coverage |
+| #13 要求 | POC 路由 | Core / 读模型来源 | 自动化覆盖 |
 | --- | --- | --- | --- |
-| Workbench summary | `/` | workspace workbench read model | Next production build + route smoke |
-| Data Resource detail | `/resources`, `/resources/{id}` | workspace Data Resource read model | Next production build + route smoke; Go read-model tests |
-| Dataset / immutable DatasetVersion | `/datasets`, `/datasets/{id}` | workspace Dataset/DatasetVersion read model | Next production build + route smoke; Core DatasetVersion tests |
-| Entity Review | `/reviews` | workspace pending review read model + existing confirm/reject commands | 24 review-command regression tests + Next build |
-| Workflow / Execution | `/production`, `/production/{id}` | workspace execution read model + immutable Execution detail | Next production build + route smoke; Core workflow integration tests |
-| Data Product / readiness | `/products`, `/products/{id}` | workspace product/releases + Core ProductVersion/Release/Readiness | release-command regression tests + Next build |
-| Release evidence trace | `/products/{productId}/releases/{releaseId}` | scoped product/release discovery + Core ProductRelease traceability | trace-scope regression tests + Next build/route smoke; Core traceability tests |
-| Evidence center | `/evidence` | workspace products/releases; links into release trace | Next production build + route smoke |
+| 工作台摘要 | `/` | workspace 工作台读模型 | Next 生产构建 + 路由冒烟测试 |
+| 数据资源详情 | `/resources`、`/resources/{id}` | workspace Data Resource 读模型 | Next 生产构建 + 路由冒烟测试；Go 读模型测试 |
+| Dataset / 不可变 DatasetVersion | `/datasets`、`/datasets/{id}` | workspace Dataset/DatasetVersion 读模型 | Next 生产构建 + 路由冒烟测试；Core DatasetVersion 测试 |
+| 实体复核 | `/reviews` | workspace 待处理复核读模型 + 既有 confirm/reject 命令 | 24 个复核命令回归测试 + Next 构建 |
+| Workflow / Execution | `/production`、`/production/{id}` | workspace execution 读模型 + 不可变 Execution 详情 | Next 生产构建 + 路由冒烟测试；Core workflow 集成测试 |
+| 数据产品 / 就绪状态 | `/products`、`/products/{id}` | workspace 产品/release + Core ProductVersion/Release/Readiness | release 命令回归测试 + Next 构建 |
+| Release 证据追溯 | `/products/{productId}/releases/{releaseId}` | 带作用域的产品/release 发现 + Core ProductRelease 可追溯性 | trace 作用域回归测试 + Next 构建/路由冒烟测试；Core 可追溯性测试 |
+| 证据中心 | `/evidence` | workspace 产品/release；链接到 release 追溯 | Next 生产构建 + 路由冒烟测试 |
 
-## Acceptance criteria
+## 验收标准
 
-### Reference flow without direct DB manipulation
+### 无需直接操纵数据库的参考流程
 
-The UI is an operator surface over existing Core commands/read models. Review confirmation/rejection and ProductRelease publishing use server actions; neither requires the operator to issue SQL or paste a command into the Core API.
+UI 是建立在既有 Core 命令/读模型之上的操作员界面。复核确认/拒绝与 ProductRelease 发布均使用 server action；两者都不要求运维人员执行 SQL 或向核心 API 粘贴命令。
 
-The current reference POC still expects fixture/bootstrap preparation to create the underlying DataResource, Dataset, Workflow, Contract, Rights, Quality, Compliance, ProductVersion, and Release objects. That bootstrap is test/POC setup, not an operator UI requirement.
+当前参考 POC 仍然需要通过 fixture/bootstrap 准备来创建底层的 DataResource、Dataset、Workflow、Contract、Rights、Quality、Compliance、ProductVersion 与 Release 对象。该 bootstrap 属于测试/POC 搭建，不是操作员 UI 的要求。
 
-### Entity Review provenance
+### 实体复核溯源
 
-The review queue shows:
+复核队列展示：
 
-- source/original values
-- normalized values
-- candidate entity
-- match method
-- match rule
-- confidence
-- engine/model provenance when present
-- policy version
+- 源值/原始值
+- 归一化值
+- 候选实体
+- 匹配方法
+- 匹配规则
+- 置信度
+- 存在时的引擎/模型溯源信息
+- 策略版本
 
-Manual confirmation/rejection requires a reason and a server-derived reviewer UUID. Writes are disabled by default and ambiguous outcomes are not automatically retried.
+人工确认/拒绝必须填写原因，并使用服务端推导的 reviewer UUID。写操作默认禁用，且结果不明确时不会自动重试。
 
-### Dataset semantics
+### Dataset 语义
 
-Dataset pages expose the logical Dataset type (`RAW`, `STANDARDIZED`, `CURATED`, `PRODUCT`) separately from immutable DatasetVersion rows. Historical versions remain independently addressable.
+Dataset 页面将逻辑 Dataset 类型（`RAW`、`STANDARDIZED`、`CURATED`、`PRODUCT`）与不可变 DatasetVersion 记录分别展示。历史版本仍然可以独立寻址。
 
-### Release readiness
+### Release 就绪状态
 
-The Product page displays these gates independently:
+产品页面独立展示以下门禁：
 
 - production
 - dataset
@@ -55,11 +55,11 @@ The Product page displays these gates independently:
 - evidence
 - delivery
 
-The UI never substitutes a single readiness score. Publishing is enabled only when Core reports `Release.status=READY`, overall readiness `READY`, and every individual gate `PASS`.
+UI 绝不会用一个单一的就绪得分替代它们。只有当 Core 报告 `Release.status=READY`、整体就绪为 `READY`、且每一项门禁均为 `PASS` 时，发布才被启用。
 
-### Evidence trace
+### 证据追溯
 
-Release trace navigation follows:
+Release 追溯导航遵循：
 
 ```text
 Workspace Data Product
@@ -74,35 +74,35 @@ Workspace Data Product
     → AuditEvent
 ```
 
-A global traceability lookup is performed only after the release was discovered under the current workspace/product. Returned release/product/workspace-bearing facts are checked again before rendering.
+只有在当前 workspace/product 下发现该 release 之后，才会执行全局可追溯性查询。渲染前会再次校验返回的 release/product/携带 workspace 的事实。
 
-### External engines stay implementation details
+### 外部引擎只是实现细节
 
-OpenMetadata, Hop, and Splink may appear only where their runtime/provenance is relevant (for example `engineType` on an Execution or model provenance on an EntityMapping). They are not first-level navigation concepts and do not own Core state.
+OpenMetadata、Hop 与 Splink 只能出现在其运行时/溯源信息相关的位置（例如 Execution 上的 `engineType`，或 EntityMapping 上的模型溯源）。它们不是一级导航概念，也不拥有核心状态。
 
-## CI acceptance layers
+## CI 验收层次
 
-The required CI gate combines complementary checks:
+必需的 CI 门禁组合了互补的检查：
 
-1. **Go platform CI** — migrations, `go test ./...`, API/worker/migrate builds. This includes the reference vertical-slice and traceability integration tests already in Core.
-2. **Web command/scope regression** — entity-review, release-publish, and release-trace scope tests.
-3. **Next production build** — validates all server/client route modules and type integration.
-4. **Production route smoke** — starts the built Next server and performs HTTP GETs for the main POC routes, including dynamic product and release-trace routes. Workspace configuration is intentionally blank in this smoke test so it exercises the safe `SetupRequired` path without requiring a second live Core stack.
-5. **Hop/Splink CI** — existing runtime/reference checks remain mandatory and are not bypassed by UI changes.
+1. **Go platform CI** —— 迁移、`go test ./...`、API/worker/migrate 构建。其中包含 Core 中已有的参考垂直切片与可追溯性集成测试。
+2. **Web 命令/作用域回归** —— 实体复核、release 发布与 release 追溯作用域测试。
+3. **Next 生产构建** —— 校验所有 server/client 路由模块与类型集成。
+4. **生产路由冒烟测试** —— 启动构建后的 Next 服务，对主要 POC 路由执行 HTTP GET，包括动态 product 与 release 追溯路由。本次冒烟测试中 workspace 配置刻意留空，以便在不需第二套实时 Core 栈的情况下走安全的 `SetupRequired` 路径。
+5. **Hop/Splink CI** —— 既有的运行时/参考检查仍然强制执行，不会因 UI 变更而被绕过。
 
-These layers validate code, API contracts, buildability, route registration, and reference Core behavior. They do not replace a deployment-specific IAM/security test.
+这些层次校验代码、API 契约、可构建性、路由注册与参考 Core 行为。它们不能替代针对具体部署环境的 IAM/安全测试。
 
-## Final live demo checklist
+## 最终实况演示检查清单
 
-For the actual POC demo environment, configure a real `POC_WORKSPACE_ID` and keep write flags off until an operator identity is provided server-side. Then verify, in order:
+针对实际的 POC 演示环境，请配置真实的 `POC_WORKSPACE_ID`，并在服务端提供操作员身份之前保持写开关关闭。然后按顺序验证：
 
-1. Workbench shows the reference workspace.
-2. Open each input Data Resource and RAW DatasetVersion.
-3. Open Entity Review, inspect provenance, and complete any pending review with a reason.
-4. Open the resulting STANDARDIZED/CURATED/PRODUCT DatasetVersions and the producing Execution.
-5. Open the Data Product and inspect all eight Release Readiness gates.
-6. If the Release is Core `READY`, publish it using the guarded server action.
-7. Open the Release evidence trace and verify EvidenceSnapshot integrity, DatasetVersion lineage, Execution provenance, entity mappings, Evidence, Cost, and Audit.
-8. Navigate the same Release from `/evidence` to prove the operator does not need to paste an arbitrary UUID.
+1. 工作台显示参考 workspace。
+2. 依次打开每个输入 Data Resource 与 RAW DatasetVersion。
+3. 打开实体复核，检查溯源信息，并带着原因完成所有待处理复核。
+4. 打开由此产生的 STANDARDIZED/CURATED/PRODUCT DatasetVersion 以及产出它们的 Execution。
+5. 打开数据产品，检查全部八个 Release Readiness 门禁。
+6. 如果该 Release 在 Core 中为 `READY`，使用带守卫的 server action 将其发布。
+7. 打开 Release 证据追溯，核实 EvidenceSnapshot 完整性、DatasetVersion 血缘、Execution 溯源、实体映射、Evidence、Cost 与 Audit。
+8. 从 `/evidence` 导航到同一个 Release，以证明运维人员无需粘贴任意 UUID。
 
-Completion of this checklist, together with green required CI, satisfies the minimal POC UI acceptance of #13/#75. Production IAM and external deployment hardening remain out of scope for this POC.
+完成本检查清单，并配合全绿的必需 CI，即满足 #13/#75 的最小 POC UI 验收。生产 IAM 与对外部署加固仍不在本 POC 范围内。
