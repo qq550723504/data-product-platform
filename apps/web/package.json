@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run test:reviews && next build",
     "lint": "eslint . --max-warnings=0",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:reviews": "tsc lib/review-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .review-tests && node --test tests/review-command.test.mjs"
   },
   "dependencies": {
-    "next": "15.2.4",
+    "next": "15.5.24",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
@@ -18,7 +19,7 @@
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
     "eslint": "8.57.1",
-    "eslint-config-next": "15.2.4",
+    "eslint-config-next": "15.5.24",
     "typescript": "5.8.2"
   }
 }
