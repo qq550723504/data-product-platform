@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ConsoleShell } from "@/components/shell";
 import "./globals.css";
+import "./operations.css";
 
 export const metadata: Metadata = {
   title: "Data Product Platform · POC",
