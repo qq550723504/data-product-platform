@@ -84,7 +84,7 @@ func TestManagedReconcilerRetriesFinalizationAfterRemoteSuccess(t *testing.T) {
 	execution := runningHopExecution()
 	repo := &fakeManagedRepo{
 		execution: execution,
-		version: domain.WorkflowVersion{
+		version:   domain.WorkflowVersion{
 			ID: execution.WorkflowVersionID,
 		},
 	}
