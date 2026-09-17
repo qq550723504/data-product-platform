@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { publishRelease } from "@/app/products/[id]/actions";
 import { Badge, formatDate, shortId } from "@/components/ui";
@@ -66,6 +67,9 @@ export function ProductReleasePanel({ productId, items, actionsEnabled }: { prod
           <p>
             ProductVersion <span className="mono">{shortId(item.release.productVersionId)}</span>
             {item.release.releasedAt ? ` · 发布于 ${formatDate(item.release.releasedAt)}` : ` · 创建于 ${formatDate(item.release.createdAt)}`}
+          </p>
+          <p style={{ marginTop: 8 }}>
+            <Link className="text-link" href={`/products/${productId}/releases/${item.release.id}`}>查看 Release → DatasetVersion → Execution → Evidence 完整证据链 →</Link>
           </p>
 
           <div className="metric-grid" style={{ marginTop: 16 }}>
