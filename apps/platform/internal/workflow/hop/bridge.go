@@ -98,6 +98,20 @@ func (b *Bridge) Status(ctx context.Context, request workflowapp.ProcessingReque
 }
 
 func (b *Bridge) Finalize(ctx context.Context, request workflowapp.ProcessingRequest, run workflowapp.EngineRun) (workflowapp.ProcessingResult, error) {
+	var result workflowapp.ProcessingResult
+	lockKey := "managed-output-finalize:" + request.ExecutionID.String()
+	err := b.tx.WithAdvisoryLock(ctx, lockKey, func(ctx context.Context) error {
+		var err error
+		result, err = b.finalizeLocked(ctx, request, run)
+		return err
+	})
+	if err != nil {
+		return workflowapp.ProcessingResult{}, err
+	}
+	return result, nil
+}
+
+func (b *Bridge) finalizeLocked(ctx context.Context, request workflowapp.ProcessingRequest, run workflowapp.EngineRun) (workflowapp.ProcessingResult, error) {
 	cfg, err := b.config(request)
 	if err != nil {
 		return workflowapp.ProcessingResult{}, err
@@ -269,6 +283,7 @@ func (b *Bridge) executionParameters(ctx context.Context, request workflowapp.Pr
 	params["OUTPUT_BASE_URI"] = outputBase
 	params["OUTPUT_URI"] = outputURI
 
+	seenPrefixes := make(map[string]string, len(request.Inputs))
 	for _, input := range request.Inputs {
 		version, err := b.datasetRepo.GetVersion(ctx, input.DatasetVersionID)
 		if err != nil {
@@ -277,7 +292,15 @@ func (b *Bridge) executionParameters(ctx context.Context, request workflowapp.Pr
 		if version.Status != datasetdomain.VersionReady && version.Status != datasetdomain.VersionSuperseded {
 			return nil, "", fmt.Errorf("input %s DatasetVersion %s is not usable: %s", input.Name, version.ID, version.Status)
 		}
-		prefix := "INPUT_" + parameterName(input.Name)
+		normalized := parameterName(input.Name)
+		if normalized == "" {
+			return nil, "", fmt.Errorf("input name %q does not produce a valid managed parameter name", input.Name)
+		}
+		if previous, exists := seenPrefixes[normalized]; exists && previous != input.Name {
+			return nil, "", fmt.Errorf("input names %q and %q collide after managed parameter normalization (%s)", previous, input.Name, normalized)
+		}
+		seenPrefixes[normalized] = input.Name
+		prefix := "INPUT_" + normalized
 		params[prefix+"_URI"] = version.StorageURI
 		params[prefix+"_VERSION_ID"] = version.ID.String()
 	}
