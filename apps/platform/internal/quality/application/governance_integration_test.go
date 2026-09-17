@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
 	complianceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/application"
 	compliancedomain "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/domain"
 	complianceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/infrastructure"
@@ -147,7 +148,7 @@ COMPANY-003,敏感科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	}
 
 	// A QualityResult workspace is derived from the Dataset. A caller naming another
-	// workspace's DatasetVersion must be rejected without writing result/evidence facts.
+	// workspace's DatasetVersion must be rejected without writing result/evidence/audit facts.
 	foreignWorkspaceID := uuid.New()
 	foreignDataset := createDatasetForTest(t, ctx, createDataset, foreignWorkspaceID, "GOV-FOREIGN")
 	foreignVersion := uploadCSV(t, ctx, uploadDataset, foreignDataset.ID, "product-foreign.csv", `company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at
@@ -157,33 +158,23 @@ COMPANY-004,外部科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 		WorkspaceID:      workspaceID,
 		DatasetVersionID: foreignVersion.ID,
 		RuleSetRef:       "park/quality/enterprise-activity-quality-v1.yaml",
-		TraceID:          "governance-e2e",
+		TraceID:          "governance-rejected",
 		Now:              foreignVersion.ReadyAt.Add(30 * 60 * 1e9),
 	}); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
 		t.Fatalf("cross workspace quality error = %v, want ErrDatasetWorkspace", err)
-	}
-	var foreignQualityResults int
-	if err := pool.QueryRow(ctx, `SELECT count(*) FROM quality_result WHERE workspace_id=$1`, foreignWorkspaceID).Scan(&foreignQualityResults); err != nil {
-		t.Fatalf("count rejected foreign quality results: %v", err)
-	}
-	if foreignQualityResults != 0 {
-		t.Fatal("rejected cross workspace quality check persisted a result")
 	}
 	if _, err := complianceService.Run(ctx, complianceapp.RunCommand{
 		WorkspaceID:      workspaceID,
 		DatasetVersionID: foreignVersion.ID,
 		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:          "governance-e2e",
+		TraceID:          "governance-rejected",
 	}); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
 		t.Fatalf("cross workspace compliance error = %v, want ErrDatasetWorkspace", err)
 	}
-	var foreignComplianceResults int
-	if err := pool.QueryRow(ctx, `SELECT count(*) FROM compliance_result WHERE workspace_id=$1`, foreignWorkspaceID).Scan(&foreignComplianceResults); err != nil {
-		t.Fatalf("count rejected foreign compliance results: %v", err)
-	}
-	if foreignComplianceResults != 0 {
-		t.Fatal("rejected cross workspace compliance check persisted a result")
-	}
+	// Absence must be scoped by the rejected DatasetVersion, not by the workspace the caller
+	// happened to name: a faulty path could persist the result under the request workspace and
+	// still leave a foreign-workspace count at zero.
+	assertNoGovernanceFactsForVersion(t, ctx, pool, foreignVersion.ID)
 
 	var evidenceCount int
 	if err := pool.QueryRow(ctx, `SELECT count(*) FROM evidence WHERE evidence_type IN ('QUALITY_RESULT','COMPLIANCE_RESULT') AND metadata->>'datasetVersionId'=$1`, passVersion.ID.String()).Scan(&evidenceCount); err != nil {
@@ -191,6 +182,36 @@ COMPANY-004,外部科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	}
 	if evidenceCount != 2 {
 		t.Fatalf("governance evidence = %d, want 2", evidenceCount)
+	}
+}
+
+func assertNoGovernanceFactsForVersion(t *testing.T, ctx context.Context, pool *pgxpool.Pool, versionID uuid.UUID) {
+	t.Helper()
+	for _, query := range []string{
+		`SELECT count(*) FROM quality_result WHERE dataset_version_id=$1`,
+		`SELECT count(*) FROM compliance_result WHERE dataset_version_id=$1`,
+	} {
+		var count int
+		if err := pool.QueryRow(ctx, query, versionID).Scan(&count); err != nil {
+			t.Fatalf("count rejected governance rows (%s): %v", query, err)
+		}
+		if count != 0 {
+			t.Fatalf("rejected cross workspace run persisted %d row(s) for %s", count, query)
+		}
+	}
+	var evidenceCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM evidence WHERE metadata->>'datasetVersionId'=$1`, versionID.String()).Scan(&evidenceCount); err != nil {
+		t.Fatalf("count rejected evidence: %v", err)
+	}
+	if evidenceCount != 0 {
+		t.Fatalf("rejected cross workspace run persisted %d evidence row(s)", evidenceCount)
+	}
+	var auditCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM audit_event WHERE after_state->>'datasetVersionId'=$1`, versionID.String()).Scan(&auditCount); err != nil {
+		t.Fatalf("count rejected audit events: %v", err)
+	}
+	if auditCount != 0 {
+		t.Fatalf("rejected cross workspace run persisted %d audit event(s)", auditCount)
 	}
 }
 
