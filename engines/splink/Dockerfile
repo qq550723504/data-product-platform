@@ -12,11 +12,6 @@ RUN pip install --upgrade pip && pip install .
 COPY app /app/app
 COPY models /app/models
 
-# The reference model is a generated statistical artifact. Build it from the
-# committed, labelled fixtures with the pinned Splink runtime instead of
-# hand-editing or silently shipping an untrained model.
-RUN python -m app.training --model-dir /app/models/park-company-v1
-
 EXPOSE 8091
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8091"]
