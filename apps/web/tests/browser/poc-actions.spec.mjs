@@ -71,7 +71,7 @@ test("complete readiness enables publish and submits exactly once", async ({ pag
 test("contradictory stale readiness fails closed in the hydrated UI", async ({ page, request }) => {
   await reset(request, "stale");
   await page.goto(`/products/${productId}`);
-  await expect(page.getByText(/GATE_NOT_PASS:rights/)).toBeVisible();
+  await expect(page.getByText("校验：GATE_NOT_PASS:rights", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "发布 Release" })).toBeDisabled();
   const state = await fixtureState(request);
   expect(state.publishCount).toBe(0);
@@ -80,7 +80,7 @@ test("contradictory stale readiness fails closed in the hydrated UI", async ({ p
 test("future non-PASS gate also fails closed", async ({ page, request }) => {
   await reset(request, "future");
   await page.goto(`/products/${productId}`);
-  await expect(page.getByText(/EXTRA_GATE_NOT_PASS:externalPublication/)).toBeVisible();
+  await expect(page.getByText("校验：EXTRA_GATE_NOT_PASS:externalPublication", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "发布 Release" })).toBeDisabled();
   const state = await fixtureState(request);
   expect(state.publishCount).toBe(0);
