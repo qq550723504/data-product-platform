@@ -116,7 +116,7 @@ func (b *Bridge) Finalize(ctx context.Context, request workflowapp.ProcessingReq
 		return workflowapp.ProcessingResult{
 			OutputDatasetVersionID: existing.ID,
 			EngineExecutionID:      run.ID,
-			Metrics:                 finalizeMetrics(existing, run, true),
+			Metrics:                finalizeMetrics(existing, run, true),
 		}, nil
 	} else if !errors.Is(err, datasetinfra.ErrNotFound) {
 		return workflowapp.ProcessingResult{}, err
@@ -167,7 +167,7 @@ func (b *Bridge) Finalize(ctx context.Context, request workflowapp.ProcessingReq
 	return workflowapp.ProcessingResult{
 		OutputDatasetVersionID: outputVersion.ID,
 		EngineExecutionID:      run.ID,
-		Metrics:                 finalizeMetrics(outputVersion, run, false),
+		Metrics:                finalizeMetrics(outputVersion, run, false),
 	}, nil
 }
 
