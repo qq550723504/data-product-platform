@@ -3,6 +3,7 @@ package application_test
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -14,6 +15,9 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
+	resourcedomain "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/domain"
+	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 )
 
 type fakeStore struct{}
@@ -44,7 +48,7 @@ func TestDatasetVersionUploadIsSequentialTraceableAndImmutable(t *testing.T) {
 
 	txManager := transaction.NewManager(pool)
 	repo := infrastructure.NewPostgresRepository(pool)
-	createDataset := application.NewCreateDatasetService(txManager, repo)
+	createDataset := application.NewCreateDatasetService(txManager, repo, resourceinfra.NewPostgresRepository())
 	upload := application.NewUploadVersionService(txManager, repo, fakeStore{})
 	invalidate := application.NewInvalidateVersionService(txManager, repo)
 
@@ -137,5 +141,72 @@ func TestDatasetVersionUploadIsSequentialTraceableAndImmutable(t *testing.T) {
 	}
 	if auditCount != 1 {
 		t.Fatalf("DATASET_VERSION_READY audit events = %d, want 1", auditCount)
+	}
+}
+
+func TestDatasetCreateRejectsSourceResourceFromAnotherWorkspace(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	txManager := transaction.NewManager(pool)
+	repo := infrastructure.NewPostgresRepository(pool)
+	resources := resourceinfra.NewPostgresRepository()
+	createDataset := application.NewCreateDatasetService(txManager, repo, resources)
+	createResource := resourceapp.NewCreateService(txManager, resources)
+
+	ownerWorkspaceID := uuid.New()
+	otherWorkspaceID := uuid.New()
+	source, err := createResource.Handle(ctx, resourceapp.CreateDataResourceCommand{
+		WorkspaceID:  ownerWorkspaceID,
+		Code:         "CSV-" + uuid.NewString(),
+		Name:         "Enterprise CSV",
+		ResourceType: resourcedomain.ResourceTypeFileCollection,
+		TraceID:      "dataset-tenant-boundary",
+	})
+	if err != nil {
+		t.Fatalf("create data resource: %v", err)
+	}
+
+	// The owning workspace may still use the resource as a dataset source.
+	if _, err := createDataset.Handle(ctx, application.CreateDatasetCommand{
+		WorkspaceID:      ownerWorkspaceID,
+		Code:             "ENTERPRISE-RAW-" + uuid.NewString(),
+		Name:             "Enterprise RAW",
+		DatasetType:      domain.DatasetTypeRaw,
+		SourceResourceID: &source.ID,
+		TraceID:          "dataset-tenant-boundary",
+	}); err != nil {
+		t.Fatalf("create dataset in owning workspace: %v", err)
+	}
+
+	// Another workspace must not claim the same resource as its source.
+	foreignCode := "ENTERPRISE-RAW-FOREIGN-" + uuid.NewString()
+	_, err = createDataset.Handle(ctx, application.CreateDatasetCommand{
+		WorkspaceID:      otherWorkspaceID,
+		Code:             foreignCode,
+		Name:             "Foreign RAW",
+		DatasetType:      domain.DatasetTypeRaw,
+		SourceResourceID: &source.ID,
+		TraceID:          "dataset-tenant-boundary",
+	})
+	if !errors.Is(err, domain.ErrSourceResourceWorkspace) {
+		t.Fatalf("cross workspace source resource error = %v, want ErrSourceResourceWorkspace", err)
+	}
+
+	var count int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM dataset WHERE code = $1`, foreignCode).Scan(&count); err != nil {
+		t.Fatalf("count datasets: %v", err)
+	}
+	if count != 0 {
+		t.Fatalf("datasets written for rejected create = %d, want 0", count)
 	}
 }

@@ -185,6 +185,25 @@ func (r *PostgresRepository) Invalidate(ctx context.Context, tx pgx.Tx, version 
 	return nil
 }
 
+// GetWorkspaceAndType returns the workspace and type of a dataset. Callers use
+// it to keep multi-step business actions inside one tenant: a foreign key on
+// dataset(id) proves the dataset exists but not who owns it.
+func (r *PostgresRepository) GetWorkspaceAndType(ctx context.Context, datasetID uuid.UUID) (uuid.UUID, domain.DatasetType, error) {
+	var workspaceID uuid.UUID
+	var datasetType domain.DatasetType
+	err := r.pool.QueryRow(ctx, `
+		SELECT workspace_id, dataset_type FROM dataset
+		WHERE id=$1 AND deleted_at IS NULL
+	`, datasetID).Scan(&workspaceID, &datasetType)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return uuid.Nil, "", ErrNotFound
+	}
+	if err != nil {
+		return uuid.Nil, "", fmt.Errorf("read dataset workspace and type: %w", err)
+	}
+	return workspaceID, datasetType, nil
+}
+
 func (r *PostgresRepository) GetVersion(ctx context.Context, versionID uuid.UUID) (domain.DatasetVersion, error) {
 	return scanVersion(r.pool.QueryRow(ctx, `
 		SELECT id, dataset_id, version_no, status,

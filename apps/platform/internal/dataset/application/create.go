@@ -11,6 +11,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 )
 
 type CreateDatasetCommand struct {
@@ -27,12 +28,13 @@ type CreateDatasetCommand struct {
 }
 
 type CreateDatasetService struct {
-	tx   *transaction.Manager
-	repo *infrastructure.PostgresRepository
+	tx        *transaction.Manager
+	repo      *infrastructure.PostgresRepository
+	resources *resourceinfra.PostgresRepository
 }
 
-func NewCreateDatasetService(tx *transaction.Manager, repo *infrastructure.PostgresRepository) *CreateDatasetService {
-	return &CreateDatasetService{tx: tx, repo: repo}
+func NewCreateDatasetService(tx *transaction.Manager, repo *infrastructure.PostgresRepository, resources *resourceinfra.PostgresRepository) *CreateDatasetService {
+	return &CreateDatasetService{tx: tx, repo: repo, resources: resources}
 }
 
 func (s *CreateDatasetService) Handle(ctx context.Context, cmd CreateDatasetCommand) (domain.Dataset, error) {
@@ -45,6 +47,18 @@ func (s *CreateDatasetService) Handle(ctx context.Context, cmd CreateDatasetComm
 	dataset.OwnerID = cmd.OwnerID
 
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		// A DataResource foreign key only proves the resource exists. Verify that
+		// it belongs to this workspace so a dataset cannot claim another
+		// tenant's resource as its source.
+		if dataset.SourceResourceID != nil {
+			sourceWorkspace, err := s.resources.WorkspaceOf(ctx, tx, *dataset.SourceResourceID)
+			if err != nil {
+				return fmt.Errorf("resolve source resource %s: %w", *dataset.SourceResourceID, err)
+			}
+			if sourceWorkspace != dataset.WorkspaceID {
+				return fmt.Errorf("%w: source resource %s belongs to workspace %s", domain.ErrSourceResourceWorkspace, *dataset.SourceResourceID, sourceWorkspace)
+			}
+		}
 		if err := s.repo.InsertDataset(ctx, tx, dataset); err != nil {
 			return err
 		}
