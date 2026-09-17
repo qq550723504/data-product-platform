@@ -135,6 +135,11 @@ func (h *Handler) listReviews(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getMappingBySource(w http.ResponseWriter, r *http.Request) {
+	workspaceID, err := requiredWorkspaceID(r)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "WORKSPACE_REQUIRED", "workspaceId must be a UUID", nil)
+		return
+	}
 	sourceType := r.URL.Query().Get("sourceType")
 	sourceRef := r.URL.Query().Get("sourceRef")
 	sourceKey := r.URL.Query().Get("sourceKey")
@@ -142,7 +147,7 @@ func (h *Handler) getMappingBySource(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "SOURCE_MAPPING_QUERY_REQUIRED", "sourceType, sourceRef and sourceKey are required", nil)
 		return
 	}
-	mapping, err := h.repo.GetMappingBySource(r.Context(), sourceType, sourceRef, sourceKey)
+	mapping, err := h.repo.GetMappingBySource(r.Context(), workspaceID, sourceType, sourceRef, sourceKey)
 	if err != nil {
 		if errors.Is(err, infrastructure.ErrNotFound) {
 			httpserver.WriteError(w, r, http.StatusNotFound, "ENTITY_MAPPING_NOT_FOUND", "entity mapping not found", nil)
@@ -155,12 +160,17 @@ func (h *Handler) getMappingBySource(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) listEntityMappings(w http.ResponseWriter, r *http.Request) {
+	workspaceID, err := requiredWorkspaceID(r)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "WORKSPACE_REQUIRED", "workspaceId must be a UUID", nil)
+		return
+	}
 	entityID, err := uuid.Parse(r.PathValue("entityId"))
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ENTITY_ID", "entityId must be a UUID", nil)
 		return
 	}
-	mappings, err := h.repo.ListMappingsByEntity(r.Context(), entityID)
+	mappings, err := h.repo.ListMappingsByEntity(r.Context(), workspaceID, entityID)
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "ENTITY_MAPPINGS_READ_FAILED", err.Error(), nil)
 		return
@@ -273,6 +283,7 @@ func candidateResponse(candidate domain.MatchCandidate) map[string]any {
 func mappingResponse(mapping domain.EntityMapping) map[string]any {
 	return map[string]any{
 		"id":                 mapping.ID,
+		"workspaceId":        mapping.WorkspaceID,
 		"entityId":           mapping.EntityID,
 		"sourceType":         mapping.SourceType,
 		"sourceRef":          mapping.SourceRef,
@@ -303,6 +314,12 @@ func parseActorID(r *http.Request) (*uuid.UUID, error) {
 		return nil, err
 	}
 	return &parsed, nil
+}
+
+// requiredWorkspaceID enforces an explicit workspace on mapping reads. Mappings
+// are only unique inside a workspace, so there is no safe global fallback.
+func requiredWorkspaceID(r *http.Request) (uuid.UUID, error) {
+	return uuid.Parse(r.URL.Query().Get("workspaceId"))
 }
 
 func writeJSON(w http.ResponseWriter, status int, value any) {

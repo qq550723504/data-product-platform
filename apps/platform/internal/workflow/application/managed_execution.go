@@ -35,6 +35,7 @@ type ManagedExecutionStateService interface {
 func ProcessingRequestFromExecution(execution domain.Execution, version domain.WorkflowVersion) ProcessingRequest {
 	return ProcessingRequest{
 		ExecutionID:     execution.ID,
+		WorkspaceID:     execution.WorkspaceID,
 		WorkflowVersion: version,
 		Inputs:          execution.Inputs,
 		OutputDatasetID: execution.OutputDatasetID,

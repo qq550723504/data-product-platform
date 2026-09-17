@@ -156,7 +156,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 	}
 	standardizedVersionID := *matchJob.OutputDatasetVersionID
 
-	aliasMapping, err := entityRepo.GetMappingBySource(ctx, "CSV", enterpriseName, "ENT-005")
+	aliasMapping, err := entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", enterpriseName, "ENT-005")
 	if err != nil {
 		t.Fatalf("query reviewed EntityMapping: %v", err)
 	}
