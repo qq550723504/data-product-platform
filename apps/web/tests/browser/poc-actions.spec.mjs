@@ -51,7 +51,7 @@ test("reject uses the same guarded review path", async ({ page, request }) => {
 test("readonly deployment renders provenance but no review form", async ({ page }) => {
   await page.goto("http://127.0.0.1:3002/reviews");
   await expect(page.getByText("当前为只读审核队列")).toBeVisible();
-  await expect(page.getByText("深圳星云科技集团有限公司")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "深圳星云科技集团有限公司", exact: true })).toBeVisible();
   await expect(page.getByLabel("审核理由（必填）")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "确认匹配" })).toHaveCount(0);
 });
