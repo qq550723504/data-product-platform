@@ -98,20 +98,20 @@ func (h *Handler) getProjection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
-		"id":           projection.ID,
-		"workspaceId":  projection.WorkspaceID,
-		"provider":     projection.Provider,
-		"objectType":   projection.ObjectType,
-		"objectId":     projection.ObjectID,
+		"id":            projection.ID,
+		"workspaceId":   projection.WorkspaceID,
+		"provider":      projection.Provider,
+		"objectType":    projection.ObjectType,
+		"objectId":      projection.ObjectID,
 		"sourceEventId": projection.SourceEventID,
-		"externalId":   projection.ExternalID,
-		"externalFqn":  projection.ExternalFQN,
-		"status":       projection.Status,
-		"attempts":     projection.Attempts,
-		"lastError":    projection.LastError,
-		"metadata":     projection.Metadata,
-		"projectedAt":  projection.ProjectedAt,
-		"updatedAt":    projection.UpdatedAt,
+		"externalId":    projection.ExternalID,
+		"externalFqn":   projection.ExternalFQN,
+		"status":        projection.Status,
+		"attempts":      projection.Attempts,
+		"lastError":     projection.LastError,
+		"metadata":      projection.Metadata,
+		"projectedAt":   projection.ProjectedAt,
+		"updatedAt":     projection.UpdatedAt,
 	})
 }
 
