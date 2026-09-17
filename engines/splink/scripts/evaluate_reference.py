@@ -8,7 +8,7 @@ import tempfile
 import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import pandas as pd
 import splink.comparison_library as cl
@@ -16,7 +16,7 @@ import yaml
 from splink import DuckDBAPI, Linker, SettingsCreator, block_on
 
 ROOT = Path(__file__).resolve().parents[3]
-FIXTURE_ROOT = ROOT / "examples" / "enterprise-activity" / "entity-resolution-evaluation"
+FIXTURE_ROOT = ROOT / "examples" / "entity-resolution-evaluation"
 POLICY_PATH = ROOT / "industry-packs" / "park" / "matching" / "company-match-policy-v1.yaml"
 MODEL_SPEC_PATH = ROOT / "industry-packs" / "park" / "matching" / "splink-company-model-v1.yaml"
 
@@ -72,64 +72,33 @@ def normalize_address(value: str, policy: dict[str, Any]) -> str:
     return value
 
 
-def normalize_uscc(value: str, policy: dict[str, Any]) -> str:
+def normalize_uscc(value: str, policy: dict[str, Any]) -> str | None:
     cfg = policy["spec"]["normalization"]["unifiedSocialCreditCode"]
     if cfg.get("trim"):
         value = value.strip()
     if cfg.get("uppercase"):
         value = value.upper()
-    return value
+    return value or None
 
 
-def normalized_reference(row: dict[str, str], policy: dict[str, Any]) -> dict[str, Any]:
+def normalize_reference(row: dict[str, str], policy: dict[str, Any]) -> dict[str, Any]:
     return {
-        "unique_id": row["entity_id"],
-        "truth_id": row["entity_id"],
+        "unique_id": row["unique_id"],
         "normalized_company_name": normalize_name(row["normalized_company_name"], policy),
         "normalized_registered_address": normalize_address(row["normalized_registered_address"], policy),
-        "legal_representative": row["legal_representative"].strip(),
-        "unified_social_credit_code": normalize_uscc(row["unified_social_credit_code"], policy) or None,
+        "legal_representative": row["legal_representative"].strip() or None,
+        "unified_social_credit_code": normalize_uscc(row["unified_social_credit_code"], policy),
     }
 
 
-def normalized_query(row: dict[str, str], label: dict[str, str], policy: dict[str, Any]) -> dict[str, Any]:
-    expected = label.get("expected_entity_id", "")
+def normalize_source(row: dict[str, str], policy: dict[str, Any]) -> dict[str, Any]:
     return {
-        "unique_id": row["source_company_id"],
-        "truth_id": expected or f"NO_MATCH:{row['source_company_id']}",
-        "normalized_company_name": normalize_name(row["company_name"], policy),
-        "normalized_registered_address": normalize_address(row["registered_address"], policy),
-        "legal_representative": row["legal_representative"].strip(),
-        "unified_social_credit_code": normalize_uscc(row["unified_social_credit_code"], policy) or None,
+        "unique_id": row["unique_id"],
+        "normalized_company_name": normalize_name(row["normalized_company_name"], policy),
+        "normalized_registered_address": normalize_address(row["normalized_registered_address"], policy),
+        "legal_representative": row["legal_representative"].strip() or None,
+        "unified_social_credit_code": normalize_uscc(row["unified_social_credit_code"], policy),
     }
-
-
-def training_variants(references: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    result: list[dict[str, Any]] = []
-    for index, ref in enumerate(references, start=1):
-        base_name = str(ref["normalized_company_name"])
-        base_address = str(ref["normalized_registered_address"])
-        base_legal = str(ref["legal_representative"])
-        variants = [
-            (base_name, base_address, base_legal, ref["unified_social_credit_code"]),
-            (base_name, base_address, base_legal, None),
-            (base_name.replace("科技", "技术"), base_address, base_legal, None),
-            (base_name.replace("有限公司", "公司"), base_address + "A座", base_legal, None),
-            (base_name.replace("智能", "智造"), base_address + "1栋", base_legal, None),
-            (base_name.replace("装备", "设备"), base_address, base_legal, None),
-        ]
-        for variant_index, (name, address, legal, uscc) in enumerate(variants, start=1):
-            result.append(
-                {
-                    "unique_id": f"TRAIN-{index:02d}-{variant_index:02d}",
-                    "truth_id": ref["truth_id"],
-                    "normalized_company_name": name,
-                    "normalized_registered_address": address,
-                    "legal_representative": legal,
-                    "unified_social_credit_code": uscc,
-                }
-            )
-    return result
 
 
 def settings_for(reference_count: int) -> SettingsCreator:
@@ -157,17 +126,21 @@ def settings_for(reference_count: int) -> SettingsCreator:
     )
 
 
-def train_model(references: list[dict[str, Any]], output_path: Path) -> None:
-    source_df = pd.DataFrame(training_variants(references))
-    reference_df = pd.DataFrame(references)
+def train_model(
+    training_sources: list[dict[str, Any]],
+    references: list[dict[str, Any]],
+    training_labels: list[dict[str, str]],
+    output_path: Path,
+) -> None:
     linker = Linker(
-        [source_df, reference_df],
+        [pd.DataFrame(training_sources), pd.DataFrame(references)],
         settings_for(len(references)),
         input_table_aliases=["source", "reference"],
         db_api=DuckDBAPI(),
     )
     linker.training.estimate_u_using_random_sampling(max_pairs=10000, seed=42)
-    linker.training.estimate_m_from_label_column("truth_id")
+    labels_table = linker.table_management.register_labels_table(pd.DataFrame(training_labels), overwrite=True)
+    linker.training.estimate_m_from_pairwise_labels(labels_table)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     linker.misc.save_model_to_json(str(output_path), overwrite=True)
 
@@ -177,10 +150,8 @@ def prediction_scores(
     references: list[dict[str, Any]],
     model_path: Path,
 ) -> dict[str, list[tuple[str, float]]]:
-    source_df = pd.DataFrame(queries).drop(columns=["truth_id"], errors="ignore")
-    reference_df = pd.DataFrame(references).drop(columns=["truth_id"], errors="ignore")
     linker = Linker(
-        [source_df, reference_df],
+        [pd.DataFrame(queries), pd.DataFrame(references)],
         settings=str(model_path),
         input_table_aliases=["source", "reference"],
         db_api=DuckDBAPI(),
@@ -193,13 +164,13 @@ def prediction_scores(
         left_source = str(row.get("source_dataset_l", ""))
         right_source = str(row.get("source_dataset_r", ""))
         if left_source == "source" and right_source == "reference":
-            source_id, entity_id = left_id, right_id
+            source_id, reference_id = left_id, right_id
         elif left_source == "reference" and right_source == "source":
-            source_id, entity_id = right_id, left_id
+            source_id, reference_id = right_id, left_id
         else:
             continue
         score = float(row.get("match_probability") or 0.0)
-        result.setdefault(source_id, []).append((entity_id, score))
+        result.setdefault(source_id, []).append((reference_id, score))
     for candidates in result.values():
         candidates.sort(key=lambda item: (-item[1], item[0]))
     return result
@@ -220,32 +191,46 @@ def similarity(a: str, b: str) -> float:
     return 1.0 - previous[-1] / max(len(a), len(b))
 
 
-def deterministic_decision(query: dict[str, Any], references: list[dict[str, Any]]) -> Decision:
+def deterministic_paths(
+    query: dict[str, Any],
+    references: list[dict[str, Any]],
+) -> tuple[Decision | None, Decision | None]:
     uscc = query.get("unified_social_credit_code")
     if uscc:
         for ref in references:
             if ref.get("unified_social_credit_code") == uscc:
-                return Decision("AUTO_MATCH", str(ref["unique_id"]), 1.0, "USCC_EXACT")
+                return Decision("AUTO_MATCH", str(ref["unique_id"]), 1.0, "USCC_EXACT"), None
 
     for ref in references:
         if (
             query["normalized_company_name"] == ref["normalized_company_name"]
             and query["normalized_registered_address"] == ref["normalized_registered_address"]
         ):
-            return Decision("AUTO_MATCH", str(ref["unique_id"]), 0.98, "NAME_ADDRESS_EXACT")
+            return Decision("AUTO_MATCH", str(ref["unique_id"]), 0.98, "NAME_ADDRESS_EXACT"), None
 
-    if query["legal_representative"]:
+    review: Decision | None = None
+    legal = query.get("legal_representative")
+    if legal:
         best: tuple[dict[str, Any], float] | None = None
         for ref in references:
-            if query["legal_representative"] != ref["legal_representative"]:
+            if legal != ref.get("legal_representative"):
                 continue
             score = similarity(str(query["normalized_company_name"]), str(ref["normalized_company_name"]))
             if score >= 0.88 and (best is None or score > best[1]):
                 best = (ref, score)
         if best is not None:
-            return Decision("REVIEW", str(best[0]["unique_id"]), min(0.85, best[1]), "NAME_SIMILAR_LEGAL_EXACT")
+            review = Decision(
+                "REVIEW",
+                str(best[0]["unique_id"]),
+                min(0.85, best[1]),
+                "NAME_SIMILAR_LEGAL_EXACT",
+            )
+    return None, review
 
-    return Decision("UNRESOLVED", method="DEFAULT")
+
+def rule_only_decision(query: dict[str, Any], references: list[dict[str, Any]]) -> Decision:
+    automatic, review = deterministic_paths(query, references)
+    return automatic or review or Decision("UNRESOLVED", method="DEFAULT")
 
 
 def combined_decision(
@@ -255,25 +240,28 @@ def combined_decision(
     auto_threshold: float,
     review_threshold: float,
 ) -> Decision:
-    deterministic = deterministic_decision(query, references)
-    if deterministic.decision != "UNRESOLVED":
-        return deterministic
+    automatic, review_fallback = deterministic_paths(query, references)
+    if automatic is not None:
+        return automatic
+
     candidates = scores.get(str(query["unique_id"]), [])
-    if not candidates:
-        return deterministic
-    entity_id, score = candidates[0]
-    if score >= auto_threshold:
-        return Decision("AUTO_MATCH", entity_id, score, "FELLEGI_SUNTER", "SPLINK")
-    if score >= review_threshold:
-        return Decision("REVIEW", entity_id, score, "FELLEGI_SUNTER", "SPLINK")
-    return Decision("UNRESOLVED", confidence=score, method="FELLEGI_SUNTER", engine="SPLINK")
+    if candidates:
+        reference_id, score = candidates[0]
+        if score >= auto_threshold:
+            return Decision("AUTO_MATCH", reference_id, score, "FELLEGI_SUNTER", "SPLINK")
+        if score >= review_threshold:
+            return Decision("REVIEW", reference_id, score, "FELLEGI_SUNTER", "SPLINK")
+        if review_fallback is None:
+            return Decision("UNRESOLVED", confidence=score, method="FELLEGI_SUNTER", engine="SPLINK")
+
+    return review_fallback or Decision("UNRESOLVED", method="DEFAULT")
 
 
 def evaluate_mode(
     mode: str,
     queries: list[dict[str, Any]],
     labels: dict[str, dict[str, str]],
-    decide: Any,
+    decide: Callable[[dict[str, Any]], Decision],
 ) -> dict[str, Any]:
     counts = {
         "autoMatched": 0,
@@ -286,8 +274,8 @@ def evaluate_mode(
     records: list[dict[str, Any]] = []
     for query in queries:
         source_id = str(query["unique_id"])
-        expected = labels[source_id].get("expected_entity_id", "")
-        decision: Decision = decide(query)
+        expected = labels[source_id].get("expected_reference_id", "")
+        decision = decide(query)
         if decision.decision == "AUTO_MATCH":
             counts["autoMatched"] += 1
         elif decision.decision == "REVIEW":
@@ -306,9 +294,9 @@ def evaluate_mode(
         records.append(
             {
                 "sourceCompanyId": source_id,
-                "expectedEntityId": expected or None,
+                "expectedReferenceId": expected or None,
                 "decision": decision.decision,
-                "candidateEntityId": decision.entity_id or None,
+                "candidateReferenceId": decision.entity_id or None,
                 "confidence": round(decision.confidence, 6),
                 "method": decision.method,
                 "engine": decision.engine,
@@ -330,15 +318,18 @@ def main() -> int:
     if binding["name"] != policy["metadata"]["name"] or binding["version"] != policy["metadata"]["version"]:
         raise SystemExit("model spec and matching policy binding disagree")
 
-    canonical_rows = read_csv(FIXTURE_ROOT / "canonical-companies.csv")
-    query_rows = read_csv(FIXTURE_ROOT / "query-companies.csv")
-    label_rows = read_csv(FIXTURE_ROOT / "labels.csv")
-    labels = {row["source_company_id"]: row for row in label_rows}
-    if set(labels) != {row["source_company_id"] for row in query_rows}:
-        raise SystemExit("evaluation labels must cover every query exactly once")
+    reference_rows = read_csv(FIXTURE_ROOT / "references.csv")
+    source_rows = read_csv(FIXTURE_ROOT / "sources.csv")
+    training_labels = read_csv(FIXTURE_ROOT / "training_labels.csv")
+    evaluation_label_rows = read_csv(FIXTURE_ROOT / "evaluation_labels.csv")
+    evaluation_labels = {row["source_unique_id"]: row for row in evaluation_label_rows}
 
-    references = [normalized_reference(row, policy) for row in canonical_rows]
-    queries = [normalized_query(row, labels[row["source_company_id"]], policy) for row in query_rows]
+    references = [normalize_reference(row, policy) for row in reference_rows]
+    training_sources = [normalize_source(row, policy) for row in source_rows if row["split"] == "train"]
+    queries = [normalize_source(row, policy) for row in source_rows if row["split"] == "eval"]
+    if set(evaluation_labels) != {row["unique_id"] for row in queries}:
+        raise SystemExit("evaluation labels must cover every eval source exactly once")
+
     thresholds = policy["spec"]["thresholds"]
     auto_threshold = float(thresholds["autoMatchMinimum"])
     review_threshold = float(thresholds["reviewMinimum"])
@@ -349,19 +340,19 @@ def main() -> int:
         model_path = Path(temporary.name) / "model.json"
     else:
         model_path = args.model_out
-    train_model(references, model_path)
+    train_model(training_sources, references, training_labels, model_path)
     scores = prediction_scores(queries, references, model_path)
 
     rules = evaluate_mode(
         "RULE_ONLY",
         queries,
-        labels,
-        lambda query: deterministic_decision(query, references),
+        evaluation_labels,
+        lambda query: rule_only_decision(query, references),
     )
     combined = evaluate_mode(
         "RULE_PLUS_SPLINK",
         queries,
-        labels,
+        evaluation_labels,
         lambda query: combined_decision(query, references, scores, auto_threshold, review_threshold),
     )
 
@@ -380,18 +371,20 @@ def main() -> int:
             "engineVersion": model_spec["spec"]["engine"]["version"],
         },
         "fixture": {
-            "canonicalCompanies": len(references),
-            "queries": len(queries),
-            "positiveLabels": sum(1 for row in label_rows if row["label"] == "MATCH"),
-            "negativeLabels": sum(1 for row in label_rows if row["label"] == "NO_MATCH"),
+            "references": len(references),
+            "trainingSources": len(training_sources),
+            "evaluationSources": len(queries),
+            "trainingPositiveLabels": len(training_labels),
+            "evaluationPositiveLabels": sum(1 for row in evaluation_label_rows if row["label"] == "MATCH"),
+            "evaluationNegativeLabels": sum(1 for row in evaluation_label_rows if row["label"] == "NO_MATCH"),
         },
         "results": [rules, combined],
         "metricDefinitions": {
             "autoMatched": "Core accepted the candidate without human review",
             "review": "Core produced a candidate that requires Human Review",
-            "unresolved": "No candidate reached reviewMinimum",
-            "conflicts": "AUTO_MATCH or REVIEW proposed an entity different from the label",
-            "falsePositive": "AUTO_MATCH proposed a wrong entity or matched a NO_MATCH label",
+            "unresolved": "No candidate reached reviewMinimum and no deterministic review fallback applied",
+            "conflicts": "AUTO_MATCH or REVIEW proposed a reference different from the label",
+            "falsePositive": "AUTO_MATCH proposed a wrong reference or matched a NO_MATCH label",
             "falseNegative": "A labelled MATCH remained UNRESOLVED; REVIEW is not counted as a false negative",
         },
     }
@@ -411,9 +404,9 @@ def main() -> int:
             raise SystemExit("rule+Splink increased false negatives")
         if not any(record["engine"] == "SPLINK" for record in combined["records"]):
             raise SystemExit("evaluation did not exercise the Splink candidate path")
-        exact = next(record for record in combined["records"] if record["sourceCompanyId"] == "EVAL-001")
+        exact = next(record for record in combined["records"] if record["sourceCompanyId"] == "E007")
         if exact["engine"] != "RULES" or exact["method"] != "USCC_EXACT":
-            raise SystemExit("strong-key precedence regressed: EVAL-001 must remain a Core USCC decision")
+            raise SystemExit("strong-key precedence regressed: E007 must remain a Core USCC decision")
 
     if temporary is not None:
         temporary.cleanup()
