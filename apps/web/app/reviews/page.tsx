@@ -1,10 +1,18 @@
 import { Badge, EmptyState, LoadError, PageHeader, SetupRequired, formatDate } from "@/components/ui";
-import { configuredWorkspaceId, platform } from "@/lib/platform";
+import { configuredActorId, configuredWorkspaceId, platform } from "@/lib/platform";
+import { reviewCandidateAction } from "./actions";
 
-export default async function ReviewsPage() {
+export default async function ReviewsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ result?: string; error?: string }>;
+}) {
   if (!configuredWorkspaceId()) {
     return <><PageHeader eyebrow="Entity Resolution" title="实体审核" description="低置信度候选进入统一人工审核队列。" /><SetupRequired /></>;
   }
+
+  const actorConfigured = Boolean(configuredActorId());
+  const notice = await searchParams;
 
   try {
     const reviews = await platform.reviews("PENDING");
@@ -13,10 +21,20 @@ export default async function ReviewsPage() {
         <PageHeader
           eyebrow="Entity Resolution"
           title="实体审核"
-          description="这里呈现需要人判断的候选关系。匹配引擎、模型和分数是诊断证据，不是产品导航层。确认/拒绝操作将在下一阶段接入。"
+          description="低置信度候选进入统一人工审核。每次确认或拒绝都必须说明判断理由，并由 Core 写入 Evidence 与 Audit。"
           action={<Badge value={reviews.page.total ? "PENDING" : "READY"} />}
         />
 
+        {notice.result ? <div className="callout callout-good"><strong>审核完成</strong><p>{notice.result}</p></div> : null}
+        {notice.error ? <div className="callout callout-bad"><strong>审核未提交</strong><p>{notice.error}</p></div> : null}
+        {!actorConfigured ? (
+          <div className="callout callout-warn" style={{ marginTop: 14 }}>
+            <strong>POC Operator 尚未配置</strong>
+            <p>设置服务端环境变量 <code>POC_ACTOR_ID</code> 后才能执行人工确认/拒绝；浏览器不会让用户伪造审计身份。</p>
+          </div>
+        ) : null}
+
+        <div style={{ height: 18 }} />
         {reviews.items.length === 0 ? (
           <EmptyState title="没有待审核候选" description="确定性强键、规则匹配和概率候选均已完成决策，或当前没有实体解析任务。" />
         ) : (
@@ -30,7 +48,7 @@ export default async function ReviewsPage() {
                   </div>
                   <h3>{review.sourceName || review.sourceKey}</h3>
                   <p>
-                    来源键 <span className="mono">{review.sourceKey}</span> · Policy {review.policyVersion} · {formatDate(review.createdAt)}
+                    来源键 <span className="mono">{review.sourceKey}</span> · Policy {review.policyRef}@{review.policyVersion} · {formatDate(review.createdAt)}
                   </p>
                   <div className="json-preview">{JSON.stringify(review.normalized, null, 2)}</div>
                 </div>
@@ -46,6 +64,25 @@ export default async function ReviewsPage() {
                     <div className="status-row"><span>诊断引擎</span><span>{review.engineName || "RULES"}{review.engineVersion ? ` ${review.engineVersion}` : ""}</span></div>
                     <div className="status-row"><span>模型版本</span><span>{review.modelVersion || "—"}</span></div>
                   </div>
+
+                  <form action={reviewCandidateAction} className="review-actions">
+                    <input type="hidden" name="candidateId" value={review.candidateId} />
+                    <input type="hidden" name="jobId" value={review.jobId} />
+                    <label htmlFor={`reason-${review.candidateId}`}>人工判断理由</label>
+                    <textarea
+                      id={`reason-${review.candidateId}`}
+                      name="reason"
+                      required
+                      minLength={3}
+                      maxLength={1000}
+                      placeholder="说明确认或拒绝该候选关系的依据…"
+                      disabled={!actorConfigured}
+                    />
+                    <div className="action-row">
+                      <button className="button button-primary" type="submit" name="intent" value="confirm" disabled={!actorConfigured}>确认匹配</button>
+                      <button className="button button-danger" type="submit" name="intent" value="reject" disabled={!actorConfigured}>拒绝候选</button>
+                    </div>
+                  </form>
                 </div>
               </article>
             ))}
