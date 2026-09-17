@@ -1,0 +1,62 @@
+apiVersion: dataprod.platform/v1alpha1
+kind: EntityResolutionModelSpec
+metadata:
+  name: park-company-v1
+  version: 1.0.0
+spec:
+  engine:
+    name: SPLINK
+    version: 4.0.17
+    backend: DUCKDB
+  entityType: COMPANY
+  linkType: link_only
+
+  # The canonical Entity ID is passed to Splink as unique_id on the reference side.
+  uniqueId: unique_id
+
+  # Strong identifiers remain Core deterministic rules. Splink is invoked only
+  # when those rules did not decide the record.
+  corePrecedence:
+    - unified_social_credit_code exact
+    - normalized company name + normalized registered address exact
+    - deterministic fuzzy review rule
+
+  features:
+    - normalized_company_name
+    - normalized_registered_address
+    - legal_representative
+    - unified_social_credit_code
+
+  recommendedComparisons:
+    normalized_company_name:
+      type: NameComparison
+    normalized_registered_address:
+      type: JaroWinklerAtThresholds
+      thresholds: [0.95, 0.88]
+    legal_representative:
+      type: ExactMatch
+    unified_social_credit_code:
+      type: ExactMatch
+
+  recommendedPredictionBlocking:
+    - legal_representative
+    - normalized_company_name
+
+  output:
+    score: match_probability
+    method: FELLEGI_SUNTER
+    retain:
+      - match_weight
+      - match_key
+
+  ownership:
+    canonicalEntity: CORE
+    entityMapping: CORE
+    humanReview: CORE
+    evidence: CORE
+    statisticalModel: SPLINK_ADAPTER
+
+  notes:
+    - Exact USCC matches are decided before Splink and cannot be overridden.
+    - Training/evaluation data and threshold calibration are completed in Sprint 6.3.
+    - This file describes the reference statistical model contract; the trained model.json is a generated artifact.
