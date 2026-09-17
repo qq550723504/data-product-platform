@@ -207,7 +207,9 @@ jobs:
           CHANGED="$(git diff --name-only "$BASE" HEAD -- \
             'engines/splink/**' \
             'apps/platform/internal/entity/splink/**' \
-            'industry-packs/park/matching/splink-company-model-v1.yaml')"
+            'industry-packs/park/matching/company-match-policy-v1.yaml' \
+            'industry-packs/park/matching/splink-company-model-v1.yaml' \
+            'examples/enterprise-activity/entity-resolution-evaluation/**')"
           if [ -n "$CHANGED" ]; then
             echo "$CHANGED"
             echo "run_splink=true" >> "$GITHUB_OUTPUT"
@@ -231,7 +233,7 @@ jobs:
         if: steps.changes.outputs.run_splink == 'true'
         shell: bash
         run: |
-          python -m compileall -q engines/splink/app
+          python -m compileall -q engines/splink/app engines/splink/scripts
           PYTHONPATH=engines/splink python - <<'PY'
           from importlib.metadata import version
           from splink import DuckDBAPI, Linker
@@ -250,9 +252,19 @@ jobs:
           print('validated Splink', version('splink'), 'and COMPANY reference schema')
           PY
 
+      - name: Evaluate labelled company matching reference set
+        if: steps.changes.outputs.run_splink == 'true'
+        run: |
+          python engines/splink/scripts/evaluate_reference.py \
+            --assert-quality \
+            --model-out "$RUNNER_TEMP/park-company-v1-model.json" \
+            --report "$RUNNER_TEMP/entity-resolution-evaluation.json"
+          test -s "$RUNNER_TEMP/park-company-v1-model.json"
+          test -s "$RUNNER_TEMP/entity-resolution-evaluation.json"
+
       - name: Skip Splink runtime smoke when unrelated
         if: steps.changes.outputs.run_splink != 'true'
-        run: echo "No Splink runtime/adapter files changed; smoke test skipped."
+        run: echo "No Splink runtime/adapter/evaluation files changed; smoke test skipped."
 
   required:
     name: required
