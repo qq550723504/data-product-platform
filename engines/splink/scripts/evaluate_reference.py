@@ -402,6 +402,8 @@ def main() -> int:
             raise SystemExit("rule+Splink introduced additional automatic false positives")
         if combined_metrics["falseNegative"] > rule_metrics["falseNegative"]:
             raise SystemExit("rule+Splink increased false negatives")
+        if combined_metrics["conflicts"] > rule_metrics["conflicts"]:
+            raise SystemExit("rule+Splink increased conflicting automatic or review candidates")
         if not any(record["engine"] == "SPLINK" for record in combined["records"]):
             raise SystemExit("evaluation did not exercise the Splink candidate path")
         exact = next(record for record in combined["records"] if record["sourceCompanyId"] == "E007")
