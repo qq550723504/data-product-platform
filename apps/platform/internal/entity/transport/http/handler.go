@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
@@ -80,7 +81,14 @@ func (h *Handler) startJob(w http.ResponseWriter, r *http.Request) {
 		TraceID:               httpserver.RequestID(r.Context()),
 	})
 	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "ENTITY_MATCH_JOB_FAILED", err.Error(), nil)
+		code, message := "ENTITY_MATCH_JOB_FAILED", err.Error()
+		switch {
+		case errors.Is(err, datasetdomain.ErrDatasetWorkspace):
+			code, message = "DATASET_WORKSPACE_MISMATCH", "input and output datasets must belong to the job workspace"
+		case errors.Is(err, domain.ErrOutputDatasetType):
+			code, message = "OUTPUT_DATASET_TYPE_INVALID", "entity resolution requires a STANDARDIZED output dataset"
+		}
+		httpserver.WriteError(w, r, http.StatusBadRequest, code, message, nil)
 		return
 	}
 	writeJSON(w, http.StatusCreated, jobResponse(job))

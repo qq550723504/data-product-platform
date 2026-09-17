@@ -4,6 +4,20 @@
 
 本项目目标不是重新实现一个元数据平台、ETL 平台、可信数据空间或财务系统，而是提供一套通用的数据产品生产内核，把分散、异构、权利边界不清晰的原始数据，持续生产为可理解、可治理、可交付、可流通、可审计的数据产品。
 
+## 本地试用入口
+
+本代码包含合成数据演示和 CSV 接入到主体审核的界面化切片。合并状态和验收结果以对应提交的 GitHub 记录为准；CI 通过不等于商业上线批准。
+主机需 Node.js 22、本地 Docker Linux 容器与 Compose v2。在完整仓库根目录运行：
+
+```sh
+node deploy/demo/demo.mjs doctor
+node deploy/demo/demo.mjs up
+```
+
+- 接入自己的合成 CSV：`http://127.0.0.1:3180/ingest`；页面有可下载模板。[CSV 接入说明](docs/poc/csv-ingestion-v1.md)包含字段、限额、继续解析入口和验收边界。
+- 预置审核/生产/发布演示：[本地演示说明](docs/poc/local-demo.md)。新上传的数据不会自动绑定这个演示产品；`advance` 和 `verify` 也不是新 CSV 的通用处理命令。
+- 停止并保留数据：`node deploy/demo/demo.mjs down`。服务仅开放本机回环控制台，不要用当前 POC 身份配置向公网或真实客户数据开放。
+
 ## Start here（从这里开始）
 
 建议按这个顺序阅读/执行：
@@ -81,7 +95,7 @@ Product Release
 - 输入数据：企业基础信息、租赁数据、能耗数据
 - 第一阶段不引入门禁、人脸、停车、视频等高敏数据
 
-Reference Implementation 将用于验证：
+Reference Implementation 用于验证：
 
 - Data Resource → Dataset → DatasetVersion
 - Company Entity Resolution
@@ -118,11 +132,13 @@ data-product-platform/
 
 ## POC 路线
 
+以下保留原建设任务的状态；适配器已实现不等于所有外部引擎已经完成商业验收。
+
 - Sprint 0：工程骨架、PostgreSQL、Redis、MinIO、Outbox、Audit（`#2`）— 已完成
 - Sprint 1：DataResource / Dataset / DatasetVersion / Entity / Evidence（`#3`、`#4`、`#8`）— 已完成
 - Sprint 2：Workflow / Execution / DataProduct / ProductRelease（`#5`、`#7`）— 已完成
 - Sprint 3：Rights / Quality / Compliance / Data Contract + full release test（`#6`、`#12`、`#14`、`#16`）— 已完成
-- POC UI：`#13` — 已完成（实况浏览器验收待完成）
+- POC UI：`#13` — 已完成；后续浏览器和 CSV 切片见下方验收说明
 - Sprint 4：OpenMetadata Adapter（`#9`）— 已完成
 - Sprint 5：Apache Hop Adapter（`#10`）— 已完成
 - Sprint 6：Splink Adapter（`#11`）— 已完成
@@ -135,29 +151,30 @@ POC 成功标准不是“组件全部部署成功”，而是能从三组原始�
 4. 产品生产发生了哪些 Cost Event？
 5. 支撑这些结论的 Evidence 在哪里？
 
-## 当前阶段
+## 当前阶段与验收边界
 
-当前处于：**核心 POC 已跑通，进入收尾与验收阶段**。
+核心 POC 已跑通。当前代码还包含可重复本地演示、CSV → RAW → 主体解析 → 人工审核入口，以及工作区引用、非有限数值和歧义匹配防错检查。整合来源见 `docs/poc/pr-cleanup.md`。
 
-已完成：
+- Sprint 0–3 的全路径验收保留在 `apps/platform/internal/acceptance/enterprise_activity_poc_test.go`。
+- POC UI 包含工作台、数据资源、数据集、数据生产、实体复核、数据产品、证据中心，以及 Release → DatasetVersion → Execution → Evidence 追溯。
+- 浏览器契约测试、真实 Core/PostgreSQL/MinIO 验收、容器演示生命周期检查已纳入七组 `required` 汇总。结果必须对应当前提交，不能沿用旧提交的绿色结果。文档：`docs/poc/browser-action-contracts.md`、`docs/poc/live-core-browser-acceptance.md`、`docs/poc/csv-ingestion-v1.md`。
+- OpenMetadata 治理投影、Apache Hop 处理和 Splink 概率候选适配器已实现；Core 仅通过 Engine SPI 依赖外部引擎。独立 smoke 与真实业务全链路验收需要区分。
 
-- Sprint 0–3：`DataResource → DatasetVersion → Entity Resolution → Workflow/Execution → Rights / Quality / Compliance / Data Contract → DataProduct / ProductVersion / ProductRelease → Evidence / Cost` 全链路，并带有全路径验收测试（`apps/platform/internal/acceptance/enterprise_activity_poc_test.go`）。
-- POC UI（`#13`）：工作台、数据资源、数据集、数据生产、实体复核、数据产品、证据中心，以及 Release → DatasetVersion → Execution → Evidence 追溯。
-- Sprint 4–6：OpenMetadata 治理投影、Apache Hop 处理、Splink 概率化候选三个适配器均已实现；Core 仅通过 Engine SPI 依赖外部引擎。
+仍需独立推进：
 
-尚未完成：
-
-- 浏览器验收闭环（`#85`）：Release readiness 需 fail-closed，并用 Playwright 驱动真实浏览器动作（复核、发布、就绪状态过期与冲突处理）。`#13` / `#75` 已关闭，但 `docs/poc/final-ui-acceptance.md` 的实况演示检查清单仍需在真实 POC 环境执行。
-- NDI 集成探针（Epic `#47`，子任务 `#84` / `#86` / `#87`）：按 ADR-0009 在 ProductRelease 稳定后启动——提供方中立的身份/标识/发布模型 → 适配器端口与对账 → 外部使用证据入图。
-- 生产 IAM / 安全加固与对外部署：明确不在 POC 范围内（当前 UI 写操作依赖 POC 开关与服务端配置的 actor）。
+- 通用生产任务界面及 Execution 工作流/输入/输出的工作区边界（`#110`），以及持久化成功但入队失败的明确恢复流程。
+- `entity_mapping` 来源唯一键缺少工作区的历史问题；当前引用一致性检查不等于完整租户隔离。
+- 歧义候选当前不得任意自动匹配；人工指定实体的正式 Command 和界面尚未实现。
+- NDI 集成探针（Epic `#47`，子任务 `#84` / `#86` / `#87`）：按 ADR-0009 在 ProductRelease 稳定后推进提供方中立模型、适配器对账与外部使用证据。
+- 生产 IAM / 安全加固、真实客户数据接入、并发负载、灾备和对外部署。当前 UI 写操作依赖 POC 开关与服务端配置 actor，不是生产身份认证。
 
 ## 仓库可见性
 
 仓库可见性决策（`#15`）已确定：仓库维持 **Public**。因此真实客户数据、合同、非公开规则或凭证不进入仓库。
 
-当前已采取的约束：
+当前约束：
 
-- `.gitignore` 忽略 `.env` 与 `.env.*`，仅保留 `!.env.example`；
+- `.gitignore` 忽略 `.env` 与 `.env.*`，仅保留示例配置；
 - `.env.example` 与 `apps/web/.env.example` 只包含本地开发占位值，外部引擎 token / 密码字段留空；
 - `examples/` 与 `engines/splink` 评估集使用合成数据，不含真实企业或个人数据；
 - `examples/enterprise-activity/` 的合规规则与 Data Contract 禁止转售与营销用途，并限制原始字段输出。

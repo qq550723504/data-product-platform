@@ -1,3 +1,5 @@
+import { releaseReadinessProblem } from "./release-readiness";
+
 /** Framework-independent ProductRelease publish boundary. Core remains authoritative for readiness and status. */
 export type ReleaseCommandConfig = {
   enabled: boolean;
@@ -136,16 +138,10 @@ export async function executePublish(
     if (release.status !== "READY" || readiness.overall !== "READY") {
       return { ok: false, message: "Core 尚未将此 Release 判定为 READY；发布按钮不会绕过任何 Gate。", refreshRequired: true };
     }
-    const checks = record(readiness.checks);
-    const blockingCheck = Object.entries(checks).find(([, status]) => status !== "PASS");
-    if (blockingCheck) {
-      // `overall=READY` together with a non-PASS gate is internally inconsistent.
-      // Fail closed and force a fresh read instead of trusting the stale summary.
-      return {
-        ok: false,
-        message: `Readiness Gate ${blockingCheck[0]} 未通过；Core 状态需要刷新核对，已阻止发布。`,
-        refreshRequired: true,
-      };
+    const readinessProblem = releaseReadinessProblem(readiness);
+    if (readinessProblem) {
+      // A summary without every required gate and an empty blockers list is not sufficient.
+      return { ok: false, message: readinessProblem, refreshRequired: true };
     }
 
     attemptedWrite = true;

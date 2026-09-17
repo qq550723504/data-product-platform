@@ -1,0 +1,48 @@
+name: demo-lifecycle
+on:
+  workflow_call:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: demo-lifecycle-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  demo-lifecycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Demo command safety tests
+        run: node --test deploy/demo/demo.test.mjs
+      - name: Install isolated browser runner
+        run: npm --prefix tests/live-browser install --no-audit --no-fund
+      - name: Install Chromium
+        working-directory: tests/live-browser
+        run: npx playwright install --with-deps chromium
+      - name: Build, migrate and initialize shipped Compose demo
+        run: node deploy/demo/demo.mjs up
+      - name: Review, advance, publish, verify and restart without losing history
+        run: node deploy/demo/smoke.mjs
+      - name: Collect service logs
+        if: ${{ always() }}
+        run: |
+          mkdir -p .artifacts/demo
+          node deploy/demo/demo.mjs logs > .artifacts/demo/services.log 2>&1 || true
+          git rev-parse HEAD > .artifacts/demo/source-sha.txt
+      - name: Preserve lifecycle evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-lifecycle-${{ github.run_attempt }}
+          path: .artifacts/demo/
+          include-hidden-files: true
+          retention-days: 7
+      - name: Remove only the disposable demo
+        if: ${{ always() }}
+        run: node deploy/demo/demo.mjs reset --confirm=DELETE_DEMO_DATA

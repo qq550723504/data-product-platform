@@ -1,0 +1,10 @@
+{
+  "name": "data-product-platform-live-browser-acceptance",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare:standalone": "node prepare-standalone.mjs",
+    "test": "playwright test"
+  },
+  "devDependencies": { "@playwright/test": "1.63.0" }
+}

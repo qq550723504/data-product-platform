@@ -2,3 +2,5 @@
 .review-tests/
 .release-tests/
 .trace-tests/
+
+.ingest-tests/

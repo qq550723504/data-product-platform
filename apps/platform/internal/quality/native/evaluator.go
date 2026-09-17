@@ -3,6 +3,7 @@ package native
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -124,8 +125,8 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 			if value == "" {
 				continue
 			}
-			parsed, err := strconv.ParseFloat(value, 64)
-			if err != nil || parsed < 0 || parsed > 100 {
+			parsed, ok := finiteFloat(value)
+			if !ok || parsed < 0 || parsed > 100 {
 				invalid++
 			}
 		}
@@ -159,8 +160,8 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 	case "QA-INDICATOR-COVERAGE-RANGE":
 		invalid := 0
 		for _, row := range ctx.Table.Rows {
-			parsed, err := strconv.ParseFloat(strings.TrimSpace(row["indicator_coverage"]), 64)
-			if err != nil || parsed < 0 || parsed > 100 {
+			parsed, ok := finiteFloat(row["indicator_coverage"])
+			if !ok || parsed < 0 || parsed > 100 {
 				invalid++
 			}
 		}
@@ -214,20 +215,40 @@ func numericMetadata(metadata map[string]any, key string) (float64, bool) {
 	}
 	switch typed := value.(type) {
 	case float64:
-		return typed, true
+		return finiteOr(typed)
 	case float32:
-		return float64(typed), true
+		return finiteOr(float64(typed))
 	case int:
 		return float64(typed), true
 	case int64:
 		return float64(typed), true
 	case json.Number:
 		parsed, err := typed.Float64()
-		return parsed, err == nil
+		if err != nil {
+			return 0, false
+		}
+		return finiteOr(parsed)
 	case string:
-		parsed, err := strconv.ParseFloat(strings.TrimSpace(typed), 64)
-		return parsed, err == nil
+		return finiteFloat(typed)
 	default:
 		return 0, false
 	}
+}
+
+// finiteFloat parses a decimal value and rejects NaN and infinities. Non-finite
+// values compare false against every range bound, so accepting one would let a
+// malformed CSV cell or metric satisfy a rule that it must fail.
+func finiteFloat(value string) (float64, bool) {
+	parsed, err := strconv.ParseFloat(strings.TrimSpace(value), 64)
+	if err != nil {
+		return 0, false
+	}
+	return finiteOr(parsed)
+}
+
+func finiteOr(value float64) (float64, bool) {
+	if math.IsNaN(value) || math.IsInf(value, 0) {
+		return 0, false
+	}
+	return value, true
 }

@@ -1,0 +1,7 @@
+{
+  "name": "data-product-platform-browser-contracts",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "playwright test", "test:fixture": "node --test fixture-server.test.mjs" },
+  "devDependencies": { "@playwright/test": "1.63.0" }
+}

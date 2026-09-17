@@ -222,8 +222,18 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 	if err := pool.QueryRow(ctx, `SELECT count(*) FROM dataset_version_lineage WHERE output_version_id=$1 AND execution_id=$2`, outputVersion.ID, execution.ID).Scan(&lineageCount); err != nil {
 		t.Fatalf("count lineage: %v", err)
 	}
-	if lineageCount != 3 {
-		t.Fatalf("lineage edges = %d, want 3", lineageCount)
+	if lineageCount != 4 {
+		t.Fatalf("lineage edges = %d, want 3 RAW dependencies plus entity-resolution output", lineageCount)
+	}
+	if matchJob.OutputDatasetVersionID == nil {
+		t.Fatal("successful entity job must have a historical output version")
+	}
+	var resolutionEdges int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM dataset_version_lineage WHERE output_version_id=$1 AND input_version_id=$2 AND execution_id=$3`, outputVersion.ID, *matchJob.OutputDatasetVersionID, execution.ID).Scan(&resolutionEdges); err != nil {
+		t.Fatalf("query exact entity-resolution dependency: %v", err)
+	}
+	if resolutionEdges != 1 {
+		t.Fatalf("entity-resolution lineage edges = %d, want exactly one", resolutionEdges)
 	}
 
 	var costCount int

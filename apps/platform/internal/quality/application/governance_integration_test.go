@@ -22,6 +22,7 @@ import (
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 )
 
 type memoryStore struct {
@@ -68,7 +69,7 @@ func TestNativeQualityAndComplianceGates(t *testing.T) {
 	txManager := transaction.NewManager(pool)
 	datasetRepo := datasetinfra.NewPostgresRepository(pool)
 	store := newMemoryStore()
-	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo)
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
 	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, store)
 	industryPackRoot := repoPath(t, "industry-packs")
 

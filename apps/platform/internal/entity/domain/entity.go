@@ -56,6 +56,9 @@ var (
 	ErrReviewerReasonRequired  = errors.New("reviewer reason is required")
 	ErrCandidateNotReviewable  = errors.New("match candidate is not reviewable")
 	ErrCandidateEntityRequired = errors.New("candidate entity is required")
+	// ErrOutputDatasetType rejects entity resolution output written into a
+	// dataset that is not a STANDARDIZED dataset.
+	ErrOutputDatasetType = errors.New("entity resolution output dataset must be STANDARDIZED")
 )
 
 type EntityType struct {

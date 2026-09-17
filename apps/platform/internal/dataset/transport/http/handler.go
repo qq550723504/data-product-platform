@@ -11,6 +11,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
+	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 )
 
 const maxUploadBytes = 32 << 20
@@ -99,6 +100,14 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 		if errors.Is(err, domain.ErrInvalidWorkspace) || errors.Is(err, domain.ErrInvalidDatasetCode) || errors.Is(err, domain.ErrInvalidDatasetName) || errors.Is(err, domain.ErrInvalidDatasetType) {
 			status = http.StatusBadRequest
 			code = "INVALID_DATASET"
+		}
+		if errors.Is(err, resourceinfra.ErrNotFound) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "SOURCE_RESOURCE_NOT_FOUND", "source resource does not exist or is unavailable", nil)
+			return
+		}
+		if errors.Is(err, domain.ErrSourceResourceWorkspace) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "SOURCE_RESOURCE_WORKSPACE_MISMATCH", "source resource must belong to the dataset workspace", nil)
+			return
 		}
 		httpserver.WriteError(w, r, status, code, err.Error(), nil)
 		return

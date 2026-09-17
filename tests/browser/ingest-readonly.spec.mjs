@@ -1,0 +1,41 @@
+import { test, expect } from "@playwright/test";
+import { readFile } from "node:fs/promises";
+import { fixtureToken } from "./fixture-server.mjs";
+test("CSV ingestion is read-only by default even after local preview", async ({ page, request }) => {
+  const headers = { "x-fixture-token": fixtureToken };
+  expect((await request.post("http://127.0.0.1:4400/__control/reset", { headers, data: {} })).ok()).toBeTruthy();
+  await page.goto("/ingest");
+  await expect(page.getByText("当前为只读接入预览")).toBeVisible();
+  const form = page.getByRole("form", { name: "接入 CSV" });
+  await form.getByLabel("数据集名称").fill("readonly");
+  await form.getByLabel("数据来源说明").fill("synthetic");
+  await form.getByLabel("本次处理用途").fill("test");
+  await form.getByRole("checkbox").check();
+  await form.getByLabel("选择 CSV 文件").setInputFiles({ name: "preview.csv", mimeType: "text/csv", buffer: Buffer.from("source_company_id,company_name\na,b") });
+  await expect(page.getByText(/CSV 预检通过/)).toBeVisible();
+  await expect(form.getByRole("button", { name: "登记来源并保存 RAW 版本", exact: true })).toBeDisabled();
+  const response = await request.get("http://127.0.0.1:4400/__control/state", { headers });
+  expect(response.ok()).toBeTruthy();
+  expect((await response.json()).requests.filter(call => call.method === "POST")).toHaveLength(0);
+});
+
+test("readonly ingest downloads the shipped template and previews it without a Core write", async ({ page, request }) => {
+  const headers = { "x-fixture-token": fixtureToken };
+  expect((await request.post("http://127.0.0.1:4400/__control/reset", { headers, data: {} })).ok()).toBeTruthy();
+  await page.goto("http://127.0.0.1:3101/ingest");
+  const downloadPending = page.waitForEvent("download");
+  await page.getByRole("link", { name: "下载 CSV 示例模板（合成数据）" }).click();
+  const download = await downloadPending;
+  expect(download.suggestedFilename()).toBe("company-import-v1.csv");
+  const target = test.info().outputPath("downloaded-company-import.csv");
+  await download.saveAs(target);
+  expect(await download.failure()).toBeNull();
+  const expected = await readFile(new URL("../../apps/web/public/templates/company-import-v1.csv", import.meta.url));
+  expect(await readFile(target)).toEqual(expected);
+  await page.getByLabel("选择 CSV 文件").setInputFiles(target);
+  await expect(page.getByText(/CSV 预检通过：2 条记录，7 个字段/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "登记来源并保存 RAW 版本" })).toBeDisabled();
+  const response = await request.get("http://127.0.0.1:4400/__control/state", { headers });
+  expect(response.ok()).toBeTruthy();
+  expect((await response.json()).requests.filter(call => call.method === "POST")).toHaveLength(0);
+});

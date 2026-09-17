@@ -17,10 +17,11 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/matching"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/csvinput"
 )
 
 func readCompanyCSV(reader io.Reader) ([]matching.CompanyRecord, error) {
-	csvReader := csv.NewReader(reader)
+	csvReader := csvinput.NewReader(reader)
 	headers, err := csvReader.Read()
 	if err != nil {
 		return nil, fmt.Errorf("read company CSV header: %w", err)
