@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -152,6 +153,16 @@ func scanEntity(row pgx.Row) (domain.Entity, error) {
 }
 
 func (r *PostgresRepository) InsertMapping(ctx context.Context, tx pgx.Tx, mapping domain.EntityMapping) error {
+	// Older Core paths (for example workflow alias resolution) predate external
+	// candidate engines. Normalize missing provenance here so every accepted
+	// mapping remains auditable even when it was produced by deterministic rules.
+	if strings.TrimSpace(mapping.MatchEngineName) == "" {
+		mapping.MatchEngineName = "RULES"
+	}
+	if strings.TrimSpace(mapping.MatchEngineVersion) == "" {
+		mapping.MatchEngineVersion = "1"
+	}
+
 	_, err := tx.Exec(ctx, `
 		INSERT INTO entity_mapping (
 			id, entity_id, source_type, source_ref, source_key, source_name,
