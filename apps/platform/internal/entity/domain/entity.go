@@ -92,6 +92,9 @@ type EntityMapping struct {
 	MatchMethod        string
 	MatchRuleID        string
 	MatchPolicyVersion string
+	MatchEngineName    string
+	MatchEngineVersion string
+	MatchModelVersion  string
 	Confidence         float64
 	Status             MappingStatus
 	ReviewedBy         *uuid.UUID
@@ -126,23 +129,26 @@ type MatchJob struct {
 }
 
 type MatchCandidate struct {
-	ID                uuid.UUID
-	JobID             uuid.UUID
-	SourceKey         string
-	SourceName        string
-	SourcePayload     map[string]string
-	NormalizedPayload map[string]string
-	CandidateEntityID *uuid.UUID
-	Decision          MatchDecision
-	Status            CandidateStatus
-	MatchMethod       string
-	MatchRuleID       string
-	Confidence        float64
-	ReviewedBy        *uuid.UUID
-	ReviewedAt        *time.Time
-	ReviewerReason    string
-	EvidenceID        *uuid.UUID
-	CreatedAt         time.Time
+	ID                 uuid.UUID
+	JobID              uuid.UUID
+	SourceKey          string
+	SourceName         string
+	SourcePayload      map[string]string
+	NormalizedPayload  map[string]string
+	CandidateEntityID  *uuid.UUID
+	Decision           MatchDecision
+	Status             CandidateStatus
+	MatchMethod        string
+	MatchRuleID        string
+	MatchEngineName    string
+	MatchEngineVersion string
+	MatchModelVersion  string
+	Confidence         float64
+	ReviewedBy         *uuid.UUID
+	ReviewedAt         *time.Time
+	ReviewerReason     string
+	EvidenceID         *uuid.UUID
+	CreatedAt          time.Time
 }
 
 func NewEntityType(workspaceID uuid.UUID, code, name, policyRef, policyVersion string) (EntityType, error) {
