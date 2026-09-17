@@ -88,13 +88,106 @@ jobs:
           go build ./cmd/worker
           go build ./cmd/migrate
 
+  hop-smoke:
+    name: hop-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect Hop reference changes
+        id: changes
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run_hop=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+            BASE="origin/${{ github.base_ref }}"
+          else
+            BASE="HEAD^"
+          fi
+
+          CHANGED="$(git diff --name-only "$BASE" HEAD -- \
+            'examples/enterprise-activity/hop/**' \
+            'examples/enterprise-activity/workflow/energy-monthly-hop-v1.yaml' \
+            'apps/platform/internal/workflow/hop/**' \
+            'apps/platform/internal/workflow/application/managed_execution.go' \
+            'apps/platform/internal/workflow/transport/queue/handler.go')"
+          if [ -n "$CHANGED" ]; then
+            echo "$CHANGED"
+            echo "run_hop=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run_hop=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run pinned Apache Hop reference pipeline
+        if: steps.changes.outputs.run_hop == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          FIXTURE_DIR="$RUNNER_TEMP/hop-smoke"
+          rm -rf "$FIXTURE_DIR"
+          mkdir -p "$FIXTURE_DIR"
+          cp examples/enterprise-activity/hop/aggregate-energy-monthly.hpl "$FIXTURE_DIR/"
+          cp examples/enterprise-activity/hop/energy-standardized-input.csv "$FIXTURE_DIR/"
+          cp examples/enterprise-activity/hop/energy-monthly-expected.csv "$FIXTURE_DIR/"
+          chmod -R a+rwX "$FIXTURE_DIR"
+
+          docker pull apache/hop:2.19.0
+          docker run --rm \
+            -v "$FIXTURE_DIR:/files" \
+            --entrypoint /opt/hop/hop-run.sh \
+            apache/hop:2.19.0 \
+            -f /files/aggregate-energy-monthly.hpl \
+            -r local \
+            -p 'INPUT_ENERGY_STANDARDIZED_URI=/files/energy-standardized-input.csv,OUTPUT_BASE_URI=/files/ci-output,CORE_EXECUTION_ID=ci-smoke,TARGET_PERIOD=2025-02'
+
+          test -s "$FIXTURE_DIR/ci-output.csv"
+
+          python3 - "$FIXTURE_DIR/ci-output.csv" "$FIXTURE_DIR/energy-monthly-expected.csv" <<'PY'
+          import csv
+          import sys
+
+          def normalize(path):
+              with open(path, newline='', encoding='utf-8-sig') as handle:
+                  rows = list(csv.DictReader(handle))
+              return sorted(
+                  (
+                      row['canonical_company_id'].strip(),
+                      row['year_month'].strip(),
+                      round(float(row['energy_kwh']), 12),
+                  )
+                  for row in rows
+              )
+
+          actual = normalize(sys.argv[1])
+          expected = normalize(sys.argv[2])
+          if actual != expected:
+              raise SystemExit(f"Hop output mismatch\nexpected={expected!r}\nactual={actual!r}")
+          print(f"validated {len(actual)} Apache Hop aggregate rows")
+          PY
+
+      - name: Skip Hop runtime smoke when unrelated
+        if: steps.changes.outputs.run_hop != 'true'
+        run: echo "No Hop reference/runtime files changed; smoke test skipped."
+
   required:
     name: required
     if: ${{ always() }}
     needs:
       - go-platform
+      - hop-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Require all CI jobs to succeed
-        run: test "${{ needs.go-platform.result }}" = "success"
+        run: |
+          test "${{ needs.go-platform.result }}" = "success"
+          test "${{ needs.hop-smoke.result }}" = "success"
