@@ -218,19 +218,12 @@ func (h *Handler) listProductReleases(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	products, err := h.repo.ListDataProducts(r.Context(), workspaceID, maxLimit, 0)
+	belongs, err := h.repo.DataProductBelongsToWorkspace(r.Context(), productID, workspaceID)
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "DATA_PRODUCT_READ_FAILED", err.Error(), nil)
 		return
 	}
-	found := false
-	for _, product := range products.Items {
-		if product.ID == productID {
-			found = true
-			break
-		}
-	}
-	if !found {
+	if !belongs {
 		httpserver.WriteError(w, r, http.StatusNotFound, "DATA_PRODUCT_NOT_FOUND", "data product not found in workspace", nil)
 		return
 	}
