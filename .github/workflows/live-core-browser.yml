@@ -1,10 +1,7 @@
 name: live-core-browser
 
 on:
-  # Includes stacked PRs: this incremental suite can be reviewed before its predecessor merges.
-  pull_request:
-  push:
-    branches: [main]
+  workflow_call:
   workflow_dispatch:
 
 permissions:

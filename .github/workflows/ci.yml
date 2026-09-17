@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+      - codex/poc-consolidated-local-demo
   workflow_dispatch:
 
 permissions:
@@ -331,20 +332,39 @@ jobs:
         if: steps.changes.outputs.run_splink != 'true'
         run: echo "No Splink runtime/adapter/evaluation files changed; smoke test skipped."
 
+  browser-contracts:
+    uses: ./.github/workflows/web-browser.yml
+  live-core:
+    uses: ./.github/workflows/live-core-browser.yml
+  demo:
+    uses: ./.github/workflows/demo-lifecycle.yml
+
   required:
     name: required
     if: ${{ always() }}
-    needs:
-      - go-platform
-      - web-console
-      - hop-smoke
-      - splink-smoke
+    needs: [go-platform, web-console, hop-smoke, splink-smoke, browser-contracts, live-core, demo]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Require all CI jobs to succeed
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test fail-closed gate policy
+        run: node --test .github/scripts/required-checks.test.mjs
+      - name: Require all seven CI jobs to succeed
+        env:
+          CI_NEEDS: ${{ toJSON(needs) }}
+        run: node .github/scripts/required-checks.mjs
+      - name: Archive the verified source snapshot
         run: |
-          test "${{ needs.go-platform.result }}" = "success"
-          test "${{ needs.web-console.result }}" = "success"
-          test "${{ needs.hop-smoke.result }}" = "success"
-          test "${{ needs.splink-smoke.result }}" = "success"
+          git archive --format=zip --output="$RUNNER_TEMP/verified-source.zip" HEAD
+          git rev-parse HEAD > "$RUNNER_TEMP/source-sha.txt"
+      - name: Preserve verified source for review and reproduction
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-source-${{ github.run_attempt }}
+          retention-days: 7
+          path: |
+            ${{ runner.temp }}/verified-source.zip
+            ${{ runner.temp }}/source-sha.txt
