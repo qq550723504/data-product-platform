@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge, EmptyState, LoadError, PageHeader, SetupRequired, formatDate } from "@/components/ui";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 
@@ -24,7 +25,10 @@ export default async function ProductsPage() {
               <tbody>
                 {products.items.map((product) => (
                   <tr key={product.id}>
-                    <td className="primary-cell"><strong>{product.name}</strong><span>{product.code}{product.domainCode ? ` · ${product.domainCode}` : ""}</span></td>
+                    <td className="primary-cell">
+                      <Link className="text-link" href={`/products/${product.id}`}><strong>{product.name}</strong></Link>
+                      <span>{product.code}{product.domainCode ? ` · ${product.domainCode}` : ""}</span>
+                    </td>
                     <td><Badge value={product.lifecycleStatus} /></td>
                     <td><Badge value={product.healthStatus} /></td>
                     <td>{product.currentVersion || "—"}</td>
@@ -36,10 +40,6 @@ export default async function ProductsPage() {
             </table>
           </div>
         )}
-        <div className="callout callout-warn" style={{ marginTop: 18 }}>
-          <strong>Release Readiness 与产品详情</strong>
-          <p>下一阶段会在产品详情中把 Rights、Quality、Compliance、Contract、Dataset、Evidence 六类检查拆开呈现，并接入发布动作。</p>
-        </div>
       </>
     );
   } catch (error) {
