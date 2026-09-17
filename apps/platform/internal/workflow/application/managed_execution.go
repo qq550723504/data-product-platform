@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
@@ -21,7 +22,7 @@ type ManagedExecutionBridge interface {
 }
 
 type ManagedExecutionRepository interface {
-	ListRunningExecutionIDsByEngine(ctx context.Context, engineType string, limit int) ([]uuid.UUID, error)
+	ListManagedExecutionIDsByEngine(ctx context.Context, engineType string, after uuid.UUID, limit int) ([]uuid.UUID, error)
 	GetExecution(ctx context.Context, executionID uuid.UUID) (domain.Execution, error)
 	GetVersion(ctx context.Context, versionID uuid.UUID) (domain.WorkflowVersion, error)
 }
@@ -74,10 +75,11 @@ func stringMap(value any) (map[string]any, bool) {
 }
 
 type ManagedReconciler struct {
-	service ManagedExecutionStateService
-	repo    ManagedExecutionRepository
-	bridges map[string]ManagedExecutionBridge
-	limit   int
+	service           ManagedExecutionStateService
+	repo              ManagedExecutionRepository
+	bridges           map[string]ManagedExecutionBridge
+	limit             int
+	submissionTimeout time.Duration
 }
 
 func NewManagedReconciler(service ManagedExecutionStateService, repo ManagedExecutionRepository, bridges ...ManagedExecutionBridge) *ManagedReconciler {
@@ -91,21 +93,34 @@ func NewManagedReconciler(service ManagedExecutionStateService, repo ManagedExec
 			registry[engineType] = bridge
 		}
 	}
-	return &ManagedReconciler{service: service, repo: repo, bridges: registry, limit: 100}
+	return &ManagedReconciler{
+		service:           service,
+		repo:              repo,
+		bridges:           registry,
+		limit:             100,
+		submissionTimeout: 5 * time.Minute,
+	}
 }
 
 func (r *ManagedReconciler) RunOnce(ctx context.Context) error {
 	var failures []error
 	for engineType, bridge := range r.bridges {
-		ids, err := r.repo.ListRunningExecutionIDsByEngine(ctx, engineType, r.limit)
-		if err != nil {
-			failures = append(failures, err)
-			continue
-		}
-		for _, executionID := range ids {
-			if err := r.reconcileOne(ctx, bridge, executionID); err != nil {
+		cursor := uuid.Nil
+		for {
+			ids, err := r.repo.ListManagedExecutionIDsByEngine(ctx, engineType, cursor, r.limit)
+			if err != nil {
 				failures = append(failures, err)
+				break
 			}
+			for _, executionID := range ids {
+				if err := r.reconcileOne(ctx, bridge, executionID); err != nil {
+					failures = append(failures, err)
+				}
+			}
+			if len(ids) < r.limit {
+				break
+			}
+			cursor = ids[len(ids)-1]
 		}
 	}
 	return errors.Join(failures...)
@@ -116,6 +131,29 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 	if err != nil {
 		return fmt.Errorf("load managed execution %s: %w", executionID, err)
 	}
+
+	if execution.Status == domain.ExecutionSubmitting {
+		claimedAt := execution.StartedAt
+		if claimedAt == nil {
+			claimedAt = &execution.CreatedAt
+		}
+		if time.Since(*claimedAt) < r.submissionTimeout {
+			return nil
+		}
+		_, err := r.service.Fail(
+			ctx,
+			execution.ID,
+			"REMOTE_SUBMISSION_OUTCOME_UNKNOWN",
+			"remote submission did not yield a durable execution id before the submission lease expired",
+			map[string]any{"engineType": execution.EngineType},
+			execution.ID.String(),
+		)
+		if err != nil && !errors.Is(err, domain.ErrInvalidTransition) {
+			return fmt.Errorf("expire uncertain managed submission %s: %w", executionID, err)
+		}
+		return nil
+	}
+
 	if execution.Status != domain.ExecutionRunning {
 		return nil
 	}
@@ -155,17 +193,27 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 		}
 		return nil
 	case EngineRunFailed:
-		message := strings.TrimSpace(run.ErrorMessage)
-		if message == "" {
-			message = "remote processing engine reported failure"
-		}
-		_, err := r.service.Fail(ctx, execution.ID, "REMOTE_EXECUTION_FAILED", message, metrics, execution.ID.String())
+		_, err := r.service.Fail(
+			ctx,
+			execution.ID,
+			"REMOTE_EXECUTION_FAILED",
+			"remote processing engine reported failure",
+			metrics,
+			execution.ID.String(),
+		)
 		if err != nil && !errors.Is(err, domain.ErrInvalidTransition) {
 			return fmt.Errorf("fail managed execution %s: %w", executionID, err)
 		}
 		return nil
 	case EngineRunCancelled:
-		_, err := r.service.Fail(ctx, execution.ID, "REMOTE_EXECUTION_CANCELLED", "remote processing engine cancelled execution", metrics, execution.ID.String())
+		_, err := r.service.Fail(
+			ctx,
+			execution.ID,
+			"REMOTE_EXECUTION_CANCELLED",
+			"remote processing engine cancelled execution",
+			metrics,
+			execution.ID.String(),
+		)
 		if err != nil && !errors.Is(err, domain.ErrInvalidTransition) {
 			return fmt.Errorf("cancel managed execution %s: %w", executionID, err)
 		}
