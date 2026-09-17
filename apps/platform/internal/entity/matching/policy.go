@@ -106,5 +106,21 @@ func LoadPolicy(path string) (Policy, error) {
 	if strings.TrimSpace(policy.Metadata.Version) == "" || strings.TrimSpace(policy.Spec.EntityType) == "" {
 		return Policy{}, fmt.Errorf("matching policy %q is missing version or entity type", path)
 	}
+	if err := validateThresholds(policy.Spec.Thresholds); err != nil {
+		return Policy{}, fmt.Errorf("matching policy %q has invalid thresholds: %w", path, err)
+	}
 	return policy, nil
+}
+
+func validateThresholds(thresholds Thresholds) error {
+	if thresholds.ReviewMinimum <= 0 || thresholds.ReviewMinimum > 1 {
+		return fmt.Errorf("reviewMinimum must be > 0 and <= 1")
+	}
+	if thresholds.AutoMatchMinimum <= 0 || thresholds.AutoMatchMinimum > 1 {
+		return fmt.Errorf("autoMatchMinimum must be > 0 and <= 1")
+	}
+	if thresholds.ReviewMinimum > thresholds.AutoMatchMinimum {
+		return fmt.Errorf("reviewMinimum must be <= autoMatchMinimum")
+	}
+	return nil
 }
