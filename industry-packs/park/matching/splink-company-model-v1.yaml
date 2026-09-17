@@ -48,7 +48,23 @@ spec:
 
   recommendedPredictionBlocking:
     - legal_representative
-    - normalized_company_name
+    - normalized_registered_address
+    - normalized_company_name_prefix
+
+  evaluation:
+    fixtureRef: examples/enterprise-activity/entity-resolution-evaluation
+    scriptRef: engines/splink/scripts/evaluate_reference.py
+    randomSeed: 42
+    modes:
+      - RULE_ONLY
+      - RULE_PLUS_SPLINK
+    metrics:
+      - autoMatched
+      - review
+      - unresolved
+      - conflicts
+      - falsePositive
+      - falseNegative
 
   output:
     score: match_probability
@@ -67,5 +83,5 @@ spec:
   notes:
     - Exact USCC matches are decided before Splink and cannot be overridden.
     - This model must not be used with a different matching policy name/version.
-    - Training/evaluation data and threshold calibration are completed in Sprint 6.3.
-    - This file describes the reference statistical model contract; the trained model.json is a generated artifact.
+    - The committed labelled fixture and evaluator provide the reproducible Sprint 6.3 reference evaluation; production thresholds still require customer-labelled calibration.
+    - This file describes the reference statistical model contract; the trained model.json remains a generated deployment artifact rather than Core domain state.
