@@ -1,0 +1,57 @@
+name: web-browser-contracts
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browser-contracts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-browser-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      NEXT_TELEMETRY_DISABLED: '1'
+      # Build without deployment-specific identity; tests supply it at runtime.
+      POC_WORKSPACE_ID: ''
+      POC_ENABLE_REVIEW_ACTIONS: 'false'
+      POC_ENABLE_RELEASE_ACTIONS: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install application and isolated browser-test dependencies
+        run: |
+          npm --prefix apps/web install --no-audit --no-fund
+          npm --prefix tests/browser install --no-audit --no-fund
+      - name: Fixture server contracts
+        run: npm --prefix tests/browser run test:fixture
+      - name: Build real Next application and existing regression tests
+        run: npm --prefix apps/web run build
+      - name: Incomplete readiness regression tests
+        run: node --test apps/web/tests/release-readiness.test.mjs
+      - name: Install Chromium
+        working-directory: tests/browser
+        run: npx playwright install --with-deps chromium
+      - name: Browser and Server Action contracts against local fixtures
+        run: npm --prefix tests/browser test
+      - name: Preserve browser report and failure traces
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-contracts-${{ github.run_attempt }}
+          retention-days: 7
+          path: |
+            tests/browser/playwright-report/
+            tests/browser/test-results/
+            tests/browser/package-lock.json
