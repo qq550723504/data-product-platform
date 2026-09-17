@@ -14,11 +14,13 @@ test("new CSV -> original RAW -> explicit resolution -> manual review, without s
   await expect(form.getByRole("button",{name:"登记来源并保存 RAW 版本"})).toBeDisabled();
   await form.getByLabel("选择 CSV 文件").setInputFiles({name:"operator-selected.csv",mimeType:"text/csv",buffer:Buffer.from(input.csvText)});
   await expect(page.getByText(/CSV 预检通过：2 条记录/)).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({path:test.info().outputPath("01-preview.png"),fullPage:true});
   await form.getByRole("button",{name:"登记来源并保存 RAW 版本"}).click();
   await expect(page.getByRole("status").filter({hasText:"原始 CSV 已保存为 RAW 版本"})).toBeVisible();
   const rawURL=await page.getByRole("link",{name:"查看 RAW 数据集与版本"}).getAttribute("href");
   const resumeURL=await page.getByRole("link",{name:"保存此入口，稍后继续解析"}).getAttribute("href");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({path:test.info().outputPath("02-raw-created.png"),fullPage:true});
   await page.goto(resumeURL);
   const resolution=page.getByRole("form",{name:"启动主体解析"});
