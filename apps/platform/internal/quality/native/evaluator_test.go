@@ -60,6 +60,45 @@ func TestRangeRulesRejectNonFiniteCells(t *testing.T) {
 	}
 }
 
+func TestIndicatorCoveragePreservesNullSemantics(t *testing.T) {
+	rule := Rule{ID: "QA-INDICATOR-COVERAGE-RANGE", Dimension: "CONFORMITY", Severity: "CRITICAL"}
+
+	ctx := DatasetContext{
+		Table: tabular.Table{
+			Headers: []string{"indicator_coverage"},
+			Rows: []map[string]string{
+				{"indicator_coverage": "100"},
+				{"indicator_coverage": ""},
+				{"indicator_coverage": "   "},
+				{"indicator_coverage": "33.33"},
+			},
+		},
+	}
+	finding := evaluateSingleRule(t, rule, ctx)
+	if finding.Status != domain.FindingPass {
+		t.Fatalf("null indicator_coverage must be allowed: %#v", finding)
+	}
+	if got := finding.Observed["missing"]; got != 2 {
+		t.Fatalf("missing = %v, want 2", got)
+	}
+	if got := finding.Observed["invalid"]; got != 0 {
+		t.Fatalf("invalid = %v, want 0", got)
+	}
+
+	bad := DatasetContext{
+		Table: tabular.Table{
+			Headers: []string{"indicator_coverage"},
+			Rows: []map[string]string{
+				{"indicator_coverage": ""},
+				{"indicator_coverage": "101"},
+			},
+		},
+	}
+	if stopped := evaluateSingleRule(t, rule, bad); stopped.Status != domain.FindingFail {
+		t.Fatalf("present out-of-range indicator_coverage must fail even beside nulls: %#v", stopped)
+	}
+}
+
 func TestMetricRulesFailClosedOnNonFiniteEvidence(t *testing.T) {
 	tests := []struct {
 		name   string

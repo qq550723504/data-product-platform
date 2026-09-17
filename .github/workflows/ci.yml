@@ -294,7 +294,7 @@ jobs:
 
       - name: Install pinned Splink runtime
         if: steps.changes.outputs.run_splink == 'true'
-        run: python -m pip install ./engines/splink
+        run: python -m pip install './engines/splink[test]'
 
       - name: Verify Splink runtime/API imports
         if: steps.changes.outputs.run_splink == 'true'
@@ -325,6 +325,11 @@ jobs:
               assert _probability(unusable) is None, unusable
           print('validated Splink', version('splink'), 'and COMPANY reference schema')
           PY
+
+      - name: Run Splink script unit tests
+        if: steps.changes.outputs.run_splink == 'true'
+        working-directory: engines/splink
+        run: python -m pytest -q
 
       - name: Evaluate labelled company matching reference set
         if: steps.changes.outputs.run_splink == 'true'
