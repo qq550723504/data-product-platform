@@ -1,8 +1,8 @@
 # Live Core browser acceptance
 
 This increment is additive to the prior readiness/browser-contract work (#88).
-It does not replace the mock-transport suite, change Core domain behavior, or
-claim every POC capability has passed. No production deployment or IAM changes.
+It does not replace the mock-transport suite or claim every POC capability has
+passed. The live run also exposed a native-engine provenance defect fixed here. No production deployment or IAM changes.
 
 ## What runs
 
@@ -61,7 +61,7 @@ business records. The Go coordinator additionally rejects any database, Redis,
 bucket, endpoint or environment not matching the dedicated local test settings.
 The original deployment Compose configuration is unchanged.
 
-MinIO uses a historical explicit test image, not a recommended production version;
+MinIO uses its official Quay registry with a historical explicit test image, not a recommended production version;
 PostgreSQL/Redis use the same major baselines as the project. CI records resolved
 image digests and the exact source commit, since tags and unlocked transitive npm
 dependencies can change. This is not a dependency/security audit.
@@ -87,3 +87,30 @@ processing, using synthetic inputs. It is **not**:
 
 Next standalone packaging follows https://nextjs.org/docs/app/api-reference/config/next-config-js/output.
 Browser lifecycle follows https://playwright.dev/docs/test-webserver.
+
+## Runtime-source correction
+
+The first CI attempt could not pull `minio/minio` from Docker Hub (access denied),
+so no live backend assertion ran in that attempt. The isolated stack now pulls
+`quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z`, following the container registry
+used in that release's official README. There is no mock-S3 fallback; an unavailable
+image still fails the job. This changes only the test runtime source.
+
+## Provenance defect reproduced by the live browser
+
+After the registry fix, real review/DB checks and native Worker/S3 output passed,
+but the published trace omitted the browser review reason. The native engine had
+recorded only the three RAW lineage inputs, so the trace could not reach the
+successful entity job's output and its mappings/review evidence. The existing
+`FindSucceededOutputVersionForInput` repository query already defines that output
+as a dependency of canonical-mapping consumers.
+
+The native engine now resolves that historical output before consuming mappings,
+requires it to exist, and persists its ID in output metadata and downstream lineage.
+This records a logical entity-resolution dependency; it does not claim the engine
+reads the STANDARDIZED CSV for business fields. All original live browser/database
+assertions remain. The existing native integration test now checks three RAW edges
+plus the exact resolution-output edge, rather than expecting only three edges.
+Existing Go regressions also run after the live slice. This is not a concurrency
+proof for mutable mapping reads or a backfill of already published history; historic
+releases are left unchanged.

@@ -112,6 +112,17 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 		return workflowapp.ProcessingResult{}, fmt.Errorf("read energy input: %w", err)
 	}
 
+	// Canonical mappings are a processing dependency even though business fields
+	// are read from RAW CSV. Capture the successful resolution output now, rather
+	// than letting a later trace query infer a different job from mutable state.
+	resolutionVersionID, found, err := e.entityRepo.FindSucceededOutputVersionForInput(ctx, enterpriseVersion.ID, "CSV", enterpriseRef)
+	if err != nil {
+		return workflowapp.ProcessingResult{}, fmt.Errorf("resolve entity lineage dependency: %w", err)
+	}
+	if !found {
+		return workflowapp.ProcessingResult{}, fmt.Errorf("enterprise input has no successful entity-resolution output for lineage")
+	}
+
 	companies, inputs, err := e.buildCanonicalCompanies(ctx, enterpriseRows, enterpriseRef, companyPolicy)
 	if err != nil {
 		return workflowapp.ProcessingResult{}, err
@@ -173,22 +184,23 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 		TraceID:                request.ExecutionID.String(),
 		GeneratedByExecutionID: &request.ExecutionID,
 		Metadata: map[string]any{
-			"workflowVersionId":          request.WorkflowVersion.ID,
-			"workflowVersion":            request.WorkflowVersion.Version,
-			"indicatorSet":               "park-enterprise-activity@1.0.0",
-			"entityPolicyVersion":        companyPolicy.Metadata.Version,
-			"targetPeriod":               request.TargetPeriod,
-			"quarantineCount":            quarantineCount,
-			"unresolvedEntityRate":       0.0,
-			"acceptedNegativeEnergyRate": 0.0,
-			"gateStatus":                 "PENDING_GOVERNANCE_GATES",
+			"workflowVersionId":               request.WorkflowVersion.ID,
+			"workflowVersion":                 request.WorkflowVersion.Version,
+			"indicatorSet":                    "park-enterprise-activity@1.0.0",
+			"entityPolicyVersion":             companyPolicy.Metadata.Version,
+			"targetPeriod":                    request.TargetPeriod,
+			"quarantineCount":                 quarantineCount,
+			"unresolvedEntityRate":            0.0,
+			"acceptedNegativeEnergyRate":      0.0,
+			"gateStatus":                      "PENDING_GOVERNANCE_GATES",
+			"entityResolutionOutputVersionId": resolutionVersionID,
 		},
 	})
 	if err != nil {
 		return workflowapp.ProcessingResult{}, fmt.Errorf("write CURATED DatasetVersion: %w", err)
 	}
 
-	lineageInputs := []uuid.UUID{enterpriseVersion.ID, leaseVersion.ID, energyVersion.ID}
+	lineageInputs := []uuid.UUID{enterpriseVersion.ID, leaseVersion.ID, energyVersion.ID, resolutionVersionID}
 	if err := e.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		for _, inputVersionID := range lineageInputs {
 			if err := e.datasetRepo.AddLineage(ctx, tx, outputVersion.ID, inputVersionID, "DERIVED_FROM", &request.ExecutionID); err != nil {
