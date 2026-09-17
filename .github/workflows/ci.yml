@@ -8,6 +8,7 @@ on:
     branches:
       - main
       - codex/poc-consolidated-local-demo
+      - codex/csv-ingestion-review-ui
   workflow_dispatch:
 
 permissions:
