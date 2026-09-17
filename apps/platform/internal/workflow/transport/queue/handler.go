@@ -56,6 +56,16 @@ func (h *Handler) Handle(ctx context.Context, task *asynq.Task) error {
 		return fmt.Errorf("execution %s has unsupported status %s", execution.ID, execution.Status)
 	}
 
+	// A row queued before reference scoping existed can still bind a foreign workflow,
+	// input or output. Revalidate before dispatch so a worker never reads a foreign input
+	// or writes a foreign output; an inconsistent row is quarantined, not executed.
+	if err := h.repo.ValidateExecutionOwnership(ctx, execution); err != nil {
+		if isReferenceFailure(err) {
+			return h.quarantine(ctx, execution, err)
+		}
+		return fmt.Errorf("validate execution %s ownership: %w", execution.ID, err)
+	}
+
 	workflowVersion, err := h.repo.GetVersion(ctx, execution.WorkflowVersionID)
 	if err != nil {
 		return fmt.Errorf("load workflow version %s: %w", execution.WorkflowVersionID, err)
@@ -66,6 +76,24 @@ func (h *Handler) Handle(ctx context.Context, task *asynq.Task) error {
 		return h.submitManaged(ctx, execution, request, engineType)
 	}
 	return h.executeNative(ctx, execution, request)
+}
+
+func isReferenceFailure(err error) bool {
+	return errors.Is(err, domain.ErrWorkspaceMismatch) || errors.Is(err, workflowinfra.ErrNotFound) || errors.Is(err, domain.ErrExecutionReferenceUnusable)
+}
+
+func (h *Handler) quarantine(ctx context.Context, execution domain.Execution, cause error) error {
+	code, message := "EXECUTION_REFERENCE_MISSING", "an execution reference no longer exists"
+	switch {
+	case errors.Is(cause, domain.ErrWorkspaceMismatch):
+		code, message = "EXECUTION_REFERENCE_WORKSPACE_MISMATCH", "execution references are not owned by one workspace"
+	case errors.Is(cause, domain.ErrExecutionReferenceUnusable):
+		code, message = "EXECUTION_REFERENCE_UNUSABLE", "an execution input is no longer immutable and usable"
+	}
+	if _, err := h.service.Fail(ctx, execution.ID, code, message, map[string]any{"quarantined": true}, execution.ID.String()); err != nil && !errors.Is(err, domain.ErrInvalidTransition) {
+		return fmt.Errorf("quarantine execution %s: %w", execution.ID, err)
+	}
+	return nil
 }
 
 func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution, request workflowapp.ProcessingRequest, engineType string) error {
@@ -85,6 +113,9 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 	if err != nil {
 		if errors.Is(err, domain.ErrInvalidTransition) {
 			return nil
+		}
+		if isReferenceFailure(err) {
+			return h.quarantine(ctx, execution, err)
 		}
 		return fmt.Errorf("claim %s submission for execution %s: %w", engineType, execution.ID, err)
 	}
@@ -130,10 +161,13 @@ func (h *Handler) executeNative(ctx context.Context, execution domain.Execution,
 		return fmt.Errorf("native processing engine is not configured")
 	}
 	engineExecutionID := "native:" + execution.ID.String()
-	started, err := h.service.Start(ctx, execution.ID, engineExecutionID, execution.ID.String())
+	started, err := h.service.StartWithReferenceCheck(ctx, execution.ID, engineExecutionID, execution.ID.String())
 	if err != nil {
 		if errors.Is(err, domain.ErrInvalidTransition) {
 			return nil
+		}
+		if isReferenceFailure(err) {
+			return h.quarantine(ctx, execution, err)
 		}
 		return fmt.Errorf("start execution %s: %w", execution.ID, err)
 	}

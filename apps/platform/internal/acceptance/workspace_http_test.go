@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/hibiken/asynq"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -26,6 +27,11 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
+	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
+	workflowdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
+	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
+	workflowhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/http"
+	workflowqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue"
 )
 
 // Only this focused HTTP/DB test uses an instrumented memory store. The separate
@@ -44,6 +50,26 @@ func (s *boundaryStore) Get(ctx context.Context, uri string) (io.ReadCloser, err
 func (s *boundaryStore) Put(ctx context.Context, name string, r io.Reader, size int64, contentType string) (string, error) {
 	s.writes.Add(1)
 	return s.memoryStore.Put(ctx, name, r, size, contentType)
+}
+
+// countingQueue records dispatch so rejected commands can be proven to enqueue nothing.
+type countingQueue struct {
+	enqueued []uuid.UUID
+}
+
+func (q *countingQueue) EnqueueExecution(_ context.Context, executionID uuid.UUID) error {
+	q.enqueued = append(q.enqueued, executionID)
+	return nil
+}
+
+// countingNativeEngine proves a quarantined execution never reaches the engine.
+type countingNativeEngine struct {
+	calls atomic.Int64
+}
+
+func (e *countingNativeEngine) Execute(context.Context, workflowapp.ProcessingRequest) (workflowapp.ProcessingResult, error) {
+	e.calls.Add(1)
+	return workflowapp.ProcessingResult{}, nil
 }
 
 // This checks cross-object ownership, not caller authentication. Configured
@@ -65,10 +91,16 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 	store := &boundaryStore{memoryStore: newMemoryStore()}
 	create := datasetapp.NewCreateDatasetService(tx, datasets, resources)
 	upload := datasetapp.NewUploadVersionService(tx, datasets, store)
+	invalidate := datasetapp.NewInvalidateVersionService(tx, datasets)
 	match := entityapp.NewMatchService(repoPath(t, "industry-packs"), tx, entities, datasets, upload, store)
 	datasetHandler := datasethttp.NewHandler(create, upload, datasetapp.NewInvalidateVersionService(tx, datasets), datasets)
 	entityHandler := entityhttp.NewHandler(match, entities)
-	server := httptest.NewServer(httpserver.NewMux(datasetHandler.Register, entityHandler.Register))
+	workflowRepo := workflowinfra.NewPostgresRepository(pool)
+	workflowVersions := workflowapp.NewWorkflowVersionService(tx, workflowRepo)
+	queue := &countingQueue{}
+	executions := workflowapp.NewExecutionService(tx, workflowRepo, queue)
+	workflowHandler := workflowhttp.NewHandler(workflowVersions, executions, workflowRepo)
+	server := httptest.NewServer(httpserver.NewMux(datasetHandler.Register, entityHandler.Register, workflowHandler.Register))
 	defer server.Close()
 	client := server.Client()
 	client.Timeout = 10 * time.Second
@@ -87,6 +119,17 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 	product := mustCreateDataset(t, ctx, create, owner, "BOUNDARY-PRODUCT", "Product", datasetdomain.DatasetTypeProduct, nil, &actor, "boundary-setup")
 	filename := "boundary-" + uuid.NewString() + ".csv"
 	version := mustUploadCSV(t, ctx, upload, raw.ID, filename, []byte("source_company_id,company_name\nTEST-1,Synthetic boundary company\n"), nil, nil, &actor, "boundary-setup")
+	// A separate READY input isolates the claim-serialization test from the fixture that
+	// the invalidation test mutates.
+	atomicRaw := mustCreateDataset(t, ctx, create, owner, "BOUNDARY-ATOMIC", "Atomic RAW", datasetdomain.DatasetTypeRaw, &source.ID, &actor, "boundary-setup")
+	atomicVersion := mustUploadCSV(t, ctx, upload, atomicRaw.ID, "atomic-"+uuid.NewString()+".csv", []byte("source_company_id,company_name\nA-1,Atomic boundary company\n"), nil, nil, &actor, "boundary-setup")
+
+	// A second, fully isolated workspace supplies foreign workflow/input/output references.
+	foreignSource := mustCreateResource(t, ctx, resourceapp.NewCreateService(tx, resources), foreign, "BOUNDARY-FOREIGN", "Foreign source", &actor, "boundary-setup")
+	foreignRaw := mustCreateDataset(t, ctx, create, foreign, "BOUNDARY-FOREIGN-RAW", "Foreign RAW", datasetdomain.DatasetTypeRaw, &foreignSource.ID, &actor, "boundary-setup")
+	foreignVersion := mustUploadCSV(t, ctx, upload, foreignRaw.ID, "foreign-"+uuid.NewString()+".csv", []byte("source_company_id,company_name\nF-1,Foreign boundary company\n"), nil, nil, &actor, "boundary-setup")
+	ownerWorkflow := mustCreateBoundaryWorkflowVersion(t, ctx, workflowVersions, owner, &actor)
+	foreignWorkflow := mustCreateBoundaryWorkflowVersion(t, ctx, workflowVersions, foreign, &actor)
 
 	post := func(t *testing.T, route string, body map[string]any) (int, []byte) {
 		t.Helper()
@@ -116,12 +159,26 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 			'jobs', (SELECT jsonb_agg(to_jsonb(j) ORDER BY j.id) FROM entity_match_job j WHERE workspace_id=ANY($1::uuid[])),
 			'audit', (SELECT jsonb_agg(to_jsonb(a) ORDER BY a.id) FROM audit_event a WHERE workspace_id=ANY($1::uuid[])),
 			'evidence', (SELECT jsonb_agg(to_jsonb(e) ORDER BY e.id) FROM evidence e WHERE workspace_id=ANY($1::uuid[])),
-			'outbox', (SELECT jsonb_agg(to_jsonb(o) ORDER BY o.id) FROM outbox_event o WHERE payload->>'workspaceId'=ANY($2::text[]))
+			'workflows', (SELECT jsonb_agg(to_jsonb(w) ORDER BY w.id) FROM workflow w WHERE w.workspace_id=ANY($1::uuid[])),
+			'workflowVersions', (SELECT jsonb_agg(to_jsonb(wv) ORDER BY wv.id) FROM workflow_version wv JOIN workflow w ON w.id=wv.workflow_id WHERE w.workspace_id=ANY($1::uuid[])),
+			'executions', (SELECT jsonb_agg(to_jsonb(e) ORDER BY e.id) FROM execution e WHERE e.workspace_id=ANY($1::uuid[])),
+			'executionInputs', (SELECT jsonb_agg(to_jsonb(ei) ORDER BY ei.execution_id, ei.input_name) FROM execution_input ei JOIN execution e ON e.id=ei.execution_id WHERE e.workspace_id=ANY($1::uuid[])),
+			'cost', (SELECT jsonb_agg(to_jsonb(c) ORDER BY c.id) FROM cost_event c WHERE c.workspace_id=ANY($1::uuid[])),
+			'outbox', (SELECT jsonb_agg(to_jsonb(o) ORDER BY o.id) FROM outbox_event o WHERE o.payload->>'workspaceId'=ANY($2::text[]) OR o.aggregate_id IN (SELECT id FROM execution WHERE workspace_id=ANY($1::uuid[])))
 		)::text`, workspaces, []string{owner.String(), foreign.String()}).Scan(&value), "snapshot isolated facts")
 		return value
 	}
 	jobBody := func(workspace, output uuid.UUID) map[string]any {
 		return map[string]any{"workspaceId": workspace, "inputDatasetVersionId": version.ID, "outputDatasetId": output, "sourceType": "CSV", "sourceRef": filename, "sourceRole": "ANCHOR", "policyRef": companyPolicyRef}
+	}
+	executionBody := func(workspace, workflowVersion, output, inputVersion uuid.UUID) map[string]any {
+		return map[string]any{
+			"workspaceId":       workspace,
+			"workflowVersionId": workflowVersion,
+			"outputDatasetId":   output,
+			"targetPeriod":      "2025-03",
+			"inputs":            []map[string]any{{"name": "boundary_input", "datasetVersionId": inputVersion}},
+		}
 	}
 	cases := []struct {
 		name, route, code string
@@ -135,6 +192,9 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 		{"RAW output", "/api/v1/entity-match-jobs", "OUTPUT_DATASET_TYPE_INVALID", jobBody(owner, raw.ID)},
 		{"CURATED output", "/api/v1/entity-match-jobs", "OUTPUT_DATASET_TYPE_INVALID", jobBody(owner, curated.ID)},
 		{"PRODUCT output", "/api/v1/entity-match-jobs", "OUTPUT_DATASET_TYPE_INVALID", jobBody(owner, product.ID)},
+		{"foreign execution workflow", "/api/v1/executions", "EXECUTION_WORKSPACE_MISMATCH", executionBody(owner, foreignWorkflow.ID, standardized.ID, version.ID)},
+		{"foreign execution input", "/api/v1/executions", "EXECUTION_WORKSPACE_MISMATCH", executionBody(owner, ownerWorkflow.ID, standardized.ID, foreignVersion.ID)},
+		{"foreign execution output", "/api/v1/executions", "EXECUTION_WORKSPACE_MISMATCH", executionBody(owner, ownerWorkflow.ID, foreignOutput.ID, version.ID)},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -172,4 +232,209 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 			t.Fatal("positive control did not read the actual input object")
 		}
 	})
+
+	var ownerExecutionID uuid.UUID
+	t.Run("same workspace execution accepted and enqueued once", func(t *testing.T) {
+		before := len(queue.enqueued)
+		status, response := post(t, "/api/v1/executions", executionBody(owner, ownerWorkflow.ID, standardized.ID, version.ID))
+		if status != http.StatusAccepted {
+			t.Fatalf("positive execution control: %d %s", status, response)
+		}
+		var decoded map[string]any
+		liveOK(t, json.Unmarshal(response, &decoded), "decode execution response")
+		parsed, err := uuid.Parse(decoded["id"].(string))
+		liveOK(t, err, "parse accepted execution id")
+		ownerExecutionID = parsed
+		if len(queue.enqueued) != before+1 || queue.enqueued[before] != ownerExecutionID {
+			t.Fatalf("accepted execution was not enqueued exactly once: %#v", queue.enqueued)
+		}
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM execution WHERE id=$1 AND workspace_id=$2 AND status='QUEUED'`, ownerExecutionID, owner)
+	})
+
+	t.Run("same workspace retry accepted", func(t *testing.T) {
+		liveOK(t, func() error {
+			_, err := executions.Start(ctx, ownerExecutionID, "boundary-native", "boundary-setup")
+			return err
+		}(), "start queued execution")
+		liveOK(t, func() error {
+			_, err := executions.Fail(ctx, ownerExecutionID, "BOUNDARY_FAILURE", "intentional boundary failure", nil, "boundary-setup")
+			return err
+		}(), "fail execution for retry")
+		before := len(queue.enqueued)
+		status, response := post(t, "/api/v1/executions/"+ownerExecutionID.String()+"/retry", map[string]any{})
+		if status != http.StatusAccepted {
+			t.Fatalf("positive retry control: %d %s", status, response)
+		}
+		if len(queue.enqueued) != before+1 {
+			t.Fatalf("accepted retry was not enqueued exactly once: %#v", queue.enqueued)
+		}
+	})
+
+	t.Run("retry re-validates a drifted workspace reference", func(t *testing.T) {
+		// Simulate an Execution persisted before workspace scoping existed: its own
+		// workspace is still owner, but its workflow reference now points at foreign.
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `UPDATE execution SET workflow_version_id=$2 WHERE id=$1`, ownerExecutionID, foreignWorkflow.ID)
+			return err
+		}(), "simulate drifted execution reference")
+		before := snapshot(t)
+		dispatches := len(queue.enqueued)
+		status, response := post(t, "/api/v1/executions/"+ownerExecutionID.String()+"/retry", map[string]any{})
+		var envelope httpserver.ErrorEnvelope
+		liveOK(t, json.Unmarshal(response, &envelope), "decode retry error envelope")
+		if status != http.StatusBadRequest || envelope.Code != "EXECUTION_WORKSPACE_MISMATCH" {
+			t.Fatalf("status=%d response=%s, want 400/EXECUTION_WORKSPACE_MISMATCH", status, response)
+		}
+		if strings.Contains(string(response), owner.String()) || strings.Contains(string(response), foreign.String()) {
+			t.Fatalf("retry error discloses a workspace identity: %s", response)
+		}
+		if len(queue.enqueued) != dispatches {
+			t.Fatalf("rejected retry enqueued a task: %#v", queue.enqueued)
+		}
+		// The tamper itself changed the Execution row; compare everything except that row.
+		if after := snapshot(t); after != before {
+			t.Fatal("rejected retry changed persisted facts")
+		}
+	})
+
+	t.Run("worker quarantines a queued execution with a foreign reference", func(t *testing.T) {
+		// Simulate a row queued before reference scoping existed by inserting it directly,
+		// binding a foreign DatasetVersion as input. Create/Retry validation is bypassed, so
+		// only the worker's own revalidation can stop foreign data from being processed.
+		legacyID := uuid.New()
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution (
+				id, workspace_id, workflow_version_id, output_dataset_id,
+				target_period, status, attempt, engine_type, metrics, created_at
+			) VALUES ($1,$2,$3,$4,'2025-03','QUEUED',1,'NATIVE','{}'::jsonb,now())`,
+				legacyID, owner, ownerWorkflow.ID, standardized.ID)
+			return err
+		}(), "insert legacy queued execution")
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution_input (execution_id, input_name, dataset_version_id) VALUES ($1,'legacy_input',$2)`, legacyID, foreignVersion.ID)
+			return err
+		}(), "insert legacy execution input")
+
+		engine := &countingNativeEngine{}
+		handler := workflowqueue.NewHandler(executions, workflowRepo, engine)
+		task := asynq.NewTask(workflowqueue.TaskExecute, []byte(`{"executionId":"`+legacyID.String()+`"}`))
+		liveOK(t, handler.Handle(ctx, task), "worker handles legacy queued execution")
+
+		if calls := engine.calls.Load(); calls != 0 {
+			t.Fatalf("worker executed a quarantined execution %d time(s)", calls)
+		}
+		var status, code string
+		liveOK(t, pool.QueryRow(ctx, `SELECT status, COALESCE(error_code,'') FROM execution WHERE id=$1`, legacyID).Scan(&status, &code), "read quarantined execution")
+		if status != "FAILED" || code != "EXECUTION_REFERENCE_WORKSPACE_MISMATCH" {
+			t.Fatalf("quarantined execution status=%s code=%s, want FAILED/EXECUTION_REFERENCE_WORKSPACE_MISMATCH", status, code)
+		}
+	})
+
+	t.Run("worker quarantines a queued execution whose input was invalidated", func(t *testing.T) {
+		// An input that was READY when the Execution was queued can be invalidated later.
+		// That is permanent, so the worker must quarantine instead of retrying forever.
+		liveOK(t, func() error {
+			_, err := invalidate.Handle(ctx, datasetapp.InvalidateVersionCommand{VersionID: version.ID, Reason: "boundary-invalidation", TraceID: "boundary-setup"})
+			return err
+		}(), "invalidate queued execution input")
+		legacyID := uuid.New()
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution (
+				id, workspace_id, workflow_version_id, output_dataset_id,
+				target_period, status, attempt, engine_type, metrics, created_at
+			) VALUES ($1,$2,$3,$4,'2025-03','QUEUED',1,'NATIVE','{}'::jsonb,now())`,
+				legacyID, owner, ownerWorkflow.ID, standardized.ID)
+			return err
+		}(), "insert queued execution with invalidated input")
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution_input (execution_id, input_name, dataset_version_id) VALUES ($1,'stale_input',$2)`, legacyID, version.ID)
+			return err
+		}(), "insert invalidated execution input")
+
+		engine := &countingNativeEngine{}
+		handler := workflowqueue.NewHandler(executions, workflowRepo, engine)
+		task := asynq.NewTask(workflowqueue.TaskExecute, []byte(`{"executionId":"`+legacyID.String()+`"}`))
+		liveOK(t, handler.Handle(ctx, task), "worker handles execution with invalidated input")
+
+		if calls := engine.calls.Load(); calls != 0 {
+			t.Fatalf("worker executed an execution with an invalidated input %d time(s)", calls)
+		}
+		var status, code string
+		liveOK(t, pool.QueryRow(ctx, `SELECT status, COALESCE(error_code,'') FROM execution WHERE id=$1`, legacyID).Scan(&status, &code), "read unusable-input execution")
+		if status != "FAILED" || code != "EXECUTION_REFERENCE_UNUSABLE" {
+			t.Fatalf("unusable-input execution status=%s code=%s, want FAILED/EXECUTION_REFERENCE_UNUSABLE", status, code)
+		}
+	})
+
+	t.Run("worker claim serializes with an in-flight input invalidation", func(t *testing.T) {
+		atomicID := uuid.New()
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution (
+				id, workspace_id, workflow_version_id, output_dataset_id,
+				target_period, status, attempt, engine_type, metrics, created_at
+			) VALUES ($1,$2,$3,$4,'2025-03','QUEUED',1,'NATIVE','{}'::jsonb,now())`,
+				atomicID, owner, ownerWorkflow.ID, standardized.ID)
+			return err
+		}(), "insert claim-serialization execution")
+		liveOK(t, func() error {
+			_, err := pool.Exec(ctx, `INSERT INTO execution_input (execution_id, input_name, dataset_version_id) VALUES ($1,'atomic_input',$2)`, atomicID, atomicVersion.ID)
+			return err
+		}(), "insert claim-serialization execution input")
+
+		// Hold an exclusive lock on the referenced version without committing, the way an
+		// invalidation in flight does. A claim that validated without taking a shared lock
+		// would read the old READY value and dispatch while this transaction is still open.
+		invalidTx, err := pool.Begin(ctx)
+		liveOK(t, err, "begin in-flight invalidation")
+		liveOK(t, func() error {
+			_, err := invalidTx.Exec(ctx, `UPDATE dataset_version SET status='INVALID' WHERE id=$1`, atomicVersion.ID)
+			return err
+		}(), "lock referenced version for invalidation")
+
+		engine := &countingNativeEngine{}
+		handler := workflowqueue.NewHandler(executions, workflowRepo, engine)
+		task := asynq.NewTask(workflowqueue.TaskExecute, []byte(`{"executionId":"`+atomicID.String()+`"}`))
+		done := make(chan error, 1)
+		go func() { done <- handler.Handle(ctx, task) }()
+
+		select {
+		case err := <-done:
+			liveOK(t, invalidTx.Rollback(ctx), "rollback unexpected invalidation")
+			t.Fatalf("worker finished before the in-flight invalidation resolved: %v", err)
+		case <-time.After(400 * time.Millisecond):
+		}
+		if calls := engine.calls.Load(); calls != 0 {
+			liveOK(t, invalidTx.Rollback(ctx), "rollback after premature dispatch")
+			t.Fatalf("worker dispatched %d time(s) while the input invalidation was uncommitted", calls)
+		}
+
+		liveOK(t, invalidTx.Commit(ctx), "commit in-flight invalidation")
+		liveOK(t, <-done, "worker handles execution after invalidation committed")
+		if calls := engine.calls.Load(); calls != 0 {
+			t.Fatalf("worker executed an invalidated input %d time(s)", calls)
+		}
+		var status, code string
+		liveOK(t, pool.QueryRow(ctx, `SELECT status, COALESCE(error_code,'') FROM execution WHERE id=$1`, atomicID).Scan(&status, &code), "read claim-serialization execution")
+		if status != "FAILED" || code != "EXECUTION_REFERENCE_UNUSABLE" {
+			t.Fatalf("claim-serialization execution status=%s code=%s, want FAILED/EXECUTION_REFERENCE_UNUSABLE", status, code)
+		}
+	})
+}
+
+func mustCreateBoundaryWorkflowVersion(t *testing.T, ctx context.Context, service *workflowapp.WorkflowVersionService, workspaceID uuid.UUID, actorID *uuid.UUID) workflowdomain.WorkflowVersion {
+	t.Helper()
+	version, err := service.Create(ctx, workflowapp.CreateWorkflowVersionCommand{
+		WorkspaceID:    workspaceID,
+		Code:           "boundary-workflow-" + uuid.NewString(),
+		Name:           "Boundary workflow",
+		Version:        "1.0.0",
+		DefinitionRef:  "examples/enterprise-activity/workflow/workflow-v1.yaml",
+		DefinitionYAML: []byte("apiVersion: dataprod.platform/v1alpha1\nkind: WorkflowDefinition\nmetadata:\n  name: boundary\n  version: 1.0.0\n"),
+		ActorID:        actorID,
+		TraceID:        "boundary-setup",
+	})
+	if err != nil {
+		t.Fatalf("create boundary workflow version: %v", err)
+	}
+	return version
 }

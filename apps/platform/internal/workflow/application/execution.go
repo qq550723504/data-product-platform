@@ -40,15 +40,12 @@ func NewExecutionService(tx *transaction.Manager, repo *infrastructure.PostgresR
 }
 
 func (s *ExecutionService) Create(ctx context.Context, cmd CreateExecutionCommand) (domain.Execution, error) {
-	if _, err := s.repo.GetVersion(ctx, cmd.WorkflowVersionID); err != nil {
-		return domain.Execution{}, err
-	}
 	execution, err := domain.NewExecution(cmd.WorkspaceID, cmd.WorkflowVersionID, cmd.OutputDatasetID, cmd.TargetPeriod, cmd.Inputs, cmd.ActorID)
 	if err != nil {
 		return domain.Execution{}, err
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if err := s.repo.ValidateExecutionReferences(ctx, tx, execution.OutputDatasetID, execution.Inputs); err != nil {
+		if err := s.repo.ValidateExecutionReferences(ctx, tx, execution.WorkspaceID, execution.WorkflowVersionID, execution.OutputDatasetID, execution.Inputs); err != nil {
 			return err
 		}
 		if err := s.repo.InsertExecution(ctx, tx, execution); err != nil {
@@ -80,6 +77,18 @@ func (s *ExecutionService) Create(ctx context.Context, cmd CreateExecutionComman
 }
 
 func (s *ExecutionService) Start(ctx context.Context, executionID uuid.UUID, engineExecutionID, traceID string) (domain.Execution, error) {
+	return s.start(ctx, executionID, engineExecutionID, traceID, false)
+}
+
+// StartWithReferenceCheck is the native processing claim. It validates the Execution's
+// references and transitions QUEUED -> RUNNING in one transaction, holding shared locks
+// on the referenced DatasetVersions, so a concurrent invalidation either commits first
+// (this call returns domain.ErrExecutionReferenceUnusable) or waits for the claim.
+func (s *ExecutionService) StartWithReferenceCheck(ctx context.Context, executionID uuid.UUID, engineExecutionID, traceID string) (domain.Execution, error) {
+	return s.start(ctx, executionID, engineExecutionID, traceID, true)
+}
+
+func (s *ExecutionService) start(ctx context.Context, executionID uuid.UUID, engineExecutionID, traceID string, validateReferences bool) (domain.Execution, error) {
 	execution, err := s.repo.GetExecution(ctx, executionID)
 	if err != nil {
 		return domain.Execution{}, err
@@ -90,6 +99,17 @@ func (s *ExecutionService) Start(ctx context.Context, executionID uuid.UUID, eng
 		return domain.Execution{}, err
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if validateReferences {
+			// Same transaction as the claim: take shared locks on the referenced
+			// DatasetVersions, then validate. A concurrent invalidation cannot slip
+			// between validation and the QUEUED -> RUNNING compare-and-set.
+			if err := s.repo.LockExecutionInputVersions(ctx, tx, execution.Inputs); err != nil {
+				return err
+			}
+			if err := s.repo.ValidateExecutionReferences(ctx, tx, execution.WorkspaceID, execution.WorkflowVersionID, execution.OutputDatasetID, execution.Inputs); err != nil {
+				return err
+			}
+		}
 		if err := s.repo.SaveExecutionState(ctx, tx, execution, expected); err != nil {
 			return err
 		}
@@ -224,7 +244,7 @@ func (s *ExecutionService) Retry(ctx context.Context, executionID uuid.UUID, act
 		return domain.Execution{}, err
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if err := s.repo.ValidateExecutionReferences(ctx, tx, retry.OutputDatasetID, retry.Inputs); err != nil {
+		if err := s.repo.ValidateExecutionReferences(ctx, tx, retry.WorkspaceID, retry.WorkflowVersionID, retry.OutputDatasetID, retry.Inputs); err != nil {
 			return err
 		}
 		if err := s.repo.InsertExecution(ctx, tx, retry); err != nil {

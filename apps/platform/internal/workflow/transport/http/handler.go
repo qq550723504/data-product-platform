@@ -138,6 +138,14 @@ func (h *Handler) createExecution(w http.ResponseWriter, r *http.Request) {
 		TraceID:           httpserver.RequestID(r.Context()),
 	})
 	if err != nil {
+		if errors.Is(err, domain.ErrWorkspaceMismatch) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "EXECUTION_WORKSPACE_MISMATCH", "workflow, inputs, output and execution must belong to one workspace", nil)
+			return
+		}
+		if errors.Is(err, domain.ErrExecutionReferenceUnusable) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "EXECUTION_REFERENCE_UNUSABLE", "an execution input must be READY or SUPERSEDED", nil)
+			return
+		}
 		status := http.StatusBadRequest
 		if errors.Is(err, workflowinfra.ErrNotFound) {
 			status = http.StatusNotFound
@@ -179,6 +187,14 @@ func (h *Handler) retryExecution(w http.ResponseWriter, r *http.Request) {
 	}
 	execution, err := h.executions.Retry(r.Context(), executionID, actorID, httpserver.RequestID(r.Context()))
 	if err != nil {
+		if errors.Is(err, domain.ErrWorkspaceMismatch) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "EXECUTION_WORKSPACE_MISMATCH", "workflow, inputs, output and execution must belong to one workspace", nil)
+			return
+		}
+		if errors.Is(err, domain.ErrExecutionReferenceUnusable) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "EXECUTION_REFERENCE_UNUSABLE", "an execution input must be READY or SUPERSEDED", nil)
+			return
+		}
 		status := http.StatusConflict
 		if errors.Is(err, workflowinfra.ErrNotFound) {
 			status = http.StatusNotFound

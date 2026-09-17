@@ -67,6 +67,15 @@ func (s *ExecutionService) BeginManagedSubmission(ctx context.Context, execution
 	}
 
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		// Validate and claim in one transaction. The shared lock on the referenced
+		// DatasetVersions makes a concurrent invalidation either win (this returns
+		// domain.ErrExecutionReferenceUnusable) or wait for the SUBMITTING claim.
+		if err := s.repo.LockExecutionInputVersions(ctx, tx, execution.Inputs); err != nil {
+			return err
+		}
+		if err := s.repo.ValidateExecutionReferences(ctx, tx, execution.WorkspaceID, execution.WorkflowVersionID, execution.OutputDatasetID, execution.Inputs); err != nil {
+			return err
+		}
 		if err := s.repo.SaveExecutionState(ctx, tx, execution, expected); err != nil {
 			return err
 		}
