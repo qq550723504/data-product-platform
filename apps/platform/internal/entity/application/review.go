@@ -38,17 +38,8 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 			Title:        "Manual entity match confirmed",
 			SourceType:   "ENTITY_MATCH_CANDIDATE",
 			SourceID:     &candidate.ID,
-			Metadata: map[string]any{
-				"decision":          "CONFIRMED",
-				"sourceKey":         candidate.SourceKey,
-				"candidateEntityId": candidate.CandidateEntityID,
-				"matchMethod":       candidate.MatchMethod,
-				"matchRuleId":       candidate.MatchRuleID,
-				"confidence":        candidate.Confidence,
-				"policyVersion":     job.PolicyVersion,
-				"reviewerReason":    candidate.ReviewerReason,
-			},
-			CreatedBy: &cmd.ReviewerID,
+			Metadata:     reviewEvidenceMetadata(job, candidate, "CONFIRMED"),
+			CreatedBy:    &cmd.ReviewerID,
 		}, evidence.Relation{ObjectType: "ENTITY_MATCH_CANDIDATE", ObjectID: candidate.ID, RelationType: "SUPPORTS"},
 			evidence.Relation{ObjectType: "ENTITY_MATCH_JOB", ObjectID: job.ID, RelationType: "SUPPORTS"})
 		if err != nil {
@@ -77,9 +68,12 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 			ObjectID:    candidate.ID,
 			BeforeState: map[string]any{"status": domain.CandidatePending},
 			AfterState: map[string]any{
-				"status":     candidate.Status,
-				"entityId":   candidate.CandidateEntityID,
-				"evidenceId": record.ID,
+				"status":             candidate.Status,
+				"entityId":           candidate.CandidateEntityID,
+				"evidenceId":         record.ID,
+				"matchEngineName":    candidate.MatchEngineName,
+				"matchEngineVersion": candidate.MatchEngineVersion,
+				"matchModelVersion":  candidate.MatchModelVersion,
 			},
 			Reason:  candidate.ReviewerReason,
 			TraceID: cmd.TraceID,
@@ -121,17 +115,8 @@ func (s *MatchService) Reject(ctx context.Context, cmd ReviewCommand) (domain.Ma
 			Title:        "Manual entity match rejected",
 			SourceType:   "ENTITY_MATCH_CANDIDATE",
 			SourceID:     &candidate.ID,
-			Metadata: map[string]any{
-				"decision":          "REJECTED",
-				"sourceKey":         candidate.SourceKey,
-				"candidateEntityId": candidate.CandidateEntityID,
-				"matchMethod":       candidate.MatchMethod,
-				"matchRuleId":       candidate.MatchRuleID,
-				"confidence":        candidate.Confidence,
-				"policyVersion":     job.PolicyVersion,
-				"reviewerReason":    candidate.ReviewerReason,
-			},
-			CreatedBy: &cmd.ReviewerID,
+			Metadata:     reviewEvidenceMetadata(job, candidate, "REJECTED"),
+			CreatedBy:    &cmd.ReviewerID,
 		}, evidence.Relation{ObjectType: "ENTITY_MATCH_CANDIDATE", ObjectID: candidate.ID, RelationType: "SUPPORTS"},
 			evidence.Relation{ObjectType: "ENTITY_MATCH_JOB", ObjectID: job.ID, RelationType: "SUPPORTS"})
 		if err != nil {
@@ -153,8 +138,11 @@ func (s *MatchService) Reject(ctx context.Context, cmd ReviewCommand) (domain.Ma
 			ObjectID:    candidate.ID,
 			BeforeState: map[string]any{"status": domain.CandidatePending},
 			AfterState: map[string]any{
-				"status":     candidate.Status,
-				"evidenceId": record.ID,
+				"status":             candidate.Status,
+				"evidenceId":         record.ID,
+				"matchEngineName":    candidate.MatchEngineName,
+				"matchEngineVersion": candidate.MatchEngineVersion,
+				"matchModelVersion":  candidate.MatchModelVersion,
 			},
 			Reason:  candidate.ReviewerReason,
 			TraceID: cmd.TraceID,
@@ -174,4 +162,21 @@ func (s *MatchService) Reject(ctx context.Context, cmd ReviewCommand) (domain.Ma
 		}
 	}
 	return s.entityRepo.GetJob(ctx, job.ID)
+}
+
+func reviewEvidenceMetadata(job domain.MatchJob, candidate domain.MatchCandidate, decision string) map[string]any {
+	return map[string]any{
+		"decision":           decision,
+		"sourceKey":          candidate.SourceKey,
+		"candidateEntityId":  candidate.CandidateEntityID,
+		"matchMethod":        candidate.MatchMethod,
+		"matchRuleId":        candidate.MatchRuleID,
+		"confidence":         candidate.Confidence,
+		"matchPolicyRef":     job.PolicyRef,
+		"matchPolicyVersion": job.PolicyVersion,
+		"matchEngineName":    candidate.MatchEngineName,
+		"matchEngineVersion": candidate.MatchEngineVersion,
+		"matchModelVersion":  candidate.MatchModelVersion,
+		"reviewerReason":     candidate.ReviewerReason,
+	}
 }
