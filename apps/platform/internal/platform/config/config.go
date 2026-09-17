@@ -15,6 +15,7 @@ type Config struct {
 	Storage          StorageConfig
 	OpenMetadata     OpenMetadataConfig
 	Hop              HopConfig
+	Splink           SplinkConfig
 }
 
 type RedisConfig struct {
@@ -45,6 +46,18 @@ type HopConfig struct {
 	Password string
 }
 
+type SplinkConfig struct {
+	Enabled               bool
+	BaseURL               string
+	Token                 string
+	ExpectedEngineVersion string
+	ModelRef              string
+	ModelVersion          string
+	PolicyRef             string
+	PolicyVersion         string
+	TimeoutSeconds        int
+}
+
 func Load() (Config, error) {
 	redisDB, err := intEnv("REDIS_DB", 0)
 	if err != nil {
@@ -60,6 +73,14 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 	hopEnabled, err := boolEnv("HOP_ENABLED", false)
+	if err != nil {
+		return Config{}, err
+	}
+	splinkEnabled, err := boolEnv("SPLINK_ENABLED", false)
+	if err != nil {
+		return Config{}, err
+	}
+	splinkTimeoutSeconds, err := intEnv("SPLINK_TIMEOUT_SECONDS", 20)
 	if err != nil {
 		return Config{}, err
 	}
@@ -93,6 +114,17 @@ func Load() (Config, error) {
 			Username: os.Getenv("HOP_SERVER_USERNAME"),
 			Password: os.Getenv("HOP_SERVER_PASSWORD"),
 		},
+		Splink: SplinkConfig{
+			Enabled:               splinkEnabled,
+			BaseURL:               os.Getenv("SPLINK_SERVICE_URL"),
+			Token:                 os.Getenv("SPLINK_SERVICE_TOKEN"),
+			ExpectedEngineVersion: stringEnv("SPLINK_EXPECTED_VERSION", "4.0.17"),
+			ModelRef:              stringEnv("SPLINK_MODEL_REF", "park-company-v1"),
+			ModelVersion:          stringEnv("SPLINK_MODEL_VERSION", "1.0.0"),
+			PolicyRef:             stringEnv("SPLINK_POLICY_REF", "park-company-match"),
+			PolicyVersion:         stringEnv("SPLINK_POLICY_VERSION", "1.0.0"),
+			TimeoutSeconds:        splinkTimeoutSeconds,
+		},
 	}
 
 	if cfg.PostgresDSN == "" {
@@ -121,6 +153,20 @@ func Load() (Config, error) {
 		}
 		if cfg.Hop.Username == "" || cfg.Hop.Password == "" {
 			return Config{}, fmt.Errorf("HOP_SERVER_USERNAME and HOP_SERVER_PASSWORD must not be empty when Apache Hop is enabled")
+		}
+	}
+	if cfg.Splink.Enabled {
+		if cfg.Splink.BaseURL == "" {
+			return Config{}, fmt.Errorf("SPLINK_SERVICE_URL must not be empty when Splink is enabled")
+		}
+		if cfg.Splink.ExpectedEngineVersion == "" || cfg.Splink.ModelRef == "" || cfg.Splink.ModelVersion == "" {
+			return Config{}, fmt.Errorf("Splink expected version, model ref and model version must not be empty when Splink is enabled")
+		}
+		if cfg.Splink.PolicyRef == "" || cfg.Splink.PolicyVersion == "" {
+			return Config{}, fmt.Errorf("Splink matching policy ref and version must not be empty when Splink is enabled")
+		}
+		if cfg.Splink.TimeoutSeconds <= 0 {
+			return Config{}, fmt.Errorf("SPLINK_TIMEOUT_SECONDS must be positive")
 		}
 	}
 
