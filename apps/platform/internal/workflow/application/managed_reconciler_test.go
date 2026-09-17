@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
@@ -14,7 +15,10 @@ type fakeManagedRepo struct {
 	version   domain.WorkflowVersion
 }
 
-func (r *fakeManagedRepo) ListRunningExecutionIDsByEngine(context.Context, string, int) ([]uuid.UUID, error) {
+func (r *fakeManagedRepo) ListManagedExecutionIDsByEngine(_ context.Context, _ string, after uuid.UUID, _ int) ([]uuid.UUID, error) {
+	if after != uuid.Nil {
+		return nil, nil
+	}
 	return []uuid.UUID{r.execution.ID}, nil
 }
 
@@ -27,11 +31,12 @@ func (r *fakeManagedRepo) GetVersion(context.Context, uuid.UUID) (domain.Workflo
 }
 
 type fakeManagedStateService struct {
-	succeeded int
-	failed    int
-	outputID  uuid.UUID
-	failCode  string
-	metrics   map[string]any
+	succeeded   int
+	failed      int
+	outputID    uuid.UUID
+	failCode    string
+	failMessage string
+	metrics     map[string]any
 }
 
 func (s *fakeManagedStateService) Succeed(_ context.Context, _ uuid.UUID, outputDatasetVersionID uuid.UUID, metrics map[string]any, _ string) (domain.Execution, error) {
@@ -41,9 +46,10 @@ func (s *fakeManagedStateService) Succeed(_ context.Context, _ uuid.UUID, output
 	return domain.Execution{Status: domain.ExecutionSucceeded}, nil
 }
 
-func (s *fakeManagedStateService) Fail(_ context.Context, _ uuid.UUID, code, _ string, metrics map[string]any, _ string) (domain.Execution, error) {
+func (s *fakeManagedStateService) Fail(_ context.Context, _ uuid.UUID, code, message string, metrics map[string]any, _ string) (domain.Execution, error) {
 	s.failed++
 	s.failCode = code
+	s.failMessage = message
 	s.metrics = metrics
 	return domain.Execution{Status: domain.ExecutionFailed}, nil
 }
@@ -62,10 +68,11 @@ func (b *fakeManagedBridge) Submit(context.Context, ProcessingRequest) (EngineRu
 
 func (b *fakeManagedBridge) Status(context.Context, ProcessingRequest, string) (EngineRun, error) {
 	return EngineRun{
-		ID:      "hop-run-1",
-		Name:    "energy-monthly",
-		State:   b.state,
-		Metrics: map[string]any{"nrErrors": 0},
+		ID:           "hop-run-1",
+		Name:         "energy-monthly",
+		State:        b.state,
+		ErrorMessage: "provider-specific stack trace must not enter Core error_message",
+		Metrics:      map[string]any{"nrErrors": 0},
 	}, nil
 }
 
@@ -118,7 +125,7 @@ func TestManagedReconcilerRetriesFinalizationAfterRemoteSuccess(t *testing.T) {
 	}
 }
 
-func TestManagedReconcilerMapsRemoteFailureToCoreFailure(t *testing.T) {
+func TestManagedReconcilerMapsRemoteFailureToPlatformOwnedError(t *testing.T) {
 	execution := runningHopExecution()
 	repo := &fakeManagedRepo{
 		execution: execution,
@@ -137,6 +144,9 @@ func TestManagedReconcilerMapsRemoteFailureToCoreFailure(t *testing.T) {
 	if state.failCode != "REMOTE_EXECUTION_FAILED" {
 		t.Fatalf("unexpected failure code %q", state.failCode)
 	}
+	if state.failMessage != "remote processing engine reported failure" {
+		t.Fatalf("raw provider diagnostics leaked into Core error message: %q", state.failMessage)
+	}
 }
 
 func TestManagedReconcilerLeavesRunningRemoteExecutionUntouched(t *testing.T) {
@@ -154,6 +164,30 @@ func TestManagedReconcilerLeavesRunningRemoteExecutionUntouched(t *testing.T) {
 	}
 	if state.succeeded != 0 || state.failed != 0 {
 		t.Fatalf("non-terminal remote run must not transition Core execution; succeeded=%d failed=%d", state.succeeded, state.failed)
+	}
+}
+
+func TestManagedReconcilerExpiresUncertainSubmittingExecution(t *testing.T) {
+	claimedAt := time.Now().UTC().Add(-10 * time.Minute)
+	execution := domain.Execution{
+		ID:                uuid.New(),
+		WorkspaceID:       uuid.New(),
+		WorkflowVersionID: uuid.New(),
+		OutputDatasetID:   uuid.New(),
+		TargetPeriod:      "2026-09",
+		Status:            domain.ExecutionSubmitting,
+		EngineType:        "HOP",
+		StartedAt:         &claimedAt,
+	}
+	repo := &fakeManagedRepo{execution: execution}
+	state := &fakeManagedStateService{}
+	reconciler := NewManagedReconciler(state, repo, &fakeManagedBridge{})
+
+	if err := reconciler.RunOnce(context.Background()); err != nil {
+		t.Fatalf("expire uncertain submission: %v", err)
+	}
+	if state.failed != 1 || state.failCode != "REMOTE_SUBMISSION_OUTCOME_UNKNOWN" {
+		t.Fatalf("expected uncertain submission failure, got count=%d code=%q", state.failed, state.failCode)
 	}
 }
 
