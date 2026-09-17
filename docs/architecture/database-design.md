@@ -1,29 +1,29 @@
-# Database Design V1.0
+# 数据库设计 V1.0
 
-Target: PostgreSQL 16+.
+目标数据库：PostgreSQL 16+。
 
-## 1. General Conventions
+## 1. 通用约定
 
-- Primary key: UUID
-- Business code: `varchar(64)`
-- Time: `timestamptz`
-- Extension fields: JSONB
-- Optimistic lock for mutable aggregates: `revision bigint`
-- Soft delete only for mutable business master objects
-- Immutable facts must not be soft-deleted or overwritten
+- 主键：UUID
+- 业务编码：`varchar(64)`
+- 时间：`timestamptz`
+- 扩展字段：JSONB
+- 可变聚合的乐观锁：`revision bigint`
+- 仅对可变业务主对象使用软删除
+- 不可变事实不得软删除或覆盖
 
-## 2. Multi-Tenant Boundary
+## 2. 多租户边界
 
-Core business objects reserve:
+核心业务对象预留：
 
 - `workspace_id`
-- `project_id` where applicable
+- `project_id`（适用时）
 
-Workspace represents organization / tenant boundary; Project represents a concrete initiative or product workspace.
+Workspace 代表组织 / 租户边界；Project 代表一个具体的项目或产品工作空间。
 
-## 3. Core Tables
+## 3. 核心表
 
-First migrations should cover:
+首批迁移应覆盖：
 
 ```text
 workspace
@@ -61,7 +61,7 @@ audit_event
 outbox_event
 ```
 
-Second batch:
+第二批：
 
 ```text
 authorization
@@ -84,9 +84,9 @@ cost_allocation
 
 ## 4. DataResource
 
-DataResource is a business-level resource, not a physical table.
+DataResource 是业务级资源，而不是物理表。
 
-Key fields:
+关键字段：
 
 - id
 - workspace_id
@@ -103,12 +103,12 @@ Key fields:
 
 ## 5. ResourceBinding
 
-Separates Core from metadata engines and physical systems.
+用于将核心域与元数据引擎、物理系统解耦。
 
-Key fields:
+关键字段：
 
 - resource_id
-- provider (`OPENMETADATA`, etc.)
+- provider（`OPENMETADATA` 等）
 - entity_type
 - external_id
 - external_fqn
@@ -116,20 +116,20 @@ Key fields:
 - binding_metadata JSONB
 - is_primary
 
-No database FK to external systems.
+对外部系统不建立数据库外键。
 
 ## 6. Dataset / DatasetVersion
 
-Dataset is logical identity. DatasetVersion is an immutable production fact.
+Dataset 是逻辑身份。DatasetVersion 是不可变的生产事实。
 
-Dataset types:
+Dataset 类型：
 
 - RAW
 - STANDARDIZED
 - CURATED
 - PRODUCT
 
-DatasetVersion stores:
+DatasetVersion 存储：
 
 - version_no
 - storage_type / storage_uri
@@ -140,33 +140,33 @@ DatasetVersion stores:
 - rights_snapshot_id
 - quality_status
 - compliance_status
-- snapshot window
+- snapshot window（快照时间窗口）
 - metadata JSONB
 
-DatasetVersion must not be updated after it reaches frozen state.
+DatasetVersion 进入冻结状态后不得更新。
 
-## 7. Production Lineage
+## 7. 生产血缘
 
-`dataset_version_lineage` records input/output lineage independent of OpenMetadata technical lineage.
+`dataset_version_lineage` 记录输入/输出血缘，独立于 OpenMetadata 的技术血缘。
 
-This is the platform Production Graph.
+这就是平台的 Production Graph（生产图谱）。
 
 ## 8. Entity
 
-Core model:
+核心模型：
 
 ```text
 EntityType → Entity → EntityMapping
 ```
 
-Entity fields:
+Entity 字段：
 
 - canonical_key
 - canonical_name
 - attributes JSONB
 - status
 
-EntityMapping stores:
+EntityMapping 存储：
 
 - source_type
 - source_ref
@@ -181,21 +181,21 @@ EntityMapping stores:
 
 ## 9. Execution
 
-Execution is the platform business execution record, independent of engine job IDs.
+Execution 是平台的业务执行记录，独立于引擎作业 ID。
 
-Stores:
+存储：
 
 - workflow / workflow_version / task
 - execution_type
 - executor_type
 - engine_execution_id
 - status
-- timing
-- rows / bytes in/out
+- timing（时序信息）
+- rows / bytes in/out（输入输出的行数 / 字节数）
 - runtime_metrics JSONB
 - error code/message
 
-Execution may generate:
+Execution 可产生：
 
 - DatasetVersion
 - CostEvent
@@ -204,13 +204,13 @@ Execution may generate:
 
 ## 10. DataProduct / ProductVersion / ProductRelease
 
-DataProduct: stable identity.
+DataProduct：稳定身份。
 
-ProductVersion: immutable product specification.
+ProductVersion：不可变的产品规格。
 
-ProductRelease: immutable published snapshot.
+ProductRelease：不可变的已发布快照。
 
-ProductRelease references exact:
+ProductRelease 精确引用：
 
 - product_version
 - dataset versions
@@ -220,50 +220,50 @@ ProductRelease references exact:
 - compliance result
 - evidence snapshot
 
-Published Release must never be edited in place.
+已发布的 Release 绝不可就地编辑。
 
 ## 11. Evidence
 
-Evidence stores evidence metadata and optional artifact location/hash.
+Evidence 存储证据元数据以及可选的产物位置/哈希。
 
-EvidenceRelation links evidence to arbitrary business objects using `(object_type, object_id)`.
+EvidenceRelation 通过 `(object_type, object_id)` 将证据关联到任意业务对象。
 
-EvidenceSnapshot freezes the manifest of a release/case at a point in time.
+EvidenceSnapshot 在某一时间点冻结某个 Release / 案件（case）的证据清单（manifest）。
 
 ## 12. Cost
 
-CostEvent supports both monetary and quantity-based events.
+CostEvent 同时支持金额型与数量型事件。
 
-Examples:
+示例：
 
 - amount=12.5 CNY, category=COMPUTE
 - quantity=2.5 HOUR, category=HUMAN
 
-Accounting classification is a later professional review and must not be conflated with production cost collection.
+会计口径归类属于后续的专业复核工作，不得与生产成本归集混为一谈。
 
-## 13. JSONB Policy
+## 13. JSONB 使用策略
 
-Use JSONB for:
+JSONB 用于：
 
-- engine-specific metadata
-- runtime metrics
-- schemas and snapshots
-- industry extension attributes
-- delivery config
-- evidence manifest
+- 引擎相关元数据
+- 运行时指标
+- schema 与快照
+- 行业扩展属性
+- 交付配置
+- 证据清单（evidence manifest）
 
-Do not use JSONB for:
+JSONB 不用于：
 
-- IDs / FKs
-- status
-- version numbers
+- ID / 外键
+- 状态
+- 版本号
 - owner
-- timestamps
-- fields frequently joined or constrained
+- 时间戳
+- 需要频繁关联或约束的字段
 
-## 14. Deletion Policy
+## 14. 删除策略
 
-Soft-delete allowed:
+允许软删除：
 
 - UseCase
 - DataResource
@@ -271,7 +271,7 @@ Soft-delete allowed:
 - DataProduct
 - Entity
 
-Do not delete immutable facts:
+不得删除的不可变事实：
 
 - DatasetVersion
 - Execution

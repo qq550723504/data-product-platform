@@ -1,10 +1,10 @@
-# Enterprise Activity Governance Alignment
+# 企业经营活跃度治理对齐（Enterprise Activity Governance Alignment）
 
-This note records the required alignment between the native Enterprise Activity processing output and the frozen V1 Data Contract / Quality / Compliance policies.
+本说明记录原生企业经营活跃度处理输出与已冻结的 V1 Data Contract / Quality / Compliance 策略之间必须完成的对齐。
 
-## Required product schema
+## 必需的产品 schema
 
-The CURATED Product Dataset emitted by the native worker must use the Data Contract field names:
+原生 worker 产出的 CURATED Product Dataset 必须使用 Data Contract 中的字段名：
 
 - `company_id`
 - `company_name`
@@ -17,37 +17,37 @@ The CURATED Product Dataset emitted by the native worker must use the Data Contr
 - `indicator_coverage`
 - `generated_at`
 
-Legacy processing aliases (`canonical_company_id`, `target_period`) may be accepted temporarily by readers but must not be the canonical Product Dataset schema.
+历史遗留的处理别名（`canonical_company_id`、`target_period`）可以被读取方临时接受，但不得作为权威的 Product Dataset schema。
 
-## Negative energy quarantine
+## 负值能耗隔离（Negative energy quarantine）
 
-A RAW energy record with `energy_kwh < 0` must:
+对于 `energy_kwh < 0` 的 RAW energy 记录，必须：
 
-1. be persisted to `execution_quarantine_record` with reason `NEGATIVE_ENERGY_KWH`;
-2. be excluded from accepted energy readings used by indicators;
-3. contribute to `quarantineCount`;
-4. not increase the accepted-negative-energy rate.
+1. 以原因 `NEGATIVE_ENERGY_KWH` 持久化到 `execution_quarantine_record`；
+2. 从指标所用的已接受能耗读数中排除；
+3. 计入 `quarantineCount`；
+4. 不增加"已接受负值能耗率"（accepted-negative-energy rate）。
 
-The output DatasetVersion processing metadata must include:
+输出的 DatasetVersion 处理元数据必须包含：
 
 - `unresolvedEntityRate`
 - `acceptedNegativeEnergyRate`
 - `quarantineCount`
-- exact WorkflowVersion
-- exact Indicator Set version
-- exact Entity Matching Policy version
+- 确切的 WorkflowVersion
+- 确切的 Indicator Set 版本
+- 确切的 Entity Matching Policy 版本
 
-For a successfully completed native reference workflow where all source company records are resolved and negative energy is quarantined before indicator calculation:
+对于一次成功完成的原生参考工作流，若所有源企业记录均已解析、且负值能耗在指标计算前已被隔离，则：
 
 ```text
 unresolvedEntityRate = 0
 acceptedNegativeEnergyRate = 0
 ```
 
-## Generated timestamp
+## 生成时间戳
 
-`generated_at` is product metadata for the release candidate. It may vary between executions; the frozen DatasetVersion checksum makes the concrete generated artifact reproducible and auditable.
+`generated_at` 是发布候选（release candidate）的产品元数据。它可以在不同执行之间变化；冻结的 DatasetVersion 校验和（checksum）使得具体的生成产物可复现、可审计。
 
-## Gate consequence
+## 门禁要求
 
-The real Quality and Compliance gates introduced in Sprint 3.2 must be able to run against the worker-produced CURATED DatasetVersion without compatibility mocks. This alignment must be completed before ReleaseReadiness can transition a release to `READY`.
+Sprint 3.2 引入的真实 Quality 与 Compliance 门禁必须能够直接针对 worker 产出的 CURATED DatasetVersion 运行，而不需要兼容性 mock。必须在完成本对齐之后，ReleaseReadiness 才能将某个 release 迁移到 `READY`。

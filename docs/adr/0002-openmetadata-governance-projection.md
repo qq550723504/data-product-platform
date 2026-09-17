@@ -1,33 +1,33 @@
-# ADR-0002: OpenMetadata Is a Governance Projection, Not the System of Record
+# ADR-0002：OpenMetadata 是治理投影，而非真相来源
 
-- Status: Accepted
+- 状态：已接受
 
-## Context
+## 背景
 
-OpenMetadata is strong at technical metadata, lineage, glossary, classification, ownership and governance views, but the platform also requires DatasetVersion, Rights, production Workflow, Cost, Evidence and ProductRelease semantics.
+OpenMetadata 擅长技术元数据、血缘、术语表（Glossary）、分类、Owner 归属与治理视图，但平台同时还需要 DatasetVersion、Rights、生产 Workflow、Cost、Evidence 与 ProductRelease 等语义。
 
-## Decision
+## 决策
 
-The Core Platform database is the System of Record for Data Product production and lifecycle state.
+核心平台数据库是数据产品生产与生命周期状态的真相来源（System of Record）。
 
-OpenMetadata is integrated through `MetadataEngine` and `ResourceBinding` as a Governance Projection.
+OpenMetadata 通过 `MetadataEngine` 与 `ResourceBinding` 以治理投影（Governance Projection）的方式接入。
 
-## Consequences
+## 后果
 
-OpenMetadata may own or project:
+OpenMetadata 可以拥有或投影：
 
-- physical asset metadata
-- technical lineage
-- glossary/classification
-- governance view of Data Products
+- 物理资产元数据
+- 技术血缘
+- 术语表 / 分类
+- 数据产品的治理视图
 
-OpenMetadata must not own:
+OpenMetadata 不得拥有：
 
 - DatasetVersion
-- Authorization / Rights state
-- Production Workflow truth
-- Cost Ledger
+- Authorization / Rights 状态
+- 生产 Workflow 的真相
+- Cost Ledger（成本账本）
 - Evidence
-- ProductRelease state
+- ProductRelease 状态
 
-OpenMetadata failure must not roll back a valid Core Product Release.
+OpenMetadata 故障不得回滚一个有效的核心 Product Release。
