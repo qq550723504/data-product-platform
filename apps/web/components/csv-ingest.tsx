@@ -69,6 +69,7 @@ export function CSVIngest({ operationId, enabled, resumeVersionId }: { operation
       <span className="eyebrow">01 · Original CSV</span><h2>预检并保存原始文件</h2>
       <p className={styles.meta}>UTF-8（支持 BOM）、逗号分隔，最多 512 KiB / 1000 条记录。必需字段：<code>source_company_id</code>、<code>company_name</code>。</p>
       <p className={styles.meta}>可选字段：<code>unified_social_credit_code</code>、<code>legal_representative</code>、<code>registered_address</code>、<code>entry_date</code>、<code>company_status</code>。V1 不提供任意字段映射或 Excel 导入。</p>
+      <p className={styles.meta}><a href="/templates/company-import-v1.csv" download="company-import-v1.csv">下载 CSV 示例模板（合成数据）</a> · 请替换示例记录。信用代码留空仅用于字段演示，不保证产生可确认的匹配。</p>
       <form action={action} className={styles.form} aria-label="接入 CSV">
         <label>数据集名称<input name="name" required maxLength={120} value={name} disabled={locked} onChange={(event) => setName(event.target.value)} /></label>
         <label>数据来源说明<textarea name="source" required maxLength={500} rows={2} value={source} disabled={locked} onChange={(event) => setSource(event.target.value)} placeholder="说明文件的提供方或生成方式，不要填写密钥。" /></label>

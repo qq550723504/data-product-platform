@@ -1,0 +1,3 @@
+﻿source_company_id,company_name,unified_social_credit_code,legal_representative,registered_address,entry_date,company_status
+DEMO-001,合成示例甲有限公司,,合成示例甲,合成示例地址A,2025-01-01,ACTIVE
+DEMO-002,合成示例乙有限公司,,合成示例乙,合成示例地址B,2025-02-01,ACTIVE

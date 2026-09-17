@@ -10,6 +10,12 @@
 收到 SHA-256 验证通过的 RAW 版本后，显式确认基准来源角色并启动主体解析。
 待审候选在已有 `/reviews` 队列处理。向导不执行 demo.mjs，也不自动审核或发布。
 
+页面提供“下载 CSV 示例模板（合成数据）”，对应
+`apps/web/public/templates/company-import-v1.csv`。示例含七列表头和两条合成记录，
+信用代码有意留空；仅用于说明格式，不保证建立新主体或产生可确认匹配。
+正式处理前应替换示例、核实来源与权限。模板下载和本地预览在只读模式下也可用，
+不会创建 Core 业务对象。生产 standalone 构建必须带上 `public` 资源。
+
 支持 UTF-8（含 BOM）、逗号分隔、双引号转义、LF/CRLF 和引号内换行。
 上限 512 KiB、1000 条记录、64 列、每字段 4096 字符；超过上限应先拆分。
 必填列 `source_company_id`、`company_name`，每条记录非空，来源键文件内唯一。
@@ -73,3 +79,25 @@ MinIO 字节核对 BOM 和哈希，并核对审核人、理由、Evidence、Audi
 证据文件：`ingest-verification.json`、`ingest-live.log`、`browser-ingest.log`、
 `report-ingest.json`、`html-ingest/` 和 `results-ingest/` 截图/追踪。
 这些是合成数据验收，不代表真实身份提供方、生产权限、大文件性能或商业上线验收。
+
+## 初次试用与版本选择
+
+当前切片位于 `codex/csv-ingestion-review-ui`，基于 #91；是否合入 main 以 PR 实际状态为准。
+从完整仓库根目录运行：
+
+```sh
+git fetch origin
+git switch codex/csv-ingestion-review-ui
+node deploy/demo/demo.mjs doctor
+node deploy/demo/demo.mjs up
+```
+
+打开 `http://127.0.0.1:3180/ingest`。在自己的合成 CSV 上完成：下载模板并修改 →
+预检 → 保存 RAW → 保存继续入口 → 显式启动主体解析 → 查看人工审核/输出版本。
+不要运行 `advance` 来推进刚上传的 CSV：该命令仍只服务预置的经营活跃度演示样本。
+审核队列按工作区显示全部候选；可能同时含演示样本任务，请核对向导返回的任务 ID。
+
+`node deploy/demo/demo.mjs down` 停止容器但保留历史。
+`node deploy/demo/demo.mjs verify` 验证的是预置演示产品，**不是新接入 CSV 的通用验收命令**。
+新 CSV 的自动化集成验收由 `TestBrowserCSVIngest` 单独执行。
+遇到部分成功先保存已知 ID 并核对，不要清空数据或反复提交来掩盖异常。

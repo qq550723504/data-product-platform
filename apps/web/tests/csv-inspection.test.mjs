@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import csv from "../.ingest-tests/csv-inspection.js";
 const inspect = (text) => csv.inspectCompanyCSV(new TextEncoder().encode(text));
 const header = "source_company_id,company_name";
@@ -38,3 +39,16 @@ test("preview is bounded to five records while every record is validated", () =>
   assert.equal(result.preview.length, 5); assert.equal(result.rowCount, 10);
 });
 test("blank physical lines match Go CSV behavior", () => assert.equal(inspect(`\n${header}\n\na,b\n\n`).rowCount, 1));
+
+// Exercise the exact asset offered by the production console, not a second copy.
+test("downloadable synthetic template satisfies the declared CSV format", () => {
+  const bytes = readFileSync(new URL("../public/templates/company-import-v1.csv", import.meta.url));
+  const original = Buffer.from(bytes);
+  const result = csv.inspectCompanyCSV(bytes);
+  assert.equal(result.hasBOM, true);
+  assert.equal(result.rowCount, 2);
+  assert.deepEqual(result.headers, ["source_company_id", "company_name", "unified_social_credit_code", "legal_representative", "registered_address", "entry_date", "company_status"]);
+  assert.deepEqual(result.preview.map((row) => row[0]), ["DEMO-001", "DEMO-002"]);
+  assert.ok(result.preview.every((row) => row[1].startsWith("合成示例") && row[2] === ""));
+  assert.deepEqual(bytes, original);
+});

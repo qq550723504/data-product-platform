@@ -4,6 +4,18 @@ const input = JSON.parse(await readFile(process.env.LIVE_BROWSER_MANIFEST,"utf8"
 test("new CSV -> original RAW -> explicit resolution -> manual review, without seeding commands",async({page})=>{
   const errors=[];page.on("pageerror",error=>errors.push(error.message));
   await page.goto("/ingest");
+  // The standalone bundle must ship the same template as the source checkout.
+  const downloadPending = page.waitForEvent("download");
+  await page.getByRole("link", { name: "下载 CSV 示例模板（合成数据）" }).click();
+  const download = await downloadPending;
+  expect(download.suggestedFilename()).toBe("company-import-v1.csv");
+  const templatePath = test.info().outputPath("downloaded-company-import.csv");
+  await download.saveAs(templatePath);
+  expect(await download.failure()).toBeNull();
+  expect(await readFile(templatePath)).toEqual(await readFile(new URL("../../apps/web/public/templates/company-import-v1.csv", import.meta.url)));
+  // Keep the dynamically generated input below; do not substitute the template
+  // for the test's fresh-workspace/manual-review acceptance.
+
   const form=page.getByRole("form",{name:"接入 CSV"});
   await form.getByLabel("数据集名称").fill(input.name);
   await form.getByLabel("数据来源说明").fill("本次浏览器验收动态生成的合成 CSV，不是仓库内置样本。");
