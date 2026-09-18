@@ -213,6 +213,8 @@ func (r *PostgresRepository) RecordMappingDecision(ctx context.Context, tx pgx.T
 	if !origin.Valid() {
 		return domain.MappingDecision{}, fmt.Errorf("unsupported mapping decision source origin %q", origin)
 	}
+	// Compare replay semantics against the normalized request, not the raw input.
+	cmd.Mapping = mapping
 
 	key, err := domain.NormalizeMappingDecisionKey(cmd.IdempotencyKey)
 	if err != nil {
@@ -237,11 +239,26 @@ func (r *PostgresRepository) RecordMappingDecision(ctx context.Context, tx pgx.T
 			return domain.MappingDecision{}, err
 		}
 		if found {
-			if existing.SourceType != mapping.SourceType || existing.SourceRef != mapping.SourceRef || existing.SourceKey != mapping.SourceKey {
+			// A key hit is only an idempotent replay when the request semantics
+			// match. Reusing the key for another target, reason, actor or source
+			// must fail instead of reporting a false success.
+			if !domain.MappingDecisionMatchesRequest(existing, cmd) {
 				return domain.MappingDecision{}, domain.ErrMappingDecisionKeyConflict
 			}
 			return existing, nil
 		}
+	}
+
+	// Serialize every operation on the same source, keyed independently of the
+	// operation idempotency key. A first creation cannot lock a row that does not
+	// exist yet, so two different keys (for example, one human review and one
+	// automatic match) could both observe "no current decision" and then race on
+	// the same upsert. Holding the source lock before the read makes that
+	// impossible: the second operation re-reads the committed current decision.
+	// The key lock is always taken first so the two lock orders cannot deadlock.
+	sourceDigest := mapping.SourceType + "\x1f" + mapping.SourceRef + "\x1f" + mapping.SourceKey
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtext($1), hashtext($2))`, mapping.WorkspaceID.String(), sourceDigest); err != nil {
+		return domain.MappingDecision{}, fmt.Errorf("lock mapping source: %w", err)
 	}
 
 	// Lock the current projection row so the concurrency check and the human
@@ -261,8 +278,8 @@ func (r *PostgresRepository) RecordMappingDecision(ctx context.Context, tx pgx.T
 		return domain.MappingDecision{}, fmt.Errorf("lock current entity mapping: %w", err)
 	}
 
-	if cmd.ExpectCurrentDecision && !sameUUID(currentDecisionID, cmd.ExpectedCurrentDecisionID) {
-		return domain.MappingDecision{}, domain.ErrMappingDecisionConflict
+	if err := domain.EnsureMappingDecisionExpectation(currentDecisionID, cmd.ExpectCurrentDecision, cmd.ExpectedCurrentDecisionID, mapping.Status); err != nil {
+		return domain.MappingDecision{}, err
 	}
 	if err := domain.EnsureMappingDecisionAllowed(currentStatus, mapping.Status); err != nil {
 		return domain.MappingDecision{}, err
@@ -355,11 +372,4 @@ func (r *PostgresRepository) RecordMappingDecision(ctx context.Context, tx pgx.T
 		SourceJobID:        cmd.SourceJobID,
 		SourceCandidateID:  cmd.SourceCandidateID,
 	}, nil
-}
-
-func sameUUID(a, b *uuid.UUID) bool {
-	if a == nil || b == nil {
-		return a == nil && b == nil
-	}
-	return *a == *b
 }

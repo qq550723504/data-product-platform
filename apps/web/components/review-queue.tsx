@@ -21,6 +21,8 @@ function ReviewForm({ review, onResult }: { review: EntityReview; onResult: (res
     <form action={action} className={styles.form} aria-label={`审核 ${review.sourceName || review.sourceKey}`}>
       <input type="hidden" name="candidateId" value={review.candidateId} />
       <input type="hidden" name="jobId" value={review.jobId} />
+      {/* The token is what the reviewer actually saw, not a value read at submit. */}
+      <input type="hidden" name="expectedDecisionId" value={review.currentMappingDecisionId ?? ""} />
       <label htmlFor={`reason-${review.candidateId}`}>审核理由（必填）</label>
       <textarea id={`reason-${review.candidateId}`} name="reason" required maxLength={2000} rows={3}
         value={reason} onChange={(event) => setReason(event.target.value)} disabled={locked}

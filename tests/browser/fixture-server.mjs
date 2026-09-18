@@ -10,6 +10,7 @@ export const ids = {
   job: "66666666-6666-4666-8666-666666666666",
   candidate: "77777777-7777-4777-8777-777777777777",
   entity: "88888888-8888-4888-8888-888888888888",
+  decision: "99999999-9999-4999-8999-999999999999",
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
@@ -81,6 +82,9 @@ export function createFixtureServer() {
         candidateEntityId: ids.entity, status: state.candidateStatus, decision: "REVIEW", matchMethod: "RULE",
         matchRuleId: "fixture-rule", confidence: 0.8, engineName: "fixture", engineVersion: "1", modelVersion: "1",
         policyRef: "test/policy", policyVersion: "1", createdAt: stamp,
+        // The reviewer observes the mapping decision that is current when the
+        // queue is rendered; the form submits it as the concurrency token.
+        ...(state.candidateStatus === "PENDING" ? { currentMappingDecisionId: ids.decision } : {}),
       };
       function page(items) {
         const limit = Math.max(1, Number(url.searchParams.get("limit")) || 100);
@@ -110,6 +114,9 @@ export function createFixtureServer() {
         const reviewPrefix = `/api/v1/entity-match-reviews/${ids.candidate}/`;
         if ([reviewPrefix + "confirm", reviewPrefix + "reject"].includes(url.pathname)) {
           if (typeof body.reason !== "string" || !body.reason.trim()) return send(400, { error: { code: "REVIEW_REASON_REQUIRED" } });
+          // A stale or absent token must never replace the decision the reviewer
+          // saw; only the exact observed decision is accepted.
+          if (body.expectedDecisionId !== ids.decision) return send(409, { error: { code: "ENTITY_MAPPING_DECISION_CONFLICT" } });
           if (state.scenario === "review-conflict" || state.candidateStatus !== "PENDING") return send(409, { error: { code: "REVIEW_CONFLICT" } });
           state.candidateStatus = url.pathname.endsWith("/confirm") ? "CONFIRMED" : "REJECTED";
           return send(200, { ...job, status: "SUCCEEDED" });

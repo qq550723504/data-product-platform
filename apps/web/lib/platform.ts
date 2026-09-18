@@ -148,6 +148,10 @@ export type EntityReview = {
   candidateEntityId?: string;
   decision: string;
   status: string;
+  // Optimistic-concurrency token: the mapping decision that was current when the
+  // queue was rendered. Sent back so a confirmation cannot replace a decision
+  // that changed after the reviewer opened the page.
+  currentMappingDecisionId?: string;
   matchMethod: string;
   matchRuleId: string;
   confidence: number;
