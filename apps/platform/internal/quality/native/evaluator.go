@@ -158,16 +158,24 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 		return pass(observed)
 
 	case "QA-INDICATOR-COVERAGE-RANGE":
+		// The policy expression is `all_non_null_values_between(indicator_coverage, 0, 100)`.
+		// An absent cell is therefore allowed and reported separately; only a present
+		// value that is malformed or outside 0..100 fails the rule.
 		invalid := 0
+		missing := 0
 		for _, row := range ctx.Table.Rows {
+			if strings.TrimSpace(row["indicator_coverage"]) == "" {
+				missing++
+				continue
+			}
 			parsed, ok := finiteFloat(row["indicator_coverage"])
 			if !ok || parsed < 0 || parsed > 100 {
 				invalid++
 			}
 		}
-		observed := map[string]any{"invalid": invalid, "total": len(ctx.Table.Rows)}
+		observed := map[string]any{"invalid": invalid, "missing": missing, "total": len(ctx.Table.Rows)}
 		if len(ctx.Table.Rows) == 0 || invalid != 0 {
-			return fail("indicator_coverage contains values outside 0..100", observed)
+			return fail("non-null indicator_coverage values must be within 0..100", observed)
 		}
 		return pass(observed)
 

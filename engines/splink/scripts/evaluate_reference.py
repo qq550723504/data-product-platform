@@ -305,6 +305,38 @@ def evaluate_mode(
     return {"mode": mode, "metrics": counts, "records": records}
 
 
+def validate_evaluation_labels(rows: list[dict[str, str]]) -> dict[str, dict[str, str]]:
+    """Reject duplicate or internally inconsistent ground-truth rows.
+
+    ``label`` is what the report aggregates while ``expected_reference_id`` is
+    what the metrics consume, so the two must agree; otherwise the report can
+    describe a MATCH distribution that the evaluation never scored. Duplicate
+    ``source_unique_id`` rows would be silently collapsed by the dict lookup, so
+    they are rejected instead of quietly changing the denominator.
+    """
+    labels: dict[str, dict[str, str]] = {}
+    duplicates: set[str] = set()
+    for row in rows:
+        source_id = row.get("source_unique_id", "")
+        if not source_id:
+            raise SystemExit("evaluation labels require source_unique_id on every row")
+        if source_id in labels:
+            duplicates.add(source_id)
+            continue
+        label = row.get("label", "")
+        expected = row.get("expected_reference_id", "")
+        if label not in {"MATCH", "NO_MATCH"}:
+            raise SystemExit(f"evaluation label {source_id} has unknown label {label!r}")
+        if label == "MATCH" and not expected:
+            raise SystemExit(f"evaluation label {source_id} is MATCH but expected_reference_id is empty")
+        if label == "NO_MATCH" and expected:
+            raise SystemExit(f"evaluation label {source_id} is NO_MATCH but expected_reference_id is {expected!r}")
+        labels[source_id] = row
+    if duplicates:
+        raise SystemExit("evaluation labels contain duplicate source_unique_id rows: " + ", ".join(sorted(duplicates)))
+    return labels
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Train and evaluate the Park COMPANY Splink reference model")
     parser.add_argument("--report", type=Path, default=None, help="Write evaluation report JSON")
@@ -322,7 +354,7 @@ def main() -> int:
     source_rows = read_csv(FIXTURE_ROOT / "sources.csv")
     training_labels = read_csv(FIXTURE_ROOT / "training_labels.csv")
     evaluation_label_rows = read_csv(FIXTURE_ROOT / "evaluation_labels.csv")
-    evaluation_labels = {row["source_unique_id"]: row for row in evaluation_label_rows}
+    evaluation_labels = validate_evaluation_labels(evaluation_label_rows)
 
     references = [normalize_reference(row, policy) for row in reference_rows]
     training_sources = [normalize_source(row, policy) for row in source_rows if row["split"] == "train"]
