@@ -111,13 +111,11 @@ export async function executeReview(
     }
     // These read endpoints are global in Core: verify scope before calling the command.
     parseJob(await json(`/api/v1/entity-match-jobs/${jobId}`), jobId, workspaceId);
-    const response = record(await json(`/api/v1/entity-match-jobs/${jobId}/reviews`));
-    if (!Array.isArray(response.items)) {
-      throw new ReviewCommandError("Core API 未返回有效候选列表。", "INVALID_RESPONSE");
-    }
-    const candidates = response.items.map(record);
-    const candidate = candidates.find((item) => sameId(item.id, candidateId));
-    if (!candidate || !sameId(candidate.jobId, jobId)) {
+    // Look up the single candidate instead of draining every candidate of the
+    // job: a large match job would otherwise transfer the whole queue for each
+    // decision, and a candidate beyond the first page would be misjudged absent.
+    const candidate = record(await json(`/api/v1/entity-match-reviews/${candidateId}`));
+    if (!sameId(candidate.id, candidateId) || !sameId(candidate.jobId, jobId)) {
       throw new ReviewCommandError("候选不属于此任务，已阻止提交。", "CANDIDATE_MISMATCH");
     }
     if (candidate.status !== "PENDING") {

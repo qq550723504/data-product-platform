@@ -1,11 +1,17 @@
 import Link from "next/link";
 import { BackLink, Badge, DefinitionList, EmptyState, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { ProductReleasePanel, type ReleasePanelItem } from "@/components/product-release-panel";
+import { collectAllPages } from "@/lib/pagination";
 import { configuredWorkspaceId, platform, type DataProduct } from "@/lib/platform";
+import { findAcrossPages } from "@/lib/scoped-lookup";
 
 async function scopedProduct(id: string): Promise<DataProduct> {
-  const products = await platform.products(100, 0);
-  const product = products.items.find((item) => item.id.toLowerCase() === id.toLowerCase());
+  // A valid product URL must resolve even when the workspace has more than the
+  // first page of products; a first-page-only lookup reports "不存在" wrongly.
+  const product = await findAcrossPages(
+    (limit, offset) => platform.products(limit, offset),
+    (item) => item.id.toLowerCase() === id.toLowerCase(),
+  );
   if (!product) throw new Error("当前 Workspace 中不存在此数据产品。");
   return product;
 }
@@ -18,13 +24,15 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   try {
     const product = await scopedProduct(id);
-    const releasesPage = await platform.releases(product.id, 100, 0);
+    // Release history is immutable and unbounded; drain every page so older
+    // releases are not silently dropped from the panel.
+    const releasedItems = await collectAllPages((limit, offset) => platform.releases(product.id, limit, offset));
     const version = product.currentVersionId ? await platform.productVersion(product.currentVersionId) : null;
     if (version && version.productId.toLowerCase() !== product.id.toLowerCase()) {
       throw new Error("当前 ProductVersion 与数据产品不匹配。");
     }
 
-    const releases: ReleasePanelItem[] = await Promise.all(releasesPage.items.map(async (summary) => {
+    const releases: ReleasePanelItem[] = await Promise.all(releasedItems.map(async (summary) => {
       const [release, readiness] = await Promise.all([
         platform.release(summary.id),
         platform.releaseReadiness(summary.id),
@@ -103,7 +111,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <section id="releases">
           <div className="panel-header">
             <div><h2>ProductRelease 与 Readiness</h2><p>逐项显示 production、dataset、rights、quality、compliance、contract、evidence、delivery 八个 Gate。</p></div>
-            <span className="eyebrow">{releasesPage.page.total} Releases</span>
+            <span className="eyebrow">{releases.length} Releases</span>
           </div>
           <ProductReleasePanel productId={product.id} items={releases} actionsEnabled={actionsEnabled} />
         </section>

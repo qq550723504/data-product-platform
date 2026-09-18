@@ -26,6 +26,9 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/entity-match-jobs", h.startJob)
 	mux.HandleFunc("GET /api/v1/entity-match-jobs/{jobId}", h.getJob)
 	mux.HandleFunc("GET /api/v1/entity-match-jobs/{jobId}/reviews", h.listReviews)
+	// Targeted candidate lookup: review actions must verify one candidate without
+	// transferring every candidate payload of a large match job.
+	mux.HandleFunc("GET /api/v1/entity-match-reviews/{candidateId}", h.getReviewCandidate)
 	mux.HandleFunc("POST /api/v1/entity-match-reviews/{candidateId}/confirm", h.confirm)
 	mux.HandleFunc("POST /api/v1/entity-match-reviews/{candidateId}/reject", h.reject)
 	mux.HandleFunc("GET /api/v1/entity-mappings", h.getMappingBySource)
@@ -132,6 +135,24 @@ func (h *Handler) listReviews(w http.ResponseWriter, r *http.Request) {
 		result = append(result, candidateResponse(candidate))
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"items": result})
+}
+
+func (h *Handler) getReviewCandidate(w http.ResponseWriter, r *http.Request) {
+	candidateID, err := uuid.Parse(r.PathValue("candidateId"))
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CANDIDATE_ID", "candidateId must be a UUID", nil)
+		return
+	}
+	candidate, err := h.repo.GetCandidate(r.Context(), candidateID)
+	if err != nil {
+		if errors.Is(err, infrastructure.ErrNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "ENTITY_MATCH_CANDIDATE_NOT_FOUND", "entity match candidate not found", nil)
+			return
+		}
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "ENTITY_MATCH_CANDIDATE_READ_FAILED", err.Error(), nil)
+		return
+	}
+	writeJSON(w, http.StatusOK, candidateResponse(candidate))
 }
 
 func (h *Handler) getMappingBySource(w http.ResponseWriter, r *http.Request) {

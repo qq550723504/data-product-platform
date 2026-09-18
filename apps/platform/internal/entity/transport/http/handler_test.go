@@ -51,3 +51,23 @@ func TestListEntityMappingsRequiresWorkspace(t *testing.T) {
 		t.Fatalf("error code = %q, want WORKSPACE_REQUIRED", envelope.Code)
 	}
 }
+
+// Review actions use a targeted candidate lookup; a malformed id must be
+// rejected before any database access.
+func TestGetReviewCandidateRejectsMalformedID(t *testing.T) {
+	handler := &Handler{}
+	request := httptest.NewRequest(http.MethodGet, "/api/v1/entity-match-reviews/not-a-uuid", nil)
+	request.SetPathValue("candidateId", "not-a-uuid")
+	recorder := httptest.NewRecorder()
+	handler.getReviewCandidate(recorder, request)
+	if recorder.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusBadRequest)
+	}
+	var envelope httpserver.ErrorEnvelope
+	if err := json.Unmarshal(recorder.Body.Bytes(), &envelope); err != nil {
+		t.Fatalf("decode error envelope: %v", err)
+	}
+	if envelope.Code != "INVALID_CANDIDATE_ID" {
+		t.Fatalf("error code = %q, want INVALID_CANDIDATE_ID", envelope.Code)
+	}
+}

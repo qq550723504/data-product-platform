@@ -18,7 +18,7 @@ function form(overrides = {}) {
   for (const [key, value] of Object.entries({ jobId: ids.job, candidateId: ids.candidate, decision: "confirm", reason: "  已核对来源记录  ", ...overrides })) data.set(key, value);
   return data;
 }
-function stub(responses = [job, { items: [candidate] }, { ...job, status: "SUCCEEDED" }]) {
+function stub(responses = [job, candidate, { ...job, status: "SUCCEEDED" }]) {
   const calls = [];
   const request = async (url, init) => {
     calls.push({ url, init });
@@ -37,6 +37,7 @@ for (const decision of ["confirm", "reject"]) {
     assert.equal(result.ok, true);
     assert.equal(result.job.status, "SUCCEEDED");
     assert.equal(transport.calls.length, 3);
+    assert.equal(transport.calls[1].url, `http://core.invalid/api/v1/entity-match-reviews/${ids.candidate}`);
     const { url, init } = transport.calls[2];
     assert.equal(url, `http://core.invalid/api/v1/entity-match-reviews/${ids.candidate}/${decision}`);
     assert.equal(init.headers["X-Actor-ID"], ids.actor);
@@ -80,22 +81,28 @@ for (const [name, payload] of [
   ["missing entity", { ...candidate, candidateEntityId: null }],
 ]) {
   test(`${name}: never posts`, async () => {
-    const transport = stub([job, { items: [payload] }]);
+    const transport = stub([job, payload]);
     assert.equal((await executeReview(form(), config, transport.request)).ok, false);
     assert.equal(transport.calls.length, 2);
   });
 }
 test("a pending candidate without an entity may be rejected, not confirmed", async () => {
-  const transport = stub([job, { items: [{ ...candidate, candidateEntityId: null }] }, job]);
+  const transport = stub([job, { ...candidate, candidateEntityId: null }, job]);
   assert.equal((await executeReview(form({ decision: "reject" }), config, transport.request)).ok, true);
 });
 test("invalid candidate response blocks the command", async () => {
-  const transport = stub([job, { items: [null] }]);
+  const transport = stub([job, null]);
   assert.equal((await executeReview(form(), config, transport.request)).ok, false);
   assert.equal(transport.calls.length, 2);
 });
+test("candidate lookup is targeted, never the whole job queue", async () => {
+  const transport = stub();
+  assert.equal((await executeReview(form(), config, transport.request)).ok, true);
+  assert.match(transport.calls[1].url, /\/api\/v1\/entity-match-reviews\/[0-9a-f-]{36}$/);
+  assert.doesNotMatch(transport.calls[1].url, /\/reviews$/);
+});
 test("nested Core errors surface a safe code, not SQL or internal messages", async () => {
-  const transport = stub([job, { items: [candidate] }, Response.json({ error: { code: "REVIEW_CONFLICT", message: "secret SQL" } }, { status: 400 })]);
+  const transport = stub([job, candidate, Response.json({ error: { code: "REVIEW_CONFLICT", message: "secret SQL" } }, { status: 400 })]);
   const result = await executeReview(form(), config, transport.request);
   assert.equal(result.ok, false);
   assert.equal(result.refreshRequired, true);
@@ -103,13 +110,13 @@ test("nested Core errors surface a safe code, not SQL or internal messages", asy
   assert.doesNotMatch(result.message, /secret SQL/);
 });
 test("concurrent review conflict requires refresh and never retries", async () => {
-  const transport = stub([job, { items: [candidate] }, new Response("conflict", { status: 409 })]);
+  const transport = stub([job, candidate, new Response("conflict", { status: 409 })]);
   const result = await executeReview(form(), config, transport.request);
   assert.equal(result.refreshRequired, true);
   assert.equal(transport.calls.length, 3);
 });
 test("timeout after POST is ambiguous, not claimed as a failed write or retried", async () => {
-  const transport = stub([job, { items: [candidate] }, new Error("timeout")]);
+  const transport = stub([job, candidate, new Error("timeout")]);
   const result = await executeReview(form(), config, transport.request);
   assert.equal(result.ok, false);
   assert.equal(result.refreshRequired, true);
@@ -117,7 +124,7 @@ test("timeout after POST is ambiguous, not claimed as a failed write or retried"
   assert.equal(transport.calls.length, 3);
 });
 test("mismatched command result is not reported as success", async () => {
-  const transport = stub([job, { items: [candidate] }, { ...job, id: ids.foreign }]);
+  const transport = stub([job, candidate, { ...job, id: ids.foreign }]);
   const result = await executeReview(form(), config, transport.request);
   assert.equal(result.ok, false);
   assert.equal(result.refreshRequired, true);
