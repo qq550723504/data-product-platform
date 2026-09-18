@@ -8,13 +8,13 @@
 
 1. 要求显式启用的 POC 开关，以及已配置的 workspace/reviewer UUID。
 2. 拉取该 job，并校验其 workspace 与身份。
-3. 拉取该 job 的候选，并校验候选归属关系与 PENDING 状态。
+3. 按 `candidateId` 定向拉取该候选（不加载整个 job 的候选列表），并校验候选归属关系与 PENDING 状态。
 4. 确认操作必须提供候选实体；拒绝操作绝不创建实体。
 5. 以去除首尾空白的原因（reason）和服务端推导出的 `X-Actor-ID` 调用既有的 `/confirm` 或 `/reject` 命令。状态迁移、映射与证据由 Core 拥有。
 
 返回的核心 job 状态会被展示；队列、工作台与数据集列表会被重新校验。POST 超时被视为结果未知，而不是确证的失败。不会自动重试任何写操作。应刷新并检查后再重试。
 
-队列已分页，且不会把"零待处理候选"等同于"就绪"。
+队列已分页，且不会把"零待处理候选"等同于"就绪"。为防止大型 match job 在每次决策时重复传输整个候选队列，预检使用 Core 只读端点 `GET /api/v1/entity-match-reviews/{candidateId}` 定向读取单个候选；该端点只返回一个候选，不返回 job 的全部候选负载。
 
 ## 本地 / 可信 POC 配置
 
@@ -37,7 +37,7 @@ https://nextjs.org/blog/august-2026-security-release
 
 `npm run test:reviews` 会编译与框架无关的边界层，并注入伪造的核心传输层（fake Core transport）运行 Node 契约测试（无需外部服务）。`npm run build` 会在 Next 生产构建之前运行这些测试，因此既有的 web CI 构建也会对它们设置门禁。同时请运行 `npm run typecheck` 与 `npm run lint`。
 
-本次交付已在本地验证：24 个传输/校验测试，覆盖确认/拒绝、actor 伪造、workspace/候选作用域、缺失原因、非 PENDING 候选、缺失实体、畸形响应、409 与超时。这些不是真实 Go/PostgreSQL 集成测试，也不是浏览器 E2E 测试。
+本次交付已在本地验证：25 个传输/校验测试，覆盖确认/拒绝、actor 伪造、workspace/候选作用域、缺失原因、非 PENDING 候选、缺失实体、畸形响应、409 与超时，以及"预检必须使用定向候选查询而非整个 job 队列"。这些不是真实 Go/PostgreSQL 集成测试，也不是浏览器 E2E 测试。
 
 仍需要针对真实已播种（seeded）POC 做浏览器验收：
 

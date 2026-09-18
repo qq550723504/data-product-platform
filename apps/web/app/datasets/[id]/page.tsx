@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BackLink, Badge, DefinitionList, EmptyState, LoadError, PageHeader, SetupRequired, formatBytes, formatDate, shortId } from "@/components/ui";
+import { collectAllPages } from "@/lib/pagination";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 
 export default async function DatasetDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -9,7 +10,12 @@ export default async function DatasetDetailPage({ params }: { params: Promise<{ 
   const { id } = await params;
 
   try {
-    const [dataset, versions] = await Promise.all([platform.dataset(id), platform.datasetVersions(id)]);
+    const [dataset, versions] = await Promise.all([
+      platform.dataset(id),
+      // Immutable version history must be drained across pages; a fixed first
+      // page would hide older versions once a dataset exceeds 100 versions.
+      collectAllPages((limit, offset) => platform.datasetVersions(id, limit, offset)),
+    ]);
     return (
       <>
         <BackLink href="/datasets">返回数据集</BackLink>
@@ -32,15 +38,15 @@ export default async function DatasetDetailPage({ params }: { params: Promise<{ 
           ]} />
         </section>
 
-        <div className="panel-header"><h2>不可变版本历史</h2><span className="eyebrow">{versions.page.total} Versions</span></div>
-        {versions.items.length === 0 ? (
+        <div className="panel-header"><h2>不可变版本历史</h2><span className="eyebrow">{versions.length} Versions</span></div>
+        {versions.length === 0 ? (
           <EmptyState title="暂无版本" description="版本一旦生成即冻结；修复数据时应创建新版本，而不是覆盖历史版本。" />
         ) : (
           <div className="table-card">
             <table className="data-table">
               <thead><tr><th>版本</th><th>状态</th><th>行数</th><th>大小</th><th>质量</th><th>合规</th><th>生产执行</th><th>时间</th></tr></thead>
               <tbody>
-                {versions.items.map((version) => (
+                {versions.map((version) => (
                   <tr key={version.id}>
                     <td className="primary-cell"><strong>v{version.versionNo}</strong><span className="mono">{shortId(version.id)}</span>{dataset.datasetType === "RAW" && dataset.code.startsWith("CSV-") && version.status === "READY" ? <Link href={`/ingest?version=${version.id}`}>继续主体解析</Link> : null}</td>
                     <td><Badge value={version.status} /></td>
