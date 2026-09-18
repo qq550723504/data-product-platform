@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -171,31 +172,118 @@ func scanEntity(row pgx.Row) (domain.Entity, error) {
 	return entity, nil
 }
 
+// InsertMapping is the legacy internal entry point used by workflow canonical
+// alias resolution. It records WORKFLOW_ALIAS provenance and appends an
+// immutable decision, but it has no operation idempotency key and no optimistic
+// concurrency expectation. New command paths should call RecordMappingDecision.
 func (r *PostgresRepository) InsertMapping(ctx context.Context, tx pgx.Tx, mapping domain.EntityMapping) error {
-	// Older Core paths (for example workflow alias resolution) predate external
-	// candidate engines. Normalize missing provenance here so every accepted
-	// mapping remains auditable even when it was produced by deterministic rules.
+	_, err := r.RecordMappingDecision(ctx, tx, domain.MappingDecisionCommand{
+		Mapping:      mapping,
+		SourceOrigin: domain.OriginWorkflowAlias,
+	})
+	return err
+}
+
+// RecordMappingDecision appends one immutable mapping decision and moves the
+// mutable current-mapping projection to it inside the caller's transaction. It:
+//
+//   - is idempotent on (workspace, idempotency key): a retry returns the
+//     decision already recorded instead of appending a duplicate;
+//   - checks the caller's expected current decision under a row lock, so a stale
+//     automatic decision cannot silently overwrite a newer human decision;
+//   - refuses automatic matches over a human-confirmed mapping.
+func (r *PostgresRepository) RecordMappingDecision(ctx context.Context, tx pgx.Tx, cmd domain.MappingDecisionCommand) (domain.MappingDecision, error) {
+	mapping := cmd.Mapping
+	if mapping.WorkspaceID == uuid.Nil {
+		return domain.MappingDecision{}, domain.ErrMappingWorkspaceRequired
+	}
+	// Older Core paths predate external candidate engines. Normalize missing
+	// provenance so every decision remains auditable.
 	if strings.TrimSpace(mapping.MatchEngineName) == "" {
 		mapping.MatchEngineName = "RULES"
 	}
 	if strings.TrimSpace(mapping.MatchEngineVersion) == "" {
 		mapping.MatchEngineVersion = "1"
 	}
-	if mapping.WorkspaceID == uuid.Nil {
-		return domain.ErrMappingWorkspaceRequired
+
+	origin := cmd.SourceOrigin
+	if origin == "" {
+		origin = domain.OriginUnknown
+	}
+	if !origin.Valid() {
+		return domain.MappingDecision{}, fmt.Errorf("unsupported mapping decision source origin %q", origin)
 	}
 
-	// entity_mapping is the mutable current projection: one row per
-	// (workspace, source triple). The conflict target is workspace-scoped so two
-	// workspaces can map the same external source independently.
+	key, err := domain.NormalizeMappingDecisionKey(cmd.IdempotencyKey)
+	if err != nil {
+		return domain.MappingDecision{}, err
+	}
+	decidedAt := cmd.DecidedAt
+	if decidedAt.IsZero() {
+		decidedAt = mapping.CreatedAt
+	}
+	if decidedAt.IsZero() {
+		decidedAt = time.Now().UTC()
+	}
+
+	// Serialize concurrent retries that reuse one operation key so the
+	// existence check below cannot race with itself.
+	if key != "" {
+		if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtext($1), hashtext($2))`, mapping.WorkspaceID.String(), key); err != nil {
+			return domain.MappingDecision{}, fmt.Errorf("lock mapping decision key: %w", err)
+		}
+		existing, found, err := r.findMappingDecisionByKey(ctx, tx, mapping.WorkspaceID, key)
+		if err != nil {
+			return domain.MappingDecision{}, err
+		}
+		if found {
+			if existing.SourceType != mapping.SourceType || existing.SourceRef != mapping.SourceRef || existing.SourceKey != mapping.SourceKey {
+				return domain.MappingDecision{}, domain.ErrMappingDecisionKeyConflict
+			}
+			return existing, nil
+		}
+	}
+
+	// Lock the current projection row so the concurrency check and the human
+	// priority rule observe a stable current decision.
 	mappingID := mapping.ID
-	err := tx.QueryRow(ctx, `
+	var currentDecisionID *uuid.UUID
+	var currentStatus *domain.MappingStatus
+	err = tx.QueryRow(ctx, `
+		SELECT em.id, em.current_decision_id, d.status
+		FROM entity_mapping em
+		LEFT JOIN entity_mapping_decision d
+		  ON d.workspace_id = em.workspace_id AND d.id = em.current_decision_id
+		WHERE em.workspace_id=$1 AND em.source_type=$2 AND em.source_ref=$3 AND em.source_key=$4
+		FOR UPDATE OF em
+	`, mapping.WorkspaceID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey).Scan(&mappingID, &currentDecisionID, &currentStatus)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		return domain.MappingDecision{}, fmt.Errorf("lock current entity mapping: %w", err)
+	}
+
+	if cmd.ExpectCurrentDecision && !sameUUID(currentDecisionID, cmd.ExpectedCurrentDecisionID) {
+		return domain.MappingDecision{}, domain.ErrMappingDecisionConflict
+	}
+	if err := domain.EnsureMappingDecisionAllowed(currentStatus, mapping.Status); err != nil {
+		return domain.MappingDecision{}, err
+	}
+
+	if mappingID == uuid.Nil {
+		mappingID = uuid.New()
+	}
+	decisionID := uuid.New()
+
+	// entity_mapping is the mutable projection. It points at the decision that
+	// produced it. The current-pointer foreign key is deferred until commit, so
+	// the decision row can be inserted just after this projection row.
+	if err := tx.QueryRow(ctx, `
 		INSERT INTO entity_mapping (
 			id, workspace_id, entity_id, source_type, source_ref, source_key, source_name,
 			match_method, match_rule_id, match_policy_version,
 			match_engine_name, match_engine_version, match_model_version,
-			confidence, status, reviewed_by, reviewed_at, reviewer_reason, evidence_id, created_at
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
+			confidence, status, reviewed_by, reviewed_at, reviewer_reason, evidence_id, created_at,
+			current_decision_id
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
 		ON CONFLICT (workspace_id, source_type, source_ref, source_key) DO UPDATE SET
 			entity_id=EXCLUDED.entity_id, source_name=EXCLUDED.source_name,
 			match_method=EXCLUDED.match_method, match_rule_id=EXCLUDED.match_rule_id,
@@ -206,33 +294,72 @@ func (r *PostgresRepository) InsertMapping(ctx context.Context, tx pgx.Tx, mappi
 			confidence=EXCLUDED.confidence,
 			status=EXCLUDED.status, reviewed_by=EXCLUDED.reviewed_by,
 			reviewed_at=EXCLUDED.reviewed_at, reviewer_reason=EXCLUDED.reviewer_reason,
-			evidence_id=EXCLUDED.evidence_id
+			evidence_id=EXCLUDED.evidence_id,
+			current_decision_id=EXCLUDED.current_decision_id
 		RETURNING id
-	`, mapping.ID, mapping.WorkspaceID, mapping.EntityID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey,
+	`, mappingID, mapping.WorkspaceID, mapping.EntityID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey,
 		mapping.SourceName, mapping.MatchMethod, mapping.MatchRuleID, mapping.MatchPolicyVersion,
 		mapping.MatchEngineName, mapping.MatchEngineVersion, mapping.MatchModelVersion,
 		mapping.Confidence, mapping.Status, mapping.ReviewedBy, mapping.ReviewedAt,
-		mapping.ReviewerReason, mapping.EvidenceID, mapping.CreatedAt).Scan(&mappingID)
-	if err != nil {
-		return fmt.Errorf("insert entity mapping: %w", err)
+		mapping.ReviewerReason, mapping.EvidenceID, mapping.CreatedAt, decisionID).Scan(&mappingID); err != nil {
+		return domain.MappingDecision{}, fmt.Errorf("upsert entity mapping: %w", err)
 	}
 
-	// Append the immutable decision that produced the current projection. The
-	// prior decision of an upsert is preserved here instead of being overwritten.
-	if _, err := tx.Exec(ctx, `
+	var decidedSeq int64
+	err = tx.QueryRow(ctx, `
 		INSERT INTO entity_mapping_decision (
 			id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key,
 			source_name, match_method, match_rule_id, match_policy_version,
 			match_engine_name, match_engine_version, match_model_version,
 			confidence, status, reviewed_by, reviewed_at, reviewer_reason, evidence_id,
+			idempotency_key, source_origin, source_job_id, source_candidate_id,
 			decided_at, decided_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$17)
-	`, uuid.New(), mapping.WorkspaceID, mappingID, mapping.EntityID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey,
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
+		          NULLIF($21,''), $22, $23, $24, $25, $26)
+		RETURNING decided_seq
+	`, decisionID, mapping.WorkspaceID, mappingID, mapping.EntityID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey,
 		mapping.SourceName, mapping.MatchMethod, mapping.MatchRuleID, mapping.MatchPolicyVersion,
 		mapping.MatchEngineName, mapping.MatchEngineVersion, mapping.MatchModelVersion,
 		mapping.Confidence, mapping.Status, mapping.ReviewedBy, mapping.ReviewedAt,
-		mapping.ReviewerReason, mapping.EvidenceID, mapping.CreatedAt); err != nil {
-		return fmt.Errorf("insert entity mapping decision: %w", err)
+		mapping.ReviewerReason, mapping.EvidenceID,
+		key, origin, cmd.SourceJobID, cmd.SourceCandidateID, decidedAt, cmd.DecidedBy).Scan(&decidedSeq)
+	if err != nil {
+		return domain.MappingDecision{}, fmt.Errorf("insert entity mapping decision: %w", err)
 	}
-	return nil
+
+	return domain.MappingDecision{
+		ID:                 decisionID,
+		WorkspaceID:        mapping.WorkspaceID,
+		MappingID:          mappingID,
+		EntityID:           mapping.EntityID,
+		SourceType:         mapping.SourceType,
+		SourceRef:          mapping.SourceRef,
+		SourceKey:          mapping.SourceKey,
+		SourceName:         mapping.SourceName,
+		MatchMethod:        mapping.MatchMethod,
+		MatchRuleID:        mapping.MatchRuleID,
+		MatchPolicyVersion: mapping.MatchPolicyVersion,
+		MatchEngineName:    mapping.MatchEngineName,
+		MatchEngineVersion: mapping.MatchEngineVersion,
+		MatchModelVersion:  mapping.MatchModelVersion,
+		Confidence:         mapping.Confidence,
+		Status:             mapping.Status,
+		ReviewedBy:         mapping.ReviewedBy,
+		ReviewedAt:         mapping.ReviewedAt,
+		ReviewerReason:     mapping.ReviewerReason,
+		EvidenceID:         mapping.EvidenceID,
+		DecidedAt:          decidedAt,
+		DecidedBy:          cmd.DecidedBy,
+		IdempotencyKey:     key,
+		SourceOrigin:       origin,
+		SourceJobID:        cmd.SourceJobID,
+		SourceCandidateID:  cmd.SourceCandidateID,
+	}, nil
+}
+
+func sameUUID(a, b *uuid.UUID) bool {
+	if a == nil || b == nil {
+		return a == nil && b == nil
+	}
+	return *a == *b
 }

@@ -151,13 +151,39 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 		t.Fatalf("commit evidence fixture: %v", err)
 	}
 
-	mustExec(t, ctx, pool, `
+	mappingDecisionID := uuid.New()
+	mappingTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin mapping fixture transaction: %v", err)
+	}
+	if _, err := mappingTx.Exec(ctx, `
 		INSERT INTO entity_mapping (
 			id, workspace_id, entity_id, source_type, source_ref, source_key, source_name, match_method,
-			match_rule_id, match_policy_version, confidence, status, reviewer_reason, evidence_id
+			match_rule_id, match_policy_version, match_engine_name, match_engine_version,
+			confidence, status, reviewer_reason, evidence_id, current_decision_id
 		) VALUES ($1,$2,$3,'CSV','enterprise.csv','SRC-001','示例科技有限公司','MANUAL_REVIEW',
-		          'REVIEW-001','1.0.0',1.0,'CONFIRMED','verified against source registry',$4)
-	`, mappingID, workspaceID, entityID, entityEvidence.ID)
+		          'REVIEW-001','1.0.0','RULES','1',1.0,'CONFIRMED','verified against source registry',$4,$5)
+	`, mappingID, workspaceID, entityID, entityEvidence.ID, mappingDecisionID); err != nil {
+		_ = mappingTx.Rollback(ctx)
+		t.Fatalf("insert entity mapping fixture: %v", err)
+	}
+	// entity_mapping.current_decision_id is deferred, so the immutable decision
+	// that produced the projection is appended in the same transaction.
+	if _, err := mappingTx.Exec(ctx, `
+		INSERT INTO entity_mapping_decision (
+			id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key, source_name,
+			match_method, match_rule_id, match_policy_version, match_engine_name, match_engine_version,
+			match_model_version, confidence, status, reviewer_reason, evidence_id, source_origin, decided_at
+		) VALUES ($1,$2,$3,$4,'CSV','enterprise.csv','SRC-001','示例科技有限公司',
+		          'MANUAL_REVIEW','REVIEW-001','1.0.0','RULES','1','',1.0,'CONFIRMED',
+		          'verified against source registry',$5,'UNKNOWN',now())
+	`, mappingDecisionID, workspaceID, mappingID, entityID, entityEvidence.ID); err != nil {
+		_ = mappingTx.Rollback(ctx)
+		t.Fatalf("insert entity mapping decision fixture: %v", err)
+	}
+	if err := mappingTx.Commit(ctx); err != nil {
+		t.Fatalf("commit entity mapping fixture: %v", err)
+	}
 
 	legacyMetadata := map[string]any{"source": "legacy-import"}
 	legacyHash, err := evidence.ComputeHash(evidence.Record{Metadata: legacyMetadata}, evidence.HashAlgorithmLegacy)

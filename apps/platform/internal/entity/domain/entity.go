@@ -20,6 +20,8 @@ type JobStatus string
 
 type SourceRole string
 
+type SourceOrigin string
+
 const (
 	EntityActive  EntityStatus = "ACTIVE"
 	EntityMerged  EntityStatus = "MERGED"
@@ -48,7 +50,23 @@ const (
 
 	SourceAnchor    SourceRole = "ANCHOR"
 	SourceReference SourceRole = "REFERENCE"
+
+	// SourceOrigin records how a mapping decision entered the platform. Legacy
+	// decisions that predate source tracking cannot prove an origin and are
+	// explicitly UNKNOWN instead of being guessed.
+	OriginUnknown        SourceOrigin = "UNKNOWN"
+	OriginMatchCandidate SourceOrigin = "MATCH_CANDIDATE"
+	OriginWorkflowAlias  SourceOrigin = "WORKFLOW_ALIAS"
 )
+
+func (o SourceOrigin) Valid() bool {
+	switch o {
+	case OriginUnknown, OriginMatchCandidate, OriginWorkflowAlias:
+		return true
+	default:
+		return false
+	}
+}
 
 var (
 	ErrInvalidEntityType       = errors.New("entity type is invalid")
@@ -62,6 +80,15 @@ var (
 	// ErrMappingWorkspaceRequired rejects a mapping that is not bound to a
 	// workspace, because mappings are only unique inside one workspace.
 	ErrMappingWorkspaceRequired = errors.New("entity mapping workspace is required")
+	// ErrMappingDecisionConflict reports that the current decision changed since
+	// the caller computed its decision; the caller must re-read before retrying.
+	ErrMappingDecisionConflict = errors.New("entity mapping current decision changed concurrently")
+	// ErrMappingConfirmedImmutable rejects an automatic match that would replace
+	// a mapping a human already confirmed. Human confirmation always wins.
+	ErrMappingConfirmedImmutable = errors.New("a human-confirmed entity mapping cannot be replaced by automatic matching")
+	// ErrMappingDecisionKeyConflict rejects reusing one idempotency key for a
+	// different source triple. Retries of the same operation are idempotent.
+	ErrMappingDecisionKeyConflict = errors.New("mapping decision idempotency key is already bound to another source")
 )
 
 type EntityType struct {
@@ -109,6 +136,9 @@ type EntityMapping struct {
 	ReviewerReason     string
 	EvidenceID         *uuid.UUID
 	CreatedAt          time.Time
+	// CurrentDecisionID points at the immutable decision that produced this
+	// projection. It is never nil for a persisted mapping.
+	CurrentDecisionID *uuid.UUID
 }
 
 // MappingDecision is one immutable entry in the decision history of a mapping.
@@ -137,6 +167,33 @@ type MappingDecision struct {
 	EvidenceID         *uuid.UUID
 	DecidedAt          time.Time
 	DecidedBy          *uuid.UUID
+	// IdempotencyKey deduplicates a retried decision operation. It is optional
+	// for internal/legacy paths but unique per workspace when present.
+	IdempotencyKey string
+	// SourceOrigin records how the decision entered the platform. Legacy rows
+	// are explicitly UNKNOWN.
+	SourceOrigin SourceOrigin
+	// SourceJobID and SourceCandidateID associate the decision with the entity
+	// matching activity that produced it, when one can be proven.
+	SourceJobID       *uuid.UUID
+	SourceCandidateID *uuid.UUID
+}
+
+// MappingDecisionCommand appends one immutable decision and moves the current
+// projection pointer in the same transaction.
+type MappingDecisionCommand struct {
+	Mapping           EntityMapping
+	SourceOrigin      SourceOrigin
+	SourceJobID       *uuid.UUID
+	SourceCandidateID *uuid.UUID
+	IdempotencyKey    string
+	DecidedBy         *uuid.UUID
+	DecidedAt         time.Time
+	// ExpectCurrentDecision enables the optimistic concurrency check. When true,
+	// the append fails with ErrMappingDecisionConflict unless the mapping's
+	// current decision still equals ExpectedCurrentDecisionID (nil = none yet).
+	ExpectCurrentDecision     bool
+	ExpectedCurrentDecisionID *uuid.UUID
 }
 
 type MatchJob struct {
@@ -239,6 +296,29 @@ func NewMatchJob(workspaceID, entityTypeID, inputVersionID, outputDatasetID uuid
 		CreatedAt:             time.Now().UTC(),
 		CreatedBy:             actorID,
 	}
+}
+
+// EnsureMappingDecisionAllowed enforces that automatic matching never replaces a
+// mapping a human confirmed. Human confirmation always wins; a later human
+// confirmation may still supersede an earlier one.
+func EnsureMappingDecisionAllowed(currentStatus *MappingStatus, next MappingStatus) error {
+	if currentStatus != nil && *currentStatus == MappingConfirmed && next == MappingAutoMatched {
+		return ErrMappingConfirmedImmutable
+	}
+	return nil
+}
+
+// NormalizeMappingDecisionKey trims an optional idempotency key and rejects keys
+// that are too long to store. An empty key is valid and means "not idempotent".
+func NormalizeMappingDecisionKey(value string) (string, error) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return "", nil
+	}
+	if len(value) > 255 {
+		return "", ErrMappingDecisionKeyConflict
+	}
+	return value, nil
 }
 
 func (c *MatchCandidate) Confirm(reviewerID uuid.UUID, reason string) error {
