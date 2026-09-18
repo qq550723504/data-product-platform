@@ -316,3 +316,20 @@ C1-a ~ C1-d 允许在同一聚焦 PR 内完成（共享同一迁移与 publisher
 4. 事件版本升级策略：同 `event_type` 多版本并存 vs 新增 `event_type`；以及
    envelope 迁移是否需要一个显式的转换步骤（C1-c/C1-d）。
 5. `outbox_event_consumption` 的保留策略（长期不清理 vs 按窗口归档）。
+
+### 7.1 已知限制：单消费者 claim 语义（C1-d 必须先解决）
+
+C1-a/C1-b 的 claim 把事件状态置为**全局** `PUBLISHED`，一个事件只会被**一个**消费者处理一次。
+`outbox_event_consumption` 虽然按 `(consumer_name, event_id)` 记录，但当前 claim 不按消费者区分，
+因此**同一个事件无法扇出给第二个消费者**。
+
+现状之所以没暴露：`metadata-projection` 只关心 `ProductReleased`，而 C1-d 计划新增的
+`execution-queue` 消费者只关心 `ExecutionQueued` / `ExecutionRetried`，事件类型不相交。
+一旦某个事件类型需要两个消费者，当前模型会静默丢失第二个消费者。
+
+C1-c/C1-d **必须**先选定并实现其中一种扇出模型，不得依赖“类型不相交”的巧合：
+
+- **A. 单派发消费者 + 应用层扇出**：Outbox 只有一个 dispatcher 消费者，它把事件分发给已注册的
+  projection/queue 处理器；`outbox_event_consumption` 改为记录每个子消费者的处理结果。
+- **B. 按消费者 claim**：claim 排除「本消费者已确认」的事件，`PUBLISHED` 语义改为
+  「所有已注册消费者均已确认」。
