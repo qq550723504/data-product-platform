@@ -98,3 +98,21 @@ for (const [value, route, buttonName] of [["review-conflict", "/reviews", "确�
     expect(await writes(request)).toHaveLength(1);
   });
 }
+
+test("list pages paginate on the server with explicit controls", async ({ page, request }) => {
+  await scenario(request, "paginated-resources");
+  await page.goto("/resources");
+  await expect(page.getByText("第 1 / 2 页 · 本页 25 条 · 共 30 条")).toBeVisible();
+  await expect(page.getByRole("link", { name: "资源 1", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "上一页" })).toHaveCount(0);
+  await page.getByRole("link", { name: "下一页" }).click();
+  await expect(page).toHaveURL(/\/resources\?offset=25$/);
+  await expect(page.getByText("第 2 / 2 页 · 本页 5 条 · 共 30 条")).toBeVisible();
+  await expect(page.getByRole("link", { name: "资源 26", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "资源 1", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "下一页" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "上一页" })).toBeVisible();
+  // A malformed offset must fall back to the first page, not fail the request.
+  await page.goto("/resources?offset=garbage");
+  await expect(page.getByText("第 1 / 2 页 · 本页 25 条 · 共 30 条")).toBeVisible();
+});

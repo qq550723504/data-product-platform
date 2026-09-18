@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { paginationWindow } from "@/lib/pagination";
 
 export function PageHeader({
   eyebrow,
@@ -109,6 +110,39 @@ export function BackLink({ href, children }: { href: string; children: React.Rea
     <Link href={href} className="back-link">
       ← {children}
     </Link>
+  );
+}
+
+export function Pagination({
+  basePath,
+  offset,
+  itemCount,
+  total,
+  pageSize,
+  label = "列表分页",
+}: {
+  basePath: string;
+  offset: number;
+  itemCount: number;
+  total: number;
+  pageSize: number;
+  label?: string;
+}) {
+  const view = paginationWindow(offset, itemCount, total, pageSize);
+  return (
+    <nav aria-label={label} className="pagination">
+      {view.previousOffset === null ? (
+        <span className="pagination-step pagination-step-disabled" aria-disabled="true">上一页</span>
+      ) : (
+        <Link className="pagination-step" rel="prev" href={`${basePath}?offset=${view.previousOffset}`}>上一页</Link>
+      )}
+      <span className="pagination-summary">{view.summary}</span>
+      {view.nextOffset === null ? (
+        <span className="pagination-step pagination-step-disabled" aria-disabled="true">下一页</span>
+      ) : (
+        <Link className="pagination-step" rel="next" href={`${basePath}?offset=${view.nextOffset}`}>下一页</Link>
+      )}
+    </nav>
   );
 }
 
