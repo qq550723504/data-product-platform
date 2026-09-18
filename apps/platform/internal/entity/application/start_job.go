@@ -265,13 +265,46 @@ func (s *MatchService) processRecord(ctx context.Context, job domain.MatchJob, r
 			candidate.EvidenceID = &record.ID
 		}
 
-		if candidate.Status == domain.CandidateAutoConfirmed && candidate.CandidateEntityID != nil {
-			mapping := mappingFromCandidate(job, candidate, domain.MappingAutoMatched, candidate.EvidenceID)
-			if err := s.entityRepo.InsertMapping(ctx, tx, mapping); err != nil {
-				return err
-			}
+		// The candidate row is inserted before the mapping decision so the decision
+		// can reference the exact candidate that produced it.
+		if err := s.entityRepo.InsertCandidate(ctx, tx, candidate); err != nil {
+			return err
 		}
-		return s.entityRepo.InsertCandidate(ctx, tx, candidate)
+		if candidate.Status != domain.CandidateAutoConfirmed || candidate.CandidateEntityID == nil {
+			return nil
+		}
+		mapping := mappingFromCandidate(job, candidate, domain.MappingAutoMatched, candidate.EvidenceID)
+		decision, err := s.entityRepo.RecordMappingDecision(ctx, tx, domain.MappingDecisionCommand{
+			Mapping:           mapping,
+			SourceOrigin:      domain.OriginMatchCandidate,
+			SourceJobID:       &job.ID,
+			SourceCandidateID: &candidate.ID,
+			IdempotencyKey:    "auto:" + job.ID.String() + ":" + candidate.SourceKey,
+			DecidedBy:         actorID,
+		})
+		if err != nil {
+			return err
+		}
+		if err := emitMappingDecision(ctx, tx, decision); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &job.WorkspaceID,
+			ActorType:   actorType(actorID),
+			ActorID:     actorID,
+			Action:      "ENTITY_MAPPING_AUTO_MATCHED",
+			ObjectType:  "ENTITY_MAPPING",
+			ObjectID:    decision.MappingID,
+			AfterState: map[string]any{
+				"decisionId":         decision.ID,
+				"entityId":           decision.EntityID,
+				"sourceKey":          decision.SourceKey,
+				"status":             decision.Status,
+				"evidenceId":         candidate.EvidenceID,
+				"matchEngineName":    decision.MatchEngineName,
+				"matchEngineVersion": decision.MatchEngineVersion,
+			},
+		})
 	})
 }
 

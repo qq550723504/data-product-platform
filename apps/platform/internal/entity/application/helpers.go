@@ -18,6 +18,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/csvinput"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 )
 
 func readCompanyCSV(reader io.Reader) ([]matching.CompanyRecord, error) {
@@ -263,6 +264,25 @@ func standardizedCSV(candidates []domain.MatchCandidate) ([]byte, error) {
 		return nil, err
 	}
 	return buffer.Bytes(), nil
+}
+
+func emitMappingDecision(ctx context.Context, tx pgx.Tx, decision domain.MappingDecision) error {
+	event, err := outbox.NewEvent("ENTITY_MAPPING", decision.MappingID, "EntityMappingDecisionRecorded", map[string]any{
+		"decisionId":        decision.ID,
+		"mappingId":         decision.MappingID,
+		"entityId":          decision.EntityID,
+		"sourceType":        decision.SourceType,
+		"sourceRef":         decision.SourceRef,
+		"sourceKey":         decision.SourceKey,
+		"status":            decision.Status,
+		"sourceOrigin":      decision.SourceOrigin,
+		"sourceJobId":       decision.SourceJobID,
+		"sourceCandidateId": decision.SourceCandidateID,
+	})
+	if err != nil {
+		return err
+	}
+	return outbox.Append(ctx, tx, event)
 }
 
 func actorType(actorID *uuid.UUID) string {
