@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/google/uuid"
@@ -168,16 +169,18 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 		t.Fatalf("insert entity mapping fixture: %v", err)
 	}
 	// entity_mapping.current_decision_id is deferred, so the immutable decision
-	// that produced the projection is appended in the same transaction.
+	// that produced the projection is appended in the same transaction. The
+	// decision proves it was produced by the release-time match job, which is
+	// what lets the release trace bind to it instead of the mutable projection.
 	if _, err := mappingTx.Exec(ctx, `
 		INSERT INTO entity_mapping_decision (
 			id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key, source_name,
 			match_method, match_rule_id, match_policy_version, match_engine_name, match_engine_version,
-			match_model_version, confidence, status, reviewer_reason, evidence_id, source_origin, decided_at
+			match_model_version, confidence, status, reviewer_reason, evidence_id, source_origin, source_job_id, decided_at
 		) VALUES ($1,$2,$3,$4,'CSV','enterprise.csv','SRC-001','示例科技有限公司',
 		          'MANUAL_REVIEW','REVIEW-001','1.0.0','RULES','1','',1.0,'CONFIRMED',
-		          'verified against source registry',$5,'UNKNOWN',now())
-	`, mappingDecisionID, workspaceID, mappingID, entityID, entityEvidence.ID); err != nil {
+		          'verified against source registry',$5,'MATCH_CANDIDATE',$6,now())
+	`, mappingDecisionID, workspaceID, mappingID, entityID, entityEvidence.ID, matchJobID); err != nil {
 		_ = mappingTx.Rollback(ctx)
 		t.Fatalf("insert entity mapping decision fixture: %v", err)
 	}
@@ -277,6 +280,9 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 	if len(trace.EntityMappings) != 1 || trace.EntityMappings[0].EvidenceID == nil || *trace.EntityMappings[0].EvidenceID != entityEvidence.ID {
 		t.Fatalf("EntityMapping trace = %+v", trace.EntityMappings)
 	}
+	if trace.EntityMappings[0].DecisionID != mappingDecisionID || trace.EntityMappings[0].EntityID != entityID || trace.EntityMappings[0].SourceJobID == nil || *trace.EntityMappings[0].SourceJobID != matchJobID {
+		t.Fatalf("EntityMapping trace is not bound to the release-time decision: %+v", trace.EntityMappings[0])
+	}
 	if len(trace.AuditEvents) < 3 {
 		t.Fatalf("AuditEvent trace size = %d, want at least 3", len(trace.AuditEvents))
 	}
@@ -295,6 +301,206 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 	assertMutationRejected(t, ctx, pool, `DELETE FROM evidence_relation WHERE evidence_id=$1`, entityEvidence.ID)
 	assertMutationRejected(t, ctx, pool, `UPDATE cost_event SET quantity=2 WHERE execution_id=$1`, executionID)
 	assertMutationRejected(t, ctx, pool, `DELETE FROM audit_event WHERE object_id=$1`, releaseID)
+}
+
+// TestReleaseTraceBindsMappingsToDecisionNotCurrentProjection is the B regression:
+// a release must report the immutable decision its match job actually applied,
+// even though entity_mapping may have moved on to another entity afterwards.
+//
+//	(a) the current mapping moves to B before the release exists: R1 still binds A;
+//	(b) a decision recorded after R1 is published leaves R1's entity, reason,
+//	    decision id and frozen evidence untouched.
+//
+// Decisions that cannot prove a source job are never guessed into the release.
+func TestReleaseTraceBindsMappingsToDecisionNotCurrentProjection(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	workspaceID := uuid.New()
+	rawDatasetID := uuid.New()
+	standardizedDatasetID := uuid.New()
+	rawVersionID := uuid.New()
+	standardizedVersionID := uuid.New()
+	entityTypeID := uuid.New()
+	entityAID := uuid.New()
+	entityBID := uuid.New()
+	matchJobID := uuid.New()
+	mappingID := uuid.New()
+	decisionAID := uuid.New()
+	decisionBID := uuid.New()
+	productID := uuid.New()
+	productVersionID := uuid.New()
+	releaseID := uuid.New()
+	reasonA := "release-time confirmation " + uuid.NewString()
+	reasonB := "post-release correction " + uuid.NewString()
+
+	insertDataset(t, ctx, pool, rawDatasetID, workspaceID, "BIND-RAW-"+uuid.NewString(), "RAW", nil)
+	insertDataset(t, ctx, pool, standardizedDatasetID, workspaceID, "BIND-STD-"+uuid.NewString(), "STANDARDIZED", nil)
+	insertDatasetVersion(t, ctx, pool, rawVersionID, rawDatasetID, nil)
+	insertDatasetVersion(t, ctx, pool, standardizedVersionID, standardizedDatasetID, nil)
+	mustExec(t, ctx, pool, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'ENTITY_RESOLUTION')
+	`, standardizedVersionID, rawVersionID)
+
+	mustExec(t, ctx, pool, `
+		INSERT INTO entity_type (id, workspace_id, code, name, key_schema, attribute_schema)
+		VALUES ($1,$2,$3,'Company','{}'::jsonb,'{}'::jsonb)
+	`, entityTypeID, workspaceID, "BIND-COMPANY-"+uuid.NewString())
+	mustExec(t, ctx, pool, `
+		INSERT INTO entity (id, workspace_id, entity_type_id, canonical_key, canonical_name, attributes)
+		VALUES ($1,$2,$3,'COMPANY-A','甲公司','{}'::jsonb), ($4,$2,$3,'COMPANY-B','乙公司','{}'::jsonb)
+	`, entityAID, workspaceID, entityTypeID, entityBID)
+	mustExec(t, ctx, pool, `
+		INSERT INTO entity_match_job (
+			id, workspace_id, entity_type_id, input_dataset_version_id, output_dataset_id,
+			source_type, source_ref, source_role, policy_ref, policy_version, status,
+			output_dataset_version_id, created_at, started_at, finished_at
+		) VALUES ($1,$2,$3,$4,$5,'CSV','enterprise.csv','ANCHOR',
+		          'park/matching/company-match-policy-v1.yaml','1.0.0','SUCCEEDED',$6,now(),now(),now())
+	`, matchJobID, workspaceID, entityTypeID, rawVersionID, standardizedDatasetID, standardizedVersionID)
+
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin evidence fixture: %v", err)
+	}
+	evidenceA, err := evidence.Append(ctx, tx, evidence.Record{
+		WorkspaceID:  workspaceID,
+		EvidenceType: "ENTITY_MATCH_REVIEW",
+		Title:        "Release-time human confirmation",
+		SourceType:   "ENTITY_MATCH_JOB",
+		SourceID:     &matchJobID,
+		Metadata:     map[string]any{"decision": "CONFIRMED", "reviewerReason": reasonA},
+	}, evidence.Relation{ObjectType: "ENTITY_MATCH_JOB", ObjectID: matchJobID, RelationType: "SUPPORTS"})
+	if err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("append release-time Evidence: %v", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("commit release-time Evidence: %v", err)
+	}
+
+	// The projection starts on A (the decision the job produced) and is then moved
+	// to B, exactly like a later manual correction. The release is created after
+	// that move, so a current-table read would return B.
+	mappingTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin mapping fixture: %v", err)
+	}
+	if _, err := mappingTx.Exec(ctx, `
+		INSERT INTO entity_mapping (
+			id, workspace_id, entity_id, source_type, source_ref, source_key, source_name,
+			match_method, match_rule_id, match_policy_version, match_engine_name, match_engine_version,
+			confidence, status, reviewer_reason, evidence_id, current_decision_id
+		) VALUES ($1,$2,$3,'CSV','enterprise.csv','SRC-001','甲公司','MANUAL_REVIEW',
+		          'REVIEW-001','1.0.0','RULES','1',1.0,'CONFIRMED',$4,NULL,$5)
+	`, mappingID, workspaceID, entityAID, reasonA, decisionAID); err != nil {
+		_ = mappingTx.Rollback(ctx)
+		t.Fatalf("insert entity mapping fixture: %v", err)
+	}
+	if _, err := mappingTx.Exec(ctx, `
+		INSERT INTO entity_mapping_decision (
+			id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key, source_name,
+			match_method, match_rule_id, match_policy_version, match_engine_name, match_engine_version,
+			match_model_version, confidence, status, reviewer_reason, evidence_id, source_origin, source_job_id, decided_at
+		) VALUES ($1,$2,$3,$4,'CSV','enterprise.csv','SRC-001','甲公司',
+		          'MANUAL_REVIEW','REVIEW-001','1.0.0','RULES','1','',1.0,'CONFIRMED',$5,$6,'MATCH_CANDIDATE',$7,now())
+	`, decisionAID, workspaceID, mappingID, entityAID, reasonA, evidenceA.ID, matchJobID); err != nil {
+		_ = mappingTx.Rollback(ctx)
+		t.Fatalf("insert job-bound mapping decision: %v", err)
+	}
+	if _, err := mappingTx.Exec(ctx, `
+		INSERT INTO entity_mapping_decision (
+			id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key, source_name,
+			match_method, match_rule_id, match_policy_version, match_engine_name, match_engine_version,
+			match_model_version, confidence, status, reviewer_reason, evidence_id, source_origin, source_job_id, decided_at
+		) VALUES ($1,$2,$3,$4,'CSV','enterprise.csv','SRC-001','乙公司',
+		          'MANUAL_REVIEW','REVIEW-002','1.0.0','RULES','1','',1.0,'CONFIRMED',$5,NULL,'UNKNOWN',NULL,now())
+	`, decisionBID, workspaceID, mappingID, entityBID, reasonB); err != nil {
+		_ = mappingTx.Rollback(ctx)
+		t.Fatalf("insert unbound correction decision: %v", err)
+	}
+	if _, err := mappingTx.Exec(ctx, `
+		UPDATE entity_mapping
+		SET entity_id=$2, reviewer_reason=$3, evidence_id=NULL, current_decision_id=$4
+		WHERE id=$1
+	`, mappingID, entityBID, reasonB, decisionBID); err != nil {
+		_ = mappingTx.Rollback(ctx)
+		t.Fatalf("move current mapping to B: %v", err)
+	}
+	if err := mappingTx.Commit(ctx); err != nil {
+		t.Fatalf("commit mapping fixture: %v", err)
+	}
+
+	mustExec(t, ctx, pool, `
+		INSERT INTO data_product (id, workspace_id, code, name, lifecycle_status, health_status, metadata, created_at, updated_at)
+		VALUES ($1,$2,$3,'Bound mapping product','PUBLISHED','HEALTHY','{}'::jsonb,now(),now())
+	`, productID, workspaceID, "BIND-PRODUCT-"+uuid.NewString())
+	mustExec(t, ctx, pool, `
+		INSERT INTO product_version (id, product_id, major_version, minor_version, patch_version, definition_snapshot, created_at)
+		VALUES ($1,$2,1,0,0,'{}'::jsonb,now())
+	`, productVersionID, productID)
+	mustExec(t, ctx, pool, `
+		INSERT INTO product_release (id, product_id, product_version_id, release_no, status, metadata, created_at, released_at)
+		VALUES ($1,$2,$3,'R-BIND-001','PUBLISHED','{}'::jsonb,now(),now())
+	`, releaseID, productID, productVersionID)
+	mustExec(t, ctx, pool, `
+		INSERT INTO product_release_dataset (release_id, dataset_version_id, role)
+		VALUES ($1,$2,'PRIMARY')
+	`, releaseID, standardizedVersionID)
+
+	repo := traceability.NewRepository(pool)
+	trace, err := repo.ProductRelease(ctx, releaseID)
+	if err != nil {
+		t.Fatalf("query ProductRelease traceability: %v", err)
+	}
+	if len(trace.EntityMappings) != 1 {
+		t.Fatalf("release trace entity mappings = %+v, want exactly the job-bound decision", trace.EntityMappings)
+	}
+	bound := trace.EntityMappings[0]
+	if bound.DecisionID != decisionAID || bound.EntityID != entityAID || bound.ReviewerReason != reasonA || bound.EvidenceID == nil || *bound.EvidenceID != evidenceA.ID {
+		t.Fatalf("release trace did not bind the job decision: %+v", bound)
+	}
+	if bound.SourceJobID == nil || *bound.SourceJobID != matchJobID || bound.SourceOrigin != "MATCH_CANDIDATE" {
+		t.Fatalf("release trace lost the decision's source association: %+v", bound)
+	}
+	if bound.DecisionID == decisionBID {
+		t.Fatalf("release trace leaked the later current mapping decision: %+v", bound)
+	}
+
+	var currentEntityID, currentDecisionID uuid.UUID
+	if err := pool.QueryRow(ctx, `SELECT entity_id, current_decision_id FROM entity_mapping WHERE id=$1`, mappingID).Scan(&currentEntityID, &currentDecisionID); err != nil {
+		t.Fatalf("read current mapping projection: %v", err)
+	}
+	if currentEntityID != entityBID || currentDecisionID != decisionBID {
+		t.Fatalf("current mapping projection = %s/%s, want B/B", currentEntityID, currentDecisionID)
+	}
+
+	// (b) A decision appended after publication must not rewrite what R1 shows.
+	decisionCID := uuid.New()
+	mustExec(t, ctx, pool, `
+		INSERT INTO entity_mapping_decision (
+			id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key, source_name,
+			match_method, match_rule_id, match_policy_version, match_engine_name, match_engine_version,
+			match_model_version, confidence, status, reviewer_reason, evidence_id, source_origin, source_job_id, decided_at
+		) VALUES ($1,$2,$3,$4,'CSV','enterprise.csv','SRC-001','甲公司',
+		          'MANUAL_REVIEW','REVIEW-003','1.0.0','RULES','1','',1.0,'CONFIRMED','post-release append',NULL,'UNKNOWN',NULL,now())
+	`, decisionCID, workspaceID, mappingID, entityAID)
+	after, err := repo.ProductRelease(ctx, releaseID)
+	if err != nil {
+		t.Fatalf("re-query ProductRelease traceability: %v", err)
+	}
+	if !reflect.DeepEqual(trace.EntityMappings, after.EntityMappings) {
+		t.Fatalf("published release entity mappings changed after a later decision:\nbefore=%+v\nafter=%+v", trace.EntityMappings, after.EntityMappings)
+	}
 }
 
 func insertDataset(t *testing.T, ctx context.Context, pool *pgxpool.Pool, id, workspaceID uuid.UUID, code, datasetType string, sourceResourceID *uuid.UUID) {

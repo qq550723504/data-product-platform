@@ -308,6 +308,73 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM outbox_event WHERE aggregate_type='PRODUCT_RELEASE' AND aggregate_id=$1 AND event_type='ProductReleased'`, release.ID)
 	assertLiveCount(t, ctx, pool, 0, "SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ProductReleased'", blocked.ID)
 	manifest["snapshotId"], manifest["rootHash"] = trace.EvidenceSnapshot.ID, trace.EvidenceSnapshot.RootHash
+
+	// B: a published Release must show the decision that produced it, not whatever
+	// entity_mapping currently points at. A post-release manual correction moves the
+	// current mapping to another entity through the same immutable decision path Core
+	// uses; the Release must keep its original decision id, entity, reviewer reason and
+	// frozen evidence.
+	currentMapping, err := entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", enterpriseName, "ENT-005")
+	liveOK(t, err, "read release-time current mapping")
+	if currentMapping.CurrentDecisionID == nil || currentMapping.EvidenceID == nil {
+		t.Fatalf("release-time mapping lost its decision/evidence: %+v", currentMapping)
+	}
+	releaseDecisionID, releaseEntityID, releaseReason := *currentMapping.CurrentDecisionID, currentMapping.EntityID, currentMapping.ReviewerReason
+	correctionReason := "LIVE_POST_RELEASE_" + suffix
+	correctionEntity, err := entitydomain.NewEntity(workspaceID, job.EntityTypeID, "COMPANY-LIVE-B-"+suffix, "Post-release correction entity", map[string]any{}, &seedActor)
+	liveOK(t, err, "build post-release correction entity")
+	correctionTx, err := pool.Begin(ctx)
+	liveOK(t, err, "begin post-release correction")
+	liveOK(t, entityRepo.InsertEntity(ctx, correctionTx, correctionEntity), "insert post-release correction entity")
+	correctionMapping := currentMapping
+	correctionMapping.EntityID = correctionEntity.ID
+	correctionMapping.Status = entitydomain.MappingConfirmed
+	correctionMapping.MatchMethod = "MANUAL_REVIEW"
+	correctionMapping.MatchRuleID = "LIVE-CORRECTION"
+	correctionMapping.ReviewerReason = correctionReason
+	correctionMapping.ReviewedBy = &reviewerID
+	correctionTime := time.Now().UTC()
+	correctionMapping.ReviewedAt = &correctionTime
+	correctionMapping.CreatedAt = correctionTime
+	correctionMapping.EvidenceID = nil
+	correctionDecision, err := entityRepo.RecordMappingDecision(ctx, correctionTx, entitydomain.MappingDecisionCommand{
+		Mapping:                   correctionMapping,
+		SourceOrigin:              entitydomain.OriginUnknown,
+		IdempotencyKey:            "live-post-release:" + suffix,
+		DecidedBy:                 &reviewerID,
+		ExpectCurrentDecision:     true,
+		ExpectedCurrentDecisionID: currentMapping.CurrentDecisionID,
+	})
+	if err != nil {
+		_ = correctionTx.Rollback(ctx)
+		t.Fatalf("record post-release correction decision: %v", err)
+	}
+	liveOK(t, correctionTx.Commit(ctx), "commit post-release correction")
+	moved, err := entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", enterpriseName, "ENT-005")
+	liveOK(t, err, "read corrected current mapping")
+	if moved.EntityID != correctionEntity.ID || moved.CurrentDecisionID == nil || *moved.CurrentDecisionID != correctionDecision.ID {
+		t.Fatalf("current mapping did not move to the correction: %+v", moved)
+	}
+	trace, err = traceability.NewRepository(pool).ProductRelease(ctx, release.ID)
+	liveOK(t, err, "re-query real PostgreSQL trace after post-release correction")
+	if len(trace.EntityMappings) == 0 {
+		t.Fatal("release trace lost entity mappings after the current mapping changed")
+	}
+	foundReleaseDecision := false
+	for _, item := range trace.EntityMappings {
+		if item.DecisionID == correctionDecision.ID {
+			t.Fatalf("release trace leaked the post-release current decision: %+v", item)
+		}
+		if item.DecisionID == releaseDecisionID && item.EntityID == releaseEntityID && item.ReviewerReason == releaseReason {
+			foundReleaseDecision = true
+		}
+	}
+	if !foundReleaseDecision {
+		t.Fatalf("release trace no longer binds the release-time decision %s: %+v", releaseDecisionID, trace.EntityMappings)
+	}
+	manifest["decisionId"] = releaseDecisionID
+	manifest["currentMappingDecisionId"] = correctionDecision.ID
+	manifest["currentMappingReason"] = correctionReason
 	liveJSONFile(t, filepath.Join(artifacts, "persisted-trace.json"), trace)
 	// A second browser session must see the same published history, not in-memory UI state.
 	publishedBefore, _ := json.Marshal(published)

@@ -54,6 +54,7 @@ export type EntityMatchJobTrace = {
 
 export type EntityMappingTrace = {
   id: string;
+  decisionId: string;
   entityId: string;
   sourceType: string;
   sourceRef: string;
@@ -68,6 +69,9 @@ export type EntityMappingTrace = {
   reviewedAt?: string;
   reviewerReason?: string;
   evidenceId?: string;
+  sourceOrigin: string;
+  sourceJobId?: string;
+  decidedAt: string;
 };
 
 export type EvidenceItem = {

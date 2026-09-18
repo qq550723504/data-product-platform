@@ -24,12 +24,19 @@ built Next **standalone server**, including its static assets:
    publish the ready release through its real Server Action, then navigate to trace.
 3. **History:** a new browser context and standalone process discover the release
    through Evidence Center and read its exact persisted snapshot ID/root hash.
-   It must display the original review reason and keep the published release locked.
+   It must display the original review reason and decision id, keep the published
+   release locked, and still show the release-time decision after the coordinator
+   has moved the same source key's *current* mapping to another entity through a
+   post-release decision.
 
 The independent database checks require a PUBLISHED release, exactly one matching
 publish audit and ProductReleased outbox event, a nonempty integrity-valid evidence
 snapshot, complete exact-version lineage, execution/workflow links, and evidence
-and cost facts. Every trace DatasetVersion's real MinIO bytes are SHA-256 checked
+and cost facts. The release trace binds EntityMappings to the immutable decision
+that the release-time match job applied, not to the mutable `entity_mapping`
+projection: a post-release correction to the same source key must not rewrite the
+Release's decision id, entity, reviewer reason or frozen evidence. Every trace
+DatasetVersion's real MinIO bytes are SHA-256 checked
 against PostgreSQL. Frozen ProductVersion/DatasetVersion rows are compared before
 and after publish; published Release rows are compared before and after history
 reads and a rejected repeat publish. The repeat uses a new key and tests state
