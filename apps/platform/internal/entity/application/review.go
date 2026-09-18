@@ -16,6 +16,9 @@ type ReviewCommand struct {
 	ReviewerID  uuid.UUID
 	Reason      string
 	TraceID     string
+	// ExpectedDecisionID is an optional optimistic concurrency token. When set,
+	// the confirmation only succeeds while this decision is still current.
+	ExpectedDecisionID *uuid.UUID
 }
 
 func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.MatchJob, error) {
@@ -53,7 +56,20 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 		if mapping.EntityID == uuid.Nil {
 			return domain.ErrCandidateEntityRequired
 		}
-		if err := s.entityRepo.InsertMapping(ctx, tx, mapping); err != nil {
+		decision, err := s.entityRepo.RecordMappingDecision(ctx, tx, domain.MappingDecisionCommand{
+			Mapping:                   mapping,
+			SourceOrigin:              domain.OriginMatchCandidate,
+			SourceJobID:               &job.ID,
+			SourceCandidateID:         &candidate.ID,
+			IdempotencyKey:            "confirm:" + candidate.ID.String(),
+			DecidedBy:                 &cmd.ReviewerID,
+			ExpectCurrentDecision:     cmd.ExpectedDecisionID != nil,
+			ExpectedCurrentDecisionID: cmd.ExpectedDecisionID,
+		})
+		if err != nil {
+			return err
+		}
+		if err := emitMappingDecision(ctx, tx, decision); err != nil {
 			return err
 		}
 		if _, err := s.entityRepo.RefreshJobCountsAndStatus(ctx, tx, job.ID); err != nil {
@@ -71,6 +87,7 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 				"status":             candidate.Status,
 				"entityId":           candidate.CandidateEntityID,
 				"evidenceId":         record.ID,
+				"mappingDecisionId":  decision.ID,
 				"matchEngineName":    candidate.MatchEngineName,
 				"matchEngineVersion": candidate.MatchEngineVersion,
 				"matchModelVersion":  candidate.MatchModelVersion,

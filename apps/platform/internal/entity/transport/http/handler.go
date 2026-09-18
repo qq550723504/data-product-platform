@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
@@ -205,6 +206,9 @@ func (h *Handler) listEntityMappings(w http.ResponseWriter, r *http.Request) {
 
 type reviewRequest struct {
 	Reason string `json:"reason"`
+	// ExpectedDecisionID is an optional optimistic concurrency token. When set,
+	// the review only succeeds while this decision is still the current one.
+	ExpectedDecisionID string `json:"expectedDecisionId"`
 }
 
 func (h *Handler) confirm(w http.ResponseWriter, r *http.Request) {
@@ -231,11 +235,21 @@ func (h *Handler) review(w http.ResponseWriter, r *http.Request, confirm bool) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_JSON", "invalid JSON request", nil)
 		return
 	}
+	var expectedDecisionID *uuid.UUID
+	if strings.TrimSpace(req.ExpectedDecisionID) != "" {
+		parsed, err := uuid.Parse(req.ExpectedDecisionID)
+		if err != nil {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_EXPECTED_DECISION_ID", "expectedDecisionId must be a UUID", nil)
+			return
+		}
+		expectedDecisionID = &parsed
+	}
 	command := application.ReviewCommand{
-		CandidateID: candidateID,
-		ReviewerID:  *actorID,
-		Reason:      req.Reason,
-		TraceID:     httpserver.RequestID(r.Context()),
+		CandidateID:        candidateID,
+		ReviewerID:         *actorID,
+		Reason:             req.Reason,
+		TraceID:            httpserver.RequestID(r.Context()),
+		ExpectedDecisionID: expectedDecisionID,
 	}
 	var job domain.MatchJob
 	if confirm {
@@ -246,12 +260,19 @@ func (h *Handler) review(w http.ResponseWriter, r *http.Request, confirm bool) {
 	if err != nil {
 		status := http.StatusConflict
 		code := "ENTITY_MATCH_REVIEW_FAILED"
-		if errors.Is(err, infrastructure.ErrNotFound) {
+		switch {
+		case errors.Is(err, infrastructure.ErrNotFound):
 			status = http.StatusNotFound
 			code = "ENTITY_MATCH_CANDIDATE_NOT_FOUND"
-		} else if errors.Is(err, domain.ErrReviewerReasonRequired) {
+		case errors.Is(err, domain.ErrReviewerReasonRequired):
 			status = http.StatusBadRequest
 			code = "REVIEW_REASON_REQUIRED"
+		case errors.Is(err, domain.ErrMappingDecisionConflict):
+			code = "ENTITY_MAPPING_DECISION_CONFLICT"
+		case errors.Is(err, domain.ErrMappingConfirmedImmutable):
+			code = "ENTITY_MAPPING_CONFIRMED_IMMUTABLE"
+		case errors.Is(err, domain.ErrMappingDecisionKeyConflict):
+			code = "ENTITY_MAPPING_DECISION_KEY_CONFLICT"
 		}
 		httpserver.WriteError(w, r, status, code, err.Error(), nil)
 		return
@@ -322,6 +343,7 @@ func mappingResponse(mapping domain.EntityMapping) map[string]any {
 		"reviewedAt":         mapping.ReviewedAt,
 		"reviewerReason":     mapping.ReviewerReason,
 		"evidenceId":         mapping.EvidenceID,
+		"currentDecisionId":  mapping.CurrentDecisionID,
 	}
 }
 
