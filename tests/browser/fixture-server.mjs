@@ -95,6 +95,7 @@ export function createFixtureServer() {
         if (url.pathname === `/api/v1/product-versions/${ids.version}`) return send(200, { id: ids.version, productId: ids.product, version: "1.0.0", definition: {}, assets: [] });
         if (url.pathname === `${workspace}/entity-match-reviews`) return send(200, page(state.candidateStatus === "PENDING" ? [candidate] : []));
         if (url.pathname === `/api/v1/entity-match-jobs/${ids.job}`) return send(200, job);
+        if (url.pathname === `/api/v1/entity-match-reviews/${ids.candidate}`) return send(200, candidate);
         if (url.pathname === `/api/v1/entity-match-jobs/${ids.job}/reviews`) return send(200, { items: [candidate] });
         if (["/datasets", "/data-resources", "/executions"].some((suffix) => url.pathname === workspace + suffix)) return send(200, page([]));
         if (url.pathname === `${workspace}/workbench`) return send(200, {

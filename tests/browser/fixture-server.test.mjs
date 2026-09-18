@@ -16,6 +16,14 @@ test("unknown scenario is rejected rather than silently returning ready", async 
   assert.equal((await fetch(`${base}/__control/scenario`, { method: "POST", headers: controlHeaders, body: '{"scenario":"typo"}' })).status, 400);
 });
 test("unknown API routes fail explicitly", async () => assert.equal((await fetch(`${base}/api/v1/not-implemented`)).status, 501));
+test("targeted candidate lookup returns one candidate, not a job queue", async () => {
+  const response = await fetch(`${base}/api/v1/entity-match-reviews/${ids.candidate}`);
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.id, ids.candidate);
+  assert.equal(body.jobId, ids.job);
+  assert.equal(body.items, undefined);
+});
 test("review needs actor and reason", async () => {
   const url = `${base}/api/v1/entity-match-reviews/${ids.candidate}/confirm`;
   assert.equal((await fetch(url, { method: "POST", body: "{}" })).status, 400);
