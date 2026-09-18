@@ -167,7 +167,11 @@ func main() {
 		}()
 	}
 
-	publisher := outbox.NewPublisher(db, time.Second)
+	publisher := outbox.NewPublisher(db, outbox.Config{
+		PollInterval: time.Second,
+		ConsumerName: "metadata-projection",
+		Logger:       logger,
+	})
 	go func() {
 		logger.Info("outbox publisher started")
 		err := publisher.Run(ctx, func(eventCtx context.Context, event outbox.PublishedEvent) error {
