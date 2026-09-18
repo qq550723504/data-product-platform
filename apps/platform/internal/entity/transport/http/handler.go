@@ -269,6 +269,8 @@ func (h *Handler) review(w http.ResponseWriter, r *http.Request, confirm bool) {
 			code = "REVIEW_REASON_REQUIRED"
 		case errors.Is(err, domain.ErrMappingDecisionConflict):
 			code = "ENTITY_MAPPING_DECISION_CONFLICT"
+		case errors.Is(err, domain.ErrMappingDecisionExpectationRequired):
+			code = "ENTITY_MAPPING_DECISION_EXPECTATION_REQUIRED"
 		case errors.Is(err, domain.ErrMappingConfirmedImmutable):
 			code = "ENTITY_MAPPING_CONFIRMED_IMMUTABLE"
 		case errors.Is(err, domain.ErrMappingDecisionKeyConflict):

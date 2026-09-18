@@ -87,8 +87,14 @@ var (
 	// a mapping a human already confirmed. Human confirmation always wins.
 	ErrMappingConfirmedImmutable = errors.New("a human-confirmed entity mapping cannot be replaced by automatic matching")
 	// ErrMappingDecisionKeyConflict rejects reusing one idempotency key for a
-	// different source triple. Retries of the same operation are idempotent.
-	ErrMappingDecisionKeyConflict = errors.New("mapping decision idempotency key is already bound to another source")
+	// different request. Retries of the same operation are idempotent, but a key
+	// reused for a different target, reason, actor or source is a conflict.
+	ErrMappingDecisionKeyConflict = errors.New("mapping decision idempotency key is already bound to another request")
+	// ErrMappingDecisionExpectationRequired rejects a manual confirmation that
+	// would replace an existing current decision while the caller did not state
+	// which decision it observed. Observed state must be explicit, not inferred
+	// by re-reading the latest value at submit time.
+	ErrMappingDecisionExpectationRequired = errors.New("replacing a current entity mapping decision requires the expected current decision")
 )
 
 type EntityType struct {
@@ -306,6 +312,70 @@ func EnsureMappingDecisionAllowed(currentStatus *MappingStatus, next MappingStat
 		return ErrMappingConfirmedImmutable
 	}
 	return nil
+}
+
+// SameMappingDecision reports whether two optional current-decision pointers
+// refer to the same decision, including both being absent.
+func SameMappingDecision(a, b *uuid.UUID) bool {
+	if a == nil || b == nil {
+		return a == nil && b == nil
+	}
+	return *a == *b
+}
+
+// EnsureMappingDecisionExpectation makes the concurrency contract explicit for
+// manual confirmations:
+//
+//   - a first confirmation (no current decision) is safe even without a token;
+//   - replacing an existing decision requires expectCurrent and an expected
+//     pointer equal to the observed decision;
+//   - a confirmation that does not request the check is rejected when a current
+//     decision already exists, instead of silently overwriting it.
+//
+// Automatic decisions are governed by EnsureMappingDecisionAllowed, not here.
+func EnsureMappingDecisionExpectation(currentDecisionID *uuid.UUID, expectCurrent bool, expected *uuid.UUID, next MappingStatus) error {
+	if expectCurrent {
+		if !SameMappingDecision(currentDecisionID, expected) {
+			return ErrMappingDecisionConflict
+		}
+		return nil
+	}
+	if next == MappingConfirmed && currentDecisionID != nil {
+		return ErrMappingDecisionExpectationRequired
+	}
+	return nil
+}
+
+// MappingDecisionMatchesRequest reports whether a retried command has the same
+// request semantics as the decision already recorded under its idempotency key.
+// Random identifiers (decision id, mapping id, evidence id) and timestamps are
+// ignored so genuine retries stay idempotent, while a different target entity,
+// decision status, reviewer reason, actor, provenance or source association is
+// treated as an idempotency-key conflict.
+func MappingDecisionMatchesRequest(existing MappingDecision, cmd MappingDecisionCommand) bool {
+	mapping := cmd.Mapping
+	origin := cmd.SourceOrigin
+	if origin == "" {
+		origin = OriginUnknown
+	}
+	return existing.EntityID == mapping.EntityID &&
+		existing.SourceType == mapping.SourceType &&
+		existing.SourceRef == mapping.SourceRef &&
+		existing.SourceKey == mapping.SourceKey &&
+		existing.SourceName == mapping.SourceName &&
+		existing.MatchMethod == mapping.MatchMethod &&
+		existing.MatchRuleID == mapping.MatchRuleID &&
+		existing.MatchPolicyVersion == mapping.MatchPolicyVersion &&
+		existing.MatchEngineName == mapping.MatchEngineName &&
+		existing.MatchEngineVersion == mapping.MatchEngineVersion &&
+		existing.MatchModelVersion == mapping.MatchModelVersion &&
+		existing.Confidence == mapping.Confidence &&
+		existing.Status == mapping.Status &&
+		existing.ReviewerReason == mapping.ReviewerReason &&
+		SameMappingDecision(existing.ReviewedBy, mapping.ReviewedBy) &&
+		existing.SourceOrigin == origin &&
+		SameMappingDecision(existing.SourceJobID, cmd.SourceJobID) &&
+		SameMappingDecision(existing.SourceCandidateID, cmd.SourceCandidateID)
 }
 
 // NormalizeMappingDecisionKey trims an optional idempotency key and rejects keys

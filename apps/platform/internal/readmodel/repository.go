@@ -149,15 +149,20 @@ type EntityReview struct {
 	CandidateEntityID *uuid.UUID      `json:"candidateEntityId,omitempty"`
 	Decision          string          `json:"decision"`
 	Status            string          `json:"status"`
-	MatchMethod       string          `json:"matchMethod"`
-	MatchRuleID       string          `json:"matchRuleId"`
-	Confidence        float64         `json:"confidence"`
-	EngineName        string          `json:"engineName"`
-	EngineVersion     string          `json:"engineVersion"`
-	ModelVersion      string          `json:"modelVersion"`
-	PolicyRef         string          `json:"policyRef"`
-	PolicyVersion     string          `json:"policyVersion"`
-	CreatedAt         time.Time       `json:"createdAt"`
+	// CurrentMappingDecisionID is the mapping decision that is current for this
+	// candidate's source triple right now. The review form carries it as the
+	// optimistic-concurrency token so a reviewer can never replace a decision
+	// that changed after the queue was rendered.
+	CurrentMappingDecisionID *uuid.UUID `json:"currentMappingDecisionId,omitempty"`
+	MatchMethod              string     `json:"matchMethod"`
+	MatchRuleID              string     `json:"matchRuleId"`
+	Confidence               float64    `json:"confidence"`
+	EngineName               string     `json:"engineName"`
+	EngineVersion            string     `json:"engineVersion"`
+	ModelVersion             string     `json:"modelVersion"`
+	PolicyRef                string     `json:"policyRef"`
+	PolicyVersion            string     `json:"policyVersion"`
+	CreatedAt                time.Time  `json:"createdAt"`
 }
 
 type DataProduct struct {
@@ -419,9 +424,15 @@ func (r *Repository) ListEntityReviews(ctx context.Context, workspaceID uuid.UUI
 		SELECT c.id, c.job_id, j.workspace_id, c.source_key, COALESCE(c.source_name,''), c.source_payload,
 		       c.normalized_payload, c.candidate_entity_id, c.decision, c.status, c.match_method,
 		       COALESCE(c.match_rule_id,''), COALESCE(c.confidence,0), c.match_engine_name,
-		       c.match_engine_version, c.match_model_version, j.policy_ref, j.policy_version, c.created_at
+		       c.match_engine_version, c.match_model_version, j.policy_ref, j.policy_version, c.created_at,
+		       em.current_decision_id
 		FROM entity_match_candidate c
 		JOIN entity_match_job j ON j.id=c.job_id
+		LEFT JOIN entity_mapping em
+		  ON em.workspace_id=j.workspace_id
+		 AND em.source_type=j.source_type
+		 AND em.source_ref=j.source_ref
+		 AND em.source_key=c.source_key
 		WHERE j.workspace_id=$1`+filter+fmt.Sprintf(`
 		ORDER BY c.created_at DESC, c.id LIMIT $%d OFFSET $%d`, limitPos, offsetPos), args...)
 	if err != nil {
@@ -436,7 +447,7 @@ func (r *Repository) ListEntityReviews(ctx context.Context, workspaceID uuid.UUI
 			&item.CandidateID, &item.JobID, &item.WorkspaceID, &item.SourceKey, &item.SourceName, &source,
 			&normalized, &item.CandidateEntityID, &item.Decision, &item.Status, &item.MatchMethod,
 			&item.MatchRuleID, &item.Confidence, &item.EngineName, &item.EngineVersion, &item.ModelVersion,
-			&item.PolicyRef, &item.PolicyVersion, &item.CreatedAt,
+			&item.PolicyRef, &item.PolicyVersion, &item.CreatedAt, &item.CurrentMappingDecisionID,
 		); err != nil {
 			return List[EntityReview]{}, fmt.Errorf("scan entity review: %w", err)
 		}

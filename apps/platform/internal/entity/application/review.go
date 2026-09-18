@@ -57,13 +57,17 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 			return domain.ErrCandidateEntityRequired
 		}
 		decision, err := s.entityRepo.RecordMappingDecision(ctx, tx, domain.MappingDecisionCommand{
-			Mapping:                   mapping,
-			SourceOrigin:              domain.OriginMatchCandidate,
-			SourceJobID:               &job.ID,
-			SourceCandidateID:         &candidate.ID,
-			IdempotencyKey:            "confirm:" + candidate.ID.String(),
-			DecidedBy:                 &cmd.ReviewerID,
-			ExpectCurrentDecision:     cmd.ExpectedDecisionID != nil,
+			Mapping:           mapping,
+			SourceOrigin:      domain.OriginMatchCandidate,
+			SourceJobID:       &job.ID,
+			SourceCandidateID: &candidate.ID,
+			IdempotencyKey:    "confirm:" + candidate.ID.String(),
+			DecidedBy:         &cmd.ReviewerID,
+			// A confirmation that replaces an existing current decision must prove which
+			// decision the reviewer saw. A missing token is not "no check": when a
+			// current decision already exists the repository rejects the write instead of
+			// silently overwriting it.
+			ExpectCurrentDecision:     true,
 			ExpectedCurrentDecisionID: cmd.ExpectedDecisionID,
 		})
 		if err != nil {

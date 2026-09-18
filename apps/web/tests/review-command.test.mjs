@@ -109,6 +109,28 @@ test("nested Core errors surface a safe code, not SQL or internal messages", asy
   assert.match(result.message, /REVIEW_CONFLICT/);
   assert.doesNotMatch(result.message, /secret SQL/);
 });
+test("an observed current decision is forwarded as an optimistic-concurrency token", async () => {
+  const transport = stub();
+  const result = await executeReview(form({ expectedDecisionId: ids.foreign.toUpperCase() }), config, transport.request);
+  assert.equal(result.ok, true);
+  assert.deepEqual(JSON.parse(transport.calls[2].init.body), { reason: "已核对来源记录", expectedDecisionId: ids.foreign.toLowerCase() });
+});
+test("no observed mapping keeps the request backwards compatible", async () => {
+  const transport = stub();
+  assert.equal((await executeReview(form({ expectedDecisionId: "" }), config, transport.request)).ok, true);
+  assert.deepEqual(JSON.parse(transport.calls[2].init.body), { reason: "已核对来源记录" });
+});
+for (const [name, token] of [
+  ["placeholder token", "not-a-uuid"], ["nil token", "00000000-0000-0000-0000-000000000000"],
+]) {
+  test(`${name}: rejected before any upstream request`, async () => {
+    const transport = stub([]);
+    const result = await executeReview(form({ expectedDecisionId: token }), config, transport.request);
+    assert.equal(result.ok, false);
+    assert.match(result.message, /当前映射决策标识无效/);
+    assert.equal(transport.calls.length, 0);
+  });
+}
 test("concurrent review conflict requires refresh and never retries", async () => {
   const transport = stub([job, candidate, new Response("conflict", { status: 409 })]);
   const result = await executeReview(form(), config, transport.request);

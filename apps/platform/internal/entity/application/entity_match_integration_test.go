@@ -189,6 +189,53 @@ func TestCompanyEntityResolutionReferenceSlice(t *testing.T) {
 	if evidenceCount != 1 {
 		t.Fatalf("review evidence count = %d, want 1", evidenceCount)
 	}
+
+	// Retrying the same confirmation must not append a second decision,
+	// evidence, audit or outbox record. The candidate state guard rejects the
+	// replay, and the repository idempotency key makes an in-flight retry return
+	// the original decision instead of writing again.
+	if _, err := service.Confirm(ctx, entityapp.ReviewCommand{
+		CandidateID: reviewCandidate.ID,
+		ReviewerID:  reviewerID,
+		Reason:      "same legal representative and highly similar normalized company name",
+		TraceID:     "entity-integration-replay",
+	}); err == nil {
+		t.Fatal("replayed confirmation unexpectedly succeeded")
+	}
+
+	var decisionCount, auditCount, outboxCount, replayEvidenceCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM entity_mapping_decision
+		WHERE workspace_id=$1 AND source_type='CSV' AND source_ref='enterprise.csv' AND source_key=$2
+	`, workspaceID, reviewCandidate.SourceKey).Scan(&decisionCount); err != nil {
+		t.Fatalf("count mapping decisions: %v", err)
+	}
+	if decisionCount != 1 {
+		t.Fatalf("mapping decision count after replay = %d, want 1", decisionCount)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM audit_event WHERE object_type='ENTITY_MATCH_CANDIDATE' AND object_id=$1`, reviewCandidate.ID).Scan(&auditCount); err != nil {
+		t.Fatalf("count audit events: %v", err)
+	}
+	if auditCount != 1 {
+		t.Fatalf("audit event count after replay = %d, want 1", auditCount)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM outbox_event o
+		JOIN entity_mapping em ON em.id=o.aggregate_id
+		WHERE o.aggregate_type='ENTITY_MAPPING'
+		  AND em.workspace_id=$1 AND em.source_type='CSV' AND em.source_ref='enterprise.csv' AND em.source_key=$2
+	`, workspaceID, reviewCandidate.SourceKey).Scan(&outboxCount); err != nil {
+		t.Fatalf("count outbox events: %v", err)
+	}
+	if outboxCount != 1 {
+		t.Fatalf("outbox event count after replay = %d, want 1", outboxCount)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM evidence WHERE source_type='ENTITY_MATCH_CANDIDATE' AND source_id=$1`, reviewCandidate.ID).Scan(&replayEvidenceCount); err != nil {
+		t.Fatalf("count review evidence after replay: %v", err)
+	}
+	if replayEvidenceCount != 1 {
+		t.Fatalf("review evidence count after replay = %d, want 1", replayEvidenceCount)
+	}
 }
 
 func TestMatchJobRejectsDatasetsFromAnotherWorkspaceOrType(t *testing.T) {

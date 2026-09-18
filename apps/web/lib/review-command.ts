@@ -77,8 +77,18 @@ export async function executeReview(
     const candidateId = form.get("candidateId");
     const decision = form.get("decision");
     const rawReason = form.get("reason");
+    const rawExpectedDecisionId = form.get("expectedDecisionId");
     if (!isReviewId(jobId) || !isReviewId(candidateId)) {
       throw new ReviewCommandError("任务和候选标识必须是有效 UUID。", "INVALID_ID");
+    }
+    // An empty token means "the reviewer observed no current decision"; a
+    // non-empty token must be a real decision id, never a placeholder.
+    let expectedDecisionId: string | undefined;
+    if (typeof rawExpectedDecisionId === "string" && rawExpectedDecisionId.trim() !== "") {
+      if (!isReviewId(rawExpectedDecisionId)) {
+        throw new ReviewCommandError("当前映射决策标识无效，请刷新队列后重新核对。", "INVALID_EXPECTED_DECISION_ID");
+      }
+      expectedDecisionId = rawExpectedDecisionId.toLowerCase();
     }
     if (decision !== "confirm" && decision !== "reject") {
       throw new ReviewCommandError("请选择确认或拒绝。", "INVALID_DECISION");
@@ -128,7 +138,7 @@ export async function executeReview(
     const result = await json(`/api/v1/entity-match-reviews/${candidateId}/${decision}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Actor-ID": actorId },
-      body: JSON.stringify({ reason: rawReason.trim() }),
+      body: JSON.stringify(expectedDecisionId ? { reason: rawReason.trim(), expectedDecisionId } : { reason: rawReason.trim() }),
     });
     const job = parseJob(result, jobId, workspaceId);
     return { ok: true, message: `${decision === "confirm" ? "已确认" : "已拒绝"}候选；任务状态：${job.status}。`, job };
