@@ -420,6 +420,35 @@ code {
   gap: 6px;
 }
 
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.pagination-step {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border, #d8dee9);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.pagination-step-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pagination-summary {
+  font-size: 13px;
+  color: var(--muted, #5b6472);
+}
+
 .callout {
   border-radius: 12px;
   padding: 16px 18px;

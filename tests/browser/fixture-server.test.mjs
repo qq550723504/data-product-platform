@@ -52,6 +52,27 @@ test("changing scenario preserves request history", async () => {
   assert.deepEqual(body.checks, {});
   assert.equal((await state()).requests.length, 2);
 });
+test("paginated resource list slices by server-side offset", async () => {
+  await fetch(`${base}/__control/scenario`, { method: "POST", headers: controlHeaders, body: '{"scenario":"paginated-resources"}' });
+  const first = await (await fetch(`${base}/api/v1/workspaces/${ids.workspace}/data-resources?limit=25&offset=0`)).json();
+  assert.equal(first.page.total, 30);
+  assert.equal(first.page.limit, 25);
+  assert.equal(first.page.offset, 0);
+  assert.equal(first.items.length, 25);
+  assert.equal(first.items[0].name, "资源 1");
+  assert.equal(first.items.at(-1).name, "资源 25");
+  const second = await (await fetch(`${base}/api/v1/workspaces/${ids.workspace}/data-resources?limit=25&offset=25`)).json();
+  assert.equal(second.page.total, 30);
+  assert.equal(second.page.offset, 25);
+  assert.deepEqual(second.items.map((item) => item.name), ["资源 26", "资源 27", "资源 28", "资源 29", "资源 30"]);
+});
+
+test("default resource list stays empty so write tests see no phantom rows", async () => {
+  const body = await (await fetch(`${base}/api/v1/workspaces/${ids.workspace}/data-resources`)).json();
+  assert.equal(body.page.total, 0);
+  assert.deepEqual(body.items, []);
+});
+
 test("publish requires idempotency header and stores observed command headers", async () => {
   const url = `${base}/api/v1/product-releases/${ids.release}/publish`;
   assert.equal((await fetch(url, { method: "POST", headers: { "X-Actor-ID": ids.actor }, body: "{}" })).status, 400);

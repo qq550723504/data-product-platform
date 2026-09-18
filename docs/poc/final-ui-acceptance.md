@@ -15,6 +15,8 @@
 | Release 证据追溯 | `/products/{productId}/releases/{releaseId}` | 带作用域的产品/release 发现 + Core ProductRelease 可追溯性 | trace 作用域回归测试 + Next 构建/路由冒烟测试；Core 可追溯性测试 |
 | 证据中心 | `/evidence` | workspace 产品/release；链接到 release 追溯 | Next 生产构建 + 路由冒烟测试 |
 
+四个列表路由（`/resources`、`/datasets`、`/products`、`/production`）使用服务端 `limit`/`offset` 分页与显式分页控件（上一页/下一页 + 总数），不使用“取满所有页”来渲染列表。非法或越界的 `?offset=` 回退到第一页而不是报错；详情页仍以带作用域的查询解析单条记录，不假定目标位于第一页。
+
 ## 验收标准
 
 ### 无需直接操纵数据库的参考流程

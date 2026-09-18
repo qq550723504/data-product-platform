@@ -14,8 +14,20 @@ export const ids = {
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
-const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "review-conflict", "publish-conflict"]);
+const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "review-conflict", "publish-conflict", "paginated-resources"]);
 const pass = { production: "PASS", dataset: "PASS", rights: "PASS", quality: "PASS", compliance: "PASS", contract: "PASS", evidence: "PASS", delivery: "PASS" };
+function fixtureResources(count) {
+  return Array.from({ length: count }, (_, index) => {
+    const n = index + 1;
+    return {
+      id: `${String(n).padStart(8, "0")}-0000-4000-8000-${String(n).padStart(12, "0")}`,
+      workspaceId: ids.workspace, code: `FIXTURE_RES_${n}`, name: `资源 ${n}`,
+      description: "Synthetic fixture resource", domainCode: "TEST", resourceType: "TABLE",
+      sensitivityLevel: "INTERNAL", rightsStatus: "APPROVED", qualityStatus: "PASS",
+      lifecycleStatus: "ACTIVE", revision: 1, createdAt: stamp, updatedAt: stamp,
+    };
+  });
+}
 function readiness(scenario) {
   const result = { releaseId: ids.release, overall: "READY", checks: { ...pass }, blockers: [], details: {} };
   if (scenario === "empty-checks") result.checks = {};
@@ -101,7 +113,8 @@ export function createFixtureServer() {
         if (url.pathname === `/api/v1/entity-match-jobs/${ids.job}`) return send(200, job);
         if (url.pathname === `/api/v1/entity-match-reviews/${ids.candidate}`) return send(200, candidate);
         if (url.pathname === `/api/v1/entity-match-jobs/${ids.job}/reviews`) return send(200, { items: [candidate] });
-        if (["/datasets", "/data-resources", "/executions"].some((suffix) => url.pathname === workspace + suffix)) return send(200, page([]));
+        if (url.pathname === `${workspace}/data-resources`) return send(200, page(state.scenario === "paginated-resources" ? fixtureResources(30) : []));
+        if (["/datasets", "/executions"].some((suffix) => url.pathname === workspace + suffix)) return send(200, page([]));
         if (url.pathname === `${workspace}/workbench`) return send(200, {
           workspaceId: ids.workspace, counts: { dataResources: 0, datasets: 0, dataProducts: 1 },
           reviewQueue: { pending: state.candidateStatus === "PENDING" ? 1 : 0, unresolved: 0, conflicts: 0 },
