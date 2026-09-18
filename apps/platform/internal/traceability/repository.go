@@ -94,8 +94,13 @@ type EntityMatchJobTrace struct {
 	Status                 string     `json:"status"`
 }
 
+// EntityMappingTrace reports the immutable mapping decision that a release-time
+// match job actually applied. It deliberately contains DecisionID: the
+// entity_mapping projection is mutable, so a release must show the decision it
+// was produced with, not whatever mapping happens to be current now.
 type EntityMappingTrace struct {
 	ID                 uuid.UUID  `json:"id"`
+	DecisionID         uuid.UUID  `json:"decisionId"`
 	EntityID           uuid.UUID  `json:"entityId"`
 	SourceType         string     `json:"sourceType"`
 	SourceRef          string     `json:"sourceRef"`
@@ -110,6 +115,9 @@ type EntityMappingTrace struct {
 	ReviewedAt         *time.Time `json:"reviewedAt,omitempty"`
 	ReviewerReason     string     `json:"reviewerReason,omitempty"`
 	EvidenceID         *uuid.UUID `json:"evidenceId,omitempty"`
+	SourceOrigin       string     `json:"sourceOrigin"`
+	SourceJobID        *uuid.UUID `json:"sourceJobId,omitempty"`
+	DecidedAt          time.Time  `json:"decidedAt"`
 }
 
 type AuditEventTrace struct {
@@ -316,44 +324,49 @@ func (r *Repository) entityMatchJobsForDatasets(ctx context.Context, datasets []
 	return result, rows.Err()
 }
 
+// entityMappingsForJobs reads the immutable decisions produced by the release's
+// own match jobs. A release must never be reconstructed from the mutable
+// entity_mapping projection: the current mapping can move to another entity long
+// after the release was produced, while the decision that produced its
+// DatasetVersion stays frozen. Decisions that cannot prove a source job
+// (idempotency/legacy rows with source_job_id IS NULL) are deliberately not
+// attributed to a release instead of being guessed from the current table.
 func (r *Repository) entityMappingsForJobs(ctx context.Context, jobs []EntityMatchJobTrace) ([]EntityMappingTrace, error) {
-	result := make([]EntityMappingTrace, 0)
-	seen := map[uuid.UUID]struct{}{}
+	ids := make([]uuid.UUID, 0, len(jobs))
 	for _, job := range jobs {
-		rows, err := r.pool.Query(ctx, `
-			SELECT em.id, em.entity_id, em.source_type, em.source_ref, em.source_key, COALESCE(em.source_name,''),
-			       em.match_method, COALESCE(em.match_rule_id,''), em.match_policy_version, COALESCE(em.confidence,0),
-			       em.status, em.reviewed_by, em.reviewed_at, COALESCE(em.reviewer_reason,''), em.evidence_id
-			FROM entity_mapping em
-			JOIN entity e ON e.id=em.entity_id
-			WHERE em.source_type=$1 AND em.source_ref=$2
-			  AND e.workspace_id=$3 AND e.entity_type_id=$4
-			ORDER BY em.source_key, em.id
-		`, job.SourceType, job.SourceRef, job.WorkspaceID, job.EntityTypeID)
-		if err != nil {
-			return nil, fmt.Errorf("query release entity mappings: %w", err)
+		ids = append(ids, job.ID)
+	}
+	if len(ids) == 0 {
+		return []EntityMappingTrace{}, nil
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT d.id, d.mapping_id, d.entity_id, d.source_type, d.source_ref, d.source_key, COALESCE(d.source_name,''),
+		       d.match_method, COALESCE(d.match_rule_id,''), d.match_policy_version, COALESCE(d.confidence,0),
+		       d.status, d.reviewed_by, d.reviewed_at, COALESCE(d.reviewer_reason,''), d.evidence_id,
+		       d.source_origin, d.source_job_id, d.decided_at
+		FROM entity_mapping_decision d
+		WHERE d.source_job_id=ANY($1::uuid[])
+		ORDER BY d.source_key, d.decided_seq, d.id
+	`, ids)
+	if err != nil {
+		return nil, fmt.Errorf("query release entity mapping decisions: %w", err)
+	}
+	defer rows.Close()
+	result := make([]EntityMappingTrace, 0)
+	for rows.Next() {
+		var item EntityMappingTrace
+		if err := rows.Scan(
+			&item.DecisionID, &item.ID, &item.EntityID, &item.SourceType, &item.SourceRef, &item.SourceKey, &item.SourceName,
+			&item.MatchMethod, &item.MatchRuleID, &item.MatchPolicyVersion, &item.Confidence,
+			&item.Status, &item.ReviewedBy, &item.ReviewedAt, &item.ReviewerReason, &item.EvidenceID,
+			&item.SourceOrigin, &item.SourceJobID, &item.DecidedAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan release entity mapping decision: %w", err)
 		}
-		for rows.Next() {
-			var item EntityMappingTrace
-			if err := rows.Scan(
-				&item.ID, &item.EntityID, &item.SourceType, &item.SourceRef, &item.SourceKey, &item.SourceName,
-				&item.MatchMethod, &item.MatchRuleID, &item.MatchPolicyVersion, &item.Confidence,
-				&item.Status, &item.ReviewedBy, &item.ReviewedAt, &item.ReviewerReason, &item.EvidenceID,
-			); err != nil {
-				rows.Close()
-				return nil, fmt.Errorf("scan release entity mapping: %w", err)
-			}
-			if _, ok := seen[item.ID]; ok {
-				continue
-			}
-			seen[item.ID] = struct{}{}
-			result = append(result, item)
-		}
-		if err := rows.Err(); err != nil {
-			rows.Close()
-			return nil, fmt.Errorf("iterate release entity mappings: %w", err)
-		}
-		rows.Close()
+		result = append(result, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate release entity mapping decisions: %w", err)
 	}
 	return result, nil
 }

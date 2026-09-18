@@ -67,6 +67,10 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
       await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
     }
     await expect(page.getByText(data.reason, { exact: true }).first()).toBeVisible();
+    // The Release must show the immutable decision that produced it...
+    await expect(page.getByText(data.decisionId, { exact: true })).toBeVisible();
+    // ...not the post-release correction that only moved the current mapping.
+    await expect(page.getByText(data.currentMappingReason, { exact: true })).toHaveCount(0);
     await page.goto(productPath);
     await expect(releaseCard(page, data.releaseId).getByRole("button", { name: "已发布", exact: true })).toBeDisabled();
     await expect(releaseCard(page, data.blockedReleaseId).getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
