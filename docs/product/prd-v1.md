@@ -32,7 +32,7 @@ V1.1 第一阶段不定位为：
 - 业务专家：指标、实体匹配、人工复核
 - 治理人员：质量标准、QualityAssessment
 - 合规/法务：RightsDeclaration verification、Authorization、Compliance Review
-- 数据交付人员：Certification / Delivery
+- 数据交付人员：Certification / Current Entitlement / Delivery
 - Product Owner：Data Product Release 与生命周期
 - 系统管理员：用户、权限、系统配置
 
@@ -257,6 +257,8 @@ CertificationProfile 至少定义：
 DatasetCertification 必须绑定明确 DatasetVersion、QualityAssessment、Profile snapshot/hash 及所需 Rights/Compliance/Contract/Evidence。
 
 任何 required 条件缺失或不匹配时，不得 CERTIFIED。
+
+Certification 表示认证时点结论，不等于永久交付授权。Certified Dataset 每次实际交付前必须重新执行 CurrentEntitlementGate，按当前时间、consumer、purpose、action 检查 RightsDeclaration / Authorization / Effective Rights。授权过期、暂停、撤销或动作不再允许时，历史 Certification 保留，但交付必须 BLOCKED。第一阶段不要求周期性后台重认证。
 
 ## 11. Product Release Readiness
 
