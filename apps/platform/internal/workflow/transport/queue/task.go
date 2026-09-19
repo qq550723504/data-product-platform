@@ -11,6 +11,10 @@ import (
 
 const TaskExecute = "workflow:execution:run"
 
+type ExecutionEnqueuer interface {
+	EnqueueExecution(ctx context.Context, executionID uuid.UUID) error
+}
+
 type executionPayload struct {
 	ExecutionID uuid.UUID `json:"executionId"`
 }
@@ -21,6 +25,14 @@ type Client struct {
 
 func NewClient(client *asynq.Client) *Client {
 	return &Client{client: client}
+}
+
+// Close releases the Redis connection pool owned by this queue client.
+func (c *Client) Close() error {
+	if c == nil || c.client == nil {
+		return nil
+	}
+	return c.client.Close()
 }
 
 func (c *Client) EnqueueExecution(ctx context.Context, executionID uuid.UUID) error {

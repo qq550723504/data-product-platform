@@ -33,6 +33,7 @@ var eventVocabulary = []string{
 	"ExecutionEngineSelected",
 	"ExecutionFailed",
 	"ExecutionQueued",
+	"ExecutionReconciliationQueued",
 	"ExecutionRetried",
 	"ExecutionStarted",
 	"ExecutionSubmitting",
@@ -101,18 +102,18 @@ func TestRoutesResolveGovernanceProjectionProfile(t *testing.T) {
 	}
 }
 
-func TestRoutesKeepExecutionDispatchExplicitForT2(t *testing.T) {
+func TestRoutesRequireExecutionQueueForNewDispatchEvents(t *testing.T) {
 	router, err := NewRouter(true)
 	if err != nil {
 		t.Fatalf("NewRouter: %v", err)
 	}
-	for _, eventType := range []string{"ExecutionQueued", "ExecutionRetried"} {
+	for _, eventType := range []string{"ExecutionQueued", "ExecutionRetried", "ExecutionReconciliationQueued"} {
 		required, ok := router.RequiredHandlers(eventType)
 		if !ok {
 			t.Fatalf("%s must be declared even while it is retention-only", eventType)
 		}
-		if len(required) != 0 {
-			t.Fatalf("%s required handlers = %v; T2 moves enqueue onto %s and bumps the routing version", eventType, required, HandlerExecutionQueue)
+		if len(required) != 1 || required[0] != HandlerExecutionQueue {
+			t.Fatalf("%s required handlers = %v, want [%s]", eventType, required, HandlerExecutionQueue)
 		}
 	}
 }

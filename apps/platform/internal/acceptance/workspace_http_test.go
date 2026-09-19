@@ -3,7 +3,10 @@ package acceptance_test
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -42,6 +45,27 @@ type boundaryStore struct {
 	writes atomic.Int64
 }
 
+// dropResponseTransport lets the server commit the request while the client
+// observes a lost response, matching the network-failure window after commit.
+type dropResponseTransport struct {
+	base http.RoundTripper
+}
+
+func (t dropResponseTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	base := t.base
+	if base == nil {
+		base = http.DefaultTransport
+	}
+	response, err := base.RoundTrip(req)
+	if err != nil {
+		return nil, err
+	}
+	if response != nil && response.Body != nil {
+		_ = response.Body.Close()
+	}
+	return nil, errors.New("test client dropped response after server commit")
+}
+
 func (s *boundaryStore) Get(ctx context.Context, uri string) (io.ReadCloser, error) {
 	s.reads.Add(1)
 	return s.memoryStore.Get(ctx, uri)
@@ -50,16 +74,6 @@ func (s *boundaryStore) Get(ctx context.Context, uri string) (io.ReadCloser, err
 func (s *boundaryStore) Put(ctx context.Context, name string, r io.Reader, size int64, contentType string) (string, error) {
 	s.writes.Add(1)
 	return s.memoryStore.Put(ctx, name, r, size, contentType)
-}
-
-// countingQueue records dispatch so rejected commands can be proven to enqueue nothing.
-type countingQueue struct {
-	enqueued []uuid.UUID
-}
-
-func (q *countingQueue) EnqueueExecution(_ context.Context, executionID uuid.UUID) error {
-	q.enqueued = append(q.enqueued, executionID)
-	return nil
 }
 
 // countingNativeEngine proves a quarantined execution never reaches the engine.
@@ -97,8 +111,7 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 	entityHandler := entityhttp.NewHandler(match, entities)
 	workflowRepo := workflowinfra.NewPostgresRepository(pool)
 	workflowVersions := workflowapp.NewWorkflowVersionService(tx, workflowRepo)
-	queue := &countingQueue{}
-	executions := workflowapp.NewExecutionService(tx, workflowRepo, queue)
+	executions := workflowapp.NewExecutionService(tx, workflowRepo)
 	workflowHandler := workflowhttp.NewHandler(workflowVersions, executions, workflowRepo)
 	server := httptest.NewServer(httpserver.NewMux(datasetHandler.Register, entityHandler.Register, workflowHandler.Register))
 	defer server.Close()
@@ -133,12 +146,23 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 
 	post := func(t *testing.T, route string, body map[string]any) (int, []byte) {
 		t.Helper()
+		keyOverride, _ := body["_idempotencyKey"].(string)
+		omitIdempotencyKey, _ := body["_omitIdempotencyKey"].(bool)
+		delete(body, "_idempotencyKey")
+		delete(body, "_omitIdempotencyKey")
 		encoded, err := json.Marshal(body)
 		liveOK(t, err, "encode HTTP boundary command")
 		req, err := http.NewRequestWithContext(ctx, http.MethodPost, server.URL+route, bytes.NewReader(encoded))
 		liveOK(t, err, "create HTTP request")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("X-Actor-ID", actor.String())
+		if strings.HasPrefix(route, "/api/v1/executions") && !omitIdempotencyKey {
+			if keyOverride == "" {
+				hash := sha256.Sum256(encoded)
+				keyOverride = "boundary-" + hex.EncodeToString(hash[:])
+			}
+			req.Header.Set("Idempotency-Key", keyOverride)
+		}
 		response, err := client.Do(req)
 		liveOK(t, err, "send actual handler request")
 		defer response.Body.Close()
@@ -168,6 +192,25 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 		)::text`, workspaces, []string{owner.String(), foreign.String()}).Scan(&value), "snapshot isolated facts")
 		return value
 	}
+	t.Run("execution requires idempotency key", func(t *testing.T) {
+		before := snapshot(t)
+		status, response := post(t, "/api/v1/executions", map[string]any{
+			"_omitIdempotencyKey": true,
+			"workspaceId":         owner,
+			"workflowVersionId":   ownerWorkflow.ID,
+			"outputDatasetId":     standardized.ID,
+			"targetPeriod":        "2025-03",
+			"inputs":              []map[string]any{{"name": "boundary_input", "datasetVersionId": version.ID}},
+		})
+		var envelope httpserver.ErrorEnvelope
+		liveOK(t, json.Unmarshal(response, &envelope), "decode missing idempotency key response")
+		if status != http.StatusBadRequest || envelope.Code != "IDEMPOTENCY_KEY_REQUIRED" {
+			t.Fatalf("status=%d response=%s, want 400/IDEMPOTENCY_KEY_REQUIRED", status, response)
+		}
+		if after := snapshot(t); after != before {
+			t.Fatal("missing idempotency key changed persisted facts")
+		}
+	})
 	jobBody := func(workspace, output uuid.UUID) map[string]any {
 		return map[string]any{"workspaceId": workspace, "inputDatasetVersionId": version.ID, "outputDatasetId": output, "sourceType": "CSV", "sourceRef": filename, "sourceRole": "ANCHOR", "policyRef": companyPolicyRef}
 	}
@@ -180,6 +223,36 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 			"inputs":            []map[string]any{{"name": "boundary_input", "datasetVersionId": inputVersion}},
 		}
 	}
+	t.Run("same key replays after committed response is dropped", func(t *testing.T) {
+		body := executionBody(owner, ownerWorkflow.ID, standardized.ID, version.ID)
+		body["_idempotencyKey"] = "boundary-response-lost"
+		encoded, err := json.Marshal(body)
+		liveOK(t, err, "encode response-loss command")
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, server.URL+"/api/v1/executions", bytes.NewReader(encoded))
+		liveOK(t, err, "create response-loss request")
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("X-Actor-ID", actor.String())
+		req.Header.Set("Idempotency-Key", "boundary-response-lost")
+		droppedClient := *client
+		droppedClient.Transport = dropResponseTransport{base: client.Transport}
+		response, err := droppedClient.Do(req)
+		if err == nil || response != nil {
+			t.Fatalf("response-loss transport = response %v error %v, want dropped response error", response, err)
+		}
+		status, responseBody := post(t, "/api/v1/executions", body)
+		if status != http.StatusAccepted {
+			t.Fatalf("replay after dropped response: %d %s", status, responseBody)
+		}
+		var decoded map[string]any
+		liveOK(t, json.Unmarshal(responseBody, &decoded), "decode replay after dropped response")
+		replayedID, err := uuid.Parse(decoded["id"].(string))
+		liveOK(t, err, "parse replayed execution id")
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM command_idempotency WHERE workspace_id=$1 AND command_type='WORKFLOW.CREATE_EXECUTION' AND idempotency_key='boundary-response-lost'`, owner)
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM execution WHERE id=$1`, replayedID)
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM execution_input WHERE execution_id=$1`, replayedID)
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionQueued'`, replayedID)
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND action='EXECUTION_QUEUED'`, replayedID)
+	})
 	cases := []struct {
 		name, route, code string
 		body              map[string]any
@@ -234,8 +307,7 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 	})
 
 	var ownerExecutionID uuid.UUID
-	t.Run("same workspace execution accepted and enqueued once", func(t *testing.T) {
-		before := len(queue.enqueued)
+	t.Run("same workspace execution accepted and records queue obligation", func(t *testing.T) {
 		status, response := post(t, "/api/v1/executions", executionBody(owner, ownerWorkflow.ID, standardized.ID, version.ID))
 		if status != http.StatusAccepted {
 			t.Fatalf("positive execution control: %d %s", status, response)
@@ -245,10 +317,8 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 		parsed, err := uuid.Parse(decoded["id"].(string))
 		liveOK(t, err, "parse accepted execution id")
 		ownerExecutionID = parsed
-		if len(queue.enqueued) != before+1 || queue.enqueued[before] != ownerExecutionID {
-			t.Fatalf("accepted execution was not enqueued exactly once: %#v", queue.enqueued)
-		}
 		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM execution WHERE id=$1 AND workspace_id=$2 AND status='QUEUED'`, ownerExecutionID, owner)
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionQueued' AND required_handlers @> ARRAY['execution-queue']::text[]`, ownerExecutionID)
 	})
 
 	t.Run("same workspace retry accepted", func(t *testing.T) {
@@ -260,14 +330,15 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 			_, err := executions.Fail(ctx, ownerExecutionID, "BOUNDARY_FAILURE", "intentional boundary failure", nil, "boundary-setup")
 			return err
 		}(), "fail execution for retry")
-		before := len(queue.enqueued)
-		status, response := post(t, "/api/v1/executions/"+ownerExecutionID.String()+"/retry", map[string]any{})
+		status, response := post(t, "/api/v1/executions/"+ownerExecutionID.String()+"/retry", map[string]any{"_idempotencyKey": "boundary-retry-" + ownerExecutionID.String()})
 		if status != http.StatusAccepted {
 			t.Fatalf("positive retry control: %d %s", status, response)
 		}
-		if len(queue.enqueued) != before+1 {
-			t.Fatalf("accepted retry was not enqueued exactly once: %#v", queue.enqueued)
-		}
+		var decoded map[string]any
+		liveOK(t, json.Unmarshal(response, &decoded), "decode retry response")
+		retryID, err := uuid.Parse(decoded["id"].(string))
+		liveOK(t, err, "parse retry execution id")
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionRetried' AND required_handlers @> ARRAY['execution-queue']::text[]`, retryID)
 	})
 
 	t.Run("retry re-validates a drifted workspace reference", func(t *testing.T) {
@@ -278,8 +349,7 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 			return err
 		}(), "simulate drifted execution reference")
 		before := snapshot(t)
-		dispatches := len(queue.enqueued)
-		status, response := post(t, "/api/v1/executions/"+ownerExecutionID.String()+"/retry", map[string]any{})
+		status, response := post(t, "/api/v1/executions/"+ownerExecutionID.String()+"/retry", map[string]any{"_idempotencyKey": "boundary-drift-" + ownerExecutionID.String()})
 		var envelope httpserver.ErrorEnvelope
 		liveOK(t, json.Unmarshal(response, &envelope), "decode retry error envelope")
 		if status != http.StatusBadRequest || envelope.Code != "EXECUTION_WORKSPACE_MISMATCH" {
@@ -287,9 +357,6 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 		}
 		if strings.Contains(string(response), owner.String()) || strings.Contains(string(response), foreign.String()) {
 			t.Fatalf("retry error discloses a workspace identity: %s", response)
-		}
-		if len(queue.enqueued) != dispatches {
-			t.Fatalf("rejected retry enqueued a task: %#v", queue.enqueued)
 		}
 		// The tamper itself changed the Execution row; compare everything except that row.
 		if after := snapshot(t); after != before {

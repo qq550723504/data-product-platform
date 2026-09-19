@@ -29,7 +29,7 @@ const (
 // whenever an event type's required-handler set changes. Dispatch logs and
 // dead-letter diagnostics reference it, so the obligation that was in force when
 // an event was handled stays auditable.
-const Version = "c1-v1"
+const Version = "c1-v2"
 
 // VersionFor folds the deployment profile into the routing version so the same
 // version string always describes the same required-handler set. Enabling or
@@ -61,16 +61,12 @@ func Routes(governanceProjection bool) []outbox.Route {
 		// explicitly retention-only, not an implicit no-op.
 		{EventType: "ProductReleased", RequiredHandlers: productReleased},
 
-		// Execution dispatch still goes through the direct queue call in this
-		// round. T2 moves both Create and Retry onto HandlerExecutionQueue and
-		// bumps the routing version; until then the outbox event itself only
-		// needs to be retained, because the direct call still delivers it.
-		//
-		// T2 must not treat these already-PUBLISHED retention-only events as
-		// evidence that the queue delivery happened: it did not, and the direct
-		// call is what delivered them.
-		{EventType: "ExecutionQueued"},
-		{EventType: "ExecutionRetried"},
+		// New execution acceptance is delivered only through this outbox
+		// obligation. Historical c1-v1 events remain frozen retention-only and
+		// are never reinterpreted as queue-delivery evidence.
+		{EventType: "ExecutionQueued", RequiredHandlers: []string{HandlerExecutionQueue}},
+		{EventType: "ExecutionRetried", RequiredHandlers: []string{HandlerExecutionQueue}},
+		{EventType: "ExecutionReconciliationQueued", RequiredHandlers: []string{HandlerExecutionQueue}},
 
 		// Retention-only: recorded for audit and traceability, with no
 		// external side-effect obligation.

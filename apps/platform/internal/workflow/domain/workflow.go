@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"sort"
 	"strings"
 	"time"
 
@@ -34,6 +35,8 @@ var (
 	ErrInvalidExecutionOutput = errors.New("execution output Dataset is required")
 	ErrInvalidTransition      = errors.New("invalid execution state transition")
 	ErrRetryRequiresFailure   = errors.New("only failed or cancelled execution can be retried")
+	ErrIdempotencyKeyNeeded   = errors.New("idempotency key is required")
+	ErrIdempotencyConflict    = errors.New("idempotency key conflicts with another request")
 	// ErrWorkspaceMismatch means a referenced workflow/input/output belongs to a
 	// different workspace than the Execution. It is deliberately opaque so callers
 	// never learn foreign workspace identifiers.
@@ -149,12 +152,14 @@ func NewExecution(workspaceID, workflowVersionID, outputDatasetID uuid.UUID, tar
 	if outputDatasetID == uuid.Nil {
 		return Execution{}, ErrInvalidExecutionOutput
 	}
+	targetPeriod = strings.TrimSpace(targetPeriod)
 	if !validTargetPeriod(targetPeriod) {
 		return Execution{}, ErrInvalidTargetPeriod
 	}
 	if len(inputs) == 0 {
 		return Execution{}, ErrInvalidExecutionInput
 	}
+	normalizedInputs := make([]InputBinding, 0, len(inputs))
 	seen := map[string]struct{}{}
 	for _, input := range inputs {
 		name := strings.TrimSpace(input.Name)
@@ -165,7 +170,9 @@ func NewExecution(workspaceID, workflowVersionID, outputDatasetID uuid.UUID, tar
 			return Execution{}, ErrInvalidExecutionInput
 		}
 		seen[name] = struct{}{}
+		normalizedInputs = append(normalizedInputs, InputBinding{Name: name, DatasetVersionID: input.DatasetVersionID})
 	}
+	sort.Slice(normalizedInputs, func(i, j int) bool { return normalizedInputs[i].Name < normalizedInputs[j].Name })
 	return Execution{
 		ID:                uuid.New(),
 		WorkspaceID:       workspaceID,
@@ -176,10 +183,21 @@ func NewExecution(workspaceID, workflowVersionID, outputDatasetID uuid.UUID, tar
 		Attempt:           1,
 		EngineType:        "NATIVE",
 		Metrics:           map[string]any{},
-		Inputs:            append([]InputBinding(nil), inputs...),
+		Inputs:            normalizedInputs,
 		CreatedAt:         time.Now().UTC(),
 		CreatedBy:         createdBy,
 	}, nil
+}
+
+// NormalizeIdempotencyKey applies the shared command header contract. The
+// caller must supply the same key again when retrying an uncertain response;
+// the platform never generates a replacement key for an execution command.
+func NormalizeIdempotencyKey(value string) (string, error) {
+	value = strings.TrimSpace(value)
+	if value == "" || len(value) > 255 {
+		return "", ErrIdempotencyKeyNeeded
+	}
+	return value, nil
 }
 
 func (e *Execution) Start(engineExecutionID string) error {

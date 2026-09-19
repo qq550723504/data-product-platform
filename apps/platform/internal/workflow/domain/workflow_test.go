@@ -69,3 +69,31 @@ func TestExecutionRequiresUniqueFrozenInputs(t *testing.T) {
 		t.Fatalf("duplicate input error = %v", err)
 	}
 }
+
+func TestExecutionNormalizesInputNamesAndTargetPeriod(t *testing.T) {
+	first := uuid.New()
+	second := uuid.New()
+	execution, err := NewExecution(uuid.New(), uuid.New(), uuid.New(), " 2025-03 ", []InputBinding{
+		{Name: " z_input ", DatasetVersionID: first},
+		{Name: "a_input", DatasetVersionID: second},
+	}, nil)
+	if err != nil {
+		t.Fatalf("new execution: %v", err)
+	}
+	if execution.TargetPeriod != "2025-03" || len(execution.Inputs) != 2 || execution.Inputs[0].Name != "a_input" || execution.Inputs[1].Name != "z_input" {
+		t.Fatalf("normalized execution = %#v", execution)
+	}
+}
+
+func TestNormalizeIdempotencyKeyRequiresStableNonEmptyValue(t *testing.T) {
+	if _, err := NormalizeIdempotencyKey("   "); !errors.Is(err, ErrIdempotencyKeyNeeded) {
+		t.Fatalf("blank key error = %v, want required", err)
+	}
+	if _, err := NormalizeIdempotencyKey(string(make([]byte, 256))); !errors.Is(err, ErrIdempotencyKeyNeeded) {
+		t.Fatalf("oversized key error = %v, want required", err)
+	}
+	key, err := NormalizeIdempotencyKey("  stable-key ")
+	if err != nil || key != "stable-key" {
+		t.Fatalf("normalized key = %q/%v, want stable-key", key, err)
+	}
+}

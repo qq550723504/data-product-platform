@@ -2,16 +2,25 @@ package application_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+	"runtime"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
@@ -32,15 +41,6 @@ func (integrationStore) Put(_ context.Context, objectName string, reader io.Read
 	return "s3://workflow-test/" + objectName, nil
 }
 
-type captureQueue struct {
-	ids []uuid.UUID
-}
-
-func (q *captureQueue) EnqueueExecution(_ context.Context, executionID uuid.UUID) error {
-	q.ids = append(q.ids, executionID)
-	return nil
-}
-
 func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
@@ -53,6 +53,12 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 		t.Fatalf("open postgres: %v", err)
 	}
 	defer pool.Close()
+	router, err := routing.NewRouter(false)
+	if err != nil {
+		t.Fatalf("create routing table: %v", err)
+	}
+	outbox.ConfigureAppendObligation(router)
+	defer outbox.ConfigureAppendObligation(nil)
 
 	txManager := transaction.NewManager(pool)
 	datasetRepo := datasetinfra.NewPostgresRepository(pool)
@@ -107,8 +113,7 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 		t.Fatalf("create workflow version: %v", err)
 	}
 
-	queue := &captureQueue{}
-	executionService := workflowapp.NewExecutionService(txManager, workflowRepo, queue)
+	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
 	execution, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
 		WorkspaceID:       workspaceID,
 		WorkflowVersionID: workflowVersion.ID,
@@ -118,15 +123,224 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 			Name:             "enterprise_standardized",
 			DatasetVersionID: inputV1.ID,
 		}},
-		TraceID: "workflow-test",
+		IdempotencyKey: "workflow-create-" + workspaceID.String(),
+		TraceID:        "workflow-test",
 	})
 	if err != nil {
 		t.Fatalf("create execution: %v", err)
 	}
-	if len(queue.ids) != 1 || queue.ids[0] != execution.ID {
-		t.Fatalf("queue ids = %#v, want execution %s", queue.ids, execution.ID)
+	replay, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+		WorkspaceID:       workspaceID,
+		WorkflowVersionID: workflowVersion.ID,
+		OutputDatasetID:   outputDataset.ID,
+		TargetPeriod:      "2025-03",
+		Inputs:            []domain.InputBinding{{Name: " enterprise_standardized ", DatasetVersionID: inputV1.ID}},
+		IdempotencyKey:    "workflow-create-" + workspaceID.String(),
+		TraceID:           "workflow-test-network-retry",
+	})
+	if err != nil || replay.ID != execution.ID {
+		t.Fatalf("same-key create replay = %s/%v, want original %s", replay.ID, err, execution.ID)
+	}
+	if _, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+		WorkspaceID:       workspaceID,
+		WorkflowVersionID: workflowVersion.ID,
+		OutputDatasetID:   outputDataset.ID,
+		TargetPeriod:      "2025-04",
+		Inputs:            []domain.InputBinding{{Name: "enterprise_standardized", DatasetVersionID: inputV1.ID}},
+		IdempotencyKey:    "workflow-create-" + workspaceID.String(),
+	}); !errors.Is(err, domain.ErrIdempotencyConflict) {
+		t.Fatalf("same-key changed create request error = %v, want idempotency conflict", err)
+	}
+	createKey := "workflow-create-" + workspaceID.String()
+	var beforeFingerprint string
+	var beforeObjectID, beforeResultRef uuid.UUID
+	if err := pool.QueryRow(ctx, `
+		SELECT request_fingerprint, object_id, result_ref
+		FROM command_idempotency
+		WHERE workspace_id=$1 AND command_type='WORKFLOW.CREATE_EXECUTION' AND idempotency_key=$2
+	`, workspaceID, createKey).Scan(&beforeFingerprint, &beforeObjectID, &beforeResultRef); err != nil {
+		t.Fatalf("read execution fingerprint before migration down: %v", err)
+	}
+	if beforeFingerprint == "" || beforeObjectID != execution.ID || beforeResultRef != execution.ID {
+		t.Fatalf("unexpected idempotency record before migration down: fingerprint=%q object=%s result=%s", beforeFingerprint, beforeObjectID, beforeResultRef)
+	}
+	beforeInputCount := countExecutionFact(t, ctx, pool, `SELECT count(*) FROM execution_input WHERE execution_id=$1`, execution.ID)
+	beforeEventCount := countExecutionFact(t, ctx, pool, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionQueued'`, execution.ID)
+	beforeAuditCount := countExecutionFact(t, ctx, pool, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND action='EXECUTION_QUEUED'`, execution.ID)
+	downSQL, err := os.ReadFile(executionFingerprintMigrationPath(t))
+	if err != nil {
+		t.Fatalf("read execution fingerprint down migration: %v", err)
+	}
+	downTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin execution fingerprint down migration: %v", err)
+	}
+	_, downErr := downTx.Exec(ctx, string(downSQL))
+	if downErr == nil {
+		_ = downTx.Rollback(ctx)
+		t.Fatal("000017 down succeeded while execution fingerprints exist")
+	}
+	_ = downTx.Rollback(ctx)
+
+	var afterFingerprint string
+	var afterObjectID, afterResultRef uuid.UUID
+	if err := pool.QueryRow(ctx, `
+		SELECT request_fingerprint, object_id, result_ref
+		FROM command_idempotency
+		WHERE workspace_id=$1 AND command_type='WORKFLOW.CREATE_EXECUTION' AND idempotency_key=$2
+	`, workspaceID, createKey).Scan(&afterFingerprint, &afterObjectID, &afterResultRef); err != nil {
+		t.Fatalf("read execution fingerprint after rejected migration down: %v", err)
+	}
+	if afterFingerprint != beforeFingerprint || afterObjectID != beforeObjectID || afterResultRef != beforeResultRef {
+		t.Fatalf("idempotency record changed after rejected migration down: before=(%q %s %s) after=(%q %s %s)", beforeFingerprint, beforeObjectID, beforeResultRef, afterFingerprint, afterObjectID, afterResultRef)
+	}
+	if got := countExecutionFact(t, ctx, pool, `SELECT count(*) FROM execution_input WHERE execution_id=$1`, execution.ID); got != beforeInputCount {
+		t.Fatalf("input bindings after rejected migration down = %d, want %d", got, beforeInputCount)
+	}
+	if got := countExecutionFact(t, ctx, pool, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionQueued'`, execution.ID); got != beforeEventCount {
+		t.Fatalf("queue events after rejected migration down = %d, want %d", got, beforeEventCount)
+	}
+	if got := countExecutionFact(t, ctx, pool, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND action='EXECUTION_QUEUED'`, execution.ID); got != beforeAuditCount {
+		t.Fatalf("audit events after rejected migration down = %d, want %d", got, beforeAuditCount)
+	}
+	postDownReplay, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+		WorkspaceID:       workspaceID,
+		WorkflowVersionID: workflowVersion.ID,
+		OutputDatasetID:   outputDataset.ID,
+		TargetPeriod:      "2025-03",
+		Inputs:            []domain.InputBinding{{Name: "enterprise_standardized", DatasetVersionID: inputV1.ID}},
+		IdempotencyKey:    createKey,
+		TraceID:           "workflow-after-rejected-down",
+	})
+	if err != nil || postDownReplay.ID != execution.ID {
+		t.Fatalf("same-key replay after rejected migration down = %s/%v, want original %s", postDownReplay.ID, err, execution.ID)
 	}
 
+	concurrentKey := "workflow-concurrent-" + workspaceID.String()
+	results := make(chan domain.Execution, 2)
+	errorsCh := make(chan error, 2)
+	var group sync.WaitGroup
+	for i := 0; i < 2; i++ {
+		group.Add(1)
+		go func() {
+			defer group.Done()
+			created, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+				WorkspaceID:       workspaceID,
+				WorkflowVersionID: workflowVersion.ID,
+				OutputDatasetID:   outputDataset.ID,
+				TargetPeriod:      "2025-05",
+				Inputs:            []domain.InputBinding{{Name: "enterprise_standardized", DatasetVersionID: inputV1.ID}},
+				IdempotencyKey:    concurrentKey,
+			})
+			if err != nil {
+				errorsCh <- err
+				return
+			}
+			results <- created
+		}()
+	}
+	group.Wait()
+	close(results)
+	close(errorsCh)
+	for err := range errorsCh {
+		t.Fatalf("concurrent same-key create: %v", err)
+	}
+	var concurrentIDs []uuid.UUID
+	for created := range results {
+		concurrentIDs = append(concurrentIDs, created.ID)
+	}
+	if len(concurrentIDs) != 2 || concurrentIDs[0] != concurrentIDs[1] {
+		t.Fatalf("concurrent create IDs = %v, want two identical IDs", concurrentIDs)
+	}
+	var concurrentFacts int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE id=$1`, concurrentIDs[0]).Scan(&concurrentFacts); err != nil {
+		t.Fatalf("count concurrent execution: %v", err)
+	}
+	if concurrentFacts != 1 {
+		t.Fatalf("concurrent execution facts = %d, want 1", concurrentFacts)
+	}
+	var concurrentEvents, concurrentAudits int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionQueued'`, concurrentIDs[0]).Scan(&concurrentEvents); err != nil {
+		t.Fatalf("count concurrent outbox events: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND action='EXECUTION_QUEUED'`, concurrentIDs[0]).Scan(&concurrentAudits); err != nil {
+		t.Fatalf("count concurrent audits: %v", err)
+	}
+	if concurrentEvents != 1 || concurrentAudits != 1 {
+		t.Fatalf("concurrent facts = outbox %d audit %d, want 1/1", concurrentEvents, concurrentAudits)
+	}
+	// Model a T1 retention-only completion: PUBLISHED is deliberately not
+	// delivery evidence once the frozen obligation is empty.
+	if _, err := pool.Exec(ctx, `
+		UPDATE outbox_event
+		SET status='PUBLISHED', published_at=now(), routing_version='c1-v1', required_handlers=ARRAY[]::text[]
+		WHERE aggregate_id=$1 AND event_type='ExecutionQueued'
+	`, execution.ID); err != nil {
+		t.Fatalf("mark legacy queue event retention-only: %v", err)
+	}
+	var executionCountBefore int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE workspace_id=$1`, workspaceID).Scan(&executionCountBefore); err != nil {
+		t.Fatalf("count executions before reconciliation: %v", err)
+	}
+	reconciler := workflowapp.NewQueuedExecutionReconciler(txManager, workflowRepo)
+	reports, err := reconciler.Run(ctx, false, 1000)
+	if err != nil {
+		t.Fatalf("report-only queued reconciliation: %v", err)
+	}
+	legacyReport := findQueuedReport(t, reports, execution.ID)
+	if legacyReport.Action != "REPORT_ONLY" || legacyReport.Reason != "legacy retention-only PUBLISHED event is not queue-delivery evidence" {
+		t.Fatalf("report-only legacy reconciliation = %#v", legacyReport)
+	}
+	var dispatchCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionReconciliationQueued'`, execution.ID).Scan(&dispatchCount); err != nil {
+		t.Fatalf("count report-only dispatch records: %v", err)
+	}
+	if dispatchCount != 0 {
+		t.Fatalf("report-only reconciliation created %d dispatch records", dispatchCount)
+	}
+
+	applyResults := make(chan []workflowapp.QueuedExecutionReport, 2)
+	applyErrors := make(chan error, 2)
+	var reconcileGroup sync.WaitGroup
+	for i := 0; i < 2; i++ {
+		reconcileGroup.Add(1)
+		go func() {
+			defer reconcileGroup.Done()
+			result, err := reconciler.Run(ctx, true, 1000)
+			if err != nil {
+				applyErrors <- err
+				return
+			}
+			applyResults <- result
+		}()
+	}
+	reconcileGroup.Wait()
+	close(applyResults)
+	close(applyErrors)
+	for err := range applyErrors {
+		t.Fatalf("concurrent queued reconciliation: %v", err)
+	}
+	var dispatchEventID uuid.UUID
+	if err := pool.QueryRow(ctx, `
+		SELECT id FROM outbox_event
+		WHERE aggregate_id=$1 AND event_type='ExecutionReconciliationQueued'
+	`, execution.ID).Scan(&dispatchEventID); err != nil {
+		t.Fatalf("read reconciliation dispatch record: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionReconciliationQueued'`, execution.ID).Scan(&dispatchCount); err != nil {
+		t.Fatalf("count reconciliation dispatch records: %v", err)
+	}
+	if dispatchCount != 1 {
+		t.Fatalf("concurrent reconciliation dispatch records = %d, want 1", dispatchCount)
+	}
+	var executionCountAfter int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE workspace_id=$1`, workspaceID).Scan(&executionCountAfter); err != nil {
+		t.Fatalf("count executions after reconciliation: %v", err)
+	}
+	if executionCountAfter != executionCountBefore {
+		t.Fatalf("reconciliation changed execution count from %d to %d", executionCountBefore, executionCountAfter)
+	}
+	_ = dispatchEventID
 	if _, err := executionService.Start(ctx, execution.ID, "native-attempt-1", "workflow-test"); err != nil {
 		t.Fatalf("start execution: %v", err)
 	}
@@ -156,20 +370,33 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 		t.Fatalf("input v1 status = %s, want SUPERSEDED", storedInputV1.Status)
 	}
 
-	retry, err := executionService.Retry(ctx, execution.ID, nil, "workflow-test")
+	retry, err := executionService.Retry(ctx, workflowapp.RetryExecutionCommand{ExecutionID: execution.ID, IdempotencyKey: "workflow-retry-" + execution.ID.String(), TraceID: "workflow-test"})
 	if err != nil {
 		t.Fatalf("retry execution using superseded frozen input: %v", err)
 	}
 	if retry.Attempt != 2 || retry.RetryOfExecutionID == nil || *retry.RetryOfExecutionID != execution.ID {
 		t.Fatalf("unexpected retry lineage: %#v", retry)
 	}
+	retryReplay, err := executionService.Retry(ctx, workflowapp.RetryExecutionCommand{ExecutionID: execution.ID, IdempotencyKey: "workflow-retry-" + execution.ID.String(), TraceID: "workflow-network-retry"})
+	if err != nil || retryReplay.ID != retry.ID {
+		t.Fatalf("same-key retry replay = %s/%v, want original retry %s", retryReplay.ID, err, retry.ID)
+	}
+	var retryFacts, retryEvents, retryAudits int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE id=$1`, retry.ID).Scan(&retryFacts); err != nil {
+		t.Fatalf("count retry execution: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionRetried'`, retry.ID).Scan(&retryEvents); err != nil {
+		t.Fatalf("count retry outbox events: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND action='EXECUTION_RETRIED'`, retry.ID).Scan(&retryAudits); err != nil {
+		t.Fatalf("count retry audits: %v", err)
+	}
+	if retryFacts != 1 || retryEvents != 1 || retryAudits != 1 {
+		t.Fatalf("retry facts = execution %d event %d audit %d, want 1/1/1", retryFacts, retryEvents, retryAudits)
+	}
 	if len(retry.Inputs) != 1 || retry.Inputs[0].DatasetVersionID != inputV1.ID {
 		t.Fatalf("retry inputs = %#v, want frozen v1 %s", retry.Inputs, inputV1.ID)
 	}
-	if len(queue.ids) != 2 || queue.ids[1] != retry.ID {
-		t.Fatalf("retry was not queued: %#v", queue.ids)
-	}
-
 	if _, err := executionService.Start(ctx, retry.ID, "native-attempt-2", "workflow-test"); err != nil {
 		t.Fatalf("start retry: %v", err)
 	}
@@ -212,4 +439,135 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 	if _, err := pool.Exec(ctx, `UPDATE workflow_version SET definition_sha256='tampered' WHERE id=$1`, workflowVersion.ID); err == nil {
 		t.Fatal("expected workflow_version mutation to be rejected")
 	}
+}
+
+func TestExecutionFingerprintDownSerializesWithUncommittedBusinessWrite(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	workspaceID, objectID := uuid.New(), uuid.New()
+	commandType := "WORKFLOW.CREATE_EXECUTION"
+	key := "migration-lock-" + uuid.NewString()
+	fingerprint := "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+
+	businessTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin business transaction: %v", err)
+	}
+	defer func() { _ = businessTx.Rollback(context.Background()) }()
+	if _, err := businessTx.Exec(ctx, `
+		INSERT INTO command_idempotency (
+			workspace_id, command_type, idempotency_key, object_id, result_ref, request_fingerprint
+		) VALUES ($1, $2, $3, $4, $4, $5)
+	`, workspaceID, commandType, key, objectID, fingerprint); err != nil {
+		t.Fatalf("insert uncommitted execution fingerprint: %v", err)
+	}
+
+	downTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin migration down transaction: %v", err)
+	}
+	defer func() { _ = downTx.Rollback(context.Background()) }()
+	var downPID int
+	if err := downTx.QueryRow(ctx, "SELECT pg_backend_pid()").Scan(&downPID); err != nil {
+		t.Fatalf("read down transaction backend pid: %v", err)
+	}
+	downSQL, err := os.ReadFile(executionFingerprintMigrationPath(t))
+	if err != nil {
+		t.Fatalf("read execution fingerprint down migration: %v", err)
+	}
+	downResult := make(chan error, 1)
+	go func() {
+		_, execErr := downTx.Exec(ctx, string(downSQL))
+		downResult <- execErr
+	}()
+
+	waitCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+	lockObserved := false
+	for !lockObserved {
+		if err := pool.QueryRow(waitCtx, `
+			SELECT EXISTS (
+				SELECT 1
+				FROM pg_locks
+				WHERE pid=$1
+				  AND relation='command_idempotency'::regclass
+				  AND mode='AccessExclusiveLock'
+				  AND NOT granted
+			)
+		`, downPID).Scan(&lockObserved); err != nil {
+			t.Fatalf("observe migration table lock: %v", err)
+		}
+		if lockObserved {
+			break
+		}
+		select {
+		case <-waitCtx.Done():
+			t.Fatal("migration down did not wait for the business write's table lock")
+		case <-time.After(10 * time.Millisecond):
+		}
+	}
+
+	if err := businessTx.Commit(ctx); err != nil {
+		t.Fatalf("commit business fingerprint after down started waiting: %v", err)
+	}
+	if err := <-downResult; err == nil {
+		t.Fatal("000017 down succeeded after the concurrent fingerprint committed")
+	}
+	if err := downTx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+		t.Fatalf("rollback rejected migration down: %v", err)
+	}
+
+	var storedFingerprint string
+	if err := pool.QueryRow(ctx, `
+		SELECT request_fingerprint
+		FROM command_idempotency
+		WHERE workspace_id=$1 AND command_type=$2 AND idempotency_key=$3
+	`, workspaceID, commandType, key).Scan(&storedFingerprint); err != nil {
+		t.Fatalf("read fingerprint after rejected concurrent down: %v", err)
+	}
+	if storedFingerprint != fingerprint {
+		t.Fatalf("fingerprint after rejected concurrent down = %q, want %q", storedFingerprint, fingerprint)
+	}
+	if _, err := pool.Exec(ctx, `DELETE FROM command_idempotency WHERE workspace_id=$1 AND idempotency_key=$2`, workspaceID, key); err != nil {
+		t.Fatalf("cleanup concurrent fingerprint: %v", err)
+	}
+}
+
+func findQueuedReport(t *testing.T, reports []workflowapp.QueuedExecutionReport, executionID uuid.UUID) workflowapp.QueuedExecutionReport {
+	t.Helper()
+	for _, report := range reports {
+		if report.ExecutionID == executionID {
+			return report
+		}
+	}
+	t.Fatalf("queued reconciliation report for execution %s not found", executionID)
+	return workflowapp.QueuedExecutionReport{}
+}
+
+func countExecutionFact(t *testing.T, ctx context.Context, pool *pgxpool.Pool, query string, executionID uuid.UUID) int {
+	t.Helper()
+	var count int
+	if err := pool.QueryRow(ctx, query, executionID).Scan(&count); err != nil {
+		t.Fatalf("count execution fact: %v", err)
+	}
+	return count
+}
+
+func executionFingerprintMigrationPath(t *testing.T) string {
+	t.Helper()
+	_, source, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("locate execution integration test source")
+	}
+	return filepath.Join(filepath.Dir(source), "..", "..", "..", "..", "..", "migrations", "000017_execution_command_fingerprint.down.sql")
 }
