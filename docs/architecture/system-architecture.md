@@ -107,7 +107,7 @@ DatasetCertification
 Certified DatasetVersion
 ~~~
 
-Certified Dataset 可以直接交付，也可以继续进入 Data Product / ProductRelease。
+Certified Dataset 可以作为独立交付对象，也可以继续进入 Data Product / ProductRelease；独立交付必须先经过 CurrentEntitlementGate，重新校验当前 Rights/Authorization/Effective Rights。
 
 ## 5. Governance Projection
 
