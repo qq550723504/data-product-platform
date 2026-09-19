@@ -99,11 +99,14 @@ DatasetVersion V2 不继承 V1 Certification。
 ~~~text
 DRAFT
 → VALIDATING
-→ READY
-→ PUBLISHED
-├→ SUSPENDED
-└→ WITHDRAWN
+├→ FAILED
+└→ READY
+   → PUBLISHED
+      ├→ SUSPENDED
+      └→ WITHDRAWN
 ~~~
+
+FAILED 是当前运行时和数据库仍支持的有效 ProductRelease 状态，不在本 docs-only 基线中废弃。
 
 Published Release 不允许替换 DatasetVersion、Rights、Quality、Compliance、Contract 或 EvidenceSnapshot。
 
