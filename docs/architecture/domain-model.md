@@ -66,7 +66,7 @@ READY 只表示内容已冻结，不表示 Quality 或 Certification 通过。
 
 DataProduct 是稳定产品身份；ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定；进入 PUBLISHED 后，发布绑定冻结，历史记录保留，后续仅允许受控的 SUSPENDED/WITHDRAWN 等生命周期迁移。
 
-Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 必须通过 CurrentDeliveryGate：先校验 DatasetVersion 当前可用性，再基于当前 consumer / purpose / action 通过 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
+Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 必须通过 CurrentDeliveryGate：校验 DatasetVersion 当前可用性、当前有效的 CERTIFIED DatasetCertification，以及当前 consumer / purpose / action 的 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
 
 ## 3. 实体模型
 
