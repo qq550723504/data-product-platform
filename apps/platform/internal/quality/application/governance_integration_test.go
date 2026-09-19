@@ -19,11 +19,13 @@ import (
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	qualitynative "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/native"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 )
 
@@ -97,6 +99,72 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	}
 	if qualityResult.GateDecision != qualitydomain.GatePass {
 		t.Fatalf("quality gate = %s, want PASS; findings=%+v", qualityResult.GateDecision, qualityResult.Findings)
+	}
+	policyPath := filepath.Join(industryPackRoot, "park/quality/enterprise-activity-quality-v1.yaml")
+	policy, err := qualitynative.LoadPolicy(policyPath)
+	if err != nil {
+		t.Fatalf("load quality policy snapshot expectation: %v", err)
+	}
+	if qualityResult.RuleSetContentSHA256 != policy.SourceContentSHA256 || qualityResult.RuleSetContent != policy.SourceContent {
+		t.Fatalf("assessment did not capture exact rule snapshot")
+	}
+	if qualityResult.EvaluatorName != qualitynative.EvaluatorName || qualityResult.EvaluatorVersion != qualitynative.EvaluatorVersion {
+		t.Fatalf("assessment evaluator = %s/%s, want %s/%s", qualityResult.EvaluatorName, qualityResult.EvaluatorVersion, qualitynative.EvaluatorName, qualitynative.EvaluatorVersion)
+	}
+	assessment, err := qualityRepo.GetAssessment(ctx, qualityResult.ID)
+	if err != nil {
+		t.Fatalf("query assessment by id: %v", err)
+	}
+	if assessment.RuleSetContent != policy.SourceContent || assessment.RuleSetContentSHA256 != policy.SourceContentSHA256 {
+		t.Fatalf("queried assessment lost its rule snapshot")
+	}
+	evidenceItems, err := evidence.NewQueryRepository(pool).ListForObject(ctx, "QUALITY_RESULT", qualityResult.ID)
+	if err != nil || len(evidenceItems) != 1 {
+		t.Fatalf("assessment evidence = %d, err=%v; want one", len(evidenceItems), err)
+	}
+	auditEvents, err := qualityRepo.ListAuditEvents(ctx, qualityResult.ID)
+	if err != nil || len(auditEvents) != 1 {
+		t.Fatalf("assessment audit events = %d, err=%v; want one", len(auditEvents), err)
+	}
+	assessments, err := qualityRepo.ListAssessments(ctx, passVersion.ID)
+	if err != nil || len(assessments) != 1 {
+		t.Fatalf("list assessments = %d, err=%v; want one", len(assessments), err)
+	}
+	latest, err := qualityRepo.LatestAssessment(ctx, passVersion.ID)
+	if err != nil || latest.ID != qualityResult.ID {
+		t.Fatalf("latest assessment = %s, err=%v; want %s", latest.ID, err, qualityResult.ID)
+	}
+	if _, err := pool.Exec(ctx, `UPDATE quality_result SET rule_set_content='tampered' WHERE id=$1`, qualityResult.ID); err == nil {
+		t.Fatal("direct quality assessment update was accepted")
+	}
+	if _, err := pool.Exec(ctx, `DELETE FROM quality_result WHERE id=$1`, qualityResult.ID); err == nil {
+		t.Fatal("direct quality assessment delete was accepted")
+	}
+	var findingID uuid.UUID
+	if err := pool.QueryRow(ctx, `SELECT id FROM quality_finding WHERE result_id=$1 ORDER BY id LIMIT 1`, qualityResult.ID).Scan(&findingID); err != nil {
+		t.Fatalf("find assessment finding: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `UPDATE quality_finding SET message='tampered' WHERE id=$1`, findingID); err == nil {
+		t.Fatal("direct quality finding update was accepted")
+	}
+	if _, err := pool.Exec(ctx, `DELETE FROM quality_finding WHERE id=$1`, findingID); err == nil {
+		t.Fatal("direct quality finding delete was accepted")
+	}
+	secondAssessment, err := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: passVersion.ID,
+		RuleSetRef: "park/quality/enterprise-activity-quality-v1.yaml",
+		TraceID:    "governance-e2e-second-assessment", Now: passVersion.ReadyAt.Add(31 * 60 * 1e9),
+	})
+	if err != nil {
+		t.Fatalf("run second assessment: %v", err)
+	}
+	assessments, err = qualityRepo.ListAssessments(ctx, passVersion.ID)
+	if err != nil || len(assessments) != 2 {
+		t.Fatalf("assessment history = %d, err=%v; want two", len(assessments), err)
+	}
+	latest, err = qualityRepo.LatestAssessment(ctx, passVersion.ID)
+	if err != nil || latest.ID != secondAssessment.ID {
+		t.Fatalf("latest second assessment = %s, err=%v; want %s", latest.ID, err, secondAssessment.ID)
 	}
 
 	complianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
@@ -205,8 +273,8 @@ COMPANY-004,外部科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	if err := pool.QueryRow(ctx, `SELECT count(*) FROM evidence WHERE evidence_type IN ('QUALITY_RESULT','COMPLIANCE_RESULT') AND metadata->>'datasetVersionId'=$1`, passVersion.ID.String()).Scan(&evidenceCount); err != nil {
 		t.Fatalf("count governance evidence: %v", err)
 	}
-	if evidenceCount != 2 {
-		t.Fatalf("governance evidence = %d, want 2", evidenceCount)
+	if evidenceCount != 3 {
+		t.Fatalf("governance evidence = %d, want 3", evidenceCount)
 	}
 }
 

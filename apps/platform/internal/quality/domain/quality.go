@@ -33,32 +33,53 @@ type Finding struct {
 	CreatedAt time.Time
 }
 
-type Result struct {
-	ID               uuid.UUID
-	WorkspaceID      uuid.UUID
-	DatasetVersionID uuid.UUID
-	RuleSetRef       string
-	RuleSetVersion   string
-	GateDecision     GateDecision
-	Metrics          map[string]any
-	Findings         []Finding
-	CreatedAt        time.Time
-	CreatedBy        *uuid.UUID
+// Assessment is the immutable historical fact produced by a quality
+// evaluation. Result remains an alias for the existing quality-result API.
+type Assessment struct {
+	ID                   uuid.UUID
+	WorkspaceID          uuid.UUID
+	DatasetVersionID     uuid.UUID
+	RuleSetRef           string
+	RuleSetVersion       string
+	RuleSetContentSHA256 string
+	RuleSetContent       string
+	EvaluatorName        string
+	EvaluatorVersion     string
+	GateDecision         GateDecision
+	Metrics              map[string]any
+	Findings             []Finding
+	CreatedAt            time.Time
+	CreatedBy            *uuid.UUID
 }
 
+type Result = Assessment
+
+const (
+	NativeEvaluatorName    = "native-quality"
+	NativeEvaluatorVersion = "1"
+)
+
 func NewResult(workspaceID, datasetVersionID uuid.UUID, ruleSetRef, version string, metrics map[string]any, findings []Finding, actorID *uuid.UUID) Result {
+	return NewAssessment(workspaceID, datasetVersionID, ruleSetRef, version, "", "", NativeEvaluatorName, NativeEvaluatorVersion, metrics, findings, actorID)
+}
+
+func NewAssessment(workspaceID, datasetVersionID uuid.UUID, ruleSetRef, version, ruleSetContentSHA256, ruleSetContent, evaluatorName, evaluatorVersion string, metrics map[string]any, findings []Finding, actorID *uuid.UUID) Assessment {
 	if metrics == nil {
 		metrics = map[string]any{}
 	}
-	result := Result{
-		ID:               uuid.New(),
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: datasetVersionID,
-		RuleSetRef:       strings.TrimSpace(ruleSetRef),
-		RuleSetVersion:   strings.TrimSpace(version),
-		Metrics:          metrics,
-		CreatedAt:        time.Now().UTC(),
-		CreatedBy:        actorID,
+	result := Assessment{
+		ID:                   uuid.New(),
+		WorkspaceID:          workspaceID,
+		DatasetVersionID:     datasetVersionID,
+		RuleSetRef:           strings.TrimSpace(ruleSetRef),
+		RuleSetVersion:       strings.TrimSpace(version),
+		RuleSetContentSHA256: strings.TrimSpace(ruleSetContentSHA256),
+		RuleSetContent:       ruleSetContent,
+		EvaluatorName:        strings.TrimSpace(evaluatorName),
+		EvaluatorVersion:     strings.TrimSpace(evaluatorVersion),
+		Metrics:              metrics,
+		CreatedAt:            time.Now().UTC(),
+		CreatedBy:            actorID,
 	}
 	for i := range findings {
 		findings[i].ID = uuid.New()
