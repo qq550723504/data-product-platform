@@ -81,6 +81,7 @@ QualityAssessment
 
 RightsDeclaration
 RightsVerification
+RightsDisposition (INVALIDATED / SUPERSEDED)
 EffectiveRights / EffectiveRightsSnapshot
 
 CertificationProfile snapshot
@@ -151,6 +152,7 @@ EntityType → Entity → EntityMapping projection
 - allowed actions
 - restricted actions
 - verification status / fact
+- append-only disposition facts (INVALIDATED / SUPERSEDED, effective_at, reason, evidence, actor, optional superseded_by)
 - evidence association
 
 JSONB 只用于受控扩展参数，不承载主要权利关系。
@@ -226,7 +228,7 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | Execution dependency facts | immutable history |
 | RightsSnapshot | immutable |
 | QualityAssessment | immutable |
-| verified RightsDeclaration fact | immutable |
+| verified RightsDeclaration / verification / disposition facts | immutable |
 | CertificationProfile snapshot | immutable |
 | DatasetCertification | immutable |
 | ProductVersion | immutable history |
@@ -253,4 +255,4 @@ Execution 行在生命周期内会通过显式状态迁移更新 status、engine
 
 ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，DatasetVersion、Rights、Quality、Compliance、Contract、EvidenceSnapshot 等发布绑定必须冻结，后续仅允许受状态机约束的生命周期动作（如 SUSPENDED/WITHDRAWN），且历史记录不得删除。
 
-不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification fact、DatasetCertification、AuditEvent、CostEvent。
+不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、DatasetCertification、AuditEvent、CostEvent。
