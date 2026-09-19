@@ -229,7 +229,8 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | verified RightsDeclaration fact | immutable |
 | CertificationProfile snapshot | immutable |
 | DatasetCertification | immutable |
-| ProductVersion / ProductRelease | immutable history |
+| ProductVersion | immutable history |
+| ProductRelease | stateful lifecycle row before publication; explicit validation/publish transitions may update status and frozen references; after publication, release bindings are frozen and terminal history is retained |
 
 ## 14. JSONB 使用策略
 
@@ -250,4 +251,6 @@ JSONB 不用于 ID/FK、状态、版本号、核心 party/resource/certification
 
 Execution 行在生命周期内会通过显式状态迁移更新 status、engine/output、metrics、errors 与 timestamps，因此不能把整行视为内容不可变；但 Execution 历史必须保留，终态记录不得删除。真正不可变的是其已冻结的 input/dependency/mapping-usage 等生产事实。
 
-不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、ProductRelease、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification fact、DatasetCertification、AuditEvent、CostEvent。
+ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，DatasetVersion、Rights、Quality、Compliance、Contract、EvidenceSnapshot 等发布绑定必须冻结，后续仅允许受状态机约束的生命周期动作（如 SUSPENDED/WITHDRAWN），且历史记录不得删除。
+
+不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification fact、DatasetCertification、AuditEvent、CostEvent。
