@@ -115,7 +115,11 @@ DatasetCertification 是历史事实。
 
 - 只有 Dataset 的实际内容、schema/content identity 或生产输出发生变化时，才创建新的 DatasetVersion；
 - 如果数据字节与 DatasetVersion 身份没有变化，只是 evaluator、QualityAssessment、Rights verification、RightsSnapshot、CertificationProfile 或 Certification 判断有误，则保留原 DatasetVersion，追加新的评测/权利/Profile/认证事实；
-- 旧事实继续保留为历史，不通过 UPDATE 改写。若未来需要让已签发认证失效，应引入显式 Revocation / Supersession 事实，而不是伪造一个新的 DatasetVersion。
+- DatasetCertification 本身不 UPDATE。若旧认证 C1 需要退出当前有效集合，第一阶段使用 append-only `CertificationDisposition`：
+  - `SUPERSEDED`：显式关联 `superseded_by_certification_id`；
+  - `REVOKED`：无 replacement 时显式撤销；
+  - 记录 `effective_at`、reason、Evidence、actor。
+- 旧 Certification 继续作为 issued-at 历史事实保留，不能因为新 Certification 存在就用“最新 created_at”隐式替换。
 
 ## 8. 新版本语义
 
@@ -149,6 +153,7 @@ CurrentDeliveryGate 是实际交付前的组合门禁：
 ~~~text
 CurrentDeliveryGate
 ├── DatasetVersionUsability
+├── CurrentCertificationGate
 └── CurrentEntitlementGate
 ~~~
 
@@ -158,6 +163,15 @@ DatasetVersionUsability 至少要求：
 - INVALID 必须 BLOCKED，即使历史 DatasetCertification 为 CERTIFIED；
 - CREATED / PROCESSING / FAILED 不得作为可交付版本；
 - 对 SUPERSEDED 的处理遵循平台现有“明确历史版本可用性”语义，不在本 docs-only 基线中自动等同 INVALID；具体交付策略由实现测试固定。
+
+CurrentCertificationGate 要求本次 delivery 明确绑定一条 DatasetCertification（或由 API 返回明确的 effective certification ID），并在 `as_of` 时点满足：
+
+- certification 属于同一 workspace / DatasetVersion / requested CertificationProfile；
+- decision = CERTIFIED；
+- 不存在已生效的 REVOKED disposition；
+- 不存在已生效的 SUPERSEDED disposition；
+- 若 C1 被 C2=REJECTED supersede，C1 不能再用于 delivery，C2 也因 decision != CERTIFIED 不能通过；
+- 不允许用 created_at/latest 作为“当前认证”选择规则。
 
 CurrentEntitlementGate 按“现在”重新检查至少：
 
@@ -175,7 +189,7 @@ CurrentEntitlementGate 按“现在”重新检查至少：
 
 ## 10. API / UI
 
-API 提供 DatasetVersion assessments、assessment report、certification profile summary、certification result / blockers，以及面向明确 consumer / purpose / action 的 CurrentDeliveryGate 查询（包含 DatasetVersion usability + current rights entitlement）。
+API 提供 DatasetVersion assessments、assessment report、certification profile summary、历史 certification list/detail、effective certification / disposition，以及面向明确 certification + consumer / purpose / action 的 CurrentDeliveryGate 查询（包含 DatasetVersion usability + CurrentCertificationGate + current rights entitlement）。
 
 关键写动作使用显式 Command。
 
@@ -203,7 +217,7 @@ UI 在 DatasetVersion 上分别展示：
 
 ## 12. 第一阶段非目标
 
-- Certification 自身的自动有效期/周期性后台复认证（但每次实际交付的 CurrentEntitlementGate 属于第一阶段必需）
+- Certification 自身的自动有效期/周期性后台复认证（但第一阶段必须有 CertificationDisposition / CurrentCertificationGate，以及每次实际交付的 CurrentDeliveryGate）
 - 通用 override
 - 电子签章
 - PDF 证书
