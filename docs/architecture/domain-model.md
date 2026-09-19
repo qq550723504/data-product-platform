@@ -184,12 +184,14 @@ CertificationProfile
       ↓
 DatasetCertification
       ↓
-Certified DatasetVersion
+CertificationDisposition (optional: REVOKED / SUPERSEDED)
+      ↓
+Certified DatasetVersion / current certification eligibility
 ~~~
 
 CertificationProfile 定义 purpose、quality、rights、compliance、contract、traceability/evidence 等要求。
 
-DatasetCertification 绑定实际使用的 Profile snapshot/hash 和所有认证证据。
+DatasetCertification 绑定实际使用的 Profile snapshot/hash 和所有认证证据。CertificationDisposition 是 append-only 历史事实，用于让错误或被替代的认证退出 current set；current certification 不能通过 latest timestamp 推断。
 
 ## 7. 工作流模型
 
@@ -257,6 +259,6 @@ Rights verification、QualityAssessment、DatasetCertification 都应将 Evidenc
 - QualityAssessment（#131）
 - verified RightsDeclaration / verification / disposition facts（#137）
 - CertificationProfile snapshot（#134）
-- DatasetCertification（#134）
+- DatasetCertification / CertificationDisposition（#134）
 
 错误通过追加新事实修正，不覆盖历史。
