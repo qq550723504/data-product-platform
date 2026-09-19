@@ -86,6 +86,7 @@ EffectiveRights / EffectiveRightsSnapshot
 
 CertificationProfile snapshot
 DatasetCertification
+CertificationDisposition (REVOKED / SUPERSEDED)
 ~~~
 
 优先演进现有 quality_result，不得无理由复制一套平行 Quality 表族。
@@ -201,6 +202,17 @@ JSONB 只用于受控扩展参数，不承载主要权利关系。
 
 Certification 创建后不可被 UPDATE 成另一种业务含义。
 
+第一阶段还需要 append-only CertificationDisposition，至少表达：
+
+- certification_id
+- disposition: REVOKED / SUPERSEDED
+- effective_at
+- reason
+- superseded_by_certification_id（SUPERSEDED 时）
+- Evidence / actor
+
+Current certification 查询必须按 disposition + as_of 判断，不得用 created_at/latest 隐式选择。
+
 ## 11. DataProduct / ProductVersion / ProductRelease
 
 ProductRelease 精确引用发布时所需 DatasetVersion、Contract、Rights、Quality、Compliance、Evidence。
@@ -230,7 +242,7 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | QualityAssessment | immutable |
 | verified RightsDeclaration / verification / disposition facts | immutable |
 | CertificationProfile snapshot | immutable |
-| DatasetCertification | immutable |
+| DatasetCertification / CertificationDisposition | immutable |
 | ProductVersion | immutable history |
 | ProductRelease | stateful lifecycle row before publication; explicit validation/publish transitions may update status and frozen references; after publication, release bindings are frozen and terminal history is retained |
 
@@ -255,4 +267,4 @@ Execution 行在生命周期内会通过显式状态迁移更新 status、engine
 
 ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，DatasetVersion、Rights、Quality、Compliance、Contract、EvidenceSnapshot 等发布绑定必须冻结，后续仅允许受状态机约束的生命周期动作（如 SUSPENDED/WITHDRAWN），且历史记录不得删除。
 
-不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、DatasetCertification、AuditEvent、CostEvent。
+不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent。
