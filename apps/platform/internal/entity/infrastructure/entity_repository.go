@@ -256,9 +256,8 @@ func (r *PostgresRepository) RecordMappingDecision(ctx context.Context, tx pgx.T
 	// the same upsert. Holding the source lock before the read makes that
 	// impossible: the second operation re-reads the committed current decision.
 	// The key lock is always taken first so the two lock orders cannot deadlock.
-	sourceDigest := mapping.SourceType + "\x1f" + mapping.SourceRef + "\x1f" + mapping.SourceKey
-	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtext($1), hashtext($2))`, mapping.WorkspaceID.String(), sourceDigest); err != nil {
-		return domain.MappingDecision{}, fmt.Errorf("lock mapping source: %w", err)
+	if err := r.LockMappingSourceTx(ctx, tx, mapping.WorkspaceID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey); err != nil {
+		return domain.MappingDecision{}, err
 	}
 
 	// Lock the current projection row so the concurrency check and the human

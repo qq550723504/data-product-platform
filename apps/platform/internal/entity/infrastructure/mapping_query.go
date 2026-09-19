@@ -29,6 +29,18 @@ type mappingQuerier interface {
 	QueryRow(context.Context, string, ...any) pgx.Row
 }
 
+// LockMappingSourceTx serializes all decisions for one source triple before
+// reading or creating its mutable mapping projection. Callers that may create
+// evidence for a new mapping must take this lock before the existence check so
+// concurrent retries cannot attach evidence to a discarded mapping ID.
+func (r *PostgresRepository) LockMappingSourceTx(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, sourceType, sourceRef, sourceKey string) error {
+	sourceDigest := sourceType + "\x1f" + sourceRef + "\x1f" + sourceKey
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtext($1), hashtext($2))`, workspaceID.String(), sourceDigest); err != nil {
+		return fmt.Errorf("lock mapping source: %w", err)
+	}
+	return nil
+}
+
 func getMappingBySource(ctx context.Context, q mappingQuerier, workspaceID uuid.UUID, sourceType, sourceRef, sourceKey string) (domain.EntityMapping, error) {
 	var mapping domain.EntityMapping
 	err := q.QueryRow(ctx, `

@@ -138,36 +138,45 @@ func (e *Engine) prepareDependencies(ctx context.Context, request workflowapp.Pr
 		}
 	}
 
-	prepareAliasUsages := func(ctx context.Context, tx pgx.Tx, inputName string, inputVersionID uuid.UUID, rows []map[string]string, sourceRef string) error {
-		orderedRows := append([]map[string]string(nil), rows...)
-		sort.SliceStable(orderedRows, func(i, j int) bool {
-			leftKey := strings.TrimSpace(orderedRows[i]["source_company_id"])
-			rightKey := strings.TrimSpace(orderedRows[j]["source_company_id"])
-			if leftKey != rightKey {
-				return leftKey < rightKey
-			}
-			return orderedRows[i]["company_name"] < orderedRows[j]["company_name"]
-		})
-		for _, row := range orderedRows {
+	type aliasSource struct {
+		inputName      string
+		inputVersionID uuid.UUID
+		sourceRef      string
+		sourceKey      string
+		companyName    string
+	}
+	aliasSources := make([]aliasSource, 0, len(leaseRows)+len(energyRows))
+	appendAliasSources := func(inputName string, inputVersionID uuid.UUID, rows []map[string]string, sourceRef string) error {
+		for _, row := range rows {
 			sourceKey := strings.TrimSpace(row["source_company_id"])
 			if sourceKey == "" {
 				return fmt.Errorf("%s record is missing source_company_id", inputName)
 			}
-			key := mappingUsageKey{InputName: inputName, SourceRef: sourceRef, SourceKey: sourceKey}
-			decision, exists := mappings[key]
-			if !exists {
-				var err error
-				decision, err = e.prepareSourceDecision(ctx, tx, request, inputName, inputVersionID, sourceRef, sourceKey, row["company_name"], companyPolicy, companies)
-				if err != nil {
-					return err
-				}
-			}
-			if err := addUsage(inputName, inputVersionID, sourceRef, sourceKey, decision); err != nil {
-				return err
-			}
+			aliasSources = append(aliasSources, aliasSource{
+				inputName: inputName, inputVersionID: inputVersionID, sourceRef: sourceRef,
+				sourceKey: sourceKey, companyName: row["company_name"],
+			})
 		}
 		return nil
 	}
+	if err := appendAliasSources("lease_raw", bindings["lease_raw"], leaseRows, leaseRef); err != nil {
+		return preparedNativeDependencies{}, err
+	}
+	if err := appendAliasSources("energy_raw", bindings["energy_raw"], energyRows, energyRef); err != nil {
+		return preparedNativeDependencies{}, err
+	}
+	sort.SliceStable(aliasSources, func(i, j int) bool {
+		if aliasSources[i].sourceRef != aliasSources[j].sourceRef {
+			return aliasSources[i].sourceRef < aliasSources[j].sourceRef
+		}
+		if aliasSources[i].sourceKey != aliasSources[j].sourceKey {
+			return aliasSources[i].sourceKey < aliasSources[j].sourceKey
+		}
+		if aliasSources[i].inputName != aliasSources[j].inputName {
+			return aliasSources[i].inputName < aliasSources[j].inputName
+		}
+		return aliasSources[i].companyName < aliasSources[j].companyName
+	})
 
 	// Alias decisions and all usage rows are written under one transaction. A
 	// concurrent worker for this Execution rechecks the preparation row while
@@ -208,11 +217,19 @@ func (e *Engine) prepareDependencies(ctx context.Context, request workflowapp.Pr
 			committed = existing
 			return errDependencyPreparationAlreadyExists
 		}
-		if err := prepareAliasUsages(ctx, tx, "lease_raw", bindings["lease_raw"], leaseRows, leaseRef); err != nil {
-			return err
-		}
-		if err := prepareAliasUsages(ctx, tx, "energy_raw", bindings["energy_raw"], energyRows, energyRef); err != nil {
-			return err
+		for _, source := range aliasSources {
+			key := mappingUsageKey{InputName: source.inputName, SourceRef: source.sourceRef, SourceKey: source.sourceKey}
+			decision, exists := mappings[key]
+			if !exists {
+				var err error
+				decision, err = e.prepareSourceDecision(ctx, tx, request, source.inputName, source.inputVersionID, source.sourceRef, source.sourceKey, source.companyName, companyPolicy, companies)
+				if err != nil {
+					return err
+				}
+			}
+			if err := addUsage(source.inputName, source.inputVersionID, source.sourceRef, source.sourceKey, decision); err != nil {
+				return err
+			}
 		}
 		preparation.MappingUsageCount = len(usages)
 		for _, binding := range bindingsToPersist {
@@ -317,6 +334,9 @@ func (e *Engine) restorePreparedDependencies(preparation workflowdomain.Dependen
 func (e *Engine) prepareSourceDecision(ctx context.Context, tx pgx.Tx, request workflowapp.ProcessingRequest, inputName string, inputVersionID uuid.UUID, sourceRef, sourceKey, companyName string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany) (entitydomain.MappingDecision, error) {
 	returnValue := entitydomain.MappingDecision{}
 	err := func() error {
+		if err := e.entityRepo.LockMappingSourceTx(ctx, tx, request.WorkspaceID, "CSV", sourceRef, sourceKey); err != nil {
+			return err
+		}
 		mapping, err := e.entityRepo.GetMappingBySourceTx(ctx, tx, request.WorkspaceID, "CSV", sourceRef, sourceKey)
 		if err == nil {
 			if mapping.CurrentDecisionID == nil {

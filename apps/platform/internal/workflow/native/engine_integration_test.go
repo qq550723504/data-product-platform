@@ -494,6 +494,72 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 			t.Fatalf("opposite alias-order preparation: %v", err)
 		}
 	}
+	var orphanAliasEvidenceCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM evidence e
+		LEFT JOIN evidence_relation er
+		  ON er.evidence_id=e.id
+		 AND er.object_type='ENTITY_MAPPING'
+		 AND er.relation_type='SUPPORTS'
+		LEFT JOIN entity_mapping m ON m.id=e.source_id
+		WHERE e.workspace_id=$1
+		  AND e.evidence_type='ENTITY_MAPPING_WORKFLOW_ALIAS'
+		  AND e.metadata->>'sourceKey' IN ('LEASE-ORDER-A','LEASE-ORDER-B')
+		  AND (m.id IS NULL
+		       OR er.object_id IS DISTINCT FROM e.source_id
+		       OR m.source_type IS DISTINCT FROM e.metadata->>'sourceType'
+		       OR m.source_ref IS DISTINCT FROM e.metadata->>'sourceRef'
+		       OR m.source_key IS DISTINCT FROM e.metadata->>'sourceKey')
+	`, workspaceID).Scan(&orphanAliasEvidenceCount); err != nil {
+		t.Fatalf("count orphan alias evidence: %v", err)
+	}
+	if orphanAliasEvidenceCount != 0 {
+		t.Fatalf("alias evidence rows reference missing mappings: %d", orphanAliasEvidenceCount)
+	}
+
+	// The same source reference can appear in both input sets. The global
+	// source order must cover both sets, otherwise lease(A)/energy(B) can still
+	// deadlock with lease(B)/energy(A).
+	crossInputAliasRowsA := []map[string]string{{"source_company_id": "CROSS-INPUT-A", "company_name": "深圳星云科技有限公司"}}
+	crossInputAliasRowsB := []map[string]string{{"source_company_id": "CROSS-INPUT-B", "company_name": "广州青禾智能科技有限公司"}}
+	crossInputRef := "shared-alias.csv"
+	crossInputExecutionA, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+		WorkspaceID: workspaceID, WorkflowVersionID: workflowVersion.ID, OutputDatasetID: activityDataset.ID,
+		TargetPeriod: "2025-03", Inputs: execution.Inputs, IdempotencyKey: "native-worker-cross-input-a-" + workspaceID.String(),
+	})
+	if err != nil {
+		t.Fatalf("create cross-input execution A: %v", err)
+	}
+	crossInputExecutionB, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+		WorkspaceID: workspaceID, WorkflowVersionID: workflowVersion.ID, OutputDatasetID: activityDataset.ID,
+		TargetPeriod: "2025-03", Inputs: execution.Inputs, IdempotencyKey: "native-worker-cross-input-b-" + workspaceID.String(),
+	})
+	if err != nil {
+		t.Fatalf("create cross-input execution B: %v", err)
+	}
+	crossInputRequestA := restoreRequest
+	crossInputRequestA.ExecutionID = crossInputExecutionA.ID
+	crossInputRequestA.Inputs = crossInputExecutionA.Inputs
+	crossInputRequestB := restoreRequest
+	crossInputRequestB.ExecutionID = crossInputExecutionB.ID
+	crossInputRequestB.Inputs = crossInputExecutionB.Inputs
+	crossInputCtx, cancelCrossInput := context.WithTimeout(ctx, 3*time.Second)
+	defer cancelCrossInput()
+	crossInputResults := make(chan error, 2)
+	go func() {
+		_, err := engine.prepareDependencies(crossInputCtx, crossInputRequestA, restoreBindings, enterpriseRows, crossInputAliasRowsA, crossInputAliasRowsB, enterpriseRef, crossInputRef, crossInputRef)
+		crossInputResults <- err
+	}()
+	go func() {
+		_, err := engine.prepareDependencies(crossInputCtx, crossInputRequestB, restoreBindings, enterpriseRows, crossInputAliasRowsB, crossInputAliasRowsA, enterpriseRef, crossInputRef, crossInputRef)
+		crossInputResults <- err
+	}()
+	for i := 0; i < 2; i++ {
+		if err := <-crossInputResults; err != nil {
+			t.Fatalf("cross-input alias preparation: %v", err)
+		}
+	}
 
 	// AC6: a failure after alias preparation starts rolls back the whole
 	// dependency set and does not leave a newly-created alias fact behind.
