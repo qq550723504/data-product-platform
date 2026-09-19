@@ -14,6 +14,8 @@ import (
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
@@ -46,6 +48,12 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 		t.Fatalf("open postgres: %v", err)
 	}
 	defer pool.Close()
+	router, err := routing.NewRouter(false)
+	if err != nil {
+		t.Fatalf("create routing table: %v", err)
+	}
+	outbox.ConfigureAppendObligation(router)
+	defer outbox.ConfigureAppendObligation(nil)
 
 	txManager := transaction.NewManager(pool)
 	datasetRepo := datasetinfra.NewPostgresRepository(pool)
@@ -192,6 +200,77 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 	if concurrentEvents != 1 || concurrentAudits != 1 {
 		t.Fatalf("concurrent facts = outbox %d audit %d, want 1/1", concurrentEvents, concurrentAudits)
 	}
+	// Model a T1 retention-only completion: PUBLISHED is deliberately not
+	// delivery evidence once the frozen obligation is empty.
+	if _, err := pool.Exec(ctx, `
+		UPDATE outbox_event
+		SET status='PUBLISHED', published_at=now(), routing_version='c1-v1', required_handlers=ARRAY[]::text[]
+		WHERE aggregate_id=$1 AND event_type='ExecutionQueued'
+	`, execution.ID); err != nil {
+		t.Fatalf("mark legacy queue event retention-only: %v", err)
+	}
+	var executionCountBefore int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE workspace_id=$1`, workspaceID).Scan(&executionCountBefore); err != nil {
+		t.Fatalf("count executions before reconciliation: %v", err)
+	}
+	reconciler := workflowapp.NewQueuedExecutionReconciler(txManager, workflowRepo)
+	reports, err := reconciler.Run(ctx, false, 1000)
+	if err != nil {
+		t.Fatalf("report-only queued reconciliation: %v", err)
+	}
+	legacyReport := findQueuedReport(t, reports, execution.ID)
+	if legacyReport.Action != "REPORT_ONLY" || legacyReport.Reason != "legacy retention-only PUBLISHED event is not queue-delivery evidence" {
+		t.Fatalf("report-only legacy reconciliation = %#v", legacyReport)
+	}
+	var dispatchCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionReconciliationQueued'`, execution.ID).Scan(&dispatchCount); err != nil {
+		t.Fatalf("count report-only dispatch records: %v", err)
+	}
+	if dispatchCount != 0 {
+		t.Fatalf("report-only reconciliation created %d dispatch records", dispatchCount)
+	}
+
+	applyResults := make(chan []workflowapp.QueuedExecutionReport, 2)
+	applyErrors := make(chan error, 2)
+	var reconcileGroup sync.WaitGroup
+	for i := 0; i < 2; i++ {
+		reconcileGroup.Add(1)
+		go func() {
+			defer reconcileGroup.Done()
+			result, err := reconciler.Run(ctx, true, 1000)
+			if err != nil {
+				applyErrors <- err
+				return
+			}
+			applyResults <- result
+		}()
+	}
+	reconcileGroup.Wait()
+	close(applyResults)
+	close(applyErrors)
+	for err := range applyErrors {
+		t.Fatalf("concurrent queued reconciliation: %v", err)
+	}
+	var dispatchEventID uuid.UUID
+	if err := pool.QueryRow(ctx, `
+		SELECT id FROM outbox_event
+		WHERE aggregate_id=$1 AND event_type='ExecutionReconciliationQueued'
+	`, execution.ID).Scan(&dispatchEventID); err != nil {
+		t.Fatalf("read reconciliation dispatch record: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionReconciliationQueued'`, execution.ID).Scan(&dispatchCount); err != nil {
+		t.Fatalf("count reconciliation dispatch records: %v", err)
+	}
+	if dispatchCount != 1 {
+		t.Fatalf("concurrent reconciliation dispatch records = %d, want 1", dispatchCount)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE workspace_id=$1`, workspaceID).Scan(&executionCountBefore); err != nil {
+		t.Fatalf("count executions after reconciliation: %v", err)
+	}
+	if executionCountBefore != 3 {
+		t.Fatalf("reconciliation changed execution count to %d, want 3", executionCountBefore)
+	}
+	_ = dispatchEventID
 	if _, err := executionService.Start(ctx, execution.ID, "native-attempt-1", "workflow-test"); err != nil {
 		t.Fatalf("start execution: %v", err)
 	}
@@ -290,4 +369,15 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 	if _, err := pool.Exec(ctx, `UPDATE workflow_version SET definition_sha256='tampered' WHERE id=$1`, workflowVersion.ID); err == nil {
 		t.Fatal("expected workflow_version mutation to be rejected")
 	}
+}
+
+func findQueuedReport(t *testing.T, reports []workflowapp.QueuedExecutionReport, executionID uuid.UUID) workflowapp.QueuedExecutionReport {
+	t.Helper()
+	for _, report := range reports {
+		if report.ExecutionID == executionID {
+			return report
+		}
+	}
+	t.Fatalf("queued reconciliation report for execution %s not found", executionID)
+	return workflowapp.QueuedExecutionReport{}
 }
