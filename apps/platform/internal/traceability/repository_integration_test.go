@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -304,6 +305,25 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 	assertMutationRejected(t, ctx, pool, `DELETE FROM evidence_relation WHERE evidence_id=$1`, entityEvidence.ID)
 	assertMutationRejected(t, ctx, pool, `UPDATE cost_event SET quantity=2 WHERE execution_id=$1`, executionID)
 	assertMutationRejected(t, ctx, pool, `DELETE FROM audit_event WHERE object_id=$1`, releaseID)
+
+	// Dependency trace queries must not run while the outer execution rows still
+	// hold the pool connection. A one-connection pool makes that regression
+	// deterministic instead of relying on production pool pressure.
+	singleConfig, err := pgxpool.ParseConfig(dsn)
+	if err != nil {
+		t.Fatalf("parse single-connection postgres config: %v", err)
+	}
+	singleConfig.MaxConns = 1
+	singlePool, err := pgxpool.NewWithConfig(ctx, singleConfig)
+	if err != nil {
+		t.Fatalf("open single-connection postgres pool: %v", err)
+	}
+	defer singlePool.Close()
+	traceCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	if _, err := traceability.NewRepository(singlePool).ProductRelease(traceCtx, releaseID); err != nil {
+		t.Fatalf("ProductRelease trace with one pool connection: %v", err)
+	}
 }
 
 // TestReleaseTraceBindsMappingsToDecisionNotCurrentProjection is the B regression:

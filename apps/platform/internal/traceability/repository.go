@@ -294,7 +294,6 @@ func (r *Repository) executionsForDatasets(ctx context.Context, datasets []Datas
 	if err != nil {
 		return nil, fmt.Errorf("query release executions: %w", err)
 	}
-	defer rows.Close()
 	result := make([]ExecutionTrace, 0)
 	for rows.Next() {
 		var item ExecutionTrace
@@ -314,13 +313,20 @@ func (r *Repository) executionsForDatasets(ctx context.Context, datasets []Datas
 		if item.Metrics == nil {
 			item.Metrics = map[string]any{}
 		}
-		item.DependencyPreparationStatus, item.DependencyBindings, item.MappingUsages, err = r.executionDependencyTrace(ctx, item.ID)
+		result = append(result, item)
+	}
+	if err := rows.Err(); err != nil {
+		rows.Close()
+		return nil, err
+	}
+	rows.Close()
+	for i := range result {
+		result[i].DependencyPreparationStatus, result[i].DependencyBindings, result[i].MappingUsages, err = r.executionDependencyTrace(ctx, result[i].ID)
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, item)
 	}
-	return result, rows.Err()
+	return result, nil
 }
 
 func (r *Repository) executionDependencyTrace(ctx context.Context, executionID uuid.UUID) (string, []ExecutionDependencyTrace, []ExecutionMappingUsageTrace, error) {
