@@ -30,7 +30,22 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	workspaceID := uuid.New()
 	datasetID := uuid.New()
 	datasetVersionID := uuid.New()
+	workflowID := uuid.New()
+	workflowVersionID := uuid.New()
 	executionID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO workflow (id, workspace_id, code, name)
+		VALUES ($1,$2,$3,'Readiness integration workflow')
+	`, workflowID, workspaceID, "READINESS-WORKFLOW-"+uuid.NewString()); err != nil {
+		t.Fatalf("insert workflow: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO workflow_version (id, workflow_id, version, definition_ref, definition_sha256, definition)
+		VALUES ($1,$2,'1.0.0','readiness/integration',
+		        'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee','{}'::jsonb)
+	`, workflowVersionID, workflowID); err != nil {
+		t.Fatalf("insert workflow version: %v", err)
+	}
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO dataset (
 			id, workspace_id, code, name, dataset_type, lifecycle_status, metadata,
@@ -38,6 +53,14 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		) VALUES ($1,$2,$3,$4,'CURATED','ACTIVE','{}'::jsonb,now(),now())
 	`, datasetID, workspaceID, "READINESS-DATASET-"+uuid.NewString(), "Readiness curated dataset"); err != nil {
 		t.Fatalf("insert dataset: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO execution (
+			id, workspace_id, workflow_version_id, output_dataset_id, target_period,
+			status, attempt, engine_type, metrics, created_at, started_at, finished_at
+		) VALUES ($1,$2,$3,$4,'2026-09','SUCCEEDED',1,'NATIVE','{}'::jsonb,now(),now(),now())
+	`, executionID, workspaceID, workflowVersionID, datasetID); err != nil {
+		t.Fatalf("insert execution: %v", err)
 	}
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO dataset_version (
@@ -49,6 +72,11 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		          $3,'{}'::jsonb,now(),now())
 	`, datasetVersionID, datasetID, executionID); err != nil {
 		t.Fatalf("insert DatasetVersion: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE execution SET output_dataset_version_id=$2 WHERE id=$1
+	`, executionID, datasetVersionID); err != nil {
+		t.Fatalf("bind execution output DatasetVersion: %v", err)
 	}
 
 	contractID := uuid.New()
