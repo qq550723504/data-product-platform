@@ -264,11 +264,12 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 	if dispatchCount != 1 {
 		t.Fatalf("concurrent reconciliation dispatch records = %d, want 1", dispatchCount)
 	}
-	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE workspace_id=$1`, workspaceID).Scan(&executionCountBefore); err != nil {
+	var executionCountAfter int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE workspace_id=$1`, workspaceID).Scan(&executionCountAfter); err != nil {
 		t.Fatalf("count executions after reconciliation: %v", err)
 	}
-	if executionCountBefore != 3 {
-		t.Fatalf("reconciliation changed execution count to %d, want 3", executionCountBefore)
+	if executionCountAfter != executionCountBefore {
+		t.Fatalf("reconciliation changed execution count from %d to %d", executionCountBefore, executionCountAfter)
 	}
 	_ = dispatchEventID
 	if _, err := executionService.Start(ctx, execution.ID, "native-attempt-1", "workflow-test"); err != nil {
