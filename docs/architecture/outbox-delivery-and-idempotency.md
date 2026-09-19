@@ -1,10 +1,14 @@
 # Outbox 派发与操作幂等设计（C1）
 
-- 状态：**设计 + C1-a/C1-b 已实现**。C1-a（向前迁移 `000015_outbox_delivery_hardening`：
+- 状态：**设计 + C1-a/C1-b 已实现，扇出前置（统一 dispatcher）已实现**。C1-a（向前迁移 `000015_outbox_delivery_hardening`：
   `event_version` / `claim_token` / 死信状态 / 可领取索引 / 每消费者确认表）与
   C1-b（publisher：claim token 守卫、指数退避、最大尝试、死信、瞬时错误容错、稳定排序、
-  事件版本兼容）已落地并通过回归测试。C1-c（请求幂等）与 C1-d（Execution 入队经 Outbox）
-  仍为设计，尚未实现。
+  事件版本兼容）已落地并通过回归测试。
+  「统一 dispatcher + 版本化路由表 + 每处理器确认」（issue #103）已落地，即 §7.1 选定的模型 A，
+  是 C1-d 的**前置**：`worker` 不再直连「publisher + 单闭包 handler」。
+  C1-c（请求幂等）与 C1-d（Execution 入队经 Outbox）**仍为设计，尚未实现**；
+  本轮只为 C1-d 预留路由占位（`ExecutionQueued` / `ExecutionRetried` 目前是显式仅保留），
+  未改动 Execution 的输入/输出语义。
 - 关联：issue #103（Domain Event / AuditEvent / Transactional Outbox 覆盖缺口）、
   #110（持久化执行 + 入队超时的恢复，禁止盲重复创建）、#100（关键 Command 幂等）；
   AGENTS.md §4（显式 Command）、§5（Domain Event + Audit + Transactional Outbox）、
@@ -268,25 +272,44 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
    `TestRunStopsOnFatalSchemaError`）；退避与致命错误分类有纯单测。
 
 **未实现（明确未完成项）**：死信重放 Command（`RequeueOutboxEvent`）及其 Audit 尚未实现，
-留待 C1 后续增量；因此「死信人工处置」目前只有诊断信息，没有重放入口。
+留待 C1-e；因此「死信人工处置」目前只有诊断信息，没有重放入口。
 
-### 5.2 Handler 幂等契约
+### 5.2 统一 dispatcher 与每处理器确认（真实 PostgreSQL）
+
+实现于 `apps/platform/internal/platform/outbox/dispatcher_integration_test.go` 与 `router_test.go`：
+
+1. **部分失败不提前完成**：一个事件两个必需处理器，一个成功一个失败时，事件为 `FAILED`、
+   成功方确认保留、失败方无确认（`TestDispatcherPartialFailureRetriesOnlyUnconfirmedHandlers`）。
+2. **只重跑未确认处理器**：重试后成功方不再调用，只有失败方重跑；全部确认后才是 `PUBLISHED`。
+3. **同类型多事件不丢失**：同一 `aggregate_id` 下两次不同类型/结构的 `event_id` 均被处理且各确认一次
+   （`TestDispatcherProcessesDistinctEventsOfSameTypeAndAggregate`）。
+4. **确认丢失重投**：处理器已执行但确认未提交时重投（至少一次），业务事实因处理器幂等而不重复，
+   确认仅一条（`TestDispatcherRedeliveryAfterLostConfirmationKeepsSingleFact`）。
+5. **租约接管**：旧持有者既不能写处理器确认也不能置 `PUBLISHED`，状态与新 token 不被破坏
+   （`TestDispatcherStaleHolderCannotConfirmAfterTakeover`）。
+6. **未声明事件类型**：不调用任何处理器，进入可诊断 `FAILED`（never silently completed）。
+7. **显式仅保留**：`RequiredHandlers` 为空的事件无处理器也能 `PUBLISHED`，且不写确认行。
+8. **缺失处理器拒绝启动**：`NewDispatcher` 对未注册的必需处理器返回显式错误。
+9. **路由表词汇完整**：`cmd/worker/routing_test.go` 断言事件词汇表与路由表一一对应，
+   且 OpenMetadata 开关只改变 `ProductReleased` 是否要求 `metadata-projection`，不隐式完成。
+
+### 5.3 Handler 幂等契约
 
 同一事件重复派发两次 → 可观察副作用计数为 1（以 `ProductReleased` →
 `governance_projection` 为契约样例）。
 
-### 5.3 请求幂等
+### 5.4 请求幂等
 
 - 同键同语义重放 → 返回同一 Execution，Execution/Outbox/Audit 计数为 1。
 - 同键不同语义 → `WORKFLOW_EXECUTION_KEY_CONFLICT`，无新事实。
 - 缺失幂等键 → `IDEMPOTENCY_KEY_REQUIRED`，无新事实。
 
-### 5.4 入队恢复
+### 5.5 入队恢复
 
 模拟 `queue.EnqueueExecution` 失败：Execution 已持久化、Outbox 事件 `FAILED`、
 重试后仅入队一次、Execution 状态不被改写。
 
-### 5.5 既有门禁
+### 5.6 既有门禁
 
 在 `required` 七组门禁下回归 native / reference / CSV / live MinIO / demo lifecycle，
 并补充 #110 的"外来引用被拒 + 零入队调用 + 无新事实"断言。
@@ -297,13 +320,15 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
 | --- | --- | --- |
 | C1-a | 事件版本列 + `claim_token` + `DEAD_LETTER` + 每消费者确认表 + 新索引（`000015_outbox_delivery_hardening`） | **已实现** |
 | C1-b | publisher：claim token 守卫、退避/最大尝试/死信、瞬时错误容错、稳定排序、事件版本兼容 + 派发契约测试 | **已实现** |
+| 扇出前置 | 统一 dispatcher + 版本化路由表 + 每处理器确认（模型 A，issue #103）；不改 Execution 输入/输出语义，不新增迁移 | **已实现** |
 | C1-c | 请求幂等：`command_type` 约定 + Execution create 幂等键（严格模式）；统一 handler 幂等契约测试 | 待实现 |
-| C1-d | Execution 入队改经 Outbox（`Create` **与** Retry 两个入口）+ 入队对账/恢复测试 | 待实现 |
+| C1-d | Execution 入队改经 Outbox（`Create` **与** Retry 两个入口）+ 入队对账/恢复测试；把 `ExecutionQueued`/`ExecutionRetried` 路由到 `execution-queue` 并 bump `outboxRoutingVersion` | 待实现（依赖扇出前置） |
 | C1-e | 死信重放 Command（操作者、理由、独立重放记录，保留原 `event_id`） | 待实现（未完成项） |
-| C2 | 原生执行恢复与输出幂等（另文，使用后续迁移号 `000016`） | 设计已合入 |
+| C2 | 原生执行恢复与输出幂等（另文） | 设计已合入 |
 
-迁移号约定：C1 占用 `000015`，C2 占用 `000016`；两者均为**新增向前迁移**，
-不得改写 `000001`~`000014`（AGENTS §11 历史事实不可覆盖）。
+迁移号约定：编号按**实际合并顺序**分配，不预先锁定；C1-a 占用 `000015`。
+任何新迁移均为**新增向前迁移**，不得改写 `000001`~`000015`（AGENTS §11 历史事实不可覆盖）。
+本轮扇出前置**不新增迁移**，复用 `outbox_event_consumption`。
 
 C1-a ~ C1-d 允许在同一聚焦 PR 内完成（共享同一迁移与 publisher 改动），
 但每一步都要有独立回归测试；C2 不混入。
@@ -317,7 +342,7 @@ C1-a ~ C1-d 允许在同一聚焦 PR 内完成（共享同一迁移与 publisher
    envelope 迁移是否需要一个显式的转换步骤（C1-c/C1-d）。
 5. `outbox_event_consumption` 的保留策略（长期不清理 vs 按窗口归档）。
 
-### 7.1 已知限制：单消费者 claim 语义（C1-d 必须先解决）
+### 7.1 已知限制：单消费者 claim 语义（C1-d 前的工作）
 
 C1-a/C1-b 的 claim 把事件状态置为**全局** `PUBLISHED`，一个事件只会被**一个**消费者处理一次。
 `outbox_event_consumption` 虽然按 `(consumer_name, event_id)` 记录，但当前 claim 不按消费者区分，
@@ -327,9 +352,40 @@ C1-a/C1-b 的 claim 把事件状态置为**全局** `PUBLISHED`，一个事件�
 `execution-queue` 消费者只关心 `ExecutionQueued` / `ExecutionRetried`，事件类型不相交。
 一旦某个事件类型需要两个消费者，当前模型会静默丢失第二个消费者。
 
-C1-c/C1-d **必须**先选定并实现其中一种扇出模型，不得依赖“类型不相交”的巧合：
+**这一扇出前置已在「统一 dispatcher」增量中实现（模型 A）**，不再依赖「类型不相交」的巧合：
+
+### 7.2 扇出前置已实现形态（模型 A，issue #103）
+
+实现于 `apps/platform/internal/platform/outbox/router.go`、`dispatcher.go`，
+worker 装配在 `apps/platform/cmd/worker/{main.go,handlers.go,routing.go}`：
+
+- **单一逻辑消费者**：`Dispatcher` 沿用 C1-b 的 `claim_token` 租约领取事件（多实例仍由 token 协调），
+  然后在应用层按路由表把事件扇出给各处理器。
+- **版本化路由表**（`effectiveRoutingVersion(governanceProjection)`，基础版本 `c1-v1`；
+  启用治理提供方时为 `c1-v1+governance`，保证同一版本串总对应同一必需处理器集合）：
+  为每个 `event_type` 显式声明
+  必须确认的处理器集合；`Route.RequiredHandlers` 为空是**显式的仅保留（retention-only）声明**，
+  而不是「默认 `return nil`」推断出来的。未在路由表中声明的事件类型是**错误**，
+  绝不被隐式完成（`TestDispatcherRefusesUndeclaredEventType`）。
+- **每处理器确认**：处理器名即 `outbox_event_consumption.consumer_name`（如 `metadata-projection`、
+  `execution-queue`），键为 `(handler_name, event_id)`；确认写入按 `status='PROCESSING' AND claim_token=token`
+  守卫。已确认的处理器不重跑；只有**全部**必需处理器确认后才置 `PUBLISHED`。
+  部分失败时已确认的确认行**保留**，重试只跑未确认的处理器
+  （`TestDispatcherPartialFailureRetriesOnlyUnconfirmedHandlers`）。
+- **缺失处理器 = 显式错误**：`NewDispatcher` 在启动时校验路由表要求的处理器均已注册，
+  否则拒绝启动；运行期若仍缺失则显式失败，绝不写假成功确认。
+- **部署剖面固定**：是否要求 `metadata-projection` 由部署是否配置 OpenMetadata 决定
+  （`workerRoutes(governanceProjection bool)`）；未配置治理提供方时 `ProductReleased`
+  是**显式仅保留**，而不是让运行时开关抹掉未完成的义务。
+- **不承诺业务幂等**：确认 ≠ 业务副作用幂等。处理器在「已执行但确认未提交」时崩溃会重跑，
+  「至少一次」因此保留，业务事实去重仍由各业务对象自身的唯一约束兜底
+  （`TestDispatcherRedeliveryAfterLostConfirmationKeepsSingleFact`）。
+- **能力边界**：claim 仍是全局 `PUBLISHED`，因此「一个事件 + 两个处理器」只在**同一派发轮次内**支持；
+  若未来需要按消费者独立进度/独立重放，仍需升级为模型 B（按消费者 claim）。
+
+C1-d 仍待落地，且必须基于上述模型（不得新开第二套 claim）：
 
 - **A. 单派发消费者 + 应用层扇出**：Outbox 只有一个 dispatcher 消费者，它把事件分发给已注册的
-  projection/queue 处理器；`outbox_event_consumption` 改为记录每个子消费者的处理结果。
+  projection/queue 处理器；`outbox_event_consumption` 改为记录每个子消费者的处理结果。（**已实现**）
 - **B. 按消费者 claim**：claim 排除「本消费者已确认」的事件，`PUBLISHED` 语义改为
-  「所有已注册消费者均已确认」。
+  「所有已注册消费者均已确认」。（未实现，仅在需求出现时引入）
