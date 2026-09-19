@@ -189,7 +189,7 @@ Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduc
 每次 standalone delivery 必须执行 CurrentDeliveryGate：
 
 - DatasetVersionUsability：至少拒绝 INVALID / FAILED / PROCESSING / CREATED；SUPERSEDED 是否允许按明确历史版本交付遵循现有领域语义和实现验收；
-- CurrentEntitlementGate：使用当前时间、consumer、purpose、action 检查 VERIFIED 且未被有效 INVALIDATED/SUPERSEDED 的 RightsDeclaration provenance、Authorization 状态/有效期与 Effective Rights。
+- CurrentEntitlementGate：使用当前时间、consumer、purpose、action 检查每一个候选 RightsDeclaration 的 VERIFIED 状态、其自身 validity window 与 scope，并排除已生效 INVALIDATED/SUPERSEDED 的 provenance；同时检查 Authorization 状态/有效期与 Effective Rights。
 
 任一子门禁失败都必须 fail closed，即使历史 Certification 仍为 CERTIFIED。
 
