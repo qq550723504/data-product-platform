@@ -2,6 +2,10 @@
 -- and in one transaction. Once an execution command has a fingerprint, the
 -- column is part of the replay contract: dropping it would make the same
 -- idempotency key look like a different request after a down/up cycle.
+-- The migration advisory lock only coordinates migration runners; serialize
+-- this guard with ordinary business writes as well.
+LOCK TABLE command_idempotency IN ACCESS EXCLUSIVE MODE;
+
 DO $$
 BEGIN
     IF EXISTS (

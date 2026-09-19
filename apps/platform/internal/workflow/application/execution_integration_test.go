@@ -10,8 +10,10 @@ import (
 	"runtime"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
@@ -436,6 +438,108 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 
 	if _, err := pool.Exec(ctx, `UPDATE workflow_version SET definition_sha256='tampered' WHERE id=$1`, workflowVersion.ID); err == nil {
 		t.Fatal("expected workflow_version mutation to be rejected")
+	}
+}
+
+func TestExecutionFingerprintDownSerializesWithUncommittedBusinessWrite(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	workspaceID, objectID := uuid.New(), uuid.New()
+	commandType := "WORKFLOW.CREATE_EXECUTION"
+	key := "migration-lock-" + uuid.NewString()
+	fingerprint := "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+
+	businessTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin business transaction: %v", err)
+	}
+	defer func() { _ = businessTx.Rollback(context.Background()) }()
+	if _, err := businessTx.Exec(ctx, `
+		INSERT INTO command_idempotency (
+			workspace_id, command_type, idempotency_key, object_id, result_ref, request_fingerprint
+		) VALUES ($1, $2, $3, $4, $4, $5)
+	`, workspaceID, commandType, key, objectID, fingerprint); err != nil {
+		t.Fatalf("insert uncommitted execution fingerprint: %v", err)
+	}
+
+	downTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin migration down transaction: %v", err)
+	}
+	defer func() { _ = downTx.Rollback(context.Background()) }()
+	var downPID int
+	if err := downTx.QueryRow(ctx, "SELECT pg_backend_pid()").Scan(&downPID); err != nil {
+		t.Fatalf("read down transaction backend pid: %v", err)
+	}
+	downSQL, err := os.ReadFile(executionFingerprintMigrationPath(t))
+	if err != nil {
+		t.Fatalf("read execution fingerprint down migration: %v", err)
+	}
+	downResult := make(chan error, 1)
+	go func() {
+		_, execErr := downTx.Exec(ctx, string(downSQL))
+		downResult <- execErr
+	}()
+
+	waitCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+	lockObserved := false
+	for !lockObserved {
+		if err := pool.QueryRow(waitCtx, `
+			SELECT EXISTS (
+				SELECT 1
+				FROM pg_locks
+				WHERE pid=$1
+				  AND relation='command_idempotency'::regclass
+				  AND mode='AccessExclusiveLock'
+				  AND NOT granted
+			)
+		`, downPID).Scan(&lockObserved); err != nil {
+			t.Fatalf("observe migration table lock: %v", err)
+		}
+		if lockObserved {
+			break
+		}
+		select {
+		case <-waitCtx.Done():
+			t.Fatal("migration down did not wait for the business write's table lock")
+		case <-time.After(10 * time.Millisecond):
+		}
+	}
+
+	if err := businessTx.Commit(ctx); err != nil {
+		t.Fatalf("commit business fingerprint after down started waiting: %v", err)
+	}
+	if err := <-downResult; err == nil {
+		t.Fatal("000017 down succeeded after the concurrent fingerprint committed")
+	}
+	if err := downTx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+		t.Fatalf("rollback rejected migration down: %v", err)
+	}
+
+	var storedFingerprint string
+	if err := pool.QueryRow(ctx, `
+		SELECT request_fingerprint
+		FROM command_idempotency
+		WHERE workspace_id=$1 AND command_type=$2 AND idempotency_key=$3
+	`, workspaceID, commandType, key).Scan(&storedFingerprint); err != nil {
+		t.Fatalf("read fingerprint after rejected concurrent down: %v", err)
+	}
+	if storedFingerprint != fingerprint {
+		t.Fatalf("fingerprint after rejected concurrent down = %q, want %q", storedFingerprint, fingerprint)
+	}
+	if _, err := pool.Exec(ctx, `DELETE FROM command_idempotency WHERE workspace_id=$1 AND idempotency_key=$2`, workspaceID, key); err != nil {
+		t.Fatalf("cleanup concurrent fingerprint: %v", err)
 	}
 }
 

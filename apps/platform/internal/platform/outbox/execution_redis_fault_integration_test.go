@@ -2,9 +2,8 @@ package outbox_test
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"fmt"
+	"io"
 	"net"
 	"os"
 	"sync"
@@ -15,9 +14,17 @@ import (
 	"github.com/google/uuid"
 	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v5/pgxpool"
+	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
+	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
+	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	platformoutbox "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
+	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
+	workflowdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
+	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 	workflowqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue"
 )
 
@@ -42,108 +49,114 @@ func (e *switchableExecutionEnqueuer) Set(client workflowqueue.ExecutionEnqueuer
 	e.mu.Unlock()
 }
 
-type executionQueueWorkerRecorder struct {
-	pool        *pgxpool.Pool
-	mu          sync.Mutex
-	invocations map[uuid.UUID]int
-	facts       map[uuid.UUID]int
-	processed   chan uuid.UUID
+type faultObjectStore struct{}
+
+func (faultObjectStore) Put(_ context.Context, objectName string, reader io.Reader, _ int64, _ string) (string, error) {
+	if _, err := io.Copy(io.Discard, reader); err != nil {
+		return "", err
+	}
+	return "s3://workflow-fault-test/" + objectName, nil
 }
 
-func newExecutionQueueWorkerRecorder(t *testing.T, pool *pgxpool.Pool) *executionQueueWorkerRecorder {
-	t.Helper()
-	recorder := &executionQueueWorkerRecorder{
-		pool:        pool,
-		invocations: make(map[uuid.UUID]int),
-		facts:       make(map[uuid.UUID]int),
-		processed:   make(chan uuid.UUID, 8),
-	}
-	t.Cleanup(func() {
-		_, _ = pool.Exec(context.Background(), `DELETE FROM audit_event WHERE action='T2_TEST_EXECUTION_RESULT'`)
-	})
-	return recorder
+type faultProcessingEngine struct {
+	outputVersionID uuid.UUID
+	release         <-chan struct{}
+	started         chan struct{}
+
+	mu    sync.Mutex
+	calls int
 }
 
-func (r *executionQueueWorkerRecorder) Handle(ctx context.Context, task *asynq.Task) error {
-	executionID, err := workflowqueue.ExecutionID(task)
-	if err != nil {
-		return err
+func (e *faultProcessingEngine) Execute(ctx context.Context, _ workflowapp.ProcessingRequest) (workflowapp.ProcessingResult, error) {
+	e.mu.Lock()
+	e.calls++
+	first := e.calls == 1
+	e.mu.Unlock()
+	if first && e.started != nil {
+		close(e.started)
 	}
-	r.mu.Lock()
-	r.invocations[executionID]++
-	// This models the worker's business-result boundary. Duplicate delivery is
-	// allowed, but the result is keyed by the stable Core Execution ID.
-	if _, exists := r.facts[executionID]; !exists {
-		r.facts[executionID] = 1
+	if first && e.release != nil {
+		select {
+		case <-e.release:
+		case <-ctx.Done():
+			return workflowapp.ProcessingResult{}, ctx.Err()
+		}
 	}
-	r.mu.Unlock()
-	resultID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("t2-execution-result/"+executionID.String()))
-	if _, err := r.pool.Exec(ctx, `
-		INSERT INTO audit_event (id, actor_type, action, object_type, object_id, metadata)
-		VALUES ($1, 'SYSTEM', 'T2_TEST_EXECUTION_RESULT', 'EXECUTION', $2, '{}'::jsonb)
-		ON CONFLICT (id) DO NOTHING
-	`, resultID, executionID); err != nil {
-		return fmt.Errorf("persist idempotent worker result: %w", err)
-	}
-	select {
-	case r.processed <- executionID:
-	default:
-	}
-	return nil
+	return workflowapp.ProcessingResult{
+		OutputDatasetVersionID: e.outputVersionID,
+		EngineExecutionID:      "test-native-engine",
+		Metrics:                map[string]any{"rows": 1},
+	}, nil
 }
 
-func (r *executionQueueWorkerRecorder) counts(executionID uuid.UUID) (invocations, facts int) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	return r.invocations[executionID], r.facts[executionID]
+func (e *faultProcessingEngine) callCount() int {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return e.calls
+}
+
+type executionFaultFixture struct {
+	pool            *pgxpool.Pool
+	redisAddr       string
+	execution       workflowdomain.Execution
+	eventID         uuid.UUID
+	outputVersionID uuid.UUID
+	service         *workflowapp.ExecutionService
+	repo            *workflowinfra.PostgresRepository
 }
 
 func TestExecutionQueueRedisRecoveryAfterOutboxFailure(t *testing.T) {
 	ctx := context.Background()
-	pool, redisAddr := newExecutionRedisFaultFixture(t)
-	eventID, executionID := insertExecutionQueueEvent(t, ctx, pool)
+	fixture := newExecutionFaultFixture(t)
+	engine := &faultProcessingEngine{outputVersionID: fixture.outputVersionID}
 
 	badAddr := unusedRedisAddress(t)
-	badRawClient := asynq.NewClient(asynq.RedisClientOpt{Addr: badAddr})
-	badClient := workflowqueue.NewClient(badRawClient)
+	badClient := workflowqueue.NewClient(asynq.NewClient(asynq.RedisClientOpt{Addr: badAddr}))
 	defer badClient.Close()
-	goodRawClient := asynq.NewClient(asynq.RedisClientOpt{Addr: redisAddr})
-	goodClient := workflowqueue.NewClient(goodRawClient)
+	goodClient := workflowqueue.NewClient(asynq.NewClient(asynq.RedisClientOpt{Addr: fixture.redisAddr}))
 	defer goodClient.Close()
 
 	switchable := &switchableExecutionEnqueuer{client: badClient}
-	recorder := newExecutionQueueWorkerRecorder(t, pool)
-	stopWorker := startExecutionQueueWorker(t, redisAddr, recorder)
+	handler := workflowqueue.NewHandler(fixture.service, fixture.repo, engine)
+	stopWorker := startExecutionQueueWorker(t, fixture.redisAddr, handler, nil)
 	defer stopWorker()
-	dispatcher := newExecutionDispatcher(t, pool, switchable, "t2-redis-recovery-"+uuid.NewString())
+	dispatcher := newExecutionDispatcher(t, fixture.pool, switchable, "t2-redis-recovery-"+uuid.NewString())
 
 	if err := dispatcher.DispatchOnce(ctx); err != nil {
 		t.Fatalf("dispatch while Redis is unavailable: %v", err)
 	}
-	assertExecutionOutboxState(t, ctx, pool, eventID, "FAILED", 0)
+	assertExecutionOutboxState(t, ctx, fixture.pool, fixture.eventID, "FAILED", 0)
 
 	switchable.Set(goodClient)
-	makeExecutionEventAvailable(t, ctx, pool, eventID)
+	makeExecutionEventAvailable(t, ctx, fixture.pool, fixture.eventID)
 	if err := dispatcher.DispatchOnce(ctx); err != nil {
 		t.Fatalf("dispatch after Redis recovery: %v", err)
 	}
-	waitForProcessed(t, recorder, executionID, 1)
-	assertExecutionOutboxState(t, ctx, pool, eventID, "PUBLISHED", 1)
-	if invocations, facts := recorder.counts(executionID); invocations != 1 || facts != 1 {
-		t.Fatalf("recovered worker result = invocations %d facts %d, want 1/1", invocations, facts)
+	waitForExecutionStatus(t, fixture.repo, fixture.execution.ID, workflowdomain.ExecutionSucceeded)
+	assertExecutionOutboxState(t, ctx, fixture.pool, fixture.eventID, "PUBLISHED", 1)
+	assertExecutionBusinessFacts(t, ctx, fixture.pool, fixture.execution.ID, fixture.outputVersionID)
+	if got := engine.callCount(); got != 1 {
+		t.Fatalf("recovered execution engine calls = %d, want 1", got)
 	}
-	assertDurableWorkerResult(t, ctx, pool, executionID, 1)
 }
 
-func TestExecutionQueueRedeliveryAfterLostConfirmationIsBusinessIdempotent(t *testing.T) {
+func TestExecutionQueueRedeliveryAfterLostConfirmationUsesProductionHandler(t *testing.T) {
 	ctx := context.Background()
-	pool, redisAddr := newExecutionRedisFaultFixture(t)
-	eventID, executionID := insertExecutionQueueEvent(t, ctx, pool)
-	rawClient := asynq.NewClient(asynq.RedisClientOpt{Addr: redisAddr})
+	fixture := newExecutionFaultFixture(t)
+	releaseEngine := make(chan struct{})
+	engine := &faultProcessingEngine{
+		outputVersionID: fixture.outputVersionID,
+		release:         releaseEngine,
+		started:         make(chan struct{}),
+	}
+	handler := workflowqueue.NewHandler(fixture.service, fixture.repo, engine)
+	var queueDeliveries atomic.Int32
+	stopWorker := startExecutionQueueWorker(t, fixture.redisAddr, handler, &queueDeliveries)
+	defer stopWorker()
+
+	rawClient := asynq.NewClient(asynq.RedisClientOpt{Addr: fixture.redisAddr})
 	client := workflowqueue.NewClient(rawClient)
 	defer client.Close()
-	recorder := newExecutionQueueWorkerRecorder(t, pool)
-
 	firstEnqueued := make(chan struct{})
 	releaseFirst := make(chan struct{})
 	var firstCalls atomic.Int32
@@ -164,12 +177,12 @@ func TestExecutionQueueRedeliveryAfterLostConfirmationIsBusinessIdempotent(t *te
 	if err != nil {
 		t.Fatalf("create routing table: %v", err)
 	}
-	firstDispatcher, err := platformoutbox.NewDispatcher(pool, executionDispatcherConfig("t2-lost-confirmation-first-"+uuid.NewString()), router,
+	firstDispatcher, err := platformoutbox.NewDispatcher(fixture.pool, executionDispatcherConfig("t2-lost-confirmation-first-"+uuid.NewString()), router,
 		platformoutbox.HandlerRegistration{Name: routing.HandlerExecutionQueue, Handle: firstHandler})
 	if err != nil {
 		t.Fatalf("create first dispatcher: %v", err)
 	}
-	secondDispatcher, err := platformoutbox.NewDispatcher(pool, executionDispatcherConfig("t2-lost-confirmation-second-"+uuid.NewString()), router,
+	secondDispatcher, err := platformoutbox.NewDispatcher(fixture.pool, executionDispatcherConfig("t2-lost-confirmation-second-"+uuid.NewString()), router,
 		platformoutbox.HandlerRegistration{Name: routing.HandlerExecutionQueue, Handle: secondHandler})
 	if err != nil {
 		t.Fatalf("create second dispatcher: %v", err)
@@ -182,7 +195,13 @@ func TestExecutionQueueRedeliveryAfterLostConfirmationIsBusinessIdempotent(t *te
 	case <-time.After(10 * time.Second):
 		t.Fatal("first dispatcher did not enqueue before confirmation barrier")
 	}
-	makeExecutionEventAvailable(t, ctx, pool, eventID)
+	select {
+	case <-engine.started:
+	case <-time.After(10 * time.Second):
+		t.Fatal("production workflow handler did not claim the Execution")
+	}
+
+	makeExecutionEventAvailable(t, ctx, fixture.pool, fixture.eventID)
 	if err := secondDispatcher.DispatchOnce(ctx); err != nil {
 		t.Fatalf("takeover dispatch after lost confirmation: %v", err)
 	}
@@ -190,18 +209,26 @@ func TestExecutionQueueRedeliveryAfterLostConfirmationIsBusinessIdempotent(t *te
 	if err := <-firstDone; err != nil {
 		t.Fatalf("stale first dispatcher: %v", err)
 	}
+	close(releaseEngine)
 
-	stopWorker := startExecutionQueueWorker(t, redisAddr, recorder)
-	defer stopWorker()
-	waitForProcessed(t, recorder, executionID, 2)
-	assertExecutionOutboxState(t, ctx, pool, eventID, "PUBLISHED", 1)
-	if invocations, facts := recorder.counts(executionID); invocations != 2 || facts != 1 {
-		t.Fatalf("lost-confirmation worker result = invocations %d facts %d, want 2/1", invocations, facts)
+	waitForExecutionStatus(t, fixture.repo, fixture.execution.ID, workflowdomain.ExecutionSucceeded)
+	deadline := time.NewTimer(10 * time.Second)
+	defer deadline.Stop()
+	for queueDeliveries.Load() < 2 {
+		select {
+		case <-deadline.C:
+			t.Fatalf("production queue deliveries = %d, want at least 2", queueDeliveries.Load())
+		case <-time.After(10 * time.Millisecond):
+		}
 	}
-	assertDurableWorkerResult(t, ctx, pool, executionID, 1)
+	assertExecutionOutboxState(t, ctx, fixture.pool, fixture.eventID, "PUBLISHED", 1)
+	assertExecutionBusinessFacts(t, ctx, fixture.pool, fixture.execution.ID, fixture.outputVersionID)
+	if got := engine.callCount(); got != 1 {
+		t.Fatalf("duplicate delivery invoked processing engine %d times, want 1", got)
+	}
 }
 
-func newExecutionRedisFaultFixture(t *testing.T) (*pgxpool.Pool, string) {
+func newExecutionFaultFixture(t *testing.T) *executionFaultFixture {
 	t.Helper()
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	redisAddr := os.Getenv("REDIS_ADDR")
@@ -221,30 +248,112 @@ func newExecutionRedisFaultFixture(t *testing.T) (*pgxpool.Pool, string) {
 		t.Fatalf("ping Redis: %v", err)
 	}
 	probe.Close()
-	return pool, redisAddr
-}
 
-func insertExecutionQueueEvent(t *testing.T, ctx context.Context, pool *pgxpool.Pool) (eventID, executionID uuid.UUID) {
-	t.Helper()
-	eventID, executionID = uuid.New(), uuid.New()
-	payload, err := json.Marshal(map[string]any{"executionId": executionID})
+	router, err := routing.NewRouter(false)
 	if err != nil {
-		t.Fatalf("marshal execution queue payload: %v", err)
+		t.Fatalf("create routing table: %v", err)
 	}
-	if _, err := pool.Exec(ctx, `
-		INSERT INTO outbox_event (
-			id, aggregate_type, aggregate_id, event_type, event_version, payload,
-			status, attempts, available_at, created_at, routing_version, required_handlers
-		) VALUES ($1, 'EXECUTION', $2, 'ExecutionQueued', 1, $3,
-			'PENDING', 0, now(), now() - interval '100 years', $4, $5)
-	`, eventID, executionID, payload, routing.Version, []string{routing.HandlerExecutionQueue}); err != nil {
-		t.Fatalf("insert execution queue event: %v", err)
-	}
-	t.Cleanup(func() {
-		_, _ = pool.Exec(context.Background(), `DELETE FROM outbox_event_consumption WHERE event_id=$1`, eventID)
-		_, _ = pool.Exec(context.Background(), `DELETE FROM outbox_event WHERE id=$1`, eventID)
+	platformoutbox.ConfigureAppendObligation(router)
+	t.Cleanup(func() { platformoutbox.ConfigureAppendObligation(nil) })
+
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	workflowRepo := workflowinfra.NewPostgresRepository(pool)
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
+	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, faultObjectStore{})
+	workspaceID := uuid.New()
+	inputDataset, err := createDataset.Handle(ctx, datasetapp.CreateDatasetCommand{
+		WorkspaceID: workspaceID,
+		Code:        "T2-FAULT-INPUT-" + uuid.NewString(),
+		Name:        "T2 fault input",
+		DatasetType: datasetdomain.DatasetTypeStandardized,
+		TraceID:     "t2-redis-fault",
 	})
-	return eventID, executionID
+	if err != nil {
+		t.Fatalf("create input dataset: %v", err)
+	}
+	inputVersion, err := uploadDataset.Handle(ctx, datasetapp.UploadVersionCommand{
+		DatasetID:   inputDataset.ID,
+		Filename:    "input.csv",
+		ContentType: "text/csv",
+		Content:     []byte("id,value\n1,10\n"),
+		TraceID:     "t2-redis-fault",
+	})
+	if err != nil {
+		t.Fatalf("upload input version: %v", err)
+	}
+	outputDataset, err := createDataset.Handle(ctx, datasetapp.CreateDatasetCommand{
+		WorkspaceID: workspaceID,
+		Code:        "T2-FAULT-OUTPUT-" + uuid.NewString(),
+		Name:        "T2 fault output",
+		DatasetType: datasetdomain.DatasetTypeCurated,
+		TraceID:     "t2-redis-fault",
+	})
+	if err != nil {
+		t.Fatalf("create output dataset: %v", err)
+	}
+	outputVersion, err := uploadDataset.Handle(ctx, datasetapp.UploadVersionCommand{
+		DatasetID:   outputDataset.ID,
+		Filename:    "output.csv",
+		ContentType: "text/csv",
+		Content:     []byte("id,result\n1,ready\n"),
+		TraceID:     "t2-redis-fault",
+	})
+	if err != nil {
+		t.Fatalf("upload output version: %v", err)
+	}
+	versionService := workflowapp.NewWorkflowVersionService(txManager, workflowRepo)
+	workflowVersion, err := versionService.Create(ctx, workflowapp.CreateWorkflowVersionCommand{
+		WorkspaceID:    workspaceID,
+		Code:           "t2-redis-fault-" + uuid.NewString(),
+		Name:           "T2 Redis fault workflow",
+		Version:        "1.0.0",
+		DefinitionRef:  "tests/t2-redis-fault.yaml",
+		DefinitionYAML: []byte("apiVersion: dataprod.platform/v1alpha1\nkind: WorkflowDefinition\nmetadata:\n  name: t2-redis-fault\n  version: 1.0.0\n"),
+		TraceID:        "t2-redis-fault",
+	})
+	if err != nil {
+		t.Fatalf("create workflow version: %v", err)
+	}
+	service := workflowapp.NewExecutionService(txManager, workflowRepo)
+	execution, err := service.Create(ctx, workflowapp.CreateExecutionCommand{
+		WorkspaceID:       workspaceID,
+		WorkflowVersionID: workflowVersion.ID,
+		OutputDatasetID:   outputDataset.ID,
+		TargetPeriod:      "2026-09",
+		Inputs:            []workflowdomain.InputBinding{{Name: "input", DatasetVersionID: inputVersion.ID}},
+		IdempotencyKey:    "t2-redis-fault-create-" + uuid.NewString(),
+		TraceID:           "t2-redis-fault",
+	})
+	if err != nil {
+		t.Fatalf("create real execution: %v", err)
+	}
+	var eventID uuid.UUID
+	if err := pool.QueryRow(ctx, `
+		SELECT id FROM outbox_event
+		WHERE aggregate_id=$1 AND event_type='ExecutionQueued'
+		ORDER BY created_at DESC, id DESC LIMIT 1
+	`, execution.ID).Scan(&eventID); err != nil {
+		t.Fatalf("find real ExecutionQueued event: %v", err)
+	}
+	// Make this fixture's event deterministic for DispatchOnce without changing
+	// its business payload, obligation, or the Execution created by the service.
+	if _, err := pool.Exec(ctx, `
+		UPDATE outbox_event
+		SET created_at=now() - interval '100 years', available_at=now() - interval '1 second'
+		WHERE id=$1
+	`, eventID); err != nil {
+		t.Fatalf("prioritize real ExecutionQueued event: %v", err)
+	}
+	return &executionFaultFixture{
+		pool:            pool,
+		redisAddr:       redisAddr,
+		execution:       execution,
+		eventID:         eventID,
+		outputVersionID: outputVersion.ID,
+		service:         service,
+		repo:            workflowRepo,
+	}
 }
 
 func newExecutionDispatcher(t *testing.T, pool *pgxpool.Pool, enqueuer workflowqueue.ExecutionEnqueuer, consumer string) *platformoutbox.Dispatcher {
@@ -276,14 +385,19 @@ func executionDispatcherConfig(consumer string) platformoutbox.Config {
 	}
 }
 
-func startExecutionQueueWorker(t *testing.T, redisAddr string, recorder *executionQueueWorkerRecorder) func() {
+func startExecutionQueueWorker(t *testing.T, redisAddr string, handler *workflowqueue.Handler, deliveries *atomic.Int32) func() {
 	t.Helper()
 	server := asynq.NewServer(asynq.RedisClientOpt{Addr: redisAddr}, asynq.Config{
-		Concurrency: 1,
+		Concurrency: 2,
 		Queues:      map[string]int{"default": 1},
 	})
 	mux := asynq.NewServeMux()
-	mux.HandleFunc(workflowqueue.TaskExecute, recorder.Handle)
+	mux.HandleFunc(workflowqueue.TaskExecute, func(ctx context.Context, task *asynq.Task) error {
+		if deliveries != nil {
+			deliveries.Add(1)
+		}
+		return handler.Handle(ctx, task)
+	})
 	go func() {
 		if err := server.Run(mux); err != nil {
 			t.Errorf("real asynq worker stopped: %v", err)
@@ -292,19 +406,19 @@ func startExecutionQueueWorker(t *testing.T, redisAddr string, recorder *executi
 	return func() { server.Shutdown() }
 }
 
-func waitForProcessed(t *testing.T, recorder *executionQueueWorkerRecorder, executionID uuid.UUID, count int) {
+func waitForExecutionStatus(t *testing.T, repo *workflowinfra.PostgresRepository, executionID uuid.UUID, want workflowdomain.ExecutionStatus) {
 	t.Helper()
 	deadline := time.NewTimer(15 * time.Second)
 	defer deadline.Stop()
 	for {
-		invocations, _ := recorder.counts(executionID)
-		if invocations >= count {
+		execution, err := repo.GetExecution(context.Background(), executionID)
+		if err == nil && execution.Status == want {
 			return
 		}
 		select {
-		case <-recorder.processed:
 		case <-deadline.C:
-			t.Fatalf("worker processed %d messages for execution %s, want at least %d", invocations, executionID, count)
+			t.Fatalf("execution %s status = %s/%v, want %s", executionID, execution.Status, err, want)
+		case <-time.After(10 * time.Millisecond):
 		}
 	}
 }
@@ -331,14 +445,30 @@ func assertExecutionOutboxState(t *testing.T, ctx context.Context, pool *pgxpool
 	}
 }
 
-func assertDurableWorkerResult(t *testing.T, ctx context.Context, pool *pgxpool.Pool, executionID uuid.UUID, want int) {
+func assertExecutionBusinessFacts(t *testing.T, ctx context.Context, pool *pgxpool.Pool, executionID, outputVersionID uuid.UUID) {
 	t.Helper()
-	var got int
-	if err := pool.QueryRow(ctx, `SELECT count(*) FROM audit_event WHERE action='T2_TEST_EXECUTION_RESULT' AND object_id=$1`, executionID).Scan(&got); err != nil {
-		t.Fatalf("read durable worker result: %v", err)
+	var executionCount, successAudits, costEvents, evidenceRelations int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE id=$1`, executionID).Scan(&executionCount); err != nil {
+		t.Fatalf("count Execution rows: %v", err)
 	}
-	if got != want {
-		t.Fatalf("durable worker results = %d, want %d", got, want)
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND action='EXECUTION_SUCCEEDED'`, executionID).Scan(&successAudits); err != nil {
+		t.Fatalf("count execution success audits: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM cost_event WHERE execution_id=$1 AND cost_type='PROCESSING_EXECUTION'`, executionID).Scan(&costEvents); err != nil {
+		t.Fatalf("count execution cost events: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM evidence_relation
+		WHERE object_type='EXECUTION' AND object_id=$1 AND relation_type='SUPPORTS'
+	`, executionID).Scan(&evidenceRelations); err != nil {
+		t.Fatalf("count execution evidence relations: %v", err)
+	}
+	var storedOutput uuid.UUID
+	if err := pool.QueryRow(ctx, `SELECT output_dataset_version_id FROM execution WHERE id=$1`, executionID).Scan(&storedOutput); err != nil {
+		t.Fatalf("read execution output version: %v", err)
+	}
+	if executionCount != 1 || successAudits != 1 || costEvents != 1 || evidenceRelations != 1 || storedOutput != outputVersionID {
+		t.Fatalf("execution business facts = execution %d success_audit %d cost %d evidence %d output %s, want 1/1/1/1/%s", executionCount, successAudits, costEvents, evidenceRelations, storedOutput, outputVersionID)
 	}
 }
 
