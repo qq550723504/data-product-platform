@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
@@ -16,17 +18,30 @@ import (
 )
 
 type Handler struct {
-	service *application.Service
-	repo    *infrastructure.PostgresRepository
+	service      *application.Service
+	repo         *infrastructure.PostgresRepository
+	evidenceRepo *evidence.QueryRepository
 }
 
-func NewHandler(service *application.Service, repo *infrastructure.PostgresRepository) *Handler {
-	return &Handler{service: service, repo: repo}
+const (
+	defaultAssessmentLimit = 25
+	maxAssessmentLimit     = 100
+)
+
+func NewHandler(service *application.Service, repo *infrastructure.PostgresRepository, evidenceRepos ...*evidence.QueryRepository) *Handler {
+	var evidenceRepo *evidence.QueryRepository
+	if len(evidenceRepos) > 0 {
+		evidenceRepo = evidenceRepos[0]
+	}
+	return &Handler{service: service, repo: repo, evidenceRepo: evidenceRepo}
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/dataset-versions/{versionId}/quality-checks", h.run)
 	mux.HandleFunc("GET /api/v1/quality-results/{resultId}", h.get)
+	mux.HandleFunc("GET /api/v1/quality-assessments/{assessmentId}", h.getAssessment)
+	mux.HandleFunc("GET /api/v1/dataset-versions/{versionId}/quality-assessments", h.listAssessments)
+	mux.HandleFunc("GET /api/v1/dataset-versions/{versionId}/quality-assessments/latest", h.latestAssessment)
 }
 
 type runRequest struct {
@@ -84,7 +99,7 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_QUALITY_RESULT_ID", "resultId must be a UUID", nil)
 		return
 	}
-	result, err := h.repo.GetResult(r.Context(), resultID)
+	result, err := h.repo.GetAssessment(r.Context(), resultID)
 	if err != nil {
 		if errors.Is(err, infrastructure.ErrNotFound) {
 			httpserver.WriteError(w, r, http.StatusNotFound, "QUALITY_RESULT_NOT_FOUND", "quality result not found", nil)
@@ -96,17 +111,124 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resultResponse(result))
 }
 
+func (h *Handler) getAssessment(w http.ResponseWriter, r *http.Request) {
+	assessmentID, err := uuid.Parse(r.PathValue("assessmentId"))
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_QUALITY_ASSESSMENT_ID", "assessmentId must be a UUID", nil)
+		return
+	}
+	assessment, err := h.repo.GetAssessment(r.Context(), assessmentID)
+	if err != nil {
+		if errors.Is(err, infrastructure.ErrNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "QUALITY_ASSESSMENT_NOT_FOUND", "quality assessment not found", nil)
+			return
+		}
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENT_READ_FAILED", err.Error(), nil)
+		return
+	}
+	response := resultResponse(assessment)
+	if h.evidenceRepo != nil {
+		evidenceItems, err := h.evidenceRepo.ListForObject(r.Context(), "QUALITY_RESULT", assessmentID)
+		if err != nil {
+			httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENT_EVIDENCE_READ_FAILED", err.Error(), nil)
+			return
+		}
+		auditEvents, err := h.repo.ListAuditEvents(r.Context(), assessmentID)
+		if err != nil {
+			httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENT_AUDIT_READ_FAILED", err.Error(), nil)
+			return
+		}
+		response["evidence"] = evidenceItems
+		response["auditEvents"] = auditEvents
+	}
+	writeJSON(w, http.StatusOK, response)
+}
+
+func (h *Handler) listAssessments(w http.ResponseWriter, r *http.Request) {
+	versionID, err := uuid.Parse(r.PathValue("versionId"))
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DATASET_VERSION_ID", "versionId must be a UUID", nil)
+		return
+	}
+	limit, offset, ok := assessmentPagination(w, r)
+	if !ok {
+		return
+	}
+	page, err := h.repo.ListAssessments(r.Context(), versionID, limit, offset)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENTS_READ_FAILED", err.Error(), nil)
+		return
+	}
+	items := make([]map[string]any, 0, len(page.Items))
+	for _, assessment := range page.Items {
+		items = append(items, resultResponse(assessment))
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"datasetVersionId": versionID,
+		"items":            items,
+		"page": map[string]int{
+			"limit":  page.Limit,
+			"offset": page.Offset,
+			"total":  page.Total,
+		},
+	})
+}
+
+func assessmentPagination(w http.ResponseWriter, r *http.Request) (int, int, bool) {
+	limit := defaultAssessmentLimit
+	offset := 0
+	if raw := strings.TrimSpace(r.URL.Query().Get("limit")); raw != "" {
+		parsed, err := strconv.Atoi(raw)
+		if err != nil || parsed < 1 || parsed > maxAssessmentLimit {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_LIMIT", "limit must be between 1 and 100", nil)
+			return 0, 0, false
+		}
+		limit = parsed
+	}
+	if raw := strings.TrimSpace(r.URL.Query().Get("offset")); raw != "" {
+		parsed, err := strconv.Atoi(raw)
+		if err != nil || parsed < 0 {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_OFFSET", "offset must be zero or greater", nil)
+			return 0, 0, false
+		}
+		offset = parsed
+	}
+	return limit, offset, true
+}
+
+func (h *Handler) latestAssessment(w http.ResponseWriter, r *http.Request) {
+	versionID, err := uuid.Parse(r.PathValue("versionId"))
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DATASET_VERSION_ID", "versionId must be a UUID", nil)
+		return
+	}
+	assessment, err := h.repo.LatestAssessment(r.Context(), versionID)
+	if err != nil {
+		if errors.Is(err, infrastructure.ErrNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "QUALITY_ASSESSMENT_NOT_FOUND", "quality assessment not found", nil)
+			return
+		}
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENT_READ_FAILED", err.Error(), nil)
+		return
+	}
+	writeJSON(w, http.StatusOK, resultResponse(assessment))
+}
+
 func resultResponse(result domain.Result) map[string]any {
 	return map[string]any{
-		"id":               result.ID,
-		"workspaceId":      result.WorkspaceID,
-		"datasetVersionId": result.DatasetVersionID,
-		"ruleSetRef":       result.RuleSetRef,
-		"ruleSetVersion":   result.RuleSetVersion,
-		"gateDecision":     result.GateDecision,
-		"metrics":          result.Metrics,
-		"findings":         result.Findings,
-		"createdAt":        result.CreatedAt,
+		"id":                   result.ID,
+		"workspaceId":          result.WorkspaceID,
+		"datasetVersionId":     result.DatasetVersionID,
+		"ruleSetRef":           result.RuleSetRef,
+		"ruleSetVersion":       result.RuleSetVersion,
+		"ruleSetContentSha256": result.RuleSetContentSHA256,
+		"ruleSetContent":       result.RuleSetContent,
+		"evaluatorName":        result.EvaluatorName,
+		"evaluatorVersion":     result.EvaluatorVersion,
+		"gateDecision":         result.GateDecision,
+		"metrics":              result.Metrics,
+		"findings":             result.Findings,
+		"createdAt":            result.CreatedAt,
 	}
 }
 

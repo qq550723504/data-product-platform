@@ -102,8 +102,11 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO quality_result (
 			id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
+			rule_set_content_sha256, rule_set_content, evaluator_name, evaluator_version,
 			gate_decision, metrics, created_at
-		) VALUES ($1,$2,$3,'park/quality/enterprise-activity-quality-v1.yaml','1.0.0','PASS','{}'::jsonb,now())
+		) VALUES ($1,$2,$3,'park/quality/enterprise-activity-quality-v1.yaml','1.0.0',
+			'c4b903018effbb6d36545f03ec3a6513aa3d5b35f12f42a50c150dc4f1ea35dc',
+			'legacy-quality-fixture','native-quality','1','PASS','{}'::jsonb,now())
 	`, qualityResultID, workspaceID, datasetVersionID); err != nil {
 		t.Fatalf("insert QualityResult: %v", err)
 	}
@@ -209,8 +212,11 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO quality_result (
 			id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
+			rule_set_content_sha256, rule_set_content, evaluator_name, evaluator_version,
 			gate_decision, metrics, created_at
-		) VALUES ($1,$2,$3,'park/quality/enterprise-activity-quality-v1.yaml','1.0.0','FAIL','{}'::jsonb,now())
+		) VALUES ($1,$2,$3,'park/quality/enterprise-activity-quality-v1.yaml','1.0.0',
+			'c4b903018effbb6d36545f03ec3a6513aa3d5b35f12f42a50c150dc4f1ea35dc',
+			'legacy-quality-fixture','native-quality','1','FAIL','{}'::jsonb,now())
 	`, badQualityID, workspaceID, datasetVersionID); err != nil {
 		t.Fatalf("insert blocking QualityResult: %v", err)
 	}

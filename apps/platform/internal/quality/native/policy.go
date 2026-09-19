@@ -1,11 +1,17 @@
 package native
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"os"
 	"strings"
 
 	"gopkg.in/yaml.v3"
+)
+
+const (
+	EvaluatorName    = "native-quality"
+	EvaluatorVersion = "1"
 )
 
 type Policy struct {
@@ -24,6 +30,8 @@ type Policy struct {
 			WarningFailure  string `yaml:"warningFailure"`
 		} `yaml:"gate"`
 	} `yaml:"spec"`
+	SourceContent       string
+	SourceContentSHA256 string
 }
 
 type Rule struct {
@@ -48,5 +56,7 @@ func LoadPolicy(path string) (Policy, error) {
 	if strings.TrimSpace(policy.Metadata.Version) == "" || len(policy.Spec.Rules) == 0 {
 		return Policy{}, fmt.Errorf("quality policy %q is missing version or rules", path)
 	}
+	policy.SourceContent = string(content)
+	policy.SourceContentSHA256 = fmt.Sprintf("%x", sha256.Sum256(content))
 	return policy, nil
 }
