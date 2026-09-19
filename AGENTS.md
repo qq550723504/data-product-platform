@@ -183,7 +183,9 @@ QualityAssessment 回答“数据质量如何”；DatasetCertification 回答�
 
 V1 不强制全行业统一总分。Critical rule、Rights、Compliance、Contract 或 Traceability 任何 required 条件缺失时，Certification 必须 fail closed。
 
-Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduct。
+Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduct；但 DatasetCertification 只证明认证时点结论，不授予永久交付资格。
+
+每次 standalone delivery 必须执行 CurrentEntitlementGate，使用当前时间、consumer、purpose、action 重新检查当前 RightsDeclaration verification、Authorization 状态/有效期与 Effective Rights。任何 required entitlement 当前失效都必须 fail closed，即使历史 Certification 仍为 CERTIFIED。
 
 ## 11. Release Readiness
 
@@ -240,6 +242,7 @@ Engine Adapter 错误需要映射为平台统一错误模型。
 - Idempotency（关键 Command）
 - Workspace / ownership boundary
 - Historical immutability
+- Current entitlement / delivery gate（涉及交付时）
 - Tests
 
 关键业务动作不得仅实现为 CRUD。
