@@ -111,7 +111,11 @@ DatasetCertification 是历史事实。
 - 修改旧 Certification 以使用新 Profile
 - 让 V1 Certification 指向 V2 DatasetVersion
 
-修正方式是创建新的 DatasetVersion、Assessment、Rights snapshot/effective rights、Profile version 和 DatasetCertification。
+修正必须区分“数据内容修正”和“治理/认证事实修正”：
+
+- 只有 Dataset 的实际内容、schema/content identity 或生产输出发生变化时，才创建新的 DatasetVersion；
+- 如果数据字节与 DatasetVersion 身份没有变化，只是 evaluator、QualityAssessment、Rights verification、RightsSnapshot、CertificationProfile 或 Certification 判断有误，则保留原 DatasetVersion，追加新的评测/权利/Profile/认证事实；
+- 旧事实继续保留为历史，不通过 UPDATE 改写。若未来需要让已签发认证失效，应引入显式 Revocation / Supersession 事实，而不是伪造一个新的 DatasetVersion。
 
 ## 8. 新版本语义
 
