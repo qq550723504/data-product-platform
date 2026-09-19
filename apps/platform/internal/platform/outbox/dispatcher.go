@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -242,9 +243,10 @@ func (c *claim) handlerConfirmed(ctx context.Context, handlerName string) (bool,
 	return confirmed, nil
 }
 
-// confirmHandler records one handler's confirmation. It is conditional on the
-// claim token, so a holder whose lease expired cannot add confirmations for a
-// successor's event.
+// confirmHandler records one handler's confirmation. It locks and validates
+// the event row in the same transaction as the confirmation write, so a holder
+// whose lease is taken over cannot add a confirmation after the successor's
+// token has committed.
 func (c *claim) confirmHandler(ctx context.Context, handlerName string) (bool, error) {
 	tx, err := c.pool.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
@@ -252,29 +254,35 @@ func (c *claim) confirmHandler(ctx context.Context, handlerName string) (bool, e
 	}
 	defer func() { _ = tx.Rollback(context.Background()) }()
 
-	tag, err := tx.Exec(ctx, `
+	var currentToken uuid.UUID
+	err = tx.QueryRow(ctx, `
+		SELECT claim_token
+		FROM outbox_event
+		WHERE id = $1
+		  AND status = $2
+		FOR UPDATE
+	`, c.Event.ID, statusProcessing).Scan(&currentToken)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return false, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("lock outbox event for handler confirmation: %w", err)
+	}
+	if currentToken != c.token {
+		return false, nil
+	}
+
+	_, err = tx.Exec(ctx, `
 		INSERT INTO outbox_event_consumption (consumer_name, event_id)
-		SELECT $1, e.id
-		FROM outbox_event e
-		WHERE e.id = $2
-		  AND e.status = $3
-		  AND e.claim_token = $4
+		VALUES ($1, $2)
 		ON CONFLICT (consumer_name, event_id) DO NOTHING
-	`, handlerName, c.Event.ID, statusProcessing, c.token)
+	`, handlerName, c.Event.ID)
 	if err != nil {
 		return false, fmt.Errorf("record outbox handler confirmation: %w", err)
 	}
-	if tag.RowsAffected() != 1 {
-		// Either the lease was lost or the confirmation already exists. Do not
-		// mistake an already-confirmed handler for a lost lease.
-		confirmed, checkErr := c.handlerConfirmed(ctx, handlerName)
-		if checkErr != nil {
-			return false, checkErr
-		}
-		if !confirmed {
-			return false, nil
-		}
-	}
+	// A zero-row insert means this handler was already confirmed. The event row
+	// lock and token check above still prove that this claim currently owns the
+	// right to observe that confirmation.
 	if err := tx.Commit(ctx); err != nil {
 		return false, fmt.Errorf("commit outbox handler confirmation: %w", err)
 	}

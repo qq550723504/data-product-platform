@@ -3,8 +3,12 @@ package outbox
 import (
 	"context"
 	"errors"
+	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -308,6 +312,221 @@ func TestDispatcherStaleHolderCannotConfirmAfterTakeover(t *testing.T) {
 	}
 	if got := handlerConfirmationCount(t, ctx, pool, "h", eventID); got != 1 {
 		t.Fatalf("confirmations = %d, want 1", got)
+	}
+}
+
+func TestDispatcherConfirmationCannotRaceTakeover(t *testing.T) {
+	ctx := context.Background()
+	pool := newTestPool(t)
+	publisher := NewPublisher(pool, testConfig(t, nil))
+	eventID := insertEvent(t, ctx, pool, "DispatcherOverlappingConfirmation")
+
+	stale, err := publisher.claimOne(ctx)
+	if err != nil || stale == nil {
+		t.Fatalf("claim: event=%v err=%v", stale, err)
+	}
+
+	// Keep the confirmation on a dedicated backend so pg_stat_activity can
+	// provide a database-level barrier after confirmHandler has started waiting
+	// on the event row. No timing or sleep is involved in the interleaving.
+	applicationName := "outbox-confirm-" + strings.ReplaceAll(uuid.NewString(), "-", "")
+	confirmConfig, err := pgxpool.ParseConfig(os.Getenv("TEST_POSTGRES_DSN"))
+	if err != nil {
+		t.Fatalf("parse confirmation pool config: %v", err)
+	}
+	confirmConfig.MinConns = 0
+	confirmConfig.MaxConns = 1
+	confirmConfig.ConnConfig.RuntimeParams["application_name"] = applicationName
+	confirmPool, err := pgxpool.NewWithConfig(ctx, confirmConfig)
+	if err != nil {
+		t.Fatalf("open confirmation pool: %v", err)
+	}
+	defer confirmPool.Close()
+
+	// The takeover transaction wins the event-row lock first. The old holder's
+	// confirmation is started while that lock is held, so its row lock and token
+	// check must wait for the takeover commit before it can insert anything.
+	takeoverTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin takeover transaction: %v", err)
+	}
+	defer func() { _ = takeoverTx.Rollback(context.Background()) }()
+	if err := takeoverTx.QueryRow(ctx, `
+		SELECT id FROM outbox_event WHERE id = $1 FOR UPDATE
+	`, eventID).Scan(&eventID); err != nil {
+		t.Fatalf("lock event for takeover: %v", err)
+	}
+
+	stale.pool = confirmPool
+	confirmation := make(chan struct {
+		recorded bool
+		err      error
+	}, 1)
+	go func() {
+		recorded, confirmErr := stale.confirmHandler(ctx, "h")
+		confirmation <- struct {
+			recorded bool
+			err      error
+		}{recorded: recorded, err: confirmErr}
+	}()
+
+	waitCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	for {
+		var waiting bool
+		err := pool.QueryRow(waitCtx, `
+			SELECT EXISTS (
+				SELECT 1
+				FROM pg_stat_activity
+				WHERE application_name = $1
+				  AND wait_event_type = 'Lock'
+			)
+		`, applicationName).Scan(&waiting)
+		if err != nil {
+			t.Fatalf("observe confirmation lock wait: %v", err)
+		}
+		if waiting {
+			break
+		}
+		select {
+		case <-waitCtx.Done():
+			t.Fatalf("confirmation did not reach the event-row lock wait: %v", waitCtx.Err())
+		default:
+			runtime.Gosched()
+		}
+	}
+
+	newToken := uuid.New()
+	if _, err := takeoverTx.Exec(ctx, `
+		UPDATE outbox_event
+		SET claim_token = $2, claimed_by = 'takeover', claimed_at = now()
+		WHERE id = $1 AND status = $3
+	`, eventID, newToken, statusProcessing); err != nil {
+		t.Fatalf("take over event: %v", err)
+	}
+	if err := takeoverTx.Commit(ctx); err != nil {
+		t.Fatalf("commit takeover: %v", err)
+	}
+
+	select {
+	case result := <-confirmation:
+		if result.err != nil {
+			t.Fatalf("overlapping stale confirmation: %v", result.err)
+		}
+		if result.recorded {
+			t.Fatal("stale holder recorded a confirmation after takeover committed")
+		}
+	case <-waitCtx.Done():
+		t.Fatalf("confirmation did not finish after takeover commit: %v", waitCtx.Err())
+	}
+	if got := handlerConfirmationCount(t, ctx, pool, "h", eventID); got != 0 {
+		t.Fatalf("confirmations after overlapping takeover = %d, want 0", got)
+	}
+}
+
+func migrationPath(t *testing.T, name string) string {
+	t.Helper()
+	_, source, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("locate integration test source")
+	}
+	return filepath.Join(filepath.Dir(source), "..", "..", "..", "..", "..", "migrations", name)
+}
+
+func TestOutboxObligationDownRefusesFrozenEventAndPreservesDispatch(t *testing.T) {
+	ctx := context.Background()
+	pool := newTestPool(t)
+	eventID := uuid.New()
+	completedEventID := uuid.New()
+	firstHandler := "already-confirmed"
+	secondHandler := "still-required"
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO outbox_event (
+			id, aggregate_type, aggregate_id, event_type, payload,
+			status, attempts, available_at, created_at,
+			routing_version, required_handlers
+		) VALUES ($1, 'TEST', $2, 'MigrationDownGuard', '{"test":true}',
+			'PENDING', 0, now(), now() - interval '100 years', $3, $4)
+	`, eventID, uuid.New(), "test-migration-v1", []string{firstHandler, secondHandler}); err != nil {
+		t.Fatalf("insert frozen event: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO outbox_event_consumption (consumer_name, event_id)
+		VALUES ($1, $2)
+	`, firstHandler, eventID); err != nil {
+		t.Fatalf("insert existing confirmation: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO outbox_event (
+			id, aggregate_type, aggregate_id, event_type, payload,
+			status, attempts, available_at, created_at, published_at,
+			routing_version, required_handlers
+		) VALUES ($1, 'TEST', $2, 'MigrationDownGuardCompleted', '{"test":true}',
+			'PUBLISHED', 1, now(), now() - interval '100 years', now(), $3, $4)
+	`, completedEventID, uuid.New(), "test-migration-v1", []string{}); err != nil {
+		t.Fatalf("insert completed frozen event: %v", err)
+	}
+	t.Cleanup(func() {
+		_, _ = pool.Exec(context.Background(), `DELETE FROM outbox_event_consumption WHERE event_id = $1`, eventID)
+		_, _ = pool.Exec(context.Background(), `DELETE FROM outbox_event WHERE id = $1`, eventID)
+		_, _ = pool.Exec(context.Background(), `DELETE FROM outbox_event WHERE id = $1`, completedEventID)
+	})
+
+	downSQL, err := os.ReadFile(migrationPath(t, "000016_outbox_event_routing_obligation.down.sql"))
+	if err != nil {
+		t.Fatalf("read migration down: %v", err)
+	}
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin down transaction: %v", err)
+	}
+	_, downErr := tx.Exec(ctx, string(downSQL))
+	if downErr == nil {
+		_ = tx.Rollback(ctx)
+		t.Fatal("down migration succeeded while a frozen obligation existed")
+	}
+	_ = tx.Rollback(ctx)
+
+	version, handlers, frozen := loadObligation(t, ctx, pool, eventID)
+	if !frozen || version != "test-migration-v1" || len(handlers) != 2 || handlers[0] != firstHandler || handlers[1] != secondHandler {
+		t.Fatalf("obligation after rejected down = (%q %v frozen=%v)", version, handlers, frozen)
+	}
+	if row := loadEventRow(t, ctx, pool, eventID); row.status != statusPending {
+		t.Fatalf("event status after rejected down = %s, want PENDING", row.status)
+	}
+	if got := handlerConfirmationCount(t, ctx, pool, firstHandler, eventID); got != 1 {
+		t.Fatalf("existing confirmation after rejected down = %d, want 1", got)
+	}
+	completedVersion, completedHandlers, completedFrozen := loadObligation(t, ctx, pool, completedEventID)
+	if !completedFrozen || completedVersion != "test-migration-v1" || len(completedHandlers) != 0 {
+		t.Fatalf("completed obligation after rejected down = (%q %v frozen=%v)", completedVersion, completedHandlers, completedFrozen)
+	}
+	if row := loadEventRow(t, ctx, pool, completedEventID); row.status != statusPublished {
+		t.Fatalf("completed event status after rejected down = %s, want PUBLISHED", row.status)
+	}
+
+	router, err := NewRouter("test-migration-v1", []Route{{
+		EventType:        "MigrationDownGuard",
+		RequiredHandlers: []string{firstHandler, secondHandler},
+	}})
+	if err != nil {
+		t.Fatalf("NewRouter: %v", err)
+	}
+	dispatcher, err := NewDispatcher(pool, testConfig(t, nil), router,
+		HandlerRegistration{Name: firstHandler, Handle: func(context.Context, PublishedEvent) error { return nil }},
+		HandlerRegistration{Name: secondHandler, Handle: func(context.Context, PublishedEvent) error { return nil }},
+	)
+	if err != nil {
+		t.Fatalf("NewDispatcher: %v", err)
+	}
+	if err := dispatcher.DispatchOnce(ctx); err != nil {
+		t.Fatalf("dispatch after rejected down: %v", err)
+	}
+	if row := loadEventRow(t, ctx, pool, eventID); row.status != statusPublished {
+		t.Fatalf("event status after resumed dispatch = %s, want PUBLISHED", row.status)
+	}
+	if got := handlerConfirmationCount(t, ctx, pool, secondHandler, eventID); got != 1 {
+		t.Fatalf("required confirmation after resumed dispatch = %d, want 1", got)
 	}
 }
 
