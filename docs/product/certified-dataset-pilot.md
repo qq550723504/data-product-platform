@@ -52,6 +52,9 @@
 - metrics / findings
 - decision
 - Evidence / Audit
+- CostEvent（实际发生的 engine invocation / compute / human-review quantity 或金额；金额未知时不得伪造，可记录 quantity/unit）
+
+同一评测业务重试不得重复记 CostEvent；实现应使用现有 Command 幂等边界或稳定 cost operation identity 去重。
 
 历史 Assessment 不因规则文件变化而改变解释。
 
@@ -110,6 +113,8 @@ DataResource
 
 衍生数据默认 fail closed。
 
+Rights verification / invalidation / supersession 等实际人工或外部核验活动必须在发生时记录 CostEvent；重试不能重复记账。
+
 ## 7. HQD-4 #134
 
 CertificationProfile + DatasetCertification。
@@ -127,6 +132,8 @@ CertificationProfile 可以要求：
 - Traceability / Evidence
 
 任何 required 条件缺失时不允许 CERTIFIED。
+
+认证评估/人工审批若产生实际成本，必须记录 CostEvent，并具备重试幂等语义。
 
 ## 8. HQD-5 #135
 
@@ -161,7 +168,11 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 
 同时验证成功与失败路径。
 
-第一阶段还必须验证：DatasetVersion 已经 CERTIFIED 后，如果对应 Authorization 过期/撤销或 SHARE/RAW_EXPORT 等本次交付动作不再允许，历史 Certification 仍可查询，但 CurrentEntitlementGate 必须阻止实际交付。
+第一阶段还必须验证：
+
+- DatasetVersion 已经 CERTIFIED 后，如果对应 Authorization 过期/撤销、RightsDeclaration 被显式 INVALIDATED/SUPERSEDED，或 SHARE/RAW_EXPORT 等本次交付动作不再允许，历史 Certification 仍可查询，但 CurrentEntitlementGate 必须阻止实际交付；
+- DatasetVersion 已经 CERTIFIED 后若状态变为 INVALID，历史 Certification 仍保留，但 CurrentDeliveryGate 必须 BLOCKED；
+- Pilot 汇总的成本来自实际 CostEvent，不允许仅在验收报告中事后估算重建。
 
 ## 10. 试点 KPI
 
@@ -176,7 +187,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - 最终认证状态
 - Evidence 覆盖
 - 处理耗时
-- 人工工时（真实试点时）
+- 人工工时（来自实际 CostEvent / activity records，真实试点时）
 
 商业验证重点是减少人工和交付周期，而不是先追求高 QPS。
 
