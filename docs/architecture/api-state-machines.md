@@ -92,7 +92,22 @@ DatasetVersion V2 不继承 V1 Certification。
 
 ## 7. DataProduct
 
-重大变更通过创建新 ProductVersion，不修改历史版本。
+~~~text
+DRAFT
+→ DESIGNING
+→ DEVELOPING
+→ TESTING
+→ READY
+→ PUBLISHED
+→ ACTIVE
+↔ SUSPENDED
+→ DEPRECATED
+→ RETIRED
+~~~
+
+以上状态仍由当前 Domain / 数据库 / Read Model 支持，本 docs-only 基线不废弃任何现有 DataProduct lifecycle 状态。
+
+重大规格变更通过创建新 ProductVersion，不修改历史 ProductVersion。
 
 ## 8. ProductRelease
 
