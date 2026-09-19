@@ -271,6 +271,9 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 	if len(trace.Executions) != 1 || trace.Executions[0].ID != executionID {
 		t.Fatalf("execution trace = %+v, want %s", trace.Executions, executionID)
 	}
+	if trace.Executions[0].DependencyPreparationStatus != "NOT_AVAILABLE" || len(trace.Executions[0].MappingUsages) != 0 {
+		t.Fatalf("legacy execution dependency gap = status=%s usages=%d, want NOT_AVAILABLE/0", trace.Executions[0].DependencyPreparationStatus, len(trace.Executions[0].MappingUsages))
+	}
 	if len(trace.CostEvents) != 1 || trace.CostEvents[0].ExecutionID == nil || *trace.CostEvents[0].ExecutionID != executionID {
 		t.Fatalf("CostEvent trace = %+v", trace.CostEvents)
 	}

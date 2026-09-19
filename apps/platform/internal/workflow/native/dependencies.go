@@ -166,6 +166,7 @@ func (e *Engine) prepareDependencies(ctx context.Context, request workflowapp.Pr
 		ExecutionID:        request.ExecutionID,
 		WorkspaceID:        request.WorkspaceID,
 		BindingFingerprint: dependencyFingerprint(request, resolutionVersionID, companyContent, indicatorContent),
+		MappingUsageCount:  len(usages),
 		Status:             "PREPARED",
 	}
 	bindingsToPersist := []workflowdomain.DependencyBinding{
@@ -203,6 +204,7 @@ func (e *Engine) prepareDependencies(ctx context.Context, request workflowapp.Pr
 		if err := prepareAliasUsages(ctx, tx, "energy_raw", bindings["energy_raw"], energyRows, energyRef); err != nil {
 			return err
 		}
+		preparation.MappingUsageCount = len(usages)
 		for _, binding := range bindingsToPersist {
 			if err := e.workflowRepo.InsertDependencyBinding(ctx, tx, binding); err != nil {
 				return err
@@ -239,7 +241,7 @@ func (e *Engine) prepareDependencies(ctx context.Context, request workflowapp.Pr
 }
 
 func (e *Engine) restorePreparedDependencies(preparation workflowdomain.DependencyPreparation, resolutionVersionID uuid.UUID) (preparedNativeDependencies, error) {
-	if preparation.Status != "PREPARED" || len(preparation.Dependencies) != 3 || len(preparation.MappingUsages) == 0 {
+	if preparation.Status != "PREPARED" || len(preparation.Dependencies) != 3 || len(preparation.MappingUsages) == 0 || preparation.MappingUsageCount != len(preparation.MappingUsages) {
 		return preparedNativeDependencies{}, fmt.Errorf("execution dependency preparation is incomplete")
 	}
 	mappings := make(map[mappingUsageKey]entitydomain.MappingDecision, len(preparation.MappingUsages))

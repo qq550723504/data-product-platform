@@ -25,10 +25,10 @@ func (r *PostgresRepository) GetDependencyPreparationTx(ctx context.Context, tx 
 func getDependencyPreparation(ctx context.Context, q dependencyQuerier, executionID uuid.UUID) (domain.DependencyPreparation, bool, error) {
 	var preparation domain.DependencyPreparation
 	err := q.QueryRow(ctx, `
-		SELECT execution_id, workspace_id, binding_fingerprint, status
+		SELECT execution_id, workspace_id, binding_fingerprint, mapping_usage_count, status
 		FROM execution_dependency_preparation
 		WHERE execution_id=$1
-	`, executionID).Scan(&preparation.ExecutionID, &preparation.WorkspaceID, &preparation.BindingFingerprint, &preparation.Status)
+	`, executionID).Scan(&preparation.ExecutionID, &preparation.WorkspaceID, &preparation.BindingFingerprint, &preparation.MappingUsageCount, &preparation.Status)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return domain.DependencyPreparation{}, false, nil
@@ -99,9 +99,9 @@ func getDependencyPreparation(ctx context.Context, q dependencyQuerier, executio
 func (r *PostgresRepository) InsertDependencyPreparation(ctx context.Context, tx pgx.Tx, preparation domain.DependencyPreparation) error {
 	if _, err := tx.Exec(ctx, `
 		INSERT INTO execution_dependency_preparation (
-			execution_id, workspace_id, binding_fingerprint, status
-		) VALUES ($1,$2,$3,$4)
-	`, preparation.ExecutionID, preparation.WorkspaceID, preparation.BindingFingerprint, preparation.Status); err != nil {
+			execution_id, workspace_id, binding_fingerprint, mapping_usage_count, status
+		) VALUES ($1,$2,$3,$4,$5)
+	`, preparation.ExecutionID, preparation.WorkspaceID, preparation.BindingFingerprint, preparation.MappingUsageCount, preparation.Status); err != nil {
 		return fmt.Errorf("insert execution dependency preparation: %w", err)
 	}
 	return nil

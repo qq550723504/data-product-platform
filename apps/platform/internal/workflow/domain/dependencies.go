@@ -39,6 +39,7 @@ type DependencyPreparation struct {
 	ExecutionID        uuid.UUID
 	WorkspaceID        uuid.UUID
 	BindingFingerprint string
+	MappingUsageCount  int
 	Status             string
 	Dependencies       []DependencyBinding
 	MappingUsages      []MappingUsage

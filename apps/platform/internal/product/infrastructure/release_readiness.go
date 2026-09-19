@@ -210,14 +210,72 @@ func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.
 				WHERE id=$1 AND generated_by_execution_id IS NOT NULL
 			`, *facts.TargetDatasetVersionID).Scan(&executionID); err == nil {
 				if err := r.pool.QueryRow(ctx, `
-					SELECT EXISTS(
-						SELECT 1 FROM execution_input
-						WHERE execution_id=$1 AND input_name='enterprise_resolution'
-					), EXISTS(
-						SELECT 1 FROM execution_dependency_preparation
-						WHERE execution_id=$1 AND status='PREPARED'
+					WITH execution_inputs AS (
+						SELECT input_name, dataset_version_id
+						FROM execution_input
+						WHERE execution_id=$1
+					), required_resolution AS (
+						SELECT dataset_version_id
+						FROM execution_inputs
+						WHERE input_name='enterprise_resolution'
+					), preparation AS (
+						SELECT p.*
+						FROM execution_dependency_preparation p
+						WHERE p.execution_id=$1
+						  AND p.workspace_id=$2
 					)
-				`, executionID).Scan(&facts.ProductionDependencyBindingRequired, &facts.ProductionDependencyBindingComplete); err != nil {
+					SELECT
+						EXISTS(SELECT 1 FROM required_resolution),
+						EXISTS(
+							SELECT 1
+							FROM preparation p
+							WHERE p.status='PREPARED'
+							  AND p.mapping_usage_count > 0
+							  AND (SELECT count(*) FROM execution_dependency_binding b
+							       WHERE b.execution_id=$1 AND b.workspace_id=$2) = 3
+							  AND (SELECT count(*) FROM execution_dependency_binding b
+							       WHERE b.execution_id=$1 AND b.workspace_id=$2
+							         AND b.dependency_name IN ('enterprise_resolution','company_match_policy','indicator_policy')) = 3
+							  AND (SELECT count(*) FROM execution_dependency_binding b
+							       WHERE b.execution_id=$1 AND b.workspace_id=$2
+							         AND b.dependency_name='enterprise_resolution'
+							         AND b.dataset_version_id=(SELECT dataset_version_id FROM required_resolution)
+							         AND octet_length(b.content) > 0
+							         AND encode(digest(b.content, 'sha256'), 'hex')=b.content_sha256) = 1
+							  AND (SELECT count(*) FROM execution_dependency_binding b
+							       WHERE b.execution_id=$1 AND b.workspace_id=$2
+							         AND b.dependency_name IN ('company_match_policy','indicator_policy')
+							         AND octet_length(b.content) > 0
+							         AND encode(digest(b.content, 'sha256'), 'hex')=b.content_sha256) = 2
+							  AND (SELECT count(*) FROM execution_mapping_usage u
+							       WHERE u.execution_id=$1 AND u.workspace_id=$2) = p.mapping_usage_count
+							  AND NOT EXISTS(
+								  SELECT 1
+								  FROM execution_mapping_usage u
+								  LEFT JOIN entity_mapping_decision d
+								    ON d.workspace_id=u.workspace_id AND d.id=u.decision_id AND d.entity_id=u.entity_id
+								  LEFT JOIN entity e
+								    ON e.workspace_id=u.workspace_id AND e.id=u.entity_id
+								  WHERE u.execution_id=$1 AND u.workspace_id=$2
+								    AND (u.input_name NOT IN ('enterprise_raw','lease_raw','energy_raw')
+								      OR NOT EXISTS(
+									      SELECT 1 FROM execution_inputs i
+									      WHERE i.input_name=u.input_name AND i.dataset_version_id=u.input_dataset_version_id
+									    )
+								      OR u.resolution_dataset_version_id IS DISTINCT FROM (SELECT dataset_version_id FROM required_resolution)
+								      OR d.id IS NULL
+								      OR e.id IS NULL)
+							  )
+							  AND NOT EXISTS(
+								  SELECT 1
+								  FROM (VALUES ('enterprise_raw'), ('lease_raw'), ('energy_raw')) required(input_name)
+								  WHERE NOT EXISTS(
+									  SELECT 1 FROM execution_mapping_usage u
+									  WHERE u.execution_id=$1 AND u.workspace_id=$2 AND u.input_name=required.input_name
+								  )
+							  )
+						)
+				`, executionID, product.WorkspaceID).Scan(&facts.ProductionDependencyBindingRequired, &facts.ProductionDependencyBindingComplete); err != nil {
 					return ReadinessFacts{}, fmt.Errorf("read production dependency readiness: %w", err)
 				}
 			}

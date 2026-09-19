@@ -23,6 +23,7 @@ CREATE TABLE execution_dependency_preparation (
     execution_id       uuid PRIMARY KEY REFERENCES execution(id),
     workspace_id       uuid NOT NULL,
     binding_fingerprint varchar(64) NOT NULL,
+    mapping_usage_count integer NOT NULL,
     status              varchar(32) NOT NULL,
     prepared_at         timestamptz NOT NULL DEFAULT now(),
     CONSTRAINT ck_execution_dependency_preparation_status CHECK (status IN ('PREPARED')),
@@ -102,3 +103,45 @@ CREATE TABLE entity_resolution_output_decision (
 
 CREATE INDEX idx_entity_resolution_output_decision_output
     ON entity_resolution_output_decision(output_dataset_version_id, source_key);
+
+-- These rows are historical proof of what production consumed. They are not
+-- mutable projections: correction means a new Execution or resolution output.
+CREATE OR REPLACE FUNCTION prevent_execution_dependency_fact_mutation()
+RETURNS trigger AS $$
+BEGIN
+    RAISE EXCEPTION '% is append-only; create a new execution fact instead', TG_TABLE_NAME;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_execution_dependency_preparation_append_only
+BEFORE UPDATE OR DELETE ON execution_dependency_preparation
+FOR EACH ROW EXECUTE FUNCTION prevent_execution_dependency_fact_mutation();
+
+CREATE TRIGGER trg_execution_dependency_binding_append_only
+BEFORE UPDATE OR DELETE ON execution_dependency_binding
+FOR EACH ROW EXECUTE FUNCTION prevent_execution_dependency_fact_mutation();
+
+CREATE TRIGGER trg_execution_mapping_usage_append_only
+BEFORE UPDATE OR DELETE ON execution_mapping_usage
+FOR EACH ROW EXECUTE FUNCTION prevent_execution_dependency_fact_mutation();
+
+CREATE TRIGGER trg_entity_resolution_output_decision_append_only
+BEFORE UPDATE OR DELETE ON entity_resolution_output_decision
+FOR EACH ROW EXECUTE FUNCTION prevent_execution_dependency_fact_mutation();
+
+CREATE OR REPLACE FUNCTION prevent_entity_match_policy_snapshot_mutation()
+RETURNS trigger AS $$
+BEGIN
+    IF OLD.policy_content IS NOT NULL OR OLD.policy_content_sha256 IS NOT NULL THEN
+        IF NEW.policy_content IS DISTINCT FROM OLD.policy_content OR
+           NEW.policy_content_sha256 IS DISTINCT FROM OLD.policy_content_sha256 THEN
+            RAISE EXCEPTION 'entity_match_job policy snapshot is immutable once recorded';
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_entity_match_job_policy_snapshot_immutable
+BEFORE UPDATE ON entity_match_job
+FOR EACH ROW EXECUTE FUNCTION prevent_entity_match_policy_snapshot_mutation();
