@@ -140,19 +140,34 @@ Certified Dataset 可以独立成为交付对象，但每一次实际交付都�
 
 ~~~text
 Certified DatasetVersion
-├→ CurrentEntitlementGate → standalone delivery
+├→ CurrentDeliveryGate → standalone delivery
 └→ ProductAsset → ProductVersion → ProductRelease
 ~~~
 
-CurrentEntitlementGate 在实际交付时按“现在”重新检查至少：
+CurrentDeliveryGate 是实际交付前的组合门禁：
 
-- 当前 RightsDeclaration / verification 是否仍有效；
+~~~text
+CurrentDeliveryGate
+├── DatasetVersionUsability
+└── CurrentEntitlementGate
+~~~
+
+DatasetVersionUsability 至少要求：
+
+- 明确检查当前 DatasetVersion.status；
+- INVALID 必须 BLOCKED，即使历史 DatasetCertification 为 CERTIFIED；
+- CREATED / PROCESSING / FAILED 不得作为可交付版本；
+- 对 SUPERSEDED 的处理遵循平台现有“明确历史版本可用性”语义，不在本 docs-only 基线中自动等同 INVALID；具体交付策略由实现测试固定。
+
+CurrentEntitlementGate 按“现在”重新检查至少：
+
+- 当前 RightsDeclaration / verification 是否 VERIFIED 且未被有效 INVALIDATED / SUPERSEDED；
 - Authorization 是否 ACTIVE 且未过期/撤销；
 - consumer / purpose 是否匹配；
 - 本次 delivery action（例如 SHARE / RAW_EXPORT）是否当前仍允许；
 - 衍生数据 Effective Rights 是否仍允许该动作。
 
-任何一项失效都必须 fail closed，交付状态为 BLOCKED，即使历史 DatasetCertification 仍然显示其当时的 CERTIFIED 结论。
+任一子门禁失败都必须 fail closed，Current Delivery Eligibility = BLOCKED；历史 DatasetCertification 仍保留其 issued-at 结论。
 
 第一阶段不要求周期性后台重认证，也不要求给 DatasetCertification 本身增加自动过期状态；“历史认证结论”和“当前可交付资格”必须分开查询和展示。
 
@@ -160,14 +175,14 @@ CurrentEntitlementGate 在实际交付时按“现在”重新检查至少：
 
 ## 10. API / UI
 
-API 提供 DatasetVersion assessments、assessment report、certification profile summary、certification result / blockers，以及面向明确 consumer / purpose / action 的 current delivery entitlement 查询。
+API 提供 DatasetVersion assessments、assessment report、certification profile summary、certification result / blockers，以及面向明确 consumer / purpose / action 的 CurrentDeliveryGate 查询（包含 DatasetVersion usability + current rights entitlement）。
 
 关键写动作使用显式 Command。
 
 UI 在 DatasetVersion 上分别展示：
 
 - 历史 Certification 结果及 issued_at；
-- 当前 Delivery Eligibility：ALLOWED / BLOCKED；
+- 当前 Delivery Eligibility：ALLOWED / BLOCKED（来自 CurrentDeliveryGate）；
 - 若 BLOCKED，显示当前 rights blocker（例如 AUTHORIZATION_EXPIRED / REVOKED / ACTION_NOT_ALLOWED）。
 
 不得仅凭历史 CERTIFIED 标记显示“当前可交付”，也不把 certification status 塞入 DatasetVersion.status。
