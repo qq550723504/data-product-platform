@@ -54,7 +54,7 @@ OpenMetadata 仅作为 Governance Projection。
 - QualityAssessment（#131 起）
 - verified RightsDeclaration / verification fact（#137 起）
 - CertificationProfile snapshot（#134 起）
-- DatasetCertification（#134 起）
+- DatasetCertification / CertificationDisposition（#134 起）
 
 ProductRelease 特例：DRAFT / VALIDATING / READY 等发布前阶段允许显式 Command 按状态机更新 status 与 validation bindings；进入 PUBLISHED 后，已发布的 DatasetVersion / Rights / Quality / Compliance / Contract / EvidenceSnapshot 绑定不得被替换，后续仅允许受控生命周期迁移并保留历史。
 
@@ -64,7 +64,7 @@ ProductRelease 特例：DRAFT / VALIDATING / READY 等发布前阶段允许显�
 - 数据内容未变化，仅 Quality 评测错误 → 新 QualityAssessment；
 - 权利声明/验证错误 → 新 RightsDeclaration / verification fact / RightsSnapshot（按实际语义）；
 - CertificationProfile 规则变化 → 新 Profile version/snapshot；
-- 认证判断错误或重新认证 → 新 DatasetCertification（未来如需失效语义，使用显式 Revocation / Supersession 事实）；
+- 认证判断错误或重新认证 → 新 DatasetCertification；旧认证退出 current set 时追加 CertificationDisposition（REVOKED / SUPERSEDED），不 UPDATE 旧认证，也不按 latest timestamp 猜当前认证；
 - Product 发布事实变化 → 新 ProductVersion / ProductRelease 或显式生命周期 Command。
 
 不得为了修正非内容事实而无意义地创建新的 DatasetVersion。
@@ -101,6 +101,7 @@ RightsDeclaration
 - InvalidateDatasetVersion
 - RunQualityAssessment
 - CertifyDatasetVersion
+- RevokeDatasetCertification / SupersedeDatasetCertification
 - ValidateProductRelease
 - PublishProductRelease
 - WithdrawProductRelease
@@ -189,6 +190,7 @@ Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduc
 每次 standalone delivery 必须执行 CurrentDeliveryGate：
 
 - DatasetVersionUsability：至少拒绝 INVALID / FAILED / PROCESSING / CREATED；SUPERSEDED 是否允许按明确历史版本交付遵循现有领域语义和实现验收；
+- CurrentCertificationGate：delivery 必须绑定明确 certification；其 decision 必须为 CERTIFIED，且在 as_of 时点未被 CertificationDisposition REVOKED / SUPERSEDED；禁止用 latest created_at 猜当前认证；
 - CurrentEntitlementGate：使用当前时间、consumer、purpose、action 检查每一个候选 RightsDeclaration 的 VERIFIED 状态、其自身 validity window 与 scope，并排除已生效 INVALIDATED/SUPERSEDED 的 provenance；同时检查 Authorization 状态/有效期与 Effective Rights。
 
 任一子门禁失败都必须 fail closed，即使历史 Certification 仍为 CERTIFIED。
