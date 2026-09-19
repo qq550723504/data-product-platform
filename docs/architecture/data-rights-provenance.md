@@ -170,7 +170,9 @@ new Authorization / Snapshot as needed
 
 历史 Release / Certification 继续解释当时的事实。
 
-## 11. 与 Certification 的关系
+## 11. 与 Certification / Delivery 的关系
+
+DatasetCertification 冻结“认证时点”使用的 RightsSnapshot / Effective Rights，用来解释为什么当时可以 CERTIFIED；它不把时限授权永久化。
 
 CertificationProfile 可以要求：
 
@@ -188,6 +190,28 @@ CertificationProfile 可以要求：
 - required input rights 不完整
 
 均不能 CERTIFIED。
+
+### CurrentEntitlementGate
+
+每次对 Certified Dataset 执行独立交付前，必须使用当前时间和明确的 consumer / purpose / action 重新判断当前权利：
+
+~~~text
+historical DatasetCertification
+        +
+current verified provenance
+        +
+current Authorization validity/status
+        +
+current Effective Rights
+        +
+consumer / purpose / action
+        ↓
+DELIVERY_ALLOWED / DELIVERY_BLOCKED
+~~~
+
+Authorization 过期、暂停、撤销，RightsDeclaration 后续失效，或 required action 当前不再允许时，即使历史 Certification 为 CERTIFIED，也必须 DELIVERY_BLOCKED。
+
+该 gate 是第一阶段必需；周期性后台重认证仍可后置。
 
 ## 12. 非目标
 
