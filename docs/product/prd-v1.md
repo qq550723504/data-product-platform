@@ -258,9 +258,30 @@ DatasetCertification 必须绑定明确 DatasetVersion、QualityAssessment、Pro
 
 任何 required 条件缺失或不匹配时，不得 CERTIFIED。
 
-Certification 表示认证时点结论，不等于永久交付授权。Certified Dataset 每次实际交付前必须重新执行 CurrentEntitlementGate，按当前时间、consumer、purpose、action 检查 RightsDeclaration / Authorization / Effective Rights。授权过期、暂停、撤销或动作不再允许时，历史 Certification 保留，但交付必须 BLOCKED。第一阶段不要求周期性后台重认证。
+Certification 表示认证时点结论，不等于永久交付授权。
 
-## 11. Product Release Readiness
+Certified Dataset 每次实际交付前必须执行 CurrentDeliveryGate：
+
+~~~text
+CurrentDeliveryGate
+├── DatasetVersionUsability
+└── CurrentEntitlementGate
+~~~
+
+- DatasetVersionUsability 至少阻断 INVALID / FAILED / PROCESSING / CREATED；SUPERSEDED 按平台既有“明确历史版本”语义处理，不在本 docs-only 基线中自动等同 INVALID；
+- CurrentEntitlementGate 按当前时间、consumer、purpose、action 检查 VERIFIED 且未被有效 INVALIDATED/SUPERSEDED 的 RightsDeclaration、Authorization 状态/有效期与 Effective Rights。
+
+任一子门禁失败时，历史 Certification 保留，但当前交付必须 BLOCKED。第一阶段不要求周期性后台重认证。
+
+## 11. CostEvent
+
+QualityAssessment、Rights verification / invalidation / supersession、DatasetCertification evaluation / human approval 等实际活动发生时必须记录 CostEvent。
+
+- 金额未知时不伪造金额，可记录 quantity/unit；
+- 成本必须与实际活动同时记录，不在试点 KPI 阶段事后反推；
+- 同一幂等业务动作重放不得重复产生 CostEvent。
+
+## 12. Product Release Readiness
 
 Release 发布前统一检查：
 
@@ -275,7 +296,7 @@ Release 发布前统一检查：
 
 ProductRelease Readiness 与 DatasetCertification 不互相替代。
 
-## 12. 第一 Reference Implementation
+## 13. 第一 Reference Implementation
 
 POC 已验证 Raw / Standardized / Curated、Entity Resolution、Workflow / Execution、Quality / Compliance、Contract、Product Release、Cost / Evidence 和生产 decision trace。
 
@@ -291,7 +312,7 @@ Pilot 在同一链路增加：
 
 最终至少产生一个由 reference fixture 驱动的 CERTIFIED CURATED DatasetVersion，并同时验证失败路径。
 
-## 13. 第一阶段非目标
+## 14. 第一阶段非目标
 
 - T4/T5/T6 全部生产可靠性实现作为前置
 - 完整 Billing / Settlement / Asset Accounting
@@ -302,7 +323,7 @@ Pilot 在同一链路增加：
 - 通用 CertificationProfile 在线设计器
 - 完整法律合同管理与自动法律推理
 
-## 14. 技术方向
+## 15. 技术方向
 
 - Frontend：React / Next.js
 - Backend：Go
