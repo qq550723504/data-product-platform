@@ -66,7 +66,7 @@ READY 只表示内容已冻结，不表示 Quality 或 Certification 通过。
 
 DataProduct 是稳定产品身份；ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定；进入 PUBLISHED 后，发布绑定冻结，历史记录保留，后续仅允许受控的 SUSPENDED/WITHDRAWN 等生命周期迁移。
 
-Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 仍必须基于当前 consumer / purpose / action 通过 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
+Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 必须通过 CurrentDeliveryGate：先校验 DatasetVersion 当前可用性，再基于当前 consumer / purpose / action 通过 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
 
 ## 3. 实体模型
 
@@ -99,6 +99,8 @@ Party / PartyRef
       ↓
 RightsDeclaration
       ↓
+RightsVerification / RightsDisposition
+      ↓
 Authorization
       ↓
 RightsSnapshot
@@ -129,7 +131,16 @@ EffectiveRights
 - 有哪些 Evidence？
 - 是否已经 VERIFIED？
 
-### 4.4 Authorization
+### 4.4 RightsDisposition
+
+VERIFIED RightsDeclaration 的历史不可改写，但当前有效性可以通过 append-only disposition 事实退出 current set：
+
+- INVALIDATED
+- SUPERSEDED（显式指向 replacement declaration）
+
+Current rights selection 必须根据 as_of 和 disposition 判断，不能用 created_at/latest 猜测。
+
+### 4.5 Authorization
 
 回答：
 
@@ -139,7 +150,7 @@ Grantor + Grantee + Resource + Purpose + Action + Scope + Validity → Decision
 
 Authorization 不是所有权证明；Grantor 的授权资格应能追溯至 Rights Provenance。
 
-### 4.5 EffectiveRights
+### 4.6 EffectiveRights
 
 衍生 DatasetVersion 的有效权利由输入资源权利、授权、Purpose 和生产 lineage 共同决定。
 
@@ -244,7 +255,7 @@ Rights verification、QualityAssessment、DatasetCertification 都应将 Evidenc
 - EvidenceSnapshot
 - RightsSnapshot
 - QualityAssessment（#131）
-- verified RightsDeclaration / verification fact（#137）
+- verified RightsDeclaration / verification / disposition facts（#137）
 - CertificationProfile snapshot（#134）
 - DatasetCertification（#134）
 
