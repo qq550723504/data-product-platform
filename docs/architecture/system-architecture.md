@@ -48,7 +48,7 @@ Engine Adapter Layer
 Core 保存：
 
 - DataResource / DatasetVersion
-- RightsDeclaration / Authorization / RightsSnapshot / Effective Rights
+- RightsDeclaration / verification / disposition / Authorization / RightsSnapshot / Effective Rights
 - EntityMappingDecision
 - Workflow / Execution / frozen execution dependencies
 - QualityAssessment
@@ -107,7 +107,7 @@ DatasetCertification
 Certified DatasetVersion
 ~~~
 
-Certified Dataset 可以作为独立交付对象，也可以继续进入 Data Product / ProductRelease；独立交付必须先经过 CurrentEntitlementGate，重新校验当前 Rights/Authorization/Effective Rights。
+Certified Dataset 可以作为独立交付对象，也可以继续进入 Data Product / ProductRelease；独立交付必须先经过 CurrentDeliveryGate：检查 DatasetVersion 当前可用性，再通过 CurrentEntitlementGate 重新校验当前 Rights provenance / Authorization / Effective Rights。
 
 ## 5. Governance Projection
 
