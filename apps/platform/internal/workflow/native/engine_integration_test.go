@@ -150,7 +150,7 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 		t.Fatalf("create workflow version: %v", err)
 	}
 
-	executionService := workflowapp.NewExecutionService(txManager, workflowRepo, nil)
+	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
 	execution, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
 		WorkspaceID:       workspaceID,
 		WorkflowVersionID: workflowVersion.ID,
@@ -161,7 +161,8 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 			{Name: "lease_raw", DatasetVersionID: leaseVersion.ID},
 			{Name: "energy_raw", DatasetVersionID: energyVersion.ID},
 		},
-		TraceID: "native-worker-e2e",
+		IdempotencyKey: "native-worker-create-" + workspaceID.String(),
+		TraceID:        "native-worker-e2e",
 	})
 	if err != nil {
 		t.Fatalf("create workflow execution: %v", err)

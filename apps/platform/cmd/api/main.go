@@ -57,7 +57,6 @@ import (
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 	workflowhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/http"
-	workflowqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue"
 )
 
 func main() {
@@ -178,8 +177,7 @@ func main() {
 
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
 	workflowVersionService := workflowapp.NewWorkflowVersionService(txManager, workflowRepo)
-	workflowQueueClient := workflowqueue.NewClient(queueClient)
-	executionService := workflowapp.NewExecutionService(txManager, workflowRepo, workflowQueueClient)
+	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
 	workflowHandler := workflowhttp.NewHandler(workflowVersionService, executionService, workflowRepo)
 
 	productRepo := productinfra.NewPostgresRepository(db)

@@ -19,6 +19,17 @@ type PostgresRepository struct {
 	pool *pgxpool.Pool
 }
 
+type executionQuerier interface {
+	QueryRow(context.Context, string, ...any) pgx.Row
+	Query(context.Context, string, ...any) (pgx.Rows, error)
+}
+
+type IdempotencyRecord struct {
+	ObjectID           uuid.UUID
+	ResultRef          *uuid.UUID
+	RequestFingerprint string
+}
+
 func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 	return &PostgresRepository{pool: pool}
 }
@@ -141,6 +152,59 @@ func (r *PostgresRepository) ValidateExecutionReferences(ctx context.Context, tx
 	return nil
 }
 
+// ValidateExecutionAccess checks ownership without requiring an input version
+// to remain READY. An idempotent replay must still prove that the caller's
+// workspace can see the existing execution, but a later input supersession or
+// invalidation must not turn a previously accepted command into a different
+// result.
+func (r *PostgresRepository) ValidateExecutionAccess(ctx context.Context, tx pgx.Tx, execution domain.Execution) error {
+	var workflowWorkspace uuid.UUID
+	if err := tx.QueryRow(ctx, `
+		SELECT w.workspace_id
+		FROM workflow_version wv
+		JOIN workflow w ON w.id = wv.workflow_id
+		WHERE wv.id=$1
+	`, execution.WorkflowVersionID).Scan(&workflowWorkspace); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("workflow version: %w", ErrNotFound)
+		}
+		return fmt.Errorf("validate execution workflow access: %w", err)
+	}
+	if workflowWorkspace != execution.WorkspaceID {
+		return fmt.Errorf("workflow version: %w", domain.ErrWorkspaceMismatch)
+	}
+
+	var outputWorkspace uuid.UUID
+	if err := tx.QueryRow(ctx, `SELECT workspace_id FROM dataset WHERE id=$1 AND deleted_at IS NULL`, execution.OutputDatasetID).Scan(&outputWorkspace); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("output dataset: %w", ErrNotFound)
+		}
+		return fmt.Errorf("validate execution output access: %w", err)
+	}
+	if outputWorkspace != execution.WorkspaceID {
+		return fmt.Errorf("output dataset: %w", domain.ErrWorkspaceMismatch)
+	}
+
+	for _, input := range execution.Inputs {
+		var inputWorkspace uuid.UUID
+		if err := tx.QueryRow(ctx, `
+			SELECT d.workspace_id
+			FROM dataset_version v
+			JOIN dataset d ON d.id = v.dataset_id
+			WHERE v.id=$1
+		`, input.DatasetVersionID).Scan(&inputWorkspace); err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return fmt.Errorf("input %s: %w", input.Name, ErrNotFound)
+			}
+			return fmt.Errorf("validate execution input access: %w", err)
+		}
+		if inputWorkspace != execution.WorkspaceID {
+			return fmt.Errorf("input %s: %w", input.Name, domain.ErrWorkspaceMismatch)
+		}
+	}
+	return nil
+}
+
 // ValidateExecutionOwnership re-checks a persisted Execution right before a worker
 // dispatches it. Executions queued before the ownership rule existed can still bind a
 // foreign workflow, input or output, so delivery must not rely only on the check made by
@@ -230,15 +294,26 @@ func (r *PostgresRepository) InsertExecution(ctx context.Context, tx pgx.Tx, exe
 }
 
 func (r *PostgresRepository) GetExecution(ctx context.Context, executionID uuid.UUID) (domain.Execution, error) {
+	return r.getExecution(ctx, r.pool, executionID, false)
+}
+
+func (r *PostgresRepository) GetExecutionTx(ctx context.Context, tx pgx.Tx, executionID uuid.UUID, forUpdate bool) (domain.Execution, error) {
+	return r.getExecution(ctx, tx, executionID, forUpdate)
+}
+
+func (r *PostgresRepository) getExecution(ctx context.Context, q executionQuerier, executionID uuid.UUID, forUpdate bool) (domain.Execution, error) {
 	var execution domain.Execution
 	var metrics []byte
-	err := r.pool.QueryRow(ctx, `
+	lockClause := ""
+	if forUpdate {
+		lockClause = " FOR UPDATE"
+	}
+	err := q.QueryRow(ctx, `
 		SELECT id, workspace_id, workflow_version_id, output_dataset_id, output_dataset_version_id,
 		       target_period, status, attempt, retry_of_execution_id, engine_type,
 		       COALESCE(engine_execution_id,''), COALESCE(error_code,''), COALESCE(error_message,''),
 		       metrics, created_at, created_by, started_at, finished_at
-		FROM execution WHERE id=$1
-	`, executionID).Scan(
+		FROM execution WHERE id=$1`+lockClause, executionID).Scan(
 		&execution.ID, &execution.WorkspaceID, &execution.WorkflowVersionID, &execution.OutputDatasetID,
 		&execution.OutputDatasetVersionID, &execution.TargetPeriod, &execution.Status, &execution.Attempt,
 		&execution.RetryOfExecutionID, &execution.EngineType, &execution.EngineExecutionID,
@@ -256,7 +331,7 @@ func (r *PostgresRepository) GetExecution(ctx context.Context, executionID uuid.
 			return domain.Execution{}, fmt.Errorf("decode execution metrics: %w", err)
 		}
 	}
-	rows, err := r.pool.Query(ctx, `SELECT input_name, dataset_version_id FROM execution_input WHERE execution_id=$1 ORDER BY input_name`, executionID)
+	rows, err := q.Query(ctx, `SELECT input_name, dataset_version_id FROM execution_input WHERE execution_id=$1 ORDER BY input_name`, executionID)
 	if err != nil {
 		return domain.Execution{}, fmt.Errorf("list execution inputs: %w", err)
 	}
@@ -272,6 +347,56 @@ func (r *PostgresRepository) GetExecution(ctx context.Context, executionID uuid.
 		return domain.Execution{}, fmt.Errorf("iterate execution inputs: %w", err)
 	}
 	return execution, nil
+}
+
+func (r *PostgresRepository) FindIdempotencyTx(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, commandType, key string) (IdempotencyRecord, bool, error) {
+	var record IdempotencyRecord
+	err := tx.QueryRow(ctx, `
+		SELECT object_id, result_ref, COALESCE(request_fingerprint, '')
+		FROM command_idempotency
+		WHERE workspace_id=$1 AND command_type=$2 AND idempotency_key=$3
+		FOR UPDATE
+	`, workspaceID, commandType, key).Scan(&record.ObjectID, &record.ResultRef, &record.RequestFingerprint)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return IdempotencyRecord{}, false, nil
+	}
+	if err != nil {
+		return IdempotencyRecord{}, false, fmt.Errorf("find execution idempotency record: %w", err)
+	}
+	return record, true, nil
+}
+
+func (r *PostgresRepository) TryInsertIdempotency(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, commandType, key string, objectID uuid.UUID, resultRef *uuid.UUID, fingerprint string) (bool, error) {
+	var inserted uuid.UUID
+	err := tx.QueryRow(ctx, `
+		INSERT INTO command_idempotency (
+			workspace_id, command_type, idempotency_key, object_id, result_ref, request_fingerprint
+		) VALUES ($1,$2,$3,$4,$5,$6)
+		ON CONFLICT (workspace_id, command_type, idempotency_key) DO NOTHING
+		RETURNING id
+	`, workspaceID, commandType, key, objectID, resultRef, fingerprint).Scan(&inserted)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return false, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("insert execution idempotency record: %w", err)
+	}
+	return inserted != uuid.Nil, nil
+}
+
+func (r *PostgresRepository) UpdateIdempotencyObject(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, commandType, key string, objectID uuid.UUID) error {
+	tag, err := tx.Exec(ctx, `
+		UPDATE command_idempotency
+		SET object_id=$4, result_ref=$4
+		WHERE workspace_id=$1 AND command_type=$2 AND idempotency_key=$3
+	`, workspaceID, commandType, key, objectID)
+	if err != nil {
+		return fmt.Errorf("update execution idempotency result: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return fmt.Errorf("update execution idempotency result: record not found")
+	}
+	return nil
 }
 
 // SaveExecutionState is a compare-and-set transition. The expected status is

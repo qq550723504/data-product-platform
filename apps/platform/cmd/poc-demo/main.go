@@ -31,7 +31,6 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
@@ -50,7 +49,6 @@ import (
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
-	workflowqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue"
 )
 
 const statePath = "/demo-state/manifest.json"
@@ -290,9 +288,7 @@ func (d *demo) advance() error {
 		return err
 	}
 	d.m.Workflow = wf.ID
-	client := queue.NewClient(queue.Config{Addr: d.cfg.Redis.Addr, Password: d.cfg.Redis.Password, DB: d.cfg.Redis.DB})
-	defer client.Close()
-	execution, err := workflowapp.NewExecutionService(tx, workflows, workflowqueue.NewClient(client)).Create(d.ctx, workflowapp.CreateExecutionCommand{WorkspaceID: d.m.Workspace, WorkflowVersionID: wf.ID, OutputDatasetID: d.m.Curated, TargetPeriod: "2025-03", Inputs: d.m.Inputs, ActorID: &d.m.Actor})
+	execution, err := workflowapp.NewExecutionService(tx, workflows).Create(d.ctx, workflowapp.CreateExecutionCommand{WorkspaceID: d.m.Workspace, WorkflowVersionID: wf.ID, OutputDatasetID: d.m.Curated, TargetPeriod: "2025-03", Inputs: d.m.Inputs, IdempotencyKey: "poc-demo-create-" + wf.ID.String(), ActorID: &d.m.Actor})
 	if err != nil {
 		return err
 	}

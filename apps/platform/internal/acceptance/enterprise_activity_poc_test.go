@@ -83,7 +83,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 	entityService := entityapp.NewMatchService(industryPackRoot, txManager, entityRepo, datasetRepo, uploadDataset, store)
 	workflowRepo := workflowinfra.NewPostgresRepository(pool)
 	workflowVersionService := workflowapp.NewWorkflowVersionService(txManager, workflowRepo)
-	executionService := workflowapp.NewExecutionService(txManager, workflowRepo, nil)
+	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
 	qualityRepo := qualityinfra.NewPostgresRepository(pool)
 	qualityService := qualityapp.NewService(industryPackRoot, txManager, datasetRepo, qualityRepo, store)
 	complianceRepo := complianceinfra.NewPostgresRepository(pool)
@@ -200,8 +200,9 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 			{Name: "lease_raw", DatasetVersionID: leaseVersion.ID},
 			{Name: "energy_raw", DatasetVersionID: energyVersion.ID},
 		},
-		ActorID: &actorID,
-		TraceID: traceID,
+		IdempotencyKey: "enterprise-activity-create-" + suffix,
+		ActorID:        &actorID,
+		TraceID:        traceID,
 	})
 	if err != nil {
 		t.Fatalf("create Workflow Execution: %v", err)

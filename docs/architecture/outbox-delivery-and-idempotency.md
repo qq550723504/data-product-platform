@@ -1,6 +1,6 @@
 # Outbox 派发与操作幂等设计（C1）
 
-- 状态：**设计 + C1-a/C1-b 已实现，扇出前置（统一 dispatcher）已实现**。C1-a（向前迁移 `000015_outbox_delivery_hardening`：
+- 状态：**设计 + C1-a/C1-b/T2 已实现，扇出前置（统一 dispatcher）已实现**。C1-a（向前迁移 `000015_outbox_delivery_hardening`：
   `event_version` / `claim_token` / 死信状态 / 可领取索引 / 每消费者确认表）与
   C1-b（publisher：claim token 守卫、指数退避、最大尝试、死信、瞬时错误容错、稳定排序、
   事件版本兼容）已落地并通过回归测试。
@@ -8,9 +8,10 @@
   是 C1-d 的**前置**：`worker` 不再直连「publisher + 单闭包 handler」。
   处理义务已在写入/首次领取时**冻结到事件上**（`000016_outbox_event_routing_obligation`），
   重启换部署剖面不会回溯改变旧事件的原义务。
-  C1-c（请求幂等）与 C1-d（Execution 入队经 Outbox）**仍为设计，尚未实现**；
-  本轮只为 C1-d 预留路由占位（`ExecutionQueued` / `ExecutionRetried` 目前是显式仅保留），
-  未改动 Execution 的输入/输出语义。
+  T2 已实现 C1-c（Execution 请求幂等）与 C1-d（Execution 入队经 Outbox）：
+  `WORKFLOW.CREATE_EXECUTION` / `WORKFLOW.RETRY_EXECUTION` 使用请求指纹，Create/Retry
+  只在事务内写入 Outbox，由 `execution-queue` handler 经真实 Redis/asynq 入队；旧的
+  T1 retention-only `PUBLISHED` 事件仍保持原义务，不作为队列送达证据。
 - 关联：issue #103（Domain Event / AuditEvent / Transactional Outbox 覆盖缺口）、
   #110（持久化执行 + 入队超时的恢复，禁止盲重复创建）、#100（关键 Command 幂等）；
   AGENTS.md §4（显式 Command）、§5（Domain Event + Audit + Transactional Outbox）、
@@ -19,7 +20,7 @@
 
 ## 1. 范围与非目标
 
-### 1.1 本文覆盖（C1）
+### 1.1 本文覆盖（C1/T2）
 
 1. Outbox 事件结构、事件版本与状态机。（C1-a）
 2. 派发确认规则：claim / 租约 / 退避 / 最大尝试 / 死信 / 租约到期恢复。（C1-b）
@@ -52,8 +53,9 @@
   已满足 AGENTS §5「与聚合更新处于同一事务」。
 - `outbox.NewEvent` 只有 `ID / AggregateType / AggregateID / EventType / Payload /
   AvailableAt`，**没有事件版本字段**。
-- `command_idempotency`（`migrations/000008_release_publish.up.sql:22`）：
-  `workspace_id / command_type / idempotency_key / object_id / result_ref`，
+- `command_idempotency`（`migrations/000008_release_publish.up.sql:22`，指纹由
+  `000017_execution_command_fingerprint` 增加）：
+  `workspace_id / command_type / idempotency_key / object_id / result_ref / request_fingerprint`，
   唯一键 `(workspace_id, command_type, idempotency_key)`。
 
 ### 2.2 派发
@@ -84,15 +86,16 @@
 | G3 | 租约到期的回扫路径依赖 `available_at`，但 `idx_outbox_pending` 不覆盖 `PROCESSING` | `000001` 索引定义 |
 | G4 | 任何 DB/claim 错误都会让 `Run` 返回，worker 把它送 `errCh` 并触发整体停机，而不是退避重试 | `publisher.go` `Run`；`cmd/worker/main.go` publisher goroutine |
 | G5 | 排序只有 `created_at`，无稳定 tiebreaker，也没有 per-aggregate 顺序保证 | `publisher.go` `ORDER BY created_at` |
-| G6 | 请求幂等只有 Release 发布使用 `command_idempotency`（`product/transport/http/publish.go:23`），另有映射决策的专用 `entity_mapping_decision.idempotency_key`；Execution 创建没有请求幂等键 | 见 4.4 |
-| G7 | Execution 入队在**事务提交之后**直接调用 `queue.EnqueueExecution`（`workflow/application/execution.go` `Create` 末尾），失败时返回"persisted but enqueue failed"，没有任何自动恢复，也没有经 Outbox | #103 未完成项、#110"盲重复创建"风险 |
+| G6 | 请求幂等只有 Release 发布使用 `command_idempotency`（`product/transport/http/publish.go:23`），另有映射决策的专用 `entity_mapping_decision.idempotency_key`；Execution 创建没有请求幂等键 | 已由 T2 关闭，见 4.4 |
+| G7 | Execution 入队在**事务提交之后**直接调用 `queue.EnqueueExecution`（`workflow/application/execution.go` `Create` 末尾），失败时返回"persisted but enqueue failed"，没有任何自动恢复，也没有经 Outbox | 已由 T2 关闭，见 4.5 |
 | G8 | handler 幂等靠各 handler 自己实现（`metadata/application/service.go` `ProjectProductRelease` 用 `governance_projection` 唯一键 + `SUCCEEDED` 短路），没有统一约定与契约测试 | `migrations/000010_metadata_projection.up.sql:35` |
 
 **C1-a/C1-b 已关闭**：G1（`event_version` 列）、G2（`MaxAttempts` + `DEAD_LETTER` + 死信停止自动重试）、
 G3（`idx_outbox_claimable` 覆盖 `PROCESSING`）、G4（瞬时错误退避继续，仅致命错误停止）、
 G5（`ORDER BY created_at, id` 稳定 tiebreaker）。
-**仍未关闭**：G6（Execution 请求幂等键，C1-c）、G7（Execution 入队经 Outbox，C1-d）、
-G8（统一 handler 幂等契约测试，C1-c/d 前补）。
+**T2 已关闭**：G6（Execution 请求幂等键）、G7（Execution 入队经 Outbox）。
+G8 的统一 handler 契约仍由消费方状态保护与本轮 `execution-queue` handler 测试覆盖；
+死信重放 Command 仍不在 T2 范围内。
 
 ## 3. 目标语义
 
@@ -222,23 +225,24 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
 
 ### 4.5 Execution 入队经 Outbox（C1 的核心行为变更）
 
-现状（`workflow/application/execution.go` `Create`）：事务内写 Execution + `ExecutionQueued`
-事件 + Audit；**提交后**调用 `s.queue.EnqueueExecution`，失败即返回悬挂错误。
-
-目标：
+T2 实现：
 
 1. 事务内：`InsertExecution` + `appendExecutionEvent("ExecutionQueued")` + Audit
-   + （若带请求幂等键）写 `command_idempotency`。**不在事务内直接入队。**
-2. Worker 侧新增 Outbox handler：消费 `ExecutionQueued` → `queue.EnqueueExecution(aggregate_id)`。
+   + 写 `command_idempotency`（含 canonical SHA-256 指纹）。**不在事务内直接入队。**
+2. Worker 侧新增 `execution-queue` Outbox handler：消费 `ExecutionQueued`、
+   `ExecutionRetried` 或受控对账事件 → `queue.EnqueueExecution(aggregate_id)`。
 3. handler 幂等由队列消费者兜底：`workflow/transport/queue/handler.go` 已对
    `SUCCEEDED / FAILED / CANCELLED / SUBMITTING / RUNNING` 直接返回 `nil`，重复入队不会
    产生重复输出或重复远程 job。
-4. 恢复：入队瞬时失败 → Outbox `FAILED` → 退避重试 → 最终入队一次；
-   不再出现"已持久化但入队失败"的悬挂执行（响应 #110）。
+4. 恢复：入队瞬时失败 → Outbox `FAILED` → 退避重试；队列接收但确认丢失允许重投，
+   消费者已有领取保护，不创建第二个 Execution。
+5. `apps/platform/cmd/execution-reconcile` 默认只报告旧 `QUEUED`；显式 `--apply` 重新锁定
+   Execution、验证工作区/引用，并用 `WORKFLOW.RECONCILE_QUEUED_EXECUTION` 与来源事件
+   建立稳定幂等补派发记录。旧事件的 `PUBLISHED` 不被当作送达证明。
 
 **对共享路径的影响声明**：以上只替换"提交后直接入队"这一步。`CreateExecutionCommand`、
 输入绑定（`Inputs`）、`domain.NewExecution`、`Succeed` 的输出版本语义均不变；
-`ExecutionQueue` 端口保留，仅由 Outbox handler 调用，而不是 `ExecutionService.Create`。
+队列端口仅由 Outbox handler 调用，而不是 `ExecutionService.Create/Retry`。
 
 **两个派发入口都要切换（硬性）**：`Create`（首次入队）与**显式 Retry**（重试入队）
 是两个独立的 `EnqueueExecution` 调用点，C1-d 必须**同时**改为经 Outbox，不能只移除
@@ -295,7 +299,7 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
 9. **路由表词汇完整**：`internal/platform/routing/routing_test.go` 断言事件词汇表与路由表一一对应，
    且 OpenMetadata 开关只改变 `ProductReleased` 是否要求 `metadata-projection`，不隐式完成。
 10. **义务在事件上冻结，跨部署剖面不变**：governance 剖面首次领取 `ProductReleased` 后处理失败，
-    义务（`routing_version=c1-v1+governance`、`required_handlers=[metadata-projection]`）写入事件；
+    义务（`routing_version=c1-v2+governance`、`required_handlers=[metadata-projection]`）写入事件；
     以 governance 关闭的剖面重启后再处理同一旧事件，它**不会**被重新解释成仅保留，也**不会**被
     置 `PUBLISHED`，而是因为缺少 `metadata-projection` 处理器显式失败；义务前后完全一致
     （`TestDispatcherHonoursFrozenObligationAcrossRoutingProfiles`）。
@@ -314,16 +318,25 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
 
 ### 5.4 请求幂等
 
-- 同键同语义重放 → 返回同一 Execution，Execution/Outbox/Audit 计数为 1。
-- 同键不同语义 → `WORKFLOW_EXECUTION_KEY_CONFLICT`，无新事实。
+- Create 同键同语义重放 → 返回同一 Execution，Execution/输入绑定/Outbox/Audit 计数为 1；
+  并发提交也只允许一个事务赢得幂等槽位。
+- Retry 同键同语义重放 → 返回同一重试 Execution，不能连续创建多个重试任务。
+- 同键不同语义 → `IDEMPOTENCY_KEY_CONFLICT`，无新事实。
 - 缺失幂等键 → `IDEMPOTENCY_KEY_REQUIRED`，无新事实。
 
 ### 5.5 入队恢复
 
-模拟 `queue.EnqueueExecution` 失败：Execution 已持久化、Outbox 事件 `FAILED`、
-重试后仅入队一次、Execution 状态不被改写。
+使用真实 Redis/asynq 让 `execution-queue` handler 入队失败：Execution 已提交、Outbox
+事件为 `FAILED` 并按退避重试；Redis 恢复后可继续派发。确认丢失允许消息重投，消费者
+领取保护不创建第二个 Execution。
 
-### 5.6 既有门禁
+### 5.6 遗留 QUEUED 对账
+
+`cmd/execution-reconcile` 默认只报告；`--apply` 才创建带来源事件、稳定操作键的
+`ExecutionReconciliationQueued` Outbox 记录。真实 PostgreSQL 并发对账必须只有一个
+有效补派发记录，且旧事件的 `PUBLISHED` 本身不能让报告变成“已送达”。
+
+### 5.7 既有门禁
 
 在 `required` 七组门禁下回归 native / reference / CSV / live MinIO / demo lifecycle，
 并补充 #110 的"外来引用被拒 + 零入队调用 + 无新事实"断言。
@@ -335,14 +348,16 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
 | C1-a | 事件版本列 + `claim_token` + `DEAD_LETTER` + 每消费者确认表 + 新索引（`000015_outbox_delivery_hardening`） | **已实现** |
 | C1-b | publisher：claim token 守卫、退避/最大尝试/死信、瞬时错误容错、稳定排序、事件版本兼容 + 派发契约测试 | **已实现** |
 | 扇出前置 | 统一 dispatcher + 版本化路由表 + 每处理器确认（模型 A，issue #103）；不改 Execution 输入/输出语义；`000016_outbox_event_routing_obligation` 把处理义务冻结在事件上 | **已实现** |
-| C1-c | 请求幂等：`command_type` 约定 + Execution create 幂等键（严格模式）；统一 handler 幂等契约测试 | 待实现 |
-| C1-d | Execution 入队改经 Outbox（`Create` **与** Retry 两个入口）+ 入队对账/恢复测试；把 `ExecutionQueued`/`ExecutionRetried` 路由到 `execution-queue` 并 bump `outboxRoutingVersion` | 待实现（依赖扇出前置） |
+| C1-c / T2-a | 请求幂等：`WORKFLOW.CREATE_EXECUTION` / `WORKFLOW.RETRY_EXECUTION`、canonical 指纹、严格 `Idempotency-Key`、并发收敛 | **已实现**（`000017`） |
+| C1-d / T2-b | Execution 入队改经 Outbox（`Create` **与** Retry 两个入口）+ `execution-queue` Redis/asynq handler + 路由版本升级 | **已实现** |
+| T2-c | 遗留 `QUEUED` 受控报告/补派发，来源关联与稳定操作键 | **已实现** |
 | C1-e | 死信重放 Command（操作者、理由、独立重放记录，保留原 `event_id`） | 待实现（未完成项） |
 | C2 | 原生执行恢复与输出幂等（另文） | 设计已合入 |
 
 迁移号约定：编号按**实际合并顺序**分配，不预先锁定；C1-a 占用 `000015`，扇出前置占用 `000016`。
-任何新迁移均为**新增向前迁移**，不得改写 `000001`~`000015`（AGENTS §11 历史事实不可覆盖）。
+任何新迁移均为**新增向前迁移**，不得改写 `000001`~`000016`（AGENTS §11 历史事实不可覆盖）。
 扇出前置复用 `outbox_event_consumption` 记录每处理器确认，并新增 `000016` 冻结事件处理义务。
+T2 新增 `000017_execution_command_fingerprint`，不回填或改写历史幂等记录。
 
 C1-a ~ C1-d 允许在同一聚焦 PR 内完成（共享同一迁移与 publisher 改动），
 但每一步都要有独立回归测试；C2 不混入。
@@ -356,14 +371,14 @@ C1-a ~ C1-d 允许在同一聚焦 PR 内完成（共享同一迁移与 publisher
    envelope 迁移是否需要一个显式的转换步骤（C1-c/C1-d）。
 5. `outbox_event_consumption` 的保留策略（长期不清理 vs 按窗口归档）。
 
-### 7.1 已知限制：单消费者 claim 语义（C1-d 前的工作）
+### 7.1 已知限制：单消费者 claim 语义
 
 C1-a/C1-b 的 claim 把事件状态置为**全局** `PUBLISHED`，一个事件只会被**一个**消费者处理一次。
 `outbox_event_consumption` 虽然按 `(consumer_name, event_id)` 记录，但当前 claim 不按消费者区分，
 因此**同一个事件无法扇出给第二个消费者**。
 
-现状之所以没暴露：`metadata-projection` 只关心 `ProductReleased`，而 C1-d 计划新增的
-`execution-queue` 消费者只关心 `ExecutionQueued` / `ExecutionRetried`，事件类型不相交。
+现状之所以没有在 T2 暴露：`metadata-projection` 只关心 `ProductReleased`，而
+`execution-queue` 只关心 Execution 入队事件，当前事件类型不相交。
 一旦某个事件类型需要两个消费者，当前模型会静默丢失第二个消费者。
 
 **这一扇出前置已在「统一 dispatcher」增量中实现（模型 A）**，不再依赖「类型不相交」的巧合：
@@ -376,8 +391,8 @@ worker 装配在 `apps/platform/cmd/worker/{main.go,handlers.go}`：
 
 - **单一逻辑消费者**：`Dispatcher` 沿用 C1-b 的 `claim_token` 租约领取事件（多实例仍由 token 协调），
   然后在应用层按**事件上冻结的义务**把事件扇出给各处理器。
-- **版本化路由表**（`routing.VersionFor(governanceProjection)`，基础版本 `c1-v1`；
-  启用治理提供方时为 `c1-v1+governance`，保证同一版本串总对应同一必需处理器集合）：
+- **版本化路由表**（`routing.VersionFor(governanceProjection)`，基础版本 `c1-v2`；
+  启用治理提供方时为 `c1-v2+governance`，保证同一版本串总对应同一必需处理器集合）：
   为每个 `event_type` 显式声明
   必须确认的处理器集合；`Route.RequiredHandlers` 为空是**显式的仅保留（retention-only）声明**，
   而不是「默认 `return nil`」推断出来的。未在路由表中声明的事件类型是**错误**，
@@ -411,10 +426,11 @@ worker 装配在 `apps/platform/cmd/worker/{main.go,handlers.go}`：
   （`TestDispatcherRedeliveryAfterLostConfirmationKeepsSingleFact`）。
 - **能力边界**：claim 仍是全局 `PUBLISHED`，因此「一个事件 + 两个处理器」只在**同一派发轮次内**支持；
   若未来需要按消费者独立进度/独立重放，仍需升级为模型 B（按消费者 claim）。
-- **T2 边界**：本轮 `ExecutionQueued`/`ExecutionRetried` 是显式仅保留，并被冻结为“无队列义务”。
-  T2 不能把这种历史完成状态当作队列已送达的证据；它必须新增一条明确的入队对账证据。
+- **T2 边界**：新产生的 `ExecutionQueued`/`ExecutionRetried` 必须由 `execution-queue`
+  确认；T1 历史事件仍冻结为仅保留，不能把其 `PUBLISHED` 当作队列送达证据。对账只为
+  仍为 `QUEUED` 且引用/工作区复核通过的遗留记录创建一条新的、带来源关联的派发记录。
 
-C1-d 仍待落地，且必须基于上述模型（不得新开第二套 claim）：
+T2 使用上述模型（不得新开第二套 claim）：
 
 - **A. 单派发消费者 + 应用层扇出**：Outbox 只有一个 dispatcher 消费者，它把事件分发给已注册的
   projection/queue 处理器；`outbox_event_consumption` 改为记录每个子消费者的处理结果。（**已实现**）

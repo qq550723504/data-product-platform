@@ -94,6 +94,11 @@ type createExecutionRequest struct {
 }
 
 func (h *Handler) createExecution(w http.ResponseWriter, r *http.Request) {
+	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
+	}
 	var req createExecutionRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_JSON", "invalid JSON request", nil)
@@ -134,16 +139,25 @@ func (h *Handler) createExecution(w http.ResponseWriter, r *http.Request) {
 		OutputDatasetID:   outputDatasetID,
 		TargetPeriod:      req.TargetPeriod,
 		Inputs:            inputs,
+		IdempotencyKey:    idempotencyKey,
 		ActorID:           actorID,
 		TraceID:           httpserver.RequestID(r.Context()),
 	})
 	if err != nil {
+		if errors.Is(err, domain.ErrIdempotencyKeyNeeded) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header must be non-empty and at most 255 characters", nil)
+			return
+		}
 		if errors.Is(err, domain.ErrWorkspaceMismatch) {
 			httpserver.WriteError(w, r, http.StatusBadRequest, "EXECUTION_WORKSPACE_MISMATCH", "workflow, inputs, output and execution must belong to one workspace", nil)
 			return
 		}
 		if errors.Is(err, domain.ErrExecutionReferenceUnusable) {
 			httpserver.WriteError(w, r, http.StatusBadRequest, "EXECUTION_REFERENCE_UNUSABLE", "an execution input must be READY or SUPERSEDED", nil)
+			return
+		}
+		if errors.Is(err, domain.ErrIdempotencyConflict) {
+			httpserver.WriteError(w, r, http.StatusConflict, "IDEMPOTENCY_KEY_CONFLICT", "Idempotency-Key was already used for a different execution request", nil)
 			return
 		}
 		status := http.StatusBadRequest
@@ -175,6 +189,11 @@ func (h *Handler) getExecution(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) retryExecution(w http.ResponseWriter, r *http.Request) {
+	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
+	}
 	executionID, err := uuid.Parse(r.PathValue("executionId"))
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_EXECUTION_ID", "executionId must be a UUID", nil)
@@ -185,14 +204,27 @@ func (h *Handler) retryExecution(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
 		return
 	}
-	execution, err := h.executions.Retry(r.Context(), executionID, actorID, httpserver.RequestID(r.Context()))
+	execution, err := h.executions.Retry(r.Context(), workflowapp.RetryExecutionCommand{
+		ExecutionID:    executionID,
+		IdempotencyKey: idempotencyKey,
+		ActorID:        actorID,
+		TraceID:        httpserver.RequestID(r.Context()),
+	})
 	if err != nil {
+		if errors.Is(err, domain.ErrIdempotencyKeyNeeded) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header must be non-empty and at most 255 characters", nil)
+			return
+		}
 		if errors.Is(err, domain.ErrWorkspaceMismatch) {
 			httpserver.WriteError(w, r, http.StatusBadRequest, "EXECUTION_WORKSPACE_MISMATCH", "workflow, inputs, output and execution must belong to one workspace", nil)
 			return
 		}
 		if errors.Is(err, domain.ErrExecutionReferenceUnusable) {
 			httpserver.WriteError(w, r, http.StatusBadRequest, "EXECUTION_REFERENCE_UNUSABLE", "an execution input must be READY or SUPERSEDED", nil)
+			return
+		}
+		if errors.Is(err, domain.ErrIdempotencyConflict) {
+			httpserver.WriteError(w, r, http.StatusConflict, "IDEMPOTENCY_KEY_CONFLICT", "Idempotency-Key was already used for a different retry request", nil)
 			return
 		}
 		status := http.StatusConflict

@@ -2,9 +2,11 @@ package application_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/google/uuid"
@@ -30,15 +32,6 @@ func (integrationStore) Put(_ context.Context, objectName string, reader io.Read
 		return "", fmt.Errorf("size mismatch: got %d want %d", len(content), size)
 	}
 	return "s3://workflow-test/" + objectName, nil
-}
-
-type captureQueue struct {
-	ids []uuid.UUID
-}
-
-func (q *captureQueue) EnqueueExecution(_ context.Context, executionID uuid.UUID) error {
-	q.ids = append(q.ids, executionID)
-	return nil
 }
 
 func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
@@ -107,8 +100,7 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 		t.Fatalf("create workflow version: %v", err)
 	}
 
-	queue := &captureQueue{}
-	executionService := workflowapp.NewExecutionService(txManager, workflowRepo, queue)
+	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
 	execution, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
 		WorkspaceID:       workspaceID,
 		WorkflowVersionID: workflowVersion.ID,
@@ -118,15 +110,88 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 			Name:             "enterprise_standardized",
 			DatasetVersionID: inputV1.ID,
 		}},
-		TraceID: "workflow-test",
+		IdempotencyKey: "workflow-create-" + workspaceID.String(),
+		TraceID:        "workflow-test",
 	})
 	if err != nil {
 		t.Fatalf("create execution: %v", err)
 	}
-	if len(queue.ids) != 1 || queue.ids[0] != execution.ID {
-		t.Fatalf("queue ids = %#v, want execution %s", queue.ids, execution.ID)
+	replay, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+		WorkspaceID:       workspaceID,
+		WorkflowVersionID: workflowVersion.ID,
+		OutputDatasetID:   outputDataset.ID,
+		TargetPeriod:      "2025-03",
+		Inputs:            []domain.InputBinding{{Name: " enterprise_standardized ", DatasetVersionID: inputV1.ID}},
+		IdempotencyKey:    "workflow-create-" + workspaceID.String(),
+		TraceID:           "workflow-test-network-retry",
+	})
+	if err != nil || replay.ID != execution.ID {
+		t.Fatalf("same-key create replay = %s/%v, want original %s", replay.ID, err, execution.ID)
+	}
+	if _, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+		WorkspaceID:       workspaceID,
+		WorkflowVersionID: workflowVersion.ID,
+		OutputDatasetID:   outputDataset.ID,
+		TargetPeriod:      "2025-04",
+		Inputs:            []domain.InputBinding{{Name: "enterprise_standardized", DatasetVersionID: inputV1.ID}},
+		IdempotencyKey:    "workflow-create-" + workspaceID.String(),
+	}); !errors.Is(err, domain.ErrIdempotencyConflict) {
+		t.Fatalf("same-key changed create request error = %v, want idempotency conflict", err)
 	}
 
+	concurrentKey := "workflow-concurrent-" + workspaceID.String()
+	results := make(chan domain.Execution, 2)
+	errorsCh := make(chan error, 2)
+	var group sync.WaitGroup
+	for i := 0; i < 2; i++ {
+		group.Add(1)
+		go func() {
+			defer group.Done()
+			created, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+				WorkspaceID:       workspaceID,
+				WorkflowVersionID: workflowVersion.ID,
+				OutputDatasetID:   outputDataset.ID,
+				TargetPeriod:      "2025-05",
+				Inputs:            []domain.InputBinding{{Name: "enterprise_standardized", DatasetVersionID: inputV1.ID}},
+				IdempotencyKey:    concurrentKey,
+			})
+			if err != nil {
+				errorsCh <- err
+				return
+			}
+			results <- created
+		}()
+	}
+	group.Wait()
+	close(results)
+	close(errorsCh)
+	for err := range errorsCh {
+		t.Fatalf("concurrent same-key create: %v", err)
+	}
+	var concurrentIDs []uuid.UUID
+	for created := range results {
+		concurrentIDs = append(concurrentIDs, created.ID)
+	}
+	if len(concurrentIDs) != 2 || concurrentIDs[0] != concurrentIDs[1] {
+		t.Fatalf("concurrent create IDs = %v, want two identical IDs", concurrentIDs)
+	}
+	var concurrentFacts int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE id=$1`, concurrentIDs[0]).Scan(&concurrentFacts); err != nil {
+		t.Fatalf("count concurrent execution: %v", err)
+	}
+	if concurrentFacts != 1 {
+		t.Fatalf("concurrent execution facts = %d, want 1", concurrentFacts)
+	}
+	var concurrentEvents, concurrentAudits int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionQueued'`, concurrentIDs[0]).Scan(&concurrentEvents); err != nil {
+		t.Fatalf("count concurrent outbox events: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND action='EXECUTION_QUEUED'`, concurrentIDs[0]).Scan(&concurrentAudits); err != nil {
+		t.Fatalf("count concurrent audits: %v", err)
+	}
+	if concurrentEvents != 1 || concurrentAudits != 1 {
+		t.Fatalf("concurrent facts = outbox %d audit %d, want 1/1", concurrentEvents, concurrentAudits)
+	}
 	if _, err := executionService.Start(ctx, execution.ID, "native-attempt-1", "workflow-test"); err != nil {
 		t.Fatalf("start execution: %v", err)
 	}
@@ -156,20 +221,33 @@ func TestExecutionPersistsFrozenInputsRetryAndTraceability(t *testing.T) {
 		t.Fatalf("input v1 status = %s, want SUPERSEDED", storedInputV1.Status)
 	}
 
-	retry, err := executionService.Retry(ctx, execution.ID, nil, "workflow-test")
+	retry, err := executionService.Retry(ctx, workflowapp.RetryExecutionCommand{ExecutionID: execution.ID, IdempotencyKey: "workflow-retry-" + execution.ID.String(), TraceID: "workflow-test"})
 	if err != nil {
 		t.Fatalf("retry execution using superseded frozen input: %v", err)
 	}
 	if retry.Attempt != 2 || retry.RetryOfExecutionID == nil || *retry.RetryOfExecutionID != execution.ID {
 		t.Fatalf("unexpected retry lineage: %#v", retry)
 	}
+	retryReplay, err := executionService.Retry(ctx, workflowapp.RetryExecutionCommand{ExecutionID: execution.ID, IdempotencyKey: "workflow-retry-" + execution.ID.String(), TraceID: "workflow-network-retry"})
+	if err != nil || retryReplay.ID != retry.ID {
+		t.Fatalf("same-key retry replay = %s/%v, want original retry %s", retryReplay.ID, err, retry.ID)
+	}
+	var retryFacts, retryEvents, retryAudits int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE id=$1`, retry.ID).Scan(&retryFacts); err != nil {
+		t.Fatalf("count retry execution: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionRetried'`, retry.ID).Scan(&retryEvents); err != nil {
+		t.Fatalf("count retry outbox events: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND action='EXECUTION_RETRIED'`, retry.ID).Scan(&retryAudits); err != nil {
+		t.Fatalf("count retry audits: %v", err)
+	}
+	if retryFacts != 1 || retryEvents != 1 || retryAudits != 1 {
+		t.Fatalf("retry facts = execution %d event %d audit %d, want 1/1/1", retryFacts, retryEvents, retryAudits)
+	}
 	if len(retry.Inputs) != 1 || retry.Inputs[0].DatasetVersionID != inputV1.ID {
 		t.Fatalf("retry inputs = %#v, want frozen v1 %s", retry.Inputs, inputV1.ID)
 	}
-	if len(queue.ids) != 2 || queue.ids[1] != retry.ID {
-		t.Fatalf("retry was not queued: %#v", queue.ids)
-	}
-
 	if _, err := executionService.Start(ctx, retry.ID, "native-attempt-2", "workflow-test"); err != nil {
 		t.Fatalf("start retry: %v", err)
 	}

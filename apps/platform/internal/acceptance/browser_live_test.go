@@ -51,7 +51,6 @@ import (
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
-	workflowqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue"
 )
 
 const liveAPI = "http://127.0.0.1:18080"
@@ -180,14 +179,14 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	liveOK(t, err, "create actual workflow version")
 	queueClient := queue.NewClient(queue.Config{Addr: cfg.Redis.Addr, Password: cfg.Redis.Password, DB: cfg.Redis.DB})
 	defer queueClient.Close()
-	executionService := workflowapp.NewExecutionService(tx, workflowRepo, workflowqueue.NewClient(queueClient))
+	executionService := workflowapp.NewExecutionService(tx, workflowRepo)
 	execution, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
 		WorkspaceID: workspaceID, WorkflowVersionID: workflow.ID, OutputDatasetID: curated.ID, TargetPeriod: "2025-03",
 		Inputs: []workflowdomain.InputBinding{
 			{Name: "enterprise_raw", DatasetVersionID: enterpriseVersion.ID},
 			{Name: "lease_raw", DatasetVersionID: leaseVersion.ID},
 			{Name: "energy_raw", DatasetVersionID: energyVersion.ID},
-		}, ActorID: &seedActor, TraceID: traceID,
+		}, IdempotencyKey: "browser-live-create-" + suffix, ActorID: &seedActor, TraceID: traceID,
 	})
 	liveOK(t, err, "enqueue production through real Redis")
 	deadline := time.Now().Add(60 * time.Second)

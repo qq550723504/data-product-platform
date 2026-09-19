@@ -2,6 +2,9 @@ package application
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -15,9 +18,10 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 )
 
-type ExecutionQueue interface {
-	EnqueueExecution(ctx context.Context, executionID uuid.UUID) error
-}
+const (
+	createExecutionCommandType = "WORKFLOW.CREATE_EXECUTION"
+	retryExecutionCommandType  = "WORKFLOW.RETRY_EXECUTION"
+)
 
 type CreateExecutionCommand struct {
 	WorkspaceID       uuid.UUID
@@ -25,26 +29,63 @@ type CreateExecutionCommand struct {
 	OutputDatasetID   uuid.UUID
 	TargetPeriod      string
 	Inputs            []domain.InputBinding
+	IdempotencyKey    string
 	ActorID           *uuid.UUID
 	TraceID           string
 }
 
 type ExecutionService struct {
-	tx    *transaction.Manager
-	repo  *infrastructure.PostgresRepository
-	queue ExecutionQueue
+	tx   *transaction.Manager
+	repo *infrastructure.PostgresRepository
 }
 
-func NewExecutionService(tx *transaction.Manager, repo *infrastructure.PostgresRepository, queue ExecutionQueue) *ExecutionService {
-	return &ExecutionService{tx: tx, repo: repo, queue: queue}
+func NewExecutionService(tx *transaction.Manager, repo *infrastructure.PostgresRepository) *ExecutionService {
+	return &ExecutionService{tx: tx, repo: repo}
 }
 
 func (s *ExecutionService) Create(ctx context.Context, cmd CreateExecutionCommand) (domain.Execution, error) {
+	key, err := domain.NormalizeIdempotencyKey(cmd.IdempotencyKey)
+	if err != nil {
+		return domain.Execution{}, err
+	}
 	execution, err := domain.NewExecution(cmd.WorkspaceID, cmd.WorkflowVersionID, cmd.OutputDatasetID, cmd.TargetPeriod, cmd.Inputs, cmd.ActorID)
 	if err != nil {
 		return domain.Execution{}, err
 	}
+	fingerprint, err := createExecutionFingerprint(execution)
+	if err != nil {
+		return domain.Execution{}, err
+	}
+	var result domain.Execution
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		inserted, err := s.repo.TryInsertIdempotency(ctx, tx, execution.WorkspaceID, createExecutionCommandType, key, execution.ID, &execution.ID, fingerprint)
+		if err != nil {
+			return err
+		}
+		if !inserted {
+			record, found, err := s.repo.FindIdempotencyTx(ctx, tx, execution.WorkspaceID, createExecutionCommandType, key)
+			if err != nil {
+				return err
+			}
+			if !found {
+				return fmt.Errorf("execution idempotency record disappeared after conflict")
+			}
+			if record.RequestFingerprint != fingerprint {
+				return domain.ErrIdempotencyConflict
+			}
+			stored, err := s.repo.GetExecutionTx(ctx, tx, record.ObjectID, true)
+			if err != nil {
+				return fmt.Errorf("load idempotent execution: %w", err)
+			}
+			if stored.WorkspaceID != execution.WorkspaceID {
+				return domain.ErrWorkspaceMismatch
+			}
+			if err := s.repo.ValidateExecutionAccess(ctx, tx, stored); err != nil {
+				return err
+			}
+			result = stored
+			return nil
+		}
 		if err := s.repo.ValidateExecutionReferences(ctx, tx, execution.WorkspaceID, execution.WorkflowVersionID, execution.OutputDatasetID, execution.Inputs); err != nil {
 			return err
 		}
@@ -54,7 +95,7 @@ func (s *ExecutionService) Create(ctx context.Context, cmd CreateExecutionComman
 		if err := appendExecutionEvent(ctx, tx, execution, "ExecutionQueued"); err != nil {
 			return err
 		}
-		return audit.Append(ctx, tx, audit.Event{
+		if err := audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &execution.WorkspaceID,
 			ActorType:   actorType(cmd.ActorID),
 			ActorID:     cmd.ActorID,
@@ -63,17 +104,16 @@ func (s *ExecutionService) Create(ctx context.Context, cmd CreateExecutionComman
 			ObjectID:    execution.ID,
 			AfterState:  executionAuditState(execution),
 			TraceID:     cmd.TraceID,
-		})
+		}); err != nil {
+			return err
+		}
+		result = execution
+		return nil
 	})
 	if err != nil {
 		return domain.Execution{}, err
 	}
-	if s.queue != nil {
-		if err := s.queue.EnqueueExecution(ctx, execution.ID); err != nil {
-			return execution, fmt.Errorf("execution %s persisted but enqueue failed: %w", execution.ID, err)
-		}
-	}
-	return execution, nil
+	return result, nil
 }
 
 func (s *ExecutionService) Start(ctx context.Context, executionID uuid.UUID, engineExecutionID, traceID string) (domain.Execution, error) {
@@ -234,46 +274,99 @@ func (s *ExecutionService) Fail(ctx context.Context, executionID uuid.UUID, code
 	return execution, err
 }
 
-func (s *ExecutionService) Retry(ctx context.Context, executionID uuid.UUID, actorID *uuid.UUID, traceID string) (domain.Execution, error) {
-	previous, err := s.repo.GetExecution(ctx, executionID)
+type RetryExecutionCommand struct {
+	ExecutionID    uuid.UUID
+	IdempotencyKey string
+	ActorID        *uuid.UUID
+	TraceID        string
+}
+
+func (s *ExecutionService) Retry(ctx context.Context, cmd RetryExecutionCommand) (domain.Execution, error) {
+	key, err := domain.NormalizeIdempotencyKey(cmd.IdempotencyKey)
 	if err != nil {
 		return domain.Execution{}, err
 	}
-	retry, err := previous.Retry(actorID)
-	if err != nil {
-		return domain.Execution{}, err
-	}
+	var result domain.Execution
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		previous, err := s.repo.GetExecutionTx(ctx, tx, cmd.ExecutionID, true)
+		if err != nil {
+			return err
+		}
+		fingerprint, err := retryExecutionFingerprint(previous, cmd.ActorID)
+		if err != nil {
+			return err
+		}
+		// The original Execution row is locked before checking/inserting the
+		// command record. This makes concurrent retries deterministic and lets a
+		// replay return its original child even if the source has since changed.
+		inserted, err := s.repo.TryInsertIdempotency(ctx, tx, previous.WorkspaceID, retryExecutionCommandType, key, uuid.New(), nil, fingerprint)
+		if err != nil {
+			return err
+		}
+		if !inserted {
+			record, found, err := s.repo.FindIdempotencyTx(ctx, tx, previous.WorkspaceID, retryExecutionCommandType, key)
+			if err != nil {
+				return err
+			}
+			if !found {
+				return fmt.Errorf("retry idempotency record disappeared after conflict")
+			}
+			if record.RequestFingerprint != fingerprint {
+				return domain.ErrIdempotencyConflict
+			}
+			stored, err := s.repo.GetExecutionTx(ctx, tx, record.ObjectID, true)
+			if err != nil {
+				return fmt.Errorf("load idempotent retry execution: %w", err)
+			}
+			if stored.WorkspaceID != previous.WorkspaceID {
+				return domain.ErrWorkspaceMismatch
+			}
+			if err := s.repo.ValidateExecutionAccess(ctx, tx, stored); err != nil {
+				return err
+			}
+			result = stored
+			return nil
+		}
+
+		// Generate the child only after the idempotency slot is won. The random
+		// child ID never enters request comparison and cannot create a second
+		// business fact for a concurrent retry with the same key.
+		retry, err := previous.Retry(cmd.ActorID)
+		if err != nil {
+			return err
+		}
 		if err := s.repo.ValidateExecutionReferences(ctx, tx, retry.WorkspaceID, retry.WorkflowVersionID, retry.OutputDatasetID, retry.Inputs); err != nil {
 			return err
 		}
 		if err := s.repo.InsertExecution(ctx, tx, retry); err != nil {
 			return err
 		}
+		if err := s.repo.UpdateIdempotencyObject(ctx, tx, previous.WorkspaceID, retryExecutionCommandType, key, retry.ID); err != nil {
+			return err
+		}
 		if err := appendExecutionEvent(ctx, tx, retry, "ExecutionRetried"); err != nil {
 			return err
 		}
-		return audit.Append(ctx, tx, audit.Event{
+		if err := audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &retry.WorkspaceID,
-			ActorType:   actorType(actorID),
-			ActorID:     actorID,
+			ActorType:   actorType(cmd.ActorID),
+			ActorID:     cmd.ActorID,
 			Action:      "EXECUTION_RETRIED",
 			ObjectType:  "EXECUTION",
 			ObjectID:    retry.ID,
 			AfterState:  executionAuditState(retry),
 			Reason:      fmt.Sprintf("retry of %s", previous.ID),
-			TraceID:     traceID,
-		})
+			TraceID:     cmd.TraceID,
+		}); err != nil {
+			return err
+		}
+		result = retry
+		return nil
 	})
 	if err != nil {
 		return domain.Execution{}, err
 	}
-	if s.queue != nil {
-		if err := s.queue.EnqueueExecution(ctx, retry.ID); err != nil {
-			return retry, fmt.Errorf("retry %s persisted but enqueue failed: %w", retry.ID, err)
-		}
-	}
-	return retry, nil
+	return result, nil
 }
 
 func appendExecutionEvent(ctx context.Context, tx pgx.Tx, execution domain.Execution, eventType string) error {
@@ -302,4 +395,70 @@ func executionAuditState(execution domain.Execution) map[string]any {
 		"outputDatasetVersionId": execution.OutputDatasetVersionID,
 		"errorCode":              execution.ErrorCode,
 	}
+}
+
+type executionRequestInput struct {
+	Name             string    `json:"name"`
+	DatasetVersionID uuid.UUID `json:"datasetVersionId"`
+}
+
+type createExecutionRequestFingerprint struct {
+	WorkspaceID       uuid.UUID               `json:"workspaceId"`
+	WorkflowVersionID uuid.UUID               `json:"workflowVersionId"`
+	OutputDatasetID   uuid.UUID               `json:"outputDatasetId"`
+	TargetPeriod      string                  `json:"targetPeriod"`
+	Inputs            []executionRequestInput `json:"inputs"`
+	ActorID           *uuid.UUID              `json:"actorId,omitempty"`
+}
+
+type retryExecutionRequestFingerprint struct {
+	WorkspaceID       uuid.UUID               `json:"workspaceId"`
+	OriginalExecution uuid.UUID               `json:"originalExecutionId"`
+	WorkflowVersionID uuid.UUID               `json:"workflowVersionId"`
+	OutputDatasetID   uuid.UUID               `json:"outputDatasetId"`
+	TargetPeriod      string                  `json:"targetPeriod"`
+	Inputs            []executionRequestInput `json:"inputs"`
+	ActorID           *uuid.UUID              `json:"actorId,omitempty"`
+}
+
+func createExecutionFingerprint(execution domain.Execution) (string, error) {
+	payload := createExecutionRequestFingerprint{
+		WorkspaceID:       execution.WorkspaceID,
+		WorkflowVersionID: execution.WorkflowVersionID,
+		OutputDatasetID:   execution.OutputDatasetID,
+		TargetPeriod:      execution.TargetPeriod,
+		Inputs:            fingerprintInputs(execution.Inputs),
+		ActorID:           execution.CreatedBy,
+	}
+	return hashExecutionRequest(payload)
+}
+
+func retryExecutionFingerprint(execution domain.Execution, actorID *uuid.UUID) (string, error) {
+	payload := retryExecutionRequestFingerprint{
+		WorkspaceID:       execution.WorkspaceID,
+		OriginalExecution: execution.ID,
+		WorkflowVersionID: execution.WorkflowVersionID,
+		OutputDatasetID:   execution.OutputDatasetID,
+		TargetPeriod:      execution.TargetPeriod,
+		Inputs:            fingerprintInputs(execution.Inputs),
+		ActorID:           actorID,
+	}
+	return hashExecutionRequest(payload)
+}
+
+func fingerprintInputs(inputs []domain.InputBinding) []executionRequestInput {
+	result := make([]executionRequestInput, 0, len(inputs))
+	for _, input := range inputs {
+		result = append(result, executionRequestInput{Name: input.Name, DatasetVersionID: input.DatasetVersionID})
+	}
+	return result
+}
+
+func hashExecutionRequest(payload any) (string, error) {
+	encoded, err := json.Marshal(payload)
+	if err != nil {
+		return "", fmt.Errorf("marshal execution idempotency fingerprint: %w", err)
+	}
+	hash := sha256.Sum256(encoded)
+	return hex.EncodeToString(hash[:]), nil
 }

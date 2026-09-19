@@ -11,6 +11,10 @@ import (
 
 const TaskExecute = "workflow:execution:run"
 
+type ExecutionEnqueuer interface {
+	EnqueueExecution(ctx context.Context, executionID uuid.UUID) error
+}
+
 type executionPayload struct {
 	ExecutionID uuid.UUID `json:"executionId"`
 }

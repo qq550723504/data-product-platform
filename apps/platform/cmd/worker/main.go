@@ -82,13 +82,20 @@ func main() {
 		Password: cfg.Redis.Password,
 		DB:       cfg.Redis.DB,
 	})
+	queueClient := queue.NewClient(queue.Config{
+		Addr:     cfg.Redis.Addr,
+		Password: cfg.Redis.Password,
+		DB:       cfg.Redis.DB,
+	})
+	defer queueClient.Close()
+	executionEnqueuer := workflowqueue.NewClient(queueClient)
 
 	txManager := transaction.NewManager(db)
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
 	entityRepo := entityinfra.NewPostgresRepository(db)
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
 	datasetWriter := datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore)
-	executionService := workflowapp.NewExecutionService(txManager, workflowRepo, nil)
+	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
 	processingEngine := nativeengine.NewEngine(
 		cfg.IndustryPackRoot,
 		txManager,
@@ -186,7 +193,7 @@ func main() {
 	if metadataService != nil {
 		projector = metadataService
 	}
-	dispatcher, err := newOutboxDispatcher(db, logger, projector)
+	dispatcher, err := newOutboxDispatcher(db, logger, projector, executionEnqueuer)
 	if err != nil {
 		logger.Error("create outbox dispatcher", "error", err)
 		os.Exit(1)
