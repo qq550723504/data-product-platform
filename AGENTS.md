@@ -46,7 +46,7 @@ OpenMetadata 仅作为 Governance Projection。
 - EntityMappingDecision
 - Execution dependency preparation / binding / mapping usage
 - ProductVersion
-- ProductRelease
+- ProductRelease published bindings / published release history
 - ContractVersion
 - WorkflowVersion
 - EvidenceSnapshot
@@ -55,6 +55,8 @@ OpenMetadata 仅作为 Governance Projection。
 - verified RightsDeclaration / verification fact（#137 起）
 - CertificationProfile snapshot（#134 起）
 - DatasetCertification（#134 起）
+
+ProductRelease 特例：DRAFT / VALIDATING / READY 等发布前阶段允许显式 Command 按状态机更新 status 与 validation bindings；进入 PUBLISHED 后，已发布的 DatasetVersion / Rights / Quality / Compliance / Contract / EvidenceSnapshot 绑定不得被替换，后续仅允许受控生命周期迁移并保留历史。
 
 修正错误时不得覆盖历史事实，但要按事实类型追加：
 
