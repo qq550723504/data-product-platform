@@ -156,19 +156,44 @@ Public 仓库不得保存真实客户合同正文或非公开权利文件。
 
 测试使用合成 evidence metadata / hash；真实证据保存在受控环境或外部安全存储，只在 Core 保存必要引用与哈希。
 
-## 10. 修正语义
+## 10. 修正、撤销与当前事实选择
 
-VERIFIED 权利事实不通过 UPDATE 覆盖。
+VERIFIED 权利事实不通过 UPDATE 覆盖，但必须能够显式声明它从某一时点起不再是“当前有效依据”。
+
+第一阶段增加 append-only 的 disposition / validity fact（具体表名由 #137 实现确定），至少表达：
+
+- declaration_id
+- disposition: INVALIDATED / SUPERSEDED
+- effective_at
+- reason
+- Evidence
+- actor
+- superseded_by_declaration_id（SUPERSEDED 时）
+
+对应显式 Command 至少包括：
+
+- InvalidateRightsDeclaration
+- SupersedeRightsDeclaration
 
 ~~~text
-old declaration / verification fact remains
+verified declaration A
         ↓
-new declaration or new verification fact
-        ↓
-new Authorization / Snapshot as needed
+append INVALIDATED(A, effective_at, reason)
+或
+append SUPERSEDED(A → B, effective_at, reason)
 ~~~
 
-历史 Release / Certification 继续解释当时的事实。
+当前权利查询不得按“最新 created_at”猜测，也不得继续选择已经在 as_of 时点生效的 INVALIDATED / SUPERSEDED 声明。
+
+Current selection rule：
+
+1. Declaration 必须存在 VERIFIED verification fact；
+2. 在查询 as_of 时点之前不存在生效的 INVALIDATED disposition；
+3. 在查询 as_of 时点之前不存在使其退出当前集合的 SUPERSEDED disposition；
+4. 若 A 被 B supersede，B 必须独立满足 VERIFIED / validity / scope 条件，不能因为 supersession 自动继承 VERIFIED；
+5. 历史 RightsSnapshot 仍保留并解释当时使用的 A，不被新 disposition 回溯改写。
+
+这样既保留不可变审计历史，又能让 CurrentEntitlementGate 排除已经撤销或取代的 provenance。
 
 ## 11. 与 Certification / Delivery 的关系
 
