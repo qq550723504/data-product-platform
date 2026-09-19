@@ -1,38 +1,32 @@
-# 数据库设计 V1.0
+# 数据库设计 V1.1
 
 目标数据库：PostgreSQL 16+。
+
+> 本文同时描述已实现核心表与 #129 Certified Dataset Pilot 已批准的目标逻辑模型。具体迁移以各子 Issue PR 为准。
 
 ## 1. 通用约定
 
 - 主键：UUID
-- 业务编码：`varchar(64)`
-- 时间：`timestamptz`
+- 时间：timestamptz
 - 扩展字段：JSONB
-- 可变聚合的乐观锁：`revision bigint`
+- 可变聚合可使用 revision bigint
 - 仅对可变业务主对象使用软删除
-- 不可变事实不得软删除或覆盖
+- 不可变历史事实不得软删除或覆盖
+- 破坏历史事实的 migration down 必须 fail closed
+- 核心业务关系使用强类型列 / FK，不藏入 JSONB
 
 ## 2. 多租户边界
 
-核心业务对象预留：
+核心业务对象使用 workspace_id 作为组织 / 租户边界。
 
-- `workspace_id`
-- `project_id`（适用时）
+关键跨表引用应校验同一 workspace，而不是仅依赖单列 FK 存在性。
 
-Workspace 代表组织 / 租户边界；Project 代表一个具体的项目或产品工作空间。
+## 3. 核心表族
 
-## 3. 核心表
+### 已有核心
 
-首批迁移应覆盖：
-
-```text
-workspace
-project
-use_case
-
+~~~text
 data_resource
-resource_binding
-
 dataset
 dataset_version
 dataset_version_lineage
@@ -40,13 +34,26 @@ dataset_version_lineage
 entity_type
 entity
 entity_mapping
+entity_mapping_decision
+entity_match_job
 
 workflow
 workflow_version
-task
-workflow_run
 execution
-execution_dataset
+execution_input
+execution_dependency_preparation
+execution_dependency_binding
+execution_mapping_usage
+
+data_authorization
+authorization_resource
+rights_snapshot
+
+quality_result
+compliance_result
+
+data_contract
+contract_version
 
 data_product
 product_version
@@ -54,229 +61,190 @@ product_asset
 product_release
 product_release_dataset
 
+cost_event
 evidence
 evidence_relation
 evidence_snapshot
 audit_event
 outbox_event
-```
+~~~
 
-第二批：
+### Certified Dataset Pilot 目标逻辑对象
 
-```text
-authorization
-authorization_resource
-authorization_action
-authorization_scope
+具体表名可由实现确定，但业务事实必须可查询：
 
-quality_rule
-quality_result
+~~~text
+QualityAssessment
+  - rule snapshot/hash
+  - dimension summaries
+  - findings
 
-compliance_policy
-compliance_result
+RightsDeclaration
+RightsVerification
+EffectiveRights / EffectiveRightsSnapshot
 
-data_contract
-contract_version
+CertificationProfile snapshot
+DatasetCertification
+~~~
 
-cost_event
-cost_allocation
-```
+优先演进现有 quality_result，不得无理由复制一套平行 Quality 表族。
 
 ## 4. DataResource
 
-DataResource 是业务级资源，而不是物理表。
+DataResource 是业务资源，不是物理表。
 
-关键字段：
+owner_id 仅代表平台资产责任/归属。法律权利来源由 RightsDeclaration / Evidence 表达。
 
-- id
-- workspace_id
-- project_id
-- code / name / description
-- domain_code
-- resource_type
-- owner
-- sensitivity_level
-- rights_status
-- quality_status
-- lifecycle_status
-- business_metadata JSONB
+## 5. Dataset / DatasetVersion
 
-## 5. ResourceBinding
+Dataset 是逻辑身份。DatasetVersion 是不可变生产事实。
 
-用于将核心域与元数据引擎、物理系统解耦。
-
-关键字段：
-
-- resource_id
-- provider（`OPENMETADATA` 等）
-- entity_type
-- external_id
-- external_fqn
-- connection_ref
-- binding_metadata JSONB
-- is_primary
-
-对外部系统不建立数据库外键。
-
-## 6. Dataset / DatasetVersion
-
-Dataset 是逻辑身份。DatasetVersion 是不可变的生产事实。
-
-Dataset 类型：
+类型：
 
 - RAW
 - STANDARDIZED
 - CURATED
 - PRODUCT
 
-DatasetVersion 存储：
+READY 后数据内容不可被改写。
 
-- version_no
-- storage_type / storage_uri
-- schema_version
-- row_count / byte_size
-- checksum
-- generated_by_execution_id
-- rights_snapshot_id
-- quality_status
-- compliance_status
-- snapshot window（快照时间窗口）
-- metadata JSONB
+Certification status 不应塞入 DatasetVersion.status；认证是独立历史事实。
 
-DatasetVersion 进入冻结状态后不得更新。
+## 6. Production Graph
 
-## 7. 生产血缘
+dataset_version_lineage 记录平台生产血缘。
 
-`dataset_version_lineage` 记录输入/输出血缘，独立于 OpenMetadata 的技术血缘。
+Execution 的实际生产依赖还包括：
 
-这就是平台的 Production Graph（生产图谱）。
+- execution_input
+- execution_dependency_binding
+- execution_mapping_usage
+- entity_resolution_output_decision
 
-## 8. Entity
+这些事实共同回答“这个输出真实消费了什么”。
 
-核心模型：
+## 7. Entity
 
-```text
-EntityType → Entity → EntityMapping
-```
+~~~text
+EntityType → Entity → EntityMapping projection
+                     ↘ EntityMappingDecision history
+~~~
 
-Entity 字段：
+历史生产/发布必须引用 immutable decision。
 
-- canonical_key
-- canonical_name
-- attributes JSONB
-- status
+## 8. Rights
 
-EntityMapping 存储：
+### Authorization（已实现）
 
-- source_type
-- source_ref
-- source_key
-- source_name
-- match_method
-- policy_version
-- confidence
-- status
-- reviewer
-- evidence
+表达 grantor_ref、grantee_ref、purpose、resource、actions、scope、raw_export_allowed 和 validity。
 
-## 9. Execution
+### RightsDeclaration（#137）
 
-Execution 是平台的业务执行记录，独立于引擎作业 ID。
+目标强类型字段至少能表达：
 
-存储：
+- workspace_id
+- data_resource_id
+- party / claimant refs
+- rights role
+- basis_type / basis_ref
+- validity
+- allowed actions
+- restricted actions
+- verification status / fact
+- evidence association
 
-- workflow / workflow_version / task
-- execution_type
-- executor_type
-- engine_execution_id
-- status
-- timing（时序信息）
-- rows / bytes in/out（输入输出的行数 / 字节数）
-- runtime_metrics JSONB
-- error code/message
+JSONB 只用于受控扩展参数，不承载主要权利关系。
 
-Execution 可产生：
+### Effective Rights（#137）
 
-- DatasetVersion
-- CostEvent
-- Evidence
-- AuditEvent
+对一个 DatasetVersion 计算/冻结实际可用动作和限制。
 
-## 10. DataProduct / ProductVersion / ProductRelease
+衍生数据默认 fail closed。
 
-DataProduct：稳定身份。
+## 9. QualityAssessment（#131）
 
-ProductVersion：不可变的产品规格。
+优先扩展现有 quality_result，至少持久化：
 
-ProductRelease：不可变的已发布快照。
+- workspace_id
+- dataset_version_id
+- rule_set_ref
+- rule_set_version
+- rule_set_content_sha256
+- immutable rule content/snapshot or content-addressed ref
+- evaluator identity/version
+- metrics / dimension summaries
+- findings
+- gate decision
+- created_at / actor
 
-ProductRelease 精确引用：
+完成的 Assessment 是不可变事实。
 
-- product_version
-- dataset versions
-- contract version
-- rights snapshot
-- quality result
-- compliance result
-- evidence snapshot
+大量 failing rows 不应全部塞入单个 JSONB；应使用分页 finding、artifact 或适合的数据结构。
 
-已发布的 Release 绝不可就地编辑。
+## 10. DatasetCertification（#134）
 
-## 11. Evidence
+核心强类型关系至少包括：
 
-Evidence 存储证据元数据以及可选的产物位置/哈希。
+- workspace_id
+- dataset_version_id
+- quality_assessment_id
+- certification_profile snapshot/ref/version/hash
+- rights_snapshot/effective rights ref
+- compliance_result_id（如 required）
+- contract_version_id（如 required）
+- evidence_snapshot_id 或等价冻结证明
+- decision
+- blockers / reason
+- issued_at / actor
 
-EvidenceRelation 通过 `(object_type, object_id)` 将证据关联到任意业务对象。
+Certification 创建后不可被 UPDATE 成另一种业务含义。
 
-EvidenceSnapshot 在某一时间点冻结某个 Release / 案件（case）的证据清单（manifest）。
+## 11. DataProduct / ProductVersion / ProductRelease
 
-## 12. Cost
+ProductRelease 精确引用发布时所需 DatasetVersion、Contract、Rights、Quality、Compliance、Evidence。
 
-CostEvent 同时支持金额型与数量型事件。
+ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status。
 
-示例：
+## 12. Evidence / Audit
 
-- amount=12.5 CNY, category=COMPUTE
-- quantity=2.5 HOUR, category=HUMAN
+Evidence 保存可验证证据元数据和可选 artifact/hash。
 
-会计口径归类属于后续的专业复核工作，不得与生产成本归集混为一谈。
+EvidenceRelation 关联业务对象；EvidenceSnapshot 在需要冻结时保存 manifest。
 
-## 13. JSONB 使用策略
+AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 
-JSONB 用于：
+## 13. Mutable vs Immutable
 
-- 引擎相关元数据
-- 运行时指标
-- schema 与快照
+| 对象 | 语义 |
+|---|---|
+| DataResource owner / lifecycle | mutable aggregate / projection |
+| EntityMapping current row | mutable projection |
+| Authorization state | explicit state machine |
+| DatasetVersion | immutable content fact after READY |
+| EntityMappingDecision | immutable history |
+| Execution dependency facts | immutable history |
+| RightsSnapshot | immutable |
+| QualityAssessment | immutable |
+| verified RightsDeclaration fact | immutable |
+| CertificationProfile snapshot | immutable |
+| DatasetCertification | immutable |
+| ProductVersion / ProductRelease | immutable history |
+
+## 14. JSONB 使用策略
+
+JSONB 可用于：
+
+- 引擎元数据
+- runtime metrics
+- schema / manifests
 - 行业扩展属性
-- 交付配置
-- 证据清单（evidence manifest）
+- finding diagnostic metadata
+- 受控 rights/certification parameters
 
-JSONB 不用于：
+JSONB 不用于 ID/FK、状态、版本号、核心 party/resource/certification 关系或需要约束的字段。
 
-- ID / 外键
-- 状态
-- 版本号
-- owner
-- 时间戳
-- 需要频繁关联或约束的字段
+## 15. 删除策略
 
-## 14. 删除策略
+允许软删除的可变主对象可以包括 UseCase、DataResource、Dataset、DataProduct、Entity。
 
-允许软删除：
-
-- UseCase
-- DataResource
-- Dataset
-- DataProduct
-- Entity
-
-不得删除的不可变事实：
-
-- DatasetVersion
-- Execution
-- ProductVersion
-- ProductRelease
-- EvidenceSnapshot
-- AuditEvent
-- CostEvent
+不可变事实不得软删除或覆盖，包括 DatasetVersion、Execution、MappingDecision、execution dependency facts、ProductVersion、ProductRelease、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification fact、DatasetCertification、AuditEvent、CostEvent。
