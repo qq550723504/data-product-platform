@@ -86,8 +86,8 @@ func (r *Router) RequiredHandlers(eventType string) ([]string, bool) {
 	return copied, true
 }
 
-// Obligation implements the ObligationSource / obligationResolver contract used
-// to freeze an event's required handlers when it is recorded or first claimed.
+// Obligation implements the ObligationSource contract used to freeze an
+// event's required handlers when it is recorded or first claimed.
 func (r *Router) Obligation(eventType string) (string, []string, bool) {
 	required, ok := r.RequiredHandlers(eventType)
 	if !ok {

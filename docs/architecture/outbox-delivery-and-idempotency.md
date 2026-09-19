@@ -393,6 +393,9 @@ worker 装配在 `apps/platform/cmd/worker/{main.go,handlers.go}`：
   （`TestDispatcherHonoursFrozenObligationAcrossRoutingProfiles`、
   `TestAppendFreezesObligationBeforeAnyDispatch`）。API 组合根（`cmd/api/main.go`）在启动时
   `outbox.ConfigureAppendObligation(routing.NewRouter(cfg.OpenMetadata.Enabled))`。
+  **限制**：只有配置了 append-time obligation source 的写入路径才能避开「先领取者决定义务」的问题；
+  若某个服务未在启动时配置，事件会退回 claim-time 冻结，两个不同剖面实例谁先领取谁做主。
+  因此每个会产生 Outbox 事件的组合根（`cmd/api`、`cmd/poc-demo`、`cmd/worker`）都必须显式配置。
 - **每处理器确认**：处理器名即 `outbox_event_consumption.consumer_name`（如 `metadata-projection`、
   `execution-queue`），键为 `(handler_name, event_id)`；确认写入按 `status='PROCESSING' AND claim_token=token`
   守卫。已确认的处理器不重跑；只有**全部**必需处理器确认后才置 `PUBLISHED`。
