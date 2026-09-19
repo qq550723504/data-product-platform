@@ -204,7 +204,10 @@ POST /api/v1/authorizations/{id}/revoke
 CreateRightsDeclaration
 VerifyRightsDeclaration
 RejectRightsDeclaration
+InvalidateRightsDeclaration
+SupersedeRightsDeclaration
 QueryEffectiveRights
+QueryCurrentEntitlement
 ~~~
 
 具体 URL 由实现 PR 固定。
