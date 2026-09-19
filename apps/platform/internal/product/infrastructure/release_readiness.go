@@ -208,8 +208,10 @@ func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.
 				SELECT generated_by_execution_id
 				FROM dataset_version
 				WHERE id=$1 AND generated_by_execution_id IS NOT NULL
-			`, *facts.TargetDatasetVersionID).Scan(&executionID); err == nil {
-				if err := r.pool.QueryRow(ctx, `
+			`, *facts.TargetDatasetVersionID).Scan(&executionID); err != nil {
+				return ReadinessFacts{}, fmt.Errorf("read producing execution for dependency readiness: %w", err)
+			}
+			if err := r.pool.QueryRow(ctx, `
 					WITH execution_inputs AS (
 						SELECT input_name, dataset_version_id
 						FROM execution_input
@@ -275,9 +277,8 @@ func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.
 								  )
 							  )
 						)
-				`, executionID, product.WorkspaceID).Scan(&facts.ProductionDependencyBindingRequired, &facts.ProductionDependencyBindingComplete); err != nil {
-					return ReadinessFacts{}, fmt.Errorf("read production dependency readiness: %w", err)
-				}
+			`, executionID, product.WorkspaceID).Scan(&facts.ProductionDependencyBindingRequired, &facts.ProductionDependencyBindingComplete); err != nil {
+				return ReadinessFacts{}, fmt.Errorf("read production dependency readiness: %w", err)
 			}
 		}
 		if err := r.pool.QueryRow(ctx, `

@@ -299,7 +299,7 @@ T2 实现：
 9. **路由表词汇完整**：`internal/platform/routing/routing_test.go` 断言事件词汇表与路由表一一对应，
    且 OpenMetadata 开关只改变 `ProductReleased` 是否要求 `metadata-projection`，不隐式完成。
 10. **义务在事件上冻结，跨部署剖面不变**：governance 剖面首次领取 `ProductReleased` 后处理失败，
-    义务（`routing_version=c1-v2+governance`、`required_handlers=[metadata-projection]`）写入事件；
+    义务（`routing_version=c1-v3+governance`、`required_handlers=[metadata-projection]`）写入事件；
     以 governance 关闭的剖面重启后再处理同一旧事件，它**不会**被重新解释成仅保留，也**不会**被
     置 `PUBLISHED`，而是因为缺少 `metadata-projection` 处理器显式失败；义务前后完全一致
     （`TestDispatcherHonoursFrozenObligationAcrossRoutingProfiles`）。
@@ -391,8 +391,8 @@ worker 装配在 `apps/platform/cmd/worker/{main.go,handlers.go}`：
 
 - **单一逻辑消费者**：`Dispatcher` 沿用 C1-b 的 `claim_token` 租约领取事件（多实例仍由 token 协调），
   然后在应用层按**事件上冻结的义务**把事件扇出给各处理器。
-- **版本化路由表**（`routing.VersionFor(governanceProjection)`，基础版本 `c1-v2`；
-  启用治理提供方时为 `c1-v2+governance`，保证同一版本串总对应同一必需处理器集合）：
+- **版本化路由表**（`routing.VersionFor(governanceProjection)`，基础版本 `c1-v3`；
+  启用治理提供方时为 `c1-v3+governance`，保证同一版本串总对应同一必需处理器集合）：
   为每个 `event_type` 显式声明
   必须确认的处理器集合；`Route.RequiredHandlers` 为空是**显式的仅保留（retention-only）声明**，
   而不是「默认 `return nil`」推断出来的。未在路由表中声明的事件类型是**错误**，
