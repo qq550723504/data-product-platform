@@ -137,8 +137,9 @@ CertificationProfile 可以要求：
 - Quality Assessment
 - Quality Report
 - Rights summary
-- Certification status
-- blockers
+- historical Certification status / issued_at
+- Current Delivery Eligibility（ALLOWED / BLOCKED）
+- current rights blockers
 - Evidence
 
 DatasetVersion V1 认证不能让 V2 自动显示已认证。
@@ -159,6 +160,8 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 8. 为什么可以被认证？
 
 同时验证成功与失败路径。
+
+第一阶段还必须验证：DatasetVersion 已经 CERTIFIED 后，如果对应 Authorization 过期/撤销或 SHARE/RAW_EXPORT 等本次交付动作不再允许，历史 Certification 仍可查询，但 CurrentEntitlementGate 必须阻止实际交付。
 
 ## 10. 试点 KPI
 
