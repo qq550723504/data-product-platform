@@ -56,7 +56,16 @@ OpenMetadata 仅作为 Governance Projection。
 - CertificationProfile snapshot（#134 起）
 - DatasetCertification（#134 起）
 
-修正错误时创建新版本、新声明、新评测、新认证或新 Release，不覆盖历史事实。
+修正错误时不得覆盖历史事实，但要按事实类型追加：
+
+- 数据内容、schema/content identity 或实际生产输出变化 → 新 DatasetVersion；
+- 数据内容未变化，仅 Quality 评测错误 → 新 QualityAssessment；
+- 权利声明/验证错误 → 新 RightsDeclaration / verification fact / RightsSnapshot（按实际语义）；
+- CertificationProfile 规则变化 → 新 Profile version/snapshot；
+- 认证判断错误或重新认证 → 新 DatasetCertification（未来如需失效语义，使用显式 Revocation / Supersession 事实）；
+- Product 发布事实变化 → 新 ProductVersion / ProductRelease 或显式生命周期 Command。
+
+不得为了修正非内容事实而无意义地创建新的 DatasetVersion。
 
 历史事实对象不得依赖软删除来模拟修正。
 
