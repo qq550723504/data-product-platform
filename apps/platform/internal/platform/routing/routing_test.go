@@ -31,6 +31,7 @@ var eventVocabulary = []string{
 	"EntityMappingDecisionRecorded",
 	"EntityMatchCompleted",
 	"ExecutionEngineSelected",
+	"ExecutionDependenciesPrepared",
 	"ExecutionFailed",
 	"ExecutionQueued",
 	"ExecutionReconciliationQueued",

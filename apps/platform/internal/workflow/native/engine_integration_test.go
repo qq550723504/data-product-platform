@@ -14,6 +14,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hibiken/asynq"
+	"github.com/jackc/pgx/v5"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -134,6 +135,36 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 	if matchJob.Status != entitydomain.JobSucceeded {
 		t.Fatalf("entity match job status = %s, want SUCCEEDED", matchJob.Status)
 	}
+	originalMapping, err := entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", "enterprise.csv", "ENT-001")
+	if err != nil || originalMapping.CurrentDecisionID == nil {
+		t.Fatalf("read original enterprise mapping decision: %v / %+v", err, originalMapping)
+	}
+	originalDecision, err := entityRepo.GetMappingDecisionByID(ctx, workspaceID, *originalMapping.CurrentDecisionID)
+	if err != nil {
+		t.Fatalf("read original immutable mapping decision: %v", err)
+	}
+	alternateEntity, err := entitydomain.NewEntity(workspaceID, matchJob.EntityTypeID, "T3-B2-ALTERNATE", "T3/B2 alternate company", map[string]any{}, nil)
+	if err != nil {
+		t.Fatalf("create alternate entity: %v", err)
+	}
+	if err := txManager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if err := entityRepo.InsertEntity(ctx, tx, alternateEntity); err != nil {
+			return err
+		}
+		mapping := originalMapping
+		mapping.ID = uuid.New()
+		mapping.EntityID = alternateEntity.ID
+		mapping.Status = entitydomain.MappingConfirmed
+		mapping.CurrentDecisionID = nil
+		_, err := entityRepo.RecordMappingDecision(ctx, tx, entitydomain.MappingDecisionCommand{
+			Mapping: mapping, SourceOrigin: entitydomain.OriginWorkflowAlias,
+			IdempotencyKey:        "native-current-mapping-change-" + workspaceID.String(),
+			ExpectCurrentDecision: true, ExpectedCurrentDecisionID: originalMapping.CurrentDecisionID,
+		})
+		return err
+	}); err != nil {
+		t.Fatalf("change current mapping after resolution: %v", err)
+	}
 
 	workflowDefinition := readRepoFile(t, "examples", "enterprise-activity", "workflow", "workflow-v1.yaml")
 	workflowVersionService := workflowapp.NewWorkflowVersionService(txManager, workflowRepo)
@@ -158,6 +189,7 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 		TargetPeriod:      "2025-03",
 		Inputs: []workflowdomain.InputBinding{
 			{Name: "enterprise_raw", DatasetVersionID: enterpriseVersion.ID},
+			{Name: "enterprise_resolution", DatasetVersionID: *matchJob.OutputDatasetVersionID},
 			{Name: "lease_raw", DatasetVersionID: leaseVersion.ID},
 			{Name: "energy_raw", DatasetVersionID: energyVersion.ID},
 		},
@@ -210,6 +242,53 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 	assertOutput(t, byName, "武汉蓝图装备制造有限公司", "99.13", "HIGH", "100.00")
 	assertOutput(t, byName, "杭州云帆数据科技有限公司", "", "INSUFFICIENT_DATA", "33.33")
 	assertOutput(t, byName, "上海海岳生物科技有限公司", "", "INSUFFICIENT_DATA", "33.33")
+	if byName["深圳星云科技有限公司"]["company_id"] != originalDecision.EntityID.String() {
+		t.Fatalf("native CURATED bytes used current mapping entity %s, want frozen resolution entity %s", byName["深圳星云科技有限公司"]["company_id"], originalDecision.EntityID)
+	}
+	var persistedDecisionID uuid.UUID
+	if err := pool.QueryRow(ctx, `
+		SELECT decision_id FROM execution_mapping_usage
+		WHERE execution_id=$1 AND input_name='enterprise_raw' AND source_key='ENT-001'
+	`, execution.ID).Scan(&persistedDecisionID); err != nil {
+		t.Fatalf("query persisted enterprise mapping usage: %v", err)
+	}
+	if persistedDecisionID != originalDecision.ID {
+		t.Fatalf("persisted enterprise decision = %s, want frozen decision %s", persistedDecisionID, originalDecision.ID)
+	}
+	var resolutionPolicyHash string
+	var resolutionPolicyContent []byte
+	if err := pool.QueryRow(ctx, `
+		SELECT content_sha256, content
+		FROM execution_dependency_binding
+		WHERE execution_id=$1 AND dependency_name='enterprise_resolution'
+	`, execution.ID).Scan(&resolutionPolicyHash, &resolutionPolicyContent); err != nil {
+		t.Fatalf("query frozen resolution policy content: %v", err)
+	}
+	if resolutionPolicyHash != matchJob.PolicyContentSHA256 || !bytes.Equal(resolutionPolicyContent, matchJob.PolicyContent) {
+		t.Fatal("execution did not persist the exact matching policy content used by resolution")
+	}
+	var preparationCount, bindingCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution_dependency_preparation WHERE execution_id=$1`, execution.ID).Scan(&preparationCount); err != nil {
+		t.Fatalf("count dependency preparations: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution_dependency_binding WHERE execution_id=$1`, execution.ID).Scan(&bindingCount); err != nil {
+		t.Fatalf("count dependency bindings: %v", err)
+	}
+	if preparationCount != 1 || bindingCount != 3 {
+		t.Fatalf("dependency preparation/bindings = %d/%d, want 1/3", preparationCount, bindingCount)
+	}
+	var executionAsAliasSource int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM execution_mapping_usage u
+		JOIN entity_mapping_decision d ON d.workspace_id=u.workspace_id AND d.id=u.decision_id
+		WHERE u.execution_id=$1 AND d.source_origin='WORKFLOW_ALIAS' AND d.source_job_id=$1
+	`, execution.ID).Scan(&executionAsAliasSource); err != nil {
+		t.Fatalf("check alias source job provenance: %v", err)
+	}
+	if executionAsAliasSource != 0 {
+		t.Fatalf("execution id was incorrectly recorded as alias source_job_id %d times", executionAsAliasSource)
+	}
 
 	var quarantineCount int
 	if err := pool.QueryRow(ctx, `SELECT count(*) FROM execution_quarantine_record WHERE execution_id=$1 AND reason_code='NEGATIVE_ENERGY_KWH'`, execution.ID).Scan(&quarantineCount); err != nil {
@@ -249,8 +328,15 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 	if err := pool.QueryRow(ctx, `SELECT count(*) FROM evidence WHERE source_type='EXECUTION' AND source_id=$1`, execution.ID).Scan(&evidenceCount); err != nil {
 		t.Fatalf("count execution evidence: %v", err)
 	}
-	if evidenceCount != 1 {
-		t.Fatalf("execution evidence = %d, want 1", evidenceCount)
+	if evidenceCount != 2 {
+		t.Fatalf("execution evidence = %d, want dependency preparation plus completion", evidenceCount)
+	}
+	var preparationEvidenceCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM evidence WHERE source_type='EXECUTION' AND source_id=$1 AND evidence_type='EXECUTION_DEPENDENCY_PREPARED'`, execution.ID).Scan(&preparationEvidenceCount); err != nil {
+		t.Fatalf("count dependency preparation evidence: %v", err)
+	}
+	if preparationEvidenceCount != 1 {
+		t.Fatalf("dependency preparation evidence = %d, want 1", preparationEvidenceCount)
 	}
 }
 

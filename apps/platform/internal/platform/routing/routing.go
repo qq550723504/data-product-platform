@@ -71,6 +71,7 @@ func Routes(governanceProjection bool) []outbox.Route {
 		// Retention-only: recorded for audit and traceability, with no
 		// external side-effect obligation.
 		{EventType: "ExecutionStarted"},
+		{EventType: "ExecutionDependenciesPrepared"},
 		{EventType: "ExecutionSucceeded"},
 		{EventType: "ExecutionFailed"},
 		{EventType: "ExecutionEngineSelected"},

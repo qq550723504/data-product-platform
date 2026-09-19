@@ -184,6 +184,7 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 		WorkspaceID: workspaceID, WorkflowVersionID: workflow.ID, OutputDatasetID: curated.ID, TargetPeriod: "2025-03",
 		Inputs: []workflowdomain.InputBinding{
 			{Name: "enterprise_raw", DatasetVersionID: enterpriseVersion.ID},
+			{Name: "enterprise_resolution", DatasetVersionID: *job.OutputDatasetVersionID},
 			{Name: "lease_raw", DatasetVersionID: leaseVersion.ID},
 			{Name: "energy_raw", DatasetVersionID: energyVersion.ID},
 		}, IdempotencyKey: "browser-live-create-" + suffix, ActorID: &seedActor, TraceID: traceID,

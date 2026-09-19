@@ -197,6 +197,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 		TargetPeriod:      "2025-03",
 		Inputs: []workflowdomain.InputBinding{
 			{Name: "enterprise_raw", DatasetVersionID: enterpriseVersion.ID},
+			{Name: "enterprise_resolution", DatasetVersionID: standardizedVersionID},
 			{Name: "lease_raw", DatasetVersionID: leaseVersion.ID},
 			{Name: "energy_raw", DatasetVersionID: energyVersion.ID},
 		},

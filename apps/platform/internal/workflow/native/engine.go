@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/csv"
-	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -82,23 +81,6 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 		}
 	}
 
-	companyPolicyPath, err := matching.ResolvePolicyPath(e.industryPackRoot, companyPolicyRef)
-	if err != nil {
-		return workflowapp.ProcessingResult{}, err
-	}
-	companyPolicy, err := matching.LoadPolicy(companyPolicyPath)
-	if err != nil {
-		return workflowapp.ProcessingResult{}, err
-	}
-	indicatorPolicyPath, err := matching.ResolvePolicyPath(e.industryPackRoot, indicatorPolicyRef)
-	if err != nil {
-		return workflowapp.ProcessingResult{}, err
-	}
-	indicatorPolicy, err := indicator.LoadPolicy(indicatorPolicyPath)
-	if err != nil {
-		return workflowapp.ProcessingResult{}, err
-	}
-
 	enterpriseVersion, enterpriseRows, enterpriseRef, err := e.readInput(ctx, bindings["enterprise_raw"])
 	if err != nil {
 		return workflowapp.ProcessingResult{}, fmt.Errorf("read enterprise input: %w", err)
@@ -112,27 +94,20 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 		return workflowapp.ProcessingResult{}, fmt.Errorf("read energy input: %w", err)
 	}
 
-	// Canonical mappings are a processing dependency even though business fields
-	// are read from RAW CSV. Capture the successful resolution output now, rather
-	// than letting a later trace query infer a different job from mutable state.
-	resolutionVersionID, found, err := e.entityRepo.FindSucceededOutputVersionForInput(ctx, enterpriseVersion.ID, "CSV", enterpriseRef)
+	dependencies, err := e.prepareDependencies(ctx, request, bindings, enterpriseRows, leaseRows, energyRows, enterpriseRef, leaseRef, energyRef)
 	if err != nil {
-		return workflowapp.ProcessingResult{}, fmt.Errorf("resolve entity lineage dependency: %w", err)
+		return workflowapp.ProcessingResult{}, err
 	}
-	if !found {
-		return workflowapp.ProcessingResult{}, fmt.Errorf("enterprise input has no successful entity-resolution output for lineage")
-	}
-
-	companies, inputs, err := e.buildCanonicalCompanies(ctx, request.WorkspaceID, enterpriseRows, enterpriseRef, companyPolicy)
+	companies, inputs, err := e.buildCanonicalCompanies(enterpriseRows, enterpriseRef, dependencies.CompanyPolicy, dependencies.Mappings)
 	if err != nil {
 		return workflowapp.ProcessingResult{}, err
 	}
 
-	leaseMapped, err := e.attachLease(ctx, request.WorkspaceID, leaseRows, leaseRef, companyPolicy, companies, inputs)
+	leaseMapped, err := e.attachLease(leaseRows, leaseRef, dependencies.CompanyPolicy, companies, inputs, dependencies.Mappings)
 	if err != nil {
 		return workflowapp.ProcessingResult{}, err
 	}
-	energyMapped, quarantineCount, err := e.attachEnergy(ctx, request.ExecutionID, request.WorkspaceID, energyRows, energyRef, companyPolicy, companies, inputs)
+	energyMapped, quarantineCount, err := e.attachEnergy(ctx, request.ExecutionID, energyRows, energyRef, dependencies.CompanyPolicy, companies, inputs, dependencies.Mappings)
 	if err != nil {
 		return workflowapp.ProcessingResult{}, err
 	}
@@ -151,7 +126,7 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 	completeScores := 0
 	for _, companyID := range companyIDs {
 		company := companies[companyID]
-		result, err := indicator.Calculate(indicatorPolicy, request.TargetPeriod, inputs[companyID])
+		result, err := indicator.Calculate(dependencies.IndicatorPolicy, request.TargetPeriod, inputs[companyID])
 		if err != nil {
 			return workflowapp.ProcessingResult{}, fmt.Errorf("calculate indicators for %s: %w", companyID, err)
 		}
@@ -187,20 +162,20 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 			"workflowVersionId":               request.WorkflowVersion.ID,
 			"workflowVersion":                 request.WorkflowVersion.Version,
 			"indicatorSet":                    "park-enterprise-activity@1.0.0",
-			"entityPolicyVersion":             companyPolicy.Metadata.Version,
+			"entityPolicyVersion":             dependencies.CompanyPolicy.Metadata.Version,
 			"targetPeriod":                    request.TargetPeriod,
 			"quarantineCount":                 quarantineCount,
 			"unresolvedEntityRate":            0.0,
 			"acceptedNegativeEnergyRate":      0.0,
 			"gateStatus":                      "PENDING_GOVERNANCE_GATES",
-			"entityResolutionOutputVersionId": resolutionVersionID,
+			"entityResolutionOutputVersionId": dependencies.ResolutionVersionID,
 		},
 	})
 	if err != nil {
 		return workflowapp.ProcessingResult{}, fmt.Errorf("write CURATED DatasetVersion: %w", err)
 	}
 
-	lineageInputs := []uuid.UUID{enterpriseVersion.ID, leaseVersion.ID, energyVersion.ID, resolutionVersionID}
+	lineageInputs := []uuid.UUID{enterpriseVersion.ID, leaseVersion.ID, energyVersion.ID, dependencies.ResolutionVersionID}
 	if err := e.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		for _, inputVersionID := range lineageInputs {
 			if err := e.datasetRepo.AddLineage(ctx, tx, outputVersion.ID, inputVersionID, "DERIVED_FROM", &request.ExecutionID); err != nil {
@@ -247,7 +222,7 @@ func (e *Engine) readInput(ctx context.Context, versionID uuid.UUID) (version st
 	return version, rows, storageBasename(datasetVersion.StorageURI), nil
 }
 
-func (e *Engine) buildCanonicalCompanies(ctx context.Context, workspaceID uuid.UUID, rows []map[string]string, sourceRef string, policy matching.Policy) (map[uuid.UUID]*canonicalCompany, map[uuid.UUID]indicator.CompanyInput, error) {
+func (e *Engine) buildCanonicalCompanies(rows []map[string]string, sourceRef string, policy matching.Policy, mappings map[mappingUsageKey]entitydomain.MappingDecision) (map[uuid.UUID]*canonicalCompany, map[uuid.UUID]indicator.CompanyInput, error) {
 	companies := map[uuid.UUID]*canonicalCompany{}
 	inputs := map[uuid.UUID]indicator.CompanyInput{}
 	for _, row := range rows {
@@ -255,15 +230,9 @@ func (e *Engine) buildCanonicalCompanies(ctx context.Context, workspaceID uuid.U
 		if sourceKey == "" {
 			return nil, nil, fmt.Errorf("enterprise record missing source_company_id")
 		}
-		mapping, err := e.entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", sourceRef, sourceKey)
-		if err != nil {
-			if errors.Is(err, entityinfra.ErrNotFound) {
-				return nil, nil, fmt.Errorf("enterprise %s has no canonical EntityMapping; run entity resolution before workflow execution", sourceKey)
-			}
-			return nil, nil, err
-		}
-		if mapping.Status != entitydomain.MappingAutoMatched && mapping.Status != entitydomain.MappingConfirmed {
-			return nil, nil, fmt.Errorf("enterprise %s mapping status %s is not usable", sourceKey, mapping.Status)
+		mapping, ok := mappings[mappingUsageKey{InputName: "enterprise_raw", SourceRef: sourceRef, SourceKey: sourceKey}]
+		if !ok {
+			return nil, nil, fmt.Errorf("enterprise %s has no fixed mapping decision; run entity resolution before workflow execution", sourceKey)
 		}
 		normalized := matching.NormalizeCompany(matching.CompanyRecord{
 			SourceCompanyID:         sourceKey,
@@ -297,10 +266,10 @@ func (e *Engine) buildCanonicalCompanies(ctx context.Context, workspaceID uuid.U
 	return companies, inputs, nil
 }
 
-func (e *Engine) attachLease(ctx context.Context, workspaceID uuid.UUID, rows []map[string]string, sourceRef string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany, inputs map[uuid.UUID]indicator.CompanyInput) (int, error) {
+func (e *Engine) attachLease(rows []map[string]string, sourceRef string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany, inputs map[uuid.UUID]indicator.CompanyInput, mappings map[mappingUsageKey]entitydomain.MappingDecision) (int, error) {
 	mapped := 0
 	for _, row := range rows {
-		companyID, err := e.resolveSourceCompany(ctx, workspaceID, "lease_raw", sourceRef, row["source_company_id"], row["company_name"], policy, companies)
+		companyID, err := e.resolveSourceCompany("lease_raw", sourceRef, row["source_company_id"], mappings)
 		if err != nil {
 			return mapped, err
 		}
@@ -334,9 +303,9 @@ func (e *Engine) attachLease(ctx context.Context, workspaceID uuid.UUID, rows []
 	return mapped, nil
 }
 
-func (e *Engine) attachEnergy(ctx context.Context, executionID, workspaceID uuid.UUID, rows []map[string]string, sourceRef string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany, inputs map[uuid.UUID]indicator.CompanyInput) (mapped int, quarantineCount int, err error) {
+func (e *Engine) attachEnergy(ctx context.Context, executionID uuid.UUID, rows []map[string]string, sourceRef string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany, inputs map[uuid.UUID]indicator.CompanyInput, mappings map[mappingUsageKey]entitydomain.MappingDecision) (mapped int, quarantineCount int, err error) {
 	for _, row := range rows {
-		companyID, err := e.resolveSourceCompany(ctx, workspaceID, "energy_raw", sourceRef, row["source_company_id"], row["company_name"], policy, companies)
+		companyID, err := e.resolveSourceCompany("energy_raw", sourceRef, row["source_company_id"], mappings)
 		if err != nil {
 			return mapped, quarantineCount, err
 		}
@@ -381,48 +350,19 @@ func (e *Engine) attachEnergy(ctx context.Context, executionID, workspaceID uuid
 	return mapped, quarantineCount, nil
 }
 
-func (e *Engine) resolveSourceCompany(ctx context.Context, workspaceID uuid.UUID, inputName, sourceRef, sourceKey, companyName string, policy matching.Policy, companies map[uuid.UUID]*canonicalCompany) (uuid.UUID, error) {
+func (e *Engine) resolveSourceCompany(inputName, sourceRef, sourceKey string, mappings map[mappingUsageKey]entitydomain.MappingDecision) (uuid.UUID, error) {
 	sourceKey = strings.TrimSpace(sourceKey)
 	if sourceKey == "" {
 		return uuid.Nil, fmt.Errorf("%s record is missing source_company_id", inputName)
 	}
-	mapping, err := e.entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", sourceRef, sourceKey)
-	if err == nil {
-		if mapping.Status == entitydomain.MappingAutoMatched || mapping.Status == entitydomain.MappingConfirmed {
-			return mapping.EntityID, nil
-		}
+	mapping, ok := mappings[mappingUsageKey{InputName: inputName, SourceRef: sourceRef, SourceKey: sourceKey}]
+	if !ok {
+		return uuid.Nil, fmt.Errorf("%s source %s has no fixed mapping decision", inputName, sourceKey)
+	}
+	if mapping.Status != entitydomain.MappingAutoMatched && mapping.Status != entitydomain.MappingConfirmed {
 		return uuid.Nil, fmt.Errorf("%s source %s has unusable mapping status %s", inputName, sourceKey, mapping.Status)
 	}
-	if !errors.Is(err, entityinfra.ErrNotFound) {
-		return uuid.Nil, err
-	}
-
-	normalized := matching.NormalizeCompany(matching.CompanyRecord{CompanyName: companyName}, policy).CompanyName
-	entityID, method, confidence, err := resolveAlias(normalized, companies)
-	if err != nil {
-		return uuid.Nil, fmt.Errorf("resolve %s source %s company %q: %w", inputName, sourceKey, companyName, err)
-	}
-	mapping = entitydomain.EntityMapping{
-		ID:                 uuid.New(),
-		WorkspaceID:        workspaceID,
-		EntityID:           entityID,
-		SourceType:         "CSV",
-		SourceRef:          sourceRef,
-		SourceKey:          sourceKey,
-		SourceName:         strings.TrimSpace(companyName),
-		MatchMethod:        method,
-		MatchRuleID:        "WORKFLOW-CANONICAL-ALIAS",
-		MatchPolicyVersion: policy.Metadata.Version,
-		Confidence:         confidence,
-		Status:             entitydomain.MappingAutoMatched,
-		CreatedAt:          time.Now().UTC(),
-	}
-	if err := e.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		return e.entityRepo.InsertMapping(ctx, tx, mapping)
-	}); err != nil {
-		return uuid.Nil, err
-	}
-	return entityID, nil
+	return mapping.EntityID, nil
 }
 
 func resolveAlias(normalized string, companies map[uuid.UUID]*canonicalCompany) (uuid.UUID, string, float64, error) {

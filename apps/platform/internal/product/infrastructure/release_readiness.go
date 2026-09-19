@@ -12,29 +12,31 @@ import (
 )
 
 type ReadinessFacts struct {
-	TargetDatasetVersionID       *uuid.UUID
-	TargetDatasetID              *uuid.UUID
-	AllDatasetsUsable            bool
-	ProductionExecutionPresent   bool
-	RightsSnapshotExists         bool
-	RightsSnapshotWorkspaceMatch bool
-	RightsCurrentlyValid         bool
-	RightsCoverageKnown          bool
-	RightsCoverageComplete       bool
-	RequiredResourceIDs          []uuid.UUID
-	MissingResourceIDs           []uuid.UUID
-	MissingActions               map[string][]string
-	ContractExists               bool
-	ContractPublished            bool
-	ContractMatchesProduct       bool
-	QualityResultExists          bool
-	QualityDatasetMatches        bool
-	QualityDecision              string
-	ComplianceResultExists       bool
-	ComplianceDatasetMatches     bool
-	ComplianceDecision           string
-	EvidenceCount                int
-	DeliveryAvailable            bool
+	TargetDatasetVersionID              *uuid.UUID
+	TargetDatasetID                     *uuid.UUID
+	AllDatasetsUsable                   bool
+	ProductionExecutionPresent          bool
+	ProductionDependencyBindingRequired bool
+	ProductionDependencyBindingComplete bool
+	RightsSnapshotExists                bool
+	RightsSnapshotWorkspaceMatch        bool
+	RightsCurrentlyValid                bool
+	RightsCoverageKnown                 bool
+	RightsCoverageComplete              bool
+	RequiredResourceIDs                 []uuid.UUID
+	MissingResourceIDs                  []uuid.UUID
+	MissingActions                      map[string][]string
+	ContractExists                      bool
+	ContractPublished                   bool
+	ContractMatchesProduct              bool
+	QualityResultExists                 bool
+	QualityDatasetMatches               bool
+	QualityDecision                     string
+	ComplianceResultExists              bool
+	ComplianceDatasetMatches            bool
+	ComplianceDecision                  string
+	EvidenceCount                       int
+	DeliveryAvailable                   bool
 }
 
 func (r *PostgresRepository) SaveReleaseValidation(ctx context.Context, tx pgx.Tx, release domain.ProductRelease) error {
@@ -200,6 +202,26 @@ func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.
 	}
 
 	if facts.TargetDatasetVersionID != nil {
+		if facts.ProductionExecutionPresent {
+			var executionID uuid.UUID
+			if err := r.pool.QueryRow(ctx, `
+				SELECT generated_by_execution_id
+				FROM dataset_version
+				WHERE id=$1 AND generated_by_execution_id IS NOT NULL
+			`, *facts.TargetDatasetVersionID).Scan(&executionID); err == nil {
+				if err := r.pool.QueryRow(ctx, `
+					SELECT EXISTS(
+						SELECT 1 FROM execution_input
+						WHERE execution_id=$1 AND input_name='enterprise_resolution'
+					), EXISTS(
+						SELECT 1 FROM execution_dependency_preparation
+						WHERE execution_id=$1 AND status='PREPARED'
+					)
+				`, executionID).Scan(&facts.ProductionDependencyBindingRequired, &facts.ProductionDependencyBindingComplete); err != nil {
+					return ReadinessFacts{}, fmt.Errorf("read production dependency readiness: %w", err)
+				}
+			}
+		}
 		if err := r.pool.QueryRow(ctx, `
 			SELECT count(*) FROM evidence_relation
 			WHERE object_type='DATASET_VERSION' AND object_id=$1

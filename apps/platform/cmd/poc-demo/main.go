@@ -288,7 +288,9 @@ func (d *demo) advance() error {
 		return err
 	}
 	d.m.Workflow = wf.ID
-	execution, err := workflowapp.NewExecutionService(tx, workflows).Create(d.ctx, workflowapp.CreateExecutionCommand{WorkspaceID: d.m.Workspace, WorkflowVersionID: wf.ID, OutputDatasetID: d.m.Curated, TargetPeriod: "2025-03", Inputs: d.m.Inputs, IdempotencyKey: "poc-demo-create-" + wf.ID.String(), ActorID: &d.m.Actor})
+	executionInputs := append([]workflowdomain.InputBinding(nil), d.m.Inputs...)
+	executionInputs = append(executionInputs, workflowdomain.InputBinding{Name: "enterprise_resolution", DatasetVersionID: *job.OutputDatasetVersionID})
+	execution, err := workflowapp.NewExecutionService(tx, workflows).Create(d.ctx, workflowapp.CreateExecutionCommand{WorkspaceID: d.m.Workspace, WorkflowVersionID: wf.ID, OutputDatasetID: d.m.Curated, TargetPeriod: "2025-03", Inputs: executionInputs, IdempotencyKey: "poc-demo-create-" + wf.ID.String(), ActorID: &d.m.Actor})
 	if err != nil {
 		return err
 	}

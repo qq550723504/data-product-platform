@@ -68,17 +68,40 @@ type DatasetVersionTrace struct {
 }
 
 type ExecutionTrace struct {
-	ID                     uuid.UUID      `json:"id"`
-	WorkflowVersionID      uuid.UUID      `json:"workflowVersionId"`
-	WorkflowVersion        string         `json:"workflowVersion"`
-	WorkflowDefinitionHash string         `json:"workflowDefinitionHash"`
-	Status                 string         `json:"status"`
-	Attempt                int            `json:"attempt"`
-	EngineType             string         `json:"engineType"`
-	EngineExecutionID      string         `json:"engineExecutionId,omitempty"`
-	TargetPeriod           string         `json:"targetPeriod"`
-	OutputDatasetVersionID *uuid.UUID     `json:"outputDatasetVersionId,omitempty"`
-	Metrics                map[string]any `json:"metrics"`
+	ID                          uuid.UUID                    `json:"id"`
+	WorkflowVersionID           uuid.UUID                    `json:"workflowVersionId"`
+	WorkflowVersion             string                       `json:"workflowVersion"`
+	WorkflowDefinitionHash      string                       `json:"workflowDefinitionHash"`
+	Status                      string                       `json:"status"`
+	Attempt                     int                          `json:"attempt"`
+	EngineType                  string                       `json:"engineType"`
+	EngineExecutionID           string                       `json:"engineExecutionId,omitempty"`
+	TargetPeriod                string                       `json:"targetPeriod"`
+	OutputDatasetVersionID      *uuid.UUID                   `json:"outputDatasetVersionId,omitempty"`
+	Metrics                     map[string]any               `json:"metrics"`
+	DependencyPreparationStatus string                       `json:"dependencyPreparationStatus"`
+	DependencyBindings          []ExecutionDependencyTrace   `json:"dependencyBindings"`
+	MappingUsages               []ExecutionMappingUsageTrace `json:"mappingUsages"`
+}
+
+type ExecutionDependencyTrace struct {
+	Name             string     `json:"name"`
+	DatasetVersionID *uuid.UUID `json:"datasetVersionId,omitempty"`
+	Reference        string     `json:"reference"`
+	Version          string     `json:"version"`
+	ContentSHA256    string     `json:"contentSha256"`
+}
+
+type ExecutionMappingUsageTrace struct {
+	ID                         uuid.UUID `json:"id"`
+	InputName                  string    `json:"inputName"`
+	InputDatasetVersionID      uuid.UUID `json:"inputDatasetVersionId"`
+	ResolutionDatasetVersionID uuid.UUID `json:"resolutionDatasetVersionId"`
+	DecisionID                 uuid.UUID `json:"decisionId"`
+	EntityID                   uuid.UUID `json:"entityId"`
+	SourceType                 string    `json:"sourceType"`
+	SourceRef                  string    `json:"sourceRef"`
+	SourceKey                  string    `json:"sourceKey"`
 }
 
 type EntityMatchJobTrace struct {
@@ -175,6 +198,11 @@ func (r *Repository) ProductRelease(ctx context.Context, releaseID uuid.UUID) (R
 	if err != nil {
 		return ReleaseTrace{}, err
 	}
+	usageMappings, err := r.entityMappingsForExecutionUsages(ctx, trace.Executions)
+	if err != nil {
+		return ReleaseTrace{}, err
+	}
+	trace.EntityMappings = appendUniqueEntityMappings(trace.EntityMappings, usageMappings)
 
 	trace.Evidence, err = r.collectEvidence(ctx, trace)
 	if err != nil {
@@ -286,9 +314,71 @@ func (r *Repository) executionsForDatasets(ctx context.Context, datasets []Datas
 		if item.Metrics == nil {
 			item.Metrics = map[string]any{}
 		}
+		item.DependencyPreparationStatus, item.DependencyBindings, item.MappingUsages, err = r.executionDependencyTrace(ctx, item.ID)
+		if err != nil {
+			return nil, err
+		}
 		result = append(result, item)
 	}
 	return result, rows.Err()
+}
+
+func (r *Repository) executionDependencyTrace(ctx context.Context, executionID uuid.UUID) (string, []ExecutionDependencyTrace, []ExecutionMappingUsageTrace, error) {
+	status := "NOT_AVAILABLE"
+	var prepared bool
+	if err := r.pool.QueryRow(ctx, `
+		SELECT EXISTS(SELECT 1 FROM execution_dependency_preparation WHERE execution_id=$1)
+	`, executionID).Scan(&prepared); err != nil {
+		return "", nil, nil, fmt.Errorf("query execution dependency preparation: %w", err)
+	}
+	if prepared {
+		status = "PREPARED"
+	}
+	dependencies, err := r.pool.Query(ctx, `
+		SELECT dependency_name, dataset_version_id, reference, version, content_sha256
+		FROM execution_dependency_binding
+		WHERE execution_id=$1
+		ORDER BY dependency_name
+	`, executionID)
+	if err != nil {
+		return "", nil, nil, fmt.Errorf("query execution dependency bindings: %w", err)
+	}
+	defer dependencies.Close()
+	dependencyResult := make([]ExecutionDependencyTrace, 0)
+	for dependencies.Next() {
+		var item ExecutionDependencyTrace
+		if err := dependencies.Scan(&item.Name, &item.DatasetVersionID, &item.Reference, &item.Version, &item.ContentSHA256); err != nil {
+			return "", nil, nil, fmt.Errorf("scan execution dependency binding: %w", err)
+		}
+		dependencyResult = append(dependencyResult, item)
+	}
+	if err := dependencies.Err(); err != nil {
+		return "", nil, nil, fmt.Errorf("iterate execution dependency bindings: %w", err)
+	}
+	usages, err := r.pool.Query(ctx, `
+		SELECT id, input_name, input_dataset_version_id, resolution_dataset_version_id,
+		       decision_id, entity_id, source_type, source_ref, source_key
+		FROM execution_mapping_usage
+		WHERE execution_id=$1
+		ORDER BY input_name, source_ref, source_key
+	`, executionID)
+	if err != nil {
+		return "", nil, nil, fmt.Errorf("query execution mapping usages: %w", err)
+	}
+	defer usages.Close()
+	usageResult := make([]ExecutionMappingUsageTrace, 0)
+	for usages.Next() {
+		var item ExecutionMappingUsageTrace
+		if err := usages.Scan(&item.ID, &item.InputName, &item.InputDatasetVersionID, &item.ResolutionDatasetVersionID,
+			&item.DecisionID, &item.EntityID, &item.SourceType, &item.SourceRef, &item.SourceKey); err != nil {
+			return "", nil, nil, fmt.Errorf("scan execution mapping usage: %w", err)
+		}
+		usageResult = append(usageResult, item)
+	}
+	if err := usages.Err(); err != nil {
+		return "", nil, nil, fmt.Errorf("iterate execution mapping usages: %w", err)
+	}
+	return status, dependencyResult, usageResult, nil
 }
 
 func (r *Repository) entityMatchJobsForDatasets(ctx context.Context, datasets []DatasetVersionTrace) ([]EntityMatchJobTrace, error) {
@@ -369,6 +459,64 @@ func (r *Repository) entityMappingsForJobs(ctx context.Context, jobs []EntityMat
 		return nil, fmt.Errorf("iterate release entity mapping decisions: %w", err)
 	}
 	return result, nil
+}
+
+func (r *Repository) entityMappingsForExecutionUsages(ctx context.Context, executions []ExecutionTrace) ([]EntityMappingTrace, error) {
+	ids := make([]uuid.UUID, 0, len(executions))
+	for _, execution := range executions {
+		ids = append(ids, execution.ID)
+	}
+	if len(ids) == 0 {
+		return []EntityMappingTrace{}, nil
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT d.id, d.mapping_id, d.entity_id, d.source_type, d.source_ref, d.source_key, COALESCE(d.source_name,''),
+		       d.match_method, COALESCE(d.match_rule_id,''), d.match_policy_version, COALESCE(d.confidence,0),
+		       d.status, d.reviewed_by, d.reviewed_at, COALESCE(d.reviewer_reason,''), d.evidence_id,
+		       d.source_origin, d.source_job_id, d.decided_at
+		FROM execution_mapping_usage u
+		JOIN entity_mapping_decision d
+		  ON d.workspace_id=u.workspace_id AND d.id=u.decision_id
+		WHERE u.execution_id=ANY($1::uuid[])
+		ORDER BY u.execution_id, u.input_name, u.source_ref, u.source_key
+	`, ids)
+	if err != nil {
+		return nil, fmt.Errorf("query execution mapping decisions: %w", err)
+	}
+	defer rows.Close()
+	result := make([]EntityMappingTrace, 0)
+	for rows.Next() {
+		var item EntityMappingTrace
+		if err := rows.Scan(
+			&item.DecisionID, &item.ID, &item.EntityID, &item.SourceType, &item.SourceRef, &item.SourceKey, &item.SourceName,
+			&item.MatchMethod, &item.MatchRuleID, &item.MatchPolicyVersion, &item.Confidence,
+			&item.Status, &item.ReviewedBy, &item.ReviewedAt, &item.ReviewerReason, &item.EvidenceID,
+			&item.SourceOrigin, &item.SourceJobID, &item.DecidedAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan execution mapping decision: %w", err)
+		}
+		result = append(result, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate execution mapping decisions: %w", err)
+	}
+	return result, nil
+}
+
+func appendUniqueEntityMappings(existing, additions []EntityMappingTrace) []EntityMappingTrace {
+	seen := make(map[uuid.UUID]struct{}, len(existing)+len(additions))
+	for _, item := range existing {
+		seen[item.DecisionID] = struct{}{}
+	}
+	result := append([]EntityMappingTrace(nil), existing...)
+	for _, item := range additions {
+		if _, ok := seen[item.DecisionID]; ok {
+			continue
+		}
+		seen[item.DecisionID] = struct{}{}
+		result = append(result, item)
+	}
+	return result
 }
 
 func (r *Repository) collectEvidence(ctx context.Context, trace ReleaseTrace) ([]evidence.Item, error) {
@@ -455,6 +603,9 @@ func (r *Repository) collectAudit(ctx context.Context, trace ReleaseTrace) ([]Au
 	}
 	for _, job := range trace.EntityMatchJobs {
 		objectIDs = append(objectIDs, job.ID)
+	}
+	for _, mapping := range trace.EntityMappings {
+		objectIDs = append(objectIDs, mapping.DecisionID)
 	}
 	rows, err := r.pool.Query(ctx, `
 		SELECT id, action, object_type, object_id, actor_type, actor_id,

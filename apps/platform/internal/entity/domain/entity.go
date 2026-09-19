@@ -213,6 +213,8 @@ type MatchJob struct {
 	SourceRole             SourceRole
 	PolicyRef              string
 	PolicyVersion          string
+	PolicyContentSHA256    string
+	PolicyContent          []byte
 	Status                 JobStatus
 	AutoMatchCount         int64
 	ReviewCount            int64

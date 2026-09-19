@@ -12,6 +12,9 @@ spec:
     - name: enterprise_raw
       datasetType: RAW
       required: true
+    - name: enterprise_resolution
+      datasetType: STANDARDIZED
+      required: true
     - name: lease_raw
       datasetType: RAW
       required: true
