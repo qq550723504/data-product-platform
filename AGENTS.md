@@ -97,6 +97,7 @@ RightsDeclaration
 
 - ApproveAuthorization
 - VerifyRightsDeclaration
+- InvalidateRightsDeclaration / SupersedeRightsDeclaration
 - InvalidateDatasetVersion
 - RunQualityAssessment
 - CertifyDatasetVersion
@@ -185,7 +186,12 @@ V1 不强制全行业统一总分。Critical rule、Rights、Compliance、Contra
 
 Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduct；但 DatasetCertification 只证明认证时点结论，不授予永久交付资格。
 
-每次 standalone delivery 必须执行 CurrentEntitlementGate，使用当前时间、consumer、purpose、action 重新检查当前 RightsDeclaration verification、Authorization 状态/有效期与 Effective Rights。任何 required entitlement 当前失效都必须 fail closed，即使历史 Certification 仍为 CERTIFIED。
+每次 standalone delivery 必须执行 CurrentDeliveryGate：
+
+- DatasetVersionUsability：至少拒绝 INVALID / FAILED / PROCESSING / CREATED；SUPERSEDED 是否允许按明确历史版本交付遵循现有领域语义和实现验收；
+- CurrentEntitlementGate：使用当前时间、consumer、purpose、action 检查 VERIFIED 且未被有效 INVALIDATED/SUPERSEDED 的 RightsDeclaration provenance、Authorization 状态/有效期与 Effective Rights。
+
+任一子门禁失败都必须 fail closed，即使历史 Certification 仍为 CERTIFIED。
 
 ## 11. Release Readiness
 
