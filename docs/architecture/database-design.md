@@ -222,6 +222,7 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | Authorization state | explicit state machine |
 | DatasetVersion | immutable content fact after READY |
 | EntityMappingDecision | immutable history |
+| Execution | stateful lifecycle row; transitions update status/output/metrics/timestamps through explicit commands; terminal rows are retained and not deleted |
 | Execution dependency facts | immutable history |
 | RightsSnapshot | immutable |
 | QualityAssessment | immutable |
@@ -247,4 +248,6 @@ JSONB 不用于 ID/FK、状态、版本号、核心 party/resource/certification
 
 允许软删除的可变主对象可以包括 UseCase、DataResource、Dataset、DataProduct、Entity。
 
-不可变事实不得软删除或覆盖，包括 DatasetVersion、Execution、MappingDecision、execution dependency facts、ProductVersion、ProductRelease、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification fact、DatasetCertification、AuditEvent、CostEvent。
+Execution 行在生命周期内会通过显式状态迁移更新 status、engine/output、metrics、errors 与 timestamps，因此不能把整行视为内容不可变；但 Execution 历史必须保留，终态记录不得删除。真正不可变的是其已冻结的 input/dependency/mapping-usage 等生产事实。
+
+不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、ProductRelease、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification fact、DatasetCertification、AuditEvent、CostEvent。
