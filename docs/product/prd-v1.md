@@ -190,10 +190,16 @@ REJECTED
 
 ### ProductRelease
 
+FAILED 是当前 Domain / 数据库 / Read Model 仍支持的有效状态，本 docs-only 基线不废弃该分支。
+
 ~~~text
-DRAFT → VALIDATING → READY → PUBLISHED
-                              ├→ SUSPENDED
-                              └→ WITHDRAWN
+DRAFT
+→ VALIDATING
+├→ FAILED
+└→ READY
+   → PUBLISHED
+      ├→ SUSPENDED
+      └→ WITHDRAWN
 ~~~
 
 ## 8. Quality Assessment
