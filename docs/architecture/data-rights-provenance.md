@@ -187,11 +187,17 @@ append SUPERSEDED(A → B, effective_at, reason)
 
 Current selection rule：
 
-1. Declaration 必须存在 VERIFIED verification fact；
-2. 在查询 as_of 时点之前不存在生效的 INVALIDATED disposition；
-3. 在查询 as_of 时点之前不存在使其退出当前集合的 SUPERSEDED disposition；
-4. 若 A 被 B supersede，B 必须独立满足 VERIFIED / validity / scope 条件，不能因为 supersession 自动继承 VERIFIED；
-5. 历史 RightsSnapshot 仍保留并解释当时使用的 A，不被新 disposition 回溯改写。
+对**每一个候选 RightsDeclaration**，都必须在查询 `as_of` 时点同时满足：
+
+1. 存在 VERIFIED verification fact；
+2. declaration 自身的 `effective_from / effective_to`（或等价 validity window）覆盖 `as_of`；
+3. declaration 的 resource / purpose / action / consumer / scope 与本次查询匹配；
+4. 在 `as_of` 之前不存在已生效的 INVALIDATED disposition；
+5. 在 `as_of` 之前不存在使其退出当前集合的 SUPERSEDED disposition；
+6. 若 A 被 B supersede，B 必须独立满足上述 VERIFIED / validity / scope 条件，不能因为 supersession 自动继承 VERIFIED；
+7. 历史 RightsSnapshot 仍保留并解释当时使用的 A，不被新 disposition 回溯改写。
+
+任何 validity 或 scope 不满足的声明都不得进入 CurrentEntitlementGate，即使其 verification 仍为 VERIFIED。
 
 这样既保留不可变审计历史，又能让 CurrentEntitlementGate 排除已经撤销或取代的 provenance。
 
