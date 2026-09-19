@@ -11,6 +11,7 @@ import (
 	"runtime"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/hibiken/asynq"
@@ -447,6 +448,51 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 	}
 	if concurrentPreparationCount != 1 || concurrentBindingCount != 3 || concurrentUsageCount == 0 {
 		t.Fatalf("concurrent dependency shape = prep=%d bindings=%d usages=%d, want 1/3/nonzero", concurrentPreparationCount, concurrentBindingCount, concurrentUsageCount)
+	}
+
+	// Two executions may discover the same new aliases in opposite CSV row
+	// orders. Preparation must acquire the source-scoped advisory locks in a
+	// shared order so this does not become an A/B versus B/A deadlock.
+	orderedAliasRows := []map[string]string{
+		{"source_company_id": "LEASE-ORDER-A", "company_name": "深圳星云科技有限公司"},
+		{"source_company_id": "LEASE-ORDER-B", "company_name": "广州青禾智能科技有限公司"},
+	}
+	reversedAliasRows := []map[string]string{orderedAliasRows[1], orderedAliasRows[0]}
+	orderedExecution, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+		WorkspaceID: workspaceID, WorkflowVersionID: workflowVersion.ID, OutputDatasetID: activityDataset.ID,
+		TargetPeriod: "2025-03", Inputs: execution.Inputs, IdempotencyKey: "native-worker-ordered-aliases-" + workspaceID.String(),
+	})
+	if err != nil {
+		t.Fatalf("create ordered-alias execution: %v", err)
+	}
+	reversedExecution, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+		WorkspaceID: workspaceID, WorkflowVersionID: workflowVersion.ID, OutputDatasetID: activityDataset.ID,
+		TargetPeriod: "2025-03", Inputs: execution.Inputs, IdempotencyKey: "native-worker-reversed-aliases-" + workspaceID.String(),
+	})
+	if err != nil {
+		t.Fatalf("create reversed-alias execution: %v", err)
+	}
+	orderedRequest := restoreRequest
+	orderedRequest.ExecutionID = orderedExecution.ID
+	orderedRequest.Inputs = orderedExecution.Inputs
+	reversedRequest := restoreRequest
+	reversedRequest.ExecutionID = reversedExecution.ID
+	reversedRequest.Inputs = reversedExecution.Inputs
+	aliasOrderCtx, cancelAliasOrder := context.WithTimeout(ctx, 3*time.Second)
+	defer cancelAliasOrder()
+	aliasOrderResults := make(chan error, 2)
+	go func() {
+		_, err := engine.prepareDependencies(aliasOrderCtx, orderedRequest, restoreBindings, enterpriseRows, orderedAliasRows, energyRows, enterpriseRef, leaseRef, energyRef)
+		aliasOrderResults <- err
+	}()
+	go func() {
+		_, err := engine.prepareDependencies(aliasOrderCtx, reversedRequest, restoreBindings, enterpriseRows, reversedAliasRows, energyRows, enterpriseRef, leaseRef, energyRef)
+		aliasOrderResults <- err
+	}()
+	for i := 0; i < 2; i++ {
+		if err := <-aliasOrderResults; err != nil {
+			t.Fatalf("opposite alias-order preparation: %v", err)
+		}
 	}
 
 	// AC6: a failure after alias preparation starts rolls back the whole

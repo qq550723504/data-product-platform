@@ -13,9 +13,9 @@ import (
 
 const t3b2DownLockSQL = `
 LOCK TABLE
-    execution_dependency_preparation,
     execution_dependency_binding,
     execution_mapping_usage,
+    execution_dependency_preparation,
     entity_resolution_output_decision,
     entity_match_job
 IN ACCESS EXCLUSIVE MODE`

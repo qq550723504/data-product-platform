@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/google/uuid"
@@ -138,7 +139,16 @@ func (e *Engine) prepareDependencies(ctx context.Context, request workflowapp.Pr
 	}
 
 	prepareAliasUsages := func(ctx context.Context, tx pgx.Tx, inputName string, inputVersionID uuid.UUID, rows []map[string]string, sourceRef string) error {
-		for _, row := range rows {
+		orderedRows := append([]map[string]string(nil), rows...)
+		sort.SliceStable(orderedRows, func(i, j int) bool {
+			leftKey := strings.TrimSpace(orderedRows[i]["source_company_id"])
+			rightKey := strings.TrimSpace(orderedRows[j]["source_company_id"])
+			if leftKey != rightKey {
+				return leftKey < rightKey
+			}
+			return orderedRows[i]["company_name"] < orderedRows[j]["company_name"]
+		})
+		for _, row := range orderedRows {
 			sourceKey := strings.TrimSpace(row["source_company_id"])
 			if sourceKey == "" {
 				return fmt.Errorf("%s record is missing source_company_id", inputName)
