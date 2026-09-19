@@ -37,9 +37,21 @@ jobs:
           --health-interval 3s
           --health-timeout 3s
           --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 3s
+          --health-timeout 3s
+          --health-retries 20
     env:
       POSTGRES_DSN: postgres://postgres:postgres@localhost:5432/data_product_platform?sslmode=disable
       TEST_POSTGRES_DSN: postgres://postgres:postgres@localhost:5432/data_product_platform?sslmode=disable
+      REDIS_ADDR: localhost:6379
+      REDIS_DB: '0'
+      REDIS_PASSWORD: ''
     defaults:
       run:
         working-directory: apps/platform

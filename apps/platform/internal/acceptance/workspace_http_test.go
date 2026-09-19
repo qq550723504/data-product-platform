@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -42,6 +43,27 @@ type boundaryStore struct {
 	*memoryStore
 	reads  atomic.Int64
 	writes atomic.Int64
+}
+
+// dropResponseTransport lets the server commit the request while the client
+// observes a lost response, matching the network-failure window after commit.
+type dropResponseTransport struct {
+	base http.RoundTripper
+}
+
+func (t dropResponseTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	base := t.base
+	if base == nil {
+		base = http.DefaultTransport
+	}
+	response, err := base.RoundTrip(req)
+	if err != nil {
+		return nil, err
+	}
+	if response != nil && response.Body != nil {
+		_ = response.Body.Close()
+	}
+	return nil, errors.New("test client dropped response after server commit")
 }
 
 func (s *boundaryStore) Get(ctx context.Context, uri string) (io.ReadCloser, error) {
@@ -201,6 +223,36 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 			"inputs":            []map[string]any{{"name": "boundary_input", "datasetVersionId": inputVersion}},
 		}
 	}
+	t.Run("same key replays after committed response is dropped", func(t *testing.T) {
+		body := executionBody(owner, ownerWorkflow.ID, standardized.ID, version.ID)
+		body["_idempotencyKey"] = "boundary-response-lost"
+		encoded, err := json.Marshal(body)
+		liveOK(t, err, "encode response-loss command")
+		req, err := http.NewRequestWithContext(ctx, http.MethodPost, server.URL+"/api/v1/executions", bytes.NewReader(encoded))
+		liveOK(t, err, "create response-loss request")
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("X-Actor-ID", actor.String())
+		req.Header.Set("Idempotency-Key", "boundary-response-lost")
+		droppedClient := *client
+		droppedClient.Transport = dropResponseTransport{base: client.Transport}
+		response, err := droppedClient.Do(req)
+		if err == nil || response != nil {
+			t.Fatalf("response-loss transport = response %v error %v, want dropped response error", response, err)
+		}
+		status, responseBody := post(t, "/api/v1/executions", body)
+		if status != http.StatusAccepted {
+			t.Fatalf("replay after dropped response: %d %s", status, responseBody)
+		}
+		var decoded map[string]any
+		liveOK(t, json.Unmarshal(responseBody, &decoded), "decode replay after dropped response")
+		replayedID, err := uuid.Parse(decoded["id"].(string))
+		liveOK(t, err, "parse replayed execution id")
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM command_idempotency WHERE workspace_id=$1 AND command_type='WORKFLOW.CREATE_EXECUTION' AND idempotency_key='boundary-response-lost'`, owner)
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM execution WHERE id=$1`, replayedID)
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM execution_input WHERE execution_id=$1`, replayedID)
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ExecutionQueued'`, replayedID)
+		assertLiveCount(t, ctx, pool, 1, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND action='EXECUTION_QUEUED'`, replayedID)
+	})
 	cases := []struct {
 		name, route, code string
 		body              map[string]any
