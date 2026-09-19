@@ -132,26 +132,45 @@ V2 不继承 V1 认证。
 
 ## 9. 与 ProductRelease 的关系
 
-Certified Dataset 是数据集交付事实；ProductRelease 是数据产品发布事实。
+DatasetCertification 是认证时点的历史事实；它本身不是永久有效的交付授权。ProductRelease 是数据产品发布事实。
+
+Certified Dataset 可以独立成为交付对象，但每一次实际交付都必须通过 CurrentEntitlementGate。
 
 允许：
 
 ~~~text
 Certified DatasetVersion
-→ ProductAsset
-→ ProductVersion
-→ ProductRelease
+├→ CurrentEntitlementGate → standalone delivery
+└→ ProductAsset → ProductVersion → ProductRelease
 ~~~
+
+CurrentEntitlementGate 在实际交付时按“现在”重新检查至少：
+
+- 当前 RightsDeclaration / verification 是否仍有效；
+- Authorization 是否 ACTIVE 且未过期/撤销；
+- consumer / purpose 是否匹配；
+- 本次 delivery action（例如 SHARE / RAW_EXPORT）是否当前仍允许；
+- 衍生数据 Effective Rights 是否仍允许该动作。
+
+任何一项失效都必须 fail closed，交付状态为 BLOCKED，即使历史 DatasetCertification 仍然显示其当时的 CERTIFIED 结论。
+
+第一阶段不要求周期性后台重认证，也不要求给 DatasetCertification 本身增加自动过期状态；“历史认证结论”和“当前可交付资格”必须分开查询和展示。
 
 第一阶段不要求所有 ProductRelease 强制只能使用 Certified DatasetVersion。
 
 ## 10. API / UI
 
-API 提供 DatasetVersion assessments、assessment report、certification profile summary、certification result / blockers。
+API 提供 DatasetVersion assessments、assessment report、certification profile summary、certification result / blockers，以及面向明确 consumer / purpose / action 的 current delivery entitlement 查询。
 
 关键写动作使用显式 Command。
 
-UI 在 DatasetVersion 上展示 Quality 与 Certification，不把 certification status 塞入 DatasetVersion.status。
+UI 在 DatasetVersion 上分别展示：
+
+- 历史 Certification 结果及 issued_at；
+- 当前 Delivery Eligibility：ALLOWED / BLOCKED；
+- 若 BLOCKED，显示当前 rights blocker（例如 AUTHORIZATION_EXPIRED / REVOKED / ACTION_NOT_ALLOWED）。
+
+不得仅凭历史 CERTIFIED 标记显示“当前可交付”，也不把 certification status 塞入 DatasetVersion.status。
 
 ## 11. Evidence
 
@@ -169,7 +188,7 @@ UI 在 DatasetVersion 上展示 Quality 与 Certification，不把 certification
 
 ## 12. 第一阶段非目标
 
-- Certification 有效期/定期复认证
+- Certification 自身的自动有效期/周期性后台复认证（但每次实际交付的 CurrentEntitlementGate 属于第一阶段必需）
 - 通用 override
 - 电子签章
 - PDF 证书
