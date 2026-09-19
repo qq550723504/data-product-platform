@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -21,6 +22,11 @@ type Handler struct {
 	repo         *infrastructure.PostgresRepository
 	evidenceRepo *evidence.QueryRepository
 }
+
+const (
+	defaultAssessmentLimit = 25
+	maxAssessmentLimit     = 100
+)
 
 func NewHandler(service *application.Service, repo *infrastructure.PostgresRepository, evidenceRepos ...*evidence.QueryRepository) *Handler {
 	var evidenceRepo *evidence.QueryRepository
@@ -144,16 +150,50 @@ func (h *Handler) listAssessments(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DATASET_VERSION_ID", "versionId must be a UUID", nil)
 		return
 	}
-	assessments, err := h.repo.ListAssessments(r.Context(), versionID)
+	limit, offset, ok := assessmentPagination(w, r)
+	if !ok {
+		return
+	}
+	page, err := h.repo.ListAssessments(r.Context(), versionID, limit, offset)
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENTS_READ_FAILED", err.Error(), nil)
 		return
 	}
-	items := make([]map[string]any, 0, len(assessments))
-	for _, assessment := range assessments {
+	items := make([]map[string]any, 0, len(page.Items))
+	for _, assessment := range page.Items {
 		items = append(items, resultResponse(assessment))
 	}
-	writeJSON(w, http.StatusOK, map[string]any{"datasetVersionId": versionID, "items": items})
+	writeJSON(w, http.StatusOK, map[string]any{
+		"datasetVersionId": versionID,
+		"items":            items,
+		"page": map[string]int{
+			"limit":  page.Limit,
+			"offset": page.Offset,
+			"total":  page.Total,
+		},
+	})
+}
+
+func assessmentPagination(w http.ResponseWriter, r *http.Request) (int, int, bool) {
+	limit := defaultAssessmentLimit
+	offset := 0
+	if raw := strings.TrimSpace(r.URL.Query().Get("limit")); raw != "" {
+		parsed, err := strconv.Atoi(raw)
+		if err != nil || parsed < 1 || parsed > maxAssessmentLimit {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_LIMIT", "limit must be between 1 and 100", nil)
+			return 0, 0, false
+		}
+		limit = parsed
+	}
+	if raw := strings.TrimSpace(r.URL.Query().Get("offset")); raw != "" {
+		parsed, err := strconv.Atoi(raw)
+		if err != nil || parsed < 0 {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_OFFSET", "offset must be zero or greater", nil)
+			return 0, 0, false
+		}
+		offset = parsed
+	}
+	return limit, offset, true
 }
 
 func (h *Handler) latestAssessment(w http.ResponseWriter, r *http.Request) {

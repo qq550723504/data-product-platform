@@ -126,9 +126,9 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	if err != nil || len(auditEvents) != 1 {
 		t.Fatalf("assessment audit events = %d, err=%v; want one", len(auditEvents), err)
 	}
-	assessments, err := qualityRepo.ListAssessments(ctx, passVersion.ID)
-	if err != nil || len(assessments) != 1 {
-		t.Fatalf("list assessments = %d, err=%v; want one", len(assessments), err)
+	assessmentPage, err := qualityRepo.ListAssessments(ctx, passVersion.ID, 1, 0)
+	if err != nil || len(assessmentPage.Items) != 1 || assessmentPage.Total != 1 {
+		t.Fatalf("list assessments = %d total=%d, err=%v; want one", len(assessmentPage.Items), assessmentPage.Total, err)
 	}
 	latest, err := qualityRepo.LatestAssessment(ctx, passVersion.ID)
 	if err != nil || latest.ID != qualityResult.ID {
@@ -164,9 +164,13 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	if err != nil {
 		t.Fatalf("run second assessment: %v", err)
 	}
-	assessments, err = qualityRepo.ListAssessments(ctx, passVersion.ID)
-	if err != nil || len(assessments) != 2 {
-		t.Fatalf("assessment history = %d, err=%v; want two", len(assessments), err)
+	assessmentPage, err = qualityRepo.ListAssessments(ctx, passVersion.ID, 1, 0)
+	if err != nil || len(assessmentPage.Items) != 1 || assessmentPage.Total != 2 {
+		t.Fatalf("assessment history page = %d total=%d, err=%v; want total two", len(assessmentPage.Items), assessmentPage.Total, err)
+	}
+	secondPage, err := qualityRepo.ListAssessments(ctx, passVersion.ID, 1, 1)
+	if err != nil || len(secondPage.Items) != 1 || secondPage.Total != 2 {
+		t.Fatalf("assessment second page = %d total=%d, err=%v; want one of two", len(secondPage.Items), secondPage.Total, err)
 	}
 	latest, err = qualityRepo.LatestAssessment(ctx, passVersion.ID)
 	if err != nil || latest.ID != secondAssessment.ID {

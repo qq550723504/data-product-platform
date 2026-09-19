@@ -34,6 +34,13 @@ type AuditEvent struct {
 	OccurredAt  time.Time  `json:"occurredAt"`
 }
 
+type AssessmentPage struct {
+	Items  []domain.Assessment
+	Limit  int
+	Offset int
+	Total  int
+}
+
 func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 	return &PostgresRepository{pool: pool}
 }
@@ -127,44 +134,63 @@ func (r *PostgresRepository) GetAssessment(ctx context.Context, assessmentID uui
 	return result, rows.Err()
 }
 
-func (r *PostgresRepository) ListAssessments(ctx context.Context, datasetVersionID uuid.UUID) ([]domain.Assessment, error) {
+func (r *PostgresRepository) ListAssessments(ctx context.Context, datasetVersionID uuid.UUID, limit, offset int) (AssessmentPage, error) {
+	if limit <= 0 {
+		limit = 25
+	}
+	if limit > 100 {
+		return AssessmentPage{}, fmt.Errorf("assessment limit must be between 1 and 100")
+	}
+	if offset < 0 {
+		return AssessmentPage{}, fmt.Errorf("assessment offset must be zero or greater")
+	}
 	rows, err := r.pool.Query(ctx, `
 		SELECT id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
 		       COALESCE(rule_set_content_sha256,''), COALESCE(rule_set_content,''),
 		       COALESCE(evaluator_name,''), COALESCE(evaluator_version,''),
-		       gate_decision, metrics, created_at, created_by
+		       gate_decision, metrics, created_at, created_by,
+		       count(*) OVER() AS total
 		FROM quality_result
 		WHERE dataset_version_id=$1
 		ORDER BY created_at DESC, id DESC
-	`, datasetVersionID)
+		LIMIT $2 OFFSET $3
+	`, datasetVersionID, limit, offset)
 	if err != nil {
-		return nil, fmt.Errorf("list quality assessments: %w", err)
+		return AssessmentPage{}, fmt.Errorf("list quality assessments: %w", err)
 	}
 	results := make([]domain.Assessment, 0)
+	total := 0
 	for rows.Next() {
 		var result domain.Assessment
 		var metrics []byte
+		var rowTotal int
 		if err := rows.Scan(&result.ID, &result.WorkspaceID, &result.DatasetVersionID, &result.RuleSetRef,
 			&result.RuleSetVersion, &result.RuleSetContentSHA256, &result.RuleSetContent,
 			&result.EvaluatorName, &result.EvaluatorVersion, &result.GateDecision, &metrics,
-			&result.CreatedAt, &result.CreatedBy); err != nil {
-			return nil, fmt.Errorf("scan quality assessment: %w", err)
+			&result.CreatedAt, &result.CreatedBy, &rowTotal); err != nil {
+			return AssessmentPage{}, fmt.Errorf("scan quality assessment: %w", err)
 		}
 		if err := json.Unmarshal(metrics, &result.Metrics); err != nil {
-			return nil, fmt.Errorf("decode quality assessment metrics: %w", err)
+			return AssessmentPage{}, fmt.Errorf("decode quality assessment metrics: %w", err)
 		}
+		total = rowTotal
 		results = append(results, result)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate quality assessments: %w", err)
+		return AssessmentPage{}, fmt.Errorf("iterate quality assessments: %w", err)
 	}
 	rows.Close()
-	for i := range results {
-		if err := r.loadFindings(ctx, &results[i]); err != nil {
-			return nil, err
+	if len(results) == 0 {
+		if err := r.pool.QueryRow(ctx, `
+			SELECT count(*) FROM quality_result WHERE dataset_version_id=$1
+		`, datasetVersionID).Scan(&total); err != nil {
+			return AssessmentPage{}, fmt.Errorf("count quality assessments: %w", err)
 		}
 	}
-	return results, nil
+	if err := r.loadFindingsBatch(ctx, results); err != nil {
+		return AssessmentPage{}, err
+	}
+	return AssessmentPage{Items: results, Limit: limit, Offset: offset, Total: total}, nil
 }
 
 func (r *PostgresRepository) LatestAssessment(ctx context.Context, datasetVersionID uuid.UUID) (domain.Assessment, error) {
@@ -251,4 +277,46 @@ func (r *PostgresRepository) loadFindings(ctx context.Context, result *domain.As
 		result.Findings = append(result.Findings, finding)
 	}
 	return rows.Err()
+}
+
+func (r *PostgresRepository) loadFindingsBatch(ctx context.Context, results []domain.Assessment) error {
+	if len(results) == 0 {
+		return nil
+	}
+	ids := make([]uuid.UUID, 0, len(results))
+	byResult := make(map[uuid.UUID][]domain.Finding, len(results))
+	for _, result := range results {
+		ids = append(ids, result.ID)
+		byResult[result.ID] = nil
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT id, result_id, rule_id, COALESCE(dimension,''), severity, status,
+		       observed, COALESCE(message,''), created_at
+		FROM quality_finding
+		WHERE result_id = ANY($1::uuid[])
+		ORDER BY result_id, created_at, rule_id
+	`, ids)
+	if err != nil {
+		return fmt.Errorf("list quality assessment findings: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var finding domain.Finding
+		var observed []byte
+		if err := rows.Scan(&finding.ID, &finding.ResultID, &finding.RuleID, &finding.Dimension,
+			&finding.Severity, &finding.Status, &observed, &finding.Message, &finding.CreatedAt); err != nil {
+			return fmt.Errorf("scan quality assessment finding: %w", err)
+		}
+		if err := json.Unmarshal(observed, &finding.Observed); err != nil {
+			return fmt.Errorf("decode quality assessment finding observation: %w", err)
+		}
+		byResult[finding.ResultID] = append(byResult[finding.ResultID], finding)
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("iterate quality assessment findings: %w", err)
+	}
+	for i := range results {
+		results[i].Findings = byResult[results[i].ID]
+	}
+	return nil
 }
