@@ -138,7 +138,7 @@ V2 不继承 V1 认证。
 
 DatasetCertification 是认证时点的历史事实；它本身不是永久有效的交付授权。ProductRelease 是数据产品发布事实。
 
-Certified Dataset 可以独立成为交付对象，但每一次实际交付都必须通过 CurrentEntitlementGate。
+Certified Dataset 可以独立成为交付对象，但每一次实际交付都必须通过完整 CurrentDeliveryGate，而不是只检查 Rights。
 
 允许：
 
