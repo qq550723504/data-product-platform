@@ -517,6 +517,19 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 	if orphanAliasEvidenceCount != 0 {
 		t.Fatalf("alias evidence rows reference missing mappings: %d", orphanAliasEvidenceCount)
 	}
+	var zeroAliasCreatedAtCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM entity_mapping
+		WHERE workspace_id=$1
+		  AND source_key IN ('LEASE-ORDER-A','LEASE-ORDER-B')
+		  AND created_at <= '2000-01-01'::timestamptz
+	`, workspaceID).Scan(&zeroAliasCreatedAtCount); err != nil {
+		t.Fatalf("check alias mapping creation time: %v", err)
+	}
+	if zeroAliasCreatedAtCount != 0 {
+		t.Fatalf("alias mappings with invalid creation time: %d", zeroAliasCreatedAtCount)
+	}
 
 	// The same source reference can appear in both input sets. The global
 	// source order must cover both sets, otherwise lease(A)/energy(B) can still

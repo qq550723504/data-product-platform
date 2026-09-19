@@ -203,6 +203,10 @@ func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.
 
 	if facts.TargetDatasetVersionID != nil {
 		if facts.ProductionExecutionPresent {
+			// A DatasetVersion that claims a producing Execution always requires
+			// an explicit dependency proof. Missing or legacy proof is a visible
+			// readiness gap, never an implicit pass.
+			facts.ProductionDependencyBindingRequired = true
 			var executionID uuid.UUID
 			var executionStatus string
 			var executionOutputVersionID *uuid.UUID
@@ -233,12 +237,15 @@ func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.
 						  AND p.workspace_id=$2
 					)
 					SELECT
-						EXISTS(SELECT 1 FROM required_resolution),
 						EXISTS(
 							SELECT 1
 							FROM preparation p
 							WHERE p.status='PREPARED'
-							  AND p.mapping_usage_count > 0
+							  AND EXISTS(
+								  SELECT 1 FROM required_resolution
+							  )
+							  AND (SELECT count(*) FROM execution_inputs
+							       WHERE input_name IN ('enterprise_raw','lease_raw','energy_raw')) = 3
 							  AND (SELECT count(*) FROM execution_dependency_binding b
 							       WHERE b.execution_id=$1 AND b.workspace_id=$2) = 3
 							  AND (SELECT count(*) FROM execution_dependency_binding b
@@ -274,16 +281,8 @@ func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.
 								      OR d.id IS NULL
 								      OR e.id IS NULL)
 							  )
-							  AND NOT EXISTS(
-								  SELECT 1
-								  FROM (VALUES ('enterprise_raw'), ('lease_raw'), ('energy_raw')) required(input_name)
-								  WHERE NOT EXISTS(
-									  SELECT 1 FROM execution_mapping_usage u
-									  WHERE u.execution_id=$1 AND u.workspace_id=$2 AND u.input_name=required.input_name
-								  )
-							  )
-						)
-			`, executionID, product.WorkspaceID).Scan(&facts.ProductionDependencyBindingRequired, &facts.ProductionDependencyBindingComplete); err != nil {
+							)
+			`, executionID, product.WorkspaceID).Scan(&facts.ProductionDependencyBindingComplete); err != nil {
 				return ReadinessFacts{}, fmt.Errorf("read production dependency readiness: %w", err)
 			}
 		}

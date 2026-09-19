@@ -10,6 +10,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -268,7 +269,7 @@ func (e *Engine) prepareDependencies(ctx context.Context, request workflowapp.Pr
 }
 
 func (e *Engine) restorePreparedDependencies(preparation workflowdomain.DependencyPreparation, resolutionVersionID uuid.UUID) (preparedNativeDependencies, error) {
-	if preparation.Status != "PREPARED" || len(preparation.Dependencies) != 3 || len(preparation.MappingUsages) == 0 || preparation.MappingUsageCount != len(preparation.MappingUsages) {
+	if preparation.Status != "PREPARED" || len(preparation.Dependencies) != 3 || preparation.MappingUsageCount != len(preparation.MappingUsages) {
 		return preparedNativeDependencies{}, fmt.Errorf("execution dependency preparation is incomplete")
 	}
 	mappings := make(map[mappingUsageKey]entitydomain.MappingDecision, len(preparation.MappingUsages))
@@ -364,7 +365,7 @@ func (e *Engine) prepareSourceDecision(ctx context.Context, tx pgx.Tx, request w
 			ID: uuid.New(), WorkspaceID: request.WorkspaceID, EntityID: entityID, SourceType: "CSV",
 			SourceRef: sourceRef, SourceKey: sourceKey, SourceName: strings.TrimSpace(companyName),
 			MatchMethod: method, MatchRuleID: "WORKFLOW-CANONICAL-ALIAS", MatchPolicyVersion: policy.Metadata.Version,
-			Confidence: confidence, Status: entitydomain.MappingAutoMatched,
+			Confidence: confidence, Status: entitydomain.MappingAutoMatched, CreatedAt: time.Now().UTC(),
 		}
 		aliasEvidence, err := evidence.Append(ctx, tx, evidence.Record{
 			WorkspaceID:  request.WorkspaceID,

@@ -32,8 +32,6 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 	productVersionID := uuid.New()
 	datasetID := uuid.New()
 	datasetVersionID := uuid.New()
-	workflowID := uuid.New()
-	workflowVersionID := uuid.New()
 	contractID := uuid.New()
 	contractVersionID := uuid.New()
 	authorizationID := uuid.New()
@@ -41,38 +39,18 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 	qualityResultID := uuid.New()
 	complianceResultID := uuid.New()
 	releaseID := uuid.New()
-	executionID := uuid.New()
-
-	mustExec(t, ctx, pool, `
-		INSERT INTO workflow (id, workspace_id, code, name)
-		VALUES ($1,$2,$3,'Publish integration workflow')
-	`, workflowID, workspaceID, "PUBLISH-WORKFLOW-"+uuid.NewString())
-	mustExec(t, ctx, pool, `
-		INSERT INTO workflow_version (id, workflow_id, version, definition_ref, definition_sha256, definition)
-		VALUES ($1,$2,'1.0.0','publish/integration',
-		        'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd','{}'::jsonb)
-	`, workflowVersionID, workflowID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO dataset (id, workspace_id, code, name, dataset_type, lifecycle_status, metadata, created_at, updated_at)
 		VALUES ($1,$2,$3,'Enterprise Activity','CURATED','ACTIVE','{}'::jsonb,now(),now())
 	`, datasetID, workspaceID, "PUBLISH-DATASET-"+uuid.NewString())
 	mustExec(t, ctx, pool, `
-		INSERT INTO execution (
-			id, workspace_id, workflow_version_id, output_dataset_id, target_period,
-			status, attempt, engine_type, metrics, created_at, started_at, finished_at
-		) VALUES ($1,$2,$3,$4,'2026-09','SUCCEEDED',1,'NATIVE','{}'::jsonb,now(),now(),now())
-	`, executionID, workspaceID, workflowVersionID, datasetID)
-	mustExec(t, ctx, pool, `
 		INSERT INTO dataset_version (
 			id, dataset_id, version_no, status, storage_type, storage_uri, content_type,
 			checksum_algorithm, checksum_value, generated_by_execution_id, metadata, created_at, ready_at
 		) VALUES ($1,$2,1,'READY','OBJECT_STORAGE','s3://test-bucket/enterprise-activity.csv','text/csv',
-		          'SHA256','aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',$3,
+		          'SHA256','aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',NULL,
 		          '{"workflowVersion":"1.0.0","indicatorSet":"park-enterprise-activity@1.0.0","entityPolicyVersion":"1.0.0"}'::jsonb,now(),now())
-	`, datasetVersionID, datasetID, executionID)
-	mustExec(t, ctx, pool, `
-		UPDATE execution SET output_dataset_version_id=$2 WHERE id=$1
-	`, executionID, datasetVersionID)
+	`, datasetVersionID, datasetID)
 
 	mustExec(t, ctx, pool, `
 		INSERT INTO data_contract (id, workspace_id, code, name, product_code)
