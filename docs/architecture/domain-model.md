@@ -1,176 +1,264 @@
-# 核心领域模型 V1.0
+# 核心领域模型 V1.1
+
+> V1.1 增加 Certified Dataset 与 Data Rights Provenance 目标模型。标注 #131/#134/#137 的对象在对应 Issue 实现前属于已批准的目标模型，而非声称当前全部已落库。
 
 ## 1. 主业务链
 
-```text
+~~~text
 Workspace
   ↓
-Project
+Project / UseCase
   ↓
-UseCase
-  ↓
-ProductOpportunity
-  │
-  ├── Rights
-  │
-  └── DataResource
+DataResource
+  ├── RightsDeclaration (#137)
+  └── Authorization
           ↓
         Dataset
           ↓
     DatasetVersion
-          ↓
-   Entity / Workflow
-          ↓
-      Execution
-          ↓
-     DataContract
-          ↓
-     DataProduct
-          ↓
-   ProductVersion
-          ↓
-   ProductRelease
-```
+          │
+          ├── Entity Resolution
+          ├── Workflow / Execution
+          ├── Lineage
+          ├── QualityAssessment (#131)
+          ├── Compliance
+          ├── EffectiveRights (#137)
+          └── DatasetCertification (#134)
+                    ↓
+             Certified DatasetVersion
+                    │
+                    ├── DataProduct / ProductRelease
+                    ├── Trusted Data Offering
+                    └── AI Dataset（后续）
+~~~
 
-横向能力：`Quality · Compliance · Cost · Evidence · Audit`。
+横向能力：Cost · Evidence · Audit · Version · Rights · Quality。
 
 ## 2. 重要区分
 
 ### DataResource
 
-回答"有什么业务数据资源"。不等于 Table。
+回答“业务数据资源是什么、由谁提供/管理、权利来源是什么”。
+
+DataResource 不等于物理 Table。
+
+owner_id 表示平台资产责任/归属，不自动等于法律 RIGHTS_HOLDER。
 
 ### Dataset
 
-回答"平台中的逻辑数据集是什么"。
+平台中的逻辑数据集身份。
 
 ### DatasetVersion
 
-回答"某一次生产真实产生的是哪批不可变数据"。
+某一次生产真实产生的不可变数据事实。
 
-### DataProduct
+READY 只表示内容已冻结，不表示 Quality 或 Certification 通过。
 
-稳定的产品身份。
+### QualityAssessment
 
-### ProductVersion
+针对一个明确 DatasetVersion 和明确规则快照的不可变质量评测事实。
 
-稳定的产品规格版本，绑定 Contract / Workflow / Indicator / Policy 等产品定义。
+### DatasetCertification
 
-### ProductRelease
+针对一个明确 DatasetVersion 和 CertificationProfile 的不可变认证结果。
 
-某次实际发布快照，绑定具体 DatasetVersion、Rights、Quality、Compliance、Evidence。
+### DataProduct / ProductRelease
+
+DataProduct 是稳定产品身份；ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定；进入 PUBLISHED 后，发布绑定冻结，历史记录保留，后续仅允许受控的 SUSPENDED/WITHDRAWN 等生命周期迁移。
+
+Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 必须通过 CurrentDeliveryGate：校验 DatasetVersion 当前可用性、当前有效的 CERTIFIED DatasetCertification，以及当前 consumer / purpose / action 的 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
 
 ## 3. 实体模型
 
-```text
+~~~text
 EntityType
    ↓
 Canonical Entity
    ↓
-EntityMapping
-```
+EntityMapping projection
+   ↓
+EntityMappingDecision history
+~~~
 
-Core 不写死 COMPANY。
+EntityMapping 当前投影可以变化；生产与 Release trace 应绑定实际使用的 immutable decision。
 
-Park Industry Pack 可提供：
+## 4. 数据权利模型
 
-- COMPANY
-- PARK
-- BUILDING
-- METER
-- EQUIPMENT
+### 4.1 平台归属与法律权利分离
 
-EntityMapping 必须记录：
+~~~text
+Platform owner / steward
+≠
+Legal rights proof
+~~~
 
-- source reference
-- source key
-- match method
-- confidence
-- policy version
-- review decision
-- evidence
+### 4.2 目标权利链
 
-## 4. 权利模型
-
-```text
+~~~text
+Party / PartyRef
+      ↓
+RightsDeclaration
+      ↓
+RightsVerification / RightsDisposition
+      ↓
 Authorization
-├── Resource
-├── Purpose
-├── Action
-├── Scope
-├── Consumer
-├── Validity
-└── Evidence
-```
+      ↓
+RightsSnapshot
+      ↓
+EffectiveRights
+~~~
 
-Rights 判断的语义不是"谁拥有数据"，而是：
+角色语义至少区分：
 
-```text
-Subject + Resource + Purpose + Action + Context → Decision
-```
+- PROVIDER
+- RIGHTS_HOLDER
+- CUSTODIAN
+- CONTROLLER
+- PROCESSOR
+- AUTHORIZED_USER
 
-## 5. 工作流模型
+第一阶段允许使用稳定 party_ref，不要求先建设完整组织主数据平台。
 
-```text
+### 4.3 RightsDeclaration
+
+回答：
+
+- 谁声明有什么权利？
+- 针对哪个 DataResource？
+- 依据是什么？
+- 允许哪些动作？
+- 有哪些限制？
+- 有哪些 Evidence？
+- 是否已经 VERIFIED？
+
+### 4.4 RightsDisposition
+
+VERIFIED RightsDeclaration 的历史不可改写，但当前有效性可以通过 append-only disposition 事实退出 current set：
+
+- INVALIDATED
+- SUPERSEDED（显式指向 replacement declaration）
+
+Current rights selection 必须根据 as_of 和 disposition 判断，不能用 created_at/latest 猜测。
+
+### 4.5 Authorization
+
+回答：
+
+~~~text
+Grantor + Grantee + Resource + Purpose + Action + Scope + Validity → Decision
+~~~
+
+Authorization 不是所有权证明；Grantor 的授权资格应能追溯至 Rights Provenance。
+
+### 4.6 EffectiveRights
+
+衍生 DatasetVersion 的有效权利由输入资源权利、授权、Purpose 和生产 lineage 共同决定。
+
+V1 默认 fail closed。
+
+## 5. Quality 模型
+
+~~~text
+QualityRuleSet
+      ↓
+QualityAssessment
+      ├── DimensionSummary
+      └── Findings
+~~~
+
+V1 维度：
+
+- Completeness
+- Accuracy
+- Consistency
+- Uniqueness
+- Timeliness
+- Traceability
+
+QualityAssessment 保存规则版本及内容 hash/snapshot。规则当前文件变化不能改变历史 Assessment。
+
+## 6. Certification 模型
+
+~~~text
+CertificationProfile
+      ↓
+DatasetCertification
+      ↓
+CertificationDisposition (optional: REVOKED / SUPERSEDED)
+      ↓
+Certified DatasetVersion / current certification eligibility
+~~~
+
+CertificationProfile 定义 purpose、quality、rights、compliance、contract、traceability/evidence 等要求。
+
+DatasetCertification 绑定实际使用的 Profile snapshot/hash 和所有认证证据。CertificationDisposition 是 append-only 历史事实，用于让错误或被替代的认证退出 current set；current certification 不能通过 latest timestamp 推断。
+
+## 7. 工作流模型
+
+~~~text
 Workflow
   ↓
 WorkflowVersion
   ↓
-TaskDefinition
-  ↓
-WorkflowRun
-  ↓
-TaskRun / Execution
-```
-
-Task 类型可包括：
-
-- DATA_INPUT / DATA_OUTPUT
-- TRANSFORM / SQL / PYTHON
-- ENTITY_RESOLUTION
-- INDICATOR
-- RIGHTS_CHECK
-- QUALITY_CHECK
-- COMPLIANCE_CHECK
-- HUMAN_REVIEW
-- APPROVAL
-- EXTERNAL
+Execution
+  ├── immutable inputs
+  ├── frozen dependency bindings
+  ├── mapping usages
+  └── output DatasetVersion
+~~~
 
 业务 Workflow 不等于 Apache Hop Workflow。
 
-## 6. 产品模型
+## 8. 产品模型
 
-```text
+~~~text
 DataProduct
   ↓
 ProductVersion
   ├── ProductAsset(DATASET/API/REPORT/...)
   ↓
 ProductRelease
-```
+~~~
 
-Product Release 必须经过统一 ReleaseReadiness。
+ProductRelease 必须经过 ReleaseReadiness。
 
-## 7. 证据模型
+ProductRelease 和 DatasetCertification 是不同事实：
 
-```text
-Claim / Business Object
+- Certification：DatasetVersion 是否满足某标准/用途；
+- Release：DataProduct 版本是否满足发布条件并实际发布。
+
+## 9. 证据模型
+
+~~~text
+Business Fact / Claim
           ↓
       Evidence
           ↓
  EvidenceRelation
-```
+          ↓
+ EvidenceSnapshot（需要冻结时）
+~~~
 
-Evidence 用于证明事实；AuditEvent 用于记录"谁做了什么"。两者不能混用。
+Evidence 用于证明事实；AuditEvent 用于记录“谁做了什么”。两者不能混用。
 
-## 8. 版本原则
+Rights verification、QualityAssessment、DatasetCertification 都应将 Evidence 纳入业务边界。
 
-下列对象使用独立版本，不使用 `updated_at` 代替版本管理：
+## 10. 版本与不可变原则
+
+独立版本/不可变历史至少包括：
 
 - DatasetVersion
+- EntityMappingDecision
 - WorkflowVersion
+- execution dependency facts
 - ContractVersion
 - ProductVersion
-- PolicyVersion（逐步实现）
+- ProductRelease published bindings / published release history
+- EvidenceSnapshot
+- RightsSnapshot
+- QualityAssessment（#131）
+- verified RightsDeclaration / verification / disposition facts（#137）
+- CertificationProfile snapshot（#134）
+- DatasetCertification / CertificationDisposition（#134）
 
-Release 形成 EvidenceSnapshot，冻结发布时的事实。
+错误通过追加新事实修正，不覆盖历史。

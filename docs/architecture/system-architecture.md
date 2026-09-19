@@ -1,23 +1,22 @@
-# 系统架构 V1.0
+# 系统架构 V1.1
 
 ## 1. 架构风格
 
-POC 采用 **模块化单体 + 引擎适配器 + 事务性 Outbox**。
+当前采用模块化单体 + 引擎适配器 + 事务性 Outbox。
 
-```text
+~~~text
 Web / Next.js
       │
       ▼
 platform-api (Go)
       │
       ├── Core Modules
-      │   ├── usecase
-      │   ├── resource
-      │   ├── dataset
+      │   ├── resource / dataset
       │   ├── entity
       │   ├── workflow
       │   ├── rights
       │   ├── quality
+      │   ├── certification   (#134 起)
       │   ├── compliance
       │   ├── contract
       │   ├── product
@@ -26,142 +25,146 @@ platform-api (Go)
       │
       ├── PostgreSQL
       ├── Redis
-      └── MinIO/S3
+      └── Object Storage
 
 platform-worker (Go)
       │
-      ├── Outbox handlers
-      ├── Workflow orchestration
-      ├── Engine reconciliation
-      └── Maintenance jobs
+      ├── Outbox dispatcher / handlers
+      ├── Workflow execution
+      ├── Maintenance / reconciliation
+      └── Projection jobs
 
 Engine Adapter Layer
       ├── MetadataEngine → OpenMetadata
       ├── ProcessingEngine → Native/Python/Hop
       ├── EntityResolutionEngine → Rules/Splink
-      ├── QualityEngine → Native/Soda/GX
-      └── ComplianceEngine → Rules/Presidio
-```
+      ├── QualityEngine → Native / future Soda/GX
+      ├── ComplianceEngine → Rules / future Presidio
+      └── AnnotationEngine → future Label Studio/X-AnyLabeling
+~~~
 
-## 2. 核心 / 引擎边界
+## 2. Core Platform 业务真相
 
-Core Platform 管理业务真相：
+Core 保存：
 
-- DatasetVersion
-- EntityMapping
-- Authorization
-- WorkflowRun / Execution
-- Quality / Compliance decision
-- DataContract
+- DataResource / DatasetVersion
+- RightsDeclaration / verification / disposition / Authorization / RightsSnapshot / Effective Rights
+- EntityMappingDecision
+- Workflow / Execution / frozen execution dependencies
+- QualityAssessment
+- Contract / Compliance
+- DatasetCertification
 - ProductVersion / ProductRelease
 - Cost / Evidence / Audit
 
-Engine 只提供执行能力。
+其中 #131/#134/#137 对应对象在各 Issue 合入前属于目标模型。
 
-外部 Engine 状态不得直接替代 Core 状态。例如：
-
-- `execution.id` 是平台业务 ID；
-- `engine_execution_id` 是 Hop/Python/Spark 外部引用。
+外部 Engine 只提供执行能力，不拥有上述核心业务状态。
 
 ## 3. 控制面 / 数据面
 
-### 控制面（Control Plane）
+### 控制面
 
-PostgreSQL 保存：
+PostgreSQL 保存业务元数据、不可变版本和证明：
 
-- UseCase
-- DataResource metadata
-- Dataset metadata / versions
-- Entity / Mapping
-- Rights
-- Workflow definition / execution metadata
-- Contract
+- Resource / Dataset metadata
+- DatasetVersion / lineage
+- Entity decisions
+- Rights provenance / authorization / snapshots
+- Workflow / Execution
+- Quality assessments
+- Certification
 - Product / Release
-- Cost / Evidence metadata
+- Cost / Evidence
 
-### 数据面（Data Plane）
+### 数据面
 
-真实数据放在：
+真实大规模数据放在：
 
 - Object Storage
 - PostgreSQL / Doris / warehouse
 - 其他外部数据系统
 
-平台核心数据库不用于承载大规模 Dataset 内容。
+核心控制数据库不承载大规模 Dataset 内容。
 
-## 4. 治理投影
+## 4. Certified Dataset 生产链
 
-OpenMetadata 作为治理投影（Governance Projection）：
+~~~text
+DataResource
+  ↓
+Rights Provenance
+  ↓
+DatasetVersion
+  ↓
+Entity Resolution / Processing
+  ↓
+QualityAssessment
+  ↓
+Effective Rights / Compliance / Contract
+  ↓
+DatasetCertification
+  ↓
+Certified DatasetVersion
+~~~
 
-```text
-Core Platform
-    │
-    ├── ResourceBinding
-    └── ProductReleased event
-             ↓
-       Metadata Adapter
-             ↓
-       OpenMetadata
-```
+Certified Dataset 可以作为独立交付对象，也可以继续进入 Data Product / ProductRelease；独立交付必须先经过 CurrentDeliveryGate：检查 DatasetVersion 当前可用性、CurrentCertificationGate（明确且未 REVOKED/SUPERSEDED 的 CERTIFIED 事实），再通过 CurrentEntitlementGate 重新校验当前 Rights provenance / Authorization / Effective Rights。
 
-OpenMetadata 负责：
+## 5. Governance Projection
 
-- 技术元数据（Technical Metadata）
-- 技术血缘（Technical Lineage）
-- 域 / 术语表 / 分类（Domain / Glossary / Classification）
-- 数据产品的治理视图
-
-它不拥有：
+OpenMetadata 是治理投影，不拥有：
 
 - Rights
 - DatasetVersion
-- Production Workflow
+- production execution facts
+- QualityAssessment
+- DatasetCertification
 - Cost
 - Evidence
 - ProductRelease
 
-## 5. 事件模型
+Projection 故障不得改变 Core 业务真相。
 
-关键状态变化产生 Domain Event，通过 Transactional Outbox 异步处理副作用。
+## 6. 事件模型
 
-示例：
+关键业务动作在数据库事务内写业务事实、Audit/Evidence 和 Outbox。
 
-```text
-PublishProductReleaseCommand
-        ↓
-DB Transaction
-  ├── Release = PUBLISHED
-  └── outbox(ProductReleased)
-        ↓
-Worker
-  ├── OpenMetadata projection
-  ├── Evidence finalize
-  ├── Search/index
-  └── Notification
-```
+外部副作用在事务提交后通过 dispatcher 执行。
 
-外部系统故障不得破坏核心发布事务。
+新事件类型必须进入统一 routing 表，并显式声明 required handlers 或 retention-only。
 
-## 6. Worker 职责
+## 7. Worker 职责
 
-- Outbox 消费
-- Workflow 任务调度
-- Engine 轮询 / 对账（reconciliation）
+- Outbox dispatcher / handler
+- Workflow 任务处理
+- Engine 对账/维护任务（按已实施范围）
 - 授权过期处理
-- 证据生成
-- 成本聚合
-- 元数据投影重试
+- 元数据投影
+- 后续可加入周期性质量/认证维护，但不属于当前 MVP 前置
 
-## 7. 行业包
+## 8. Industry Pack
 
-行业 Pack 只提供：
+Industry Pack 提供：
 
-- Entity Type
+- Entity Types
 - Glossary
-- 标准化规则
-- 实体匹配策略
-- 指标（Indicators）
-- 质量 / 合规规则
-- 产品模板
+- Standardization Rules
+- Matching Policies
+- Indicators
+- Quality Rules
+- Compliance Rules
+- Certification Profiles
+- Product Templates
 
-禁止行业逻辑污染核心领域。
+Core 不允许出现 PARK 等行业专属分支。
+
+## 9. 当前阶段边界
+
+当前是 #129 Certified Dataset 受控试点。
+
+第一阶段优先验证业务闭环，不以以下事项作为前置：
+
+- T4/T5/T6 全部可靠性实现
+- 完整 IAM / 灾备 / 性能平台
+- 微服务拆分
+- Label Studio / X-AnyLabeling 第二阶段
+- 数据市场 / Billing
