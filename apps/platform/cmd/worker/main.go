@@ -20,7 +20,9 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
@@ -41,6 +43,16 @@ func main() {
 		logger.Error("load configuration", "error", err)
 		os.Exit(1)
 	}
+
+	// The worker also emits execution transition events. Freeze their obligation
+	// under the same deployment profile the dispatcher uses, so the worker never
+	// records an event it cannot route, and an undeclared event type fails loudly.
+	obligationRouter, err := routing.NewRouter(cfg.OpenMetadata.Enabled)
+	if err != nil {
+		logger.Error("build outbox routing table", "error", err)
+		os.Exit(1)
+	}
+	outbox.ConfigureAppendObligation(obligationRouter)
 
 	db, err := database.Open(ctx, cfg.PostgresDSN)
 	if err != nil {

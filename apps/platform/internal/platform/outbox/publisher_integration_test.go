@@ -442,14 +442,21 @@ func TestRunSurvivesHandlerFailureAndDispatchesFollowingEvents(t *testing.T) {
 	runErr := make(chan error, 1)
 	go func() { runErr <- publisher.Run(ctx, handler) }()
 
+	// A handler failure must not stop the loop: the healthy event still gets
+	// dispatched.
 	select {
 	case <-done:
 	case <-time.After(10 * time.Second):
 		t.Fatal("publisher never dispatched the healthy event")
 	}
-	// Let the run loop finish the terminal write before stopping it; cancelling
-	// mid-completion legitimately leaves the event PROCESSING for lease takeover.
-	goodRow := waitForStatus(t, pool, good, statusPublished, 5*time.Second)
+	// Wait for both terminal outcomes before stopping the loop. Cancelling as
+	// soon as the healthy event is published raced the poison event's final
+	// failure: the loop is only required to dead-letter it after its second
+	// attempt, which may fall on a later poll tick. These are bounded waits for
+	// a persisted terminal state, not fixed sleeps.
+	poisonRow := waitForStatus(t, pool, poison, statusDeadLetter, 10*time.Second)
+	goodRow := waitForStatus(t, pool, good, statusPublished, 10*time.Second)
+
 	cancel()
 	select {
 	case err := <-runErr:
@@ -460,7 +467,6 @@ func TestRunSurvivesHandlerFailureAndDispatchesFollowingEvents(t *testing.T) {
 		t.Fatal("Run did not stop after context cancellation")
 	}
 
-	poisonRow := loadEventRow(t, context.Background(), pool, poison)
 	if poisonRow.status != statusDeadLetter {
 		t.Fatalf("poison status = %s, want DEAD_LETTER", poisonRow.status)
 	}

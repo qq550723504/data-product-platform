@@ -6,6 +6,8 @@
   事件版本兼容）已落地并通过回归测试。
   「统一 dispatcher + 版本化路由表 + 每处理器确认」（issue #103）已落地，即 §7.1 选定的模型 A，
   是 C1-d 的**前置**：`worker` 不再直连「publisher + 单闭包 handler」。
+  处理义务已在写入/首次领取时**冻结到事件上**（`000016_outbox_event_routing_obligation`），
+  重启换部署剖面不会回溯改变旧事件的原义务。
   C1-c（请求幂等）与 C1-d（Execution 入队经 Outbox）**仍为设计，尚未实现**；
   本轮只为 C1-d 预留路由占位（`ExecutionQueued` / `ExecutionRetried` 目前是显式仅保留），
   未改动 Execution 的输入/输出语义。
@@ -290,8 +292,20 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
 6. **未声明事件类型**：不调用任何处理器，进入可诊断 `FAILED`（never silently completed）。
 7. **显式仅保留**：`RequiredHandlers` 为空的事件无处理器也能 `PUBLISHED`，且不写确认行。
 8. **缺失处理器拒绝启动**：`NewDispatcher` 对未注册的必需处理器返回显式错误。
-9. **路由表词汇完整**：`cmd/worker/routing_test.go` 断言事件词汇表与路由表一一对应，
+9. **路由表词汇完整**：`internal/platform/routing/routing_test.go` 断言事件词汇表与路由表一一对应，
    且 OpenMetadata 开关只改变 `ProductReleased` 是否要求 `metadata-projection`，不隐式完成。
+10. **义务在事件上冻结，跨部署剖面不变**：governance 剖面首次领取 `ProductReleased` 后处理失败，
+    义务（`routing_version=c1-v1+governance`、`required_handlers=[metadata-projection]`）写入事件；
+    以 governance 关闭的剖面重启后再处理同一旧事件，它**不会**被重新解释成仅保留，也**不会**被
+    置 `PUBLISHED`，而是因为缺少 `metadata-projection` 处理器显式失败；义务前后完全一致
+    （`TestDispatcherHonoursFrozenObligationAcrossRoutingProfiles`）。
+11. **写入期冻结，先于任何派发**：通过 `outbox.Append` 记录事件时即按部署剖面冻结义务；
+    并发的“较小处理器集合”实例即使先领取，也无法按较少处理器提前完成事件，只能显式失败
+    （`TestAppendFreezesObligationBeforeAnyDispatch`）。
+12. **仅保留是显式的空集合**：retention-only 义务冻结为 `routing_version<>''` + 非 nil 空数组，
+    与“尚未冻结”（NULL）保持可区分（`TestAppendFreezesRetentionOnlyObligation`）。
+13. **未声明事件类型拒绝写入**：配置了路由表时，`outbox.Append` 对未声明类型返回显式错误
+    （`TestAppendRejectsUndeclaredEventType`）。
 
 ### 5.3 Handler 幂等契约
 
@@ -320,15 +334,15 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
 | --- | --- | --- |
 | C1-a | 事件版本列 + `claim_token` + `DEAD_LETTER` + 每消费者确认表 + 新索引（`000015_outbox_delivery_hardening`） | **已实现** |
 | C1-b | publisher：claim token 守卫、退避/最大尝试/死信、瞬时错误容错、稳定排序、事件版本兼容 + 派发契约测试 | **已实现** |
-| 扇出前置 | 统一 dispatcher + 版本化路由表 + 每处理器确认（模型 A，issue #103）；不改 Execution 输入/输出语义，不新增迁移 | **已实现** |
+| 扇出前置 | 统一 dispatcher + 版本化路由表 + 每处理器确认（模型 A，issue #103）；不改 Execution 输入/输出语义；`000016_outbox_event_routing_obligation` 把处理义务冻结在事件上 | **已实现** |
 | C1-c | 请求幂等：`command_type` 约定 + Execution create 幂等键（严格模式）；统一 handler 幂等契约测试 | 待实现 |
 | C1-d | Execution 入队改经 Outbox（`Create` **与** Retry 两个入口）+ 入队对账/恢复测试；把 `ExecutionQueued`/`ExecutionRetried` 路由到 `execution-queue` 并 bump `outboxRoutingVersion` | 待实现（依赖扇出前置） |
 | C1-e | 死信重放 Command（操作者、理由、独立重放记录，保留原 `event_id`） | 待实现（未完成项） |
 | C2 | 原生执行恢复与输出幂等（另文） | 设计已合入 |
 
-迁移号约定：编号按**实际合并顺序**分配，不预先锁定；C1-a 占用 `000015`。
+迁移号约定：编号按**实际合并顺序**分配，不预先锁定；C1-a 占用 `000015`，扇出前置占用 `000016`。
 任何新迁移均为**新增向前迁移**，不得改写 `000001`~`000015`（AGENTS §11 历史事实不可覆盖）。
-本轮扇出前置**不新增迁移**，复用 `outbox_event_consumption`。
+扇出前置复用 `outbox_event_consumption` 记录每处理器确认，并新增 `000016` 冻结事件处理义务。
 
 C1-a ~ C1-d 允许在同一聚焦 PR 内完成（共享同一迁移与 publisher 改动），
 但每一步都要有独立回归测试；C2 不混入。
@@ -357,16 +371,28 @@ C1-a/C1-b 的 claim 把事件状态置为**全局** `PUBLISHED`，一个事件�
 ### 7.2 扇出前置已实现形态（模型 A，issue #103）
 
 实现于 `apps/platform/internal/platform/outbox/router.go`、`dispatcher.go`，
-worker 装配在 `apps/platform/cmd/worker/{main.go,handlers.go,routing.go}`：
+路由表在 `apps/platform/internal/platform/routing/routing.go`，
+worker 装配在 `apps/platform/cmd/worker/{main.go,handlers.go}`：
 
 - **单一逻辑消费者**：`Dispatcher` 沿用 C1-b 的 `claim_token` 租约领取事件（多实例仍由 token 协调），
-  然后在应用层按路由表把事件扇出给各处理器。
-- **版本化路由表**（`effectiveRoutingVersion(governanceProjection)`，基础版本 `c1-v1`；
+  然后在应用层按**事件上冻结的义务**把事件扇出给各处理器。
+- **版本化路由表**（`routing.VersionFor(governanceProjection)`，基础版本 `c1-v1`；
   启用治理提供方时为 `c1-v1+governance`，保证同一版本串总对应同一必需处理器集合）：
   为每个 `event_type` 显式声明
   必须确认的处理器集合；`Route.RequiredHandlers` 为空是**显式的仅保留（retention-only）声明**，
   而不是「默认 `return nil`」推断出来的。未在路由表中声明的事件类型是**错误**，
   绝不被隐式完成（`TestDispatcherRefusesUndeclaredEventType`）。
+- **处理义务冻结在事件上（`000016_outbox_event_routing_obligation`）**：`outbox_event` 新增
+  `routing_version varchar(64)` 与 `required_handlers text[]`。义务在**写入事件时**由
+  `outbox.Append` 按当前部署剖面冻结；历史/未冻结事件由**首次领取**在同一事务内冻结
+  （`claimOneRouted`）。`Dispatcher` 只读事件上的冻结义务，**不**按本进程路由表重新解释，
+  因此重启换剖面或两个不同剖面的实例并存时，旧事件的原义务不会被缩减或抹掉；
+  若冻结义务要求本进程未注册的处理器，则**显式失败**而非发布。
+  `routing_version` 与 `required_handlers` 要么同时为 NULL（未冻结），要么同时非 NULL；
+  仅保留为 `routing_version<>''` + 空数组，与未冻结可区分
+  （`TestDispatcherHonoursFrozenObligationAcrossRoutingProfiles`、
+  `TestAppendFreezesObligationBeforeAnyDispatch`）。API 组合根（`cmd/api/main.go`）在启动时
+  `outbox.ConfigureAppendObligation(routing.NewRouter(cfg.OpenMetadata.Enabled))`。
 - **每处理器确认**：处理器名即 `outbox_event_consumption.consumer_name`（如 `metadata-projection`、
   `execution-queue`），键为 `(handler_name, event_id)`；确认写入按 `status='PROCESSING' AND claim_token=token`
   守卫。已确认的处理器不重跑；只有**全部**必需处理器确认后才置 `PUBLISHED`。
@@ -375,13 +401,15 @@ worker 装配在 `apps/platform/cmd/worker/{main.go,handlers.go,routing.go}`：
 - **缺失处理器 = 显式错误**：`NewDispatcher` 在启动时校验路由表要求的处理器均已注册，
   否则拒绝启动；运行期若仍缺失则显式失败，绝不写假成功确认。
 - **部署剖面固定**：是否要求 `metadata-projection` 由部署是否配置 OpenMetadata 决定
-  （`workerRoutes(governanceProjection bool)`）；未配置治理提供方时 `ProductReleased`
-  是**显式仅保留**，而不是让运行时开关抹掉未完成的义务。
+  （`routing.Routes(governanceProjection bool)`）；未配置治理提供方时写入的 `ProductReleased`
+  是**显式仅保留**义务。剖面在进程生命周期内固定并写入事件，之后换剖面**不可**追溯改变旧事件的义务。
 - **不承诺业务幂等**：确认 ≠ 业务副作用幂等。处理器在「已执行但确认未提交」时崩溃会重跑，
   「至少一次」因此保留，业务事实去重仍由各业务对象自身的唯一约束兜底
   （`TestDispatcherRedeliveryAfterLostConfirmationKeepsSingleFact`）。
 - **能力边界**：claim 仍是全局 `PUBLISHED`，因此「一个事件 + 两个处理器」只在**同一派发轮次内**支持；
   若未来需要按消费者独立进度/独立重放，仍需升级为模型 B（按消费者 claim）。
+- **T2 边界**：本轮 `ExecutionQueued`/`ExecutionRetried` 是显式仅保留，并被冻结为“无队列义务”。
+  T2 不能把这种历史完成状态当作队列已送达的证据；它必须新增一条明确的入队对账证据。
 
 C1-d 仍待落地，且必须基于上述模型（不得新开第二套 claim）：
 

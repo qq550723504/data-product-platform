@@ -30,7 +30,9 @@ import (
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	productapp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/application"
@@ -100,6 +102,14 @@ func run() error {
 	if err := validateConfig(cfg, os.Getenv("POC_DEMO_ACK")); err != nil {
 		return err
 	}
+	// This demo runs with every external engine disabled, so its routing profile
+	// is the explicit retention-only one. Freeze the obligation on events as they
+	// are recorded instead of letting a dispatcher guess later.
+	obligationRouter, err := routing.NewRouter(cfg.OpenMetadata.Enabled)
+	if err != nil {
+		return err
+	}
+	outbox.ConfigureAppendObligation(obligationRouter)
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
 	defer cancel()
 	pool, err := database.Open(ctx, cfg.PostgresDSN)

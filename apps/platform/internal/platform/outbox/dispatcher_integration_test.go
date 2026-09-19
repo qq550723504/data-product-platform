@@ -21,7 +21,10 @@ import (
 //  4. a holder whose lease was taken over can neither confirm nor publish;
 //  5. an event type absent from the routing version fails diagnosably instead
 //     of being completed implicitly;
-//  6. a declared retention-only event completes without any handler.
+//  6. a declared retention-only event completes without any handler;
+//  7. an obligation frozen by one deployment profile is honoured by a later
+//     process started with a different profile and is never re-interpreted as
+//     retention-only.
 
 func handlerConfirmationCount(t *testing.T, ctx context.Context, pool *pgxpool.Pool, handlerName string, eventID uuid.UUID) int {
 	t.Helper()
@@ -33,6 +36,19 @@ func handlerConfirmationCount(t *testing.T, ctx context.Context, pool *pgxpool.P
 		t.Fatalf("count handler confirmation: %v", err)
 	}
 	return count
+}
+
+// loadObligation reads the obligation frozen on the event. ok is false when no
+// obligation is frozen (both columns NULL).
+func loadObligation(t *testing.T, ctx context.Context, pool *pgxpool.Pool, eventID uuid.UUID) (version string, handlers []string, ok bool) {
+	t.Helper()
+	if err := pool.QueryRow(ctx, `
+		SELECT COALESCE(routing_version, ''), COALESCE(required_handlers, ARRAY[]::text[])
+		FROM outbox_event WHERE id = $1
+	`, eventID).Scan(&version, &handlers); err != nil {
+		t.Fatalf("load outbox obligation: %v", err)
+	}
+	return version, handlers, version != ""
 }
 
 // insertEventForAggregate lets several events share one aggregate_id while
@@ -354,5 +370,206 @@ func TestNewDispatcherRejectsUnregisteredRequiredHandler(t *testing.T) {
 	_, err = NewDispatcher(nil, testConfig(t, nil), router)
 	if err == nil || !strings.Contains(err.Error(), "absent") {
 		t.Fatalf("NewDispatcher error = %v, want the missing required handler", err)
+	}
+}
+
+// Proof 7: an obligation frozen by one deployment profile survives a restart
+// with a different profile. The old event must never be re-interpreted as
+// retention-only just because the new process does not declare the handler.
+func TestDispatcherHonoursFrozenObligationAcrossRoutingProfiles(t *testing.T) {
+	ctx := context.Background()
+	pool := newTestPool(t)
+
+	governanceRouter, err := NewRouter("c1-v1+governance", []Route{
+		{EventType: "ProductReleased", RequiredHandlers: []string{"metadata-projection"}},
+	})
+	if err != nil {
+		t.Fatalf("NewRouter(governance): %v", err)
+	}
+	dispatcherA, err := NewDispatcher(pool, testConfig(t, nil), governanceRouter,
+		HandlerRegistration{Name: "metadata-projection", Handle: func(context.Context, PublishedEvent) error {
+			return errors.New("openmetadata is unavailable")
+		}},
+	)
+	if err != nil {
+		t.Fatalf("NewDispatcher(governance): %v", err)
+	}
+
+	// The event is recorded before its obligation is known, so the first claimer
+	// freezes it inside the claim transaction.
+	eventID := insertEvent(t, ctx, pool, "ProductReleased")
+	if err := dispatcherA.DispatchOnce(ctx); err != nil {
+		t.Fatalf("governance dispatch: %v", err)
+	}
+
+	version, handlers, frozen := loadObligation(t, ctx, pool, eventID)
+	if !frozen {
+		t.Fatal("the first claim must freeze the obligation on the event")
+	}
+	if version != "c1-v1+governance" {
+		t.Fatalf("frozen routing version = %q, want c1-v1+governance", version)
+	}
+	if len(handlers) != 1 || handlers[0] != "metadata-projection" {
+		t.Fatalf("frozen handlers = %v, want [metadata-projection]", handlers)
+	}
+	if row := loadEventRow(t, ctx, pool, eventID); row.status != statusFailed {
+		t.Fatalf("status after failed projection = %s, want FAILED", row.status)
+	}
+
+	// Deployment B: the process restarts with governance disabled and a routing
+	// table that would call this event retention-only. It must not get to.
+	disabledRouter, err := NewRouter("c1-v1", []Route{{EventType: "ProductReleased"}})
+	if err != nil {
+		t.Fatalf("NewRouter(disabled): %v", err)
+	}
+	dispatcherB, err := NewDispatcher(pool, testConfig(t, nil), disabledRouter)
+	if err != nil {
+		t.Fatalf("NewDispatcher(disabled): %v", err)
+	}
+
+	expireLease(t, ctx, pool, eventID)
+	if err := dispatcherB.DispatchOnce(ctx); err != nil {
+		t.Fatalf("disabled dispatch: %v", err)
+	}
+
+	row := loadEventRow(t, ctx, pool, eventID)
+	if row.status == statusPublished {
+		t.Fatal("the disabled profile published an event whose frozen obligation was never satisfied")
+	}
+	if row.lastError == nil || !strings.Contains(*row.lastError, "metadata-projection") {
+		t.Fatalf("last_error = %v, want an explicit missing-obligation handler error", row.lastError)
+	}
+	versionAfter, handlersAfter, stillFrozen := loadObligation(t, ctx, pool, eventID)
+	if !stillFrozen || versionAfter != version || len(handlersAfter) != len(handlers) || handlersAfter[0] != handlers[0] {
+		t.Fatalf("obligation changed across the profile switch: before (%q %v), after (%q %v)", version, handlers, versionAfter, handlersAfter)
+	}
+}
+
+// Proof 7b: the obligation is frozen when the event is recorded, before any
+// dispatcher runs. A concurrently started instance with a smaller routing table
+// cannot claim the event first and complete it with fewer handlers.
+func TestAppendFreezesObligationBeforeAnyDispatch(t *testing.T) {
+	ctx := context.Background()
+	pool := newTestPool(t)
+
+	governanceRouter, err := NewRouter("c1-v1+governance", []Route{
+		{EventType: "ProductReleased", RequiredHandlers: []string{"metadata-projection"}},
+	})
+	if err != nil {
+		t.Fatalf("NewRouter(governance): %v", err)
+	}
+	ConfigureAppendObligation(governanceRouter)
+	defer ConfigureAppendObligation(nil)
+
+	event, err := NewEvent("PRODUCT", uuid.New(), "ProductReleased", map[string]any{"test": true})
+	if err != nil {
+		t.Fatalf("NewEvent: %v", err)
+	}
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin: %v", err)
+	}
+	if err := Append(ctx, tx, event); err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("Append: %v", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("commit: %v", err)
+	}
+	t.Cleanup(func() {
+		_, _ = pool.Exec(context.Background(), `DELETE FROM outbox_event_consumption WHERE event_id = $1`, event.ID)
+		_, _ = pool.Exec(context.Background(), `DELETE FROM outbox_event WHERE id = $1`, event.ID)
+	})
+
+	version, handlers, frozen := loadObligation(t, ctx, pool, event.ID)
+	if !frozen || version != "c1-v1+governance" || len(handlers) != 1 || handlers[0] != "metadata-projection" {
+		t.Fatalf("append-time obligation = (%q %v frozen=%v), want (c1-v1+governance [metadata-projection] frozen=true)", version, handlers, frozen)
+	}
+
+	// A smaller-profile instance must fail the claim rather than complete the
+	// event with fewer handlers.
+	disabledRouter, err := NewRouter("c1-v1", []Route{{EventType: "ProductReleased"}})
+	if err != nil {
+		t.Fatalf("NewRouter(disabled): %v", err)
+	}
+	dispatcher, err := NewDispatcher(pool, testConfig(t, nil), disabledRouter)
+	if err != nil {
+		t.Fatalf("NewDispatcher(disabled): %v", err)
+	}
+	if err := dispatcher.DispatchOnce(ctx); err != nil {
+		t.Fatalf("disabled dispatch: %v", err)
+	}
+	if row := loadEventRow(t, ctx, pool, event.ID); row.status == statusPublished {
+		t.Fatal("a smaller-profile instance published an event it could not satisfy")
+	}
+}
+
+// Proof 7c: a retention-only obligation is frozen as a non-null empty handler
+// set, which stays distinguishable from "not frozen yet" (NULL).
+func TestAppendFreezesRetentionOnlyObligation(t *testing.T) {
+	ctx := context.Background()
+	pool := newTestPool(t)
+
+	retentionRouter, err := NewRouter("c1-v1", []Route{{EventType: "ProductReleased"}})
+	if err != nil {
+		t.Fatalf("NewRouter: %v", err)
+	}
+	ConfigureAppendObligation(retentionRouter)
+	defer ConfigureAppendObligation(nil)
+
+	event, err := NewEvent("PRODUCT", uuid.New(), "ProductReleased", map[string]any{"test": true})
+	if err != nil {
+		t.Fatalf("NewEvent: %v", err)
+	}
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin: %v", err)
+	}
+	if err := Append(ctx, tx, event); err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("Append: %v", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("commit: %v", err)
+	}
+	t.Cleanup(func() {
+		_, _ = pool.Exec(context.Background(), `DELETE FROM outbox_event_consumption WHERE event_id = $1`, event.ID)
+		_, _ = pool.Exec(context.Background(), `DELETE FROM outbox_event WHERE id = $1`, event.ID)
+	})
+
+	version, handlers, frozen := loadObligation(t, ctx, pool, event.ID)
+	if !frozen || version != "c1-v1" {
+		t.Fatalf("retention obligation = (%q frozen=%v), want (c1-v1 true)", version, frozen)
+	}
+	if len(handlers) != 0 {
+		t.Fatalf("retention-only handlers = %v, want an explicit empty set", handlers)
+	}
+}
+
+// Proof 7d: recording an event whose type is not declared is an error. Silently
+// recording it would make it indistinguishable from an explicit retention-only
+// event.
+func TestAppendRejectsUndeclaredEventType(t *testing.T) {
+	ctx := context.Background()
+	pool := newTestPool(t)
+
+	router, err := NewRouter("test-v1", []Route{{EventType: "DeclaredOnly"}})
+	if err != nil {
+		t.Fatalf("NewRouter: %v", err)
+	}
+	ConfigureAppendObligation(router)
+	defer ConfigureAppendObligation(nil)
+
+	event, err := NewEvent("TEST", uuid.New(), "NotDeclared", map[string]any{"test": true})
+	if err != nil {
+		t.Fatalf("NewEvent: %v", err)
+	}
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin: %v", err)
+	}
+	defer func() { _ = tx.Rollback(context.Background()) }()
+	if err := Append(ctx, tx, event); err == nil || !strings.Contains(err.Error(), "not declared") {
+		t.Fatalf("Append error = %v, want an undeclared-type error", err)
 	}
 }

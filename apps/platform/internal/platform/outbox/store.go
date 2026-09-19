@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,6 +21,14 @@ type Event struct {
 	EventVersion  int
 	Payload       json.RawMessage
 	AvailableAt   time.Time
+
+	// RoutingVersion and RequiredHandlers freeze the handler obligation of the
+	// event at the moment it is recorded. They are optional: when left zero the
+	// event carries no frozen obligation, and the first dispatcher to claim it
+	// freezes one instead. Retention-only is represented by a non-empty
+	// RoutingVersion with a non-nil empty RequiredHandlers slice.
+	RoutingVersion   string
+	RequiredHandlers []string
 }
 
 // NewEvent builds a version-1 event with a flat payload.
@@ -39,8 +48,44 @@ func NewEvent(aggregateType string, aggregateID uuid.UUID, eventType string, pay
 	}, nil
 }
 
+// ObligationSource resolves the handler obligation for an event type. It is
+// consulted by Append so the obligation is frozen when the business fact is
+// recorded, not whenever some instance happens to dispatch it.
+type ObligationSource interface {
+	// Obligation returns the routing version and required handler names for the
+	// event type. ok is false when the event type is not declared; the caller
+	// must not invent an obligation in that case.
+	Obligation(eventType string) (routingVersion string, requiredHandlers []string, ok bool)
+}
+
+var (
+	appendObligationMu sync.RWMutex
+	appendObligation   ObligationSource
+)
+
+// ConfigureAppendObligation installs the process-wide obligation source used by
+// Append. Composition roots call it once at startup with the routing table for
+// their deployment profile, before any event is appended. Passing nil clears
+// the source (used by tests).
+func ConfigureAppendObligation(source ObligationSource) {
+	appendObligationMu.Lock()
+	defer appendObligationMu.Unlock()
+	appendObligation = source
+}
+
+func obligationSource() ObligationSource {
+	appendObligationMu.RLock()
+	defer appendObligationMu.RUnlock()
+	return appendObligation
+}
+
 // Append writes the event inside the caller's transaction so the event commits
 // atomically with the aggregate change it announces.
+//
+// When the event does not already carry a routing obligation, Append resolves
+// one from the configured ObligationSource and freezes it on the row. An
+// undeclared event type is an error: silently recording it would make the
+// event indistinguishable from an explicit retention-only event.
 func Append(ctx context.Context, tx pgx.Tx, event Event) error {
 	if event.ID == uuid.Nil {
 		event.ID = uuid.New()
@@ -51,15 +96,48 @@ func Append(ctx context.Context, tx pgx.Tx, event Event) error {
 	if event.EventVersion == 0 {
 		event.EventVersion = MaxSupportedEventVersion
 	}
+	if event.RoutingVersion == "" {
+		if source := obligationSource(); source != nil {
+			version, handlers, ok := source.Obligation(event.EventType)
+			if !ok {
+				return fmt.Errorf(
+					"append outbox event: event type %q is not declared in the routing table; refusing to record an untyped obligation",
+					event.EventType,
+				)
+			}
+			event.RoutingVersion = version
+			if handlers == nil {
+				handlers = []string{}
+			}
+			event.RequiredHandlers = handlers
+		}
+	}
+	if event.RoutingVersion != "" && event.RequiredHandlers == nil {
+		// A frozen obligation always has a handler set: empty means retention
+		// only, NULL means not frozen. Keep the two distinguishable.
+		event.RequiredHandlers = []string{}
+	}
 
 	_, err := tx.Exec(ctx, `
 		INSERT INTO outbox_event (
-			id, aggregate_type, aggregate_id, event_type, event_version, payload, available_at
-		) VALUES ($1, $2, $3, $4, $5, $6, $7)
+			id, aggregate_type, aggregate_id, event_type, event_version, payload, available_at,
+			routing_version, required_handlers
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 	`, event.ID, event.AggregateType, event.AggregateID, event.EventType,
-		int16(event.EventVersion), event.Payload, event.AvailableAt)
+		int16(event.EventVersion), event.Payload, event.AvailableAt,
+		nullableRoutingVersion(event.RoutingVersion), event.RequiredHandlers)
 	if err != nil {
 		return fmt.Errorf("append outbox event: %w", err)
 	}
 	return nil
+}
+
+// nullableRoutingVersion keeps "not frozen" (NULL) distinct from a frozen
+// obligation. An empty routing version means the event has no recorded
+// obligation yet.
+func nullableRoutingVersion(version string) any {
+	if version == "" {
+		return nil
+	}
+	return version
 }

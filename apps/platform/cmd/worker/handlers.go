@@ -7,6 +7,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 )
 
 // governanceProjector is the worker's view of the governance projection
@@ -37,13 +38,13 @@ func metadataProjectionHandler(service governanceProjector, logger *slog.Logger)
 
 // workerHandlerRegistrations builds the handler set for the deployment. A nil
 // projector means no governance provider is configured, matching the
-// retention-only governance route produced by workerRoutes(false).
+// retention-only governance route produced by routing.Routes(false).
 func workerHandlerRegistrations(service governanceProjector, logger *slog.Logger) []outbox.HandlerRegistration {
 	if service == nil {
 		return nil
 	}
 	return []outbox.HandlerRegistration{{
-		Name:   handlerMetadataProjection,
+		Name:   routing.HandlerMetadataProjection,
 		Handle: metadataProjectionHandler(service, logger),
 	}}
 }
@@ -52,8 +53,7 @@ func workerHandlerRegistrations(service governanceProjector, logger *slog.Logger
 // against the registered handlers. It fails when a required handler is missing,
 // so an obligation can never be completed by an unregistered consumer.
 func newOutboxDispatcher(pool *pgxpool.Pool, logger *slog.Logger, service governanceProjector) (*outbox.Dispatcher, error) {
-	projection := service != nil
-	router, err := outbox.NewRouter(effectiveRoutingVersion(projection), workerRoutes(projection))
+	router, err := routing.NewRouter(service != nil)
 	if err != nil {
 		return nil, err
 	}

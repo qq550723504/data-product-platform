@@ -72,12 +72,28 @@ func (r *Router) Version() string { return r.version }
 // RequiredHandlers returns the required handlers for an event type. ok is false
 // when the event type is not declared in this routing version; callers must
 // treat that as an error and must not mark the event complete.
+//
+// The result is always a copy and is never nil: an explicit retention-only
+// route returns a non-nil empty slice so callers can tell it apart from
+// "not routed" via ok.
 func (r *Router) RequiredHandlers(eventType string) ([]string, bool) {
 	required, ok := r.routes[eventType]
 	if !ok {
 		return nil, false
 	}
-	return append([]string(nil), required...), true
+	copied := make([]string, len(required))
+	copy(copied, required)
+	return copied, true
+}
+
+// Obligation implements the ObligationSource / obligationResolver contract used
+// to freeze an event's required handlers when it is recorded or first claimed.
+func (r *Router) Obligation(eventType string) (string, []string, bool) {
+	required, ok := r.RequiredHandlers(eventType)
+	if !ok {
+		return "", nil, false
+	}
+	return r.version, required, true
 }
 
 // EventTypes returns the declared event types in declaration order.

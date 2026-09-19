@@ -21,9 +21,16 @@ type HandlerRegistration struct {
 }
 
 // Dispatcher is the single logical outbox consumer. It claims one event at a
-// time and fans it out to every handler the routing version requires, recording
-// one confirmation per handler. The event is marked PUBLISHED only once all
-// required handlers have confirmed.
+// time and fans it out to every handler the event's frozen obligation requires,
+// recording one confirmation per handler. The event is marked PUBLISHED only
+// once all required handlers have confirmed.
+//
+// The obligation is read from the event row, not from whichever routing table
+// this process happens to run. An event recorded under one routing version keeps
+// that obligation even when a later process starts with a different deployment
+// profile: it is never re-interpreted as retention-only. When the frozen
+// obligation names a handler this process has not registered, the claim fails
+// loudly instead of publishing.
 //
 // A handler that already confirmed is never invoked again, so a partially
 // handled event resumes where it stopped instead of replaying the whole fan-out.
@@ -71,7 +78,8 @@ func NewDispatcher(pool *pgxpool.Pool, cfg Config, router *Router, handlers ...H
 	}, nil
 }
 
-// RouterVersion identifies the routing contract this dispatcher applies.
+// RouterVersion identifies the routing contract this dispatcher applies to
+// events that do not carry a frozen obligation yet.
 func (d *Dispatcher) RouterVersion() string { return d.router.Version() }
 
 // HandlerNames returns the registered handler names in sorted order. It is used
@@ -115,7 +123,11 @@ func (d *Dispatcher) Run(ctx context.Context) error {
 // DispatchOnce performs at most one claim + fan-out cycle. It returns nil when
 // no event is claimable.
 func (d *Dispatcher) DispatchOnce(ctx context.Context) error {
-	c, err := d.publisher.claimOne(ctx)
+	// The resolver is only consulted for events that were recorded before their
+	// obligation was known; it freezes that obligation inside the claim
+	// transaction, so two instances started from different profiles cannot
+	// disagree about what the event owes.
+	c, err := d.publisher.claimOneRouted(ctx, d.router)
 	if err != nil {
 		return err
 	}
@@ -131,12 +143,23 @@ func (d *Dispatcher) DispatchOnce(ctx context.Context) error {
 		return d.publisher.failClaim(ctx, c, versionErr)
 	}
 
-	required, routed := d.router.RequiredHandlers(c.Event.EventType)
-	if !routed {
+	// The obligation comes from the event, never from this process's routing
+	// table. An event with no frozen obligation is one whose type is undeclared.
+	if c.routingVersion == "" {
 		return d.publisher.failClaim(ctx, c, fmt.Errorf(
-			"outbox event type %q is not declared in routing version %s; refusing to complete it implicitly",
-			c.Event.EventType, d.router.Version(),
+			"outbox event %s of type %q has no frozen routing obligation and type %q is not declared in routing version %s; refusing to complete it implicitly",
+			c.Event.ID, c.Event.EventType, c.Event.EventType, d.router.Version(),
 		))
+	}
+	required := c.requiredHandlers
+	if c.routingVersion != d.router.Version() {
+		d.logger.Info("dispatching event under a foreign routing version; honoring the frozen obligation",
+			"event_id", c.Event.ID,
+			"event_type", c.Event.EventType,
+			"frozen_routing_version", c.routingVersion,
+			"process_routing_version", d.router.Version(),
+			"required_handlers", required,
+		)
 	}
 
 	for _, name := range required {
@@ -154,11 +177,11 @@ func (d *Dispatcher) DispatchOnce(ctx context.Context) error {
 		}
 		handle, ok := d.handlers[name]
 		if !ok {
-			// NewDispatcher rejects this at startup; keep the guard so a
-			// misconfigured runtime can never record a false success.
+			// The frozen obligation outranks this process's handler set. Fail
+			// the claim instead of publishing an unpaid obligation.
 			return d.publisher.failClaim(ctx, c, fmt.Errorf(
-				"outbox event %s requires handler %q, which is not registered in routing version %s",
-				c.Event.ID, name, d.router.Version(),
+				"outbox event %s obligation (routing version %s) requires handler %q, which this process has not registered",
+				c.Event.ID, c.routingVersion, name,
 			))
 		}
 		if err := handle(ctx, c.Event); err != nil {
@@ -173,7 +196,7 @@ func (d *Dispatcher) DispatchOnce(ctx context.Context) error {
 				"event_id", c.Event.ID,
 				"event_type", c.Event.EventType,
 				"handler", name,
-				"routing_version", d.router.Version(),
+				"routing_version", c.routingVersion,
 			)
 			return nil
 		}
@@ -187,7 +210,7 @@ func (d *Dispatcher) DispatchOnce(ctx context.Context) error {
 		d.logger.Warn("outbox dispatch lease lost before publish; leaving the event to the current claim holder",
 			"event_id", c.Event.ID,
 			"event_type", c.Event.EventType,
-			"routing_version", d.router.Version(),
+			"routing_version", c.routingVersion,
 		)
 		return nil
 	}
@@ -197,7 +220,7 @@ func (d *Dispatcher) DispatchOnce(ctx context.Context) error {
 		"aggregate_type", c.Event.AggregateType,
 		"aggregate_id", c.Event.AggregateID,
 		"handlers", required,
-		"routing_version", d.router.Version(),
+		"routing_version", c.routingVersion,
 	)
 	return nil
 }
