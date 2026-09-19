@@ -1,12 +1,43 @@
 package native
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"math"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/tabular"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 )
+
+func TestLoadPolicyCapturesExactSourceSnapshot(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "quality.yaml")
+	content := []byte("apiVersion: quality/v1\nkind: QualityRuleSet\nmetadata:\n  version: 1.0.0\nspec:\n  rules:\n    - id: QA-COMPANY-ID-COMPLETE\n      severity: CRITICAL\n")
+	if err := os.WriteFile(path, content, 0o600); err != nil {
+		t.Fatalf("write policy: %v", err)
+	}
+	policy, err := LoadPolicy(path)
+	if err != nil {
+		t.Fatalf("load policy: %v", err)
+	}
+	if policy.SourceContent != string(content) {
+		t.Fatalf("source content changed during load")
+	}
+	want := fmt.Sprintf("%x", sha256.Sum256(content))
+	if policy.SourceContentSHA256 != want {
+		t.Fatalf("source sha256 = %s, want %s", policy.SourceContentSHA256, want)
+	}
+
+	if err := os.WriteFile(path, append(content, []byte("# changed after evaluation\n")...), 0o600); err != nil {
+		t.Fatalf("modify policy: %v", err)
+	}
+	if policy.SourceContent != string(content) || policy.SourceContentSHA256 != want {
+		t.Fatal("loaded policy snapshot changed after source file mutation")
+	}
+}
 
 func evaluateSingleRule(t *testing.T, rule Rule, ctx DatasetContext) domain.Finding {
 	t.Helper()
