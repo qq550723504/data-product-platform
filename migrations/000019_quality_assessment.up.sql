@@ -29,15 +29,31 @@ ALTER TABLE quality_result
 CREATE INDEX idx_quality_result_dataset_version_history
     ON quality_result(dataset_version_id, created_at DESC, id DESC);
 
--- Findings are part of the assessment fact. Protecting only the parent row
--- would still allow a direct SQL writer to rewrite the assessment's meaning.
+-- Findings are part of the assessment fact. The deferred FK lets the
+-- application insert the child rows before the parent during the one creation
+-- transaction. Once the parent exists, the INSERT branch below rejects any
+-- later attempt to append findings.
+ALTER TABLE quality_finding
+    DROP CONSTRAINT IF EXISTS quality_finding_result_id_fkey;
+
+ALTER TABLE quality_finding
+    ADD CONSTRAINT fk_quality_finding_result
+    FOREIGN KEY (result_id) REFERENCES quality_result(id)
+    DEFERRABLE INITIALLY DEFERRED;
+
 CREATE OR REPLACE FUNCTION prevent_quality_assessment_child_mutation()
 RETURNS trigger AS $$
 BEGIN
+	IF TG_OP = 'INSERT' THEN
+		IF EXISTS (SELECT 1 FROM quality_result WHERE id = NEW.result_id) THEN
+			RAISE EXCEPTION 'quality assessment findings are historical and immutable';
+		END IF;
+		RETURN NEW;
+	END IF;
     RAISE EXCEPTION 'quality assessment findings are historical and immutable';
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_quality_finding_immutable
-BEFORE UPDATE OR DELETE ON quality_finding
+BEFORE INSERT OR UPDATE OR DELETE ON quality_finding
 FOR EACH ROW EXECUTE FUNCTION prevent_quality_assessment_child_mutation();

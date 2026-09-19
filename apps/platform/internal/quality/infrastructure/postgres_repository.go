@@ -43,19 +43,6 @@ func (r *PostgresRepository) InsertResult(ctx context.Context, tx pgx.Tx, result
 	if err != nil {
 		return fmt.Errorf("marshal quality metrics: %w", err)
 	}
-	_, err = tx.Exec(ctx, `
-		INSERT INTO quality_result (
-			id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
-			rule_set_content_sha256, rule_set_content, evaluator_name, evaluator_version,
-			gate_decision, metrics, created_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
-	`, result.ID, result.WorkspaceID, result.DatasetVersionID, result.RuleSetRef,
-		result.RuleSetVersion, result.RuleSetContentSHA256, result.RuleSetContent,
-		result.EvaluatorName, result.EvaluatorVersion, result.GateDecision, metrics,
-		result.CreatedAt, result.CreatedBy)
-	if err != nil {
-		return fmt.Errorf("insert quality result: %w", err)
-	}
 	for _, finding := range result.Findings {
 		observed, err := json.Marshal(finding.Observed)
 		if err != nil {
@@ -69,6 +56,23 @@ func (r *PostgresRepository) InsertResult(ctx context.Context, tx pgx.Tx, result
 			finding.Status, observed, finding.Message, finding.CreatedAt); err != nil {
 			return fmt.Errorf("insert quality finding %s: %w", finding.RuleID, err)
 		}
+	}
+	// Findings are inserted before their parent assessment. Migration 019 makes
+	// the FK deferred and rejects child inserts when the parent already exists;
+	// this permits only the initial creation transaction and prevents later
+	// append-only rewrites of an assessment's meaning.
+	_, err = tx.Exec(ctx, `
+		INSERT INTO quality_result (
+			id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
+			rule_set_content_sha256, rule_set_content, evaluator_name, evaluator_version,
+			gate_decision, metrics, created_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+	`, result.ID, result.WorkspaceID, result.DatasetVersionID, result.RuleSetRef,
+		result.RuleSetVersion, result.RuleSetContentSHA256, result.RuleSetContent,
+		result.EvaluatorName, result.EvaluatorVersion, result.GateDecision, metrics,
+		result.CreatedAt, result.CreatedBy)
+	if err != nil {
+		return fmt.Errorf("insert quality result: %w", err)
 	}
 	return nil
 }
@@ -136,7 +140,6 @@ func (r *PostgresRepository) ListAssessments(ctx context.Context, datasetVersion
 	if err != nil {
 		return nil, fmt.Errorf("list quality assessments: %w", err)
 	}
-	defer rows.Close()
 	results := make([]domain.Assessment, 0)
 	for rows.Next() {
 		var result domain.Assessment
@@ -150,13 +153,16 @@ func (r *PostgresRepository) ListAssessments(ctx context.Context, datasetVersion
 		if err := json.Unmarshal(metrics, &result.Metrics); err != nil {
 			return nil, fmt.Errorf("decode quality assessment metrics: %w", err)
 		}
-		if err := r.loadFindings(ctx, &result); err != nil {
-			return nil, err
-		}
 		results = append(results, result)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("iterate quality assessments: %w", err)
+	}
+	rows.Close()
+	for i := range results {
+		if err := r.loadFindings(ctx, &results[i]); err != nil {
+			return nil, err
+		}
 	}
 	return results, nil
 }

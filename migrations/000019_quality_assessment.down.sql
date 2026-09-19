@@ -14,6 +14,13 @@ $$;
 DROP TRIGGER IF EXISTS trg_quality_finding_immutable ON quality_finding;
 DROP FUNCTION IF EXISTS prevent_quality_assessment_child_mutation();
 
+ALTER TABLE quality_finding
+    DROP CONSTRAINT IF EXISTS fk_quality_finding_result;
+
+ALTER TABLE quality_finding
+    ADD CONSTRAINT quality_finding_result_id_fkey
+    FOREIGN KEY (result_id) REFERENCES quality_result(id);
+
 DROP INDEX IF EXISTS idx_quality_result_dataset_version_history;
 
 ALTER TABLE quality_result

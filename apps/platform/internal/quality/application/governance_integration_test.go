@@ -144,6 +144,12 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	if err := pool.QueryRow(ctx, `SELECT id FROM quality_finding WHERE result_id=$1 ORDER BY id LIMIT 1`, qualityResult.ID).Scan(&findingID); err != nil {
 		t.Fatalf("find assessment finding: %v", err)
 	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO quality_finding (id, result_id, rule_id, severity, status, observed)
+		VALUES ($1,$2,'QA-APPENDED','LOW','PASS','{}'::jsonb)
+	`, uuid.New(), qualityResult.ID); err == nil {
+		t.Fatal("direct quality finding append was accepted")
+	}
 	if _, err := pool.Exec(ctx, `UPDATE quality_finding SET message='tampered' WHERE id=$1`, findingID); err == nil {
 		t.Fatal("direct quality finding update was accepted")
 	}
