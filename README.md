@@ -100,7 +100,7 @@ Certified Dataset
 Rights · Version · Lineage · Quality · Cost · Evidence · Audit
 ~~~
 
-Certified Dataset 是可独立交付成果，不要求必须包装为 DataProduct；但每次 standalone delivery 都必须通过 CurrentEntitlementGate，历史 CERTIFIED 结果本身不代表当前仍有交付权限。
+Certified Dataset 是可独立交付成果，不要求必须包装为 DataProduct；但每次 standalone delivery 都必须通过 CurrentDeliveryGate（DatasetVersion usability + CurrentEntitlementGate）。历史 CERTIFIED 结果本身不代表当前仍有交付权限或数据版本仍可用。
 
 ## 核心建模原则
 
