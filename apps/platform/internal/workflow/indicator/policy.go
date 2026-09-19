@@ -50,16 +50,20 @@ func LoadPolicy(path string) (Policy, error) {
 	if err != nil {
 		return Policy{}, fmt.Errorf("read indicator policy %q: %w", path, err)
 	}
+	return LoadPolicyBytes(content, path)
+}
+
+func LoadPolicyBytes(content []byte, source string) (Policy, error) {
 	var policy Policy
 	if err := yaml.Unmarshal(content, &policy); err != nil {
-		return Policy{}, fmt.Errorf("decode indicator policy %q: %w", path, err)
+		return Policy{}, fmt.Errorf("decode indicator policy %q: %w", source, err)
 	}
 	if strings.TrimSpace(policy.Metadata.Name) == "" || strings.TrimSpace(policy.Metadata.Version) == "" {
-		return Policy{}, fmt.Errorf("indicator policy %q is missing name/version", path)
+		return Policy{}, fmt.Errorf("indicator policy %q is missing name/version", source)
 	}
 	for _, required := range []string{"tenancy_stability", "rent_performance", "energy_stability", "activity_score"} {
 		if _, ok := policy.Definition(required); !ok {
-			return Policy{}, fmt.Errorf("indicator policy %q is missing %s", path, required)
+			return Policy{}, fmt.Errorf("indicator policy %q is missing %s", source, required)
 		}
 	}
 	return policy, nil

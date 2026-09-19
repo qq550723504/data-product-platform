@@ -2,8 +2,11 @@ package application
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 	"time"
 
@@ -64,10 +67,15 @@ func (s *MatchService) Start(ctx context.Context, cmd StartJobCommand) (domain.M
 	if err != nil {
 		return domain.MatchJob{}, err
 	}
-	policy, err := matching.LoadPolicy(policyPath)
+	policyContent, err := os.ReadFile(policyPath)
+	if err != nil {
+		return domain.MatchJob{}, fmt.Errorf("read matching policy content: %w", err)
+	}
+	policy, err := matching.LoadPolicyBytes(policyContent, policyPath)
 	if err != nil {
 		return domain.MatchJob{}, err
 	}
+	policyDigest := sha256.Sum256(policyContent)
 	if policy.Spec.EntityType != "COMPANY" {
 		return domain.MatchJob{}, fmt.Errorf("POC matcher supports COMPANY policy, got %s", policy.Spec.EntityType)
 	}
@@ -120,6 +128,8 @@ func (s *MatchService) Start(ctx context.Context, cmd StartJobCommand) (domain.M
 		}
 		job = domain.NewMatchJob(cmd.WorkspaceID, storedType.ID, cmd.InputDatasetVersionID, cmd.OutputDatasetID,
 			cmd.SourceType, cmd.SourceRef, cmd.SourceRole, cmd.PolicyRef, policy.Metadata.Version, cmd.ActorID)
+		job.PolicyContent = append([]byte(nil), policyContent...)
+		job.PolicyContentSHA256 = hex.EncodeToString(policyDigest[:])
 		if err := s.entityRepo.InsertJob(ctx, tx, job); err != nil {
 			return err
 		}

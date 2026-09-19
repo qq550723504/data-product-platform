@@ -15,8 +15,35 @@ import (
 // mapped independently by different workspaces, so a workspace-less lookup would
 // be able to return another workspace's mapping.
 func (r *PostgresRepository) GetMappingBySource(ctx context.Context, workspaceID uuid.UUID, sourceType, sourceRef, sourceKey string) (domain.EntityMapping, error) {
+	return getMappingBySource(ctx, r.pool, workspaceID, sourceType, sourceRef, sourceKey)
+}
+
+// GetMappingBySourceTx reads the mutable projection inside the caller's
+// transaction. It is only used while preparing a new execution; the native
+// calculation consumes the immutable decision captured from this projection.
+func (r *PostgresRepository) GetMappingBySourceTx(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, sourceType, sourceRef, sourceKey string) (domain.EntityMapping, error) {
+	return getMappingBySource(ctx, tx, workspaceID, sourceType, sourceRef, sourceKey)
+}
+
+type mappingQuerier interface {
+	QueryRow(context.Context, string, ...any) pgx.Row
+}
+
+// LockMappingSourceTx serializes all decisions for one source triple before
+// reading or creating its mutable mapping projection. Callers that may create
+// evidence for a new mapping must take this lock before the existence check so
+// concurrent retries cannot attach evidence to a discarded mapping ID.
+func (r *PostgresRepository) LockMappingSourceTx(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, sourceType, sourceRef, sourceKey string) error {
+	sourceDigest := sourceType + "\x1f" + sourceRef + "\x1f" + sourceKey
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtext($1), hashtext($2))`, workspaceID.String(), sourceDigest); err != nil {
+		return fmt.Errorf("lock mapping source: %w", err)
+	}
+	return nil
+}
+
+func getMappingBySource(ctx context.Context, q mappingQuerier, workspaceID uuid.UUID, sourceType, sourceRef, sourceKey string) (domain.EntityMapping, error) {
 	var mapping domain.EntityMapping
-	err := r.pool.QueryRow(ctx, `
+	err := q.QueryRow(ctx, `
 		SELECT id, workspace_id, entity_id, source_type, source_ref, source_key, COALESCE(source_name,''),
 		       match_method, COALESCE(match_rule_id,''), match_policy_version,
 		       match_engine_name, match_engine_version, match_model_version,
@@ -38,6 +65,30 @@ func (r *PostgresRepository) GetMappingBySource(ctx context.Context, workspaceID
 		return domain.EntityMapping{}, fmt.Errorf("get entity mapping by source: %w", err)
 	}
 	return mapping, nil
+}
+
+// GetMappingDecisionByIDTx reads one immutable decision with an explicit
+// workspace check. A consumer may not turn a decision id into a cross-workspace
+// lookup by accident.
+func (r *PostgresRepository) GetMappingDecisionByIDTx(ctx context.Context, tx pgx.Tx, workspaceID, decisionID uuid.UUID) (domain.MappingDecision, error) {
+	return getMappingDecisionByID(ctx, tx, workspaceID, decisionID)
+}
+
+func (r *PostgresRepository) GetMappingDecisionByID(ctx context.Context, workspaceID, decisionID uuid.UUID) (domain.MappingDecision, error) {
+	return getMappingDecisionByID(ctx, r.pool, workspaceID, decisionID)
+}
+
+func getMappingDecisionByID(ctx context.Context, q mappingQuerier, workspaceID, decisionID uuid.UUID) (domain.MappingDecision, error) {
+	return scanMappingDecision(q.QueryRow(ctx, `
+		SELECT id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key,
+		       COALESCE(source_name,''), match_method, COALESCE(match_rule_id,''), match_policy_version,
+		       match_engine_name, match_engine_version, match_model_version,
+		       COALESCE(confidence,0), status, reviewed_by, reviewed_at,
+		       COALESCE(reviewer_reason,''), evidence_id, decided_at, decided_by,
+		       COALESCE(idempotency_key,''), source_origin, source_job_id, source_candidate_id
+		FROM entity_mapping_decision
+		WHERE workspace_id=$1 AND id=$2
+	`, workspaceID, decisionID))
 }
 
 // ListMappingsByEntity lists the current mappings of one entity. The workspace

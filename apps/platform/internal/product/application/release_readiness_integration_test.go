@@ -30,7 +30,6 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	workspaceID := uuid.New()
 	datasetID := uuid.New()
 	datasetVersionID := uuid.New()
-	executionID := uuid.New()
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO dataset (
 			id, workspace_id, code, name, dataset_type, lifecycle_status, metadata,
@@ -46,8 +45,8 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 			metadata, created_at, ready_at
 		) VALUES ($1,$2,1,'READY','OBJECT_STORAGE','s3://test-bucket/readiness.csv',
 		          'text/csv','SHA256','bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
-		          $3,'{}'::jsonb,now(),now())
-	`, datasetVersionID, datasetID, executionID); err != nil {
+		          NULL,'{}'::jsonb,now(),now())
+	`, datasetVersionID, datasetID); err != nil {
 		t.Fatalf("insert DatasetVersion: %v", err)
 	}
 

@@ -16,11 +16,11 @@ func (r *PostgresRepository) InsertJob(ctx context.Context, tx pgx.Tx, job domai
 		INSERT INTO entity_match_job (
 			id, workspace_id, entity_type_id, input_dataset_version_id, output_dataset_id,
 			source_type, source_ref, source_role, policy_ref, policy_version,
-			status, created_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+			policy_content_sha256, policy_content, status, created_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
 	`, job.ID, job.WorkspaceID, job.EntityTypeID, job.InputDatasetVersionID, job.OutputDatasetID,
 		job.SourceType, job.SourceRef, job.SourceRole, job.PolicyRef, job.PolicyVersion,
-		job.Status, job.CreatedAt, job.CreatedBy)
+		job.PolicyContentSHA256, job.PolicyContent, job.Status, job.CreatedAt, job.CreatedBy)
 	if err != nil {
 		return fmt.Errorf("insert entity match job: %w", err)
 	}
@@ -95,14 +95,16 @@ func (r *PostgresRepository) GetJob(ctx context.Context, jobID uuid.UUID) (domai
 	var job domain.MatchJob
 	err := r.pool.QueryRow(ctx, `
 		SELECT id, workspace_id, entity_type_id, input_dataset_version_id, output_dataset_id,
-		       source_type, source_ref, source_role, policy_ref, policy_version, status,
+		       source_type, source_ref, source_role, policy_ref, policy_version,
+		       COALESCE(policy_content_sha256,''), COALESCE(policy_content,''::bytea), status,
 		       auto_match_count, review_count, unresolved_count, rejected_count,
 		       output_dataset_version_id, COALESCE(error_message,''), created_at, created_by,
 		       started_at, finished_at
 		FROM entity_match_job WHERE id=$1
 	`, jobID).Scan(
 		&job.ID, &job.WorkspaceID, &job.EntityTypeID, &job.InputDatasetVersionID, &job.OutputDatasetID,
-		&job.SourceType, &job.SourceRef, &job.SourceRole, &job.PolicyRef, &job.PolicyVersion, &job.Status,
+		&job.SourceType, &job.SourceRef, &job.SourceRole, &job.PolicyRef, &job.PolicyVersion,
+		&job.PolicyContentSHA256, &job.PolicyContent, &job.Status,
 		&job.AutoMatchCount, &job.ReviewCount, &job.UnresolvedCount, &job.RejectedCount,
 		&job.OutputDatasetVersionID, &job.ErrorMessage, &job.CreatedAt, &job.CreatedBy,
 		&job.StartedAt, &job.FinishedAt,

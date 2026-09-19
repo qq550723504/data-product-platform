@@ -382,7 +382,11 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 	details := map[string]any{}
 
 	if facts.TargetDatasetVersionID != nil {
-		checks["production"] = CheckPass
+		if facts.ProductionDependencyBindingRequired && !facts.ProductionDependencyBindingComplete {
+			blockers = append(blockers, "PRODUCTION_DEPENDENCY_BINDING_INCOMPLETE")
+		} else {
+			checks["production"] = CheckPass
+		}
 	} else {
 		blockers = append(blockers, "PRODUCTION_DATASET_MISSING")
 	}
@@ -433,6 +437,10 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 		checks["delivery"] = CheckPass
 	} else {
 		blockers = append(blockers, "DELIVERY_ASSET_MISSING")
+	}
+	details["productionDependencyBinding"] = map[string]any{
+		"required": facts.ProductionDependencyBindingRequired,
+		"complete": facts.ProductionDependencyBindingComplete,
 	}
 
 	sort.Strings(blockers)

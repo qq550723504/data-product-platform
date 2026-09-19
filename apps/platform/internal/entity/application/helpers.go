@@ -179,6 +179,26 @@ func (s *MatchService) finalize(ctx context.Context, jobID uuid.UUID, actorID *u
 		if err := s.datasetRepo.AddLineage(ctx, tx, version.ID, job.InputDatasetVersionID, "ENTITY_RESOLUTION", nil); err != nil {
 			return err
 		}
+		// The standardized output is a frozen consumer-facing fact. Bind each
+		// canonical source row to the exact immutable decision produced for its
+		// candidate before the job becomes SUCCEEDED; later current-mapping
+		// changes must not change which entity this output proves.
+		for _, candidate := range candidates {
+			if candidate.CandidateEntityID == nil ||
+				(candidate.Status != domain.CandidateAutoConfirmed && candidate.Status != domain.CandidateConfirmed) {
+				continue
+			}
+			decision, err := s.entityRepo.GetMappingDecisionByCandidateTx(ctx, tx, job.WorkspaceID, candidate.ID)
+			if err != nil {
+				return fmt.Errorf("find decision for resolution output source %s: %w", candidate.SourceKey, err)
+			}
+			if decision.SourceJobID == nil || *decision.SourceJobID != job.ID || decision.EntityID != *candidate.CandidateEntityID {
+				return fmt.Errorf("resolution output source %s has an unproven mapping decision", candidate.SourceKey)
+			}
+			if err := s.entityRepo.InsertResolutionOutputDecision(ctx, tx, version.ID, job, candidate, decision); err != nil {
+				return err
+			}
+		}
 		if err := s.entityRepo.CompleteJob(ctx, tx, job.ID, version.ID); err != nil {
 			return err
 		}

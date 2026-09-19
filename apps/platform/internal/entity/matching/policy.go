@@ -100,15 +100,19 @@ func LoadPolicy(path string) (Policy, error) {
 	if err != nil {
 		return Policy{}, fmt.Errorf("read matching policy %q: %w", path, err)
 	}
+	return LoadPolicyBytes(content, path)
+}
+
+func LoadPolicyBytes(content []byte, source string) (Policy, error) {
 	var policy Policy
 	if err := yaml.Unmarshal(content, &policy); err != nil {
-		return Policy{}, fmt.Errorf("decode matching policy %q: %w", path, err)
+		return Policy{}, fmt.Errorf("decode matching policy %q: %w", source, err)
 	}
 	if strings.TrimSpace(policy.Metadata.Version) == "" || strings.TrimSpace(policy.Spec.EntityType) == "" {
-		return Policy{}, fmt.Errorf("matching policy %q is missing version or entity type", path)
+		return Policy{}, fmt.Errorf("matching policy %q is missing version or entity type", source)
 	}
 	if err := validateThresholds(policy.Spec.Thresholds); err != nil {
-		return Policy{}, fmt.Errorf("matching policy %q has invalid thresholds: %w", path, err)
+		return Policy{}, fmt.Errorf("matching policy %q has invalid thresholds: %w", source, err)
 	}
 	return policy, nil
 }

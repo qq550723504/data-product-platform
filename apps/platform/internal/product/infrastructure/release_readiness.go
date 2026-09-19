@@ -12,29 +12,31 @@ import (
 )
 
 type ReadinessFacts struct {
-	TargetDatasetVersionID       *uuid.UUID
-	TargetDatasetID              *uuid.UUID
-	AllDatasetsUsable            bool
-	ProductionExecutionPresent   bool
-	RightsSnapshotExists         bool
-	RightsSnapshotWorkspaceMatch bool
-	RightsCurrentlyValid         bool
-	RightsCoverageKnown          bool
-	RightsCoverageComplete       bool
-	RequiredResourceIDs          []uuid.UUID
-	MissingResourceIDs           []uuid.UUID
-	MissingActions               map[string][]string
-	ContractExists               bool
-	ContractPublished            bool
-	ContractMatchesProduct       bool
-	QualityResultExists          bool
-	QualityDatasetMatches        bool
-	QualityDecision              string
-	ComplianceResultExists       bool
-	ComplianceDatasetMatches     bool
-	ComplianceDecision           string
-	EvidenceCount                int
-	DeliveryAvailable            bool
+	TargetDatasetVersionID              *uuid.UUID
+	TargetDatasetID                     *uuid.UUID
+	AllDatasetsUsable                   bool
+	ProductionExecutionPresent          bool
+	ProductionDependencyBindingRequired bool
+	ProductionDependencyBindingComplete bool
+	RightsSnapshotExists                bool
+	RightsSnapshotWorkspaceMatch        bool
+	RightsCurrentlyValid                bool
+	RightsCoverageKnown                 bool
+	RightsCoverageComplete              bool
+	RequiredResourceIDs                 []uuid.UUID
+	MissingResourceIDs                  []uuid.UUID
+	MissingActions                      map[string][]string
+	ContractExists                      bool
+	ContractPublished                   bool
+	ContractMatchesProduct              bool
+	QualityResultExists                 bool
+	QualityDatasetMatches               bool
+	QualityDecision                     string
+	ComplianceResultExists              bool
+	ComplianceDatasetMatches            bool
+	ComplianceDecision                  string
+	EvidenceCount                       int
+	DeliveryAvailable                   bool
 }
 
 func (r *PostgresRepository) SaveReleaseValidation(ctx context.Context, tx pgx.Tx, release domain.ProductRelease) error {
@@ -200,6 +202,90 @@ func (r *PostgresRepository) ReadinessFacts(ctx context.Context, release domain.
 	}
 
 	if facts.TargetDatasetVersionID != nil {
+		if facts.ProductionExecutionPresent {
+			// A DatasetVersion that claims a producing Execution always requires
+			// an explicit dependency proof. Missing or legacy proof is a visible
+			// readiness gap, never an implicit pass.
+			facts.ProductionDependencyBindingRequired = true
+			var executionID uuid.UUID
+			var executionStatus string
+			var executionOutputVersionID *uuid.UUID
+			if err := r.pool.QueryRow(ctx, `
+				SELECT e.id, e.status, e.output_dataset_version_id
+				FROM dataset_version v
+				JOIN execution e ON e.id=v.generated_by_execution_id
+				WHERE v.id=$1
+			`, *facts.TargetDatasetVersionID).Scan(&executionID, &executionStatus, &executionOutputVersionID); err != nil {
+				return ReadinessFacts{}, fmt.Errorf("read producing execution for dependency readiness: %w", err)
+			}
+			if executionStatus != "SUCCEEDED" || executionOutputVersionID == nil || *executionOutputVersionID != *facts.TargetDatasetVersionID {
+				facts.ProductionDependencyBindingRequired = true
+				facts.ProductionDependencyBindingComplete = false
+			} else if err := r.pool.QueryRow(ctx, `
+					WITH execution_inputs AS (
+						SELECT input_name, dataset_version_id
+						FROM execution_input
+						WHERE execution_id=$1
+					), required_resolution AS (
+						SELECT dataset_version_id
+						FROM execution_inputs
+						WHERE input_name='enterprise_resolution'
+					), preparation AS (
+						SELECT p.*
+						FROM execution_dependency_preparation p
+						WHERE p.execution_id=$1
+						  AND p.workspace_id=$2
+					)
+					SELECT
+						EXISTS(
+							SELECT 1
+							FROM preparation p
+							WHERE p.status='PREPARED'
+							  AND EXISTS(
+								  SELECT 1 FROM required_resolution
+							  )
+							  AND (SELECT count(*) FROM execution_inputs
+							       WHERE input_name IN ('enterprise_raw','lease_raw','energy_raw')) = 3
+							  AND (SELECT count(*) FROM execution_dependency_binding b
+							       WHERE b.execution_id=$1 AND b.workspace_id=$2) = 3
+							  AND (SELECT count(*) FROM execution_dependency_binding b
+							       WHERE b.execution_id=$1 AND b.workspace_id=$2
+							         AND b.dependency_name IN ('enterprise_resolution','company_match_policy','indicator_policy')) = 3
+							  AND (SELECT count(*) FROM execution_dependency_binding b
+							       WHERE b.execution_id=$1 AND b.workspace_id=$2
+							         AND b.dependency_name='enterprise_resolution'
+							         AND b.dataset_version_id=(SELECT dataset_version_id FROM required_resolution)
+							         AND octet_length(b.content) > 0
+							         AND encode(digest(b.content, 'sha256'), 'hex')=b.content_sha256) = 1
+							  AND (SELECT count(*) FROM execution_dependency_binding b
+							       WHERE b.execution_id=$1 AND b.workspace_id=$2
+							         AND b.dependency_name IN ('company_match_policy','indicator_policy')
+							         AND octet_length(b.content) > 0
+							         AND encode(digest(b.content, 'sha256'), 'hex')=b.content_sha256) = 2
+							  AND (SELECT count(*) FROM execution_mapping_usage u
+							       WHERE u.execution_id=$1 AND u.workspace_id=$2) = p.mapping_usage_count
+							  AND NOT EXISTS(
+								  SELECT 1
+								  FROM execution_mapping_usage u
+								  LEFT JOIN entity_mapping_decision d
+								    ON d.workspace_id=u.workspace_id AND d.id=u.decision_id AND d.entity_id=u.entity_id
+								  LEFT JOIN entity e
+								    ON e.workspace_id=u.workspace_id AND e.id=u.entity_id
+								  WHERE u.execution_id=$1 AND u.workspace_id=$2
+								    AND (u.input_name NOT IN ('enterprise_raw','lease_raw','energy_raw')
+								      OR NOT EXISTS(
+									      SELECT 1 FROM execution_inputs i
+									      WHERE i.input_name=u.input_name AND i.dataset_version_id=u.input_dataset_version_id
+									    )
+								      OR u.resolution_dataset_version_id IS DISTINCT FROM (SELECT dataset_version_id FROM required_resolution)
+								      OR d.id IS NULL
+								      OR e.id IS NULL)
+							  )
+							)
+			`, executionID, product.WorkspaceID).Scan(&facts.ProductionDependencyBindingComplete); err != nil {
+				return ReadinessFacts{}, fmt.Errorf("read production dependency readiness: %w", err)
+			}
+		}
 		if err := r.pool.QueryRow(ctx, `
 			SELECT count(*) FROM evidence_relation
 			WHERE object_type='DATASET_VERSION' AND object_id=$1

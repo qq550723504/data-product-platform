@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hibiken/asynq"
+	"github.com/jackc/pgx/v5"
 	complianceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/application"
 	compliancedomain "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/domain"
 	complianceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/infrastructure"
@@ -197,6 +198,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 		TargetPeriod:      "2025-03",
 		Inputs: []workflowdomain.InputBinding{
 			{Name: "enterprise_raw", DatasetVersionID: enterpriseVersion.ID},
+			{Name: "enterprise_resolution", DatasetVersionID: standardizedVersionID},
 			{Name: "lease_raw", DatasetVersionID: leaseVersion.ID},
 			{Name: "energy_raw", DatasetVersionID: energyVersion.ID},
 		},
@@ -362,6 +364,59 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 		t.Fatalf("ReleaseReadiness = %s blockers=%v details=%v, want READY", readiness.Overall, readiness.Blockers, readiness.Details)
 	}
 
+	// AC7: an output that claims a production Execution with the explicit
+	// resolution input but has no committed T3/B2 preparation must not pass the
+	// production gate merely because the execution row exists.
+	incompleteExecution, err := executionService.Create(ctx, workflowapp.CreateExecutionCommand{
+		WorkspaceID: workspaceID, WorkflowVersionID: workflowVersion.ID, OutputDatasetID: activityDataset.ID,
+		TargetPeriod: "2025-03", Inputs: execution.Inputs,
+		IdempotencyKey: "enterprise-activity-incomplete-binding-" + suffix, ActorID: &actorID, TraceID: traceID,
+	})
+	if err != nil {
+		t.Fatalf("create incomplete-binding execution: %v", err)
+	}
+	incompleteOutput := mustUploadCSV(t, ctx, uploadDataset, activityDataset.ID, "incomplete-binding-"+suffix+".csv", []byte(outputCSV), map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0}, &incompleteExecution.ID, &actorID, traceID)
+	incompleteQuality, err := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: incompleteOutput.ID, RuleSetRef: qualityRuleSetRef,
+		ActorID: &actorID, TraceID: traceID, Now: incompleteOutput.ReadyAt.Add(30 * time.Minute),
+	})
+	if err != nil || incompleteQuality.GateDecision != qualitydomain.GatePass {
+		t.Fatalf("incomplete-binding Quality Gate = %s err=%v, want PASS", incompleteQuality.GateDecision, err)
+	}
+	incompleteCompliance, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: incompleteOutput.ID, PolicyRef: complianceRef,
+		ActorID: &actorID, TraceID: traceID,
+	})
+	if err != nil || incompleteCompliance.GateDecision != compliancedomain.GatePass {
+		t.Fatalf("incomplete-binding Compliance Gate = %s err=%v, want PASS", incompleteCompliance.GateDecision, err)
+	}
+	incompleteRelease, err := productService.CreateRelease(ctx, productapp.CreateReleaseCommand{
+		ProductID: product.ID, ProductVersionID: productVersion.ID, ReleaseNo: "R-INCOMPLETE-BINDING-" + suffix,
+		Datasets: []productdomain.ReleaseDataset{{DatasetVersionID: incompleteOutput.ID, Role: productdomain.DatasetPrimary}},
+		ActorID:  &actorID, TraceID: traceID,
+	})
+	if err != nil {
+		t.Fatalf("create incomplete-binding release: %v", err)
+	}
+	incompleteRights, err := rightsService.CreateSnapshot(ctx, rightsapp.CreateSnapshotCommand{
+		WorkspaceID: workspaceID, ProductReleaseID: &incompleteRelease.ID, Purpose: purpose,
+		ConsumerRef: "LICENSED_BANK", AsOf: time.Now().UTC(), AuthorizationIDs: []uuid.UUID{authorization.ID},
+		ActorID: &actorID, TraceID: traceID,
+	})
+	if err != nil {
+		t.Fatalf("create incomplete-binding RightsSnapshot: %v", err)
+	}
+	incompleteReadiness, err := productService.ValidateRelease(ctx, productapp.ValidateReleaseCommand{
+		ReleaseID: incompleteRelease.ID, ContractVersionID: contractVersion.ID, RightsSnapshotID: incompleteRights.ID,
+		QualityResultID: incompleteQuality.ID, ComplianceResultID: incompleteCompliance.ID, ActorID: &actorID, TraceID: traceID,
+	})
+	if err != nil {
+		t.Fatalf("validate incomplete-binding release: %v", err)
+	}
+	if incompleteReadiness.Overall != "NOT_READY" || !slices.Contains(incompleteReadiness.Blockers, "PRODUCTION_DEPENDENCY_BINDING_INCOMPLETE") {
+		t.Fatalf("incomplete-binding readiness = %s blockers=%v, want dependency-binding blocker", incompleteReadiness.Overall, incompleteReadiness.Blockers)
+	}
+
 	idempotencyKey := "publish-" + suffix
 	published, err := productService.PublishRelease(ctx, productapp.PublishReleaseCommand{
 		ReleaseID:      release.ID,
@@ -419,6 +474,57 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 		if !item.IntegrityValid {
 			t.Fatalf("release Evidence %s failed integrity verification", item.ID)
 		}
+	}
+	// AC2: an alias decision used by production remains the trace decision even
+	// after the mutable current mapping is corrected after publication.
+	var leaseSourceRef string
+	var leaseUsedDecisionID, leaseUsedEntityID uuid.UUID
+	if err := pool.QueryRow(ctx, `
+		SELECT source_ref, decision_id, entity_id
+		FROM execution_mapping_usage
+		WHERE execution_id=$1 AND input_name='lease_raw' AND source_key='LEASE-C001'
+	`, execution.ID).Scan(&leaseSourceRef, &leaseUsedDecisionID, &leaseUsedEntityID); err != nil {
+		t.Fatalf("read production lease decision usage: %v", err)
+	}
+	leaseMapping, err := entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", leaseSourceRef, "LEASE-C001")
+	if err != nil || leaseMapping.CurrentDecisionID == nil {
+		t.Fatalf("read current lease mapping: %v / %+v", err, leaseMapping)
+	}
+	leaseAlternate, err := entitydomain.NewEntity(workspaceID, matchJob.EntityTypeID, "POST-RELEASE-LEASE", "Post-release lease correction", map[string]any{}, nil)
+	if err != nil {
+		t.Fatalf("create post-release lease entity: %v", err)
+	}
+	if err := txManager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if err := entityRepo.InsertEntity(ctx, tx, leaseAlternate); err != nil {
+			return err
+		}
+		corrected := leaseMapping
+		corrected.EntityID = leaseAlternate.ID
+		corrected.Status = entitydomain.MappingConfirmed
+		_, err := entityRepo.RecordMappingDecision(ctx, tx, entitydomain.MappingDecisionCommand{
+			Mapping: corrected, SourceOrigin: entitydomain.OriginWorkflowAlias,
+			IdempotencyKey:        "post-release-lease-correction-" + suffix,
+			ExpectCurrentDecision: true, ExpectedCurrentDecisionID: leaseMapping.CurrentDecisionID,
+		})
+		return err
+	}); err != nil {
+		t.Fatalf("record post-release lease correction: %v", err)
+	}
+	releaseTraceAfterCorrection, err := traceability.NewRepository(pool).ProductRelease(ctx, release.ID)
+	if err != nil {
+		t.Fatalf("query trace after post-release correction: %v", err)
+	}
+	var leaseTraceFound bool
+	for _, mapping := range releaseTraceAfterCorrection.EntityMappings {
+		if mapping.DecisionID == leaseUsedDecisionID {
+			leaseTraceFound = true
+			if mapping.EntityID != leaseUsedEntityID {
+				t.Fatalf("release trace changed production lease entity from %s to %s", leaseUsedEntityID, mapping.EntityID)
+			}
+		}
+	}
+	if !leaseTraceFound {
+		t.Fatalf("release trace lost alias decision %s after current mapping correction", leaseUsedDecisionID)
 	}
 
 	// The STANDARDIZED DatasetVersion is deliberately checked through the entity-resolution
