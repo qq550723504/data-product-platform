@@ -64,7 +64,7 @@ READY 只表示内容已冻结，不表示 Quality 或 Certification 通过。
 
 ### DataProduct / ProductRelease
 
-DataProduct 是稳定产品身份；ProductRelease 是某次对外交付/发布的不可变发布事实。
+DataProduct 是稳定产品身份；ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定；进入 PUBLISHED 后，发布绑定冻结，历史记录保留，后续仅允许受控的 SUSPENDED/WITHDRAWN 等生命周期迁移。
 
 Certified Dataset 可独立交付，不要求必须包装成 DataProduct。
 
@@ -240,7 +240,7 @@ Rights verification、QualityAssessment、DatasetCertification 都应将 Evidenc
 - execution dependency facts
 - ContractVersion
 - ProductVersion
-- ProductRelease
+- ProductRelease published bindings / published release history
 - EvidenceSnapshot
 - RightsSnapshot
 - QualityAssessment（#131）
