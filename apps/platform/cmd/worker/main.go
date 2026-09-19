@@ -22,6 +22,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
@@ -42,6 +43,16 @@ func main() {
 		logger.Error("load configuration", "error", err)
 		os.Exit(1)
 	}
+
+	// The worker also emits execution transition events. Freeze their obligation
+	// under the same deployment profile the dispatcher uses, so the worker never
+	// records an event it cannot route, and an undeclared event type fails loudly.
+	obligationRouter, err := routing.NewRouter(cfg.OpenMetadata.Enabled)
+	if err != nil {
+		logger.Error("build outbox routing table", "error", err)
+		os.Exit(1)
+	}
+	outbox.ConfigureAppendObligation(obligationRouter)
 
 	db, err := database.Open(ctx, cfg.PostgresDSN)
 	if err != nil {
@@ -167,38 +178,26 @@ func main() {
 		}()
 	}
 
-	publisher := outbox.NewPublisher(db, outbox.Config{
-		PollInterval: time.Second,
-		ConsumerName: "metadata-projection",
-		Logger:       logger,
-	})
+	// The outbox dispatcher fans one event out to every handler the routing
+	// version requires, recording one confirmation per handler. It refuses to
+	// start when a required handler is not registered, so an obligation can
+	// never be completed by a missing consumer.
+	var projector governanceProjector
+	if metadataService != nil {
+		projector = metadataService
+	}
+	dispatcher, err := newOutboxDispatcher(db, logger, projector)
+	if err != nil {
+		logger.Error("create outbox dispatcher", "error", err)
+		os.Exit(1)
+	}
 	go func() {
-		logger.Info("outbox publisher started")
-		err := publisher.Run(ctx, func(eventCtx context.Context, event outbox.PublishedEvent) error {
-			if metadataService != nil {
-				if err := metadataService.HandleOutboxEvent(eventCtx, event); err != nil {
-					logger.Error(
-						"governance projection failed",
-						"event_id", event.ID,
-						"event_type", event.EventType,
-						"aggregate_id", event.AggregateID,
-						"attempt", event.Attempts,
-						"error", err,
-					)
-					return err
-				}
-			}
-			logger.Info(
-				"domain event published",
-				"event_id", event.ID,
-				"event_type", event.EventType,
-				"aggregate_type", event.AggregateType,
-				"aggregate_id", event.AggregateID,
-				"attempt", event.Attempts,
-			)
-			return nil
-		})
-		if err != nil && !errors.Is(err, context.Canceled) {
+		logger.Info(
+			"outbox dispatcher started",
+			"routing_version", dispatcher.RouterVersion(),
+			"handlers", dispatcher.HandlerNames(),
+		)
+		if err := dispatcher.Run(ctx); err != nil && !errors.Is(err, context.Canceled) {
 			errCh <- err
 		}
 	}()

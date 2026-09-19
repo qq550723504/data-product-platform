@@ -33,7 +33,9 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	productapp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/application"
@@ -68,6 +70,20 @@ func main() {
 		logger.Error("load configuration", "error", err)
 		os.Exit(1)
 	}
+
+	// Freeze every event's handler obligation as it is recorded, so the
+	// obligation belongs to the event rather than to whichever worker profile
+	// dispatches it later. The governance profile is fixed for this process.
+	obligationRouter, err := routing.NewRouter(cfg.OpenMetadata.Enabled)
+	if err != nil {
+		logger.Error("build outbox routing table", "error", err)
+		os.Exit(1)
+	}
+	outbox.ConfigureAppendObligation(obligationRouter)
+	logger.Info("outbox routing obligation configured",
+		"routing_version", obligationRouter.Version(),
+		"governance_projection", cfg.OpenMetadata.Enabled,
+	)
 
 	db, err := database.Open(ctx, cfg.PostgresDSN)
 	if err != nil {

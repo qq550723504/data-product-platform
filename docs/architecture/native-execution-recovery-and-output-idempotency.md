@@ -119,7 +119,8 @@
 
 **幂等键**：`(output_dataset_id, generated_by_execution_id)`。
 
-- 新向前迁移 `000016_native_recovery_output_idempotency`（C1 已占用 `000015`；不改写 `000001`~`000015`）：
+- 新向前迁移（编号按**实际合并顺序**分配，不预先锁定；`000015` 已被 C1-a 占用，
+  扇出前置占用 `000016`，C2 使用下一个可用编号；不改写已有迁移）：
   `CREATE UNIQUE INDEX uq_dataset_version_execution_output
    ON dataset_version(dataset_id, generated_by_execution_id)
    WHERE generated_by_execution_id IS NOT NULL;`
