@@ -224,9 +224,38 @@ QueryCurrentEntitlement
 EvaluateDatasetCertification
 GetDatasetCertification
 ListDatasetCertifications
+RevokeDatasetCertification
+SupersedeDatasetCertification
+GetCurrentDatasetCertification / QueryCurrentCertification
 ~~~
 
+Current certification 不能按 latest timestamp 推断；delivery 必须绑定明确有效的 CERTIFIED 事实，并排除已生效 REVOKED / SUPERSEDED disposition。
+
 禁止 generic PATCH certification status。
+
+### Contract（当前 live API）
+
+~~~text
+POST /api/v1/data-contracts/versions
+GET  /api/v1/contract-versions/{versionId}
+POST /api/v1/contract-versions/{versionId}/publish
+~~~
+
+### Product / Release（当前 live API）
+
+~~~text
+POST /api/v1/data-products
+GET  /api/v1/data-products/{productId}
+POST /api/v1/data-products/{productId}/versions
+GET  /api/v1/product-versions/{versionId}
+POST /api/v1/data-products/{productId}/releases
+GET  /api/v1/product-releases/{releaseId}
+GET  /api/v1/product-releases/{releaseId}/readiness
+POST /api/v1/product-releases/{releaseId}/validate
+POST /api/v1/product-releases/{releaseId}/publish
+~~~
+
+以上 Contract/Product routes 是当前运行时已注册的 live API 边界；本目录不是所有 GET/query route 的穷举，但不得省略支撑本文状态机和 ReleaseReadiness 的现有 Command routes。
 
 ## 12. 领域事件
 
