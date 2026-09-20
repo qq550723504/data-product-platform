@@ -1,38 +1,34 @@
-# 数据库设计 V1.0
+# 数据库设计 V1.1
 
 目标数据库：PostgreSQL 16+。
+
+> 本文同时描述已实现核心表与 #129 Certified Dataset Pilot 已批准的目标逻辑模型。具体迁移以各子 Issue PR 为准。
 
 ## 1. 通用约定
 
 - 主键：UUID
-- 业务编码：`varchar(64)`
-- 时间：`timestamptz`
+- 时间：timestamptz
 - 扩展字段：JSONB
-- 可变聚合的乐观锁：`revision bigint`
+- 可变聚合可使用 revision bigint
 - 仅对可变业务主对象使用软删除
-- 不可变事实不得软删除或覆盖
+- 不可变历史事实不得软删除或覆盖
+- 破坏历史事实的 migration down 必须 fail closed
+- 核心业务关系使用强类型列 / FK，不藏入 JSONB
 
 ## 2. 多租户边界
 
-核心业务对象预留：
+核心业务对象使用 workspace_id 作为组织 / 租户边界。
 
-- `workspace_id`
-- `project_id`（适用时）
+关键跨表引用应校验同一 workspace，而不是仅依赖单列 FK 存在性。
 
-Workspace 代表组织 / 租户边界；Project 代表一个具体的项目或产品工作空间。
+## 3. 核心表族
 
-## 3. 核心表
+### 已有核心
 
-首批迁移应覆盖：
-
-```text
-workspace
-project
-use_case
-
+~~~text
 data_resource
 resource_binding
-
+governance_projection
 dataset
 dataset_version
 dataset_version_lineage
@@ -40,13 +36,28 @@ dataset_version_lineage
 entity_type
 entity
 entity_mapping
+entity_mapping_decision
+entity_match_job
 
 workflow
 workflow_version
-task
-workflow_run
 execution
-execution_dataset
+execution_input
+execution_dependency_preparation
+execution_dependency_binding
+execution_mapping_usage
+
+data_authorization
+authorization_resource
+rights_snapshot
+
+quality_result        # QualityAssessment compatibility storage; formalized by 000019
+quality_finding
+compliance_result
+compliance_finding
+
+data_contract
+contract_version
 
 data_product
 product_version
@@ -54,229 +65,601 @@ product_asset
 product_release
 product_release_dataset
 
+cost_event
 evidence
 evidence_relation
 evidence_snapshot
 audit_event
 outbox_event
-```
+~~~
 
-第二批：
+### Certified Dataset Pilot 目标逻辑对象
 
-```text
-authorization
-authorization_resource
-authorization_action
-authorization_scope
+具体表名可由实现确定，但业务事实必须可查询：
 
-quality_rule
-quality_result
+~~~text
+RightsDeclaration
+RightsVerification (one terminal outcome per declaration: VERIFIED / REJECTED)
+RightsDisposition (INVALIDATED / SUPERSEDED)
+AuthorizationProvenanceBinding
+AuthorizationProvenanceBindingDisposition (INVALIDATED / SUPERSEDED)
+EffectiveRights / EffectiveRightsSnapshot
 
-compliance_policy
-compliance_result
+CertificationProfile snapshot
+DatasetCertification
+CertificationDisposition (REVOKED / SUPERSEDED)
 
-data_contract
-contract_version
+DeliveryOperation
 
-cost_event
-cost_allocation
-```
+CostEvent activity identity extension
+CostAllocation
+~~~
+
+QualityAssessment 核心已通过 #140 / migration 000019 落地，继续复用 `quality_result` / `quality_finding` 作为兼容存储名；后续 #132/#133 必须在该已实现模型上扩展，不得再次创建平行 QualityAssessment 表族。
 
 ## 4. DataResource
 
-DataResource 是业务级资源，而不是物理表。
+DataResource 是业务资源，不是物理表。
 
-关键字段：
+owner_id 仅代表平台资产责任/归属。法律权利来源由 RightsDeclaration / Evidence 表达。
 
-- id
-- workspace_id
-- project_id
-- code / name / description
-- domain_code
-- resource_type
-- owner
-- sensitivity_level
-- rights_status
-- quality_status
-- lifecycle_status
-- business_metadata JSONB
+## 5. ResourceBinding / Governance Projection
 
-## 5. ResourceBinding
+`resource_binding` 是现有已落库的 adapter binding 模型，用于把 Core `DataResource` 与 OpenMetadata 等外部治理实体解耦。
 
-用于将核心域与元数据引擎、物理系统解耦。
-
-关键字段：
+现有关键字段：
 
 - resource_id
-- provider（`OPENMETADATA` 等）
+- provider
 - entity_type
 - external_id
 - external_fqn
-- connection_ref
-- binding_metadata JSONB
+- binding_metadata
 - is_primary
+- created_at / updated_at
 
-对外部系统不建立数据库外键。
+约束原则：
+
+- `resource_id` 关联 Core DataResource；
+- provider / external_id / external_fqn 是外部引用，不对外部系统建立数据库 FK；
+- 外部 FQN/ID 不得写回 DataResource 成为 Core 业务主键；
+- provider-specific 扩展信息放在 binding_metadata，不污染 Core Domain。
+
+`governance_projection` 记录 Core 对外部治理系统的投影尝试和状态。它是 projection/reconciliation 状态，不拥有 DataResource / Dataset / ProductRelease 等 Core 业务真相。
 
 ## 6. Dataset / DatasetVersion
 
-Dataset 是逻辑身份。DatasetVersion 是不可变的生产事实。
+Dataset 是逻辑身份。DatasetVersion 是不可变生产事实。
 
-Dataset 类型：
+类型：
 
 - RAW
 - STANDARDIZED
 - CURATED
 - PRODUCT
 
-DatasetVersion 存储：
+READY 后数据内容不可被改写。
 
-- version_no
-- storage_type / storage_uri
-- schema_version
-- row_count / byte_size
-- checksum
-- generated_by_execution_id
-- rights_snapshot_id
-- quality_status
-- compliance_status
-- snapshot window（快照时间窗口）
-- metadata JSONB
+Certification status 不应塞入 DatasetVersion.status；认证是独立历史事实。
 
-DatasetVersion 进入冻结状态后不得更新。
+## 7. Production Graph
 
-## 7. 生产血缘
+dataset_version_lineage 记录平台生产血缘。
 
-`dataset_version_lineage` 记录输入/输出血缘，独立于 OpenMetadata 的技术血缘。
+Execution 的实际生产依赖还包括：
 
-这就是平台的 Production Graph（生产图谱）。
+- execution_input
+- execution_dependency_binding
+- execution_mapping_usage
+- entity_resolution_output_decision
+
+这些事实共同回答“这个输出真实消费了什么”。
 
 ## 8. Entity
 
-核心模型：
+~~~text
+EntityType → Entity → EntityMapping projection
+                     ↘ EntityMappingDecision history
+~~~
 
-```text
-EntityType → Entity → EntityMapping
-```
+历史生产/发布必须引用 immutable decision。
 
-Entity 字段：
+## 9. Rights
 
-- canonical_key
-- canonical_name
-- attributes JSONB
-- status
+### Authorization（已实现 + #137 scope normalization follow-up）
 
-EntityMapping 存储：
+现有 Authorization 表达 grantor_ref、grantee_ref、purpose、resource、actions、scope、raw_export_allowed 和 validity；当前 `authorization_resource.scope jsonb` 保留为兼容/扩展字段，但**不能继续作为 gate-critical scope 的唯一权威表示**。
 
-- source_type
-- source_ref
-- source_key
-- source_name
-- match_method
-- policy_version
-- confidence
-- status
-- reviewer
-- evidence
+#137 必须增加固定、可索引、可查询的 normalized Authorization scope，二选一或等价设计：
 
-## 9. Execution
+- 在 authorization_resource 上增加受约束的 `scope_type` + `scope_ref`（必要时 normalized scope key/version）；或
+- 新增 `authorization_resource_scope(authorization_id, data_resource_id, scope_type, scope_ref, ...)` 强类型 relation。
 
-Execution 是平台的业务执行记录，独立于引擎作业 ID。
+要求：
+- scope_type 使用受约束枚举/字典（如 ALL_RESOURCE / DATASET / OBJECT_PREFIX / ROW_POLICY 等由实现固定）；
+- `scope_ref` 按 scope_type 使用稳定 identity；ALL_RESOURCE 使用显式 sentinel/NULL 规则，不允许“字段缺失=全部”；
+- 建立 authorization/resource/scope_type/scope_ref 查询索引与唯一性/一致性约束；
+- BindAuthorizationProvenance 与 CurrentEntitlementGate **只使用该 normalized scope identity 做安全比较**；JSONB 可携带扩展参数但不得决定 allow；
+- migration 对可无歧义识别的 legacy scope 做 deterministic backfill；无法可靠解释的 legacy rows 标记为不可用于 entitlement / fail closed，禁止猜测成更宽 scope。
 
-存储：
+### AuthorizationProvenanceBinding（#137）
 
-- workflow / workflow_version / task
-- execution_type
-- executor_type
-- engine_execution_id
-- status
-- timing（时序信息）
-- rows / bytes in/out（输入输出的行数 / 字节数）
-- runtime_metrics JSONB
-- error code/message
+目标强类型关系至少表达：
 
-Execution 可产生：
+- workspace_id
+- authorization_id
+- data_resource_id
+- rights_declaration_id
+- grantor_ref
+- grantor_authority_mode: DIRECT_DECLARATION_PARTY / DELEGATED
+- grantor_delegation_chain_id + chain_hash（DELEGATED 时必填，强类型 FK/identity）
+- supported_grantable_actions / supported_grantable_purpose / normalized grant_scope_type + grant_scope_ref（如按 grant 粒度绑定；不得用 use/allowed actions 代替 grant authority）
+- created_at / actor
 
-- DatasetVersion
-- CostEvent
-- Evidence
-- AuditEvent
+约束：
 
-## 10. DataProduct / ProductVersion / ProductRelease
+- grantor_ref 若不与声明中的可授权 party_ref 直接匹配，则必须显式引用可验证、强类型 `GrantorAuthorityDelegationChain`；不得只写“delegated=true”或把 chain IDs 塞 JSONB；
+- authorization/resource/declaration 必须同 workspace、同 DataResource；
+- declaration 必须以显式 grant authority 支撑 Authorization：`grant_authority_mode` 允许 grant，且 grantable_actions、grantable purpose、grantable scope 逐项覆盖 Authorization 授出的 actions/purpose/scope；allowed/use actions 或 use scope 不得用于替代该校验；
+- 当前 entitlement 查询必须读取 binding，不允许独立选择 declaration + authorization；
+- AuthorizationProvenanceBinding 创建后是 immutable historical fact：禁止 UPDATE / DELETE；修正只能创建新的 binding/replacement fact，并让后续 CurrentEntitlement/RightsSnapshot 显式引用新 binding；
+- migration 必须提供 update/delete guard，历史 RightsSnapshot 引用的 binding ID 不能被重连到另一 declaration/grantor/actions/scope。
 
-DataProduct：稳定身份。
+### GrantorAuthorityDelegation / DelegationChain（#137）
 
-ProductVersion：不可变的产品规格。
+若 Authorization.grantor_ref 通过 delegation 获得授权资格，必须有强类型、可 current-check 的 delegation facts。
 
-ProductRelease：不可变的已发布快照。
+推荐模型（或等价）：
+- `grantor_authority_delegation`：immutable **grant-authority edge**，包含 workspace_id、delegator_ref、delegate_ref、data_resource_id、grantable_purpose/applicability、grantable_actions、normalized grant_scope_type/grant_scope_ref、onward_grant_mode、valid_from/valid_to、Evidence/actor；delegate 自身 use permission 如需表达必须是独立字段/事实，不能与 grantable actions 共用同一语义；
+- `grantor_authority_delegation_disposition`：append-only REVOKED / INVALIDATED / SUPERSEDED + effective_at + reason/evidence；
+- `grantor_delegation_chain`：稳定 chain identity / chain_hash；
+- `grantor_delegation_chain_member`：ordered edge membership。若 chain 采用 DRAFT→FINALIZED，多事务 membership mutation 与 FINALIZE 必须获取同一个 parent `grantor_delegation_chain` row lock/fence，固定 parent-first 顺序：mutation 先锁 parent、确认 DRAFT 后写 member；Finalize 持同一 parent lock，验证完整 ordered membership + chain_hash 后原子改 FINALIZED。禁止“member transaction 先看到 DRAFT → Finalize 先提交 → member 后提交”的穿越；FINALIZED 后 member INSERT/UPDATE/DELETE fail closed。
 
-ProductRelease 精确引用：
+CurrentEntitlementGate 对 DELEGATED binding 必须按 as_of 重新验证 chain 的每一 edge validity/disposition/coverage/continuity。binding 创建时验证成功不能永久缓存该结论。
 
-- product_version
-- dataset versions
-- contract version
-- rights snapshot
-- quality result
-- compliance result
-- evidence snapshot
+RightsSnapshot 若使用 delegated grantor，必须冻结 chain ID/hash + member edge IDs；历史 snapshot 保留解释，但 current gate 仍读取各 edge 当前 disposition/validity。
 
-已发布的 Release 绝不可就地编辑。
+credential expiry cap 还必须加入：所有参与 current grantor delegation chain 的最早有限 `valid_to`，以及签发时已知 future-effective delegation disposition `effective_at`。
 
-## 11. Evidence
+### AuthorizationProvenanceBindingDisposition（#137）
 
-Evidence 存储证据元数据以及可选的产物位置/哈希。
+AuthorizationProvenanceBinding 本身 immutable；错误或失效 binding 通过 append-only disposition 退出 current set。
 
-EvidenceRelation 通过 `(object_type, object_id)` 将证据关联到任意业务对象。
+至少强类型表达：
 
-EvidenceSnapshot 在某一时间点冻结某个 Release / 案件（case）的证据清单（manifest）。
+- workspace_id
+- binding_id
+- disposition: INVALIDATED / SUPERSEDED
+- effective_at
+- reason
+- superseded_by_binding_id（SUPERSEDED 时）
+- Evidence / actor
 
-## 12. Cost
+Current binding selection 必须按 as_of 排除已生效 INVALIDATED / SUPERSEDED；不得用 latest created_at 猜 current binding。replacement binding 必须独立满足 grantor/resource/actions/scope、关联 declaration 当前有效性与 workspace 约束，不能自动继承旧 binding 的“有效”结论。
 
-CostEvent 同时支持金额型与数量型事件。
+### RightsDeclaration（#137）
 
-示例：
+目标强类型字段至少能表达：
 
-- amount=12.5 CNY, category=COMPUTE
-- quantity=2.5 HOUR, category=HUMAN
+- workspace_id
+- data_resource_id
+- party / claimant refs
+- rights role
+- basis_type / basis_ref
+- validity: effective_from / effective_to
+- consumer applicability：例如 consumer_mode = ANY / EXPLICIT；EXPLICIT 时使用强类型 consumer_ref（必要时 consumer_type）
+- purpose：单值可用强类型 purpose_code；多值时使用 rights_declaration_purpose(declaration_id, purpose_code) 等规范化关系，不只放 JSONB
+- scope：至少强类型 scope_type + scope_ref（例如 ALL_RESOURCE / DATASET / OBJECT_PREFIX / ROW_POLICY 等实现固定枚举/引用）；复杂扩展参数可附加 JSONB，但 CurrentEntitlementGate 所需的 scope identity 必须可索引/查询
+- allowed_actions（强类型枚举/规范化 relation）：party 自身可执行的使用动作
+- grant_authority_mode：NONE / EXPLICIT（或等价）
+- grantable_actions（强类型 relation；EXPLICIT 时至少一项）
+- grantable_purpose（强类型 relation；不默认等于 permitted purpose）
+- grantable_scope_type / grantable_scope_ref（或 normalized relation；不默认等于 use scope）
+- restricted actions / transfer / sublicensing semantics（受约束、机器可判断）
+- verification status / fact
+- append-only disposition facts (INVALIDATED / SUPERSEDED, effective_at, reason, evidence, actor, optional superseded_by)
+- evidence association
 
-会计口径归类属于后续的专业复核工作，不得与生产成本归集混为一谈。
+JSONB 只用于受控扩展参数，不承载主要权利关系。特别是 CurrentEntitlementGate 必须读取的 resource / consumer applicability / purpose / action / scope / validity 都必须有强类型、可索引、可查询表示；不得靠应用层解析任意 JSONB 才能 fail closed。
 
-## 13. JSONB 使用策略
+### RightsSnapshot context + membership freezing（#137）
 
-JSONB 用于：
+RightsSnapshot header 必须冻结其适用 rights context，不能只冻结成员列表。至少表达：
+- consumer_mode: ANY / EXPLICIT；EXPLICIT 时冻结 consumer refs/selectors；
+- purpose_mode: ANY / EXPLICIT；EXPLICIT 时冻结 purpose codes；
+- action coverage：冻结 snapshot 实际证明的 action set（或 action_mode + membership）；
+- normalized scope coverage；
+- as_of / context hash。
 
-- 引擎相关元数据
-- 运行时指标
-- schema 与快照
+这些字段回答“这份 frozen rights evidence 对谁、什么 purpose/action/scope 成立”。Profile=ANY 不能由一个窄 EXPLICIT snapshot 推断出来。
+
+### RightsSnapshot membership freezing（#137）
+
+RightsSnapshot 的 immutable 语义覆盖 **snapshot header + 全部 membership rows**，不仅是主表。
+
+至少冻结：
+- rights_snapshot_authorization
+- rights_snapshot_declaration（或等价 membership）
+- rights_snapshot_provenance_binding（或等价 membership）
+- rights_snapshot_grantor_delegation_chain / edge membership（如 binding 依赖 delegated grantor authority）
+- 其它实际参与 Effective Rights / Certification 解释的强类型成员关系
+
+要求：
+- snapshot header 与全部 membership 在同一 transaction 中创建并 finalize，或采用明确 DRAFT → FINALIZED 协议；
+- **若使用 DRAFT → FINALIZED，多事务 membership mutation 与 FINALIZE 必须串行化在同一个 parent snapshot row/fence/revision 上。** 推荐固定顺序先 `SELECT ... FOR UPDATE` 锁 parent snapshot，再检查 status=DRAFT，再 INSERT/UPDATE/DELETE membership；Finalize 使用同一 parent lock，验证 membership/root hash 完整后原子改 FINALIZED；
+- 不允许“membership transaction 先读到 DRAFT → finalize transaction 提交 → membership 后提交”的穿越窗口；parent lock/fence 必须让这两个顺序形成唯一全序；
+- FINALIZED 后 header 禁止业务语义 UPDATE/DELETE；
+- FINALIZED 后 membership 行禁止 INSERT / UPDATE / DELETE，数据库 trigger/guard 必须 fail closed；
+- 不允许通过删除旧 authorization_id、插入新 binding_id 等方式“保持 snapshot ID 不变但改写历史内容”；
+- Snapshot root_hash / content hash（如存在）必须覆盖有序后的 membership identity，membership 改变会导致 hash 不一致；
+- migration down 不得移除这些历史保护后静默允许 mutation。
+
+现有 `rights_snapshot_authorization` 也必须纳入该保护；#137 新增 declaration/binding membership 时使用同等级 guard。**实现状态说明：当前 migration 只保护 `rights_snapshot` header，现有 `rights_snapshot_authorization` 尚无 INSERT/UPDATE/DELETE membership guard；这是 #137 明确待落地的 enforcement gap，在对应 forward migration + PostgreSQL tests 合入前不得声称 RightsSnapshot membership 已被数据库完整冻结。**
+
+### Effective Rights（#137）
+
+Effective Rights 必须落成 immutable aggregate（例如 `effective_rights_snapshot` + `effective_rights_input` + `effective_rights_action`），而不是只在内存计算。
+
+header 至少：
+- id / workspace_id / target_dataset_version_id；
+- calculation_as_of；
+- consumer_mode + explicit consumer coverage（或等价 context identity）；
+- purpose_mode + explicit purpose coverage；
+- normalized scope coverage；
+- action decisions / coverage 与 context_hash；
+- calculation_rule_version + rule_hash；
+- lineage_or_input_set_hash；
+- status DRAFT/FINALIZED（或等价受控 finalize）；
+- created_at/finalized_at/actor。
+
+input membership 至少：
+- effective_rights_snapshot_id；
+- required input dataset_version_id / data_resource_id；
+- source rights_snapshot_id（或等价冻结 provenance identity）；
+- input lineage/dependency identity；
+- required=true（第一阶段 required inputs 默认全部纳入）。
+
+action decision 至少：
+- action（USE / PROCESS / DERIVE / SHARE / RAW_EXPORT / RESALE / AI_TRAINING）；
+- decision ALLOWED / NOT_ALLOWED；
+- reason_code；
+- blocking/source input refs（可规范化 child rows）。
+
+约束：
+- 计算输入必须来自 target DatasetVersion 的实际 lineage/dependency facts，调用方不能省略某 required input；
+- action=ALLOWED 当且仅当所有 required input 对该 action 都明确 ALLOWED；任一 deny/unknown/missing → NOT_ALLOWED/fail closed；
+- DRAFT EffectiveRightsSnapshot 的 input/action membership mutation 与 FINALIZE 必须使用与 RightsSnapshot 相同的 parent-row lock/fence 协议；Finalize 在持锁状态下校验 required-input set/hash 与 action decisions 后提交 FINALIZED；
+- FINALIZED 后 header/input/action rows 禁止 INSERT/UPDATE/DELETE；修正创建新 snapshot；
+- content/root hash（如使用）覆盖规范化排序后的 input membership + action decisions + calculation rule identity；
+- #134 DatasetCertification 使用强类型 effective_rights_snapshot_id/hash，不能只保存“当时算过”的布尔结果；
+- 计算/finalize 与 Audit/Evidence/Outbox/Domain Event 保持一致事务边界。
+
+衍生数据默认 fail closed。
+
+## 10. QualityAssessment（已实现：#140 / migration 000019）
+
+领域语义已经正式落地，存储/API 兼容名仍保留 `quality_result`。
+
+当前已实现的 Assessment 至少持久化：
+
+- workspace_id
+- dataset_version_id
+- rule_set_ref
+- rule_set_version
+- rule_set_content_sha256
+- rule_set_content
+- evaluator_name / evaluator_version
+- metrics
+- gate_decision
+- created_at / actor
+
+`quality_finding` 保存逐规则 finding，并由 000019 补强为 Assessment 创建事务内写入、之后不可追加/UPDATE/DELETE 的历史事实。
+
+000019 还提供：
+
+- rule content + SHA-256 一致性约束；
+- 新 Assessment 必须有完整 rule snapshot/evaluator identity；
+- legacy pre-019 row 通过 NOT VALID 策略保留兼容历史；
+- DatasetVersion assessment history 索引；
+- Assessment / finding 不可回溯改写。
+
+现有 HTTP 已提供 assessment by ID、DatasetVersion history/latest 等查询。
+
+后续 #132/#133 的工作重点是六维通用规则执行与 Quality Report，不再重复迁移/重建 QualityAssessment 核心。
+
+大量 failing rows 的进一步规模化存储/分页可以由 #133 按已实现 finding 模型演进；不得通过新平行 Assessment root 规避现有历史。
+
+## 11. CertificationProfile / DatasetCertification（#134）
+
+### CertificationProfile
+
+CertificationProfile 必须把认证覆盖的 delivery applicability 作为强类型、可查询、可冻结事实；**缺失字段不得隐式解释为 ANY**。
+
+目标字段/关系至少表达：
+
+- profile_ref / code / version
+- immutable content snapshot + content_sha256
+- purpose_mode: ANY / EXPLICIT
+- explicit purposes（purpose_mode=EXPLICIT 时使用强类型/规范化 purpose rows）
+- action_mode: ANY / EXPLICIT
+- explicit actions（强类型枚举/规范化 relation）
+- consumer_mode: ANY / EXPLICIT
+- explicit consumer_ref / consumer_type 或实现固定的强类型 consumer selector
+- delivery_channel_mode: ANY / EXPLICIT
+- explicit delivery channels / modes（例如 DIRECT_DATA / PLATFORM_REDEMPTION / PRESIGNED_URL / TOKEN 等由实现固定）
+- quality / rights / compliance / contract / traceability / evidence requirements
+- created_at / actor
+
+约束：
+
+- purpose/action/consumer/delivery_channel 四个 applicability mode 都必须非空且属于固定枚举；
+- mode=EXPLICIT 时必须至少存在一个对应强类型成员；mode=ANY 时不得依赖“成员表为空”推断 ANY；
+- mode 缺失、UNKNOWN、非法枚举或 snapshot 无法证明覆盖时 CurrentCertificationGate fail closed；
+- CertificationProfile snapshot/hash 必须覆盖 applicability mode + 规范化排序后的 explicit membership，不能只 hash 文本文件的一部分；
+- 历史 DatasetCertification 读取 frozen Profile snapshot，不回读当前 Profile 定义。
+
+### DatasetCertification
+
+核心强类型关系至少包括：
+
+- workspace_id
+- dataset_version_id
+- quality_assessment_id
+- certification_profile snapshot/ref/version/hash
+- rights_snapshot_id（finalized immutable）
+- effective_rights_snapshot_id + effective_rights_snapshot_hash + frozen_rights_context_hash（Rights required / derived Dataset 时；FK/强类型引用 finalized immutable #137 aggregate，input-set hash 必须与认证 target lineage 一致）
+- compliance_result_id（如 required）
+- contract_version_id（如 required）
+- evidence_snapshot_id 或等价冻结证明
+- decision
+- blockers / reason
+- issued_at / actor
+
+Certification 创建前必须校验 frozen rights evidence context 覆盖 Profile rights applicability：
+- Profile consumer/purpose/action/scope 为 EXPLICIT 时，required set 必须是 frozen rights coverage 的子集；
+- Profile 某 rights-relevant 维度=ANY 时，rights evidence 必须显式 ANY/universal coverage；窄 EXPLICIT evidence 不足；
+- coverage 缺失、UNKNOWN、cross-workspace、target DatasetVersion 不一致或不可比较时 fail closed。
+
+Certification 创建后不可被 UPDATE 成另一种业务含义。
+
+第一阶段还需要 append-only CertificationDisposition，至少表达：
+
+- certification_id
+- disposition: REVOKED / SUPERSEDED
+- effective_at
+- reason
+- superseded_by_certification_id（SUPERSEDED 时）
+- Evidence / actor
+
+Current certification 查询必须按 disposition + as_of 判断，不得用 created_at/latest 隐式选择。
+
+## 12. DataProduct / ProductVersion / ProductRelease
+
+ProductRelease 精确引用发布时所需 DatasetVersion、Contract、Rights、Quality、Compliance、Evidence。
+
+ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status。
+
+### RightsVerification terminal outcome（#137）
+
+RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration 只能有一个 terminal decision：
+
+- declaration_id
+- decision: VERIFIED / REJECTED
+- evidence / reason
+- decided_at / actor
+
+数据库要求：
+- unique(declaration_id)（或等价 partial/terminal 唯一约束）保证 VERIFIED / REJECTED 互斥；
+- outcome 创建后禁止 UPDATE / DELETE；
+- 错误 VERIFIED 通过 RightsDisposition INVALIDATED/SUPERSEDED 退出 current set，再创建新 declaration/verification；
+- current selection 不得使用 EXISTS(any VERIFIED history)，而必须读取该 declaration 的唯一 terminal outcome。
+
+## 13. DeliveryOperation（#135）
+
+第一阶段 standalone delivery 必须持久化稳定的 DeliveryOperation，作为 delivery command、Audit/Evidence 和 CostAllocation 的强类型业务主体；不能让一次交付只存在于临时 HTTP 请求或 JSONB metadata 中。
+
+至少逻辑表达：
+
+- id
+- workspace_id
+- dataset_version_id
+- dataset_certification_id
+- caller_principal_ref（服务端 authenticated principal 的稳定引用）
+- consumer_ref（服务端解析后的 effective consumer；不得直接等同请求值）
+- principal_binding_ref / workspace_membership_ref（按实现模型选取可验证稳定引用）
+- delegation_ref（on-behalf-of 时使用）
+- retry_of_delivery_operation_id（显式 replacement/re-delivery attempt 时使用）
+- purpose
+- action
+- delivery_mode
+- idempotency_key / request identity
+- requested_at
+- current_gate_decision / current_blockers（仅作为 lifecycle row 的当前投影/cache；不得作为唯一历史来源）
+- status：PREPARED / ISSUANCE_PENDING / CONTAINMENT_PENDING / ISSUED / BLOCKED / FAILED（或等价受控状态）
+- provider_request_key（稳定幂等键）
+- provider_credential_ref/hash（如适用；禁止存可用 secret）
+- planned_credential_expires_at / fresh_cap_expires_at
+- provider_credential_expires_at（provider 实际返回/恢复出的 expiry；direct bearer 必须可验证；direct-data 可为空）
+- provider capability 的**可验证强类型边界**：resource_ref/dataset_version_ref、**consumer/grantee enforcement descriptor（必需）**、actions、scope_type/scope_ref、**delivery_mode/channel enforcement descriptor（当 profile/request 对该维度有约束时必需）**；多值 actions 可使用规范化 child rows。direct provider 无法表达/验证/强制 consumer/grantee 或 constrained delivery channel/mode 时，必须记录 platform redemption/gateway binding descriptor 并走 indirection，不能以 null/unsupported 后继续 direct issuance
+- provider_capability_snapshot_hash / provider read-after-write evidence ref（用于证明实际签发能力与记录一致）
+- issuance result / direct-data release authorization result
+- actor / trace
+
+### DeliveryGateEvaluation / transition history
+
+DeliveryOperation lifecycle row 只保存当前 projection，不拥有唯一 gate 历史。每一次会影响后续行为的 gate 评估都必须追加 immutable `DeliveryGateEvaluation`（或等价 child fact），至少包含：
+
+- id / delivery_operation_id / evaluation_kind（INITIAL / RETRY / RECONCILIATION / TERMINAL_FINALIZE / CREDENTIAL_REPLAY 等固定枚举）；
+- evaluated_at / actor or worker identity；
+- authenticated caller / effective consumer / delegation refs；
+- purpose / action / delivery_mode；
+- decision: ALLOWED / BLOCKED；
+- blocker codes / reason；
+- dependency fence/revision vector/hash；
+- fresh_cap_expires_at（credential/provider path 如适用）；
+- selected certification/rights/binding/delegation/source-input identities/hash（可规范化 child membership）。
+
+这些 evaluation facts 创建后禁止 UPDATE/DELETE；相同 evaluation attempt 以稳定 evaluation_attempt_id/idempotency identity 去重。初始 ALLOWED、后续 reconciliation BLOCKED 必须同时保留，不能覆盖为一个最终 gate 字段。
+
+状态迁移本身也必须有 append-only transition history（例如 PREPARED→ISSUANCE_PENDING、→CONTAINMENT_PENDING、→BLOCKED/FAILED/ISSUED），记录触发该 transition 的 gate_evaluation_id / provider-attempt refs / reason。DeliveryOperation.status 与 current_gate_decision 只是当前投影。
+
+实现可选择 append-only attempt/result 模型或受控 lifecycle row，但必须满足：
+
+- 每次 delivery Command 有稳定 ID；
+- 同一幂等请求不会重复签发；CostEvent 幂等按 physical activity attempt 处理：same-attempt replay 不重复，真实新增 provider/compute attempt 必须新增 attempt identity 成本（或原子聚合 quantity/amount）；
+- 外部 issuance 前必须先 durable persist PREPARED/ISSUANCE_PENDING；
+- provider_request_key 对同一外部-provider DeliveryOperation 稳定，支持 crash 后安全 retry/reconcile；direct-data mode 可为空，但仍必须使用 delivery authorization fence/revision；
+- terminal ISSUED credential 的 same-key response replay 必须有追加式 replay authorization fact（推荐 `DeliveryCredentialReplayDecision` 或等价）：至少包含 replay_attempt_id、delivery_operation_id、authenticated caller principal、effective consumer/workspace/delegation refs、fence/gate revision、fresh_cap_expires_at、capability ref/hash、decision=ALLOWED/BLOCKED/CONTAINMENT_PENDING、created_at；禁止保存可用 credential secret；
+- 必须持久化 delivery authorization dependency revision/fence token（或等价可验证线性化信息），覆盖 caller principal/binding/membership/caller delegation + CurrentDeliveryGate 关键依赖；若 binding 依赖 delegated grantor authority，dependency vector 还必须覆盖 grantor delegation chain/member edge/disposition revisions；
+- 所有影响实际 delivery authorization 的 principal binding/workspace membership/caller delegation lifecycle、grantor-authority delegation edge/disposition lifecycle、CurrentDeliveryGate disposition/invalidation Command 与 DeliveryOperation terminal finalize 使用同一组 delivery authorization fence rows / revisions（或等价强度机制），并以固定顺序锁定，避免 deadlock；
+- provider 返回后，ISSUED terminal transaction 必须在 fence 下重新验证 caller authority + re-gate + fresh-cap，并把该 commit 作为 issuance linearization point；
+- direct-data mode 的 ISSUED terminal transaction 同样在 fence 下重新 gate；commit 成功前禁止写出任何 response byte，commit 后不得继续持有 fence/row lock 贯穿整个 stream；
+- direct-data terminal `ISSUED` 只表示该 operation attempt 已在线性化，不表示客户端已收到数据。若 ISSUED commit 后 response 在第一字节前失败或 stream 中断，同一 DeliveryOperation/idempotency key 的 replay 不得再次读取/发送 DatasetVersion payload；应返回稳定 non-payload replay-required result。重新传输必须新建 DeliveryOperation（新的 idempotency key，使用 `retry_of_delivery_operation_id` 关联旧 operation），并重新解析 caller identity、重新 CurrentDeliveryGate、重新进入 fence/finalize；
+- 任何进入 ISSUED 的 credential 必须满足 provider_credential_expires_at <= 当前 fresh_cap_expires_at；reconciliation 找回的旧 credential 同样适用，不能因为 provider_request_key 命中就跳过；
+- 原 DeliveryOperation 已是 ISSUED 时，同 key credential replay 仍不得跳过当前授权：返回 secret 前重新 caller authority + CurrentDeliveryGate + fence/fresh-cap/capability verification，并先提交 replay decision=ALLOWED；若 BLOCKED，则 0 credential/secret 输出并 revoke/contain 原 capability，追加 BLOCKED/CONTAINMENT_PENDING replay decision，不能把历史 ISSUED operation 改写为 BLOCKED；
+- credential replay decision=CONTAINMENT_PENDING 时，append-only replay decision 与 `DatasetCredentialReplayContainmentPending`（或统一 containment event + subject_kind/replay_attempt_id）+ Audit/Evidence/Outbox 同 transaction；原 DeliveryOperation 保持 ISSUED。
+- provider 实际 capability 必须是 delivery request / CurrentDeliveryGate 允许上下文的**等价或更窄集合**：不得扩大到其它 DatasetVersion/DataResource、consumer/grantee、action、object/row/prefix scope 或 delivery channel；consumer/grantee enforcement 是 direct bearer/presigned 的必需维度，无法验证/强制时必须使用 platform redemption/gateway 或 fail closed；
+- provider capability 必须通过 read-after-write / equivalent authoritative lookup 验证后才能 ISSUED；实际 scope 无法读取/验证，或比请求更宽时不得 ISSUED，必须 revoke/contain，或改用 platform redemption indirection；
+- provider_credential_expires_at 不可验证或超过 fresh cap 时不得 ISSUED；必须安全 shorten/verify，或 revoke/contain；
+- gate 失败也有可审计 DeliveryOperation / result；
+- 不把可用 credential secret/token 正文持久化到 Core 数据库；
+- ISSUANCE_PENDING / CONTAINMENT_PENDING 必须有 reconciliation 查询/索引，不能永久悬空；首次进入 CONTAINMENT_PENDING 的同一 transaction 必须写入 append-only containment transition fact / `DatasetDeliveryContainmentPending`（或固定等价）Outbox Event + Audit/Evidence，事件 identity 至少绑定 delivery_operation_id + transition/reason/revision 并具备幂等唯一约束；
+- 从 ISSUANCE_PENDING 进入 terminal state 前，如 provider_request_key 可能已产生外部访问能力，必须记录 reconciliation/containment outcome；
+- confirmed containment 后允许 CONTAINMENT_PENDING → BLOCKED（fresh gate 已拒绝）或 → FAILED（gate 仍允许但 issuance contract 无法满足，如 credential 超 fresh cap 且无法安全 shorten）；
+- unknown/uncontained 必须保持 CONTAINMENT_PENDING；
+- CostAllocation 必须能以 FK 关联 DeliveryOperation。
+
+## 14. CostEvent / CostAllocation
+
+当前 `cost_event` 已落库，现有强类型关联只有可选 `execution_id`。这足以表达 Execution 成本，但不足以表达 QualityAssessment、Rights verification/disposition、Certification、Delivery 等没有 Execution 的活动。
+
+Certified Dataset Pilot 目标模型增加：
+
+### Delivery provider attempts
+
+一个 DeliveryOperation 可包含 0..N 次真实外部 provider invocation；必须用**不可变 attempt identity + 追加式 observation/outcome facts**（推荐 `DeliveryProviderAttemptStarted` + `DeliveryProviderAttemptObservation` / `DeliveryProviderAttemptOutcome`，或等价强类型模型）表达，而不能只靠日志推断，也不能声称一行 append-only 记录却在 provider 返回后 UPDATE 它。
+
+每次**实际调用前**先 durable persist immutable start fact：
+
+- provider_attempt_id（稳定 physical attempt identity，同时可作为 CostEvent.activity_id 或其强类型来源）
+- delivery_operation_id FK
+- provider_request_key
+- invocation_kind：ISSUE / RECONCILE / REVOKE / COMPENSATE / NARROW / VERIFY（按实现固定）
+- started_at
+- requested invocation quantity/unit（如调用前可知）
+
+provider 返回、超时或本地观察到未知结果后，再 append outcome/observation fact，至少包含：
+
+- provider_attempt_id FK
+- observed_at / completed_at（按 outcome 语义）
+- observation_kind（CALL_RETURN / TIMEOUT / RECONCILIATION / AUTHORITATIVE_LOOKUP 等，名称由实现固定）
+- observed_outcome：SUCCESS / FAILED / UNKNOWN / TIMEOUT（或等价）
+- provider outcome/evidence ref（非 secret）
+- actual invocation quantity/unit
+- amount/provider charge（如已知；未知时保持 NULL，不伪造）
+
+原始 attempt identity/start fact 不可改写。若后续 authoritative reconciliation 改变了对原 attempt 的认知（例如 TIMEOUT/UNKNOWN 后确认 provider 实际成功），必须**追加新的 observation/resolution fact**引用同一 provider_attempt_id，而不是覆盖最初观察；发起 reconciliation provider API 本身如果是真实外部调用，则它同时还是一个新的 provider_attempt_id，并单独记录其自身调用成本。
+
+每个 provider_attempt_id 只代表一次真实外部调用。same-attempt 的本地 transaction/network replay 没有再次调用 provider 时复用同一 identity 且 CostEvent 去重；若代码再次发起真实 provider request，即使仍属同一 DeliveryOperation/provider_request_key/reconciliation 流程，也必须产生新的 provider_attempt_id。**FAILED、UNKNOWN、TIMEOUT、后续被 contain/revoke 的 attempt 只要实际调用发生，都保留 CostEvent；业务终态不能反向删除成本事实。**
+
+### CostEvent physical-attempt identity
+
+`cost_event` 的幂等键必须绑定**一次真实 physical activity attempt**，不能直接复用 QualityAssessment / DeliveryOperation / Certification 等顶层业务对象 ID 作为所有 retry 的唯一 activity identity。至少逻辑表达：
+
+- workspace_id
+- activity_id（**physical attempt identity**；也可命名为 `activity_attempt_id` / `cost_attempt_id`）
+- subject operation / aggregate ref（通过 typed CostAllocation 或等价强类型列关联，不代替 activity_id）
+- component_key / cost_type
+- quantity / unit
+- amount / currency
+- pricing_mode
+- occurred_at
+
+规则：
+
+- 同一个 physical attempt 的 network/command/transaction replay，如果没有再次发生外部工作，必须复用同一个 activity_id；
+- failed/transient attempt 后若 retry/reconciliation **真的再次调用 engine/provider、再次执行 compute 或再次发生人工审核**，必须分配新的 activity_id；即使顶层 QualityAssessment、DeliveryOperation 或业务 idempotency key 相同，也不能复用旧 activity_id；
+- 如果实现选择原子聚合 quantity/amount 而不是每 attempt 一条 CostEvent，也必须保存/关联可审计的 attempt identity/count，并确保新增真实工作被累加。
+
+建议数据库唯一约束至少覆盖：
+
+~~~text
+(workspace_id, activity_id, component_key)
+~~~
+
+这里的 `activity_id` 明确定义为 physical-attempt identity。一个 attempt 可以有多个不同 component_key（例如 ENGINE_INVOCATION、HUMAN_REVIEW、DELIVERY）；**同一 attempt 的同一 component replay 不得重复记账，但新的真实 attempt 必须使用新的 activity_id 并允许新增同类 component 成本。**
+
+### CostAllocation
+
+非 Execution 成本不得仅把 subject IDs 塞入 JSONB metadata。
+
+使用强类型 `CostAllocation`（具体表名可由实现确定）把 CostEvent 关联到实际业务主体。V1 至少支持：
+
+- cost_event_id
+- execution_id（兼容现有）
+- quality_assessment_id
+- rights_declaration_id
+- rights_verification_id
+- rights_disposition_id
+- authorization_provenance_binding_id
+- authorization_provenance_binding_disposition_id
+- dataset_certification_id
+- certification_disposition_id
+- delivery_operation_id（第一阶段必需；#135 必须落库 DeliveryOperation）
+
+实现可用一张带 nullable typed FK 的 allocation 表并用 CHECK 保证每条 allocation 仅选择一个 subject，或用等价强类型表族；不得退化为 `subject_type + subject_id` 无 FK 多态字符串，也不得只依赖 metadata。
+
+现有 `cost_event.execution_id` 可继续用于兼容查询；新增非 Execution 成本必须通过 typed allocation 查询到业务主体。
+
+## 15. Evidence / Audit
+
+Evidence 保存可验证证据元数据和可选 artifact/hash。
+
+EvidenceRelation 关联业务对象；EvidenceSnapshot 在需要冻结时保存 manifest。
+
+AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
+
+## 16. Mutable vs Immutable
+
+| 对象 | 语义 |
+|---|---|
+| DataResource owner / lifecycle | mutable aggregate / projection |
+| EntityMapping current row | mutable projection |
+| Authorization state | explicit state machine |
+| DatasetVersion | immutable content fact after READY |
+| EntityMappingDecision | immutable history |
+| Execution | stateful lifecycle row; transitions update status/output/metrics/timestamps through explicit commands; terminal rows are retained and not deleted |
+| Execution dependency facts | immutable history |
+| RightsSnapshot | target immutable aggregate; current header guard exists, while existing `rights_snapshot_authorization` membership DB guard is still a #137 enforcement gap |
+| QualityAssessment | immutable |
+| verified RightsDeclaration / verification / disposition facts | immutable |
+| AuthorizationProvenanceBinding / AuthorizationProvenanceBindingDisposition | immutable historical provenance facts |
+| CertificationProfile snapshot | immutable |
+| DatasetCertification / CertificationDisposition | immutable |
+| DeliveryOperation | persisted delivery attempt/result with stable idempotency identity; gate/issuance transitions only through delivery command |
+| CostEvent / CostAllocation | immutable accounting/history facts |
+| ProductVersion | immutable history |
+| ProductRelease | stateful lifecycle row before publication; published row is currently guarded, while immutable published dataset membership is a required invariant but DB enforcement on `product_release_dataset` is still an open #99 gap |
+
+## 17. JSONB 使用策略
+
+JSONB 可用于：
+
+- 引擎元数据
+- runtime metrics
+- schema / manifests
 - 行业扩展属性
-- 交付配置
-- 证据清单（evidence manifest）
+- finding diagnostic metadata
+- 受控 rights/certification parameters
 
-JSONB 不用于：
+JSONB 不用于 ID/FK、状态、版本号、核心 party/resource/certification 关系或需要约束的字段。
 
-- ID / 外键
-- 状态
-- 版本号
-- owner
-- 时间戳
-- 需要频繁关联或约束的字段
+## 18. 删除策略
 
-## 14. 删除策略
+允许软删除的可变主对象可以包括 UseCase、DataResource、Dataset、DataProduct、Entity。
 
-允许软删除：
+Execution 行在生命周期内会通过显式状态迁移更新 status、engine/output、metrics、errors 与 timestamps，因此不能把整行视为内容不可变；但 Execution 历史必须保留，终态记录不得删除。真正不可变的是其已冻结的 input/dependency/mapping-usage 等生产事实。
 
-- UseCase
-- DataResource
-- Dataset
-- DataProduct
-- Entity
+ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，当前 `guard_product_release_history` 拒绝 `product_release` 主行 UPDATE/DELETE，因此主行作为发布历史冻结。**但 `product_release_dataset` 当前没有针对已 PUBLISHED release 的 INSERT/UPDATE/DELETE guard；#99 明确跟踪该 P2/P1 enforcement gap。** 在对应 forward migration + PostgreSQL tests 合入前，文档不得声称 published dataset membership 已由数据库完整保护。SUSPENDED/WITHDRAWN 虽是 schema 枚举值，但当前不构成可达 live transition；未来启用必须先调整主行 guard、补齐 membership immutability 并新增显式 Command。
 
-不得删除的不可变事实：
-
-- DatasetVersion
-- Execution
-- ProductVersion
-- ProductRelease
-- EvidenceSnapshot
-- AuditEvent
-- CostEvent
+不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、AuthorizationProvenanceBinding、AuthorizationProvenanceBindingDisposition、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent、CostAllocation。实现状态上，EvidenceSnapshot membership guard 仍由 #99 跟踪；RightsSnapshot membership guard 仍由 #137 当前实现范围补齐。文档不得把这些尚未落库的 child-row enforcement 描述成已完成。
