@@ -287,7 +287,36 @@ RightsSnapshot 的 immutable 语义覆盖 **snapshot header + 全部 membership 
 
 大量 failing rows 的进一步规模化存储/分页可以由 #133 按已实现 finding 模型演进；不得通过新平行 Assessment root 规避现有历史。
 
-## 11. DatasetCertification（#134）
+## 11. CertificationProfile / DatasetCertification（#134）
+
+### CertificationProfile
+
+CertificationProfile 必须把认证覆盖的 delivery applicability 作为强类型、可查询、可冻结事实；**缺失字段不得隐式解释为 ANY**。
+
+目标字段/关系至少表达：
+
+- profile_ref / code / version
+- immutable content snapshot + content_sha256
+- purpose_mode: ANY / EXPLICIT
+- explicit purposes（purpose_mode=EXPLICIT 时使用强类型/规范化 purpose rows）
+- action_mode: ANY / EXPLICIT
+- explicit actions（强类型枚举/规范化 relation）
+- consumer_mode: ANY / EXPLICIT
+- explicit consumer_ref / consumer_type 或实现固定的强类型 consumer selector
+- delivery_channel_mode: ANY / EXPLICIT
+- explicit delivery channels / modes（例如 DIRECT_DATA / PLATFORM_REDEMPTION / PRESIGNED_URL / TOKEN 等由实现固定）
+- quality / rights / compliance / contract / traceability / evidence requirements
+- created_at / actor
+
+约束：
+
+- purpose/action/consumer/delivery_channel 四个 applicability mode 都必须非空且属于固定枚举；
+- mode=EXPLICIT 时必须至少存在一个对应强类型成员；mode=ANY 时不得依赖“成员表为空”推断 ANY；
+- mode 缺失、UNKNOWN、非法枚举或 snapshot 无法证明覆盖时 CurrentCertificationGate fail closed；
+- CertificationProfile snapshot/hash 必须覆盖 applicability mode + 规范化排序后的 explicit membership，不能只 hash 文本文件的一部分；
+- 历史 DatasetCertification 读取 frozen Profile snapshot，不回读当前 Profile 定义。
+
+### DatasetCertification
 
 核心强类型关系至少包括：
 
