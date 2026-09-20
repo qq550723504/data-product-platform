@@ -452,12 +452,13 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 - direct-data terminal `ISSUED` 只表示该 operation attempt 已在线性化，不表示客户端已收到数据。若 ISSUED commit 后 response 在第一字节前失败或 stream 中断，同一 DeliveryOperation/idempotency key 的 replay 不得再次读取/发送 DatasetVersion payload；应返回稳定 non-payload replay-required result。重新传输必须新建 DeliveryOperation（新的 idempotency key，使用 `retry_of_delivery_operation_id` 关联旧 operation），并重新解析 caller identity、重新 CurrentDeliveryGate、重新进入 fence/finalize；
 - 任何进入 ISSUED 的 credential 必须满足 provider_credential_expires_at <= 当前 fresh_cap_expires_at；reconciliation 找回的旧 credential 同样适用，不能因为 provider_request_key 命中就跳过；
 - 原 DeliveryOperation 已是 ISSUED 时，同 key credential replay 仍不得跳过当前授权：返回 secret 前重新 caller authority + CurrentDeliveryGate + fence/fresh-cap/capability verification，并先提交 replay decision=ALLOWED；若 BLOCKED，则 0 credential/secret 输出并 revoke/contain 原 capability，追加 BLOCKED/CONTAINMENT_PENDING replay decision，不能把历史 ISSUED operation 改写为 BLOCKED；
+- credential replay decision=CONTAINMENT_PENDING 时，append-only replay decision 与 `DatasetCredentialReplayContainmentPending`（或统一 containment event + subject_kind/replay_attempt_id）+ Audit/Evidence/Outbox 同 transaction；原 DeliveryOperation 保持 ISSUED。
 - provider 实际 capability 必须是 delivery request / CurrentDeliveryGate 允许上下文的**等价或更窄集合**：不得扩大到其它 DatasetVersion/DataResource、consumer/grantee、action、object/row/prefix scope 或 delivery channel；consumer/grantee enforcement 是 direct bearer/presigned 的必需维度，无法验证/强制时必须使用 platform redemption/gateway 或 fail closed；
 - provider capability 必须通过 read-after-write / equivalent authoritative lookup 验证后才能 ISSUED；实际 scope 无法读取/验证，或比请求更宽时不得 ISSUED，必须 revoke/contain，或改用 platform redemption indirection；
 - provider_credential_expires_at 不可验证或超过 fresh cap 时不得 ISSUED；必须安全 shorten/verify，或 revoke/contain；
 - gate 失败也有可审计 DeliveryOperation / result；
 - 不把可用 credential secret/token 正文持久化到 Core 数据库；
-- ISSUANCE_PENDING / CONTAINMENT_PENDING 必须有 reconciliation 查询/索引，不能永久悬空；
+- ISSUANCE_PENDING / CONTAINMENT_PENDING 必须有 reconciliation 查询/索引，不能永久悬空；首次进入 CONTAINMENT_PENDING 的同一 transaction 必须写入 append-only containment transition fact / `DatasetDeliveryContainmentPending`（或固定等价）Outbox Event + Audit/Evidence，事件 identity 至少绑定 delivery_operation_id + transition/reason/revision 并具备幂等唯一约束；
 - 从 ISSUANCE_PENDING 进入 terminal state 前，如 provider_request_key 可能已产生外部访问能力，必须记录 reconciliation/containment outcome；
 - confirmed containment 后允许 CONTAINMENT_PENDING → BLOCKED（fresh gate 已拒绝）或 → FAILED（gate 仍允许但 issuance contract 无法满足，如 credential 超 fresh cap 且无法安全 shorten）；
 - unknown/uncontained 必须保持 CONTAINMENT_PENDING；
