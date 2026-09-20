@@ -126,6 +126,7 @@ DataResource
 
 - 持久化 `RightsDeclaration` 与独立的 append-only `RightsVerification` 事实；Declaration 创建不等于 VERIFIED；
 - RightsDeclaration 的 resource、consumer applicability/consumer_ref、purpose、action、scope、validity 必须强类型/规范化持久化并可索引查询；CurrentEntitlementGate 不得依赖任意 JSONB 解析这些核心维度；
+- Authorization / authorization_resource 的 gate-critical scope 也必须强类型/规范化、可索引查询：至少固定 `scope_type` + `scope_ref`（或等价 normalized relation）。现有 `authorization_resource.scope jsonb` 只能保存受控扩展参数，不能作为 CurrentEntitlementGate / BindAuthorizationProvenance 的唯一 scope identity；legacy row 无可验证 normalized scope 时 fail closed，迁移不得猜测宽 scope；
 - 显式 `CreateRightsDeclaration` / `VerifyRightsDeclaration` / `RejectRightsDeclaration` Command；
 - 同一 RightsDeclaration 只能有一个 terminal RightsVerification outcome（VERIFIED / REJECTED）；Verify/Reject 互斥，数据库约束禁止同一 declaration 同时出现两个 terminal outcomes；
 - verification/rejection 创建后不可 UPDATE/DELETE；错误 VERIFIED 通过 RightsDisposition INVALIDATED/SUPERSEDED 退出 current set，并创建新的 RightsDeclaration + verification 修正；不得在同一 declaration 上追加 REJECTED 覆盖 VERIFIED；
@@ -142,14 +143,19 @@ DataResource
 - 显式 `InvalidateAuthorizationProvenanceBinding` / `SupersedeAuthorizationProvenanceBinding` Command；
 - Current binding selection 按 `as_of` 排除已生效 binding disposition；replacement binding 必须独立通过 grantor/resource/actions/scope/declaration-current-validity 校验，不能自动继承有效性；
 - RightsSnapshot 冻结实际使用的 declaration + AuthorizationProvenanceBinding + Authorization IDs，且 snapshot header + 所有 membership rows 一起 immutable；finalize 后 membership INSERT/UPDATE/DELETE 必须被 PostgreSQL guard 拒绝；
+- 持久化不可变 `EffectiveRightsSnapshot`（或等价强类型 aggregate），绑定明确 target DatasetVersion、计算 `as_of`/context、calculation_rule_version/hash、lineage/input-set hash，并通过 membership rows 冻结所有**必要输入** DatasetVersion/DataResource + 对应 RightsSnapshot/provenance refs；finalize 后 header/membership/action decision 全部不可改写；
+- Effective Rights 计算必须对每个必要输入执行确定性 fail-closed 合成：对 USE/PROCESS/DERIVE/SHARE/RAW_EXPORT/RESALE/AI_TRAINING 等 action，只有所有必要输入都明确 ALLOWED 才允许输出；任一输入 NOT_ALLOWED、UNKNOWN、缺失 rights fact/snapshot 或未出现在冻结 lineage membership 中，输出该 action 均 NOT_ALLOWED。限制项按最严格约束合成；
+- `EffectiveRightsSnapshot` 逐 action 持久化 decision + reason/source membership，可查询解释“哪一个输入阻断了 SHARE/RESALE 等动作”；创建/finalize 产生 `EffectiveRightsCalculated` / `EffectiveRightsFinalized`（或实现固定的等价事件）+ Audit/Evidence/Outbox；#134 只能冻结引用 finalized immutable Effective Rights fact，不能认证时临时重新计算后不留事实；
 - unrelated grantor 反例：资源/action 相同但无有效 provenance binding 时 CurrentEntitlementGate 必须 BLOCKED；
 - Authorization context mismatch 反例：declaration 允许 consumer B / SHARE，但绑定 Authorization 只授予 consumer A / USE 时，B 的 SHARE 请求必须 BLOCKED；Authorization 的 grantee/consumer、resource、purpose、action、scope 必须逐项覆盖 requested context；
+- Authorization normalized-scope 反例：`authorization_resource.scope` JSONB 看似包含允许前缀，但 normalized `scope_type/scope_ref` 缺失或与请求不匹配时，BindAuthorizationProvenance / CurrentEntitlementGate 必须 fail closed；不能由不同代码路径各自解释 JSONB；
+- Effective Rights 多输入反例：CURATED output 必须绑定至少两个/三个 required inputs；其中一个输入明确禁止 SHARE（其它输入允许）时，finalized EffectiveRightsSnapshot.SHARE=NOT_ALLOWED，并能追溯到该输入。删除/漏掉该 required input membership 必须使计算失败，不能得到更宽结果；
 - disposed/expired declaration 反例：即使 Authorization 仍 ACTIVE，CurrentEntitlementGate 仍必须 BLOCKED；
 - RightsDeclarationInvalidated / RightsDeclarationSuperseded / AuthorizationProvenanceBound / AuthorizationProvenanceBindingInvalidated / AuthorizationProvenanceBindingSuperseded 等 Domain Event + Audit/Evidence/Outbox/routing obligation。
 
 Rights verification / invalidation / supersession / provenance binding 等实际人工或外部核验活动必须在发生时记录 CostEvent；这些活动通常没有 Execution，必须通过 typed CostAllocation 关联实际 Rights 业务事实。same-attempt replay 使用稳定 activity/attempt identity + component_key 去重；若 retry 真正再次发生外部核验/人工工作，则使用新的 attempt identity 记录新增实际成本，不能按顶层业务对象全部去重。
 
-缺少 declaration creation/verification lifecycle、withdrawal/current-selection、provenance binding 任一能力时，#137 不视为完成。
+缺少 declaration creation/verification lifecycle、withdrawal/current-selection、**Authorization normalized scope**、provenance binding、**lineage-bound persisted Effective Rights computation/finalization** 任一能力时，#137 不视为完成。
 
 ## 7. HQD-4 #134
 
