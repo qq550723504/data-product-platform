@@ -107,7 +107,7 @@ Certified or governed DatasetVersion
 
 - RightsDeclaration（#137）
 - RightsVerification / RightsDisposition facts（#137）
-- AuthorizationProvenanceBinding（#137）
+- AuthorizationProvenanceBinding / AuthorizationProvenanceBindingDisposition（#137）
 - Authorization / ResourceGrant
 - RightsSnapshot
 - EffectiveRights（#137）
@@ -284,7 +284,7 @@ CurrentDeliveryGate
 
 - DatasetVersionUsability 至少阻断 INVALID / FAILED / PROCESSING / CREATED；SUPERSEDED 按平台既有“明确历史版本”语义处理，不在本 docs-only 基线中自动等同 INVALID；
 - CurrentCertificationGate 要求本次 delivery 绑定明确 DatasetCertification，decision = CERTIFIED 且未在 as_of 时点被 CertificationDisposition REVOKED / SUPERSEDED；requested purpose/action/consumer/delivery context 必须被该 Certification 冻结的 CertificationProfile snapshot 覆盖；禁止以 latest created_at 猜当前认证；
-- CurrentEntitlementGate 对**每一个绑定的 RightsDeclaration**按当前 `as_of` 校验：VERIFIED、declaration 自身 `effective_from/effective_to` 覆盖 `as_of`、resource/consumer/purpose/action/scope 与本次 delivery context 匹配、且未被已生效 INVALIDATED/SUPERSEDED disposition 排除；每个 Authorization 必须通过 AuthorizationProvenanceBinding 证明其 grantor_ref 得到该 provenance 支持，并同时满足 Authorization 自身状态/有效期、scope 与 Effective Rights。任一 declaration validity/scope 不匹配都 fail closed，不能因为 Authorization 仍 ACTIVE 而放行。
+- CurrentEntitlementGate 对**每一个绑定的 RightsDeclaration**按当前 `as_of` 校验：VERIFIED、declaration 自身 `effective_from/effective_to` 覆盖 `as_of`、resource/consumer/purpose/action/scope 与本次 delivery context 匹配、且未被已生效 INVALIDATED/SUPERSEDED disposition 排除；每个 Authorization 必须通过**当前有效、未被 AuthorizationProvenanceBindingDisposition INVALIDATED/SUPERSEDED 的** AuthorizationProvenanceBinding 证明其 grantor_ref 得到该 provenance 支持，并同时满足 Authorization 自身状态/有效期、scope 与 Effective Rights。任一 declaration 或 binding 已失效/不匹配都 fail closed。
 
 任一子门禁失败时，历史 Certification 保留，但当前交付必须 BLOCKED。第一阶段不要求周期性后台重认证。
 
@@ -292,7 +292,11 @@ Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证�
 
 签发 credential 时，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 所依赖所有 RightsDeclaration / Authorization 中最早的有限 `valid_to/effective_to`，以及签发时已存在且将在未来生效的 RightsDisposition / CertificationDisposition 中最早的 `effective_at`。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 gate；不能回调平台的 bearer/presigned credential 必须严格执行该 expiry cap 和明确的短最大 TTL。
 
-外部 credential issuance 必须 crash-safe：先持久化 DeliveryOperation + stable provider_request_key，再调用外部 provider；provider 必须支持幂等查询/重放或 revoke/compensation。外部成功但 terminal DB commit 失败时，retry/reconciliation 复用同一 key，不得产生第二份独立 credential。无这些能力的 provider 第一阶段只能走 platform redemption indirection 或不支持该 delivery mode。
+外部 credential issuance 必须 crash-safe：先持久化 DeliveryOperation + stable provider_request_key；每次 initial/retry/reconciliation 真正调用 provider 前重新执行 CurrentDeliveryGate 并重新计算 expiry cap，再决定是否允许外部 side effect。
+
+**Direct bearer delivery 的 provider 必须支持按同一 provider_request_key replay/read-after-write 恢复同一 credential（或等价同一访问能力）。仅支持 revoke/compensation、却无法恢复原 bearer secret，不足以支持 direct bearer**：terminal ISSUED commit 成功但 HTTP response 丢失后，客户端幂等 retry 必须仍能获得原访问能力。此类 provider 第一阶段必须使用 platform redemption indirection，或明确不支持 direct bearer mode。
+
+provider 成功但 terminal DB commit 失败时，retry/reconciliation 复用同一 key，不得产生第二份独立 credential。
 
 ## 11. CostEvent / CostAllocation
 
