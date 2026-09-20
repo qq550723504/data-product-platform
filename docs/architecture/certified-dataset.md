@@ -314,8 +314,8 @@ PREPARED
    - 必须对既有 capability 执行 revoke/contain；确认失效后返回稳定 non-secret `CREDENTIAL_REPLAY_BLOCKED`（或等价）；
    - containment 未确认成功时返回稳定 non-secret `CREDENTIAL_REPLAY_CONTAINMENT_PENDING`（或等价），并保留/追加 containment 审计；不得声称旧 capability 已失效；
    - 不得把原 terminal ISSUED DeliveryOperation 改写为 BLOCKED/FAILED；replay denial/containment 是该历史 operation 之后的新安全决策事实。
-15. 如果 provider 不能恢复同一 credential，则第一阶段必须使用平台控制的 redemption indirection；也可以在能够证明旧 credential 未交付且已成功 revoke 的协议下执行显式 replacement operation，但不得把同一 DeliveryOperation 的幂等 retry 静默变成第二份 credential；
-16. 如果外部 provider **既不支持 idempotency/read-after-write，也不支持 revoke/compensation**，第一阶段不得直接暴露其 bearer credential；必须改用平台控制的 redemption indirection，或将该 delivery mode 判为 unsupported；
+15. 如果 provider 不能安全恢复同一 credential，**或**在 fresh replay authorization 被拒绝时不能 revoke/contain 既有 capability，则第一阶段必须使用平台控制的 redemption indirection/gateway；也可以在能够证明旧 credential 未交付且已成功 revoke 的协议下执行显式 replacement operation，但不得把同一 DeliveryOperation 的幂等 retry 静默变成第二份 credential；
+16. 第一阶段 direct bearer contract 要求 provider 同时具备 safe same-capability recovery/read-after-write 与 blocked-replay revoke/contain（或等价机制）；任一缺失时不得直接暴露 bearer credential，必须改用平台控制的 redemption indirection/gateway，或将该 delivery mode 判为 unsupported；
 17. 本地生成 presigned URL 时，也必须先持久化 PREPARED/ISSUANCE_PENDING，并在每次实际生成前重新验证 caller principal→effective consumer/workspace binding/delegation，再执行 CurrentDeliveryGate/完整 expiry cap；terminal DB commit 成功前不得把 URL 返回客户端或写入日志/事件；
 18. direct-data delivery 不得绕过上述 terminal fence：ISSUED commit 成功前 response body 必须保持 0 bytes；若 commit 失败或 gate 被并发变更阻断，则该请求不得泄露任何数据字节；
 19. **direct-data 的 terminal `ISSUED` 只表示该次交付授权在线性化点已提交、服务端随后可以开始写响应；它不是“客户端已收到全部数据”的证明。** 网络/进程在 commit 后、第一字节前或流中断开时，不得把 ISSUED 审计事实解释为客户端完成接收；
