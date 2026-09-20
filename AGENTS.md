@@ -100,6 +100,7 @@ Authorization 不能与 provenance 独立选择。每个进入 CurrentEntitlemen
 - ApproveAuthorization
 - VerifyRightsDeclaration
 - InvalidateRightsDeclaration / SupersedeRightsDeclaration
+- BindAuthorizationProvenance
 - InvalidateDatasetVersion
 - RunQualityAssessment
 - CertifyDatasetVersion
@@ -196,6 +197,8 @@ Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduc
 - CurrentEntitlementGate：使用当前时间、consumer、purpose、action 检查每一个候选 RightsDeclaration 的 VERIFIED 状态、其自身 validity window 与 scope，并排除已生效 INVALIDATED/SUPERSEDED 的 provenance；同时检查 Authorization 状态/有效期与 Effective Rights。
 
 任一子门禁失败都必须 fail closed，即使历史 Certification 仍为 CERTIFIED。
+
+CurrentDeliveryGate query 只用于展示/预检，不构成交付授权。任何返回数据、下载链接、presigned URL、token 或访问凭证的 server-side delivery Command 都必须在 issuance 前重新执行完整 CurrentDeliveryGate；不得信任客户端缓存的旧 gate result。gate 与 issuance 必须处于同一 Application Command 受控边界。
 
 ## 11. Release Readiness
 
