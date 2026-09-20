@@ -290,7 +290,7 @@ CurrentDeliveryGate
 
 Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证。第一阶段必须有真正的 server-side delivery command；服务端在返回数据或签发下载链接、presigned URL、token、credential 前必须重新执行完整 CurrentDeliveryGate。query 与 delivery 之间状态发生变化时，以 delivery command 内重新计算的当前事实为准。
 
-签发 credential 时，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 所依赖所有 RightsDeclaration / Authorization 中最早的有限 `valid_to/effective_to`，以及签发时已存在且将在未来生效的 RightsDisposition / CertificationDisposition 中最早的 `effective_at`。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 gate；不能回调平台的 bearer/presigned credential 必须严格执行该 expiry cap 和明确的短最大 TTL。
+签发 credential 时，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 所依赖所有 RightsDeclaration / Authorization 中最早的有限 `valid_to/effective_to`，以及签发时已存在且将在未来生效的 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 中最早的 `effective_at`。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 gate；不能回调平台的 bearer/presigned credential 必须严格执行该 expiry cap 和明确的短最大 TTL。
 
 外部 credential issuance 必须 crash-safe：先持久化 DeliveryOperation + stable provider_request_key；每次 initial/retry/reconciliation 真正调用 provider 前重新执行 CurrentDeliveryGate 并重新计算 expiry cap，再决定是否允许外部 side effect。
 
