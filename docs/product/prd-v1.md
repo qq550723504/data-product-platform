@@ -294,6 +294,11 @@ Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证�
 
 外部 credential issuance 必须 crash-safe：先持久化 DeliveryOperation + stable provider_request_key；每次 initial/retry/reconciliation 真正调用 provider 前重新执行 CurrentDeliveryGate 并重新计算 expiry cap，再决定是否允许外部 side effect。
 
+如果 fresh gate 变为 BLOCKED，但该 DeliveryOperation 此前已经进入可能调用过 provider 的 ISSUANCE_PENDING/retry/reconciliation 窗口，**不能直接记录 BLOCKED**。必须先使用同一 provider_request_key reconciliation 既有 provider outcome：
+- 明确未签发 → 可 BLOCKED；
+- 已签发 → 必须先 revoke / compensate / contain，并确认外部访问能力已不可用后才能 BLOCKED；
+- outcome unknown 或 containment 未确认成功 → 保持 CONTAINMENT_PENDING，不得发 DatasetDeliveryBlocked terminal event，也不得向用户声称不存在活跃访问能力。
+
 **Direct bearer delivery 的 provider 必须支持按同一 provider_request_key replay/read-after-write 恢复同一 credential（或等价同一访问能力）。仅支持 revoke/compensation、却无法恢复原 bearer secret，不足以支持 direct bearer**：terminal ISSUED commit 成功但 HTTP response 丢失后，客户端幂等 retry 必须仍能获得原访问能力。此类 provider 第一阶段必须使用 platform redemption indirection，或明确不支持 direct bearer mode。
 
 provider 成功但 terminal DB commit 失败时，retry/reconciliation 复用同一 key，不得产生第二份独立 credential。
