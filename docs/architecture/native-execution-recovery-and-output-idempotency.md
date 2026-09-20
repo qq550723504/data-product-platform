@@ -200,6 +200,8 @@
      在 0 行更新后继续改 `dataset`）；
   2. 内存状态 `MarkReady` 接受 `FAILED` 作为来源，使“修复半成品”与“发布”成为**同一次**状态
      迁移，而不是先 `FAILED → PROCESSING` 再 `PROCESSING → READY`。
+  3. 若待恢复半成品的 `version_no` 低于该 Dataset 当前已发布版本，`SetReady` 拒绝这次恢复，
+     不得让延迟的旧 Execution 把当前版本回退或把较新的版本标成 `SUPERSEDED`。
 
   因此无需新增“恢复开始”事件类型：不存在只改变状态、
   不产生 Domain Event 的中间迁移，发布事实（`DatasetVersionCreated`）本身就是该迁移的

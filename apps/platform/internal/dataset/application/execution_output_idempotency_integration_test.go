@@ -340,6 +340,51 @@ func TestExecutionOutputRecoveryPrefersHalfProductOverTerminalHistory(t *testing
 	}
 }
 
+// TestRecoveryDoesNotSupersedeNewerCurrentVersion prevents a delayed output
+// recovery from rewinding a Dataset to an older version after another write has
+// already published a newer current version.
+func TestRecoveryDoesNotSupersedeNewerCurrentVersion(t *testing.T) {
+	fixture, _, datasetID := newC2AFixture(t, fakeStore{})
+	executionID := uuid.New()
+	oldHalfID := uuid.New()
+	if _, err := fixture.pool.Exec(fixture.ctx, `
+		INSERT INTO dataset_version (
+			id, dataset_id, version_no, status, metadata, generated_by_execution_id
+		) VALUES ($1, $2, 1, 'CREATED', '{}'::jsonb, $3)
+	`, oldHalfID, datasetID, executionID); err != nil {
+		t.Fatalf("insert old output half-product: %v", err)
+	}
+
+	newer := fixture.outputCommand(datasetID, uuid.New(), "id,name\n2,newer\n")
+	newer.GeneratedByExecutionID = nil
+	current, err := fixture.upload.Handle(fixture.ctx, newer)
+	if err != nil {
+		t.Fatalf("publish newer current version: %v", err)
+	}
+	if current.VersionNo != 2 || current.Status != domain.VersionReady {
+		t.Fatalf("newer current version = %d/%s, want 2/READY", current.VersionNo, current.Status)
+	}
+
+	_, err = fixture.upload.Handle(fixture.ctx, fixture.outputCommand(datasetID, executionID, "id,name\n1,old\n"))
+	if !errors.Is(err, domain.ErrStaleVersionRecovery) {
+		t.Fatalf("stale recovery error = %v, want ErrStaleVersionRecovery", err)
+	}
+	oldHalf, err := fixture.repo.GetVersion(fixture.ctx, oldHalfID)
+	if err != nil {
+		t.Fatalf("read old half-product: %v", err)
+	}
+	if oldHalf.Status != domain.VersionCreated {
+		t.Fatalf("old half-product status = %s, want CREATED after rejected recovery", oldHalf.Status)
+	}
+	newCurrent, err := fixture.repo.GetVersion(fixture.ctx, current.ID)
+	if err != nil {
+		t.Fatalf("read newer current version: %v", err)
+	}
+	if newCurrent.Status != domain.VersionReady {
+		t.Fatalf("newer current status = %s, want READY", newCurrent.Status)
+	}
+}
+
 // TestConcurrentDeliveriesNeverOverwritePublishedContent is the "one row is not
 // enough" proof: the unique index guarantees one DatasetVersion row, but object
 // storage has no conditional write, so the writer must also guarantee that a

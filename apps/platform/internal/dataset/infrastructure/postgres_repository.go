@@ -220,6 +220,15 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 	if err := tx.QueryRow(ctx, `SELECT current_version_id FROM dataset WHERE id = $1 FOR UPDATE`, version.DatasetID).Scan(&previousVersionID); err != nil {
 		return fmt.Errorf("lock dataset current version: %w", err)
 	}
+	if previousVersionID != nil && *previousVersionID != version.ID {
+		var previousVersionNo int64
+		if err := tx.QueryRow(ctx, `SELECT version_no FROM dataset_version WHERE id = $1`, *previousVersionID).Scan(&previousVersionNo); err != nil {
+			return fmt.Errorf("read current dataset version: %w", err)
+		}
+		if previousVersionNo > version.VersionNo {
+			return fmt.Errorf("dataset version %s is older than current version %s: %w", version.ID, *previousVersionID, domain.ErrStaleVersionRecovery)
+		}
+	}
 	metadata, err := json.Marshal(version.Metadata)
 	if err != nil {
 		return fmt.Errorf("marshal dataset version metadata: %w", err)
