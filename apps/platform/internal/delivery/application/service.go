@@ -105,15 +105,8 @@ func (s *Service) IssueCredential(ctx context.Context, cmd IssueCredentialComman
 	created := false
 	terminalContainmentPending := false
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		candidate, err := domain.NewOperation(
-			cmd.WorkspaceID, cmd.DatasetVersionID, cmd.IdempotencyKey, cmd.ProviderName,
-			cmd.PrincipalRef, cmd.EffectiveConsumerRef, cmd.DelegationRef, cmd.Purpose, cmd.Action,
-			cmd.ScopeRef, cmd.DeliveryChannel, cmd.RequestedExpiresAt, cmd.CertificationRef,
-		)
-		if err != nil {
-			return err
-		}
-		inserted, err := s.repo.TryInsertIdempotency(ctx, tx, cmd.WorkspaceID, cmd.IdempotencyKey, fingerprint, candidate.ID)
+		candidateID := uuid.New()
+		inserted, err := s.repo.TryInsertIdempotency(ctx, tx, cmd.WorkspaceID, cmd.IdempotencyKey, fingerprint, candidateID)
 		if err != nil {
 			return err
 		}
@@ -138,6 +131,15 @@ func (s *Service) IssueCredential(ctx context.Context, cmd IssueCredentialComman
 			}
 			return err
 		}
+		candidate, err := domain.NewOperation(
+			cmd.WorkspaceID, cmd.DatasetVersionID, cmd.IdempotencyKey, cmd.ProviderName,
+			cmd.PrincipalRef, cmd.EffectiveConsumerRef, cmd.DelegationRef, cmd.Purpose, cmd.Action,
+			cmd.ScopeRef, cmd.DeliveryChannel, cmd.RequestedExpiresAt, cmd.CertificationRef,
+		)
+		if err != nil {
+			return err
+		}
+		candidate.ID = candidateID
 
 		if err := s.repo.InsertOperation(ctx, tx, candidate); err != nil {
 			return err
@@ -548,13 +550,13 @@ func (s *Service) processPending(ctx context.Context, operation domain.Operation
 	if err != nil {
 		outcome := domain.OutcomeFailed
 		observation := domain.ObservationCallReturn
-		if errors.Is(err, ErrCapabilityNotFound) && !initial && operation.Status == domain.StatusContainmentPending {
+		if errors.Is(err, ErrCapabilityNotFound) && !initial {
 			if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationReconciliation, domain.OutcomeNotFound, domain.Capability{}, "provider reports no active capability"); recordErr != nil {
 				return Result{}, recordErr
 			}
-			target := domain.StatusBlocked
-			if evaluation.Allowed {
-				target = domain.StatusFailed
+			target := domain.StatusFailed
+			if operation.Status == domain.StatusContainmentPending && !evaluation.Allowed {
+				target = domain.StatusBlocked
 			}
 			return s.finishWithoutCapability(ctx, operation.ID, cmd, target, "provider reports no active capability", &attemptID)
 		}
@@ -568,7 +570,7 @@ func (s *Service) processPending(ctx context.Context, operation domain.Operation
 		if outcome == domain.OutcomeUnknown {
 			return s.enterContainmentPending(ctx, operation.ID, "provider outcome is unknown", cmd, &attemptID)
 		}
-		if !initial && operation.Status == domain.StatusContainmentPending {
+		if !initial {
 			return s.enterContainmentPending(ctx, operation.ID, err.Error(), cmd, &attemptID)
 		}
 		return s.finishWithoutCapability(ctx, operation.ID, cmd, domain.StatusFailed, err.Error(), &attemptID)
@@ -1205,7 +1207,7 @@ func appendContainmentFactsTx(ctx context.Context, tx pgx.Tx, operation domain.O
 }
 
 func validateCommand(cmd IssueCredentialCommand) error {
-	if cmd.WorkspaceID == uuid.Nil || cmd.DatasetVersionID == uuid.Nil || strings.TrimSpace(cmd.ProviderName) == "" || strings.TrimSpace(cmd.PrincipalRef) == "" || strings.TrimSpace(cmd.EffectiveConsumerRef) == "" || strings.TrimSpace(cmd.Purpose) == "" || strings.TrimSpace(cmd.Action) == "" || strings.TrimSpace(cmd.ScopeRef) == "" || strings.TrimSpace(cmd.DeliveryChannel) == "" || strings.TrimSpace(cmd.IdempotencyKey) == "" || len(cmd.IdempotencyKey) > 255 || cmd.RequestedExpiresAt.IsZero() || !cmd.RequestedExpiresAt.After(time.Now().UTC()) {
+	if cmd.WorkspaceID == uuid.Nil || cmd.DatasetVersionID == uuid.Nil || strings.TrimSpace(cmd.ProviderName) == "" || strings.TrimSpace(cmd.PrincipalRef) == "" || strings.TrimSpace(cmd.EffectiveConsumerRef) == "" || strings.TrimSpace(cmd.Purpose) == "" || strings.TrimSpace(cmd.Action) == "" || strings.TrimSpace(cmd.ScopeRef) == "" || strings.TrimSpace(cmd.DeliveryChannel) == "" || strings.TrimSpace(cmd.IdempotencyKey) == "" || len(cmd.IdempotencyKey) > 255 || cmd.RequestedExpiresAt.IsZero() {
 		return domain.ErrInvalidOperation
 	}
 	return nil
