@@ -98,15 +98,19 @@ Authorization 不能与 provenance 独立选择。每个进入 CurrentEntitlemen
 
 RightsDeclaration 的 resource / consumer applicability / purpose / action / scope / validity 必须强类型、可索引、可查询；这些 gate-critical 字段不得仅藏在 JSONB。
 
+**使用权与授予权必须分离。** `allowed_actions/permitted purpose/use scope` 回答 party 自己能做什么；`grant_authority_mode + grantable_actions + grantable purpose + grantable scope` 回答 party 能否把这些权利授给别人。AuthorizationProvenanceBinding 必须证明后者覆盖 Authorization；只有 USE/PROCESS permission 而无 grant authority 时，不能作为 grant source。delegation chain 每一跳也必须显式携带 onward grant authority，不能把 use permission 当 sublicensing authority。
+
 Authorization 的 gate-critical scope 也必须强类型/规范化、可索引、可查询（`scope_type` + `scope_ref` 或等价 relation）。现有 `authorization_resource.scope` JSONB 只能做扩展参数；BindAuthorizationProvenance / CurrentEntitlementGate 不得各自解析任意 JSONB 决定 allow。legacy Authorization 无法可靠归一化 scope 时 fail closed，不得把缺失 scope 当作全资源。
 
 Authorization 本身也必须逐项覆盖当前 requested context：grantee/consumer、resource、purpose、action、scope、validity/status。RightsDeclaration 或 Effective Rights 的更宽范围不得放大一条更窄的 Authorization。
 
-RightsSnapshot 的 immutable 语义覆盖 header + authorization/declaration/provenance-binding membership；finalize 后 membership INSERT/UPDATE/DELETE 必须由数据库 guard fail closed。
+RightsSnapshot / EffectiveRightsSnapshot 的 immutable 语义覆盖 header + 全部 membership/action rows。若采用 DRAFT→FINALIZED，多事务 membership mutation 与 Finalize 必须获取同一个 parent snapshot row lock/fence（固定顺序 parent-first）：mutation 持锁检查 DRAFT 后写成员；Finalize 持同锁验证 membership/hash 后改 FINALIZED。不得只在 trigger 中无锁读取 parent status，否则可能出现 finalize 提交后旧 membership transaction 再提交的历史穿越。FINALIZED 后 INSERT/UPDATE/DELETE 全部 fail closed。
 
 AuthorizationProvenanceBinding 创建后不可 UPDATE/DELETE。错误 binding 通过 append-only BindingDisposition（INVALIDATED / SUPERSEDED + effective_at）退出 current set；CurrentEntitlementGate 必须按 as_of 排除已生效 disposition。replacement binding 必须独立重新校验，历史 RightsSnapshot 继续引用旧 binding。
 
 衍生数据的 Effective Rights 默认 fail closed：必须从 target DatasetVersion 的实际 required lineage/input facts 计算并持久化 immutable EffectiveRightsSnapshot（或等价 aggregate），冻结 calculation rule/hash、required input membership + source RightsSnapshot/provenance、逐 action decision/reason。任何必要输入不允许、未知、缺失或未被纳入冻结 input membership 时，输出不得获得该动作；只有所有 required inputs 明确 ALLOWED 才 ALLOWED。#134 只能引用 finalized immutable Effective Rights identity/hash。
+
+**历史 EffectiveRightsSnapshot 不替代 delivery-time current rights。** 对衍生 DatasetVersion 的每次 CurrentDeliveryGate，必须遍历 target 的全部 immutable required inputs，对每个 input 重新验证当前 declaration/binding/Authorization/grantor-delegation facts，再对 requested action 做 fail-closed 交集。任一 source input 后续 revoke/expire/disposition 都必须立即阻断 derived delivery；这些 source dependencies 参与同一 delivery fence/revision 与 credential TTL cap。
 
 ## 5. State Transitions
 
