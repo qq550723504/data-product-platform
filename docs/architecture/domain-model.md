@@ -269,7 +269,9 @@ CertificationDisposition (optional: REVOKED / SUPERSEDED)
 Certified DatasetVersion / current certification eligibility
 ~~~
 
-CertificationProfile 定义 purpose、quality、rights、compliance、contract、traceability/evidence 等要求。
+CertificationProfile 定义 purpose、action、consumer、delivery channel/mode、quality、rights、compliance、contract、traceability/evidence 等要求。
+
+purpose/action/consumer/delivery channel 四个 delivery-context 维度都必须显式使用 ANY / EXPLICIT（或实现固定的等价枚举）表达覆盖范围；缺失/NULL/UNKNOWN 不表示不限，而是“无法证明认证覆盖”，CurrentCertificationGate 必须 fail closed。Profile snapshot/hash 冻结这些 mode 及其 explicit membership。
 
 DatasetCertification 绑定实际使用的 Profile snapshot/hash 和所有认证证据。CertificationDisposition 是 append-only 历史事实，用于让错误或被替代的认证退出 current set；current certification 不能通过 latest timestamp 推断。
 
