@@ -234,6 +234,17 @@ CurrentEntitlementGate 不能只检查 Authorization 是否 ACTIVE/未过期。�
 
 衍生 DatasetVersion 的有效权利由输入资源权利、授权、Purpose 和生产 lineage 共同决定。
 
+EffectiveRights 不是瞬时 query value，而是可冻结的 immutable aggregate。至少具有：
+
+- target DatasetVersion；
+- calculation rule version/hash 与 calculation context/as_of；
+- actual required lineage/input membership；
+- 每个 input 使用的 RightsSnapshot / provenance identity；
+- 每个 action 的 ALLOWED / NOT_ALLOWED decision + reason/source；
+- finalized identity/hash，供 DatasetCertification 强类型引用。
+
+所有 required inputs 参与交集合成；任一必要输入 deny/unknown/missing 时对应 action NOT_ALLOWED。调用方不能通过少传输入获得更宽 Effective Rights。FINALIZED 后 header/input/action membership 不可修改，修正产生新 aggregate。
+
 V1 默认 fail closed。
 
 ## 5. Quality 模型
