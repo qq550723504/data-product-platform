@@ -335,7 +335,9 @@ ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status
 - gate 失败也有可审计 DeliveryOperation / result；
 - 不把可用 credential secret/token 正文持久化到 Core 数据库；
 - ISSUANCE_PENDING / CONTAINMENT_PENDING 必须有 reconciliation 查询/索引，不能永久悬空；
-- 从 ISSUANCE_PENDING 转 BLOCKED 前，如 provider_request_key 可能已产生外部访问能力，必须记录 reconciliation/containment outcome；只有确认“未签发”或“已成功 revoke/contain”才能 BLOCKED；unknown/uncontained 必须保持 CONTAINMENT_PENDING；
+- 从 ISSUANCE_PENDING 进入 terminal state 前，如 provider_request_key 可能已产生外部访问能力，必须记录 reconciliation/containment outcome；
+- confirmed containment 后允许 CONTAINMENT_PENDING → BLOCKED（fresh gate 已拒绝）或 → FAILED（gate 仍允许但 issuance contract 无法满足，如 credential 超 fresh cap 且无法安全 shorten）；
+- unknown/uncontained 必须保持 CONTAINMENT_PENDING；
 - CostAllocation 必须能以 FK 关联 DeliveryOperation。
 
 ## 14. CostEvent / CostAllocation
