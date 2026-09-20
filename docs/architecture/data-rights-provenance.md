@@ -28,6 +28,8 @@ Party / PartyRef
       ↓
 RightsDeclaration
       ↓
+AuthorizationProvenanceBinding
+      ↓
 Authorization
       ↓
 RightsSnapshot
