@@ -98,3 +98,38 @@ func (r *QueryRepository) ListForObject(ctx context.Context, objectType string, 
 	}
 	return items, nil
 }
+
+// HasRelationForObject is the small provenance port used by quality rules that
+// need to verify evidence existence without loading unbounded evidence metadata.
+func (r *QueryRepository) HasRelationForObject(ctx context.Context, objectType string, objectID uuid.UUID) (bool, error) {
+	var present bool
+	if err := r.pool.QueryRow(ctx, `
+		SELECT EXISTS(
+			SELECT 1 FROM evidence_relation
+			WHERE object_type = $1 AND object_id = $2
+		)
+	`, objectType, objectID).Scan(&present); err != nil {
+		return false, fmt.Errorf("check evidence for %s %s: %w", objectType, objectID, err)
+	}
+	return present, nil
+}
+
+// HasSupportingEvidenceForObject excludes governance results produced by the
+// quality/compliance checks themselves, preventing a rerun from using its own
+// previous assessment as production traceability proof.
+func (r *QueryRepository) HasSupportingEvidenceForObject(ctx context.Context, objectType string, objectID uuid.UUID) (bool, error) {
+	var present bool
+	if err := r.pool.QueryRow(ctx, `
+		SELECT EXISTS(
+			SELECT 1
+			FROM evidence_relation er
+			JOIN evidence e ON e.id = er.evidence_id
+			WHERE er.object_type = $1
+			  AND er.object_id = $2
+			  AND e.evidence_type NOT IN ('QUALITY_RESULT', 'COMPLIANCE_RESULT')
+		)
+	`, objectType, objectID).Scan(&present); err != nil {
+		return false, fmt.Errorf("check supporting evidence for %s %s: %w", objectType, objectID, err)
+	}
+	return present, nil
+}

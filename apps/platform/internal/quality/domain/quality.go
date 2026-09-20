@@ -9,6 +9,7 @@ import (
 
 type GateDecision string
 type FindingStatus string
+type DimensionStatus string
 
 const (
 	GatePass            GateDecision = "PASS"
@@ -19,7 +20,30 @@ const (
 	FindingPass    FindingStatus = "PASS"
 	FindingFail    FindingStatus = "FAIL"
 	FindingSkipped FindingStatus = "SKIPPED"
+
+	DimensionPass          DimensionStatus = "PASS"
+	DimensionWarn          DimensionStatus = "WARN"
+	DimensionReview        DimensionStatus = "REVIEW"
+	DimensionFail          DimensionStatus = "FAIL"
+	DimensionNotApplicable DimensionStatus = "NOT_APPLICABLE"
 )
+
+var QualityDimensions = []string{
+	"COMPLETENESS",
+	"ACCURACY",
+	"CONSISTENCY",
+	"UNIQUENESS",
+	"TIMELINESS",
+	"TRACEABILITY",
+}
+
+type DimensionSummary struct {
+	Dimension      string          `json:"dimension"`
+	Status         DimensionStatus `json:"status"`
+	RuleCount      int             `json:"ruleCount"`
+	EvaluatedCount int             `json:"evaluatedCount"`
+	FailedCount    int             `json:"failedCount"`
+}
 
 type Finding struct {
 	ID        uuid.UUID
@@ -48,6 +72,7 @@ type Assessment struct {
 	GateDecision         GateDecision
 	Metrics              map[string]any
 	Findings             []Finding
+	DimensionSummaries   map[string]DimensionSummary
 	CreatedAt            time.Time
 	CreatedBy            *uuid.UUID
 }
@@ -56,7 +81,7 @@ type Result = Assessment
 
 const (
 	NativeEvaluatorName    = "native-quality"
-	NativeEvaluatorVersion = "1"
+	NativeEvaluatorVersion = "2"
 )
 
 func NewResult(workspaceID, datasetVersionID uuid.UUID, ruleSetRef, version string, metrics map[string]any, findings []Finding, actorID *uuid.UUID) Result {
@@ -89,7 +114,46 @@ func NewAssessment(workspaceID, datasetVersionID uuid.UUID, ruleSetRef, version,
 		}
 	}
 	result.Findings = findings
+	result.DimensionSummaries = SummarizeDimensions(findings)
+	result.Metrics["dimensions"] = result.DimensionSummaries
 	result.GateDecision = DecideGate(findings)
+	return result
+}
+
+func SummarizeDimensions(findings []Finding) map[string]DimensionSummary {
+	result := make(map[string]DimensionSummary, len(QualityDimensions))
+	for _, dimension := range QualityDimensions {
+		result[dimension] = DimensionSummary{Dimension: dimension, Status: DimensionNotApplicable}
+	}
+	for _, finding := range findings {
+		dimension := strings.ToUpper(strings.TrimSpace(finding.Dimension))
+		if dimension == "CONFORMITY" {
+			dimension = "ACCURACY"
+		}
+		summary, ok := result[dimension]
+		if !ok {
+			continue
+		}
+		summary.RuleCount++
+		if finding.Status == FindingSkipped {
+			result[dimension] = summary
+			continue
+		}
+		summary.EvaluatedCount++
+		if finding.Status == FindingFail {
+			summary.FailedCount++
+			if strings.EqualFold(finding.Severity, "CRITICAL") {
+				summary.Status = DimensionFail
+			} else if strings.EqualFold(finding.Severity, "HIGH") && summary.Status != DimensionFail {
+				summary.Status = DimensionReview
+			} else if summary.Status == DimensionNotApplicable || summary.Status == DimensionPass {
+				summary.Status = DimensionWarn
+			}
+		} else if summary.Status == DimensionNotApplicable {
+			summary.Status = DimensionPass
+		}
+		result[dimension] = summary
+	}
 	return result
 }
 

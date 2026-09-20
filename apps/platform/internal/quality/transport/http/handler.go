@@ -227,6 +227,7 @@ func resultResponse(result domain.Result) map[string]any {
 		"evaluatorVersion":     result.EvaluatorVersion,
 		"gateDecision":         result.GateDecision,
 		"metrics":              result.Metrics,
+		"dimensionSummary":     result.DimensionSummaries,
 		"findings":             result.Findings,
 		"createdAt":            result.CreatedAt,
 	}

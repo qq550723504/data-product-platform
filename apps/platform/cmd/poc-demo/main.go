@@ -28,6 +28,7 @@ import (
 	entityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
@@ -319,7 +320,7 @@ func (d *demo) advance() error {
 	if err != nil {
 		return err
 	}
-	quality, err := qualityapp.NewService(d.cfg.IndustryPackRoot, tx, datasets, qualityinfra.NewPostgresRepository(d.pool), d.store).Run(d.ctx, qualityapp.RunCommand{WorkspaceID: d.m.Workspace, DatasetVersionID: output.ID, RuleSetRef: "park/quality/enterprise-activity-quality-v1.yaml", ActorID: &d.m.Actor, Now: time.Now().UTC()})
+	quality, err := qualityapp.NewService(d.cfg.IndustryPackRoot, tx, datasets, qualityinfra.NewPostgresRepository(d.pool), d.store, evidence.NewQueryRepository(d.pool)).Run(d.ctx, qualityapp.RunCommand{WorkspaceID: d.m.Workspace, DatasetVersionID: output.ID, RuleSetRef: "park/quality/enterprise-activity-quality-v1.yaml", ActorID: &d.m.Actor, Now: time.Now().UTC()})
 	if err != nil {
 		return err
 	}

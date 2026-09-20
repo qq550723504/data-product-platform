@@ -31,16 +31,21 @@ type Service struct {
 	datasetRepo      *datasetinfra.PostgresRepository
 	repo             *infrastructure.PostgresRepository
 	store            ObjectStore
+	evidenceRepo     *evidence.QueryRepository
 }
 
-func NewService(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, repo *infrastructure.PostgresRepository, store ObjectStore) *Service {
-	return &Service{
+func NewService(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, repo *infrastructure.PostgresRepository, store ObjectStore, evidenceRepos ...*evidence.QueryRepository) *Service {
+	service := &Service{
 		industryPackRoot: industryPackRoot,
 		tx:               tx,
 		datasetRepo:      datasetRepo,
 		repo:             repo,
 		store:            store,
 	}
+	if len(evidenceRepos) > 0 {
+		service.evidenceRepo = evidenceRepos[0]
+	}
+	return service
 }
 
 type RunCommand struct {
@@ -88,11 +93,22 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	if err != nil {
 		return domain.Assessment{}, err
 	}
+	var evidencePresent *bool
+	if s.evidenceRepo != nil {
+		present, err := s.evidenceRepo.HasSupportingEvidenceForObject(ctx, "DATASET_VERSION", version.ID)
+		if err != nil {
+			return domain.Assessment{}, fmt.Errorf("resolve DatasetVersion evidence facts: %w", err)
+		}
+		evidencePresent = &present
+	}
+	lineagePresent := version.GeneratedByExecutionID != nil
 	findings, metrics, err := native.Evaluate(policy, native.DatasetContext{
-		Table:    table,
-		Metadata: version.Metadata,
-		ReadyAt:  version.ReadyAt,
-		Now:      cmd.Now,
+		Table:           table,
+		Metadata:        version.Metadata,
+		ReadyAt:         version.ReadyAt,
+		Now:             cmd.Now,
+		LineagePresent:  &lineagePresent,
+		EvidencePresent: evidencePresent,
 	})
 	if err != nil {
 		return domain.Assessment{}, err

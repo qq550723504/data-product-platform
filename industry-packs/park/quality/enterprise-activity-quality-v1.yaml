@@ -2,75 +2,131 @@ apiVersion: dataprod.platform/v1alpha1
 kind: QualityRuleSet
 metadata:
   name: enterprise-activity-quality
-  version: 1.0.0
+  version: 2.0.0
 spec:
   productCode: DP-ENTERPRISE-ACTIVITY
   rules:
     - id: QA-COMPANY-ID-COMPLETE
       stage: PRODUCT
       dimension: COMPLETENESS
+      type: completeness_ratio
       target: company_id
-      expression: "non_null_rate(company_id) >= 0.999"
+      threshold: 0.999
+      required: true
+      description: Company identifiers are present on accepted product rows.
       severity: CRITICAL
 
     - id: QA-CANONICAL-UNIQUE
       stage: ENTITY_RESOLUTION
-      dimension: CONSISTENCY
+      dimension: UNIQUENESS
+      type: unique
       target: company_id
-      expression: "unique_mapping_rate(company_id) >= 0.99"
+      threshold: 0.99
+      required: true
+      description: Canonical company mappings remain sufficiently unique.
       severity: HIGH
 
     - id: QA-ENTITY-UNRESOLVED
       stage: ENTITY_RESOLUTION
       dimension: CONSISTENCY
+      type: reference_match
       target: entity_resolution
-      expression: "unresolved_entity_rate <= 0.005"
+      threshold: 0.005
+      parameters:
+        metric: unresolvedEntityRate
+        operator: lte
+      required: true
+      description: Entity resolution evidence keeps unresolved rows below the declared limit.
       severity: HIGH
 
     - id: QA-ENERGY-NONNEGATIVE
       stage: STANDARDIZED
       dimension: ACCURACY
+      type: reconciliation
       target: energy_kwh
-      expression: "accepted_record_negative_rate(energy_kwh) == 0"
+      threshold: 0
+      parameters:
+        metric: acceptedNegativeEnergyRate
+        operator: eq
+      required: true
+      description: Accepted standardized energy rows contain no negative readings.
       severity: CRITICAL
       note: Negative RAW records may exist but must be quarantined and excluded from accepted standardized energy data.
 
     - id: QA-PERIOD-PRESENT
       stage: PRODUCT
       dimension: COMPLETENESS
+      type: not_null
       target: period
-      expression: "non_null_rate(period) == 1"
+      threshold: 1
+      required: true
+      description: Every accepted product row has a reporting period.
       severity: CRITICAL
 
     - id: QA-ACTIVITY-SCORE-RANGE
       stage: PRODUCT
-      dimension: CONFORMITY
+      dimension: ACCURACY
+      type: range
       target: activity_score
-      expression: "all_non_null_values_between(activity_score, 0, 100)"
+      parameters:
+        min: 0
+        max: 100
+        allowNull: true
+      required: true
+      description: Non-null activity scores are within the product contract range.
       severity: CRITICAL
 
     - id: QA-ACTIVITY-LEVEL-CONSISTENCY
       stage: PRODUCT
       dimension: CONSISTENCY
+      type: conditional_consistency
       target: activity_level
-      expression: >-
-        every_row((activity_score IS NULL AND activity_level == 'INSUFFICIENT_DATA')
-        OR (activity_score IS NOT NULL AND activity_level IN ['HIGH','MEDIUM','LOW']))
+      parameters:
+        conditionField: activity_score
+        whenMissing: INSUFFICIENT_DATA
+        whenPresentValues: [HIGH, MEDIUM, LOW]
+      required: true
+      description: Activity level reflects whether an activity score is available.
       severity: CRITICAL
 
     - id: QA-INDICATOR-COVERAGE-RANGE
       stage: PRODUCT
-      dimension: CONFORMITY
+      dimension: ACCURACY
+      type: range
       target: indicator_coverage
-      expression: "all_non_null_values_between(indicator_coverage, 0, 100)"
+      parameters:
+        min: 0
+        max: 100
+        allowNull: true
+      required: true
+      description: Non-null indicator coverage values are within the product contract range.
       severity: CRITICAL
 
     - id: QA-FRESHNESS
       stage: PRODUCT
       dimension: TIMELINESS
+      type: freshness
       target: product_dataset
-      expression: "freshness_hours <= 24"
+      threshold: 24
+      required: true
+      description: The DatasetVersion is evaluated within the accepted freshness window.
       severity: CRITICAL
+
+    - id: QA-LINEAGE-PRESENT
+      stage: PRODUCT
+      dimension: TRACEABILITY
+      type: lineage_present
+      required: false
+      description: Workflow-produced DatasetVersions expose their producing execution.
+      severity: HIGH
+
+    - id: QA-EVIDENCE-PRESENT
+      stage: PRODUCT
+      dimension: TRACEABILITY
+      type: evidence_present
+      required: false
+      description: DatasetVersions may declare supporting production evidence through the application context.
+      severity: HIGH
 
   gate:
     criticalFailure: FAIL

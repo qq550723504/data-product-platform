@@ -131,7 +131,11 @@ func (r *PostgresRepository) GetAssessment(ctx context.Context, assessmentID uui
 		}
 		result.Findings = append(result.Findings, finding)
 	}
-	return result, rows.Err()
+	if err := rows.Err(); err != nil {
+		return domain.Result{}, err
+	}
+	result.DimensionSummaries = domain.SummarizeDimensions(result.Findings)
+	return result, nil
 }
 
 func (r *PostgresRepository) ListAssessments(ctx context.Context, datasetVersionID uuid.UUID, limit, offset int) (AssessmentPage, error) {
@@ -276,7 +280,11 @@ func (r *PostgresRepository) loadFindings(ctx context.Context, result *domain.As
 		}
 		result.Findings = append(result.Findings, finding)
 	}
-	return rows.Err()
+	if err := rows.Err(); err != nil {
+		return err
+	}
+	result.DimensionSummaries = domain.SummarizeDimensions(result.Findings)
+	return nil
 }
 
 func (r *PostgresRepository) loadFindingsBatch(ctx context.Context, results []domain.Assessment) error {
@@ -317,6 +325,7 @@ func (r *PostgresRepository) loadFindingsBatch(ctx context.Context, results []do
 	}
 	for i := range results {
 		results[i].Findings = byResult[results[i].ID]
+		results[i].DimensionSummaries = domain.SummarizeDimensions(results[i].Findings)
 	}
 	return nil
 }

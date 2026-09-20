@@ -111,12 +111,21 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	if qualityResult.EvaluatorName != qualitynative.EvaluatorName || qualityResult.EvaluatorVersion != qualitynative.EvaluatorVersion {
 		t.Fatalf("assessment evaluator = %s/%s, want %s/%s", qualityResult.EvaluatorName, qualityResult.EvaluatorVersion, qualitynative.EvaluatorName, qualitynative.EvaluatorVersion)
 	}
+	if len(qualityResult.DimensionSummaries) != len(qualitydomain.QualityDimensions) {
+		t.Fatalf("dimension summaries = %d, want %d", len(qualityResult.DimensionSummaries), len(qualitydomain.QualityDimensions))
+	}
+	if qualityResult.DimensionSummaries["COMPLETENESS"].Status != qualitydomain.DimensionPass {
+		t.Fatalf("completeness summary = %#v, want PASS", qualityResult.DimensionSummaries["COMPLETENESS"])
+	}
 	assessment, err := qualityRepo.GetAssessment(ctx, qualityResult.ID)
 	if err != nil {
 		t.Fatalf("query assessment by id: %v", err)
 	}
 	if assessment.RuleSetContent != policy.SourceContent || assessment.RuleSetContentSHA256 != policy.SourceContentSHA256 {
 		t.Fatalf("queried assessment lost its rule snapshot")
+	}
+	if assessment.DimensionSummaries["COMPLETENESS"].Status != qualitydomain.DimensionPass {
+		t.Fatalf("queried completeness summary = %#v, want PASS", assessment.DimensionSummaries["COMPLETENESS"])
 	}
 	evidenceItems, err := evidence.NewQueryRepository(pool).ListForObject(ctx, "QUALITY_RESULT", qualityResult.ID)
 	if err != nil || len(evidenceItems) != 1 {
