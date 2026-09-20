@@ -186,7 +186,9 @@ EntityType → Entity → EntityMapping projection
 - grantor_ref 必须与支持声明中的可授权 party_ref 明确匹配，或显式引用可验证 delegation chain；
 - authorization/resource/declaration 必须同 workspace、同 DataResource；
 - declaration 支持的 actions/scope 必须覆盖 authorization 授出的范围；
-- 当前 entitlement 查询必须读取 binding，不允许独立选择 declaration + authorization。
+- 当前 entitlement 查询必须读取 binding，不允许独立选择 declaration + authorization；
+- AuthorizationProvenanceBinding 创建后是 immutable historical fact：禁止 UPDATE / DELETE；修正只能创建新的 binding/replacement fact，并让后续 CurrentEntitlement/RightsSnapshot 显式引用新 binding；
+- migration 必须提供 update/delete guard，历史 RightsSnapshot 引用的 binding ID 不能被重连到另一 declaration/grantor/actions/scope。
 
 ### RightsDeclaration（#137）
 
@@ -384,6 +386,7 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | RightsSnapshot | immutable |
 | QualityAssessment | immutable |
 | verified RightsDeclaration / verification / disposition facts | immutable |
+| AuthorizationProvenanceBinding | immutable historical provenance fact |
 | CertificationProfile snapshot | immutable |
 | DatasetCertification / CertificationDisposition | immutable |
 | DeliveryOperation | persisted delivery attempt/result with stable idempotency identity; gate/issuance transitions only through delivery command |
@@ -412,4 +415,4 @@ Execution 行在生命周期内会通过显式状态迁移更新 status、engine
 
 ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，当前 `guard_product_release_history` 拒绝所有 UPDATE，整行作为发布历史冻结。SUSPENDED/WITHDRAWN 虽是 schema 枚举值，但当前不构成可达 live transition；未来启用必须先调整 guard 并新增显式 Command。
 
-不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent、CostAllocation。
+不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、AuthorizationProvenanceBinding、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent、CostAllocation。
