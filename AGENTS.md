@@ -92,7 +92,9 @@ RightsDeclaration
 
 平台记录权利声明、依据、主体角色、允许项、限制项和 Evidence；不得声称平台自动裁定现实世界法律所有权。
 
-Authorization 不能与 provenance 独立选择。每个进入 CurrentEntitlementGate 的 Authorization / ResourceGrant 都必须通过强类型 AuthorizationProvenanceBinding 证明其 grantor_ref 得到相应 VERIFIED RightsDeclaration 支持；grantor 不匹配或无可验证 delegation chain 时 fail closed。
+Authorization 不能与 provenance 独立选择。每个进入 CurrentEntitlementGate 的 Authorization / ResourceGrant 都必须通过强类型 AuthorizationProvenanceBinding 证明其 grantor_ref 得到相应 VERIFIED RightsDeclaration 支持。若 grantor 不是 declaration-supported party 本身，binding 必须强类型引用 finalized GrantorAuthorityDelegationChain（或等价）及其 member edge identities/hash；不能只记录“存在 delegation”。
+
+**Grantor delegation chain 是 current entitlement dependency，不是 binding-create-time 一次性检查。** 每次 CurrentEntitlementGate 都必须按 as_of 重新验证所有 required delegation edges 的 validity、REVOKED/INVALIDATED/SUPERSEDED disposition、delegator→delegate 连续性及 resource/purpose/action/normalized-scope coverage；任一 edge 失效即 fail closed。RightsSnapshot 冻结 chain identity/member IDs只用于历史解释，不把 delegation 永久化。
 
 RightsDeclaration 的 resource / consumer applicability / purpose / action / scope / validity 必须强类型、可索引、可查询；这些 gate-critical 字段不得仅藏在 JSONB。
 
@@ -239,7 +241,7 @@ DeliveryOperation 每个终态都必须产生明确 Domain Event：Issued / Bloc
 
 Credential replay 自身进入 CONTAINMENT_PENDING 时也必须发出显式 non-terminal containment event（例如 `DatasetCredentialReplayContainmentPending`，或统一 containment event + subject_kind/replay_attempt_id），与 replay decision + Audit/Evidence + Outbox 同事务；不得用原 DeliveryOperation 的 terminal Blocked/Failed event 冒充该状态。
 
-若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL、caller principal→consumer/workspace binding / workspace membership / delegation 的最早有限有效期，以及本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界；签发时已知且未来生效的 identity revoke/disable（trusted identity source 可表达时）、RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 的最早 effective_at 也必须参与 cap。支持 redemption-time server check 的 delivery mode 应在 redemption 时重新验证 caller authority + CurrentDeliveryGate；不可回调的 bearer/presigned credential 必须使用该完整 expiry cap + 明确最大 TTL。
+若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL、caller principal→consumer/workspace binding / workspace membership / caller delegation 的最早有限有效期、**CurrentEntitlementGate 实际依赖的 grantor-authority delegation chain 所有 required edges 的最早 valid_to**，以及本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界；签发时已知且未来生效的 caller identity revoke/disable、**grantor delegation disposition effective_at**、RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 的最早 effective_at 也必须参与 cap。支持 redemption-time server check 的 delivery mode 应在 redemption 时重新验证 caller authority + CurrentDeliveryGate；不可回调的 bearer/presigned credential 必须使用该完整 expiry cap + 明确最大 TTL。
 
 任何 provider 首次返回或 reconciliation 恢复出的 credential，在进入 ISSUED 前必须验证实际 capability 是 requested/current-gate context 的等价或更窄集合：expiry <= fresh cap，resource/DatasetVersion、consumer/grantee、action、object/row/prefix scope、channel 不得扩大。**consumer/grantee 不能因 provider“不支持该字段”而跳过**：direct bearer/presigned capability 必须有 provider-native 或等价可验证的 consumer-binding enforcement；否则必须用 platform redemption/gateway 在 redemption 时重新认证并强制 effective consumer，或标记 direct mode unsupported。命中旧 provider_request_key 不能绕过这条检查；超过 fresh cap、scope 过宽或关键维度不可验证时必须 shorten/narrow+verify 或 revoke/contain，无法安全满足当前 context 时不得 ISSUED。
 
