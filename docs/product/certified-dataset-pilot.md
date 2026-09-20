@@ -131,7 +131,7 @@ DataResource
 - RightsSnapshot 冻结实际使用的 declaration + AuthorizationProvenanceBinding + Authorization IDs，保证历史解释不随 current facts 变化；
 - unrelated grantor 反例：资源/action 相同但无有效 provenance binding 时 CurrentEntitlementGate 必须 BLOCKED；
 - disposed/expired declaration 反例：即使 Authorization 仍 ACTIVE，CurrentEntitlementGate 仍必须 BLOCKED；
-- RightsDeclarationInvalidated / RightsDeclarationSuperseded / AuthorizationProvenanceBound 等 Domain Event + Audit/Evidence/Outbox/routing obligation。
+- RightsDeclarationInvalidated / RightsDeclarationSuperseded / AuthorizationProvenanceBound / AuthorizationProvenanceBindingInvalidated / AuthorizationProvenanceBindingSuperseded 等 Domain Event + Audit/Evidence/Outbox/routing obligation。
 
 Rights verification / invalidation / supersession / provenance binding 等实际人工或外部核验活动必须在发生时记录 CostEvent；这些活动通常没有 Execution，必须通过 typed CostAllocation 关联实际 Rights 业务事实，并使用稳定 activity_id/component_key 防止重试重复记账。
 
@@ -198,7 +198,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - server-side delivery command 在返回数据或签发 URL/token/credential 前重新执行完整 CurrentDeliveryGate；
 - query→delivery 之间 Rights/Certification/DatasetVersion 状态变化的 TOCTOU 测试；
 - gate 失败不得产生可用数据、URL、token、credential；
-- credential TTL 受 validity / future-effective RightsDisposition / CertificationDisposition 边界约束；
+- credential TTL 受 validity / future-effective RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 边界约束；
 - `DatasetDeliveryIssued` / `DatasetDeliveryBlocked` / `DatasetDeliveryFailed`（或实现固定的等价事件）覆盖三个终态结果；
 - DeliveryOperation 的**数据库 terminal fact** + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；外部 credential provider 调用不属于 PostgreSQL transaction；
 - 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key；
