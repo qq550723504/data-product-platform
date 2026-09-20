@@ -310,7 +310,7 @@ direct-data terminal `ISSUED` 不表示客户端确认收到数据。若 ISSUED 
 如果 fresh gate 变为 BLOCKED，但该 DeliveryOperation 此前已经进入可能调用过 provider 的 ISSUANCE_PENDING/retry/reconciliation 窗口，**不能直接记录 BLOCKED**。必须先使用同一 provider_request_key reconciliation 既有 provider outcome：
 - 明确未签发 → 可 BLOCKED；
 - 已签发 → 必须先 revoke / compensate / contain，并确认外部访问能力已不可用后才能 BLOCKED；
-- outcome unknown 或 containment 未确认成功 → 保持 CONTAINMENT_PENDING，不得发 DatasetDeliveryBlocked terminal event，也不得向用户声称不存在活跃访问能力。
+- outcome unknown 或 containment 未确认成功 → 保持/进入 CONTAINMENT_PENDING，不得发 DatasetDeliveryBlocked/DatasetDeliveryFailed terminal event，也不得向用户声称不存在活跃访问能力；**首次进入该安全关键非终态时必须在同一 transaction 发 `DatasetDeliveryContainmentPending`（或固定等价）+ Audit/Evidence/Outbox，幂等重放不重复。**
 
 **Direct bearer delivery 的 provider 必须同时支持：按同一 provider_request_key replay/read-after-write 恢复同一 credential（或等价同一访问能力），以及 fresh replay authorization 被拒绝时 revoke/contain 该既有 capability。** 只满足其中一项不足以支持第一阶段 direct bearer；应使用 platform redemption indirection/gateway，或明确 unsupported。
 
