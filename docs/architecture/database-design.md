@@ -166,9 +166,21 @@ EntityType → Entity → EntityMapping projection
 
 ## 9. Rights
 
-### Authorization（已实现）
+### Authorization（已实现 + #137 scope normalization follow-up）
 
-表达 grantor_ref、grantee_ref、purpose、resource、actions、scope、raw_export_allowed 和 validity。
+现有 Authorization 表达 grantor_ref、grantee_ref、purpose、resource、actions、scope、raw_export_allowed 和 validity；当前 `authorization_resource.scope jsonb` 保留为兼容/扩展字段，但**不能继续作为 gate-critical scope 的唯一权威表示**。
+
+#137 必须增加固定、可索引、可查询的 normalized Authorization scope，二选一或等价设计：
+
+- 在 authorization_resource 上增加受约束的 `scope_type` + `scope_ref`（必要时 normalized scope key/version）；或
+- 新增 `authorization_resource_scope(authorization_id, data_resource_id, scope_type, scope_ref, ...)` 强类型 relation。
+
+要求：
+- scope_type 使用受约束枚举/字典（如 ALL_RESOURCE / DATASET / OBJECT_PREFIX / ROW_POLICY 等由实现固定）；
+- `scope_ref` 按 scope_type 使用稳定 identity；ALL_RESOURCE 使用显式 sentinel/NULL 规则，不允许“字段缺失=全部”；
+- 建立 authorization/resource/scope_type/scope_ref 查询索引与唯一性/一致性约束；
+- BindAuthorizationProvenance 与 CurrentEntitlementGate **只使用该 normalized scope identity 做安全比较**；JSONB 可携带扩展参数但不得决定 allow；
+- migration 对可无歧义识别的 legacy scope 做 deterministic backfill；无法可靠解释的 legacy rows 标记为不可用于 entitlement / fail closed，禁止猜测成更宽 scope。
 
 ### AuthorizationProvenanceBinding（#137）
 
@@ -250,7 +262,36 @@ RightsSnapshot 的 immutable 语义覆盖 **snapshot header + 全部 membership 
 
 ### Effective Rights（#137）
 
-对一个 DatasetVersion 计算/冻结实际可用动作和限制。
+Effective Rights 必须落成 immutable aggregate（例如 `effective_rights_snapshot` + `effective_rights_input` + `effective_rights_action`），而不是只在内存计算。
+
+header 至少：
+- id / workspace_id / target_dataset_version_id；
+- calculation_as_of / context identity；
+- calculation_rule_version + rule_hash；
+- lineage_or_input_set_hash；
+- status DRAFT/FINALIZED（或等价受控 finalize）；
+- created_at/finalized_at/actor。
+
+input membership 至少：
+- effective_rights_snapshot_id；
+- required input dataset_version_id / data_resource_id；
+- source rights_snapshot_id（或等价冻结 provenance identity）；
+- input lineage/dependency identity；
+- required=true（第一阶段 required inputs 默认全部纳入）。
+
+action decision 至少：
+- action（USE / PROCESS / DERIVE / SHARE / RAW_EXPORT / RESALE / AI_TRAINING）；
+- decision ALLOWED / NOT_ALLOWED；
+- reason_code；
+- blocking/source input refs（可规范化 child rows）。
+
+约束：
+- 计算输入必须来自 target DatasetVersion 的实际 lineage/dependency facts，调用方不能省略某 required input；
+- action=ALLOWED 当且仅当所有 required input 对该 action 都明确 ALLOWED；任一 deny/unknown/missing → NOT_ALLOWED/fail closed；
+- FINALIZED 后 header/input/action rows 禁止 INSERT/UPDATE/DELETE；修正创建新 snapshot；
+- content/root hash（如使用）覆盖规范化排序后的 input membership + action decisions + calculation rule identity；
+- #134 DatasetCertification 使用强类型 effective_rights_snapshot_id/hash，不能只保存“当时算过”的布尔结果；
+- 计算/finalize 与 Audit/Evidence/Outbox/Domain Event 保持一致事务边界。
 
 衍生数据默认 fail closed。
 
