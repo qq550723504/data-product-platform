@@ -220,15 +220,19 @@ expires_at
 <= min(
      requested_expires_at,
      platform_max_credential_expiry,
+     earliest applicable principal→consumer/workspace binding valid_to/expires_at,
+     earliest applicable workspace membership valid_to/expires_at,
+     earliest applicable delegation valid_to/expires_at,
      earliest applicable RightsDeclaration effective_to,
      earliest applicable Authorization valid_to,
+     earliest already-scheduled identity binding/membership/delegation revocation_or_disable effective_at (when exposed by the trusted identity source),
      earliest already-scheduled RightsDisposition effective_at,
      earliest already-scheduled AuthorizationProvenanceBindingDisposition effective_at,
      earliest already-scheduled CertificationDisposition effective_at
    )
 ~~~
 
-任何参与本次 CurrentDeliveryGate 的已知有限边界都必须参与上限计算。除了 declaration / authorization validity，还包括签发时已经存在、将在未来生效的 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition。不能让 URL/token 在 provenance 或 certification 已按计划退出 current set 后继续有效；
+任何参与本次 delivery authorization 的已知有限边界都必须参与上限计算。除了 declaration / authorization validity，还包括 caller principal→consumer/workspace binding、workspace membership、delegation 的有限有效期，以及签发时 trusted identity source 已知的 future-effective revoke/disable（如该源可表达），再加上未来生效的 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition。不能让 URL/token 在调用者代表资格、provenance、rights 或 certification 已按计划退出 current set 后继续有效；
 11. 如果 delivery mode 支持 redemption-time server check，则每次 redemption 继续执行 CurrentDeliveryGate；如果是无法在 redemption 时回调平台的 bearer/presigned credential，则必须执行上述 expiry cap，并由 #135 明确该 delivery mode 的最大 TTL；
 12. 对签发后才新增的紧急 revocation，只有 redemption-time gate / revocable credential 才能即时阻断；第一阶段若某 delivery mode 不具备此能力，必须在产品/API 中明确该限制，并使用短 TTL，而不能声称签发后的 bearer credential 可即时撤销。
 
@@ -304,14 +308,14 @@ PREPARED
 17. **direct-data 的 terminal `ISSUED` 只表示该次交付授权在线性化点已提交、服务端随后可以开始写响应；它不是“客户端已收到全部数据”的证明。** 网络/进程在 commit 后、第一字节前或流中断开时，不得把 ISSUED 审计事实解释为客户端完成接收；
 18. **terminal ISSUED 的 direct-data operation 不允许用同一 idempotency key 从旧 gate 结果再次发出数据字节。** 同一 key 的 retry 必须返回稳定的 non-payload 结果（例如 `DIRECT_DATA_REPLAY_REQUIRES_NEW_ATTEMPT`，附原 operation ID/ISSUED 状态），response body 中不得包含 DatasetVersion 数据；
 19. 如果调用方确实需要重新取得 direct-data，必须创建新的显式 DeliveryOperation/attempt（新的 idempotency key，可用 `retry_of_delivery_operation_id` 关联原 attempt），重新解析可信 caller principal→consumer/delegation，重新执行完整 CurrentDeliveryGate，并重新走 delivery authorization fence/finalize。若期间 Rights/Certification/DatasetVersion/Authorization 已失效，新 attempt 必须 BLOCKED；只有 fresh gate 仍 ALLOWED 才能再次发送数据；
-20. retries / reconciliation 不得重复同一 DeliveryOperation 的 CostEvent、AuditEvent 或 terminal Domain Event；显式的新 direct-data attempt 是新的业务事实，必须有独立 operation ID 与审计链。
+20. retries / reconciliation 不得重复同一 DeliveryOperation 的 terminal Domain Event 或同一业务结果 Audit/Event 事实；**CostEvent 的去重只限于 same physical activity attempt 的 replay**。若 retry/reconciliation 真正再次调用 provider、执行 compute 或发生其它可计费外部工作，必须使用新的稳定 attempt/activity identity 追加实际 CostEvent（或原子聚合新增 quantity/amount 并保留 attempt identity/count）。显式的新 direct-data DeliveryOperation/attempt 是新的业务事实，必须有独立 operation ID 与审计链。
 
 测试必须覆盖故障注入：
 - provider 成功后、terminal DB commit 前 crash；
 - terminal commit 成功后、HTTP response 前 crash，并验证 idempotent retry 能恢复同一 credential/访问能力，或通过 redemption indirection 返回稳定访问句柄；
 - direct-data terminal ISSUED commit 成功后、第一字节前 crash：同一 idempotency key retry 必须返回 non-payload replay-required 结果且保持 0 dataset bytes；不得基于旧 gate 直接重放数据；
 - direct-data 以新的显式 attempt 重试：必须重新解析 trusted principal/effective consumer 并 fresh re-gate；若 crash 后发生 revocation/disposition/invalidation，新 attempt BLOCKED 且 0 bytes；若仍 ALLOWED，才可在新的 fenced ISSUED commit 后发送数据；
-- reconciliation/retry；
+- reconciliation/retry：same-attempt replay 不重复成本；故障恢复若真实再次调用可计费 provider，则新增 attempt identity 的实际 CostEvent 不得被 DeliveryOperation 顶层幂等吞掉；
 - provider 成功后 fresh cap 因 future-effective disposition 缩短，recovered credential 实际 expiry 超过 fresh cap；
 - provider actual expiry 不可验证；
 - provider timeout 导致 unknown outcome；
