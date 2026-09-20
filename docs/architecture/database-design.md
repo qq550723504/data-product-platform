@@ -427,16 +427,28 @@ Certified Dataset Pilot 目标模型增加：
 
 ### Delivery provider attempts
 
-一个 DeliveryOperation 可包含 0..N 次真实外部 provider invocation；必须用 append-only child fact（推荐 `DeliveryProviderAttempt`，或等价强类型模型）表达，而不能只靠日志推断。每次**实际调用前**先 durable persist：
+一个 DeliveryOperation 可包含 0..N 次真实外部 provider invocation；必须用**不可变 attempt identity + 追加式 observation/outcome facts**（推荐 `DeliveryProviderAttemptStarted` + `DeliveryProviderAttemptObservation` / `DeliveryProviderAttemptOutcome`，或等价强类型模型）表达，而不能只靠日志推断，也不能声称一行 append-only 记录却在 provider 返回后 UPDATE 它。
+
+每次**实际调用前**先 durable persist immutable start fact：
 
 - provider_attempt_id（稳定 physical attempt identity，同时可作为 CostEvent.activity_id 或其强类型来源）
 - delivery_operation_id FK
 - provider_request_key
 - invocation_kind：ISSUE / RECONCILE / REVOKE / COMPENSATE / NARROW / VERIFY（按实现固定）
-- started_at / completed_at
-- outcome：SUCCESS / FAILED / UNKNOWN / TIMEOUT（或等价）
+- started_at
+- requested invocation quantity/unit（如调用前可知）
+
+provider 返回、超时或本地观察到未知结果后，再 append outcome/observation fact，至少包含：
+
+- provider_attempt_id FK
+- observed_at / completed_at（按 outcome 语义）
+- observation_kind（CALL_RETURN / TIMEOUT / RECONCILIATION / AUTHORITATIVE_LOOKUP 等，名称由实现固定）
+- observed_outcome：SUCCESS / FAILED / UNKNOWN / TIMEOUT（或等价）
 - provider outcome/evidence ref（非 secret）
-- actual invocation quantity/unit，amount/provider charge 如已知
+- actual invocation quantity/unit
+- amount/provider charge（如已知；未知时保持 NULL，不伪造）
+
+原始 attempt identity/start fact 不可改写。若后续 authoritative reconciliation 改变了对原 attempt 的认知（例如 TIMEOUT/UNKNOWN 后确认 provider 实际成功），必须**追加新的 observation/resolution fact**引用同一 provider_attempt_id，而不是覆盖最初观察；发起 reconciliation provider API 本身如果是真实外部调用，则它同时还是一个新的 provider_attempt_id，并单独记录其自身调用成本。
 
 每个 provider_attempt_id 只代表一次真实外部调用。same-attempt 的本地 transaction/network replay 没有再次调用 provider 时复用同一 identity 且 CostEvent 去重；若代码再次发起真实 provider request，即使仍属同一 DeliveryOperation/provider_request_key/reconciliation 流程，也必须产生新的 provider_attempt_id。**FAILED、UNKNOWN、TIMEOUT、后续被 contain/revoke 的 attempt 只要实际调用发生，都保留 CostEvent；业务终态不能反向删除成本事实。**
 
