@@ -575,6 +575,16 @@ func (s *Service) processPending(ctx context.Context, operation domain.Operation
 		outcome := domain.OutcomeFailed
 		observation := domain.ObservationCallReturn
 		if errors.Is(err, ErrCapabilityNotFound) && !initial {
+			protectedOperation, unobserved, protectErr := s.protectUnobservedIssueAttempt(ctx, operation.ID, attemptID, "provider recovery did not find a capability while the issue attempt remains unobserved", cmd)
+			if protectErr != nil {
+				return Result{}, protectErr
+			}
+			if unobserved {
+				if recordErr := s.recordObservationWithoutOriginal(ctx, operation.ID, attemptID, domain.ObservationReconciliation, domain.OutcomeNotFound, domain.Capability{}, "provider reports no active capability while issue attempt is unobserved"); recordErr != nil {
+					return Result{}, recordErr
+				}
+				return Result{Operation: protectedOperation}, nil
+			}
 			if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationReconciliation, domain.OutcomeNotFound, domain.Capability{}, "provider reports no active capability"); recordErr != nil {
 				return Result{}, recordErr
 			}
@@ -988,6 +998,9 @@ func (s *Service) reconcileContainment(ctx context.Context, operation domain.Ope
 		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationReconciliation, domain.OutcomeNotFound, domain.Capability{}, "provider reports no active capability"); recordErr != nil {
 			return Result{}, recordErr
 		}
+		if err := s.resolveContainment(ctx, operation.ID, attemptID, "provider reports no active capability", cmd); err != nil {
+			return Result{}, err
+		}
 		target := domain.StatusBlocked
 		if evaluation.Allowed {
 			target = domain.StatusFailed
@@ -1018,6 +1031,14 @@ func (s *Service) reconcileContainment(ctx context.Context, operation domain.Ope
 }
 
 func (s *Service) recordObservation(ctx context.Context, operationID, attemptID uuid.UUID, kind domain.ObservationKind, outcome domain.Outcome, capability domain.Capability, evidenceRef string) error {
+	return s.recordObservationInternal(ctx, operationID, attemptID, kind, outcome, capability, evidenceRef, true)
+}
+
+func (s *Service) recordObservationWithoutOriginal(ctx context.Context, operationID, attemptID uuid.UUID, kind domain.ObservationKind, outcome domain.Outcome, capability domain.Capability, evidenceRef string) error {
+	return s.recordObservationInternal(ctx, operationID, attemptID, kind, outcome, capability, evidenceRef, false)
+}
+
+func (s *Service) recordObservationInternal(ctx context.Context, operationID, attemptID uuid.UUID, kind domain.ObservationKind, outcome domain.Outcome, capability domain.Capability, evidenceRef string, resolveOriginal bool) error {
 	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		operation, err := s.repo.GetOperation(ctx, tx, operationID, false)
 		if err != nil {
@@ -1028,16 +1049,25 @@ func (s *Service) recordObservation(ctx context.Context, operationID, attemptID 
 			kind                domain.ObservationKind
 			resolutionAttemptID *uuid.UUID
 		}{{id: attemptID, kind: kind}}
-		originalAttemptID, found, err := s.repo.FindUnobservedIssueAttempt(ctx, tx, operationID, attemptID)
-		if err != nil {
-			return err
+		attemptKind := domain.InvocationKind("")
+		if resolveOriginal {
+			attemptKind, err = s.repo.GetProviderAttemptKind(ctx, tx, attemptID)
+			if err != nil {
+				return err
+			}
 		}
-		if found {
-			observationAttempts = append(observationAttempts, struct {
-				id                  uuid.UUID
-				kind                domain.ObservationKind
-				resolutionAttemptID *uuid.UUID
-			}{id: originalAttemptID, kind: domain.ObservationReconciliation, resolutionAttemptID: &attemptID})
+		if resolveOriginal && attemptKind == domain.InvocationReconcile && (kind == domain.ObservationCallReturn || kind == domain.ObservationReconciliation || kind == domain.ObservationTimeout) {
+			originalAttemptID, found, err := s.repo.FindUnobservedIssueAttempt(ctx, tx, operationID, attemptID)
+			if err != nil {
+				return err
+			}
+			if found {
+				observationAttempts = append(observationAttempts, struct {
+					id                  uuid.UUID
+					kind                domain.ObservationKind
+					resolutionAttemptID *uuid.UUID
+				}{id: originalAttemptID, kind: domain.ObservationReconciliation, resolutionAttemptID: &attemptID})
+			}
 		}
 		for _, observation := range observationAttempts {
 			if err := s.repo.InsertProviderObservation(ctx, tx, observation.id, observation.kind, outcome, capability, evidenceRef); err != nil {
@@ -1083,6 +1113,57 @@ func (s *Service) recordObservation(ctx context.Context, operationID, attemptID 
 		}
 		return nil
 	})
+}
+
+func (s *Service) protectUnobservedIssueAttempt(ctx context.Context, operationID, recoveryAttemptID uuid.UUID, reason string, cmd IssueCredentialCommand) (domain.Operation, bool, error) {
+	var operation domain.Operation
+	unobserved := false
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		operation, err = s.repo.GetOperation(ctx, tx, operationID, true)
+		if err != nil {
+			return err
+		}
+		_, found, err := s.repo.FindUnobservedIssueAttempt(ctx, tx, operationID, recoveryAttemptID)
+		if err != nil {
+			return err
+		}
+		if !found {
+			return nil
+		}
+		unobserved = true
+		if operation.Status != domain.StatusIssuancePending {
+			return nil
+		}
+		before := operation.Status
+		if err := operation.Transition(domain.StatusContainmentPending); err != nil {
+			return err
+		}
+		operation.TerminalReason = reason
+		if err := s.repo.InsertTransition(ctx, tx, operation.ID, "containment/unobserved-issue/"+recoveryAttemptID.String(), before, operation.Status, nil, &recoveryAttemptID, reason, operation.UpdatedAt); err != nil {
+			return err
+		}
+		containmentStatus, containmentFound, err := s.repo.GetContainmentStatus(ctx, tx, operation.ID)
+		if err != nil {
+			return err
+		}
+		if containmentFound && containmentStatus == domain.ContainmentResolved {
+			return fmt.Errorf("unobserved issue attempt has already resolved containment")
+		}
+		if !containmentFound {
+			if err := s.repo.UpsertContainmentProjection(ctx, tx, operation.ID, domain.ContainmentPending, &recoveryAttemptID, reason); err != nil {
+				return err
+			}
+			if err := s.repo.InsertContainmentTransition(ctx, tx, operation.ID, "", domain.ContainmentPending, &recoveryAttemptID, reason); err != nil {
+				return err
+			}
+		}
+		if err := s.repo.UpdateProjection(ctx, tx, operation); err != nil {
+			return err
+		}
+		return appendTransitionFacts(ctx, tx, operation, before, "DatasetDeliveryContainmentPending", reason, cmd.ActorID, cmd.TraceID)
+	})
+	return operation, unobserved, err
 }
 
 func (s *Service) enterContainmentPending(ctx context.Context, operationID uuid.UUID, reason string, cmd IssueCredentialCommand, providerAttemptID *uuid.UUID) (Result, error) {

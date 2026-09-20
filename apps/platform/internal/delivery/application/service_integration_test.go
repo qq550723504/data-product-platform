@@ -276,8 +276,8 @@ func TestLateContainmentFailureRemainsRetryableAfterTerminalRace(t *testing.T) {
 	}
 
 	secondResult, err := service.IssueCredential(ctx, cmd)
-	if err != nil || secondResult.Operation.Status != domain.StatusFailed {
-		t.Fatalf("terminalizing retry = result %#v, err %v", secondResult, err)
+	if err != nil || secondResult.Operation.Status != domain.StatusContainmentPending {
+		t.Fatalf("protective retry = result %#v, err %v", secondResult, err)
 	}
 	close(provider.releaseIssue)
 	select {
@@ -290,7 +290,7 @@ func TestLateContainmentFailureRemainsRetryableAfterTerminalRace(t *testing.T) {
 	}
 
 	thirdResult, err := service.IssueCredential(ctx, cmd)
-	if !errors.Is(err, ErrCredentialReplay) || thirdResult.Capability != nil {
+	if err != nil || thirdResult.Operation.Status != domain.StatusFailed || thirdResult.Capability != nil {
 		t.Fatalf("containment retry = %#v, err %v", thirdResult, err)
 	}
 	var operationStatus, containmentStatus string

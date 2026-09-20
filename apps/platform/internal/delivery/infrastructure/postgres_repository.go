@@ -272,6 +272,14 @@ func (r *PostgresRepository) FindUnobservedIssueAttempt(ctx context.Context, tx 
 	return attemptID, true, nil
 }
 
+func (r *PostgresRepository) GetProviderAttemptKind(ctx context.Context, tx pgx.Tx, attemptID uuid.UUID) (domain.InvocationKind, error) {
+	var kind domain.InvocationKind
+	if err := tx.QueryRow(ctx, `SELECT invocation_kind FROM delivery_provider_attempt WHERE id=$1`, attemptID).Scan(&kind); err != nil {
+		return "", fmt.Errorf("get delivery provider attempt kind: %w", err)
+	}
+	return kind, nil
+}
+
 func (r *PostgresRepository) InsertReplayDecision(ctx context.Context, tx pgx.Tx, operationID, replayAttemptID, gateEvaluationID uuid.UUID, decision string, evaluation domain.GateEvaluation, capability domain.Capability, reason string) error {
 	_, err := tx.Exec(ctx, `
 		INSERT INTO delivery_credential_replay_decision(
