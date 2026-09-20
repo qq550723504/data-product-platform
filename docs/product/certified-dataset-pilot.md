@@ -117,12 +117,21 @@ DataResource
 
 衍生数据默认 fail closed。
 
-#137 第一阶段必须同时实现：
+#137 第一阶段最小完成合同：
+
+- append-only `RightsDisposition`，至少支持 `INVALIDATED` / `SUPERSEDED` + `effective_at` + reason + Evidence + actor；
+- 显式 `InvalidateRightsDeclaration` / `SupersedeRightsDeclaration` Command，禁止 UPDATE 已 VERIFIED 历史事实；
+- Current rights selection 按 `as_of` 排除已生效 disposition，并校验每条 declaration 自身 validity window 与 resource/consumer/purpose/action/scope；
 - `BindAuthorizationProvenance`（或等价显式 Command），禁止 ad hoc CRUD 创建安全关键 binding；
 - Authorization.grantor_ref 与支持它的 RightsDeclaration / 可验证 delegation chain 的强类型关系；
-- unrelated grantor 反例：资源/action 相同但无有效 provenance binding 时 CurrentEntitlementGate 必须 BLOCKED。
+- RightsSnapshot 冻结实际使用的 declaration + AuthorizationProvenanceBinding + Authorization IDs，保证历史解释不随 current facts 变化；
+- unrelated grantor 反例：资源/action 相同但无有效 provenance binding 时 CurrentEntitlementGate 必须 BLOCKED；
+- disposed/expired declaration 反例：即使 Authorization 仍 ACTIVE，CurrentEntitlementGate 仍必须 BLOCKED；
+- RightsDeclarationInvalidated / RightsDeclarationSuperseded / AuthorizationProvenanceBound 等 Domain Event + Audit/Evidence/Outbox/routing obligation。
 
 Rights verification / invalidation / supersession / provenance binding 等实际人工或外部核验活动必须在发生时记录 CostEvent；这些活动通常没有 Execution，必须通过 typed CostAllocation 关联实际 Rights 业务事实，并使用稳定 activity_id/component_key 防止重试重复记账。
+
+缺少上述任一 withdrawal/current-selection/binding 能力时，#137 不视为完成。
 
 ## 7. HQD-4 #134
 
@@ -167,14 +176,21 @@ CertificationProfile 可以要求：
 
 DatasetVersion V1 认证不能让 V2 自动显示已认证。
 
-#135 不能只交付 UI / eligibility query，还必须实现：
+#135 不能只交付 UI / eligibility query，还必须实现以下最小完成合同：
+
 - 持久化 `DeliveryOperation`（每次交付尝试的稳定业务 ID / 幂等主体）；
 - `DeliverDatasetVersion` / `IssueDatasetAccess`（最终命名由实现 PR 固定）；
 - server-side delivery command 在返回数据或签发 URL/token/credential 前重新执行完整 CurrentDeliveryGate；
 - query→delivery 之间 Rights/Certification/DatasetVersion 状态变化的 TOCTOU 测试；
 - gate 失败不得产生可用数据、URL、token、credential；
-- credential TTL 受 validity / future-effective disposition 边界约束；
-- delivery CostEvent 必须 typed allocate 到 DeliveryOperation。
+- credential TTL 受 validity / future-effective RightsDisposition / CertificationDisposition 边界约束；
+- `DatasetDeliveryIssued` / `DatasetDeliveryBlocked` / `DatasetDeliveryFailed`（或实现固定的等价事件）覆盖三个终态结果；
+- DeliveryOperation result + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；
+- 每个 delivery event_type 显式进入 routing table，声明 required handlers 或 retention-only；
+- event/Audit/Evidence payload 不得包含可用 credential secret；
+- delivery CostEvent 必须通过 typed CostAllocation FK 关联 DeliveryOperation。
+
+缺少 server-side gate-at-issuance、DeliveryOperation 或 terminal delivery events 任一项时，#135 不视为完成。
 
 ## 9. HQD-6 #136
 
