@@ -182,7 +182,7 @@ CurrentCertificationGate 要求本次 delivery 明确绑定一条 DatasetCertifi
 CurrentEntitlementGate 按“现在”重新检查至少：
 
 - 每个绑定 RightsDeclaration / verification 是否 VERIFIED、其自身 validity window 覆盖 as_of、resource/consumer/purpose/action/scope 与本次 delivery context 匹配，且未被有效 INVALIDATED / SUPERSEDED；
-- 每个 Authorization 是否存在当前有效 AuthorizationProvenanceBinding 支撑 grantor_ref，并且该 binding 在 as_of 时点未被 AuthorizationProvenanceBindingDisposition INVALIDATED / SUPERSEDED；Authorization 自身还必须 ACTIVE、scope 匹配且未过期/撤销；
+- 每个 Authorization 是否存在当前有效 AuthorizationProvenanceBinding 支撑 grantor_ref，并且该 binding 在 as_of 时点未被 AuthorizationProvenanceBindingDisposition INVALIDATED / SUPERSEDED；Authorization 自身还必须 ACTIVE、未过期/撤销，并且其 grantee/consumer、DataResource、purpose、action、scope 全部覆盖本次 delivery context；
 - consumer / purpose 是否匹配；
 - 本次 delivery action（例如 SHARE / RAW_EXPORT）是否当前仍允许；
 - 衍生数据 Effective Rights 是否仍允许该动作。
