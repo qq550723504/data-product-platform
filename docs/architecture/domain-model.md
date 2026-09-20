@@ -88,7 +88,7 @@ PREPARED
          └→ FAILED
 ~~~
 
-`ISSUANCE_PENDING` 是 crash-recovery / reconciliation 中间态，不是 terminal failure。若 fresh gate 变为 BLOCKED，但此前 provider outcome 可能已产生访问能力，必须先 reconcile；已签发则先 revoke/contain，无法确认 outcome 或 containment 时进入 `CONTAINMENT_PENDING`。只有确认没有活跃访问能力后，才允许终结：fresh gate 已 BLOCKED 时进入 `BLOCKED`；gate 仍 ALLOWED 但 issuance contract 无法满足（如 credential 无法缩短到 fresh cap）时进入 `FAILED`。外部 provider 调用发生前必须先 durable persist 该状态和 stable provider_request_key。
+`ISSUANCE_PENDING` 是 crash-recovery / reconciliation 中间态，不是 terminal failure。若 fresh gate 变为 BLOCKED，但此前 provider outcome 可能已产生访问能力，必须先 reconcile；已签发则先 revoke/contain，无法确认 outcome 或 containment 时进入 `CONTAINMENT_PENDING`。**CONTAINMENT_PENDING 虽非终态，但属于安全关键 transition：状态变更、`DatasetDeliveryContainmentPending`（或固定等价）Domain Event、Audit/Evidence、Outbox 必须同事务提交，幂等重放不重复事件。** 只有确认没有活跃访问能力后，才允许终结：fresh gate 已 BLOCKED 时进入 `BLOCKED`；gate 仍 ALLOWED 但 issuance contract 无法满足（如 credential 无法缩短到 fresh cap）时进入 `FAILED`，并再产生各自 terminal event。外部 provider 调用发生前必须先 durable persist 该状态和 stable provider_request_key。
 
 每次 initial/retry/reconciliation issuance 前必须重新验证 authenticated caller principal 当前仍可代表 effective consumer/workspace（含 binding/membership/delegation），再执行完整 CurrentDeliveryGate 并重新计算 expiry cap；旧 identity/gate snapshot 只保留审计价值，不能授权新的 provider side effect。
 
