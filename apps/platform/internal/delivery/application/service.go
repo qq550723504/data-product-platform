@@ -22,6 +22,11 @@ import (
 
 const issueCommandType = "DELIVERY.ISSUE_CREDENTIAL"
 
+const (
+	providerCallTimeout  = time.Minute
+	providerAttemptLease = 2 * time.Minute
+)
+
 var (
 	ErrUnknownProviderOutcome = errors.New("provider outcome is unknown")
 	ErrCapabilityNotFound     = errors.New("provider capability not found")
@@ -50,6 +55,10 @@ type IssueCredentialCommand struct {
 type Result struct {
 	Operation  domain.Operation
 	Capability *domain.Capability
+}
+
+func providerCallContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	return context.WithTimeout(ctx, providerCallTimeout)
 }
 
 type Gate interface {
@@ -231,7 +240,9 @@ func (s *Service) replayIssued(ctx context.Context, operation domain.Operation, 
 		return s.executeReplayRevoke(ctx, prep, "fresh replay gate blocked", cmd)
 	}
 
-	capability, err := s.provider.Recover(ctx, prep.operation.ProviderRequestKey)
+	providerCtx, cancelProvider := providerCallContext(ctx)
+	capability, err := s.provider.Recover(providerCtx, prep.operation.ProviderRequestKey)
+	cancelProvider()
 	if err == nil && s.AfterProviderCall != nil {
 		s.AfterProviderCall()
 	}
@@ -387,7 +398,10 @@ func (s *Service) finalizeReplay(ctx context.Context, prep replayPreparation, ca
 
 func (s *Service) executeReplayRevoke(ctx context.Context, prep replayPreparation, reason string, cmd IssueCredentialCommand) (Result, error) {
 	if prep.revoke {
-		if err := s.provider.Revoke(ctx, prep.operation.ProviderRequestKey); err != nil {
+		providerCtx, cancelProvider := providerCallContext(ctx)
+		err := s.provider.Revoke(providerCtx, prep.operation.ProviderRequestKey)
+		cancelProvider()
+		if err != nil {
 			if errors.Is(err, ErrCapabilityNotFound) {
 				if recordErr := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, domain.ObservationCallReturn, domain.OutcomeNotFound, domain.Capability{}, "provider reports no active capability during replay containment"); recordErr != nil {
 					return Result{}, recordErr
@@ -559,11 +573,13 @@ func (s *Service) processPending(ctx context.Context, operation domain.Operation
 		request.ExpiresAt = evaluation.FreshCapExpiresAt.UTC()
 	}
 	var capability domain.Capability
+	providerCtx, cancelProvider := providerCallContext(ctx)
 	if initial {
-		capability, err = s.provider.Issue(ctx, request)
+		capability, err = s.provider.Issue(providerCtx, request)
 	} else {
-		capability, err = s.provider.Recover(ctx, operation.ProviderRequestKey)
+		capability, err = s.provider.Recover(providerCtx, operation.ProviderRequestKey)
 	}
+	cancelProvider()
 	if err == nil && s.AfterProviderCall != nil {
 		s.AfterProviderCall()
 		// The hook is intentionally allowed to panic in integration tests to
@@ -742,6 +758,11 @@ func (s *Service) finalizeCapability(ctx context.Context, operationID, attemptID
 			reason = firstBlocker(evaluation.Blockers)
 			return nil
 		}
+		if capabilityHashMismatch(capability) {
+			needsContainment = true
+			reason = "provider capability hash mismatch"
+			return nil
+		}
 		if err := capability.ValidateAgainst(operation, evaluation); err != nil {
 			needsContainment = true
 			reason = err.Error()
@@ -813,7 +834,9 @@ func (s *Service) revokeContainment(ctx context.Context, operation domain.Operat
 	if !proceed {
 		return Result{Operation: current}, ErrCredentialReplay
 	}
-	err = s.provider.Revoke(ctx, current.ProviderRequestKey)
+	providerCtx, cancelProvider := providerCallContext(ctx)
+	err = s.provider.Revoke(providerCtx, current.ProviderRequestKey)
+	cancelProvider()
 	if errors.Is(err, ErrCapabilityNotFound) {
 		if recordErr := s.recordObservation(ctx, current.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeNotFound, capability, "provider reports no active capability during containment"); recordErr != nil {
 			return Result{}, recordErr
@@ -960,17 +983,20 @@ func (s *Service) containCapability(ctx context.Context, operation domain.Operat
 		}
 		return Result{Operation: operation}, nil
 	}
-	if err := s.provider.Revoke(ctx, operation.ProviderRequestKey); errors.Is(err, ErrCapabilityNotFound) {
+	providerCtx, cancelProvider := providerCallContext(ctx)
+	revokeErr := s.provider.Revoke(providerCtx, operation.ProviderRequestKey)
+	cancelProvider()
+	if errors.Is(revokeErr, ErrCapabilityNotFound) {
 		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeNotFound, capability, "provider reports no active capability during containment"); recordErr != nil {
 			return Result{}, recordErr
 		}
 		return s.finishWithoutCapability(ctx, operation.ID, cmd, target, reason, &attemptID)
-	} else if err != nil {
+	} else if revokeErr != nil {
 		outcome := domain.OutcomeFailed
-		if errors.Is(err, ErrUnknownProviderOutcome) {
+		if errors.Is(revokeErr, ErrUnknownProviderOutcome) {
 			outcome = domain.OutcomeUnknown
 		}
-		reasonCode := providerFailureReason(err)
+		reasonCode := providerFailureReason(revokeErr)
 		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, outcome, domain.Capability{}, reasonCode); recordErr != nil {
 			return Result{}, recordErr
 		}
@@ -993,7 +1019,9 @@ func (s *Service) reconcileContainment(ctx context.Context, operation domain.Ope
 	if !proceed {
 		return Result{Operation: operation}, nil
 	}
-	capability, err := s.provider.Recover(ctx, operation.ProviderRequestKey)
+	providerCtx, cancelProvider := providerCallContext(ctx)
+	capability, err := s.provider.Recover(providerCtx, operation.ProviderRequestKey)
+	cancelProvider()
 	if errors.Is(err, ErrCapabilityNotFound) {
 		protectedOperation, unobserved, protectErr := s.protectUnobservedIssueAttempt(ctx, operation.ID, attemptID, "provider recovery did not find a capability while the issue attempt remains unobserved", cmd)
 		if protectErr != nil {
@@ -1049,6 +1077,11 @@ func (s *Service) recordObservationWithoutOriginal(ctx context.Context, operatio
 }
 
 func (s *Service) recordObservationInternal(ctx context.Context, operationID, attemptID uuid.UUID, kind domain.ObservationKind, outcome domain.Outcome, capability domain.Capability, evidenceRef string, resolveOriginal bool) error {
+	observationCapability, hashMismatch := sanitizeCapabilityObservation(capability)
+	if hashMismatch {
+		outcome = domain.OutcomeFailed
+		evidenceRef = "PROVIDER_CAPABILITY_HASH_MISMATCH"
+	}
 	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		operation, err := s.repo.GetOperation(ctx, tx, operationID, false)
 		if err != nil {
@@ -1080,19 +1113,19 @@ func (s *Service) recordObservationInternal(ctx context.Context, operationID, at
 			}
 		}
 		for _, observation := range observationAttempts {
-			if err := s.repo.InsertProviderObservation(ctx, tx, observation.id, observation.kind, outcome, capability, evidenceRef); err != nil {
+			if err := s.repo.InsertProviderObservation(ctx, tx, observation.id, observation.kind, outcome, observationCapability, evidenceRef); err != nil {
 				return err
 			}
 			eventPayload := map[string]any{
 				"operationId": operation.ID, "providerAttemptId": observation.id, "outcome": outcome,
-				"observationKind": observation.kind, "capabilityRef": capability.CapabilityRef,
-				"capabilityHash": capability.CapabilityHash,
+				"observationKind": observation.kind, "capabilityRef": observationCapability.CapabilityRef,
+				"capabilityHash": observationCapability.CapabilityHash,
 			}
 			afterState := map[string]any{"providerAttemptId": observation.id, "outcome": outcome, "observationKind": observation.kind}
 			metadata := map[string]any{
 				"providerAttemptId": observation.id, "observationKind": observation.kind,
-				"outcome": outcome, "capabilityRef": capability.CapabilityRef,
-				"capabilityHash": capability.CapabilityHash, "evidenceRef": evidenceRef,
+				"outcome": outcome, "capabilityRef": observationCapability.CapabilityRef,
+				"capabilityHash": observationCapability.CapabilityHash, "evidenceRef": evidenceRef,
 			}
 			if observation.resolutionAttemptID != nil {
 				eventPayload["resolutionProviderAttemptId"] = *observation.resolutionAttemptID
@@ -1134,7 +1167,7 @@ func (s *Service) protectUnobservedIssueAttempt(ctx context.Context, operationID
 		if err != nil {
 			return err
 		}
-		_, found, err := s.repo.FindUnobservedIssueAttempt(ctx, tx, operationID, recoveryAttemptID)
+		_, found, err := s.repo.FindActiveUnobservedIssueAttempt(ctx, tx, operationID, recoveryAttemptID, time.Now().UTC().Add(-providerAttemptLease))
 		if err != nil {
 			return err
 		}
@@ -1174,6 +1207,25 @@ func (s *Service) protectUnobservedIssueAttempt(ctx context.Context, operationID
 		return appendTransitionFacts(ctx, tx, operation, before, "DatasetDeliveryContainmentPending", reason, cmd.ActorID, cmd.TraceID)
 	})
 	return operation, unobserved, err
+}
+
+func sanitizeCapabilityObservation(capability domain.Capability) (domain.Capability, bool) {
+	if capability.Credential == "" {
+		mismatch := capability.CapabilityHash != ""
+		capability.CapabilityHash = ""
+		return capability, mismatch
+	}
+	derived := hashSecret(capability.Credential)
+	mismatch := capability.CapabilityHash != "" && capability.CapabilityHash != derived
+	capability.CapabilityHash = derived
+	return capability, mismatch
+}
+
+func capabilityHashMismatch(capability domain.Capability) bool {
+	if capability.Credential == "" {
+		return capability.CapabilityHash != ""
+	}
+	return capability.CapabilityHash != "" && capability.CapabilityHash != hashSecret(capability.Credential)
 }
 
 func (s *Service) enterContainmentPending(ctx context.Context, operationID uuid.UUID, reason string, cmd IssueCredentialCommand, providerAttemptID *uuid.UUID) (Result, error) {

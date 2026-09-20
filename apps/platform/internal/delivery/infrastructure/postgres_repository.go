@@ -272,6 +272,30 @@ func (r *PostgresRepository) FindUnobservedIssueAttempt(ctx context.Context, tx 
 	return attemptID, true, nil
 }
 
+func (r *PostgresRepository) FindActiveUnobservedIssueAttempt(ctx context.Context, tx pgx.Tx, operationID, excludeAttemptID uuid.UUID, startedAfter time.Time) (uuid.UUID, bool, error) {
+	var attemptID uuid.UUID
+	err := tx.QueryRow(ctx, `
+		SELECT a.id
+		FROM delivery_provider_attempt a
+		WHERE a.delivery_operation_id=$1
+		  AND a.id <> $2
+		  AND a.invocation_kind='ISSUE'
+		  AND a.started_at >= $3
+		  AND NOT EXISTS (
+			  SELECT 1 FROM delivery_provider_observation o WHERE o.provider_attempt_id=a.id
+		  )
+		ORDER BY a.started_at, a.id
+		LIMIT 1
+	`, operationID, excludeAttemptID, startedAfter).Scan(&attemptID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return uuid.Nil, false, nil
+	}
+	if err != nil {
+		return uuid.Nil, false, fmt.Errorf("find active unobserved delivery issue attempt: %w", err)
+	}
+	return attemptID, true, nil
+}
+
 func (r *PostgresRepository) GetProviderAttemptKind(ctx context.Context, tx pgx.Tx, attemptID uuid.UUID) (domain.InvocationKind, error) {
 	var kind domain.InvocationKind
 	if err := tx.QueryRow(ctx, `SELECT invocation_kind FROM delivery_provider_attempt WHERE id=$1`, attemptID).Scan(&kind); err != nil {
