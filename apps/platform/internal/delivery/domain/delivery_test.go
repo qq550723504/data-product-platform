@@ -10,9 +10,12 @@ import (
 
 func TestOperationLifecycleRequiresContainmentBeforeBlocked(t *testing.T) {
 	now := time.Now().UTC()
-	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
+	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "delegation-a", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
 	if err != nil {
 		t.Fatal(err)
+	}
+	if op.DelegationRef != "delegation-a" {
+		t.Fatalf("delegation ref = %q, want delegation-a", op.DelegationRef)
 	}
 	if err := op.Transition(StatusBlocked); err != nil {
 		t.Fatalf("prepared -> blocked should be allowed by initial gate, got %v", err)
@@ -21,7 +24,7 @@ func TestOperationLifecycleRequiresContainmentBeforeBlocked(t *testing.T) {
 		t.Fatalf("terminal operation must not be rewritten, got %v", err)
 	}
 
-	op, err = NewOperation(uuid.New(), uuid.New(), "delivery-2", "test-provider", "principal-a", "consumer-a", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
+	op, err = NewOperation(uuid.New(), uuid.New(), "delivery-2", "test-provider", "principal-a", "consumer-a", "", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,7 +44,7 @@ func TestOperationLifecycleRequiresContainmentBeforeBlocked(t *testing.T) {
 
 func TestCapabilityMustBeNarrowAndWithinFreshCap(t *testing.T) {
 	now := time.Now().UTC()
-	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
+	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -68,7 +71,7 @@ func TestCapabilityMustBeNarrowAndWithinFreshCap(t *testing.T) {
 
 func TestCapabilityCannotCrossFreshExpiryCap(t *testing.T) {
 	now := time.Now().UTC()
-	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
+	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
 	if err != nil {
 		t.Fatal(err)
 	}

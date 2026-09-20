@@ -95,7 +95,7 @@ type Operation struct {
 	UpdatedAt                   time.Time
 }
 
-func NewOperation(workspaceID, datasetVersionID uuid.UUID, idempotencyKey, providerName, principalRef, consumerRef, purpose, action, scopeRef, channel string, requestedExpiresAt time.Time, certificationRef *uuid.UUID) (Operation, error) {
+func NewOperation(workspaceID, datasetVersionID uuid.UUID, idempotencyKey, providerName, principalRef, consumerRef, delegationRef, purpose, action, scopeRef, channel string, requestedExpiresAt time.Time, certificationRef *uuid.UUID) (Operation, error) {
 	if workspaceID == uuid.Nil || datasetVersionID == uuid.Nil || strings.TrimSpace(idempotencyKey) == "" || strings.TrimSpace(providerName) == "" || strings.TrimSpace(principalRef) == "" || strings.TrimSpace(consumerRef) == "" || strings.TrimSpace(purpose) == "" || strings.TrimSpace(action) == "" || strings.TrimSpace(scopeRef) == "" || strings.TrimSpace(channel) == "" {
 		return Operation{}, ErrInvalidOperation
 	}
@@ -115,6 +115,7 @@ func NewOperation(workspaceID, datasetVersionID uuid.UUID, idempotencyKey, provi
 		CurrentGateDecision:  "BLOCKED",
 		PrincipalRef:         strings.TrimSpace(principalRef),
 		EffectiveConsumerRef: strings.TrimSpace(consumerRef),
+		DelegationRef:        strings.TrimSpace(delegationRef),
 		Purpose:              strings.TrimSpace(purpose),
 		Action:               strings.TrimSpace(action),
 		ScopeRef:             strings.TrimSpace(scopeRef),

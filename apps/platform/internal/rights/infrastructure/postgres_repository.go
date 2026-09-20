@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
 )
 
@@ -119,6 +120,9 @@ func (r *PostgresRepository) GetAuthorization(ctx context.Context, authorization
 }
 
 func (r *PostgresRepository) SaveAuthorizationState(ctx context.Context, tx pgx.Tx, authorization domain.Authorization) error {
+	if _, err := deliveryfence.Advance(ctx, tx, authorization.WorkspaceID); err != nil {
+		return err
+	}
 	commandTag, err := tx.Exec(ctx, `
 		UPDATE data_authorization
 		SET status=$2, updated_at=$3, updated_by=$4

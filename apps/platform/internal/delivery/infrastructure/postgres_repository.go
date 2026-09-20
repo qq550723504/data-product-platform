@@ -10,6 +10,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/domain"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 )
 
 var ErrNotFound = errors.New("delivery operation not found")
@@ -117,17 +118,7 @@ func (r *PostgresRepository) GetOperation(ctx context.Context, tx pgx.Tx, id uui
 }
 
 func (r *PostgresRepository) LockFence(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID) (int64, error) {
-	if _, err := tx.Exec(ctx, `
-		INSERT INTO delivery_authorization_fence(workspace_id) VALUES ($1)
-		ON CONFLICT (workspace_id) DO NOTHING
-	`, workspaceID); err != nil {
-		return 0, fmt.Errorf("ensure delivery authorization fence: %w", err)
-	}
-	var revision int64
-	if err := tx.QueryRow(ctx, `SELECT revision FROM delivery_authorization_fence WHERE workspace_id=$1 FOR UPDATE`, workspaceID).Scan(&revision); err != nil {
-		return 0, fmt.Errorf("lock delivery authorization fence: %w", err)
-	}
-	return revision, nil
+	return deliveryfence.Lock(ctx, tx, workspaceID)
 }
 
 func (r *PostgresRepository) InsertGateEvaluation(ctx context.Context, tx pgx.Tx, operationID uuid.UUID, evaluation domain.GateEvaluation, createdAt time.Time) error {

@@ -106,7 +106,7 @@ func (s *Service) IssueCredential(ctx context.Context, cmd IssueCredentialComman
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		candidate, err := domain.NewOperation(
 			cmd.WorkspaceID, cmd.DatasetVersionID, cmd.IdempotencyKey, cmd.ProviderName,
-			cmd.PrincipalRef, cmd.EffectiveConsumerRef, cmd.Purpose, cmd.Action,
+			cmd.PrincipalRef, cmd.EffectiveConsumerRef, cmd.DelegationRef, cmd.Purpose, cmd.Action,
 			cmd.ScopeRef, cmd.DeliveryChannel, cmd.RequestedExpiresAt, cmd.CertificationRef,
 		)
 		if err != nil {
@@ -328,6 +328,11 @@ func (s *Service) finalizeReplay(ctx context.Context, prep replayPreparation, ca
 		if !evaluation.Allowed {
 			needsContainment = true
 			reason = firstBlocker(evaluation.Blockers)
+			return s.repo.UpdateProjection(ctx, tx, operation)
+		}
+		if !matchesIssuedCapability(operation, capability) {
+			needsContainment = true
+			reason = "provider replay did not return the originally issued capability"
 			return s.repo.UpdateProjection(ctx, tx, operation)
 		}
 		if err := capability.ValidateAgainst(operation, evaluation); err != nil {
@@ -639,6 +644,7 @@ func (s *Service) finalizeCapability(ctx context.Context, operationID, attemptID
 	var operation domain.Operation
 	var evaluation domain.GateEvaluation
 	var needsContainment bool
+	var finalizationSkipped bool
 	reason := ""
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		var err error
@@ -647,6 +653,7 @@ func (s *Service) finalizeCapability(ctx context.Context, operationID, attemptID
 			return err
 		}
 		if operation.Status != domain.StatusIssuancePending {
+			finalizationSkipped = true
 			return nil
 		}
 		revision, err := s.repo.LockFence(ctx, tx, operation.WorkspaceID)
@@ -693,6 +700,12 @@ func (s *Service) finalizeCapability(ctx context.Context, operationID, attemptID
 	if err != nil {
 		return Result{}, err
 	}
+	if finalizationSkipped {
+		if operation.Status == domain.StatusIssued && matchesIssuedCapability(operation, capability) {
+			return s.replayIssued(ctx, operation, cmd)
+		}
+		return s.containUnexpectedCapability(ctx, operation, capability, cmd)
+	}
 	if needsContainment {
 		target := domain.StatusFailed
 		if !evaluation.Allowed {
@@ -701,6 +714,59 @@ func (s *Service) finalizeCapability(ctx context.Context, operationID, attemptID
 		return s.containCapability(ctx, operation, target, reason, cmd)
 	}
 	return Result{Operation: operation, Capability: &capability}, nil
+}
+
+func matchesIssuedCapability(operation domain.Operation, capability domain.Capability) bool {
+	if operation.Status != domain.StatusIssued || operation.CredentialRef == "" || operation.CredentialHash == "" {
+		return false
+	}
+	if capability.CapabilityRef != operation.CredentialRef {
+		return false
+	}
+	capabilityHash := capability.CapabilityHash
+	if capabilityHash == "" {
+		capabilityHash = hashSecret(capability.Credential)
+	}
+	return capabilityHash == operation.CredentialHash
+}
+
+func (s *Service) containUnexpectedCapability(ctx context.Context, operation domain.Operation, capability domain.Capability, cmd IssueCredentialCommand) (Result, error) {
+	var attemptID uuid.UUID
+	if err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		current, err := s.repo.GetOperation(ctx, tx, operation.ID, true)
+		if err != nil {
+			return err
+		}
+		operation = current
+		attemptID, err = s.repo.InsertProviderAttempt(ctx, tx, current, "late-containment/"+uuid.NewString(), domain.InvocationRevoke)
+		if err != nil {
+			return err
+		}
+		if err := s.repo.InsertProviderCost(ctx, tx, current, attemptID); err != nil {
+			return err
+		}
+		return appendAttemptFacts(ctx, tx, current, attemptID, domain.InvocationRevoke, cmd.ActorID, cmd.TraceID)
+	}); err != nil {
+		return Result{}, err
+	}
+
+	err := s.provider.Revoke(ctx, operation.ProviderRequestKey)
+	if errors.Is(err, ErrCapabilityNotFound) {
+		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeNotFound, capability, "late capability was not active"); recordErr != nil {
+			return Result{}, recordErr
+		}
+		return Result{Operation: operation}, ErrCredentialReplay
+	}
+	if err != nil {
+		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeUnknown, capability, "late capability containment outcome is unknown: "+err.Error()); recordErr != nil {
+			return Result{}, recordErr
+		}
+		return Result{Operation: operation}, ErrCredentialReplay
+	}
+	if err := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeSuccess, capability, "late capability contained after terminal race"); err != nil {
+		return Result{}, err
+	}
+	return Result{Operation: operation}, ErrCredentialReplay
 }
 
 func (s *Service) containCapability(ctx context.Context, operation domain.Operation, target domain.Status, reason string, cmd IssueCredentialCommand) (Result, error) {
