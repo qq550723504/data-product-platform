@@ -292,6 +292,8 @@ Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证�
 
 签发 credential 时，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 所依赖所有 RightsDeclaration / Authorization 中最早的有限 `valid_to/effective_to`，以及签发时已存在且将在未来生效的 RightsDisposition / CertificationDisposition 中最早的 `effective_at`。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 gate；不能回调平台的 bearer/presigned credential 必须严格执行该 expiry cap 和明确的短最大 TTL。
 
+外部 credential issuance 必须 crash-safe：先持久化 DeliveryOperation + stable provider_request_key，再调用外部 provider；provider 必须支持幂等查询/重放或 revoke/compensation。外部成功但 terminal DB commit 失败时，retry/reconciliation 复用同一 key，不得产生第二份独立 credential。无这些能力的 provider 第一阶段只能走 platform redemption indirection 或不支持该 delivery mode。
+
 ## 11. CostEvent / CostAllocation
 
 QualityAssessment、Rights verification / invalidation / supersession、Authorization provenance binding、DatasetCertification evaluation / human approval、Delivery 等实际活动发生时必须记录 CostEvent。
