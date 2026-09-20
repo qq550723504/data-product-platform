@@ -31,6 +31,8 @@ var ErrAssessmentAttemptConflict = errors.New("quality assessment attempt confli
 var ErrAssessmentAttemptInProgress = errors.New("quality assessment attempt is already in progress")
 var ErrAssessmentAttemptFailed = errors.New("quality assessment attempt already failed")
 
+const attemptOutcomeRecoveryTimeout = 5 * time.Second
+
 type Service struct {
 	industryPackRoot string
 	tx               *transaction.Manager
@@ -127,7 +129,7 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 		Now:      cmd.Now,
 	})
 	if err != nil {
-		if outcomeErr := s.recordAttemptOutcome(ctx, attemptID, "FAILED", nil, err.Error(), startedAt); outcomeErr != nil {
+		if outcomeErr := s.recordAttemptOutcomeAfterEvaluation(ctx, attemptID, "FAILED", nil, err.Error(), time.Now().UTC()); outcomeErr != nil {
 			return domain.Assessment{}, fmt.Errorf("quality evaluation failed: %v; record attempt outcome: %w", err, outcomeErr)
 		}
 		return domain.Assessment{}, err
@@ -205,7 +207,7 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 		return s.repo.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, "SUCCEEDED", &result.ID, "", result.CreatedAt)
 	})
 	if err != nil {
-		if outcomeErr := s.recordAttemptOutcome(ctx, attemptID, "FAILED", nil, err.Error(), time.Now().UTC()); outcomeErr != nil {
+		if outcomeErr := s.recordAttemptOutcomeAfterEvaluation(ctx, attemptID, "FAILED", nil, err.Error(), time.Now().UTC()); outcomeErr != nil {
 			return result, fmt.Errorf("persist quality assessment failed: %v; record attempt outcome: %w", err, outcomeErr)
 		}
 	}
@@ -246,6 +248,12 @@ func (s *Service) recordAttemptOutcome(ctx context.Context, attemptID uuid.UUID,
 	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		return s.repo.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, outcome, assessmentID, errorMessage, occurredAt)
 	})
+}
+
+func (s *Service) recordAttemptOutcomeAfterEvaluation(ctx context.Context, attemptID uuid.UUID, outcome string, assessmentID *uuid.UUID, errorMessage string, occurredAt time.Time) error {
+	recoveryCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), attemptOutcomeRecoveryTimeout)
+	defer cancel()
+	return s.recordAttemptOutcome(recoveryCtx, attemptID, outcome, assessmentID, errorMessage, occurredAt)
 }
 
 func actorType(actorID *uuid.UUID) string {
