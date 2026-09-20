@@ -316,7 +316,7 @@ ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status
 - idempotency_key / request identity
 - requested_at
 - gate decision / blockers
-- status：PREPARED / ISSUANCE_PENDING / ISSUED / BLOCKED / FAILED（或等价受控状态）
+- status：PREPARED / ISSUANCE_PENDING / CONTAINMENT_PENDING / ISSUED / BLOCKED / FAILED（或等价受控状态）
 - provider_request_key（稳定幂等键）
 - provider_credential_ref/hash（如适用；禁止存可用 secret）
 - issuance result
@@ -331,7 +331,8 @@ ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status
 - provider_request_key 对同一 DeliveryOperation 稳定，支持 crash 后安全 retry/reconcile；
 - gate 失败也有可审计 DeliveryOperation / result；
 - 不把可用 credential secret/token 正文持久化到 Core 数据库；
-- ISSUANCE_PENDING 必须有 reconciliation 查询/索引，不能永久悬空；
+- ISSUANCE_PENDING / CONTAINMENT_PENDING 必须有 reconciliation 查询/索引，不能永久悬空；
+- 从 ISSUANCE_PENDING 转 BLOCKED 前，如 provider_request_key 可能已产生外部访问能力，必须记录 reconciliation/containment outcome；只有确认“未签发”或“已成功 revoke/contain”才能 BLOCKED；unknown/uncontained 必须保持 CONTAINMENT_PENDING；
 - CostAllocation 必须能以 FK 关联 DeliveryOperation。
 
 ## 14. CostEvent / CostAllocation
