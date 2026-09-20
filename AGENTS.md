@@ -51,7 +51,7 @@ OpenMetadata 仅作为 Governance Projection。
 - ContractVersion
 - WorkflowVersion
 - EvidenceSnapshot（领域 immutable invariant；当前 header guard 已有，但 `evidence_snapshot_item` membership INSERT/DELETE/UPDATE 的 DB-level freeze 仍是 #99 已知缺口）
-- RightsSnapshot
+- RightsSnapshot（领域 immutable invariant；当前 `rights_snapshot` header guard 已有，但既有 `rights_snapshot_authorization` membership DB guard 尚未落地，属于 #137 当前实现范围/已知 enforcement gap）
 - QualityAssessment（已实现；兼容存储名 quality_result / quality_finding）
 - verified RightsDeclaration / verification fact（#137 起）
 - AuthorizationProvenanceBinding / BindingDisposition（#137 起）
@@ -60,7 +60,7 @@ OpenMetadata 仅作为 Governance Projection。
 
 ProductRelease 特例：DRAFT / VALIDATING / READY 等发布前阶段允许显式 Command 按状态机更新 status 与 validation bindings；进入 PUBLISHED 后，当前 `guard_product_release_history` 只保护 `product_release` 主行的 UPDATE/DELETE。**当前 `product_release_dataset` membership 尚无数据库 INSERT/UPDATE/DELETE guard（#99 open），因此不能声称数据库已经完整冻结 published dataset bindings。** 领域 invariant 仍要求 published bindings 不可变；在 #99 补齐 membership guard 前，这是已知 enforcement gap。SUSPENDED / WITHDRAWN 目前只是 schema 枚举中的保留状态，不得声称已有 PUBLISHED → SUSPENDED/WITHDRAWN live transition；未来启用需要独立 migration + Command，同时不得回退 binding freeze。
 
-DeliveryOperation 也是受控 lifecycle row，不得把整行视为创建即 immutable：PREPARED / ISSUANCE_PENDING / CONTAINMENT_PENDING / terminal 状态需要由显式 delivery/reconciliation Command 更新。必须冻结并保护的是 request/idempotency identity、确定后的 provider_request_key、已记录的 transition/gate/issuance history 与 terminal outcome 语义；不要安装会阻止合法恢复迁移的全行 UPDATE guard。
+DeliveryOperation 也是受控 lifecycle row，不得把整行视为创建即 immutable：PREPARED / ISSUANCE_PENDING / CONTAINMENT_PENDING / terminal 状态需要由显式 delivery/reconciliation Command 更新。**row 上的 status/current_gate_decision 只能是当前 projection。每一次 initial/retry/reconciliation/terminal-finalize/credential-replay gate 都必须追加 immutable DeliveryGateEvaluation（或等价 fact），保存 decision/blockers + dependency fence/revision + trusted caller/effective consumer/context；状态迁移也追加 transition history，并引用驱动它的 evaluation/provider attempt。** 已记录的 evaluation/transition/issuance history 不得覆盖；不要安装会阻止合法 lifecycle projection 更新的全行 immutable guard。
 
 **通用 frozen aggregate 并发规则：** 任何采用 `DRAFT → FINALIZED/PUBLISHED`、且 parent 下存在可变 child membership/action/binding rows 的聚合，都必须把 child mutation 与 Finalize/Publish 串行化在同一个 parent row lock/fence/revision 上，并采用固定 parent-first 锁顺序。Finalize/Publish 必须在持有 parent lock 时验证完整 membership/content hash 再冻结。仅靠“FINALIZED 后 trigger 拒绝 mutation”不够，因为旧 transaction 可能在 finalize 前读到 DRAFT、却在 finalize 后才提交。该规则适用于 RightsSnapshot、EffectiveRightsSnapshot、GrantorAuthorityDelegationChain、未来新增的 Profile/Evidence/Release membership aggregate 等；若已有对象当前尚未满足，必须明确记录为 open enforcement gap，而不能声称已完整冻结。
 
@@ -257,7 +257,7 @@ Credential replay 自身进入 CONTAINMENT_PENDING 时也必须发出显式 non-
 
 若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL、caller principal→consumer/workspace binding / workspace membership / caller delegation 的最早有限有效期、**CurrentEntitlementGate 实际依赖的 grantor-authority delegation chain 所有 required edges 的最早 valid_to**，以及本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界；签发时已知且未来生效的 caller identity revoke/disable、**grantor delegation disposition effective_at**、RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 的最早 effective_at 也必须参与 cap。支持 redemption-time server check 的 delivery mode 应在 redemption 时重新验证 caller authority + CurrentDeliveryGate；不可回调的 bearer/presigned credential 必须使用该完整 expiry cap + 明确最大 TTL。
 
-任何 provider 首次返回或 reconciliation 恢复出的 credential，在进入 ISSUED 前必须验证实际 capability 是 requested/current-gate context 的等价或更窄集合：expiry <= fresh cap，resource/DatasetVersion、consumer/grantee、action、object/row/prefix scope、channel 不得扩大。**consumer/grantee 不能因 provider“不支持该字段”而跳过**：direct bearer/presigned capability 必须有 provider-native 或等价可验证的 consumer-binding enforcement；否则必须用 platform redemption/gateway 在 redemption 时重新认证并强制 effective consumer，或标记 direct mode unsupported。命中旧 provider_request_key 不能绕过这条检查；超过 fresh cap、scope 过宽或关键维度不可验证时必须 shorten/narrow+verify 或 revoke/contain，无法安全满足当前 context 时不得 ISSUED。
+任何 provider 首次返回或 reconciliation 恢复出的 credential，在进入 ISSUED 前必须验证实际 capability 是 requested/current-gate context 的等价或更窄集合：expiry <= fresh cap，resource/DatasetVersion、consumer/grantee、action、object/row/prefix scope、**delivery channel/mode** 不得扩大。consumer/grantee 与受约束的 channel/mode 都不能因 provider“不支持该字段”而跳过：无法权威验证/强制时，必须用 platform redemption/gateway 在使用时重新认证并强制这些边界，或标记 direct mode unsupported。命中旧 provider_request_key 不能绕过这条检查；任一关键维度不可验证或过宽时不得 ISSUED。
 
 ## 11. Release Readiness
 
