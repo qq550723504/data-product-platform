@@ -90,9 +90,9 @@ PREPARED
 
 `ISSUANCE_PENDING` 是 crash-recovery / reconciliation 中间态，不是 terminal failure。若 fresh gate 变为 BLOCKED，但此前 provider outcome 可能已产生访问能力，必须先 reconcile；已签发则先 revoke/contain，无法确认 outcome 或 containment 时进入 `CONTAINMENT_PENDING`。只有确认没有活跃访问能力后，才允许终结：fresh gate 已 BLOCKED 时进入 `BLOCKED`；gate 仍 ALLOWED 但 issuance contract 无法满足（如 credential 无法缩短到 fresh cap）时进入 `FAILED`。外部 provider 调用发生前必须先 durable persist 该状态和 stable provider_request_key。
 
-每次 initial/retry/reconciliation issuance 前必须重新执行完整 CurrentDeliveryGate 并重新计算 expiry cap；旧 gate snapshot 只保留审计价值，不能授权新的 provider side effect。
+每次 initial/retry/reconciliation issuance 前必须重新验证 authenticated caller principal 当前仍可代表 effective consumer/workspace（含 binding/membership/delegation），再执行完整 CurrentDeliveryGate 并重新计算 expiry cap；旧 identity/gate snapshot 只保留审计价值，不能授权新的 provider side effect。
 
-provider 返回/恢复 access capability 后，在 terminal ISSUED transaction 中必须使用共享 delivery authorization fence/revision 与所有影响 gate 的 entitlement-changing Commands 线性化，并再次完整 re-gate + fresh-cap。该 terminal commit 是 issuance 的线性化点。
+provider 返回/恢复 access capability 后，在 terminal ISSUED transaction 中必须使用共享 delivery authorization fence/revision，与 caller binding/membership/delegation lifecycle 以及所有影响 gate 的 entitlement-changing Commands 线性化，并再次验证 caller authority + 完整 re-gate + fresh-cap。该 terminal commit 是 issuance 的线性化点。
 
 provider 成功但 terminal DB commit 失败时，恢复流程必须使用同一 provider_request_key 查询/重放同一 issuance，而不是生成新的 credential。**任何首次返回或恢复出的 credential 在进入 ISSUED 前，都必须验证其实际 expiry/access bound <= 当前 fresh cap。** 若旧 credential 超过 fresh cap，必须先安全 shorten 并验证，或 revoke/contain；不能直接恢复为 ISSUED。direct bearer mode 还必须能在 terminal commit 成功、HTTP response 丢失后通过同一 key 恢复同一 credential/访问能力；否则必须使用 platform redemption indirection。
 
@@ -104,7 +104,7 @@ DataProduct 是稳定产品身份。当前公开 API 中 DataProduct 创建为 D
 
 ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定；进入 PUBLISHED 后，当前数据库 history guard 阻止任何 UPDATE，published bindings 与历史行整体冻结。SUSPENDED/WITHDRAWN 虽仍存在于 schema 枚举，但当前不是从 PUBLISHED 可达的 live transition；未来启用需要独立 migration + Command。
 
-Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 由持久化 DeliveryOperation 表达，并必须通过 CurrentDeliveryGate：校验 DatasetVersion 当前可用性、当前有效的 CERTIFIED DatasetCertification，以及当前 consumer / purpose / action 的 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
+Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 由持久化 DeliveryOperation 表达。进入 CurrentDeliveryGate 前先建立 trusted caller principal → effective consumer/workspace（on-behalf-of 必须有当前有效 delegation），随后再校验 DatasetVersion 当前可用性、当前有效的 CERTIFIED DatasetCertification，以及 effective consumer / purpose / action 的 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
 
 ## 3. 实体模型
 
