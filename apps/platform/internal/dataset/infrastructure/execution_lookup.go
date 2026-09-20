@@ -17,7 +17,8 @@ func (r *PostgresRepository) FindVersionByExecution(ctx context.Context, executi
 		WHERE generated_by_execution_id = $1
 		ORDER BY
 			(status = 'READY') DESC,
-			(status IN ('CREATED', 'PROCESSING', 'FAILED')) DESC,
+			(status IN ('CREATED', 'PROCESSING')) DESC,
+			(status = 'FAILED') DESC,
 			version_no ASC
 		LIMIT 1
 	`, executionID))

@@ -150,7 +150,8 @@ func findVersionByExecutionOutputTx(ctx context.Context, tx pgx.Tx, datasetID, e
 		WHERE dataset_id = $1 AND generated_by_execution_id = $2
 		ORDER BY
 			(status = 'READY') DESC,
-			(status IN ('CREATED', 'PROCESSING', 'FAILED')) DESC,
+			(status IN ('CREATED', 'PROCESSING')) DESC,
+			(status = 'FAILED') DESC,
 			version_no ASC
 		LIMIT 1
 	`, datasetID, executionID))

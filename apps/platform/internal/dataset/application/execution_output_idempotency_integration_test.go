@@ -315,8 +315,9 @@ func TestExecutionOutputRecoveryPrefersHalfProductOverTerminalHistory(t *testing
 			storage_type, storage_uri, checksum_algorithm, checksum_value
 		) VALUES
 			($1, $3, 1, 'SUPERSEDED', '{}'::jsonb, $2, 'OBJECT_STORAGE', 's3://history/old.csv', 'SHA256', repeat('a', 64)),
-			($4, $3, 2, 'CREATED', '{}'::jsonb, $2, NULL, NULL, NULL, NULL)
-	`, terminalID, executionID, datasetID, halfProductID); err != nil {
+			($4, $3, 2, 'FAILED', '{}'::jsonb, $2, NULL, NULL, NULL, NULL),
+			($5, $3, 3, 'CREATED', '{}'::jsonb, $2, NULL, NULL, NULL, NULL)
+	`, terminalID, executionID, datasetID, uuid.New(), halfProductID); err != nil {
 		t.Fatalf("insert terminal history and half-product: %v", err)
 	}
 

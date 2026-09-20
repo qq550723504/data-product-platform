@@ -169,9 +169,9 @@
     恢复中间态；
   - 若命中的是 `INVALID`/`SUPERSEDED` → 硬错误，**不**静默复活已撤销的输出；
   - 否则分配新版本。
-  - 查回顺序：先 `READY`，再 `CREATED` / `PROCESSING` / `FAILED` 半成品，最后才是
-    `INVALID` / `SUPERSEDED` 历史；同一状态内按 `version_no ASC`。这样已有终态历史时仍会
-    先修复可恢复半成品，且已发布版本仍优先。
+  - 查回顺序：先 `READY`，再 `CREATED` / `PROCESSING`，再 `FAILED`，最后才是
+    `INVALID` / `SUPERSEDED` 历史；同一状态内按 `version_no ASC`。这样迁移补救留下的旧
+    `FAILED` 行不会遮蔽仍占用 live slot 的可恢复半成品，且已发布版本仍优先。
   - 命中唯一索引冲突（并发重放）时读回既有行，而不是新增版本号。
 - **幂等键落库时点**（草案 §8 的落地）：`generated_by_execution_id` 在**分配**时写入
   `INSERT`，而不是等到 `SetReady`。这样唯一索引覆盖完整的两阶段窗口，关闭“并发重放各自
@@ -364,8 +364,9 @@ C2-a 已落地：
    而不是新增版本号（并发重放安全）；
 3. `generated_by_execution_id` 在同一行上不可改写（`guard_dataset_version_immutability`
    已覆盖 `READY` 之后的改写；分配阶段写入后也不得再改）；
-4. 复用查询先排序 `READY`，再排序 `CREATED` / `PROCESSING` / `FAILED`，最后排序终态历史，
-   同状态内按 `version_no ASC`：历史重复对优先复用已发布行，否则优先修复可恢复半成品；
+4. 复用查询先排序 `READY`，再排序 `CREATED` / `PROCESSING`，再排序 `FAILED`，最后排序终态
+   历史，同状态内按 `version_no ASC`：历史重复对优先复用已发布行，否则优先修复仍占用
+   live slot 的半成品；
 5. `SetReady` 在同一事务内锁内重读并仲裁已提交状态，`WHERE status IN
    ('CREATED','PROCESSING','FAILED')` 且要求 `RowsAffected == 1`，使 `FAILED` 半成品的
    修复与发布成为一次原子状态迁移（其 Domain Event 带 `previousStatus`）。
