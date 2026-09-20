@@ -293,13 +293,13 @@ CurrentDeliveryGate
 
 任一子门禁失败时，历史 Certification 保留，但当前交付必须 BLOCKED。第一阶段不要求周期性后台重认证。
 
-Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证。第一阶段必须有真正的 server-side delivery command；服务端在返回数据或签发下载链接、presigned URL、token、credential 前必须重新执行完整 CurrentDeliveryGate。query 与 delivery 之间状态发生变化时，以 delivery command 内重新计算的当前事实为准。
+Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证。第一阶段必须有真正的 server-side delivery command；服务端先从 authenticated caller principal 解析 effective consumer/workspace，on-behalf-of 验证当前 delegation，再在返回数据或签发下载链接、presigned URL、token、credential 前重新执行完整 CurrentDeliveryGate。query 与 delivery 之间 caller binding/delegation、Rights/Certification/DatasetVersion 状态发生变化时，以 delivery command 内重新计算的当前授权事实为准。
 
-签发 credential 时，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 所依赖所有 RightsDeclaration / Authorization 中最早的有限 `valid_to/effective_to`，以及签发时已存在且将在未来生效的 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 中最早的 `effective_at`。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 gate；不能回调平台的 bearer/presigned credential 必须严格执行该 expiry cap 和明确的短最大 TTL。
+签发 credential 时，`expires_at` 不得晚于 requested TTL、平台最大 TTL、caller principal→consumer/workspace binding / workspace membership / delegation 的最早有限 `valid_to/expires_at`、本次 entitlement 所依赖所有 RightsDeclaration / Authorization 中最早的有限 `valid_to/effective_to`，以及签发时 trusted identity source 已知且将在未来生效的 identity revoke/disable（如可表达）、RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 中最早的 `effective_at`。支持 redemption-time server check 的 delivery mode 应在 redemption 时重新验证 caller authority + gate；不能回调平台的 bearer/presigned credential 必须严格执行该完整 expiry cap 和明确的短最大 TTL。
 
-外部 credential issuance 必须 crash-safe：先持久化 DeliveryOperation + stable provider_request_key；每次 initial/retry/reconciliation 真正调用 provider 前重新执行 CurrentDeliveryGate 并重新计算 expiry cap，再决定是否允许外部 side effect。
+外部 credential issuance 必须 crash-safe：先持久化 DeliveryOperation + stable provider_request_key；每次 initial/retry/reconciliation 真正调用 provider 前重新验证 caller principal→effective consumer/workspace binding/delegation，再执行 CurrentDeliveryGate 并重新计算 expiry cap，再决定是否允许外部 side effect。
 
-同时必须存在 delivery/entitlement 线性化机制：所有 delivery mode 的 terminal ISSUED DB transaction 都必须获取与 Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，重新执行 CurrentDeliveryGate，并验证 dependency revision 未被并发变更穿越；provider/credential 模式同时重算 fresh cap。该 terminal commit 是 delivery linearization point。
+同时必须存在 delivery authorization 线性化机制：所有 delivery mode 的 terminal ISSUED DB transaction 都必须获取与 principal binding/workspace membership/delegation lifecycle、Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，重新验证 caller authority + CurrentDeliveryGate，并验证 dependency revision 未被并发变更穿越；provider/credential 模式同时重算 fresh cap。该 terminal commit 是 delivery linearization point。
 
 direct-data delivery 也不得例外：在 terminal ISSUED commit 成功之前，不得向 HTTP response/body/stream 写出任何数据字节；commit 成功后才开始传输。数据库 fence 只覆盖 terminal re-gate + commit，不在整个 stream 生命周期持续持锁。
 
@@ -321,8 +321,8 @@ QualityAssessment、Rights verification / invalidation / supersession、Authoriz
 - 金额未知时不伪造金额，可记录 quantity/unit；
 - 成本必须与实际活动同时记录，不在试点 KPI 阶段事后反推；
 - 非 Execution 成本必须通过 typed CostAllocation 关联实际业务主体，禁止仅把 subject ID 放 JSONB metadata；
-- CostEvent 使用稳定 activity_id / operation identity，并以 component_key / cost_type 区分同一业务活动内不同成本组件；
-- 相同 activity_id + component_key 的幂等业务重放不得重复产生 CostEvent。
+- CostEvent 使用稳定 physical-attempt activity identity，并以 component_key / cost_type 区分同一次实际活动内不同成本组件；
+- same-attempt 的 network/command/transaction replay 未产生新外部工作时，相同 attempt identity + component_key 的幂等重放不得重复 CostEvent；failed/transient attempt 后若 retry 真正再次执行 engine/provider/人工工作，必须使用新的 attempt identity 记录新增实际成本，或原子聚合新增 quantity/amount 并保留可审计 attempt count/identity。
 
 ## 12. Product Release Readiness
 
