@@ -116,6 +116,8 @@ AuthorizationProvenanceBinding 创建后不可 UPDATE/DELETE。错误 binding �
 
 状态迁移和认证判定规则必须由 Domain / Application 边界控制。
 
+DataProduct 当前公开 API 的 live lifecycle 只应视为 `DRAFT → PUBLISHED`（由成功 PublishProductRelease 的受控副作用触发）。DESIGNING / DEVELOPING / TESTING / READY / ACTIVE / SUSPENDED / DEPRECATED / RETIRED 目前只是 domain/schema reserved values；在新增显式 Command/API 前，不得把这些 enum 当作已实现可达状态，也不得用 generic PATCH 补出迁移。
+
 ## 6. Domain Events and Audit
 
 关键状态变化必须：
