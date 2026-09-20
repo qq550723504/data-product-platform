@@ -137,16 +137,17 @@ DataResource
 - 显式 `InvalidateRightsDeclaration` / `SupersedeRightsDeclaration` Command，禁止 UPDATE 已 VERIFIED 历史事实；
 - Current rights selection 按 `as_of` 排除已生效 disposition，并校验每条 declaration 自身 validity window 与 resource/consumer/purpose/action/scope；
 - `BindAuthorizationProvenance`（或等价显式 Command），禁止 ad hoc CRUD 创建安全关键 binding；
-- Authorization.grantor_ref 与支持它的 RightsDeclaration / 可验证 delegation chain 的强类型关系；
+- Authorization.grantor_ref 与支持它的 RightsDeclaration / grantor-authority delegation chain 的强类型关系；DELEGATED binding 必须持久化 chain ID/hash + ordered member edge identities，不能只在创建时临时证明存在 delegation；
 - AuthorizationProvenanceBinding 创建后不可 UPDATE/DELETE；
 - append-only `AuthorizationProvenanceBindingDisposition`，至少支持 `INVALIDATED` / `SUPERSEDED` + `effective_at` + reason + Evidence + actor + optional superseded_by_binding_id；
 - 显式 `InvalidateAuthorizationProvenanceBinding` / `SupersedeAuthorizationProvenanceBinding` Command；
-- Current binding selection 按 `as_of` 排除已生效 binding disposition；replacement binding 必须独立通过 grantor/resource/actions/scope/declaration-current-validity 校验，不能自动继承有效性；
-- RightsSnapshot 冻结实际使用的 declaration + AuthorizationProvenanceBinding + Authorization IDs，且 snapshot header + 所有 membership rows 一起 immutable；finalize 后 membership INSERT/UPDATE/DELETE 必须被 PostgreSQL guard 拒绝；
+- Current binding selection 按 `as_of` 排除已生效 binding disposition；replacement binding 必须独立通过 grantor/resource/actions/scope/declaration-current-validity 校验，不能自动继承有效性；DELEGATED binding 每次 CurrentEntitlementGate 还必须重新验证所有 grantor delegation edges 的 current validity/disposition/continuity/coverage，不能复用 binding-create-time 结论；
+- RightsSnapshot 冻结实际使用的 declaration + AuthorizationProvenanceBinding + Authorization IDs；若 grantor authority=DELEGATED，还冻结 grantor delegation chain ID/hash + member edge IDs。snapshot header + 所有 membership rows 一起 immutable；finalize 后 membership INSERT/UPDATE/DELETE 必须被 PostgreSQL guard 拒绝；历史 freeze 不替代 delivery-time current chain validation；
 - 持久化不可变 `EffectiveRightsSnapshot`（或等价强类型 aggregate），绑定明确 target DatasetVersion、计算 `as_of`/context、calculation_rule_version/hash、lineage/input-set hash，并通过 membership rows 冻结所有**必要输入** DatasetVersion/DataResource + 对应 RightsSnapshot/provenance refs；finalize 后 header/membership/action decision 全部不可改写；
 - Effective Rights 计算必须对每个必要输入执行确定性 fail-closed 合成：对 USE/PROCESS/DERIVE/SHARE/RAW_EXPORT/RESALE/AI_TRAINING 等 action，只有所有必要输入都明确 ALLOWED 才允许输出；任一输入 NOT_ALLOWED、UNKNOWN、缺失 rights fact/snapshot 或未出现在冻结 lineage membership 中，输出该 action 均 NOT_ALLOWED。限制项按最严格约束合成；
 - `EffectiveRightsSnapshot` 逐 action 持久化 decision + reason/source membership，可查询解释“哪一个输入阻断了 SHARE/RESALE 等动作”；创建/finalize 产生 `EffectiveRightsCalculated` / `EffectiveRightsFinalized`（或实现固定的等价事件）+ Audit/Evidence/Outbox；#134 只能冻结引用 finalized immutable Effective Rights fact，不能认证时临时重新计算后不留事实；
 - unrelated grantor 反例：资源/action 相同但无有效 provenance binding 时 CurrentEntitlementGate 必须 BLOCKED；
+- delegated grantor 反例：binding 创建时 grantor delegation chain 有效，随后任一上游 edge 过期或 REVOKED/INVALIDATED/SUPERSEDED；即使 binding/declaration/Authorization 本身仍 current，CurrentEntitlementGate 必须 BLOCKED，且后续 credential fresh cap 不得越过 delegation edge 的 valid_to/disposition effective_at；
 - Authorization context mismatch 反例：declaration 允许 consumer B / SHARE，但绑定 Authorization 只授予 consumer A / USE 时，B 的 SHARE 请求必须 BLOCKED；Authorization 的 grantee/consumer、resource、purpose、action、scope 必须逐项覆盖 requested context；
 - Authorization normalized-scope 反例：`authorization_resource.scope` JSONB 看似包含允许前缀，但 normalized `scope_type/scope_ref` 缺失或与请求不匹配时，BindAuthorizationProvenance / CurrentEntitlementGate 必须 fail closed；不能由不同代码路径各自解释 JSONB；
 - Effective Rights 多输入反例：CURATED output 必须绑定至少两个/三个 required inputs；其中一个输入明确禁止 SHARE（其它输入允许）时，finalized EffectiveRightsSnapshot.SHARE=NOT_ALLOWED，并能追溯到该输入。删除/漏掉该 required input membership 必须使计算失败，不能得到更宽结果；
@@ -155,7 +156,7 @@ DataResource
 
 Rights verification / invalidation / supersession / provenance binding 等实际人工或外部核验活动必须在发生时记录 CostEvent；这些活动通常没有 Execution，必须通过 typed CostAllocation 关联实际 Rights 业务事实。same-attempt replay 使用稳定 activity/attempt identity + component_key 去重；若 retry 真正再次发生外部核验/人工工作，则使用新的 attempt identity 记录新增实际成本，不能按顶层业务对象全部去重。
 
-缺少 declaration creation/verification lifecycle、withdrawal/current-selection、**Authorization normalized scope**、provenance binding、**lineage-bound persisted Effective Rights computation/finalization** 任一能力时，#137 不视为完成。
+缺少 declaration creation/verification lifecycle、withdrawal/current-selection、**Authorization normalized scope**、provenance binding、**delegated grantor chain 强类型引用 + current revalidation/disposition**、**lineage-bound persisted Effective Rights computation/finalization** 任一能力时，#137 不视为完成。
 
 ## 7. HQD-4 #134
 
@@ -229,7 +230,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - server-side delivery command 在返回数据或签发 URL/token/credential 前，使用该 trusted principal + effective consumer 上下文重新执行完整 CurrentDeliveryGate；
 - query→delivery 之间 Rights/Certification/DatasetVersion 状态变化，以及 principal binding/delegation revoke 的 TOCTOU 测试；
 - gate 失败不得产生可用数据、URL、token、credential；
-- credential `expires_at` 必须满足完整最小上限：`<= min(requested_expires_at, platform_max_credential_expiry, caller principal→consumer/workspace binding / workspace membership / delegation 的最早有限 valid_to/expires_at, trusted identity source 已知 future revoke/disable effective_at（如可表达）, RightsDeclaration effective_to, Authorization valid_to, future-effective RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition effective_at)`；不可回调 bearer/presigned credential 尤其不得超过 caller 明确请求的更短 TTL 或平台最大 TTL，不能因为其它 identity/rights 边界更晚就放宽；
+- credential `expires_at` 必须满足完整最小上限：`<= min(requested_expires_at, platform_max_credential_expiry, caller principal→consumer/workspace binding / workspace membership / caller delegation 的最早有限 valid_to/expires_at, 当前 entitlement 实际依赖的 grantor-authority delegation chain 所有 required edges 的最早 valid_to, trusted identity source 已知 caller future revoke/disable effective_at（如可表达）, grantor delegation future disposition effective_at, RightsDeclaration effective_to, Authorization valid_to, future-effective RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition effective_at)`；不可回调 bearer/presigned credential 不得越过 delegated grantor authority 本身的有限边界；
 - #135 issuance 测试必须分别覆盖：① caller 请求 5 分钟而 platform/identity/rights 均允许 1 小时，实际 credential <= 5 分钟；② caller 请求 1 小时但 platform max=10 分钟，实际 credential <= 10 分钟；③ identity/rights/disposition 更早时继续取最早边界。replay/reconciliation 的 fresh cap 必须重复应用同一完整 min 公式；
 - `DatasetDeliveryIssued` / `DatasetDeliveryBlocked` / `DatasetDeliveryFailed`（或实现固定的等价事件）覆盖三个终态结果；
 - `CONTAINMENT_PENDING` 虽非终态，但每次首次进入必须产生显式 `DatasetDeliveryContainmentPending`（或固定等价）Domain Event，并与该 transition 的 Audit/Evidence/Outbox 同事务、幂等提交；reconciliation/alert consumers 不得依赖轮询状态或普通日志才知道存在未确认外部 capability；credential replay containment pending 使用独立 replay subject/event（或统一 containment event + subject_kind），不改写原 ISSUED operation；
