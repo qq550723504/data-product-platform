@@ -347,7 +347,7 @@ Rights verification、QualityAssessment、DatasetCertification 都应将 Evidenc
 - ContractVersion
 - ProductVersion
 - ProductRelease published bindings / published release history（目标 immutable invariant；`product_release_dataset` DB membership guard 仍由 #99 跟踪）
-- EvidenceSnapshot
+- EvidenceSnapshot（目标 immutable invariant；当前 header guard 已有，但 `evidence_snapshot_item` membership DB guard 仍由 #99 跟踪）
 - RightsSnapshot
 - QualityAssessment（已实现）
 - DeliveryOperation 的固定 request/idempotency identity、已冻结 gate/issuance history 与 terminal outcome（#135）；DeliveryOperation lifecycle row 本身不是从创建起 immutable
