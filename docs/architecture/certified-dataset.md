@@ -190,7 +190,8 @@ CurrentEntitlementGate 按“现在”重新检查至少：
 - 每个 Authorization 是否存在当前有效 AuthorizationProvenanceBinding 支撑 grantor_ref，并且该 binding 在 as_of 时点未被 AuthorizationProvenanceBindingDisposition INVALIDATED / SUPERSEDED；若 binding 的 grantor authority 来自 delegation chain，则必须按 as_of 重新验证所有 required grantor-delegation edges 的 chain identity/continuity、validity、REVOKED/INVALIDATED/SUPERSEDED disposition，以及 resource/purpose/action/normalized-scope coverage，任一 edge 失效即 BLOCKED；Authorization 自身还必须 ACTIVE、未过期/撤销，并且其 grantee/consumer、DataResource、purpose、action、scope 全部覆盖本次 delivery context；
 - consumer / purpose 是否匹配；
 - 本次 delivery action（例如 SHARE / RAW_EXPORT）是否当前仍允许；
-- 衍生数据 Effective Rights 是否仍允许该动作。
+- 对衍生 DatasetVersion，不能只读取认证时 frozen EffectiveRightsSnapshot 的 action decision。必须从 target 的 immutable required lineage/input membership 枚举**全部 required inputs**，对每个 input 在当前 `as_of` 下重新验证其 RightsDeclaration、AuthorizationProvenanceBinding、Authorization、grantor-delegation chain/disposition、purpose/action/scope/validity，并对 requested action 重新执行 fail-closed intersection；任一 source input 当前 BLOCKED/UNKNOWN/missing，则 derived delivery BLOCKED；
+- 历史 EffectiveRightsSnapshot 仅解释认证时结论；source input 在认证后被 INVALIDATED/REVOKED/EXPIRED 时不得继续依赖旧 snapshot.ALLOWED。
 
 任一子门禁失败都必须 fail closed，Current Delivery Eligibility = BLOCKED；历史 DatasetCertification 仍保留其 issued-at 结论。
 
@@ -236,7 +237,7 @@ expires_at
    )
 ~~~
 
-任何参与本次 delivery authorization 的已知有限边界都必须参与上限计算。除了 declaration / authorization validity，还包括 caller principal→consumer/workspace binding、workspace membership/caller delegation 的有限有效期，以及 CurrentEntitlementGate 实际依赖的 grantor-authority delegation chain 所有 required edges 的有限 valid_to / 已知 future disposition effective_at；再加上签发时 trusted identity source 已知的 caller future-effective revoke/disable（如该源可表达）与 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition。不能让 URL/token 在调用者代表资格、grantor delegated authority、provenance、rights 或 certification 已按计划退出 current set 后继续有效；
+任何参与本次 delivery authorization 的已知有限边界都必须参与上限计算。除了 declaration / authorization validity，还包括 caller principal→consumer/workspace binding、workspace membership/caller delegation 的有限有效期，以及 **derived target 全部 required source inputs 当前实际选中的 rights/delegation 链**中最早 validity/disposition boundary、CurrentEntitlementGate 实际依赖的 grantor-authority delegation chain 所有 required edges 的有限 valid_to / 已知 future disposition effective_at；再加上签发时 trusted identity source 已知的 caller future-effective revoke/disable（如该源可表达）与 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition。不能让 URL/token 在任何 source input 当前权利、调用者代表资格、grantor delegated authority、provenance、rights 或 certification 已按计划退出 current set 后继续有效；
 11. 如果 delivery mode 支持 redemption-time server check，则每次 redemption 都重新验证 authenticated principal / effective consumer / delegation 当前仍有效，并继续执行 CurrentDeliveryGate；如果是无法在 redemption 时回调平台的 bearer/presigned credential，则必须执行上述完整 expiry cap，并由 #135 明确该 delivery mode 的最大 TTL；
 12. 对签发后才新增的紧急 revocation，只有 redemption-time gate / revocable credential 才能即时阻断；第一阶段若某 delivery mode 不具备此能力，必须在产品/API 中明确该限制，并使用短 TTL，而不能声称签发后的 bearer credential 可即时撤销。
 
@@ -265,7 +266,7 @@ PREPARED
 3. gate ALLOWED 时将 operation 持久化为 ISSUANCE_PENDING；外部调用必须使用稳定幂等键，默认以 DeliveryOperation ID（或其稳定派生值）作为 provider_request_key；
 4. **每一次初始 issuance、retry issuance 或 reconciliation 后决定继续 issuance 之前，都必须重新验证已持久化 caller principal 当前仍可代表 effective consumer（含 workspace membership / delegation 的当前有效性），再重新读取当前事实并执行完整 CurrentDeliveryGate，同时重新计算 credential expiry cap。** PREPARED/ISSUANCE_PENDING 中保存的旧 principal→consumer 结论和旧 gate snapshot 都只用于审计，不可作为后续 issuance 授权；
 5. **所有 delivery mode 与 entitlement-changing commands 必须有共享线性化机制。** 第一阶段采用（或实现等价强度的）delivery authorization fence/revision。这里不仅包括 URL/token/credential，也包括直接返回数据 bytes 的 direct-data delivery：
-   - delivery authorization 依赖的 caller-principal status、principal→consumer/workspace binding/caller delegation（如有），以及 CurrentDeliveryGate 依赖的 DatasetVersion usability、selected Certification、RightsDeclaration / RightsDisposition、AuthorizationProvenanceBinding / BindingDisposition、Authorization、GrantorAuthorityDelegationChain/member edges/dispositions（如 binding 依赖 delegated grantor authority）等关键 subject，都必须落到稳定 fence/revision identity（或等价可串行化机制）；
+   - delivery authorization 依赖的 caller-principal status、principal→consumer/workspace binding/caller delegation（如有），以及 CurrentDeliveryGate 依赖的 DatasetVersion usability、selected Certification、**derived target 的全部 required source-input current-rights facts**、RightsDeclaration / RightsDisposition、AuthorizationProvenanceBinding / BindingDisposition、Authorization、GrantorAuthorityDelegationChain/member edges/dispositions（如 binding 依赖 delegated grantor authority）等关键 subject，都必须落到稳定 fence/revision identity（或等价可串行化机制）；
    - revoke/disable principal binding、workspace membership/caller delegation，Revoke/Invalidate/SupersedeGrantorAuthorityDelegation（或等价 delegation disposition），Invalidate/Supersede RightsDeclaration、Invalidate/Supersede AuthorizationProvenanceBinding、Revoke/Supersede DatasetCertification、DatasetVersion invalidate，以及其它会改变实际 delivery authorization 的 Command，在提交业务变更前必须获取/推进对应 fence；
    - 外部 provider 模式在 provider 调用前记录本次 gate dependency revision vector / fence token；
    - **任何 delivery mode 在产生第一个外部可观察交付副作用前，都必须在 terminal DB transaction 内重新获取相同 fence（固定顺序锁定），重新验证 caller principal→effective consumer/delegation 当前仍有效，再重新执行 CurrentDeliveryGate，并验证 dependency revision/token 未被并发变更穿越。** credential/provider 模式还必须重新计算 fresh cap；
