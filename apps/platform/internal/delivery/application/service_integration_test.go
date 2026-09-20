@@ -279,6 +279,10 @@ func TestLateContainmentFailureRemainsRetryableAfterTerminalRace(t *testing.T) {
 	if err != nil || secondResult.Operation.Status != domain.StatusContainmentPending {
 		t.Fatalf("protective retry = result %#v, err %v", secondResult, err)
 	}
+	secondRetry, err := service.IssueCredential(ctx, cmd)
+	if err != nil || secondRetry.Operation.Status != domain.StatusContainmentPending {
+		t.Fatalf("in-flight containment retry = result %#v, err %v", secondRetry, err)
+	}
 	close(provider.releaseIssue)
 	select {
 	case <-firstDone:

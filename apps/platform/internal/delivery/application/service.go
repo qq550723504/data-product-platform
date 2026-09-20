@@ -995,6 +995,16 @@ func (s *Service) reconcileContainment(ctx context.Context, operation domain.Ope
 	}
 	capability, err := s.provider.Recover(ctx, operation.ProviderRequestKey)
 	if errors.Is(err, ErrCapabilityNotFound) {
+		protectedOperation, unobserved, protectErr := s.protectUnobservedIssueAttempt(ctx, operation.ID, attemptID, "provider recovery did not find a capability while the issue attempt remains unobserved", cmd)
+		if protectErr != nil {
+			return Result{}, protectErr
+		}
+		if unobserved {
+			if recordErr := s.recordObservationWithoutOriginal(ctx, operation.ID, attemptID, domain.ObservationReconciliation, domain.OutcomeNotFound, domain.Capability{}, "provider reports no active capability while issue attempt is unobserved"); recordErr != nil {
+				return Result{}, recordErr
+			}
+			return Result{Operation: protectedOperation}, nil
+		}
 		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationReconciliation, domain.OutcomeNotFound, domain.Capability{}, "provider reports no active capability"); recordErr != nil {
 			return Result{}, recordErr
 		}
