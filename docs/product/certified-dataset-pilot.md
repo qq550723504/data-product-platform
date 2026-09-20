@@ -212,6 +212,8 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - direct bearer provider 必须支持基于同一 provider_request_key replay/read-after-write 恢复同一 credential（或等价同一访问能力）；仅支持 revoke/compensation 但不能恢复原 bearer secret 不足以支持 direct bearer；
 - 无法恢复同一 credential 的 provider 必须使用平台 redemption indirection，或明确 unsupported；
 - provider 成功但 terminal DB commit 前 crash 时，retry/reconciliation 必须复用同一 provider_request_key，不得签发第二份独立 credential；
+- 首次返回或 recovered credential 在 ISSUED 前必须验证实际 provider expiry/access bound <= 当前 fresh cap；future-effective disposition 若把 cap 缩短到旧 credential expiry 之前，旧 credential 不得直接恢复为 ISSUED；
+- recovered credential 超出 fresh cap 时必须安全 shorten+verify，或 revoke/contain；无法满足 fresh cap 时当前 operation 不得成功；
 - ISSUANCE_PENDING / CONTAINMENT_PENDING 必须有 reconciliation path 和告警/恢复机制；
 - 每个 delivery event_type 显式进入 routing table，声明 required handlers 或 retention-only；
 - event/Audit/Evidence payload 不得包含可用 credential secret；
