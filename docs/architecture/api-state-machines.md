@@ -231,6 +231,8 @@ SupersedeRightsDeclaration
 BindAuthorizationProvenance / CreateAuthorizationProvenanceBinding
 InvalidateAuthorizationProvenanceBinding
 SupersedeAuthorizationProvenanceBinding
+ComputeEffectiveRights / FinalizeEffectiveRights
+# 或单一原子 ComputeAndFinalizeEffectiveRights（由实现 PR 固定）
 QueryEffectiveRights
 QueryCurrentEntitlement
 ~~~
