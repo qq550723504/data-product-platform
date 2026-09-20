@@ -130,13 +130,13 @@ Binding 至少表达：
 - grantor_ref
 - grantor_authority_mode：DIRECT_DECLARATION_PARTY / DELEGATED（或固定等价枚举）
 - grantor_delegation_chain_id / chain_hash（DELEGATED 时必填；强类型引用，不得只放 metadata/JSONB）
-- supported_actions / normalized scope（如按 grant 粒度绑定）
+- supported_grantable_actions / supported_grantable_purpose / normalized grant scope（如按 grant 粒度绑定）
 - created_at / actor
 
 建立/验证 Binding 时必须 fail closed：
 
 1. Authorization.grantor_ref 与声明中承担可授权角色的 party_ref 明确匹配；若依赖 delegation，则必须引用**强类型 GrantorAuthorityDelegationChain**（名称可由实现固定），链条从 declaration-supported delegator 到 Authorization.grantor_ref 可验证且不可缺边；
-   - 每个 delegation edge 至少有 delegator_ref、delegate_ref、resource、allowed/grantable actions、normalized scope、purpose/applicability（如适用）、valid_from/valid_to、Evidence；
+   - 每个 delegation edge 至少有 delegator_ref、delegate_ref、resource、**grantable_actions / grantable purpose / normalized grant scope / onward_grant_mode**、valid_from/valid_to、Evidence；如果还需要表达 delegate 自己的 use permission，应使用独立 use-permission 字段/事实，不能与 grant authority 共用一个 actions 集合；
    - delegation edge / chain 的撤销或纠正使用 append-only disposition（至少 REVOKED / INVALIDATED / SUPERSEDED + effective_at），不能覆盖历史；
    - chain identity + ordered member edge IDs/hash 必须可查询/可冻结；
 2. 声明覆盖同一 DataResource；
