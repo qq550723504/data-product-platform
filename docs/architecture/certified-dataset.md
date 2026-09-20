@@ -298,7 +298,7 @@ PREPARED
    - actual consumer/grantee 是必需安全边界：provider capability 必须直接表达并强制匹配本次 effective consumer/grantee，或由平台控制的 consumer-binding redemption/gateway 在使用 capability 前重新认证并强制绑定；provider 无法表达/验证/强制 consumer 时，不能把该维度视为“不适用”；
    - actual action/permission 必须是 requested action 的等价或更窄集合，不能把 READ/USE 请求提升成 bucket-wide write/share/admin；
    - actual object/row/prefix/scope 必须等价或更窄，不能把单 DatasetVersion/对象范围签成整个 bucket、workspace 或无约束 prefix；
-   - actual delivery channel/mode constraints（如 provider 模型支持）不得放宽；
+   - actual delivery channel/mode 是关键 capability boundary：当 CertificationProfile/request 对 channel/mode 有约束时，provider capability 必须能够权威表达/验证并证明等价或更窄；**不存在“provider 模型不支持就跳过”的例外**。无法验证/强制该维度时，不得 direct bearer/presigned ISSUED，必须使用 platform redemption/gateway 在使用时强制 channel/mode，或将该 direct mode 标为 unsupported；
    - 上述 capability descriptor 必须通过 provider read-after-write / authoritative lookup（或等价可验证机制）确认，并记录非 secret 的 capability snapshot/hash/evidence；
    - consumer/grantee enforcement 也必须有可验证 evidence：provider 原生 subject/grantee binding、mTLS/DPoP/等价持有者约束，或 platform redemption/gateway 的 authenticated consumer binding 均可；**纯 bearer/presigned capability 若无法限制由哪个 consumer 使用，不满足 direct issuance contract**；
    - 任何关键维度无法验证，或实际 capability 比 requested/current-gate context 更宽，都不得 ISSUED，必须 revoke/contain，或使用 platform redemption indirection。
