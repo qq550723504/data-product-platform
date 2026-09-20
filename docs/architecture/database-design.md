@@ -361,4 +361,4 @@ Execution 行在生命周期内会通过显式状态迁移更新 status、engine
 
 ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，当前 `guard_product_release_history` 拒绝所有 UPDATE，整行作为发布历史冻结。SUSPENDED/WITHDRAWN 虽是 schema 枚举值，但当前不构成可达 live transition；未来启用必须先调整 guard 并新增显式 Command。
 
-不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent。
+不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent、CostAllocation。
