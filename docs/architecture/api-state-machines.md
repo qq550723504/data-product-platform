@@ -88,7 +88,15 @@ REJECTED
 
 DatasetVersion V2 不继承 V1 Certification。
 
-未来如需撤销认证，应追加 Revocation 事实，不修改旧 Certification。
+第一阶段必须支持认证退出 current set，而不是以后再补：
+
+~~~text
+DatasetCertification C1
+├── append CertificationDisposition(REVOKED)
+└── append CertificationDisposition(SUPERSEDED → C2)
+~~~
+
+旧 Certification 不修改、不删除；CurrentCertificationGate 按 as_of 排除已生效的 REVOKED / SUPERSEDED disposition。
 
 ## 7. DataProduct
 
@@ -261,13 +269,22 @@ POST /api/v1/product-releases/{releaseId}/publish
 
 事件名以实际路由表为准；新增事件必须显式加入 routing obligation。
 
-Pilot 目标事件可能包括：
+Pilot 第一阶段事件词汇至少包括：
 
-- RightsDeclarationCreated / Verified / Rejected
-- QualityAssessmentCompleted 或兼容现有 QualityPassed/Failed/ReviewRequired
-- DatasetCertified / DatasetCertificationRejected
+- RightsDeclarationCreated
+- RightsDeclarationVerified
+- RightsDeclarationRejected
+- RightsDeclarationInvalidated
+- RightsDeclarationSuperseded
+- QualityAssessmentCompleted（或继续兼容现有 QualityPassed / QualityFailed / QualityReviewRequired）
+- DatasetCertified
+- DatasetCertificationRejected
+- DatasetCertificationRevoked
+- DatasetCertificationSuperseded
 
-如事件仅用于留存，也必须显式声明 retention-only。
+Disposition Command 与对应业务事实、AuditEvent、Evidence、Outbox event 应在同一事务边界内提交。
+
+每个新增 event_type 都必须显式加入统一 routing 表，明确 required handlers 集合或 retention-only 义务；不得因为“暂时没有异步处理器”而省略 routing declaration。若某个 Issue 引入异步 impact/projection 副作用，则对应 handler 必须成为该事件的 required obligation；同步 CurrentDeliveryGate 仍是交付安全的最终业务门禁。
 
 ## 13. 错误模型
 
