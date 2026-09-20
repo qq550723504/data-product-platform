@@ -27,6 +27,8 @@
 
 ~~~text
 data_resource
+resource_binding
+governance_projection
 dataset
 dataset_version
 dataset_version_lineage
@@ -97,7 +99,31 @@ DataResource 是业务资源，不是物理表。
 
 owner_id 仅代表平台资产责任/归属。法律权利来源由 RightsDeclaration / Evidence 表达。
 
-## 5. Dataset / DatasetVersion
+## 5. ResourceBinding / Governance Projection
+
+`resource_binding` 是现有已落库的 adapter binding 模型，用于把 Core `DataResource` 与 OpenMetadata 等外部治理实体解耦。
+
+现有关键字段：
+
+- resource_id
+- provider
+- entity_type
+- external_id
+- external_fqn
+- binding_metadata
+- is_primary
+- created_at / updated_at
+
+约束原则：
+
+- `resource_id` 关联 Core DataResource；
+- provider / external_id / external_fqn 是外部引用，不对外部系统建立数据库 FK；
+- 外部 FQN/ID 不得写回 DataResource 成为 Core 业务主键；
+- provider-specific 扩展信息放在 binding_metadata，不污染 Core Domain。
+
+`governance_projection` 记录 Core 对外部治理系统的投影尝试和状态。它是 projection/reconciliation 状态，不拥有 DataResource / Dataset / ProductRelease 等 Core 业务真相。
+
+## 6. Dataset / DatasetVersion
 
 Dataset 是逻辑身份。DatasetVersion 是不可变生产事实。
 
@@ -112,7 +138,7 @@ READY 后数据内容不可被改写。
 
 Certification status 不应塞入 DatasetVersion.status；认证是独立历史事实。
 
-## 6. Production Graph
+## 7. Production Graph
 
 dataset_version_lineage 记录平台生产血缘。
 
@@ -125,7 +151,7 @@ Execution 的实际生产依赖还包括：
 
 这些事实共同回答“这个输出真实消费了什么”。
 
-## 7. Entity
+## 8. Entity
 
 ~~~text
 EntityType → Entity → EntityMapping projection
@@ -134,7 +160,7 @@ EntityType → Entity → EntityMapping projection
 
 历史生产/发布必须引用 immutable decision。
 
-## 8. Rights
+## 9. Rights
 
 ### Authorization（已实现）
 
@@ -164,7 +190,7 @@ JSONB 只用于受控扩展参数，不承载主要权利关系。
 
 衍生数据默认 fail closed。
 
-## 9. QualityAssessment（#131）
+## 10. QualityAssessment（#131）
 
 优先扩展现有 quality_result，至少持久化：
 
@@ -184,7 +210,7 @@ JSONB 只用于受控扩展参数，不承载主要权利关系。
 
 大量 failing rows 不应全部塞入单个 JSONB；应使用分页 finding、artifact 或适合的数据结构。
 
-## 10. DatasetCertification（#134）
+## 11. DatasetCertification（#134）
 
 核心强类型关系至少包括：
 
@@ -213,13 +239,13 @@ Certification 创建后不可被 UPDATE 成另一种业务含义。
 
 Current certification 查询必须按 disposition + as_of 判断，不得用 created_at/latest 隐式选择。
 
-## 11. DataProduct / ProductVersion / ProductRelease
+## 12. DataProduct / ProductVersion / ProductRelease
 
 ProductRelease 精确引用发布时所需 DatasetVersion、Contract、Rights、Quality、Compliance、Evidence。
 
 ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status。
 
-## 12. Evidence / Audit
+## 13. Evidence / Audit
 
 Evidence 保存可验证证据元数据和可选 artifact/hash。
 
@@ -227,7 +253,7 @@ EvidenceRelation 关联业务对象；EvidenceSnapshot 在需要冻结时保存 
 
 AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 
-## 13. Mutable vs Immutable
+## 14. Mutable vs Immutable
 
 | 对象 | 语义 |
 |---|---|
@@ -246,7 +272,7 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | ProductVersion | immutable history |
 | ProductRelease | stateful lifecycle row before publication; explicit validation/publish transitions may update status and frozen references; after publication, release bindings are frozen and terminal history is retained |
 
-## 14. JSONB 使用策略
+## 15. JSONB 使用策略
 
 JSONB 可用于：
 
@@ -259,7 +285,7 @@ JSONB 可用于：
 
 JSONB 不用于 ID/FK、状态、版本号、核心 party/resource/certification 关系或需要约束的字段。
 
-## 15. 删除策略
+## 16. 删除策略
 
 允许软删除的可变主对象可以包括 UseCase、DataResource、Dataset、DataProduct、Entity。
 
