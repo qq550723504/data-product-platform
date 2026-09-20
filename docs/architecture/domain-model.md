@@ -91,7 +91,7 @@ PREPARED
 
 每次 initial/retry/reconciliation issuance 前必须重新执行完整 CurrentDeliveryGate 并重新计算 expiry cap；旧 gate snapshot 只保留审计价值，不能授权新的 provider side effect。
 
-provider 成功但 terminal DB commit 失败时，恢复流程必须使用同一 provider_request_key 查询/重放同一 issuance，而不是生成新的 credential。direct bearer mode 还必须能在 terminal commit 成功、HTTP response 丢失后通过同一 key 恢复同一 credential/访问能力；否则必须使用 platform redemption indirection。
+provider 成功但 terminal DB commit 失败时，恢复流程必须使用同一 provider_request_key 查询/重放同一 issuance，而不是生成新的 credential。**任何首次返回或恢复出的 credential 在进入 ISSUED 前，都必须验证其实际 expiry/access bound <= 当前 fresh cap。** 若旧 credential 超过 fresh cap，必须先安全 shorten 并验证，或 revoke/contain；不能直接恢复为 ISSUED。direct bearer mode 还必须能在 terminal commit 成功、HTTP response 丢失后通过同一 key 恢复同一 credential/访问能力；否则必须使用 platform redemption indirection。
 
 不能只存在临时 HTTP 请求；也不能把可用 token/credential secret 正文持久化为领域事实。
 
