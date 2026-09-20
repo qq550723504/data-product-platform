@@ -82,6 +82,7 @@ RightsDeclaration
 RightsVerification
 RightsDisposition (INVALIDATED / SUPERSEDED)
 AuthorizationProvenanceBinding
+AuthorizationProvenanceBindingDisposition (INVALIDATED / SUPERSEDED)
 EffectiveRights / EffectiveRightsSnapshot
 
 CertificationProfile snapshot
@@ -189,6 +190,22 @@ EntityType → Entity → EntityMapping projection
 - 当前 entitlement 查询必须读取 binding，不允许独立选择 declaration + authorization；
 - AuthorizationProvenanceBinding 创建后是 immutable historical fact：禁止 UPDATE / DELETE；修正只能创建新的 binding/replacement fact，并让后续 CurrentEntitlement/RightsSnapshot 显式引用新 binding；
 - migration 必须提供 update/delete guard，历史 RightsSnapshot 引用的 binding ID 不能被重连到另一 declaration/grantor/actions/scope。
+
+### AuthorizationProvenanceBindingDisposition（#137）
+
+AuthorizationProvenanceBinding 本身 immutable；错误或失效 binding 通过 append-only disposition 退出 current set。
+
+至少强类型表达：
+
+- workspace_id
+- binding_id
+- disposition: INVALIDATED / SUPERSEDED
+- effective_at
+- reason
+- superseded_by_binding_id（SUPERSEDED 时）
+- Evidence / actor
+
+Current binding selection 必须按 as_of 排除已生效 INVALIDATED / SUPERSEDED；不得用 latest created_at 猜 current binding。replacement binding 必须独立满足 grantor/resource/actions/scope、关联 declaration 当前有效性与 workspace 约束，不能自动继承旧 binding 的“有效”结论。
 
 ### RightsDeclaration（#137）
 
@@ -356,6 +373,7 @@ Certified Dataset Pilot 目标模型增加：
 - rights_verification_id
 - rights_disposition_id
 - authorization_provenance_binding_id
+- authorization_provenance_binding_disposition_id
 - dataset_certification_id
 - certification_disposition_id
 - delivery_operation_id（第一阶段必需；#135 必须落库 DeliveryOperation）
@@ -386,7 +404,7 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | RightsSnapshot | immutable |
 | QualityAssessment | immutable |
 | verified RightsDeclaration / verification / disposition facts | immutable |
-| AuthorizationProvenanceBinding | immutable historical provenance fact |
+| AuthorizationProvenanceBinding / AuthorizationProvenanceBindingDisposition | immutable historical provenance facts |
 | CertificationProfile snapshot | immutable |
 | DatasetCertification / CertificationDisposition | immutable |
 | DeliveryOperation | persisted delivery attempt/result with stable idempotency identity; gate/issuance transitions only through delivery command |
@@ -415,4 +433,4 @@ Execution 行在生命周期内会通过显式状态迁移更新 status、engine
 
 ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，当前 `guard_product_release_history` 拒绝所有 UPDATE，整行作为发布历史冻结。SUSPENDED/WITHDRAWN 虽是 schema 枚举值，但当前不构成可达 live transition；未来启用必须先调整 guard 并新增显式 Command。
 
-不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、AuthorizationProvenanceBinding、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent、CostAllocation。
+不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、AuthorizationProvenanceBinding、AuthorizationProvenanceBindingDisposition、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent、CostAllocation。
