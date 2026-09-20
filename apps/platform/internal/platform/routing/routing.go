@@ -104,6 +104,16 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "CompliancePassed"},
 		{EventType: "ComplianceFailed"},
 		{EventType: "ComplianceReviewRequired"},
+		{EventType: "DatasetDeliveryGateEvaluated"},
+		{EventType: "DatasetDeliveryIssuancePending"},
+		{EventType: "DatasetDeliveryProviderAttemptStarted"},
+		{EventType: "DatasetDeliveryProviderObservationRecorded"},
+		{EventType: "DatasetCredentialReplayDecision"},
+		{EventType: "DatasetCredentialReplayContainmentPending"},
+		{EventType: "DatasetDeliveryContainmentPending"},
+		{EventType: "DatasetDeliveryIssued"},
+		{EventType: "DatasetDeliveryBlocked"},
+		{EventType: "DatasetDeliveryFailed"},
 	}
 }
 
