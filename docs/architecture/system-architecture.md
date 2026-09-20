@@ -109,6 +109,13 @@ Certified DatasetVersion
 
 Certified Dataset 可以作为独立交付对象，也可以继续进入 Data Product / ProductRelease；独立交付必须由 server-side delivery command 执行。该 Command 在返回数据或签发 URL/token/credential 前重新执行 CurrentDeliveryGate：检查 DatasetVersion 当前可用性、CurrentCertificationGate（明确且未 REVOKED/SUPERSEDED 的 CERTIFIED 事实），再通过 CurrentEntitlementGate 重新校验当前 Rights provenance / Authorization / Effective Rights。Eligibility query 不能替代 delivery-time gate。
 
+外部 credential issuance 使用 DB-first crash-safe protocol：
+1. 先持久化 DeliveryOperation PREPARED/ISSUANCE_PENDING + stable provider_request_key；
+2. DB commit 成功后才执行外部 issuance；
+3. provider 成功后再提交 terminal DeliveryOperation + Audit/Evidence/Outbox/CostEvent；
+4. terminal commit 成功后才向客户端暴露 credential；
+5. crash/timeout 由 reconciliation 使用同一 provider_request_key 恢复，不盲目重复签发。
+
 ## 5. Governance Projection
 
 OpenMetadata 是治理投影，不拥有：
@@ -128,7 +135,7 @@ Projection 故障不得改变 Core 业务真相。
 
 关键业务动作在数据库事务内写业务事实、Audit/Evidence 和 Outbox。
 
-外部副作用在事务提交后通过 dispatcher 执行。
+外部副作用不属于 PostgreSQL transaction；必须在事务提交后执行，并通过稳定 idempotency key、read-after-write/reconciliation 或 revoke/compensation 处理 crash consistency。Delivery credential issuance 禁止用“外部调用 + DB commit 看起来像一个事务”的假原子模型。
 
 新事件类型必须进入统一 routing 表，并显式声明 required handlers 或 retention-only。
 
@@ -137,6 +144,7 @@ Projection 故障不得改变 Core 业务真相。
 - Outbox dispatcher / handler
 - Workflow 任务处理
 - Engine 对账/维护任务（按已实施范围）
+- DeliveryOperation ISSUANCE_PENDING reconciliation / provider outcome recovery（#135 起）
 - 授权过期处理
 - 元数据投影
 - 后续可加入周期性质量/认证维护，但不属于当前 MVP 前置
