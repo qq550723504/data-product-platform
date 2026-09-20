@@ -350,3 +350,33 @@ Engine Adapter 错误需要映射为平台统一错误模型。
 - 完整法律合同管理或自动法律推理
 
 文档基线见 docs/product/certified-dataset-pilot.md、docs/architecture/certified-dataset.md、docs/architecture/data-rights-provenance.md。
+
+## 17. Review Convergence and Merge Contract
+
+目标不是“让自动 reviewer 零建议”，而是让 PR 在**明确、有限、可验证的 merge contract** 内收敛。任何 substantial PR / architecture baseline 在进入重复 review 前，必须明确：
+
+1. **Goal**：本 PR 要交付什么业务结果；
+2. **Authoritative sources**：哪些文件/Issue 是该主题唯一或主要 contract，避免同一 invariant 在多处各自演化；
+3. **In-scope invariants**：本 PR 必须保证的安全、历史一致性、事务/并发、兼容性边界；
+4. **Explicit non-goals / follow-ups**：哪些能力明确转后续 Issue；
+5. **Merge blockers**：只有以下类别默认阻塞合并：
+   - security / authorization bypass、数据或 credential 泄漏；
+   - 历史事实、快照、账务等可被静默改写/丢失；
+   - 两个 authoritative contracts 明确冲突，按文档实现会得到不同安全语义；
+   - 当前 Issue/PR 的必需路径不可实现、CI/build/test 失败；
+   - 并发/幂等缺陷会破坏本 PR 已声明的核心 invariant；
+6. **Follow-up by default**：性能优化、额外 hardening、未来生命周期、可选 observability、超出当前 Issue 的新实体/新状态/新产品能力，若不满足上述 blocker 条件，应创建/更新 follow-up Issue，而不是继续扩大当前 PR。
+
+Review 处理规则：
+
+- 同一轮出现多条相邻问题时，先按**根因**聚类并横向修复 authoritative contracts，不逐 comment 打补丁；
+- 修复 review comment 新引入实体/状态/协议时，必须检查它是否是现有 merge contract 的必要推论；如果不是，转 follow-up，不把“review 建议”自动升级为当前 scope；
+- review 累积达到 **3 个 substantive rounds 或 20 条已解决 comments** 后，必须停止机械 comment-by-comment 模式，执行一次 **convergence checkpoint**：
+  - 冻结当前 merge contract；
+  - 做 dependency/closure audit；
+  - 把后续新意见分类为 BLOCKER / FOLLOW-UP / INVALID-OR-OUT-OF-SCOPE；
+  - 只有 BLOCKER 可以重新打开当前 scope；
+- architecture/docs PR 的 closure audit 至少检查：source-of-truth 一致性、状态机、历史不可变性、幂等、并发线性化、安全边界、跨 Issue ownership；不要无限追求所有未来极端场景都在当前 PR 完成；
+- CI 绿色、closure audit 无 blocker、所有 blocker review threads 已解决时，PR 即可视为 merge candidate；**存在非阻塞自动建议不等于不能合并**；
+- 如果 reviewer 提出的问题已由现有 open Issue 明确跟踪，且当前 PR 没有错误声称该能力已实现，应引用该 Issue 并保持为 follow-up，不在当前 PR 重复实现；
+- 每次 closure checkpoint 应在 PR 留一条简短评论，记录：当前 HEAD、merge contract、剩余 blocker=0/列表、转 follow-up 的 Issue，作为后续 reviewer/执行线程的共同边界。
