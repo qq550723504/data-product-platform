@@ -97,6 +97,7 @@ V1 六个质量维度：
 ~~~text
 DataResource
 → RightsDeclaration
+→ AuthorizationProvenanceBinding
 → Authorization
 → RightsSnapshot
 → Effective Rights
@@ -116,11 +117,16 @@ DataResource
 
 衍生数据默认 fail closed。
 
+#137 第一阶段必须同时实现：
+- `BindAuthorizationProvenance`（或等价显式 Command），禁止 ad hoc CRUD 创建安全关键 binding；
+- Authorization.grantor_ref 与支持它的 RightsDeclaration / 可验证 delegation chain 的强类型关系；
+- unrelated grantor 反例：资源/action 相同但无有效 provenance binding 时 CurrentEntitlementGate 必须 BLOCKED。
+
 Rights verification / invalidation / supersession / provenance binding 等实际人工或外部核验活动必须在发生时记录 CostEvent；这些活动通常没有 Execution，必须通过 typed CostAllocation 关联实际 Rights 业务事实，并使用稳定 activity_id/component_key 防止重试重复记账。
 
 ## 7. HQD-4 #134
 
-CertificationProfile + DatasetCertification。
+CertificationProfile + DatasetCertification + CertificationDisposition。
 
 认证回答：
 
@@ -136,11 +142,18 @@ CertificationProfile 可以要求：
 
 任何 required 条件缺失时不允许 CERTIFIED。
 
+#134 第一阶段必须同时实现：
+- append-only `CertificationDisposition`；
+- `RevokeDatasetCertification` / `SupersedeDatasetCertification`；
+- CurrentCertificationGate 按 as_of 排除已生效 REVOKED / SUPERSEDED；
+- C1=CERTIFIED 被 C2=REJECTED supersede 后，C1/C2 历史均保留，但当前交付不得继续使用 C1；
+- 不允许以 latest created_at 推断当前认证。
+
 认证评估/人工审批若产生实际成本，必须记录 CostEvent，并通过 typed CostAllocation 关联 DatasetCertification / CertificationDisposition，使用稳定 activity_id/component_key 保证重试幂等。
 
 ## 8. HQD-5 #135
 
-从 DatasetVersion 页面理解和操作质量/认证。
+从 DatasetVersion 页面理解和操作质量/认证，并提供第一阶段真正的 server-side delivery path。
 
 至少展示：
 
@@ -153,6 +166,15 @@ CertificationProfile 可以要求：
 - Evidence
 
 DatasetVersion V1 认证不能让 V2 自动显示已认证。
+
+#135 不能只交付 UI / eligibility query，还必须实现：
+- 持久化 `DeliveryOperation`（每次交付尝试的稳定业务 ID / 幂等主体）；
+- `DeliverDatasetVersion` / `IssueDatasetAccess`（最终命名由实现 PR 固定）；
+- server-side delivery command 在返回数据或签发 URL/token/credential 前重新执行完整 CurrentDeliveryGate；
+- query→delivery 之间 Rights/Certification/DatasetVersion 状态变化的 TOCTOU 测试；
+- gate 失败不得产生可用数据、URL、token、credential；
+- credential TTL 受 validity / future-effective disposition 边界约束；
+- delivery CostEvent 必须 typed allocate 到 DeliveryOperation。
 
 ## 9. HQD-6 #136
 
