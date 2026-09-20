@@ -194,14 +194,25 @@ CurrentEntitlementGate 按“现在”重新检查至少：
 
 ## 10. API / UI
 
-API 提供 DatasetVersion assessments、assessment report、certification profile summary、历史 certification list/detail、effective certification / disposition，以及面向明确 certification + consumer / purpose / action 的 CurrentDeliveryGate 查询（包含 DatasetVersion usability + CurrentCertificationGate + current rights entitlement）。
+API 提供 DatasetVersion assessments、assessment report、certification profile summary、历史 certification list/detail、effective certification / disposition，以及面向明确 certification + consumer / purpose / action 的 CurrentDeliveryGate 查询。
+
+**Eligibility 查询只用于展示/预检，不是安全边界。**
+
+第一阶段必须提供一个真正的 server-side delivery command（命名可由 #135 实现固定，例如 `DeliverDatasetVersion` / `IssueDatasetAccess`），并满足：
+
+1. 请求显式包含 workspace、DatasetVersion、Certification、consumer、purpose、action 和 delivery mode；
+2. 服务端在实际返回数据、生成下载链接、签发对象存储 URL、token 或其他访问凭证**之前**，使用同一请求上下文重新执行完整 `CurrentDeliveryGate`；
+3. 不接受客户端传入的“已通过 eligibility”布尔值或旧 gate result 作为授权依据；
+4. gate 与 credential/data issuance 必须属于同一个 Application Command 的受控边界，避免 query→delivery 之间的 TOCTOU 绕过；
+5. gate 失败时不得产生可用下载链接、token、credential 或数据响应；
+6. 若交付形态需要签发访问凭证，凭证必须有明确有限有效期；第一阶段不得签发无期限凭证。
 
 关键写动作使用显式 Command。
 
 UI 在 DatasetVersion 上分别展示：
 
 - 历史 Certification 结果及 issued_at；
-- 当前 Delivery Eligibility：ALLOWED / BLOCKED（来自 CurrentDeliveryGate）；
+- 当前 Delivery Eligibility：ALLOWED / BLOCKED（来自 CurrentDeliveryGate，仅用于展示/预检）；
 - 若 BLOCKED，显示当前 rights blocker（例如 AUTHORIZATION_EXPIRED / REVOKED / ACTION_NOT_ALLOWED）。
 
 不得仅凭历史 CERTIFIED 标记显示“当前可交付”，也不把 certification status 塞入 DatasetVersion.status。
