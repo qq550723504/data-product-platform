@@ -100,20 +100,21 @@ DatasetCertification C1
 
 ## 7. DataProduct
 
+当前 API 可达生命周期：
+
 ~~~text
 DRAFT
-→ DESIGNING
-→ DEVELOPING
-→ TESTING
-→ READY
-→ PUBLISHED
-→ ACTIVE
-↔ SUSPENDED
-→ DEPRECATED
-→ RETIRED
+  ↓ PublishProductRelease side effect
+PUBLISHED
 ~~~
 
-以上状态仍由当前 Domain / 数据库 / Read Model 支持，本 docs-only 基线不废弃任何现有 DataProduct lifecycle 状态。
+DataProduct 创建时为 `DRAFT`。当前没有显式 Domain/Application Command 将 Product 迁移到 `DESIGNING`、`DEVELOPING`、`TESTING`、`READY`、`ACTIVE`、`SUSPENDED`、`DEPRECATED` 或 `RETIRED`。
+
+当前 `PublishProductRelease` 成功时，repository 会把处于 `DRAFT/DESIGNING/DEVELOPING/TESTING/READY` 的 Product lifecycle_status 更新为 `PUBLISHED`；在正常公开 API 流程中，新建 Product 因而表现为 `DRAFT → PUBLISHED`。
+
+其余 lifecycle values 仍由 domain/schema/read model 枚举保留，但属于 **reserved / not currently command-reachable**。本 docs-only 基线不删除这些值，也不向客户端宣称现有 API 可以驱动这些迁移。
+
+未来若启用完整 DataProduct lifecycle，必须新增显式 Command/API、Domain Event/Audit/Outbox、状态迁移约束和测试；不得通过 generic PATCH lifecycle_status 实现。
 
 重大规格变更通过创建新 ProductVersion，不修改历史 ProductVersion。
 
@@ -309,9 +310,12 @@ ISSUANCE_PENDING + stable provider_request_key
 ~~~
 
 - 外部 provider 调用不属于 PostgreSQL transaction；
+- **每一次 initial issuance、retry issuance、以及 reconciliation 决定继续 issuance 前，都必须重新读取当前事实，重新执行完整 CurrentDeliveryGate，并重新计算 credential expiry cap；PREPARED/ISSUANCE_PENDING 中旧 gate snapshot 仅用于审计；**
+- fresh gate BLOCKED 时不得调用 provider，DeliveryOperation 安全终结为 BLOCKED；
 - terminal DeliveryOperation + Audit/Evidence + Outbox/CostEvent（如有）在后续 DB transaction 内一致提交；
 - provider 成功但 terminal commit 失败时，retry/reconciliation 使用同一 provider_request_key；
-- provider 若不支持 idempotency/read-after-write 或 revoke/compensation，则第一阶段不得直接暴露其 bearer credential，只能通过 platform redemption indirection 或标记该 mode unsupported。
+- direct bearer provider 必须支持 same-credential replay/read-after-write（或等价同一访问能力恢复）；仅有 revoke/compensation 但无法恢复原 bearer secret 时必须使用 platform redemption indirection；
+- provider 若既不具备可恢复幂等能力，也不能安全补偿，则该 direct bearer mode 在第一阶段 unsupported。
 
 ### Contract（当前 live API）
 
