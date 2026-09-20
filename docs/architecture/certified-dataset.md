@@ -87,6 +87,13 @@ RightsDeclaration
 
 如果任一必要输入限制 required action、输入 rights 为 UNKNOWN/missing、snapshot 不是 FINALIZED，或 frozen input-set/hash 与 target DatasetVersion 的实际 lineage 不一致，则不得 CERTIFIED。
 
+认证时还必须验证 frozen rights evidence 的 **context coverage** 至少覆盖 CertificationProfile 的 rights applicability：
+- Profile consumer=EXPLICIT(S) → RightsSnapshot / EffectiveRightsSnapshot frozen consumer coverage 必须覆盖 S；Profile consumer=ANY → rights evidence 也必须显式证明 ANY/通用 consumer coverage，不能拿只为 consumer A 计算的 snapshot 支撑 ANY；
+- Profile purpose=EXPLICIT(P) → frozen rights purpose coverage 必须覆盖 P；Profile purpose=ANY → narrow RESEARCH-only snapshot 不足以证明 ANY/COMMERCIAL；
+- Profile action applicability / required rights actions 必须被 frozen action decisions/coverage 完整覆盖；
+- Profile 要求的 rights scope 必须是 frozen normalized scope coverage 的子集；
+- 任一 coverage 缺失、UNKNOWN、窄于 Profile，Certification 必须 REJECTED/fail closed。
+
 ## 6. 认证判定
 
 ~~~text
