@@ -320,6 +320,9 @@ ISSUANCE_PENDING + stable provider_request_key
   - outcome unknown 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal DatasetDeliveryBlocked；
 - terminal DeliveryOperation + Audit/Evidence + Outbox/CostEvent（如有）在后续 DB transaction 内一致提交；
 - provider 成功但 terminal commit 失败时，retry/reconciliation 使用同一 provider_request_key；
+- provider 首次返回或 reconciliation 恢复 credential 后，进入 ISSUED 前必须验证**实际 provider expiry/access bound <= 当前 fresh expiry cap**；仅命中旧 provider_request_key 不代表 credential 仍满足当前边界；
+- recovered credential 超过 fresh cap 时，必须安全 shorten 并 read-after-write 验证，或 revoke/contain；无法确认 containment 时进入 CONTAINMENT_PENDING；containment 成功但无法满足 cap 时当前 operation 终结为 FAILED，后续如需重试必须新建显式 delivery attempt 并重新 gate；
+- actual provider expiry 不可验证时，direct bearer / 不支持 redemption-time gate 的模式不得 ISSUED；
 - direct bearer provider 必须支持 same-credential replay/read-after-write（或等价同一访问能力恢复）；仅有 revoke/compensation 但无法恢复原 bearer secret 时必须使用 platform redemption indirection；
 - provider 若既不具备可恢复幂等能力，也不能安全补偿，则该 direct bearer mode 在第一阶段 unsupported。
 
