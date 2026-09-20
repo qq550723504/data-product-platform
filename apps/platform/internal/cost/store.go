@@ -14,6 +14,7 @@ type Event struct {
 	ID          uuid.UUID
 	WorkspaceID uuid.UUID
 	ExecutionID *uuid.UUID
+	ActivityID  uuid.UUID
 	CostType    string
 	Quantity    float64
 	Unit        string
@@ -43,15 +44,22 @@ func Append(ctx context.Context, tx pgx.Tx, event Event) error {
 	}
 	_, err = tx.Exec(ctx, `
 		INSERT INTO cost_event (
-			id, workspace_id, execution_id, cost_type, quantity, unit,
+			id, workspace_id, execution_id, activity_id, cost_type, quantity, unit,
 			amount, currency, pricing_mode, metadata, occurred_at
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
-	`, event.ID, event.WorkspaceID, event.ExecutionID, event.CostType, event.Quantity, event.Unit,
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+	`, event.ID, event.WorkspaceID, event.ExecutionID, nullableUUID(event.ActivityID), event.CostType, event.Quantity, event.Unit,
 		event.Amount, nullable(event.Currency), event.PricingMode, metadata, event.OccurredAt)
 	if err != nil {
 		return fmt.Errorf("append cost event: %w", err)
 	}
 	return nil
+}
+
+func nullableUUID(value uuid.UUID) any {
+	if value == uuid.Nil {
+		return nil
+	}
+	return value
 }
 
 func nullable(value string) any {

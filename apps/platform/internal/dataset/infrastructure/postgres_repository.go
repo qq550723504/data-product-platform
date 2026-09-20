@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 )
 
 var ErrNotFound = errors.New("dataset object not found")
@@ -215,6 +216,13 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 	if version.Status != domain.VersionReady {
 		return fmt.Errorf("set ready requires READY domain state")
 	}
+	workspaceID, err := r.workspaceForDataset(ctx, tx, version.DatasetID)
+	if err != nil {
+		return err
+	}
+	if _, err := deliveryfence.Advance(ctx, tx, workspaceID); err != nil {
+		return err
+	}
 
 	var previousVersionID *uuid.UUID
 	if err := tx.QueryRow(ctx, `SELECT current_version_id FROM dataset WHERE id = $1 FOR UPDATE`, version.DatasetID).Scan(&previousVersionID); err != nil {
@@ -286,7 +294,14 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 // whose object write failed must not fail a row another delivery already
 // published. Only CREATED/PROCESSING rows can be failed.
 func (r *PostgresRepository) SetFailed(ctx context.Context, tx pgx.Tx, versionID uuid.UUID) error {
-	_, err := tx.Exec(ctx, `UPDATE dataset_version SET status = 'FAILED' WHERE id = $1 AND status IN ('CREATED','PROCESSING')`, versionID)
+	workspaceID, err := r.workspaceForVersion(ctx, tx, versionID)
+	if err != nil {
+		return err
+	}
+	if _, err := deliveryfence.Advance(ctx, tx, workspaceID); err != nil {
+		return err
+	}
+	_, err = tx.Exec(ctx, `UPDATE dataset_version SET status = 'FAILED' WHERE id = $1 AND status IN ('CREATED','PROCESSING')`, versionID)
 	if err != nil {
 		return fmt.Errorf("mark dataset version failed: %w", err)
 	}
