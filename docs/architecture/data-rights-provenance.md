@@ -63,7 +63,9 @@ V1 至少区分：
 - validity
 - allowed actions
 - restrictions
-- purpose（如适用）
+- consumer applicability（ANY / EXPLICIT；EXPLICIT 时强类型 consumer_ref / consumer_type）
+- purpose / permitted purposes（强类型 purpose_code 或规范化 declaration-purpose relation）
+- scope_type / scope_ref（用于表达资源内 object/row/prefix/policy 范围；复杂扩展参数可以 JSONB，但 gate 比较所需 identity 必须强类型可查询）
 - Evidence
 - verification result
 
@@ -135,6 +137,8 @@ V1 不推断“同一个资源上任何 VERIFIED 声明都能支持任何 granto
 
 历史 RightsSnapshot 应冻结实际使用的 AuthorizationProvenanceBinding / declaration IDs，使“为什么这个 grantor 有权授权”可追溯。
 
+RightsSnapshot 的冻结范围包括 snapshot header **以及全部 membership rows**（Authorization / RightsDeclaration / AuthorizationProvenanceBinding 等）。snapshot finalize 后，membership 不得 INSERT/UPDATE/DELETE；数据库必须有 guard，不能通过替换成员关系而保持 snapshot ID 不变来改写历史 provenance。
+
 ### Binding 修正 / 退休
 
 AuthorizationProvenanceBinding 本身不可 UPDATE / DELETE。第一阶段必须提供 append-only AuthorizationProvenanceBindingDisposition：
@@ -155,7 +159,7 @@ CurrentEntitlementGate 选择 binding 时必须按 as_of 排除已生效的 INVA
 
 ## 6. RightsSnapshot
 
-RightsSnapshot 冻结某一时点、某一 Purpose / Consumer 实际使用的授权集合。
+RightsSnapshot 冻结某一时点、某一 Purpose / Consumer 实际使用的授权集合。它是一个整体不可变集合：header、authorization membership、declaration membership、provenance-binding membership 必须一起冻结。
 
 Snapshot 不应在未来通过读取“当前声明”改变历史解释。
 
@@ -204,7 +208,7 @@ RESALE  = NOT_ALLOWED
 
 限制必须能够机器判断，不能全部放自然语言备注。
 
-允许 JSONB 保存扩展参数，但 action / decision / resource / party / purpose 等核心字段应为强类型。
+允许 JSONB 保存扩展参数，但 action / decision / resource / party / consumer applicability / purpose / scope / validity 等 CurrentEntitlementGate 依赖字段必须为强类型、可索引、可查询。不得把 fail-closed 所需的 consumer/purpose/scope 只藏在任意 JSONB。
 
 典型限制：
 
