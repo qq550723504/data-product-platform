@@ -205,12 +205,15 @@ API 提供 DatasetVersion assessments、assessment report、certification profil
 第一阶段必须提供一个真正的 server-side delivery command（命名可由 #135 实现固定，例如 `DeliverDatasetVersion` / `IssueDatasetAccess`），并满足：
 
 1. 请求显式包含 workspace、DatasetVersion、Certification、consumer、purpose、action 和 delivery mode；
-2. 服务端在实际返回数据、生成下载链接、签发对象存储 URL、token 或其他访问凭证**之前**，使用同一请求上下文重新执行完整 `CurrentDeliveryGate`；
-3. 不接受客户端传入的“已通过 eligibility”布尔值或旧 gate result 作为授权依据；
-4. gate 与 credential/data issuance 必须属于同一个 Application Command 的受控边界，避免 query→delivery 之间的 TOCTOU 绕过；
-5. gate 失败时不得产生可用下载链接、token、credential 或数据响应；
-6. 若交付形态需要签发访问凭证，凭证必须有明确有限有效期；第一阶段不得签发无期限凭证；
-7. 凭证 `expires_at` 必须满足：
+2. **在把 consumer 用于任何 CurrentCertificationGate / CurrentEntitlementGate 之前，服务端必须先建立可信 caller principal。** principal 必须来自已认证 session/token、mTLS、受控 API credential 或等价不可由普通请求字段伪造的服务端信任边界；原始 `consumer` 请求参数只能表达期望目标，不能自证“我就是该 consumer”；
+3. 服务端必须把 caller principal 映射到其允许代表的 consumer/workspace 集合。若 caller 代表不同 consumer 执行 on-behalf-of delivery，必须存在由服务端验证的显式 delegation/impersonation grant，并把 principal、delegation、effective consumer 一起写入 Audit/Evidence；任意客户端 header、query/body 中的 actor/consumer ID、demo actor 配置都不得直接构成该授权；
+4. principal 未认证、consumer 不在其允许集合内、delegation 缺失/过期/撤销时，必须在进入 CurrentDeliveryGate 前 fail closed（稳定 blocker 例如 `CALLER_IDENTITY_UNTRUSTED` / `CONSUMER_PRINCIPAL_MISMATCH`）。第一阶段不要求完整企业 IAM，但 **#135 必须实现最小可信 principal→consumer 解析边界**；没有该边界的 HTTP/demo 路径不得对外启用真实数据交付；
+5. 服务端在实际返回数据、生成下载链接、签发对象存储 URL、token 或其他访问凭证**之前**，使用同一可信 principal + effective consumer 请求上下文重新执行完整 `CurrentDeliveryGate`；
+6. 不接受客户端传入的“已通过 eligibility”布尔值或旧 gate result 作为授权依据；
+7. gate 与 credential/data issuance 必须属于同一个 Application Command 的受控边界，避免 query→delivery 之间的 TOCTOU 绕过；
+8. gate 失败时不得产生可用下载链接、token、credential 或数据响应；
+9. 若交付形态需要签发访问凭证，凭证必须有明确有限有效期；第一阶段不得签发无期限凭证；
+10. 凭证 `expires_at` 必须满足：
 
 ~~~text
 expires_at
@@ -226,8 +229,8 @@ expires_at
 ~~~
 
 任何参与本次 CurrentDeliveryGate 的已知有限边界都必须参与上限计算。除了 declaration / authorization validity，还包括签发时已经存在、将在未来生效的 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition。不能让 URL/token 在 provenance 或 certification 已按计划退出 current set 后继续有效；
-8. 如果 delivery mode 支持 redemption-time server check，则每次 redemption 继续执行 CurrentDeliveryGate；如果是无法在 redemption 时回调平台的 bearer/presigned credential，则必须执行上述 expiry cap，并由 #135 明确该 delivery mode 的最大 TTL；
-9. 对签发后才新增的紧急 revocation，只有 redemption-time gate / revocable credential 才能即时阻断；第一阶段若某 delivery mode 不具备此能力，必须在产品/API 中明确该限制，并使用短 TTL，而不能声称签发后的 bearer credential 可即时撤销。
+11. 如果 delivery mode 支持 redemption-time server check，则每次 redemption 继续执行 CurrentDeliveryGate；如果是无法在 redemption 时回调平台的 bearer/presigned credential，则必须执行上述 expiry cap，并由 #135 明确该 delivery mode 的最大 TTL；
+12. 对签发后才新增的紧急 revocation，只有 redemption-time gate / revocable credential 才能即时阻断；第一阶段若某 delivery mode 不具备此能力，必须在产品/API 中明确该限制，并使用短 TTL，而不能声称签发后的 bearer credential 可即时撤销。
 
 ### External credential issuance crash-safety
 
@@ -298,11 +301,16 @@ PREPARED
 14. 如果外部 provider **既不支持 idempotency/read-after-write，也不支持 revoke/compensation**，第一阶段不得直接暴露其 bearer credential；必须改用平台控制的 redemption indirection，或将该 delivery mode 判为 unsupported；
 15. 本地生成 presigned URL 时，也必须先持久化 PREPARED/ISSUANCE_PENDING，并在每次实际生成前重新执行 CurrentDeliveryGate/expiry cap；terminal DB commit 成功前不得把 URL 返回客户端或写入日志/事件；
 16. direct-data delivery 不得绕过上述 terminal fence：ISSUED commit 成功前 response body 必须保持 0 bytes；若 commit 失败或 gate 被并发变更阻断，则该请求不得泄露任何数据字节；
-17. retries / reconciliation 不得重复 CostEvent、AuditEvent 或 terminal Domain Event。
+17. **direct-data 的 terminal `ISSUED` 只表示该次交付授权在线性化点已提交、服务端随后可以开始写响应；它不是“客户端已收到全部数据”的证明。** 网络/进程在 commit 后、第一字节前或流中断开时，不得把 ISSUED 审计事实解释为客户端完成接收；
+18. **terminal ISSUED 的 direct-data operation 不允许用同一 idempotency key 从旧 gate 结果再次发出数据字节。** 同一 key 的 retry 必须返回稳定的 non-payload 结果（例如 `DIRECT_DATA_REPLAY_REQUIRES_NEW_ATTEMPT`，附原 operation ID/ISSUED 状态），response body 中不得包含 DatasetVersion 数据；
+19. 如果调用方确实需要重新取得 direct-data，必须创建新的显式 DeliveryOperation/attempt（新的 idempotency key，可用 `retry_of_delivery_operation_id` 关联原 attempt），重新解析可信 caller principal→consumer/delegation，重新执行完整 CurrentDeliveryGate，并重新走 delivery authorization fence/finalize。若期间 Rights/Certification/DatasetVersion/Authorization 已失效，新 attempt 必须 BLOCKED；只有 fresh gate 仍 ALLOWED 才能再次发送数据；
+20. retries / reconciliation 不得重复同一 DeliveryOperation 的 CostEvent、AuditEvent 或 terminal Domain Event；显式的新 direct-data attempt 是新的业务事实，必须有独立 operation ID 与审计链。
 
 测试必须覆盖故障注入：
 - provider 成功后、terminal DB commit 前 crash；
 - terminal commit 成功后、HTTP response 前 crash，并验证 idempotent retry 能恢复同一 credential/访问能力，或通过 redemption indirection 返回稳定访问句柄；
+- direct-data terminal ISSUED commit 成功后、第一字节前 crash：同一 idempotency key retry 必须返回 non-payload replay-required 结果且保持 0 dataset bytes；不得基于旧 gate 直接重放数据；
+- direct-data 以新的显式 attempt 重试：必须重新解析 trusted principal/effective consumer 并 fresh re-gate；若 crash 后发生 revocation/disposition/invalidation，新 attempt BLOCKED 且 0 bytes；若仍 ALLOWED，才可在新的 fenced ISSUED commit 后发送数据；
 - reconciliation/retry；
 - provider 成功后 fresh cap 因 future-effective disposition 缩短，recovered credential 实际 expiry 超过 fresh cap；
 - provider actual expiry 不可验证；
