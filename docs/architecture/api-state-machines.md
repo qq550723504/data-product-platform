@@ -308,7 +308,8 @@ ISSUANCE_PENDING + stable provider_request_key
       ├→ FAILED
       ├→ BLOCKED
       └→ CONTAINMENT_PENDING
-             └→ BLOCKED
+             ├→ BLOCKED
+             └→ FAILED
 ~~~
 
 - 外部 provider 调用不属于 PostgreSQL transaction；
@@ -317,7 +318,8 @@ ISSUANCE_PENDING + stable provider_request_key
   - 若确认此前未发生 provider issuance，可直接 BLOCKED；
   - 若 provider_request_key 可能已产生访问能力，必须先 reconciliation 查询既有 outcome；
   - 已签发则先 revoke/compensate/contain，确认访问能力已不可用后才能 BLOCKED；
-  - outcome unknown 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal DatasetDeliveryBlocked；
+  - outcome unknown 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal DatasetDeliveryBlocked / DatasetDeliveryFailed；
+  - containment 确认成功后：fresh gate 不再允许交付 → BLOCKED；fresh gate 仍 ALLOWED 但 credential/issuance contract 无法满足 → FAILED；
 - terminal DeliveryOperation + Audit/Evidence + Outbox/CostEvent（如有）在后续 DB transaction 内一致提交；
 - provider 成功但 terminal commit 失败时，retry/reconciliation 使用同一 provider_request_key；
 - provider 首次返回或 reconciliation 恢复 credential 后，进入 ISSUED 前必须验证**实际 provider expiry/access bound <= 当前 fresh expiry cap**；仅命中旧 provider_request_key 不代表 credential 仍满足当前边界；
