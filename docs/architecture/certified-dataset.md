@@ -275,7 +275,7 @@ PREPARED
    - 若 operation 曾进入可能已调用 provider 的 ISSUANCE_PENDING/retry/reconciliation 窗口，**必须先用同一 provider_request_key reconciliation 既有 provider outcome**，不能直接记 BLOCKED；
    - provider 明确“未签发” → BLOCKED；
    - provider 已存在 credential/access capability → 必须先 revoke / compensate / contain，并在确认该访问能力已不可用后才能 BLOCKED；
-   - provider outcome unknown、查询失败、或 revoke/contain 未确认成功 → 进入 CONTAINMENT_PENDING，不得对外声称 BLOCKED，也不得发出 DatasetDeliveryBlocked terminal event；
+   - provider outcome unknown、查询失败、或 revoke/contain 未确认成功 → 进入 CONTAINMENT_PENDING，不得对外声称 BLOCKED，也不得发出 DatasetDeliveryBlocked terminal event；**但必须在进入该非终态的同一 DB transaction 追加 `DatasetDeliveryContainmentPending`（或固定等价）+ Audit/Evidence + Outbox，记录 reason/provider_request_key ref/operation identity（不含 secret），供 recovery/alert consumers 可靠消费；**
    - CONTAINMENT_PENDING 必须由 reconciliation/人工告警持续处理，直到确认 access capability 不存在或已被安全失效；
 - containment 确认成功后，若终结原因是 fresh gate 已不允许交付，则转 BLOCKED；若 gate 仍 ALLOWED 但 credential 无法满足 fresh cap/issuance contract，则转 FAILED（例如 CREDENTIAL_EXCEEDS_FRESH_CAP）；
 7. provider 首次返回或 reconciliation 恢复出 credential/access capability 后，**在写入 ISSUED 前必须验证 provider 实际签发的能力边界，而不只是验证 expiry**：
@@ -312,7 +312,7 @@ PREPARED
 14. 如果 replay 时 caller authority、Rights/Certification/Authorization/DatasetVersion 任一已失效，或 recovered capability 已不满足 fresh cap/context，则：
    - **不得返回 credential/secret/handle**；
    - 必须对既有 capability 执行 revoke/contain；确认失效后返回稳定 non-secret `CREDENTIAL_REPLAY_BLOCKED`（或等价）；
-   - containment 未确认成功时返回稳定 non-secret `CREDENTIAL_REPLAY_CONTAINMENT_PENDING`（或等价），并保留/追加 containment 审计；不得声称旧 capability 已失效；
+   - containment 未确认成功时返回稳定 non-secret `CREDENTIAL_REPLAY_CONTAINMENT_PENDING`（或等价），并在 replay decision transaction 追加 `DatasetCredentialReplayContainmentPending`（或固定等价/统一 containment event）+ Audit/Evidence + Outbox；不得声称旧 capability 已失效；
    - 不得把原 terminal ISSUED DeliveryOperation 改写为 BLOCKED/FAILED；replay denial/containment 是该历史 operation 之后的新安全决策事实。
 15. 如果 provider 不能安全恢复同一 credential，**或**在 fresh replay authorization 被拒绝时不能 revoke/contain 既有 capability，则第一阶段必须使用平台控制的 redemption indirection/gateway；也可以在能够证明旧 credential 未交付且已成功 revoke 的协议下执行显式 replacement operation，但不得把同一 DeliveryOperation 的幂等 retry 静默变成第二份 credential；
 16. 第一阶段 direct bearer contract 要求 provider 同时具备 safe same-capability recovery/read-after-write 与 blocked-replay revoke/contain（或等价机制）；任一缺失时不得直接暴露 bearer credential，必须改用平台控制的 redemption indirection/gateway，或将该 delivery mode 判为 unsupported；
