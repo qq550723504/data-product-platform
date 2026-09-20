@@ -295,7 +295,7 @@ PREPARED
    - containment 未确认成功时进入 CONTAINMENT_PENDING；
    - containment 成功但无法在同一安全能力上满足 fresh cap 时，当前 DeliveryOperation 终结为 FAILED（例如 CREDENTIAL_EXCEEDS_FRESH_CAP）；如业务仍需交付，必须通过新的显式 delivery attempt/replacement operation 再次完整 re-gate，不得在同一幂等 operation 下静默签发第二份 credential；
    - actual expiry 无法可靠读取/验证时，对 direct bearer 等不可 redemption-time gate 的模式按不安全处理，不得 ISSUED；
-9. 只有 credential/access capability 已证明满足 fresh cap 后，才用后续 DB transaction 记录 ISSUED + provider credential reference/hash（不得保存可用 secret 正文）+ **verified actual credential expiry** + Audit/Evidence/CostEvent/Outbox；**只有这个 terminal commit 成功后**才能把可用 credential 返回给客户端；
+9. 只有 credential/access capability 已证明满足 fresh cap 与全部 capability boundary（含 consumer/grantee enforcement）后，才用后续 DB transaction 记录 ISSUED + provider credential reference/hash（不得保存可用 secret 正文）+ **verified actual credential expiry** + Audit/Evidence/Outbox + terminal-specific CostEvent（如有）；**每次 provider invocation 的 physical-attempt CostEvent 已按调用事实独立记录，不以 ISSUED 为前提。只有这个 terminal commit 成功后**才能把可用 credential 返回给客户端；
 10. 如果发生“provider 已成功，但 terminal commit 失败/进程崩溃”的不确定窗口，重试必须使用同一 provider_request_key 查询/重放同一 issuance，不得生成第二份独立 credential；
 11. 必须存在 reconciliation path，能够把长时间停留在 ISSUANCE_PENDING 的 operation 解析为：
    - provider 已成功 → 恢复并完成同一个 ISSUED terminal fact；
