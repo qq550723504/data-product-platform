@@ -140,24 +140,6 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 		if err := s.repo.InsertResult(ctx, tx, result); err != nil {
 			return err
 		}
-		if err := cost.AppendQualityAssessmentActivity(ctx, tx, cost.QualityAssessmentActivity{
-			WorkspaceID:  cmd.WorkspaceID,
-			AssessmentID: result.ID,
-			AttemptID:    attemptID,
-			CostType:     cost.QualityEngineInvocation,
-			Quantity:     1,
-			Unit:         "assessment",
-			PricingMode:  "ACTUAL",
-			Metadata: map[string]any{
-				"ruleSetRef":       result.RuleSetRef,
-				"ruleSetVersion":   result.RuleSetVersion,
-				"evaluatorName":    result.EvaluatorName,
-				"evaluatorVersion": result.EvaluatorVersion,
-			},
-			OccurredAt: result.CreatedAt,
-		}); err != nil {
-			return err
-		}
 		if err := s.datasetRepo.SetQualityStatus(ctx, tx, version.ID, string(result.GateDecision)); err != nil {
 			return err
 		}
