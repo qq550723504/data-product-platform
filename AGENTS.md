@@ -66,7 +66,7 @@ DeliveryOperation 也是受控 lifecycle row，不得把整行视为创建即 im
 
 - 数据内容、schema/content identity 或实际生产输出变化 → 新 DatasetVersion；
 - 数据内容未变化，仅 Quality 评测错误 → 新 QualityAssessment；
-- 权利声明/验证错误 → 新 RightsDeclaration / verification fact / RightsSnapshot（按实际语义）；
+- 权利声明/验证错误 → 同一 RightsDeclaration 的 terminal verification outcome 不可翻转；错误 VERIFIED 先用 RightsDisposition INVALIDATED/SUPERSEDED 退出 current set，再创建新 RightsDeclaration + verification / RightsSnapshot（按实际语义）；
 - CertificationProfile 规则变化 → 新 Profile version/snapshot；
 - 认证判断错误或重新认证 → 新 DatasetCertification；旧认证退出 current set 时追加 CertificationDisposition（REVOKED / SUPERSEDED），不 UPDATE 旧认证，也不按 latest timestamp 猜当前认证；
 - Product 发布事实变化 → 新 ProductVersion / ProductRelease 或显式生命周期 Command。
@@ -215,7 +215,7 @@ CurrentDeliveryGate query 只用于展示/预检，不构成交付授权。任�
 
 DeliveryOperation 每个终态都必须产生明确 Domain Event：Issued / Blocked / Failed（事件名由实现固定但语义不得缺失），并与 Audit/Evidence/Outbox、CostEvent（如有）保持一致幂等边界。任何事件或审计 payload 不得包含可用 credential secret。
 
-外部 credential issuance 不能假装与 PostgreSQL 同事务。必须先持久化 DeliveryOperation + stable provider_request_key，再执行外部副作用；**每次初始/retry/reconciliation issuance 前都必须重新执行 CurrentDeliveryGate 并重新计算 expiry cap**，旧 gate snapshot 仅供审计。fresh gate BLOCKED 时，如 provider_request_key 可能已经产生外部访问能力，必须先 reconcile 并 revoke/contain；只有确认没有活跃访问能力后才能终结 BLOCKED，否则保持 CONTAINMENT_PENDING。CONTAINMENT_PENDING 在 confirmed containment 后也允许终结 FAILED：用于 gate 仍 ALLOWED、但 credential/issuance contract 无法满足（如实际 expiry 超 fresh cap 且无法安全 shorten）的场景。direct bearer mode 还必须支持按同一 provider_request_key 恢复/重放同一 credential（或等价同一访问能力）；只有 revoke/compensation 但不能恢复原 bearer secret 时，必须走 platform redemption indirection，不能把同一幂等 retry 静默签发成第二份 credential。ISSUANCE_PENDING 必须可 reconciliation。
+外部 credential issuance 不能假装与 PostgreSQL 同事务。必须先持久化 DeliveryOperation + stable provider_request_key，再执行外部副作用；provider 返回/恢复 capability 后，terminal ISSUED transaction 必须使用与所有影响 CurrentDeliveryGate 的 disposition/invalidation Commands 共享的 delivery authorization fence/revision，再次 re-gate + fresh-cap；该 commit 是 issuance linearization point。**每次初始/retry/reconciliation issuance 前都必须重新执行 CurrentDeliveryGate 并重新计算 expiry cap**，旧 gate snapshot 仅供审计。fresh gate BLOCKED 时，如 provider_request_key 可能已经产生外部访问能力，必须先 reconcile 并 revoke/contain；只有确认没有活跃访问能力后才能终结 BLOCKED，否则保持 CONTAINMENT_PENDING。CONTAINMENT_PENDING 在 confirmed containment 后也允许终结 FAILED：用于 gate 仍 ALLOWED、但 credential/issuance contract 无法满足（如实际 expiry 超 fresh cap 且无法安全 shorten）的场景。direct bearer mode 还必须支持按同一 provider_request_key 恢复/重放同一 credential（或等价同一访问能力）；只有 revoke/compensation 但不能恢复原 bearer secret 时，必须走 platform redemption indirection，不能把同一幂等 retry 静默签发成第二份 credential。ISSUANCE_PENDING 必须可 reconciliation。
 
 若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界，以及签发时已存在且未来生效的 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 最早 effective_at。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 CurrentDeliveryGate；不可回调的 bearer/presigned credential 必须使用 expiry cap + 明确最大 TTL。
 
