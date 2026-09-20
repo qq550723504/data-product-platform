@@ -392,7 +392,7 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 - provider_credential_ref/hash（如适用；禁止存可用 secret）
 - planned_credential_expires_at / fresh_cap_expires_at
 - provider_credential_expires_at（provider 实际返回/恢复出的 expiry；direct bearer 必须可验证；direct-data 可为空）
-- provider capability 的**可验证强类型边界**：resource_ref/dataset_version_ref、consumer_ref（如 provider 模型支持）、actions、scope_type/scope_ref，以及必要的 delivery mode/channel identity；多值 actions 可使用规范化 child rows
+- provider capability 的**可验证强类型边界**：resource_ref/dataset_version_ref、**consumer/grantee enforcement descriptor（必需；不得因 provider 模型缺字段而省略）**、actions、scope_type/scope_ref，以及必要的 delivery mode/channel identity；多值 actions 可使用规范化 child rows；若 direct provider 无法强制 consumer/grantee，则记录 platform redemption/gateway binding descriptor，而不是把 consumer 设为 unverifiable/null 后继续 direct issuance
 - provider_capability_snapshot_hash / provider read-after-write evidence ref（用于证明实际签发能力与记录一致）
 - issuance result / direct-data release authorization result
 - actor / trace
@@ -408,7 +408,7 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 - provider 返回后，ISSUED terminal transaction 必须在 fence 下重新验证 caller authority + re-gate + fresh-cap，并把该 commit 作为 issuance linearization point；
 - direct-data mode 的 ISSUED terminal transaction 同样在 fence 下重新 gate；commit 成功前禁止写出任何 response byte，commit 后不得继续持有 fence/row lock 贯穿整个 stream；
 - 任何进入 ISSUED 的 credential 必须满足 provider_credential_expires_at <= 当前 fresh_cap_expires_at；reconciliation 找回的旧 credential 同样适用，不能因为 provider_request_key 命中就跳过；
-- provider 实际 capability 必须是 delivery request / CurrentDeliveryGate 允许上下文的**等价或更窄集合**：不得扩大到其它 DatasetVersion/DataResource、consumer、action、object/row/prefix scope 或 delivery channel；
+- provider 实际 capability 必须是 delivery request / CurrentDeliveryGate 允许上下文的**等价或更窄集合**：不得扩大到其它 DatasetVersion/DataResource、consumer/grantee、action、object/row/prefix scope 或 delivery channel；consumer/grantee enforcement 是 direct bearer/presigned 的必需维度，无法验证/强制时必须使用 platform redemption/gateway 或 fail closed；
 - provider capability 必须通过 read-after-write / equivalent authoritative lookup 验证后才能 ISSUED；实际 scope 无法读取/验证，或比请求更宽时不得 ISSUED，必须 revoke/contain，或改用 platform redemption indirection；
 - provider_credential_expires_at 不可验证或超过 fresh cap 时不得 ISSUED；必须安全 shorten/verify，或 revoke/contain；
 - gate 失败也有可审计 DeliveryOperation / result；
@@ -424,6 +424,21 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 当前 `cost_event` 已落库，现有强类型关联只有可选 `execution_id`。这足以表达 Execution 成本，但不足以表达 QualityAssessment、Rights verification/disposition、Certification、Delivery 等没有 Execution 的活动。
 
 Certified Dataset Pilot 目标模型增加：
+
+### Delivery provider attempts
+
+一个 DeliveryOperation 可包含 0..N 次真实外部 provider invocation；必须用 append-only child fact（推荐 `DeliveryProviderAttempt`，或等价强类型模型）表达，而不能只靠日志推断。每次**实际调用前**先 durable persist：
+
+- provider_attempt_id（稳定 physical attempt identity，同时可作为 CostEvent.activity_id 或其强类型来源）
+- delivery_operation_id FK
+- provider_request_key
+- invocation_kind：ISSUE / RECONCILE / REVOKE / COMPENSATE / NARROW / VERIFY（按实现固定）
+- started_at / completed_at
+- outcome：SUCCESS / FAILED / UNKNOWN / TIMEOUT（或等价）
+- provider outcome/evidence ref（非 secret）
+- actual invocation quantity/unit，amount/provider charge 如已知
+
+每个 provider_attempt_id 只代表一次真实外部调用。same-attempt 的本地 transaction/network replay 没有再次调用 provider 时复用同一 identity 且 CostEvent 去重；若代码再次发起真实 provider request，即使仍属同一 DeliveryOperation/provider_request_key/reconciliation 流程，也必须产生新的 provider_attempt_id。**FAILED、UNKNOWN、TIMEOUT、后续被 contain/revoke 的 attempt 只要实际调用发生，都保留 CostEvent；业务终态不能反向删除成本事实。**
 
 ### CostEvent physical-attempt identity
 
