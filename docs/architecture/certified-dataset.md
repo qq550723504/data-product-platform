@@ -225,6 +225,42 @@ expires_at
 8. 如果 delivery mode 支持 redemption-time server check，则每次 redemption 继续执行 CurrentDeliveryGate；如果是无法在 redemption 时回调平台的 bearer/presigned credential，则必须执行上述 expiry cap，并由 #135 明确该 delivery mode 的最大 TTL；
 9. 对签发后才新增的紧急 revocation，只有 redemption-time gate / revocable credential 才能即时阻断；第一阶段若某 delivery mode 不具备此能力，必须在产品/API 中明确该限制，并使用短 TTL，而不能声称签发后的 bearer credential 可即时撤销。
 
+### External credential issuance crash-safety
+
+数据库事务不能把外部 token provider、对象存储签名服务或其它远端 credential issuance 纳入同一个 ACID transaction。第一阶段必须使用显式 crash-safe protocol，而不是声称“外部签发与 PostgreSQL 原子提交”。
+
+推荐状态：
+
+~~~text
+PREPARED
+├→ BLOCKED
+└→ ISSUANCE_PENDING
+    ├→ ISSUED
+    └→ FAILED
+~~~
+
+协议至少满足：
+
+1. **prepare first**：在任何外部可用 credential 产生前，先在 PostgreSQL 持久化 DeliveryOperation、当前 gate snapshot/decision、credential expiry cap、稳定 provider_request_key，并提交；
+2. gate BLOCKED 时直接在同一 DB transaction 记录 BLOCKED + Audit/Evidence/Outbox，不调用 provider；
+3. gate ALLOWED 时将 operation 持久化为 ISSUANCE_PENDING；外部调用必须使用稳定幂等键，默认以 DeliveryOperation ID（或其稳定派生值）作为 provider_request_key；
+4. provider 成功后，再用第二个 DB transaction 记录 ISSUED + provider credential reference/hash（不得保存可用 secret 正文）+ Audit/Evidence/CostEvent/Outbox；**只有这个 terminal commit 成功后**才能把可用 credential 返回给客户端；
+5. 如果发生“provider 已成功，但 terminal commit 失败/进程崩溃”的不确定窗口，重试必须使用同一 provider_request_key 查询/重放同一 issuance，不得生成第二份独立 credential；
+6. 必须存在 reconciliation path，能够把长时间停留在 ISSUANCE_PENDING 的 operation 解析为：
+   - provider 已成功 → 恢复并完成同一个 ISSUED terminal fact；
+   - provider 明确失败 → FAILED；
+   - outcome 无法确认但 provider 支持 revoke/compensation → 先撤销/补偿再 FAILED；
+7. 如果外部 provider **既不支持 idempotency/read-after-write，也不支持 revoke/compensation**，第一阶段不得直接暴露其 bearer credential；必须改用平台控制的 redemption indirection，或将该 delivery mode 判为 unsupported；
+8. 本地生成 presigned URL 时，也必须先持久化 PREPARED/ISSUANCE_PENDING，并在 terminal DB commit 成功前不得把 URL 返回客户端或写入日志/事件；
+9. retries / reconciliation 不得重复 CostEvent、AuditEvent 或 terminal Domain Event。
+
+测试必须覆盖故障注入：
+- provider 成功后、terminal DB commit 前 crash；
+- terminal commit 成功后、HTTP response 前 crash；
+- reconciliation/retry；
+- provider timeout 导致 unknown outcome；
+- compensation/revocation 路径。
+
 关键写动作使用显式 Command。
 
 UI 在 DatasetVersion 上分别展示：
