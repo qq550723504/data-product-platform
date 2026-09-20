@@ -175,7 +175,7 @@ func TestCredentialIssueRecoversSameProviderKeyAfterCrashWindow(t *testing.T) {
 	}
 	provider.mu.Unlock()
 
-	var operationCount, terminalEvents, secretCount, attemptCount, costCount int
+	var operationCount, terminalEvents, secretCount, attemptCount, observationCount, costCount int
 	if err := pool.QueryRow(ctx, `SELECT count(*) FROM delivery_operation WHERE workspace_id=$1`, workspaceID).Scan(&operationCount); err != nil {
 		t.Fatal(err)
 	}
@@ -188,11 +188,14 @@ func TestCredentialIssueRecoversSameProviderKeyAfterCrashWindow(t *testing.T) {
 	if err := pool.QueryRow(ctx, `SELECT count(*) FROM delivery_provider_attempt a JOIN delivery_operation o ON o.id=a.delivery_operation_id WHERE o.workspace_id=$1`, workspaceID).Scan(&attemptCount); err != nil {
 		t.Fatal(err)
 	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM delivery_provider_observation o JOIN delivery_provider_attempt a ON a.id=o.provider_attempt_id JOIN delivery_operation d ON d.id=a.delivery_operation_id WHERE d.workspace_id=$1`, workspaceID).Scan(&observationCount); err != nil {
+		t.Fatal(err)
+	}
 	if err := pool.QueryRow(ctx, `SELECT count(*) FROM cost_allocation c JOIN delivery_operation o ON o.id=c.delivery_operation_id WHERE o.workspace_id=$1`, workspaceID).Scan(&costCount); err != nil {
 		t.Fatal(err)
 	}
-	if operationCount != 1 || terminalEvents != 1 || secretCount != 0 || attemptCount != 2 || costCount != 2 {
-		t.Fatalf("facts operation=%d terminal_events=%d secret_rows=%d attempts=%d costs=%d", operationCount, terminalEvents, secretCount, attemptCount, costCount)
+	if operationCount != 1 || terminalEvents != 1 || secretCount != 0 || attemptCount != 2 || observationCount != 2 || costCount != 2 {
+		t.Fatalf("facts operation=%d terminal_events=%d secret_rows=%d attempts=%d observations=%d costs=%d", operationCount, terminalEvents, secretCount, attemptCount, observationCount, costCount)
 	}
 }
 

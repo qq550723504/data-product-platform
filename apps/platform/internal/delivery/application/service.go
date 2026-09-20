@@ -1023,43 +1023,65 @@ func (s *Service) recordObservation(ctx context.Context, operationID, attemptID 
 		if err != nil {
 			return err
 		}
-		if err := s.repo.InsertProviderObservation(ctx, tx, attemptID, kind, outcome, capability, evidenceRef); err != nil {
-			return err
-		}
-		event, err := outbox.NewEvent("DELIVERY_OPERATION", operation.ID, "DatasetDeliveryProviderObservationRecorded", map[string]any{
-			"operationId": operation.ID, "providerAttemptId": attemptID, "outcome": outcome, "observationKind": kind,
-			"capabilityRef": capability.CapabilityRef, "capabilityHash": capability.CapabilityHash,
-		})
+		observationAttempts := []struct {
+			id                  uuid.UUID
+			kind                domain.ObservationKind
+			resolutionAttemptID *uuid.UUID
+		}{{id: attemptID, kind: kind}}
+		originalAttemptID, found, err := s.repo.FindUnobservedIssueAttempt(ctx, tx, operationID, attemptID)
 		if err != nil {
 			return err
 		}
-		if err := outbox.Append(ctx, tx, event); err != nil {
-			return err
+		if found {
+			observationAttempts = append(observationAttempts, struct {
+				id                  uuid.UUID
+				kind                domain.ObservationKind
+				resolutionAttemptID *uuid.UUID
+			}{id: originalAttemptID, kind: domain.ObservationReconciliation, resolutionAttemptID: &attemptID})
 		}
-		if err := audit.Append(ctx, tx, audit.Event{
-			WorkspaceID: &operation.WorkspaceID, ActorType: "SYSTEM", Action: "DELIVERY_PROVIDER_OBSERVED",
-			ObjectType: "DELIVERY_OPERATION", ObjectID: operation.ID,
-			AfterState: map[string]any{"providerAttemptId": attemptID, "outcome": outcome, "observationKind": kind},
-			Reason:     evidenceRef,
-		}); err != nil {
-			return err
+		for _, observation := range observationAttempts {
+			if err := s.repo.InsertProviderObservation(ctx, tx, observation.id, observation.kind, outcome, capability, evidenceRef); err != nil {
+				return err
+			}
+			eventPayload := map[string]any{
+				"operationId": operation.ID, "providerAttemptId": observation.id, "outcome": outcome,
+				"observationKind": observation.kind, "capabilityRef": capability.CapabilityRef,
+				"capabilityHash": capability.CapabilityHash,
+			}
+			afterState := map[string]any{"providerAttemptId": observation.id, "outcome": outcome, "observationKind": observation.kind}
+			metadata := map[string]any{
+				"providerAttemptId": observation.id, "observationKind": observation.kind,
+				"outcome": outcome, "capabilityRef": capability.CapabilityRef,
+				"capabilityHash": capability.CapabilityHash, "evidenceRef": evidenceRef,
+			}
+			if observation.resolutionAttemptID != nil {
+				eventPayload["resolutionProviderAttemptId"] = *observation.resolutionAttemptID
+				afterState["resolutionProviderAttemptId"] = *observation.resolutionAttemptID
+				metadata["resolutionProviderAttemptId"] = *observation.resolutionAttemptID
+			}
+			event, err := outbox.NewEvent("DELIVERY_OPERATION", operation.ID, "DatasetDeliveryProviderObservationRecorded", eventPayload)
+			if err != nil {
+				return err
+			}
+			if err := outbox.Append(ctx, tx, event); err != nil {
+				return err
+			}
+			if err := audit.Append(ctx, tx, audit.Event{
+				WorkspaceID: &operation.WorkspaceID, ActorType: "SYSTEM", Action: "DELIVERY_PROVIDER_OBSERVED",
+				ObjectType: "DELIVERY_OPERATION", ObjectID: operation.ID,
+				AfterState: afterState, Reason: evidenceRef,
+			}); err != nil {
+				return err
+			}
+			if _, err := evidence.Append(ctx, tx, evidence.Record{
+				WorkspaceID: operation.WorkspaceID, EvidenceType: "DELIVERY_PROVIDER_OBSERVATION",
+				Title: "Delivery provider observation", SourceType: "DELIVERY_OPERATION", SourceID: &operation.ID,
+				Metadata: metadata,
+			}, evidence.Relation{ObjectType: "DELIVERY_OPERATION", ObjectID: operation.ID, RelationType: "PROVIDER_OBSERVATION"}); err != nil {
+				return err
+			}
 		}
-		_, err = evidence.Append(ctx, tx, evidence.Record{
-			WorkspaceID:  operation.WorkspaceID,
-			EvidenceType: "DELIVERY_PROVIDER_OBSERVATION",
-			Title:        "Delivery provider observation",
-			SourceType:   "DELIVERY_OPERATION",
-			SourceID:     &operation.ID,
-			Metadata: map[string]any{
-				"providerAttemptId": attemptID,
-				"observationKind":   kind,
-				"outcome":           outcome,
-				"capabilityRef":     capability.CapabilityRef,
-				"capabilityHash":    capability.CapabilityHash,
-				"evidenceRef":       evidenceRef,
-			},
-		}, evidence.Relation{ObjectType: "DELIVERY_OPERATION", ObjectID: operation.ID, RelationType: "PROVIDER_OBSERVATION"})
-		return err
+		return nil
 	})
 }
 
@@ -1132,14 +1154,23 @@ func (s *Service) evaluate(ctx context.Context, tx pgx.Tx, operation domain.Oper
 	evaluation.EvaluationKey = key
 	evaluation.Stage = stage
 	evaluation.DependencyRevision = revision
-	if evaluation.PrincipalRef == "" {
-		evaluation.PrincipalRef = operation.PrincipalRef
-	}
-	if evaluation.EffectiveConsumerRef == "" {
-		evaluation.EffectiveConsumerRef = operation.EffectiveConsumerRef
-	}
-	if evaluation.DelegationRef == "" {
-		evaluation.DelegationRef = operation.DelegationRef
+	if evaluation.Allowed {
+		if evaluation.PrincipalRef == "" || evaluation.EffectiveConsumerRef == "" ||
+			evaluation.PrincipalRef != operation.PrincipalRef ||
+			evaluation.EffectiveConsumerRef != operation.EffectiveConsumerRef ||
+			evaluation.DelegationRef != operation.DelegationRef {
+			return domain.GateEvaluation{}, fmt.Errorf("delivery gate returned untrusted caller context")
+		}
+	} else {
+		if evaluation.PrincipalRef == "" {
+			evaluation.PrincipalRef = operation.PrincipalRef
+		}
+		if evaluation.EffectiveConsumerRef == "" {
+			evaluation.EffectiveConsumerRef = operation.EffectiveConsumerRef
+		}
+		if evaluation.DelegationRef == "" {
+			evaluation.DelegationRef = operation.DelegationRef
+		}
 	}
 	if evaluation.Allowed && (evaluation.FreshCapExpiresAt == nil || evaluation.FreshCapExpiresAt.After(operation.RequestedExpiresAt)) {
 		return domain.GateEvaluation{}, fmt.Errorf("delivery gate returned an expiry cap wider than the request")
