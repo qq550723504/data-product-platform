@@ -186,8 +186,10 @@ CurrentCertificationGate 要求本次 delivery 明确绑定一条 DatasetCertifi
 
 CurrentEntitlementGate 按“现在”重新检查至少：
 
-- 每个绑定 RightsDeclaration / verification 是否 VERIFIED、其自身 validity window 覆盖 as_of、resource/consumer/purpose/action/scope 与本次 delivery context 匹配，且未被有效 INVALIDATED / SUPERSEDED；
-- 每个 Authorization 是否存在当前有效 AuthorizationProvenanceBinding 支撑 grantor_ref，并且该 binding 在 as_of 时点未被 AuthorizationProvenanceBindingDisposition INVALIDATED / SUPERSEDED；若 binding 的 grantor authority 来自 delegation chain，则必须按 as_of 重新验证所有 required grantor-delegation edges 的 chain identity/continuity、validity、REVOKED/INVALIDATED/SUPERSEDED disposition，以及 resource/purpose/action/normalized-scope coverage，任一 edge 失效即 BLOCKED；Authorization 自身还必须 ACTIVE、未过期/撤销，并且其 grantee/consumer、DataResource、purpose、action、scope 全部覆盖本次 delivery context；
+- entitlement path 必须明确区分：
+  - DIRECT_USE：RightsDeclaration 本身作为使用依据时，要求 VERIFIED、current validity/disposition、resource、consumer、permitted purpose、allowed action、use scope 与本次 delivery context 匹配；
+  - DOWNSTREAM_AUTHORIZATION：Authorization 用于授权下游 grantee/consumer 时，RightsDeclaration 只作为 current provenance/grant-authority source，要求 VERIFIED、current validity/disposition、resource 匹配；requested purpose/action/scope 由 declaration/binding/delegation 的 **grantable** coverage + Authorization 自身 requested-context coverage 证明，**不得要求 grantor 自己的 allowed/use scope 匹配 grantee 请求**；
+- 每个 Authorization 必须存在当前有效 AuthorizationProvenanceBinding 支撑 grantor_ref，并且 binding 在 as_of 时点未被 INVALIDATED/SUPERSEDED；binding 必须证明 declaration 的 grantable purpose/action/scope（或 current-valid grantor delegation chain 的 onward grant authority）覆盖 Authorization。若依赖 delegation chain，则逐 edge 验证 current validity/disposition/continuity/grantable coverage；Authorization 自身必须 ACTIVE、未过期/撤销，并覆盖 grantee/consumer、DataResource、purpose、action、scope。
 - consumer / purpose 是否匹配；
 - 本次 delivery action（例如 SHARE / RAW_EXPORT）是否当前仍允许；
 - 对衍生 DatasetVersion，不能只读取认证时 frozen EffectiveRightsSnapshot 的 action decision。必须从 target 的 immutable required lineage/input membership 枚举**全部 required inputs**，对每个 input 在当前 `as_of` 下重新验证其 RightsDeclaration、AuthorizationProvenanceBinding、Authorization、grantor-delegation chain/disposition、purpose/action/scope/validity，并对 requested action 重新执行 fail-closed intersection；任一 source input 当前 BLOCKED/UNKNOWN/missing，则 derived delivery BLOCKED；
