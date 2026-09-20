@@ -62,7 +62,7 @@ VERIFIED 历史声明不得通过通用 UPDATE 改成另一份权利事实；修
 
 平台不提供暗示自动法律裁判的 SetLegalOwner 命令。
 
-## 5. QualityAssessment（#131）
+## 5. QualityAssessment（核心已由 #140 落地；#131 仅 follow-up / CostAllocation）
 
 ~~~text
 RunQualityAssessment
@@ -247,7 +247,7 @@ GET  /api/v1/dataset-versions/{versionId}/quality-assessments
 GET  /api/v1/dataset-versions/{versionId}/quality-assessments/latest
 ~~~
 
-其中 `POST .../quality-checks` 在 #131 起语义明确为创建新的 QualityAssessment；历史兼容 query route 仍保留。
+其中 `POST .../quality-checks` 创建 QualityAssessment 的核心语义、模型与查询路由已由 #140 落地；#131 当前仅承接 typed CostAllocation / retry-cost 等 review follow-up，不得重新创建 QualityAssessment root、平行表族或重复 migration。历史兼容 query route 仍保留。
 
 ### Compliance（当前 live API）
 
