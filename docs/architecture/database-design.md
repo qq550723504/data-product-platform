@@ -319,8 +319,9 @@ ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status
 - status：PREPARED / ISSUANCE_PENDING / CONTAINMENT_PENDING / ISSUED / BLOCKED / FAILED（或等价受控状态）
 - provider_request_key（稳定幂等键）
 - provider_credential_ref/hash（如适用；禁止存可用 secret）
+- planned_credential_expires_at / fresh_cap_expires_at
+- provider_credential_expires_at（provider 实际返回/恢复出的 expiry；direct bearer 必须可验证）
 - issuance result
-- credential_expires_at（如签发 credential）
 - actor / trace
 
 实现可选择 append-only attempt/result 模型或受控 lifecycle row，但必须满足：
@@ -329,6 +330,8 @@ ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status
 - 同一幂等请求不会重复签发或重复记账；
 - 外部 issuance 前必须先 durable persist PREPARED/ISSUANCE_PENDING；
 - provider_request_key 对同一 DeliveryOperation 稳定，支持 crash 后安全 retry/reconcile；
+- 任何进入 ISSUED 的 credential 必须满足 provider_credential_expires_at <= 当前 fresh_cap_expires_at；reconciliation 找回的旧 credential 同样适用，不能因为 provider_request_key 命中就跳过；
+- provider_credential_expires_at 不可验证或超过 fresh cap 时不得 ISSUED；必须安全 shorten/verify，或 revoke/contain；
 - gate 失败也有可审计 DeliveryOperation / result；
 - 不把可用 credential secret/token 正文持久化到 Core 数据库；
 - ISSUANCE_PENDING / CONTAINMENT_PENDING 必须有 reconciliation 查询/索引，不能永久悬空；
