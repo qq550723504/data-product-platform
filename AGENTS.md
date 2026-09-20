@@ -62,6 +62,8 @@ ProductRelease 特例：DRAFT / VALIDATING / READY 等发布前阶段允许显�
 
 DeliveryOperation 也是受控 lifecycle row，不得把整行视为创建即 immutable：PREPARED / ISSUANCE_PENDING / CONTAINMENT_PENDING / terminal 状态需要由显式 delivery/reconciliation Command 更新。必须冻结并保护的是 request/idempotency identity、确定后的 provider_request_key、已记录的 transition/gate/issuance history 与 terminal outcome 语义；不要安装会阻止合法恢复迁移的全行 UPDATE guard。
 
+**通用 frozen aggregate 并发规则：** 任何采用 `DRAFT → FINALIZED/PUBLISHED`、且 parent 下存在可变 child membership/action/binding rows 的聚合，都必须把 child mutation 与 Finalize/Publish 串行化在同一个 parent row lock/fence/revision 上，并采用固定 parent-first 锁顺序。Finalize/Publish 必须在持有 parent lock 时验证完整 membership/content hash 再冻结。仅靠“FINALIZED 后 trigger 拒绝 mutation”不够，因为旧 transaction 可能在 finalize 前读到 DRAFT、却在 finalize 后才提交。该规则适用于 RightsSnapshot、EffectiveRightsSnapshot、GrantorAuthorityDelegationChain、未来新增的 Profile/Evidence/Release membership aggregate 等；若已有对象当前尚未满足，必须明确记录为 open enforcement gap，而不能声称已完整冻结。
+
 修正错误时不得覆盖历史事实，但要按事实类型追加：
 
 - 数据内容、schema/content identity 或实际生产输出变化 → 新 DatasetVersion；
