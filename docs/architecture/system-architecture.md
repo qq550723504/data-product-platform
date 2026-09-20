@@ -112,14 +112,14 @@ Certified Dataset 可以作为独立交付对象，也可以继续进入 Data Pr
 外部 credential issuance 使用 DB-first crash-safe protocol：
 1. 先持久化 DeliveryOperation PREPARED/ISSUANCE_PENDING + stable provider_request_key；
 2. DB commit 成功后才执行外部 issuance；
-3. provider 成功后再提交 terminal DeliveryOperation + Audit/Evidence/Outbox/CostEvent；
+3. 每次真实 provider invocation 在调用前先 durable persist physical provider-attempt identity；success / failure / timeout / unknown / reconciliation / revoke / compensation 只要实际外部调用并可能计费，都按该 attempt 记录 CostEvent；provider 成功后再提交 terminal DeliveryOperation + Audit/Evidence/Outbox（terminal-specific CostEvent 如有）；
 4. terminal commit 成功后才向客户端暴露 credential；
 5. 每次 initial/retry/reconciliation 真正调用 provider 前重新验证 caller principal→effective consumer/workspace binding/delegation，再执行 CurrentDeliveryGate 并重新计算 expiry cap；prepare 阶段的旧 identity/gate snapshot 不授权后续外部 side effect；
 6. 所有 delivery mode 的 terminal finalize 都必须在共享 delivery authorization fence/revision 下重新读取 current facts、重新验证 caller authority、重新 gate；credential/provider 模式还要重新计算 fresh cap。影响 delivery authorization 的 principal binding/workspace membership/delegation lifecycle、Rights/Binding/Certification disposition 与 DatasetVersion invalidation 等 Command 使用同一 fence/revision，并按固定顺序锁定；
 7. terminal ISSUED DB commit 是 delivery 的线性化点：provider/credential 模式只有 commit 后才返回 capability；direct-data 模式只有 commit 后才允许写出第一字节。若 entitlement 变更先提交，finalize 必须看到它且 direct-data 0-byte fail closed；若 finalize 先提交，则后续 entitlement 变更在线性顺序上发生在该 delivery 之后；
 8. direct-data 不得在整个 stream 期间持有数据库 lock；fence 只覆盖 terminal re-gate + commit。
-9. provider capability 在 ISSUED 前必须通过 read-after-write/authoritative lookup 验证为 requested/current-gate context 的等价或更窄集合，至少覆盖 expiry、resource/DatasetVersion、consumer（可表达时）、actions、object/row/prefix scope、delivery channel；过宽或不可验证时 fail closed 并 contain/narrow；
-10. crash/timeout 由 reconciliation 使用同一 provider_request_key 恢复，不盲目重复签发；
+9. provider capability 在 ISSUED 前必须通过 read-after-write/authoritative lookup 验证为 requested/current-gate context 的等价或更窄集合，至少覆盖 expiry、resource/DatasetVersion、**consumer/grantee enforcement（必需）**、actions、object/row/prefix scope、delivery channel；consumer/grantee 无法由 provider 原生或等价 holder-bound mechanism 强制/验证时，不得 direct bearer/presigned ISSUED，必须使用 platform redemption/gateway 或标记 direct mode unsupported；其它 scope 过宽或不可验证同样 fail closed 并 contain/narrow；
+10. crash/timeout 由 reconciliation 使用同一 provider_request_key 恢复，不盲目重复签发；但 timeout/unknown 本次真实 provider attempt 的成本事实仍保留，不能因 outcome 未知或最终 FAILED/BLOCKED 而省略；
 11. direct bearer delivery 只有在 provider 能按同一 key 恢复同一 credential/访问能力并验证实际 capability scope 时允许；否则使用 platform redemption indirection。
 
 ## 5. Governance Projection
