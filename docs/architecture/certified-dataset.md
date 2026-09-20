@@ -171,10 +171,13 @@ CurrentCertificationGate 要求本次 delivery 明确绑定一条 DatasetCertifi
 - decision = CERTIFIED；
 - 不存在已生效的 REVOKED disposition；
 - 不存在已生效的 SUPERSEDED disposition；
-- **本次 delivery context 必须被该 Certification 冻结的 CertificationProfile snapshot 覆盖**：
-  - requested purpose 必须满足 profile purpose / applicability；
-  - requested action（如 USE / SHARE / RAW_EXPORT / RESALE / AI_TRAINING）必须落在 profile 明确允许/认证覆盖的 action 集合；
-  - profile 若定义 consumer / delivery channel / applicability constraints，也必须匹配；
+- **本次 delivery context 必须被该 Certification 冻结的 CertificationProfile snapshot 显式覆盖**：
+  - Profile 必须显式声明 purpose applicability：`ANY` 或 `EXPLICIT`；EXPLICIT 时 requested purpose 必须命中冻结集合；
+  - Profile 必须显式声明 action applicability：`ANY` 或 `EXPLICIT`；EXPLICIT 时 requested action（如 USE / SHARE / RAW_EXPORT / RESALE / AI_TRAINING）必须命中冻结集合；
+  - Profile 必须显式声明 consumer applicability：`ANY` 或 `EXPLICIT`；EXPLICIT 时 requested consumer 必须命中冻结 consumer 集合/规则；
+  - Profile 必须显式声明 delivery channel/mode applicability：`ANY` 或 `EXPLICIT`；EXPLICIT 时 requested delivery channel/mode 必须命中冻结集合；
+  - **字段缺失、NULL、UNKNOWN 或无法从 frozen snapshot 证明覆盖，都不是 wildcard，必须 fail closed**（例如 `CERTIFICATION_PROFILE_CONTEXT_UNSPECIFIED`）；
+  - 只有显式 `ANY` 才代表该维度不限；
 - Rights 允许某动作不代表 CertificationProfile 已对该动作做过质量/合规/合同认证；例如 INTERNAL_USE profile 不能用于 RAW_EXPORT；
 - 若 C1 被 C2=REJECTED supersede，C1 不能再用于 delivery，C2 也因 decision != CERTIFIED 不能通过；
 - 不允许用 created_at/latest 作为“当前认证”选择规则。
