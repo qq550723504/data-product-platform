@@ -630,7 +630,7 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | EntityMappingDecision | immutable history |
 | Execution | stateful lifecycle row; transitions update status/output/metrics/timestamps through explicit commands; terminal rows are retained and not deleted |
 | Execution dependency facts | immutable history |
-| RightsSnapshot | immutable |
+| RightsSnapshot | target immutable aggregate; current header guard exists, while existing `rights_snapshot_authorization` membership DB guard is still a #137 enforcement gap |
 | QualityAssessment | immutable |
 | verified RightsDeclaration / verification / disposition facts | immutable |
 | AuthorizationProvenanceBinding / AuthorizationProvenanceBindingDisposition | immutable historical provenance facts |
