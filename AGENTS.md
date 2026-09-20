@@ -96,13 +96,15 @@ Authorization 不能与 provenance 独立选择。每个进入 CurrentEntitlemen
 
 RightsDeclaration 的 resource / consumer applicability / purpose / action / scope / validity 必须强类型、可索引、可查询；这些 gate-critical 字段不得仅藏在 JSONB。
 
+Authorization 的 gate-critical scope 也必须强类型/规范化、可索引、可查询（`scope_type` + `scope_ref` 或等价 relation）。现有 `authorization_resource.scope` JSONB 只能做扩展参数；BindAuthorizationProvenance / CurrentEntitlementGate 不得各自解析任意 JSONB 决定 allow。legacy Authorization 无法可靠归一化 scope 时 fail closed，不得把缺失 scope 当作全资源。
+
 Authorization 本身也必须逐项覆盖当前 requested context：grantee/consumer、resource、purpose、action、scope、validity/status。RightsDeclaration 或 Effective Rights 的更宽范围不得放大一条更窄的 Authorization。
 
 RightsSnapshot 的 immutable 语义覆盖 header + authorization/declaration/provenance-binding membership；finalize 后 membership INSERT/UPDATE/DELETE 必须由数据库 guard fail closed。
 
 AuthorizationProvenanceBinding 创建后不可 UPDATE/DELETE。错误 binding 通过 append-only BindingDisposition（INVALIDATED / SUPERSEDED + effective_at）退出 current set；CurrentEntitlementGate 必须按 as_of 排除已生效 disposition。replacement binding 必须独立重新校验，历史 RightsSnapshot 继续引用旧 binding。
 
-衍生数据的 Effective Rights 默认 fail closed：任何必要输入不允许某个动作时，输出不得自动获得该动作。
+衍生数据的 Effective Rights 默认 fail closed：必须从 target DatasetVersion 的实际 required lineage/input facts 计算并持久化 immutable EffectiveRightsSnapshot（或等价 aggregate），冻结 calculation rule/hash、required input membership + source RightsSnapshot/provenance、逐 action decision/reason。任何必要输入不允许、未知、缺失或未被纳入冻结 input membership 时，输出不得获得该动作；只有所有 required inputs 明确 ALLOWED 才 ALLOWED。#134 只能引用 finalized immutable Effective Rights identity/hash。
 
 ## 5. State Transitions
 
