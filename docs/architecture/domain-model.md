@@ -146,6 +146,7 @@ AuthorizationProvenanceBindingDisposition (optional)
 Authorization
       ↓
 RightsSnapshot
+(header + immutable authorization/declaration/binding membership)
       ↓
 EffectiveRights
 ~~~
@@ -174,6 +175,8 @@ EffectiveRights
 - 是否已经 VERIFIED？
 
 ### 4.4 RightsVerification outcome
+
+RightsDeclaration 的 gate-relevant context（resource、consumer applicability、purpose、action、scope、validity）必须强类型可查询；JSONB 只承载扩展参数。
 
 RightsVerification 与 RightsDeclaration 分离，但同一个 RightsDeclaration 只允许一个 terminal verification decision：VERIFIED 或 REJECTED。Verify / Reject 互斥；同一 declaration 的 terminal outcome 不允许后续翻转。
 
@@ -212,6 +215,8 @@ AuthorizationProvenanceBinding 一旦创建即为不可变 provenance fact；不
 - effective_at / reason / Evidence / actor
 
 Current binding selection 按 as_of 排除已生效 disposition。replacement binding 必须独立满足 grantor/resource/actions/scope/declaration-current-validity 约束，不能因 supersession 自动获得有效性。历史 RightsSnapshot 继续引用旧 binding，不被回溯改写。
+
+RightsSnapshot 的不可变性覆盖 membership：finalized snapshot 的 authorization/declaration/provenance-binding 成员关系禁止后续插入、删除或重连。
 
 ### 4.6 Authorization
 
