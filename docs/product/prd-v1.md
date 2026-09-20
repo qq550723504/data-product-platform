@@ -172,6 +172,8 @@ DRAFT → REVIEWING → APPROVED → ACTIVE
 
 ### RightsDeclaration
 
+RightsDeclaration 对 CurrentEntitlementGate 使用的 resource、consumer applicability、purpose、action、scope、validity 必须强类型持久化并可查询；不能只靠 JSONB。
+
 声明与验证事实分离。同一个 RightsDeclaration 只能有一个 terminal RightsVerification outcome：VERIFIED 或 REJECTED，Verify/Reject 互斥且 outcome 不可翻转。错误 VERIFIED 通过 RightsDisposition INVALIDATED/SUPERSEDED 退出 current set，并以新 RightsDeclaration + 新 verification 修正；不得在同一 declaration 上追加 REJECTED 来覆盖 VERIFIED。
 
 ### QualityAssessment
@@ -307,7 +309,7 @@ direct-data delivery 也不得例外：在 terminal ISSUED commit 成功之前�
 
 provider 成功但 terminal DB commit 失败时，retry/reconciliation 复用同一 key，不得产生第二份独立 credential。
 
-任何首次返回或 reconciliation 恢复出的 credential，在 DeliveryOperation 进入 ISSUED 前都必须验证其**实际 provider expiry/access bound 不晚于当前 fresh cap**。如果 disposition/validity 在 prepare 后缩短了 cap，而旧 credential 仍更长，则不能直接恢复为 ISSUED：必须安全 shorten 并验证，或 revoke/contain；无法安全满足 fresh cap 时当前 operation 不得成功交付。
+任何首次返回或 reconciliation 恢复出的 credential，在 DeliveryOperation 进入 ISSUED 前都必须验证其**实际 provider capability 与当前 allowed/requested context 等价或更窄**：expiry 不晚于 fresh cap，resource/DatasetVersion、consumer、action、object/row/prefix scope、delivery channel 不得扩大。如果 disposition/validity 在 prepare 后缩短了 cap，或 provider 实际 capability 比请求更宽，则不能直接恢复为 ISSUED：必须安全 shorten/narrow 并通过 read-after-write/authoritative lookup 验证，或 revoke/contain；任何关键 capability 维度无法验证时 fail closed。
 
 ## 11. CostEvent / CostAllocation
 
