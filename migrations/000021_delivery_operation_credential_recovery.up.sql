@@ -103,6 +103,34 @@ CREATE TABLE delivery_provider_attempt (
     CONSTRAINT ck_delivery_provider_attempt_quantity CHECK(quantity > 0)
 );
 
+-- A late provider result can arrive after the operation projection already
+-- reached FAILED/BLOCKED. This separate projection keeps revoke containment
+-- retryable without rewriting terminal DeliveryOperation history.
+CREATE TABLE delivery_containment (
+    delivery_operation_id    uuid PRIMARY KEY REFERENCES delivery_operation(id),
+    status                   varchar(16) NOT NULL,
+    last_provider_attempt_id uuid REFERENCES delivery_provider_attempt(id),
+    reason                   varchar(255),
+    created_at               timestamptz NOT NULL DEFAULT now(),
+    updated_at               timestamptz NOT NULL DEFAULT now(),
+    CONSTRAINT ck_delivery_containment_status CHECK(status IN ('PENDING','RESOLVED'))
+);
+
+CREATE TABLE delivery_containment_transition (
+    id                     uuid PRIMARY KEY,
+    delivery_operation_id  uuid NOT NULL REFERENCES delivery_operation(id),
+    from_status            varchar(16),
+    to_status              varchar(16) NOT NULL,
+    provider_attempt_id    uuid REFERENCES delivery_provider_attempt(id),
+    reason                 varchar(255),
+    created_at             timestamptz NOT NULL DEFAULT now(),
+    CONSTRAINT ck_delivery_containment_transition_to CHECK(to_status IN ('PENDING','RESOLVED'))
+);
+
+CREATE INDEX idx_delivery_containment_pending
+    ON delivery_containment(status, updated_at)
+    WHERE status = 'PENDING';
+
 CREATE TABLE delivery_provider_observation (
     id                              uuid PRIMARY KEY,
     provider_attempt_id             uuid NOT NULL REFERENCES delivery_provider_attempt(id),
@@ -174,6 +202,10 @@ FOR EACH ROW EXECUTE FUNCTION prevent_delivery_history_mutation();
 
 CREATE TRIGGER trg_delivery_replay_decision_immutable
 BEFORE UPDATE OR DELETE ON delivery_credential_replay_decision
+FOR EACH ROW EXECUTE FUNCTION prevent_delivery_history_mutation();
+
+CREATE TRIGGER trg_delivery_containment_transition_immutable
+BEFORE UPDATE OR DELETE ON delivery_containment_transition
 FOR EACH ROW EXECUTE FUNCTION prevent_delivery_history_mutation();
 
 CREATE OR REPLACE FUNCTION guard_delivery_operation_mutation()

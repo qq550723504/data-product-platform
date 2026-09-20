@@ -30,6 +30,13 @@ func TestMatchesIssuedCapabilityRequiresTheOriginalCapability(t *testing.T) {
 	}
 
 	capability.Credential = "secret-a"
+	capability.CapabilityHash = hashSecret("secret-b")
+	if matchesIssuedCapability(op, capability) {
+		t.Fatal("a provider-supplied hash that disagrees with the recovered secret must not match")
+	}
+
+	capability.CapabilityHash = ""
+	capability.Credential = "secret-a"
 	capability.CapabilityRef = "different-ref"
 	if matchesIssuedCapability(op, capability) {
 		t.Fatal("a different capability ref must not match the issued fact")

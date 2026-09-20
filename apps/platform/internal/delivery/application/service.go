@@ -103,6 +103,7 @@ func (s *Service) IssueCredential(ctx context.Context, cmd IssueCredentialComman
 
 	var operation domain.Operation
 	created := false
+	terminalContainmentPending := false
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		candidate, err := domain.NewOperation(
 			cmd.WorkspaceID, cmd.DatasetVersionID, cmd.IdempotencyKey, cmd.ProviderName,
@@ -128,6 +129,13 @@ func (s *Service) IssueCredential(ctx context.Context, cmd IssueCredentialComman
 				return errors.New("delivery idempotency key conflicts with another request")
 			}
 			operation, err = s.repo.GetOperation(ctx, tx, record.ObjectID, false)
+			if err == nil && operation.IsTerminal() {
+				status, found, containmentErr := s.repo.GetContainmentStatus(ctx, tx, operation.ID)
+				if containmentErr != nil {
+					return containmentErr
+				}
+				terminalContainmentPending = found && status == domain.ContainmentPending
+			}
 			return err
 		}
 
@@ -191,6 +199,9 @@ func (s *Service) IssueCredential(ctx context.Context, cmd IssueCredentialComman
 		return s.replayIssued(ctx, operation, cmd)
 	}
 	if operation.Status == domain.StatusBlocked || operation.Status == domain.StatusFailed {
+		if terminalContainmentPending {
+			return s.reconcileTerminalContainment(ctx, operation, cmd)
+		}
 		return Result{Operation: operation}, nil
 	}
 	if operation.Status == domain.StatusContainmentPending {
@@ -723,21 +734,62 @@ func matchesIssuedCapability(operation domain.Operation, capability domain.Capab
 	if capability.CapabilityRef != operation.CredentialRef {
 		return false
 	}
-	capabilityHash := capability.CapabilityHash
-	if capabilityHash == "" {
-		capabilityHash = hashSecret(capability.Credential)
+	derivedHash := hashSecret(capability.Credential)
+	if capability.CapabilityHash != "" && capability.CapabilityHash != derivedHash {
+		return false
 	}
-	return capabilityHash == operation.CredentialHash
+	return derivedHash == operation.CredentialHash
 }
 
 func (s *Service) containUnexpectedCapability(ctx context.Context, operation domain.Operation, capability domain.Capability, cmd IssueCredentialCommand) (Result, error) {
+	return s.revokeContainment(ctx, operation, capability, "late capability contained after terminal race", cmd)
+}
+
+func (s *Service) reconcileTerminalContainment(ctx context.Context, operation domain.Operation, cmd IssueCredentialCommand) (Result, error) {
+	return s.revokeContainment(ctx, operation, domain.Capability{}, "terminal containment retry", cmd)
+}
+
+func (s *Service) revokeContainment(ctx context.Context, operation domain.Operation, capability domain.Capability, reason string, cmd IssueCredentialCommand) (Result, error) {
+	attemptID, current, err := s.startContainmentAttempt(ctx, operation, reason, cmd)
+	if err != nil {
+		return Result{}, err
+	}
+	err = s.provider.Revoke(ctx, current.ProviderRequestKey)
+	if errors.Is(err, ErrCapabilityNotFound) {
+		if recordErr := s.recordObservation(ctx, current.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeNotFound, capability, "provider reports no active capability during containment"); recordErr != nil {
+			return Result{}, recordErr
+		}
+		if resolveErr := s.resolveContainment(ctx, current.ID, attemptID, "provider reports no active capability during containment", cmd); resolveErr != nil {
+			return Result{}, resolveErr
+		}
+		return Result{Operation: current}, ErrCredentialReplay
+	}
+	if err != nil {
+		if recordErr := s.recordObservation(ctx, current.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeUnknown, capability, "containment outcome is unknown: "+err.Error()); recordErr != nil {
+			return Result{}, recordErr
+		}
+		// The PENDING projection deliberately remains durable so the same-key
+		// command can retry revoke without rewriting the terminal operation.
+		return Result{Operation: current}, ErrCredentialReplay
+	}
+	if err := s.recordObservation(ctx, current.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeSuccess, capability, reason); err != nil {
+		return Result{}, err
+	}
+	if err := s.resolveContainment(ctx, current.ID, attemptID, reason, cmd); err != nil {
+		return Result{}, err
+	}
+	return Result{Operation: current}, ErrCredentialReplay
+}
+
+func (s *Service) startContainmentAttempt(ctx context.Context, operation domain.Operation, reason string, cmd IssueCredentialCommand) (uuid.UUID, domain.Operation, error) {
 	var attemptID uuid.UUID
-	if err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		current, err := s.repo.GetOperation(ctx, tx, operation.ID, true)
+	var current domain.Operation
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		current, err = s.repo.GetOperation(ctx, tx, operation.ID, true)
 		if err != nil {
 			return err
 		}
-		operation = current
 		attemptID, err = s.repo.InsertProviderAttempt(ctx, tx, current, "late-containment/"+uuid.NewString(), domain.InvocationRevoke)
 		if err != nil {
 			return err
@@ -745,28 +797,48 @@ func (s *Service) containUnexpectedCapability(ctx context.Context, operation dom
 		if err := s.repo.InsertProviderCost(ctx, tx, current, attemptID); err != nil {
 			return err
 		}
-		return appendAttemptFacts(ctx, tx, current, attemptID, domain.InvocationRevoke, cmd.ActorID, cmd.TraceID)
-	}); err != nil {
-		return Result{}, err
-	}
+		if err := appendAttemptFacts(ctx, tx, current, attemptID, domain.InvocationRevoke, cmd.ActorID, cmd.TraceID); err != nil {
+			return err
+		}
+		status, found, err := s.repo.GetContainmentStatus(ctx, tx, current.ID)
+		if err != nil {
+			return err
+		}
+		if !found || status != domain.ContainmentPending {
+			if err := s.repo.UpsertContainmentProjection(ctx, tx, current.ID, domain.ContainmentPending, &attemptID, reason); err != nil {
+				return err
+			}
+			if err := s.repo.InsertContainmentTransition(ctx, tx, current.ID, status, domain.ContainmentPending, &attemptID, reason); err != nil {
+				return err
+			}
+			return appendContainmentFactsTx(ctx, tx, current, attemptID, domain.ContainmentPending, reason, cmd)
+		}
+		return s.repo.UpsertContainmentProjection(ctx, tx, current.ID, domain.ContainmentPending, &attemptID, reason)
+	})
+	return attemptID, current, err
+}
 
-	err := s.provider.Revoke(ctx, operation.ProviderRequestKey)
-	if errors.Is(err, ErrCapabilityNotFound) {
-		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeNotFound, capability, "late capability was not active"); recordErr != nil {
-			return Result{}, recordErr
+func (s *Service) resolveContainment(ctx context.Context, operationID, attemptID uuid.UUID, reason string, cmd IssueCredentialCommand) error {
+	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		operation, err := s.repo.GetOperation(ctx, tx, operationID, false)
+		if err != nil {
+			return err
 		}
-		return Result{Operation: operation}, ErrCredentialReplay
-	}
-	if err != nil {
-		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeUnknown, capability, "late capability containment outcome is unknown: "+err.Error()); recordErr != nil {
-			return Result{}, recordErr
+		status, found, err := s.repo.GetContainmentStatus(ctx, tx, operationID)
+		if err != nil {
+			return err
 		}
-		return Result{Operation: operation}, ErrCredentialReplay
-	}
-	if err := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeSuccess, capability, "late capability contained after terminal race"); err != nil {
-		return Result{}, err
-	}
-	return Result{Operation: operation}, ErrCredentialReplay
+		if !found || status == domain.ContainmentResolved {
+			return nil
+		}
+		if err := s.repo.UpsertContainmentProjection(ctx, tx, operationID, domain.ContainmentResolved, &attemptID, reason); err != nil {
+			return err
+		}
+		if err := s.repo.InsertContainmentTransition(ctx, tx, operationID, status, domain.ContainmentResolved, &attemptID, reason); err != nil {
+			return err
+		}
+		return appendContainmentFactsTx(ctx, tx, operation, attemptID, domain.ContainmentResolved, reason, cmd)
+	})
 }
 
 func (s *Service) containCapability(ctx context.Context, operation domain.Operation, target domain.Status, reason string, cmd IssueCredentialCommand) (Result, error) {
@@ -1075,6 +1147,37 @@ func appendTransitionFacts(ctx context.Context, tx pgx.Tx, operation domain.Oper
 		SourceType: "DELIVERY_OPERATION", SourceID: &operation.ID,
 		Metadata: map[string]any{"fromStatus": before, "toStatus": operation.Status, "reason": reason, "credentialRef": operation.CredentialRef, "credentialHash": operation.CredentialHash}, CreatedBy: actorID,
 	}, evidence.Relation{ObjectType: "DELIVERY_OPERATION", ObjectID: operation.ID, RelationType: "TRANSITION"})
+	return err
+}
+
+func appendContainmentFactsTx(ctx context.Context, tx pgx.Tx, operation domain.Operation, attemptID uuid.UUID, status domain.ContainmentStatus, reason string, cmd IssueCredentialCommand) error {
+	eventType := "DatasetDeliveryContainmentPending"
+	action := "DELIVERY_CONTAINMENT_PENDING"
+	if status == domain.ContainmentResolved {
+		eventType = "DatasetDeliveryContainmentResolved"
+		action = "DELIVERY_CONTAINMENT_RESOLVED"
+	}
+	event, err := outbox.NewEvent("DELIVERY_OPERATION", operation.ID, eventType, map[string]any{
+		"operationId": operation.ID, "providerAttemptId": attemptID, "status": status, "reason": reason,
+	})
+	if err != nil {
+		return err
+	}
+	if err := outbox.Append(ctx, tx, event); err != nil {
+		return err
+	}
+	if err := audit.Append(ctx, tx, audit.Event{
+		WorkspaceID: &operation.WorkspaceID, ActorType: "SYSTEM", ActorID: cmd.ActorID,
+		Action: action, ObjectType: "DELIVERY_OPERATION", ObjectID: operation.ID,
+		AfterState: map[string]any{"containmentStatus": status, "providerAttemptId": attemptID, "reason": reason}, TraceID: cmd.TraceID,
+	}); err != nil {
+		return err
+	}
+	_, err = evidence.Append(ctx, tx, evidence.Record{
+		WorkspaceID: operation.WorkspaceID, EvidenceType: "DELIVERY_CONTAINMENT", Title: "Delivery containment state",
+		SourceType: "DELIVERY_OPERATION", SourceID: &operation.ID,
+		Metadata: map[string]any{"containmentStatus": status, "providerAttemptId": attemptID, "reason": reason}, CreatedBy: cmd.ActorID,
+	}, evidence.Relation{ObjectType: "DELIVERY_OPERATION", ObjectID: operation.ID, RelationType: "CONTAINMENT"})
 	return err
 }
 

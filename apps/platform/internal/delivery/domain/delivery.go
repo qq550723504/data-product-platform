@@ -19,6 +19,13 @@ const (
 	StatusFailed             Status = "FAILED"
 )
 
+type ContainmentStatus string
+
+const (
+	ContainmentPending  ContainmentStatus = "PENDING"
+	ContainmentResolved ContainmentStatus = "RESOLVED"
+)
+
 type GateStage string
 
 const (

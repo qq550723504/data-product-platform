@@ -182,6 +182,46 @@ func (r *PostgresRepository) UpdateProjection(ctx context.Context, tx pgx.Tx, op
 	return nil
 }
 
+func (r *PostgresRepository) GetContainmentStatus(ctx context.Context, tx pgx.Tx, operationID uuid.UUID) (domain.ContainmentStatus, bool, error) {
+	var status domain.ContainmentStatus
+	err := tx.QueryRow(ctx, `
+		SELECT status FROM delivery_containment WHERE delivery_operation_id=$1
+	`, operationID).Scan(&status)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", false, nil
+	}
+	if err != nil {
+		return "", false, fmt.Errorf("get delivery containment: %w", err)
+	}
+	return status, true, nil
+}
+
+func (r *PostgresRepository) UpsertContainmentProjection(ctx context.Context, tx pgx.Tx, operationID uuid.UUID, status domain.ContainmentStatus, attemptID *uuid.UUID, reason string) error {
+	_, err := tx.Exec(ctx, `
+		INSERT INTO delivery_containment(delivery_operation_id, status, last_provider_attempt_id, reason, created_at, updated_at)
+		VALUES ($1,$2,$3,$4,now(),now())
+		ON CONFLICT (delivery_operation_id) DO UPDATE SET
+			status=EXCLUDED.status, last_provider_attempt_id=EXCLUDED.last_provider_attempt_id,
+			reason=EXCLUDED.reason, updated_at=EXCLUDED.updated_at
+	`, operationID, status, attemptID, nullable(reason))
+	if err != nil {
+		return fmt.Errorf("upsert delivery containment: %w", err)
+	}
+	return nil
+}
+
+func (r *PostgresRepository) InsertContainmentTransition(ctx context.Context, tx pgx.Tx, operationID uuid.UUID, from, to domain.ContainmentStatus, attemptID *uuid.UUID, reason string) error {
+	_, err := tx.Exec(ctx, `
+		INSERT INTO delivery_containment_transition(
+			id, delivery_operation_id, from_status, to_status, provider_attempt_id, reason
+		) VALUES ($1,$2,$3,$4,$5,$6)
+	`, uuid.New(), operationID, nullable(string(from)), to, attemptID, nullable(reason))
+	if err != nil {
+		return fmt.Errorf("insert delivery containment transition: %w", err)
+	}
+	return nil
+}
+
 func (r *PostgresRepository) InsertProviderAttempt(ctx context.Context, tx pgx.Tx, operation domain.Operation, invocationKey string, kind domain.InvocationKind) (uuid.UUID, error) {
 	id := uuid.New()
 	_, err := tx.Exec(ctx, `

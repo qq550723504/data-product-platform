@@ -25,6 +25,7 @@ var eventVocabulary = []string{
 	"DatasetCredentialReplayDecision",
 	"DatasetDeliveryBlocked",
 	"DatasetDeliveryContainmentPending",
+	"DatasetDeliveryContainmentResolved",
 	"DatasetDeliveryFailed",
 	"DatasetDeliveryGateEvaluated",
 	"DatasetDeliveryIssued",
