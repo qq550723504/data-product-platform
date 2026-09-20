@@ -90,7 +90,9 @@ provider 成功但 terminal DB commit 失败时，恢复流程必须使用同一
 
 ### DataProduct / ProductRelease
 
-DataProduct 是稳定产品身份；ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定；进入 PUBLISHED 后，当前数据库 history guard 阻止任何 UPDATE，published bindings 与历史行整体冻结。SUSPENDED/WITHDRAWN 虽仍存在于 schema 枚举，但当前不是从 PUBLISHED 可达的 live transition；未来启用需要独立 migration + Command。
+DataProduct 是稳定产品身份。当前公开 API 中 DataProduct 创建为 DRAFT，成功 PublishProductRelease 会将其更新为 PUBLISHED；DESIGNING/DEVELOPING/TESTING/READY/ACTIVE/SUSPENDED/DEPRECATED/RETIRED 虽保留在 domain/schema 枚举中，但当前没有显式 lifecycle Command，因此不视为 API 可达迁移。
+
+ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定；进入 PUBLISHED 后，当前数据库 history guard 阻止任何 UPDATE，published bindings 与历史行整体冻结。SUSPENDED/WITHDRAWN 虽仍存在于 schema 枚举，但当前不是从 PUBLISHED 可达的 live transition；未来启用需要独立 migration + Command。
 
 Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 由持久化 DeliveryOperation 表达，并必须通过 CurrentDeliveryGate：校验 DatasetVersion 当前可用性、当前有效的 CERTIFIED DatasetCertification，以及当前 consumer / purpose / action 的 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
 
