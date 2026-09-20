@@ -119,19 +119,28 @@ DRAFT
 
 ## 8. ProductRelease
 
+当前 live 可达状态机：
+
 ~~~text
 DRAFT
 → VALIDATING
 ├→ FAILED
 └→ READY
    → PUBLISHED
-      ├→ SUSPENDED
-      └→ WITHDRAWN
 ~~~
+
+数据库 schema 仍枚举 `SUSPENDED` / `WITHDRAWN`，但当前 `guard_product_release_history` 会拒绝 OLD.status=PUBLISHED 的任何 UPDATE，且当前运行时没有 suspend/withdraw Release Command。因此本 docs-only 基线**不宣称** `PUBLISHED → SUSPENDED/WITHDRAWN` 已可用。
+
+未来若要启用这两个状态，必须由独立实现同时提供：
+
+- 显式 Suspend/Withdraw Command；
+- migration 调整数据库 guard，仅允许目标 lifecycle status 变化；
+- 继续冻结 DatasetVersion、Rights、Quality、Compliance、Contract、EvidenceSnapshot 等 published bindings；
+- Domain/Audit/Outbox/幂等/并发测试。
 
 FAILED 是当前运行时和数据库仍支持的有效 ProductRelease 状态，不在本 docs-only 基线中废弃。
 
-Published Release 不允许替换 DatasetVersion、Rights、Quality、Compliance、Contract 或 EvidenceSnapshot。
+Published Release 当前整行受历史 guard 保护，不允许普通 UPDATE。
 
 ## 9. Execution
 
