@@ -124,6 +124,10 @@ DataResource
 - Current rights selection 按 `as_of` 排除已生效 disposition，并校验每条 declaration 自身 validity window 与 resource/consumer/purpose/action/scope；
 - `BindAuthorizationProvenance`（或等价显式 Command），禁止 ad hoc CRUD 创建安全关键 binding；
 - Authorization.grantor_ref 与支持它的 RightsDeclaration / 可验证 delegation chain 的强类型关系；
+- AuthorizationProvenanceBinding 创建后不可 UPDATE/DELETE；
+- append-only `AuthorizationProvenanceBindingDisposition`，至少支持 `INVALIDATED` / `SUPERSEDED` + `effective_at` + reason + Evidence + actor + optional superseded_by_binding_id；
+- 显式 `InvalidateAuthorizationProvenanceBinding` / `SupersedeAuthorizationProvenanceBinding` Command；
+- Current binding selection 按 `as_of` 排除已生效 binding disposition；replacement binding 必须独立通过 grantor/resource/actions/scope/declaration-current-validity 校验，不能自动继承有效性；
 - RightsSnapshot 冻结实际使用的 declaration + AuthorizationProvenanceBinding + Authorization IDs，保证历史解释不随 current facts 变化；
 - unrelated grantor 反例：资源/action 相同但无有效 provenance binding 时 CurrentEntitlementGate 必须 BLOCKED；
 - disposed/expired declaration 反例：即使 Authorization 仍 ACTIVE，CurrentEntitlementGate 仍必须 BLOCKED；
@@ -197,8 +201,11 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - credential TTL 受 validity / future-effective RightsDisposition / CertificationDisposition 边界约束；
 - `DatasetDeliveryIssued` / `DatasetDeliveryBlocked` / `DatasetDeliveryFailed`（或实现固定的等价事件）覆盖三个终态结果；
 - DeliveryOperation 的**数据库 terminal fact** + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；外部 credential provider 调用不属于 PostgreSQL transaction；
-- 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key，再调用 provider；
-- provider 必须支持 idempotency/read-after-write，或支持 revoke/compensation；否则只能使用平台 redemption indirection，不得直接暴露不可恢复 bearer credential；
+- 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key；
+- **每一次 initial / retry / reconciliation 真正调用 provider 前，都重新执行完整 CurrentDeliveryGate 并重新计算 credential expiry cap**；PREPARED/ISSUANCE_PENDING 中旧 gate snapshot 只用于审计；
+- 如果 re-gate 已 BLOCKED，不得调用 provider，operation 安全终结为 BLOCKED；
+- direct bearer provider 必须支持基于同一 provider_request_key replay/read-after-write 恢复同一 credential（或等价同一访问能力）；仅支持 revoke/compensation 但不能恢复原 bearer secret 不足以支持 direct bearer；
+- 无法恢复同一 credential 的 provider 必须使用平台 redemption indirection，或明确 unsupported；
 - provider 成功但 terminal DB commit 前 crash 时，retry/reconciliation 必须复用同一 provider_request_key，不得签发第二份独立 credential；
 - ISSUANCE_PENDING 必须有 reconciliation path；
 - 每个 delivery event_type 显式进入 routing table，声明 required handlers 或 retention-only；
