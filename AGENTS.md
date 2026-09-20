@@ -217,6 +217,8 @@ DeliveryOperation 每个终态都必须产生明确 Domain Event：Issued / Bloc
 
 若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界，以及签发时已存在且未来生效的 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 最早 effective_at。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 CurrentDeliveryGate；不可回调的 bearer/presigned credential 必须使用 expiry cap + 明确最大 TTL。
 
+任何 provider 首次返回或 reconciliation 恢复出的 credential，在进入 ISSUED 前必须验证实际 provider expiry/access bound <= 当前 fresh cap。命中旧 provider_request_key 不能绕过这条检查；超过 fresh cap 时必须 shorten+verify 或 revoke/contain，无法安全满足 cap 时不得 ISSUED。
+
 ## 11. Release Readiness
 
 任何 Product Release 发布必须经过统一 ReleaseReadiness 判断。
