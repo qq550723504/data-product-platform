@@ -295,6 +295,22 @@ CurrentDeliveryGate
 
 客户端不能通过先调用 eligibility query 再跳过 gate。query 结果不得作为后续 delivery 的授权凭证。
 
+对于外部 credential provider / 对象存储签名服务，delivery Command 必须使用 crash-safe issuance protocol：
+
+~~~text
+DeliveryOperation PREPARED
+      ↓ durable DB commit
+ISSUANCE_PENDING + stable provider_request_key
+      ↓ external idempotent issuance
+      ├→ ISSUED
+      └→ FAILED
+~~~
+
+- 外部 provider 调用不属于 PostgreSQL transaction；
+- terminal DeliveryOperation + Audit/Evidence + Outbox/CostEvent（如有）在后续 DB transaction 内一致提交；
+- provider 成功但 terminal commit 失败时，retry/reconciliation 使用同一 provider_request_key；
+- provider 若不支持 idempotency/read-after-write 或 revoke/compensation，则第一阶段不得直接暴露其 bearer credential，只能通过 platform redemption indirection 或标记该 mode unsupported。
+
 ### Contract（当前 live API）
 
 ~~~text
@@ -347,7 +363,7 @@ Disposition Command 与对应业务事实、AuditEvent、Evidence、Outbox event
 - CurrentDeliveryGate fail closed、没有签发任何可用访问能力 → `DatasetDeliveryBlocked`；
 - gate 通过但实际 delivery/issuance 因系统或外部错误失败 → `DatasetDeliveryFailed`。
 
-DeliveryOperation result + Audit/Evidence + CostEvent（如有）+ Outbox 必须保持一致的事务/幂等语义；事件 payload 不得包含可用 token/credential secret。
+DeliveryOperation **terminal database fact** + Audit/Evidence + CostEvent（如有）+ Outbox 必须在同一数据库事务内保持一致，并具备幂等语义；这里不包含外部 provider side effect。外部 issuance 依赖 stable provider_request_key + retry/reconciliation/compensation 协议。事件 payload 不得包含可用 token/credential secret。
 
 每个新增 event_type 都必须显式加入统一 routing 表，明确 required handlers 集合或 retention-only 义务；不得因为“暂时没有异步处理器”而省略 routing declaration。若某个 Issue 引入异步 impact/projection 副作用，则对应 handler 必须成为该事件的 required obligation；同步 CurrentDeliveryGate 仍是交付安全的最终业务门禁。
 
