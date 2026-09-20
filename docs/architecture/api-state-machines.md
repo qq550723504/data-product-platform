@@ -228,6 +228,8 @@ RejectRightsDeclaration
 InvalidateRightsDeclaration
 SupersedeRightsDeclaration
 BindAuthorizationProvenance / CreateAuthorizationProvenanceBinding
+InvalidateAuthorizationProvenanceBinding
+SupersedeAuthorizationProvenanceBinding
 QueryEffectiveRights
 QueryCurrentEntitlement
 ~~~
@@ -347,6 +349,8 @@ Pilot 第一阶段事件词汇至少包括：
 - RightsDeclarationInvalidated
 - RightsDeclarationSuperseded
 - AuthorizationProvenanceBound
+- AuthorizationProvenanceBindingInvalidated
+- AuthorizationProvenanceBindingSuperseded
 - QualityAssessmentCompleted（或继续兼容现有 QualityPassed / QualityFailed / QualityReviewRequired）
 - DatasetCertified
 - DatasetCertificationRejected
