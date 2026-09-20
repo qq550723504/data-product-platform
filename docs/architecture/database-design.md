@@ -210,7 +210,7 @@ EntityType → Entity → EntityMapping projection
 若 Authorization.grantor_ref 通过 delegation 获得授权资格，必须有强类型、可 current-check 的 delegation facts。
 
 推荐模型（或等价）：
-- `grantor_authority_delegation`：immutable edge，包含 workspace_id、delegator_ref、delegate_ref、data_resource_id、purpose/applicability、allowed/grantable actions、normalized scope_type/scope_ref、valid_from/valid_to、Evidence/actor；
+- `grantor_authority_delegation`：immutable **grant-authority edge**，包含 workspace_id、delegator_ref、delegate_ref、data_resource_id、grantable_purpose/applicability、grantable_actions、normalized grant_scope_type/grant_scope_ref、onward_grant_mode、valid_from/valid_to、Evidence/actor；delegate 自身 use permission 如需表达必须是独立字段/事实，不能与 grantable actions 共用同一语义；
 - `grantor_authority_delegation_disposition`：append-only REVOKED / INVALIDATED / SUPERSEDED + effective_at + reason/evidence；
 - `grantor_delegation_chain`：稳定 chain identity / chain_hash；
 - `grantor_delegation_chain_member`：ordered edge membership，finalized 后不可 INSERT/UPDATE/DELETE。
