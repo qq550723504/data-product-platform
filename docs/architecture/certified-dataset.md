@@ -83,7 +83,9 @@ RightsDeclaration
 
 认证需要验证 Profile 要求的 Purpose / Action 是否确实允许。
 
-如果任一必要输入限制 required action，则不得 CERTIFIED。
+#137 的 Effective Rights 必须先落成 finalized immutable `EffectiveRightsSnapshot`（或等价 aggregate），冻结 target DatasetVersion、calculation rule/hash、实际 required lineage/input membership + source RightsSnapshot/provenance、逐 action decision/reason。DatasetCertification 必须强类型引用该 snapshot identity/hash；认证时不得临时算一个不持久化的“effective rights=true”。
+
+如果任一必要输入限制 required action、输入 rights 为 UNKNOWN/missing、snapshot 不是 FINALIZED，或 frozen input-set/hash 与 target DatasetVersion 的实际 lineage 不一致，则不得 CERTIFIED。
 
 ## 6. 认证判定
 
