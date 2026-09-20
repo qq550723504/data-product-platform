@@ -219,6 +219,8 @@ CurrentDeliveryGate query 只用于展示/预检，不构成交付授权。任�
 
 Delivery Command 的 `consumer` 不得直接信任请求字段。进入 CurrentDeliveryGate 前必须从已认证 caller principal 解析其允许代表的 effective consumer/workspace；on-behalf-of 必须有服务端验证的显式 delegation，并把 principal/delegation/effective consumer 写入 Audit/Evidence。demo actor ID、任意 header/body consumer ID 都不是认证。第一阶段可以不做完整 IAM，但没有最小可信 principal→consumer 边界的 HTTP 路径不得执行真实 delivery。
 
+该 principal→consumer/workspace binding/delegation 不是一次性 precheck。任何 initial/retry/reconciliation issuance 与 terminal finalize 都必须重新验证其当前有效性；可撤销 binding/delegation/principal status 必须与 Rights/Certification/DatasetVersion 等 gate dependency 一样参与 delivery authorization fence/revision（或等价串行化机制），防止“先校验身份、后撤销 delegation、仍然签发”的 TOCTOU。
+
 Direct-data 的 terminal `ISSUED` 只证明该次交付授权已在线性化点提交，不证明客户端收到全部 bytes。若 ISSUED commit 后响应丢失/进程崩溃，同一 idempotency key 不得依据旧 gate 再次发数据；只返回稳定 non-payload replay-required 结果。需要再次取数时创建新的显式 DeliveryOperation/attempt（可关联 retry_of），重新解析 principal→consumer、重新 CurrentDeliveryGate、重新走 fence；期间任何 revocation/invalidation 必须使新 attempt fail closed。
 
 DeliveryOperation 每个终态都必须产生明确 Domain Event：Issued / Blocked / Failed（事件名由实现固定但语义不得缺失），并与 Audit/Evidence/Outbox、CostEvent（如有）保持一致幂等边界。任何事件或审计 payload 不得包含可用 credential secret。
