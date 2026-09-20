@@ -287,9 +287,16 @@ IssueDatasetAccess
 
 具体 HTTP URL 由 #135 实现 PR 固定。
 
-该 Command 在返回数据或签发下载 URL / token / credential 前，必须重新执行；并且所有 delivery mode 都必须在第一个外部可观察交付副作用前完成共享 fence 下的 terminal finalize：
+该 Command 在返回数据或签发下载 URL / token / credential 前，必须重新执行；并且所有 delivery mode 都必须在第一个外部可观察交付副作用前完成共享 fence 下的 terminal finalize。
+
+在 CurrentDeliveryGate 之前必须先建立可信调用者上下文：authenticated caller principal → effective consumer/workspace；on-behalf-of 必须有服务端验证的当前有效 delegation。请求 header/query/body/demo actor ID 不能自证 consumer。principal binding / workspace membership / delegation 也是 delivery authorization dependency，必须参与与 entitlement facts 相同强度的 fence/revision（或等价串行化机制）。
 
 ~~~text
+TrustedCallerResolution
+├── AuthenticatedPrincipal
+├── Principal→Consumer/Workspace Binding
+└── Delegation (when on-behalf-of)
+        ↓
 CurrentDeliveryGate
 ├── DatasetVersionUsability
 ├── CurrentCertificationGate
@@ -313,8 +320,8 @@ ISSUANCE_PENDING + stable provider_request_key
 ~~~
 
 - 外部 provider 调用不属于 PostgreSQL transaction；
-- **每一次 initial issuance、retry issuance、以及 reconciliation 决定继续 issuance 前，都必须重新读取当前事实，重新执行完整 CurrentDeliveryGate，并重新计算 credential expiry cap；PREPARED/ISSUANCE_PENDING 中旧 gate snapshot 仅用于审计；**
-- 所有 delivery mode 的 terminal finalize 必须获取共享 delivery authorization fence/revision，并在同一 terminal transaction 内重新 gate；provider/credential 模式还需 fresh-cap；
+- **每一次 initial issuance、retry issuance、以及 reconciliation 决定继续 issuance 前，都必须重新验证 authenticated principal 当前仍可代表 effective consumer/workspace（含 delegation/membership/binding），再重新读取当前事实、执行完整 CurrentDeliveryGate，并重新计算 credential expiry cap；PREPARED/ISSUANCE_PENDING 中旧 identity/gate snapshot 仅用于审计；**
+- 所有 delivery mode 的 terminal finalize 必须获取共享 delivery authorization fence/revision，并在同一 terminal transaction 内重新验证 principal→consumer/workspace binding/delegation + CurrentDeliveryGate；provider/credential 模式还需 fresh-cap；identity binding/delegation revoke/expiry 不得穿越 terminal finalize；
 - direct-data 模式必须先提交 ISSUED terminal fact，再允许写出 HTTP body/stream/file 的第一字节；commit 前 response body 必须为 0 bytes；
 - direct-data 不得在整个 stream 期间持有 fence/DB row lock；锁仅覆盖 terminal re-gate + commit；
 - fresh gate BLOCKED 时：
@@ -323,7 +330,7 @@ ISSUANCE_PENDING + stable provider_request_key
   - 已签发则先 revoke/compensate/contain，确认访问能力已不可用后才能 BLOCKED；
   - outcome unknown 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal DatasetDeliveryBlocked / DatasetDeliveryFailed；
   - containment 确认成功后：fresh gate 不再允许交付 → BLOCKED；fresh gate 仍 ALLOWED 但 credential/issuance contract 无法满足 → FAILED；
-- terminal DeliveryOperation + Audit/Evidence + Outbox/CostEvent（如有）在后续 DB transaction 内一致提交；
+- terminal DeliveryOperation + Audit/Evidence + Outbox 在后续 DB transaction 内一致提交；CostEvent 按实际 activity-attempt 计量：same-attempt replay 去重；如果 retry/reconciliation 确实再次发生可计费 provider/compute 外部工作，必须使用新的稳定 attempt/activity identity 追加 CostEvent（或原子聚合新增 quantity/amount），不能因复用同一 DeliveryOperation 而漏记；
 - provider 成功但 terminal commit 失败时，retry/reconciliation 使用同一 provider_request_key；
 - provider 首次返回或 reconciliation 恢复 credential 后，进入 ISSUED 前必须验证**实际 provider capability 是 requested/current-gate context 的等价或更窄集合**：expiry <= fresh cap，resource/DatasetVersion、consumer（可表达时）、action/permission、object/row/prefix scope、delivery channel 不得放宽；仅命中旧 provider_request_key 不代表 credential 仍满足当前边界；
 - recovered credential 超过 fresh cap 时，必须安全 shorten 并 read-after-write 验证，或 revoke/contain；无法确认 containment 时进入 CONTAINMENT_PENDING；containment 成功但无法满足 cap 时当前 operation 终结为 FAILED，后续如需重试必须新建显式 delivery attempt 并重新 gate；
