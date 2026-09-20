@@ -203,6 +203,9 @@ func validatePolicy(policy Policy, requireRequired bool) error {
 			if strings.TrimSpace(parameterString(rule, "metric", "metadataKey")) == "" {
 				return fmt.Errorf("rule %s metric parameter is required", rule.ID)
 			}
+			if !hasExplicitThreshold(rule) {
+				return fmt.Errorf("rule %s threshold is required", rule.ID)
+			}
 			if _, err := ruleThreshold(rule, 0); err != nil {
 				return fmt.Errorf("rule %s threshold: %w", rule.ID, err)
 			}
@@ -213,6 +216,9 @@ func validatePolicy(policy Policy, requireRequired bool) error {
 			}
 		}
 		if ruleType == RuleTypeFreshness {
+			if !hasExplicitThreshold(rule) {
+				return fmt.Errorf("rule %s threshold is required", rule.ID)
+			}
 			if _, err := ruleThreshold(rule, 0); err != nil {
 				return fmt.Errorf("rule %s threshold: %w", rule.ID, err)
 			}
@@ -269,6 +275,14 @@ func validateRatioThreshold(rule Rule, fallback float64) error {
 		return fmt.Errorf("ratio threshold must be between 0 and 1, got %v", threshold)
 	}
 	return nil
+}
+
+func hasExplicitThreshold(rule Rule) bool {
+	if rule.Threshold != nil {
+		return true
+	}
+	_, ok := rule.Parameters["threshold"]
+	return ok
 }
 
 func parameterString(rule Rule, keys ...string) string {

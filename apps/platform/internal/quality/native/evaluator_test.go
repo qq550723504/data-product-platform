@@ -118,6 +118,8 @@ func TestLoadPolicyRejectsInvalidRatioThresholdsAndAllowNull(t *testing.T) {
 		{name: "completeness threshold above one", rule: "type: completeness_ratio\n      target: amount\n      threshold: 1.1"},
 		{name: "unique threshold below zero", rule: "type: unique\n      target: amount\n      threshold: -0.1"},
 		{name: "duplicate threshold above one", rule: "type: duplicate_ratio\n      target: amount\n      threshold: 2"},
+		{name: "freshness threshold omitted", rule: "type: freshness"},
+		{name: "reference threshold omitted", rule: "type: reference_match\n      parameters:\n        metric: errorRate"},
 		{name: "malformed allowNull", rule: "type: range\n      target: amount\n      parameters:\n        min: 0\n        max: 1\n        allowNull: flase"},
 	}
 	for _, testCase := range tests {
