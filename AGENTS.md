@@ -224,6 +224,8 @@ QualityAssessment 回答“数据质量如何”；DatasetCertification 回答�
 
 V1 不强制全行业统一总分。Critical rule、Rights、Compliance、Contract 或 Traceability 任何 required 条件缺失时，Certification 必须 fail closed。
 
+Certification 使用的 finalized RightsSnapshot / EffectiveRightsSnapshot 必须冻结可比较的 rights coverage context（至少 consumer、purpose、action、normalized scope），并证明 `CertificationProfile required rights applicability ⊆ frozen rights evidence coverage`。Profile 某 rights-relevant 维度=ANY 时，窄 EXPLICIT snapshot 不能冒充 ANY；coverage 缺失/UNKNOWN/不可比较时 Certification fail closed。
+
 Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduct；但 DatasetCertification 只证明认证时点结论，不授予永久交付资格。
 
 每次 standalone delivery 必须执行 CurrentDeliveryGate：
