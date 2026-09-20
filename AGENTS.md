@@ -127,6 +127,7 @@ AuthorizationProvenanceBinding 创建后不可 UPDATE/DELETE。错误 binding �
 - InvalidateRightsDeclaration / SupersedeRightsDeclaration
 - BindAuthorizationProvenance
 - InvalidateAuthorizationProvenanceBinding / SupersedeAuthorizationProvenanceBinding
+- ComputeEffectiveRights / FinalizeEffectiveRights（或单一原子 ComputeAndFinalizeEffectiveRights）
 - InvalidateDatasetVersion
 - RunQualityAssessment
 - CertifyDatasetVersion
