@@ -89,6 +89,12 @@ Authorization 本身不证明 Grantor 为什么有权授权。
 
 第一阶段必须建立强类型 `AuthorizationProvenanceBinding`（具体表名可由 #137 实现确定），把一个 Authorization / ResourceGrant 显式绑定到支持它的 RightsDeclaration provenance，而不是分别独立挑选两组事实。
 
+绑定必须通过显式业务 Command 创建，例如：
+
+- `BindAuthorizationProvenance` / `CreateAuthorizationProvenanceBinding`
+
+该 Command 在写入 binding 前完成 grantor/resource/actions/scope/workspace/verification/validity/disposition 校验；禁止通过通用 CRUD 或直接持久化绕过这些规则。
+
 Binding 至少表达：
 
 - workspace_id
