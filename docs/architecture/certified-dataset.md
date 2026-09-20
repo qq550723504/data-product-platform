@@ -292,7 +292,7 @@ PREPARED
 8. 若 recovered/returned credential 的实际 expiry 晚于 fresh cap，或 capability scope 比当前 allowed/requested context 更宽：
    - 若 provider 能对**同一 access capability**安全缩短/收窄并可 read-after-write 验证实际 expiry <= fresh cap 且 resource/action/consumer/scope 均满足当前 allowed context，则验证成功后才允许继续 ISSUED；
    - 否则不得提交 ISSUED，必须先 revoke/contain 该 credential；
-   - containment 未确认成功时进入 CONTAINMENT_PENDING；
+   - containment 未确认成功时进入 CONTAINMENT_PENDING，并在同一 transition transaction 追加 `DatasetDeliveryContainmentPending` + Audit/Evidence/Outbox（遵循第 6 条相同幂等/无 secret 规则）；
    - containment 成功但无法在同一安全能力上满足 fresh cap 时，当前 DeliveryOperation 终结为 FAILED（例如 CREDENTIAL_EXCEEDS_FRESH_CAP）；如业务仍需交付，必须通过新的显式 delivery attempt/replacement operation 再次完整 re-gate，不得在同一幂等 operation 下静默签发第二份 credential；
    - actual expiry 无法可靠读取/验证时，对 direct bearer 等不可 redemption-time gate 的模式按不安全处理，不得 ISSUED；
 9. 只有 credential/access capability 已证明满足 fresh cap 与全部 capability boundary（含 consumer/grantee enforcement）后，才用后续 DB transaction 记录 ISSUED + provider credential reference/hash（不得保存可用 secret 正文）+ **verified actual credential expiry** + Audit/Evidence/Outbox + terminal-specific CostEvent（如有）；**每次 provider invocation 的 physical-attempt CostEvent 已按调用事实独立记录，不以 ISSUED 为前提。只有这个 terminal commit 成功后**才能把可用 credential 返回给客户端；
