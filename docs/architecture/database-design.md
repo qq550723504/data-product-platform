@@ -84,6 +84,7 @@ QualityAssessment
 RightsDeclaration
 RightsVerification
 RightsDisposition (INVALIDATED / SUPERSEDED)
+AuthorizationProvenanceBinding
 EffectiveRights / EffectiveRightsSnapshot
 
 CertificationProfile snapshot
@@ -165,6 +166,25 @@ EntityType → Entity → EntityMapping projection
 ### Authorization（已实现）
 
 表达 grantor_ref、grantee_ref、purpose、resource、actions、scope、raw_export_allowed 和 validity。
+
+### AuthorizationProvenanceBinding（#137）
+
+目标强类型关系至少表达：
+
+- workspace_id
+- authorization_id
+- data_resource_id
+- rights_declaration_id
+- grantor_ref
+- supported_actions / scope（如按 grant 粒度绑定）
+- created_at / actor
+
+约束：
+
+- grantor_ref 必须与支持声明中的可授权 party_ref 明确匹配，或显式引用可验证 delegation chain；
+- authorization/resource/declaration 必须同 workspace、同 DataResource；
+- declaration 支持的 actions/scope 必须覆盖 authorization 授出的范围；
+- 当前 entitlement 查询必须读取 binding，不允许独立选择 declaration + authorization。
 
 ### RightsDeclaration（#137）
 
