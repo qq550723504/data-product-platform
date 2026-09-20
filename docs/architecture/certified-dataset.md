@@ -182,7 +182,7 @@ CurrentCertificationGate 要求本次 delivery 明确绑定一条 DatasetCertifi
 CurrentEntitlementGate 按“现在”重新检查至少：
 
 - 每个绑定 RightsDeclaration / verification 是否 VERIFIED、其自身 validity window 覆盖 as_of、resource/consumer/purpose/action/scope 与本次 delivery context 匹配，且未被有效 INVALIDATED / SUPERSEDED；
-- 每个 Authorization 是否存在有效 AuthorizationProvenanceBinding 支撑 grantor_ref，并且 Authorization 自身 ACTIVE、scope 匹配且未过期/撤销；
+- 每个 Authorization 是否存在当前有效 AuthorizationProvenanceBinding 支撑 grantor_ref，并且该 binding 在 as_of 时点未被 AuthorizationProvenanceBindingDisposition INVALIDATED / SUPERSEDED；Authorization 自身还必须 ACTIVE、scope 匹配且未过期/撤销；
 - consumer / purpose 是否匹配；
 - 本次 delivery action（例如 SHARE / RAW_EXPORT）是否当前仍允许；
 - 衍生数据 Effective Rights 是否仍允许该动作。
@@ -217,11 +217,12 @@ expires_at
      earliest applicable RightsDeclaration effective_to,
      earliest applicable Authorization valid_to,
      earliest already-scheduled RightsDisposition effective_at,
+     earliest already-scheduled AuthorizationProvenanceBindingDisposition effective_at,
      earliest already-scheduled CertificationDisposition effective_at
    )
 ~~~
 
-任何参与本次 CurrentDeliveryGate 的已知有限边界都必须参与上限计算。除了 declaration / authorization validity，还包括签发时已经存在、将在未来生效的 RightsDisposition / CertificationDisposition。不能让 URL/token 在 provenance 或 certification 已按计划退出 current set 后继续有效；
+任何参与本次 CurrentDeliveryGate 的已知有限边界都必须参与上限计算。除了 declaration / authorization validity，还包括签发时已经存在、将在未来生效的 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition。不能让 URL/token 在 provenance 或 certification 已按计划退出 current set 后继续有效；
 8. 如果 delivery mode 支持 redemption-time server check，则每次 redemption 继续执行 CurrentDeliveryGate；如果是无法在 redemption 时回调平台的 bearer/presigned credential，则必须执行上述 expiry cap，并由 #135 明确该 delivery mode 的最大 TTL；
 9. 对签发后才新增的紧急 revocation，只有 redemption-time gate / revocable credential 才能即时阻断；第一阶段若某 delivery mode 不具备此能力，必须在产品/API 中明确该限制，并使用短 TTL，而不能声称签发后的 bearer credential 可即时撤销。
 
