@@ -61,11 +61,15 @@ V1 至少区分：
 - basis_type
 - basis_ref
 - validity
-- allowed actions
-- restrictions
+- allowed_actions：该 party 自身被允许执行的使用动作
+- grant_authority_mode：NONE / EXPLICIT（或固定等价）；**allowed 不等于 grantable**
+- grantable_actions：仅在 grant_authority_mode=EXPLICIT 时生效，表示该 party 有权进一步授予第三方的动作集合
+- grantable purposes：强类型 purpose_code / normalized relation；不得默认等于 permitted purposes
+- grantable scope_type / grantable scope_ref（或等价 normalized relation）；不得默认等于 use scope
+- restrictions / transfer / sublicensing semantics（机器可判断；需要 onward delegation 时显式表达）
 - consumer applicability（ANY / EXPLICIT；EXPLICIT 时强类型 consumer_ref / consumer_type）
 - purpose / permitted purposes（强类型 purpose_code 或规范化 declaration-purpose relation）
-- scope_type / scope_ref（用于表达资源内 object/row/prefix/policy 范围；复杂扩展参数可以 JSONB，但 gate 比较所需 identity 必须强类型可查询）
+- use scope_type / use scope_ref（用于表达资源内 object/row/prefix/policy 范围；复杂扩展参数可以 JSONB，但 gate 比较所需 identity 必须强类型可查询）
 - Evidence
 - verification result
 
@@ -136,9 +140,10 @@ Binding 至少表达：
    - delegation edge / chain 的撤销或纠正使用 append-only disposition（至少 REVOKED / INVALIDATED / SUPERSEDED + effective_at），不能覆盖历史；
    - chain identity + ordered member edge IDs/hash 必须可查询/可冻结；
 2. 声明覆盖同一 DataResource；
-3. 声明的 allowed/grantable actions 与 scope 足以支持该 Authorization 授出的 actions/scope；
-4. 声明自身 VERIFIED、validity、disposition 条件满足；
-5. 跨 workspace 引用拒绝。
+3. **Authorization 的授予必须由 grant authority 支撑，不能只看 allowed/use permission。** declaration.grant_authority_mode 必须允许 grant，且 grantable_actions、grantable purposes、grantable scope 必须逐项覆盖 Authorization 授出的 action/purpose/scope；declaration 只有 allowed USE/PROCESS 而 grantable_actions 为空时，不能作为任何对第三方 Authorization 的 grant source；
+4. 若通过 delegation chain 传递 grant authority，每一 edge 必须显式表达其**可继续授予的 grantable actions/purpose/scope**；只有 use permission、但没有 onward grant authority 的 edge 会在该处终止授权链；
+5. 声明自身 VERIFIED、validity、disposition 条件满足；
+6. 跨 workspace 引用拒绝。
 
 V1 不推断“同一个资源上任何 VERIFIED 声明都能支持任何 grantor”。如果无法证明 grantor 与 provenance 的关系，则 Authorization 不能进入 CurrentEntitlementGate。
 
@@ -168,7 +173,8 @@ CurrentEntitlementGate 选择 binding 时必须按 as_of 排除已生效的 INVA
 - chain 的所有 required edges 在 as_of 时都存在且 validity 覆盖 as_of；
 - 没有已生效 REVOKED / INVALIDATED / SUPERSEDED disposition；
 - 每一跳的 delegator→delegate 连续，最终 delegate=Authorization.grantor_ref；
-- resource / purpose / action / normalized scope 逐跳不得比上游放宽；
+- **每一跳都具有满足下游 Authorization 的 grantable actions/purpose/scope / onward-grant authority；只有“允许自己使用”的动作不能被解释成“允许继续授权”；**
+- resource / grantable purpose / grantable action / normalized grant scope 逐跳不得比上游放宽；
 - 任一 edge 过期、撤销、缺失或无法验证时，binding 即使自身未被 disposition，也不得进入 CurrentEntitlementGate。
 
 RightsSnapshot 冻结 binding + grantor delegation chain identity/member edge IDs 用于历史解释，但 frozen snapshot **不替代 delivery-time current chain validation**。
@@ -213,6 +219,18 @@ snapshot header、input membership、action decision membership 在 FINALIZED �
 计算路径必须从 target DatasetVersion 的**实际 required lineage/input membership**出发，不能由调用方传一个缩水后的输入列表。每个必要输入缺少可用 current/frozen rights fact、scope/context 无法比较或 lineage 不完整时，计算 fail closed。
 
 V1 action 合成规则：对每一个 required input 取允许集合交集；只有所有必要输入都明确允许某 action，output 才 ALLOWED。任一输入 deny/restrict/unknown/missing → output NOT_ALLOWED。限制项采用最严格/并集合成（按实现固定的 restriction semantics），不得因其它输入更宽而消除限制。
+
+### Delivery-time Current Effective Rights
+
+`EffectiveRightsSnapshot` 是认证/历史解释事实，**不是永久 delivery authorization**。对衍生 DatasetVersion 的每次 CurrentDeliveryGate，必须基于 target 的 immutable required lineage/input membership，重新计算 `CurrentEffectiveRightsGate`（名称可由实现固定）：
+
+1. 枚举 target DatasetVersion 的**全部 required inputs**；不得只检查顶层 output 的一条 RightsSnapshot，也不得由客户端缩减 input list；
+2. 对每个 required input，在当前 `as_of` 下重新选择/验证 RightsDeclaration、AuthorizationProvenanceBinding、Authorization、grantor delegation chain 及其 dispositions/validity/context；
+3. 对 requested action/purpose/consumer/scope 执行与 Effective Rights 相同的 fail-closed 交集；任一 required input 当前 BLOCKED / UNKNOWN / missing，则 derived output 当前 action BLOCKED；
+4. 历史 EffectiveRightsSnapshot 仍用于证明“认证时为什么允许”，但 delivery-time current result 可以因为任一 source input 后续 revocation/disposition 变为 BLOCKED；
+5. 所有 required-input current-rights dependencies 都必须纳入 delivery authorization fence/revision 与 credential expiry cap，防止 source revocation 穿越 terminal finalize。
+
+因此，“认证后 input B 的 declaration 被 INVALIDATED”不能因为历史 snapshot.SHARE=ALLOWED 而继续交付衍生 output SHARE。
 
 V1 规则：fail closed。
 
