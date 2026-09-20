@@ -294,7 +294,9 @@ Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证�
 
 外部 credential issuance 必须 crash-safe：先持久化 DeliveryOperation + stable provider_request_key；每次 initial/retry/reconciliation 真正调用 provider 前重新执行 CurrentDeliveryGate 并重新计算 expiry cap，再决定是否允许外部 side effect。
 
-同时必须存在 issuance/entitlement 线性化机制：provider 返回或 reconciliation 恢复 access capability 后，在 terminal ISSUED DB transaction 内获取与 Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，重新执行 CurrentDeliveryGate + fresh cap，并验证 dependency revision 未被并发变更穿越。该 terminal commit 是 issuance linearization point。
+同时必须存在 delivery/entitlement 线性化机制：所有 delivery mode 的 terminal ISSUED DB transaction 都必须获取与 Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，重新执行 CurrentDeliveryGate，并验证 dependency revision 未被并发变更穿越；provider/credential 模式同时重算 fresh cap。该 terminal commit 是 delivery linearization point。
+
+direct-data delivery 也不得例外：在 terminal ISSUED commit 成功之前，不得向 HTTP response/body/stream 写出任何数据字节；commit 成功后才开始传输。数据库 fence 只覆盖 terminal re-gate + commit，不在整个 stream 生命周期持续持锁。
 
 如果 fresh gate 变为 BLOCKED，但该 DeliveryOperation 此前已经进入可能调用过 provider 的 ISSUANCE_PENDING/retry/reconciliation 窗口，**不能直接记录 BLOCKED**。必须先使用同一 provider_request_key reconciliation 既有 provider outcome：
 - 明确未签发 → 可 BLOCKED；
