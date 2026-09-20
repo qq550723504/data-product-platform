@@ -265,7 +265,54 @@ ProductRelease 精确引用发布时所需 DatasetVersion、Contract、Rights、
 
 ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status。
 
-## 13. Evidence / Audit
+## 13. CostEvent / CostAllocation
+
+当前 `cost_event` 已落库，现有强类型关联只有可选 `execution_id`。这足以表达 Execution 成本，但不足以表达 QualityAssessment、Rights verification/disposition、Certification、Delivery 等没有 Execution 的活动。
+
+Certified Dataset Pilot 目标模型增加：
+
+### CostEvent activity identity
+
+`cost_event` 需要稳定的 activity/idempotency identity，至少逻辑表达：
+
+- workspace_id
+- activity_id（或等价稳定 operation identity）
+- component_key / cost_type
+- quantity / unit
+- amount / currency
+- pricing_mode
+- occurred_at
+
+同一业务活动的幂等重放必须复用同一 activity identity。建议数据库唯一约束至少覆盖：
+
+~~~text
+(workspace_id, activity_id, component_key)
+~~~
+
+一个业务活动可以有多个不同 component_key（例如 ENGINE_INVOCATION、HUMAN_REVIEW、DELIVERY），但同一 component 不得因重试重复记账。
+
+### CostAllocation
+
+非 Execution 成本不得仅把 subject IDs 塞入 JSONB metadata。
+
+使用强类型 `CostAllocation`（具体表名可由实现确定）把 CostEvent 关联到实际业务主体。V1 至少支持：
+
+- cost_event_id
+- execution_id（兼容现有）
+- quality_assessment_id
+- rights_declaration_id
+- rights_verification_id
+- rights_disposition_id
+- authorization_provenance_binding_id
+- dataset_certification_id
+- certification_disposition_id
+- delivery_operation_id（如 #135 落库 delivery operation）
+
+实现可用一张带 nullable typed FK 的 allocation 表并用 CHECK 保证每条 allocation 仅选择一个 subject，或用等价强类型表族；不得退化为 `subject_type + subject_id` 无 FK 多态字符串，也不得只依赖 metadata。
+
+现有 `cost_event.execution_id` 可继续用于兼容查询；新增非 Execution 成本必须通过 typed allocation 查询到业务主体。
+
+## 14. Evidence / Audit
 
 Evidence 保存可验证证据元数据和可选 artifact/hash。
 
@@ -273,7 +320,7 @@ EvidenceRelation 关联业务对象；EvidenceSnapshot 在需要冻结时保存 
 
 AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 
-## 14. Mutable vs Immutable
+## 15. Mutable vs Immutable
 
 | 对象 | 语义 |
 |---|---|
@@ -289,10 +336,11 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | verified RightsDeclaration / verification / disposition facts | immutable |
 | CertificationProfile snapshot | immutable |
 | DatasetCertification / CertificationDisposition | immutable |
+| CostEvent / CostAllocation | immutable accounting/history facts |
 | ProductVersion | immutable history |
 | ProductRelease | stateful lifecycle row before publication; explicit validation/publish transitions may update status and frozen references; after publication, release bindings are frozen and terminal history is retained |
 
-## 15. JSONB 使用策略
+## 16. JSONB 使用策略
 
 JSONB 可用于：
 
@@ -305,12 +353,12 @@ JSONB 可用于：
 
 JSONB 不用于 ID/FK、状态、版本号、核心 party/resource/certification 关系或需要约束的字段。
 
-## 16. 删除策略
+## 17. 删除策略
 
 允许软删除的可变主对象可以包括 UseCase、DataResource、Dataset、DataProduct、Entity。
 
 Execution 行在生命周期内会通过显式状态迁移更新 status、engine/output、metrics、errors 与 timestamps，因此不能把整行视为内容不可变；但 Execution 历史必须保留，终态记录不得删除。真正不可变的是其已冻结的 input/dependency/mapping-usage 等生产事实。
 
-ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，DatasetVersion、Rights、Quality、Compliance、Contract、EvidenceSnapshot 等发布绑定必须冻结，后续仅允许受状态机约束的生命周期动作（如 SUSPENDED/WITHDRAWN），且历史记录不得删除。
+ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，当前 `guard_product_release_history` 拒绝所有 UPDATE，整行作为发布历史冻结。SUSPENDED/WITHDRAWN 虽是 schema 枚举值，但当前不构成可达 live transition；未来启用必须先调整 guard 并新增显式 Command。
 
 不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent。
