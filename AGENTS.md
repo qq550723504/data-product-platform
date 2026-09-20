@@ -211,7 +211,7 @@ DeliveryOperation 每个终态都必须产生明确 Domain Event：Issued / Bloc
 
 外部 credential issuance 不能假装与 PostgreSQL 同事务。必须先持久化 DeliveryOperation + stable provider_request_key，再执行外部副作用；**每次初始/retry/reconciliation issuance 前都必须重新执行 CurrentDeliveryGate 并重新计算 expiry cap**，旧 gate snapshot 仅供审计。direct bearer mode 还必须支持按同一 provider_request_key 恢复/重放同一 credential（或等价同一访问能力）；只有 revoke/compensation 但不能恢复原 bearer secret 时，必须走 platform redemption indirection，不能把同一幂等 retry 静默签发成第二份 credential。ISSUANCE_PENDING 必须可 reconciliation。
 
-若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界，以及签发时已存在且未来生效的 RightsDisposition / CertificationDisposition 最早 effective_at。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 CurrentDeliveryGate；不可回调的 bearer/presigned credential 必须使用 expiry cap + 明确最大 TTL。
+若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界，以及签发时已存在且未来生效的 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 最早 effective_at。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 CurrentDeliveryGate；不可回调的 bearer/presigned credential 必须使用 expiry cap + 明确最大 TTL。
 
 ## 11. Release Readiness
 
