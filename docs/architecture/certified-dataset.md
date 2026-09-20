@@ -250,13 +250,16 @@ PREPARED
 2. gate BLOCKED 时直接在同一 DB transaction 记录 BLOCKED + Audit/Evidence/Outbox，不调用 provider；
 3. gate ALLOWED 时将 operation 持久化为 ISSUANCE_PENDING；外部调用必须使用稳定幂等键，默认以 DeliveryOperation ID（或其稳定派生值）作为 provider_request_key；
 4. **每一次初始 issuance、retry issuance 或 reconciliation 后决定继续 issuance 之前，都必须重新读取当前事实并重新执行完整 CurrentDeliveryGate，同时重新计算 credential expiry cap。** PREPARED/ISSUANCE_PENDING 中保存的旧 gate snapshot 只用于审计，不可作为后续 issuance 授权；
-5. **delivery issuance 与 entitlement-changing commands 必须有共享线性化机制。** 第一阶段采用（或实现等价强度的）delivery authorization fence/revision：
+5. **所有 delivery mode 与 entitlement-changing commands 必须有共享线性化机制。** 第一阶段采用（或实现等价强度的）delivery authorization fence/revision。这里不仅包括 URL/token/credential，也包括直接返回数据 bytes 的 direct-data delivery：
    - CurrentDeliveryGate 依赖的 DatasetVersion usability、selected Certification、RightsDeclaration / RightsDisposition、AuthorizationProvenanceBinding / BindingDisposition、Authorization 等关键 subject 都必须落到稳定 fence/revision identity；
    - Invalidate/Supersede RightsDeclaration、Invalidate/Supersede AuthorizationProvenanceBinding、Revoke/Supersede DatasetCertification、DatasetVersion invalidate，以及其它会改变 CurrentDeliveryGate 的 Command，在提交业务变更前必须获取/推进对应 fence；
-   - provider 调用前记录本次 gate dependency revision vector / fence token；
-   - **provider 返回或 reconciliation 恢复出 access capability 后，在写 ISSUED 的 terminal DB transaction 内重新获取相同 fence（固定顺序锁定），重新执行 CurrentDeliveryGate、重新计算 fresh cap，并验证 revision/token 未被并发变更穿越；该 terminal commit 是 delivery issuance 的线性化点。**
-   - 若任何影响 gate 的变更先完成，finalize 必须看到新 revision/current facts，不能 ISSUED，转 containment/block/fail 流程；
-   - 若 finalize 先完成，则并发 disposition/invalidation 在线性顺序上发生在 issuance 之后；其 Command 必须按 delivery mode 的撤销语义处理受影响的已签发 capability（revocable/redemption-time mode 立即 contain；不可回调 bearer 只能使用已声明的短 TTL 限制，且不能声称支持即时撤销）。
+   - 外部 provider 模式在 provider 调用前记录本次 gate dependency revision vector / fence token；
+   - **任何 delivery mode 在产生第一个外部可观察交付副作用前，都必须在 terminal DB transaction 内重新获取相同 fence（固定顺序锁定），重新执行 CurrentDeliveryGate，并验证 dependency revision/token 未被并发变更穿越。** credential/provider 模式还必须重新计算 fresh cap；
+   - provider 模式：provider 返回或 reconciliation 恢复 capability 后执行上述 fenced finalize；只有 finalize/ISSUED commit 成功后才能把 credential 返回客户端；
+   - direct-data 模式：在发送 HTTP body、stream chunk、文件字节或任何数据 payload 的**第一字节之前**执行上述 fenced finalize，并先提交 ISSUED terminal fact + Audit/Evidence/Outbox/CostEvent（如有）；commit 成功后才允许开始写 response body；
+   - direct-data 不得为了整个大文件/stream 生命周期持有数据库 fence/row lock；锁只覆盖 re-gate + terminal commit。commit 后的 response 是已经在线性化点获准的一次交付，后续 disposition 在线性顺序上发生在该交付之后；
+   - 若任何影响 gate 的变更先完成，finalize 必须看到新 revision/current facts，不能 ISSUED；provider capability 已产生时转 containment/block/fail，direct-data 则不得发送任何 byte；
+   - 若 finalize 先完成，则并发 disposition/invalidation 在线性顺序上发生在 issuance 之后；provider credential 按 delivery mode 的撤销语义处理，direct-data 已被授权的这一响应不能被描述为“在 disposition 之前未发生”。
 5. 如果 fresh gate 已 BLOCKED：
    - 若 operation 还未发生任何 provider 调用，可直接 BLOCKED；
    - 若 operation 曾进入可能已调用 provider 的 ISSUANCE_PENDING/retry/reconciliation 窗口，**必须先用同一 provider_request_key reconciliation 既有 provider outcome**，不能直接记 BLOCKED；
@@ -282,7 +285,8 @@ PREPARED
 13. 如果 provider 不能恢复同一 credential，则第一阶段必须使用平台控制的 redemption indirection；也可以在能够证明旧 credential 未交付且已成功 revoke 的协议下执行显式 replacement operation，但不得把同一 DeliveryOperation 的幂等 retry 静默变成第二份 credential；
 14. 如果外部 provider **既不支持 idempotency/read-after-write，也不支持 revoke/compensation**，第一阶段不得直接暴露其 bearer credential；必须改用平台控制的 redemption indirection，或将该 delivery mode 判为 unsupported；
 15. 本地生成 presigned URL 时，也必须先持久化 PREPARED/ISSUANCE_PENDING，并在每次实际生成前重新执行 CurrentDeliveryGate/expiry cap；terminal DB commit 成功前不得把 URL 返回客户端或写入日志/事件；
-16. retries / reconciliation 不得重复 CostEvent、AuditEvent 或 terminal Domain Event。
+16. direct-data delivery 不得绕过上述 terminal fence：ISSUED commit 成功前 response body 必须保持 0 bytes；若 commit 失败或 gate 被并发变更阻断，则该请求不得泄露任何数据字节；
+17. retries / reconciliation 不得重复 CostEvent、AuditEvent 或 terminal Domain Event。
 
 测试必须覆盖故障注入：
 - provider 成功后、terminal DB commit 前 crash；
