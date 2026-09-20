@@ -102,7 +102,7 @@ provider 成功但 terminal DB commit 失败时，恢复流程必须使用同一
 
 DataProduct 是稳定产品身份。当前公开 API 中 DataProduct 创建为 DRAFT，成功 PublishProductRelease 会将其更新为 PUBLISHED；DESIGNING/DEVELOPING/TESTING/READY/ACTIVE/SUSPENDED/DEPRECATED/RETIRED 虽保留在 domain/schema 枚举中，但当前没有显式 lifecycle Command，因此不视为 API 可达迁移。
 
-ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定；进入 PUBLISHED 后，当前数据库 history guard 阻止任何 UPDATE，published bindings 与历史行整体冻结。SUSPENDED/WITHDRAWN 虽仍存在于 schema 枚举，但当前不是从 PUBLISHED 可达的 live transition；未来启用需要独立 migration + Command。
+ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定。进入 PUBLISHED 后，领域 invariant 要求 release row 与 dataset membership 都不可被回溯改写；**但当前数据库只由 `guard_product_release_history` 保护 `product_release` 主行，`product_release_dataset` 仍缺 INSERT/UPDATE/DELETE membership guard（#99 open）**。因此当前不能把“published bindings 已由数据库整体冻结”描述为已实现事实；这是已有 Core enforcement gap。SUSPENDED/WITHDRAWN 虽仍存在于 schema 枚举，但当前不是从 PUBLISHED 可达的 live transition；未来启用需要独立 migration + Command，并同时保持/补齐 membership immutability。
 
 Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 由持久化 DeliveryOperation 表达。进入 CurrentDeliveryGate 前先建立 trusted caller principal → effective consumer/workspace（on-behalf-of 必须有当前有效 delegation），随后再校验 DatasetVersion 当前可用性、当前有效的 CERTIFIED DatasetCertification，以及 effective consumer / purpose / action 的 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
 
@@ -346,7 +346,7 @@ Rights verification、QualityAssessment、DatasetCertification 都应将 Evidenc
 - execution dependency facts
 - ContractVersion
 - ProductVersion
-- ProductRelease published bindings / published release history
+- ProductRelease published bindings / published release history（目标 immutable invariant；`product_release_dataset` DB membership guard 仍由 #99 跟踪）
 - EvidenceSnapshot
 - RightsSnapshot
 - QualityAssessment（已实现）
