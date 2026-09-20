@@ -218,11 +218,12 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - DeliveryOperation 的**数据库 terminal fact** + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；外部 credential provider 调用不属于 PostgreSQL transaction；
 - 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key；
 - **每一次 initial / retry / reconciliation 真正调用 provider 前，都重新执行完整 CurrentDeliveryGate 并重新计算 credential expiry cap**；PREPARED/ISSUANCE_PENDING 中旧 gate snapshot 只用于审计；
-- provider 返回/恢复 capability 后，terminal ISSUED transaction 必须获取与 Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，再次 re-gate + fresh-cap；terminal commit 是 issuance linearization point；
+- 所有 delivery mode 的 terminal ISSUED transaction 必须获取与 Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，再次 re-gate；provider/credential 模式同时 fresh-cap；terminal commit 是 delivery linearization point；
+- direct-data 模式必须在 terminal ISSUED commit 成功前保持 response body=0 bytes；commit 后才允许写第一字节，且不能为整个 stream 长时间持有 DB fence/lock；
 - **真实 PostgreSQL 并发测试是 #135 完成条件，不允许只用 mock/串行调用证明 fence**：
   - 使用两个独立 transaction/connection + barrier，把竞争窗口固定在“delivery terminal finalize 已进入 fenced re-gate/准备提交 ISSUED”和“gate-changing Command 准备提交 disposition/invalidation”之间；
-  - entitlement-change-first：Authorization revoke（并至少再覆盖 Rights/Binding/Certification disposition 或 DatasetVersion INVALID 中一种）先在线性化 fence 上提交，delivery finalize 随后必须观察新 revision/current facts，不能 ISSUED；若 provider 已产生 capability，进入 contain/block/fail；
-  - finalize-first：delivery terminal ISSUED 先在线性化 fence 上提交，随后 gate-changing Command 才完成；两者必须形成唯一全序，后续 Command 按 delivery-mode revocation semantics 处理已签发 capability；
+  - entitlement-change-first：Authorization revoke（并至少再覆盖 Rights/Binding/Certification disposition 或 DatasetVersion INVALID 中一种）先在线性化 fence 上提交，delivery finalize 随后必须观察新 revision/current facts，不能 ISSUED；provider capability 进入 contain/block/fail，direct-data 必须断言 response body 仍为 0 bytes；
+  - finalize-first：delivery terminal ISSUED 先在线性化 fence 上提交，随后 gate-changing Command 才完成；direct-data 只有在该 commit 之后才能放行第一字节；两者必须形成唯一全序，后续 Command 按 delivery-mode revocation semantics 处理已签发 capability；
   - 验证固定锁顺序/无 deadlock、重复 idempotency retry 不产生第二个 terminal fact/event/cost；
 - 如果 re-gate 已 BLOCKED：
   - 确认此前未产生 provider access capability 时可直接 BLOCKED；
