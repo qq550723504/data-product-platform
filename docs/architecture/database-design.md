@@ -216,14 +216,37 @@ Current binding selection 必须按 as_of 排除已生效 INVALIDATED / SUPERSED
 - party / claimant refs
 - rights role
 - basis_type / basis_ref
-- validity
-- allowed actions
-- restricted actions
+- validity: effective_from / effective_to
+- consumer applicability：例如 consumer_mode = ANY / EXPLICIT；EXPLICIT 时使用强类型 consumer_ref（必要时 consumer_type）
+- purpose：单值可用强类型 purpose_code；多值时使用 rights_declaration_purpose(declaration_id, purpose_code) 等规范化关系，不只放 JSONB
+- scope：至少强类型 scope_type + scope_ref（例如 ALL_RESOURCE / DATASET / OBJECT_PREFIX / ROW_POLICY 等实现固定枚举/引用）；复杂扩展参数可附加 JSONB，但 CurrentEntitlementGate 所需的 scope identity 必须可索引/查询
+- allowed actions（强类型枚举/规范化关系）
+- restricted actions（强类型枚举/规范化关系）
 - verification status / fact
 - append-only disposition facts (INVALIDATED / SUPERSEDED, effective_at, reason, evidence, actor, optional superseded_by)
 - evidence association
 
-JSONB 只用于受控扩展参数，不承载主要权利关系。
+JSONB 只用于受控扩展参数，不承载主要权利关系。特别是 CurrentEntitlementGate 必须读取的 resource / consumer applicability / purpose / action / scope / validity 都必须有强类型、可索引、可查询表示；不得靠应用层解析任意 JSONB 才能 fail closed。
+
+### RightsSnapshot membership freezing（#137）
+
+RightsSnapshot 的 immutable 语义覆盖 **snapshot header + 全部 membership rows**，不仅是主表。
+
+至少冻结：
+- rights_snapshot_authorization
+- rights_snapshot_declaration（或等价 membership）
+- rights_snapshot_provenance_binding（或等价 membership）
+- 其它实际参与 Effective Rights / Certification 解释的强类型成员关系
+
+要求：
+- snapshot header 与全部 membership 在同一 transaction 中创建并 finalize，或采用明确 DRAFT → FINALIZED 协议；
+- FINALIZED 后 header 禁止业务语义 UPDATE/DELETE；
+- FINALIZED 后 membership 行禁止 INSERT / UPDATE / DELETE，数据库 trigger/guard 必须 fail closed；
+- 不允许通过删除旧 authorization_id、插入新 binding_id 等方式“保持 snapshot ID 不变但改写历史内容”；
+- Snapshot root_hash / content hash（如存在）必须覆盖有序后的 membership identity，membership 改变会导致 hash 不一致；
+- migration down 不得移除这些历史保护后静默允许 mutation。
+
+现有 `rights_snapshot_authorization` 也必须纳入该保护；#137 新增 declaration/binding membership 时使用同等级 guard。
 
 ### Effective Rights（#137）
 
@@ -336,6 +359,8 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 - provider_credential_ref/hash（如适用；禁止存可用 secret）
 - planned_credential_expires_at / fresh_cap_expires_at
 - provider_credential_expires_at（provider 实际返回/恢复出的 expiry；direct bearer 必须可验证；direct-data 可为空）
+- provider capability 的**可验证强类型边界**：resource_ref/dataset_version_ref、consumer_ref（如 provider 模型支持）、actions、scope_type/scope_ref，以及必要的 delivery mode/channel identity；多值 actions 可使用规范化 child rows
+- provider_capability_snapshot_hash / provider read-after-write evidence ref（用于证明实际签发能力与记录一致）
 - issuance result / direct-data release authorization result
 - actor / trace
 
@@ -350,6 +375,8 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 - provider 返回后，ISSUED terminal transaction 必须在 fence 下重新 gate + fresh-cap，并把该 commit 作为 issuance linearization point；
 - direct-data mode 的 ISSUED terminal transaction 同样在 fence 下重新 gate；commit 成功前禁止写出任何 response byte，commit 后不得继续持有 fence/row lock 贯穿整个 stream；
 - 任何进入 ISSUED 的 credential 必须满足 provider_credential_expires_at <= 当前 fresh_cap_expires_at；reconciliation 找回的旧 credential 同样适用，不能因为 provider_request_key 命中就跳过；
+- provider 实际 capability 必须是 delivery request / CurrentDeliveryGate 允许上下文的**等价或更窄集合**：不得扩大到其它 DatasetVersion/DataResource、consumer、action、object/row/prefix scope 或 delivery channel；
+- provider capability 必须通过 read-after-write / equivalent authoritative lookup 验证后才能 ISSUED；实际 scope 无法读取/验证，或比请求更宽时不得 ISSUED，必须 revoke/contain，或改用 platform redemption indirection；
 - provider_credential_expires_at 不可验证或超过 fresh cap 时不得 ISSUED；必须安全 shorten/verify，或 revoke/contain；
 - gate 失败也有可审计 DeliveryOperation / result；
 - 不把可用 credential secret/token 正文持久化到 Core 数据库；
