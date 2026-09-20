@@ -214,6 +214,7 @@ VerifyRightsDeclaration
 RejectRightsDeclaration
 InvalidateRightsDeclaration
 SupersedeRightsDeclaration
+BindAuthorizationProvenance / CreateAuthorizationProvenanceBinding
 QueryEffectiveRights
 QueryCurrentEntitlement
 ~~~
@@ -257,6 +258,29 @@ GetCurrentDatasetCertification / QueryCurrentCertification
 Current certification 不能按 latest timestamp 推断；delivery 必须绑定明确有效的 CERTIFIED 事实，并排除已生效 REVOKED / SUPERSEDED disposition。
 
 禁止 generic PATCH certification status。
+
+### Certified Dataset Delivery（#135 目标 Command）
+
+Eligibility query 不是交付授权边界。第一阶段必须有一个真正的服务端交付 Command，例如：
+
+~~~text
+DeliverDatasetVersion
+或
+IssueDatasetAccess
+~~~
+
+具体 HTTP URL 由 #135 实现 PR 固定。
+
+该 Command 在返回数据或签发下载 URL / token / credential 前，必须重新执行：
+
+~~~text
+CurrentDeliveryGate
+├── DatasetVersionUsability
+├── CurrentCertificationGate
+└── CurrentEntitlementGate
+~~~
+
+客户端不能通过先调用 eligibility query 再跳过 gate。query 结果不得作为后续 delivery 的授权凭证。
 
 ### Contract（当前 live API）
 
