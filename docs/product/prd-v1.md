@@ -144,7 +144,7 @@ V1.1 六个质量维度：
 - CompliancePolicy / ComplianceResult
 - DataContract / ContractVersion
 - DataProduct / ProductVersion / ProductAsset / ProductRelease
-- CostEvent
+- CostEvent / CostAllocation
 - Evidence / EvidenceSnapshot / AuditEvent
 
 ## 7. 状态语义
@@ -285,13 +285,15 @@ Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证�
 
 签发 credential 时，`expires_at` 不得晚于 requested TTL、平台最大 TTL、以及本次 entitlement 所依赖所有 RightsDeclaration / Authorization 中最早的有限 `valid_to/effective_to`。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 gate；不能回调平台的 bearer/presigned credential 至少必须严格执行该 expiry cap。
 
-## 11. CostEvent
+## 11. CostEvent / CostAllocation
 
-QualityAssessment、Rights verification / invalidation / supersession、DatasetCertification evaluation / human approval 等实际活动发生时必须记录 CostEvent。
+QualityAssessment、Rights verification / invalidation / supersession、Authorization provenance binding、DatasetCertification evaluation / human approval、Delivery 等实际活动发生时必须记录 CostEvent。
 
 - 金额未知时不伪造金额，可记录 quantity/unit；
 - 成本必须与实际活动同时记录，不在试点 KPI 阶段事后反推；
-- 同一幂等业务动作重放不得重复产生 CostEvent。
+- 非 Execution 成本必须通过 typed CostAllocation 关联实际业务主体，禁止仅把 subject ID 放 JSONB metadata；
+- CostEvent 使用稳定 activity_id / operation identity，并以 component_key / cost_type 区分同一业务活动内不同成本组件；
+- 相同 activity_id + component_key 的幂等业务重放不得重复产生 CostEvent。
 
 ## 12. Product Release Readiness
 
