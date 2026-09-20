@@ -10,7 +10,7 @@ import (
 
 func TestOperationLifecycleRequiresContainmentBeforeBlocked(t *testing.T) {
 	now := time.Now().UTC()
-	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "delegation-a", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
+	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "delegation-a", "RESEARCH", "READ", "dataset-version", "REDEMPTION", "CREDENTIAL", now.Add(time.Hour), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -24,7 +24,7 @@ func TestOperationLifecycleRequiresContainmentBeforeBlocked(t *testing.T) {
 		t.Fatalf("terminal operation must not be rewritten, got %v", err)
 	}
 
-	op, err = NewOperation(uuid.New(), uuid.New(), "delivery-2", "test-provider", "principal-a", "consumer-a", "", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
+	op, err = NewOperation(uuid.New(), uuid.New(), "delivery-2", "test-provider", "principal-a", "consumer-a", "", "RESEARCH", "READ", "dataset-version", "REDEMPTION", "CREDENTIAL", now.Add(time.Hour), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -44,7 +44,7 @@ func TestOperationLifecycleRequiresContainmentBeforeBlocked(t *testing.T) {
 
 func TestCapabilityMustBeNarrowAndWithinFreshCap(t *testing.T) {
 	now := time.Now().UTC()
-	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
+	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "", "RESEARCH", "READ", "dataset-version", "REDEMPTION", "CREDENTIAL", now.Add(time.Hour), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,12 +57,18 @@ func TestCapabilityMustBeNarrowAndWithinFreshCap(t *testing.T) {
 		Action:                      op.Action,
 		ScopeRef:                    op.ScopeRef,
 		DeliveryChannel:             op.DeliveryChannel,
+		DeliveryMode:                op.DeliveryMode,
 		AuthoritativelyVerified:     true,
 	}
 	evaluation := GateEvaluation{Allowed: true, FreshCapExpiresAt: timePtr(now.Add(10 * time.Minute))}
 	if err := capability.ValidateAgainst(op, evaluation); err != nil {
 		t.Fatalf("narrow capability should pass: %v", err)
 	}
+	capability.DeliveryMode = "DIRECT_DATA"
+	if !errors.Is(capability.ValidateAgainst(op, evaluation), ErrCapabilityTooBroad) {
+		t.Fatal("a capability for another delivery mode must fail closed")
+	}
+	capability.DeliveryMode = op.DeliveryMode
 	capability.ScopeRef = "workspace-wide"
 	if !errors.Is(capability.ValidateAgainst(op, evaluation), ErrCapabilityTooBroad) {
 		t.Fatal("broader scope must fail closed")
@@ -71,7 +77,7 @@ func TestCapabilityMustBeNarrowAndWithinFreshCap(t *testing.T) {
 
 func TestCapabilityCannotCrossFreshExpiryCap(t *testing.T) {
 	now := time.Now().UTC()
-	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "", "RESEARCH", "READ", "dataset-version", "REDEMPTION", now.Add(time.Hour), nil)
+	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "", "RESEARCH", "READ", "dataset-version", "REDEMPTION", "CREDENTIAL", now.Add(time.Hour), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -84,6 +90,7 @@ func TestCapabilityCannotCrossFreshExpiryCap(t *testing.T) {
 		Action:                      op.Action,
 		ScopeRef:                    op.ScopeRef,
 		DeliveryChannel:             op.DeliveryChannel,
+		DeliveryMode:                op.DeliveryMode,
 		AuthoritativelyVerified:     true,
 	}
 	evaluation := GateEvaluation{Allowed: true, FreshCapExpiresAt: timePtr(now.Add(10 * time.Minute))}

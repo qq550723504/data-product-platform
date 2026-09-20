@@ -15,6 +15,7 @@ func TestMatchesIssuedCapabilityRequiresTheOriginalCapability(t *testing.T) {
 		DatasetVersionID:            uuid.New(),
 		Status:                      domain.StatusIssued,
 		EffectiveConsumerRef:        "consumer-a",
+		DeliveryMode:                "CREDENTIAL",
 		CredentialRef:               "provider-capability-ref",
 		CredentialHash:              hashSecret("secret-a"),
 		ProviderCredentialExpiresAt: &now,

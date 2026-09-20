@@ -140,6 +140,7 @@ func TestCredentialIssueRecoversSameProviderKeyAfterCrashWindow(t *testing.T) {
 		Action:                      "READ",
 		ScopeRef:                    "dataset-version",
 		DeliveryChannel:             "REDEMPTION",
+		DeliveryMode:                "CREDENTIAL",
 		AuthoritativelyVerified:     true,
 	}
 	txManager := transaction.NewManager(pool)
@@ -148,7 +149,7 @@ func TestCredentialIssueRecoversSameProviderKeyAfterCrashWindow(t *testing.T) {
 	cmd := IssueCredentialCommand{
 		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProviderName: "test-provider",
 		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a", Purpose: "RESEARCH",
-		Action: "READ", ScopeRef: "dataset-version", DeliveryChannel: "REDEMPTION",
+		Action: "READ", ScopeRef: "dataset-version", DeliveryChannel: "REDEMPTION", DeliveryMode: "CREDENTIAL",
 		RequestedExpiresAt: time.Now().UTC().Add(time.Hour), IdempotencyKey: "delivery-crash-window-1",
 	}
 
@@ -247,13 +248,14 @@ func TestLateContainmentFailureRemainsRetryableAfterTerminalRace(t *testing.T) {
 		Action:                      "READ",
 		ScopeRef:                    "dataset-version",
 		DeliveryChannel:             "REDEMPTION",
+		DeliveryMode:                "CREDENTIAL",
 		AuthoritativelyVerified:     true,
 	}
 	service := NewService(transaction.NewManager(pool), infrastructure.NewPostgresRepository(pool), gate, provider)
 	cmd := IssueCredentialCommand{
 		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProviderName: "containment-provider",
 		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a", Purpose: "RESEARCH",
-		Action: "READ", ScopeRef: "dataset-version", DeliveryChannel: "REDEMPTION",
+		Action: "READ", ScopeRef: "dataset-version", DeliveryChannel: "REDEMPTION", DeliveryMode: "CREDENTIAL",
 		RequestedExpiresAt: time.Now().UTC().Add(time.Hour), IdempotencyKey: "delivery-containment-race-1",
 	}
 

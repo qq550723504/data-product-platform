@@ -33,6 +33,7 @@ CREATE TABLE delivery_operation (
     action                         varchar(64) NOT NULL,
     scope_ref                      varchar(512) NOT NULL,
     delivery_channel               varchar(64) NOT NULL,
+    delivery_mode                  varchar(64) NOT NULL,
     requested_expires_at           timestamptz NOT NULL,
     fresh_cap_expires_at           timestamptz,
     credential_ref                 varchar(512),
@@ -231,6 +232,7 @@ BEGIN
        OLD.action IS DISTINCT FROM NEW.action OR
        OLD.scope_ref IS DISTINCT FROM NEW.scope_ref OR
        OLD.delivery_channel IS DISTINCT FROM NEW.delivery_channel OR
+       OLD.delivery_mode IS DISTINCT FROM NEW.delivery_mode OR
        OLD.requested_expires_at IS DISTINCT FROM NEW.requested_expires_at OR
        OLD.created_at IS DISTINCT FROM NEW.created_at THEN
         RAISE EXCEPTION 'delivery_operation request identity is immutable';

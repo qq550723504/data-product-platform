@@ -40,6 +40,7 @@ type IssueCredentialCommand struct {
 	Action               string
 	ScopeRef             string
 	DeliveryChannel      string
+	DeliveryMode         string
 	RequestedExpiresAt   time.Time
 	IdempotencyKey       string
 	ActorID              *uuid.UUID
@@ -72,6 +73,7 @@ type ProviderRequest struct {
 	Action             string
 	ScopeRef           string
 	DeliveryChannel    string
+	DeliveryMode       string
 	ExpiresAt          time.Time
 }
 
@@ -134,7 +136,7 @@ func (s *Service) IssueCredential(ctx context.Context, cmd IssueCredentialComman
 		candidate, err := domain.NewOperation(
 			cmd.WorkspaceID, cmd.DatasetVersionID, cmd.IdempotencyKey, cmd.ProviderName,
 			cmd.PrincipalRef, cmd.EffectiveConsumerRef, cmd.DelegationRef, cmd.Purpose, cmd.Action,
-			cmd.ScopeRef, cmd.DeliveryChannel, cmd.RequestedExpiresAt, cmd.CertificationRef,
+			cmd.ScopeRef, cmd.DeliveryChannel, cmd.DeliveryMode, cmd.RequestedExpiresAt, cmd.CertificationRef,
 		)
 		if err != nil {
 			return err
@@ -250,10 +252,11 @@ func (s *Service) replayIssued(ctx context.Context, operation domain.Operation, 
 			outcome = domain.OutcomeUnknown
 			kind = domain.ObservationTimeout
 		}
-		if recordErr := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, kind, outcome, domain.Capability{}, err.Error()); recordErr != nil {
+		reason := providerFailureReason(err)
+		if recordErr := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, kind, outcome, domain.Capability{}, reason); recordErr != nil {
 			return Result{}, recordErr
 		}
-		result, recordErr := s.appendReplayDecision(ctx, prep, "CONTAINMENT_PENDING", domain.Capability{}, err.Error(), cmd)
+		result, recordErr := s.appendReplayDecision(ctx, prep, "CONTAINMENT_PENDING", domain.Capability{}, reason, cmd)
 		if recordErr != nil {
 			return Result{}, recordErr
 		}
@@ -395,10 +398,11 @@ func (s *Service) executeReplayRevoke(ctx context.Context, prep replayPreparatio
 				}
 				return result, ErrCredentialReplay
 			}
-			if recordErr := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, domain.ObservationCallReturn, domain.OutcomeUnknown, domain.Capability{}, err.Error()); recordErr != nil {
+			reasonCode := providerFailureReason(err)
+			if recordErr := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, domain.ObservationCallReturn, domain.OutcomeUnknown, domain.Capability{}, reasonCode); recordErr != nil {
 				return Result{}, recordErr
 			}
-			result, recordErr := s.appendReplayDecision(ctx, prep, "CONTAINMENT_PENDING", domain.Capability{}, reason+": "+err.Error(), cmd)
+			result, recordErr := s.appendReplayDecision(ctx, prep, "CONTAINMENT_PENDING", domain.Capability{}, reason+": "+reasonCode, cmd)
 			if recordErr != nil {
 				return Result{}, recordErr
 			}
@@ -469,6 +473,8 @@ func (s *Service) appendReplayFactsTx(ctx context.Context, tx pgx.Tx, operation 
 		"operationId": operation.ID, "replayAttemptId": replayID, "decision": decision,
 		"dependencyRevision": evaluation.DependencyRevision, "capabilityRef": capability.CapabilityRef,
 		"capabilityHash": capability.CapabilityHash, "reason": reason,
+		"principalRef": evaluation.PrincipalRef, "effectiveConsumerRef": evaluation.EffectiveConsumerRef,
+		"delegationRef": evaluation.DelegationRef,
 	})
 	if err != nil {
 		return err
@@ -490,7 +496,11 @@ func (s *Service) appendReplayFactsTx(ctx context.Context, tx pgx.Tx, operation 
 	if err := audit.Append(ctx, tx, audit.Event{
 		WorkspaceID: &operation.WorkspaceID, ActorType: "SYSTEM", ActorID: cmd.ActorID,
 		Action: "DELIVERY_CREDENTIAL_REPLAY_" + decision, ObjectType: "DELIVERY_OPERATION", ObjectID: operation.ID,
-		AfterState: map[string]any{"replayAttemptId": replayID, "decision": decision, "reason": reason}, TraceID: cmd.TraceID,
+		AfterState: map[string]any{
+			"replayAttemptId": replayID, "decision": decision, "reason": reason,
+			"principalRef": evaluation.PrincipalRef, "effectiveConsumerRef": evaluation.EffectiveConsumerRef,
+			"delegationRef": evaluation.DelegationRef,
+		}, TraceID: cmd.TraceID,
 	}); err != nil {
 		return err
 	}
@@ -501,12 +511,15 @@ func (s *Service) appendReplayFactsTx(ctx context.Context, tx pgx.Tx, operation 
 		SourceType:   "DELIVERY_OPERATION",
 		SourceID:     &operation.ID,
 		Metadata: map[string]any{
-			"replayAttemptId":    replayID,
-			"decision":           decision,
-			"dependencyRevision": evaluation.DependencyRevision,
-			"capabilityRef":      capability.CapabilityRef,
-			"capabilityHash":     capability.CapabilityHash,
-			"reason":             reason,
+			"replayAttemptId":      replayID,
+			"decision":             decision,
+			"dependencyRevision":   evaluation.DependencyRevision,
+			"capabilityRef":        capability.CapabilityRef,
+			"capabilityHash":       capability.CapabilityHash,
+			"reason":               reason,
+			"principalRef":         evaluation.PrincipalRef,
+			"effectiveConsumerRef": evaluation.EffectiveConsumerRef,
+			"delegationRef":        evaluation.DelegationRef,
 		},
 		CreatedBy: cmd.ActorID,
 	}, evidence.Relation{ObjectType: "DELIVERY_OPERATION", ObjectID: operation.ID, RelationType: "CREDENTIAL_REPLAY"})
@@ -539,6 +552,7 @@ func (s *Service) processPending(ctx context.Context, operation domain.Operation
 		Action:             operation.Action,
 		ScopeRef:           operation.ScopeRef,
 		DeliveryChannel:    operation.DeliveryChannel,
+		DeliveryMode:       operation.DeliveryMode,
 	}
 	request.ExpiresAt = operation.RequestedExpiresAt
 	if evaluation.FreshCapExpiresAt != nil {
@@ -574,16 +588,17 @@ func (s *Service) processPending(ctx context.Context, operation domain.Operation
 			outcome = domain.OutcomeUnknown
 			observation = domain.ObservationTimeout
 		}
-		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, observation, outcome, domain.Capability{}, err.Error()); recordErr != nil {
+		reasonCode := providerFailureReason(err)
+		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, observation, outcome, domain.Capability{}, reasonCode); recordErr != nil {
 			return Result{}, recordErr
 		}
 		if outcome == domain.OutcomeUnknown {
-			return s.enterContainmentPending(ctx, operation.ID, "provider outcome is unknown", cmd, &attemptID)
+			return s.enterContainmentPending(ctx, operation.ID, reasonCode, cmd, &attemptID)
 		}
 		if !initial {
-			return s.enterContainmentPending(ctx, operation.ID, err.Error(), cmd, &attemptID)
+			return s.enterContainmentPending(ctx, operation.ID, reasonCode, cmd, &attemptID)
 		}
-		return s.finishWithoutCapability(ctx, operation.ID, cmd, domain.StatusFailed, err.Error(), &attemptID)
+		return s.finishWithoutCapability(ctx, operation.ID, cmd, domain.StatusFailed, reasonCode, &attemptID)
 	}
 	if err := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeSuccess, capability, "provider returned capability"); err != nil {
 		return Result{}, err
@@ -799,7 +814,7 @@ func (s *Service) revokeContainment(ctx context.Context, operation domain.Operat
 		return Result{Operation: current}, ErrCredentialReplay
 	}
 	if err != nil {
-		if recordErr := s.recordObservation(ctx, current.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeUnknown, capability, "containment outcome is unknown: "+err.Error()); recordErr != nil {
+		if recordErr := s.recordObservation(ctx, current.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeUnknown, capability, "containment outcome is unknown: "+providerFailureReason(err)); recordErr != nil {
 			return Result{}, recordErr
 		}
 		// The PENDING projection deliberately remains durable so the same-key
@@ -945,10 +960,11 @@ func (s *Service) containCapability(ctx context.Context, operation domain.Operat
 		if errors.Is(err, ErrUnknownProviderOutcome) {
 			outcome = domain.OutcomeUnknown
 		}
-		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, outcome, domain.Capability{}, err.Error()); recordErr != nil {
+		reasonCode := providerFailureReason(err)
+		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, outcome, domain.Capability{}, reasonCode); recordErr != nil {
 			return Result{}, recordErr
 		}
-		return s.enterContainmentPending(ctx, operation.ID, reason+": "+err.Error(), cmd, &attemptID)
+		return s.enterContainmentPending(ctx, operation.ID, reason+": "+reasonCode, cmd, &attemptID)
 	}
 	if err := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeSuccess, domain.Capability{}, "capability contained"); err != nil {
 		return Result{}, err
@@ -985,10 +1001,11 @@ func (s *Service) reconcileContainment(ctx context.Context, operation domain.Ope
 			outcome = domain.OutcomeUnknown
 			observation = domain.ObservationTimeout
 		}
-		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, observation, outcome, domain.Capability{}, err.Error()); recordErr != nil {
+		reasonCode := providerFailureReason(err)
+		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, observation, outcome, domain.Capability{}, reasonCode); recordErr != nil {
 			return Result{}, recordErr
 		}
-		return s.enterContainmentPending(ctx, operation.ID, err.Error(), cmd, &attemptID)
+		return s.enterContainmentPending(ctx, operation.ID, reasonCode, cmd, &attemptID)
 	}
 	if err := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationReconciliation, domain.OutcomeSuccess, capability, "provider reports an existing capability"); err != nil {
 		return Result{}, err
@@ -1106,7 +1123,7 @@ func (s *Service) evaluate(ctx context.Context, tx pgx.Tx, operation domain.Oper
 		CertificationRef: operation.CertificationRef, PrincipalRef: operation.PrincipalRef,
 		EffectiveConsumerRef: operation.EffectiveConsumerRef, DelegationRef: operation.DelegationRef,
 		Purpose: operation.Purpose, Action: operation.Action, ScopeRef: operation.ScopeRef,
-		DeliveryChannel: operation.DeliveryChannel, RequestedExpiresAt: operation.RequestedExpiresAt, Stage: stage,
+		DeliveryChannel: operation.DeliveryChannel, DeliveryMode: operation.DeliveryMode, RequestedExpiresAt: operation.RequestedExpiresAt, Stage: stage,
 	})
 	if err != nil {
 		return domain.GateEvaluation{}, fmt.Errorf("evaluate delivery gate: %w", err)
@@ -1135,6 +1152,8 @@ func appendGateFacts(ctx context.Context, tx pgx.Tx, operation domain.Operation,
 		"operationId": operation.ID, "evaluationId": evaluation.ID, "evaluationKey": evaluation.EvaluationKey,
 		"stage": evaluation.Stage, "decision": evaluation.Decision(), "blockers": evaluation.Blockers,
 		"dependencyRevision": evaluation.DependencyRevision, "freshCapExpiresAt": evaluation.FreshCapExpiresAt,
+		"principalRef": evaluation.PrincipalRef, "effectiveConsumerRef": evaluation.EffectiveConsumerRef,
+		"delegationRef": evaluation.DelegationRef,
 	})
 	if err != nil {
 		return err
@@ -1145,14 +1164,24 @@ func appendGateFacts(ctx context.Context, tx pgx.Tx, operation domain.Operation,
 	if err := audit.Append(ctx, tx, audit.Event{
 		WorkspaceID: &operation.WorkspaceID, ActorType: "SYSTEM", ActorID: actorID,
 		Action: "DELIVERY_GATE_EVALUATED", ObjectType: "DELIVERY_OPERATION", ObjectID: operation.ID,
-		AfterState: map[string]any{"evaluationId": evaluation.ID, "stage": evaluation.Stage, "decision": evaluation.Decision(), "blockers": evaluation.Blockers, "dependencyRevision": evaluation.DependencyRevision}, TraceID: traceID,
+		AfterState: map[string]any{
+			"evaluationId": evaluation.ID, "stage": evaluation.Stage, "decision": evaluation.Decision(),
+			"blockers": evaluation.Blockers, "dependencyRevision": evaluation.DependencyRevision,
+			"principalRef": evaluation.PrincipalRef, "effectiveConsumerRef": evaluation.EffectiveConsumerRef,
+			"delegationRef": evaluation.DelegationRef,
+		}, TraceID: traceID,
 	}); err != nil {
 		return err
 	}
 	_, err = evidence.Append(ctx, tx, evidence.Record{
 		WorkspaceID: operation.WorkspaceID, EvidenceType: "DELIVERY_GATE_EVALUATION", Title: "Delivery gate evaluation",
 		SourceType: "DELIVERY_OPERATION", SourceID: &operation.ID,
-		Metadata: map[string]any{"evaluationId": evaluation.ID, "stage": evaluation.Stage, "decision": evaluation.Decision(), "blockers": evaluation.Blockers, "dependencyRevision": evaluation.DependencyRevision}, CreatedBy: actorID,
+		Metadata: map[string]any{
+			"evaluationId": evaluation.ID, "stage": evaluation.Stage, "decision": evaluation.Decision(),
+			"blockers": evaluation.Blockers, "dependencyRevision": evaluation.DependencyRevision,
+			"principalRef": evaluation.PrincipalRef, "effectiveConsumerRef": evaluation.EffectiveConsumerRef,
+			"delegationRef": evaluation.DelegationRef,
+		}, CreatedBy: actorID,
 	}, evidence.Relation{ObjectType: "DELIVERY_OPERATION", ObjectID: operation.ID, RelationType: "GATE_EVALUATION"})
 	return err
 }
@@ -1242,7 +1271,7 @@ func appendContainmentFactsTx(ctx context.Context, tx pgx.Tx, operation domain.O
 }
 
 func validateCommand(cmd IssueCredentialCommand) error {
-	if cmd.WorkspaceID == uuid.Nil || cmd.DatasetVersionID == uuid.Nil || strings.TrimSpace(cmd.ProviderName) == "" || strings.TrimSpace(cmd.PrincipalRef) == "" || strings.TrimSpace(cmd.EffectiveConsumerRef) == "" || strings.TrimSpace(cmd.Purpose) == "" || strings.TrimSpace(cmd.Action) == "" || strings.TrimSpace(cmd.ScopeRef) == "" || strings.TrimSpace(cmd.DeliveryChannel) == "" || strings.TrimSpace(cmd.IdempotencyKey) == "" || len(cmd.IdempotencyKey) > 255 || cmd.RequestedExpiresAt.IsZero() {
+	if cmd.WorkspaceID == uuid.Nil || cmd.DatasetVersionID == uuid.Nil || strings.TrimSpace(cmd.ProviderName) == "" || strings.TrimSpace(cmd.PrincipalRef) == "" || strings.TrimSpace(cmd.EffectiveConsumerRef) == "" || strings.TrimSpace(cmd.Purpose) == "" || strings.TrimSpace(cmd.Action) == "" || strings.TrimSpace(cmd.ScopeRef) == "" || strings.TrimSpace(cmd.DeliveryChannel) == "" || strings.TrimSpace(cmd.DeliveryMode) == "" || strings.TrimSpace(cmd.IdempotencyKey) == "" || len(cmd.IdempotencyKey) > 255 || cmd.RequestedExpiresAt.IsZero() {
 		return domain.ErrInvalidOperation
 	}
 	return nil
@@ -1261,8 +1290,9 @@ func commandFingerprint(cmd IssueCredentialCommand) (string, error) {
 		Action             string     `json:"action"`
 		ScopeRef           string     `json:"scopeRef"`
 		DeliveryChannel    string     `json:"deliveryChannel"`
+		DeliveryMode       string     `json:"deliveryMode"`
 		RequestedExpiresAt time.Time  `json:"requestedExpiresAt"`
-	}{cmd.WorkspaceID, cmd.DatasetVersionID, cmd.CertificationRef, strings.TrimSpace(cmd.ProviderName), strings.TrimSpace(cmd.PrincipalRef), strings.TrimSpace(cmd.EffectiveConsumerRef), strings.TrimSpace(cmd.DelegationRef), strings.TrimSpace(cmd.Purpose), strings.TrimSpace(cmd.Action), strings.TrimSpace(cmd.ScopeRef), strings.TrimSpace(cmd.DeliveryChannel), cmd.RequestedExpiresAt.UTC()}
+	}{cmd.WorkspaceID, cmd.DatasetVersionID, cmd.CertificationRef, strings.TrimSpace(cmd.ProviderName), strings.TrimSpace(cmd.PrincipalRef), strings.TrimSpace(cmd.EffectiveConsumerRef), strings.TrimSpace(cmd.DelegationRef), strings.TrimSpace(cmd.Purpose), strings.TrimSpace(cmd.Action), strings.TrimSpace(cmd.ScopeRef), strings.TrimSpace(cmd.DeliveryChannel), strings.TrimSpace(cmd.DeliveryMode), cmd.RequestedExpiresAt.UTC()}
 	encoded, err := json.Marshal(payload)
 	if err != nil {
 		return "", fmt.Errorf("marshal delivery command fingerprint: %w", err)
@@ -1274,6 +1304,17 @@ func commandFingerprint(cmd IssueCredentialCommand) (string, error) {
 func hashSecret(secret string) string {
 	digest := sha256.Sum256([]byte(secret))
 	return hex.EncodeToString(digest[:])
+}
+
+func providerFailureReason(err error) string {
+	switch {
+	case errors.Is(err, ErrCapabilityNotFound):
+		return "PROVIDER_CAPABILITY_NOT_FOUND"
+	case errors.Is(err, ErrUnknownProviderOutcome):
+		return "PROVIDER_OUTCOME_UNKNOWN"
+	default:
+		return "PROVIDER_CALL_FAILED"
+	}
 }
 
 func firstBlocker(blockers []string) string {

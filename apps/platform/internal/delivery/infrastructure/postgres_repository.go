@@ -68,15 +68,15 @@ func (r *PostgresRepository) InsertOperation(ctx context.Context, tx pgx.Tx, ope
 			id, workspace_id, dataset_version_id, certification_ref, idempotency_key,
 			provider_name, provider_request_key, status, current_gate_decision,
 			dependency_revision, principal_ref, effective_consumer_ref, delegation_ref,
-			purpose, action, scope_ref, delivery_channel, requested_expires_at,
+			purpose, action, scope_ref, delivery_channel, delivery_mode, requested_expires_at,
 			fresh_cap_expires_at, credential_ref, credential_hash,
 			provider_credential_expires_at, terminal_reason, created_at, updated_at
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
 	`, operation.ID, operation.WorkspaceID, operation.DatasetVersionID, operation.CertificationRef,
 		operation.IdempotencyKey, operation.ProviderName, operation.ProviderRequestKey,
 		operation.Status, operation.CurrentGateDecision, operation.DependencyRevision,
 		operation.PrincipalRef, operation.EffectiveConsumerRef, nullable(operation.DelegationRef),
-		operation.Purpose, operation.Action, operation.ScopeRef, operation.DeliveryChannel,
+		operation.Purpose, operation.Action, operation.ScopeRef, operation.DeliveryChannel, operation.DeliveryMode,
 		operation.RequestedExpiresAt, operation.FreshCapExpiresAt, nullable(operation.CredentialRef),
 		nullable(operation.CredentialHash), operation.ProviderCredentialExpiresAt,
 		nullable(operation.TerminalReason), operation.CreatedAt, operation.UpdatedAt)
@@ -96,7 +96,7 @@ func (r *PostgresRepository) GetOperation(ctx context.Context, tx pgx.Tx, id uui
 		SELECT id, workspace_id, dataset_version_id, certification_ref, idempotency_key,
 		       provider_name, provider_request_key, status, current_gate_decision,
 		       dependency_revision, principal_ref, effective_consumer_ref, COALESCE(delegation_ref,''),
-		       purpose, action, scope_ref, delivery_channel, requested_expires_at,
+		       purpose, action, scope_ref, delivery_channel, delivery_mode, requested_expires_at,
 		       fresh_cap_expires_at, COALESCE(credential_ref,''), COALESCE(credential_hash,''),
 		       provider_credential_expires_at, COALESCE(terminal_reason,''), created_at, updated_at
 		FROM delivery_operation WHERE id=$1`+lock, id).Scan(
@@ -104,7 +104,7 @@ func (r *PostgresRepository) GetOperation(ctx context.Context, tx pgx.Tx, id uui
 		&operation.IdempotencyKey, &operation.ProviderName, &operation.ProviderRequestKey,
 		&operation.Status, &operation.CurrentGateDecision, &operation.DependencyRevision,
 		&operation.PrincipalRef, &operation.EffectiveConsumerRef, &operation.DelegationRef,
-		&operation.Purpose, &operation.Action, &operation.ScopeRef, &operation.DeliveryChannel,
+		&operation.Purpose, &operation.Action, &operation.ScopeRef, &operation.DeliveryChannel, &operation.DeliveryMode,
 		&operation.RequestedExpiresAt, &operation.FreshCapExpiresAt, &operation.CredentialRef,
 		&operation.CredentialHash, &operation.ProviderCredentialExpiresAt, &operation.TerminalReason,
 		&operation.CreatedAt, &operation.UpdatedAt)

@@ -92,6 +92,7 @@ type Operation struct {
 	Action                      string
 	ScopeRef                    string
 	DeliveryChannel             string
+	DeliveryMode                string
 	RequestedExpiresAt          time.Time
 	FreshCapExpiresAt           *time.Time
 	CredentialRef               string
@@ -102,8 +103,8 @@ type Operation struct {
 	UpdatedAt                   time.Time
 }
 
-func NewOperation(workspaceID, datasetVersionID uuid.UUID, idempotencyKey, providerName, principalRef, consumerRef, delegationRef, purpose, action, scopeRef, channel string, requestedExpiresAt time.Time, certificationRef *uuid.UUID) (Operation, error) {
-	if workspaceID == uuid.Nil || datasetVersionID == uuid.Nil || strings.TrimSpace(idempotencyKey) == "" || strings.TrimSpace(providerName) == "" || strings.TrimSpace(principalRef) == "" || strings.TrimSpace(consumerRef) == "" || strings.TrimSpace(purpose) == "" || strings.TrimSpace(action) == "" || strings.TrimSpace(scopeRef) == "" || strings.TrimSpace(channel) == "" {
+func NewOperation(workspaceID, datasetVersionID uuid.UUID, idempotencyKey, providerName, principalRef, consumerRef, delegationRef, purpose, action, scopeRef, channel, mode string, requestedExpiresAt time.Time, certificationRef *uuid.UUID) (Operation, error) {
+	if workspaceID == uuid.Nil || datasetVersionID == uuid.Nil || strings.TrimSpace(idempotencyKey) == "" || strings.TrimSpace(providerName) == "" || strings.TrimSpace(principalRef) == "" || strings.TrimSpace(consumerRef) == "" || strings.TrimSpace(purpose) == "" || strings.TrimSpace(action) == "" || strings.TrimSpace(scopeRef) == "" || strings.TrimSpace(channel) == "" || strings.TrimSpace(mode) == "" {
 		return Operation{}, ErrInvalidOperation
 	}
 	if requestedExpiresAt.IsZero() || !requestedExpiresAt.After(time.Now().UTC()) {
@@ -127,6 +128,7 @@ func NewOperation(workspaceID, datasetVersionID uuid.UUID, idempotencyKey, provi
 		Action:               strings.TrimSpace(action),
 		ScopeRef:             strings.TrimSpace(scopeRef),
 		DeliveryChannel:      strings.TrimSpace(channel),
+		DeliveryMode:         strings.TrimSpace(mode),
 		RequestedExpiresAt:   requestedExpiresAt.UTC(),
 		CreatedAt:            now,
 		UpdatedAt:            now,
@@ -181,6 +183,7 @@ type GateRequest struct {
 	Action               string
 	ScopeRef             string
 	DeliveryChannel      string
+	DeliveryMode         string
 	RequestedExpiresAt   time.Time
 	Stage                GateStage
 }
@@ -215,6 +218,7 @@ type Capability struct {
 	Action                      string
 	ScopeRef                    string
 	DeliveryChannel             string
+	DeliveryMode                string
 	AuthoritativelyVerified     bool
 }
 
@@ -222,7 +226,7 @@ func (c Capability) ValidateAgainst(o Operation, evaluation GateEvaluation) erro
 	if !c.AuthoritativelyVerified || strings.TrimSpace(c.CapabilityRef) == "" || strings.TrimSpace(c.Credential) == "" || c.ProviderCredentialExpiresAt.IsZero() {
 		return ErrCapabilityUnverifiable
 	}
-	if c.DatasetVersionID != o.DatasetVersionID || strings.TrimSpace(c.ConsumerRef) != o.EffectiveConsumerRef || strings.TrimSpace(c.Action) != o.Action || strings.TrimSpace(c.ScopeRef) != o.ScopeRef || strings.TrimSpace(c.DeliveryChannel) != o.DeliveryChannel {
+	if c.DatasetVersionID != o.DatasetVersionID || strings.TrimSpace(c.ConsumerRef) != o.EffectiveConsumerRef || strings.TrimSpace(c.Action) != o.Action || strings.TrimSpace(c.ScopeRef) != o.ScopeRef || strings.TrimSpace(c.DeliveryChannel) != o.DeliveryChannel || strings.TrimSpace(c.DeliveryMode) != o.DeliveryMode {
 		return ErrCapabilityTooBroad
 	}
 	if evaluation.FreshCapExpiresAt == nil || c.ProviderCredentialExpiresAt.After(evaluation.FreshCapExpiresAt.UTC()) || !c.ProviderCredentialExpiresAt.After(time.Now().UTC()) {
