@@ -196,17 +196,22 @@ REJECTED
 
 ### ProductRelease
 
-FAILED 是当前 Domain / 数据库 / Read Model 仍支持的有效状态，本 docs-only 基线不废弃该分支。
+当前 live 可达状态：
 
 ~~~text
 DRAFT
 → VALIDATING
-├→ FAILED
 └→ READY
    → PUBLISHED
 ~~~
 
-`SUSPENDED` / `WITHDRAWN` 仍是数据库 schema 中的合法枚举值，但当前 published-row guard 会阻止从 PUBLISHED 更新，运行时也没有对应 Command；因此 V1.1 不把它们描述为当前可达迁移。未来启用必须同时修改 guard 并新增显式 Command，且 published bindings 继续冻结。
+Readiness 不满足时当前实现保持 `VALIDATING`，不会写成 `FAILED`。
+
+`FAILED` / `SUSPENDED` / `WITHDRAWN` 仍是 domain/schema reserved values，但当前没有对应可达 Command：
+- FAILED 当前不由 ValidateRelease 产生；
+- SUSPENDED/WITHDRAWN 当前受 published-row guard 阻止，且无对应 Command。
+
+V1.1 不把这些状态描述为当前可达迁移；未来启用必须单独设计 migration + Command，并继续冻结 published bindings。
 
 ## 8. Quality Assessment
 
