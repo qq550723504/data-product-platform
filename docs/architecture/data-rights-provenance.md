@@ -310,17 +310,30 @@ append SUPERSEDED(A → B, effective_at, reason)
 
 Current selection rule：
 
-对**每一个候选 RightsDeclaration**，都必须在查询 `as_of` 时点同时满足：
+Current selection 必须先确定 entitlement path，再应用不同 coverage：
 
-1. 该 declaration 存在且仅存在一个 terminal RightsVerification outcome，并且 decision = VERIFIED；
-2. declaration 自身的 `effective_from / effective_to`（或等价 validity window）覆盖 `as_of`；
-3. declaration 的 resource / purpose / action / consumer / scope 与本次查询匹配；
-4. 在 `as_of` 之前不存在已生效的 INVALIDATED disposition；
-5. 在 `as_of` 之前不存在使其退出当前集合的 SUPERSEDED disposition；
-6. 若 A 被 B supersede，B 必须独立满足上述 VERIFIED / validity / scope 条件，不能因为 supersession 自动继承 VERIFIED；
-7. 历史 RightsSnapshot 仍保留并解释当时使用的 A，不被新 disposition 回溯改写。
+### DIRECT_USE
 
-任何 validity 或 scope 不满足的声明都不得进入 CurrentEntitlementGate，即使其 verification 仍为 VERIFIED。
+对作为调用方/consumer 自身使用依据的候选 RightsDeclaration：
+
+1. 唯一 terminal RightsVerification outcome = VERIFIED；
+2. declaration validity 覆盖 `as_of`；
+3. resource、consumer applicability、permitted purpose、allowed action、use scope 与本次请求匹配；
+4. 无已生效 INVALIDATED / SUPERSEDED disposition；
+5. superseding replacement 必须独立 VERIFIED/current；
+6. 历史 RightsSnapshot 保留旧事实，不被回溯改写。
+
+### DOWNSTREAM_AUTHORIZATION
+
+当请求依赖 Authorization 给 grantee/consumer 的授权时：
+
+1. supporting RightsDeclaration 只需作为 current provenance / grant-authority source：VERIFIED、validity 覆盖 `as_of`、resource 匹配、无已生效 INVALIDATED / SUPERSEDED；
+2. **不得要求 grantor 自己的 consumer applicability / permitted purpose / allowed action / use scope 匹配 grantee 的 delivery request**；
+3. AuthorizationProvenanceBinding 必须证明 declaration 的 grantable purpose/action/scope（或 current-valid grantor delegation chain 的 onward grant authority）覆盖 Authorization；
+4. Authorization 自身再覆盖 requested grantee/consumer、resource、purpose、action、normalized scope 与 validity/status；
+5. 任一 binding/delegation/provenance current fact 失效即 fail closed。
+
+因此同一 declaration 可以出现：grantor 自己 SHARE=BLOCKED，但其显式 grantable SHARE 足以支持合法下游 B SHARE=ALLOWED。
 
 这样既保留不可变审计历史，又能让 CurrentEntitlementGate 排除已经撤销或取代的 provenance。
 
