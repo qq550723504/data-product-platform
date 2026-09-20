@@ -425,25 +425,32 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 
 Certified Dataset Pilot 目标模型增加：
 
-### CostEvent activity identity
+### CostEvent physical-attempt identity
 
-`cost_event` 需要稳定的 activity/idempotency identity，至少逻辑表达：
+`cost_event` 的幂等键必须绑定**一次真实 physical activity attempt**，不能直接复用 QualityAssessment / DeliveryOperation / Certification 等顶层业务对象 ID 作为所有 retry 的唯一 activity identity。至少逻辑表达：
 
 - workspace_id
-- activity_id（或等价稳定 operation identity）
+- activity_id（**physical attempt identity**；也可命名为 `activity_attempt_id` / `cost_attempt_id`）
+- subject operation / aggregate ref（通过 typed CostAllocation 或等价强类型列关联，不代替 activity_id）
 - component_key / cost_type
 - quantity / unit
 - amount / currency
 - pricing_mode
 - occurred_at
 
-同一业务活动的幂等重放必须复用同一 activity identity。建议数据库唯一约束至少覆盖：
+规则：
+
+- 同一个 physical attempt 的 network/command/transaction replay，如果没有再次发生外部工作，必须复用同一个 activity_id；
+- failed/transient attempt 后若 retry/reconciliation **真的再次调用 engine/provider、再次执行 compute 或再次发生人工审核**，必须分配新的 activity_id；即使顶层 QualityAssessment、DeliveryOperation 或业务 idempotency key 相同，也不能复用旧 activity_id；
+- 如果实现选择原子聚合 quantity/amount 而不是每 attempt 一条 CostEvent，也必须保存/关联可审计的 attempt identity/count，并确保新增真实工作被累加。
+
+建议数据库唯一约束至少覆盖：
 
 ~~~text
 (workspace_id, activity_id, component_key)
 ~~~
 
-一个业务活动可以有多个不同 component_key（例如 ENGINE_INVOCATION、HUMAN_REVIEW、DELIVERY），但同一 component 不得因重试重复记账。
+这里的 `activity_id` 明确定义为 physical-attempt identity。一个 attempt 可以有多个不同 component_key（例如 ENGINE_INVOCATION、HUMAN_REVIEW、DELIVERY）；**同一 attempt 的同一 component replay 不得重复记账，但新的真实 attempt 必须使用新的 activity_id 并允许新增同类 component 成本。**
 
 ### CostAllocation
 
