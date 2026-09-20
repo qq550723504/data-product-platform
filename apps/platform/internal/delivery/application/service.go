@@ -605,7 +605,7 @@ func (s *Service) processPending(ctx context.Context, operation domain.Operation
 		if outcome == domain.OutcomeUnknown {
 			return s.enterContainmentPending(ctx, operation.ID, reasonCode, cmd, &attemptID)
 		}
-		if !initial {
+		if !initial || !errors.Is(err, ErrCapabilityNotFound) {
 			return s.enterContainmentPending(ctx, operation.ID, reasonCode, cmd, &attemptID)
 		}
 		return s.finishWithoutCapability(ctx, operation.ID, cmd, domain.StatusFailed, reasonCode, &attemptID)
