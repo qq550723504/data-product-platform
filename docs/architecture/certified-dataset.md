@@ -75,6 +75,7 @@ Certification 使用 #137 的权利链：
 
 ~~~text
 RightsDeclaration
+→ AuthorizationProvenanceBinding
 → Authorization
 → RightsSnapshot
 → Effective Rights
@@ -180,8 +181,8 @@ CurrentCertificationGate 要求本次 delivery 明确绑定一条 DatasetCertifi
 
 CurrentEntitlementGate 按“现在”重新检查至少：
 
-- 当前 RightsDeclaration / verification 是否 VERIFIED 且未被有效 INVALIDATED / SUPERSEDED；
-- Authorization 是否 ACTIVE 且未过期/撤销；
+- 每个绑定 RightsDeclaration / verification 是否 VERIFIED、其自身 validity window 覆盖 as_of、resource/consumer/purpose/action/scope 与本次 delivery context 匹配，且未被有效 INVALIDATED / SUPERSEDED；
+- 每个 Authorization 是否存在有效 AuthorizationProvenanceBinding 支撑 grantor_ref，并且 Authorization 自身 ACTIVE、scope 匹配且未过期/撤销；
 - consumer / purpose 是否匹配；
 - 本次 delivery action（例如 SHARE / RAW_EXPORT）是否当前仍允许；
 - 衍生数据 Effective Rights 是否仍允许该动作。
