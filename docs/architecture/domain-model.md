@@ -321,10 +321,12 @@ Rights verification、QualityAssessment、DatasetCertification 都应将 Evidenc
 - EvidenceSnapshot
 - RightsSnapshot
 - QualityAssessment（已实现）
-- DeliveryOperation（#135）
+- DeliveryOperation 的固定 request/idempotency identity、已冻结 gate/issuance history 与 terminal outcome（#135）；DeliveryOperation lifecycle row 本身不是从创建起 immutable
 - verified RightsDeclaration / verification / disposition facts（#137）
 - AuthorizationProvenanceBinding / BindingDisposition（#137）
 - CertificationProfile snapshot（#134）
 - DatasetCertification / CertificationDisposition（#134）
+
+DeliveryOperation 特例：它与 Execution 类似，是受控 lifecycle row。PREPARED / ISSUANCE_PENDING / CONTAINMENT_PENDING / terminal 状态允许由显式 delivery/reconciliation Command 更新；不得给整行安装“创建后禁止 UPDATE”的不可变 guard。不可回写的是已经确定的 request/idempotency identity、provider_request_key（确定后稳定）、已提交的 gate/issuance transition history，以及 terminal outcome 的业务含义。需要审计每次迁移时使用 append-only Event/Audit/Evidence/Outbox/transition facts。
 
 错误通过追加新事实修正，不覆盖历史。
