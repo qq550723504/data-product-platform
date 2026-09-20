@@ -191,17 +191,35 @@ EntityType → Entity → EntityMapping projection
 - data_resource_id
 - rights_declaration_id
 - grantor_ref
-- supported_actions / scope（如按 grant 粒度绑定）
+- grantor_authority_mode: DIRECT_DECLARATION_PARTY / DELEGATED
+- grantor_delegation_chain_id + chain_hash（DELEGATED 时必填，强类型 FK/identity）
+- supported_actions / normalized scope（如按 grant 粒度绑定）
 - created_at / actor
 
 约束：
 
-- grantor_ref 必须与支持声明中的可授权 party_ref 明确匹配，或显式引用可验证 delegation chain；
+- grantor_ref 若不与声明中的可授权 party_ref 直接匹配，则必须显式引用可验证、强类型 `GrantorAuthorityDelegationChain`；不得只写“delegated=true”或把 chain IDs 塞 JSONB；
 - authorization/resource/declaration 必须同 workspace、同 DataResource；
 - declaration 支持的 actions/scope 必须覆盖 authorization 授出的范围；
 - 当前 entitlement 查询必须读取 binding，不允许独立选择 declaration + authorization；
 - AuthorizationProvenanceBinding 创建后是 immutable historical fact：禁止 UPDATE / DELETE；修正只能创建新的 binding/replacement fact，并让后续 CurrentEntitlement/RightsSnapshot 显式引用新 binding；
 - migration 必须提供 update/delete guard，历史 RightsSnapshot 引用的 binding ID 不能被重连到另一 declaration/grantor/actions/scope。
+
+### GrantorAuthorityDelegation / DelegationChain（#137）
+
+若 Authorization.grantor_ref 通过 delegation 获得授权资格，必须有强类型、可 current-check 的 delegation facts。
+
+推荐模型（或等价）：
+- `grantor_authority_delegation`：immutable edge，包含 workspace_id、delegator_ref、delegate_ref、data_resource_id、purpose/applicability、allowed/grantable actions、normalized scope_type/scope_ref、valid_from/valid_to、Evidence/actor；
+- `grantor_authority_delegation_disposition`：append-only REVOKED / INVALIDATED / SUPERSEDED + effective_at + reason/evidence；
+- `grantor_delegation_chain`：稳定 chain identity / chain_hash；
+- `grantor_delegation_chain_member`：ordered edge membership，finalized 后不可 INSERT/UPDATE/DELETE。
+
+CurrentEntitlementGate 对 DELEGATED binding 必须按 as_of 重新验证 chain 的每一 edge validity/disposition/coverage/continuity。binding 创建时验证成功不能永久缓存该结论。
+
+RightsSnapshot 若使用 delegated grantor，必须冻结 chain ID/hash + member edge IDs；历史 snapshot 保留解释，但 current gate 仍读取各 edge 当前 disposition/validity。
+
+credential expiry cap 还必须加入：所有参与 current grantor delegation chain 的最早有限 `valid_to`，以及签发时已知 future-effective delegation disposition `effective_at`。
 
 ### AuthorizationProvenanceBindingDisposition（#137）
 
@@ -248,6 +266,7 @@ RightsSnapshot 的 immutable 语义覆盖 **snapshot header + 全部 membership 
 - rights_snapshot_authorization
 - rights_snapshot_declaration（或等价 membership）
 - rights_snapshot_provenance_binding（或等价 membership）
+- rights_snapshot_grantor_delegation_chain / edge membership（如 binding 依赖 delegated grantor authority）
 - 其它实际参与 Effective Rights / Certification 解释的强类型成员关系
 
 要求：
