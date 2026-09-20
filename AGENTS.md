@@ -96,6 +96,8 @@ Authorization 不能与 provenance 独立选择。每个进入 CurrentEntitlemen
 
 **Grantor delegation chain 是 current entitlement dependency，不是 binding-create-time 一次性检查。** 每次 CurrentEntitlementGate 都必须按 as_of 重新验证所有 required delegation edges 的 validity、REVOKED/INVALIDATED/SUPERSEDED disposition、delegator→delegate 连续性及 resource/purpose/action/normalized-scope coverage；任一 edge 失效即 fail closed。RightsSnapshot 冻结 chain identity/member IDs只用于历史解释，不把 delegation 永久化。
 
+GrantorAuthorityDelegationChain 的冻结也必须并发安全：若使用 DRAFT→FINALIZED，ordered member writes 与 Finalize 获取同一 parent chain row lock/fence，固定 parent-first；Finalize 在锁内验证 member set/hash 后提交。不得只靠 FINALIZED 后 trigger 拒绝写入，否则 late member transaction 可穿越 finalization。
+
 RightsDeclaration 的 resource / consumer applicability / purpose / action / scope / validity 必须强类型、可索引、可查询；这些 gate-critical 字段不得仅藏在 JSONB。
 
 **使用权与授予权必须分离。** `allowed_actions/permitted purpose/use scope` 回答 party 自己能做什么；`grant_authority_mode + grantable_actions + grantable purpose + grantable scope` 回答 party 能否把这些权利授给别人。AuthorizationProvenanceBinding 必须证明后者覆盖 Authorization；只有 USE/PROCESS permission 而无 grant authority 时，不能作为 grant source。delegation chain 每一跳也必须显式携带 onward grant authority，不能把 use permission 当 sublicensing authority。
