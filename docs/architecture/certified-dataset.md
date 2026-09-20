@@ -266,7 +266,7 @@ PREPARED
    - 外部 provider 模式在 provider 调用前记录本次 gate dependency revision vector / fence token；
    - **任何 delivery mode 在产生第一个外部可观察交付副作用前，都必须在 terminal DB transaction 内重新获取相同 fence（固定顺序锁定），重新验证 caller principal→effective consumer/delegation 当前仍有效，再重新执行 CurrentDeliveryGate，并验证 dependency revision/token 未被并发变更穿越。** credential/provider 模式还必须重新计算 fresh cap；
    - provider 模式：provider 返回或 reconciliation 恢复 capability 后执行上述 fenced finalize；只有 finalize/ISSUED commit 成功后才能把 credential 返回客户端；
-   - direct-data 模式：在发送 HTTP body、stream chunk、文件字节或任何数据 payload 的**第一字节之前**执行上述 fenced finalize，并先提交 ISSUED terminal fact + Audit/Evidence/Outbox/CostEvent（如有）；commit 成功后才允许开始写 response body；
+   - direct-data 模式：在发送 HTTP body、stream chunk、文件字节或任何数据 payload 的**第一字节之前**执行上述 fenced finalize，并先提交 ISSUED terminal fact + Audit/Evidence/Outbox + terminal-specific CostEvent（如有）；commit 成功后才允许开始写 response body；
    - direct-data 不得为了整个大文件/stream 生命周期持有数据库 fence/row lock；锁只覆盖 re-gate + terminal commit。commit 后的 response 是已经在线性化点获准的一次交付，后续 disposition 在线性顺序上发生在该交付之后；
    - 若任何影响 gate 的变更先完成，finalize 必须看到新 revision/current facts，不能 ISSUED；provider capability 已产生时转 containment/block/fail，direct-data 则不得发送任何 byte；
    - 若 finalize 先完成，则并发 disposition/invalidation 在线性顺序上发生在 issuance 之后；provider credential 按 delivery mode 的撤销语义处理，direct-data 已被授权的这一响应不能被描述为“在 disposition 之前未发生”。
