@@ -204,9 +204,9 @@ DRAFT
 ├→ FAILED
 └→ READY
    → PUBLISHED
-      ├→ SUSPENDED
-      └→ WITHDRAWN
 ~~~
+
+`SUSPENDED` / `WITHDRAWN` 仍是数据库 schema 中的合法枚举值，但当前 published-row guard 会阻止从 PUBLISHED 更新，运行时也没有对应 Command；因此 V1.1 不把它们描述为当前可达迁移。未来启用必须同时修改 guard 并新增显式 Command，且 published bindings 继续冻结。
 
 ## 8. Quality Assessment
 
@@ -282,6 +282,8 @@ CurrentDeliveryGate
 任一子门禁失败时，历史 Certification 保留，但当前交付必须 BLOCKED。第一阶段不要求周期性后台重认证。
 
 Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证。第一阶段必须有真正的 server-side delivery command；服务端在返回数据或签发下载链接、presigned URL、token、credential 前必须重新执行完整 CurrentDeliveryGate。query 与 delivery 之间状态发生变化时，以 delivery command 内重新计算的当前事实为准。
+
+签发 credential 时，`expires_at` 不得晚于 requested TTL、平台最大 TTL、以及本次 entitlement 所依赖所有 RightsDeclaration / Authorization 中最早的有限 `valid_to/effective_to`。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 gate；不能回调平台的 bearer/presigned credential 至少必须严格执行该 expiry cap。
 
 ## 11. CostEvent
 
