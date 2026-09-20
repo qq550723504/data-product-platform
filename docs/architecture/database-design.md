@@ -87,6 +87,9 @@ EffectiveRights / EffectiveRightsSnapshot
 CertificationProfile snapshot
 DatasetCertification
 CertificationDisposition (REVOKED / SUPERSEDED)
+
+CostEvent activity identity extension
+CostAllocation
 ~~~
 
 QualityAssessment 核心已通过 #140 / migration 000019 落地，继续复用 `quality_result` / `quality_finding` 作为兼容存储名；后续 #132/#133 必须在该已实现模型上扩展，不得再次创建平行 QualityAssessment 表族。
