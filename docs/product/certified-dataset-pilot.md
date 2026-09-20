@@ -121,10 +121,11 @@ DataResource
 
 - 持久化 `RightsDeclaration` 与独立的 append-only `RightsVerification` 事实；Declaration 创建不等于 VERIFIED；
 - 显式 `CreateRightsDeclaration` / `VerifyRightsDeclaration` / `RejectRightsDeclaration` Command；
-- verification/rejection 创建后不可 UPDATE/DELETE；纠错通过新 declaration / verification fact，不覆盖旧事实；
+- 同一 RightsDeclaration 只能有一个 terminal RightsVerification outcome（VERIFIED / REJECTED）；Verify/Reject 互斥，数据库约束禁止同一 declaration 同时出现两个 terminal outcomes；
+- verification/rejection 创建后不可 UPDATE/DELETE；错误 VERIFIED 通过 RightsDisposition INVALIDATED/SUPERSEDED 退出 current set，并创建新的 RightsDeclaration + verification 修正；不得在同一 declaration 上追加 REJECTED 覆盖 VERIFIED；
 - 未 VERIFIED 或已 REJECTED declaration 不得进入 AuthorizationProvenanceBinding、CurrentEntitlementGate、RightsSnapshot 或 Certification 权利依据；
 - declaration create/verify/reject 分别产生 `RightsDeclarationCreated` / `RightsDeclarationVerified` / `RightsDeclarationRejected`（或实现固定的等价事件），并与 Audit/Evidence/Outbox 保持一致事务和幂等语义；
-- 至少测试：未验证声明 fail closed、VERIFY 后可参与后续 binding、REJECT 后不可参与、历史 verification 不被后续修改；
+- 至少测试：未验证声明 fail closed、VERIFY 后可参与后续 binding、REJECT 后不可参与、Verify/Reject 并发只能产生一个 terminal outcome、VERIFIED declaration 后续不能追加 REJECTED 翻转结论、历史 verification 不被后续修改；
 - append-only `RightsDisposition`，至少支持 `INVALIDATED` / `SUPERSEDED` + `effective_at` + reason + Evidence + actor；
 - 显式 `InvalidateRightsDeclaration` / `SupersedeRightsDeclaration` Command，禁止 UPDATE 已 VERIFIED 历史事实；
 - Current rights selection 按 `as_of` 排除已生效 disposition，并校验每条 declaration 自身 validity window 与 resource/consumer/purpose/action/scope；
@@ -217,6 +218,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - DeliveryOperation 的**数据库 terminal fact** + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；外部 credential provider 调用不属于 PostgreSQL transaction；
 - 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key；
 - **每一次 initial / retry / reconciliation 真正调用 provider 前，都重新执行完整 CurrentDeliveryGate 并重新计算 credential expiry cap**；PREPARED/ISSUANCE_PENDING 中旧 gate snapshot 只用于审计；
+- provider 返回/恢复 capability 后，terminal ISSUED transaction 必须获取与 Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，再次 re-gate + fresh-cap；terminal commit 是 issuance linearization point；
 - 如果 re-gate 已 BLOCKED：
   - 确认此前未产生 provider access capability 时可直接 BLOCKED；
   - 若既有 provider_request_key 可能已签发，必须先 reconcile；
