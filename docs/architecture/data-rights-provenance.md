@@ -69,7 +69,7 @@ V1 至少区分：
 
 未经 VERIFIED 的声明不得作为正式 Certification 权利依据。
 
-## 5. Authorization
+## 5. Authorization 与 Provenance Binding
 
 现有 Authorization 继续回答：
 
@@ -85,7 +85,29 @@ Grantor
 
 Authorization 本身不证明 Grantor 为什么有权授权。
 
-因此正式授权链应能回溯到可验证 RightsDeclaration。
+第一阶段必须建立强类型 `AuthorizationProvenanceBinding`（具体表名可由 #137 实现确定），把一个 Authorization / ResourceGrant 显式绑定到支持它的 RightsDeclaration provenance，而不是分别独立挑选两组事实。
+
+Binding 至少表达：
+
+- workspace_id
+- authorization_id
+- data_resource_id
+- rights_declaration_id
+- grantor_ref
+- supported_actions / scope（如按 grant 粒度绑定）
+- created_at / actor
+
+建立/验证 Binding 时必须 fail closed：
+
+1. Authorization.grantor_ref 与声明中承担可授权角色的 party_ref 明确匹配，或存在平台显式支持且可验证的 delegation chain；
+2. 声明覆盖同一 DataResource；
+3. 声明的 allowed/grantable actions 与 scope 足以支持该 Authorization 授出的 actions/scope；
+4. 声明自身 VERIFIED、validity、disposition 条件满足；
+5. 跨 workspace 引用拒绝。
+
+V1 不推断“同一个资源上任何 VERIFIED 声明都能支持任何 grantor”。如果无法证明 grantor 与 provenance 的关系，则 Authorization 不能进入 CurrentEntitlementGate。
+
+历史 RightsSnapshot 应冻结实际使用的 AuthorizationProvenanceBinding / declaration IDs，使“为什么这个 grantor 有权授权”可追溯。
 
 ## 6. RightsSnapshot
 
