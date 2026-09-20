@@ -247,13 +247,13 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - direct bearer provider 必须支持基于同一 provider_request_key replay/read-after-write 恢复同一 credential（或等价同一访问能力）；仅支持 revoke/compensation 但不能恢复原 bearer secret 不足以支持 direct bearer；
 - 无法恢复同一 credential 的 provider 必须使用平台 redemption indirection，或明确 unsupported；
 - provider 成功但 terminal DB commit 前 crash 时，retry/reconciliation 必须复用同一 provider_request_key，不得签发第二份独立 credential；
-- 首次返回或 recovered credential 在 ISSUED 前必须 read-after-write/authoritative verify 实际 provider capability：expiry <= fresh cap，并且 resource/DatasetVersion、consumer、action、object/row/prefix scope、delivery mode/channel 等能力不得比 requested/current-gate context 更宽；
+- 首次返回或 recovered credential 在 ISSUED 前必须 read-after-write/authoritative verify 实际 provider capability：expiry <= fresh cap，并且 resource/DatasetVersion、**consumer/grantee enforcement**、action、object/row/prefix scope、delivery mode/channel 等能力不得比 requested/current-gate context 更宽；consumer/grantee 无法被 provider 原生或等价 holder-bound mechanism 强制/验证时，direct bearer/presigned 不得 ISSUED，只能 platform redemption/gateway 或 unsupported；
 - recovered/returned credential 超出 fresh cap **或 capability scope 过宽/不可验证**时必须安全 shorten/narrow+verify，或 revoke/contain；无法满足当前 context 时 operation 不得成功；
 - ISSUANCE_PENDING / CONTAINMENT_PENDING 必须有 reconciliation path 和告警/恢复机制；
 - CONTAINMENT_PENDING confirmed containment 后允许两种终结：fresh gate 已 BLOCKED → BLOCKED；fresh gate 仍 ALLOWED 但 credential/issuance contract 无法满足（如无法缩短到 fresh cap）→ FAILED；
 - 每个 delivery event_type 显式进入 routing table，声明 required handlers 或 retention-only；
 - event/Audit/Evidence payload 不得包含可用 credential secret；
-- delivery CostEvent 必须通过 typed CostAllocation FK 关联 DeliveryOperation。
+- delivery CostEvent 必须通过 typed CostAllocation FK 关联 DeliveryOperation；每次真实 provider invocation 在调用前建立 durable physical provider-attempt identity，并按 attempt 记账。success / provider failure / timeout/unknown / reconciliation / revoke/compensation 只要实际外部调用并可能计费，都必须保留 CostEvent；same-attempt 无新调用 replay 才去重。
 
 缺少 server-side gate-at-issuance、DeliveryOperation、terminal delivery events、共享 fence/revision，或上述真实 PostgreSQL 双顺序并发测试任一项时，#135 不视为完成。
 
