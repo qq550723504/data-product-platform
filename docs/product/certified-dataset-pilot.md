@@ -180,7 +180,7 @@ CertificationProfile 可以要求：
 - 持久化不可变 `CertificationProfile` version/snapshot/hash；Profile 后续变化不得改变历史 Certification 的解释；
 - purpose/action/consumer/delivery channel 四个 delivery-context 维度必须显式 ANY / EXPLICIT；EXPLICIT 时冻结对应强类型 membership；缺失/NULL/UNKNOWN 不得被解释成 ANY；
 - 显式 `EvaluateDatasetCertification`（或等价 Certify Command），禁止 generic PATCH certification status；
-- 每次评估明确绑定并冻结：workspace、DatasetVersion、CertificationProfile snapshot/version/hash、QualityAssessment、RightsSnapshot / Effective Rights、required ComplianceResult、required ContractVersion、Evidence/EvidenceSnapshot；
+- 每次评估明确绑定并冻结：workspace、DatasetVersion、CertificationProfile snapshot/version/hash、QualityAssessment、finalized immutable RightsSnapshot、**finalized EffectiveRightsSnapshot identity/hash（Rights required 时）**、required ComplianceResult、required ContractVersion、Evidence/EvidenceSnapshot；Effective Rights snapshot 的 required-input membership/input-set hash 必须与 target DatasetVersion 实际 lineage 一致；
 - required quality/rights/compliance/contract/traceability/evidence 任一缺失或不匹配必须 fail closed 为 REJECTED/阻断，不能产生 CERTIFIED；
 - CurrentCertificationGate 对 purpose/action/consumer/delivery channel 任一维度无法从 frozen Profile snapshot 明确证明覆盖时必须 BLOCKED；只有显式 ANY 才代表该维度不限；
 - DatasetCertification 是不可变评估事实，decision 至少明确 CERTIFIED / REJECTED；DatasetVersion V2 不继承 V1 Certification；
