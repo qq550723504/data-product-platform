@@ -317,6 +317,7 @@ Pilot 第一阶段事件词汇至少包括：
 - RightsDeclarationRejected
 - RightsDeclarationInvalidated
 - RightsDeclarationSuperseded
+- AuthorizationProvenanceBound
 - QualityAssessmentCompleted（或继续兼容现有 QualityPassed / QualityFailed / QualityReviewRequired）
 - DatasetCertified
 - DatasetCertificationRejected
