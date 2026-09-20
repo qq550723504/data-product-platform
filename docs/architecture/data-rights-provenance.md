@@ -290,6 +290,8 @@ DELIVERY_ALLOWED / DELIVERY_BLOCKED
 
 Authorization 过期、暂停、撤销，RightsDeclaration 后续失效，或 required action 当前不再允许时，即使历史 Certification 为 CERTIFIED，也必须 DELIVERY_BLOCKED。
 
+此外，每个 Authorization 必须对本次请求本身成立：其 grantee 必须匹配 consumer（或符合明确支持的主体映射规则），resource 必须是本次 DataResource，purpose/action/scope 必须覆盖 requested purpose/action/scope。Declaration 的宽权限不能扩张一条更窄的 Authorization。
+
 该 gate 是第一阶段必需；周期性后台重认证仍可后置。
 
 ## 12. 非目标
