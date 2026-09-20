@@ -134,7 +134,7 @@ V1.1 六个质量维度：
 ### Certification
 
 - CertificationProfile（#134）
-- DatasetCertification（#134）
+- DatasetCertification / CertificationDisposition（#134）
 
 认证判断的是“DatasetVersion X 是否满足 CertificationProfile Y”。
 
@@ -186,7 +186,12 @@ CERTIFIED
 REJECTED
 ~~~
 
-未来若需要撤销认证，追加 Revocation 事实，不覆盖原 Certification。
+第一阶段即支持 append-only CertificationDisposition：
+
+- REVOKED：撤销旧认证的当前可用性；
+- SUPERSEDED：显式指向 replacement certification。
+
+旧 Certification 不覆盖、不删除；CurrentCertificationGate 按 as_of 排除已生效 disposition。
 
 ### ProductRelease
 
