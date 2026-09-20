@@ -253,7 +253,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - CONTAINMENT_PENDING confirmed containment 后允许两种终结：fresh gate 已 BLOCKED → BLOCKED；fresh gate 仍 ALLOWED 但 credential/issuance contract 无法满足（如无法缩短到 fresh cap）→ FAILED；
 - 每个 delivery event_type 显式进入 routing table，声明 required handlers 或 retention-only；
 - event/Audit/Evidence payload 不得包含可用 credential secret；
-- delivery CostEvent 必须通过 typed CostAllocation FK 关联 DeliveryOperation；每次真实 provider invocation 在调用前建立 durable physical provider-attempt identity，并按 attempt 记账。success / provider failure / timeout/unknown / reconciliation / revoke/compensation 只要实际外部调用并可能计费，都必须保留 CostEvent；same-attempt 无新调用 replay 才去重。
+- delivery CostEvent 必须通过 typed CostAllocation FK 关联 DeliveryOperation；每次真实 provider invocation 在调用前建立 durable immutable provider-attempt start fact，并按 attempt 记账。success / provider failure / timeout/unknown 后追加 outcome/observation fact；后续 reconciliation 对原 attempt 的新认知只能追加 resolution observation，不能覆盖原始 start/首次 observation。reconciliation / revoke / compensation 若真实调用 provider，则它们各自是新的 provider_attempt_id。只要实际外部调用并可能计费，都必须保留 CostEvent；same-attempt 无新调用 replay 才去重。
 
 缺少 server-side gate-at-issuance、DeliveryOperation、terminal delivery events、共享 fence/revision，或上述真实 PostgreSQL 双顺序并发测试任一项时，#135 不视为完成。
 
