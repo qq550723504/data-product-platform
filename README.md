@@ -23,7 +23,7 @@ AI 高质量数据集 / Gold Dataset    后续
 
 第一阶段任务：
 
-- #131 QualityAssessment 与规则快照
+- #131 QualityAssessment follow-up / typed CostAllocation（核心 QualityAssessment 与规则快照已由 #140 落地）
 - #132 通用 industry-pack Quality Engine
 - #133 Quality Report
 - #137 Data Rights Provenance / Effective Rights
