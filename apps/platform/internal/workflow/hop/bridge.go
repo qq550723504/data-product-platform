@@ -1,6 +1,7 @@
 package hop
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"errors"
@@ -274,11 +275,15 @@ func (b *Bridge) loadDefinition(cfg managedConfig) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read Hop definition %s: %w", cfg.DefinitionRef, err)
 	}
-	checksum := fmt.Sprintf("%x", sha256.Sum256(content))
+	checksum := fmt.Sprintf("%x", sha256.Sum256(canonicalDefinitionBytes(content)))
 	if !strings.EqualFold(checksum, cfg.DefinitionSHA256) {
 		return nil, fmt.Errorf("Hop definition checksum mismatch for %s: expected %s got %s", cfg.DefinitionRef, cfg.DefinitionSHA256, checksum)
 	}
 	return content, nil
+}
+
+func canonicalDefinitionBytes(content []byte) []byte {
+	return bytes.ReplaceAll(content, []byte("\r\n"), []byte("\n"))
 }
 
 func (b *Bridge) executionParameters(ctx context.Context, request workflowapp.ProcessingRequest, cfg managedConfig) (map[string]string, string, error) {

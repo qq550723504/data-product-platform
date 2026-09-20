@@ -21,7 +21,7 @@ spec:
     engine: HOP
     name: enterprise-activity-energy-monthly-hop
     definitionRef: examples/enterprise-activity/hop/aggregate-energy-monthly.hpl
-    definitionSha256: 39091a997bff8bfcd7126c2ccea0c2e1c383f47cf895cd4f30eb924c071c1479
+    definitionSha256: 106b318e6ab6e26a14d8306bf5908f0eedc36b42e1e824e49f02916f583d3083
     contentType: application/xml
     outputFilename: energy-monthly.csv
     outputContentType: text/csv; charset=utf-8
