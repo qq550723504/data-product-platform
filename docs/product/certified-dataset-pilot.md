@@ -223,7 +223,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - server-side delivery command 在返回数据或签发 URL/token/credential 前，使用该 trusted principal + effective consumer 上下文重新执行完整 CurrentDeliveryGate；
 - query→delivery 之间 Rights/Certification/DatasetVersion 状态变化，以及 principal binding/delegation revoke 的 TOCTOU 测试；
 - gate 失败不得产生可用数据、URL、token、credential；
-- credential TTL 受 validity / future-effective RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 边界约束；
+- credential TTL 受 caller principal→consumer/workspace binding、workspace membership、delegation 的最早有限 valid_to/expires_at，以及 trusted identity source 已知 future revoke/disable（如可表达）、Rights/Authorization validity、future-effective RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 的最早边界共同约束；不可回调 bearer/presigned credential 不得越过调用者代表资格本身的有效期；
 - `DatasetDeliveryIssued` / `DatasetDeliveryBlocked` / `DatasetDeliveryFailed`（或实现固定的等价事件）覆盖三个终态结果；
 - DeliveryOperation 的**数据库 terminal fact** + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；外部 credential provider 调用不属于 PostgreSQL transaction；
 - 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key；
