@@ -51,8 +51,10 @@ data_authorization
 authorization_resource
 rights_snapshot
 
-quality_result
+quality_result        # QualityAssessment compatibility storage; formalized by 000019
+quality_finding
 compliance_result
+compliance_finding
 
 data_contract
 contract_version
@@ -76,11 +78,6 @@ outbox_event
 具体表名可由实现确定，但业务事实必须可查询：
 
 ~~~text
-QualityAssessment
-  - rule snapshot/hash
-  - dimension summaries
-  - findings
-
 RightsDeclaration
 RightsVerification
 RightsDisposition (INVALIDATED / SUPERSEDED)
@@ -92,7 +89,7 @@ DatasetCertification
 CertificationDisposition (REVOKED / SUPERSEDED)
 ~~~
 
-优先演进现有 quality_result，不得无理由复制一套平行 Quality 表族。
+QualityAssessment 核心已通过 #140 / migration 000019 落地，继续复用 `quality_result` / `quality_finding` 作为兼容存储名；后续 #132/#133 必须在该已实现模型上扩展，不得再次创建平行 QualityAssessment 表族。
 
 ## 4. DataResource
 
@@ -210,25 +207,38 @@ JSONB 只用于受控扩展参数，不承载主要权利关系。
 
 衍生数据默认 fail closed。
 
-## 10. QualityAssessment（#131）
+## 10. QualityAssessment（已实现：#140 / migration 000019）
 
-优先扩展现有 quality_result，至少持久化：
+领域语义已经正式落地，存储/API 兼容名仍保留 `quality_result`。
+
+当前已实现的 Assessment 至少持久化：
 
 - workspace_id
 - dataset_version_id
 - rule_set_ref
 - rule_set_version
 - rule_set_content_sha256
-- immutable rule content/snapshot or content-addressed ref
-- evaluator identity/version
-- metrics / dimension summaries
-- findings
-- gate decision
+- rule_set_content
+- evaluator_name / evaluator_version
+- metrics
+- gate_decision
 - created_at / actor
 
-完成的 Assessment 是不可变事实。
+`quality_finding` 保存逐规则 finding，并由 000019 补强为 Assessment 创建事务内写入、之后不可追加/UPDATE/DELETE 的历史事实。
 
-大量 failing rows 不应全部塞入单个 JSONB；应使用分页 finding、artifact 或适合的数据结构。
+000019 还提供：
+
+- rule content + SHA-256 一致性约束；
+- 新 Assessment 必须有完整 rule snapshot/evaluator identity；
+- legacy pre-019 row 通过 NOT VALID 策略保留兼容历史；
+- DatasetVersion assessment history 索引；
+- Assessment / finding 不可回溯改写。
+
+现有 HTTP 已提供 assessment by ID、DatasetVersion history/latest 等查询。
+
+后续 #132/#133 的工作重点是六维通用规则执行与 Quality Report，不再重复迁移/重建 QualityAssessment 核心。
+
+大量 failing rows 的进一步规模化存储/分页可以由 #133 按已实现 finding 模型演进；不得通过新平行 Assessment root 规避现有历史。
 
 ## 11. DatasetCertification（#134）
 
