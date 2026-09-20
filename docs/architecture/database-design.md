@@ -262,6 +262,17 @@ Current binding selection 必须按 as_of 排除已生效 INVALIDATED / SUPERSED
 
 JSONB 只用于受控扩展参数，不承载主要权利关系。特别是 CurrentEntitlementGate 必须读取的 resource / consumer applicability / purpose / action / scope / validity 都必须有强类型、可索引、可查询表示；不得靠应用层解析任意 JSONB 才能 fail closed。
 
+### RightsSnapshot context + membership freezing（#137）
+
+RightsSnapshot header 必须冻结其适用 rights context，不能只冻结成员列表。至少表达：
+- consumer_mode: ANY / EXPLICIT；EXPLICIT 时冻结 consumer refs/selectors；
+- purpose_mode: ANY / EXPLICIT；EXPLICIT 时冻结 purpose codes；
+- action coverage：冻结 snapshot 实际证明的 action set（或 action_mode + membership）；
+- normalized scope coverage；
+- as_of / context hash。
+
+这些字段回答“这份 frozen rights evidence 对谁、什么 purpose/action/scope 成立”。Profile=ANY 不能由一个窄 EXPLICIT snapshot 推断出来。
+
 ### RightsSnapshot membership freezing（#137）
 
 RightsSnapshot 的 immutable 语义覆盖 **snapshot header + 全部 membership rows**，不仅是主表。
@@ -291,7 +302,11 @@ Effective Rights 必须落成 immutable aggregate（例如 `effective_rights_sna
 
 header 至少：
 - id / workspace_id / target_dataset_version_id；
-- calculation_as_of / context identity；
+- calculation_as_of；
+- consumer_mode + explicit consumer coverage（或等价 context identity）；
+- purpose_mode + explicit purpose coverage；
+- normalized scope coverage；
+- action decisions / coverage 与 context_hash；
 - calculation_rule_version + rule_hash；
 - lineage_or_input_set_hash；
 - status DRAFT/FINALIZED（或等价受控 finalize）；
