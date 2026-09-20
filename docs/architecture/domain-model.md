@@ -101,6 +101,8 @@ RightsDeclaration
       ↓
 RightsVerification / RightsDisposition
       ↓
+AuthorizationProvenanceBinding
+      ↓
 Authorization
       ↓
 RightsSnapshot
@@ -140,7 +142,21 @@ VERIFIED RightsDeclaration 的历史不可改写，但当前有效性可以通�
 
 Current rights selection 必须根据 as_of 和 disposition 判断，不能用 created_at/latest 猜测。
 
-### 4.5 Authorization
+### 4.5 AuthorizationProvenanceBinding
+
+把 Authorization / ResourceGrant 强类型绑定到支持它的 RightsDeclaration provenance。
+
+必须证明：
+
+- Authorization.grantor_ref 与 declaration 中可授权 party_ref 匹配，或存在明确可验证 delegation chain；
+- 同一 DataResource；
+- declaration allowed/grantable actions 与 scope 覆盖 Authorization 授出的 actions/scope；
+- declaration 当前 VERIFIED、validity 与 disposition 条件有效；
+- 同一 workspace。
+
+不得把互不相关的 VERIFIED declaration 和 ACTIVE Authorization 独立拼接。
+
+### 4.6 Authorization
 
 回答：
 
@@ -150,7 +166,7 @@ Grantor + Grantee + Resource + Purpose + Action + Scope + Validity → Decision
 
 Authorization 不是所有权证明；Grantor 的授权资格应能追溯至 Rights Provenance。
 
-### 4.6 EffectiveRights
+### 4.7 EffectiveRights
 
 衍生 DatasetVersion 的有效权利由输入资源权利、授权、Purpose 和生产 lineage 共同决定。
 
