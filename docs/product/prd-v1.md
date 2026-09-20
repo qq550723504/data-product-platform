@@ -106,7 +106,8 @@ Certified or governed DatasetVersion
 ### Rights
 
 - RightsDeclaration（#137）
-- RightsVerification fact（#137）
+- RightsVerification / RightsDisposition facts（#137）
+- AuthorizationProvenanceBinding（#137）
 - Authorization / ResourceGrant
 - RightsSnapshot
 - EffectiveRights（#137）
@@ -275,8 +276,8 @@ CurrentDeliveryGate
 ~~~
 
 - DatasetVersionUsability 至少阻断 INVALID / FAILED / PROCESSING / CREATED；SUPERSEDED 按平台既有“明确历史版本”语义处理，不在本 docs-only 基线中自动等同 INVALID；
-- CurrentCertificationGate 要求本次 delivery 绑定明确 DatasetCertification，decision= CERTIFIED 且未在 as_of 时点被 CertificationDisposition REVOKED / SUPERSEDED；禁止以 latest created_at 猜当前认证；
-- CurrentEntitlementGate 按当前时间、consumer、purpose、action 检查 VERIFIED 且未被有效 INVALIDATED/SUPERSEDED 的 RightsDeclaration、Authorization 状态/有效期与 Effective Rights。
+- CurrentCertificationGate 要求本次 delivery 绑定明确 DatasetCertification，decision = CERTIFIED 且未在 as_of 时点被 CertificationDisposition REVOKED / SUPERSEDED；requested purpose/action/consumer/delivery context 必须被该 Certification 冻结的 CertificationProfile snapshot 覆盖；禁止以 latest created_at 猜当前认证；
+- CurrentEntitlementGate 按当前时间、consumer、purpose、action 检查 VERIFIED 且未被有效 INVALIDATED/SUPERSEDED 的 RightsDeclaration；每个 Authorization 必须通过 AuthorizationProvenanceBinding 证明其 grantor_ref 得到该 provenance 支持，并同时满足 Authorization 状态/有效期与 Effective Rights。
 
 任一子门禁失败时，历史 Certification 保留，但当前交付必须 BLOCKED。第一阶段不要求周期性后台重认证。
 
