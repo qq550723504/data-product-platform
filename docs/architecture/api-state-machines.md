@@ -396,9 +396,9 @@ Pilot 第一阶段事件词汇至少包括：
 Disposition Command 与对应业务事实、AuditEvent、Evidence、Outbox event 应在同一事务边界内提交。
 
 #135 delivery command 的每个终态结果也必须产生明确 Domain Event：
-- gate 通过并完成数据/credential issuance → `DatasetDeliveryIssued`；
+- gate/fence 通过并提交该 DeliveryOperation 的**授权/访问能力释放线性化点** → `DatasetDeliveryIssued`。对 provider/credential mode，这表示 terminal fact 已提交并允许返回已验证 capability；对 direct-data，这表示服务端从该 commit 之后才被允许开始写第一字节，**不表示客户端已收到任何或全部 bytes，也不表示传输完成**；
 - CurrentDeliveryGate fail closed、没有签发任何可用访问能力 → `DatasetDeliveryBlocked`；
-- gate 通过但实际 delivery/issuance 因系统或外部错误失败 → `DatasetDeliveryFailed`。
+- gate 通过但在 terminal authorization/release point 之前无法完成必要 issuance contract → `DatasetDeliveryFailed`。direct-data 在 `DatasetDeliveryIssued` 之后发生 socket loss/stream interruption 不回写 terminal outcome 为 FAILED；如业务需要观测传输完成/中断，使用独立 append-only transfer observation（例如 `DatasetDeliveryTransferObserved` / bytes_sent / completed=false/true），不得改变 `Issued` 的授权线性化语义。
 
 DeliveryOperation **terminal database fact** + Audit/Evidence + Outbox 必须在同一数据库事务内保持一致，并具备幂等语义；这里不包含外部 provider side effect。CostEvent 按实际 activity-attempt 记账：same-attempt replay 去重，retry/reconciliation 若真实新增可计费 provider/compute 工作则追加 attempt 成本（或原子聚合新增 quantity/amount）。外部 issuance 依赖 stable provider_request_key + retry/reconciliation/compensation 协议。事件 payload 不得包含可用 token/credential secret。
 
