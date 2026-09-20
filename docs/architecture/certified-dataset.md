@@ -268,9 +268,18 @@ PREPARED
    - provider outcome unknown、查询失败、或 revoke/contain 未确认成功 → 进入 CONTAINMENT_PENDING，不得对外声称 BLOCKED，也不得发出 DatasetDeliveryBlocked terminal event；
    - CONTAINMENT_PENDING 必须由 reconciliation/人工告警持续处理，直到确认 access capability 不存在或已被安全失效；
 - containment 确认成功后，若终结原因是 fresh gate 已不允许交付，则转 BLOCKED；若 gate 仍 ALLOWED 但 credential 无法满足 fresh cap/issuance contract，则转 FAILED（例如 CREDENTIAL_EXCEEDS_FRESH_CAP）；
-7. provider 首次返回或 reconciliation 恢复出 credential/access capability 后，**在写入 ISSUED 前必须验证其实际 provider expiry / access bound 不晚于当前 fresh credential expiry cap**。该 cap 必须来自最近一次 CurrentDeliveryGate + disposition/validity 重新计算，而不是 PREPARED 时的旧值；
-8. 若 recovered/returned credential 的实际 expiry 晚于 fresh cap：
-   - 若 provider 能对**同一 access capability**安全缩短/收窄并可 read-after-write 验证实际 expiry <= fresh cap，则验证成功后才允许继续 ISSUED；
+7. provider 首次返回或 reconciliation 恢复出 credential/access capability 后，**在写入 ISSUED 前必须验证 provider 实际签发的能力边界，而不只是验证 expiry**：
+   - actual expiry / access time bound 不晚于当前 fresh credential expiry cap；
+   - actual resource / DatasetVersion 不得比本次 delivery request 更宽；
+   - actual consumer/grantee（provider 可表达时）必须匹配本次 consumer；
+   - actual action/permission 必须是 requested action 的等价或更窄集合，不能把 READ/USE 请求提升成 bucket-wide write/share/admin；
+   - actual object/row/prefix/scope 必须等价或更窄，不能把单 DatasetVersion/对象范围签成整个 bucket、workspace 或无约束 prefix；
+   - actual delivery channel/mode constraints（如 provider 模型支持）不得放宽；
+   - 上述 capability descriptor 必须通过 provider read-after-write / authoritative lookup（或等价可验证机制）确认，并记录非 secret 的 capability snapshot/hash/evidence；
+   - 任何关键维度无法验证，或实际 capability 比 requested/current-gate context 更宽，都不得 ISSUED，必须 revoke/contain，或使用 platform redemption indirection。
+该 cap/context 必须来自最近一次 fenced CurrentDeliveryGate，而不是 PREPARED 时的旧值；
+8. 若 recovered/returned credential 的实际 expiry 晚于 fresh cap，或 capability scope 比当前 allowed/requested context 更宽：
+   - 若 provider 能对**同一 access capability**安全缩短/收窄并可 read-after-write 验证实际 expiry <= fresh cap 且 resource/action/consumer/scope 均满足当前 allowed context，则验证成功后才允许继续 ISSUED；
    - 否则不得提交 ISSUED，必须先 revoke/contain 该 credential；
    - containment 未确认成功时进入 CONTAINMENT_PENDING；
    - containment 成功但无法在同一安全能力上满足 fresh cap 时，当前 DeliveryOperation 终结为 FAILED（例如 CREDENTIAL_EXCEEDS_FRESH_CAP）；如业务仍需交付，必须通过新的显式 delivery attempt/replacement operation 再次完整 re-gate，不得在同一幂等 operation 下静默签发第二份 credential；
