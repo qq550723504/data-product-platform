@@ -88,6 +88,8 @@ CertificationProfile snapshot
 DatasetCertification
 CertificationDisposition (REVOKED / SUPERSEDED)
 
+DeliveryOperation
+
 CostEvent activity identity extension
 CostAllocation
 ~~~
@@ -278,7 +280,36 @@ ProductRelease 精确引用发布时所需 DatasetVersion、Contract、Rights、
 
 ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status。
 
-## 13. CostEvent / CostAllocation
+## 13. DeliveryOperation（#135）
+
+第一阶段 standalone delivery 必须持久化稳定的 DeliveryOperation，作为 delivery command、Audit/Evidence 和 CostAllocation 的强类型业务主体；不能让一次交付只存在于临时 HTTP 请求或 JSONB metadata 中。
+
+至少逻辑表达：
+
+- id
+- workspace_id
+- dataset_version_id
+- dataset_certification_id
+- consumer_ref
+- purpose
+- action
+- delivery_mode
+- idempotency_key / request identity
+- requested_at
+- gate decision / blockers
+- issuance result（issued / blocked / failed 等明确结果）
+- credential_expires_at（如签发 credential）
+- actor / trace
+
+实现可选择 append-only attempt/result 模型或受控 lifecycle row，但必须满足：
+
+- 每次 delivery Command 有稳定 ID；
+- 同一幂等请求不会重复签发或重复记账；
+- gate 失败也有可审计 DeliveryOperation / result；
+- 不把可用 credential secret/token 正文持久化到 Core 数据库；
+- CostAllocation 必须能以 FK 关联 DeliveryOperation。
+
+## 14. CostEvent / CostAllocation
 
 当前 `cost_event` 已落库，现有强类型关联只有可选 `execution_id`。这足以表达 Execution 成本，但不足以表达 QualityAssessment、Rights verification/disposition、Certification、Delivery 等没有 Execution 的活动。
 
@@ -319,13 +350,13 @@ Certified Dataset Pilot 目标模型增加：
 - authorization_provenance_binding_id
 - dataset_certification_id
 - certification_disposition_id
-- delivery_operation_id（如 #135 落库 delivery operation）
+- delivery_operation_id（第一阶段必需；#135 必须落库 DeliveryOperation）
 
 实现可用一张带 nullable typed FK 的 allocation 表并用 CHECK 保证每条 allocation 仅选择一个 subject，或用等价强类型表族；不得退化为 `subject_type + subject_id` 无 FK 多态字符串，也不得只依赖 metadata。
 
 现有 `cost_event.execution_id` 可继续用于兼容查询；新增非 Execution 成本必须通过 typed allocation 查询到业务主体。
 
-## 14. Evidence / Audit
+## 15. Evidence / Audit
 
 Evidence 保存可验证证据元数据和可选 artifact/hash。
 
@@ -333,7 +364,7 @@ EvidenceRelation 关联业务对象；EvidenceSnapshot 在需要冻结时保存 
 
 AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 
-## 15. Mutable vs Immutable
+## 16. Mutable vs Immutable
 
 | 对象 | 语义 |
 |---|---|
@@ -349,11 +380,12 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | verified RightsDeclaration / verification / disposition facts | immutable |
 | CertificationProfile snapshot | immutable |
 | DatasetCertification / CertificationDisposition | immutable |
+| DeliveryOperation | persisted delivery attempt/result with stable idempotency identity; gate/issuance transitions only through delivery command |
 | CostEvent / CostAllocation | immutable accounting/history facts |
 | ProductVersion | immutable history |
 | ProductRelease | stateful lifecycle row before publication; explicit validation/publish transitions may update status and frozen references; after publication, release bindings are frozen and terminal history is retained |
 
-## 16. JSONB 使用策略
+## 17. JSONB 使用策略
 
 JSONB 可用于：
 
@@ -366,7 +398,7 @@ JSONB 可用于：
 
 JSONB 不用于 ID/FK、状态、版本号、核心 party/resource/certification 关系或需要约束的字段。
 
-## 17. 删除策略
+## 18. 删除策略
 
 允许软删除的可变主对象可以包括 UseCase、DataResource、Dataset、DataProduct、Entity。
 
