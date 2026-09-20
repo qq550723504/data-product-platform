@@ -220,9 +220,26 @@ QueryCurrentEntitlement
 
 具体 URL 由实现 PR 固定。
 
-### Quality
+### Quality（当前 live API）
 
-当前 quality-checks API 在 #131 起应明确语义为创建新的 QualityAssessment。
+~~~text
+POST /api/v1/dataset-versions/{versionId}/quality-checks
+GET  /api/v1/quality-results/{resultId}
+GET  /api/v1/quality-assessments/{assessmentId}
+GET  /api/v1/dataset-versions/{versionId}/quality-assessments
+GET  /api/v1/dataset-versions/{versionId}/quality-assessments/latest
+~~~
+
+其中 `POST .../quality-checks` 在 #131 起语义明确为创建新的 QualityAssessment；历史兼容 query route 仍保留。
+
+### Compliance（当前 live API）
+
+~~~text
+POST /api/v1/dataset-versions/{versionId}/compliance-checks
+GET  /api/v1/compliance-results/{resultId}
+~~~
+
+Quality / Compliance POST routes 产生 Certification 与 ReleaseReadiness 消费的 gate facts，本 docs-only 基线不得省略这些现有 Command API。
 
 ### Certification
 
