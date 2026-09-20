@@ -107,7 +107,7 @@ func TestWorkspaceOwnershipHTTPRejectsWithoutSideEffects(t *testing.T) {
 	upload := datasetapp.NewUploadVersionService(tx, datasets, store)
 	invalidate := datasetapp.NewInvalidateVersionService(tx, datasets)
 	match := entityapp.NewMatchService(repoPath(t, "industry-packs"), tx, entities, datasets, upload, store)
-	datasetHandler := datasethttp.NewHandler(create, upload, datasetapp.NewInvalidateVersionService(tx, datasets), datasets)
+	datasetHandler := datasethttp.NewHandler(create, upload, datasetapp.NewInvalidateVersionService(tx, datasets), datasetapp.NewFailVersionService(tx, datasets), datasets)
 	entityHandler := entityhttp.NewHandler(match, entities)
 	workflowRepo := workflowinfra.NewPostgresRepository(pool)
 	workflowVersions := workflowapp.NewWorkflowVersionService(tx, workflowRepo)

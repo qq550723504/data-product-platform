@@ -187,6 +187,7 @@ POST /api/v1/data-resources
 POST /api/v1/datasets
 POST /api/v1/datasets/{id}/versions
 POST /api/v1/dataset-versions/{id}/invalidate
+POST /api/v1/dataset-versions/{id}/fail
 ~~~
 
 ### Entity

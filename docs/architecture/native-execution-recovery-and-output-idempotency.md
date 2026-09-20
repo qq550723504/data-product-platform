@@ -1,7 +1,7 @@
 # 原生执行恢复与输出幂等设计（C2）
 
-- 状态：**草案（design only）**。本文只定义原生（native）执行的中断恢复规则与输出幂等
-  语义，不包含实现。
+- 状态：**C2-a 已实现（输出幂等，含代码评审修正）**；C2-b / C2-c 仍为设计。本文定义原生
+  （native）执行的中断恢复规则与输出幂等语义，C2-a 的实现偏差记录在 §4.3 / §4.4 / §8。
 - 关联：issue #110（持久化执行 + 入队超时/中断的恢复，禁止盲重复创建）、#100（关键 Command
   幂等）、#103（Outbox 派发，见 C1）；AGENTS.md §3（不可变对象）、§6（Evidence 一等）、
   §10（外部引擎 ID 不是业务真相）；ADR-0003（不可变版本）。
@@ -25,7 +25,9 @@
 - 不改变「运营性重试 = 新建 Execution」的语义：`ExecutionService.Retry` 仍创建新 Execution，
   新 Execution 产生**新**输出版本（这是不可变版本的正常路径，不是重复）。
 - 不改变输入绑定与 `ProcessingRequestFromExecution` 的冻结语义。
-- 不改变 managed（Hop/Splink）桥接与 `ManagedReconciler` 的既有路径；C2 只补 native 的缺口。
+- 不改变 managed（Hop/Splink）的业务语义；当 managed finalize 发现同一 Execution 的
+  `CREATED` / `PROCESSING` / `FAILED` 半成品时，必须复用本节统一的输出写入/恢复路径，不能
+  把可恢复半成品永久判为不可用。
 - C2 不引入分布式事务、不引入外部工作流引擎；继续以平台数据库为 System of Record。
 
 ## 2. 现状事实（实现前已核对）
@@ -120,29 +122,128 @@
 **幂等键**：`(output_dataset_id, generated_by_execution_id)`。
 
 - 新向前迁移（编号按**实际合并顺序**分配，不预先锁定；`000015` 已被 C1-a 占用，
-  扇出前置占用 `000016`，C2 使用下一个可用编号；不改写已有迁移）：
-  `CREATE UNIQUE INDEX uq_dataset_version_execution_output
-   ON dataset_version(dataset_id, generated_by_execution_id)
-   WHERE generated_by_execution_id IS NOT NULL;`
-- `datasetWriter.Handle` 改为**先查后写**（在 `AllocateVersion` 之前）：
-  - 若 `(datasetID, generatedByExecutionID)` 已有 `READY` 版本 → 直接返回该版本（不新建）；
-  - 若存在 `PENDING/FAILED` 半成品 → 复用它（`SetReady`），不新增版本号；
+  扇出前置占用 `000016`，`000017`/`000018` 被 T2/T3-B2 占用，`000019` 被 HQD-1 占用，
+  C2-a 落为 `000020`；不改写已有迁移）：
+
+  ```sql
+  CREATE UNIQUE INDEX uq_dataset_version_execution_output
+      ON dataset_version(dataset_id, generated_by_execution_id)
+      WHERE generated_by_execution_id IS NOT NULL
+        AND status IN ('CREATED', 'PROCESSING', 'READY');
+  ```
+
+  **相对草案的收紧（实现时补充，理由见下）**：草案的谓词只有
+  `generated_by_execution_id IS NOT NULL`，会把终态行（`INVALID` / `SUPERSEDED`）也算进约束。
+  但 `dataset_version` 行永不删除（`guard_dataset_version_immutability` 禁止 DELETE），
+  且 `READY` 行的 `generated_by_execution_id` 不可改写，所以该版本在任何已经产生过重复
+  输出的真实安装上**无法安装且无法补救**。因此索引只覆盖“仍可作为该 Execution 输出”的
+  live 状态（分配窗口 `CREATED` / `PROCESSING`、已发布 `READY`）；同一对
+  `(dataset, execution)` 可以有多条历史行，但有且仅有一条 live 行。
+
+  **`FAILED` 也被排除在 live 集合之外（评审修正）**：草案把 `FAILED` 当作“半成品修复目标”
+  保留在索引内，与守卫给出的补救路径自相矛盾——把多余半成品置 `FAIL` 并不会把它移出约束，
+  按守卫提示修复后再次迁移仍会被拒绝。`FAILED` 是**未产生内容的失败尝试**，不属于“该
+  Execution 的输出”，故排除。排除后守卫的每条建议都真实可达：
+
+  | 多余行的状态 | 可达的补救 | 依据 |
+  | --- | --- | --- |
+  | `READY` | `InvalidateDatasetVersion` → `INVALID` | `Invalidate` 仅接受 `READY`，且会把 `dataset.current_version_id` 清空 |
+  | `CREATED` / `PROCESSING` | `FailDatasetVersion` Command（HTTP: `POST /api/v1/dataset-versions/{versionId}/fail`）→ `FAILED` | 域层 `MarkFailed` 接受这两种状态 |
+  | `INVALID` / `SUPERSEDED` / `FAILED` | 无需处理 | 本就不在 live 集合内 |
+
+  还必须核对历史重复的真实形状：C2-a 之前 `generated_by_execution_id` **只在 `SetReady` 写入**
+  （旧 `upload_version.go` 在 `MarkReady` 之后才赋值该字段），所以旧安装可能留下的重复 live 对
+  只可能是**多条 `READY` 行**（`INVALID`/`SUPERSEDED` 副本无论谓词如何都已被排除），
+  而 `READY` 行的补救路径正是 `InvalidateDatasetVersion`。C2-a 之后键在**分配**时落库，
+  所以 `CREATED`/`PROCESSING` 必须留在索引内（关闭 N3/N7）。
+
+  排除 `FAILED` 不会削弱写入侧的幂等：写入者按 `(dataset, execution)` **查回并复用**该行
+  （见下），不依赖索引来发现半成品；被复用的 `FAILED` 行重新进入索引的时点是它被发布
+  （`SetReady`），那时唯一性会被再次校验。迁移守卫只统计 live 行，遇到重复时
+  `RAISE EXCEPTION` 并列出每条冲突对的 `version_no:status`，而不是静默丢事实。
+- `datasetWriter.Handle` 改为**先查后写**，且**在分配版本的事务内**完成（`AllocateVersion`）：
+  - 若 `(datasetID, generatedByExecutionID)` 已有 `READY` 版本 → 直接返回该版本（不新建、
+    不重写对象、不重复发事实）；
+  - 若存在半成品（`CREATED`/`PROCESSING`/`FAILED`）→ 复用它，不新增版本号；本次持有的
+    已落盘内容在提交阶段以一次原子状态迁移发布为 `READY`，不引入额外的 `PROCESSING`
+    恢复中间态；
+  - 若命中的是 `INVALID`/`SUPERSEDED` → 硬错误，**不**静默复活已撤销的输出；
   - 否则分配新版本。
+  - 查回顺序：先 `READY`，再 `CREATED` / `PROCESSING`，再 `FAILED`，最后才是
+    `INVALID` / `SUPERSEDED` 历史；同一状态内按 `version_no ASC`。这样迁移补救留下的旧
+    `FAILED` 行不会遮蔽仍占用 live slot 的可恢复半成品，且已发布版本仍优先。
+  - 命中唯一索引冲突（并发重放）时读回既有行，而不是新增版本号。
+- **幂等键落库时点**（草案 §8 的落地）：`generated_by_execution_id` 在**分配**时写入
+  `INSERT`，而不是等到 `SetReady`。这样唯一索引覆盖完整的两阶段窗口，关闭“并发重放各自
+  建半成品行”的缺口。
+- **内容防覆盖**：对象存储 `Put` 无条件覆盖，因此每次尝试使用独立暂存键
+  `datasets/<dataset>/v<no>/<attemptToken>/<file>`，只有获胜尝试引用的对象成为发布字节；
+  失败的尝试只留下未被引用的对象，不会覆盖已发布内容。（用户 C2 第三条：唯一输出行 ≠
+  内容不被覆盖。）
+- **提交阶段的状态仲裁（评审修正）**：同一次 Execution 的多个投递**共享同一行**，所以
+  任何投递都不可以凭“自己分配时看到的状态”宣布发布。第二阶段必须 `LockVersion` 锁内重读
+  已提交状态，并显式分派：
+
+  | 已提交状态 | 动作 |
+  | --- | --- |
+  | `READY` | 采纳该行：覆盖内存状态、不重写对象引用、不再发事实 |
+  | `INVALID` / `SUPERSEDED` | 硬错误，拒绝发布 |
+  | `CREATED` / `PROCESSING` / `FAILED` | 本尝试持有已落盘内容，由它发布（`SetReady` 在同一事务内完成状态迁移） |
+
+  这里 `FAILED` 的处理是评审 Finding 1 的核心：并发投递中对象写失败的失败者会把共享行置
+  `FAILED`，而获胜者的 `SetReady` 旧 SQL 只匹配 `CREATED`/`PROCESSING` 且**忽略
+  `RowsAffected`**，结果是数据库仍是 `FAILED`，却照样 supersede 前一版本、设
+  `current_version_id`、发 `DatasetVersionCreated` 与 `DATASET_VERSION_READY`，并返回内存中的
+  `READY` 版本——内存事实与已提交事实不一致。修正为两点：
+  1. `SetReady` 的 `WHERE ... status IN ('CREATED','PROCESSING','FAILED')` 并**要求
+     `RowsAffected == 1`**，否则返回 `domain.ErrInvalidTransition`（不再静默 no-op，且不再
+     在 0 行更新后继续改 `dataset`）；
+  2. 内存状态 `MarkReady` 接受 `FAILED` 作为来源，使“修复半成品”与“发布”成为**同一次**状态
+     迁移，而不是先 `FAILED → PROCESSING` 再 `PROCESSING → READY`。
+  3. 若待恢复半成品的 `version_no` 低于该 Dataset 当前已发布版本，`SetReady` 拒绝这次恢复，
+     不得让延迟的旧 Execution 把当前版本回退或把较新的版本标成 `SUPERSEDED`。
+
+  因此无需新增“恢复开始”事件类型：不存在只改变状态、
+  不产生 Domain Event 的中间迁移，发布事实（`DatasetVersionCreated`）本身就是该迁移的
+  Domain Event，其 payload 增加 `previousStatus`（`FAILED` 表示这是恢复发布，
+  `CREATED`/`PROCESSING` 表示首次发布），`DATASET_VERSION_READY` 审计同样带
+  `previousStatus`。这样同时满足 AGENTS §5（关键状态变化必产生 Domain Event + AuditEvent）
+  与 §4（显式 Command / Domain 层控制迁移）。
+
+  回归锁定：`TestConcurrentDeliveryFailingTheSharedRowStillPublishesTheWinner`
+  用可阻塞的 `gateStore` 让失败者在获胜者提交前把共享行置 `FAILED`，然后断言已提交行是
+  `READY`、已发布对象校验和与获批内容一致、`previousStatus=FAILED`，且只有一条
+  `DatasetVersionCreated` / `DATASET_VERSION_READY` 事实。（把 `SetReady` 退回旧行为时该测试
+  失败于 `committed status = FAILED, want READY`。）
+
+  为避免重复讨论，把状态变化的“事实”覆盖范围列清楚：
+
+  | 状态变化 | Domain Event | AuditEvent |
+  | --- | --- | --- |
+  | （分配）无 → `CREATED` | 无（首个事实在发布时产生） | `DATASET_VERSION_CREATED` |
+  | 复用既有半成品 | 无（没有新业务事实） | `DATASET_VERSION_REUSED` |
+  | `CREATED` / `PROCESSING` / `FAILED` → `READY` | `DatasetVersionCreated`（带 `previousStatus`） | `DATASET_VERSION_READY` |
+  | `CREATED` / `PROCESSING` → `FAILED` | `DatasetVersionFailed` | `DATASET_VERSION_FAILED` |
+  | `READY` → `INVALID` | `DatasetVersionInvalidated` | `DATASET_VERSION_INVALIDATED` |
+
+  即：**每个对外可观察的业务状态变化都有 Domain Event**，而 C2-a 新增的恢复路径不引入例外。
 - 该改动把"同一 Execution 至多一个输出版本"变成数据库强约束，而非调用方约定（关闭 N3/N7）。
 - **lineage 幂等**：已满足（`uq_dataset_lineage` + `ON CONFLICT DO NOTHING`），C2 不加改动，
-  仅补回归测试锁住。
-- **映射幂等**：`InsertMapping`（WORKFLOW_ALIAS）当前无幂等键，重放会重复写映射（N6）：
-  - 对 `(workspace_id, source_key, ...)` 的 WORKFLOW_ALIAS 写入改为幂等
-    （复用 A/A1 的 `RecordMappingDecision` 语义比较思路）；
-  - 由于 B 已把 Release traceability 绑定到 `entity_mapping_decision`，重放产生的
-    WORKFLOW_ALIAS 映射必须带稳定 `source_job_id` 或显式保持"不归属 Release"的现状
-    （现状：`InsertMapping` 不设 `SourceJobID`，B 已 documented 为 gap；C2 补齐时不得
-    改变已发布 Release 的既有 trace）。
+  已补回归测试锁住（`TestLineageReplayKeepsOneEdgePerInput`）。
+- **映射幂等**：已满足——原生引擎的 alias 写入走 `RecordMappingDecision`，
+  带 `stableAliasIdempotencyKey(executionID, inputName, inputVersionID, sourceRef, sourceKey)`，
+  重放返回既有 decision 而非追加；`engine_integration_test.go` 已断言重放不改变
+  `entity_mapping_decision` 计数。C2 不新增映射侧改动。
+  - 遗留入口 `InsertMapping`（仅测试调用）不带幂等键，作为 legacy 路径保留并在注释中标注；
+    新命令路径统一用 `RecordMappingDecision`。
 
 ### 4.4 半成品与孤儿输出版本
 
-- 对象存储已写但 DB 未 `SetReady`：由幂等键复用同一 `version` 行（P3 的第一阶段已建行），
+- 对象存储已写但 DB 未 `SetReady`：由幂等键复用同一 `version` 行（第一阶段已建行），
   重跑只补 `SetReady`，不新增行。
+- 一个共享行已经 FAILED（并发投递中失败者标记）但本次尝试已落盘内容：在**提交阶段**
+  用一次 `FAILED → READY` 原子迁移修复并发布，无需中间 `PROCESSING` 态（§4.3 提交阶段
+  的状态仲裁），且该迁移本身产生 Domain Event + AuditEvent。
 - DB 已 `SetReady` 但未 `Succeed`：reconciler 采用该版本完成 Execution（4.2 第一分支）。
 - 二者都不需要"删除历史事实"：半成品在复用后成为正式版本，或被显式 `InvalidateDatasetVersion`
   标记（AGENTS §3/§4 的不可变语义）。
@@ -159,15 +260,47 @@
   `half_written_outputs_repaired`。
 - 每条恢复记录 `executionId`、`engineExecutionId`、`reason`、`action`、`attempt`。
 
+### 4.7 C2-a 实现落点（供审阅对照）
+
+| 机制 | 位置 |
+| --- | --- |
+| live 输出唯一索引 | `migrations/000020_dataset_version_execution_output_key.up.sql` |
+| 分配时写幂等键 + 先查后写 + 冲突读回 | `dataset/infrastructure/postgres_repository.go`（`AllocateVersion` / `findVersionByExecutionOutputTx` / `isExecutionOutputConflict`） |
+| 两阶段写与暂存对象隔离 | `dataset/application/upload_version.go` |
+| 行锁重读 + 提交阶段状态仲裁 | `LockVersion` + `upload_version.go`（`switch current.Status`） |
+| 精确行数更新的发布（不静默 no-op） | `SetReady`（`RowsAffected == 1`） |
+| `FAILED` 半成品的原子修复与发布 | `MarkReady` 接受 `FAILED` 来源 + `previousStatus` 事实载荷 |
+| 回归测试 | `dataset/application/execution_output_idempotency_integration_test.go` |
+| 迁移守卫测试（含历史重复可升级性） | `platform/migration/dataset_output_key_up_integration_test.go` |
+| 迁移测试脚手架（独立 scratch DB） | `platform/migration/scratch_database_test.go` |
+
 ## 5. 测试与验收计划
 
 ### 5.1 输出幂等（真实 PostgreSQL + 对象存储 stub）
 
 1. 同一 `(dataset_id, generated_by_execution_id)` 调用 `Handle` 两次 → 只有一个 `READY` 版本，
-   第二次返回同一 `version.ID`。
+   第二次返回同一 `version.ID`。（`TestExecutionOutputReplayPublishesExactlyOneVersion`）
 2. 第一阶段后中断（已建 PENDING 行）→ 重跑复用该行，`version_no` 不变。
-3. `AddLineage` 重放不产生重复边（现状已满足，补回归）。
-4. `InsertMapping` 重放不产生重复决策；已发布 Release trace 不变（与 B 的回归测试对齐）。
+   （`TestInterruptedOutputIsRepairedWithoutConsumingANewVersionNumber`）
+3. `AddLineage` 重放不产生重复边。
+   （`TestLineageReplayKeepsOneEdgePerInput`）
+4. 映射重放不产生重复决策；已发布 Release trace 不变
+   （`InsertMapping` → `RecordMappingDecision` 稳定键，`engine_integration_test.go` 已断言；
+   与 B 的回归测试对齐）。
+5. 并发投递不覆盖已发布字节，也不新增版本号。
+   （`TestConcurrentDeliveriesNeverOverwritePublishedContent`）
+6. 已撤销（`INVALID`）输出不被静默复用。（`TestInvalidatedOutputIsNotSilentlyReused`）
+7. 数据库拒绝同一 Execution 的第二个 live 输出，且错误可识别。
+   （`TestDatabaseRefusesASecondOutputForOneExecution`）
+8. 迁移：已有重复 live 输出 → 拒绝且回滚（不留下索引、不删行）；守卫给出的补救路径
+   确实可达；只有历史重复 → 允许升级。
+   （`TestC2AOutputKeyMigrationRefusesExistingDuplicateOutputs`、
+   `TestC2AOutputKeyMigrationRemediationIsReachable`、
+   `TestC2AOutputKeyMigrationUpgradesInstallationsWithHistoricalDuplicates`）
+9. 迁移部分性/可逆性：NULL 执行不受限，down 只删索引、保留行。
+   （`TestC2AOutputKeyMigrationIsPartialAndReversible`）
+10. 并发投递中失败者把共享行置 `FAILED` 后，获胜者仍发布且已提交状态与获批事实一致。
+    （`TestConcurrentDeliveryFailingTheSharedRowStillPublishesTheWinner`）
 
 ### 5.2 原生恢复
 
@@ -188,7 +321,7 @@
 
 | 阶段 | 内容 |
 | --- | --- |
-| C2-a | 输出幂等键迁移 + `datasetWriter.Handle` 先查后写 + lineage/映射幂等 |
+| C2-a | 输出幂等键迁移 + `datasetWriter.Handle` 先查后写 + lineage/映射幂等 | **已实现**（迁移 `000020`） |
 | C2-b | `NativeReconciler`（租约 + CAS 收敛 + 重跑上限）+ 恢复 Audit/Evidence |
 | C2-c | 观测、上限/租约配置、端到端 #110 回归 |
 
@@ -197,22 +330,45 @@ C2-a 必须先于 C2-b（reconciler 依赖幂等输出）；两者可同 PR，�
 ## 7. 未决问题
 
 1. `nativeLeaseTTL` 与最大恢复次数取值；是否按 workflow 类别区分。
-2. 半成品输出版本在"永久无法修复"时是 `InvalidateDatasetVersion` 还是保留为 `FAILED` 证据。
-3. WORKFLOW_ALIAS 映射是否要回填 `source_job_id`（涉及已发布 Release 的 trace 稳定性）。
-4. 恢复重跑是否复用 `Retry`（新 Execution）语义的一部分，还是保持"同一 Execution 原地恢复"的独立路径。
-5. 是否需要把 reconciler 与 C1 的 Outbox 派发统一到同一个调度器。
+2. 半成品输出版本在"永久无法修复"时：C2-a 的选择是**保留为 `FAILED` 证据**。评审修正后
+   `FAILED` **不在** live 输出集合内（迁移 `000020` 的索引与守卫都只覆盖
+   `CREATED`/`PROCESSING`/`READY`），所以保留 `FAILED` 不会占用 `(dataset, execution)` 的
+   约束槽位，也不会阻塞迁移；写入侧的复用靠“先查后写”，不靠索引。
+   已提供面向操作者的 `FailDatasetVersion` Command 及 HTTP 入口；它只接受
+   `CREATED` / `PROCESSING`，并追加 `DatasetVersionFailed`、AuditEvent 和 Outbox 事实。
+   `InvalidateDatasetVersion` 仍只接受 `READY`，因此不属于此路径。
+3. 当一个 Execution 的输出已被人工上传 `SUPERSEDED`、而该 Execution 被重新投递时，C2-a 选择
+   **硬错误**（不静默复活已撤销输出）。C2-b 的 reconciler 需要把这个错误翻译成一个明确的
+   终态（例如 `FAIL(OUTPUT_WITHDRAWN)`）或人工决策点。
+4. WORKFLOW_ALIAS 映射是否要回填 `source_job_id`（涉及已发布 Release 的 trace 稳定性）。
+5. 恢复重跑是否复用 `Retry`（新 Execution）语义的一部分，还是保持"同一 Execution 原地恢复"的独立路径。
+6. 是否需要把 reconciler 与 C1 的 Outbox 派发统一到同一个调度器。
+7. 失败的暂存对象（`datasets/<ds>/v<no>/<attemptToken>/<file>`）目前只靠"未被引用"隔离，
+   没有 TTL 清理；是否加生命周期规则由 C2-c 的运维收口。
+8. 半成品的 `FAILED` 可能有两种语义："本次尝试失败，可重试"（写入者自己的失败路径）与
+   "该 Execution 已被判定终态失败"（C2-b 的 `FAIL(EXECUTION_RECOVERY_EXHAUSTED)`）。
+   C2-a 的写入路径目前无法区分二者，会把 `FAILED` 行直接重发布为 `READY`；终态失败语义
+   仍由 C2-b 的 Execution 状态与显式放弃/撤回协议收口。
+   C2-b 需要在发布前核对所关联 Execution 的状态（或让 reconciler 放弃时显式撤回半成品），
+   否则一个已被放弃的输出可能被队列重投递复活。
 
 ## 8. 补充：幂等键必须在"分配版本"时落库
 
-现状 `AllocateVersion` / `insertVersion`（`dataset/infrastructure/postgres_repository.go`）
-插入行时**不写** `generated_by_execution_id`，该列只在 `SetReady` 阶段被赋值。
-若只在 `SetReady` 才带键，唯一索引无法在分配阶段拦住并发的第二个半成品行。
+C2-a 之前，`AllocateVersion` / `insertVersion` 插入行时**不写** `generated_by_execution_id`，
+该列只在 `SetReady` 阶段被赋值。若只在 `SetReady` 才带键，唯一索引无法在分配阶段拦住并发的
+第二个半成品行。
 
-因此 C2-a 还需：
+C2-a 已落地：
 
-1. 让 `UploadVersionCommand.GeneratedByExecutionID` 透传到 `AllocateVersion` / `insertVersion`，
-   行创建即带幂等键；
-2. 唯一索引的冲突处理：捕获 `uq_dataset_version_execution_output` 冲突后**读回**既有行，
+1. `UploadVersionCommand.GeneratedByExecutionID` 透传到
+   `AllocateVersion` / `insertVersion`，行创建即带幂等键；
+2. 唯一索引冲突（`uq_dataset_version_execution_output`，SQLSTATE `23505`）后**读回**既有行，
    而不是新增版本号（并发重放安全）；
-3. `generated_by_execution_id` 在同一行上不得被改写（`guard_dataset_version_immutability`
-   已覆盖 READY 之后的改写；分配阶段写入后也不得再改）。
+3. `generated_by_execution_id` 在同一行上不可改写（`guard_dataset_version_immutability`
+   已覆盖 `READY` 之后的改写；分配阶段写入后也不得再改）；
+4. 复用查询先排序 `READY`，再排序 `CREATED` / `PROCESSING`，再排序 `FAILED`，最后排序终态
+   历史，同状态内按 `version_no ASC`：历史重复对优先复用已发布行，否则优先修复仍占用
+   live slot 的半成品；
+5. `SetReady` 在同一事务内锁内重读并仲裁已提交状态，`WHERE status IN
+   ('CREATED','PROCESSING','FAILED')` 且要求 `RowsAffected == 1`，使 `FAILED` 半成品的
+   修复与发布成为一次原子状态迁移（其 Domain Event 带 `previousStatus`）。

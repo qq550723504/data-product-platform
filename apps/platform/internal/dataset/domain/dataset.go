@@ -39,6 +39,7 @@ var (
 	ErrInvalidDatasetType   = errors.New("invalid dataset type")
 	ErrInvalidVersion       = errors.New("version number must be positive")
 	ErrInvalidTransition    = errors.New("invalid dataset version state transition")
+	ErrStaleVersionRecovery = errors.New("dataset version recovery would replace a newer current version")
 	ErrImmutableVersion     = errors.New("dataset version is immutable")
 	ErrInvalidReadyMetadata = errors.New("ready dataset version requires storage URI and checksum")
 	// ErrSourceResourceWorkspace rejects a dataset whose source DataResource
@@ -160,8 +161,15 @@ func (v *DatasetVersion) StartProcessing() error {
 	return nil
 }
 
+// MarkReady makes the version's content durable and publishes it.
+//
+// FAILED is an accepted source state: a failed attempt never stored content, and
+// the output idempotency key ties the retry to that same row, so recovery reuses
+// the version number instead of consuming a new one. The state change either way
+// is CREATED/PROCESSING/FAILED -> READY, which is what the caller records as a
+// domain event and an audit event.
 func (v *DatasetVersion) MarkReady(storageType, storageURI, contentType, checksumAlgorithm, checksumValue string, rowCount, byteSize int64) error {
-	if v.Status != VersionCreated && v.Status != VersionProcessing {
+	if v.Status != VersionCreated && v.Status != VersionProcessing && v.Status != VersionFailed {
 		return ErrInvalidTransition
 	}
 	if strings.TrimSpace(storageURI) == "" || strings.TrimSpace(checksumValue) == "" {
