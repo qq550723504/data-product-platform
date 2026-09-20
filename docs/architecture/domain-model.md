@@ -70,6 +70,18 @@ DeliveryOperation 是每次 standalone delivery 尝试的稳定业务事实/操�
 - 冻结 gate result / blockers 与 issuance result；
 - 作为 Audit/Evidence/CostAllocation 的强类型 subject。
 
+受控生命周期至少表达：
+
+~~~text
+PREPARED
+├→ BLOCKED
+└→ ISSUANCE_PENDING
+    ├→ ISSUED
+    └→ FAILED
+~~~
+
+`ISSUANCE_PENDING` 是 crash-recovery / reconciliation 中间态，不是 terminal failure。外部 provider 调用发生前必须先 durable persist 该状态和 stable provider_request_key。provider 成功但 terminal DB commit 失败时，恢复流程必须使用同一 provider_request_key 查询/重放同一 issuance，而不是生成新的 credential。
+
 不能只存在临时 HTTP 请求；也不能把可用 token/credential secret 正文持久化为领域事实。
 
 ### DataProduct / ProductRelease
