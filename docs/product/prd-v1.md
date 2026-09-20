@@ -311,6 +311,8 @@ direct-data delivery 也不得例外：在 terminal ISSUED commit 成功之前�
 
 direct-data terminal `ISSUED` 不表示客户端确认收到数据。若 ISSUED commit 后、第一字节前发生 crash/socket loss，或 stream 中断，同一 idempotency key 的 retry 不得沿用旧 gate/旧 ISSUED 重放 DatasetVersion bytes；只能返回稳定 non-payload replay-required 结果并保持 dataset payload=0 bytes。需要重新传输时必须创建新的显式 DeliveryOperation/attempt（新 idempotency key，可关联原 operation），重新解析 authenticated caller→effective consumer/delegation、重新执行 CurrentDeliveryGate、重新走 terminal fence。若两次 attempt 之间发生身份委派/entitlement/certification/dataset revocation/invalidation，新 attempt 必须 BLOCKED。
 
+对应事件语义必须一致：`DatasetDeliveryIssued` 仅表示该 DeliveryOperation 的 authorization/release linearization 已提交；对 direct-data，它发生在第一字节之前，因此不能被 UI/Audit/下游 consumer 解释为“下载完成/传输完成/客户端已收到”。若产品需要展示传输完成度，使用独立 transfer observation/history，而不是修改 Issued terminal fact。
+
 如果 fresh gate 变为 BLOCKED，但该 DeliveryOperation 此前已经进入可能调用过 provider 的 ISSUANCE_PENDING/retry/reconciliation 窗口，**不能直接记录 BLOCKED**。必须先使用同一 provider_request_key reconciliation 既有 provider outcome：
 - 明确未签发 → 可 BLOCKED；
 - 已签发 → 必须先 revoke / compensate / contain，并确认外部访问能力已不可用后才能 BLOCKED；
