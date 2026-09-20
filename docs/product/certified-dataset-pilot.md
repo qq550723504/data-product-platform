@@ -57,7 +57,12 @@ QualityAssessment 核心已经通过 #140 / migration 000019 落地，继续复�
 - CostEvent（实际发生的 engine invocation / compute / human-review quantity 或金额；金额未知时不得伪造，可记录 quantity/unit）
 - typed CostAllocation → QualityAssessment
 
-同一评测业务重试不得重复记 CostEvent；必须使用稳定 activity_id / operation identity + component_key，并由 PostgreSQL 唯一约束保证幂等。
+成本幂等必须区分 **same-attempt replay** 与 **new execution attempt**：
+
+- 同一次物理评测 attempt 的网络重放、command replay 或 transaction retry，如果没有再次发生 engine/compute/human-review 外部工作，不得重复记 CostEvent；
+- 每个可能产生实际成本的物理 attempt 必须有稳定 `assessment_attempt_id` / activity identity（或等价强类型 attempt identity）；同一 attempt 内使用 `(attempt_identity, component_key/cost_type)` 由 PostgreSQL 唯一约束去重；
+- failed/transient attempt 之后若真正再次调用 engine、再次消耗 compute 或再次发生人工 review，这是新的实际 activity，必须分配新的 attempt identity 并追加对应 CostEvent；不得因为属于同一个 QualityAssessment / 同一个顶层 idempotency key 就吞掉第二次真实成本；
+- 若实现选择聚合而不是逐 attempt CostEvent，也必须原子累加实际 quantity/amount，并保留可审计 attempt count/identity，能够证明每次真实工作都被计入；不能仅保留第一次成本。
 
 历史 Assessment 不因规则文件变化而改变解释。
 
@@ -213,19 +218,25 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 
 - 持久化 `DeliveryOperation`（每次交付尝试的稳定业务 ID / 幂等主体）；
 - `DeliverDatasetVersion` / `IssueDatasetAccess`（最终命名由实现 PR 固定）；
-- server-side delivery command 在返回数据或签发 URL/token/credential 前重新执行完整 CurrentDeliveryGate；
-- query→delivery 之间 Rights/Certification/DatasetVersion 状态变化的 TOCTOU 测试；
+- server-side delivery command 在进入 CurrentDeliveryGate 前先从可信 authenticated caller principal 解析 effective consumer/workspace；on-behalf-of 必须验证当前有效 delegation，不能信任客户端 header/query/body/demo actor ID 自证 consumer；
+- initial / retry / reconciliation / terminal finalize 都必须重新验证 principal→consumer/workspace binding/delegation 当前有效性；这些可撤销身份依赖必须进入与 Rights/Certification/DatasetVersion 共享的 delivery authorization fence/revision（或等价串行化机制）；
+- server-side delivery command 在返回数据或签发 URL/token/credential 前，使用该 trusted principal + effective consumer 上下文重新执行完整 CurrentDeliveryGate；
+- query→delivery 之间 Rights/Certification/DatasetVersion 状态变化，以及 principal binding/delegation revoke 的 TOCTOU 测试；
 - gate 失败不得产生可用数据、URL、token、credential；
 - credential TTL 受 validity / future-effective RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 边界约束；
 - `DatasetDeliveryIssued` / `DatasetDeliveryBlocked` / `DatasetDeliveryFailed`（或实现固定的等价事件）覆盖三个终态结果；
 - DeliveryOperation 的**数据库 terminal fact** + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；外部 credential provider 调用不属于 PostgreSQL transaction；
 - 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key；
-- **每一次 initial / retry / reconciliation 真正调用 provider 前，都重新执行完整 CurrentDeliveryGate 并重新计算 credential expiry cap**；PREPARED/ISSUANCE_PENDING 中旧 gate snapshot 只用于审计；
+- **每一次 initial / retry / reconciliation 真正调用 provider 前，都重新验证 caller principal→effective consumer/workspace binding/delegation 当前有效性，再重新执行完整 CurrentDeliveryGate 并重新计算 credential expiry cap**；PREPARED/ISSUANCE_PENDING 中旧 identity/gate snapshot 只用于审计；
 - 所有 delivery mode 的 terminal ISSUED transaction 必须获取与 Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，再次 re-gate；provider/credential 模式同时 fresh-cap；terminal commit 是 delivery linearization point；
 - direct-data 模式必须在 terminal ISSUED commit 成功前保持 response body=0 bytes；commit 后才允许写第一字节，且不能为整个 stream 长时间持有 DB fence/lock；
+- direct-data terminal `ISSUED` 只表示该 attempt 已在线性化点获准开始响应，不证明客户端已收到数据；如果 ISSUED commit 后、第一字节前或 streaming 中发生 response loss，同一 idempotency key 只能返回稳定 non-payload replay result（例如 `DIRECT_DATA_REPLAY_REQUIRES_NEW_ATTEMPT` + 原 operation identity），不得依据旧 gate 重放 DatasetVersion bytes；
+- direct-data 需要重新传输时必须创建新的显式 DeliveryOperation/attempt（新 idempotency key，可用 `retry_of_delivery_operation_id` 关联原 attempt），重新解析 trusted principal/effective consumer/delegation、重新执行 CurrentDeliveryGate、重新进入 terminal fence；期间任何 Rights/Certification/Authorization/DatasetVersion/principal-binding/delegation 失效都必须使新 attempt fail closed；
+- crash/fault test 必须覆盖“ISSUED commit 成功、第一字节前 crash”：same-key retry 断言 0 dataset bytes + stable replay-required 结果；以及新 attempt 在 crash 后 entitlement/identity 被撤销时 BLOCKED、仍有效时仅在新的 ISSUED commit 后开始输出；
 - **真实 PostgreSQL 并发测试是 #135 完成条件，不允许只用 mock/串行调用证明 fence**：
   - 使用两个独立 transaction/connection + barrier，把竞争窗口固定在“delivery terminal finalize 已进入 fenced re-gate/准备提交 ISSUED”和“gate-changing Command 准备提交 disposition/invalidation”之间；
   - entitlement-change-first：Authorization revoke（并至少再覆盖 Rights/Binding/Certification disposition 或 DatasetVersion INVALID 中一种）先在线性化 fence 上提交，delivery finalize 随后必须观察新 revision/current facts，不能 ISSUED；provider capability 进入 contain/block/fail，direct-data 必须断言 response body 仍为 0 bytes；
+  - caller-binding-change-first：principal→consumer/workspace binding / delegation revoke 先在线性化 fence 上提交，delivery finalize 必须观察新 revision 并 fail closed；不能因为入口身份检查曾通过而继续 ISSUED；
   - finalize-first：delivery terminal ISSUED 先在线性化 fence 上提交，随后 gate-changing Command 才完成；direct-data 只有在该 commit 之后才能放行第一字节；两者必须形成唯一全序，后续 Command 按 delivery-mode revocation semantics 处理已签发 capability；
   - 验证固定锁顺序/无 deadlock、重复 idempotency retry 不产生第二个 terminal fact/event/cost；
 - 如果 re-gate 已 BLOCKED：
