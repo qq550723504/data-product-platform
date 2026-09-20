@@ -151,12 +151,23 @@ CertificationProfile 可以要求：
 
 任何 required 条件缺失时不允许 CERTIFIED。
 
-#134 第一阶段必须同时实现：
+#134 第一阶段最小完成合同：
+
 - append-only `CertificationDisposition`；
 - `RevokeDatasetCertification` / `SupersedeDatasetCertification`；
 - CurrentCertificationGate 按 as_of 排除已生效 REVOKED / SUPERSEDED；
 - C1=CERTIFIED 被 C2=REJECTED supersede 后，C1/C2 历史均保留，但当前交付不得继续使用 C1；
-- 不允许以 latest created_at 推断当前认证。
+- 不允许以 latest created_at 推断当前认证；
+- 认证创建/拒绝/撤销/取代必须产生明确 Domain Event：
+  - `DatasetCertified`
+  - `DatasetCertificationRejected`
+  - `DatasetCertificationRevoked`
+  - `DatasetCertificationSuperseded`
+- Certification / CertificationDisposition + Audit/Evidence + Outbox 在数据库事务内一致提交；
+- 每个 certification event_type 显式进入 routing table，声明 required handlers 或 retention-only；
+- 幂等重放不重复产生认证事实、事件或 CostEvent。
+
+缺少 CertificationDisposition、withdrawal commands、current-selection 或 certification outcome events 任一项时，#134 不视为完成。
 
 认证评估/人工审批若产生实际成本，必须记录 CostEvent，并通过 typed CostAllocation 关联 DatasetCertification / CertificationDisposition，使用稳定 activity_id/component_key 保证重试幂等。
 
@@ -185,7 +196,11 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - gate 失败不得产生可用数据、URL、token、credential；
 - credential TTL 受 validity / future-effective RightsDisposition / CertificationDisposition 边界约束；
 - `DatasetDeliveryIssued` / `DatasetDeliveryBlocked` / `DatasetDeliveryFailed`（或实现固定的等价事件）覆盖三个终态结果；
-- DeliveryOperation result + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；
+- DeliveryOperation 的**数据库 terminal fact** + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；外部 credential provider 调用不属于 PostgreSQL transaction；
+- 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key，再调用 provider；
+- provider 必须支持 idempotency/read-after-write，或支持 revoke/compensation；否则只能使用平台 redemption indirection，不得直接暴露不可恢复 bearer credential；
+- provider 成功但 terminal DB commit 前 crash 时，retry/reconciliation 必须复用同一 provider_request_key，不得签发第二份独立 credential；
+- ISSUANCE_PENDING 必须有 reconciliation path；
 - 每个 delivery event_type 显式进入 routing table，声明 required handlers 或 retention-only；
 - event/Audit/Evidence payload 不得包含可用 credential secret；
 - delivery CostEvent 必须通过 typed CostAllocation FK 关联 DeliveryOperation。
