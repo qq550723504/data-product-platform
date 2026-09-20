@@ -111,6 +111,7 @@ DatasetVersion 内容变化后必须创建新版本并重新评测、重新认�
 
 ~~~text
 RightsDeclaration
+→ AuthorizationProvenanceBinding
 → Authorization
 → RightsSnapshot
 → Effective Rights
