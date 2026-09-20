@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
@@ -21,6 +22,7 @@ type Handler struct {
 	service      *application.Service
 	repo         *infrastructure.PostgresRepository
 	evidenceRepo *evidence.QueryRepository
+	costRepo     *cost.QueryRepository
 }
 
 const (
@@ -36,6 +38,10 @@ func NewHandler(service *application.Service, repo *infrastructure.PostgresRepos
 	return &Handler{service: service, repo: repo, evidenceRepo: evidenceRepo}
 }
 
+func NewHandlerWithCost(service *application.Service, repo *infrastructure.PostgresRepository, evidenceRepo *evidence.QueryRepository, costRepo *cost.QueryRepository) *Handler {
+	return &Handler{service: service, repo: repo, evidenceRepo: evidenceRepo, costRepo: costRepo}
+}
+
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/dataset-versions/{versionId}/quality-checks", h.run)
 	mux.HandleFunc("GET /api/v1/quality-results/{resultId}", h.get)
@@ -45,8 +51,9 @@ func (h *Handler) Register(mux *http.ServeMux) {
 }
 
 type runRequest struct {
-	WorkspaceID string `json:"workspaceId"`
-	RuleSetRef  string `json:"ruleSetRef"`
+	WorkspaceID         string `json:"workspaceId"`
+	RuleSetRef          string `json:"ruleSetRef"`
+	AssessmentAttemptID string `json:"assessmentAttemptId"`
 }
 
 func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
@@ -74,13 +81,22 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 	if ruleSetRef == "" {
 		ruleSetRef = "park/quality/enterprise-activity-quality-v1.yaml"
 	}
+	var assessmentAttemptID uuid.UUID
+	if strings.TrimSpace(req.AssessmentAttemptID) != "" {
+		assessmentAttemptID, err = uuid.Parse(req.AssessmentAttemptID)
+		if err != nil {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ASSESSMENT_ATTEMPT_ID", "assessmentAttemptId must be a UUID", nil)
+			return
+		}
+	}
 	result, err := h.service.Run(r.Context(), application.RunCommand{
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: versionID,
-		RuleSetRef:       ruleSetRef,
-		ActorID:          actorID,
-		TraceID:          httpserver.RequestID(r.Context()),
-		Now:              time.Now().UTC(),
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    versionID,
+		RuleSetRef:          ruleSetRef,
+		AssessmentAttemptID: assessmentAttemptID,
+		ActorID:             actorID,
+		TraceID:             httpserver.RequestID(r.Context()),
+		Now:                 time.Now().UTC(),
 	})
 	if err != nil {
 		if errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
@@ -140,6 +156,14 @@ func (h *Handler) getAssessment(w http.ResponseWriter, r *http.Request) {
 		}
 		response["evidence"] = evidenceItems
 		response["auditEvents"] = auditEvents
+	}
+	if h.costRepo != nil {
+		costEvents, err := h.costRepo.ListByQualityAssessment(r.Context(), assessmentID)
+		if err != nil {
+			httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENT_COST_READ_FAILED", err.Error(), nil)
+			return
+		}
+		response["costEvents"] = costEvents
 	}
 	writeJSON(w, http.StatusOK, response)
 }

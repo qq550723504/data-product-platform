@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 )
 
@@ -86,6 +87,25 @@ func (r *PostgresRepository) InsertResult(ctx context.Context, tx pgx.Tx, result
 
 func (r *PostgresRepository) GetResult(ctx context.Context, resultID uuid.UUID) (domain.Assessment, error) {
 	return r.GetAssessment(ctx, resultID)
+}
+
+func (r *PostgresRepository) FindAssessmentIDByAttempt(ctx context.Context, workspaceID, attemptID uuid.UUID) (uuid.UUID, bool, error) {
+	var assessmentID uuid.UUID
+	err := r.pool.QueryRow(ctx, `
+		SELECT a.quality_assessment_id
+		FROM cost_event e
+		JOIN cost_allocation a ON a.cost_event_id=e.id
+		WHERE e.workspace_id=$1
+		  AND e.activity_id=$2
+		  AND e.cost_type=$3
+	`, workspaceID, attemptID, cost.QualityEngineInvocation).Scan(&assessmentID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return uuid.Nil, false, nil
+	}
+	if err != nil {
+		return uuid.Nil, false, fmt.Errorf("find quality assessment by attempt: %w", err)
+	}
+	return assessmentID, true, nil
 }
 
 func (r *PostgresRepository) GetAssessment(ctx context.Context, assessmentID uuid.UUID) (domain.Assessment, error) {

@@ -43,7 +43,7 @@
 
 QualityAssessment 核心已经通过 #140 / migration 000019 落地，继续复用 `quality_result` / `quality_finding` 作为兼容存储/API 名称。
 
-#131 后续只处理在 review 中新增但 #140 未覆盖的 follow-up（例如 typed CostAllocation），不重复设计或迁移 QualityAssessment root。
+#131 当前 follow-up 已由 migration 000022 与质量评测事务补齐 typed CostAllocation / physical-attempt cost identity；继续复用 `quality_result` / `quality_finding`，不重复设计或迁移 QualityAssessment root。
 
 必须固定：
 

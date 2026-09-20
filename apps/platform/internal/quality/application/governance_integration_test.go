@@ -12,10 +12,12 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	complianceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/application"
 	compliancedomain "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/domain"
 	complianceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -117,6 +119,43 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	}
 	if assessment.RuleSetContent != policy.SourceContent || assessment.RuleSetContentSHA256 != policy.SourceContentSHA256 {
 		t.Fatalf("queried assessment lost its rule snapshot")
+	}
+	costRepo := cost.NewQueryRepository(pool)
+	qualityCosts, err := costRepo.ListByQualityAssessment(ctx, qualityResult.ID)
+	if err != nil {
+		t.Fatalf("query assessment costs: %v", err)
+	}
+	if len(qualityCosts) != 1 || qualityCosts[0].ActivityID == nil || qualityCosts[0].Amount != nil || qualityCosts[0].Quantity != 1 || qualityCosts[0].Unit != "assessment" {
+		t.Fatalf("assessment costs = %+v, want one physical attempt with quantity/unit and unknown amount", qualityCosts)
+	}
+	firstAttemptID := *qualityCosts[0].ActivityID
+	replayedAssessment, err := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: passVersion.ID,
+		RuleSetRef: "park/quality/enterprise-activity-quality-v1.yaml", AssessmentAttemptID: firstAttemptID,
+		TraceID: "governance-e2e-replay", Now: passVersion.ReadyAt.Add(32 * 60 * 1e9),
+	})
+	if err != nil || replayedAssessment.ID != qualityResult.ID {
+		t.Fatalf("same quality attempt replay = %s, err=%v; want original assessment %s", replayedAssessment.ID, err, qualityResult.ID)
+	}
+	if err := txManager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		return cost.AppendQualityAssessmentActivity(ctx, tx, cost.QualityAssessmentActivity{
+			WorkspaceID: workspaceID, AssessmentID: qualityResult.ID, AttemptID: firstAttemptID,
+			CostType: cost.QualityEngineInvocation, Quantity: 1, Unit: "assessment",
+		})
+	}); err != nil {
+		t.Fatalf("replay assessment cost attempt: %v", err)
+	}
+	if err := txManager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		return cost.AppendQualityAssessmentActivity(ctx, tx, cost.QualityAssessmentActivity{
+			WorkspaceID: workspaceID, AssessmentID: qualityResult.ID, AttemptID: uuid.New(),
+			CostType: cost.QualityEngineInvocation, Quantity: 1, Unit: "assessment",
+		})
+	}); err != nil {
+		t.Fatalf("append retry assessment cost attempt: %v", err)
+	}
+	qualityCosts, err = costRepo.ListByQualityAssessment(ctx, qualityResult.ID)
+	if err != nil || len(qualityCosts) != 2 {
+		t.Fatalf("assessment costs after replay/retry = %d, err=%v; want two physical attempts", len(qualityCosts), err)
 	}
 	evidenceItems, err := evidence.NewQueryRepository(pool).ListForObject(ctx, "QUALITY_RESULT", qualityResult.ID)
 	if err != nil || len(evidenceItems) != 1 {

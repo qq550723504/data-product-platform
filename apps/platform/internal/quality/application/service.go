@@ -2,12 +2,14 @@ package application
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
@@ -24,6 +26,8 @@ import (
 type ObjectStore interface {
 	Get(ctx context.Context, storageURI string) (io.ReadCloser, error)
 }
+
+var ErrAssessmentAttemptConflict = errors.New("quality assessment attempt conflicts with an existing assessment")
 
 type Service struct {
 	industryPackRoot string
@@ -44,15 +48,28 @@ func NewService(industryPackRoot string, tx *transaction.Manager, datasetRepo *d
 }
 
 type RunCommand struct {
-	WorkspaceID      uuid.UUID
-	DatasetVersionID uuid.UUID
-	RuleSetRef       string
-	ActorID          *uuid.UUID
-	TraceID          string
-	Now              time.Time
+	WorkspaceID         uuid.UUID
+	DatasetVersionID    uuid.UUID
+	RuleSetRef          string
+	AssessmentAttemptID uuid.UUID
+	ActorID             *uuid.UUID
+	TraceID             string
+	Now                 time.Time
 }
 
 func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, error) {
+	attemptID := cmd.AssessmentAttemptID
+	if attemptID == uuid.Nil {
+		attemptID = uuid.New()
+	} else {
+		existing, found, err := s.loadExistingAttempt(ctx, cmd, attemptID)
+		if err != nil {
+			return domain.Assessment{}, err
+		}
+		if found {
+			return existing, nil
+		}
+	}
 	version, err := s.datasetRepo.GetVersion(ctx, cmd.DatasetVersionID)
 	if err != nil {
 		return domain.Assessment{}, err
@@ -103,6 +120,24 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		if err := s.repo.InsertResult(ctx, tx, result); err != nil {
+			return err
+		}
+		if err := cost.AppendQualityAssessmentActivity(ctx, tx, cost.QualityAssessmentActivity{
+			WorkspaceID:  cmd.WorkspaceID,
+			AssessmentID: result.ID,
+			AttemptID:    attemptID,
+			CostType:     cost.QualityEngineInvocation,
+			Quantity:     1,
+			Unit:         "assessment",
+			PricingMode:  "ACTUAL",
+			Metadata: map[string]any{
+				"ruleSetRef":       result.RuleSetRef,
+				"ruleSetVersion":   result.RuleSetVersion,
+				"evaluatorName":    result.EvaluatorName,
+				"evaluatorVersion": result.EvaluatorVersion,
+			},
+			OccurredAt: result.CreatedAt,
+		}); err != nil {
 			return err
 		}
 		if err := s.datasetRepo.SetQualityStatus(ctx, tx, version.ID, string(result.GateDecision)); err != nil {
@@ -166,7 +201,33 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			TraceID: cmd.TraceID,
 		})
 	})
+	if err != nil && cmd.AssessmentAttemptID != uuid.Nil {
+		// A concurrent caller may have committed the same physical attempt
+		// between the initial lookup and this transaction. Recover its existing
+		// assessment instead of surfacing a duplicate-allocation conflict.
+		if existing, found, lookupErr := s.loadExistingAttempt(ctx, cmd, cmd.AssessmentAttemptID); lookupErr == nil && found {
+			return existing, nil
+		}
+	}
 	return result, err
+}
+
+func (s *Service) loadExistingAttempt(ctx context.Context, cmd RunCommand, attemptID uuid.UUID) (domain.Assessment, bool, error) {
+	existingID, found, err := s.repo.FindAssessmentIDByAttempt(ctx, cmd.WorkspaceID, attemptID)
+	if err != nil {
+		return domain.Assessment{}, false, err
+	}
+	if !found {
+		return domain.Assessment{}, false, nil
+	}
+	existing, err := s.repo.GetAssessment(ctx, existingID)
+	if err != nil {
+		return domain.Assessment{}, false, fmt.Errorf("load idempotent quality assessment: %w", err)
+	}
+	if existing.DatasetVersionID != cmd.DatasetVersionID || existing.RuleSetRef != cmd.RuleSetRef {
+		return domain.Assessment{}, false, ErrAssessmentAttemptConflict
+	}
+	return existing, true, nil
 }
 
 func actorType(actorID *uuid.UUID) string {

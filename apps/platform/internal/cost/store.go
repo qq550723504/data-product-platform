@@ -3,12 +3,15 @@ package cost
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
+
+const QualityEngineInvocation = "QUALITY_ENGINE_INVOCATION"
 
 type Event struct {
 	ID          uuid.UUID
@@ -51,6 +54,103 @@ func Append(ctx context.Context, tx pgx.Tx, event Event) error {
 		event.Amount, nullable(event.Currency), event.PricingMode, metadata, event.OccurredAt)
 	if err != nil {
 		return fmt.Errorf("append cost event: %w", err)
+	}
+	return nil
+}
+
+// QualityAssessmentActivity is one physical quality-evaluation activity. The
+// attempt ID is deliberately independent from the assessment ID: a retry that
+// performs real work must be chargeable even when it belongs to the same
+// top-level assessment command.
+type QualityAssessmentActivity struct {
+	WorkspaceID  uuid.UUID
+	AssessmentID uuid.UUID
+	AttemptID    uuid.UUID
+	CostType     string
+	Quantity     float64
+	Unit         string
+	Amount       *float64
+	Currency     string
+	PricingMode  string
+	Metadata     map[string]any
+	OccurredAt   time.Time
+}
+
+// AppendQualityAssessmentActivity records the cost and its typed assessment
+// allocation in one transaction. A replay of the same physical attempt and
+// component is a no-op; a new attempt gets a new activity_id and therefore a
+// new cost fact.
+func AppendQualityAssessmentActivity(ctx context.Context, tx pgx.Tx, activity QualityAssessmentActivity) error {
+	if activity.WorkspaceID == uuid.Nil || activity.AssessmentID == uuid.Nil || activity.AttemptID == uuid.Nil {
+		return errors.New("quality assessment cost activity requires workspace, assessment, and attempt IDs")
+	}
+	if activity.CostType == "" {
+		activity.CostType = QualityEngineInvocation
+	}
+	if activity.Quantity <= 0 {
+		return errors.New("quality assessment cost activity quantity must be positive")
+	}
+	if activity.Unit == "" {
+		activity.Unit = "assessment"
+	}
+	if activity.PricingMode == "" {
+		activity.PricingMode = "ACTUAL"
+	}
+	if activity.OccurredAt.IsZero() {
+		activity.OccurredAt = time.Now().UTC()
+	}
+	if activity.Metadata == nil {
+		activity.Metadata = map[string]any{}
+	}
+	metadata, err := json.Marshal(activity.Metadata)
+	if err != nil {
+		return fmt.Errorf("marshal quality assessment cost metadata: %w", err)
+	}
+
+	var costEventID uuid.UUID
+	err = tx.QueryRow(ctx, `
+		INSERT INTO cost_event (
+			id, workspace_id, execution_id, activity_id, cost_type, quantity, unit,
+			amount, currency, pricing_mode, metadata, occurred_at
+		) VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+		ON CONFLICT (workspace_id, activity_id, cost_type)
+		WHERE activity_id IS NOT NULL DO NOTHING
+		RETURNING id
+	`, uuid.New(), activity.WorkspaceID, activity.AttemptID, activity.CostType,
+		activity.Quantity, activity.Unit, activity.Amount, nullable(activity.Currency),
+		activity.PricingMode, metadata, activity.OccurredAt).Scan(&costEventID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		err = tx.QueryRow(ctx, `
+			SELECT id FROM cost_event
+			WHERE workspace_id=$1 AND activity_id=$2 AND cost_type=$3
+		`, activity.WorkspaceID, activity.AttemptID, activity.CostType).Scan(&costEventID)
+	}
+	if err != nil {
+		return fmt.Errorf("append quality assessment cost event: %w", err)
+	}
+
+	_, err = tx.Exec(ctx, `
+		INSERT INTO cost_allocation(id, cost_event_id, quality_assessment_id)
+		VALUES ($1,$2,$3)
+		ON CONFLICT (cost_event_id) DO NOTHING
+	`, uuid.New(), costEventID, activity.AssessmentID)
+	if err != nil {
+		return fmt.Errorf("allocate quality assessment cost event: %w", err)
+	}
+
+	var allocatedAssessmentID *uuid.UUID
+	if err := tx.QueryRow(ctx, `
+		SELECT quality_assessment_id
+		FROM cost_allocation
+		WHERE cost_event_id=$1
+	`, costEventID).Scan(&allocatedAssessmentID); err != nil {
+		return fmt.Errorf("verify quality assessment cost allocation: %w", err)
+	}
+	if allocatedAssessmentID == nil {
+		return fmt.Errorf("cost activity %s is already allocated to a non-quality subject", activity.AttemptID)
+	}
+	if *allocatedAssessmentID != activity.AssessmentID {
+		return fmt.Errorf("cost activity %s is already allocated to assessment %s", activity.AttemptID, *allocatedAssessmentID)
 	}
 	return nil
 }
