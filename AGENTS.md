@@ -56,7 +56,7 @@ OpenMetadata 仅作为 Governance Projection。
 - CertificationProfile snapshot（#134 起）
 - DatasetCertification / CertificationDisposition（#134 起）
 
-ProductRelease 特例：DRAFT / VALIDATING / READY 等发布前阶段允许显式 Command 按状态机更新 status 与 validation bindings；进入 PUBLISHED 后，已发布的 DatasetVersion / Rights / Quality / Compliance / Contract / EvidenceSnapshot 绑定不得被替换，后续仅允许受控生命周期迁移并保留历史。
+ProductRelease 特例：DRAFT / VALIDATING / READY 等发布前阶段允许显式 Command 按状态机更新 status 与 validation bindings；进入 PUBLISHED 后，当前数据库 guard 阻止任何 UPDATE，published row 整体冻结。SUSPENDED / WITHDRAWN 目前只是 schema 枚举中的保留状态，不得声称已有 PUBLISHED → SUSPENDED/WITHDRAWN live transition；未来启用需要独立 migration + Command。
 
 修正错误时不得覆盖历史事实，但要按事实类型追加：
 
@@ -107,7 +107,6 @@ Authorization 不能与 provenance 独立选择。每个进入 CurrentEntitlemen
 - RevokeDatasetCertification / SupersedeDatasetCertification
 - ValidateProductRelease
 - PublishProductRelease
-- WithdrawProductRelease
 
 状态迁移和认证判定规则必须由 Domain / Application 边界控制。
 
@@ -125,11 +124,13 @@ Authorization 不能与 provenance 独立选择。每个进入 CurrentEntitlemen
 
 Cost 与 Evidence 是一等业务对象，不允许项目结束后再补录。
 
-生产、人工审核、质量评测、Rights verification、Certification、外部服务、Release 等关键活动应按业务需要产生：
+生产、人工审核、质量评测、Rights verification、Certification、Delivery、外部服务、Release 等关键活动应按业务需要产生：
 
 - CostEvent
 - Evidence
 - AuditEvent
+
+非 Execution CostEvent 必须有稳定 activity/idempotency identity，并通过强类型 CostAllocation 关联到 QualityAssessment、Rights verification/disposition、AuthorizationProvenanceBinding、DatasetCertification/Disposition、DeliveryOperation 等实际业务主体。禁止仅把 subject IDs 塞入 JSONB metadata。
 
 ## 8. Industry Pack Boundary
 
@@ -199,6 +200,8 @@ Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduc
 任一子门禁失败都必须 fail closed，即使历史 Certification 仍为 CERTIFIED。
 
 CurrentDeliveryGate query 只用于展示/预检，不构成交付授权。任何返回数据、下载链接、presigned URL、token 或访问凭证的 server-side delivery Command 都必须在 issuance 前重新执行完整 CurrentDeliveryGate；不得信任客户端缓存的旧 gate result。gate 与 issuance 必须处于同一 Application Command 受控边界。
+
+若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL 和本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 CurrentDeliveryGate。
 
 ## 11. Release Readiness
 
