@@ -312,13 +312,13 @@ direct-data delivery 也不得例外：在 terminal ISSUED commit 成功之前�
 
 provider 成功但 terminal DB commit 失败时，retry/reconciliation 复用同一 key，不得产生第二份独立 credential。
 
-任何首次返回或 reconciliation 恢复出的 credential，在 DeliveryOperation 进入 ISSUED 前都必须验证其**实际 provider capability 与当前 allowed/requested context 等价或更窄**：expiry 不晚于 fresh cap，resource/DatasetVersion、consumer、action、object/row/prefix scope、delivery channel 不得扩大。如果 disposition/validity 在 prepare 后缩短了 cap，或 provider 实际 capability 比请求更宽，则不能直接恢复为 ISSUED：必须安全 shorten/narrow 并通过 read-after-write/authoritative lookup 验证，或 revoke/contain；任何关键 capability 维度无法验证时 fail closed。
+任何首次返回或 reconciliation 恢复出的 credential，在 DeliveryOperation 进入 ISSUED 前都必须验证其**实际 provider capability 与当前 allowed/requested context 等价或更窄**：expiry 不晚于 fresh cap，resource/DatasetVersion、consumer/grantee、action、object/row/prefix scope、delivery channel 不得扩大。**consumer/grantee 是 direct bearer/presigned 的必需 enforcement 维度**；provider 无法原生表达/验证/强制该边界时，不能把它当作“不适用”，必须改用 platform redemption/gateway（redemption 时重新认证并绑定 effective consumer）或将 direct mode 标为 unsupported。如果 disposition/validity 在 prepare 后缩短了 cap，或 provider 实际 capability 比请求更宽，则不能直接恢复为 ISSUED：必须安全 shorten/narrow 并通过 read-after-write/authoritative lookup 验证，或 revoke/contain；任何关键 capability 维度无法验证时 fail closed。
 
 ## 11. CostEvent / CostAllocation
 
-QualityAssessment、Rights verification / invalidation / supersession、Authorization provenance binding、DatasetCertification evaluation / human approval、Delivery 等实际活动发生时必须记录 CostEvent。
+QualityAssessment、Rights verification / invalidation / supersession、Authorization provenance binding、DatasetCertification evaluation / human approval、Delivery 等实际活动发生时必须记录 CostEvent。**Provider 调用成本与 DeliveryOperation 最终 ISSUED/FAILED/BLOCKED 状态独立：每次真实 provider invocation 在调用前分配稳定 physical attempt identity，成功、显式失败、timeout/unknown、reconciliation lookup、revoke/compensation 只要实际调用并可能计费，都必须记录该 attempt 成本。**
 
-- 金额未知时不伪造金额，可记录 quantity/unit；
+- 金额未知时不伪造金额，可记录真实 invocation/compute/review quantity + unit；provider outcome unknown 时也先记录已发生调用的 quantity，后续已知收费金额可通过可审计 adjustment/aggregation 补充；
 - 成本必须与实际活动同时记录，不在试点 KPI 阶段事后反推；
 - 非 Execution 成本必须通过 typed CostAllocation 关联实际业务主体，禁止仅把 subject ID 放 JSONB metadata；
 - CostEvent 使用稳定 physical-attempt activity identity，并以 component_key / cost_type 区分同一次实际活动内不同成本组件；
