@@ -287,7 +287,7 @@ IssueDatasetAccess
 
 具体 HTTP URL 由 #135 实现 PR 固定。
 
-该 Command 在返回数据或签发下载 URL / token / credential 前，必须重新执行：
+该 Command 在返回数据或签发下载 URL / token / credential 前，必须重新执行；并且所有 delivery mode 都必须在第一个外部可观察交付副作用前完成共享 fence 下的 terminal finalize：
 
 ~~~text
 CurrentDeliveryGate
@@ -314,6 +314,9 @@ ISSUANCE_PENDING + stable provider_request_key
 
 - 外部 provider 调用不属于 PostgreSQL transaction；
 - **每一次 initial issuance、retry issuance、以及 reconciliation 决定继续 issuance 前，都必须重新读取当前事实，重新执行完整 CurrentDeliveryGate，并重新计算 credential expiry cap；PREPARED/ISSUANCE_PENDING 中旧 gate snapshot 仅用于审计；**
+- 所有 delivery mode 的 terminal finalize 必须获取共享 delivery authorization fence/revision，并在同一 terminal transaction 内重新 gate；provider/credential 模式还需 fresh-cap；
+- direct-data 模式必须先提交 ISSUED terminal fact，再允许写出 HTTP body/stream/file 的第一字节；commit 前 response body 必须为 0 bytes；
+- direct-data 不得在整个 stream 期间持有 fence/DB row lock；锁仅覆盖 terminal re-gate + commit；
 - fresh gate BLOCKED 时：
   - 若确认此前未发生 provider issuance，可直接 BLOCKED；
   - 若 provider_request_key 可能已产生访问能力，必须先 reconciliation 查询既有 outcome；
