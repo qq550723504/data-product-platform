@@ -256,7 +256,11 @@ DataResource
 
 多源衍生数据的 Effective Rights 默认 fail closed，而且必须持久化为 immutable EffectiveRightsSnapshot（或等价 aggregate），绑定 target DatasetVersion、calculation rule/version/hash、实际 required lineage/input membership、各输入 RightsSnapshot/provenance，以及逐 action decision/reason。只有所有必要输入都明确允许某 action 时输出才 ALLOWED；任一输入 deny/unknown/missing 或被遗漏出 required membership 时均 NOT_ALLOWED。#134 DatasetCertification 必须冻结引用 finalized Effective Rights identity/hash，不能只保存一次临时计算结果。
 
+但历史 EffectiveRightsSnapshot 不构成永久交付授权。对 derived DatasetVersion 的每次 CurrentDeliveryGate，平台必须枚举 immutable required lineage 中所有 source inputs，重新验证每个 source 当前的 declaration/binding/Authorization/grantor-delegation 状态并重新交集 requested action；任一 source 后续 revoke/invalidate/expire 即 BLOCKED。source dependencies 进入同一 delivery fence/revision 与 credential expiry cap。
+
 Authorization scope 也属于 gate-critical 强类型数据。现有 `authorization_resource.scope jsonb` 只能保留扩展参数；#137 必须提供可索引、可查询的 normalized `scope_type/scope_ref`（或等价 relation），并让 BindAuthorizationProvenance / CurrentEntitlementGate 使用同一结构化表示。无法可靠归一化的 legacy scope fail closed，不得把缺失解释为 ALL_RESOURCE。
+
+RightsDeclaration 必须分离“party 自己可以使用什么”和“party 可以授权给别人什么”。`allowed_actions/permitted purpose/use scope` 不自动产生 grant authority；第三方 Authorization 必须由显式 `grant_authority_mode + grantable_actions + grantable purpose/scope` 或等价强类型事实支持。只有 USE permission、没有 sublicensing/grant authority 的 party 不得成为 USE Authorization 的合法 grantor。
 
 平台不自动判断现实世界法律所有权；平台保存可验证的声明、依据和 Evidence。
 
