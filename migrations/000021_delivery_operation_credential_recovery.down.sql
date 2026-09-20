@@ -24,6 +24,7 @@ DROP TRIGGER IF EXISTS trg_delivery_operation_guard ON delivery_operation;
 DROP FUNCTION IF EXISTS guard_delivery_operation_mutation();
 DROP TRIGGER IF EXISTS trg_delivery_replay_decision_immutable ON delivery_credential_replay_decision;
 DROP TRIGGER IF EXISTS trg_delivery_containment_transition_immutable ON delivery_containment_transition;
+DROP TRIGGER IF EXISTS trg_delivery_cost_allocation_immutable ON cost_allocation;
 DROP TRIGGER IF EXISTS trg_delivery_provider_observation_immutable ON delivery_provider_observation;
 DROP TRIGGER IF EXISTS trg_delivery_provider_attempt_immutable ON delivery_provider_attempt;
 DROP TRIGGER IF EXISTS trg_delivery_transition_immutable ON delivery_transition;

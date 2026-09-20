@@ -904,6 +904,13 @@ func (s *Service) containCapability(ctx context.Context, operation domain.Operat
 		return Result{Operation: operation}, nil
 	}
 	if err := s.provider.Revoke(ctx, operation.ProviderRequestKey); err != nil {
+		outcome := domain.OutcomeFailed
+		if errors.Is(err, ErrUnknownProviderOutcome) {
+			outcome = domain.OutcomeUnknown
+		}
+		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, outcome, domain.Capability{}, err.Error()); recordErr != nil {
+			return Result{}, recordErr
+		}
 		return s.enterContainmentPending(ctx, operation.ID, reason+": "+err.Error(), cmd, &attemptID)
 	}
 	if err := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeSuccess, domain.Capability{}, "capability contained"); err != nil {

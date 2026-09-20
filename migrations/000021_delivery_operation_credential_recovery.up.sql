@@ -208,6 +208,10 @@ CREATE TRIGGER trg_delivery_containment_transition_immutable
 BEFORE UPDATE OR DELETE ON delivery_containment_transition
 FOR EACH ROW EXECUTE FUNCTION prevent_delivery_history_mutation();
 
+CREATE TRIGGER trg_delivery_cost_allocation_immutable
+BEFORE UPDATE OR DELETE ON cost_allocation
+FOR EACH ROW EXECUTE FUNCTION prevent_delivery_history_mutation();
+
 CREATE OR REPLACE FUNCTION guard_delivery_operation_mutation()
 RETURNS trigger AS $$
 BEGIN

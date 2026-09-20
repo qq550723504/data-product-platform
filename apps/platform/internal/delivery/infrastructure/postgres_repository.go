@@ -185,7 +185,7 @@ func (r *PostgresRepository) UpdateProjection(ctx context.Context, tx pgx.Tx, op
 func (r *PostgresRepository) GetContainmentStatus(ctx context.Context, tx pgx.Tx, operationID uuid.UUID) (domain.ContainmentStatus, bool, error) {
 	var status domain.ContainmentStatus
 	err := tx.QueryRow(ctx, `
-		SELECT status FROM delivery_containment WHERE delivery_operation_id=$1
+		SELECT status FROM delivery_containment WHERE delivery_operation_id=$1 FOR UPDATE
 	`, operationID).Scan(&status)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return "", false, nil
