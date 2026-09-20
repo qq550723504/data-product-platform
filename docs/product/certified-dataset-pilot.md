@@ -126,6 +126,7 @@ DataResource
 
 - 持久化 `RightsDeclaration` 与独立的 append-only `RightsVerification` 事实；Declaration 创建不等于 VERIFIED；
 - RightsDeclaration 的 resource、consumer applicability/consumer_ref、purpose、action、scope、validity 必须强类型/规范化持久化并可索引查询；CurrentEntitlementGate 不得依赖任意 JSONB 解析这些核心维度；
+- RightsDeclaration 必须把**使用许可**与**授予第三方的 grant authority**分开：`allowed_actions/permitted purpose/use scope` 不等于 `grant_authority_mode + grantable_actions + grantable purpose/scope`。只有 use permission、无 grant authority 的 declaration 不得支持 AuthorizationProvenanceBinding；
 - Authorization / authorization_resource 的 gate-critical scope 也必须强类型/规范化、可索引查询：至少固定 `scope_type` + `scope_ref`（或等价 normalized relation）。现有 `authorization_resource.scope jsonb` 只能保存受控扩展参数，不能作为 CurrentEntitlementGate / BindAuthorizationProvenance 的唯一 scope identity；legacy row 无可验证 normalized scope 时 fail closed，迁移不得猜测宽 scope；
 - 显式 `CreateRightsDeclaration` / `VerifyRightsDeclaration` / `RejectRightsDeclaration` Command；
 - 同一 RightsDeclaration 只能有一个 terminal RightsVerification outcome（VERIFIED / REJECTED）；Verify/Reject 互斥，数据库约束禁止同一 declaration 同时出现两个 terminal outcomes；
@@ -138,13 +139,15 @@ DataResource
 - Current rights selection 按 `as_of` 排除已生效 disposition，并校验每条 declaration 自身 validity window 与 resource/consumer/purpose/action/scope；
 - `BindAuthorizationProvenance`（或等价显式 Command），禁止 ad hoc CRUD 创建安全关键 binding；
 - Authorization.grantor_ref 与支持它的 RightsDeclaration / grantor-authority delegation chain 的强类型关系；DELEGATED binding 必须持久化 chain ID/hash + ordered member edge identities，不能只在创建时临时证明存在 delegation；
+- `BindAuthorizationProvenance` 必须证明 declaration 的 **grantable** actions/purpose/scope 覆盖 Authorization 授出的范围；delegation chain 每一跳也必须具有 onward grant authority。`allowed USE` 但 `grantable USE` 为空/禁止时，不能创建支持第三方 USE grant 的 binding；
 - AuthorizationProvenanceBinding 创建后不可 UPDATE/DELETE；
 - append-only `AuthorizationProvenanceBindingDisposition`，至少支持 `INVALIDATED` / `SUPERSEDED` + `effective_at` + reason + Evidence + actor + optional superseded_by_binding_id；
 - 显式 `InvalidateAuthorizationProvenanceBinding` / `SupersedeAuthorizationProvenanceBinding` Command；
 - Current binding selection 按 `as_of` 排除已生效 binding disposition；replacement binding 必须独立通过 grantor/resource/actions/scope/declaration-current-validity 校验，不能自动继承有效性；DELEGATED binding 每次 CurrentEntitlementGate 还必须重新验证所有 grantor delegation edges 的 current validity/disposition/continuity/coverage，不能复用 binding-create-time 结论；
-- RightsSnapshot 冻结实际使用的 declaration + AuthorizationProvenanceBinding + Authorization IDs；若 grantor authority=DELEGATED，还冻结 grantor delegation chain ID/hash + member edge IDs。snapshot header + 所有 membership rows 一起 immutable；finalize 后 membership INSERT/UPDATE/DELETE 必须被 PostgreSQL guard 拒绝；历史 freeze 不替代 delivery-time current chain validation；
-- 持久化不可变 `EffectiveRightsSnapshot`（或等价强类型 aggregate），绑定明确 target DatasetVersion、计算 `as_of`/context、calculation_rule_version/hash、lineage/input-set hash，并通过 membership rows 冻结所有**必要输入** DatasetVersion/DataResource + 对应 RightsSnapshot/provenance refs；finalize 后 header/membership/action decision 全部不可改写；
+- RightsSnapshot 冻结实际使用的 declaration + AuthorizationProvenanceBinding + Authorization IDs；若 grantor authority=DELEGATED，还冻结 grantor delegation chain ID/hash + member edge IDs。snapshot header + 所有 membership rows 一起 immutable；**若采用 DRAFT→FINALIZED，多事务 membership mutation 与 Finalize 必须共享同一个 parent snapshot row lock/fence（parent-first 固定顺序），Finalize 在持锁下验证 membership/hash 后提交；禁止 membership transaction 先看到 DRAFT、Finalize 先提交、membership 后提交的穿越。** FINALIZED 后 membership INSERT/UPDATE/DELETE 必须被 PostgreSQL guard 拒绝；历史 freeze 不替代 delivery-time current chain validation；
+- 持久化不可变 `EffectiveRightsSnapshot`（或等价强类型 aggregate），绑定明确 target DatasetVersion、计算 `as_of`/context、calculation_rule_version/hash、lineage/input-set hash，并通过 membership rows 冻结所有**必要输入** DatasetVersion/DataResource + 对应 RightsSnapshot/provenance refs；DRAFT membership/action mutation 与 Finalize 使用同一 parent snapshot lock/fence，Finalize 持锁校验 required-input set/hash 后提交；FINALIZED 后 header/membership/action decision 全部不可改写；
 - Effective Rights 计算必须对每个必要输入执行确定性 fail-closed 合成：对 USE/PROCESS/DERIVE/SHARE/RAW_EXPORT/RESALE/AI_TRAINING 等 action，只有所有必要输入都明确 ALLOWED 才允许输出；任一输入 NOT_ALLOWED、UNKNOWN、缺失 rights fact/snapshot 或未出现在冻结 lineage membership 中，输出该 action 均 NOT_ALLOWED。限制项按最严格约束合成；
+- 历史 EffectiveRightsSnapshot 只用于认证时解释。对衍生 DatasetVersion 的每次 CurrentDeliveryGate，必须从 target 的 immutable required lineage/input membership 遍历所有 source inputs，并重新验证各 input 的 current declaration/binding/Authorization/grantor-delegation facts，再对 requested action 做 fail-closed 交集；任一 source 在认证后被 revoke/invalidate/expire，derived delivery 立即 BLOCKED；
 - `EffectiveRightsSnapshot` 逐 action 持久化 decision + reason/source membership，可查询解释“哪一个输入阻断了 SHARE/RESALE 等动作”；创建/finalize 产生 `EffectiveRightsCalculated` / `EffectiveRightsFinalized`（或实现固定的等价事件）+ Audit/Evidence/Outbox；#134 只能冻结引用 finalized immutable Effective Rights fact，不能认证时临时重新计算后不留事实；
 - unrelated grantor 反例：资源/action 相同但无有效 provenance binding 时 CurrentEntitlementGate 必须 BLOCKED；
 - delegated grantor 反例：binding 创建时 grantor delegation chain 有效，随后任一上游 edge 过期或 REVOKED/INVALIDATED/SUPERSEDED；即使 binding/declaration/Authorization 本身仍 current，CurrentEntitlementGate 必须 BLOCKED，且后续 credential fresh cap 不得越过 delegation edge 的 valid_to/disposition effective_at；
@@ -156,7 +159,7 @@ DataResource
 
 Rights verification / invalidation / supersession / provenance binding 等实际人工或外部核验活动必须在发生时记录 CostEvent；这些活动通常没有 Execution，必须通过 typed CostAllocation 关联实际 Rights 业务事实。same-attempt replay 使用稳定 activity/attempt identity + component_key 去重；若 retry 真正再次发生外部核验/人工工作，则使用新的 attempt identity 记录新增实际成本，不能按顶层业务对象全部去重。
 
-缺少 declaration creation/verification lifecycle、withdrawal/current-selection、**Authorization normalized scope**、provenance binding、**delegated grantor chain 强类型引用 + current revalidation/disposition**、**lineage-bound persisted Effective Rights computation/finalization** 任一能力时，#137 不视为完成。
+缺少 declaration creation/verification lifecycle、withdrawal/current-selection、**use permission vs grant authority 分离**、**Authorization normalized scope**、provenance binding、**delegated grantor chain 强类型引用 + current revalidation/disposition**、**lineage-bound persisted Effective Rights computation/finalization + delivery-time source recomputation**、**snapshot finalize/membership serialization** 任一能力时，#137 不视为完成。
 
 ## 7. HQD-4 #134
 
