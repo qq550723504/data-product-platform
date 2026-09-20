@@ -231,6 +231,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - gate 失败不得产生可用数据、URL、token、credential；
 - credential TTL 受 caller principal→consumer/workspace binding、workspace membership、delegation 的最早有限 valid_to/expires_at，以及 trusted identity source 已知 future revoke/disable（如可表达）、Rights/Authorization validity、future-effective RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 的最早边界共同约束；不可回调 bearer/presigned credential 不得越过调用者代表资格本身的有效期；
 - `DatasetDeliveryIssued` / `DatasetDeliveryBlocked` / `DatasetDeliveryFailed`（或实现固定的等价事件）覆盖三个终态结果；
+- `CONTAINMENT_PENDING` 虽非终态，但每次首次进入必须产生显式 `DatasetDeliveryContainmentPending`（或固定等价）Domain Event，并与该 transition 的 Audit/Evidence/Outbox 同事务、幂等提交；reconciliation/alert consumers 不得依赖轮询状态或普通日志才知道存在未确认外部 capability；credential replay containment pending 使用独立 replay subject/event（或统一 containment event + subject_kind），不改写原 ISSUED operation；
 - DeliveryOperation 的**数据库 terminal fact** + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；外部 credential provider 调用不属于 PostgreSQL transaction；
 - 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key；
 - **每一次 initial / retry / reconciliation 真正调用 provider 前，都重新验证 caller principal→effective consumer/workspace binding/delegation 当前有效性，再重新执行完整 CurrentDeliveryGate 并重新计算 credential expiry cap**；PREPARED/ISSUANCE_PENDING 中旧 identity/gate snapshot 只用于审计；
@@ -249,7 +250,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
   - 确认此前未产生 provider access capability 时可直接 BLOCKED；
   - 若既有 provider_request_key 可能已签发，必须先 reconcile；
   - recovered credential/access 必须先 revoke/contain，确认失效后才能 BLOCKED；
-  - unknown outcome 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal Blocked event；
+  - unknown outcome 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal Blocked/Failed event；但必须在同一 transition transaction 发 `DatasetDeliveryContainmentPending` + Audit/Evidence/Outbox；
 - direct bearer provider 必须支持基于同一 provider_request_key replay/read-after-write 恢复同一 credential（或等价同一访问能力），并支持 fresh credential-replay authorization 被拒绝时 revoke/contain 该既有 capability；任一能力缺失都不足以支持 direct bearer，必须 platform redemption/gateway 或 unsupported；
 - 无法安全恢复同一 credential，或 replay 被当前授权拒绝后无法 revoke/contain 旧 capability 的 provider，必须使用 platform redemption/gateway，或明确 unsupported；
 - provider 成功但 terminal DB commit 前 crash 时，retry/reconciliation 必须复用同一 provider_request_key，不得签发第二份独立 credential；
