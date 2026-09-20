@@ -50,7 +50,7 @@ OpenMetadata 仅作为 Governance Projection。
 - ProductRelease published bindings / published release history（领域 invariant；当前 `product_release` 行已有 guard，但 `product_release_dataset` membership 的 DB-level freeze 仍是 #99 已知缺口）
 - ContractVersion
 - WorkflowVersion
-- EvidenceSnapshot
+- EvidenceSnapshot（领域 immutable invariant；当前 header guard 已有，但 `evidence_snapshot_item` membership INSERT/DELETE/UPDATE 的 DB-level freeze 仍是 #99 已知缺口）
 - RightsSnapshot
 - QualityAssessment（已实现；兼容存储名 quality_result / quality_finding）
 - verified RightsDeclaration / verification fact（#137 起）
@@ -229,7 +229,10 @@ Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduc
 
 - DatasetVersionUsability：至少拒绝 INVALID / FAILED / PROCESSING / CREATED；SUPERSEDED 是否允许按明确历史版本交付遵循现有领域语义和实现验收；
 - CurrentCertificationGate：delivery 必须绑定明确 certification；其 decision 必须为 CERTIFIED，且在 as_of 时点未被 CertificationDisposition REVOKED / SUPERSEDED；frozen CertificationProfile 对 requested purpose/action/consumer/delivery channel/mode 每个维度都必须显式 ANY / EXPLICIT 覆盖。缺失、NULL、UNKNOWN 不等于 ANY，必须 fail closed；禁止用 latest created_at 猜当前认证；
-- CurrentEntitlementGate：使用当前时间、consumer、purpose、action 检查每一个候选 RightsDeclaration 的 VERIFIED 状态、其自身 validity window 与 use scope，并排除已生效 INVALIDATED/SUPERSEDED provenance；AuthorizationProvenanceBinding 必须当前有效，且其 grant source 必须由 declaration 的显式 grant authority（不是 allowed/use permission）或 current-valid grantor delegation chain 支撑；再逐项校验 Authorization 的 grantee/consumer、resource、purpose、action、normalized scope、状态/有效期。对 derived DatasetVersion 不能只读取历史 EffectiveRightsSnapshot：必须遍历全部 immutable required source inputs，分别重新验证 current declaration/binding/Authorization/grantor-delegation facts，并对 requested action 做 fail-closed 交集。
+- CurrentEntitlementGate 必须区分 entitlement path：
+  - **DIRECT_USE**：当前请求直接依赖 RightsDeclaration 允许该 party/consumer 自身使用时，校验 declaration VERIFIED/current validity/disposition、resource、consumer applicability、permitted purpose、allowed_actions、use scope；
+  - **DOWNSTREAM_AUTHORIZATION**：当前请求依赖 Authorization 给 grantee/consumer 的授权时，declaration 只需作为 current provenance/grant-authority source（VERIFIED、current validity/disposition、resource 匹配），并通过 AuthorizationProvenanceBinding / current grantor-delegation chain 证明 **grantable purpose/action/scope** 覆盖该 Authorization；随后逐项校验 Authorization 的 grantee/consumer、resource、purpose、action、normalized scope、状态/有效期。**不得再要求 grantor 自己的 allowed_actions/use scope 匹配 grantee 的 delivery request。**
+  对 derived DatasetVersion 不能只读取历史 EffectiveRightsSnapshot：必须遍历全部 immutable required source inputs，并按各 source 实际 entitlement path 重新验证 current declaration/binding/Authorization/grantor-delegation facts，再对 requested action 做 fail-closed 交集。
 
 任一子门禁失败都必须 fail closed，即使历史 Certification 仍为 CERTIFIED。
 
