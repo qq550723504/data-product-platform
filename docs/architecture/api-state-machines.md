@@ -142,10 +142,10 @@ Readiness 不满足时，当前 `ValidateRelease` 返回 non-ready `ReadinessRes
 
 - 显式 Domain/Application Command；
 - 必要 migration / database guard 调整；
-- published bindings 继续冻结；
+- published bindings 的**领域 invariant**继续冻结；数据库层 `product_release_dataset` membership guard 仍由 #99 补齐，未来 lifecycle migration 不得扩大该现有缺口；
 - Domain Event / Audit / Outbox / 幂等 / 并发测试。
 
-Published Release 当前整行受历史 guard 保护，不允许普通 UPDATE。
+Published Release 当前**主行**受 `guard_product_release_history` 保护，不允许普通 UPDATE/DELETE；`product_release_dataset` membership 尚未由同等数据库 guard 保护（#99 open），因此当前实现状态不能描述为“published bindings 已完整 DB-frozen”。
 
 ## 9. Execution
 
