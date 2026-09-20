@@ -1,6 +1,7 @@
 package evidence
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -96,11 +97,19 @@ func canonicalMetadata(metadata map[string]any) (map[string]any, error) {
 		return nil, fmt.Errorf("marshal canonical Evidence metadata: %w", err)
 	}
 	var canonical map[string]any
-	if err := json.Unmarshal(encoded, &canonical); err != nil {
+	decoder := json.NewDecoder(bytes.NewReader(encoded))
+	decoder.UseNumber()
+	if err := decoder.Decode(&canonical); err != nil {
 		return nil, fmt.Errorf("normalize canonical Evidence metadata: %w", err)
 	}
 	if canonical == nil {
 		canonical = map[string]any{}
 	}
 	return canonical, nil
+}
+
+func decodeMetadata(encoded []byte, metadata *map[string]any) error {
+	decoder := json.NewDecoder(bytes.NewReader(encoded))
+	decoder.UseNumber()
+	return decoder.Decode(metadata)
 }

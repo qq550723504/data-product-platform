@@ -110,6 +110,31 @@ func TestLoadPolicyNormalizesSeverity(t *testing.T) {
 	}
 }
 
+func TestLoadPolicyRejectsInvalidRatioThresholdsAndAllowNull(t *testing.T) {
+	tests := []struct {
+		name string
+		rule string
+	}{
+		{name: "completeness threshold above one", rule: "type: completeness_ratio\n      target: amount\n      threshold: 1.1"},
+		{name: "unique threshold below zero", rule: "type: unique\n      target: amount\n      threshold: -0.1"},
+		{name: "duplicate threshold above one", rule: "type: duplicate_ratio\n      target: amount\n      threshold: 2"},
+		{name: "malformed allowNull", rule: "type: range\n      target: amount\n      parameters:\n        min: 0\n        max: 1\n        allowNull: flase"},
+	}
+	for _, testCase := range tests {
+		t.Run(testCase.name, func(t *testing.T) {
+			dir := t.TempDir()
+			path := filepath.Join(dir, "quality.yaml")
+			content := fmt.Sprintf("apiVersion: quality/v1\nkind: QualityRuleSet\nmetadata:\n  version: 1.0.0\nspec:\n  rules:\n    - id: R-1\n      dimension: ACCURACY\n      required: true\n      severity: CRITICAL\n      %s\n", testCase.rule)
+			if err := os.WriteFile(path, []byte(content), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := LoadPolicy(path); err == nil {
+				t.Fatal("invalid rule parameter was accepted")
+			}
+		})
+	}
+}
+
 func TestGenericRuleTypesUsePackConfiguration(t *testing.T) {
 	readyAt := time.Date(2026, 9, 20, 0, 0, 0, 0, time.UTC)
 	lineage := true
@@ -260,6 +285,25 @@ func TestRangeAndNullSemantics(t *testing.T) {
 		if finding := evaluateSingleRule(t, rule, ctx); finding.Status != domain.FindingFail {
 			t.Fatalf("non-finite value %q passed: %#v", value, finding)
 		}
+	}
+}
+
+func TestEvaluateRejectsMalformedAllowNull(t *testing.T) {
+	policy := singleRulePolicy(Rule{
+		ID:        "R",
+		Dimension: "ACCURACY",
+		Type:      RuleTypeRange,
+		Target:    "amount",
+		Parameters: map[string]any{
+			"min":       0,
+			"max":       1,
+			"allowNull": "flase",
+		},
+		Required: true,
+		Severity: "CRITICAL",
+	})
+	if _, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{Headers: []string{"amount"}}}); err == nil {
+		t.Fatal("malformed allowNull was accepted during evaluation")
 	}
 }
 

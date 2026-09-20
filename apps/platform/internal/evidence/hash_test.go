@@ -1,6 +1,7 @@
 package evidence
 
 import (
+	"bytes"
 	"encoding/json"
 	"testing"
 	"time"
@@ -93,11 +94,50 @@ func TestEvidenceHashVerificationSurvivesQualityMetricsJSONRoundTrip(t *testing.
 		t.Fatalf("marshal quality evidence metadata: %v", err)
 	}
 	var roundTripped map[string]any
-	if err := json.Unmarshal(encoded, &roundTripped); err != nil {
+	decoder := json.NewDecoder(bytes.NewReader(encoded))
+	decoder.UseNumber()
+	if err := decoder.Decode(&roundTripped); err != nil {
 		t.Fatalf("unmarshal quality evidence metadata: %v", err)
 	}
 	record.Metadata = roundTripped
 	if !VerifyHash(record, HashAlgorithmEvidenceV1, hashValue) {
 		t.Fatalf("quality evidence hash did not survive JSON round trip: hash=%s metadata=%#v", hashValue, roundTripped)
+	}
+}
+
+func TestEvidenceHashPreservesLargeJSONIntegers(t *testing.T) {
+	base := Record{
+		WorkspaceID:  uuid.MustParse("11111111-1111-1111-1111-111111111111"),
+		EvidenceType: "QUALITY_RESULT",
+		SourceType:   "QUALITY_RESULT",
+		CreatedAt:    time.Date(2026, 9, 20, 10, 11, 12, 0, time.UTC),
+		Metadata:     map[string]any{"large": json.Number("9007199254740993")},
+	}
+	highHash, err := ComputeHash(base, HashAlgorithmEvidenceV1)
+	if err != nil {
+		t.Fatalf("compute high integer hash: %v", err)
+	}
+	encoded, err := json.Marshal(base.Metadata)
+	if err != nil {
+		t.Fatalf("marshal large integer metadata: %v", err)
+	}
+	var roundTripped map[string]any
+	decoder := json.NewDecoder(bytes.NewReader(encoded))
+	decoder.UseNumber()
+	if err := decoder.Decode(&roundTripped); err != nil {
+		t.Fatalf("decode large integer metadata: %v", err)
+	}
+	base.Metadata = roundTripped
+	if !VerifyHash(base, HashAlgorithmEvidenceV1, highHash) {
+		t.Fatalf("large integer hash did not survive JSON round trip: metadata=%#v", roundTripped)
+	}
+
+	base.Metadata = map[string]any{"large": json.Number("9007199254740992")}
+	lowHash, err := ComputeHash(base, HashAlgorithmEvidenceV1)
+	if err != nil {
+		t.Fatalf("compute low integer hash: %v", err)
+	}
+	if highHash == lowHash {
+		t.Fatalf("distinct large integers produced the same hash: %s", highHash)
 	}
 }

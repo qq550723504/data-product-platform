@@ -152,7 +152,11 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 		samples := make([]any, 0, 5)
 		for index, row := range ctx.Table.Rows {
 			value := strings.TrimSpace(row[rule.Target])
-			if value == "" && parameterBool(rule, "allowNull", true) {
+			allowNull, err := parameterBool(rule, "allowNull", true)
+			if err != nil {
+				return domain.Finding{}, nil, fmt.Errorf("rule %s allowNull: %w", rule.ID, err)
+			}
+			if value == "" && allowNull {
 				continue
 			}
 			parsed, ok := finiteFloat(value)
@@ -186,7 +190,11 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 		samples := make([]any, 0, 5)
 		for index, row := range ctx.Table.Rows {
 			value := strings.TrimSpace(row[rule.Target])
-			if value == "" && parameterBool(rule, "allowNull", true) {
+			allowNull, err := parameterBool(rule, "allowNull", true)
+			if err != nil {
+				return domain.Finding{}, nil, fmt.Errorf("rule %s allowNull: %w", rule.ID, err)
+			}
+			if value == "" && allowNull {
 				continue
 			}
 			if _, ok := allowedSet[value]; !ok {
@@ -215,7 +223,11 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 		samples := make([]any, 0, 5)
 		for index, row := range ctx.Table.Rows {
 			value := strings.TrimSpace(row[rule.Target])
-			if value == "" && parameterBool(rule, "allowNull", true) {
+			allowNull, err := parameterBool(rule, "allowNull", true)
+			if err != nil {
+				return domain.Finding{}, nil, fmt.Errorf("rule %s allowNull: %w", rule.ID, err)
+			}
+			if value == "" && allowNull {
 				continue
 			}
 			if !re.MatchString(value) {
@@ -436,21 +448,21 @@ func numericValue(value any) (float64, error) {
 	}
 }
 
-func parameterBool(rule Rule, key string, fallback bool) bool {
+func parameterBool(rule Rule, key string, fallback bool) (bool, error) {
 	value, ok := rule.Parameters[key]
 	if !ok {
-		return fallback
+		return fallback, nil
 	}
 	switch typed := value.(type) {
 	case bool:
-		return typed
+		return typed, nil
 	case string:
 		parsed, err := strconv.ParseBool(strings.TrimSpace(typed))
 		if err == nil {
-			return parsed
+			return parsed, nil
 		}
 	}
-	return fallback
+	return false, fmt.Errorf("must be boolean")
 }
 
 func compare(value float64, operator string, threshold float64) bool {

@@ -171,6 +171,21 @@ func validatePolicy(policy Policy, requireRequired bool) error {
 				return fmt.Errorf("rule %s range max: %w", rule.ID, err)
 			}
 		}
+		if ruleType == RuleTypeNotNull || ruleType == RuleTypeCompletenessRatio || ruleType == RuleTypeUnique {
+			if err := validateRatioThreshold(rule, 1); err != nil {
+				return fmt.Errorf("rule %s: %w", rule.ID, err)
+			}
+		}
+		if ruleType == RuleTypeDuplicateRatio {
+			if err := validateRatioThreshold(rule, 0); err != nil {
+				return fmt.Errorf("rule %s: %w", rule.ID, err)
+			}
+		}
+		if ruleType == RuleTypeRange || ruleType == RuleTypeEnum || ruleType == RuleTypeRegex {
+			if _, err := parameterBool(rule, "allowNull", true); err != nil {
+				return fmt.Errorf("rule %s allowNull: %w", rule.ID, err)
+			}
+		}
 		if ruleType == RuleTypeEnum && len(parameterStrings(rule, "values", "allowedValues")) == 0 {
 			return fmt.Errorf("rule %s enum values are required", rule.ID)
 		}
@@ -243,6 +258,17 @@ func normalizeDimension(value string) string {
 
 func normalizeSeverity(value string) string {
 	return strings.ToUpper(strings.TrimSpace(value))
+}
+
+func validateRatioThreshold(rule Rule, fallback float64) error {
+	threshold, err := ruleThreshold(rule, fallback)
+	if err != nil {
+		return fmt.Errorf("ratio threshold: %w", err)
+	}
+	if threshold < 0 || threshold > 1 {
+		return fmt.Errorf("ratio threshold must be between 0 and 1, got %v", threshold)
+	}
+	return nil
 }
 
 func parameterString(rule Rule, keys ...string) string {
