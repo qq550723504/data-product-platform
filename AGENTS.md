@@ -152,6 +152,8 @@ CostEvent 的幂等边界是**同一次实际 activity attempt**，不是把一�
 
 Provider 成本不依赖业务终态。每一次真实 external provider invocation 在调用前先分配/持久化 physical attempt identity；成功、provider failure、timeout/unknown、reconciliation lookup、revoke/compensation 只要实际调用并可能计费，都必须记录该 attempt 的 CostEvent。amount 暂不可知时至少记录真实 invocation quantity/unit；不能等到 ISSUED 才记账，也不能因最终 BLOCKED/FAILED/CONTAINMENT_PENDING 而丢弃已发生成本。
 
+Provider attempt persistence 采用不可变 identity/start fact + 追加式 outcome/observation fact（或等价强度模型）。调用前 start fact 已持久化；返回/timeout/unknown 后 append observation。后续 reconciliation 若重新判定原 attempt outcome，只能追加 resolution/observation，不能覆盖原始 start/首次观察；如果 reconciliation 自身真的调用 provider，则它是新的 provider_attempt_id，并独立计费。
+
 ## 8. Industry Pack Boundary
 
 园区、制造、医疗、政务等行业逻辑不得硬编码进 Core Domain。
