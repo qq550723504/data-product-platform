@@ -107,15 +107,15 @@ DatasetCertification
 Certified DatasetVersion
 ~~~
 
-Certified Dataset 可以作为独立交付对象，也可以继续进入 Data Product / ProductRelease；独立交付必须由 server-side delivery command 执行。该 Command 在返回数据或签发 URL/token/credential 前重新执行 CurrentDeliveryGate：检查 DatasetVersion 当前可用性、CurrentCertificationGate（明确且未 REVOKED/SUPERSEDED 的 CERTIFIED 事实），再通过 CurrentEntitlementGate 重新校验当前 Rights provenance / Authorization / Effective Rights。Eligibility query 不能替代 delivery-time gate。
+Certified Dataset 可以作为独立交付对象，也可以继续进入 Data Product / ProductRelease；独立交付必须由 server-side delivery command 执行。该 Command 先从 authenticated caller principal 解析 effective consumer/workspace；on-behalf-of 必须验证当前有效 delegation，不能信任请求 consumer 自证身份。随后在返回数据或签发 URL/token/credential 前重新执行 CurrentDeliveryGate：检查 DatasetVersion 当前可用性、CurrentCertificationGate（明确且未 REVOKED/SUPERSEDED 的 CERTIFIED 事实），再通过 CurrentEntitlementGate 重新校验当前 Rights provenance / Authorization / Effective Rights。Eligibility query 不能替代 delivery-time authorization。
 
 外部 credential issuance 使用 DB-first crash-safe protocol：
 1. 先持久化 DeliveryOperation PREPARED/ISSUANCE_PENDING + stable provider_request_key；
 2. DB commit 成功后才执行外部 issuance；
 3. provider 成功后再提交 terminal DeliveryOperation + Audit/Evidence/Outbox/CostEvent；
 4. terminal commit 成功后才向客户端暴露 credential；
-5. 每次 initial/retry/reconciliation 真正调用 provider 前重新执行 CurrentDeliveryGate，并重新计算 expiry cap；prepare 阶段的旧 gate snapshot 不授权后续外部 side effect；
-6. 所有 delivery mode 的 terminal finalize 都必须在共享 delivery authorization fence/revision 下重新读取 current facts、重新 gate；credential/provider 模式还要重新计算 fresh cap。影响 gate 的 Rights/Binding/Certification disposition 与 DatasetVersion invalidation 等 Command 使用同一 fence/revision，并按固定顺序锁定；
+5. 每次 initial/retry/reconciliation 真正调用 provider 前重新验证 caller principal→effective consumer/workspace binding/delegation，再执行 CurrentDeliveryGate 并重新计算 expiry cap；prepare 阶段的旧 identity/gate snapshot 不授权后续外部 side effect；
+6. 所有 delivery mode 的 terminal finalize 都必须在共享 delivery authorization fence/revision 下重新读取 current facts、重新验证 caller authority、重新 gate；credential/provider 模式还要重新计算 fresh cap。影响 delivery authorization 的 principal binding/workspace membership/delegation lifecycle、Rights/Binding/Certification disposition 与 DatasetVersion invalidation 等 Command 使用同一 fence/revision，并按固定顺序锁定；
 7. terminal ISSUED DB commit 是 delivery 的线性化点：provider/credential 模式只有 commit 后才返回 capability；direct-data 模式只有 commit 后才允许写出第一字节。若 entitlement 变更先提交，finalize 必须看到它且 direct-data 0-byte fail closed；若 finalize 先提交，则后续 entitlement 变更在线性顺序上发生在该 delivery 之后；
 8. direct-data 不得在整个 stream 期间持有数据库 lock；fence 只覆盖 terminal re-gate + commit。
 9. provider capability 在 ISSUED 前必须通过 read-after-write/authoritative lookup 验证为 requested/current-gate context 的等价或更窄集合，至少覆盖 expiry、resource/DatasetVersion、consumer（可表达时）、actions、object/row/prefix scope、delivery channel；过宽或不可验证时 fail closed 并 contain/narrow；
