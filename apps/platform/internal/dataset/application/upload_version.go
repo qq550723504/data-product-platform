@@ -52,8 +52,13 @@ func NewUploadVersionService(tx *transaction.Manager, repo *infrastructure.Postg
 // With a key present a replayed delivery is not a second output:
 //   - an already READY version produced by this Execution is returned untouched;
 //   - a half-product of the same Execution (CREATED/PROCESSING/FAILED) reuses the
-//     same row, so version_no and object key stay stable;
+//     same row, so version_no and object key stay stable, and a FAILED one is
+//     republished in place instead of consuming a new version number;
 //   - an INVALID/SUPERSEDED row is a hard error rather than a silent overwrite.
+//
+// Both phases re-read the committed row under a lock: several deliveries of one
+// Execution share the row, so nothing may be published on the strength of the
+// state this call allocated.
 func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionCommand) (domain.DatasetVersion, error) {
 	if len(cmd.Content) == 0 {
 		return domain.DatasetVersion{}, fmt.Errorf("dataset version content is empty")
@@ -98,16 +103,9 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 		if version.Status == domain.VersionInvalid || version.Status == domain.VersionSuperseded {
 			return fmt.Errorf("dataset version %s produced by execution %s is %s and cannot be reused as an output", version.ID, cmd.GeneratedByExecutionID, version.Status)
 		}
-		// A FAILED half-product is repaired through the explicit domain transition,
-		// not by overwriting it in place.
-		if version.Status == domain.VersionFailed {
-			if err := version.StartProcessing(); err != nil {
-				return err
-			}
-			if err := s.repo.StartProcessing(ctx, tx, version.ID); err != nil {
-				return err
-			}
-		}
+		// CREATED/PROCESSING/FAILED are all reusable half-products. A FAILED row is
+		// not repaired here: this attempt has no durable content yet, so its state is
+		// only decided when the publish phase runs with the object write behind it.
 		return audit.Append(ctx, tx, audit.Event{
 			ActorType:  actorType(cmd.ActorID),
 			ActorID:    cmd.ActorID,
@@ -154,6 +152,8 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 	}
 
 	checksum := fmt.Sprintf("%x", sha256.Sum256(cmd.Content))
+	// MarkReady accepts CREATED/PROCESSING/FAILED, so a half-product recovered by
+	// this attempt becomes READY with this attempt's staged content.
 	if err := version.MarkReady("OBJECT_STORAGE", storageURI, cmd.ContentType, "SHA256", checksum, rowCount, int64(len(cmd.Content))); err != nil {
 		return domain.DatasetVersion{}, err
 	}
@@ -164,17 +164,25 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		// Lock the row and re-read its committed state. A concurrent delivery of the
-		// same Execution may have published this exact version between our allocation
-		// and this commit; the loser must adopt that row rather than emit a second
-		// set of facts (and must not overwrite its storage reference).
+		// same Execution may have published this exact version (or failed it) between
+		// our allocation and this commit, so the decision to publish is taken on the
+		// committed row, never on the state this call allocated.
 		current, err := s.repo.LockVersion(ctx, tx, version.ID)
 		if err != nil {
 			return err
 		}
-		if current.Status == domain.VersionReady {
+		switch current.Status {
+		case domain.VersionReady:
+			// Already published by a concurrent delivery: adopt that row, do not emit a
+			// second set of facts and do not overwrite its storage reference.
 			version = current
 			return nil
+		case domain.VersionInvalid, domain.VersionSuperseded:
+			return fmt.Errorf("dataset version %s is %s and cannot be published", version.ID, current.Status)
 		}
+		// CREATED/PROCESSING/FAILED: this attempt holds durably stored content, so it
+		// is the one that publishes. SetReady performs the transition under the lock
+		// and fails loudly if the row is no longer publishable.
 
 		if err := s.repo.SetReady(ctx, tx, version); err != nil {
 			return err
@@ -185,6 +193,7 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 			"datasetId":              version.DatasetID,
 			"versionNo":              version.VersionNo,
 			"status":                 version.Status,
+			"previousStatus":         string(current.Status),
 			"checksum":               version.ChecksumValue,
 			"generatedByExecutionId": version.GeneratedByExecutionID,
 		})
@@ -205,6 +214,7 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 				"datasetId":              version.DatasetID,
 				"versionNo":              version.VersionNo,
 				"status":                 version.Status,
+				"previousStatus":         string(current.Status),
 				"storageUri":             version.StorageURI,
 				"checksum":               version.ChecksumValue,
 				"rowCount":               rowCount,

@@ -66,6 +66,28 @@ func (s *recordingStore) read(uri string) ([]byte, bool) {
 	return content, ok
 }
 
+// gateStore blocks its Put until the test releases it, which makes the window
+// between "this delivery allocated the shared output row" and "this delivery
+// committed it" deterministic instead of timing-dependent.
+type gateStore struct {
+	inner   *recordingStore
+	entered chan struct{}
+	release chan struct{}
+}
+
+func newGateStore(inner *recordingStore) *gateStore {
+	return &gateStore{inner: inner, entered: make(chan struct{}, 1), release: make(chan struct{})}
+}
+
+func (s *gateStore) Put(ctx context.Context, objectName string, reader io.Reader, size int64, contentType string) (string, error) {
+	select {
+	case s.entered <- struct{}{}:
+	default:
+	}
+	<-s.release
+	return s.inner.Put(ctx, objectName, reader, size, contentType)
+}
+
 // c2aFixture wires the real writer against a real PostgreSQL, matching how the
 // native engine consumes it.
 type c2aFixture struct {
@@ -338,6 +360,101 @@ func TestConcurrentDeliveriesNeverOverwritePublishedContent(t *testing.T) {
 	}
 	assertSingle(t, fixture, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='DatasetVersionCreated'`, published.ID, "DatasetVersionCreated outbox events")
 	assertSingle(t, fixture, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND action='DATASET_VERSION_READY'`, published.ID, "DATASET_VERSION_READY audit events")
+}
+
+// TestConcurrentDeliveryFailingTheSharedRowStillPublishesTheWinner pins the
+// commit-phase race the review found: deliveries of one Execution share the
+// output row, so a loser whose object write failed can mark that row FAILED
+// between the winner's allocation and the winner's commit. The winner must then
+// republish the row in the same transaction it announces, or it would report a
+// READY version the database does not hold.
+func TestConcurrentDeliveryFailingTheSharedRowStillPublishesTheWinner(t *testing.T) {
+	store := newRecordingStore()
+	fixture, _, datasetID := newC2AFixture(t, store)
+	txManager := transaction.NewManager(fixture.pool)
+	gated := newGateStore(store)
+	winner := application.NewUploadVersionService(txManager, fixture.repo, gated)
+	loser := application.NewUploadVersionService(txManager, fixture.repo, failingStore{})
+	executionID := uuid.New()
+	body := "id,name\n1,winner\n"
+
+	type outcome struct {
+		version domain.DatasetVersion
+		err     error
+	}
+	done := make(chan outcome, 1)
+	go func() {
+		version, err := winner.Handle(fixture.ctx, fixture.outputCommand(datasetID, executionID, body))
+		done <- outcome{version: version, err: err}
+	}()
+
+	// The winner allocated the shared row and is staging its object.
+	<-gated.entered
+	// A competing delivery of the same Execution cannot store its object and marks
+	// the shared row FAILED before the winner commits.
+	if _, err := loser.Handle(fixture.ctx, fixture.outputCommand(datasetID, executionID, "id,name\n2,loser\n")); err == nil {
+		t.Fatal("delivery with an unavailable object store must fail")
+	}
+	var failedStatus domain.VersionStatus
+	if err := fixture.pool.QueryRow(fixture.ctx, `SELECT status FROM dataset_version WHERE dataset_id=$1 AND generated_by_execution_id=$2`, datasetID, executionID).Scan(&failedStatus); err != nil {
+		t.Fatalf("read shared row: %v", err)
+	}
+	if failedStatus != domain.VersionFailed {
+		t.Fatalf("shared row status before the winner commits = %s, want FAILED", failedStatus)
+	}
+
+	close(gated.release)
+	result := <-done
+	if result.err != nil {
+		t.Fatalf("winner: %v", result.err)
+	}
+	if result.version.Status != domain.VersionReady {
+		t.Fatalf("winner returned status %s, want READY", result.version.Status)
+	}
+
+	// The reported fact and the committed row must agree, and the published object
+	// must be the winner's own staged content.
+	published, err := fixture.repo.GetVersion(fixture.ctx, result.version.ID)
+	if err != nil {
+		t.Fatalf("read published version: %v", err)
+	}
+	if published.Status != domain.VersionReady {
+		t.Fatalf("committed status = %s, want READY", published.Status)
+	}
+	if published.StorageURI != result.version.StorageURI {
+		t.Fatalf("committed storage URI = %q, want the winner's %q", published.StorageURI, result.version.StorageURI)
+	}
+	content, ok := store.read(published.StorageURI)
+	if !ok {
+		t.Fatalf("published storage URI %q was never written", published.StorageURI)
+	}
+	if got := fmt.Sprintf("%x", sha256.Sum256(content)); got != published.ChecksumValue {
+		t.Fatalf("published object checksum = %s, want %s", got, published.ChecksumValue)
+	}
+	if count := fixture.countVersions(t, datasetID, executionID); count != 1 {
+		t.Fatalf("output versions = %d, want 1", count)
+	}
+	// The loser stored nothing and announced nothing: only the winner's publish is
+	// recorded as a fact, and it records that the row was recovered from FAILED.
+	assertSingle(t, fixture, `SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='DatasetVersionCreated'`, published.ID, "DatasetVersionCreated outbox events")
+	assertSingle(t, fixture, `SELECT count(*) FROM audit_event WHERE object_id=$1 AND action='DATASET_VERSION_READY'`, published.ID, "DATASET_VERSION_READY audit events")
+	var previousStatus string
+	if err := fixture.pool.QueryRow(fixture.ctx, `
+		SELECT payload->>'previousStatus' FROM outbox_event
+		WHERE aggregate_id=$1 AND event_type='DatasetVersionCreated'
+	`, published.ID).Scan(&previousStatus); err != nil {
+		t.Fatalf("read DatasetVersionCreated payload: %v", err)
+	}
+	if previousStatus != string(domain.VersionFailed) {
+		t.Fatalf("recovery event previousStatus = %q, want FAILED", previousStatus)
+	}
+	var current *uuid.UUID
+	if err := fixture.pool.QueryRow(fixture.ctx, `SELECT current_version_id FROM dataset WHERE id=$1`, datasetID).Scan(&current); err != nil {
+		t.Fatalf("read dataset current version: %v", err)
+	}
+	if current == nil || *current != published.ID {
+		t.Fatalf("dataset current_version_id = %v, want %s", current, published.ID)
+	}
 }
 
 // TestInvalidatedOutputIsNotSilentlyReused makes the failure mode explicit: a

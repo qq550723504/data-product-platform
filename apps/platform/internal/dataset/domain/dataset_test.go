@@ -32,6 +32,30 @@ func TestDatasetVersionReadyThenInvalidate(t *testing.T) {
 	}
 }
 
+func TestDatasetVersionFailedHalfProductCanBeRepublished(t *testing.T) {
+	version, err := NewVersion(uuid.New(), uuid.New(), 1, nil)
+	if err != nil {
+		t.Fatalf("NewVersion() error = %v", err)
+	}
+	if err := version.MarkFailed(); err != nil {
+		t.Fatalf("MarkFailed() error = %v", err)
+	}
+
+	// Recovery republishes the same row: the failure left no content behind, so
+	// FAILED -> READY is the single transition that both repairs and announces it.
+	if err := version.MarkReady("OBJECT_STORAGE", "s3://bucket/object.csv", "text/csv", "SHA256", "abc123", 5, 100); err != nil {
+		t.Fatalf("MarkReady() from FAILED error = %v", err)
+	}
+	if version.Status != VersionReady {
+		t.Fatalf("status = %s, want READY", version.Status)
+	}
+
+	invalid := DatasetVersion{Status: VersionInvalid}
+	if err := invalid.MarkReady("OBJECT_STORAGE", "s3://bucket/object.csv", "text/csv", "SHA256", "abc123", 5, 100); !errors.Is(err, ErrInvalidTransition) {
+		t.Fatalf("MarkReady() from INVALID error = %v, want ErrInvalidTransition", err)
+	}
+}
+
 func TestDatasetVersionRejectsInvalidTransitions(t *testing.T) {
 	version, err := NewVersion(uuid.New(), uuid.New(), 1, nil)
 	if err != nil {

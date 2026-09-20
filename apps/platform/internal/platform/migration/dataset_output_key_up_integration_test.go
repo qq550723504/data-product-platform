@@ -84,10 +84,61 @@ func TestC2AOutputKeyMigrationRefusesExistingDuplicateOutputs(t *testing.T) {
 	}
 }
 
+// TestC2AOutputKeyMigrationRemediationIsReachable proves the refusal message is
+// actionable rather than self-defeating: taking the surplus half-product out of
+// the live set with the platform's explicit failure transition installs the index
+// on the next attempt. The withdrawn half-product stays as history.
+func TestC2AOutputKeyMigrationRemediationIsReachable(t *testing.T) {
+	pool := scratchDatabase(t, 19)
+	ctx := context.Background()
+
+	datasetID := insertCuratedDataset(t, pool)
+	executionID := uuid.New()
+	insertDatasetVersion(t, pool, datasetID, 1, &executionID, "CREATED")
+	insertDatasetVersion(t, pool, datasetID, 2, &executionID, "CREATED")
+
+	err := tryApplyMigrationFile(t, pool, 20, "up")
+	if err == nil {
+		t.Fatal("C2-a migration accepted a pre-existing duplicate output pair")
+	}
+	// The guard must not advise a transition that leaves the row inside the
+	// constraint, so it may only name INVALID/SUPERSEDED/FAILED as live-set exits.
+	if strings.Contains(err.Error(), "FAILED and outside this constraint") == false {
+		t.Fatalf("C2-a migration error = %v, want the failure-transition remediation", err)
+	}
+
+	if _, err := pool.Exec(ctx, `
+		UPDATE dataset_version SET status = 'FAILED'
+		WHERE dataset_id = $1 AND version_no = 2
+	`, datasetID); err != nil {
+		t.Fatalf("apply the failure transition to the surplus half-product: %v", err)
+	}
+	if err := tryApplyMigrationFile(t, pool, 20, "up"); err != nil {
+		t.Fatalf("C2-a migration refused after the documented remediation: %v", err)
+	}
+
+	var regclass string
+	if err := pool.QueryRow(ctx, `SELECT COALESCE(to_regclass('uq_dataset_version_execution_output')::text, '')`).Scan(&regclass); err != nil {
+		t.Fatalf("check C2-a index: %v", err)
+	}
+	if regclass == "" {
+		t.Fatal("C2-a index missing after the remediation")
+	}
+	// Remediation withdraws from the live set; it never deletes the fact.
+	var status string
+	if err := pool.QueryRow(ctx, `SELECT status FROM dataset_version WHERE dataset_id=$1 AND version_no=2`, datasetID).Scan(&status); err != nil {
+		t.Fatalf("read withdrawn half-product: %v", err)
+	}
+	if status != "FAILED" {
+		t.Fatalf("withdrawn half-product status = %s, want FAILED", status)
+	}
+}
+
 // TestC2AOutputKeyMigrationUpgradesInstallationsWithHistoricalDuplicates is the
-// operational half of the guard: terminal rows (INVALID/SUPERSEDED) can never be
-// deleted or rewritten, so an index that covered them would be impossible to
-// install. Historical duplicates must therefore not block the upgrade.
+// operational half of the guard: terminal rows (INVALID/SUPERSEDED) and abandoned
+// half-products (FAILED) can be neither deleted nor rewritten, so an index that
+// covered them would be impossible to install. Historical duplicates must
+// therefore not block the upgrade, and only the live rows are constrained.
 func TestC2AOutputKeyMigrationUpgradesInstallationsWithHistoricalDuplicates(t *testing.T) {
 	pool := scratchDatabase(t, 19)
 	ctx := context.Background()
@@ -96,19 +147,22 @@ func TestC2AOutputKeyMigrationUpgradesInstallationsWithHistoricalDuplicates(t *t
 	executionID := uuid.New()
 	// A real shape from the pre-C2-a bug: the Execution output was superseded by
 	// later uploads, so the pair has several historical rows and exactly one live one.
-	insertDatasetVersion(t, pool, datasetID, 1, &executionID, "CREATED")
-	insertDatasetVersion(t, pool, datasetID, 2, &executionID, "SUPERSEDED")
-	insertDatasetVersion(t, pool, datasetID, 3, &executionID, "INVALID")
+	insertDatasetVersion(t, pool, datasetID, 1, &executionID, "SUPERSEDED")
+	insertDatasetVersion(t, pool, datasetID, 2, &executionID, "INVALID")
+	// FAILED is outside the live set on purpose (see the guard remediation), so an
+	// abandoned half-product never blocks the upgrade either.
+	insertDatasetVersion(t, pool, datasetID, 3, &executionID, "FAILED")
+	insertDatasetVersion(t, pool, datasetID, 4, &executionID, "READY")
 
 	if err := tryApplyMigrationFile(t, pool, 20, "up"); err != nil {
 		t.Fatalf("C2-a migration refused an installation with historical duplicates: %v", err)
 	}
 
 	// The one live row is now constrained: a second live output is rejected.
-	insertDatasetVersion(t, pool, datasetID, 4, &executionID, "SUPERSEDED")
+	insertDatasetVersion(t, pool, datasetID, 5, &executionID, "SUPERSEDED")
 	_, err := pool.Exec(ctx, `
 		INSERT INTO dataset_version (id, dataset_id, version_no, status, metadata, generated_by_execution_id)
-		VALUES ($1,$2,5,'CREATED','{}'::jsonb,$3)
+		VALUES ($1,$2,6,'CREATED','{}'::jsonb,$3)
 	`, uuid.New(), datasetID, executionID)
 	if err == nil {
 		t.Fatal("C2-a index accepted a second live output version for one execution")
@@ -117,6 +171,11 @@ func TestC2AOutputKeyMigrationUpgradesInstallationsWithHistoricalDuplicates(t *t
 	if !errors.As(err, &pgErr) || pgErr.Code != "23505" || pgErr.ConstraintName != "uq_dataset_version_execution_output" {
 		t.Fatalf("live duplicate error = %v, want uq_dataset_version_execution_output 23505", err)
 	}
+
+	// FAILED stays outside the constraint (that is what makes the refusal message's
+	// remediation work), so an abandoned half-product does not consume the slot the
+	// live READY row holds.
+	insertDatasetVersion(t, pool, datasetID, 8, &executionID, "FAILED")
 }
 
 // TestC2AOutputKeyMigrationIsPartialAndReversible covers the properties the

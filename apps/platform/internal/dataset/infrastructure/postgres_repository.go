@@ -137,14 +137,18 @@ func (r *PostgresRepository) AllocateVersion(ctx context.Context, tx pgx.Tx, dat
 
 // findVersionByExecutionOutputTx reads the output row already owned by an
 // Execution, if any, including half-products (CREATED/PROCESSING/FAILED).
-// The oldest row wins so a pair that accumulated historical duplicates before
-// C2-a always repairs the same version instead of picking one arbitrarily.
+//
+// A published READY row wins over a half-product so that an installation which
+// accumulated several rows for one pair before C2-a replays idempotently against
+// the output that is actually published. Among rows of the same state the oldest
+// wins, so a half-product is always repaired in place instead of a second row
+// being picked arbitrarily.
 func findVersionByExecutionOutputTx(ctx context.Context, tx pgx.Tx, datasetID, executionID uuid.UUID) (domain.DatasetVersion, bool, error) {
 	version, err := scanVersion(tx.QueryRow(ctx, `
 		SELECT `+versionColumns+`
 		FROM dataset_version
 		WHERE dataset_id = $1 AND generated_by_execution_id = $2
-		ORDER BY version_no ASC
+		ORDER BY (status = 'READY') DESC, version_no ASC
 		LIMIT 1
 	`, datasetID, executionID))
 	if errors.Is(err, ErrNotFound) {
@@ -181,20 +185,6 @@ func (r *PostgresRepository) insertVersion(ctx context.Context, tx pgx.Tx, versi
 	return nil
 }
 
-// StartProcessing persists the domain transition a reused FAILED half-product
-// needs before its content can be rewritten. It is the SQL twin of
-// DatasetVersion.StartProcessing and rejects any other source status.
-func (r *PostgresRepository) StartProcessing(ctx context.Context, tx pgx.Tx, versionID uuid.UUID) error {
-	tag, err := tx.Exec(ctx, `UPDATE dataset_version SET status = 'PROCESSING' WHERE id = $1 AND status IN ('CREATED','FAILED')`, versionID)
-	if err != nil {
-		return fmt.Errorf("start processing dataset version: %w", err)
-	}
-	if tag.RowsAffected() != 1 {
-		return domain.ErrInvalidTransition
-	}
-	return nil
-}
-
 // LockVersion locks a version row and returns its committed state. The output
 // writer uses it to prove, at commit time, that it is still the attempt allowed
 // to publish: a concurrent delivery of the same Execution may already have done
@@ -206,6 +196,17 @@ func (r *PostgresRepository) LockVersion(ctx context.Context, tx pgx.Tx, version
 	`, versionID))
 }
 
+// SetReady publishes a version under the row lock, requiring exactly one row.
+//
+// FAILED is an accepted source state: several deliveries of one Execution share
+// the same output row, so a losing attempt whose object write failed may have
+// marked it FAILED after this attempt allocated it. This attempt holds content
+// that is durably stored, so it republishes the row in one atomic transition
+// (the same CREATED/PROCESSING/FAILED -> READY change the domain models). The
+// transition is deliberately strict: a zero-row update means the committed state
+// is no longer publishable (for example another caller already invalidated it),
+// and reporting success there would announce a READY fact the database does not
+// hold.
 func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version domain.DatasetVersion) error {
 	if version.Status != domain.VersionReady {
 		return fmt.Errorf("set ready requires READY domain state")
@@ -220,7 +221,7 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 		return fmt.Errorf("marshal dataset version metadata: %w", err)
 	}
 
-	_, err = tx.Exec(ctx, `
+	commandTag, err := tx.Exec(ctx, `
 		UPDATE dataset_version
 		SET status = $2,
 		    storage_type = $3,
@@ -233,7 +234,7 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 		    generated_by_execution_id = $10,
 		    metadata = $11,
 		    ready_at = $12
-		WHERE id = $1 AND status IN ('CREATED','PROCESSING')
+		WHERE id = $1 AND status IN ('CREATED','PROCESSING','FAILED')
 	`,
 		version.ID,
 		version.Status,
@@ -251,6 +252,9 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 	if err != nil {
 		return fmt.Errorf("mark dataset version ready: %w", err)
 	}
+	if commandTag.RowsAffected() != 1 {
+		return fmt.Errorf("mark dataset version ready: %w", domain.ErrInvalidTransition)
+	}
 
 	if previousVersionID != nil && *previousVersionID != version.ID {
 		if _, err := tx.Exec(ctx, `UPDATE dataset_version SET status = 'SUPERSEDED' WHERE id = $1 AND status = 'READY'`, *previousVersionID); err != nil {
@@ -264,6 +268,10 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 	return nil
 }
 
+// SetFailed records a failed attempt on a half-product. It is deliberately
+// tolerant of zero rows: several deliveries share one output row, so an attempt
+// whose object write failed must not fail a row another delivery already
+// published. Only CREATED/PROCESSING rows can be failed.
 func (r *PostgresRepository) SetFailed(ctx context.Context, tx pgx.Tx, versionID uuid.UUID) error {
 	_, err := tx.Exec(ctx, `UPDATE dataset_version SET status = 'FAILED' WHERE id = $1 AND status IN ('CREATED','PROCESSING')`, versionID)
 	if err != nil {
