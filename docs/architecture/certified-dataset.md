@@ -170,6 +170,11 @@ CurrentCertificationGate 要求本次 delivery 明确绑定一条 DatasetCertifi
 - decision = CERTIFIED；
 - 不存在已生效的 REVOKED disposition；
 - 不存在已生效的 SUPERSEDED disposition；
+- **本次 delivery context 必须被该 Certification 冻结的 CertificationProfile snapshot 覆盖**：
+  - requested purpose 必须满足 profile purpose / applicability；
+  - requested action（如 USE / SHARE / RAW_EXPORT / RESALE / AI_TRAINING）必须落在 profile 明确允许/认证覆盖的 action 集合；
+  - profile 若定义 consumer / delivery channel / applicability constraints，也必须匹配；
+- Rights 允许某动作不代表 CertificationProfile 已对该动作做过质量/合规/合同认证；例如 INTERNAL_USE profile 不能用于 RAW_EXPORT；
 - 若 C1 被 C2=REJECTED supersede，C1 不能再用于 delivery，C2 也因 decision != CERTIFIED 不能通过；
 - 不允许用 created_at/latest 作为“当前认证”选择规则。
 
