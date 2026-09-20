@@ -117,7 +117,7 @@ owner_id 仅表示平台资产责任/归属，不作为法律所有权证明。
 ### Quality
 
 - QualityRuleSet
-- QualityAssessment（演进现有 quality_result，#131）
+- QualityAssessment（已通过 #140 / migration 000019 落地，兼容存储名 quality_result）
 - QualityFinding
 - QualityDimensionSummary
 
@@ -144,6 +144,7 @@ V1.1 六个质量维度：
 - CompliancePolicy / ComplianceResult
 - DataContract / ContractVersion
 - DataProduct / ProductVersion / ProductAsset / ProductRelease
+- DeliveryOperation（#135）
 - CostEvent / CostAllocation
 - Evidence / EvidenceSnapshot / AuditEvent
 
