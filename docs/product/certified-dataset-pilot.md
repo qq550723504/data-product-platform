@@ -219,6 +219,11 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key；
 - **每一次 initial / retry / reconciliation 真正调用 provider 前，都重新执行完整 CurrentDeliveryGate 并重新计算 credential expiry cap**；PREPARED/ISSUANCE_PENDING 中旧 gate snapshot 只用于审计；
 - provider 返回/恢复 capability 后，terminal ISSUED transaction 必须获取与 Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，再次 re-gate + fresh-cap；terminal commit 是 issuance linearization point；
+- **真实 PostgreSQL 并发测试是 #135 完成条件，不允许只用 mock/串行调用证明 fence**：
+  - 使用两个独立 transaction/connection + barrier，把竞争窗口固定在“delivery terminal finalize 已进入 fenced re-gate/准备提交 ISSUED”和“gate-changing Command 准备提交 disposition/invalidation”之间；
+  - entitlement-change-first：Authorization revoke（并至少再覆盖 Rights/Binding/Certification disposition 或 DatasetVersion INVALID 中一种）先在线性化 fence 上提交，delivery finalize 随后必须观察新 revision/current facts，不能 ISSUED；若 provider 已产生 capability，进入 contain/block/fail；
+  - finalize-first：delivery terminal ISSUED 先在线性化 fence 上提交，随后 gate-changing Command 才完成；两者必须形成唯一全序，后续 Command 按 delivery-mode revocation semantics 处理已签发 capability；
+  - 验证固定锁顺序/无 deadlock、重复 idempotency retry 不产生第二个 terminal fact/event/cost；
 - 如果 re-gate 已 BLOCKED：
   - 确认此前未产生 provider access capability 时可直接 BLOCKED；
   - 若既有 provider_request_key 可能已签发，必须先 reconcile；
@@ -235,7 +240,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - event/Audit/Evidence payload 不得包含可用 credential secret；
 - delivery CostEvent 必须通过 typed CostAllocation FK 关联 DeliveryOperation。
 
-缺少 server-side gate-at-issuance、DeliveryOperation 或 terminal delivery events 任一项时，#135 不视为完成。
+缺少 server-side gate-at-issuance、DeliveryOperation、terminal delivery events、共享 fence/revision，或上述真实 PostgreSQL 双顺序并发测试任一项时，#135 不视为完成。
 
 ## 9. HQD-6 #136
 
