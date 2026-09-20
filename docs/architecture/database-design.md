@@ -474,16 +474,34 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 - delivery_mode
 - idempotency_key / request identity
 - requested_at
-- gate decision / blockers
+- current_gate_decision / current_blockers（仅作为 lifecycle row 的当前投影/cache；不得作为唯一历史来源）
 - status：PREPARED / ISSUANCE_PENDING / CONTAINMENT_PENDING / ISSUED / BLOCKED / FAILED（或等价受控状态）
 - provider_request_key（稳定幂等键）
 - provider_credential_ref/hash（如适用；禁止存可用 secret）
 - planned_credential_expires_at / fresh_cap_expires_at
 - provider_credential_expires_at（provider 实际返回/恢复出的 expiry；direct bearer 必须可验证；direct-data 可为空）
-- provider capability 的**可验证强类型边界**：resource_ref/dataset_version_ref、**consumer/grantee enforcement descriptor（必需；不得因 provider 模型缺字段而省略）**、actions、scope_type/scope_ref，以及必要的 delivery mode/channel identity；多值 actions 可使用规范化 child rows；若 direct provider 无法强制 consumer/grantee，则记录 platform redemption/gateway binding descriptor，而不是把 consumer 设为 unverifiable/null 后继续 direct issuance
+- provider capability 的**可验证强类型边界**：resource_ref/dataset_version_ref、**consumer/grantee enforcement descriptor（必需）**、actions、scope_type/scope_ref、**delivery_mode/channel enforcement descriptor（当 profile/request 对该维度有约束时必需）**；多值 actions 可使用规范化 child rows。direct provider 无法表达/验证/强制 consumer/grantee 或 constrained delivery channel/mode 时，必须记录 platform redemption/gateway binding descriptor 并走 indirection，不能以 null/unsupported 后继续 direct issuance
 - provider_capability_snapshot_hash / provider read-after-write evidence ref（用于证明实际签发能力与记录一致）
 - issuance result / direct-data release authorization result
 - actor / trace
+
+### DeliveryGateEvaluation / transition history
+
+DeliveryOperation lifecycle row 只保存当前 projection，不拥有唯一 gate 历史。每一次会影响后续行为的 gate 评估都必须追加 immutable `DeliveryGateEvaluation`（或等价 child fact），至少包含：
+
+- id / delivery_operation_id / evaluation_kind（INITIAL / RETRY / RECONCILIATION / TERMINAL_FINALIZE / CREDENTIAL_REPLAY 等固定枚举）；
+- evaluated_at / actor or worker identity；
+- authenticated caller / effective consumer / delegation refs；
+- purpose / action / delivery_mode；
+- decision: ALLOWED / BLOCKED；
+- blocker codes / reason；
+- dependency fence/revision vector/hash；
+- fresh_cap_expires_at（credential/provider path 如适用）；
+- selected certification/rights/binding/delegation/source-input identities/hash（可规范化 child membership）。
+
+这些 evaluation facts 创建后禁止 UPDATE/DELETE；相同 evaluation attempt 以稳定 evaluation_attempt_id/idempotency identity 去重。初始 ALLOWED、后续 reconciliation BLOCKED 必须同时保留，不能覆盖为一个最终 gate 字段。
+
+状态迁移本身也必须有 append-only transition history（例如 PREPARED→ISSUANCE_PENDING、→CONTAINMENT_PENDING、→BLOCKED/FAILED/ISSUED），记录触发该 transition 的 gate_evaluation_id / provider-attempt refs / reason。DeliveryOperation.status 与 current_gate_decision 只是当前投影。
 
 实现可选择 append-only attempt/result 模型或受控 lifecycle row，但必须满足：
 
