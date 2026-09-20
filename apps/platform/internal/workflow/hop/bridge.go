@@ -121,17 +121,26 @@ func (b *Bridge) finalizeLocked(ctx context.Context, request workflowapp.Process
 		if existing.DatasetID != request.OutputDatasetID {
 			return workflowapp.ProcessingResult{}, fmt.Errorf("execution %s already generated DatasetVersion %s for dataset %s", request.ExecutionID, existing.ID, existing.DatasetID)
 		}
-		if existing.Status != datasetdomain.VersionReady && existing.Status != datasetdomain.VersionSuperseded {
+		switch existing.Status {
+		case datasetdomain.VersionReady, datasetdomain.VersionSuperseded:
+			if err := b.ensureLineage(ctx, request, existing.ID); err != nil {
+				return workflowapp.ProcessingResult{}, err
+			}
+			return workflowapp.ProcessingResult{
+				OutputDatasetVersionID: existing.ID,
+				EngineExecutionID:      run.ID,
+				Metrics:                finalizeMetrics(existing, run, true),
+			}, nil
+		case datasetdomain.VersionCreated, datasetdomain.VersionProcessing, datasetdomain.VersionFailed:
+			// The execution key identifies a recoverable half-product. Re-read the
+			// staged engine output and send it through UploadVersionService so the
+			// same version row can be published rather than retrying a permanent
+			// "not usable" error forever.
+		case datasetdomain.VersionInvalid:
 			return workflowapp.ProcessingResult{}, fmt.Errorf("execution %s output DatasetVersion %s is not usable: %s", request.ExecutionID, existing.ID, existing.Status)
+		default:
+			return workflowapp.ProcessingResult{}, fmt.Errorf("execution %s output DatasetVersion %s has unsupported status: %s", request.ExecutionID, existing.ID, existing.Status)
 		}
-		if err := b.ensureLineage(ctx, request, existing.ID); err != nil {
-			return workflowapp.ProcessingResult{}, err
-		}
-		return workflowapp.ProcessingResult{
-			OutputDatasetVersionID: existing.ID,
-			EngineExecutionID:      run.ID,
-			Metrics:                finalizeMetrics(existing, run, true),
-		}, nil
 	} else if !errors.Is(err, datasetinfra.ErrNotFound) {
 		return workflowapp.ProcessingResult{}, err
 	}

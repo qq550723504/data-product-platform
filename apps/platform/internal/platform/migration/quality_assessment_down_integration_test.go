@@ -2,36 +2,23 @@ package migration_test
 
 import (
 	"context"
-	"os"
-	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/migration"
 )
 
+// TestQualityAssessmentDownRefusesHistoricalFacts pins the 000019 downgrade
+// guard: once quality history exists, the migration refuses to drop the rule
+// snapshot columns instead of silently discarding evidence.
+//
+// It runs on a scratch database at version 19 so it keeps exercising the guard
+// after later migrations land. The previous version of this test skipped itself
+// as soon as the shared database moved past 19, which silently removed the
+// coverage.
 func TestQualityAssessmentDownRefusesHistoricalFacts(t *testing.T) {
-	dsn := os.Getenv("TEST_POSTGRES_DSN")
-	if dsn == "" {
-		t.Skip("TEST_POSTGRES_DSN is not set")
-	}
+	pool := scratchDatabase(t, 19)
 	ctx := context.Background()
-	pool, err := database.Open(ctx, dsn)
-	if err != nil {
-		t.Fatalf("open postgres: %v", err)
-	}
-	defer pool.Close()
-
-	var latest int64
-	if err := pool.QueryRow(ctx, `SELECT COALESCE(max(version),0) FROM schema_migration`).Scan(&latest); err != nil {
-		t.Fatalf("read latest migration: %v", err)
-	}
-	if latest != 19 {
-		t.Skipf("quality assessment migration is not latest: %d", latest)
-	}
 
 	workspaceID := uuid.New()
 	datasetID := uuid.New()
@@ -64,21 +51,13 @@ func TestQualityAssessmentDownRefusesHistoricalFacts(t *testing.T) {
 		t.Fatalf("insert quality assessment: %v", err)
 	}
 
-	_, file, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("cannot resolve migration test source path")
-	}
-	root := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../"))
-	runner := migration.NewRunner(pool, filepath.Join(root, "migrations"))
-	if err := runner.Down(ctx); err == nil || !strings.Contains(err.Error(), "refusing destructive rollback of quality assessment history") {
+	err := tryApplyMigrationFile(t, pool, 19, "down")
+	if err == nil || !strings.Contains(err.Error(), "refusing destructive rollback of quality assessment history") {
 		t.Fatalf("quality assessment down error = %v, want historical-fact refusal", err)
 	}
-	if err := pool.QueryRow(ctx, `SELECT max(version) FROM schema_migration`).Scan(&latest); err != nil {
-		t.Fatalf("verify migration version: %v", err)
-	}
-	if latest != 19 {
-		t.Fatalf("latest migration after refused down = %d, want 19", latest)
-	}
+
+	// The refusal must be complete: the rule snapshot columns and the assessment
+	// row are still there.
 	var snapshotColumns int
 	if err := pool.QueryRow(ctx, `
 		SELECT count(*) FROM information_schema.columns
@@ -89,5 +68,12 @@ func TestQualityAssessmentDownRefusesHistoricalFacts(t *testing.T) {
 	}
 	if snapshotColumns != 4 {
 		t.Fatalf("quality assessment snapshot columns after refused down = %d, want 4", snapshotColumns)
+	}
+	var assessments int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM quality_result WHERE id=$1`, assessmentID).Scan(&assessments); err != nil {
+		t.Fatalf("verify quality assessment row: %v", err)
+	}
+	if assessments != 1 {
+		t.Fatalf("quality assessments after refused down = %d, want 1", assessments)
 	}
 }

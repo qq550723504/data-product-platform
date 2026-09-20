@@ -130,6 +130,7 @@ func main() {
 		datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceRepo),
 		datasetWriter,
 		datasetapp.NewInvalidateVersionService(txManager, datasetRepo),
+		datasetapp.NewFailVersionService(txManager, datasetRepo),
 		datasetRepo,
 	)
 

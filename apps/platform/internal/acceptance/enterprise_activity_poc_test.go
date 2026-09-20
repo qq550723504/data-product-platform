@@ -539,7 +539,13 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 	}
 
 	t.Run("critical quality failure blocks readiness", func(t *testing.T) {
-		badVersion := mustUploadCSV(t, ctx, uploadDataset, activityDataset.ID, "bad-quality-"+suffix+".csv", []byte("company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at\nCOMPANY-BAD,异常科技有限公司,2025-03,90,95,80,120,HIGH,100,2025-03-31T00:00:00Z\n"), map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0}, &execution.ID, &actorID, traceID)
+		// These blocker fixtures are manually uploaded DatasetVersions, not outputs of
+		// the production Execution above. They deliberately carry no
+		// generatedByExecutionId: C2-a makes "one Execution produces at most one
+		// DatasetVersion of a Dataset" a database constraint, so claiming execution.ID
+		// here would be both false provenance and a violation of
+		// uq_dataset_version_execution_output.
+		badVersion := mustUploadCSV(t, ctx, uploadDataset, activityDataset.ID, "bad-quality-"+suffix+".csv", []byte("company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at\nCOMPANY-BAD,异常科技有限公司,2025-03,90,95,80,120,HIGH,100,2025-03-31T00:00:00Z\n"), map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0}, nil, &actorID, traceID)
 		badQuality, err := qualityService.Run(ctx, qualityapp.RunCommand{WorkspaceID: workspaceID, DatasetVersionID: badVersion.ID, RuleSetRef: qualityRuleSetRef, ActorID: &actorID, TraceID: traceID, Now: badVersion.ReadyAt.Add(30 * time.Minute)})
 		if err != nil {
 			t.Fatalf("run blocking Quality Gate: %v", err)
@@ -558,7 +564,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 	})
 
 	t.Run("compliance block finding blocks readiness", func(t *testing.T) {
-		badVersion := mustUploadCSV(t, ctx, uploadDataset, activityDataset.ID, "bad-compliance-"+suffix+".csv", []byte("company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at,mobile\nCOMPANY-PII,敏感科技有限公司,2025-03,90,95,80,88,HIGH,100,2025-03-31T00:00:00Z,13800000000\n"), map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0}, &execution.ID, &actorID, traceID)
+		badVersion := mustUploadCSV(t, ctx, uploadDataset, activityDataset.ID, "bad-compliance-"+suffix+".csv", []byte("company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at,mobile\nCOMPANY-PII,敏感科技有限公司,2025-03,90,95,80,88,HIGH,100,2025-03-31T00:00:00Z,13800000000\n"), map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0}, nil, &actorID, traceID)
 		passQuality, err := qualityService.Run(ctx, qualityapp.RunCommand{WorkspaceID: workspaceID, DatasetVersionID: badVersion.ID, RuleSetRef: qualityRuleSetRef, ActorID: &actorID, TraceID: traceID, Now: badVersion.ReadyAt.Add(30 * time.Minute)})
 		if err != nil || passQuality.GateDecision != qualitydomain.GatePass {
 			t.Fatalf("control Quality Gate = %s err=%v, want PASS", passQuality.GateDecision, err)
