@@ -138,7 +138,7 @@ DRAFT
 - 继续冻结 DatasetVersion、Rights、Quality、Compliance、Contract、EvidenceSnapshot 等 published bindings；
 - Domain/Audit/Outbox/幂等/并发测试。
 
-FAILED 是当前运行时和数据库仍支持的有效 ProductRelease 状态，不在本 docs-only 基线中废弃。
+`FAILED` 当前仅作为保留枚举值存在；本 docs-only 基线既不删除它，也不把它描述为当前 Command 可达状态。
 
 Published Release 当前整行受历史 guard 保护，不允许普通 UPDATE。
 
