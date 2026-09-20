@@ -330,11 +330,12 @@ ISSUANCE_PENDING + stable provider_request_key
   - 已签发则先 revoke/compensate/contain，确认访问能力已不可用后才能 BLOCKED；
   - outcome unknown 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal DatasetDeliveryBlocked / DatasetDeliveryFailed；
   - containment 确认成功后：fresh gate 不再允许交付 → BLOCKED；fresh gate 仍 ALLOWED 但 credential/issuance contract 无法满足 → FAILED；
-- terminal DeliveryOperation + Audit/Evidence + Outbox 在后续 DB transaction 内一致提交；CostEvent 按实际 activity-attempt 计量：same-attempt replay 去重；如果 retry/reconciliation 确实再次发生可计费 provider/compute 外部工作，必须使用新的稳定 attempt/activity identity 追加 CostEvent（或原子聚合新增 quantity/amount），不能因复用同一 DeliveryOperation 而漏记；
+- **每一次真实 provider invocation（initial / retry / reconciliation query / revoke / compensation 等，只要实际调用外部 provider）在调用前必须先持久化稳定 physical provider-attempt identity。** 调用成功、显式失败、timeout/unknown outcome 都必须按该 attempt 记录实际 CostEvent；amount 未知时至少记录真实 invocation quantity/unit，后续若 provider 返回收费金额可通过可审计 adjustment/aggregation 补充，但不能因为 terminal outcome 不是 ISSUED 就漏记。same-attempt replay 且没有再次调用 provider 时去重；再次真实调用 provider 必须新 attempt identity；
+- terminal DeliveryOperation + Audit/Evidence + Outbox 在后续 DB transaction 内一致提交；terminal business outcome/event 的唯一性与 provider-attempt CostEvent 独立，失败/unknown/containment 路径同样保留已发生 provider attempts 的成本事实；
 - provider 成功但 terminal commit 失败时，retry/reconciliation 使用同一 provider_request_key；
-- provider 首次返回或 reconciliation 恢复 credential 后，进入 ISSUED 前必须验证**实际 provider capability 是 requested/current-gate context 的等价或更窄集合**：expiry <= fresh cap，resource/DatasetVersion、consumer（可表达时）、action/permission、object/row/prefix scope、delivery channel 不得放宽；仅命中旧 provider_request_key 不代表 credential 仍满足当前边界；
+- provider 首次返回或 reconciliation 恢复 credential 后，进入 ISSUED 前必须验证**实际 provider capability 是 requested/current-gate context 的等价或更窄集合**：expiry <= fresh cap，resource/DatasetVersion、action/permission、object/row/prefix scope、delivery channel 不得放宽；**consumer/grantee 是必需安全边界，不存在“provider 不表达就跳过”的例外**。direct bearer/presigned capability 必须由 provider 本身或一个可验证的 consumer-binding mechanism 强制绑定 effective consumer/grantee；若 provider capability 无法表达/验证/强制该边界，则不得直接 ISSUED，必须改用 platform redemption/gateway 等在 redemption 时重新认证并绑定 consumer 的 indirection，或将该 direct mode 标为 unsupported；仅命中旧 provider_request_key 不代表 credential 仍满足当前边界；
 - recovered credential 超过 fresh cap 时，必须安全 shorten 并 read-after-write 验证，或 revoke/contain；无法确认 containment 时进入 CONTAINMENT_PENDING；containment 成功但无法满足 cap 时当前 operation 终结为 FAILED，后续如需重试必须新建显式 delivery attempt 并重新 gate；
-- actual provider expiry 或关键 capability scope 无法通过 read-after-write/authoritative lookup 验证时，direct bearer / 不支持 redemption-time gate 的模式不得 ISSUED；
+- actual provider expiry、consumer/grantee enforcement 或其它关键 capability scope 无法通过 read-after-write/authoritative lookup（或等价可验证 consumer-binding mechanism）确认时，direct bearer / presigned / 不支持 redemption-time gate 的模式不得 ISSUED；
 - direct bearer provider 必须支持 same-credential replay/read-after-write（或等价同一访问能力恢复）；仅有 revoke/compensation 但无法恢复原 bearer secret 时必须使用 platform redemption indirection；
 - provider 若既不具备可恢复幂等能力，也不能安全补偿，则该 direct bearer mode 在第一阶段 unsupported。
 
