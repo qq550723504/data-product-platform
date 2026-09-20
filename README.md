@@ -130,6 +130,7 @@ data_resource.owner_id / dataset.owner_id 表示平台内资产责任或归属�
 
 ~~~text
 RightsDeclaration
+→ AuthorizationProvenanceBinding
 → Authorization
 → RightsSnapshot
 → Effective Rights
