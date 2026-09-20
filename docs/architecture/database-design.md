@@ -335,8 +335,8 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 - provider_request_key（稳定幂等键）
 - provider_credential_ref/hash（如适用；禁止存可用 secret）
 - planned_credential_expires_at / fresh_cap_expires_at
-- provider_credential_expires_at（provider 实际返回/恢复出的 expiry；direct bearer 必须可验证）
-- issuance result
+- provider_credential_expires_at（provider 实际返回/恢复出的 expiry；direct bearer 必须可验证；direct-data 可为空）
+- issuance result / direct-data release authorization result
 - actor / trace
 
 实现可选择 append-only attempt/result 模型或受控 lifecycle row，但必须满足：
@@ -344,10 +344,11 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 - 每次 delivery Command 有稳定 ID；
 - 同一幂等请求不会重复签发或重复记账；
 - 外部 issuance 前必须先 durable persist PREPARED/ISSUANCE_PENDING；
-- provider_request_key 对同一 DeliveryOperation 稳定，支持 crash 后安全 retry/reconcile；
+- provider_request_key 对同一外部-provider DeliveryOperation 稳定，支持 crash 后安全 retry/reconcile；direct-data mode 可为空，但仍必须使用 delivery authorization fence/revision；
 - 必须持久化 delivery gate dependency revision/fence token（或等价可验证线性化信息）；
 - 所有影响 CurrentDeliveryGate 的 disposition/invalidation Command 与 DeliveryOperation terminal finalize 使用同一组 delivery authorization fence rows / revisions，并以固定顺序锁定，避免 deadlock；
 - provider 返回后，ISSUED terminal transaction 必须在 fence 下重新 gate + fresh-cap，并把该 commit 作为 issuance linearization point；
+- direct-data mode 的 ISSUED terminal transaction 同样在 fence 下重新 gate；commit 成功前禁止写出任何 response byte，commit 后不得继续持有 fence/row lock 贯穿整个 stream；
 - 任何进入 ISSUED 的 credential 必须满足 provider_credential_expires_at <= 当前 fresh_cap_expires_at；reconciliation 找回的旧 credential 同样适用，不能因为 provider_request_key 命中就跳过；
 - provider_credential_expires_at 不可验证或超过 fresh cap 时不得 ISSUED；必须安全 shorten/verify，或 revoke/contain；
 - gate 失败也有可审计 DeliveryOperation / result；
