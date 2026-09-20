@@ -80,7 +80,11 @@ PREPARED
     └→ FAILED
 ~~~
 
-`ISSUANCE_PENDING` 是 crash-recovery / reconciliation 中间态，不是 terminal failure。外部 provider 调用发生前必须先 durable persist 该状态和 stable provider_request_key。provider 成功但 terminal DB commit 失败时，恢复流程必须使用同一 provider_request_key 查询/重放同一 issuance，而不是生成新的 credential。
+`ISSUANCE_PENDING` 是 crash-recovery / reconciliation 中间态，不是 terminal failure。外部 provider 调用发生前必须先 durable persist 该状态和 stable provider_request_key。
+
+每次 initial/retry/reconciliation issuance 前必须重新执行完整 CurrentDeliveryGate 并重新计算 expiry cap；旧 gate snapshot 只保留审计价值，不能授权新的 provider side effect。
+
+provider 成功但 terminal DB commit 失败时，恢复流程必须使用同一 provider_request_key 查询/重放同一 issuance，而不是生成新的 credential。direct bearer mode 还必须能在 terminal commit 成功、HTTP response 丢失后通过同一 key 恢复同一 credential/访问能力；否则必须使用 platform redemption indirection。
 
 不能只存在临时 HTTP 请求；也不能把可用 token/credential secret 正文持久化为领域事实。
 
@@ -177,6 +181,8 @@ Current rights selection 必须根据 as_of 和 disposition 判断，不能用 c
 - 同一 workspace。
 
 不得把互不相关的 VERIFIED declaration 和 ACTIVE Authorization 独立拼接。
+
+AuthorizationProvenanceBinding 一旦创建即为不可变 provenance fact；不得 UPDATE/DELETE 后把历史 binding ID 重连到另一 declaration/grantor/actions/scope。修正只能追加新的 binding/replacement fact。
 
 ### 4.6 Authorization
 
