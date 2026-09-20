@@ -284,7 +284,7 @@ CurrentDeliveryGate
 
 - DatasetVersionUsability 至少阻断 INVALID / FAILED / PROCESSING / CREATED；SUPERSEDED 按平台既有“明确历史版本”语义处理，不在本 docs-only 基线中自动等同 INVALID；
 - CurrentCertificationGate 要求本次 delivery 绑定明确 DatasetCertification，decision = CERTIFIED 且未在 as_of 时点被 CertificationDisposition REVOKED / SUPERSEDED；requested purpose/action/consumer/delivery context 必须被该 Certification 冻结的 CertificationProfile snapshot 覆盖；禁止以 latest created_at 猜当前认证；
-- CurrentEntitlementGate 对**每一个绑定的 RightsDeclaration**按当前 `as_of` 校验：VERIFIED、declaration 自身 `effective_from/effective_to` 覆盖 `as_of`、resource/consumer/purpose/action/scope 与本次 delivery context 匹配、且未被已生效 INVALIDATED/SUPERSEDED disposition 排除；每个 Authorization 必须通过**当前有效、未被 AuthorizationProvenanceBindingDisposition INVALIDATED/SUPERSEDED 的** AuthorizationProvenanceBinding 证明其 grantor_ref 得到该 provenance 支持，并同时满足 Authorization 自身状态/有效期、scope 与 Effective Rights。任一 declaration 或 binding 已失效/不匹配都 fail closed。
+- CurrentEntitlementGate 对**每一个绑定的 RightsDeclaration**按当前 `as_of` 校验：VERIFIED、declaration 自身 `effective_from/effective_to` 覆盖 `as_of`、resource/consumer/purpose/action/scope 与本次 delivery context 匹配、且未被已生效 INVALIDATED/SUPERSEDED disposition 排除；每个 Authorization 必须通过**当前有效、未被 AuthorizationProvenanceBindingDisposition INVALIDATED/SUPERSEDED 的** AuthorizationProvenanceBinding 证明其 grantor_ref 得到该 provenance 支持，并且 Authorization 自身也必须覆盖**同一 requested context**：grantee/consumer、resource、purpose、action、scope、validity/status。Declaration 允许某 consumer/action 不代表 Authorization 已授权该 consumer/action；任一层不匹配都 fail closed。
 
 任一子门禁失败时，历史 Certification 保留，但当前交付必须 BLOCKED。第一阶段不要求周期性后台重认证。
 
