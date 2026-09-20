@@ -53,8 +53,9 @@
 - decision
 - Evidence / Audit
 - CostEvent（实际发生的 engine invocation / compute / human-review quantity 或金额；金额未知时不得伪造，可记录 quantity/unit）
+- typed CostAllocation → QualityAssessment
 
-同一评测业务重试不得重复记 CostEvent；实现应使用现有 Command 幂等边界或稳定 cost operation identity 去重。
+同一评测业务重试不得重复记 CostEvent；必须使用稳定 activity_id / operation identity + component_key，并由 PostgreSQL 唯一约束保证幂等。
 
 历史 Assessment 不因规则文件变化而改变解释。
 
@@ -113,7 +114,7 @@ DataResource
 
 衍生数据默认 fail closed。
 
-Rights verification / invalidation / supersession 等实际人工或外部核验活动必须在发生时记录 CostEvent；重试不能重复记账。
+Rights verification / invalidation / supersession / provenance binding 等实际人工或外部核验活动必须在发生时记录 CostEvent；这些活动通常没有 Execution，必须通过 typed CostAllocation 关联实际 Rights 业务事实，并使用稳定 activity_id/component_key 防止重试重复记账。
 
 ## 7. HQD-4 #134
 
@@ -133,7 +134,7 @@ CertificationProfile 可以要求：
 
 任何 required 条件缺失时不允许 CERTIFIED。
 
-认证评估/人工审批若产生实际成本，必须记录 CostEvent，并具备重试幂等语义。
+认证评估/人工审批若产生实际成本，必须记录 CostEvent，并通过 typed CostAllocation 关联 DatasetCertification / CertificationDisposition，使用稳定 activity_id/component_key 保证重试幂等。
 
 ## 8. HQD-5 #135
 
@@ -173,7 +174,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - DatasetVersion 已经 CERTIFIED 后，如果对应 Authorization 过期/撤销、RightsDeclaration 被显式 INVALIDATED/SUPERSEDED，或 SHARE/RAW_EXPORT 等本次交付动作不再允许，历史 Certification 仍可查询，但 CurrentDeliveryGate 中的 CurrentEntitlementGate 必须阻止实际交付；
 - DatasetVersion 已经 CERTIFIED 后若状态变为 INVALID，历史 Certification 仍保留，但 CurrentDeliveryGate 必须 BLOCKED；
 - C1=CERTIFIED 后如果纠错生成 C2=REJECTED，并通过 CertificationDisposition 显式 SUPERSEDE C1，历史 C1/C2 都保留，但 CurrentCertificationGate 必须阻止继续使用 C1；
-- Pilot 汇总的成本来自实际 CostEvent，不允许仅在验收报告中事后估算重建；
+- Pilot 汇总的成本来自实际 CostEvent + typed CostAllocation，不允许仅在验收报告中事后估算重建，也不得仅从 JSONB metadata 猜业务归属；
 - eligibility query 只做展示/预检；真实 delivery command 在签发数据/URL/token/credential 前重新执行 CurrentDeliveryGate，必须覆盖 query 后状态变化的 TOCTOU 场景。
 
 ## 10. 试点 KPI
