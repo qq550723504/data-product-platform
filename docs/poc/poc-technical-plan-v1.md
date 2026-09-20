@@ -1,3 +1,9 @@
+> **状态：COMPLETED（历史 POC 基线）**
+>
+> 本文件记录核心 POC 当时的目标、Sprint 和成功标准，不因后续产品演进而重写。
+> 当前项目已进入 #129 Certified Dataset 受控试点。
+> 后续路线见 docs/product/certified-dataset-pilot.md、docs/architecture/certified-dataset.md、docs/architecture/data-rights-provenance.md。
+
 # Data Product Platform POC 技术计划 V1.0
 
 ## 1. POC 目标
