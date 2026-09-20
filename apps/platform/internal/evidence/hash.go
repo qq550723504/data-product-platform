@@ -38,6 +38,10 @@ func ComputeHash(record Record, algorithm string) (string, error) {
 	case HashAlgorithmLegacy:
 		payload, err = json.Marshal(nonNilMetadata(record.Metadata))
 	case HashAlgorithmEvidenceV1:
+		metadata, normalizeErr := canonicalMetadata(record.Metadata)
+		if normalizeErr != nil {
+			return "", normalizeErr
+		}
 		sourceID := ""
 		if record.SourceID != nil {
 			sourceID = record.SourceID.String()
@@ -53,7 +57,7 @@ func ComputeHash(record Record, algorithm string) (string, error) {
 			SourceType:   record.SourceType,
 			SourceID:     sourceID,
 			StorageURI:   record.StorageURI,
-			Metadata:     nonNilMetadata(record.Metadata),
+			Metadata:     metadata,
 			CreatedAt:    NormalizeCreatedAt(record.CreatedAt),
 			CreatedBy:    createdBy,
 		})
@@ -80,4 +84,23 @@ func nonNilMetadata(metadata map[string]any) map[string]any {
 		return map[string]any{}
 	}
 	return metadata
+}
+
+// canonicalMetadata makes Evidence V1 hashes independent of whether nested
+// metadata was held as typed Go structs or decoded from PostgreSQL jsonb maps.
+// jsonb canonicalizes object key order, so hashing the original struct-shaped
+// value would otherwise produce a different digest after a read round-trip.
+func canonicalMetadata(metadata map[string]any) (map[string]any, error) {
+	encoded, err := json.Marshal(nonNilMetadata(metadata))
+	if err != nil {
+		return nil, fmt.Errorf("marshal canonical Evidence metadata: %w", err)
+	}
+	var canonical map[string]any
+	if err := json.Unmarshal(encoded, &canonical); err != nil {
+		return nil, fmt.Errorf("normalize canonical Evidence metadata: %w", err)
+	}
+	if canonical == nil {
+		canonical = map[string]any{}
+	}
+	return canonical, nil
 }

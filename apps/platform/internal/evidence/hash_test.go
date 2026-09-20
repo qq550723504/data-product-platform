@@ -1,10 +1,12 @@
 package evidence
 
 import (
+	"encoding/json"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
+	qualitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 )
 
 func TestEvidenceHashVerification(t *testing.T) {
@@ -49,5 +51,53 @@ func TestEvidenceHashVerification(t *testing.T) {
 	legacyMetadataChange.Metadata = map[string]any{"attempt": 2, "workflowVersion": "1.0.0"}
 	if VerifyHash(legacyMetadataChange, HashAlgorithmLegacy, legacyHash) {
 		t.Fatal("legacy Evidence with modified metadata unexpectedly verified")
+	}
+}
+
+func TestEvidenceHashVerificationSurvivesQualityMetricsJSONRoundTrip(t *testing.T) {
+	workspaceID := uuid.MustParse("11111111-1111-1111-1111-111111111111")
+	createdBy := uuid.MustParse("33333333-3333-3333-3333-333333333333")
+	metadata := map[string]any{
+		"datasetVersionId": uuid.MustParse("44444444-4444-4444-4444-444444444444"),
+		"metrics": map[string]any{
+			"QA-COMPANY-ID-COMPLETE": map[string]any{
+				"observedValue": 1,
+				"threshold":     0.999,
+				"affectedCount": 0,
+			},
+			"dimensions": map[string]qualitydomain.DimensionSummary{
+				"COMPLETENESS": {
+					Dimension:      "COMPLETENESS",
+					Status:         qualitydomain.DimensionPass,
+					RuleCount:      1,
+					EvaluatedCount: 1,
+					FailedCount:    0,
+				},
+			},
+		},
+	}
+	record := Record{
+		WorkspaceID:  workspaceID,
+		EvidenceType: "QUALITY_RESULT",
+		SourceType:   "QUALITY_RESULT",
+		Metadata:     metadata,
+		CreatedAt:    time.Date(2026, 9, 20, 10, 11, 12, 123456789, time.UTC),
+		CreatedBy:    &createdBy,
+	}
+	hashValue, err := ComputeHash(record, HashAlgorithmEvidenceV1)
+	if err != nil {
+		t.Fatalf("compute quality evidence hash: %v", err)
+	}
+	encoded, err := json.Marshal(metadata)
+	if err != nil {
+		t.Fatalf("marshal quality evidence metadata: %v", err)
+	}
+	var roundTripped map[string]any
+	if err := json.Unmarshal(encoded, &roundTripped); err != nil {
+		t.Fatalf("unmarshal quality evidence metadata: %v", err)
+	}
+	record.Metadata = roundTripped
+	if !VerifyHash(record, HashAlgorithmEvidenceV1, hashValue) {
+		t.Fatalf("quality evidence hash did not survive JSON round trip: hash=%s metadata=%#v", hashValue, roundTripped)
 	}
 }
