@@ -124,21 +124,25 @@ DRAFT
 ~~~text
 DRAFT
 → VALIDATING
-├→ FAILED
 └→ READY
    → PUBLISHED
 ~~~
 
-数据库 schema 仍枚举 `SUSPENDED` / `WITHDRAWN`，但当前 `guard_product_release_history` 会拒绝 OLD.status=PUBLISHED 的任何 UPDATE，且当前运行时没有 suspend/withdraw Release Command。因此本 docs-only 基线**不宣称** `PUBLISHED → SUSPENDED/WITHDRAWN` 已可用。
+Readiness 不满足时，当前 `ValidateRelease` 返回 non-ready `ReadinessResult` 并保持状态为 `VALIDATING`；当前没有任何 Command 写入 `FAILED`。
 
-未来若要启用这两个状态，必须由独立实现同时提供：
+`FAILED` / `SUSPENDED` / `WITHDRAWN` 仍是 domain/schema reserved values，但当前不是 live reachable transitions：
 
-- 显式 Suspend/Withdraw Command；
-- migration 调整数据库 guard，仅允许目标 lifecycle status 变化；
-- 继续冻结 DatasetVersion、Rights、Quality、Compliance、Contract、EvidenceSnapshot 等 published bindings；
-- Domain/Audit/Outbox/幂等/并发测试。
+- `FAILED`：没有 `VALIDATING → FAILED` Command；
+- `SUSPENDED` / `WITHDRAWN`：`guard_product_release_history` 拒绝 OLD.status=PUBLISHED 的任何 UPDATE，且没有 suspend/withdraw Command。
 
-`FAILED` 当前仅作为保留枚举值存在；本 docs-only 基线既不删除它，也不把它描述为当前 Command 可达状态。
+本 docs-only 基线不删除这些枚举，但客户端不得等待或假设当前 Command 会产生这些状态。
+
+未来若要启用 reserved states，必须由独立实现同时提供：
+
+- 显式 Domain/Application Command；
+- 必要 migration / database guard 调整；
+- published bindings 继续冻结；
+- Domain Event / Audit / Outbox / 幂等 / 并发测试。
 
 Published Release 当前整行受历史 guard 保护，不允许普通 UPDATE。
 
@@ -332,8 +336,18 @@ Pilot 第一阶段事件词汇至少包括：
 - DatasetCertificationRejected
 - DatasetCertificationRevoked
 - DatasetCertificationSuperseded
+- DatasetDeliveryIssued
+- DatasetDeliveryBlocked
+- DatasetDeliveryFailed
 
 Disposition Command 与对应业务事实、AuditEvent、Evidence、Outbox event 应在同一事务边界内提交。
+
+#135 delivery command 的每个终态结果也必须产生明确 Domain Event：
+- gate 通过并完成数据/credential issuance → `DatasetDeliveryIssued`；
+- CurrentDeliveryGate fail closed、没有签发任何可用访问能力 → `DatasetDeliveryBlocked`；
+- gate 通过但实际 delivery/issuance 因系统或外部错误失败 → `DatasetDeliveryFailed`。
+
+DeliveryOperation result + Audit/Evidence + CostEvent（如有）+ Outbox 必须保持一致的事务/幂等语义；事件 payload 不得包含可用 token/credential secret。
 
 每个新增 event_type 都必须显式加入统一 routing 表，明确 required handlers 集合或 retention-only 义务；不得因为“暂时没有异步处理器”而省略 routing declaration。若某个 Issue 引入异步 impact/projection 副作用，则对应 handler 必须成为该事件的 required obligation；同步 CurrentDeliveryGate 仍是交付安全的最终业务门禁。
 
