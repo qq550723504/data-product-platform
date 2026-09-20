@@ -1,6 +1,6 @@
 # 核心领域模型 V1.1
 
-> V1.1 增加 Certified Dataset 与 Data Rights Provenance 目标模型。标注 #131/#134/#137 的对象在对应 Issue 实现前属于已批准的目标模型，而非声称当前全部已落库。
+> V1.1 增加 Certified Dataset 与 Data Rights Provenance 目标模型。QualityAssessment 核心已通过 #140 / migration 000019 落地；#134/#137/#135 新对象在对应 Issue 实现前属于已批准目标模型。
 
 ## 1. 主业务链
 
@@ -20,7 +20,7 @@ DataResource
           ├── Entity Resolution
           ├── Workflow / Execution
           ├── Lineage
-          ├── QualityAssessment (#131)
+          ├── QualityAssessment (implemented via #140)
           ├── Compliance
           ├── EffectiveRights (#137)
           └── DatasetCertification (#134)
@@ -62,11 +62,21 @@ READY 只表示内容已冻结，不表示 Quality 或 Certification 通过。
 
 针对一个明确 DatasetVersion 和 CertificationProfile 的不可变认证结果。
 
+### DeliveryOperation
+
+DeliveryOperation 是每次 standalone delivery 尝试的稳定业务事实/操作身份，用于：
+- 承载 delivery command 的幂等 identity；
+- 记录 datasetVersion/certification/consumer/purpose/action/delivery mode；
+- 冻结 gate result / blockers 与 issuance result；
+- 作为 Audit/Evidence/CostAllocation 的强类型 subject。
+
+不能只存在临时 HTTP 请求；也不能把可用 token/credential secret 正文持久化为领域事实。
+
 ### DataProduct / ProductRelease
 
 DataProduct 是稳定产品身份；ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定；进入 PUBLISHED 后，当前数据库 history guard 阻止任何 UPDATE，published bindings 与历史行整体冻结。SUSPENDED/WITHDRAWN 虽仍存在于 schema 枚举，但当前不是从 PUBLISHED 可达的 live transition；未来启用需要独立 migration + Command。
 
-Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 必须通过 CurrentDeliveryGate：校验 DatasetVersion 当前可用性、当前有效的 CERTIFIED DatasetCertification，以及当前 consumer / purpose / action 的 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
+Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 由持久化 DeliveryOperation 表达，并必须通过 CurrentDeliveryGate：校验 DatasetVersion 当前可用性、当前有效的 CERTIFIED DatasetCertification，以及当前 consumer / purpose / action 的 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
 
 ## 3. 实体模型
 
@@ -272,7 +282,8 @@ Rights verification、QualityAssessment、DatasetCertification 都应将 Evidenc
 - ProductRelease published bindings / published release history
 - EvidenceSnapshot
 - RightsSnapshot
-- QualityAssessment（#131）
+- QualityAssessment（已实现）
+- DeliveryOperation（#135）
 - verified RightsDeclaration / verification / disposition facts（#137）
 - CertificationProfile snapshot（#134）
 - DatasetCertification / CertificationDisposition（#134）
