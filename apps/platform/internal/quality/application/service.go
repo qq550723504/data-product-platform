@@ -28,6 +28,8 @@ type ObjectStore interface {
 }
 
 var ErrAssessmentAttemptConflict = errors.New("quality assessment attempt conflicts with an existing assessment")
+var ErrAssessmentAttemptInProgress = errors.New("quality assessment attempt is already in progress")
+var ErrAssessmentAttemptFailed = errors.New("quality assessment attempt already failed")
 
 type Service struct {
 	industryPackRoot string
@@ -61,14 +63,6 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	attemptID := cmd.AssessmentAttemptID
 	if attemptID == uuid.Nil {
 		attemptID = uuid.New()
-	} else {
-		existing, found, err := s.loadExistingAttempt(ctx, cmd, attemptID)
-		if err != nil {
-			return domain.Assessment{}, err
-		}
-		if found {
-			return existing, nil
-		}
 	}
 	version, err := s.datasetRepo.GetVersion(ctx, cmd.DatasetVersionID)
 	if err != nil {
@@ -105,6 +99,27 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	if err != nil {
 		return domain.Assessment{}, err
 	}
+	startedAt := cmd.Now
+	if startedAt.IsZero() {
+		startedAt = time.Now().UTC()
+	}
+	claimed, attemptState, err := s.claimAttempt(ctx, cmd, attemptID, startedAt)
+	if err != nil {
+		return domain.Assessment{}, err
+	}
+	if !claimed {
+		if attemptState.AssessmentID != nil {
+			existing, err := s.repo.GetAssessment(ctx, *attemptState.AssessmentID)
+			if err != nil {
+				return domain.Assessment{}, fmt.Errorf("load idempotent quality assessment: %w", err)
+			}
+			return existing, nil
+		}
+		if attemptState.Outcome == "FAILED" {
+			return domain.Assessment{}, fmt.Errorf("%w: %s", ErrAssessmentAttemptFailed, attemptState.ErrorMessage)
+		}
+		return domain.Assessment{}, ErrAssessmentAttemptInProgress
+	}
 	findings, metrics, err := native.Evaluate(policy, native.DatasetContext{
 		Table:    table,
 		Metadata: version.Metadata,
@@ -112,6 +127,9 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 		Now:      cmd.Now,
 	})
 	if err != nil {
+		if outcomeErr := s.recordAttemptOutcome(ctx, attemptID, "FAILED", nil, err.Error(), startedAt); outcomeErr != nil {
+			return domain.Assessment{}, fmt.Errorf("quality evaluation failed: %v; record attempt outcome: %w", err, outcomeErr)
+		}
 		return domain.Assessment{}, err
 	}
 	result := domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, policy.Metadata.Version,
@@ -183,7 +201,7 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 		if err := outbox.Append(ctx, tx, event); err != nil {
 			return err
 		}
-		return audit.Append(ctx, tx, audit.Event{
+		if err := audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &cmd.WorkspaceID,
 			ActorType:   actorType(cmd.ActorID),
 			ActorID:     cmd.ActorID,
@@ -199,35 +217,53 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 				"evaluatorVersion":     result.EvaluatorVersion,
 			},
 			TraceID: cmd.TraceID,
-		})
+		}); err != nil {
+			return err
+		}
+		return s.repo.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, "SUCCEEDED", &result.ID, "", result.CreatedAt)
 	})
-	if err != nil && cmd.AssessmentAttemptID != uuid.Nil {
-		// A concurrent caller may have committed the same physical attempt
-		// between the initial lookup and this transaction. Recover its existing
-		// assessment instead of surfacing a duplicate-allocation conflict.
-		if existing, found, lookupErr := s.loadExistingAttempt(ctx, cmd, cmd.AssessmentAttemptID); lookupErr == nil && found {
-			return existing, nil
+	if err != nil {
+		if outcomeErr := s.recordAttemptOutcome(ctx, attemptID, "FAILED", nil, err.Error(), time.Now().UTC()); outcomeErr != nil {
+			return result, fmt.Errorf("persist quality assessment failed: %v; record attempt outcome: %w", err, outcomeErr)
 		}
 	}
 	return result, err
 }
 
-func (s *Service) loadExistingAttempt(ctx context.Context, cmd RunCommand, attemptID uuid.UUID) (domain.Assessment, bool, error) {
-	existingID, found, err := s.repo.FindAssessmentIDByAttempt(ctx, cmd.WorkspaceID, attemptID)
-	if err != nil {
-		return domain.Assessment{}, false, err
-	}
-	if !found {
-		return domain.Assessment{}, false, nil
-	}
-	existing, err := s.repo.GetAssessment(ctx, existingID)
-	if err != nil {
-		return domain.Assessment{}, false, fmt.Errorf("load idempotent quality assessment: %w", err)
-	}
-	if existing.DatasetVersionID != cmd.DatasetVersionID || existing.RuleSetRef != cmd.RuleSetRef {
-		return domain.Assessment{}, false, ErrAssessmentAttemptConflict
-	}
-	return existing, true, nil
+func (s *Service) claimAttempt(ctx context.Context, cmd RunCommand, attemptID uuid.UUID, startedAt time.Time) (bool, infrastructure.AssessmentAttemptState, error) {
+	var claimed bool
+	var state infrastructure.AssessmentAttemptState
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		claimed, state, err = s.repo.ClaimAssessmentAttempt(ctx, tx, attemptID, cmd.WorkspaceID,
+			cmd.DatasetVersionID, cmd.RuleSetRef, startedAt, cmd.ActorID)
+		if errors.Is(err, infrastructure.ErrAssessmentAttemptConflict) {
+			return fmt.Errorf("%w: %v", ErrAssessmentAttemptConflict, err)
+		}
+		if err != nil || !claimed {
+			return err
+		}
+		return cost.AppendQualityAssessmentAttemptActivity(ctx, tx, cost.QualityAssessmentAttemptActivity{
+			WorkspaceID: cmd.WorkspaceID,
+			AttemptID:   attemptID,
+			CostType:    cost.QualityEngineInvocation,
+			Quantity:    1,
+			Unit:        "assessment",
+			PricingMode: "ACTUAL",
+			Metadata: map[string]any{
+				"ruleSetRef": cmd.RuleSetRef,
+				"stage":      "evaluation_started",
+			},
+			OccurredAt: startedAt,
+		})
+	})
+	return claimed, state, err
+}
+
+func (s *Service) recordAttemptOutcome(ctx context.Context, attemptID uuid.UUID, outcome string, assessmentID *uuid.UUID, errorMessage string, occurredAt time.Time) error {
+	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		return s.repo.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, outcome, assessmentID, errorMessage, occurredAt)
+	})
 }
 
 func actorType(actorID *uuid.UUID) string {

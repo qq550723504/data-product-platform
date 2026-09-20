@@ -55,11 +55,12 @@ QualityAssessment 核心已经通过 #140 / migration 000019 落地，继续复�
 - decision
 - Evidence / Audit
 - CostEvent（实际发生的 engine invocation / compute / human-review quantity 或金额；金额未知时不得伪造，可记录 quantity/unit）
-- typed CostAllocation → QualityAssessment
+- typed CostAllocation → QualityAssessment or QualityAssessmentAttempt
 
 成本幂等必须区分 **same-attempt replay** 与 **new execution attempt**：
 
 - 同一次物理评测 attempt 的网络重放、command replay 或 transaction retry，如果没有再次发生 engine/compute/human-review 外部工作，不得重复记 CostEvent；
+- 评测开始前必须 durable persist attempt identity/start fact，并先记录归属于该 attempt 的 CostEvent；成功或失败都必须追加 immutable outcome，成功 outcome 再把该 attempt 的成本查询关联到 QualityAssessment；
 - 每个可能产生实际成本的物理 attempt 必须有稳定 `assessment_attempt_id` / activity identity（或等价强类型 attempt identity）；同一 attempt 内使用 `(attempt_identity, component_key/cost_type)` 由 PostgreSQL 唯一约束去重；
 - failed/transient attempt 之后若真正再次调用 engine、再次消耗 compute 或再次发生人工 review，这是新的实际 activity，必须分配新的 attempt identity 并追加对应 CostEvent；不得因为属于同一个 QualityAssessment / 同一个顶层 idempotency key 就吞掉第二次真实成本；
 - 若实现选择聚合而不是逐 attempt CostEvent，也必须原子累加实际 quantity/amount，并保留可审计 attempt count/identity，能够证明每次真实工作都被计入；不能仅保留第一次成本。

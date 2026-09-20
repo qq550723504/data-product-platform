@@ -76,6 +76,22 @@ type QualityAssessmentActivity struct {
 	OccurredAt   time.Time
 }
 
+// QualityAssessmentAttemptActivity records the cost of a physical quality
+// evaluation before a QualityAssessment exists. The attempt is a typed
+// subject, so failed evaluations remain allocated and auditable.
+type QualityAssessmentAttemptActivity struct {
+	WorkspaceID uuid.UUID
+	AttemptID   uuid.UUID
+	CostType    string
+	Quantity    float64
+	Unit        string
+	Amount      *float64
+	Currency    string
+	PricingMode string
+	Metadata    map[string]any
+	OccurredAt  time.Time
+}
+
 // AppendQualityAssessmentActivity records the cost and its typed assessment
 // allocation in one transaction. A replay of the same physical attempt and
 // component is a no-op; a new attempt gets a new activity_id and therefore a
@@ -151,6 +167,84 @@ func AppendQualityAssessmentActivity(ctx context.Context, tx pgx.Tx, activity Qu
 	}
 	if *allocatedAssessmentID != activity.AssessmentID {
 		return fmt.Errorf("cost activity %s is already allocated to assessment %s", activity.AttemptID, *allocatedAssessmentID)
+	}
+	return nil
+}
+
+// AppendQualityAssessmentAttemptActivity persists one physical quality
+// attempt's cost and its typed attempt allocation before evaluation starts.
+// Replaying the same attempt and component is a no-op.
+func AppendQualityAssessmentAttemptActivity(ctx context.Context, tx pgx.Tx, activity QualityAssessmentAttemptActivity) error {
+	if activity.WorkspaceID == uuid.Nil || activity.AttemptID == uuid.Nil {
+		return errors.New("quality assessment attempt cost activity requires workspace and attempt IDs")
+	}
+	if activity.CostType == "" {
+		activity.CostType = QualityEngineInvocation
+	}
+	if activity.Quantity <= 0 {
+		return errors.New("quality assessment attempt cost activity quantity must be positive")
+	}
+	if activity.Unit == "" {
+		activity.Unit = "assessment"
+	}
+	if activity.PricingMode == "" {
+		activity.PricingMode = "ACTUAL"
+	}
+	if activity.OccurredAt.IsZero() {
+		activity.OccurredAt = time.Now().UTC()
+	}
+	if activity.Metadata == nil {
+		activity.Metadata = map[string]any{}
+	}
+	metadata, err := json.Marshal(activity.Metadata)
+	if err != nil {
+		return fmt.Errorf("marshal quality assessment attempt cost metadata: %w", err)
+	}
+
+	var costEventID uuid.UUID
+	err = tx.QueryRow(ctx, `
+		INSERT INTO cost_event (
+			id, workspace_id, execution_id, activity_id, cost_type, quantity, unit,
+			amount, currency, pricing_mode, metadata, occurred_at
+		) VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+		ON CONFLICT (workspace_id, activity_id, cost_type)
+		WHERE activity_id IS NOT NULL DO NOTHING
+		RETURNING id
+	`, uuid.New(), activity.WorkspaceID, activity.AttemptID, activity.CostType,
+		activity.Quantity, activity.Unit, activity.Amount, nullable(activity.Currency),
+		activity.PricingMode, metadata, activity.OccurredAt).Scan(&costEventID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		err = tx.QueryRow(ctx, `
+			SELECT id FROM cost_event
+			WHERE workspace_id=$1 AND activity_id=$2 AND cost_type=$3
+		`, activity.WorkspaceID, activity.AttemptID, activity.CostType).Scan(&costEventID)
+	}
+	if err != nil {
+		return fmt.Errorf("append quality assessment attempt cost event: %w", err)
+	}
+
+	_, err = tx.Exec(ctx, `
+		INSERT INTO cost_allocation(id, cost_event_id, quality_assessment_attempt_id)
+		VALUES ($1,$2,$3)
+		ON CONFLICT (cost_event_id) DO NOTHING
+	`, uuid.New(), costEventID, activity.AttemptID)
+	if err != nil {
+		return fmt.Errorf("allocate quality assessment attempt cost event: %w", err)
+	}
+
+	var allocatedAttemptID *uuid.UUID
+	if err := tx.QueryRow(ctx, `
+		SELECT quality_assessment_attempt_id
+		FROM cost_allocation
+		WHERE cost_event_id=$1
+	`, costEventID).Scan(&allocatedAttemptID); err != nil {
+		return fmt.Errorf("verify quality assessment attempt cost allocation: %w", err)
+	}
+	if allocatedAttemptID == nil {
+		return fmt.Errorf("cost activity %s is already allocated to a non-quality-attempt subject", activity.AttemptID)
+	}
+	if *allocatedAttemptID != activity.AttemptID {
+		return fmt.Errorf("cost activity %s is already allocated to attempt %s", activity.AttemptID, *allocatedAttemptID)
 	}
 	return nil
 }

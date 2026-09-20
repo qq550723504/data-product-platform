@@ -15,6 +15,7 @@ import (
 )
 
 var ErrNotFound = errors.New("quality assessment not found")
+var ErrAssessmentAttemptConflict = errors.New("quality assessment attempt conflicts with its original request")
 
 type PostgresRepository struct {
 	pool *pgxpool.Pool
@@ -40,6 +41,12 @@ type AssessmentPage struct {
 	Limit  int
 	Offset int
 	Total  int
+}
+
+type AssessmentAttemptState struct {
+	Outcome      string
+	AssessmentID *uuid.UUID
+	ErrorMessage string
 }
 
 func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
@@ -85,6 +92,100 @@ func (r *PostgresRepository) InsertResult(ctx context.Context, tx pgx.Tx, result
 	return nil
 }
 
+// ClaimAssessmentAttempt durably records the physical attempt before the
+// evaluator is invoked. A false return means another caller already owns the
+// same attempt identity; its terminal outcome, if any, is returned to the
+// caller without re-running the evaluator.
+func (r *PostgresRepository) ClaimAssessmentAttempt(ctx context.Context, tx pgx.Tx, attemptID, workspaceID, datasetVersionID uuid.UUID, ruleSetRef string, startedAt time.Time, actorID *uuid.UUID) (bool, AssessmentAttemptState, error) {
+	var insertedID uuid.UUID
+	err := tx.QueryRow(ctx, `
+		INSERT INTO quality_assessment_attempt (
+			id, workspace_id, dataset_version_id, rule_set_ref, started_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6)
+		ON CONFLICT (id) DO NOTHING
+		RETURNING id
+	`, attemptID, workspaceID, datasetVersionID, ruleSetRef, startedAt, actorID).Scan(&insertedID)
+	if err == nil {
+		return true, AssessmentAttemptState{}, nil
+	}
+	if !errors.Is(err, pgx.ErrNoRows) {
+		return false, AssessmentAttemptState{}, fmt.Errorf("claim quality assessment attempt: %w", err)
+	}
+
+	var existingWorkspaceID, existingDatasetVersionID uuid.UUID
+	var existingRuleSetRef string
+	if err := tx.QueryRow(ctx, `
+		SELECT workspace_id, dataset_version_id, rule_set_ref
+		FROM quality_assessment_attempt
+		WHERE id=$1
+	`, attemptID).Scan(&existingWorkspaceID, &existingDatasetVersionID, &existingRuleSetRef); err != nil {
+		return false, AssessmentAttemptState{}, fmt.Errorf("load quality assessment attempt %s: %w", attemptID, err)
+	}
+	if existingWorkspaceID != workspaceID || existingDatasetVersionID != datasetVersionID || existingRuleSetRef != ruleSetRef {
+		return false, AssessmentAttemptState{}, fmt.Errorf("%w: %s", ErrAssessmentAttemptConflict, attemptID)
+	}
+
+	state := AssessmentAttemptState{}
+	if err := tx.QueryRow(ctx, `
+		SELECT outcome, assessment_id, COALESCE(error_message,'')
+		FROM quality_assessment_attempt_outcome
+		WHERE attempt_id=$1
+	`, attemptID).Scan(&state.Outcome, &state.AssessmentID, &state.ErrorMessage); errors.Is(err, pgx.ErrNoRows) {
+		return false, state, nil
+	} else if err != nil {
+		return false, AssessmentAttemptState{}, fmt.Errorf("load quality assessment attempt outcome %s: %w", attemptID, err)
+	}
+	return false, state, nil
+}
+
+func (r *PostgresRepository) AppendAssessmentAttemptOutcome(ctx context.Context, tx pgx.Tx, attemptID uuid.UUID, outcome string, assessmentID *uuid.UUID, errorMessage string, occurredAt time.Time) error {
+	if attemptID == uuid.Nil {
+		return errors.New("quality assessment attempt outcome requires an attempt ID")
+	}
+	if outcome != "SUCCEEDED" && outcome != "FAILED" {
+		return fmt.Errorf("unsupported quality assessment attempt outcome %q", outcome)
+	}
+	if outcome == "SUCCEEDED" && assessmentID == nil {
+		return errors.New("successful quality assessment attempt outcome requires an assessment ID")
+	}
+	if outcome == "FAILED" {
+		assessmentID = nil
+	}
+	if occurredAt.IsZero() {
+		occurredAt = time.Now().UTC()
+	}
+
+	var insertedID uuid.UUID
+	err := tx.QueryRow(ctx, `
+		INSERT INTO quality_assessment_attempt_outcome (
+			id, attempt_id, assessment_id, outcome, error_message, occurred_at
+		) VALUES ($1,$2,$3,$4,NULLIF($5,''),$6)
+		ON CONFLICT (attempt_id) DO NOTHING
+		RETURNING id
+	`, uuid.New(), attemptID, assessmentID, outcome, errorMessage, occurredAt).Scan(&insertedID)
+	if err == nil {
+		return nil
+	}
+	if !errors.Is(err, pgx.ErrNoRows) {
+		return fmt.Errorf("append quality assessment attempt outcome: %w", err)
+	}
+
+	var existingOutcome string
+	var existingAssessmentID *uuid.UUID
+	if err := tx.QueryRow(ctx, `
+		SELECT outcome, assessment_id
+		FROM quality_assessment_attempt_outcome
+		WHERE attempt_id=$1
+	`, attemptID).Scan(&existingOutcome, &existingAssessmentID); err != nil {
+		return fmt.Errorf("load existing quality assessment attempt outcome: %w", err)
+	}
+	if existingOutcome != outcome || (assessmentID == nil) != (existingAssessmentID == nil) ||
+		(assessmentID != nil && *assessmentID != *existingAssessmentID) {
+		return fmt.Errorf("quality assessment attempt %s already has outcome %s", attemptID, existingOutcome)
+	}
+	return nil
+}
+
 func (r *PostgresRepository) GetResult(ctx context.Context, resultID uuid.UUID) (domain.Assessment, error) {
 	return r.GetAssessment(ctx, resultID)
 }
@@ -92,12 +193,15 @@ func (r *PostgresRepository) GetResult(ctx context.Context, resultID uuid.UUID) 
 func (r *PostgresRepository) FindAssessmentIDByAttempt(ctx context.Context, workspaceID, attemptID uuid.UUID) (uuid.UUID, bool, error) {
 	var assessmentID uuid.UUID
 	err := r.pool.QueryRow(ctx, `
-		SELECT a.quality_assessment_id
+		SELECT COALESCE(a.quality_assessment_id, o.assessment_id)
 		FROM cost_event e
 		JOIN cost_allocation a ON a.cost_event_id=e.id
+		LEFT JOIN quality_assessment_attempt_outcome o
+		  ON o.attempt_id=a.quality_assessment_attempt_id
 		WHERE e.workspace_id=$1
 		  AND e.activity_id=$2
 		  AND e.cost_type=$3
+		  AND COALESCE(a.quality_assessment_id, o.assessment_id) IS NOT NULL
 	`, workspaceID, attemptID, cost.QualityEngineInvocation).Scan(&assessmentID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return uuid.Nil, false, nil

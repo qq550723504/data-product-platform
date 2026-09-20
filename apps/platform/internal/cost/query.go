@@ -89,7 +89,11 @@ func (r *QueryRepository) ListByQualityAssessment(ctx context.Context, assessmen
 		       e.metadata, e.occurred_at
 		FROM cost_event e
 		JOIN cost_allocation a ON a.cost_event_id=e.id
+		LEFT JOIN quality_assessment_attempt_outcome o
+		  ON o.attempt_id=a.quality_assessment_attempt_id
 		WHERE a.quality_assessment_id=$1
+		   OR (a.quality_assessment_attempt_id IS NOT NULL
+		       AND o.assessment_id=$1 AND o.outcome='SUCCEEDED')
 		ORDER BY e.occurred_at, e.id
 	`, assessmentID)
 	if err != nil {

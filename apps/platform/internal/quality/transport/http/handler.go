@@ -99,6 +99,14 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 		Now:                 time.Now().UTC(),
 	})
 	if err != nil {
+		if errors.Is(err, application.ErrAssessmentAttemptInProgress) {
+			httpserver.WriteError(w, r, http.StatusConflict, "QUALITY_ASSESSMENT_ATTEMPT_IN_PROGRESS", "assessmentAttemptId is already being evaluated", nil)
+			return
+		}
+		if errors.Is(err, application.ErrAssessmentAttemptFailed) {
+			httpserver.WriteError(w, r, http.StatusConflict, "QUALITY_ASSESSMENT_ATTEMPT_FAILED", "assessmentAttemptId already has a failed evaluation", nil)
+			return
+		}
 		if errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
 			httpserver.WriteError(w, r, http.StatusBadRequest, "DATASET_WORKSPACE_MISMATCH", "the DatasetVersion must belong to the declared workspace", nil)
 			return

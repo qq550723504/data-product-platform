@@ -138,8 +138,8 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 		t.Fatalf("same quality attempt replay = %s, err=%v; want original assessment %s", replayedAssessment.ID, err, qualityResult.ID)
 	}
 	if err := txManager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		return cost.AppendQualityAssessmentActivity(ctx, tx, cost.QualityAssessmentActivity{
-			WorkspaceID: workspaceID, AssessmentID: qualityResult.ID, AttemptID: firstAttemptID,
+		return cost.AppendQualityAssessmentAttemptActivity(ctx, tx, cost.QualityAssessmentAttemptActivity{
+			WorkspaceID: workspaceID, AttemptID: firstAttemptID,
 			CostType: cost.QualityEngineInvocation, Quantity: 1, Unit: "assessment",
 		})
 	}); err != nil {
