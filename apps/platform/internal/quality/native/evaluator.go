@@ -295,7 +295,11 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 			return domain.Finding{}, nil, fmt.Errorf("rule %s conditional_consistency requires conditionField, whenMissing and whenPresentValues", rule.ID)
 		}
 		if _, ok := tabular.HeaderSet(ctx.Table.Headers)[conditionField]; !ok {
-			return domain.Finding{}, nil, fmt.Errorf("rule %s condition field %s is unavailable", rule.ID, conditionField)
+			observed := map[string]any{"conditionField": conditionField, "available": false}
+			if rule.Required {
+				return fail(fmt.Sprintf("condition field %s is unavailable", conditionField), observed, nil, nil, 1, nil)
+			}
+			return skip(fmt.Sprintf("rule not applicable: condition field %s is unavailable", conditionField), observed)
 		}
 		allowedPresent := make(map[string]struct{}, len(presentValues))
 		for _, value := range presentValues {

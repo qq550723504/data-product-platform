@@ -307,6 +307,32 @@ func TestEvaluateRejectsMalformedAllowNull(t *testing.T) {
 	}
 }
 
+func TestOptionalConditionalConsistencySkipsMissingConditionField(t *testing.T) {
+	policy := singleRulePolicy(Rule{
+		ID:        "R",
+		Dimension: "CONSISTENCY",
+		Type:      RuleTypeConditionalConsistency,
+		Target:    "value",
+		Parameters: map[string]any{
+			"conditionField":    "status",
+			"whenMissing":       "N/A",
+			"whenPresentValues": []any{"VALID"},
+		},
+		Required: false,
+		Severity: "HIGH",
+	})
+	findings, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{
+		Headers: []string{"value"},
+		Rows:    []map[string]string{{"value": "N/A"}},
+	}})
+	if err != nil {
+		t.Fatalf("evaluate optional conditional rule: %v", err)
+	}
+	if findings[0].Status != domain.FindingSkipped {
+		t.Fatalf("finding status = %s, want SKIPPED", findings[0].Status)
+	}
+}
+
 func TestFindingSamplesNeverContainRawCells(t *testing.T) {
 	secret := "secret@example.com"
 	policy := singleRulePolicySet([]Rule{

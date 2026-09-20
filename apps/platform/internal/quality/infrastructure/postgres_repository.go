@@ -134,7 +134,9 @@ func (r *PostgresRepository) GetAssessment(ctx context.Context, assessmentID uui
 	if err := rows.Err(); err != nil {
 		return domain.Result{}, err
 	}
-	result.DimensionSummaries = domain.SummarizeDimensions(result.Findings)
+	if err := restoreDimensionSummaries(&result); err != nil {
+		return domain.Result{}, err
+	}
 	return result, nil
 }
 
@@ -283,8 +285,7 @@ func (r *PostgresRepository) loadFindings(ctx context.Context, result *domain.As
 	if err := rows.Err(); err != nil {
 		return err
 	}
-	result.DimensionSummaries = domain.SummarizeDimensions(result.Findings)
-	return nil
+	return restoreDimensionSummaries(result)
 }
 
 func (r *PostgresRepository) loadFindingsBatch(ctx context.Context, results []domain.Assessment) error {
@@ -325,7 +326,34 @@ func (r *PostgresRepository) loadFindingsBatch(ctx context.Context, results []do
 	}
 	for i := range results {
 		results[i].Findings = byResult[results[i].ID]
-		results[i].DimensionSummaries = domain.SummarizeDimensions(results[i].Findings)
+		if err := restoreDimensionSummaries(&results[i]); err != nil {
+			return err
+		}
 	}
+	return nil
+}
+
+// restoreDimensionSummaries returns the summary frozen in the assessment's
+// metrics. Recomputing it from mutable evaluator code would change the meaning
+// of an immutable historical assessment after a later evaluator change. Older
+// rows without the persisted snapshot retain the legacy findings-based fallback.
+func restoreDimensionSummaries(result *domain.Assessment) error {
+	persisted, ok := result.Metrics["dimensions"]
+	if !ok {
+		result.DimensionSummaries = domain.SummarizeDimensions(result.Findings)
+		return nil
+	}
+	encoded, err := json.Marshal(persisted)
+	if err != nil {
+		return fmt.Errorf("marshal persisted quality dimension summary: %w", err)
+	}
+	var summaries map[string]domain.DimensionSummary
+	if err := json.Unmarshal(encoded, &summaries); err != nil {
+		return fmt.Errorf("decode persisted quality dimension summary: %w", err)
+	}
+	if summaries == nil {
+		return fmt.Errorf("persisted quality dimension summary is null")
+	}
+	result.DimensionSummaries = summaries
 	return nil
 }
