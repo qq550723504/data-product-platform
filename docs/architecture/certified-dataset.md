@@ -281,11 +281,12 @@ PREPARED
 7. provider 首次返回或 reconciliation 恢复出 credential/access capability 后，**在写入 ISSUED 前必须验证 provider 实际签发的能力边界，而不只是验证 expiry**：
    - actual expiry / access time bound 不晚于当前 fresh credential expiry cap；
    - actual resource / DatasetVersion 不得比本次 delivery request 更宽；
-   - actual consumer/grantee（provider 可表达时）必须匹配本次 consumer；
+   - actual consumer/grantee 是必需安全边界：provider capability 必须直接表达并强制匹配本次 effective consumer/grantee，或由平台控制的 consumer-binding redemption/gateway 在使用 capability 前重新认证并强制绑定；provider 无法表达/验证/强制 consumer 时，不能把该维度视为“不适用”；
    - actual action/permission 必须是 requested action 的等价或更窄集合，不能把 READ/USE 请求提升成 bucket-wide write/share/admin；
    - actual object/row/prefix/scope 必须等价或更窄，不能把单 DatasetVersion/对象范围签成整个 bucket、workspace 或无约束 prefix；
    - actual delivery channel/mode constraints（如 provider 模型支持）不得放宽；
    - 上述 capability descriptor 必须通过 provider read-after-write / authoritative lookup（或等价可验证机制）确认，并记录非 secret 的 capability snapshot/hash/evidence；
+   - consumer/grantee enforcement 也必须有可验证 evidence：provider 原生 subject/grantee binding、mTLS/DPoP/等价持有者约束，或 platform redemption/gateway 的 authenticated consumer binding 均可；**纯 bearer/presigned capability 若无法限制由哪个 consumer 使用，不满足 direct issuance contract**；
    - 任何关键维度无法验证，或实际 capability 比 requested/current-gate context 更宽，都不得 ISSUED，必须 revoke/contain，或使用 platform redemption indirection。
 该 cap/context 必须来自最近一次 fenced CurrentDeliveryGate，而不是 PREPARED 时的旧值；
 8. 若 recovered/returned credential 的实际 expiry 晚于 fresh cap，或 capability scope 比当前 allowed/requested context 更宽：
@@ -300,6 +301,7 @@ PREPARED
    - provider 已成功 → 恢复并完成同一个 ISSUED terminal fact；
    - provider 明确失败 → FAILED；
    - outcome 无法确认但 provider 支持 revoke/compensation → 先撤销/补偿再 FAILED；
+   - **无论上述哪种终结，凡已经发生的 provider invocation 都必须保留其 physical provider-attempt identity 与 CostEvent；FAILED / BLOCKED / CONTAINMENT_PENDING / unknown outcome 不能删除或省略真实已发生成本。**
 12. **direct bearer mode 的恢复要求更严格**：provider 必须能够基于同一 provider_request_key replay / read-after-write 返回**同一 credential（或等价可重复获取的同一访问能力）**。仅支持 revoke/compensation 但无法恢复同一 bearer secret，不足以支持 direct bearer，因为“terminal ISSUED 已提交但 HTTP response 丢失”后客户端重试无法拿回原 credential；
 13. 如果 provider 不能恢复同一 credential，则第一阶段必须使用平台控制的 redemption indirection；也可以在能够证明旧 credential 未交付且已成功 revoke 的协议下执行显式 replacement operation，但不得把同一 DeliveryOperation 的幂等 retry 静默变成第二份 credential；
 14. 如果外部 provider **既不支持 idempotency/read-after-write，也不支持 revoke/compensation**，第一阶段不得直接暴露其 bearer credential；必须改用平台控制的 redemption indirection，或将该 delivery mode 判为 unsupported；
@@ -308,7 +310,7 @@ PREPARED
 17. **direct-data 的 terminal `ISSUED` 只表示该次交付授权在线性化点已提交、服务端随后可以开始写响应；它不是“客户端已收到全部数据”的证明。** 网络/进程在 commit 后、第一字节前或流中断开时，不得把 ISSUED 审计事实解释为客户端完成接收；
 18. **terminal ISSUED 的 direct-data operation 不允许用同一 idempotency key 从旧 gate 结果再次发出数据字节。** 同一 key 的 retry 必须返回稳定的 non-payload 结果（例如 `DIRECT_DATA_REPLAY_REQUIRES_NEW_ATTEMPT`，附原 operation ID/ISSUED 状态），response body 中不得包含 DatasetVersion 数据；
 19. 如果调用方确实需要重新取得 direct-data，必须创建新的显式 DeliveryOperation/attempt（新的 idempotency key，可用 `retry_of_delivery_operation_id` 关联原 attempt），重新解析可信 caller principal→consumer/delegation，重新执行完整 CurrentDeliveryGate，并重新走 delivery authorization fence/finalize。若期间 Rights/Certification/DatasetVersion/Authorization 已失效，新 attempt 必须 BLOCKED；只有 fresh gate 仍 ALLOWED 才能再次发送数据；
-20. retries / reconciliation 不得重复同一 DeliveryOperation 的 terminal Domain Event 或同一业务结果 Audit/Event 事实；**CostEvent 的去重只限于 same physical activity attempt 的 replay**。若 retry/reconciliation 真正再次调用 provider、执行 compute 或发生其它可计费外部工作，必须使用新的稳定 attempt/activity identity 追加实际 CostEvent（或原子聚合新增 quantity/amount 并保留 attempt identity/count）。显式的新 direct-data DeliveryOperation/attempt 是新的业务事实，必须有独立 operation ID 与审计链。
+20. retries / reconciliation 不得重复同一 DeliveryOperation 的 terminal Domain Event 或同一业务结果 Audit/Event 事实；**每一次真实 provider invocation 必须在调用前拥有 durable physical provider-attempt identity，并独立于 terminal outcome 记账。** success / provider-declared failure / timeout / unknown / reconciliation lookup / revoke / compensation，只要实际外部调用产生了可计费 activity，都必须记录 CostEvent；amount 未知时先记录真实 quantity/unit。same physical attempt 的无新调用 replay 才去重；若 retry/reconciliation 真正再次调用 provider、执行 compute 或发生其它可计费外部工作，必须使用新的稳定 attempt/activity identity 追加实际 CostEvent（或原子聚合新增 quantity/amount并保留 attempt identity/count）。显式的新 direct-data DeliveryOperation/attempt 是新的业务事实，必须有独立 operation ID 与审计链。
 
 测试必须覆盖故障注入：
 - provider 成功后、terminal DB commit 前 crash；
@@ -318,7 +320,8 @@ PREPARED
 - reconciliation/retry：same-attempt replay 不重复成本；故障恢复若真实再次调用可计费 provider，则新增 attempt identity 的实际 CostEvent 不得被 DeliveryOperation 顶层幂等吞掉；
 - provider 成功后 fresh cap 因 future-effective disposition 缩短，recovered credential 实际 expiry 超过 fresh cap；
 - provider actual expiry 不可验证；
-- provider timeout 导致 unknown outcome；
+- provider timeout 导致 unknown outcome，并验证本次真实 provider invocation 即使 terminal outcome 未知也已按 physical attempt 记录 CostEvent；
+- provider 显式失败但调用本身可计费：DeliveryOperation 最终 FAILED/BLOCKED 时对应 provider-attempt CostEvent 仍保留；
 - fresh gate 在 ISSUANCE_PENDING 中变为 BLOCKED，但 provider 实际已签发；
 - revoke/contain 成功后才能进入 BLOCKED；
 - revoke/contain 失败或 outcome unknown 时保持 CONTAINMENT_PENDING；
