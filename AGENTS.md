@@ -205,7 +205,7 @@ CurrentDeliveryGate query 只用于展示/预检，不构成交付授权。任�
 
 DeliveryOperation 每个终态都必须产生明确 Domain Event：Issued / Blocked / Failed（事件名由实现固定但语义不得缺失），并与 Audit/Evidence/Outbox、CostEvent（如有）保持一致幂等边界。任何事件或审计 payload 不得包含可用 credential secret。
 
-外部 credential issuance 不能假装与 PostgreSQL 同事务。必须先持久化 DeliveryOperation + stable provider_request_key，再执行外部副作用；provider 必须支持幂等重放/read-after-write 或 revoke/compensation。若 provider 不具备这些能力，则第一阶段只能通过平台 redemption indirection 暴露访问，不得直接签发不可恢复的 bearer credential。ISSUANCE_PENDING 必须可 reconciliation，provider 成功但 DB terminal commit 失败时不得因 retry 产生第二份独立 credential。
+外部 credential issuance 不能假装与 PostgreSQL 同事务。必须先持久化 DeliveryOperation + stable provider_request_key，再执行外部副作用；**每次初始/retry/reconciliation issuance 前都必须重新执行 CurrentDeliveryGate 并重新计算 expiry cap**，旧 gate snapshot 仅供审计。direct bearer mode 还必须支持按同一 provider_request_key 恢复/重放同一 credential（或等价同一访问能力）；只有 revoke/compensation 但不能恢复原 bearer secret 时，必须走 platform redemption indirection，不能把同一幂等 retry 静默签发成第二份 credential。ISSUANCE_PENDING 必须可 reconciliation。
 
 若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界，以及签发时已存在且未来生效的 RightsDisposition / CertificationDisposition 最早 effective_at。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 CurrentDeliveryGate；不可回调的 bearer/presigned credential 必须使用 expiry cap + 明确最大 TTL。
 
