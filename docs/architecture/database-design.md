@@ -193,14 +193,14 @@ EntityType → Entity → EntityMapping projection
 - grantor_ref
 - grantor_authority_mode: DIRECT_DECLARATION_PARTY / DELEGATED
 - grantor_delegation_chain_id + chain_hash（DELEGATED 时必填，强类型 FK/identity）
-- supported_actions / normalized scope（如按 grant 粒度绑定）
+- supported_grantable_actions / supported_grantable_purpose / normalized grant_scope_type + grant_scope_ref（如按 grant 粒度绑定；不得用 use/allowed actions 代替 grant authority）
 - created_at / actor
 
 约束：
 
 - grantor_ref 若不与声明中的可授权 party_ref 直接匹配，则必须显式引用可验证、强类型 `GrantorAuthorityDelegationChain`；不得只写“delegated=true”或把 chain IDs 塞 JSONB；
 - authorization/resource/declaration 必须同 workspace、同 DataResource；
-- declaration 支持的 actions/scope 必须覆盖 authorization 授出的范围；
+- declaration 必须以显式 grant authority 支撑 Authorization：`grant_authority_mode` 允许 grant，且 grantable_actions、grantable purpose、grantable scope 逐项覆盖 Authorization 授出的 actions/purpose/scope；allowed/use actions 或 use scope 不得用于替代该校验；
 - 当前 entitlement 查询必须读取 binding，不允许独立选择 declaration + authorization；
 - AuthorizationProvenanceBinding 创建后是 immutable historical fact：禁止 UPDATE / DELETE；修正只能创建新的 binding/replacement fact，并让后续 CurrentEntitlement/RightsSnapshot 显式引用新 binding；
 - migration 必须提供 update/delete guard，历史 RightsSnapshot 引用的 binding ID 不能被重连到另一 declaration/grantor/actions/scope。
