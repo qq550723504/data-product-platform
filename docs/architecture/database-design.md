@@ -407,13 +407,18 @@ CertificationProfile 必须把认证覆盖的 delivery applicability 作为强�
 - quality_assessment_id
 - certification_profile snapshot/ref/version/hash
 - rights_snapshot_id（finalized immutable）
-- effective_rights_snapshot_id + effective_rights_snapshot_hash（Rights required / derived Dataset 时；FK/强类型引用 finalized immutable #137 aggregate，input-set hash 必须与认证 target lineage 一致）
+- effective_rights_snapshot_id + effective_rights_snapshot_hash + frozen_rights_context_hash（Rights required / derived Dataset 时；FK/强类型引用 finalized immutable #137 aggregate，input-set hash 必须与认证 target lineage 一致）
 - compliance_result_id（如 required）
 - contract_version_id（如 required）
 - evidence_snapshot_id 或等价冻结证明
 - decision
 - blockers / reason
 - issued_at / actor
+
+Certification 创建前必须校验 frozen rights evidence context 覆盖 Profile rights applicability：
+- Profile consumer/purpose/action/scope 为 EXPLICIT 时，required set 必须是 frozen rights coverage 的子集；
+- Profile 某 rights-relevant 维度=ANY 时，rights evidence 必须显式 ANY/universal coverage；窄 EXPLICIT evidence 不足；
+- coverage 缺失、UNKNOWN、cross-workspace、target DatasetVersion 不一致或不可比较时 fail closed。
 
 Certification 创建后不可被 UPDATE 成另一种业务含义。
 
