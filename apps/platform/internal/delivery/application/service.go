@@ -593,7 +593,7 @@ func (s *Service) processPending(ctx context.Context, operation domain.Operation
 		if evaluation.Allowed {
 			target = domain.StatusFailed
 		}
-		return s.containCapability(ctx, operation, target, "recovered capability requires containment", cmd)
+		return s.containCapability(ctx, operation, target, "recovered capability requires containment", capability, cmd)
 	}
 	return s.finalizeCapability(ctx, operation.ID, attemptID, capability, cmd)
 }
@@ -750,7 +750,7 @@ func (s *Service) finalizeCapability(ctx context.Context, operationID, attemptID
 		if !evaluation.Allowed {
 			target = domain.StatusBlocked
 		}
-		return s.containCapability(ctx, operation, target, reason, cmd)
+		return s.containCapability(ctx, operation, target, reason, capability, cmd)
 	}
 	return Result{Operation: operation, Capability: &capability}, nil
 }
@@ -781,9 +781,12 @@ func (s *Service) reconcileTerminalContainment(ctx context.Context, operation do
 }
 
 func (s *Service) revokeContainment(ctx context.Context, operation domain.Operation, capability domain.Capability, reason string, cmd IssueCredentialCommand) (Result, error) {
-	attemptID, current, err := s.startContainmentAttempt(ctx, operation, reason, cmd)
+	attemptID, current, proceed, err := s.startContainmentAttempt(ctx, operation, capability, reason, cmd)
 	if err != nil {
 		return Result{}, err
+	}
+	if !proceed {
+		return Result{Operation: current}, ErrCredentialReplay
 	}
 	err = s.provider.Revoke(ctx, current.ProviderRequestKey)
 	if errors.Is(err, ErrCapabilityNotFound) {
@@ -812,14 +815,23 @@ func (s *Service) revokeContainment(ctx context.Context, operation domain.Operat
 	return Result{Operation: current}, ErrCredentialReplay
 }
 
-func (s *Service) startContainmentAttempt(ctx context.Context, operation domain.Operation, reason string, cmd IssueCredentialCommand) (uuid.UUID, domain.Operation, error) {
+func (s *Service) startContainmentAttempt(ctx context.Context, operation domain.Operation, capability domain.Capability, reason string, cmd IssueCredentialCommand) (uuid.UUID, domain.Operation, bool, error) {
 	var attemptID uuid.UUID
 	var current domain.Operation
+	proceed := true
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		var err error
 		current, err = s.repo.GetOperation(ctx, tx, operation.ID, true)
 		if err != nil {
 			return err
+		}
+		status, found, err := s.repo.GetContainmentStatus(ctx, tx, current.ID)
+		if err != nil {
+			return err
+		}
+		if found && status == domain.ContainmentResolved && capability.Credential == "" {
+			proceed = false
+			return nil
 		}
 		attemptID, err = s.repo.InsertProviderAttempt(ctx, tx, current, "late-containment/"+uuid.NewString(), domain.InvocationRevoke)
 		if err != nil {
@@ -829,10 +841,6 @@ func (s *Service) startContainmentAttempt(ctx context.Context, operation domain.
 			return err
 		}
 		if err := appendAttemptFacts(ctx, tx, current, attemptID, domain.InvocationRevoke, cmd.ActorID, cmd.TraceID); err != nil {
-			return err
-		}
-		status, found, err := s.repo.GetContainmentStatus(ctx, tx, current.ID)
-		if err != nil {
 			return err
 		}
 		if !found || status != domain.ContainmentPending {
@@ -846,12 +854,12 @@ func (s *Service) startContainmentAttempt(ctx context.Context, operation domain.
 		}
 		return s.repo.UpsertContainmentProjection(ctx, tx, current.ID, domain.ContainmentPending, &attemptID, reason)
 	})
-	return attemptID, current, err
+	return attemptID, current, proceed, err
 }
 
 func (s *Service) resolveContainment(ctx context.Context, operationID, attemptID uuid.UUID, reason string, cmd IssueCredentialCommand) error {
 	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		operation, err := s.repo.GetOperation(ctx, tx, operationID, false)
+		operation, err := s.repo.GetOperation(ctx, tx, operationID, true)
 		if err != nil {
 			return err
 		}
@@ -872,11 +880,12 @@ func (s *Service) resolveContainment(ctx context.Context, operationID, attemptID
 	})
 }
 
-func (s *Service) containCapability(ctx context.Context, operation domain.Operation, target domain.Status, reason string, cmd IssueCredentialCommand) (Result, error) {
+func (s *Service) containCapability(ctx context.Context, operation domain.Operation, target domain.Status, reason string, capability domain.Capability, cmd IssueCredentialCommand) (Result, error) {
 	// Revoke is a new physical provider attempt. It is never folded into the
 	// original ISSUE attempt or its cost identity.
 	var attemptID uuid.UUID
 	proceed := false
+	terminalRace := false
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		current, err := s.repo.GetOperation(ctx, tx, operation.ID, true)
 		if err != nil {
@@ -884,6 +893,7 @@ func (s *Service) containCapability(ctx context.Context, operation domain.Operat
 		}
 		if current.Status != domain.StatusIssuancePending && current.Status != domain.StatusContainmentPending {
 			operation = current
+			terminalRace = capability.Credential != ""
 			return nil
 		}
 		attemptID, err = s.repo.InsertProviderAttempt(ctx, tx, current, uuid.NewString(), domain.InvocationRevoke)
@@ -920,9 +930,17 @@ func (s *Service) containCapability(ctx context.Context, operation domain.Operat
 		return Result{}, err
 	}
 	if !proceed {
+		if terminalRace {
+			return s.revokeContainment(ctx, operation, capability, reason, cmd)
+		}
 		return Result{Operation: operation}, nil
 	}
-	if err := s.provider.Revoke(ctx, operation.ProviderRequestKey); err != nil {
+	if err := s.provider.Revoke(ctx, operation.ProviderRequestKey); errors.Is(err, ErrCapabilityNotFound) {
+		if recordErr := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationCallReturn, domain.OutcomeNotFound, capability, "provider reports no active capability during containment"); recordErr != nil {
+			return Result{}, recordErr
+		}
+		return s.finishWithoutCapability(ctx, operation.ID, cmd, target, reason, &attemptID)
+	} else if err != nil {
 		outcome := domain.OutcomeFailed
 		if errors.Is(err, ErrUnknownProviderOutcome) {
 			outcome = domain.OutcomeUnknown
@@ -979,7 +997,7 @@ func (s *Service) reconcileContainment(ctx context.Context, operation domain.Ope
 	if evaluation.Allowed {
 		target = domain.StatusFailed
 	}
-	return s.containCapability(ctx, operation, target, "recovered capability requires containment", cmd)
+	return s.containCapability(ctx, operation, target, "recovered capability requires containment", capability, cmd)
 }
 
 func (s *Service) recordObservation(ctx context.Context, operationID, attemptID uuid.UUID, kind domain.ObservationKind, outcome domain.Outcome, capability domain.Capability, evidenceRef string) error {
