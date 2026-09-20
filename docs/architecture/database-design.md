@@ -213,7 +213,7 @@ EntityType → Entity → EntityMapping projection
 - `grantor_authority_delegation`：immutable **grant-authority edge**，包含 workspace_id、delegator_ref、delegate_ref、data_resource_id、grantable_purpose/applicability、grantable_actions、normalized grant_scope_type/grant_scope_ref、onward_grant_mode、valid_from/valid_to、Evidence/actor；delegate 自身 use permission 如需表达必须是独立字段/事实，不能与 grantable actions 共用同一语义；
 - `grantor_authority_delegation_disposition`：append-only REVOKED / INVALIDATED / SUPERSEDED + effective_at + reason/evidence；
 - `grantor_delegation_chain`：稳定 chain identity / chain_hash；
-- `grantor_delegation_chain_member`：ordered edge membership，finalized 后不可 INSERT/UPDATE/DELETE。
+- `grantor_delegation_chain_member`：ordered edge membership。若 chain 采用 DRAFT→FINALIZED，多事务 membership mutation 与 FINALIZE 必须获取同一个 parent `grantor_delegation_chain` row lock/fence，固定 parent-first 顺序：mutation 先锁 parent、确认 DRAFT 后写 member；Finalize 持同一 parent lock，验证完整 ordered membership + chain_hash 后原子改 FINALIZED。禁止“member transaction 先看到 DRAFT → Finalize 先提交 → member 后提交”的穿越；FINALIZED 后 member INSERT/UPDATE/DELETE fail closed。
 
 CurrentEntitlementGate 对 DELEGATED binding 必须按 as_of 重新验证 chain 的每一 edge validity/disposition/coverage/continuity。binding 创建时验证成功不能永久缓存该结论。
 
