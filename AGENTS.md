@@ -148,6 +148,8 @@ Cost 与 Evidence 是一等业务对象，不允许项目结束后再补录。
 
 非 Execution CostEvent 必须有稳定 activity/idempotency identity，并通过强类型 CostAllocation 关联到 QualityAssessment、Rights verification/disposition、AuthorizationProvenanceBinding、DatasetCertification/Disposition、DeliveryOperation 等实际业务主体。禁止仅把 subject IDs 塞入 JSONB metadata。
 
+CostEvent 的幂等边界是**同一次实际 activity attempt**，不是把一个顶层业务对象后续所有真实重试都合并掉。same-attempt 的 command/network/transaction replay 未产生新外部工作时必须去重；如果 failed/transient attempt 后再次真实调用 engine/provider、再次消耗 compute 或再次发生人工审核，则必须使用新的稳定 attempt/activity identity 记录新增 CostEvent，或原子聚合新增 quantity/amount 并保留可审计 attempt identity/count。不得用同一个 QualityAssessment / DeliveryOperation 的顶层 idempotency key 吞掉后来真实发生的成本。
+
 ## 8. Industry Pack Boundary
 
 园区、制造、医疗、政务等行业逻辑不得硬编码进 Core Domain。
