@@ -79,7 +79,7 @@ outbox_event
 
 ~~~text
 RightsDeclaration
-RightsVerification
+RightsVerification (one terminal outcome per declaration: VERIFIED / REJECTED)
 RightsDisposition (INVALIDATED / SUPERSEDED)
 AuthorizationProvenanceBinding
 AuthorizationProvenanceBindingDisposition (INVALIDATED / SUPERSEDED)
@@ -299,6 +299,21 @@ ProductRelease 精确引用发布时所需 DatasetVersion、Contract、Rights、
 
 ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status。
 
+### RightsVerification terminal outcome（#137）
+
+RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration 只能有一个 terminal decision：
+
+- declaration_id
+- decision: VERIFIED / REJECTED
+- evidence / reason
+- decided_at / actor
+
+数据库要求：
+- unique(declaration_id)（或等价 partial/terminal 唯一约束）保证 VERIFIED / REJECTED 互斥；
+- outcome 创建后禁止 UPDATE / DELETE；
+- 错误 VERIFIED 通过 RightsDisposition INVALIDATED/SUPERSEDED 退出 current set，再创建新 declaration/verification；
+- current selection 不得使用 EXISTS(any VERIFIED history)，而必须读取该 declaration 的唯一 terminal outcome。
+
 ## 13. DeliveryOperation（#135）
 
 第一阶段 standalone delivery 必须持久化稳定的 DeliveryOperation，作为 delivery command、Audit/Evidence 和 CostAllocation 的强类型业务主体；不能让一次交付只存在于临时 HTTP 请求或 JSONB metadata 中。
@@ -330,6 +345,9 @@ ProductRelease 与 DatasetCertification 不应合并成同一表或同一 status
 - 同一幂等请求不会重复签发或重复记账；
 - 外部 issuance 前必须先 durable persist PREPARED/ISSUANCE_PENDING；
 - provider_request_key 对同一 DeliveryOperation 稳定，支持 crash 后安全 retry/reconcile；
+- 必须持久化 delivery gate dependency revision/fence token（或等价可验证线性化信息）；
+- 所有影响 CurrentDeliveryGate 的 disposition/invalidation Command 与 DeliveryOperation terminal finalize 使用同一组 delivery authorization fence rows / revisions，并以固定顺序锁定，避免 deadlock；
+- provider 返回后，ISSUED terminal transaction 必须在 fence 下重新 gate + fresh-cap，并把该 commit 作为 issuance linearization point；
 - 任何进入 ISSUED 的 credential 必须满足 provider_credential_expires_at <= 当前 fresh_cap_expires_at；reconciliation 找回的旧 credential 同样适用，不能因为 provider_request_key 命中就跳过；
 - provider_credential_expires_at 不可验证或超过 fresh cap 时不得 ISSUED；必须安全 shorten/verify，或 revoke/contain；
 - gate 失败也有可审计 DeliveryOperation / result；
