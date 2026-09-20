@@ -218,11 +218,12 @@ func validatePolicy(policy Policy, requireRequired bool) error {
 			if err != nil {
 				return fmt.Errorf("rule %s operator: %w", rule.ID, err)
 			}
-			if present {
-				operator = strings.ToLower(operator)
+			if !present || operator == "" {
+				return fmt.Errorf("rule %s operator is required", rule.ID)
 			}
+			operator = strings.ToLower(operator)
 			switch operator {
-			case "", "lt", "lte", "le", "eq", "equal", "gte", "ge", "gt":
+			case "lt", "lte", "le", "eq", "equal", "gte", "ge", "gt":
 			default:
 				return fmt.Errorf("rule %s has unsupported operator %q", rule.ID, operator)
 			}
