@@ -310,7 +310,9 @@ direct-data terminal `ISSUED` 不表示客户端确认收到数据。若 ISSUED 
 - 已签发 → 必须先 revoke / compensate / contain，并确认外部访问能力已不可用后才能 BLOCKED；
 - outcome unknown 或 containment 未确认成功 → 保持 CONTAINMENT_PENDING，不得发 DatasetDeliveryBlocked terminal event，也不得向用户声称不存在活跃访问能力。
 
-**Direct bearer delivery 的 provider 必须支持按同一 provider_request_key replay/read-after-write 恢复同一 credential（或等价同一访问能力）。仅支持 revoke/compensation、却无法恢复原 bearer secret，不足以支持 direct bearer**：terminal ISSUED commit 成功但 HTTP response 丢失后，客户端幂等 retry 必须仍能获得原访问能力。此类 provider 第一阶段必须使用 platform redemption indirection，或明确不支持 direct bearer mode。
+**Direct bearer delivery 的 provider 必须同时支持：按同一 provider_request_key replay/read-after-write 恢复同一 credential（或等价同一访问能力），以及 fresh replay authorization 被拒绝时 revoke/contain 该既有 capability。** 只满足其中一项不足以支持第一阶段 direct bearer；应使用 platform redemption indirection/gateway，或明确 unsupported。
+
+terminal ISSUED commit 成功但 HTTP response 丢失后，客户端用同一 idempotency key 重试时，不能因为原 operation 已 ISSUED 就直接返回 credential。每次 replay 在再次暴露 credential/handle 前必须 fresh authenticated caller→effective consumer/delegation resolution，在共享 delivery authorization fence 下重新 CurrentDeliveryGate + fresh cap，并 authoritative-verify recovered same capability 当前仍满足 consumer/resource/action/scope/channel/expiry。系统追加不含 secret 的 replay decision；只有 ALLOWED 才返回同一 credential/handle。若 fresh replay 已 BLOCKED，则不返回任何 credential/secret/handle，并 revoke/contain 原 capability；containment 未确认时仅返回 non-secret pending 状态。原 ISSUED DeliveryOperation 仍是不可改写的历史事实。
 
 provider 成功但 terminal DB commit 失败时，retry/reconciliation 复用同一 key，不得产生第二份独立 credential。
 
