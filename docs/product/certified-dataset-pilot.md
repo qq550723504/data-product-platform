@@ -136,7 +136,7 @@ DataResource
 - 至少测试：未验证声明 fail closed、VERIFY 后可参与后续 binding、REJECT 后不可参与、Verify/Reject 并发只能产生一个 terminal outcome、VERIFIED declaration 后续不能追加 REJECTED 翻转结论、历史 verification 不被后续修改；
 - append-only `RightsDisposition`，至少支持 `INVALIDATED` / `SUPERSEDED` + `effective_at` + reason + Evidence + actor；
 - 显式 `InvalidateRightsDeclaration` / `SupersedeRightsDeclaration` Command，禁止 UPDATE 已 VERIFIED 历史事实；
-- Current rights selection 按 `as_of` 排除已生效 disposition，并校验每条 declaration 自身 validity window 与 resource/consumer/purpose/action/scope；
+- Current rights selection 区分 DIRECT_USE 与 DOWNSTREAM_AUTHORIZATION：DIRECT_USE 校验 declaration 的 consumer/permitted-purpose/allowed-action/use-scope；DOWNSTREAM_AUTHORIZATION 校验 declaration current provenance + grant authority、binding/delegation 的 grantable purpose/action/scope 与 Authorization requested context，**不得要求 grantor 自己的 allowed/use scope 匹配 grantee request**；两条路径都按 `as_of` 排除已生效 disposition；
 - `BindAuthorizationProvenance`（或等价显式 Command），禁止 ad hoc CRUD 创建安全关键 binding；
 - Authorization.grantor_ref 与支持它的 RightsDeclaration / grantor-authority delegation chain 的强类型关系；DELEGATED binding 必须持久化 chain ID/hash + ordered member edge identities，不能只在创建时临时证明存在 delegation；chain 若 DRAFT→FINALIZED，member mutation 与 Finalize 必须共享 parent chain row lock/fence（parent-first），Finalize 持锁校验 ordered members/hash，禁止 finalize 后 late member commit；
 - `BindAuthorizationProvenance` 必须证明 declaration 的 **grantable** actions/purpose/scope 覆盖 Authorization 授出的范围；delegation chain 每一跳也必须具有 onward grant authority。`allowed USE` 但 `grantable USE` 为空/禁止时，不能创建支持第三方 USE grant 的 binding；
@@ -152,6 +152,7 @@ DataResource
 - unrelated grantor 反例：资源/action 相同但无有效 provenance binding 时 CurrentEntitlementGate 必须 BLOCKED；
 - delegated grantor 反例：binding 创建时 grantor delegation chain 有效，随后任一上游 edge 过期或 REVOKED/INVALIDATED/SUPERSEDED；即使 binding/declaration/Authorization 本身仍 current，CurrentEntitlementGate 必须 BLOCKED，且后续 credential fresh cap 不得越过 delegation edge 的 valid_to/disposition effective_at；
 - Authorization context mismatch 反例：declaration 允许 consumer B / SHARE，但绑定 Authorization 只授予 consumer A / USE 时，B 的 SHARE 请求必须 BLOCKED；Authorization 的 grantee/consumer、resource、purpose、action、scope 必须逐项覆盖 requested context；
+- downstream grant 正例：party A 的 `allowed_actions/use scope` 不包含 SHARE，但 declaration 明确 `grantable_actions=[SHARE]`、grantable purpose/scope 覆盖 A→B Authorization；若 binding/delegation/Authorization/current facts 全部有效，consumer B 的 SHARE 不能因为 A 自己不能 SHARE 而被错误 BLOCKED；
 - Authorization normalized-scope 反例：`authorization_resource.scope` JSONB 看似包含允许前缀，但 normalized `scope_type/scope_ref` 缺失或与请求不匹配时，BindAuthorizationProvenance / CurrentEntitlementGate 必须 fail closed；不能由不同代码路径各自解释 JSONB；
 - Effective Rights 多输入反例：CURATED output 必须绑定至少两个/三个 required inputs；其中一个输入明确禁止 SHARE（其它输入允许）时，finalized EffectiveRightsSnapshot.SHARE=NOT_ALLOWED，并能追溯到该输入。删除/漏掉该 required input membership 必须使计算失败，不能得到更宽结果；
 - disposed/expired declaration 反例：即使 Authorization 仍 ACTIVE，CurrentEntitlementGate 仍必须 BLOCKED；
