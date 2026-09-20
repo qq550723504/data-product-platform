@@ -22,7 +22,7 @@
 ## 2. 第一阶段任务
 
 ~~~text
-#131 QualityAssessment
+#131 QualityAssessment core ✅ (#140 / migration 000019)
         ↓
 #132 Quality Engine
         ↓
@@ -41,7 +41,9 @@
 
 ## 3. HQD-1 #131
 
-演进现有 quality_result 为正式 QualityAssessment。
+QualityAssessment 核心已经通过 #140 / migration 000019 落地，继续复用 `quality_result` / `quality_finding` 作为兼容存储/API 名称。
+
+#131 后续只处理在 review 中新增但 #140 未覆盖的 follow-up（例如 typed CostAllocation），不重复设计或迁移 QualityAssessment root。
 
 必须固定：
 
