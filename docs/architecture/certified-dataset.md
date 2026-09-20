@@ -205,7 +205,21 @@ API 提供 DatasetVersion assessments、assessment report、certification profil
 3. 不接受客户端传入的“已通过 eligibility”布尔值或旧 gate result 作为授权依据；
 4. gate 与 credential/data issuance 必须属于同一个 Application Command 的受控边界，避免 query→delivery 之间的 TOCTOU 绕过；
 5. gate 失败时不得产生可用下载链接、token、credential 或数据响应；
-6. 若交付形态需要签发访问凭证，凭证必须有明确有限有效期；第一阶段不得签发无期限凭证。
+6. 若交付形态需要签发访问凭证，凭证必须有明确有限有效期；第一阶段不得签发无期限凭证；
+7. 凭证 `expires_at` 必须满足：
+
+~~~text
+expires_at
+<= min(
+     requested_expires_at,
+     platform_max_credential_expiry,
+     earliest applicable RightsDeclaration effective_to,
+     earliest applicable Authorization valid_to
+   )
+~~~
+
+任何参与本次 CurrentEntitlementGate 的有限权利边界都必须参与上限计算，不能让 URL/token 在 entitlement 到期后继续有效；
+8. 如果 delivery mode 支持 redemption-time server check，则每次 redemption 继续执行 CurrentDeliveryGate；如果是无法在 redemption 时回调平台的 bearer/presigned credential，则至少必须执行上述 expiry cap，并由 #135 明确该 delivery mode 的最大 TTL。
 
 关键写动作使用显式 Command。
 
