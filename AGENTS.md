@@ -24,7 +24,7 @@ Data Product Platform 自身数据库是以下核心业务事实的 System of Re
 - DataResource
 - Dataset / DatasetVersion
 - Entity / EntityMapping / immutable mapping decisions
-- Authorization / RightsSnapshot
+- Authorization / AuthorizationProvenanceBinding / RightsSnapshot
 - RightsDeclaration / rights verification facts（#137 起）
 - Workflow / Execution / frozen execution dependencies
 - QualityAssessment / Quality findings（#131 起）
@@ -86,6 +86,8 @@ RightsDeclaration
 ~~~
 
 平台记录权利声明、依据、主体角色、允许项、限制项和 Evidence；不得声称平台自动裁定现实世界法律所有权。
+
+Authorization 不能与 provenance 独立选择。每个进入 CurrentEntitlementGate 的 Authorization / ResourceGrant 都必须通过强类型 AuthorizationProvenanceBinding 证明其 grantor_ref 得到相应 VERIFIED RightsDeclaration 支持；grantor 不匹配或无可验证 delegation chain 时 fail closed。
 
 衍生数据的 Effective Rights 默认 fail closed：任何必要输入不允许某个动作时，输出不得自动获得该动作。
 
@@ -190,7 +192,7 @@ Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduc
 每次 standalone delivery 必须执行 CurrentDeliveryGate：
 
 - DatasetVersionUsability：至少拒绝 INVALID / FAILED / PROCESSING / CREATED；SUPERSEDED 是否允许按明确历史版本交付遵循现有领域语义和实现验收；
-- CurrentCertificationGate：delivery 必须绑定明确 certification；其 decision 必须为 CERTIFIED，且在 as_of 时点未被 CertificationDisposition REVOKED / SUPERSEDED；禁止用 latest created_at 猜当前认证；
+- CurrentCertificationGate：delivery 必须绑定明确 certification；其 decision 必须为 CERTIFIED，且在 as_of 时点未被 CertificationDisposition REVOKED / SUPERSEDED；requested purpose/action/consumer/delivery context 必须被该 certification 冻结的 CertificationProfile snapshot 覆盖；禁止用 latest created_at 猜当前认证；
 - CurrentEntitlementGate：使用当前时间、consumer、purpose、action 检查每一个候选 RightsDeclaration 的 VERIFIED 状态、其自身 validity window 与 scope，并排除已生效 INVALIDATED/SUPERSEDED 的 provenance；同时检查 Authorization 状态/有效期与 Effective Rights。
 
 任一子门禁失败都必须 fail closed，即使历史 Certification 仍为 CERTIFIED。
