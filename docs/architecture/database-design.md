@@ -250,8 +250,12 @@ Current binding selection 必须按 as_of 排除已生效 INVALIDATED / SUPERSED
 - consumer applicability：例如 consumer_mode = ANY / EXPLICIT；EXPLICIT 时使用强类型 consumer_ref（必要时 consumer_type）
 - purpose：单值可用强类型 purpose_code；多值时使用 rights_declaration_purpose(declaration_id, purpose_code) 等规范化关系，不只放 JSONB
 - scope：至少强类型 scope_type + scope_ref（例如 ALL_RESOURCE / DATASET / OBJECT_PREFIX / ROW_POLICY 等实现固定枚举/引用）；复杂扩展参数可附加 JSONB，但 CurrentEntitlementGate 所需的 scope identity 必须可索引/查询
-- allowed actions（强类型枚举/规范化关系）
-- restricted actions（强类型枚举/规范化关系）
+- allowed_actions（强类型枚举/规范化 relation）：party 自身可执行的使用动作
+- grant_authority_mode：NONE / EXPLICIT（或等价）
+- grantable_actions（强类型 relation；EXPLICIT 时至少一项）
+- grantable_purpose（强类型 relation；不默认等于 permitted purpose）
+- grantable_scope_type / grantable_scope_ref（或 normalized relation；不默认等于 use scope）
+- restricted actions / transfer / sublicensing semantics（受约束、机器可判断）
 - verification status / fact
 - append-only disposition facts (INVALIDATED / SUPERSEDED, effective_at, reason, evidence, actor, optional superseded_by)
 - evidence association
@@ -271,6 +275,8 @@ RightsSnapshot 的 immutable 语义覆盖 **snapshot header + 全部 membership 
 
 要求：
 - snapshot header 与全部 membership 在同一 transaction 中创建并 finalize，或采用明确 DRAFT → FINALIZED 协议；
+- **若使用 DRAFT → FINALIZED，多事务 membership mutation 与 FINALIZE 必须串行化在同一个 parent snapshot row/fence/revision 上。** 推荐固定顺序先 `SELECT ... FOR UPDATE` 锁 parent snapshot，再检查 status=DRAFT，再 INSERT/UPDATE/DELETE membership；Finalize 使用同一 parent lock，验证 membership/root hash 完整后原子改 FINALIZED；
+- 不允许“membership transaction 先读到 DRAFT → finalize transaction 提交 → membership 后提交”的穿越窗口；parent lock/fence 必须让这两个顺序形成唯一全序；
 - FINALIZED 后 header 禁止业务语义 UPDATE/DELETE；
 - FINALIZED 后 membership 行禁止 INSERT / UPDATE / DELETE，数据库 trigger/guard 必须 fail closed；
 - 不允许通过删除旧 authorization_id、插入新 binding_id 等方式“保持 snapshot ID 不变但改写历史内容”；
@@ -307,6 +313,7 @@ action decision 至少：
 约束：
 - 计算输入必须来自 target DatasetVersion 的实际 lineage/dependency facts，调用方不能省略某 required input；
 - action=ALLOWED 当且仅当所有 required input 对该 action 都明确 ALLOWED；任一 deny/unknown/missing → NOT_ALLOWED/fail closed；
+- DRAFT EffectiveRightsSnapshot 的 input/action membership mutation 与 FINALIZE 必须使用与 RightsSnapshot 相同的 parent-row lock/fence 协议；Finalize 在持锁状态下校验 required-input set/hash 与 action decisions 后提交 FINALIZED；
 - FINALIZED 后 header/input/action rows 禁止 INSERT/UPDATE/DELETE；修正创建新 snapshot；
 - content/root hash（如使用）覆盖规范化排序后的 input membership + action decisions + calculation rule identity；
 - #134 DatasetCertification 使用强类型 effective_rights_snapshot_id/hash，不能只保存“当时算过”的布尔结果；
