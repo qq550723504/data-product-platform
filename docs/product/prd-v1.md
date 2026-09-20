@@ -214,7 +214,7 @@ Readiness 不满足时当前实现保持 `VALIDATING`，不会写成 `FAILED`。
 - FAILED 当前不由 ValidateRelease 产生；
 - SUSPENDED/WITHDRAWN 当前受 published-row guard 阻止，且无对应 Command。
 
-V1.1 不把这些状态描述为当前可达迁移；未来启用必须单独设计 migration + Command，并继续冻结 published bindings。
+V1.1 不把这些状态描述为当前可达迁移。Published binding immutability 是领域 invariant，但当前数据库只保护 `product_release` 主行；`product_release_dataset` membership guard 仍由 #99 跟踪。未来启用 reserved states 必须单独设计 migration + Command，并先确保/保持 published dataset membership 的 INSERT/UPDATE/DELETE freeze。
 
 ## 8. Quality Assessment
 
