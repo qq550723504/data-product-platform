@@ -147,7 +147,7 @@ DataResource
 - disposed/expired declaration 反例：即使 Authorization 仍 ACTIVE，CurrentEntitlementGate 仍必须 BLOCKED；
 - RightsDeclarationInvalidated / RightsDeclarationSuperseded / AuthorizationProvenanceBound / AuthorizationProvenanceBindingInvalidated / AuthorizationProvenanceBindingSuperseded 等 Domain Event + Audit/Evidence/Outbox/routing obligation。
 
-Rights verification / invalidation / supersession / provenance binding 等实际人工或外部核验活动必须在发生时记录 CostEvent；这些活动通常没有 Execution，必须通过 typed CostAllocation 关联实际 Rights 业务事实，并使用稳定 activity_id/component_key 防止重试重复记账。
+Rights verification / invalidation / supersession / provenance binding 等实际人工或外部核验活动必须在发生时记录 CostEvent；这些活动通常没有 Execution，必须通过 typed CostAllocation 关联实际 Rights 业务事实。same-attempt replay 使用稳定 activity/attempt identity + component_key 去重；若 retry 真正再次发生外部核验/人工工作，则使用新的 attempt identity 记录新增实际成本，不能按顶层业务对象全部去重。
 
 缺少 declaration creation/verification lifecycle、withdrawal/current-selection、provenance binding 任一能力时，#137 不视为完成。
 
@@ -196,7 +196,7 @@ CertificationProfile 可以要求：
 
 缺少 Profile snapshot、certification evaluation/create path、fail-closed input binding、CertificationDisposition、withdrawal/current-selection 或 certification outcome events 任一项时，#134 不视为完成。
 
-认证评估/人工审批若产生实际成本，必须记录 CostEvent，并通过 typed CostAllocation 关联 DatasetCertification / CertificationDisposition，使用稳定 activity_id/component_key 保证重试幂等。
+认证评估/人工审批若产生实际成本，必须记录 CostEvent，并通过 typed CostAllocation 关联 DatasetCertification / CertificationDisposition。稳定 activity/attempt identity + component_key 只用于 same-attempt replay 幂等；新的真实评估/审批 attempt 若再次产生费用，必须追加成本或原子聚合新增 quantity。
 
 ## 8. HQD-5 #135
 
@@ -238,7 +238,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
   - entitlement-change-first：Authorization revoke（并至少再覆盖 Rights/Binding/Certification disposition 或 DatasetVersion INVALID 中一种）先在线性化 fence 上提交，delivery finalize 随后必须观察新 revision/current facts，不能 ISSUED；provider capability 进入 contain/block/fail，direct-data 必须断言 response body 仍为 0 bytes；
   - caller-binding-change-first：principal→consumer/workspace binding / delegation revoke 先在线性化 fence 上提交，delivery finalize 必须观察新 revision 并 fail closed；不能因为入口身份检查曾通过而继续 ISSUED；
   - finalize-first：delivery terminal ISSUED 先在线性化 fence 上提交，随后 gate-changing Command 才完成；direct-data 只有在该 commit 之后才能放行第一字节；两者必须形成唯一全序，后续 Command 按 delivery-mode revocation semantics 处理已签发 capability；
-  - 验证固定锁顺序/无 deadlock、重复 idempotency retry 不产生第二个 terminal fact/event/cost；
+  - 验证固定锁顺序/无 deadlock、重复 idempotency retry 不产生第二个 terminal fact/event；CostEvent 按实际 activity-attempt 语义处理：same-attempt replay 去重，但如果 retry/reconciliation 确实再次发生可计费 provider/compute 调用，则必须以新的稳定 attempt identity 记录新增实际成本（或原子聚合 quantity），不能被顶层 DeliveryOperation idempotency 吞掉；
 - 如果 re-gate 已 BLOCKED：
   - 确认此前未产生 provider access capability 时可直接 BLOCKED；
   - 若既有 provider_request_key 可能已签发，必须先 reconcile；
