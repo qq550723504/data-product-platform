@@ -214,12 +214,15 @@ expires_at
      requested_expires_at,
      platform_max_credential_expiry,
      earliest applicable RightsDeclaration effective_to,
-     earliest applicable Authorization valid_to
+     earliest applicable Authorization valid_to,
+     earliest already-scheduled RightsDisposition effective_at,
+     earliest already-scheduled CertificationDisposition effective_at
    )
 ~~~
 
-任何参与本次 CurrentEntitlementGate 的有限权利边界都必须参与上限计算，不能让 URL/token 在 entitlement 到期后继续有效；
-8. 如果 delivery mode 支持 redemption-time server check，则每次 redemption 继续执行 CurrentDeliveryGate；如果是无法在 redemption 时回调平台的 bearer/presigned credential，则至少必须执行上述 expiry cap，并由 #135 明确该 delivery mode 的最大 TTL。
+任何参与本次 CurrentDeliveryGate 的已知有限边界都必须参与上限计算。除了 declaration / authorization validity，还包括签发时已经存在、将在未来生效的 RightsDisposition / CertificationDisposition。不能让 URL/token 在 provenance 或 certification 已按计划退出 current set 后继续有效；
+8. 如果 delivery mode 支持 redemption-time server check，则每次 redemption 继续执行 CurrentDeliveryGate；如果是无法在 redemption 时回调平台的 bearer/presigned credential，则必须执行上述 expiry cap，并由 #135 明确该 delivery mode 的最大 TTL；
+9. 对签发后才新增的紧急 revocation，只有 redemption-time gate / revocable credential 才能即时阻断；第一阶段若某 delivery mode 不具备此能力，必须在产品/API 中明确该限制，并使用短 TTL，而不能声称签发后的 bearer credential 可即时撤销。
 
 关键写动作使用显式 Command。
 
