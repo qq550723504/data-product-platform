@@ -229,6 +229,21 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 		t.Fatalf("compliance gate = %s, want PASS; findings=%+v", complianceResult.GateDecision, complianceResult.Findings)
 	}
 
+	// A completed attempt is a stable replay fact. It must remain replayable even
+	// after the mutable DatasetVersion is invalidated.
+	invalidateVersion := datasetapp.NewInvalidateVersionService(txManager, datasetRepo)
+	if _, err := invalidateVersion.Handle(ctx, datasetapp.InvalidateVersionCommand{VersionID: passVersion.ID, Reason: "replay-ordering", TraceID: "governance-e2e-replay"}); err != nil {
+		t.Fatalf("invalidate replayed version: %v", err)
+	}
+	replayedAfterInvalidation, err := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: passVersion.ID,
+		RuleSetRef: "park/quality/enterprise-activity-quality-v1.yaml", AssessmentAttemptID: firstAttemptID,
+		TraceID: "governance-e2e-replay-after-invalidation", Now: passVersion.ReadyAt.Add(33 * 60 * 1e9),
+	})
+	if err != nil || replayedAfterInvalidation.ID != qualityResult.ID {
+		t.Fatalf("same quality attempt replay after invalidation = %s, err=%v; want original assessment %s", replayedAfterInvalidation.ID, err, qualityResult.ID)
+	}
+
 	badQualityDataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "GOV-BAD-QUALITY")
 	badQualityVersion := uploadCSV(t, ctx, uploadDataset, badQualityDataset.ID, "product-bad-quality.csv", `company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at
 COMPANY-002,异常科技有限公司,2026-09,90,95,80,120,HIGH,100,2026-09-16T10:00:00Z
@@ -296,7 +311,6 @@ COMPANY-004,外部科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	// Ownership must be resolved before the status check: a foreign version that is no
 	// longer READY must still be rejected as a workspace mismatch, not surface its status
 	// through the generic QUALITY_CHECK_FAILED / COMPLIANCE_CHECK_FAILED path.
-	invalidateVersion := datasetapp.NewInvalidateVersionService(txManager, datasetRepo)
 	if _, err := invalidateVersion.Handle(ctx, datasetapp.InvalidateVersionCommand{VersionID: foreignVersion.ID, Reason: "governance-ordering", TraceID: "governance-rejected"}); err != nil {
 		t.Fatalf("invalidate foreign version: %v", err)
 	}

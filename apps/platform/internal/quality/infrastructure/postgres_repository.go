@@ -49,6 +49,13 @@ type AssessmentAttemptState struct {
 	ErrorMessage string
 }
 
+type AssessmentAttempt struct {
+	WorkspaceID      uuid.UUID
+	DatasetVersionID uuid.UUID
+	RuleSetRef       string
+	State            AssessmentAttemptState
+}
+
 func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 	return &PostgresRepository{pool: pool}
 }
@@ -90,6 +97,27 @@ func (r *PostgresRepository) InsertResult(ctx context.Context, tx pgx.Tx, result
 		return fmt.Errorf("insert quality result: %w", err)
 	}
 	return nil
+}
+
+func (r *PostgresRepository) GetAssessmentAttempt(ctx context.Context, attemptID uuid.UUID) (AssessmentAttempt, bool, error) {
+	var attempt AssessmentAttempt
+	err := r.pool.QueryRow(ctx, `
+		SELECT a.workspace_id, a.dataset_version_id, a.rule_set_ref,
+			COALESCE(o.outcome,''), o.assessment_id, COALESCE(o.error_message,'')
+		FROM quality_assessment_attempt a
+		LEFT JOIN quality_assessment_attempt_outcome o ON o.attempt_id=a.id
+		WHERE a.id=$1
+	`, attemptID).Scan(
+		&attempt.WorkspaceID, &attempt.DatasetVersionID, &attempt.RuleSetRef,
+		&attempt.State.Outcome, &attempt.State.AssessmentID, &attempt.State.ErrorMessage,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return AssessmentAttempt{}, false, nil
+	}
+	if err != nil {
+		return AssessmentAttempt{}, false, fmt.Errorf("load quality assessment attempt %s: %w", attemptID, err)
+	}
+	return attempt, true, nil
 }
 
 // ClaimAssessmentAttempt durably records the physical attempt before the

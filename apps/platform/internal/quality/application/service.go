@@ -66,6 +66,18 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	if attemptID == uuid.Nil {
 		attemptID = uuid.New()
 	}
+	if cmd.AssessmentAttemptID != uuid.Nil {
+		attempt, found, err := s.repo.GetAssessmentAttempt(ctx, attemptID)
+		if err != nil {
+			return domain.Assessment{}, err
+		}
+		if found {
+			if attempt.WorkspaceID != cmd.WorkspaceID || attempt.DatasetVersionID != cmd.DatasetVersionID || attempt.RuleSetRef != cmd.RuleSetRef {
+				return domain.Assessment{}, fmt.Errorf("%w: %s", ErrAssessmentAttemptConflict, attemptID)
+			}
+			return s.replayAttempt(ctx, attempt.State)
+		}
+	}
 	version, err := s.datasetRepo.GetVersion(ctx, cmd.DatasetVersionID)
 	if err != nil {
 		return domain.Assessment{}, err
@@ -110,17 +122,7 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 		return domain.Assessment{}, err
 	}
 	if !claimed {
-		if attemptState.AssessmentID != nil {
-			existing, err := s.repo.GetAssessment(ctx, *attemptState.AssessmentID)
-			if err != nil {
-				return domain.Assessment{}, fmt.Errorf("load idempotent quality assessment: %w", err)
-			}
-			return existing, nil
-		}
-		if attemptState.Outcome == "FAILED" {
-			return domain.Assessment{}, fmt.Errorf("%w: %s", ErrAssessmentAttemptFailed, attemptState.ErrorMessage)
-		}
-		return domain.Assessment{}, ErrAssessmentAttemptInProgress
+		return s.replayAttempt(ctx, attemptState)
 	}
 	findings, metrics, err := native.Evaluate(policy, native.DatasetContext{
 		Table:    table,
@@ -212,6 +214,20 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 		}
 	}
 	return result, err
+}
+
+func (s *Service) replayAttempt(ctx context.Context, state infrastructure.AssessmentAttemptState) (domain.Assessment, error) {
+	if state.AssessmentID != nil {
+		existing, err := s.repo.GetAssessment(ctx, *state.AssessmentID)
+		if err != nil {
+			return domain.Assessment{}, fmt.Errorf("load idempotent quality assessment: %w", err)
+		}
+		return existing, nil
+	}
+	if state.Outcome == "FAILED" {
+		return domain.Assessment{}, fmt.Errorf("%w: %s", ErrAssessmentAttemptFailed, state.ErrorMessage)
+	}
+	return domain.Assessment{}, ErrAssessmentAttemptInProgress
 }
 
 func (s *Service) claimAttempt(ctx context.Context, cmd RunCommand, attemptID uuid.UUID, startedAt time.Time) (bool, infrastructure.AssessmentAttemptState, error) {
