@@ -237,7 +237,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - DeliveryOperation 的**数据库 terminal fact** + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；外部 credential provider 调用不属于 PostgreSQL transaction；
 - 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key；
 - **每一次 initial / retry / reconciliation 真正调用 provider 前，都重新验证 caller principal→effective consumer/workspace binding/delegation 当前有效性，再重新执行完整 CurrentDeliveryGate 并重新计算 credential expiry cap**；PREPARED/ISSUANCE_PENDING 中旧 identity/gate snapshot 只用于审计；
-- 所有 delivery mode 的 terminal ISSUED transaction 必须获取与 Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，再次 re-gate；provider/credential 模式同时 fresh-cap；terminal commit 是 delivery linearization point；
+- 所有 delivery mode 的 terminal ISSUED transaction 必须获取与 caller identity lifecycle、grantor-authority delegation edge/disposition、Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，再次 re-gate；provider/credential 模式同时 fresh-cap；terminal commit 是 delivery linearization point；
 - direct-data 模式必须在 terminal ISSUED commit 成功前保持 response body=0 bytes；commit 后才允许写第一字节，且不能为整个 stream 长时间持有 DB fence/lock；
 - direct-data terminal `ISSUED` 只表示该 attempt 已在线性化点获准开始响应，不证明客户端已收到数据；如果 ISSUED commit 后、第一字节前或 streaming 中发生 response loss，同一 idempotency key 只能返回稳定 non-payload replay result（例如 `DIRECT_DATA_REPLAY_REQUIRES_NEW_ATTEMPT` + 原 operation identity），不得依据旧 gate 重放 DatasetVersion bytes；
 - direct-data 需要重新传输时必须创建新的显式 DeliveryOperation/attempt（新 idempotency key，可用 `retry_of_delivery_operation_id` 关联原 attempt），重新解析 trusted principal/effective consumer/delegation、重新执行 CurrentDeliveryGate、重新进入 terminal fence；期间任何 Rights/Certification/Authorization/DatasetVersion/principal-binding/delegation 失效都必须使新 attempt fail closed；
@@ -246,6 +246,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
   - 使用两个独立 transaction/connection + barrier，把竞争窗口固定在“delivery terminal finalize 已进入 fenced re-gate/准备提交 ISSUED”和“gate-changing Command 准备提交 disposition/invalidation”之间；
   - entitlement-change-first：Authorization revoke（并至少再覆盖 Rights/Binding/Certification disposition 或 DatasetVersion INVALID 中一种）先在线性化 fence 上提交，delivery finalize 随后必须观察新 revision/current facts，不能 ISSUED；provider capability 进入 contain/block/fail，direct-data 必须断言 response body 仍为 0 bytes；
   - caller-binding-change-first：principal→consumer/workspace binding / delegation revoke 先在线性化 fence 上提交，delivery finalize 必须观察新 revision 并 fail closed；不能因为入口身份检查曾通过而继续 ISSUED；
+  - grantor-delegation-change-first：CurrentEntitlementGate 依赖的 grantor delegation edge/disposition 先在线性化 fence 上提交 revoke/expiry/supersede，delivery finalize 必须观察新 revision 并 fail closed；不能因为 AuthorizationProvenanceBinding 创建时 chain 曾有效而继续 ISSUED；
   - finalize-first：delivery terminal ISSUED 先在线性化 fence 上提交，随后 gate-changing Command 才完成；direct-data 只有在该 commit 之后才能放行第一字节；两者必须形成唯一全序，后续 Command 按 delivery-mode revocation semantics 处理已签发 capability；
   - 验证固定锁顺序/无 deadlock、重复 idempotency retry 不产生第二个 terminal fact/event；CostEvent 按实际 activity-attempt 语义处理：same-attempt replay 去重，但如果 retry/reconciliation 确实再次发生可计费 provider/compute 调用，则必须以新的稳定 attempt identity 记录新增实际成本（或原子聚合 quantity），不能被顶层 DeliveryOperation idempotency 吞掉；
 - 如果 re-gate 已 BLOCKED：
