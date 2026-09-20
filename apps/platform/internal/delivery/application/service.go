@@ -385,6 +385,16 @@ func (s *Service) finalizeReplay(ctx context.Context, prep replayPreparation, ca
 func (s *Service) executeReplayRevoke(ctx context.Context, prep replayPreparation, reason string, cmd IssueCredentialCommand) (Result, error) {
 	if prep.revoke {
 		if err := s.provider.Revoke(ctx, prep.operation.ProviderRequestKey); err != nil {
+			if errors.Is(err, ErrCapabilityNotFound) {
+				if recordErr := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, domain.ObservationCallReturn, domain.OutcomeNotFound, domain.Capability{}, "provider reports no active capability during replay containment"); recordErr != nil {
+					return Result{}, recordErr
+				}
+				result, recordErr := s.appendReplayDecision(ctx, prep, "BLOCKED", domain.Capability{}, reason, cmd)
+				if recordErr != nil {
+					return Result{}, recordErr
+				}
+				return result, ErrCredentialReplay
+			}
 			if recordErr := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, domain.ObservationCallReturn, domain.OutcomeUnknown, domain.Capability{}, err.Error()); recordErr != nil {
 				return Result{}, recordErr
 			}
@@ -579,7 +589,11 @@ func (s *Service) processPending(ctx context.Context, operation domain.Operation
 		return Result{}, err
 	}
 	if !initial && operation.Status == domain.StatusContainmentPending {
-		return s.containCapability(ctx, operation, domain.StatusBlocked, "recovered capability requires containment", cmd)
+		target := domain.StatusBlocked
+		if evaluation.Allowed {
+			target = domain.StatusFailed
+		}
+		return s.containCapability(ctx, operation, target, "recovered capability requires containment", cmd)
 	}
 	return s.finalizeCapability(ctx, operation.ID, attemptID, capability, cmd)
 }
@@ -746,6 +760,9 @@ func matchesIssuedCapability(operation domain.Operation, capability domain.Capab
 		return false
 	}
 	if capability.CapabilityRef != operation.CredentialRef {
+		return false
+	}
+	if operation.ProviderCredentialExpiresAt == nil || capability.ProviderCredentialExpiresAt.IsZero() || capability.ProviderCredentialExpiresAt.After(operation.ProviderCredentialExpiresAt.UTC()) {
 		return false
 	}
 	derivedHash := hashSecret(capability.Credential)

@@ -19,7 +19,7 @@ func TestMatchesIssuedCapabilityRequiresTheOriginalCapability(t *testing.T) {
 		CredentialHash:              hashSecret("secret-a"),
 		ProviderCredentialExpiresAt: &now,
 	}
-	capability := domain.Capability{Credential: "secret-a", CapabilityRef: "provider-capability-ref"}
+	capability := domain.Capability{Credential: "secret-a", CapabilityRef: "provider-capability-ref", ProviderCredentialExpiresAt: now}
 	if !matchesIssuedCapability(op, capability) {
 		t.Fatal("the originally issued capability should match")
 	}
@@ -40,5 +40,11 @@ func TestMatchesIssuedCapabilityRequiresTheOriginalCapability(t *testing.T) {
 	capability.CapabilityRef = "different-ref"
 	if matchesIssuedCapability(op, capability) {
 		t.Fatal("a different capability ref must not match the issued fact")
+	}
+
+	capability.CapabilityRef = "provider-capability-ref"
+	capability.ProviderCredentialExpiresAt = now.Add(time.Minute)
+	if matchesIssuedCapability(op, capability) {
+		t.Fatal("a recovered capability with extended expiry must not match the issued fact")
 	}
 }
