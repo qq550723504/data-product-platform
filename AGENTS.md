@@ -31,7 +31,7 @@ Data Product Platform 自身数据库是以下核心业务事实的 System of Re
 - DataContract
 - CertificationProfile snapshot / DatasetCertification（#134 起）
 - DataProduct / ProductVersion / ProductRelease
-- CostEvent
+- CostEvent / CostAllocation
 - Evidence / EvidenceSnapshot / AuditEvent
 
 OpenMetadata 仅作为 Governance Projection。
