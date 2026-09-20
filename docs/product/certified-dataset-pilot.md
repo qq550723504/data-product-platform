@@ -239,6 +239,8 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 第一阶段还必须验证：
 
 - DatasetVersion 已经 CERTIFIED 后，如果对应 Authorization 过期/撤销、RightsDeclaration 被显式 INVALIDATED/SUPERSEDED，或 SHARE/RAW_EXPORT 等本次交付动作不再允许，历史 Certification 仍可查询，但 CurrentDeliveryGate 中的 CurrentEntitlementGate 必须阻止实际交付；
+- 当前有效 AuthorizationProvenanceBinding 被显式 INVALIDATED/SUPERSEDED，而其 RightsDeclaration 仍 VERIFIED、Authorization 仍 ACTIVE 时，历史 RightsSnapshot / Certification 继续解释旧 binding，但 CurrentEntitlementGate 必须排除该 binding 并 BLOCKED；
+- provider issuance 已成功但 terminal DB commit 丢失，随后 fresh gate 变为 BLOCKED 时，必须先 reconciliation 既有 provider_request_key 并 revoke/contain 已恢复的 access capability；未确认 containment 时保持 CONTAINMENT_PENDING，不得直接宣称 BLOCKED；
 - DatasetVersion 已经 CERTIFIED 后若状态变为 INVALID，历史 Certification 仍保留，但 CurrentDeliveryGate 必须 BLOCKED；
 - C1=CERTIFIED 后如果纠错生成 C2=REJECTED，并通过 CertificationDisposition 显式 SUPERSEDE C1，历史 C1/C2 都保留，但 CurrentCertificationGate 必须阻止继续使用 C1；
 - Pilot 汇总的成本来自实际 CostEvent + typed CostAllocation，不允许仅在验收报告中事后估算重建，也不得仅从 JSONB metadata 猜业务归属；
