@@ -27,9 +27,10 @@ Data Product Platform 自身数据库是以下核心业务事实的 System of Re
 - Authorization / AuthorizationProvenanceBinding / RightsSnapshot
 - RightsDeclaration / rights verification facts（#137 起）
 - Workflow / Execution / frozen execution dependencies
-- QualityAssessment / Quality findings（#131 起）
+- QualityAssessment / Quality findings（已通过 #140 / migration 000019 落地）
 - DataContract
 - CertificationProfile snapshot / DatasetCertification（#134 起）
+- DeliveryOperation（#135 起）
 - DataProduct / ProductVersion / ProductRelease
 - CostEvent / CostAllocation
 - Evidence / EvidenceSnapshot / AuditEvent
@@ -51,7 +52,7 @@ OpenMetadata 仅作为 Governance Projection。
 - WorkflowVersion
 - EvidenceSnapshot
 - RightsSnapshot
-- QualityAssessment（#131 起）
+- QualityAssessment（已实现；兼容存储名 quality_result / quality_finding）
 - verified RightsDeclaration / verification fact（#137 起）
 - CertificationProfile snapshot（#134 起）
 - DatasetCertification / CertificationDisposition（#134 起）
@@ -278,11 +279,11 @@ Engine Adapter 错误需要映射为平台统一错误模型。
 
 ## 16. Current Stage and Scope Discipline
 
-核心 POC 已完成。当前阶段是 #129 Certified Dataset 受控试点。
+核心 POC 已完成。当前阶段是 #129 Certified Dataset 受控试点。QualityAssessment 核心已由 #140 落地；#131 仅保留 review 后新增的 CostAllocation 等 follow-up。
 
 第一阶段主任务：
 
-- #131 QualityAssessment
+- #131 QualityAssessment follow-up / CostAllocation
 - #132 Quality Engine
 - #133 Quality Report
 - #137 Data Rights Provenance
