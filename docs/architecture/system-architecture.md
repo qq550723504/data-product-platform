@@ -114,7 +114,9 @@ Certified Dataset 可以作为独立交付对象，也可以继续进入 Data Pr
 2. DB commit 成功后才执行外部 issuance；
 3. provider 成功后再提交 terminal DeliveryOperation + Audit/Evidence/Outbox/CostEvent；
 4. terminal commit 成功后才向客户端暴露 credential；
-5. crash/timeout 由 reconciliation 使用同一 provider_request_key 恢复，不盲目重复签发。
+5. 每次 initial/retry/reconciliation 真正调用 provider 前重新执行 CurrentDeliveryGate，并重新计算 expiry cap；prepare 阶段的旧 gate snapshot 不授权后续外部 side effect；
+6. crash/timeout 由 reconciliation 使用同一 provider_request_key 恢复，不盲目重复签发；
+7. direct bearer delivery 只有在 provider 能按同一 key 恢复同一 credential/访问能力时允许；否则使用 platform redemption indirection。
 
 ## 5. Governance Projection
 
