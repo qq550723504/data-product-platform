@@ -376,7 +376,11 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 - workspace_id
 - dataset_version_id
 - dataset_certification_id
-- consumer_ref
+- caller_principal_ref（服务端 authenticated principal 的稳定引用）
+- consumer_ref（服务端解析后的 effective consumer；不得直接等同请求值）
+- principal_binding_ref / workspace_membership_ref（按实现模型选取可验证稳定引用）
+- delegation_ref（on-behalf-of 时使用）
+- retry_of_delivery_operation_id（显式 replacement/re-delivery attempt 时使用）
 - purpose
 - action
 - delivery_mode
@@ -396,12 +400,12 @@ RightsVerification 使用独立 append-only fact，但同一 RightsDeclaration �
 实现可选择 append-only attempt/result 模型或受控 lifecycle row，但必须满足：
 
 - 每次 delivery Command 有稳定 ID；
-- 同一幂等请求不会重复签发或重复记账；
+- 同一幂等请求不会重复签发；CostEvent 幂等按 physical activity attempt 处理：same-attempt replay 不重复，真实新增 provider/compute attempt 必须新增 attempt identity 成本（或原子聚合 quantity/amount）；
 - 外部 issuance 前必须先 durable persist PREPARED/ISSUANCE_PENDING；
 - provider_request_key 对同一外部-provider DeliveryOperation 稳定，支持 crash 后安全 retry/reconcile；direct-data mode 可为空，但仍必须使用 delivery authorization fence/revision；
-- 必须持久化 delivery gate dependency revision/fence token（或等价可验证线性化信息）；
-- 所有影响 CurrentDeliveryGate 的 disposition/invalidation Command 与 DeliveryOperation terminal finalize 使用同一组 delivery authorization fence rows / revisions，并以固定顺序锁定，避免 deadlock；
-- provider 返回后，ISSUED terminal transaction 必须在 fence 下重新 gate + fresh-cap，并把该 commit 作为 issuance linearization point；
+- 必须持久化 delivery authorization dependency revision/fence token（或等价可验证线性化信息），覆盖 caller principal/binding/membership/delegation + CurrentDeliveryGate 关键依赖；
+- 所有影响实际 delivery authorization 的 principal binding/workspace membership/delegation lifecycle、CurrentDeliveryGate disposition/invalidation Command 与 DeliveryOperation terminal finalize 使用同一组 delivery authorization fence rows / revisions（或等价强度机制），并以固定顺序锁定，避免 deadlock；
+- provider 返回后，ISSUED terminal transaction 必须在 fence 下重新验证 caller authority + re-gate + fresh-cap，并把该 commit 作为 issuance linearization point；
 - direct-data mode 的 ISSUED terminal transaction 同样在 fence 下重新 gate；commit 成功前禁止写出任何 response byte，commit 后不得继续持有 fence/row lock 贯穿整个 stream；
 - 任何进入 ISSUED 的 credential 必须满足 provider_credential_expires_at <= 当前 fresh_cap_expires_at；reconciliation 找回的旧 credential 同样适用，不能因为 provider_request_key 命中就跳过；
 - provider 实际 capability 必须是 delivery request / CurrentDeliveryGate 允许上下文的**等价或更窄集合**：不得扩大到其它 DatasetVersion/DataResource、consumer、action、object/row/prefix scope 或 delivery channel；
