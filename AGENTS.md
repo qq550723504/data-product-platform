@@ -47,7 +47,7 @@ OpenMetadata 仅作为 Governance Projection。
 - EntityMappingDecision
 - Execution dependency preparation / binding / mapping usage
 - ProductVersion
-- ProductRelease published bindings / published release history
+- ProductRelease published bindings / published release history（领域 invariant；当前 `product_release` 行已有 guard，但 `product_release_dataset` membership 的 DB-level freeze 仍是 #99 已知缺口）
 - ContractVersion
 - WorkflowVersion
 - EvidenceSnapshot
@@ -58,7 +58,7 @@ OpenMetadata 仅作为 Governance Projection。
 - CertificationProfile snapshot（#134 起）
 - DatasetCertification / CertificationDisposition（#134 起）
 
-ProductRelease 特例：DRAFT / VALIDATING / READY 等发布前阶段允许显式 Command 按状态机更新 status 与 validation bindings；进入 PUBLISHED 后，当前数据库 guard 阻止任何 UPDATE，published row 整体冻结。SUSPENDED / WITHDRAWN 目前只是 schema 枚举中的保留状态，不得声称已有 PUBLISHED → SUSPENDED/WITHDRAWN live transition；未来启用需要独立 migration + Command。
+ProductRelease 特例：DRAFT / VALIDATING / READY 等发布前阶段允许显式 Command 按状态机更新 status 与 validation bindings；进入 PUBLISHED 后，当前 `guard_product_release_history` 只保护 `product_release` 主行的 UPDATE/DELETE。**当前 `product_release_dataset` membership 尚无数据库 INSERT/UPDATE/DELETE guard（#99 open），因此不能声称数据库已经完整冻结 published dataset bindings。** 领域 invariant 仍要求 published bindings 不可变；在 #99 补齐 membership guard 前，这是已知 enforcement gap。SUSPENDED / WITHDRAWN 目前只是 schema 枚举中的保留状态，不得声称已有 PUBLISHED → SUSPENDED/WITHDRAWN live transition；未来启用需要独立 migration + Command，同时不得回退 binding freeze。
 
 DeliveryOperation 也是受控 lifecycle row，不得把整行视为创建即 immutable：PREPARED / ISSUANCE_PENDING / CONTAINMENT_PENDING / terminal 状态需要由显式 delivery/reconciliation Command 更新。必须冻结并保护的是 request/idempotency identity、确定后的 provider_request_key、已记录的 transition/gate/issuance history 与 terminal outcome 语义；不要安装会阻止合法恢复迁移的全行 UPDATE guard。
 
