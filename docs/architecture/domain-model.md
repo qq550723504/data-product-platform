@@ -92,6 +92,8 @@ PREPARED
 
 每次 initial/retry/reconciliation issuance 前必须重新执行完整 CurrentDeliveryGate 并重新计算 expiry cap；旧 gate snapshot 只保留审计价值，不能授权新的 provider side effect。
 
+provider 返回/恢复 access capability 后，在 terminal ISSUED transaction 中必须使用共享 delivery authorization fence/revision 与所有影响 gate 的 entitlement-changing Commands 线性化，并再次完整 re-gate + fresh-cap。该 terminal commit 是 issuance 的线性化点。
+
 provider 成功但 terminal DB commit 失败时，恢复流程必须使用同一 provider_request_key 查询/重放同一 issuance，而不是生成新的 credential。**任何首次返回或恢复出的 credential 在进入 ISSUED 前，都必须验证其实际 expiry/access bound <= 当前 fresh cap。** 若旧 credential 超过 fresh cap，必须先安全 shorten 并验证，或 revoke/contain；不能直接恢复为 ISSUED。direct bearer mode 还必须能在 terminal commit 成功、HTTP response 丢失后通过同一 key 恢复同一 credential/访问能力；否则必须使用 platform redemption indirection。
 
 不能只存在临时 HTTP 请求；也不能把可用 token/credential secret 正文持久化为领域事实。
@@ -171,7 +173,15 @@ EffectiveRights
 - 有哪些 Evidence？
 - 是否已经 VERIFIED？
 
-### 4.4 RightsDisposition
+### 4.4 RightsVerification outcome
+
+RightsVerification 与 RightsDeclaration 分离，但同一个 RightsDeclaration 只允许一个 terminal verification decision：VERIFIED 或 REJECTED。Verify / Reject 互斥；同一 declaration 的 terminal outcome 不允许后续翻转。
+
+错误 VERIFIED 通过 RightsDisposition INVALIDATED / SUPERSEDED 退出 current set；如需修正内容，创建新的 RightsDeclaration 并独立 verification。错误/过时 REJECTED 也通过新的 RightsDeclaration 重新主张，不在原 declaration 上追加 VERIFIED。
+
+Current rights selection 必须读取该 declaration 的唯一 terminal outcome，并要求 decision = VERIFIED；不能只判断历史上“存在过 VERIFIED”。
+
+### 4.5 RightsDisposition
 
 VERIFIED RightsDeclaration 的历史不可改写，但当前有效性可以通过 append-only disposition 事实退出 current set：
 
@@ -180,7 +190,7 @@ VERIFIED RightsDeclaration 的历史不可改写，但当前有效性可以通�
 
 Current rights selection 必须根据 as_of 和 disposition 判断，不能用 created_at/latest 猜测。
 
-### 4.5 AuthorizationProvenanceBinding
+### 4.7 AuthorizationProvenanceBinding
 
 把 Authorization / ResourceGrant 强类型绑定到支持它的 RightsDeclaration provenance。
 
