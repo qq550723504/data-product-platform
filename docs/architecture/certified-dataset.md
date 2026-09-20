@@ -240,7 +240,8 @@ PREPARED
     ├→ FAILED
     ├→ BLOCKED
     └→ CONTAINMENT_PENDING
-         └→ BLOCKED
+         ├→ BLOCKED
+         └→ FAILED
 ~~~
 
 协议至少满足：
@@ -256,6 +257,7 @@ PREPARED
    - provider 已存在 credential/access capability → 必须先 revoke / compensate / contain，并在确认该访问能力已不可用后才能 BLOCKED；
    - provider outcome unknown、查询失败、或 revoke/contain 未确认成功 → 进入 CONTAINMENT_PENDING，不得对外声称 BLOCKED，也不得发出 DatasetDeliveryBlocked terminal event；
    - CONTAINMENT_PENDING 必须由 reconciliation/人工告警持续处理，直到确认 access capability 不存在或已被安全失效；
+- containment 确认成功后，若终结原因是 fresh gate 已不允许交付，则转 BLOCKED；若 gate 仍 ALLOWED 但 credential 无法满足 fresh cap/issuance contract，则转 FAILED（例如 CREDENTIAL_EXCEEDS_FRESH_CAP）；
 6. provider 首次返回或 reconciliation 恢复出 credential/access capability 后，**在写入 ISSUED 前必须验证其实际 provider expiry / access bound 不晚于当前 fresh credential expiry cap**。该 cap 必须来自最近一次 CurrentDeliveryGate + disposition/validity 重新计算，而不是 PREPARED 时的旧值；
 7. 若 recovered/returned credential 的实际 expiry 晚于 fresh cap：
    - 若 provider 能对**同一 access capability**安全缩短/收窄并可 read-after-write 验证实际 expiry <= fresh cap，则验证成功后才允许继续 ISSUED；
