@@ -10,10 +10,14 @@ Workspace
 Project / UseCase
   ↓
 DataResource
-  ├── RightsDeclaration (#137)
-  └── Authorization
-          ↓
-        Dataset
+  ↓
+RightsDeclaration (#137)
+  ↓
+AuthorizationProvenanceBinding (#137)
+  ↓
+Authorization
+  ↓
+Dataset
           ↓
     DatasetVersion
           │
@@ -207,6 +211,8 @@ Grantor + Grantee + Resource + Purpose + Action + Scope + Validity → Decision
 ~~~
 
 Authorization 不是所有权证明；Grantor 的授权资格应能追溯至 Rights Provenance。
+
+CurrentEntitlementGate 不能只检查 Authorization 是否 ACTIVE/未过期。每个被使用的 Authorization 必须同时覆盖当前请求的 grantee/consumer、DataResource、purpose、action 与 scope；窄授权不能因为绑定的 RightsDeclaration 范围更宽而被“放大”。
 
 ### 4.7 EffectiveRights
 
