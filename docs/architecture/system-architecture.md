@@ -115,8 +115,10 @@ Certified Dataset 可以作为独立交付对象，也可以继续进入 Data Pr
 3. provider 成功后再提交 terminal DeliveryOperation + Audit/Evidence/Outbox/CostEvent；
 4. terminal commit 成功后才向客户端暴露 credential；
 5. 每次 initial/retry/reconciliation 真正调用 provider 前重新执行 CurrentDeliveryGate，并重新计算 expiry cap；prepare 阶段的旧 gate snapshot 不授权后续外部 side effect；
-6. crash/timeout 由 reconciliation 使用同一 provider_request_key 恢复，不盲目重复签发；
-7. direct bearer delivery 只有在 provider 能按同一 key 恢复同一 credential/访问能力时允许；否则使用 platform redemption indirection。
+6. provider 返回/恢复 access capability 后，terminal finalize 必须在共享 delivery authorization fence/revision 下重新读取 current facts、重新 gate、重新计算 fresh cap；影响 gate 的 Rights/Binding/Certification disposition 与 DatasetVersion invalidation 等 Command 使用同一 fence/revision，并按固定顺序锁定；
+7. terminal ISSUED DB commit 是 issuance 的线性化点：若 entitlement 变更先提交，finalize 必须看到它并 contain/block/fail；若 finalize 先提交，则后续 entitlement 变更在线性顺序上发生在 issuance 之后，并按 delivery mode 的 revocation semantics 处理已签发 capability；
+8. crash/timeout 由 reconciliation 使用同一 provider_request_key 恢复，不盲目重复签发；
+9. direct bearer delivery 只有在 provider 能按同一 key 恢复同一 credential/访问能力时允许；否则使用 platform redemption indirection。
 
 ## 5. Governance Projection
 
