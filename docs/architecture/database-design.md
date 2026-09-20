@@ -365,7 +365,8 @@ CertificationProfile 必须把认证覆盖的 delivery applicability 作为强�
 - dataset_version_id
 - quality_assessment_id
 - certification_profile snapshot/ref/version/hash
-- rights_snapshot/effective rights ref
+- rights_snapshot_id（finalized immutable）
+- effective_rights_snapshot_id + effective_rights_snapshot_hash（Rights required / derived Dataset 时；FK/强类型引用 finalized immutable #137 aggregate，input-set hash 必须与认证 target lineage 一致）
 - compliance_result_id（如 required）
 - contract_version_id（如 required）
 - evidence_snapshot_id 或等价冻结证明
