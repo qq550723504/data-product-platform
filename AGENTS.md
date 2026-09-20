@@ -80,6 +80,7 @@ data_resource.owner_id、dataset.owner_id 只表示平台内资产责任/归属�
 
 ~~~text
 RightsDeclaration
+→ AuthorizationProvenanceBinding
 → Authorization
 → RightsSnapshot
 → Effective Rights
@@ -201,6 +202,8 @@ Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduc
 任一子门禁失败都必须 fail closed，即使历史 Certification 仍为 CERTIFIED。
 
 CurrentDeliveryGate query 只用于展示/预检，不构成交付授权。任何返回数据、下载链接、presigned URL、token 或访问凭证的 server-side delivery Command 都必须在 issuance 前重新执行完整 CurrentDeliveryGate；不得信任客户端缓存的旧 gate result。gate 与 issuance 必须处于同一 Application Command 受控边界。
+
+DeliveryOperation 每个终态都必须产生明确 Domain Event：Issued / Blocked / Failed（事件名由实现固定但语义不得缺失），并与 Audit/Evidence/Outbox、CostEvent（如有）保持一致幂等边界。任何事件或审计 payload 不得包含可用 credential secret。
 
 若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界，以及签发时已存在且未来生效的 RightsDisposition / CertificationDisposition 最早 effective_at。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 CurrentDeliveryGate；不可回调的 bearer/presigned credential 必须使用 expiry cap + 明确最大 TTL。
 
