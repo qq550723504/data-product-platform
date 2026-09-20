@@ -594,7 +594,7 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | DeliveryOperation | persisted delivery attempt/result with stable idempotency identity; gate/issuance transitions only through delivery command |
 | CostEvent / CostAllocation | immutable accounting/history facts |
 | ProductVersion | immutable history |
-| ProductRelease | stateful lifecycle row before publication; explicit validation/publish transitions may update status and frozen references; after publication, release bindings are frozen and terminal history is retained |
+| ProductRelease | stateful lifecycle row before publication; published row is currently guarded, while immutable published dataset membership is a required invariant but DB enforcement on `product_release_dataset` is still an open #99 gap |
 
 ## 17. JSONB 使用策略
 
@@ -615,6 +615,6 @@ JSONB 不用于 ID/FK、状态、版本号、核心 party/resource/certification
 
 Execution 行在生命周期内会通过显式状态迁移更新 status、engine/output、metrics、errors 与 timestamps，因此不能把整行视为内容不可变；但 Execution 历史必须保留，终态记录不得删除。真正不可变的是其已冻结的 input/dependency/mapping-usage 等生产事实。
 
-ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，当前 `guard_product_release_history` 拒绝所有 UPDATE，整行作为发布历史冻结。SUSPENDED/WITHDRAWN 虽是 schema 枚举值，但当前不构成可达 live transition；未来启用必须先调整 guard 并新增显式 Command。
+ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，当前 `guard_product_release_history` 拒绝 `product_release` 主行 UPDATE/DELETE，因此主行作为发布历史冻结。**但 `product_release_dataset` 当前没有针对已 PUBLISHED release 的 INSERT/UPDATE/DELETE guard；#99 明确跟踪该 P2/P1 enforcement gap。** 在对应 forward migration + PostgreSQL tests 合入前，文档不得声称 published dataset membership 已由数据库完整保护。SUSPENDED/WITHDRAWN 虽是 schema 枚举值，但当前不构成可达 live transition；未来启用必须先调整主行 guard、补齐 membership immutability 并新增显式 Command。
 
 不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、AuthorizationProvenanceBinding、AuthorizationProvenanceBindingDisposition、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent、CostAllocation。
