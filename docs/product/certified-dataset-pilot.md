@@ -119,6 +119,12 @@ DataResource
 
 #137 第一阶段最小完成合同：
 
+- 持久化 `RightsDeclaration` 与独立的 append-only `RightsVerification` 事实；Declaration 创建不等于 VERIFIED；
+- 显式 `CreateRightsDeclaration` / `VerifyRightsDeclaration` / `RejectRightsDeclaration` Command；
+- verification/rejection 创建后不可 UPDATE/DELETE；纠错通过新 declaration / verification fact，不覆盖旧事实；
+- 未 VERIFIED 或已 REJECTED declaration 不得进入 AuthorizationProvenanceBinding、CurrentEntitlementGate、RightsSnapshot 或 Certification 权利依据；
+- declaration create/verify/reject 分别产生 `RightsDeclarationCreated` / `RightsDeclarationVerified` / `RightsDeclarationRejected`（或实现固定的等价事件），并与 Audit/Evidence/Outbox 保持一致事务和幂等语义；
+- 至少测试：未验证声明 fail closed、VERIFY 后可参与后续 binding、REJECT 后不可参与、历史 verification 不被后续修改；
 - append-only `RightsDisposition`，至少支持 `INVALIDATED` / `SUPERSEDED` + `effective_at` + reason + Evidence + actor；
 - 显式 `InvalidateRightsDeclaration` / `SupersedeRightsDeclaration` Command，禁止 UPDATE 已 VERIFIED 历史事实；
 - Current rights selection 按 `as_of` 排除已生效 disposition，并校验每条 declaration 自身 validity window 与 resource/consumer/purpose/action/scope；
@@ -136,7 +142,7 @@ DataResource
 
 Rights verification / invalidation / supersession / provenance binding 等实际人工或外部核验活动必须在发生时记录 CostEvent；这些活动通常没有 Execution，必须通过 typed CostAllocation 关联实际 Rights 业务事实，并使用稳定 activity_id/component_key 防止重试重复记账。
 
-缺少上述任一 withdrawal/current-selection/binding 能力时，#137 不视为完成。
+缺少 declaration creation/verification lifecycle、withdrawal/current-selection、provenance binding 任一能力时，#137 不视为完成。
 
 ## 7. HQD-4 #134
 
@@ -158,6 +164,13 @@ CertificationProfile 可以要求：
 
 #134 第一阶段最小完成合同：
 
+- 持久化不可变 `CertificationProfile` version/snapshot/hash；Profile 后续变化不得改变历史 Certification 的解释；
+- 显式 `EvaluateDatasetCertification`（或等价 Certify Command），禁止 generic PATCH certification status；
+- 每次评估明确绑定并冻结：workspace、DatasetVersion、CertificationProfile snapshot/version/hash、QualityAssessment、RightsSnapshot / Effective Rights、required ComplianceResult、required ContractVersion、Evidence/EvidenceSnapshot；
+- required quality/rights/compliance/contract/traceability/evidence 任一缺失或不匹配必须 fail closed 为 REJECTED/阻断，不能产生 CERTIFIED；
+- DatasetCertification 是不可变评估事实，decision 至少明确 CERTIFIED / REJECTED；DatasetVersion V2 不继承 V1 Certification；
+- 评估结果可在 Profile/规则文件后续变化后重放解释，不能读取当前文件伪造历史；
+- `EvaluateDatasetCertification` 幂等重放不得重复产生 Certification / event / CostEvent；
 - append-only `CertificationDisposition`；
 - `RevokeDatasetCertification` / `SupersedeDatasetCertification`；
 - CurrentCertificationGate 按 as_of 排除已生效 REVOKED / SUPERSEDED；
@@ -172,7 +185,7 @@ CertificationProfile 可以要求：
 - 每个 certification event_type 显式进入 routing table，声明 required handlers 或 retention-only；
 - 幂等重放不重复产生认证事实、事件或 CostEvent。
 
-缺少 CertificationDisposition、withdrawal commands、current-selection 或 certification outcome events 任一项时，#134 不视为完成。
+缺少 Profile snapshot、certification evaluation/create path、fail-closed input binding、CertificationDisposition、withdrawal/current-selection 或 certification outcome events 任一项时，#134 不视为完成。
 
 认证评估/人工审批若产生实际成本，必须记录 CostEvent，并通过 typed CostAllocation 关联 DatasetCertification / CertificationDisposition，使用稳定 activity_id/component_key 保证重试幂等。
 
