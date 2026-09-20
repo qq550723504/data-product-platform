@@ -303,6 +303,8 @@ Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证�
 
 provider 成功但 terminal DB commit 失败时，retry/reconciliation 复用同一 key，不得产生第二份独立 credential。
 
+任何首次返回或 reconciliation 恢复出的 credential，在 DeliveryOperation 进入 ISSUED 前都必须验证其**实际 provider expiry/access bound 不晚于当前 fresh cap**。如果 disposition/validity 在 prepare 后缩短了 cap，而旧 credential 仍更长，则不能直接恢复为 ISSUED：必须安全 shorten 并验证，或 revoke/contain；无法安全满足 fresh cap 时当前 operation 不得成功交付。
+
 ## 11. CostEvent / CostAllocation
 
 QualityAssessment、Rights verification / invalidation / supersession、Authorization provenance binding、DatasetCertification evaluation / human approval、Delivery 等实际活动发生时必须记录 CostEvent。
