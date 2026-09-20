@@ -281,6 +281,8 @@ CurrentDeliveryGate
 
 任一子门禁失败时，历史 Certification 保留，但当前交付必须 BLOCKED。第一阶段不要求周期性后台重认证。
 
+Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证。第一阶段必须有真正的 server-side delivery command；服务端在返回数据或签发下载链接、presigned URL、token、credential 前必须重新执行完整 CurrentDeliveryGate。query 与 delivery 之间状态发生变化时，以 delivery command 内重新计算的当前事实为准。
+
 ## 11. CostEvent
 
 QualityAssessment、Rights verification / invalidation / supersession、DatasetCertification evaluation / human approval 等实际活动发生时必须记录 CostEvent。
