@@ -271,7 +271,7 @@ SupersedeDatasetCertification
 GetCurrentDatasetCertification / QueryCurrentCertification
 ~~~
 
-Current certification 不能按 latest timestamp 推断；delivery 必须绑定明确有效的 CERTIFIED 事实，并排除已生效 REVOKED / SUPERSEDED disposition。
+Current certification 不能按 latest timestamp 推断；delivery 必须绑定明确有效的 CERTIFIED 事实，并排除已生效 REVOKED / SUPERSEDED disposition。frozen CertificationProfile 对 purpose/action/consumer/delivery channel/mode 必须逐维度显式 ANY/EXPLICIT 覆盖；缺失/NULL/UNKNOWN 维度一律 fail closed。
 
 禁止 generic PATCH certification status。
 
