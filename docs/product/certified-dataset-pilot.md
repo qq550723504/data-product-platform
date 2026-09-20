@@ -138,7 +138,7 @@ DataResource
 - 显式 `InvalidateRightsDeclaration` / `SupersedeRightsDeclaration` Command，禁止 UPDATE 已 VERIFIED 历史事实；
 - Current rights selection 按 `as_of` 排除已生效 disposition，并校验每条 declaration 自身 validity window 与 resource/consumer/purpose/action/scope；
 - `BindAuthorizationProvenance`（或等价显式 Command），禁止 ad hoc CRUD 创建安全关键 binding；
-- Authorization.grantor_ref 与支持它的 RightsDeclaration / grantor-authority delegation chain 的强类型关系；DELEGATED binding 必须持久化 chain ID/hash + ordered member edge identities，不能只在创建时临时证明存在 delegation；
+- Authorization.grantor_ref 与支持它的 RightsDeclaration / grantor-authority delegation chain 的强类型关系；DELEGATED binding 必须持久化 chain ID/hash + ordered member edge identities，不能只在创建时临时证明存在 delegation；chain 若 DRAFT→FINALIZED，member mutation 与 Finalize 必须共享 parent chain row lock/fence（parent-first），Finalize 持锁校验 ordered members/hash，禁止 finalize 后 late member commit；
 - `BindAuthorizationProvenance` 必须证明 declaration 的 **grantable** actions/purpose/scope 覆盖 Authorization 授出的范围；delegation chain 每一跳也必须具有 onward grant authority。`allowed USE` 但 `grantable USE` 为空/禁止时，不能创建支持第三方 USE grant 的 binding；
 - AuthorizationProvenanceBinding 创建后不可 UPDATE/DELETE；
 - append-only `AuthorizationProvenanceBindingDisposition`，至少支持 `INVALIDATED` / `SUPERSEDED` + `effective_at` + reason + Evidence + actor + optional superseded_by_binding_id；
