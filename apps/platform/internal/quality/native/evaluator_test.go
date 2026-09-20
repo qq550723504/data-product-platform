@@ -68,6 +68,46 @@ func TestLoadPolicyRejectsUnknownRuleTypeAndMissingParameters(t *testing.T) {
 	if _, err := LoadPolicy(wrongKind); err == nil {
 		t.Fatal("wrong policy kind was accepted")
 	}
+	missingRequired := filepath.Join(dir, "missing-required.yaml")
+	content = fmt.Sprintf(base, RuleTypeCompletenessRatio)
+	if err := os.WriteFile(missingRequired, []byte(content), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := LoadPolicy(missingRequired); err == nil {
+		t.Fatal("rule without explicit required was accepted")
+	}
+	explicitFalse := filepath.Join(dir, "explicit-false.yaml")
+	content = strings.Replace(content, "severity: CRITICAL", "required: false\n      severity: CRITICAL", 1)
+	if err := os.WriteFile(explicitFalse, []byte(content), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := LoadPolicy(explicitFalse); err != nil {
+		t.Fatalf("explicit required=false was rejected: %v", err)
+	}
+	badSeverity := filepath.Join(dir, "bad-severity.yaml")
+	content = strings.Replace(content, "severity: CRITICAL", "severity: CRITCAL", 1)
+	if err := os.WriteFile(badSeverity, []byte(content), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := LoadPolicy(badSeverity); err == nil {
+		t.Fatal("unknown severity was accepted")
+	}
+}
+
+func TestLoadPolicyNormalizesSeverity(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "severity.yaml")
+	content := []byte("apiVersion: quality/v1\nkind: QualityRuleSet\nmetadata:\n  version: 1.0.0\nspec:\n  rules:\n    - id: R-1\n      dimension: ACCURACY\n      type: not_null\n      target: amount\n      required: true\n      severity: ' critical '\n")
+	if err := os.WriteFile(path, content, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	policy, err := LoadPolicy(path)
+	if err != nil {
+		t.Fatalf("load policy: %v", err)
+	}
+	if policy.Spec.Rules[0].Severity != "CRITICAL" {
+		t.Fatalf("severity = %q, want CRITICAL", policy.Spec.Rules[0].Severity)
+	}
 }
 
 func TestGenericRuleTypesUsePackConfiguration(t *testing.T) {
@@ -219,6 +259,28 @@ func TestRangeAndNullSemantics(t *testing.T) {
 		ctx.Table.Rows = []map[string]string{{"coverage": value}}
 		if finding := evaluateSingleRule(t, rule, ctx); finding.Status != domain.FindingFail {
 			t.Fatalf("non-finite value %q passed: %#v", value, finding)
+		}
+	}
+}
+
+func TestFindingSamplesNeverContainRawCells(t *testing.T) {
+	secret := "secret@example.com"
+	policy := singleRulePolicySet([]Rule{
+		{ID: "R-ENUM", Dimension: "CONSISTENCY", Type: RuleTypeEnum, Target: "email", Parameters: map[string]any{"values": []any{"known@example.com"}}, Required: true, Severity: "HIGH"},
+		{ID: "R-REGEX", Dimension: "CONSISTENCY", Type: RuleTypeRegex, Target: "email", Parameters: map[string]any{"pattern": `^known@`}, Required: true, Severity: "HIGH"},
+		{ID: "R-RANGE", Dimension: "ACCURACY", Type: RuleTypeRange, Target: "email", Parameters: map[string]any{"min": 0, "max": 1, "allowNull": false}, Required: true, Severity: "HIGH"},
+		{ID: "R-UNIQUE", Dimension: "UNIQUENESS", Type: RuleTypeUnique, Target: "email", Threshold: 1, Required: true, Severity: "HIGH"},
+	})
+	findings, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{
+		Headers: []string{"email"},
+		Rows:    []map[string]string{{"email": secret}, {"email": secret}},
+	}})
+	if err != nil {
+		t.Fatalf("evaluate sensitive samples: %v", err)
+	}
+	for _, finding := range findings {
+		if strings.Contains(fmt.Sprintf("%#v", finding.Observed["sample"]), secret) {
+			t.Fatalf("rule %s leaked raw cell in sample: %#v", finding.RuleID, finding.Observed)
 		}
 	}
 }

@@ -42,6 +42,7 @@ func Evaluate(policy Policy, ctx DatasetContext) ([]domain.Finding, map[string]a
 func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any, error) {
 	rule.Type = strings.ToLower(strings.TrimSpace(rule.Type))
 	rule.Dimension = normalizeDimension(rule.Dimension)
+	rule.Severity = normalizeSeverity(rule.Severity)
 	finding := domain.Finding{RuleID: rule.ID, Dimension: rule.Dimension, Severity: rule.Severity, Status: domain.FindingPass, Observed: map[string]any{}}
 	pass := func(observed map[string]any, value any, threshold any, affected int, samples []any) (domain.Finding, map[string]any, error) {
 		finding.Observed = standardObservation(observed, value, threshold, affected, samples)
@@ -102,7 +103,7 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 			}
 			nonNull++
 			if _, exists := seen[value]; exists && len(samples) < 5 {
-				samples = append(samples, map[string]any{"row": index, "field": rule.Target, "value": value})
+				samples = append(samples, map[string]any{"row": index, "field": rule.Target})
 			}
 			seen[value] = struct{}{}
 		}
@@ -158,7 +159,7 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 			if !ok || parsed < minimum || parsed > maximum {
 				invalid++
 				if len(samples) < 5 {
-					samples = append(samples, map[string]any{"row": index, "field": rule.Target, "value": value})
+					samples = append(samples, map[string]any{"row": index, "field": rule.Target})
 				}
 			}
 		}
@@ -191,7 +192,7 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 			if _, ok := allowedSet[value]; !ok {
 				invalid++
 				if len(samples) < 5 {
-					samples = append(samples, map[string]any{"row": index, "field": rule.Target, "value": value})
+					samples = append(samples, map[string]any{"row": index, "field": rule.Target})
 				}
 			}
 		}
@@ -220,7 +221,7 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 			if !re.MatchString(value) {
 				invalid++
 				if len(samples) < 5 {
-					samples = append(samples, map[string]any{"row": index, "field": rule.Target, "value": value})
+					samples = append(samples, map[string]any{"row": index, "field": rule.Target})
 				}
 			}
 		}

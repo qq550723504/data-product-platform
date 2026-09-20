@@ -81,9 +81,9 @@ V1 六个质量维度：
 
 不强制全行业统一总分。
 
-V1 QualityRuleSet 由 industry-pack 提供，Core 只识别有限的通用 `type`，不按行业字段或 rule id 写分支。规则至少声明 `id`、`dimension`、`type`、`severity`、`required`；需要时声明 `target`、`threshold`、`parameters` 和 `description`。当前 native evaluator 支持：`not_null`、`completeness_ratio`、`unique`、`duplicate_ratio`、`range`、`enum`、`regex`、`freshness`、`reference_match`、`reconciliation`、`conditional_consistency`、`lineage_present`、`evidence_present`。
+V1 QualityRuleSet 由 industry-pack 提供，Core 只识别有限的通用 `type`，不按行业字段或 rule id 写分支。规则必须显式声明 `id`、`dimension`、`type`、`severity`、`required`；需要时声明 `target`、`threshold`、`parameters` 和 `description`。`severity` 只接受 `CRITICAL`、`HIGH`、`WARNING`（大小写和外围空白会规范化）。当前 native evaluator 支持：`not_null`、`completeness_ratio`、`unique`、`duplicate_ratio`、`range`、`enum`、`regex`、`freshness`、`reference_match`、`reconciliation`、`conditional_consistency`、`lineage_present`、`evidence_present`。
 
-每条 finding 都在既有 `quality_finding.observed` 快照中记录统一的 `observedValue`、`threshold`、`affectedCount`、受限 `sample` 与规则专属诊断字段；六维摘要（Completeness、Accuracy、Consistency、Uniqueness、Timeliness、Traceability）随既有 QualityAssessment `metrics` 保存并通过查询 API 返回。没有可比较事实的可选规则为 `NOT_APPLICABLE`，未知 rule type、缺失必要参数或缺失 required evidence 均 fail closed。
+每条 finding 都在既有 `quality_finding.observed` 快照中记录统一的 `observedValue`、`threshold`、`affectedCount`、仅含行号/字段引用的受限 `sample` 与规则专属诊断字段；不得把原始数据单元格写入 finding、Evidence 或查询响应。六维摘要（Completeness、Accuracy、Consistency、Uniqueness、Timeliness、Traceability）随既有 QualityAssessment `metrics` 保存并通过查询 API 返回。没有可比较事实的可选规则为 `NOT_APPLICABLE`，未知 rule type、缺失必要参数或缺失 required evidence 均 fail closed。
 
 ## 5. HQD-3 #133
 

@@ -49,6 +49,29 @@ type Rule struct {
 	Expression  string         `yaml:"expression"` // retained as human-readable expectation text
 	Severity    string         `yaml:"severity"`
 	Note        string         `yaml:"note"`
+	requiredSet bool
+}
+
+// UnmarshalYAML preserves whether required was present. A plain bool cannot
+// distinguish an omitted field from an explicit false, but that distinction
+// is part of the rule-set contract for fail-closed evaluation.
+func (r *Rule) UnmarshalYAML(node *yaml.Node) error {
+	type ruleAlias Rule
+	var decoded ruleAlias
+	if err := node.Decode(&decoded); err != nil {
+		return err
+	}
+	*r = Rule(decoded)
+	if node.Kind != yaml.MappingNode {
+		return fmt.Errorf("rule must be a mapping")
+	}
+	for index := 0; index+1 < len(node.Content); index += 2 {
+		if node.Content[index].Value == "required" {
+			r.requiredSet = true
+			break
+		}
+	}
+	return nil
 }
 
 const (
@@ -83,19 +106,20 @@ func LoadPolicy(path string) (Policy, error) {
 	if err := yaml.Unmarshal(content, &policy); err != nil {
 		return Policy{}, fmt.Errorf("decode quality policy %q: %w", path, err)
 	}
-	if err := validatePolicy(policy); err != nil {
+	if err := validatePolicy(policy, true); err != nil {
 		return Policy{}, fmt.Errorf("validate quality policy %q: %w", path, err)
 	}
 	for i := range policy.Spec.Rules {
 		policy.Spec.Rules[i].Dimension = normalizeDimension(policy.Spec.Rules[i].Dimension)
 		policy.Spec.Rules[i].Type = strings.ToLower(strings.TrimSpace(policy.Spec.Rules[i].Type))
+		policy.Spec.Rules[i].Severity = normalizeSeverity(policy.Spec.Rules[i].Severity)
 	}
 	policy.SourceContent = string(content)
 	policy.SourceContentSHA256 = fmt.Sprintf("%x", sha256.Sum256(content))
 	return policy, nil
 }
 
-func validatePolicy(policy Policy) error {
+func validatePolicy(policy Policy, requireRequired bool) error {
 	if strings.TrimSpace(policy.APIVersion) == "" {
 		return fmt.Errorf("apiVersion is required")
 	}
@@ -117,6 +141,9 @@ func validatePolicy(policy Policy) error {
 			return fmt.Errorf("spec.rules[%d].id %q is duplicated", i, rule.ID)
 		}
 		seen[rule.ID] = struct{}{}
+		if requireRequired && !rule.requiredSet {
+			return fmt.Errorf("rule %s required must be explicitly declared", rule.ID)
+		}
 		if !isQualityDimension(rule.Dimension) {
 			return fmt.Errorf("rule %s has unsupported dimension %q", rule.ID, rule.Dimension)
 		}
@@ -124,8 +151,14 @@ func validatePolicy(policy Policy) error {
 		if _, ok := qualityRuleTypes[ruleType]; !ok {
 			return fmt.Errorf("rule %s has unknown rule type %q", rule.ID, rule.Type)
 		}
-		if strings.TrimSpace(rule.Severity) == "" {
+		severity := normalizeSeverity(rule.Severity)
+		if severity == "" {
 			return fmt.Errorf("rule %s severity is required", rule.ID)
+		}
+		switch severity {
+		case "CRITICAL", "HIGH", "WARNING":
+		default:
+			return fmt.Errorf("rule %s has unsupported severity %q", rule.ID, rule.Severity)
 		}
 		if requiresTarget(ruleType) && strings.TrimSpace(rule.Target) == "" {
 			return fmt.Errorf("rule %s target is required for %s", rule.ID, ruleType)
@@ -187,7 +220,7 @@ func validateRules(rules []Rule) error {
 	policy := Policy{APIVersion: "inline", Kind: "QualityRuleSet"}
 	policy.Metadata.Version = "inline"
 	policy.Spec.Rules = rules
-	return validatePolicy(policy)
+	return validatePolicy(policy, false)
 }
 
 func requiresTarget(ruleType string) bool {
@@ -206,6 +239,10 @@ func normalizeDimension(value string) string {
 		return "ACCURACY"
 	}
 	return dimension
+}
+
+func normalizeSeverity(value string) string {
+	return strings.ToUpper(strings.TrimSpace(value))
 }
 
 func parameterString(rule Rule, keys ...string) string {
