@@ -71,7 +71,7 @@ READY 只表示内容已冻结，不表示 Quality 或 Certification 通过。
 DeliveryOperation 是每次 standalone delivery 尝试的稳定业务事实/操作身份，用于：
 - 承载 delivery command 的幂等 identity；
 - 记录 datasetVersion/certification/consumer/purpose/action/delivery mode；
-- 冻结 gate result / blockers 与 issuance result；
+- 持有当前 gate/status projection；真正的每次 gate decision / blockers / dependency revision 与状态迁移由 append-only DeliveryGateEvaluation / DeliveryTransition facts 冻结；
 - 作为 Audit/Evidence/CostAllocation 的强类型 subject。
 
 受控生命周期至少表达：
@@ -91,6 +91,8 @@ PREPARED
 `ISSUANCE_PENDING` 是 crash-recovery / reconciliation 中间态，不是 terminal failure。若 fresh gate 变为 BLOCKED，但此前 provider outcome 可能已产生访问能力，必须先 reconcile；已签发则先 revoke/contain，无法确认 outcome 或 containment 时进入 `CONTAINMENT_PENDING`。**CONTAINMENT_PENDING 虽非终态，但属于安全关键 transition：状态变更、`DatasetDeliveryContainmentPending`（或固定等价）Domain Event、Audit/Evidence、Outbox 必须同事务提交，幂等重放不重复事件。** 只有确认没有活跃访问能力后，才允许终结：fresh gate 已 BLOCKED 时进入 `BLOCKED`；gate 仍 ALLOWED 但 issuance contract 无法满足（如 credential 无法缩短到 fresh cap）时进入 `FAILED`，并再产生各自 terminal event。外部 provider 调用发生前必须先 durable persist 该状态和 stable provider_request_key。
 
 每次 initial/retry/reconciliation issuance 前必须重新验证 authenticated caller principal 当前仍可代表 effective consumer/workspace（含 binding/membership/delegation），再执行完整 CurrentDeliveryGate 并重新计算 expiry cap；旧 identity/gate snapshot 只保留审计价值，不能授权新的 provider side effect。
+
+每次上述 gate 都必须追加独立 DeliveryGateEvaluation（INITIAL / RETRY / RECONCILIATION / TERMINAL_FINALIZE 等），保存 decision/blockers + dependency fence/revision；初始 ALLOWED 与后续 BLOCKED 必须同时保留。DeliveryOperation.current_gate_decision/status 仅作 projection，不能覆盖历史 evaluation。
 
 provider 返回/恢复 access capability 后，在 terminal ISSUED transaction 中必须使用共享 delivery authorization fence/revision，与 caller binding/membership/delegation lifecycle 以及所有影响 gate 的 entitlement-changing Commands 线性化，并再次验证 caller authority + 完整 re-gate + fresh-cap。该 terminal commit 是 issuance 的线性化点。
 
@@ -348,7 +350,7 @@ Rights verification、QualityAssessment、DatasetCertification 都应将 Evidenc
 - ProductVersion
 - ProductRelease published bindings / published release history（目标 immutable invariant；`product_release_dataset` DB membership guard 仍由 #99 跟踪）
 - EvidenceSnapshot（目标 immutable invariant；当前 header guard 已有，但 `evidence_snapshot_item` membership DB guard 仍由 #99 跟踪）
-- RightsSnapshot
+- RightsSnapshot（目标 immutable invariant；现有 header guard 已有，但 `rights_snapshot_authorization` membership guard 仍待 #137 实现）
 - QualityAssessment（已实现）
 - DeliveryOperation 的固定 request/idempotency identity、已冻结 gate/issuance history 与 terminal outcome（#135）；DeliveryOperation lifecycle row 本身不是从创建起 immutable
 - verified RightsDeclaration / verification / disposition facts（#137）
