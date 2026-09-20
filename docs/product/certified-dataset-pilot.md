@@ -245,7 +245,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
   - recovered credential/access 必须先 revoke/contain，确认失效后才能 BLOCKED；
   - unknown outcome 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal Blocked event；
 - direct bearer provider 必须支持基于同一 provider_request_key replay/read-after-write 恢复同一 credential（或等价同一访问能力），并支持 fresh credential-replay authorization 被拒绝时 revoke/contain 该既有 capability；任一能力缺失都不足以支持 direct bearer，必须 platform redemption/gateway 或 unsupported；
-- 无法恢复同一 credential 的 provider 必须使用平台 redemption indirection，或明确 unsupported；
+- 无法安全恢复同一 credential，或 replay 被当前授权拒绝后无法 revoke/contain 旧 capability 的 provider，必须使用 platform redemption/gateway，或明确 unsupported；
 - provider 成功但 terminal DB commit 前 crash 时，retry/reconciliation 必须复用同一 provider_request_key，不得签发第二份独立 credential；
 - terminal ISSUED commit 已成功但 credential HTTP response 丢失时，same-key retry 在再次返回同一 credential/handle 前必须 fresh caller→effective consumer/delegation resolution + shared fence + CurrentDeliveryGate + fresh cap + recovered capability verify，并 append non-secret replay decision；fresh ALLOWED 才返回。若期间 delegation/Rights/Certification/Authorization/DatasetVersion 已失效，same-key retry 必须 0 credential/secret 输出并 revoke/contain 原 capability；containment 未确认只返回 non-secret pending，原 ISSUED 历史不改写；
 - 首次返回或 recovered credential 在 ISSUED 前必须 read-after-write/authoritative verify 实际 provider capability：expiry <= fresh cap，并且 resource/DatasetVersion、**consumer/grantee enforcement**、action、object/row/prefix scope、delivery mode/channel 等能力不得比 requested/current-gate context 更宽；consumer/grantee 无法被 provider 原生或等价 holder-bound mechanism 强制/验证时，direct bearer/presigned 不得 ISSUED，只能 platform redemption/gateway 或 unsupported；
