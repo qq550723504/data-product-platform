@@ -232,6 +232,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - `DeliverDatasetVersion` / `IssueDatasetAccess`（最终命名由实现 PR 固定）；
 - server-side delivery command 在进入 CurrentDeliveryGate 前先从可信 authenticated caller principal 解析 effective consumer/workspace；on-behalf-of 必须验证当前有效 delegation，不能信任客户端 header/query/body/demo actor ID 自证 consumer；
 - initial / retry / reconciliation / terminal finalize 都必须重新验证 principal→consumer/workspace binding/delegation 当前有效性；这些可撤销身份依赖必须进入与 Rights/Certification/DatasetVersion 共享的 delivery authorization fence/revision（或等价串行化机制）；
+- 每一次 initial / retry / reconciliation / terminal-finalize / credential-replay gate evaluation 都必须追加 immutable DeliveryGateEvaluation（或等价 child fact），保存 decision/blockers + dependency fence/revision + trusted caller/effective consumer/context；DeliveryOperation.current_gate/status 只是 projection，不得覆盖旧 evaluation；
 - server-side delivery command 在返回数据或签发 URL/token/credential 前，使用该 trusted principal + effective consumer 上下文重新执行完整 CurrentDeliveryGate；
 - query→delivery 之间 Rights/Certification/DatasetVersion 状态变化，以及 principal binding/delegation revoke 的 TOCTOU 测试；
 - gate 失败不得产生可用数据、URL、token、credential；
@@ -263,7 +264,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - 无法安全恢复同一 credential，或 replay 被当前授权拒绝后无法 revoke/contain 旧 capability 的 provider，必须使用 platform redemption/gateway，或明确 unsupported；
 - provider 成功但 terminal DB commit 前 crash 时，retry/reconciliation 必须复用同一 provider_request_key，不得签发第二份独立 credential；
 - terminal ISSUED commit 已成功但 credential HTTP response 丢失时，same-key retry 在再次返回同一 credential/handle 前必须 fresh caller→effective consumer/delegation resolution + shared fence + CurrentDeliveryGate + fresh cap + recovered capability verify，并 append non-secret replay decision；fresh ALLOWED 才返回。若期间 delegation/Rights/Certification/Authorization/DatasetVersion 已失效，same-key retry 必须 0 credential/secret 输出并 revoke/contain 原 capability；containment 未确认只返回 non-secret pending，原 ISSUED 历史不改写；
-- 首次返回或 recovered credential 在 ISSUED 前必须 read-after-write/authoritative verify 实际 provider capability：expiry <= fresh cap，并且 resource/DatasetVersion、**consumer/grantee enforcement**、action、object/row/prefix scope、delivery mode/channel 等能力不得比 requested/current-gate context 更宽；consumer/grantee 无法被 provider 原生或等价 holder-bound mechanism 强制/验证时，direct bearer/presigned 不得 ISSUED，只能 platform redemption/gateway 或 unsupported；
+- 首次返回或 recovered credential 在 ISSUED 前必须 read-after-write/authoritative verify 实际 provider capability：expiry <= fresh cap，并且 resource/DatasetVersion、consumer/grantee enforcement、action、object/row/prefix scope、**delivery mode/channel enforcement** 均不得比 requested/current-gate context 更宽；consumer/grantee 或受约束 channel/mode 任一无法被 provider 原生或等价机制权威表达/验证/强制时，direct bearer/presigned 不得 ISSUED，只能 platform redemption/gateway 在使用时强制，或标记 unsupported；
 - recovered/returned credential 超出 fresh cap **或 capability scope 过宽/不可验证**时必须安全 shorten/narrow+verify，或 revoke/contain；无法满足当前 context 时 operation 不得成功；
 - ISSUANCE_PENDING / CONTAINMENT_PENDING 必须有 reconciliation path 和告警/恢复机制；
 - CONTAINMENT_PENDING confirmed containment 后允许两种终结：fresh gate 已 BLOCKED → BLOCKED；fresh gate 仍 ALLOWED 但 credential/issuance contract 无法满足（如无法缩短到 fresh cap）→ FAILED；
