@@ -299,6 +299,46 @@ func TestInterruptedOutputIsRepairedWithoutConsumingANewVersionNumber(t *testing
 	}
 }
 
+// TestExecutionOutputRecoveryPrefersHalfProductOverTerminalHistory covers an
+// upgraded installation that already has terminal history for the same output
+// key and a newer recoverable half-product. Recovery must select the half-product
+// instead of returning the older terminal row and permanently rejecting the
+// managed finalize.
+func TestExecutionOutputRecoveryPrefersHalfProductOverTerminalHistory(t *testing.T) {
+	fixture, _, datasetID := newC2AFixture(t, fakeStore{})
+	executionID := uuid.New()
+	terminalID := uuid.New()
+	halfProductID := uuid.New()
+	if _, err := fixture.pool.Exec(fixture.ctx, `
+		INSERT INTO dataset_version (
+			id, dataset_id, version_no, status, metadata, generated_by_execution_id,
+			storage_type, storage_uri, checksum_algorithm, checksum_value
+		) VALUES
+			($1, $3, 1, 'SUPERSEDED', '{}'::jsonb, $2, 'OBJECT_STORAGE', 's3://history/old.csv', 'SHA256', repeat('a', 64)),
+			($4, $3, 2, 'CREATED', '{}'::jsonb, $2, NULL, NULL, NULL, NULL)
+	`, terminalID, executionID, datasetID, halfProductID); err != nil {
+		t.Fatalf("insert terminal history and half-product: %v", err)
+	}
+
+	version, err := fixture.upload.Handle(fixture.ctx, fixture.outputCommand(datasetID, executionID, "id,name\n1,recovered\n"))
+	if err != nil {
+		t.Fatalf("recover output: %v", err)
+	}
+	if version.ID != halfProductID {
+		t.Fatalf("recovery selected version %s, want recoverable half-product %s", version.ID, halfProductID)
+	}
+	if version.Status != domain.VersionReady {
+		t.Fatalf("recovered status = %s, want READY", version.Status)
+	}
+	selected, err := fixture.repo.FindVersionByExecution(fixture.ctx, executionID)
+	if err != nil {
+		t.Fatalf("find recovered output: %v", err)
+	}
+	if selected.ID != halfProductID {
+		t.Fatalf("execution lookup selected version %s, want %s", selected.ID, halfProductID)
+	}
+}
+
 // TestConcurrentDeliveriesNeverOverwritePublishedContent is the "one row is not
 // enough" proof: the unique index guarantees one DatasetVersion row, but object
 // storage has no conditional write, so the writer must also guarantee that a

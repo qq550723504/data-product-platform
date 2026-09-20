@@ -20,14 +20,16 @@ type Handler struct {
 	createDataset     *application.CreateDatasetService
 	uploadVersion     *application.UploadVersionService
 	invalidateVersion *application.InvalidateVersionService
+	failVersion       *application.FailVersionService
 	repo              *infrastructure.PostgresRepository
 }
 
-func NewHandler(createDataset *application.CreateDatasetService, uploadVersion *application.UploadVersionService, invalidateVersion *application.InvalidateVersionService, repo *infrastructure.PostgresRepository) *Handler {
+func NewHandler(createDataset *application.CreateDatasetService, uploadVersion *application.UploadVersionService, invalidateVersion *application.InvalidateVersionService, failVersion *application.FailVersionService, repo *infrastructure.PostgresRepository) *Handler {
 	return &Handler{
 		createDataset:     createDataset,
 		uploadVersion:     uploadVersion,
 		invalidateVersion: invalidateVersion,
+		failVersion:       failVersion,
 		repo:              repo,
 	}
 }
@@ -37,6 +39,7 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/datasets/{datasetId}/versions", h.upload)
 	mux.HandleFunc("GET /api/v1/dataset-versions/{versionId}", h.getVersion)
 	mux.HandleFunc("POST /api/v1/dataset-versions/{versionId}/invalidate", h.invalidate)
+	mux.HandleFunc("POST /api/v1/dataset-versions/{versionId}/fail", h.fail)
 }
 
 type createDatasetRequest struct {
@@ -230,6 +233,44 @@ func (h *Handler) invalidate(w http.ResponseWriter, r *http.Request) {
 		} else if !errors.Is(err, domain.ErrInvalidTransition) && !errors.Is(err, domain.ErrImmutableVersion) {
 			status = http.StatusInternalServerError
 			code = "DATASET_VERSION_INVALIDATE_FAILED"
+		}
+		httpserver.WriteError(w, r, status, code, err.Error(), nil)
+		return
+	}
+	writeVersion(w, http.StatusOK, version)
+}
+
+func (h *Handler) fail(w http.ResponseWriter, r *http.Request) {
+	versionID, err := uuid.Parse(r.PathValue("versionId"))
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_VERSION_ID", "versionId must be a UUID", nil)
+		return
+	}
+	var req invalidateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_JSON", "invalid JSON request", nil)
+		return
+	}
+	actorID, err := parseOptionalUUID(r.Header.Get("X-Actor-ID"))
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
+		return
+	}
+	version, err := h.failVersion.Handle(r.Context(), application.FailVersionCommand{
+		VersionID: versionID,
+		Reason:    req.Reason,
+		ActorID:   actorID,
+		TraceID:   httpserver.RequestID(r.Context()),
+	})
+	if err != nil {
+		status := http.StatusConflict
+		code := "DATASET_VERSION_INVALID_TRANSITION"
+		if errors.Is(err, infrastructure.ErrNotFound) {
+			status = http.StatusNotFound
+			code = "DATASET_VERSION_NOT_FOUND"
+		} else if !errors.Is(err, domain.ErrInvalidTransition) {
+			status = http.StatusInternalServerError
+			code = "DATASET_VERSION_FAIL_FAILED"
 		}
 		httpserver.WriteError(w, r, status, code, err.Error(), nil)
 		return

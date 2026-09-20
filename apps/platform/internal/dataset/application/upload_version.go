@@ -145,9 +145,7 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 	objectName := fmt.Sprintf("datasets/%s/v%06d/%s/%s", version.DatasetID.String(), version.VersionNo, attemptToken.String(), filename)
 	storageURI, err := s.store.Put(ctx, objectName, bytes.NewReader(cmd.Content), int64(len(cmd.Content)), cmd.ContentType)
 	if err != nil {
-		_ = s.tx.Do(context.Background(), func(ctx context.Context, tx pgx.Tx) error {
-			return s.repo.SetFailed(ctx, tx, version.ID)
-		})
+		_ = s.markFailed(context.Background(), version.ID, cmd)
 		return domain.DatasetVersion{}, fmt.Errorf("store dataset version: %w", err)
 	}
 
@@ -228,6 +226,56 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 	}
 
 	return version, nil
+}
+
+// markFailed records a real output-attempt failure only when it wins the
+// CREATED/PROCESSING -> FAILED transition. A concurrent publisher may already
+// have committed READY, in which case there is no state change to announce.
+func (s *UploadVersionService) markFailed(ctx context.Context, versionID uuid.UUID, cmd UploadVersionCommand) error {
+	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		current, err := s.repo.LockVersion(ctx, tx, versionID)
+		if err != nil {
+			return err
+		}
+		if current.Status != domain.VersionCreated && current.Status != domain.VersionProcessing {
+			return nil
+		}
+		before := current.Status
+		if err := current.MarkFailed(); err != nil {
+			return err
+		}
+		if err := s.repo.Fail(ctx, tx, current); err != nil {
+			return err
+		}
+		event, err := outbox.NewEvent("DATASET_VERSION", current.ID, "DatasetVersionFailed", map[string]any{
+			"datasetVersionId": current.ID,
+			"datasetId":        current.DatasetID,
+			"versionNo":        current.VersionNo,
+			"previousStatus":   before,
+			"reason":           "object storage write failed",
+		})
+		if err != nil {
+			return fmt.Errorf("create dataset version failure event: %w", err)
+		}
+		if err := outbox.Append(ctx, tx, event); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			ActorType:  actorType(cmd.ActorID),
+			ActorID:    cmd.ActorID,
+			Action:     "DATASET_VERSION_FAILED",
+			ObjectType: "DATASET_VERSION",
+			ObjectID:   current.ID,
+			BeforeState: map[string]any{
+				"status": before,
+			},
+			AfterState: map[string]any{
+				"status": current.Status,
+			},
+			Reason:  "object storage write failed",
+			TraceID: cmd.TraceID,
+		})
+	})
 }
 
 func countRows(filename, contentType string, content []byte) (int64, error) {

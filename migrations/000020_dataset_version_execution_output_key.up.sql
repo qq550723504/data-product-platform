@@ -57,7 +57,7 @@ BEGIN
     ) duplicates;
 
     IF offenders IS NOT NULL THEN
-        RAISE EXCEPTION E'cannot enforce uq_dataset_version_execution_output: these (dataset, execution) pairs already have more than one live output version:\n%\nBring each pair back to one live row with an explicit state change, then re-run this migration. Historical rows are never deleted: withdraw a surplus READY output with InvalidateDatasetVersion, and take a surplus unproduced half-product (CREATED/PROCESSING) out of the live set by applying the explicit failure transition, which leaves it FAILED and outside this constraint.', offenders;
+        RAISE EXCEPTION E'cannot enforce uq_dataset_version_execution_output: these (dataset, execution) pairs already have more than one live output version:\n%\nBring each pair back to one live row with an explicit state change, then re-run this migration. Historical rows are never deleted: withdraw a surplus READY output with InvalidateDatasetVersion, and take a surplus unproduced half-product (CREATED/PROCESSING) out of the live set with the FailDatasetVersion command (POST /api/v1/dataset-versions/{versionId}/fail), which leaves it FAILED and outside this constraint.', offenders;
     END IF;
 END
 $$;

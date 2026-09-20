@@ -15,7 +15,10 @@ func (r *PostgresRepository) FindVersionByExecution(ctx context.Context, executi
 		SELECT `+versionColumns+`
 		FROM dataset_version
 		WHERE generated_by_execution_id = $1
-		ORDER BY version_no DESC
+		ORDER BY
+			(status = 'READY') DESC,
+			(status IN ('CREATED', 'PROCESSING', 'FAILED')) DESC,
+			version_no ASC
 		LIMIT 1
 	`, executionID))
 	if errors.Is(err, ErrNotFound) || errors.Is(err, pgx.ErrNoRows) {

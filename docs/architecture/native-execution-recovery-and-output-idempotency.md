@@ -25,7 +25,9 @@
 - 不改变「运营性重试 = 新建 Execution」的语义：`ExecutionService.Retry` 仍创建新 Execution，
   新 Execution 产生**新**输出版本（这是不可变版本的正常路径，不是重复）。
 - 不改变输入绑定与 `ProcessingRequestFromExecution` 的冻结语义。
-- 不改变 managed（Hop/Splink）桥接与 `ManagedReconciler` 的既有路径；C2 只补 native 的缺口。
+- 不改变 managed（Hop/Splink）的业务语义；当 managed finalize 发现同一 Execution 的
+  `CREATED` / `PROCESSING` / `FAILED` 半成品时，必须复用本节统一的输出写入/恢复路径，不能
+  把可恢复半成品永久判为不可用。
 - C2 不引入分布式事务、不引入外部工作流引擎；继续以平台数据库为 System of Record。
 
 ## 2. 现状事实（实现前已核对）
@@ -146,7 +148,7 @@
   | 多余行的状态 | 可达的补救 | 依据 |
   | --- | --- | --- |
   | `READY` | `InvalidateDatasetVersion` → `INVALID` | `Invalidate` 仅接受 `READY`，且会把 `dataset.current_version_id` 清空 |
-  | `CREATED` / `PROCESSING` | 施加显式失败迁移 → `FAILED` | 域层 `MarkFailed` 接受这两种状态 |
+  | `CREATED` / `PROCESSING` | `FailDatasetVersion` Command（HTTP: `POST /api/v1/dataset-versions/{versionId}/fail`）→ `FAILED` | 域层 `MarkFailed` 接受这两种状态 |
   | `INVALID` / `SUPERSEDED` / `FAILED` | 无需处理 | 本就不在 live 集合内 |
 
   还必须核对历史重复的真实形状：C2-a 之前 `generated_by_execution_id` **只在 `SetReady` 写入**
@@ -162,14 +164,14 @@
 - `datasetWriter.Handle` 改为**先查后写**，且**在分配版本的事务内**完成（`AllocateVersion`）：
   - 若 `(datasetID, generatedByExecutionID)` 已有 `READY` 版本 → 直接返回该版本（不新建、
     不重写对象、不重复发事实）；
-  - 若存在半成品（`CREATED`/`PROCESSING`/`FAILED`）→ 复用它，不新增版本号；
-    `CREATED` 仍走到 `PROCESSING`；**`FAILED` 不在此处做中间态修复**，而在提交阶段以一次
-    原子 `FAILED → READY` 完成（理由见“提交阶段的状态仲裁”）；
+  - 若存在半成品（`CREATED`/`PROCESSING`/`FAILED`）→ 复用它，不新增版本号；本次持有的
+    已落盘内容在提交阶段以一次原子状态迁移发布为 `READY`，不引入额外的 `PROCESSING`
+    恢复中间态；
   - 若命中的是 `INVALID`/`SUPERSEDED` → 硬错误，**不**静默复活已撤销的输出；
   - 否则分配新版本。
-  - 查回顺序：`ORDER BY (status = 'READY') DESC, version_no ASC`。同一对出现历史多行时，
-    优先复用**已发布**的那一行（而不是任取最早的一条，也不是被放弃的 `FAILED` 行），
-    避免在历史重复对上误撞唯一索引。
+  - 查回顺序：先 `READY`，再 `CREATED` / `PROCESSING` / `FAILED` 半成品，最后才是
+    `INVALID` / `SUPERSEDED` 历史；同一状态内按 `version_no ASC`。这样已有终态历史时仍会
+    先修复可恢复半成品，且已发布版本仍优先。
   - 命中唯一索引冲突（并发重放）时读回既有行，而不是新增版本号。
 - **幂等键落库时点**（草案 §8 的落地）：`generated_by_execution_id` 在**分配**时写入
   `INSERT`，而不是等到 `SetReady`。这样唯一索引覆盖完整的两阶段窗口，关闭“并发重放各自
@@ -199,7 +201,7 @@
   2. 内存状态 `MarkReady` 接受 `FAILED` 作为来源，使“修复半成品”与“发布”成为**同一次**状态
      迁移，而不是先 `FAILED → PROCESSING` 再 `PROCESSING → READY`。
 
-  因此无需新增“恢复开始”事件类型，也无需 bump `routing.Version`：不存在只改变状态、
+  因此无需新增“恢复开始”事件类型：不存在只改变状态、
   不产生 Domain Event 的中间迁移，发布事实（`DatasetVersionCreated`）本身就是该迁移的
   Domain Event，其 payload 增加 `previousStatus`（`FAILED` 表示这是恢复发布，
   `CREATED`/`PROCESSING` 表示首次发布），`DATASET_VERSION_READY` 审计同样带
@@ -219,7 +221,7 @@
   | （分配）无 → `CREATED` | 无（首个事实在发布时产生） | `DATASET_VERSION_CREATED` |
   | 复用既有半成品 | 无（没有新业务事实） | `DATASET_VERSION_REUSED` |
   | `CREATED` / `PROCESSING` / `FAILED` → `READY` | `DatasetVersionCreated`（带 `previousStatus`） | `DATASET_VERSION_READY` |
-  | `CREATED` / `PROCESSING` → `FAILED` | 无（尝试未产生内容，不是对外业务状态变更；保持 C2-a 前的既有语义） | 失败路径上的尝试审计 |
+  | `CREATED` / `PROCESSING` → `FAILED` | `DatasetVersionFailed` | `DATASET_VERSION_FAILED` |
   | `READY` → `INVALID` | `DatasetVersionInvalidated` | `DATASET_VERSION_INVALIDATED` |
 
   即：**每个对外可观察的业务状态变化都有 Domain Event**，而 C2-a 新增的恢复路径不引入例外。
@@ -330,10 +332,9 @@ C2-a 必须先于 C2-b（reconciler 依赖幂等输出）；两者可同 PR，�
    `FAILED` **不在** live 输出集合内（迁移 `000020` 的索引与守卫都只覆盖
    `CREATED`/`PROCESSING`/`READY`），所以保留 `FAILED` 不会占用 `(dataset, execution)` 的
    约束槽位，也不会阻塞迁移；写入侧的复用靠“先查后写”，不靠索引。
-   仍未决：目前只有运维层面的失败迁移（域 `MarkFailed` / 仓储 `SetFailed`，写入者已在使用）
-   能产生 `FAILED`，没有面向操作者的专用 Command（例如 `DiscardDatasetVersion` 把半成品
-   移到 `INVALID`）。`InvalidateDatasetVersion` 只接受 `READY`，因此不属于此路径。
-   是否为半成品加显式命令待 C2-b 决定。
+   已提供面向操作者的 `FailDatasetVersion` Command 及 HTTP 入口；它只接受
+   `CREATED` / `PROCESSING`，并追加 `DatasetVersionFailed`、AuditEvent 和 Outbox 事实。
+   `InvalidateDatasetVersion` 仍只接受 `READY`，因此不属于此路径。
 3. 当一个 Execution 的输出已被人工上传 `SUPERSEDED`、而该 Execution 被重新投递时，C2-a 选择
    **硬错误**（不静默复活已撤销输出）。C2-b 的 reconciler 需要把这个错误翻译成一个明确的
    终态（例如 `FAIL(OUTPUT_WITHDRAWN)`）或人工决策点。
@@ -344,7 +345,8 @@ C2-a 必须先于 C2-b（reconciler 依赖幂等输出）；两者可同 PR，�
    没有 TTL 清理；是否加生命周期规则由 C2-c 的运维收口。
 8. 半成品的 `FAILED` 可能有两种语义："本次尝试失败，可重试"（写入者自己的失败路径）与
    "该 Execution 已被判定终态失败"（C2-b 的 `FAIL(EXECUTION_RECOVERY_EXHAUSTED)`）。
-   C2-a 的写入路径目前无法区分二者，会把 `FAILED` 行直接重发布为 `READY`。
+   C2-a 的写入路径目前无法区分二者，会把 `FAILED` 行直接重发布为 `READY`；终态失败语义
+   仍由 C2-b 的 Execution 状态与显式放弃/撤回协议收口。
    C2-b 需要在发布前核对所关联 Execution 的状态（或让 reconciler 放弃时显式撤回半成品），
    否则一个已被放弃的输出可能被队列重投递复活。
 
@@ -362,9 +364,8 @@ C2-a 已落地：
    而不是新增版本号（并发重放安全）；
 3. `generated_by_execution_id` 在同一行上不可改写（`guard_dataset_version_immutability`
    已覆盖 `READY` 之后的改写；分配阶段写入后也不得再改）；
-4. 复用查询 `ORDER BY (status = 'READY') DESC, version_no ASC LIMIT 1`：历史重复对优先复用
-   已发布的 `READY` 行（避免在被放弃的 `FAILED` 行上误撞唯一索引），同状态内则总是修复
-   同一条最早版本；
+4. 复用查询先排序 `READY`，再排序 `CREATED` / `PROCESSING` / `FAILED`，最后排序终态历史，
+   同状态内按 `version_no ASC`：历史重复对优先复用已发布行，否则优先修复可恢复半成品；
 5. `SetReady` 在同一事务内锁内重读并仲裁已提交状态，`WHERE status IN
    ('CREATED','PROCESSING','FAILED')` 且要求 `RowsAffected == 1`，使 `FAILED` 半成品的
    修复与发布成为一次原子状态迁移（其 Domain Event 带 `previousStatus`）。

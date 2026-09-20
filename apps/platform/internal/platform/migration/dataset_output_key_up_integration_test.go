@@ -9,6 +9,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
+	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
 // insertCuratedDataset writes a dataset row for the C2-a guard fixtures.
@@ -107,11 +110,12 @@ func TestC2AOutputKeyMigrationRemediationIsReachable(t *testing.T) {
 		t.Fatalf("C2-a migration error = %v, want the failure-transition remediation", err)
 	}
 
-	if _, err := pool.Exec(ctx, `
-		UPDATE dataset_version SET status = 'FAILED'
-		WHERE dataset_id = $1 AND version_no = 2
-	`, datasetID); err != nil {
-		t.Fatalf("apply the failure transition to the surplus half-product: %v", err)
+	failVersion := datasetapp.NewFailVersionService(transaction.NewManager(pool), datasetinfra.NewPostgresRepository(pool))
+	if _, err := failVersion.Handle(ctx, datasetapp.FailVersionCommand{
+		VersionID: findVersionID(t, pool, datasetID, 2),
+		Reason:    "surplus pre-C2-a output half-product",
+	}); err != nil {
+		t.Fatalf("apply FailDatasetVersion to the surplus half-product: %v", err)
 	}
 	if err := tryApplyMigrationFile(t, pool, 20, "up"); err != nil {
 		t.Fatalf("C2-a migration refused after the documented remediation: %v", err)
@@ -132,6 +136,17 @@ func TestC2AOutputKeyMigrationRemediationIsReachable(t *testing.T) {
 	if status != "FAILED" {
 		t.Fatalf("withdrawn half-product status = %s, want FAILED", status)
 	}
+}
+
+func findVersionID(t *testing.T, pool *pgxpool.Pool, datasetID uuid.UUID, versionNo int64) uuid.UUID {
+	t.Helper()
+	var versionID uuid.UUID
+	if err := pool.QueryRow(context.Background(), `
+		SELECT id FROM dataset_version WHERE dataset_id=$1 AND version_no=$2
+	`, datasetID, versionNo).Scan(&versionID); err != nil {
+		t.Fatalf("find dataset version %d: %v", versionNo, err)
+	}
+	return versionID
 }
 
 // TestC2AOutputKeyMigrationUpgradesInstallationsWithHistoricalDuplicates is the

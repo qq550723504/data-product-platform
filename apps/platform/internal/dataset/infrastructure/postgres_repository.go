@@ -148,7 +148,10 @@ func findVersionByExecutionOutputTx(ctx context.Context, tx pgx.Tx, datasetID, e
 		SELECT `+versionColumns+`
 		FROM dataset_version
 		WHERE dataset_id = $1 AND generated_by_execution_id = $2
-		ORDER BY (status = 'READY') DESC, version_no ASC
+		ORDER BY
+			(status = 'READY') DESC,
+			(status IN ('CREATED', 'PROCESSING', 'FAILED')) DESC,
+			version_no ASC
 		LIMIT 1
 	`, datasetID, executionID))
 	if errors.Is(err, ErrNotFound) {
@@ -276,6 +279,27 @@ func (r *PostgresRepository) SetFailed(ctx context.Context, tx pgx.Tx, versionID
 	_, err := tx.Exec(ctx, `UPDATE dataset_version SET status = 'FAILED' WHERE id = $1 AND status IN ('CREATED','PROCESSING')`, versionID)
 	if err != nil {
 		return fmt.Errorf("mark dataset version failed: %w", err)
+	}
+	return nil
+}
+
+// Fail applies the explicit DatasetVersion failure command. Unlike SetFailed,
+// which is best-effort for an object-store attempt that may race a publisher,
+// this method requires the requested state transition to win exactly once.
+func (r *PostgresRepository) Fail(ctx context.Context, tx pgx.Tx, version domain.DatasetVersion) error {
+	if version.Status != domain.VersionFailed {
+		return fmt.Errorf("fail requires FAILED domain state")
+	}
+	commandTag, err := tx.Exec(ctx, `
+		UPDATE dataset_version
+		SET status = 'FAILED'
+		WHERE id = $1 AND status IN ('CREATED','PROCESSING')
+	`, version.ID)
+	if err != nil {
+		return fmt.Errorf("fail dataset version: %w", err)
+	}
+	if commandTag.RowsAffected() != 1 {
+		return domain.ErrInvalidTransition
 	}
 	return nil
 }
