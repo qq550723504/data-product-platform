@@ -68,6 +68,11 @@ func (r *Rule) UnmarshalYAML(node *yaml.Node) error {
 	for index := 0; index+1 < len(node.Content); index += 2 {
 		if node.Content[index].Value == "required" {
 			r.requiredSet = true
+			requiredNode := node.Content[index+1]
+			requiredValue := strings.ToLower(strings.TrimSpace(requiredNode.Value))
+			if requiredNode.Tag != "!!bool" || (requiredValue != "true" && requiredValue != "false") {
+				return fmt.Errorf("rule required must be a non-null boolean")
+			}
 			break
 		}
 	}
@@ -209,7 +214,14 @@ func validatePolicy(policy Policy, requireRequired bool) error {
 			if _, err := ruleThreshold(rule, 0); err != nil {
 				return fmt.Errorf("rule %s threshold: %w", rule.ID, err)
 			}
-			switch operator := strings.ToLower(parameterString(rule, "operator")); operator {
+			operator, present, err := parameterStringValue(rule, "operator")
+			if err != nil {
+				return fmt.Errorf("rule %s operator: %w", rule.ID, err)
+			}
+			if present {
+				operator = strings.ToLower(operator)
+			}
+			switch operator {
 			case "", "lt", "lte", "le", "eq", "equal", "gte", "ge", "gt":
 			default:
 				return fmt.Errorf("rule %s has unsupported operator %q", rule.ID, operator)
@@ -296,6 +308,18 @@ func parameterString(rule Rule, keys ...string) string {
 		}
 	}
 	return ""
+}
+
+func parameterStringValue(rule Rule, key string) (string, bool, error) {
+	value, ok := rule.Parameters[key]
+	if !ok {
+		return "", false, nil
+	}
+	text, ok := value.(string)
+	if !ok {
+		return "", true, fmt.Errorf("parameter %s must be a string", key)
+	}
+	return strings.TrimSpace(text), true, nil
 }
 
 func parameterStrings(rule Rule, keys ...string) []string {

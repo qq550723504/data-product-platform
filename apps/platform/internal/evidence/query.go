@@ -71,7 +71,7 @@ func (r *QueryRepository) ListForObject(ctx context.Context, objectType string, 
 			return nil, fmt.Errorf("scan evidence query result: %w", err)
 		}
 		if len(metadata) > 0 {
-			if err := decodeMetadata(metadata, &item.Metadata); err != nil {
+			if err := decodeMetadataForHash(metadata, item.HashAlgorithm, &item.Metadata); err != nil {
 				return nil, fmt.Errorf("decode evidence metadata: %w", err)
 			}
 		}

@@ -141,3 +141,47 @@ func TestEvidenceHashPreservesLargeJSONIntegers(t *testing.T) {
 		t.Fatalf("distinct large integers produced the same hash: %s", highHash)
 	}
 }
+
+func TestEvidenceHashCanonicalizesEquivalentJSONNumbers(t *testing.T) {
+	base := Record{
+		WorkspaceID:  uuid.MustParse("11111111-1111-1111-1111-111111111111"),
+		EvidenceType: "QUALITY_RESULT",
+		SourceType:   "QUALITY_RESULT",
+		CreatedAt:    time.Date(2026, 9, 20, 10, 11, 12, 0, time.UTC),
+		Metadata:     map[string]any{"nested": []any{json.Number("1e-7")}},
+	}
+	exponentHash, err := ComputeHash(base, HashAlgorithmEvidenceV1)
+	if err != nil {
+		t.Fatalf("compute exponent hash: %v", err)
+	}
+	base.Metadata = map[string]any{"nested": []any{json.Number("0.0000001")}}
+	decimalHash, err := ComputeHash(base, HashAlgorithmEvidenceV1)
+	if err != nil {
+		t.Fatalf("compute decimal hash: %v", err)
+	}
+	if exponentHash != decimalHash {
+		t.Fatalf("equivalent JSON numbers produced different hashes: %s != %s", exponentHash, decimalHash)
+	}
+}
+
+func TestLegacyEvidenceHashPreservesNumericRoundTrip(t *testing.T) {
+	record := Record{
+		Metadata: map[string]any{"ratio": 1e-7},
+	}
+	hashValue, err := ComputeHash(record, HashAlgorithmLegacy)
+	if err != nil {
+		t.Fatalf("compute legacy hash: %v", err)
+	}
+	encoded, err := json.Marshal(record.Metadata)
+	if err != nil {
+		t.Fatalf("marshal legacy metadata: %v", err)
+	}
+	var roundTripped map[string]any
+	if err := decodeMetadataForHash(encoded, HashAlgorithmLegacy, &roundTripped); err != nil {
+		t.Fatalf("decode legacy metadata: %v", err)
+	}
+	record.Metadata = roundTripped
+	if !VerifyHash(record, HashAlgorithmLegacy, hashValue) {
+		t.Fatalf("legacy hash did not survive JSONB numeric round trip: metadata=%#v", roundTripped)
+	}
+}

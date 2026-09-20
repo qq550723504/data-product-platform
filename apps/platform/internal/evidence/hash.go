@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math/big"
 	"strings"
 	"time"
 )
@@ -102,6 +103,15 @@ func canonicalMetadata(metadata map[string]any) (map[string]any, error) {
 	if err := decoder.Decode(&canonical); err != nil {
 		return nil, fmt.Errorf("normalize canonical Evidence metadata: %w", err)
 	}
+	normalized, err := normalizeJSONNumbers(canonical)
+	if err != nil {
+		return nil, fmt.Errorf("normalize canonical Evidence numbers: %w", err)
+	}
+	var ok bool
+	canonical, ok = normalized.(map[string]any)
+	if !ok {
+		return nil, fmt.Errorf("canonical Evidence metadata must be an object")
+	}
 	if canonical == nil {
 		canonical = map[string]any{}
 	}
@@ -112,4 +122,94 @@ func decodeMetadata(encoded []byte, metadata *map[string]any) error {
 	decoder := json.NewDecoder(bytes.NewReader(encoded))
 	decoder.UseNumber()
 	return decoder.Decode(metadata)
+}
+
+func decodeMetadataForHash(encoded []byte, algorithm string, metadata *map[string]any) error {
+	if strings.EqualFold(strings.TrimSpace(algorithm), HashAlgorithmLegacy) {
+		// Preserve the legacy float64 decode/re-marshal behavior for records
+		// written before Evidence V1. V1 uses json.Number plus canonicalization.
+		return json.Unmarshal(encoded, metadata)
+	}
+	return decodeMetadata(encoded, metadata)
+}
+
+func normalizeJSONNumbers(value any) (any, error) {
+	switch typed := value.(type) {
+	case json.Number:
+		return canonicalJSONNumber(typed)
+	case map[string]any:
+		for key, child := range typed {
+			normalized, err := normalizeJSONNumbers(child)
+			if err != nil {
+				return nil, err
+			}
+			typed[key] = normalized
+		}
+		return typed, nil
+	case []any:
+		for index, child := range typed {
+			normalized, err := normalizeJSONNumbers(child)
+			if err != nil {
+				return nil, err
+			}
+			typed[index] = normalized
+		}
+		return typed, nil
+	default:
+		return value, nil
+	}
+}
+
+func canonicalJSONNumber(value json.Number) (json.Number, error) {
+	rat, ok := new(big.Rat).SetString(value.String())
+	if !ok {
+		return "", fmt.Errorf("invalid JSON number %q", value)
+	}
+	if rat.Sign() == 0 {
+		return "0", nil
+	}
+
+	denominator := new(big.Int).Set(rat.Denom())
+	twoCount, fiveCount := 0, 0
+	two := big.NewInt(2)
+	five := big.NewInt(5)
+	zero := big.NewInt(0)
+	for new(big.Int).Mod(denominator, two).Cmp(zero) == 0 {
+		denominator.Div(denominator, two)
+		twoCount++
+	}
+	for new(big.Int).Mod(denominator, five).Cmp(zero) == 0 {
+		denominator.Div(denominator, five)
+		fiveCount++
+	}
+	if denominator.Cmp(big.NewInt(1)) != 0 {
+		return "", fmt.Errorf("JSON number %q has a non-terminating decimal form", value)
+	}
+
+	scale := twoCount
+	if fiveCount > scale {
+		scale = fiveCount
+	}
+	scaled := new(big.Int).Set(rat.Num())
+	if factor := scale - twoCount; factor > 0 {
+		scaled.Mul(scaled, new(big.Int).Exp(five, big.NewInt(int64(factor)), nil))
+	}
+	if factor := scale - fiveCount; factor > 0 {
+		scaled.Mul(scaled, new(big.Int).Exp(two, big.NewInt(int64(factor)), nil))
+	}
+
+	negative := scaled.Sign() < 0
+	digits := scaled.Abs(scaled).String()
+	if scale > 0 {
+		if len(digits) <= scale {
+			digits = strings.Repeat("0", scale-len(digits)+1) + digits
+		}
+		position := len(digits) - scale
+		digits = digits[:position] + "." + digits[position:]
+		digits = strings.TrimRight(strings.TrimRight(digits, "0"), ".")
+	}
+	if negative {
+		digits = "-" + digits
+	}
+	return json.Number(digits), nil
 }

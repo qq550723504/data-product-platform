@@ -34,7 +34,7 @@ func (r *QueryRepository) Get(ctx context.Context, evidenceID uuid.UUID) (Item, 
 		return Item{}, fmt.Errorf("query evidence %s: %w", evidenceID, err)
 	}
 	if len(metadata) > 0 {
-		if err := decodeMetadata(metadata, &item.Metadata); err != nil {
+		if err := decodeMetadataForHash(metadata, item.HashAlgorithm, &item.Metadata); err != nil {
 			return Item{}, fmt.Errorf("decode evidence metadata: %w", err)
 		}
 	}
