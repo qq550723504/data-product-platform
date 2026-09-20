@@ -172,7 +172,7 @@ DRAFT → REVIEWING → APPROVED → ACTIVE
 
 ### RightsDeclaration
 
-声明与验证事实分离。VERIFIED 历史声明不得被覆盖；修正通过新声明/新验证事实完成。
+声明与验证事实分离。同一个 RightsDeclaration 只能有一个 terminal RightsVerification outcome：VERIFIED 或 REJECTED，Verify/Reject 互斥且 outcome 不可翻转。错误 VERIFIED 通过 RightsDisposition INVALIDATED/SUPERSEDED 退出 current set，并以新 RightsDeclaration + 新 verification 修正；不得在同一 declaration 上追加 REJECTED 来覆盖 VERIFIED。
 
 ### QualityAssessment
 
@@ -293,6 +293,8 @@ Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证�
 签发 credential 时，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 所依赖所有 RightsDeclaration / Authorization 中最早的有限 `valid_to/effective_to`，以及签发时已存在且将在未来生效的 RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 中最早的 `effective_at`。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 gate；不能回调平台的 bearer/presigned credential 必须严格执行该 expiry cap 和明确的短最大 TTL。
 
 外部 credential issuance 必须 crash-safe：先持久化 DeliveryOperation + stable provider_request_key；每次 initial/retry/reconciliation 真正调用 provider 前重新执行 CurrentDeliveryGate 并重新计算 expiry cap，再决定是否允许外部 side effect。
+
+同时必须存在 issuance/entitlement 线性化机制：provider 返回或 reconciliation 恢复 access capability 后，在 terminal ISSUED DB transaction 内获取与 Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，重新执行 CurrentDeliveryGate + fresh cap，并验证 dependency revision 未被并发变更穿越。该 terminal commit 是 issuance linearization point。
 
 如果 fresh gate 变为 BLOCKED，但该 DeliveryOperation 此前已经进入可能调用过 provider 的 ISSUANCE_PENDING/retry/reconciliation 窗口，**不能直接记录 BLOCKED**。必须先使用同一 provider_request_key reconciliation 既有 provider outcome：
 - 明确未签发 → 可 BLOCKED；
