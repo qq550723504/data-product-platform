@@ -303,6 +303,8 @@ Current Delivery Eligibility 查询仅用于展示/预检，不是授权凭证�
 
 direct-data delivery 也不得例外：在 terminal ISSUED commit 成功之前，不得向 HTTP response/body/stream 写出任何数据字节；commit 成功后才开始传输。数据库 fence 只覆盖 terminal re-gate + commit，不在整个 stream 生命周期持续持锁。
 
+direct-data terminal `ISSUED` 不表示客户端确认收到数据。若 ISSUED commit 后、第一字节前发生 crash/socket loss，或 stream 中断，同一 idempotency key 的 retry 不得沿用旧 gate/旧 ISSUED 重放 DatasetVersion bytes；只能返回稳定 non-payload replay-required 结果并保持 dataset payload=0 bytes。需要重新传输时必须创建新的显式 DeliveryOperation/attempt（新 idempotency key，可关联原 operation），重新解析 authenticated caller→effective consumer/delegation、重新执行 CurrentDeliveryGate、重新走 terminal fence。若两次 attempt 之间发生身份委派/entitlement/certification/dataset revocation/invalidation，新 attempt 必须 BLOCKED。
+
 如果 fresh gate 变为 BLOCKED，但该 DeliveryOperation 此前已经进入可能调用过 provider 的 ISSUANCE_PENDING/retry/reconciliation 窗口，**不能直接记录 BLOCKED**。必须先使用同一 provider_request_key reconciliation 既有 provider outcome：
 - 明确未签发 → 可 BLOCKED；
 - 已签发 → 必须先 revoke / compensate / contain，并确认外部访问能力已不可用后才能 BLOCKED；
