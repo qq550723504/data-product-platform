@@ -201,7 +201,7 @@ Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduc
 
 CurrentDeliveryGate query 只用于展示/预检，不构成交付授权。任何返回数据、下载链接、presigned URL、token 或访问凭证的 server-side delivery Command 都必须在 issuance 前重新执行完整 CurrentDeliveryGate；不得信任客户端缓存的旧 gate result。gate 与 issuance 必须处于同一 Application Command 受控边界。
 
-若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL 和本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 CurrentDeliveryGate。
+若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL、本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界，以及签发时已存在且未来生效的 RightsDisposition / CertificationDisposition 最早 effective_at。支持 redemption-time server check 的 delivery mode 应在 redemption 时再次执行 CurrentDeliveryGate；不可回调的 bearer/presigned credential 必须使用 expiry cap + 明确最大 TTL。
 
 ## 11. Release Readiness
 
