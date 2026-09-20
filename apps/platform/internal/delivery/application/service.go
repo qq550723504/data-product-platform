@@ -235,7 +235,10 @@ func (s *Service) replayIssued(ctx context.Context, operation domain.Operation, 
 		if recordErr := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, domain.ObservationReconciliation, domain.OutcomeNotFound, domain.Capability{}, "provider reports no active capability"); recordErr != nil {
 			return Result{}, recordErr
 		}
-		result, _ := s.appendReplayDecision(ctx, prep, "BLOCKED", domain.Capability{}, "provider reports no active capability", cmd)
+		result, recordErr := s.appendReplayDecision(ctx, prep, "BLOCKED", domain.Capability{}, "provider reports no active capability", cmd)
+		if recordErr != nil {
+			return Result{}, recordErr
+		}
 		return result, ErrCredentialReplay
 	}
 	if err != nil {
@@ -248,7 +251,10 @@ func (s *Service) replayIssued(ctx context.Context, operation domain.Operation, 
 		if recordErr := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, kind, outcome, domain.Capability{}, err.Error()); recordErr != nil {
 			return Result{}, recordErr
 		}
-		result, _ := s.appendReplayDecision(ctx, prep, "CONTAINMENT_PENDING", domain.Capability{}, err.Error(), cmd)
+		result, recordErr := s.appendReplayDecision(ctx, prep, "CONTAINMENT_PENDING", domain.Capability{}, err.Error(), cmd)
+		if recordErr != nil {
+			return Result{}, recordErr
+		}
 		return result, ErrCredentialReplay
 	}
 	if err := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, domain.ObservationReconciliation, domain.OutcomeSuccess, capability, "provider replay recovered capability"); err != nil {
@@ -380,13 +386,19 @@ func (s *Service) executeReplayRevoke(ctx context.Context, prep replayPreparatio
 			if recordErr := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, domain.ObservationCallReturn, domain.OutcomeUnknown, domain.Capability{}, err.Error()); recordErr != nil {
 				return Result{}, recordErr
 			}
-			result, _ := s.appendReplayDecision(ctx, prep, "CONTAINMENT_PENDING", domain.Capability{}, reason+": "+err.Error(), cmd)
+			result, recordErr := s.appendReplayDecision(ctx, prep, "CONTAINMENT_PENDING", domain.Capability{}, reason+": "+err.Error(), cmd)
+			if recordErr != nil {
+				return Result{}, recordErr
+			}
 			return result, ErrCredentialReplay
 		}
 		if err := s.recordObservation(ctx, prep.operation.ID, prep.attemptID, domain.ObservationCallReturn, domain.OutcomeSuccess, domain.Capability{}, "replay capability contained"); err != nil {
 			return Result{}, err
 		}
-		result, _ := s.appendReplayDecision(ctx, prep, "BLOCKED", domain.Capability{}, reason, cmd)
+		result, recordErr := s.appendReplayDecision(ctx, prep, "BLOCKED", domain.Capability{}, reason, cmd)
+		if recordErr != nil {
+			return Result{}, recordErr
+		}
 		return result, ErrCredentialReplay
 	}
 
@@ -937,7 +949,11 @@ func (s *Service) reconcileContainment(ctx context.Context, operation domain.Ope
 	if err := s.recordObservation(ctx, operation.ID, attemptID, domain.ObservationReconciliation, domain.OutcomeSuccess, capability, "provider reports an existing capability"); err != nil {
 		return Result{}, err
 	}
-	return s.containCapability(ctx, operation, domain.StatusBlocked, "recovered capability requires containment", cmd)
+	target := domain.StatusBlocked
+	if evaluation.Allowed {
+		target = domain.StatusFailed
+	}
+	return s.containCapability(ctx, operation, target, "recovered capability requires containment", cmd)
 }
 
 func (s *Service) recordObservation(ctx context.Context, operationID, attemptID uuid.UUID, kind domain.ObservationKind, outcome domain.Outcome, capability domain.Capability, evidenceRef string) error {
