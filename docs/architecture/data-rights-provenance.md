@@ -138,7 +138,7 @@ Binding 至少表达：
 1. Authorization.grantor_ref 与声明中承担可授权角色的 party_ref 明确匹配；若依赖 delegation，则必须引用**强类型 GrantorAuthorityDelegationChain**（名称可由实现固定），链条从 declaration-supported delegator 到 Authorization.grantor_ref 可验证且不可缺边；
    - 每个 delegation edge 至少有 delegator_ref、delegate_ref、resource、**grantable_actions / grantable purpose / normalized grant scope / onward_grant_mode**、valid_from/valid_to、Evidence；如果还需要表达 delegate 自己的 use permission，应使用独立 use-permission 字段/事实，不能与 grant authority 共用一个 actions 集合；
    - delegation edge / chain 的撤销或纠正使用 append-only disposition（至少 REVOKED / INVALIDATED / SUPERSEDED + effective_at），不能覆盖历史；
-   - chain identity + ordered member edge IDs/hash 必须可查询/可冻结；
+   - chain identity + ordered member edge IDs/hash 必须可查询/可冻结；如果 chain 采用 DRAFT→FINALIZED，member mutation 与 Finalize 必须共享同一个 parent chain row lock/fence（parent-first 固定顺序），Finalize 持锁校验 ordered members/hash 后提交；FINALIZED 后 member mutation 全部拒绝，不能出现 late member commit 改写已冻结 grant authority；
 2. 声明覆盖同一 DataResource；
 3. **Authorization 的授予必须由 grant authority 支撑，不能只看 allowed/use permission。** declaration.grant_authority_mode 必须允许 grant，且 grantable_actions、grantable purposes、grantable scope 必须逐项覆盖 Authorization 授出的 action/purpose/scope；declaration 只有 allowed USE/PROCESS 而 grantable_actions 为空时，不能作为任何对第三方 Authorization 的 grant source；
 4. 若通过 delegation chain 传递 grant authority，每一 edge 必须显式表达其**可继续授予的 grantable actions/purpose/scope**；只有 use permission、但没有 onward grant authority 的 edge 会在该处终止授权链；
