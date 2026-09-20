@@ -150,6 +150,8 @@ Cost 与 Evidence 是一等业务对象，不允许项目结束后再补录。
 
 CostEvent 的幂等边界是**同一次实际 activity attempt**，不是把一个顶层业务对象后续所有真实重试都合并掉。same-attempt 的 command/network/transaction replay 未产生新外部工作时必须去重；如果 failed/transient attempt 后再次真实调用 engine/provider、再次消耗 compute 或再次发生人工审核，则必须使用新的稳定 attempt/activity identity 记录新增 CostEvent，或原子聚合新增 quantity/amount 并保留可审计 attempt identity/count。不得用同一个 QualityAssessment / DeliveryOperation 的顶层 idempotency key 吞掉后来真实发生的成本。
 
+Provider 成本不依赖业务终态。每一次真实 external provider invocation 在调用前先分配/持久化 physical attempt identity；成功、provider failure、timeout/unknown、reconciliation lookup、revoke/compensation 只要实际调用并可能计费，都必须记录该 attempt 的 CostEvent。amount 暂不可知时至少记录真实 invocation quantity/unit；不能等到 ISSUED 才记账，也不能因最终 BLOCKED/FAILED/CONTAINMENT_PENDING 而丢弃已发生成本。
+
 ## 8. Industry Pack Boundary
 
 园区、制造、医疗、政务等行业逻辑不得硬编码进 Core Domain。
@@ -231,7 +233,7 @@ DeliveryOperation 每个终态都必须产生明确 Domain Event：Issued / Bloc
 
 若签发 URL/token/credential，`expires_at` 不得晚于 requested TTL、平台最大 TTL、caller principal→consumer/workspace binding / workspace membership / delegation 的最早有限有效期，以及本次 entitlement 链上最早的 RightsDeclaration / Authorization 有效期边界；签发时已知且未来生效的 identity revoke/disable（trusted identity source 可表达时）、RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition 的最早 effective_at 也必须参与 cap。支持 redemption-time server check 的 delivery mode 应在 redemption 时重新验证 caller authority + CurrentDeliveryGate；不可回调的 bearer/presigned credential 必须使用该完整 expiry cap + 明确最大 TTL。
 
-任何 provider 首次返回或 reconciliation 恢复出的 credential，在进入 ISSUED 前必须验证实际 capability 是 requested/current-gate context 的等价或更窄集合：expiry <= fresh cap，resource/DatasetVersion、consumer、action、object/row/prefix scope、channel 不得扩大。命中旧 provider_request_key 不能绕过这条检查；超过 fresh cap、scope 过宽或关键维度不可验证时必须 shorten/narrow+verify 或 revoke/contain，无法安全满足当前 context 时不得 ISSUED。
+任何 provider 首次返回或 reconciliation 恢复出的 credential，在进入 ISSUED 前必须验证实际 capability 是 requested/current-gate context 的等价或更窄集合：expiry <= fresh cap，resource/DatasetVersion、consumer/grantee、action、object/row/prefix scope、channel 不得扩大。**consumer/grantee 不能因 provider“不支持该字段”而跳过**：direct bearer/presigned capability 必须有 provider-native 或等价可验证的 consumer-binding enforcement；否则必须用 platform redemption/gateway 在 redemption 时重新认证并强制 effective consumer，或标记 direct mode unsupported。命中旧 provider_request_key 不能绕过这条检查；超过 fresh cap、scope 过宽或关键维度不可验证时必须 shorten/narrow+verify 或 revoke/contain，无法安全满足当前 context 时不得 ISSUED。
 
 ## 11. Release Readiness
 
