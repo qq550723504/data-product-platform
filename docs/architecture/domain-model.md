@@ -199,9 +199,9 @@ Current rights selection 必须根据 as_of 和 disposition 判断，不能用 c
 
 必须证明：
 
-- Authorization.grantor_ref 与 declaration 中可授权 party_ref 匹配，或存在明确可验证 delegation chain；
+- Authorization.grantor_ref 与 declaration 中可授权 party_ref 匹配，或存在明确强类型 delegation chain；delegation chain 每一跳都必须携带 current-valid onward grant authority，不能把 use permission 当作 sublicensing authority；
 - 同一 DataResource；
-- declaration allowed/grantable actions 与 scope 覆盖 Authorization 授出的 actions/scope；
+- declaration 必须有显式 grant authority；grantable actions / grantable purpose / grantable scope 覆盖 Authorization 授出的 actions/purpose/scope。allowed/use permission 不产生 grant authority；
 - declaration 当前 VERIFIED、validity 与 disposition 条件有效；
 - 同一 workspace。
 
