@@ -323,6 +323,8 @@ ISSUANCE_PENDING + stable provider_request_key
 - **每一次 initial issuance、retry issuance、以及 reconciliation 决定继续 issuance 前，都必须重新验证 authenticated principal 当前仍可代表 effective consumer/workspace（含 delegation/membership/binding），再重新读取当前事实、执行完整 CurrentDeliveryGate，并重新计算 credential expiry cap；PREPARED/ISSUANCE_PENDING 中旧 identity/gate snapshot 仅用于审计；**
 - 所有 delivery mode 的 terminal finalize 必须获取共享 delivery authorization fence/revision，并在同一 terminal transaction 内重新验证 principal→consumer/workspace binding/delegation + CurrentDeliveryGate；provider/credential 模式还需 fresh-cap；identity binding/delegation revoke/expiry 不得穿越 terminal finalize；
 - direct-data 模式必须先提交 ISSUED terminal fact，再允许写出 HTTP body/stream/file 的第一字节；commit 前 response body 必须为 0 bytes；
+- direct-data terminal `ISSUED` 只表示该 attempt 已在线性化点获准开始响应，不证明客户端已收到全部数据。若 ISSUED commit 后在第一字节前 crash/socket loss，或 stream 中断，同一 idempotency key 的 retry **不得**使用旧 gate/旧 ISSUED 重新发送 DatasetVersion bytes；必须返回稳定 non-payload replay-required 结果（例如 `DIRECT_DATA_REPLAY_REQUIRES_NEW_ATTEMPT` + 原 DeliveryOperation ID/状态），dataset payload=0 bytes；
+- direct-data 需要重新传输时必须创建新的显式 DeliveryOperation/attempt（新的 idempotency key，可记录 `retry_of_delivery_operation_id`）。新 attempt 必须重新解析 authenticated principal→effective consumer/workspace/delegation、重新执行 CurrentDeliveryGate，并重新进入 delivery authorization fence/terminal finalize；如果两次 attempt 之间发生 caller binding/delegation revoke、Rights/Certification/Authorization 变化或 DatasetVersion invalidation，新 attempt 必须 fail closed；
 - direct-data 不得在整个 stream 期间持有 fence/DB row lock；锁仅覆盖 terminal re-gate + commit；
 - fresh gate BLOCKED 时：
   - 若确认此前未发生 provider issuance，可直接 BLOCKED；
