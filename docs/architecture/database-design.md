@@ -294,7 +294,7 @@ RightsSnapshot 的 immutable 语义覆盖 **snapshot header + 全部 membership 
 - Snapshot root_hash / content hash（如存在）必须覆盖有序后的 membership identity，membership 改变会导致 hash 不一致；
 - migration down 不得移除这些历史保护后静默允许 mutation。
 
-现有 `rights_snapshot_authorization` 也必须纳入该保护；#137 新增 declaration/binding membership 时使用同等级 guard。
+现有 `rights_snapshot_authorization` 也必须纳入该保护；#137 新增 declaration/binding membership 时使用同等级 guard。**实现状态说明：当前 migration 只保护 `rights_snapshot` header，现有 `rights_snapshot_authorization` 尚无 INSERT/UPDATE/DELETE membership guard；这是 #137 明确待落地的 enforcement gap，在对应 forward migration + PostgreSQL tests 合入前不得声称 RightsSnapshot membership 已被数据库完整冻结。**
 
 ### Effective Rights（#137）
 
@@ -662,4 +662,4 @@ Execution 行在生命周期内会通过显式状态迁移更新 status、engine
 
 ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，当前 `guard_product_release_history` 拒绝 `product_release` 主行 UPDATE/DELETE，因此主行作为发布历史冻结。**但 `product_release_dataset` 当前没有针对已 PUBLISHED release 的 INSERT/UPDATE/DELETE guard；#99 明确跟踪该 P2/P1 enforcement gap。** 在对应 forward migration + PostgreSQL tests 合入前，文档不得声称 published dataset membership 已由数据库完整保护。SUSPENDED/WITHDRAWN 虽是 schema 枚举值，但当前不构成可达 live transition；未来启用必须先调整主行 guard、补齐 membership immutability 并新增显式 Command。
 
-不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、AuthorizationProvenanceBinding、AuthorizationProvenanceBindingDisposition、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent、CostAllocation。**实现状态说明：EvidenceSnapshot 的 immutable invariant 包括 header + `evidence_snapshot_item` membership，但当前数据库仅保护 snapshot header，membership INSERT/UPDATE/DELETE guard 仍是 #99 已知 open enforcement gap；在 #99 合入前不得声称 EvidenceSnapshot membership 已被 DB 完整冻结。**
+不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、AuthorizationProvenanceBinding、AuthorizationProvenanceBindingDisposition、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent、CostAllocation。实现状态上，EvidenceSnapshot membership guard 仍由 #99 跟踪；RightsSnapshot membership guard 仍由 #137 当前实现范围补齐。文档不得把这些尚未落库的 child-row enforcement 描述成已完成。
