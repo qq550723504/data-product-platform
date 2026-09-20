@@ -250,6 +250,13 @@ PREPARED
 2. gate BLOCKED 时直接在同一 DB transaction 记录 BLOCKED + Audit/Evidence/Outbox，不调用 provider；
 3. gate ALLOWED 时将 operation 持久化为 ISSUANCE_PENDING；外部调用必须使用稳定幂等键，默认以 DeliveryOperation ID（或其稳定派生值）作为 provider_request_key；
 4. **每一次初始 issuance、retry issuance 或 reconciliation 后决定继续 issuance 之前，都必须重新读取当前事实并重新执行完整 CurrentDeliveryGate，同时重新计算 credential expiry cap。** PREPARED/ISSUANCE_PENDING 中保存的旧 gate snapshot 只用于审计，不可作为后续 issuance 授权；
+5. **delivery issuance 与 entitlement-changing commands 必须有共享线性化机制。** 第一阶段采用（或实现等价强度的）delivery authorization fence/revision：
+   - CurrentDeliveryGate 依赖的 DatasetVersion usability、selected Certification、RightsDeclaration / RightsDisposition、AuthorizationProvenanceBinding / BindingDisposition、Authorization 等关键 subject 都必须落到稳定 fence/revision identity；
+   - Invalidate/Supersede RightsDeclaration、Invalidate/Supersede AuthorizationProvenanceBinding、Revoke/Supersede DatasetCertification、DatasetVersion invalidate，以及其它会改变 CurrentDeliveryGate 的 Command，在提交业务变更前必须获取/推进对应 fence；
+   - provider 调用前记录本次 gate dependency revision vector / fence token；
+   - **provider 返回或 reconciliation 恢复出 access capability 后，在写 ISSUED 的 terminal DB transaction 内重新获取相同 fence（固定顺序锁定），重新执行 CurrentDeliveryGate、重新计算 fresh cap，并验证 revision/token 未被并发变更穿越；该 terminal commit 是 delivery issuance 的线性化点。**
+   - 若任何影响 gate 的变更先完成，finalize 必须看到新 revision/current facts，不能 ISSUED，转 containment/block/fail 流程；
+   - 若 finalize 先完成，则并发 disposition/invalidation 在线性顺序上发生在 issuance 之后；其 Command 必须按 delivery mode 的撤销语义处理受影响的已签发 capability（revocable/redemption-time mode 立即 contain；不可回调 bearer 只能使用已声明的短 TTL 限制，且不能声称支持即时撤销）。
 5. 如果 fresh gate 已 BLOCKED：
    - 若 operation 还未发生任何 provider 调用，可直接 BLOCKED；
    - 若 operation 曾进入可能已调用 provider 的 ISSUANCE_PENDING/retry/reconciliation 窗口，**必须先用同一 provider_request_key reconciliation 既有 provider outcome**，不能直接记 BLOCKED；
@@ -258,24 +265,24 @@ PREPARED
    - provider outcome unknown、查询失败、或 revoke/contain 未确认成功 → 进入 CONTAINMENT_PENDING，不得对外声称 BLOCKED，也不得发出 DatasetDeliveryBlocked terminal event；
    - CONTAINMENT_PENDING 必须由 reconciliation/人工告警持续处理，直到确认 access capability 不存在或已被安全失效；
 - containment 确认成功后，若终结原因是 fresh gate 已不允许交付，则转 BLOCKED；若 gate 仍 ALLOWED 但 credential 无法满足 fresh cap/issuance contract，则转 FAILED（例如 CREDENTIAL_EXCEEDS_FRESH_CAP）；
-6. provider 首次返回或 reconciliation 恢复出 credential/access capability 后，**在写入 ISSUED 前必须验证其实际 provider expiry / access bound 不晚于当前 fresh credential expiry cap**。该 cap 必须来自最近一次 CurrentDeliveryGate + disposition/validity 重新计算，而不是 PREPARED 时的旧值；
-7. 若 recovered/returned credential 的实际 expiry 晚于 fresh cap：
+7. provider 首次返回或 reconciliation 恢复出 credential/access capability 后，**在写入 ISSUED 前必须验证其实际 provider expiry / access bound 不晚于当前 fresh credential expiry cap**。该 cap 必须来自最近一次 CurrentDeliveryGate + disposition/validity 重新计算，而不是 PREPARED 时的旧值；
+8. 若 recovered/returned credential 的实际 expiry 晚于 fresh cap：
    - 若 provider 能对**同一 access capability**安全缩短/收窄并可 read-after-write 验证实际 expiry <= fresh cap，则验证成功后才允许继续 ISSUED；
    - 否则不得提交 ISSUED，必须先 revoke/contain 该 credential；
    - containment 未确认成功时进入 CONTAINMENT_PENDING；
    - containment 成功但无法在同一安全能力上满足 fresh cap 时，当前 DeliveryOperation 终结为 FAILED（例如 CREDENTIAL_EXCEEDS_FRESH_CAP）；如业务仍需交付，必须通过新的显式 delivery attempt/replacement operation 再次完整 re-gate，不得在同一幂等 operation 下静默签发第二份 credential；
    - actual expiry 无法可靠读取/验证时，对 direct bearer 等不可 redemption-time gate 的模式按不安全处理，不得 ISSUED；
-8. 只有 credential/access capability 已证明满足 fresh cap 后，才用后续 DB transaction 记录 ISSUED + provider credential reference/hash（不得保存可用 secret 正文）+ **verified actual credential expiry** + Audit/Evidence/CostEvent/Outbox；**只有这个 terminal commit 成功后**才能把可用 credential 返回给客户端；
-9. 如果发生“provider 已成功，但 terminal commit 失败/进程崩溃”的不确定窗口，重试必须使用同一 provider_request_key 查询/重放同一 issuance，不得生成第二份独立 credential；
-10. 必须存在 reconciliation path，能够把长时间停留在 ISSUANCE_PENDING 的 operation 解析为：
+9. 只有 credential/access capability 已证明满足 fresh cap 后，才用后续 DB transaction 记录 ISSUED + provider credential reference/hash（不得保存可用 secret 正文）+ **verified actual credential expiry** + Audit/Evidence/CostEvent/Outbox；**只有这个 terminal commit 成功后**才能把可用 credential 返回给客户端；
+10. 如果发生“provider 已成功，但 terminal commit 失败/进程崩溃”的不确定窗口，重试必须使用同一 provider_request_key 查询/重放同一 issuance，不得生成第二份独立 credential；
+11. 必须存在 reconciliation path，能够把长时间停留在 ISSUANCE_PENDING 的 operation 解析为：
    - provider 已成功 → 恢复并完成同一个 ISSUED terminal fact；
    - provider 明确失败 → FAILED；
    - outcome 无法确认但 provider 支持 revoke/compensation → 先撤销/补偿再 FAILED；
-11. **direct bearer mode 的恢复要求更严格**：provider 必须能够基于同一 provider_request_key replay / read-after-write 返回**同一 credential（或等价可重复获取的同一访问能力）**。仅支持 revoke/compensation 但无法恢复同一 bearer secret，不足以支持 direct bearer，因为“terminal ISSUED 已提交但 HTTP response 丢失”后客户端重试无法拿回原 credential；
-12. 如果 provider 不能恢复同一 credential，则第一阶段必须使用平台控制的 redemption indirection；也可以在能够证明旧 credential 未交付且已成功 revoke 的协议下执行显式 replacement operation，但不得把同一 DeliveryOperation 的幂等 retry 静默变成第二份 credential；
-13. 如果外部 provider **既不支持 idempotency/read-after-write，也不支持 revoke/compensation**，第一阶段不得直接暴露其 bearer credential；必须改用平台控制的 redemption indirection，或将该 delivery mode 判为 unsupported；
-14. 本地生成 presigned URL 时，也必须先持久化 PREPARED/ISSUANCE_PENDING，并在每次实际生成前重新执行 CurrentDeliveryGate/expiry cap；terminal DB commit 成功前不得把 URL 返回客户端或写入日志/事件；
-15. retries / reconciliation 不得重复 CostEvent、AuditEvent 或 terminal Domain Event。
+12. **direct bearer mode 的恢复要求更严格**：provider 必须能够基于同一 provider_request_key replay / read-after-write 返回**同一 credential（或等价可重复获取的同一访问能力）**。仅支持 revoke/compensation 但无法恢复同一 bearer secret，不足以支持 direct bearer，因为“terminal ISSUED 已提交但 HTTP response 丢失”后客户端重试无法拿回原 credential；
+13. 如果 provider 不能恢复同一 credential，则第一阶段必须使用平台控制的 redemption indirection；也可以在能够证明旧 credential 未交付且已成功 revoke 的协议下执行显式 replacement operation，但不得把同一 DeliveryOperation 的幂等 retry 静默变成第二份 credential；
+14. 如果外部 provider **既不支持 idempotency/read-after-write，也不支持 revoke/compensation**，第一阶段不得直接暴露其 bearer credential；必须改用平台控制的 redemption indirection，或将该 delivery mode 判为 unsupported；
+15. 本地生成 presigned URL 时，也必须先持久化 PREPARED/ISSUANCE_PENDING，并在每次实际生成前重新执行 CurrentDeliveryGate/expiry cap；terminal DB commit 成功前不得把 URL 返回客户端或写入日志/事件；
+16. retries / reconciliation 不得重复 CostEvent、AuditEvent 或 terminal Domain Event。
 
 测试必须覆盖故障注入：
 - provider 成功后、terminal DB commit 前 crash；
