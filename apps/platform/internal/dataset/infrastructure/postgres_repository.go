@@ -8,11 +8,30 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 )
 
 var ErrNotFound = errors.New("dataset object not found")
+
+// versionColumns is the single SELECT list for hydrating a DatasetVersion. It is
+// shared so a new column cannot be added to one query and silently dropped from
+// another (scanVersion expects exactly this order).
+const versionColumns = `
+	id, dataset_id, version_no, status,
+	COALESCE(schema_version, ''),
+	COALESCE(storage_type, ''),
+	COALESCE(storage_uri, ''),
+	COALESCE(content_type, ''),
+	row_count, byte_size,
+	COALESCE(checksum_algorithm, ''),
+	COALESCE(checksum_value, ''),
+	generated_by_execution_id, rights_snapshot_id,
+	COALESCE(quality_status, ''),
+	COALESCE(compliance_status, ''),
+	snapshot_from, snapshot_to, metadata, created_at, created_by, ready_at,
+	invalidated_at, COALESCE(invalidation_reason, '')`
 
 type PostgresRepository struct {
 	pool *pgxpool.Pool
@@ -54,32 +73,96 @@ func (r *PostgresRepository) InsertDataset(ctx context.Context, tx pgx.Tx, datas
 	return nil
 }
 
-func (r *PostgresRepository) AllocateVersion(ctx context.Context, tx pgx.Tx, datasetID uuid.UUID, createdBy *uuid.UUID) (domain.DatasetVersion, error) {
+// AllocateVersion creates the next version row for a Dataset, or returns the row
+// already produced by the same Execution.
+//
+// generatedByExecutionID is the C2-a output idempotency key. When it is set the
+// allocation first looks for an existing (dataset_id, generated_by_execution_id)
+// row under the Dataset lock: reusing that row is what keeps a replayed output
+// write from consuming a second version number and from breaking the unique
+// index added by 000020. The returned bool reports whether an existing row was
+// reused instead of a new one being allocated.
+func (r *PostgresRepository) AllocateVersion(ctx context.Context, tx pgx.Tx, datasetID uuid.UUID, createdBy, generatedByExecutionID *uuid.UUID) (domain.DatasetVersion, bool, error) {
 	var exists bool
 	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM dataset WHERE id = $1 AND deleted_at IS NULL)`, datasetID).Scan(&exists); err != nil {
-		return domain.DatasetVersion{}, fmt.Errorf("check dataset: %w", err)
+		return domain.DatasetVersion{}, false, fmt.Errorf("check dataset: %w", err)
 	}
 	if !exists {
-		return domain.DatasetVersion{}, ErrNotFound
+		return domain.DatasetVersion{}, false, ErrNotFound
 	}
 
 	// Serialize version allocation using the Dataset row rather than a global lock.
 	if _, err := tx.Exec(ctx, `SELECT id FROM dataset WHERE id = $1 FOR UPDATE`, datasetID); err != nil {
-		return domain.DatasetVersion{}, fmt.Errorf("lock dataset: %w", err)
+		return domain.DatasetVersion{}, false, fmt.Errorf("lock dataset: %w", err)
+	}
+
+	if generatedByExecutionID != nil {
+		existing, found, err := findVersionByExecutionOutputTx(ctx, tx, datasetID, *generatedByExecutionID)
+		if err != nil {
+			return domain.DatasetVersion{}, false, err
+		}
+		if found {
+			return existing, true, nil
+		}
 	}
 
 	var versionNo int64
 	if err := tx.QueryRow(ctx, `SELECT COALESCE(MAX(version_no), 0) + 1 FROM dataset_version WHERE dataset_id = $1`, datasetID).Scan(&versionNo); err != nil {
-		return domain.DatasetVersion{}, fmt.Errorf("allocate dataset version: %w", err)
+		return domain.DatasetVersion{}, false, fmt.Errorf("allocate dataset version: %w", err)
 	}
 	version, err := domain.NewVersion(uuid.New(), datasetID, versionNo, createdBy)
 	if err != nil {
-		return domain.DatasetVersion{}, err
+		return domain.DatasetVersion{}, false, err
 	}
+	// The idempotency key must be written at allocation time, not at SetReady:
+	// otherwise a concurrent replay could allocate a second half-product row that
+	// the partial unique index never sees.
+	version.GeneratedByExecutionID = generatedByExecutionID
 	if err := r.insertVersion(ctx, tx, version); err != nil {
-		return domain.DatasetVersion{}, err
+		// Defense in depth: the Dataset lock already serializes allocation, but a row
+		// inserted through another path must still not become a second output.
+		if generatedByExecutionID != nil && isExecutionOutputConflict(err) {
+			existing, found, findErr := findVersionByExecutionOutputTx(ctx, tx, datasetID, *generatedByExecutionID)
+			if findErr != nil {
+				return domain.DatasetVersion{}, false, findErr
+			}
+			if found {
+				return existing, true, nil
+			}
+		}
+		return domain.DatasetVersion{}, false, err
 	}
-	return version, nil
+	return version, false, nil
+}
+
+// findVersionByExecutionOutputTx reads the output row already owned by an
+// Execution, if any, including half-products (CREATED/PROCESSING/FAILED).
+// The oldest row wins so a pair that accumulated historical duplicates before
+// C2-a always repairs the same version instead of picking one arbitrarily.
+func findVersionByExecutionOutputTx(ctx context.Context, tx pgx.Tx, datasetID, executionID uuid.UUID) (domain.DatasetVersion, bool, error) {
+	version, err := scanVersion(tx.QueryRow(ctx, `
+		SELECT `+versionColumns+`
+		FROM dataset_version
+		WHERE dataset_id = $1 AND generated_by_execution_id = $2
+		ORDER BY version_no ASC
+		LIMIT 1
+	`, datasetID, executionID))
+	if errors.Is(err, ErrNotFound) {
+		return domain.DatasetVersion{}, false, nil
+	}
+	if err != nil {
+		return domain.DatasetVersion{}, false, err
+	}
+	return version, true, nil
+}
+
+// isExecutionOutputConflict reports a unique violation on the C2-a output index.
+func isExecutionOutputConflict(err error) bool {
+	var pgErr *pgconn.PgError
+	if !errors.As(err, &pgErr) {
+		return false
+	}
+	return pgErr.Code == "23505" && pgErr.ConstraintName == "uq_dataset_version_execution_output"
 }
 
 func (r *PostgresRepository) insertVersion(ctx context.Context, tx pgx.Tx, version domain.DatasetVersion) error {
@@ -89,13 +172,38 @@ func (r *PostgresRepository) insertVersion(ctx context.Context, tx pgx.Tx, versi
 	}
 	_, err = tx.Exec(ctx, `
 		INSERT INTO dataset_version (
-			id, dataset_id, version_no, status, metadata, created_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7)
-	`, version.ID, version.DatasetID, version.VersionNo, version.Status, metadata, version.CreatedAt, version.CreatedBy)
+			id, dataset_id, version_no, status, metadata, created_at, created_by, generated_by_execution_id
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+	`, version.ID, version.DatasetID, version.VersionNo, version.Status, metadata, version.CreatedAt, version.CreatedBy, version.GeneratedByExecutionID)
 	if err != nil {
 		return fmt.Errorf("insert dataset version: %w", err)
 	}
 	return nil
+}
+
+// StartProcessing persists the domain transition a reused FAILED half-product
+// needs before its content can be rewritten. It is the SQL twin of
+// DatasetVersion.StartProcessing and rejects any other source status.
+func (r *PostgresRepository) StartProcessing(ctx context.Context, tx pgx.Tx, versionID uuid.UUID) error {
+	tag, err := tx.Exec(ctx, `UPDATE dataset_version SET status = 'PROCESSING' WHERE id = $1 AND status IN ('CREATED','FAILED')`, versionID)
+	if err != nil {
+		return fmt.Errorf("start processing dataset version: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return domain.ErrInvalidTransition
+	}
+	return nil
+}
+
+// LockVersion locks a version row and returns its committed state. The output
+// writer uses it to prove, at commit time, that it is still the attempt allowed
+// to publish: a concurrent delivery of the same Execution may already have done
+// so, in which case the loser adopts the published row instead of rewriting it.
+func (r *PostgresRepository) LockVersion(ctx context.Context, tx pgx.Tx, versionID uuid.UUID) (domain.DatasetVersion, error) {
+	return scanVersion(tx.QueryRow(ctx, `
+		SELECT `+versionColumns+`
+		FROM dataset_version WHERE id = $1 FOR UPDATE
+	`, versionID))
 }
 
 func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version domain.DatasetVersion) error {
@@ -206,19 +314,7 @@ func (r *PostgresRepository) GetWorkspaceAndType(ctx context.Context, datasetID 
 
 func (r *PostgresRepository) GetVersion(ctx context.Context, versionID uuid.UUID) (domain.DatasetVersion, error) {
 	return scanVersion(r.pool.QueryRow(ctx, `
-		SELECT id, dataset_id, version_no, status,
-		       COALESCE(schema_version, ''),
-		       COALESCE(storage_type, ''),
-		       COALESCE(storage_uri, ''),
-		       COALESCE(content_type, ''),
-		       row_count, byte_size,
-		       COALESCE(checksum_algorithm, ''),
-		       COALESCE(checksum_value, ''),
-		       generated_by_execution_id, rights_snapshot_id,
-		       COALESCE(quality_status, ''),
-		       COALESCE(compliance_status, ''),
-		       snapshot_from, snapshot_to, metadata, created_at, created_by, ready_at,
-		       invalidated_at, COALESCE(invalidation_reason, '')
+		SELECT `+versionColumns+`
 		FROM dataset_version WHERE id = $1
 	`, versionID))
 }

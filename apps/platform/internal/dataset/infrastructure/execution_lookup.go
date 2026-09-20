@@ -12,19 +12,7 @@ import (
 
 func (r *PostgresRepository) FindVersionByExecution(ctx context.Context, executionID uuid.UUID) (domain.DatasetVersion, error) {
 	version, err := scanVersion(r.pool.QueryRow(ctx, `
-		SELECT id, dataset_id, version_no, status,
-		       COALESCE(schema_version, ''),
-		       COALESCE(storage_type, ''),
-		       COALESCE(storage_uri, ''),
-		       COALESCE(content_type, ''),
-		       row_count, byte_size,
-		       COALESCE(checksum_algorithm, ''),
-		       COALESCE(checksum_value, ''),
-		       generated_by_execution_id, rights_snapshot_id,
-		       COALESCE(quality_status, ''),
-		       COALESCE(compliance_status, ''),
-		       snapshot_from, snapshot_to, metadata, created_at, created_by, ready_at,
-		       invalidated_at, COALESCE(invalidation_reason, '')
+		SELECT `+versionColumns+`
 		FROM dataset_version
 		WHERE generated_by_execution_id = $1
 		ORDER BY version_no DESC
