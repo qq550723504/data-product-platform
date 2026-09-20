@@ -53,6 +53,7 @@ type AssessmentAttempt struct {
 	WorkspaceID      uuid.UUID
 	DatasetVersionID uuid.UUID
 	RuleSetRef       string
+	LeaseExpiresAt   time.Time
 	State            AssessmentAttemptState
 }
 
@@ -99,23 +100,43 @@ func (r *PostgresRepository) InsertResult(ctx context.Context, tx pgx.Tx, result
 	return nil
 }
 
-func (r *PostgresRepository) GetAssessmentAttempt(ctx context.Context, attemptID uuid.UUID) (AssessmentAttempt, bool, error) {
+func (r *PostgresRepository) ReconcileAssessmentAttempt(ctx context.Context, tx pgx.Tx, attemptID, workspaceID, datasetVersionID uuid.UUID, ruleSetRef string, now time.Time) (AssessmentAttempt, bool, error) {
 	var attempt AssessmentAttempt
-	err := r.pool.QueryRow(ctx, `
-		SELECT a.workspace_id, a.dataset_version_id, a.rule_set_ref,
-			COALESCE(o.outcome,''), o.assessment_id, COALESCE(o.error_message,'')
-		FROM quality_assessment_attempt a
-		LEFT JOIN quality_assessment_attempt_outcome o ON o.attempt_id=a.id
-		WHERE a.id=$1
+	err := tx.QueryRow(ctx, `
+		SELECT workspace_id, dataset_version_id, rule_set_ref, lease_expires_at
+		FROM quality_assessment_attempt
+		WHERE id=$1
+		FOR UPDATE
 	`, attemptID).Scan(
 		&attempt.WorkspaceID, &attempt.DatasetVersionID, &attempt.RuleSetRef,
-		&attempt.State.Outcome, &attempt.State.AssessmentID, &attempt.State.ErrorMessage,
+		&attempt.LeaseExpiresAt,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return AssessmentAttempt{}, false, nil
 	}
 	if err != nil {
 		return AssessmentAttempt{}, false, fmt.Errorf("load quality assessment attempt %s: %w", attemptID, err)
+	}
+	if attempt.WorkspaceID != workspaceID || attempt.DatasetVersionID != datasetVersionID || attempt.RuleSetRef != ruleSetRef {
+		return AssessmentAttempt{}, false, fmt.Errorf("%w: %s", ErrAssessmentAttemptConflict, attemptID)
+	}
+	if err := tx.QueryRow(ctx, `
+		SELECT outcome, assessment_id, COALESCE(error_message,'')
+		FROM quality_assessment_attempt_outcome
+		WHERE attempt_id=$1
+	`, attemptID).Scan(&attempt.State.Outcome, &attempt.State.AssessmentID, &attempt.State.ErrorMessage); errors.Is(err, pgx.ErrNoRows) {
+		if now.IsZero() {
+			now = time.Now().UTC()
+		}
+		if !now.Before(attempt.LeaseExpiresAt) {
+			attempt.State.Outcome = "FAILED"
+			attempt.State.ErrorMessage = "quality assessment attempt lease expired without a terminal outcome"
+			if err := r.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, "FAILED", nil, attempt.State.ErrorMessage, now); err != nil {
+				return AssessmentAttempt{}, false, fmt.Errorf("reconcile quality assessment attempt %s: %w", attemptID, err)
+			}
+		}
+	} else if err != nil {
+		return AssessmentAttempt{}, false, fmt.Errorf("load quality assessment attempt outcome %s: %w", attemptID, err)
 	}
 	return attempt, true, nil
 }
@@ -124,15 +145,15 @@ func (r *PostgresRepository) GetAssessmentAttempt(ctx context.Context, attemptID
 // evaluator is invoked. A false return means another caller already owns the
 // same attempt identity; its terminal outcome, if any, is returned to the
 // caller without re-running the evaluator.
-func (r *PostgresRepository) ClaimAssessmentAttempt(ctx context.Context, tx pgx.Tx, attemptID, workspaceID, datasetVersionID uuid.UUID, ruleSetRef string, startedAt time.Time, actorID *uuid.UUID) (bool, AssessmentAttemptState, error) {
+func (r *PostgresRepository) ClaimAssessmentAttempt(ctx context.Context, tx pgx.Tx, attemptID, workspaceID, datasetVersionID uuid.UUID, ruleSetRef string, startedAt, leaseExpiresAt time.Time, actorID *uuid.UUID) (bool, AssessmentAttemptState, error) {
 	var insertedID uuid.UUID
 	err := tx.QueryRow(ctx, `
 		INSERT INTO quality_assessment_attempt (
-			id, workspace_id, dataset_version_id, rule_set_ref, started_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6)
+			id, workspace_id, dataset_version_id, rule_set_ref, started_at, lease_expires_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7)
 		ON CONFLICT (id) DO NOTHING
 		RETURNING id
-	`, attemptID, workspaceID, datasetVersionID, ruleSetRef, startedAt, actorID).Scan(&insertedID)
+	`, attemptID, workspaceID, datasetVersionID, ruleSetRef, startedAt, leaseExpiresAt, actorID).Scan(&insertedID)
 	if err == nil {
 		return true, AssessmentAttemptState{}, nil
 	}

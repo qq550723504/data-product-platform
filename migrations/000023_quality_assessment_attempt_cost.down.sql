@@ -1,5 +1,5 @@
-LOCK TABLE cost_allocation, cost_event,
-    quality_assessment_attempt_outcome, quality_assessment_attempt
+LOCK TABLE quality_assessment_attempt, quality_assessment_attempt_outcome,
+    cost_event, cost_allocation
     IN ACCESS EXCLUSIVE MODE;
 
 DO $$

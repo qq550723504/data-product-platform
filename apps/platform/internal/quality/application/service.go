@@ -32,6 +32,7 @@ var ErrAssessmentAttemptInProgress = errors.New("quality assessment attempt is a
 var ErrAssessmentAttemptFailed = errors.New("quality assessment attempt already failed")
 
 const attemptOutcomeRecoveryTimeout = 5 * time.Second
+const assessmentAttemptLeaseDuration = time.Hour
 
 type Service struct {
 	industryPackRoot string
@@ -67,15 +68,12 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 		attemptID = uuid.New()
 	}
 	if cmd.AssessmentAttemptID != uuid.Nil {
-		attempt, found, err := s.repo.GetAssessmentAttempt(ctx, attemptID)
+		attempt, found, err := s.reconcileAttempt(ctx, cmd, attemptID)
 		if err != nil {
 			return domain.Assessment{}, err
 		}
 		if found {
-			if attempt.WorkspaceID != cmd.WorkspaceID || attempt.DatasetVersionID != cmd.DatasetVersionID || attempt.RuleSetRef != cmd.RuleSetRef {
-				return domain.Assessment{}, fmt.Errorf("%w: %s", ErrAssessmentAttemptConflict, attemptID)
-			}
-			return s.replayAttempt(ctx, attempt.State)
+			return attempt, nil
 		}
 	}
 	version, err := s.datasetRepo.GetVersion(ctx, cmd.DatasetVersionID)
@@ -117,12 +115,19 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	if startedAt.IsZero() {
 		startedAt = time.Now().UTC()
 	}
-	claimed, attemptState, err := s.claimAttempt(ctx, cmd, attemptID, startedAt)
+	claimed, _, err := s.claimAttempt(ctx, cmd, attemptID, startedAt)
 	if err != nil {
 		return domain.Assessment{}, err
 	}
 	if !claimed {
-		return s.replayAttempt(ctx, attemptState)
+		attempt, found, err := s.reconcileAttempt(ctx, cmd, attemptID)
+		if err != nil {
+			return domain.Assessment{}, err
+		}
+		if !found {
+			return domain.Assessment{}, ErrAssessmentAttemptInProgress
+		}
+		return attempt, nil
 	}
 	findings, metrics, err := native.Evaluate(policy, native.DatasetContext{
 		Table:    table,
@@ -230,13 +235,37 @@ func (s *Service) replayAttempt(ctx context.Context, state infrastructure.Assess
 	return domain.Assessment{}, ErrAssessmentAttemptInProgress
 }
 
+func (s *Service) reconcileAttempt(ctx context.Context, cmd RunCommand, attemptID uuid.UUID) (domain.Assessment, bool, error) {
+	var state infrastructure.AssessmentAttemptState
+	var found bool
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		attempt, attemptFound, err := s.repo.ReconcileAssessmentAttempt(ctx, tx, attemptID, cmd.WorkspaceID, cmd.DatasetVersionID, cmd.RuleSetRef, time.Now().UTC())
+		if errors.Is(err, infrastructure.ErrAssessmentAttemptConflict) {
+			return fmt.Errorf("%w: %v", ErrAssessmentAttemptConflict, err)
+		}
+		if err != nil {
+			return err
+		}
+		found = attemptFound
+		if attemptFound {
+			state = attempt.State
+		}
+		return nil
+	})
+	if err != nil || !found {
+		return domain.Assessment{}, found, err
+	}
+	assessment, err := s.replayAttempt(ctx, state)
+	return assessment, true, err
+}
+
 func (s *Service) claimAttempt(ctx context.Context, cmd RunCommand, attemptID uuid.UUID, startedAt time.Time) (bool, infrastructure.AssessmentAttemptState, error) {
 	var claimed bool
 	var state infrastructure.AssessmentAttemptState
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		var err error
 		claimed, state, err = s.repo.ClaimAssessmentAttempt(ctx, tx, attemptID, cmd.WorkspaceID,
-			cmd.DatasetVersionID, cmd.RuleSetRef, startedAt, cmd.ActorID)
+			cmd.DatasetVersionID, cmd.RuleSetRef, startedAt, time.Now().UTC().Add(assessmentAttemptLeaseDuration), cmd.ActorID)
 		if errors.Is(err, infrastructure.ErrAssessmentAttemptConflict) {
 			return fmt.Errorf("%w: %v", ErrAssessmentAttemptConflict, err)
 		}

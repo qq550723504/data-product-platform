@@ -112,3 +112,54 @@ spec:
 		t.Fatalf("failed quality attempt costs after replay = %d, want 1", costCount)
 	}
 }
+
+func TestQualityAttemptReconcilesExpiredClaim(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	workspaceID := uuid.New()
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	store := newMemoryStore()
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
+	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, store)
+	dataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "ATTEMPT-EXPIRED")
+	version := uploadCSV(t, ctx, uploadDataset, dataset.ID, "attempt-expired.csv", "company_id\nCOMPANY-001\n", nil)
+	qualityRepo := qualityinfra.NewPostgresRepository(pool)
+	qualityService := qualityapp.NewService(t.TempDir(), txManager, datasetRepo, qualityRepo, store)
+	attemptID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO quality_assessment_attempt (
+			id, workspace_id, dataset_version_id, rule_set_ref,
+			started_at, lease_expires_at
+		) VALUES ($1,$2,$3,$4,now() - interval '2 hours',now() - interval '1 minute')
+	`, attemptID, workspaceID, version.ID, "unknown-rule.yaml"); err != nil {
+		t.Fatalf("insert expired quality attempt: %v", err)
+	}
+	_, replayErr := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: version.ID,
+		RuleSetRef: "unknown-rule.yaml", AssessmentAttemptID: attemptID,
+	})
+	if !errors.Is(replayErr, qualityapp.ErrAssessmentAttemptFailed) {
+		t.Fatalf("expired-attempt replay error = %v, want ErrAssessmentAttemptFailed", replayErr)
+	}
+	var outcome string
+	if err := pool.QueryRow(ctx, `
+		SELECT outcome
+		FROM quality_assessment_attempt_outcome
+		WHERE attempt_id=$1
+	`, attemptID).Scan(&outcome); err != nil {
+		t.Fatalf("read reconciled attempt outcome: %v", err)
+	}
+	if outcome != "FAILED" {
+		t.Fatalf("reconciled attempt outcome = %q, want FAILED", outcome)
+	}
+}

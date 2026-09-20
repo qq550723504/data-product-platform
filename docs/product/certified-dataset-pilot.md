@@ -43,7 +43,7 @@
 
 QualityAssessment 核心已经通过 #140 / migration 000019 落地，继续复用 `quality_result` / `quality_finding` 作为兼容存储/API 名称。
 
-#131 当前 follow-up 已由 migration 000022 与质量评测事务补齐 typed CostAllocation / physical-attempt cost identity；继续复用 `quality_result` / `quality_finding`，不重复设计或迁移 QualityAssessment root。
+#131 当前 follow-up 已由 migration 000022 与质量评测事务补齐 typed CostAllocation / physical-attempt cost identity；继续复用 `quality_result` / `quality_finding`，不重复设计或迁移 QualityAssessment root。质量 attempt 还必须带有 durable lease；重放或 reconciliation 在 lease 过期且没有 terminal outcome 时追加 FAILED outcome，不能永久停留在 IN_PROGRESS。
 
 必须固定：
 

@@ -7,6 +7,7 @@ CREATE TABLE quality_assessment_attempt (
     dataset_version_id  uuid NOT NULL REFERENCES dataset_version(id),
     rule_set_ref        varchar(512) NOT NULL,
     started_at          timestamptz NOT NULL,
+    lease_expires_at    timestamptz NOT NULL,
     created_by          uuid
 );
 
@@ -30,6 +31,9 @@ CREATE INDEX idx_quality_assessment_attempt_workspace
 
 CREATE INDEX idx_quality_assessment_attempt_dataset_version
     ON quality_assessment_attempt(dataset_version_id, started_at, id);
+
+CREATE INDEX idx_quality_assessment_attempt_lease
+    ON quality_assessment_attempt(lease_expires_at, id);
 
 CREATE INDEX idx_quality_assessment_attempt_outcome_assessment
     ON quality_assessment_attempt_outcome(assessment_id, occurred_at, id)

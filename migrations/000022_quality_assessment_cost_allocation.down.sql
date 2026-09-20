@@ -1,4 +1,4 @@
-LOCK TABLE cost_allocation, cost_event, quality_result IN ACCESS EXCLUSIVE MODE;
+LOCK TABLE quality_result, cost_event, cost_allocation IN ACCESS EXCLUSIVE MODE;
 
 DO $$
 BEGIN
