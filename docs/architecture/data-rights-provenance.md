@@ -117,6 +117,24 @@ V1 不推断“同一个资源上任何 VERIFIED 声明都能支持任何 granto
 
 历史 RightsSnapshot 应冻结实际使用的 AuthorizationProvenanceBinding / declaration IDs，使“为什么这个 grantor 有权授权”可追溯。
 
+### Binding 修正 / 退休
+
+AuthorizationProvenanceBinding 本身不可 UPDATE / DELETE。第一阶段必须提供 append-only AuthorizationProvenanceBindingDisposition：
+
+- INVALIDATED
+- SUPERSEDED → 显式 superseded_by_binding_id
+- effective_at
+- reason
+- Evidence
+- actor
+
+对应显式 Command：
+
+- InvalidateAuthorizationProvenanceBinding
+- SupersedeAuthorizationProvenanceBinding
+
+CurrentEntitlementGate 选择 binding 时必须按 as_of 排除已生效的 INVALIDATED / SUPERSEDED binding；不得因为 Authorization 仍 ACTIVE、declaration 仍 VERIFIED 就继续选择已退休 binding。replacement binding 必须重新通过完整 binding 校验。
+
 ## 6. RightsSnapshot
 
 RightsSnapshot 冻结某一时点、某一 Purpose / Consumer 实际使用的授权集合。
