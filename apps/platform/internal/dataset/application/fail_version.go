@@ -9,7 +9,6 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
@@ -43,15 +42,8 @@ func (s *FailVersionService) Handle(ctx context.Context, cmd FailVersionCommand)
 	if err := version.MarkFailed(); err != nil {
 		return domain.DatasetVersion{}, err
 	}
-	workspaceID, _, err := s.repo.GetWorkspaceAndType(ctx, version.DatasetID)
-	if err != nil {
-		return domain.DatasetVersion{}, fmt.Errorf("resolve DatasetVersion workspace: %w", err)
-	}
 
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if _, err := deliveryfence.Advance(ctx, tx, workspaceID); err != nil {
-			return err
-		}
 		if err := s.repo.Fail(ctx, tx, version); err != nil {
 			return err
 		}
