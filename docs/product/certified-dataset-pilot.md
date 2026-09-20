@@ -228,6 +228,7 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 - 首次返回或 recovered credential 在 ISSUED 前必须验证实际 provider expiry/access bound <= 当前 fresh cap；future-effective disposition 若把 cap 缩短到旧 credential expiry 之前，旧 credential 不得直接恢复为 ISSUED；
 - recovered credential 超出 fresh cap 时必须安全 shorten+verify，或 revoke/contain；无法满足 fresh cap 时当前 operation 不得成功；
 - ISSUANCE_PENDING / CONTAINMENT_PENDING 必须有 reconciliation path 和告警/恢复机制；
+- CONTAINMENT_PENDING confirmed containment 后允许两种终结：fresh gate 已 BLOCKED → BLOCKED；fresh gate 仍 ALLOWED 但 credential/issuance contract 无法满足（如无法缩短到 fresh cap）→ FAILED；
 - 每个 delivery event_type 显式进入 routing table，声明 required handlers 或 retention-only；
 - event/Audit/Evidence payload 不得包含可用 credential secret；
 - delivery CostEvent 必须通过 typed CostAllocation FK 关联 DeliveryOperation。
