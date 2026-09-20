@@ -95,6 +95,8 @@ Current rights selection 只接受“该 declaration 的唯一 terminal outcome 
 
 现有 Authorization 继续回答：
 
+> **存储兼容说明**：现有 `authorization_resource.scope jsonb` 不是 gate-critical scope 的权威表示。#137 必须新增/补齐强类型、可索引的 Authorization scope identity（至少 `scope_type + scope_ref`，或等价 normalized child relation）。JSONB 只保留受控扩展参数。BindAuthorizationProvenance、CurrentEntitlementGate、RightsSnapshot 都读取同一 normalized scope 语义；legacy Authorization 若不能无歧义 backfill normalized scope，必须 fail closed / 标记不可用于 entitlement，不得把缺失当作 ALL_RESOURCE。
+
 ~~~text
 Grantor
 → Grantee
@@ -179,7 +181,24 @@ Snapshot 不应在未来通过读取“当前声明”改变历史解释。
 
 衍生 Dataset 的权利不能简单设置 output.owner_id = platform。
 
-必须基于输入资源和 lineage 求有效动作。
+必须基于输入资源和 lineage 求有效动作，而且结果必须是**可持久化、可冻结、可解释的历史事实**，不是每次查询临时拼出的布尔值。
+
+V1 推荐模型为 immutable `EffectiveRightsSnapshot`（名称可由实现固定），至少冻结：
+
+- workspace_id / target_dataset_version_id；
+- calculation_as_of、consumer/purpose/context（如计算按 context 区分）；
+- calculation_rule_version + rule/content hash；
+- target lineage / required-input set 的稳定 hash；
+- required input membership：每个必要 input DatasetVersion/DataResource + 对应 RightsSnapshot、RightsDeclaration/Binding/Authorization provenance 引用；
+- 每个 action 的 decision（ALLOWED / NOT_ALLOWED；UNKNOWN 不得被解释为 allowed）；
+- restriction/result reason 与阻断来源，可追到具体 input membership；
+- finalized_at / actor / Evidence/Audit refs。
+
+snapshot header、input membership、action decision membership 在 FINALIZED 后必须全部 immutable；修正只能创建新的 EffectiveRightsSnapshot，历史 DatasetCertification 继续引用旧 snapshot。
+
+计算路径必须从 target DatasetVersion 的**实际 required lineage/input membership**出发，不能由调用方传一个缩水后的输入列表。每个必要输入缺少可用 current/frozen rights fact、scope/context 无法比较或 lineage 不完整时，计算 fail closed。
+
+V1 action 合成规则：对每一个 required input 取允许集合交集；只有所有必要输入都明确允许某 action，output 才 ALLOWED。任一输入 deny/restrict/unknown/missing → output NOT_ALLOWED。限制项采用最严格/并集合成（按实现固定的 restriction semantics），不得因其它输入更宽而消除限制。
 
 V1 规则：fail closed。
 
@@ -203,6 +222,8 @@ RESALE  = NOT_ALLOWED
 - RAW_EXPORT
 - RESALE
 - AI_TRAINING
+
+计算/finalize 必须产生 `EffectiveRightsCalculated` / `EffectiveRightsFinalized`（或固定等价事件）+ Audit/Evidence/Outbox；#134 DatasetCertification 只能引用 finalized immutable Effective Rights identity/hash。
 
 ## 8. Restriction Semantics
 
