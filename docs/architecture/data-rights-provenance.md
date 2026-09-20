@@ -71,6 +71,24 @@ V1 至少区分：
 
 未经 VERIFIED 的声明不得作为正式 Certification 权利依据。
 
+### Verification outcome 规则
+
+RightsVerification 是 append-only terminal decision fact，但**同一个 RightsDeclaration 只能有一个 terminal verification outcome**：
+
+- VERIFIED
+- REJECTED
+
+数据库必须保证一个 declaration_id 最多一个 terminal outcome；VerifyRightsDeclaration 与 RejectRightsDeclaration 互斥且幂等。
+
+因此：
+- PENDING/UNVERIFIED → VERIFIED 或 REJECTED；
+- 已 VERIFIED 的同一 declaration 不能再追加 REJECTED 来“纠正”；
+- 已 REJECTED 的同一 declaration 不能再追加 VERIFIED 来“翻转”；
+- 错误 VERIFIED 的纠正使用 RightsDisposition(INVALIDATED / SUPERSEDED)，必要时创建新的 RightsDeclaration 并独立 Verify；
+- 错误/过时 REJECTED 若需要重新主张，创建新的 RightsDeclaration + 新 verification，不覆盖旧 outcome。
+
+Current rights selection 只接受“该 declaration 的唯一 terminal outcome = VERIFIED”，不能采用“历史上存在过 VERIFIED fact”这一宽松判定。
+
 ## 5. Authorization 与 Provenance Binding
 
 现有 Authorization 继续回答：
@@ -237,7 +255,7 @@ Current selection rule：
 
 对**每一个候选 RightsDeclaration**，都必须在查询 `as_of` 时点同时满足：
 
-1. 存在 VERIFIED verification fact；
+1. 该 declaration 存在且仅存在一个 terminal RightsVerification outcome，并且 decision = VERIFIED；
 2. declaration 自身的 `effective_from / effective_to`（或等价 validity window）覆盖 `as_of`；
 3. declaration 的 resource / purpose / action / consumer / scope 与本次查询匹配；
 4. 在 `as_of` 之前不存在已生效的 INVALIDATED disposition；
