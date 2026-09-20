@@ -129,6 +129,8 @@ RightsVerification / RightsDisposition
       ↓
 AuthorizationProvenanceBinding
       ↓
+AuthorizationProvenanceBindingDisposition (optional)
+      ↓
 Authorization
       ↓
 RightsSnapshot
@@ -182,7 +184,14 @@ Current rights selection 必须根据 as_of 和 disposition 判断，不能用 c
 
 不得把互不相关的 VERIFIED declaration 和 ACTIVE Authorization 独立拼接。
 
-AuthorizationProvenanceBinding 一旦创建即为不可变 provenance fact；不得 UPDATE/DELETE 后把历史 binding ID 重连到另一 declaration/grantor/actions/scope。修正只能追加新的 binding/replacement fact。
+AuthorizationProvenanceBinding 一旦创建即为不可变 provenance fact；不得 UPDATE/DELETE 后把历史 binding ID 重连到另一 declaration/grantor/actions/scope。
+
+错误/失效 binding 通过 append-only AuthorizationProvenanceBindingDisposition 退出 current set：
+- INVALIDATED
+- SUPERSEDED（显式 superseded_by_binding_id）
+- effective_at / reason / Evidence / actor
+
+Current binding selection 按 as_of 排除已生效 disposition。replacement binding 必须独立满足 grantor/resource/actions/scope/declaration-current-validity 约束，不能因 supersession 自动获得有效性。历史 RightsSnapshot 继续引用旧 binding，不被回溯改写。
 
 ### 4.6 Authorization
 
@@ -303,6 +312,7 @@ Rights verification、QualityAssessment、DatasetCertification 都应将 Evidenc
 - QualityAssessment（已实现）
 - DeliveryOperation（#135）
 - verified RightsDeclaration / verification / disposition facts（#137）
+- AuthorizationProvenanceBinding / BindingDisposition（#137）
 - CertificationProfile snapshot（#134）
 - DatasetCertification / CertificationDisposition（#134）
 
