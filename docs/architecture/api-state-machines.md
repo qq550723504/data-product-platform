@@ -330,7 +330,7 @@ ISSUANCE_PENDING + stable provider_request_key
   - 若确认此前未发生 provider issuance，可直接 BLOCKED；
   - 若 provider_request_key 可能已产生访问能力，必须先 reconciliation 查询既有 outcome；
   - 已签发则先 revoke/compensate/contain，确认访问能力已不可用后才能 BLOCKED；
-  - outcome unknown 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal DatasetDeliveryBlocked / DatasetDeliveryFailed；
+  - outcome unknown 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal DatasetDeliveryBlocked / DatasetDeliveryFailed；**进入 CONTAINMENT_PENDING 的 transition transaction 必须同时追加 `DatasetDeliveryContainmentPending`（或固定等价）+ Audit/Evidence + Outbox，事件幂等 identity 绑定 delivery_operation_id + transition/reason/revision，不泄露 credential secret；**
   - containment 确认成功后：fresh gate 不再允许交付 → BLOCKED；fresh gate 仍 ALLOWED 但 credential/issuance contract 无法满足 → FAILED；
 - **每一次真实 provider invocation（initial / retry / reconciliation query / revoke / compensation 等，只要实际调用外部 provider）在调用前必须先持久化稳定 physical provider-attempt identity。** 调用成功、显式失败、timeout/unknown outcome 都必须按该 attempt 记录实际 CostEvent；amount 未知时至少记录真实 invocation quantity/unit，后续若 provider 返回收费金额可通过可审计 adjustment/aggregation 补充，但不能因为 terminal outcome 不是 ISSUED 就漏记。same-attempt replay 且没有再次调用 provider 时去重；再次真实调用 provider 必须新 attempt identity；
 - terminal DeliveryOperation + Audit/Evidence + Outbox 在后续 DB transaction 内一致提交；terminal business outcome/event 的唯一性与 provider-attempt CostEvent 独立，失败/unknown/containment 路径同样保留已发生 provider attempts 的成本事实；
@@ -341,7 +341,7 @@ ISSUANCE_PENDING + stable provider_request_key
 - direct bearer provider 必须支持 same-credential replay/read-after-write（或等价同一访问能力恢复），并支持 fresh replay authorization 失败时 revoke/contain 该既有 capability；仅能恢复但不能 containment，或仅有 revoke/compensation 但无法恢复原 bearer secret，都必须使用 platform redemption indirection；
 - terminal ISSUED credential 的 same-idempotency-key replay 是一次新的**credential replay authorization**，不是旧 terminal fact 的机械回放：再次返回 credential/handle 前必须 fresh authenticated principal→effective consumer/delegation resolution，获取 shared delivery authorization fence/revision，重新执行 CurrentDeliveryGate + fresh cap，并 authoritative-verify 恢复出的同一 capability 仍满足当前 consumer/resource/action/scope/channel/expiry；
 - replay authorization 必须 append 一个不含 secret 的 replay decision fact/audit（replay attempt identity、caller/effective consumer、fence/gate revision、ALLOWED/BLOCKED/CONTAINMENT_PENDING、capability ref/hash）；只有 ALLOWED decision commit 后才可再次暴露同一 credential/handle；
-- replay fresh gate/caller authority 已 BLOCKED 或 capability 不再满足当前边界时，same-key retry 必须返回 0 credential secret，并 revoke/contain 原 capability；containment confirmed 后返回稳定 non-secret replay-blocked 结果，未确认时返回 containment-pending 结果。原 DeliveryOperation 的 terminal ISSUED 历史事实不得改写。
+- replay fresh gate/caller authority 已 BLOCKED 或 capability 不再满足当前边界时，same-key retry 必须返回 0 credential secret，并 revoke/contain 原 capability；containment confirmed 后返回稳定 non-secret replay-blocked 结果，未确认时返回 containment-pending 结果。**replay decision 进入 CONTAINMENT_PENDING 时必须追加独立 `DatasetCredentialReplayContainmentPending`（或固定等价/统一 containment event）+ Audit/Evidence/Outbox，subject 指向 replay attempt，不改写原 DeliveryOperation。** 原 DeliveryOperation 的 terminal ISSUED 历史事实不得改写。
 - provider 若既不具备可恢复幂等能力，也不能安全补偿，则该 direct bearer mode 在第一阶段 unsupported。
 
 ### Contract（当前 live API）
