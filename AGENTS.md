@@ -217,6 +217,10 @@ Certified Dataset 是可独立交付成果，不要求必须包装成 DataProduc
 
 CurrentDeliveryGate query 只用于展示/预检，不构成交付授权。任何返回数据、下载链接、presigned URL、token 或访问凭证的 server-side delivery Command 都必须在 delivery 前重新执行完整 CurrentDeliveryGate；不得信任客户端缓存的旧 gate result。所有 delivery mode 都必须在第一个外部可观察交付副作用前完成共享 delivery authorization fence/revision 下的 terminal finalize。direct-data 必须先提交 ISSUED，再允许写 response 第一字节；commit 前必须 0 bytes。
 
+Delivery Command 的 `consumer` 不得直接信任请求字段。进入 CurrentDeliveryGate 前必须从已认证 caller principal 解析其允许代表的 effective consumer/workspace；on-behalf-of 必须有服务端验证的显式 delegation，并把 principal/delegation/effective consumer 写入 Audit/Evidence。demo actor ID、任意 header/body consumer ID 都不是认证。第一阶段可以不做完整 IAM，但没有最小可信 principal→consumer 边界的 HTTP 路径不得执行真实 delivery。
+
+Direct-data 的 terminal `ISSUED` 只证明该次交付授权已在线性化点提交，不证明客户端收到全部 bytes。若 ISSUED commit 后响应丢失/进程崩溃，同一 idempotency key 不得依据旧 gate 再次发数据；只返回稳定 non-payload replay-required 结果。需要再次取数时创建新的显式 DeliveryOperation/attempt（可关联 retry_of），重新解析 principal→consumer、重新 CurrentDeliveryGate、重新走 fence；期间任何 revocation/invalidation 必须使新 attempt fail closed。
+
 DeliveryOperation 每个终态都必须产生明确 Domain Event：Issued / Blocked / Failed（事件名由实现固定但语义不得缺失），并与 Audit/Evidence/Outbox、CostEvent（如有）保持一致幂等边界。任何事件或审计 payload 不得包含可用 credential secret。
 
 外部 credential issuance 不能假装与 PostgreSQL 同事务。必须先持久化 DeliveryOperation + stable provider_request_key，再执行外部副作用；provider 返回/恢复 capability 后，terminal ISSUED transaction 必须使用与所有影响 CurrentDeliveryGate 的 disposition/invalidation Commands 共享的 delivery authorization fence/revision，再次 re-gate + fresh-cap；direct-data 也必须使用同一 fence 在 ISSUED commit 后才能写第一字节。该 commit 是 delivery linearization point。**每次初始/retry/reconciliation issuance 前都必须重新执行 CurrentDeliveryGate 并重新计算 expiry cap**，旧 gate snapshot 仅供审计。fresh gate BLOCKED 时，如 provider_request_key 可能已经产生外部访问能力，必须先 reconcile 并 revoke/contain；只有确认没有活跃访问能力后才能终结 BLOCKED，否则保持 CONTAINMENT_PENDING。CONTAINMENT_PENDING 在 confirmed containment 后也允许终结 FAILED：用于 gate 仍 ALLOWED、但 credential/issuance contract 无法满足（如实际 expiry 超 fresh cap 且无法安全 shorten）的场景。direct bearer mode 还必须支持按同一 provider_request_key 恢复/重放同一 credential（或等价同一访问能力）；只有 revoke/compensation 但不能恢复原 bearer secret 时，必须走 platform redemption indirection，不能把同一幂等 retry 静默签发成第二份 credential。ISSUANCE_PENDING 必须可 reconciliation。
@@ -279,6 +283,7 @@ Engine Adapter 错误需要映射为平台统一错误模型。
 - Evidence（关键动作）
 - Idempotency（关键 Command）
 - Workspace / ownership boundary
+- Authenticated principal → effective consumer / delegation boundary（涉及交付时）
 - Historical immutability
 - Current entitlement / delivery gate（涉及交付时）
 - Tests
