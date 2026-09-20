@@ -124,12 +124,17 @@ Binding 至少表达：
 - data_resource_id
 - rights_declaration_id
 - grantor_ref
-- supported_actions / scope（如按 grant 粒度绑定）
+- grantor_authority_mode：DIRECT_DECLARATION_PARTY / DELEGATED（或固定等价枚举）
+- grantor_delegation_chain_id / chain_hash（DELEGATED 时必填；强类型引用，不得只放 metadata/JSONB）
+- supported_actions / normalized scope（如按 grant 粒度绑定）
 - created_at / actor
 
 建立/验证 Binding 时必须 fail closed：
 
-1. Authorization.grantor_ref 与声明中承担可授权角色的 party_ref 明确匹配，或存在平台显式支持且可验证的 delegation chain；
+1. Authorization.grantor_ref 与声明中承担可授权角色的 party_ref 明确匹配；若依赖 delegation，则必须引用**强类型 GrantorAuthorityDelegationChain**（名称可由实现固定），链条从 declaration-supported delegator 到 Authorization.grantor_ref 可验证且不可缺边；
+   - 每个 delegation edge 至少有 delegator_ref、delegate_ref、resource、allowed/grantable actions、normalized scope、purpose/applicability（如适用）、valid_from/valid_to、Evidence；
+   - delegation edge / chain 的撤销或纠正使用 append-only disposition（至少 REVOKED / INVALIDATED / SUPERSEDED + effective_at），不能覆盖历史；
+   - chain identity + ordered member edge IDs/hash 必须可查询/可冻结；
 2. 声明覆盖同一 DataResource；
 3. 声明的 allowed/grantable actions 与 scope 足以支持该 Authorization 授出的 actions/scope；
 4. 声明自身 VERIFIED、validity、disposition 条件满足；
@@ -139,7 +144,7 @@ V1 不推断“同一个资源上任何 VERIFIED 声明都能支持任何 granto
 
 历史 RightsSnapshot 应冻结实际使用的 AuthorizationProvenanceBinding / declaration IDs，使“为什么这个 grantor 有权授权”可追溯。
 
-RightsSnapshot 的冻结范围包括 snapshot header **以及全部 membership rows**（Authorization / RightsDeclaration / AuthorizationProvenanceBinding 等）。snapshot finalize 后，membership 不得 INSERT/UPDATE/DELETE；数据库必须有 guard，不能通过替换成员关系而保持 snapshot ID 不变来改写历史 provenance。
+RightsSnapshot 的冻结范围包括 snapshot header **以及全部 membership rows**（Authorization / RightsDeclaration / AuthorizationProvenanceBinding / grantor delegation chain + edge identities 等）。snapshot finalize 后，membership 不得 INSERT/UPDATE/DELETE；数据库必须有 guard，不能通过替换成员关系而保持 snapshot ID 不变来改写历史 provenance。
 
 ### Binding 修正 / 退休
 
@@ -158,6 +163,15 @@ AuthorizationProvenanceBinding 本身不可 UPDATE / DELETE。第一阶段必须
 - SupersedeAuthorizationProvenanceBinding
 
 CurrentEntitlementGate 选择 binding 时必须按 as_of 排除已生效的 INVALIDATED / SUPERSEDED binding；不得因为 Authorization 仍 ACTIVE、declaration 仍 VERIFIED 就继续选择已退休 binding。replacement binding 必须重新通过完整 binding 校验。
+
+如果 binding 的 grantor_authority_mode=DELEGATED，则**每次 CurrentEntitlementGate 都必须重新验证 grantor delegation chain 的当前有效性**，不能把“binding 创建时验证过”当永久授权：
+- chain 的所有 required edges 在 as_of 时都存在且 validity 覆盖 as_of；
+- 没有已生效 REVOKED / INVALIDATED / SUPERSEDED disposition；
+- 每一跳的 delegator→delegate 连续，最终 delegate=Authorization.grantor_ref；
+- resource / purpose / action / normalized scope 逐跳不得比上游放宽；
+- 任一 edge 过期、撤销、缺失或无法验证时，binding 即使自身未被 disposition，也不得进入 CurrentEntitlementGate。
+
+RightsSnapshot 冻结 binding + grantor delegation chain identity/member edge IDs 用于历史解释，但 frozen snapshot **不替代 delivery-time current chain validation**。
 
 ## 6. RightsSnapshot
 
