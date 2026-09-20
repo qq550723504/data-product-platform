@@ -304,14 +304,20 @@ CurrentDeliveryGate
 DeliveryOperation PREPARED
       ↓ durable DB commit
 ISSUANCE_PENDING + stable provider_request_key
-      ↓ external idempotent issuance
       ├→ ISSUED
-      └→ FAILED
+      ├→ FAILED
+      ├→ BLOCKED
+      └→ CONTAINMENT_PENDING
+             └→ BLOCKED
 ~~~
 
 - 外部 provider 调用不属于 PostgreSQL transaction；
 - **每一次 initial issuance、retry issuance、以及 reconciliation 决定继续 issuance 前，都必须重新读取当前事实，重新执行完整 CurrentDeliveryGate，并重新计算 credential expiry cap；PREPARED/ISSUANCE_PENDING 中旧 gate snapshot 仅用于审计；**
-- fresh gate BLOCKED 时不得调用 provider，DeliveryOperation 安全终结为 BLOCKED；
+- fresh gate BLOCKED 时：
+  - 若确认此前未发生 provider issuance，可直接 BLOCKED；
+  - 若 provider_request_key 可能已产生访问能力，必须先 reconciliation 查询既有 outcome；
+  - 已签发则先 revoke/compensate/contain，确认访问能力已不可用后才能 BLOCKED；
+  - outcome unknown 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal DatasetDeliveryBlocked；
 - terminal DeliveryOperation + Audit/Evidence + Outbox/CostEvent（如有）在后续 DB transaction 内一致提交；
 - provider 成功但 terminal commit 失败时，retry/reconciliation 使用同一 provider_request_key；
 - direct bearer provider 必须支持 same-credential replay/read-after-write（或等价同一访问能力恢复）；仅有 revoke/compensation 但无法恢复原 bearer secret 时必须使用 platform redemption indirection；
