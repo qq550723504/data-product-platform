@@ -130,7 +130,6 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 	sort.Slice(companyIDs, func(i, j int) bool { return companyIDs[i].String() < companyIDs[j].String() })
 	completeScores := 0
 	for _, companyID := range companyIDs {
-		company := companies[companyID]
 		result, err := e.indicatorCalculator.Calculate(dependencies.IndicatorPolicy, request.TargetPeriod, inputs[companyID])
 		if err != nil {
 			return workflowapp.ProcessingResult{}, fmt.Errorf("calculate indicators for %s: %w", companyID, err)
