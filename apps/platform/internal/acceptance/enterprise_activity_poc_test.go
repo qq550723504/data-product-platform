@@ -624,6 +624,12 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 
 func activateAuthorization(t *testing.T, ctx context.Context, service *rightsapp.Service, workspaceID uuid.UUID, code string, validFrom, validTo time.Time, grants []rightsdomain.ResourceGrantSpec, actorID *uuid.UUID, traceID string) rightsdomain.Authorization {
 	t.Helper()
+	for i := range grants {
+		if grants[i].ScopeType == "" {
+			grants[i].ScopeType = "ALL_RESOURCE"
+			grants[i].ScopeRef = grants[i].DataResourceID.String()
+		}
+	}
 	authorization, err := service.Create(ctx, rightsapp.CreateAuthorizationCommand{
 		WorkspaceID: workspaceID,
 		Code:        code,
@@ -650,6 +656,31 @@ func activateAuthorization(t *testing.T, ctx context.Context, service *rightsapp
 	authorization, err = service.Activate(ctx, rightsapp.TransitionCommand{AuthorizationID: authorization.ID, ActorID: actorID, TraceID: traceID, At: time.Now().UTC()})
 	if err != nil {
 		t.Fatalf("activate Authorization: %v", err)
+	}
+	for _, grant := range authorization.Resources {
+		permissions := make([]rightsdomain.RightsPermission, 0, len(grant.Actions))
+		for _, action := range grant.Actions {
+			permissions = append(permissions, rightsdomain.RightsPermission{
+				Kind: rightsdomain.PermissionGrant, Action: action, Purpose: purpose,
+				Scope: rightsdomain.NormalizedScope{Type: grant.ScopeType, Ref: grant.ScopeRef},
+			})
+		}
+		declaration, err := service.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{Spec: rightsdomain.RightsDeclarationSpec{
+			WorkspaceID: workspaceID, DataResourceID: grant.DataResourceID, ClaimantRef: authorization.GrantorRef,
+			BasisType: "LICENSE", BasisRef: "enterprise-activity-acceptance", Parties: []rightsdomain.RightsParty{{PartyRef: authorization.GrantorRef, Role: "RIGHTS_HOLDER"}}, Permissions: permissions, ActorID: actorID,
+		}, TraceID: traceID})
+		if err != nil {
+			t.Fatalf("create rights declaration: %v", err)
+		}
+		if _, err := service.VerifyRightsDeclaration(ctx, rightsapp.VerifyRightsDeclarationCommand{DeclarationID: declaration.ID, Outcome: rightsdomain.DeclarationVerified, ActorID: actorID, TraceID: traceID}); err != nil {
+			t.Fatalf("verify rights declaration: %v", err)
+		}
+		if _, err := service.BindAuthorizationProvenance(ctx, rightsapp.BindAuthorizationProvenanceCommand{
+			WorkspaceID: workspaceID, AuthorizationID: authorization.ID, DataResourceID: grant.DataResourceID, DeclarationID: declaration.ID,
+			GrantorRef: authorization.GrantorRef, AuthorityMode: rightsdomain.AuthorityDirect, AsOf: time.Now().UTC(), ActorID: actorID, TraceID: traceID,
+		}); err != nil {
+			t.Fatalf("bind authorization provenance: %v", err)
+		}
 	}
 	return authorization
 }

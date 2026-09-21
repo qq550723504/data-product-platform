@@ -3,6 +3,7 @@ LOCK TABLE rights_declaration, rights_declaration_verification,
     authorization_provenance_binding_disposition, grantor_authority_delegation_chain,
     grantor_authority_delegation_edge, grantor_authority_delegation_disposition,
     effective_rights_snapshot, effective_rights_input, effective_rights_action,
+    effective_rights_action_provenance,
     rights_snapshot_declaration, rights_snapshot_provenance_binding, cost_allocation
     IN ACCESS EXCLUSIVE MODE;
 
@@ -36,6 +37,7 @@ DROP TRIGGER IF EXISTS trg_rights_declaration_evidence_immutable ON rights_decla
 DROP TRIGGER IF EXISTS trg_rights_declaration_party_immutable ON rights_declaration_party;
 DROP TRIGGER IF EXISTS trg_rights_declaration_immutable ON rights_declaration;
 DROP TRIGGER IF EXISTS trg_effective_rights_action_immutable ON effective_rights_action;
+DROP TRIGGER IF EXISTS trg_effective_rights_action_provenance_immutable ON effective_rights_action_provenance;
 DROP TRIGGER IF EXISTS trg_effective_rights_input_immutable ON effective_rights_input;
 DROP TRIGGER IF EXISTS trg_effective_rights_header_immutable ON effective_rights_snapshot;
 DROP TRIGGER IF EXISTS trg_rights_snapshot_binding_immutable ON rights_snapshot_provenance_binding;
@@ -101,6 +103,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TABLE IF EXISTS effective_rights_action_provenance;
 DROP TABLE IF EXISTS effective_rights_action;
 DROP TABLE IF EXISTS effective_rights_input;
 DROP TABLE IF EXISTS effective_rights_snapshot;

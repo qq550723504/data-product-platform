@@ -53,16 +53,39 @@ func (r *PostgresRepository) GetDelegationChain(ctx context.Context, id uuid.UUI
 	return chain, rows.Err()
 }
 
-func (r *PostgresRepository) FinalizeDelegationChain(ctx context.Context, tx pgx.Tx, chain domain.DelegationChain) error {
+func (r *PostgresRepository) FinalizeDelegationChain(ctx context.Context, tx pgx.Tx, chainID uuid.UUID) (domain.DelegationChain, error) {
+	var chain domain.DelegationChain
 	var status string
-	if err := tx.QueryRow(ctx, `SELECT status FROM grantor_authority_delegation_chain WHERE id=$1 FOR UPDATE`, chain.ID).Scan(&status); err != nil {
-		return err
+	if err := tx.QueryRow(ctx, `SELECT id,workspace_id,source_declaration_id,status,COALESCE(chain_hash,''),created_at,created_by FROM grantor_authority_delegation_chain WHERE id=$1 FOR UPDATE`, chainID).Scan(&chain.ID, &chain.WorkspaceID, &chain.SourceDeclarationID, &status, &chain.ChainHash, &chain.CreatedAt, &chain.CreatedBy); err != nil {
+		return chain, err
 	}
 	if status != "DRAFT" {
-		return domain.ErrInvalidBinding
+		return chain, domain.ErrInvalidBinding
 	}
-	_, err := tx.Exec(ctx, `UPDATE grantor_authority_delegation_chain SET status='FINALIZED',chain_hash=$2,finalized_at=now() WHERE id=$1`, chain.ID, chain.ChainHash)
-	return err
+	rows, err := tx.Query(ctx, `SELECT id,ordinal,delegator_ref,delegate_ref,data_resource_id,grantable_actions,grantable_purposes,scope_type,scope_ref,valid_from,valid_to FROM grantor_authority_delegation_edge WHERE chain_id=$1 ORDER BY ordinal`, chain.ID)
+	if err != nil {
+		return chain, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var edge domain.DelegationEdge
+		if err := rows.Scan(&edge.ID, &edge.Ordinal, &edge.DelegatorRef, &edge.DelegateRef, &edge.DataResourceID, &edge.GrantableActions, &edge.GrantablePurposes, &edge.Scope.Type, &edge.Scope.Ref, &edge.ValidFrom, &edge.ValidTo); err != nil {
+			return chain, err
+		}
+		chain.Edges = append(chain.Edges, edge)
+	}
+	if err := rows.Err(); err != nil {
+		return chain, err
+	}
+	if len(chain.Edges) == 0 {
+		return chain, domain.ErrInvalidBinding
+	}
+	chain.ChainHash = domain.HashDelegationEdges(chain.Edges)
+	if _, err := tx.Exec(ctx, `UPDATE grantor_authority_delegation_chain SET status='FINALIZED',chain_hash=$2,finalized_at=now() WHERE id=$1`, chain.ID, chain.ChainHash); err != nil {
+		return chain, err
+	}
+	chain.Status = "FINALIZED"
+	return chain, nil
 }
 
 func (r *PostgresRepository) InsertDelegationDisposition(ctx context.Context, tx pgx.Tx, disposition domain.DelegationDisposition) error {

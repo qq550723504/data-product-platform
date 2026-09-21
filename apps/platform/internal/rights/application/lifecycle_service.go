@@ -79,7 +79,7 @@ func (s *Service) DisposeAuthorizationProvenanceBinding(ctx context.Context, cmd
 		if err := appendEvent(ctx, tx, "AUTHORIZATION_PROVENANCE_BINDING", d.BindingID, eventType, map[string]any{"bindingId": d.BindingID, "dispositionId": d.ID, "effectiveAt": d.EffectiveAt}); err != nil {
 			return err
 		}
-		if err := appendRightsCost(ctx, tx, workspace, *cmd.ActivityID, "AUTHORIZATION_PROVENANCE_BINDING_DISPOSITION", "authorization_provenance_binding_disposition", d.ID); err != nil {
+		if err := appendRightsCost(ctx, tx, workspace, *cmd.ActivityID, "AUTHORIZATION_PROVENANCE_BINDING_DISPOSITION", "authorization_provenance_binding_disposition_id", d.ID); err != nil {
 			return err
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &workspace, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: action, ObjectType: "AUTHORIZATION_PROVENANCE_BINDING_DISPOSITION", ObjectID: d.ID, AfterState: map[string]any{"bindingId": d.BindingID, "disposition": kind}, TraceID: cmd.TraceID})
@@ -102,18 +102,13 @@ func (s *Service) CreateDelegationChain(ctx context.Context, cmd CreateDelegatio
 }
 
 func (s *Service) FinalizeDelegationChain(ctx context.Context, cmd FinalizeDelegationChainCommand) (domain.DelegationChain, error) {
-	chain, err := s.repo.GetDelegationChain(ctx, cmd.ChainID)
-	if err != nil {
-		return chain, err
-	}
-	if chain.Status != "DRAFT" {
-		return domain.DelegationChain{}, domain.ErrInvalidBinding
-	}
-	chain.Status = "FINALIZED"
-	chain.ChainHash = domain.HashDelegationEdges(chain.Edges)
+	var chain domain.DelegationChain
+	var err error
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if err := s.repo.FinalizeDelegationChain(ctx, tx, chain); err != nil {
-			return err
+		var finalizeErr error
+		chain, finalizeErr = s.repo.FinalizeDelegationChain(ctx, tx, cmd.ChainID)
+		if finalizeErr != nil {
+			return finalizeErr
 		}
 		if err := appendEvent(ctx, tx, "GRANTOR_AUTHORITY_DELEGATION_CHAIN", chain.ID, "GrantorAuthorityDelegationChainFinalized", map[string]any{"chainId": chain.ID, "chainHash": chain.ChainHash}); err != nil {
 			return err

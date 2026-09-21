@@ -73,6 +73,18 @@ func (r *PostgresRepository) EvaluateRightsCoverage(ctx context.Context, snapsho
 		  AND da.purpose=rs.purpose
 		  AND (da.valid_from IS NULL OR da.valid_from <= $2)
 		  AND (da.valid_to IS NULL OR da.valid_to > $2)
+		  AND EXISTS (
+			SELECT 1
+			FROM rights_snapshot_provenance_binding rspb
+			JOIN authorization_provenance_binding apb ON apb.id=rspb.binding_id
+			JOIN rights_declaration rd ON rd.id=apb.rights_declaration_id
+			JOIN rights_declaration_verification rdv ON rdv.declaration_id=rd.id AND rdv.outcome='VERIFIED'
+			WHERE rspb.rights_snapshot_id=rs.id
+			  AND apb.authorization_id=da.id
+			  AND apb.data_resource_id=ar.data_resource_id
+			  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition rdd WHERE rdd.declaration_id=rd.id AND rdd.effective_at <= $2)
+			  AND NOT EXISTS (SELECT 1 FROM authorization_provenance_binding_disposition apbd WHERE apbd.binding_id=apb.id AND apbd.effective_at <= $2)
+		  )
 	`, snapshotID, now.UTC())
 	if err != nil {
 		return RightsCoverage{}, fmt.Errorf("read rights resource grants: %w", err)

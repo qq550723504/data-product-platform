@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -154,33 +155,66 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 	if err != nil {
 		return fmt.Errorf("insert rights snapshot: %w", err)
 	}
-	for _, authorization := range snapshot.Manifest.Authorizations {
+	for i := range snapshot.Manifest.Authorizations {
+		authorization := &snapshot.Manifest.Authorizations[i]
 		if _, err := tx.Exec(ctx, `
 			INSERT INTO rights_snapshot_authorization (rights_snapshot_id, authorization_id)
 			VALUES ($1,$2)
 		`, snapshot.ID, authorization.AuthorizationID); err != nil {
 			return fmt.Errorf("bind rights snapshot authorization: %w", err)
 		}
-		rows, err := tx.Query(ctx, `SELECT id, rights_declaration_id FROM authorization_provenance_binding WHERE authorization_id=$1 AND created_at <= $2 ORDER BY created_at,id`, authorization.AuthorizationID, snapshot.AsOf)
-		if err != nil {
-			return fmt.Errorf("read snapshot provenance bindings: %w", err)
-		}
-		for rows.Next() {
-			var bindingID, declarationID uuid.UUID
-			if err := rows.Scan(&bindingID, &declarationID); err != nil {
-				rows.Close()
-				return fmt.Errorf("scan snapshot provenance binding: %w", err)
+		for _, resource := range authorization.Resources {
+			if strings.TrimSpace(resource.ScopeType) == "" || strings.TrimSpace(resource.ScopeRef) == "" {
+				return domain.ErrAuthorizationInvalid
 			}
-			if _, err := tx.Exec(ctx, `INSERT INTO rights_snapshot_provenance_binding(rights_snapshot_id,binding_id) VALUES ($1,$2) ON CONFLICT DO NOTHING`, snapshot.ID, bindingID); err != nil {
-				rows.Close()
+			rows, err := tx.Query(ctx, `
+				SELECT b.id, b.rights_declaration_id
+				FROM authorization_provenance_binding b
+				JOIN data_authorization a ON a.id=b.authorization_id
+				JOIN authorization_resource ar ON ar.authorization_id=a.id AND ar.data_resource_id=b.data_resource_id
+				JOIN rights_declaration d ON d.id=b.rights_declaration_id
+				JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED'
+				WHERE b.authorization_id=$1 AND b.data_resource_id=$2 AND b.workspace_id=$3
+				  AND a.workspace_id=$3 AND a.status='ACTIVE'
+				  AND ar.scope_type IS NOT NULL AND ar.scope_ref IS NOT NULL
+				  AND b.created_at <= $4
+				  AND (d.effective_from IS NULL OR d.effective_from <= $4)
+				  AND (d.effective_to IS NULL OR d.effective_to > $4)
+				  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $4)
+				  AND NOT EXISTS (SELECT 1 FROM authorization_provenance_binding_disposition x WHERE x.binding_id=b.id AND x.effective_at <= $4)
+				  AND (b.grantor_authority_mode='DIRECT_DECLARATION_PARTY' OR (
+					b.delegation_chain_id IS NOT NULL
+					AND EXISTS (SELECT 1 FROM grantor_authority_delegation_chain c WHERE c.id=b.delegation_chain_id AND c.source_declaration_id=b.rights_declaration_id AND c.status='FINALIZED' AND c.chain_hash=b.delegation_chain_hash)
+					AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition x WHERE x.chain_id=b.delegation_chain_id AND x.effective_at <= $4)
+					AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition x JOIN grantor_authority_delegation_edge e ON e.id=x.edge_id WHERE e.chain_id=b.delegation_chain_id AND x.effective_at <= $4)
+				))
+				ORDER BY b.created_at,b.id`, authorization.AuthorizationID, resource.DataResourceID, snapshot.WorkspaceID, snapshot.AsOf)
+			if err != nil {
+				return fmt.Errorf("read snapshot provenance bindings: %w", err)
+			}
+			var bindingIDs, declarationIDs []uuid.UUID
+			for rows.Next() {
+				var bindingID, declarationID uuid.UUID
+				if err := rows.Scan(&bindingID, &declarationID); err != nil {
+					rows.Close()
+					return fmt.Errorf("scan snapshot provenance binding: %w", err)
+				}
+				bindingIDs = append(bindingIDs, bindingID)
+				declarationIDs = append(declarationIDs, declarationID)
+			}
+			rows.Close()
+			if len(bindingIDs) != 1 {
+				return domain.ErrAuthorizationInvalid
+			}
+			if _, err := tx.Exec(ctx, `INSERT INTO rights_snapshot_provenance_binding(rights_snapshot_id,binding_id) VALUES ($1,$2)`, snapshot.ID, bindingIDs[0]); err != nil {
 				return fmt.Errorf("bind snapshot provenance: %w", err)
 			}
-			if _, err := tx.Exec(ctx, `INSERT INTO rights_snapshot_declaration(rights_snapshot_id,declaration_id) VALUES ($1,$2) ON CONFLICT DO NOTHING`, snapshot.ID, declarationID); err != nil {
-				rows.Close()
+			if _, err := tx.Exec(ctx, `INSERT INTO rights_snapshot_declaration(rights_snapshot_id,declaration_id) VALUES ($1,$2) ON CONFLICT DO NOTHING`, snapshot.ID, declarationIDs[0]); err != nil {
 				return fmt.Errorf("bind snapshot declaration: %w", err)
 			}
+			authorization.BindingIDs = append(authorization.BindingIDs, bindingIDs[0])
+			authorization.DeclarationIDs = append(authorization.DeclarationIDs, declarationIDs[0])
 		}
-		rows.Close()
 	}
 	var hashMaterial []byte
 	if err := tx.QueryRow(ctx, `SELECT jsonb_build_object('manifest',manifest,'authorizationIds',COALESCE((SELECT jsonb_agg(authorization_id ORDER BY authorization_id) FROM rights_snapshot_authorization WHERE rights_snapshot_id=$1),'[]'::jsonb),'declarationIds',COALESCE((SELECT jsonb_agg(declaration_id ORDER BY declaration_id) FROM rights_snapshot_declaration WHERE rights_snapshot_id=$1),'[]'::jsonb),'bindingIds',COALESCE((SELECT jsonb_agg(binding_id ORDER BY binding_id) FROM rights_snapshot_provenance_binding WHERE rights_snapshot_id=$1),'[]'::jsonb))::text FROM rights_snapshot WHERE id=$1`, snapshot.ID).Scan(&hashMaterial); err != nil {

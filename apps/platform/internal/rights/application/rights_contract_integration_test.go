@@ -59,7 +59,9 @@ func TestAuthorizationSnapshotAndContractLifecycle(t *testing.T) {
 		Resources: []rightsdomain.ResourceGrantSpec{
 			{
 				DataResourceID: resourceID,
-				Actions:        []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"},
+				Actions:        []string{"USE", "DERIVE"},
+				ScopeType:      "ALL_RESOURCE",
+				ScopeRef:       resourceID.String(),
 				Scope:          map[string]any{"region": "POC"},
 			},
 		},
@@ -82,6 +84,35 @@ func TestAuthorizationSnapshotAndContractLifecycle(t *testing.T) {
 	}
 	if authorization.Status != rightsdomain.StatusActive {
 		t.Fatalf("authorization status = %s, want ACTIVE", authorization.Status)
+	}
+
+	provenanceService := rightsapp.NewService(transaction.NewManager(pool), rightsinfra.NewPostgresRepository(pool))
+	declaration, err := provenanceService.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{
+		Spec: rightsdomain.RightsDeclarationSpec{
+			WorkspaceID:    workspaceID,
+			DataResourceID: resourceID,
+			ClaimantRef:    "PARK-OPERATOR",
+			BasisType:      "LICENSE",
+			BasisRef:       "rights-contract-fixture",
+			Parties:        []rightsdomain.RightsParty{{PartyRef: "PARK-OPERATOR", Role: "RIGHTS_HOLDER"}},
+			Permissions: []rightsdomain.RightsPermission{
+				{Kind: rightsdomain.PermissionGrant, Action: "USE", Purpose: "ENTERPRISE_CREDIT_RISK_SUPPORT", Scope: rightsdomain.NormalizedScope{Type: "ALL_RESOURCE", Ref: resourceID.String()}},
+				{Kind: rightsdomain.PermissionGrant, Action: "DERIVE", Purpose: "ENTERPRISE_CREDIT_RISK_SUPPORT", Scope: rightsdomain.NormalizedScope{Type: "ALL_RESOURCE", Ref: resourceID.String()}},
+			},
+		},
+		TraceID: "rights-contract-e2e",
+	})
+	if err != nil {
+		t.Fatalf("create rights declaration: %v", err)
+	}
+	if _, err := provenanceService.VerifyRightsDeclaration(ctx, rightsapp.VerifyRightsDeclarationCommand{DeclarationID: declaration.ID, Outcome: rightsdomain.DeclarationVerified, TraceID: "rights-contract-e2e"}); err != nil {
+		t.Fatalf("verify rights declaration: %v", err)
+	}
+	if _, err := provenanceService.BindAuthorizationProvenance(ctx, rightsapp.BindAuthorizationProvenanceCommand{
+		WorkspaceID: workspaceID, AuthorizationID: authorization.ID, DataResourceID: resourceID, DeclarationID: declaration.ID,
+		GrantorRef: "PARK-OPERATOR", AuthorityMode: rightsdomain.AuthorityDirect, AsOf: time.Now().UTC(), TraceID: "rights-contract-e2e",
+	}); err != nil {
+		t.Fatalf("bind authorization provenance: %v", err)
 	}
 
 	// A grant declared in one workspace must not name another workspace's resource.

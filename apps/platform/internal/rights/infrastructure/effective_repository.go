@@ -32,6 +32,11 @@ func (r *PostgresRepository) InsertEffectiveRightsAction(ctx context.Context, tx
 	if err != nil {
 		return fmt.Errorf("insert effective rights action: %w", err)
 	}
+	for _, provenance := range action.Provenance {
+		if _, err := tx.Exec(ctx, `INSERT INTO effective_rights_action_provenance(snapshot_id,action_id,input_id,declaration_id) VALUES ($1,$2,$3,$4)`, snapshotID, action.ID, provenance.InputID, provenance.DeclarationID); err != nil {
+			return fmt.Errorf("insert effective rights action provenance: %w", err)
+		}
+	}
 	return nil
 }
 
@@ -85,6 +90,25 @@ func (r *PostgresRepository) GetEffectiveRights(ctx context.Context, id uuid.UUI
 		s.Actions = append(s.Actions, a)
 	}
 	rows.Close()
+	actionByID := make(map[uuid.UUID]*domain.EffectiveRightsAction, len(s.Actions))
+	for i := range s.Actions {
+		actionByID[s.Actions[i].ID] = &s.Actions[i]
+	}
+	rows, err = r.pool.Query(ctx, `SELECT action_id,input_id,declaration_id FROM effective_rights_action_provenance WHERE snapshot_id=$1 ORDER BY action_id,input_id`, id)
+	if err != nil {
+		return s, err
+	}
+	for rows.Next() {
+		var actionID, inputID, declarationID uuid.UUID
+		if err := rows.Scan(&actionID, &inputID, &declarationID); err != nil {
+			rows.Close()
+			return s, err
+		}
+		if action := actionByID[actionID]; action != nil {
+			action.Provenance = append(action.Provenance, domain.EffectiveRightsProvenance{InputID: inputID, DeclarationID: declarationID})
+		}
+	}
+	rows.Close()
 	return s, nil
 }
 
@@ -95,6 +119,9 @@ func EffectiveRightsRootHash(snapshot domain.EffectiveRightsSnapshot) string {
 	}
 	for _, a := range snapshot.Actions {
 		parts = append(parts, "A|"+a.Action+"|"+a.Decision+"|"+a.Reason)
+		for _, provenance := range a.Provenance {
+			parts = append(parts, "P|"+a.Action+"|"+provenance.InputID.String()+"|"+provenance.DeclarationID.String())
+		}
 	}
 	b, _ := json.Marshal(parts)
 	sum := sha256Sum(b)

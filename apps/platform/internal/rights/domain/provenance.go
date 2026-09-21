@@ -39,7 +39,7 @@ var (
 	ErrEffectiveRights          = errors.New("effective rights calculation is not allowed")
 )
 
-var SupportedRightsActions = []string{"USE", "PROCESS", "DERIVE", "SHARE", "RAW_EXPORT", "RESALE", "AI_TRAINING"}
+var SupportedRightsActions = []string{"USE", "PROCESS", "DERIVE", "SHARE", "RAW_EXPORT", "RESALE", "AI_TRAINING", "READ", "AGGREGATE", "PRODUCTIZE"}
 
 type NormalizedScope struct {
 	Type string `json:"type"`
@@ -331,6 +331,12 @@ type EffectiveRightsAction struct {
 	Decision        string
 	Reason          string
 	BlockingInputID *uuid.UUID
+	Provenance      []EffectiveRightsProvenance
+}
+
+type EffectiveRightsProvenance struct {
+	InputID       uuid.UUID
+	DeclarationID uuid.UUID
 }
 
 type EffectiveRightsSnapshot struct {

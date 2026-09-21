@@ -90,12 +90,7 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	`, rightsSnapshotID, workspaceID); err != nil {
 		t.Fatalf("insert RightsSnapshot: %v", err)
 	}
-	if _, err := pool.Exec(ctx, `
-		INSERT INTO rights_snapshot_authorization (rights_snapshot_id, authorization_id)
-		VALUES ($1,$2)
-	`, rightsSnapshotID, authorizationID); err != nil {
-		t.Fatalf("bind snapshot authorization: %v", err)
-	}
+	insertRightsProvenanceFixture(t, ctx, pool, workspaceID, authorizationID, rightsSnapshotID)
 	if _, err := pool.Exec(ctx, `UPDATE rights_snapshot SET status='FINALIZED' WHERE id=$1`, rightsSnapshotID); err != nil {
 		t.Fatalf("finalize RightsSnapshot: %v", err)
 	}

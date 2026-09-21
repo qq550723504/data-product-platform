@@ -299,6 +299,14 @@ CREATE TABLE effective_rights_action (
     CONSTRAINT ck_effective_rights_action_decision CHECK (decision IN ('ALLOWED','NOT_ALLOWED'))
 );
 
+CREATE TABLE effective_rights_action_provenance (
+    snapshot_id       uuid NOT NULL REFERENCES effective_rights_snapshot(id),
+    action_id         uuid NOT NULL REFERENCES effective_rights_action(id),
+    input_id          uuid NOT NULL REFERENCES effective_rights_input(id),
+    declaration_id    uuid NOT NULL REFERENCES rights_declaration(id),
+    PRIMARY KEY(action_id, input_id)
+);
+
 -- Subject-typed CostAllocation keeps rights activity cost auditable without
 -- putting business IDs into cost_event.metadata.
 ALTER TABLE cost_allocation
@@ -492,6 +500,9 @@ BEFORE INSERT OR UPDATE OR DELETE ON effective_rights_input
 FOR EACH ROW EXECUTE FUNCTION guard_effective_rights_membership_mutation();
 CREATE TRIGGER trg_effective_rights_action_immutable
 BEFORE INSERT OR UPDATE OR DELETE ON effective_rights_action
+FOR EACH ROW EXECUTE FUNCTION guard_effective_rights_membership_mutation();
+CREATE TRIGGER trg_effective_rights_action_provenance_immutable
+BEFORE INSERT OR UPDATE OR DELETE ON effective_rights_action_provenance
 FOR EACH ROW EXECUTE FUNCTION guard_effective_rights_membership_mutation();
 
 CREATE OR REPLACE FUNCTION guard_delegation_chain_mutation()

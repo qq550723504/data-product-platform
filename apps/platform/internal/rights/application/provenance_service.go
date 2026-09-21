@@ -128,7 +128,7 @@ func (s *Service) VerifyRightsDeclaration(ctx context.Context, cmd VerifyRightsD
 		if err := appendEvent(ctx, tx, "RIGHTS_DECLARATION", d.ID, eventType, map[string]any{"rightsDeclarationId": d.ID, "outcome": outcome, "verificationId": verification.ID}); err != nil {
 			return err
 		}
-		if err := appendRightsCost(ctx, tx, d.WorkspaceID, *verification.ActivityID, "RIGHTS_DECLARATION_VERIFICATION", "rights_declaration_verification", verification.ID); err != nil {
+		if err := appendRightsCost(ctx, tx, d.WorkspaceID, *verification.ActivityID, "RIGHTS_DECLARATION_VERIFICATION", "rights_declaration_verification_id", verification.ID); err != nil {
 			return err
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &d.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: action, ObjectType: "RIGHTS_DECLARATION_VERIFICATION", ObjectID: verification.ID, AfterState: map[string]any{"declarationId": d.ID, "outcome": outcome}, TraceID: cmd.TraceID})
@@ -178,7 +178,7 @@ func (s *Service) DisposeRightsDeclaration(ctx context.Context, cmd DisposeRight
 		if err := appendEvent(ctx, tx, "RIGHTS_DECLARATION", d.ID, eventType, map[string]any{"rightsDeclarationId": d.ID, "dispositionId": disposition.ID, "effectiveAt": disposition.EffectiveAt}); err != nil {
 			return err
 		}
-		if err := appendRightsCost(ctx, tx, d.WorkspaceID, *disposition.ActivityID, "RIGHTS_DECLARATION_DISPOSITION", "rights_declaration_disposition", disposition.ID); err != nil {
+		if err := appendRightsCost(ctx, tx, d.WorkspaceID, *disposition.ActivityID, "RIGHTS_DECLARATION_DISPOSITION", "rights_declaration_disposition_id", disposition.ID); err != nil {
 			return err
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &d.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: action, ObjectType: "RIGHTS_DECLARATION_DISPOSITION", ObjectID: disposition.ID, AfterState: map[string]any{"declarationId": d.ID, "disposition": kind}, TraceID: cmd.TraceID})
@@ -202,7 +202,7 @@ func (s *Service) BindAuthorizationProvenance(ctx context.Context, cmd BindAutho
 		if err := appendEvent(ctx, tx, "AUTHORIZATION_PROVENANCE_BINDING", binding.ID, "AuthorizationProvenanceBound", map[string]any{"bindingId": binding.ID, "authorizationId": binding.AuthorizationID, "rightsDeclarationId": binding.DeclarationID}); err != nil {
 			return err
 		}
-		if err := appendRightsCost(ctx, tx, binding.WorkspaceID, *cmd.ActivityID, "AUTHORIZATION_PROVENANCE_BINDING", "authorization_provenance_binding", binding.ID); err != nil {
+		if err := appendRightsCost(ctx, tx, binding.WorkspaceID, *cmd.ActivityID, "AUTHORIZATION_PROVENANCE_BINDING", "authorization_provenance_binding_id", binding.ID); err != nil {
 			return err
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &binding.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: "AUTHORIZATION_PROVENANCE_BOUND", ObjectType: "AUTHORIZATION_PROVENANCE_BINDING", ObjectID: binding.ID, AfterState: map[string]any{"authorizationId": binding.AuthorizationID, "declarationId": binding.DeclarationID}, TraceID: cmd.TraceID})
@@ -247,12 +247,14 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 		result := domain.EffectiveRightsAction{ID: uuid.New(), Action: action, Decision: domain.DecisionAllowed, Reason: "all required lineage inputs currently allow the action"}
 		for idx, lineage := range inputs {
 			scope, _ := domain.NewNormalizedScope("ALL_RESOURCE", lineage.DataResourceID.String())
-			if _, e := s.repo.CurrentDirectDeclaration(ctx, cmd.WorkspaceID, lineage.DataResourceID, cmd.ConsumerRef, cmd.Purpose, action, scope, cmd.AsOf); e != nil {
+			declarationID, e := s.repo.CurrentDirectDeclaration(ctx, cmd.WorkspaceID, lineage.DataResourceID, cmd.ConsumerRef, cmd.Purpose, action, scope, cmd.AsOf)
+			if e != nil {
 				result.Decision = domain.DecisionNotAllowed
 				result.Reason = "required input does not currently allow action"
 				result.BlockingInputID = &snapshot.Inputs[idx].ID
 				break
 			}
+			result.Provenance = append(result.Provenance, domain.EffectiveRightsProvenance{InputID: snapshot.Inputs[idx].ID, DeclarationID: declarationID})
 		}
 		snapshot.Actions = append(snapshot.Actions, result)
 	}
@@ -294,7 +296,7 @@ func appendRightsCost(ctx context.Context, tx pgx.Tx, workspaceID, activityID uu
 	if err != nil {
 		return err
 	}
-	allowed := map[string]bool{"rights_declaration_verification": true, "rights_declaration_disposition": true, "authorization_provenance_binding": true, "effective_rights_snapshot": true}
+	allowed := map[string]bool{"rights_declaration_verification_id": true, "rights_declaration_disposition_id": true, "authorization_provenance_binding_id": true, "authorization_provenance_binding_disposition_id": true, "effective_rights_snapshot_id": true}
 	if !allowed[column] {
 		return fmt.Errorf("unsupported rights cost subject %s", column)
 	}

@@ -104,6 +104,18 @@ func NewAuthorization(workspaceID uuid.UUID, code, grantorRef, granteeRef, purpo
 		if spec.DataResourceID == uuid.Nil || len(spec.Actions) == 0 {
 			return Authorization{}, ErrInvalidAuthorization
 		}
+		scopeType := strings.ToUpper(strings.TrimSpace(spec.ScopeType))
+		scopeRef := strings.TrimSpace(spec.ScopeRef)
+		if (scopeType == "") != (scopeRef == "") {
+			return Authorization{}, ErrInvalidAuthorization
+		}
+		if scopeType != "" {
+			switch scopeType {
+			case "ALL_RESOURCE", "OBJECT", "ROW", "PREFIX", "POLICY":
+			default:
+				return Authorization{}, ErrInvalidAuthorization
+			}
+		}
 		actions := make([]string, 0, len(spec.Actions))
 		for _, action := range spec.Actions {
 			action = strings.ToUpper(strings.TrimSpace(action))
@@ -121,6 +133,8 @@ func NewAuthorization(workspaceID uuid.UUID, code, grantorRef, granteeRef, purpo
 			DataResourceID:   spec.DataResourceID,
 			Actions:          actions,
 			Scope:            spec.Scope,
+			ScopeType:        scopeType,
+			ScopeRef:         scopeRef,
 			RawExportAllowed: spec.RawExportAllowed,
 			CreatedAt:        now,
 		})

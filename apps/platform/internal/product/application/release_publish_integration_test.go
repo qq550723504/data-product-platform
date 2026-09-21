@@ -81,10 +81,7 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 		          '{"purpose":"ENTERPRISE_CREDIT_RISK_SUPPORT","authorizations":[]}'::jsonb,
 		          'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc',now(),'BUILDING')
 	`, rightsSnapshotID, workspaceID)
-	mustExec(t, ctx, pool, `
-		INSERT INTO rights_snapshot_authorization (rights_snapshot_id, authorization_id)
-		VALUES ($1,$2)
-	`, rightsSnapshotID, authorizationID)
+	insertRightsProvenanceFixture(t, ctx, pool, workspaceID, authorizationID, rightsSnapshotID)
 	mustExec(t, ctx, pool, `UPDATE rights_snapshot SET status='FINALIZED' WHERE id=$1`, rightsSnapshotID)
 
 	mustExec(t, ctx, pool, `
