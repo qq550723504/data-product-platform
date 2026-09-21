@@ -16,6 +16,55 @@ Core Domain 不得直接依赖以下具体产品或 SDK：
 
 外部能力必须通过 Port / SPI + Adapter 接入。
 
+
+## 1A. Commodity Capability Reuse（禁止重复造轮子）
+
+本仓库遵循：
+
+> **Core owns semantics; OSS owns commodity capabilities.**
+
+新增能力前必须按以下顺序决策，**不得直接从“自己实现”开始**：
+
+1. 先检查仓库内是否已有可复用能力、Port、queue、worker、reconciliation、storage、audit/evidence 等基础设施；
+2. 再检查当前已引入依赖是否已能满足需求；
+3. 若属于成熟通用能力，优先评估成熟开源软件，并通过 Port / SPI + Adapter 集成；
+4. 只有现有能力与成熟 OSS 都无法满足核心业务 invariant 时，才允许实现最小必要自研能力；
+5. Fork 第三方大型项目是最后手段；优先级固定为：**原生 API / Plugin / Extension → Adapter → Sidecar → Fork**。
+
+下列能力默认视为 commodity capability，原则上不在 Core 中从零实现：
+
+- Identity / OIDC / OAuth2 / MFA / SSO；
+- 通用 RBAC / ABAC / Policy Engine；
+- 对象存储、通用队列、通用 durable workflow runtime；
+- Metadata Catalog / Governance Catalog；
+- 通用数据标注工具；
+- 通用 tracing / metrics / dashboards；
+- resumable upload、通用搜索等基础设施能力。
+
+平台应自行拥有的是**业务语义与系统事实**，包括但不限于：
+
+- Dataset / DatasetVersion；
+- Entity / EntityMapping / MappingDecision 的平台语义与人工覆盖规则；
+- Processing / Execution 的业务生命周期与 immutable dependencies；
+- QualityAssessment；
+- Rights / Effective Rights；
+- Cost / Evidence / Audit；
+- DatasetCertification；
+- ProductVersion / ProductRelease / ReleaseReadiness；
+- Industry Pack 中定义的行业业务规则与认证语义。
+
+“使用开源”不等于“引入更多组件”。若现有平台能力已满足要求，应优先复用，不得为了技术偏好再引入 Asynq、Temporal、OPA 等第二套平行基础设施。
+
+任何新增以下类型的基础设施能力，都必须在 Issue / PR 中完成 **Build-vs-Buy / Reuse Check**：
+
+- 说明仓库内已有能力为何不足；
+- 至少列出一个成熟 OSS / 标准方案及不采用原因；
+- 说明为什么该能力属于平台差异化价值，或为什么必须自研；
+- 若引入新 OSS，说明 license、维护活跃度、部署/运维成本、替换边界与 Adapter contract；
+- 若选择 Fork，必须新增 ADR 说明无法通过 API / Extension / Adapter 实现的原因。
+
+能力归属与当前默认实现见 `docs/architecture/capability-map.md`；通用决策原则见 ADR-0010。
+
 ## 2. System of Record
 
 Data Product Platform 自身数据库是以下核心业务事实的 System of Record：
