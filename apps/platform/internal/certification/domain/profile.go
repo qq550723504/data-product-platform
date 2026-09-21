@@ -266,6 +266,9 @@ func normalizeCodes(values []string) []string {
 
 func (a Applicability) Covers(value string, uppercase bool) bool {
 	value = strings.TrimSpace(value)
+	if value == "" {
+		return false
+	}
 	if uppercase {
 		value = strings.ToUpper(value)
 	}

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -23,6 +24,11 @@ type CertificationTarget struct {
 	DatasetVersionID uuid.UUID
 	ProfileID        uuid.UUID
 	Decision         domain.Decision
+}
+
+type CertificationHistory struct {
+	Certifications []domain.DatasetCertification
+	Dispositions   []domain.CertificationDisposition
 }
 
 func NewCertificationRepository(pool *pgxpool.Pool) *CertificationRepository {
@@ -81,6 +87,101 @@ func (r *CertificationRepository) GetCertificationTx(ctx context.Context, tx pgx
 		return domain.DatasetCertification{}, ErrCertificationNotFound
 	} else if err != nil {
 		return domain.DatasetCertification{}, fmt.Errorf("get dataset certification: %w", err)
+	}
+	if err := json.Unmarshal(blockers, &certification.Blockers); err != nil {
+		return domain.DatasetCertification{}, fmt.Errorf("decode dataset certification blockers: %w", err)
+	}
+	certification.Decision = domain.Decision(decision)
+	certification.EffectiveRightsSnapshotHash = dereferenceString(effectiveHash)
+	certification.FrozenRightsContextHash = dereferenceString(contextHash)
+	certification.Profile = profile
+	return certification, nil
+}
+
+// ListCertificationHistory intentionally returns every matching historical
+// fact. Current selection belongs to the domain, where ambiguity can fail
+// closed instead of being hidden by an ORDER BY created_at.
+func (r *CertificationRepository) ListCertificationHistory(ctx context.Context, workspaceID, datasetVersionID, profileID uuid.UUID, asOf time.Time, profile domain.ProfileSnapshot) (CertificationHistory, error) {
+	if asOf.IsZero() {
+		asOf = time.Now().UTC()
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT id, workspace_id, dataset_version_id, quality_assessment_id,
+		       rights_snapshot_id, effective_rights_snapshot_id, effective_rights_snapshot_hash,
+		       frozen_rights_context_hash, compliance_result_id, contract_version_id,
+		       traceability_evidence_id, evidence_snapshot_id, decision, blockers, reason, issued_at, created_by
+		FROM dataset_certification
+		WHERE workspace_id=$1 AND dataset_version_id=$2 AND certification_profile_id=$3
+		  AND issued_at <= $4
+		ORDER BY id
+	`, workspaceID, datasetVersionID, profileID, asOf.UTC())
+	if err != nil {
+		return CertificationHistory{}, fmt.Errorf("list dataset certification history: %w", err)
+	}
+	defer rows.Close()
+	history := CertificationHistory{Certifications: make([]domain.DatasetCertification, 0)}
+	for rows.Next() {
+		certification, err := scanCertification(rows, profile)
+		if err != nil {
+			return CertificationHistory{}, err
+		}
+		history.Certifications = append(history.Certifications, certification)
+	}
+	if err := rows.Err(); err != nil {
+		return CertificationHistory{}, fmt.Errorf("iterate dataset certification history: %w", err)
+	}
+
+	dispositionRows, err := r.pool.Query(ctx, `
+		SELECT d.id, d.workspace_id, d.certification_id, d.disposition, d.effective_at,
+		       d.reason, d.superseded_by_certification_id, d.evidence_snapshot_id, d.created_by
+		FROM certification_disposition d
+		JOIN dataset_certification c ON c.id=d.certification_id
+		WHERE c.workspace_id=$1 AND c.dataset_version_id=$2 AND c.certification_profile_id=$3
+		  AND d.effective_at <= $4
+		ORDER BY d.certification_id, d.effective_at, d.id
+	`, workspaceID, datasetVersionID, profileID, asOf.UTC())
+	if err != nil {
+		return CertificationHistory{}, fmt.Errorf("list certification dispositions: %w", err)
+	}
+	defer dispositionRows.Close()
+	history.Dispositions = make([]domain.CertificationDisposition, 0)
+	for dispositionRows.Next() {
+		var disposition domain.CertificationDisposition
+		var kind string
+		if err := dispositionRows.Scan(
+			&disposition.ID, &disposition.WorkspaceID, &disposition.CertificationID, &kind,
+			&disposition.EffectiveAt, &disposition.Reason, &disposition.SupersededByCertificationID,
+			&disposition.EvidenceSnapshotID, &disposition.ActorID,
+		); err != nil {
+			return CertificationHistory{}, fmt.Errorf("scan certification disposition: %w", err)
+		}
+		disposition.Disposition = domain.Disposition(kind)
+		history.Dispositions = append(history.Dispositions, disposition)
+	}
+	if err := dispositionRows.Err(); err != nil {
+		return CertificationHistory{}, fmt.Errorf("iterate certification dispositions: %w", err)
+	}
+	return history, nil
+}
+
+type certificationScanner interface {
+	Scan(dest ...any) error
+}
+
+func scanCertification(row certificationScanner, profile domain.ProfileSnapshot) (domain.DatasetCertification, error) {
+	var certification domain.DatasetCertification
+	var blockers []byte
+	var decision string
+	var effectiveHash, contextHash *string
+	if err := row.Scan(
+		&certification.ID, &certification.WorkspaceID, &certification.DatasetVersionID,
+		&certification.QualityAssessmentID, &certification.RightsSnapshotID,
+		&certification.EffectiveRightsSnapshotID, &effectiveHash, &contextHash,
+		&certification.ComplianceResultID, &certification.ContractVersionID,
+		&certification.TraceabilityEvidenceID, &certification.EvidenceSnapshotID,
+		&decision, &blockers, &certification.Reason, &certification.IssuedAt, &certification.ActorID,
+	); err != nil {
+		return domain.DatasetCertification{}, fmt.Errorf("scan dataset certification: %w", err)
 	}
 	if err := json.Unmarshal(blockers, &certification.Blockers); err != nil {
 		return domain.DatasetCertification{}, fmt.Errorf("decode dataset certification blockers: %w", err)

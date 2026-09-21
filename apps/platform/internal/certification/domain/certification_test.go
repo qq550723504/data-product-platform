@@ -145,6 +145,27 @@ func TestCurrentCertificationRequiresDispositionRulesAndExplicitProfileContext(t
 	}
 }
 
+func TestCurrentCertificationRejectsMissingContextEvenForAnyProfile(t *testing.T) {
+	certification := DatasetCertification{
+		ID:       uuid.New(),
+		Decision: DecisionCertified,
+		IssuedAt: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+		Profile: ProfileSnapshot{CertificationProfile: CertificationProfile{
+			Purpose:   Applicability{Mode: ApplicabilityAny},
+			Actions:   Applicability{Mode: ApplicabilityAny},
+			Consumers: Applicability{Mode: ApplicabilityAny},
+			Delivery:  Applicability{Mode: ApplicabilityAny},
+		}},
+	}
+	gate := certification.CheckCurrent(time.Date(2026, 1, 2, 0, 0, 0, 0, time.UTC), nil, DeliveryContext{})
+	if gate.Allowed {
+		t.Fatal("missing delivery context was accepted by an ANY profile")
+	}
+	if len(gate.Blockers) != 4 {
+		t.Fatalf("blockers = %#v, want one blocker for each missing context dimension", gate.Blockers)
+	}
+}
+
 func TestSelectCurrentCertificationDoesNotGuessLatest(t *testing.T) {
 	workspaceID, datasetVersionID := uuid.New(), uuid.New()
 	profile := testProfile(t)
