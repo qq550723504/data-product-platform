@@ -200,7 +200,7 @@ func (s *EligibilityService) checkInputEntitlement(ctx context.Context, query De
 		WorkspaceID: query.WorkspaceID, DataResourceID: input.DataResourceID, ConsumerRef: query.Consumer,
 		Purpose: query.Purpose, Action: query.Action, AsOf: query.AsOf,
 		Scope: rightsdomain.NormalizedScope{Type: "ALL_RESOURCE", Ref: input.DataResourceID.String()},
-		Path: rightsdomain.EntitlementDirectUse,
+		Path:  rightsdomain.EntitlementDirectUse,
 	}
 	check := EntitlementCheck{DataResourceID: input.DataResourceID, Path: request.Path}
 	if input.BindingID != nil {
