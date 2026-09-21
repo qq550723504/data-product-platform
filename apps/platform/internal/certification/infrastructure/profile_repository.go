@@ -49,14 +49,14 @@ func (r *ProfileRepository) InsertProfile(ctx context.Context, tx pgx.Tx, profil
 		INSERT INTO certification_profile (
 			id, workspace_id, profile_ref, code, name, version, content_sha256, content_snapshot,
 			purpose_mode, action_mode, consumer_mode, delivery_mode,
-			quality_gate_required, rights_required, compliance_required, contract_required,
+			quality_gate_required, rights_required, compliance_required, contract_required, contract_code,
 			traceability_required, evidence_required, rights_purpose_mode, rights_action_mode,
 			rights_consumer_mode, rights_scope_mode, membership_state, created_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,'DRAFT',$23,$24)
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,NULLIF($17,''),$18,$19,$20,$21,$22,$23,'DRAFT',$24,$25)
 	`, profile.ID, profile.WorkspaceID, profile.ProfileRef, profile.Code, profile.Name, profile.Version,
 		profile.ContentSHA256, string(profile.Content), profile.Purpose.Mode, profile.Actions.Mode,
 		profile.Consumers.Mode, profile.Delivery.Mode, profile.QualityGateRequired, profile.Rights.Required,
-		profile.ComplianceRequired, profile.ContractRequired, profile.TraceabilityRequired, profile.EvidenceRequired,
+		profile.ComplianceRequired, profile.ContractRequired, profile.ContractCode, profile.TraceabilityRequired, profile.EvidenceRequired,
 		rightsPurposeMode, rightsActionMode, rightsConsumerMode, rightsScopeMode, createdAt, profile.CreatedBy); err != nil {
 		return fmt.Errorf("insert certification profile: %w", err)
 	}
@@ -140,7 +140,7 @@ func (r *ProfileRepository) GetProfile(ctx context.Context, profileID uuid.UUID)
 	err := r.pool.QueryRow(ctx, `
 		SELECT id, workspace_id, profile_ref, code, name, version, content_sha256, content_snapshot,
 		       purpose_mode, action_mode, consumer_mode, delivery_mode,
-		       quality_gate_required, rights_required, compliance_required, contract_required,
+		       quality_gate_required, rights_required, compliance_required, contract_required, COALESCE(contract_code,''),
 		       traceability_required, evidence_required, rights_purpose_mode, rights_action_mode,
 		       rights_consumer_mode, rights_scope_mode, created_at, created_by
 		FROM certification_profile WHERE id=$1
@@ -148,7 +148,7 @@ func (r *ProfileRepository) GetProfile(ctx context.Context, profileID uuid.UUID)
 		&snapshot.ID, &snapshot.WorkspaceID, &snapshot.ProfileRef, &snapshot.Code, &snapshot.Name, &snapshot.Version,
 		&snapshot.ContentSHA256, &content, &purposeMode, &actionMode, &consumerMode, &deliveryMode,
 		&snapshot.QualityGateRequired, &snapshot.Rights.Required, &snapshot.ComplianceRequired,
-		&snapshot.ContractRequired, &snapshot.TraceabilityRequired, &snapshot.EvidenceRequired,
+		&snapshot.ContractRequired, &snapshot.ContractCode, &snapshot.TraceabilityRequired, &snapshot.EvidenceRequired,
 		&rightsPurposeMode, &rightsActionMode, &rightsConsumerMode, &rightsScopeMode, &snapshot.CreatedAt, &snapshot.CreatedBy,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
