@@ -90,9 +90,8 @@ func (h *Handler) createAuthorization(w http.ResponseWriter, r *http.Request) {
 			RawExportAllowed: resource.RawExportAllowed,
 		})
 	}
-	actorID, err := parseActorID(r)
-	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
+	actorID, ok := h.authorizeWorkspace(w, r, workspaceID)
+	if !ok {
 		return
 	}
 	authorization, err := h.service.Create(r.Context(), application.CreateAuthorizationCommand{
@@ -133,6 +132,9 @@ func (h *Handler) getAuthorization(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "AUTHORIZATION_READ_FAILED", err.Error(), nil)
 		return
 	}
+	if _, ok := h.authorizeWorkspace(w, r, authorization.WorkspaceID); !ok {
+		return
+	}
 	writeJSON(w, http.StatusOK, authorizationResponse(authorization))
 }
 
@@ -163,9 +165,17 @@ func (h *Handler) transitionAuthorization(w http.ResponseWriter, r *http.Request
 	if !ok {
 		return
 	}
-	actorID, err := parseActorID(r)
+	current, err := h.repo.GetAuthorization(r.Context(), authorizationID)
 	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
+		status := http.StatusInternalServerError
+		if errors.Is(err, infrastructure.ErrNotFound) {
+			status = http.StatusNotFound
+		}
+		httpserver.WriteError(w, r, status, "AUTHORIZATION_READ_FAILED", err.Error(), nil)
+		return
+	}
+	actorID, ok := h.authorizeWorkspace(w, r, current.WorkspaceID)
+	if !ok {
 		return
 	}
 	authorization, err := fn(r.Context(), application.TransitionCommand{
