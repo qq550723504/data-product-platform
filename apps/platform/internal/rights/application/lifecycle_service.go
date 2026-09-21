@@ -64,6 +64,7 @@ func (s *Service) DisposeAuthorizationProvenanceBinding(ctx context.Context, cmd
 	if cmd.EffectiveAt.IsZero() {
 		cmd.EffectiveAt = time.Now().UTC()
 	}
+	cmd.EffectiveAt = cmd.EffectiveAt.UTC().Round(time.Microsecond)
 	if strings.TrimSpace(cmd.Reason) == "" || (kind == domain.DispositionSuperseded && cmd.SupersededBy == nil) {
 		return domain.BindingDisposition{}, domain.ErrRightsDisposition
 	}
@@ -143,7 +144,16 @@ func (s *Service) CreateDelegationChain(ctx context.Context, cmd CreateDelegatio
 	if len(cmd.Edges) == 0 {
 		return domain.DelegationChain{}, domain.ErrInvalidBinding
 	}
-	for _, edge := range cmd.Edges {
+	for i := range cmd.Edges {
+		edge := &cmd.Edges[i]
+		if edge.ValidFrom != nil {
+			normalized := edge.ValidFrom.UTC().Round(time.Microsecond)
+			edge.ValidFrom = &normalized
+		}
+		if edge.ValidTo != nil {
+			normalized := edge.ValidTo.UTC().Round(time.Microsecond)
+			edge.ValidTo = &normalized
+		}
 		if edge.Scope.Type == "ALL_RESOURCE" && edge.Scope.Ref != edge.DataResourceID.String() {
 			return domain.DelegationChain{}, domain.ErrInvalidBinding
 		}
@@ -266,6 +276,7 @@ func (s *Service) DisposeDelegation(ctx context.Context, cmd DisposeDelegationCo
 	if cmd.EffectiveAt.IsZero() {
 		cmd.EffectiveAt = time.Now().UTC()
 	}
+	cmd.EffectiveAt = cmd.EffectiveAt.UTC().Round(time.Microsecond)
 	if cmd.ActivityID == nil {
 		id := uuid.New()
 		cmd.ActivityID = &id
