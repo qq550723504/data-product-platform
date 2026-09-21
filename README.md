@@ -19,17 +19,17 @@ AI 高质量数据集 / Gold Dataset    后续
 可信数据空间 / 数据产品规模化交付   后续
 ~~~
 
-当前主 Epic：#129 高质量数据集生产与认证。
+当前主 Epic：#129 高质量数据集生产与认证（OPEN；第一阶段纵向验收完成后再关闭）。
 
-第一阶段任务：
+第一阶段任务状态（截至 2026-09-21）：
 
-- #131 QualityAssessment follow-up / typed CostAllocation（核心 QualityAssessment 与规则快照已由 #140 落地）
-- #132 通用 industry-pack Quality Engine
-- #133 Quality Report
-- #137 Data Rights Provenance / Effective Rights
-- #134 DatasetCertification / CertificationProfile
-- #135 Certified Dataset API / UI
-- #136 enterprise-activity 纵向试点验收
+- #131 QualityAssessment follow-up / typed CostAllocation ✅ 完成（核心 QualityAssessment 与规则快照已由 #140 落地）
+- #132 通用 industry-pack Quality Engine ✅ 完成
+- #133 Quality Report ✅ 完成
+- #137 Data Rights Provenance / Effective Rights ✅ 完成
+- #134 DatasetCertification / CertificationProfile 🚧 进行中（PR #149）
+- #135 Certified Dataset API / UI ⏳ 待完成
+- #136 enterprise-activity 纵向试点验收 ⏳ 待完成
 
 T4/T5/T6、完整生产 IAM、灾备、性能压测以及 Label Studio / X-AnyLabeling 不作为 Certified Dataset MVP 第一阶段前置条件。
 
