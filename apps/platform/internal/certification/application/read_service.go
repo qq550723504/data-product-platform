@@ -74,6 +74,8 @@ type DeliveryEligibilityQuery struct {
 	Purpose          string
 	Action           string
 	Delivery         string
+	ScopeType        string
+	ScopeRef         string
 	AsOf             time.Time
 }
 
@@ -121,8 +123,20 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 	query.Purpose = strings.ToUpper(strings.TrimSpace(query.Purpose))
 	query.Action = strings.ToUpper(strings.TrimSpace(query.Action))
 	query.Delivery = strings.ToUpper(strings.TrimSpace(query.Delivery))
-	if query.Consumer == "" || query.Purpose == "" || query.Action == "" || query.Delivery == "" {
-		return result, fmt.Errorf("consumer, purpose, action, and delivery are required")
+	query.ScopeType = strings.ToUpper(strings.TrimSpace(query.ScopeType))
+	query.ScopeRef = strings.TrimSpace(query.ScopeRef)
+	if query.Consumer == "" || query.Purpose == "" || query.Action == "" || query.Delivery == "" || query.ScopeType == "" {
+		return result, fmt.Errorf("consumer, purpose, action, delivery, and scope type are required")
+	}
+	if query.ScopeType != "ALL_RESOURCE" && query.ScopeRef == "" {
+		return result, fmt.Errorf("scope ref is required for %s scope", query.ScopeType)
+	}
+	probeRef := query.ScopeRef
+	if query.ScopeType == "ALL_RESOURCE" {
+		probeRef = query.DatasetVersionID.String()
+	}
+	if _, err := rightsdomain.NewNormalizedScope(query.ScopeType, probeRef); err != nil {
+		return result, fmt.Errorf("delivery eligibility scope is invalid: %w", err)
 	}
 	if query.AsOf.IsZero() {
 		query.AsOf = time.Now().UTC()
@@ -232,10 +246,18 @@ func (s *EligibilityService) checkInputEntitlement(ctx context.Context, query De
 	if !input.ResourceMapped || input.DataResourceID == uuid.Nil {
 		return check, &certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_RESOURCE_UNMAPPED", Detail: input.DatasetVersionID.String() + ": required source DatasetVersion has no DataResource mapping"}, nil
 	}
+	scopeRef := query.ScopeRef
+	if query.ScopeType == "ALL_RESOURCE" {
+		scopeRef = input.DataResourceID.String()
+	}
+	scope, err := rightsdomain.NewNormalizedScope(query.ScopeType, scopeRef)
+	if err != nil {
+		return check, nil, fmt.Errorf("normalize requested entitlement scope: %w", err)
+	}
 	request := rightsdomain.EntitlementRequest{
 		WorkspaceID: query.WorkspaceID, DataResourceID: input.DataResourceID, ConsumerRef: query.Consumer,
 		Purpose: query.Purpose, Action: query.Action, AsOf: query.AsOf,
-		Scope: rightsdomain.NormalizedScope{Type: "ALL_RESOURCE", Ref: input.DataResourceID.String()},
+		Scope: scope,
 		Path:  rightsdomain.EntitlementDirectUse,
 	}
 	direct, err := s.rights.CheckCurrentEntitlement(ctx, request)
