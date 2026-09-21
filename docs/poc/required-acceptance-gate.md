@@ -14,7 +14,7 @@ Pure documentation changes are an explicit, narrow exception. A change is
 `docs-only` only when every changed path is under `docs/**`, is a repository
 Markdown/MDX file, or is a GitHub issue/pull-request template. Workflow files,
 scripts, source, tests, migrations, dependency manifests, deployment files, and
-all other paths are non-documentation.
+all other paths are non-documentation. Rename detection is disabled during classification so a rename contributes its deleted source path and added destination path; moving executable content into a documentation path therefore cannot become `docs-only`.
 
 For a `docs-only` change:
 
