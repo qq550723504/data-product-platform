@@ -209,7 +209,7 @@ func main() {
 	certificationRepo := certificationinfra.NewCertificationRepository(db)
 	certificationService := certificationapp.NewCertificationService(txManager, certificationProfileRepo, certificationRepo, nil)
 	certificationEligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
-	certificationHandler := certificationhttp.NewHandler(certificationService, certificationEligibility)
+	certificationHandler := certificationhttp.NewHandler(certificationService, certificationEligibility, datasetRepo)
 
 	complianceRepo := complianceinfra.NewPostgresRepository(db)
 	complianceService := complianceapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, complianceRepo, objectStore)
