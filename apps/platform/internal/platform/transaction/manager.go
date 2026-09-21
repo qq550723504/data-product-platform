@@ -15,12 +15,22 @@ type Manager struct {
 	pool *pgxpool.Pool
 }
 
+type advisoryLockConnectionContextKey struct{}
+
 func NewManager(pool *pgxpool.Pool) *Manager {
 	return &Manager{pool: pool}
 }
 
 func (m *Manager) Do(ctx context.Context, fn func(context.Context, pgx.Tx) error) error {
-	tx, err := m.pool.BeginTx(ctx, pgx.TxOptions{})
+	var (
+		tx  pgx.Tx
+		err error
+	)
+	if conn, ok := ctx.Value(advisoryLockConnectionContextKey{}).(*pgxpool.Conn); ok {
+		tx, err = conn.BeginTx(ctx, pgx.TxOptions{})
+	} else {
+		tx, err = m.pool.BeginTx(ctx, pgx.TxOptions{})
+	}
 	if err != nil {
 		return fmt.Errorf("begin transaction: %w", err)
 	}
@@ -69,5 +79,5 @@ func (m *Manager) WithAdvisoryLock(ctx context.Context, key string, fn func(cont
 		_ = conn.QueryRow(context.Background(), `SELECT pg_advisory_unlock(hashtextextended($1, 0))`, key).Scan(&unlocked)
 	}()
 
-	return fn(ctx)
+	return fn(context.WithValue(ctx, advisoryLockConnectionContextKey{}, conn))
 }

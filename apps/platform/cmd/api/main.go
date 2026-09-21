@@ -195,7 +195,7 @@ func main() {
 
 	qualityRepo := qualityinfra.NewPostgresRepository(db)
 	qualityService := qualityapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, qualityRepo, objectStore, evidence.NewQueryRepository(db))
-	qualityHandler := qualityhttp.NewHandler(qualityService, qualityRepo, evidence.NewQueryRepository(db))
+	qualityHandler := qualityhttp.NewHandlerWithCost(qualityService, qualityRepo, evidence.NewQueryRepository(db), cost.NewQueryRepository(db))
 
 	complianceRepo := complianceinfra.NewPostgresRepository(db)
 	complianceService := complianceapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, complianceRepo, objectStore)

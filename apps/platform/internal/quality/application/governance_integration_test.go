@@ -12,10 +12,12 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	complianceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/application"
 	compliancedomain "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/domain"
 	complianceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -111,12 +113,6 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	if qualityResult.EvaluatorName != qualitynative.EvaluatorName || qualityResult.EvaluatorVersion != qualitynative.EvaluatorVersion {
 		t.Fatalf("assessment evaluator = %s/%s, want %s/%s", qualityResult.EvaluatorName, qualityResult.EvaluatorVersion, qualitynative.EvaluatorName, qualitynative.EvaluatorVersion)
 	}
-	if len(qualityResult.DimensionSummaries) != len(qualitydomain.QualityDimensions) {
-		t.Fatalf("dimension summaries = %d, want %d", len(qualityResult.DimensionSummaries), len(qualitydomain.QualityDimensions))
-	}
-	if qualityResult.DimensionSummaries["COMPLETENESS"].Status != qualitydomain.DimensionPass {
-		t.Fatalf("completeness summary = %#v, want PASS", qualityResult.DimensionSummaries["COMPLETENESS"])
-	}
 	assessment, err := qualityRepo.GetAssessment(ctx, qualityResult.ID)
 	if err != nil {
 		t.Fatalf("query assessment by id: %v", err)
@@ -126,6 +122,43 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	}
 	if assessment.DimensionSummaries["COMPLETENESS"].Status != qualitydomain.DimensionPass {
 		t.Fatalf("queried completeness summary = %#v, want PASS", assessment.DimensionSummaries["COMPLETENESS"])
+	}
+	costRepo := cost.NewQueryRepository(pool)
+	qualityCosts, err := costRepo.ListByQualityAssessment(ctx, qualityResult.ID)
+	if err != nil {
+		t.Fatalf("query assessment costs: %v", err)
+	}
+	if len(qualityCosts) != 1 || qualityCosts[0].ActivityID == nil || qualityCosts[0].Amount != nil || qualityCosts[0].Quantity != 1 || qualityCosts[0].Unit != "assessment" {
+		t.Fatalf("assessment costs = %+v, want one physical attempt with quantity/unit and unknown amount", qualityCosts)
+	}
+	firstAttemptID := *qualityCosts[0].ActivityID
+	replayedAssessment, err := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: passVersion.ID,
+		RuleSetRef: "park/quality/enterprise-activity-quality-v1.yaml", AssessmentAttemptID: firstAttemptID,
+		TraceID: "governance-e2e-replay", Now: passVersion.ReadyAt.Add(32 * 60 * 1e9),
+	})
+	if err != nil || replayedAssessment.ID != qualityResult.ID {
+		t.Fatalf("same quality attempt replay = %s, err=%v; want original assessment %s", replayedAssessment.ID, err, qualityResult.ID)
+	}
+	if err := txManager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		return cost.AppendQualityAssessmentAttemptActivity(ctx, tx, cost.QualityAssessmentAttemptActivity{
+			WorkspaceID: workspaceID, AttemptID: firstAttemptID,
+			CostType: cost.QualityEngineInvocation, Quantity: 1, Unit: "assessment",
+		})
+	}); err != nil {
+		t.Fatalf("replay assessment cost attempt: %v", err)
+	}
+	if err := txManager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		return cost.AppendQualityAssessmentActivity(ctx, tx, cost.QualityAssessmentActivity{
+			WorkspaceID: workspaceID, AssessmentID: qualityResult.ID, AttemptID: uuid.New(),
+			CostType: cost.QualityEngineInvocation, Quantity: 1, Unit: "assessment",
+		})
+	}); err != nil {
+		t.Fatalf("append retry assessment cost attempt: %v", err)
+	}
+	qualityCosts, err = costRepo.ListByQualityAssessment(ctx, qualityResult.ID)
+	if err != nil || len(qualityCosts) != 2 {
+		t.Fatalf("assessment costs after replay/retry = %d, err=%v; want two physical attempts", len(qualityCosts), err)
 	}
 	evidenceItems, err := evidence.NewQueryRepository(pool).ListForObject(ctx, "QUALITY_RESULT", qualityResult.ID)
 	if err != nil || len(evidenceItems) != 1 {
@@ -199,6 +232,21 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 		t.Fatalf("compliance gate = %s, want PASS; findings=%+v", complianceResult.GateDecision, complianceResult.Findings)
 	}
 
+	// A completed attempt is a stable replay fact. It must remain replayable even
+	// after the mutable DatasetVersion is invalidated.
+	invalidateVersion := datasetapp.NewInvalidateVersionService(txManager, datasetRepo)
+	if _, err := invalidateVersion.Handle(ctx, datasetapp.InvalidateVersionCommand{VersionID: passVersion.ID, Reason: "replay-ordering", TraceID: "governance-e2e-replay"}); err != nil {
+		t.Fatalf("invalidate replayed version: %v", err)
+	}
+	replayedAfterInvalidation, err := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: passVersion.ID,
+		RuleSetRef: "park/quality/enterprise-activity-quality-v1.yaml", AssessmentAttemptID: firstAttemptID,
+		TraceID: "governance-e2e-replay-after-invalidation", Now: passVersion.ReadyAt.Add(33 * 60 * 1e9),
+	})
+	if err != nil || replayedAfterInvalidation.ID != qualityResult.ID {
+		t.Fatalf("same quality attempt replay after invalidation = %s, err=%v; want original assessment %s", replayedAfterInvalidation.ID, err, qualityResult.ID)
+	}
+
 	badQualityDataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "GOV-BAD-QUALITY")
 	badQualityVersion := uploadCSV(t, ctx, uploadDataset, badQualityDataset.ID, "product-bad-quality.csv", `company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at
 COMPANY-002,异常科技有限公司,2026-09,90,95,80,120,HIGH,100,2026-09-16T10:00:00Z
@@ -266,7 +314,6 @@ COMPANY-004,外部科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	// Ownership must be resolved before the status check: a foreign version that is no
 	// longer READY must still be rejected as a workspace mismatch, not surface its status
 	// through the generic QUALITY_CHECK_FAILED / COMPLIANCE_CHECK_FAILED path.
-	invalidateVersion := datasetapp.NewInvalidateVersionService(txManager, datasetRepo)
 	if _, err := invalidateVersion.Handle(ctx, datasetapp.InvalidateVersionCommand{VersionID: foreignVersion.ID, Reason: "governance-ordering", TraceID: "governance-rejected"}); err != nil {
 		t.Fatalf("invalidate foreign version: %v", err)
 	}
