@@ -473,7 +473,7 @@ export const platform = {
     ),
   qualityAssessments: (versionId: string, limit = 25, offset = 0) =>
     apiGet<{ datasetVersionId: string; items: QualityAssessment[]; page: PageMeta }>(
-      `/api/v1/dataset-versions/${encodeURIComponent(versionId)}/quality-assessments?workspaceId=${encodeURIComponent(requireWorkspace())}&limit=${limit}&offset=${offset}`,
+      `/api/v1/dataset-versions/${encodeURIComponent(versionId)}/quality-assessments?workspaceId=${encodeURIComponent(requireWorkspace())}&limit=${limit}&offset=${offset}&summary=true`,
     ),
   qualityReport: (assessmentId: string, limit = 50, offset = 0) =>
     apiGet<QualityReport>(
