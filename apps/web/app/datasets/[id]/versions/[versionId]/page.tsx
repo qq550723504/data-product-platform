@@ -19,6 +19,8 @@ type Query = {
   purpose?: string;
   action?: string;
   delivery?: string;
+  scopeType?: string;
+  scopeRef?: string;
 };
 
 function firstValue(values?: string[]): string {
@@ -92,18 +94,28 @@ export default async function DatasetVersionDetailPage({
     const profileMap = new Map(history.items.map((item) => [item.profile.id, item.profile]));
     const profiles = Array.from(profileMap.values());
     const selectedProfile = profileMap.get(query.profileId ?? "") ?? profiles[0];
+    const profileScope = selectedProfile?.rights.scopes.values?.[0];
     const requested = {
       profileId: query.profileId ?? selectedProfile?.id ?? "",
       consumer: query.consumer ?? firstValue(selectedProfile?.consumers.values),
       purpose: query.purpose ?? firstValue(selectedProfile?.purpose.values),
       action: query.action ?? firstValue(selectedProfile?.actions.values),
       delivery: query.delivery ?? firstValue(selectedProfile?.delivery.values),
+      scopeType: query.scopeType ?? profileScope?.type ?? "ALL_RESOURCE",
+      scopeRef: query.scopeRef ?? profileScope?.ref ?? "",
     };
-    const canCheck = Object.values(requested).every((value) => value.trim() !== "");
+    const canCheck = requested.profileId.trim() !== ""
+      && requested.consumer.trim() !== ""
+      && requested.purpose.trim() !== ""
+      && requested.action.trim() !== ""
+      && requested.delivery.trim() !== ""
+      && requested.scopeType.trim() !== ""
+      && (requested.scopeType === "ALL_RESOURCE" || requested.scopeRef.trim() !== "");
     const eligibility = canCheck ? await platform.deliveryEligibility(versionId, requested) : null;
     const latestAssessment = quality.items[0];
     const latestReport = latestAssessment ? await platform.qualityReport(latestAssessment.id, 50, 0) : null;
-    const evidenceCertification = eligibility?.certification.current ?? history.items[0];
+    const evidenceCertification = eligibility?.certification.current
+      ?? history.items.find((item) => item.profile.id === selectedProfile?.id);
 
     return (
       <>
@@ -319,12 +331,14 @@ export default async function DatasetVersionDetailPage({
                 <div><dt>Purpose</dt><dd><input name="purpose" defaultValue={requested.purpose} required /></dd></div>
                 <div><dt>Action</dt><dd><input name="action" defaultValue={requested.action} required /></dd></div>
                 <div><dt>Delivery</dt><dd><input name="delivery" defaultValue={requested.delivery} required /></dd></div>
+                <div><dt>Scope type</dt><dd><input name="scopeType" defaultValue={requested.scopeType} required /></dd></div>
+                <div><dt>Scope ref</dt><dd><input name="scopeRef" defaultValue={requested.scopeRef} placeholder="ALL_RESOURCE 时可留空" /></dd></div>
               </div>
               <button type="submit" style={{ marginTop: 14 }}>检查当前可交付性</button>
             </form>
 
             {!eligibility ? (
-              <div className="callout callout-warn"><strong>需要完整 delivery context</strong><p>填写 consumer、purpose、action、delivery 后执行当前资格预检。</p></div>
+              <div className="callout callout-warn"><strong>需要完整 delivery context</strong><p>填写 consumer、purpose、action、delivery 与 normalized scope 后执行当前资格预检；ALL_RESOURCE 的 scope ref 会按每个 source DataResource 解析。</p></div>
             ) : (
               <section className="detail-card">
                 <div className="panel-header">
