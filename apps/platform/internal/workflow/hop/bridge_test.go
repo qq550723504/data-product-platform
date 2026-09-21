@@ -43,7 +43,7 @@ func TestManagedWorkflowPinsHopDefinitionChecksum(t *testing.T) {
 	if workflow.Spec.ManagedExecution.DefinitionRef != "examples/enterprise-activity/hop/aggregate-energy-monthly.hpl" {
 		t.Fatalf("unexpected definitionRef %q", workflow.Spec.ManagedExecution.DefinitionRef)
 	}
-	checksum := fmt.Sprintf("%x", sha256.Sum256(pipeline))
+	checksum := fmt.Sprintf("%x", sha256.Sum256(canonicalDefinitionBytes(pipeline)))
 	if workflow.Spec.ManagedExecution.DefinitionSHA256 != checksum {
 		t.Fatalf("workflow pins checksum %s, pipeline checksum is %s", workflow.Spec.ManagedExecution.DefinitionSHA256, checksum)
 	}

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
@@ -21,6 +22,7 @@ type Handler struct {
 	service      *application.Service
 	repo         *infrastructure.PostgresRepository
 	evidenceRepo *evidence.QueryRepository
+	costRepo     *cost.QueryRepository
 }
 
 const (
@@ -36,6 +38,10 @@ func NewHandler(service *application.Service, repo *infrastructure.PostgresRepos
 	return &Handler{service: service, repo: repo, evidenceRepo: evidenceRepo}
 }
 
+func NewHandlerWithCost(service *application.Service, repo *infrastructure.PostgresRepository, evidenceRepo *evidence.QueryRepository, costRepo *cost.QueryRepository) *Handler {
+	return &Handler{service: service, repo: repo, evidenceRepo: evidenceRepo, costRepo: costRepo}
+}
+
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/dataset-versions/{versionId}/quality-checks", h.run)
 	mux.HandleFunc("GET /api/v1/quality-results/{resultId}", h.get)
@@ -45,8 +51,9 @@ func (h *Handler) Register(mux *http.ServeMux) {
 }
 
 type runRequest struct {
-	WorkspaceID string `json:"workspaceId"`
-	RuleSetRef  string `json:"ruleSetRef"`
+	WorkspaceID         string `json:"workspaceId"`
+	RuleSetRef          string `json:"ruleSetRef"`
+	AssessmentAttemptID string `json:"assessmentAttemptId"`
 }
 
 func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
@@ -74,15 +81,35 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 	if ruleSetRef == "" {
 		ruleSetRef = "park/quality/enterprise-activity-quality-v1.yaml"
 	}
+	var assessmentAttemptID uuid.UUID
+	assessmentAttemptRef := strings.TrimSpace(req.AssessmentAttemptID)
+	if assessmentAttemptRef == "" {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "MISSING_ASSESSMENT_ATTEMPT_ID", "assessmentAttemptId is required for idempotent quality execution", nil)
+		return
+	}
+	assessmentAttemptID, err = uuid.Parse(assessmentAttemptRef)
+	if err != nil || assessmentAttemptID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ASSESSMENT_ATTEMPT_ID", "assessmentAttemptId must be a non-nil UUID", nil)
+		return
+	}
 	result, err := h.service.Run(r.Context(), application.RunCommand{
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: versionID,
-		RuleSetRef:       ruleSetRef,
-		ActorID:          actorID,
-		TraceID:          httpserver.RequestID(r.Context()),
-		Now:              time.Now().UTC(),
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    versionID,
+		RuleSetRef:          ruleSetRef,
+		AssessmentAttemptID: assessmentAttemptID,
+		ActorID:             actorID,
+		TraceID:             httpserver.RequestID(r.Context()),
+		Now:                 time.Now().UTC(),
 	})
 	if err != nil {
+		if errors.Is(err, application.ErrAssessmentAttemptInProgress) {
+			httpserver.WriteError(w, r, http.StatusConflict, "QUALITY_ASSESSMENT_ATTEMPT_IN_PROGRESS", "assessmentAttemptId is already being evaluated", nil)
+			return
+		}
+		if errors.Is(err, application.ErrAssessmentAttemptFailed) {
+			httpserver.WriteError(w, r, http.StatusConflict, "QUALITY_ASSESSMENT_ATTEMPT_FAILED", "assessmentAttemptId already has a failed evaluation", nil)
+			return
+		}
 		if errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
 			httpserver.WriteError(w, r, http.StatusBadRequest, "DATASET_WORKSPACE_MISMATCH", "the DatasetVersion must belong to the declared workspace", nil)
 			return
@@ -140,6 +167,14 @@ func (h *Handler) getAssessment(w http.ResponseWriter, r *http.Request) {
 		}
 		response["evidence"] = evidenceItems
 		response["auditEvents"] = auditEvents
+	}
+	if h.costRepo != nil {
+		costEvents, err := h.costRepo.ListByQualityAssessment(r.Context(), assessmentID)
+		if err != nil {
+			httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENT_COST_READ_FAILED", err.Error(), nil)
+			return
+		}
+		response["costEvents"] = costEvents
 	}
 	writeJSON(w, http.StatusOK, response)
 }

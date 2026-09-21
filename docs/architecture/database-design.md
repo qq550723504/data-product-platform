@@ -531,7 +531,7 @@ DeliveryOperation lifecycle row 只保存当前 projection，不拥有唯一 gat
 
 ## 14. CostEvent / CostAllocation
 
-当前 `cost_event` 已落库，现有强类型关联只有可选 `execution_id`。这足以表达 Execution 成本，但不足以表达 QualityAssessment、Rights verification/disposition、Certification、Delivery 等没有 Execution 的活动。
+当前 `cost_event` 已落库；`activity_id`（由 000021 引入）用于 physical-attempt identity。000022 已将 `cost_allocation` 扩展为带 `quality_assessment_id` 的 typed FK，并保留 `delivery_operation_id` 兼容既有 Delivery allocation。QualityAssessment 成本现可通过 typed allocation 查询；Rights verification/disposition 与 Certification 等主体仍按各自 Issue 落地。
 
 Certified Dataset Pilot 目标模型增加：
 
@@ -607,7 +607,7 @@ provider 返回、超时或本地观察到未知结果后，再 append outcome/o
 - certification_disposition_id
 - delivery_operation_id（第一阶段必需；#135 必须落库 DeliveryOperation）
 
-实现可用一张带 nullable typed FK 的 allocation 表并用 CHECK 保证每条 allocation 仅选择一个 subject，或用等价强类型表族；不得退化为 `subject_type + subject_id` 无 FK 多态字符串，也不得只依赖 metadata。
+当前实现使用一张带 nullable typed FK 的 allocation 表，并用 CHECK 保证每条 allocation 仅选择一个 subject；QualityAssessment 与 DeliveryOperation 的 allocation 还校验 CostEvent 与 subject 的 workspace 一致性。不得退化为 `subject_type + subject_id` 无 FK 多态字符串，也不得只依赖 metadata。
 
 现有 `cost_event.execution_id` 可继续用于兼容查询；新增非 Execution 成本必须通过 typed allocation 查询到业务主体。
 
