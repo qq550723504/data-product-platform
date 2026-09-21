@@ -27,14 +27,9 @@ type Client struct {
 }
 
 func NewClient(baseURL, username, password string, httpClient *http.Client) (*Client, error) {
-	baseURL = strings.TrimRight(strings.TrimSpace(baseURL), "/")
-	baseURL = strings.TrimSuffix(baseURL, "/hop")
-	if baseURL == "" {
-		return nil, fmt.Errorf("Hop Server base URL is required")
-	}
-	parsed, err := url.ParseRequestURI(baseURL)
-	if err != nil || parsed.Scheme == "" || parsed.Host == "" {
-		return nil, fmt.Errorf("invalid Hop Server base URL %q", baseURL)
+	baseURL, err := normalizeBaseURL(baseURL)
+	if err != nil {
+		return nil, err
 	}
 	if strings.TrimSpace(username) == "" || password == "" {
 		return nil, fmt.Errorf("Hop Server username and password are required")
@@ -48,6 +43,27 @@ func NewClient(baseURL, username, password string, httpClient *http.Client) (*Cl
 		password:   password,
 		httpClient: httpClient,
 	}, nil
+}
+
+func normalizeBaseURL(raw string) (string, error) {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return "", fmt.Errorf("Hop Server base URL is required")
+	}
+	parsed, err := url.ParseRequestURI(raw)
+	if err != nil || parsed.Scheme == "" || parsed.Host == "" {
+		return "", fmt.Errorf("invalid Hop Server base URL %q", raw)
+	}
+	if parsed.RawQuery != "" || parsed.Fragment != "" {
+		return "", fmt.Errorf("Hop Server base URL must not contain query or fragment")
+	}
+	path := strings.TrimRight(parsed.Path, "/")
+	if path == "/hop" || strings.HasSuffix(path, "/hop") {
+		path = strings.TrimSuffix(path, "/hop")
+	}
+	parsed.Path = path
+	parsed.RawPath = ""
+	return strings.TrimRight(parsed.String(), "/"), nil
 }
 
 type webResult struct {
@@ -75,16 +91,31 @@ type pipelineStatus struct {
 func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRequest) (workflowapp.EngineRun, error) {
 	name := strings.TrimSpace(request.Name)
 	if name == "" || len(request.Definition) == 0 {
-		return workflowapp.EngineRun{}, fmt.Errorf("Hop submit requires a pipeline name and pipeline configuration XML")
+		return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidRequest, "submit", false, 0,
+			fmt.Errorf("pipeline name and pipeline configuration are required"),
+		)
+	}
+	for key := range request.Parameters {
+		switch strings.ToLower(strings.TrimSpace(key)) {
+		case "name", "id", "xml":
+			return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
+				workflowapp.ManagedEngineInvalidRequest, "submit", false, 0,
+				fmt.Errorf("parameter %q is reserved for remote run identity", key),
+			)
+		}
 	}
 
 	registerQuery := url.Values{"xml": []string{"Y"}}
 	registered, err := c.webResultRequest(ctx, http.MethodPost, "/hop/registerPipeline", registerQuery, request.Definition, request.ContentType)
 	if err != nil {
-		return workflowapp.EngineRun{}, fmt.Errorf("register Hop pipeline %q: %w", name, err)
+		return workflowapp.EngineRun{}, err
 	}
 	if strings.TrimSpace(registered.ID) == "" {
-		return workflowapp.EngineRun{}, fmt.Errorf("register Hop pipeline %q returned no execution id", name)
+		return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidResponse, "register pipeline", false, 0,
+			fmt.Errorf("remote registration returned no execution id"),
+		)
 	}
 
 	startQuery := url.Values{
@@ -100,7 +131,7 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 		startQuery.Set(key, value)
 	}
 	if _, err := c.webResultRequest(ctx, http.MethodGet, "/hop/startPipeline", startQuery, nil, ""); err != nil {
-		return workflowapp.EngineRun{}, fmt.Errorf("start Hop pipeline %q (%s): %w", name, registered.ID, err)
+		return workflowapp.EngineRun{}, err
 	}
 
 	run, err := c.Status(ctx, name, registered.ID)
@@ -137,14 +168,17 @@ func (c *Client) Cancel(ctx context.Context, name, runID string) error {
 	query.Set("xml", "Y")
 	_, err = c.webResultRequest(ctx, http.MethodGet, "/hop/stopPipeline", query, nil, "")
 	if err != nil {
-		return fmt.Errorf("stop Hop pipeline %q (%s): %w", name, runID, err)
+		return err
 	}
 	return nil
 }
 
 func (c *Client) Logs(ctx context.Context, name, runID string, from int) (workflowapp.EngineLogPage, error) {
 	if from < 0 {
-		return workflowapp.EngineLogPage{}, fmt.Errorf("log offset must be >= 0")
+		return workflowapp.EngineLogPage{}, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidRequest, "read logs", false, 0,
+			fmt.Errorf("log offset must be >= 0"),
+		)
 	}
 	status, err := c.getStatus(ctx, name, runID, from)
 	if err != nil {
@@ -152,7 +186,7 @@ func (c *Client) Logs(ctx context.Context, name, runID string, from int) (workfl
 	}
 	text, err := decodeLoggingString(status.LoggingString)
 	if err != nil {
-		return workflowapp.EngineLogPage{}, fmt.Errorf("decode Hop pipeline logs: %w", err)
+		return workflowapp.EngineLogPage{}, err
 	}
 	next := status.LastLoggingLineNr + 1
 	if next < from {
@@ -183,7 +217,7 @@ func (c *Client) getStatus(ctx context.Context, name, runID string, from int) (p
 
 	var status pipelineStatus
 	if err := c.jsonRequest(ctx, http.MethodGet, "/hop/pipelineStatus", query, nil, "", &status); err != nil {
-		return pipelineStatus{}, fmt.Errorf("get Hop pipeline status %q (%s): %w", name, runID, err)
+		return pipelineStatus{}, err
 	}
 	if strings.TrimSpace(status.ID) == "" {
 		status.ID = runID
@@ -231,8 +265,19 @@ func mapStatus(status pipelineStatus) workflowapp.EngineRun {
 		State:        state,
 		StartedAt:    parseHopTime(status.ExecutionStartDate),
 		FinishedAt:   parseHopTime(status.ExecutionEndDate),
-		ErrorMessage: strings.TrimSpace(status.ErrorDescription),
+		ErrorMessage: managedRunErrorMessage(state),
 		Metrics:      statusMetrics(status),
+	}
+}
+
+func managedRunErrorMessage(state workflowapp.EngineRunState) string {
+	switch state {
+	case workflowapp.EngineRunFailed:
+		return "remote processing engine reported failure"
+	case workflowapp.EngineRunCancelled:
+		return "remote processing engine cancelled execution"
+	default:
+		return ""
 	}
 }
 
@@ -289,7 +334,10 @@ func runQuery(name, runID string) (url.Values, error) {
 	name = strings.TrimSpace(name)
 	runID = strings.TrimSpace(runID)
 	if name == "" || runID == "" {
-		return nil, fmt.Errorf("pipeline name and external execution id are required")
+		return nil, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidRequest, "run identity", false, 0,
+			fmt.Errorf("pipeline name and external execution id are required"),
+		)
 	}
 	return url.Values{"name": []string{name}, "id": []string{runID}}, nil
 }
@@ -301,10 +349,15 @@ func (c *Client) webResultRequest(ctx context.Context, method, endpoint string, 
 		return response, err
 	}
 	if err := xml.Unmarshal(raw, &response); err != nil {
-		return response, fmt.Errorf("decode Hop WebResult: %w", err)
+		return response, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidResponse, "decode response", false, 0, err,
+		)
 	}
 	if !strings.EqualFold(strings.TrimSpace(response.Result), "OK") {
-		return response, fmt.Errorf("Hop Server result %q: %s", response.Result, strings.TrimSpace(response.Message))
+		return response, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineRejected, "provider result", false, 0,
+			fmt.Errorf("result=%q message=%q", response.Result, strings.TrimSpace(response.Message)),
+		)
 	}
 	return response, nil
 }
@@ -317,7 +370,9 @@ func (c *Client) jsonRequest(ctx context.Context, method, endpoint string, query
 	decoder := json.NewDecoder(strings.NewReader(string(raw)))
 	decoder.UseNumber()
 	if err := decoder.Decode(target); err != nil {
-		return fmt.Errorf("decode Hop Server JSON: %w", err)
+		return workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidResponse, "decode response", false, 0, err,
+		)
 	}
 	return nil
 }
@@ -333,7 +388,9 @@ func (c *Client) do(ctx context.Context, method, endpoint string, query url.Valu
 	}
 	req, err := http.NewRequestWithContext(ctx, method, requestURL, reader)
 	if err != nil {
-		return nil, fmt.Errorf("create Hop Server request: %w", err)
+		return nil, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidRequest, "create request", false, 0, err,
+		)
 	}
 	req.SetBasicAuth(c.username, c.password)
 	req.Header.Set("Accept", "application/json, application/xml, text/xml")
@@ -345,17 +402,40 @@ func (c *Client) do(ctx context.Context, method, endpoint string, query url.Valu
 	}
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("Hop Server request %s %s: %w", method, endpoint, err)
+		return nil, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineUnavailable, "request", true, 0, err,
+		)
 	}
 	defer resp.Body.Close()
 	raw, readErr := io.ReadAll(io.LimitReader(resp.Body, 16<<20))
 	if readErr != nil {
-		return nil, fmt.Errorf("read Hop Server response: %w", readErr)
+		return nil, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineUnavailable, "read response", true, resp.StatusCode, readErr,
+		)
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("Hop Server request %s %s returned %d: %s", method, endpoint, resp.StatusCode, strings.TrimSpace(string(raw)))
+		kind, retryable := classifyHTTPStatus(resp.StatusCode)
+		return nil, workflowapp.NewManagedEngineError(
+			kind, "request", retryable, resp.StatusCode,
+			fmt.Errorf("method=%s endpoint=%s body=%q", method, endpoint, strings.TrimSpace(string(raw))),
+		)
 	}
 	return raw, nil
+}
+
+func classifyHTTPStatus(status int) (workflowapp.ManagedEngineErrorKind, bool) {
+	switch {
+	case status == http.StatusBadRequest || status == http.StatusUnprocessableEntity:
+		return workflowapp.ManagedEngineInvalidRequest, false
+	case status == http.StatusNotFound:
+		return workflowapp.ManagedEngineNotFound, false
+	case status == http.StatusUnauthorized || status == http.StatusForbidden:
+		return workflowapp.ManagedEngineUnauthorized, false
+	case status == http.StatusRequestTimeout || status == http.StatusTooManyRequests || status >= http.StatusInternalServerError:
+		return workflowapp.ManagedEngineUnavailable, true
+	default:
+		return workflowapp.ManagedEngineRejected, false
+	}
 }
 
 func decodeLoggingString(encoded string) (string, error) {
@@ -365,16 +445,22 @@ func decodeLoggingString(encoded string) (string, error) {
 	}
 	compressed, err := base64.StdEncoding.DecodeString(encoded)
 	if err != nil {
-		return "", fmt.Errorf("base64 decode: %w", err)
+		return "", workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidResponse, "decode logs", false, 0, err,
+		)
 	}
 	reader, err := gzip.NewReader(strings.NewReader(string(compressed)))
 	if err != nil {
-		return "", fmt.Errorf("gzip reader: %w", err)
+		return "", workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidResponse, "decode logs", false, 0, err,
+		)
 	}
 	defer reader.Close()
 	decoded, err := io.ReadAll(reader)
 	if err != nil {
-		return "", fmt.Errorf("gzip decode: %w", err)
+		return "", workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidResponse, "decode logs", false, 0, err,
+		)
 	}
 	return string(decoded), nil
 }

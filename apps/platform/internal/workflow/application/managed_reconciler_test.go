@@ -125,6 +125,42 @@ func TestManagedReconcilerRetriesFinalizationAfterRemoteSuccess(t *testing.T) {
 	}
 }
 
+func TestManagedReconcilerTerminalizesPermanentlyInvalidManagedOutput(t *testing.T) {
+	execution := runningHopExecution()
+	repo := &fakeManagedRepo{
+		execution: execution,
+		version:   domain.WorkflowVersion{ID: execution.WorkflowVersionID},
+	}
+	state := &fakeManagedStateService{}
+	bridge := &fakeManagedBridge{
+		state: EngineRunSucceeded,
+		finalizeErr: NewManagedEngineError(
+			ManagedEngineOutputInvalid,
+			"finalize output",
+			false,
+			0,
+			errors.New("provider-specific invalid output detail"),
+		),
+	}
+	reconciler := NewManagedReconciler(state, repo, bridge)
+
+	if err := reconciler.RunOnce(context.Background()); err != nil {
+		t.Fatalf("terminalize invalid managed output: %v", err)
+	}
+	if state.succeeded != 0 || state.failed != 1 {
+		t.Fatalf("expected one terminal failure; succeeded=%d failed=%d", state.succeeded, state.failed)
+	}
+	if state.failCode != "REMOTE_OUTPUT_INVALID" {
+		t.Fatalf("failure code = %q, want REMOTE_OUTPUT_INVALID", state.failCode)
+	}
+	if state.failMessage != "managed processing output is invalid" {
+		t.Fatalf("failure message leaked provider detail: %q", state.failMessage)
+	}
+	if state.metrics["finalizationErrorKind"] != string(ManagedEngineOutputInvalid) {
+		t.Fatalf("missing finalization error kind: %#v", state.metrics)
+	}
+}
+
 func TestManagedReconcilerMapsRemoteFailureToPlatformOwnedError(t *testing.T) {
 	execution := runningHopExecution()
 	repo := &fakeManagedRepo{

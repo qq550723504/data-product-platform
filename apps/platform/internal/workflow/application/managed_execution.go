@@ -178,8 +178,25 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 	case EngineRunSucceeded:
 		result, err := bridge.Finalize(ctx, request, run)
 		if err != nil {
+			var managedErr *ManagedEngineError
+			if errors.As(err, &managedErr) && managedErr.Kind == ManagedEngineOutputInvalid && !managedErr.Retryable {
+				metrics["finalizationErrorKind"] = string(managedErr.Kind)
+				_, failErr := r.service.Fail(
+					ctx,
+					execution.ID,
+					"REMOTE_OUTPUT_INVALID",
+					"managed processing output is invalid",
+					metrics,
+					execution.ID.String(),
+				)
+				if failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
+					return fmt.Errorf("terminalize invalid managed output for execution %s: %w", executionID, failErr)
+				}
+				return nil
+			}
 			// The remote run is terminal but the Core output has not been imported.
-			// Keep the Execution RUNNING so a later reconciliation can retry finalization.
+			// Retry transient/unknown finalization failures; do not strand a known
+			// permanently invalid output in RUNNING forever.
 			return fmt.Errorf("finalize managed execution %s: %w", executionID, err)
 		}
 		for key, value := range result.Metrics {
