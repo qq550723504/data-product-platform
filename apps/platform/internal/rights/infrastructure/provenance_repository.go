@@ -139,7 +139,7 @@ func (r *PostgresRepository) GetRightsDeclaration(ctx context.Context, id uuid.U
 
 func (r *PostgresRepository) InsertDeclarationVerification(ctx context.Context, tx pgx.Tx, verification domain.RightsVerification) error {
 	var inserted uuid.UUID
-	err := tx.QueryRow(ctx, `INSERT INTO rights_declaration_verification(id,declaration_id,outcome,reason,evidence_id,occurred_at,actor_id,activity_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (declaration_id,activity_id) DO NOTHING RETURNING id`, verification.ID, verification.DeclarationID, verification.Outcome, verification.Reason, verification.EvidenceID, verification.OccurredAt, verification.ActorID, verification.ActivityID).Scan(&inserted)
+	err := tx.QueryRow(ctx, `INSERT INTO rights_declaration_verification(id,declaration_id,outcome,reason,evidence_id,occurred_at,actor_id,activity_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (declaration_id,activity_id) WHERE activity_id IS NOT NULL DO NOTHING RETURNING id`, verification.ID, verification.DeclarationID, verification.Outcome, verification.Reason, verification.EvidenceID, verification.OccurredAt, verification.ActorID, verification.ActivityID).Scan(&inserted)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return ErrVerificationIdempotentReplay
 	}
