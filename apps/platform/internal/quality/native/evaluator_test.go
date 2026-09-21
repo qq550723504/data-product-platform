@@ -74,9 +74,11 @@ func TestRegexRuleMatchesUnmodifiedCellValues(t *testing.T) {
 		Parameters: map[string]any{"pattern": "^[A-Z]+$", "allowNull": false},
 		Required:   true, Severity: "CRITICAL",
 	}}
-	findings, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{
-		Headers: []string{"code"}, Rows: []map[string]string{{"code": " BAD "}},
-	}})
+	table, err := tabular.ReadCSV(strings.NewReader("code\n\" BAD \"\n"))
+	if err != nil {
+		t.Fatalf("read regex CSV: %v", err)
+	}
+	findings, _, err := Evaluate(policy, DatasetContext{Table: table})
 	if err != nil {
 		t.Fatalf("evaluate regex rule: %v", err)
 	}
@@ -92,9 +94,11 @@ func TestEnumRuleMatchesUnmodifiedCellValues(t *testing.T) {
 		Parameters: map[string]any{"values": []any{"ADMIN"}, "allowNull": false},
 		Required:   true, Severity: "CRITICAL",
 	}}
-	findings, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{
-		Headers: []string{"role"}, Rows: []map[string]string{{"role": " ADMIN "}},
-	}})
+	table, err := tabular.ReadCSV(strings.NewReader("role\n\" ADMIN \"\n"))
+	if err != nil {
+		t.Fatalf("read enum CSV: %v", err)
+	}
+	findings, _, err := Evaluate(policy, DatasetContext{Table: table})
 	if err != nil {
 		t.Fatalf("evaluate enum rule: %v", err)
 	}
@@ -114,10 +118,11 @@ func TestConditionalConsistencyMatchesUnmodifiedTargetValues(t *testing.T) {
 		},
 		Required: true, Severity: "CRITICAL",
 	}}
-	findings, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{
-		Headers: []string{"activity_score", "activity_level"},
-		Rows:    []map[string]string{{"activity_score": "88", "activity_level": " HIGH "}},
-	}})
+	table, err := tabular.ReadCSV(strings.NewReader("activity_score,activity_level\n88,\" HIGH \"\n"))
+	if err != nil {
+		t.Fatalf("read conditional CSV: %v", err)
+	}
+	findings, _, err := Evaluate(policy, DatasetContext{Table: table})
 	if err != nil {
 		t.Fatalf("evaluate conditional consistency: %v", err)
 	}
