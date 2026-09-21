@@ -164,9 +164,6 @@ func (s *Service) VerifyRightsDeclaration(ctx context.Context, cmd VerifyRightsD
 	if outcome != domain.DeclarationVerified && outcome != domain.DeclarationRejected {
 		return domain.RightsVerification{}, domain.ErrDeclarationTerminal
 	}
-	if outcome == domain.DeclarationVerified && cmd.EvidenceID == nil {
-		return domain.RightsVerification{}, domain.ErrInvalidRightsDeclaration
-	}
 	d, err := s.repo.GetRightsDeclaration(ctx, cmd.DeclarationID)
 	if err != nil {
 		return domain.RightsVerification{}, err
@@ -189,6 +186,17 @@ func (s *Service) VerifyRightsDeclaration(ctx context.Context, cmd VerifyRightsD
 			if err := tx.QueryRow(ctx, `SELECT workspace_id FROM evidence WHERE id=$1`, *verification.EvidenceID).Scan(&evidenceWorkspace); err != nil || evidenceWorkspace != d.WorkspaceID {
 				return domain.ErrInvalidRightsDeclaration
 			}
+		} else if outcome == domain.DeclarationVerified {
+			evidenceID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("rights-declaration-verification-evidence:"+d.ID.String()+":"+verification.ActivityID.String()))
+			hashValue := declarationFingerprint(d)
+			if _, err := tx.Exec(ctx, `
+				INSERT INTO evidence(id,workspace_id,evidence_type,title,source_type,source_id,hash_algorithm,hash_value,metadata,created_at)
+				VALUES ($1,$2,'RIGHTS_VERIFICATION','Rights declaration verification','RIGHTS_DECLARATION',$3,'SHA256',$4,'{}'::jsonb,now())
+				ON CONFLICT (id) DO NOTHING
+			`, evidenceID, d.WorkspaceID, d.ID, hashValue); err != nil {
+				return err
+			}
+			verification.EvidenceID = &evidenceID
 		}
 		var replay bool
 		if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM rights_declaration_verification WHERE declaration_id=$1 AND activity_id=$2)`, d.ID, *verification.ActivityID).Scan(&replay); err != nil {
