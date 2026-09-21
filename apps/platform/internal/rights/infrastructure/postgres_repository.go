@@ -185,9 +185,27 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 				  AND (b.grantor_authority_mode='DIRECT_DECLARATION_PARTY' OR (
 					b.delegation_chain_id IS NOT NULL
 					AND EXISTS (SELECT 1 FROM grantor_authority_delegation_chain c WHERE c.id=b.delegation_chain_id AND c.source_declaration_id=b.rights_declaration_id AND c.status='FINALIZED' AND c.chain_hash=b.delegation_chain_hash)
+					AND EXISTS (SELECT 1 FROM rights_declaration_party rp WHERE rp.declaration_id=d.id AND rp.party_ref=d.claimant_ref AND rp.role IN ('RIGHTS_HOLDER','PROVIDER','CONTROLLER'))
 					AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition x WHERE x.chain_id=b.delegation_chain_id AND x.effective_at <= $4)
 					AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition x JOIN grantor_authority_delegation_edge e ON e.id=x.edge_id WHERE e.chain_id=b.delegation_chain_id AND x.effective_at <= $4)
 					AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id AND ((e.valid_from IS NOT NULL AND e.valid_from > $4) OR (e.valid_to IS NOT NULL AND e.valid_to <= $4)))
+					AND NOT EXISTS (
+						SELECT 1 FROM grantor_authority_delegation_edge e
+						WHERE e.chain_id=b.delegation_chain_id
+						  AND (e.data_resource_id<>ar.data_resource_id OR NOT (ar.actions <@ e.grantable_actions) OR NOT (a.purpose=ANY(e.grantable_purposes)) OR NOT (e.scope_type='ALL_RESOURCE' OR (e.scope_type=ar.scope_type AND e.scope_ref=ar.scope_ref)))
+					)
+					AND (SELECT e.delegator_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id ORDER BY e.ordinal LIMIT 1)=d.claimant_ref
+					AND (SELECT e.delegate_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id ORDER BY e.ordinal DESC LIMIT 1)=b.grantor_ref
+					AND NOT EXISTS (
+						SELECT 1
+						FROM (
+							SELECT e.ordinal,e.delegator_ref,lag(e.delegate_ref) OVER (ORDER BY e.ordinal) previous_delegate,row_number() OVER (ORDER BY e.ordinal)-1 expected_ordinal
+							FROM grantor_authority_delegation_edge e
+							WHERE e.chain_id=b.delegation_chain_id
+						) ordered_edges
+						WHERE ordered_edges.ordinal<>ordered_edges.expected_ordinal
+						   OR (ordered_edges.previous_delegate IS NOT NULL AND ordered_edges.previous_delegate<>ordered_edges.delegator_ref)
+					)
 				))
 				ORDER BY b.created_at,b.id`, authorization.AuthorizationID, resource.DataResourceID, snapshot.WorkspaceID, snapshot.AsOf, snapshot.ConsumerRef)
 			if err != nil {
