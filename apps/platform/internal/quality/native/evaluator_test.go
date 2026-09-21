@@ -74,9 +74,11 @@ func TestRegexRuleMatchesUnmodifiedCellValues(t *testing.T) {
 		Parameters: map[string]any{"pattern": "^[A-Z]+$", "allowNull": false},
 		Required:   true, Severity: "CRITICAL",
 	}}
-	findings, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{
-		Headers: []string{"code"}, Rows: []map[string]string{{"code": " BAD "}},
-	}})
+	table, err := tabular.ReadCSV(strings.NewReader("code\n\" BAD \"\n"))
+	if err != nil {
+		t.Fatalf("read regex CSV: %v", err)
+	}
+	findings, _, err := Evaluate(policy, DatasetContext{Table: table})
 	if err != nil {
 		t.Fatalf("evaluate regex rule: %v", err)
 	}
@@ -92,14 +94,40 @@ func TestEnumRuleMatchesUnmodifiedCellValues(t *testing.T) {
 		Parameters: map[string]any{"values": []any{"ADMIN"}, "allowNull": false},
 		Required:   true, Severity: "CRITICAL",
 	}}
-	findings, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{
-		Headers: []string{"role"}, Rows: []map[string]string{{"role": " ADMIN "}},
-	}})
+	table, err := tabular.ReadCSV(strings.NewReader("role\n\" ADMIN \"\n"))
+	if err != nil {
+		t.Fatalf("read enum CSV: %v", err)
+	}
+	findings, _, err := Evaluate(policy, DatasetContext{Table: table})
 	if err != nil {
 		t.Fatalf("evaluate enum rule: %v", err)
 	}
 	if findings[0].Status != domain.FindingFail {
 		t.Fatalf("space-padded enum value passed: %#v", findings[0])
+	}
+}
+
+func TestConditionalConsistencyMatchesUnmodifiedTargetValues(t *testing.T) {
+	policy := Policy{}
+	policy.Spec.Rules = []Rule{{
+		ID: "R-CONDITIONAL", Dimension: "CONSISTENCY", Type: RuleTypeConditionalConsistency, Target: "activity_level",
+		Parameters: map[string]any{
+			"conditionField":    "activity_score",
+			"whenMissing":       "INSUFFICIENT_DATA",
+			"whenPresentValues": []any{"HIGH", "MEDIUM", "LOW"},
+		},
+		Required: true, Severity: "CRITICAL",
+	}}
+	table, err := tabular.ReadCSV(strings.NewReader("activity_score,activity_level\n88,\" HIGH \"\n"))
+	if err != nil {
+		t.Fatalf("read conditional CSV: %v", err)
+	}
+	findings, _, err := Evaluate(policy, DatasetContext{Table: table})
+	if err != nil {
+		t.Fatalf("evaluate conditional consistency: %v", err)
+	}
+	if findings[0].Status != domain.FindingFail {
+		t.Fatalf("space-padded conditional target passed: %#v", findings[0])
 	}
 }
 
