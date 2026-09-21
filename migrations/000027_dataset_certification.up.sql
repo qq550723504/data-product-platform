@@ -100,7 +100,7 @@ DECLARE
     compliance_dataset_version uuid;
     compliance_gate varchar(32);
     contract_workspace uuid;
-    contract_code varchar(128);
+    contract_code_value varchar(128);
     contract_status varchar(16);
     traceability_workspace uuid;
     traceability_object_type varchar(64);
@@ -351,7 +351,7 @@ BEGIN
 
     IF NEW.contract_version_id IS NOT NULL THEN
         SELECT c.workspace_id, c.code, cv.status
-          INTO contract_workspace, contract_code, contract_status
+          INTO contract_workspace, contract_code_value, contract_status
           FROM contract_version cv JOIN data_contract c ON c.id = cv.contract_id
          WHERE cv.id = NEW.contract_version_id
          FOR SHARE OF cv, c;
@@ -359,7 +359,7 @@ BEGIN
             RAISE EXCEPTION 'DatasetCertification contract does not match workspace';
         END IF;
         IF NEW.decision = 'CERTIFIED' AND profile_contract_required
-           AND (contract_status <> 'PUBLISHED' OR contract_code IS DISTINCT FROM profile_contract_code) THEN
+           AND (contract_status <> 'PUBLISHED' OR contract_code_value IS DISTINCT FROM profile_contract_code) THEN
             RAISE EXCEPTION 'DatasetCertification ContractVersion does not match frozen profile contract code';
         END IF;
     END IF;
