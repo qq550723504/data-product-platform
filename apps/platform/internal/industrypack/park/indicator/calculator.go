@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strings"
 	"time"
+
+	workflowindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/indicator"
 )
 
 type Calculator struct{}
@@ -13,7 +16,7 @@ func NewCalculator() Calculator { return Calculator{} }
 
 var _ workflowindicator.Calculator = Calculator{}
 
-func (Calculator) Calculate(policy workflowindicator.Policy, targetPeriod string, input workflowindicator.CompanyInput) (workflowindicator.workflowindicator.CompanyResult, error) {
+func (Calculator) Calculate(policy workflowindicator.Policy, targetPeriod string, input workflowindicator.CompanyInput) (workflowindicator.CompanyResult, error) {
 	targetStart, targetEnd, err := targetPeriodBounds(targetPeriod)
 	if err != nil {
 		return workflowindicator.CompanyResult{}, err
@@ -27,9 +30,9 @@ func (Calculator) Calculate(policy workflowindicator.Policy, targetPeriod string
 	energyDef, _ := policy.Definition("energy_stability")
 	activityDef, _ := policy.Definition("activity_score")
 
-	tenancy, tenancyExplanation := calculateTenancy(tenancyDef.Parameters, targetStart, targetEnd, input.EntryDate, input.workflowindicator.LeaseEvents)
-	rent, rentExplanation := calculateRent(rentDef.Parameters, targetEnd, input.workflowindicator.LeaseEvents)
-	energy, energyExplanation, quarantine := calculateEnergy(energyDef.Parameters, targetStart, input.workflowindicator.EnergyReadings)
+	tenancy, tenancyExplanation := calculateTenancy(tenancyDef.Parameters, targetStart, targetEnd, input.EntryDate, input.LeaseEvents)
+	rent, rentExplanation := calculateRent(rentDef.Parameters, targetEnd, input.LeaseEvents)
+	energy, energyExplanation, quarantine := calculateEnergy(energyDef.Parameters, targetStart, calendarLocation, input.EnergyReadings)
 
 	result := workflowindicator.CompanyResult{
 		TenancyStability:   roundOptional(tenancy, policy.Spec.Rounding.Decimals),
