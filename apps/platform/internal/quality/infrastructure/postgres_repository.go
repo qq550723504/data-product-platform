@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -43,6 +44,15 @@ type AssessmentPage struct {
 
 func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 	return &PostgresRepository{pool: pool}
+}
+
+// decodeJSONNumbers preserves JSON numbers as json.Number when loading
+// immutable assessment facts. Converting them to float64 would make values
+// above 2^53 or outside float64's range differ from the stored assessment.
+func decodeJSONNumbers(data []byte, target any) error {
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	return decoder.Decode(target)
 }
 
 func (r *PostgresRepository) InsertResult(ctx context.Context, tx pgx.Tx, result domain.Assessment) error {
@@ -107,7 +117,7 @@ func (r *PostgresRepository) GetAssessment(ctx context.Context, assessmentID uui
 	if err != nil {
 		return domain.Result{}, fmt.Errorf("get quality result: %w", err)
 	}
-	if err := json.Unmarshal(metrics, &result.Metrics); err != nil {
+	if err := decodeJSONNumbers(metrics, &result.Metrics); err != nil {
 		return domain.Result{}, fmt.Errorf("decode quality metrics: %w", err)
 	}
 	rows, err := r.pool.Query(ctx, `
@@ -126,7 +136,7 @@ func (r *PostgresRepository) GetAssessment(ctx context.Context, assessmentID uui
 			&finding.Severity, &finding.Status, &observed, &finding.Message, &finding.CreatedAt); err != nil {
 			return domain.Result{}, fmt.Errorf("scan quality finding: %w", err)
 		}
-		if err := json.Unmarshal(observed, &finding.Observed); err != nil {
+		if err := decodeJSONNumbers(observed, &finding.Observed); err != nil {
 			return domain.Result{}, fmt.Errorf("decode quality finding observation: %w", err)
 		}
 		result.Findings = append(result.Findings, finding)
@@ -176,7 +186,7 @@ func (r *PostgresRepository) ListAssessments(ctx context.Context, datasetVersion
 			&result.CreatedAt, &result.CreatedBy, &rowTotal); err != nil {
 			return AssessmentPage{}, fmt.Errorf("scan quality assessment: %w", err)
 		}
-		if err := json.Unmarshal(metrics, &result.Metrics); err != nil {
+		if err := decodeJSONNumbers(metrics, &result.Metrics); err != nil {
 			return AssessmentPage{}, fmt.Errorf("decode quality assessment metrics: %w", err)
 		}
 		total = rowTotal
@@ -277,7 +287,7 @@ func (r *PostgresRepository) loadFindings(ctx context.Context, result *domain.As
 			&finding.Severity, &finding.Status, &observed, &finding.Message, &finding.CreatedAt); err != nil {
 			return fmt.Errorf("scan quality finding: %w", err)
 		}
-		if err := json.Unmarshal(observed, &finding.Observed); err != nil {
+		if err := decodeJSONNumbers(observed, &finding.Observed); err != nil {
 			return fmt.Errorf("decode quality finding observation: %w", err)
 		}
 		result.Findings = append(result.Findings, finding)
@@ -316,7 +326,7 @@ func (r *PostgresRepository) loadFindingsBatch(ctx context.Context, results []do
 			&finding.Severity, &finding.Status, &observed, &finding.Message, &finding.CreatedAt); err != nil {
 			return fmt.Errorf("scan quality assessment finding: %w", err)
 		}
-		if err := json.Unmarshal(observed, &finding.Observed); err != nil {
+		if err := decodeJSONNumbers(observed, &finding.Observed); err != nil {
 			return fmt.Errorf("decode quality assessment finding observation: %w", err)
 		}
 		byResult[finding.ResultID] = append(byResult[finding.ResultID], finding)

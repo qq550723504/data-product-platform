@@ -1,10 +1,24 @@
 package infrastructure
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 )
+
+func TestDecodeJSONNumbersPreservesAssessmentFacts(t *testing.T) {
+	var decoded map[string]any
+	if err := decodeJSONNumbers([]byte(`{"metric":9007199254740993,"overflow":1e400}`), &decoded); err != nil {
+		t.Fatalf("decode assessment JSON: %v", err)
+	}
+	if got, ok := decoded["metric"].(json.Number); !ok || got.String() != "9007199254740993" {
+		t.Fatalf("metric = %#v, want exact JSON number", decoded["metric"])
+	}
+	if got, ok := decoded["overflow"].(json.Number); !ok || got.String() != "1e400" {
+		t.Fatalf("overflow = %#v, want exact JSON number", decoded["overflow"])
+	}
+}
 
 func TestRestoreDimensionSummariesUsesPersistedSnapshot(t *testing.T) {
 	result := domain.Assessment{
