@@ -65,6 +65,9 @@ func (r *PostgresRepository) GetEffectiveRights(ctx context.Context, id uuid.UUI
 	var status string
 	var consumer string
 	err := r.pool.QueryRow(ctx, `SELECT id,workspace_id,target_dataset_version_id,calculation_as_of,COALESCE(consumer_ref,''),purpose,calculation_rule_version,calculation_rule_hash,required_input_hash,status,COALESCE(root_hash,''),created_at,created_by FROM effective_rights_snapshot WHERE id=$1`, id).Scan(&s.ID, &s.WorkspaceID, &s.TargetDatasetVersionID, &s.CalculationAsOf, &consumer, &s.Purpose, &s.CalculationRuleVersion, &s.CalculationRuleHash, &s.RequiredInputHash, &status, &s.RootHash, &s.CreatedAt, &s.CreatedBy)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return s, ErrNotFound
+	}
 	if err != nil {
 		return s, err
 	}
