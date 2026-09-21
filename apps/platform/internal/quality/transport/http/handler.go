@@ -84,7 +84,7 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 	var assessmentAttemptID uuid.UUID
 	if strings.TrimSpace(req.AssessmentAttemptID) != "" {
 		assessmentAttemptID, err = uuid.Parse(req.AssessmentAttemptID)
-		if err != nil {
+		if err != nil || assessmentAttemptID == uuid.Nil {
 			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ASSESSMENT_ATTEMPT_ID", "assessmentAttemptId must be a UUID", nil)
 			return
 		}

@@ -137,6 +137,31 @@ func TestAdvisoryLockSerializesCriticalSection(t *testing.T) {
 	}
 }
 
+func TestAdvisoryLockReusesConnectionForNestedTransaction(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+	manager := transaction.NewManager(pool)
+
+	key := "test-nested-transaction-" + uuid.NewString()
+	if err := manager.WithAdvisoryLock(ctx, key, func(ctx context.Context) error {
+		return manager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+			_, err := tx.Exec(ctx, `SELECT 1`)
+			return err
+		})
+	}); err != nil {
+		t.Fatalf("nested transaction under advisory lock: %v", err)
+	}
+}
+
 func assertCount(t *testing.T, ctx context.Context, pool queryRower, query string, objectID uuid.UUID, want int) {
 	t.Helper()
 	var got int
