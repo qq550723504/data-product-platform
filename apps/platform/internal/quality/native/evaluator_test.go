@@ -55,6 +55,18 @@ func TestLoadPolicyRejectsUnknownGateFields(t *testing.T) {
 	}
 }
 
+func TestLoadPolicyRejectsUnknownRuleFields(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "quality.yaml")
+	content := []byte("apiVersion: quality/v1\nkind: QualityRuleSet\nmetadata:\n  version: 1.0.0\nspec:\n  rules:\n    - id: R-1\n      dimension: ACCURACY\n      type: range\n      target: amount\n      min: 0\n      max: 1\n      required: true\n      severity: CRITICAL\n")
+	if err := os.WriteFile(path, content, 0o600); err != nil {
+		t.Fatalf("write policy: %v", err)
+	}
+	if _, err := LoadPolicy(path); err == nil {
+		t.Fatal("policy with unknown rule field was accepted")
+	}
+}
+
 func TestRegexRuleMatchesUnmodifiedCellValues(t *testing.T) {
 	policy := Policy{}
 	policy.Spec.Rules = []Rule{{
@@ -70,6 +82,24 @@ func TestRegexRuleMatchesUnmodifiedCellValues(t *testing.T) {
 	}
 	if findings[0].Status != domain.FindingFail {
 		t.Fatalf("space-padded regex value passed: %#v", findings[0])
+	}
+}
+
+func TestEnumRuleMatchesUnmodifiedCellValues(t *testing.T) {
+	policy := Policy{}
+	policy.Spec.Rules = []Rule{{
+		ID: "R-ENUM", Dimension: "CONSISTENCY", Type: RuleTypeEnum, Target: "role",
+		Parameters: map[string]any{"values": []any{"ADMIN"}, "allowNull": false},
+		Required:   true, Severity: "CRITICAL",
+	}}
+	findings, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{
+		Headers: []string{"role"}, Rows: []map[string]string{{"role": " ADMIN "}},
+	}})
+	if err != nil {
+		t.Fatalf("evaluate enum rule: %v", err)
+	}
+	if findings[0].Status != domain.FindingFail {
+		t.Fatalf("space-padded enum value passed: %#v", findings[0])
 	}
 }
 

@@ -61,12 +61,22 @@ type Rule struct {
 func (r *Rule) UnmarshalYAML(node *yaml.Node) error {
 	type ruleAlias Rule
 	var decoded ruleAlias
-	if err := node.Decode(&decoded); err != nil {
-		return err
-	}
-	*r = Rule(decoded)
 	if node.Kind != yaml.MappingNode {
 		return fmt.Errorf("rule must be a mapping")
+	}
+	knownFields := map[string]struct{}{
+		"id": {}, "stage": {}, "dimension": {}, "type": {}, "target": {},
+		"threshold": {}, "parameters": {}, "required": {}, "description": {},
+		"expectation": {}, "expression": {}, "severity": {}, "note": {},
+	}
+	for index := 0; index+1 < len(node.Content); index += 2 {
+		key := node.Content[index].Value
+		if _, ok := knownFields[key]; !ok {
+			return fmt.Errorf("unknown field %q", key)
+		}
+	}
+	if err := node.Decode(&decoded); err != nil {
+		return err
 	}
 	for index := 0; index+1 < len(node.Content); index += 2 {
 		key := node.Content[index].Value

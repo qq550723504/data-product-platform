@@ -202,7 +202,7 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 		invalid := 0
 		samples := make([]any, 0, 5)
 		for index, row := range ctx.Table.Rows {
-			value := strings.TrimSpace(row[rule.Target])
+			value := row[rule.Target]
 			allowNull, err := parameterBool(rule, "allowNull", true)
 			if err != nil {
 				return domain.Finding{}, nil, fmt.Errorf("rule %s allowNull: %w", rule.ID, err)
