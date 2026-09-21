@@ -251,6 +251,11 @@ func (h *Handler) disposeDeclaration(w http.ResponseWriter, r *http.Request, kin
 		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid JSON request", nil)
 		return
 	}
+	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, 400, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
+	}
 	actor, _ := parseActorID(r)
 	var replacement *uuid.UUID
 	if strings.TrimSpace(body.SupersededBy) != "" {
@@ -261,11 +266,12 @@ func (h *Handler) disposeDeclaration(w http.ResponseWriter, r *http.Request, kin
 		}
 		replacement = &v
 	}
-	at := time.Now().UTC()
+	var at time.Time
 	if body.EffectiveAt != nil {
 		at = body.EffectiveAt.UTC()
 	}
-	d, err := h.service.DisposeRightsDeclaration(r.Context(), application.DisposeRightsDeclarationCommand{DeclarationID: id, Disposition: kind, EffectiveAt: at, Reason: body.Reason, SupersededBy: replacement, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
+	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("rights-declaration-disposition:"+kind+":"+id.String()+":"+idempotencyKey))
+	d, err := h.service.DisposeRightsDeclaration(r.Context(), application.DisposeRightsDeclarationCommand{DeclarationID: id, Disposition: kind, EffectiveAt: at, Reason: body.Reason, SupersededBy: replacement, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
 	if err != nil {
 		httpserver.WriteError(w, r, 400, "RIGHTS_DECLARATION_DISPOSITION_FAILED", err.Error(), nil)
 		return
@@ -352,7 +358,12 @@ func (h *Handler) checkCurrentEntitlement(w http.ResponseWriter, r *http.Request
 	}
 	var auth uuid.UUID
 	if strings.TrimSpace(body.AuthorizationID) != "" {
-		auth, _ = uuid.Parse(body.AuthorizationID)
+		var err error
+		auth, err = uuid.Parse(body.AuthorizationID)
+		if err != nil {
+			httpserver.WriteError(w, r, 400, "INVALID_AUTHORIZATION_ID", "authorizationId must be a UUID", nil)
+			return
+		}
 	}
 	scope, e := domain.NewNormalizedScope(body.ScopeType, body.ScopeRef)
 	if e != nil {

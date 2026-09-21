@@ -17,6 +17,7 @@ import (
 )
 
 var ErrBindingIdempotentReplay = errors.New("authorization provenance binding idempotent replay")
+var ErrDeclarationDispositionIdempotentReplay = errors.New("rights declaration disposition idempotent replay")
 
 func (r *PostgresRepository) InsertRightsDeclaration(ctx context.Context, tx pgx.Tx, declaration domain.RightsDeclaration) error {
 	restrictions, err := json.Marshal(declaration.Restrictions)
@@ -143,11 +144,28 @@ func (r *PostgresRepository) InsertDeclarationVerification(ctx context.Context, 
 }
 
 func (r *PostgresRepository) InsertDeclarationDisposition(ctx context.Context, tx pgx.Tx, disposition domain.RightsDisposition) error {
-	_, err := tx.Exec(ctx, `INSERT INTO rights_declaration_disposition(id,declaration_id,disposition,effective_at,reason,superseded_by_declaration_id,evidence_id,activity_id,actor_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, disposition.ID, disposition.DeclarationID, disposition.Disposition, disposition.EffectiveAt, disposition.Reason, disposition.SupersededBy, disposition.EvidenceID, disposition.ActivityID, disposition.ActorID)
+	var inserted uuid.UUID
+	err := tx.QueryRow(ctx, `INSERT INTO rights_declaration_disposition(id,declaration_id,disposition,effective_at,reason,superseded_by_declaration_id,evidence_id,activity_id,actor_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (declaration_id,disposition,activity_id) DO NOTHING RETURNING id`, disposition.ID, disposition.DeclarationID, disposition.Disposition, disposition.EffectiveAt, disposition.Reason, disposition.SupersededBy, disposition.EvidenceID, disposition.ActivityID, disposition.ActorID).Scan(&inserted)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ErrDeclarationDispositionIdempotentReplay
+	}
 	if err != nil {
 		return fmt.Errorf("insert rights declaration disposition: %w", err)
 	}
 	return nil
+}
+
+func (r *PostgresRepository) GetDeclarationDispositionByActivityID(ctx context.Context, declarationID uuid.UUID, disposition string, activityID uuid.UUID) (domain.RightsDisposition, error) {
+	var d domain.RightsDisposition
+	err := r.pool.QueryRow(ctx, `SELECT id,declaration_id,disposition,effective_at,reason,superseded_by_declaration_id,evidence_id,activity_id,actor_id FROM rights_declaration_disposition WHERE declaration_id=$1 AND disposition=$2 AND activity_id=$3`, declarationID, disposition, activityID).
+		Scan(&d.ID, &d.DeclarationID, &d.Disposition, &d.EffectiveAt, &d.Reason, &d.SupersededBy, &d.EvidenceID, &d.ActivityID, &d.ActorID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.RightsDisposition{}, ErrNotFound
+	}
+	if err != nil {
+		return domain.RightsDisposition{}, fmt.Errorf("get rights declaration disposition by activity: %w", err)
+	}
+	return d, nil
 }
 
 func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, binding domain.AuthorizationProvenanceBinding, asOf time.Time) error {
@@ -332,7 +350,20 @@ func (r *PostgresRepository) InsertBindingDisposition(ctx context.Context, tx pg
 	return nil
 }
 
+type queryer interface {
+	Query(context.Context, string, ...any) (pgx.Rows, error)
+	QueryRow(context.Context, string, ...any) pgx.Row
+}
+
 func (r *PostgresRepository) CheckCurrentEntitlement(ctx context.Context, request domain.EntitlementRequest) (domain.EntitlementDecision, error) {
+	return checkCurrentEntitlement(ctx, r.pool, request)
+}
+
+func (r *PostgresRepository) CheckCurrentEntitlementTx(ctx context.Context, tx pgx.Tx, request domain.EntitlementRequest) (domain.EntitlementDecision, error) {
+	return checkCurrentEntitlement(ctx, tx, request)
+}
+
+func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.EntitlementRequest) (domain.EntitlementDecision, error) {
 	if request.AsOf.IsZero() {
 		request.AsOf = time.Now().UTC()
 	}
@@ -343,7 +374,7 @@ func (r *PostgresRepository) CheckCurrentEntitlement(ctx context.Context, reques
 	decision.DataResourceID = request.DataResourceID
 	if request.Path == domain.EntitlementDirectUse {
 		var declarationID uuid.UUID
-		err := r.pool.QueryRow(ctx, `
+		err := q.QueryRow(ctx, `
 			SELECT d.id
 			FROM rights_declaration d
 			JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED'
@@ -408,7 +439,7 @@ func (r *PostgresRepository) CheckCurrentEntitlement(ctx context.Context, reques
 			)
 		  ))`
 	args := []any{request.WorkspaceID, request.DataResourceID, request.AuthorizationID, request.ConsumerRef, request.Purpose, request.AsOf, request.Scope.Type, request.Scope.Ref, request.Action}
-	err := r.pool.QueryRow(ctx, query, args...).Scan(&decision.BindingID, &decision.DeclarationID)
+	err := q.QueryRow(ctx, query, args...).Scan(&decision.BindingID, &decision.DeclarationID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		decision.Decision = domain.DecisionNotAllowed
 		decision.Reason = "no current provenance binding covers the requested context"
@@ -462,8 +493,16 @@ func (r *PostgresRepository) RequiredLineageInputsTx(ctx context.Context, tx pgx
 }
 
 func (r *PostgresRepository) CurrentDirectDeclaration(ctx context.Context, workspaceID, resourceID uuid.UUID, consumer, purpose, action string, scope domain.NormalizedScope, asOf time.Time) (uuid.UUID, error) {
+	return currentDirectDeclaration(ctx, r.pool, workspaceID, resourceID, consumer, purpose, action, scope, asOf)
+}
+
+func (r *PostgresRepository) CurrentDirectDeclarationTx(ctx context.Context, tx pgx.Tx, workspaceID, resourceID uuid.UUID, consumer, purpose, action string, scope domain.NormalizedScope, asOf time.Time) (uuid.UUID, error) {
+	return currentDirectDeclaration(ctx, tx, workspaceID, resourceID, consumer, purpose, action, scope, asOf)
+}
+
+func currentDirectDeclaration(ctx context.Context, q queryer, workspaceID, resourceID uuid.UUID, consumer, purpose, action string, scope domain.NormalizedScope, asOf time.Time) (uuid.UUID, error) {
 	var id uuid.UUID
-	err := r.pool.QueryRow(ctx, `SELECT d.id FROM rights_declaration d JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED' JOIN rights_declaration_permission p ON p.declaration_id=d.id AND p.permission_kind='USE' AND p.action=$5 JOIN rights_declaration_purpose q ON q.permission_id=p.id AND q.purpose_code=$4 JOIN rights_declaration_scope s ON s.permission_id=p.id AND (s.scope_type='ALL_RESOURCE' OR (s.scope_type=$6 AND s.scope_ref=$7)) WHERE d.workspace_id=$1 AND d.data_resource_id=$2 AND (d.consumer_scope_type='ANY' OR (d.consumer_scope_type='EXPLICIT' AND d.consumer_ref=$3)) AND (d.effective_from IS NULL OR d.effective_from <= $8) AND (d.effective_to IS NULL OR d.effective_to > $8) AND NOT EXISTS(SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $8) ORDER BY d.created_at,d.id LIMIT 1`, workspaceID, resourceID, consumer, purpose, action, scope.Type, scope.Ref, asOf).Scan(&id)
+	err := q.QueryRow(ctx, `SELECT d.id FROM rights_declaration d JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED' JOIN rights_declaration_permission p ON p.declaration_id=d.id AND p.permission_kind='USE' AND p.action=$5 JOIN rights_declaration_purpose q ON q.permission_id=p.id AND q.purpose_code=$4 JOIN rights_declaration_scope s ON s.permission_id=p.id AND (s.scope_type='ALL_RESOURCE' OR (s.scope_type=$6 AND s.scope_ref=$7)) WHERE d.workspace_id=$1 AND d.data_resource_id=$2 AND (d.consumer_scope_type='ANY' OR (d.consumer_scope_type='EXPLICIT' AND d.consumer_ref=$3)) AND (d.effective_from IS NULL OR d.effective_from <= $8) AND (d.effective_to IS NULL OR d.effective_to > $8) AND NOT EXISTS(SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $8) ORDER BY d.created_at,d.id LIMIT 1`, workspaceID, resourceID, consumer, purpose, action, scope.Type, scope.Ref, asOf).Scan(&id)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return uuid.Nil, domain.ErrDeclarationNotVerified
 	}
@@ -480,5 +519,14 @@ func HashEffectiveInputs(inputs []domain.EffectiveRightsInput) string {
 	}
 	sort.Strings(parts)
 	h := sha256.Sum256([]byte(strings.Join(parts, "\n")))
+	return hex.EncodeToString(h[:])
+}
+
+func HashEffectiveProvenance(declarationID uuid.UUID, bindingID *uuid.UUID) string {
+	value := declarationID.String()
+	if bindingID != nil {
+		value += "|" + bindingID.String()
+	}
+	h := sha256.Sum256([]byte(value))
 	return hex.EncodeToString(h[:])
 }

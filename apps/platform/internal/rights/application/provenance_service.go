@@ -146,6 +146,7 @@ func (s *Service) DisposeRightsDeclaration(ctx context.Context, cmd DisposeRight
 	if kind != domain.DispositionInvalidated && kind != domain.DispositionSuperseded {
 		return domain.RightsDisposition{}, domain.ErrRightsDisposition
 	}
+	effectiveAtProvided := !cmd.EffectiveAt.IsZero()
 	if cmd.EffectiveAt.IsZero() {
 		cmd.EffectiveAt = time.Now().UTC()
 	}
@@ -187,7 +188,33 @@ func (s *Service) DisposeRightsDeclaration(ctx context.Context, cmd DisposeRight
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &d.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: action, ObjectType: "RIGHTS_DECLARATION_DISPOSITION", ObjectID: disposition.ID, AfterState: map[string]any{"declarationId": d.ID, "disposition": kind}, TraceID: cmd.TraceID})
 	})
+	if errors.Is(err, infrastructure.ErrDeclarationDispositionIdempotentReplay) {
+		existing, findErr := s.repo.GetDeclarationDispositionByActivityID(ctx, d.ID, kind, *disposition.ActivityID)
+		if findErr != nil {
+			return domain.RightsDisposition{}, findErr
+		}
+		if !sameRightsDisposition(existing, disposition, effectiveAtProvided) {
+			return domain.RightsDisposition{}, domain.ErrRightsDisposition
+		}
+		return existing, nil
+	}
 	return disposition, err
+}
+
+func sameRightsDisposition(existing, requested domain.RightsDisposition, compareEffectiveAt bool) bool {
+	if existing.DeclarationID != requested.DeclarationID || existing.Disposition != requested.Disposition || (compareEffectiveAt && !existing.EffectiveAt.Equal(requested.EffectiveAt)) || existing.Reason != requested.Reason {
+		return false
+	}
+	if (existing.SupersededBy == nil) != (requested.SupersededBy == nil) || (existing.EvidenceID == nil) != (requested.EvidenceID == nil) || (existing.ActorID == nil) != (requested.ActorID == nil) {
+		return false
+	}
+	if existing.SupersededBy != nil && *existing.SupersededBy != *requested.SupersededBy {
+		return false
+	}
+	if existing.EvidenceID != nil && *existing.EvidenceID != *requested.EvidenceID {
+		return false
+	}
+	return existing.ActorID == nil || *existing.ActorID == *requested.ActorID
 }
 
 func (s *Service) BindAuthorizationProvenance(ctx context.Context, cmd BindAuthorizationProvenanceCommand) (domain.AuthorizationProvenanceBinding, error) {
@@ -243,19 +270,19 @@ type effectiveRightsProvenanceDecision struct {
 	bindingID     *uuid.UUID
 }
 
-func (s *Service) resolveEffectiveRightsProvenance(ctx context.Context, workspaceID, resourceID uuid.UUID, consumer, purpose, action string, asOf time.Time) (effectiveRightsProvenanceDecision, error) {
+func (s *Service) resolveEffectiveRightsProvenanceTx(ctx context.Context, tx pgx.Tx, workspaceID, resourceID uuid.UUID, consumer, purpose, action string, asOf time.Time) (effectiveRightsProvenanceDecision, error) {
 	scope, err := domain.NewNormalizedScope("ALL_RESOURCE", resourceID.String())
 	if err != nil {
 		return effectiveRightsProvenanceDecision{}, err
 	}
-	declarationID, err := s.repo.CurrentDirectDeclaration(ctx, workspaceID, resourceID, consumer, purpose, action, scope, asOf)
+	declarationID, err := s.repo.CurrentDirectDeclarationTx(ctx, tx, workspaceID, resourceID, consumer, purpose, action, scope, asOf)
 	if err == nil {
 		return effectiveRightsProvenanceDecision{declarationID: declarationID}, nil
 	}
 	if !errors.Is(err, domain.ErrDeclarationNotVerified) {
 		return effectiveRightsProvenanceDecision{}, err
 	}
-	decision, err := s.repo.CheckCurrentEntitlement(ctx, domain.EntitlementRequest{
+	decision, err := s.repo.CheckCurrentEntitlementTx(ctx, tx, domain.EntitlementRequest{
 		WorkspaceID:     workspaceID,
 		AuthorizationID: uuid.Nil,
 		DataResourceID:  resourceID,
@@ -286,64 +313,22 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 	if len(inputs) == 0 {
 		return domain.EffectiveRightsSnapshot{}, domain.ErrEffectiveRights
 	}
-	snapshot := domain.EffectiveRightsSnapshot{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, TargetDatasetVersionID: cmd.TargetDatasetVersionID, CalculationAsOf: cmd.AsOf.UTC(), ConsumerRef: strings.TrimSpace(cmd.ConsumerRef), Purpose: strings.TrimSpace(cmd.Purpose), CalculationRuleVersion: "intersection-v1", CalculationRuleHash: "rights-intersection-v1", CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
-	provenanceByInput := make([]map[string]effectiveRightsProvenanceDecision, len(inputs))
-	for idx, lineage := range inputs {
-		provenanceByInput[idx] = make(map[string]effectiveRightsProvenanceDecision)
-		for _, action := range domain.SupportedRightsActions {
-			provenance, e := s.resolveEffectiveRightsProvenance(ctx, cmd.WorkspaceID, lineage.DataResourceID, cmd.ConsumerRef, cmd.Purpose, action, cmd.AsOf)
-			if e == nil {
-				provenanceByInput[idx][action] = provenance
-			} else if !errors.Is(e, domain.ErrDeclarationNotVerified) {
-				return domain.EffectiveRightsSnapshot{}, fmt.Errorf("resolve current rights provenance for input %s action %s: %w", lineage.DatasetVersionID, action, e)
-			}
-		}
-		if len(provenanceByInput[idx]) == 0 {
-			return domain.EffectiveRightsSnapshot{}, fmt.Errorf("%w: missing current rights provenance for input %s", domain.ErrEffectiveRights, lineage.DatasetVersionID)
-		}
-		selected := provenanceByInput[idx][domain.SupportedRightsActions[0]]
-		if selected.declarationID == uuid.Nil {
-			for _, action := range domain.SupportedRightsActions {
-				if candidate, ok := provenanceByInput[idx][action]; ok {
-					selected = candidate
-					break
-				}
-			}
-		}
-		declarationID := selected.declarationID
-		inputHash := declarationID.String()
-		if selected.bindingID != nil {
-			inputHash += "|" + selected.bindingID.String()
-		}
-		input := domain.EffectiveRightsInput{ID: uuid.New(), InputDatasetVersionID: lineage.DatasetVersionID, DataResourceID: lineage.DataResourceID, DeclarationID: &declarationID, BindingID: selected.bindingID, InputHash: inputHash}
-		snapshot.Inputs = append(snapshot.Inputs, input)
-	}
-	snapshot.RequiredInputHash = infrastructure.HashEffectiveInputs(snapshot.Inputs)
-	for _, action := range domain.SupportedRightsActions {
-		result := domain.EffectiveRightsAction{ID: uuid.New(), Action: action, Decision: domain.DecisionAllowed, Reason: "all required lineage inputs currently allow the action"}
-		for idx := range inputs {
-			provenance, ok := provenanceByInput[idx][action]
-			if !ok {
-				result.Decision = domain.DecisionNotAllowed
-				result.Reason = "required input does not currently allow action"
-				result.BlockingInputID = &snapshot.Inputs[idx].ID
-				break
-			}
-			result.Provenance = append(result.Provenance, domain.EffectiveRightsProvenance{InputID: snapshot.Inputs[idx].ID, DeclarationID: provenance.declarationID, BindingID: provenance.bindingID})
-		}
-		snapshot.Actions = append(snapshot.Actions, result)
-	}
-	snapshot.RootHash = infrastructure.EffectiveRightsRootHash(snapshot)
+	var snapshot domain.EffectiveRightsSnapshot
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if _, err := deliveryfence.Lock(ctx, tx, snapshot.WorkspaceID); err != nil {
+		if _, err := deliveryfence.Lock(ctx, tx, cmd.WorkspaceID); err != nil {
 			return err
 		}
-		currentInputs, err := s.repo.RequiredLineageInputsTx(ctx, tx, snapshot.TargetDatasetVersionID)
+		currentInputs, err := s.repo.RequiredLineageInputsTx(ctx, tx, cmd.TargetDatasetVersionID)
 		if err != nil {
 			return err
 		}
 		if !sameLineageInputs(inputs, currentInputs) {
 			return fmt.Errorf("%w: lineage changed during effective-rights finalization", domain.ErrEffectiveRights)
+		}
+		var buildErr error
+		snapshot, buildErr = s.buildEffectiveRightsSnapshotTx(ctx, tx, cmd, currentInputs)
+		if buildErr != nil {
+			return buildErr
 		}
 		if err := s.repo.InsertEffectiveRightsHeader(ctx, tx, snapshot); err != nil {
 			return err
@@ -367,6 +352,53 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &snapshot.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: "EFFECTIVE_RIGHTS_FINALIZED", ObjectType: "EFFECTIVE_RIGHTS_SNAPSHOT", ObjectID: snapshot.ID, AfterState: map[string]any{"targetDatasetVersionId": snapshot.TargetDatasetVersionID, "rootHash": snapshot.RootHash}, TraceID: cmd.TraceID})
 	})
 	return snapshot, err
+}
+
+func (s *Service) buildEffectiveRightsSnapshotTx(ctx context.Context, tx pgx.Tx, cmd ComputeEffectiveRightsCommand, inputs []infrastructure.LineageInput) (domain.EffectiveRightsSnapshot, error) {
+	snapshot := domain.EffectiveRightsSnapshot{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, TargetDatasetVersionID: cmd.TargetDatasetVersionID, CalculationAsOf: cmd.AsOf.UTC(), ConsumerRef: strings.TrimSpace(cmd.ConsumerRef), Purpose: strings.TrimSpace(cmd.Purpose), CalculationRuleVersion: "intersection-v1", CalculationRuleHash: "rights-intersection-v1", CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
+	provenanceByInput := make([]map[string]effectiveRightsProvenanceDecision, len(inputs))
+	for idx, lineage := range inputs {
+		provenanceByInput[idx] = make(map[string]effectiveRightsProvenanceDecision)
+		for _, action := range domain.SupportedRightsActions {
+			provenance, err := s.resolveEffectiveRightsProvenanceTx(ctx, tx, cmd.WorkspaceID, lineage.DataResourceID, cmd.ConsumerRef, cmd.Purpose, action, cmd.AsOf)
+			if err == nil {
+				provenanceByInput[idx][action] = provenance
+			} else if !errors.Is(err, domain.ErrDeclarationNotVerified) {
+				return domain.EffectiveRightsSnapshot{}, fmt.Errorf("resolve current rights provenance for input %s action %s: %w", lineage.DatasetVersionID, action, err)
+			}
+		}
+		if len(provenanceByInput[idx]) == 0 {
+			return domain.EffectiveRightsSnapshot{}, fmt.Errorf("%w: missing current rights provenance for input %s", domain.ErrEffectiveRights, lineage.DatasetVersionID)
+		}
+		selected := provenanceByInput[idx][domain.SupportedRightsActions[0]]
+		if selected.declarationID == uuid.Nil {
+			for _, action := range domain.SupportedRightsActions {
+				if candidate, ok := provenanceByInput[idx][action]; ok {
+					selected = candidate
+					break
+				}
+			}
+		}
+		declarationID := selected.declarationID
+		snapshot.Inputs = append(snapshot.Inputs, domain.EffectiveRightsInput{ID: uuid.New(), InputDatasetVersionID: lineage.DatasetVersionID, DataResourceID: lineage.DataResourceID, DeclarationID: &declarationID, BindingID: selected.bindingID, InputHash: infrastructure.HashEffectiveProvenance(declarationID, selected.bindingID)})
+	}
+	snapshot.RequiredInputHash = infrastructure.HashEffectiveInputs(snapshot.Inputs)
+	for _, action := range domain.SupportedRightsActions {
+		result := domain.EffectiveRightsAction{ID: uuid.New(), Action: action, Decision: domain.DecisionAllowed, Reason: "all required lineage inputs currently allow the action"}
+		for idx := range inputs {
+			provenance, ok := provenanceByInput[idx][action]
+			if !ok {
+				result.Decision = domain.DecisionNotAllowed
+				result.Reason = "required input does not currently allow action"
+				result.BlockingInputID = &snapshot.Inputs[idx].ID
+				break
+			}
+			result.Provenance = append(result.Provenance, domain.EffectiveRightsProvenance{InputID: snapshot.Inputs[idx].ID, DeclarationID: provenance.declarationID, BindingID: provenance.bindingID})
+		}
+		snapshot.Actions = append(snapshot.Actions, result)
+	}
+	snapshot.RootHash = infrastructure.EffectiveRightsRootHash(snapshot)
+	return snapshot, nil
 }
 
 func sameLineageInputs(left, right []infrastructure.LineageInput) bool {
