@@ -266,6 +266,18 @@ func (s *Service) DisposeRightsDeclaration(ctx context.Context, cmd DisposeRight
 		if verified != "VERIFIED" {
 			return domain.ErrDeclarationNotVerified
 		}
+		if kind == domain.DispositionSuperseded {
+			if disposition.SupersededBy == nil || *disposition.SupersededBy == d.ID {
+				return domain.ErrRightsDisposition
+			}
+			var replacementWorkspaceID, replacementResourceID uuid.UUID
+			if err := tx.QueryRow(ctx, `SELECT workspace_id,data_resource_id FROM rights_declaration WHERE id=$1 FOR SHARE`, *disposition.SupersededBy).Scan(&replacementWorkspaceID, &replacementResourceID); err != nil {
+				return domain.ErrRightsDisposition
+			}
+			if replacementWorkspaceID != d.WorkspaceID || replacementResourceID != d.DataResourceID {
+				return domain.ErrRightsDisposition
+			}
+		}
 		if err := s.repo.InsertDeclarationDisposition(ctx, tx, disposition); err != nil {
 			return err
 		}
@@ -400,6 +412,19 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 	requestedAsOf := cmd.AsOf
 	if cmd.AsOf.IsZero() {
 		cmd.AsOf = time.Now().UTC()
+	}
+	if cmd.ActivityID != nil {
+		replayID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("effective-rights-compute:"+cmd.WorkspaceID.String()+":"+cmd.ActivityID.String()))
+		existing, replayErr := s.repo.GetEffectiveRights(ctx, replayID)
+		if replayErr == nil {
+			if !sameEffectiveRightsRequest(existing, cmd, requestedAsOf) {
+				return domain.EffectiveRightsSnapshot{}, domain.ErrEffectiveRights
+			}
+			return existing, nil
+		}
+		if !errors.Is(replayErr, pgx.ErrNoRows) {
+			return domain.EffectiveRightsSnapshot{}, replayErr
+		}
 	}
 	workspaceID, err := s.repo.DatasetVersionWorkspace(ctx, cmd.TargetDatasetVersionID)
 	if err != nil {
