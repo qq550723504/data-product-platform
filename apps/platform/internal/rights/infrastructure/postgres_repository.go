@@ -175,7 +175,7 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 				JOIN rights_declaration d ON d.id=b.rights_declaration_id
 				JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED'
 				WHERE b.authorization_id=$1 AND b.data_resource_id=$2 AND b.workspace_id=$3
-				  AND a.workspace_id=$3 AND a.status='ACTIVE'
+				  AND a.workspace_id=$3 AND a.status='ACTIVE' AND a.grantee_ref=$5
 				  AND ar.scope_type IS NOT NULL AND ar.scope_ref IS NOT NULL
 				  AND b.created_at <= $4
 				  AND (d.effective_from IS NULL OR d.effective_from <= $4)
@@ -189,7 +189,7 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 					AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition x JOIN grantor_authority_delegation_edge e ON e.id=x.edge_id WHERE e.chain_id=b.delegation_chain_id AND x.effective_at <= $4)
 					AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id AND ((e.valid_from IS NOT NULL AND e.valid_from > $4) OR (e.valid_to IS NOT NULL AND e.valid_to <= $4)))
 				))
-				ORDER BY b.created_at,b.id`, authorization.AuthorizationID, resource.DataResourceID, snapshot.WorkspaceID, snapshot.AsOf)
+				ORDER BY b.created_at,b.id`, authorization.AuthorizationID, resource.DataResourceID, snapshot.WorkspaceID, snapshot.AsOf, snapshot.ConsumerRef)
 			if err != nil {
 				return fmt.Errorf("read snapshot provenance bindings: %w", err)
 			}

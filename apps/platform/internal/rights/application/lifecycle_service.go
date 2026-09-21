@@ -72,9 +72,18 @@ func (s *Service) DisposeAuthorizationProvenanceBinding(ctx context.Context, cmd
 	}
 	d := domain.BindingDisposition{ID: uuid.New(), BindingID: cmd.BindingID, Disposition: kind, EffectiveAt: cmd.EffectiveAt.UTC(), Reason: strings.TrimSpace(cmd.Reason), SupersededBy: cmd.SupersededBy, EvidenceID: cmd.EvidenceID, ActivityID: cmd.ActivityID, ActorID: cmd.ActorID}
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		var workspace uuid.UUID
-		if err := tx.QueryRow(ctx, `SELECT workspace_id FROM authorization_provenance_binding WHERE id=$1 FOR SHARE`, d.BindingID).Scan(&workspace); err != nil {
+		var workspace, authorizationID, resourceID uuid.UUID
+		if err := tx.QueryRow(ctx, `SELECT workspace_id,authorization_id,data_resource_id FROM authorization_provenance_binding WHERE id=$1 FOR SHARE`, d.BindingID).Scan(&workspace, &authorizationID, &resourceID); err != nil {
 			return err
+		}
+		if d.SupersededBy != nil {
+			var replacementWorkspace, replacementAuthorizationID, replacementResourceID uuid.UUID
+			if err := tx.QueryRow(ctx, `SELECT workspace_id,authorization_id,data_resource_id FROM authorization_provenance_binding WHERE id=$1 FOR SHARE`, *d.SupersededBy).Scan(&replacementWorkspace, &replacementAuthorizationID, &replacementResourceID); err != nil {
+				return err
+			}
+			if *d.SupersededBy == d.BindingID || replacementWorkspace != workspace || replacementAuthorizationID != authorizationID || replacementResourceID != resourceID {
+				return domain.ErrRightsDisposition
+			}
 		}
 		if _, err := deliveryfence.Advance(ctx, tx, workspace); err != nil {
 			return err

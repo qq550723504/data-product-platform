@@ -536,6 +536,11 @@ func (h *Handler) computeEffectiveRights(w http.ResponseWriter, r *http.Request)
 		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid JSON request", nil)
 		return
 	}
+	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, 400, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
+	}
 	workspace, e := uuid.Parse(body.WorkspaceID)
 	if e != nil {
 		httpserver.WriteError(w, r, 400, "INVALID_WORKSPACE_ID", "workspaceId must be a UUID", nil)
@@ -554,7 +559,8 @@ func (h *Handler) computeEffectiveRights(w http.ResponseWriter, r *http.Request)
 	if body.AsOf != nil {
 		at = body.AsOf.UTC()
 	}
-	snapshot, e := h.service.ComputeEffectiveRights(r.Context(), application.ComputeEffectiveRightsCommand{WorkspaceID: workspace, TargetDatasetVersionID: target, ConsumerRef: body.ConsumerRef, Purpose: body.Purpose, AsOf: at, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
+	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("effective-rights-compute:"+workspace.String()+":"+idempotencyKey))
+	snapshot, e := h.service.ComputeEffectiveRights(r.Context(), application.ComputeEffectiveRightsCommand{WorkspaceID: workspace, TargetDatasetVersionID: target, ConsumerRef: body.ConsumerRef, Purpose: body.Purpose, AsOf: at, AsOfProvided: body.AsOf != nil, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
 	if e != nil {
 		httpserver.WriteError(w, r, 400, "EFFECTIVE_RIGHTS_COMPUTE_FAILED", e.Error(), nil)
 		return

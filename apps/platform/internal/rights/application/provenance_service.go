@@ -73,6 +73,8 @@ type ComputeEffectiveRightsCommand struct {
 	ConsumerRef            string
 	Purpose                string
 	AsOf                   time.Time
+	AsOfProvided           bool
+	ActivityID             *uuid.UUID
 	ActorID                *uuid.UUID
 	TraceID                string
 }
@@ -395,6 +397,7 @@ func (s *Service) resolveEffectiveRightsProvenanceTx(ctx context.Context, tx pgx
 }
 
 func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffectiveRightsCommand) (domain.EffectiveRightsSnapshot, error) {
+	requestedAsOf := cmd.AsOf
 	if cmd.AsOf.IsZero() {
 		cmd.AsOf = time.Now().UTC()
 	}
@@ -450,11 +453,37 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &snapshot.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: "EFFECTIVE_RIGHTS_FINALIZED", ObjectType: "EFFECTIVE_RIGHTS_SNAPSHOT", ObjectID: snapshot.ID, AfterState: map[string]any{"targetDatasetVersionId": snapshot.TargetDatasetVersionID, "rootHash": snapshot.RootHash}, TraceID: cmd.TraceID})
 	})
+	if errors.Is(err, infrastructure.ErrEffectiveRightsIdempotentReplay) {
+		existing, findErr := s.repo.GetEffectiveRights(ctx, snapshot.ID)
+		if findErr != nil {
+			return domain.EffectiveRightsSnapshot{}, findErr
+		}
+		if !sameEffectiveRightsRequest(existing, cmd, requestedAsOf) {
+			return domain.EffectiveRightsSnapshot{}, domain.ErrEffectiveRights
+		}
+		return existing, nil
+	}
 	return snapshot, err
+}
+
+func sameEffectiveRightsRequest(existing domain.EffectiveRightsSnapshot, requested ComputeEffectiveRightsCommand, requestedAsOf time.Time) bool {
+	if existing.WorkspaceID != requested.WorkspaceID || existing.TargetDatasetVersionID != requested.TargetDatasetVersionID || existing.ConsumerRef != strings.TrimSpace(requested.ConsumerRef) || existing.Purpose != strings.TrimSpace(requested.Purpose) {
+		return false
+	}
+	if requested.AsOfProvided && !existing.CalculationAsOf.Equal(requestedAsOf.UTC()) {
+		return false
+	}
+	if (existing.CreatedBy == nil) != (requested.ActorID == nil) {
+		return false
+	}
+	return existing.CreatedBy == nil || *existing.CreatedBy == *requested.ActorID
 }
 
 func (s *Service) buildEffectiveRightsSnapshotTx(ctx context.Context, tx pgx.Tx, cmd ComputeEffectiveRightsCommand, inputs []infrastructure.LineageInput) (domain.EffectiveRightsSnapshot, error) {
 	snapshot := domain.EffectiveRightsSnapshot{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, TargetDatasetVersionID: cmd.TargetDatasetVersionID, CalculationAsOf: cmd.AsOf.UTC(), ConsumerRef: strings.TrimSpace(cmd.ConsumerRef), Purpose: strings.TrimSpace(cmd.Purpose), CalculationRuleVersion: "intersection-v1", CalculationRuleHash: "rights-intersection-v1", CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
+	if cmd.ActivityID != nil {
+		snapshot.ID = uuid.NewSHA1(uuid.NameSpaceURL, []byte("effective-rights-compute:"+cmd.WorkspaceID.String()+":"+cmd.ActivityID.String()))
+	}
 	provenanceByInput := make([]map[string]effectiveRightsProvenanceDecision, len(inputs))
 	for idx, lineage := range inputs {
 		if !lineage.ResourceMapped || lineage.DataResourceID == uuid.Nil {

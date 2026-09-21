@@ -634,7 +634,7 @@ func activateAuthorization(t *testing.T, ctx context.Context, service *rightsapp
 		WorkspaceID: workspaceID,
 		Code:        code,
 		GrantorRef:  "PARK-OPERATOR",
-		GranteeRef:  "DATA-PRODUCT-PLATFORM",
+		GranteeRef:  "LICENSED_BANK",
 		Purpose:     purpose,
 		ValidFrom:   &validFrom,
 		ValidTo:     &validTo,

@@ -61,7 +61,7 @@ func NewRightsSnapshot(workspaceID uuid.UUID, productReleaseID *uuid.UUID, purpo
 		AsOf:        asOf.UTC(),
 	}
 	for _, authorization := range authorizations {
-		if authorization.WorkspaceID != workspaceID || !authorization.ValidFor(asOf, purpose) {
+		if authorization.WorkspaceID != workspaceID || strings.TrimSpace(authorization.GranteeRef) != consumerRef || !authorization.ValidFor(asOf, purpose) {
 			return RightsSnapshot{}, ErrAuthorizationInvalid
 		}
 		resources := make([]ResourceGrant, len(authorization.Resources))
