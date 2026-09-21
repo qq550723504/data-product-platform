@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
@@ -160,6 +161,9 @@ func (s *Service) DisposeRightsDeclaration(ctx context.Context, cmd DisposeRight
 		return domain.RightsDisposition{}, domain.ErrRightsDisposition
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if _, err := deliveryfence.Advance(ctx, tx, d.WorkspaceID); err != nil {
+			return err
+		}
 		var verified string
 		if err := tx.QueryRow(ctx, `SELECT outcome FROM rights_declaration_verification WHERE declaration_id=$1`, d.ID).Scan(&verified); err != nil {
 			return domain.ErrDeclarationNotVerified

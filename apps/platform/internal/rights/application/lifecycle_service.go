@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
 )
 
@@ -67,6 +68,9 @@ func (s *Service) DisposeAuthorizationProvenanceBinding(ctx context.Context, cmd
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		var workspace uuid.UUID
 		if err := tx.QueryRow(ctx, `SELECT workspace_id FROM authorization_provenance_binding WHERE id=$1 FOR SHARE`, d.BindingID).Scan(&workspace); err != nil {
+			return err
+		}
+		if _, err := deliveryfence.Advance(ctx, tx, workspace); err != nil {
 			return err
 		}
 		if err := s.repo.InsertBindingDisposition(ctx, tx, d); err != nil {
@@ -130,6 +134,9 @@ func (s *Service) DisposeDelegation(ctx context.Context, cmd DisposeDelegationCo
 	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		var workspace uuid.UUID
 		if err := tx.QueryRow(ctx, `SELECT workspace_id FROM grantor_authority_delegation_chain WHERE id=$1 FOR SHARE`, cmd.ChainID).Scan(&workspace); err != nil {
+			return err
+		}
+		if _, err := deliveryfence.Advance(ctx, tx, workspace); err != nil {
 			return err
 		}
 		if err := s.repo.InsertDelegationDisposition(ctx, tx, disposition); err != nil {

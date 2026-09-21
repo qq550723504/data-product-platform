@@ -19,6 +19,14 @@ DECLARE
     verified boolean;
 BEGIN
     target_declaration_id := NEW.declaration_id;
+    IF TG_TABLE_NAME IN ('rights_declaration_purpose','rights_declaration_scope') THEN
+        SELECT p.declaration_id INTO target_declaration_id
+        FROM rights_declaration_permission p
+        WHERE p.id=NEW.permission_id;
+        IF target_declaration_id IS NULL OR target_declaration_id IS DISTINCT FROM NEW.declaration_id THEN
+            RAISE EXCEPTION 'rights declaration child does not match permission declaration';
+        END IF;
+    END IF;
     PERFORM 1 FROM rights_declaration WHERE id=target_declaration_id FOR UPDATE;
     IF NOT FOUND THEN
         RAISE EXCEPTION 'rights declaration does not exist';

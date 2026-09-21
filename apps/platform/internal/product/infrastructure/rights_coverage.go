@@ -82,6 +82,8 @@ func (r *PostgresRepository) EvaluateRightsCoverage(ctx context.Context, snapsho
 			WHERE rspb.rights_snapshot_id=rs.id
 			  AND apb.authorization_id=da.id
 			  AND apb.data_resource_id=ar.data_resource_id
+			  AND (rd.effective_from IS NULL OR rd.effective_from <= $2)
+			  AND (rd.effective_to IS NULL OR rd.effective_to > $2)
 			  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition rdd WHERE rdd.declaration_id=rd.id AND rdd.effective_at <= $2)
 			  AND NOT EXISTS (SELECT 1 FROM authorization_provenance_binding_disposition apbd WHERE apbd.binding_id=apb.id AND apbd.effective_at <= $2)
 			  AND (apb.grantor_authority_mode='DIRECT_DECLARATION_PARTY' OR (

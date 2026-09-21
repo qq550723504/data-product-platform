@@ -1,3 +1,15 @@
+LOCK TABLE effective_rights_snapshot, effective_rights_input, effective_rights_action,
+    effective_rights_action_provenance, authorization_provenance_binding
+    IN ACCESS EXCLUSIVE MODE;
+
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM effective_rights_action_provenance WHERE binding_id IS NOT NULL)
+       OR EXISTS (SELECT 1 FROM authorization_provenance_binding WHERE activity_id IS NOT NULL) THEN
+        RAISE EXCEPTION 'cannot roll back #137 provenance identities while history exists';
+    END IF;
+END $$;
+
 DROP INDEX IF EXISTS idx_effective_rights_action_provenance_binding;
 
 DROP TRIGGER IF EXISTS trg_rights_declaration_scope_insert_guard ON rights_declaration_scope;
