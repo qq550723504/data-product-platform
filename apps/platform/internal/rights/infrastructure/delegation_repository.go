@@ -10,6 +10,8 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
 )
 
+var ErrDelegationDispositionIdempotentReplay = errors.New("delegation disposition idempotent replay")
+
 func (r *PostgresRepository) InsertDelegationChain(ctx context.Context, tx pgx.Tx, chain domain.DelegationChain) error {
 	var workspace uuid.UUID
 	if err := tx.QueryRow(ctx, `SELECT workspace_id FROM rights_declaration WHERE id=$1`, chain.SourceDeclarationID).Scan(&workspace); err != nil {
@@ -89,6 +91,23 @@ func (r *PostgresRepository) FinalizeDelegationChain(ctx context.Context, tx pgx
 }
 
 func (r *PostgresRepository) InsertDelegationDisposition(ctx context.Context, tx pgx.Tx, disposition domain.DelegationDisposition) error {
-	_, err := tx.Exec(ctx, `INSERT INTO grantor_authority_delegation_disposition(id,chain_id,edge_id,disposition,effective_at,reason,evidence_id,actor_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, disposition.ID, disposition.ChainID, disposition.EdgeID, disposition.Disposition, disposition.EffectiveAt, disposition.Reason, disposition.EvidenceID, disposition.ActorID)
+	var inserted uuid.UUID
+	err := tx.QueryRow(ctx, `INSERT INTO grantor_authority_delegation_disposition(id,chain_id,edge_id,disposition,effective_at,reason,evidence_id,activity_id,actor_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT DO NOTHING RETURNING id`, disposition.ID, disposition.ChainID, disposition.EdgeID, disposition.Disposition, disposition.EffectiveAt, disposition.Reason, disposition.EvidenceID, disposition.ActivityID, disposition.ActorID).Scan(&inserted)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ErrDelegationDispositionIdempotentReplay
+	}
 	return err
+}
+
+func (r *PostgresRepository) GetDelegationDispositionByActivityID(ctx context.Context, chainID uuid.UUID, disposition string, activityID uuid.UUID) (domain.DelegationDisposition, error) {
+	var d domain.DelegationDisposition
+	err := r.pool.QueryRow(ctx, `SELECT id,chain_id,edge_id,disposition,effective_at,reason,evidence_id,activity_id,actor_id FROM grantor_authority_delegation_disposition WHERE chain_id=$1 AND disposition=$2 AND activity_id=$3`, chainID, disposition, activityID).
+		Scan(&d.ID, &d.ChainID, &d.EdgeID, &d.Disposition, &d.EffectiveAt, &d.Reason, &d.EvidenceID, &d.ActivityID, &d.ActorID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.DelegationDisposition{}, ErrNotFound
+	}
+	if err != nil {
+		return domain.DelegationDisposition{}, fmt.Errorf("get delegation disposition by activity: %w", err)
+	}
+	return d, nil
 }

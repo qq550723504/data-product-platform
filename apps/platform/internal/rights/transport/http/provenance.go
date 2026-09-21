@@ -48,6 +48,8 @@ func (h *Handler) registerProvenance(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/rights-declarations/{declarationId}/invalidate", h.invalidateRightsDeclaration)
 	mux.HandleFunc("POST /api/v1/rights-declarations/{declarationId}/supersede", h.supersedeRightsDeclaration)
 	mux.HandleFunc("POST /api/v1/authorizations/{authorizationId}/provenance-bindings", h.bindAuthorizationProvenance)
+	mux.HandleFunc("POST /api/v1/authorization-provenance-bindings/{bindingId}/invalidate", h.invalidateAuthorizationProvenanceBinding)
+	mux.HandleFunc("POST /api/v1/authorization-provenance-bindings/{bindingId}/supersede", h.supersedeAuthorizationProvenanceBinding)
 	mux.HandleFunc("POST /api/v1/grantor-delegation-chains", h.createDelegationChain)
 	mux.HandleFunc("POST /api/v1/grantor-delegation-chains/{chainId}/finalize", h.finalizeDelegationChain)
 	mux.HandleFunc("POST /api/v1/grantor-delegation-chains/{chainId}/dispose", h.disposeDelegation)
@@ -144,6 +146,11 @@ func (h *Handler) disposeDelegation(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid JSON request", nil)
 		return
 	}
+	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, 400, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
+	}
 	var edgeID *uuid.UUID
 	if strings.TrimSpace(body.EdgeID) != "" {
 		v, e := uuid.Parse(body.EdgeID)
@@ -153,16 +160,23 @@ func (h *Handler) disposeDelegation(w http.ResponseWriter, r *http.Request) {
 		}
 		edgeID = &v
 	}
-	at := time.Now().UTC()
+	var at time.Time
 	if body.EffectiveAt != nil {
 		at = body.EffectiveAt.UTC()
 	}
 	actor, _ := parseActorID(r)
-	if e := h.service.DisposeDelegation(r.Context(), application.DisposeDelegationCommand{ChainID: id, EdgeID: edgeID, Disposition: body.Disposition, EffectiveAt: at, Reason: body.Reason, ActorID: actor, TraceID: httpserver.RequestID(r.Context())}); e != nil {
+	kind := strings.ToUpper(strings.TrimSpace(body.Disposition))
+	edgeKey := "chain"
+	if edgeID != nil {
+		edgeKey = edgeID.String()
+	}
+	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("grantor-delegation-disposition:"+kind+":"+id.String()+":"+edgeKey+":"+idempotencyKey))
+	d, e := h.service.DisposeDelegation(r.Context(), application.DisposeDelegationCommand{ChainID: id, EdgeID: edgeID, Disposition: kind, EffectiveAt: at, Reason: body.Reason, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
+	if e != nil {
 		httpserver.WriteError(w, r, 400, "DELEGATION_DISPOSITION_FAILED", e.Error(), nil)
 		return
 	}
-	writeJSON(w, 201, map[string]any{"chainId": id, "disposition": body.Disposition, "effectiveAt": at})
+	writeJSON(w, 201, d)
 }
 
 func (h *Handler) createRightsDeclaration(w http.ResponseWriter, r *http.Request) {
@@ -333,6 +347,56 @@ func (h *Handler) bindAuthorizationProvenance(w http.ResponseWriter, r *http.Req
 		return
 	}
 	writeJSON(w, 201, b)
+}
+
+func (h *Handler) invalidateAuthorizationProvenanceBinding(w http.ResponseWriter, r *http.Request) {
+	h.disposeAuthorizationProvenanceBinding(w, r, domain.DispositionInvalidated)
+}
+
+func (h *Handler) supersedeAuthorizationProvenanceBinding(w http.ResponseWriter, r *http.Request) {
+	h.disposeAuthorizationProvenanceBinding(w, r, domain.DispositionSuperseded)
+}
+
+func (h *Handler) disposeAuthorizationProvenanceBinding(w http.ResponseWriter, r *http.Request, kind string) {
+	bindingID, ok := parsePathUUID(w, r, "bindingId", "INVALID_BINDING_ID")
+	if !ok {
+		return
+	}
+	var body struct {
+		Reason       string     `json:"reason"`
+		EffectiveAt  *time.Time `json:"effectiveAt"`
+		SupersededBy string     `json:"supersededByBindingId"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid JSON request", nil)
+		return
+	}
+	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, 400, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
+	}
+	var replacement *uuid.UUID
+	if strings.TrimSpace(body.SupersededBy) != "" {
+		v, err := uuid.Parse(body.SupersededBy)
+		if err != nil {
+			httpserver.WriteError(w, r, 400, "INVALID_SUPERSEDED_BY", "supersededByBindingId must be a UUID", nil)
+			return
+		}
+		replacement = &v
+	}
+	var at time.Time
+	if body.EffectiveAt != nil {
+		at = body.EffectiveAt.UTC()
+	}
+	actor, _ := parseActorID(r)
+	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("authorization-provenance-binding-disposition:"+kind+":"+bindingID.String()+":"+idempotencyKey))
+	d, err := h.service.DisposeAuthorizationProvenanceBinding(r.Context(), application.DisposeAuthorizationProvenanceBindingCommand{BindingID: bindingID, Disposition: kind, EffectiveAt: at, Reason: body.Reason, SupersededBy: replacement, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
+	if err != nil {
+		httpserver.WriteError(w, r, 400, "BINDING_DISPOSITION_FAILED", err.Error(), nil)
+		return
+	}
+	writeJSON(w, 201, d)
 }
 
 func (h *Handler) checkCurrentEntitlement(w http.ResponseWriter, r *http.Request) {

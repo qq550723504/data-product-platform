@@ -20,6 +20,7 @@ DROP TRIGGER IF EXISTS trg_rights_declaration_party_insert_guard ON rights_decla
 DROP FUNCTION IF EXISTS guard_rights_declaration_child_insert();
 
 DROP INDEX IF EXISTS uq_authorization_provenance_binding_activity;
+DROP INDEX IF EXISTS uq_grantor_delegation_disposition_activity;
 
 ALTER TABLE authorization_provenance_binding
     DROP COLUMN IF EXISTS activity_id;

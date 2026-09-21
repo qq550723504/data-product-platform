@@ -18,6 +18,7 @@ import (
 
 var ErrBindingIdempotentReplay = errors.New("authorization provenance binding idempotent replay")
 var ErrDeclarationDispositionIdempotentReplay = errors.New("rights declaration disposition idempotent replay")
+var ErrBindingDispositionIdempotentReplay = errors.New("authorization provenance binding disposition idempotent replay")
 
 func (r *PostgresRepository) InsertRightsDeclaration(ctx context.Context, tx pgx.Tx, declaration domain.RightsDeclaration) error {
 	restrictions, err := json.Marshal(declaration.Restrictions)
@@ -343,11 +344,28 @@ func (r *PostgresRepository) GetBindingByActivityID(ctx context.Context, workspa
 }
 
 func (r *PostgresRepository) InsertBindingDisposition(ctx context.Context, tx pgx.Tx, disposition domain.BindingDisposition) error {
-	_, err := tx.Exec(ctx, `INSERT INTO authorization_provenance_binding_disposition(id,binding_id,disposition,effective_at,reason,superseded_by_binding_id,evidence_id,activity_id,actor_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, disposition.ID, disposition.BindingID, disposition.Disposition, disposition.EffectiveAt, disposition.Reason, disposition.SupersededBy, disposition.EvidenceID, disposition.ActivityID, disposition.ActorID)
+	var inserted uuid.UUID
+	err := tx.QueryRow(ctx, `INSERT INTO authorization_provenance_binding_disposition(id,binding_id,disposition,effective_at,reason,superseded_by_binding_id,evidence_id,activity_id,actor_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (binding_id,disposition,activity_id) DO NOTHING RETURNING id`, disposition.ID, disposition.BindingID, disposition.Disposition, disposition.EffectiveAt, disposition.Reason, disposition.SupersededBy, disposition.EvidenceID, disposition.ActivityID, disposition.ActorID).Scan(&inserted)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ErrBindingDispositionIdempotentReplay
+	}
 	if err != nil {
 		return fmt.Errorf("insert binding disposition: %w", err)
 	}
 	return nil
+}
+
+func (r *PostgresRepository) GetBindingDispositionByActivityID(ctx context.Context, bindingID uuid.UUID, disposition string, activityID uuid.UUID) (domain.BindingDisposition, error) {
+	var d domain.BindingDisposition
+	err := r.pool.QueryRow(ctx, `SELECT id,binding_id,disposition,effective_at,reason,superseded_by_binding_id,evidence_id,activity_id,actor_id FROM authorization_provenance_binding_disposition WHERE binding_id=$1 AND disposition=$2 AND activity_id=$3`, bindingID, disposition, activityID).
+		Scan(&d.ID, &d.BindingID, &d.Disposition, &d.EffectiveAt, &d.Reason, &d.SupersededBy, &d.EvidenceID, &d.ActivityID, &d.ActorID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.BindingDisposition{}, ErrNotFound
+	}
+	if err != nil {
+		return domain.BindingDisposition{}, fmt.Errorf("get binding disposition by activity: %w", err)
+	}
+	return d, nil
 }
 
 type queryer interface {
@@ -413,6 +431,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 		WHERE b.workspace_id=$1 AND b.data_resource_id=$2 AND ($3::uuid='00000000-0000-0000-0000-000000000000' OR b.authorization_id=$3)
 		  AND a.status='ACTIVE' AND a.grantee_ref=$4 AND a.purpose=$5
 		  AND (a.valid_from IS NULL OR a.valid_from <= $6) AND (a.valid_to IS NULL OR a.valid_to > $6)
+		  AND b.created_at <= $6
 		  AND (ar.scope_type='ALL_RESOURCE' OR (ar.scope_type=$7 AND ar.scope_ref=$8)) AND $9 = ANY(ar.actions)
 		  AND (d.effective_from IS NULL OR d.effective_from <= $6) AND (d.effective_to IS NULL OR d.effective_to > $6)
 		  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $6)
@@ -490,6 +509,18 @@ func (r *PostgresRepository) RequiredLineageInputsTx(ctx context.Context, tx pgx
 		inputs = append(inputs, input)
 	}
 	return inputs, rows.Err()
+}
+
+func (r *PostgresRepository) DatasetVersionWorkspace(ctx context.Context, target uuid.UUID) (uuid.UUID, error) {
+	var workspace uuid.UUID
+	err := r.pool.QueryRow(ctx, `SELECT d.workspace_id FROM dataset_version v JOIN dataset d ON d.id=v.dataset_id WHERE v.id=$1`, target).Scan(&workspace)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return uuid.Nil, ErrNotFound
+	}
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("get dataset version workspace: %w", err)
+	}
+	return workspace, nil
 }
 
 func (r *PostgresRepository) CurrentDirectDeclaration(ctx context.Context, workspaceID, resourceID uuid.UUID, consumer, purpose, action string, scope domain.NormalizedScope, asOf time.Time) (uuid.UUID, error) {

@@ -37,6 +37,7 @@ var (
 	ErrBindingNotCurrent        = errors.New("authorization provenance binding is not current")
 	ErrEntitlementBlocked       = errors.New("current entitlement is blocked")
 	ErrEffectiveRights          = errors.New("effective rights calculation is not allowed")
+	ErrWorkspaceMismatch        = errors.New("target dataset version belongs to a different workspace")
 )
 
 var SupportedRightsActions = []string{"USE", "PROCESS", "DERIVE", "SHARE", "RAW_EXPORT", "RESALE", "AI_TRAINING", "READ", "AGGREGATE", "PRODUCTIZE"}
@@ -303,6 +304,7 @@ type DelegationDisposition struct {
 	EffectiveAt time.Time
 	Reason      string
 	EvidenceID  *uuid.UUID
+	ActivityID  *uuid.UUID
 	ActorID     *uuid.UUID
 }
 

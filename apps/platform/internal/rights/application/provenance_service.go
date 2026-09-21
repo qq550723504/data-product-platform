@@ -306,6 +306,13 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 	if cmd.AsOf.IsZero() {
 		cmd.AsOf = time.Now().UTC()
 	}
+	workspaceID, err := s.repo.DatasetVersionWorkspace(ctx, cmd.TargetDatasetVersionID)
+	if err != nil {
+		return domain.EffectiveRightsSnapshot{}, err
+	}
+	if cmd.WorkspaceID != workspaceID {
+		return domain.EffectiveRightsSnapshot{}, domain.ErrWorkspaceMismatch
+	}
 	inputs, err := s.repo.RequiredLineageInputs(ctx, cmd.TargetDatasetVersionID)
 	if err != nil {
 		return domain.EffectiveRightsSnapshot{}, err

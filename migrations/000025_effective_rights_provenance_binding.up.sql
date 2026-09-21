@@ -12,6 +12,10 @@ CREATE UNIQUE INDEX uq_authorization_provenance_binding_activity
     ON authorization_provenance_binding(workspace_id, activity_id)
     WHERE activity_id IS NOT NULL;
 
+CREATE UNIQUE INDEX uq_grantor_delegation_disposition_activity
+    ON grantor_authority_delegation_disposition(chain_id, COALESCE(edge_id, '00000000-0000-0000-0000-000000000000'::uuid), disposition, activity_id)
+    WHERE activity_id IS NOT NULL;
+
 CREATE OR REPLACE FUNCTION guard_rights_declaration_child_insert()
 RETURNS trigger AS $$
 DECLARE

@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
 
 type DisposeAuthorizationProvenanceBindingCommand struct {
@@ -45,6 +47,7 @@ type DisposeDelegationCommand struct {
 	EffectiveAt time.Time
 	Reason      string
 	EvidenceID  *uuid.UUID
+	ActivityID  *uuid.UUID
 	ActorID     *uuid.UUID
 	TraceID     string
 }
@@ -54,6 +57,7 @@ func (s *Service) DisposeAuthorizationProvenanceBinding(ctx context.Context, cmd
 	if kind != domain.DispositionInvalidated && kind != domain.DispositionSuperseded {
 		return domain.BindingDisposition{}, domain.ErrRightsDisposition
 	}
+	effectiveAtProvided := !cmd.EffectiveAt.IsZero()
 	if cmd.EffectiveAt.IsZero() {
 		cmd.EffectiveAt = time.Now().UTC()
 	}
@@ -88,7 +92,33 @@ func (s *Service) DisposeAuthorizationProvenanceBinding(ctx context.Context, cmd
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &workspace, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: action, ObjectType: "AUTHORIZATION_PROVENANCE_BINDING_DISPOSITION", ObjectID: d.ID, AfterState: map[string]any{"bindingId": d.BindingID, "disposition": kind}, TraceID: cmd.TraceID})
 	})
+	if errors.Is(err, infrastructure.ErrBindingDispositionIdempotentReplay) {
+		existing, findErr := s.repo.GetBindingDispositionByActivityID(ctx, d.BindingID, kind, *d.ActivityID)
+		if findErr != nil {
+			return domain.BindingDisposition{}, findErr
+		}
+		if !sameBindingDisposition(existing, d, effectiveAtProvided) {
+			return domain.BindingDisposition{}, domain.ErrRightsDisposition
+		}
+		return existing, nil
+	}
 	return d, err
+}
+
+func sameBindingDisposition(existing, requested domain.BindingDisposition, compareEffectiveAt bool) bool {
+	if existing.BindingID != requested.BindingID || existing.Disposition != requested.Disposition || (compareEffectiveAt && !existing.EffectiveAt.Equal(requested.EffectiveAt)) || existing.Reason != requested.Reason {
+		return false
+	}
+	if (existing.SupersededBy == nil) != (requested.SupersededBy == nil) || (existing.EvidenceID == nil) != (requested.EvidenceID == nil) || (existing.ActorID == nil) != (requested.ActorID == nil) {
+		return false
+	}
+	if existing.SupersededBy != nil && *existing.SupersededBy != *requested.SupersededBy {
+		return false
+	}
+	if existing.EvidenceID != nil && *existing.EvidenceID != *requested.EvidenceID {
+		return false
+	}
+	return existing.ActorID == nil || *existing.ActorID == *requested.ActorID
 }
 
 func (s *Service) CreateDelegationChain(ctx context.Context, cmd CreateDelegationChainCommand) (domain.DelegationChain, error) {
@@ -122,16 +152,21 @@ func (s *Service) FinalizeDelegationChain(ctx context.Context, cmd FinalizeDeleg
 	return chain, err
 }
 
-func (s *Service) DisposeDelegation(ctx context.Context, cmd DisposeDelegationCommand) error {
+func (s *Service) DisposeDelegation(ctx context.Context, cmd DisposeDelegationCommand) (domain.DelegationDisposition, error) {
 	kind := strings.ToUpper(strings.TrimSpace(cmd.Disposition))
 	if kind != "REVOKED" && kind != "INVALIDATED" && kind != "SUPERSEDED" || strings.TrimSpace(cmd.Reason) == "" {
-		return domain.ErrRightsDisposition
+		return domain.DelegationDisposition{}, domain.ErrRightsDisposition
 	}
+	effectiveAtProvided := !cmd.EffectiveAt.IsZero()
 	if cmd.EffectiveAt.IsZero() {
 		cmd.EffectiveAt = time.Now().UTC()
 	}
-	disposition := domain.DelegationDisposition{ID: uuid.New(), ChainID: cmd.ChainID, EdgeID: cmd.EdgeID, Disposition: kind, EffectiveAt: cmd.EffectiveAt.UTC(), Reason: strings.TrimSpace(cmd.Reason), EvidenceID: cmd.EvidenceID, ActorID: cmd.ActorID}
-	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+	if cmd.ActivityID == nil {
+		id := uuid.New()
+		cmd.ActivityID = &id
+	}
+	disposition := domain.DelegationDisposition{ID: uuid.New(), ChainID: cmd.ChainID, EdgeID: cmd.EdgeID, Disposition: kind, EffectiveAt: cmd.EffectiveAt.UTC(), Reason: strings.TrimSpace(cmd.Reason), EvidenceID: cmd.EvidenceID, ActivityID: cmd.ActivityID, ActorID: cmd.ActorID}
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		var workspace uuid.UUID
 		if err := tx.QueryRow(ctx, `SELECT workspace_id FROM grantor_authority_delegation_chain WHERE id=$1 FOR SHARE`, cmd.ChainID).Scan(&workspace); err != nil {
 			return err
@@ -152,4 +187,31 @@ func (s *Service) DisposeDelegation(ctx context.Context, cmd DisposeDelegationCo
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &workspace, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: action, ObjectType: "GRANTOR_AUTHORITY_DELEGATION_DISPOSITION", ObjectID: disposition.ID, AfterState: map[string]any{"chainId": cmd.ChainID, "edgeId": cmd.EdgeID, "disposition": kind}, TraceID: cmd.TraceID})
 	})
+	if errors.Is(err, infrastructure.ErrDelegationDispositionIdempotentReplay) {
+		existing, findErr := s.repo.GetDelegationDispositionByActivityID(ctx, cmd.ChainID, kind, *disposition.ActivityID)
+		if findErr != nil {
+			return domain.DelegationDisposition{}, findErr
+		}
+		if !sameDelegationDisposition(existing, disposition, effectiveAtProvided) {
+			return domain.DelegationDisposition{}, domain.ErrRightsDisposition
+		}
+		return existing, nil
+	}
+	return disposition, err
+}
+
+func sameDelegationDisposition(existing, requested domain.DelegationDisposition, compareEffectiveAt bool) bool {
+	if existing.ChainID != requested.ChainID || existing.Disposition != requested.Disposition || (compareEffectiveAt && !existing.EffectiveAt.Equal(requested.EffectiveAt)) || existing.Reason != requested.Reason {
+		return false
+	}
+	if (existing.EdgeID == nil) != (requested.EdgeID == nil) || (existing.EvidenceID == nil) != (requested.EvidenceID == nil) || (existing.ActorID == nil) != (requested.ActorID == nil) {
+		return false
+	}
+	if existing.EdgeID != nil && *existing.EdgeID != *requested.EdgeID {
+		return false
+	}
+	if existing.EvidenceID != nil && *existing.EvidenceID != *requested.EvidenceID {
+		return false
+	}
+	return existing.ActorID == nil || *existing.ActorID == *requested.ActorID
 }
