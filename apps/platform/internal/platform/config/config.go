@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type Config struct {
@@ -11,11 +12,18 @@ type Config struct {
 	HTTPAddr         string
 	PostgresDSN      string
 	IndustryPackRoot string
+	RightsAPI        RightsAPIConfig
 	Redis            RedisConfig
 	Storage          StorageConfig
 	OpenMetadata     OpenMetadataConfig
 	Hop              HopConfig
 	Splink           SplinkConfig
+}
+
+type RightsAPIConfig struct {
+	Token        string
+	ActorID      string
+	WorkspaceIDs []string
 }
 
 type RedisConfig struct {
@@ -90,6 +98,11 @@ func Load() (Config, error) {
 		HTTPAddr:         stringEnv("APP_HTTP_ADDR", ":8080"),
 		PostgresDSN:      stringEnv("POSTGRES_DSN", "postgres://postgres:postgres@localhost:5432/data_product_platform?sslmode=disable"),
 		IndustryPackRoot: stringEnv("INDUSTRY_PACK_ROOT", "../../industry-packs"),
+		RightsAPI: RightsAPIConfig{
+			Token:        os.Getenv("RIGHTS_API_TOKEN"),
+			ActorID:      os.Getenv("RIGHTS_API_ACTOR_ID"),
+			WorkspaceIDs: stringListEnv("RIGHTS_API_WORKSPACE_IDS"),
+		},
 		Redis: RedisConfig{
 			Addr:     stringEnv("REDIS_ADDR", "localhost:6379"),
 			Password: os.Getenv("REDIS_PASSWORD"),
@@ -139,6 +152,9 @@ func Load() (Config, error) {
 	if cfg.IndustryPackRoot == "" {
 		return Config{}, fmt.Errorf("INDUSTRY_PACK_ROOT must not be empty")
 	}
+	if strings.EqualFold(cfg.Environment, "production") && (cfg.RightsAPI.Token == "" || cfg.RightsAPI.ActorID == "" || len(cfg.RightsAPI.WorkspaceIDs) == 0) {
+		return Config{}, fmt.Errorf("RIGHTS_API_TOKEN, RIGHTS_API_ACTOR_ID, and RIGHTS_API_WORKSPACE_IDS must be configured in production")
+	}
 	if cfg.OpenMetadata.Enabled {
 		if cfg.OpenMetadata.BaseURL == "" {
 			return Config{}, fmt.Errorf("OPENMETADATA_BASE_URL must not be empty when OpenMetadata is enabled")
@@ -178,6 +194,17 @@ func stringEnv(key, fallback string) string {
 		return value
 	}
 	return fallback
+}
+
+func stringListEnv(key string) []string {
+	values := strings.Split(os.Getenv(key), ",")
+	result := make([]string, 0, len(values))
+	for _, value := range values {
+		if value = strings.TrimSpace(value); value != "" {
+			result = append(result, value)
+		}
+	}
+	return result
 }
 
 func intEnv(key string, fallback int) (int, error) {

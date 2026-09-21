@@ -97,7 +97,10 @@ func (h *Handler) createDelegationChain(w http.ResponseWriter, r *http.Request) 
 		httpserver.WriteError(w, r, 400, "INVALID_RIGHTS_DECLARATION_ID", "sourceDeclarationId must be a UUID", nil)
 		return
 	}
-	actor, _ := parseActorID(r)
+	actor, ok := h.authorizeWorkspace(w, r, workspace)
+	if !ok {
+		return
+	}
 	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("grantor-delegation-chain-create:"+workspace.String()+":"+idempotencyKey))
 	cmd := application.CreateDelegationChainCommand{WorkspaceID: workspace, SourceDeclarationID: source, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())}
 	for index, value := range body.Edges {
@@ -130,7 +133,15 @@ func (h *Handler) finalizeDelegationChain(w http.ResponseWriter, r *http.Request
 	if !ok {
 		return
 	}
-	actor, _ := parseActorID(r)
+	chainRecord, e := h.repo.GetDelegationChain(r.Context(), id)
+	if e != nil {
+		httpserver.WriteError(w, r, 400, "DELEGATION_CHAIN_FINALIZE_FAILED", e.Error(), nil)
+		return
+	}
+	actor, ok := h.authorizeWorkspace(w, r, chainRecord.WorkspaceID)
+	if !ok {
+		return
+	}
 	chain, e := h.service.FinalizeDelegationChain(r.Context(), application.FinalizeDelegationChainCommand{ChainID: id, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
 	if e != nil {
 		httpserver.WriteError(w, r, 400, "DELEGATION_CHAIN_FINALIZE_FAILED", e.Error(), nil)
@@ -142,6 +153,11 @@ func (h *Handler) finalizeDelegationChain(w http.ResponseWriter, r *http.Request
 func (h *Handler) disposeDelegation(w http.ResponseWriter, r *http.Request) {
 	id, ok := parsePathUUID(w, r, "chainId", "INVALID_DELEGATION_CHAIN_ID")
 	if !ok {
+		return
+	}
+	chainRecord, e := h.repo.GetDelegationChain(r.Context(), id)
+	if e != nil {
+		httpserver.WriteError(w, r, 400, "DELEGATION_DISPOSITION_FAILED", e.Error(), nil)
 		return
 	}
 	var body struct {
@@ -172,7 +188,10 @@ func (h *Handler) disposeDelegation(w http.ResponseWriter, r *http.Request) {
 	if body.EffectiveAt != nil {
 		at = body.EffectiveAt.UTC()
 	}
-	actor, _ := parseActorID(r)
+	actor, ok := h.authorizeWorkspace(w, r, chainRecord.WorkspaceID)
+	if !ok {
+		return
+	}
 	kind := strings.ToUpper(strings.TrimSpace(body.Disposition))
 	edgeKey := "chain"
 	if edgeID != nil {
@@ -197,9 +216,8 @@ func (h *Handler) createRightsDeclaration(w http.ResponseWriter, r *http.Request
 	if !ok {
 		return
 	}
-	actor, err := parseActorID(r)
-	if err != nil {
-		httpserver.WriteError(w, r, 400, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
+	actor, ok := h.authorizeWorkspace(w, r, workspace)
+	if !ok {
 		return
 	}
 	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
@@ -242,9 +260,13 @@ func (h *Handler) verifyDeclaration(w http.ResponseWriter, r *http.Request, outc
 	if !ok {
 		return
 	}
-	actor, err := parseActorID(r)
+	declarationRecord, err := h.repo.GetRightsDeclaration(r.Context(), id)
 	if err != nil {
-		httpserver.WriteError(w, r, 400, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
+		httpserver.WriteError(w, r, 400, "RIGHTS_DECLARATION_VERIFY_FAILED", err.Error(), nil)
+		return
+	}
+	actor, ok := h.authorizeWorkspace(w, r, declarationRecord.WorkspaceID)
+	if !ok {
 		return
 	}
 	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
@@ -289,6 +311,11 @@ func (h *Handler) disposeDeclaration(w http.ResponseWriter, r *http.Request, kin
 	if !ok {
 		return
 	}
+	declarationRecord, err := h.repo.GetRightsDeclaration(r.Context(), id)
+	if err != nil {
+		httpserver.WriteError(w, r, 400, "RIGHTS_DECLARATION_DISPOSITION_FAILED", err.Error(), nil)
+		return
+	}
 	var body struct {
 		Reason       string     `json:"reason"`
 		EffectiveAt  *time.Time `json:"effectiveAt"`
@@ -303,7 +330,10 @@ func (h *Handler) disposeDeclaration(w http.ResponseWriter, r *http.Request, kin
 		httpserver.WriteError(w, r, 400, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
 		return
 	}
-	actor, _ := parseActorID(r)
+	actor, ok := h.authorizeWorkspace(w, r, declarationRecord.WorkspaceID)
+	if !ok {
+		return
+	}
 	var replacement *uuid.UUID
 	if strings.TrimSpace(body.SupersededBy) != "" {
 		v, e := uuid.Parse(body.SupersededBy)
@@ -360,7 +390,10 @@ func (h *Handler) bindAuthorizationProvenance(w http.ResponseWriter, r *http.Req
 		httpserver.WriteError(w, r, 400, "INVALID_RIGHTS_DECLARATION_ID", "rightsDeclarationId must be a UUID", nil)
 		return
 	}
-	actor, _ := parseActorID(r)
+	actor, ok := h.authorizeWorkspace(w, r, workspace)
+	if !ok {
+		return
+	}
 	at := time.Now().UTC()
 	if body.AsOf != nil {
 		at = body.AsOf.UTC()
@@ -422,7 +455,15 @@ func (h *Handler) disposeAuthorizationProvenanceBinding(w http.ResponseWriter, r
 	if body.EffectiveAt != nil {
 		at = body.EffectiveAt.UTC()
 	}
-	actor, _ := parseActorID(r)
+	workspace, err := h.repo.GetBindingWorkspace(r.Context(), bindingID)
+	if err != nil {
+		httpserver.WriteError(w, r, 400, "BINDING_DISPOSITION_FAILED", err.Error(), nil)
+		return
+	}
+	actor, ok := h.authorizeWorkspace(w, r, workspace)
+	if !ok {
+		return
+	}
 	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("authorization-provenance-binding-disposition:"+kind+":"+bindingID.String()+":"+idempotencyKey))
 	d, err := h.service.DisposeAuthorizationProvenanceBinding(r.Context(), application.DisposeAuthorizationProvenanceBindingCommand{BindingID: bindingID, Disposition: kind, EffectiveAt: at, Reason: body.Reason, SupersededBy: replacement, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
 	if err != nil {
@@ -505,7 +546,10 @@ func (h *Handler) computeEffectiveRights(w http.ResponseWriter, r *http.Request)
 		httpserver.WriteError(w, r, 400, "INVALID_DATASET_VERSION_ID", "targetDatasetVersionId must be a UUID", nil)
 		return
 	}
-	actor, _ := parseActorID(r)
+	actor, ok := h.authorizeWorkspace(w, r, workspace)
+	if !ok {
+		return
+	}
 	at := time.Now().UTC()
 	if body.AsOf != nil {
 		at = body.AsOf.UTC()

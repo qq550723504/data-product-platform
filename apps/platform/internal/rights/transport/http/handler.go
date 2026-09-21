@@ -16,12 +16,17 @@ import (
 )
 
 type Handler struct {
-	service *application.Service
-	repo    *infrastructure.PostgresRepository
+	service    *application.Service
+	repo       *infrastructure.PostgresRepository
+	authorizer Authorizer
 }
 
-func NewHandler(service *application.Service, repo *infrastructure.PostgresRepository) *Handler {
-	return &Handler{service: service, repo: repo}
+func NewHandler(service *application.Service, repo *infrastructure.PostgresRepository, authorizers ...Authorizer) *Handler {
+	var authorizer Authorizer = staticAuthorizer{}
+	if len(authorizers) > 0 && authorizers[0] != nil {
+		authorizer = authorizers[0]
+	}
+	return &Handler{service: service, repo: repo, authorizer: authorizer}
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
@@ -200,6 +205,10 @@ func (h *Handler) createSnapshot(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_WORKSPACE_ID", "workspaceId must be a UUID", nil)
 		return
 	}
+	actorID, ok := h.authorizeWorkspace(w, r, workspaceID)
+	if !ok {
+		return
+	}
 	var releaseID *uuid.UUID
 	if strings.TrimSpace(req.ProductReleaseID) != "" {
 		parsed, err := uuid.Parse(req.ProductReleaseID)
@@ -217,11 +226,6 @@ func (h *Handler) createSnapshot(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		authorizationIDs = append(authorizationIDs, parsed)
-	}
-	actorID, err := parseActorID(r)
-	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
-		return
 	}
 	asOf := time.Now().UTC()
 	if req.AsOf != nil {
