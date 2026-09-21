@@ -41,6 +41,8 @@ function badgeTone(value: string): "neutral" | "good" | "warn" | "bad" | "info" 
     case "CONFIRMED":
     case "AUTO_CONFIRMED":
     case "HEALTHY":
+    case "CERTIFIED":
+    case "ALLOWED":
       return "good";
     case "RUNNING":
     case "SUBMITTING":
@@ -52,12 +54,16 @@ function badgeTone(value: string): "neutral" | "good" | "warn" | "bad" | "info" 
     case "QUEUED":
     case "UNRESOLVED":
     case "SUPERSEDED":
+    case "PASS_WITH_WARNING":
+    case "NOT_CERTIFIED":
       return "warn";
     case "FAILED":
     case "REJECTED":
     case "INVALIDATED":
     case "CONFLICT":
     case "UNHEALTHY":
+    case "BLOCKED":
+    case "REVOKED":
       return "bad";
     default:
       return "neutral";
