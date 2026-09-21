@@ -21,6 +21,7 @@ type Query = {
   delivery?: string;
   scopeType?: string;
   scopeRef?: string;
+  findingsOffset?: string;
 };
 
 function firstValue(values?: string[]): string {
@@ -78,6 +79,18 @@ export default async function DatasetVersionDetailPage({
   }
   const { id, versionId } = await params;
   const query = await searchParams;
+  const findingsOffset = Math.max(0, Number.parseInt(query.findingsOffset ?? "0", 10) || 0);
+  const findingsLimit = 50;
+  const findingPageHref = (offset: number) => {
+    const next = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) {
+      if (value) next.set(key, value);
+    }
+    if (offset > 0) next.set("findingsOffset", String(offset));
+    else next.delete("findingsOffset");
+    const suffix = next.toString();
+    return `/datasets/${id}/versions/${versionId}${suffix ? `?${suffix}` : ""}`;
+  };
 
   try {
     const [dataset, version, quality, history] = await Promise.all([
@@ -113,7 +126,7 @@ export default async function DatasetVersionDetailPage({
       && (requested.scopeType.trim().toUpperCase() === "ALL_RESOURCE" || requested.scopeRef.trim() !== "");
     const eligibility = canCheck ? await platform.deliveryEligibility(versionId, requested) : null;
     const latestAssessment = quality.items[0];
-    const latestReport = latestAssessment ? await platform.qualityReport(latestAssessment.id, 50, 0) : null;
+    const latestReport = latestAssessment ? await platform.qualityReport(latestAssessment.id, findingsLimit, findingsOffset) : null;
     const evidenceCertification = eligibility?.certification.current
       ?? history.items.find((item) => item.profile.id === selectedProfile?.id);
 
@@ -200,6 +213,22 @@ export default async function DatasetVersionDetailPage({
                     </table>
                   </div>
                 )}
+                {latestReport.findings.page.total > findingsLimit ? (
+                  <div className="panel-header" style={{ marginTop: 14 }}>
+                    <span className="eyebrow">
+                      {latestReport.findings.page.offset + 1}–{Math.min(latestReport.findings.page.offset + latestReport.findings.items.length, latestReport.findings.page.total)}
+                      {" / "}{latestReport.findings.page.total}
+                    </span>
+                    <div className="badge-row">
+                      {latestReport.findings.page.offset > 0 ? (
+                        <Link href={findingPageHref(Math.max(0, latestReport.findings.page.offset - findingsLimit))}>上一页</Link>
+                      ) : null}
+                      {latestReport.findings.page.offset + latestReport.findings.items.length < latestReport.findings.page.total ? (
+                        <Link href={findingPageHref(latestReport.findings.page.offset + findingsLimit)}>下一页</Link>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
                 <div className="panel-header" style={{ marginTop: 18 }}>
                   <h3>Quality Evidence / Audit</h3>
                   <span className="eyebrow">{latestReport.evidence.length} Evidence · {latestReport.auditEvents.length} Audit</span>
