@@ -15,6 +15,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
 	certificationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
@@ -146,6 +147,30 @@ func (s *CertificationService) Evaluate(ctx context.Context, cmd EvaluateDataset
 		if err := s.certificationRepo.InsertCertification(ctx, tx, candidate); err != nil {
 			return err
 		}
+		decisionEvidenceID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("dataset-certification-evidence:"+candidate.ID.String()))
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			ID:           decisionEvidenceID,
+			WorkspaceID:  candidate.WorkspaceID,
+			EvidenceType: "DATASET_CERTIFICATION_DECISION",
+			Title:        "Dataset certification decision",
+			SourceType:   "DATASET_CERTIFICATION",
+			SourceID:     &candidate.ID,
+			Metadata: map[string]any{
+				"certificationId":  candidate.ID,
+				"datasetVersionId": candidate.DatasetVersionID,
+				"profileId":        candidate.Profile.ID,
+				"decision":         candidate.Decision,
+				"blockerCodes":     blockerCodes(candidate.Blockers),
+			},
+			CreatedAt: candidate.IssuedAt,
+			CreatedBy: candidate.ActorID,
+		}, evidence.Relation{
+			ObjectType:   "DATASET_CERTIFICATION",
+			ObjectID:     candidate.ID,
+			RelationType: "DECISION_EVIDENCE",
+		}); err != nil {
+			return err
+		}
 		if cmd.CostActivity != nil {
 			activity := *cmd.CostActivity
 			activity.WorkspaceID = candidate.WorkspaceID
@@ -161,10 +186,7 @@ func (s *CertificationService) Evaluate(ctx context.Context, cmd EvaluateDataset
 			eventType = "DatasetCertified"
 			action = "DATASET_CERTIFIED"
 		}
-		blockerCodes := make([]string, 0, len(candidate.Blockers))
-		for _, blocker := range candidate.Blockers {
-			blockerCodes = append(blockerCodes, blocker.Code)
-		}
+		blockerCodes := blockerCodes(candidate.Blockers)
 		event, err := outbox.NewEvent("DATASET_CERTIFICATION", candidate.ID, eventType, map[string]any{
 			"certificationId":  candidate.ID,
 			"workspaceId":      candidate.WorkspaceID,
@@ -295,6 +317,28 @@ func (s *CertificationService) ChangeDisposition(ctx context.Context, cmd Change
 		if err := s.certificationRepo.InsertDisposition(ctx, tx, candidate); err != nil {
 			return err
 		}
+		decisionEvidenceID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("certification-disposition-evidence:"+candidate.ID.String()))
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			ID:           decisionEvidenceID,
+			WorkspaceID:  candidate.WorkspaceID,
+			EvidenceType: "CERTIFICATION_DISPOSITION",
+			Title:        "Certification disposition",
+			SourceType:   "CERTIFICATION_DISPOSITION",
+			SourceID:     &candidate.ID,
+			Metadata: map[string]any{
+				"dispositionId":   candidate.ID,
+				"certificationId": candidate.CertificationID,
+				"disposition":     candidate.Disposition,
+				"effectiveAt":     candidate.EffectiveAt,
+			},
+			CreatedBy: candidate.ActorID,
+		}, evidence.Relation{
+			ObjectType:   "CERTIFICATION_DISPOSITION",
+			ObjectID:     candidate.ID,
+			RelationType: "DISPOSITION_EVIDENCE",
+		}); err != nil {
+			return err
+		}
 		if cmd.CostActivity != nil {
 			activity := *cmd.CostActivity
 			activity.WorkspaceID = candidate.WorkspaceID
@@ -344,6 +388,14 @@ func (s *CertificationService) ChangeDisposition(ctx context.Context, cmd Change
 		return nil
 	})
 	return result, err
+}
+
+func blockerCodes(blockers []domain.Blocker) []string {
+	codes := make([]string, 0, len(blockers))
+	for _, blocker := range blockers {
+		codes = append(codes, blocker.Code)
+	}
+	return codes
 }
 
 func dispositionFingerprint(cmd ChangeCertificationDispositionCommand) (string, error) {
