@@ -282,7 +282,8 @@ CREATE TABLE effective_rights_input (
     input_hash            varchar(64) NOT NULL,
     CONSTRAINT uq_effective_rights_input UNIQUE(snapshot_id, input_dataset_version_id),
     CONSTRAINT ck_effective_rights_input_provenance CHECK (
-        rights_snapshot_id IS NOT NULL OR declaration_id IS NOT NULL OR binding_id IS NOT NULL
+        (rights_snapshot_id IS NULL AND declaration_id IS NULL AND binding_id IS NULL)
+        OR declaration_id IS NOT NULL
     )
 );
 
