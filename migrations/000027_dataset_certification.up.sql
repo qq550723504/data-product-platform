@@ -176,12 +176,11 @@ BEGIN
     END IF;
 
     IF NEW.decision = 'CERTIFIED' AND profile_rights_required AND (
-        NEW.rights_snapshot_id IS NULL OR
         NEW.effective_rights_snapshot_id IS NULL OR
         NEW.effective_rights_snapshot_hash IS NULL OR
         NEW.frozen_rights_context_hash IS NULL
     ) THEN
-        RAISE EXCEPTION 'DatasetCertification profile requires frozen rights evidence';
+        RAISE EXCEPTION 'DatasetCertification profile requires frozen EffectiveRights evidence';
     END IF;
     IF NEW.decision = 'CERTIFIED' AND profile_compliance_required AND NEW.compliance_result_id IS NULL THEN
         RAISE EXCEPTION 'DatasetCertification profile requires compliance evidence';
