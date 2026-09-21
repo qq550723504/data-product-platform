@@ -229,6 +229,127 @@ export type ProductRelease = {
   releasedAt?: string;
 };
 
+export type QualityDimensionSummary = {
+  dimension: string;
+  status: string;
+  ruleCount: number;
+  evaluatedCount: number;
+  failedCount: number;
+};
+
+export type QualityAssessment = {
+  id: string;
+  workspaceId: string;
+  datasetVersionId: string;
+  ruleSetRef: string;
+  ruleSetVersion: string;
+  ruleSetContentSha256: string;
+  evaluatorName: string;
+  evaluatorVersion: string;
+  gateDecision: string;
+  metrics: Record<string, unknown>;
+  dimensionSummary: Record<string, QualityDimensionSummary>;
+  createdAt: string;
+};
+
+export type Applicability = {
+  mode: "ANY" | "EXPLICIT" | string;
+  values?: string[];
+};
+
+export type ScopeApplicability = {
+  mode: "ANY" | "EXPLICIT" | string;
+  values?: Array<{ type: string; ref: string }>;
+};
+
+export type CertificationProfile = {
+  id: string;
+  workspaceId: string;
+  profileRef: string;
+  code: string;
+  name: string;
+  version: string;
+  contentSha256: string;
+  purpose: Applicability;
+  actions: Applicability;
+  consumers: Applicability;
+  delivery: Applicability;
+  requiredQualityDimensions: string[];
+  requiredCriticalRules: string[];
+  qualityGateRequired: boolean;
+  rights: {
+    required: boolean;
+    purpose: Applicability;
+    actions: Applicability;
+    consumers: Applicability;
+    scopes: ScopeApplicability;
+  };
+  complianceRequired: boolean;
+  contractRequired: boolean;
+  contractCode?: string;
+  traceabilityRequired: boolean;
+  evidenceRequired: boolean;
+};
+
+export type CertificationBlocker = { code: string; detail: string };
+
+export type CertificationDisposition = {
+  id: string;
+  disposition: string;
+  effectiveAt: string;
+  reason: string;
+  supersededByCertificationId?: string;
+  evidenceSnapshotId?: string;
+};
+
+export type DatasetCertification = {
+  id: string;
+  workspaceId: string;
+  datasetVersionId: string;
+  qualityAssessmentId: string;
+  decision: string;
+  blockers: CertificationBlocker[];
+  reason: string;
+  issuedAt: string;
+  rightsSnapshotId?: string;
+  effectiveRightsSnapshotId?: string;
+  effectiveRightsSnapshotHash?: string;
+  frozenRightsContextHash?: string;
+  complianceResultId?: string;
+  contractVersionId?: string;
+  traceabilityEvidenceId?: string;
+  evidenceSnapshotId?: string;
+  profile: CertificationProfile;
+  dispositions: CertificationDisposition[];
+};
+
+export type CertificationHistory = {
+  workspaceId: string;
+  datasetVersionId: string;
+  asOf: string;
+  items: DatasetCertification[];
+};
+
+export type DeliveryEligibility = {
+  allowed: boolean;
+  blockers: CertificationBlocker[];
+  datasetVersion: { status: string; allowed: boolean; blockers: CertificationBlocker[] };
+  certification: { allowed: boolean; blockers: CertificationBlocker[]; current?: DatasetCertification | null };
+  entitlement: {
+    allowed: boolean;
+    blockers: CertificationBlocker[];
+    checks: Array<{
+      dataResourceId: string;
+      path: string;
+      decision: string;
+      reason: string;
+      authorizationId?: string;
+      declarationId?: string;
+      bindingId?: string;
+    }>;
+  };
+};
+
 export type ReleaseCheckStatus = "PASS" | "FAIL" | "PENDING" | string;
 export type ReleaseReadiness = {
   releaseId: string;
@@ -302,6 +423,31 @@ export const platform = {
     apiGet<PageResult<DatasetVersion>>(
       workspacePath(`/datasets/${encodeURIComponent(id)}/versions?limit=${limit}&offset=${offset}`),
     ),
+  datasetVersion: (versionId: string) =>
+    apiGet<DatasetVersion>(`/api/v1/dataset-versions/${encodeURIComponent(versionId)}`),
+  qualityAssessments: (versionId: string, limit = 25, offset = 0) =>
+    apiGet<{ datasetVersionId: string; items: QualityAssessment[]; page: PageMeta }>(
+      `/api/v1/dataset-versions/${encodeURIComponent(versionId)}/quality-assessments?limit=${limit}&offset=${offset}`,
+    ),
+  certificationHistory: (versionId: string) =>
+    apiGet<CertificationHistory>(
+      workspacePath(`/dataset-versions/${encodeURIComponent(versionId)}/certifications`),
+    ),
+  deliveryEligibility: (
+    versionId: string,
+    input: { profileId: string; consumer: string; purpose: string; action: string; delivery: string },
+  ) => {
+    const query = new URLSearchParams({
+      profileId: input.profileId,
+      consumer: input.consumer,
+      purpose: input.purpose,
+      action: input.action,
+      delivery: input.delivery,
+    });
+    return apiGet<DeliveryEligibility>(
+      workspacePath(`/dataset-versions/${encodeURIComponent(versionId)}/delivery-eligibility?${query.toString()}`),
+    );
+  },
   executions: (limit = 100, offset = 0) =>
     apiGet<PageResult<ExecutionSummary>>(workspacePath(`/executions?limit=${limit}&offset=${offset}`)),
   execution: (id: string) => apiGet<ExecutionDetail>(`/api/v1/executions/${encodeURIComponent(id)}`),
