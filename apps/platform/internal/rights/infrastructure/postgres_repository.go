@@ -223,17 +223,23 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 				declarationIDs = append(declarationIDs, declarationID)
 			}
 			rows.Close()
-			if len(bindingIDs) != 1 {
+			if len(bindingIDs) == 0 {
 				return domain.ErrAuthorizationInvalid
 			}
-			if _, err := tx.Exec(ctx, `INSERT INTO rights_snapshot_provenance_binding(rights_snapshot_id,binding_id) VALUES ($1,$2)`, snapshot.ID, bindingIDs[0]); err != nil {
-				return fmt.Errorf("bind snapshot provenance: %w", err)
+			seenDeclarations := make(map[uuid.UUID]struct{}, len(declarationIDs))
+			for i := range bindingIDs {
+				if _, err := tx.Exec(ctx, `INSERT INTO rights_snapshot_provenance_binding(rights_snapshot_id,binding_id) VALUES ($1,$2)`, snapshot.ID, bindingIDs[i]); err != nil {
+					return fmt.Errorf("bind snapshot provenance: %w", err)
+				}
+				if _, err := tx.Exec(ctx, `INSERT INTO rights_snapshot_declaration(rights_snapshot_id,declaration_id) VALUES ($1,$2) ON CONFLICT DO NOTHING`, snapshot.ID, declarationIDs[i]); err != nil {
+					return fmt.Errorf("bind snapshot declaration: %w", err)
+				}
+				authorization.BindingIDs = append(authorization.BindingIDs, bindingIDs[i])
+				if _, exists := seenDeclarations[declarationIDs[i]]; !exists {
+					authorization.DeclarationIDs = append(authorization.DeclarationIDs, declarationIDs[i])
+					seenDeclarations[declarationIDs[i]] = struct{}{}
+				}
 			}
-			if _, err := tx.Exec(ctx, `INSERT INTO rights_snapshot_declaration(rights_snapshot_id,declaration_id) VALUES ($1,$2) ON CONFLICT DO NOTHING`, snapshot.ID, declarationIDs[0]); err != nil {
-				return fmt.Errorf("bind snapshot declaration: %w", err)
-			}
-			authorization.BindingIDs = append(authorization.BindingIDs, bindingIDs[0])
-			authorization.DeclarationIDs = append(authorization.DeclarationIDs, declarationIDs[0])
 		}
 	}
 	var hashMaterial []byte
