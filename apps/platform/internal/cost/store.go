@@ -13,6 +13,11 @@ import (
 
 const QualityEngineInvocation = "QUALITY_ENGINE_INVOCATION"
 
+const (
+	CertificationEvaluationActivity  = "CERTIFICATION_EVALUATION"
+	CertificationDispositionActivity = "CERTIFICATION_DISPOSITION"
+)
+
 type Event struct {
 	ID          uuid.UUID
 	WorkspaceID uuid.UUID
@@ -90,6 +95,101 @@ type QualityAssessmentAttemptActivity struct {
 	PricingMode string
 	Metadata    map[string]any
 	OccurredAt  time.Time
+}
+
+// CertificationActivity is an optional physical evaluation/approval activity.
+// Exactly one typed subject is required. CostType is the component key in the
+// existing (workspace, activity_id, cost_type) idempotency boundary.
+type CertificationActivity struct {
+	WorkspaceID     uuid.UUID
+	CertificationID *uuid.UUID
+	DispositionID   *uuid.UUID
+	ActivityID      uuid.UUID
+	CostType        string
+	Quantity        float64
+	Unit            string
+	Amount          *float64
+	Currency        string
+	PricingMode     string
+	Metadata        map[string]any
+	OccurredAt      time.Time
+}
+
+func AppendCertificationActivity(ctx context.Context, tx pgx.Tx, activity CertificationActivity) error {
+	if activity.WorkspaceID == uuid.Nil || activity.ActivityID == uuid.Nil {
+		return errors.New("certification cost activity requires workspace and activity IDs")
+	}
+	if (activity.CertificationID == nil) == (activity.DispositionID == nil) {
+		return errors.New("certification cost activity requires exactly one typed subject")
+	}
+	if activity.CostType == "" {
+		activity.CostType = CertificationEvaluationActivity
+		if activity.DispositionID != nil {
+			activity.CostType = CertificationDispositionActivity
+		}
+	}
+	if activity.Quantity <= 0 {
+		return errors.New("certification cost activity quantity must be positive")
+	}
+	if activity.Unit == "" {
+		activity.Unit = "certification"
+	}
+	if activity.PricingMode == "" {
+		activity.PricingMode = "ACTUAL"
+	}
+	if activity.OccurredAt.IsZero() {
+		activity.OccurredAt = time.Now().UTC()
+	}
+	if activity.Metadata == nil {
+		activity.Metadata = map[string]any{}
+	}
+	metadata, err := json.Marshal(activity.Metadata)
+	if err != nil {
+		return fmt.Errorf("marshal certification cost metadata: %w", err)
+	}
+
+	var costEventID uuid.UUID
+	err = tx.QueryRow(ctx, `
+		INSERT INTO cost_event (
+			id, workspace_id, execution_id, activity_id, cost_type, quantity, unit,
+			amount, currency, pricing_mode, metadata, occurred_at
+		) VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+		ON CONFLICT (workspace_id, activity_id, cost_type)
+		WHERE activity_id IS NOT NULL DO NOTHING
+		RETURNING id
+	`, uuid.New(), activity.WorkspaceID, activity.ActivityID, activity.CostType,
+		activity.Quantity, activity.Unit, activity.Amount, nullable(activity.Currency),
+		activity.PricingMode, metadata, activity.OccurredAt).Scan(&costEventID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		err = tx.QueryRow(ctx, `
+			SELECT id FROM cost_event WHERE workspace_id=$1 AND activity_id=$2 AND cost_type=$3
+		`, activity.WorkspaceID, activity.ActivityID, activity.CostType).Scan(&costEventID)
+	}
+	if err != nil {
+		return fmt.Errorf("append certification cost event: %w", err)
+	}
+
+	if _, err := tx.Exec(ctx, `
+		INSERT INTO cost_allocation(id, cost_event_id, dataset_certification_id, certification_disposition_id)
+		VALUES ($1,$2,$3,$4)
+		ON CONFLICT (cost_event_id) DO NOTHING
+	`, uuid.New(), costEventID, activity.CertificationID, activity.DispositionID); err != nil {
+		return fmt.Errorf("allocate certification cost event: %w", err)
+	}
+	var allocatedCertificationID, allocatedDispositionID *uuid.UUID
+	if err := tx.QueryRow(ctx, `
+		SELECT dataset_certification_id, certification_disposition_id
+		FROM cost_allocation WHERE cost_event_id=$1
+	`, costEventID).Scan(&allocatedCertificationID, &allocatedDispositionID); err != nil {
+		return fmt.Errorf("verify certification cost allocation: %w", err)
+	}
+	if activity.CertificationID != nil && (allocatedCertificationID == nil || *allocatedCertificationID != *activity.CertificationID) {
+		return fmt.Errorf("cost activity %s is allocated to a different certification", activity.ActivityID)
+	}
+	if activity.DispositionID != nil && (allocatedDispositionID == nil || *allocatedDispositionID != *activity.DispositionID) {
+		return fmt.Errorf("cost activity %s is allocated to a different certification disposition", activity.ActivityID)
+	}
+	return nil
 }
 
 // AppendQualityAssessmentActivity records the cost and its typed assessment
