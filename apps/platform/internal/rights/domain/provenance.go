@@ -125,6 +125,14 @@ func NewRightsDeclaration(spec RightsDeclarationSpec) (RightsDeclaration, error)
 	if consumerScope == "ANY" {
 		consumerRef = ""
 	}
+	if spec.EffectiveFrom != nil {
+		normalized := spec.EffectiveFrom.UTC().Round(time.Microsecond)
+		spec.EffectiveFrom = &normalized
+	}
+	if spec.EffectiveTo != nil {
+		normalized := spec.EffectiveTo.UTC().Round(time.Microsecond)
+		spec.EffectiveTo = &normalized
+	}
 	if spec.EffectiveFrom != nil && spec.EffectiveTo != nil && !spec.EffectiveTo.After(*spec.EffectiveFrom) {
 		return RightsDeclaration{}, ErrInvalidRightsDeclaration
 	}
