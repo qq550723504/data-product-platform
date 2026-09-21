@@ -317,6 +317,13 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 		return fmt.Errorf("DatasetVersion crosses certification workspace boundary")
 	}
 
+	// Lineage is append-only but can still grow concurrently. Hold a table SHARE
+	// lock through certification so a new edge cannot cross the lineage evidence
+	// read and the immutable certification insert.
+	if _, err := tx.Exec(ctx, "LOCK TABLE dataset_version_lineage IN SHARE MODE"); err != nil {
+		return fmt.Errorf("serialize DatasetVersion lineage for certification: %w", err)
+	}
+
 	if input.Rights != nil && input.Rights.EffectiveRightsSnapshotID != uuid.Nil {
 		rights := input.Rights
 		var status, rootHash, consumerRef, purpose string
