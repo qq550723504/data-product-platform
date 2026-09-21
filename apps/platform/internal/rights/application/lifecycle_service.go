@@ -77,6 +77,12 @@ func (s *Service) DisposeAuthorizationProvenanceBinding(ctx context.Context, cmd
 		if err := tx.QueryRow(ctx, `SELECT workspace_id,authorization_id,data_resource_id FROM authorization_provenance_binding WHERE id=$1 FOR SHARE`, d.BindingID).Scan(&workspace, &authorizationID, &resourceID); err != nil {
 			return err
 		}
+		if d.EvidenceID != nil {
+			var evidenceWorkspace uuid.UUID
+			if err := tx.QueryRow(ctx, `SELECT workspace_id FROM evidence WHERE id=$1`, *d.EvidenceID).Scan(&evidenceWorkspace); err != nil || evidenceWorkspace != workspace {
+				return domain.ErrRightsDisposition
+			}
+		}
 		if d.SupersededBy != nil {
 			var replacementWorkspace, replacementAuthorizationID, replacementResourceID uuid.UUID
 			if err := tx.QueryRow(ctx, `SELECT workspace_id,authorization_id,data_resource_id FROM authorization_provenance_binding WHERE id=$1 FOR SHARE`, *d.SupersededBy).Scan(&replacementWorkspace, &replacementAuthorizationID, &replacementResourceID); err != nil {
@@ -247,6 +253,12 @@ func (s *Service) DisposeDelegation(ctx context.Context, cmd DisposeDelegationCo
 		var workspace uuid.UUID
 		if err := tx.QueryRow(ctx, `SELECT workspace_id FROM grantor_authority_delegation_chain WHERE id=$1 FOR SHARE`, cmd.ChainID).Scan(&workspace); err != nil {
 			return err
+		}
+		if disposition.EvidenceID != nil {
+			var evidenceWorkspace uuid.UUID
+			if err := tx.QueryRow(ctx, `SELECT workspace_id FROM evidence WHERE id=$1`, *disposition.EvidenceID).Scan(&evidenceWorkspace); err != nil || evidenceWorkspace != workspace {
+				return domain.ErrRightsDisposition
+			}
 		}
 		if disposition.EdgeID != nil {
 			var edgeChainID uuid.UUID
