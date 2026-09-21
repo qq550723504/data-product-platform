@@ -306,7 +306,7 @@ func evaluateRights(requirement RightsRequirement, input EvaluationInput, add fu
 	if !rights.Coverage.Scopes.Covers(requirement.Scopes) {
 		add("RIGHTS_SCOPE_COVERAGE_MISSING", "frozen rights normalized scope coverage does not cover the profile")
 	}
-	if rights.RightsSnapshotID != uuid.Nil {
+	if rights.RightsSnapshotID != uuid.Nil && rights.RightsSnapshotFinalized {
 		id := rights.RightsSnapshotID
 		certification.RightsSnapshotID = &id
 	}

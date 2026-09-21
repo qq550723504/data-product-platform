@@ -69,6 +69,24 @@ func TestEvaluateRejectsMissingRightsAndComplianceFailure(t *testing.T) {
 	assertBlocker(t, certification.Blockers, "COMPLIANCE_NOT_PASSED")
 }
 
+func TestRejectedCertificationDoesNotFreezeUnfinalizedRightsSnapshot(t *testing.T) {
+	workspaceID, datasetVersionID := uuid.New(), uuid.New()
+	input := testInput(workspaceID, datasetVersionID)
+	input.Rights.RightsSnapshotFinalized = false
+	input.Rights.ActionDecisions["SHARE"] = "DENIED"
+
+	certification, err := Evaluate(testProfile(t), input)
+	if err != nil {
+		t.Fatalf("evaluate certification: %v", err)
+	}
+	if certification.Decision != DecisionRejected {
+		t.Fatalf("decision = %s, want REJECTED", certification.Decision)
+	}
+	if certification.RightsSnapshotID != nil {
+		t.Fatal("unfinalized RightsSnapshot was frozen into the certification")
+	}
+}
+
 func TestEvaluateCertifiesOnlyWhenAllFrozenEvidenceMatches(t *testing.T) {
 	workspaceID, datasetVersionID := uuid.New(), uuid.New()
 	certification, err := Evaluate(testProfile(t), testInput(workspaceID, datasetVersionID))
