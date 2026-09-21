@@ -138,7 +138,13 @@ func (b *Bridge) finalizeLocked(ctx context.Context, request workflowapp.Process
 			// same version row can be published rather than retrying a permanent
 			// "not usable" error forever.
 		case datasetdomain.VersionInvalid:
-			return workflowapp.ProcessingResult{}, fmt.Errorf("execution %s output DatasetVersion %s is not usable: %s", request.ExecutionID, existing.ID, existing.Status)
+			return workflowapp.ProcessingResult{}, workflowapp.NewManagedEngineError(
+				workflowapp.ManagedEngineOutputInvalid,
+				"finalize output",
+				false,
+				0,
+				fmt.Errorf("execution %s output DatasetVersion %s is not usable: %s", request.ExecutionID, existing.ID, existing.Status),
+			)
 		default:
 			return workflowapp.ProcessingResult{}, fmt.Errorf("execution %s output DatasetVersion %s has unsupported status: %s", request.ExecutionID, existing.ID, existing.Status)
 		}

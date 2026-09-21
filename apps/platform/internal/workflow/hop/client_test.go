@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -171,13 +172,13 @@ func TestHopStatusMapsTerminalStates(t *testing.T) {
 	}
 }
 
-func TestHopAdapterReportsWebAndHTTPFailures(t *testing.T) {
+func TestHopAdapterMapsProviderFailuresToPlatformCategories(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/hop/registerPipeline":
-			writeXML(w, `<webresult><result>ERROR</result><message>invalid pipeline</message><id></id></webresult>`)
+			writeXML(w, `<webresult><result>ERROR</result><message>invalid pipeline secret detail</message><id></id></webresult>`)
 		default:
-			http.Error(w, "server unavailable", http.StatusServiceUnavailable)
+			http.Error(w, "server unavailable secret detail", http.StatusServiceUnavailable)
 		}
 	}))
 	defer server.Close()
@@ -189,12 +190,86 @@ func TestHopAdapterReportsWebAndHTTPFailures(t *testing.T) {
 		Name:       "broken",
 		Definition: []byte(`<pipeline_configuration/>`),
 	})
-	if err == nil || !strings.Contains(err.Error(), "invalid pipeline") {
-		t.Fatalf("submit error = %v", err)
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineRejected, false, 0)
+	if strings.Contains(err.Error(), "invalid pipeline secret detail") || strings.Contains(err.Error(), "Hop") {
+		t.Fatalf("platform error leaked provider detail: %q", err.Error())
 	}
-	if _, err := client.Status(context.Background(), "broken", "run-x"); err == nil || !strings.Contains(err.Error(), "503") {
-		t.Fatalf("status error = %v", err)
+
+	_, err = client.Status(context.Background(), "broken", "run-x")
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineUnavailable, true, http.StatusServiceUnavailable)
+	if strings.Contains(err.Error(), "server unavailable secret detail") || strings.Contains(err.Error(), "Hop") {
+		t.Fatalf("platform error leaked provider response: %q", err.Error())
 	}
+}
+
+func TestHopSubmitRejectsReservedRunIdentityParametersBeforeRemoteCall(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		requests++
+		http.Error(w, "must not be called", http.StatusInternalServerError)
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	for _, reserved := range []string{"name", "ID", " xml "} {
+		_, err := client.Submit(context.Background(), workflowapp.ManagedSubmitRequest{
+			Name:       "pipeline",
+			Definition: []byte(`<pipeline_configuration/>`),
+			Parameters: map[string]string{reserved: "attacker-controlled"},
+		})
+		assertManagedEngineError(t, err, workflowapp.ManagedEngineInvalidRequest, false, 0)
+	}
+	if requests != 0 {
+		t.Fatalf("reserved parameter validation made %d remote requests, want 0", requests)
+	}
+}
+
+func TestHopBaseURLPreservesHostnameNamedHop(t *testing.T) {
+	var gotHost, gotPath string
+	httpClient := &http.Client{Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
+		gotHost = req.URL.Host
+		gotPath = req.URL.Path
+		return &http.Response{
+			StatusCode: http.StatusServiceUnavailable,
+			Header:     make(http.Header),
+			Body:       io.NopCloser(strings.NewReader("unavailable")),
+			Request:    req,
+		}, nil
+	})}
+	client, err := hop.NewClient("http://hop", "cluster", "secret", httpClient)
+	if err != nil {
+		t.Fatalf("create Hop client with hostname hop: %v", err)
+	}
+	_, _ = client.Submit(context.Background(), workflowapp.ManagedSubmitRequest{
+		Name:       "pipeline",
+		Definition: []byte(`<pipeline_configuration/>`),
+	})
+	if gotHost != "hop" || gotPath != "/hop/registerPipeline" {
+		t.Fatalf("request target = host %q path %q, want hop /hop/registerPipeline", gotHost, gotPath)
+	}
+}
+
+func assertManagedEngineError(t *testing.T, err error, kind workflowapp.ManagedEngineErrorKind, retryable bool, status int) {
+	t.Helper()
+	if err == nil {
+		t.Fatal("expected managed engine error")
+	}
+	var managed *workflowapp.ManagedEngineError
+	if !errors.As(err, &managed) {
+		t.Fatalf("error = %T %v, want ManagedEngineError", err, err)
+	}
+	if managed.Kind != kind || managed.Retryable != retryable || managed.StatusCode != status {
+		t.Fatalf("managed error = %+v, want kind=%s retryable=%t status=%d", managed, kind, retryable, status)
+	}
+}
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req)
 }
 
 func assertRunQuery(t *testing.T, query url.Values, name, runID string) {
