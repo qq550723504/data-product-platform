@@ -226,7 +226,7 @@ func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, bindi
 	}
 	var actions []string
 	var scopeType, scopeRef string
-	if err := tx.QueryRow(ctx, `SELECT data_resource_id,actions,scope_type,scope_ref FROM authorization_resource WHERE authorization_id=$1 AND data_resource_id=$2 AND scope_type IS NOT NULL`, binding.AuthorizationID, binding.DataResourceID).Scan(&resourceID, &actions, &scopeType, &scopeRef); err != nil {
+	if err := tx.QueryRow(ctx, `SELECT data_resource_id,actions,scope_type,scope_ref FROM authorization_resource WHERE authorization_id=$1 AND data_resource_id=$2 AND scope_type IS NOT NULL AND (NOT ('RAW_EXPORT'=ANY(actions)) OR raw_export_allowed)`, binding.AuthorizationID, binding.DataResourceID).Scan(&resourceID, &actions, &scopeType, &scopeRef); err != nil {
 		return domain.ErrInvalidBinding
 	}
 	if resourceID != binding.DataResourceID {
@@ -295,7 +295,18 @@ func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, bindi
 			return domain.ErrInvalidBinding
 		}
 		var lastDelegate string
-		rows, err := tx.Query(ctx, `SELECT delegator_ref,delegate_ref,data_resource_id,grantable_actions,grantable_purposes,scope_type,scope_ref FROM grantor_authority_delegation_edge WHERE chain_id=$1 ORDER BY ordinal`, *binding.DelegationChainID)
+		rows, err := tx.Query(ctx, `
+			SELECT e.delegator_ref,e.delegate_ref,e.data_resource_id,e.grantable_actions,e.grantable_purposes,e.scope_type,e.scope_ref
+			FROM grantor_authority_delegation_edge e
+			WHERE e.chain_id=$1
+			  AND (e.valid_from IS NULL OR e.valid_from <= $2)
+			  AND (e.valid_to IS NULL OR e.valid_to > $2)
+			  AND NOT EXISTS (
+				SELECT 1 FROM grantor_authority_delegation_disposition d
+				WHERE d.chain_id=e.chain_id AND (d.edge_id IS NULL OR d.edge_id=e.id) AND d.effective_at <= $2
+			  )
+			ORDER BY e.ordinal
+		`, *binding.DelegationChainID, asOf)
 		if err != nil {
 			return domain.ErrInvalidBinding
 		}
@@ -472,7 +483,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 		  AND a.status='ACTIVE' AND a.grantee_ref=$4 AND a.purpose=$5
 		  AND (a.valid_from IS NULL OR a.valid_from <= $6) AND (a.valid_to IS NULL OR a.valid_to > $6)
 		  AND b.created_at <= $6
-		  AND ((ar.scope_type='ALL_RESOURCE' AND ar.scope_ref=$2::text) OR (ar.scope_type=$7 AND ar.scope_ref=$8)) AND $9 = ANY(ar.actions)
+		  AND ((ar.scope_type='ALL_RESOURCE' AND ar.scope_ref=$2::text) OR (ar.scope_type=$7 AND ar.scope_ref=$8)) AND $9 = ANY(ar.actions) AND ($9<>'RAW_EXPORT' OR ar.raw_export_allowed)
 		  AND (d.effective_from IS NULL OR d.effective_from <= $6) AND (d.effective_to IS NULL OR d.effective_to > $6)
 		  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $6)
 		  AND NOT EXISTS (SELECT 1 FROM authorization_provenance_binding_disposition x WHERE x.binding_id=b.id AND x.effective_at <= $6)
