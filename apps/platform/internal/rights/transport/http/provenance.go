@@ -171,6 +171,7 @@ func (h *Handler) disposeDelegation(w http.ResponseWriter, r *http.Request) {
 		Disposition string     `json:"disposition"`
 		EffectiveAt *time.Time `json:"effectiveAt"`
 		Reason      string     `json:"reason"`
+		EvidenceID  string     `json:"evidenceId"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid JSON request", nil)
@@ -194,6 +195,15 @@ func (h *Handler) disposeDelegation(w http.ResponseWriter, r *http.Request) {
 	if body.EffectiveAt != nil {
 		at = body.EffectiveAt.UTC()
 	}
+	var evidenceID *uuid.UUID
+	if strings.TrimSpace(body.EvidenceID) != "" {
+		v, e := uuid.Parse(body.EvidenceID)
+		if e != nil {
+			httpserver.WriteError(w, r, 400, "INVALID_EVIDENCE_ID", "evidenceId must be a UUID", nil)
+			return
+		}
+		evidenceID = &v
+	}
 	actor, ok := h.authorizeWorkspace(w, r, chainRecord.WorkspaceID)
 	if !ok {
 		return
@@ -204,7 +214,7 @@ func (h *Handler) disposeDelegation(w http.ResponseWriter, r *http.Request) {
 		edgeKey = edgeID.String()
 	}
 	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("grantor-delegation-disposition:"+kind+":"+id.String()+":"+edgeKey+":"+idempotencyKey))
-	d, e := h.service.DisposeDelegation(r.Context(), application.DisposeDelegationCommand{ChainID: id, EdgeID: edgeID, Disposition: kind, EffectiveAt: at, Reason: body.Reason, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
+	d, e := h.service.DisposeDelegation(r.Context(), application.DisposeDelegationCommand{ChainID: id, EdgeID: edgeID, Disposition: kind, EffectiveAt: at, Reason: body.Reason, EvidenceID: evidenceID, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
 	if e != nil {
 		httpserver.WriteError(w, r, 400, "DELEGATION_DISPOSITION_FAILED", e.Error(), nil)
 		return
@@ -448,6 +458,7 @@ func (h *Handler) disposeAuthorizationProvenanceBinding(w http.ResponseWriter, r
 		Reason       string     `json:"reason"`
 		EffectiveAt  *time.Time `json:"effectiveAt"`
 		SupersededBy string     `json:"supersededByBindingId"`
+		EvidenceID   string     `json:"evidenceId"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid JSON request", nil)
@@ -471,6 +482,15 @@ func (h *Handler) disposeAuthorizationProvenanceBinding(w http.ResponseWriter, r
 	if body.EffectiveAt != nil {
 		at = body.EffectiveAt.UTC()
 	}
+	var evidenceID *uuid.UUID
+	if strings.TrimSpace(body.EvidenceID) != "" {
+		v, err := uuid.Parse(body.EvidenceID)
+		if err != nil {
+			httpserver.WriteError(w, r, 400, "INVALID_EVIDENCE_ID", "evidenceId must be a UUID", nil)
+			return
+		}
+		evidenceID = &v
+	}
 	workspace, err := h.repo.GetBindingWorkspace(r.Context(), bindingID)
 	if err != nil {
 		httpserver.WriteError(w, r, 400, "BINDING_DISPOSITION_FAILED", err.Error(), nil)
@@ -481,7 +501,7 @@ func (h *Handler) disposeAuthorizationProvenanceBinding(w http.ResponseWriter, r
 		return
 	}
 	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("authorization-provenance-binding-disposition:"+kind+":"+bindingID.String()+":"+idempotencyKey))
-	d, err := h.service.DisposeAuthorizationProvenanceBinding(r.Context(), application.DisposeAuthorizationProvenanceBindingCommand{BindingID: bindingID, Disposition: kind, EffectiveAt: at, Reason: body.Reason, SupersededBy: replacement, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
+	d, err := h.service.DisposeAuthorizationProvenanceBinding(r.Context(), application.DisposeAuthorizationProvenanceBindingCommand{BindingID: bindingID, Disposition: kind, EffectiveAt: at, Reason: body.Reason, SupersededBy: replacement, EvidenceID: evidenceID, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
 	if err != nil {
 		httpserver.WriteError(w, r, 400, "BINDING_DISPOSITION_FAILED", err.Error(), nil)
 		return
