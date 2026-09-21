@@ -14,6 +14,7 @@ import (
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
+	parkindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
 	metadatadomain "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain"
 	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
@@ -104,6 +105,7 @@ func main() {
 		workflowRepo,
 		datasetWriter,
 		objectStore,
+		parkindicator.NewCalculator(),
 	)
 
 	managedBridges := make([]workflowapp.ManagedExecutionBridge, 0, 1)

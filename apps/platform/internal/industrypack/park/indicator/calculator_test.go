@@ -5,6 +5,8 @@ import (
 	"runtime"
 	"testing"
 	"time"
+
+	workflowindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/indicator"
 )
 
 func TestReferenceVectorsV1(t *testing.T) {
@@ -12,7 +14,7 @@ func TestReferenceVectorsV1(t *testing.T) {
 
 	tests := []struct {
 		name       string
-		input      CompanyInput
+		input      workflowindicator.CompanyInput
 		tenancy    *float64
 		rent       *float64
 		energy     *float64
@@ -23,14 +25,14 @@ func TestReferenceVectorsV1(t *testing.T) {
 	}{
 		{
 			name: "STAR-CLOUD",
-			input: CompanyInput{
+			input: workflowindicator.CompanyInput{
 				EntryDate: ptrDate(t, "2022-03-01"),
-				LeaseEvents: []LeaseEvent{
+				LeaseEvents: []workflowindicator.LeaseEvent{
 					lease(t, "2025-01-01", "2025-12-31", "2025-01-05", "2025-01-04"),
 					lease(t, "2025-01-01", "2025-12-31", "2025-02-05", "2025-02-07"),
 					lease(t, "2025-01-01", "2025-12-31", "2025-03-05", "2025-03-05"),
 				},
-				EnergyReadings: []EnergyReading{
+				EnergyReadings: []workflowindicator.EnergyReading{
 					energy(t, "M-001-01", "2025-01-31T23:59:00+08:00", 12850),
 					energy(t, "M-001-02", "2025-02-28T23:59:00+08:00", 13120),
 					energy(t, "M-001-03", "2025-03-31T23:59:00+08:00", 12990),
@@ -40,14 +42,14 @@ func TestReferenceVectorsV1(t *testing.T) {
 		},
 		{
 			name: "QINGHE",
-			input: CompanyInput{
+			input: workflowindicator.CompanyInput{
 				EntryDate: ptrDate(t, "2023-07-15"),
-				LeaseEvents: []LeaseEvent{
+				LeaseEvents: []workflowindicator.LeaseEvent{
 					lease(t, "2025-01-01", "2025-12-31", "2025-01-05", "2025-01-05"),
 					lease(t, "2025-01-01", "2025-12-31", "2025-02-05", "2025-02-05"),
 					lease(t, "2025-01-01", "2025-12-31", "2025-03-05", "2025-03-18"),
 				},
-				EnergyReadings: []EnergyReading{
+				EnergyReadings: []workflowindicator.EnergyReading{
 					energy(t, "M-002-01", "2025-01-31T23:59:00+08:00", 8240),
 					energy(t, "M-002-02", "2025-02-28T23:59:00+08:00", 8160),
 					energy(t, "M-002-03", "2025-03-31T23:59:00+08:00", 7990),
@@ -57,13 +59,13 @@ func TestReferenceVectorsV1(t *testing.T) {
 		},
 		{
 			name: "LANTU",
-			input: CompanyInput{
+			input: workflowindicator.CompanyInput{
 				EntryDate: ptrDate(t, "2021-01-10"),
-				LeaseEvents: []LeaseEvent{
+				LeaseEvents: []workflowindicator.LeaseEvent{
 					lease(t, "2025-01-01", "2025-12-31", "2025-01-05", "2025-01-03"),
 					lease(t, "2025-01-01", "2025-12-31", "2025-02-05", "2025-02-03"),
 				},
-				EnergyReadings: []EnergyReading{
+				EnergyReadings: []workflowindicator.EnergyReading{
 					energy(t, "M-003-01", "2025-01-31T23:59:00+08:00", 22400),
 					energy(t, "M-003-02", "2025-02-28T23:59:00+08:00", 21800),
 					energy(t, "M-003-03", "2025-03-31T23:59:00+08:00", 22150),
@@ -73,10 +75,10 @@ func TestReferenceVectorsV1(t *testing.T) {
 		},
 		{
 			name: "YUNFAN-INSUFFICIENT",
-			input: CompanyInput{
+			input: workflowindicator.CompanyInput{
 				EntryDate:   ptrDate(t, "2024-02-20"),
-				LeaseEvents: []LeaseEvent{lease(t, "2025-02-20", "2026-02-19", "2025-03-05", "2025-03-05")},
-				EnergyReadings: []EnergyReading{
+				LeaseEvents: []workflowindicator.LeaseEvent{lease(t, "2025-02-20", "2026-02-19", "2025-03-05", "2025-03-05")},
+				EnergyReadings: []workflowindicator.EnergyReading{
 					energy(t, "M-004-02", "2025-02-28T23:59:00+08:00", 6100),
 					energy(t, "M-004-03", "2025-03-31T23:59:00+08:00", 6250),
 				},
@@ -85,10 +87,10 @@ func TestReferenceVectorsV1(t *testing.T) {
 		},
 		{
 			name: "HAIYUE-QUARANTINE",
-			input: CompanyInput{
+			input: workflowindicator.CompanyInput{
 				EntryDate:   ptrDate(t, "2020-06-08"),
-				LeaseEvents: []LeaseEvent{leaseUnpaid(t, "2025-01-01", "2025-12-31", "2025-01-05")},
-				EnergyReadings: []EnergyReading{
+				LeaseEvents: []workflowindicator.LeaseEvent{leaseUnpaid(t, "2025-01-01", "2025-12-31", "2025-01-05")},
+				EnergyReadings: []workflowindicator.EnergyReading{
 					energy(t, "M-005-01", "2025-01-31T23:59:00+08:00", 15400),
 					energy(t, "M-005-02", "2025-02-28T23:59:00+08:00", -999),
 					energy(t, "M-005-03", "2025-03-31T23:59:00+08:00", 14980),
@@ -100,7 +102,7 @@ func TestReferenceVectorsV1(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := Calculate(policy, "2025-03", tt.input)
+			result, err := NewCalculator().Calculate(policy, "2025-03", tt.input)
 			if err != nil {
 				t.Fatalf("calculate: %v", err)
 			}
@@ -148,23 +150,47 @@ func TestRentBoundaryClassification(t *testing.T) {
 	}
 }
 
-func loadReferencePolicy(t *testing.T) Policy {
+func TestEnergyAggregationUsesPackCalendarTimezone(t *testing.T) {
+	policy := loadReferencePolicy(t)
+	if policy.Spec.CalendarTimezone != "Asia/Shanghai" {
+		t.Fatalf("calendar timezone = %q, want Asia/Shanghai", policy.Spec.CalendarTimezone)
+	}
+	result, err := NewCalculator().Calculate(policy, "2025-03", workflowindicator.CompanyInput{
+		EnergyReadings: []workflowindicator.EnergyReading{
+			energy(t, "TZ-JAN", "2024-12-31T16:30:00Z", 100),
+			energy(t, "TZ-FEB", "2025-01-31T16:30:00Z", 100),
+			energy(t, "TZ-MAR", "2025-02-28T16:30:00Z", 100),
+		},
+	})
+	if err != nil {
+		t.Fatalf("calculate timezone boundary: %v", err)
+	}
+	assertOptional(t, "energy", result.EnergyStability, number(100))
+	if got := result.EnergyExplanation["expected_months"]; got != 3 {
+		t.Fatalf("expected_months = %v, want 3", got)
+	}
+	if got := result.EnergyExplanation["valid_months"]; got != 3 {
+		t.Fatalf("valid_months = %v, want 3", got)
+	}
+}
+
+func loadReferencePolicy(t *testing.T) workflowindicator.Policy {
 	t.Helper()
 	_, file, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("runtime caller unavailable")
 	}
-	root := filepath.Clean(filepath.Join(filepath.Dir(file), "..", "..", "..", "..", ".."))
-	policy, err := LoadPolicy(filepath.Join(root, "industry-packs", "park", "indicators", "enterprise-activity-v1.yaml"))
+	root := filepath.Clean(filepath.Join(filepath.Dir(file), "..", "..", "..", "..", "..", ".."))
+	policy, err := workflowindicator.LoadPolicy(filepath.Join(root, "industry-packs", "park", "indicators", "enterprise-activity-v1.yaml"))
 	if err != nil {
 		t.Fatalf("load policy: %v", err)
 	}
 	return policy
 }
 
-func lease(t *testing.T, start, end, due, paid string) LeaseEvent {
+func lease(t *testing.T, start, end, due, paid string) workflowindicator.LeaseEvent {
 	t.Helper()
-	return LeaseEvent{
+	return workflowindicator.LeaseEvent{
 		ContractStart: mustDate(t, start),
 		ContractEnd:   mustDate(t, end),
 		LeaseStatus:   "ACTIVE",
@@ -173,9 +199,9 @@ func lease(t *testing.T, start, end, due, paid string) LeaseEvent {
 	}
 }
 
-func leaseUnpaid(t *testing.T, start, end, due string) LeaseEvent {
+func leaseUnpaid(t *testing.T, start, end, due string) workflowindicator.LeaseEvent {
 	t.Helper()
-	return LeaseEvent{
+	return workflowindicator.LeaseEvent{
 		ContractStart: mustDate(t, start),
 		ContractEnd:   mustDate(t, end),
 		LeaseStatus:   "ACTIVE",
@@ -183,13 +209,13 @@ func leaseUnpaid(t *testing.T, start, end, due string) LeaseEvent {
 	}
 }
 
-func energy(t *testing.T, key, timestamp string, kwh float64) EnergyReading {
+func energy(t *testing.T, key, timestamp string, kwh float64) workflowindicator.EnergyReading {
 	t.Helper()
 	parsed, err := time.Parse(time.RFC3339, timestamp)
 	if err != nil {
 		t.Fatalf("parse timestamp %s: %v", timestamp, err)
 	}
-	return EnergyReading{ReadingTime: parsed, EnergyKWh: kwh, SourceKey: key}
+	return workflowindicator.EnergyReading{ReadingTime: parsed, EnergyKWh: kwh, SourceKey: key}
 }
 
 func ptrDate(t *testing.T, value string) *time.Time {

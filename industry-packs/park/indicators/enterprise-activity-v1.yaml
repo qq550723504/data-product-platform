@@ -9,6 +9,7 @@ metadata:
     Data Product lifecycle. It is not a validated credit score, underwriting
     model, probability-of-default model, or investment/risk recommendation.
 spec:
+  calendarTimezone: Asia/Shanghai
   rounding:
     mode: HALF_UP
     decimals: 2
