@@ -24,6 +24,7 @@ import (
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
+	parkindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	productapp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/application"
@@ -209,7 +210,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create Workflow Execution: %v", err)
 	}
-	engine := workflownative.NewEngine(industryPackRoot, txManager, datasetRepo, entityRepo, workflowRepo, uploadDataset, store)
+	engine := workflownative.NewEngine(industryPackRoot, txManager, datasetRepo, entityRepo, workflowRepo, uploadDataset, store, parkindicator.NewCalculator())
 	queueHandler := workflowqueue.NewHandler(executionService, workflowRepo, engine)
 	payload, _ := json.Marshal(map[string]any{"executionId": execution.ID})
 	if err := queueHandler.Handle(ctx, asynq.NewTask(workflowqueue.TaskExecute, payload)); err != nil {

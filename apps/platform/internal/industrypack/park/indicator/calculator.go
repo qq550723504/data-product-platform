@@ -4,52 +4,27 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strings"
 	"time"
+	_ "time/tzdata"
+
+	workflowindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/indicator"
 )
 
-type LeaseEvent struct {
-	ContractStart time.Time
-	ContractEnd   time.Time
-	LeaseStatus   string
-	DueDate       time.Time
-	PaymentDate   *time.Time
-}
+type Calculator struct{}
 
-type EnergyReading struct {
-	ReadingTime time.Time
-	EnergyKWh   float64
-	SourceKey   string
-}
+func NewCalculator() Calculator { return Calculator{} }
 
-type CompanyInput struct {
-	EntryDate      *time.Time
-	LeaseEvents    []LeaseEvent
-	EnergyReadings []EnergyReading
-}
+var _ workflowindicator.Calculator = Calculator{}
 
-type QuarantinedReading struct {
-	SourceKey string
-	Reason    string
-	Reading   EnergyReading
-}
-
-type CompanyResult struct {
-	TenancyStability   *float64
-	RentPerformance    *float64
-	EnergyStability    *float64
-	ActivityScore      *float64
-	ActivityLevel      string
-	IndicatorCoverage  float64
-	TenancyExplanation map[string]any
-	RentExplanation    map[string]any
-	EnergyExplanation  map[string]any
-	Quarantine         []QuarantinedReading
-}
-
-func Calculate(policy Policy, targetPeriod string, input CompanyInput) (CompanyResult, error) {
+func (Calculator) Calculate(policy workflowindicator.Policy, targetPeriod string, input workflowindicator.CompanyInput) (workflowindicator.CompanyResult, error) {
 	targetStart, targetEnd, err := targetPeriodBounds(targetPeriod)
 	if err != nil {
-		return CompanyResult{}, err
+		return workflowindicator.CompanyResult{}, err
+	}
+	calendarLocation, err := policyCalendarLocation(policy)
+	if err != nil {
+		return workflowindicator.CompanyResult{}, err
 	}
 	tenancyDef, _ := policy.Definition("tenancy_stability")
 	rentDef, _ := policy.Definition("rent_performance")
@@ -58,9 +33,9 @@ func Calculate(policy Policy, targetPeriod string, input CompanyInput) (CompanyR
 
 	tenancy, tenancyExplanation := calculateTenancy(tenancyDef.Parameters, targetStart, targetEnd, input.EntryDate, input.LeaseEvents)
 	rent, rentExplanation := calculateRent(rentDef.Parameters, targetEnd, input.LeaseEvents)
-	energy, energyExplanation, quarantine := calculateEnergy(energyDef.Parameters, targetStart, input.EnergyReadings)
+	energy, energyExplanation, quarantine := calculateEnergy(energyDef.Parameters, targetStart, calendarLocation, input.EnergyReadings)
 
-	result := CompanyResult{
+	result := workflowindicator.CompanyResult{
 		TenancyStability:   roundOptional(tenancy, policy.Spec.Rounding.Decimals),
 		RentPerformance:    roundOptional(rent, policy.Spec.Rounding.Decimals),
 		EnergyStability:    roundOptional(energy, policy.Spec.Rounding.Decimals),
@@ -93,7 +68,7 @@ func Calculate(policy Policy, targetPeriod string, input CompanyInput) (CompanyR
 	return result, nil
 }
 
-func calculateTenancy(params IndicatorParameters, targetStart, targetEnd time.Time, entryDate *time.Time, leases []LeaseEvent) (*float64, map[string]any) {
+func calculateTenancy(params workflowindicator.IndicatorParameters, targetStart, targetEnd time.Time, entryDate *time.Time, leases []workflowindicator.LeaseEvent) (*float64, map[string]any) {
 	explanation := map[string]any{}
 	if entryDate == nil || len(leases) == 0 {
 		return nil, explanation
@@ -128,7 +103,7 @@ func calculateTenancy(params IndicatorParameters, targetStart, targetEnd time.Ti
 	return &value, explanation
 }
 
-func calculateRent(params IndicatorParameters, targetEnd time.Time, leases []LeaseEvent) (*float64, map[string]any) {
+func calculateRent(params workflowindicator.IndicatorParameters, targetEnd time.Time, leases []workflowindicator.LeaseEvent) (*float64, map[string]any) {
 	explanation := map[string]any{
 		"due_event_count":      0,
 		"on_time_count":        0,
@@ -199,25 +174,27 @@ func classifyRentEvent(due time.Time, paid *time.Time, asOf time.Time, scores ma
 	}
 }
 
-func calculateEnergy(params IndicatorParameters, targetStart time.Time, readings []EnergyReading) (*float64, map[string]any, []QuarantinedReading) {
+func calculateEnergy(params workflowindicator.IndicatorParameters, targetStart time.Time, calendarLocation *time.Location, readings []workflowindicator.EnergyReading) (*float64, map[string]any, []workflowindicator.QuarantinedReading) {
 	explanation := map[string]any{}
 	lookback := params.LookbackMonths
 	if lookback <= 0 {
 		lookback = 6
 	}
-	windowStart := targetStart.AddDate(0, -(lookback - 1), 0)
-	windowEnd := targetStart.AddDate(0, 1, 0).Add(-time.Nanosecond)
+	targetMonth := time.Date(targetStart.Year(), targetStart.Month(), 1, 0, 0, 0, 0, calendarLocation)
+	windowStart := targetMonth.AddDate(0, -(lookback - 1), 0)
+	windowEnd := targetMonth.AddDate(0, 1, 0).Add(-time.Nanosecond)
 	monthly := map[string]float64{}
 	observed := map[string]struct{}{}
-	quarantine := make([]QuarantinedReading, 0)
+	quarantine := make([]workflowindicator.QuarantinedReading, 0)
 	for _, reading := range readings {
-		if reading.ReadingTime.Before(windowStart) || reading.ReadingTime.After(windowEnd) {
+		readingTime := reading.ReadingTime.In(calendarLocation)
+		if readingTime.Before(windowStart) || readingTime.After(windowEnd) {
 			continue
 		}
-		key := reading.ReadingTime.Format("2006-01")
+		key := readingTime.Format("2006-01")
 		observed[key] = struct{}{}
 		if reading.EnergyKWh < 0 {
-			quarantine = append(quarantine, QuarantinedReading{SourceKey: reading.SourceKey, Reason: "NEGATIVE_ENERGY_KWH", Reading: reading})
+			quarantine = append(quarantine, workflowindicator.QuarantinedReading{SourceKey: reading.SourceKey, Reason: "NEGATIVE_ENERGY_KWH", Reading: reading})
 			continue
 		}
 		monthly[key] += reading.EnergyKWh
@@ -232,8 +209,7 @@ func calculateEnergy(params IndicatorParameters, targetStart time.Time, readings
 		explanation["quarantined_record_count"] = len(quarantine)
 		return nil, explanation, quarantine
 	}
-	first, _ := time.Parse("2006-01", keys[0])
-	targetMonth := time.Date(targetStart.Year(), targetStart.Month(), 1, 0, 0, 0, 0, time.UTC)
+	first, _ := time.ParseInLocation("2006-01", keys[0], calendarLocation)
 	expectedMonths := monthDistance(first, targetMonth) + 1
 	if expectedMonths > lookback {
 		expectedMonths = lookback
@@ -270,7 +246,7 @@ func calculateEnergy(params IndicatorParameters, targetStart time.Time, readings
 	return &value, explanation, quarantine
 }
 
-func classifyLevel(params IndicatorParameters, score float64) string {
+func classifyLevel(params workflowindicator.IndicatorParameters, score float64) string {
 	if level, ok := params.Levels["HIGH"]; ok && score >= level.MinimumInclusive {
 		return "HIGH"
 	}
@@ -280,6 +256,18 @@ func classifyLevel(params IndicatorParameters, score float64) string {
 		}
 	}
 	return "LOW"
+}
+
+func policyCalendarLocation(policy workflowindicator.Policy) (*time.Location, error) {
+	name := strings.TrimSpace(policy.Spec.CalendarTimezone)
+	if name == "" {
+		name = "UTC"
+	}
+	location, err := time.LoadLocation(name)
+	if err != nil {
+		return nil, fmt.Errorf("load indicator calendar timezone %q: %w", name, err)
+	}
+	return location, nil
 }
 
 func targetPeriodBounds(value string) (time.Time, time.Time, error) {

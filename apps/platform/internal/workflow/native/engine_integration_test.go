@@ -22,6 +22,7 @@ import (
 	entityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
+	parkindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
@@ -200,7 +201,7 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 		t.Fatalf("create workflow execution: %v", err)
 	}
 
-	engine := NewEngine(industryPackRoot, txManager, datasetRepo, entityRepo, workflowRepo, uploadDataset, store)
+	engine := NewEngine(industryPackRoot, txManager, datasetRepo, entityRepo, workflowRepo, uploadDataset, store, parkindicator.NewCalculator())
 	handler := workflowqueue.NewHandler(executionService, workflowRepo, engine)
 	payload, err := json.Marshal(map[string]any{"executionId": execution.ID})
 	if err != nil {
