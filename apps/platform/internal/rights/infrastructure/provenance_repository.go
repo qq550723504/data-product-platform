@@ -422,6 +422,10 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 	}
 	request.Action = strings.ToUpper(strings.TrimSpace(request.Action))
 	request.Purpose = strings.TrimSpace(request.Purpose)
+	request.ConsumerRef = strings.TrimSpace(request.ConsumerRef)
+	if request.ConsumerRef == "" || request.Purpose == "" || request.Action == "" {
+		return domain.EntitlementDecision{}, domain.ErrEffectiveRights
+	}
 	var decision domain.EntitlementDecision
 	decision.AuthorizationID = request.AuthorizationID
 	decision.DataResourceID = request.DataResourceID
