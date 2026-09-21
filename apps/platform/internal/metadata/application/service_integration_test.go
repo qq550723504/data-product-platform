@@ -44,6 +44,8 @@ func (f *fakeMetadataEngine) UpsertDataProduct(_ context.Context, product metada
 	}, nil
 }
 
+const testProvider metadatadomain.Provider = "TEST_METADATA"
+
 func TestBindingAndProductReleasedProjectionAreRetrySafe(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
@@ -91,7 +93,7 @@ func TestBindingAndProductReleasedProjectionAreRetrySafe(t *testing.T) {
 	metadataRepo := metadatainfra.NewPostgresRepository(pool)
 	engine := &fakeMetadataEngine{}
 	service := metadataapp.NewService(
-		metadatadomain.ProviderOpenMetadata,
+		testProvider,
 		"Park",
 		txManager,
 		metadataRepo,
@@ -108,8 +110,24 @@ func TestBindingAndProductReleasedProjectionAreRetrySafe(t *testing.T) {
 	if err != nil {
 		t.Fatalf("bind resource: %v", err)
 	}
-	if binding.ExternalID != "table-001" || binding.Provider != metadatadomain.ProviderOpenMetadata {
+	if binding.ExternalID != "table-001" || binding.Provider != testProvider {
 		t.Fatalf("binding = %+v", binding)
+	}
+	firstBindingID := binding.ID
+	replayedBinding, err := service.BindResource(ctx, metadataapp.BindResourceCommand{
+		ResourceID:         resourceID,
+		EntityType:         "TABLE",
+		FullyQualifiedName: "sample_data.ecommerce.public.orders",
+		Primary:            false,
+	})
+	if err != nil {
+		t.Fatalf("replay bind resource: %v", err)
+	}
+	if replayedBinding.ID != firstBindingID {
+		t.Fatalf("replayed binding ID = %s, want persisted ID %s", replayedBinding.ID, firstBindingID)
+	}
+	if replayedBinding.IsPrimary {
+		t.Fatalf("replayed binding primary = true, want persisted update false")
 	}
 
 	eventID := uuid.New()
@@ -119,7 +137,7 @@ func TestBindingAndProductReleasedProjectionAreRetrySafe(t *testing.T) {
 	if engine.upsertCalls != 1 {
 		t.Fatalf("upsert calls = %d, want 1", engine.upsertCalls)
 	}
-	projection, err := metadataRepo.GetProjection(ctx, metadatadomain.ProviderOpenMetadata, "PRODUCT_RELEASE", releaseID)
+	projection, err := metadataRepo.GetProjection(ctx, testProvider, "PRODUCT_RELEASE", releaseID)
 	if err != nil {
 		t.Fatalf("get projection: %v", err)
 	}
@@ -145,7 +163,7 @@ func TestBindingAndProductReleasedProjectionAreRetrySafe(t *testing.T) {
 	if err := service.ProjectProductRelease(ctx, uuid.New(), failedReleaseID); err == nil {
 		t.Fatal("expected OpenMetadata projection failure")
 	}
-	failed, err := metadataRepo.GetProjection(ctx, metadatadomain.ProviderOpenMetadata, "PRODUCT_RELEASE", failedReleaseID)
+	failed, err := metadataRepo.GetProjection(ctx, testProvider, "PRODUCT_RELEASE", failedReleaseID)
 	if err != nil {
 		t.Fatalf("get failed projection: %v", err)
 	}
@@ -157,7 +175,7 @@ func TestBindingAndProductReleasedProjectionAreRetrySafe(t *testing.T) {
 	if err := service.ProjectProductRelease(ctx, uuid.New(), failedReleaseID); err != nil {
 		t.Fatalf("retry projection: %v", err)
 	}
-	retried, err := metadataRepo.GetProjection(ctx, metadatadomain.ProviderOpenMetadata, "PRODUCT_RELEASE", failedReleaseID)
+	retried, err := metadataRepo.GetProjection(ctx, testProvider, "PRODUCT_RELEASE", failedReleaseID)
 	if err != nil {
 		t.Fatalf("get retried projection: %v", err)
 	}
