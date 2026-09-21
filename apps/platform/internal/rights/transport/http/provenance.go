@@ -326,6 +326,7 @@ func (h *Handler) disposeDeclaration(w http.ResponseWriter, r *http.Request, kin
 		Reason       string     `json:"reason"`
 		EffectiveAt  *time.Time `json:"effectiveAt"`
 		SupersededBy string     `json:"supersededByDeclarationId"`
+		EvidenceID   string     `json:"evidenceId"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid JSON request", nil)
@@ -349,12 +350,21 @@ func (h *Handler) disposeDeclaration(w http.ResponseWriter, r *http.Request, kin
 		}
 		replacement = &v
 	}
+	var evidenceID *uuid.UUID
+	if strings.TrimSpace(body.EvidenceID) != "" {
+		v, e := uuid.Parse(body.EvidenceID)
+		if e != nil {
+			httpserver.WriteError(w, r, 400, "INVALID_EVIDENCE_ID", "evidenceId must be a UUID", nil)
+			return
+		}
+		evidenceID = &v
+	}
 	var at time.Time
 	if body.EffectiveAt != nil {
 		at = body.EffectiveAt.UTC()
 	}
 	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("rights-declaration-disposition:"+kind+":"+id.String()+":"+idempotencyKey))
-	d, err := h.service.DisposeRightsDeclaration(r.Context(), application.DisposeRightsDeclarationCommand{DeclarationID: id, Disposition: kind, EffectiveAt: at, Reason: body.Reason, SupersededBy: replacement, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
+	d, err := h.service.DisposeRightsDeclaration(r.Context(), application.DisposeRightsDeclarationCommand{DeclarationID: id, Disposition: kind, EffectiveAt: at, Reason: body.Reason, SupersededBy: replacement, EvidenceID: evidenceID, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
 	if err != nil {
 		httpserver.WriteError(w, r, 400, "RIGHTS_DECLARATION_DISPOSITION_FAILED", err.Error(), nil)
 		return
@@ -537,6 +547,7 @@ func (h *Handler) computeEffectiveRights(w http.ResponseWriter, r *http.Request)
 		ConsumerRef            string     `json:"consumerRef"`
 		Purpose                string     `json:"purpose"`
 		AsOf                   *time.Time `json:"asOf"`
+		EvidenceID             string     `json:"evidenceId"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid JSON request", nil)
@@ -565,8 +576,17 @@ func (h *Handler) computeEffectiveRights(w http.ResponseWriter, r *http.Request)
 	if body.AsOf != nil {
 		at = body.AsOf.UTC()
 	}
+	var evidenceID *uuid.UUID
+	if strings.TrimSpace(body.EvidenceID) != "" {
+		parsed, parseErr := uuid.Parse(body.EvidenceID)
+		if parseErr != nil {
+			httpserver.WriteError(w, r, 400, "INVALID_EVIDENCE_ID", "evidenceId must be a UUID", nil)
+			return
+		}
+		evidenceID = &parsed
+	}
 	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("effective-rights-compute:"+workspace.String()+":"+idempotencyKey))
-	snapshot, e := h.service.ComputeEffectiveRights(r.Context(), application.ComputeEffectiveRightsCommand{WorkspaceID: workspace, TargetDatasetVersionID: target, ConsumerRef: body.ConsumerRef, Purpose: body.Purpose, AsOf: at, AsOfProvided: body.AsOf != nil, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
+	snapshot, e := h.service.ComputeEffectiveRights(r.Context(), application.ComputeEffectiveRightsCommand{WorkspaceID: workspace, TargetDatasetVersionID: target, ConsumerRef: body.ConsumerRef, Purpose: body.Purpose, AsOf: at, AsOfProvided: body.AsOf != nil, EvidenceID: evidenceID, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
 	if e != nil {
 		httpserver.WriteError(w, r, 400, "EFFECTIVE_RIGHTS_COMPUTE_FAILED", e.Error(), nil)
 		return
