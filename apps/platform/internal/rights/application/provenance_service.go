@@ -12,6 +12,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
@@ -74,6 +75,7 @@ type ComputeEffectiveRightsCommand struct {
 	Purpose                string
 	AsOf                   time.Time
 	AsOfProvided           bool
+	EvidenceID             *uuid.UUID
 	ActivityID             *uuid.UUID
 	ActorID                *uuid.UUID
 	TraceID                string
@@ -266,6 +268,12 @@ func (s *Service) DisposeRightsDeclaration(ctx context.Context, cmd DisposeRight
 		if verified != "VERIFIED" {
 			return domain.ErrDeclarationNotVerified
 		}
+		if disposition.EvidenceID != nil {
+			var evidenceWorkspace uuid.UUID
+			if err := tx.QueryRow(ctx, `SELECT workspace_id FROM evidence WHERE id=$1`, *disposition.EvidenceID).Scan(&evidenceWorkspace); err != nil || evidenceWorkspace != d.WorkspaceID {
+				return domain.ErrRightsDisposition
+			}
+		}
 		if kind == domain.DispositionSuperseded {
 			if disposition.SupersededBy == nil || *disposition.SupersededBy == d.ID {
 				return domain.ErrRightsDisposition
@@ -420,6 +428,13 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 			if !sameEffectiveRightsRequest(existing, cmd, requestedAsOf) {
 				return domain.EffectiveRightsSnapshot{}, domain.ErrEffectiveRights
 			}
+			storedEvidenceID, evidenceErr := s.repo.GetEffectiveRightsSupportingEvidence(ctx, existing.ID)
+			if evidenceErr != nil {
+				return domain.EffectiveRightsSnapshot{}, evidenceErr
+			}
+			if !sameOptionalUUID(storedEvidenceID, cmd.EvidenceID) {
+				return domain.EffectiveRightsSnapshot{}, domain.ErrEffectiveRights
+			}
 			return existing, nil
 		}
 		if !errors.Is(replayErr, pgx.ErrNoRows) {
@@ -473,7 +488,29 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 		if err := s.repo.FinalizeEffectiveRights(ctx, tx, snapshot); err != nil {
 			return err
 		}
-		if err := appendEvent(ctx, tx, "EFFECTIVE_RIGHTS_SNAPSHOT", snapshot.ID, "EffectiveRightsFinalized", map[string]any{"effectiveRightsSnapshotId": snapshot.ID, "targetDatasetVersionId": snapshot.TargetDatasetVersionID, "rootHash": snapshot.RootHash}); err != nil {
+		if cmd.EvidenceID != nil {
+			var evidenceWorkspace uuid.UUID
+			if err := tx.QueryRow(ctx, `SELECT workspace_id FROM evidence WHERE id=$1`, *cmd.EvidenceID).Scan(&evidenceWorkspace); err != nil || evidenceWorkspace != snapshot.WorkspaceID {
+				return domain.ErrEffectiveRights
+			}
+		}
+		decisionEvidenceID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("effective-rights-evidence:"+snapshot.ID.String()))
+		metadata, _ := json.Marshal(map[string]any{"targetDatasetVersionId": snapshot.TargetDatasetVersionID, "requiredInputHash": snapshot.RequiredInputHash, "calculationRuleHash": snapshot.CalculationRuleHash})
+		if _, err := tx.Exec(ctx, `
+			INSERT INTO evidence(id,workspace_id,evidence_type,title,source_type,source_id,hash_algorithm,hash_value,metadata,created_at)
+			VALUES ($1,$2,'EFFECTIVE_RIGHTS_SNAPSHOT','Effective rights finalization','EFFECTIVE_RIGHTS_SNAPSHOT',$3,'SHA256',$4,$5,now())
+		`, decisionEvidenceID, snapshot.WorkspaceID, snapshot.ID, snapshot.RootHash, metadata); err != nil {
+			return err
+		}
+		items := []evidence.SnapshotItem{{EvidenceID: decisionEvidenceID, Category: "EFFECTIVE_RIGHTS_DECISION"}}
+		if cmd.EvidenceID != nil {
+			items = append(items, evidence.SnapshotItem{EvidenceID: *cmd.EvidenceID, Category: "SUPPORTING_EVIDENCE"})
+		}
+		evidenceSnapshot, err := evidence.CreateSnapshot(ctx, tx, snapshot.WorkspaceID, "EFFECTIVE_RIGHTS_SNAPSHOT", snapshot.ID, map[string]any{"effectiveRightsSnapshotId": snapshot.ID, "rootHash": snapshot.RootHash, "requiredInputHash": snapshot.RequiredInputHash}, items, cmd.ActorID)
+		if err != nil {
+			return err
+		}
+		if err := appendEvent(ctx, tx, "EFFECTIVE_RIGHTS_SNAPSHOT", snapshot.ID, "EffectiveRightsFinalized", map[string]any{"effectiveRightsSnapshotId": snapshot.ID, "targetDatasetVersionId": snapshot.TargetDatasetVersionID, "rootHash": snapshot.RootHash, "evidenceSnapshotId": evidenceSnapshot.ID}); err != nil {
 			return err
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &snapshot.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: "EFFECTIVE_RIGHTS_FINALIZED", ObjectType: "EFFECTIVE_RIGHTS_SNAPSHOT", ObjectID: snapshot.ID, AfterState: map[string]any{"targetDatasetVersionId": snapshot.TargetDatasetVersionID, "rootHash": snapshot.RootHash}, TraceID: cmd.TraceID})
@@ -489,6 +526,13 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 		return existing, nil
 	}
 	return snapshot, err
+}
+
+func sameOptionalUUID(left, right *uuid.UUID) bool {
+	if (left == nil) != (right == nil) {
+		return false
+	}
+	return left == nil || *left == *right
 }
 
 func sameEffectiveRightsRequest(existing domain.EffectiveRightsSnapshot, requested ComputeEffectiveRightsCommand, requestedAsOf time.Time) bool {
