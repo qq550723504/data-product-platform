@@ -53,7 +53,7 @@ jobs:
             exit 0
           fi
 
-          mapfile -t changed_files < <(git diff --name-only "$base" "$head")
+          mapfile -t changed_files < <(git diff --no-renames --name-only "$base" "$head")
           if [ "${#changed_files[@]}" -eq 0 ]; then
             echo "docs_only=false" >> "$GITHUB_OUTPUT"
             exit 0
