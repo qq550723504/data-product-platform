@@ -73,11 +73,14 @@ audit_event
 outbox_event
 ~~~
 
-### Certified Dataset Pilot 目标逻辑对象
+### Certified Dataset Pilot 实现状态（main）
 
-具体表名可由实现确定，但业务事实必须可查询：
+具体表名由实现确定，但业务事实必须可查询。当前状态按 main 上已合入迁移/实现划分：
+
+**已进入 main：**
 
 ~~~text
+QualityAssessment / QualityRuleSet snapshot
 RightsDeclaration
 RightsVerification (one terminal outcome per declaration: VERIFIED / REJECTED)
 RightsDisposition (INVALIDATED / SUPERSEDED)
@@ -85,17 +88,24 @@ AuthorizationProvenanceBinding
 AuthorizationProvenanceBindingDisposition (INVALIDATED / SUPERSEDED)
 EffectiveRights / EffectiveRightsSnapshot
 
-CertificationProfile snapshot
-DatasetCertification
-CertificationDisposition (REVOKED / SUPERSEDED)
-
-DeliveryOperation
+DeliveryOperation core
 
 CostEvent activity identity extension
 CostAllocation
 ~~~
 
-QualityAssessment 核心已通过 #140 / migration 000019 落地，继续复用 `quality_result` / `quality_finding` 作为兼容存储名；后续 #132/#133 必须在该已实现模型上扩展，不得再次创建平行 QualityAssessment 表族。
+**仍在推进 / 尚未完成第一阶段：**
+
+~~~text
+CertificationProfile snapshot
+DatasetCertification
+CertificationDisposition (REVOKED / SUPERSEDED)   # #134 / PR #149
+
+Certified Dataset API / UI                         # #135
+enterprise-activity E2E Pilot                     # #136
+~~~
+
+QualityAssessment 核心已通过 #140 / migration 000019 落地；#132 Quality Engine 与 #133 Quality Report 也已在该模型上完成扩展。继续复用 `quality_result` / `quality_finding` 作为兼容存储名，不得再次创建平行 QualityAssessment 表族。
 
 ## 4. DataResource
 
@@ -664,4 +674,4 @@ Execution 行在生命周期内会通过显式状态迁移更新 status、engine
 
 ProductRelease 不是“从创建起整行不可变”：在 DRAFT/VALIDATING/READY 等发布前生命周期内，显式 Command 可以更新 status 以及 validation 绑定；进入 PUBLISHED 后，当前 `guard_product_release_history` 拒绝 `product_release` 主行 UPDATE/DELETE，因此主行作为发布历史冻结。**但 `product_release_dataset` 当前没有针对已 PUBLISHED release 的 INSERT/UPDATE/DELETE guard；#99 明确跟踪该 P2/P1 enforcement gap。** 在对应 forward migration + PostgreSQL tests 合入前，文档不得声称 published dataset membership 已由数据库完整保护。SUSPENDED/WITHDRAWN 虽是 schema 枚举值，但当前不构成可达 live transition；未来启用必须先调整主行 guard、补齐 membership immutability 并新增显式 Command。
 
-不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、AuthorizationProvenanceBinding、AuthorizationProvenanceBindingDisposition、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent、CostAllocation。实现状态上，EvidenceSnapshot membership guard 仍由 #99 跟踪；RightsSnapshot membership guard 仍由 #137 当前实现范围补齐。文档不得把这些尚未落库的 child-row enforcement 描述成已完成。
+不可变事实不得软删除或覆盖，包括 DatasetVersion、MappingDecision、execution dependency facts、ProductVersion、EvidenceSnapshot、RightsSnapshot、QualityAssessment、verified RightsDeclaration/verification/disposition facts、AuthorizationProvenanceBinding、AuthorizationProvenanceBindingDisposition、DatasetCertification、CertificationDisposition、AuditEvent、CostEvent、CostAllocation。实现状态上，EvidenceSnapshot membership guard 仍由 #99 跟踪；RightsSnapshot header 与 authorization/declaration/provenance membership guards 已由 migration 000024 落地，但真实 PostgreSQL 并发冻结回归仍需持续验证。文档不得把尚未落库或尚未通过并发验证的 enforcement 描述成已完成。

@@ -100,7 +100,7 @@ OpenMetadata 仅作为 Governance Projection。
 - ContractVersion
 - WorkflowVersion
 - EvidenceSnapshot（领域 immutable invariant；当前 header guard 已有，但 `evidence_snapshot_item` membership INSERT/DELETE/UPDATE 的 DB-level freeze 仍是 #99 已知缺口）
-- RightsSnapshot（领域 immutable invariant；当前 `rights_snapshot` header guard 已有，但既有 `rights_snapshot_authorization` membership DB guard 尚未落地，属于 #137 当前实现范围/已知 enforcement gap）
+- RightsSnapshot（领域 immutable invariant；`rights_snapshot` header 与 authorization/declaration/provenance membership guards 已由 migration 000024 落地；DRAFT→FINALIZED 与并发 membership mutation 的真实 PostgreSQL concurrency regression 仍需持续验证，不能仅凭 trigger 声称并发线性化已证明）
 - QualityAssessment（已实现；兼容存储名 quality_result / quality_finding）
 - verified RightsDeclaration / verification fact（#137 起）
 - AuthorizationProvenanceBinding / BindingDisposition（#137 起）
