@@ -11,6 +11,7 @@ import (
 )
 
 var ErrDelegationChainIdempotentReplay = errors.New("delegation chain idempotent replay")
+var ErrDelegationFinalizeIdempotentReplay = errors.New("delegation finalization idempotent replay")
 var ErrDelegationDispositionIdempotentReplay = errors.New("delegation disposition idempotent replay")
 
 func (r *PostgresRepository) InsertDelegationChain(ctx context.Context, tx pgx.Tx, chain domain.DelegationChain) error {
@@ -65,6 +66,10 @@ func (r *PostgresRepository) FinalizeDelegationChain(ctx context.Context, tx pgx
 	var status string
 	if err := tx.QueryRow(ctx, `SELECT id,workspace_id,source_declaration_id,status,COALESCE(chain_hash,''),created_at,created_by FROM grantor_authority_delegation_chain WHERE id=$1 FOR UPDATE`, chainID).Scan(&chain.ID, &chain.WorkspaceID, &chain.SourceDeclarationID, &status, &chain.ChainHash, &chain.CreatedAt, &chain.CreatedBy); err != nil {
 		return chain, err
+	}
+	if status == "FINALIZED" {
+		chain.Status = status
+		return chain, ErrDelegationFinalizeIdempotentReplay
 	}
 	if status != "DRAFT" {
 		return chain, domain.ErrInvalidBinding
