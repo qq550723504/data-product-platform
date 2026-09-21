@@ -60,6 +60,22 @@ func (r *PostgresRepository) FinalizeEffectiveRights(ctx context.Context, tx pgx
 	if status != "DRAFT" {
 		return fmt.Errorf("effective rights snapshot %s is not draft", snapshot.ID)
 	}
+	var mismatchedProvenance bool
+	if err := tx.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1
+			FROM effective_rights_action_provenance p
+			JOIN effective_rights_action a ON a.id=p.action_id
+			JOIN effective_rights_input i ON i.id=p.input_id
+			WHERE p.snapshot_id=$1
+			  AND (a.snapshot_id<>p.snapshot_id OR i.snapshot_id<>p.snapshot_id)
+		)
+	`, snapshot.ID).Scan(&mismatchedProvenance); err != nil {
+		return err
+	}
+	if mismatchedProvenance {
+		return fmt.Errorf("effective rights snapshot %s has cross-snapshot provenance", snapshot.ID)
+	}
 	persisted, err := loadEffectiveRights(ctx, tx, snapshot.ID)
 	if err != nil {
 		return err
