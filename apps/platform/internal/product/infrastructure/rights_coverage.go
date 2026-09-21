@@ -71,6 +71,8 @@ func (r *PostgresRepository) EvaluateRightsCoverage(ctx context.Context, snapsho
 		WHERE rsa.rights_snapshot_id=$1
 		  AND da.status='ACTIVE'
 		  AND da.purpose=rs.purpose
+		  AND ar.scope_type='ALL_RESOURCE'
+		  AND ar.scope_ref=ar.data_resource_id::text
 		  AND (da.valid_from IS NULL OR da.valid_from <= $2)
 		  AND (da.valid_to IS NULL OR da.valid_to > $2)
 		  AND EXISTS (
