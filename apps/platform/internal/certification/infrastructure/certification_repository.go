@@ -298,7 +298,6 @@ func (r *CertificationRepository) TryInsertIdempotency(ctx context.Context, tx p
 	return inserted != uuid.Nil, nil
 }
 
-
 func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Context, tx pgx.Tx, input *domain.EvaluationInput) error {
 	if input == nil {
 		return fmt.Errorf("evaluation input is required")
