@@ -218,7 +218,7 @@ func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, bindi
 	if authWorkspace != binding.WorkspaceID || strings.TrimSpace(grantor) != strings.TrimSpace(binding.GrantorRef) {
 		return domain.ErrInvalidBinding
 	}
-	if status == domain.StatusRevoked || status == domain.StatusSuspended || status == domain.StatusExpired || status == domain.StatusRejected {
+	if status != domain.StatusActive {
 		return domain.ErrInvalidBinding
 	}
 	if validFrom != nil && asOf.Before(*validFrom) || validTo != nil && !asOf.Before(*validTo) {
