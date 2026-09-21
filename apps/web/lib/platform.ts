@@ -424,10 +424,12 @@ export const platform = {
       workspacePath(`/datasets/${encodeURIComponent(id)}/versions?limit=${limit}&offset=${offset}`),
     ),
   datasetVersion: (versionId: string) =>
-    apiGet<DatasetVersion>(`/api/v1/dataset-versions/${encodeURIComponent(versionId)}`),
+    apiGet<DatasetVersion>(
+      `/api/v1/dataset-versions/${encodeURIComponent(versionId)}?workspaceId=${encodeURIComponent(requireWorkspace())}`,
+    ),
   qualityAssessments: (versionId: string, limit = 25, offset = 0) =>
     apiGet<{ datasetVersionId: string; items: QualityAssessment[]; page: PageMeta }>(
-      `/api/v1/dataset-versions/${encodeURIComponent(versionId)}/quality-assessments?limit=${limit}&offset=${offset}`,
+      `/api/v1/dataset-versions/${encodeURIComponent(versionId)}/quality-assessments?workspaceId=${encodeURIComponent(requireWorkspace())}&limit=${limit}&offset=${offset}`,
     ),
   certificationHistory: (versionId: string) =>
     apiGet<CertificationHistory>(
