@@ -252,9 +252,9 @@ func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, bindi
 				SELECT 1 FROM rights_declaration_permission p
 				WHERE p.declaration_id=$1 AND p.permission_kind='GRANT' AND p.action=requested_action
 				  AND EXISTS (SELECT 1 FROM rights_declaration_purpose pu WHERE pu.permission_id=p.id AND pu.purpose_code=$3)
-				  AND EXISTS (SELECT 1 FROM rights_declaration_scope sc WHERE sc.permission_id=p.id AND (sc.scope_type='ALL_RESOURCE' OR (sc.scope_type=$4 AND sc.scope_ref=$5)))
+				  AND EXISTS (SELECT 1 FROM rights_declaration_scope sc WHERE sc.permission_id=p.id AND ((sc.scope_type='ALL_RESOURCE' AND sc.scope_ref=$6) OR (sc.scope_type=$4 AND sc.scope_ref=$5)))
 			)
-		)`, binding.DeclarationID, actions, purpose, scopeType, scopeRef).Scan(&supported); err != nil || !supported {
+		)`, binding.DeclarationID, actions, purpose, scopeType, scopeRef, binding.DataResourceID.String()).Scan(&supported); err != nil || !supported {
 		return domain.ErrInvalidBinding
 	}
 	if binding.AuthorityMode == domain.AuthorityDirect {
@@ -433,7 +433,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 			JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED' AND v.occurred_at <= $8
 			JOIN rights_declaration_permission p ON p.declaration_id=d.id AND p.permission_kind='USE' AND p.action=$5
 			JOIN rights_declaration_purpose pu ON pu.permission_id=p.id AND pu.purpose_code=$4
-			JOIN rights_declaration_scope sc ON sc.permission_id=p.id AND (sc.scope_type='ALL_RESOURCE' OR (sc.scope_type=$6 AND sc.scope_ref=$7))
+			JOIN rights_declaration_scope sc ON sc.permission_id=p.id AND ((sc.scope_type='ALL_RESOURCE' AND sc.scope_ref=$2::text) OR (sc.scope_type=$6 AND sc.scope_ref=$7))
 			WHERE d.workspace_id=$1 AND d.data_resource_id=$2
 			  AND (d.consumer_scope_type='ANY' OR (d.consumer_scope_type='EXPLICIT' AND d.consumer_ref=$3))
 			  AND d.created_at <= $8
@@ -463,12 +463,12 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 		JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED'
 		JOIN rights_declaration_permission gp ON gp.declaration_id=d.id AND gp.permission_kind='GRANT' AND gp.action=$9
 		JOIN rights_declaration_purpose gpurpose ON gpurpose.permission_id=gp.id AND gpurpose.purpose_code=$5
-		JOIN rights_declaration_scope gscope ON gscope.permission_id=gp.id AND (gscope.scope_type='ALL_RESOURCE' OR (gscope.scope_type=$7 AND gscope.scope_ref=$8))
+		JOIN rights_declaration_scope gscope ON gscope.permission_id=gp.id AND ((gscope.scope_type='ALL_RESOURCE' AND gscope.scope_ref=$2::text) OR (gscope.scope_type=$7 AND gscope.scope_ref=$8))
 		WHERE b.workspace_id=$1 AND b.data_resource_id=$2 AND ($3::uuid='00000000-0000-0000-0000-000000000000' OR b.authorization_id=$3)
 		  AND a.status='ACTIVE' AND a.grantee_ref=$4 AND a.purpose=$5
 		  AND (a.valid_from IS NULL OR a.valid_from <= $6) AND (a.valid_to IS NULL OR a.valid_to > $6)
 		  AND b.created_at <= $6
-		  AND (ar.scope_type='ALL_RESOURCE' OR (ar.scope_type=$7 AND ar.scope_ref=$8)) AND $9 = ANY(ar.actions)
+		  AND ((ar.scope_type='ALL_RESOURCE' AND ar.scope_ref=$2::text) OR (ar.scope_type=$7 AND ar.scope_ref=$8)) AND $9 = ANY(ar.actions)
 		  AND (d.effective_from IS NULL OR d.effective_from <= $6) AND (d.effective_to IS NULL OR d.effective_to > $6)
 		  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $6)
 		  AND NOT EXISTS (SELECT 1 FROM authorization_provenance_binding_disposition x WHERE x.binding_id=b.id AND x.effective_at <= $6)
@@ -490,7 +490,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 			AND NOT EXISTS (
 				SELECT 1 FROM grantor_authority_delegation_edge e
 				WHERE e.chain_id=b.delegation_chain_id
-				  AND (e.data_resource_id<>$2 OR NOT ($9=ANY(e.grantable_actions)) OR NOT ($5=ANY(e.grantable_purposes)) OR NOT (e.scope_type='ALL_RESOURCE' OR (e.scope_type=$7 AND e.scope_ref=$8)))
+				  AND (e.data_resource_id<>$2 OR NOT ($9=ANY(e.grantable_actions)) OR NOT ($5=ANY(e.grantable_purposes)) OR NOT ((e.scope_type='ALL_RESOURCE' AND e.scope_ref=$2::text) OR (e.scope_type=$7 AND e.scope_ref=$8)))
 			)
 			AND EXISTS (
 				SELECT 1 FROM rights_declaration_party rp
