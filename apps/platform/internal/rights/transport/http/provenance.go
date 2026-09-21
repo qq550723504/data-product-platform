@@ -138,11 +138,17 @@ func (h *Handler) finalizeDelegationChain(w http.ResponseWriter, r *http.Request
 		httpserver.WriteError(w, r, 400, "DELEGATION_CHAIN_FINALIZE_FAILED", e.Error(), nil)
 		return
 	}
+	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, 400, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
+	}
 	actor, ok := h.authorizeWorkspace(w, r, chainRecord.WorkspaceID)
 	if !ok {
 		return
 	}
-	chain, e := h.service.FinalizeDelegationChain(r.Context(), application.FinalizeDelegationChainCommand{ChainID: id, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
+	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("grantor-delegation-chain-finalize:"+id.String()+":"+idempotencyKey))
+	chain, e := h.service.FinalizeDelegationChain(r.Context(), application.FinalizeDelegationChainCommand{ChainID: id, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
 	if e != nil {
 		httpserver.WriteError(w, r, 400, "DELEGATION_CHAIN_FINALIZE_FAILED", e.Error(), nil)
 		return
