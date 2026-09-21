@@ -169,6 +169,9 @@ func NewRightsDeclaration(spec RightsDeclarationSpec) (RightsDeclaration, error)
 		if err != nil {
 			return RightsDeclaration{}, ErrInvalidRightsDeclaration
 		}
+		if permission.Scope.Type == "ALL_RESOURCE" && permission.Scope.Ref != spec.DataResourceID.String() {
+			return RightsDeclaration{}, ErrInvalidRightsDeclaration
+		}
 		declaration.Permissions = append(declaration.Permissions, permission)
 	}
 	return declaration, nil
@@ -217,7 +220,10 @@ func (d RightsDeclaration) Allows(kind, action, purpose, consumer string, scope 
 
 func ScopeCovers(allowed, requested NormalizedScope) bool {
 	if allowed.Type == "ALL_RESOURCE" {
-		return allowed.Ref == requested.Ref || requested.Ref != ""
+		if requested.Type == "ALL_RESOURCE" {
+			return allowed.Ref == requested.Ref
+		}
+		return allowed.Ref != ""
 	}
 	return allowed.Type == requested.Type && allowed.Ref == requested.Ref
 }
