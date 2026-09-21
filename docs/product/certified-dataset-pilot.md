@@ -90,6 +90,8 @@ V1 QualityRuleSet 由 industry-pack 提供，Core 只识别有限的通用 `type
 
 提供可读 Quality Report。
 
+当前报告查询路由为 `GET /api/v1/quality-assessments/{assessmentId}/report`，要求显式 `workspaceId`，并使用 `limit` / `offset` 返回受控、稳定排序的 finding page。报告读取已冻结的六维摘要和 RuleSet hash/evaluator provenance，不重新执行当前规则；Evidence 与 Audit 以引用字段返回。报告层将历史 `SKIPPED` 映射为 `NOT_APPLICABLE`，不改变 `quality_finding` 中的历史存储值。
+
 客户能够看到：
 
 - 六维摘要

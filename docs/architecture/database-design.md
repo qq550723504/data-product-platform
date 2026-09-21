@@ -367,7 +367,7 @@ action decision 至少：
 
 后续 #132/#133 的工作重点是六维通用规则执行与 Quality Report，不再重复迁移/重建 QualityAssessment 核心。
 
-大量 failing rows 的进一步规模化存储/分页可以由 #133 按已实现 finding 模型演进；不得通过新平行 Assessment root 规避现有历史。
+#133 的报告读模型复用既有 `quality_finding`，通过 `created_at, rule_id, id` 稳定排序和 `limit/offset` 提供受控 finding page；报告只读取 Assessment 已冻结的六维摘要，不得重新执行当前规则。不得通过新平行 Assessment root 规避现有历史。
 
 ## 11. CertificationProfile / DatasetCertification（#134）
 

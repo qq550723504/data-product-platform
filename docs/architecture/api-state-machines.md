@@ -246,11 +246,14 @@ QueryCurrentEntitlement
 POST /api/v1/dataset-versions/{versionId}/quality-checks
 GET  /api/v1/quality-results/{resultId}
 GET  /api/v1/quality-assessments/{assessmentId}
+GET  /api/v1/quality-assessments/{assessmentId}/report?workspaceId={workspaceId}&limit={limit}&offset={offset}
 GET  /api/v1/dataset-versions/{versionId}/quality-assessments
 GET  /api/v1/dataset-versions/{versionId}/quality-assessments/latest
 ~~~
 
 其中 `POST .../quality-checks` 创建 QualityAssessment 的核心语义、模型与查询路由已由 #140 落地；#131 当前仅承接 typed CostAllocation / retry-cost 等 review follow-up，不得重新创建 QualityAssessment root、平行表族或重复 migration。历史兼容 query route 仍保留。
+
+`GET .../{assessmentId}/report` 是 #133 的客户报告读模型：必须显式提供 `workspaceId`，返回冻结的 DatasetVersion/RuleSet/evaluator provenance、六维摘要、Evidence/Audit 引用，以及按 `created_at, rule_id, id` 稳定排序的受控 finding page。该路由读取已持久化的 Assessment `metrics.dimensions`，不得按当前规则文件重新评测；`SKIPPED` finding 在报告契约中呈现为 `NOT_APPLICABLE`，不会改写历史存储事实。报告不返回完整规则文件或未分页的 finding 集合。
 
 ### Compliance（当前 live API）
 
