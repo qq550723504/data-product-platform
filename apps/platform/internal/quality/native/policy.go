@@ -1,17 +1,21 @@
 package native
 
 import (
+	"bytes"
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
+	"math/big"
 	"os"
 	"strings"
 
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	"gopkg.in/yaml.v3"
 )
 
 const (
 	EvaluatorName    = "native-quality"
-	EvaluatorVersion = "1"
+	EvaluatorVersion = "2"
 )
 
 type Policy struct {
@@ -35,13 +39,141 @@ type Policy struct {
 }
 
 type Rule struct {
-	ID         string `yaml:"id"`
-	Stage      string `yaml:"stage"`
-	Dimension  string `yaml:"dimension"`
-	Target     string `yaml:"target"`
-	Expression string `yaml:"expression"`
-	Severity   string `yaml:"severity"`
-	Note       string `yaml:"note"`
+	ID          string         `yaml:"id"`
+	Stage       string         `yaml:"stage"`
+	Dimension   string         `yaml:"dimension"`
+	Type        string         `yaml:"type"`
+	Target      string         `yaml:"target"`
+	Threshold   any            `yaml:"threshold"`
+	Parameters  map[string]any `yaml:"parameters"`
+	Required    bool           `yaml:"required"`
+	Description string         `yaml:"description"`
+	Expectation string         `yaml:"expectation"`
+	Expression  string         `yaml:"expression"` // retained as human-readable expectation text
+	Severity    string         `yaml:"severity"`
+	Note        string         `yaml:"note"`
+	requiredSet bool
+}
+
+// UnmarshalYAML preserves whether required was present. A plain bool cannot
+// distinguish an omitted field from an explicit false, but that distinction
+// is part of the rule-set contract for fail-closed evaluation.
+func (r *Rule) UnmarshalYAML(node *yaml.Node) error {
+	type ruleAlias Rule
+	var decoded ruleAlias
+	if node.Kind != yaml.MappingNode {
+		return fmt.Errorf("rule must be a mapping")
+	}
+	knownFields := map[string]struct{}{
+		"id": {}, "stage": {}, "dimension": {}, "type": {}, "target": {},
+		"threshold": {}, "parameters": {}, "required": {}, "description": {},
+		"expectation": {}, "expression": {}, "severity": {}, "note": {},
+	}
+	for index := 0; index+1 < len(node.Content); index += 2 {
+		key := node.Content[index].Value
+		if _, ok := knownFields[key]; !ok {
+			return fmt.Errorf("unknown field %q", key)
+		}
+	}
+	if err := node.Decode(&decoded); err != nil {
+		return err
+	}
+	for index := 0; index+1 < len(node.Content); index += 2 {
+		key := node.Content[index].Value
+		value := node.Content[index+1]
+		switch key {
+		case "threshold":
+			exact, err := yamlExactValue(value)
+			if err != nil {
+				return fmt.Errorf("rule threshold: %w", err)
+			}
+			decoded.Threshold = exact
+		case "parameters":
+			exact, err := yamlExactValue(value)
+			if err != nil {
+				return fmt.Errorf("rule parameters: %w", err)
+			}
+			parameters, ok := exact.(map[string]any)
+			if !ok {
+				return fmt.Errorf("rule parameters must be a mapping")
+			}
+			decoded.Parameters = parameters
+		case "required":
+			decoded.requiredSet = true
+			requiredValue := strings.ToLower(strings.TrimSpace(value.Value))
+			if value.Tag != "!!bool" || (requiredValue != "true" && requiredValue != "false") {
+				return fmt.Errorf("rule required must be a non-null boolean")
+			}
+		}
+	}
+	*r = Rule(decoded)
+	r.requiredSet = decoded.requiredSet
+	return nil
+}
+
+func yamlExactValue(node *yaml.Node) (any, error) {
+	switch node.Kind {
+	case yaml.MappingNode:
+		result := make(map[string]any, len(node.Content)/2)
+		for index := 0; index+1 < len(node.Content); index += 2 {
+			value, err := yamlExactValue(node.Content[index+1])
+			if err != nil {
+				return nil, err
+			}
+			result[node.Content[index].Value] = value
+		}
+		return result, nil
+	case yaml.SequenceNode:
+		result := make([]any, 0, len(node.Content))
+		for _, child := range node.Content {
+			value, err := yamlExactValue(child)
+			if err != nil {
+				return nil, err
+			}
+			result = append(result, value)
+		}
+		return result, nil
+	case yaml.ScalarNode:
+		switch node.Tag {
+		case "!!int", "!!float":
+			return json.Number(node.Value), nil
+		case "!!bool":
+			var value bool
+			if err := node.Decode(&value); err != nil {
+				return nil, err
+			}
+			return value, nil
+		case "!!null":
+			return nil, nil
+		default:
+			return node.Value, nil
+		}
+	default:
+		return nil, fmt.Errorf("unsupported YAML value kind %d", node.Kind)
+	}
+}
+
+const (
+	RuleTypeNotNull                = "not_null"
+	RuleTypeCompletenessRatio      = "completeness_ratio"
+	RuleTypeUnique                 = "unique"
+	RuleTypeDuplicateRatio         = "duplicate_ratio"
+	RuleTypeRange                  = "range"
+	RuleTypeEnum                   = "enum"
+	RuleTypeRegex                  = "regex"
+	RuleTypeFreshness              = "freshness"
+	RuleTypeReferenceMatch         = "reference_match"
+	RuleTypeReconciliation         = "reconciliation"
+	RuleTypeConditionalConsistency = "conditional_consistency"
+	RuleTypeLineagePresent         = "lineage_present"
+	RuleTypeEvidencePresent        = "evidence_present"
+)
+
+var qualityRuleTypes = map[string]struct{}{
+	RuleTypeNotNull: {}, RuleTypeCompletenessRatio: {}, RuleTypeUnique: {},
+	RuleTypeDuplicateRatio: {}, RuleTypeRange: {}, RuleTypeEnum: {}, RuleTypeRegex: {},
+	RuleTypeFreshness: {}, RuleTypeReferenceMatch: {}, RuleTypeReconciliation: {},
+	RuleTypeConditionalConsistency: {}, RuleTypeLineagePresent: {}, RuleTypeEvidencePresent: {},
 }
 
 func LoadPolicy(path string) (Policy, error) {
@@ -50,13 +182,412 @@ func LoadPolicy(path string) (Policy, error) {
 		return Policy{}, fmt.Errorf("read quality policy %q: %w", path, err)
 	}
 	var policy Policy
-	if err := yaml.Unmarshal(content, &policy); err != nil {
+	decoder := yaml.NewDecoder(bytes.NewReader(content))
+	decoder.KnownFields(true)
+	if err := decoder.Decode(&policy); err != nil {
 		return Policy{}, fmt.Errorf("decode quality policy %q: %w", path, err)
 	}
-	if strings.TrimSpace(policy.Metadata.Version) == "" || len(policy.Spec.Rules) == 0 {
-		return Policy{}, fmt.Errorf("quality policy %q is missing version or rules", path)
+	if err := validatePolicy(policy, true); err != nil {
+		return Policy{}, fmt.Errorf("validate quality policy %q: %w", path, err)
+	}
+	if err := normalizeAndValidateGate(&policy); err != nil {
+		return Policy{}, fmt.Errorf("validate quality policy %q: %w", path, err)
+	}
+	for i := range policy.Spec.Rules {
+		policy.Spec.Rules[i].Dimension = normalizeDimension(policy.Spec.Rules[i].Dimension)
+		policy.Spec.Rules[i].Type = strings.ToLower(strings.TrimSpace(policy.Spec.Rules[i].Type))
+		policy.Spec.Rules[i].Severity = normalizeSeverity(policy.Spec.Rules[i].Severity)
 	}
 	policy.SourceContent = string(content)
 	policy.SourceContentSHA256 = fmt.Sprintf("%x", sha256.Sum256(content))
 	return policy, nil
+}
+
+func (p Policy) GateDecision(findings []domain.Finding) (domain.GateDecision, error) {
+	gate := p.Spec.Gate
+	if strings.TrimSpace(gate.CriticalFailure) == "" && strings.TrimSpace(gate.HighFailure) == "" && strings.TrimSpace(gate.WarningFailure) == "" {
+		gate.CriticalFailure = string(domain.GateFail)
+		gate.HighFailure = string(domain.GateReview)
+		gate.WarningFailure = string(domain.GatePassWithWarning)
+	}
+	if err := validateGateValues(gate); err != nil {
+		return "", err
+	}
+	decision := domain.GatePass
+	for _, finding := range findings {
+		if finding.Status != domain.FindingFail {
+			continue
+		}
+		mapped := gate.WarningFailure
+		switch strings.ToUpper(finding.Severity) {
+		case "CRITICAL":
+			mapped = gate.CriticalFailure
+		case "HIGH":
+			mapped = gate.HighFailure
+		}
+		candidate := domain.GateDecision(strings.ToUpper(strings.TrimSpace(mapped)))
+		if gateDecisionRank(candidate) > gateDecisionRank(decision) {
+			decision = candidate
+		}
+	}
+	return decision, nil
+}
+
+func normalizeAndValidateGate(policy *Policy) error {
+	gate := &policy.Spec.Gate
+	if strings.TrimSpace(gate.CriticalFailure) == "" && strings.TrimSpace(gate.HighFailure) == "" && strings.TrimSpace(gate.WarningFailure) == "" {
+		gate.CriticalFailure = string(domain.GateFail)
+		gate.HighFailure = string(domain.GateReview)
+		gate.WarningFailure = string(domain.GatePassWithWarning)
+	}
+	return validateGateValues(*gate)
+}
+
+func validateGateValues(gate struct {
+	CriticalFailure string `yaml:"criticalFailure"`
+	HighFailure     string `yaml:"highFailure"`
+	WarningFailure  string `yaml:"warningFailure"`
+}) error {
+	for name, value := range map[string]string{
+		"criticalFailure": gate.CriticalFailure,
+		"highFailure":     gate.HighFailure,
+		"warningFailure":  gate.WarningFailure,
+	} {
+		if name == "criticalFailure" && strings.ToUpper(strings.TrimSpace(value)) != string(domain.GateFail) {
+			return fmt.Errorf("spec.gate.criticalFailure must be FAIL to preserve fail-closed critical rules")
+		}
+		switch domain.GateDecision(strings.ToUpper(strings.TrimSpace(value))) {
+		case domain.GatePass, domain.GatePassWithWarning, domain.GateReview, domain.GateFail:
+		default:
+			return fmt.Errorf("spec.gate.%s must be one of PASS, PASS_WITH_WARNING, REVIEW, FAIL", name)
+		}
+	}
+	return nil
+}
+
+func gateDecisionRank(decision domain.GateDecision) int {
+	switch decision {
+	case domain.GateFail:
+		return 4
+	case domain.GateReview:
+		return 3
+	case domain.GatePassWithWarning:
+		return 2
+	case domain.GatePass:
+		return 1
+	default:
+		return 0
+	}
+}
+
+func validatePolicy(policy Policy, requireRequired bool) error {
+	if strings.TrimSpace(policy.APIVersion) == "" {
+		return fmt.Errorf("apiVersion is required")
+	}
+	if strings.TrimSpace(policy.Kind) != "QualityRuleSet" {
+		return fmt.Errorf("kind must be QualityRuleSet")
+	}
+	if strings.TrimSpace(policy.Metadata.Version) == "" {
+		return fmt.Errorf("metadata.version is required")
+	}
+	if len(policy.Spec.Rules) == 0 {
+		return fmt.Errorf("spec.rules must not be empty")
+	}
+	seen := make(map[string]struct{}, len(policy.Spec.Rules))
+	for i, rule := range policy.Spec.Rules {
+		if strings.TrimSpace(rule.ID) == "" {
+			return fmt.Errorf("spec.rules[%d].id is required", i)
+		}
+		if _, exists := seen[rule.ID]; exists {
+			return fmt.Errorf("spec.rules[%d].id %q is duplicated", i, rule.ID)
+		}
+		seen[rule.ID] = struct{}{}
+		if requireRequired && !rule.requiredSet {
+			return fmt.Errorf("rule %s required must be explicitly declared", rule.ID)
+		}
+		if !isQualityDimension(rule.Dimension) {
+			return fmt.Errorf("rule %s has unsupported dimension %q", rule.ID, rule.Dimension)
+		}
+		ruleType := strings.ToLower(strings.TrimSpace(rule.Type))
+		if _, ok := qualityRuleTypes[ruleType]; !ok {
+			return fmt.Errorf("rule %s has unknown rule type %q", rule.ID, rule.Type)
+		}
+		if err := validateParameterKeys(rule, ruleType); err != nil {
+			return err
+		}
+		severity := normalizeSeverity(rule.Severity)
+		if severity == "" {
+			return fmt.Errorf("rule %s severity is required", rule.ID)
+		}
+		switch severity {
+		case "CRITICAL", "HIGH", "WARNING":
+		default:
+			return fmt.Errorf("rule %s has unsupported severity %q", rule.ID, rule.Severity)
+		}
+		if requiresTarget(ruleType) && strings.TrimSpace(rule.Target) == "" {
+			return fmt.Errorf("rule %s target is required for %s", rule.ID, ruleType)
+		}
+		if ruleType == RuleTypeRange {
+			if _, err := parameterNumber(rule, "min"); err != nil {
+				return fmt.Errorf("rule %s range min: %w", rule.ID, err)
+			}
+			if _, err := parameterNumber(rule, "max"); err != nil {
+				return fmt.Errorf("rule %s range max: %w", rule.ID, err)
+			}
+			minimum, err := numericRat(rule.Parameters["min"])
+			if err != nil {
+				return fmt.Errorf("rule %s range min: %w", rule.ID, err)
+			}
+			maximum, err := numericRat(rule.Parameters["max"])
+			if err != nil {
+				return fmt.Errorf("rule %s range max: %w", rule.ID, err)
+			}
+			if minimum.Cmp(maximum) > 0 {
+				return fmt.Errorf("rule %s range min must not exceed max", rule.ID)
+			}
+		}
+		if ruleType == RuleTypeNotNull || ruleType == RuleTypeCompletenessRatio || ruleType == RuleTypeUnique {
+			if err := validateRatioThreshold(rule, 1); err != nil {
+				return fmt.Errorf("rule %s: %w", rule.ID, err)
+			}
+		}
+		if ruleType == RuleTypeDuplicateRatio {
+			if err := validateRatioThreshold(rule, 0); err != nil {
+				return fmt.Errorf("rule %s: %w", rule.ID, err)
+			}
+		}
+		if ruleType == RuleTypeRange || ruleType == RuleTypeEnum || ruleType == RuleTypeRegex {
+			if _, err := parameterBool(rule, "allowNull", true); err != nil {
+				return fmt.Errorf("rule %s allowNull: %w", rule.ID, err)
+			}
+		}
+		if ruleType == RuleTypeEnum {
+			if err := validateStringListParameters(rule, "values", "allowedValues"); err != nil {
+				return fmt.Errorf("rule %s: %w", rule.ID, err)
+			}
+		}
+		if ruleType == RuleTypeEnum && len(parameterStrings(rule, "values", "allowedValues")) == 0 {
+			return fmt.Errorf("rule %s enum values are required", rule.ID)
+		}
+		if ruleType == RuleTypeRegex && strings.TrimSpace(parameterString(rule, "pattern")) == "" {
+			return fmt.Errorf("rule %s regex pattern is required", rule.ID)
+		}
+		if ruleType == RuleTypeConditionalConsistency {
+			if err := validateStringListParameters(rule, "whenPresentValues"); err != nil {
+				return fmt.Errorf("rule %s: %w", rule.ID, err)
+			}
+			if strings.TrimSpace(parameterString(rule, "conditionField")) == "" ||
+				strings.TrimSpace(parameterString(rule, "whenMissing")) == "" ||
+				len(parameterStrings(rule, "whenPresentValues")) == 0 {
+				return fmt.Errorf("rule %s conditional_consistency parameters are incomplete", rule.ID)
+			}
+		}
+		if ruleType == RuleTypeReferenceMatch || ruleType == RuleTypeReconciliation {
+			if strings.TrimSpace(parameterString(rule, "metric", "metadataKey")) == "" {
+				return fmt.Errorf("rule %s metric parameter is required", rule.ID)
+			}
+			if !hasExplicitThreshold(rule) {
+				return fmt.Errorf("rule %s threshold is required", rule.ID)
+			}
+			if _, err := ruleThreshold(rule, 0); err != nil {
+				return fmt.Errorf("rule %s threshold: %w", rule.ID, err)
+			}
+			operator, present, err := parameterStringValue(rule, "operator")
+			if err != nil {
+				return fmt.Errorf("rule %s operator: %w", rule.ID, err)
+			}
+			if !present || operator == "" {
+				return fmt.Errorf("rule %s operator is required", rule.ID)
+			}
+			operator = strings.ToLower(operator)
+			switch operator {
+			case "lt", "lte", "le", "eq", "equal", "gte", "ge", "gt":
+			default:
+				return fmt.Errorf("rule %s has unsupported operator %q", rule.ID, operator)
+			}
+		}
+		if ruleType == RuleTypeFreshness {
+			if !hasExplicitThreshold(rule) {
+				return fmt.Errorf("rule %s threshold is required", rule.ID)
+			}
+			if _, err := ruleThreshold(rule, 0); err != nil {
+				return fmt.Errorf("rule %s threshold: %w", rule.ID, err)
+			}
+		}
+	}
+	return nil
+}
+
+func isQualityDimension(value string) bool {
+	normalized := normalizeDimension(value)
+	for _, dimension := range domain.QualityDimensions {
+		if normalized == dimension {
+			return true
+		}
+	}
+	return false
+}
+
+func validateRules(rules []Rule) error {
+	policy := Policy{APIVersion: "inline", Kind: "QualityRuleSet"}
+	policy.Metadata.Version = "inline"
+	policy.Spec.Rules = rules
+	return validatePolicy(policy, false)
+}
+
+func requiresTarget(ruleType string) bool {
+	switch ruleType {
+	case RuleTypeNotNull, RuleTypeCompletenessRatio, RuleTypeUnique, RuleTypeDuplicateRatio,
+		RuleTypeRange, RuleTypeEnum, RuleTypeRegex, RuleTypeConditionalConsistency:
+		return true
+	default:
+		return false
+	}
+}
+
+func validateParameterKeys(rule Rule, ruleType string) error {
+	allowed := map[string]struct{}{}
+	switch ruleType {
+	case RuleTypeNotNull, RuleTypeCompletenessRatio, RuleTypeUnique, RuleTypeDuplicateRatio:
+		allowed["threshold"] = struct{}{}
+	case RuleTypeRange:
+		allowed["min"] = struct{}{}
+		allowed["max"] = struct{}{}
+		allowed["allowNull"] = struct{}{}
+	case RuleTypeEnum:
+		allowed["values"] = struct{}{}
+		allowed["allowedValues"] = struct{}{}
+		allowed["allowNull"] = struct{}{}
+	case RuleTypeRegex:
+		allowed["pattern"] = struct{}{}
+		allowed["allowNull"] = struct{}{}
+	case RuleTypeFreshness:
+		allowed["threshold"] = struct{}{}
+	case RuleTypeReferenceMatch, RuleTypeReconciliation:
+		allowed["metric"] = struct{}{}
+		allowed["metadataKey"] = struct{}{}
+		allowed["threshold"] = struct{}{}
+		allowed["operator"] = struct{}{}
+	case RuleTypeConditionalConsistency:
+		allowed["conditionField"] = struct{}{}
+		allowed["whenMissing"] = struct{}{}
+		allowed["whenPresentValues"] = struct{}{}
+	}
+	for key := range rule.Parameters {
+		if _, ok := allowed[key]; !ok {
+			return fmt.Errorf("rule %s has unsupported parameter %q", rule.ID, key)
+		}
+	}
+	return nil
+}
+
+func normalizeDimension(value string) string {
+	dimension := strings.ToUpper(strings.TrimSpace(value))
+	if dimension == "CONFORMITY" {
+		return "ACCURACY"
+	}
+	return dimension
+}
+
+func normalizeSeverity(value string) string {
+	return strings.ToUpper(strings.TrimSpace(value))
+}
+
+func validateRatioThreshold(rule Rule, fallback float64) error {
+	threshold, err := ruleThresholdRat(rule, fallback)
+	if err != nil {
+		return fmt.Errorf("ratio threshold: %w", err)
+	}
+	if threshold.Sign() < 0 || threshold.Cmp(big.NewRat(1, 1)) > 0 {
+		return fmt.Errorf("ratio threshold must be between 0 and 1, got %s", threshold.RatString())
+	}
+	return nil
+}
+
+func hasExplicitThreshold(rule Rule) bool {
+	if rule.Threshold != nil {
+		return true
+	}
+	_, ok := rule.Parameters["threshold"]
+	return ok
+}
+
+func parameterString(rule Rule, keys ...string) string {
+	for _, key := range keys {
+		value, ok := rule.Parameters[key]
+		if !ok {
+			continue
+		}
+		if text, ok := value.(string); ok {
+			return strings.TrimSpace(text)
+		}
+	}
+	return ""
+}
+
+func parameterStringValue(rule Rule, key string) (string, bool, error) {
+	value, ok := rule.Parameters[key]
+	if !ok {
+		return "", false, nil
+	}
+	text, ok := value.(string)
+	if !ok {
+		return "", true, fmt.Errorf("parameter %s must be a string", key)
+	}
+	return strings.TrimSpace(text), true, nil
+}
+
+func parameterStrings(rule Rule, keys ...string) []string {
+	for _, key := range keys {
+		value, ok := rule.Parameters[key]
+		if !ok {
+			continue
+		}
+		switch values := value.(type) {
+		case []any:
+			result := make([]string, 0, len(values))
+			for _, item := range values {
+				if text, ok := item.(string); ok && strings.TrimSpace(text) != "" {
+					result = append(result, strings.TrimSpace(text))
+				}
+			}
+			return result
+		case []string:
+			result := make([]string, 0, len(values))
+			for _, item := range values {
+				if strings.TrimSpace(item) != "" {
+					result = append(result, strings.TrimSpace(item))
+				}
+			}
+			return result
+		}
+	}
+	return nil
+}
+
+func validateStringListParameters(rule Rule, keys ...string) error {
+	for _, key := range keys {
+		value, ok := rule.Parameters[key]
+		if !ok {
+			continue
+		}
+		switch values := value.(type) {
+		case []any:
+			for index, item := range values {
+				text, ok := item.(string)
+				if !ok || strings.TrimSpace(text) == "" {
+					return fmt.Errorf("parameter %s[%d] must be a non-empty string", key, index)
+				}
+			}
+		case []string:
+			for index, item := range values {
+				if strings.TrimSpace(item) == "" {
+					return fmt.Errorf("parameter %s[%d] must be a non-empty string", key, index)
+				}
+			}
+		default:
+			return fmt.Errorf("parameter %s must be a string list", key)
+		}
+	}
+	return nil
 }

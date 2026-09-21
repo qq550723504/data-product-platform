@@ -120,6 +120,9 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	if assessment.RuleSetContent != policy.SourceContent || assessment.RuleSetContentSHA256 != policy.SourceContentSHA256 {
 		t.Fatalf("queried assessment lost its rule snapshot")
 	}
+	if assessment.DimensionSummaries["COMPLETENESS"].Status != qualitydomain.DimensionPass {
+		t.Fatalf("queried completeness summary = %#v, want PASS", assessment.DimensionSummaries["COMPLETENESS"])
+	}
 	costRepo := cost.NewQueryRepository(pool)
 	qualityCosts, err := costRepo.ListByQualityAssessment(ctx, qualityResult.ID)
 	if err != nil {

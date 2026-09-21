@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -85,6 +86,39 @@ func (s *gateStore) Put(ctx context.Context, objectName string, reader io.Reader
 	default:
 	}
 	<-s.release
+	return s.inner.Put(ctx, objectName, reader, size, contentType)
+}
+
+// barrierStore keeps all concurrent attempts in the staging phase until the
+// test has observed every attempt. Without this barrier the first goroutine to
+// publish can make later goroutines replay the READY row before they stage an
+// object, which makes the "one staged object per attempt" assertion dependent
+// on scheduler timing.
+type barrierStore struct {
+	inner   *recordingStore
+	entered chan struct{}
+	release chan struct{}
+}
+
+func newBarrierStore(inner *recordingStore, attempts int) *barrierStore {
+	return &barrierStore{
+		inner:   inner,
+		entered: make(chan struct{}, attempts),
+		release: make(chan struct{}),
+	}
+}
+
+func (s *barrierStore) Put(ctx context.Context, objectName string, reader io.Reader, size int64, contentType string) (string, error) {
+	select {
+	case s.entered <- struct{}{}:
+	case <-ctx.Done():
+		return "", ctx.Err()
+	}
+	select {
+	case <-s.release:
+	case <-ctx.Done():
+		return "", ctx.Err()
+	}
 	return s.inner.Put(ctx, objectName, reader, size, contentType)
 }
 
@@ -392,11 +426,12 @@ func TestRecoveryDoesNotSupersedeNewerCurrentVersion(t *testing.T) {
 // own object; the published storage URI must still hold content matching the
 // published checksum after every attempt finished.
 func TestConcurrentDeliveriesNeverOverwritePublishedContent(t *testing.T) {
+	const writers = 8
 	store := newRecordingStore()
-	fixture, _, datasetID := newC2AFixture(t, store)
+	barrier := newBarrierStore(store, writers)
+	fixture, _, datasetID := newC2AFixture(t, barrier)
 	executionID := uuid.New()
 
-	const writers = 8
 	var wg sync.WaitGroup
 	versions := make([]domain.DatasetVersion, writers)
 	errs := make([]error, writers)
@@ -410,6 +445,14 @@ func TestConcurrentDeliveriesNeverOverwritePublishedContent(t *testing.T) {
 			)
 		}(i)
 	}
+	for i := 0; i < writers; i++ {
+		select {
+		case <-barrier.entered:
+		case <-time.After(10 * time.Second):
+			t.Fatalf("timed out waiting for concurrent writer %d to stage", i+1)
+		}
+	}
+	close(barrier.release)
 	wg.Wait()
 
 	for i, err := range errs {

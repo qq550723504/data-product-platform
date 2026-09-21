@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -60,6 +61,15 @@ type AssessmentAttempt struct {
 
 func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 	return &PostgresRepository{pool: pool}
+}
+
+// decodeJSONNumbers preserves JSON numbers as json.Number when loading
+// immutable assessment facts. Converting them to float64 would make values
+// above 2^53 or outside float64's range differ from the stored assessment.
+func decodeJSONNumbers(data []byte, target any) error {
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	return decoder.Decode(target)
 }
 
 func (r *PostgresRepository) InsertResult(ctx context.Context, tx pgx.Tx, result domain.Assessment) error {
@@ -279,7 +289,7 @@ func (r *PostgresRepository) GetAssessment(ctx context.Context, assessmentID uui
 	if err != nil {
 		return domain.Result{}, fmt.Errorf("get quality result: %w", err)
 	}
-	if err := json.Unmarshal(metrics, &result.Metrics); err != nil {
+	if err := decodeJSONNumbers(metrics, &result.Metrics); err != nil {
 		return domain.Result{}, fmt.Errorf("decode quality metrics: %w", err)
 	}
 	rows, err := r.pool.Query(ctx, `
@@ -298,12 +308,18 @@ func (r *PostgresRepository) GetAssessment(ctx context.Context, assessmentID uui
 			&finding.Severity, &finding.Status, &observed, &finding.Message, &finding.CreatedAt); err != nil {
 			return domain.Result{}, fmt.Errorf("scan quality finding: %w", err)
 		}
-		if err := json.Unmarshal(observed, &finding.Observed); err != nil {
+		if err := decodeJSONNumbers(observed, &finding.Observed); err != nil {
 			return domain.Result{}, fmt.Errorf("decode quality finding observation: %w", err)
 		}
 		result.Findings = append(result.Findings, finding)
 	}
-	return result, rows.Err()
+	if err := rows.Err(); err != nil {
+		return domain.Result{}, err
+	}
+	if err := restoreDimensionSummaries(&result); err != nil {
+		return domain.Result{}, err
+	}
+	return result, nil
 }
 
 func (r *PostgresRepository) ListAssessments(ctx context.Context, datasetVersionID uuid.UUID, limit, offset int) (AssessmentPage, error) {
@@ -342,7 +358,7 @@ func (r *PostgresRepository) ListAssessments(ctx context.Context, datasetVersion
 			&result.CreatedAt, &result.CreatedBy, &rowTotal); err != nil {
 			return AssessmentPage{}, fmt.Errorf("scan quality assessment: %w", err)
 		}
-		if err := json.Unmarshal(metrics, &result.Metrics); err != nil {
+		if err := decodeJSONNumbers(metrics, &result.Metrics); err != nil {
 			return AssessmentPage{}, fmt.Errorf("decode quality assessment metrics: %w", err)
 		}
 		total = rowTotal
@@ -443,12 +459,15 @@ func (r *PostgresRepository) loadFindings(ctx context.Context, result *domain.As
 			&finding.Severity, &finding.Status, &observed, &finding.Message, &finding.CreatedAt); err != nil {
 			return fmt.Errorf("scan quality finding: %w", err)
 		}
-		if err := json.Unmarshal(observed, &finding.Observed); err != nil {
+		if err := decodeJSONNumbers(observed, &finding.Observed); err != nil {
 			return fmt.Errorf("decode quality finding observation: %w", err)
 		}
 		result.Findings = append(result.Findings, finding)
 	}
-	return rows.Err()
+	if err := rows.Err(); err != nil {
+		return err
+	}
+	return restoreDimensionSummaries(result)
 }
 
 func (r *PostgresRepository) loadFindingsBatch(ctx context.Context, results []domain.Assessment) error {
@@ -479,7 +498,7 @@ func (r *PostgresRepository) loadFindingsBatch(ctx context.Context, results []do
 			&finding.Severity, &finding.Status, &observed, &finding.Message, &finding.CreatedAt); err != nil {
 			return fmt.Errorf("scan quality assessment finding: %w", err)
 		}
-		if err := json.Unmarshal(observed, &finding.Observed); err != nil {
+		if err := decodeJSONNumbers(observed, &finding.Observed); err != nil {
 			return fmt.Errorf("decode quality assessment finding observation: %w", err)
 		}
 		byResult[finding.ResultID] = append(byResult[finding.ResultID], finding)
@@ -489,6 +508,34 @@ func (r *PostgresRepository) loadFindingsBatch(ctx context.Context, results []do
 	}
 	for i := range results {
 		results[i].Findings = byResult[results[i].ID]
+		if err := restoreDimensionSummaries(&results[i]); err != nil {
+			return err
+		}
 	}
+	return nil
+}
+
+// restoreDimensionSummaries returns the summary frozen in the assessment's
+// metrics. Recomputing it from mutable evaluator code would change the meaning
+// of an immutable historical assessment after a later evaluator change. Older
+// rows without the persisted snapshot retain the legacy findings-based fallback.
+func restoreDimensionSummaries(result *domain.Assessment) error {
+	persisted, ok := result.Metrics["dimensions"]
+	if !ok {
+		result.DimensionSummaries = domain.SummarizeDimensions(result.Findings)
+		return nil
+	}
+	encoded, err := json.Marshal(persisted)
+	if err != nil {
+		return fmt.Errorf("marshal persisted quality dimension summary: %w", err)
+	}
+	var summaries map[string]domain.DimensionSummary
+	if err := json.Unmarshal(encoded, &summaries); err != nil {
+		return fmt.Errorf("decode persisted quality dimension summary: %w", err)
+	}
+	if summaries == nil {
+		return fmt.Errorf("persisted quality dimension summary is null")
+	}
+	result.DimensionSummaries = summaries
 	return nil
 }
