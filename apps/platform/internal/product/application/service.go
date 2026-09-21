@@ -333,135 +333,53 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 	if err != nil {
 		return ReadinessResult{}, err
 	}
-
-	// Before explicit validation, preserve the design-stage view: production and frozen
-	// dataset bindings are known, while governance/delivery checks remain pending.
 	if release.Status == domain.ReleaseDraft {
-		return readinessResultFromFacts(release.ID, facts), nil
+		checks := map[string]CheckStatus{
+			"production": CheckPass,
+			"dataset": CheckPass,
+			"rights": CheckPending,
+			"quality": CheckPending,
+			"compliance": CheckPending,
+			"contract": CheckPending,
+			"evidence": CheckPending,
+			"delivery": CheckPending,
+		}
+		return ReadinessResult{ReleaseID: release.ID, Overall: "NOT_READY", Checks: checks, Blockers: []string{"rights","quality","compliance","contract","evidence","delivery"}}, nil
+	}
+	product, err := s.repo.GetProduct(ctx, release.ProductID)
+	if err != nil { return ReadinessResult{}, err }
+	version, err := s.repo.GetVersion(ctx, release.ProductVersionID)
+	if err != nil { return ReadinessResult{}, err }
+	facts, err := s.repo.ReadinessFacts(ctx, release, product, version, time.Now().UTC())
+	if err != nil { return ReadinessResult{}, err }
+	return readinessResultFromFacts(release.ID, facts), nil
 }
-
 
 func readinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.ReadinessFacts) ReadinessResult {
 	checks := map[string]CheckStatus{
-			"production": CheckPass,
-			"dataset":    CheckPass,
-			"rights":     CheckPending,
-			"quality":    CheckPending,
-			"compliance": CheckPending,
-			"contract":   CheckPending,
-			"evidence":   CheckPending,
-			"delivery":   CheckPending,
-		}
-		return ReadinessResult{
-			ReleaseID: releaseID,
-			Overall:   "NOT_READY",
-			Checks:    checks,
-			Blockers:  []string{"rights", "quality", "compliance", "contract", "evidence", "delivery"},
-		}, nil
-	}
-
-	product, err := s.repo.GetProduct(ctx, release.ProductID)
-	if err != nil {
-		return ReadinessResult{}, err
-	}
-	version, err := s.repo.GetVersion(ctx, release.ProductVersionID)
-	if err != nil {
-		return ReadinessResult{}, err
-	}
-	facts, err := s.repo.ReadinessFacts(ctx, release, product, version, time.Now().UTC())
-	if err != nil {
-		return ReadinessResult{}, err
-	}
-
-	checks := map[string]CheckStatus{
-		"production": CheckFail,
-		"dataset":    CheckFail,
-		"rights":     CheckFail,
-		"quality":    CheckFail,
-		"compliance": CheckFail,
-		"contract":   CheckFail,
-		"evidence":   CheckFail,
-		"delivery":   CheckFail,
+		"production": CheckFail, "dataset": CheckFail, "rights": CheckFail, "quality": CheckFail,
+		"compliance": CheckFail, "contract": CheckFail, "evidence": CheckFail, "delivery": CheckFail,
 	}
 	blockers := make([]string, 0)
 	details := map[string]any{}
-
 	if facts.TargetDatasetVersionID != nil {
-		if facts.ProductionDependencyBindingRequired && !facts.ProductionDependencyBindingComplete {
-			blockers = append(blockers, "PRODUCTION_DEPENDENCY_BINDING_INCOMPLETE")
-		} else {
-			checks["production"] = CheckPass
-		}
-	} else {
-		blockers = append(blockers, "PRODUCTION_DATASET_MISSING")
-	}
-	if facts.AllDatasetsUsable && facts.TargetDatasetVersionID != nil {
-		checks["dataset"] = CheckPass
-	} else {
-		blockers = append(blockers, "DATASET_NOT_USABLE")
-	}
-
+		if facts.ProductionDependencyBindingRequired && !facts.ProductionDependencyBindingComplete { blockers = append(blockers, "PRODUCTION_DEPENDENCY_BINDING_INCOMPLETE") } else { checks["production"] = CheckPass }
+	} else { blockers = append(blockers, "PRODUCTION_DATASET_MISSING") }
+	if facts.AllDatasetsUsable && facts.TargetDatasetVersionID != nil { checks["dataset"] = CheckPass } else { blockers = append(blockers, "DATASET_NOT_USABLE") }
 	rightsStatus, rightsBlockers, rightsDetails := evaluateRightsReadiness(facts)
-	checks["rights"] = rightsStatus
-	blockers = append(blockers, rightsBlockers...)
-	details["rights"] = rightsDetails
-
-	if !facts.ContractExists {
-		blockers = append(blockers, "CONTRACT_VERSION_MISSING")
-	} else if !facts.ContractMatchesProduct {
-		blockers = append(blockers, "CONTRACT_VERSION_MISMATCH")
-	} else if !facts.ContractPublished {
-		blockers = append(blockers, "CONTRACT_NOT_PUBLISHED")
-	} else {
-		checks["contract"] = CheckPass
-	}
-	if !facts.QualityResultExists {
-		blockers = append(blockers, "QUALITY_RESULT_MISSING")
-	} else if !facts.QualityDatasetMatches {
-		blockers = append(blockers, "QUALITY_DATASET_MISMATCH")
-	} else if facts.QualityDecision != "PASS" && facts.QualityDecision != "PASS_WITH_WARNING" {
-		blockers = append(blockers, "QUALITY_GATE_BLOCKING")
-	} else {
-		checks["quality"] = CheckPass
-	}
-	if !facts.ComplianceResultExists {
-		blockers = append(blockers, "COMPLIANCE_RESULT_MISSING")
-	} else if !facts.ComplianceDatasetMatches {
-		blockers = append(blockers, "COMPLIANCE_DATASET_MISMATCH")
-	} else if facts.ComplianceDecision != "PASS" {
-		blockers = append(blockers, "COMPLIANCE_GATE_BLOCKING")
-	} else {
-		checks["compliance"] = CheckPass
-	}
-	if facts.EvidenceCount >= 2 {
-		checks["evidence"] = CheckPass
-	} else {
-		blockers = append(blockers, "EVIDENCE_INCOMPLETE")
-	}
-	if facts.DeliveryAvailable {
-		checks["delivery"] = CheckPass
-	} else {
-		blockers = append(blockers, "DELIVERY_ASSET_MISSING")
-	}
-	details["productionDependencyBinding"] = map[string]any{
-		"required": facts.ProductionDependencyBindingRequired,
-		"complete": facts.ProductionDependencyBindingComplete,
-	}
-
+	checks["rights"] = rightsStatus; blockers = append(blockers, rightsBlockers...); details["rights"] = rightsDetails
+	if !facts.ContractExists { blockers = append(blockers, "CONTRACT_VERSION_MISSING") } else if !facts.ContractMatchesProduct { blockers = append(blockers, "CONTRACT_VERSION_MISMATCH") } else if !facts.ContractPublished { blockers = append(blockers, "CONTRACT_NOT_PUBLISHED") } else { checks["contract"] = CheckPass }
+	if !facts.QualityResultExists { blockers = append(blockers, "QUALITY_RESULT_MISSING") } else if !facts.QualityDatasetMatches { blockers = append(blockers, "QUALITY_DATASET_MISMATCH") } else if facts.QualityDecision != "PASS" && facts.QualityDecision != "PASS_WITH_WARNING" { blockers = append(blockers, "QUALITY_GATE_BLOCKING") } else { checks["quality"] = CheckPass }
+	if !facts.ComplianceResultExists { blockers = append(blockers, "COMPLIANCE_RESULT_MISSING") } else if !facts.ComplianceDatasetMatches { blockers = append(blockers, "COMPLIANCE_DATASET_MISMATCH") } else if facts.ComplianceDecision != "PASS" { blockers = append(blockers, "COMPLIANCE_GATE_BLOCKING") } else { checks["compliance"] = CheckPass }
+	if facts.EvidenceCount >= 2 { checks["evidence"] = CheckPass } else { blockers = append(blockers, "EVIDENCE_INCOMPLETE") }
+	if facts.DeliveryAvailable { checks["delivery"] = CheckPass } else { blockers = append(blockers, "DELIVERY_ASSET_MISSING") }
+	details["productionDependencyBinding"] = map[string]any{"required": facts.ProductionDependencyBindingRequired, "complete": facts.ProductionDependencyBindingComplete}
 	sort.Strings(blockers)
 	overall := "NOT_READY"
 	allPass := true
-	for _, status := range checks {
-		if status != CheckPass {
-			allPass = false
-			break
-		}
-	}
-	if allPass {
-		overall = "READY"
-	}
+	for _, status := range checks { if status != CheckPass { allPass = false; break } }
+	if allPass { overall = "READY" }
 	return ReadinessResult{ReleaseID: releaseID, Overall: overall, Checks: checks, Blockers: blockers, Details: details}
-
 }
 
 func appendEvent(ctx context.Context, tx pgx.Tx, aggregateType string, aggregateID uuid.UUID, eventType string, payload map[string]any) error {
