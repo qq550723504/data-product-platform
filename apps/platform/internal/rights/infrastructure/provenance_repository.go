@@ -363,7 +363,13 @@ func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, bindi
 			deferred = true
 		}
 		rows.Close()
-		if !deferred || firstDelegator != sourceClaimant || lastDelegate != binding.GrantorRef {
+		var rootSupported bool
+		if firstDelegator != "" {
+			if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM rights_declaration_party WHERE declaration_id=$1 AND party_ref=$2 AND role IN ('RIGHTS_HOLDER','PROVIDER','CONTROLLER'))`, sourceDeclaration, firstDelegator).Scan(&rootSupported); err != nil {
+				return domain.ErrInvalidBinding
+			}
+		}
+		if !deferred || !rootSupported || lastDelegate != binding.GrantorRef {
 			return domain.ErrInvalidBinding
 		}
 	}
@@ -509,10 +515,10 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 			)
 			AND EXISTS (
 				SELECT 1 FROM rights_declaration_party rp
-				WHERE rp.declaration_id=d.id AND rp.party_ref=d.claimant_ref
+				WHERE rp.declaration_id=d.id
+				  AND rp.party_ref=(SELECT e.delegator_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id ORDER BY e.ordinal LIMIT 1)
 				  AND rp.role IN ('RIGHTS_HOLDER','PROVIDER','CONTROLLER')
 			)
-			AND (SELECT e.delegator_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id ORDER BY e.ordinal LIMIT 1)=d.claimant_ref
 			AND (SELECT e.delegate_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id ORDER BY e.ordinal DESC LIMIT 1)=b.grantor_ref
 			AND NOT EXISTS (
 				SELECT 1
