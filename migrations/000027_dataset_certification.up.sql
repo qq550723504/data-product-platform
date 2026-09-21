@@ -81,6 +81,7 @@ DECLARE
     profile_rights_scope_mode varchar(16);
     profile_compliance_required boolean;
     profile_contract_required boolean;
+    profile_contract_code varchar(128);
     profile_traceability_required boolean;
     profile_evidence_required boolean;
     rights_workspace uuid;
@@ -99,6 +100,8 @@ DECLARE
     compliance_dataset_version uuid;
     compliance_gate varchar(32);
     contract_workspace uuid;
+    contract_code varchar(128);
+    contract_status varchar(16);
     traceability_workspace uuid;
     traceability_object_type varchar(64);
     traceability_object_id uuid;
@@ -126,11 +129,11 @@ BEGIN
     SELECT workspace_id, profile_ref, version, content_sha256, content_snapshot,
            quality_gate_required,
            rights_required, rights_purpose_mode, rights_action_mode, rights_consumer_mode, rights_scope_mode,
-           compliance_required, contract_required, traceability_required, evidence_required
+           compliance_required, contract_required, contract_code, traceability_required, evidence_required
       INTO profile_workspace, profile_ref_value, profile_version_value, profile_hash_value, profile_content_value,
            profile_quality_gate_required,
            profile_rights_required, profile_rights_purpose_mode, profile_rights_action_mode, profile_rights_consumer_mode, profile_rights_scope_mode,
-           profile_compliance_required, profile_contract_required, profile_traceability_required, profile_evidence_required
+           profile_compliance_required, profile_contract_required, profile_contract_code, profile_traceability_required, profile_evidence_required
       FROM certification_profile WHERE id = NEW.certification_profile_id;
     IF profile_workspace IS DISTINCT FROM NEW.workspace_id
        OR profile_ref_value IS DISTINCT FROM NEW.profile_ref
@@ -198,10 +201,26 @@ BEGIN
           INTO rights_workspace, rights_status, rights_purpose, rights_consumer
           FROM rights_snapshot WHERE id = NEW.rights_snapshot_id
           FOR SHARE;
-        SELECT EXISTS(
-            SELECT 1 FROM effective_rights_input
-            WHERE snapshot_id=NEW.effective_rights_snapshot_id
-              AND rights_snapshot_id=NEW.rights_snapshot_id
+        SELECT NOT EXISTS (
+            SELECT 1
+            FROM effective_rights_input eri
+            WHERE eri.snapshot_id=NEW.effective_rights_snapshot_id
+              AND eri.declaration_id IS NOT NULL
+              AND NOT EXISTS (
+                  SELECT 1 FROM rights_snapshot_declaration rsd
+                  WHERE rsd.rights_snapshot_id=NEW.rights_snapshot_id
+                    AND rsd.declaration_id=eri.declaration_id
+              )
+        ) AND NOT EXISTS (
+            SELECT 1
+            FROM effective_rights_input eri
+            WHERE eri.snapshot_id=NEW.effective_rights_snapshot_id
+              AND eri.binding_id IS NOT NULL
+              AND NOT EXISTS (
+                  SELECT 1 FROM rights_snapshot_provenance_binding rspb
+                  WHERE rspb.rights_snapshot_id=NEW.rights_snapshot_id
+                    AND rspb.binding_id=eri.binding_id
+              )
         ) INTO rights_referenced_by_effective;
         IF rights_workspace IS DISTINCT FROM NEW.workspace_id
            OR rights_status <> 'FINALIZED'
@@ -212,7 +231,7 @@ BEGIN
                SELECT COALESCE(consumer_ref,'') FROM effective_rights_snapshot WHERE id=NEW.effective_rights_snapshot_id
            )
            OR NOT rights_referenced_by_effective THEN
-            RAISE EXCEPTION 'DatasetCertification RightsSnapshot does not match frozen EffectiveRights context';
+            RAISE EXCEPTION 'DatasetCertification RightsSnapshot does not cover frozen EffectiveRights provenance';
         END IF;
     END IF;
 
@@ -332,11 +351,17 @@ BEGIN
     END IF;
 
     IF NEW.contract_version_id IS NOT NULL THEN
-        SELECT c.workspace_id INTO contract_workspace
+        SELECT c.workspace_id, c.code, cv.status
+          INTO contract_workspace, contract_code, contract_status
           FROM contract_version cv JOIN data_contract c ON c.id = cv.contract_id
-         WHERE cv.id = NEW.contract_version_id;
+         WHERE cv.id = NEW.contract_version_id
+         FOR SHARE OF cv, c;
         IF contract_workspace IS DISTINCT FROM NEW.workspace_id THEN
             RAISE EXCEPTION 'DatasetCertification contract does not match workspace';
+        END IF;
+        IF NEW.decision = 'CERTIFIED' AND profile_contract_required
+           AND (contract_status <> 'PUBLISHED' OR contract_code IS DISTINCT FROM profile_contract_code) THEN
+            RAISE EXCEPTION 'DatasetCertification ContractVersion does not match frozen profile contract code';
         END IF;
     END IF;
 
