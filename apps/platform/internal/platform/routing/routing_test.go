@@ -56,6 +56,7 @@ var eventVocabulary = []string{
 	"ExecutionSucceeded",
 	"EffectiveRightsCalculated",
 	"EffectiveRightsFinalized",
+	"GrantorAuthorityDelegationChainCreated",
 	"GrantorAuthorityDelegationChainFinalized",
 	"GrantorAuthorityDelegationInvalidated",
 	"GrantorAuthorityDelegationRevoked",
