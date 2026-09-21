@@ -316,6 +316,86 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 		return fmt.Errorf("DatasetVersion crosses certification workspace boundary")
 	}
 
+	// Rebind QualityAssessment from immutable stored facts. Resolver fields are
+	// only candidate references and must not decide certification.
+	var qualityWorkspaceID, qualityDatasetVersionID uuid.UUID
+	var qualityGate string
+	if err := tx.QueryRow(ctx, `
+		SELECT workspace_id, dataset_version_id, gate_decision
+		FROM quality_result
+		WHERE id=$1
+		FOR SHARE
+	`, input.Quality.ID).Scan(&qualityWorkspaceID, &qualityDatasetVersionID, &qualityGate); err != nil {
+		return fmt.Errorf("load QualityAssessment for certification: %w", err)
+	}
+	input.Quality.WorkspaceID = qualityWorkspaceID
+	input.Quality.DatasetVersionID = qualityDatasetVersionID
+	input.Quality.GateDecision = qualityGate
+	input.Quality.Dimensions = map[string]string{}
+	rows, err := tx.Query(ctx, `
+		SELECT upper(key), value->>'status'
+		FROM quality_result q,
+		     jsonb_each(COALESCE(q.metrics->'dimensions', '{}'::jsonb))
+		WHERE q.id=$1
+		ORDER BY key
+	`, input.Quality.ID)
+	if err != nil {
+		return fmt.Errorf("load QualityAssessment dimensions: %w", err)
+	}
+	for rows.Next() {
+		var dimension, status string
+		if err := rows.Scan(&dimension, &status); err != nil {
+			rows.Close()
+			return fmt.Errorf("scan QualityAssessment dimension: %w", err)
+		}
+		input.Quality.Dimensions[dimension] = status
+	}
+	if err := rows.Err(); err != nil {
+		rows.Close()
+		return fmt.Errorf("iterate QualityAssessment dimensions: %w", err)
+	}
+	rows.Close()
+
+	input.Quality.RuleStatuses = map[string]string{}
+	rows, err = tx.Query(ctx, `
+		SELECT rule_id, status
+		FROM quality_finding
+		WHERE result_id=$1
+		ORDER BY rule_id, id
+	`, input.Quality.ID)
+	if err != nil {
+		return fmt.Errorf("load QualityAssessment findings: %w", err)
+	}
+	for rows.Next() {
+		var ruleID, status string
+		if err := rows.Scan(&ruleID, &status); err != nil {
+			rows.Close()
+			return fmt.Errorf("scan QualityAssessment finding: %w", err)
+		}
+		input.Quality.RuleStatuses[ruleID] = status
+	}
+	if err := rows.Err(); err != nil {
+		rows.Close()
+		return fmt.Errorf("iterate QualityAssessment findings: %w", err)
+	}
+	rows.Close()
+
+	if input.Compliance != nil && input.Compliance.ID != uuid.Nil {
+		var complianceWorkspaceID, complianceDatasetVersionID uuid.UUID
+		var complianceDecision string
+		if err := tx.QueryRow(ctx, `
+			SELECT workspace_id, dataset_version_id, gate_decision
+			FROM compliance_result
+			WHERE id=$1
+			FOR SHARE
+		`, input.Compliance.ID).Scan(&complianceWorkspaceID, &complianceDatasetVersionID, &complianceDecision); err != nil {
+			return fmt.Errorf("load ComplianceResult for certification: %w", err)
+		}
+		input.Compliance.WorkspaceID = complianceWorkspaceID
+		input.Compliance.DatasetVersionID = complianceDatasetVersionID
+		input.Compliance.Decision = complianceDecision
+	}
+
 	// Lineage is append-only but can still grow concurrently. Hold a table SHARE
 	// lock through certification so a new edge cannot cross the lineage evidence
 	// read and the immutable certification insert.
@@ -470,16 +550,31 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 
 		if rights.RightsSnapshotID != uuid.Nil {
 			var rightsWorkspace uuid.UUID
-			var rightsStatus string
+			var rightsStatus, rightsPurpose, rightsConsumer string
 			if err := tx.QueryRow(ctx, `
-				SELECT workspace_id, status
+				SELECT workspace_id, status, purpose, COALESCE(consumer_ref,'')
 				FROM rights_snapshot
 				WHERE id=$1
 				FOR SHARE
-			`, rights.RightsSnapshotID).Scan(&rightsWorkspace, &rightsStatus); err != nil {
+			`, rights.RightsSnapshotID).Scan(&rightsWorkspace, &rightsStatus, &rightsPurpose, &rightsConsumer); err != nil {
 				return fmt.Errorf("load RightsSnapshot for certification: %w", err)
 			}
-			rights.RightsSnapshotFinalized = rightsWorkspace == input.WorkspaceID && rightsStatus == "FINALIZED"
+			var referencedByEffective bool
+			if err := tx.QueryRow(ctx, `
+				SELECT EXISTS(
+					SELECT 1
+					FROM effective_rights_input
+					WHERE snapshot_id=$1 AND rights_snapshot_id=$2
+				)
+			`, rights.EffectiveRightsSnapshotID, rights.RightsSnapshotID).Scan(&referencedByEffective); err != nil {
+				return fmt.Errorf("verify RightsSnapshot relationship to EffectiveRightsSnapshot: %w", err)
+			}
+			rights.RightsSnapshotFinalized =
+				rightsWorkspace == input.WorkspaceID &&
+					rightsStatus == "FINALIZED" &&
+					strings.EqualFold(strings.TrimSpace(rightsPurpose), strings.TrimSpace(purpose)) &&
+					strings.TrimSpace(rightsConsumer) == strings.TrimSpace(consumerRef) &&
+					referencedByEffective
 		} else {
 			rights.RightsSnapshotFinalized = false
 		}
