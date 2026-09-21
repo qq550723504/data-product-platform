@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"fmt"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
@@ -157,16 +158,15 @@ func NewRightsDeclaration(spec RightsDeclarationSpec) (RightsDeclaration, error)
 		if permission.Kind != PermissionUse && permission.Kind != PermissionGrant {
 			return RightsDeclaration{}, ErrInvalidRightsDeclaration
 		}
-		if permission.Action == "" || !contains(SupportedRightsActions, permission.Action) {
+		if permission.Action == "" || !contains(SupportedRightsActions, permission.Action) || permission.Purpose == "" {
 			return RightsDeclaration{}, ErrInvalidRightsDeclaration
 		}
-		if permission.Scope.Ref != "" {
-			var err error
-			permission.Scope, err = NewNormalizedScope(permission.Scope.Type, permission.Scope.Ref)
-			if err != nil {
-				return RightsDeclaration{}, ErrInvalidRightsDeclaration
-			}
-		} else if permission.Action == "" {
+		if strings.TrimSpace(permission.Scope.Type) == "" || strings.TrimSpace(permission.Scope.Ref) == "" {
+			return RightsDeclaration{}, ErrInvalidRightsDeclaration
+		}
+		var err error
+		permission.Scope, err = NewNormalizedScope(permission.Scope.Type, permission.Scope.Ref)
+		if err != nil {
 			return RightsDeclaration{}, ErrInvalidRightsDeclaration
 		}
 		declaration.Permissions = append(declaration.Permissions, permission)
@@ -315,7 +315,14 @@ func HashDelegationEdges(edges []DelegationEdge) string {
 		sort.Strings(actions)
 		purposes := append([]string(nil), edge.GrantablePurposes...)
 		sort.Strings(purposes)
-		parts = append(parts, strings.Join([]string{edge.ID.String(), edge.DelegatorRef, edge.DelegateRef, edge.DataResourceID.String(), strings.Join(actions, ","), strings.Join(purposes, ","), edge.Scope.Type, edge.Scope.Ref}, "|"))
+		validFrom, validTo := "", ""
+		if edge.ValidFrom != nil {
+			validFrom = edge.ValidFrom.UTC().Format(time.RFC3339Nano)
+		}
+		if edge.ValidTo != nil {
+			validTo = edge.ValidTo.UTC().Format(time.RFC3339Nano)
+		}
+		parts = append(parts, strings.Join([]string{fmt.Sprintf("%d", edge.Ordinal), edge.ID.String(), edge.DelegatorRef, edge.DelegateRef, edge.DataResourceID.String(), strings.Join(actions, ","), strings.Join(purposes, ","), edge.Scope.Type, edge.Scope.Ref, validFrom, validTo}, "|"))
 	}
 	digest := sha256.Sum256([]byte(strings.Join(parts, "\n")))
 	return hex.EncodeToString(digest[:])
