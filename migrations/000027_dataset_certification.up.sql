@@ -205,8 +205,12 @@ BEGIN
         ) INTO rights_referenced_by_effective;
         IF rights_workspace IS DISTINCT FROM NEW.workspace_id
            OR rights_status <> 'FINALIZED'
-           OR rights_purpose IS DISTINCT FROM effective_purpose
-           OR rights_consumer IS DISTINCT FROM effective_consumer_ref
+           OR rights_purpose IS DISTINCT FROM (
+               SELECT purpose FROM effective_rights_snapshot WHERE id=NEW.effective_rights_snapshot_id
+           )
+           OR rights_consumer IS DISTINCT FROM (
+               SELECT COALESCE(consumer_ref,'') FROM effective_rights_snapshot WHERE id=NEW.effective_rights_snapshot_id
+           )
            OR NOT rights_referenced_by_effective THEN
             RAISE EXCEPTION 'DatasetCertification RightsSnapshot does not match frozen EffectiveRights context';
         END IF;
