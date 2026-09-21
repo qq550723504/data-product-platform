@@ -16,12 +16,17 @@ import (
 )
 
 type Handler struct {
-	service *application.Service
-	repo    *infrastructure.PostgresRepository
+	service    *application.Service
+	repo       *infrastructure.PostgresRepository
+	authorizer Authorizer
 }
 
-func NewHandler(service *application.Service, repo *infrastructure.PostgresRepository) *Handler {
-	return &Handler{service: service, repo: repo}
+func NewHandler(service *application.Service, repo *infrastructure.PostgresRepository, authorizers ...Authorizer) *Handler {
+	var authorizer Authorizer = staticAuthorizer{}
+	if len(authorizers) > 0 && authorizers[0] != nil {
+		authorizer = authorizers[0]
+	}
+	return &Handler{service: service, repo: repo, authorizer: authorizer}
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
@@ -34,12 +39,15 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/authorizations/{authorizationId}/revoke", h.revokeAuthorization)
 	mux.HandleFunc("POST /api/v1/rights-snapshots", h.createSnapshot)
 	mux.HandleFunc("GET /api/v1/rights-snapshots/{snapshotId}", h.getSnapshot)
+	h.registerProvenance(mux)
 }
 
 type resourceGrantRequest struct {
 	DataResourceID   string         `json:"dataResourceId"`
 	Actions          []string       `json:"actions"`
 	Scope            map[string]any `json:"scope"`
+	ScopeType        string         `json:"scopeType"`
+	ScopeRef         string         `json:"scopeRef"`
 	RawExportAllowed bool           `json:"rawExportAllowed"`
 }
 
@@ -77,12 +85,13 @@ func (h *Handler) createAuthorization(w http.ResponseWriter, r *http.Request) {
 			DataResourceID:   resourceID,
 			Actions:          resource.Actions,
 			Scope:            resource.Scope,
+			ScopeType:        resource.ScopeType,
+			ScopeRef:         resource.ScopeRef,
 			RawExportAllowed: resource.RawExportAllowed,
 		})
 	}
-	actorID, err := parseActorID(r)
-	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
+	actorID, ok := h.authorizeWorkspace(w, r, workspaceID)
+	if !ok {
 		return
 	}
 	authorization, err := h.service.Create(r.Context(), application.CreateAuthorizationCommand{
@@ -123,6 +132,9 @@ func (h *Handler) getAuthorization(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "AUTHORIZATION_READ_FAILED", err.Error(), nil)
 		return
 	}
+	if _, ok := h.authorizeWorkspace(w, r, authorization.WorkspaceID); !ok {
+		return
+	}
 	writeJSON(w, http.StatusOK, authorizationResponse(authorization))
 }
 
@@ -153,9 +165,17 @@ func (h *Handler) transitionAuthorization(w http.ResponseWriter, r *http.Request
 	if !ok {
 		return
 	}
-	actorID, err := parseActorID(r)
+	current, err := h.repo.GetAuthorization(r.Context(), authorizationID)
 	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
+		status := http.StatusInternalServerError
+		if errors.Is(err, infrastructure.ErrNotFound) {
+			status = http.StatusNotFound
+		}
+		httpserver.WriteError(w, r, status, "AUTHORIZATION_READ_FAILED", err.Error(), nil)
+		return
+	}
+	actorID, ok := h.authorizeWorkspace(w, r, current.WorkspaceID)
+	if !ok {
 		return
 	}
 	authorization, err := fn(r.Context(), application.TransitionCommand{
@@ -195,6 +215,10 @@ func (h *Handler) createSnapshot(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_WORKSPACE_ID", "workspaceId must be a UUID", nil)
 		return
 	}
+	actorID, ok := h.authorizeWorkspace(w, r, workspaceID)
+	if !ok {
+		return
+	}
 	var releaseID *uuid.UUID
 	if strings.TrimSpace(req.ProductReleaseID) != "" {
 		parsed, err := uuid.Parse(req.ProductReleaseID)
@@ -212,11 +236,6 @@ func (h *Handler) createSnapshot(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		authorizationIDs = append(authorizationIDs, parsed)
-	}
-	actorID, err := parseActorID(r)
-	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
-		return
 	}
 	asOf := time.Now().UTC()
 	if req.AsOf != nil {
@@ -253,6 +272,9 @@ func (h *Handler) getSnapshot(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "RIGHTS_SNAPSHOT_READ_FAILED", err.Error(), nil)
 		return
 	}
+	if _, ok := h.authorizeWorkspace(w, r, snapshot.WorkspaceID); !ok {
+		return
+	}
 	writeJSON(w, http.StatusOK, snapshotResponse(snapshot))
 }
 
@@ -264,6 +286,8 @@ func authorizationResponse(authorization domain.Authorization) map[string]any {
 			"dataResourceId":   resource.DataResourceID,
 			"actions":          resource.Actions,
 			"scope":            resource.Scope,
+			"scopeType":        resource.ScopeType,
+			"scopeRef":         resource.ScopeRef,
 			"rawExportAllowed": resource.RawExportAllowed,
 		})
 	}
@@ -292,6 +316,8 @@ func snapshotResponse(snapshot domain.RightsSnapshot) map[string]any {
 		"asOf":             snapshot.AsOf,
 		"manifest":         snapshot.Manifest,
 		"rootHash":         snapshot.RootHash,
+		"declarationIds":   snapshot.DeclarationIDs,
+		"bindingIds":       snapshot.BindingIDs,
 		"createdAt":        snapshot.CreatedAt,
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
@@ -206,6 +207,9 @@ func (s *Service) CreateSnapshot(ctx context.Context, cmd CreateSnapshotCommand)
 		return domain.RightsSnapshot{}, err
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if _, err := deliveryfence.Lock(ctx, tx, snapshot.WorkspaceID); err != nil {
+			return err
+		}
 		if err := s.repo.InsertSnapshot(ctx, tx, snapshot); err != nil {
 			return err
 		}
@@ -213,7 +217,6 @@ func (s *Service) CreateSnapshot(ctx context.Context, cmd CreateSnapshotCommand)
 			"rightsSnapshotId": snapshot.ID,
 			"productReleaseId": snapshot.ProductReleaseID,
 			"purpose":          snapshot.Purpose,
-			"rootHash":         snapshot.RootHash,
 		}); err != nil {
 			return err
 		}
@@ -228,11 +231,17 @@ func (s *Service) CreateSnapshot(ctx context.Context, cmd CreateSnapshotCommand)
 				"purpose":            snapshot.Purpose,
 				"consumerRef":        snapshot.ConsumerRef,
 				"authorizationCount": len(snapshot.Manifest.Authorizations),
-				"rootHash":           snapshot.RootHash,
 			},
 			TraceID: cmd.TraceID,
 		})
 	})
+	if err == nil {
+		if stored, readErr := s.repo.GetSnapshot(ctx, snapshot.ID); readErr == nil {
+			snapshot = stored
+		} else {
+			err = readErr
+		}
+	}
 	return snapshot, err
 }
 

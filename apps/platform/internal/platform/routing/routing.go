@@ -29,7 +29,7 @@ const (
 // whenever an event type's required-handler set changes. Dispatch logs and
 // dead-letter diagnostics reference it, so the obligation that was in force when
 // an event was handled stays auditable.
-const Version = "c1-v6"
+const Version = "c1-v7"
 
 // VersionFor folds the deployment profile into the routing version so the same
 // version string always describes the same required-handler set. Enabling or
@@ -99,6 +99,21 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "AuthorizationRevoked"},
 		{EventType: "AuthorizationExpired"},
 		{EventType: "RightsSnapshotCreated"},
+		{EventType: "RightsDeclarationCreated"},
+		{EventType: "RightsDeclarationVerified"},
+		{EventType: "RightsDeclarationRejected"},
+		{EventType: "RightsDeclarationInvalidated"},
+		{EventType: "RightsDeclarationSuperseded"},
+		{EventType: "AuthorizationProvenanceBound"},
+		{EventType: "AuthorizationProvenanceBindingInvalidated"},
+		{EventType: "AuthorizationProvenanceBindingSuperseded"},
+		{EventType: "GrantorAuthorityDelegationChainCreated"},
+		{EventType: "GrantorAuthorityDelegationChainFinalized"},
+		{EventType: "GrantorAuthorityDelegationInvalidated"},
+		{EventType: "GrantorAuthorityDelegationRevoked"},
+		{EventType: "GrantorAuthorityDelegationSuperseded"},
+		{EventType: "EffectiveRightsCalculated"},
+		{EventType: "EffectiveRightsFinalized"},
 		{EventType: "QualityAssessmentAttemptFailed"},
 		{EventType: "QualityPassed"},
 		{EventType: "QualityFailed"},

@@ -36,6 +36,8 @@ type ResourceGrant struct {
 	DataResourceID   uuid.UUID
 	Actions          []string
 	Scope            map[string]any
+	ScopeType        string
+	ScopeRef         string
 	RawExportAllowed bool
 	CreatedAt        time.Time
 }
@@ -62,6 +64,8 @@ type ResourceGrantSpec struct {
 	DataResourceID   uuid.UUID
 	Actions          []string
 	Scope            map[string]any
+	ScopeType        string
+	ScopeRef         string
 	RawExportAllowed bool
 }
 
@@ -100,10 +104,26 @@ func NewAuthorization(workspaceID uuid.UUID, code, grantorRef, granteeRef, purpo
 		if spec.DataResourceID == uuid.Nil || len(spec.Actions) == 0 {
 			return Authorization{}, ErrInvalidAuthorization
 		}
+		scopeType := strings.ToUpper(strings.TrimSpace(spec.ScopeType))
+		scopeRef := strings.TrimSpace(spec.ScopeRef)
+		if scopeType == "" || scopeRef == "" {
+			return Authorization{}, ErrInvalidAuthorization
+		}
+		switch scopeType {
+		case "ALL_RESOURCE", "OBJECT", "ROW", "PREFIX", "POLICY":
+		default:
+			return Authorization{}, ErrInvalidAuthorization
+		}
+		if scopeType == "ALL_RESOURCE" && scopeRef != spec.DataResourceID.String() {
+			return Authorization{}, ErrInvalidAuthorization
+		}
 		actions := make([]string, 0, len(spec.Actions))
 		for _, action := range spec.Actions {
 			action = strings.ToUpper(strings.TrimSpace(action))
 			if action == "" {
+				return Authorization{}, ErrInvalidAuthorization
+			}
+			if action == "RAW_EXPORT" && !spec.RawExportAllowed {
 				return Authorization{}, ErrInvalidAuthorization
 			}
 			actions = append(actions, action)
@@ -117,6 +137,8 @@ func NewAuthorization(workspaceID uuid.UUID, code, grantorRef, granteeRef, purpo
 			DataResourceID:   spec.DataResourceID,
 			Actions:          actions,
 			Scope:            spec.Scope,
+			ScopeType:        scopeType,
+			ScopeRef:         scopeRef,
 			RawExportAllowed: spec.RawExportAllowed,
 			CreatedAt:        now,
 		})

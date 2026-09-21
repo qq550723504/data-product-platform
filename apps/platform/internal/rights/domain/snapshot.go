@@ -22,6 +22,8 @@ type SnapshotAuthorization struct {
 	ValidFrom       *time.Time      `json:"validFrom,omitempty"`
 	ValidTo         *time.Time      `json:"validTo,omitempty"`
 	Resources       []ResourceGrant `json:"resources"`
+	DeclarationIDs  []uuid.UUID     `json:"declarationIds,omitempty"`
+	BindingIDs      []uuid.UUID     `json:"bindingIds,omitempty"`
 }
 
 type RightsManifest struct {
@@ -42,6 +44,8 @@ type RightsSnapshot struct {
 	RootHash         string
 	CreatedAt        time.Time
 	CreatedBy        *uuid.UUID
+	DeclarationIDs   []uuid.UUID
+	BindingIDs       []uuid.UUID
 }
 
 func NewRightsSnapshot(workspaceID uuid.UUID, productReleaseID *uuid.UUID, purpose, consumerRef string, asOf time.Time, authorizations []Authorization, actorID *uuid.UUID) (RightsSnapshot, error) {
@@ -57,7 +61,7 @@ func NewRightsSnapshot(workspaceID uuid.UUID, productReleaseID *uuid.UUID, purpo
 		AsOf:        asOf.UTC(),
 	}
 	for _, authorization := range authorizations {
-		if authorization.WorkspaceID != workspaceID || !authorization.ValidFor(asOf, purpose) {
+		if authorization.WorkspaceID != workspaceID || strings.TrimSpace(authorization.GranteeRef) != consumerRef || !authorization.ValidFor(asOf, purpose) {
 			return RightsSnapshot{}, ErrAuthorizationInvalid
 		}
 		resources := make([]ResourceGrant, len(authorization.Resources))

@@ -187,7 +187,12 @@ func main() {
 
 	rightsRepo := rightsinfra.NewPostgresRepository(db)
 	rightsService := rightsapp.NewService(txManager, rightsRepo)
-	rightsHandler := rightshttp.NewHandler(rightsService, rightsRepo)
+	rightsAuthorizer, err := rightshttp.NewStaticAuthorizer(cfg.RightsAPI.Token, cfg.RightsAPI.ActorID, cfg.RightsAPI.WorkspaceIDs)
+	if err != nil {
+		logger.Error("configure rights API authorization", "error", err)
+		os.Exit(1)
+	}
+	rightsHandler := rightshttp.NewHandler(rightsService, rightsRepo, rightsAuthorizer)
 
 	contractRepo := contractinfra.NewPostgresRepository(db)
 	contractService := contractapp.NewService(txManager, contractRepo)

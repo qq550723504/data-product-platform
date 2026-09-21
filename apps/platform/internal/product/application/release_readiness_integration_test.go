@@ -83,18 +83,16 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	}
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO rights_snapshot (
-			id, workspace_id, purpose, consumer_ref, as_of, manifest, root_hash, created_at
+			id, workspace_id, purpose, consumer_ref, as_of, manifest, root_hash, created_at, status
 		) VALUES ($1,$2,'ENTERPRISE_CREDIT_RISK_SUPPORT','LICENSED_BANK',now(),
 		          '{"purpose":"ENTERPRISE_CREDIT_RISK_SUPPORT","authorizations":[]}'::jsonb,
-		          'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',now())
+		          'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',now(),'BUILDING')
 	`, rightsSnapshotID, workspaceID); err != nil {
 		t.Fatalf("insert RightsSnapshot: %v", err)
 	}
-	if _, err := pool.Exec(ctx, `
-		INSERT INTO rights_snapshot_authorization (rights_snapshot_id, authorization_id)
-		VALUES ($1,$2)
-	`, rightsSnapshotID, authorizationID); err != nil {
-		t.Fatalf("bind snapshot authorization: %v", err)
+	insertRightsProvenanceFixture(t, ctx, pool, workspaceID, authorizationID, rightsSnapshotID)
+	if _, err := pool.Exec(ctx, `UPDATE rights_snapshot SET status='FINALIZED' WHERE id=$1`, rightsSnapshotID); err != nil {
+		t.Fatalf("finalize RightsSnapshot: %v", err)
 	}
 
 	qualityResultID := uuid.New()
