@@ -135,24 +135,74 @@ func createRightsFixture(t *testing.T, ctx context.Context, pool *pgxpool.Pool, 
 		) VALUES ($1,$2,$3,'PARK-OPERATOR','DATA-PRODUCT-PLATFORM','ENTERPRISE_CREDIT_RISK_SUPPORT','ACTIVE',
 		          now()-interval '1 hour',now()+interval '1 hour','{}'::jsonb,now(),now())
 	`, authorizationID, workspaceID, "RIGHTS-AUTH-"+uuid.NewString())
+	var provenanceBindings []struct{ bindingID, declarationID uuid.UUID }
 	for resourceID, actions := range grants {
+		declarationID := uuid.New()
+		bindingID := uuid.New()
 		mustExec(t, ctx, pool, `
 			INSERT INTO authorization_resource (
-				id, authorization_id, data_resource_id, actions, scope, raw_export_allowed, created_at
-			) VALUES ($1,$2,$3,$4,'{}'::jsonb,false,now())
-		`, uuid.New(), authorizationID, resourceID, actions)
+				id, authorization_id, data_resource_id, actions, scope, scope_type, scope_ref, raw_export_allowed, created_at
+			) VALUES ($1,$2,$3,$4,'{}'::jsonb,'ALL_RESOURCE',$5,false,now())
+		`, uuid.New(), authorizationID, resourceID, actions, resourceID.String())
+		mustExec(t, ctx, pool, `
+			INSERT INTO rights_declaration (
+				id, workspace_id, data_resource_id, claimant_ref, basis_type, basis_ref,
+				consumer_scope_type, restrictions, created_at
+			) VALUES ($1,$2,$3,'PARK-OPERATOR','LICENSE','coverage-fixture','ANY','{}'::jsonb,now())
+		`, declarationID, workspaceID, resourceID)
+		mustExec(t, ctx, pool, `
+			INSERT INTO rights_declaration_party (id, declaration_id, party_ref, role)
+			VALUES ($1,$2,'PARK-OPERATOR','RIGHTS_HOLDER')
+		`, uuid.New(), declarationID)
+		for _, action := range actions {
+			permissionID := uuid.New()
+			mustExec(t, ctx, pool, `
+				INSERT INTO rights_declaration_permission (id, declaration_id, permission_kind, action)
+				VALUES ($1,$2,'GRANT',$3)
+			`, permissionID, declarationID, action)
+			mustExec(t, ctx, pool, `
+				INSERT INTO rights_declaration_purpose (id, declaration_id, permission_id, permission_kind, purpose_code)
+				VALUES ($1,$2,$3,'GRANT','ENTERPRISE_CREDIT_RISK_SUPPORT')
+			`, uuid.New(), declarationID, permissionID)
+			mustExec(t, ctx, pool, `
+				INSERT INTO rights_declaration_scope (id, declaration_id, permission_id, permission_kind, scope_type, scope_ref)
+				VALUES ($1,$2,$3,'GRANT','ALL_RESOURCE',$4)
+			`, uuid.New(), declarationID, permissionID, resourceID.String())
+		}
+		mustExec(t, ctx, pool, `
+			INSERT INTO rights_declaration_verification (id, declaration_id, outcome, occurred_at)
+			VALUES ($1,$2,'VERIFIED',now())
+		`, uuid.New(), declarationID)
+		mustExec(t, ctx, pool, `
+			INSERT INTO authorization_provenance_binding (
+				id, workspace_id, authorization_id, data_resource_id, rights_declaration_id,
+				grantor_ref, grantor_authority_mode, created_at
+			) VALUES ($1,$2,$3,$4,$5,'PARK-OPERATOR','DIRECT_DECLARATION_PARTY',now())
+		`, bindingID, workspaceID, authorizationID, resourceID, declarationID)
+		provenanceBindings = append(provenanceBindings, struct{ bindingID, declarationID uuid.UUID }{bindingID, declarationID})
 	}
 	mustExec(t, ctx, pool, `
 		INSERT INTO rights_snapshot (
-			id, workspace_id, purpose, consumer_ref, as_of, manifest, root_hash, created_at
+			id, workspace_id, purpose, consumer_ref, as_of, manifest, root_hash, created_at, status
 		) VALUES ($1,$2,'ENTERPRISE_CREDIT_RISK_SUPPORT','LICENSED_BANK',now(),
 		          '{"purpose":"ENTERPRISE_CREDIT_RISK_SUPPORT","authorizations":[]}'::jsonb,
-		          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',now())
+		          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',now(),'BUILDING')
 	`, snapshotID, workspaceID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO rights_snapshot_authorization (rights_snapshot_id, authorization_id)
 		VALUES ($1,$2)
 	`, snapshotID, authorizationID)
+	for _, provenance := range provenanceBindings {
+		mustExec(t, ctx, pool, `
+			INSERT INTO rights_snapshot_provenance_binding (rights_snapshot_id, binding_id)
+			VALUES ($1,$2)
+		`, snapshotID, provenance.bindingID)
+		mustExec(t, ctx, pool, `
+			INSERT INTO rights_snapshot_declaration (rights_snapshot_id, declaration_id)
+			VALUES ($1,$2)
+		`, snapshotID, provenance.declarationID)
+	}
+	mustExec(t, ctx, pool, `UPDATE rights_snapshot SET status='FINALIZED' WHERE id=$1`, snapshotID)
 	return snapshotID
 }
 

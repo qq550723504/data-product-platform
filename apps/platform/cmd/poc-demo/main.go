@@ -344,11 +344,11 @@ func (d *demo) advance() error {
 	rights := rightsapp.NewService(tx, rightsinfra.NewPostgresRepository(d.pool))
 	grants := make([]rightsdomain.ResourceGrantSpec, 0, len(d.m.Resources))
 	for _, id := range d.m.Resources {
-		grants = append(grants, rightsdomain.ResourceGrantSpec{DataResourceID: id, Actions: []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}, Scope: map[string]any{"useCase": purpose}})
+		grants = append(grants, rightsdomain.ResourceGrantSpec{DataResourceID: id, Actions: []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}, Scope: map[string]any{"useCase": purpose}, ScopeType: "ALL_RESOURCE", ScopeRef: id.String()})
 	}
 	from := time.Now().UTC().Add(-time.Minute)
 	d.m.RightsExpiry = time.Now().UTC().Add(7 * 24 * time.Hour)
-	auth, err := rights.Create(d.ctx, rightsapp.CreateAuthorizationCommand{WorkspaceID: d.m.Workspace, Code: "DEMO-AUTH", GrantorRef: "SYNTHETIC-PARK-OPERATOR", GranteeRef: "DATA-PRODUCT-PLATFORM", Purpose: purpose, ValidFrom: &from, ValidTo: &d.m.RightsExpiry, Resources: grants, ActorID: &d.m.Actor})
+	auth, err := rights.Create(d.ctx, rightsapp.CreateAuthorizationCommand{WorkspaceID: d.m.Workspace, Code: "DEMO-AUTH", GrantorRef: "SYNTHETIC-PARK-OPERATOR", GranteeRef: "LICENSED_BANK", Purpose: purpose, ValidFrom: &from, ValidTo: &d.m.RightsExpiry, Resources: grants, ActorID: &d.m.Actor})
 	if err != nil {
 		return err
 	}
@@ -361,6 +361,28 @@ func (d *demo) advance() error {
 	}
 	if _, err = rights.Activate(d.ctx, transition); err != nil {
 		return err
+	}
+	for _, grant := range auth.Resources {
+		permissions := make([]rightsdomain.RightsPermission, 0, len(grant.Actions))
+		for _, action := range grant.Actions {
+			permissions = append(permissions, rightsdomain.RightsPermission{Kind: rightsdomain.PermissionGrant, Action: action, Purpose: purpose, Scope: rightsdomain.NormalizedScope{Type: grant.ScopeType, Ref: grant.ScopeRef}})
+		}
+		declaration, err := rights.CreateRightsDeclaration(d.ctx, rightsapp.CreateRightsDeclarationCommand{Spec: rightsdomain.RightsDeclarationSpec{
+			WorkspaceID: d.m.Workspace, DataResourceID: grant.DataResourceID, ClaimantRef: auth.GrantorRef, BasisType: "LICENSE", BasisRef: "synthetic-demo-rights",
+			Parties: []rightsdomain.RightsParty{{PartyRef: auth.GrantorRef, Role: "RIGHTS_HOLDER"}}, Permissions: permissions, ActorID: &d.m.Actor,
+		}, TraceID: "poc-demo-rights"})
+		if err != nil {
+			return err
+		}
+		if _, err := rights.VerifyRightsDeclaration(d.ctx, rightsapp.VerifyRightsDeclarationCommand{DeclarationID: declaration.ID, Outcome: rightsdomain.DeclarationVerified, ActorID: &d.m.Actor, TraceID: "poc-demo-rights"}); err != nil {
+			return err
+		}
+		if _, err := rights.BindAuthorizationProvenance(d.ctx, rightsapp.BindAuthorizationProvenanceCommand{
+			WorkspaceID: d.m.Workspace, AuthorizationID: auth.ID, DataResourceID: grant.DataResourceID, DeclarationID: declaration.ID,
+			GrantorRef: auth.GrantorRef, AuthorityMode: rightsdomain.AuthorityDirect, AsOf: time.Now().UTC(), ActorID: &d.m.Actor, TraceID: "poc-demo-rights",
+		}); err != nil {
+			return err
+		}
 	}
 	products := productapp.NewService(tx, productinfra.NewPostgresRepository(d.pool))
 	product, err := products.CreateProduct(d.ctx, productapp.CreateProductCommand{WorkspaceID: d.m.Workspace, Code: "DEMO-ACTIVITY", Name: "合成演示：企业经营活跃度", Description: "仅合成样本；不代表真实企业评价", DomainCode: "PARK_ENTERPRISE_ACTIVITY", ActorID: &d.m.Actor})

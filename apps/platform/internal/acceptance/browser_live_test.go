@@ -234,7 +234,7 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	rightsService := rightsapp.NewService(tx, rightsinfra.NewPostgresRepository(pool))
 	grants := []rightsdomain.ResourceGrantSpec{}
 	for _, id := range []uuid.UUID{enterpriseResource.ID, leaseResource.ID, energyResource.ID} {
-		grants = append(grants, rightsdomain.ResourceGrantSpec{DataResourceID: id, Actions: []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}, Scope: map[string]any{"useCase": purpose}})
+		grants = append(grants, rightsdomain.ResourceGrantSpec{DataResourceID: id, Actions: []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}, ScopeType: "ALL_RESOURCE", ScopeRef: id.String(), Scope: map[string]any{"useCase": purpose}})
 	}
 	authorization := activateAuthorization(t, ctx, rightsService, workspaceID, "AUTH-LIVE-"+suffix, time.Now().UTC().Add(-time.Hour), time.Now().UTC().Add(24*time.Hour), grants, &seedActor, traceID)
 	productRepo := productinfra.NewPostgresRepository(pool)

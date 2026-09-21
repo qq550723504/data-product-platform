@@ -166,11 +166,11 @@ EntityType → Entity → EntityMapping projection
 
 ## 9. Rights
 
-### Authorization（已实现 + #137 scope normalization follow-up）
+### Authorization（已实现：#137 normalized scope）
 
 现有 Authorization 表达 grantor_ref、grantee_ref、purpose、resource、actions、scope、raw_export_allowed 和 validity；当前 `authorization_resource.scope jsonb` 保留为兼容/扩展字段，但**不能继续作为 gate-critical scope 的唯一权威表示**。
 
-#137 必须增加固定、可索引、可查询的 normalized Authorization scope，二选一或等价设计：
+#137 在 `authorization_resource` 上增加固定、可索引、可查询的 normalized Authorization scope：
 
 - 在 authorization_resource 上增加受约束的 `scope_type` + `scope_ref`（必要时 normalized scope key/version）；或
 - 新增 `authorization_resource_scope(authorization_id, data_resource_id, scope_type, scope_ref, ...)` 强类型 relation。
@@ -182,7 +182,7 @@ EntityType → Entity → EntityMapping projection
 - BindAuthorizationProvenance 与 CurrentEntitlementGate **只使用该 normalized scope identity 做安全比较**；JSONB 可携带扩展参数但不得决定 allow；
 - migration 对可无歧义识别的 legacy scope 做 deterministic backfill；无法可靠解释的 legacy rows 标记为不可用于 entitlement / fail closed，禁止猜测成更宽 scope。
 
-### AuthorizationProvenanceBinding（#137）
+### AuthorizationProvenanceBinding（#137 已实现）
 
 目标强类型关系至少表达：
 
@@ -294,9 +294,11 @@ RightsSnapshot 的 immutable 语义覆盖 **snapshot header + 全部 membership 
 - Snapshot root_hash / content hash（如存在）必须覆盖有序后的 membership identity，membership 改变会导致 hash 不一致；
 - migration down 不得移除这些历史保护后静默允许 mutation。
 
-现有 `rights_snapshot_authorization` 也必须纳入该保护；#137 新增 declaration/binding membership 时使用同等级 guard。**实现状态说明：当前 migration 只保护 `rights_snapshot` header，现有 `rights_snapshot_authorization` 尚无 INSERT/UPDATE/DELETE membership guard；这是 #137 明确待落地的 enforcement gap，在对应 forward migration + PostgreSQL tests 合入前不得声称 RightsSnapshot membership 已被数据库完整冻结。**
+`000024_rights_provenance` 已将 `rights_snapshot_authorization`、declaration membership 和 provenance-binding membership 纳入 BUILDING→FINALIZED parent guard；FINALIZED 后 INSERT/UPDATE/DELETE 均 fail closed。真实 PostgreSQL 并发回归仍应在带 `TEST_POSTGRES_DSN` 的环境执行。
 
 ### Effective Rights（#137）
+
+`effective_rights_snapshot`、required input membership 和 action decision 已由 `000024_rights_provenance` 持久化；`ComputeEffectiveRights` 只从 target 的递归 lineage 解析 required inputs，缺少任一 input provenance 时 fail closed。
 
 Effective Rights 必须落成 immutable aggregate（例如 `effective_rights_snapshot` + `effective_rights_input` + `effective_rights_action`），而不是只在内存计算。
 
@@ -630,7 +632,7 @@ AuditEvent 记录“谁做了什么”，不是 Evidence 的替代品。
 | EntityMappingDecision | immutable history |
 | Execution | stateful lifecycle row; transitions update status/output/metrics/timestamps through explicit commands; terminal rows are retained and not deleted |
 | Execution dependency facts | immutable history |
-| RightsSnapshot | target immutable aggregate; current header guard exists, while existing `rights_snapshot_authorization` membership DB guard is still a #137 enforcement gap |
+| RightsSnapshot | target immutable aggregate; header and authorization/declaration/provenance membership guards are implemented in migration 000024; real PostgreSQL concurrency regression remains required |
 | QualityAssessment | immutable |
 | verified RightsDeclaration / verification / disposition facts | immutable |
 | AuthorizationProvenanceBinding / AuthorizationProvenanceBindingDisposition | immutable historical provenance facts |

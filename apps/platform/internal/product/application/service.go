@@ -333,9 +333,6 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 	if err != nil {
 		return ReadinessResult{}, err
 	}
-
-	// Before explicit validation, preserve the design-stage view: production and frozen
-	// dataset bindings are known, while governance/delivery checks remain pending.
 	if release.Status == domain.ReleaseDraft {
 		checks := map[string]CheckStatus{
 			"production": CheckPass,
@@ -354,7 +351,6 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 			Blockers:  []string{"rights", "quality", "compliance", "contract", "evidence", "delivery"},
 		}, nil
 	}
-
 	product, err := s.repo.GetProduct(ctx, release.ProductID)
 	if err != nil {
 		return ReadinessResult{}, err
@@ -367,7 +363,10 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 	if err != nil {
 		return ReadinessResult{}, err
 	}
+	return readinessResultFromFacts(release.ID, facts), nil
+}
 
+func readinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.ReadinessFacts) ReadinessResult {
 	checks := map[string]CheckStatus{
 		"production": CheckFail,
 		"dataset":    CheckFail,
@@ -455,7 +454,7 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 	if allPass {
 		overall = "READY"
 	}
-	return ReadinessResult{ReleaseID: release.ID, Overall: overall, Checks: checks, Blockers: blockers, Details: details}, nil
+	return ReadinessResult{ReleaseID: releaseID, Overall: overall, Checks: checks, Blockers: blockers, Details: details}
 }
 
 func appendEvent(ctx context.Context, tx pgx.Tx, aggregateType string, aggregateID uuid.UUID, eventType string, payload map[string]any) error {
