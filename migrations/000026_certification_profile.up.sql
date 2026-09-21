@@ -17,6 +17,7 @@ CREATE TABLE certification_profile (
     rights_required            boolean NOT NULL,
     compliance_required       boolean NOT NULL,
     contract_required         boolean NOT NULL,
+    contract_code             varchar(128),
     traceability_required     boolean NOT NULL,
     evidence_required         boolean NOT NULL,
     membership_state           varchar(16) NOT NULL DEFAULT 'FINALIZED',
@@ -45,6 +46,7 @@ CREATE TABLE certification_profile (
             rights_scope_mode IN ('ANY','EXPLICIT')
         )
     ),
+    CONSTRAINT ck_certification_profile_contract CHECK ((contract_required AND NULLIF(btrim(contract_code), '') IS NOT NULL) OR (NOT contract_required AND contract_code IS NULL)),
     CONSTRAINT ck_certification_profile_membership_state CHECK (membership_state IN ('DRAFT','FINALIZED'))
 );
 
