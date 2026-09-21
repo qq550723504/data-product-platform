@@ -465,7 +465,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 			JOIN rights_declaration_permission p ON p.declaration_id=d.id AND p.permission_kind='USE' AND p.action=$5
 			JOIN rights_declaration_purpose pu ON pu.permission_id=p.id AND pu.purpose_code=$4
 			JOIN rights_declaration_scope sc ON sc.permission_id=p.id AND ((sc.scope_type='ALL_RESOURCE' AND sc.scope_ref=$2::text) OR (sc.scope_type=$6 AND sc.scope_ref=$7))
-			WHERE d.workspace_id=$1 AND d.data_resource_id=$2
+			WHERE d.workspace_id=$1 AND d.data_resource_id=$2::uuid
 			  AND (d.consumer_scope_type='ANY' OR (d.consumer_scope_type='EXPLICIT' AND d.consumer_ref=$3))
 			  AND d.created_at <= $8
 			  AND (d.effective_from IS NULL OR d.effective_from <= $8) AND (d.effective_to IS NULL OR d.effective_to > $8)
@@ -521,7 +521,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 			AND NOT EXISTS (
 				SELECT 1 FROM grantor_authority_delegation_edge e
 				WHERE e.chain_id=b.delegation_chain_id
-				  AND (e.data_resource_id<>$2 OR NOT ($9=ANY(e.grantable_actions)) OR NOT ($5=ANY(e.grantable_purposes)) OR NOT ((e.scope_type='ALL_RESOURCE' AND e.scope_ref=$2::text) OR (e.scope_type=$7 AND e.scope_ref=$8)))
+				  AND (e.data_resource_id<>$2::uuid OR NOT ($9=ANY(e.grantable_actions)) OR NOT ($5=ANY(e.grantable_purposes)) OR NOT ((e.scope_type='ALL_RESOURCE' AND e.scope_ref=$2::text) OR (e.scope_type=$7 AND e.scope_ref=$8)))
 			)
 			AND EXISTS (
 				SELECT 1 FROM rights_declaration_party rp
