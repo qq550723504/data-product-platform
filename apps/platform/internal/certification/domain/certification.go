@@ -277,8 +277,8 @@ func evaluateRights(requirement RightsRequirement, input EvaluationInput, add fu
 		add("RIGHTS_TARGET_MISMATCH", "rights evidence does not belong to the target workspace and DatasetVersion")
 		return
 	}
-	if rights.RightsSnapshotID == uuid.Nil || !rights.RightsSnapshotFinalized {
-		add("RIGHTS_SNAPSHOT_NOT_FINALIZED", "rights evidence must reference a finalized immutable RightsSnapshot")
+	if rights.RightsSnapshotID != uuid.Nil && !rights.RightsSnapshotFinalized {
+		add("RIGHTS_SNAPSHOT_NOT_FINALIZED", "referenced RightsSnapshot must be finalized and match the EffectiveRights provenance")
 	}
 	if rights.EffectiveRightsSnapshotID == uuid.Nil || !rights.EffectiveRightsFinalized || strings.TrimSpace(rights.EffectiveRightsSnapshotHash) == "" {
 		add("EFFECTIVE_RIGHTS_NOT_FINALIZED", "rights-required certification must reference a finalized immutable EffectiveRightsSnapshot and hash")
