@@ -109,7 +109,7 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 	registerQuery := url.Values{"xml": []string{"Y"}}
 	registered, err := c.webResultRequest(ctx, http.MethodPost, "/hop/registerPipeline", registerQuery, request.Definition, request.ContentType)
 	if err != nil {
-		return workflowapp.EngineRun{}, fmt.Errorf("register Hop pipeline %q: %w", name, err)
+		return workflowapp.EngineRun{}, err
 	}
 	if strings.TrimSpace(registered.ID) == "" {
 		return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
@@ -131,7 +131,7 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 		startQuery.Set(key, value)
 	}
 	if _, err := c.webResultRequest(ctx, http.MethodGet, "/hop/startPipeline", startQuery, nil, ""); err != nil {
-		return workflowapp.EngineRun{}, fmt.Errorf("start Hop pipeline %q (%s): %w", name, registered.ID, err)
+		return workflowapp.EngineRun{}, err
 	}
 
 	run, err := c.Status(ctx, name, registered.ID)
@@ -168,7 +168,7 @@ func (c *Client) Cancel(ctx context.Context, name, runID string) error {
 	query.Set("xml", "Y")
 	_, err = c.webResultRequest(ctx, http.MethodGet, "/hop/stopPipeline", query, nil, "")
 	if err != nil {
-		return fmt.Errorf("stop Hop pipeline %q (%s): %w", name, runID, err)
+		return err
 	}
 	return nil
 }
@@ -186,7 +186,7 @@ func (c *Client) Logs(ctx context.Context, name, runID string, from int) (workfl
 	}
 	text, err := decodeLoggingString(status.LoggingString)
 	if err != nil {
-		return workflowapp.EngineLogPage{}, fmt.Errorf("decode Hop pipeline logs: %w", err)
+		return workflowapp.EngineLogPage{}, err
 	}
 	next := status.LastLoggingLineNr + 1
 	if next < from {
@@ -217,7 +217,7 @@ func (c *Client) getStatus(ctx context.Context, name, runID string, from int) (p
 
 	var status pipelineStatus
 	if err := c.jsonRequest(ctx, http.MethodGet, "/hop/pipelineStatus", query, nil, "", &status); err != nil {
-		return pipelineStatus{}, fmt.Errorf("get Hop pipeline status %q (%s): %w", name, runID, err)
+		return pipelineStatus{}, err
 	}
 	if strings.TrimSpace(status.ID) == "" {
 		status.ID = runID
