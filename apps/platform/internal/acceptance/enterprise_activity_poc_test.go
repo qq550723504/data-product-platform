@@ -280,9 +280,9 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 	validFrom := time.Now().UTC().Add(-time.Hour)
 	validTo := time.Now().UTC().Add(24 * time.Hour)
 	grants := []rightsdomain.ResourceGrantSpec{
-		{DataResourceID: enterpriseResource.ID, Actions: []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}, Scope: map[string]any{"useCase": purpose}},
-		{DataResourceID: leaseResource.ID, Actions: []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}, Scope: map[string]any{"useCase": purpose}},
-		{DataResourceID: energyResource.ID, Actions: []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}, Scope: map[string]any{"useCase": purpose}},
+		{DataResourceID: enterpriseResource.ID, Actions: []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}, ScopeType: "ALL_RESOURCE", ScopeRef: enterpriseResource.ID.String(), Scope: map[string]any{"useCase": purpose}},
+		{DataResourceID: leaseResource.ID, Actions: []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}, ScopeType: "ALL_RESOURCE", ScopeRef: leaseResource.ID.String(), Scope: map[string]any{"useCase": purpose}},
+		{DataResourceID: energyResource.ID, Actions: []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}, ScopeType: "ALL_RESOURCE", ScopeRef: energyResource.ID.String(), Scope: map[string]any{"useCase": purpose}},
 	}
 	authorization := activateAuthorization(t, ctx, rightsService, workspaceID, "AUTH-CORE-"+suffix, validFrom, validTo, grants, &actorID, traceID)
 

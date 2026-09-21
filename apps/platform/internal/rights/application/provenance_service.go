@@ -2,9 +2,11 @@ package application
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -75,10 +77,15 @@ type ComputeEffectiveRightsCommand struct {
 	TraceID                string
 }
 
+var ErrRightsDeclarationIdempotencyConflict = errors.New("rights declaration idempotency key was reused with different input")
+
 func (s *Service) CreateRightsDeclaration(ctx context.Context, cmd CreateRightsDeclarationCommand) (domain.RightsDeclaration, error) {
 	d, err := domain.NewRightsDeclaration(cmd.Spec)
 	if err != nil {
 		return d, err
+	}
+	if cmd.ActivityID != nil {
+		d.ID = uuid.NewSHA1(uuid.NameSpaceURL, []byte("rights-declaration-create:"+d.WorkspaceID.String()+":"+cmd.ActivityID.String()))
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		if err := s.repo.InsertRightsDeclaration(ctx, tx, d); err != nil {
@@ -89,7 +96,56 @@ func (s *Service) CreateRightsDeclaration(ctx context.Context, cmd CreateRightsD
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &d.WorkspaceID, ActorType: actorType(cmd.Spec.ActorID), ActorID: cmd.Spec.ActorID, Action: "RIGHTS_DECLARATION_CREATED", ObjectType: "RIGHTS_DECLARATION", ObjectID: d.ID, AfterState: map[string]any{"dataResourceId": d.DataResourceID, "claimantRef": d.ClaimantRef, "basisType": d.BasisType}, TraceID: cmd.TraceID})
 	})
+	if errors.Is(err, infrastructure.ErrDeclarationIdempotentReplay) {
+		existing, findErr := s.repo.GetRightsDeclaration(ctx, d.ID)
+		if findErr != nil {
+			return domain.RightsDeclaration{}, findErr
+		}
+		if declarationFingerprint(existing) != declarationFingerprint(d) {
+			return domain.RightsDeclaration{}, ErrRightsDeclarationIdempotencyConflict
+		}
+		return existing, nil
+	}
 	return d, err
+}
+
+func declarationFingerprint(d domain.RightsDeclaration) string {
+	parties := append([]domain.RightsParty(nil), d.Parties...)
+	sort.Slice(parties, func(i, j int) bool {
+		if parties[i].PartyRef != parties[j].PartyRef {
+			return parties[i].PartyRef < parties[j].PartyRef
+		}
+		return parties[i].Role < parties[j].Role
+	})
+	permissions := append([]domain.RightsPermission(nil), d.Permissions...)
+	sort.Slice(permissions, func(i, j int) bool {
+		left := strings.Join([]string{permissions[i].Kind, permissions[i].Action, permissions[i].Purpose, permissions[i].Scope.Type, permissions[i].Scope.Ref}, "\x00")
+		right := strings.Join([]string{permissions[j].Kind, permissions[j].Action, permissions[j].Purpose, permissions[j].Scope.Type, permissions[j].Scope.Ref}, "\x00")
+		return left < right
+	})
+	evidence := make([]string, 0, len(d.EvidenceIDs))
+	for _, id := range d.EvidenceIDs {
+		evidence = append(evidence, id.String())
+	}
+	sort.Strings(evidence)
+	payload, _ := json.Marshal(struct {
+		WorkspaceID       uuid.UUID                 `json:"workspaceId"`
+		DataResourceID    uuid.UUID                 `json:"dataResourceId"`
+		ClaimantRef       string                    `json:"claimantRef"`
+		BasisType         string                    `json:"basisType"`
+		BasisRef          string                    `json:"basisRef"`
+		ConsumerScopeType string                    `json:"consumerScopeType"`
+		ConsumerRef       string                    `json:"consumerRef"`
+		EffectiveFrom     *time.Time                `json:"effectiveFrom"`
+		EffectiveTo       *time.Time                `json:"effectiveTo"`
+		Parties           []domain.RightsParty      `json:"parties"`
+		Permissions       []domain.RightsPermission `json:"permissions"`
+		Restrictions      map[string]any            `json:"restrictions"`
+		EvidenceIDs       []string                  `json:"evidenceIds"`
+		CreatedBy         *uuid.UUID                `json:"createdBy"`
+	}{d.WorkspaceID, d.DataResourceID, d.ClaimantRef, d.BasisType, d.BasisRef, d.ConsumerScopeType, d.ConsumerRef, d.EffectiveFrom, d.EffectiveTo, parties, permissions, d.Restrictions, evidence, d.CreatedBy})
+	hash := sha256.Sum256(payload)
+	return fmt.Sprintf("%x", hash[:])
 }
 
 func (s *Service) VerifyRightsDeclaration(ctx context.Context, cmd VerifyRightsDeclarationCommand) (domain.RightsVerification, error) {

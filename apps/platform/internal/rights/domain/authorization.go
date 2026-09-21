@@ -106,15 +106,13 @@ func NewAuthorization(workspaceID uuid.UUID, code, grantorRef, granteeRef, purpo
 		}
 		scopeType := strings.ToUpper(strings.TrimSpace(spec.ScopeType))
 		scopeRef := strings.TrimSpace(spec.ScopeRef)
-		if (scopeType == "") != (scopeRef == "") {
+		if scopeType == "" || scopeRef == "" {
 			return Authorization{}, ErrInvalidAuthorization
 		}
-		if scopeType != "" {
-			switch scopeType {
-			case "ALL_RESOURCE", "OBJECT", "ROW", "PREFIX", "POLICY":
-			default:
-				return Authorization{}, ErrInvalidAuthorization
-			}
+		switch scopeType {
+		case "ALL_RESOURCE", "OBJECT", "ROW", "PREFIX", "POLICY":
+		default:
+			return Authorization{}, ErrInvalidAuthorization
 		}
 		actions := make([]string, 0, len(spec.Actions))
 		for _, action := range spec.Actions {

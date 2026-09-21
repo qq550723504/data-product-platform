@@ -131,7 +131,7 @@ func TestAuthorizationSnapshotAndContractLifecycle(t *testing.T) {
 		GrantorRef:  "PARK-OPERATOR",
 		GranteeRef:  "DATA-PRODUCT-PLATFORM",
 		Purpose:     "ENTERPRISE_CREDIT_RISK_SUPPORT",
-		Resources:   []rightsdomain.ResourceGrantSpec{{DataResourceID: foreignResourceID, Actions: []string{"READ"}}},
+		Resources:   []rightsdomain.ResourceGrantSpec{{DataResourceID: foreignResourceID, Actions: []string{"READ"}, ScopeType: "ALL_RESOURCE", ScopeRef: foreignResourceID.String()}},
 		TraceID:     "rights-contract-e2e",
 	}); !errors.Is(err, rightsdomain.ErrResourceWorkspace) {
 		t.Fatalf("cross workspace grant error = %v, want ErrResourceWorkspace", err)

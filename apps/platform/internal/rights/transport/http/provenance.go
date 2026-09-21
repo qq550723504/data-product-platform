@@ -195,6 +195,12 @@ func (h *Handler) createRightsDeclaration(w http.ResponseWriter, r *http.Request
 		httpserver.WriteError(w, r, 400, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
 		return
 	}
+	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, 400, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
+	}
+	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("rights-declaration-create:"+workspace.String()+":"+idempotencyKey))
 	spec := domain.RightsDeclarationSpec{WorkspaceID: workspace, DataResourceID: resource, ClaimantRef: req.ClaimantRef, BasisType: req.BasisType, BasisRef: req.BasisRef, ConsumerScopeType: req.ConsumerScopeType, ConsumerRef: req.ConsumerRef, EffectiveFrom: req.EffectiveFrom, EffectiveTo: req.EffectiveTo, Restrictions: req.Restrictions, ActorID: actor}
 	for _, value := range req.EvidenceIDs {
 		evidenceID, parseErr := uuid.Parse(value)
@@ -210,7 +216,7 @@ func (h *Handler) createRightsDeclaration(w http.ResponseWriter, r *http.Request
 	for _, p := range req.Permissions {
 		spec.Permissions = append(spec.Permissions, domain.RightsPermission{Kind: p.Kind, Action: p.Action, Purpose: p.Purpose, Scope: domain.NormalizedScope{Type: p.ScopeType, Ref: p.ScopeRef}})
 	}
-	d, err := h.service.CreateRightsDeclaration(r.Context(), application.CreateRightsDeclarationCommand{Spec: spec, TraceID: httpserver.RequestID(r.Context())})
+	d, err := h.service.CreateRightsDeclaration(r.Context(), application.CreateRightsDeclarationCommand{Spec: spec, ActivityID: &activityID, TraceID: httpserver.RequestID(r.Context())})
 	if err != nil {
 		httpserver.WriteError(w, r, 400, "RIGHTS_DECLARATION_CREATE_FAILED", err.Error(), nil)
 		return

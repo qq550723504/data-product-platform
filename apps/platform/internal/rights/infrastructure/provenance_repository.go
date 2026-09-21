@@ -20,6 +20,7 @@ var ErrBindingIdempotentReplay = errors.New("authorization provenance binding id
 var ErrDeclarationDispositionIdempotentReplay = errors.New("rights declaration disposition idempotent replay")
 var ErrBindingDispositionIdempotentReplay = errors.New("authorization provenance binding disposition idempotent replay")
 var ErrVerificationIdempotentReplay = errors.New("rights declaration verification idempotent replay")
+var ErrDeclarationIdempotentReplay = errors.New("rights declaration idempotent replay")
 
 func (r *PostgresRepository) InsertRightsDeclaration(ctx context.Context, tx pgx.Tx, declaration domain.RightsDeclaration) error {
 	restrictions, err := json.Marshal(declaration.Restrictions)
@@ -36,13 +37,17 @@ func (r *PostgresRepository) InsertRightsDeclaration(ctx context.Context, tx pgx
 	if resourceWorkspace != declaration.WorkspaceID {
 		return domain.ErrResourceWorkspace
 	}
-	_, err = tx.Exec(ctx, `
+	result, err := tx.Exec(ctx, `
 		INSERT INTO rights_declaration (id,workspace_id,data_resource_id,claimant_ref,basis_type,basis_ref,consumer_scope_type,consumer_ref,effective_from,effective_to,restrictions,created_at,created_by)
 		VALUES ($1,$2,$3,$4,$5,$6,$7,NULLIF($8,''),$9,$10,$11,$12,$13)
+		ON CONFLICT (id) DO NOTHING
 	`, declaration.ID, declaration.WorkspaceID, declaration.DataResourceID, declaration.ClaimantRef, declaration.BasisType, declaration.BasisRef,
 		declaration.ConsumerScopeType, declaration.ConsumerRef, declaration.EffectiveFrom, declaration.EffectiveTo, restrictions, declaration.CreatedAt, declaration.CreatedBy)
 	if err != nil {
 		return fmt.Errorf("insert rights declaration: %w", err)
+	}
+	if result.RowsAffected() == 0 {
+		return ErrDeclarationIdempotentReplay
 	}
 	for _, party := range declaration.Parties {
 		if _, err := tx.Exec(ctx, `INSERT INTO rights_declaration_party(id,declaration_id,party_ref,role) VALUES ($1,$2,$3,$4)`, uuid.New(), declaration.ID, party.PartyRef, party.Role); err != nil {
@@ -413,12 +418,13 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 		err := q.QueryRow(ctx, `
 			SELECT d.id
 			FROM rights_declaration d
-			JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED'
+			JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED' AND v.occurred_at <= $8
 			JOIN rights_declaration_permission p ON p.declaration_id=d.id AND p.permission_kind='USE' AND p.action=$5
 			JOIN rights_declaration_purpose pu ON pu.permission_id=p.id AND pu.purpose_code=$4
 			JOIN rights_declaration_scope sc ON sc.permission_id=p.id AND (sc.scope_type='ALL_RESOURCE' OR (sc.scope_type=$6 AND sc.scope_ref=$7))
 			WHERE d.workspace_id=$1 AND d.data_resource_id=$2
 			  AND (d.consumer_scope_type='ANY' OR (d.consumer_scope_type='EXPLICIT' AND d.consumer_ref=$3))
+			  AND d.created_at <= $8
 			  AND (d.effective_from IS NULL OR d.effective_from <= $8) AND (d.effective_to IS NULL OR d.effective_to > $8)
 			  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $8)
 			ORDER BY d.created_at,d.id LIMIT 1
