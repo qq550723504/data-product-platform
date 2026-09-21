@@ -116,6 +116,10 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	result := domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, policy.Metadata.Version,
 		policy.SourceContentSHA256, policy.SourceContent, native.EvaluatorName, native.EvaluatorVersion,
 		metrics, findings, cmd.ActorID)
+	result.GateDecision, err = policy.GateDecision(findings)
+	if err != nil {
+		return domain.Assessment{}, fmt.Errorf("derive quality gate decision: %w", err)
+	}
 
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		if err := s.repo.InsertResult(ctx, tx, result); err != nil {

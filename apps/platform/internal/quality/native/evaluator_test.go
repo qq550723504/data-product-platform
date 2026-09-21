@@ -2,6 +2,7 @@ package native
 
 import (
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"math"
 	"os"
@@ -107,6 +108,47 @@ func TestLoadPolicyNormalizesSeverity(t *testing.T) {
 	}
 	if policy.Spec.Rules[0].Severity != "CRITICAL" {
 		t.Fatalf("severity = %q, want CRITICAL", policy.Spec.Rules[0].Severity)
+	}
+}
+
+func TestLoadPolicyPreservesExactDecimalBounds(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "decimal.yaml")
+	content := []byte("apiVersion: quality/v1\nkind: QualityRuleSet\nmetadata:\n  version: 1.0.0\nspec:\n  rules:\n    - id: R-RANGE\n      dimension: ACCURACY\n      type: range\n      target: amount\n      parameters:\n        min: 0.10000000000000001\n        max: 1\n        allowNull: false\n      required: true\n      severity: CRITICAL\n")
+	if err := os.WriteFile(path, content, 0o600); err != nil {
+		t.Fatalf("write policy: %v", err)
+	}
+	policy, err := LoadPolicy(path)
+	if err != nil {
+		t.Fatalf("load policy: %v", err)
+	}
+	min, ok := policy.Spec.Rules[0].Parameters["min"].(json.Number)
+	if !ok || min.String() != "0.10000000000000001" {
+		t.Fatalf("min = %#v, want exact JSON number", policy.Spec.Rules[0].Parameters["min"])
+	}
+	findings, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{
+		Headers: []string{"amount"},
+		Rows:    []map[string]string{{"amount": "0.100000000000000005"}},
+	}})
+	if err != nil {
+		t.Fatalf("evaluate exact decimal range: %v", err)
+	}
+	if findings[0].Status != domain.FindingFail {
+		t.Fatalf("decimal below exact minimum passed: %#v", findings[0])
+	}
+}
+
+func TestPolicyGateDecisionHonorsDeclaredMapping(t *testing.T) {
+	policy := Policy{}
+	policy.Spec.Gate.CriticalFailure = "FAIL"
+	policy.Spec.Gate.HighFailure = "REVIEW"
+	policy.Spec.Gate.WarningFailure = "FAIL"
+	decision, err := policy.GateDecision([]domain.Finding{{Status: domain.FindingFail, Severity: "WARNING"}})
+	if err != nil {
+		t.Fatalf("derive declared gate decision: %v", err)
+	}
+	if decision != domain.GateFail {
+		t.Fatalf("warning gate decision = %s, want FAIL", decision)
 	}
 }
 

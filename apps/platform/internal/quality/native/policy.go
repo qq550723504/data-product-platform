@@ -2,6 +2,7 @@ package native
 
 import (
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -66,17 +67,78 @@ func (r *Rule) UnmarshalYAML(node *yaml.Node) error {
 		return fmt.Errorf("rule must be a mapping")
 	}
 	for index := 0; index+1 < len(node.Content); index += 2 {
-		if node.Content[index].Value == "required" {
-			r.requiredSet = true
-			requiredNode := node.Content[index+1]
-			requiredValue := strings.ToLower(strings.TrimSpace(requiredNode.Value))
-			if requiredNode.Tag != "!!bool" || (requiredValue != "true" && requiredValue != "false") {
+		key := node.Content[index].Value
+		value := node.Content[index+1]
+		switch key {
+		case "threshold":
+			exact, err := yamlExactValue(value)
+			if err != nil {
+				return fmt.Errorf("rule threshold: %w", err)
+			}
+			decoded.Threshold = exact
+		case "parameters":
+			exact, err := yamlExactValue(value)
+			if err != nil {
+				return fmt.Errorf("rule parameters: %w", err)
+			}
+			parameters, ok := exact.(map[string]any)
+			if !ok {
+				return fmt.Errorf("rule parameters must be a mapping")
+			}
+			decoded.Parameters = parameters
+		case "required":
+			decoded.requiredSet = true
+			requiredValue := strings.ToLower(strings.TrimSpace(value.Value))
+			if value.Tag != "!!bool" || (requiredValue != "true" && requiredValue != "false") {
 				return fmt.Errorf("rule required must be a non-null boolean")
 			}
-			break
 		}
 	}
+	*r = Rule(decoded)
+	r.requiredSet = decoded.requiredSet
 	return nil
+}
+
+func yamlExactValue(node *yaml.Node) (any, error) {
+	switch node.Kind {
+	case yaml.MappingNode:
+		result := make(map[string]any, len(node.Content)/2)
+		for index := 0; index+1 < len(node.Content); index += 2 {
+			value, err := yamlExactValue(node.Content[index+1])
+			if err != nil {
+				return nil, err
+			}
+			result[node.Content[index].Value] = value
+		}
+		return result, nil
+	case yaml.SequenceNode:
+		result := make([]any, 0, len(node.Content))
+		for _, child := range node.Content {
+			value, err := yamlExactValue(child)
+			if err != nil {
+				return nil, err
+			}
+			result = append(result, value)
+		}
+		return result, nil
+	case yaml.ScalarNode:
+		switch node.Tag {
+		case "!!int", "!!float":
+			return json.Number(node.Value), nil
+		case "!!bool":
+			var value bool
+			if err := node.Decode(&value); err != nil {
+				return nil, err
+			}
+			return value, nil
+		case "!!null":
+			return nil, nil
+		default:
+			return node.Value, nil
+		}
+	default:
+		return nil, fmt.Errorf("unsupported YAML value kind %d", node.Kind)
+	}
 }
 
 const (
@@ -114,6 +176,9 @@ func LoadPolicy(path string) (Policy, error) {
 	if err := validatePolicy(policy, true); err != nil {
 		return Policy{}, fmt.Errorf("validate quality policy %q: %w", path, err)
 	}
+	if err := normalizeAndValidateGate(&policy); err != nil {
+		return Policy{}, fmt.Errorf("validate quality policy %q: %w", path, err)
+	}
 	for i := range policy.Spec.Rules {
 		policy.Spec.Rules[i].Dimension = normalizeDimension(policy.Spec.Rules[i].Dimension)
 		policy.Spec.Rules[i].Type = strings.ToLower(strings.TrimSpace(policy.Spec.Rules[i].Type))
@@ -122,6 +187,80 @@ func LoadPolicy(path string) (Policy, error) {
 	policy.SourceContent = string(content)
 	policy.SourceContentSHA256 = fmt.Sprintf("%x", sha256.Sum256(content))
 	return policy, nil
+}
+
+func (p Policy) GateDecision(findings []domain.Finding) (domain.GateDecision, error) {
+	gate := p.Spec.Gate
+	if strings.TrimSpace(gate.CriticalFailure) == "" && strings.TrimSpace(gate.HighFailure) == "" && strings.TrimSpace(gate.WarningFailure) == "" {
+		gate.CriticalFailure = string(domain.GateFail)
+		gate.HighFailure = string(domain.GateReview)
+		gate.WarningFailure = string(domain.GatePassWithWarning)
+	}
+	if err := validateGateValues(gate); err != nil {
+		return "", err
+	}
+	decision := domain.GatePass
+	for _, finding := range findings {
+		if finding.Status != domain.FindingFail {
+			continue
+		}
+		mapped := gate.WarningFailure
+		switch strings.ToUpper(finding.Severity) {
+		case "CRITICAL":
+			mapped = gate.CriticalFailure
+		case "HIGH":
+			mapped = gate.HighFailure
+		}
+		candidate := domain.GateDecision(strings.ToUpper(strings.TrimSpace(mapped)))
+		if gateDecisionRank(candidate) > gateDecisionRank(decision) {
+			decision = candidate
+		}
+	}
+	return decision, nil
+}
+
+func normalizeAndValidateGate(policy *Policy) error {
+	gate := &policy.Spec.Gate
+	if strings.TrimSpace(gate.CriticalFailure) == "" && strings.TrimSpace(gate.HighFailure) == "" && strings.TrimSpace(gate.WarningFailure) == "" {
+		gate.CriticalFailure = string(domain.GateFail)
+		gate.HighFailure = string(domain.GateReview)
+		gate.WarningFailure = string(domain.GatePassWithWarning)
+	}
+	return validateGateValues(*gate)
+}
+
+func validateGateValues(gate struct {
+	CriticalFailure string `yaml:"criticalFailure"`
+	HighFailure     string `yaml:"highFailure"`
+	WarningFailure  string `yaml:"warningFailure"`
+}) error {
+	for name, value := range map[string]string{
+		"criticalFailure": gate.CriticalFailure,
+		"highFailure":     gate.HighFailure,
+		"warningFailure":  gate.WarningFailure,
+	} {
+		switch domain.GateDecision(strings.ToUpper(strings.TrimSpace(value))) {
+		case domain.GatePass, domain.GatePassWithWarning, domain.GateReview, domain.GateFail:
+		default:
+			return fmt.Errorf("spec.gate.%s must be one of PASS, PASS_WITH_WARNING, REVIEW, FAIL", name)
+		}
+	}
+	return nil
+}
+
+func gateDecisionRank(decision domain.GateDecision) int {
+	switch decision {
+	case domain.GateFail:
+		return 4
+	case domain.GateReview:
+		return 3
+	case domain.GatePassWithWarning:
+		return 2
+	case domain.GatePass:
+		return 1
+	default:
+		return 0
+	}
 }
 
 func validatePolicy(policy Policy, requireRequired bool) error {
