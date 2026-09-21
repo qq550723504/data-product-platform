@@ -281,6 +281,7 @@ CREATE TABLE effective_rights_input (
     binding_id            uuid REFERENCES authorization_provenance_binding(id),
     input_hash            varchar(64) NOT NULL,
     CONSTRAINT uq_effective_rights_input UNIQUE(snapshot_id, input_dataset_version_id),
+    CONSTRAINT uq_effective_rights_input_snapshot_id UNIQUE(snapshot_id, id),
     CONSTRAINT ck_effective_rights_input_provenance CHECK (
         (rights_snapshot_id IS NULL AND declaration_id IS NULL AND binding_id IS NULL)
         OR declaration_id IS NOT NULL
@@ -296,15 +297,22 @@ CREATE TABLE effective_rights_action (
     blocking_input_id     uuid REFERENCES effective_rights_input(id),
     created_at            timestamptz NOT NULL DEFAULT now(),
     CONSTRAINT uq_effective_rights_action UNIQUE(snapshot_id, action),
+    CONSTRAINT uq_effective_rights_action_snapshot_id UNIQUE(snapshot_id, id),
     CONSTRAINT ck_effective_rights_action_decision CHECK (decision IN ('ALLOWED','NOT_ALLOWED'))
 );
 
 CREATE TABLE effective_rights_action_provenance (
     snapshot_id       uuid NOT NULL REFERENCES effective_rights_snapshot(id),
-    action_id         uuid NOT NULL REFERENCES effective_rights_action(id),
-    input_id          uuid NOT NULL REFERENCES effective_rights_input(id),
+    action_id         uuid NOT NULL,
+    input_id          uuid NOT NULL,
     declaration_id    uuid NOT NULL REFERENCES rights_declaration(id),
-    PRIMARY KEY(action_id, input_id)
+    PRIMARY KEY(action_id, input_id),
+    CONSTRAINT fk_effective_rights_provenance_action_snapshot
+        FOREIGN KEY(snapshot_id, action_id)
+        REFERENCES effective_rights_action(snapshot_id, id),
+    CONSTRAINT fk_effective_rights_provenance_input_snapshot
+        FOREIGN KEY(snapshot_id, input_id)
+        REFERENCES effective_rights_input(snapshot_id, id)
 );
 
 -- Subject-typed CostAllocation keeps rights activity cost auditable without
