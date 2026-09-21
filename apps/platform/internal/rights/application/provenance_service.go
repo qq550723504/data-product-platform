@@ -523,6 +523,13 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 		if !sameEffectiveRightsRequest(existing, cmd, requestedAsOf) {
 			return domain.EffectiveRightsSnapshot{}, domain.ErrEffectiveRights
 		}
+		storedEvidenceID, evidenceErr := s.repo.GetEffectiveRightsSupportingEvidence(ctx, existing.ID)
+		if evidenceErr != nil {
+			return domain.EffectiveRightsSnapshot{}, evidenceErr
+		}
+		if !sameOptionalUUID(storedEvidenceID, cmd.EvidenceID) {
+			return domain.EffectiveRightsSnapshot{}, domain.ErrEffectiveRights
+		}
 		return existing, nil
 	}
 	return snapshot, err
