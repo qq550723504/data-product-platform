@@ -177,6 +177,7 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 				WHERE b.authorization_id=$1 AND b.data_resource_id=$2 AND b.workspace_id=$3
 				  AND a.workspace_id=$3 AND a.status='ACTIVE' AND a.grantee_ref=$5
 				  AND ar.scope_type IS NOT NULL AND ar.scope_ref IS NOT NULL
+				  AND (ar.scope_type<>'ALL_RESOURCE' OR ar.scope_ref=ar.data_resource_id::text)
 				  AND b.created_at <= $4
 				  AND (d.effective_from IS NULL OR d.effective_from <= $4)
 				  AND (d.effective_to IS NULL OR d.effective_to > $4)
@@ -192,7 +193,7 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 					AND NOT EXISTS (
 						SELECT 1 FROM grantor_authority_delegation_edge e
 						WHERE e.chain_id=b.delegation_chain_id
-						  AND (e.data_resource_id<>ar.data_resource_id OR NOT (ar.actions <@ e.grantable_actions) OR NOT (a.purpose=ANY(e.grantable_purposes)) OR NOT (e.scope_type='ALL_RESOURCE' OR (e.scope_type=ar.scope_type AND e.scope_ref=ar.scope_ref)))
+						  AND (e.data_resource_id<>ar.data_resource_id OR NOT (ar.actions <@ e.grantable_actions) OR NOT (a.purpose=ANY(e.grantable_purposes)) OR NOT ((e.scope_type='ALL_RESOURCE' AND e.scope_ref=ar.data_resource_id::text) OR (e.scope_type=ar.scope_type AND e.scope_ref=ar.scope_ref)))
 					)
 					AND (SELECT e.delegator_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id ORDER BY e.ordinal LIMIT 1)=d.claimant_ref
 					AND (SELECT e.delegate_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id ORDER BY e.ordinal DESC LIMIT 1)=b.grantor_ref
