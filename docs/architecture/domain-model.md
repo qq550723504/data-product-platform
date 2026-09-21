@@ -1,6 +1,6 @@
 # 核心领域模型 V1.1
 
-> V1.1 增加 Certified Dataset 与 Data Rights Provenance 目标模型。QualityAssessment 核心已通过 #140 / migration 000019 落地；#134/#137/#135 新对象在对应 Issue 实现前属于已批准目标模型。
+> V1.1 增加 Certified Dataset 与 Data Rights Provenance 模型。QualityAssessment 已通过 #140 / migration 000019 落地；#137 Rights / Effective Rights 与 #134 Certification 已进入 main；#135 API/UI 与剩余交付能力仍按目标模型推进。
 
 ## 1. 主业务链
 
