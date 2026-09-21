@@ -171,7 +171,7 @@ func historyItemResponse(item application.CertificationHistoryItem) map[string]a
 		"effectiveRightsSnapshotHash": certification.EffectiveRightsSnapshotHash, "frozenRightsContextHash": certification.FrozenRightsContextHash,
 		"complianceResultId": certification.ComplianceResultID, "contractVersionId": certification.ContractVersionID,
 		"traceabilityEvidenceId": certification.TraceabilityEvidenceID, "evidenceSnapshotId": certification.EvidenceSnapshotID,
-		"profile": profileResponse(certification.Profile),
+		"profile":      profileResponse(certification.Profile),
 		"dispositions": dispositions,
 	}
 }
@@ -204,22 +204,22 @@ func eligibilityResponse(result application.DeliveryEligibilityResult) map[strin
 		certification = historyItemResponse(application.CertificationHistoryItem{Certification: result.Certification})
 	}
 	return map[string]any{
-		"allowed": result.Allowed,
+		"allowed":  result.Allowed,
 		"blockers": result.Blockers,
 		"datasetVersion": map[string]any{
-			"status": result.DatasetVersionStatus,
-			"allowed": result.DatasetVersionGate.Allowed,
+			"status":   result.DatasetVersionStatus,
+			"allowed":  result.DatasetVersionGate.Allowed,
 			"blockers": result.DatasetVersionGate.Blockers,
 		},
 		"certification": map[string]any{
-			"allowed": result.CertificationGate.Allowed,
+			"allowed":  result.CertificationGate.Allowed,
 			"blockers": result.CertificationGate.Blockers,
-			"current": certification,
+			"current":  certification,
 		},
 		"entitlement": map[string]any{
-			"allowed": result.EntitlementGate.Allowed,
+			"allowed":  result.EntitlementGate.Allowed,
 			"blockers": result.EntitlementGate.Blockers,
-			"checks": checks,
+			"checks":   checks,
 		},
 	}
 }
