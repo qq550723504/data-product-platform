@@ -174,7 +174,7 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 				JOIN authorization_resource ar ON ar.authorization_id=a.id AND ar.data_resource_id=b.data_resource_id
 				JOIN rights_declaration d ON d.id=b.rights_declaration_id
 				JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED' AND v.occurred_at <= $4
-				WHERE b.authorization_id=$1 AND b.data_resource_id=$2 AND b.workspace_id=$3
+				WHERE b.authorization_id=$1 AND b.data_resource_id=$2::uuid AND b.workspace_id=$3
 				  AND a.workspace_id=$3 AND a.status='ACTIVE' AND a.grantee_ref=$5
 				  AND ar.scope_type IS NOT NULL AND ar.scope_ref IS NOT NULL
 				  AND (ar.scope_type<>'ALL_RESOURCE' OR ar.scope_ref=ar.data_resource_id::text)
