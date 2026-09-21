@@ -231,8 +231,11 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 		t.Fatalf("CURATED DatasetVersion generatedByExecutionId = %v, want %s", outputVersion.GeneratedByExecutionID, execution.ID)
 	}
 	outputCSV := string(store.bytes(outputVersion.StorageURI))
-	if !strings.Contains(outputCSV, "深圳星云科技有限公司") || !strings.Contains(outputCSV, "96.01") {
-		t.Fatalf("CURATED output does not contain deterministic reference result: %s", outputCSV)
+	if strings.Contains(outputCSV, "company_name") || strings.Contains(outputCSV, "深圳星云科技有限公司") {
+		t.Fatalf("CURATED V1 output leaked non-contract company name data: %s", outputCSV)
+	}
+	if !strings.Contains(outputCSV, ",96.01,HIGH,100.00,") {
+		t.Fatalf("CURATED output does not contain deterministic reference score: %s", outputCSV)
 	}
 
 	qualityResult, err := qualityService.Run(ctx, qualityapp.RunCommand{
