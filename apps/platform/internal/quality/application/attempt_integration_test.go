@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -140,6 +141,134 @@ spec:
 		t.Fatalf("failed quality attempt costs after replay = %d, want 1", costCount)
 	}
 	assertQualityAttemptFailureFacts(t, ctx, pool, attemptID)
+}
+
+func TestQualityAttemptRealRetryPreservesBothPhysicalCosts(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	workspaceID := uuid.New()
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	store := newMemoryStore()
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
+	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, store)
+	dataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "ATTEMPT-REAL-RETRY")
+	version := uploadCSV(t, ctx, uploadDataset, dataset.ID, "attempt-real-retry.csv", "company_id\nCOMPANY-001\n", nil)
+
+	industryPackRoot := t.TempDir()
+	policyPath := filepath.Join(industryPackRoot, "retry-cost.yaml")
+	writePolicy := func(version string) {
+		t.Helper()
+		content := fmt.Sprintf(`apiVersion: quality/v1
+kind: QualityRuleSet
+metadata:
+  name: retry-cost
+  version: %s
+spec:
+  rules:
+    - id: QA-COMPANY-ID
+      dimension: COMPLETENESS
+      type: not_null
+      target: company_id
+      threshold: 1
+      required: true
+      severity: CRITICAL
+  gate:
+    criticalFailure: FAIL
+    highFailure: REVIEW
+    warningFailure: PASS_WITH_WARNING
+`, version)
+		if err := os.WriteFile(policyPath, []byte(content), 0o600); err != nil {
+			t.Fatalf("write retry policy: %v", err)
+		}
+	}
+
+	qualityRepo := qualityinfra.NewPostgresRepository(pool)
+	qualityService := qualityapp.NewService(industryPackRoot, txManager, datasetRepo, qualityRepo, store)
+
+	// Attempt A evaluates the valid rule successfully, then fails only when the
+	// immutable assessment is persisted because rule_set_version is varchar(64).
+	// This pins a real evaluator/compute attempt whose business result could not
+	// be committed.
+	attemptA := uuid.New()
+	writePolicy(strings.Repeat("v", 65))
+	_, err = qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    version.ID,
+		RuleSetRef:          "retry-cost.yaml",
+		AssessmentAttemptID: attemptA,
+		Now:                 version.ReadyAt.Add(time.Minute),
+	})
+	if err == nil || !strings.Contains(err.Error(), "character varying(64)") {
+		t.Fatalf("attempt A error = %v, want post-evaluation persistence failure", err)
+	}
+
+	// Attempt B is a new physical activity. With a persistable version it must
+	// really evaluate again and succeed instead of being collapsed into A.
+	attemptB := uuid.New()
+	writePolicy("1.0.0")
+	assessment, err := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    version.ID,
+		RuleSetRef:          "retry-cost.yaml",
+		AssessmentAttemptID: attemptB,
+		Now:                 version.ReadyAt.Add(time.Minute),
+	})
+	if err != nil {
+		t.Fatalf("attempt B real retry: %v", err)
+	}
+	if assessment.ID == uuid.Nil {
+		t.Fatal("attempt B returned no QualityAssessment")
+	}
+
+	countAttemptCost := func(attemptID uuid.UUID) int {
+		t.Helper()
+		var count int
+		if err := pool.QueryRow(ctx, `
+			SELECT count(*)
+			FROM cost_event e
+			JOIN cost_allocation a ON a.cost_event_id=e.id
+			WHERE a.quality_assessment_attempt_id=$1
+		`, attemptID).Scan(&count); err != nil {
+			t.Fatalf("count costs for attempt %s: %v", attemptID, err)
+		}
+		return count
+	}
+	if gotA, gotB := countAttemptCost(attemptA), countAttemptCost(attemptB); gotA != 1 || gotB != 1 {
+		t.Fatalf("physical attempt costs A/B = %d/%d, want 1/1", gotA, gotB)
+	}
+
+	// Replaying either stable attempt identity must not create new work/cost.
+	_, replayAErr := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    version.ID,
+		RuleSetRef:          "retry-cost.yaml",
+		AssessmentAttemptID: attemptA,
+	})
+	if !errors.Is(replayAErr, qualityapp.ErrAssessmentAttemptFailed) {
+		t.Fatalf("attempt A replay error = %v, want ErrAssessmentAttemptFailed", replayAErr)
+	}
+	replayedB, replayBErr := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    version.ID,
+		RuleSetRef:          "retry-cost.yaml",
+		AssessmentAttemptID: attemptB,
+	})
+	if replayBErr != nil || replayedB.ID != assessment.ID {
+		t.Fatalf("attempt B replay = %s, err=%v; want assessment %s", replayedB.ID, replayBErr, assessment.ID)
+	}
+	if gotA, gotB := countAttemptCost(attemptA), countAttemptCost(attemptB); gotA != 1 || gotB != 1 {
+		t.Fatalf("physical attempt costs after replay A/B = %d/%d, want 1/1", gotA, gotB)
+	}
 }
 
 func TestQualityAttemptReconcilesExpiredClaim(t *testing.T) {
