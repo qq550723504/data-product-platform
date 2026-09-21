@@ -138,6 +138,26 @@ func TestLoadPolicyPreservesExactDecimalBounds(t *testing.T) {
 	}
 }
 
+func TestRatioThresholdUsesExactDecimalComparison(t *testing.T) {
+	rows := make([]map[string]string, 0, 10)
+	for index := 0; index < 9; index++ {
+		rows = append(rows, map[string]string{"amount": fmt.Sprintf("%d", index)})
+	}
+	rows = append(rows, map[string]string{"amount": ""})
+	finding := evaluateSingleRule(t, Rule{
+		ID:        "R-COMPLETE",
+		Dimension: "COMPLETENESS",
+		Type:      RuleTypeCompletenessRatio,
+		Target:    "amount",
+		Threshold: json.Number("0.90000000000000001"),
+		Required:  true,
+		Severity:  "CRITICAL",
+	}, DatasetContext{Table: tabular.Table{Headers: []string{"amount"}, Rows: rows}})
+	if finding.Status != domain.FindingFail {
+		t.Fatalf("exact ratio below threshold passed: %#v", finding)
+	}
+}
+
 func TestPolicyGateDecisionHonorsDeclaredMapping(t *testing.T) {
 	policy := Policy{}
 	policy.Spec.Gate.CriticalFailure = "FAIL"

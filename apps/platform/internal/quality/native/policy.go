@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"math/big"
 	"os"
 	"strings"
 
@@ -461,12 +462,12 @@ func normalizeSeverity(value string) string {
 }
 
 func validateRatioThreshold(rule Rule, fallback float64) error {
-	threshold, err := ruleThreshold(rule, fallback)
+	threshold, err := ruleThresholdRat(rule, fallback)
 	if err != nil {
 		return fmt.Errorf("ratio threshold: %w", err)
 	}
-	if threshold < 0 || threshold > 1 {
-		return fmt.Errorf("ratio threshold must be between 0 and 1, got %v", threshold)
+	if threshold.Sign() < 0 || threshold.Cmp(big.NewRat(1, 1)) > 0 {
+		return fmt.Errorf("ratio threshold must be between 0 and 1, got %s", threshold.RatString())
 	}
 	return nil
 }

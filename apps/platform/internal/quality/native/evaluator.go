@@ -70,7 +70,7 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 		if result, ok, err := targetAvailability(rule, ctx, skip, fail); err != nil || ok {
 			return result, result.Observed, err
 		}
-		threshold, err := ruleThreshold(rule, 1)
+		threshold, err := ruleThresholdRat(rule, 1)
 		if err != nil {
 			return domain.Finding{}, nil, fmt.Errorf("rule %s: %w", rule.ID, err)
 		}
@@ -83,12 +83,12 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 				samples = append(samples, map[string]any{"row": index, "field": rule.Target})
 			}
 		}
-		rate := ratio(nonNull, len(ctx.Table.Rows))
-		observed := map[string]any{"nonNull": nonNull, "total": len(ctx.Table.Rows), "rate": rate}
-		if rate < threshold {
-			return fail(fmt.Sprintf("%s completeness %.6f is below %.6f", rule.Target, rate, threshold), observed, rate, threshold, len(ctx.Table.Rows)-nonNull, samples)
+		rate := ratioRat(nonNull, len(ctx.Table.Rows))
+		observed := map[string]any{"nonNull": nonNull, "total": len(ctx.Table.Rows), "rate": ratJSONNumber(rate)}
+		if rate.Cmp(threshold) < 0 {
+			return fail(fmt.Sprintf("%s completeness %.6f is below %.6f", rule.Target, ratFloat64(rate), ratFloat64(threshold)), observed, ratJSONNumber(rate), ratJSONNumber(threshold), len(ctx.Table.Rows)-nonNull, samples)
 		}
-		return pass(observed, rate, threshold, 0, nil)
+		return pass(observed, ratJSONNumber(rate), ratJSONNumber(threshold), 0, nil)
 
 	case RuleTypeUnique, RuleTypeDuplicateRatio:
 		if result, ok, err := targetAvailability(rule, ctx, skip, fail); err != nil || ok {
@@ -114,28 +114,28 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 			}
 			return skip("rule not applicable: no non-null values", map[string]any{"nonNull": 0})
 		}
-		uniqueRatio := ratio(len(seen), nonNull)
-		duplicateRatio := ratio(nonNull-len(seen), nonNull)
+		uniqueRatio := ratioRat(len(seen), nonNull)
+		duplicateRatio := ratioRat(nonNull-len(seen), nonNull)
 		if rule.Type == RuleTypeUnique {
-			threshold, err := ruleThreshold(rule, 1)
+			threshold, err := ruleThresholdRat(rule, 1)
 			if err != nil {
 				return domain.Finding{}, nil, fmt.Errorf("rule %s: %w", rule.ID, err)
 			}
-			observed := map[string]any{"unique": len(seen), "nonNull": nonNull, "rate": uniqueRatio, "duplicateRate": duplicateRatio}
-			if uniqueRatio < threshold {
-				return fail(fmt.Sprintf("%s uniqueness %.6f is below %.6f", rule.Target, uniqueRatio, threshold), observed, uniqueRatio, threshold, nonNull-len(seen), samples)
+			observed := map[string]any{"unique": len(seen), "nonNull": nonNull, "rate": ratJSONNumber(uniqueRatio), "duplicateRate": ratJSONNumber(duplicateRatio)}
+			if uniqueRatio.Cmp(threshold) < 0 {
+				return fail(fmt.Sprintf("%s uniqueness %.6f is below %.6f", rule.Target, ratFloat64(uniqueRatio), ratFloat64(threshold)), observed, ratJSONNumber(uniqueRatio), ratJSONNumber(threshold), nonNull-len(seen), samples)
 			}
-			return pass(observed, uniqueRatio, threshold, 0, nil)
+			return pass(observed, ratJSONNumber(uniqueRatio), ratJSONNumber(threshold), 0, nil)
 		}
-		threshold, err := ruleThreshold(rule, 0)
+		threshold, err := ruleThresholdRat(rule, 0)
 		if err != nil {
 			return domain.Finding{}, nil, fmt.Errorf("rule %s: %w", rule.ID, err)
 		}
-		observed := map[string]any{"unique": len(seen), "nonNull": nonNull, "rate": uniqueRatio, "duplicateRate": duplicateRatio}
-		if duplicateRatio > threshold {
-			return fail(fmt.Sprintf("%s duplicate ratio %.6f is above %.6f", rule.Target, duplicateRatio, threshold), observed, duplicateRatio, threshold, nonNull-len(seen), samples)
+		observed := map[string]any{"unique": len(seen), "nonNull": nonNull, "rate": ratJSONNumber(uniqueRatio), "duplicateRate": ratJSONNumber(duplicateRatio)}
+		if duplicateRatio.Cmp(threshold) > 0 {
+			return fail(fmt.Sprintf("%s duplicate ratio %.6f is above %.6f", rule.Target, ratFloat64(duplicateRatio), ratFloat64(threshold)), observed, ratJSONNumber(duplicateRatio), ratJSONNumber(threshold), nonNull-len(seen), samples)
 		}
-		return pass(observed, duplicateRatio, threshold, 0, nil)
+		return pass(observed, ratJSONNumber(duplicateRatio), ratJSONNumber(threshold), 0, nil)
 
 	case RuleTypeRange:
 		if result, ok, err := targetAvailability(rule, ctx, skip, fail); err != nil || ok {
@@ -617,11 +617,19 @@ func hasString(values map[string]struct{}, value string) bool {
 	return ok
 }
 
-func ratio(numerator, denominator int) float64 {
+func ratioRat(numerator, denominator int) *big.Rat {
 	if denominator == 0 {
+		return new(big.Rat)
+	}
+	return new(big.Rat).SetFrac64(int64(numerator), int64(denominator))
+}
+
+func ratFloat64(value *big.Rat) float64 {
+	if value == nil {
 		return 0
 	}
-	return float64(numerator) / float64(denominator)
+	converted, _ := value.Float64()
+	return converted
 }
 
 func numericMetadataRat(metadata map[string]any, key string) (*big.Rat, bool) {
