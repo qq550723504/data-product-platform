@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	metadataengine "github.com/qq550723504/data-product-platform/apps/platform/internal/engine/metadata"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
 	metadatadomain "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain"
 	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
@@ -56,7 +57,7 @@ func (h *Handler) bindResource(w http.ResponseWriter, r *http.Request) {
 		Primary:            req.Primary,
 	})
 	if err != nil {
-		httpserver.WriteError(w, r, http.StatusBadGateway, "METADATA_BINDING_FAILED", err.Error(), nil)
+		writeBindingError(w, r, err)
 		return
 	}
 	writeJSON(w, http.StatusCreated, bindingResponse(binding))
@@ -70,7 +71,7 @@ func (h *Handler) listBindings(w http.ResponseWriter, r *http.Request) {
 	}
 	bindings, err := h.repo.ListBindings(r.Context(), resourceID)
 	if err != nil {
-		httpserver.WriteError(w, r, http.StatusInternalServerError, "METADATA_BINDINGS_READ_FAILED", err.Error(), nil)
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "METADATA_BINDINGS_READ_FAILED", "failed to read metadata bindings", nil)
 		return
 	}
 	items := make([]map[string]any, 0, len(bindings))
@@ -94,7 +95,7 @@ func (h *Handler) getProjection(w http.ResponseWriter, r *http.Request) {
 			httpserver.WriteError(w, r, http.StatusNotFound, "GOVERNANCE_PROJECTION_NOT_FOUND", "governance projection not found", nil)
 			return
 		}
-		httpserver.WriteError(w, r, http.StatusInternalServerError, "GOVERNANCE_PROJECTION_READ_FAILED", err.Error(), nil)
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "GOVERNANCE_PROJECTION_READ_FAILED", "failed to read governance projection", nil)
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
@@ -108,11 +109,44 @@ func (h *Handler) getProjection(w http.ResponseWriter, r *http.Request) {
 		"externalFqn":   projection.ExternalFQN,
 		"status":        projection.Status,
 		"attempts":      projection.Attempts,
-		"lastError":     projection.LastError,
+		"lastError":     publicProjectionError(projection.LastError),
 		"metadata":      projection.Metadata,
 		"projectedAt":   projection.ProjectedAt,
 		"updatedAt":     projection.UpdatedAt,
 	})
+}
+
+func writeBindingError(w http.ResponseWriter, r *http.Request, err error) {
+	if errors.Is(err, metadataapp.ErrInvalidBindingRequest) {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "METADATA_BINDING_INVALID", "metadata binding request is invalid", nil)
+		return
+	}
+	var external *metadataengine.ExternalError
+	if errors.As(err, &external) {
+		switch external.Kind {
+		case metadataengine.ErrorInvalidRequest:
+			httpserver.WriteError(w, r, http.StatusBadRequest, "METADATA_BINDING_INVALID", "metadata binding request is invalid", nil)
+		case metadataengine.ErrorNotFound:
+			httpserver.WriteError(w, r, http.StatusNotFound, "METADATA_ASSET_NOT_FOUND", "metadata asset was not found", nil)
+		case metadataengine.ErrorUnavailable:
+			httpserver.WriteError(w, r, http.StatusServiceUnavailable, "METADATA_PROVIDER_UNAVAILABLE", "metadata provider is unavailable", nil)
+		case metadataengine.ErrorUnauthorized:
+			httpserver.WriteError(w, r, http.StatusBadGateway, "METADATA_PROVIDER_AUTH_FAILED", "metadata provider rejected platform credentials", nil)
+		case metadataengine.ErrorInvalidResponse:
+			httpserver.WriteError(w, r, http.StatusBadGateway, "METADATA_PROVIDER_INVALID_RESPONSE", "metadata provider returned an invalid response", nil)
+		default:
+			httpserver.WriteError(w, r, http.StatusBadGateway, "METADATA_PROVIDER_REJECTED", "metadata provider rejected the request", nil)
+		}
+		return
+	}
+	httpserver.WriteError(w, r, http.StatusInternalServerError, "METADATA_BINDING_FAILED", "metadata binding failed", nil)
+}
+
+func publicProjectionError(lastError string) string {
+	if strings.TrimSpace(lastError) == "" {
+		return ""
+	}
+	return "metadata projection failed"
 }
 
 func bindingResponse(binding metadatadomain.ResourceBinding) map[string]any {

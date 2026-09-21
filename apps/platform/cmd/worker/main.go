@@ -16,7 +16,6 @@ import (
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	parkindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
-	metadatadomain "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain"
 	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
@@ -136,7 +135,7 @@ func main() {
 			os.Exit(1)
 		}
 		metadataService = metadataapp.NewService(
-			metadatadomain.ProviderOpenMetadata,
+			openmetadata.Provider,
 			cfg.OpenMetadata.Domain,
 			txManager,
 			metadatainfra.NewPostgresRepository(db),

@@ -3,8 +3,10 @@ package openmetadata_test
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	metadataengine "github.com/qq550723504/data-product-platform/apps/platform/internal/engine/metadata"
@@ -73,17 +75,31 @@ func TestClientGetTableAndUpsertDataProduct(t *testing.T) {
 	}
 }
 
-func TestClientReportsOpenMetadataErrors(t *testing.T) {
+func TestClientMapsOpenMetadataErrorsToProviderNeutralContract(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		http.Error(w, `{"message":"not authorized"}`, http.StatusForbidden)
+		http.Error(w, `{"message":"not authorized secret detail"}`, http.StatusForbidden)
 	}))
 	defer server.Close()
 	client, err := openmetadata.NewClient(server.URL, "", server.Client())
 	if err != nil {
 		t.Fatalf("create client: %v", err)
 	}
-	if _, err := client.UpsertDataProduct(context.Background(), metadataengine.GovernanceProduct{Name: "x", Domain: "Park"}); err == nil {
+	_, err = client.UpsertDataProduct(context.Background(), metadataengine.GovernanceProduct{Name: "x", Domain: "Park"})
+	if err == nil {
 		t.Fatal("expected adapter error")
+	}
+	var external *metadataengine.ExternalError
+	if !errors.As(err, &external) {
+		t.Fatalf("error = %T %v, want provider-neutral ExternalError", err, err)
+	}
+	if external.Kind != metadataengine.ErrorUnauthorized || external.StatusCode != http.StatusForbidden {
+		t.Fatalf("external error = %+v, want UNAUTHORIZED/403", external)
+	}
+	if strings.Contains(err.Error(), "not authorized secret detail") || strings.Contains(err.Error(), "OpenMetadata") {
+		t.Fatalf("public error string leaked provider detail: %q", err.Error())
+	}
+	if external.Cause == nil || !strings.Contains(external.Cause.Error(), "not authorized secret detail") {
+		t.Fatalf("internal cause was not retained for diagnostics: %+v", external)
 	}
 }
 

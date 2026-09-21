@@ -17,6 +17,8 @@ import (
 	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
 )
 
+var ErrInvalidBindingRequest = errors.New("invalid metadata binding request")
+
 type Service struct {
 	provider  metadatadomain.Provider
 	domainFQN string
@@ -46,7 +48,7 @@ type BindResourceCommand struct {
 
 func (s *Service) BindResource(ctx context.Context, cmd BindResourceCommand) (metadatadomain.ResourceBinding, error) {
 	if cmd.ResourceID == uuid.Nil || strings.TrimSpace(cmd.EntityType) == "" || strings.TrimSpace(cmd.FullyQualifiedName) == "" {
-		return metadatadomain.ResourceBinding{}, fmt.Errorf("resource ID, entity type and fully qualified name are required")
+		return metadatadomain.ResourceBinding{}, fmt.Errorf("%w: resource ID, entity type and fully qualified name are required", ErrInvalidBindingRequest)
 	}
 	asset, err := s.engine.GetAsset(ctx, cmd.EntityType, cmd.FullyQualifiedName)
 	if err != nil {
@@ -62,12 +64,15 @@ func (s *Service) BindResource(ctx context.Context, cmd BindResourceCommand) (me
 		BindingMetadata: asset.Metadata,
 		IsPrimary:       cmd.Primary,
 	}
+	var persisted metadatadomain.ResourceBinding
 	if err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		return s.repo.UpsertBinding(ctx, tx, binding)
+		var err error
+		persisted, err = s.repo.UpsertBinding(ctx, tx, binding)
+		return err
 	}); err != nil {
 		return metadatadomain.ResourceBinding{}, err
 	}
-	return binding, nil
+	return persisted, nil
 }
 
 func (s *Service) HandleOutboxEvent(ctx context.Context, event outbox.PublishedEvent) error {

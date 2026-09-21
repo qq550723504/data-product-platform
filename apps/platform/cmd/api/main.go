@@ -29,7 +29,6 @@ import (
 	entityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
-	metadatadomain "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain"
 	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata"
 	metadatahttp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/transport/http"
@@ -224,7 +223,7 @@ func main() {
 			os.Exit(1)
 		}
 		metadataService = metadataapp.NewService(
-			metadatadomain.ProviderOpenMetadata,
+			openmetadata.Provider,
 			cfg.OpenMetadata.Domain,
 			txManager,
 			metadataRepo,

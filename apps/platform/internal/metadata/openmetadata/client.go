@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -38,14 +39,14 @@ func (c *Client) GetAsset(ctx context.Context, entityType, fullyQualifiedName st
 	entityType = strings.ToUpper(strings.TrimSpace(entityType))
 	fullyQualifiedName = strings.TrimSpace(fullyQualifiedName)
 	if fullyQualifiedName == "" {
-		return metadataengine.Asset{}, fmt.Errorf("asset fully qualified name is required")
+		return metadataengine.Asset{}, metadataengine.NewExternalError(metadataengine.ErrorInvalidRequest, "get asset", 0, errors.New("asset fully qualified name is required"))
 	}
 	var endpoint string
 	switch entityType {
 	case "TABLE":
 		endpoint = "/v1/tables/name/" + url.PathEscape(fullyQualifiedName)
 	default:
-		return metadataengine.Asset{}, fmt.Errorf("unsupported OpenMetadata asset type %q", entityType)
+		return metadataengine.Asset{}, metadataengine.NewExternalError(metadataengine.ErrorInvalidRequest, "get asset", 0, fmt.Errorf("unsupported metadata asset type %q", entityType))
 	}
 
 	var response struct {
@@ -78,7 +79,7 @@ func (c *Client) UpsertDataProduct(ctx context.Context, product metadataengine.G
 	product.Name = strings.TrimSpace(product.Name)
 	product.Domain = strings.TrimSpace(product.Domain)
 	if product.Name == "" || product.Domain == "" {
-		return metadataengine.ExternalEntity{}, fmt.Errorf("OpenMetadata data product name and domain are required")
+		return metadataengine.ExternalEntity{}, metadataengine.NewExternalError(metadataengine.ErrorInvalidRequest, "upsert data product", 0, errors.New("data product name and domain are required"))
 	}
 	request := map[string]any{
 		"name":        product.Name,
@@ -111,13 +112,13 @@ func (c *Client) doJSON(ctx context.Context, method, endpoint string, requestBod
 	if requestBody != nil {
 		encoded, err := json.Marshal(requestBody)
 		if err != nil {
-			return fmt.Errorf("encode OpenMetadata request: %w", err)
+			return metadataengine.NewExternalError(metadataengine.ErrorInvalidRequest, "encode request", 0, err)
 		}
 		body = bytes.NewReader(encoded)
 	}
 	req, err := http.NewRequestWithContext(ctx, method, c.baseURL+endpoint, body)
 	if err != nil {
-		return fmt.Errorf("create OpenMetadata request: %w", err)
+		return metadataengine.NewExternalError(metadataengine.ErrorInvalidRequest, "create request", 0, err)
 	}
 	req.Header.Set("Accept", "application/json")
 	if requestBody != nil {
@@ -129,20 +130,36 @@ func (c *Client) doJSON(ctx context.Context, method, endpoint string, requestBod
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("OpenMetadata request %s %s: %w", method, endpoint, err)
+		return metadataengine.NewExternalError(metadataengine.ErrorUnavailable, "request", 0, err)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		limited, _ := io.ReadAll(io.LimitReader(resp.Body, 8<<10))
-		return fmt.Errorf("OpenMetadata request %s %s returned %d: %s", method, endpoint, resp.StatusCode, strings.TrimSpace(string(limited)))
+		cause := errors.New(strings.TrimSpace(string(limited)))
+		return metadataengine.NewExternalError(classifyStatus(resp.StatusCode), "request", resp.StatusCode, cause)
 	}
 	if responseBody == nil {
 		return nil
 	}
 	if err := json.NewDecoder(resp.Body).Decode(responseBody); err != nil {
-		return fmt.Errorf("decode OpenMetadata response: %w", err)
+		return metadataengine.NewExternalError(metadataengine.ErrorInvalidResponse, "decode response", resp.StatusCode, err)
 	}
 	return nil
+}
+
+func classifyStatus(status int) metadataengine.ErrorKind {
+	switch {
+	case status == http.StatusBadRequest || status == http.StatusUnprocessableEntity:
+		return metadataengine.ErrorInvalidRequest
+	case status == http.StatusNotFound:
+		return metadataengine.ErrorNotFound
+	case status == http.StatusUnauthorized || status == http.StatusForbidden:
+		return metadataengine.ErrorUnauthorized
+	case status == http.StatusRequestTimeout || status == http.StatusTooManyRequests || status >= http.StatusInternalServerError:
+		return metadataengine.ErrorUnavailable
+	default:
+		return metadataengine.ErrorRejected
+	}
 }
 
 var _ metadataengine.Engine = (*Client)(nil)

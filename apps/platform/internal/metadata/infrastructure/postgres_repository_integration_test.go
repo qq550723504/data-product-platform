@@ -12,6 +12,8 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 )
 
+const testProvider domain.Provider = "TEST_METADATA"
+
 func TestResourceBindingAndGovernanceProjectionPersistence(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
@@ -34,6 +36,8 @@ func TestResourceBindingAndGovernanceProjectionPersistence(t *testing.T) {
 		t.Fatalf("insert DataResource: %v", err)
 	}
 
+	externalFQN := "sample_data.ecommerce.public.orders." + uuid.NewString()
+
 	repo := infrastructure.NewPostgresRepository(pool)
 	tx, err := pool.Begin(ctx)
 	if err != nil {
@@ -42,16 +46,21 @@ func TestResourceBindingAndGovernanceProjectionPersistence(t *testing.T) {
 	binding := domain.ResourceBinding{
 		ID:              uuid.New(),
 		ResourceID:      resourceID,
-		Provider:        domain.ProviderOpenMetadata,
+		Provider:        testProvider,
 		EntityType:      "TABLE",
 		ExternalID:      "om-table-001",
-		ExternalFQN:     "sample_data.ecommerce.public.orders",
+		ExternalFQN:     externalFQN,
 		BindingMetadata: map[string]any{"serviceType": "PostgreSQL"},
 		IsPrimary:       true,
 	}
-	if err := repo.UpsertBinding(ctx, tx, binding); err != nil {
+	persistedBinding, err := repo.UpsertBinding(ctx, tx, binding)
+	if err != nil {
 		_ = tx.Rollback(ctx)
 		t.Fatalf("upsert resource binding: %v", err)
+	}
+	if persistedBinding.ID != binding.ID {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("persisted binding ID = %s, want %s", persistedBinding.ID, binding.ID)
 	}
 	if err := tx.Commit(ctx); err != nil {
 		t.Fatalf("commit resource binding: %v", err)
@@ -61,15 +70,15 @@ func TestResourceBindingAndGovernanceProjectionPersistence(t *testing.T) {
 	if err != nil {
 		t.Fatalf("list resource bindings: %v", err)
 	}
-	if len(bindings) != 1 || bindings[0].ExternalID != "om-table-001" || !bindings[0].IsPrimary {
-		t.Fatalf("resource bindings = %+v, want one primary OpenMetadata binding", bindings)
+	if len(bindings) != 1 || bindings[0].ID != persistedBinding.ID || bindings[0].ExternalID != "om-table-001" || bindings[0].ExternalFQN != externalFQN || !bindings[0].IsPrimary {
+		t.Fatalf("resource bindings = %+v, want persisted primary metadata binding %+v", bindings, persistedBinding)
 	}
 
 	firstEventID := uuid.New()
 	projection := domain.GovernanceProjection{
 		ID:            uuid.New(),
 		WorkspaceID:   workspaceID,
-		Provider:      domain.ProviderOpenMetadata,
+		Provider:      testProvider,
 		ObjectType:    "PRODUCT_RELEASE",
 		ObjectID:      uuid.New(),
 		SourceEventID: &firstEventID,
