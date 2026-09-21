@@ -43,6 +43,36 @@ func TestLoadPolicyCapturesExactSourceSnapshot(t *testing.T) {
 	}
 }
 
+func TestLoadPolicyRejectsUnknownGateFields(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "quality.yaml")
+	content := []byte("apiVersion: quality/v1\nkind: QualityRuleSet\nmetadata:\n  version: 1.0.0\nspec:\n  gate:\n    warningFailures: FAIL\n  rules:\n    - id: R-1\n      dimension: COMPLETENESS\n      type: not_null\n      target: amount\n      required: true\n      severity: WARNING\n")
+	if err := os.WriteFile(path, content, 0o600); err != nil {
+		t.Fatalf("write policy: %v", err)
+	}
+	if _, err := LoadPolicy(path); err == nil {
+		t.Fatal("policy with unknown gate field was accepted")
+	}
+}
+
+func TestRegexRuleMatchesUnmodifiedCellValues(t *testing.T) {
+	policy := Policy{}
+	policy.Spec.Rules = []Rule{{
+		ID: "R-REGEX", Dimension: "CONSISTENCY", Type: RuleTypeRegex, Target: "code",
+		Parameters: map[string]any{"pattern": "^[A-Z]+$", "allowNull": false},
+		Required:   true, Severity: "CRITICAL",
+	}}
+	findings, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{
+		Headers: []string{"code"}, Rows: []map[string]string{{"code": " BAD "}},
+	}})
+	if err != nil {
+		t.Fatalf("evaluate regex rule: %v", err)
+	}
+	if findings[0].Status != domain.FindingFail {
+		t.Fatalf("space-padded regex value passed: %#v", findings[0])
+	}
+}
+
 func TestLoadPolicyRejectsUnknownRuleTypeAndMissingParameters(t *testing.T) {
 	dir := t.TempDir()
 	unknown := filepath.Join(dir, "unknown.yaml")

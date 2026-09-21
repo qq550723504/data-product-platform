@@ -1,6 +1,7 @@
 package native
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
@@ -171,7 +172,9 @@ func LoadPolicy(path string) (Policy, error) {
 		return Policy{}, fmt.Errorf("read quality policy %q: %w", path, err)
 	}
 	var policy Policy
-	if err := yaml.Unmarshal(content, &policy); err != nil {
+	decoder := yaml.NewDecoder(bytes.NewReader(content))
+	decoder.KnownFields(true)
+	if err := decoder.Decode(&policy); err != nil {
 		return Policy{}, fmt.Errorf("decode quality policy %q: %w", path, err)
 	}
 	if err := validatePolicy(policy, true); err != nil {
