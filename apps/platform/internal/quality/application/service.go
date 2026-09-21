@@ -100,32 +100,6 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	if version.Status != datasetdomain.VersionReady && version.Status != datasetdomain.VersionSuperseded {
 		return domain.Assessment{}, fmt.Errorf("quality checks require READY or SUPERSEDED DatasetVersion, got %s", version.Status)
 	}
-	policyPath, err := industrypack.ResolvePath(s.industryPackRoot, cmd.RuleSetRef)
-	if err != nil {
-		return domain.Assessment{}, err
-	}
-	policy, err := native.LoadPolicy(policyPath)
-	if err != nil {
-		return domain.Assessment{}, err
-	}
-	reader, err := s.store.Get(ctx, version.StorageURI)
-	if err != nil {
-		return domain.Assessment{}, fmt.Errorf("open DatasetVersion object: %w", err)
-	}
-	defer reader.Close()
-	table, err := tabular.ReadCSV(reader)
-	if err != nil {
-		return domain.Assessment{}, err
-	}
-	var evidencePresent *bool
-	if s.evidenceRepo != nil {
-		present, err := s.evidenceRepo.HasSupportingEvidenceForObject(ctx, "DATASET_VERSION", version.ID)
-		if err != nil {
-			return domain.Assessment{}, fmt.Errorf("resolve DatasetVersion evidence facts: %w", err)
-		}
-		evidencePresent = &present
-	}
-	lineagePresent := version.GeneratedByExecutionID != nil
 	var result domain.Assessment
 	var replayAssessmentID uuid.UUID
 	err = s.tx.WithAdvisoryLock(ctx, assessmentAttemptLockPrefix+attemptID.String(), func(ctx context.Context) error {
@@ -151,6 +125,48 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			replayAssessmentID = *state.AssessmentID
 			return nil
 		}
+		policyPath, err := industrypack.ResolvePath(s.industryPackRoot, cmd.RuleSetRef)
+		if err != nil {
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("resolve quality policy: %v; record attempt outcome: %w", err, outcomeErr)
+			}
+			return err
+		}
+		policy, err := native.LoadPolicy(policyPath)
+		if err != nil {
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("load quality policy: %v; record attempt outcome: %w", err, outcomeErr)
+			}
+			return err
+		}
+		reader, err := s.store.Get(ctx, version.StorageURI)
+		if err != nil {
+			wrappedErr := fmt.Errorf("open DatasetVersion object: %w", err)
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, wrappedErr.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("%v; record attempt outcome: %w", wrappedErr, outcomeErr)
+			}
+			return wrappedErr
+		}
+		defer reader.Close()
+		table, err := tabular.ReadCSV(reader)
+		if err != nil {
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("read DatasetVersion object: %v; record attempt outcome: %w", err, outcomeErr)
+			}
+			return err
+		}
+		var evidencePresent *bool
+		if s.evidenceRepo != nil {
+			present, err := s.evidenceRepo.HasSupportingEvidenceForObject(ctx, "DATASET_VERSION", version.ID)
+			if err != nil {
+				if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
+					return fmt.Errorf("resolve DatasetVersion evidence facts: %v; record attempt outcome: %w", err, outcomeErr)
+				}
+				return fmt.Errorf("resolve DatasetVersion evidence facts: %w", err)
+			}
+			evidencePresent = &present
+		}
+		lineagePresent := version.GeneratedByExecutionID != nil
 		findings, metrics, err := native.Evaluate(policy, native.DatasetContext{
 			Table:           table,
 			Metadata:        version.Metadata,
