@@ -76,15 +76,14 @@ func (h *Handler) deliveryEligibility(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_PROFILE_ID", "profileId must be a non-nil UUID", nil)
 		return
 	}
-	asOf, ok := parseAsOf(w, r)
-	if !ok {
-		return
-	}
+	// Current Delivery Eligibility is intentionally evaluated at server current
+	// time. Historical asOf selection belongs to certification history reads and
+	// must not allow callers to rewind revocation/expiry-sensitive current gates.
 	result, err := h.eligibility.Check(r.Context(), application.DeliveryEligibilityQuery{
 		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: profileID,
 		Consumer: r.URL.Query().Get("consumer"), Purpose: r.URL.Query().Get("purpose"),
 		Action: r.URL.Query().Get("action"), Delivery: r.URL.Query().Get("delivery"),
-		ScopeType: r.URL.Query().Get("scopeType"), ScopeRef: r.URL.Query().Get("scopeRef"), AsOf: asOf,
+		ScopeType: r.URL.Query().Get("scopeType"), ScopeRef: r.URL.Query().Get("scopeRef"), AsOf: time.Now().UTC(),
 	})
 	if err != nil {
 		if errors.Is(err, datasetinfra.ErrNotFound) || errors.Is(err, certificationinfra.ErrProfileNotFound) {
