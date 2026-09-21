@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	certificationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
+	certificationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
+	certificationhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/transport/http"
 	complianceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/application"
 	complianceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/infrastructure"
 	compliancehttp "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/transport/http"
@@ -202,6 +205,12 @@ func main() {
 	qualityService := qualityapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, qualityRepo, objectStore, evidence.NewQueryRepository(db))
 	qualityHandler := qualityhttp.NewHandlerWithCost(qualityService, qualityRepo, evidence.NewQueryRepository(db), cost.NewQueryRepository(db))
 
+	certificationProfileRepo := certificationinfra.NewProfileRepository(db)
+	certificationRepo := certificationinfra.NewCertificationRepository(db)
+	certificationService := certificationapp.NewCertificationService(txManager, certificationProfileRepo, certificationRepo, nil)
+	certificationEligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
+	certificationHandler := certificationhttp.NewHandler(certificationService, certificationEligibility)
+
 	complianceRepo := complianceinfra.NewPostgresRepository(db)
 	complianceService := complianceapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, complianceRepo, objectStore)
 	complianceHandler := compliancehttp.NewHandler(complianceService, complianceRepo)
@@ -245,6 +254,7 @@ func main() {
 			rightsHandler.Register,
 			contractHandler.Register,
 			qualityHandler.Register,
+			certificationHandler.Register,
 			complianceHandler.Register,
 			metadataHandler.Register,
 			traceabilityHandler.Register,
