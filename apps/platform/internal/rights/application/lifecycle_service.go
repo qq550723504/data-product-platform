@@ -176,8 +176,22 @@ func sameDelegationChain(existing, requested domain.DelegationChain) bool {
 	if len(existing.Edges) != len(requested.Edges) {
 		return false
 	}
-	for i := range existing.Edges {
-		left, right := existing.Edges[i], requested.Edges[i]
+	existingEdges := append([]domain.DelegationEdge(nil), existing.Edges...)
+	requestedEdges := append([]domain.DelegationEdge(nil), requested.Edges...)
+	sort.Slice(existingEdges, func(i, j int) bool {
+		if existingEdges[i].Ordinal != existingEdges[j].Ordinal {
+			return existingEdges[i].Ordinal < existingEdges[j].Ordinal
+		}
+		return existingEdges[i].ID.String() < existingEdges[j].ID.String()
+	})
+	sort.Slice(requestedEdges, func(i, j int) bool {
+		if requestedEdges[i].Ordinal != requestedEdges[j].Ordinal {
+			return requestedEdges[i].Ordinal < requestedEdges[j].Ordinal
+		}
+		return requestedEdges[i].ID.String() < requestedEdges[j].ID.String()
+	})
+	for i := range existingEdges {
+		left, right := existingEdges[i], requestedEdges[i]
 		if left.ID != right.ID || left.Ordinal != right.Ordinal || left.DelegatorRef != right.DelegatorRef || left.DelegateRef != right.DelegateRef || left.DataResourceID != right.DataResourceID || left.Scope != right.Scope || !sameTime(left.ValidFrom, right.ValidFrom) || !sameTime(left.ValidTo, right.ValidTo) || !sameStringSet(left.GrantableActions, right.GrantableActions) || !sameStringSet(left.GrantablePurposes, right.GrantablePurposes) {
 			return false
 		}
