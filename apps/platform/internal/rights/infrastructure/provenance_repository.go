@@ -492,6 +492,25 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 				WHERE e.chain_id=b.delegation_chain_id
 				  AND (e.data_resource_id<>$2 OR NOT ($9=ANY(e.grantable_actions)) OR NOT ($5=ANY(e.grantable_purposes)) OR NOT (e.scope_type='ALL_RESOURCE' OR (e.scope_type=$7 AND e.scope_ref=$8)))
 			)
+			AND EXISTS (
+				SELECT 1 FROM rights_declaration_party rp
+				WHERE rp.declaration_id=d.id AND rp.party_ref=d.claimant_ref
+				  AND rp.role IN ('RIGHTS_HOLDER','PROVIDER','CONTROLLER')
+			)
+			AND (SELECT e.delegator_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id ORDER BY e.ordinal LIMIT 1)=d.claimant_ref
+			AND (SELECT e.delegate_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id ORDER BY e.ordinal DESC LIMIT 1)=b.grantor_ref
+			AND NOT EXISTS (
+				SELECT 1
+				FROM (
+					SELECT e.ordinal,e.delegator_ref,
+					       lag(e.delegate_ref) OVER (ORDER BY e.ordinal) AS previous_delegate,
+					       row_number() OVER (ORDER BY e.ordinal)-1 AS expected_ordinal
+					FROM grantor_authority_delegation_edge e
+					WHERE e.chain_id=b.delegation_chain_id
+				) ordered_edges
+				WHERE ordered_edges.ordinal<>ordered_edges.expected_ordinal
+				   OR (ordered_edges.previous_delegate IS NOT NULL AND ordered_edges.previous_delegate<>ordered_edges.delegator_ref)
+			)
 		  ))`
 	args := []any{request.WorkspaceID, request.DataResourceID, request.AuthorizationID, request.ConsumerRef, request.Purpose, request.AsOf, request.Scope.Type, request.Scope.Ref, request.Action}
 	err := q.QueryRow(ctx, query, args...).Scan(&decision.BindingID, &decision.DeclarationID)
