@@ -59,6 +59,7 @@ var eventVocabulary = []string{
 	"GrantorAuthorityDelegationChainFinalized",
 	"GrantorAuthorityDelegationInvalidated",
 	"GrantorAuthorityDelegationRevoked",
+	"GrantorAuthorityDelegationSuperseded",
 	"ProductReleaseDraftCreated",
 	"ProductReleased",
 	"ProductReleaseReady",

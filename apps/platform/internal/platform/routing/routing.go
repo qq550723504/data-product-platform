@@ -110,6 +110,7 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "GrantorAuthorityDelegationChainFinalized"},
 		{EventType: "GrantorAuthorityDelegationInvalidated"},
 		{EventType: "GrantorAuthorityDelegationRevoked"},
+		{EventType: "GrantorAuthorityDelegationSuperseded"},
 		{EventType: "EffectiveRightsCalculated"},
 		{EventType: "EffectiveRightsFinalized"},
 		{EventType: "QualityAssessmentAttemptFailed"},
