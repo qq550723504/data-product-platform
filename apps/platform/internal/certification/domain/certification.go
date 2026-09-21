@@ -143,6 +143,11 @@ type DeliveryContext struct {
 	Delivery string
 }
 
+type GateResult struct {
+	Allowed  bool
+	Blockers []Blocker
+}
+
 var (
 	ErrInvalidEvaluationContext      = errors.New("invalid certification evaluation context")
 	ErrInvalidDisposition            = errors.New("invalid certification disposition")
@@ -330,6 +335,33 @@ func (c DatasetCertification) Covers(context DeliveryContext) bool {
 		c.Profile.Actions.Covers(context.Action, true) &&
 		c.Profile.Consumers.Covers(context.Consumer, false) &&
 		c.Profile.Delivery.Covers(context.Delivery, true)
+}
+
+// CheckCurrent is the certification-only part of CurrentDeliveryGate. It does
+// not re-evaluate current rights, dataset usability, or caller authority; the
+// delivery command must run those gates separately under its shared fence.
+func (c DatasetCertification) CheckCurrent(asOf time.Time, dispositions []CertificationDisposition, context DeliveryContext) GateResult {
+	result := GateResult{Allowed: false, Blockers: make([]Blocker, 0)}
+	add := func(code, detail string) {
+		result.Blockers = append(result.Blockers, Blocker{Code: code, Detail: detail})
+	}
+	if !c.CurrentAt(asOf, dispositions) {
+		add("CERTIFICATION_NOT_CURRENT", "certification is not CERTIFIED, is not issued as of the requested time, or has an effective disposition")
+	}
+	if !c.Profile.Purpose.Covers(context.Purpose, true) {
+		add("CERTIFICATION_PURPOSE_NOT_COVERED", "requested purpose is not covered by the frozen CertificationProfile")
+	}
+	if !c.Profile.Actions.Covers(context.Action, true) {
+		add("CERTIFICATION_ACTION_NOT_COVERED", "requested action is not covered by the frozen CertificationProfile")
+	}
+	if !c.Profile.Consumers.Covers(context.Consumer, false) {
+		add("CERTIFICATION_CONSUMER_NOT_COVERED", "requested consumer is not covered by the frozen CertificationProfile")
+	}
+	if !c.Profile.Delivery.Covers(context.Delivery, true) {
+		add("CERTIFICATION_DELIVERY_NOT_COVERED", "requested delivery channel or mode is not covered by the frozen CertificationProfile")
+	}
+	result.Allowed = len(result.Blockers) == 0
+	return result
 }
 
 func NewDisposition(workspaceID, certificationID uuid.UUID, disposition Disposition, effectiveAt time.Time, reason string, supersededBy, evidenceID, actorID *uuid.UUID) (CertificationDisposition, error) {

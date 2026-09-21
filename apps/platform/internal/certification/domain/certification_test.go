@@ -112,9 +112,11 @@ func TestCurrentCertificationRequiresDispositionRulesAndExplicitProfileContext(t
 	if !certification.CurrentAt(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC), nil) {
 		t.Fatal("certification should be current without disposition")
 	}
-	if certification.Covers(DeliveryContext{Purpose: "COMMERCIAL", Action: "RAW_EXPORT", Consumer: "consumer-a", Delivery: "DIRECT_DATA"}) {
+	gate := certification.CheckCurrent(time.Date(2026, 1, 2, 0, 0, 0, 0, time.UTC), nil, DeliveryContext{Purpose: "COMMERCIAL", Action: "RAW_EXPORT", Consumer: "consumer-a", Delivery: "DIRECT_DATA"})
+	if gate.Allowed {
 		t.Fatal("profile incorrectly covered an action outside its frozen applicability")
 	}
+	assertBlocker(t, gate.Blockers, "CERTIFICATION_ACTION_NOT_COVERED")
 	replacement := uuid.New()
 	disposition, err := NewDisposition(workspaceID, certification.ID, DispositionSuperseded, time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC), "replacement evaluation", &replacement, nil, nil)
 	if err != nil {
