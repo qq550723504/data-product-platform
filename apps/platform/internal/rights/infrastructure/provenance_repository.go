@@ -276,10 +276,9 @@ func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, bindi
 			return domain.ErrInvalidBinding
 		}
 		var sourceResource uuid.UUID
-		var sourceClaimant string
 		var sourceCurrent bool
 		if err := tx.QueryRow(ctx, `
-			SELECT d.data_resource_id,d.claimant_ref,
+			SELECT d.data_resource_id,
 			       EXISTS(
 					SELECT 1 FROM rights_declaration_verification v
 					WHERE v.declaration_id=d.id AND v.outcome='VERIFIED'
@@ -287,11 +286,25 @@ func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, bindi
 					  AND (d.effective_to IS NULL OR d.effective_to > $2)
 					  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $2)
 				)
-			FROM rights_declaration d WHERE d.id=$1`, sourceDeclaration, asOf).Scan(&sourceResource, &sourceClaimant, &sourceCurrent); err != nil || !sourceCurrent || sourceResource != binding.DataResourceID {
+			FROM rights_declaration d WHERE d.id=$1`, sourceDeclaration, asOf).Scan(&sourceResource, &sourceCurrent); err != nil || !sourceCurrent || sourceResource != binding.DataResourceID {
 			return domain.ErrInvalidBinding
 		}
-		var sourceParty bool
-		if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM rights_declaration_party WHERE declaration_id=$1 AND party_ref=$2 AND role IN ('RIGHTS_HOLDER','PROVIDER','CONTROLLER'))`, sourceDeclaration, sourceClaimant).Scan(&sourceParty); err != nil || !sourceParty {
+		var invalidEdgeExists bool
+		if err := tx.QueryRow(ctx, `
+			SELECT EXISTS (
+				SELECT 1
+				FROM grantor_authority_delegation_edge e
+				WHERE e.chain_id=$1
+				  AND (
+					(e.valid_from IS NOT NULL AND e.valid_from > $2)
+					OR (e.valid_to IS NOT NULL AND e.valid_to <= $2)
+					OR EXISTS (
+						SELECT 1 FROM grantor_authority_delegation_disposition d
+						WHERE d.chain_id=e.chain_id AND (d.edge_id IS NULL OR d.edge_id=e.id) AND d.effective_at <= $2
+					)
+				  )
+			)
+		`, *binding.DelegationChainID, asOf).Scan(&invalidEdgeExists); err != nil || invalidEdgeExists {
 			return domain.ErrInvalidBinding
 		}
 		var lastDelegate string
@@ -299,14 +312,8 @@ func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, bindi
 			SELECT e.delegator_ref,e.delegate_ref,e.data_resource_id,e.grantable_actions,e.grantable_purposes,e.scope_type,e.scope_ref
 			FROM grantor_authority_delegation_edge e
 			WHERE e.chain_id=$1
-			  AND (e.valid_from IS NULL OR e.valid_from <= $2)
-			  AND (e.valid_to IS NULL OR e.valid_to > $2)
-			  AND NOT EXISTS (
-				SELECT 1 FROM grantor_authority_delegation_disposition d
-				WHERE d.chain_id=e.chain_id AND (d.edge_id IS NULL OR d.edge_id=e.id) AND d.effective_at <= $2
-			  )
 			ORDER BY e.ordinal
-		`, *binding.DelegationChainID, asOf)
+		`, *binding.DelegationChainID)
 		if err != nil {
 			return domain.ErrInvalidBinding
 		}
