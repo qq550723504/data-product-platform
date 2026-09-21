@@ -13,7 +13,7 @@
 
 `main` 受到保护：仅允许通过 Pull Request 变更，并配置一个必需的 GitHub Actions 状态检查，名称为 `required`。
 
-CI workflow 内部可以演进，但必须持续发布稳定的 `required` 门禁。只有当所有必需的 CI job 都成功时，该门禁才算通过。
+CI workflow 内部可以演进，但必须持续发布稳定的 `required` 门禁。对非文档变更，所有必需的重 CI job 都必须显式成功；对经过受控路径分类确认的纯文档变更，允许这些重 job 显式 `skipped`，但 `classify-changes` 与 `required-checks.mjs` 必须成功，并验证没有任何代码、workflow、migration、依赖、部署或测试路径混入。任何分类失败、缺失或混合状态都 fail closed。
 
 当前针对 `main` 的推荐仓库规则：
 
@@ -37,7 +37,9 @@ CI workflow 内部可以演进，但必须持续发布稳定的 `required` 门�
 
 针对 `main` 的 Pull Request 以及推送到 `main` 都会运行 CI。如果已存在 PR，特性分支的推送不会重复运行同一 workflow。
 
-当前必需的校验包括：
+纯文档变更采用轻量 gate：仅当所有 changed paths 都属于 `docs/**`、仓库 Markdown/MDX 或 GitHub issue/PR template 时，七组重 CI job 才允许跳过；`required` 仍必须运行可执行策略验证这些 job 全部为 `skipped`。`.github/workflows/**` 与脚本本身不属于文档例外，因此 CI 策略修改必须跑完整 acceptance。
+
+非文档变更当前必需的校验包括：
 
 - Go module 锁定校验（`go mod tidy` 不得改变 `go.mod` 或 `go.sum`）。
 - `gofmt` 检查。
@@ -53,3 +55,14 @@ CI workflow 内部可以演进，但必须持续发布稳定的 `required` 门�
 - 之后 CI 实现可以拆分为更多 job，而无需改变分支保护检查名称；只有 `required` 门禁必须保持稳定。
 - `required` 门禁刻意与诸如 `go-platform` 这类具体实现 job 分离。
 - 任何紧急绕过都应是可审计且例外的。
+
+## 文档专用轻量门禁
+
+文档专用轻量门禁是对“所有适用 CI 必须验证”的显式分类规则，不是规则绕过：
+
+- `classify-changes` 是必需依赖，分类失败即失败；
+- docs-only 模式要求七组重任务全部为 `skipped`，不能用历史成功或部分成功替代；
+- full 模式要求七组重任务全部为 `success`；
+- `required-checks.mjs` 是两种模式共同的可执行真相来源；
+- docs-only 不生成 verified-source artifact，因为没有声明已完成 runtime acceptance；
+- 任何将 executable path 错分为 docs-only 的改动属于 CI blocker。
