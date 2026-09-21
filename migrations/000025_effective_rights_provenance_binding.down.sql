@@ -2,13 +2,15 @@ LOCK TABLE effective_rights_snapshot, effective_rights_input, effective_rights_a
     effective_rights_action_provenance, authorization_provenance_binding,
     rights_declaration_verification, rights_declaration_party,
     rights_declaration_evidence, rights_declaration_permission,
-    rights_declaration_purpose, rights_declaration_scope
+    rights_declaration_purpose, rights_declaration_scope,
+    grantor_authority_delegation_disposition
     IN ACCESS EXCLUSIVE MODE;
 
 DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM effective_rights_action_provenance WHERE binding_id IS NOT NULL)
        OR EXISTS (SELECT 1 FROM authorization_provenance_binding WHERE activity_id IS NOT NULL)
+       OR EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition WHERE activity_id IS NOT NULL)
        OR EXISTS (SELECT 1 FROM rights_declaration_verification) THEN
         RAISE EXCEPTION 'cannot roll back #137 provenance identities while history exists';
     END IF;
