@@ -81,7 +81,6 @@ CREATE TABLE rights_declaration_permission (
     permission_kind   varchar(16) NOT NULL,
     action            varchar(64) NOT NULL,
     created_at        timestamptz NOT NULL DEFAULT now(),
-    CONSTRAINT uq_rights_declaration_permission UNIQUE(declaration_id, permission_kind, action),
     CONSTRAINT ck_rights_declaration_permission_kind CHECK (permission_kind IN ('USE','GRANT'))
 );
 
