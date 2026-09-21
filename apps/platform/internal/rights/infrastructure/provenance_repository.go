@@ -444,6 +444,23 @@ func (r *PostgresRepository) RequiredLineageInputs(ctx context.Context, target u
 	return inputs, rows.Err()
 }
 
+func (r *PostgresRepository) RequiredLineageInputsTx(ctx context.Context, tx pgx.Tx, target uuid.UUID) ([]LineageInput, error) {
+	rows, err := tx.Query(ctx, `WITH RECURSIVE lineage(version_id) AS (SELECT $1::uuid UNION SELECT l.input_version_id FROM dataset_version_lineage l JOIN lineage x ON x.version_id=l.output_version_id) SELECT DISTINCT l.version_id,d.source_resource_id FROM lineage l JOIN dataset_version v ON v.id=l.version_id JOIN dataset d ON d.id=v.dataset_id WHERE d.source_resource_id IS NOT NULL ORDER BY l.version_id`, target)
+	if err != nil {
+		return nil, fmt.Errorf("resolve effective rights lineage in transaction: %w", err)
+	}
+	defer rows.Close()
+	var inputs []LineageInput
+	for rows.Next() {
+		var input LineageInput
+		if err := rows.Scan(&input.DatasetVersionID, &input.DataResourceID); err != nil {
+			return nil, err
+		}
+		inputs = append(inputs, input)
+	}
+	return inputs, rows.Err()
+}
+
 func (r *PostgresRepository) CurrentDirectDeclaration(ctx context.Context, workspaceID, resourceID uuid.UUID, consumer, purpose, action string, scope domain.NormalizedScope, asOf time.Time) (uuid.UUID, error) {
 	var id uuid.UUID
 	err := r.pool.QueryRow(ctx, `SELECT d.id FROM rights_declaration d JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED' JOIN rights_declaration_permission p ON p.declaration_id=d.id AND p.permission_kind='USE' AND p.action=$5 JOIN rights_declaration_purpose q ON q.permission_id=p.id AND q.purpose_code=$4 JOIN rights_declaration_scope s ON s.permission_id=p.id AND (s.scope_type='ALL_RESOURCE' OR (s.scope_type=$6 AND s.scope_ref=$7)) WHERE d.workspace_id=$1 AND d.data_resource_id=$2 AND (d.consumer_scope_type='ANY' OR (d.consumer_scope_type='EXPLICIT' AND d.consumer_ref=$3)) AND (d.effective_from IS NULL OR d.effective_from <= $8) AND (d.effective_to IS NULL OR d.effective_to > $8) AND NOT EXISTS(SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $8) ORDER BY d.created_at,d.id LIMIT 1`, workspaceID, resourceID, consumer, purpose, action, scope.Type, scope.Ref, asOf).Scan(&id)

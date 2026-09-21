@@ -400,14 +400,22 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION guard_rights_snapshot_membership_mutation()
 RETURNS trigger AS $$
 DECLARE
-    snapshot_id uuid;
-    snapshot_status varchar(16);
+    parent record;
+    old_snapshot_id uuid;
+    new_snapshot_id uuid;
 BEGIN
-    snapshot_id := CASE WHEN TG_OP = 'DELETE' THEN OLD.rights_snapshot_id ELSE NEW.rights_snapshot_id END;
-    SELECT status INTO snapshot_status FROM rights_snapshot WHERE id=snapshot_id FOR UPDATE;
-    IF snapshot_status IS DISTINCT FROM 'BUILDING' THEN
-        RAISE EXCEPTION 'finalized rights_snapshot membership is immutable';
-    END IF;
+    old_snapshot_id := CASE WHEN TG_OP = 'INSERT' THEN NULL ELSE OLD.rights_snapshot_id END;
+    new_snapshot_id := CASE WHEN TG_OP = 'DELETE' THEN NULL ELSE NEW.rights_snapshot_id END;
+    FOR parent IN
+        SELECT id,status FROM rights_snapshot
+        WHERE id IN (old_snapshot_id,new_snapshot_id)
+        ORDER BY id
+        FOR UPDATE
+    LOOP
+        IF parent.status IS DISTINCT FROM 'BUILDING' THEN
+            RAISE EXCEPTION 'finalized rights_snapshot membership is immutable';
+        END IF;
+    END LOOP;
     IF TG_OP = 'DELETE' THEN RETURN OLD; END IF;
     RETURN NEW;
 END;
@@ -441,7 +449,18 @@ BEGIN
        AND OLD.created_by IS NOT DISTINCT FROM NEW.created_by THEN
         RETURN NEW;
     END IF;
-    IF NEW.status <> 'FINALIZED' THEN RAISE EXCEPTION 'rights_snapshot status transition is invalid'; END IF;
+    IF NEW.status <> 'FINALIZED'
+       OR OLD.id IS DISTINCT FROM NEW.id
+       OR OLD.workspace_id IS DISTINCT FROM NEW.workspace_id
+       OR OLD.product_release_id IS DISTINCT FROM NEW.product_release_id
+       OR OLD.purpose IS DISTINCT FROM NEW.purpose
+       OR OLD.consumer_ref IS DISTINCT FROM NEW.consumer_ref
+       OR OLD.as_of IS DISTINCT FROM NEW.as_of
+       OR OLD.manifest IS DISTINCT FROM NEW.manifest
+       OR OLD.created_at IS DISTINCT FROM NEW.created_at
+       OR OLD.created_by IS DISTINCT FROM NEW.created_by THEN
+        RAISE EXCEPTION 'rights_snapshot status transition is invalid';
+    END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -479,14 +498,22 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION guard_effective_rights_membership_mutation()
 RETURNS trigger AS $$
 DECLARE
-    snapshot_id uuid;
-    snapshot_status varchar(16);
+    parent record;
+    old_snapshot_id uuid;
+    new_snapshot_id uuid;
 BEGIN
-    snapshot_id := CASE WHEN TG_OP='DELETE' THEN OLD.snapshot_id ELSE NEW.snapshot_id END;
-    SELECT status INTO snapshot_status FROM effective_rights_snapshot WHERE id=snapshot_id FOR UPDATE;
-    IF snapshot_status IS DISTINCT FROM 'DRAFT' THEN
-        RAISE EXCEPTION 'finalized effective rights membership is immutable';
-    END IF;
+    old_snapshot_id := CASE WHEN TG_OP='INSERT' THEN NULL ELSE OLD.snapshot_id END;
+    new_snapshot_id := CASE WHEN TG_OP='DELETE' THEN NULL ELSE NEW.snapshot_id END;
+    FOR parent IN
+        SELECT id,status FROM effective_rights_snapshot
+        WHERE id IN (old_snapshot_id,new_snapshot_id)
+        ORDER BY id
+        FOR UPDATE
+    LOOP
+        IF parent.status IS DISTINCT FROM 'DRAFT' THEN
+            RAISE EXCEPTION 'finalized effective rights membership is immutable';
+        END IF;
+    END LOOP;
     IF TG_OP = 'DELETE' THEN RETURN OLD; END IF;
     RETURN NEW;
 END;
@@ -523,14 +550,22 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION guard_delegation_edge_mutation()
 RETURNS trigger AS $$
 DECLARE
-    chain_id uuid;
-    chain_status varchar(16);
+    parent record;
+    old_chain_id uuid;
+    new_chain_id uuid;
 BEGIN
-    chain_id := CASE WHEN TG_OP='DELETE' THEN OLD.chain_id ELSE NEW.chain_id END;
-    SELECT status INTO chain_status FROM grantor_authority_delegation_chain WHERE id=chain_id FOR UPDATE;
-    IF chain_status IS DISTINCT FROM 'DRAFT' THEN
-        RAISE EXCEPTION 'finalized delegation chain membership is immutable';
-    END IF;
+    old_chain_id := CASE WHEN TG_OP='INSERT' THEN NULL ELSE OLD.chain_id END;
+    new_chain_id := CASE WHEN TG_OP='DELETE' THEN NULL ELSE NEW.chain_id END;
+    FOR parent IN
+        SELECT id,status FROM grantor_authority_delegation_chain
+        WHERE id IN (old_chain_id,new_chain_id)
+        ORDER BY id
+        FOR UPDATE
+    LOOP
+        IF parent.status IS DISTINCT FROM 'DRAFT' THEN
+            RAISE EXCEPTION 'finalized delegation chain membership is immutable';
+        END IF;
+    END LOOP;
     RETURN CASE WHEN TG_OP='DELETE' THEN OLD ELSE NEW END;
 END;
 $$ LANGUAGE plpgsql;

@@ -335,6 +335,16 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 	}
 	snapshot.RootHash = infrastructure.EffectiveRightsRootHash(snapshot)
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if _, err := deliveryfence.Lock(ctx, tx, snapshot.WorkspaceID); err != nil {
+			return err
+		}
+		currentInputs, err := s.repo.RequiredLineageInputsTx(ctx, tx, snapshot.TargetDatasetVersionID)
+		if err != nil {
+			return err
+		}
+		if !sameLineageInputs(inputs, currentInputs) {
+			return fmt.Errorf("%w: lineage changed during effective-rights finalization", domain.ErrEffectiveRights)
+		}
 		if err := s.repo.InsertEffectiveRightsHeader(ctx, tx, snapshot); err != nil {
 			return err
 		}
@@ -357,6 +367,18 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &snapshot.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: "EFFECTIVE_RIGHTS_FINALIZED", ObjectType: "EFFECTIVE_RIGHTS_SNAPSHOT", ObjectID: snapshot.ID, AfterState: map[string]any{"targetDatasetVersionId": snapshot.TargetDatasetVersionID, "rootHash": snapshot.RootHash}, TraceID: cmd.TraceID})
 	})
 	return snapshot, err
+}
+
+func sameLineageInputs(left, right []infrastructure.LineageInput) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for i := range left {
+		if left[i] != right[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func appendRightsCost(ctx context.Context, tx pgx.Tx, workspaceID, activityID uuid.UUID, costType, column string, subjectID uuid.UUID) error {
