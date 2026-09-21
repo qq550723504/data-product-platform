@@ -37,7 +37,7 @@ func testProfile(t *testing.T) ProfileSnapshot {
 
 func testInput(workspaceID, datasetVersionID uuid.UUID) EvaluationInput {
 	return EvaluationInput{
-		WorkspaceID: workspaceID, DatasetVersionID: datasetVersionID, Derived: true,
+		WorkspaceID: workspaceID, DatasetVersionID: datasetVersionID, DatasetVersionStatus: "READY", Derived: true,
 		IssuedAt: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
 		Quality:  QualityAssessmentEvidence{ID: uuid.New(), WorkspaceID: workspaceID, DatasetVersionID: datasetVersionID, GateDecision: EvidencePass, Dimensions: map[string]string{"COMPLETENESS": EvidencePass}, RuleStatuses: map[string]string{"Q-1": EvidencePass}},
 		Rights: &RightsEvidence{
