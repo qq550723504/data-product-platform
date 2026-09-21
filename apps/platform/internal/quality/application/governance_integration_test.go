@@ -85,8 +85,8 @@ func TestNativeQualityAndComplianceGates(t *testing.T) {
 	complianceService := complianceapp.NewService(industryPackRoot, txManager, datasetRepo, complianceRepo, store)
 
 	passDataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "GOV-PASS")
-	passVersion := uploadCSV(t, ctx, uploadDataset, passDataset.ID, "product-pass.csv", `company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at
-COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
+	passVersion := uploadCSV(t, ctx, uploadDataset, passDataset.ID, "product-pass.csv", `company_id,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at
+COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 `, map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0})
 
 	qualityResult, err := qualityService.Run(ctx, qualityapp.RunCommand{
@@ -248,8 +248,8 @@ COMPANY-001,示例科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	}
 
 	badQualityDataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "GOV-BAD-QUALITY")
-	badQualityVersion := uploadCSV(t, ctx, uploadDataset, badQualityDataset.ID, "product-bad-quality.csv", `company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at
-COMPANY-002,异常科技有限公司,2026-09,90,95,80,120,HIGH,100,2026-09-16T10:00:00Z
+	badQualityVersion := uploadCSV(t, ctx, uploadDataset, badQualityDataset.ID, "product-bad-quality.csv", `company_id,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at
+COMPANY-002,2026-09,90,95,80,120,HIGH,100,2026-09-16T10:00:00Z
 `, map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0})
 	badQualityResult, err := qualityService.Run(ctx, qualityapp.RunCommand{
 		WorkspaceID:      workspaceID,
@@ -266,8 +266,8 @@ COMPANY-002,异常科技有限公司,2026-09,90,95,80,120,HIGH,100,2026-09-16T10
 	}
 
 	badComplianceDataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "GOV-BAD-COMPLIANCE")
-	badComplianceVersion := uploadCSV(t, ctx, uploadDataset, badComplianceDataset.ID, "product-bad-compliance.csv", `company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at,mobile
-COMPANY-003,敏感科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z,13800000000
+	badComplianceVersion := uploadCSV(t, ctx, uploadDataset, badComplianceDataset.ID, "product-bad-compliance.csv", `company_id,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at,mobile
+COMPANY-003,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z,13800000000
 `, map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0})
 	badComplianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
 		WorkspaceID:      workspaceID,
@@ -286,8 +286,8 @@ COMPANY-003,敏感科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:
 	// workspace's DatasetVersion must be rejected without writing result/evidence/audit facts.
 	foreignWorkspaceID := uuid.New()
 	foreignDataset := createDatasetForTest(t, ctx, createDataset, foreignWorkspaceID, "GOV-FOREIGN")
-	foreignVersion := uploadCSV(t, ctx, uploadDataset, foreignDataset.ID, "product-foreign.csv", `company_id,company_name,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at
-COMPANY-004,外部科技有限公司,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
+	foreignVersion := uploadCSV(t, ctx, uploadDataset, foreignDataset.ID, "product-foreign.csv", `company_id,period,tenancy_stability,rent_performance,energy_stability,activity_score,activity_level,indicator_coverage,generated_at
+COMPANY-004,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 `, map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0})
 	if _, err := qualityService.Run(ctx, qualityapp.RunCommand{
 		WorkspaceID:      workspaceID,
