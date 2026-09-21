@@ -348,7 +348,7 @@ func (d *demo) advance() error {
 	}
 	from := time.Now().UTC().Add(-time.Minute)
 	d.m.RightsExpiry = time.Now().UTC().Add(7 * 24 * time.Hour)
-	auth, err := rights.Create(d.ctx, rightsapp.CreateAuthorizationCommand{WorkspaceID: d.m.Workspace, Code: "DEMO-AUTH", GrantorRef: "SYNTHETIC-PARK-OPERATOR", GranteeRef: "DATA-PRODUCT-PLATFORM", Purpose: purpose, ValidFrom: &from, ValidTo: &d.m.RightsExpiry, Resources: grants, ActorID: &d.m.Actor})
+	auth, err := rights.Create(d.ctx, rightsapp.CreateAuthorizationCommand{WorkspaceID: d.m.Workspace, Code: "DEMO-AUTH", GrantorRef: "SYNTHETIC-PARK-OPERATOR", GranteeRef: "LICENSED_BANK", Purpose: purpose, ValidFrom: &from, ValidTo: &d.m.RightsExpiry, Resources: grants, ActorID: &d.m.Actor})
 	if err != nil {
 		return err
 	}
