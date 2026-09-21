@@ -36,11 +36,11 @@ type ObjectStore interface {
 }
 
 type Engine struct {
-	industryPackRoot string
-	tx               *transaction.Manager
-	datasetRepo      *datasetinfra.PostgresRepository
-	entityRepo       *entityinfra.PostgresRepository
-	workflowRepo     *workflowinfra.PostgresRepository
+	industryPackRoot    string
+	tx                  *transaction.Manager
+	datasetRepo         *datasetinfra.PostgresRepository
+	entityRepo          *entityinfra.PostgresRepository
+	workflowRepo        *workflowinfra.PostgresRepository
 	datasetWriter       *datasetapp.UploadVersionService
 	store               ObjectStore
 	indicatorCalculator indicator.Calculator
@@ -52,11 +52,11 @@ func NewEngine(industryPackRoot string, tx *transaction.Manager, datasetRepo *da
 		calculator = calculators[0]
 	}
 	return &Engine{
-		industryPackRoot: industryPackRoot,
-		tx:               tx,
-		datasetRepo:      datasetRepo,
-		entityRepo:       entityRepo,
-		workflowRepo:     workflowRepo,
+		industryPackRoot:    industryPackRoot,
+		tx:                  tx,
+		datasetRepo:         datasetRepo,
+		entityRepo:          entityRepo,
+		workflowRepo:        workflowRepo,
 		datasetWriter:       datasetWriter,
 		store:               store,
 		indicatorCalculator: calculator,
