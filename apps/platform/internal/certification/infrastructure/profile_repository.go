@@ -38,6 +38,32 @@ func (r *ProfileRepository) InsertProfile(ctx context.Context, tx pgx.Tx, profil
 		createdAt = time.Now().UTC()
 	}
 
+	var rightsPurposeMode, rightsActionMode, rightsConsumerMode, rightsScopeMode any
+	if profile.Rights.Required {
+		rightsPurposeMode = string(profile.Rights.Purpose.Mode)
+		rightsActionMode = string(profile.Rights.Actions.Mode)
+		rightsConsumerMode = string(profile.Rights.Consumers.Mode)
+		rightsScopeMode = string(profile.Rights.Scopes.Mode)
+	}
+	if _, err := tx.Exec(ctx, `
+		INSERT INTO certification_profile (
+			id, workspace_id, profile_ref, code, name, version, content_sha256, content_snapshot,
+			purpose_mode, action_mode, consumer_mode, delivery_mode,
+			quality_gate_required, rights_required, compliance_required, contract_required,
+			traceability_required, evidence_required, rights_purpose_mode, rights_action_mode,
+			rights_consumer_mode, rights_scope_mode, membership_state, created_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,'DRAFT',$23,$24)
+	`, profile.ID, profile.WorkspaceID, profile.ProfileRef, profile.Code, profile.Name, profile.Version,
+		profile.ContentSHA256, string(profile.Content), profile.Purpose.Mode, profile.Actions.Mode,
+		profile.Consumers.Mode, profile.Delivery.Mode, profile.QualityGateRequired, profile.Rights.Required,
+		profile.ComplianceRequired, profile.ContractRequired, profile.TraceabilityRequired, profile.EvidenceRequired,
+		rightsPurposeMode, rightsActionMode, rightsConsumerMode, rightsScopeMode, createdAt, profile.CreatedBy); err != nil {
+		return fmt.Errorf("insert certification profile: %w", err)
+	}
+	if _, err := tx.Exec(ctx, `SELECT id FROM certification_profile WHERE id=$1 FOR UPDATE`, profile.ID); err != nil {
+		return fmt.Errorf("lock certification profile before membership insert: %w", err)
+	}
+
 	insert := func(query string, args ...any) error {
 		if _, err := tx.Exec(ctx, query, args...); err != nil {
 			return err
@@ -97,31 +123,6 @@ func (r *ProfileRepository) InsertProfile(ctx context.Context, tx pgx.Tx, profil
 		}
 	}
 
-	var rightsPurposeMode, rightsActionMode, rightsConsumerMode, rightsScopeMode any
-	if profile.Rights.Required {
-		rightsPurposeMode = string(profile.Rights.Purpose.Mode)
-		rightsActionMode = string(profile.Rights.Actions.Mode)
-		rightsConsumerMode = string(profile.Rights.Consumers.Mode)
-		rightsScopeMode = string(profile.Rights.Scopes.Mode)
-	}
-	if _, err := tx.Exec(ctx, `
-		INSERT INTO certification_profile (
-			id, workspace_id, profile_ref, code, name, version, content_sha256, content_snapshot,
-			purpose_mode, action_mode, consumer_mode, delivery_mode,
-			quality_gate_required, rights_required, compliance_required, contract_required,
-			traceability_required, evidence_required, rights_purpose_mode, rights_action_mode,
-			rights_consumer_mode, rights_scope_mode, membership_state, created_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,'DRAFT',$23,$24)
-	`, profile.ID, profile.WorkspaceID, profile.ProfileRef, profile.Code, profile.Name, profile.Version,
-		profile.ContentSHA256, string(profile.Content), profile.Purpose.Mode, profile.Actions.Mode,
-		profile.Consumers.Mode, profile.Delivery.Mode, profile.QualityGateRequired, profile.Rights.Required,
-		profile.ComplianceRequired, profile.ContractRequired, profile.TraceabilityRequired, profile.EvidenceRequired,
-		rightsPurposeMode, rightsActionMode, rightsConsumerMode, rightsScopeMode, createdAt, profile.CreatedBy); err != nil {
-		return fmt.Errorf("insert certification profile: %w", err)
-	}
-	if _, err := tx.Exec(ctx, `SELECT id FROM certification_profile WHERE id=$1 FOR UPDATE`, profile.ID); err != nil {
-		return fmt.Errorf("lock certification profile before membership insert: %w", err)
-	}
 	// The membership trigger serializes these writes on the same parent row.
 	// Finalization is the only permitted parent mutation and the deferred
 	// membership-completeness constraint validates the complete snapshot at commit.
