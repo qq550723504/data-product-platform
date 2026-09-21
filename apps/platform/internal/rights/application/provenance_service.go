@@ -134,10 +134,10 @@ func declarationFingerprint(d domain.RightsDeclaration) string {
 	sort.Strings(evidence)
 	effectiveFrom, effectiveTo := "", ""
 	if d.EffectiveFrom != nil {
-		effectiveFrom = d.EffectiveFrom.UTC().Format(time.RFC3339Nano)
+		effectiveFrom = d.EffectiveFrom.UTC().Round(time.Microsecond).Format(time.RFC3339Nano)
 	}
 	if d.EffectiveTo != nil {
-		effectiveTo = d.EffectiveTo.UTC().Format(time.RFC3339Nano)
+		effectiveTo = d.EffectiveTo.UTC().Round(time.Microsecond).Format(time.RFC3339Nano)
 	}
 	payload, _ := json.Marshal(struct {
 		WorkspaceID       uuid.UUID                 `json:"workspaceId"`
