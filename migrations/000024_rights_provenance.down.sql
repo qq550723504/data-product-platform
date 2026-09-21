@@ -4,7 +4,8 @@ LOCK TABLE rights_declaration, rights_declaration_verification,
     grantor_authority_delegation_edge, grantor_authority_delegation_disposition,
     effective_rights_snapshot, effective_rights_input, effective_rights_action,
     effective_rights_action_provenance,
-    rights_snapshot_declaration, rights_snapshot_provenance_binding, cost_allocation
+    rights_snapshot_declaration, rights_snapshot_provenance_binding, cost_allocation,
+    authorization_resource
     IN ACCESS EXCLUSIVE MODE;
 
 DO $$
@@ -13,6 +14,7 @@ BEGIN
        OR EXISTS (SELECT 1 FROM authorization_provenance_binding LIMIT 1)
        OR EXISTS (SELECT 1 FROM grantor_authority_delegation_chain LIMIT 1)
        OR EXISTS (SELECT 1 FROM effective_rights_snapshot LIMIT 1)
+       OR EXISTS (SELECT 1 FROM authorization_resource WHERE scope_type IS NOT NULL OR scope_ref IS NOT NULL LIMIT 1)
        OR EXISTS (SELECT 1 FROM cost_allocation WHERE rights_declaration_id IS NOT NULL
            OR rights_declaration_verification_id IS NOT NULL
            OR rights_declaration_disposition_id IS NOT NULL
