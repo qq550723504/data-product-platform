@@ -499,7 +499,7 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 		if _, err := tx.Exec(ctx, `
 			INSERT INTO evidence(id,workspace_id,evidence_type,title,source_type,source_id,hash_algorithm,hash_value,metadata,created_at)
 			VALUES ($1,$2,'EFFECTIVE_RIGHTS_SNAPSHOT','Effective rights finalization','EFFECTIVE_RIGHTS_SNAPSHOT',$3,'SHA256',$4,$5,now())
-		`, decisionEvidenceID, snapshot.WorkspaceID, snapshot.ID, snapshot.RootHash, metadata); err != nil {
+		`, decisionEvidenceID, snapshot.WorkspaceID, snapshot.ID, snapshot.RootHash, string(metadata)); err != nil {
 			return err
 		}
 		items := []evidence.SnapshotItem{{EvidenceID: decisionEvidenceID, Category: "EFFECTIVE_RIGHTS_DECISION"}}
