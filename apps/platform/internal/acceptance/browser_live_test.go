@@ -209,8 +209,11 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	output, err := datasetRepo.GetVersion(ctx, *execution.OutputDatasetVersionID)
 	liveOK(t, err, "read real worker output version")
 	csv := readLiveObject(t, ctx, store, output.StorageURI)
-	if !bytes.Contains(csv, []byte("96.01")) || !bytes.Contains(csv, []byte("深圳星云科技有限公司")) {
-		t.Fatal("real object storage output does not match the deterministic reference result")
+	if !bytes.Contains(csv, []byte("96.01")) {
+		t.Fatal("real object storage output does not contain the deterministic reference score")
+	}
+	if bytes.Contains(csv, []byte("company_name")) || bytes.Contains(csv, []byte("深圳星云科技有限公司")) {
+		t.Fatal("real object storage V1 output leaked mutable company display name")
 	}
 	if output.GeneratedByExecutionID == nil || *output.GeneratedByExecutionID != execution.ID {
 		t.Fatal("output version lost its producing execution identity")

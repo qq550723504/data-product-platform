@@ -7,7 +7,6 @@
 原生 worker 产出的 CURATED Product Dataset 必须使用 Data Contract 中的字段名：
 
 - `company_id`
-- `company_name`
 - `period`
 - `tenancy_stability`
 - `rent_performance`
@@ -17,7 +16,7 @@
 - `indicator_coverage`
 - `generated_at`
 
-历史遗留的处理别名（`canonical_company_id`、`target_period`）可以被读取方临时接受，但不得作为权威的 Product Dataset schema。
+V1 产品身份只使用稳定的 `company_id`。`company_name` 属于源数据/实体解析阶段可使用的可变展示属性，不属于冻结的 Product Dataset schema；历史遗留的处理别名（`canonical_company_id`、`target_period`）可以被读取方临时接受，但不得作为权威的 Product Dataset schema。
 
 ## 负值能耗隔离（Negative energy quarantine）
 

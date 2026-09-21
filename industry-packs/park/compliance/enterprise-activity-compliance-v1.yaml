@@ -55,7 +55,6 @@ spec:
     - match:
         names:
           - company_id
-          - company_name
           - period
           - tenancy_stability
           - rent_performance
