@@ -2,9 +2,13 @@ package infrastructure
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -292,6 +296,251 @@ func (r *CertificationRepository) TryInsertIdempotency(ctx context.Context, tx p
 		return false, fmt.Errorf("insert certification idempotency record: %w", err)
 	}
 	return inserted != uuid.Nil, nil
+}
+
+
+func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Context, tx pgx.Tx, input *domain.EvaluationInput) error {
+	if input == nil {
+		return fmt.Errorf("evaluation input is required")
+	}
+	var workspaceID uuid.UUID
+	if err := tx.QueryRow(ctx, `
+		SELECT d.workspace_id, v.status
+		FROM dataset_version v
+		JOIN dataset d ON d.id=v.dataset_id
+		WHERE v.id=$1
+		FOR SHARE OF v
+	`, input.DatasetVersionID).Scan(&workspaceID, &input.DatasetVersionStatus); err != nil {
+		return fmt.Errorf("load DatasetVersion certification status: %w", err)
+	}
+	if workspaceID != input.WorkspaceID {
+		return fmt.Errorf("DatasetVersion crosses certification workspace boundary")
+	}
+
+	if input.Rights != nil && input.Rights.EffectiveRightsSnapshotID != uuid.Nil {
+		rights := input.Rights
+		var status, rootHash, consumerRef, purpose string
+		if err := tx.QueryRow(ctx, `
+			SELECT workspace_id, target_dataset_version_id, status, root_hash, consumer_ref, purpose
+			FROM effective_rights_snapshot
+			WHERE id=$1
+			FOR SHARE
+		`, rights.EffectiveRightsSnapshotID).Scan(
+			&rights.WorkspaceID, &rights.DatasetVersionID, &status, &rootHash, &consumerRef, &purpose,
+		); err != nil {
+			return fmt.Errorf("load EffectiveRightsSnapshot for certification: %w", err)
+		}
+		rights.EffectiveRightsFinalized = status == "FINALIZED"
+		rights.EffectiveRightsSnapshotHash = rootHash
+		rights.Coverage = domain.RightsCoverage{
+			Purpose:   domain.Applicability{Mode: domain.ApplicabilityExplicit, Values: []string{purpose}},
+			Actions:   domain.Applicability{Mode: domain.ApplicabilityExplicit},
+			Consumers: domain.Applicability{Mode: domain.ApplicabilityExplicit, Values: []string{consumerRef}},
+			Scopes:    domain.ScopeApplicability{Mode: domain.ApplicabilityExplicit},
+		}
+		rights.ActionDecisions = map[string]string{}
+
+		rows, err := tx.Query(ctx, `
+			SELECT action, decision
+			FROM effective_rights_action
+			WHERE snapshot_id=$1
+			ORDER BY action
+		`, rights.EffectiveRightsSnapshotID)
+		if err != nil {
+			return fmt.Errorf("load EffectiveRightsSnapshot actions: %w", err)
+		}
+		for rows.Next() {
+			var action, decision string
+			if err := rows.Scan(&action, &decision); err != nil {
+				rows.Close()
+				return fmt.Errorf("scan EffectiveRightsSnapshot action: %w", err)
+			}
+			rights.ActionDecisions[action] = decision
+			if strings.EqualFold(decision, domain.RightsAllowed) {
+				rights.Coverage.Actions.Values = append(rights.Coverage.Actions.Values, action)
+			}
+		}
+		if err := rows.Err(); err != nil {
+			rows.Close()
+			return fmt.Errorf("iterate EffectiveRightsSnapshot actions: %w", err)
+		}
+		rows.Close()
+
+		rows, err = tx.Query(ctx, `
+			SELECT DISTINCT data_resource_id
+			FROM effective_rights_input
+			WHERE snapshot_id=$1
+			ORDER BY data_resource_id
+		`, rights.EffectiveRightsSnapshotID)
+		if err != nil {
+			return fmt.Errorf("load EffectiveRightsSnapshot scopes: %w", err)
+		}
+		for rows.Next() {
+			var resourceID uuid.UUID
+			if err := rows.Scan(&resourceID); err != nil {
+				rows.Close()
+				return fmt.Errorf("scan EffectiveRightsSnapshot scope: %w", err)
+			}
+			rights.Coverage.Scopes.Values = append(rights.Coverage.Scopes.Values, domain.ScopeRef{Type: "ALL_RESOURCE", Ref: resourceID.String()})
+		}
+		if err := rows.Err(); err != nil {
+			rows.Close()
+			return fmt.Errorf("iterate EffectiveRightsSnapshot scopes: %w", err)
+		}
+		rows.Close()
+
+		var snapshotInputs []uuid.UUID
+		rows, err = tx.Query(ctx, `
+			SELECT input_dataset_version_id
+			FROM effective_rights_input
+			WHERE snapshot_id=$1
+			ORDER BY input_dataset_version_id
+		`, rights.EffectiveRightsSnapshotID)
+		if err != nil {
+			return fmt.Errorf("load EffectiveRightsSnapshot lineage membership: %w", err)
+		}
+		for rows.Next() {
+			var id uuid.UUID
+			if err := rows.Scan(&id); err != nil {
+				rows.Close()
+				return fmt.Errorf("scan EffectiveRightsSnapshot lineage member: %w", err)
+			}
+			snapshotInputs = append(snapshotInputs, id)
+		}
+		if err := rows.Err(); err != nil {
+			rows.Close()
+			return fmt.Errorf("iterate EffectiveRightsSnapshot lineage membership: %w", err)
+		}
+		rows.Close()
+
+		var lineageInputs []uuid.UUID
+		rows, err = tx.Query(ctx, `
+			WITH RECURSIVE lineage(version_id) AS (
+				SELECT input_version_id
+				FROM dataset_version_lineage
+				WHERE output_version_id=$1
+				UNION
+				SELECT edge.input_version_id
+				FROM dataset_version_lineage edge
+				JOIN lineage parent ON parent.version_id=edge.output_version_id
+			)
+			SELECT DISTINCT l.version_id
+			FROM lineage l
+			WHERE NOT EXISTS (
+				SELECT 1 FROM dataset_version_lineage child
+				WHERE child.output_version_id=l.version_id
+			)
+			ORDER BY l.version_id
+		`, input.DatasetVersionID)
+		if err != nil {
+			return fmt.Errorf("load DatasetVersion lineage for certification: %w", err)
+		}
+		for rows.Next() {
+			var id uuid.UUID
+			if err := rows.Scan(&id); err != nil {
+				rows.Close()
+				return fmt.Errorf("scan DatasetVersion lineage member: %w", err)
+			}
+			lineageInputs = append(lineageInputs, id)
+		}
+		if err := rows.Err(); err != nil {
+			rows.Close()
+			return fmt.Errorf("iterate DatasetVersion lineage: %w", err)
+		}
+		rows.Close()
+
+		input.Derived = len(lineageInputs) > 0
+		rights.RequiredInputSetHash = hashUUIDSet(snapshotInputs)
+		rights.TargetLineageInputSetHash = hashUUIDSet(lineageInputs)
+		rights.FrozenRightsContextHash = hashStrings(
+			rights.EffectiveRightsSnapshotID.String(),
+			rights.EffectiveRightsSnapshotHash,
+			consumerRef,
+			purpose,
+			rights.RequiredInputSetHash,
+			strings.Join(rights.Coverage.Actions.Values, ","),
+			scopeRefsKey(rights.Coverage.Scopes.Values),
+		)
+
+		if rights.RightsSnapshotID != uuid.Nil {
+			var rightsWorkspace uuid.UUID
+			var rightsStatus string
+			if err := tx.QueryRow(ctx, `
+				SELECT workspace_id, status
+				FROM rights_snapshot
+				WHERE id=$1
+				FOR SHARE
+			`, rights.RightsSnapshotID).Scan(&rightsWorkspace, &rightsStatus); err != nil {
+				return fmt.Errorf("load RightsSnapshot for certification: %w", err)
+			}
+			rights.RightsSnapshotFinalized = rightsWorkspace == input.WorkspaceID && rightsStatus == "FINALIZED"
+		} else {
+			rights.RightsSnapshotFinalized = false
+		}
+	}
+
+	if input.Traceability != nil && input.Traceability.ID != uuid.Nil {
+		var workspaceID uuid.UUID
+		var objectType string
+		var objectID uuid.UUID
+		var itemCount int
+		err := tx.QueryRow(ctx, `
+			SELECT es.workspace_id, es.object_type, es.object_id, count(esi.evidence_id)
+			FROM evidence_snapshot es
+			LEFT JOIN evidence_snapshot_item esi ON esi.snapshot_id=es.id
+			WHERE es.id=$1
+			GROUP BY es.workspace_id, es.object_type, es.object_id
+			FOR SHARE OF es
+		`, input.Traceability.ID).Scan(&workspaceID, &objectType, &objectID, &itemCount)
+		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("load traceability EvidenceSnapshot: %w", err)
+		}
+		input.Traceability.WorkspaceID = workspaceID
+		input.Traceability.DatasetVersionID = objectID
+		input.Traceability.Complete = err == nil && workspaceID == input.WorkspaceID && objectType == "DATASET_VERSION" && objectID == input.DatasetVersionID && itemCount > 0
+	}
+
+	if input.Evidence != nil && input.Evidence.ID != uuid.Nil {
+		var evidenceWorkspace uuid.UUID
+		var objectType string
+		var objectID uuid.UUID
+		err := tx.QueryRow(ctx, `
+			SELECT workspace_id, object_type, object_id
+			FROM evidence_snapshot
+			WHERE id=$1
+			FOR SHARE
+		`, input.Evidence.ID).Scan(&evidenceWorkspace, &objectType, &objectID)
+		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("load certification EvidenceSnapshot: %w", err)
+		}
+		input.Evidence.WorkspaceID = evidenceWorkspace
+		input.Evidence.DatasetVersionID = objectID
+		input.Evidence.Complete = err == nil && evidenceWorkspace == input.WorkspaceID && objectType == "DATASET_VERSION" && objectID == input.DatasetVersionID
+	}
+	return nil
+}
+
+func hashUUIDSet(values []uuid.UUID) string {
+	parts := make([]string, 0, len(values))
+	for _, value := range values {
+		parts = append(parts, value.String())
+	}
+	sort.Strings(parts)
+	return hashStrings(parts...)
+}
+
+func hashStrings(values ...string) string {
+	sum := sha256.Sum256([]byte(strings.Join(values, "\n")))
+	return hex.EncodeToString(sum[:])
+}
+
+func scopeRefsKey(scopes []domain.ScopeRef) string {
+	parts := make([]string, 0, len(scopes))
+	for _, scope := range scopes {
+		parts = append(parts, scope.Type+"|"+scope.Ref)
+	}
+	sort.Strings(parts)
+	return strings.Join(parts, ",")
 }
 
 func nullableString(value string) any {
