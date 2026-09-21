@@ -14,6 +14,7 @@ type Policy struct {
 		Version string `yaml:"version"`
 	} `yaml:"metadata"`
 	Spec struct {
+		CalendarTimezone string `yaml:"calendarTimezone"`
 		Rounding struct {
 			Mode     string `yaml:"mode"`
 			Decimals int    `yaml:"decimals"`
