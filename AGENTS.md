@@ -388,11 +388,11 @@ Engine Adapter 错误需要映射为平台统一错误模型。
 
 第一阶段主任务：
 
-- #131 QualityAssessment follow-up / CostAllocation
-- #132 Quality Engine
-- #133 Quality Report
-- #137 Data Rights Provenance
-- #134 DatasetCertification
+- #131 QualityAssessment follow-up / CostAllocation ✅
+- #132 Quality Engine ✅
+- #133 Quality Report ✅
+- #137 Data Rights Provenance ✅
+- #134 DatasetCertification ✅
 - #135 API / UI
 - #136 E2E Pilot
 
