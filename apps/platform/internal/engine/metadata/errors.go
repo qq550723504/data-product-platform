@@ -5,12 +5,12 @@ import "fmt"
 type ErrorKind string
 
 const (
-	ErrorInvalidRequest ErrorKind = "INVALID_REQUEST"
-	ErrorNotFound       ErrorKind = "NOT_FOUND"
-	ErrorUnauthorized   ErrorKind = "UNAUTHORIZED"
-	ErrorUnavailable    ErrorKind = "UNAVAILABLE"
+	ErrorInvalidRequest  ErrorKind = "INVALID_REQUEST"
+	ErrorNotFound        ErrorKind = "NOT_FOUND"
+	ErrorUnauthorized    ErrorKind = "UNAUTHORIZED"
+	ErrorUnavailable     ErrorKind = "UNAVAILABLE"
 	ErrorInvalidResponse ErrorKind = "INVALID_RESPONSE"
-	ErrorRejected       ErrorKind = "REJECTED"
+	ErrorRejected        ErrorKind = "REJECTED"
 )
 
 // ExternalError is the provider-neutral failure contract exposed by metadata
