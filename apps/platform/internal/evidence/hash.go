@@ -192,10 +192,10 @@ func canonicalJSONNumber(value json.Number) (json.Number, error) {
 	}
 	scaled := new(big.Int).Set(rat.Num())
 	if factor := scale - twoCount; factor > 0 {
-		scaled.Mul(scaled, new(big.Int).Exp(five, big.NewInt(int64(factor)), nil))
+		scaled.Mul(scaled, new(big.Int).Exp(two, big.NewInt(int64(factor)), nil))
 	}
 	if factor := scale - fiveCount; factor > 0 {
-		scaled.Mul(scaled, new(big.Int).Exp(two, big.NewInt(int64(factor)), nil))
+		scaled.Mul(scaled, new(big.Int).Exp(five, big.NewInt(int64(factor)), nil))
 	}
 
 	negative := scaled.Sign() < 0

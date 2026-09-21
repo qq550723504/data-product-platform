@@ -279,6 +279,16 @@ func TestGenericRulesFailClosedOnBadEvidence(t *testing.T) {
 	}
 }
 
+func TestReferenceMatchPreservesLargeIntegerPrecision(t *testing.T) {
+	rule := Rule{ID: "R", Dimension: "ACCURACY", Type: RuleTypeReferenceMatch, Threshold: int64(9007199254740992), Parameters: map[string]any{
+		"metric": "count", "operator": "eq",
+	}, Required: true, Severity: "CRITICAL"}
+	finding := evaluateSingleRule(t, rule, DatasetContext{Metadata: map[string]any{"count": int64(9007199254740993)}})
+	if finding.Status != domain.FindingFail {
+		t.Fatalf("distinct large integer metric passed equality comparison: %#v", finding)
+	}
+}
+
 func TestRangeAndNullSemantics(t *testing.T) {
 	rule := Rule{ID: "R", Dimension: "ACCURACY", Type: RuleTypeRange, Target: "coverage", Parameters: map[string]any{"min": 0, "max": 100, "allowNull": true}, Required: true, Severity: "CRITICAL"}
 	ctx := DatasetContext{Table: tabular.Table{Headers: []string{"coverage"}, Rows: []map[string]string{{"coverage": "100"}, {"coverage": ""}, {"coverage": "33.33"}}}}

@@ -164,6 +164,27 @@ func TestEvidenceHashCanonicalizesEquivalentJSONNumbers(t *testing.T) {
 	}
 }
 
+func TestCanonicalJSONNumberPreservesDecimalValue(t *testing.T) {
+	for _, testCase := range []struct {
+		input string
+		want  string
+	}{
+		{input: "0.5", want: "0.5"},
+		{input: "0.8", want: "0.8"},
+		{input: "1e-7", want: "0.0000001"},
+	} {
+		t.Run(testCase.input, func(t *testing.T) {
+			got, err := canonicalJSONNumber(json.Number(testCase.input))
+			if err != nil {
+				t.Fatalf("canonicalize %s: %v", testCase.input, err)
+			}
+			if got.String() != testCase.want {
+				t.Fatalf("canonicalize %s = %s, want %s", testCase.input, got, testCase.want)
+			}
+		})
+	}
+}
+
 func TestLegacyEvidenceHashPreservesNumericRoundTrip(t *testing.T) {
 	record := Record{
 		Metadata: map[string]any{"ratio": 1e-7},

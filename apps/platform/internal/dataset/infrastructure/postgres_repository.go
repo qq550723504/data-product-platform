@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -412,7 +413,9 @@ func scanVersion(row pgx.Row) (domain.DatasetVersion, error) {
 		return domain.DatasetVersion{}, fmt.Errorf("scan dataset version: %w", err)
 	}
 	if len(metadataBytes) > 0 {
-		if err := json.Unmarshal(metadataBytes, &v.Metadata); err != nil {
+		decoder := json.NewDecoder(bytes.NewReader(metadataBytes))
+		decoder.UseNumber()
+		if err := decoder.Decode(&v.Metadata); err != nil {
 			return domain.DatasetVersion{}, fmt.Errorf("decode dataset version metadata: %w", err)
 		}
 	}

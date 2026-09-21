@@ -277,20 +277,22 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 
 	case RuleTypeReferenceMatch, RuleTypeReconciliation:
 		metric := parameterString(rule, "metric", "metadataKey")
-		value, ok := numericMetadata(ctx.Metadata, metric)
-		threshold, err := ruleThreshold(rule, 0)
+		valueRat, ok := numericMetadataRat(ctx.Metadata, metric)
+		thresholdRat, err := ruleThresholdRat(rule, 0)
 		if err != nil {
 			return domain.Finding{}, nil, fmt.Errorf("rule %s: %w", rule.ID, err)
 		}
 		operator := strings.ToLower(parameterString(rule, "operator"))
-		if operator == "" {
-			operator = "lte"
+		value := float64(0)
+		if ok {
+			value, _ = valueRat.Float64()
 		}
+		threshold, _ := thresholdRat.Float64()
 		observed := map[string]any{"metric": metric, "value": value, "available": ok, "operator": operator}
 		if !ok && !rule.Required {
 			return skip(fmt.Sprintf("rule not applicable: reference metric %s is unavailable", metric), observed)
 		}
-		if !ok || !compare(value, operator, threshold) {
+		if !ok || !compareRat(valueRat, operator, thresholdRat) {
 			return fail(fmt.Sprintf("reference metric %s is unavailable or violates %s %.6f", metric, operator, threshold), observed, value, threshold, 1, nil)
 		}
 		return pass(observed, value, threshold, 0, nil)
@@ -421,6 +423,16 @@ func ruleThreshold(rule Rule, fallback float64) (float64, error) {
 	return fallback, nil
 }
 
+func ruleThresholdRat(rule Rule, fallback float64) (*big.Rat, error) {
+	if rule.Threshold != nil {
+		return numericRat(rule.Threshold)
+	}
+	if value, ok := rule.Parameters["threshold"]; ok {
+		return numericRat(value)
+	}
+	return numericRat(fallback)
+}
+
 func parameterValue(rule Rule, key string) (any, error) {
 	value, ok := rule.Parameters[key]
 	if !ok {
@@ -538,6 +550,27 @@ func compare(value float64, operator string, threshold float64) bool {
 	}
 }
 
+func compareRat(value *big.Rat, operator string, threshold *big.Rat) bool {
+	if value == nil || threshold == nil {
+		return false
+	}
+	comparison := value.Cmp(threshold)
+	switch operator {
+	case "lt":
+		return comparison < 0
+	case "lte", "le":
+		return comparison <= 0
+	case "eq", "equal":
+		return comparison == 0
+	case "gte", "ge":
+		return comparison >= 0
+	case "gt":
+		return comparison > 0
+	default:
+		return false
+	}
+}
+
 func hasString(values map[string]struct{}, value string) bool {
 	_, ok := values[value]
 	return ok
@@ -550,15 +583,15 @@ func ratio(numerator, denominator int) float64 {
 	return float64(numerator) / float64(denominator)
 }
 
-func numericMetadata(metadata map[string]any, key string) (float64, bool) {
+func numericMetadataRat(metadata map[string]any, key string) (*big.Rat, bool) {
 	if metadata == nil {
-		return 0, false
+		return nil, false
 	}
 	value, ok := metadata[key]
 	if !ok {
-		return 0, false
+		return nil, false
 	}
-	parsed, err := numericValue(value)
+	parsed, err := numericRat(value)
 	return parsed, err == nil
 }
 
