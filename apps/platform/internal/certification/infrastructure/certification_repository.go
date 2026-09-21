@@ -321,7 +321,7 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 		rights := input.Rights
 		var status, rootHash, consumerRef, purpose string
 		if err := tx.QueryRow(ctx, `
-			SELECT workspace_id, target_dataset_version_id, status, root_hash, consumer_ref, purpose
+			SELECT workspace_id, target_dataset_version_id, status, COALESCE(root_hash,''), consumer_ref, purpose
 			FROM effective_rights_snapshot
 			WHERE id=$1
 			FOR SHARE
@@ -483,21 +483,20 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 		var workspaceID uuid.UUID
 		var objectType string
 		var objectID uuid.UUID
-		var itemCount int
+		var hasItems bool
 		err := tx.QueryRow(ctx, `
-			SELECT es.workspace_id, es.object_type, es.object_id, count(esi.evidence_id)
+			SELECT es.workspace_id, es.object_type, es.object_id,
+			       EXISTS(SELECT 1 FROM evidence_snapshot_item esi WHERE esi.snapshot_id=es.id)
 			FROM evidence_snapshot es
-			LEFT JOIN evidence_snapshot_item esi ON esi.snapshot_id=es.id
 			WHERE es.id=$1
-			GROUP BY es.workspace_id, es.object_type, es.object_id
 			FOR SHARE OF es
-		`, input.Traceability.ID).Scan(&workspaceID, &objectType, &objectID, &itemCount)
+		`, input.Traceability.ID).Scan(&workspaceID, &objectType, &objectID, &hasItems)
 		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 			return fmt.Errorf("load traceability EvidenceSnapshot: %w", err)
 		}
 		input.Traceability.WorkspaceID = workspaceID
 		input.Traceability.DatasetVersionID = objectID
-		input.Traceability.Complete = err == nil && workspaceID == input.WorkspaceID && objectType == "DATASET_VERSION" && objectID == input.DatasetVersionID && itemCount > 0
+		input.Traceability.Complete = err == nil && workspaceID == input.WorkspaceID && objectType == "DATASET_VERSION" && objectID == input.DatasetVersionID && hasItems
 	}
 
 	if input.Evidence != nil && input.Evidence.ID != uuid.Nil {
