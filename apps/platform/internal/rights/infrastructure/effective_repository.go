@@ -119,6 +119,25 @@ func (r *PostgresRepository) GetEffectiveRights(ctx context.Context, id uuid.UUI
 	return s, nil
 }
 
+func (r *PostgresRepository) GetEffectiveRightsSupportingEvidence(ctx context.Context, snapshotID uuid.UUID) (*uuid.UUID, error) {
+	var evidenceID uuid.UUID
+	err := r.pool.QueryRow(ctx, `
+		SELECT esi.evidence_id
+		FROM evidence_snapshot es
+		JOIN evidence_snapshot_item esi ON esi.snapshot_id=es.id AND esi.category='SUPPORTING_EVIDENCE'
+		WHERE es.object_type='EFFECTIVE_RIGHTS_SNAPSHOT' AND es.object_id=$1
+		ORDER BY esi.evidence_id
+		LIMIT 1
+	`, snapshotID).Scan(&evidenceID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, fmt.Errorf("get effective rights supporting evidence: %w", err)
+	}
+	return &evidenceID, nil
+}
+
 func EffectiveRightsRootHash(snapshot domain.EffectiveRightsSnapshot) string {
 	parts := []string{snapshot.TargetDatasetVersionID.String(), snapshot.CalculationAsOf.UTC().String(), snapshot.ConsumerRef, snapshot.Purpose, snapshot.CalculationRuleVersion, snapshot.CalculationRuleHash, snapshot.RequiredInputHash}
 	for _, i := range snapshot.Inputs {
