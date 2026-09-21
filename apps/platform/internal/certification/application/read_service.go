@@ -162,34 +162,33 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 	result.Blockers = append(result.Blockers, current.Gate.Blockers...)
 
 	if current.Certification.ID != uuid.Nil && current.Gate.Allowed {
-		if current.Certification.EffectiveRightsSnapshotID == nil {
-			result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_EVIDENCE_MISSING", Detail: "current certification has no EffectiveRightsSnapshot for current-rights revalidation"})
+		currentInputs, err := s.rights.RequiredLineageInputs(ctx, query.DatasetVersionID)
+		if err != nil {
+			return result, err
+		}
+		if len(currentInputs) == 0 {
+			result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_INPUTS_MISSING", Detail: "DatasetVersion has no mapped required source inputs to revalidate"})
 		} else {
-			snapshot, err := s.rights.GetEffectiveRights(ctx, *current.Certification.EffectiveRightsSnapshotID)
-			if err != nil {
-				return result, err
-			}
-			if snapshot.WorkspaceID != query.WorkspaceID || snapshot.TargetDatasetVersionID != query.DatasetVersionID || snapshot.Status != "FINALIZED" {
-				result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_EVIDENCE_INVALID", Detail: "EffectiveRightsSnapshot does not match the requested DatasetVersion"})
-			} else if len(snapshot.Inputs) == 0 {
-				result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_INPUTS_MISSING", Detail: "EffectiveRightsSnapshot has no required source inputs to revalidate"})
-			} else {
-				currentInputs, err := s.rights.RequiredLineageInputs(ctx, query.DatasetVersionID)
+			if current.Certification.EffectiveRightsSnapshotID != nil {
+				snapshot, err := s.rights.GetEffectiveRights(ctx, *current.Certification.EffectiveRightsSnapshotID)
 				if err != nil {
 					return result, err
 				}
-				if !sameEligibilityLineage(snapshot.Inputs, currentInputs) {
+				if snapshot.WorkspaceID != query.WorkspaceID || snapshot.TargetDatasetVersionID != query.DatasetVersionID || snapshot.Status != "FINALIZED" {
+					result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_EVIDENCE_INVALID", Detail: "EffectiveRightsSnapshot does not match the requested DatasetVersion"})
+				} else if !sameEligibilityLineage(snapshot.Inputs, currentInputs) {
 					result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_LINEAGE_MISMATCH", Detail: "current DatasetVersion required lineage no longer matches the frozen EffectiveRights input membership"})
-				} else {
-					for _, input := range snapshot.Inputs {
-						check, blocker, err := s.checkInputEntitlement(ctx, query, input)
-						if err != nil {
-							return result, err
-						}
-						result.EntitlementChecks = append(result.EntitlementChecks, check)
-						if blocker != nil {
-							result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, *blocker)
-						}
+				}
+			}
+			if len(result.EntitlementGate.Blockers) == 0 {
+				for _, input := range currentInputs {
+					check, blocker, err := s.checkInputEntitlement(ctx, query, input)
+					if err != nil {
+						return result, err
+					}
+					result.EntitlementChecks = append(result.EntitlementChecks, check)
+					if blocker != nil {
+						result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, *blocker)
 					}
 				}
 			}
@@ -228,45 +227,38 @@ func sameEligibilityLineage(frozen []rightsdomain.EffectiveRightsInput, current 
 	return true
 }
 
-func (s *EligibilityService) checkInputEntitlement(ctx context.Context, query DeliveryEligibilityQuery, input rightsdomain.EffectiveRightsInput) (EntitlementCheck, *certificationdomain.Blocker, error) {
+func (s *EligibilityService) checkInputEntitlement(ctx context.Context, query DeliveryEligibilityQuery, input rightsinfra.LineageInput) (EntitlementCheck, *certificationdomain.Blocker, error) {
+	check := EntitlementCheck{DataResourceID: input.DataResourceID, Path: rightsdomain.EntitlementDirectUse}
+	if !input.ResourceMapped || input.DataResourceID == uuid.Nil {
+		return check, &certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_RESOURCE_UNMAPPED", Detail: input.DatasetVersionID.String() + ": required source DatasetVersion has no DataResource mapping"}, nil
+	}
 	request := rightsdomain.EntitlementRequest{
 		WorkspaceID: query.WorkspaceID, DataResourceID: input.DataResourceID, ConsumerRef: query.Consumer,
 		Purpose: query.Purpose, Action: query.Action, AsOf: query.AsOf,
 		Scope: rightsdomain.NormalizedScope{Type: "ALL_RESOURCE", Ref: input.DataResourceID.String()},
 		Path:  rightsdomain.EntitlementDirectUse,
 	}
-	check := EntitlementCheck{DataResourceID: input.DataResourceID, Path: request.Path}
-	if input.BindingID != nil {
-		binding, err := s.rights.GetAuthorizationProvenanceBinding(ctx, *input.BindingID)
-		if err != nil {
-			return check, &certificationdomain.Blocker{Code: "RIGHTS_GRANTOR_PROVENANCE_MISSING", Detail: "frozen provenance binding is unavailable for current entitlement"}, nil
-		}
-		authorization, err := s.rights.GetAuthorization(ctx, binding.AuthorizationID)
-		if err != nil {
-			return check, &certificationdomain.Blocker{Code: "AUTHORIZATION_NOT_CURRENT", Detail: "authorization referenced by frozen provenance is unavailable"}, nil
-		}
-		foundScope := false
-		for _, resource := range authorization.Resources {
-			if resource.DataResourceID == input.DataResourceID && strings.TrimSpace(resource.ScopeType) != "" && strings.TrimSpace(resource.ScopeRef) != "" {
-				request.Scope = rightsdomain.NormalizedScope{Type: resource.ScopeType, Ref: resource.ScopeRef}
-				foundScope = true
-				break
-			}
-		}
-		if !foundScope {
-			return check, &certificationdomain.Blocker{Code: "AUTHORIZATION_SCOPE_UNAVAILABLE", Detail: "authorization has no normalized scope for the required source resource"}, nil
-		}
-		request.AuthorizationID = binding.AuthorizationID
-		request.Path = rightsdomain.EntitlementDownstream
-		check.Path = request.Path
-	}
-	decision, err := s.rights.CheckCurrentEntitlement(ctx, request)
+	direct, err := s.rights.CheckCurrentEntitlement(ctx, request)
 	if err != nil {
 		return check, nil, err
 	}
-	check.Decision = decision
-	if decision.Decision != rightsdomain.DecisionAllowed {
-		return check, &certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_BLOCKED", Detail: input.DataResourceID.String() + ": " + decision.Reason}, nil
+	check.Decision = direct
+	if direct.Decision == rightsdomain.DecisionAllowed {
+		return check, nil, nil
 	}
-	return check, nil, nil
+
+	request.Path = rightsdomain.EntitlementDownstream
+	check.Path = request.Path
+	downstream, err := s.rights.CheckCurrentEntitlement(ctx, request)
+	if err != nil {
+		return check, nil, err
+	}
+	check.Decision = downstream
+	if downstream.Decision == rightsdomain.DecisionAllowed {
+		return check, nil, nil
+	}
+	return check, &certificationdomain.Blocker{
+		Code:   "CURRENT_ENTITLEMENT_BLOCKED",
+		Detail: input.DataResourceID.String() + ": direct use blocked (" + direct.Reason + "); downstream authorization blocked (" + downstream.Reason + ")",
+	}, nil
 }
