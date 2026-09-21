@@ -94,14 +94,14 @@ type EvaluationInput struct {
 	DatasetVersionID     uuid.UUID
 	DatasetVersionStatus string
 	Derived              bool
-	Quality          QualityAssessmentEvidence
-	Rights           *RightsEvidence
-	Compliance       *ComplianceEvidence
-	Contract         *ContractEvidence
-	Traceability     *TraceabilityEvidence
-	Evidence         *EvidenceSnapshot
-	IssuedAt         time.Time
-	ActorID          *uuid.UUID
+	Quality              QualityAssessmentEvidence
+	Rights               *RightsEvidence
+	Compliance           *ComplianceEvidence
+	Contract             *ContractEvidence
+	Traceability         *TraceabilityEvidence
+	Evidence             *EvidenceSnapshot
+	IssuedAt             time.Time
+	ActorID              *uuid.UUID
 }
 
 type DatasetCertification struct {
