@@ -48,6 +48,10 @@ func TestQualityReportIsBoundedAndWorkspaceScoped(t *testing.T) {
 	ruleContent := "apiVersion: quality/v1\nkind: QualityRuleSet\nmetadata:\n  version: 1.0.0\n"
 	ruleHash := sha256.Sum256([]byte(ruleContent))
 	metrics, err := json.Marshal(map[string]any{
+		"R-1": map[string]any{
+			"affectedCount": 999999,
+			"sample":        []any{map[string]any{"row": 999999}},
+		},
 		"dimensions": map[string]any{
 			"COMPLETENESS": map[string]any{
 				"dimension":      "COMPLETENESS",
@@ -178,6 +182,7 @@ func TestQualityReportIsBoundedAndWorkspaceScoped(t *testing.T) {
 				Total int `json:"total"`
 			} `json:"page"`
 		} `json:"findings"`
+		Metrics     map[string]any   `json:"metrics"`
 		Evidence    []map[string]any `json:"evidence"`
 		AuditEvents []map[string]any `json:"auditEvents"`
 	}
@@ -189,6 +194,12 @@ func TestQualityReportIsBoundedAndWorkspaceScoped(t *testing.T) {
 	}
 	if len(report.Evidence) != 1 || len(report.AuditEvents) != 1 {
 		t.Fatalf("HTTP governance refs = evidence %d audit %d, want one each", len(report.Evidence), len(report.AuditEvents))
+	}
+	if _, ok := report.Metrics["R-1"]; ok {
+		t.Fatal("HTTP report exposed unbounded per-rule metrics")
+	}
+	if _, ok := report.Evidence[0]["metadata"]; ok {
+		t.Fatal("HTTP report exposed evidence metadata")
 	}
 
 	foreignResponse, err := server.Client().Get(server.URL + "/api/v1/quality-assessments/" + assessmentID.String() + "/report?workspaceId=" + foreignWorkspaceID.String())

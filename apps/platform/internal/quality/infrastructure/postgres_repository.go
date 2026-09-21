@@ -37,6 +37,17 @@ type AuditEvent struct {
 	OccurredAt  time.Time  `json:"occurredAt"`
 }
 
+type AuditEventReference struct {
+	ID         uuid.UUID  `json:"id"`
+	Action     string     `json:"action"`
+	ObjectType string     `json:"objectType"`
+	ObjectID   uuid.UUID  `json:"objectId"`
+	ActorType  string     `json:"actorType"`
+	ActorID    *uuid.UUID `json:"actorId,omitempty"`
+	TraceID    string     `json:"traceId,omitempty"`
+	OccurredAt time.Time  `json:"occurredAt"`
+}
+
 type AssessmentPage struct {
 	Items  []domain.Assessment
 	Limit  int
@@ -338,17 +349,17 @@ func (r *PostgresRepository) GetReport(ctx context.Context, workspaceID, assessm
 	}
 
 	var result domain.Assessment
-	var metrics []byte
+	var dimensionMetrics []byte
 	err := r.pool.QueryRow(ctx, `
 		SELECT id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
 		       COALESCE(rule_set_content_sha256,''),
 		       COALESCE(evaluator_name,''), COALESCE(evaluator_version,''),
-		       gate_decision, metrics, created_at, created_by
+		       gate_decision, metrics->'dimensions', created_at, created_by
 		FROM quality_result
 		WHERE id=$1 AND workspace_id=$2
 	`, assessmentID, workspaceID).Scan(&result.ID, &result.WorkspaceID, &result.DatasetVersionID, &result.RuleSetRef,
 		&result.RuleSetVersion, &result.RuleSetContentSHA256,
-		&result.EvaluatorName, &result.EvaluatorVersion, &result.GateDecision, &metrics,
+		&result.EvaluatorName, &result.EvaluatorVersion, &result.GateDecision, &dimensionMetrics,
 		&result.CreatedAt, &result.CreatedBy)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return domain.Assessment{}, domain.FindingPage{}, ErrNotFound
@@ -356,13 +367,14 @@ func (r *PostgresRepository) GetReport(ctx context.Context, workspaceID, assessm
 	if err != nil {
 		return domain.Assessment{}, domain.FindingPage{}, fmt.Errorf("get quality report assessment: %w", err)
 	}
-	if err := decodeJSONNumbers(metrics, &result.Metrics); err != nil {
-		return domain.Assessment{}, domain.FindingPage{}, fmt.Errorf("decode quality report metrics: %w", err)
-	}
-
-	if _, ok := result.Metrics["dimensions"]; !ok {
+	var dimensions map[string]any
+	if len(dimensionMetrics) == 0 || string(dimensionMetrics) == "null" {
 		return domain.Assessment{}, domain.FindingPage{}, fmt.Errorf("quality report dimension snapshot is missing")
 	}
+	if err := decodeJSONNumbers(dimensionMetrics, &dimensions); err != nil {
+		return domain.Assessment{}, domain.FindingPage{}, fmt.Errorf("decode quality report metrics: %w", err)
+	}
+	result.Metrics = map[string]any{"dimensions": dimensions}
 	if err := restoreDimensionSummaries(&result); err != nil {
 		return domain.Assessment{}, domain.FindingPage{}, err
 	}
@@ -530,6 +542,41 @@ func (r *PostgresRepository) ListAuditEvents(ctx context.Context, assessmentID u
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("iterate quality assessment audit events: %w", err)
+	}
+	return events, nil
+}
+
+// ListAuditEventReferences returns only the audit identity and routing fields
+// needed by the bounded Quality Report. It deliberately does not hydrate
+// historical state or metadata payloads.
+func (r *PostgresRepository) ListAuditEventReferences(ctx context.Context, assessmentID uuid.UUID, limit int) ([]AuditEventReference, error) {
+	if limit <= 0 || limit > 100 {
+		return nil, fmt.Errorf("audit reference limit must be between 1 and 100")
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT id, action, object_type, object_id, actor_type, actor_id,
+		       COALESCE(trace_id,''), occurred_at
+		FROM audit_event
+		WHERE object_type='QUALITY_RESULT' AND object_id=$1
+		ORDER BY occurred_at, id
+		LIMIT $2
+	`, assessmentID, limit)
+	if err != nil {
+		return nil, fmt.Errorf("list quality assessment audit references: %w", err)
+	}
+	defer rows.Close()
+
+	events := make([]AuditEventReference, 0)
+	for rows.Next() {
+		var event AuditEventReference
+		if err := rows.Scan(&event.ID, &event.Action, &event.ObjectType, &event.ObjectID,
+			&event.ActorType, &event.ActorID, &event.TraceID, &event.OccurredAt); err != nil {
+			return nil, fmt.Errorf("scan quality assessment audit reference: %w", err)
+		}
+		events = append(events, event)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate quality assessment audit references: %w", err)
 	}
 	return events, nil
 }

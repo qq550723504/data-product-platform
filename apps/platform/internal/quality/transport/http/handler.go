@@ -213,15 +213,15 @@ func (h *Handler) getReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var evidenceItems []evidence.Item
+	var evidenceItems []evidence.Reference
 	if h.evidenceRepo != nil {
-		evidenceItems, err = h.evidenceRepo.ListForObject(r.Context(), "QUALITY_RESULT", assessmentID)
+		evidenceItems, err = h.evidenceRepo.ListReferencesForObject(r.Context(), "QUALITY_RESULT", assessmentID, assessment.WorkspaceID, maxAssessmentLimit)
 		if err != nil {
 			httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_REPORT_EVIDENCE_READ_FAILED", err.Error(), nil)
 			return
 		}
 	}
-	auditEvents, err := h.repo.ListAuditEvents(r.Context(), assessmentID)
+	auditEvents, err := h.repo.ListAuditEventReferences(r.Context(), assessmentID, maxAssessmentLimit)
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_REPORT_AUDIT_READ_FAILED", err.Error(), nil)
 		return
@@ -341,7 +341,7 @@ func resultResponse(result domain.Result) map[string]any {
 	}
 }
 
-func reportResponse(result domain.Assessment, page domain.FindingPage, evidenceItems []evidence.Item, auditEvents []infrastructure.AuditEvent) map[string]any {
+func reportResponse(result domain.Assessment, page domain.FindingPage, evidenceItems []evidence.Reference, auditEvents []infrastructure.AuditEventReference) map[string]any {
 	findings := make([]map[string]any, 0, len(page.Items))
 	for _, finding := range page.Items {
 		findings = append(findings, reportFindingResponse(finding))
@@ -350,16 +350,16 @@ func reportResponse(result domain.Assessment, page domain.FindingPage, evidenceI
 	evidenceRefs := make([]map[string]any, 0, len(evidenceItems))
 	for _, item := range evidenceItems {
 		evidenceRefs = append(evidenceRefs, map[string]any{
-			"id":             item.ID,
-			"evidenceType":   item.EvidenceType,
-			"relationType":   item.RelationType,
-			"sourceType":     item.SourceType,
-			"sourceId":       item.SourceID,
-			"hashAlgorithm":  item.HashAlgorithm,
-			"hashValue":      item.HashValue,
-			"integrityValid": item.IntegrityValid,
-			"createdAt":      item.CreatedAt,
-			"createdBy":      item.CreatedBy,
+			"id":            item.ID,
+			"workspaceId":   item.WorkspaceID,
+			"evidenceType":  item.EvidenceType,
+			"relationType":  item.RelationType,
+			"sourceType":    item.SourceType,
+			"sourceId":      item.SourceID,
+			"hashAlgorithm": item.HashAlgorithm,
+			"hashValue":     item.HashValue,
+			"createdAt":     item.CreatedAt,
+			"createdBy":     item.CreatedBy,
 		})
 	}
 
@@ -390,7 +390,7 @@ func reportResponse(result domain.Assessment, page domain.FindingPage, evidenceI
 		"createdAt":            result.CreatedAt,
 		"createdBy":            result.CreatedBy,
 		"dimensionSummary":     result.DimensionSummaries,
-		"metrics":              result.Metrics,
+		"metrics":              map[string]any{"dimensions": result.Metrics["dimensions"]},
 		"ruleSet": map[string]any{
 			"ref":           result.RuleSetRef,
 			"version":       result.RuleSetVersion,
