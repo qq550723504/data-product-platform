@@ -101,6 +101,27 @@ func TestEvaluateCertifiesOnlyWhenAllFrozenEvidenceMatches(t *testing.T) {
 	}
 }
 
+func TestEvaluateCertifiesFromEffectiveRightsWithoutSeparateRightsSnapshot(t *testing.T) {
+	workspaceID, datasetVersionID := uuid.New(), uuid.New()
+	input := testInput(workspaceID, datasetVersionID)
+	input.Rights.RightsSnapshotID = uuid.Nil
+	input.Rights.RightsSnapshotFinalized = false
+
+	certification, err := Evaluate(testProfile(t), input)
+	if err != nil {
+		t.Fatalf("evaluate certification: %v", err)
+	}
+	if certification.Decision != DecisionCertified || len(certification.Blockers) != 0 {
+		t.Fatalf("certification = %#v, want CERTIFIED from frozen EffectiveRights provenance", certification)
+	}
+	if certification.RightsSnapshotID != nil {
+		t.Fatal("certification invented a RightsSnapshot identity that was not part of EffectiveRights")
+	}
+	if certification.EffectiveRightsSnapshotID == nil || certification.EvidenceSnapshotID == nil {
+		t.Fatal("certification did not freeze required EffectiveRights/evidence identities")
+	}
+}
+
 func TestEvaluateRejectsUnusableDatasetVersion(t *testing.T) {
 	workspaceID, datasetVersionID := uuid.New(), uuid.New()
 	input := testInput(workspaceID, datasetVersionID)
