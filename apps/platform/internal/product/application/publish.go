@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -90,10 +91,11 @@ func (s *Service) PublishRelease(ctx context.Context, cmd PublishReleaseCommand)
 		if _, err := deliveryfence.Lock(ctx, tx, product.WorkspaceID); err != nil {
 			return err
 		}
-		currentReadiness, err := s.Readiness(ctx, release.ID)
+		facts, err := s.repo.ReadinessFactsTx(ctx, tx, release, product, version, time.Now().UTC())
 		if err != nil {
 			return err
 		}
+		currentReadiness := readinessResultFromFacts(release.ID, facts)
 		if currentReadiness.Overall != "READY" {
 			return fmt.Errorf("%w: blockers=%v", domain.ErrReleaseNotReady, currentReadiness.Blockers)
 		}
