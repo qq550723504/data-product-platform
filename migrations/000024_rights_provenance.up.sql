@@ -31,7 +31,7 @@ CREATE TABLE rights_declaration (
     basis_type            varchar(64) NOT NULL,
     basis_ref             varchar(512) NOT NULL,
     consumer_scope_type   varchar(16) NOT NULL DEFAULT 'ANY',
-    consumer_ref          varchar(255),
+    consumer_ref          varchar(255) NOT NULL,
     effective_from        timestamptz,
     effective_to          timestamptz,
     restrictions          jsonb NOT NULL DEFAULT '{}'::jsonb,
