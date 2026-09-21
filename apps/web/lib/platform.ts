@@ -252,6 +252,50 @@ export type QualityAssessment = {
   createdAt: string;
 };
 
+export type QualityFinding = {
+  id: string;
+  resultId: string;
+  ruleId: string;
+  dimension: string;
+  severity: string;
+  status: string;
+  observed?: Record<string, unknown>;
+  affectedCount?: unknown;
+  sample?: unknown;
+  reason?: string;
+  createdAt: string;
+};
+
+export type EvidenceReference = {
+  id: string;
+  workspaceId: string;
+  evidenceType: string;
+  relationType: string;
+  sourceType: string;
+  sourceId?: string;
+  hashAlgorithm?: string;
+  hashValue?: string;
+  createdAt: string;
+  createdBy?: string;
+};
+
+export type AuditReference = {
+  id: string;
+  action: string;
+  objectType: string;
+  objectId: string;
+  actorType: string;
+  actorId?: string;
+  traceId?: string;
+  occurredAt: string;
+};
+
+export type QualityReport = QualityAssessment & {
+  findings: { items: QualityFinding[]; page: PageMeta };
+  evidence: EvidenceReference[];
+  auditEvents: AuditReference[];
+};
+
 export type Applicability = {
   mode: "ANY" | "EXPLICIT" | string;
   values?: string[];
@@ -430,6 +474,10 @@ export const platform = {
   qualityAssessments: (versionId: string, limit = 25, offset = 0) =>
     apiGet<{ datasetVersionId: string; items: QualityAssessment[]; page: PageMeta }>(
       `/api/v1/dataset-versions/${encodeURIComponent(versionId)}/quality-assessments?workspaceId=${encodeURIComponent(requireWorkspace())}&limit=${limit}&offset=${offset}`,
+    ),
+  qualityReport: (assessmentId: string, limit = 50, offset = 0) =>
+    apiGet<QualityReport>(
+      `/api/v1/quality-assessments/${encodeURIComponent(assessmentId)}/report?workspaceId=${encodeURIComponent(requireWorkspace())}&limit=${limit}&offset=${offset}`,
     ),
   certificationHistory: (versionId: string) =>
     apiGet<CertificationHistory>(
