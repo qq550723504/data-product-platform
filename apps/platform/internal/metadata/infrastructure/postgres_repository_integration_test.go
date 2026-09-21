@@ -36,6 +36,8 @@ func TestResourceBindingAndGovernanceProjectionPersistence(t *testing.T) {
 		t.Fatalf("insert DataResource: %v", err)
 	}
 
+	externalFQN := "sample_data.ecommerce.public.orders." + uuid.NewString()
+
 	repo := infrastructure.NewPostgresRepository(pool)
 	tx, err := pool.Begin(ctx)
 	if err != nil {
@@ -47,7 +49,7 @@ func TestResourceBindingAndGovernanceProjectionPersistence(t *testing.T) {
 		Provider:        testProvider,
 		EntityType:      "TABLE",
 		ExternalID:      "om-table-001",
-		ExternalFQN:     "sample_data.ecommerce.public.orders",
+		ExternalFQN:     externalFQN,
 		BindingMetadata: map[string]any{"serviceType": "PostgreSQL"},
 		IsPrimary:       true,
 	}
@@ -68,8 +70,8 @@ func TestResourceBindingAndGovernanceProjectionPersistence(t *testing.T) {
 	if err != nil {
 		t.Fatalf("list resource bindings: %v", err)
 	}
-	if len(bindings) != 1 || bindings[0].ExternalID != "om-table-001" || !bindings[0].IsPrimary {
-		t.Fatalf("resource bindings = %+v, want one primary OpenMetadata binding", bindings)
+	if len(bindings) != 1 || bindings[0].ID != persistedBinding.ID || bindings[0].ExternalID != "om-table-001" || bindings[0].ExternalFQN != externalFQN || !bindings[0].IsPrimary {
+		t.Fatalf("resource bindings = %+v, want persisted primary metadata binding %+v", bindings, persistedBinding)
 	}
 
 	firstEventID := uuid.New()
