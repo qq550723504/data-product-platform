@@ -99,6 +99,19 @@ func (p CertificationProfile) Snapshot() (ProfileSnapshot, error) {
 	}, nil
 }
 
+func (p CertificationProfile) SnapshotForWorkspace(workspaceID uuid.UUID, actorID *uuid.UUID) (ProfileSnapshot, error) {
+	if workspaceID == uuid.Nil {
+		return ProfileSnapshot{}, fmt.Errorf("%w: workspace id is required", ErrInvalidProfile)
+	}
+	snapshot, err := p.Snapshot()
+	if err != nil {
+		return ProfileSnapshot{}, err
+	}
+	snapshot.WorkspaceID = workspaceID
+	snapshot.CreatedBy = actorID
+	return snapshot, nil
+}
+
 func (s ProfileSnapshot) Validate() error {
 	normalized, err := s.CertificationProfile.normalized()
 	if err != nil {

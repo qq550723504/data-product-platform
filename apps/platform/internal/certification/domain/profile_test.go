@@ -3,6 +3,8 @@ package domain
 import (
 	"bytes"
 	"testing"
+
+	"github.com/google/uuid"
 )
 
 func TestProfileSnapshotNormalizesApplicabilityAndHashesMembership(t *testing.T) {
@@ -19,6 +21,11 @@ func TestProfileSnapshotNormalizesApplicabilityAndHashesMembership(t *testing.T)
 	}
 	if snapshot.Purpose.Values[0] != "COMMERCIAL" || snapshot.Actions.Values[0] != "SHARE" || snapshot.Consumers.Values[0] != "consumer-a" || snapshot.Delivery.Values[0] != "DIRECT_DATA" {
 		t.Fatalf("profile was not normalized: %#v", snapshot)
+	}
+	workspaceID := uuid.New()
+	workspaceSnapshot, err := profile.SnapshotForWorkspace(workspaceID, nil)
+	if err != nil || workspaceSnapshot.WorkspaceID != workspaceID {
+		t.Fatalf("workspace profile snapshot = %#v, err = %v", workspaceSnapshot, err)
 	}
 	if err := snapshot.Validate(); err != nil {
 		t.Fatalf("validate snapshot: %v", err)
