@@ -171,6 +171,8 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 			}
 			if snapshot.WorkspaceID != query.WorkspaceID || snapshot.TargetDatasetVersionID != query.DatasetVersionID || snapshot.Status != "FINALIZED" {
 				result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_EVIDENCE_INVALID", Detail: "EffectiveRightsSnapshot does not match the requested DatasetVersion"})
+			} else if len(snapshot.Inputs) == 0 {
+				result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_INPUTS_MISSING", Detail: "EffectiveRightsSnapshot has no required source inputs to revalidate"})
 			} else {
 				for _, input := range snapshot.Inputs {
 					check, blocker, err := s.checkInputEntitlement(ctx, query, input)
