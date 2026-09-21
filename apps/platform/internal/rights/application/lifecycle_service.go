@@ -37,9 +37,10 @@ type CreateDelegationChainCommand struct {
 }
 
 type FinalizeDelegationChainCommand struct {
-	ChainID uuid.UUID
-	ActorID *uuid.UUID
-	TraceID string
+	ChainID    uuid.UUID
+	ActivityID *uuid.UUID
+	ActorID    *uuid.UUID
+	TraceID    string
 }
 
 type DisposeDelegationCommand struct {
@@ -215,6 +216,16 @@ func (s *Service) FinalizeDelegationChain(ctx context.Context, cmd FinalizeDeleg
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &chain.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: "GRANTOR_AUTHORITY_DELEGATION_CHAIN_FINALIZED", ObjectType: "GRANTOR_AUTHORITY_DELEGATION_CHAIN", ObjectID: chain.ID, AfterState: map[string]any{"chainHash": chain.ChainHash}, TraceID: cmd.TraceID})
 	})
+	if errors.Is(err, infrastructure.ErrDelegationFinalizeIdempotentReplay) {
+		existing, findErr := s.repo.GetDelegationChain(ctx, cmd.ChainID)
+		if findErr != nil {
+			return domain.DelegationChain{}, findErr
+		}
+		if existing.Status != "FINALIZED" {
+			return domain.DelegationChain{}, domain.ErrInvalidBinding
+		}
+		return existing, nil
+	}
 	return chain, err
 }
 
