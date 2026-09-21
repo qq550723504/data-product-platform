@@ -174,14 +174,22 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 			} else if len(snapshot.Inputs) == 0 {
 				result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_INPUTS_MISSING", Detail: "EffectiveRightsSnapshot has no required source inputs to revalidate"})
 			} else {
-				for _, input := range snapshot.Inputs {
-					check, blocker, err := s.checkInputEntitlement(ctx, query, input)
-					if err != nil {
-						return result, err
-					}
-					result.EntitlementChecks = append(result.EntitlementChecks, check)
-					if blocker != nil {
-						result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, *blocker)
+				currentInputs, err := s.rights.RequiredLineageInputs(ctx, query.DatasetVersionID)
+				if err != nil {
+					return result, err
+				}
+				if !sameEligibilityLineage(snapshot.Inputs, currentInputs) {
+					result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_LINEAGE_MISMATCH", Detail: "current DatasetVersion required lineage no longer matches the frozen EffectiveRights input membership"})
+				} else {
+					for _, input := range snapshot.Inputs {
+						check, blocker, err := s.checkInputEntitlement(ctx, query, input)
+						if err != nil {
+							return result, err
+						}
+						result.EntitlementChecks = append(result.EntitlementChecks, check)
+						if blocker != nil {
+							result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, *blocker)
+						}
 					}
 				}
 			}
@@ -193,6 +201,31 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 	result.Blockers = append(result.Blockers, result.EntitlementGate.Blockers...)
 	result.Allowed = result.DatasetVersionGate.Allowed && result.CertificationGate.Allowed && result.EntitlementGate.Allowed
 	return result, nil
+}
+
+func sameEligibilityLineage(frozen []rightsdomain.EffectiveRightsInput, current []rightsinfra.LineageInput) bool {
+	if len(frozen) != len(current) {
+		return false
+	}
+	frozenIDs := make([]string, 0, len(frozen))
+	currentIDs := make([]string, 0, len(current))
+	for _, input := range frozen {
+		frozenIDs = append(frozenIDs, input.InputDatasetVersionID.String())
+	}
+	for _, input := range current {
+		if !input.ResourceMapped {
+			return false
+		}
+		currentIDs = append(currentIDs, input.DatasetVersionID.String())
+	}
+	sort.Strings(frozenIDs)
+	sort.Strings(currentIDs)
+	for i := range frozenIDs {
+		if frozenIDs[i] != currentIDs[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func (s *EligibilityService) checkInputEntitlement(ctx context.Context, query DeliveryEligibilityQuery, input rightsdomain.EffectiveRightsInput) (EntitlementCheck, *certificationdomain.Blocker, error) {
