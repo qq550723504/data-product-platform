@@ -167,6 +167,9 @@ func (s *Service) VerifyRightsDeclaration(ctx context.Context, cmd VerifyRightsD
 		verification.ActivityID = &id
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if _, err := deliveryfence.Advance(ctx, tx, d.WorkspaceID); err != nil {
+			return err
+		}
 		var locked uuid.UUID
 		if err := tx.QueryRow(ctx, `SELECT id FROM rights_declaration WHERE id=$1 FOR UPDATE`, d.ID).Scan(&locked); err != nil {
 			return err
