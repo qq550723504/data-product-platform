@@ -173,19 +173,29 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 				JOIN data_authorization a ON a.id=b.authorization_id
 				JOIN authorization_resource ar ON ar.authorization_id=a.id AND ar.data_resource_id=b.data_resource_id
 				JOIN rights_declaration d ON d.id=b.rights_declaration_id
-				JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED'
+				JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED' AND v.occurred_at <= $4
 				WHERE b.authorization_id=$1 AND b.data_resource_id=$2 AND b.workspace_id=$3
 				  AND a.workspace_id=$3 AND a.status='ACTIVE' AND a.grantee_ref=$5
 				  AND ar.scope_type IS NOT NULL AND ar.scope_ref IS NOT NULL
 				  AND (ar.scope_type<>'ALL_RESOURCE' OR ar.scope_ref=ar.data_resource_id::text)
-				  AND b.created_at <= $4
+				  AND b.created_at <= $4 AND d.created_at <= $4
 				  AND (d.effective_from IS NULL OR d.effective_from <= $4)
 				  AND (d.effective_to IS NULL OR d.effective_to > $4)
 				  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $4)
 				  AND NOT EXISTS (SELECT 1 FROM authorization_provenance_binding_disposition x WHERE x.binding_id=b.id AND x.effective_at <= $4)
 				  AND (b.grantor_authority_mode='DIRECT_DECLARATION_PARTY' OR (
 					b.delegation_chain_id IS NOT NULL
-					AND EXISTS (SELECT 1 FROM grantor_authority_delegation_chain c WHERE c.id=b.delegation_chain_id AND c.source_declaration_id=b.rights_declaration_id AND c.status='FINALIZED' AND c.chain_hash=b.delegation_chain_hash)
+					AND EXISTS (
+						SELECT 1
+						FROM grantor_authority_delegation_chain c
+						JOIN rights_declaration sd ON sd.id=c.source_declaration_id
+						JOIN rights_declaration_verification sv ON sv.declaration_id=sd.id AND sv.outcome='VERIFIED' AND sv.occurred_at <= $4
+						WHERE c.id=b.delegation_chain_id AND c.source_declaration_id=b.rights_declaration_id AND c.status='FINALIZED' AND c.chain_hash=b.delegation_chain_hash AND c.created_at <= $4
+						  AND sd.created_at <= $4
+						  AND (sd.effective_from IS NULL OR sd.effective_from <= $4)
+						  AND (sd.effective_to IS NULL OR sd.effective_to > $4)
+						  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition sx WHERE sx.declaration_id=sd.id AND sx.effective_at <= $4)
+					)
 					AND EXISTS (
 						SELECT 1 FROM rights_declaration_party rp
 						WHERE rp.declaration_id=d.id
