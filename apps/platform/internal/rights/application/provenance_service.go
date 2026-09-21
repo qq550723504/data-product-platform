@@ -164,6 +164,9 @@ func (s *Service) VerifyRightsDeclaration(ctx context.Context, cmd VerifyRightsD
 	if outcome != domain.DeclarationVerified && outcome != domain.DeclarationRejected {
 		return domain.RightsVerification{}, domain.ErrDeclarationTerminal
 	}
+	if outcome == domain.DeclarationVerified && cmd.EvidenceID == nil {
+		return domain.RightsVerification{}, domain.ErrInvalidRightsDeclaration
+	}
 	d, err := s.repo.GetRightsDeclaration(ctx, cmd.DeclarationID)
 	if err != nil {
 		return domain.RightsVerification{}, err
@@ -256,6 +259,7 @@ func (s *Service) DisposeRightsDeclaration(ctx context.Context, cmd DisposeRight
 	if cmd.EffectiveAt.IsZero() {
 		cmd.EffectiveAt = time.Now().UTC()
 	}
+	cmd.EffectiveAt = cmd.EffectiveAt.UTC().Round(time.Microsecond)
 	if strings.TrimSpace(cmd.Reason) == "" {
 		return domain.RightsDisposition{}, domain.ErrRightsDisposition
 	}
