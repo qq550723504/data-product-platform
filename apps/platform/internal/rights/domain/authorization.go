@@ -123,6 +123,9 @@ func NewAuthorization(workspaceID uuid.UUID, code, grantorRef, granteeRef, purpo
 			if action == "" {
 				return Authorization{}, ErrInvalidAuthorization
 			}
+			if action == "RAW_EXPORT" && !spec.RawExportAllowed {
+				return Authorization{}, ErrInvalidAuthorization
+			}
 			actions = append(actions, action)
 		}
 		if spec.Scope == nil {
