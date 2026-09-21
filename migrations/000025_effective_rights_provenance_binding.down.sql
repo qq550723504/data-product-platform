@@ -21,6 +21,7 @@ DROP FUNCTION IF EXISTS guard_rights_declaration_child_insert();
 
 DROP INDEX IF EXISTS uq_authorization_provenance_binding_activity;
 DROP INDEX IF EXISTS uq_grantor_delegation_disposition_activity;
+DROP INDEX IF EXISTS uq_rights_declaration_verification_activity;
 
 ALTER TABLE authorization_provenance_binding
     DROP COLUMN IF EXISTS activity_id;

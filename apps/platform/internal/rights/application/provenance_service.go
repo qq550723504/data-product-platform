@@ -111,6 +111,19 @@ func (s *Service) VerifyRightsDeclaration(ctx context.Context, cmd VerifyRightsD
 		if err := tx.QueryRow(ctx, `SELECT id FROM rights_declaration WHERE id=$1 FOR UPDATE`, d.ID).Scan(&locked); err != nil {
 			return err
 		}
+		if verification.EvidenceID != nil {
+			var evidenceWorkspace uuid.UUID
+			if err := tx.QueryRow(ctx, `SELECT workspace_id FROM evidence WHERE id=$1`, *verification.EvidenceID).Scan(&evidenceWorkspace); err != nil || evidenceWorkspace != d.WorkspaceID {
+				return domain.ErrInvalidRightsDeclaration
+			}
+		}
+		var replay bool
+		if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM rights_declaration_verification WHERE declaration_id=$1 AND activity_id=$2)`, d.ID, *verification.ActivityID).Scan(&replay); err != nil {
+			return err
+		}
+		if replay {
+			return infrastructure.ErrVerificationIdempotentReplay
+		}
 		var exists bool
 		if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM rights_declaration_verification WHERE declaration_id=$1)`, d.ID).Scan(&exists); err != nil {
 			return err
@@ -134,7 +147,30 @@ func (s *Service) VerifyRightsDeclaration(ctx context.Context, cmd VerifyRightsD
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &d.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: action, ObjectType: "RIGHTS_DECLARATION_VERIFICATION", ObjectID: verification.ID, AfterState: map[string]any{"declarationId": d.ID, "outcome": outcome}, TraceID: cmd.TraceID})
 	})
+	if errors.Is(err, infrastructure.ErrVerificationIdempotentReplay) {
+		existing, findErr := s.repo.GetDeclarationVerificationByActivityID(ctx, d.ID, *verification.ActivityID)
+		if findErr != nil {
+			return domain.RightsVerification{}, findErr
+		}
+		if !sameRightsVerification(existing, verification) {
+			return domain.RightsVerification{}, domain.ErrDeclarationTerminal
+		}
+		return existing, nil
+	}
 	return verification, err
+}
+
+func sameRightsVerification(existing, requested domain.RightsVerification) bool {
+	if existing.DeclarationID != requested.DeclarationID || existing.Outcome != requested.Outcome || existing.Reason != requested.Reason {
+		return false
+	}
+	if (existing.EvidenceID == nil) != (requested.EvidenceID == nil) || (existing.ActorID == nil) != (requested.ActorID == nil) {
+		return false
+	}
+	if existing.EvidenceID != nil && *existing.EvidenceID != *requested.EvidenceID {
+		return false
+	}
+	return existing.ActorID == nil || *existing.ActorID == *requested.ActorID
 }
 
 func (s *Service) DisposeRightsDeclaration(ctx context.Context, cmd DisposeRightsDeclarationCommand) (domain.RightsDisposition, error) {
@@ -365,6 +401,9 @@ func (s *Service) buildEffectiveRightsSnapshotTx(ctx context.Context, tx pgx.Tx,
 	snapshot := domain.EffectiveRightsSnapshot{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, TargetDatasetVersionID: cmd.TargetDatasetVersionID, CalculationAsOf: cmd.AsOf.UTC(), ConsumerRef: strings.TrimSpace(cmd.ConsumerRef), Purpose: strings.TrimSpace(cmd.Purpose), CalculationRuleVersion: "intersection-v1", CalculationRuleHash: "rights-intersection-v1", CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
 	provenanceByInput := make([]map[string]effectiveRightsProvenanceDecision, len(inputs))
 	for idx, lineage := range inputs {
+		if !lineage.ResourceMapped || lineage.DataResourceID == uuid.Nil {
+			return domain.EffectiveRightsSnapshot{}, fmt.Errorf("%w: lineage input %s has no mapped data resource", domain.ErrEffectiveRights, lineage.DatasetVersionID)
+		}
 		provenanceByInput[idx] = make(map[string]effectiveRightsProvenanceDecision)
 		for _, action := range domain.SupportedRightsActions {
 			provenance, err := s.resolveEffectiveRightsProvenanceTx(ctx, tx, cmd.WorkspaceID, lineage.DataResourceID, cmd.ConsumerRef, cmd.Purpose, action, cmd.AsOf)

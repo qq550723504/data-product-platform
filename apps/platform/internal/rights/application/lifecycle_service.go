@@ -181,6 +181,9 @@ func (s *Service) DisposeDelegation(ctx context.Context, cmd DisposeDelegationCo
 		if kind == "REVOKED" {
 			eventType = "GrantorAuthorityDelegationRevoked"
 			action = "GRANTOR_AUTHORITY_DELEGATION_REVOKED"
+		} else if kind == "SUPERSEDED" {
+			eventType = "GrantorAuthorityDelegationSuperseded"
+			action = "GRANTOR_AUTHORITY_DELEGATION_SUPERSEDED"
 		}
 		if err := appendEvent(ctx, tx, "GRANTOR_AUTHORITY_DELEGATION_CHAIN", cmd.ChainID, eventType, map[string]any{"chainId": cmd.ChainID, "edgeId": cmd.EdgeID, "dispositionId": disposition.ID, "effectiveAt": disposition.EffectiveAt}); err != nil {
 			return err

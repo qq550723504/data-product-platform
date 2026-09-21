@@ -19,6 +19,7 @@ import (
 var ErrBindingIdempotentReplay = errors.New("authorization provenance binding idempotent replay")
 var ErrDeclarationDispositionIdempotentReplay = errors.New("rights declaration disposition idempotent replay")
 var ErrBindingDispositionIdempotentReplay = errors.New("authorization provenance binding disposition idempotent replay")
+var ErrVerificationIdempotentReplay = errors.New("rights declaration verification idempotent replay")
 
 func (r *PostgresRepository) InsertRightsDeclaration(ctx context.Context, tx pgx.Tx, declaration domain.RightsDeclaration) error {
 	restrictions, err := json.Marshal(declaration.Restrictions)
@@ -137,11 +138,28 @@ func (r *PostgresRepository) GetRightsDeclaration(ctx context.Context, id uuid.U
 }
 
 func (r *PostgresRepository) InsertDeclarationVerification(ctx context.Context, tx pgx.Tx, verification domain.RightsVerification) error {
-	_, err := tx.Exec(ctx, `INSERT INTO rights_declaration_verification(id,declaration_id,outcome,reason,evidence_id,occurred_at,actor_id,activity_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, verification.ID, verification.DeclarationID, verification.Outcome, verification.Reason, verification.EvidenceID, verification.OccurredAt, verification.ActorID, verification.ActivityID)
+	var inserted uuid.UUID
+	err := tx.QueryRow(ctx, `INSERT INTO rights_declaration_verification(id,declaration_id,outcome,reason,evidence_id,occurred_at,actor_id,activity_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (declaration_id,activity_id) DO NOTHING RETURNING id`, verification.ID, verification.DeclarationID, verification.Outcome, verification.Reason, verification.EvidenceID, verification.OccurredAt, verification.ActorID, verification.ActivityID).Scan(&inserted)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ErrVerificationIdempotentReplay
+	}
 	if err != nil {
 		return fmt.Errorf("insert rights declaration verification: %w", err)
 	}
 	return nil
+}
+
+func (r *PostgresRepository) GetDeclarationVerificationByActivityID(ctx context.Context, declarationID, activityID uuid.UUID) (domain.RightsVerification, error) {
+	var v domain.RightsVerification
+	err := r.pool.QueryRow(ctx, `SELECT id,declaration_id,outcome,reason,evidence_id,occurred_at,actor_id,activity_id FROM rights_declaration_verification WHERE declaration_id=$1 AND activity_id=$2`, declarationID, activityID).
+		Scan(&v.ID, &v.DeclarationID, &v.Outcome, &v.Reason, &v.EvidenceID, &v.OccurredAt, &v.ActorID, &v.ActivityID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.RightsVerification{}, ErrNotFound
+	}
+	if err != nil {
+		return domain.RightsVerification{}, fmt.Errorf("get rights declaration verification by activity: %w", err)
+	}
+	return v, nil
 }
 
 func (r *PostgresRepository) InsertDeclarationDisposition(ctx context.Context, tx pgx.Tx, disposition domain.RightsDisposition) error {
@@ -475,10 +493,11 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 type LineageInput struct {
 	DatasetVersionID uuid.UUID
 	DataResourceID   uuid.UUID
+	ResourceMapped   bool
 }
 
 func (r *PostgresRepository) RequiredLineageInputs(ctx context.Context, target uuid.UUID) ([]LineageInput, error) {
-	rows, err := r.pool.Query(ctx, `WITH RECURSIVE lineage(version_id) AS (SELECT $1::uuid UNION SELECT l.input_version_id FROM dataset_version_lineage l JOIN lineage x ON x.version_id=l.output_version_id) SELECT DISTINCT l.version_id,d.source_resource_id FROM lineage l JOIN dataset_version v ON v.id=l.version_id JOIN dataset d ON d.id=v.dataset_id WHERE d.source_resource_id IS NOT NULL ORDER BY l.version_id`, target)
+	rows, err := r.pool.Query(ctx, `WITH RECURSIVE lineage(version_id) AS (SELECT $1::uuid UNION SELECT l.input_version_id FROM dataset_version_lineage l JOIN lineage x ON x.version_id=l.output_version_id) SELECT DISTINCT l.version_id,d.source_resource_id FROM lineage l JOIN dataset_version v ON v.id=l.version_id JOIN dataset d ON d.id=v.dataset_id ORDER BY l.version_id`, target)
 	if err != nil {
 		return nil, fmt.Errorf("resolve effective rights lineage: %w", err)
 	}
@@ -486,8 +505,13 @@ func (r *PostgresRepository) RequiredLineageInputs(ctx context.Context, target u
 	var inputs []LineageInput
 	for rows.Next() {
 		var i LineageInput
-		if err := rows.Scan(&i.DatasetVersionID, &i.DataResourceID); err != nil {
+		var resourceID *uuid.UUID
+		if err := rows.Scan(&i.DatasetVersionID, &resourceID); err != nil {
 			return nil, err
+		}
+		if resourceID != nil {
+			i.DataResourceID = *resourceID
+			i.ResourceMapped = true
 		}
 		inputs = append(inputs, i)
 	}
@@ -495,7 +519,7 @@ func (r *PostgresRepository) RequiredLineageInputs(ctx context.Context, target u
 }
 
 func (r *PostgresRepository) RequiredLineageInputsTx(ctx context.Context, tx pgx.Tx, target uuid.UUID) ([]LineageInput, error) {
-	rows, err := tx.Query(ctx, `WITH RECURSIVE lineage(version_id) AS (SELECT $1::uuid UNION SELECT l.input_version_id FROM dataset_version_lineage l JOIN lineage x ON x.version_id=l.output_version_id) SELECT DISTINCT l.version_id,d.source_resource_id FROM lineage l JOIN dataset_version v ON v.id=l.version_id JOIN dataset d ON d.id=v.dataset_id WHERE d.source_resource_id IS NOT NULL ORDER BY l.version_id`, target)
+	rows, err := tx.Query(ctx, `WITH RECURSIVE lineage(version_id) AS (SELECT $1::uuid UNION SELECT l.input_version_id FROM dataset_version_lineage l JOIN lineage x ON x.version_id=l.output_version_id) SELECT DISTINCT l.version_id,d.source_resource_id FROM lineage l JOIN dataset_version v ON v.id=l.version_id JOIN dataset d ON d.id=v.dataset_id ORDER BY l.version_id`, target)
 	if err != nil {
 		return nil, fmt.Errorf("resolve effective rights lineage in transaction: %w", err)
 	}
@@ -503,8 +527,13 @@ func (r *PostgresRepository) RequiredLineageInputsTx(ctx context.Context, tx pgx
 	var inputs []LineageInput
 	for rows.Next() {
 		var input LineageInput
-		if err := rows.Scan(&input.DatasetVersionID, &input.DataResourceID); err != nil {
+		var resourceID *uuid.UUID
+		if err := rows.Scan(&input.DatasetVersionID, &resourceID); err != nil {
 			return nil, err
+		}
+		if resourceID != nil {
+			input.DataResourceID = *resourceID
+			input.ResourceMapped = true
 		}
 		inputs = append(inputs, input)
 	}

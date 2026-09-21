@@ -3,6 +3,7 @@ package rightshttp
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -233,11 +234,30 @@ func (h *Handler) verifyDeclaration(w http.ResponseWriter, r *http.Request, outc
 		httpserver.WriteError(w, r, 400, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
 		return
 	}
-	var body struct {
-		Reason string `json:"reason"`
+	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, 400, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
 	}
-	_ = json.NewDecoder(r.Body).Decode(&body)
-	v, err := h.service.VerifyRightsDeclaration(r.Context(), application.VerifyRightsDeclarationCommand{DeclarationID: id, Outcome: outcome, Reason: body.Reason, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
+	var body struct {
+		Reason     string `json:"reason"`
+		EvidenceID string `json:"evidenceId"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil && !errors.Is(err, io.EOF) {
+		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid JSON request", nil)
+		return
+	}
+	var evidenceID *uuid.UUID
+	if strings.TrimSpace(body.EvidenceID) != "" {
+		parsed, parseErr := uuid.Parse(body.EvidenceID)
+		if parseErr != nil {
+			httpserver.WriteError(w, r, 400, "INVALID_EVIDENCE_ID", "evidenceId must be a UUID", nil)
+			return
+		}
+		evidenceID = &parsed
+	}
+	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("rights-declaration-verification:"+outcome+":"+id.String()+":"+idempotencyKey))
+	v, err := h.service.VerifyRightsDeclaration(r.Context(), application.VerifyRightsDeclarationCommand{DeclarationID: id, Outcome: outcome, Reason: body.Reason, EvidenceID: evidenceID, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
 	if err != nil {
 		httpserver.WriteError(w, r, 400, "RIGHTS_DECLARATION_VERIFY_FAILED", err.Error(), nil)
 		return
