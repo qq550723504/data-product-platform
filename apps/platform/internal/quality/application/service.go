@@ -113,6 +113,7 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 		return domain.Assessment{}, err
 	}
 	var result domain.Assessment
+	var replayAssessmentID uuid.UUID
 	err = s.tx.WithAdvisoryLock(ctx, assessmentAttemptLockPrefix+attemptID.String(), func(ctx context.Context) error {
 		startedAt := time.Now().UTC()
 		claimed, _, err := s.claimAttempt(ctx, cmd, attemptID, startedAt)
@@ -127,8 +128,14 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			if !found {
 				return ErrAssessmentAttemptInProgress
 			}
-			result, err = s.replayAttempt(ctx, state)
-			return err
+			if state.Outcome == "FAILED" {
+				return fmt.Errorf("%w: %s", ErrAssessmentAttemptFailed, state.ErrorMessage)
+			}
+			if state.AssessmentID == nil {
+				return ErrAssessmentAttemptInProgress
+			}
+			replayAssessmentID = *state.AssessmentID
+			return nil
 		}
 		findings, metrics, err := native.Evaluate(policy, native.DatasetContext{
 			Table:    table,
@@ -224,6 +231,9 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	})
 	if errors.Is(err, transaction.ErrAdvisoryLockBusy) {
 		return domain.Assessment{}, ErrAssessmentAttemptInProgress
+	}
+	if err == nil && replayAssessmentID != uuid.Nil {
+		result, err = s.repo.GetAssessment(ctx, replayAssessmentID)
 	}
 	return result, err
 }
