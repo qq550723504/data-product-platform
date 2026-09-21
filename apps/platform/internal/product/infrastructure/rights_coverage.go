@@ -91,7 +91,12 @@ func (r *PostgresRepository) EvaluateRightsCoverage(ctx context.Context, snapsho
 			  AND (apb.grantor_authority_mode='DIRECT_DECLARATION_PARTY' OR (
 				apb.delegation_chain_id IS NOT NULL
 				AND EXISTS (SELECT 1 FROM grantor_authority_delegation_chain c WHERE c.id=apb.delegation_chain_id AND c.source_declaration_id=apb.rights_declaration_id AND c.status='FINALIZED' AND c.chain_hash=apb.delegation_chain_hash)
-				AND EXISTS (SELECT 1 FROM rights_declaration_party rp WHERE rp.declaration_id=rd.id AND rp.party_ref=rd.claimant_ref AND rp.role IN ('RIGHTS_HOLDER','PROVIDER','CONTROLLER'))
+				AND EXISTS (
+					SELECT 1 FROM rights_declaration_party rp
+					WHERE rp.declaration_id=rd.id
+					  AND rp.party_ref=(SELECT e.delegator_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=apb.delegation_chain_id ORDER BY e.ordinal LIMIT 1)
+					  AND rp.role IN ('RIGHTS_HOLDER','PROVIDER','CONTROLLER')
+				)
 				AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition x WHERE x.chain_id=apb.delegation_chain_id AND x.effective_at <= $2)
 				AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition x JOIN grantor_authority_delegation_edge e ON e.id=x.edge_id WHERE e.chain_id=apb.delegation_chain_id AND x.effective_at <= $2)
 				AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_edge e WHERE e.chain_id=apb.delegation_chain_id AND ((e.valid_from IS NOT NULL AND e.valid_from > $2) OR (e.valid_to IS NOT NULL AND e.valid_to <= $2)))
@@ -100,7 +105,6 @@ func (r *PostgresRepository) EvaluateRightsCoverage(ctx context.Context, snapsho
 					WHERE e.chain_id=apb.delegation_chain_id
 					  AND (e.data_resource_id<>ar.data_resource_id OR NOT (ar.actions <@ e.grantable_actions) OR NOT (rs.purpose=ANY(e.grantable_purposes)) OR e.scope_type<>'ALL_RESOURCE' OR e.scope_ref<>ar.data_resource_id::text)
 				)
-				AND (SELECT e.delegator_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=apb.delegation_chain_id ORDER BY e.ordinal LIMIT 1)=rd.claimant_ref
 				AND (SELECT e.delegate_ref FROM grantor_authority_delegation_edge e WHERE e.chain_id=apb.delegation_chain_id ORDER BY e.ordinal DESC LIMIT 1)=apb.grantor_ref
 				AND NOT EXISTS (
 					SELECT 1
