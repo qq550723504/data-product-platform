@@ -449,6 +449,10 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 	if cmd.AsOf.IsZero() {
 		cmd.AsOf = time.Now().UTC()
 	}
+	cmd.AsOf = cmd.AsOf.UTC().Round(time.Microsecond)
+	if !requestedAsOf.IsZero() {
+		requestedAsOf = requestedAsOf.UTC().Round(time.Microsecond)
+	}
 	if cmd.ActivityID != nil {
 		replayID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("effective-rights-compute:"+cmd.WorkspaceID.String()+":"+cmd.ActivityID.String()))
 		existing, replayErr := s.repo.GetEffectiveRights(ctx, replayID)
@@ -587,7 +591,7 @@ func sameEffectiveRightsRequest(existing domain.EffectiveRightsSnapshot, request
 }
 
 func (s *Service) buildEffectiveRightsSnapshotTx(ctx context.Context, tx pgx.Tx, cmd ComputeEffectiveRightsCommand, inputs []infrastructure.LineageInput) (domain.EffectiveRightsSnapshot, error) {
-	snapshot := domain.EffectiveRightsSnapshot{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, TargetDatasetVersionID: cmd.TargetDatasetVersionID, CalculationAsOf: cmd.AsOf.UTC(), ConsumerRef: strings.TrimSpace(cmd.ConsumerRef), Purpose: strings.TrimSpace(cmd.Purpose), CalculationRuleVersion: "intersection-v1", CalculationRuleHash: "rights-intersection-v1", CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
+	snapshot := domain.EffectiveRightsSnapshot{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, TargetDatasetVersionID: cmd.TargetDatasetVersionID, CalculationAsOf: cmd.AsOf.UTC().Round(time.Microsecond), ConsumerRef: strings.TrimSpace(cmd.ConsumerRef), Purpose: strings.TrimSpace(cmd.Purpose), CalculationRuleVersion: "intersection-v1", CalculationRuleHash: "rights-intersection-v1", CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
 	if cmd.ActivityID != nil {
 		snapshot.ID = uuid.NewSHA1(uuid.NameSpaceURL, []byte("effective-rights-compute:"+cmd.WorkspaceID.String()+":"+cmd.ActivityID.String()))
 	}
