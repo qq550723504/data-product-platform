@@ -143,6 +143,9 @@ func TestCurrentCertificationRequiresDispositionRulesAndExplicitProfileContext(t
 	if certification.CurrentAt(time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC), []CertificationDisposition{disposition}) {
 		t.Fatal("superseded certification remained current")
 	}
+	if _, err := NewDisposition(workspaceID, certification.ID, DispositionRevoked, time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC), "revoked", &replacement, nil, nil); err == nil {
+		t.Fatal("REVOKED disposition accepted a replacement certification")
+	}
 }
 
 func TestCurrentCertificationRejectsMissingContextEvenForAnyProfile(t *testing.T) {

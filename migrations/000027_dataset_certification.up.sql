@@ -195,26 +195,53 @@ FOR EACH ROW EXECUTE FUNCTION prevent_dataset_certification_mutation();
 
 CREATE OR REPLACE FUNCTION validate_certification_disposition_references()
 RETURNS trigger AS $$
-DECLARE certification_workspace uuid;
+DECLARE
+    certification_workspace uuid;
+    certification_dataset_version uuid;
+    certification_profile_id uuid;
+    certification_decision varchar(16);
+    certification_issued_at timestamptz;
+    replacement_workspace uuid;
+    replacement_dataset_version uuid;
+    replacement_profile_id uuid;
+    replacement_decision varchar(16);
+    evidence_workspace uuid;
+    evidence_dataset_version uuid;
 BEGIN
-    SELECT workspace_id INTO certification_workspace
-      FROM dataset_certification WHERE id = NEW.certification_id;
+    SELECT c.workspace_id, c.dataset_version_id, c.certification_profile_id, c.decision, c.issued_at
+      INTO certification_workspace, certification_dataset_version, certification_profile_id, certification_decision, certification_issued_at
+      FROM dataset_certification c WHERE c.id = NEW.certification_id;
     IF certification_workspace IS DISTINCT FROM NEW.workspace_id THEN
         RAISE EXCEPTION 'CertificationDisposition crosses workspace boundary';
     END IF;
+    IF certification_decision <> 'CERTIFIED' THEN
+        RAISE EXCEPTION 'CertificationDisposition requires a CERTIFIED source fact';
+    END IF;
+    IF NEW.effective_at < certification_issued_at THEN
+        RAISE EXCEPTION 'CertificationDisposition cannot precede certification issuance';
+    END IF;
+    IF NEW.disposition <> 'SUPERSEDED' AND NEW.superseded_by_certification_id IS NOT NULL THEN
+        RAISE EXCEPTION 'REVOKED CertificationDisposition cannot carry a replacement';
+    END IF;
     IF NEW.superseded_by_certification_id IS NOT NULL THEN
-        IF NOT EXISTS (
-            SELECT 1 FROM dataset_certification c
-             WHERE c.id = NEW.superseded_by_certification_id
-               AND c.workspace_id = NEW.workspace_id
-        ) THEN
-            RAISE EXCEPTION 'CertificationDisposition replacement is not in the same workspace';
+        SELECT c.workspace_id, c.dataset_version_id, c.certification_profile_id, c.decision
+          INTO replacement_workspace, replacement_dataset_version, replacement_profile_id, replacement_decision
+          FROM dataset_certification c WHERE c.id = NEW.superseded_by_certification_id;
+        IF replacement_workspace IS DISTINCT FROM NEW.workspace_id
+           OR replacement_dataset_version IS DISTINCT FROM certification_dataset_version
+           OR replacement_profile_id IS DISTINCT FROM certification_profile_id
+           OR replacement_decision <> 'CERTIFIED' THEN
+            RAISE EXCEPTION 'CertificationDisposition replacement must be a certified same-target profile';
         END IF;
     END IF;
-    IF NEW.evidence_snapshot_id IS NOT NULL AND NOT EXISTS (
-        SELECT 1 FROM evidence_snapshot e WHERE e.id = NEW.evidence_snapshot_id AND e.workspace_id = NEW.workspace_id
-    ) THEN
-        RAISE EXCEPTION 'CertificationDisposition evidence is not in the same workspace';
+    IF NEW.evidence_snapshot_id IS NOT NULL THEN
+        SELECT workspace_id, dataset_version_id
+          INTO evidence_workspace, evidence_dataset_version
+          FROM evidence_snapshot WHERE id = NEW.evidence_snapshot_id;
+        IF evidence_workspace IS DISTINCT FROM NEW.workspace_id
+           OR evidence_dataset_version IS DISTINCT FROM certification_dataset_version THEN
+            RAISE EXCEPTION 'CertificationDisposition evidence does not match the certified target';
+        END IF;
     END IF;
     RETURN NEW;
 END;

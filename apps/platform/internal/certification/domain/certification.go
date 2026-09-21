@@ -374,6 +374,9 @@ func NewDisposition(workspaceID, certificationID uuid.UUID, disposition Disposit
 	if disposition == DispositionSuperseded && (supersededBy == nil || *supersededBy == uuid.Nil || *supersededBy == certificationID) {
 		return CertificationDisposition{}, fmt.Errorf("%w: SUPERSEDED requires a different replacement certification", ErrInvalidDisposition)
 	}
+	if disposition == DispositionRevoked && supersededBy != nil {
+		return CertificationDisposition{}, fmt.Errorf("%w: REVOKED cannot carry a replacement certification", ErrInvalidDisposition)
+	}
 	return CertificationDisposition{
 		ID:                          uuid.New(),
 		WorkspaceID:                 workspaceID,
