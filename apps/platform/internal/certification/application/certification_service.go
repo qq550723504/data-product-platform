@@ -117,7 +117,7 @@ func (s *CertificationService) Evaluate(ctx context.Context, cmd EvaluateDataset
 	}
 	var result domain.DatasetCertification
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if err := s.certificationRepo.BindTrustedEvaluationFactsTx(ctx, tx, &input); err != nil {
+		if err := s.certificationRepo.BindTrustedEvaluationFactsTx(ctx, tx, profile, &input); err != nil {
 			return err
 		}
 		candidate, err := domain.Evaluate(profile, input)
