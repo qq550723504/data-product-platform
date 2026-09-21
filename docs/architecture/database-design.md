@@ -94,13 +94,17 @@ CostEvent activity identity extension
 CostAllocation
 ~~~
 
-**仍在推进 / 尚未完成第一阶段：**
+**已进入 main：**
 
 ~~~text
 CertificationProfile snapshot
 DatasetCertification
 CertificationDisposition (REVOKED / SUPERSEDED)   # #134 / PR #149
+~~~
 
+**仍在推进 / 尚未完成第一阶段：**
+
+~~~text
 Certified Dataset API / UI                         # #135
 enterprise-activity E2E Pilot                     # #136
 ~~~

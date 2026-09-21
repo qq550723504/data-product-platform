@@ -30,7 +30,7 @@
 
 #137 Data Rights Provenance ✅
         ↓
-#134 DatasetCertification 🚧 (PR #149)
+#134 DatasetCertification ✅ (PR #149)
         ↓
 #135 API / UI ⏳
         ↓
@@ -192,7 +192,7 @@ CertificationProfile 可以要求：
 - 持久化不可变 `CertificationProfile` version/snapshot/hash；Profile 后续变化不得改变历史 Certification 的解释；
 - purpose/action/consumer/delivery channel 四个 delivery-context 维度必须显式 ANY / EXPLICIT；EXPLICIT 时冻结对应强类型 membership；缺失/NULL/UNKNOWN 不得被解释成 ANY；
 - 显式 `EvaluateDatasetCertification`（或等价 Certify Command），禁止 generic PATCH certification status；
-- 每次评估明确绑定并冻结：workspace、DatasetVersion、CertificationProfile snapshot/version/hash、QualityAssessment、finalized immutable RightsSnapshot、**finalized EffectiveRightsSnapshot identity/hash（Rights required 时）**、required ComplianceResult、required ContractVersion、Evidence/EvidenceSnapshot；Effective Rights snapshot 的 required-input membership/input-set hash 必须与 target DatasetVersion 实际 lineage 一致；
+- 每次评估明确绑定并冻结：workspace、DatasetVersion、CertificationProfile snapshot/version/hash、QualityAssessment、**finalized EffectiveRightsSnapshot identity/hash + frozen declaration/binding provenance（Rights required 时）**、required ComplianceResult、required ContractVersion、Evidence/EvidenceSnapshot；显式 RightsSnapshot 为可选加强证据，若提供则必须 finalized 且覆盖 EffectiveRights 冻结的 provenance；Effective Rights snapshot 的 required-input membership/input-set hash 必须与 target DatasetVersion 实际 lineage 一致；
 - Certification 必须验证 frozen rights evidence context 覆盖 Profile rights applicability：consumer/purpose/action/normalized scope 逐维做“Profile required set ⊆ frozen rights coverage”。Profile 某维度=ANY 时，只能由 rights evidence 显式 ANY/universal coverage 支撑；consumer A / RESEARCH / narrow scope 的 snapshot 不得用于 consumer B、COMMERCIAL 或 ANY profile；
 - required quality/rights/compliance/contract/traceability/evidence 任一缺失或不匹配必须 fail closed 为 REJECTED/阻断，不能产生 CERTIFIED；
 - CurrentCertificationGate 对 purpose/action/consumer/delivery channel 任一维度无法从 frozen Profile snapshot 明确证明覆盖时必须 BLOCKED；只有显式 ANY 才代表该维度不限；
