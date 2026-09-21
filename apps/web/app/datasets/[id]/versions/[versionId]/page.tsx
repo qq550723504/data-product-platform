@@ -96,7 +96,7 @@ export default async function DatasetVersionDetailPage({
     const selectedProfile = profileMap.get(query.profileId ?? "") ?? profiles[0];
     const profileScope = selectedProfile?.rights.scopes.values?.[0];
     const requested = {
-      profileId: query.profileId ?? selectedProfile?.id ?? "",
+      profileId: selectedProfile?.id ?? "",
       consumer: query.consumer ?? firstValue(selectedProfile?.consumers.values),
       purpose: query.purpose ?? firstValue(selectedProfile?.purpose.values),
       action: query.action ?? firstValue(selectedProfile?.actions.values),
@@ -110,7 +110,7 @@ export default async function DatasetVersionDetailPage({
       && requested.action.trim() !== ""
       && requested.delivery.trim() !== ""
       && requested.scopeType.trim() !== ""
-      && (requested.scopeType === "ALL_RESOURCE" || requested.scopeRef.trim() !== "");
+      && (requested.scopeType.trim().toUpperCase() === "ALL_RESOURCE" || requested.scopeRef.trim() !== "");
     const eligibility = canCheck ? await platform.deliveryEligibility(versionId, requested) : null;
     const latestAssessment = quality.items[0];
     const latestReport = latestAssessment ? await platform.qualityReport(latestAssessment.id, 50, 0) : null;
