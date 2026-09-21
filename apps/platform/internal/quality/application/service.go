@@ -33,6 +33,7 @@ var ErrAssessmentAttemptFailed = errors.New("quality assessment attempt already 
 
 const attemptOutcomeRecoveryTimeout = 5 * time.Second
 const assessmentAttemptLeaseDuration = time.Hour
+const assessmentAttemptLockPrefix = "quality-assessment-attempt:"
 
 type Service struct {
 	industryPackRoot string
@@ -111,109 +112,117 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	if err != nil {
 		return domain.Assessment{}, err
 	}
-	startedAt := time.Now().UTC()
-	claimed, _, err := s.claimAttempt(ctx, cmd, attemptID, startedAt)
-	if err != nil {
-		return domain.Assessment{}, err
-	}
-	if !claimed {
-		attempt, found, err := s.reconcileAttempt(ctx, cmd, attemptID)
+	var result domain.Assessment
+	err = s.tx.WithAdvisoryLock(ctx, assessmentAttemptLockPrefix+attemptID.String(), func(ctx context.Context) error {
+		startedAt := time.Now().UTC()
+		claimed, _, err := s.claimAttempt(ctx, cmd, attemptID, startedAt)
 		if err != nil {
-			return domain.Assessment{}, err
-		}
-		if !found {
-			return domain.Assessment{}, ErrAssessmentAttemptInProgress
-		}
-		return attempt, nil
-	}
-	findings, metrics, err := native.Evaluate(policy, native.DatasetContext{
-		Table:    table,
-		Metadata: version.Metadata,
-		ReadyAt:  version.ReadyAt,
-		Now:      cmd.Now,
-	})
-	if err != nil {
-		if outcomeErr := s.recordAttemptOutcomeAfterEvaluation(ctx, attemptID, "FAILED", nil, err.Error(), time.Now().UTC()); outcomeErr != nil {
-			return domain.Assessment{}, fmt.Errorf("quality evaluation failed: %v; record attempt outcome: %w", err, outcomeErr)
-		}
-		return domain.Assessment{}, err
-	}
-	result := domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, policy.Metadata.Version,
-		policy.SourceContentSHA256, policy.SourceContent, native.EvaluatorName, native.EvaluatorVersion,
-		metrics, findings, cmd.ActorID)
-
-	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if err := s.repo.InsertResult(ctx, tx, result); err != nil {
 			return err
 		}
-		if err := s.datasetRepo.SetQualityStatus(ctx, tx, version.ID, string(result.GateDecision)); err != nil {
+		if !claimed {
+			state, found, err := s.reconcileAttemptState(ctx, cmd, attemptID)
+			if err != nil {
+				return err
+			}
+			if !found {
+				return ErrAssessmentAttemptInProgress
+			}
+			result, err = s.replayAttempt(ctx, state)
 			return err
 		}
-		if _, err := evidence.Append(ctx, tx, evidence.Record{
-			WorkspaceID:  cmd.WorkspaceID,
-			EvidenceType: "QUALITY_RESULT",
-			Title:        "Quality gate result",
-			SourceType:   "QUALITY_RESULT",
-			SourceID:     &result.ID,
-			Metadata: map[string]any{
-				"datasetVersionId":     version.ID,
-				"ruleSetRef":           cmd.RuleSetRef,
-				"ruleSetVersion":       result.RuleSetVersion,
-				"ruleSetContentSha256": result.RuleSetContentSHA256,
-				"gateDecision":         result.GateDecision,
-				"metrics":              result.Metrics,
-			},
-			CreatedBy: cmd.ActorID,
-		}, evidence.Relation{ObjectType: "DATASET_VERSION", ObjectID: version.ID, RelationType: "QUALITY_EVIDENCE"},
-			evidence.Relation{ObjectType: "QUALITY_RESULT", ObjectID: result.ID, RelationType: "EVIDENCE_FOR"}); err != nil {
-			return err
-		}
-		eventType := "QualityPassed"
-		if result.GateDecision == domain.GateFail {
-			eventType = "QualityFailed"
-		} else if result.GateDecision == domain.GateReview {
-			eventType = "QualityReviewRequired"
-		}
-		event, err := outbox.NewEvent("QUALITY_RESULT", result.ID, eventType, map[string]any{
-			"qualityResultId":      result.ID,
-			"datasetVersionId":     version.ID,
-			"gateDecision":         result.GateDecision,
-			"ruleSetVersion":       result.RuleSetVersion,
-			"ruleSetContentSha256": result.RuleSetContentSHA256,
-			"evaluatorName":        result.EvaluatorName,
-			"evaluatorVersion":     result.EvaluatorVersion,
+		findings, metrics, err := native.Evaluate(policy, native.DatasetContext{
+			Table:    table,
+			Metadata: version.Metadata,
+			ReadyAt:  version.ReadyAt,
+			Now:      cmd.Now,
 		})
 		if err != nil {
+			if outcomeErr := s.recordAttemptOutcomeAfterEvaluation(ctx, attemptID, "FAILED", nil, err.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("quality evaluation failed: %v; record attempt outcome: %w", err, outcomeErr)
+			}
 			return err
 		}
-		if err := outbox.Append(ctx, tx, event); err != nil {
-			return err
-		}
-		if err := audit.Append(ctx, tx, audit.Event{
-			WorkspaceID: &cmd.WorkspaceID,
-			ActorType:   actorType(cmd.ActorID),
-			ActorID:     cmd.ActorID,
-			Action:      "QUALITY_CHECK_COMPLETED",
-			ObjectType:  "QUALITY_RESULT",
-			ObjectID:    result.ID,
-			AfterState: map[string]any{
+		result = domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, policy.Metadata.Version,
+			policy.SourceContentSHA256, policy.SourceContent, native.EvaluatorName, native.EvaluatorVersion,
+			metrics, findings, cmd.ActorID)
+
+		err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+			if err := s.repo.InsertResult(ctx, tx, result); err != nil {
+				return err
+			}
+			if err := s.datasetRepo.SetQualityStatus(ctx, tx, version.ID, string(result.GateDecision)); err != nil {
+				return err
+			}
+			if _, err := evidence.Append(ctx, tx, evidence.Record{
+				WorkspaceID:  cmd.WorkspaceID,
+				EvidenceType: "QUALITY_RESULT",
+				Title:        "Quality gate result",
+				SourceType:   "QUALITY_RESULT",
+				SourceID:     &result.ID,
+				Metadata: map[string]any{
+					"datasetVersionId":     version.ID,
+					"ruleSetRef":           cmd.RuleSetRef,
+					"ruleSetVersion":       result.RuleSetVersion,
+					"ruleSetContentSha256": result.RuleSetContentSHA256,
+					"gateDecision":         result.GateDecision,
+					"metrics":              result.Metrics,
+				},
+				CreatedBy: cmd.ActorID,
+			}, evidence.Relation{ObjectType: "DATASET_VERSION", ObjectID: version.ID, RelationType: "QUALITY_EVIDENCE"},
+				evidence.Relation{ObjectType: "QUALITY_RESULT", ObjectID: result.ID, RelationType: "EVIDENCE_FOR"}); err != nil {
+				return err
+			}
+			eventType := "QualityPassed"
+			if result.GateDecision == domain.GateFail {
+				eventType = "QualityFailed"
+			} else if result.GateDecision == domain.GateReview {
+				eventType = "QualityReviewRequired"
+			}
+			event, err := outbox.NewEvent("QUALITY_RESULT", result.ID, eventType, map[string]any{
+				"qualityResultId":      result.ID,
 				"datasetVersionId":     version.ID,
 				"gateDecision":         result.GateDecision,
 				"ruleSetVersion":       result.RuleSetVersion,
 				"ruleSetContentSha256": result.RuleSetContentSHA256,
 				"evaluatorName":        result.EvaluatorName,
 				"evaluatorVersion":     result.EvaluatorVersion,
-			},
-			TraceID: cmd.TraceID,
-		}); err != nil {
-			return err
+			})
+			if err != nil {
+				return err
+			}
+			if err := outbox.Append(ctx, tx, event); err != nil {
+				return err
+			}
+			if err := audit.Append(ctx, tx, audit.Event{
+				WorkspaceID: &cmd.WorkspaceID,
+				ActorType:   actorType(cmd.ActorID),
+				ActorID:     cmd.ActorID,
+				Action:      "QUALITY_CHECK_COMPLETED",
+				ObjectType:  "QUALITY_RESULT",
+				ObjectID:    result.ID,
+				AfterState: map[string]any{
+					"datasetVersionId":     version.ID,
+					"gateDecision":         result.GateDecision,
+					"ruleSetVersion":       result.RuleSetVersion,
+					"ruleSetContentSha256": result.RuleSetContentSHA256,
+					"evaluatorName":        result.EvaluatorName,
+					"evaluatorVersion":     result.EvaluatorVersion,
+				},
+				TraceID: cmd.TraceID,
+			}); err != nil {
+				return err
+			}
+			return s.repo.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, "SUCCEEDED", &result.ID, "", result.CreatedAt)
+		})
+		if err != nil {
+			if outcomeErr := s.recordAttemptOutcomeAfterEvaluation(ctx, attemptID, "FAILED", nil, err.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("persist quality assessment failed: %v; record attempt outcome: %w", err, outcomeErr)
+			}
 		}
-		return s.repo.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, "SUCCEEDED", &result.ID, "", result.CreatedAt)
+		return err
 	})
-	if err != nil {
-		if outcomeErr := s.recordAttemptOutcomeAfterEvaluation(ctx, attemptID, "FAILED", nil, err.Error(), time.Now().UTC()); outcomeErr != nil {
-			return result, fmt.Errorf("persist quality assessment failed: %v; record attempt outcome: %w", err, outcomeErr)
-		}
+	if errors.Is(err, transaction.ErrAdvisoryLockBusy) {
+		return domain.Assessment{}, ErrAssessmentAttemptInProgress
 	}
 	return result, err
 }
@@ -235,6 +244,24 @@ func (s *Service) replayAttempt(ctx context.Context, state infrastructure.Assess
 func (s *Service) reconcileAttempt(ctx context.Context, cmd RunCommand, attemptID uuid.UUID) (domain.Assessment, bool, error) {
 	var state infrastructure.AssessmentAttemptState
 	var found bool
+	err := s.tx.WithAdvisoryLock(ctx, assessmentAttemptLockPrefix+attemptID.String(), func(ctx context.Context) error {
+		var err error
+		state, found, err = s.reconcileAttemptState(ctx, cmd, attemptID)
+		return err
+	})
+	if errors.Is(err, transaction.ErrAdvisoryLockBusy) {
+		return domain.Assessment{}, true, ErrAssessmentAttemptInProgress
+	}
+	if err != nil || !found {
+		return domain.Assessment{}, found, err
+	}
+	assessment, err := s.replayAttempt(ctx, state)
+	return assessment, true, err
+}
+
+func (s *Service) reconcileAttemptState(ctx context.Context, cmd RunCommand, attemptID uuid.UUID) (infrastructure.AssessmentAttemptState, bool, error) {
+	var state infrastructure.AssessmentAttemptState
+	var found bool
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		attempt, attemptFound, err := s.repo.ReconcileAssessmentAttempt(ctx, tx, attemptID, cmd.WorkspaceID, cmd.DatasetVersionID, cmd.RuleSetRef, time.Now().UTC())
 		if errors.Is(err, infrastructure.ErrAssessmentAttemptConflict) {
@@ -249,11 +276,7 @@ func (s *Service) reconcileAttempt(ctx context.Context, cmd RunCommand, attemptI
 		}
 		return nil
 	})
-	if err != nil || !found {
-		return domain.Assessment{}, found, err
-	}
-	assessment, err := s.replayAttempt(ctx, state)
-	return assessment, true, err
+	return state, found, err
 }
 
 func (s *Service) claimAttempt(ctx context.Context, cmd RunCommand, attemptID uuid.UUID, startedAt time.Time) (bool, infrastructure.AssessmentAttemptState, error) {

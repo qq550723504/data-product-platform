@@ -3,6 +3,7 @@ package application_test
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -169,7 +170,39 @@ func TestQualityAttemptReconcilesExpiredClaim(t *testing.T) {
 	`, attemptID, workspaceID, version.ID, "unknown-rule.yaml"); err != nil {
 		t.Fatalf("insert expired quality attempt: %v", err)
 	}
+	conn, err := pool.Acquire(ctx)
+	if err != nil {
+		t.Fatalf("acquire attempt owner connection: %v", err)
+	}
+	lockKey := fmt.Sprintf("quality-assessment-attempt:%s", attemptID)
+	var locked bool
+	if err := conn.QueryRow(ctx, `
+		SELECT pg_try_advisory_lock(hashtextextended($1, 0))
+	`, lockKey).Scan(&locked); err != nil {
+		conn.Release()
+		t.Fatalf("acquire attempt owner lock: %v", err)
+	}
+	if !locked {
+		conn.Release()
+		t.Fatal("attempt owner lock was not acquired")
+	}
 	_, replayErr := qualityService.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: version.ID,
+		RuleSetRef: "unknown-rule.yaml", AssessmentAttemptID: attemptID,
+	})
+	if !errors.Is(replayErr, qualityapp.ErrAssessmentAttemptInProgress) {
+		conn.Release()
+		t.Fatalf("live expired-attempt replay error = %v, want ErrAssessmentAttemptInProgress", replayErr)
+	}
+	var unlocked bool
+	if err := conn.QueryRow(ctx, `
+		SELECT pg_advisory_unlock(hashtextextended($1, 0))
+	`, lockKey).Scan(&unlocked); err != nil || !unlocked {
+		conn.Release()
+		t.Fatalf("release attempt owner lock: %v", err)
+	}
+	conn.Release()
+	_, replayErr = qualityService.Run(ctx, qualityapp.RunCommand{
 		WorkspaceID: workspaceID, DatasetVersionID: version.ID,
 		RuleSetRef: "unknown-rule.yaml", AssessmentAttemptID: attemptID,
 	})
