@@ -465,7 +465,7 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 			}
 			return existing, nil
 		}
-		if !errors.Is(replayErr, pgx.ErrNoRows) {
+		if !errors.Is(replayErr, infrastructure.ErrNotFound) && !errors.Is(replayErr, pgx.ErrNoRows) {
 			return domain.EffectiveRightsSnapshot{}, replayErr
 		}
 	}
