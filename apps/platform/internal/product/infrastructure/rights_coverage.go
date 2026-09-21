@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 var releaseRequiredActions = []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}
@@ -20,13 +21,21 @@ type RightsCoverage struct {
 	MissingActions    map[string][]string
 }
 
+type rightsCoverageQueryer interface {
+	Query(context.Context, string, ...any) (pgx.Rows, error)
+}
+
 func (r *PostgresRepository) EvaluateRightsCoverage(ctx context.Context, snapshotID uuid.UUID, releaseDatasetVersionIDs []uuid.UUID, now time.Time) (RightsCoverage, error) {
+	return evaluateRightsCoverage(ctx, r.pool, snapshotID, releaseDatasetVersionIDs, now)
+}
+
+func evaluateRightsCoverage(ctx context.Context, q rightsCoverageQueryer, snapshotID uuid.UUID, releaseDatasetVersionIDs []uuid.UUID, now time.Time) (RightsCoverage, error) {
 	coverage := RightsCoverage{MissingActions: map[string][]string{}}
 	if snapshotID == uuid.Nil || len(releaseDatasetVersionIDs) == 0 {
 		return coverage, nil
 	}
 
-	rows, err := r.pool.Query(ctx, `
+	rows, err := q.Query(ctx, `
 		WITH RECURSIVE lineage(version_id) AS (
 			SELECT unnest($1::uuid[])
 			UNION
@@ -62,7 +71,7 @@ func (r *PostgresRepository) EvaluateRightsCoverage(ctx context.Context, snapsho
 	}
 	coverage.Known = true
 
-	grantRows, err := r.pool.Query(ctx, `
+	grantRows, err := q.Query(ctx, `
 		SELECT ar.data_resource_id, ar.actions
 		FROM rights_snapshot_authorization rsa
 		JOIN rights_snapshot rs ON rs.id = rsa.rights_snapshot_id
