@@ -510,6 +510,9 @@ func (h *Handler) checkCurrentEntitlement(w http.ResponseWriter, r *http.Request
 	if !ok {
 		return
 	}
+	if _, ok := h.authorizeWorkspace(w, r, workspace); !ok {
+		return
+	}
 	var auth uuid.UUID
 	if strings.TrimSpace(body.AuthorizationID) != "" {
 		var err error
@@ -606,6 +609,9 @@ func (h *Handler) getEffectiveRights(w http.ResponseWriter, r *http.Request) {
 	}
 	if e != nil {
 		httpserver.WriteError(w, r, 500, "EFFECTIVE_RIGHTS_READ_FAILED", e.Error(), nil)
+		return
+	}
+	if _, ok := h.authorizeWorkspace(w, r, snapshot.WorkspaceID); !ok {
 		return
 	}
 	writeJSON(w, 200, snapshot)
