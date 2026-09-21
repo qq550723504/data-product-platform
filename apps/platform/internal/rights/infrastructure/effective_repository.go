@@ -15,7 +15,7 @@ import (
 var ErrEffectiveRightsIdempotentReplay = errors.New("effective rights idempotent replay")
 
 func (r *PostgresRepository) InsertEffectiveRightsHeader(ctx context.Context, tx pgx.Tx, snapshot domain.EffectiveRightsSnapshot) error {
-	tag, err := tx.Exec(ctx, `INSERT INTO effective_rights_snapshot(id,workspace_id,target_dataset_version_id,calculation_as_of,consumer_ref,purpose,calculation_rule_version,calculation_rule_hash,required_input_hash,status,root_hash,created_at,created_by) VALUES ($1,$2,$3,$4,NULLIF($5,''),$6,$7,$8,$9,'DRAFT',$10,$11,$12) ON CONFLICT (id) DO NOTHING`, snapshot.ID, snapshot.WorkspaceID, snapshot.TargetDatasetVersionID, snapshot.CalculationAsOf, snapshot.ConsumerRef, snapshot.Purpose, snapshot.CalculationRuleVersion, snapshot.CalculationRuleHash, snapshot.RequiredInputHash, snapshot.RootHash, snapshot.CreatedAt, snapshot.CreatedBy)
+	tag, err := tx.Exec(ctx, `INSERT INTO effective_rights_snapshot(id,workspace_id,target_dataset_version_id,calculation_as_of,consumer_ref,purpose,calculation_rule_version,calculation_rule_hash,required_input_hash,status,root_hash,created_at,created_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'DRAFT',$10,$11,$12) ON CONFLICT (id) DO NOTHING`, snapshot.ID, snapshot.WorkspaceID, snapshot.TargetDatasetVersionID, snapshot.CalculationAsOf, snapshot.ConsumerRef, snapshot.Purpose, snapshot.CalculationRuleVersion, snapshot.CalculationRuleHash, snapshot.RequiredInputHash, snapshot.RootHash, snapshot.CreatedAt, snapshot.CreatedBy)
 	if err != nil {
 		return fmt.Errorf("insert effective rights snapshot: %w", err)
 	}
