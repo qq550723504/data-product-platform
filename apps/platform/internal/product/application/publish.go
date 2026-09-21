@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/domain"
 )
 
@@ -86,6 +87,16 @@ func (s *Service) PublishRelease(ctx context.Context, cmd PublishReleaseCommand)
 			return err
 		}
 		snapshot = created
+		if _, err := deliveryfence.Lock(ctx, tx, product.WorkspaceID); err != nil {
+			return err
+		}
+		currentReadiness, err := s.Readiness(ctx, release.ID)
+		if err != nil {
+			return err
+		}
+		if currentReadiness.Overall != "READY" {
+			return fmt.Errorf("%w: blockers=%v", domain.ErrReleaseNotReady, currentReadiness.Blockers)
+		}
 		if err := release.Publish(snapshot.ID, cmd.ActorID); err != nil {
 			return err
 		}
