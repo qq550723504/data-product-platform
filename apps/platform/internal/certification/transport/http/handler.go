@@ -18,10 +18,11 @@ import (
 type Handler struct {
 	certifications *application.CertificationService
 	eligibility    *application.EligibilityService
+	datasets       *datasetinfra.PostgresRepository
 }
 
-func NewHandler(certifications *application.CertificationService, eligibility *application.EligibilityService) *Handler {
-	return &Handler{certifications: certifications, eligibility: eligibility}
+func NewHandler(certifications *application.CertificationService, eligibility *application.EligibilityService, datasets *datasetinfra.PostgresRepository) *Handler {
+	return &Handler{certifications: certifications, eligibility: eligibility, datasets: datasets}
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
@@ -32,6 +33,9 @@ func (h *Handler) Register(mux *http.ServeMux) {
 func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 	workspaceID, versionID, ok := parseWorkspaceVersion(w, r)
 	if !ok {
+		return
+	}
+	if !h.requireVersionWorkspace(w, r, workspaceID, versionID) {
 		return
 	}
 	asOf, ok := parseAsOf(w, r)
@@ -64,6 +68,9 @@ func (h *Handler) deliveryEligibility(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	if !h.requireVersionWorkspace(w, r, workspaceID, versionID) {
+		return
+	}
 	profileID, err := uuid.Parse(strings.TrimSpace(r.URL.Query().Get("profileId")))
 	if err != nil || profileID == uuid.Nil {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_PROFILE_ID", "profileId must be a non-nil UUID", nil)
@@ -91,6 +98,32 @@ func (h *Handler) deliveryEligibility(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, eligibilityResponse(result))
+}
+
+func (h *Handler) requireVersionWorkspace(w http.ResponseWriter, r *http.Request, workspaceID, versionID uuid.UUID) bool {
+	if h == nil || h.datasets == nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "CERTIFIED_DATASET_READ_NOT_CONFIGURED", "certified dataset read dependencies are incomplete", nil)
+		return false
+	}
+	version, err := h.datasets.GetVersion(r.Context(), versionID)
+	if err != nil {
+		if errors.Is(err, datasetinfra.ErrNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "DATASET_VERSION_NOT_FOUND", "DatasetVersion was not found", nil)
+			return false
+		}
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "DATASET_VERSION_READ_FAILED", err.Error(), nil)
+		return false
+	}
+	actualWorkspace, _, err := h.datasets.GetWorkspaceAndType(r.Context(), version.DatasetID)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "DATASET_WORKSPACE_READ_FAILED", err.Error(), nil)
+		return false
+	}
+	if actualWorkspace != workspaceID {
+		httpserver.WriteError(w, r, http.StatusNotFound, "DATASET_VERSION_NOT_FOUND", "DatasetVersion was not found in workspace", nil)
+		return false
+	}
+	return true
 }
 
 func parseWorkspaceVersion(w http.ResponseWriter, r *http.Request) (uuid.UUID, uuid.UUID, bool) {
