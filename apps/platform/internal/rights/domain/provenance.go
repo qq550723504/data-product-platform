@@ -1,10 +1,10 @@
 package domain
 
 import (
-	"fmt"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"sort"
 	"strings"
 	"time"
