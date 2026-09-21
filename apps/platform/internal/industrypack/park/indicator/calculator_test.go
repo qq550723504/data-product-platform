@@ -150,7 +150,6 @@ func TestRentBoundaryClassification(t *testing.T) {
 	}
 }
 
-
 func TestEnergyAggregationUsesPackCalendarTimezone(t *testing.T) {
 	policy := loadReferencePolicy(t)
 	if policy.Spec.CalendarTimezone != "Asia/Shanghai" {
