@@ -236,6 +236,19 @@ func (h *Handler) listAssessments(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DATASET_VERSION_ID", "versionId must be a UUID", nil)
 		return
 	}
+	workspaceID, ok := requiredWorkspaceQuery(w, r)
+	if !ok {
+		return
+	}
+	belongs, err := h.repo.DatasetVersionBelongsToWorkspace(r.Context(), workspaceID, versionID)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_DATASET_WORKSPACE_READ_FAILED", err.Error(), nil)
+		return
+	}
+	if !belongs {
+		httpserver.WriteError(w, r, http.StatusNotFound, "DATASET_VERSION_NOT_FOUND", "DatasetVersion was not found in workspace", nil)
+		return
+	}
 	limit, offset, ok := assessmentPagination(w, r)
 	if !ok {
 		return
@@ -258,6 +271,20 @@ func (h *Handler) listAssessments(w http.ResponseWriter, r *http.Request) {
 			"total":  page.Total,
 		},
 	})
+}
+
+func requiredWorkspaceQuery(w http.ResponseWriter, r *http.Request) (uuid.UUID, bool) {
+	raw := strings.TrimSpace(r.URL.Query().Get("workspaceId"))
+	if raw == "" {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "WORKSPACE_REQUIRED", "workspaceId is required", nil)
+		return uuid.Nil, false
+	}
+	workspaceID, err := uuid.Parse(raw)
+	if err != nil || workspaceID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_WORKSPACE_ID", "workspaceId must be a non-nil UUID", nil)
+		return uuid.Nil, false
+	}
+	return workspaceID, true
 }
 
 func assessmentPagination(w http.ResponseWriter, r *http.Request) (int, int, bool) {
@@ -308,6 +335,19 @@ func (h *Handler) latestAssessment(w http.ResponseWriter, r *http.Request) {
 	versionID, err := uuid.Parse(r.PathValue("versionId"))
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DATASET_VERSION_ID", "versionId must be a UUID", nil)
+		return
+	}
+	workspaceID, ok := requiredWorkspaceQuery(w, r)
+	if !ok {
+		return
+	}
+	belongs, err := h.repo.DatasetVersionBelongsToWorkspace(r.Context(), workspaceID, versionID)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_DATASET_WORKSPACE_READ_FAILED", err.Error(), nil)
+		return
+	}
+	if !belongs {
+		httpserver.WriteError(w, r, http.StatusNotFound, "DATASET_VERSION_NOT_FOUND", "DatasetVersion was not found in workspace", nil)
 		return
 	}
 	assessment, err := h.repo.LatestAssessment(r.Context(), versionID)
