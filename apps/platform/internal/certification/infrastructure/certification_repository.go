@@ -559,22 +559,40 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 			`, rights.RightsSnapshotID).Scan(&rightsWorkspace, &rightsStatus, &rightsPurpose, &rightsConsumer); err != nil {
 				return fmt.Errorf("load RightsSnapshot for certification: %w", err)
 			}
-			var referencedByEffective bool
+			var coversEffectiveProvenance bool
 			if err := tx.QueryRow(ctx, `
-				SELECT EXISTS(
+				SELECT NOT EXISTS (
 					SELECT 1
-					FROM effective_rights_input
-					WHERE snapshot_id=$1 AND rights_snapshot_id=$2
+					FROM effective_rights_input eri
+					WHERE eri.snapshot_id=$1
+					  AND eri.declaration_id IS NOT NULL
+					  AND NOT EXISTS (
+						  SELECT 1
+						  FROM rights_snapshot_declaration rsd
+						  WHERE rsd.rights_snapshot_id=$2
+						    AND rsd.declaration_id=eri.declaration_id
+					  )
+				) AND NOT EXISTS (
+					SELECT 1
+					FROM effective_rights_input eri
+					WHERE eri.snapshot_id=$1
+					  AND eri.binding_id IS NOT NULL
+					  AND NOT EXISTS (
+						  SELECT 1
+						  FROM rights_snapshot_provenance_binding rspb
+						  WHERE rspb.rights_snapshot_id=$2
+						    AND rspb.binding_id=eri.binding_id
+					  )
 				)
-			`, rights.EffectiveRightsSnapshotID, rights.RightsSnapshotID).Scan(&referencedByEffective); err != nil {
-				return fmt.Errorf("verify RightsSnapshot relationship to EffectiveRightsSnapshot: %w", err)
+			`, rights.EffectiveRightsSnapshotID, rights.RightsSnapshotID).Scan(&coversEffectiveProvenance); err != nil {
+				return fmt.Errorf("verify RightsSnapshot provenance coverage: %w", err)
 			}
 			rights.RightsSnapshotFinalized =
 				rightsWorkspace == input.WorkspaceID &&
 					rightsStatus == "FINALIZED" &&
 					strings.EqualFold(strings.TrimSpace(rightsPurpose), strings.TrimSpace(purpose)) &&
 					strings.TrimSpace(rightsConsumer) == strings.TrimSpace(consumerRef) &&
-					referencedByEffective
+					coversEffectiveProvenance
 		} else {
 			rights.RightsSnapshotFinalized = false
 		}
