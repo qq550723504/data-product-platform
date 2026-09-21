@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
@@ -56,11 +57,13 @@ spec:
 	qualityRepo := qualityinfra.NewPostgresRepository(pool)
 	qualityService := qualityapp.NewService(industryPackRoot, txManager, datasetRepo, qualityRepo, store)
 	attemptID := uuid.New()
+	beforeInvocation := time.Now().UTC()
 	_, err = qualityService.Run(ctx, qualityapp.RunCommand{
 		WorkspaceID:         workspaceID,
 		DatasetVersionID:    version.ID,
 		RuleSetRef:          "unknown-rule.yaml",
 		AssessmentAttemptID: attemptID,
+		Now:                 beforeInvocation.Add(24 * time.Hour),
 	})
 	if err == nil {
 		t.Fatal("quality evaluation unexpectedly succeeded")
@@ -89,6 +92,28 @@ spec:
 	}
 	if outcome != "FAILED" || errorMessage == "" {
 		t.Fatalf("failed-attempt outcome = %q/%q, want FAILED with error", outcome, errorMessage)
+	}
+	var startedAt, costOccurredAt time.Time
+	if err := pool.QueryRow(ctx, `
+		SELECT started_at
+		FROM quality_assessment_attempt
+		WHERE id=$1
+	`, attemptID).Scan(&startedAt); err != nil {
+		t.Fatalf("read attempt start time: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT e.occurred_at
+		FROM cost_event e
+		JOIN cost_allocation a ON a.cost_event_id=e.id
+		WHERE a.quality_assessment_attempt_id=$1
+	`, attemptID).Scan(&costOccurredAt); err != nil {
+		t.Fatalf("read attempt cost time: %v", err)
+	}
+	if startedAt.Before(beforeInvocation.Add(-time.Second)) || startedAt.After(time.Now().UTC().Add(time.Second)) {
+		t.Fatalf("attempt started_at = %s, want wall-clock invocation time near %s", startedAt, beforeInvocation)
+	}
+	if costOccurredAt.Before(beforeInvocation.Add(-time.Second)) || costOccurredAt.After(time.Now().UTC().Add(time.Second)) {
+		t.Fatalf("attempt cost occurred_at = %s, want wall-clock invocation time near %s", costOccurredAt, beforeInvocation)
 	}
 
 	_, replayErr := qualityService.Run(ctx, qualityapp.RunCommand{

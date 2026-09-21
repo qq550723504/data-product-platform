@@ -111,10 +111,7 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	if err != nil {
 		return domain.Assessment{}, err
 	}
-	startedAt := cmd.Now
-	if startedAt.IsZero() {
-		startedAt = time.Now().UTC()
-	}
+	startedAt := time.Now().UTC()
 	claimed, _, err := s.claimAttempt(ctx, cmd, attemptID, startedAt)
 	if err != nil {
 		return domain.Assessment{}, err
