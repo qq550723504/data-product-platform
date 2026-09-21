@@ -43,6 +43,27 @@ function currentDisposition(certification: DatasetCertification): string {
   return certification.dispositions.map((item) => item.disposition).join(", ");
 }
 
+function applicability(mode?: string, values?: string[]): string {
+  if (!mode) return "—";
+  if (mode === "ANY") return "ANY";
+  return values?.length ? values.join(", ") : "EXPLICIT (empty)";
+}
+
+function scopes(values?: Array<{ type: string; ref: string }>): string {
+  if (!values?.length) return "—";
+  return values.map((item) => `${item.type}:${item.ref}`).join(", ");
+}
+
+function displayObserved(value: unknown): string {
+  if (value === null || value === undefined) return "—";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value);
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return "—";
+  }
+}
+
 export default async function DatasetVersionDetailPage({
   params,
   searchParams,
@@ -81,6 +102,8 @@ export default async function DatasetVersionDetailPage({
     const canCheck = Object.values(requested).every((value) => value.trim() !== "");
     const eligibility = canCheck ? await platform.deliveryEligibility(versionId, requested) : null;
     const latestAssessment = quality.items[0];
+    const latestReport = latestAssessment ? await platform.qualityReport(latestAssessment.id, 50, 0) : null;
+    const evidenceCertification = eligibility?.certification.current ?? history.items[0];
 
     return (
       <>
@@ -135,6 +158,67 @@ export default async function DatasetVersionDetailPage({
                 </table>
               </div>
             </section>
+            {latestReport ? (
+              <section className="detail-card" style={{ marginBottom: 18 }}>
+                <div className="panel-header">
+                  <h3>Quality Report</h3>
+                  <span className="eyebrow">{latestReport.findings.page.total} Findings</span>
+                </div>
+                {latestReport.findings.items.length === 0 ? (
+                  <EmptyState title="无规则明细" description="最新 QualityAssessment 没有 finding。" />
+                ) : (
+                  <div className="table-card">
+                    <table className="data-table">
+                      <thead><tr><th>Rule</th><th>维度</th><th>状态</th><th>严重度</th><th>Affected</th><th>原因 / 样例</th></tr></thead>
+                      <tbody>
+                        {latestReport.findings.items.map((finding) => (
+                          <tr key={finding.id}>
+                            <td className="mono">{finding.ruleId}</td>
+                            <td>{finding.dimension}</td>
+                            <td><Badge value={finding.status} /></td>
+                            <td>{finding.severity}</td>
+                            <td>{displayObserved(finding.affectedCount)}</td>
+                            <td>
+                              {finding.reason || "—"}
+                              {finding.sample !== undefined ? <><br /><span className="mono">{displayObserved(finding.sample)}</span></> : null}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                <div className="panel-header" style={{ marginTop: 18 }}>
+                  <h3>Quality Evidence / Audit</h3>
+                  <span className="eyebrow">{latestReport.evidence.length} Evidence · {latestReport.auditEvents.length} Audit</span>
+                </div>
+                <div className="table-card">
+                  <table className="data-table">
+                    <thead><tr><th>类型</th><th>引用</th><th>来源 / 动作</th><th>Hash / Trace</th><th>时间</th></tr></thead>
+                    <tbody>
+                      {latestReport.evidence.map((item) => (
+                        <tr key={`evidence:${item.id}`}>
+                          <td>Evidence · {item.evidenceType}</td>
+                          <td className="mono">{shortId(item.id)}</td>
+                          <td>{item.sourceType}{item.sourceId ? ` / ${shortId(item.sourceId)}` : ""}</td>
+                          <td className="mono">{item.hashValue ? shortId(item.hashValue) : "—"}</td>
+                          <td>{formatDate(item.createdAt)}</td>
+                        </tr>
+                      ))}
+                      {latestReport.auditEvents.map((item) => (
+                        <tr key={`audit:${item.id}`}>
+                          <td>Audit · {item.actorType}</td>
+                          <td className="mono">{shortId(item.id)}</td>
+                          <td>{item.action}</td>
+                          <td className="mono">{item.traceId || "—"}</td>
+                          <td>{formatDate(item.occurredAt)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            ) : null}
             <div className="table-card" style={{ marginBottom: 24 }}>
               <table className="data-table">
                 <thead><tr><th>时间</th><th>Gate</th><th>RuleSet</th><th>Assessment</th></tr></thead>
@@ -182,6 +266,42 @@ export default async function DatasetVersionDetailPage({
             </table>
           </div>
         )}
+
+        {selectedProfile ? (
+          <section className="detail-card" style={{ marginBottom: 24 }}>
+            <div className="panel-header"><h2>Rights summary</h2><span className="eyebrow">Frozen certification context</span></div>
+            <DefinitionList items={[
+              { label: "Rights required", value: <Badge value={selectedProfile.rights.required ? "REQUIRED" : "OPTIONAL"} /> },
+              { label: "Purpose coverage", value: applicability(selectedProfile.rights.purpose.mode, selectedProfile.rights.purpose.values) },
+              { label: "Action coverage", value: applicability(selectedProfile.rights.actions.mode, selectedProfile.rights.actions.values) },
+              { label: "Consumer coverage", value: applicability(selectedProfile.rights.consumers.mode, selectedProfile.rights.consumers.values) },
+              { label: "Scope coverage", value: selectedProfile.rights.scopes.mode === "ANY" ? "ANY" : scopes(selectedProfile.rights.scopes.values) },
+              { label: "EffectiveRights", value: evidenceCertification?.effectiveRightsSnapshotId ? <span className="mono">{evidenceCertification.effectiveRightsSnapshotId}</span> : "—" },
+              { label: "EffectiveRights hash", value: evidenceCertification?.effectiveRightsSnapshotHash ? <span className="mono">{evidenceCertification.effectiveRightsSnapshotHash}</span> : "—" },
+              { label: "RightsSnapshot (optional)", value: evidenceCertification?.rightsSnapshotId ? <span className="mono">{evidenceCertification.rightsSnapshotId}</span> : "—" },
+            ]} />
+            {eligibility?.entitlement.checks.length ? (
+              <div className="callout" style={{ marginTop: 14 }}>
+                <strong>当前 Rights 重新验证</strong>
+                <p>下方 Current Entitlement 以请求的 consumer / purpose / action 对每个实际 source input 重新校验，不把历史认证当成永久授权。</p>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
+        <section className="detail-card" style={{ marginBottom: 24 }}>
+          <div className="panel-header"><h2>Evidence</h2><span className="eyebrow">Frozen references</span></div>
+          {!latestReport?.evidence.length && !evidenceCertification?.evidenceSnapshotId && !evidenceCertification?.traceabilityEvidenceId ? (
+            <EmptyState title="暂无 Evidence 引用" description="当前版本尚未返回质量或认证 Evidence 引用。" />
+          ) : (
+            <DefinitionList items={[
+              { label: "Quality evidence", value: latestReport?.evidence.length ? latestReport.evidence.map((item) => <div key={item.id}><span className="mono">{shortId(item.id)}</span> · {item.evidenceType}</div>) : "—" },
+              { label: "Certification EvidenceSnapshot", value: evidenceCertification?.evidenceSnapshotId ? <span className="mono">{evidenceCertification.evidenceSnapshotId}</span> : "—" },
+              { label: "Traceability Evidence", value: evidenceCertification?.traceabilityEvidenceId ? <span className="mono">{evidenceCertification.traceabilityEvidenceId}</span> : "—" },
+              { label: "Certification", value: evidenceCertification ? <span className="mono">{evidenceCertification.id}</span> : "—" },
+            ]} />
+          )}
+        </section>
 
         <div className="panel-header"><h2>Current Delivery Eligibility</h2><span className="eyebrow">Preflight only</span></div>
         {profiles.length === 0 ? (
