@@ -143,6 +143,11 @@ func (s *Service) CreateDelegationChain(ctx context.Context, cmd CreateDelegatio
 	if len(cmd.Edges) == 0 {
 		return domain.DelegationChain{}, domain.ErrInvalidBinding
 	}
+	for _, edge := range cmd.Edges {
+		if edge.Scope.Type == "ALL_RESOURCE" && edge.Scope.Ref != edge.DataResourceID.String() {
+			return domain.DelegationChain{}, domain.ErrInvalidBinding
+		}
+	}
 	chain := domain.DelegationChain{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, SourceDeclarationID: cmd.SourceDeclarationID, Status: "DRAFT", Edges: cmd.Edges, CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
 	if cmd.ActivityID != nil {
 		chain.ID = uuid.NewSHA1(uuid.NameSpaceURL, []byte("grantor-delegation-chain-create:"+cmd.WorkspaceID.String()+":"+cmd.ActivityID.String()))
