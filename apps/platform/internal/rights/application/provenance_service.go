@@ -340,7 +340,18 @@ func (s *Service) BindAuthorizationProvenance(ctx context.Context, cmd BindAutho
 		cmd.ActivityID = &id
 	}
 	binding := domain.AuthorizationProvenanceBinding{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, AuthorizationID: cmd.AuthorizationID, DataResourceID: cmd.DataResourceID, DeclarationID: cmd.DeclarationID, GrantorRef: strings.TrimSpace(cmd.GrantorRef), AuthorityMode: strings.ToUpper(strings.TrimSpace(cmd.AuthorityMode)), DelegationChainID: cmd.DelegationChainID, DelegationChainHash: strings.TrimSpace(cmd.DelegationChainHash), CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID, ActivityID: cmd.ActivityID}
+	if existing, replayErr := s.repo.GetBindingByActivityID(ctx, binding.WorkspaceID, *cmd.ActivityID); replayErr == nil {
+		if !sameBindingRequest(existing, binding) {
+			return domain.AuthorizationProvenanceBinding{}, domain.ErrInvalidBinding
+		}
+		return existing, nil
+	} else if !errors.Is(replayErr, infrastructure.ErrNotFound) {
+		return domain.AuthorizationProvenanceBinding{}, replayErr
+	}
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if _, err := deliveryfence.Advance(ctx, tx, binding.WorkspaceID); err != nil {
+			return err
+		}
 		if err := s.repo.InsertBinding(ctx, tx, binding, cmd.AsOf); err != nil {
 			return err
 		}
