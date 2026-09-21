@@ -158,6 +158,28 @@ func TestRatioThresholdUsesExactDecimalComparison(t *testing.T) {
 	}
 }
 
+func TestNonTerminatingRatioObservationIsJSONSafe(t *testing.T) {
+	finding := evaluateSingleRule(t, Rule{
+		ID:        "R-COMPLETE",
+		Dimension: "COMPLETENESS",
+		Type:      RuleTypeCompletenessRatio,
+		Target:    "amount",
+		Threshold: json.Number("0.2"),
+		Required:  true,
+		Severity:  "CRITICAL",
+	}, DatasetContext{Table: tabular.Table{
+		Headers: []string{"amount"},
+		Rows:    []map[string]string{{"amount": "1"}, {"amount": ""}, {"amount": ""}},
+	}})
+	encoded, err := json.Marshal(finding.Observed)
+	if err != nil {
+		t.Fatalf("marshal non-terminating ratio observation: %v", err)
+	}
+	if !strings.Contains(string(encoded), `"numerator":1`) || !strings.Contains(string(encoded), `"denominator":3`) {
+		t.Fatalf("ratio observation = %s, want numerator/denominator", encoded)
+	}
+}
+
 func TestPolicyGateDecisionHonorsDeclaredMapping(t *testing.T) {
 	policy := Policy{}
 	policy.Spec.Gate.CriticalFailure = "FAIL"

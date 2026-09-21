@@ -519,16 +519,22 @@ func numericRat(value any) (*big.Rat, error) {
 	}
 }
 
-func ratJSONNumber(value *big.Rat) json.Number {
+func ratJSONNumber(value *big.Rat) any {
 	if value == nil {
-		return "0"
+		return json.Number("0")
 	}
-	return json.Number(ratDecimalString(value))
+	if decimal, ok := ratDecimalString(value); ok {
+		return json.Number(decimal)
+	}
+	return map[string]any{
+		"numerator":   json.Number(value.Num().String()),
+		"denominator": json.Number(value.Denom().String()),
+	}
 }
 
-func ratDecimalString(value *big.Rat) string {
+func ratDecimalString(value *big.Rat) (string, bool) {
 	if value.Sign() == 0 {
-		return "0"
+		return "0", true
 	}
 	denominator := new(big.Int).Set(value.Denom())
 	two := big.NewInt(2)
@@ -544,7 +550,7 @@ func ratDecimalString(value *big.Rat) string {
 		fiveCount++
 	}
 	if denominator.Cmp(one) != 0 {
-		return value.RatString()
+		return "", false
 	}
 	scale := twoCount
 	if fiveCount > scale {
@@ -554,7 +560,7 @@ func ratDecimalString(value *big.Rat) string {
 	if scale > 0 {
 		text = strings.TrimRight(strings.TrimRight(text, "0"), ".")
 	}
-	return text
+	return text, true
 }
 
 func parameterBool(rule Rule, key string, fallback bool) (bool, error) {
