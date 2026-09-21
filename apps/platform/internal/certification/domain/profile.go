@@ -61,6 +61,7 @@ type CertificationProfile struct {
 	Rights                    RightsRequirement `json:"rights"`
 	ComplianceRequired        bool              `json:"complianceRequired"`
 	ContractRequired          bool              `json:"contractRequired"`
+	ContractCode              string            `json:"contractCode,omitempty"`
 	TraceabilityRequired      bool              `json:"traceabilityRequired"`
 	EvidenceRequired          bool              `json:"evidenceRequired"`
 }
@@ -165,6 +166,13 @@ func (p CertificationProfile) normalized() (CertificationProfile, error) {
 	}
 	p.RequiredQualityDimensions = normalizeCodes(p.RequiredQualityDimensions)
 	p.RequiredCriticalRules = normalizeCodes(p.RequiredCriticalRules)
+	p.ContractCode = strings.TrimSpace(p.ContractCode)
+	if p.ContractRequired && p.ContractCode == "" {
+		return CertificationProfile{}, fmt.Errorf("%w: contractCode is required when contractRequired is true", ErrInvalidProfile)
+	}
+	if !p.ContractRequired && p.ContractCode != "" {
+		return CertificationProfile{}, fmt.Errorf("%w: contractCode requires contractRequired", ErrInvalidProfile)
+	}
 	if p.Rights.Required {
 		if p.Rights.Purpose, err = normalizeApplicability(p.Rights.Purpose, true, "rights.purpose"); err != nil {
 			return CertificationProfile{}, err
@@ -226,6 +234,9 @@ func normalizeScopes(a ScopeApplicability, name string) (ScopeApplicability, err
 		if scope.Type == "" || scope.Ref == "" {
 			return ScopeApplicability{}, fmt.Errorf("%w: %s contains an incomplete member", ErrInvalidProfile, name)
 		}
+		if !supportedScopeType(scope.Type) {
+			return ScopeApplicability{}, fmt.Errorf("%w: %s contains unsupported scope type %s", ErrInvalidProfile, name, scope.Type)
+		}
 		key := scope.Type + "\x00" + scope.Ref
 		if _, exists := seen[key]; !exists {
 			seen[key] = struct{}{}
@@ -246,6 +257,15 @@ func normalizeScopes(a ScopeApplicability, name string) (ScopeApplicability, err
 	})
 	a.Values = values
 	return a, nil
+}
+
+func supportedScopeType(value string) bool {
+	switch value {
+	case "ALL_RESOURCE", "OBJECT", "ROW", "PREFIX", "POLICY":
+		return true
+	default:
+		return false
+	}
 }
 
 func normalizeCodes(values []string) []string {
