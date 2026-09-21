@@ -262,6 +262,9 @@ func (h *Handler) getSnapshot(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "RIGHTS_SNAPSHOT_READ_FAILED", err.Error(), nil)
 		return
 	}
+	if _, ok := h.authorizeWorkspace(w, r, snapshot.WorkspaceID); !ok {
+		return
+	}
 	writeJSON(w, http.StatusOK, snapshotResponse(snapshot))
 }
 
