@@ -120,7 +120,7 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 	generatedAt := time.Now().UTC().Format(time.RFC3339)
 	rows := make([][]string, 0, len(companies)+1)
 	rows = append(rows, []string{
-		"company_id", "company_name", "period", "tenancy_stability",
+		"company_id", "period", "tenancy_stability",
 		"rent_performance", "energy_stability", "activity_score", "activity_level", "indicator_coverage", "generated_at",
 	})
 	companyIDs := make([]uuid.UUID, 0, len(companies))
@@ -140,7 +140,6 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 		}
 		rows = append(rows, []string{
 			companyID.String(),
-			company.DisplayName,
 			request.TargetPeriod,
 			formatOptional(result.TenancyStability),
 			formatOptional(result.RentPerformance),
