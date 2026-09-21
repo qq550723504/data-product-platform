@@ -37,6 +37,17 @@ type AuditEvent struct {
 	OccurredAt  time.Time  `json:"occurredAt"`
 }
 
+type AuditEventReference struct {
+	ID         uuid.UUID  `json:"id"`
+	Action     string     `json:"action"`
+	ObjectType string     `json:"objectType"`
+	ObjectID   uuid.UUID  `json:"objectId"`
+	ActorType  string     `json:"actorType"`
+	ActorID    *uuid.UUID `json:"actorId,omitempty"`
+	TraceID    string     `json:"traceId,omitempty"`
+	OccurredAt time.Time  `json:"occurredAt"`
+}
+
 type AssessmentPage struct {
 	Items  []domain.Assessment
 	Limit  int
@@ -322,6 +333,99 @@ func (r *PostgresRepository) GetAssessment(ctx context.Context, assessmentID uui
 	return result, nil
 }
 
+// GetReport returns the frozen assessment summary together with a bounded
+// finding page. It deliberately does not use GetAssessment because that query
+// hydrates every finding and is therefore not safe for a customer-facing
+// report endpoint.
+func (r *PostgresRepository) GetReport(ctx context.Context, workspaceID, assessmentID uuid.UUID, limit, offset int) (domain.Assessment, domain.FindingPage, error) {
+	if limit <= 0 {
+		limit = 25
+	}
+	if limit > 100 {
+		return domain.Assessment{}, domain.FindingPage{}, fmt.Errorf("finding limit must be between 1 and 100")
+	}
+	if offset < 0 {
+		return domain.Assessment{}, domain.FindingPage{}, fmt.Errorf("finding offset must be zero or greater")
+	}
+
+	var result domain.Assessment
+	var dimensionMetrics []byte
+	err := r.pool.QueryRow(ctx, `
+		SELECT id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
+		       COALESCE(rule_set_content_sha256,''),
+		       COALESCE(evaluator_name,''), COALESCE(evaluator_version,''),
+		       gate_decision, metrics->'dimensions', created_at, created_by
+		FROM quality_result
+		WHERE id=$1 AND workspace_id=$2
+	`, assessmentID, workspaceID).Scan(&result.ID, &result.WorkspaceID, &result.DatasetVersionID, &result.RuleSetRef,
+		&result.RuleSetVersion, &result.RuleSetContentSHA256,
+		&result.EvaluatorName, &result.EvaluatorVersion, &result.GateDecision, &dimensionMetrics,
+		&result.CreatedAt, &result.CreatedBy)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.Assessment{}, domain.FindingPage{}, ErrNotFound
+	}
+	if err != nil {
+		return domain.Assessment{}, domain.FindingPage{}, fmt.Errorf("get quality report assessment: %w", err)
+	}
+	var dimensions map[string]any
+	if len(dimensionMetrics) == 0 || string(dimensionMetrics) == "null" {
+		return domain.Assessment{}, domain.FindingPage{}, fmt.Errorf("quality report dimension snapshot is missing")
+	}
+	if err := decodeJSONNumbers(dimensionMetrics, &dimensions); err != nil {
+		return domain.Assessment{}, domain.FindingPage{}, fmt.Errorf("decode quality report metrics: %w", err)
+	}
+	result.Metrics = map[string]any{"dimensions": dimensions}
+	if err := restoreDimensionSummaries(&result); err != nil {
+		return domain.Assessment{}, domain.FindingPage{}, err
+	}
+
+	page, err := r.listFindingPage(ctx, assessmentID, limit, offset)
+	if err != nil {
+		return domain.Assessment{}, domain.FindingPage{}, err
+	}
+	return result, page, nil
+}
+
+func (r *PostgresRepository) listFindingPage(ctx context.Context, assessmentID uuid.UUID, limit, offset int) (domain.FindingPage, error) {
+	var total int
+	if err := r.pool.QueryRow(ctx, `
+		SELECT count(*) FROM quality_finding WHERE result_id=$1
+	`, assessmentID).Scan(&total); err != nil {
+		return domain.FindingPage{}, fmt.Errorf("count quality report findings: %w", err)
+	}
+
+	rows, err := r.pool.Query(ctx, `
+		SELECT id, result_id, rule_id, COALESCE(dimension,''), severity, status,
+		       observed, COALESCE(message,''), created_at
+		FROM quality_finding
+		WHERE result_id=$1
+		ORDER BY created_at, rule_id, id
+		LIMIT $2 OFFSET $3
+	`, assessmentID, limit, offset)
+	if err != nil {
+		return domain.FindingPage{}, fmt.Errorf("list quality report findings: %w", err)
+	}
+	defer rows.Close()
+
+	items := make([]domain.Finding, 0)
+	for rows.Next() {
+		var finding domain.Finding
+		var observed []byte
+		if err := rows.Scan(&finding.ID, &finding.ResultID, &finding.RuleID, &finding.Dimension,
+			&finding.Severity, &finding.Status, &observed, &finding.Message, &finding.CreatedAt); err != nil {
+			return domain.FindingPage{}, fmt.Errorf("scan quality report finding: %w", err)
+		}
+		if err := decodeJSONNumbers(observed, &finding.Observed); err != nil {
+			return domain.FindingPage{}, fmt.Errorf("decode quality report finding observation: %w", err)
+		}
+		items = append(items, finding)
+	}
+	if err := rows.Err(); err != nil {
+		return domain.FindingPage{}, fmt.Errorf("iterate quality report findings: %w", err)
+	}
+	return domain.FindingPage{Items: items, Limit: limit, Offset: offset, Total: total}, nil
+}
+
 func (r *PostgresRepository) ListAssessments(ctx context.Context, datasetVersionID uuid.UUID, limit, offset int) (AssessmentPage, error) {
 	if limit <= 0 {
 		limit = 25
@@ -438,6 +542,41 @@ func (r *PostgresRepository) ListAuditEvents(ctx context.Context, assessmentID u
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("iterate quality assessment audit events: %w", err)
+	}
+	return events, nil
+}
+
+// ListAuditEventReferences returns only the audit identity and routing fields
+// needed by the bounded Quality Report. It deliberately does not hydrate
+// historical state or metadata payloads.
+func (r *PostgresRepository) ListAuditEventReferences(ctx context.Context, assessmentID uuid.UUID, limit int) ([]AuditEventReference, error) {
+	if limit <= 0 || limit > 100 {
+		return nil, fmt.Errorf("audit reference limit must be between 1 and 100")
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT id, action, object_type, object_id, actor_type, actor_id,
+		       COALESCE(trace_id,''), occurred_at
+		FROM audit_event
+		WHERE object_type='QUALITY_RESULT' AND object_id=$1
+		ORDER BY occurred_at, id
+		LIMIT $2
+	`, assessmentID, limit)
+	if err != nil {
+		return nil, fmt.Errorf("list quality assessment audit references: %w", err)
+	}
+	defer rows.Close()
+
+	events := make([]AuditEventReference, 0)
+	for rows.Next() {
+		var event AuditEventReference
+		if err := rows.Scan(&event.ID, &event.Action, &event.ObjectType, &event.ObjectID,
+			&event.ActorType, &event.ActorID, &event.TraceID, &event.OccurredAt); err != nil {
+			return nil, fmt.Errorf("scan quality assessment audit reference: %w", err)
+		}
+		events = append(events, event)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate quality assessment audit references: %w", err)
 	}
 	return events, nil
 }

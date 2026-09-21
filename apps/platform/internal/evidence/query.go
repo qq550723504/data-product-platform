@@ -26,6 +26,23 @@ type Item struct {
 	CreatedBy      *uuid.UUID     `json:"createdBy,omitempty"`
 }
 
+// Reference is the bounded evidence projection used by report/read-model
+// endpoints. It intentionally excludes metadata: metadata is part of the
+// evidence integrity envelope and may contain large evaluator observations.
+// Callers that need integrity verification must use Get or ListForObject.
+type Reference struct {
+	ID            uuid.UUID  `json:"id"`
+	WorkspaceID   uuid.UUID  `json:"workspaceId"`
+	EvidenceType  string     `json:"evidenceType"`
+	SourceType    string     `json:"sourceType,omitempty"`
+	SourceID      *uuid.UUID `json:"sourceId,omitempty"`
+	HashAlgorithm string     `json:"hashAlgorithm,omitempty"`
+	HashValue     string     `json:"hashValue,omitempty"`
+	RelationType  string     `json:"relationType"`
+	CreatedAt     time.Time  `json:"createdAt"`
+	CreatedBy     *uuid.UUID `json:"createdBy,omitempty"`
+}
+
 type QueryRepository struct {
 	pool *pgxpool.Pool
 }
@@ -94,6 +111,52 @@ func (r *QueryRepository) ListForObject(ctx context.Context, objectType string, 
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("iterate evidence query results: %w", err)
+	}
+	return items, nil
+}
+
+// ListReferencesForObject returns a bounded header/hash projection without
+// loading or decoding evidence metadata.
+func (r *QueryRepository) ListReferencesForObject(ctx context.Context, objectType string, objectID, workspaceID uuid.UUID, limit int) ([]Reference, error) {
+	if limit <= 0 || limit > 100 {
+		return nil, fmt.Errorf("evidence reference limit must be between 1 and 100")
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT e.id, e.workspace_id, e.evidence_type, COALESCE(e.source_type,''), e.source_id,
+		       COALESCE(e.hash_algorithm,''), COALESCE(e.hash_value,''), er.relation_type,
+		       e.created_at, e.created_by
+		FROM evidence_relation er
+		JOIN evidence e ON e.id = er.evidence_id
+		WHERE er.object_type = $1 AND er.object_id = $2 AND e.workspace_id = $3
+		ORDER BY e.created_at, e.id
+		LIMIT $4
+	`, objectType, objectID, workspaceID, limit)
+	if err != nil {
+		return nil, fmt.Errorf("query evidence references for %s %s: %w", objectType, objectID, err)
+	}
+	defer rows.Close()
+
+	items := make([]Reference, 0)
+	for rows.Next() {
+		var item Reference
+		if err := rows.Scan(
+			&item.ID,
+			&item.WorkspaceID,
+			&item.EvidenceType,
+			&item.SourceType,
+			&item.SourceID,
+			&item.HashAlgorithm,
+			&item.HashValue,
+			&item.RelationType,
+			&item.CreatedAt,
+			&item.CreatedBy,
+		); err != nil {
+			return nil, fmt.Errorf("scan evidence reference: %w", err)
+		}
+		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate evidence references: %w", err)
 	}
 	return items, nil
 }
