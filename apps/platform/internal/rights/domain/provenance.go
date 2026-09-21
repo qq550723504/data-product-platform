@@ -197,6 +197,9 @@ func (d RightsDeclaration) Allows(kind, action, purpose, consumer string, scope 
 		if permission.Kind != strings.ToUpper(kind) {
 			continue
 		}
+		if permission.Purpose != "" && permission.Purpose != strings.TrimSpace(purpose) {
+			continue
+		}
 		if permission.Action != strings.ToUpper(action) {
 			if permission.Purpose == strings.TrimSpace(purpose) && action == "" {
 				return true
@@ -337,6 +340,7 @@ type EffectiveRightsAction struct {
 type EffectiveRightsProvenance struct {
 	InputID       uuid.UUID
 	DeclarationID uuid.UUID
+	BindingID     *uuid.UUID
 }
 
 type EffectiveRightsSnapshot struct {

@@ -33,7 +33,7 @@ func (r *PostgresRepository) InsertEffectiveRightsAction(ctx context.Context, tx
 		return fmt.Errorf("insert effective rights action: %w", err)
 	}
 	for _, provenance := range action.Provenance {
-		if _, err := tx.Exec(ctx, `INSERT INTO effective_rights_action_provenance(snapshot_id,action_id,input_id,declaration_id) VALUES ($1,$2,$3,$4)`, snapshotID, action.ID, provenance.InputID, provenance.DeclarationID); err != nil {
+		if _, err := tx.Exec(ctx, `INSERT INTO effective_rights_action_provenance(snapshot_id,action_id,input_id,declaration_id,binding_id) VALUES ($1,$2,$3,$4,$5)`, snapshotID, action.ID, provenance.InputID, provenance.DeclarationID, provenance.BindingID); err != nil {
 			return fmt.Errorf("insert effective rights action provenance: %w", err)
 		}
 	}
@@ -94,18 +94,19 @@ func (r *PostgresRepository) GetEffectiveRights(ctx context.Context, id uuid.UUI
 	for i := range s.Actions {
 		actionByID[s.Actions[i].ID] = &s.Actions[i]
 	}
-	rows, err = r.pool.Query(ctx, `SELECT action_id,input_id,declaration_id FROM effective_rights_action_provenance WHERE snapshot_id=$1 ORDER BY action_id,input_id`, id)
+	rows, err = r.pool.Query(ctx, `SELECT action_id,input_id,declaration_id,binding_id FROM effective_rights_action_provenance WHERE snapshot_id=$1 ORDER BY action_id,input_id`, id)
 	if err != nil {
 		return s, err
 	}
 	for rows.Next() {
 		var actionID, inputID, declarationID uuid.UUID
-		if err := rows.Scan(&actionID, &inputID, &declarationID); err != nil {
+		var bindingID *uuid.UUID
+		if err := rows.Scan(&actionID, &inputID, &declarationID, &bindingID); err != nil {
 			rows.Close()
 			return s, err
 		}
 		if action := actionByID[actionID]; action != nil {
-			action.Provenance = append(action.Provenance, domain.EffectiveRightsProvenance{InputID: inputID, DeclarationID: declarationID})
+			action.Provenance = append(action.Provenance, domain.EffectiveRightsProvenance{InputID: inputID, DeclarationID: declarationID, BindingID: bindingID})
 		}
 	}
 	rows.Close()
@@ -120,7 +121,11 @@ func EffectiveRightsRootHash(snapshot domain.EffectiveRightsSnapshot) string {
 	for _, a := range snapshot.Actions {
 		parts = append(parts, "A|"+a.Action+"|"+a.Decision+"|"+a.Reason)
 		for _, provenance := range a.Provenance {
-			parts = append(parts, "P|"+a.Action+"|"+provenance.InputID.String()+"|"+provenance.DeclarationID.String())
+			bindingID := ""
+			if provenance.BindingID != nil {
+				bindingID = provenance.BindingID.String()
+			}
+			parts = append(parts, "P|"+a.Action+"|"+provenance.InputID.String()+"|"+provenance.DeclarationID.String()+"|"+bindingID)
 		}
 	}
 	b, _ := json.Marshal(parts)

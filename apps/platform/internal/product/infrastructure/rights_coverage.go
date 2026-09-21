@@ -84,6 +84,13 @@ func (r *PostgresRepository) EvaluateRightsCoverage(ctx context.Context, snapsho
 			  AND apb.data_resource_id=ar.data_resource_id
 			  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition rdd WHERE rdd.declaration_id=rd.id AND rdd.effective_at <= $2)
 			  AND NOT EXISTS (SELECT 1 FROM authorization_provenance_binding_disposition apbd WHERE apbd.binding_id=apb.id AND apbd.effective_at <= $2)
+			  AND (apb.grantor_authority_mode='DIRECT_DECLARATION_PARTY' OR (
+				apb.delegation_chain_id IS NOT NULL
+				AND EXISTS (SELECT 1 FROM grantor_authority_delegation_chain c WHERE c.id=apb.delegation_chain_id AND c.source_declaration_id=apb.rights_declaration_id AND c.status='FINALIZED' AND c.chain_hash=apb.delegation_chain_hash)
+				AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition x WHERE x.chain_id=apb.delegation_chain_id AND x.effective_at <= $2)
+				AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition x JOIN grantor_authority_delegation_edge e ON e.id=x.edge_id WHERE e.chain_id=apb.delegation_chain_id AND x.effective_at <= $2)
+				AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_edge e WHERE e.chain_id=apb.delegation_chain_id AND ((e.valid_from IS NOT NULL AND e.valid_from > $2) OR (e.valid_to IS NOT NULL AND e.valid_to <= $2)))
+			  ))
 		  )
 	`, snapshotID, now.UTC())
 	if err != nil {

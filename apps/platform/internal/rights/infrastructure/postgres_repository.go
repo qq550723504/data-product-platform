@@ -187,6 +187,7 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 					AND EXISTS (SELECT 1 FROM grantor_authority_delegation_chain c WHERE c.id=b.delegation_chain_id AND c.source_declaration_id=b.rights_declaration_id AND c.status='FINALIZED' AND c.chain_hash=b.delegation_chain_hash)
 					AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition x WHERE x.chain_id=b.delegation_chain_id AND x.effective_at <= $4)
 					AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_disposition x JOIN grantor_authority_delegation_edge e ON e.id=x.edge_id WHERE e.chain_id=b.delegation_chain_id AND x.effective_at <= $4)
+					AND NOT EXISTS (SELECT 1 FROM grantor_authority_delegation_edge e WHERE e.chain_id=b.delegation_chain_id AND ((e.valid_from IS NOT NULL AND e.valid_from > $4) OR (e.valid_to IS NOT NULL AND e.valid_to <= $4)))
 				))
 				ORDER BY b.created_at,b.id`, authorization.AuthorizationID, resource.DataResourceID, snapshot.WorkspaceID, snapshot.AsOf)
 			if err != nil {
