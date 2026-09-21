@@ -240,7 +240,7 @@ func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, bindi
 		return domain.ErrInvalidBinding
 	}
 	var verified bool
-	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM rights_declaration_verification v WHERE v.declaration_id=$1 AND v.outcome='VERIFIED') AND NOT EXISTS(SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=$1 AND x.effective_at <= $2) AND EXISTS(SELECT 1 FROM rights_declaration d WHERE d.id=$1 AND (d.effective_from IS NULL OR d.effective_from <= $2) AND (d.effective_to IS NULL OR d.effective_to > $2))`, binding.DeclarationID, asOf).Scan(&verified); err != nil || !verified {
+	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM rights_declaration_verification v WHERE v.declaration_id=$1 AND v.outcome='VERIFIED' AND v.occurred_at <= $2) AND NOT EXISTS(SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=$1 AND x.effective_at <= $2) AND EXISTS(SELECT 1 FROM rights_declaration d WHERE d.id=$1 AND d.created_at <= $2 AND (d.effective_from IS NULL OR d.effective_from <= $2) AND (d.effective_to IS NULL OR d.effective_to > $2))`, binding.DeclarationID, asOf).Scan(&verified); err != nil || !verified {
 		return domain.ErrDeclarationNotVerified
 	}
 	var supported bool
@@ -281,7 +281,7 @@ func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, bindi
 			SELECT d.data_resource_id,
 			       EXISTS(
 					SELECT 1 FROM rights_declaration_verification v
-					WHERE v.declaration_id=d.id AND v.outcome='VERIFIED'
+					WHERE v.declaration_id=d.id AND v.outcome='VERIFIED' AND v.occurred_at <= $2
 					  AND (d.effective_from IS NULL OR d.effective_from <= $2)
 					  AND (d.effective_to IS NULL OR d.effective_to > $2)
 					  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $2)
@@ -465,7 +465,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 			JOIN rights_declaration_permission p ON p.declaration_id=d.id AND p.permission_kind='USE' AND p.action=$5
 			JOIN rights_declaration_purpose pu ON pu.permission_id=p.id AND pu.purpose_code=$4
 			JOIN rights_declaration_scope sc ON sc.permission_id=p.id AND ((sc.scope_type='ALL_RESOURCE' AND sc.scope_ref=$2::text) OR (sc.scope_type=$6 AND sc.scope_ref=$7))
-			WHERE d.workspace_id=$1 AND d.data_resource_id=$2
+			WHERE d.workspace_id=$1 AND d.data_resource_id=$2::uuid
 			  AND (d.consumer_scope_type='ANY' OR (d.consumer_scope_type='EXPLICIT' AND d.consumer_ref=$3))
 			  AND d.created_at <= $8
 			  AND (d.effective_from IS NULL OR d.effective_from <= $8) AND (d.effective_to IS NULL OR d.effective_to > $8)
@@ -491,14 +491,14 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 		JOIN data_authorization a ON a.id=b.authorization_id
 		JOIN authorization_resource ar ON ar.authorization_id=a.id AND ar.data_resource_id=b.data_resource_id
 		JOIN rights_declaration d ON d.id=b.rights_declaration_id
-		JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED'
+		JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED' AND v.occurred_at <= $6
 		JOIN rights_declaration_permission gp ON gp.declaration_id=d.id AND gp.permission_kind='GRANT' AND gp.action=$9
 		JOIN rights_declaration_purpose gpurpose ON gpurpose.permission_id=gp.id AND gpurpose.purpose_code=$5
 		JOIN rights_declaration_scope gscope ON gscope.permission_id=gp.id AND ((gscope.scope_type='ALL_RESOURCE' AND gscope.scope_ref=$2::text) OR (gscope.scope_type=$7 AND gscope.scope_ref=$8))
-		WHERE b.workspace_id=$1 AND b.data_resource_id=$2 AND ($3::uuid='00000000-0000-0000-0000-000000000000' OR b.authorization_id=$3)
+		WHERE b.workspace_id=$1 AND b.data_resource_id=$2::uuid AND ($3::uuid='00000000-0000-0000-0000-000000000000' OR b.authorization_id=$3::uuid)
 		  AND a.status='ACTIVE' AND a.grantee_ref=$4 AND a.purpose=$5
 		  AND (a.valid_from IS NULL OR a.valid_from <= $6) AND (a.valid_to IS NULL OR a.valid_to > $6)
-		  AND b.created_at <= $6
+		  AND b.created_at <= $6 AND d.created_at <= $6
 		  AND ((ar.scope_type='ALL_RESOURCE' AND ar.scope_ref=$2::text) OR (ar.scope_type=$7 AND ar.scope_ref=$8)) AND $9 = ANY(ar.actions) AND ($9<>'RAW_EXPORT' OR ar.raw_export_allowed)
 		  AND (d.effective_from IS NULL OR d.effective_from <= $6) AND (d.effective_to IS NULL OR d.effective_to > $6)
 		  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $6)
@@ -509,9 +509,9 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 				SELECT 1
 				FROM grantor_authority_delegation_chain c
 				JOIN rights_declaration sd ON sd.id=c.source_declaration_id
-				JOIN rights_declaration_verification sv ON sv.declaration_id=sd.id AND sv.outcome='VERIFIED'
+				JOIN rights_declaration_verification sv ON sv.declaration_id=sd.id AND sv.outcome='VERIFIED' AND sv.occurred_at <= $6
 				WHERE c.id=b.delegation_chain_id AND c.source_declaration_id=b.rights_declaration_id AND c.status='FINALIZED' AND c.chain_hash=b.delegation_chain_hash
-				  AND sd.workspace_id=$1 AND sd.data_resource_id=$2
+				  AND sd.workspace_id=$1 AND sd.data_resource_id=$2::uuid AND sd.created_at <= $6
 				  AND (sd.effective_from IS NULL OR sd.effective_from <= $6) AND (sd.effective_to IS NULL OR sd.effective_to > $6)
 				  AND NOT EXISTS (SELECT 1 FROM rights_declaration_disposition sx WHERE sx.declaration_id=sd.id AND sx.effective_at <= $6)
 			)
@@ -521,7 +521,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 			AND NOT EXISTS (
 				SELECT 1 FROM grantor_authority_delegation_edge e
 				WHERE e.chain_id=b.delegation_chain_id
-				  AND (e.data_resource_id<>$2 OR NOT ($9=ANY(e.grantable_actions)) OR NOT ($5=ANY(e.grantable_purposes)) OR NOT ((e.scope_type='ALL_RESOURCE' AND e.scope_ref=$2::text) OR (e.scope_type=$7 AND e.scope_ref=$8)))
+				  AND (e.data_resource_id<>$2::uuid OR NOT ($9=ANY(e.grantable_actions)) OR NOT ($5=ANY(e.grantable_purposes)) OR NOT ((e.scope_type='ALL_RESOURCE' AND e.scope_ref=$2::text) OR (e.scope_type=$7 AND e.scope_ref=$8)))
 			)
 			AND EXISTS (
 				SELECT 1 FROM rights_declaration_party rp
@@ -630,7 +630,7 @@ func (r *PostgresRepository) CurrentDirectDeclarationTx(ctx context.Context, tx 
 
 func currentDirectDeclaration(ctx context.Context, q queryer, workspaceID, resourceID uuid.UUID, consumer, purpose, action string, scope domain.NormalizedScope, asOf time.Time) (uuid.UUID, error) {
 	var id uuid.UUID
-	err := q.QueryRow(ctx, `SELECT d.id FROM rights_declaration d JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED' AND v.occurred_at <= $8 JOIN rights_declaration_permission p ON p.declaration_id=d.id AND p.permission_kind='USE' AND p.action=$5 JOIN rights_declaration_purpose q ON q.permission_id=p.id AND q.purpose_code=$4 JOIN rights_declaration_scope s ON s.permission_id=p.id AND ((s.scope_type='ALL_RESOURCE' AND s.scope_ref=$2::text) OR (s.scope_type=$6 AND s.scope_ref=$7)) WHERE d.workspace_id=$1 AND d.data_resource_id=$2 AND (d.consumer_scope_type='ANY' OR (d.consumer_scope_type='EXPLICIT' AND d.consumer_ref=$3)) AND d.created_at <= $8 AND (d.effective_from IS NULL OR d.effective_from <= $8) AND (d.effective_to IS NULL OR d.effective_to > $8) AND NOT EXISTS(SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $8) ORDER BY d.created_at,d.id LIMIT 1`, workspaceID, resourceID, consumer, purpose, action, scope.Type, scope.Ref, asOf).Scan(&id)
+	err := q.QueryRow(ctx, `SELECT d.id FROM rights_declaration d JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED' AND v.occurred_at <= $8 JOIN rights_declaration_permission p ON p.declaration_id=d.id AND p.permission_kind='USE' AND p.action=$5 JOIN rights_declaration_purpose q ON q.permission_id=p.id AND q.purpose_code=$4 JOIN rights_declaration_scope s ON s.permission_id=p.id AND ((s.scope_type='ALL_RESOURCE' AND s.scope_ref=$2::text) OR (s.scope_type=$6 AND s.scope_ref=$7)) WHERE d.workspace_id=$1 AND d.data_resource_id=$2::uuid AND (d.consumer_scope_type='ANY' OR (d.consumer_scope_type='EXPLICIT' AND d.consumer_ref=$3)) AND d.created_at <= $8 AND (d.effective_from IS NULL OR d.effective_from <= $8) AND (d.effective_to IS NULL OR d.effective_to > $8) AND NOT EXISTS(SELECT 1 FROM rights_declaration_disposition x WHERE x.declaration_id=d.id AND x.effective_at <= $8) ORDER BY d.created_at,d.id LIMIT 1`, workspaceID, resourceID, consumer, purpose, action, scope.Type, scope.Ref, asOf).Scan(&id)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return uuid.Nil, domain.ErrDeclarationNotVerified
 	}
