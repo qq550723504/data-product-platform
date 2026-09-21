@@ -292,6 +292,12 @@ func (h *Handler) bindAuthorizationProvenance(w http.ResponseWriter, r *http.Req
 		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid JSON request", nil)
 		return
 	}
+	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, 400, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
+	}
+	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("rights-provenance-binding:"+idempotencyKey))
 	workspace, resource, ok := parseTwoUUIDs(w, r, body.WorkspaceID, body.DataResourceID, "workspaceId", "dataResourceId")
 	if !ok {
 		return
@@ -315,7 +321,7 @@ func (h *Handler) bindAuthorizationProvenance(w http.ResponseWriter, r *http.Req
 		}
 		chainID = &parsed
 	}
-	b, e := h.service.BindAuthorizationProvenance(r.Context(), application.BindAuthorizationProvenanceCommand{WorkspaceID: workspace, AuthorizationID: authID, DataResourceID: resource, DeclarationID: declaration, GrantorRef: body.GrantorRef, AuthorityMode: body.AuthorityMode, DelegationChainID: chainID, DelegationChainHash: body.DelegationChainHash, AsOf: at, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
+	b, e := h.service.BindAuthorizationProvenance(r.Context(), application.BindAuthorizationProvenanceCommand{WorkspaceID: workspace, AuthorizationID: authID, DataResourceID: resource, DeclarationID: declaration, GrantorRef: body.GrantorRef, AuthorityMode: body.AuthorityMode, DelegationChainID: chainID, DelegationChainHash: body.DelegationChainHash, AsOf: at, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())})
 	if e != nil {
 		httpserver.WriteError(w, r, 400, "AUTHORIZATION_PROVENANCE_BIND_FAILED", e.Error(), nil)
 		return

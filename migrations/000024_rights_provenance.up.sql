@@ -513,7 +513,7 @@ BEGIN
        AND OLD.id IS NOT DISTINCT FROM NEW.id
        AND OLD.workspace_id IS NOT DISTINCT FROM NEW.workspace_id
        AND OLD.source_declaration_id IS NOT DISTINCT FROM NEW.source_declaration_id
-       AND OLD.chain_hash IS NOT DISTINCT FROM NEW.chain_hash
+       AND (OLD.chain_hash IS NOT DISTINCT FROM NEW.chain_hash OR (OLD.chain_hash IS NULL AND NEW.chain_hash IS NOT NULL))
        AND OLD.created_at IS NOT DISTINCT FROM NEW.created_at
        AND OLD.created_by IS NOT DISTINCT FROM NEW.created_by THEN RETURN NEW; END IF;
     RAISE EXCEPTION 'delegation chain is immutable';

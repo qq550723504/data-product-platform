@@ -16,6 +16,8 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
 )
 
+var ErrBindingIdempotentReplay = errors.New("authorization provenance binding idempotent replay")
+
 func (r *PostgresRepository) InsertRightsDeclaration(ctx context.Context, tx pgx.Tx, declaration domain.RightsDeclaration) error {
 	restrictions, err := json.Marshal(declaration.Restrictions)
 	if err != nil {
@@ -300,10 +302,26 @@ func (r *PostgresRepository) InsertBinding(ctx context.Context, tx pgx.Tx, bindi
 			return domain.ErrInvalidBinding
 		}
 	}
-	if _, err := tx.Exec(ctx, `INSERT INTO authorization_provenance_binding(id,workspace_id,authorization_id,data_resource_id,rights_declaration_id,grantor_ref,grantor_authority_mode,delegation_chain_id,delegation_chain_hash,created_at,created_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`, binding.ID, binding.WorkspaceID, binding.AuthorizationID, binding.DataResourceID, binding.DeclarationID, binding.GrantorRef, binding.AuthorityMode, binding.DelegationChainID, nullableString(binding.DelegationChainHash), binding.CreatedAt, binding.CreatedBy); err != nil {
+	tag, err := tx.Exec(ctx, `INSERT INTO authorization_provenance_binding(id,workspace_id,authorization_id,data_resource_id,rights_declaration_id,grantor_ref,grantor_authority_mode,delegation_chain_id,delegation_chain_hash,created_at,created_by,activity_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) ON CONFLICT (workspace_id,activity_id) WHERE activity_id IS NOT NULL DO NOTHING`, binding.ID, binding.WorkspaceID, binding.AuthorizationID, binding.DataResourceID, binding.DeclarationID, binding.GrantorRef, binding.AuthorityMode, binding.DelegationChainID, nullableString(binding.DelegationChainHash), binding.CreatedAt, binding.CreatedBy, binding.ActivityID)
+	if err != nil {
 		return fmt.Errorf("insert authorization provenance binding: %w", err)
 	}
+	if tag.RowsAffected() == 0 {
+		return ErrBindingIdempotentReplay
+	}
 	return nil
+}
+
+func (r *PostgresRepository) GetBindingByActivityID(ctx context.Context, workspaceID, activityID uuid.UUID) (domain.AuthorizationProvenanceBinding, error) {
+	var binding domain.AuthorizationProvenanceBinding
+	err := r.pool.QueryRow(ctx, `SELECT id,workspace_id,authorization_id,data_resource_id,rights_declaration_id,grantor_ref,grantor_authority_mode,delegation_chain_id,COALESCE(delegation_chain_hash,''),created_at,created_by,activity_id FROM authorization_provenance_binding WHERE workspace_id=$1 AND activity_id=$2`, workspaceID, activityID).Scan(&binding.ID, &binding.WorkspaceID, &binding.AuthorizationID, &binding.DataResourceID, &binding.DeclarationID, &binding.GrantorRef, &binding.AuthorityMode, &binding.DelegationChainID, &binding.DelegationChainHash, &binding.CreatedAt, &binding.CreatedBy, &binding.ActivityID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.AuthorizationProvenanceBinding{}, ErrNotFound
+	}
+	if err != nil {
+		return domain.AuthorizationProvenanceBinding{}, fmt.Errorf("get authorization provenance binding by activity: %w", err)
+	}
+	return binding, nil
 }
 
 func (r *PostgresRepository) InsertBindingDisposition(ctx context.Context, tx pgx.Tx, disposition domain.BindingDisposition) error {

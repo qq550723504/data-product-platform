@@ -194,7 +194,7 @@ func (s *Service) BindAuthorizationProvenance(ctx context.Context, cmd BindAutho
 		id := uuid.New()
 		cmd.ActivityID = &id
 	}
-	binding := domain.AuthorizationProvenanceBinding{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, AuthorizationID: cmd.AuthorizationID, DataResourceID: cmd.DataResourceID, DeclarationID: cmd.DeclarationID, GrantorRef: strings.TrimSpace(cmd.GrantorRef), AuthorityMode: strings.ToUpper(strings.TrimSpace(cmd.AuthorityMode)), DelegationChainID: cmd.DelegationChainID, DelegationChainHash: strings.TrimSpace(cmd.DelegationChainHash), CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
+	binding := domain.AuthorizationProvenanceBinding{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, AuthorizationID: cmd.AuthorizationID, DataResourceID: cmd.DataResourceID, DeclarationID: cmd.DeclarationID, GrantorRef: strings.TrimSpace(cmd.GrantorRef), AuthorityMode: strings.ToUpper(strings.TrimSpace(cmd.AuthorityMode)), DelegationChainID: cmd.DelegationChainID, DelegationChainHash: strings.TrimSpace(cmd.DelegationChainHash), CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID, ActivityID: cmd.ActivityID}
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		if err := s.repo.InsertBinding(ctx, tx, binding, cmd.AsOf); err != nil {
 			return err
@@ -207,7 +207,27 @@ func (s *Service) BindAuthorizationProvenance(ctx context.Context, cmd BindAutho
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &binding.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: "AUTHORIZATION_PROVENANCE_BOUND", ObjectType: "AUTHORIZATION_PROVENANCE_BINDING", ObjectID: binding.ID, AfterState: map[string]any{"authorizationId": binding.AuthorizationID, "declarationId": binding.DeclarationID}, TraceID: cmd.TraceID})
 	})
+	if errors.Is(err, infrastructure.ErrBindingIdempotentReplay) {
+		existing, findErr := s.repo.GetBindingByActivityID(ctx, binding.WorkspaceID, *cmd.ActivityID)
+		if findErr != nil {
+			return domain.AuthorizationProvenanceBinding{}, findErr
+		}
+		if !sameBindingRequest(existing, binding) {
+			return domain.AuthorizationProvenanceBinding{}, domain.ErrInvalidBinding
+		}
+		return existing, nil
+	}
 	return binding, err
+}
+
+func sameBindingRequest(existing, requested domain.AuthorizationProvenanceBinding) bool {
+	if existing.WorkspaceID != requested.WorkspaceID || existing.AuthorizationID != requested.AuthorizationID || existing.DataResourceID != requested.DataResourceID || existing.DeclarationID != requested.DeclarationID || existing.GrantorRef != requested.GrantorRef || existing.AuthorityMode != requested.AuthorityMode || existing.DelegationChainHash != requested.DelegationChainHash {
+		return false
+	}
+	if (existing.DelegationChainID == nil) != (requested.DelegationChainID == nil) {
+		return false
+	}
+	return existing.DelegationChainID == nil || *existing.DelegationChainID == *requested.DelegationChainID
 }
 
 func (s *Service) CheckCurrentEntitlement(ctx context.Context, cmd CheckCurrentEntitlementCommand) (domain.EntitlementDecision, error) {

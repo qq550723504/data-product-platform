@@ -256,6 +256,7 @@ type AuthorizationProvenanceBinding struct {
 	DelegationChainHash string
 	CreatedAt           time.Time
 	CreatedBy           *uuid.UUID
+	ActivityID          *uuid.UUID
 }
 
 type BindingDisposition struct {
