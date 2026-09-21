@@ -201,8 +201,8 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 		}
 		invalid := 0
 		samples := make([]any, 0, 5)
-		for index, row := range ctx.Table.Rows {
-			value := row[rule.Target]
+		for index := range ctx.Table.Rows {
+			value := ctx.Table.RawValue(index, rule.Target)
 			allowNull, err := parameterBool(rule, "allowNull", true)
 			if err != nil {
 				return domain.Finding{}, nil, fmt.Errorf("rule %s allowNull: %w", rule.ID, err)
@@ -234,8 +234,8 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 		}
 		invalid := 0
 		samples := make([]any, 0, 5)
-		for index, row := range ctx.Table.Rows {
-			value := row[rule.Target]
+		for index := range ctx.Table.Rows {
+			value := ctx.Table.RawValue(index, rule.Target)
 			allowNull, err := parameterBool(rule, "allowNull", true)
 			if err != nil {
 				return domain.Finding{}, nil, fmt.Errorf("rule %s allowNull: %w", rule.ID, err)
@@ -325,7 +325,10 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 		samples := make([]any, 0, 5)
 		for index, row := range ctx.Table.Rows {
 			condition := strings.TrimSpace(row[conditionField])
-			value := strings.TrimSpace(row[rule.Target])
+			// Presence of the condition field may use whitespace normalization, but the
+			// categorical target is a data fact and must match the declared values
+			// exactly unless a future rule explicitly opts into normalization.
+			value := ctx.Table.RawValue(index, rule.Target)
 			valid := (condition == "" && value == missingValue) || (condition != "" && hasString(allowedPresent, value))
 			if !valid {
 				invalid++

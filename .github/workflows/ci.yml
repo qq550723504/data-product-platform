@@ -19,7 +19,65 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: classify-changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      docs_only: ${{ steps.classify.outputs.docs_only }}
+    steps:
+      - name: Checkout history for diff classification
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Classify changed paths
+        id: classify
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+          PUSH_HEAD_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            base="$PR_BASE_SHA"
+            head="$PR_HEAD_SHA"
+          elif [ "$EVENT_NAME" = "push" ] && [ -n "$PUSH_BEFORE_SHA" ] && [ "$PUSH_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
+            base="$PUSH_BEFORE_SHA"
+            head="$PUSH_HEAD_SHA"
+          else
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          mapfile -t changed_files < <(git diff --no-renames --name-only "$base" "$head")
+          if [ "${#changed_files[@]}" -eq 0 ]; then
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          docs_only=true
+          for file in "${changed_files[@]}"; do
+            case "$file" in
+              docs/*|*.md|*.mdx|.github/ISSUE_TEMPLATE/*|.github/PULL_REQUEST_TEMPLATE*)
+                ;;
+              *)
+                docs_only=false
+                break
+                ;;
+            esac
+          done
+
+          echo "docs_only=$docs_only" >> "$GITHUB_OUTPUT"
+          printf 'Changed files:\n%s\n' "${changed_files[*]}"
+          echo "docs_only=$docs_only"
+
   go-platform:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
     name: go-platform
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -103,6 +161,8 @@ jobs:
           go build ./cmd/migrate
 
   web-console:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
     name: web-console
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -166,6 +226,8 @@ jobs:
           done
 
   hop-smoke:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
     name: hop-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -256,6 +318,8 @@ jobs:
         run: echo "No Hop reference/runtime files changed; smoke test skipped."
 
   splink-smoke:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
     name: splink-smoke
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -358,16 +422,22 @@ jobs:
         run: echo "No Splink runtime/adapter/evaluation files changed; smoke test skipped."
 
   browser-contracts:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
     uses: ./.github/workflows/web-browser.yml
   live-core:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
     uses: ./.github/workflows/live-core-browser.yml
   demo:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
     uses: ./.github/workflows/demo-lifecycle.yml
 
   required:
     name: required
     if: ${{ always() }}
-    needs: [go-platform, web-console, hop-smoke, splink-smoke, browser-contracts, live-core, demo]
+    needs: [changes, go-platform, web-console, hop-smoke, splink-smoke, browser-contracts, live-core, demo]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -377,15 +447,18 @@ jobs:
           node-version: '22'
       - name: Test fail-closed gate policy
         run: node --test .github/scripts/required-checks.test.mjs
-      - name: Require all seven CI jobs to succeed
+      - name: Enforce required CI policy for this change class
         env:
           CI_NEEDS: ${{ toJSON(needs) }}
+          CI_DOCS_ONLY: ${{ needs.changes.outputs.docs_only }}
         run: node .github/scripts/required-checks.mjs
       - name: Archive the verified source snapshot
+        if: ${{ needs.changes.outputs.docs_only != 'true' }}
         run: |
           git archive --format=zip --output="$RUNNER_TEMP/verified-source.zip" HEAD
           git rev-parse HEAD > "$RUNNER_TEMP/source-sha.txt"
       - name: Preserve verified source for review and reproduction
+        if: ${{ needs.changes.outputs.docs_only != 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: verified-source-${{ github.run_attempt }}
