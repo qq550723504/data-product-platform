@@ -441,6 +441,10 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 	if strings.TrimSpace(cmd.ConsumerRef) == "" || strings.TrimSpace(cmd.Purpose) == "" {
 		return domain.EffectiveRightsSnapshot{}, domain.ErrEffectiveRights
 	}
+	if cmd.ActivityID == nil {
+		id := uuid.New()
+		cmd.ActivityID = &id
+	}
 	requestedAsOf := cmd.AsOf
 	if cmd.AsOf.IsZero() {
 		cmd.AsOf = time.Now().UTC()
@@ -535,6 +539,9 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 			return err
 		}
 		if err := appendEvent(ctx, tx, "EFFECTIVE_RIGHTS_SNAPSHOT", snapshot.ID, "EffectiveRightsFinalized", map[string]any{"effectiveRightsSnapshotId": snapshot.ID, "targetDatasetVersionId": snapshot.TargetDatasetVersionID, "rootHash": snapshot.RootHash, "evidenceSnapshotId": evidenceSnapshot.ID}); err != nil {
+			return err
+		}
+		if err := appendRightsCost(ctx, tx, snapshot.WorkspaceID, *cmd.ActivityID, "EFFECTIVE_RIGHTS_COMPUTE", "effective_rights_snapshot_id", snapshot.ID); err != nil {
 			return err
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &snapshot.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: "EFFECTIVE_RIGHTS_FINALIZED", ObjectType: "EFFECTIVE_RIGHTS_SNAPSHOT", ObjectID: snapshot.ID, AfterState: map[string]any{"targetDatasetVersionId": snapshot.TargetDatasetVersionID, "rootHash": snapshot.RootHash}, TraceID: cmd.TraceID})
