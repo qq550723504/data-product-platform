@@ -155,6 +155,30 @@ func TestLoadPolicyRejectsUnknownRuleTypeAndMissingParameters(t *testing.T) {
 	}
 }
 
+func TestLoadPolicyRejectsInvalidRangeAndStringListValues(t *testing.T) {
+	dir := t.TempDir()
+	base := "apiVersion: quality/v1\nkind: QualityRuleSet\nmetadata:\n  version: 1.0.0\nspec:\n  rules:\n    - id: R-1\n      dimension: ACCURACY\n      type: %s\n      target: amount\n      parameters:\n%s      required: true\n      severity: CRITICAL\n"
+	cases := []struct {
+		name string
+		rule string
+	}{
+		{name: "inverted range", rule: "range\n        min: 10\n        max: 1\n"},
+		{name: "non-string enum member", rule: "enum\n        values:\n          - ACTIVE\n          - 1\n"},
+	}
+	for _, testCase := range cases {
+		t.Run(testCase.name, func(t *testing.T) {
+			path := filepath.Join(dir, testCase.name+".yaml")
+			content := []byte(fmt.Sprintf(base, strings.Split(testCase.rule, "\n")[0], strings.Replace(testCase.rule, strings.Split(testCase.rule, "\n")[0]+"\n", "", 1)))
+			if err := os.WriteFile(path, content, 0o600); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := LoadPolicy(path); err == nil {
+				t.Fatalf("invalid %s policy was accepted", testCase.name)
+			}
+		})
+	}
+}
+
 func TestLoadPolicyNormalizesSeverity(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "severity.yaml")

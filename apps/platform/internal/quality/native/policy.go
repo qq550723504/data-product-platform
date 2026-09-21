@@ -334,6 +334,17 @@ func validatePolicy(policy Policy, requireRequired bool) error {
 			if _, err := parameterNumber(rule, "max"); err != nil {
 				return fmt.Errorf("rule %s range max: %w", rule.ID, err)
 			}
+			minimum, err := numericRat(rule.Parameters["min"])
+			if err != nil {
+				return fmt.Errorf("rule %s range min: %w", rule.ID, err)
+			}
+			maximum, err := numericRat(rule.Parameters["max"])
+			if err != nil {
+				return fmt.Errorf("rule %s range max: %w", rule.ID, err)
+			}
+			if minimum.Cmp(maximum) > 0 {
+				return fmt.Errorf("rule %s range min must not exceed max", rule.ID)
+			}
 		}
 		if ruleType == RuleTypeNotNull || ruleType == RuleTypeCompletenessRatio || ruleType == RuleTypeUnique {
 			if err := validateRatioThreshold(rule, 1); err != nil {
@@ -350,6 +361,11 @@ func validatePolicy(policy Policy, requireRequired bool) error {
 				return fmt.Errorf("rule %s allowNull: %w", rule.ID, err)
 			}
 		}
+		if ruleType == RuleTypeEnum {
+			if err := validateStringListParameters(rule, "values", "allowedValues"); err != nil {
+				return fmt.Errorf("rule %s: %w", rule.ID, err)
+			}
+		}
 		if ruleType == RuleTypeEnum && len(parameterStrings(rule, "values", "allowedValues")) == 0 {
 			return fmt.Errorf("rule %s enum values are required", rule.ID)
 		}
@@ -357,6 +373,9 @@ func validatePolicy(policy Policy, requireRequired bool) error {
 			return fmt.Errorf("rule %s regex pattern is required", rule.ID)
 		}
 		if ruleType == RuleTypeConditionalConsistency {
+			if err := validateStringListParameters(rule, "whenPresentValues"); err != nil {
+				return fmt.Errorf("rule %s: %w", rule.ID, err)
+			}
 			if strings.TrimSpace(parameterString(rule, "conditionField")) == "" ||
 				strings.TrimSpace(parameterString(rule, "whenMissing")) == "" ||
 				len(parameterStrings(rule, "whenPresentValues")) == 0 {
@@ -541,6 +560,33 @@ func parameterStrings(rule Rule, keys ...string) []string {
 				}
 			}
 			return result
+		}
+	}
+	return nil
+}
+
+func validateStringListParameters(rule Rule, keys ...string) error {
+	for _, key := range keys {
+		value, ok := rule.Parameters[key]
+		if !ok {
+			continue
+		}
+		switch values := value.(type) {
+		case []any:
+			for index, item := range values {
+				text, ok := item.(string)
+				if !ok || strings.TrimSpace(text) == "" {
+					return fmt.Errorf("parameter %s[%d] must be a non-empty string", key, index)
+				}
+			}
+		case []string:
+			for index, item := range values {
+				if strings.TrimSpace(item) == "" {
+					return fmt.Errorf("parameter %s[%d] must be a non-empty string", key, index)
+				}
+			}
+		default:
+			return fmt.Errorf("parameter %s must be a string list", key)
 		}
 	}
 	return nil

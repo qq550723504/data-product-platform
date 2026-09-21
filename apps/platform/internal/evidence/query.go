@@ -125,7 +125,11 @@ func (r *QueryRepository) HasSupportingEvidenceForObject(ctx context.Context, ob
 			JOIN evidence e ON e.id = er.evidence_id
 			WHERE er.object_type = $1
 			  AND er.object_id = $2
-			  AND e.evidence_type NOT IN ('QUALITY_RESULT', 'COMPLIANCE_RESULT')
+			  AND e.evidence_type NOT IN (
+				  'QUALITY_RESULT',
+				  'COMPLIANCE_RESULT',
+				  'QUALITY_ASSESSMENT_ATTEMPT_FAILED'
+			  )
 		)
 	`, objectType, objectID).Scan(&present); err != nil {
 		return false, fmt.Errorf("check supporting evidence for %s %s: %w", objectType, objectID, err)
