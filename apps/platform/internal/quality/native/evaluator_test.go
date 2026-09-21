@@ -103,6 +103,29 @@ func TestEnumRuleMatchesUnmodifiedCellValues(t *testing.T) {
 	}
 }
 
+func TestConditionalConsistencyMatchesUnmodifiedTargetValues(t *testing.T) {
+	policy := Policy{}
+	policy.Spec.Rules = []Rule{{
+		ID: "R-CONDITIONAL", Dimension: "CONSISTENCY", Type: RuleTypeConditionalConsistency, Target: "activity_level",
+		Parameters: map[string]any{
+			"conditionField":    "activity_score",
+			"whenMissing":       "INSUFFICIENT_DATA",
+			"whenPresentValues": []any{"HIGH", "MEDIUM", "LOW"},
+		},
+		Required: true, Severity: "CRITICAL",
+	}}
+	findings, _, err := Evaluate(policy, DatasetContext{Table: tabular.Table{
+		Headers: []string{"activity_score", "activity_level"},
+		Rows:    []map[string]string{{"activity_score": "88", "activity_level": " HIGH "}},
+	}})
+	if err != nil {
+		t.Fatalf("evaluate conditional consistency: %v", err)
+	}
+	if findings[0].Status != domain.FindingFail {
+		t.Fatalf("space-padded conditional target passed: %#v", findings[0])
+	}
+}
+
 func TestLoadPolicyRejectsUnknownRuleTypeAndMissingParameters(t *testing.T) {
 	dir := t.TempDir()
 	unknown := filepath.Join(dir, "unknown.yaml")
