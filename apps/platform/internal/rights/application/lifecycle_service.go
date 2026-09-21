@@ -156,6 +156,9 @@ func (s *Service) CreateDelegationChain(ctx context.Context, cmd CreateDelegatio
 		if err := s.repo.InsertDelegationChain(ctx, tx, chain); err != nil {
 			return err
 		}
+		if err := appendEvent(ctx, tx, "GRANTOR_AUTHORITY_DELEGATION_CHAIN", chain.ID, "GrantorAuthorityDelegationChainCreated", map[string]any{"chainId": chain.ID, "sourceDeclarationId": chain.SourceDeclarationID, "status": chain.Status}); err != nil {
+			return err
+		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &chain.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: "GRANTOR_AUTHORITY_DELEGATION_CHAIN_CREATED", ObjectType: "GRANTOR_AUTHORITY_DELEGATION_CHAIN", ObjectID: chain.ID, AfterState: map[string]any{"sourceDeclarationId": chain.SourceDeclarationID}, TraceID: cmd.TraceID})
 	})
 	if errors.Is(err, infrastructure.ErrDelegationChainIdempotentReplay) {
