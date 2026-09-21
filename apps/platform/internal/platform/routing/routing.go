@@ -118,6 +118,7 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "DatasetCertificationRejected"},
 		{EventType: "DatasetCertificationRevoked"},
 		{EventType: "DatasetCertificationSuperseded"},
+		{EventType: "CertificationProfileCreated"},
 		{EventType: "QualityAssessmentAttemptFailed"},
 		{EventType: "QualityPassed"},
 		{EventType: "QualityFailed"},

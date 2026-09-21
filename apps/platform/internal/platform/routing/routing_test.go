@@ -37,6 +37,7 @@ var eventVocabulary = []string{
 	"DatasetDeliveryProviderObservationRecorded",
 	"ContractPublished",
 	"ContractVersionCreated",
+	"CertificationProfileCreated",
 	"DataProductCreated",
 	"DatasetCertified",
 	"DatasetCertificationRejected",
