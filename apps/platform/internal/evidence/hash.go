@@ -14,6 +14,7 @@ import (
 const (
 	HashAlgorithmLegacy     = "SHA256"
 	HashAlgorithmEvidenceV1 = "SHA256-EVIDENCE-V1"
+	HashAlgorithmEvidenceV2 = "SHA256-EVIDENCE-V2"
 )
 
 type hashEnvelopeV1 struct {
@@ -39,8 +40,11 @@ func ComputeHash(record Record, algorithm string) (string, error) {
 	switch algorithm {
 	case HashAlgorithmLegacy:
 		payload, err = json.Marshal(nonNilMetadata(record.Metadata))
-	case HashAlgorithmEvidenceV1:
-		metadata, normalizeErr := canonicalMetadata(record.Metadata)
+	case HashAlgorithmEvidenceV1, HashAlgorithmEvidenceV2:
+		metadata, normalizeErr := canonicalMetadataV1(record.Metadata)
+		if algorithm == HashAlgorithmEvidenceV2 {
+			metadata, normalizeErr = canonicalMetadataV2(record.Metadata)
+		}
 		if normalizeErr != nil {
 			return "", normalizeErr
 		}
@@ -98,6 +102,25 @@ func canonicalMetadata(metadata map[string]any) (map[string]any, error) {
 		return nil, fmt.Errorf("marshal canonical Evidence metadata: %w", err)
 	}
 	var canonical map[string]any
+	if err := json.Unmarshal(encoded, &canonical); err != nil {
+		return nil, fmt.Errorf("normalize canonical Evidence metadata: %w", err)
+	}
+	if canonical == nil {
+		canonical = map[string]any{}
+	}
+	return canonical, nil
+}
+
+func canonicalMetadataV1(metadata map[string]any) (map[string]any, error) {
+	return canonicalMetadata(metadata)
+}
+
+func canonicalMetadataV2(metadata map[string]any) (map[string]any, error) {
+	encoded, err := json.Marshal(nonNilMetadata(metadata))
+	if err != nil {
+		return nil, fmt.Errorf("marshal canonical Evidence metadata: %w", err)
+	}
+	var canonical map[string]any
 	decoder := json.NewDecoder(bytes.NewReader(encoded))
 	decoder.UseNumber()
 	if err := decoder.Decode(&canonical); err != nil {
@@ -125,9 +148,9 @@ func decodeMetadata(encoded []byte, metadata *map[string]any) error {
 }
 
 func decodeMetadataForHash(encoded []byte, algorithm string, metadata *map[string]any) error {
-	if strings.EqualFold(strings.TrimSpace(algorithm), HashAlgorithmLegacy) {
-		// Preserve the legacy float64 decode/re-marshal behavior for records
-		// written before Evidence V1. V1 uses json.Number plus canonicalization.
+	if strings.EqualFold(strings.TrimSpace(algorithm), HashAlgorithmLegacy) || strings.EqualFold(strings.TrimSpace(algorithm), HashAlgorithmEvidenceV1) {
+		// Preserve the historical float64 decode/re-marshal behavior for legacy
+		// and V1 records. V2 is the versioned exact-number canonical format.
 		return json.Unmarshal(encoded, metadata)
 	}
 	return decodeMetadata(encoded, metadata)

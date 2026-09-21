@@ -113,7 +113,7 @@ func TestEvidenceHashPreservesLargeJSONIntegers(t *testing.T) {
 		CreatedAt:    time.Date(2026, 9, 20, 10, 11, 12, 0, time.UTC),
 		Metadata:     map[string]any{"large": json.Number("9007199254740993")},
 	}
-	highHash, err := ComputeHash(base, HashAlgorithmEvidenceV1)
+	highHash, err := ComputeHash(base, HashAlgorithmEvidenceV2)
 	if err != nil {
 		t.Fatalf("compute high integer hash: %v", err)
 	}
@@ -128,12 +128,12 @@ func TestEvidenceHashPreservesLargeJSONIntegers(t *testing.T) {
 		t.Fatalf("decode large integer metadata: %v", err)
 	}
 	base.Metadata = roundTripped
-	if !VerifyHash(base, HashAlgorithmEvidenceV1, highHash) {
+	if !VerifyHash(base, HashAlgorithmEvidenceV2, highHash) {
 		t.Fatalf("large integer hash did not survive JSON round trip: metadata=%#v", roundTripped)
 	}
 
 	base.Metadata = map[string]any{"large": json.Number("9007199254740992")}
-	lowHash, err := ComputeHash(base, HashAlgorithmEvidenceV1)
+	lowHash, err := ComputeHash(base, HashAlgorithmEvidenceV2)
 	if err != nil {
 		t.Fatalf("compute low integer hash: %v", err)
 	}
@@ -150,12 +150,12 @@ func TestEvidenceHashCanonicalizesEquivalentJSONNumbers(t *testing.T) {
 		CreatedAt:    time.Date(2026, 9, 20, 10, 11, 12, 0, time.UTC),
 		Metadata:     map[string]any{"nested": []any{json.Number("1e-7")}},
 	}
-	exponentHash, err := ComputeHash(base, HashAlgorithmEvidenceV1)
+	exponentHash, err := ComputeHash(base, HashAlgorithmEvidenceV2)
 	if err != nil {
 		t.Fatalf("compute exponent hash: %v", err)
 	}
 	base.Metadata = map[string]any{"nested": []any{json.Number("0.0000001")}}
-	decimalHash, err := ComputeHash(base, HashAlgorithmEvidenceV1)
+	decimalHash, err := ComputeHash(base, HashAlgorithmEvidenceV2)
 	if err != nil {
 		t.Fatalf("compute decimal hash: %v", err)
 	}
@@ -204,5 +204,21 @@ func TestLegacyEvidenceHashPreservesNumericRoundTrip(t *testing.T) {
 	record.Metadata = roundTripped
 	if !VerifyHash(record, HashAlgorithmLegacy, hashValue) {
 		t.Fatalf("legacy hash did not survive JSONB numeric round trip: metadata=%#v", roundTripped)
+	}
+}
+
+func TestEvidenceV1PreservesHistoricalNumericVerification(t *testing.T) {
+	record := Record{Metadata: map[string]any{"ratio": 1e-7}}
+	hashValue, err := ComputeHash(record, HashAlgorithmEvidenceV1)
+	if err != nil {
+		t.Fatalf("compute V1 hash: %v", err)
+	}
+	var roundTripped map[string]any
+	if err := decodeMetadataForHash([]byte(`{"ratio":0.0000001}`), HashAlgorithmEvidenceV1, &roundTripped); err != nil {
+		t.Fatalf("decode V1 metadata: %v", err)
+	}
+	record.Metadata = roundTripped
+	if !VerifyHash(record, HashAlgorithmEvidenceV1, hashValue) {
+		t.Fatalf("historical V1 hash did not survive JSONB numeric spelling normalization")
 	}
 }

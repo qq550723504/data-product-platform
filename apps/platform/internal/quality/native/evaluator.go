@@ -178,8 +178,10 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 				}
 			}
 		}
-		observed := map[string]any{"invalid": invalid, "total": len(ctx.Table.Rows), "min": minimumFloat, "max": maximumFloat}
-		threshold := map[string]any{"min": minimumFloat, "max": maximumFloat}
+		minimumObserved := ratJSONNumber(minimum)
+		maximumObserved := ratJSONNumber(maximum)
+		observed := map[string]any{"invalid": invalid, "total": len(ctx.Table.Rows), "min": minimumObserved, "max": maximumObserved}
+		threshold := map[string]any{"min": minimumObserved, "max": maximumObserved}
 		if invalid > 0 {
 			return fail(fmt.Sprintf("%s contains values outside %.6f..%.6f", rule.Target, minimumFloat, maximumFloat), observed, invalid, threshold, invalid, samples)
 		}
@@ -283,19 +285,20 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 			return domain.Finding{}, nil, fmt.Errorf("rule %s: %w", rule.ID, err)
 		}
 		operator := strings.ToLower(parameterString(rule, "operator"))
-		value := float64(0)
+		var valueObserved any
 		if ok {
-			value, _ = valueRat.Float64()
+			valueObserved = ratJSONNumber(valueRat)
 		}
+		thresholdObserved := ratJSONNumber(thresholdRat)
 		threshold, _ := thresholdRat.Float64()
-		observed := map[string]any{"metric": metric, "value": value, "available": ok, "operator": operator}
+		observed := map[string]any{"metric": metric, "value": valueObserved, "available": ok, "operator": operator}
 		if !ok && !rule.Required {
 			return skip(fmt.Sprintf("rule not applicable: reference metric %s is unavailable", metric), observed)
 		}
 		if !ok || !compareRat(valueRat, operator, thresholdRat) {
-			return fail(fmt.Sprintf("reference metric %s is unavailable or violates %s %.6f", metric, operator, threshold), observed, value, threshold, 1, nil)
+			return fail(fmt.Sprintf("reference metric %s is unavailable or violates %s %.6f", metric, operator, threshold), observed, valueObserved, thresholdObserved, 1, nil)
 		}
-		return pass(observed, value, threshold, 0, nil)
+		return pass(observed, valueObserved, thresholdObserved, 0, nil)
 
 	case RuleTypeConditionalConsistency:
 		if result, ok, err := targetAvailability(rule, ctx, skip, fail); err != nil || ok {
@@ -514,6 +517,44 @@ func numericRat(value any) (*big.Rat, error) {
 	default:
 		return nil, fmt.Errorf("must be numeric, got %T", value)
 	}
+}
+
+func ratJSONNumber(value *big.Rat) json.Number {
+	if value == nil {
+		return "0"
+	}
+	return json.Number(ratDecimalString(value))
+}
+
+func ratDecimalString(value *big.Rat) string {
+	if value.Sign() == 0 {
+		return "0"
+	}
+	denominator := new(big.Int).Set(value.Denom())
+	two := big.NewInt(2)
+	five := big.NewInt(5)
+	one := big.NewInt(1)
+	twoCount, fiveCount := 0, 0
+	for new(big.Int).Mod(denominator, two).Cmp(big.NewInt(0)) == 0 {
+		denominator.Div(denominator, two)
+		twoCount++
+	}
+	for new(big.Int).Mod(denominator, five).Cmp(big.NewInt(0)) == 0 {
+		denominator.Div(denominator, five)
+		fiveCount++
+	}
+	if denominator.Cmp(one) != 0 {
+		return value.RatString()
+	}
+	scale := twoCount
+	if fiveCount > scale {
+		scale = fiveCount
+	}
+	text := value.FloatString(scale)
+	if scale > 0 {
+		text = strings.TrimRight(strings.TrimRight(text, "0"), ".")
+	}
+	return text
 }
 
 func parameterBool(rule Rule, key string, fallback bool) (bool, error) {

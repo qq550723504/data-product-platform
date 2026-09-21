@@ -45,7 +45,7 @@ func Append(ctx context.Context, tx pgx.Tx, record Record, relations ...Relation
 	if err != nil {
 		return Record{}, fmt.Errorf("marshal evidence metadata: %w", err)
 	}
-	hashValue, err := ComputeHash(record, HashAlgorithmEvidenceV1)
+	hashValue, err := ComputeHash(record, HashAlgorithmEvidenceV2)
 	if err != nil {
 		return Record{}, err
 	}
@@ -56,7 +56,7 @@ func Append(ctx context.Context, tx pgx.Tx, record Record, relations ...Relation
 			storage_uri, hash_algorithm, hash_value, metadata, created_at, created_by
 		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
 	`, record.ID, record.WorkspaceID, record.EvidenceType, record.Title, record.SourceType, record.SourceID,
-		record.StorageURI, HashAlgorithmEvidenceV1, hashValue, metadata, record.CreatedAt, record.CreatedBy)
+		record.StorageURI, HashAlgorithmEvidenceV2, hashValue, metadata, record.CreatedAt, record.CreatedBy)
 	if err != nil {
 		return Record{}, fmt.Errorf("insert evidence: %w", err)
 	}
