@@ -45,6 +45,16 @@ type DimensionSummary struct {
 	FailedCount    int             `json:"failedCount"`
 }
 
+// FindingPage is the bounded, deterministic view of an assessment's
+// immutable findings used by the Quality Report API. The assessment itself
+// remains the historical fact; paging only changes how it is read.
+type FindingPage struct {
+	Items  []Finding
+	Limit  int
+	Offset int
+	Total  int
+}
+
 type Finding struct {
 	ID        uuid.UUID
 	ResultID  uuid.UUID

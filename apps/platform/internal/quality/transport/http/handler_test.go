@@ -1,12 +1,14 @@
 package qualityhttp
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 )
 
 func TestRunRejectsExplicitNilAssessmentAttemptID(t *testing.T) {
@@ -43,5 +45,61 @@ func TestRunRejectsMissingAssessmentAttemptID(t *testing.T) {
 	}
 	if !strings.Contains(response.Body.String(), "MISSING_ASSESSMENT_ATTEMPT_ID") {
 		t.Fatalf("response = %s, want missing attempt id error", response.Body.String())
+	}
+}
+
+func TestReportRequiresWorkspaceID(t *testing.T) {
+	assessmentID := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/quality-assessments/"+assessmentID.String()+"/report", nil)
+	req.SetPathValue("assessmentId", assessmentID.String())
+	response := httptest.NewRecorder()
+
+	(&Handler{}).getReport(response, req)
+
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusBadRequest)
+	}
+	if !strings.Contains(response.Body.String(), "WORKSPACE_REQUIRED") {
+		t.Fatalf("response = %s, want workspace-required error", response.Body.String())
+	}
+}
+
+func TestReportRejectsUnboundedFindingLimit(t *testing.T) {
+	assessmentID := uuid.New()
+	workspaceID := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/quality-assessments/"+assessmentID.String()+"/report?workspaceId="+workspaceID.String()+"&limit=101", nil)
+	req.SetPathValue("assessmentId", assessmentID.String())
+	response := httptest.NewRecorder()
+
+	(&Handler{}).getReport(response, req)
+
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusBadRequest)
+	}
+	if !strings.Contains(response.Body.String(), "INVALID_LIMIT") {
+		t.Fatalf("response = %s, want invalid-limit error", response.Body.String())
+	}
+}
+
+func TestReportFindingMapsSkippedToNotApplicableWithoutChangingObservedFact(t *testing.T) {
+	finding := domain.Finding{
+		ID:        uuid.New(),
+		ResultID:  uuid.New(),
+		RuleID:    "optional-field",
+		Dimension: "ACCURACY",
+		Severity:  "WARNING",
+		Status:    domain.FindingSkipped,
+		Observed:  map[string]any{"affectedCount": 0, "sample": []any{}},
+	}
+
+	response := reportFindingResponse(finding)
+	if response["status"] != string(domain.DimensionNotApplicable) {
+		t.Fatalf("report status = %v, want NOT_APPLICABLE", response["status"])
+	}
+	if finding.Status != domain.FindingSkipped {
+		t.Fatalf("historical finding status changed to %s", finding.Status)
+	}
+	if _, err := json.Marshal(response); err != nil {
+		t.Fatalf("report finding is not JSON encodable: %v", err)
 	}
 }
