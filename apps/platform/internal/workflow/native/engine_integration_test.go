@@ -240,10 +240,10 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 		}
 	}
 	assertOutputSet(t, rows, map[string]int{
-		"96.01|HIGH|100.00":                  1,
-		"81.97|HIGH|100.00":                  1,
-		"99.13|HIGH|100.00":                  1,
-		"|INSUFFICIENT_DATA|33.33":           2,
+		"96.01|HIGH|100.00":        1,
+		"81.97|HIGH|100.00":        1,
+		"99.13|HIGH|100.00":        1,
+		"|INSUFFICIENT_DATA|33.33": 2,
 	})
 	frozenRow := findOutputByCompanyID(rows, originalDecision.EntityID.String())
 	if frozenRow == nil {
