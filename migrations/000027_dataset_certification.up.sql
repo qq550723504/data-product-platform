@@ -73,6 +73,10 @@ DECLARE
     profile_hash_value varchar(64);
     profile_content_value text;
     profile_rights_required boolean;
+    profile_rights_purpose_mode varchar(16);
+    profile_rights_action_mode varchar(16);
+    profile_rights_consumer_mode varchar(16);
+    profile_rights_scope_mode varchar(16);
     profile_compliance_required boolean;
     profile_contract_required boolean;
     profile_traceability_required boolean;
@@ -83,6 +87,9 @@ DECLARE
     effective_dataset_version uuid;
     effective_status varchar(16);
     effective_root_hash varchar(64);
+    effective_consumer_ref varchar(255);
+    effective_purpose varchar(128);
+    effective_lineage_mismatch boolean;
     compliance_workspace uuid;
     compliance_dataset_version uuid;
     contract_workspace uuid;
@@ -109,9 +116,11 @@ BEGIN
     END IF;
 
     SELECT workspace_id, profile_ref, version, content_sha256, content_snapshot,
-           rights_required, compliance_required, contract_required, traceability_required, evidence_required
+           rights_required, rights_purpose_mode, rights_action_mode, rights_consumer_mode, rights_scope_mode,
+           compliance_required, contract_required, traceability_required, evidence_required
       INTO profile_workspace, profile_ref_value, profile_version_value, profile_hash_value, profile_content_value,
-           profile_rights_required, profile_compliance_required, profile_contract_required, profile_traceability_required, profile_evidence_required
+           profile_rights_required, profile_rights_purpose_mode, profile_rights_action_mode, profile_rights_consumer_mode, profile_rights_scope_mode,
+           profile_compliance_required, profile_contract_required, profile_traceability_required, profile_evidence_required
       FROM certification_profile WHERE id = NEW.certification_profile_id;
     IF profile_workspace IS DISTINCT FROM NEW.workspace_id
        OR profile_ref_value IS DISTINCT FROM NEW.profile_ref
@@ -155,14 +164,104 @@ BEGIN
     END IF;
 
     IF NEW.effective_rights_snapshot_id IS NOT NULL THEN
-        SELECT workspace_id, target_dataset_version_id, status, root_hash
-          INTO effective_workspace, effective_dataset_version, effective_status, effective_root_hash
-          FROM effective_rights_snapshot WHERE id = NEW.effective_rights_snapshot_id;
+        SELECT workspace_id, target_dataset_version_id, status, root_hash, consumer_ref, purpose
+          INTO effective_workspace, effective_dataset_version, effective_status, effective_root_hash, effective_consumer_ref, effective_purpose
+          FROM effective_rights_snapshot WHERE id = NEW.effective_rights_snapshot_id
+          FOR SHARE;
         IF effective_workspace IS DISTINCT FROM NEW.workspace_id
            OR effective_dataset_version IS DISTINCT FROM NEW.dataset_version_id
            OR effective_status <> 'FINALIZED'
            OR effective_root_hash IS DISTINCT FROM NEW.effective_rights_snapshot_hash THEN
             RAISE EXCEPTION 'DatasetCertification requires a finalized matching EffectiveRightsSnapshot';
+        END IF;
+
+        IF NEW.decision = 'CERTIFIED' AND profile_rights_required THEN
+            -- EffectiveRightsSnapshot is currently a single consumer/purpose context.
+            -- It cannot prove universal coverage, so ANY requirements fail closed
+            -- until the rights model has an explicit universal frozen fact.
+            IF profile_rights_purpose_mode = 'ANY'
+               OR profile_rights_action_mode = 'ANY'
+               OR profile_rights_consumer_mode = 'ANY'
+               OR profile_rights_scope_mode = 'ANY' THEN
+                RAISE EXCEPTION 'DatasetCertification cannot prove ANY rights applicability from a single-context EffectiveRightsSnapshot';
+            END IF;
+
+            IF EXISTS (
+                SELECT 1 FROM certification_profile_rights_purpose p
+                WHERE p.profile_id=NEW.certification_profile_id
+                  AND p.purpose_code IS DISTINCT FROM effective_purpose
+            ) THEN
+                RAISE EXCEPTION 'EffectiveRightsSnapshot purpose does not cover CertificationProfile';
+            END IF;
+
+            IF EXISTS (
+                SELECT 1 FROM certification_profile_rights_consumer c
+                WHERE c.profile_id=NEW.certification_profile_id
+                  AND c.consumer_ref IS DISTINCT FROM effective_consumer_ref
+            ) THEN
+                RAISE EXCEPTION 'EffectiveRightsSnapshot consumer does not cover CertificationProfile';
+            END IF;
+
+            IF EXISTS (
+                SELECT 1
+                FROM certification_profile_rights_action a
+                WHERE a.profile_id=NEW.certification_profile_id
+                  AND NOT EXISTS (
+                      SELECT 1 FROM effective_rights_action era
+                      WHERE era.snapshot_id=NEW.effective_rights_snapshot_id
+                        AND era.action=a.action
+                        AND era.decision='ALLOWED'
+                  )
+            ) THEN
+                RAISE EXCEPTION 'EffectiveRightsSnapshot actions do not cover CertificationProfile';
+            END IF;
+
+            IF EXISTS (
+                SELECT 1
+                FROM certification_profile_rights_scope s
+                WHERE s.profile_id=NEW.certification_profile_id
+                  AND (
+                      s.scope_type <> 'ALL_RESOURCE'
+                      OR NOT EXISTS (
+                          SELECT 1 FROM effective_rights_input eri
+                          WHERE eri.snapshot_id=NEW.effective_rights_snapshot_id
+                            AND eri.data_resource_id::text=s.scope_ref
+                      )
+                  )
+            ) THEN
+                RAISE EXCEPTION 'EffectiveRightsSnapshot normalized scopes do not cover CertificationProfile';
+            END IF;
+
+            WITH RECURSIVE lineage(version_id) AS (
+                SELECT input_version_id
+                FROM dataset_version_lineage
+                WHERE output_version_id=NEW.dataset_version_id
+                UNION
+                SELECT edge.input_version_id
+                FROM dataset_version_lineage edge
+                JOIN lineage parent ON parent.version_id=edge.output_version_id
+            ),
+            leaf_lineage(version_id) AS (
+                SELECT DISTINCT l.version_id
+                FROM lineage l
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM dataset_version_lineage child
+                    WHERE child.output_version_id=l.version_id
+                )
+            ),
+            mismatch AS (
+                (SELECT version_id FROM leaf_lineage
+                 EXCEPT
+                 SELECT input_dataset_version_id FROM effective_rights_input WHERE snapshot_id=NEW.effective_rights_snapshot_id)
+                UNION ALL
+                (SELECT input_dataset_version_id FROM effective_rights_input WHERE snapshot_id=NEW.effective_rights_snapshot_id
+                 EXCEPT
+                 SELECT version_id FROM leaf_lineage)
+            )
+            SELECT EXISTS(SELECT 1 FROM mismatch) INTO effective_lineage_mismatch;
+            IF effective_lineage_mismatch THEN
+                RAISE EXCEPTION 'EffectiveRightsSnapshot lineage membership does not match target DatasetVersion';
+            END IF;
         END IF;
     END IF;
 
