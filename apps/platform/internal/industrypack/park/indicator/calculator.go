@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 	"time"
+	_ "time/tzdata"
 
 	workflowindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/indicator"
 )
