@@ -11,8 +11,6 @@ type Provider string
 type ProjectionStatus string
 
 const (
-	ProviderOpenMetadata Provider = "OPENMETADATA"
-
 	ProjectionPending   ProjectionStatus = "PENDING"
 	ProjectionSucceeded ProjectionStatus = "SUCCEEDED"
 	ProjectionFailed    ProjectionStatus = "FAILED"
