@@ -125,7 +125,11 @@ func EffectiveRightsRootHash(snapshot domain.EffectiveRightsSnapshot) string {
 		parts = append(parts, "I|"+i.InputDatasetVersionID.String()+"|"+i.DataResourceID.String()+"|"+i.InputHash)
 	}
 	for _, a := range snapshot.Actions {
-		parts = append(parts, "A|"+a.Action+"|"+a.Decision+"|"+a.Reason)
+		blockingInputID := ""
+		if a.BlockingInputID != nil {
+			blockingInputID = a.BlockingInputID.String()
+		}
+		parts = append(parts, "A|"+a.Action+"|"+a.Decision+"|"+a.Reason+"|"+blockingInputID)
 		for _, provenance := range a.Provenance {
 			bindingID := ""
 			if provenance.BindingID != nil {
