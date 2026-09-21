@@ -27,7 +27,7 @@ AI 高质量数据集 / Gold Dataset    后续
 - #132 通用 industry-pack Quality Engine ✅ 完成
 - #133 Quality Report ✅ 完成
 - #137 Data Rights Provenance / Effective Rights ✅ 完成
-- #134 DatasetCertification / CertificationProfile 🚧 进行中（PR #149）
+- #134 DatasetCertification / CertificationProfile ✅ 完成（PR #149）
 - #135 Certified Dataset API / UI ⏳ 待完成
 - #136 enterprise-activity 纵向试点验收 ⏳ 待完成
 
