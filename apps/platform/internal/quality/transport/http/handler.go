@@ -82,12 +82,15 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 		ruleSetRef = "park/quality/enterprise-activity-quality-v1.yaml"
 	}
 	var assessmentAttemptID uuid.UUID
-	if strings.TrimSpace(req.AssessmentAttemptID) != "" {
-		assessmentAttemptID, err = uuid.Parse(req.AssessmentAttemptID)
-		if err != nil || assessmentAttemptID == uuid.Nil {
-			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ASSESSMENT_ATTEMPT_ID", "assessmentAttemptId must be a UUID", nil)
-			return
-		}
+	assessmentAttemptRef := strings.TrimSpace(req.AssessmentAttemptID)
+	if assessmentAttemptRef == "" {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "MISSING_ASSESSMENT_ATTEMPT_ID", "assessmentAttemptId is required for idempotent quality execution", nil)
+		return
+	}
+	assessmentAttemptID, err = uuid.Parse(assessmentAttemptRef)
+	if err != nil || assessmentAttemptID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ASSESSMENT_ATTEMPT_ID", "assessmentAttemptId must be a non-nil UUID", nil)
+		return
 	}
 	result, err := h.service.Run(r.Context(), application.RunCommand{
 		WorkspaceID:         workspaceID,
