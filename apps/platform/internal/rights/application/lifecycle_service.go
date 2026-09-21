@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"errors"
+	"sort"
 	"strings"
 	"time"
 
@@ -30,6 +31,7 @@ type CreateDelegationChainCommand struct {
 	WorkspaceID         uuid.UUID
 	SourceDeclarationID uuid.UUID
 	Edges               []domain.DelegationEdge
+	ActivityID          *uuid.UUID
 	ActorID             *uuid.UUID
 	TraceID             string
 }
@@ -126,13 +128,68 @@ func (s *Service) CreateDelegationChain(ctx context.Context, cmd CreateDelegatio
 		return domain.DelegationChain{}, domain.ErrInvalidBinding
 	}
 	chain := domain.DelegationChain{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, SourceDeclarationID: cmd.SourceDeclarationID, Status: "DRAFT", Edges: cmd.Edges, CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
+	if cmd.ActivityID != nil {
+		chain.ID = uuid.NewSHA1(uuid.NameSpaceURL, []byte("grantor-delegation-chain-create:"+cmd.WorkspaceID.String()+":"+cmd.ActivityID.String()))
+	}
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		if err := s.repo.InsertDelegationChain(ctx, tx, chain); err != nil {
 			return err
 		}
 		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &chain.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID, Action: "GRANTOR_AUTHORITY_DELEGATION_CHAIN_CREATED", ObjectType: "GRANTOR_AUTHORITY_DELEGATION_CHAIN", ObjectID: chain.ID, AfterState: map[string]any{"sourceDeclarationId": chain.SourceDeclarationID}, TraceID: cmd.TraceID})
 	})
+	if errors.Is(err, infrastructure.ErrDelegationChainIdempotentReplay) {
+		existing, findErr := s.repo.GetDelegationChain(ctx, chain.ID)
+		if findErr != nil {
+			return domain.DelegationChain{}, findErr
+		}
+		if !sameDelegationChain(existing, chain) {
+			return domain.DelegationChain{}, domain.ErrInvalidBinding
+		}
+		return existing, nil
+	}
 	return chain, err
+}
+
+func sameDelegationChain(existing, requested domain.DelegationChain) bool {
+	if existing.ID != requested.ID || existing.WorkspaceID != requested.WorkspaceID || existing.SourceDeclarationID != requested.SourceDeclarationID || (existing.CreatedBy == nil) != (requested.CreatedBy == nil) {
+		return false
+	}
+	if existing.CreatedBy != nil && *existing.CreatedBy != *requested.CreatedBy {
+		return false
+	}
+	if len(existing.Edges) != len(requested.Edges) {
+		return false
+	}
+	for i := range existing.Edges {
+		left, right := existing.Edges[i], requested.Edges[i]
+		if left.ID != right.ID || left.Ordinal != right.Ordinal || left.DelegatorRef != right.DelegatorRef || left.DelegateRef != right.DelegateRef || left.DataResourceID != right.DataResourceID || left.Scope != right.Scope || !sameTime(left.ValidFrom, right.ValidFrom) || !sameTime(left.ValidTo, right.ValidTo) || !sameStringSet(left.GrantableActions, right.GrantableActions) || !sameStringSet(left.GrantablePurposes, right.GrantablePurposes) {
+			return false
+		}
+	}
+	return true
+}
+
+func sameTime(left, right *time.Time) bool {
+	if (left == nil) != (right == nil) {
+		return false
+	}
+	return left == nil || left.Equal(*right)
+}
+
+func sameStringSet(left, right []string) bool {
+	left = append([]string(nil), left...)
+	right = append([]string(nil), right...)
+	sort.Strings(left)
+	sort.Strings(right)
+	if len(left) != len(right) {
+		return false
+	}
+	for i := range left {
+		if left[i] != right[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func (s *Service) FinalizeDelegationChain(ctx context.Context, cmd FinalizeDelegationChainCommand) (domain.DelegationChain, error) {
@@ -170,6 +227,15 @@ func (s *Service) DisposeDelegation(ctx context.Context, cmd DisposeDelegationCo
 		var workspace uuid.UUID
 		if err := tx.QueryRow(ctx, `SELECT workspace_id FROM grantor_authority_delegation_chain WHERE id=$1 FOR SHARE`, cmd.ChainID).Scan(&workspace); err != nil {
 			return err
+		}
+		if disposition.EdgeID != nil {
+			var edgeChainID uuid.UUID
+			if err := tx.QueryRow(ctx, `SELECT chain_id FROM grantor_authority_delegation_edge WHERE id=$1 FOR SHARE`, *disposition.EdgeID).Scan(&edgeChainID); err != nil {
+				return err
+			}
+			if edgeChainID != cmd.ChainID {
+				return domain.ErrRightsDisposition
+			}
 		}
 		if _, err := deliveryfence.Advance(ctx, tx, workspace); err != nil {
 			return err

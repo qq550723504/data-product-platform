@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -81,6 +82,11 @@ func (h *Handler) createDelegationChain(w http.ResponseWriter, r *http.Request) 
 		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid JSON request", nil)
 		return
 	}
+	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, 400, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
+	}
 	workspace, e := uuid.Parse(body.WorkspaceID)
 	if e != nil {
 		httpserver.WriteError(w, r, 400, "INVALID_WORKSPACE_ID", "workspaceId must be a UUID", nil)
@@ -92,11 +98,12 @@ func (h *Handler) createDelegationChain(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	actor, _ := parseActorID(r)
-	cmd := application.CreateDelegationChainCommand{WorkspaceID: workspace, SourceDeclarationID: source, ActorID: actor, TraceID: httpserver.RequestID(r.Context())}
-	for _, value := range body.Edges {
+	activityID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("grantor-delegation-chain-create:"+workspace.String()+":"+idempotencyKey))
+	cmd := application.CreateDelegationChainCommand{WorkspaceID: workspace, SourceDeclarationID: source, ActivityID: &activityID, ActorID: actor, TraceID: httpserver.RequestID(r.Context())}
+	for index, value := range body.Edges {
 		id, e := uuid.Parse(value.ID)
 		if e != nil {
-			id = uuid.New()
+			id = uuid.NewSHA1(uuid.NameSpaceURL, []byte("grantor-delegation-edge:"+activityID.String()+":"+strconv.Itoa(index)))
 		}
 		resource, e := uuid.Parse(value.DataResourceID)
 		if e != nil {

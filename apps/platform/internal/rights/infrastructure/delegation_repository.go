@@ -10,6 +10,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
 )
 
+var ErrDelegationChainIdempotentReplay = errors.New("delegation chain idempotent replay")
 var ErrDelegationDispositionIdempotentReplay = errors.New("delegation disposition idempotent replay")
 
 func (r *PostgresRepository) InsertDelegationChain(ctx context.Context, tx pgx.Tx, chain domain.DelegationChain) error {
@@ -20,8 +21,12 @@ func (r *PostgresRepository) InsertDelegationChain(ctx context.Context, tx pgx.T
 	if workspace != chain.WorkspaceID {
 		return domain.ErrResourceWorkspace
 	}
-	if _, err := tx.Exec(ctx, `INSERT INTO grantor_authority_delegation_chain(id,workspace_id,source_declaration_id,status,created_at,created_by) VALUES($1,$2,$3,'DRAFT',$4,$5)`, chain.ID, chain.WorkspaceID, chain.SourceDeclarationID, chain.CreatedAt, chain.CreatedBy); err != nil {
+	tag, err := tx.Exec(ctx, `INSERT INTO grantor_authority_delegation_chain(id,workspace_id,source_declaration_id,status,created_at,created_by) VALUES($1,$2,$3,'DRAFT',$4,$5) ON CONFLICT (id) DO NOTHING`, chain.ID, chain.WorkspaceID, chain.SourceDeclarationID, chain.CreatedAt, chain.CreatedBy)
+	if err != nil {
 		return fmt.Errorf("insert delegation chain: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrDelegationChainIdempotentReplay
 	}
 	for _, edge := range chain.Edges {
 		if _, err := tx.Exec(ctx, `INSERT INTO grantor_authority_delegation_edge(id,chain_id,ordinal,delegator_ref,delegate_ref,data_resource_id,grantable_actions,grantable_purposes,scope_type,scope_ref,valid_from,valid_to) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, edge.ID, chain.ID, edge.Ordinal, edge.DelegatorRef, edge.DelegateRef, edge.DataResourceID, edge.GrantableActions, edge.GrantablePurposes, edge.Scope.Type, edge.Scope.Ref, edge.ValidFrom, edge.ValidTo); err != nil {
