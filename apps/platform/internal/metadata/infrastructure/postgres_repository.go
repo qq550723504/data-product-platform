@@ -22,15 +22,17 @@ func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 	return &PostgresRepository{pool: pool}
 }
 
-func (r *PostgresRepository) UpsertBinding(ctx context.Context, tx pgx.Tx, binding metadatadomain.ResourceBinding) error {
+func (r *PostgresRepository) UpsertBinding(ctx context.Context, tx pgx.Tx, binding metadatadomain.ResourceBinding) (metadatadomain.ResourceBinding, error) {
 	metadata, err := json.Marshal(binding.BindingMetadata)
 	if err != nil {
-		return fmt.Errorf("marshal resource binding metadata: %w", err)
+		return metadatadomain.ResourceBinding{}, fmt.Errorf("marshal resource binding metadata: %w", err)
 	}
 	if binding.ID == uuid.Nil {
 		binding.ID = uuid.New()
 	}
-	_, err = tx.Exec(ctx, `
+	var persisted metadatadomain.ResourceBinding
+	var persistedMetadata []byte
+	err = tx.QueryRow(ctx, `
 		INSERT INTO resource_binding (
 			id, resource_id, provider, entity_type, external_id, external_fqn,
 			binding_metadata, is_primary, created_at, updated_at
@@ -42,12 +44,21 @@ func (r *PostgresRepository) UpsertBinding(ctx context.Context, tx pgx.Tx, bindi
 			binding_metadata = EXCLUDED.binding_metadata,
 			is_primary = EXCLUDED.is_primary,
 			updated_at = now()
+		RETURNING id, resource_id, provider, entity_type, COALESCE(external_id,''), external_fqn,
+		          binding_metadata, is_primary, created_at, updated_at
 	`, binding.ID, binding.ResourceID, binding.Provider, binding.EntityType, nullableString(binding.ExternalID),
-		binding.ExternalFQN, metadata, binding.IsPrimary)
+		binding.ExternalFQN, metadata, binding.IsPrimary).Scan(
+		&persisted.ID, &persisted.ResourceID, &persisted.Provider, &persisted.EntityType,
+		&persisted.ExternalID, &persisted.ExternalFQN, &persistedMetadata, &persisted.IsPrimary,
+		&persisted.CreatedAt, &persisted.UpdatedAt,
+	)
 	if err != nil {
-		return fmt.Errorf("upsert resource binding: %w", err)
+		return metadatadomain.ResourceBinding{}, fmt.Errorf("upsert resource binding: %w", err)
 	}
-	return nil
+	if err := json.Unmarshal(persistedMetadata, &persisted.BindingMetadata); err != nil {
+		return metadatadomain.ResourceBinding{}, fmt.Errorf("decode persisted resource binding metadata: %w", err)
+	}
+	return persisted, nil
 }
 
 func (r *PostgresRepository) ListBindings(ctx context.Context, resourceID uuid.UUID) ([]metadatadomain.ResourceBinding, error) {
