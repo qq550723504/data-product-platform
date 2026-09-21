@@ -101,6 +101,21 @@ func TestEvaluateCertifiesOnlyWhenAllFrozenEvidenceMatches(t *testing.T) {
 	}
 }
 
+func TestEvaluateRejectsUnusableDatasetVersion(t *testing.T) {
+	workspaceID, datasetVersionID := uuid.New(), uuid.New()
+	input := testInput(workspaceID, datasetVersionID)
+	input.DatasetVersionStatus = "INVALID"
+
+	certification, err := Evaluate(testProfile(t), input)
+	if err != nil {
+		t.Fatalf("evaluate certification: %v", err)
+	}
+	if certification.Decision != DecisionRejected {
+		t.Fatalf("decision = %s, want REJECTED", certification.Decision)
+	}
+	assertBlocker(t, certification.Blockers, "DATASET_VERSION_NOT_READY")
+}
+
 func TestEvaluateChecksRequiredQualityItemsEvenWhenQualityGateIsDisabled(t *testing.T) {
 	workspaceID, datasetVersionID := uuid.New(), uuid.New()
 	profile := testProfile(t)
