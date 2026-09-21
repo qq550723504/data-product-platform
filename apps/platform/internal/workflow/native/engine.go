@@ -46,11 +46,7 @@ type Engine struct {
 	indicatorCalculator indicator.Calculator
 }
 
-func NewEngine(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, entityRepo *entityinfra.PostgresRepository, workflowRepo *workflowinfra.PostgresRepository, datasetWriter *datasetapp.UploadVersionService, store ObjectStore, calculators ...indicator.Calculator) *Engine {
-	var calculator indicator.Calculator
-	if len(calculators) > 0 {
-		calculator = calculators[0]
-	}
+func NewEngine(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, entityRepo *entityinfra.PostgresRepository, workflowRepo *workflowinfra.PostgresRepository, datasetWriter *datasetapp.UploadVersionService, store ObjectStore, calculator indicator.Calculator) *Engine {
 	return &Engine{
 		industryPackRoot:    industryPackRoot,
 		tx:                  tx,
