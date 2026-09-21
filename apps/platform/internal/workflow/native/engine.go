@@ -41,19 +41,25 @@ type Engine struct {
 	datasetRepo      *datasetinfra.PostgresRepository
 	entityRepo       *entityinfra.PostgresRepository
 	workflowRepo     *workflowinfra.PostgresRepository
-	datasetWriter    *datasetapp.UploadVersionService
-	store            ObjectStore
+	datasetWriter       *datasetapp.UploadVersionService
+	store               ObjectStore
+	indicatorCalculator indicator.Calculator
 }
 
-func NewEngine(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, entityRepo *entityinfra.PostgresRepository, workflowRepo *workflowinfra.PostgresRepository, datasetWriter *datasetapp.UploadVersionService, store ObjectStore) *Engine {
+func NewEngine(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, entityRepo *entityinfra.PostgresRepository, workflowRepo *workflowinfra.PostgresRepository, datasetWriter *datasetapp.UploadVersionService, store ObjectStore, calculators ...indicator.Calculator) *Engine {
+	var calculator indicator.Calculator
+	if len(calculators) > 0 {
+		calculator = calculators[0]
+	}
 	return &Engine{
 		industryPackRoot: industryPackRoot,
 		tx:               tx,
 		datasetRepo:      datasetRepo,
 		entityRepo:       entityRepo,
 		workflowRepo:     workflowRepo,
-		datasetWriter:    datasetWriter,
-		store:            store,
+		datasetWriter:       datasetWriter,
+		store:               store,
+		indicatorCalculator: calculator,
 	}
 }
 
@@ -71,6 +77,9 @@ type sourceRecord struct {
 }
 
 func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.ProcessingResult, error) {
+	if e.indicatorCalculator == nil {
+		return workflowapp.ProcessingResult{}, fmt.Errorf("native workflow has no industry-pack indicator calculator")
+	}
 	bindings := map[string]uuid.UUID{}
 	for _, input := range request.Inputs {
 		bindings[input.Name] = input.DatasetVersionID
@@ -126,7 +135,7 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 	completeScores := 0
 	for _, companyID := range companyIDs {
 		company := companies[companyID]
-		result, err := indicator.Calculate(dependencies.IndicatorPolicy, request.TargetPeriod, inputs[companyID])
+		result, err := e.indicatorCalculator.Calculate(dependencies.IndicatorPolicy, request.TargetPeriod, inputs[companyID])
 		if err != nil {
 			return workflowapp.ProcessingResult{}, fmt.Errorf("calculate indicators for %s: %w", companyID, err)
 		}
