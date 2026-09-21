@@ -150,6 +150,10 @@ func TestPolicyGateDecisionHonorsDeclaredMapping(t *testing.T) {
 	if decision != domain.GateFail {
 		t.Fatalf("warning gate decision = %s, want FAIL", decision)
 	}
+	policy.Spec.Gate.CriticalFailure = "PASS_WITH_WARNING"
+	if _, err := policy.GateDecision([]domain.Finding{{Status: domain.FindingFail, Severity: "CRITICAL"}}); err == nil {
+		t.Fatal("nonblocking critical gate mapping was accepted")
+	}
 }
 
 func TestLoadPolicyRejectsInvalidRatioThresholdsAndAllowNull(t *testing.T) {

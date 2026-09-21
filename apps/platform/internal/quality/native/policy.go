@@ -239,6 +239,9 @@ func validateGateValues(gate struct {
 		"highFailure":     gate.HighFailure,
 		"warningFailure":  gate.WarningFailure,
 	} {
+		if name == "criticalFailure" && strings.ToUpper(strings.TrimSpace(value)) != string(domain.GateFail) {
+			return fmt.Errorf("spec.gate.criticalFailure must be FAIL to preserve fail-closed critical rules")
+		}
 		switch domain.GateDecision(strings.ToUpper(strings.TrimSpace(value))) {
 		case domain.GatePass, domain.GatePassWithWarning, domain.GateReview, domain.GateFail:
 		default:
