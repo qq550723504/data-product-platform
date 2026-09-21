@@ -9,6 +9,9 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type ApplicabilityMode string
@@ -63,9 +66,13 @@ type CertificationProfile struct {
 }
 
 type ProfileSnapshot struct {
+	ID          uuid.UUID `json:"id"`
+	WorkspaceID uuid.UUID `json:"workspaceId"`
 	CertificationProfile
-	ContentSHA256 string `json:"contentSha256"`
-	Content       []byte `json:"content"`
+	ContentSHA256 string     `json:"contentSha256"`
+	Content       []byte     `json:"content"`
+	CreatedAt     time.Time  `json:"createdAt"`
+	CreatedBy     *uuid.UUID `json:"createdBy,omitempty"`
 }
 
 var (
@@ -84,9 +91,11 @@ func (p CertificationProfile) Snapshot() (ProfileSnapshot, error) {
 	}
 	digest := sha256.Sum256(content)
 	return ProfileSnapshot{
+		ID:                   uuid.New(),
 		CertificationProfile: normalized,
 		ContentSHA256:        hex.EncodeToString(digest[:]),
 		Content:              append([]byte(nil), content...),
+		CreatedAt:            time.Now().UTC(),
 	}, nil
 }
 
@@ -97,6 +106,9 @@ func (s ProfileSnapshot) Validate() error {
 	}
 	if len(s.Content) == 0 || strings.TrimSpace(s.ContentSHA256) == "" {
 		return fmt.Errorf("%w: content and hash are required", ErrInvalidProfileSnapshot)
+	}
+	if s.ID == uuid.Nil {
+		return fmt.Errorf("%w: profile snapshot id is required", ErrInvalidProfileSnapshot)
 	}
 	digest := sha256.Sum256(s.Content)
 	if !strings.EqualFold(hex.EncodeToString(digest[:]), s.ContentSHA256) {
