@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"math/big"
 	"regexp"
 	"strconv"
 	"strings"
@@ -140,14 +141,24 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 		if result, ok, err := targetAvailability(rule, ctx, skip, fail); err != nil || ok {
 			return result, result.Observed, err
 		}
-		minimum, err := parameterNumber(rule, "min")
+		minimumValue, err := parameterValue(rule, "min")
 		if err != nil {
 			return domain.Finding{}, nil, fmt.Errorf("rule %s: range min: %w", rule.ID, err)
 		}
-		maximum, err := parameterNumber(rule, "max")
+		maximumValue, err := parameterValue(rule, "max")
 		if err != nil {
 			return domain.Finding{}, nil, fmt.Errorf("rule %s: range max: %w", rule.ID, err)
 		}
+		minimum, err := numericRat(minimumValue)
+		if err != nil {
+			return domain.Finding{}, nil, fmt.Errorf("rule %s: range min: %w", rule.ID, err)
+		}
+		maximum, err := numericRat(maximumValue)
+		if err != nil {
+			return domain.Finding{}, nil, fmt.Errorf("rule %s: range max: %w", rule.ID, err)
+		}
+		minimumFloat, _ := minimum.Float64()
+		maximumFloat, _ := maximum.Float64()
 		invalid := 0
 		samples := make([]any, 0, 5)
 		for index, row := range ctx.Table.Rows {
@@ -159,18 +170,18 @@ func evaluateRule(rule Rule, ctx DatasetContext) (domain.Finding, map[string]any
 			if value == "" && allowNull {
 				continue
 			}
-			parsed, ok := finiteFloat(value)
-			if !ok || parsed < minimum || parsed > maximum {
+			parsed, parseErr := decimalRat(value)
+			if parseErr != nil || parsed.Cmp(minimum) < 0 || parsed.Cmp(maximum) > 0 {
 				invalid++
 				if len(samples) < 5 {
 					samples = append(samples, map[string]any{"row": index, "field": rule.Target})
 				}
 			}
 		}
-		observed := map[string]any{"invalid": invalid, "total": len(ctx.Table.Rows), "min": minimum, "max": maximum}
-		threshold := map[string]any{"min": minimum, "max": maximum}
+		observed := map[string]any{"invalid": invalid, "total": len(ctx.Table.Rows), "min": minimumFloat, "max": maximumFloat}
+		threshold := map[string]any{"min": minimumFloat, "max": maximumFloat}
 		if invalid > 0 {
-			return fail(fmt.Sprintf("%s contains values outside %.6f..%.6f", rule.Target, minimum, maximum), observed, invalid, threshold, invalid, samples)
+			return fail(fmt.Sprintf("%s contains values outside %.6f..%.6f", rule.Target, minimumFloat, maximumFloat), observed, invalid, threshold, invalid, samples)
 		}
 		return pass(observed, 0, threshold, 0, nil)
 
@@ -410,10 +421,18 @@ func ruleThreshold(rule Rule, fallback float64) (float64, error) {
 	return fallback, nil
 }
 
-func parameterNumber(rule Rule, key string) (float64, error) {
+func parameterValue(rule Rule, key string) (any, error) {
 	value, ok := rule.Parameters[key]
 	if !ok {
-		return 0, fmt.Errorf("parameter %s is required", key)
+		return nil, fmt.Errorf("parameter %s is required", key)
+	}
+	return value, nil
+}
+
+func parameterNumber(rule Rule, key string) (float64, error) {
+	value, err := parameterValue(rule, key)
+	if err != nil {
+		return 0, err
 	}
 	return numericValue(value)
 }
@@ -449,6 +468,39 @@ func numericValue(value any) (float64, error) {
 		return parsed, nil
 	default:
 		return 0, fmt.Errorf("must be numeric, got %T", value)
+	}
+}
+
+func numericRat(value any) (*big.Rat, error) {
+	switch typed := value.(type) {
+	case int:
+		return new(big.Rat).SetInt64(int64(typed)), nil
+	case int32:
+		return new(big.Rat).SetInt64(int64(typed)), nil
+	case int64:
+		return new(big.Rat).SetInt64(typed), nil
+	case uint:
+		return new(big.Rat).SetUint64(uint64(typed)), nil
+	case uint32:
+		return new(big.Rat).SetUint64(uint64(typed)), nil
+	case uint64:
+		return new(big.Rat).SetUint64(typed), nil
+	case float32:
+		return numericRat(float64(typed))
+	case float64:
+		if math.IsNaN(typed) || math.IsInf(typed, 0) {
+			return nil, fmt.Errorf("must be a finite number")
+		}
+		if math.Trunc(typed) == typed && math.Abs(typed) > 1<<53 {
+			return nil, fmt.Errorf("integer-valued float %v exceeds exact range", typed)
+		}
+		return decimalRat(strconv.FormatFloat(typed, 'g', -1, 64))
+	case json.Number:
+		return decimalRat(typed.String())
+	case string:
+		return decimalRat(typed)
+	default:
+		return nil, fmt.Errorf("must be numeric, got %T", value)
 	}
 }
 
@@ -519,4 +571,18 @@ func finiteFloat(value string) (float64, bool) {
 		return 0, false
 	}
 	return parsed, true
+}
+
+var decimalNumberPattern = regexp.MustCompile(`^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?$`)
+
+func decimalRat(value string) (*big.Rat, error) {
+	text := strings.TrimSpace(value)
+	if !decimalNumberPattern.MatchString(text) {
+		return nil, fmt.Errorf("must be a finite decimal number")
+	}
+	rat, ok := new(big.Rat).SetString(text)
+	if !ok {
+		return nil, fmt.Errorf("must be a finite decimal number")
+	}
+	return rat, nil
 }

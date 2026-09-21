@@ -123,6 +123,7 @@ func TestLoadPolicyRejectsInvalidRatioThresholdsAndAllowNull(t *testing.T) {
 		{name: "comparison operator misspelled", rule: "type: reference_match\n      threshold: 0.1\n      parameters:\n        metric: errorRate\n        operater: gte"},
 		{name: "required null", rule: "type: not_null\n      target: amount\n      required:"},
 		{name: "malformed comparison operator", rule: "type: reference_match\n      threshold: 0.1\n      parameters:\n        metric: errorRate\n        operator: true"},
+		{name: "allowNull parameter misspelled", rule: "type: range\n      target: amount\n      parameters:\n        min: 0\n        max: 1\n        allowNul: false"},
 		{name: "malformed allowNull", rule: "type: range\n      target: amount\n      parameters:\n        min: 0\n        max: 1\n        allowNull: flase"},
 	}
 	for _, testCase := range tests {
@@ -290,6 +291,18 @@ func TestRangeAndNullSemantics(t *testing.T) {
 		if finding := evaluateSingleRule(t, rule, ctx); finding.Status != domain.FindingFail {
 			t.Fatalf("non-finite value %q passed: %#v", value, finding)
 		}
+	}
+}
+
+func TestRangePreservesLargeIntegerPrecision(t *testing.T) {
+	rule := Rule{ID: "R", Dimension: "ACCURACY", Type: RuleTypeRange, Target: "amount", Parameters: map[string]any{
+		"min": int64(0), "max": int64(9007199254740992), "allowNull": false,
+	}, Required: true, Severity: "CRITICAL"}
+	finding := evaluateSingleRule(t, rule, DatasetContext{Table: tabular.Table{
+		Headers: []string{"amount"}, Rows: []map[string]string{{"amount": "9007199254740993"}},
+	}})
+	if finding.Status != domain.FindingFail {
+		t.Fatalf("out-of-range large integer passed: %#v", finding)
 	}
 }
 

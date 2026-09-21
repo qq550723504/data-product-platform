@@ -156,6 +156,9 @@ func validatePolicy(policy Policy, requireRequired bool) error {
 		if _, ok := qualityRuleTypes[ruleType]; !ok {
 			return fmt.Errorf("rule %s has unknown rule type %q", rule.ID, rule.Type)
 		}
+		if err := validateParameterKeys(rule, ruleType); err != nil {
+			return err
+		}
 		severity := normalizeSeverity(rule.Severity)
 		if severity == "" {
 			return fmt.Errorf("rule %s severity is required", rule.ID)
@@ -265,6 +268,42 @@ func requiresTarget(ruleType string) bool {
 	default:
 		return false
 	}
+}
+
+func validateParameterKeys(rule Rule, ruleType string) error {
+	allowed := map[string]struct{}{}
+	switch ruleType {
+	case RuleTypeNotNull, RuleTypeCompletenessRatio, RuleTypeUnique, RuleTypeDuplicateRatio:
+		allowed["threshold"] = struct{}{}
+	case RuleTypeRange:
+		allowed["min"] = struct{}{}
+		allowed["max"] = struct{}{}
+		allowed["allowNull"] = struct{}{}
+	case RuleTypeEnum:
+		allowed["values"] = struct{}{}
+		allowed["allowedValues"] = struct{}{}
+		allowed["allowNull"] = struct{}{}
+	case RuleTypeRegex:
+		allowed["pattern"] = struct{}{}
+		allowed["allowNull"] = struct{}{}
+	case RuleTypeFreshness:
+		allowed["threshold"] = struct{}{}
+	case RuleTypeReferenceMatch, RuleTypeReconciliation:
+		allowed["metric"] = struct{}{}
+		allowed["metadataKey"] = struct{}{}
+		allowed["threshold"] = struct{}{}
+		allowed["operator"] = struct{}{}
+	case RuleTypeConditionalConsistency:
+		allowed["conditionField"] = struct{}{}
+		allowed["whenMissing"] = struct{}{}
+		allowed["whenPresentValues"] = struct{}{}
+	}
+	for key := range rule.Parameters {
+		if _, ok := allowed[key]; !ok {
+			return fmt.Errorf("rule %s has unsupported parameter %q", rule.ID, key)
+		}
+	}
+	return nil
 }
 
 func normalizeDimension(value string) string {
