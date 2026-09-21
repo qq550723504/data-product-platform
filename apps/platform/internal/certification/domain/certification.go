@@ -90,9 +90,10 @@ type EvidenceSnapshot struct {
 }
 
 type EvaluationInput struct {
-	WorkspaceID      uuid.UUID
-	DatasetVersionID uuid.UUID
-	Derived          bool
+	WorkspaceID          uuid.UUID
+	DatasetVersionID     uuid.UUID
+	DatasetVersionStatus string
+	Derived              bool
 	Quality          QualityAssessmentEvidence
 	Rights           *RightsEvidence
 	Compliance       *ComplianceEvidence
@@ -165,6 +166,12 @@ func Evaluate(profile ProfileSnapshot, input EvaluationInput) (DatasetCertificat
 		return DatasetCertification{}, fmt.Errorf("%w: QualityAssessment must belong to the target workspace and DatasetVersion", ErrInvalidEvaluationContext)
 	}
 
+	if strings.ToUpper(strings.TrimSpace(input.DatasetVersionStatus)) != "READY" {
+		// DatasetVersion status is rebound from the database inside the certification transaction.
+		// A stale QualityAssessment cannot certify an unusable target.
+		input.DatasetVersionStatus = strings.ToUpper(strings.TrimSpace(input.DatasetVersionStatus))
+	}
+
 	certification := DatasetCertification{
 		ID:                  uuid.New(),
 		WorkspaceID:         input.WorkspaceID,
@@ -183,6 +190,9 @@ func Evaluate(profile ProfileSnapshot, input EvaluationInput) (DatasetCertificat
 
 	blockers := make([]Blocker, 0)
 	add := func(code, detail string) { blockers = append(blockers, Blocker{Code: code, Detail: detail}) }
+	if input.DatasetVersionStatus != "READY" {
+		add("DATASET_VERSION_NOT_READY", "target DatasetVersion is not READY for certification")
+	}
 	if profile.QualityGateRequired && input.Quality.GateDecision != EvidencePass {
 		add("QUALITY_GATE_NOT_PASSED", "required QualityAssessment gate decision is not PASS")
 	}
