@@ -253,14 +253,24 @@ func (h *Handler) listAssessments(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	page, err := h.repo.ListAssessments(r.Context(), versionID, limit, offset)
+	summaryOnly := strings.EqualFold(strings.TrimSpace(r.URL.Query().Get("summary")), "true")
+	var page infrastructure.AssessmentPage
+	if summaryOnly {
+		page, err = h.repo.ListAssessmentSummaries(r.Context(), versionID, limit, offset)
+	} else {
+		page, err = h.repo.ListAssessments(r.Context(), versionID, limit, offset)
+	}
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENTS_READ_FAILED", err.Error(), nil)
 		return
 	}
 	items := make([]map[string]any, 0, len(page.Items))
 	for _, assessment := range page.Items {
-		items = append(items, resultResponse(assessment))
+		if summaryOnly {
+			items = append(items, assessmentSummaryResponse(assessment))
+		} else {
+			items = append(items, resultResponse(assessment))
+		}
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"datasetVersionId": versionID,
@@ -360,6 +370,23 @@ func (h *Handler) latestAssessment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, resultResponse(assessment))
+}
+
+func assessmentSummaryResponse(result domain.Assessment) map[string]any {
+	return map[string]any{
+		"id":                   result.ID,
+		"workspaceId":          result.WorkspaceID,
+		"datasetVersionId":     result.DatasetVersionID,
+		"ruleSetRef":           result.RuleSetRef,
+		"ruleSetVersion":       result.RuleSetVersion,
+		"ruleSetContentSha256": result.RuleSetContentSHA256,
+		"evaluatorName":        result.EvaluatorName,
+		"evaluatorVersion":     result.EvaluatorVersion,
+		"gateDecision":         result.GateDecision,
+		"metrics":              result.Metrics,
+		"dimensionSummary":     result.DimensionSummaries,
+		"createdAt":            result.CreatedAt,
+	}
 }
 
 func resultResponse(result domain.Result) map[string]any {
