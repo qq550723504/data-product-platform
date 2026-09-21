@@ -262,8 +262,8 @@ func (s *CertificationService) ChangeDisposition(ctx context.Context, cmd Change
 			if replacement.WorkspaceID != certification.WorkspaceID ||
 				replacement.DatasetVersionID != certification.DatasetVersionID ||
 				replacement.ProfileID != profile.ID ||
-				replacement.Decision != domain.DecisionCertified {
-				return fmt.Errorf("superseding certification must be a certified replacement for the same workspace, DatasetVersion, and profile")
+				(replacement.Decision != domain.DecisionCertified && replacement.Decision != domain.DecisionRejected) {
+				return fmt.Errorf("superseding certification must be a same-target profile replacement with CERTIFIED or REJECTED decision")
 			}
 		}
 		candidate, err := domain.NewDisposition(cmd.WorkspaceID, cmd.CertificationID, cmd.Disposition, cmd.EffectiveAt, cmd.Reason, cmd.SupersededByCertificationID, cmd.EvidenceSnapshotID, cmd.ActorID)

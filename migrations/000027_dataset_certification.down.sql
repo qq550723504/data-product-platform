@@ -1,5 +1,7 @@
 DO $$
 BEGIN
+    LOCK TABLE dataset_certification, certification_disposition, cost_allocation
+        IN ACCESS EXCLUSIVE MODE;
     IF EXISTS (SELECT 1 FROM dataset_certification)
        OR EXISTS (SELECT 1 FROM certification_disposition) THEN
         RAISE EXCEPTION 'refusing to downgrade DatasetCertification historical facts';

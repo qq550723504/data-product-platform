@@ -230,8 +230,8 @@ BEGIN
         IF replacement_workspace IS DISTINCT FROM NEW.workspace_id
            OR replacement_dataset_version IS DISTINCT FROM certification_dataset_version
            OR replacement_profile_id IS DISTINCT FROM certification_profile_id
-           OR replacement_decision <> 'CERTIFIED' THEN
-            RAISE EXCEPTION 'CertificationDisposition replacement must be a certified same-target profile';
+           OR replacement_decision NOT IN ('CERTIFIED', 'REJECTED') THEN
+            RAISE EXCEPTION 'CertificationDisposition replacement must be a same-target profile certification with CERTIFIED or REJECTED decision';
         END IF;
     END IF;
     IF NEW.evidence_snapshot_id IS NOT NULL THEN

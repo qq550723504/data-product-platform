@@ -138,6 +138,31 @@ func TestDatasetCertificationMigrationGuardsHistoricalFacts(t *testing.T) {
 		t.Fatalf("cross-target supersession error = %v, want same-target guard", err)
 	}
 
+	// A rejected re-evaluation is still the authoritative replacement fact for
+	// an older certified result and must be allowed to supersede it.
+	rejectedCertificationID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_certification (
+			id, workspace_id, dataset_version_id, quality_assessment_id,
+			certification_profile_id, profile_ref, profile_version,
+			profile_content_sha256, profile_content_snapshot, decision,
+			blockers, reason, issued_at
+		) VALUES ($1,$2,$3,$4,$5,$6,'1',$7,$8,'REJECTED','[{"code":"QUALITY_GATE_NOT_PASSED"}]'::jsonb,
+			're-evaluation rejected',now())
+	`, rejectedCertificationID, workspaceID, first.versionID, first.qualityID, first.profileID,
+		first.profileRef, first.profileHash, first.profileContent); err != nil {
+		t.Fatalf("insert rejected replacement certification: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO certification_disposition (
+			id, workspace_id, certification_id, disposition, effective_at, reason,
+			superseded_by_certification_id
+		) SELECT $1, workspace_id, id, 'SUPERSEDED', issued_at, 'rejected re-evaluation', $2
+		FROM dataset_certification WHERE id=$3
+	`, uuid.New(), rejectedCertificationID, certificationID); err != nil {
+		t.Fatalf("rejected replacement supersession error: %v", err)
+	}
+
 	if err := tryApplyMigrationFile(t, pool, 27, "down"); err == nil || !strings.Contains(err.Error(), "refusing to downgrade DatasetCertification historical facts") {
 		t.Fatalf("dataset certification down error = %v, want historical-fact refusal", err)
 	}

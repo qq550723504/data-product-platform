@@ -183,21 +183,19 @@ func Evaluate(profile ProfileSnapshot, input EvaluationInput) (DatasetCertificat
 
 	blockers := make([]Blocker, 0)
 	add := func(code, detail string) { blockers = append(blockers, Blocker{Code: code, Detail: detail}) }
-	if profile.QualityGateRequired {
-		if input.Quality.GateDecision != EvidencePass {
-			add("QUALITY_GATE_NOT_PASSED", "required QualityAssessment gate decision is not PASS")
+	if profile.QualityGateRequired && input.Quality.GateDecision != EvidencePass {
+		add("QUALITY_GATE_NOT_PASSED", "required QualityAssessment gate decision is not PASS")
+	}
+	for _, dimension := range profile.RequiredQualityDimensions {
+		status, ok := input.Quality.Dimensions[dimension]
+		if !ok || status != EvidencePass {
+			add("QUALITY_DIMENSION_NOT_PASSED", fmt.Sprintf("required quality dimension %s is missing or not PASS", dimension))
 		}
-		for _, dimension := range profile.RequiredQualityDimensions {
-			status, ok := input.Quality.Dimensions[dimension]
-			if !ok || status != EvidencePass {
-				add("QUALITY_DIMENSION_NOT_PASSED", fmt.Sprintf("required quality dimension %s is missing or not PASS", dimension))
-			}
-		}
-		for _, ruleID := range profile.RequiredCriticalRules {
-			status, ok := input.Quality.RuleStatuses[ruleID]
-			if !ok || status != EvidencePass {
-				add("QUALITY_CRITICAL_RULE_NOT_PASSED", fmt.Sprintf("required critical rule %s is missing or not PASS", ruleID))
-			}
+	}
+	for _, ruleID := range profile.RequiredCriticalRules {
+		status, ok := input.Quality.RuleStatuses[ruleID]
+		if !ok || status != EvidencePass {
+			add("QUALITY_CRITICAL_RULE_NOT_PASSED", fmt.Sprintf("required critical rule %s is missing or not PASS", ruleID))
 		}
 	}
 

@@ -19,6 +19,7 @@ CREATE TABLE certification_profile (
     contract_required         boolean NOT NULL,
     traceability_required     boolean NOT NULL,
     evidence_required         boolean NOT NULL,
+    membership_state           varchar(16) NOT NULL DEFAULT 'FINALIZED',
     rights_purpose_mode        varchar(16),
     rights_action_mode         varchar(16),
     rights_consumer_mode       varchar(16),
@@ -43,7 +44,8 @@ CREATE TABLE certification_profile (
             rights_consumer_mode IN ('ANY','EXPLICIT') AND
             rights_scope_mode IN ('ANY','EXPLICIT')
         )
-    )
+    ),
+    CONSTRAINT ck_certification_profile_membership_state CHECK (membership_state IN ('DRAFT','FINALIZED'))
 );
 
 CREATE TABLE certification_profile_purpose (
@@ -112,7 +114,13 @@ CREATE TABLE certification_profile_rights_scope (
 CREATE OR REPLACE FUNCTION prevent_certification_profile_mutation()
 RETURNS trigger AS $$
 BEGIN
-    RAISE EXCEPTION 'certification_profile is immutable';
+    IF TG_OP = 'DELETE'
+       OR OLD.membership_state <> 'DRAFT'
+       OR NEW.membership_state <> 'FINALIZED'
+       OR (to_jsonb(OLD) - 'membership_state') IS DISTINCT FROM (to_jsonb(NEW) - 'membership_state') THEN
+        RAISE EXCEPTION 'certification_profile is immutable';
+    END IF;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -123,11 +131,48 @@ FOR EACH ROW EXECUTE FUNCTION prevent_certification_profile_mutation();
 CREATE OR REPLACE FUNCTION prevent_certification_profile_membership_mutation()
 RETURNS trigger AS $$
 DECLARE
-    profile_id_value uuid;
+    old_profile_id uuid;
+    new_profile_id uuid;
+    profile_count integer;
+    profile record;
 BEGIN
-    profile_id_value := CASE WHEN TG_OP = 'DELETE' THEN OLD.profile_id ELSE NEW.profile_id END;
-    IF EXISTS (SELECT 1 FROM certification_profile WHERE id = profile_id_value) THEN
-        RAISE EXCEPTION 'certification_profile membership is immutable';
+    IF TG_OP = 'UPDATE' THEN
+        old_profile_id := OLD.profile_id;
+        new_profile_id := NEW.profile_id;
+    ELSIF TG_OP = 'DELETE' THEN
+        old_profile_id := OLD.profile_id;
+        new_profile_id := OLD.profile_id;
+    ELSE
+        old_profile_id := NEW.profile_id;
+        new_profile_id := NEW.profile_id;
+    END IF;
+
+    IF old_profile_id IS DISTINCT FROM new_profile_id THEN
+        SELECT count(*) INTO profile_count
+          FROM certification_profile
+         WHERE id IN (old_profile_id, new_profile_id);
+        IF profile_count <> 2 THEN
+            RAISE EXCEPTION 'certification_profile membership parent is missing';
+        END IF;
+        FOR profile IN
+            SELECT id, membership_state
+              FROM certification_profile
+             WHERE id IN (old_profile_id, new_profile_id)
+             ORDER BY id
+             FOR UPDATE
+        LOOP
+            IF profile.membership_state <> 'DRAFT' THEN
+                RAISE EXCEPTION 'certification_profile membership is immutable';
+            END IF;
+        END LOOP;
+    ELSE
+        SELECT p.membership_state INTO profile
+          FROM certification_profile p
+         WHERE p.id = old_profile_id
+         FOR UPDATE;
+        IF NOT FOUND OR profile.membership_state <> 'DRAFT' THEN
+            RAISE EXCEPTION 'certification_profile membership is immutable';
+        END IF;
     END IF;
     RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
 END;

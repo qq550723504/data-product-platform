@@ -101,6 +101,31 @@ func TestEvaluateCertifiesOnlyWhenAllFrozenEvidenceMatches(t *testing.T) {
 	}
 }
 
+func TestEvaluateChecksRequiredQualityItemsEvenWhenQualityGateIsDisabled(t *testing.T) {
+	workspaceID, datasetVersionID := uuid.New(), uuid.New()
+	profile := testProfile(t)
+	profileDefinition := profile.CertificationProfile
+	profileDefinition.QualityGateRequired = false
+	var err error
+	profile, err = profileDefinition.Snapshot()
+	if err != nil {
+		t.Fatalf("snapshot profile: %v", err)
+	}
+	input := testInput(workspaceID, datasetVersionID)
+	input.Quality.Dimensions = nil
+	input.Quality.RuleStatuses = nil
+
+	certification, err := Evaluate(profile, input)
+	if err != nil {
+		t.Fatalf("evaluate certification: %v", err)
+	}
+	if certification.Decision != DecisionRejected {
+		t.Fatalf("decision = %s, want REJECTED", certification.Decision)
+	}
+	assertBlocker(t, certification.Blockers, "QUALITY_DIMENSION_NOT_PASSED")
+	assertBlocker(t, certification.Blockers, "QUALITY_CRITICAL_RULE_NOT_PASSED")
+}
+
 func TestEvaluateRejectsCrossVersionQualityAndEffectiveRightsMismatch(t *testing.T) {
 	workspaceID, datasetVersionID := uuid.New(), uuid.New()
 	input := testInput(workspaceID, datasetVersionID)
