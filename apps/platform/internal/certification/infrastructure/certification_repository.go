@@ -298,7 +298,7 @@ func (r *CertificationRepository) TryInsertIdempotency(ctx context.Context, tx p
 	return inserted != uuid.Nil, nil
 }
 
-func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Context, tx pgx.Tx, input *domain.EvaluationInput) error {
+func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Context, tx pgx.Tx, profile domain.ProfileSnapshot, input *domain.EvaluationInput) error {
 	if input == nil {
 		return fmt.Errorf("evaluation input is required")
 	}
@@ -394,6 +394,26 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 		input.Compliance.WorkspaceID = complianceWorkspaceID
 		input.Compliance.DatasetVersionID = complianceDatasetVersionID
 		input.Compliance.Decision = complianceDecision
+	}
+
+	if input.Contract != nil && input.Contract.ID != uuid.Nil {
+		var contractWorkspaceID uuid.UUID
+		var contractCode, contractStatus string
+		if err := tx.QueryRow(ctx, `
+			SELECT c.workspace_id, c.code, cv.status
+			FROM contract_version cv
+			JOIN data_contract c ON c.id=cv.contract_id
+			WHERE cv.id=$1
+			FOR SHARE OF cv, c
+		`, input.Contract.ID).Scan(&contractWorkspaceID, &contractCode, &contractStatus); err != nil {
+			return fmt.Errorf("load ContractVersion for certification: %w", err)
+		}
+		input.Contract.WorkspaceID = contractWorkspaceID
+		input.Contract.DatasetVersionID = input.DatasetVersionID
+		input.Contract.MatchesProfile =
+			contractWorkspaceID == input.WorkspaceID &&
+				contractStatus == "PUBLISHED" &&
+				strings.TrimSpace(contractCode) == strings.TrimSpace(profile.ContractCode)
 	}
 
 	// Lineage is append-only but can still grow concurrently. Hold a table SHARE
