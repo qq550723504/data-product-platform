@@ -104,7 +104,6 @@ func TestReportFindingMapsSkippedToNotApplicableWithoutChangingObservedFact(t *t
 	}
 }
 
-
 func TestAssessmentHistoryRequiresWorkspaceID(t *testing.T) {
 	versionID := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/dataset-versions/"+versionID.String()+"/quality-assessments", nil)
