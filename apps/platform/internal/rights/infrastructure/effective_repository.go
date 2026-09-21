@@ -15,6 +15,11 @@ import (
 
 var ErrEffectiveRightsIdempotentReplay = errors.New("effective rights idempotent replay")
 
+type effectiveRightsQueryer interface {
+	Query(context.Context, string, ...any) (pgx.Rows, error)
+	QueryRow(context.Context, string, ...any) pgx.Row
+}
+
 func (r *PostgresRepository) InsertEffectiveRightsHeader(ctx context.Context, tx pgx.Tx, snapshot domain.EffectiveRightsSnapshot) error {
 	tag, err := tx.Exec(ctx, `INSERT INTO effective_rights_snapshot(id,workspace_id,target_dataset_version_id,calculation_as_of,consumer_ref,purpose,calculation_rule_version,calculation_rule_hash,required_input_hash,status,root_hash,created_at,created_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'DRAFT',$10,$11,$12) ON CONFLICT (id) DO NOTHING`, snapshot.ID, snapshot.WorkspaceID, snapshot.TargetDatasetVersionID, snapshot.CalculationAsOf, snapshot.ConsumerRef, snapshot.Purpose, snapshot.CalculationRuleVersion, snapshot.CalculationRuleHash, snapshot.RequiredInputHash, snapshot.RootHash, snapshot.CreatedAt, snapshot.CreatedBy)
 	if err != nil {
@@ -55,6 +60,17 @@ func (r *PostgresRepository) FinalizeEffectiveRights(ctx context.Context, tx pgx
 	if status != "DRAFT" {
 		return fmt.Errorf("effective rights snapshot %s is not draft", snapshot.ID)
 	}
+	persisted, err := loadEffectiveRights(ctx, tx, snapshot.ID)
+	if err != nil {
+		return err
+	}
+	if persisted.RequiredInputHash != HashEffectiveInputs(persisted.Inputs) {
+		return fmt.Errorf("effective rights snapshot %s input membership hash mismatch", snapshot.ID)
+	}
+	computedRoot := EffectiveRightsRootHash(persisted)
+	if persisted.RootHash == "" || persisted.RootHash != computedRoot || persisted.RootHash != snapshot.RootHash {
+		return fmt.Errorf("effective rights snapshot %s root hash mismatch", snapshot.ID)
+	}
 	if _, err := tx.Exec(ctx, `UPDATE effective_rights_snapshot SET status='FINALIZED',finalized_at=now() WHERE id=$1`, snapshot.ID); err != nil {
 		return fmt.Errorf("finalize effective rights snapshot: %w", err)
 	}
@@ -62,10 +78,14 @@ func (r *PostgresRepository) FinalizeEffectiveRights(ctx context.Context, tx pgx
 }
 
 func (r *PostgresRepository) GetEffectiveRights(ctx context.Context, id uuid.UUID) (domain.EffectiveRightsSnapshot, error) {
+	return loadEffectiveRights(ctx, r.pool, id)
+}
+
+func loadEffectiveRights(ctx context.Context, q effectiveRightsQueryer, id uuid.UUID) (domain.EffectiveRightsSnapshot, error) {
 	var s domain.EffectiveRightsSnapshot
 	var status string
 	var consumer string
-	err := r.pool.QueryRow(ctx, `SELECT id,workspace_id,target_dataset_version_id,calculation_as_of,COALESCE(consumer_ref,''),purpose,calculation_rule_version,calculation_rule_hash,required_input_hash,status,COALESCE(root_hash,''),created_at,created_by FROM effective_rights_snapshot WHERE id=$1`, id).Scan(&s.ID, &s.WorkspaceID, &s.TargetDatasetVersionID, &s.CalculationAsOf, &consumer, &s.Purpose, &s.CalculationRuleVersion, &s.CalculationRuleHash, &s.RequiredInputHash, &status, &s.RootHash, &s.CreatedAt, &s.CreatedBy)
+	err := q.QueryRow(ctx, `SELECT id,workspace_id,target_dataset_version_id,calculation_as_of,COALESCE(consumer_ref,''),purpose,calculation_rule_version,calculation_rule_hash,required_input_hash,status,COALESCE(root_hash,''),created_at,created_by FROM effective_rights_snapshot WHERE id=$1`, id).Scan(&s.ID, &s.WorkspaceID, &s.TargetDatasetVersionID, &s.CalculationAsOf, &consumer, &s.Purpose, &s.CalculationRuleVersion, &s.CalculationRuleHash, &s.RequiredInputHash, &status, &s.RootHash, &s.CreatedAt, &s.CreatedBy)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return s, ErrNotFound
 	}
@@ -74,7 +94,7 @@ func (r *PostgresRepository) GetEffectiveRights(ctx context.Context, id uuid.UUI
 	}
 	s.ConsumerRef = consumer
 	s.Status = status
-	rows, err := r.pool.Query(ctx, `SELECT id,input_dataset_version_id,data_resource_id,rights_snapshot_id,declaration_id,binding_id,input_hash FROM effective_rights_input WHERE snapshot_id=$1 ORDER BY input_dataset_version_id`, id)
+	rows, err := q.Query(ctx, `SELECT id,input_dataset_version_id,data_resource_id,rights_snapshot_id,declaration_id,binding_id,input_hash FROM effective_rights_input WHERE snapshot_id=$1 ORDER BY input_dataset_version_id`, id)
 	if err != nil {
 		return s, err
 	}
@@ -87,7 +107,7 @@ func (r *PostgresRepository) GetEffectiveRights(ctx context.Context, id uuid.UUI
 		s.Inputs = append(s.Inputs, i)
 	}
 	rows.Close()
-	rows, err = r.pool.Query(ctx, `SELECT id,action,decision,reason,blocking_input_id FROM effective_rights_action WHERE snapshot_id=$1 ORDER BY action`, id)
+	rows, err = q.Query(ctx, `SELECT id,action,decision,reason,blocking_input_id FROM effective_rights_action WHERE snapshot_id=$1 ORDER BY action`, id)
 	if err != nil {
 		return s, err
 	}
@@ -104,7 +124,7 @@ func (r *PostgresRepository) GetEffectiveRights(ctx context.Context, id uuid.UUI
 	for i := range s.Actions {
 		actionByID[s.Actions[i].ID] = &s.Actions[i]
 	}
-	rows, err = r.pool.Query(ctx, `SELECT action_id,input_id,declaration_id,binding_id FROM effective_rights_action_provenance WHERE snapshot_id=$1 ORDER BY action_id,input_id`, id)
+	rows, err = q.Query(ctx, `SELECT action_id,input_id,declaration_id,binding_id FROM effective_rights_action_provenance WHERE snapshot_id=$1 ORDER BY action_id,input_id`, id)
 	if err != nil {
 		return s, err
 	}
