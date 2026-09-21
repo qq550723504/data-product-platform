@@ -114,6 +114,9 @@ func NewAuthorization(workspaceID uuid.UUID, code, grantorRef, granteeRef, purpo
 		default:
 			return Authorization{}, ErrInvalidAuthorization
 		}
+		if scopeType == "ALL_RESOURCE" && scopeRef != spec.DataResourceID.String() {
+			return Authorization{}, ErrInvalidAuthorization
+		}
 		actions := make([]string, 0, len(spec.Actions))
 		for _, action := range spec.Actions {
 			action = strings.ToUpper(strings.TrimSpace(action))
