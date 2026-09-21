@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -143,16 +144,37 @@ func (r *PostgresRepository) GetEffectiveRightsSupportingEvidence(ctx context.Co
 
 func EffectiveRightsRootHash(snapshot domain.EffectiveRightsSnapshot) string {
 	parts := []string{snapshot.TargetDatasetVersionID.String(), snapshot.CalculationAsOf.UTC().String(), snapshot.ConsumerRef, snapshot.Purpose, snapshot.CalculationRuleVersion, snapshot.CalculationRuleHash, snapshot.RequiredInputHash}
-	for _, i := range snapshot.Inputs {
+	inputs := append([]domain.EffectiveRightsInput(nil), snapshot.Inputs...)
+	sort.Slice(inputs, func(i, j int) bool {
+		return inputs[i].InputDatasetVersionID.String() < inputs[j].InputDatasetVersionID.String()
+	})
+	for _, i := range inputs {
 		parts = append(parts, "I|"+i.InputDatasetVersionID.String()+"|"+i.DataResourceID.String()+"|"+i.InputHash)
 	}
-	for _, a := range snapshot.Actions {
+	actions := append([]domain.EffectiveRightsAction(nil), snapshot.Actions...)
+	sort.Slice(actions, func(i, j int) bool {
+		return actions[i].Action < actions[j].Action
+	})
+	for _, a := range actions {
 		blockingInputID := ""
 		if a.BlockingInputID != nil {
 			blockingInputID = a.BlockingInputID.String()
 		}
 		parts = append(parts, "A|"+a.Action+"|"+a.Decision+"|"+a.Reason+"|"+blockingInputID)
-		for _, provenance := range a.Provenance {
+		provenanceEntries := append([]domain.EffectiveRightsProvenance(nil), a.Provenance...)
+		sort.Slice(provenanceEntries, func(i, j int) bool {
+			leftBinding, rightBinding := "", ""
+			if provenanceEntries[i].BindingID != nil {
+				leftBinding = provenanceEntries[i].BindingID.String()
+			}
+			if provenanceEntries[j].BindingID != nil {
+				rightBinding = provenanceEntries[j].BindingID.String()
+			}
+			left := provenanceEntries[i].InputID.String() + "|" + provenanceEntries[i].DeclarationID.String() + "|" + leftBinding
+			right := provenanceEntries[j].InputID.String() + "|" + provenanceEntries[j].DeclarationID.String() + "|" + rightBinding
+			return left < right
+		})
+		for _, provenance := range provenanceEntries {
 			bindingID := ""
 			if provenance.BindingID != nil {
 				bindingID = provenance.BindingID.String()
