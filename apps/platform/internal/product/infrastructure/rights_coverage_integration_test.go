@@ -144,15 +144,16 @@ func createRightsFixture(t *testing.T, ctx context.Context, pool *pgxpool.Pool, 
 	}
 	mustExec(t, ctx, pool, `
 		INSERT INTO rights_snapshot (
-			id, workspace_id, purpose, consumer_ref, as_of, manifest, root_hash, created_at
+			id, workspace_id, purpose, consumer_ref, as_of, manifest, root_hash, created_at, status
 		) VALUES ($1,$2,'ENTERPRISE_CREDIT_RISK_SUPPORT','LICENSED_BANK',now(),
 		          '{"purpose":"ENTERPRISE_CREDIT_RISK_SUPPORT","authorizations":[]}'::jsonb,
-		          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',now())
+		          'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',now(),'BUILDING')
 	`, snapshotID, workspaceID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO rights_snapshot_authorization (rights_snapshot_id, authorization_id)
 		VALUES ($1,$2)
 	`, snapshotID, authorizationID)
+	mustExec(t, ctx, pool, `UPDATE rights_snapshot SET status='FINALIZED' WHERE id=$1`, snapshotID)
 	return snapshotID
 }
 

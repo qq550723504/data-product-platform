@@ -2,6 +2,8 @@ package infrastructure
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -60,10 +62,10 @@ func (r *PostgresRepository) InsertAuthorization(ctx context.Context, tx pgx.Tx,
 		}
 		if _, err := tx.Exec(ctx, `
 			INSERT INTO authorization_resource (
-				id, authorization_id, data_resource_id, actions, scope, raw_export_allowed, created_at
-			) VALUES ($1,$2,$3,$4,$5,$6,$7)
+				id, authorization_id, data_resource_id, actions, scope, scope_type, scope_ref, raw_export_allowed, created_at
+			) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
 		`, resource.ID, resource.AuthorizationID, resource.DataResourceID, resource.Actions, scope,
-			resource.RawExportAllowed, resource.CreatedAt); err != nil {
+			nullableString(resource.ScopeType), nullableString(resource.ScopeRef), resource.RawExportAllowed, resource.CreatedAt); err != nil {
 			return fmt.Errorf("insert authorization resource: %w", err)
 		}
 	}
@@ -94,7 +96,7 @@ func (r *PostgresRepository) GetAuthorization(ctx context.Context, authorization
 	}
 
 	rows, err := r.pool.Query(ctx, `
-		SELECT id, authorization_id, data_resource_id, actions, scope, raw_export_allowed, created_at
+		SELECT id, authorization_id, data_resource_id, actions, scope, COALESCE(scope_type,''), COALESCE(scope_ref,''), raw_export_allowed, created_at
 		FROM authorization_resource WHERE authorization_id=$1 ORDER BY created_at, id
 	`, authorizationID)
 	if err != nil {
@@ -105,7 +107,7 @@ func (r *PostgresRepository) GetAuthorization(ctx context.Context, authorization
 		var resource domain.ResourceGrant
 		var scope []byte
 		if err := rows.Scan(&resource.ID, &resource.AuthorizationID, &resource.DataResourceID,
-			&resource.Actions, &scope, &resource.RawExportAllowed, &resource.CreatedAt); err != nil {
+			&resource.Actions, &scope, &resource.ScopeType, &resource.ScopeRef, &resource.RawExportAllowed, &resource.CreatedAt); err != nil {
 			return domain.Authorization{}, fmt.Errorf("scan authorization resource: %w", err)
 		}
 		if err := json.Unmarshal(scope, &resource.Scope); err != nil {
@@ -145,8 +147,8 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 	_, err = tx.Exec(ctx, `
 		INSERT INTO rights_snapshot (
 			id, workspace_id, product_release_id, purpose, consumer_ref, as_of,
-			manifest, root_hash, created_at, created_by
-		) VALUES ($1,$2,$3,$4,NULLIF($5,''),$6,$7,$8,$9,$10)
+			manifest, root_hash, created_at, created_by, status
+		) VALUES ($1,$2,$3,$4,NULLIF($5,''),$6,$7,$8,$9,$10,'BUILDING')
 	`, snapshot.ID, snapshot.WorkspaceID, snapshot.ProductReleaseID, snapshot.Purpose,
 		snapshot.ConsumerRef, snapshot.AsOf, manifest, snapshot.RootHash, snapshot.CreatedAt, snapshot.CreatedBy)
 	if err != nil {
@@ -159,6 +161,37 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 		`, snapshot.ID, authorization.AuthorizationID); err != nil {
 			return fmt.Errorf("bind rights snapshot authorization: %w", err)
 		}
+		rows, err := tx.Query(ctx, `SELECT id, rights_declaration_id FROM authorization_provenance_binding WHERE authorization_id=$1 AND created_at <= $2 ORDER BY created_at,id`, authorization.AuthorizationID, snapshot.AsOf)
+		if err != nil {
+			return fmt.Errorf("read snapshot provenance bindings: %w", err)
+		}
+		for rows.Next() {
+			var bindingID, declarationID uuid.UUID
+			if err := rows.Scan(&bindingID, &declarationID); err != nil {
+				rows.Close()
+				return fmt.Errorf("scan snapshot provenance binding: %w", err)
+			}
+			if _, err := tx.Exec(ctx, `INSERT INTO rights_snapshot_provenance_binding(rights_snapshot_id,binding_id) VALUES ($1,$2) ON CONFLICT DO NOTHING`, snapshot.ID, bindingID); err != nil {
+				rows.Close()
+				return fmt.Errorf("bind snapshot provenance: %w", err)
+			}
+			if _, err := tx.Exec(ctx, `INSERT INTO rights_snapshot_declaration(rights_snapshot_id,declaration_id) VALUES ($1,$2) ON CONFLICT DO NOTHING`, snapshot.ID, declarationID); err != nil {
+				rows.Close()
+				return fmt.Errorf("bind snapshot declaration: %w", err)
+			}
+		}
+		rows.Close()
+	}
+	var hashMaterial []byte
+	if err := tx.QueryRow(ctx, `SELECT jsonb_build_object('manifest',manifest,'authorizationIds',COALESCE((SELECT jsonb_agg(authorization_id ORDER BY authorization_id) FROM rights_snapshot_authorization WHERE rights_snapshot_id=$1),'[]'::jsonb),'declarationIds',COALESCE((SELECT jsonb_agg(declaration_id ORDER BY declaration_id) FROM rights_snapshot_declaration WHERE rights_snapshot_id=$1),'[]'::jsonb),'bindingIds',COALESCE((SELECT jsonb_agg(binding_id ORDER BY binding_id) FROM rights_snapshot_provenance_binding WHERE rights_snapshot_id=$1),'[]'::jsonb))::text FROM rights_snapshot WHERE id=$1`, snapshot.ID).Scan(&hashMaterial); err != nil {
+		return fmt.Errorf("build rights snapshot root hash: %w", err)
+	}
+	digest := sha256.Sum256(hashMaterial)
+	if _, err := tx.Exec(ctx, `UPDATE rights_snapshot SET root_hash=$2 WHERE id=$1`, snapshot.ID, hex.EncodeToString(digest[:])); err != nil {
+		return fmt.Errorf("store rights snapshot root hash: %w", err)
+	}
+	if _, err := tx.Exec(ctx, `UPDATE rights_snapshot SET status='FINALIZED' WHERE id=$1`, snapshot.ID); err != nil {
+		return fmt.Errorf("finalize rights snapshot: %w", err)
 	}
 	return nil
 }
@@ -181,5 +214,38 @@ func (r *PostgresRepository) GetSnapshot(ctx context.Context, snapshotID uuid.UU
 	if err := json.Unmarshal(manifest, &snapshot.Manifest); err != nil {
 		return domain.RightsSnapshot{}, fmt.Errorf("decode rights snapshot manifest: %w", err)
 	}
+	rows, err := r.pool.Query(ctx, `SELECT declaration_id FROM rights_snapshot_declaration WHERE rights_snapshot_id=$1 ORDER BY declaration_id`, snapshotID)
+	if err != nil {
+		return domain.RightsSnapshot{}, fmt.Errorf("read snapshot declarations: %w", err)
+	}
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			rows.Close()
+			return domain.RightsSnapshot{}, err
+		}
+		snapshot.DeclarationIDs = append(snapshot.DeclarationIDs, id)
+	}
+	rows.Close()
+	rows, err = r.pool.Query(ctx, `SELECT binding_id FROM rights_snapshot_provenance_binding WHERE rights_snapshot_id=$1 ORDER BY binding_id`, snapshotID)
+	if err != nil {
+		return domain.RightsSnapshot{}, fmt.Errorf("read snapshot bindings: %w", err)
+	}
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			rows.Close()
+			return domain.RightsSnapshot{}, err
+		}
+		snapshot.BindingIDs = append(snapshot.BindingIDs, id)
+	}
+	rows.Close()
 	return snapshot, nil
+}
+
+func nullableString(value string) any {
+	if value == "" {
+		return nil
+	}
+	return value
 }

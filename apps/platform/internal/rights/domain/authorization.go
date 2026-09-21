@@ -36,6 +36,8 @@ type ResourceGrant struct {
 	DataResourceID   uuid.UUID
 	Actions          []string
 	Scope            map[string]any
+	ScopeType        string
+	ScopeRef         string
 	RawExportAllowed bool
 	CreatedAt        time.Time
 }
@@ -62,6 +64,8 @@ type ResourceGrantSpec struct {
 	DataResourceID   uuid.UUID
 	Actions          []string
 	Scope            map[string]any
+	ScopeType        string
+	ScopeRef         string
 	RawExportAllowed bool
 }
 

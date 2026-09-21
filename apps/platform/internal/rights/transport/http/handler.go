@@ -34,12 +34,15 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/authorizations/{authorizationId}/revoke", h.revokeAuthorization)
 	mux.HandleFunc("POST /api/v1/rights-snapshots", h.createSnapshot)
 	mux.HandleFunc("GET /api/v1/rights-snapshots/{snapshotId}", h.getSnapshot)
+	h.registerProvenance(mux)
 }
 
 type resourceGrantRequest struct {
 	DataResourceID   string         `json:"dataResourceId"`
 	Actions          []string       `json:"actions"`
 	Scope            map[string]any `json:"scope"`
+	ScopeType        string         `json:"scopeType"`
+	ScopeRef         string         `json:"scopeRef"`
 	RawExportAllowed bool           `json:"rawExportAllowed"`
 }
 
@@ -77,6 +80,8 @@ func (h *Handler) createAuthorization(w http.ResponseWriter, r *http.Request) {
 			DataResourceID:   resourceID,
 			Actions:          resource.Actions,
 			Scope:            resource.Scope,
+			ScopeType:        resource.ScopeType,
+			ScopeRef:         resource.ScopeRef,
 			RawExportAllowed: resource.RawExportAllowed,
 		})
 	}
@@ -264,6 +269,8 @@ func authorizationResponse(authorization domain.Authorization) map[string]any {
 			"dataResourceId":   resource.DataResourceID,
 			"actions":          resource.Actions,
 			"scope":            resource.Scope,
+			"scopeType":        resource.ScopeType,
+			"scopeRef":         resource.ScopeRef,
 			"rawExportAllowed": resource.RawExportAllowed,
 		})
 	}
@@ -292,6 +299,8 @@ func snapshotResponse(snapshot domain.RightsSnapshot) map[string]any {
 		"asOf":             snapshot.AsOf,
 		"manifest":         snapshot.Manifest,
 		"rootHash":         snapshot.RootHash,
+		"declarationIds":   snapshot.DeclarationIDs,
+		"bindingIds":       snapshot.BindingIDs,
 		"createdAt":        snapshot.CreatedAt,
 	}
 }
