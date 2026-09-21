@@ -24,9 +24,9 @@ func testProfile(t *testing.T) ProfileSnapshot {
 			Purpose:   Applicability{Mode: ApplicabilityExplicit, Values: []string{"COMMERCIAL"}},
 			Actions:   Applicability{Mode: ApplicabilityExplicit, Values: []string{"SHARE"}},
 			Consumers: Applicability{Mode: ApplicabilityExplicit, Values: []string{"consumer-a"}},
-			Scopes:    ScopeApplicability{Mode: ApplicabilityExplicit, Values: []ScopeRef{{Type: "DATASET", Ref: "dataset-scope"}}},
+			Scopes:    ScopeApplicability{Mode: ApplicabilityExplicit, Values: []ScopeRef{{Type: "ALL_RESOURCE", Ref: "dataset-scope"}}},
 		},
-		ComplianceRequired: true, ContractRequired: true, TraceabilityRequired: true, EvidenceRequired: true,
+		ComplianceRequired: true, ContractRequired: true, ContractCode: "enterprise-contract", TraceabilityRequired: true, EvidenceRequired: true,
 	}
 	snapshot, err := profile.Snapshot()
 	if err != nil {
@@ -42,7 +42,7 @@ func testInput(workspaceID, datasetVersionID uuid.UUID) EvaluationInput {
 		Quality:  QualityAssessmentEvidence{ID: uuid.New(), WorkspaceID: workspaceID, DatasetVersionID: datasetVersionID, GateDecision: EvidencePass, Dimensions: map[string]string{"COMPLETENESS": EvidencePass}, RuleStatuses: map[string]string{"Q-1": EvidencePass}},
 		Rights: &RightsEvidence{
 			WorkspaceID: workspaceID, DatasetVersionID: datasetVersionID, RightsSnapshotID: uuid.New(), EffectiveRightsSnapshotID: uuid.New(), EffectiveRightsSnapshotHash: "effective-hash", FrozenRightsContextHash: "context-hash", RightsSnapshotFinalized: true, EffectiveRightsFinalized: true, RequiredInputSetHash: "lineage-hash", TargetLineageInputSetHash: "lineage-hash", ActionDecisions: map[string]string{"SHARE": RightsAllowed}, Coverage: RightsCoverage{
-				Purpose: Applicability{Mode: ApplicabilityExplicit, Values: []string{"COMMERCIAL"}}, Actions: Applicability{Mode: ApplicabilityExplicit, Values: []string{"SHARE"}}, Consumers: Applicability{Mode: ApplicabilityExplicit, Values: []string{"consumer-a"}}, Scopes: ScopeApplicability{Mode: ApplicabilityExplicit, Values: []ScopeRef{{Type: "DATASET", Ref: "dataset-scope"}}},
+				Purpose: Applicability{Mode: ApplicabilityExplicit, Values: []string{"COMMERCIAL"}}, Actions: Applicability{Mode: ApplicabilityExplicit, Values: []string{"SHARE"}}, Consumers: Applicability{Mode: ApplicabilityExplicit, Values: []string{"consumer-a"}}, Scopes: ScopeApplicability{Mode: ApplicabilityExplicit, Values: []ScopeRef{{Type: "ALL_RESOURCE", Ref: "dataset-scope"}}},
 			},
 		},
 		Compliance:   &ComplianceEvidence{ID: uuid.New(), WorkspaceID: workspaceID, DatasetVersionID: datasetVersionID, Decision: EvidencePass},
