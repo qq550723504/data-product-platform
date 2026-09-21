@@ -83,14 +83,15 @@ func (h *Handler) deliveryEligibility(w http.ResponseWriter, r *http.Request) {
 	result, err := h.eligibility.Check(r.Context(), application.DeliveryEligibilityQuery{
 		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: profileID,
 		Consumer: r.URL.Query().Get("consumer"), Purpose: r.URL.Query().Get("purpose"),
-		Action: r.URL.Query().Get("action"), Delivery: r.URL.Query().Get("delivery"), AsOf: asOf,
+		Action: r.URL.Query().Get("action"), Delivery: r.URL.Query().Get("delivery"),
+		ScopeType: r.URL.Query().Get("scopeType"), ScopeRef: r.URL.Query().Get("scopeRef"), AsOf: asOf,
 	})
 	if err != nil {
 		if errors.Is(err, datasetinfra.ErrNotFound) || errors.Is(err, certificationinfra.ErrProfileNotFound) {
 			httpserver.WriteError(w, r, http.StatusNotFound, "DELIVERY_ELIGIBILITY_TARGET_NOT_FOUND", "DatasetVersion or CertificationProfile was not found", nil)
 			return
 		}
-		if strings.Contains(err.Error(), "required") || strings.Contains(err.Error(), "workspace boundary") {
+		if strings.Contains(err.Error(), "required") || strings.Contains(err.Error(), "scope") || strings.Contains(err.Error(), "workspace boundary") {
 			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DELIVERY_ELIGIBILITY_QUERY", err.Error(), nil)
 			return
 		}
