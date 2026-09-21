@@ -426,6 +426,66 @@ func (r *PostgresRepository) listFindingPage(ctx context.Context, assessmentID u
 	return domain.FindingPage{Items: items, Limit: limit, Offset: offset, Total: total}, nil
 }
 
+func (r *PostgresRepository) ListAssessmentSummaries(ctx context.Context, datasetVersionID uuid.UUID, limit, offset int) (AssessmentPage, error) {
+	if limit <= 0 {
+		limit = 25
+	}
+	if limit > 100 {
+		return AssessmentPage{}, fmt.Errorf("assessment limit must be between 1 and 100")
+	}
+	if offset < 0 {
+		return AssessmentPage{}, fmt.Errorf("assessment offset must be zero or greater")
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
+		       COALESCE(rule_set_content_sha256,''),
+		       COALESCE(evaluator_name,''), COALESCE(evaluator_version,''),
+		       gate_decision, metrics, created_at, created_by,
+		       count(*) OVER() AS total
+		FROM quality_result
+		WHERE dataset_version_id=$1
+		ORDER BY created_at DESC, id DESC
+		LIMIT $2 OFFSET $3
+	`, datasetVersionID, limit, offset)
+	if err != nil {
+		return AssessmentPage{}, fmt.Errorf("list quality assessment summaries: %w", err)
+	}
+	defer rows.Close()
+
+	results := make([]domain.Assessment, 0)
+	total := 0
+	for rows.Next() {
+		var result domain.Assessment
+		var metrics []byte
+		var rowTotal int
+		if err := rows.Scan(&result.ID, &result.WorkspaceID, &result.DatasetVersionID, &result.RuleSetRef,
+			&result.RuleSetVersion, &result.RuleSetContentSHA256,
+			&result.EvaluatorName, &result.EvaluatorVersion, &result.GateDecision, &metrics,
+			&result.CreatedAt, &result.CreatedBy, &rowTotal); err != nil {
+			return AssessmentPage{}, fmt.Errorf("scan quality assessment summary: %w", err)
+		}
+		if err := decodeJSONNumbers(metrics, &result.Metrics); err != nil {
+			return AssessmentPage{}, fmt.Errorf("decode quality assessment summary metrics: %w", err)
+		}
+		if err := restoreDimensionSummaries(&result); err != nil {
+			return AssessmentPage{}, fmt.Errorf("restore quality assessment summary dimensions: %w", err)
+		}
+		total = rowTotal
+		results = append(results, result)
+	}
+	if err := rows.Err(); err != nil {
+		return AssessmentPage{}, fmt.Errorf("iterate quality assessment summaries: %w", err)
+	}
+	if len(results) == 0 {
+		if err := r.pool.QueryRow(ctx, `
+			SELECT count(*) FROM quality_result WHERE dataset_version_id=$1
+		`, datasetVersionID).Scan(&total); err != nil {
+			return AssessmentPage{}, fmt.Errorf("count quality assessment summaries: %w", err)
+		}
+	}
+	return AssessmentPage{Items: results, Limit: limit, Offset: offset, Total: total}, nil
+}
+
 func (r *PostgresRepository) ListAssessments(ctx context.Context, datasetVersionID uuid.UUID, limit, offset int) (AssessmentPage, error) {
 	if limit <= 0 {
 		limit = 25
