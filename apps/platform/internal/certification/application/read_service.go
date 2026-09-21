@@ -223,13 +223,16 @@ func sameEligibilityLineage(frozen []rightsdomain.EffectiveRightsInput, current 
 	frozenIDs := make([]string, 0, len(frozen))
 	currentIDs := make([]string, 0, len(current))
 	for _, input := range frozen {
-		frozenIDs = append(frozenIDs, input.InputDatasetVersionID.String())
-	}
-	for _, input := range current {
-		if !input.ResourceMapped {
+		if input.DataResourceID == uuid.Nil {
 			return false
 		}
-		currentIDs = append(currentIDs, input.DatasetVersionID.String())
+		frozenIDs = append(frozenIDs, input.InputDatasetVersionID.String()+":"+input.DataResourceID.String())
+	}
+	for _, input := range current {
+		if !input.ResourceMapped || input.DataResourceID == uuid.Nil {
+			return false
+		}
+		currentIDs = append(currentIDs, input.DatasetVersionID.String()+":"+input.DataResourceID.String())
 	}
 	sort.Strings(frozenIDs)
 	sort.Strings(currentIDs)
