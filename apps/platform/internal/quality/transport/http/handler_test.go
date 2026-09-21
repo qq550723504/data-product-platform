@@ -136,7 +136,6 @@ func TestLatestAssessmentRequiresWorkspaceID(t *testing.T) {
 	}
 }
 
-
 func TestAssessmentSummaryResponseOmitsHeavyFields(t *testing.T) {
 	assessment := domain.Assessment{
 		ID:               uuid.New(),
