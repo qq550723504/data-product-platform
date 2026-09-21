@@ -57,7 +57,7 @@ Core 保存：
 - ProductVersion / ProductRelease
 - Cost / Evidence / Audit
 
-其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights 已进入 main；DeliveryOperation 核心切片已进入 main，但 #135 API/UI 与剩余交付范围仍开放；#134 Certification 正由 PR #149 推进，在合入前仍属于目标模型。
+其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights 已进入 main；#134 Certification 已由 PR #149 进入 main；DeliveryOperation 核心切片已进入 main，但 #135 API/UI 与剩余交付范围仍开放。
 
 外部 Engine 只提供执行能力，不拥有上述核心业务状态。
 
