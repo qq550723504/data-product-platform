@@ -4,7 +4,7 @@
 
 核心 POC 已完成。本路线是 POC 之后的受控试点，目标是把已经验证的数据生产内核组合成客户可验收的“高质量数据集”交付物。
 
-主 Epic：#129。
+主 Epic：#129（OPEN；第一阶段纵向验收完成后再关闭）。
 
 第一阶段完成后，平台应能够把一组原始数据生产为：
 
@@ -24,17 +24,17 @@
 ~~~text
 #131 QualityAssessment core ✅ (#140 / migration 000019)
         ↓
-#132 Quality Engine
+#132 Quality Engine ✅
         ↓
-#133 Quality Report
+#133 Quality Report ✅
 
-#137 Data Rights Provenance
+#137 Data Rights Provenance ✅
         ↓
-#134 DatasetCertification
+#134 DatasetCertification 🚧 (PR #149)
         ↓
-#135 API / UI
+#135 API / UI ⏳
         ↓
-#136 enterprise-activity E2E Pilot
+#136 enterprise-activity E2E Pilot ⏳
 ~~~
 
 #134 明确依赖 #137。
