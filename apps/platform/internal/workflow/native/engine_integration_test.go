@@ -234,17 +234,23 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 	if len(rows) != 5 {
 		t.Fatalf("CURATED rows = %d, want 5 canonical companies", len(rows))
 	}
-	byName := map[string]map[string]string{}
 	for _, row := range rows {
-		byName[row["company_name"]] = row
+		if _, exists := row["company_name"]; exists {
+			t.Fatalf("V1 CURATED output unexpectedly exposes company_name: %#v", row)
+		}
 	}
-	assertOutput(t, byName, "深圳星云科技有限公司", "96.01", "HIGH", "100.00")
-	assertOutput(t, byName, "广州青禾智能科技有限公司", "81.97", "HIGH", "100.00")
-	assertOutput(t, byName, "武汉蓝图装备制造有限公司", "99.13", "HIGH", "100.00")
-	assertOutput(t, byName, "杭州云帆数据科技有限公司", "", "INSUFFICIENT_DATA", "33.33")
-	assertOutput(t, byName, "上海海岳生物科技有限公司", "", "INSUFFICIENT_DATA", "33.33")
-	if byName["深圳星云科技有限公司"]["company_id"] != originalDecision.EntityID.String() {
-		t.Fatalf("native CURATED bytes used current mapping entity %s, want frozen resolution entity %s", byName["深圳星云科技有限公司"]["company_id"], originalDecision.EntityID)
+	assertOutputSet(t, rows, map[string]int{
+		"96.01|HIGH|100.00":                  1,
+		"81.97|HIGH|100.00":                  1,
+		"99.13|HIGH|100.00":                  1,
+		"|INSUFFICIENT_DATA|33.33":           2,
+	})
+	frozenRow := findOutputByCompanyID(rows, originalDecision.EntityID.String())
+	if frozenRow == nil {
+		t.Fatalf("missing output row for frozen resolution entity %s", originalDecision.EntityID)
+	}
+	if frozenRow["activity_score"] != "96.01" || frozenRow["activity_level"] != "HIGH" || frozenRow["indicator_coverage"] != "100.00" {
+		t.Fatalf("frozen entity output = score %q level %q coverage %q, want 96.01 HIGH 100.00", frozenRow["activity_score"], frozenRow["activity_level"], frozenRow["indicator_coverage"])
 	}
 	var persistedDecisionID uuid.UUID
 	if err := pool.QueryRow(ctx, `
@@ -758,13 +764,28 @@ func parseCSV(t *testing.T, content []byte) []map[string]string {
 	return result
 }
 
-func assertOutput(t *testing.T, rows map[string]map[string]string, companyName, activityScore, activityLevel, coverage string) {
+func assertOutputSet(t *testing.T, rows []map[string]string, want map[string]int) {
 	t.Helper()
-	row := rows[companyName]
-	if row == nil {
-		t.Fatalf("missing output row for %s", companyName)
+	got := map[string]int{}
+	for _, row := range rows {
+		key := row["activity_score"] + "|" + row["activity_level"] + "|" + row["indicator_coverage"]
+		got[key]++
 	}
-	if row["activity_score"] != activityScore || row["activity_level"] != activityLevel || row["indicator_coverage"] != coverage {
-		t.Fatalf("%s output = score %q level %q coverage %q, want %q %q %q", companyName, row["activity_score"], row["activity_level"], row["indicator_coverage"], activityScore, activityLevel, coverage)
+	if len(got) != len(want) {
+		t.Fatalf("output score/level/coverage groups = %#v, want %#v", got, want)
 	}
+	for key, count := range want {
+		if got[key] != count {
+			t.Fatalf("output group %q count = %d, want %d; all=%#v", key, got[key], count, got)
+		}
+	}
+}
+
+func findOutputByCompanyID(rows []map[string]string, companyID string) map[string]string {
+	for _, row := range rows {
+		if row["company_id"] == companyID {
+			return row
+		}
+	}
+	return nil
 }
