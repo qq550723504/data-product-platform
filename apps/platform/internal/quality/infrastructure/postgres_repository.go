@@ -54,6 +54,7 @@ type AssessmentAttempt struct {
 	DatasetVersionID uuid.UUID
 	RuleSetRef       string
 	LeaseExpiresAt   time.Time
+	LeaseExpired     bool
 	State            AssessmentAttemptState
 }
 
@@ -131,9 +132,7 @@ func (r *PostgresRepository) ReconcileAssessmentAttempt(ctx context.Context, tx 
 		if !now.Before(attempt.LeaseExpiresAt) {
 			attempt.State.Outcome = "FAILED"
 			attempt.State.ErrorMessage = "quality assessment attempt lease expired without a terminal outcome"
-			if err := r.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, "FAILED", nil, attempt.State.ErrorMessage, now); err != nil {
-				return AssessmentAttempt{}, false, fmt.Errorf("reconcile quality assessment attempt %s: %w", attemptID, err)
-			}
+			attempt.LeaseExpired = true
 		}
 	} else if err != nil {
 		return AssessmentAttempt{}, false, fmt.Errorf("load quality assessment attempt outcome %s: %w", attemptID, err)
@@ -187,15 +186,15 @@ func (r *PostgresRepository) ClaimAssessmentAttempt(ctx context.Context, tx pgx.
 	return false, state, nil
 }
 
-func (r *PostgresRepository) AppendAssessmentAttemptOutcome(ctx context.Context, tx pgx.Tx, attemptID uuid.UUID, outcome string, assessmentID *uuid.UUID, errorMessage string, occurredAt time.Time) error {
+func (r *PostgresRepository) AppendAssessmentAttemptOutcome(ctx context.Context, tx pgx.Tx, attemptID uuid.UUID, outcome string, assessmentID *uuid.UUID, errorMessage string, occurredAt time.Time) (bool, error) {
 	if attemptID == uuid.Nil {
-		return errors.New("quality assessment attempt outcome requires an attempt ID")
+		return false, errors.New("quality assessment attempt outcome requires an attempt ID")
 	}
 	if outcome != "SUCCEEDED" && outcome != "FAILED" {
-		return fmt.Errorf("unsupported quality assessment attempt outcome %q", outcome)
+		return false, fmt.Errorf("unsupported quality assessment attempt outcome %q", outcome)
 	}
 	if outcome == "SUCCEEDED" && assessmentID == nil {
-		return errors.New("successful quality assessment attempt outcome requires an assessment ID")
+		return false, errors.New("successful quality assessment attempt outcome requires an assessment ID")
 	}
 	if outcome == "FAILED" {
 		assessmentID = nil
@@ -213,10 +212,10 @@ func (r *PostgresRepository) AppendAssessmentAttemptOutcome(ctx context.Context,
 		RETURNING id
 	`, uuid.New(), attemptID, assessmentID, outcome, errorMessage, occurredAt).Scan(&insertedID)
 	if err == nil {
-		return nil
+		return true, nil
 	}
 	if !errors.Is(err, pgx.ErrNoRows) {
-		return fmt.Errorf("append quality assessment attempt outcome: %w", err)
+		return false, fmt.Errorf("append quality assessment attempt outcome: %w", err)
 	}
 
 	var existingOutcome string
@@ -226,13 +225,13 @@ func (r *PostgresRepository) AppendAssessmentAttemptOutcome(ctx context.Context,
 		FROM quality_assessment_attempt_outcome
 		WHERE attempt_id=$1
 	`, attemptID).Scan(&existingOutcome, &existingAssessmentID); err != nil {
-		return fmt.Errorf("load existing quality assessment attempt outcome: %w", err)
+		return false, fmt.Errorf("load existing quality assessment attempt outcome: %w", err)
 	}
 	if existingOutcome != outcome || (assessmentID == nil) != (existingAssessmentID == nil) ||
 		(assessmentID != nil && *assessmentID != *existingAssessmentID) {
-		return fmt.Errorf("quality assessment attempt %s already has outcome %s", attemptID, existingOutcome)
+		return false, fmt.Errorf("quality assessment attempt %s already has outcome %s", attemptID, existingOutcome)
 	}
-	return nil
+	return false, nil
 }
 
 func (r *PostgresRepository) GetResult(ctx context.Context, resultID uuid.UUID) (domain.Assessment, error) {

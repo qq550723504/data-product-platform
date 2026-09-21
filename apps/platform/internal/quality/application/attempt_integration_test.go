@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
@@ -94,6 +95,7 @@ spec:
 	if outcome != "FAILED" || errorMessage == "" {
 		t.Fatalf("failed-attempt outcome = %q/%q, want FAILED with error", outcome, errorMessage)
 	}
+	assertQualityAttemptFailureFacts(t, ctx, pool, attemptID)
 	var startedAt, costOccurredAt time.Time
 	if err := pool.QueryRow(ctx, `
 		SELECT started_at
@@ -137,6 +139,7 @@ spec:
 	if costCount != 1 {
 		t.Fatalf("failed quality attempt costs after replay = %d, want 1", costCount)
 	}
+	assertQualityAttemptFailureFacts(t, ctx, pool, attemptID)
 }
 
 func TestQualityAttemptReconcilesExpiredClaim(t *testing.T) {
@@ -219,5 +222,34 @@ func TestQualityAttemptReconcilesExpiredClaim(t *testing.T) {
 	}
 	if outcome != "FAILED" {
 		t.Fatalf("reconciled attempt outcome = %q, want FAILED", outcome)
+	}
+	assertQualityAttemptFailureFacts(t, ctx, pool, attemptID)
+}
+
+func assertQualityAttemptFailureFacts(t *testing.T, ctx context.Context, pool *pgxpool.Pool, attemptID uuid.UUID) {
+	t.Helper()
+	var auditCount, eventCount, evidenceCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM audit_event
+		WHERE object_type='QUALITY_ASSESSMENT_ATTEMPT' AND object_id=$1
+	`, attemptID).Scan(&auditCount); err != nil {
+		t.Fatalf("count quality attempt audit facts: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM outbox_event
+		WHERE aggregate_type='QUALITY_ASSESSMENT_ATTEMPT' AND aggregate_id=$1
+		  AND event_type='QualityAssessmentAttemptFailed'
+	`, attemptID).Scan(&eventCount); err != nil {
+		t.Fatalf("count quality attempt outbox facts: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM evidence
+		WHERE source_type='QUALITY_ASSESSMENT_ATTEMPT' AND source_id=$1
+		  AND evidence_type='QUALITY_ASSESSMENT_ATTEMPT_FAILED'
+	`, attemptID).Scan(&evidenceCount); err != nil {
+		t.Fatalf("count quality attempt evidence facts: %v", err)
+	}
+	if auditCount != 1 || eventCount != 1 || evidenceCount != 1 {
+		t.Fatalf("quality attempt failure facts = audit %d, outbox %d, evidence %d, want 1 each", auditCount, eventCount, evidenceCount)
 	}
 }

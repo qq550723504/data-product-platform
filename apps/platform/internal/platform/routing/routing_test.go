@@ -57,6 +57,7 @@ var eventVocabulary = []string{
 	"ProductReleaseValidationStarted",
 	"ProductVersionCreated",
 	"QualityFailed",
+	"QualityAssessmentAttemptFailed",
 	"QualityPassed",
 	"QualityReviewRequired",
 	"RightsSnapshotCreated",

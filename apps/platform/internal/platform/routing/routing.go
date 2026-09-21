@@ -99,6 +99,7 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "AuthorizationRevoked"},
 		{EventType: "AuthorizationExpired"},
 		{EventType: "RightsSnapshotCreated"},
+		{EventType: "QualityAssessmentAttemptFailed"},
 		{EventType: "QualityPassed"},
 		{EventType: "QualityFailed"},
 		{EventType: "QualityReviewRequired"},

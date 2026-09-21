@@ -137,7 +137,7 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			Now:      cmd.Now,
 		})
 		if err != nil {
-			if outcomeErr := s.recordAttemptOutcomeAfterEvaluation(ctx, attemptID, "FAILED", nil, err.Error(), time.Now().UTC()); outcomeErr != nil {
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
 				return fmt.Errorf("quality evaluation failed: %v; record attempt outcome: %w", err, outcomeErr)
 			}
 			return err
@@ -212,10 +212,11 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			}); err != nil {
 				return err
 			}
-			return s.repo.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, "SUCCEEDED", &result.ID, "", result.CreatedAt)
+			_, err = s.repo.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, "SUCCEEDED", &result.ID, "", result.CreatedAt)
+			return err
 		})
 		if err != nil {
-			if outcomeErr := s.recordAttemptOutcomeAfterEvaluation(ctx, attemptID, "FAILED", nil, err.Error(), time.Now().UTC()); outcomeErr != nil {
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
 				return fmt.Errorf("persist quality assessment failed: %v; record attempt outcome: %w", err, outcomeErr)
 			}
 		}
@@ -273,6 +274,11 @@ func (s *Service) reconcileAttemptState(ctx context.Context, cmd RunCommand, att
 		found = attemptFound
 		if attemptFound {
 			state = attempt.State
+			if attempt.LeaseExpired {
+				if err := s.appendAttemptFailureFacts(ctx, tx, cmd, attemptID, attempt.State.ErrorMessage, time.Now().UTC(), nil, ""); err != nil {
+					return fmt.Errorf("record reconciled quality assessment failure: %w", err)
+				}
+			}
 		}
 		return nil
 	})
@@ -309,16 +315,58 @@ func (s *Service) claimAttempt(ctx context.Context, cmd RunCommand, attemptID uu
 	return claimed, state, err
 }
 
-func (s *Service) recordAttemptOutcome(ctx context.Context, attemptID uuid.UUID, outcome string, assessmentID *uuid.UUID, errorMessage string, occurredAt time.Time) error {
-	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		return s.repo.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, outcome, assessmentID, errorMessage, occurredAt)
+func (s *Service) recordAttemptFailureAfterEvaluation(ctx context.Context, cmd RunCommand, attemptID uuid.UUID, errorMessage string, occurredAt time.Time) error {
+	recoveryCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), attemptOutcomeRecoveryTimeout)
+	defer cancel()
+	return s.tx.Do(recoveryCtx, func(ctx context.Context, tx pgx.Tx) error {
+		return s.appendAttemptFailureFacts(ctx, tx, cmd, attemptID, errorMessage, occurredAt, cmd.ActorID, cmd.TraceID)
 	})
 }
 
-func (s *Service) recordAttemptOutcomeAfterEvaluation(ctx context.Context, attemptID uuid.UUID, outcome string, assessmentID *uuid.UUID, errorMessage string, occurredAt time.Time) error {
-	recoveryCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), attemptOutcomeRecoveryTimeout)
-	defer cancel()
-	return s.recordAttemptOutcome(recoveryCtx, attemptID, outcome, assessmentID, errorMessage, occurredAt)
+func (s *Service) appendAttemptFailureFacts(ctx context.Context, tx pgx.Tx, cmd RunCommand, attemptID uuid.UUID, errorMessage string, occurredAt time.Time, actorID *uuid.UUID, traceID string) error {
+	inserted, err := s.repo.AppendAssessmentAttemptOutcome(ctx, tx, attemptID, "FAILED", nil, errorMessage, occurredAt)
+	if err != nil || !inserted {
+		return err
+	}
+	payload := map[string]any{
+		"qualityAssessmentAttemptId": attemptID,
+		"workspaceId":                cmd.WorkspaceID,
+		"datasetVersionId":           cmd.DatasetVersionID,
+		"ruleSetRef":                 cmd.RuleSetRef,
+		"outcome":                    "FAILED",
+		"errorMessage":               errorMessage,
+	}
+	event, err := outbox.NewEvent("QUALITY_ASSESSMENT_ATTEMPT", attemptID, "QualityAssessmentAttemptFailed", payload)
+	if err != nil {
+		return err
+	}
+	if err := outbox.Append(ctx, tx, event); err != nil {
+		return err
+	}
+	if _, err := evidence.Append(ctx, tx, evidence.Record{
+		WorkspaceID:  cmd.WorkspaceID,
+		EvidenceType: "QUALITY_ASSESSMENT_ATTEMPT_FAILED",
+		Title:        "Quality assessment attempt failed",
+		SourceType:   "QUALITY_ASSESSMENT_ATTEMPT",
+		SourceID:     &attemptID,
+		Metadata:     payload,
+		CreatedAt:    occurredAt,
+		CreatedBy:    actorID,
+	}, evidence.Relation{ObjectType: "QUALITY_ASSESSMENT_ATTEMPT", ObjectID: attemptID, RelationType: "FAILURE_EVIDENCE"},
+		evidence.Relation{ObjectType: "DATASET_VERSION", ObjectID: cmd.DatasetVersionID, RelationType: "QUALITY_ATTEMPT_FAILURE"}); err != nil {
+		return err
+	}
+	return audit.Append(ctx, tx, audit.Event{
+		WorkspaceID: &cmd.WorkspaceID,
+		ActorType:   actorType(actorID),
+		ActorID:     actorID,
+		Action:      "QUALITY_ASSESSMENT_ATTEMPT_FAILED",
+		ObjectType:  "QUALITY_ASSESSMENT_ATTEMPT",
+		ObjectID:    attemptID,
+		AfterState:  payload,
+		TraceID:     traceID,
+		OccurredAt:  occurredAt,
+	})
 }
 
 func actorType(actorID *uuid.UUID) string {
