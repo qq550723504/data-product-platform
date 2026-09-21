@@ -450,6 +450,9 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 	if request.ConsumerRef == "" || request.Purpose == "" || request.Action == "" {
 		return domain.EntitlementDecision{}, domain.ErrEffectiveRights
 	}
+	if request.Scope.Type == "ALL_RESOURCE" && request.Scope.Ref != request.DataResourceID.String() {
+		return domain.EntitlementDecision{}, domain.ErrEffectiveRights
+	}
 	var decision domain.EntitlementDecision
 	decision.AuthorizationID = request.AuthorizationID
 	decision.DataResourceID = request.DataResourceID
