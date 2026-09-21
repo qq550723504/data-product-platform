@@ -132,6 +132,13 @@ func declarationFingerprint(d domain.RightsDeclaration) string {
 		evidence = append(evidence, id.String())
 	}
 	sort.Strings(evidence)
+	effectiveFrom, effectiveTo := "", ""
+	if d.EffectiveFrom != nil {
+		effectiveFrom = d.EffectiveFrom.UTC().Format(time.RFC3339Nano)
+	}
+	if d.EffectiveTo != nil {
+		effectiveTo = d.EffectiveTo.UTC().Format(time.RFC3339Nano)
+	}
 	payload, _ := json.Marshal(struct {
 		WorkspaceID       uuid.UUID                 `json:"workspaceId"`
 		DataResourceID    uuid.UUID                 `json:"dataResourceId"`
@@ -140,14 +147,14 @@ func declarationFingerprint(d domain.RightsDeclaration) string {
 		BasisRef          string                    `json:"basisRef"`
 		ConsumerScopeType string                    `json:"consumerScopeType"`
 		ConsumerRef       string                    `json:"consumerRef"`
-		EffectiveFrom     *time.Time                `json:"effectiveFrom"`
-		EffectiveTo       *time.Time                `json:"effectiveTo"`
+		EffectiveFrom     string                    `json:"effectiveFrom"`
+		EffectiveTo       string                    `json:"effectiveTo"`
 		Parties           []domain.RightsParty      `json:"parties"`
 		Permissions       []domain.RightsPermission `json:"permissions"`
 		Restrictions      map[string]any            `json:"restrictions"`
 		EvidenceIDs       []string                  `json:"evidenceIds"`
 		CreatedBy         *uuid.UUID                `json:"createdBy"`
-	}{d.WorkspaceID, d.DataResourceID, d.ClaimantRef, d.BasisType, d.BasisRef, d.ConsumerScopeType, d.ConsumerRef, d.EffectiveFrom, d.EffectiveTo, parties, permissions, d.Restrictions, evidence, d.CreatedBy})
+	}{d.WorkspaceID, d.DataResourceID, d.ClaimantRef, d.BasisType, d.BasisRef, d.ConsumerScopeType, d.ConsumerRef, effectiveFrom, effectiveTo, parties, permissions, d.Restrictions, evidence, d.CreatedBy})
 	hash := sha256.Sum256(payload)
 	return fmt.Sprintf("%x", hash[:])
 }
@@ -588,20 +595,26 @@ func (s *Service) buildEffectiveRightsSnapshotTx(ctx context.Context, tx pgx.Tx,
 				return domain.EffectiveRightsSnapshot{}, fmt.Errorf("resolve current rights provenance for input %s action %s: %w", lineage.DatasetVersionID, action, err)
 			}
 		}
+		input := domain.EffectiveRightsInput{ID: uuid.New(), InputDatasetVersionID: lineage.DatasetVersionID, DataResourceID: lineage.DataResourceID}
 		if len(provenanceByInput[idx]) == 0 {
-			return domain.EffectiveRightsSnapshot{}, fmt.Errorf("%w: missing current rights provenance for input %s", domain.ErrEffectiveRights, lineage.DatasetVersionID)
-		}
-		selected := provenanceByInput[idx][domain.SupportedRightsActions[0]]
-		if selected.declarationID == uuid.Nil {
-			for _, action := range domain.SupportedRightsActions {
-				if candidate, ok := provenanceByInput[idx][action]; ok {
-					selected = candidate
-					break
+			digest := sha256.Sum256([]byte("NO_PROVENANCE|" + lineage.DatasetVersionID.String() + "|" + lineage.DataResourceID.String()))
+			input.InputHash = fmt.Sprintf("%x", digest[:])
+		} else {
+			selected := provenanceByInput[idx][domain.SupportedRightsActions[0]]
+			if selected.declarationID == uuid.Nil {
+				for _, action := range domain.SupportedRightsActions {
+					if candidate, ok := provenanceByInput[idx][action]; ok {
+						selected = candidate
+						break
+					}
 				}
 			}
+			declarationID := selected.declarationID
+			input.DeclarationID = &declarationID
+			input.BindingID = selected.bindingID
+			input.InputHash = infrastructure.HashEffectiveProvenance(declarationID, selected.bindingID)
 		}
-		declarationID := selected.declarationID
-		snapshot.Inputs = append(snapshot.Inputs, domain.EffectiveRightsInput{ID: uuid.New(), InputDatasetVersionID: lineage.DatasetVersionID, DataResourceID: lineage.DataResourceID, DeclarationID: &declarationID, BindingID: selected.bindingID, InputHash: infrastructure.HashEffectiveProvenance(declarationID, selected.bindingID)})
+		snapshot.Inputs = append(snapshot.Inputs, input)
 	}
 	snapshot.RequiredInputHash = infrastructure.HashEffectiveInputs(snapshot.Inputs)
 	for _, action := range domain.SupportedRightsActions {
