@@ -438,6 +438,9 @@ func (s *Service) resolveEffectiveRightsProvenanceTx(ctx context.Context, tx pgx
 }
 
 func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffectiveRightsCommand) (domain.EffectiveRightsSnapshot, error) {
+	if strings.TrimSpace(cmd.ConsumerRef) == "" || strings.TrimSpace(cmd.Purpose) == "" {
+		return domain.EffectiveRightsSnapshot{}, domain.ErrEffectiveRights
+	}
 	requestedAsOf := cmd.AsOf
 	if cmd.AsOf.IsZero() {
 		cmd.AsOf = time.Now().UTC()
