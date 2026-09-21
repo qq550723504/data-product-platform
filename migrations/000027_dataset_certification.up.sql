@@ -18,7 +18,7 @@ CREATE TABLE dataset_certification (
     frozen_rights_context_hash      varchar(64),
     compliance_result_id            uuid REFERENCES compliance_result(id),
     contract_version_id             uuid REFERENCES contract_version(id),
-    traceability_evidence_id        uuid,
+    traceability_evidence_id        uuid REFERENCES evidence_snapshot(id),
     evidence_snapshot_id            uuid REFERENCES evidence_snapshot(id),
     decision                        varchar(16) NOT NULL,
     blockers                        jsonb NOT NULL DEFAULT '[]'::jsonb,
@@ -64,6 +64,7 @@ CREATE OR REPLACE FUNCTION validate_dataset_certification_references()
 RETURNS trigger AS $$
 DECLARE
     dataset_workspace uuid;
+    dataset_status varchar(32);
     quality_workspace uuid;
     quality_dataset_version uuid;
     profile_workspace uuid;
@@ -74,6 +75,7 @@ DECLARE
     profile_rights_required boolean;
     profile_compliance_required boolean;
     profile_contract_required boolean;
+    profile_traceability_required boolean;
     profile_evidence_required boolean;
     rights_workspace uuid;
     rights_status varchar(16);
@@ -84,11 +86,18 @@ DECLARE
     compliance_workspace uuid;
     compliance_dataset_version uuid;
     contract_workspace uuid;
+    traceability_workspace uuid;
+    traceability_object_type varchar(64);
+    traceability_object_id uuid;
+    traceability_has_items boolean;
     evidence_workspace uuid;
+    evidence_object_type varchar(64);
+    evidence_object_id uuid;
 BEGIN
-    SELECT d.workspace_id INTO dataset_workspace
+    SELECT d.workspace_id, v.status INTO dataset_workspace, dataset_status
       FROM dataset_version v JOIN dataset d ON d.id = v.dataset_id
-     WHERE v.id = NEW.dataset_version_id;
+     WHERE v.id = NEW.dataset_version_id
+     FOR SHARE OF v;
     IF dataset_workspace IS DISTINCT FROM NEW.workspace_id THEN
         RAISE EXCEPTION 'DatasetCertification crosses workspace boundary';
     END IF;
@@ -100,9 +109,9 @@ BEGIN
     END IF;
 
     SELECT workspace_id, profile_ref, version, content_sha256, content_snapshot,
-           rights_required, compliance_required, contract_required, evidence_required
+           rights_required, compliance_required, contract_required, traceability_required, evidence_required
       INTO profile_workspace, profile_ref_value, profile_version_value, profile_hash_value, profile_content_value,
-           profile_rights_required, profile_compliance_required, profile_contract_required, profile_evidence_required
+           profile_rights_required, profile_compliance_required, profile_contract_required, profile_traceability_required, profile_evidence_required
       FROM certification_profile WHERE id = NEW.certification_profile_id;
     IF profile_workspace IS DISTINCT FROM NEW.workspace_id
        OR profile_ref_value IS DISTINCT FROM NEW.profile_ref
@@ -110,6 +119,10 @@ BEGIN
        OR profile_hash_value IS DISTINCT FROM NEW.profile_content_sha256
        OR profile_content_value IS DISTINCT FROM NEW.profile_content_snapshot THEN
         RAISE EXCEPTION 'DatasetCertification profile snapshot does not match immutable profile';
+    END IF;
+
+    IF NEW.decision = 'CERTIFIED' AND dataset_status <> 'READY' THEN
+        RAISE EXCEPTION 'DatasetCertification requires a READY DatasetVersion';
     END IF;
 
     IF NEW.decision = 'CERTIFIED' AND profile_rights_required AND (
@@ -125,6 +138,9 @@ BEGIN
     END IF;
     IF NEW.decision = 'CERTIFIED' AND profile_contract_required AND NEW.contract_version_id IS NULL THEN
         RAISE EXCEPTION 'DatasetCertification profile requires contract evidence';
+    END IF;
+    IF NEW.decision = 'CERTIFIED' AND profile_traceability_required AND NEW.traceability_evidence_id IS NULL THEN
+        RAISE EXCEPTION 'DatasetCertification profile requires traceability evidence';
     END IF;
     IF NEW.decision = 'CERTIFIED' AND profile_evidence_required AND NEW.evidence_snapshot_id IS NULL THEN
         RAISE EXCEPTION 'DatasetCertification profile requires evidence snapshot';
@@ -167,11 +183,30 @@ BEGIN
         END IF;
     END IF;
 
+    IF NEW.traceability_evidence_id IS NOT NULL THEN
+        SELECT es.workspace_id, es.object_type, es.object_id,
+               EXISTS(SELECT 1 FROM evidence_snapshot_item esi WHERE esi.snapshot_id=es.id)
+          INTO traceability_workspace, traceability_object_type, traceability_object_id, traceability_has_items
+          FROM evidence_snapshot es
+         WHERE es.id = NEW.traceability_evidence_id
+         FOR SHARE OF es;
+        IF traceability_workspace IS DISTINCT FROM NEW.workspace_id
+           OR traceability_object_type <> 'DATASET_VERSION'
+           OR traceability_object_id IS DISTINCT FROM NEW.dataset_version_id
+           OR NOT traceability_has_items THEN
+            RAISE EXCEPTION 'DatasetCertification traceability evidence does not match a complete DatasetVersion EvidenceSnapshot';
+        END IF;
+    END IF;
+
     IF NEW.evidence_snapshot_id IS NOT NULL THEN
-        SELECT workspace_id INTO evidence_workspace
-          FROM evidence_snapshot WHERE id = NEW.evidence_snapshot_id;
-        IF evidence_workspace IS DISTINCT FROM NEW.workspace_id THEN
-            RAISE EXCEPTION 'DatasetCertification evidence does not match workspace';
+        SELECT workspace_id, object_type, object_id
+          INTO evidence_workspace, evidence_object_type, evidence_object_id
+          FROM evidence_snapshot WHERE id = NEW.evidence_snapshot_id
+          FOR SHARE;
+        IF evidence_workspace IS DISTINCT FROM NEW.workspace_id
+           OR evidence_object_type <> 'DATASET_VERSION'
+           OR evidence_object_id IS DISTINCT FROM NEW.dataset_version_id THEN
+            RAISE EXCEPTION 'DatasetCertification evidence does not match target DatasetVersion';
         END IF;
     END IF;
     RETURN NEW;
@@ -206,7 +241,8 @@ DECLARE
     replacement_profile_id uuid;
     replacement_decision varchar(16);
     evidence_workspace uuid;
-    evidence_dataset_version uuid;
+    evidence_object_type varchar(64);
+    evidence_object_id uuid;
 BEGIN
     SELECT c.workspace_id, c.dataset_version_id, c.certification_profile_id, c.decision, c.issued_at
       INTO certification_workspace, certification_dataset_version, certification_profile_id, certification_decision, certification_issued_at
@@ -235,11 +271,13 @@ BEGIN
         END IF;
     END IF;
     IF NEW.evidence_snapshot_id IS NOT NULL THEN
-        SELECT workspace_id, dataset_version_id
-          INTO evidence_workspace, evidence_dataset_version
-          FROM evidence_snapshot WHERE id = NEW.evidence_snapshot_id;
+        SELECT workspace_id, object_type, object_id
+          INTO evidence_workspace, evidence_object_type, evidence_object_id
+          FROM evidence_snapshot WHERE id = NEW.evidence_snapshot_id
+          FOR SHARE;
         IF evidence_workspace IS DISTINCT FROM NEW.workspace_id
-           OR evidence_dataset_version IS DISTINCT FROM certification_dataset_version THEN
+           OR evidence_object_type <> 'DATASET_VERSION'
+           OR evidence_object_id IS DISTINCT FROM certification_dataset_version THEN
             RAISE EXCEPTION 'CertificationDisposition evidence does not match the certified target';
         END IF;
     END IF;
