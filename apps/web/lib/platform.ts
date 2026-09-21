@@ -485,7 +485,7 @@ export const platform = {
     ),
   deliveryEligibility: (
     versionId: string,
-    input: { profileId: string; consumer: string; purpose: string; action: string; delivery: string },
+    input: { profileId: string; consumer: string; purpose: string; action: string; delivery: string; scopeType: string; scopeRef?: string },
   ) => {
     const query = new URLSearchParams({
       profileId: input.profileId,
@@ -493,7 +493,9 @@ export const platform = {
       purpose: input.purpose,
       action: input.action,
       delivery: input.delivery,
+      scopeType: input.scopeType,
     });
+    if (input.scopeRef) query.set("scopeRef", input.scopeRef);
     return apiGet<DeliveryEligibility>(
       workspacePath(`/dataset-versions/${encodeURIComponent(versionId)}/delivery-eligibility?${query.toString()}`),
     );
