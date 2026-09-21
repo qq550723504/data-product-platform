@@ -67,11 +67,13 @@ DECLARE
     dataset_status varchar(32);
     quality_workspace uuid;
     quality_dataset_version uuid;
+    quality_gate varchar(32);
     profile_workspace uuid;
     profile_ref_value varchar(512);
     profile_version_value varchar(64);
     profile_hash_value varchar(64);
     profile_content_value text;
+    profile_quality_gate_required boolean;
     profile_rights_required boolean;
     profile_rights_purpose_mode varchar(16);
     profile_rights_action_mode varchar(16);
@@ -83,6 +85,9 @@ DECLARE
     profile_evidence_required boolean;
     rights_workspace uuid;
     rights_status varchar(16);
+    rights_purpose varchar(128);
+    rights_consumer varchar(255);
+    rights_referenced_by_effective boolean;
     effective_workspace uuid;
     effective_dataset_version uuid;
     effective_status varchar(16);
@@ -92,6 +97,7 @@ DECLARE
     effective_lineage_mismatch boolean;
     compliance_workspace uuid;
     compliance_dataset_version uuid;
+    compliance_gate varchar(32);
     contract_workspace uuid;
     traceability_workspace uuid;
     traceability_object_type varchar(64);
@@ -109,16 +115,20 @@ BEGIN
         RAISE EXCEPTION 'DatasetCertification crosses workspace boundary';
     END IF;
 
-    SELECT workspace_id, dataset_version_id INTO quality_workspace, quality_dataset_version
-      FROM quality_result WHERE id = NEW.quality_assessment_id;
+    SELECT workspace_id, dataset_version_id, gate_decision
+      INTO quality_workspace, quality_dataset_version, quality_gate
+      FROM quality_result WHERE id = NEW.quality_assessment_id
+      FOR SHARE;
     IF quality_workspace IS DISTINCT FROM NEW.workspace_id OR quality_dataset_version IS DISTINCT FROM NEW.dataset_version_id THEN
         RAISE EXCEPTION 'DatasetCertification quality assessment does not match target';
     END IF;
 
     SELECT workspace_id, profile_ref, version, content_sha256, content_snapshot,
+           quality_gate_required,
            rights_required, rights_purpose_mode, rights_action_mode, rights_consumer_mode, rights_scope_mode,
            compliance_required, contract_required, traceability_required, evidence_required
       INTO profile_workspace, profile_ref_value, profile_version_value, profile_hash_value, profile_content_value,
+           profile_quality_gate_required,
            profile_rights_required, profile_rights_purpose_mode, profile_rights_action_mode, profile_rights_consumer_mode, profile_rights_scope_mode,
            profile_compliance_required, profile_contract_required, profile_traceability_required, profile_evidence_required
       FROM certification_profile WHERE id = NEW.certification_profile_id;
@@ -132,6 +142,34 @@ BEGIN
 
     IF NEW.decision = 'CERTIFIED' AND dataset_status <> 'READY' THEN
         RAISE EXCEPTION 'DatasetCertification requires a READY DatasetVersion';
+    END IF;
+
+    IF NEW.decision = 'CERTIFIED' AND profile_quality_gate_required AND quality_gate <> 'PASS' THEN
+        RAISE EXCEPTION 'DatasetCertification requires a passing QualityAssessment gate';
+    END IF;
+    IF NEW.decision = 'CERTIFIED' AND EXISTS (
+        SELECT 1
+        FROM certification_profile_quality_dimension d
+        WHERE d.profile_id=NEW.certification_profile_id
+          AND COALESCE((
+              SELECT q.metrics->'dimensions'->d.dimension->>'status'
+              FROM quality_result q WHERE q.id=NEW.quality_assessment_id
+          ), '') <> 'PASS'
+    ) THEN
+        RAISE EXCEPTION 'DatasetCertification required quality dimension is not PASS';
+    END IF;
+    IF NEW.decision = 'CERTIFIED' AND EXISTS (
+        SELECT 1
+        FROM certification_profile_critical_rule r
+        WHERE r.profile_id=NEW.certification_profile_id
+          AND NOT EXISTS (
+              SELECT 1 FROM quality_finding f
+              WHERE f.result_id=NEW.quality_assessment_id
+                AND f.rule_id=r.rule_id
+                AND f.status='PASS'
+          )
+    ) THEN
+        RAISE EXCEPTION 'DatasetCertification required critical rule is not PASS';
     END IF;
 
     IF NEW.decision = 'CERTIFIED' AND profile_rights_required AND (
@@ -156,10 +194,21 @@ BEGIN
     END IF;
 
     IF NEW.rights_snapshot_id IS NOT NULL THEN
-        SELECT workspace_id, status INTO rights_workspace, rights_status
-          FROM rights_snapshot WHERE id = NEW.rights_snapshot_id;
-        IF rights_workspace IS DISTINCT FROM NEW.workspace_id OR rights_status <> 'FINALIZED' THEN
-            RAISE EXCEPTION 'DatasetCertification requires a finalized same-workspace RightsSnapshot';
+        SELECT workspace_id, status, purpose, COALESCE(consumer_ref,'')
+          INTO rights_workspace, rights_status, rights_purpose, rights_consumer
+          FROM rights_snapshot WHERE id = NEW.rights_snapshot_id
+          FOR SHARE;
+        SELECT EXISTS(
+            SELECT 1 FROM effective_rights_input
+            WHERE snapshot_id=NEW.effective_rights_snapshot_id
+              AND rights_snapshot_id=NEW.rights_snapshot_id
+        ) INTO rights_referenced_by_effective;
+        IF rights_workspace IS DISTINCT FROM NEW.workspace_id
+           OR rights_status <> 'FINALIZED'
+           OR rights_purpose IS DISTINCT FROM effective_purpose
+           OR rights_consumer IS DISTINCT FROM effective_consumer_ref
+           OR NOT rights_referenced_by_effective THEN
+            RAISE EXCEPTION 'DatasetCertification RightsSnapshot does not match frozen EffectiveRights context';
         END IF;
     END IF;
 
@@ -266,10 +315,15 @@ BEGIN
     END IF;
 
     IF NEW.compliance_result_id IS NOT NULL THEN
-        SELECT workspace_id, dataset_version_id INTO compliance_workspace, compliance_dataset_version
-          FROM compliance_result WHERE id = NEW.compliance_result_id;
+        SELECT workspace_id, dataset_version_id, gate_decision
+          INTO compliance_workspace, compliance_dataset_version, compliance_gate
+          FROM compliance_result WHERE id = NEW.compliance_result_id
+          FOR SHARE;
         IF compliance_workspace IS DISTINCT FROM NEW.workspace_id OR compliance_dataset_version IS DISTINCT FROM NEW.dataset_version_id THEN
             RAISE EXCEPTION 'DatasetCertification compliance result does not match target';
+        END IF;
+        IF NEW.decision = 'CERTIFIED' AND profile_compliance_required AND compliance_gate <> 'PASS' THEN
+            RAISE EXCEPTION 'DatasetCertification requires a passing ComplianceResult';
         END IF;
     END IF;
 
