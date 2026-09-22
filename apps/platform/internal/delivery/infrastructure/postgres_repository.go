@@ -125,6 +125,25 @@ func (r *PostgresRepository) GetOperation(ctx context.Context, tx pgx.Tx, id uui
 	return operation, nil
 }
 
+func (r *PostgresRepository) GetTerminalGateCertificationProfile(ctx context.Context, tx pgx.Tx, operationID uuid.UUID) (uuid.UUID, error) {
+	var profileID *uuid.UUID
+	err := tx.QueryRow(ctx, `
+		SELECT certification_profile_id
+		FROM delivery_gate_evaluation
+		WHERE delivery_operation_id=$1
+		  AND stage='TERMINAL_FINALIZE'
+		ORDER BY created_at DESC, id DESC
+		LIMIT 1
+	`, operationID).Scan(&profileID)
+	if errors.Is(err, pgx.ErrNoRows) || profileID == nil || *profileID == uuid.Nil {
+		return uuid.Nil, ErrNotFound
+	}
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("get terminal delivery certification profile: %w", err)
+	}
+	return *profileID, nil
+}
+
 func (r *PostgresRepository) LockFence(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID) (int64, error) {
 	return deliveryfence.Lock(ctx, tx, workspaceID)
 }
