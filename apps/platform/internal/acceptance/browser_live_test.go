@@ -20,7 +20,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	certificationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
+	certificationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
+	certificationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
 	complianceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/application"
 	complianceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/infrastructure"
 	contractapp "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/application"
@@ -31,6 +35,7 @@ import (
 	entityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
@@ -235,12 +240,134 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	liveOK(t, err, "prepare actual data contract")
 	contract, err = contractService.PublishVersion(ctx, contractapp.PublishVersionCommand{VersionID: contract.ID, ActorID: &seedActor, TraceID: traceID})
 	liveOK(t, err, "publish preparation contract")
-	rightsService := rightsapp.NewService(tx, rightsinfra.NewPostgresRepository(pool))
+	rightsRepo := rightsinfra.NewPostgresRepository(pool)
+	rightsService := rightsapp.NewService(tx, rightsRepo)
 	grants := []rightsdomain.ResourceGrantSpec{}
 	for _, id := range []uuid.UUID{enterpriseResource.ID, leaseResource.ID, energyResource.ID} {
 		grants = append(grants, rightsdomain.ResourceGrantSpec{DataResourceID: id, Actions: []string{"READ", "AGGREGATE", "DERIVE", "PRODUCTIZE"}, ScopeType: "ALL_RESOURCE", ScopeRef: id.String(), Scope: map[string]any{"useCase": purpose}})
 	}
 	authorization := activateAuthorization(t, ctx, rightsService, workspaceID, "AUTH-LIVE-"+suffix, time.Now().UTC().Add(-time.Hour), time.Now().UTC().Add(24*time.Hour), grants, &seedActor, traceID)
+
+	certifiedRightsSnapshot, err := rightsService.CreateSnapshot(ctx, rightsapp.CreateSnapshotCommand{
+		WorkspaceID: workspaceID, Purpose: purpose, ConsumerRef: "LICENSED_BANK", AsOf: time.Now().UTC(),
+		AuthorizationIDs: []uuid.UUID{authorization.ID}, ActorID: &seedActor, TraceID: traceID,
+	})
+	liveOK(t, err, "create Certified Dataset rights snapshot")
+	effectiveRights, err := rightsService.ComputeEffectiveRights(ctx, rightsapp.ComputeEffectiveRightsCommand{
+		WorkspaceID: workspaceID, TargetDatasetVersionID: output.ID, ConsumerRef: "LICENSED_BANK",
+		Purpose: purpose, ActorID: &seedActor, TraceID: traceID,
+	})
+	liveOK(t, err, "compute Certified Dataset effective rights")
+	if effectiveRights.Status != "FINALIZED" {
+		t.Fatalf("live Certified Dataset EffectiveRights status=%s, want FINALIZED", effectiveRights.Status)
+	}
+
+	var certifiedEvidence evidence.Snapshot
+	liveOK(t, tx.Do(ctx, func(ctx context.Context, dbtx pgx.Tx) error {
+		record, err := evidence.Append(ctx, dbtx, evidence.Record{
+			WorkspaceID: workspaceID, EvidenceType: "CERTIFIED_DATASET_BROWSER_TRACE",
+			Title: "Live browser Certified Dataset traceability evidence",
+			SourceType: "DATASET_VERSION", SourceID: &output.ID,
+			Metadata: map[string]any{
+				"executionId": execution.ID, "entityMatchJobId": job.ID,
+				"qualityAssessmentId": quality.ID, "effectiveRightsSnapshotId": effectiveRights.ID,
+			},
+			CreatedBy: &seedActor,
+		}, evidence.Relation{ObjectType: "DATASET_VERSION", ObjectID: output.ID, RelationType: "CERTIFIED_BROWSER_TRACE"})
+		if err != nil {
+			return err
+		}
+		snapshot, err := evidence.CreateSnapshot(ctx, dbtx, workspaceID, "DATASET_VERSION", output.ID, map[string]any{
+			"pilot": "enterprise-activity-browser", "executionId": execution.ID,
+		}, []evidence.SnapshotItem{{EvidenceID: record.ID, Category: "TRACEABILITY"}}, &seedActor)
+		if err != nil {
+			return err
+		}
+		certifiedEvidence = snapshot
+		return nil
+	}), "create Certified Dataset evidence snapshot")
+
+	profileRepo := certificationinfra.NewProfileRepository(pool)
+	profileService := certificationapp.NewProfileService(tx, profileRepo)
+	certificationProfile, err := profileService.Create(ctx, certificationapp.CreateProfileCommand{
+		WorkspaceID: workspaceID,
+		Profile: certificationdomain.CertificationProfile{
+			ProfileRef: "park/enterprise-activity-browser-certified-v1",
+			Code: "BROWSER-ENTERPRISE-ACTIVITY-CERTIFIED",
+			Name: "Enterprise Activity Browser Certified Dataset",
+			Version: "1.0.0",
+			Purpose: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
+			Actions: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
+			Consumers: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"LICENSED_BANK"}},
+			Delivery: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"DIRECT_DATA"}},
+			RequiredCriticalRules: []string{"QA-COMPANY-ID-COMPLETE"},
+			QualityGateRequired: true,
+			Rights: certificationdomain.RightsRequirement{
+				Required: true,
+				Purpose: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
+				Actions: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
+				Consumers: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"LICENSED_BANK"}},
+				Scopes: certificationdomain.ScopeApplicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []certificationdomain.ScopeRef{
+					{Type: "ALL_RESOURCE", Ref: enterpriseResource.ID.String()},
+					{Type: "ALL_RESOURCE", Ref: leaseResource.ID.String()},
+					{Type: "ALL_RESOURCE", Ref: energyResource.ID.String()},
+				}},
+			},
+			ComplianceRequired: true, ContractRequired: true, ContractCode: "DP-ENTERPRISE-ACTIVITY",
+			TraceabilityRequired: true, EvidenceRequired: true,
+		},
+		ActorID: &seedActor, TraceID: traceID,
+	})
+	liveOK(t, err, "create Certified Dataset browser profile")
+	certificationRepo := certificationinfra.NewCertificationRepository(pool)
+	certificationService := certificationapp.NewCertificationService(tx, profileRepo, certificationRepo, pilotCertificationResolver{
+		input: certificationdomain.EvaluationInput{
+			WorkspaceID: workspaceID, DatasetVersionID: output.ID,
+			Quality: certificationdomain.QualityAssessmentEvidence{ID: quality.ID},
+			Rights: &certificationdomain.RightsEvidence{
+				RightsSnapshotID: certifiedRightsSnapshot.ID, EffectiveRightsSnapshotID: effectiveRights.ID,
+			},
+			Compliance: &certificationdomain.ComplianceEvidence{ID: compliance.ID},
+			Contract: &certificationdomain.ContractEvidence{ID: contract.ID},
+			Traceability: &certificationdomain.TraceabilityEvidence{ID: certifiedEvidence.ID},
+			Evidence: &certificationdomain.EvidenceSnapshot{ID: certifiedEvidence.ID},
+			ActorID: &seedActor,
+		},
+	})
+	certification, err := certificationService.Evaluate(ctx, certificationapp.EvaluateDatasetCertificationCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: output.ID, ProfileID: certificationProfile.ID,
+		IdempotencyKey: "browser-live-certification-"+suffix, ActorID: &seedActor, TraceID: traceID,
+		CostActivity: &cost.CertificationActivity{
+			ActivityID: uuid.New(), CostType: cost.CertificationEvaluationActivity,
+			Quantity: 1, Unit: "certification", PricingMode: "ACTUAL",
+		},
+	})
+	liveOK(t, err, "certify live browser DatasetVersion")
+	if certification.Decision != certificationdomain.DecisionCertified {
+		t.Fatalf("live browser certification=%s blockers=%+v", certification.Decision, certification.Blockers)
+	}
+	eligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
+	currentEligibility, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
+		WorkspaceID: workspaceID, DatasetVersionID: output.ID, ProfileID: certificationProfile.ID,
+		Consumer: "LICENSED_BANK", Purpose: purpose, Action: "READ", Delivery: "DIRECT_DATA",
+		ScopeType: "ALL_RESOURCE", ScopeRef: output.ID.String(), AsOf: time.Now().UTC(),
+	})
+	liveOK(t, err, "check live browser Certified Dataset eligibility")
+	if !currentEligibility.Allowed {
+		t.Fatalf("live browser Current Delivery Eligibility blockers=%+v", currentEligibility.Blockers)
+	}
+
+	manifest["certifiedDatasetId"] = curated.ID
+	manifest["certifiedVersionId"] = output.ID
+	manifest["qualityAssessmentId"] = quality.ID
+	manifest["certificationId"] = certification.ID
+	manifest["certificationProfileId"] = certificationProfile.ID
+	manifest["effectiveRightsSnapshotId"] = effectiveRights.ID
+	manifest["effectiveRightsHash"] = effectiveRights.RootHash
+	manifest["certificationEvidenceSnapshotId"] = certifiedEvidence.ID
+	manifest["outputChecksum"] = output.ChecksumValue
+	manifest["qualityDimensions"] = []string{"COMPLETENESS", "ACCURACY", "CONSISTENCY", "VALIDITY", "UNIQUENESS", "TIMELINESS"}
+
 	productRepo := productinfra.NewPostgresRepository(pool)
 	productService := productapp.NewService(tx, productRepo)
 	product, err := productService.CreateProduct(ctx, productapp.CreateProductCommand{WorkspaceID: workspaceID, Code: "DP-LIVE-" + suffix, Name: "真实后端浏览器验收产品", Description: "Synthetic test inputs, real persisted Core facts", DomainCode: "PARK_ENTERPRISE_ACTIVITY", ActorID: &seedActor, TraceID: traceID})
