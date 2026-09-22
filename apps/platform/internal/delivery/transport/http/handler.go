@@ -44,8 +44,9 @@ type deliverRequest struct {
 	Consumer  string `json:"consumer"`
 	Purpose   string `json:"purpose"`
 	Action    string `json:"action"`
-	ScopeType string `json:"scopeType"`
-	ScopeRef  string `json:"scopeRef,omitempty"`
+	ScopeType                 string `json:"scopeType"`
+	ScopeRef                  string `json:"scopeRef,omitempty"`
+	RetryOfDeliveryOperationID string `json:"retryOfDeliveryOperationId,omitempty"`
 }
 
 func (h *Handler) deliver(w http.ResponseWriter, r *http.Request) {
@@ -69,6 +70,15 @@ func (h *Handler) deliver(w http.ResponseWriter, r *http.Request) {
 	if err != nil || profileID == uuid.Nil {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_PROFILE_ID", "profileId must be a non-nil UUID", nil)
 		return
+	}
+	var retryOf *uuid.UUID
+	if value := strings.TrimSpace(request.RetryOfDeliveryOperationID); value != "" {
+		id, parseErr := uuid.Parse(value)
+		if parseErr != nil || id == uuid.Nil {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_RETRY_OF_DELIVERY_OPERATION_ID", "retryOfDeliveryOperationId must be a non-nil UUID", nil)
+			return
+		}
+		retryOf = &id
 	}
 	idempotencyKey := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
 	if idempotencyKey == "" || len(idempotencyKey) > 255 {
@@ -97,6 +107,7 @@ func (h *Handler) deliver(w http.ResponseWriter, r *http.Request) {
 		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: profileID,
 		PrincipalRef: caller.PrincipalRef, EffectiveConsumerRef: caller.EffectiveConsumerRef,
 		Purpose: request.Purpose, Action: request.Action, ScopeType: request.ScopeType, ScopeRef: request.ScopeRef,
+		RetryOfDeliveryOperationID: retryOf,
 		IdempotencyKey: idempotencyKey, TraceID: strings.TrimSpace(r.Header.Get("X-Trace-ID")),
 	})
 	if errors.Is(err, deliveryapp.ErrDirectDataReplayRequiresNewAttempt) {
