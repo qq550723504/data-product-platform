@@ -240,12 +240,24 @@ func TestDatasetCertificationAllowsSeededRawEffectiveRightsLeaf(t *testing.T) {
 		t.Fatalf("insert certification profile: %v", err)
 	}
 	if _, err := profileTx.Exec(ctx, `
-		INSERT INTO certification_profile_rights_purpose (profile_id, purpose_code) VALUES ($1,'INTERNAL_USE');
-		INSERT INTO certification_profile_rights_action (profile_id, action) VALUES ($1,'READ');
-		INSERT INTO certification_profile_rights_consumer (profile_id, consumer_ref) VALUES ($1,'consumer-a');
-		INSERT INTO certification_profile_rights_scope (profile_id, scope_type, scope_ref) VALUES ($1,'ALL_RESOURCE',$2);
+		INSERT INTO certification_profile_rights_purpose (profile_id, purpose_code) VALUES ($1,'INTERNAL_USE')
+	`, profileID); err != nil {
+		t.Fatalf("insert certification rights purpose: %v", err)
+	}
+	if _, err := profileTx.Exec(ctx, `
+		INSERT INTO certification_profile_rights_action (profile_id, action) VALUES ($1,'READ')
+	`, profileID); err != nil {
+		t.Fatalf("insert certification rights action: %v", err)
+	}
+	if _, err := profileTx.Exec(ctx, `
+		INSERT INTO certification_profile_rights_consumer (profile_id, consumer_ref) VALUES ($1,'consumer-a')
+	`, profileID); err != nil {
+		t.Fatalf("insert certification rights consumer: %v", err)
+	}
+	if _, err := profileTx.Exec(ctx, `
+		INSERT INTO certification_profile_rights_scope (profile_id, scope_type, scope_ref) VALUES ($1,'ALL_RESOURCE',$2)
 	`, profileID, resourceID.String()); err != nil {
-		t.Fatalf("insert certification rights memberships: %v", err)
+		t.Fatalf("insert certification rights scope: %v", err)
 	}
 	if _, err := profileTx.Exec(ctx, `
 		UPDATE certification_profile SET membership_state='FINALIZED' WHERE id=$1
