@@ -64,7 +64,6 @@ func TestRestoreDimensionSummariesRejectsMissingSnapshot(t *testing.T) {
 	}
 }
 
-
 func TestValidateDimensionSnapshotRejectsMissingOrNonObject(t *testing.T) {
 	for name, metrics := range map[string]map[string]any{
 		"missing": {},
