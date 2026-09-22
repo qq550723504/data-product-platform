@@ -21,23 +21,35 @@
 
 ## 2. 第一阶段任务
 
-~~~text
-#131 QualityAssessment core ✅ (#140 / migration 000019)
-        ↓
-#132 Quality Engine ✅
-        ↓
-#133 Quality Report ✅
+第一阶段已经完成：
 
-#137 Data Rights Provenance ✅
+~~~text
+#131 QualityAssessment / Cost identity            ✅
         ↓
-#134 DatasetCertification ✅ (PR #149)
+#132 Quality Engine                               ✅
         ↓
-#135 API / UI ⏳
+#133 Quality Report                               ✅
+
+#137 Data Rights Provenance / Effective Rights    ✅
         ↓
-#136 enterprise-activity E2E Pilot ⏳
+#134 DatasetCertification                         ✅
+        ↓
+#135A Read/API/UI                                 ✅
+#135B trusted DIRECT_DATA                         ✅
+        ↓
+#136 enterprise-activity E2E Pilot                ✅ E2E1–E2E20
 ~~~
 
-#134 明确依赖 #137。
+关键交付：
+
+- #149 DatasetCertification / CertificationProfile；
+- #152 Read/API/UI + Current Delivery Eligibility；
+- #173 / #174 trusted server-side DIRECT_DATA；
+- #176 / #178 / #179 / #180 Pilot reliability closeout；
+- #182–#194 enterprise-activity vertical acceptance；
+- docs/product/certified-dataset-pilot-acceptance.md 最终验收报告。
+
+第一阶段不把 bearer/presigned provider、完整生产 IAM、provider containment/recovery、T4/T5/T6、灾备、性能 SLA 或 AI Gold Dataset 作为未完成项。
 
 ## 3. HQD-1 #131
 
@@ -219,111 +231,134 @@ CertificationProfile 可以要求：
 
 ## 8. HQD-5 #135
 
-从 DatasetVersion 页面理解和操作质量/认证，并提供第一阶段真正的 server-side delivery path。
+HQD-5 第一阶段 MVP 已完成并关闭。
 
-至少展示：
+### HQD-5A — Read/API/UI
 
-- Quality Assessment
-- Quality Report
-- Rights summary
-- historical Certification status / issued_at
-- Current Delivery Eligibility（ALLOWED / BLOCKED）
-- current rights blockers
-- Evidence
+已交付：
 
-DatasetVersion V1 认证不能让 V2 自动显示已认证。
+- DatasetVersion QualityAssessment / Quality Report；
+- 六维质量摘要与 findings；
+- Certification history / profile / evidence；
+- Rights summary；
+- Current Delivery Eligibility：
+  - DatasetVersion usability
+  - Current Certification
+  - Current Entitlement
 
-#135 不能只交付 UI / eligibility query，还必须实现以下最小完成合同：
+历史 CERTIFIED 与“当前仍可交付”明确分离。
 
-- 持久化 `DeliveryOperation`（每次交付尝试的稳定业务 ID / 幂等主体）；
-- `DeliverDatasetVersion` / `IssueDatasetAccess`（最终命名由实现 PR 固定）；
-- server-side delivery command 在进入 CurrentDeliveryGate 前先从可信 authenticated caller principal 解析 effective consumer/workspace；on-behalf-of 必须验证当前有效 delegation，不能信任客户端 header/query/body/demo actor ID 自证 consumer；
-- initial / retry / reconciliation / terminal finalize 都必须重新验证 principal→consumer/workspace binding/delegation 当前有效性；这些可撤销身份依赖必须进入与 Rights/Certification/DatasetVersion 共享的 delivery authorization fence/revision（或等价串行化机制）；
-- 每一次 initial / retry / reconciliation / terminal-finalize / credential-replay gate evaluation 都必须追加 immutable DeliveryGateEvaluation（或等价 child fact），保存 decision/blockers + dependency fence/revision + trusted caller/effective consumer/context；DeliveryOperation.current_gate/status 只是 projection，不得覆盖旧 evaluation；
-- server-side delivery command 在返回数据或签发 URL/token/credential 前，使用该 trusted principal + effective consumer 上下文重新执行完整 CurrentDeliveryGate；
-- query→delivery 之间 Rights/Certification/DatasetVersion 状态变化，以及 principal binding/delegation revoke 的 TOCTOU 测试；
-- gate 失败不得产生可用数据、URL、token、credential；
-- credential `expires_at` 必须满足完整最小上限：`<= min(requested_expires_at, platform_max_credential_expiry, caller principal→consumer/workspace binding / workspace membership / caller delegation 的最早有限 valid_to/expires_at, 当前 entitlement 实际依赖的 grantor-authority delegation chain 所有 required edges 的最早 valid_to, trusted identity source 已知 caller future revoke/disable effective_at（如可表达）, grantor delegation future disposition effective_at, RightsDeclaration effective_to, Authorization valid_to, future-effective RightsDisposition / AuthorizationProvenanceBindingDisposition / CertificationDisposition effective_at)`；不可回调 bearer/presigned credential 不得越过 delegated grantor authority 本身的有限边界；
-- #135 issuance 测试必须分别覆盖：① caller 请求 5 分钟而 platform/identity/rights 均允许 1 小时，实际 credential <= 5 分钟；② caller 请求 1 小时但 platform max=10 分钟，实际 credential <= 10 分钟；③ identity/rights/disposition 更早时继续取最早边界。replay/reconciliation 的 fresh cap 必须重复应用同一完整 min 公式；
-- `DatasetDeliveryIssued` / `DatasetDeliveryBlocked` / `DatasetDeliveryFailed`（或实现固定的等价事件）覆盖三个终态结果；
-- `CONTAINMENT_PENDING` 虽非终态，但每次首次进入必须产生显式 `DatasetDeliveryContainmentPending`（或固定等价）Domain Event，并与该 transition 的 Audit/Evidence/Outbox 同事务、幂等提交；reconciliation/alert consumers 不得依赖轮询状态或普通日志才知道存在未确认外部 capability；credential replay containment pending 使用独立 replay subject/event（或统一 containment event + subject_kind），不改写原 ISSUED operation；
-- DeliveryOperation 的**数据库 terminal fact** + Audit/Evidence + Outbox + CostEvent（如有）保持一致事务/幂等语义；外部 credential provider 调用不属于 PostgreSQL transaction；
-- 外部 issuance 必须先 durable persist PREPARED/ISSUANCE_PENDING + stable provider_request_key；
-- **每一次 initial / retry / reconciliation 真正调用 provider 前，都重新验证 caller principal→effective consumer/workspace binding/delegation 当前有效性，再重新执行完整 CurrentDeliveryGate 并重新计算 credential expiry cap**；PREPARED/ISSUANCE_PENDING 中旧 identity/gate snapshot 只用于审计；
-- 所有 delivery mode 的 terminal ISSUED transaction 必须获取与 caller identity lifecycle、grantor-authority delegation edge/disposition、Rights/Binding/Certification disposition、DatasetVersion invalidation 等 Command 共享的 delivery authorization fence/revision，再次 re-gate；provider/credential 模式同时 fresh-cap；terminal commit 是 delivery linearization point；
-- direct-data 模式必须在 terminal ISSUED commit 成功前保持 response body=0 bytes；commit 后才允许写第一字节，且不能为整个 stream 长时间持有 DB fence/lock；
-- direct-data terminal `ISSUED` 只表示该 attempt 已在线性化点获准开始响应，不证明客户端已收到数据；如果 ISSUED commit 后、第一字节前或 streaming 中发生 response loss，同一 idempotency key 只能返回稳定 non-payload replay result（例如 `DIRECT_DATA_REPLAY_REQUIRES_NEW_ATTEMPT` + 原 operation identity），不得依据旧 gate 重放 DatasetVersion bytes；
-- direct-data 需要重新传输时必须创建新的显式 DeliveryOperation/attempt（新 idempotency key，可用 `retry_of_delivery_operation_id` 关联原 attempt），重新解析 trusted principal/effective consumer/delegation、重新执行 CurrentDeliveryGate、重新进入 terminal fence；期间任何 Rights/Certification/Authorization/DatasetVersion/principal-binding/delegation 失效都必须使新 attempt fail closed；
-- crash/fault test 必须覆盖“ISSUED commit 成功、第一字节前 crash”：same-key retry 断言 0 dataset bytes + stable replay-required 结果；以及新 attempt 在 crash 后 entitlement/identity 被撤销时 BLOCKED、仍有效时仅在新的 ISSUED commit 后开始输出；
-- **真实 PostgreSQL 并发测试是 #135 完成条件，不允许只用 mock/串行调用证明 fence**：
-  - 使用两个独立 transaction/connection + barrier，把竞争窗口固定在“delivery terminal finalize 已进入 fenced re-gate/准备提交 ISSUED”和“gate-changing Command 准备提交 disposition/invalidation”之间；
-  - entitlement-change-first：Authorization revoke（并至少再覆盖 Rights/Binding/Certification disposition 或 DatasetVersion INVALID 中一种）先在线性化 fence 上提交，delivery finalize 随后必须观察新 revision/current facts，不能 ISSUED；provider capability 进入 contain/block/fail，direct-data 必须断言 response body 仍为 0 bytes；
-  - caller-binding-change-first：principal→consumer/workspace binding / delegation revoke 先在线性化 fence 上提交，delivery finalize 必须观察新 revision 并 fail closed；不能因为入口身份检查曾通过而继续 ISSUED；
-  - grantor-delegation-change-first：CurrentEntitlementGate 依赖的 grantor delegation edge/disposition 先在线性化 fence 上提交 revoke/expiry/supersede，delivery finalize 必须观察新 revision 并 fail closed；不能因为 AuthorizationProvenanceBinding 创建时 chain 曾有效而继续 ISSUED；
-  - finalize-first：delivery terminal ISSUED 先在线性化 fence 上提交，随后 gate-changing Command 才完成；direct-data 只有在该 commit 之后才能放行第一字节；两者必须形成唯一全序，后续 Command 按 delivery-mode revocation semantics 处理已签发 capability；
-  - 验证固定锁顺序/无 deadlock、重复 idempotency retry 不产生第二个 terminal fact/event；CostEvent 按实际 activity-attempt 语义处理：same-attempt replay 去重，但如果 retry/reconciliation 确实再次发生可计费 provider/compute 调用，则必须以新的稳定 attempt identity 记录新增实际成本（或原子聚合 quantity），不能被顶层 DeliveryOperation idempotency 吞掉；
-- 如果 re-gate 已 BLOCKED：
-  - 确认此前未产生 provider access capability 时可直接 BLOCKED；
-  - 若既有 provider_request_key 可能已签发，必须先 reconcile；
-  - recovered credential/access 必须先 revoke/contain，确认失效后才能 BLOCKED；
-  - unknown outcome 或 containment 未确认成功时进入 CONTAINMENT_PENDING，不能发 terminal Blocked/Failed event；但必须在同一 transition transaction 发 `DatasetDeliveryContainmentPending` + Audit/Evidence/Outbox；
-- direct bearer provider 必须支持基于同一 provider_request_key replay/read-after-write 恢复同一 credential（或等价同一访问能力），并支持 fresh credential-replay authorization 被拒绝时 revoke/contain 该既有 capability；任一能力缺失都不足以支持 direct bearer，必须 platform redemption/gateway 或 unsupported；
-- 无法安全恢复同一 credential，或 replay 被当前授权拒绝后无法 revoke/contain 旧 capability 的 provider，必须使用 platform redemption/gateway，或明确 unsupported；
-- provider 成功但 terminal DB commit 前 crash 时，retry/reconciliation 必须复用同一 provider_request_key，不得签发第二份独立 credential；
-- terminal ISSUED commit 已成功但 credential HTTP response 丢失时，same-key retry 在再次返回同一 credential/handle 前必须 fresh caller→effective consumer/delegation resolution + shared fence + CurrentDeliveryGate + fresh cap + recovered capability verify，并 append non-secret replay decision；fresh ALLOWED 才返回。若期间 delegation/Rights/Certification/Authorization/DatasetVersion 已失效，same-key retry 必须 0 credential/secret 输出并 revoke/contain 原 capability；containment 未确认只返回 non-secret pending，原 ISSUED 历史不改写；
-- 首次返回或 recovered credential 在 ISSUED 前必须 read-after-write/authoritative verify 实际 provider capability：expiry <= fresh cap，并且 resource/DatasetVersion、consumer/grantee enforcement、action、object/row/prefix scope、**delivery mode/channel enforcement** 均不得比 requested/current-gate context 更宽；consumer/grantee 或受约束 channel/mode 任一无法被 provider 原生或等价机制权威表达/验证/强制时，direct bearer/presigned 不得 ISSUED，只能 platform redemption/gateway 在使用时强制，或标记 unsupported；
-- recovered/returned credential 超出 fresh cap **或 capability scope 过宽/不可验证**时必须安全 shorten/narrow+verify，或 revoke/contain；无法满足当前 context 时 operation 不得成功；
-- ISSUANCE_PENDING / CONTAINMENT_PENDING 必须有 reconciliation path 和告警/恢复机制；
-- CONTAINMENT_PENDING confirmed containment 后允许两种终结：fresh gate 已 BLOCKED → BLOCKED；fresh gate 仍 ALLOWED 但 credential/issuance contract 无法满足（如无法缩短到 fresh cap）→ FAILED；
-- 每个 delivery event_type 显式进入 routing table，声明 required handlers 或 retention-only；
-- event/Audit/Evidence payload 不得包含可用 credential secret；
-- delivery CostEvent 必须通过 typed CostAllocation FK 关联 DeliveryOperation；每次真实 provider invocation 在调用前建立 durable immutable provider-attempt start fact，并按 attempt 记账。success / provider failure / timeout/unknown 后追加 outcome/observation fact；后续 reconciliation 对原 attempt 的新认知只能追加 resolution observation，不能覆盖原始 start/首次 observation。reconciliation / revoke / compensation 若真实调用 provider，则它们各自是新的 provider_attempt_id。只要实际外部调用并可能计费，都必须保留 CostEvent；same-attempt 无新调用 replay 才去重。
+### HQD-5B — trusted DIRECT_DATA
 
-缺少 server-side gate-at-issuance、DeliveryOperation、terminal delivery events、共享 fence/revision，或上述真实 PostgreSQL 双顺序并发测试任一项时，#135 不视为完成。
+已交付：
+
+- trusted principal → effective consumer/workspace；
+- fresh CurrentDeliveryGate；
+- DeliveryOperation；
+- commit-before-first-byte；
+- BLOCKED = 0 bytes；
+- same-key replay 不重放 payload；
+- explicit replacement attempt + fresh re-gate；
+- Audit / Evidence / Outbox / Cost；
+- real PostgreSQL delivery-fence linearization。
+
+### Deferred，不属于 HQD-5 第一阶段未完成项
+
+- bearer / presigned credential provider；
+- provider revoke / containment / recovery；
+- credential expiry-cap / capability narrowing matrix；
+- full enterprise IAM / delegation management；
+- NDI / external publication protocol。
+
+如真实产品需要这些能力，应从具体 Delivery Hardening / Productionization 需求单独立项，不重新打开 #135。
 
 ## 9. HQD-6 #136
 
-使用 enterprise / lease / energy Reference Implementation 完成纵向验收。
+enterprise / lease / energy Reference Implementation 已完成纵向验收，E2E1–E2E20 全部 PASS。
 
-必须回答：
+完整链路：
 
-1. 数据从哪里来？
-2. 做了哪些加工？
-3. 实体为什么这样对齐？
-4. 使用了哪版规则？
-5. 质量为什么通过/失败？
-6. 哪些记录存在问题？
-7. 为什么有权使用/交付？
-8. 为什么可以被认证？
+~~~text
+RAW
+→ Entity Resolution
+→ STANDARDIZED
+→ Native Execution
+→ CURATED
+→ QualityAssessment / Quality Report
+→ Rights / Compliance / Contract
+→ EffectiveRightsSnapshot
+→ DatasetCertification
+→ Current Delivery Eligibility
+→ trusted caller
+→ fresh CurrentDeliveryGate
+→ DeliveryOperation
+→ DIRECT_DATA
+→ real UI / trace
+~~~
 
-同时验证成功与失败路径。
+关键失败路径已经覆盖：
 
-第一阶段还必须验证：
+- CRITICAL Quality FAIL；
+- required Rights / Compliance / Contract missing；
+- new DatasetVersion 无旧 Certification 继承；
+- Certification revoke/supersede；
+- Authorization revoke；
+- DatasetVersion INVALID；
+- profile context mismatch；
+- Authorization/provenance context mismatch；
+- principal spoofing；
+- eligibility→delivery TOCTOU；
+- DIRECT_DATA response-loss；
+- revoke/finalize 双事务线性化；
+- frozen EvidenceSnapshot / RightsSnapshot membership tamper。
 
-- DatasetVersion 已经 CERTIFIED 后，如果对应 Authorization 过期/撤销、RightsDeclaration 被显式 INVALIDATED/SUPERSEDED，或 SHARE/RAW_EXPORT 等本次交付动作不再允许，历史 Certification 仍可查询，但 CurrentDeliveryGate 中的 CurrentEntitlementGate 必须阻止实际交付；
-- 当前有效 AuthorizationProvenanceBinding 被显式 INVALIDATED/SUPERSEDED，而其 RightsDeclaration 仍 VERIFIED、Authorization 仍 ACTIVE 时，历史 RightsSnapshot / Certification 继续解释旧 binding，但 CurrentEntitlementGate 必须排除该 binding 并 BLOCKED；
-- provider issuance 已成功但 terminal DB commit 丢失，随后 fresh gate 变为 BLOCKED 时，必须先 reconciliation 既有 provider_request_key 并 revoke/contain 已恢复的 access capability；未确认 containment 时保持 CONTAINMENT_PENDING，不得直接宣称 BLOCKED；
-- DatasetVersion 已经 CERTIFIED 后若状态变为 INVALID，历史 Certification 仍保留，但 CurrentDeliveryGate 必须 BLOCKED；
-- C1=CERTIFIED 后如果纠错生成 C2=REJECTED，并通过 CertificationDisposition 显式 SUPERSEDE C1，历史 C1/C2 都保留，但 CurrentCertificationGate 必须阻止继续使用 C1；
-- Pilot 汇总的成本来自实际 CostEvent + typed CostAllocation，不允许仅在验收报告中事后估算重建，也不得仅从 JSONB metadata 猜业务归属；
-- eligibility query 只做展示/预检；真实 delivery command 在签发数据/URL/token/credential 前重新执行 CurrentDeliveryGate，必须覆盖 query 后状态变化的 TOCTOU 场景。
+最终真实 browser gate #194 / CI #998 使用：
+
+- real Core / Worker；
+- PostgreSQL / Redis / MinIO；
+- standalone Next；
+- Chromium。
+
+并验证同一 immutable DatasetVersion 的：
+
+- exact producing Execution；
+- checksum / MinIO bytes；
+- Quality / six dimensions；
+- Certification history；
+- EffectiveRights；
+- EvidenceSnapshot；
+- Current Delivery Eligibility 三个 ALLOWED gate；
+- ProductRelease trace。
+
+详细证据与已知限制见 docs/product/certified-dataset-pilot-acceptance.md。
 
 ## 10. 试点 KPI
 
-第一轮优先统计：
+第一阶段 Reference fixture 的可重复 KPI：
 
-- 原始记录数
-- 标准化成功率
-- 自动实体匹配率
-- 人工复核率
-- Quality rule pass/fail 数
-- affected records
-- 最终认证状态
-- Evidence 覆盖
-- 处理耗时
-- 人工工时（来自实际 CostEvent / activity records，真实试点时）
+| 指标 | Pilot 结果 |
+| --- | --- |
+| RAW records | 30（enterprise 6 + lease 10 + energy 14） |
+| enterprise 标准化 | 6 / 6，100% |
+| 人工复核触达率 | 1 / 6，16.7% |
+| 无人工复核路径 | 5 / 6，83.3% |
+| Quality RuleSet | 11 rules / 6 dimensions |
+| happy-path blocking Quality FAIL | 0，Gate PASS |
+| targeted negative Quality FAIL | 1 个 CRITICAL `QA-FRESHNESS`，Gate FAIL |
+| 最终 Certification | CERTIFIED |
+| Current Delivery Eligibility | ALLOWED |
+| trusted DIRECT_DATA | ISSUED |
+| browser gate | PASS — #194 / CI #998 |
 
-商业验证重点是减少人工和交付周期，而不是先追求高 QPS。
+成本按真实 activity 记录：
+
+- 1 × QUALITY_ENGINE_INVOCATION；
+- 3 × RIGHTS_DECLARATION_VERIFICATION；
+- 1 × EFFECTIVE_RIGHTS_COMPUTE；
+- 1 × CERTIFICATION_EVALUATION（same-key replay 不重复）；
+- 每个新 DeliveryOperation 1 × DIRECT_DATA_DELIVERY_ATTEMPT（same-key replay 不重复）。
+
+以上数字只描述固定 synthetic fixture，不是生产 SLA、生产匹配率或商业 KPI 基准。
 
 ## 11. 第一阶段明确非目标
 
@@ -342,6 +377,15 @@ DatasetVersion V1 认证不能让 V2 自动显示已认证。
 
 ## 12. 第一阶段完成定义
 
-#136 验收通过后，Certified Dataset MVP 第一阶段完成。
+#136 E2E1–E2E20 已全部通过，Certified Dataset MVP 第一阶段完成。
 
-是否进入 AI 标注数据集第二阶段，应基于真实试点反馈，而不是因为技术路线图中存在该能力。
+完成证据：
+
+- #136 acceptance checklist；
+- #182–#194 merged Pilot slices；
+- CI #998 final required gate；
+- docs/product/certified-dataset-pilot-acceptance.md。
+
+下一阶段不自动启动。应基于 Pilot 结果在 AI / Gold Dataset、Delivery Hardening、Core reliability debt 或真实客户/行业需求之间选择优先级。
+
+**第一阶段完成不等于生产上线批准。**
