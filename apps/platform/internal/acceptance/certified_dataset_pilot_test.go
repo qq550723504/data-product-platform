@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -594,6 +595,231 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		certification.EvidenceSnapshotID == nil || *certification.EvidenceSnapshotID != supportingEvidence.ID {
 		t.Fatalf("pilot certification did not freeze expected rights/evidence facts: %+v", certification)
 	}
+
+	t.Run("certification snapshot memberships reject tamper without changing history", func(t *testing.T) {
+		evidenceRepo := evidence.NewQueryRepository(pool)
+		evidenceBefore, err := evidenceRepo.GetSnapshot(ctx, supportingEvidence.ID)
+		if err != nil {
+			t.Fatalf("read frozen Pilot EvidenceSnapshot before tamper: %v", err)
+		}
+		if !evidenceBefore.IntegrityValid {
+			t.Fatal("Pilot EvidenceSnapshot integrity is invalid before tamper")
+		}
+		rightsBefore, err := rightsRepo.GetSnapshot(ctx, rightsSnapshot.ID)
+		if err != nil {
+			t.Fatalf("read frozen Pilot RightsSnapshot before tamper: %v", err)
+		}
+		if rightsBefore.RootHash == "" || len(rightsBefore.DeclarationIDs) == 0 || len(rightsBefore.BindingIDs) == 0 {
+			t.Fatalf("Pilot RightsSnapshot is incomplete before tamper: %+v", rightsBefore)
+		}
+		var rightsAuthorizationCountBefore int
+		if err := pool.QueryRow(ctx, `
+			SELECT count(*)
+			FROM rights_snapshot_authorization
+			WHERE rights_snapshot_id=$1
+		`, rightsSnapshot.ID).Scan(&rightsAuthorizationCountBefore); err != nil {
+			t.Fatalf("count frozen Pilot RightsSnapshot authorizations: %v", err)
+		}
+		if rightsAuthorizationCountBefore == 0 {
+			t.Fatal("Pilot RightsSnapshot has no frozen Authorization membership")
+		}
+
+		var extraEvidence evidence.Record
+		if err := txManager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+			record, err := evidence.Append(ctx, tx, evidence.Record{
+				WorkspaceID:  workspaceID,
+				EvidenceType: "SNAPSHOT_TAMPER_PROBE",
+				Title:        "Certified Dataset Pilot snapshot tamper probe",
+				SourceType:   "DATASET_VERSION",
+				SourceID:     &outputVersion.ID,
+				Metadata:     map[string]any{"pilot": "snapshot-tamper"},
+				CreatedBy:    &actorID,
+			})
+			if err != nil {
+				return err
+			}
+			extraEvidence = record
+			return nil
+		}); err != nil {
+			t.Fatalf("create valid Evidence tamper fixture: %v", err)
+		}
+
+		tamperAuthorization := activatePilotAuthorizationForConsumer(
+			t,
+			ctx,
+			rightsService,
+			workspaceID,
+			"AUTH-SNAPSHOT-TAMPER-"+suffix,
+			"SNAPSHOT_TAMPER_CONSUMER",
+			validFrom,
+			validTo,
+			grants,
+			&actorID,
+			traceID,
+		)
+		var extraBindingID, extraDeclarationID uuid.UUID
+		if err := pool.QueryRow(ctx, `
+			SELECT id, rights_declaration_id
+			FROM authorization_provenance_binding
+			WHERE authorization_id=$1
+			ORDER BY created_at, id
+			LIMIT 1
+		`, tamperAuthorization.ID).Scan(&extraBindingID, &extraDeclarationID); err != nil {
+			t.Fatalf("load valid RightsSnapshot tamper fixture: %v", err)
+		}
+
+		assertTamperRejected := func(label, expected string, exec func() error) {
+			t.Helper()
+			err := exec()
+			if err == nil || !strings.Contains(err.Error(), expected) {
+				t.Fatalf("%s error = %v, want %q", label, err, expected)
+			}
+		}
+
+		assertTamperRejected("EvidenceSnapshot INSERT", "membership is finalized", func() error {
+			_, err := pool.Exec(ctx, `
+				INSERT INTO evidence_snapshot_item(snapshot_id, evidence_id, category)
+				VALUES ($1,$2,'TAMPER')
+			`, supportingEvidence.ID, extraEvidence.ID)
+			return err
+		})
+		assertTamperRejected("EvidenceSnapshot UPDATE", "membership is immutable", func() error {
+			_, err := pool.Exec(ctx, `
+				UPDATE evidence_snapshot_item
+				SET category='TAMPER'
+				WHERE snapshot_id=$1 AND evidence_id=$2
+			`, supportingEvidence.ID, supportingEvidence.Items[0].EvidenceID)
+			return err
+		})
+		assertTamperRejected("EvidenceSnapshot DELETE", "membership is immutable", func() error {
+			_, err := pool.Exec(ctx, `
+				DELETE FROM evidence_snapshot_item
+				WHERE snapshot_id=$1 AND evidence_id=$2
+			`, supportingEvidence.ID, supportingEvidence.Items[0].EvidenceID)
+			return err
+		})
+
+		assertTamperRejected("RightsSnapshot Authorization INSERT", "finalized rights_snapshot membership is immutable", func() error {
+			_, err := pool.Exec(ctx, `
+				INSERT INTO rights_snapshot_authorization(rights_snapshot_id, authorization_id)
+				VALUES ($1,$2)
+			`, rightsSnapshot.ID, tamperAuthorization.ID)
+			return err
+		})
+		assertTamperRejected("RightsSnapshot Declaration INSERT", "finalized rights_snapshot membership is immutable", func() error {
+			_, err := pool.Exec(ctx, `
+				INSERT INTO rights_snapshot_declaration(rights_snapshot_id, declaration_id)
+				VALUES ($1,$2)
+			`, rightsSnapshot.ID, extraDeclarationID)
+			return err
+		})
+		assertTamperRejected("RightsSnapshot Binding INSERT", "finalized rights_snapshot membership is immutable", func() error {
+			_, err := pool.Exec(ctx, `
+				INSERT INTO rights_snapshot_provenance_binding(rights_snapshot_id, binding_id)
+				VALUES ($1,$2)
+			`, rightsSnapshot.ID, extraBindingID)
+			return err
+		})
+		assertTamperRejected("RightsSnapshot Authorization UPDATE", "finalized rights_snapshot membership is immutable", func() error {
+			_, err := pool.Exec(ctx, `
+				UPDATE rights_snapshot_authorization
+				SET authorization_id=$3
+				WHERE rights_snapshot_id=$1 AND authorization_id=$2
+			`, rightsSnapshot.ID, authorization.ID, tamperAuthorization.ID)
+			return err
+		})
+		assertTamperRejected("RightsSnapshot Declaration UPDATE", "finalized rights_snapshot membership is immutable", func() error {
+			_, err := pool.Exec(ctx, `
+				UPDATE rights_snapshot_declaration
+				SET declaration_id=$3
+				WHERE rights_snapshot_id=$1 AND declaration_id=$2
+			`, rightsSnapshot.ID, rightsBefore.DeclarationIDs[0], extraDeclarationID)
+			return err
+		})
+		assertTamperRejected("RightsSnapshot Binding UPDATE", "finalized rights_snapshot membership is immutable", func() error {
+			_, err := pool.Exec(ctx, `
+				UPDATE rights_snapshot_provenance_binding
+				SET binding_id=$3
+				WHERE rights_snapshot_id=$1 AND binding_id=$2
+			`, rightsSnapshot.ID, rightsBefore.BindingIDs[0], extraBindingID)
+			return err
+		})
+		assertTamperRejected("RightsSnapshot Authorization DELETE", "finalized rights_snapshot membership is immutable", func() error {
+			_, err := pool.Exec(ctx, `
+				DELETE FROM rights_snapshot_authorization
+				WHERE rights_snapshot_id=$1 AND authorization_id=$2
+			`, rightsSnapshot.ID, authorization.ID)
+			return err
+		})
+		assertTamperRejected("RightsSnapshot Declaration DELETE", "finalized rights_snapshot membership is immutable", func() error {
+			_, err := pool.Exec(ctx, `
+				DELETE FROM rights_snapshot_declaration
+				WHERE rights_snapshot_id=$1 AND declaration_id=$2
+			`, rightsSnapshot.ID, rightsBefore.DeclarationIDs[0])
+			return err
+		})
+		assertTamperRejected("RightsSnapshot Binding DELETE", "finalized rights_snapshot membership is immutable", func() error {
+			_, err := pool.Exec(ctx, `
+				DELETE FROM rights_snapshot_provenance_binding
+				WHERE rights_snapshot_id=$1 AND binding_id=$2
+			`, rightsSnapshot.ID, rightsBefore.BindingIDs[0])
+			return err
+		})
+
+		evidenceAfter, err := evidenceRepo.GetSnapshot(ctx, supportingEvidence.ID)
+		if err != nil {
+			t.Fatalf("read frozen Pilot EvidenceSnapshot after tamper attempts: %v", err)
+		}
+		if !evidenceAfter.IntegrityValid ||
+			evidenceAfter.RootHash != evidenceBefore.RootHash ||
+			!reflect.DeepEqual(evidenceAfter.Items, evidenceBefore.Items) ||
+			!reflect.DeepEqual(evidenceAfter.Manifest, evidenceBefore.Manifest) {
+			t.Fatalf("Pilot EvidenceSnapshot changed after rejected tamper: before=%+v after=%+v",
+				evidenceBefore, evidenceAfter)
+		}
+
+		rightsAfter, err := rightsRepo.GetSnapshot(ctx, rightsSnapshot.ID)
+		if err != nil {
+			t.Fatalf("read frozen Pilot RightsSnapshot after tamper attempts: %v", err)
+		}
+		var rightsAuthorizationCountAfter int
+		if err := pool.QueryRow(ctx, `
+			SELECT count(*)
+			FROM rights_snapshot_authorization
+			WHERE rights_snapshot_id=$1
+		`, rightsSnapshot.ID).Scan(&rightsAuthorizationCountAfter); err != nil {
+			t.Fatalf("count Pilot RightsSnapshot authorizations after tamper: %v", err)
+		}
+		if rightsAfter.RootHash != rightsBefore.RootHash ||
+			!reflect.DeepEqual(rightsAfter.Manifest, rightsBefore.Manifest) ||
+			!reflect.DeepEqual(rightsAfter.DeclarationIDs, rightsBefore.DeclarationIDs) ||
+			!reflect.DeepEqual(rightsAfter.BindingIDs, rightsBefore.BindingIDs) ||
+			rightsAuthorizationCountAfter != rightsAuthorizationCountBefore {
+			t.Fatalf("Pilot RightsSnapshot changed after rejected tamper: before=%+v after=%+v authCounts=%d/%d",
+				rightsBefore, rightsAfter, rightsAuthorizationCountBefore, rightsAuthorizationCountAfter)
+		}
+
+		history, err := certificationService.ListDatasetHistory(ctx, workspaceID, outputVersion.ID, time.Now().UTC())
+		if err != nil {
+			t.Fatalf("read certification history after snapshot tamper attempts: %v", err)
+		}
+		found := false
+		for _, item := range history {
+			if item.Certification.ID != certification.ID {
+				continue
+			}
+			found = true
+			if item.Certification.RightsSnapshotID == nil ||
+				*item.Certification.RightsSnapshotID != rightsSnapshot.ID ||
+				item.Certification.EvidenceSnapshotID == nil ||
+				*item.Certification.EvidenceSnapshotID != supportingEvidence.ID {
+				t.Fatalf("historical certification snapshot refs changed after rejected tamper: %+v", item.Certification)
+			}
+		}
+		if !found {
+			t.Fatalf("historical certification %s disappeared after rejected snapshot tamper", certification.ID)
+		}
+	})
 
 	t.Run("rule and profile changes do not rewrite historical explanation", func(t *testing.T) {
 		originalPolicy := readRepoFile(t, "industry-packs", "park", "quality", "enterprise-activity-quality-v1.yaml")
