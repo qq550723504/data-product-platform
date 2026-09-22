@@ -1,11 +1,13 @@
 package evidence
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"github.com/google/uuid"
 )
@@ -18,8 +20,10 @@ type SnapshotView struct {
 func (r *QueryRepository) GetSnapshot(ctx context.Context, snapshotID uuid.UUID) (SnapshotView, error) {
 	var snapshot Snapshot
 	var manifest []byte
+	var hashPayload []byte
 	err := r.pool.QueryRow(ctx, `
-		SELECT id, workspace_id, object_type, object_id, manifest, root_hash, created_at, created_by
+		SELECT id, workspace_id, object_type, object_id, manifest, root_hash,
+		       manifest_hash_payload, created_at, created_by
 		FROM evidence_snapshot
 		WHERE id=$1 AND status='FINALIZED'
 	`, snapshotID).Scan(
@@ -29,15 +33,17 @@ func (r *QueryRepository) GetSnapshot(ctx context.Context, snapshotID uuid.UUID)
 		&snapshot.ObjectID,
 		&manifest,
 		&snapshot.RootHash,
+		&hashPayload,
 		&snapshot.CreatedAt,
 		&snapshot.CreatedBy,
 	)
 	if err != nil {
 		return SnapshotView{}, fmt.Errorf("query evidence snapshot %s: %w", snapshotID, err)
 	}
-	if err := json.Unmarshal(manifest, &snapshot.Manifest); err != nil {
+	if err := decodeSnapshotJSON(manifest, &snapshot.Manifest); err != nil {
 		return SnapshotView{}, fmt.Errorf("decode evidence snapshot manifest: %w", err)
 	}
+
 	rows, err := r.pool.Query(ctx, `
 		SELECT evidence_id, category
 		FROM evidence_snapshot_item
@@ -59,22 +65,58 @@ func (r *QueryRepository) GetSnapshot(ctx context.Context, snapshotID uuid.UUID)
 		return SnapshotView{}, fmt.Errorf("iterate evidence snapshot items: %w", err)
 	}
 
-	// Historical snapshots were hashed while evidenceItems was a []SnapshotItem.
-	// JSONB decodes nested objects into maps and changes their key order when
-	// marshaled again, so reconstruct the original typed representation before
-	// recomputing the digest.
+	// The membership table is part of the frozen aggregate, so verification
+	// always reconstructs evidenceItems from persisted child rows.
 	verificationManifest := make(map[string]any, len(snapshot.Manifest))
 	for key, value := range snapshot.Manifest {
 		verificationManifest[key] = value
 	}
 	verificationManifest["evidenceItems"] = snapshot.Items
-	encoded, err := json.Marshal(verificationManifest)
+
+	integrityValid, err := verifySnapshotIntegrity(snapshot.RootHash, hashPayload, verificationManifest)
 	if err != nil {
-		return SnapshotView{}, fmt.Errorf("marshal evidence snapshot for verification: %w", err)
+		return SnapshotView{}, err
 	}
-	digest := sha256.Sum256(encoded)
 	return SnapshotView{
 		Snapshot:       snapshot,
-		IntegrityValid: hex.EncodeToString(digest[:]) == snapshot.RootHash,
+		IntegrityValid: integrityValid,
 	}, nil
+}
+
+func verifySnapshotIntegrity(rootHash string, hashPayload []byte, verificationManifest map[string]any) (bool, error) {
+	// Snapshots created after migration 000030 preserve the exact bytes used to
+	// derive root_hash. Verify both the digest and semantic equality with the
+	// manifest reconstructed from frozen membership.
+	if len(hashPayload) > 0 {
+		var payloadValue any
+		if err := decodeSnapshotJSON(hashPayload, &payloadValue); err != nil {
+			return false, fmt.Errorf("decode evidence snapshot hash payload: %w", err)
+		}
+		verificationJSON, err := json.Marshal(verificationManifest)
+		if err != nil {
+			return false, fmt.Errorf("marshal evidence snapshot for verification: %w", err)
+		}
+		var verificationValue any
+		if err := decodeSnapshotJSON(verificationJSON, &verificationValue); err != nil {
+			return false, fmt.Errorf("decode reconstructed evidence snapshot manifest: %w", err)
+		}
+		digest := sha256.Sum256(hashPayload)
+		return hex.EncodeToString(digest[:]) == rootHash && reflect.DeepEqual(payloadValue, verificationValue), nil
+	}
+
+	// Historical snapshots predate manifest_hash_payload. Preserve their
+	// established verification contract by rebuilding the typed evidenceItems
+	// representation before hashing.
+	encoded, err := json.Marshal(verificationManifest)
+	if err != nil {
+		return false, fmt.Errorf("marshal evidence snapshot for verification: %w", err)
+	}
+	digest := sha256.Sum256(encoded)
+	return hex.EncodeToString(digest[:]) == rootHash, nil
+}
+
+func decodeSnapshotJSON(data []byte, target any) error {
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+	return decoder.Decode(target)
 }
