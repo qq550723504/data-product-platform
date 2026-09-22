@@ -61,7 +61,7 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
     const query = new URLSearchParams({
       profileId: data.certificationProfileId,
       consumer: "LICENSED_BANK",
-      purpose: "REGULATORY_REPORTING",
+      purpose: data.certificationPurpose,
       action: "READ",
       delivery: "DIRECT_DATA",
       scopeType: "ALL_RESOURCE",
