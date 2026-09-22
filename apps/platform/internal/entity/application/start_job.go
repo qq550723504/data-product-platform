@@ -320,7 +320,14 @@ func (s *MatchService) processRecord(ctx context.Context, job domain.MatchJob, r
 
 func (s *MatchService) failJob(ctx context.Context, job domain.MatchJob, cause error) error {
 	_ = s.tx.Do(context.Background(), func(ctx context.Context, tx pgx.Tx) error {
-		_, err := tx.Exec(ctx, `UPDATE entity_match_job SET status='FAILED', error_message=$2, finished_at=now() WHERE id=$1`, job.ID, cause.Error())
+		// A stale caller must never overwrite a concurrently completed job.
+		// Failure is a best-effort terminalization only while the job is still
+		// non-terminal.
+		_, err := tx.Exec(ctx, `
+			UPDATE entity_match_job
+			SET status='FAILED', error_message=$2, finished_at=now()
+			WHERE id=$1 AND status IN ('QUEUED','RUNNING','WAITING_REVIEW')
+		`, job.ID, cause.Error())
 		return err
 	})
 	return cause

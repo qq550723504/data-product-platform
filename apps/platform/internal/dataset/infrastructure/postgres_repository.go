@@ -29,7 +29,7 @@ const versionColumns = `
 	row_count, byte_size,
 	COALESCE(checksum_algorithm, ''),
 	COALESCE(checksum_value, ''),
-	generated_by_execution_id, rights_snapshot_id,
+	generated_by_execution_id, generated_by_entity_match_job_id, rights_snapshot_id,
 	COALESCE(quality_status, ''),
 	COALESCE(compliance_status, ''),
 	snapshot_from, snapshot_to, metadata, created_at, created_by, ready_at,
@@ -76,15 +76,18 @@ func (r *PostgresRepository) InsertDataset(ctx context.Context, tx pgx.Tx, datas
 }
 
 // AllocateVersion creates the next version row for a Dataset, or returns the row
-// already produced by the same Execution.
+// already owned by the same producer.
 //
-// generatedByExecutionID is the C2-a output idempotency key. When it is set the
-// allocation first looks for an existing (dataset_id, generated_by_execution_id)
-// row under the Dataset lock: reusing that row is what keeps a replayed output
-// write from consuming a second version number and from breaking the unique
-// index added by 000020. The returned bool reports whether an existing row was
-// reused instead of a new one being allocated.
-func (r *PostgresRepository) AllocateVersion(ctx context.Context, tx pgx.Tx, datasetID uuid.UUID, createdBy, generatedByExecutionID *uuid.UUID) (domain.DatasetVersion, bool, error) {
+// Execution and EntityMatchJob are distinct producer identities and are mutually
+// exclusive. Both are written at allocation time so a replay reuses the same
+// half-product/output instead of consuming a second version number. The returned
+// bool reports whether an existing row was reused instead of a new one being
+// allocated.
+func (r *PostgresRepository) AllocateVersion(ctx context.Context, tx pgx.Tx, datasetID uuid.UUID, createdBy, generatedByExecutionID, generatedByEntityMatchJobID *uuid.UUID) (domain.DatasetVersion, bool, error) {
+	if generatedByExecutionID != nil && generatedByEntityMatchJobID != nil {
+		return domain.DatasetVersion{}, false, fmt.Errorf("dataset version cannot have both execution and entity-match producers")
+	}
+
 	var exists bool
 	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM dataset WHERE id = $1 AND deleted_at IS NULL)`, datasetID).Scan(&exists); err != nil {
 		return domain.DatasetVersion{}, false, fmt.Errorf("check dataset: %w", err)
@@ -108,6 +111,16 @@ func (r *PostgresRepository) AllocateVersion(ctx context.Context, tx pgx.Tx, dat
 		}
 	}
 
+	if generatedByEntityMatchJobID != nil {
+		existing, found, err := findVersionByEntityMatchJobOutputTx(ctx, tx, datasetID, *generatedByEntityMatchJobID)
+		if err != nil {
+			return domain.DatasetVersion{}, false, err
+		}
+		if found {
+			return existing, true, nil
+		}
+	}
+
 	var versionNo int64
 	if err := tx.QueryRow(ctx, `SELECT COALESCE(MAX(version_no), 0) + 1 FROM dataset_version WHERE dataset_id = $1`, datasetID).Scan(&versionNo); err != nil {
 		return domain.DatasetVersion{}, false, fmt.Errorf("allocate dataset version: %w", err)
@@ -120,11 +133,21 @@ func (r *PostgresRepository) AllocateVersion(ctx context.Context, tx pgx.Tx, dat
 	// otherwise a concurrent replay could allocate a second half-product row that
 	// the partial unique index never sees.
 	version.GeneratedByExecutionID = generatedByExecutionID
+	version.GeneratedByEntityMatchJobID = generatedByEntityMatchJobID
 	if err := r.insertVersion(ctx, tx, version); err != nil {
 		// Defense in depth: the Dataset lock already serializes allocation, but a row
 		// inserted through another path must still not become a second output.
 		if generatedByExecutionID != nil && isExecutionOutputConflict(err) {
 			existing, found, findErr := findVersionByExecutionOutputTx(ctx, tx, datasetID, *generatedByExecutionID)
+			if findErr != nil {
+				return domain.DatasetVersion{}, false, findErr
+			}
+			if found {
+				return existing, true, nil
+			}
+		}
+		if generatedByEntityMatchJobID != nil && isEntityMatchOutputConflict(err) {
+			existing, found, findErr := findVersionByEntityMatchJobOutputTx(ctx, tx, datasetID, *generatedByEntityMatchJobID)
 			if findErr != nil {
 				return domain.DatasetVersion{}, false, findErr
 			}
@@ -166,6 +189,30 @@ func findVersionByExecutionOutputTx(ctx context.Context, tx pgx.Tx, datasetID, e
 	return version, true, nil
 }
 
+// findVersionByEntityMatchJobOutputTx reads the output row already owned by an
+// EntityMatchJob, including retryable half-products and published history.
+func findVersionByEntityMatchJobOutputTx(ctx context.Context, tx pgx.Tx, datasetID, jobID uuid.UUID) (domain.DatasetVersion, bool, error) {
+	version, err := scanVersion(tx.QueryRow(ctx, `
+		SELECT `+versionColumns+`
+		FROM dataset_version
+		WHERE dataset_id = $1 AND generated_by_entity_match_job_id = $2
+		ORDER BY
+			(status = 'READY') DESC,
+			(status = 'SUPERSEDED') DESC,
+			(status IN ('CREATED', 'PROCESSING')) DESC,
+			(status = 'FAILED') DESC,
+			version_no ASC
+		LIMIT 1
+	`, datasetID, jobID))
+	if errors.Is(err, ErrNotFound) {
+		return domain.DatasetVersion{}, false, nil
+	}
+	if err != nil {
+		return domain.DatasetVersion{}, false, err
+	}
+	return version, true, nil
+}
+
 // isExecutionOutputConflict reports a unique violation on the C2-a output index.
 func isExecutionOutputConflict(err error) bool {
 	var pgErr *pgconn.PgError
@@ -175,6 +222,14 @@ func isExecutionOutputConflict(err error) bool {
 	return pgErr.Code == "23505" && pgErr.ConstraintName == "uq_dataset_version_execution_output"
 }
 
+func isEntityMatchOutputConflict(err error) bool {
+	var pgErr *pgconn.PgError
+	if !errors.As(err, &pgErr) {
+		return false
+	}
+	return pgErr.Code == "23505" && pgErr.ConstraintName == "uq_dataset_version_entity_match_output"
+}
+
 func (r *PostgresRepository) insertVersion(ctx context.Context, tx pgx.Tx, version domain.DatasetVersion) error {
 	metadata, err := json.Marshal(version.Metadata)
 	if err != nil {
@@ -182,9 +237,11 @@ func (r *PostgresRepository) insertVersion(ctx context.Context, tx pgx.Tx, versi
 	}
 	_, err = tx.Exec(ctx, `
 		INSERT INTO dataset_version (
-			id, dataset_id, version_no, status, metadata, created_at, created_by, generated_by_execution_id
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
-	`, version.ID, version.DatasetID, version.VersionNo, version.Status, metadata, version.CreatedAt, version.CreatedBy, version.GeneratedByExecutionID)
+			id, dataset_id, version_no, status, metadata, created_at, created_by,
+			generated_by_execution_id, generated_by_entity_match_job_id
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+	`, version.ID, version.DatasetID, version.VersionNo, version.Status, metadata, version.CreatedAt, version.CreatedBy,
+		version.GeneratedByExecutionID, version.GeneratedByEntityMatchJobID)
 	if err != nil {
 		return fmt.Errorf("insert dataset version: %w", err)
 	}
@@ -254,8 +311,9 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 		    checksum_algorithm = $8,
 		    checksum_value = $9,
 		    generated_by_execution_id = $10,
-		    metadata = $11,
-		    ready_at = $12
+		    generated_by_entity_match_job_id = $11,
+		    metadata = $12,
+		    ready_at = $13
 		WHERE id = $1 AND status IN ('CREATED','PROCESSING','FAILED')
 	`,
 		version.ID,
@@ -268,6 +326,7 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 		version.ChecksumAlgorithm,
 		version.ChecksumValue,
 		version.GeneratedByExecutionID,
+		version.GeneratedByEntityMatchJobID,
 		metadata,
 		version.ReadyAt,
 	)
@@ -401,6 +460,7 @@ func scanVersion(row pgx.Row) (domain.DatasetVersion, error) {
 		&v.ChecksumAlgorithm,
 		&v.ChecksumValue,
 		&v.GeneratedByExecutionID,
+		&v.GeneratedByEntityMatchJobID,
 		&v.RightsSnapshotID,
 		&v.QualityStatus,
 		&v.ComplianceStatus,

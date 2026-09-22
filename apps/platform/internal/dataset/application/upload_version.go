@@ -24,14 +24,15 @@ type ObjectStore interface {
 }
 
 type UploadVersionCommand struct {
-	DatasetID              uuid.UUID
-	Filename               string
-	ContentType            string
-	Content                []byte
-	ActorID                *uuid.UUID
-	TraceID                string
-	GeneratedByExecutionID *uuid.UUID
-	Metadata               map[string]any
+	DatasetID                   uuid.UUID
+	Filename                    string
+	ContentType                 string
+	Content                     []byte
+	ActorID                     *uuid.UUID
+	TraceID                     string
+	GeneratedByExecutionID      *uuid.UUID
+	GeneratedByEntityMatchJobID *uuid.UUID
+	Metadata                    map[string]any
 }
 
 type UploadVersionService struct {
@@ -60,6 +61,9 @@ func NewUploadVersionService(tx *transaction.Manager, repo *infrastructure.Postg
 // Execution share the row, so nothing may be published on the strength of the
 // state this call allocated.
 func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionCommand) (domain.DatasetVersion, error) {
+	if cmd.GeneratedByExecutionID != nil && cmd.GeneratedByEntityMatchJobID != nil {
+		return domain.DatasetVersion{}, fmt.Errorf("dataset version cannot have both execution and entity-match producers")
+	}
 	if len(cmd.Content) == 0 {
 		return domain.DatasetVersion{}, fmt.Errorf("dataset version content is empty")
 	}
@@ -74,7 +78,7 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 	// published: there is nothing left to write, and no new fact to record.
 	alreadyPublished := false
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		allocated, reused, err := s.repo.AllocateVersion(ctx, tx, cmd.DatasetID, cmd.ActorID, cmd.GeneratedByExecutionID)
+		allocated, reused, err := s.repo.AllocateVersion(ctx, tx, cmd.DatasetID, cmd.ActorID, cmd.GeneratedByExecutionID, cmd.GeneratedByEntityMatchJobID)
 		if err != nil {
 			return err
 		}
@@ -96,7 +100,10 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 		}
 
 		// A READY version is a published fact: reuse it without rewriting anything.
-		if version.Status == domain.VersionReady {
+		if version.Status == domain.VersionReady || (version.Status == domain.VersionSuperseded && cmd.GeneratedByEntityMatchJobID != nil) {
+			// A MatchJob may recover after its already-published historical output was
+			// superseded by a later DatasetVersion. That immutable output still proves
+			// what this job produced and is safe to re-bind to the job.
 			alreadyPublished = true
 			return nil
 		}
@@ -120,7 +127,7 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 				"datasetId": version.DatasetID,
 				"versionNo": version.VersionNo,
 			},
-			Reason:  "execution output idempotency key matched an existing half-product",
+			Reason:  "output producer idempotency key matched an existing half-product",
 			TraceID: cmd.TraceID,
 		})
 	})
@@ -156,6 +163,7 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 		return domain.DatasetVersion{}, err
 	}
 	version.GeneratedByExecutionID = cmd.GeneratedByExecutionID
+	version.GeneratedByEntityMatchJobID = cmd.GeneratedByEntityMatchJobID
 	if cmd.Metadata != nil {
 		version.Metadata = cmd.Metadata
 	}
@@ -187,13 +195,14 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 		}
 
 		event, err := outbox.NewEvent("DATASET_VERSION", version.ID, "DatasetVersionCreated", map[string]any{
-			"datasetVersionId":       version.ID,
-			"datasetId":              version.DatasetID,
-			"versionNo":              version.VersionNo,
-			"status":                 version.Status,
-			"previousStatus":         string(current.Status),
-			"checksum":               version.ChecksumValue,
-			"generatedByExecutionId": version.GeneratedByExecutionID,
+			"datasetVersionId":            version.ID,
+			"datasetId":                   version.DatasetID,
+			"versionNo":                   version.VersionNo,
+			"status":                      version.Status,
+			"previousStatus":              string(current.Status),
+			"checksum":                    version.ChecksumValue,
+			"generatedByExecutionId":      version.GeneratedByExecutionID,
+			"generatedByEntityMatchJobId": version.GeneratedByEntityMatchJobID,
 		})
 		if err != nil {
 			return fmt.Errorf("create dataset version event: %w", err)
@@ -209,14 +218,15 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 			ObjectType: "DATASET_VERSION",
 			ObjectID:   version.ID,
 			AfterState: map[string]any{
-				"datasetId":              version.DatasetID,
-				"versionNo":              version.VersionNo,
-				"status":                 version.Status,
-				"previousStatus":         string(current.Status),
-				"storageUri":             version.StorageURI,
-				"checksum":               version.ChecksumValue,
-				"rowCount":               rowCount,
-				"generatedByExecutionId": version.GeneratedByExecutionID,
+				"datasetId":                   version.DatasetID,
+				"versionNo":                   version.VersionNo,
+				"status":                      version.Status,
+				"previousStatus":              string(current.Status),
+				"storageUri":                  version.StorageURI,
+				"checksum":                    version.ChecksumValue,
+				"rowCount":                    rowCount,
+				"generatedByExecutionId":      version.GeneratedByExecutionID,
+				"generatedByEntityMatchJobId": version.GeneratedByEntityMatchJobID,
 			},
 			TraceID: cmd.TraceID,
 		})

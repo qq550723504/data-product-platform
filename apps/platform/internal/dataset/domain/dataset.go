@@ -67,30 +67,31 @@ type Dataset struct {
 }
 
 type DatasetVersion struct {
-	ID                     uuid.UUID
-	DatasetID              uuid.UUID
-	VersionNo              int64
-	Status                 VersionStatus
-	SchemaVersion          string
-	StorageType            string
-	StorageURI             string
-	ContentType            string
-	RowCount               *int64
-	ByteSize               *int64
-	ChecksumAlgorithm      string
-	ChecksumValue          string
-	GeneratedByExecutionID *uuid.UUID
-	RightsSnapshotID       *uuid.UUID
-	QualityStatus          string
-	ComplianceStatus       string
-	SnapshotFrom           *time.Time
-	SnapshotTo             *time.Time
-	Metadata               map[string]any
-	CreatedAt              time.Time
-	CreatedBy              *uuid.UUID
-	ReadyAt                *time.Time
-	InvalidatedAt          *time.Time
-	InvalidationReason     string
+	ID                          uuid.UUID
+	DatasetID                   uuid.UUID
+	VersionNo                   int64
+	Status                      VersionStatus
+	SchemaVersion               string
+	StorageType                 string
+	StorageURI                  string
+	ContentType                 string
+	RowCount                    *int64
+	ByteSize                    *int64
+	ChecksumAlgorithm           string
+	ChecksumValue               string
+	GeneratedByExecutionID      *uuid.UUID
+	GeneratedByEntityMatchJobID *uuid.UUID
+	RightsSnapshotID            *uuid.UUID
+	QualityStatus               string
+	ComplianceStatus            string
+	SnapshotFrom                *time.Time
+	SnapshotTo                  *time.Time
+	Metadata                    map[string]any
+	CreatedAt                   time.Time
+	CreatedBy                   *uuid.UUID
+	ReadyAt                     *time.Time
+	InvalidatedAt               *time.Time
+	InvalidationReason          string
 }
 
 func NewDataset(id, workspaceID uuid.UUID, code, name string, datasetType DatasetType, sourceResourceID *uuid.UUID, createdBy *uuid.UUID) (Dataset, error) {

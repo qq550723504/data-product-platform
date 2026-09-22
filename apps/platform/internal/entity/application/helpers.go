@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"io"
 	"sort"
@@ -149,6 +150,16 @@ func (s *MatchService) finalize(ctx context.Context, jobID uuid.UUID, actorID *u
 	if err != nil {
 		return err
 	}
+	if job.Status == domain.JobSucceeded {
+		if job.OutputDatasetVersionID == nil {
+			return fmt.Errorf("succeeded entity match job %s has no output DatasetVersion", job.ID)
+		}
+		return nil
+	}
+	if job.Status != domain.JobRunning {
+		return nil
+	}
+
 	candidates, err := s.entityRepo.ListCandidates(ctx, jobID)
 	if err != nil {
 		return err
@@ -164,18 +175,19 @@ func (s *MatchService) finalize(ctx context.Context, jobID uuid.UUID, actorID *u
 		return err
 	}
 	version, err := s.datasetWriter.Handle(ctx, datasetapp.UploadVersionCommand{
-		DatasetID:   job.OutputDatasetID,
-		Filename:    fmt.Sprintf("standardized-company-%s.csv", job.ID.String()),
-		ContentType: "text/csv; charset=utf-8",
-		Content:     content,
-		ActorID:     actorID,
-		TraceID:     traceID,
+		DatasetID:                   job.OutputDatasetID,
+		Filename:                    fmt.Sprintf("standardized-company-%s.csv", job.ID.String()),
+		ContentType:                 "text/csv; charset=utf-8",
+		Content:                     content,
+		ActorID:                     actorID,
+		TraceID:                     traceID,
+		GeneratedByEntityMatchJobID: &job.ID,
 	})
 	if err != nil {
 		return err
 	}
 
-	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		if err := s.datasetRepo.AddLineage(ctx, tx, version.ID, job.InputDatasetVersionID, "ENTITY_RESOLUTION", nil); err != nil {
 			return err
 		}
@@ -239,6 +251,18 @@ func (s *MatchService) finalize(ctx context.Context, jobID uuid.UUID, actorID *u
 			TraceID: traceID,
 		})
 	})
+	if errors.Is(err, domain.ErrMatchJobFinalizeConflict) {
+		current, readErr := s.entityRepo.GetJob(ctx, job.ID)
+		if readErr != nil {
+			return readErr
+		}
+		if current.Status == domain.JobSucceeded &&
+			current.OutputDatasetVersionID != nil &&
+			*current.OutputDatasetVersionID == version.ID {
+			return nil
+		}
+	}
+	return err
 }
 
 func standardizedCSV(candidates []domain.MatchCandidate) ([]byte, error) {
