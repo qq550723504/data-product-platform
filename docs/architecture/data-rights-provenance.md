@@ -99,7 +99,7 @@ Current rights selection 只接受“该 declaration 的唯一 terminal outcome 
 
 现有 Authorization 继续回答：
 
-> **存储兼容说明**：现有 `authorization_resource.scope jsonb` 不是 gate-critical scope 的权威表示。#137 必须新增/补齐强类型、可索引的 Authorization scope identity（至少 `scope_type + scope_ref`，或等价 normalized child relation）。JSONB 只保留受控扩展参数。BindAuthorizationProvenance、CurrentEntitlementGate、RightsSnapshot 都读取同一 normalized scope 语义；legacy Authorization 若不能无歧义 backfill normalized scope，必须 fail closed / 标记不可用于 entitlement，不得把缺失当作 ALL_RESOURCE。
+> **存储契约**：`authorization_resource.scope_type + scope_ref` 是 gate-critical scope 的唯一权威 identity，创建 AuthorizationResource 时必须显式提供且不可为空。JSONB `scope` 只保留受控扩展参数。BindAuthorizationProvenance、CurrentEntitlementGate、RightsSnapshot 都读取同一 normalized scope 语义；缺失 scope 不属于有效 AuthorizationResource。
 
 ~~~text
 Grantor

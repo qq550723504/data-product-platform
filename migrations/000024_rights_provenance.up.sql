@@ -3,22 +3,20 @@
 -- extension field, never the authority for entitlement decisions.
 
 ALTER TABLE authorization_resource
-    ADD COLUMN scope_type varchar(32),
-    ADD COLUMN scope_ref varchar(512);
+    ADD COLUMN scope_type varchar(32) NOT NULL,
+    ADD COLUMN scope_ref varchar(512) NOT NULL;
 
 ALTER TABLE authorization_resource
     ADD CONSTRAINT ck_authorization_resource_normalized_scope CHECK (
-        (scope_type IS NULL AND scope_ref IS NULL)
-        OR
-        (scope_type IN ('ALL_RESOURCE', 'OBJECT', 'ROW', 'PREFIX', 'POLICY')
-         AND scope_ref IS NOT NULL AND btrim(scope_ref) <> '')
+        scope_type IN ('ALL_RESOURCE', 'OBJECT', 'ROW', 'PREFIX', 'POLICY')
+        AND btrim(scope_ref) <> ''
     );
 
 CREATE INDEX idx_authorization_resource_scope
     ON authorization_resource(data_resource_id, scope_type, scope_ref);
 
 ALTER TABLE rights_snapshot
-    ADD COLUMN status varchar(16) NOT NULL DEFAULT 'FINALIZED';
+    ADD COLUMN status varchar(16) NOT NULL;
 
 ALTER TABLE rights_snapshot
     ADD CONSTRAINT ck_rights_snapshot_status CHECK (status IN ('BUILDING', 'FINALIZED'));

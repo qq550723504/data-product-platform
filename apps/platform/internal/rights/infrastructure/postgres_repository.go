@@ -66,7 +66,7 @@ func (r *PostgresRepository) InsertAuthorization(ctx context.Context, tx pgx.Tx,
 				id, authorization_id, data_resource_id, actions, scope, scope_type, scope_ref, raw_export_allowed, created_at
 			) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
 		`, resource.ID, resource.AuthorizationID, resource.DataResourceID, resource.Actions, scope,
-			nullableString(resource.ScopeType), nullableString(resource.ScopeRef), resource.RawExportAllowed, resource.CreatedAt); err != nil {
+			resource.ScopeType, resource.ScopeRef, resource.RawExportAllowed, resource.CreatedAt); err != nil {
 			return fmt.Errorf("insert authorization resource: %w", err)
 		}
 	}
@@ -97,7 +97,7 @@ func (r *PostgresRepository) GetAuthorization(ctx context.Context, authorization
 	}
 
 	rows, err := r.pool.Query(ctx, `
-		SELECT id, authorization_id, data_resource_id, actions, scope, COALESCE(scope_type,''), COALESCE(scope_ref,''), raw_export_allowed, created_at
+		SELECT id, authorization_id, data_resource_id, actions, scope, scope_type, scope_ref, raw_export_allowed, created_at
 		FROM authorization_resource WHERE authorization_id=$1 ORDER BY created_at, id
 	`, authorizationID)
 	if err != nil {
@@ -176,7 +176,6 @@ func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snap
 				JOIN rights_declaration_verification v ON v.declaration_id=d.id AND v.outcome='VERIFIED' AND v.occurred_at <= $4
 				WHERE b.authorization_id=$1 AND b.data_resource_id=$2::uuid AND b.workspace_id=$3
 				  AND a.workspace_id=$3 AND a.status='ACTIVE' AND a.grantee_ref=$5
-				  AND ar.scope_type IS NOT NULL AND ar.scope_ref IS NOT NULL
 				  AND (ar.scope_type<>'ALL_RESOURCE' OR ar.scope_ref=ar.data_resource_id::text)
 				  AND b.created_at <= $4 AND d.created_at <= $4
 				  AND (d.effective_from IS NULL OR d.effective_from <= $4)
