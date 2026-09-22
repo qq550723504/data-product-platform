@@ -37,12 +37,14 @@ Core Domain 不得直接依赖以下具体产品或 SDK：
 - 通用 RBAC / ABAC / Policy Engine；
 - 对象存储、通用队列、通用 durable workflow runtime；
 - Metadata Catalog / Governance Catalog；
+- 通用 Data Ingestion / Integration（数据库/文件/API Connector、批量/增量同步、CDC runtime）；
 - 通用数据标注工具；
 - 通用 tracing / metrics / dashboards；
 - resumable upload、通用搜索等基础设施能力。
 
 平台应自行拥有的是**业务语义与系统事实**，包括但不限于：
 
+- DataResource 与外部接入结果被接纳为 RAW DatasetVersion 的业务语义；
 - Dataset / DatasetVersion；
 - Entity / EntityMapping / MappingDecision 的平台语义与人工覆盖规则；
 - Processing / Execution 的业务生命周期与 immutable dependencies；
