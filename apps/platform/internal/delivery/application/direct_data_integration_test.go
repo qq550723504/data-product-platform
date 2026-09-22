@@ -133,8 +133,8 @@ func TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked(t *t
 	base := DirectDataCommand{
 		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: uuid.New(),
 		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
-		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
-		IdempotencyKey: "direct-first-" + uuid.NewString(),
+		Purpose: " research ", Action: " read ", ScopeType: " all_resource ",
+		IdempotencyKey: " direct-first-" + uuid.NewString() + " ",
 	}
 	first, err := service.Deliver(ctx, base)
 	if err != nil {
@@ -145,7 +145,13 @@ func TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked(t *t
 	gate.allowed = false
 	gate.blocker = "DATASET_VERSION_INVALID"
 	gate.mu.Unlock()
+	if first.Operation.Purpose != "RESEARCH" || first.Operation.Action != "READ" || first.Operation.IdempotencyKey == "" || strings.TrimSpace(first.Operation.IdempotencyKey) != first.Operation.IdempotencyKey {
+		t.Fatalf("immutable operation context was not canonicalized: purpose=%q action=%q key=%q", first.Operation.Purpose, first.Operation.Action, first.Operation.IdempotencyKey)
+	}
 	replacement := base
+	replacement.Purpose = "RESEARCH"
+	replacement.Action = "READ"
+	replacement.ScopeType = "ALL_RESOURCE"
 	replacement.IdempotencyKey = "direct-replacement-" + uuid.NewString()
 	replacement.RetryOfDeliveryOperationID = &first.Operation.ID
 	blocked, err := service.Deliver(ctx, replacement)
