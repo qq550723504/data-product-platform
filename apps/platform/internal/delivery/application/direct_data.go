@@ -239,6 +239,13 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 		if err := s.repo.InsertOperation(ctx, tx, operation); err != nil {
 			return err
 		}
+		// DIRECT_DATA has no external provider invocation, but it is still one
+		// physical delivery attempt. Persist that activity in the same
+		// transaction as the DeliveryOperation so blocked/issued attempts are
+		// both cost-auditable and same-key replay cannot duplicate cost.
+		if err := s.repo.InsertDirectDataCost(ctx, tx, operation); err != nil {
+			return err
+		}
 		if err := s.repo.InsertGateEvaluation(ctx, tx, operation.ID, evaluation, operation.CreatedAt); err != nil {
 			return err
 		}
