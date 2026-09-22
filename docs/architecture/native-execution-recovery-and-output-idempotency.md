@@ -104,6 +104,10 @@ C2-b 当前实现采用**同一 Execution 的 session advisory lock + stale RUNN
 2. 正常 native queue handler 从 `StartWithReferenceCheck`、`Engine.Execute` 一直到最终 `Succeed/Fail`
    全程持有 `NativeExecutionLockKey(executionID)`；`NativeReconciler` 使用同一 key。
    `Engine.Execute` 自身也声明同一锁作为 adapter 边界的 defense-in-depth。
+   - worker composition root 为 native execution ownership 建立**独立 PostgreSQL lock pool**；长生命周期
+     advisory lock 不占用 repository/outbox 使用的主业务 pgx pool，避免并发 worker 把主池连接耗尽后自锁；
+   - 在 lock callback 内，`transaction.Manager.Do` 复用 lock connection 执行相关 Command 事务；
+     普通 repository pool-backed 读取仍使用主业务 pool；
    - 健康 worker 仍在运行或正在 terminalize 时，reconciler 的 `pg_try_advisory_lock` 失败并跳过；
    - worker 进程/连接崩溃时，PostgreSQL 自动释放 session lock，reconciler 才能接管；
    - queue handler / recovery 内部进入 `Engine.Execute` 时，`transaction.Manager` 复用当前 advisory-lock
