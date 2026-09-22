@@ -46,7 +46,6 @@ func TestSameEligibilityLineageRequiresExactMappedMembership(t *testing.T) {
 	}
 }
 
-
 func TestCertificationScopeCoversRequestedScope(t *testing.T) {
 	resourceID := uuid.New()
 	inputs := []rightsinfra.LineageInput{{
