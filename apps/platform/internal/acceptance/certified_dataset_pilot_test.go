@@ -238,10 +238,10 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 	}
 
 	contractVersion, err := contractService.CreateVersionFromYAML(ctx, contractapp.CreateVersionFromYAMLCommand{
-		WorkspaceID: workspaceID,
-		SourceRef: "examples/enterprise-activity/contract/data-contract-v1.yaml",
+		WorkspaceID:  workspaceID,
+		SourceRef:    "examples/enterprise-activity/contract/data-contract-v1.yaml",
 		DocumentYAML: readRepoFile(t, "examples", "enterprise-activity", "contract", "data-contract-v1.yaml"),
-		ActorID: &actorID, TraceID: traceID,
+		ActorID:      &actorID, TraceID: traceID,
 	})
 	if err != nil {
 		t.Fatalf("create pilot Data Contract: %v", err)
@@ -292,15 +292,15 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 	var supportingEvidence evidence.Snapshot
 	if err := txManager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		record, err := evidence.Append(ctx, tx, evidence.Record{
-			WorkspaceID: workspaceID,
+			WorkspaceID:  workspaceID,
 			EvidenceType: "CERTIFIED_DATASET_PILOT_TRACE",
-			Title: "Certified Dataset Pilot traceability evidence",
-			SourceType: "DATASET_VERSION",
-			SourceID: &outputVersion.ID,
+			Title:        "Certified Dataset Pilot traceability evidence",
+			SourceType:   "DATASET_VERSION",
+			SourceID:     &outputVersion.ID,
 			Metadata: map[string]any{
-				"executionId": execution.ID,
-				"entityMatchJobId": matchJob.ID,
-				"qualityAssessmentId": qualityResult.ID,
+				"executionId":               execution.ID,
+				"entityMatchJobId":          matchJob.ID,
+				"qualityAssessmentId":       qualityResult.ID,
 				"effectiveRightsSnapshotId": effectiveRights.ID,
 			},
 			CreatedBy: &actorID,
@@ -309,7 +309,7 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 			return err
 		}
 		snapshot, err := evidence.CreateSnapshot(ctx, tx, workspaceID, "DATASET_VERSION", outputVersion.ID, map[string]any{
-			"pilot": "enterprise-activity",
+			"pilot":       "enterprise-activity",
 			"executionId": execution.ID,
 		}, []evidence.SnapshotItem{{EvidenceID: record.ID, Category: "TRACEABILITY"}}, &actorID)
 		if err != nil {
@@ -326,20 +326,20 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 	profile, err := profileService.Create(ctx, certificationapp.CreateProfileCommand{
 		WorkspaceID: workspaceID,
 		Profile: certificationdomain.CertificationProfile{
-			ProfileRef: "park/enterprise-activity-certified-v1",
-			Code: "PILOT-ENTERPRISE-ACTIVITY-CERTIFIED",
-			Name: "Enterprise Activity Certified Dataset Pilot",
-			Version: "1.0.0",
-			Purpose: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
-			Actions: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
-			Consumers: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"LICENSED_BANK"}},
-			Delivery: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"DIRECT_DATA"}},
+			ProfileRef:            "park/enterprise-activity-certified-v1",
+			Code:                  "PILOT-ENTERPRISE-ACTIVITY-CERTIFIED",
+			Name:                  "Enterprise Activity Certified Dataset Pilot",
+			Version:               "1.0.0",
+			Purpose:               certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
+			Actions:               certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
+			Consumers:             certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"LICENSED_BANK"}},
+			Delivery:              certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"DIRECT_DATA"}},
 			RequiredCriticalRules: []string{"QA-COMPANY-ID-COMPLETE"},
-			QualityGateRequired: true,
+			QualityGateRequired:   true,
 			Rights: certificationdomain.RightsRequirement{
-				Required: true,
-				Purpose: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
-				Actions: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
+				Required:  true,
+				Purpose:   certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
+				Actions:   certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
 				Consumers: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"LICENSED_BANK"}},
 				Scopes: certificationdomain.ScopeApplicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []certificationdomain.ScopeRef{
 					{Type: "ALL_RESOURCE", Ref: enterpriseResource.ID.String()},
@@ -347,11 +347,11 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 					{Type: "ALL_RESOURCE", Ref: energyResource.ID.String()},
 				}},
 			},
-			ComplianceRequired: true,
-			ContractRequired: true,
-			ContractCode: "DP-ENTERPRISE-ACTIVITY",
+			ComplianceRequired:   true,
+			ContractRequired:     true,
+			ContractCode:         "DP-ENTERPRISE-ACTIVITY",
 			TraceabilityRequired: true,
-			EvidenceRequired: true,
+			EvidenceRequired:     true,
 		},
 		ActorID: &actorID,
 		TraceID: traceID,
@@ -362,27 +362,27 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 
 	certificationRepo := certificationinfra.NewCertificationRepository(pool)
 	resolver := pilotCertificationResolver{input: certificationdomain.EvaluationInput{
-		WorkspaceID: workspaceID,
+		WorkspaceID:      workspaceID,
 		DatasetVersionID: outputVersion.ID,
-		Quality: certificationdomain.QualityAssessmentEvidence{ID: qualityResult.ID},
+		Quality:          certificationdomain.QualityAssessmentEvidence{ID: qualityResult.ID},
 		Rights: &certificationdomain.RightsEvidence{
-			RightsSnapshotID: rightsSnapshot.ID,
+			RightsSnapshotID:          rightsSnapshot.ID,
 			EffectiveRightsSnapshotID: effectiveRights.ID,
 		},
-		Compliance: &certificationdomain.ComplianceEvidence{ID: complianceResult.ID},
-		Contract: &certificationdomain.ContractEvidence{ID: contractVersion.ID},
+		Compliance:   &certificationdomain.ComplianceEvidence{ID: complianceResult.ID},
+		Contract:     &certificationdomain.ContractEvidence{ID: contractVersion.ID},
 		Traceability: &certificationdomain.TraceabilityEvidence{ID: supportingEvidence.ID},
-		Evidence: &certificationdomain.EvidenceSnapshot{ID: supportingEvidence.ID},
-		ActorID: &actorID,
+		Evidence:     &certificationdomain.EvidenceSnapshot{ID: supportingEvidence.ID},
+		ActorID:      &actorID,
 	}}
 	certificationService := certificationapp.NewCertificationService(txManager, profileRepo, certificationRepo, resolver)
 	certification, err := certificationService.Evaluate(ctx, certificationapp.EvaluateDatasetCertificationCommand{
-		WorkspaceID: workspaceID,
+		WorkspaceID:      workspaceID,
 		DatasetVersionID: outputVersion.ID,
-		ProfileID: profile.ID,
-		IdempotencyKey: "pilot-certification-" + suffix,
-		ActorID: &actorID,
-		TraceID: traceID,
+		ProfileID:        profile.ID,
+		IdempotencyKey:   "pilot-certification-" + suffix,
+		ActorID:          &actorID,
+		TraceID:          traceID,
 	})
 	if err != nil {
 		t.Fatalf("evaluate pilot DatasetCertification: %v", err)
@@ -398,16 +398,16 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 
 	eligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
 	eligibilityResult, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
-		WorkspaceID: workspaceID,
+		WorkspaceID:      workspaceID,
 		DatasetVersionID: outputVersion.ID,
-		ProfileID: profile.ID,
-		Consumer: "LICENSED_BANK",
-		Purpose: purpose,
-		Action: "READ",
-		Delivery: "DIRECT_DATA",
-		ScopeType: "ALL_RESOURCE",
-		ScopeRef: outputVersion.ID.String(),
-		AsOf: time.Now().UTC(),
+		ProfileID:        profile.ID,
+		Consumer:         "LICENSED_BANK",
+		Purpose:          purpose,
+		Action:           "READ",
+		Delivery:         "DIRECT_DATA",
+		ScopeType:        "ALL_RESOURCE",
+		ScopeRef:         outputVersion.ID.String(),
+		AsOf:             time.Now().UTC(),
 	})
 	if err != nil {
 		t.Fatalf("check pilot Current Delivery Eligibility: %v", err)
@@ -424,17 +424,17 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		datasetRepo,
 	)
 	deliveryCommand := deliveryapp.DirectDataCommand{
-		WorkspaceID: workspaceID,
-		DatasetVersionID: outputVersion.ID,
-		ProfileID: profile.ID,
-		PrincipalRef: "pilot-principal-licensed-bank",
+		WorkspaceID:          workspaceID,
+		DatasetVersionID:     outputVersion.ID,
+		ProfileID:            profile.ID,
+		PrincipalRef:         "pilot-principal-licensed-bank",
 		EffectiveConsumerRef: "LICENSED_BANK",
-		Purpose: purpose,
-		Action: "READ",
-		ScopeType: "ALL_RESOURCE",
-		ScopeRef: outputVersion.ID.String(),
-		IdempotencyKey: "pilot-direct-data-" + suffix,
-		TraceID: traceID,
+		Purpose:              purpose,
+		Action:               "READ",
+		ScopeType:            "ALL_RESOURCE",
+		ScopeRef:             outputVersion.ID.String(),
+		IdempotencyKey:       "pilot-direct-data-" + suffix,
+		TraceID:              traceID,
 	}
 	delivered, err := directData.Deliver(ctx, deliveryCommand)
 	if err != nil {
