@@ -5,8 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -27,6 +30,7 @@ import (
 	deliveryapp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application"
 	deliverydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/domain"
 	deliveryinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/infrastructure"
+	deliveryhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/transport/http"
 	entityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
@@ -789,6 +793,98 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		deliveryapp.NewCertificationDirectDataGate(eligibility),
 		datasetRepo,
 	)
+
+	t.Run("trusted HTTP principal cannot spoof effective consumer", func(t *testing.T) {
+		const (
+			trustedToken     = "pilot-trusted-delivery-token"
+			trustedPrincipal = "pilot-principal-licensed-bank"
+			trustedConsumer  = "LICENSED_BANK"
+		)
+		resolver, err := deliveryhttp.NewStaticPrincipalResolver(
+			true,
+			trustedToken,
+			trustedPrincipal,
+			trustedConsumer,
+			[]string{workspaceID.String()},
+		)
+		if err != nil {
+			t.Fatalf("configure Pilot trusted principal resolver: %v", err)
+		}
+		handler := deliveryhttp.NewHandler(directData, resolver, store)
+		mux := http.NewServeMux()
+		handler.Register(mux)
+
+		deliverHTTP := func(consumer, idempotencyKey string) *httptest.ResponseRecorder {
+			t.Helper()
+			body, err := json.Marshal(map[string]any{
+				"profileId": profile.ID.String(),
+				"consumer":  consumer,
+				"purpose":   purpose,
+				"action":    "READ",
+				"scopeType": "ALL_RESOURCE",
+				"scopeRef":  outputVersion.ID.String(),
+			})
+			if err != nil {
+				t.Fatalf("marshal Pilot HTTP delivery request: %v", err)
+			}
+			request := httptest.NewRequest(
+				http.MethodPost,
+				"/api/v1/workspaces/"+workspaceID.String()+"/dataset-versions/"+outputVersion.ID.String()+"/deliveries",
+				bytes.NewReader(body),
+			)
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Authorization", "Bearer "+trustedToken)
+			request.Header.Set("Idempotency-Key", idempotencyKey)
+			request.Header.Set("X-Trace-ID", traceID)
+			response := httptest.NewRecorder()
+			mux.ServeHTTP(response, request)
+			return response
+		}
+
+		var operationsBefore int
+		if err := pool.QueryRow(ctx, `SELECT count(*) FROM delivery_operation WHERE workspace_id=$1`, workspaceID).Scan(&operationsBefore); err != nil {
+			t.Fatalf("count Pilot delivery operations before spoof: %v", err)
+		}
+
+		spoof := deliverHTTP("GUARANTEE_INSTITUTION", "pilot-http-spoof-"+suffix)
+		if spoof.Code != http.StatusForbidden || !strings.Contains(spoof.Body.String(), "CONSUMER_PRINCIPAL_MISMATCH") {
+			t.Fatalf("spoofed Pilot HTTP delivery = %d %s, want 403 CONSUMER_PRINCIPAL_MISMATCH", spoof.Code, spoof.Body.String())
+		}
+		var operationsAfterSpoof int
+		if err := pool.QueryRow(ctx, `SELECT count(*) FROM delivery_operation WHERE workspace_id=$1`, workspaceID).Scan(&operationsAfterSpoof); err != nil {
+			t.Fatalf("count Pilot delivery operations after spoof: %v", err)
+		}
+		if operationsAfterSpoof != operationsBefore {
+			t.Fatalf("spoofed caller created DeliveryOperation: before=%d after=%d", operationsBefore, operationsAfterSpoof)
+		}
+
+		allowed := deliverHTTP(trustedConsumer, "pilot-http-allowed-"+suffix)
+		if allowed.Code != http.StatusOK {
+			t.Fatalf("trusted Pilot HTTP delivery = %d %s, want 200", allowed.Code, allowed.Body.String())
+		}
+		if !bytes.Equal(allowed.Body.Bytes(), store.bytes(outputVersion.StorageURI)) {
+			t.Fatal("trusted Pilot HTTP delivery bytes do not match certified CURATED DatasetVersion")
+		}
+		operationID, err := uuid.Parse(allowed.Header().Get("X-Delivery-Operation-Id"))
+		if err != nil || operationID == uuid.Nil {
+			t.Fatalf("trusted Pilot HTTP delivery operation header = %q", allowed.Header().Get("X-Delivery-Operation-Id"))
+		}
+		var principalRef, consumerRef, status string
+		var storedVersionID uuid.UUID
+		if err := pool.QueryRow(ctx, `
+			SELECT principal_ref, effective_consumer_ref, status, dataset_version_id
+			FROM delivery_operation
+			WHERE id=$1
+		`, operationID).Scan(&principalRef, &consumerRef, &status, &storedVersionID); err != nil {
+			t.Fatalf("read trusted Pilot HTTP DeliveryOperation: %v", err)
+		}
+		if principalRef != trustedPrincipal || consumerRef != trustedConsumer ||
+			status != string(deliverydomain.StatusIssued) || storedVersionID != outputVersion.ID {
+			t.Fatalf("trusted Pilot HTTP DeliveryOperation = principal=%q consumer=%q status=%q version=%s",
+				principalRef, consumerRef, status, storedVersionID)
+		}
+	})
+
 	deliveryCommand := deliveryapp.DirectDataCommand{
 		WorkspaceID:          workspaceID,
 		DatasetVersionID:     outputVersion.ID,
