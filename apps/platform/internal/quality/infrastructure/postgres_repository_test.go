@@ -49,9 +49,9 @@ func TestRestoreDimensionSummariesUsesPersistedSnapshot(t *testing.T) {
 	}
 }
 
-func TestRestoreDimensionSummariesFallsBackForLegacyRows(t *testing.T) {
+func TestRestoreDimensionSummariesRejectsMissingSnapshot(t *testing.T) {
 	result := domain.Assessment{
-		Metrics: map[string]any{"legacy": true},
+		Metrics: map[string]any{},
 		Findings: []domain.Finding{{
 			Dimension: "COMPLETENESS",
 			Severity:  "CRITICAL",
@@ -59,10 +59,7 @@ func TestRestoreDimensionSummariesFallsBackForLegacyRows(t *testing.T) {
 		}},
 	}
 
-	if err := restoreDimensionSummaries(&result); err != nil {
-		t.Fatalf("restore legacy dimension summaries: %v", err)
-	}
-	if got := result.DimensionSummaries["COMPLETENESS"].Status; got != domain.DimensionFail {
-		t.Fatalf("legacy summary status = %s, want FAIL", got)
+	if err := restoreDimensionSummaries(&result); err == nil {
+		t.Fatal("missing persisted dimension snapshot was accepted")
 	}
 }
