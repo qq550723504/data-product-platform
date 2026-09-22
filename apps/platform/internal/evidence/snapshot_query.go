@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"reflect"
 
 	"github.com/google/uuid"
 )
@@ -40,7 +39,7 @@ func (r *QueryRepository) GetSnapshot(ctx context.Context, snapshotID uuid.UUID)
 	if err != nil {
 		return SnapshotView{}, fmt.Errorf("query evidence snapshot %s: %w", snapshotID, err)
 	}
-	if err := decodeSnapshotJSON(manifest, &snapshot.Manifest); err != nil {
+	if err := json.Unmarshal(manifest, &snapshot.Manifest); err != nil {
 		return SnapshotView{}, fmt.Errorf("decode evidence snapshot manifest: %w", err)
 	}
 
@@ -88,20 +87,20 @@ func verifySnapshotIntegrity(rootHash string, hashPayload []byte, verificationMa
 	// derive root_hash. Verify both the digest and semantic equality with the
 	// manifest reconstructed from frozen membership.
 	if len(hashPayload) > 0 {
-		var payloadValue any
-		if err := decodeSnapshotJSON(hashPayload, &payloadValue); err != nil {
-			return false, fmt.Errorf("decode evidence snapshot hash payload: %w", err)
+		payloadValue, err := normalizedSnapshotJSON(hashPayload)
+		if err != nil {
+			return false, fmt.Errorf("normalize evidence snapshot hash payload: %w", err)
 		}
 		verificationJSON, err := json.Marshal(verificationManifest)
 		if err != nil {
 			return false, fmt.Errorf("marshal evidence snapshot for verification: %w", err)
 		}
-		var verificationValue any
-		if err := decodeSnapshotJSON(verificationJSON, &verificationValue); err != nil {
-			return false, fmt.Errorf("decode reconstructed evidence snapshot manifest: %w", err)
+		verificationValue, err := normalizedSnapshotJSON(verificationJSON)
+		if err != nil {
+			return false, fmt.Errorf("normalize reconstructed evidence snapshot manifest: %w", err)
 		}
 		digest := sha256.Sum256(hashPayload)
-		return hex.EncodeToString(digest[:]) == rootHash && reflect.DeepEqual(payloadValue, verificationValue), nil
+		return hex.EncodeToString(digest[:]) == rootHash && jsonValuesEqual(payloadValue, verificationValue), nil
 	}
 
 	// Historical snapshots predate manifest_hash_payload. Preserve their
@@ -115,8 +114,21 @@ func verifySnapshotIntegrity(rootHash string, hashPayload []byte, verificationMa
 	return hex.EncodeToString(digest[:]) == rootHash, nil
 }
 
-func decodeSnapshotJSON(data []byte, target any) error {
+func normalizedSnapshotJSON(data []byte) (any, error) {
+	var value any
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
-	return decoder.Decode(target)
+	if err := decoder.Decode(&value); err != nil {
+		return nil, err
+	}
+	return normalizeJSONNumbers(value)
+}
+
+func jsonValuesEqual(left, right any) bool {
+	leftJSON, leftErr := json.Marshal(left)
+	rightJSON, rightErr := json.Marshal(right)
+	if leftErr != nil || rightErr != nil {
+		return false
+	}
+	return bytes.Equal(leftJSON, rightJSON)
 }
