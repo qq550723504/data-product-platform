@@ -13,6 +13,7 @@ import (
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	deliveryapp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application"
 	deliverydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/domain"
+	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
 
 type fakeDirectService struct {
@@ -97,6 +98,23 @@ func TestDeliveryHandlerBlockedAndReplayReturnZeroPayload(t *testing.T) {
 			t.Fatalf("replay leaked payload: calls=%d body=%s", store.calls, response.Body.String())
 		}
 	})
+}
+
+func TestDeliveryHandlerMapsTransactionalRightsLookupMissToNotFound(t *testing.T) {
+	workspaceID, versionID, profileID := uuid.New(), uuid.New(), uuid.New()
+	resolver, err := NewStaticPrincipalResolver(true, "secret", "principal-a", "consumer-a", []string{workspaceID.String()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	service := &fakeDirectService{err: rightsinfra.ErrNotFound}
+	store := &fakeObjectStore{content: []byte("must-not-read")}
+	response := executeDeliveryRequest(t, NewHandler(service, resolver, store), workspaceID, versionID, profileID, "consumer-a", "key-missing", "secret")
+	if response.Code != http.StatusNotFound || !strings.Contains(response.Body.String(), "DELIVERY_TARGET_NOT_FOUND") {
+		t.Fatalf("response = %d %s", response.Code, response.Body.String())
+	}
+	if store.calls != 0 {
+		t.Fatalf("not-found delivery opened object storage %d times", store.calls)
+	}
 }
 
 func TestDeliveryHandlerReadsObjectOnlyAfterIssuedCommandReturns(t *testing.T) {
