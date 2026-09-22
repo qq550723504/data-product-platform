@@ -95,7 +95,7 @@ func TestDeliveryRetryLinkDownRefusesImmutableProfileAttribution(t *testing.T) {
 			$1,$2,$3,NULL,$4,'PLATFORM_DIRECT_DATA',$5,
 			'BLOCKED','BLOCKED',1,
 			'principal-a','consumer-a',NULL,
-			'RESEARCH','READ',$3::text,'DIRECT_DATA','DIRECT_DATA',
+			'RESEARCH','READ',$3::uuid::text,'DIRECT_DATA','DIRECT_DATA',
 			now() + interval '5 minutes'
 		)
 	`, operationID, workspaceID, versionID, "profile-down-"+uuid.NewString(), "direct/"+operationID.String()); err != nil {
@@ -171,7 +171,7 @@ func TestDeliveryRetryLinkDownRefusesImmutableRetryHistory(t *testing.T) {
 				$1,$2,$3,NULL,$4,'PLATFORM_DIRECT_DATA',$5,
 				'ISSUED','ALLOWED',1,
 				'principal-a','consumer-a',NULL,
-				'RESEARCH','READ',$3::text,'DIRECT_DATA','DIRECT_DATA',
+				'RESEARCH','READ',$3::uuid::text,'DIRECT_DATA','DIRECT_DATA',
 				now() + interval '5 minutes',$6
 			)
 		`, id, workspaceID, versionID, key, "direct/"+id.String(), retryOf); err != nil {
