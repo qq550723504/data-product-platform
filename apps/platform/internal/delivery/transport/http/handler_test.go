@@ -162,4 +162,3 @@ func executeDeliveryRequest(t *testing.T, handler *Handler, workspaceID, version
 	mux.ServeHTTP(response, request)
 	return response
 }
-
