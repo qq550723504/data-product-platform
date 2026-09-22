@@ -64,7 +64,12 @@ func TestEntityMappingWorkspaceScopingAndDecisionHistory(t *testing.T) {
 
 	insertMapping := func(mapping domain.EntityMapping) error {
 		return txManager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-			return repo.InsertMapping(ctx, tx, mapping)
+			_, err := repo.RecordMappingDecision(ctx, tx, domain.MappingDecisionCommand{
+				Mapping:        mapping,
+				SourceOrigin:   domain.OriginWorkflowAlias,
+				IdempotencyKey: "workspace-test:" + uuid.NewString(),
+			})
+			return err
 		})
 	}
 	newMapping := func(workspaceID, entityID uuid.UUID, sourceKey string) domain.EntityMapping {
