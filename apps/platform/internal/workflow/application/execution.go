@@ -153,6 +153,24 @@ func (s *ExecutionService) start(ctx context.Context, executionID uuid.UUID, eng
 		if err := s.repo.SaveExecutionState(ctx, tx, execution, expected); err != nil {
 			return err
 		}
+		if validateReferences {
+			executionIDCopy := execution.ID
+			if err := cost.Append(ctx, tx, cost.Event{
+				WorkspaceID: execution.WorkspaceID,
+				ExecutionID: &executionIDCopy,
+				ActivityID:  nativeInitialInvocationActivityID(execution.ID),
+				CostType:    cost.NativeEngineInvocation,
+				Quantity:    1,
+				Unit:        "invocation",
+				PricingMode: "POC_ESTIMATE",
+				Metadata: map[string]any{
+					"engineType": "NATIVE",
+					"recovery":   false,
+				},
+			}); err != nil {
+				return err
+			}
+		}
 		if err := appendExecutionEvent(ctx, tx, execution, "ExecutionStarted"); err != nil {
 			return err
 		}
@@ -179,14 +197,17 @@ func (s *ExecutionService) RecordNativeRecovery(ctx context.Context, executionID
 		if execution.Status != domain.ExecutionRunning || execution.EngineType != "NATIVE" {
 			return domain.ErrInvalidTransition
 		}
+		activityID := uuid.New()
 		payload := map[string]any{
 			"executionId":       execution.ID,
 			"workflowVersionId": execution.WorkflowVersionID,
 			"outputDatasetId":   execution.OutputDatasetID,
 			"action":            action,
 			"attempt":           execution.Attempt,
+			"activityId":        activityID,
 		}
 		record, err := evidence.Append(ctx, tx, evidence.Record{
+			ID:           activityID,
 			WorkspaceID:  execution.WorkspaceID,
 			EvidenceType: "EXECUTION_RECOVERY",
 			Title:        "Native execution recovery started",
@@ -196,6 +217,25 @@ func (s *ExecutionService) RecordNativeRecovery(ctx context.Context, executionID
 		}, evidence.Relation{ObjectType: "EXECUTION", ObjectID: execution.ID, RelationType: "RECOVERY"})
 		if err != nil {
 			return err
+		}
+		if action == "REEXECUTE" {
+			executionIDCopy := execution.ID
+			if err := cost.Append(ctx, tx, cost.Event{
+				WorkspaceID: execution.WorkspaceID,
+				ExecutionID: &executionIDCopy,
+				ActivityID:  activityID,
+				CostType:    cost.NativeEngineInvocation,
+				Quantity:    1,
+				Unit:        "invocation",
+				PricingMode: "POC_ESTIMATE",
+				Metadata: map[string]any{
+					"engineType": "NATIVE",
+					"recovery":   true,
+					"action":     action,
+				},
+			}); err != nil {
+				return err
+			}
 		}
 		event, err := outbox.NewEvent("EXECUTION", execution.ID, "ExecutionRecoveryStarted", payload)
 		if err != nil {
@@ -213,6 +253,7 @@ func (s *ExecutionService) RecordNativeRecovery(ctx context.Context, executionID
 			AfterState: map[string]any{
 				"status":     execution.Status,
 				"action":     action,
+				"activityId": activityID,
 				"evidenceId": record.ID,
 			},
 			TraceID: traceID,
@@ -417,6 +458,10 @@ func (s *ExecutionService) Retry(ctx context.Context, cmd RetryExecutionCommand)
 		return domain.Execution{}, err
 	}
 	return result, nil
+}
+
+func nativeInitialInvocationActivityID(executionID uuid.UUID) uuid.UUID {
+	return uuid.NewSHA1(uuid.NameSpaceURL, []byte("native-engine-invocation:initial:"+executionID.String()))
 }
 
 func appendExecutionEvent(ctx context.Context, tx pgx.Tx, execution domain.Execution, eventType string) error {
