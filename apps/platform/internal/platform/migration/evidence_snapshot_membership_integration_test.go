@@ -22,8 +22,8 @@ func TestEvidenceSnapshotBuildingCannotCommit(t *testing.T) {
 	snapshotID := uuid.New()
 	if _, err := tx.Exec(ctx, `
 		INSERT INTO evidence_snapshot (
-			id, workspace_id, object_type, object_id, manifest, root_hash, status
-		) VALUES ($1,$2,'DATASET_VERSION',$3,'{}'::jsonb,$4,'BUILDING')
+			id, workspace_id, object_type, object_id, manifest, root_hash
+		) VALUES ($1,$2,'DATASET_VERSION',$3,'{"evidenceItems":[]}'::jsonb,$4)
 	`, snapshotID, uuid.New(), uuid.New(), strings.Repeat("a", 64)); err != nil {
 		_ = tx.Rollback(ctx)
 		t.Fatalf("insert BUILDING snapshot: %v", err)
@@ -58,9 +58,18 @@ func TestEvidenceSnapshotMembershipParentLockSerializesFinalize(t *testing.T) {
 	}
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO evidence_snapshot (
-			id, workspace_id, object_type, object_id, manifest, root_hash, status
-		) VALUES ($1,$2,'DATASET_VERSION',$3,'{}'::jsonb,$4,'BUILDING')
-	`, snapshotID, workspaceID, uuid.New(), strings.Repeat("b", 64)); err != nil {
+			id, workspace_id, object_type, object_id, manifest, root_hash
+		) VALUES (
+			$1,$2,'DATASET_VERSION',$3,
+			jsonb_build_object(
+				'evidenceItems',
+				jsonb_build_array(
+					jsonb_build_object('evidenceId',$5::text,'category','QUALITY')
+				)
+			),
+			$4
+		)
+	`, snapshotID, workspaceID, uuid.New(), strings.Repeat("b", 64), firstEvidenceID); err != nil {
 		t.Fatalf("insert committed BUILDING snapshot fixture: %v", err)
 	}
 	if _, err := pool.Exec(ctx, `
@@ -130,6 +139,49 @@ func TestEvidenceSnapshotMembershipParentLockSerializesFinalize(t *testing.T) {
 		VALUES ($1,$2,'RIGHTS')
 	`, snapshotID, secondEvidenceID); err == nil || !strings.Contains(err.Error(), "membership is finalized") {
 		t.Fatalf("post-finalize membership insert error = %v, want finalized refusal", err)
+	}
+}
+
+func TestEvidenceSnapshotFinalizeRejectsManifestMembershipMismatch(t *testing.T) {
+	pool := scratchDatabase(t, 30)
+	ctx := context.Background()
+
+	workspaceID := uuid.New()
+	snapshotID := uuid.New()
+	evidenceID := insertSnapshotMigrationEvidence(t, pool, workspaceID, "mismatch")
+
+	if _, err := pool.Exec(ctx, `
+		ALTER TABLE evidence_snapshot
+		DISABLE TRIGGER trg_evidence_snapshot_finalized_on_commit
+	`); err != nil {
+		t.Fatalf("disable deferred snapshot guard: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO evidence_snapshot (
+			id, workspace_id, object_type, object_id, manifest, root_hash
+		) VALUES ($1,$2,'DATASET_VERSION',$3,'{"evidenceItems":[]}'::jsonb,$4)
+	`, snapshotID, workspaceID, uuid.New(), strings.Repeat("d", 64)); err != nil {
+		t.Fatalf("insert BUILDING mismatch fixture: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		ALTER TABLE evidence_snapshot
+		ENABLE TRIGGER trg_evidence_snapshot_finalized_on_commit
+	`); err != nil {
+		t.Fatalf("re-enable deferred snapshot guard: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO evidence_snapshot_item (snapshot_id, evidence_id, category)
+		VALUES ($1,$2,'QUALITY')
+	`, snapshotID, evidenceID); err != nil {
+		t.Fatalf("insert mismatched membership item: %v", err)
+	}
+
+	if _, err := pool.Exec(ctx, `
+		UPDATE evidence_snapshot
+		SET status='FINALIZED'
+		WHERE id=$1 AND status='BUILDING'
+	`, snapshotID); err == nil || !strings.Contains(err.Error(), "membership does not match manifest") {
+		t.Fatalf("mismatched finalize error = %v, want manifest membership refusal", err)
 	}
 }
 
