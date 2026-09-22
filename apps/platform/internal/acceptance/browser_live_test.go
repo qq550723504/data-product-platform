@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"syscall"
 	"testing"
@@ -471,7 +472,12 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	manifest["deliveryOperationId"] = delivered.Operation.ID
 	manifest["deliveredSha256"] = deliveredSHA256
 	manifest["datasetChecksum"] = output.ChecksumValue
-	manifest["qualityDimensions"] = []string{"completeness", "accuracy", "consistency", "validity", "uniqueness", "timeliness"}
+	qualityDimensions := make([]string, 0, len(quality.DimensionSummaries))
+	for dimension := range quality.DimensionSummaries {
+		qualityDimensions = append(qualityDimensions, dimension)
+	}
+	sort.Strings(qualityDimensions)
+	manifest["qualityDimensions"] = qualityDimensions
 
 	runLiveBrowser(t, ctx, "certified", manifest, artifacts)
 
