@@ -2,6 +2,9 @@ package evidence
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"os"
 	"strings"
 	"testing"
@@ -89,6 +92,66 @@ func TestCreateSnapshotFinalizesAndFreezesMembership(t *testing.T) {
 	}
 	if itemCount != 2 {
 		t.Fatalf("frozen membership count = %d, want 2", itemCount)
+	}
+}
+
+func TestCreateSnapshotAllowsEmptyMembership(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin snapshot transaction: %v", err)
+	}
+	snapshot, err := CreateSnapshot(ctx, tx, uuid.New(), "DATASET_VERSION", uuid.New(), map[string]any{
+		"purpose": "empty-membership-test",
+	}, nil, nil)
+	if err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("create empty evidence snapshot: %v", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("commit empty evidence snapshot: %v", err)
+	}
+
+	view, err := NewQueryRepository(pool).GetSnapshot(ctx, snapshot.ID)
+	if err != nil {
+		t.Fatalf("query empty finalized snapshot: %v", err)
+	}
+	if !view.IntegrityValid {
+		t.Fatal("empty EvidenceSnapshot integrity is invalid")
+	}
+	if view.Items == nil || len(view.Items) != 0 {
+		t.Fatalf("empty EvidenceSnapshot items = %#v, want non-nil empty slice", view.Items)
+	}
+	manifestItems, ok := view.Manifest["evidenceItems"].([]any)
+	if !ok || len(manifestItems) != 0 {
+		t.Fatalf("empty EvidenceSnapshot manifest membership = %#v, want []", view.Manifest["evidenceItems"])
+	}
+}
+
+func TestVerifySnapshotIntegrityNormalizesEquivalentJSONNumbers(t *testing.T) {
+	hashPayload := []byte(`{"evidenceItems":[],"threshold":1e-7}`)
+	digest := sha256.Sum256(hashPayload)
+	rootHash := hex.EncodeToString(digest[:])
+
+	valid, err := verifySnapshotIntegrity(rootHash, hashPayload, map[string]any{
+		"evidenceItems": []SnapshotItem{},
+		"threshold":     json.Number("0.0000001"),
+	})
+	if err != nil {
+		t.Fatalf("verify equivalent numeric snapshot JSON: %v", err)
+	}
+	if !valid {
+		t.Fatal("equivalent JSON number spellings invalidated snapshot integrity")
 	}
 }
 
