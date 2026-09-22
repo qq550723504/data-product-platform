@@ -5,23 +5,19 @@
 --     read without the decision that created it.
 --   * entity_mapping_decision records the operation idempotency key and the
 --     source association (job / candidate) that produced it.
---   * legacy decision rows that cannot prove a source are explicitly UNKNOWN.
+--   * every decision has an explicit current provenance and idempotency key.
 --
--- Forward-only with respect to data: the migration blocks instead of repairing
--- when an existing mapping has no decision to point at. It never rewrites or
--- deletes the immutable decision history created by 000013.
+-- This pre-production schema assumes no legacy decision rows need preserving.
 
 ALTER TABLE entity_mapping_decision
-    ADD COLUMN idempotency_key varchar(255),
-    ADD COLUMN source_origin varchar(32) NOT NULL DEFAULT 'UNKNOWN',
+    ADD COLUMN idempotency_key varchar(255) NOT NULL,
+    ADD COLUMN source_origin varchar(32) NOT NULL,
     ADD COLUMN source_job_id uuid,
     ADD COLUMN source_candidate_id uuid;
 
 ALTER TABLE entity_mapping_decision
     ADD CONSTRAINT ck_entity_mapping_decision_source_origin
-        CHECK (source_origin IN ('UNKNOWN', 'MATCH_CANDIDATE', 'WORKFLOW_ALIAS')),
-    -- Decisions backfilled by 000013 predate source tracking; their origin is
-    -- unknown by definition and stays UNKNOWN. Nothing is re-derived.
+        CHECK (source_origin IN ('MATCH_CANDIDATE', 'WORKFLOW_ALIAS')),
     ADD CONSTRAINT fk_entity_mapping_decision_job
         FOREIGN KEY (source_job_id) REFERENCES entity_match_job(id),
     ADD CONSTRAINT fk_entity_mapping_decision_candidate
@@ -29,8 +25,7 @@ ALTER TABLE entity_mapping_decision
 
 -- One operation key appends at most one decision per workspace.
 CREATE UNIQUE INDEX uq_entity_mapping_decision_idempotency
-    ON entity_mapping_decision(workspace_id, idempotency_key)
-    WHERE idempotency_key IS NOT NULL;
+    ON entity_mapping_decision(workspace_id, idempotency_key);
 
 -- Referenced by the composite current-pointer foreign key below, so the pointer
 -- can only ever name a decision that belongs to the same mapping.
