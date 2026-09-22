@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-const QualityEngineInvocation = "QUALITY_ENGINE_INVOCATION"
+const QualityEngineInvocation = "QUALITY_ENGINE_INVOCATION"\nconst NativeEngineInvocation = "NATIVE_ENGINE_INVOCATION"
 
 const (
 	CertificationEvaluationActivity  = "CERTIFICATION_EVALUATION"
