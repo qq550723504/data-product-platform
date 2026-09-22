@@ -104,7 +104,7 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 			gate_decision, metrics, created_at
 		) VALUES ($1,$2,$3,'park/quality/enterprise-activity-quality-v1.yaml','1.0.0',
 			'c4b903018effbb6d36545f03ec3a6513aa3d5b35f12f42a50c150dc4f1ea35dc',
-			'legacy-quality-fixture','native-quality','1','PASS','{}'::jsonb,now())
+			'legacy-quality-fixture','native-quality','1','PASS','{"dimensions":{}}'::jsonb,now())
 	`, qualityResultID, workspaceID, datasetVersionID); err != nil {
 		t.Fatalf("insert QualityResult: %v", err)
 	}
@@ -112,7 +112,7 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		INSERT INTO compliance_result (
 			id, workspace_id, dataset_version_id, policy_ref, policy_version,
 			gate_decision, summary, created_at
-		) VALUES ($1,$2,$3,'park/compliance/enterprise-activity-compliance-v1.yaml','1.0.0','PASS','{}'::jsonb,now())
+		) VALUES ($1,$2,$3,'park/compliance/enterprise-activity-compliance-v1.yaml','1.0.0','PASS','{"dimensions":{}}'::jsonb,now())
 	`, complianceResultID, workspaceID, datasetVersionID); err != nil {
 		t.Fatalf("insert ComplianceResult: %v", err)
 	}
@@ -214,7 +214,7 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 			gate_decision, metrics, created_at
 		) VALUES ($1,$2,$3,'park/quality/enterprise-activity-quality-v1.yaml','1.0.0',
 			'c4b903018effbb6d36545f03ec3a6513aa3d5b35f12f42a50c150dc4f1ea35dc',
-			'legacy-quality-fixture','native-quality','1','FAIL','{}'::jsonb,now())
+			'legacy-quality-fixture','native-quality','1','FAIL','{"dimensions":{}}'::jsonb,now())
 	`, badQualityID, workspaceID, datasetVersionID); err != nil {
 		t.Fatalf("insert blocking QualityResult: %v", err)
 	}
