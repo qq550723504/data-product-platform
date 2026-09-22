@@ -1,5 +1,7 @@
 DROP TRIGGER IF EXISTS trg_evidence_snapshot_item_membership ON evidence_snapshot_item;
 DROP FUNCTION IF EXISTS guard_evidence_snapshot_membership();
+DROP TRIGGER IF EXISTS trg_evidence_snapshot_finalized_on_commit ON evidence_snapshot;
+DROP FUNCTION IF EXISTS require_evidence_snapshot_finalized_on_commit();
 
 -- Restore the pre-000030 header guard before removing the lifecycle column so
 -- rollback never leaves EvidenceSnapshot mutable.
