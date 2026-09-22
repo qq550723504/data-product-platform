@@ -12,6 +12,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/infrastructure"
