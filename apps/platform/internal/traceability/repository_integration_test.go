@@ -190,7 +190,7 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 	}
 
 	sourceMetadata := map[string]any{"source": "captured-import"}
-	sourceRecord := evidence.Record{WorkspaceID: workspaceID, EvidenceType: "SOURCE_CAPTURE", Title: "Source evidence", Metadata: sourceMetadata, CreatedAt: time.Now().UTC()}
+	sourceRecord := evidence.Record{WorkspaceID: workspaceID, EvidenceType: "SOURCE_CAPTURE", Title: "Source evidence", Metadata: sourceMetadata, CreatedAt: evidence.NormalizeCreatedAt(time.Now().UTC())}
 	sourceHash, err := evidence.ComputeHash(sourceRecord, evidence.HashAlgorithmEvidenceV2)
 	if err != nil {
 		t.Fatalf("compute source Evidence hash: %v", err)
