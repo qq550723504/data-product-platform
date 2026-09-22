@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/application"
@@ -116,21 +117,21 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	`, complianceResultID, workspaceID, datasetVersionID); err != nil {
 		t.Fatalf("insert ComplianceResult: %v", err)
 	}
-	for index, evidenceType := range []string{"QUALITY_RESULT", "COMPLIANCE_RESULT"} {
-		evidenceID := uuid.New()
-		if _, err := pool.Exec(ctx, `
-			INSERT INTO evidence (
-				id, workspace_id, evidence_type, title, hash_algorithm, hash_value,
-				metadata, created_at
-			) VALUES ($1,$2,$3,$3,'SHA256',$4,'{}'::jsonb,now())
-		`, evidenceID, workspaceID, evidenceType, repeatHex(index+1)); err != nil {
-			t.Fatalf("insert Evidence: %v", err)
+	for _, evidenceType := range []string{"QUALITY_RESULT", "COMPLIANCE_RESULT"} {
+		tx, err := pool.Begin(ctx)
+		if err != nil {
+			t.Fatalf("begin Evidence fixture: %v", err)
 		}
-		if _, err := pool.Exec(ctx, `
-			INSERT INTO evidence_relation (evidence_id, object_type, object_id, relation_type)
-			VALUES ($1,'DATASET_VERSION',$2,'GOVERNANCE_EVIDENCE')
-		`, evidenceID, datasetVersionID); err != nil {
-			t.Fatalf("insert Evidence relation: %v", err)
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			WorkspaceID:  workspaceID,
+			EvidenceType: evidenceType,
+			Title:        evidenceType,
+		}, evidence.Relation{ObjectType: "DATASET_VERSION", ObjectID: datasetVersionID, RelationType: "GOVERNANCE_EVIDENCE"}); err != nil {
+			_ = tx.Rollback(ctx)
+			t.Fatalf("append Evidence fixture: %v", err)
+		}
+		if err := tx.Commit(ctx); err != nil {
+			t.Fatalf("commit Evidence fixture: %v", err)
 		}
 	}
 
