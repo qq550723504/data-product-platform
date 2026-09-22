@@ -85,8 +85,8 @@ var (
 	// ErrMappingDecisionKeyConflict rejects reusing one idempotency key for a
 	// different request. Retries of the same operation are idempotent, but a key
 	// reused for a different target, reason, actor or source is a conflict.
-	ErrMappingDecisionKeyConflict = errors.New("mapping decision idempotency key is already bound to another request")
-	ErrMappingDecisionKeyRequired = errors.New("mapping decision idempotency key is required")
+	ErrMappingDecisionKeyConflict    = errors.New("mapping decision idempotency key is already bound to another request")
+	ErrMappingDecisionKeyRequired    = errors.New("mapping decision idempotency key is required")
 	ErrMappingDecisionOriginRequired = errors.New("mapping decision source origin is required")
 	// ErrMappingDecisionExpectationRequired rejects a manual confirmation that
 	// would replace an existing current decision while the caller did not state
