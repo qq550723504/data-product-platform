@@ -61,12 +61,18 @@ func (m *Manager) Do(ctx context.Context, fn func(context.Context, pgx.Tx) error
 // if the process/connection dies, which makes them suitable for remote-output
 // finalization that spans object-store I/O plus several Core transactions.
 func (m *Manager) WithAdvisoryLock(ctx context.Context, key string, fn func(context.Context) error) error {
+	if conn, ok := ctx.Value(advisoryLockConnectionContextKey{}).(*pgxpool.Conn); ok {
+		return withAdvisoryLockOnConn(ctx, conn, key, fn)
+	}
 	conn, err := m.pool.Acquire(ctx)
 	if err != nil {
 		return fmt.Errorf("acquire advisory-lock connection: %w", err)
 	}
 	defer conn.Release()
+	return withAdvisoryLockOnConn(ctx, conn, key, fn)
+}
 
+func withAdvisoryLockOnConn(ctx context.Context, conn *pgxpool.Conn, key string, fn func(context.Context) error) error {
 	var locked bool
 	if err := conn.QueryRow(ctx, `SELECT pg_try_advisory_lock(hashtextextended($1, 0))`, key).Scan(&locked); err != nil {
 		return fmt.Errorf("acquire advisory lock: %w", err)
