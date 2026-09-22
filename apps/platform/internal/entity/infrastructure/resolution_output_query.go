@@ -113,9 +113,39 @@ func (r *PostgresRepository) InsertResolutionOutputDecision(ctx context.Context,
 			output_dataset_version_id, workspace_id, source_job_id, source_type, source_ref,
 			source_key, decision_id, entity_id
 		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+		ON CONFLICT DO NOTHING
 	`, outputVersionID, job.WorkspaceID, job.ID, job.SourceType, job.SourceRef,
 		candidate.SourceKey, decision.ID, decision.EntityID); err != nil {
 		return fmt.Errorf("insert resolution output decision %s: %w", candidate.SourceKey, err)
+	}
+
+	// A concurrent/replayed finalizer may have frozen this exact row already.
+	// Treat only the identical immutable fact as idempotent; a uniqueness
+	// collision with different provenance is a hard conflict.
+	var (
+		storedWorkspaceID uuid.UUID
+		storedJobID       uuid.UUID
+		storedSourceType  string
+		storedSourceRef   string
+		storedDecisionID  uuid.UUID
+		storedEntityID    uuid.UUID
+	)
+	if err := tx.QueryRow(ctx, `
+		SELECT workspace_id, source_job_id, source_type, source_ref, decision_id, entity_id
+		FROM entity_resolution_output_decision
+		WHERE output_dataset_version_id=$1 AND source_key=$2
+	`, outputVersionID, candidate.SourceKey).Scan(
+		&storedWorkspaceID, &storedJobID, &storedSourceType, &storedSourceRef, &storedDecisionID, &storedEntityID,
+	); err != nil {
+		return fmt.Errorf("verify resolution output decision %s: %w", candidate.SourceKey, err)
+	}
+	if storedWorkspaceID != job.WorkspaceID ||
+		storedJobID != job.ID ||
+		storedSourceType != job.SourceType ||
+		storedSourceRef != job.SourceRef ||
+		storedDecisionID != decision.ID ||
+		storedEntityID != decision.EntityID {
+		return fmt.Errorf("resolution output decision %s conflicts with frozen provenance", candidate.SourceKey)
 	}
 	return nil
 }
