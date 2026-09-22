@@ -42,6 +42,20 @@ func TestOperationLifecycleRequiresContainmentBeforeBlocked(t *testing.T) {
 	}
 }
 
+func TestDirectDataCanLinearizePreparedToIssued(t *testing.T) {
+	now := time.Now().UTC()
+	op, err := NewOperation(uuid.New(), uuid.New(), "direct-delivery", "PLATFORM_DIRECT_DATA", "principal-a", "consumer-a", "", "RESEARCH", "READ", "dataset-version", "DIRECT_DATA", "DIRECT_DATA", now.Add(5*time.Minute), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := op.Transition(StatusIssued); err != nil {
+		t.Fatalf("providerless direct data PREPARED -> ISSUED: %v", err)
+	}
+	if op.Status != StatusIssued {
+		t.Fatalf("status = %s, want ISSUED", op.Status)
+	}
+}
+
 func TestCapabilityMustBeNarrowAndWithinFreshCap(t *testing.T) {
 	now := time.Now().UTC()
 	op, err := NewOperation(uuid.New(), uuid.New(), "delivery-1", "test-provider", "principal-a", "consumer-a", "", "RESEARCH", "READ", "dataset-version", "REDEMPTION", "CREDENTIAL", now.Add(time.Hour), nil)
