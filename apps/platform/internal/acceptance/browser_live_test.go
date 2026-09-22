@@ -47,6 +47,7 @@ import (
 	productdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/product/domain"
 	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
+	qualitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
 	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
@@ -367,10 +368,7 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	manifest["effectiveRightsHash"] = effectiveRights.RootHash
 	manifest["certificationEvidenceSnapshotId"] = certifiedEvidence.ID
 	manifest["outputChecksum"] = output.ChecksumValue
-	qualityDimensions := make([]string, 0, len(quality.DimensionSummaries))
-	for dimension := range quality.DimensionSummaries {
-		qualityDimensions = append(qualityDimensions, dimension)
-	}
+	qualityDimensions := append([]string(nil), qualitydomain.QualityDimensions...)
 	sort.Strings(qualityDimensions)
 	manifest["qualityDimensions"] = qualityDimensions
 
