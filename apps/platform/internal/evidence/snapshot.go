@@ -74,10 +74,11 @@ func CreateSnapshot(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, objec
 	}
 	if _, err := tx.Exec(ctx, `
 		INSERT INTO evidence_snapshot (
-			id, workspace_id, object_type, object_id, manifest, root_hash, status, created_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,'BUILDING',$7,$8)
+			id, workspace_id, object_type, object_id, manifest, root_hash,
+			manifest_hash_payload, status, created_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,'BUILDING',$8,$9)
 	`, snapshot.ID, snapshot.WorkspaceID, snapshot.ObjectType, snapshot.ObjectID,
-		manifestJSON, snapshot.RootHash, snapshot.CreatedAt, snapshot.CreatedBy); err != nil {
+		manifestJSON, snapshot.RootHash, encoded, snapshot.CreatedAt, snapshot.CreatedBy); err != nil {
 		return Snapshot{}, fmt.Errorf("insert evidence snapshot: %w", err)
 	}
 	for _, item := range items {
