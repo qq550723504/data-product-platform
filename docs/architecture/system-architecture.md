@@ -34,8 +34,11 @@ platform-worker (Go)
       ├── Maintenance / reconciliation
       └── Projection jobs
 
-Data Ingestion Adapter Layer
-      └── DataIngestionProvider → Native CSV/File / future external ingestion engine
+Current Data Ingestion
+      └── CSV/File slice → existing Resource / Dataset / UploadVersion commands
+
+Future Data Ingestion Adapter Boundary (not implemented yet)
+      └── provider-neutral Ingestion Port → external ingestion engine
 
 Engine Adapter Layer
       ├── MetadataEngine → OpenMetadata
@@ -99,10 +102,14 @@ External Data Sources
         │
         ├── Metadata Ingestion ──→ OpenMetadata（治理投影）
         │
-        └── Data Ingestion ──────→ DataIngestionProvider
+        └── Data Ingestion
+                │
+                ├── 当前：CSV/File 直接调用既有 Core commands
+                │
+                └── 后续：provider-neutral Ingestion Port（尚未实现）
                                       │
-                                      ├── 当前：Native CSV/File slice
-                                      └── 后续：可替换外部 ingestion engine
+                                      ▼
+                              可替换外部 ingestion engine
                                       │
                                       ▼
                               Core acceptance boundary
@@ -111,7 +118,7 @@ External Data Sources
                               RAW DatasetVersion
 ~~~
 
-当前 `/ingest` CSV 路径只是第一条窄接入切片，不作为未来数据库、API、消息系统、批量同步或 CDC 的通用实现模板。
+当前 `/ingest` CSV 路径只是第一条窄接入切片，且**当前并没有通用 `DataIngestionProvider` 接口**；它直接复用既有 Resource / Dataset / UploadVersion commands。未来数据库、API、消息系统、批量同步或 CDC 在真实 vertical slice 到来时再定义最小 provider-neutral Port。
 
 外部 ingestion engine 可以拥有 connector、technical schema discovery、snapshot/incremental/CDC 执行、checkpoint/offset、分区和 engine-internal retry；这些运行时细节默认不复制成 Core 业务状态。Core 保留 DataResource、接入结果与 workspace/source 的业务绑定、不可变 DatasetVersion、业务 lineage、Evidence/Audit/Cost、Rights 与后续 Certification 的 System of Record。
 
@@ -120,6 +127,8 @@ External Data Sources
 持续 CDC stream 本身不是 DatasetVersion。需要进入质量评测、认证或交付链时，必须按明确 snapshot/window/cut 边界发布新的不可变 DatasetVersion；不得让已认证 DatasetVersion 指向持续原地变化的数据。外部 checkpoint/offset 默认由 ingestion engine 持有，仅在解释接入边界确有需要时以 provider-neutral provenance/evidence 引用。
 
 同一同步链路只能有一个调度/重试责任方。Core 可以发起、观察或 reconciliation 外部任务，但不得与外部 ingestion engine 同时维护互相竞争的 scheduler/retry 状态机。
+
+若 Core 主动发起外部 ingestion，未来 Adapter contract 必须采用 DB-first crash-safe 调用：provider 调用前持久化 stable provider_request_key 与 physical attempt start fact；response 丢失/timeout/unknown 时用同一 request identity lookup/recover 原 operation，禁止盲目创建第二个同步任务。每次真实 reconciliation provider 调用使用新的 physical attempt identity，并按现有 Cost/Audit/Evidence attempt 规则追加记录。
 
 当前不选定 SeaTunnel、InLong、Airbyte、NiFi、Debezium 或 Flink CDC 等具体实现；真实数据库/API/CDC 场景出现时按 ADR-0010 做 Build-vs-Buy / Reuse Check 后选择最小合适方案。
 
