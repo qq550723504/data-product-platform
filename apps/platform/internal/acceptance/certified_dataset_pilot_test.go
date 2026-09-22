@@ -396,6 +396,102 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		t.Fatalf("pilot certification did not freeze expected rights/evidence facts: %+v", certification)
 	}
 
+	baseCertificationInput := certificationdomain.EvaluationInput{
+		WorkspaceID:      workspaceID,
+		DatasetVersionID: outputVersion.ID,
+		Quality:          certificationdomain.QualityAssessmentEvidence{ID: qualityResult.ID},
+		Rights: &certificationdomain.RightsEvidence{
+			RightsSnapshotID:          rightsSnapshot.ID,
+			EffectiveRightsSnapshotID: effectiveRights.ID,
+		},
+		Compliance:   &certificationdomain.ComplianceEvidence{ID: complianceResult.ID},
+		Contract:     &certificationdomain.ContractEvidence{ID: contractVersion.ID},
+		Traceability: &certificationdomain.TraceabilityEvidence{ID: supportingEvidence.ID},
+		Evidence:     &certificationdomain.EvidenceSnapshot{ID: supportingEvidence.ID},
+		ActorID:      &actorID,
+	}
+	evaluateRejected := func(label string, input certificationdomain.EvaluationInput) certificationdomain.DatasetCertification {
+		t.Helper()
+		service := certificationapp.NewCertificationService(
+			txManager,
+			profileRepo,
+			certificationRepo,
+			pilotCertificationResolver{input: input},
+		)
+		result, err := service.Evaluate(ctx, certificationapp.EvaluateDatasetCertificationCommand{
+			WorkspaceID:      workspaceID,
+			DatasetVersionID: outputVersion.ID,
+			ProfileID:        profile.ID,
+			IdempotencyKey:   "pilot-rejected-" + label + "-" + suffix,
+			ActorID:          &actorID,
+			TraceID:          traceID,
+		})
+		if err != nil {
+			t.Fatalf("evaluate rejected pilot certification %s: %v", label, err)
+		}
+		if result.Decision != certificationdomain.DecisionRejected {
+			t.Fatalf("pilot certification %s = %s blockers=%+v, want REJECTED", label, result.Decision, result.Blockers)
+		}
+		return result
+	}
+
+	t.Run("critical quality failure rejects certification", func(t *testing.T) {
+		failedQuality, err := qualityService.Run(ctx, qualityapp.RunCommand{
+			WorkspaceID:      workspaceID,
+			DatasetVersionID: outputVersion.ID,
+			RuleSetRef:       qualityRuleSetRef,
+			ActorID:          &actorID,
+			TraceID:          traceID,
+			Now:              outputVersion.ReadyAt.Add(48 * time.Hour),
+		})
+		if err != nil {
+			t.Fatalf("run stale pilot QualityAssessment: %v", err)
+		}
+		if failedQuality.GateDecision != qualitydomain.GateFail {
+			t.Fatalf("stale pilot QualityAssessment gate = %s, want FAIL; findings=%+v", failedQuality.GateDecision, failedQuality.Findings)
+		}
+		freshnessFailed := false
+		for _, finding := range failedQuality.Findings {
+			if finding.RuleID == "QA-FRESHNESS" && finding.Status == qualitydomain.FindingFail {
+				freshnessFailed = true
+				break
+			}
+		}
+		if !freshnessFailed {
+			t.Fatalf("stale pilot QualityAssessment did not fail CRITICAL QA-FRESHNESS: %+v", failedQuality.Findings)
+		}
+
+		input := baseCertificationInput
+		input.Quality = certificationdomain.QualityAssessmentEvidence{ID: failedQuality.ID}
+		rejected := evaluateRejected("critical-quality", input)
+		if !hasPilotBlocker(rejected.Blockers, "QUALITY_GATE_NOT_PASSED") {
+			t.Fatalf("critical-quality rejection blockers=%+v, want QUALITY_GATE_NOT_PASSED", rejected.Blockers)
+		}
+	})
+
+	t.Run("required governance evidence missing rejects certification", func(t *testing.T) {
+		missingRights := baseCertificationInput
+		missingRights.Rights = nil
+		rightsRejected := evaluateRejected("missing-rights", missingRights)
+		if !hasPilotBlocker(rightsRejected.Blockers, "RIGHTS_EVIDENCE_MISSING") {
+			t.Fatalf("missing-rights blockers=%+v, want RIGHTS_EVIDENCE_MISSING", rightsRejected.Blockers)
+		}
+
+		missingCompliance := baseCertificationInput
+		missingCompliance.Compliance = nil
+		complianceRejected := evaluateRejected("missing-compliance", missingCompliance)
+		if !hasPilotBlocker(complianceRejected.Blockers, "COMPLIANCE_EVIDENCE_MISSING") {
+			t.Fatalf("missing-compliance blockers=%+v, want COMPLIANCE_EVIDENCE_MISSING", complianceRejected.Blockers)
+		}
+
+		missingContract := baseCertificationInput
+		missingContract.Contract = nil
+		contractRejected := evaluateRejected("missing-contract", missingContract)
+		if !hasPilotBlocker(contractRejected.Blockers, "CONTRACT_EVIDENCE_MISSING") {
+			t.Fatalf("missing-contract blockers=%+v, want CONTRACT_EVIDENCE_MISSING", contractRejected.Blockers)
+		}
+	})
+
 	eligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
 	eligibilityResult, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
 		WorkspaceID:      workspaceID,
@@ -672,6 +768,65 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 	if issuedEvents != 1 || gateFacts != 1 {
 		t.Fatalf("pilot delivery facts issuedEvents=%d terminalGateFacts=%d, want 1/1", issuedEvents, gateFacts)
 	}
+
+	t.Run("new DatasetVersion does not inherit quality or certification", func(t *testing.T) {
+		newVersion := mustUploadCSV(
+			t,
+			ctx,
+			uploadDataset,
+			activityDataset.ID,
+			"pilot-new-version-"+suffix+".csv",
+			store.bytes(outputVersion.StorageURI),
+			map[string]any{
+				"unresolvedEntityRate":       0.0,
+				"acceptedNegativeEnergyRate": 0.0,
+			},
+			nil,
+			&actorID,
+			traceID,
+		)
+		if newVersion.ID == outputVersion.ID || newVersion.VersionNo <= outputVersion.VersionNo {
+			t.Fatalf("new pilot DatasetVersion = id %s version %d, previous %s/%d", newVersion.ID, newVersion.VersionNo, outputVersion.ID, outputVersion.VersionNo)
+		}
+
+		var qualityCount, certificationCount int
+		if err := pool.QueryRow(ctx, `SELECT count(*) FROM quality_result WHERE dataset_version_id=$1`, newVersion.ID).Scan(&qualityCount); err != nil {
+			t.Fatalf("count new-version QualityAssessments: %v", err)
+		}
+		if err := pool.QueryRow(ctx, `SELECT count(*) FROM dataset_certification WHERE dataset_version_id=$1`, newVersion.ID).Scan(&certificationCount); err != nil {
+			t.Fatalf("count new-version certifications: %v", err)
+		}
+		if qualityCount != 0 || certificationCount != 0 {
+			t.Fatalf("new DatasetVersion inherited facts: quality=%d certification=%d, want 0/0", qualityCount, certificationCount)
+		}
+
+		history, err := certificationService.ListDatasetHistory(ctx, workspaceID, newVersion.ID, time.Now().UTC())
+		if err != nil {
+			t.Fatalf("read new-version certification history: %v", err)
+		}
+		if len(history) != 0 {
+			t.Fatalf("new DatasetVersion certification history = %+v, want empty", history)
+		}
+
+		newEligibility, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
+			WorkspaceID:      workspaceID,
+			DatasetVersionID: newVersion.ID,
+			ProfileID:        profile.ID,
+			Consumer:         "LICENSED_BANK",
+			Purpose:          purpose,
+			Action:           "READ",
+			Delivery:         "DIRECT_DATA",
+			ScopeType:        "ALL_RESOURCE",
+			ScopeRef:         newVersion.ID.String(),
+			AsOf:             time.Now().UTC(),
+		})
+		if err != nil {
+			t.Fatalf("check new-version delivery eligibility: %v", err)
+		}
+		if newEligibility.Allowed || !hasPilotBlocker(newEligibility.Blockers, "CERTIFICATION_NOT_CURRENT") {
+			t.Fatalf("new-version eligibility = allowed=%v blockers=%+v, want CERTIFICATION_NOT_CURRENT", newEligibility.Allowed, newEligibility.Blockers)
+		}
+	})
 }
 
 func hasPilotBlocker(blockers []certificationdomain.Blocker, code string) bool {
