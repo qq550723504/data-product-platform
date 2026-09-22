@@ -26,7 +26,9 @@ type CurrentCertificationResult struct {
 
 // CheckCurrent resolves current certification from append-only history. It
 // never treats the newest row as current and returns a blocked result when no
-// current certification exists. Ambiguous func (s *CertificationService) CheckCurrent(ctx context.Context, query CurrentCertificationQuery) (CurrentCertificationResult, error) {
+// current certification exists. Ambiguous history is an error so callers
+// cannot accidentally turn two current facts into an authorization.
+func (s *CertificationService) CheckCurrent(ctx context.Context, query CurrentCertificationQuery) (CurrentCertificationResult, error) {
 	return s.checkCurrent(ctx, nil, query)
 }
 
