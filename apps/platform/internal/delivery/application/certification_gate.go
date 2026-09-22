@@ -31,7 +31,7 @@ func (g *CertificationDirectDataGate) EvaluateDirectData(ctx context.Context, tx
 	if request.WorkspaceID == uuid.Nil || request.DatasetVersionID == uuid.Nil || request.ProfileID == uuid.Nil {
 		return DirectDataGateResult{}, fmt.Errorf("workspace, DatasetVersion, and CertificationProfile are required")
 	}
-	result, err := g.eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
+	result, err := g.eligibility.CheckTx(ctx, tx, certificationapp.DeliveryEligibilityQuery{
 		WorkspaceID: request.WorkspaceID, DatasetVersionID: request.DatasetVersionID, ProfileID: request.ProfileID,
 		Consumer: request.EffectiveConsumerRef, Purpose: request.Purpose, Action: request.Action,
 		Delivery: request.DeliveryChannel, ScopeType: request.ScopeType, ScopeRef: request.ScopeRef,
