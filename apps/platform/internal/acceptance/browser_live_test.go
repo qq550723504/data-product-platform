@@ -29,13 +29,13 @@ import (
 	complianceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/compliance/infrastructure"
 	contractapp "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/application"
 	contractinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	entityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/config"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
@@ -266,7 +266,7 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	liveOK(t, tx.Do(ctx, func(ctx context.Context, dbtx pgx.Tx) error {
 		record, err := evidence.Append(ctx, dbtx, evidence.Record{
 			WorkspaceID: workspaceID, EvidenceType: "CERTIFIED_DATASET_BROWSER_TRACE",
-			Title: "Live browser Certified Dataset traceability evidence",
+			Title:      "Live browser Certified Dataset traceability evidence",
 			SourceType: "DATASET_VERSION", SourceID: &output.ID,
 			Metadata: map[string]any{
 				"executionId": execution.ID, "entityMatchJobId": job.ID,
@@ -292,20 +292,20 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	certificationProfile, err := profileService.Create(ctx, certificationapp.CreateProfileCommand{
 		WorkspaceID: workspaceID,
 		Profile: certificationdomain.CertificationProfile{
-			ProfileRef: "park/enterprise-activity-browser-certified-v1",
-			Code: "BROWSER-ENTERPRISE-ACTIVITY-CERTIFIED",
-			Name: "Enterprise Activity Browser Certified Dataset",
-			Version: "1.0.0",
-			Purpose: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
-			Actions: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
-			Consumers: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"LICENSED_BANK"}},
-			Delivery: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"DIRECT_DATA"}},
+			ProfileRef:            "park/enterprise-activity-browser-certified-v1",
+			Code:                  "BROWSER-ENTERPRISE-ACTIVITY-CERTIFIED",
+			Name:                  "Enterprise Activity Browser Certified Dataset",
+			Version:               "1.0.0",
+			Purpose:               certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
+			Actions:               certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
+			Consumers:             certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"LICENSED_BANK"}},
+			Delivery:              certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"DIRECT_DATA"}},
 			RequiredCriticalRules: []string{"QA-COMPANY-ID-COMPLETE"},
-			QualityGateRequired: true,
+			QualityGateRequired:   true,
 			Rights: certificationdomain.RightsRequirement{
-				Required: true,
-				Purpose: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
-				Actions: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
+				Required:  true,
+				Purpose:   certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
+				Actions:   certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
 				Consumers: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"LICENSED_BANK"}},
 				Scopes: certificationdomain.ScopeApplicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []certificationdomain.ScopeRef{
 					{Type: "ALL_RESOURCE", Ref: enterpriseResource.ID.String()},
@@ -327,16 +327,16 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 			Rights: &certificationdomain.RightsEvidence{
 				RightsSnapshotID: certifiedRightsSnapshot.ID, EffectiveRightsSnapshotID: effectiveRights.ID,
 			},
-			Compliance: &certificationdomain.ComplianceEvidence{ID: compliance.ID},
-			Contract: &certificationdomain.ContractEvidence{ID: contract.ID},
+			Compliance:   &certificationdomain.ComplianceEvidence{ID: compliance.ID},
+			Contract:     &certificationdomain.ContractEvidence{ID: contract.ID},
 			Traceability: &certificationdomain.TraceabilityEvidence{ID: certifiedEvidence.ID},
-			Evidence: &certificationdomain.EvidenceSnapshot{ID: certifiedEvidence.ID},
-			ActorID: &seedActor,
+			Evidence:     &certificationdomain.EvidenceSnapshot{ID: certifiedEvidence.ID},
+			ActorID:      &seedActor,
 		},
 	})
 	certification, err := certificationService.Evaluate(ctx, certificationapp.EvaluateDatasetCertificationCommand{
 		WorkspaceID: workspaceID, DatasetVersionID: output.ID, ProfileID: certificationProfile.ID,
-		IdempotencyKey: "browser-live-certification-"+suffix, ActorID: &seedActor, TraceID: traceID,
+		IdempotencyKey: "browser-live-certification-" + suffix, ActorID: &seedActor, TraceID: traceID,
 		CostActivity: &cost.CertificationActivity{
 			ActivityID: uuid.New(), CostType: cost.CertificationEvaluationActivity,
 			Quantity: 1, Unit: "certification", PricingMode: "ACTUAL",
