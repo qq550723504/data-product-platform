@@ -294,21 +294,21 @@ func (h *Handler) fail(w http.ResponseWriter, r *http.Request) {
 
 func writeVersion(w http.ResponseWriter, status int, version domain.DatasetVersion) {
 	writeJSON(w, status, map[string]any{
-		"id":                 version.ID,
-		"datasetId":          version.DatasetID,
-		"versionNo":          version.VersionNo,
-		"status":             version.Status,
-		"storageType":        version.StorageType,
-		"storageUri":         version.StorageURI,
-		"contentType":        version.ContentType,
-		"rowCount":           version.RowCount,
-		"byteSize":           version.ByteSize,
-		"checksumAlgorithm":  version.ChecksumAlgorithm,
+		"id":                     version.ID,
+		"datasetId":              version.DatasetID,
+		"versionNo":              version.VersionNo,
+		"status":                 version.Status,
+		"storageType":            version.StorageType,
+		"storageUri":             version.StorageURI,
+		"contentType":            version.ContentType,
+		"rowCount":               version.RowCount,
+		"byteSize":               version.ByteSize,
+		"checksumAlgorithm":      version.ChecksumAlgorithm,
 		"checksum":               version.ChecksumValue,
 		"generatedByExecutionId": version.GeneratedByExecutionID,
 		"readyAt":                version.ReadyAt,
-		"invalidatedAt":      version.InvalidatedAt,
-		"invalidationReason": version.InvalidationReason,
+		"invalidatedAt":          version.InvalidatedAt,
+		"invalidationReason":     version.InvalidationReason,
 	})
 }
 
