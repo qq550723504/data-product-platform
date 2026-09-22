@@ -25,6 +25,7 @@ import (
 	parkindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
@@ -81,10 +82,11 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 	workspaceID := uuid.New()
 	txManager := transaction.NewManager(pool)
 	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	resourceRepo := resourceinfra.NewPostgresRepository()
 	entityRepo := entityinfra.NewPostgresRepository(pool)
 	workflowRepo := workflowinfra.NewPostgresRepository(pool)
 	store := newMemoryStore()
-	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo)
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceRepo)
 	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, store)
 
 	enterpriseDataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "ENTERPRISE-RAW", "Enterprise RAW", datasetdomain.DatasetTypeRaw)
