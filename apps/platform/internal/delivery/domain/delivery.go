@@ -195,13 +195,13 @@ type GateEvaluation struct {
 	EvaluationKey          string
 	Stage                  GateStage
 	CertificationProfileID *uuid.UUID
-	Allowed              bool
-	Blockers             []string
-	DependencyRevision   int64
-	PrincipalRef         string
-	EffectiveConsumerRef string
-	DelegationRef        string
-	FreshCapExpiresAt    *time.Time
+	Allowed                bool
+	Blockers               []string
+	DependencyRevision     int64
+	PrincipalRef           string
+	EffectiveConsumerRef   string
+	DelegationRef          string
+	FreshCapExpiresAt      *time.Time
 }
 
 func (e GateEvaluation) Decision() string {
