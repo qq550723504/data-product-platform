@@ -101,7 +101,7 @@ func (h *Handler) deliver(w http.ResponseWriter, r *http.Request) {
 	})
 	if errors.Is(err, deliveryapp.ErrDirectDataReplayRequiresNewAttempt) {
 		writeJSON(w, http.StatusConflict, map[string]any{
-			"code": "DIRECT_DATA_REPLAY_REQUIRES_NEW_ATTEMPT",
+			"code":        "DIRECT_DATA_REPLAY_REQUIRES_NEW_ATTEMPT",
 			"operationId": result.Operation.ID, "status": result.Operation.Status,
 			"message": "the original direct-data authorization was already linearized; use a new idempotency key for another delivery attempt",
 		})
