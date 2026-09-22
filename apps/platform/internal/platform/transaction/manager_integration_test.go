@@ -137,6 +137,30 @@ func TestAdvisoryLockSerializesCriticalSection(t *testing.T) {
 	}
 }
 
+func TestAdvisoryLockIsReentrantOnTheSameConnection(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+	manager := transaction.NewManager(pool)
+
+	key := "test-reentrant-lock-" + uuid.NewString()
+	if err := manager.WithAdvisoryLock(ctx, key, func(ctx context.Context) error {
+		return manager.WithAdvisoryLock(ctx, key, func(context.Context) error {
+			return nil
+		})
+	}); err != nil {
+		t.Fatalf("reentrant advisory lock: %v", err)
+	}
+}
+
 func TestAdvisoryLockReusesConnectionForNestedTransaction(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
