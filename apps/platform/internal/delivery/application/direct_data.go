@@ -167,9 +167,14 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 				prior.EffectiveConsumerRef != cmd.EffectiveConsumerRef ||
 				prior.Purpose != cmd.Purpose ||
 				prior.Action != cmd.Action ||
+				prior.ProviderName != directDataProviderName ||
 				prior.DeliveryChannel != directDataChannel ||
 				prior.DeliveryMode != directDataMode {
 				return fmt.Errorf("%w: retry_of must reference the same caller/context and an ISSUED DIRECT_DATA attempt", domain.ErrInvalidOperation)
+			}
+			priorProfileID, err := s.repo.GetTerminalGateCertificationProfile(ctx, tx, prior.ID)
+			if err != nil || priorProfileID != cmd.ProfileID {
+				return fmt.Errorf("%w: retry_of must reference an ISSUED DIRECT_DATA attempt evaluated with the same certification profile", domain.ErrInvalidOperation)
 			}
 		}
 
