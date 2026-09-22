@@ -295,6 +295,85 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		}
 	}
 
+	qualityHandler := qualityhttp.NewHandler(
+		qualityService,
+		qualityRepo,
+		evidence.NewQueryRepository(pool),
+	)
+	qualityMux := http.NewServeMux()
+	qualityHandler.Register(qualityMux)
+	reportRequest := httptest.NewRequest(
+		http.MethodGet,
+		"/api/v1/quality-assessments/"+qualityResult.ID.String()+"/report?workspaceId="+workspaceID.String()+"&limit=100&offset=0",
+		nil,
+	)
+	reportResponse := httptest.NewRecorder()
+	qualityMux.ServeHTTP(reportResponse, reportRequest)
+	if reportResponse.Code != http.StatusOK {
+		t.Fatalf("pilot Quality Report = %d %s, want 200", reportResponse.Code, reportResponse.Body.String())
+	}
+	var report map[string]any
+	if err := json.Unmarshal(reportResponse.Body.Bytes(), &report); err != nil {
+		t.Fatalf("decode pilot Quality Report: %v", err)
+	}
+	if report["id"] != qualityResult.ID.String() ||
+		report["workspaceId"] != workspaceID.String() ||
+		report["datasetVersionId"] != outputVersion.ID.String() ||
+		report["gateDecision"] != string(qualitydomain.GatePass) ||
+		report["ruleSetRef"] != qualityResult.RuleSetRef ||
+		report["ruleSetVersion"] != qualityResult.RuleSetVersion {
+		t.Fatalf("pilot Quality Report summary is inconsistent: %+v", report)
+	}
+	dimensionSummary, ok := report["dimensionSummary"].(map[string]any)
+	if !ok {
+		t.Fatalf("pilot Quality Report dimensionSummary has unexpected shape: %#v", report["dimensionSummary"])
+	}
+	for _, dimension := range qualitydomain.QualityDimensions {
+		if _, ok := dimensionSummary[string(dimension)]; !ok {
+			t.Fatalf("pilot Quality Report missing dimension %s: %+v", dimension, dimensionSummary)
+		}
+	}
+	findingsSection, ok := report["findings"].(map[string]any)
+	if !ok {
+		t.Fatalf("pilot Quality Report findings has unexpected shape: %#v", report["findings"])
+	}
+	items, ok := findingsSection["items"].([]any)
+	if !ok {
+		t.Fatalf("pilot Quality Report findings.items has unexpected shape: %#v", findingsSection["items"])
+	}
+	page, ok := findingsSection["page"].(map[string]any)
+	if !ok {
+		t.Fatalf("pilot Quality Report findings.page has unexpected shape: %#v", findingsSection["page"])
+	}
+	total, totalOK := page["total"].(float64)
+	offset, offsetOK := page["offset"].(float64)
+	if !totalOK || !offsetOK || int(total) != len(qualityResult.Findings) || int(offset) != 0 || len(items) != len(qualityResult.Findings) {
+		t.Fatalf("pilot Quality Report findings page = %#v items=%d, want offset=0 total/items=%d",
+			page, len(items), len(qualityResult.Findings))
+	}
+	for _, raw := range items {
+		finding, ok := raw.(map[string]any)
+		if !ok {
+			t.Fatalf("pilot Quality Report finding has unexpected shape: %#v", raw)
+		}
+		if strings.TrimSpace(asPilotString(finding["id"])) == "" ||
+			strings.TrimSpace(asPilotString(finding["ruleId"])) == "" ||
+			strings.TrimSpace(asPilotString(finding["dimension"])) == "" ||
+			strings.TrimSpace(asPilotString(finding["severity"])) == "" ||
+			strings.TrimSpace(asPilotString(finding["status"])) == "" ||
+			finding["observed"] == nil {
+			t.Fatalf("pilot Quality Report contains an unexplained finding: %+v", finding)
+		}
+	}
+	evidenceRefs, ok := report["evidence"].([]any)
+	if !ok || len(evidenceRefs) == 0 {
+		t.Fatalf("pilot Quality Report Evidence references = %#v, want non-empty", report["evidence"])
+	}
+	auditRefs, ok := report["auditEvents"].([]any)
+	if !ok || len(auditRefs) == 0 {
+		t.Fatalf("pilot Quality Report Audit references = %#v, want non-empty", report["auditEvents"])
+	}
+
 	complianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
 		WorkspaceID: workspaceID, DatasetVersionID: outputVersion.ID, PolicyRef: complianceRef,
 		ActorID: &actorID, TraceID: traceID,
@@ -1257,6 +1336,11 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 			t.Fatalf("new-version eligibility = allowed=%v blockers=%+v, want CERTIFICATION_NOT_CURRENT", newEligibility.Allowed, newEligibility.Blockers)
 		}
 	})
+}
+
+func asPilotString(value any) string {
+	text, _ := value.(string)
+	return text
 }
 
 func hasPilotBlocker(blockers []certificationdomain.Blocker, code string) bool {
