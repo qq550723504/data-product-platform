@@ -1,12 +1,12 @@
 package transaction_test
 
-import (
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
-)
+import "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 
 func init() {
-	router, err := routing.NewRouter(false)
+	router, err := outbox.NewRouter("transaction-test-v1", []outbox.Route{
+		{EventType: "TestEventCommitted"},
+		{EventType: "TestEventRolledBack"},
+	})
 	if err != nil {
 		panic(err)
 	}
