@@ -384,6 +384,17 @@ Engine Adapter 错误需要映射为平台统一错误模型。
 
 ## 16. Current Stage and Scope Discipline
 
+### Pre-production compatibility rule
+
+当前系统尚未投入生产，也没有需要保留的客户/生产存量数据或外部稳定 API 消费者。除非 Issue 明确指出一个真实已部署的 consumer/data source，否则：
+
+- 不得为了假想的旧调用方、旧数据库行、旧 payload、旧 hash、旧 constructor/API 继续增加 backward-compatibility shim；
+- 领域模型或 schema 演进时，优先保持一套严格的当前 contract；开发/测试数据库可以重建，不把开发阶段历史变成永久产品兼容债；
+- migration 可以继续保留增量历史以支持 CI/可复现安装，但不得仅为假想 pre-production rows 使用 NOT VALID、UNKNOWN/backfill fallback 或双读/双写来弱化当前 invariant；
+- reviewer 提出的 legacy/backward-compatibility 建议只有在能指出真实已部署数据/consumer 时才构成当前 scope 的要求。
+
+这条规则不适用于正常业务生命周期（如 DEPRECATED/SUPERSEDED）、当前协议必需的 retry/idempotency/crash recovery、配置默认值、实体 alias 语义以及 append-only 历史事实。
+
 核心 POC 已完成。当前阶段是 #129 Certified Dataset 受控试点。QualityAssessment 核心已由 #140 落地；#131 仅保留 review 后新增的 CostAllocation 等 follow-up。
 
 第一阶段主任务：
