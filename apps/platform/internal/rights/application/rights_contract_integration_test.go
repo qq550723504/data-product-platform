@@ -114,6 +114,23 @@ func TestAuthorizationSnapshotAndContractLifecycle(t *testing.T) {
 	}); err != nil {
 		t.Fatalf("bind authorization provenance: %v", err)
 	}
+	selected, err := rightsRepo.CheckCurrentEntitlement(ctx, rightsdomain.EntitlementRequest{
+		WorkspaceID:    workspaceID,
+		DataResourceID: resourceID,
+		ConsumerRef:    "LICENSED_BANK",
+		Purpose:        "ENTERPRISE_CREDIT_RISK_SUPPORT",
+		Action:         "USE",
+		Scope:          rightsdomain.NormalizedScope{Type: "ALL_RESOURCE", Ref: resourceID.String()},
+		AsOf:           time.Now().UTC(),
+		Path:           rightsdomain.EntitlementDownstream,
+	})
+	if err != nil {
+		t.Fatalf("check selected downstream entitlement: %v", err)
+	}
+	if selected.Decision != rightsdomain.DecisionAllowed || selected.AuthorizationID != authorization.ID {
+		t.Fatalf("selected downstream authorization = decision %s authorization %s, want ALLOWED/%s", selected.Decision, selected.AuthorizationID, authorization.ID)
+	}
+
 
 	// A grant declared in one workspace must not name another workspace's resource.
 	foreignWorkspace := uuid.New()
