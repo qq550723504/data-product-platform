@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -137,7 +137,7 @@ func TestMatchFinalizeConcurrentCallsProduceOneOutput(t *testing.T) {
 	assertFinalizeFacts(t, ctx, pool, fixture.job.ID, *job.OutputDatasetVersionID)
 }
 
-func openFinalizeTestDB(t *testing.T, ctx context.Context) *database.Pool {
+func openFinalizeTestDB(t *testing.T, ctx context.Context) *pgxpool.Pool {
 	t.Helper()
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
@@ -156,7 +156,7 @@ func openFinalizeTestDB(t *testing.T, ctx context.Context) *database.Pool {
 	return pool
 }
 
-func createFinalizeFixture(t *testing.T, ctx context.Context, pool *database.Pool) finalizeFixture {
+func createFinalizeFixture(t *testing.T, ctx context.Context, pool *pgxpool.Pool) finalizeFixture {
 	t.Helper()
 	workspaceID := uuid.New()
 	entityTypeID := uuid.New()
@@ -282,7 +282,7 @@ func createFinalizeFixture(t *testing.T, ctx context.Context, pool *database.Poo
 	}
 }
 
-func assertFinalizeFacts(t *testing.T, ctx context.Context, pool *database.Pool, jobID, outputVersionID uuid.UUID) {
+func assertFinalizeFacts(t *testing.T, ctx context.Context, pool *pgxpool.Pool, jobID, outputVersionID uuid.UUID) {
 	t.Helper()
 	var outputCount, proofCount, eventCount, evidenceCount, auditCount int
 	if err := pool.QueryRow(ctx, `
