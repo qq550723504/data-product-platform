@@ -238,7 +238,7 @@ func TestCertificationDispositionSerializesWithDeliveryAuthorizationFence(t *tes
 		_, changeErr := service.ChangeDisposition(context.Background(), ChangeCertificationDispositionCommand{
 			WorkspaceID: workspaceID, CertificationID: certification.ID,
 			Disposition: domain.DispositionRevoked, Reason: "concurrent revocation",
-			EffectiveAt: certification.IssuedAt,
+			EffectiveAt:    certification.IssuedAt,
 			IdempotencyKey: "certification-fence-disposition-" + uuid.NewString(),
 		})
 		done <- changeErr
