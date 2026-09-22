@@ -131,7 +131,6 @@ func TestAuthorizationSnapshotAndContractLifecycle(t *testing.T) {
 		t.Fatalf("selected downstream authorization = decision %s authorization %s, want ALLOWED/%s", selected.Decision, selected.AuthorizationID, authorization.ID)
 	}
 
-
 	// A grant declared in one workspace must not name another workspace's resource.
 	foreignWorkspace := uuid.New()
 	foreignResourceID := uuid.New()
