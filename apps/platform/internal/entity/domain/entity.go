@@ -51,17 +51,13 @@ const (
 	SourceAnchor    SourceRole = "ANCHOR"
 	SourceReference SourceRole = "REFERENCE"
 
-	// SourceOrigin records how a mapping decision entered the platform. Legacy
-	// decisions that predate source tracking cannot prove an origin and are
-	// explicitly UNKNOWN instead of being guessed.
-	OriginUnknown        SourceOrigin = "UNKNOWN"
 	OriginMatchCandidate SourceOrigin = "MATCH_CANDIDATE"
 	OriginWorkflowAlias  SourceOrigin = "WORKFLOW_ALIAS"
 )
 
 func (o SourceOrigin) Valid() bool {
 	switch o {
-	case OriginUnknown, OriginMatchCandidate, OriginWorkflowAlias:
+	case OriginMatchCandidate, OriginWorkflowAlias:
 		return true
 	default:
 		return false
@@ -90,6 +86,8 @@ var (
 	// different request. Retries of the same operation are idempotent, but a key
 	// reused for a different target, reason, actor or source is a conflict.
 	ErrMappingDecisionKeyConflict = errors.New("mapping decision idempotency key is already bound to another request")
+	ErrMappingDecisionKeyRequired = errors.New("mapping decision idempotency key is required")
+	ErrMappingDecisionOriginRequired = errors.New("mapping decision source origin is required")
 	// ErrMappingDecisionExpectationRequired rejects a manual confirmation that
 	// would replace an existing current decision while the caller did not state
 	// which decision it observed. Observed state must be explicit, not inferred
@@ -173,11 +171,10 @@ type MappingDecision struct {
 	EvidenceID         *uuid.UUID
 	DecidedAt          time.Time
 	DecidedBy          *uuid.UUID
-	// IdempotencyKey deduplicates a retried decision operation. It is optional
-	// for internal/legacy paths but unique per workspace when present.
+	// IdempotencyKey deduplicates a retried decision operation and is required
+	// for every current decision command.
 	IdempotencyKey string
-	// SourceOrigin records how the decision entered the platform. Legacy rows
-	// are explicitly UNKNOWN.
+	// SourceOrigin records the explicit current source of the decision.
 	SourceOrigin SourceOrigin
 	// SourceJobID and SourceCandidateID associate the decision with the entity
 	// matching activity that produced it, when one can be proven.
@@ -357,9 +354,6 @@ func EnsureMappingDecisionExpectation(currentDecisionID *uuid.UUID, expectCurren
 func MappingDecisionMatchesRequest(existing MappingDecision, cmd MappingDecisionCommand) bool {
 	mapping := cmd.Mapping
 	origin := cmd.SourceOrigin
-	if origin == "" {
-		origin = OriginUnknown
-	}
 	return existing.EntityID == mapping.EntityID &&
 		existing.SourceType == mapping.SourceType &&
 		existing.SourceRef == mapping.SourceRef &&
@@ -380,12 +374,12 @@ func MappingDecisionMatchesRequest(existing MappingDecision, cmd MappingDecision
 		SameMappingDecision(existing.SourceCandidateID, cmd.SourceCandidateID)
 }
 
-// NormalizeMappingDecisionKey trims an optional idempotency key and rejects keys
-// that are too long to store. An empty key is valid and means "not idempotent".
+// NormalizeMappingDecisionKey trims the required idempotency key and rejects
+// missing or oversized keys.
 func NormalizeMappingDecisionKey(value string) (string, error) {
 	value = strings.TrimSpace(value)
 	if value == "" {
-		return "", nil
+		return "", ErrMappingDecisionKeyRequired
 	}
 	if len(value) > 255 {
 		return "", ErrMappingDecisionKeyConflict
