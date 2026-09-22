@@ -154,7 +154,7 @@ func (s *Service) transition(ctx context.Context, cmd TransitionCommand, auditAc
 		return domain.Authorization{}, err
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if err := s.repo.SaveAuthorizationState(ctx, tx, authorization); err != nil {
+		if err := s.repo.SaveAuthorizationState(ctx, tx, authorization, before); err != nil {
 			return err
 		}
 		if err := appendEvent(ctx, tx, "AUTHORIZATION", authorization.ID, eventType, map[string]any{
