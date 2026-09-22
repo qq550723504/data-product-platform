@@ -9,14 +9,16 @@ import (
 	"github.com/hibiken/asynq"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 )
 
 type Handler struct {
-	service *workflowapp.ExecutionService
-	repo    *workflowinfra.PostgresRepository
-	native  workflowapp.ProcessingEngine
-	managed map[string]workflowapp.ManagedExecutionBridge
+	service      *workflowapp.ExecutionService
+	repo         *workflowinfra.PostgresRepository
+	native       workflowapp.ProcessingEngine
+	nativeLocker workflowapp.NativeRecoveryLocker
+	managed      map[string]workflowapp.ManagedExecutionBridge
 }
 
 func NewHandler(service *workflowapp.ExecutionService, repo *workflowinfra.PostgresRepository, native workflowapp.ProcessingEngine, managed ...workflowapp.ManagedExecutionBridge) *Handler {
@@ -31,6 +33,11 @@ func NewHandler(service *workflowapp.ExecutionService, repo *workflowinfra.Postg
 		}
 	}
 	return &Handler{service: service, repo: repo, native: native, managed: registry}
+}
+
+func (h *Handler) WithNativeExecutionLocker(locker workflowapp.NativeRecoveryLocker) *Handler {
+	h.nativeLocker = locker
+	return h
 }
 
 func (h *Handler) Handle(ctx context.Context, task *asynq.Task) error {
@@ -157,6 +164,21 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 }
 
 func (h *Handler) executeNative(ctx context.Context, execution domain.Execution, request workflowapp.ProcessingRequest) error {
+	if h.nativeLocker == nil {
+		return h.executeNativeLocked(ctx, execution, request)
+	}
+	err := h.nativeLocker.WithAdvisoryLock(ctx, workflowapp.NativeExecutionLockKey(execution.ID), func(ctx context.Context) error {
+		return h.executeNativeLocked(ctx, execution, request)
+	})
+	if errors.Is(err, transaction.ErrAdvisoryLockBusy) {
+		// Another worker/reconciler owns this exact Core Execution. Duplicate
+		// delivery is a no-op; the current owner will converge the state.
+		return nil
+	}
+	return err
+}
+
+func (h *Handler) executeNativeLocked(ctx context.Context, execution domain.Execution, request workflowapp.ProcessingRequest) error {
 	if h.native == nil {
 		return fmt.Errorf("native processing engine is not configured")
 	}
