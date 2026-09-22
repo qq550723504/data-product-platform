@@ -125,7 +125,6 @@ func TestNativeReconcilerFinalizesReadyOutputAfterCrash(t *testing.T) {
 	}
 }
 
-
 func TestNativeReconcilerAccountsFailedRecoveryInvocation(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
@@ -209,7 +208,8 @@ func TestNativeReconcilerAccountsFailedRecoveryInvocation(t *testing.T) {
 	}
 }
 
-
 type errEngineMustNotRun struct{}
 
-func (errEngineMustNotRun) Error() string { return "native engine must not execute when READY output already exists" }
+func (errEngineMustNotRun) Error() string {
+	return "native engine must not execute when READY output already exists"
+}
