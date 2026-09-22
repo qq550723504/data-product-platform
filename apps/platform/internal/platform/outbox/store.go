@@ -129,4 +129,3 @@ func Append(ctx context.Context, tx pgx.Tx, event Event) error {
 	}
 	return nil
 }
-
