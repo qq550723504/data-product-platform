@@ -70,8 +70,9 @@ type DirectDataCommand struct {
 	Purpose              string
 	Action               string
 	ScopeType            string
-	ScopeRef             string
-	IdempotencyKey       string
+	ScopeRef                   string
+	RetryOfDeliveryOperationID *uuid.UUID
+	IdempotencyKey             string
 	TraceID              string
 }
 
@@ -153,6 +154,24 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 			}
 		}
 
+		if cmd.RetryOfDeliveryOperationID != nil {
+			prior, err := s.repo.GetOperation(ctx, tx, *cmd.RetryOfDeliveryOperationID, false)
+			if err != nil {
+				return fmt.Errorf("%w: retry_of delivery operation is not available", domain.ErrInvalidOperation)
+			}
+			if prior.Status != domain.StatusIssued ||
+				prior.WorkspaceID != cmd.WorkspaceID ||
+				prior.DatasetVersionID != cmd.DatasetVersionID ||
+				prior.PrincipalRef != strings.TrimSpace(cmd.PrincipalRef) ||
+				prior.EffectiveConsumerRef != strings.TrimSpace(cmd.EffectiveConsumerRef) ||
+				prior.Purpose != strings.TrimSpace(cmd.Purpose) ||
+				prior.Action != strings.TrimSpace(cmd.Action) ||
+				prior.DeliveryChannel != directDataChannel ||
+				prior.DeliveryMode != directDataMode {
+				return fmt.Errorf("%w: retry_of must reference the same caller/context and an ISSUED DIRECT_DATA attempt", domain.ErrInvalidOperation)
+			}
+		}
+
 		revision, err := s.repo.LockFence(ctx, tx, cmd.WorkspaceID)
 		if err != nil {
 			return err
@@ -202,6 +221,7 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 			return err
 		}
 		operation.ID = candidateID
+		operation.RetryOfDeliveryOperationID = cmd.RetryOfDeliveryOperationID
 		operation.DependencyRevision = evaluation.DependencyRevision
 		operation.FreshCapExpiresAt = evaluation.FreshCapExpiresAt
 		operation.CurrentGateDecision = evaluation.Decision()
@@ -291,6 +311,9 @@ func validateDirectDataCommand(cmd DirectDataCommand) error {
 		strings.TrimSpace(cmd.IdempotencyKey) == "" || len(cmd.IdempotencyKey) > 255 {
 		return domain.ErrInvalidOperation
 	}
+	if cmd.RetryOfDeliveryOperationID != nil && *cmd.RetryOfDeliveryOperationID == uuid.Nil {
+		return fmt.Errorf("%w: retryOfDeliveryOperationId must be a non-nil UUID", domain.ErrInvalidOperation)
+	}
 	if strings.ToUpper(strings.TrimSpace(cmd.ScopeType)) != "ALL_RESOURCE" {
 		return fmt.Errorf("%w: DIRECT_DATA first slice supports only ALL_RESOURCE scope", domain.ErrInvalidOperation)
 	}
@@ -314,12 +337,13 @@ func directDataFingerprint(cmd DirectDataCommand) (string, error) {
 		Purpose          string    `json:"purpose"`
 		Action           string    `json:"action"`
 		ScopeType        string    `json:"scopeType"`
-		ScopeRef         string    `json:"scopeRef,omitempty"`
+		ScopeRef         string     `json:"scopeRef,omitempty"`
+		RetryOf          *uuid.UUID `json:"retryOfDeliveryOperationId,omitempty"`
 	}{
 		cmd.WorkspaceID, cmd.DatasetVersionID, cmd.ProfileID,
 		strings.TrimSpace(cmd.PrincipalRef), strings.TrimSpace(cmd.EffectiveConsumerRef),
 		strings.ToUpper(strings.TrimSpace(cmd.Purpose)), strings.ToUpper(strings.TrimSpace(cmd.Action)),
-		strings.ToUpper(strings.TrimSpace(cmd.ScopeType)), "",
+		strings.ToUpper(strings.TrimSpace(cmd.ScopeType)), "", cmd.RetryOfDeliveryOperationID,
 	}
 	encoded, err := json.Marshal(payload)
 	if err != nil {
