@@ -145,6 +145,7 @@ func (o *Operation) Transition(to Status) error {
 	allowed := map[Status]map[Status]bool{
 		StatusPrepared: {
 			StatusIssuancePending: true,
+			StatusIssued:          true,
 			StatusBlocked:         true,
 			StatusFailed:          true,
 		},
