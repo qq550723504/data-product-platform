@@ -36,5 +36,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DO $
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM delivery_operation
+        WHERE retry_of_delivery_operation_id IS NOT NULL
+    ) THEN
+        RAISE EXCEPTION 'cannot rollback delivery retry link migration: immutable retry history exists';
+    END IF;
+END;
+$;
+
 DROP INDEX IF EXISTS idx_delivery_operation_retry_of;
 ALTER TABLE delivery_operation DROP COLUMN IF EXISTS retry_of_delivery_operation_id;
