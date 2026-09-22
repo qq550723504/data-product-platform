@@ -5,6 +5,7 @@ const phase = process.env.LIVE_BROWSER_PHASE;
 const data = JSON.parse(await readFile(process.env.LIVE_BROWSER_MANIFEST, "utf8"));
 const productPath = `/products/${data.productId}`;
 const tracePath = `${productPath}/releases/${data.releaseId}`;
+const certifiedPath = `/datasets/${data.certifiedDatasetId}/versions/${data.certifiedVersionId}`;
 
 function releaseCard(page, id) {
   return page.locator("article").filter({ has: page.locator(`input[name="releaseId"][value="${id}"]`) });
@@ -56,6 +57,45 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
     await expect(page.getByRole("heading", { name: "ProductRelease 证据链", exact: true })).toBeVisible();
     await expect(page.getByText(data.reason, { exact: true }).first()).toBeVisible();
     await expect(page.getByText("PRODUCT_RELEASE_PUBLISHED", { exact: true })).toBeVisible();
+  } else if (phase === "certified") {
+    await page.goto(certifiedPath);
+    await expect(page).toHaveURL(new RegExp(`${certifiedPath}(?:\\?.*)?$`));
+    await expect(page.getByRole("heading", { name: "DatasetVersion 质量与认证", exact: true })).toBeVisible();
+
+    await expect(page.getByText(data.certifiedVersionId, { exact: true })).toBeVisible();
+    await expect(page.getByText(data.outputChecksum, { exact: true })).toBeVisible();
+    await expect(page.locator(`a[href="/production/${data.executionId}"]`)).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: "Quality Assessment", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Quality Report", exact: true })).toBeVisible();
+    await expect(page.getByText(data.qualityAssessmentId, { exact: true })).toBeVisible();
+    const latestAssessment = page.getByRole("heading", { name: "最新评测", exact: true }).locator("xpath=ancestor::section");
+    await expect(latestAssessment.locator("tbody tr")).toHaveCount(data.qualityDimensions.length);
+    for (const dimension of data.qualityDimensions) {
+      const row = latestAssessment.locator("tbody tr").filter({ hasText: dimension });
+      await expect(row).toHaveCount(1);
+      await expect(row).toContainText("PASS");
+    }
+
+    await expect(page.getByRole("heading", { name: "Certification 历史", exact: true })).toBeVisible();
+    await expect(page.getByText("CERTIFIED", { exact: true }).first()).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: "Rights summary", exact: true })).toBeVisible();
+    await expect(page.getByText(data.effectiveRightsSnapshotId, { exact: true })).toBeVisible();
+    await expect(page.getByText(data.effectiveRightsHash, { exact: true })).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: "Evidence", exact: true })).toBeVisible();
+    await expect(page.getByText(data.certificationEvidenceSnapshotId, { exact: true }).first()).toBeVisible();
+    await expect(page.getByText(data.certificationId, { exact: true })).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: "Current Delivery Eligibility", exact: true })).toBeVisible();
+    const preflight = page.getByRole("heading", { name: "预检结果", exact: true }).locator("xpath=ancestor::section");
+    for (const gate of ["DatasetVersion usability", "Current Certification", "Current Entitlement"]) {
+      const row = preflight.locator("tbody tr").filter({ hasText: gate });
+      await expect(row).toBeVisible();
+      await expect(row).toContainText("ALLOWED");
+    }
+    await expect(preflight.getByText("BLOCKED", { exact: true })).toHaveCount(0);
   } else if (phase === "history") {
     // New browser context + fresh standalone process, reading persisted history.
     await page.goto("/evidence");
