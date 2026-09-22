@@ -62,18 +62,18 @@ type DirectDataGate interface {
 }
 
 type DirectDataCommand struct {
-	WorkspaceID          uuid.UUID
-	DatasetVersionID     uuid.UUID
-	ProfileID            uuid.UUID
-	PrincipalRef         string
-	EffectiveConsumerRef string
-	Purpose              string
-	Action               string
-	ScopeType            string
+	WorkspaceID                uuid.UUID
+	DatasetVersionID           uuid.UUID
+	ProfileID                  uuid.UUID
+	PrincipalRef               string
+	EffectiveConsumerRef       string
+	Purpose                    string
+	Action                     string
+	ScopeType                  string
 	ScopeRef                   string
 	RetryOfDeliveryOperationID *uuid.UUID
 	IdempotencyKey             string
-	TraceID              string
+	TraceID                    string
 }
 
 type DirectDataResult struct {
@@ -329,14 +329,14 @@ func directDataScopeRef(cmd DirectDataCommand) string {
 
 func directDataFingerprint(cmd DirectDataCommand) (string, error) {
 	payload := struct {
-		WorkspaceID      uuid.UUID `json:"workspaceId"`
-		DatasetVersionID uuid.UUID `json:"datasetVersionId"`
-		ProfileID        uuid.UUID `json:"profileId"`
-		PrincipalRef     string    `json:"principalRef"`
-		ConsumerRef      string    `json:"consumerRef"`
-		Purpose          string    `json:"purpose"`
-		Action           string    `json:"action"`
-		ScopeType        string    `json:"scopeType"`
+		WorkspaceID      uuid.UUID  `json:"workspaceId"`
+		DatasetVersionID uuid.UUID  `json:"datasetVersionId"`
+		ProfileID        uuid.UUID  `json:"profileId"`
+		PrincipalRef     string     `json:"principalRef"`
+		ConsumerRef      string     `json:"consumerRef"`
+		Purpose          string     `json:"purpose"`
+		Action           string     `json:"action"`
+		ScopeType        string     `json:"scopeType"`
 		ScopeRef         string     `json:"scopeRef,omitempty"`
 		RetryOf          *uuid.UUID `json:"retryOfDeliveryOperationId,omitempty"`
 	}{
