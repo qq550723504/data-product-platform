@@ -273,8 +273,208 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	if readiness.Overall != "READY" || len(readiness.Blockers) != 0 {
 		t.Fatalf("real Core not ready: %+v", readiness)
 	}
+
+	// Certified Dataset browser slice: reuse the exact real CURATED output and
+	// governance facts already prepared for the live Core scenario. This keeps
+	// the browser proof attached to the same immutable data bytes rather than a
+	// parallel fixture-only dataset.
+	effectiveRights, err := rightsService.ComputeEffectiveRights(ctx, rightsapp.ComputeEffectiveRightsCommand{
+		WorkspaceID:            workspaceID,
+		TargetDatasetVersionID: output.ID,
+		ConsumerRef:            "LICENSED_BANK",
+		Purpose:                purpose,
+		ActorID:                &seedActor,
+		TraceID:                traceID,
+	})
+	liveOK(t, err, "compute live Certified Dataset EffectiveRights")
+	if effectiveRights.Status != "FINALIZED" {
+		t.Fatalf("live Certified Dataset EffectiveRights status=%s, want FINALIZED", effectiveRights.Status)
+	}
+
+	var certificationEvidence evidence.Snapshot
+	liveOK(t, tx.Do(ctx, func(ctx context.Context, dbtx pgx.Tx) error {
+		record, err := evidence.Append(ctx, dbtx, evidence.Record{
+			WorkspaceID:  workspaceID,
+			EvidenceType: "LIVE_CERTIFIED_DATASET_TRACE",
+			Title:        "Live browser Certified Dataset trace",
+			SourceType:   "DATASET_VERSION",
+			SourceID:     &output.ID,
+			Metadata: map[string]any{
+				"executionId":               execution.ID,
+				"qualityAssessmentId":       quality.ID,
+				"effectiveRightsSnapshotId": effectiveRights.ID,
+				"productReleaseId":          release.ID,
+			},
+			CreatedBy: &seedActor,
+		}, evidence.Relation{
+			ObjectType:   "DATASET_VERSION",
+			ObjectID:     output.ID,
+			RelationType: "LIVE_CERTIFIED_DATASET_TRACE",
+		})
+		if err != nil {
+			return err
+		}
+		snapshot, err := evidence.CreateSnapshot(
+			ctx,
+			dbtx,
+			workspaceID,
+			"DATASET_VERSION",
+			output.ID,
+			map[string]any{
+				"acceptance":  "live-core-browser",
+				"executionId": execution.ID,
+			},
+			[]evidence.SnapshotItem{{EvidenceID: record.ID, Category: "TRACEABILITY"}},
+			&seedActor,
+		)
+		if err != nil {
+			return err
+		}
+		certificationEvidence = snapshot
+		return nil
+	}), "create live Certified Dataset EvidenceSnapshot")
+
+	profileRepo := certificationinfra.NewProfileRepository(pool)
+	profileService := certificationapp.NewProfileService(tx, profileRepo)
+	profile, err := profileService.Create(ctx, certificationapp.CreateProfileCommand{
+		WorkspaceID: workspaceID,
+		Profile: certificationdomain.CertificationProfile{
+			ProfileRef:            "park/live-browser-certified-v1",
+			Code:                  "LIVE-BROWSER-CERTIFIED",
+			Name:                  "Live Browser Certified Dataset",
+			Version:               "1.0.0",
+			Purpose:               certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
+			Actions:               certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
+			Consumers:             certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"LICENSED_BANK"}},
+			Delivery:              certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"DIRECT_DATA"}},
+			RequiredCriticalRules: []string{"QA-COMPANY-ID-COMPLETE"},
+			QualityGateRequired:   true,
+			Rights: certificationdomain.RightsRequirement{
+				Required:  true,
+				Purpose:   certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
+				Actions:   certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
+				Consumers: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"LICENSED_BANK"}},
+				Scopes: certificationdomain.ScopeApplicability{
+					Mode: certificationdomain.ApplicabilityExplicit,
+					Values: []certificationdomain.ScopeRef{
+						{Type: "ALL_RESOURCE", Ref: enterpriseResource.ID.String()},
+						{Type: "ALL_RESOURCE", Ref: leaseResource.ID.String()},
+						{Type: "ALL_RESOURCE", Ref: energyResource.ID.String()},
+					},
+				},
+			},
+			ComplianceRequired:   true,
+			ContractRequired:     true,
+			ContractCode:         "DP-ENTERPRISE-ACTIVITY",
+			TraceabilityRequired: true,
+			EvidenceRequired:     true,
+		},
+		ActorID: &seedActor,
+		TraceID: traceID,
+	})
+	liveOK(t, err, "create live Certified Dataset CertificationProfile")
+
+	certificationRepo := certificationinfra.NewCertificationRepository(pool)
+	certificationService := certificationapp.NewCertificationService(
+		tx,
+		profileRepo,
+		certificationRepo,
+		pilotCertificationResolver{input: certificationdomain.EvaluationInput{
+			WorkspaceID:      workspaceID,
+			DatasetVersionID: output.ID,
+			Quality:          certificationdomain.QualityAssessmentEvidence{ID: quality.ID},
+			Rights: &certificationdomain.RightsEvidence{
+				RightsSnapshotID:          snapshot.ID,
+				EffectiveRightsSnapshotID: effectiveRights.ID,
+			},
+			Compliance:   &certificationdomain.ComplianceEvidence{ID: compliance.ID},
+			Contract:     &certificationdomain.ContractEvidence{ID: contract.ID},
+			Traceability: &certificationdomain.TraceabilityEvidence{ID: certificationEvidence.ID},
+			Evidence:     &certificationdomain.EvidenceSnapshot{ID: certificationEvidence.ID},
+			ActorID:      &seedActor,
+		}},
+	)
+	certification, err := certificationService.Evaluate(ctx, certificationapp.EvaluateDatasetCertificationCommand{
+		WorkspaceID:      workspaceID,
+		DatasetVersionID: output.ID,
+		ProfileID:        profile.ID,
+		IdempotencyKey:   "live-browser-certification-" + suffix,
+		ActorID:          &seedActor,
+		TraceID:          traceID,
+	})
+	liveOK(t, err, "certify live DatasetVersion")
+	if certification.Decision != certificationdomain.DecisionCertified {
+		t.Fatalf("live DatasetCertification=%s blockers=%+v, want CERTIFIED", certification.Decision, certification.Blockers)
+	}
+
+	eligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsinfra.NewPostgresRepository(pool))
+	eligibilityResult, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
+		WorkspaceID:      workspaceID,
+		DatasetVersionID: output.ID,
+		ProfileID:        profile.ID,
+		Consumer:         "LICENSED_BANK",
+		Purpose:          purpose,
+		Action:           "READ",
+		Delivery:         "DIRECT_DATA",
+		ScopeType:        "ALL_RESOURCE",
+		ScopeRef:         output.ID.String(),
+		AsOf:             time.Now().UTC(),
+	})
+	liveOK(t, err, "check live Certified Dataset delivery eligibility")
+	if !eligibilityResult.Allowed {
+		t.Fatalf("live Current Delivery Eligibility blocked: %+v", eligibilityResult.Blockers)
+	}
+
+	directData := deliveryapp.NewDirectDataService(
+		tx,
+		deliveryinfra.NewPostgresRepository(pool),
+		deliveryapp.NewCertificationDirectDataGate(eligibility),
+		datasetRepo,
+	)
+	delivered, err := directData.Deliver(ctx, deliveryapp.DirectDataCommand{
+		WorkspaceID:          workspaceID,
+		DatasetVersionID:     output.ID,
+		ProfileID:            profile.ID,
+		PrincipalRef:         "live-browser-certified-principal",
+		EffectiveConsumerRef: "LICENSED_BANK",
+		Purpose:              purpose,
+		Action:               "READ",
+		ScopeType:            "ALL_RESOURCE",
+		ScopeRef:             output.ID.String(),
+		IdempotencyKey:       "live-browser-certified-delivery-" + suffix,
+		TraceID:              traceID,
+	})
+	liveOK(t, err, "deliver live Certified Dataset")
+	if delivered.Operation.Status != deliverydomain.StatusIssued || !delivered.PayloadReady || delivered.DatasetVersion.ID != output.ID {
+		t.Fatalf("live Certified Dataset delivery=%+v", delivered)
+	}
+	deliveredBytes := readLiveObject(t, ctx, store, delivered.DatasetVersion.StorageURI)
+	deliveredHash := sha256.Sum256(deliveredBytes)
+	deliveredSHA256 := hex.EncodeToString(deliveredHash[:])
+	if !strings.EqualFold(deliveredSHA256, output.ChecksumValue) {
+		t.Fatalf("delivered Certified Dataset checksum=%s, persisted=%s", deliveredSHA256, output.ChecksumValue)
+	}
+	if delivered.Operation.CertificationRef == nil || *delivered.Operation.CertificationRef != certification.ID {
+		t.Fatalf("live delivery certification=%v, want %s", delivered.Operation.CertificationRef, certification.ID)
+	}
+
 	manifest["productId"], manifest["releaseId"], manifest["blockedReleaseId"] = product.ID, release.ID, blocked.ID
 	manifest["executionId"], manifest["outputVersionId"] = execution.ID, output.ID
+	manifest["datasetId"] = curated.ID
+	manifest["qualityAssessmentId"] = quality.ID
+	manifest["certificationId"] = certification.ID
+	manifest["certificationProfileId"] = profile.ID
+	manifest["certificationProfileName"] = profile.Name
+	manifest["effectiveRightsSnapshotId"] = effectiveRights.ID
+	manifest["certificationEvidenceSnapshotId"] = certificationEvidence.ID
+	manifest["rightsSnapshotId"] = snapshot.ID
+	manifest["deliveryOperationId"] = delivered.Operation.ID
+	manifest["deliveredSha256"] = deliveredSHA256
+	manifest["datasetChecksum"] = output.ChecksumValue
+	manifest["qualityDimensions"] = []string{"completeness", "accuracy", "consistency", "validity", "uniqueness", "timeliness"}
+
+	runLiveBrowser(t, ctx, "certified", manifest, artifacts)
+
 	frozenQuery := `SELECT jsonb_build_object('productVersion', (SELECT to_jsonb(p) FROM product_version p WHERE id=$1), 'datasets', (SELECT jsonb_agg(to_jsonb(v) ORDER BY id) FROM dataset_version v WHERE id=ANY($2::uuid[])))`
 	frozenIDs := []uuid.UUID{enterpriseVersion.ID, leaseVersion.ID, energyVersion.ID, *job.OutputDatasetVersionID, output.ID}
 	var frozenBefore []byte
