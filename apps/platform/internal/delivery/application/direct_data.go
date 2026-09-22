@@ -298,9 +298,9 @@ func validateDirectDataCommand(cmd DirectDataCommand) error {
 }
 
 func directDataScopeRef(cmd DirectDataCommand) string {
-	if ref := strings.TrimSpace(cmd.ScopeRef); ref != "" {
-		return ref
-	}
+	// The first DIRECT_DATA slice supports only ALL_RESOURCE. Persist the
+	// platform-owned target identity rather than a client-provided scopeRef that
+	// the entitlement gate would not use for this scope mode.
 	return cmd.DatasetVersionID.String()
 }
 
@@ -319,7 +319,7 @@ func directDataFingerprint(cmd DirectDataCommand) (string, error) {
 		cmd.WorkspaceID, cmd.DatasetVersionID, cmd.ProfileID,
 		strings.TrimSpace(cmd.PrincipalRef), strings.TrimSpace(cmd.EffectiveConsumerRef),
 		strings.ToUpper(strings.TrimSpace(cmd.Purpose)), strings.ToUpper(strings.TrimSpace(cmd.Action)),
-		strings.ToUpper(strings.TrimSpace(cmd.ScopeType)), strings.TrimSpace(cmd.ScopeRef),
+		strings.ToUpper(strings.TrimSpace(cmd.ScopeType)), "",
 	}
 	encoded, err := json.Marshal(payload)
 	if err != nil {
