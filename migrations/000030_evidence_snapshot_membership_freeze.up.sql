@@ -39,7 +39,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION require_evidence_snapshot_finalized_on_commit()
-RETURNS trigger AS $
+RETURNS trigger AS $finalize$
 DECLARE
     current_status varchar(16);
 BEGIN
@@ -52,7 +52,7 @@ BEGIN
     END IF;
     RETURN NULL;
 END;
-$ LANGUAGE plpgsql;
+$finalize$ LANGUAGE plpgsql;
 
 CREATE CONSTRAINT TRIGGER trg_evidence_snapshot_finalized_on_commit
 AFTER INSERT ON evidence_snapshot
