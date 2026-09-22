@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -395,6 +396,129 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		certification.EvidenceSnapshotID == nil || *certification.EvidenceSnapshotID != supportingEvidence.ID {
 		t.Fatalf("pilot certification did not freeze expected rights/evidence facts: %+v", certification)
 	}
+
+	t.Run("rule and profile changes do not rewrite historical explanation", func(t *testing.T) {
+		originalPolicy := readRepoFile(t, "industry-packs", "park", "quality", "enterprise-activity-quality-v1.yaml")
+		modifiedPolicy := bytes.Replace(originalPolicy, []byte("version: 2.0.0"), []byte("version: 9.9.9"), 1)
+		if bytes.Equal(modifiedPolicy, originalPolicy) {
+			t.Fatal("pilot quality policy fixture version replacement did not change content")
+		}
+		mutatedIndustryPackRoot := t.TempDir()
+		mutatedPolicyPath := filepath.Join(mutatedIndustryPackRoot, "park", "quality", "enterprise-activity-quality-v1.yaml")
+		if err := os.MkdirAll(filepath.Dir(mutatedPolicyPath), 0o755); err != nil {
+			t.Fatalf("create mutated quality policy directory: %v", err)
+		}
+		if err := os.WriteFile(mutatedPolicyPath, modifiedPolicy, 0o644); err != nil {
+			t.Fatalf("write mutated quality policy: %v", err)
+		}
+
+		mutatedQualityService := qualityapp.NewService(
+			mutatedIndustryPackRoot,
+			txManager,
+			datasetRepo,
+			qualityRepo,
+			store,
+			evidence.NewQueryRepository(pool),
+		)
+		mutatedQuality, err := mutatedQualityService.Run(ctx, qualityapp.RunCommand{
+			WorkspaceID:      workspaceID,
+			DatasetVersionID: outputVersion.ID,
+			RuleSetRef:       qualityRuleSetRef,
+			ActorID:          &actorID,
+			TraceID:          traceID,
+			Now:              outputVersion.ReadyAt.Add(30 * time.Minute),
+		})
+		if err != nil {
+			t.Fatalf("run mutated-rule QualityAssessment: %v", err)
+		}
+		if mutatedQuality.ID == qualityResult.ID ||
+			mutatedQuality.RuleSetVersion != "9.9.9" ||
+			mutatedQuality.RuleSetContentSHA256 == qualityResult.RuleSetContentSHA256 {
+			t.Fatalf("mutated quality facts = id %s version %s hash %s; original id %s version %s hash %s",
+				mutatedQuality.ID, mutatedQuality.RuleSetVersion, mutatedQuality.RuleSetContentSHA256,
+				qualityResult.ID, qualityResult.RuleSetVersion, qualityResult.RuleSetContentSHA256)
+		}
+
+		storedOriginalQuality, err := qualityRepo.GetAssessment(ctx, qualityResult.ID)
+		if err != nil {
+			t.Fatalf("reload original QualityAssessment after rule change: %v", err)
+		}
+		if storedOriginalQuality.RuleSetVersion != qualityResult.RuleSetVersion ||
+			storedOriginalQuality.RuleSetContentSHA256 != qualityResult.RuleSetContentSHA256 ||
+			storedOriginalQuality.RuleSetContent != qualityResult.RuleSetContent {
+			t.Fatalf("historical QualityAssessment drifted after source rule change: stored=%s/%s original=%s/%s",
+				storedOriginalQuality.RuleSetVersion, storedOriginalQuality.RuleSetContentSHA256,
+				qualityResult.RuleSetVersion, qualityResult.RuleSetContentSHA256)
+		}
+
+		profileV2Spec := profile.CertificationProfile
+		profileV2Spec.Version = "2.0.0"
+		profileV2Spec.RequiredCriticalRules = []string{"QA-COMPANY-ID-COMPLETE", "QA-FRESHNESS"}
+		profileV2, err := profileService.Create(ctx, certificationapp.CreateProfileCommand{
+			WorkspaceID: workspaceID,
+			Profile:     profileV2Spec,
+			ActorID:     &actorID,
+			TraceID:     traceID,
+		})
+		if err != nil {
+			t.Fatalf("create evolved CertificationProfile: %v", err)
+		}
+		if profileV2.ID == profile.ID || profileV2.ContentSHA256 == profile.ContentSHA256 {
+			t.Fatalf("evolved CertificationProfile did not create a distinct frozen snapshot: v1=%s/%s v2=%s/%s",
+				profile.ID, profile.ContentSHA256, profileV2.ID, profileV2.ContentSHA256)
+		}
+
+		storedOriginalProfile, err := profileRepo.GetProfile(ctx, profile.ID)
+		if err != nil {
+			t.Fatalf("reload original CertificationProfile after V2 creation: %v", err)
+		}
+		if storedOriginalProfile.Version != profile.Version ||
+			storedOriginalProfile.ContentSHA256 != profile.ContentSHA256 ||
+			!bytes.Equal(storedOriginalProfile.Content, profile.Content) {
+			t.Fatalf("historical CertificationProfile drifted after V2 creation: stored=%s/%s original=%s/%s",
+				storedOriginalProfile.Version, storedOriginalProfile.ContentSHA256,
+				profile.Version, profile.ContentSHA256)
+		}
+
+		history, err := certificationService.ListDatasetHistory(ctx, workspaceID, outputVersion.ID, time.Now().UTC())
+		if err != nil {
+			t.Fatalf("read certification history after profile/rule changes: %v", err)
+		}
+		found := false
+		for _, item := range history {
+			if item.Certification.ID != certification.ID {
+				continue
+			}
+			found = true
+			if item.Certification.QualityAssessmentID != qualityResult.ID ||
+				item.Certification.Profile.ID != profile.ID ||
+				item.Certification.Profile.Version != "1.0.0" ||
+				item.Certification.Profile.ContentSHA256 != profile.ContentSHA256 ||
+				!bytes.Equal(item.Certification.Profile.Content, profile.Content) {
+				t.Fatalf("historical DatasetCertification explanation drifted: %+v", item.Certification)
+			}
+		}
+		if !found {
+			t.Fatalf("historical DatasetCertification %s disappeared after rule/profile evolution", certification.ID)
+		}
+
+		current, err := certificationService.CheckCurrent(ctx, certificationapp.CurrentCertificationQuery{
+			WorkspaceID:      workspaceID,
+			DatasetVersionID: outputVersion.ID,
+			ProfileID:        profile.ID,
+			AsOf:             time.Now().UTC(),
+			DeliveryContext: certificationdomain.DeliveryContext{
+				Purpose: purpose, Action: "READ", Consumer: "LICENSED_BANK", Delivery: "DIRECT_DATA",
+			},
+		})
+		if err != nil {
+			t.Fatalf("check original current certification after rule/profile evolution: %v", err)
+		}
+		if current.Certification.ID != certification.ID || !current.Gate.Allowed {
+			t.Fatalf("original current certification changed after rule/profile evolution: id=%s allowed=%v blockers=%+v",
+				current.Certification.ID, current.Gate.Allowed, current.Gate.Blockers)
+		}
+	})
 
 	baseCertificationInput := certificationdomain.EvaluationInput{
 		WorkspaceID:      workspaceID,
