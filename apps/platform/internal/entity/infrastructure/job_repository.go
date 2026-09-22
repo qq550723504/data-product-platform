@@ -200,13 +200,16 @@ func (r *PostgresRepository) ListCandidates(ctx context.Context, jobID uuid.UUID
 }
 
 func (r *PostgresRepository) CompleteJob(ctx context.Context, tx pgx.Tx, jobID, outputVersionID uuid.UUID) error {
-	_, err := tx.Exec(ctx, `
+	tag, err := tx.Exec(ctx, `
 		UPDATE entity_match_job
 		SET status='SUCCEEDED', output_dataset_version_id=$2, finished_at=now()
-		WHERE id=$1 AND status='RUNNING'
+		WHERE id=$1 AND status='RUNNING' AND output_dataset_version_id IS NULL
 	`, jobID, outputVersionID)
 	if err != nil {
 		return fmt.Errorf("complete entity match job: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return domain.ErrMatchJobFinalizeConflict
 	}
 	return nil
 }
