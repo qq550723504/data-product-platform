@@ -2,6 +2,9 @@ package migration_test
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"strings"
 	"testing"
@@ -11,9 +14,45 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+func TestEvidenceSnapshotMigrationBackfillsExistingImmutableSnapshot(t *testing.T) {
+	pool := scratchDatabase(t, 29)
+	ctx := context.Background()
+
+	snapshotID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO evidence_snapshot (
+			id, workspace_id, object_type, object_id, manifest, root_hash
+		) VALUES ($1,$2,'DATASET_VERSION',$3,'{"evidenceItems":[]}'::jsonb,$4)
+	`, snapshotID, uuid.New(), uuid.New(), strings.Repeat("a", 64)); err != nil {
+		t.Fatalf("insert pre-000030 snapshot: %v", err)
+	}
+
+	if err := tryApplyMigrationFile(t, pool, 30, "up"); err != nil {
+		t.Fatalf("apply EvidenceSnapshot freeze migration over historical row: %v", err)
+	}
+
+	var status string
+	var hashPayload []byte
+	if err := pool.QueryRow(ctx, `
+		SELECT status, manifest_hash_payload
+		FROM evidence_snapshot
+		WHERE id=$1
+	`, snapshotID).Scan(&status, &hashPayload); err != nil {
+		t.Fatalf("read backfilled snapshot: %v", err)
+	}
+	if status != "FINALIZED" {
+		t.Fatalf("backfilled snapshot status = %s, want FINALIZED", status)
+	}
+	if len(hashPayload) != 0 {
+		t.Fatalf("historical snapshot unexpectedly gained hash payload: %x", hashPayload)
+	}
+}
+
 func TestEvidenceSnapshotBuildingCannotCommit(t *testing.T) {
 	pool := scratchDatabase(t, 30)
 	ctx := context.Background()
+	manifest := map[string]any{"evidenceItems": []any{}}
+	payload, rootHash := snapshotManifestHashFixture(t, manifest)
 
 	tx, err := pool.Begin(ctx)
 	if err != nil {
@@ -22,9 +61,9 @@ func TestEvidenceSnapshotBuildingCannotCommit(t *testing.T) {
 	snapshotID := uuid.New()
 	if _, err := tx.Exec(ctx, `
 		INSERT INTO evidence_snapshot (
-			id, workspace_id, object_type, object_id, manifest, root_hash
-		) VALUES ($1,$2,'DATASET_VERSION',$3,'{"evidenceItems":[]}'::jsonb,$4)
-	`, snapshotID, uuid.New(), uuid.New(), strings.Repeat("a", 64)); err != nil {
+			id, workspace_id, object_type, object_id, manifest, root_hash, manifest_hash_payload
+		) VALUES ($1,$2,'DATASET_VERSION',$3,$4::jsonb,$5,$6)
+	`, snapshotID, uuid.New(), uuid.New(), string(payload), rootHash, payload); err != nil {
 		_ = tx.Rollback(ctx)
 		t.Fatalf("insert BUILDING snapshot: %v", err)
 	}
@@ -37,6 +76,37 @@ func TestEvidenceSnapshotBuildingCannotCommit(t *testing.T) {
 	}
 }
 
+func TestEvidenceSnapshotInsertRejectsExplicitFinalizedState(t *testing.T) {
+	pool := scratchDatabase(t, 30)
+	ctx := context.Background()
+	payload, rootHash := snapshotManifestHashFixture(t, map[string]any{"evidenceItems": []any{}})
+
+	_, err := pool.Exec(ctx, `
+		INSERT INTO evidence_snapshot (
+			id, workspace_id, object_type, object_id, manifest, root_hash,
+			manifest_hash_payload, status
+		) VALUES ($1,$2,'DATASET_VERSION',$3,$4::jsonb,$5,$6,'FINALIZED')
+	`, uuid.New(), uuid.New(), uuid.New(), string(payload), rootHash, payload)
+	if err == nil || !strings.Contains(err.Error(), "must start BUILDING") {
+		t.Fatalf("explicit FINALIZED insert error = %v, want BUILDING-only refusal", err)
+	}
+}
+
+func TestEvidenceSnapshotInsertRejectsWrongRootHash(t *testing.T) {
+	pool := scratchDatabase(t, 30)
+	ctx := context.Background()
+	payload, _ := snapshotManifestHashFixture(t, map[string]any{"evidenceItems": []any{}})
+
+	_, err := pool.Exec(ctx, `
+		INSERT INTO evidence_snapshot (
+			id, workspace_id, object_type, object_id, manifest, root_hash, manifest_hash_payload
+		) VALUES ($1,$2,'DATASET_VERSION',$3,$4::jsonb,$5,$6)
+	`, uuid.New(), uuid.New(), uuid.New(), string(payload), strings.Repeat("f", 64), payload)
+	if err == nil || !strings.Contains(err.Error(), "root hash does not match manifest payload") {
+		t.Fatalf("wrong root hash insert error = %v, want root-hash refusal", err)
+	}
+}
+
 func TestEvidenceSnapshotMembershipParentLockSerializesFinalize(t *testing.T) {
 	pool := scratchDatabase(t, 30)
 	ctx := context.Background()
@@ -45,6 +115,12 @@ func TestEvidenceSnapshotMembershipParentLockSerializesFinalize(t *testing.T) {
 	snapshotID := uuid.New()
 	firstEvidenceID := insertSnapshotMigrationEvidence(t, pool, workspaceID, "first")
 	secondEvidenceID := insertSnapshotMigrationEvidence(t, pool, workspaceID, "second")
+	manifest := map[string]any{
+		"evidenceItems": []any{
+			map[string]any{"evidenceId": firstEvidenceID.String(), "category": "QUALITY"},
+		},
+	}
+	payload, rootHash := snapshotManifestHashFixture(t, manifest)
 
 	// BUILDING snapshots are intentionally uncommittable in production. Disable
 	// only the deferred commit guard in this isolated scratch database so the
@@ -58,18 +134,9 @@ func TestEvidenceSnapshotMembershipParentLockSerializesFinalize(t *testing.T) {
 	}
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO evidence_snapshot (
-			id, workspace_id, object_type, object_id, manifest, root_hash
-		) VALUES (
-			$1,$2,'DATASET_VERSION',$3,
-			jsonb_build_object(
-				'evidenceItems',
-				jsonb_build_array(
-					jsonb_build_object('evidenceId',$5::text,'category','QUALITY')
-				)
-			),
-			$4
-		)
-	`, snapshotID, workspaceID, uuid.New(), strings.Repeat("b", 64), firstEvidenceID); err != nil {
+			id, workspace_id, object_type, object_id, manifest, root_hash, manifest_hash_payload
+		) VALUES ($1,$2,'DATASET_VERSION',$3,$4::jsonb,$5,$6)
+	`, snapshotID, workspaceID, uuid.New(), string(payload), rootHash, payload); err != nil {
 		t.Fatalf("insert committed BUILDING snapshot fixture: %v", err)
 	}
 	if _, err := pool.Exec(ctx, `
@@ -149,6 +216,7 @@ func TestEvidenceSnapshotFinalizeRejectsManifestMembershipMismatch(t *testing.T)
 	workspaceID := uuid.New()
 	snapshotID := uuid.New()
 	evidenceID := insertSnapshotMigrationEvidence(t, pool, workspaceID, "mismatch")
+	payload, rootHash := snapshotManifestHashFixture(t, map[string]any{"evidenceItems": []any{}})
 
 	if _, err := pool.Exec(ctx, `
 		ALTER TABLE evidence_snapshot
@@ -158,9 +226,9 @@ func TestEvidenceSnapshotFinalizeRejectsManifestMembershipMismatch(t *testing.T)
 	}
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO evidence_snapshot (
-			id, workspace_id, object_type, object_id, manifest, root_hash
-		) VALUES ($1,$2,'DATASET_VERSION',$3,'{"evidenceItems":[]}'::jsonb,$4)
-	`, snapshotID, workspaceID, uuid.New(), strings.Repeat("d", 64)); err != nil {
+			id, workspace_id, object_type, object_id, manifest, root_hash, manifest_hash_payload
+		) VALUES ($1,$2,'DATASET_VERSION',$3,$4::jsonb,$5,$6)
+	`, snapshotID, workspaceID, uuid.New(), string(payload), rootHash, payload); err != nil {
 		t.Fatalf("insert BUILDING mismatch fixture: %v", err)
 	}
 	if _, err := pool.Exec(ctx, `
@@ -183,6 +251,16 @@ func TestEvidenceSnapshotFinalizeRejectsManifestMembershipMismatch(t *testing.T)
 	`, snapshotID); err == nil || !strings.Contains(err.Error(), "membership does not match manifest") {
 		t.Fatalf("mismatched finalize error = %v, want manifest membership refusal", err)
 	}
+}
+
+func snapshotManifestHashFixture(t *testing.T, manifest any) ([]byte, string) {
+	t.Helper()
+	payload, err := json.Marshal(manifest)
+	if err != nil {
+		t.Fatalf("marshal snapshot manifest fixture: %v", err)
+	}
+	digest := sha256.Sum256(payload)
+	return payload, hex.EncodeToString(digest[:])
 }
 
 func insertSnapshotMigrationEvidence(t *testing.T, pool *pgxpool.Pool, workspaceID uuid.UUID, label string) uuid.UUID {
