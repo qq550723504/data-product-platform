@@ -6,8 +6,8 @@
   事件版本兼容）已落地并通过回归测试。
   「统一 dispatcher + 版本化路由表 + 每处理器确认」（issue #103）已落地，即 §7.1 选定的模型 A，
   是 C1-d 的**前置**：`worker` 不再直连「publisher + 单闭包 handler」。
-  处理义务已在写入/首次领取时**冻结到事件上**（`000016_outbox_event_routing_obligation`），
-  重启换部署剖面不会回溯改变旧事件的原义务。
+  处理义务在写入时就**冻结到事件上**（`000016_outbox_event_routing_obligation`）；
+  dispatcher 只消费已冻结义务，不再为未冻结旧事件推导 routing contract。
   T2 已实现 C1-c（Execution 请求幂等）与 C1-d（Execution 入队经 Outbox）：
   `WORKFLOW.CREATE_EXECUTION` / `WORKFLOW.RETRY_EXECUTION` 使用请求指纹，Create/Retry
   只在事务内写入 Outbox，由 `execution-queue` handler 经真实 Redis/asynq 入队；旧的
@@ -123,8 +123,8 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
 }
 ```
 
-因此当前所有事件（含历史行）的 payload 仍是旧的平铺结构，`event_version` 只声明该结构的版本。
-引入 envelope 时必须有显式转换策略，不得把旧平铺载荷按 envelope 猜测解析。
+当前 payload contract 是平铺结构，`event_version = 1` 声明这一结构版本。
+引入 envelope 时必须显式提升版本或新增事件类型，不能猜测解析。
 
 - `outbox_event` 新增列（**已实现：`000015_outbox_delivery_hardening`**，不改写 000001）：
   - `event_version smallint NOT NULL DEFAULT 1` —— **仅表示 payload 结构版本，不是发生次数**；
@@ -133,14 +133,11 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
   - `ck_outbox_status` 扩展为包含 `DEAD_LETTER`；
   - 新索引 `idx_outbox_claimable (available_at, created_at) WHERE status IN ('PENDING','FAILED','PROCESSING')`
     以覆盖租约到期回扫（关闭 G3）。
-- **旧载荷兼容规则（硬性）**：本次硬化**不重写任何历史行**；旧事件的 `event_version`
-  取列默认值 `1`，其 payload 仍是旧的平铺结构。消费者**不得**仅凭 `event_version = 1`
-  就假定载荷已是新 envelope 而按 envelope 解析。实现按版本分派：
+- **事件版本规则**：
   - `event_version <= MaxSupportedEventVersion`（当前 `1`）按已知的平铺结构解析；
   - 更高（未知）版本**不猜测、不静默跳过**，直接以可诊断错误失败并进入退避/死信路径
-    （`unsupported outbox event version N`），handler 不被调用。
-  - 过渡期如需 envelope，属 C1-c/C1-d 的显式迁移（同 `event_type` 多版本并存或新增
-    `event_type`），不在本阶段原地改写。
+    （`unsupported outbox event version N`），handler 不被调用；
+  - 如需 envelope，必须显式提升事件版本或新增 `event_type`。
 - 事件词汇表（event vocabulary）在 `docs/architecture/` 维护：`aggregate_type`、
   `event_type`、当前 `eventVersion` 与消费者。新增事件类型必须登记。
 
@@ -267,8 +264,8 @@ T2 实现：
    续租/完成回写的行数为 0，消费确认整事务回滚（`TestLostLeaseHolderCannotOverwriteCurrentClaim`）。
 2. **毒事件死信**：连续失败达到 `MaxAttempts` 后 `DEAD_LETTER`，其后不再被 claim、
    `attempts` 不再增长（`TestPoisonEventDeadLettersAfterMaxAttempts`）。
-3. **旧事件仍可消费**：`event_version` 取默认 1 的旧平铺载荷可正常派发
-   （`TestLegacyFlatPayloadEventStaysConsumable`）。
+3. **当前 V1 payload 可消费**：`event_version = 1` 的平铺载荷可正常派发
+   （`TestVersionOnePayloadEventStaysConsumable`）。
 4. **未知版本可诊断**：`event_version = 99` 不调用 handler，进入可诊断失败并死信
    （`TestUnknownEventVersionFailsDiagnosably`）。
 5. **重复投递**：确认丢失后重投为至少一次，但每消费者只有一条消费确认
@@ -294,22 +291,20 @@ T2 实现：
    确认仅一条（`TestDispatcherRedeliveryAfterLostConfirmationKeepsSingleFact`）。
 5. **租约接管**：旧持有者既不能写处理器确认也不能置 `PUBLISHED`，状态与新 token 不被破坏
    （`TestDispatcherStaleHolderCannotConfirmAfterTakeover`）。
-6. **未声明事件类型**：不调用任何处理器，进入可诊断 `FAILED`（never silently completed）。
-7. **显式仅保留**：`RequiredHandlers` 为空的事件无处理器也能 `PUBLISHED`，且不写确认行。
+6. **显式仅保留**：`RequiredHandlers` 为空的事件无处理器也能 `PUBLISHED`，且不写确认行。
 8. **缺失处理器拒绝启动**：`NewDispatcher` 对未注册的必需处理器返回显式错误。
 9. **路由表词汇完整**：`internal/platform/routing/routing_test.go` 断言事件词汇表与路由表一一对应，
    且 OpenMetadata 开关只改变 `ProductReleased` 是否要求 `metadata-projection`，不隐式完成。
-10. **义务在事件上冻结，跨部署剖面不变**：governance 剖面首次领取 `ProductReleased` 后处理失败，
-    义务（`routing_version=c1-v3+governance`、`required_handlers=[metadata-projection]`）写入事件；
-    以 governance 关闭的剖面重启后再处理同一旧事件，它**不会**被重新解释成仅保留，也**不会**被
-    置 `PUBLISHED`，而是因为缺少 `metadata-projection` 处理器显式失败；义务前后完全一致
+9. **义务在事件上冻结，跨部署剖面不变**：governance 剖面写入 `ProductReleased` 时即冻结
+    `routing_version` 与 `required_handlers`；以 governance 关闭的剖面重启后处理同一事件时，
+    不会重新解释义务，而会在缺少必需 handler 时显式失败
     （`TestDispatcherHonoursFrozenObligationAcrossRoutingProfiles`）。
-11. **写入期冻结，先于任何派发**：通过 `outbox.Append` 记录事件时即按部署剖面冻结义务；
+10. **写入期冻结，先于任何派发**：通过 `outbox.Append` 记录事件时即按部署剖面冻结义务；
     并发的“较小处理器集合”实例即使先领取，也无法按较少处理器提前完成事件，只能显式失败
     （`TestAppendFreezesObligationBeforeAnyDispatch`）。
-12. **仅保留是显式的空集合**：retention-only 义务冻结为 `routing_version<>''` + 非 nil 空数组，
-    与“尚未冻结”（NULL）保持可区分（`TestAppendFreezesRetentionOnlyObligation`）。
-13. **未声明事件类型拒绝写入**：配置了路由表时，`outbox.Append` 对未声明类型返回显式错误
+11. **仅保留是显式的空集合**：retention-only 义务冻结为 `routing_version<>''` + 非 nil 空数组
+    （`TestAppendFreezesRetentionOnlyObligation`）。
+12. **未声明事件类型拒绝写入**：`outbox.Append` 对未声明类型或缺少 routing source 返回显式错误
     （`TestAppendRejectsUndeclaredEventType`）。
 
 ### 5.3 Handler 幂等契约
@@ -398,20 +393,13 @@ worker 装配在 `apps/platform/cmd/worker/{main.go,handlers.go}`：
   必须确认的处理器集合；`Route.RequiredHandlers` 为空是**显式的仅保留（retention-only）声明**，
   而不是「默认 `return nil`」推断出来的。未在路由表中声明的事件类型是**错误**，
   绝不被隐式完成（`TestDispatcherRefusesUndeclaredEventType`）。
-- **处理义务冻结在事件上（`000016_outbox_event_routing_obligation`）**：`outbox_event` 新增
-  `routing_version varchar(64)` 与 `required_handlers text[]`。义务在**写入事件时**由
-  `outbox.Append` 按当前部署剖面冻结；历史/未冻结事件由**首次领取**在同一事务内冻结
-  （`claimOneRouted`）。`Dispatcher` 只读事件上的冻结义务，**不**按本进程路由表重新解释，
-  因此重启换剖面或两个不同剖面的实例并存时，旧事件的原义务不会被缩减或抹掉；
-  若冻结义务要求本进程未注册的处理器，则**显式失败**而非发布。
-  `routing_version` 与 `required_handlers` 要么同时为 NULL（未冻结），要么同时非 NULL；
-  仅保留为 `routing_version<>''` + 空数组，与未冻结可区分
-  （`TestDispatcherHonoursFrozenObligationAcrossRoutingProfiles`、
-  `TestAppendFreezesObligationBeforeAnyDispatch`）。API 组合根（`cmd/api/main.go`）在启动时
-  `outbox.ConfigureAppendObligation(routing.NewRouter(cfg.OpenMetadata.Enabled))`。
-  **限制**：只有配置了 append-time obligation source 的写入路径才能避开「先领取者决定义务」的问题；
-  若某个服务未在启动时配置，事件会退回 claim-time 冻结，两个不同剖面实例谁先领取谁做主。
-  因此每个会产生 Outbox 事件的组合根（`cmd/api`、`cmd/poc-demo`、`cmd/worker`）都必须显式配置。
+- **处理义务冻结在事件上（`000016_outbox_event_routing_obligation`）**：`outbox_event` 的
+  `routing_version` 与 `required_handlers` 均为 NOT NULL。义务必须在**写入事件时**由
+  `outbox.Append` 按当前部署剖面冻结；缺少 obligation source 或未声明事件类型时写入直接失败。
+  `Dispatcher` 只读事件上的冻结义务，**不**按本进程路由表重新解释，因此跨部署 profile
+  仍保持原义务；若冻结义务要求本进程未注册的处理器，则**显式失败**而非发布。
+  仅保留事件使用 `routing_version<>''` + 空数组。所有会产生 Outbox 事件的组合根
+  （`cmd/api`、`cmd/poc-demo`、`cmd/worker`）都必须显式配置 obligation source。
 - **每处理器确认**：处理器名即 `outbox_event_consumption.consumer_name`（如 `metadata-projection`、
   `execution-queue`），键为 `(handler_name, event_id)`；确认写入按 `status='PROCESSING' AND claim_token=token`
   守卫。已确认的处理器不重跑；只有**全部**必需处理器确认后才置 `PUBLISHED`。

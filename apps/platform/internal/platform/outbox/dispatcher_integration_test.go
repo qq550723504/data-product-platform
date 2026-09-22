@@ -23,10 +23,8 @@ import (
 //     redelivery, while the confirmation stays single and the idempotent
 //     business fact is not duplicated;
 //  4. a holder whose lease was taken over can neither confirm nor publish;
-//  5. an event type absent from the routing version fails diagnosably instead
-//     of being completed implicitly;
-//  6. a declared retention-only event completes without any handler;
-//  7. an obligation frozen by one deployment profile is honoured by a later
+//  5. a declared retention-only event completes without any handler;
+//  6. an obligation frozen by one deployment profile is honoured by a later
 //     process started with a different profile and is never re-interpreted as
 //     retention-only.
 
@@ -42,17 +40,37 @@ func handlerConfirmationCount(t *testing.T, ctx context.Context, pool *pgxpool.P
 	return count
 }
 
-// loadObligation reads the obligation frozen on the event. ok is false when no
-// obligation is frozen (both columns NULL).
+// loadObligation reads the obligation frozen on the event.
 func loadObligation(t *testing.T, ctx context.Context, pool *pgxpool.Pool, eventID uuid.UUID) (version string, handlers []string, ok bool) {
 	t.Helper()
 	if err := pool.QueryRow(ctx, `
-		SELECT COALESCE(routing_version, ''), COALESCE(required_handlers, ARRAY[]::text[])
+		SELECT routing_version, required_handlers
 		FROM outbox_event WHERE id = $1
 	`, eventID).Scan(&version, &handlers); err != nil {
 		t.Fatalf("load outbox obligation: %v", err)
 	}
-	return version, handlers, version != ""
+	return version, handlers, true
+}
+
+func insertRoutedEvent(t *testing.T, ctx context.Context, pool *pgxpool.Pool, eventType, routingVersion string, handlers []string) uuid.UUID {
+	t.Helper()
+	id := uuid.New()
+	if handlers == nil {
+		handlers = []string{}
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO outbox_event (
+			id, aggregate_type, aggregate_id, event_type, payload,
+			status, attempts, available_at, created_at, routing_version, required_handlers
+		) VALUES ($1, 'TEST', $1, $2, '{"test":true}', 'PENDING', 0, now(), now() - interval '100 years', $3, $4)
+	`, id, eventType, routingVersion, handlers); err != nil {
+		t.Fatalf("insert routed outbox event: %v", err)
+	}
+	t.Cleanup(func() {
+		_, _ = pool.Exec(context.Background(), `DELETE FROM outbox_event_consumption WHERE event_id = $1`, id)
+		_, _ = pool.Exec(context.Background(), `DELETE FROM outbox_event WHERE id = $1`, id)
+	})
+	return id
 }
 
 // insertEventForAggregate lets several events share one aggregate_id while
@@ -63,8 +81,8 @@ func insertEventForAggregate(t *testing.T, ctx context.Context, pool *pgxpool.Po
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO outbox_event (
 			id, aggregate_type, aggregate_id, event_type, payload,
-			status, attempts, available_at, created_at
-		) VALUES ($1, 'TEST', $2, $3, '{"test":true}', 'PENDING', 0, now(), now() - interval '100 years')
+			status, attempts, available_at, created_at, routing_version, required_handlers
+		) VALUES ($1, 'TEST', $2, $3, '{"test":true}', 'PENDING', 0, now(), now() - interval '100 years', 'test-v1', ARRAY['counter']::text[])
 	`, id, aggregateID, eventType); err != nil {
 		t.Fatalf("insert outbox event: %v", err)
 	}
@@ -104,7 +122,7 @@ func TestDispatcherPartialFailureRetriesOnlyUnconfirmedHandlers(t *testing.T) {
 		t.Fatalf("NewDispatcher: %v", err)
 	}
 
-	eventID := insertEvent(t, ctx, pool, "DispatcherTwoHandlers")
+	eventID := insertRoutedEvent(t, ctx, pool, "DispatcherTwoHandlers", "test-v1", []string{"first", "second"})
 
 	if err := dispatcher.DispatchOnce(ctx); err != nil {
 		t.Fatalf("first dispatch: %v", err)
@@ -219,7 +237,7 @@ func TestDispatcherRedeliveryAfterLostConfirmationKeepsSingleFact(t *testing.T) 
 		t.Fatalf("NewDispatcher: %v", err)
 	}
 
-	eventID := insertEvent(t, ctx, pool, "DispatcherLostConfirmation")
+	eventID := insertRoutedEvent(t, ctx, pool, "DispatcherLostConfirmation", "test-v1", []string{"fact-writer"})
 
 	// Simulate a crash between handler success and the confirmation commit:
 	// claim, run the handler, then never confirm.
@@ -268,7 +286,7 @@ func TestDispatcherStaleHolderCannotConfirmAfterTakeover(t *testing.T) {
 		t.Fatalf("NewDispatcher: %v", err)
 	}
 
-	eventID := insertEvent(t, ctx, pool, "DispatcherTakeover")
+	eventID := insertRoutedEvent(t, ctx, pool, "DispatcherTakeover", "test-v1", []string{"h"})
 	first, err := publisher.claimOne(ctx)
 	if err != nil || first == nil {
 		t.Fatalf("first claim: event=%v err=%v", first, err)
@@ -319,7 +337,7 @@ func TestDispatcherConfirmationCannotRaceTakeover(t *testing.T) {
 	ctx := context.Background()
 	pool := newTestPool(t)
 	publisher := NewPublisher(pool, testConfig(t, nil))
-	eventID := insertEvent(t, ctx, pool, "DispatcherOverlappingConfirmation")
+	eventID := insertRoutedEvent(t, ctx, pool, "DispatcherOverlappingConfirmation", "test-v1", []string{"h"})
 
 	stale, err := publisher.claimOne(ctx)
 	if err != nil || stale == nil {
@@ -530,32 +548,6 @@ func TestOutboxObligationDownRefusesFrozenEventAndPreservesDispatch(t *testing.T
 	}
 }
 
-func TestDispatcherRefusesUndeclaredEventType(t *testing.T) {
-	ctx := context.Background()
-	pool := newTestPool(t)
-
-	router, err := NewRouter("test-v1", []Route{{EventType: "DispatcherDeclaredOnly"}})
-	if err != nil {
-		t.Fatalf("NewRouter: %v", err)
-	}
-	dispatcher, err := NewDispatcher(pool, testConfig(t, nil), router)
-	if err != nil {
-		t.Fatalf("NewDispatcher: %v", err)
-	}
-
-	eventID := insertEvent(t, ctx, pool, "DispatcherUndeclared")
-	if err := dispatcher.DispatchOnce(ctx); err != nil {
-		t.Fatalf("dispatch undeclared event: %v", err)
-	}
-	row := loadEventRow(t, ctx, pool, eventID)
-	if row.status != statusFailed {
-		t.Fatalf("status = %s, want FAILED (never silently completed)", row.status)
-	}
-	if row.lastError == nil || !strings.Contains(*row.lastError, "not declared in routing version test-v1") {
-		t.Fatalf("last_error = %v, want a diagnosable routing error", row.lastError)
-	}
-}
-
 func TestDispatcherRetentionOnlyEventCompletesWithoutHandler(t *testing.T) {
 	ctx := context.Background()
 	pool := newTestPool(t)
@@ -569,7 +561,7 @@ func TestDispatcherRetentionOnlyEventCompletesWithoutHandler(t *testing.T) {
 		t.Fatalf("NewDispatcher: %v", err)
 	}
 
-	eventID := insertEvent(t, ctx, pool, "DispatcherRetentionOnly")
+	eventID := insertRoutedEvent(t, ctx, pool, "DispatcherRetentionOnly", "test-v1", []string{})
 	if err := dispatcher.DispatchOnce(ctx); err != nil {
 		t.Fatalf("dispatch retention-only event: %v", err)
 	}
@@ -614,16 +606,15 @@ func TestDispatcherHonoursFrozenObligationAcrossRoutingProfiles(t *testing.T) {
 		t.Fatalf("NewDispatcher(governance): %v", err)
 	}
 
-	// The event is recorded before its obligation is known, so the first claimer
-	// freezes it inside the claim transaction.
-	eventID := insertEvent(t, ctx, pool, "ProductReleased")
+	// The event already carries the governance obligation frozen at append time.
+	eventID := insertRoutedEvent(t, ctx, pool, "ProductReleased", "c1-v1+governance", []string{"metadata-projection"})
 	if err := dispatcherA.DispatchOnce(ctx); err != nil {
 		t.Fatalf("governance dispatch: %v", err)
 	}
 
 	version, handlers, frozen := loadObligation(t, ctx, pool, eventID)
 	if !frozen {
-		t.Fatal("the first claim must freeze the obligation on the event")
+		t.Fatal("the event must carry a frozen obligation")
 	}
 	if version != "c1-v1+governance" {
 		t.Fatalf("frozen routing version = %q, want c1-v1+governance", version)

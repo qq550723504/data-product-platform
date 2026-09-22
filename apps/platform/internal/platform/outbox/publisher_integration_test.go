@@ -24,8 +24,8 @@ import (
 //  1. a claim holder whose lease expired cannot overwrite the result of the
 //     next claimer (claim tokens guard every terminal write);
 //  2. poison events dead-letter instead of retrying forever;
-//  3. events written before this hardening (flat payloads, version 1) stay
-//     consumable, and unknown versions fail diagnosably;
+//  3. the current version-1 payload is consumable, and unknown versions fail
+//     diagnosably;
 //  4. redelivery after a lost acknowledgement is at-least-once with exactly
 //     one per-consumer dispatch confirmation;
 //  5. handler failures never stop the run loop; fatal database conditions do.
@@ -77,8 +77,8 @@ func insertEvent(t *testing.T, ctx context.Context, pool *pgxpool.Pool, eventTyp
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO outbox_event (
 			id, aggregate_type, aggregate_id, event_type, payload,
-			status, attempts, available_at, created_at
-		) VALUES ($1, 'TEST', $1, $2, '{"test":true}', 'PENDING', 0, now(), now() - interval '100 years')
+			status, attempts, available_at, created_at, routing_version, required_handlers
+		) VALUES ($1, 'TEST', $1, $2, '{"test":true}', 'PENDING', 0, now(), now() - interval '100 years', 'test-v1', ARRAY[]::text[])
 	`, id, eventType); err != nil {
 		t.Fatalf("insert outbox event: %v", err)
 	}
@@ -241,13 +241,13 @@ func TestPoisonEventDeadLettersAfterMaxAttempts(t *testing.T) {
 	}
 }
 
-// Proof 3a: legacy flat payloads stay consumable without rewriting history.
-func TestLegacyFlatPayloadEventStaysConsumable(t *testing.T) {
+// Proof 3a: the current version-1 payload stays consumable.
+func TestVersionOnePayloadEventStaysConsumable(t *testing.T) {
 	ctx := context.Background()
 	pool := newTestPool(t)
 	publisher := NewPublisher(pool, testConfig(t, nil))
 
-	eventID := insertEvent(t, ctx, pool, "LegacyEvent")
+	eventID := insertEvent(t, ctx, pool, "VersionOneEvent")
 
 	var received []PublishedEvent
 	handler := func(_ context.Context, event PublishedEvent) error {
@@ -255,7 +255,7 @@ func TestLegacyFlatPayloadEventStaysConsumable(t *testing.T) {
 		return nil
 	}
 	if err := publisher.publishOnce(ctx, handler); err != nil {
-		t.Fatalf("dispatch legacy event: %v", err)
+		t.Fatalf("dispatch version-one event: %v", err)
 	}
 	if len(received) != 1 {
 		t.Fatalf("handler calls = %d, want 1", len(received))
@@ -265,10 +265,10 @@ func TestLegacyFlatPayloadEventStaysConsumable(t *testing.T) {
 	}
 	var payload map[string]any
 	if err := json.Unmarshal(received[0].Payload, &payload); err != nil {
-		t.Fatalf("payload is not the legacy flat json: %v", err)
+		t.Fatalf("payload is not the version-one flat json: %v", err)
 	}
 	if payload["test"] != true {
-		t.Fatalf("legacy payload contents lost: %s", received[0].Payload)
+		t.Fatalf("version-one payload contents lost: %s", received[0].Payload)
 	}
 	if row := loadEventRow(t, ctx, pool, eventID); row.status != statusPublished {
 		t.Fatalf("status = %s, want PUBLISHED", row.status)
@@ -370,8 +370,8 @@ func TestDispatchOrderIsStableByCreatedAtThenID(t *testing.T) {
 		if _, err := pool.Exec(ctx, `
 			INSERT INTO outbox_event (
 				id, aggregate_type, aggregate_id, event_type, payload,
-				status, attempts, available_at, created_at
-			) VALUES ($1, 'TEST', $1, 'OrderTest', '{"test":true}', 'PENDING', 0, now(), $2)
+				status, attempts, available_at, created_at, routing_version, required_handlers
+			) VALUES ($1, 'TEST', $1, 'OrderTest', '{"test":true}', 'PENDING', 0, now(), $2, 'test-v1', ARRAY[]::text[])
 		`, id, sameTime); err != nil {
 			t.Fatalf("insert ordered event: %v", err)
 		}

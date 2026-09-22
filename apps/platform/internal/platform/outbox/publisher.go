@@ -18,8 +18,7 @@ import (
 // MaxSupportedEventVersion is the highest payload structure version this binary
 // understands. Events with a higher version fail dispatch with a diagnosable
 // error (and eventually dead-letter) instead of being silently skipped or
-// misparsed under a newer envelope. Old events always keep version 1 and stay
-// consumable; historical payloads are never rewritten in place.
+// misparsed under a newer envelope.
 const MaxSupportedEventVersion = 1
 
 const (
@@ -129,8 +128,6 @@ type claim struct {
 	cfg   Config
 
 	// routingVersion and requiredHandlers are the event's frozen obligation.
-	// An empty routingVersion means nothing was frozen: either the event type is
-	// not declared in the resolver's routing table, or no resolver was supplied.
 	routingVersion   string
 	requiredHandlers []string
 }
@@ -208,14 +205,12 @@ func (p *Publisher) publishOnce(ctx context.Context, handler Handler) error {
 }
 
 func (p *Publisher) claimOne(ctx context.Context) (*claim, error) {
-	return p.claimOneRouted(ctx, nil)
+	return p.claimOneRouted(ctx)
 }
 
-// claimOneRouted claims the next event and, when the event carries no frozen
-// obligation yet, freezes the resolver's obligation on it in the same
-// transaction. Passing a nil resolver claims without freezing, which is only
-// appropriate when the caller does not route by handler obligation.
-func (p *Publisher) claimOneRouted(ctx context.Context, resolver ObligationSource) (*claim, error) {
+// claimOneRouted claims the next event together with the routing obligation
+// that was frozen when the event was appended.
+func (p *Publisher) claimOneRouted(ctx context.Context) (*claim, error) {
 	tx, err := p.pool.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("begin outbox claim transaction: %w", err)
@@ -247,7 +242,7 @@ func (p *Publisher) claimOneRouted(ctx context.Context, resolver ObligationSourc
 			LIMIT 1
 		)
 		RETURNING id, aggregate_type, aggregate_id, event_type, event_version, payload, attempts,
-		          COALESCE(routing_version, ''), COALESCE(required_handlers, ARRAY[]::text[])
+		          routing_version, required_handlers
 	`, statusProcessing, now.Add(p.cfg.ClaimTTL), token, p.cfg.ConsumerName,
 		statusPending, statusFailed).Scan(
 		&event.ID,
@@ -267,28 +262,6 @@ func (p *Publisher) claimOneRouted(ctx context.Context, resolver ObligationSourc
 		return nil, fmt.Errorf("claim outbox event: %w", err)
 	}
 	event.EventVersion = int(version)
-
-	if routingVersion == "" && resolver != nil {
-		if resolvedVersion, resolvedHandlers, ok := resolver.Obligation(event.EventType); ok {
-			if resolvedHandlers == nil {
-				resolvedHandlers = []string{}
-			}
-			tag, freezeErr := tx.Exec(ctx, `
-				UPDATE outbox_event
-				SET routing_version = $2,
-				    required_handlers = $3
-				WHERE id = $1
-				  AND routing_version IS NULL
-			`, event.ID, resolvedVersion, resolvedHandlers)
-			if freezeErr != nil {
-				return nil, fmt.Errorf("freeze outbox routing obligation: %w", freezeErr)
-			}
-			if tag.RowsAffected() == 1 {
-				routingVersion = resolvedVersion
-				requiredHandlers = resolvedHandlers
-			}
-		}
-	}
 
 	if err := tx.Commit(ctx); err != nil {
 		return nil, fmt.Errorf("commit outbox claim: %w", err)
