@@ -43,6 +43,7 @@ func (r *QueryRepository) GetSnapshot(ctx context.Context, snapshotID uuid.UUID)
 		return SnapshotView{}, fmt.Errorf("decode evidence snapshot manifest: %w", err)
 	}
 
+	snapshot.Items = make([]SnapshotItem, 0)
 	rows, err := r.pool.Query(ctx, `
 		SELECT evidence_id, category
 		FROM evidence_snapshot_item
