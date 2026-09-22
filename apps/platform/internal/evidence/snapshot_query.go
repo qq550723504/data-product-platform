@@ -21,7 +21,7 @@ func (r *QueryRepository) GetSnapshot(ctx context.Context, snapshotID uuid.UUID)
 	err := r.pool.QueryRow(ctx, `
 		SELECT id, workspace_id, object_type, object_id, manifest, root_hash, created_at, created_by
 		FROM evidence_snapshot
-		WHERE id=$1
+		WHERE id=$1 AND status='FINALIZED'
 	`, snapshotID).Scan(
 		&snapshot.ID,
 		&snapshot.WorkspaceID,
