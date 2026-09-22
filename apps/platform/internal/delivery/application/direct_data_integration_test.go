@@ -60,6 +60,7 @@ func (g *directIntegrationGate) EvaluateDirectData(_ context.Context, tx pgx.Tx,
 func TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload(t *testing.T) {
 	pool, ctx := directDataTestDatabase(t)
 	workspaceID, versionID := insertDirectDataFixture(t, ctx, pool)
+	profileID := insertDirectDataProfile(t, ctx, pool, workspaceID)
 	gate := &directIntegrationGate{allowed: true, certificationRef: uuid.New()}
 	service := NewDirectDataService(
 		transaction.NewManager(pool),
@@ -69,7 +70,7 @@ func TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload(t *testing.T) 
 	)
 
 	cmd := DirectDataCommand{
-		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: uuid.New(),
+		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: profileID,
 		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
 		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
 		IdempotencyKey: "direct-issued-" + uuid.NewString(), TraceID: "direct-issued",
@@ -123,6 +124,7 @@ func TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload(t *testing.T) 
 func TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked(t *testing.T) {
 	pool, ctx := directDataTestDatabase(t)
 	workspaceID, versionID := insertDirectDataFixture(t, ctx, pool)
+	profileID := insertDirectDataProfile(t, ctx, pool, workspaceID)
 	gate := &directIntegrationGate{allowed: true, certificationRef: uuid.New()}
 	service := NewDirectDataService(
 		transaction.NewManager(pool),
@@ -132,7 +134,7 @@ func TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked(t *t
 	)
 
 	base := DirectDataCommand{
-		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: uuid.New(),
+		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: profileID,
 		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
 		Purpose: " research ", Action: " read ", ScopeType: " all_resource ",
 		IdempotencyKey: " direct-first-" + uuid.NewString() + " ",
@@ -173,6 +175,13 @@ func TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked(t *t
 	if blockedEvents != 1 || gateFacts != 1 {
 		t.Fatalf("blocked facts events=%d gate_evaluations=%d", blockedEvents, gateFacts)
 	}
+	var persistedProfileID uuid.UUID
+	if err := pool.QueryRow(ctx, `SELECT certification_profile_id FROM delivery_gate_evaluation WHERE delivery_operation_id=$1 AND decision='BLOCKED'`, blocked.Operation.ID).Scan(&persistedProfileID); err != nil {
+		t.Fatal(err)
+	}
+	if persistedProfileID != profileID {
+		t.Fatalf("blocked gate profile = %s, want %s", persistedProfileID, profileID)
+	}
 	var retryOf uuid.UUID
 	if err := pool.QueryRow(ctx, `SELECT retry_of_delivery_operation_id FROM delivery_operation WHERE id=$1`, blocked.Operation.ID).Scan(&retryOf); err != nil {
 		t.Fatal(err)
@@ -186,6 +195,8 @@ func TestDirectDataReplacementRejectsUnrelatedOperation(t *testing.T) {
 	pool, ctx := directDataTestDatabase(t)
 	workspaceID, versionID := insertDirectDataFixture(t, ctx, pool)
 	otherWorkspaceID, otherVersionID := insertDirectDataFixture(t, ctx, pool)
+	profileID := insertDirectDataProfile(t, ctx, pool, workspaceID)
+	otherProfileID := insertDirectDataProfile(t, ctx, pool, otherWorkspaceID)
 	gate := &directIntegrationGate{allowed: true, certificationRef: uuid.New()}
 	service := NewDirectDataService(
 		transaction.NewManager(pool),
@@ -194,7 +205,7 @@ func TestDirectDataReplacementRejectsUnrelatedOperation(t *testing.T) {
 		datasetinfra.NewPostgresRepository(pool),
 	)
 	other, err := service.Deliver(ctx, DirectDataCommand{
-		WorkspaceID: otherWorkspaceID, DatasetVersionID: otherVersionID, ProfileID: uuid.New(),
+		WorkspaceID: otherWorkspaceID, DatasetVersionID: otherVersionID, ProfileID: otherProfileID,
 		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
 		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
 		IdempotencyKey: "direct-other-" + uuid.NewString(),
@@ -203,7 +214,7 @@ func TestDirectDataReplacementRejectsUnrelatedOperation(t *testing.T) {
 		t.Fatalf("create unrelated issued operation: %v", err)
 	}
 	_, err = service.Deliver(ctx, DirectDataCommand{
-		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: uuid.New(),
+		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: profileID,
 		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
 		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
 		RetryOfDeliveryOperationID: &other.Operation.ID,
@@ -242,6 +253,29 @@ func directDataTestDatabase(t *testing.T) (*pgxpool.Pool, context.Context) {
 	outbox.ConfigureAppendObligation(router)
 	t.Cleanup(func() { outbox.ConfigureAppendObligation(nil) })
 	return pool, ctx
+}
+
+func insertDirectDataProfile(t *testing.T, ctx context.Context, pool *pgxpool.Pool, workspaceID uuid.UUID) uuid.UUID {
+	t.Helper()
+	profileID := uuid.New()
+	snapshot := "direct-data-integration-profile"
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO certification_profile(
+			id, workspace_id, profile_ref, code, name, version,
+			content_sha256, content_snapshot,
+			purpose_mode, action_mode, consumer_mode, delivery_mode,
+			quality_gate_required, rights_required, compliance_required,
+			contract_required, contract_code, traceability_required, evidence_required
+		) VALUES(
+			$1,$2,$3,$4,'Direct data integration profile','1.0.0',
+			encode(digest(convert_to($5,'UTF8'),'sha256'),'hex'),$5,
+			'ANY','ANY','ANY','ANY',
+			false,false,false,false,NULL,false,false
+		)
+	`, profileID, workspaceID, "direct/profile/"+profileID.String(), "DIRECT-"+profileID.String(), snapshot); err != nil {
+		t.Fatalf("insert certification profile: %v", err)
+	}
+	return profileID
 }
 
 func insertDirectDataFixture(t *testing.T, ctx context.Context, pool *pgxpool.Pool) (uuid.UUID, uuid.UUID) {
