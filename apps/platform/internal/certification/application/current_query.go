@@ -6,7 +6,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
 )
 
 type CurrentCertificationQuery struct {
@@ -24,9 +26,18 @@ type CurrentCertificationResult struct {
 
 // CheckCurrent resolves current certification from append-only history. It
 // never treats the newest row as current and returns a blocked result when no
-// current certification exists. Ambiguous history is an error so callers
-// cannot accidentally turn two current facts into an authorization.
-func (s *CertificationService) CheckCurrent(ctx context.Context, query CurrentCertificationQuery) (CurrentCertificationResult, error) {
+// current certification exists. Ambiguous func (s *CertificationService) CheckCurrent(ctx context.Context, query CurrentCertificationQuery) (CurrentCertificationResult, error) {
+	return s.checkCurrent(ctx, nil, query)
+}
+
+func (s *CertificationService) CheckCurrentTx(ctx context.Context, tx pgx.Tx, query CurrentCertificationQuery) (CurrentCertificationResult, error) {
+	if tx == nil {
+		return CurrentCertificationResult{}, fmt.Errorf("certification transaction is required")
+	}
+	return s.checkCurrent(ctx, tx, query)
+}
+
+func (s *CertificationService) checkCurrent(ctx context.Context, tx pgx.Tx, query CurrentCertificationQuery) (CurrentCertificationResult, error) {
 	if query.WorkspaceID == uuid.Nil || query.DatasetVersionID == uuid.Nil || query.ProfileID == uuid.Nil {
 		return CurrentCertificationResult{}, fmt.Errorf("workspace, DatasetVersion, and profile are required")
 	}
@@ -37,14 +48,25 @@ func (s *CertificationService) CheckCurrent(ctx context.Context, query CurrentCe
 	if asOf.IsZero() {
 		asOf = time.Now().UTC()
 	}
-	profile, err := s.profileRepo.GetProfile(ctx, query.ProfileID)
+	var profile domain.ProfileSnapshot
+	var err error
+	if tx != nil {
+		profile, err = s.profileRepo.GetProfileTx(ctx, tx, query.ProfileID)
+	} else {
+		profile, err = s.profileRepo.GetProfile(ctx, query.ProfileID)
+	}
 	if err != nil {
 		return CurrentCertificationResult{}, err
 	}
 	if profile.WorkspaceID != query.WorkspaceID {
 		return CurrentCertificationResult{}, fmt.Errorf("certification profile does not belong to the query workspace")
 	}
-	history, err := s.certificationRepo.ListCertificationHistory(ctx, query.WorkspaceID, query.DatasetVersionID, query.ProfileID, asOf, profile)
+	var history infrastructure.CertificationHistory
+	if tx != nil {
+		history, err = s.certificationRepo.ListCertificationHistoryTx(ctx, tx, query.WorkspaceID, query.DatasetVersionID, query.ProfileID, asOf, profile)
+	} else {
+		history, err = s.certificationRepo.ListCertificationHistory(ctx, query.WorkspaceID, query.DatasetVersionID, query.ProfileID, asOf, profile)
+	}
 	if err != nil {
 		return CurrentCertificationResult{}, err
 	}
