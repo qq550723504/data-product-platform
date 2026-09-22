@@ -183,9 +183,9 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 		if len(currentInputs) == 0 {
 			result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_INPUTS_MISSING", Detail: "DatasetVersion has no mapped required source inputs to revalidate"})
 		} else {
-			if !certificationScopeCovers(current.Certification.Profile, query, currentInputs) {
+			if !certificationRightsContextCovers(current.Certification.Profile, query, currentInputs) {
 				result.CertificationGate.Allowed = false
-				blocker := certificationdomain.Blocker{Code: "CERTIFICATION_SCOPE_NOT_COVERED", Detail: "requested scope is outside the frozen CertificationProfile rights scope"}
+				blocker := certificationdomain.Blocker{Code: "CERTIFICATION_RIGHTS_CONTEXT_NOT_COVERED", Detail: "requested purpose, action, consumer, or scope is outside the frozen CertificationProfile rights applicability"}
 				result.CertificationGate.Blockers = append(result.CertificationGate.Blockers, blocker)
 				result.Blockers = append(result.Blockers, blocker)
 			}
@@ -222,8 +222,16 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 	return result, nil
 }
 
-func certificationScopeCovers(profile certificationdomain.ProfileSnapshot, query DeliveryEligibilityQuery, inputs []rightsinfra.LineageInput) bool {
-	if !profile.Rights.Required || profile.Rights.Scopes.Mode == certificationdomain.ApplicabilityAny {
+func certificationRightsContextCovers(profile certificationdomain.ProfileSnapshot, query DeliveryEligibilityQuery, inputs []rightsinfra.LineageInput) bool {
+	if !profile.Rights.Required {
+		return true
+	}
+	if !applicabilityCovers(profile.Rights.Purpose, query.Purpose) ||
+		!applicabilityCovers(profile.Rights.Actions, query.Action) ||
+		!applicabilityCovers(profile.Rights.Consumers, query.Consumer) {
+		return false
+	}
+	if profile.Rights.Scopes.Mode == certificationdomain.ApplicabilityAny {
 		return true
 	}
 	if profile.Rights.Scopes.Mode != certificationdomain.ApplicabilityExplicit {
@@ -256,6 +264,20 @@ func certificationScopeCovers(profile certificationdomain.ProfileSnapshot, query
 		}
 	}
 	return true
+}
+
+func applicabilityCovers(applicability certificationdomain.Applicability, requested string) bool {
+	switch applicability.Mode {
+	case certificationdomain.ApplicabilityAny:
+		return true
+	case certificationdomain.ApplicabilityExplicit:
+		for _, value := range applicability.Values {
+			if value == requested {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func sameEligibilityLineage(frozen []rightsdomain.EffectiveRightsInput, current []rightsinfra.LineageInput) bool {
