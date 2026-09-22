@@ -25,8 +25,8 @@ func (l *fakeNativeLocker) WithAdvisoryLock(ctx context.Context, _ string, fn fu
 }
 
 type fakeNativeRepo struct {
-	execution  domain.Execution
-	version    domain.WorkflowVersion
+	execution   domain.Execution
+	version     domain.WorkflowVersion
 	validateErr error
 }
 
