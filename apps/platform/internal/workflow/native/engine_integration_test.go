@@ -418,6 +418,26 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 		t.Fatalf("restore used changed policy content: company=%s indicator=%s", restoredDependencies.CompanyPolicy.Metadata.Version, restoredDependencies.IndicatorPolicy.Metadata.Version)
 	}
 
+	// Recovery replay must not duplicate negative-energy quarantine facts. The
+	// same Core Execution owns the same rejected source record identity.
+	replayed, err := engine.execute(ctx, restoreRequest)
+	if err != nil {
+		t.Fatalf("replay native execution for quarantine idempotency: %v", err)
+	}
+	if replayed.OutputDatasetVersionID != outputVersion.ID {
+		t.Fatalf("replay output = %s, want existing %s", replayed.OutputDatasetVersionID, outputVersion.ID)
+	}
+	var quarantineCountAfterReplay int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM execution_quarantine_record
+		WHERE execution_id=$1 AND reason_code='NEGATIVE_ENERGY_KWH'
+	`, execution.ID).Scan(&quarantineCountAfterReplay); err != nil {
+		t.Fatalf("count quarantine records after replay: %v", err)
+	}
+	if quarantineCountAfterReplay != 1 {
+		t.Fatalf("quarantine records after replay = %d, want 1", quarantineCountAfterReplay)
+	}
+
 	// AC5/AC6: replaying preparation reuses the alias facts, and two initial
 	// preparations for a new Execution converge on one committed set.
 	var aliasDecisionCountBefore int
