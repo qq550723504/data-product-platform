@@ -54,7 +54,6 @@ var eventVocabulary = []string{
 	"ExecutionDependenciesPrepared",
 	"ExecutionFailed",
 	"ExecutionQueued",
-	"ExecutionReconciliationQueued",
 	"ExecutionRetried",
 	"ExecutionStarted",
 	"ExecutionSubmitting",
@@ -141,7 +140,7 @@ func TestRoutesRequireExecutionQueueForNewDispatchEvents(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewRouter: %v", err)
 	}
-	for _, eventType := range []string{"ExecutionQueued", "ExecutionRetried", "ExecutionReconciliationQueued"} {
+	for _, eventType := range []string{"ExecutionQueued", "ExecutionRetried"} {
 		required, ok := router.RequiredHandlers(eventType)
 		if !ok {
 			t.Fatalf("%s must be declared even while it is retention-only", eventType)
