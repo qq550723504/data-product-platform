@@ -107,6 +107,7 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 	if s == nil || s.tx == nil || s.repo == nil || s.gate == nil || s.datasets == nil || s.now == nil {
 		return DirectDataResult{}, fmt.Errorf("direct data delivery service is not configured")
 	}
+	cmd = normalizeDirectDataCommand(cmd)
 	if err := validateDirectDataCommand(cmd); err != nil {
 		return DirectDataResult{}, err
 	}
@@ -162,10 +163,10 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 			if prior.Status != domain.StatusIssued ||
 				prior.WorkspaceID != cmd.WorkspaceID ||
 				prior.DatasetVersionID != cmd.DatasetVersionID ||
-				prior.PrincipalRef != strings.TrimSpace(cmd.PrincipalRef) ||
-				prior.EffectiveConsumerRef != strings.TrimSpace(cmd.EffectiveConsumerRef) ||
-				prior.Purpose != strings.TrimSpace(cmd.Purpose) ||
-				prior.Action != strings.TrimSpace(cmd.Action) ||
+				prior.PrincipalRef != cmd.PrincipalRef ||
+				prior.EffectiveConsumerRef != cmd.EffectiveConsumerRef ||
+				prior.Purpose != cmd.Purpose ||
+				prior.Action != cmd.Action ||
 				prior.DeliveryChannel != directDataChannel ||
 				prior.DeliveryMode != directDataMode {
 				return fmt.Errorf("%w: retry_of must reference the same caller/context and an ISSUED DIRECT_DATA attempt", domain.ErrInvalidOperation)
@@ -179,11 +180,11 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 		requestedExpiresAt := s.now().Add(directDataAuthorization)
 		gateResult, err := s.gate.EvaluateDirectData(ctx, tx, DirectDataGateRequest{
 			OperationID: candidateID, WorkspaceID: cmd.WorkspaceID, DatasetVersionID: cmd.DatasetVersionID,
-			ProfileID: cmd.ProfileID, PrincipalRef: strings.TrimSpace(cmd.PrincipalRef),
-			EffectiveConsumerRef: strings.TrimSpace(cmd.EffectiveConsumerRef),
-			Purpose:              strings.ToUpper(strings.TrimSpace(cmd.Purpose)),
-			Action:               strings.ToUpper(strings.TrimSpace(cmd.Action)),
-			ScopeType:            strings.ToUpper(strings.TrimSpace(cmd.ScopeType)), ScopeRef: cmd.DatasetVersionID.String(),
+			ProfileID: cmd.ProfileID, PrincipalRef: cmd.PrincipalRef,
+			EffectiveConsumerRef: cmd.EffectiveConsumerRef,
+			Purpose:              cmd.Purpose,
+			Action:               cmd.Action,
+			ScopeType:            cmd.ScopeType, ScopeRef: cmd.DatasetVersionID.String(),
 			DeliveryChannel: directDataChannel, DeliveryMode: directDataMode, RequestedExpiresAt: requestedExpiresAt,
 		})
 		if err != nil {
@@ -195,8 +196,8 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 		evaluation.Stage = domain.GateTerminalFinalize
 		evaluation.DependencyRevision = revision
 		if evaluation.Allowed {
-			if evaluation.PrincipalRef != strings.TrimSpace(cmd.PrincipalRef) ||
-				evaluation.EffectiveConsumerRef != strings.TrimSpace(cmd.EffectiveConsumerRef) ||
+			if evaluation.PrincipalRef != cmd.PrincipalRef ||
+				evaluation.EffectiveConsumerRef != cmd.EffectiveConsumerRef ||
 				evaluation.DelegationRef != "" {
 				return fmt.Errorf("direct data gate returned untrusted caller context")
 			}
@@ -304,6 +305,18 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 	return result, nil
 }
 
+func normalizeDirectDataCommand(cmd DirectDataCommand) DirectDataCommand {
+	cmd.PrincipalRef = strings.TrimSpace(cmd.PrincipalRef)
+	cmd.EffectiveConsumerRef = strings.TrimSpace(cmd.EffectiveConsumerRef)
+	cmd.Purpose = strings.ToUpper(strings.TrimSpace(cmd.Purpose))
+	cmd.Action = strings.ToUpper(strings.TrimSpace(cmd.Action))
+	cmd.ScopeType = strings.ToUpper(strings.TrimSpace(cmd.ScopeType))
+	cmd.ScopeRef = strings.TrimSpace(cmd.ScopeRef)
+	cmd.IdempotencyKey = strings.TrimSpace(cmd.IdempotencyKey)
+	cmd.TraceID = strings.TrimSpace(cmd.TraceID)
+	return cmd
+}
+
 func validateDirectDataCommand(cmd DirectDataCommand) error {
 	if cmd.WorkspaceID == uuid.Nil || cmd.DatasetVersionID == uuid.Nil || cmd.ProfileID == uuid.Nil ||
 		strings.TrimSpace(cmd.PrincipalRef) == "" || strings.TrimSpace(cmd.EffectiveConsumerRef) == "" ||
@@ -314,7 +327,7 @@ func validateDirectDataCommand(cmd DirectDataCommand) error {
 	if cmd.RetryOfDeliveryOperationID != nil && *cmd.RetryOfDeliveryOperationID == uuid.Nil {
 		return fmt.Errorf("%w: retryOfDeliveryOperationId must be a non-nil UUID", domain.ErrInvalidOperation)
 	}
-	if strings.ToUpper(strings.TrimSpace(cmd.ScopeType)) != "ALL_RESOURCE" {
+	if cmd.ScopeType != "ALL_RESOURCE" {
 		return fmt.Errorf("%w: DIRECT_DATA first slice supports only ALL_RESOURCE scope", domain.ErrInvalidOperation)
 	}
 	return nil
@@ -341,9 +354,9 @@ func directDataFingerprint(cmd DirectDataCommand) (string, error) {
 		RetryOf          *uuid.UUID `json:"retryOfDeliveryOperationId,omitempty"`
 	}{
 		cmd.WorkspaceID, cmd.DatasetVersionID, cmd.ProfileID,
-		strings.TrimSpace(cmd.PrincipalRef), strings.TrimSpace(cmd.EffectiveConsumerRef),
-		strings.ToUpper(strings.TrimSpace(cmd.Purpose)), strings.ToUpper(strings.TrimSpace(cmd.Action)),
-		strings.ToUpper(strings.TrimSpace(cmd.ScopeType)), "", cmd.RetryOfDeliveryOperationID,
+		cmd.PrincipalRef, cmd.EffectiveConsumerRef,
+		cmd.Purpose, cmd.Action,
+		cmd.ScopeType, "", cmd.RetryOfDeliveryOperationID,
 	}
 	encoded, err := json.Marshal(payload)
 	if err != nil {
