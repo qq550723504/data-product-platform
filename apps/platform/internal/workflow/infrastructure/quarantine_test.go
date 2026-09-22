@@ -17,25 +17,25 @@ func TestQuarantineRecordIdentityDistinguishesPayloadButDeduplicatesReplay(t *te
 	}
 
 	firstPayload, err := json.Marshal(map[string]any{
-		"meter_id":   "METER-1",
-		"reading_time": "2026-09-01T00:00:00Z",
-		"energy_kwh": "-1",
+		"meter_id":      "METER-1",
+		"reading_time":  "2026-09-01T00:00:00Z",
+		"energy_kwh":    "-1",
 	})
 	if err != nil {
 		t.Fatalf("marshal first payload: %v", err)
 	}
 	replayPayload, err := json.Marshal(map[string]any{
-		"energy_kwh": "-1",
-		"reading_time": "2026-09-01T00:00:00Z",
-		"meter_id":   "METER-1",
+		"energy_kwh":    "-1",
+		"reading_time":  "2026-09-01T00:00:00Z",
+		"meter_id":      "METER-1",
 	})
 	if err != nil {
 		t.Fatalf("marshal replay payload: %v", err)
 	}
 	distinctPayload, err := json.Marshal(map[string]any{
-		"meter_id":   "METER-1",
-		"reading_time": "2026-09-01T00:00:00Z",
-		"energy_kwh": "-2",
+		"meter_id":      "METER-1",
+		"reading_time":  "2026-09-01T00:00:00Z",
+		"energy_kwh":    "-2",
 	})
 	if err != nil {
 		t.Fatalf("marshal distinct payload: %v", err)
