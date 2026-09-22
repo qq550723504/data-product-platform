@@ -76,14 +76,13 @@ func (r *PostgresRepository) InsertDataset(ctx context.Context, tx pgx.Tx, datas
 }
 
 // AllocateVersion creates the next version row for a Dataset, or returns the row
-// already produced by the same Execution.
+// already owned by the same producer.
 //
-// generatedByExecutionID is the C2-a output idempotency key. When it is set the
-// allocation first looks for an existing (dataset_id, generated_by_execution_id)
-// row under the Dataset lock: reusing that row is what keeps a replayed output
-// write from consuming a second version number and from breaking the unique
-// index added by 000020. The returned bool reports whether an existing row was
-// reused instead of a new one being allocated.
+// Execution and EntityMatchJob are distinct producer identities and are mutually
+// exclusive. Both are written at allocation time so a replay reuses the same
+// half-product/output instead of consuming a second version number. The returned
+// bool reports whether an existing row was reused instead of a new one being
+// allocated.
 func (r *PostgresRepository) AllocateVersion(ctx context.Context, tx pgx.Tx, datasetID uuid.UUID, createdBy, generatedByExecutionID, generatedByEntityMatchJobID *uuid.UUID) (domain.DatasetVersion, bool, error) {
 	if generatedByExecutionID != nil && generatedByEntityMatchJobID != nil {
 		return domain.DatasetVersion{}, false, fmt.Errorf("dataset version cannot have both execution and entity-match producers")
@@ -213,6 +212,7 @@ func findVersionByEntityMatchJobOutputTx(ctx context.Context, tx pgx.Tx, dataset
 	}
 	return version, true, nil
 }
+
 // isExecutionOutputConflict reports a unique violation on the C2-a output index.
 func isExecutionOutputConflict(err error) bool {
 	var pgErr *pgconn.PgError
@@ -221,6 +221,7 @@ func isExecutionOutputConflict(err error) bool {
 	}
 	return pgErr.Code == "23505" && pgErr.ConstraintName == "uq_dataset_version_execution_output"
 }
+
 func isEntityMatchOutputConflict(err error) bool {
 	var pgErr *pgconn.PgError
 	if !errors.As(err, &pgErr) {
