@@ -183,6 +183,12 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 		if len(currentInputs) == 0 {
 			result.EntitlementGate.Blockers = append(result.EntitlementGate.Blockers, certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_INPUTS_MISSING", Detail: "DatasetVersion has no mapped required source inputs to revalidate"})
 		} else {
+			if !certificationScopeCovers(current.Certification.Profile, query, currentInputs) {
+				result.CertificationGate.Allowed = false
+				blocker := certificationdomain.Blocker{Code: "CERTIFICATION_SCOPE_NOT_COVERED", Detail: "requested scope is outside the frozen CertificationProfile rights scope"}
+				result.CertificationGate.Blockers = append(result.CertificationGate.Blockers, blocker)
+				result.Blockers = append(result.Blockers, blocker)
+			}
 			if current.Certification.EffectiveRightsSnapshotID != nil {
 				snapshot, err := s.rights.GetEffectiveRights(ctx, *current.Certification.EffectiveRightsSnapshotID)
 				if err != nil {
@@ -214,6 +220,42 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 	result.Blockers = append(result.Blockers, result.EntitlementGate.Blockers...)
 	result.Allowed = result.DatasetVersionGate.Allowed && result.CertificationGate.Allowed && result.EntitlementGate.Allowed
 	return result, nil
+}
+
+func certificationScopeCovers(profile certificationdomain.ProfileSnapshot, query DeliveryEligibilityQuery, inputs []rightsinfra.LineageInput) bool {
+	if !profile.Rights.Required || profile.Rights.Scopes.Mode == certificationdomain.ApplicabilityAny {
+		return true
+	}
+	if profile.Rights.Scopes.Mode != certificationdomain.ApplicabilityExplicit {
+		return false
+	}
+	for _, input := range inputs {
+		if !input.ResourceMapped || input.DataResourceID == uuid.Nil {
+			return false
+		}
+		requestedType := query.ScopeType
+		requestedRef := query.ScopeRef
+		if requestedType == "ALL_RESOURCE" {
+			requestedRef = input.DataResourceID.String()
+		}
+		covered := false
+		for _, frozen := range profile.Rights.Scopes.Values {
+			frozenType := strings.ToUpper(strings.TrimSpace(frozen.Type))
+			frozenRef := strings.TrimSpace(frozen.Ref)
+			if frozenType == requestedType && frozenRef == requestedRef {
+				covered = true
+				break
+			}
+			if frozenType == "ALL_RESOURCE" && frozenRef == input.DataResourceID.String() {
+				covered = true
+				break
+			}
+		}
+		if !covered {
+			return false
+		}
+	}
+	return true
 }
 
 func sameEligibilityLineage(frozen []rightsdomain.EffectiveRightsInput, current []rightsinfra.LineageInput) bool {
