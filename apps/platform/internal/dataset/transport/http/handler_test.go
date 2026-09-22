@@ -27,7 +27,6 @@ func TestGetVersionRequiresWorkspaceID(t *testing.T) {
 	}
 }
 
-
 func TestWriteVersionIncludesExecutionProducer(t *testing.T) {
 	executionID := uuid.New()
 	version := domain.DatasetVersion{
