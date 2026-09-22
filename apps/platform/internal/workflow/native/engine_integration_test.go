@@ -325,12 +325,24 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 		t.Fatalf("entity-resolution lineage edges = %d, want exactly one", resolutionEdges)
 	}
 
-	var costCount int
-	if err := pool.QueryRow(ctx, `SELECT count(*) FROM cost_event WHERE execution_id=$1`, execution.ID).Scan(&costCount); err != nil {
-		t.Fatalf("count cost events: %v", err)
+	var processingCostCount, invocationCostCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM cost_event
+		WHERE execution_id=$1 AND cost_type='PROCESSING_EXECUTION'
+	`, execution.ID).Scan(&processingCostCount); err != nil {
+		t.Fatalf("count processing cost events: %v", err)
 	}
-	if costCount != 1 {
-		t.Fatalf("cost events = %d, want 1", costCount)
+	if processingCostCount != 1 {
+		t.Fatalf("processing cost events = %d, want 1", processingCostCount)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM cost_event
+		WHERE execution_id=$1 AND cost_type='NATIVE_ENGINE_INVOCATION'
+	`, execution.ID).Scan(&invocationCostCount); err != nil {
+		t.Fatalf("count native invocation cost events: %v", err)
+	}
+	if invocationCostCount != 1 {
+		t.Fatalf("native invocation cost events = %d, want 1", invocationCostCount)
 	}
 
 	var evidenceCount int
