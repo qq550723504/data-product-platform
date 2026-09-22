@@ -54,6 +54,7 @@ var eventVocabulary = []string{
 	"ExecutionDependenciesPrepared",
 	"ExecutionFailed",
 	"ExecutionQueued",
+	"ExecutionRecoveryStarted",
 	"ExecutionRetried",
 	"ExecutionStarted",
 	"ExecutionSubmitting",
