@@ -10,10 +10,10 @@ import (
 )
 
 var (
-	ErrDeliveryNotConfigured      = errors.New("direct data delivery is not configured")
-	ErrCallerIdentityUntrusted    = errors.New("trusted caller identity is required")
-	ErrCallerWorkspaceDenied      = errors.New("caller is not authorized for the workspace")
-	ErrConsumerPrincipalMismatch  = errors.New("requested consumer does not match the trusted principal binding")
+	ErrDeliveryNotConfigured     = errors.New("direct data delivery is not configured")
+	ErrCallerIdentityUntrusted   = errors.New("trusted caller identity is required")
+	ErrCallerWorkspaceDenied     = errors.New("caller is not authorized for the workspace")
+	ErrConsumerPrincipalMismatch = errors.New("requested consumer does not match the trusted principal binding")
 )
 
 type CallerContext struct {
