@@ -40,12 +40,12 @@ func (h *Handler) Register(mux *http.ServeMux) {
 }
 
 type deliverRequest struct {
-	ProfileID string `json:"profileId"`
-	Consumer  string `json:"consumer"`
-	Purpose   string `json:"purpose"`
-	Action    string `json:"action"`
-	ScopeType                 string `json:"scopeType"`
-	ScopeRef                  string `json:"scopeRef,omitempty"`
+	ProfileID                  string `json:"profileId"`
+	Consumer                   string `json:"consumer"`
+	Purpose                    string `json:"purpose"`
+	Action                     string `json:"action"`
+	ScopeType                  string `json:"scopeType"`
+	ScopeRef                   string `json:"scopeRef,omitempty"`
 	RetryOfDeliveryOperationID string `json:"retryOfDeliveryOperationId,omitempty"`
 }
 
@@ -108,7 +108,7 @@ func (h *Handler) deliver(w http.ResponseWriter, r *http.Request) {
 		PrincipalRef: caller.PrincipalRef, EffectiveConsumerRef: caller.EffectiveConsumerRef,
 		Purpose: request.Purpose, Action: request.Action, ScopeType: request.ScopeType, ScopeRef: request.ScopeRef,
 		RetryOfDeliveryOperationID: retryOf,
-		IdempotencyKey: idempotencyKey, TraceID: strings.TrimSpace(r.Header.Get("X-Trace-ID")),
+		IdempotencyKey:             idempotencyKey, TraceID: strings.TrimSpace(r.Header.Get("X-Trace-ID")),
 	})
 	if errors.Is(err, deliveryapp.ErrDirectDataReplayRequiresNewAttempt) {
 		writeJSON(w, http.StatusConflict, map[string]any{
