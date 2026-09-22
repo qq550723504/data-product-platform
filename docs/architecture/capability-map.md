@@ -14,7 +14,8 @@
 |---|---|---|---|
 | Identity / Authentication | External commodity | 企业 OIDC；默认候选 ZITADEL / Keycloak | Core 只消费可信 Principal，不实现密码、MFA、Token 服务 |
 | Workspace RBAC | External commodity + platform mapping | 优先 Casbin；复杂跨系统 policy 才评估 OPA | Domain 定义“需要什么权限”，Policy Engine 执行通用授权判断 |
-| Metadata / Governance Catalog | External projection | OpenMetadata | 平台 DB 是 System of Record；OpenMetadata 仅治理投影 |
+| Metadata Ingestion / Governance Catalog | External projection | OpenMetadata | OpenMetadata 发现/投影结构、血缘、使用等元数据；不负责把业务数据搬入 DatasetVersion |
+| Data Ingestion / Integration | External commodity + platform acceptance boundary | 当前 Native CSV/File slice；真实异构接入时通过 provider-neutral Adapter 评估 SeaTunnel / InLong / Airbyte / NiFi / Debezium / Flink CDC 等 | 外部系统负责 connector、snapshot/incremental/CDC、checkpoint/offset 与技术重试；Core 负责 DataResource、接入结果验收、不可变 RAW DatasetVersion、业务 provenance、Evidence/Audit/Cost/Rights |
 | Object Storage | External commodity | MinIO / S3-compatible | Core 通过 storage Port 使用，不依赖具体 SDK 语义 |
 | Async Queue / Worker | Platform infrastructure | **优先复用仓库现有 queue / worker / reconciliation** | 不因存在 Asynq 就平行建设第二套队列 |
 | Durable long-running workflow | External commodity when justified | 默认不新增；现有执行模型不足时再评估 Temporal | 只有跨天等待、人工 Signal、复杂恢复真正需要时引入 |
@@ -95,6 +96,7 @@ Data Product Platform Core
 - 不自建 IAM、密码、MFA、OIDC Provider；
 - 不因为 Entity Resolution 需要异步化就再造 Scheduler；先复用现有 queue / worker / reconciliation；
 - 不复制 OpenMetadata 的 catalog / lineage / glossary 产品能力到 Core；
+- 不在 Core 为每一种数据库/API/消息系统分别自研 connector、增量游标或 CDC runtime；当前 CSV 只是第一条窄接入切片；
 - 不在 Core 自研通用标注 UI；
 - 不把 Splink 等算法引擎的数据模型直接变成 Core Domain；
 - 不为了“未来可能需要”提前引入 Temporal、OPA、Service Mesh 等重量组件；
