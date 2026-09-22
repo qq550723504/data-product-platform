@@ -191,9 +191,10 @@ type GateRequest struct {
 }
 
 type GateEvaluation struct {
-	ID                   uuid.UUID
-	EvaluationKey        string
-	Stage                GateStage
+	ID                     uuid.UUID
+	EvaluationKey          string
+	Stage                  GateStage
+	CertificationProfileID *uuid.UUID
 	Allowed              bool
 	Blockers             []string
 	DependencyRevision   int64
