@@ -122,20 +122,20 @@ func (r *PostgresRepository) GetAuthorization(ctx context.Context, authorization
 	return authorization, nil
 }
 
-func (r *PostgresRepository) SaveAuthorizationState(ctx context.Context, tx pgx.Tx, authorization domain.Authorization) error {
+func (r *PostgresRepository) SaveAuthorizationState(ctx context.Context, tx pgx.Tx, authorization domain.Authorization, expectedStatus domain.AuthorizationStatus) error {
 	if _, err := deliveryfence.Advance(ctx, tx, authorization.WorkspaceID); err != nil {
 		return err
 	}
 	commandTag, err := tx.Exec(ctx, `
 		UPDATE data_authorization
 		SET status=$2, updated_at=$3, updated_by=$4
-		WHERE id=$1
-	`, authorization.ID, authorization.Status, authorization.UpdatedAt, authorization.UpdatedBy)
+		WHERE id=$1 AND status=$5
+	`, authorization.ID, authorization.Status, authorization.UpdatedAt, authorization.UpdatedBy, expectedStatus)
 	if err != nil {
 		return fmt.Errorf("save authorization state: %w", err)
 	}
 	if commandTag.RowsAffected() != 1 {
-		return ErrNotFound
+		return domain.ErrInvalidTransition
 	}
 	return nil
 }
