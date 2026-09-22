@@ -93,9 +93,10 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	traceID, suffix := "browser-live-"+uuid.NewString(), uuid.NewString()
 	reason := "LIVE_BROWSER_REVIEW_" + suffix
 	tx := transaction.NewManager(pool)
-	resourceService := resourceapp.NewCreateService(tx, resourceinfra.NewPostgresRepository())
+	resourceRepo := resourceinfra.NewPostgresRepository()
+	resourceService := resourceapp.NewCreateService(tx, resourceRepo)
 	datasetRepo := datasetinfra.NewPostgresRepository(pool)
-	createDataset := datasetapp.NewCreateDatasetService(tx, datasetRepo)
+	createDataset := datasetapp.NewCreateDatasetService(tx, datasetRepo, resourceRepo)
 	upload := datasetapp.NewUploadVersionService(tx, datasetRepo, store)
 	entityRepo := entityinfra.NewPostgresRepository(pool)
 	entityService := entityapp.NewMatchService(cfg.IndustryPackRoot, tx, entityRepo, datasetRepo, upload, store)
