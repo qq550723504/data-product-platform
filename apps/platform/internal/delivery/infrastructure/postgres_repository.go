@@ -147,11 +147,11 @@ func (r *PostgresRepository) InsertGateEvaluation(ctx context.Context, tx pgx.Tx
 		INSERT INTO delivery_gate_evaluation(
 			id, delivery_operation_id, evaluation_key, stage, decision, blockers,
 			dependency_revision, principal_ref, effective_consumer_ref, delegation_ref,
-			fresh_cap_expires_at, created_at
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+			certification_profile_id, fresh_cap_expires_at, created_at
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
 	`, evaluation.ID, operationID, evaluation.EvaluationKey, evaluation.Stage, evaluation.Decision(), blockers,
 		evaluation.DependencyRevision, evaluation.PrincipalRef, evaluation.EffectiveConsumerRef,
-		nullable(evaluation.DelegationRef), evaluation.FreshCapExpiresAt, createdAt)
+		nullable(evaluation.DelegationRef), evaluation.CertificationProfileID, evaluation.FreshCapExpiresAt, createdAt)
 	if err != nil {
 		return fmt.Errorf("insert delivery gate evaluation: %w", err)
 	}
