@@ -216,9 +216,10 @@ func (d *demo) prepare() error {
 		return err
 	}
 	tx := transaction.NewManager(d.pool)
-	resources := resourceapp.NewCreateService(tx, resourceinfra.NewPostgresRepository())
+	resourceRepo := resourceinfra.NewPostgresRepository()
+	resources := resourceapp.NewCreateService(tx, resourceRepo)
 	datasets := datasetinfra.NewPostgresRepository(d.pool)
-	create := datasetapp.NewCreateDatasetService(tx, datasets)
+	create := datasetapp.NewCreateDatasetService(tx, datasets, resourceRepo)
 	upload := datasetapp.NewUploadVersionService(tx, datasets, d.store)
 	var source string
 	for _, name := range []string{"enterprise", "lease", "energy"} {
