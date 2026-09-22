@@ -17,7 +17,7 @@ ALTER TABLE entity_mapping_decision
 
 ALTER TABLE entity_mapping_decision
     ADD CONSTRAINT ck_entity_mapping_decision_source_origin
-        CHECK (source_origin IN ('MATCH_CANDIDATE', 'WORKFLOW_ALIAS')),
+        CHECK (source_origin IN ('MATCH_CANDIDATE', 'MANUAL_REVIEW', 'WORKFLOW_ALIAS')),
     ADD CONSTRAINT fk_entity_mapping_decision_job
         FOREIGN KEY (source_job_id) REFERENCES entity_match_job(id),
     ADD CONSTRAINT fk_entity_mapping_decision_candidate
