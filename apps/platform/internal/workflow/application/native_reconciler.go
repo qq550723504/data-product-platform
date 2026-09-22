@@ -18,6 +18,10 @@ const (
 	defaultNativeRecoveryLimit    = 100
 )
 
+func NativeExecutionLockKey(executionID uuid.UUID) string {
+	return "native-execution:" + executionID.String()
+}
+
 type NativeRecoveryLocker interface {
 	WithAdvisoryLock(context.Context, string, func(context.Context) error) error
 }
@@ -84,14 +88,7 @@ func (r *NativeReconciler) RunOnce(ctx context.Context) error {
 			break
 		}
 		for _, executionID := range ids {
-			lockKey := "native-execution-recovery:" + executionID.String()
-			err := r.locker.WithAdvisoryLock(ctx, lockKey, func(ctx context.Context) error {
-				return r.reconcileOne(ctx, executionID, cutoff)
-			})
-			if errors.Is(err, transaction.ErrAdvisoryLockBusy) {
-				continue
-			}
-			if err != nil {
+			if err := r.reconcileOne(ctx, executionID, cutoff); err != nil {
 				failures = append(failures, err)
 			}
 		}
@@ -104,60 +101,77 @@ func (r *NativeReconciler) RunOnce(ctx context.Context) error {
 }
 
 func (r *NativeReconciler) reconcileOne(ctx context.Context, executionID uuid.UUID, cutoff time.Time) error {
-	execution, err := r.repo.GetExecution(ctx, executionID)
-	if err != nil {
-		return fmt.Errorf("load native execution %s: %w", executionID, err)
-	}
-	if execution.Status != domain.ExecutionRunning || execution.EngineType != "NATIVE" {
-		return nil
-	}
-	leaseStarted := execution.CreatedAt
-	if execution.StartedAt != nil {
-		leaseStarted = *execution.StartedAt
-	}
-	if leaseStarted.After(cutoff) {
-		return nil
-	}
-
-	output, outputErr := r.outputs.FindVersionByExecution(ctx, execution.ID)
-	if outputErr == nil {
-		switch output.Status {
-		case datasetdomain.VersionReady, datasetdomain.VersionSuperseded:
-			if err := r.recordRecovery(ctx, execution.ID, "ADOPT_EXISTING_OUTPUT"); err != nil {
-				return err
-			}
-			metrics := mergeNativeRecoveryMetrics(execution.Metrics, map[string]any{
-				"outputReused": true,
-				"recoveryAction": "ADOPT_EXISTING_OUTPUT",
-			})
-			if _, err := r.service.Succeed(ctx, execution.ID, output.ID, metrics, execution.ID.String()); err != nil && !errors.Is(err, domain.ErrInvalidTransition) {
-				return fmt.Errorf("finalize recovered native execution %s: %w", execution.ID, err)
-			}
-			return nil
-		case datasetdomain.VersionInvalid:
-			if err := r.recordRecovery(ctx, execution.ID, "TERMINAL_INVALID_OUTPUT"); err != nil {
-				return err
-			}
-			if _, err := r.service.Fail(ctx, execution.ID, "NATIVE_OUTPUT_INVALID", "native execution output is invalid", mergeNativeRecoveryMetrics(execution.Metrics, nil), execution.ID.String()); err != nil && !errors.Is(err, domain.ErrInvalidTransition) {
-				return fmt.Errorf("terminalize invalid native output for execution %s: %w", execution.ID, err)
-			}
+	var (
+		execution domain.Execution
+		reexecute bool
+	)
+	err := r.locker.WithAdvisoryLock(ctx, NativeExecutionLockKey(executionID), func(ctx context.Context) error {
+		current, err := r.repo.GetExecution(ctx, executionID)
+		if err != nil {
+			return fmt.Errorf("load native execution %s: %w", executionID, err)
+		}
+		execution = current
+		if execution.Status != domain.ExecutionRunning || execution.EngineType != "NATIVE" {
 			return nil
 		}
-	} else if !errors.Is(outputErr, datasetinfra.ErrNotFound) {
-		return fmt.Errorf("find native execution output %s: %w", execution.ID, outputErr)
-	}
-
-	if err := r.repo.ValidateExecutionOwnership(ctx, execution); err != nil {
-		if errors.Is(err, domain.ErrWorkspaceMismatch) || errors.Is(err, domain.ErrExecutionReferenceUnusable) {
-			if recordErr := r.recordRecovery(ctx, execution.ID, "REFERENCE_UNUSABLE"); recordErr != nil {
-				return recordErr
-			}
-			if _, failErr := r.service.Fail(ctx, execution.ID, "NATIVE_RECOVERY_REFERENCE_UNUSABLE", "native execution recovery references are no longer usable", mergeNativeRecoveryMetrics(execution.Metrics, nil), execution.ID.String()); failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
-				return fmt.Errorf("terminalize unusable native recovery references for execution %s: %w", execution.ID, failErr)
-			}
+		leaseStarted := execution.CreatedAt
+		if execution.StartedAt != nil {
+			leaseStarted = *execution.StartedAt
+		}
+		if leaseStarted.After(cutoff) {
 			return nil
 		}
-		return fmt.Errorf("validate native recovery references for execution %s: %w", execution.ID, err)
+
+		output, outputErr := r.outputs.FindVersionByExecution(ctx, execution.ID)
+		if outputErr == nil {
+			switch output.Status {
+			case datasetdomain.VersionReady, datasetdomain.VersionSuperseded:
+				if err := r.recordRecovery(ctx, execution.ID, "ADOPT_EXISTING_OUTPUT"); err != nil {
+					return err
+				}
+				metrics := mergeNativeRecoveryMetrics(execution.Metrics, map[string]any{
+					"outputReused":   true,
+					"recoveryAction": "ADOPT_EXISTING_OUTPUT",
+				})
+				if _, err := r.service.Succeed(ctx, execution.ID, output.ID, metrics, execution.ID.String()); err != nil && !errors.Is(err, domain.ErrInvalidTransition) {
+					return fmt.Errorf("finalize recovered native execution %s: %w", execution.ID, err)
+				}
+				return nil
+			case datasetdomain.VersionInvalid:
+				if err := r.recordRecovery(ctx, execution.ID, "TERMINAL_INVALID_OUTPUT"); err != nil {
+					return err
+				}
+				if _, err := r.service.Fail(ctx, execution.ID, "NATIVE_OUTPUT_INVALID", "native execution output is invalid", mergeNativeRecoveryMetrics(execution.Metrics, nil), execution.ID.String()); err != nil && !errors.Is(err, domain.ErrInvalidTransition) {
+					return fmt.Errorf("terminalize invalid native output for execution %s: %w", execution.ID, err)
+				}
+				return nil
+			}
+		} else if !errors.Is(outputErr, datasetinfra.ErrNotFound) {
+			return fmt.Errorf("find native execution output %s: %w", execution.ID, outputErr)
+		}
+
+		if err := r.repo.ValidateExecutionOwnership(ctx, execution); err != nil {
+			if errors.Is(err, domain.ErrWorkspaceMismatch) || errors.Is(err, domain.ErrExecutionReferenceUnusable) {
+				if recordErr := r.recordRecovery(ctx, execution.ID, "REFERENCE_UNUSABLE"); recordErr != nil {
+					return recordErr
+				}
+				if _, failErr := r.service.Fail(ctx, execution.ID, "NATIVE_RECOVERY_REFERENCE_UNUSABLE", "native execution recovery references are no longer usable", mergeNativeRecoveryMetrics(execution.Metrics, nil), execution.ID.String()); failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
+					return fmt.Errorf("terminalize unusable native recovery references for execution %s: %w", execution.ID, failErr)
+				}
+				return nil
+			}
+			return fmt.Errorf("validate native recovery references for execution %s: %w", execution.ID, err)
+		}
+		reexecute = true
+		return nil
+	})
+	if errors.Is(err, transaction.ErrAdvisoryLockBusy) {
+		// A healthy native worker (or another reconciler) still owns the same
+		// Execution. Do not run recovery concurrently with live computation.
+		return nil
+	}
+	if err != nil || !reexecute {
+		return err
 	}
 
 	version, err := r.repo.GetVersion(ctx, execution.WorkflowVersionID)
@@ -168,7 +182,13 @@ func (r *NativeReconciler) reconcileOne(ctx context.Context, executionID uuid.UU
 		return err
 	}
 
+	// Engine.Execute owns the same advisory lock for the full native computation.
+	// If another worker/reconciler reacquired it after the inspection phase, this
+	// attempt simply yields and lets the current owner converge the Execution.
 	result, err := r.engine.Execute(ctx, ProcessingRequestFromExecution(execution, version))
+	if errors.Is(err, transaction.ErrAdvisoryLockBusy) {
+		return nil
+	}
 	if err != nil {
 		metrics := mergeNativeRecoveryMetrics(execution.Metrics, map[string]any{"recoveryAction": "REEXECUTE"})
 		if _, failErr := r.service.Fail(ctx, execution.ID, "NATIVE_RECOVERY_FAILED", "native execution recovery failed", metrics, execution.ID.String()); failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
@@ -178,7 +198,6 @@ func (r *NativeReconciler) reconcileOne(ctx context.Context, executionID uuid.UU
 	}
 	metrics := mergeNativeRecoveryMetrics(result.Metrics, map[string]any{
 		"recoveryAction": "REEXECUTE",
-		"outputReused": outputErr == nil,
 	})
 	if result.EngineExecutionID != "" && result.EngineExecutionID != execution.EngineExecutionID {
 		metrics["adapterExecutionId"] = result.EngineExecutionID
