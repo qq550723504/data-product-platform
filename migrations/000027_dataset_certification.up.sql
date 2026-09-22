@@ -304,9 +304,7 @@ BEGIN
             END IF;
 
             WITH RECURSIVE lineage(version_id) AS (
-                SELECT input_version_id
-                FROM dataset_version_lineage
-                WHERE output_version_id=NEW.dataset_version_id
+                SELECT NEW.dataset_version_id
                 UNION
                 SELECT edge.input_version_id
                 FROM dataset_version_lineage edge
