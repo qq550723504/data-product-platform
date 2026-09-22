@@ -10,6 +10,10 @@ CREATE INDEX idx_delivery_operation_retry_of
     ON delivery_operation(retry_of_delivery_operation_id)
     WHERE retry_of_delivery_operation_id IS NOT NULL;
 
+ALTER TABLE delivery_gate_evaluation
+    ADD COLUMN certification_profile_id uuid
+    REFERENCES certification_profile(id);
+
 CREATE OR REPLACE FUNCTION guard_delivery_operation_mutation()
 RETURNS trigger AS $$
 BEGIN
