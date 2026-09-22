@@ -126,7 +126,7 @@ func main() {
 		logger.Info("Apache Hop managed execution enabled", "base_url", cfg.Hop.BaseURL, "artifact_root", artifactRoot)
 	}
 	nativeReconciler := workflowapp.NewNativeReconciler(txManager, executionService, workflowRepo, datasetRepo, processingEngine)
-	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine, managedBridges...)
+	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine, managedBridges...).WithNativeExecutionLocker(txManager)
 
 	var metadataService *metadataapp.Service
 	if cfg.OpenMetadata.Enabled {
