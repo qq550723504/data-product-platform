@@ -1042,7 +1042,7 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 				WorkspaceID:      workspaceID,
 				DatasetVersionID: outputVersion.ID,
 				ProfileID:        profileSnapshot.ID,
-				IdempotencyKey:   "pilot-linear-cert-"+label+"-"+suffix,
+				IdempotencyKey:   "pilot-linear-cert-" + label + "-" + suffix,
 				ActorID:          &actorID,
 				TraceID:          traceID,
 			})
