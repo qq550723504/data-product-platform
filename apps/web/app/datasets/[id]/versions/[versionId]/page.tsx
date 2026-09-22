@@ -43,8 +43,10 @@ function blockerList(blockers: CertificationBlocker[]) {
 }
 
 function currentDisposition(certification: DatasetCertification): string {
-  if (certification.dispositions.length === 0) return "CURRENT_HISTORY";
-  return certification.dispositions.map((item) => item.disposition).join(", ");
+  if (certification.dispositions.length > 0) {
+    return certification.dispositions.map((item) => item.disposition).join(", ");
+  }
+  return certification.decision === "CERTIFIED" ? "CURRENT" : certification.decision;
 }
 
 function applicability(mode?: string, values?: string[]): string {
