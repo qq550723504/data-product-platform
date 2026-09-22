@@ -617,6 +617,152 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 	})
 
 	eligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
+
+	t.Run("profile and authorization context mismatches fail closed", func(t *testing.T) {
+		profileMismatch, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
+			WorkspaceID:      workspaceID,
+			DatasetVersionID: outputVersion.ID,
+			ProfileID:        profile.ID,
+			Consumer:         "LICENSED_BANK",
+			Purpose:          purpose,
+			Action:           "RAW_EXPORT",
+			Delivery:         "DIRECT_DATA",
+			ScopeType:        "ALL_RESOURCE",
+			ScopeRef:         outputVersion.ID.String(),
+			AsOf:             time.Now().UTC(),
+		})
+		if err != nil {
+			t.Fatalf("check profile-context mismatch: %v", err)
+		}
+		if profileMismatch.Allowed || profileMismatch.CertificationGate.Allowed ||
+			!hasPilotBlocker(profileMismatch.CertificationGate.Blockers, "CERTIFICATION_ACTION_NOT_COVERED") {
+			t.Fatalf("profile-context mismatch = allowed=%v certificationAllowed=%v blockers=%+v",
+				profileMismatch.Allowed, profileMismatch.CertificationGate.Allowed, profileMismatch.Blockers)
+		}
+
+		entitlementProfile, err := profileService.Create(ctx, certificationapp.CreateProfileCommand{
+			WorkspaceID: workspaceID,
+			Profile: certificationdomain.CertificationProfile{
+				ProfileRef:            "park/enterprise-activity-entitlement-probe-v1",
+				Code:                  "PILOT-ENTITLEMENT-CONTEXT",
+				Name:                  "Enterprise Activity Entitlement Context Probe",
+				Version:               "1.0.0",
+				Purpose:               certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
+				Actions:               certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
+				Consumers:             certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"GUARANTEE_INSTITUTION"}},
+				Delivery:              certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"DIRECT_DATA"}},
+				RequiredCriticalRules: []string{"QA-COMPANY-ID-COMPLETE"},
+				QualityGateRequired:   true,
+				Rights:                certificationdomain.RightsRequirement{Required: false},
+				ComplianceRequired:    true,
+				ContractRequired:      true,
+				ContractCode:          "DP-ENTERPRISE-ACTIVITY",
+				TraceabilityRequired:  true,
+				EvidenceRequired:      true,
+			},
+			ActorID: &actorID,
+			TraceID: traceID,
+		})
+		if err != nil {
+			t.Fatalf("create entitlement-context CertificationProfile: %v", err)
+		}
+
+		entitlementCertificationService := certificationapp.NewCertificationService(
+			txManager,
+			profileRepo,
+			certificationRepo,
+			pilotCertificationResolver{input: certificationdomain.EvaluationInput{
+				WorkspaceID:      workspaceID,
+				DatasetVersionID: outputVersion.ID,
+				Quality:          certificationdomain.QualityAssessmentEvidence{ID: qualityResult.ID},
+				Compliance:       &certificationdomain.ComplianceEvidence{ID: complianceResult.ID},
+				Contract:         &certificationdomain.ContractEvidence{ID: contractVersion.ID},
+				Traceability:     &certificationdomain.TraceabilityEvidence{ID: supportingEvidence.ID},
+				Evidence:         &certificationdomain.EvidenceSnapshot{ID: supportingEvidence.ID},
+				ActorID:          &actorID,
+			}},
+		)
+		entitlementCertification, err := entitlementCertificationService.Evaluate(ctx, certificationapp.EvaluateDatasetCertificationCommand{
+			WorkspaceID:      workspaceID,
+			DatasetVersionID: outputVersion.ID,
+			ProfileID:        entitlementProfile.ID,
+			IdempotencyKey:   "pilot-entitlement-context-certification-" + suffix,
+			ActorID:          &actorID,
+			TraceID:          traceID,
+		})
+		if err != nil {
+			t.Fatalf("evaluate entitlement-context certification: %v", err)
+		}
+		if entitlementCertification.Decision != certificationdomain.DecisionCertified {
+			t.Fatalf("entitlement-context certification = %s blockers=%+v, want CERTIFIED",
+				entitlementCertification.Decision, entitlementCertification.Blockers)
+		}
+
+		entitlementEligibility := certificationapp.NewEligibilityService(
+			entitlementCertificationService,
+			datasetRepo,
+			rightsRepo,
+		)
+		entitlementMismatch, err := entitlementEligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
+			WorkspaceID:      workspaceID,
+			DatasetVersionID: outputVersion.ID,
+			ProfileID:        entitlementProfile.ID,
+			Consumer:         "GUARANTEE_INSTITUTION",
+			Purpose:          purpose,
+			Action:           "READ",
+			Delivery:         "DIRECT_DATA",
+			ScopeType:        "ALL_RESOURCE",
+			ScopeRef:         outputVersion.ID.String(),
+			AsOf:             time.Now().UTC(),
+		})
+		if err != nil {
+			t.Fatalf("check Authorization/provenance context mismatch: %v", err)
+		}
+		if entitlementMismatch.Allowed || !entitlementMismatch.CertificationGate.Allowed ||
+			entitlementMismatch.EntitlementGate.Allowed ||
+			!hasPilotBlocker(entitlementMismatch.EntitlementGate.Blockers, "CURRENT_ENTITLEMENT_BLOCKED") {
+			t.Fatalf("Authorization/provenance mismatch = allowed=%v certificationAllowed=%v entitlementAllowed=%v blockers=%+v",
+				entitlementMismatch.Allowed, entitlementMismatch.CertificationGate.Allowed,
+				entitlementMismatch.EntitlementGate.Allowed, entitlementMismatch.Blockers)
+		}
+		if len(entitlementMismatch.EntitlementChecks) == 0 {
+			t.Fatal("Authorization/provenance mismatch produced no entitlement checks")
+		}
+		for _, check := range entitlementMismatch.EntitlementChecks {
+			if check.Decision.Decision != rightsdomain.DecisionNotAllowed {
+				t.Fatalf("mismatched entitlement for resource %s = %s, want NOT_ALLOWED",
+					check.DataResourceID, check.Decision.Decision)
+			}
+		}
+
+		mismatchDelivery := deliveryapp.NewDirectDataService(
+			txManager,
+			deliveryinfra.NewPostgresRepository(pool),
+			deliveryapp.NewCertificationDirectDataGate(entitlementEligibility),
+			datasetRepo,
+		)
+		blockedDelivery, err := mismatchDelivery.Deliver(ctx, deliveryapp.DirectDataCommand{
+			WorkspaceID:          workspaceID,
+			DatasetVersionID:     outputVersion.ID,
+			ProfileID:            entitlementProfile.ID,
+			PrincipalRef:         "pilot-principal-guarantee",
+			EffectiveConsumerRef: "GUARANTEE_INSTITUTION",
+			Purpose:              purpose,
+			Action:               "READ",
+			ScopeType:            "ALL_RESOURCE",
+			ScopeRef:             outputVersion.ID.String(),
+			IdempotencyKey:       "pilot-entitlement-context-delivery-" + suffix,
+			TraceID:              traceID,
+		})
+		if err != nil {
+			t.Fatalf("deliver Authorization/provenance mismatch context: %v", err)
+		}
+		if blockedDelivery.PayloadReady || blockedDelivery.Operation.Status != deliverydomain.StatusBlocked ||
+			!hasString(blockedDelivery.Blockers, "CURRENT_ENTITLEMENT_BLOCKED") {
+			t.Fatalf("Authorization/provenance mismatch delivery = %#v", blockedDelivery)
+		}
+	})
+
 	eligibilityResult, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
 		WorkspaceID:      workspaceID,
 		DatasetVersionID: outputVersion.ID,
