@@ -541,6 +541,121 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		t.Fatalf("post-revocation delivery facts blockedEvents=%d blockedGateFacts=%d, want 1/1", blockedEvents, blockedGateFacts)
 	}
 
+	invalidateVersion := datasetapp.NewInvalidateVersionService(txManager, datasetRepo)
+	invalidated, err := invalidateVersion.Handle(ctx, datasetapp.InvalidateVersionCommand{
+		VersionID: outputVersion.ID,
+		Reason:    "Certified Dataset Pilot current-facts invalidation",
+		ActorID:   &actorID,
+		TraceID:   traceID,
+	})
+	if err != nil {
+		t.Fatalf("invalidate pilot DatasetVersion: %v", err)
+	}
+	if invalidated.Status != datasetdomain.VersionInvalid {
+		t.Fatalf("pilot invalidated DatasetVersion status = %s, want INVALID", invalidated.Status)
+	}
+
+	afterInvalidation, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
+		WorkspaceID:      workspaceID,
+		DatasetVersionID: outputVersion.ID,
+		ProfileID:        profile.ID,
+		Consumer:         "LICENSED_BANK",
+		Purpose:          purpose,
+		Action:           "READ",
+		Delivery:         "DIRECT_DATA",
+		ScopeType:        "ALL_RESOURCE",
+		ScopeRef:         outputVersion.ID.String(),
+		AsOf:             time.Now().UTC(),
+	})
+	if err != nil {
+		t.Fatalf("post-invalidation delivery eligibility: %v", err)
+	}
+	if afterInvalidation.Allowed || afterInvalidation.DatasetVersionGate.Allowed ||
+		afterInvalidation.Certification.ID != certification.ID ||
+		!hasPilotBlocker(afterInvalidation.Blockers, "DATASET_VERSION_INVALID") {
+		t.Fatalf("post-invalidation eligibility = allowed=%v datasetAllowed=%v certification=%s blockers=%+v",
+			afterInvalidation.Allowed, afterInvalidation.DatasetVersionGate.Allowed,
+			afterInvalidation.Certification.ID, afterInvalidation.Blockers)
+	}
+
+	invalidReplacement := deliveryCommand
+	invalidReplacement.IdempotencyKey = "pilot-direct-data-invalid-version-" + suffix
+	invalidReplacement.RetryOfDeliveryOperationID = &delivered.Operation.ID
+	invalidBlocked, err := directData.Deliver(ctx, invalidReplacement)
+	if err != nil {
+		t.Fatalf("post-invalidation replacement delivery: %v", err)
+	}
+	if invalidBlocked.PayloadReady || invalidBlocked.Operation.Status != deliverydomain.StatusBlocked ||
+		!hasString(invalidBlocked.Blockers, "DATASET_VERSION_INVALID") {
+		t.Fatalf("post-invalidation replacement result = %#v", invalidBlocked)
+	}
+
+	disposition, err := certificationService.ChangeDisposition(ctx, certificationapp.ChangeCertificationDispositionCommand{
+		WorkspaceID:     workspaceID,
+		CertificationID: certification.ID,
+		Disposition:     certificationdomain.DispositionRevoked,
+		Reason:          "Certified Dataset Pilot certification revocation",
+		EffectiveAt:     time.Now().UTC(),
+		IdempotencyKey:  "pilot-certification-revoke-" + suffix,
+		ActorID:         &actorID,
+		TraceID:         traceID,
+	})
+	if err != nil {
+		t.Fatalf("revoke pilot DatasetCertification: %v", err)
+	}
+	if disposition.CertificationID != certification.ID || disposition.Disposition != certificationdomain.DispositionRevoked {
+		t.Fatalf("pilot certification disposition = %#v", disposition)
+	}
+
+	afterCertificationRevoke, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
+		WorkspaceID:      workspaceID,
+		DatasetVersionID: outputVersion.ID,
+		ProfileID:        profile.ID,
+		Consumer:         "LICENSED_BANK",
+		Purpose:          purpose,
+		Action:           "READ",
+		Delivery:         "DIRECT_DATA",
+		ScopeType:        "ALL_RESOURCE",
+		ScopeRef:         outputVersion.ID.String(),
+		AsOf:             time.Now().UTC(),
+	})
+	if err != nil {
+		t.Fatalf("post-certification-revoke delivery eligibility: %v", err)
+	}
+	if afterCertificationRevoke.Allowed || afterCertificationRevoke.CertificationGate.Allowed ||
+		!hasPilotBlocker(afterCertificationRevoke.Blockers, "CERTIFICATION_NOT_CURRENT") {
+		t.Fatalf("post-certification-revoke eligibility = allowed=%v certificationAllowed=%v blockers=%+v",
+			afterCertificationRevoke.Allowed, afterCertificationRevoke.CertificationGate.Allowed,
+			afterCertificationRevoke.Blockers)
+	}
+
+	history, err := certificationService.ListDatasetHistory(ctx, workspaceID, outputVersion.ID, time.Now().UTC())
+	if err != nil {
+		t.Fatalf("read pilot certification history after revocation: %v", err)
+	}
+	foundHistoricalCertification := false
+	for _, item := range history {
+		if item.Certification.ID == certification.ID {
+			foundHistoricalCertification = true
+			break
+		}
+	}
+	if !foundHistoricalCertification {
+		t.Fatalf("historical certification %s disappeared after disposition", certification.ID)
+	}
+
+	certificationReplacement := deliveryCommand
+	certificationReplacement.IdempotencyKey = "pilot-direct-data-certification-revoked-" + suffix
+	certificationReplacement.RetryOfDeliveryOperationID = &delivered.Operation.ID
+	certificationBlocked, err := directData.Deliver(ctx, certificationReplacement)
+	if err != nil {
+		t.Fatalf("post-certification-revoke replacement delivery: %v", err)
+	}
+	if certificationBlocked.PayloadReady || certificationBlocked.Operation.Status != deliverydomain.StatusBlocked ||
+		!hasString(certificationBlocked.Blockers, "CERTIFICATION_NOT_CURRENT") {
+		t.Fatalf("post-certification-revoke replacement result = %#v", certificationBlocked)
+	}
+
 	var issuedEvents, gateFacts int
 	if err := pool.QueryRow(ctx, `
 		SELECT count(*) FROM outbox_event
