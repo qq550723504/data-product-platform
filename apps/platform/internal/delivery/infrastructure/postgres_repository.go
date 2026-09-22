@@ -360,10 +360,10 @@ func (r *PostgresRepository) InsertDirectDataCost(ctx context.Context, tx pgx.Tx
 			quantity, unit, pricing_mode, metadata
 		)
 		VALUES (
-			$1,$2,NULL,$3,$4,
+			$1,$2,NULL,$3::uuid,$4,
 			1,'attempt','ACTUAL',
 			jsonb_build_object(
-				'delivery_operation_id',$3::text,
+				'delivery_operation_id',($3::uuid)::text,
 				'delivery_channel',$5::text,
 				'delivery_mode',$6::text
 			)
