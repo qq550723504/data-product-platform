@@ -459,6 +459,88 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		t.Fatalf("same-key pilot DIRECT_DATA replay = %#v", replay)
 	}
 
+	// A UI/preflight ALLOWED result is not an authorization token. Re-check the
+	// exact current context, then revoke the underlying Authorization before a
+	// replacement delivery attempt. The replacement must fresh re-gate and fail
+	// closed while preserving the historical CERTIFIED fact.
+	beforeRevoke, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
+		WorkspaceID:      workspaceID,
+		DatasetVersionID: outputVersion.ID,
+		ProfileID:        profile.ID,
+		Consumer:         "LICENSED_BANK",
+		Purpose:          purpose,
+		Action:           "READ",
+		Delivery:         "DIRECT_DATA",
+		ScopeType:        "ALL_RESOURCE",
+		ScopeRef:         outputVersion.ID.String(),
+		AsOf:             time.Now().UTC(),
+	})
+	if err != nil {
+		t.Fatalf("pre-revocation delivery eligibility: %v", err)
+	}
+	if !beforeRevoke.Allowed || beforeRevoke.Certification.ID != certification.ID {
+		t.Fatalf("pre-revocation eligibility = allowed=%v certification=%s, want ALLOWED/%s", beforeRevoke.Allowed, beforeRevoke.Certification.ID, certification.ID)
+	}
+
+	if _, err := rightsService.Revoke(ctx, rightsapp.TransitionCommand{
+		AuthorizationID: authorization.ID,
+		ActorID:         &actorID,
+		TraceID:         traceID,
+	}); err != nil {
+		t.Fatalf("revoke pilot Authorization: %v", err)
+	}
+
+	afterRevoke, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
+		WorkspaceID:      workspaceID,
+		DatasetVersionID: outputVersion.ID,
+		ProfileID:        profile.ID,
+		Consumer:         "LICENSED_BANK",
+		Purpose:          purpose,
+		Action:           "READ",
+		Delivery:         "DIRECT_DATA",
+		ScopeType:        "ALL_RESOURCE",
+		ScopeRef:         outputVersion.ID.String(),
+		AsOf:             time.Now().UTC(),
+	})
+	if err != nil {
+		t.Fatalf("post-revocation delivery eligibility: %v", err)
+	}
+	if afterRevoke.Allowed || !afterRevoke.CertificationGate.Allowed || afterRevoke.EntitlementGate.Allowed ||
+		afterRevoke.Certification.ID != certification.ID || !hasPilotBlocker(afterRevoke.Blockers, "CURRENT_ENTITLEMENT_BLOCKED") {
+		t.Fatalf("post-revocation eligibility = allowed=%v certificationAllowed=%v entitlementAllowed=%v certification=%s blockers=%+v",
+			afterRevoke.Allowed, afterRevoke.CertificationGate.Allowed, afterRevoke.EntitlementGate.Allowed,
+			afterRevoke.Certification.ID, afterRevoke.Blockers)
+	}
+
+	replacement := deliveryCommand
+	replacement.IdempotencyKey = "pilot-direct-data-replacement-" + suffix
+	replacement.RetryOfDeliveryOperationID = &delivered.Operation.ID
+	blocked, err := directData.Deliver(ctx, replacement)
+	if err != nil {
+		t.Fatalf("post-revocation replacement delivery: %v", err)
+	}
+	if blocked.PayloadReady || blocked.ReplayRequired || blocked.Operation.Status != deliverydomain.StatusBlocked ||
+		!hasString(blocked.Blockers, "CURRENT_ENTITLEMENT_BLOCKED") {
+		t.Fatalf("post-revocation replacement result = %#v", blocked)
+	}
+
+	var blockedEvents, blockedGateFacts int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM outbox_event
+		WHERE aggregate_type='DELIVERY_OPERATION' AND aggregate_id=$1 AND event_type='DatasetDeliveryBlocked'
+	`, blocked.Operation.ID).Scan(&blockedEvents); err != nil {
+		t.Fatalf("count post-revocation DatasetDeliveryBlocked events: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM delivery_gate_evaluation
+		WHERE delivery_operation_id=$1 AND stage='TERMINAL_FINALIZE' AND decision='BLOCKED'
+	`, blocked.Operation.ID).Scan(&blockedGateFacts); err != nil {
+		t.Fatalf("count post-revocation blocked gate evaluations: %v", err)
+	}
+	if blockedEvents != 1 || blockedGateFacts != 1 {
+		t.Fatalf("post-revocation delivery facts blockedEvents=%d blockedGateFacts=%d, want 1/1", blockedEvents, blockedGateFacts)
+	}
+
 	var issuedEvents, gateFacts int
 	if err := pool.QueryRow(ctx, `
 		SELECT count(*) FROM outbox_event
@@ -475,4 +557,22 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 	if issuedEvents != 1 || gateFacts != 1 {
 		t.Fatalf("pilot delivery facts issuedEvents=%d terminalGateFacts=%d, want 1/1", issuedEvents, gateFacts)
 	}
+}
+
+func hasPilotBlocker(blockers []certificationdomain.Blocker, code string) bool {
+	for _, blocker := range blockers {
+		if blocker.Code == code {
+			return true
+		}
+	}
+	return false
+}
+
+func hasString(values []string, expected string) bool {
+	for _, value := range values {
+		if value == expected {
+			return true
+		}
+	}
+	return false
 }
