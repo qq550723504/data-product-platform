@@ -20,15 +20,12 @@ type QuarantineRecord struct {
 }
 
 func (r *PostgresRepository) InsertQuarantine(ctx context.Context, tx pgx.Tx, record QuarantineRecord) error {
-	if record.ID == uuid.Nil {
-		record.ID = uuid.NewSHA1(uuid.NameSpaceURL, []byte(
-			"execution-quarantine:"+record.ExecutionID.String()+"\x00"+
-				record.InputName+"\x00"+record.SourceKey+"\x00"+record.ReasonCode,
-		))
-	}
 	payload, err := json.Marshal(record.Payload)
 	if err != nil {
 		return fmt.Errorf("marshal quarantine payload: %w", err)
+	}
+	if record.ID == uuid.Nil {
+		record.ID = quarantineRecordID(record, payload)
 	}
 	_, err = tx.Exec(ctx, `
 		INSERT INTO execution_quarantine_record (
@@ -40,6 +37,15 @@ func (r *PostgresRepository) InsertQuarantine(ctx context.Context, tx pgx.Tx, re
 		return fmt.Errorf("insert execution quarantine record: %w", err)
 	}
 	return nil
+}
+
+func quarantineRecordID(record QuarantineRecord, canonicalPayload []byte) uuid.UUID {
+	identity := []byte(
+		"execution-quarantine:" + record.ExecutionID.String() + "\x00" +
+			record.InputName + "\x00" + record.SourceKey + "\x00" + record.ReasonCode + "\x00",
+	)
+	identity = append(identity, canonicalPayload...)
+	return uuid.NewSHA1(uuid.NameSpaceURL, identity)
 }
 
 func (r *PostgresRepository) CountQuarantine(ctx context.Context, executionID uuid.UUID) (int64, error) {
