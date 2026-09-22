@@ -46,7 +46,7 @@ func TestSameEligibilityLineageRequiresExactMappedMembership(t *testing.T) {
 	}
 }
 
-func TestCertificationScopeCoversRequestedScope(t *testing.T) {
+func TestCertificationRightsContextCoversRequestedContext(t *testing.T) {
 	resourceID := uuid.New()
 	inputs := []rightsinfra.LineageInput{{
 		DatasetVersionID: uuid.New(),
@@ -56,7 +56,10 @@ func TestCertificationScopeCoversRequestedScope(t *testing.T) {
 	profile := certificationdomain.ProfileSnapshot{
 		CertificationProfile: certificationdomain.CertificationProfile{
 			Rights: certificationdomain.RightsRequirement{
-				Required: true,
+				Required:  true,
+				Purpose:   certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"INTERNAL_USE"}},
+				Actions:   certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
+				Consumers: certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"consumer-a"}},
 				Scopes: certificationdomain.ScopeApplicability{
 					Mode: certificationdomain.ApplicabilityExplicit,
 					Values: []certificationdomain.ScopeRef{{
@@ -67,19 +70,45 @@ func TestCertificationScopeCoversRequestedScope(t *testing.T) {
 			},
 		},
 	}
-
-	if !certificationScopeCovers(profile, DeliveryEligibilityQuery{ScopeType: "ALL_RESOURCE"}, inputs) {
-		t.Fatal("matching ALL_RESOURCE scope was rejected")
+	base := DeliveryEligibilityQuery{
+		Purpose:   "INTERNAL_USE",
+		Action:    "READ",
+		Consumer:  "consumer-a",
+		ScopeType: "ALL_RESOURCE",
 	}
-	if !certificationScopeCovers(profile, DeliveryEligibilityQuery{ScopeType: "OBJECT", ScopeRef: "object-1"}, inputs) {
+
+	if !certificationRightsContextCovers(profile, base, inputs) {
+		t.Fatal("matching frozen rights context was rejected")
+	}
+	if !certificationRightsContextCovers(profile, DeliveryEligibilityQuery{
+		Purpose: "INTERNAL_USE", Action: "READ", Consumer: "consumer-a",
+		ScopeType: "OBJECT", ScopeRef: "object-1",
+	}, inputs) {
 		t.Fatal("resource-wide certified scope did not cover a narrower requested scope")
 	}
 
+	for name, mutate := range map[string]func(*DeliveryEligibilityQuery){
+		"purpose":  func(q *DeliveryEligibilityQuery) { q.Purpose = "EXTERNAL_USE" },
+		"action":   func(q *DeliveryEligibilityQuery) { q.Action = "SHARE" },
+		"consumer": func(q *DeliveryEligibilityQuery) { q.Consumer = "consumer-b" },
+	} {
+		t.Run(name, func(t *testing.T) {
+			query := base
+			mutate(&query)
+			if certificationRightsContextCovers(profile, query, inputs) {
+				t.Fatalf("mismatched %s was accepted", name)
+			}
+		})
+	}
+
 	profile.Rights.Scopes.Values = []certificationdomain.ScopeRef{{Type: "OBJECT", Ref: "object-1"}}
-	if certificationScopeCovers(profile, DeliveryEligibilityQuery{ScopeType: "OBJECT", ScopeRef: "object-2"}, inputs) {
+	query := base
+	query.ScopeType = "OBJECT"
+	query.ScopeRef = "object-2"
+	if certificationRightsContextCovers(profile, query, inputs) {
 		t.Fatal("different explicit scope was accepted")
 	}
-	if certificationScopeCovers(profile, DeliveryEligibilityQuery{ScopeType: "ALL_RESOURCE"}, inputs) {
+	if certificationRightsContextCovers(profile, base, inputs) {
 		t.Fatal("narrow frozen scope incorrectly covered ALL_RESOURCE")
 	}
 }
