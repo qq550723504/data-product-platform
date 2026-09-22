@@ -13,6 +13,7 @@ type Config struct {
 	PostgresDSN      string
 	IndustryPackRoot string
 	RightsAPI        RightsAPIConfig
+	DeliveryAPI      DeliveryAPIConfig
 	Redis            RedisConfig
 	Storage          StorageConfig
 	OpenMetadata     OpenMetadataConfig
@@ -23,6 +24,14 @@ type Config struct {
 type RightsAPIConfig struct {
 	Token        string
 	ActorID      string
+	WorkspaceIDs []string
+}
+
+type DeliveryAPIConfig struct {
+	Enabled      bool
+	Token        string
+	PrincipalRef string
+	ConsumerRef  string
 	WorkspaceIDs []string
 }
 
@@ -76,6 +85,10 @@ func Load() (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
+	deliveryAPIEnabled, err := boolEnv("DELIVERY_API_ENABLED", false)
+	if err != nil {
+		return Config{}, err
+	}
 	openMetadataEnabled, err := boolEnv("OPENMETADATA_ENABLED", false)
 	if err != nil {
 		return Config{}, err
@@ -102,6 +115,13 @@ func Load() (Config, error) {
 			Token:        os.Getenv("RIGHTS_API_TOKEN"),
 			ActorID:      os.Getenv("RIGHTS_API_ACTOR_ID"),
 			WorkspaceIDs: stringListEnv("RIGHTS_API_WORKSPACE_IDS"),
+		},
+		DeliveryAPI: DeliveryAPIConfig{
+			Enabled:      deliveryAPIEnabled,
+			Token:        os.Getenv("DELIVERY_API_TOKEN"),
+			PrincipalRef: os.Getenv("DELIVERY_API_PRINCIPAL_REF"),
+			ConsumerRef:  os.Getenv("DELIVERY_API_CONSUMER_REF"),
+			WorkspaceIDs: stringListEnv("DELIVERY_API_WORKSPACE_IDS"),
 		},
 		Redis: RedisConfig{
 			Addr:     stringEnv("REDIS_ADDR", "localhost:6379"),
@@ -154,6 +174,9 @@ func Load() (Config, error) {
 	}
 	if strings.EqualFold(cfg.Environment, "production") && (cfg.RightsAPI.Token == "" || cfg.RightsAPI.ActorID == "" || len(cfg.RightsAPI.WorkspaceIDs) == 0) {
 		return Config{}, fmt.Errorf("RIGHTS_API_TOKEN, RIGHTS_API_ACTOR_ID, and RIGHTS_API_WORKSPACE_IDS must be configured in production")
+	}
+	if cfg.DeliveryAPI.Enabled && (strings.TrimSpace(cfg.DeliveryAPI.Token) == "" || strings.TrimSpace(cfg.DeliveryAPI.PrincipalRef) == "" || strings.TrimSpace(cfg.DeliveryAPI.ConsumerRef) == "" || len(cfg.DeliveryAPI.WorkspaceIDs) == 0) {
+		return Config{}, fmt.Errorf("DELIVERY_API_TOKEN, DELIVERY_API_PRINCIPAL_REF, DELIVERY_API_CONSUMER_REF, and DELIVERY_API_WORKSPACE_IDS must be configured when direct delivery is enabled")
 	}
 	if cfg.OpenMetadata.Enabled {
 		if cfg.OpenMetadata.BaseURL == "" {
