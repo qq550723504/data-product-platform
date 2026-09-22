@@ -3,7 +3,6 @@ package deliveryhttp
 import (
 	"bytes"
 	"context"
-	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -164,4 +163,3 @@ func executeDeliveryRequest(t *testing.T, handler *Handler, workspaceID, version
 	return response
 }
 
-var _ = errors.Is
