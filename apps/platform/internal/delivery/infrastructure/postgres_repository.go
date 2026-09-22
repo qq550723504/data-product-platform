@@ -73,15 +73,15 @@ func (r *PostgresRepository) FindIdempotencyForCommand(ctx context.Context, tx p
 func (r *PostgresRepository) InsertOperation(ctx context.Context, tx pgx.Tx, operation domain.Operation) error {
 	_, err := tx.Exec(ctx, `
 		INSERT INTO delivery_operation(
-			id, workspace_id, dataset_version_id, certification_ref, idempotency_key,
+			id, workspace_id, dataset_version_id, certification_ref, retry_of_delivery_operation_id, idempotency_key,
 			provider_name, provider_request_key, status, current_gate_decision,
 			dependency_revision, principal_ref, effective_consumer_ref, delegation_ref,
 			purpose, action, scope_ref, delivery_channel, delivery_mode, requested_expires_at,
 			fresh_cap_expires_at, credential_ref, credential_hash,
 			provider_credential_expires_at, terminal_reason, created_at, updated_at
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27)
 	`, operation.ID, operation.WorkspaceID, operation.DatasetVersionID, operation.CertificationRef,
-		operation.IdempotencyKey, operation.ProviderName, operation.ProviderRequestKey,
+		operation.RetryOfDeliveryOperationID, operation.IdempotencyKey, operation.ProviderName, operation.ProviderRequestKey,
 		operation.Status, operation.CurrentGateDecision, operation.DependencyRevision,
 		operation.PrincipalRef, operation.EffectiveConsumerRef, nullable(operation.DelegationRef),
 		operation.Purpose, operation.Action, operation.ScopeRef, operation.DeliveryChannel, operation.DeliveryMode,
@@ -101,7 +101,7 @@ func (r *PostgresRepository) GetOperation(ctx context.Context, tx pgx.Tx, id uui
 	}
 	var operation domain.Operation
 	err := tx.QueryRow(ctx, `
-		SELECT id, workspace_id, dataset_version_id, certification_ref, idempotency_key,
+		SELECT id, workspace_id, dataset_version_id, certification_ref, retry_of_delivery_operation_id, idempotency_key,
 		       provider_name, provider_request_key, status, current_gate_decision,
 		       dependency_revision, principal_ref, effective_consumer_ref, COALESCE(delegation_ref,''),
 		       purpose, action, scope_ref, delivery_channel, delivery_mode, requested_expires_at,
@@ -109,7 +109,7 @@ func (r *PostgresRepository) GetOperation(ctx context.Context, tx pgx.Tx, id uui
 		       provider_credential_expires_at, COALESCE(terminal_reason,''), created_at, updated_at
 		FROM delivery_operation WHERE id=$1`+lock, id).Scan(
 		&operation.ID, &operation.WorkspaceID, &operation.DatasetVersionID, &operation.CertificationRef,
-		&operation.IdempotencyKey, &operation.ProviderName, &operation.ProviderRequestKey,
+		&operation.RetryOfDeliveryOperationID, &operation.IdempotencyKey, &operation.ProviderName, &operation.ProviderRequestKey,
 		&operation.Status, &operation.CurrentGateDecision, &operation.DependencyRevision,
 		&operation.PrincipalRef, &operation.EffectiveConsumerRef, &operation.DelegationRef,
 		&operation.Purpose, &operation.Action, &operation.ScopeRef, &operation.DeliveryChannel, &operation.DeliveryMode,
