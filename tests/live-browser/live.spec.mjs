@@ -81,7 +81,7 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
     await expect(page.getByText(data.effectiveRightsHash, { exact: true })).toBeVisible();
 
     await expect(page.getByRole("heading", { name: "Evidence", exact: true })).toBeVisible();
-    await expect(page.getByText(data.certificationEvidenceSnapshotId, { exact: true })).toBeVisible();
+    await expect(page.getByText(data.certificationEvidenceSnapshotId, { exact: true }).first()).toBeVisible();
     await expect(page.getByText(data.certificationId, { exact: true })).toBeVisible();
 
     await expect(page.getByRole("heading", { name: "Current Delivery Eligibility", exact: true })).toBeVisible();
