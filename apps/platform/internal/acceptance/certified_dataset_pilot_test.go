@@ -41,6 +41,7 @@ import (
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	qualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http"
 	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
@@ -162,6 +163,69 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		t.Fatalf("pilot Entity Resolution = %s/%v, want SUCCEEDED with STANDARDIZED output", matchJob.Status, matchJob.OutputDatasetVersionID)
 	}
 	standardizedVersionID := *matchJob.OutputDatasetVersionID
+	standardizedVersion, err := datasetRepo.GetVersion(ctx, standardizedVersionID)
+	if err != nil {
+		t.Fatalf("load pilot STANDARDIZED DatasetVersion: %v", err)
+	}
+	if standardizedVersion.Status != datasetdomain.VersionReady ||
+		standardizedVersion.GeneratedByEntityMatchJobID == nil ||
+		*standardizedVersion.GeneratedByEntityMatchJobID != matchJob.ID ||
+		standardizedVersion.GeneratedByExecutionID != nil {
+		t.Fatalf("pilot STANDARDIZED output = status %s matchProducer %v executionProducer %v, want READY/%s/nil",
+			standardizedVersion.Status, standardizedVersion.GeneratedByEntityMatchJobID,
+			standardizedVersion.GeneratedByExecutionID, matchJob.ID)
+	}
+	provenJob, err := entityRepo.GetSuccessfulResolutionJobForOutput(
+		ctx,
+		workspaceID,
+		enterpriseVersion.ID,
+		standardizedVersionID,
+		"CSV",
+		enterpriseName,
+	)
+	if err != nil {
+		t.Fatalf("prove pilot Entity Resolution output lineage: %v", err)
+	}
+	if provenJob.ID != matchJob.ID ||
+		provenJob.OutputDatasetVersionID == nil ||
+		*provenJob.OutputDatasetVersionID != standardizedVersionID {
+		t.Fatalf("pilot proven Entity Resolution job = id %s output %v, want %s/%s",
+			provenJob.ID, provenJob.OutputDatasetVersionID, matchJob.ID, standardizedVersionID)
+	}
+
+	candidates, err := entityRepo.ListCandidates(ctx, matchJob.ID)
+	if err != nil {
+		t.Fatalf("list finalized pilot Entity Resolution candidates: %v", err)
+	}
+	frozenDecisions, err := entityRepo.ListResolutionOutputDecisions(ctx, workspaceID, standardizedVersionID)
+	if err != nil {
+		t.Fatalf("list frozen pilot Entity Resolution decisions: %v", err)
+	}
+	if len(candidates) == 0 || len(frozenDecisions) != len(candidates) {
+		t.Fatalf("pilot frozen resolution decisions = %d for %d candidates, want one per candidate",
+			len(frozenDecisions), len(candidates))
+	}
+	for _, candidate := range candidates {
+		decision, ok := frozenDecisions[candidate.SourceKey]
+		if !ok {
+			t.Fatalf("pilot STANDARDIZED output has no frozen decision for source key %s", candidate.SourceKey)
+		}
+		if decision.WorkspaceID != workspaceID ||
+			decision.SourceType != matchJob.SourceType ||
+			decision.SourceRef != matchJob.SourceRef ||
+			decision.SourceKey != candidate.SourceKey ||
+			decision.SourceJobID == nil || *decision.SourceJobID != matchJob.ID ||
+			decision.SourceCandidateID == nil || *decision.SourceCandidateID != candidate.ID {
+			t.Fatalf("pilot frozen resolution decision for %s is inconsistent: %+v", candidate.SourceKey, decision)
+		}
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE dataset_version
+		SET generated_by_entity_match_job_id=$2
+		WHERE id=$1
+	`, standardizedVersionID, uuid.New()); err == nil {
+		t.Fatal("pilot STANDARDIZED producer identity mutation unexpectedly succeeded")
+	}
 
 	workflowVersion, err := workflowVersionService.Create(ctx, workflowapp.CreateWorkflowVersionCommand{
 		WorkspaceID:    workspaceID,
