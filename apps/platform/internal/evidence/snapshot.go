@@ -34,7 +34,7 @@ func CreateSnapshot(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, objec
 	if workspaceID == uuid.Nil || objectType == "" || objectID == uuid.Nil || manifest == nil {
 		return Snapshot{}, fmt.Errorf("invalid evidence snapshot")
 	}
-	items = append([]SnapshotItem(nil), items...)
+	items = append([]SnapshotItem{}, items...)
 	for _, item := range items {
 		if item.EvidenceID == uuid.Nil || item.Category == "" {
 			return Snapshot{}, fmt.Errorf("invalid evidence snapshot item")
