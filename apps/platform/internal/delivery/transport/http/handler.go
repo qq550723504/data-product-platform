@@ -15,6 +15,7 @@ import (
 	deliveryapp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application"
 	deliverydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
+	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
 
 type DirectDataCommandService interface {
@@ -126,7 +127,7 @@ func (h *Handler) deliver(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, deliverydomain.ErrInvalidOperation):
 			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DELIVERY_REQUEST", err.Error(), nil)
-		case errors.Is(err, datasetinfra.ErrNotFound), errors.Is(err, certificationinfra.ErrProfileNotFound):
+		case errors.Is(err, datasetinfra.ErrNotFound), errors.Is(err, certificationinfra.ErrProfileNotFound), errors.Is(err, rightsinfra.ErrNotFound):
 			httpserver.WriteError(w, r, http.StatusNotFound, "DELIVERY_TARGET_NOT_FOUND", "DatasetVersion or CertificationProfile was not found", nil)
 		default:
 			httpserver.WriteError(w, r, http.StatusInternalServerError, "DIRECT_DATA_DELIVERY_FAILED", "direct data delivery command failed", nil)
