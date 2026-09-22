@@ -172,18 +172,6 @@ func scanEntity(row pgx.Row) (domain.Entity, error) {
 	return entity, nil
 }
 
-// InsertMapping is the legacy internal entry point used by workflow canonical
-// alias resolution. It records WORKFLOW_ALIAS provenance and appends an
-// immutable decision, but it has no operation idempotency key and no optimistic
-// concurrency expectation. New command paths should call RecordMappingDecision.
-func (r *PostgresRepository) InsertMapping(ctx context.Context, tx pgx.Tx, mapping domain.EntityMapping) error {
-	_, err := r.RecordMappingDecision(ctx, tx, domain.MappingDecisionCommand{
-		Mapping:      mapping,
-		SourceOrigin: domain.OriginWorkflowAlias,
-	})
-	return err
-}
-
 // RecordMappingDecision appends one immutable mapping decision and moves the
 // mutable current-mapping projection to it inside the caller's transaction. It:
 //
@@ -197,18 +185,13 @@ func (r *PostgresRepository) RecordMappingDecision(ctx context.Context, tx pgx.T
 	if mapping.WorkspaceID == uuid.Nil {
 		return domain.MappingDecision{}, domain.ErrMappingWorkspaceRequired
 	}
-	// Older Core paths predate external candidate engines. Normalize missing
-	// provenance so every decision remains auditable.
-	if strings.TrimSpace(mapping.MatchEngineName) == "" {
-		mapping.MatchEngineName = "RULES"
-	}
-	if strings.TrimSpace(mapping.MatchEngineVersion) == "" {
-		mapping.MatchEngineVersion = "1"
+	if strings.TrimSpace(mapping.MatchEngineName) == "" || strings.TrimSpace(mapping.MatchEngineVersion) == "" {
+		return domain.MappingDecision{}, fmt.Errorf("mapping decision engine provenance is required")
 	}
 
 	origin := cmd.SourceOrigin
 	if origin == "" {
-		origin = domain.OriginUnknown
+		return domain.MappingDecision{}, domain.ErrMappingDecisionOriginRequired
 	}
 	if !origin.Valid() {
 		return domain.MappingDecision{}, fmt.Errorf("unsupported mapping decision source origin %q", origin)
@@ -331,7 +314,7 @@ func (r *PostgresRepository) RecordMappingDecision(ctx context.Context, tx pgx.T
 			idempotency_key, source_origin, source_job_id, source_candidate_id,
 			decided_at, decided_by
 		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
-		          NULLIF($21,''), $22, $23, $24, $25, $26)
+		          $21, $22, $23, $24, $25, $26)
 		RETURNING decided_seq
 	`, decisionID, mapping.WorkspaceID, mappingID, mapping.EntityID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey,
 		mapping.SourceName, mapping.MatchMethod, mapping.MatchRuleID, mapping.MatchPolicyVersion,
