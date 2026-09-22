@@ -137,7 +137,8 @@ func TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked(t *t
 		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
 		IdempotencyKey: "direct-first-" + uuid.NewString(),
 	}
-	if _, err := service.Deliver(ctx, base); err != nil {
+	first, err := service.Deliver(ctx, base)
+	if err != nil {
 		t.Fatalf("initial allowed delivery: %v", err)
 	}
 
@@ -147,6 +148,7 @@ func TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked(t *t
 	gate.mu.Unlock()
 	replacement := base
 	replacement.IdempotencyKey = "direct-replacement-" + uuid.NewString()
+	replacement.RetryOfDeliveryOperationID = &first.Operation.ID
 	blocked, err := service.Deliver(ctx, replacement)
 	if err != nil {
 		t.Fatalf("replacement blocked delivery: %v", err)
@@ -164,6 +166,45 @@ func TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked(t *t
 	}
 	if blockedEvents != 1 || gateFacts != 1 {
 		t.Fatalf("blocked facts events=%d gate_evaluations=%d", blockedEvents, gateFacts)
+	}
+	var retryOf uuid.UUID
+	if err := pool.QueryRow(ctx, `SELECT retry_of_delivery_operation_id FROM delivery_operation WHERE id=$1`, blocked.Operation.ID).Scan(&retryOf); err != nil {
+		t.Fatal(err)
+	}
+	if retryOf != first.Operation.ID {
+		t.Fatalf("replacement retry_of = %s, want %s", retryOf, first.Operation.ID)
+	}
+}
+
+func TestDirectDataReplacementRejectsUnrelatedOperation(t *testing.T) {
+	pool, ctx := directDataTestDatabase(t)
+	workspaceID, versionID := insertDirectDataFixture(t, ctx, pool)
+	otherWorkspaceID, otherVersionID := insertDirectDataFixture(t, ctx, pool)
+	gate := &directIntegrationGate{allowed: true, certificationRef: uuid.New()}
+	service := NewDirectDataService(
+		transaction.NewManager(pool),
+		infrastructure.NewPostgresRepository(pool),
+		gate,
+		datasetinfra.NewPostgresRepository(pool),
+	)
+	other, err := service.Deliver(ctx, DirectDataCommand{
+		WorkspaceID: otherWorkspaceID, DatasetVersionID: otherVersionID, ProfileID: uuid.New(),
+		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
+		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
+		IdempotencyKey: "direct-other-" + uuid.NewString(),
+	})
+	if err != nil {
+		t.Fatalf("create unrelated issued operation: %v", err)
+	}
+	_, err = service.Deliver(ctx, DirectDataCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: uuid.New(),
+		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
+		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
+		RetryOfDeliveryOperationID: &other.Operation.ID,
+		IdempotencyKey: "direct-invalid-retry-" + uuid.NewString(),
+	})
+	if !errors.Is(err, domain.ErrInvalidOperation) {
+		t.Fatalf("unrelated retry_of error = %v, want ErrInvalidOperation", err)
 	}
 }
 
