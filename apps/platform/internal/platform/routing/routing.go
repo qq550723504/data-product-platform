@@ -2,9 +2,8 @@
 //
 // It is the single source of truth for which handlers must confirm each event
 // type before the event may be marked PUBLISHED. Both composition roots use it:
-// the API freezes the obligation on events as they are recorded, and the worker
-// resolves the same table for events that were recorded before their obligation
-// was known.
+// every composition root freezes the obligation on events as they are recorded;
+// the dispatcher only consumes the obligation persisted on each event.
 //
 // The table is versioned and deterministic. An event type absent from the table
 // is an error, never an implicit success; events with no external side effect
@@ -62,8 +61,7 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "ProductReleased", RequiredHandlers: productReleased},
 
 		// New execution acceptance is delivered only through this outbox
-		// obligation. Historical c1-v1 events remain frozen retention-only and
-		// are never reinterpreted as queue-delivery evidence.
+		// obligation.
 		{EventType: "ExecutionQueued", RequiredHandlers: []string{HandlerExecutionQueue}},
 		{EventType: "ExecutionRetried", RequiredHandlers: []string{HandlerExecutionQueue}},
 
