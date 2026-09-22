@@ -101,7 +101,7 @@ func (e *Engine) prepareDependencies(ctx context.Context, request workflowapp.Pr
 		} else {
 			mappings[key] = decision
 		}
-		if decision.WorkspaceID != request.WorkspaceID || decision.EntityID == uuid.Nil || decision.SourceOrigin == entitydomain.OriginUnknown ||
+		if decision.WorkspaceID != request.WorkspaceID || decision.EntityID == uuid.Nil ||
 			(decision.Status != entitydomain.MappingAutoMatched && decision.Status != entitydomain.MappingConfirmed) {
 			return fmt.Errorf("source %s/%s has an unusable mapping decision", sourceRef, sourceKey)
 		}
