@@ -52,12 +52,13 @@ const (
 	SourceReference SourceRole = "REFERENCE"
 
 	OriginMatchCandidate SourceOrigin = "MATCH_CANDIDATE"
+	OriginManualReview   SourceOrigin = "MANUAL_REVIEW"
 	OriginWorkflowAlias  SourceOrigin = "WORKFLOW_ALIAS"
 )
 
 func (o SourceOrigin) Valid() bool {
 	switch o {
-	case OriginMatchCandidate, OriginWorkflowAlias:
+	case OriginMatchCandidate, OriginManualReview, OriginWorkflowAlias:
 		return true
 	default:
 		return false
