@@ -72,7 +72,7 @@ func TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload(t *testing.T) 
 		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: uuid.New(),
 		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
 		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
-		IdempotencyKey: "direct-issued-"+uuid.NewString(), TraceID: "direct-issued",
+		IdempotencyKey: "direct-issued-" + uuid.NewString(), TraceID: "direct-issued",
 	}
 	first, err := service.Deliver(ctx, cmd)
 	if err != nil {
@@ -135,7 +135,7 @@ func TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked(t *t
 		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: uuid.New(),
 		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
 		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
-		IdempotencyKey: "direct-first-"+uuid.NewString(),
+		IdempotencyKey: "direct-first-" + uuid.NewString(),
 	}
 	if _, err := service.Deliver(ctx, base); err != nil {
 		t.Fatalf("initial allowed delivery: %v", err)
