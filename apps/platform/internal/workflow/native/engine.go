@@ -73,6 +73,19 @@ type sourceRecord struct {
 }
 
 func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.ProcessingResult, error) {
+	var result workflowapp.ProcessingResult
+	err := e.tx.WithAdvisoryLock(ctx, workflowapp.NativeExecutionLockKey(request.ExecutionID), func(ctx context.Context) error {
+		var err error
+		result, err = e.execute(ctx, request)
+		return err
+	})
+	if err != nil {
+		return workflowapp.ProcessingResult{}, err
+	}
+	return result, nil
+}
+
+func (e *Engine) execute(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.ProcessingResult, error) {
 	if e.indicatorCalculator == nil {
 		return workflowapp.ProcessingResult{}, fmt.Errorf("native workflow has no industry-pack indicator calculator")
 	}
