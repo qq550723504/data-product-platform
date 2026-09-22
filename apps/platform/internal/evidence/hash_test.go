@@ -26,32 +26,20 @@ func TestEvidenceHashVerification(t *testing.T) {
 		CreatedBy:    &createdBy,
 	}
 
-	v1Hash, err := ComputeHash(record, HashAlgorithmEvidenceV1)
+	v2Hash, err := ComputeHash(record, HashAlgorithmEvidenceV2)
 	if err != nil {
-		t.Fatalf("compute V1 hash: %v", err)
+		t.Fatalf("compute V2 hash: %v", err)
 	}
-	if !VerifyHash(record, HashAlgorithmEvidenceV1, v1Hash) {
-		t.Fatal("V1 Evidence hash did not verify")
+	if !VerifyHash(record, HashAlgorithmEvidenceV2, v2Hash) {
+		t.Fatal("V2 Evidence hash did not verify")
 	}
 	tampered := record
 	tampered.Title = "tampered title"
-	if VerifyHash(tampered, HashAlgorithmEvidenceV1, v1Hash) {
-		t.Fatal("tampered V1 Evidence unexpectedly verified")
+	if VerifyHash(tampered, HashAlgorithmEvidenceV2, v2Hash) {
+		t.Fatal("tampered V2 Evidence unexpectedly verified")
 	}
-
-	legacyHash, err := ComputeHash(record, HashAlgorithmLegacy)
-	if err != nil {
-		t.Fatalf("compute legacy hash: %v", err)
-	}
-	legacyTitleChange := record
-	legacyTitleChange.Title = "legacy title was not hashed"
-	if !VerifyHash(legacyTitleChange, HashAlgorithmLegacy, legacyHash) {
-		t.Fatal("legacy metadata-only Evidence hash should ignore title")
-	}
-	legacyMetadataChange := record
-	legacyMetadataChange.Metadata = map[string]any{"attempt": 2, "workflowVersion": "1.0.0"}
-	if VerifyHash(legacyMetadataChange, HashAlgorithmLegacy, legacyHash) {
-		t.Fatal("legacy Evidence with modified metadata unexpectedly verified")
+	if _, err := ComputeHash(record, "SHA256"); err == nil {
+		t.Fatal("legacy hash algorithm was accepted")
 	}
 }
 
@@ -85,7 +73,7 @@ func TestEvidenceHashVerificationSurvivesQualityMetricsJSONRoundTrip(t *testing.
 		CreatedAt:    time.Date(2026, 9, 20, 10, 11, 12, 123456789, time.UTC),
 		CreatedBy:    &createdBy,
 	}
-	hashValue, err := ComputeHash(record, HashAlgorithmEvidenceV1)
+	hashValue, err := ComputeHash(record, HashAlgorithmEvidenceV2)
 	if err != nil {
 		t.Fatalf("compute quality evidence hash: %v", err)
 	}
@@ -100,7 +88,7 @@ func TestEvidenceHashVerificationSurvivesQualityMetricsJSONRoundTrip(t *testing.
 		t.Fatalf("unmarshal quality evidence metadata: %v", err)
 	}
 	record.Metadata = roundTripped
-	if !VerifyHash(record, HashAlgorithmEvidenceV1, hashValue) {
+	if !VerifyHash(record, HashAlgorithmEvidenceV2, hashValue) {
 		t.Fatalf("quality evidence hash did not survive JSON round trip: hash=%s metadata=%#v", hashValue, roundTripped)
 	}
 }
@@ -182,43 +170,5 @@ func TestCanonicalJSONNumberPreservesDecimalValue(t *testing.T) {
 				t.Fatalf("canonicalize %s = %s, want %s", testCase.input, got, testCase.want)
 			}
 		})
-	}
-}
-
-func TestLegacyEvidenceHashPreservesNumericRoundTrip(t *testing.T) {
-	record := Record{
-		Metadata: map[string]any{"ratio": 1e-7},
-	}
-	hashValue, err := ComputeHash(record, HashAlgorithmLegacy)
-	if err != nil {
-		t.Fatalf("compute legacy hash: %v", err)
-	}
-	encoded, err := json.Marshal(record.Metadata)
-	if err != nil {
-		t.Fatalf("marshal legacy metadata: %v", err)
-	}
-	var roundTripped map[string]any
-	if err := decodeMetadataForHash(encoded, HashAlgorithmLegacy, &roundTripped); err != nil {
-		t.Fatalf("decode legacy metadata: %v", err)
-	}
-	record.Metadata = roundTripped
-	if !VerifyHash(record, HashAlgorithmLegacy, hashValue) {
-		t.Fatalf("legacy hash did not survive JSONB numeric round trip: metadata=%#v", roundTripped)
-	}
-}
-
-func TestEvidenceV1PreservesHistoricalNumericVerification(t *testing.T) {
-	record := Record{Metadata: map[string]any{"ratio": 1e-7}}
-	hashValue, err := ComputeHash(record, HashAlgorithmEvidenceV1)
-	if err != nil {
-		t.Fatalf("compute V1 hash: %v", err)
-	}
-	var roundTripped map[string]any
-	if err := decodeMetadataForHash([]byte(`{"ratio":0.0000001}`), HashAlgorithmEvidenceV1, &roundTripped); err != nil {
-		t.Fatalf("decode V1 metadata: %v", err)
-	}
-	record.Metadata = roundTripped
-	if !VerifyHash(record, HashAlgorithmEvidenceV1, hashValue) {
-		t.Fatalf("historical V1 hash did not survive JSONB numeric spelling normalization")
 	}
 }

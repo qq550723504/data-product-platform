@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/application"
@@ -100,18 +101,24 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 	`, complianceResultID, workspaceID, datasetVersionID)
 
 	for i, evidenceType := range []string{"QUALITY_RESULT", "COMPLIANCE_RESULT"} {
-		evidenceID := uuid.New()
 		sourceID := []uuid.UUID{qualityResultID, complianceResultID}[i]
-		mustExec(t, ctx, pool, `
-			INSERT INTO evidence (
-				id, workspace_id, evidence_type, title, source_type, source_id,
-				hash_algorithm, hash_value, metadata, created_at
-			) VALUES ($1,$2,$3,$3,$3,$4,'SHA256',$5,'{}'::jsonb,now())
-		`, evidenceID, workspaceID, evidenceType, sourceID, repeatHex(i+3))
-		mustExec(t, ctx, pool, `
-			INSERT INTO evidence_relation (evidence_id, object_type, object_id, relation_type)
-			VALUES ($1,'DATASET_VERSION',$2,$3)
-		`, evidenceID, datasetVersionID, evidenceType+"_EVIDENCE")
+		tx, err := pool.Begin(ctx)
+		if err != nil {
+			t.Fatalf("begin Evidence fixture: %v", err)
+		}
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			WorkspaceID:  workspaceID,
+			EvidenceType: evidenceType,
+			Title:        evidenceType,
+			SourceType:   evidenceType,
+			SourceID:     &sourceID,
+		}, evidence.Relation{ObjectType: "DATASET_VERSION", ObjectID: datasetVersionID, RelationType: evidenceType + "_EVIDENCE"}); err != nil {
+			_ = tx.Rollback(ctx)
+			t.Fatalf("append Evidence fixture: %v", err)
+		}
+		if err := tx.Commit(ctx); err != nil {
+			t.Fatalf("commit Evidence fixture: %v", err)
+		}
 	}
 
 	mustExec(t, ctx, pool, `

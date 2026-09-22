@@ -189,22 +189,23 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 		t.Fatalf("commit entity mapping fixture: %v", err)
 	}
 
-	legacyMetadata := map[string]any{"source": "legacy-import"}
-	legacyHash, err := evidence.ComputeHash(evidence.Record{Metadata: legacyMetadata}, evidence.HashAlgorithmLegacy)
+	sourceMetadata := map[string]any{"source": "captured-import"}
+	sourceRecord := evidence.Record{WorkspaceID: workspaceID, EvidenceType: "SOURCE_CAPTURE", Title: "Source evidence", Metadata: sourceMetadata, CreatedAt: evidence.NormalizeCreatedAt(time.Now().UTC())}
+	sourceHash, err := evidence.ComputeHash(sourceRecord, evidence.HashAlgorithmEvidenceV2)
 	if err != nil {
-		t.Fatalf("compute legacy Evidence hash: %v", err)
+		t.Fatalf("compute source Evidence hash: %v", err)
 	}
-	legacyMetadataJSON, _ := json.Marshal(legacyMetadata)
-	legacyEvidenceID := uuid.New()
+	sourceMetadataJSON, _ := json.Marshal(sourceMetadata)
+	sourceEvidenceID := uuid.New()
 	mustExec(t, ctx, pool, `
 		INSERT INTO evidence (
 			id, workspace_id, evidence_type, title, hash_algorithm, hash_value, metadata, created_at
-		) VALUES ($1,$2,'SOURCE_CAPTURE','Legacy source evidence','SHA256',$3,$4,now())
-	`, legacyEvidenceID, workspaceID, legacyHash, legacyMetadataJSON)
+		) VALUES ($1,$2,'SOURCE_CAPTURE','Source evidence','SHA256-EVIDENCE-V2',$3,$4,$5)
+	`, sourceEvidenceID, workspaceID, sourceHash, sourceMetadataJSON, sourceRecord.CreatedAt)
 	mustExec(t, ctx, pool, `
 		INSERT INTO evidence_relation (evidence_id, object_type, object_id, relation_type)
 		VALUES ($1,'DATASET_VERSION',$2,'SOURCE_EVIDENCE')
-	`, legacyEvidenceID, rawVersionID)
+	`, sourceEvidenceID, rawVersionID)
 
 	mustExec(t, ctx, pool, `
 		INSERT INTO data_product (
@@ -295,7 +296,7 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 	for _, item := range trace.Evidence {
 		integrityByID[item.ID] = item.IntegrityValid
 	}
-	for _, id := range []uuid.UUID{executionEvidence.ID, entityEvidence.ID, legacyEvidenceID} {
+	for _, id := range []uuid.UUID{executionEvidence.ID, entityEvidence.ID, sourceEvidenceID} {
 		if !integrityByID[id] {
 			t.Fatalf("Evidence %s missing or failed integrity verification: %#v", id, integrityByID)
 		}
