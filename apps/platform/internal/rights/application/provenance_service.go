@@ -613,7 +613,18 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 		}
 		return existing, nil
 	}
-	return snapshot, err
+	if err != nil {
+		return domain.EffectiveRightsSnapshot{}, err
+	}
+
+	// Finalization is a persisted fact. Return the committed representation
+	// rather than the pre-finalize in-memory candidate so callers observe the
+	// same FINALIZED status/root/membership that downstream certification reads.
+	stored, readErr := s.repo.GetEffectiveRights(ctx, snapshot.ID)
+	if readErr != nil {
+		return domain.EffectiveRightsSnapshot{}, readErr
+	}
+	return stored, nil
 }
 
 func sameOptionalUUID(left, right *uuid.UUID) bool {
