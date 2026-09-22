@@ -132,35 +132,13 @@
         AND status IN ('CREATED', 'PROCESSING', 'READY');
   ```
 
-  **相对草案的收紧（实现时补充，理由见下）**：草案的谓词只有
-  `generated_by_execution_id IS NOT NULL`，会把终态行（`INVALID` / `SUPERSEDED`）也算进约束。
-  但 `dataset_version` 行永不删除（`guard_dataset_version_immutability` 禁止 DELETE），
-  且 `READY` 行的 `generated_by_execution_id` 不可改写，所以该版本在任何已经产生过重复
-  输出的真实安装上**无法安装且无法补救**。因此索引只覆盖“仍可作为该 Execution 输出”的
-  live 状态（分配窗口 `CREATED` / `PROCESSING`、已发布 `READY`）；同一对
-  `(dataset, execution)` 可以有多条历史行，但有且仅有一条 live 行。
+  索引只覆盖“仍可作为该 Execution 输出”的 live 状态：
+  `CREATED` / `PROCESSING` / `READY`。`FAILED` 是未产出内容的失败半成品，
+  `INVALID` / `SUPERSEDED` 是终态历史，因此都不占用 live 输出槽位。
 
-  **`FAILED` 也被排除在 live 集合之外（评审修正）**：草案把 `FAILED` 当作“半成品修复目标”
-  保留在索引内，与守卫给出的补救路径自相矛盾——把多余半成品置 `FAIL` 并不会把它移出约束，
-  按守卫提示修复后再次迁移仍会被拒绝。`FAILED` 是**未产生内容的失败尝试**，不属于“该
-  Execution 的输出”，故排除。排除后守卫的每条建议都真实可达：
-
-  | 多余行的状态 | 可达的补救 | 依据 |
-  | --- | --- | --- |
-  | `READY` | `InvalidateDatasetVersion` → `INVALID` | `Invalidate` 仅接受 `READY`，且会把 `dataset.current_version_id` 清空 |
-  | `CREATED` / `PROCESSING` | `FailDatasetVersion` Command（HTTP: `POST /api/v1/dataset-versions/{versionId}/fail`）→ `FAILED` | 域层 `MarkFailed` 接受这两种状态 |
-  | `INVALID` / `SUPERSEDED` / `FAILED` | 无需处理 | 本就不在 live 集合内 |
-
-  还必须核对历史重复的真实形状：C2-a 之前 `generated_by_execution_id` **只在 `SetReady` 写入**
-  （旧 `upload_version.go` 在 `MarkReady` 之后才赋值该字段），所以旧安装可能留下的重复 live 对
-  只可能是**多条 `READY` 行**（`INVALID`/`SUPERSEDED` 副本无论谓词如何都已被排除），
-  而 `READY` 行的补救路径正是 `InvalidateDatasetVersion`。C2-a 之后键在**分配**时落库，
-  所以 `CREATED`/`PROCESSING` 必须留在索引内（关闭 N3/N7）。
-
-  排除 `FAILED` 不会削弱写入侧的幂等：写入者按 `(dataset, execution)` **查回并复用**该行
-  （见下），不依赖索引来发现半成品；被复用的 `FAILED` 行重新进入索引的时点是它被发布
-  （`SetReady`），那时唯一性会被再次校验。迁移守卫只统计 live 行，遇到重复时
-  `RAISE EXCEPTION` 并列出每条冲突对的 `version_no:status`，而不是静默丢事实。
+  这不会削弱写入侧幂等：写入者始终按 `(dataset, execution)` 查回并复用既有半成品，
+  `FAILED` 行可以在重试成功时重新发布为 `READY`，此时唯一索引再次校验 live 输出唯一性。
+  `INVALID` / `SUPERSEDED` 则明确拒绝复用，避免静默复活已撤销输出。
 - `datasetWriter.Handle` 改为**先查后写**，且**在分配版本的事务内**完成（`AllocateVersion`）：
   - 若 `(datasetID, generatedByExecutionID)` 已有 `READY` 版本 → 直接返回该版本（不新建、
     不重写对象、不重复发事实）；
@@ -292,13 +270,11 @@
 6. 已撤销（`INVALID`）输出不被静默复用。（`TestInvalidatedOutputIsNotSilentlyReused`）
 7. 数据库拒绝同一 Execution 的第二个 live 输出，且错误可识别。
    （`TestDatabaseRefusesASecondOutputForOneExecution`）
-8. 迁移：已有重复 live 输出 → 拒绝且回滚（不留下索引、不删行）；守卫给出的补救路径
-   确实可达；只有历史重复 → 允许升级。
-   （`TestC2AOutputKeyMigrationRefusesExistingDuplicateOutputs`、
-   `TestC2AOutputKeyMigrationRemediationIsReachable`、
-   `TestC2AOutputKeyMigrationUpgradesInstallationsWithHistoricalDuplicates`）
-9. 迁移部分性/可逆性：NULL 执行不受限，down 只删索引、保留行。
-   （`TestC2AOutputKeyMigrationIsPartialAndReversible`）
+8. 迁移直接安装当前 live-output 唯一约束；NULL 执行不受限，第二个 live 输出被数据库拒绝。
+   （`TestC2AOutputKeyMigrationInstallsCurrentContract`、
+   `TestC2AOutputKeyConstraintScopesOnlyLiveExecutionOutputs`）
+9. down 只删除唯一索引，不删除 DatasetVersion 事实。
+   （`TestC2AOutputKeyMigrationDownDropsOnlyConstraint`）
 10. 并发投递中失败者把共享行置 `FAILED` 后，获胜者仍发布且已提交状态与获批事实一致。
     （`TestConcurrentDeliveryFailingTheSharedRowStillPublishesTheWinner`）
 
@@ -331,9 +307,9 @@ C2-a 必须先于 C2-b（reconciler 依赖幂等输出）；两者可同 PR，�
 
 1. `nativeLeaseTTL` 与最大恢复次数取值；是否按 workflow 类别区分。
 2. 半成品输出版本在"永久无法修复"时：C2-a 的选择是**保留为 `FAILED` 证据**。评审修正后
-   `FAILED` **不在** live 输出集合内（迁移 `000020` 的索引与守卫都只覆盖
+   `FAILED` **不在** live 输出集合内（迁移 `000020` 的索引只覆盖
    `CREATED`/`PROCESSING`/`READY`），所以保留 `FAILED` 不会占用 `(dataset, execution)` 的
-   约束槽位，也不会阻塞迁移；写入侧的复用靠“先查后写”，不靠索引。
+   约束槽位；写入侧的复用靠“先查后写”，不靠索引。
    已提供面向操作者的 `FailDatasetVersion` Command 及 HTTP 入口；它只接受
    `CREATED` / `PROCESSING`，并追加 `DatasetVersionFailed`、AuditEvent 和 Outbox 事实。
    `InvalidateDatasetVersion` 仍只接受 `READY`，因此不属于此路径。
