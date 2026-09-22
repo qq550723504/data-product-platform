@@ -22,6 +22,7 @@ type Query = {
   scopeType?: string;
   scopeRef?: string;
   findingsOffset?: string;
+  assessmentOffset?: string;
 };
 
 function firstValue(values?: string[]): string {
@@ -80,23 +81,26 @@ export default async function DatasetVersionDetailPage({
   const { id, versionId } = await params;
   const query = await searchParams;
   const findingsOffset = Math.max(0, Number.parseInt(query.findingsOffset ?? "0", 10) || 0);
+  const assessmentOffset = Math.max(0, Number.parseInt(query.assessmentOffset ?? "0", 10) || 0);
   const findingsLimit = 50;
-  const findingPageHref = (offset: number) => {
+  const assessmentLimit = 25;
+  const pageHref = (key: "findingsOffset" | "assessmentOffset", offset: number) => {
     const next = new URLSearchParams();
-    for (const [key, value] of Object.entries(query)) {
-      if (value) next.set(key, value);
+    for (const [queryKey, value] of Object.entries(query)) {
+      if (value) next.set(queryKey, value);
     }
-    if (offset > 0) next.set("findingsOffset", String(offset));
-    else next.delete("findingsOffset");
+    if (offset > 0) next.set(key, String(offset));
+    else next.delete(key);
     const suffix = next.toString();
     return `/datasets/${id}/versions/${versionId}${suffix ? `?${suffix}` : ""}`;
   };
 
   try {
-    const [dataset, version, quality, history] = await Promise.all([
+    const [dataset, version, quality, latestQuality, history] = await Promise.all([
       platform.dataset(id),
       platform.datasetVersion(versionId),
-      platform.qualityAssessments(versionId, 25, 0),
+      platform.qualityAssessments(versionId, assessmentLimit, assessmentOffset),
+      assessmentOffset === 0 ? Promise.resolve(null) : platform.qualityAssessments(versionId, 1, 0),
       platform.certificationHistory(versionId),
     ]);
 
@@ -125,8 +129,13 @@ export default async function DatasetVersionDetailPage({
       && requested.scopeType.trim() !== ""
       && (requested.scopeType.trim().toUpperCase() === "ALL_RESOURCE" || requested.scopeRef.trim() !== "");
     const eligibility = canCheck ? await platform.deliveryEligibility(versionId, requested) : null;
-    const latestAssessment = quality.items[0];
-    const latestReport = latestAssessment ? await platform.qualityReport(latestAssessment.id, findingsLimit, findingsOffset) : null;
+    const latestAssessment = assessmentOffset === 0 ? quality.items[0] : latestQuality?.items[0];
+    const latestReportResult = latestAssessment
+      ? await platform.qualityReport(latestAssessment.id, findingsLimit, findingsOffset)
+        .then((report) => ({ report, failed: false }))
+        .catch(() => ({ report: null, failed: true }))
+      : { report: null, failed: false };
+    const latestReport = latestReportResult.report;
     const evidenceCertification = eligibility?.certification.current
       ?? history.items.find((item) => item.profile.id === selectedProfile?.id);
 
@@ -221,10 +230,10 @@ export default async function DatasetVersionDetailPage({
                     </span>
                     <div className="badge-row">
                       {latestReport.findings.page.offset > 0 ? (
-                        <Link href={findingPageHref(Math.max(0, latestReport.findings.page.offset - findingsLimit))}>上一页</Link>
+                        <Link href={pageHref("findingsOffset", Math.max(0, latestReport.findings.page.offset - findingsLimit))}>上一页</Link>
                       ) : null}
                       {latestReport.findings.page.offset + latestReport.findings.items.length < latestReport.findings.page.total ? (
-                        <Link href={findingPageHref(latestReport.findings.page.offset + findingsLimit)}>下一页</Link>
+                        <Link href={pageHref("findingsOffset", latestReport.findings.page.offset + findingsLimit)}>下一页</Link>
                       ) : null}
                     </div>
                   </div>
@@ -259,6 +268,11 @@ export default async function DatasetVersionDetailPage({
                   </table>
                 </div>
               </section>
+            ) : latestReportResult.failed ? (
+              <div className="callout callout-warn" style={{ marginBottom: 18 }}>
+                <strong>Quality Report 明细暂不可用</strong>
+                <p>该评测可能来自旧版历史数据，缺少当前 bounded report 所需的维度快照；版本与认证历史仍可正常查看。</p>
+              </div>
             ) : null}
             <div className="table-card" style={{ marginBottom: 24 }}>
               <table className="data-table">
@@ -275,6 +289,22 @@ export default async function DatasetVersionDetailPage({
                 </tbody>
               </table>
             </div>
+            {quality.page.total > assessmentLimit ? (
+              <div className="panel-header" style={{ marginBottom: 24 }}>
+                <span className="eyebrow">
+                  {quality.page.offset + 1}–{Math.min(quality.page.offset + quality.items.length, quality.page.total)}
+                  {" / "}{quality.page.total}
+                </span>
+                <div className="badge-row">
+                  {quality.page.offset > 0 ? (
+                    <Link href={pageHref("assessmentOffset", Math.max(0, quality.page.offset - assessmentLimit))}>上一页</Link>
+                  ) : null}
+                  {quality.page.offset + quality.items.length < quality.page.total ? (
+                    <Link href={pageHref("assessmentOffset", quality.page.offset + assessmentLimit)}>下一页</Link>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
           </>
         )}
 
