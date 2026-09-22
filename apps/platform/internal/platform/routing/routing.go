@@ -29,7 +29,7 @@ const (
 // whenever an event type's required-handler set changes. Dispatch logs and
 // dead-letter diagnostics reference it, so the obligation that was in force when
 // an event was handled stays auditable.
-const Version = "c1-v8"
+const Version = "c1-v9"
 
 // VersionFor folds the deployment profile into the routing version so the same
 // version string always describes the same required-handler set. Enabling or
@@ -66,7 +66,6 @@ func Routes(governanceProjection bool) []outbox.Route {
 		// are never reinterpreted as queue-delivery evidence.
 		{EventType: "ExecutionQueued", RequiredHandlers: []string{HandlerExecutionQueue}},
 		{EventType: "ExecutionRetried", RequiredHandlers: []string{HandlerExecutionQueue}},
-		{EventType: "ExecutionReconciliationQueued", RequiredHandlers: []string{HandlerExecutionQueue}},
 
 		// Retention-only: recorded for audit and traceability, with no
 		// external side-effect obligation.

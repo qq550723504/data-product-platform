@@ -56,9 +56,9 @@ func (h *Handler) Handle(ctx context.Context, task *asynq.Task) error {
 		return fmt.Errorf("execution %s has unsupported status %s", execution.ID, execution.Status)
 	}
 
-	// A row queued before reference scoping existed can still bind a foreign workflow,
-	// input or output. Revalidate before dispatch so a worker never reads a foreign input
-	// or writes a foreign output; an inconsistent row is quarantined, not executed.
+	// Revalidate ownership and reference usability immediately before dispatch so a
+	// worker never reads a foreign input or writes a foreign output. A reference that
+	// no longer satisfies the current contract is quarantined rather than executed.
 	if err := h.repo.ValidateExecutionOwnership(ctx, execution); err != nil {
 		if isReferenceFailure(err) {
 			return h.quarantine(ctx, execution, err)

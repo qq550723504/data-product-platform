@@ -11,7 +11,8 @@
   T2 已实现 C1-c（Execution 请求幂等）与 C1-d（Execution 入队经 Outbox）：
   `WORKFLOW.CREATE_EXECUTION` / `WORKFLOW.RETRY_EXECUTION` 使用请求指纹，Create/Retry
   只在事务内写入 Outbox，由 `execution-queue` handler 经真实 Redis/asynq 入队；旧的
-  T1 retention-only `PUBLISHED` 事件仍保持原义务，不作为队列送达证据。
+  当前 Execution 入队事件都冻结为 `execution-queue` 义务；历史 retention-only 对账路径已移除，
+  不再维护针对开发阶段旧事件的补派发兼容流程。
 - 关联：issue #103（Domain Event / AuditEvent / Transactional Outbox 覆盖缺口）、
   #110（持久化执行 + 入队超时的恢复，禁止盲重复创建）、#100（关键 Command 幂等）；
   AGENTS.md §4（显式 Command）、§5（Domain Event + Audit + Transactional Outbox）、
@@ -229,16 +230,16 @@ T2 实现：
 
 1. 事务内：`InsertExecution` + `appendExecutionEvent("ExecutionQueued")` + Audit
    + 写 `command_idempotency`（含 canonical SHA-256 指纹）。**不在事务内直接入队。**
-2. Worker 侧新增 `execution-queue` Outbox handler：消费 `ExecutionQueued`、
-   `ExecutionRetried` 或受控对账事件 → `queue.EnqueueExecution(aggregate_id)`。
+2. Worker 侧的 `execution-queue` Outbox handler 消费 `ExecutionQueued` / `ExecutionRetried`
+   → `queue.EnqueueExecution(aggregate_id)`。
 3. handler 幂等由队列消费者兜底：`workflow/transport/queue/handler.go` 已对
    `SUCCEEDED / FAILED / CANCELLED / SUBMITTING / RUNNING` 直接返回 `nil`，重复入队不会
    产生重复输出或重复远程 job。
 4. 恢复：入队瞬时失败 → Outbox `FAILED` → 退避重试；队列接收但确认丢失允许重投，
    消费者已有领取保护，不创建第二个 Execution。
-5. `apps/platform/cmd/execution-reconcile` 默认只报告旧 `QUEUED`；显式 `--apply` 重新锁定
-   Execution、验证工作区/引用，并用 `WORKFLOW.RECONCILE_QUEUED_EXECUTION` 与来源事件
-   建立稳定幂等补派发记录。旧事件的 `PUBLISHED` 不被当作送达证明。
+5. 不再提供针对 pre-production 旧 `QUEUED` / retention-only 事件的 reconciliation CLI。
+   当前恢复依赖 Outbox 的 claim/lease/退避重试，以及 worker dispatch 前的 workspace/reference
+   revalidation；引用失效或越权时 fail closed 并 quarantine。
 
 **对共享路径的影响声明**：以上只替换"提交后直接入队"这一步。`CreateExecutionCommand`、
 输入绑定（`Inputs`）、`domain.NewExecution`、`Succeed` 的输出版本语义均不变；
@@ -246,8 +247,8 @@ T2 实现：
 
 **两个派发入口都要切换（硬性）**：`Create`（首次入队）与**显式 Retry**（重试入队）
 是两个独立的 `EnqueueExecution` 调用点，C1-d 必须**同时**改为经 Outbox，不能只移除
-`Create` 里的直接 enqueue 而留下 Retry 的直连路径。遗留的 `QUEUED` 执行还需有对账路径
-（Outbox 事件缺失/入队确认丢失时能补派发），否则“不再悬挂”不成立。
+`Create` 里的直接 enqueue 而留下 Retry 的直连路径。当前系统不再为假想的 pre-production
+遗留 `QUEUED` 行保留额外对账协议。
 
 ### 4.6 观测
 
@@ -330,11 +331,11 @@ T2 实现：
 事件为 `FAILED` 并按退避重试；Redis 恢复后可继续派发。确认丢失允许消息重投，消费者
 领取保护不创建第二个 Execution。
 
-### 5.6 遗留 QUEUED 对账
+### 5.6 Execution 恢复
 
-`cmd/execution-reconcile` 默认只报告；`--apply` 才创建带来源事件、稳定操作键的
-`ExecutionReconciliationQueued` Outbox 记录。真实 PostgreSQL 并发对账必须只有一个
-有效补派发记录，且旧事件的 `PUBLISHED` 本身不能让报告变成“已送达”。
+当前恢复只验证现行协议：Outbox 派发失败后按 lease/退避自动重试；worker dispatch 前再次
+校验 workspace/reference；无效引用进入 quarantine。已移除针对开发阶段旧 retention-only
+事件的 `execution-reconcile` / `ExecutionReconciliationQueued` 兼容路径。
 
 ### 5.7 既有门禁
 
@@ -350,7 +351,7 @@ T2 实现：
 | 扇出前置 | 统一 dispatcher + 版本化路由表 + 每处理器确认（模型 A，issue #103）；不改 Execution 输入/输出语义；`000016_outbox_event_routing_obligation` 把处理义务冻结在事件上 | **已实现** |
 | C1-c / T2-a | 请求幂等：`WORKFLOW.CREATE_EXECUTION` / `WORKFLOW.RETRY_EXECUTION`、canonical 指纹、严格 `Idempotency-Key`、并发收敛 | **已实现**（`000017`） |
 | C1-d / T2-b | Execution 入队改经 Outbox（`Create` **与** Retry 两个入口）+ `execution-queue` Redis/asynq handler + 路由版本升级 | **已实现** |
-| T2-c | 遗留 `QUEUED` 受控报告/补派发，来源关联与稳定操作键 | **已实现** |
+| T2-c | pre-production 遗留 `QUEUED` 对账兼容路径 | **已移除**（#159 cleanup） |
 | C1-e | 死信重放 Command（操作者、理由、独立重放记录，保留原 `event_id`） | 待实现（未完成项） |
 | C2 | 原生执行恢复与输出幂等（另文） | 设计已合入 |
 
@@ -427,8 +428,8 @@ worker 装配在 `apps/platform/cmd/worker/{main.go,handlers.go}`：
 - **能力边界**：claim 仍是全局 `PUBLISHED`，因此「一个事件 + 两个处理器」只在**同一派发轮次内**支持；
   若未来需要按消费者独立进度/独立重放，仍需升级为模型 B（按消费者 claim）。
 - **T2 边界**：新产生的 `ExecutionQueued`/`ExecutionRetried` 必须由 `execution-queue`
-  确认；T1 历史事件仍冻结为仅保留，不能把其 `PUBLISHED` 当作队列送达证据。对账只为
-  仍为 `QUEUED` 且引用/工作区复核通过的遗留记录创建一条新的、带来源关联的派发记录。
+  确认。针对 pre-production 旧 retention-only 事件的补派发对账已移除；当前恢复只依赖
+  Outbox retry/lease 与 dispatch-time reference validation。
 
 T2 使用上述模型（不得新开第二套 claim）：
 
