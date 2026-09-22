@@ -104,7 +104,7 @@ export async function startImportedResolution(form: FormData, config: IngestConf
     if (!isId(versionId) || form.get("acknowledged") !== "on") throw new Error("需要有效 RAW 版本并确认主体解析策略。");
     const json = transport(config, request, () => { attempted = true; });
     const scoped = await datasets(json, workspaceId);
-    const version = await json(`/api/v1/dataset-versions/${versionId}`);
+    const version = await json(`/api/v1/dataset-versions/${versionId}?workspaceId=${encodeURIComponent(workspaceId)}`);
     const raw = scoped.find((item) => same(item.id, String(version.datasetId)) && item.datasetType === "RAW");
     if (!raw || !same(version.id, versionId) || version.status !== "READY") throw new Error("输入必须是当前工作区中可用的 RAW 版本。");
     if (typeof raw.code !== "string" || !raw.code.startsWith("CSV-") || !isId(raw.code.slice(4))) throw new Error("只支持此接入向导创建的 RAW 数据集。");

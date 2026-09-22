@@ -103,3 +103,61 @@ func TestReportFindingMapsSkippedToNotApplicableWithoutChangingObservedFact(t *t
 		t.Fatalf("report finding is not JSON encodable: %v", err)
 	}
 }
+
+func TestAssessmentHistoryRequiresWorkspaceID(t *testing.T) {
+	versionID := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/dataset-versions/"+versionID.String()+"/quality-assessments", nil)
+	req.SetPathValue("versionId", versionID.String())
+	response := httptest.NewRecorder()
+
+	(&Handler{}).listAssessments(response, req)
+
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusBadRequest)
+	}
+	if !strings.Contains(response.Body.String(), "WORKSPACE_REQUIRED") {
+		t.Fatalf("body = %s, want WORKSPACE_REQUIRED", response.Body.String())
+	}
+}
+
+func TestLatestAssessmentRequiresWorkspaceID(t *testing.T) {
+	versionID := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/dataset-versions/"+versionID.String()+"/quality-assessments/latest", nil)
+	req.SetPathValue("versionId", versionID.String())
+	response := httptest.NewRecorder()
+
+	(&Handler{}).latestAssessment(response, req)
+
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusBadRequest)
+	}
+	if !strings.Contains(response.Body.String(), "WORKSPACE_REQUIRED") {
+		t.Fatalf("body = %s, want WORKSPACE_REQUIRED", response.Body.String())
+	}
+}
+
+func TestAssessmentSummaryResponseOmitsHeavyFields(t *testing.T) {
+	assessment := domain.Assessment{
+		ID:               uuid.New(),
+		WorkspaceID:      uuid.New(),
+		DatasetVersionID: uuid.New(),
+		RuleSetRef:       "park/quality/example.yaml",
+		RuleSetVersion:   "v1",
+		RuleSetContent:   "large frozen rule-set content",
+		Findings: []domain.Finding{{
+			ID:     uuid.New(),
+			RuleID: "rule-1",
+		}},
+	}
+
+	response := assessmentSummaryResponse(assessment)
+	if _, ok := response["findings"]; ok {
+		t.Fatal("summary response must not serialize findings")
+	}
+	if _, ok := response["ruleSetContent"]; ok {
+		t.Fatal("summary response must not serialize full rule-set content")
+	}
+	if response["id"] != assessment.ID {
+		t.Fatalf("summary id = %v, want %s", response["id"], assessment.ID)
+	}
+}

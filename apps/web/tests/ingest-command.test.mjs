@@ -82,6 +82,7 @@ test("foreign creation response stops the chain",async()=>{
 test("start verifies input scope and fixes policy/source role on server",async()=>{
   const t=stub([page([raw]),version,output,job]);const result=await start(resolution({actorId:ids.foreign,policyRef:"../../evil",sourceRole:"evil"}),config,t.request);
   assert.equal(result.ok,true);assert.equal(result.jobId,ids.job);assert.equal(t.calls.length,4);
+  assert.equal(new URL(t.calls[1].url).searchParams.get("workspaceId"),ids.workspace);
   const body=JSON.parse(t.calls[3].init.body);
   assert.equal(body.workspaceId,ids.workspace);assert.equal(body.policyRef,"park/matching/company-match-policy-v1.yaml");assert.equal(body.sourceRole,"ANCHOR");
   assert.equal(body.sourceRef,`company-import-${ids.operation}.csv`);assert.equal(t.calls[3].init.headers["X-Actor-ID"],ids.actor);

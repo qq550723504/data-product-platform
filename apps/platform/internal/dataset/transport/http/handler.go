@@ -186,6 +186,11 @@ func (h *Handler) getVersion(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_VERSION_ID", "versionId must be a UUID", nil)
 		return
 	}
+	workspaceID, err := uuid.Parse(r.URL.Query().Get("workspaceId"))
+	if err != nil || workspaceID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_WORKSPACE_ID", "workspaceId query parameter must be a non-nil UUID", nil)
+		return
+	}
 	version, err := h.repo.GetVersion(r.Context(), versionID)
 	if err != nil {
 		if errors.Is(err, infrastructure.ErrNotFound) {
@@ -193,6 +198,15 @@ func (h *Handler) getVersion(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "DATASET_VERSION_READ_FAILED", err.Error(), nil)
+		return
+	}
+	actualWorkspace, _, err := h.repo.GetWorkspaceAndType(r.Context(), version.DatasetID)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "DATASET_WORKSPACE_READ_FAILED", err.Error(), nil)
+		return
+	}
+	if actualWorkspace != workspaceID {
+		httpserver.WriteError(w, r, http.StatusNotFound, "DATASET_VERSION_NOT_FOUND", "dataset version not found in workspace", nil)
 		return
 	}
 	writeVersion(w, http.StatusOK, version)

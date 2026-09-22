@@ -236,18 +236,41 @@ func (h *Handler) listAssessments(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DATASET_VERSION_ID", "versionId must be a UUID", nil)
 		return
 	}
+	workspaceID, ok := requiredWorkspaceQuery(w, r)
+	if !ok {
+		return
+	}
+	belongs, err := h.repo.DatasetVersionBelongsToWorkspace(r.Context(), workspaceID, versionID)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_DATASET_WORKSPACE_READ_FAILED", err.Error(), nil)
+		return
+	}
+	if !belongs {
+		httpserver.WriteError(w, r, http.StatusNotFound, "DATASET_VERSION_NOT_FOUND", "DatasetVersion was not found in workspace", nil)
+		return
+	}
 	limit, offset, ok := assessmentPagination(w, r)
 	if !ok {
 		return
 	}
-	page, err := h.repo.ListAssessments(r.Context(), versionID, limit, offset)
+	summaryOnly := strings.EqualFold(strings.TrimSpace(r.URL.Query().Get("summary")), "true")
+	var page infrastructure.AssessmentPage
+	if summaryOnly {
+		page, err = h.repo.ListAssessmentSummaries(r.Context(), versionID, limit, offset)
+	} else {
+		page, err = h.repo.ListAssessments(r.Context(), versionID, limit, offset)
+	}
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENTS_READ_FAILED", err.Error(), nil)
 		return
 	}
 	items := make([]map[string]any, 0, len(page.Items))
 	for _, assessment := range page.Items {
-		items = append(items, resultResponse(assessment))
+		if summaryOnly {
+			items = append(items, assessmentSummaryResponse(assessment))
+		} else {
+			items = append(items, resultResponse(assessment))
+		}
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"datasetVersionId": versionID,
@@ -258,6 +281,20 @@ func (h *Handler) listAssessments(w http.ResponseWriter, r *http.Request) {
 			"total":  page.Total,
 		},
 	})
+}
+
+func requiredWorkspaceQuery(w http.ResponseWriter, r *http.Request) (uuid.UUID, bool) {
+	raw := strings.TrimSpace(r.URL.Query().Get("workspaceId"))
+	if raw == "" {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "WORKSPACE_REQUIRED", "workspaceId is required", nil)
+		return uuid.Nil, false
+	}
+	workspaceID, err := uuid.Parse(raw)
+	if err != nil || workspaceID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_WORKSPACE_ID", "workspaceId must be a non-nil UUID", nil)
+		return uuid.Nil, false
+	}
+	return workspaceID, true
 }
 
 func assessmentPagination(w http.ResponseWriter, r *http.Request) (int, int, bool) {
@@ -310,6 +347,19 @@ func (h *Handler) latestAssessment(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DATASET_VERSION_ID", "versionId must be a UUID", nil)
 		return
 	}
+	workspaceID, ok := requiredWorkspaceQuery(w, r)
+	if !ok {
+		return
+	}
+	belongs, err := h.repo.DatasetVersionBelongsToWorkspace(r.Context(), workspaceID, versionID)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_DATASET_WORKSPACE_READ_FAILED", err.Error(), nil)
+		return
+	}
+	if !belongs {
+		httpserver.WriteError(w, r, http.StatusNotFound, "DATASET_VERSION_NOT_FOUND", "DatasetVersion was not found in workspace", nil)
+		return
+	}
 	assessment, err := h.repo.LatestAssessment(r.Context(), versionID)
 	if err != nil {
 		if errors.Is(err, infrastructure.ErrNotFound) {
@@ -320,6 +370,23 @@ func (h *Handler) latestAssessment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, resultResponse(assessment))
+}
+
+func assessmentSummaryResponse(result domain.Assessment) map[string]any {
+	return map[string]any{
+		"id":                   result.ID,
+		"workspaceId":          result.WorkspaceID,
+		"datasetVersionId":     result.DatasetVersionID,
+		"ruleSetRef":           result.RuleSetRef,
+		"ruleSetVersion":       result.RuleSetVersion,
+		"ruleSetContentSha256": result.RuleSetContentSHA256,
+		"evaluatorName":        result.EvaluatorName,
+		"evaluatorVersion":     result.EvaluatorVersion,
+		"gateDecision":         result.GateDecision,
+		"metrics":              result.Metrics,
+		"dimensionSummary":     result.DimensionSummaries,
+		"createdAt":            result.CreatedAt,
+	}
 }
 
 func resultResponse(result domain.Result) map[string]any {

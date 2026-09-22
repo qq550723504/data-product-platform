@@ -486,7 +486,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 		return decision, nil
 	}
 	query := `
-		SELECT b.id,d.id
+		SELECT a.id,b.id,d.id
 		FROM authorization_provenance_binding b
 		JOIN data_authorization a ON a.id=b.authorization_id
 		JOIN authorization_resource ar ON ar.authorization_id=a.id AND ar.data_resource_id=b.data_resource_id
@@ -544,7 +544,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 			)
 		  ))`
 	args := []any{request.WorkspaceID, request.DataResourceID, request.AuthorizationID, request.ConsumerRef, request.Purpose, request.AsOf, request.Scope.Type, request.Scope.Ref, request.Action}
-	err := q.QueryRow(ctx, query, args...).Scan(&decision.BindingID, &decision.DeclarationID)
+	err := q.QueryRow(ctx, query, args...).Scan(&decision.AuthorizationID, &decision.BindingID, &decision.DeclarationID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		decision.Decision = domain.DecisionNotAllowed
 		decision.Reason = "no current provenance binding covers the requested context"
@@ -565,7 +565,7 @@ type LineageInput struct {
 }
 
 func (r *PostgresRepository) RequiredLineageInputs(ctx context.Context, target uuid.UUID) ([]LineageInput, error) {
-	rows, err := r.pool.Query(ctx, `WITH RECURSIVE lineage(version_id) AS (SELECT input_version_id FROM dataset_version_lineage WHERE output_version_id=$1 UNION SELECT l.input_version_id FROM dataset_version_lineage l JOIN lineage x ON x.version_id=l.output_version_id) SELECT DISTINCT l.version_id,d.source_resource_id FROM lineage l JOIN dataset_version v ON v.id=l.version_id JOIN dataset d ON d.id=v.dataset_id WHERE NOT EXISTS (SELECT 1 FROM dataset_version_lineage child WHERE child.output_version_id=l.version_id) ORDER BY l.version_id`, target)
+	rows, err := r.pool.Query(ctx, `WITH RECURSIVE lineage(version_id) AS (SELECT $1::uuid UNION SELECT l.input_version_id FROM dataset_version_lineage l JOIN lineage x ON x.version_id=l.output_version_id) SELECT DISTINCT l.version_id,d.source_resource_id FROM lineage l JOIN dataset_version v ON v.id=l.version_id JOIN dataset d ON d.id=v.dataset_id WHERE NOT EXISTS (SELECT 1 FROM dataset_version_lineage child WHERE child.output_version_id=l.version_id) ORDER BY l.version_id`, target)
 	if err != nil {
 		return nil, fmt.Errorf("resolve effective rights lineage: %w", err)
 	}
@@ -587,7 +587,7 @@ func (r *PostgresRepository) RequiredLineageInputs(ctx context.Context, target u
 }
 
 func (r *PostgresRepository) RequiredLineageInputsTx(ctx context.Context, tx pgx.Tx, target uuid.UUID) ([]LineageInput, error) {
-	rows, err := tx.Query(ctx, `WITH RECURSIVE lineage(version_id) AS (SELECT input_version_id FROM dataset_version_lineage WHERE output_version_id=$1 UNION SELECT l.input_version_id FROM dataset_version_lineage l JOIN lineage x ON x.version_id=l.output_version_id) SELECT DISTINCT l.version_id,d.source_resource_id FROM lineage l JOIN dataset_version v ON v.id=l.version_id JOIN dataset d ON d.id=v.dataset_id WHERE NOT EXISTS (SELECT 1 FROM dataset_version_lineage child WHERE child.output_version_id=l.version_id) ORDER BY l.version_id`, target)
+	rows, err := tx.Query(ctx, `WITH RECURSIVE lineage(version_id) AS (SELECT $1::uuid UNION SELECT l.input_version_id FROM dataset_version_lineage l JOIN lineage x ON x.version_id=l.output_version_id) SELECT DISTINCT l.version_id,d.source_resource_id FROM lineage l JOIN dataset_version v ON v.id=l.version_id JOIN dataset d ON d.id=v.dataset_id WHERE NOT EXISTS (SELECT 1 FROM dataset_version_lineage child WHERE child.output_version_id=l.version_id) ORDER BY l.version_id`, target)
 	if err != nil {
 		return nil, fmt.Errorf("resolve effective rights lineage in transaction: %w", err)
 	}
