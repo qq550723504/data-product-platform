@@ -36,7 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-LOCK TABLE delivery_operation IN ACCESS EXCLUSIVE MODE;
+LOCK TABLE delivery_operation, delivery_gate_evaluation IN ACCESS EXCLUSIVE MODE;
 
 DO $rollback$
 BEGIN
@@ -47,8 +47,16 @@ BEGIN
     ) THEN
         RAISE EXCEPTION 'cannot rollback delivery retry link migration: immutable retry history exists';
     END IF;
+    IF EXISTS (
+        SELECT 1
+        FROM delivery_gate_evaluation
+        WHERE certification_profile_id IS NOT NULL
+    ) THEN
+        RAISE EXCEPTION 'cannot rollback delivery profile attribution: immutable gate history exists';
+    END IF;
 END;
 $rollback$;
 
 DROP INDEX IF EXISTS idx_delivery_operation_retry_of;
 ALTER TABLE delivery_operation DROP COLUMN IF EXISTS retry_of_delivery_operation_id;
+ALTER TABLE delivery_gate_evaluation DROP COLUMN IF EXISTS certification_profile_id;
