@@ -486,7 +486,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 		return decision, nil
 	}
 	query := `
-		SELECT b.id,d.id
+		SELECT a.id,b.id,d.id
 		FROM authorization_provenance_binding b
 		JOIN data_authorization a ON a.id=b.authorization_id
 		JOIN authorization_resource ar ON ar.authorization_id=a.id AND ar.data_resource_id=b.data_resource_id
@@ -544,7 +544,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 			)
 		  ))`
 	args := []any{request.WorkspaceID, request.DataResourceID, request.AuthorizationID, request.ConsumerRef, request.Purpose, request.AsOf, request.Scope.Type, request.Scope.Ref, request.Action}
-	err := q.QueryRow(ctx, query, args...).Scan(&decision.BindingID, &decision.DeclarationID)
+	err := q.QueryRow(ctx, query, args...).Scan(&decision.AuthorizationID, &decision.BindingID, &decision.DeclarationID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		decision.Decision = domain.DecisionNotAllowed
 		decision.Reason = "no current provenance binding covers the requested context"
