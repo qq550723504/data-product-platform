@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -60,6 +61,32 @@ type pilotCertificationResolver struct {
 
 func (r pilotCertificationResolver) Resolve(context.Context, certificationapp.EvaluateDatasetCertificationCommand, certificationdomain.ProfileSnapshot) (certificationdomain.EvaluationInput, error) {
 	return r.input, nil
+}
+
+type pilotDeliveryStatusQuery interface {
+	QueryRow(context.Context, string, ...any) pgx.Row
+}
+
+type pilotCommitObservingStore struct {
+	base           *memoryStore
+	query          pilotDeliveryStatusQuery
+	workspaceID    uuid.UUID
+	idempotencyKey string
+
+	calls          int
+	observedStatus string
+}
+
+func (s *pilotCommitObservingStore) Get(ctx context.Context, storageURI string) (io.ReadCloser, error) {
+	s.calls++
+	if err := s.query.QueryRow(ctx, `
+		SELECT status
+		FROM delivery_operation
+		WHERE workspace_id=$1 AND idempotency_key=$2
+	`, s.workspaceID, s.idempotencyKey).Scan(&s.observedStatus); err != nil {
+		return nil, err
+	}
+	return s.base.Get(ctx, storageURI)
 }
 
 func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
@@ -936,6 +963,183 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		deliveryapp.NewCertificationDirectDataGate(eligibility),
 		datasetRepo,
 	)
+
+	t.Run("HTTP reads object only after ISSUED commit and never on BLOCKED", func(t *testing.T) {
+		const (
+			trustedToken     = "pilot-response-boundary-token"
+			trustedPrincipal = "pilot-response-boundary-principal"
+			trustedConsumer  = "LICENSED_BANK"
+		)
+		resolver, err := deliveryhttp.NewStaticPrincipalResolver(
+			true,
+			trustedToken,
+			trustedPrincipal,
+			trustedConsumer,
+			[]string{workspaceID.String()},
+		)
+		if err != nil {
+			t.Fatalf("configure response-boundary principal resolver: %v", err)
+		}
+
+		execute := func(handler *deliveryhttp.Handler, action, key string) *httptest.ResponseRecorder {
+			t.Helper()
+			body, err := json.Marshal(map[string]any{
+				"profileId": profile.ID.String(),
+				"consumer":  trustedConsumer,
+				"purpose":   purpose,
+				"action":    action,
+				"scopeType": "ALL_RESOURCE",
+				"scopeRef":  outputVersion.ID.String(),
+			})
+			if err != nil {
+				t.Fatalf("marshal response-boundary delivery request: %v", err)
+			}
+			request := httptest.NewRequest(
+				http.MethodPost,
+				"/api/v1/workspaces/"+workspaceID.String()+"/dataset-versions/"+outputVersion.ID.String()+"/deliveries",
+				bytes.NewReader(body),
+			)
+			request.Header.Set("Content-Type", "application/json")
+			request.Header.Set("Authorization", "Bearer "+trustedToken)
+			request.Header.Set("Idempotency-Key", key)
+			request.Header.Set("X-Trace-ID", traceID)
+			response := httptest.NewRecorder()
+			mux := http.NewServeMux()
+			handler.Register(mux)
+			mux.ServeHTTP(response, request)
+			return response
+		}
+
+		successKey := "pilot-commit-before-read-" + suffix
+		successStore := &pilotCommitObservingStore{
+			base:           store,
+			query:          pool,
+			workspaceID:    workspaceID,
+			idempotencyKey: successKey,
+		}
+		success := execute(deliveryhttp.NewHandler(directData, resolver, successStore), "READ", successKey)
+		if success.Code != http.StatusOK {
+			t.Fatalf("commit-before-read delivery = %d %s, want 200", success.Code, success.Body.String())
+		}
+		if successStore.calls != 1 || successStore.observedStatus != string(deliverydomain.StatusIssued) {
+			t.Fatalf("object read boundary = calls %d observed status %q, want 1/ISSUED",
+				successStore.calls, successStore.observedStatus)
+		}
+		if !bytes.Equal(success.Body.Bytes(), store.bytes(outputVersion.StorageURI)) {
+			t.Fatal("commit-before-read response bytes do not match certified CURATED DatasetVersion")
+		}
+
+		blockedKey := "pilot-blocked-no-read-" + suffix
+		blockedStore := &pilotCommitObservingStore{
+			base:           store,
+			query:          pool,
+			workspaceID:    workspaceID,
+			idempotencyKey: blockedKey,
+		}
+		blockedResponse := execute(deliveryhttp.NewHandler(directData, resolver, blockedStore), "RAW_EXPORT", blockedKey)
+		if blockedResponse.Code != http.StatusForbidden {
+			t.Fatalf("profile-blocked HTTP delivery = %d %s, want 403", blockedResponse.Code, blockedResponse.Body.String())
+		}
+		if blockedStore.calls != 0 {
+			t.Fatalf("BLOCKED HTTP delivery opened object storage %d times, want 0", blockedStore.calls)
+		}
+		var blockedStatus string
+		if err := pool.QueryRow(ctx, `
+			SELECT status
+			FROM delivery_operation
+			WHERE workspace_id=$1 AND idempotency_key=$2
+		`, workspaceID, blockedKey).Scan(&blockedStatus); err != nil {
+			t.Fatalf("read BLOCKED response-boundary DeliveryOperation: %v", err)
+		}
+		if blockedStatus != string(deliverydomain.StatusBlocked) {
+			t.Fatalf("BLOCKED response-boundary operation status = %s, want BLOCKED", blockedStatus)
+		}
+	})
+
+	t.Run("response loss before first byte requires explicit fresh replacement", func(t *testing.T) {
+		lostCommand := deliveryapp.DirectDataCommand{
+			WorkspaceID:          workspaceID,
+			DatasetVersionID:     outputVersion.ID,
+			ProfileID:            profile.ID,
+			PrincipalRef:         "pilot-response-loss-principal",
+			EffectiveConsumerRef: "LICENSED_BANK",
+			Purpose:              purpose,
+			Action:               "READ",
+			ScopeType:            "ALL_RESOURCE",
+			ScopeRef:             outputVersion.ID.String(),
+			IdempotencyKey:       "pilot-response-loss-" + suffix,
+			TraceID:              traceID,
+		}
+		lost, err := directData.Deliver(ctx, lostCommand)
+		if err != nil {
+			t.Fatalf("linearize response-loss delivery: %v", err)
+		}
+		if !lost.PayloadReady || lost.ReplayRequired || lost.Operation.Status != deliverydomain.StatusIssued {
+			t.Fatalf("response-loss initial result = %#v", lost)
+		}
+
+		// Intentionally do not open lost.DatasetVersion.StorageURI. This is the
+		// fault window after the ISSUED transaction committed but before the
+		// HTTP layer emitted the first dataset byte.
+		replay, err := directData.Deliver(ctx, lostCommand)
+		if !errors.Is(err, deliveryapp.ErrDirectDataReplayRequiresNewAttempt) {
+			t.Fatalf("response-loss same-key replay error = %v, want replay-required", err)
+		}
+		if replay.PayloadReady || !replay.ReplayRequired || replay.Operation.ID != lost.Operation.ID {
+			t.Fatalf("response-loss same-key replay = %#v", replay)
+		}
+
+		replacementCommand := lostCommand
+		replacementCommand.IdempotencyKey = "pilot-response-loss-replacement-" + suffix
+		replacementCommand.RetryOfDeliveryOperationID = &lost.Operation.ID
+		replacement, err := directData.Deliver(ctx, replacementCommand)
+		if err != nil {
+			t.Fatalf("response-loss replacement delivery: %v", err)
+		}
+		if !replacement.PayloadReady || replacement.ReplayRequired ||
+			replacement.Operation.Status != deliverydomain.StatusIssued ||
+			replacement.Operation.ID == lost.Operation.ID {
+			t.Fatalf("response-loss replacement result = %#v", replacement)
+		}
+
+		var retryOf uuid.UUID
+		if err := pool.QueryRow(ctx, `
+			SELECT retry_of_delivery_operation_id
+			FROM delivery_operation
+			WHERE id=$1
+		`, replacement.Operation.ID).Scan(&retryOf); err != nil {
+			t.Fatalf("read response-loss replacement relation: %v", err)
+		}
+		if retryOf != lost.Operation.ID {
+			t.Fatalf("response-loss replacement retry_of = %s, want %s", retryOf, lost.Operation.ID)
+		}
+		var terminalAllowed int
+		if err := pool.QueryRow(ctx, `
+			SELECT count(*)
+			FROM delivery_gate_evaluation
+			WHERE delivery_operation_id=$1
+			  AND stage='TERMINAL_FINALIZE'
+			  AND decision='ALLOWED'
+		`, replacement.Operation.ID).Scan(&terminalAllowed); err != nil {
+			t.Fatalf("count response-loss replacement terminal gate: %v", err)
+		}
+		if terminalAllowed != 1 {
+			t.Fatalf("response-loss replacement terminal ALLOWED gates = %d, want 1", terminalAllowed)
+		}
+
+		object, err := store.Get(ctx, replacement.DatasetVersion.StorageURI)
+		if err != nil {
+			t.Fatalf("open replacement dataset only after fresh ISSUED commit: %v", err)
+		}
+		replacementBytes, err := io.ReadAll(object)
+		_ = object.Close()
+		if err != nil {
+			t.Fatalf("read replacement dataset bytes: %v", err)
+		}
+		if !bytes.Equal(replacementBytes, store.bytes(outputVersion.StorageURI)) {
+			t.Fatal("response-loss replacement bytes do not match certified CURATED DatasetVersion")
+		}
+	})
 
 	t.Run("trusted HTTP principal cannot spoof effective consumer", func(t *testing.T) {
 		const (
