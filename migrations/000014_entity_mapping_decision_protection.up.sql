@@ -34,30 +34,7 @@ ALTER TABLE entity_mapping_decision
         UNIQUE (workspace_id, mapping_id, id);
 
 ALTER TABLE entity_mapping
-    ADD COLUMN current_decision_id uuid;
-
--- Backfill the pointer with the newest decision per mapping. decided_seq is the
--- authoritative insertion order because decided_at is caller-supplied and ties.
-UPDATE entity_mapping em
-SET current_decision_id = latest.id
-FROM (
-    SELECT DISTINCT ON (mapping_id) mapping_id, id
-    FROM entity_mapping_decision
-    ORDER BY mapping_id, decided_seq DESC
-) latest
-WHERE latest.mapping_id = em.id;
-
--- Block, do not invent: a mapping whose decision cannot be proven must be
--- resolved by an operator before this migration is applied.
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM entity_mapping WHERE current_decision_id IS NULL) THEN
-        RAISE EXCEPTION 'entity_mapping contains a row without a decision; resolve the orphaned mapping before applying 000014';
-    END IF;
-END $$;
-
-ALTER TABLE entity_mapping
-    ALTER COLUMN current_decision_id SET NOT NULL;
+    ADD COLUMN current_decision_id uuid NOT NULL;
 
 -- The pointer must name a decision of this exact workspace and mapping. The
 -- constraint is deferred so a decision can be inserted after the projection row
