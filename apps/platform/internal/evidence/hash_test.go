@@ -172,4 +172,3 @@ func TestCanonicalJSONNumberPreservesDecimalValue(t *testing.T) {
 		})
 	}
 }
-
