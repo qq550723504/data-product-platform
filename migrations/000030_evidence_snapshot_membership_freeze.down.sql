@@ -13,4 +13,5 @@ END;
 $$ LANGUAGE plpgsql;
 
 ALTER TABLE evidence_snapshot
+    DROP CONSTRAINT IF EXISTS ck_evidence_snapshot_root_hash,
     DROP COLUMN IF EXISTS status;
