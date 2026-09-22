@@ -101,11 +101,11 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 	leaseResource := mustCreateResource(t, ctx, resourceService, workspaceID, "PILOT-LEASE", "Pilot enterprise lease data", &actorID, traceID)
 	energyResource := mustCreateResource(t, ctx, resourceService, workspaceID, "PILOT-ENERGY", "Pilot enterprise energy data", &actorID, traceID)
 
-	enterpriseDataset := mustCreateDataset(t, ctx, createDataset, workspaceID, "PILOT-ENTERPRISE-RAW", "Pilot Enterprise RAW", datasetdomain.DatasetTypeRaw, &enterpriseResource.ID, &actorID, traceID)
-	leaseDataset := mustCreateDataset(t, ctx, createDataset, workspaceID, "PILOT-LEASE-RAW", "Pilot Lease RAW", datasetdomain.DatasetTypeRaw, &leaseResource.ID, &actorID, traceID)
-	energyDataset := mustCreateDataset(t, ctx, createDataset, workspaceID, "PILOT-ENERGY-RAW", "Pilot Energy RAW", datasetdomain.DatasetTypeRaw, &energyResource.ID, &actorID, traceID)
-	standardizedDataset := mustCreateDataset(t, ctx, createDataset, workspaceID, "PILOT-ENTERPRISE-STANDARDIZED", "Pilot Enterprise standardized", datasetdomain.DatasetTypeStandardized, nil, &actorID, traceID)
-	activityDataset := mustCreateDataset(t, ctx, createDataset, workspaceID, "PILOT-ENTERPRISE-ACTIVITY", "Pilot Enterprise activity", datasetdomain.DatasetTypeCurated, nil, &actorID, traceID)
+	enterpriseDataset := mustCreateDataset(t, ctx, createDataset, workspaceID, "PENT-RAW", "Pilot Enterprise RAW", datasetdomain.DatasetTypeRaw, &enterpriseResource.ID, &actorID, traceID)
+	leaseDataset := mustCreateDataset(t, ctx, createDataset, workspaceID, "PLEASE-RAW", "Pilot Lease RAW", datasetdomain.DatasetTypeRaw, &leaseResource.ID, &actorID, traceID)
+	energyDataset := mustCreateDataset(t, ctx, createDataset, workspaceID, "PENERGY-RAW", "Pilot Energy RAW", datasetdomain.DatasetTypeRaw, &energyResource.ID, &actorID, traceID)
+	standardizedDataset := mustCreateDataset(t, ctx, createDataset, workspaceID, "PENT-STD", "Pilot Enterprise standardized", datasetdomain.DatasetTypeStandardized, nil, &actorID, traceID)
+	activityDataset := mustCreateDataset(t, ctx, createDataset, workspaceID, "PACT-CURATED", "Pilot Enterprise activity", datasetdomain.DatasetTypeCurated, nil, &actorID, traceID)
 
 	enterpriseName := "pilot-enterprise-" + suffix + ".csv"
 	leaseName := "pilot-lease-" + suffix + ".csv"
