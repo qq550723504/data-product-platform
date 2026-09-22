@@ -16,7 +16,6 @@ import (
 	deliverydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
-	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
 
 type DirectDataCommandService interface {
