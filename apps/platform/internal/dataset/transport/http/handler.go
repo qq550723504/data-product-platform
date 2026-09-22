@@ -304,8 +304,9 @@ func writeVersion(w http.ResponseWriter, status int, version domain.DatasetVersi
 		"rowCount":           version.RowCount,
 		"byteSize":           version.ByteSize,
 		"checksumAlgorithm":  version.ChecksumAlgorithm,
-		"checksum":           version.ChecksumValue,
-		"readyAt":            version.ReadyAt,
+		"checksum":               version.ChecksumValue,
+		"generatedByExecutionId": version.GeneratedByExecutionID,
+		"readyAt":                version.ReadyAt,
 		"invalidatedAt":      version.InvalidatedAt,
 		"invalidationReason": version.InvalidationReason,
 	})
