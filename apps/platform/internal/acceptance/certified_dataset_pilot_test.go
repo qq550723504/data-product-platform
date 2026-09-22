@@ -221,10 +221,10 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 	}
 	if _, err := pool.Exec(ctx, `
 		UPDATE dataset_version
-		SET generated_by_entity_match_job_id=$2
+		SET generated_by_entity_match_job_id=NULL
 		WHERE id=$1
-	`, standardizedVersionID, uuid.New()); err == nil {
-		t.Fatal("pilot STANDARDIZED producer identity mutation unexpectedly succeeded")
+	`, standardizedVersionID); err == nil || !strings.Contains(err.Error(), "entity-match producer identity is immutable") {
+		t.Fatalf("pilot STANDARDIZED producer identity mutation error = %v, want immutable producer guard", err)
 	}
 
 	workflowVersion, err := workflowVersionService.Create(ctx, workflowapp.CreateWorkflowVersionCommand{
