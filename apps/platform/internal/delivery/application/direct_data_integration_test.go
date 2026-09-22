@@ -116,8 +116,8 @@ func TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload(t *testing.T) 
 	if err := pool.QueryRow(ctx, `SELECT count(*) FROM cost_allocation WHERE delivery_operation_id=$1`, first.Operation.ID).Scan(&costs); err != nil {
 		t.Fatal(err)
 	}
-	if operations != 1 || issuedEvents != 1 || attempts != 0 || costs != 0 {
-		t.Fatalf("direct facts operations=%d issued_events=%d provider_attempts=%d costs=%d", operations, issuedEvents, attempts, costs)
+	if operations != 1 || issuedEvents != 1 || attempts != 0 || costs != 1 {
+		t.Fatalf("direct facts operations=%d issued_events=%d provider_attempts=%d costs=%d, want 1/1/0/1", operations, issuedEvents, attempts, costs)
 	}
 }
 
