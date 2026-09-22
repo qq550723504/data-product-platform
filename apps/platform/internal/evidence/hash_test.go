@@ -26,20 +26,21 @@ func TestEvidenceHashVerification(t *testing.T) {
 		CreatedBy:    &createdBy,
 	}
 
-	v1Hash, err := ComputeHash(record, HashAlgorithmEvidenceV2)
+	v2Hash, err := ComputeHash(record, HashAlgorithmEvidenceV2)
 	if err != nil {
 		t.Fatalf("compute V2 hash: %v", err)
 	}
-	if !VerifyHash(record, HashAlgorithmEvidenceV2, v1Hash) {
+	if !VerifyHash(record, HashAlgorithmEvidenceV2, v2Hash) {
 		t.Fatal("V2 Evidence hash did not verify")
 	}
 	tampered := record
 	tampered.Title = "tampered title"
-	if VerifyHash(tampered, HashAlgorithmEvidenceV2, v1Hash) {
+	if VerifyHash(tampered, HashAlgorithmEvidenceV2, v2Hash) {
 		t.Fatal("tampered V2 Evidence unexpectedly verified")
 	}
-
-
+	if _, err := ComputeHash(record, "SHA256"); err == nil {
+		t.Fatal("legacy hash algorithm was accepted")
+	}
 }
 
 func TestEvidenceHashVerificationSurvivesQualityMetricsJSONRoundTrip(t *testing.T) {
