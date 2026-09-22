@@ -6,11 +6,12 @@ CREATE TABLE evidence (
     source_type     varchar(64),
     source_id       uuid,
     storage_uri     text,
-    hash_algorithm  varchar(32),
-    hash_value      varchar(256),
+    hash_algorithm  varchar(32) NOT NULL,
+    hash_value      varchar(256) NOT NULL,
     metadata        jsonb NOT NULL DEFAULT '{}'::jsonb,
     created_at      timestamptz NOT NULL DEFAULT now(),
-    created_by      uuid
+    created_by      uuid,
+    CONSTRAINT ck_evidence_hash_algorithm CHECK (hash_algorithm = 'SHA256-EVIDENCE-V2')
 );
 
 CREATE INDEX idx_evidence_workspace_type ON evidence(workspace_id, evidence_type);
