@@ -101,12 +101,13 @@ C2-b 当前实现采用**同一 Execution 的 session advisory lock + stale RUNN
 
 1. `ListStaleNativeExecutionIDs` 只选择 `engine_type='NATIVE'`、`status='RUNNING'` 且
    `COALESCE(started_at, created_at) <= now - 10m` 的执行。
-2. 正常 native `Engine.Execute` 在整个计算、对象写入与内部事务期间持有
-   `NativeExecutionLockKey(executionID)`；`NativeReconciler` 使用同一 key。
-   - 健康 worker 仍在运行时，reconciler 的 `pg_try_advisory_lock` 失败并跳过；
+2. 正常 native queue handler 从 `StartWithReferenceCheck`、`Engine.Execute` 一直到最终 `Succeed/Fail`
+   全程持有 `NativeExecutionLockKey(executionID)`；`NativeReconciler` 使用同一 key。
+   `Engine.Execute` 自身也声明同一锁作为 adapter 边界的 defense-in-depth。
+   - 健康 worker 仍在运行或正在 terminalize 时，reconciler 的 `pg_try_advisory_lock` 失败并跳过；
    - worker 进程/连接崩溃时，PostgreSQL 自动释放 session lock，reconciler 才能接管；
-   - recovery 内部再次进入 `Engine.Execute` 时，`transaction.Manager` 复用当前 advisory-lock
-     connection，允许同 session reentrant lock，不会释放外层 recovery ownership。
+   - queue handler / recovery 内部进入 `Engine.Execute` 时，`transaction.Manager` 复用当前 advisory-lock
+     connection，允许同 session reentrant lock，不会释放外层 execution ownership。
 3. 获得 recovery ownership 后：
    - 已存在 `READY` / `SUPERSEDED` output → 不重算，直接采用该 immutable output 并
      CAS `RUNNING -> SUCCEEDED`；
@@ -117,8 +118,11 @@ C2-b 当前实现采用**同一 Execution 的 session advisory lock + stale RUNN
    - 受控 replay 本身失败 → `FAIL(NATIVE_RECOVERY_FAILED)`，不把 Execution 永久留在 RUNNING。
 4. 每次真正 recovery side effect 前写入：
    - `ExecutionRecoveryStarted` retention-only Domain Event；
-   - `EXECUTION_RECOVERY` Evidence；
-   - `EXECUTION_RECOVERY_STARTED` AuditEvent。
+   - `EXECUTION_RECOVERY` Evidence（同时作为 physical recovery activity identity）；
+   - `EXECUTION_RECOVERY_STARTED` AuditEvent；
+   - `REEXECUTE` 时追加独立 `NATIVE_ENGINE_INVOCATION` CostEvent；失败重算同样保留实际成本。
+   正常首次 native invocation 也在 `QUEUED -> RUNNING` claim 事务内写入独立的
+   `NATIVE_ENGINE_INVOCATION` activity，terminal `PROCESSING_EXECUTION` 成本语义保持不变。
 5. worker composition root 每 5 秒运行一次 reconciler；lease TTL 当前固定为 10 分钟。
    TTL/interval 的运行时配置化属于 C2-c，不在 C2-b 为了“可配置”新增基础设施。
 
