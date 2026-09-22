@@ -61,7 +61,7 @@ func TestNormalizeMappingDecisionKey(t *testing.T) {
 }
 
 func TestSourceOriginValid(t *testing.T) {
-	for _, origin := range []SourceOrigin{OriginMatchCandidate, OriginWorkflowAlias} {
+	for _, origin := range []SourceOrigin{OriginMatchCandidate, OriginManualReview, OriginWorkflowAlias} {
 		if !origin.Valid() {
 			t.Fatalf("origin %q reported invalid", origin)
 		}
