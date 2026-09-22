@@ -272,9 +272,9 @@ func TestDatasetCertificationAllowsSeededRawEffectiveRightsLeaf(t *testing.T) {
 		INSERT INTO effective_rights_snapshot (
 			id, workspace_id, target_dataset_version_id, calculation_as_of,
 			consumer_ref, purpose, calculation_rule_version, calculation_rule_hash,
-			required_input_hash, status, root_hash, finalized_at
+			required_input_hash, status, root_hash
 		) VALUES ($1,$2,$3,now(),'consumer-a','INTERNAL_USE','1',repeat('a',64),
-			repeat('b',64),'FINALIZED',repeat('c',64),now())
+			repeat('b',64),'DRAFT',repeat('c',64))
 	`, effectiveID, workspaceID, versionID); err != nil {
 		t.Fatalf("insert effective rights snapshot: %v", err)
 	}
@@ -291,6 +291,13 @@ func TestDatasetCertificationAllowsSeededRawEffectiveRightsLeaf(t *testing.T) {
 		) VALUES ($1,$2,'READ','ALLOWED','raw source is currently entitled')
 	`, uuid.New(), effectiveID); err != nil {
 		t.Fatalf("insert effective rights action: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE effective_rights_snapshot
+		SET status='FINALIZED', finalized_at=now()
+		WHERE id=$1
+	`, effectiveID); err != nil {
+		t.Fatalf("finalize effective rights snapshot: %v", err)
 	}
 
 	if _, err := pool.Exec(ctx, `
