@@ -188,12 +188,26 @@ func (s *Service) VerifyRightsDeclaration(ctx context.Context, cmd VerifyRightsD
 			}
 		} else if outcome == domain.DeclarationVerified {
 			evidenceID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("rights-declaration-verification-evidence:"+d.ID.String()+":"+verification.ActivityID.String()))
-			hashValue := declarationFingerprint(d)
+			evidenceRecord := evidence.Record{
+				ID:           evidenceID,
+				WorkspaceID:  d.WorkspaceID,
+				EvidenceType: "RIGHTS_VERIFICATION",
+				Title:        "Rights declaration verification",
+				SourceType:   "RIGHTS_DECLARATION",
+				SourceID:     &d.ID,
+				Metadata:     map[string]any{},
+				CreatedAt:    evidence.NormalizeCreatedAt(time.Now().UTC()),
+			}
+			hashValue, err := evidence.ComputeHash(evidenceRecord, evidence.HashAlgorithmEvidenceV2)
+			if err != nil {
+				return err
+			}
 			if _, err := tx.Exec(ctx, `
 				INSERT INTO evidence(id,workspace_id,evidence_type,title,source_type,source_id,hash_algorithm,hash_value,metadata,created_at)
-				VALUES ($1,$2,'RIGHTS_VERIFICATION','Rights declaration verification','RIGHTS_DECLARATION',$3,'SHA256',$4,'{}'::jsonb,now())
+				VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'{}'::jsonb,$9)
 				ON CONFLICT (id) DO NOTHING
-			`, evidenceID, d.WorkspaceID, d.ID, hashValue); err != nil {
+			`, evidenceRecord.ID, evidenceRecord.WorkspaceID, evidenceRecord.EvidenceType, evidenceRecord.Title,
+				evidenceRecord.SourceType, evidenceRecord.SourceID, evidence.HashAlgorithmEvidenceV2, hashValue, evidenceRecord.CreatedAt); err != nil {
 				return err
 			}
 			verification.EvidenceID = &evidenceID
@@ -539,11 +553,31 @@ func (s *Service) ComputeEffectiveRights(ctx context.Context, cmd ComputeEffecti
 			}
 		}
 		decisionEvidenceID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("effective-rights-evidence:"+snapshot.ID.String()))
-		metadata, _ := json.Marshal(map[string]any{"targetDatasetVersionId": snapshot.TargetDatasetVersionID, "requiredInputHash": snapshot.RequiredInputHash, "calculationRuleHash": snapshot.CalculationRuleHash})
+		decisionMetadata := map[string]any{
+			"targetDatasetVersionId": snapshot.TargetDatasetVersionID,
+			"requiredInputHash":      snapshot.RequiredInputHash,
+			"calculationRuleHash":    snapshot.CalculationRuleHash,
+		}
+		decisionEvidence := evidence.Record{
+			ID:           decisionEvidenceID,
+			WorkspaceID:  snapshot.WorkspaceID,
+			EvidenceType: "EFFECTIVE_RIGHTS_SNAPSHOT",
+			Title:        "Effective rights finalization",
+			SourceType:   "EFFECTIVE_RIGHTS_SNAPSHOT",
+			SourceID:     &snapshot.ID,
+			Metadata:     decisionMetadata,
+			CreatedAt:    evidence.NormalizeCreatedAt(time.Now().UTC()),
+		}
+		decisionHash, err := evidence.ComputeHash(decisionEvidence, evidence.HashAlgorithmEvidenceV2)
+		if err != nil {
+			return err
+		}
+		metadata, _ := json.Marshal(decisionMetadata)
 		if _, err := tx.Exec(ctx, `
 			INSERT INTO evidence(id,workspace_id,evidence_type,title,source_type,source_id,hash_algorithm,hash_value,metadata,created_at)
-			VALUES ($1,$2,'EFFECTIVE_RIGHTS_SNAPSHOT','Effective rights finalization','EFFECTIVE_RIGHTS_SNAPSHOT',$3,'SHA256',$4,$5,now())
-		`, decisionEvidenceID, snapshot.WorkspaceID, snapshot.ID, snapshot.RootHash, string(metadata)); err != nil {
+			VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+		`, decisionEvidence.ID, decisionEvidence.WorkspaceID, decisionEvidence.EvidenceType, decisionEvidence.Title,
+			decisionEvidence.SourceType, decisionEvidence.SourceID, evidence.HashAlgorithmEvidenceV2, decisionHash, string(metadata), decisionEvidence.CreatedAt); err != nil {
 			return err
 		}
 		items := []evidence.SnapshotItem{{EvidenceID: decisionEvidenceID, Category: "EFFECTIVE_RIGHTS_DECISION"}}
