@@ -41,13 +41,15 @@ External Data Sources
         │   metadata / lineage / usage / governance projection
         │
         └── Data Ingestion / Integration
-                 ↓
-          DataIngestionProvider
                  │
-                 ├── current: Native CSV/File slice
-                 └── future: replaceable external ingestion engine
-                 │
-                 ▼
+                 ├── current implementation: CSV / File path directly invokes existing Core commands
+                 └── future heterogeneous-source boundary:
+                        provider-neutral Ingestion Adapter / Port
+                                  │
+                                  ▼
+                        replaceable external ingestion engine
+                                  │
+                                  ▼
           Core acceptance boundary
                  │
                  ▼
@@ -105,9 +107,9 @@ Core 继续拥有：
 
 ### 4. 当前 CSV 是 Native Adapter，不是通用模型
 
-现有 `/ingest` CSV 路径继续保留，它代表当前最小 Native File ingestion slice。
+现有 `/ingest` CSV 路径继续保留，它代表当前最小 File ingestion slice，**但当前并不存在 `DataIngestionProvider` / 通用 ingestion Port**；CSV 页面仍直接调用现有 Resource / Dataset / UploadVersion 等 Core commands。
 
-它的 CSV 格式、浏览器预览、512 KiB / 1000 rows 等 POC 约束，不上升为通用 Data Ingestion contract。
+它的 CSV 格式、浏览器预览、512 KiB / 1000 rows 等 POC 约束，不上升为通用 Data Ingestion contract。未来 provider-neutral ingestion Port 只在首个真实异构来源 vertical slice 中按实际需求落地。
 
 未来数据库、API、对象存储、消息系统或 CDC 接入不得通过复制 CSV handler 的方式逐源扩张。
 
@@ -124,12 +126,24 @@ Core 继续拥有：
 
 该 contract 应只暴露 Core 真正需要的稳定边界，例如：
 
-- provider/external execution reference；
+- Core 先持久化的 stable provider_request_key / invocation request identity；
+- 每一次真实 provider invocation 在调用前持久化的 physical attempt identity；
+- provider/external execution reference（允许在调用后才能获得）；
 - source identity/binding；
 - output artifact or manifest reference；
 - snapshot/window/cut identity（如适用）；
 - content/schema fingerprint（如适用）；
-- provider-neutral status / metrics / diagnostics classification。
+- provider-neutral status / metrics / diagnostics classification；
+- append-only provider attempt outcome / observation / reconciliation evidence。
+
+如果 Core 主动触发外部 ingestion，必须遵循 DB-first crash-safe 调用语义：
+
+1. 调用 provider 前先持久化 stable provider_request_key 与 physical attempt identity/start fact；
+2. provider API 必须支持相同 request identity 的 idempotent replay/lookup，或 Adapter 提供等价 same-operation recovery；若 provider 无法做到，必须显式设计不会盲目重复启动同步的 recovery contract；
+3. success / explicit failure / timeout / unknown 只能追加 outcome/observation，不能覆盖 start fact；
+4. response 丢失时通过同一 request identity 查询/恢复原 operation，不得直接创建第二个同步任务；
+5. reconciliation 若真实调用 provider API，则使用新的 physical attempt identity；如该调用可能计费，按现有 CostEvent attempt 规则独立记录；
+6. external execution reference 只是 provider 返回后的外部标识，不能替代调用前已经持久化的 request/attempt identity。
 
 具体字段由真实需求驱动，禁止为未来假设提前建模。
 
