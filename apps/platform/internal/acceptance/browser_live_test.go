@@ -407,6 +407,17 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	if certification.Decision != certificationdomain.DecisionCertified {
 		t.Fatalf("live DatasetCertification=%s blockers=%+v, want CERTIFIED", certification.Decision, certification.Blockers)
 	}
+	if certification.EffectiveRightsSnapshotID == nil || *certification.EffectiveRightsSnapshotID != effectiveRights.ID ||
+		certification.RightsSnapshotID == nil || *certification.RightsSnapshotID != snapshot.ID ||
+		certification.EvidenceSnapshotID == nil || *certification.EvidenceSnapshotID != certificationEvidence.ID ||
+		certification.TraceabilityEvidenceID == nil || *certification.TraceabilityEvidenceID != certificationEvidence.ID {
+		t.Fatalf("live DatasetCertification did not freeze expected rights/evidence facts: %+v", certification)
+	}
+	certificationEvidenceView, err := evidence.NewQueryRepository(pool).GetSnapshot(ctx, certificationEvidence.ID)
+	liveOK(t, err, "reload live Certified Dataset EvidenceSnapshot")
+	if !certificationEvidenceView.IntegrityValid {
+		t.Fatalf("live Certified Dataset EvidenceSnapshot %s failed integrity verification", certificationEvidence.ID)
+	}
 
 	eligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsinfra.NewPostgresRepository(pool))
 	eligibilityResult, err := eligibility.Check(ctx, certificationapp.DeliveryEligibilityQuery{
@@ -472,6 +483,7 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	manifest["deliveryOperationId"] = delivered.Operation.ID
 	manifest["deliveredSha256"] = deliveredSHA256
 	manifest["datasetChecksum"] = output.ChecksumValue
+	manifest["certificationPurpose"] = purpose
 	qualityDimensions := make([]string, 0, len(quality.DimensionSummaries))
 	for dimension := range quality.DimensionSummaries {
 		qualityDimensions = append(qualityDimensions, dimension)
