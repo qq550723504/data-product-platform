@@ -10,7 +10,8 @@ import (
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"\n\tworkflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
+	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 )
 
 const (
