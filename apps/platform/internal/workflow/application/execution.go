@@ -170,6 +170,56 @@ func (s *ExecutionService) start(ctx context.Context, executionID uuid.UUID, eng
 	return execution, err
 }
 
+func (s *ExecutionService) RecordNativeRecovery(ctx context.Context, executionID uuid.UUID, action, traceID string) error {
+	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		execution, err := s.repo.GetExecutionTx(ctx, tx, executionID, true)
+		if err != nil {
+			return err
+		}
+		if execution.Status != domain.ExecutionRunning || execution.EngineType != "NATIVE" {
+			return domain.ErrInvalidTransition
+		}
+		payload := map[string]any{
+			"executionId":       execution.ID,
+			"workflowVersionId": execution.WorkflowVersionID,
+			"outputDatasetId":   execution.OutputDatasetID,
+			"action":            action,
+			"attempt":           execution.Attempt,
+		}
+		record, err := evidence.Append(ctx, tx, evidence.Record{
+			WorkspaceID:  execution.WorkspaceID,
+			EvidenceType: "EXECUTION_RECOVERY",
+			Title:        "Native execution recovery started",
+			SourceType:   "EXECUTION",
+			SourceID:     &execution.ID,
+			Metadata:     payload,
+		}, evidence.Relation{ObjectType: "EXECUTION", ObjectID: execution.ID, RelationType: "RECOVERY"})
+		if err != nil {
+			return err
+		}
+		event, err := outbox.NewEvent("EXECUTION", execution.ID, "ExecutionRecoveryStarted", payload)
+		if err != nil {
+			return err
+		}
+		if err := outbox.Append(ctx, tx, event); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &execution.WorkspaceID,
+			ActorType:   "SERVICE",
+			Action:      "EXECUTION_RECOVERY_STARTED",
+			ObjectType:  "EXECUTION",
+			ObjectID:    execution.ID,
+			AfterState: map[string]any{
+				"status":     execution.Status,
+				"action":     action,
+				"evidenceId": record.ID,
+			},
+			TraceID: traceID,
+		})
+	})
+}
+
 func (s *ExecutionService) Succeed(ctx context.Context, executionID, outputDatasetVersionID uuid.UUID, metrics map[string]any, traceID string) (domain.Execution, error) {
 	execution, err := s.repo.GetExecution(ctx, executionID)
 	if err != nil {
