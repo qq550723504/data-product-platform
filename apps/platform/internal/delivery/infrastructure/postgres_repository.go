@@ -350,6 +350,62 @@ func (r *PostgresRepository) InsertReplayDecision(ctx context.Context, tx pgx.Tx
 	return nil
 }
 
+func (r *PostgresRepository) InsertDirectDataCost(ctx context.Context, tx pgx.Tx, operation domain.Operation) error {
+	const costType = "DIRECT_DATA_DELIVERY_ATTEMPT"
+
+	var costEventID uuid.UUID
+	err := tx.QueryRow(ctx, `
+		INSERT INTO cost_event(
+			id, workspace_id, execution_id, activity_id, cost_type,
+			quantity, unit, pricing_mode, metadata
+		)
+		VALUES (
+			$1,$2,NULL,$3::uuid,$4,
+			1,'attempt','ACTUAL',
+			jsonb_build_object(
+				'delivery_operation_id',($3::uuid)::text,
+				'delivery_channel',$5::text,
+				'delivery_mode',$6::text
+			)
+		)
+		ON CONFLICT (workspace_id, activity_id, cost_type)
+		WHERE activity_id IS NOT NULL
+		DO NOTHING
+		RETURNING id
+	`, uuid.New(), operation.WorkspaceID, operation.ID, costType, operation.DeliveryChannel, operation.DeliveryMode).Scan(&costEventID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		err = tx.QueryRow(ctx, `
+			SELECT id
+			FROM cost_event
+			WHERE workspace_id=$1 AND activity_id=$2 AND cost_type=$3
+		`, operation.WorkspaceID, operation.ID, costType).Scan(&costEventID)
+	}
+	if err != nil {
+		return fmt.Errorf("insert direct data delivery cost event: %w", err)
+	}
+
+	if _, err := tx.Exec(ctx, `
+		INSERT INTO cost_allocation(id, cost_event_id, delivery_operation_id)
+		VALUES ($1,$2,$3)
+		ON CONFLICT (cost_event_id) DO NOTHING
+	`, uuid.New(), costEventID, operation.ID); err != nil {
+		return fmt.Errorf("allocate direct data delivery cost event: %w", err)
+	}
+
+	var allocatedOperationID *uuid.UUID
+	if err := tx.QueryRow(ctx, `
+		SELECT delivery_operation_id
+		FROM cost_allocation
+		WHERE cost_event_id=$1
+	`, costEventID).Scan(&allocatedOperationID); err != nil {
+		return fmt.Errorf("verify direct data delivery cost allocation: %w", err)
+	}
+	if allocatedOperationID == nil || *allocatedOperationID != operation.ID {
+		return fmt.Errorf("direct data delivery cost activity %s is allocated to another subject", operation.ID)
+	}
+	return nil
+}
+
 func (r *PostgresRepository) InsertProviderCost(ctx context.Context, tx pgx.Tx, operation domain.Operation, attemptID uuid.UUID) error {
 	costEventID := uuid.New()
 	if _, err := tx.Exec(ctx, `
