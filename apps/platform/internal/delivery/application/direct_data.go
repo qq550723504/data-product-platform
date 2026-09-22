@@ -183,7 +183,7 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 			EffectiveConsumerRef: strings.TrimSpace(cmd.EffectiveConsumerRef),
 			Purpose:              strings.ToUpper(strings.TrimSpace(cmd.Purpose)),
 			Action:               strings.ToUpper(strings.TrimSpace(cmd.Action)),
-			ScopeType:            strings.ToUpper(strings.TrimSpace(cmd.ScopeType)), ScopeRef: strings.TrimSpace(cmd.ScopeRef),
+			ScopeType:            strings.ToUpper(strings.TrimSpace(cmd.ScopeType)), ScopeRef: cmd.DatasetVersionID.String(),
 			DeliveryChannel: directDataChannel, DeliveryMode: directDataMode, RequestedExpiresAt: requestedExpiresAt,
 		})
 		if err != nil {
