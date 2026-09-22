@@ -191,6 +191,41 @@ func TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked(t *t
 	}
 }
 
+func TestDirectDataReplacementRejectsDifferentCertificationProfile(t *testing.T) {
+	pool, ctx := directDataTestDatabase(t)
+	workspaceID, versionID := insertDirectDataFixture(t, ctx, pool)
+	profileA := insertDirectDataProfile(t, ctx, pool, workspaceID)
+	profileB := insertDirectDataProfile(t, ctx, pool, workspaceID)
+	gate := &directIntegrationGate{allowed: true, certificationRef: uuid.New()}
+	service := NewDirectDataService(
+		transaction.NewManager(pool),
+		infrastructure.NewPostgresRepository(pool),
+		gate,
+		datasetinfra.NewPostgresRepository(pool),
+	)
+
+	first, err := service.Deliver(ctx, DirectDataCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: profileA,
+		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
+		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
+		IdempotencyKey: "direct-profile-a-" + uuid.NewString(),
+	})
+	if err != nil {
+		t.Fatalf("create profile-a issued operation: %v", err)
+	}
+
+	_, err = service.Deliver(ctx, DirectDataCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: versionID, ProfileID: profileB,
+		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
+		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
+		RetryOfDeliveryOperationID: &first.Operation.ID,
+		IdempotencyKey:             "direct-profile-b-retry-" + uuid.NewString(),
+	})
+	if !errors.Is(err, domain.ErrInvalidOperation) {
+		t.Fatalf("cross-profile retry error = %v, want ErrInvalidOperation", err)
+	}
+}
+
 func TestDirectDataReplacementRejectsUnrelatedOperation(t *testing.T) {
 	pool, ctx := directDataTestDatabase(t)
 	workspaceID, versionID := insertDirectDataFixture(t, ctx, pool)
