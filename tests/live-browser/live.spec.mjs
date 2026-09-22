@@ -56,6 +56,49 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
     await expect(page.getByRole("heading", { name: "ProductRelease 证据链", exact: true })).toBeVisible();
     await expect(page.getByText(data.reason, { exact: true }).first()).toBeVisible();
     await expect(page.getByText("PRODUCT_RELEASE_PUBLISHED", { exact: true })).toBeVisible();
+  } else if (phase === "certified") {
+    expect(data.deliveredSha256).toBe(data.datasetChecksum);
+    const query = new URLSearchParams({
+      profileId: data.certificationProfileId,
+      consumer: "LICENSED_BANK",
+      purpose: "REGULATORY_REPORTING",
+      action: "READ",
+      delivery: "DIRECT_DATA",
+      scopeType: "ALL_RESOURCE",
+      scopeRef: data.outputVersionId,
+    });
+    const versionPath = `/datasets/${data.datasetId}/versions/${data.outputVersionId}?${query.toString()}`;
+    await page.goto(versionPath);
+    await expect(page.getByRole("heading", { name: "DatasetVersion 质量与认证", exact: true })).toBeVisible();
+    await expect(page.getByText(data.outputVersionId, { exact: true })).toBeVisible();
+    await expect(page.getByText(data.datasetChecksum, { exact: true })).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: "Quality Assessment", exact: true })).toBeVisible();
+    await expect(page.getByText(data.qualityAssessmentId, { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Quality Report", exact: true })).toBeVisible();
+    for (const dimension of data.qualityDimensions) {
+      await expect(page.getByText(dimension, { exact: true }).first()).toBeVisible();
+    }
+
+    await expect(page.getByRole("heading", { name: "Certification 历史", exact: true })).toBeVisible();
+    await expect(page.getByText(data.certificationProfileName, { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Rights summary", exact: true })).toBeVisible();
+    await expect(page.getByText(data.effectiveRightsSnapshotId, { exact: true })).toBeVisible();
+    await expect(page.getByText(data.rightsSnapshotId, { exact: true })).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: "Evidence", exact: true })).toBeVisible();
+    await expect(page.getByText(data.certificationEvidenceSnapshotId, { exact: true })).toBeVisible();
+    await expect(page.getByText(data.certificationId, { exact: true })).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: "Current Delivery Eligibility", exact: true })).toBeVisible();
+    const eligibility = page.locator("section.detail-card").filter({
+      has: page.getByRole("heading", { name: "预检结果", exact: true }),
+    });
+    await expect(eligibility).toBeVisible();
+    await expect(eligibility.getByText("DatasetVersion usability", { exact: true })).toBeVisible();
+    await expect(eligibility.getByText("Current Certification", { exact: true })).toBeVisible();
+    await expect(eligibility.getByText("Current Entitlement", { exact: true })).toBeVisible();
+    await expect(eligibility.getByText("ALLOWED", { exact: true })).toHaveCount(4);
   } else if (phase === "history") {
     // New browser context + fresh standalone process, reading persisted history.
     await page.goto("/evidence");
