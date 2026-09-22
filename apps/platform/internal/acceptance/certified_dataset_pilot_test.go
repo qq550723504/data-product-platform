@@ -17,6 +17,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	certificationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
 	certificationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
 	certificationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
@@ -87,6 +88,29 @@ func (s *pilotCommitObservingStore) Get(ctx context.Context, storageURI string) 
 		return nil, err
 	}
 	return s.base.Get(ctx, storageURI)
+}
+
+type pilotBarrierDirectDataGate struct {
+	base    deliveryapp.DirectDataGate
+	entered chan struct{}
+	release chan struct{}
+}
+
+func (g *pilotBarrierDirectDataGate) EvaluateDirectData(ctx context.Context, tx pgx.Tx, request deliveryapp.DirectDataGateRequest) (deliveryapp.DirectDataGateResult, error) {
+	result, err := g.base.EvaluateDirectData(ctx, tx, request)
+	if err != nil {
+		return deliveryapp.DirectDataGateResult{}, err
+	}
+	select {
+	case g.entered <- struct{}{}:
+	default:
+	}
+	select {
+	case <-g.release:
+		return result, nil
+	case <-ctx.Done():
+		return deliveryapp.DirectDataGateResult{}, ctx.Err()
+	}
 }
 
 func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
@@ -964,6 +988,277 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		datasetRepo,
 	)
 
+	t.Run("delivery fence linearizes revoke and terminal finalize", func(t *testing.T) {
+		makeConsumerDelivery := func(label, consumer string) (rightsdomain.Authorization, certificationdomain.ProfileSnapshot, *certificationapp.EligibilityService, *deliveryapp.DirectDataService) {
+			t.Helper()
+			auth := activatePilotAuthorizationForConsumer(
+				t, ctx, rightsService, workspaceID, "AUTH-LINEAR-"+label+"-"+suffix,
+				consumer, validFrom, validTo, grants, &actorID, traceID,
+			)
+
+			profileSnapshot, err := profileService.Create(ctx, certificationapp.CreateProfileCommand{
+				WorkspaceID: workspaceID,
+				Profile: certificationdomain.CertificationProfile{
+					ProfileRef:            "park/enterprise-activity-linearization-" + label,
+					Code:                  "PILOT-LINEARIZATION-" + strings.ToUpper(label),
+					Name:                  "Pilot Delivery Fence " + label,
+					Version:               "1.0.0",
+					Purpose:               certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{purpose}},
+					Actions:               certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"READ"}},
+					Consumers:             certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{consumer}},
+					Delivery:              certificationdomain.Applicability{Mode: certificationdomain.ApplicabilityExplicit, Values: []string{"DIRECT_DATA"}},
+					RequiredCriticalRules: []string{"QA-COMPANY-ID-COMPLETE"},
+					QualityGateRequired:   true,
+					Rights:                certificationdomain.RightsRequirement{Required: false},
+					ComplianceRequired:    true,
+					ContractRequired:      true,
+					ContractCode:          "DP-ENTERPRISE-ACTIVITY",
+					TraceabilityRequired:  true,
+					EvidenceRequired:      true,
+				},
+				ActorID: &actorID,
+				TraceID: traceID,
+			})
+			if err != nil {
+				t.Fatalf("create %s linearization profile: %v", label, err)
+			}
+
+			certService := certificationapp.NewCertificationService(
+				txManager,
+				profileRepo,
+				certificationRepo,
+				pilotCertificationResolver{input: certificationdomain.EvaluationInput{
+					WorkspaceID:      workspaceID,
+					DatasetVersionID: outputVersion.ID,
+					Quality:          certificationdomain.QualityAssessmentEvidence{ID: qualityResult.ID},
+					Compliance:       &certificationdomain.ComplianceEvidence{ID: complianceResult.ID},
+					Contract:         &certificationdomain.ContractEvidence{ID: contractVersion.ID},
+					Traceability:     &certificationdomain.TraceabilityEvidence{ID: supportingEvidence.ID},
+					Evidence:         &certificationdomain.EvidenceSnapshot{ID: supportingEvidence.ID},
+					ActorID:          &actorID,
+				}},
+			)
+			cert, err := certService.Evaluate(ctx, certificationapp.EvaluateDatasetCertificationCommand{
+				WorkspaceID:      workspaceID,
+				DatasetVersionID: outputVersion.ID,
+				ProfileID:        profileSnapshot.ID,
+				IdempotencyKey:   "pilot-linear-cert-" + label + "-" + suffix,
+				ActorID:          &actorID,
+				TraceID:          traceID,
+			})
+			if err != nil {
+				t.Fatalf("certify %s linearization context: %v", label, err)
+			}
+			if cert.Decision != certificationdomain.DecisionCertified {
+				t.Fatalf("%s linearization certification = %s blockers=%+v", label, cert.Decision, cert.Blockers)
+			}
+
+			eligibilityService := certificationapp.NewEligibilityService(certService, datasetRepo, rightsRepo)
+			directService := deliveryapp.NewDirectDataService(
+				txManager,
+				deliveryinfra.NewPostgresRepository(pool),
+				deliveryapp.NewCertificationDirectDataGate(eligibilityService),
+				datasetRepo,
+			)
+			return auth, profileSnapshot, eligibilityService, directService
+		}
+
+		t.Run("revoke commits before delivery fence", func(t *testing.T) {
+			const consumer = "LINEARIZATION_REVOKE_FIRST"
+			auth, linearProfile, _, linearDirect := makeConsumerDelivery("revoke-first", consumer)
+
+			stored, err := rightsRepo.GetAuthorization(ctx, auth.ID)
+			if err != nil {
+				t.Fatalf("load revoke-first Authorization: %v", err)
+			}
+			expectedStatus := stored.Status
+			if err := stored.Revoke(&actorID); err != nil {
+				t.Fatalf("prepare revoke-first Authorization transition: %v", err)
+			}
+
+			revokeTx, err := pool.Begin(ctx)
+			if err != nil {
+				t.Fatalf("begin revoke-first transaction: %v", err)
+			}
+			defer func() { _ = revokeTx.Rollback(context.Background()) }()
+			if err := rightsRepo.SaveAuthorizationState(ctx, revokeTx, stored, expectedStatus); err != nil {
+				t.Fatalf("hold revoke-first delivery fence: %v", err)
+			}
+
+			probeTx, err := pool.Begin(ctx)
+			if err != nil {
+				t.Fatalf("begin revoke-first delivery probe: %v", err)
+			}
+			if _, err := probeTx.Exec(ctx, `SET LOCAL lock_timeout = '100ms'`); err != nil {
+				_ = probeTx.Rollback(ctx)
+				t.Fatalf("set revoke-first probe lock timeout: %v", err)
+			}
+			_, lockErr := deliveryRepo.LockFence(ctx, probeTx, workspaceID)
+			var pgErr *pgconn.PgError
+			if !errors.As(lockErr, &pgErr) || pgErr.Code != "55P03" {
+				_ = probeTx.Rollback(ctx)
+				t.Fatalf("delivery fence while revoke-first tx is open = %v, want PostgreSQL 55P03", lockErr)
+			}
+			_ = probeTx.Rollback(ctx)
+
+			if err := revokeTx.Commit(ctx); err != nil {
+				t.Fatalf("commit revoke-first transition: %v", err)
+			}
+
+			result, err := linearDirect.Deliver(ctx, deliveryapp.DirectDataCommand{
+				WorkspaceID:          workspaceID,
+				DatasetVersionID:     outputVersion.ID,
+				ProfileID:            linearProfile.ID,
+				PrincipalRef:         "pilot-revoke-first-principal",
+				EffectiveConsumerRef: consumer,
+				Purpose:              purpose,
+				Action:               "READ",
+				ScopeType:            "ALL_RESOURCE",
+				ScopeRef:             outputVersion.ID.String(),
+				IdempotencyKey:       "pilot-revoke-first-delivery-" + suffix,
+				TraceID:              traceID,
+			})
+			if err != nil {
+				t.Fatalf("deliver after revoke-first commit: %v", err)
+			}
+			if result.PayloadReady || result.Operation.Status != deliverydomain.StatusBlocked ||
+				!hasString(result.Blockers, "CURRENT_ENTITLEMENT_BLOCKED") {
+				t.Fatalf("revoke-first delivery = %#v", result)
+			}
+		})
+
+		t.Run("delivery finalize commits before revoke", func(t *testing.T) {
+			const consumer = "LINEARIZATION_FINALIZE_FIRST"
+			auth, linearProfile, linearEligibility, _ := makeConsumerDelivery("finalize-first", consumer)
+
+			barrierGate := &pilotBarrierDirectDataGate{
+				base:    deliveryapp.NewCertificationDirectDataGate(linearEligibility),
+				entered: make(chan struct{}, 1),
+				release: make(chan struct{}),
+			}
+			linearDirect := deliveryapp.NewDirectDataService(
+				txManager,
+				deliveryinfra.NewPostgresRepository(pool),
+				barrierGate,
+				datasetRepo,
+			)
+
+			command := deliveryapp.DirectDataCommand{
+				WorkspaceID:          workspaceID,
+				DatasetVersionID:     outputVersion.ID,
+				ProfileID:            linearProfile.ID,
+				PrincipalRef:         "pilot-finalize-first-principal",
+				EffectiveConsumerRef: consumer,
+				Purpose:              purpose,
+				Action:               "READ",
+				ScopeType:            "ALL_RESOURCE",
+				ScopeRef:             outputVersion.ID.String(),
+				IdempotencyKey:       "pilot-finalize-first-delivery-" + suffix,
+				TraceID:              traceID,
+			}
+
+			type deliveryOutcome struct {
+				result deliveryapp.DirectDataResult
+				err    error
+			}
+			outcomeCh := make(chan deliveryOutcome, 1)
+			deliverCtx, cancelDeliver := context.WithTimeout(ctx, 5*time.Second)
+			defer cancelDeliver()
+			go func() {
+				result, err := linearDirect.Deliver(deliverCtx, command)
+				outcomeCh <- deliveryOutcome{result: result, err: err}
+			}()
+
+			select {
+			case <-barrierGate.entered:
+			case <-time.After(5 * time.Second):
+				t.Fatal("finalize-first delivery never reached in-fence gate barrier")
+			}
+
+			stored, err := rightsRepo.GetAuthorization(ctx, auth.ID)
+			if err != nil {
+				close(barrierGate.release)
+				t.Fatalf("load finalize-first Authorization: %v", err)
+			}
+			expectedStatus := stored.Status
+			if err := stored.Revoke(&actorID); err != nil {
+				close(barrierGate.release)
+				t.Fatalf("prepare finalize-first Authorization transition: %v", err)
+			}
+
+			revokeTx, err := pool.Begin(ctx)
+			if err != nil {
+				close(barrierGate.release)
+				t.Fatalf("begin finalize-first revoke transaction: %v", err)
+			}
+			if _, err := revokeTx.Exec(ctx, `SET LOCAL lock_timeout = '100ms'`); err != nil {
+				close(barrierGate.release)
+				_ = revokeTx.Rollback(ctx)
+				t.Fatalf("set finalize-first revoke lock timeout: %v", err)
+			}
+			revokeErr := rightsRepo.SaveAuthorizationState(ctx, revokeTx, stored, expectedStatus)
+			var pgErr *pgconn.PgError
+			if !errors.As(revokeErr, &pgErr) || pgErr.Code != "55P03" {
+				close(barrierGate.release)
+				_ = revokeTx.Rollback(ctx)
+				t.Fatalf("revoke while delivery holds fence = %v, want PostgreSQL 55P03", revokeErr)
+			}
+			_ = revokeTx.Rollback(ctx)
+
+			close(barrierGate.release)
+
+			var outcome deliveryOutcome
+			select {
+			case outcome = <-outcomeCh:
+			case <-time.After(5 * time.Second):
+				t.Fatal("finalize-first delivery did not complete after releasing barrier")
+			}
+			if outcome.err != nil {
+				t.Fatalf("finalize-first delivery: %v", outcome.err)
+			}
+			if !outcome.result.PayloadReady || outcome.result.Operation.Status != deliverydomain.StatusIssued {
+				t.Fatalf("finalize-first delivery = %#v", outcome.result)
+			}
+
+			if _, err := rightsService.Revoke(ctx, rightsapp.TransitionCommand{
+				AuthorizationID: auth.ID,
+				ActorID:         &actorID,
+				TraceID:         traceID,
+			}); err != nil {
+				t.Fatalf("revoke after finalize-first ISSUED commit: %v", err)
+			}
+
+			var storedStatus string
+			if err := pool.QueryRow(ctx, `
+				SELECT status
+				FROM delivery_operation
+				WHERE id=$1
+			`, outcome.result.Operation.ID).Scan(&storedStatus); err != nil {
+				t.Fatalf("read finalize-first DeliveryOperation after revoke: %v", err)
+			}
+			if storedStatus != string(deliverydomain.StatusIssued) {
+				t.Fatalf("finalize-first historical operation status = %s, want ISSUED", storedStatus)
+			}
+
+			replacement := command
+			replacement.IdempotencyKey = "pilot-finalize-first-replacement-" + suffix
+			replacement.RetryOfDeliveryOperationID = &outcome.result.Operation.ID
+			blocked, err := deliveryapp.NewDirectDataService(
+				txManager,
+				deliveryinfra.NewPostgresRepository(pool),
+				deliveryapp.NewCertificationDirectDataGate(linearEligibility),
+				datasetRepo,
+			).Deliver(ctx, replacement)
+			if err != nil {
+				t.Fatalf("replacement after finalize-first revoke: %v", err)
+			}
+			if blocked.PayloadReady || blocked.Operation.Status != deliverydomain.StatusBlocked ||
+				!hasString(blocked.Blockers, "CURRENT_ENTITLEMENT_BLOCKED") {
+				t.Fatalf("finalize-first replacement after revoke = %#v", blocked)
+			}
+		})
+	})
+
 	t.Run("HTTP reads object only after ISSUED commit and never on BLOCKED", func(t *testing.T) {
 		const (
 			trustedToken     = "pilot-response-boundary-token"
@@ -1545,6 +1840,97 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 func asPilotString(value any) string {
 	text, _ := value.(string)
 	return text
+}
+
+func activatePilotAuthorizationForConsumer(t *testing.T, ctx context.Context, service *rightsapp.Service, workspaceID uuid.UUID, code, consumer string, validFrom, validTo time.Time, grants []rightsdomain.ResourceGrantSpec, actorID *uuid.UUID, traceID string) rightsdomain.Authorization {
+	t.Helper()
+	normalizedGrants := append([]rightsdomain.ResourceGrantSpec(nil), grants...)
+	for i := range normalizedGrants {
+		if normalizedGrants[i].ScopeType == "" {
+			normalizedGrants[i].ScopeType = "ALL_RESOURCE"
+			normalizedGrants[i].ScopeRef = normalizedGrants[i].DataResourceID.String()
+		}
+	}
+	authorization, err := service.Create(ctx, rightsapp.CreateAuthorizationCommand{
+		WorkspaceID: workspaceID,
+		Code:        code,
+		GrantorRef:  "PARK-OPERATOR",
+		GranteeRef:  consumer,
+		Purpose:     purpose,
+		ValidFrom:   &validFrom,
+		ValidTo:     &validTo,
+		Resources:   normalizedGrants,
+		ActorID:     actorID,
+		TraceID:     traceID,
+	})
+	if err != nil {
+		t.Fatalf("create %s Authorization: %v", consumer, err)
+	}
+	authorization, err = service.Submit(ctx, rightsapp.TransitionCommand{AuthorizationID: authorization.ID, ActorID: actorID, TraceID: traceID})
+	if err != nil {
+		t.Fatalf("submit %s Authorization: %v", consumer, err)
+	}
+	authorization, err = service.Approve(ctx, rightsapp.TransitionCommand{AuthorizationID: authorization.ID, ActorID: actorID, TraceID: traceID})
+	if err != nil {
+		t.Fatalf("approve %s Authorization: %v", consumer, err)
+	}
+	authorization, err = service.Activate(ctx, rightsapp.TransitionCommand{AuthorizationID: authorization.ID, ActorID: actorID, TraceID: traceID, At: time.Now().UTC()})
+	if err != nil {
+		t.Fatalf("activate %s Authorization: %v", consumer, err)
+	}
+
+	for _, grant := range authorization.Resources {
+		permissions := make([]rightsdomain.RightsPermission, 0, len(grant.Actions))
+		for _, action := range grant.Actions {
+			permissions = append(permissions, rightsdomain.RightsPermission{
+				Kind:    rightsdomain.PermissionGrant,
+				Action:  action,
+				Purpose: purpose,
+				Scope:   rightsdomain.NormalizedScope{Type: grant.ScopeType, Ref: grant.ScopeRef},
+			})
+		}
+		declaration, err := service.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{
+			Spec: rightsdomain.RightsDeclarationSpec{
+				WorkspaceID:       workspaceID,
+				DataResourceID:    grant.DataResourceID,
+				ClaimantRef:       authorization.GrantorRef,
+				BasisType:         "LICENSE",
+				BasisRef:          "certified-dataset-pilot-linearization",
+				ConsumerScopeType: "ANY",
+				Parties: []rightsdomain.RightsParty{
+					{PartyRef: authorization.GrantorRef, Role: "RIGHTS_HOLDER"},
+				},
+				Permissions: permissions,
+				ActorID:     actorID,
+			},
+			TraceID: traceID,
+		})
+		if err != nil {
+			t.Fatalf("create %s rights declaration: %v", consumer, err)
+		}
+		if _, err := service.VerifyRightsDeclaration(ctx, rightsapp.VerifyRightsDeclarationCommand{
+			DeclarationID: declaration.ID,
+			Outcome:       rightsdomain.DeclarationVerified,
+			ActorID:       actorID,
+			TraceID:       traceID,
+		}); err != nil {
+			t.Fatalf("verify %s rights declaration: %v", consumer, err)
+		}
+		if _, err := service.BindAuthorizationProvenance(ctx, rightsapp.BindAuthorizationProvenanceCommand{
+			WorkspaceID:     workspaceID,
+			AuthorizationID: authorization.ID,
+			DataResourceID:  grant.DataResourceID,
+			DeclarationID:   declaration.ID,
+			GrantorRef:      authorization.GrantorRef,
+			AuthorityMode:   rightsdomain.AuthorityDirect,
+			AsOf:            time.Now().UTC(),
+			ActorID:         actorID,
+			TraceID:         traceID,
+		}); err != nil {
+			t.Fatalf("bind %s authorization provenance: %v", consumer, err)
+		}
+	}
+	return authorization
 }
 
 func hasPilotBlocker(blockers []certificationdomain.Blocker, code string) bool {
