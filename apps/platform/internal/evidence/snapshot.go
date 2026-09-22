@@ -34,7 +34,12 @@ func CreateSnapshot(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, objec
 	if workspaceID == uuid.Nil || objectType == "" || objectID == uuid.Nil || manifest == nil {
 		return Snapshot{}, fmt.Errorf("invalid evidence snapshot")
 	}
-	items = append([]SnapshotItem(nil), items...)
+	items = append([]SnapshotItem{}, items...)
+	for _, item := range items {
+		if item.EvidenceID == uuid.Nil || item.Category == "" {
+			return Snapshot{}, fmt.Errorf("invalid evidence snapshot item")
+		}
+	}
 	sort.Slice(items, func(i, j int) bool {
 		if items[i].Category == items[j].Category {
 			return items[i].EvidenceID.String() < items[j].EvidenceID.String()
@@ -69,22 +74,31 @@ func CreateSnapshot(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, objec
 	}
 	if _, err := tx.Exec(ctx, `
 		INSERT INTO evidence_snapshot (
-			id, workspace_id, object_type, object_id, manifest, root_hash, created_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+			id, workspace_id, object_type, object_id, manifest, root_hash,
+			manifest_hash_payload, status, created_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,'BUILDING',$8,$9)
 	`, snapshot.ID, snapshot.WorkspaceID, snapshot.ObjectType, snapshot.ObjectID,
-		manifestJSON, snapshot.RootHash, snapshot.CreatedAt, snapshot.CreatedBy); err != nil {
+		manifestJSON, snapshot.RootHash, encoded, snapshot.CreatedAt, snapshot.CreatedBy); err != nil {
 		return Snapshot{}, fmt.Errorf("insert evidence snapshot: %w", err)
 	}
 	for _, item := range items {
-		if item.EvidenceID == uuid.Nil || item.Category == "" {
-			return Snapshot{}, fmt.Errorf("invalid evidence snapshot item")
-		}
 		if _, err := tx.Exec(ctx, `
 			INSERT INTO evidence_snapshot_item (snapshot_id, evidence_id, category)
 			VALUES ($1,$2,$3)
 		`, snapshot.ID, item.EvidenceID, item.Category); err != nil {
 			return Snapshot{}, fmt.Errorf("insert evidence snapshot item: %w", err)
 		}
+	}
+	tag, err := tx.Exec(ctx, `
+		UPDATE evidence_snapshot
+		SET status='FINALIZED'
+		WHERE id=$1 AND status='BUILDING'
+	`, snapshot.ID)
+	if err != nil {
+		return Snapshot{}, fmt.Errorf("finalize evidence snapshot: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return Snapshot{}, fmt.Errorf("finalize evidence snapshot: expected one BUILDING row")
 	}
 	return snapshot, nil
 }
