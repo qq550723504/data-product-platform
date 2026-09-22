@@ -70,8 +70,12 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
     await expect(page.getByRole("heading", { name: "Quality Report", exact: true })).toBeVisible();
     await expect(page.getByText(data.qualityAssessmentId, { exact: true })).toBeVisible();
     const latestAssessment = page.getByRole("heading", { name: "最新评测", exact: true }).locator("xpath=ancestor::section");
-    await expect(latestAssessment.locator("tbody tr")).toHaveCount(6);
-    await expect(latestAssessment.getByText("PASS", { exact: true }).first()).toBeVisible();
+    await expect(latestAssessment.locator("tbody tr")).toHaveCount(data.qualityDimensions.length);
+    for (const dimension of data.qualityDimensions) {
+      const row = latestAssessment.locator("tbody tr").filter({ hasText: dimension });
+      await expect(row).toHaveCount(1);
+      await expect(row).toContainText("PASS");
+    }
 
     await expect(page.getByRole("heading", { name: "Certification 历史", exact: true })).toBeVisible();
     await expect(page.getByText("CERTIFIED", { exact: true }).first()).toBeVisible();
