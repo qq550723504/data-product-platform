@@ -370,8 +370,8 @@ func TestDispatchOrderIsStableByCreatedAtThenID(t *testing.T) {
 		if _, err := pool.Exec(ctx, `
 			INSERT INTO outbox_event (
 				id, aggregate_type, aggregate_id, event_type, payload,
-				status, attempts, available_at, created_at
-			) VALUES ($1, 'TEST', $1, 'OrderTest', '{"test":true}', 'PENDING', 0, now(), $2)
+				status, attempts, available_at, created_at, routing_version, required_handlers
+			) VALUES ($1, 'TEST', $1, 'OrderTest', '{"test":true}', 'PENDING', 0, now(), $2, 'test-v1', ARRAY[]::text[])
 		`, id, sameTime); err != nil {
 			t.Fatalf("insert ordered event: %v", err)
 		}
