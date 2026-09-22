@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 )
 
@@ -91,12 +92,25 @@ func TestCreateSnapshotFinalizesAndFreezesMembership(t *testing.T) {
 	}
 }
 
-func appendSnapshotTestEvidence(t *testing.T, ctx context.Context, pool interface {
-	Begin(context.Context) (interface {
-		Commit(context.Context) error
-		Rollback(context.Context) error
-	}, error)
-}, workspaceID uuid.UUID, label string) Record {
+func appendSnapshotTestEvidence(t *testing.T, ctx context.Context, pool *pgxpool.Pool, workspaceID uuid.UUID, label string) Record {
 	t.Helper()
-	panic("unreachable")
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin evidence transaction: %v", err)
+	}
+	record, err := Append(ctx, tx, Record{
+		WorkspaceID:  workspaceID,
+		EvidenceType: "SNAPSHOT_MEMBERSHIP_TEST",
+		Title:        "Snapshot membership " + label,
+		SourceType:   "TEST",
+		Metadata:     map[string]any{"label": label},
+	})
+	if err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("append evidence %s: %v", label, err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("commit evidence %s: %v", label, err)
+	}
+	return record
 }
