@@ -38,6 +38,27 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION require_evidence_snapshot_finalized_on_commit()
+RETURNS trigger AS $
+DECLARE
+    current_status varchar(16);
+BEGIN
+    SELECT status INTO current_status
+      FROM evidence_snapshot
+     WHERE id = NEW.id;
+
+    IF current_status <> 'FINALIZED' THEN
+        RAISE EXCEPTION 'evidence_snapshot % must be FINALIZED before commit', NEW.id;
+    END IF;
+    RETURN NULL;
+END;
+$ LANGUAGE plpgsql;
+
+CREATE CONSTRAINT TRIGGER trg_evidence_snapshot_finalized_on_commit
+AFTER INSERT ON evidence_snapshot
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW EXECUTE FUNCTION require_evidence_snapshot_finalized_on_commit();
+
 CREATE OR REPLACE FUNCTION guard_evidence_snapshot_membership()
 RETURNS trigger AS $$
 DECLARE
