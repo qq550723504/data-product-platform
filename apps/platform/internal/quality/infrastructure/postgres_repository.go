@@ -655,14 +655,12 @@ func (r *PostgresRepository) loadFindingsBatch(ctx context.Context, results []do
 }
 
 // restoreDimensionSummaries returns the summary frozen in the assessment's
-// metrics. Recomputing it from mutable evaluator code would change the meaning
-// of an immutable historical assessment after a later evaluator change. Older
-// rows without the persisted snapshot retain the legacy findings-based fallback.
+// metrics. Every QualityAssessment must persist this immutable snapshot; missing
+// snapshot data is invalid rather than recomputed from current evaluator code.
 func restoreDimensionSummaries(result *domain.Assessment) error {
 	persisted, ok := result.Metrics["dimensions"]
 	if !ok {
-		result.DimensionSummaries = domain.SummarizeDimensions(result.Findings)
-		return nil
+		return fmt.Errorf("persisted quality dimension summary is missing")
 	}
 	encoded, err := json.Marshal(persisted)
 	if err != nil {
