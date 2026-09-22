@@ -216,8 +216,14 @@ func TestDatasetCertificationAllowsSeededRawEffectiveRightsLeaf(t *testing.T) {
 		t.Fatalf("insert quality assessment: %v", err)
 	}
 
+	profileTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin certification profile transaction: %v", err)
+	}
+	defer profileTx.Rollback(ctx)
+
 	var profileHash string
-	if err := pool.QueryRow(ctx, `
+	if err := profileTx.QueryRow(ctx, `
 		INSERT INTO certification_profile (
 			id, workspace_id, profile_ref, code, name, version,
 			content_sha256, content_snapshot, purpose_mode, action_mode,
@@ -233,7 +239,7 @@ func TestDatasetCertificationAllowsSeededRawEffectiveRightsLeaf(t *testing.T) {
 	`, profileID, workspaceID, profileRef, profileContent).Scan(&profileHash); err != nil {
 		t.Fatalf("insert certification profile: %v", err)
 	}
-	if _, err := pool.Exec(ctx, `
+	if _, err := profileTx.Exec(ctx, `
 		INSERT INTO certification_profile_rights_purpose (profile_id, purpose_code) VALUES ($1,'INTERNAL_USE');
 		INSERT INTO certification_profile_rights_action (profile_id, action) VALUES ($1,'READ');
 		INSERT INTO certification_profile_rights_consumer (profile_id, consumer_ref) VALUES ($1,'consumer-a');
@@ -241,10 +247,13 @@ func TestDatasetCertificationAllowsSeededRawEffectiveRightsLeaf(t *testing.T) {
 	`, profileID, resourceID.String()); err != nil {
 		t.Fatalf("insert certification rights memberships: %v", err)
 	}
-	if _, err := pool.Exec(ctx, `
+	if _, err := profileTx.Exec(ctx, `
 		UPDATE certification_profile SET membership_state='FINALIZED' WHERE id=$1
 	`, profileID); err != nil {
 		t.Fatalf("finalize certification profile: %v", err)
+	}
+	if err := profileTx.Commit(ctx); err != nil {
+		t.Fatalf("commit certification profile: %v", err)
 	}
 
 	if _, err := pool.Exec(ctx, `
