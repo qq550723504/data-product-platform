@@ -79,8 +79,7 @@ func NewDispatcher(pool *pgxpool.Pool, cfg Config, router *Router, handlers ...H
 	}, nil
 }
 
-// RouterVersion identifies the routing contract this dispatcher applies to
-// events that do not carry a frozen obligation yet.
+// RouterVersion identifies this process's routing contract.
 func (d *Dispatcher) RouterVersion() string { return d.router.Version() }
 
 // HandlerNames returns the registered handler names in sorted order. It is used
@@ -124,11 +123,7 @@ func (d *Dispatcher) Run(ctx context.Context) error {
 // DispatchOnce performs at most one claim + fan-out cycle. It returns nil when
 // no event is claimable.
 func (d *Dispatcher) DispatchOnce(ctx context.Context) error {
-	// The resolver is only consulted for events that were recorded before their
-	// obligation was known; it freezes that obligation inside the claim
-	// transaction, so two instances started from different profiles cannot
-	// disagree about what the event owes.
-	c, err := d.publisher.claimOneRouted(ctx, d.router)
+	c, err := d.publisher.claimOneRouted(ctx)
 	if err != nil {
 		return err
 	}
@@ -145,13 +140,7 @@ func (d *Dispatcher) DispatchOnce(ctx context.Context) error {
 	}
 
 	// The obligation comes from the event, never from this process's routing
-	// table. An event with no frozen obligation is one whose type is undeclared.
-	if c.routingVersion == "" {
-		return d.publisher.failClaim(ctx, c, fmt.Errorf(
-			"outbox event %s of type %q has no frozen routing obligation and type %q is not declared in routing version %s; refusing to complete it implicitly",
-			c.Event.ID, c.Event.EventType, c.Event.EventType, d.router.Version(),
-		))
-	}
+	// table.
 	required := c.requiredHandlers
 	if c.routingVersion != d.router.Version() {
 		d.logger.Info("dispatching event under a foreign routing version; honoring the frozen obligation",
