@@ -79,8 +79,9 @@ type DatasetVersion struct {
 	ByteSize               *int64
 	ChecksumAlgorithm      string
 	ChecksumValue          string
-	GeneratedByExecutionID *uuid.UUID
-	RightsSnapshotID       *uuid.UUID
+	GeneratedByExecutionID      *uuid.UUID
+	GeneratedByEntityMatchJobID *uuid.UUID
+	RightsSnapshotID            *uuid.UUID
 	QualityStatus          string
 	ComplianceStatus       string
 	SnapshotFrom           *time.Time
