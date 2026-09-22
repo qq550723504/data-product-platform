@@ -343,7 +343,7 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	correctionMapping.EvidenceID = nil
 	correctionDecision, err := entityRepo.RecordMappingDecision(ctx, correctionTx, entitydomain.MappingDecisionCommand{
 		Mapping:                   correctionMapping,
-		SourceOrigin:              entitydomain.OriginUnknown,
+		SourceOrigin:              entitydomain.OriginManualReview,
 		IdempotencyKey:            "live-post-release:" + suffix,
 		DecidedBy:                 &reviewerID,
 		ExpectCurrentDecision:     true,
