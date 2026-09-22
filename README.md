@@ -6,32 +6,51 @@
 
 ## 当前阶段
 
-核心 POC 已完成，当前进入 Certified Dataset 受控试点。
+核心 POC 已完成，Certified Dataset MVP 的质量、权利、认证、查询/UI 与受控 DIRECT_DATA 交付主链已经落地。当前先做一轮**定向可靠性收口**，随后进入 enterprise-activity 纵向 E2E Pilot。
 
 ~~~text
-核心 POC                         ✅
-T1/T2/T3-B2 可靠性与生产事实冻结  ✅
+核心 POC                              ✅
+T1/T2/T3-B2 可靠性与生产事实冻结       ✅
+Certified Dataset Quality/Rights       ✅
+DatasetCertification + Read/API/UI      ✅
+Trusted DIRECT_DATA Delivery            ✅
         ↓
-Certified Dataset Pilot          ← 当前
+#99 / #100 定向 Reliability Closeout   ← 当前
         ↓
-AI 高质量数据集 / Gold Dataset    后续
+#136 enterprise-activity E2E Pilot      下一步
         ↓
-可信数据空间 / 数据产品规模化交付   后续
+AI 高质量数据集 / Gold Dataset          后续
+        ↓
+可信数据空间 / 数据产品规模化交付        后续
 ~~~
 
-当前主 Epic：#129 高质量数据集生产与认证（OPEN；第一阶段纵向验收完成后再关闭）。
+当前主 Epic：#129 高质量数据集生产与认证（OPEN；#136 第一阶段纵向验收完成后再关闭）。
 
-第一阶段任务状态（截至 2026-09-21）：
+第一阶段任务状态（截至 2026-09-22）：
 
-- #131 QualityAssessment follow-up / typed CostAllocation ✅ 完成（核心 QualityAssessment 与规则快照已由 #140 落地）
+- #131 QualityAssessment follow-up / typed CostAllocation ✅ 完成（核心 QualityAssessment 与规则快照由 #140 落地）
 - #132 通用 industry-pack Quality Engine ✅ 完成
 - #133 Quality Report ✅ 完成
 - #137 Data Rights Provenance / Effective Rights ✅ 完成
 - #134 DatasetCertification / CertificationProfile ✅ 完成（PR #149）
-- #135 Certified Dataset API / UI ⏳ 待完成
-- #136 enterprise-activity 纵向试点验收 ⏳ 待完成
+- #135A Certified Dataset Read/API/UI ✅ 完成（PR #152）
+- #135B Trusted server-side DIRECT_DATA delivery ✅ 实现完成（PR #173；PR #174 补齐 retry authorization context）
+- #159 Pre-production compatibility cleanup ✅ 完成
+- #99 / #100 Reliability Closeout 🚧 当前只收敛与 #136 直接相关的关键项
+- #136 enterprise-activity 纵向试点验收 ⏳ 下一步
+- #161 DatasetCertification history pagination ⏳ P2 follow-up，**不阻塞 #136**
 
-T4/T5/T6、完整生产 IAM、灾备、性能压测以及 Label Studio / X-AnyLabeling 不作为 Certified Dataset MVP 第一阶段前置条件。
+#136 前的定向 Reliability Closeout 只包含：
+
+- #99：EvidenceSnapshot membership freeze；
+- #100：Entity Match finalize claim/idempotency；
+- #100：Native RUNNING crash recovery；
+- #100：Native output ↔ Execution terminal convergence；
+- #100：Authorization expected-status CAS。
+
+#99 / #100 的其它 ProductRelease/ProductVersion freeze、Metadata stale projection、Hop unknown submit、manual upload idempotency 等继续作为 Core reliability debt 跟踪，**不作为当前 Certified Dataset DIRECT_DATA Pilot 的前置条件**，除非 #136 实际复现相关问题。
+
+T4/T5/T6、完整生产 IAM、bearer/presigned credential provider、provider containment/recovery、灾备、性能压测以及 Label Studio / X-AnyLabeling 不作为 Certified Dataset MVP 第一阶段前置条件。
 
 ## 本地试用入口
 
@@ -169,7 +188,7 @@ POC 已验证：
 - Cost / Evidence
 - Release → Execution → Mapping Decision 冻结追溯
 
-下一步使用同一参考场景扩展 Certified Dataset 纵向试点。
+当前使用同一参考场景完成 #99/#100 定向可靠性收口；随后执行 #136 Certified Dataset 纵向 E2E Pilot。Pilot 只验证当前已落地的受控 DIRECT_DATA 交付闭环，不把 bearer/presigned credential provider、containment/recovery 或完整企业 IAM 扩入第一阶段。
 
 activity_score 等 V1 指标仅用于验证数据生产生命周期和可解释性，不是经过验证的授信模型。
 
