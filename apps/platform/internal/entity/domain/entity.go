@@ -89,6 +89,7 @@ var (
 	ErrMappingDecisionKeyConflict    = errors.New("mapping decision idempotency key is already bound to another request")
 	ErrMappingDecisionKeyRequired    = errors.New("mapping decision idempotency key is required")
 	ErrMappingDecisionOriginRequired = errors.New("mapping decision source origin is required")
+	ErrMatchJobFinalizeConflict       = errors.New("entity match job finalization lost a concurrent state transition")
 	// ErrMappingDecisionExpectationRequired rejects a manual confirmation that
 	// would replace an existing current decision while the caller did not state
 	// which decision it observed. Observed state must be explicit, not inferred
