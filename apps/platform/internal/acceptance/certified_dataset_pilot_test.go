@@ -41,6 +41,7 @@ import (
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	qualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http"
 	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
@@ -162,6 +163,69 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		t.Fatalf("pilot Entity Resolution = %s/%v, want SUCCEEDED with STANDARDIZED output", matchJob.Status, matchJob.OutputDatasetVersionID)
 	}
 	standardizedVersionID := *matchJob.OutputDatasetVersionID
+	standardizedVersion, err := datasetRepo.GetVersion(ctx, standardizedVersionID)
+	if err != nil {
+		t.Fatalf("load pilot STANDARDIZED DatasetVersion: %v", err)
+	}
+	if standardizedVersion.Status != datasetdomain.VersionReady ||
+		standardizedVersion.GeneratedByEntityMatchJobID == nil ||
+		*standardizedVersion.GeneratedByEntityMatchJobID != matchJob.ID ||
+		standardizedVersion.GeneratedByExecutionID != nil {
+		t.Fatalf("pilot STANDARDIZED output = status %s matchProducer %v executionProducer %v, want READY/%s/nil",
+			standardizedVersion.Status, standardizedVersion.GeneratedByEntityMatchJobID,
+			standardizedVersion.GeneratedByExecutionID, matchJob.ID)
+	}
+	provenJob, err := entityRepo.GetSuccessfulResolutionJobForOutput(
+		ctx,
+		workspaceID,
+		enterpriseVersion.ID,
+		standardizedVersionID,
+		"CSV",
+		enterpriseName,
+	)
+	if err != nil {
+		t.Fatalf("prove pilot Entity Resolution output lineage: %v", err)
+	}
+	if provenJob.ID != matchJob.ID ||
+		provenJob.OutputDatasetVersionID == nil ||
+		*provenJob.OutputDatasetVersionID != standardizedVersionID {
+		t.Fatalf("pilot proven Entity Resolution job = id %s output %v, want %s/%s",
+			provenJob.ID, provenJob.OutputDatasetVersionID, matchJob.ID, standardizedVersionID)
+	}
+
+	candidates, err := entityRepo.ListCandidates(ctx, matchJob.ID)
+	if err != nil {
+		t.Fatalf("list finalized pilot Entity Resolution candidates: %v", err)
+	}
+	frozenDecisions, err := entityRepo.ListResolutionOutputDecisions(ctx, workspaceID, standardizedVersionID)
+	if err != nil {
+		t.Fatalf("list frozen pilot Entity Resolution decisions: %v", err)
+	}
+	if len(candidates) == 0 || len(frozenDecisions) != len(candidates) {
+		t.Fatalf("pilot frozen resolution decisions = %d for %d candidates, want one per candidate",
+			len(frozenDecisions), len(candidates))
+	}
+	for _, candidate := range candidates {
+		decision, ok := frozenDecisions[candidate.SourceKey]
+		if !ok {
+			t.Fatalf("pilot STANDARDIZED output has no frozen decision for source key %s", candidate.SourceKey)
+		}
+		if decision.WorkspaceID != workspaceID ||
+			decision.SourceType != matchJob.SourceType ||
+			decision.SourceRef != matchJob.SourceRef ||
+			decision.SourceKey != candidate.SourceKey ||
+			decision.SourceJobID == nil || *decision.SourceJobID != matchJob.ID ||
+			decision.SourceCandidateID == nil || *decision.SourceCandidateID != candidate.ID {
+			t.Fatalf("pilot frozen resolution decision for %s is inconsistent: %+v", candidate.SourceKey, decision)
+		}
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE dataset_version
+		SET generated_by_entity_match_job_id=NULL
+		WHERE id=$1
+	`, standardizedVersionID); err == nil || !strings.Contains(err.Error(), "entity-match producer identity is immutable") {
+		t.Fatalf("pilot STANDARDIZED producer identity mutation error = %v, want immutable producer guard", err)
+	}
 
 	workflowVersion, err := workflowVersionService.Create(ctx, workflowapp.CreateWorkflowVersionCommand{
 		WorkspaceID:    workspaceID,
@@ -229,6 +293,85 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		if _, ok := qualityResult.DimensionSummaries[dimension]; !ok {
 			t.Fatalf("pilot QualityAssessment missing dimension %s", dimension)
 		}
+	}
+
+	qualityHandler := qualityhttp.NewHandler(
+		qualityService,
+		qualityRepo,
+		evidence.NewQueryRepository(pool),
+	)
+	qualityMux := http.NewServeMux()
+	qualityHandler.Register(qualityMux)
+	reportRequest := httptest.NewRequest(
+		http.MethodGet,
+		"/api/v1/quality-assessments/"+qualityResult.ID.String()+"/report?workspaceId="+workspaceID.String()+"&limit=100&offset=0",
+		nil,
+	)
+	reportResponse := httptest.NewRecorder()
+	qualityMux.ServeHTTP(reportResponse, reportRequest)
+	if reportResponse.Code != http.StatusOK {
+		t.Fatalf("pilot Quality Report = %d %s, want 200", reportResponse.Code, reportResponse.Body.String())
+	}
+	var report map[string]any
+	if err := json.Unmarshal(reportResponse.Body.Bytes(), &report); err != nil {
+		t.Fatalf("decode pilot Quality Report: %v", err)
+	}
+	if report["id"] != qualityResult.ID.String() ||
+		report["workspaceId"] != workspaceID.String() ||
+		report["datasetVersionId"] != outputVersion.ID.String() ||
+		report["gateDecision"] != string(qualitydomain.GatePass) ||
+		report["ruleSetRef"] != qualityResult.RuleSetRef ||
+		report["ruleSetVersion"] != qualityResult.RuleSetVersion {
+		t.Fatalf("pilot Quality Report summary is inconsistent: %+v", report)
+	}
+	dimensionSummary, ok := report["dimensionSummary"].(map[string]any)
+	if !ok {
+		t.Fatalf("pilot Quality Report dimensionSummary has unexpected shape: %#v", report["dimensionSummary"])
+	}
+	for _, dimension := range qualitydomain.QualityDimensions {
+		if _, ok := dimensionSummary[string(dimension)]; !ok {
+			t.Fatalf("pilot Quality Report missing dimension %s: %+v", dimension, dimensionSummary)
+		}
+	}
+	findingsSection, ok := report["findings"].(map[string]any)
+	if !ok {
+		t.Fatalf("pilot Quality Report findings has unexpected shape: %#v", report["findings"])
+	}
+	items, ok := findingsSection["items"].([]any)
+	if !ok {
+		t.Fatalf("pilot Quality Report findings.items has unexpected shape: %#v", findingsSection["items"])
+	}
+	page, ok := findingsSection["page"].(map[string]any)
+	if !ok {
+		t.Fatalf("pilot Quality Report findings.page has unexpected shape: %#v", findingsSection["page"])
+	}
+	total, totalOK := page["total"].(float64)
+	offset, offsetOK := page["offset"].(float64)
+	if !totalOK || !offsetOK || int(total) != len(qualityResult.Findings) || int(offset) != 0 || len(items) != len(qualityResult.Findings) {
+		t.Fatalf("pilot Quality Report findings page = %#v items=%d, want offset=0 total/items=%d",
+			page, len(items), len(qualityResult.Findings))
+	}
+	for _, raw := range items {
+		finding, ok := raw.(map[string]any)
+		if !ok {
+			t.Fatalf("pilot Quality Report finding has unexpected shape: %#v", raw)
+		}
+		if strings.TrimSpace(asPilotString(finding["id"])) == "" ||
+			strings.TrimSpace(asPilotString(finding["ruleId"])) == "" ||
+			strings.TrimSpace(asPilotString(finding["dimension"])) == "" ||
+			strings.TrimSpace(asPilotString(finding["severity"])) == "" ||
+			strings.TrimSpace(asPilotString(finding["status"])) == "" ||
+			finding["observed"] == nil {
+			t.Fatalf("pilot Quality Report contains an unexplained finding: %+v", finding)
+		}
+	}
+	evidenceRefs, ok := report["evidence"].([]any)
+	if !ok || len(evidenceRefs) == 0 {
+		t.Fatalf("pilot Quality Report Evidence references = %#v, want non-empty", report["evidence"])
+	}
+	auditRefs, ok := report["auditEvents"].([]any)
+	if !ok || len(auditRefs) == 0 {
+		t.Fatalf("pilot Quality Report Audit references = %#v, want non-empty", report["auditEvents"])
 	}
 
 	complianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
@@ -1193,6 +1336,11 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 			t.Fatalf("new-version eligibility = allowed=%v blockers=%+v, want CERTIFICATION_NOT_CURRENT", newEligibility.Allowed, newEligibility.Blockers)
 		}
 	})
+}
+
+func asPilotString(value any) string {
+	text, _ := value.(string)
+	return text
 }
 
 func hasPilotBlocker(blockers []certificationdomain.Blocker, code string) bool {
