@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"syscall"
 	"testing"
@@ -366,7 +367,12 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	manifest["effectiveRightsHash"] = effectiveRights.RootHash
 	manifest["certificationEvidenceSnapshotId"] = certifiedEvidence.ID
 	manifest["outputChecksum"] = output.ChecksumValue
-	manifest["qualityDimensions"] = []string{"COMPLETENESS", "ACCURACY", "CONSISTENCY", "VALIDITY", "UNIQUENESS", "TIMELINESS"}
+	qualityDimensions := make([]string, 0, len(quality.DimensionSummaries))
+	for dimension := range quality.DimensionSummaries {
+		qualityDimensions = append(qualityDimensions, dimension)
+	}
+	sort.Strings(qualityDimensions)
+	manifest["qualityDimensions"] = qualityDimensions
 
 	productRepo := productinfra.NewPostgresRepository(pool)
 	productService := productapp.NewService(tx, productRepo)
