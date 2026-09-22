@@ -33,18 +33,8 @@ type CreateDatasetService struct {
 	resources *resourceinfra.PostgresRepository
 }
 
-// NewCreateDatasetService accepts the explicit resource repository used by newer
-// callers, while retaining the two-argument constructor used by older clients.
-// Omission or nil NEVER disables ownership checks: both use the real repository.
-func NewCreateDatasetService(tx *transaction.Manager, repo *infrastructure.PostgresRepository, resources ...*resourceinfra.PostgresRepository) *CreateDatasetService {
-	if len(resources) > 1 {
-		panic("NewCreateDatasetService accepts at most one resource repository")
-	}
-	resourceRepo := resourceinfra.NewPostgresRepository()
-	if len(resources) == 1 && resources[0] != nil {
-		resourceRepo = resources[0]
-	}
-	return &CreateDatasetService{tx: tx, repo: repo, resources: resourceRepo}
+func NewCreateDatasetService(tx *transaction.Manager, repo *infrastructure.PostgresRepository, resources *resourceinfra.PostgresRepository) *CreateDatasetService {
+	return &CreateDatasetService{tx: tx, repo: repo, resources: resources}
 }
 
 func (s *CreateDatasetService) Handle(ctx context.Context, cmd CreateDatasetCommand) (domain.Dataset, error) {
