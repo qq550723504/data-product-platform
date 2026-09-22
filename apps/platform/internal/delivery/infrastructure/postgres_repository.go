@@ -29,13 +29,17 @@ func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 }
 
 func (r *PostgresRepository) TryInsertIdempotency(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, key, fingerprint string, operationID uuid.UUID) (bool, error) {
+	return r.TryInsertIdempotencyForCommand(ctx, tx, workspaceID, "DELIVERY.ISSUE_CREDENTIAL", key, fingerprint, operationID)
+}
+
+func (r *PostgresRepository) TryInsertIdempotencyForCommand(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, commandType, key, fingerprint string, operationID uuid.UUID) (bool, error) {
 	var id uuid.UUID
 	err := tx.QueryRow(ctx, `
 		INSERT INTO command_idempotency(workspace_id, command_type, idempotency_key, object_id, result_ref, request_fingerprint)
-		VALUES ($1,'DELIVERY.ISSUE_CREDENTIAL',$2,$3,$3,$4)
+		VALUES ($1,$2,$3,$4,$4,$5)
 		ON CONFLICT (workspace_id, command_type, idempotency_key) DO NOTHING
 		RETURNING id
-	`, workspaceID, key, operationID, fingerprint).Scan(&id)
+	`, workspaceID, commandType, key, operationID, fingerprint).Scan(&id)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return false, nil
 	}
@@ -46,13 +50,17 @@ func (r *PostgresRepository) TryInsertIdempotency(ctx context.Context, tx pgx.Tx
 }
 
 func (r *PostgresRepository) FindIdempotency(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, key string) (IdempotencyRecord, bool, error) {
+	return r.FindIdempotencyForCommand(ctx, tx, workspaceID, "DELIVERY.ISSUE_CREDENTIAL", key)
+}
+
+func (r *PostgresRepository) FindIdempotencyForCommand(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, commandType, key string) (IdempotencyRecord, bool, error) {
 	var record IdempotencyRecord
 	err := tx.QueryRow(ctx, `
 		SELECT object_id, COALESCE(request_fingerprint,'')
 		FROM command_idempotency
-		WHERE workspace_id=$1 AND command_type='DELIVERY.ISSUE_CREDENTIAL' AND idempotency_key=$2
+		WHERE workspace_id=$1 AND command_type=$2 AND idempotency_key=$3
 		FOR UPDATE
-	`, workspaceID, key).Scan(&record.ObjectID, &record.RequestFingerprint)
+	`, workspaceID, commandType, key).Scan(&record.ObjectID, &record.RequestFingerprint)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return IdempotencyRecord{}, false, nil
 	}
