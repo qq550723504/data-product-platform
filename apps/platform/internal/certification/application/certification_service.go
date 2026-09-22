@@ -17,6 +17,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
@@ -144,6 +145,12 @@ func (s *CertificationService) Evaluate(ctx context.Context, cmd EvaluateDataset
 			return err
 		}
 
+		// A new certification fact can change CurrentCertificationGate. Serialize
+		// it with terminal delivery authorization; idempotent replay above does
+		// not advance the revision.
+		if _, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID); err != nil {
+			return err
+		}
 		if err := s.certificationRepo.InsertCertification(ctx, tx, candidate); err != nil {
 			return err
 		}
@@ -314,6 +321,12 @@ func (s *CertificationService) ChangeDisposition(ctx context.Context, cmd Change
 			return err
 		}
 
+		// REVOCATION/SUPERSEDE changes whether an issued certification is current.
+		// Advance the same workspace fence held by terminal delivery finalization
+		// so one side is unambiguously first in the PostgreSQL order.
+		if _, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID); err != nil {
+			return err
+		}
 		if err := s.certificationRepo.InsertDisposition(ctx, tx, candidate); err != nil {
 			return err
 		}

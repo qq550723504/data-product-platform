@@ -23,6 +23,11 @@ type CertificationRepository struct {
 	pool *pgxpool.Pool
 }
 
+type certificationQueryer interface {
+	Query(context.Context, string, ...any) (pgx.Rows, error)
+	QueryRow(context.Context, string, ...any) pgx.Row
+}
+
 type CertificationTarget struct {
 	WorkspaceID      uuid.UUID
 	DatasetVersionID uuid.UUID
@@ -106,10 +111,18 @@ func (r *CertificationRepository) GetCertificationTx(ctx context.Context, tx pgx
 // fact. Current selection belongs to the domain, where ambiguity can fail
 // closed instead of being hidden by an ORDER BY created_at.
 func (r *CertificationRepository) ListCertificationHistory(ctx context.Context, workspaceID, datasetVersionID, profileID uuid.UUID, asOf time.Time, profile domain.ProfileSnapshot) (CertificationHistory, error) {
+	return listCertificationHistory(ctx, r.pool, workspaceID, datasetVersionID, profileID, asOf, profile)
+}
+
+func (r *CertificationRepository) ListCertificationHistoryTx(ctx context.Context, tx pgx.Tx, workspaceID, datasetVersionID, profileID uuid.UUID, asOf time.Time, profile domain.ProfileSnapshot) (CertificationHistory, error) {
+	return listCertificationHistory(ctx, tx, workspaceID, datasetVersionID, profileID, asOf, profile)
+}
+
+func listCertificationHistory(ctx context.Context, q certificationQueryer, workspaceID, datasetVersionID, profileID uuid.UUID, asOf time.Time, profile domain.ProfileSnapshot) (CertificationHistory, error) {
 	if asOf.IsZero() {
 		asOf = time.Now().UTC()
 	}
-	rows, err := r.pool.Query(ctx, `
+	rows, err := q.Query(ctx, `
 		SELECT id, workspace_id, dataset_version_id, quality_assessment_id,
 		       rights_snapshot_id, effective_rights_snapshot_id, effective_rights_snapshot_hash,
 		       frozen_rights_context_hash, compliance_result_id, contract_version_id,
@@ -135,7 +148,7 @@ func (r *CertificationRepository) ListCertificationHistory(ctx context.Context, 
 		return CertificationHistory{}, fmt.Errorf("iterate dataset certification history: %w", err)
 	}
 
-	dispositionRows, err := r.pool.Query(ctx, `
+	dispositionRows, err := q.Query(ctx, `
 		SELECT d.id, d.workspace_id, d.certification_id, d.disposition, d.effective_at,
 		       d.reason, d.superseded_by_certification_id, d.evidence_snapshot_id, d.created_by
 		FROM certification_disposition d

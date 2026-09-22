@@ -97,6 +97,10 @@ func (r *PostgresRepository) GetEffectiveRights(ctx context.Context, id uuid.UUI
 	return loadEffectiveRights(ctx, r.pool, id)
 }
 
+func (r *PostgresRepository) GetEffectiveRightsTx(ctx context.Context, tx pgx.Tx, id uuid.UUID) (domain.EffectiveRightsSnapshot, error) {
+	return loadEffectiveRights(ctx, tx, id)
+}
+
 func loadEffectiveRights(ctx context.Context, q effectiveRightsQueryer, id uuid.UUID) (domain.EffectiveRightsSnapshot, error) {
 	var s domain.EffectiveRightsSnapshot
 	var status string

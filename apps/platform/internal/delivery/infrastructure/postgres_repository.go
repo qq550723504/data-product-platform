@@ -29,13 +29,17 @@ func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 }
 
 func (r *PostgresRepository) TryInsertIdempotency(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, key, fingerprint string, operationID uuid.UUID) (bool, error) {
+	return r.TryInsertIdempotencyForCommand(ctx, tx, workspaceID, "DELIVERY.ISSUE_CREDENTIAL", key, fingerprint, operationID)
+}
+
+func (r *PostgresRepository) TryInsertIdempotencyForCommand(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, commandType, key, fingerprint string, operationID uuid.UUID) (bool, error) {
 	var id uuid.UUID
 	err := tx.QueryRow(ctx, `
 		INSERT INTO command_idempotency(workspace_id, command_type, idempotency_key, object_id, result_ref, request_fingerprint)
-		VALUES ($1,'DELIVERY.ISSUE_CREDENTIAL',$2,$3,$3,$4)
+		VALUES ($1,$2,$3,$4,$4,$5)
 		ON CONFLICT (workspace_id, command_type, idempotency_key) DO NOTHING
 		RETURNING id
-	`, workspaceID, key, operationID, fingerprint).Scan(&id)
+	`, workspaceID, commandType, key, operationID, fingerprint).Scan(&id)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return false, nil
 	}
@@ -46,13 +50,17 @@ func (r *PostgresRepository) TryInsertIdempotency(ctx context.Context, tx pgx.Tx
 }
 
 func (r *PostgresRepository) FindIdempotency(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, key string) (IdempotencyRecord, bool, error) {
+	return r.FindIdempotencyForCommand(ctx, tx, workspaceID, "DELIVERY.ISSUE_CREDENTIAL", key)
+}
+
+func (r *PostgresRepository) FindIdempotencyForCommand(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, commandType, key string) (IdempotencyRecord, bool, error) {
 	var record IdempotencyRecord
 	err := tx.QueryRow(ctx, `
 		SELECT object_id, COALESCE(request_fingerprint,'')
 		FROM command_idempotency
-		WHERE workspace_id=$1 AND command_type='DELIVERY.ISSUE_CREDENTIAL' AND idempotency_key=$2
+		WHERE workspace_id=$1 AND command_type=$2 AND idempotency_key=$3
 		FOR UPDATE
-	`, workspaceID, key).Scan(&record.ObjectID, &record.RequestFingerprint)
+	`, workspaceID, commandType, key).Scan(&record.ObjectID, &record.RequestFingerprint)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return IdempotencyRecord{}, false, nil
 	}
@@ -65,15 +73,15 @@ func (r *PostgresRepository) FindIdempotency(ctx context.Context, tx pgx.Tx, wor
 func (r *PostgresRepository) InsertOperation(ctx context.Context, tx pgx.Tx, operation domain.Operation) error {
 	_, err := tx.Exec(ctx, `
 		INSERT INTO delivery_operation(
-			id, workspace_id, dataset_version_id, certification_ref, idempotency_key,
+			id, workspace_id, dataset_version_id, certification_ref, retry_of_delivery_operation_id, idempotency_key,
 			provider_name, provider_request_key, status, current_gate_decision,
 			dependency_revision, principal_ref, effective_consumer_ref, delegation_ref,
 			purpose, action, scope_ref, delivery_channel, delivery_mode, requested_expires_at,
 			fresh_cap_expires_at, credential_ref, credential_hash,
 			provider_credential_expires_at, terminal_reason, created_at, updated_at
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26)
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27)
 	`, operation.ID, operation.WorkspaceID, operation.DatasetVersionID, operation.CertificationRef,
-		operation.IdempotencyKey, operation.ProviderName, operation.ProviderRequestKey,
+		operation.RetryOfDeliveryOperationID, operation.IdempotencyKey, operation.ProviderName, operation.ProviderRequestKey,
 		operation.Status, operation.CurrentGateDecision, operation.DependencyRevision,
 		operation.PrincipalRef, operation.EffectiveConsumerRef, nullable(operation.DelegationRef),
 		operation.Purpose, operation.Action, operation.ScopeRef, operation.DeliveryChannel, operation.DeliveryMode,
@@ -93,7 +101,7 @@ func (r *PostgresRepository) GetOperation(ctx context.Context, tx pgx.Tx, id uui
 	}
 	var operation domain.Operation
 	err := tx.QueryRow(ctx, `
-		SELECT id, workspace_id, dataset_version_id, certification_ref, idempotency_key,
+		SELECT id, workspace_id, dataset_version_id, certification_ref, retry_of_delivery_operation_id, idempotency_key,
 		       provider_name, provider_request_key, status, current_gate_decision,
 		       dependency_revision, principal_ref, effective_consumer_ref, COALESCE(delegation_ref,''),
 		       purpose, action, scope_ref, delivery_channel, delivery_mode, requested_expires_at,
@@ -101,7 +109,7 @@ func (r *PostgresRepository) GetOperation(ctx context.Context, tx pgx.Tx, id uui
 		       provider_credential_expires_at, COALESCE(terminal_reason,''), created_at, updated_at
 		FROM delivery_operation WHERE id=$1`+lock, id).Scan(
 		&operation.ID, &operation.WorkspaceID, &operation.DatasetVersionID, &operation.CertificationRef,
-		&operation.IdempotencyKey, &operation.ProviderName, &operation.ProviderRequestKey,
+		&operation.RetryOfDeliveryOperationID, &operation.IdempotencyKey, &operation.ProviderName, &operation.ProviderRequestKey,
 		&operation.Status, &operation.CurrentGateDecision, &operation.DependencyRevision,
 		&operation.PrincipalRef, &operation.EffectiveConsumerRef, &operation.DelegationRef,
 		&operation.Purpose, &operation.Action, &operation.ScopeRef, &operation.DeliveryChannel, &operation.DeliveryMode,
@@ -139,11 +147,11 @@ func (r *PostgresRepository) InsertGateEvaluation(ctx context.Context, tx pgx.Tx
 		INSERT INTO delivery_gate_evaluation(
 			id, delivery_operation_id, evaluation_key, stage, decision, blockers,
 			dependency_revision, principal_ref, effective_consumer_ref, delegation_ref,
-			fresh_cap_expires_at, created_at
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+			certification_profile_id, fresh_cap_expires_at, created_at
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
 	`, evaluation.ID, operationID, evaluation.EvaluationKey, evaluation.Stage, evaluation.Decision(), blockers,
 		evaluation.DependencyRevision, evaluation.PrincipalRef, evaluation.EffectiveConsumerRef,
-		nullable(evaluation.DelegationRef), evaluation.FreshCapExpiresAt, createdAt)
+		nullable(evaluation.DelegationRef), evaluation.CertificationProfileID, evaluation.FreshCapExpiresAt, createdAt)
 	if err != nil {
 		return fmt.Errorf("insert delivery gate evaluation: %w", err)
 	}

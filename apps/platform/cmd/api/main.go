@@ -23,6 +23,9 @@ import (
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	datasethttp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/transport/http"
+	deliveryapp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application"
+	deliveryinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/infrastructure"
+	deliveryhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/transport/http"
 	entityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	entitysplink "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/splink"
@@ -210,6 +213,22 @@ func main() {
 	certificationEligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
 	certificationHandler := certificationhttp.NewHandler(certificationService, certificationEligibility, datasetRepo)
 
+	deliveryRepo := deliveryinfra.NewPostgresRepository(db)
+	deliveryGate := deliveryapp.NewCertificationDirectDataGate(certificationEligibility)
+	directDataService := deliveryapp.NewDirectDataService(txManager, deliveryRepo, deliveryGate, datasetRepo)
+	deliveryPrincipalResolver, err := deliveryhttp.NewStaticPrincipalResolver(
+		cfg.DeliveryAPI.Enabled,
+		cfg.DeliveryAPI.Token,
+		cfg.DeliveryAPI.PrincipalRef,
+		cfg.DeliveryAPI.ConsumerRef,
+		cfg.DeliveryAPI.WorkspaceIDs,
+	)
+	if err != nil {
+		logger.Error("configure direct delivery trusted caller boundary", "error", err)
+		os.Exit(1)
+	}
+	deliveryHandler := deliveryhttp.NewHandler(directDataService, deliveryPrincipalResolver, objectStore)
+
 	complianceRepo := complianceinfra.NewPostgresRepository(db)
 	complianceService := complianceapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, complianceRepo, objectStore)
 	complianceHandler := compliancehttp.NewHandler(complianceService, complianceRepo)
@@ -254,6 +273,7 @@ func main() {
 			contractHandler.Register,
 			qualityHandler.Register,
 			certificationHandler.Register,
+			deliveryHandler.Register,
 			complianceHandler.Register,
 			metadataHandler.Register,
 			traceabilityHandler.Register,

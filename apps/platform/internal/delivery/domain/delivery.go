@@ -79,6 +79,7 @@ type Operation struct {
 	WorkspaceID                 uuid.UUID
 	DatasetVersionID            uuid.UUID
 	CertificationRef            *uuid.UUID
+	RetryOfDeliveryOperationID  *uuid.UUID
 	IdempotencyKey              string
 	ProviderName                string
 	ProviderRequestKey          string
@@ -145,6 +146,7 @@ func (o *Operation) Transition(to Status) error {
 	allowed := map[Status]map[Status]bool{
 		StatusPrepared: {
 			StatusIssuancePending: true,
+			StatusIssued:          true,
 			StatusBlocked:         true,
 			StatusFailed:          true,
 		},
@@ -189,16 +191,17 @@ type GateRequest struct {
 }
 
 type GateEvaluation struct {
-	ID                   uuid.UUID
-	EvaluationKey        string
-	Stage                GateStage
-	Allowed              bool
-	Blockers             []string
-	DependencyRevision   int64
-	PrincipalRef         string
-	EffectiveConsumerRef string
-	DelegationRef        string
-	FreshCapExpiresAt    *time.Time
+	ID                     uuid.UUID
+	EvaluationKey          string
+	Stage                  GateStage
+	CertificationProfileID *uuid.UUID
+	Allowed                bool
+	Blockers               []string
+	DependencyRevision     int64
+	PrincipalRef           string
+	EffectiveConsumerRef   string
+	DelegationRef          string
+	FreshCapExpiresAt      *time.Time
 }
 
 func (e GateEvaluation) Decision() string {

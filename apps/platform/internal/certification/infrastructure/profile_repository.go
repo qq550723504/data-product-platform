@@ -18,6 +18,11 @@ type ProfileRepository struct {
 	pool *pgxpool.Pool
 }
 
+type profileQueryer interface {
+	Query(context.Context, string, ...any) (pgx.Rows, error)
+	QueryRow(context.Context, string, ...any) pgx.Row
+}
+
 func NewProfileRepository(pool *pgxpool.Pool) *ProfileRepository {
 	return &ProfileRepository{pool: pool}
 }
@@ -133,11 +138,19 @@ func (r *ProfileRepository) InsertProfile(ctx context.Context, tx pgx.Tx, profil
 }
 
 func (r *ProfileRepository) GetProfile(ctx context.Context, profileID uuid.UUID) (domain.ProfileSnapshot, error) {
+	return getProfile(ctx, r.pool, profileID)
+}
+
+func (r *ProfileRepository) GetProfileTx(ctx context.Context, tx pgx.Tx, profileID uuid.UUID) (domain.ProfileSnapshot, error) {
+	return getProfile(ctx, tx, profileID)
+}
+
+func getProfile(ctx context.Context, q profileQueryer, profileID uuid.UUID) (domain.ProfileSnapshot, error) {
 	var snapshot domain.ProfileSnapshot
 	var purposeMode, actionMode, consumerMode, deliveryMode string
 	var rightsPurposeMode, rightsActionMode, rightsConsumerMode, rightsScopeMode *string
 	var content string
-	err := r.pool.QueryRow(ctx, `
+	err := q.QueryRow(ctx, `
 		SELECT id, workspace_id, profile_ref, code, name, version, content_sha256, content_snapshot,
 		       purpose_mode, action_mode, consumer_mode, delivery_mode,
 		       quality_gate_required, rights_required, compliance_required, contract_required, COALESCE(contract_code,''),
@@ -172,35 +185,35 @@ func (r *ProfileRepository) GetProfile(ctx context.Context, profileID uuid.UUID)
 		snapshot.Rights.Scopes.Mode = domain.ApplicabilityMode(*rightsScopeMode)
 	}
 
-	if err := r.loadStrings(ctx, "certification_profile_purpose", "purpose_code", profileID, &snapshot.Purpose.Values); err != nil {
+	if err := loadProfileStrings(q, ctx, "certification_profile_purpose", "purpose_code", profileID, &snapshot.Purpose.Values); err != nil {
 		return domain.ProfileSnapshot{}, err
 	}
-	if err := r.loadStrings(ctx, "certification_profile_action", "action", profileID, &snapshot.Actions.Values); err != nil {
+	if err := loadProfileStrings(q, ctx, "certification_profile_action", "action", profileID, &snapshot.Actions.Values); err != nil {
 		return domain.ProfileSnapshot{}, err
 	}
-	if err := r.loadStrings(ctx, "certification_profile_consumer", "consumer_ref", profileID, &snapshot.Consumers.Values); err != nil {
+	if err := loadProfileStrings(q, ctx, "certification_profile_consumer", "consumer_ref", profileID, &snapshot.Consumers.Values); err != nil {
 		return domain.ProfileSnapshot{}, err
 	}
-	if err := r.loadStrings(ctx, "certification_profile_delivery", "delivery_channel", profileID, &snapshot.Delivery.Values); err != nil {
+	if err := loadProfileStrings(q, ctx, "certification_profile_delivery", "delivery_channel", profileID, &snapshot.Delivery.Values); err != nil {
 		return domain.ProfileSnapshot{}, err
 	}
-	if err := r.loadStrings(ctx, "certification_profile_quality_dimension", "dimension", profileID, &snapshot.RequiredQualityDimensions); err != nil {
+	if err := loadProfileStrings(q, ctx, "certification_profile_quality_dimension", "dimension", profileID, &snapshot.RequiredQualityDimensions); err != nil {
 		return domain.ProfileSnapshot{}, err
 	}
-	if err := r.loadStrings(ctx, "certification_profile_critical_rule", "rule_id", profileID, &snapshot.RequiredCriticalRules); err != nil {
+	if err := loadProfileStrings(q, ctx, "certification_profile_critical_rule", "rule_id", profileID, &snapshot.RequiredCriticalRules); err != nil {
 		return domain.ProfileSnapshot{}, err
 	}
 	if snapshot.Rights.Required {
-		if err := r.loadStrings(ctx, "certification_profile_rights_purpose", "purpose_code", profileID, &snapshot.Rights.Purpose.Values); err != nil {
+		if err := loadProfileStrings(q, ctx, "certification_profile_rights_purpose", "purpose_code", profileID, &snapshot.Rights.Purpose.Values); err != nil {
 			return domain.ProfileSnapshot{}, err
 		}
-		if err := r.loadStrings(ctx, "certification_profile_rights_action", "action", profileID, &snapshot.Rights.Actions.Values); err != nil {
+		if err := loadProfileStrings(q, ctx, "certification_profile_rights_action", "action", profileID, &snapshot.Rights.Actions.Values); err != nil {
 			return domain.ProfileSnapshot{}, err
 		}
-		if err := r.loadStrings(ctx, "certification_profile_rights_consumer", "consumer_ref", profileID, &snapshot.Rights.Consumers.Values); err != nil {
+		if err := loadProfileStrings(q, ctx, "certification_profile_rights_consumer", "consumer_ref", profileID, &snapshot.Rights.Consumers.Values); err != nil {
 			return domain.ProfileSnapshot{}, err
 		}
-		rows, err := r.pool.Query(ctx, `SELECT scope_type, scope_ref FROM certification_profile_rights_scope WHERE profile_id=$1 ORDER BY scope_type, scope_ref`, profileID)
+		rows, err := q.Query(ctx, `SELECT scope_type, scope_ref FROM certification_profile_rights_scope WHERE profile_id=$1 ORDER BY scope_type, scope_ref`, profileID)
 		if err != nil {
 			return domain.ProfileSnapshot{}, fmt.Errorf("load certification profile rights scopes: %w", err)
 		}
@@ -223,8 +236,12 @@ func (r *ProfileRepository) GetProfile(ctx context.Context, profileID uuid.UUID)
 }
 
 func (r *ProfileRepository) loadStrings(ctx context.Context, table, column string, profileID uuid.UUID, target *[]string) error {
+	return loadProfileStrings(r.pool, ctx, table, column, profileID, target)
+}
+
+func loadProfileStrings(q profileQueryer, ctx context.Context, table, column string, profileID uuid.UUID, target *[]string) error {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE profile_id=$1 ORDER BY %s", column, table, column)
-	rows, err := r.pool.Query(ctx, query, profileID)
+	rows, err := q.Query(ctx, query, profileID)
 	if err != nil {
 		return fmt.Errorf("load certification profile %s: %w", table, err)
 	}

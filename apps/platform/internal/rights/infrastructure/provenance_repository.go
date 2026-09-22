@@ -620,6 +620,18 @@ func (r *PostgresRepository) DatasetVersionWorkspace(ctx context.Context, target
 	return workspace, nil
 }
 
+func (r *PostgresRepository) DatasetVersionWorkspaceTx(ctx context.Context, tx pgx.Tx, target uuid.UUID) (uuid.UUID, error) {
+	var workspace uuid.UUID
+	err := tx.QueryRow(ctx, `SELECT d.workspace_id FROM dataset_version v JOIN dataset d ON d.id=v.dataset_id WHERE v.id=$1`, target).Scan(&workspace)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return uuid.Nil, ErrNotFound
+	}
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("get dataset version workspace in transaction: %w", err)
+	}
+	return workspace, nil
+}
+
 func (r *PostgresRepository) CurrentDirectDeclaration(ctx context.Context, workspaceID, resourceID uuid.UUID, consumer, purpose, action string, scope domain.NormalizedScope, asOf time.Time) (uuid.UUID, error) {
 	return currentDirectDeclaration(ctx, r.pool, workspaceID, resourceID, consumer, purpose, action, scope, asOf)
 }

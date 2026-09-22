@@ -377,6 +377,13 @@ func (r *PostgresRepository) GetVersion(ctx context.Context, versionID uuid.UUID
 	`, versionID))
 }
 
+func (r *PostgresRepository) GetVersionTx(ctx context.Context, tx pgx.Tx, versionID uuid.UUID) (domain.DatasetVersion, error) {
+	return scanVersion(tx.QueryRow(ctx, `
+		SELECT `+versionColumns+`
+		FROM dataset_version WHERE id = $1
+	`, versionID))
+}
+
 func scanVersion(row pgx.Row) (domain.DatasetVersion, error) {
 	var v domain.DatasetVersion
 	var metadataBytes []byte
