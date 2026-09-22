@@ -51,8 +51,8 @@ func TestNormalizeMappingDecisionKey(t *testing.T) {
 	}
 
 	key, err = NormalizeMappingDecisionKey("   ")
-	if err != nil || key != "" {
-		t.Fatalf("empty key = %q, err = %v; want empty key and nil error", key, err)
+	if err != ErrMappingDecisionKeyRequired || key != "" {
+		t.Fatalf("empty key = %q, err = %v; want ErrMappingDecisionKeyRequired", key, err)
 	}
 
 	if _, err := NormalizeMappingDecisionKey(strings.Repeat("x", 256)); err == nil {
@@ -61,7 +61,7 @@ func TestNormalizeMappingDecisionKey(t *testing.T) {
 }
 
 func TestSourceOriginValid(t *testing.T) {
-	for _, origin := range []SourceOrigin{OriginUnknown, OriginMatchCandidate, OriginWorkflowAlias} {
+	for _, origin := range []SourceOrigin{OriginMatchCandidate, OriginManualReview, OriginWorkflowAlias} {
 		if !origin.Valid() {
 			t.Fatalf("origin %q reported invalid", origin)
 		}
@@ -204,13 +204,6 @@ func TestMappingDecisionMatchesRequest(t *testing.T) {
 		t.Fatal("a different source candidate association was treated as a replay")
 	}
 
-	defaultedOrigin := cmd
-	defaultedOrigin.SourceOrigin = ""
-	unknownExisting := existing
-	unknownExisting.SourceOrigin = OriginUnknown
-	if !MappingDecisionMatchesRequest(unknownExisting, defaultedOrigin) {
-		t.Fatal("an omitted origin should default to UNKNOWN for comparison")
-	}
 }
 
 func ptrUUID(id uuid.UUID) *uuid.UUID { return &id }

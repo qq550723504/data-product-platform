@@ -198,38 +198,6 @@ func TestEntityMappingDecisionProtection(t *testing.T) {
 		t.Fatalf("decision provenance not preserved: %+v", decisions)
 	}
 
-	// Legacy rows that predate source tracking are explicitly UNKNOWN. Insert a
-	// decision the way the 000013 backfill did and read the default back.
-	legacyRef := "legacy-" + uuid.NewString()
-	legacyKey := "LEGACY-" + uuid.NewString()[:8]
-	var legacyOrigin string
-	if err := txManager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		legacyMapping := mapping(entityA.ID, domain.MappingAutoMatched)
-		legacyMapping.ID = uuid.New()
-		legacyMapping.SourceRef = legacyRef
-		legacyMapping.SourceKey = legacyKey
-		if err := repo.InsertMapping(ctx, tx, legacyMapping); err != nil {
-			return err
-		}
-		return tx.QueryRow(ctx, `
-			INSERT INTO entity_mapping_decision (
-				id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key,
-				match_method, match_policy_version, match_engine_name, match_engine_version,
-				match_model_version, status
-			)
-			SELECT gen_random_uuid(), $1, id, entity_id, source_type, source_ref, source_key,
-			       match_method, match_policy_version, match_engine_name, match_engine_version,
-			       match_model_version, status
-			FROM entity_mapping WHERE workspace_id=$1 AND source_ref=$2 AND source_key=$3
-			RETURNING source_origin
-		`, workspaceID, legacyRef, legacyKey).Scan(&legacyOrigin)
-	}); err != nil {
-		t.Fatalf("insert legacy decision: %v", err)
-	}
-	if legacyOrigin != string(domain.OriginUnknown) {
-		t.Fatalf("legacy decision origin = %q, want UNKNOWN", legacyOrigin)
-	}
-
 	// The workflow alias path still records provenance instead of leaving it blank.
 	aliasDecision, err := record(domain.MappingDecisionCommand{
 		Mapping: func() domain.EntityMapping {
@@ -238,7 +206,8 @@ func TestEntityMappingDecisionProtection(t *testing.T) {
 			m.SourceKey = "ALIAS-" + uuid.NewString()[:8]
 			return m
 		}(),
-		SourceOrigin: domain.OriginWorkflowAlias,
+		SourceOrigin:   domain.OriginWorkflowAlias,
+		IdempotencyKey: "alias:" + uuid.NewString(),
 	})
 	if err != nil {
 		t.Fatalf("record workflow alias decision: %v", err)

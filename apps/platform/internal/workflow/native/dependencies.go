@@ -101,7 +101,7 @@ func (e *Engine) prepareDependencies(ctx context.Context, request workflowapp.Pr
 		} else {
 			mappings[key] = decision
 		}
-		if decision.WorkspaceID != request.WorkspaceID || decision.EntityID == uuid.Nil || decision.SourceOrigin == entitydomain.OriginUnknown ||
+		if decision.WorkspaceID != request.WorkspaceID || decision.EntityID == uuid.Nil || !decision.SourceOrigin.Valid() ||
 			(decision.Status != entitydomain.MappingAutoMatched && decision.Status != entitydomain.MappingConfirmed) {
 			return fmt.Errorf("source %s/%s has an unusable mapping decision", sourceRef, sourceKey)
 		}
@@ -365,6 +365,7 @@ func (e *Engine) prepareSourceDecision(ctx context.Context, tx pgx.Tx, request w
 			ID: uuid.New(), WorkspaceID: request.WorkspaceID, EntityID: entityID, SourceType: "CSV",
 			SourceRef: sourceRef, SourceKey: sourceKey, SourceName: strings.TrimSpace(companyName),
 			MatchMethod: method, MatchRuleID: "WORKFLOW-CANONICAL-ALIAS", MatchPolicyVersion: policy.Metadata.Version,
+			MatchEngineName: "RULES", MatchEngineVersion: "1",
 			Confidence: confidence, Status: entitydomain.MappingAutoMatched, CreatedAt: time.Now().UTC(),
 		}
 		aliasEvidence, err := evidence.Append(ctx, tx, evidence.Record{

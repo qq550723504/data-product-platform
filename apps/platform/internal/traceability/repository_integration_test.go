@@ -177,11 +177,11 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 		INSERT INTO entity_mapping_decision (
 			id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key, source_name,
 			match_method, match_rule_id, match_policy_version, match_engine_name, match_engine_version,
-			match_model_version, confidence, status, reviewer_reason, evidence_id, source_origin, source_job_id, decided_at
+			match_model_version, confidence, status, reviewer_reason, evidence_id, idempotency_key, source_origin, source_job_id, decided_at
 		) VALUES ($1,$2,$3,$4,'CSV','enterprise.csv','SRC-001','示例科技有限公司',
 		          'MANUAL_REVIEW','REVIEW-001','1.0.0','RULES','1','',1.0,'CONFIRMED',
-		          'verified against source registry',$5,'MATCH_CANDIDATE',$6,now())
-	`, mappingDecisionID, workspaceID, mappingID, entityID, entityEvidence.ID, matchJobID); err != nil {
+		          'verified against source registry',$5,$7,'MATCH_CANDIDATE',$6,now())
+	`, mappingDecisionID, workspaceID, mappingID, entityID, entityEvidence.ID, matchJobID, "trace-release:"+mappingDecisionID.String()); err != nil {
 		_ = mappingTx.Rollback(ctx)
 		t.Fatalf("insert entity mapping decision fixture: %v", err)
 	}
@@ -433,10 +433,10 @@ func TestReleaseTraceBindsMappingsToDecisionNotCurrentProjection(t *testing.T) {
 		INSERT INTO entity_mapping_decision (
 			id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key, source_name,
 			match_method, match_rule_id, match_policy_version, match_engine_name, match_engine_version,
-			match_model_version, confidence, status, reviewer_reason, evidence_id, source_origin, source_job_id, decided_at
+			match_model_version, confidence, status, reviewer_reason, evidence_id, idempotency_key, source_origin, source_job_id, decided_at
 		) VALUES ($1,$2,$3,$4,'CSV','enterprise.csv','SRC-001','甲公司',
-		          'MANUAL_REVIEW','REVIEW-001','1.0.0','RULES','1','',1.0,'CONFIRMED',$5,$6,'MATCH_CANDIDATE',$7,now())
-	`, decisionAID, workspaceID, mappingID, entityAID, reasonA, evidenceA.ID, matchJobID); err != nil {
+		          'MANUAL_REVIEW','REVIEW-001','1.0.0','RULES','1','',1.0,'CONFIRMED',$5,$6,$8,'MATCH_CANDIDATE',$7,now())
+	`, decisionAID, workspaceID, mappingID, entityAID, reasonA, evidenceA.ID, matchJobID, "trace-bind-a:"+decisionAID.String()); err != nil {
 		_ = mappingTx.Rollback(ctx)
 		t.Fatalf("insert job-bound mapping decision: %v", err)
 	}
@@ -444,10 +444,10 @@ func TestReleaseTraceBindsMappingsToDecisionNotCurrentProjection(t *testing.T) {
 		INSERT INTO entity_mapping_decision (
 			id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key, source_name,
 			match_method, match_rule_id, match_policy_version, match_engine_name, match_engine_version,
-			match_model_version, confidence, status, reviewer_reason, evidence_id, source_origin, source_job_id, decided_at
+			match_model_version, confidence, status, reviewer_reason, evidence_id, idempotency_key, source_origin, source_job_id, decided_at
 		) VALUES ($1,$2,$3,$4,'CSV','enterprise.csv','SRC-001','乙公司',
-		          'MANUAL_REVIEW','REVIEW-002','1.0.0','RULES','1','',1.0,'CONFIRMED',$5,NULL,'UNKNOWN',NULL,now())
-	`, decisionBID, workspaceID, mappingID, entityBID, reasonB); err != nil {
+		          'MANUAL_REVIEW','REVIEW-002','1.0.0','RULES','1','',1.0,'CONFIRMED',$5,NULL,$6,'MANUAL_REVIEW',NULL,now())
+	`, decisionBID, workspaceID, mappingID, entityBID, reasonB, "trace-bind-b:"+decisionBID.String()); err != nil {
 		_ = mappingTx.Rollback(ctx)
 		t.Fatalf("insert unbound correction decision: %v", err)
 	}
@@ -513,10 +513,10 @@ func TestReleaseTraceBindsMappingsToDecisionNotCurrentProjection(t *testing.T) {
 		INSERT INTO entity_mapping_decision (
 			id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key, source_name,
 			match_method, match_rule_id, match_policy_version, match_engine_name, match_engine_version,
-			match_model_version, confidence, status, reviewer_reason, evidence_id, source_origin, source_job_id, decided_at
+			match_model_version, confidence, status, reviewer_reason, evidence_id, idempotency_key, source_origin, source_job_id, decided_at
 		) VALUES ($1,$2,$3,$4,'CSV','enterprise.csv','SRC-001','甲公司',
-		          'MANUAL_REVIEW','REVIEW-003','1.0.0','RULES','1','',1.0,'CONFIRMED','post-release append',NULL,'UNKNOWN',NULL,now())
-	`, decisionCID, workspaceID, mappingID, entityAID)
+		          'MANUAL_REVIEW','REVIEW-003','1.0.0','RULES','1','',1.0,'CONFIRMED','post-release append',NULL,$5,'MANUAL_REVIEW',NULL,now())
+	`, decisionCID, workspaceID, mappingID, entityAID, "trace-bind-c:"+decisionCID.String())
 	after, err := repo.ProductRelease(ctx, releaseID)
 	if err != nil {
 		t.Fatalf("re-query ProductRelease traceability: %v", err)

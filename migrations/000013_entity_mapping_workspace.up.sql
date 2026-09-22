@@ -1,51 +1,15 @@
 -- Scope EntityMapping to a workspace and separate the mutable "current mapping"
 -- projection from the immutable decision history that produced it.
 --
--- Before this migration the only uniqueness rule was global:
---   UNIQUE(source_type, source_ref, source_key)
--- so two workspaces could not both map the same external source key, and a
--- lookup by source could resolve to another workspace's mapping.
---
--- This migration is forward-only with respect to data. When it cannot prove a
--- row's workspace, or when scoping would expose a conflict, it aborts and asks
--- an operator to resolve it. It never repairs, deduplicates or deletes rows.
+-- This pre-production migration defines the current workspace-scoped mapping
+-- contract. No legacy mapping rows are preserved or backfilled.
 
 -- Referenced by the composite workspace-consistency foreign keys below.
 ALTER TABLE entity
     ADD CONSTRAINT uq_entity_workspace_id UNIQUE (workspace_id, id);
 
 ALTER TABLE entity_mapping
-    ADD COLUMN workspace_id uuid;
-
-UPDATE entity_mapping em
-SET workspace_id = e.workspace_id
-FROM entity e
-WHERE e.id = em.entity_id;
-
--- Block, do not repair: every mapping must resolve to exactly one workspace.
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM entity_mapping WHERE workspace_id IS NULL) THEN
-        RAISE EXCEPTION 'entity_mapping backfill left rows without a workspace; resolve the orphaned entity references before applying 000013';
-    END IF;
-END $$;
-
-ALTER TABLE entity_mapping
-    ALTER COLUMN workspace_id SET NOT NULL;
-
--- Block, do not deduplicate: the old global key makes a conflict impossible
--- today, but if one exists an operator must decide which mapping wins.
-DO $$
-BEGIN
-    IF EXISTS (
-        SELECT 1
-        FROM entity_mapping
-        GROUP BY workspace_id, source_type, source_ref, source_key
-        HAVING count(*) > 1
-    ) THEN
-        RAISE EXCEPTION 'entity_mapping contains duplicate source triples inside one workspace; resolve them before applying 000013';
-    END IF;
-END $$;
+    ADD COLUMN workspace_id uuid NOT NULL;
 
 ALTER TABLE entity_mapping
     DROP CONSTRAINT uq_entity_mapping_source,
@@ -95,22 +59,6 @@ CREATE TABLE entity_mapping_decision (
 
 CREATE INDEX idx_entity_mapping_decision_mapping ON entity_mapping_decision(mapping_id, decided_seq);
 CREATE INDEX idx_entity_mapping_decision_source ON entity_mapping_decision(workspace_id, source_type, source_ref, source_key);
-
--- Backfill one decision per existing current mapping. This records the row as it
--- exists at migration time; it does not re-derive or invent provenance.
-INSERT INTO entity_mapping_decision (
-    id, workspace_id, mapping_id, entity_id, source_type, source_ref, source_key,
-    source_name, match_method, match_rule_id, match_policy_version,
-    match_engine_name, match_engine_version, match_model_version, confidence,
-    status, reviewed_by, reviewed_at, reviewer_reason, evidence_id, decided_at, decided_by
-)
-SELECT gen_random_uuid(), em.workspace_id, em.id, em.entity_id, em.source_type, em.source_ref, em.source_key,
-       em.source_name, em.match_method, em.match_rule_id, em.match_policy_version,
-       em.match_engine_name, em.match_engine_version, em.match_model_version, em.confidence,
-       em.status, em.reviewed_by, em.reviewed_at, em.reviewer_reason, em.evidence_id,
-       em.created_at, em.reviewed_by
-FROM entity_mapping em
-ORDER BY em.created_at, em.id;
 
 -- Decision history is append-only: AGENTS.md §3 forbids overwriting history.
 CREATE OR REPLACE FUNCTION prevent_entity_mapping_decision_mutation() RETURNS trigger AS $$
