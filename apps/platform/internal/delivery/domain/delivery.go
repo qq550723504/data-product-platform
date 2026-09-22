@@ -79,6 +79,7 @@ type Operation struct {
 	WorkspaceID                 uuid.UUID
 	DatasetVersionID            uuid.UUID
 	CertificationRef            *uuid.UUID
+	RetryOfDeliveryOperationID   *uuid.UUID
 	IdempotencyKey              string
 	ProviderName                string
 	ProviderRequestKey          string
