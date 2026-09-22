@@ -316,3 +316,9 @@ func (r *PostgresRepository) GetSnapshot(ctx context.Context, snapshotID uuid.UU
 	return snapshot, nil
 }
 
+func nullableString(value string) any {
+	if value == "" {
+		return nil
+	}
+	return value
+}
