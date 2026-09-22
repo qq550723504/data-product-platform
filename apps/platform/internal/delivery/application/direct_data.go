@@ -194,6 +194,7 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 		evaluation.ID = uuid.New()
 		evaluation.EvaluationKey = "direct/terminal/" + candidateID.String()
 		evaluation.Stage = domain.GateTerminalFinalize
+		evaluation.CertificationProfileID = &cmd.ProfileID
 		evaluation.DependencyRevision = revision
 		if evaluation.Allowed {
 			if evaluation.PrincipalRef != cmd.PrincipalRef ||
