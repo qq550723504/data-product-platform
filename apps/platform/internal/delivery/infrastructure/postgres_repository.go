@@ -135,11 +135,14 @@ func (r *PostgresRepository) GetTerminalGateCertificationProfile(ctx context.Con
 		ORDER BY created_at DESC, id DESC
 		LIMIT 1
 	`, operationID).Scan(&profileID)
-	if errors.Is(err, pgx.ErrNoRows) || profileID == nil || *profileID == uuid.Nil {
+	if errors.Is(err, pgx.ErrNoRows) {
 		return uuid.Nil, ErrNotFound
 	}
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("get terminal delivery certification profile: %w", err)
+	}
+	if profileID == nil || *profileID == uuid.Nil {
+		return uuid.Nil, ErrNotFound
 	}
 	return *profileID, nil
 }
