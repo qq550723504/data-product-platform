@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func TestEvidenceSnapshotBuildingCannotCommit(t *testing.T) {
@@ -132,9 +133,16 @@ func TestEvidenceSnapshotMembershipParentLockSerializesFinalize(t *testing.T) {
 	}
 }
 
-func insertSnapshotMigrationEvidence(t *testing.T, pool interface {
-	Exec(context.Context, string, ...any) (interface{ RowsAffected() int64 }, error)
-}, workspaceID uuid.UUID, label string) uuid.UUID {
+func insertSnapshotMigrationEvidence(t *testing.T, pool *pgxpool.Pool, workspaceID uuid.UUID, label string) uuid.UUID {
 	t.Helper()
-	panic("unreachable " + label)
+	evidenceID := uuid.New()
+	if _, err := pool.Exec(context.Background(), `
+		INSERT INTO evidence (
+			id, workspace_id, evidence_type, title, source_type,
+			hash_algorithm, hash_value, metadata
+		) VALUES ($1,$2,'SNAPSHOT_MEMBERSHIP_TEST',$3,'TEST','SHA256-EVIDENCE-V2',$4,'{}'::jsonb)
+	`, evidenceID, workspaceID, label, strings.Repeat("c", 64)); err != nil {
+		t.Fatalf("insert evidence %s: %v", label, err)
+	}
+	return evidenceID
 }
