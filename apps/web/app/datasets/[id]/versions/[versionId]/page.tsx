@@ -130,12 +130,7 @@ export default async function DatasetVersionDetailPage({
       && (requested.scopeType.trim().toUpperCase() === "ALL_RESOURCE" || requested.scopeRef.trim() !== "");
     const eligibility = canCheck ? await platform.deliveryEligibility(versionId, requested) : null;
     const latestAssessment = assessmentOffset === 0 ? quality.items[0] : latestQuality?.items[0];
-    const latestReportResult = latestAssessment
-      ? await platform.qualityReport(latestAssessment.id, findingsLimit, findingsOffset)
-        .then((report) => ({ report, failed: false }))
-        .catch(() => ({ report: null, failed: true }))
-      : { report: null, failed: false };
-    const latestReport = latestReportResult.report;
+    const latestReport = latestAssessment ? await platform.qualityReport(latestAssessment.id, findingsLimit, findingsOffset) : null;
     const evidenceCertification = eligibility?.certification.current
       ?? history.items.find((item) => item.profile.id === selectedProfile?.id);
 
@@ -268,11 +263,6 @@ export default async function DatasetVersionDetailPage({
                   </table>
                 </div>
               </section>
-            ) : latestReportResult.failed ? (
-              <div className="callout callout-warn" style={{ marginBottom: 18 }}>
-                <strong>Quality Report 明细暂不可用</strong>
-                <p>该评测可能来自旧版历史数据，缺少当前 bounded report 所需的维度快照；版本与认证历史仍可正常查看。</p>
-              </div>
             ) : null}
             <div className="table-card" style={{ marginBottom: 24 }}>
               <table className="data-table">
