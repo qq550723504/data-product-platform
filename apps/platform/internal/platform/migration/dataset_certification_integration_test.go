@@ -54,7 +54,7 @@ func insertCertificationFixture(t *testing.T, pool *pgxpool.Pool, workspaceID uu
 			gate_decision, metrics
 		) VALUES ($1,$2,$3,'certification/migration.yaml','1.0.0',
 			encode(digest(convert_to('certification-fixture','UTF8'),'sha256'),'hex'),
-			'certification-fixture','native-quality','1','PASS','{}'::jsonb)
+			'certification-fixture','native-quality','1','PASS','{"dimensions":{}}'::jsonb)
 	`, fixture.qualityID, workspaceID, fixture.versionID); err != nil {
 		t.Fatalf("insert certification quality result: %v", err)
 	}
@@ -211,7 +211,7 @@ func TestDatasetCertificationAllowsSeededRawEffectiveRightsLeaf(t *testing.T) {
 			gate_decision, metrics
 		) VALUES ($1,$2,$3,'certification/raw.yaml','1.0.0',
 			encode(digest(convert_to('raw-certification','UTF8'),'sha256'),'hex'),
-			'raw-certification','native-quality','1','PASS','{}'::jsonb)
+			'raw-certification','native-quality','1','PASS','{"dimensions":{}}'::jsonb)
 	`, qualityID, workspaceID, versionID); err != nil {
 		t.Fatalf("insert quality assessment: %v", err)
 	}
