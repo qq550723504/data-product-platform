@@ -10,7 +10,7 @@ import (
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"\n\tworkflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 )
 
 const (
@@ -151,7 +151,7 @@ func (r *NativeReconciler) reconcileOne(ctx context.Context, executionID uuid.UU
 	}
 
 	if err := r.repo.ValidateExecutionOwnership(ctx, execution); err != nil {
-		if errors.Is(err, domain.ErrWorkspaceMismatch) || errors.Is(err, domain.ErrExecutionReferenceUnusable) {
+		if errors.Is(err, domain.ErrWorkspaceMismatch) || errors.Is(err, domain.ErrExecutionReferenceUnusable) || errors.Is(err, workflowinfra.ErrNotFound) {
 			if recordErr := r.recordRecovery(ctx, execution.ID, "REFERENCE_UNUSABLE"); recordErr != nil {
 				return recordErr
 			}
