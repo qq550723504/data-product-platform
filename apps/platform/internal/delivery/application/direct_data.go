@@ -162,9 +162,9 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 			OperationID: candidateID, WorkspaceID: cmd.WorkspaceID, DatasetVersionID: cmd.DatasetVersionID,
 			ProfileID: cmd.ProfileID, PrincipalRef: strings.TrimSpace(cmd.PrincipalRef),
 			EffectiveConsumerRef: strings.TrimSpace(cmd.EffectiveConsumerRef),
-			Purpose: strings.ToUpper(strings.TrimSpace(cmd.Purpose)),
-			Action: strings.ToUpper(strings.TrimSpace(cmd.Action)),
-			ScopeType: strings.ToUpper(strings.TrimSpace(cmd.ScopeType)), ScopeRef: strings.TrimSpace(cmd.ScopeRef),
+			Purpose:              strings.ToUpper(strings.TrimSpace(cmd.Purpose)),
+			Action:               strings.ToUpper(strings.TrimSpace(cmd.Action)),
+			ScopeType:            strings.ToUpper(strings.TrimSpace(cmd.ScopeType)), ScopeRef: strings.TrimSpace(cmd.ScopeRef),
 			DeliveryChannel: directDataChannel, DeliveryMode: directDataMode, RequestedExpiresAt: requestedExpiresAt,
 		})
 		if err != nil {
