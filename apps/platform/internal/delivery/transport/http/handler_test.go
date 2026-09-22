@@ -117,6 +117,23 @@ func TestDeliveryHandlerMapsTransactionalRightsLookupMissToNotFound(t *testing.T
 	}
 }
 
+func TestDeliveryHandlerMapsRightsNotFoundTo404(t *testing.T) {
+	workspaceID, versionID, profileID := uuid.New(), uuid.New(), uuid.New()
+	resolver, err := NewStaticPrincipalResolver(true, "secret", "principal-a", "consumer-a", []string{workspaceID.String()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	service := &fakeDirectService{err: rightsinfra.ErrNotFound}
+	store := &fakeObjectStore{}
+	response := executeDeliveryRequest(t, NewHandler(service, resolver, store), workspaceID, versionID, profileID, "consumer-a", "key-not-found", "secret")
+	if response.Code != http.StatusNotFound || !strings.Contains(response.Body.String(), "DELIVERY_TARGET_NOT_FOUND") {
+		t.Fatalf("response = %d %s", response.Code, response.Body.String())
+	}
+	if store.calls != 0 {
+		t.Fatalf("not-found delivery reached object storage: calls=%d", store.calls)
+	}
+}
+
 func TestDeliveryHandlerReadsObjectOnlyAfterIssuedCommandReturns(t *testing.T) {
 	workspaceID, versionID, profileID := uuid.New(), uuid.New(), uuid.New()
 	resolver, err := NewStaticPrincipalResolver(true, "secret", "principal-a", "consumer-a", []string{workspaceID.String()})
