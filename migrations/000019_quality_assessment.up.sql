@@ -1,6 +1,6 @@
--- QualityResult remains the storage/API compatibility name. These columns
--- promote it to an immutable QualityAssessment by recording exactly what was
--- evaluated, not merely where the current policy file happens to live.
+-- QualityResult is the current storage/API type name. These columns promote
+-- it to an immutable QualityAssessment by recording exactly what was evaluated,
+-- not merely where the current policy file happens to live.
 ALTER TABLE quality_result
     ADD COLUMN rule_set_content_sha256 varchar(64),
     ADD COLUMN rule_set_content text,

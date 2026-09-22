@@ -1,6 +1,6 @@
--- Extend the existing typed cost allocation table to cover QualityAssessment.
--- The table was introduced by migration 000021 for DeliveryOperation only;
--- keep that shape compatible while making the subject relation explicit.
+-- Extend the typed cost allocation table to cover QualityAssessment.
+-- Migration 000021 introduced DeliveryOperation as the first subject; this
+-- migration generalizes the subject relation explicitly.
 
 ALTER TABLE cost_allocation
     ALTER COLUMN delivery_operation_id DROP NOT NULL,

@@ -155,7 +155,7 @@ RightsDeclaration 的 resource / consumer applicability / purpose / action / sco
 
 **使用权与授予权必须分离。** `allowed_actions/permitted purpose/use scope` 回答 party 自己能做什么；`grant_authority_mode + grantable_actions + grantable purpose + grantable scope` 回答 party 能否把这些权利授给别人。AuthorizationProvenanceBinding 必须证明后者覆盖 Authorization；只有 USE/PROCESS permission 而无 grant authority 时，不能作为 grant source。delegation chain 每一跳也必须显式携带 onward grant authority，不能把 use permission 当 sublicensing authority。
 
-Authorization 的 gate-critical scope 也必须强类型/规范化、可索引、可查询（`scope_type` + `scope_ref` 或等价 relation）。现有 `authorization_resource.scope` JSONB 只能做扩展参数；BindAuthorizationProvenance / CurrentEntitlementGate 不得各自解析任意 JSONB 决定 allow。legacy Authorization 无法可靠归一化 scope 时 fail closed，不得把缺失 scope 当作全资源。
+Authorization 的 gate-critical scope 也必须强类型/规范化、可索引、可查询（`scope_type` + `scope_ref` 或等价 relation）。`authorization_resource.scope` JSONB 只能做扩展参数；BindAuthorizationProvenance / CurrentEntitlementGate 不得各自解析任意 JSONB 决定 allow。缺失 normalized scope 的 AuthorizationResource 无效，不得把缺失 scope 当作全资源。
 
 Authorization 本身也必须逐项覆盖当前 requested context：grantee/consumer、resource、purpose、action、scope、validity/status。RightsDeclaration 或 Effective Rights 的更宽范围不得放大一条更窄的 Authorization。
 
