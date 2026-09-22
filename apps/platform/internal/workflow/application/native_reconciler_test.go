@@ -10,6 +10,7 @@ import (
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
+	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 )
 
 type fakeNativeLocker struct {
@@ -172,6 +173,22 @@ func TestNativeReconcilerTerminalizesFailedRecovery(t *testing.T) {
 	}
 	if state.failed != 1 || state.failCode != "NATIVE_RECOVERY_FAILED" {
 		t.Fatalf("expected NATIVE_RECOVERY_FAILED, count=%d code=%q", state.failed, state.failCode)
+	}
+}
+
+func TestNativeReconcilerTerminalizesMissingReferences(t *testing.T) {
+	execution := staleNativeExecution()
+	repo := &fakeNativeRepo{execution: execution, validateErr: workflowinfra.ErrNotFound}
+	state := &fakeNativeState{}
+	engine := &fakeNativeEngine{}
+	reconciler := NewNativeReconciler(&fakeNativeLocker{}, state, repo, &fakeNativeOutputRepo{err: datasetinfra.ErrNotFound}, engine)
+	reconciler.leaseTTL = time.Second
+
+	if err := reconciler.RunOnce(context.Background()); err != nil {
+		t.Fatalf("terminalize missing references: %v", err)
+	}
+	if engine.calls != 0 || state.failed != 1 || state.failCode != "NATIVE_RECOVERY_REFERENCE_UNUSABLE" {
+		t.Fatalf("unexpected missing-reference recovery result: engine=%d failed=%d code=%q", engine.calls, state.failed, state.failCode)
 	}
 }
 
