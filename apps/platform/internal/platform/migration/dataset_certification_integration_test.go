@@ -168,7 +168,6 @@ func TestDatasetCertificationMigrationGuardsHistoricalFacts(t *testing.T) {
 	}
 }
 
-
 func TestDatasetCertificationAllowsSeededRawEffectiveRightsLeaf(t *testing.T) {
 	pool := scratchDatabase(t, 27)
 	ctx := context.Background()
