@@ -201,7 +201,7 @@ func TestDirectDataReplacementRejectsUnrelatedOperation(t *testing.T) {
 		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
 		Purpose: "RESEARCH", Action: "READ", ScopeType: "ALL_RESOURCE",
 		RetryOfDeliveryOperationID: &other.Operation.ID,
-		IdempotencyKey: "direct-invalid-retry-" + uuid.NewString(),
+		IdempotencyKey:             "direct-invalid-retry-" + uuid.NewString(),
 	})
 	if !errors.Is(err, domain.ErrInvalidOperation) {
 		t.Fatalf("unrelated retry_of error = %v, want ErrInvalidOperation", err)
