@@ -1,7 +1,7 @@
 # 原生执行恢复与输出幂等设计（C2）
 
-- 状态：**C2-a 已实现（输出幂等，含代码评审修正）**；C2-b / C2-c 仍为设计。本文定义原生
-  （native）执行的中断恢复规则与输出幂等语义，C2-a 的实现偏差记录在 §4.3 / §4.4 / §8。
+- 状态：**C2-a 已实现（输出幂等）**；**C2-b 已实现（NativeReconciler + execution-level advisory lock）**；C2-c 的配置/观测收口仍待后续。本文定义原生
+  （native）执行的中断恢复规则与输出幂等语义，已实现落点记录在 §4.2 / §4.3 / §4.4 / §8。
 - 关联：issue #110（持久化执行 + 入队超时/中断的恢复，禁止盲重复创建）、#100（关键 Command
   幂等）、#103（Outbox 派发，见 C1）；AGENTS.md §3（不可变对象）、§6（Evidence 一等）、
   §10（外部引擎 ID 不是业务真相）；ADR-0003（不可变版本）。
@@ -97,25 +97,46 @@
 
 ### 4.2 中断恢复：native reconciler
 
-新增 `NativeReconciler`（与 `ManagedReconciler` 对称，复用同一调度骨架）：
+C2-b 当前实现采用**同一 Execution 的 session advisory lock + stale RUNNING scan**，不新增调度器或恢复主实体：
 
-1. 选取 `engine_type = 'NATIVE'`（或等价标识）且 `status = 'RUNNING'` 且
-   `updated_at < now() - nativeLeaseTTL` 的执行。
-2. 对每条执行按 4.3 的规则判定：
-   - **存在已 `READY` 的输出版本** → 采用该版本，CAS `RUNNING → SUCCEEDED`；
-   - **不存在已 `READY` 的输出版本，但在分配中/存储中** → 按 4.3 的"半成品"规则处置
-     （丢弃半成品并允许一次安全重跑，或标记失败）；
-   - **无任何输出版本且租约已过期** → 允许**一次**受控重跑（`attempt` 有上限），
-     重跑同样走 4.3 的幂等输出路径。
-3. 超过重跑上限 → `FAIL(EXECUTION_RECOVERY_EXHAUSTED)`，保留 Evidence/Audit。
-4. 恢复动作本身产生 Domain Event + AuditEvent（AGENTS §5）。
+1. `ListStaleNativeExecutionIDs` 只选择 `engine_type='NATIVE'`、`status='RUNNING'` 且
+   `COALESCE(started_at, created_at) <= now - 10m` 的执行。
+2. 正常 native `Engine.Execute` 在整个计算、对象写入与内部事务期间持有
+   `NativeExecutionLockKey(executionID)`；`NativeReconciler` 使用同一 key。
+   - 健康 worker 仍在运行时，reconciler 的 `pg_try_advisory_lock` 失败并跳过；
+   - worker 进程/连接崩溃时，PostgreSQL 自动释放 session lock，reconciler 才能接管；
+   - recovery 内部再次进入 `Engine.Execute` 时，`transaction.Manager` 复用当前 advisory-lock
+     connection，允许同 session reentrant lock，不会释放外层 recovery ownership。
+3. 获得 recovery ownership 后：
+   - 已存在 `READY` / `SUPERSEDED` output → 不重算，直接采用该 immutable output 并
+     CAS `RUNNING -> SUCCEEDED`；
+   - output 为 `INVALID` → 明确 `FAIL(NATIVE_OUTPUT_INVALID)`；
+   - 无 output 或只有 `CREATED` / `PROCESSING` / `FAILED` 半成品 → 用同一 Execution
+     做一次受控 native replay；C2-a producer identity 保证复用同一 live output；
+   - 当前输入已不再 usable / workspace 不一致 → fail closed，不读取/生产错误边界的数据；
+   - 受控 replay 本身失败 → `FAIL(NATIVE_RECOVERY_FAILED)`，不把 Execution 永久留在 RUNNING。
+4. 每次真正 recovery side effect 前写入：
+   - `ExecutionRecoveryStarted` retention-only Domain Event；
+   - `EXECUTION_RECOVERY` Evidence；
+   - `EXECUTION_RECOVERY_STARTED` AuditEvent。
+5. worker composition root 每 5 秒运行一次 reconciler；lease TTL 当前固定为 10 分钟。
+   TTL/interval 的运行时配置化属于 C2-c，不在 C2-b 为了“可配置”新增基础设施。
 
-底层支撑（已存在，无需新迁移）：`migrations/000011_managed_execution_hardening.up.sql`
-已建 `idx_execution_engine_status_id (engine_type, status, id)`，reconciler 的
-"`engine_type='NATIVE' AND status='RUNNING'`" 扫描可直接命中；租约时间用 `execution.updated_at`
-（`000004_workflow_execution.up.sql`）或 `started_at`，无需新增列。
+该实现关闭两个主要 crash window：
 
-`nativeLeaseTTL` 与最大恢复次数按执行类型配置，默认值在实现 PR 中定稿。
+~~~text
+RUNNING + worker crash + no output
+    -> lock released
+    -> controlled replay
+    -> SUCCEEDED / FAILED
+
+RUNNING + output READY + crash before Succeed
+    -> lock released
+    -> adopt exact existing output
+    -> SUCCEEDED
+~~~
+
+真实 PostgreSQL 回归覆盖第二个窗口，并断言重复 reconciliation 不重复写 recovery Evidence/Outbox。
 
 ### 4.3 输出幂等
 
@@ -298,14 +319,14 @@
 | 阶段 | 内容 |
 | --- | --- |
 | C2-a | 输出幂等键迁移 + `datasetWriter.Handle` 先查后写 + lineage/映射幂等 | **已实现**（迁移 `000020`） |
-| C2-b | `NativeReconciler`（租约 + CAS 收敛 + 重跑上限）+ 恢复 Audit/Evidence |
-| C2-c | 观测、上限/租约配置、端到端 #110 回归 |
+| C2-b | `NativeReconciler` + execution-level advisory lock + READY output adoption / controlled replay + 恢复 Audit/Evidence | **已实现** |
+| C2-c | lease/tick 运行时配置、恢复指标、更多 crash fault-window / #110 E2E 回归 | 待后续 |
 
 C2-a 必须先于 C2-b（reconciler 依赖幂等输出）；两者可同 PR，但测试独立。
 
 ## 7. 未决问题
 
-1. `nativeLeaseTTL` 与最大恢复次数取值；是否按 workflow 类别区分。
+1. C2-b 当前固定 `nativeLeaseTTL=10m`、worker scan interval=5s；是否需要按 workflow 类别/运行环境配置化留给 C2-c。
 2. 半成品输出版本在"永久无法修复"时：C2-a 的选择是**保留为 `FAILED` 证据**。评审修正后
    `FAILED` **不在** live 输出集合内（迁移 `000020` 的索引只覆盖
    `CREATED`/`PROCESSING`/`READY`），所以保留 `FAILED` 不会占用 `(dataset, execution)` 的
