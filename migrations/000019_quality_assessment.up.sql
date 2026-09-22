@@ -24,7 +24,7 @@ ALTER TABLE quality_result
         AND encode(digest(convert_to(rule_set_content, 'UTF8'), 'sha256'), 'hex') = rule_set_content_sha256
         AND NULLIF(btrim(evaluator_name), '') IS NOT NULL
         AND NULLIF(btrim(evaluator_version), '') IS NOT NULL
-        AND jsonb_typeof(metrics->'dimensions') = 'object'
+        AND COALESCE(jsonb_typeof(metrics->'dimensions') = 'object', false)
     );
 
 CREATE INDEX idx_quality_result_dataset_version_history
