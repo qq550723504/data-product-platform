@@ -46,7 +46,7 @@ func TestQualityAssessmentDownRefusesHistoricalFacts(t *testing.T) {
 			gate_decision, metrics
 		) VALUES ($1,$2,$3,'quality/down-guard.yaml','1.0.0',
 			'c4b903018effbb6d36545f03ec3a6513aa3d5b35f12f42a50c150dc4f1ea35dc',
-			'legacy-quality-fixture','native-quality','1','PASS','{}'::jsonb)
+			'legacy-quality-fixture','native-quality','1','PASS','{"dimensions":{}}'::jsonb)
 	`, assessmentID, workspaceID, versionID); err != nil {
 		t.Fatalf("insert quality assessment: %v", err)
 	}

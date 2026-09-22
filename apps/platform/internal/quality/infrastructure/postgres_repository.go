@@ -83,7 +83,32 @@ func decodeJSONNumbers(data []byte, target any) error {
 	return decoder.Decode(target)
 }
 
+func validateDimensionSnapshot(metrics map[string]any) error {
+	if metrics == nil {
+		return fmt.Errorf("quality assessment metrics are required")
+	}
+	persisted, ok := metrics["dimensions"]
+	if !ok || persisted == nil {
+		return fmt.Errorf("quality assessment dimension snapshot is required")
+	}
+	encoded, err := json.Marshal(persisted)
+	if err != nil {
+		return fmt.Errorf("marshal quality dimension snapshot: %w", err)
+	}
+	var summaries map[string]domain.DimensionSummary
+	if err := json.Unmarshal(encoded, &summaries); err != nil {
+		return fmt.Errorf("decode quality dimension snapshot: %w", err)
+	}
+	if summaries == nil {
+		return fmt.Errorf("quality assessment dimension snapshot must be an object")
+	}
+	return nil
+}
+
 func (r *PostgresRepository) InsertResult(ctx context.Context, tx pgx.Tx, result domain.Assessment) error {
+	if err := validateDimensionSnapshot(result.Metrics); err != nil {
+		return err
+	}
 	metrics, err := json.Marshal(result.Metrics)
 	if err != nil {
 		return fmt.Errorf("marshal quality metrics: %w", err)
@@ -715,14 +740,12 @@ func (r *PostgresRepository) loadFindingsBatch(ctx context.Context, results []do
 }
 
 // restoreDimensionSummaries returns the summary frozen in the assessment's
-// metrics. Recomputing it from mutable evaluator code would change the meaning
-// of an immutable historical assessment after a later evaluator change. Older
-// rows without the persisted snapshot retain the legacy findings-based fallback.
+// metrics. Every QualityAssessment must persist this immutable snapshot; missing
+// snapshot data is invalid rather than recomputed from current evaluator code.
 func restoreDimensionSummaries(result *domain.Assessment) error {
 	persisted, ok := result.Metrics["dimensions"]
 	if !ok {
-		result.DimensionSummaries = domain.SummarizeDimensions(result.Findings)
-		return nil
+		return fmt.Errorf("persisted quality dimension summary is missing")
 	}
 	encoded, err := json.Marshal(persisted)
 	if err != nil {

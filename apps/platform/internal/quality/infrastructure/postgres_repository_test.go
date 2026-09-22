@@ -49,9 +49,9 @@ func TestRestoreDimensionSummariesUsesPersistedSnapshot(t *testing.T) {
 	}
 }
 
-func TestRestoreDimensionSummariesFallsBackForLegacyRows(t *testing.T) {
+func TestRestoreDimensionSummariesRejectsMissingSnapshot(t *testing.T) {
 	result := domain.Assessment{
-		Metrics: map[string]any{"legacy": true},
+		Metrics: map[string]any{},
 		Findings: []domain.Finding{{
 			Dimension: "COMPLETENESS",
 			Severity:  "CRITICAL",
@@ -59,10 +59,35 @@ func TestRestoreDimensionSummariesFallsBackForLegacyRows(t *testing.T) {
 		}},
 	}
 
-	if err := restoreDimensionSummaries(&result); err != nil {
-		t.Fatalf("restore legacy dimension summaries: %v", err)
+	if err := restoreDimensionSummaries(&result); err == nil {
+		t.Fatal("missing persisted dimension snapshot was accepted")
 	}
-	if got := result.DimensionSummaries["COMPLETENESS"].Status; got != domain.DimensionFail {
-		t.Fatalf("legacy summary status = %s, want FAIL", got)
+}
+
+func TestValidateDimensionSnapshotRejectsMissingOrNonObject(t *testing.T) {
+	for name, metrics := range map[string]map[string]any{
+		"missing": {},
+		"null":    {"dimensions": nil},
+		"array":   {"dimensions": []any{}},
+	} {
+		t.Run(name, func(t *testing.T) {
+			if err := validateDimensionSnapshot(metrics); err == nil {
+				t.Fatalf("%s dimension snapshot was accepted", name)
+			}
+		})
+	}
+
+	if err := validateDimensionSnapshot(map[string]any{
+		"dimensions": map[string]any{
+			"COMPLETENESS": map[string]any{
+				"dimension":      "COMPLETENESS",
+				"status":         "PASS",
+				"ruleCount":      1,
+				"evaluatedCount": 1,
+				"failedCount":    0,
+			},
+		},
+	}); err != nil {
+		t.Fatalf("valid dimension snapshot was rejected: %v", err)
 	}
 }

@@ -40,7 +40,7 @@ func TestQualityAssessmentCostAllocationIsTypedAndWorkspaceBound(t *testing.T) {
 		) VALUES ($1,$2,$3,'quality/cost.yaml','1.0.0',
 			'c4b903018effbb6d36545f03ec3a6513aa3d5b35f12f42a50c150dc4f1ea35dc',
 			'legacy-quality-fixture',
-			'native-quality','1','PASS','{}'::jsonb)
+			'native-quality','1','PASS','{"dimensions":{}}'::jsonb)
 	`, assessmentID, workspaceID, versionID); err != nil {
 		t.Fatalf("insert quality assessment: %v", err)
 	}
@@ -94,7 +94,7 @@ func TestQualityAssessmentCostAllocationIsTypedAndWorkspaceBound(t *testing.T) {
 		) VALUES ($1,$2,$3,'quality/cost-other.yaml','1.0.0',
 			'c4b903018effbb6d36545f03ec3a6513aa3d5b35f12f42a50c150dc4f1ea35dc',
 			'legacy-quality-fixture',
-			'native-quality','1','PASS','{}'::jsonb)
+			'native-quality','1','PASS','{"dimensions":{}}'::jsonb)
 	`, otherAssessmentID, otherWorkspaceID, otherVersionID); err != nil {
 		t.Fatalf("insert other quality assessment: %v", err)
 	}

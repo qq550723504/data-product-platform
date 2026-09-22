@@ -61,7 +61,7 @@ func TestCertificationAndDispositionAppendDecisionEvidence(t *testing.T) {
 			gate_decision, metrics
 		) VALUES ($1,$2,$3,'certification/evidence.yaml','1.0.0',
 			encode(digest(convert_to('certification-evidence','UTF8'),'sha256'),'hex'),
-			'certification-evidence','test-evaluator','1','PASS','{}'::jsonb)
+			'certification-evidence','test-evaluator','1','PASS','{"dimensions":{}}'::jsonb)
 	`, qualityID, workspaceID, datasetVersionID); err != nil {
 		t.Fatalf("insert quality assessment: %v", err)
 	}

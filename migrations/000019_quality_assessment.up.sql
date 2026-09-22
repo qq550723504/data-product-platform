@@ -13,9 +13,9 @@ ALTER TABLE quality_result
     ADD CONSTRAINT ck_quality_result_rule_set_content_pair
         CHECK ((rule_set_content IS NULL) = (rule_set_content_sha256 IS NULL));
 
--- NOT VALID preserves pre-019 legacy rows, while PostgreSQL still applies the
--- check to every new row and every later UPDATE. Legacy rows are frozen by the
--- existing parent immutability trigger and cannot become new assessments.
+-- Every QualityAssessment in this pre-production system must satisfy the
+-- complete frozen snapshot contract. Development databases should be rebuilt
+-- rather than carrying compatibility for hypothetical pre-019 rows.
 ALTER TABLE quality_result
     ADD CONSTRAINT ck_quality_assessment_snapshot_complete
     CHECK (
@@ -24,7 +24,8 @@ ALTER TABLE quality_result
         AND encode(digest(convert_to(rule_set_content, 'UTF8'), 'sha256'), 'hex') = rule_set_content_sha256
         AND NULLIF(btrim(evaluator_name), '') IS NOT NULL
         AND NULLIF(btrim(evaluator_version), '') IS NOT NULL
-    ) NOT VALID;
+        AND COALESCE(jsonb_typeof(metrics->'dimensions') = 'object', false)
+    );
 
 CREATE INDEX idx_quality_result_dataset_version_history
     ON quality_result(dataset_version_id, created_at DESC, id DESC);
