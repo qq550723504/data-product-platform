@@ -325,12 +325,24 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 		t.Fatalf("entity-resolution lineage edges = %d, want exactly one", resolutionEdges)
 	}
 
-	var costCount int
-	if err := pool.QueryRow(ctx, `SELECT count(*) FROM cost_event WHERE execution_id=$1`, execution.ID).Scan(&costCount); err != nil {
-		t.Fatalf("count cost events: %v", err)
+	var processingCostCount, invocationCostCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM cost_event
+		WHERE execution_id=$1 AND cost_type='PROCESSING_EXECUTION'
+	`, execution.ID).Scan(&processingCostCount); err != nil {
+		t.Fatalf("count processing cost events: %v", err)
 	}
-	if costCount != 1 {
-		t.Fatalf("cost events = %d, want 1", costCount)
+	if processingCostCount != 1 {
+		t.Fatalf("processing cost events = %d, want 1", processingCostCount)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM cost_event
+		WHERE execution_id=$1 AND cost_type='NATIVE_ENGINE_INVOCATION'
+	`, execution.ID).Scan(&invocationCostCount); err != nil {
+		t.Fatalf("count native invocation cost events: %v", err)
+	}
+	if invocationCostCount != 1 {
+		t.Fatalf("native invocation cost events = %d, want 1", invocationCostCount)
 	}
 
 	var evidenceCount int
@@ -404,6 +416,26 @@ func TestEnterpriseActivityNativeWorkerProducesCuratedDataset(t *testing.T) {
 	}()
 	if restoredDependencies.CompanyPolicy.Metadata.Version != matchJob.PolicyVersion || restoredDependencies.IndicatorPolicy.Metadata.Version != "1.0.0" {
 		t.Fatalf("restore used changed policy content: company=%s indicator=%s", restoredDependencies.CompanyPolicy.Metadata.Version, restoredDependencies.IndicatorPolicy.Metadata.Version)
+	}
+
+	// Recovery replay must not duplicate negative-energy quarantine facts. The
+	// same Core Execution owns the same rejected source record identity.
+	replayed, err := engine.execute(ctx, restoreRequest)
+	if err != nil {
+		t.Fatalf("replay native execution for quarantine idempotency: %v", err)
+	}
+	if replayed.OutputDatasetVersionID != outputVersion.ID {
+		t.Fatalf("replay output = %s, want existing %s", replayed.OutputDatasetVersionID, outputVersion.ID)
+	}
+	var quarantineCountAfterReplay int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM execution_quarantine_record
+		WHERE execution_id=$1 AND reason_code='NEGATIVE_ENERGY_KWH'
+	`, execution.ID).Scan(&quarantineCountAfterReplay); err != nil {
+		t.Fatalf("count quarantine records after replay: %v", err)
+	}
+	if quarantineCountAfterReplay != 1 {
+		t.Fatalf("quarantine records after replay = %d, want 1", quarantineCountAfterReplay)
 	}
 
 	// AC5/AC6: replaying preparation reuses the alias facts, and two initial

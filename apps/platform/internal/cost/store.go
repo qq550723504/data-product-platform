@@ -12,6 +12,7 @@ import (
 )
 
 const QualityEngineInvocation = "QUALITY_ENGINE_INVOCATION"
+const NativeEngineInvocation = "NATIVE_ENGINE_INVOCATION"
 
 const (
 	CertificationEvaluationActivity  = "CERTIFICATION_EVALUATION"

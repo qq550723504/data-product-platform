@@ -61,6 +61,18 @@ func main() {
 	}
 	defer db.Close()
 
+	// Long-lived native execution ownership must not consume the same pgx pool
+	// used by repositories. Otherwise N concurrent workers can hold all business
+	// connections as advisory-lock leases and then deadlock waiting for their own
+	// repository reads. The dedicated pool is only used for execution ownership
+	// and transactions nested under that ownership context.
+	nativeLockDB, err := database.Open(ctx, cfg.PostgresDSN)
+	if err != nil {
+		logger.Error("open native execution lock postgres pool", "error", err)
+		os.Exit(1)
+	}
+	defer nativeLockDB.Close()
+
 	objectStore, err := storage.New(
 		cfg.Storage.Endpoint,
 		cfg.Storage.AccessKey,
@@ -91,6 +103,7 @@ func main() {
 	executionEnqueuer := workflowqueue.NewClient(queueClient)
 
 	txManager := transaction.NewManager(db)
+	nativeLockManager := transaction.NewManager(nativeLockDB)
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
 	entityRepo := entityinfra.NewPostgresRepository(db)
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
@@ -125,7 +138,8 @@ func main() {
 		managedReconciler = workflowapp.NewManagedReconciler(executionService, workflowRepo, hopBridge)
 		logger.Info("Apache Hop managed execution enabled", "base_url", cfg.Hop.BaseURL, "artifact_root", artifactRoot)
 	}
-	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine, managedBridges...)
+	nativeReconciler := workflowapp.NewNativeReconciler(nativeLockManager, executionService, workflowRepo, datasetRepo, processingEngine)
+	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine, managedBridges...).WithNativeExecutionLocker(nativeLockManager)
 
 	var metadataService *metadataapp.Service
 	if cfg.OpenMetadata.Enabled {
@@ -185,6 +199,24 @@ func main() {
 			}
 		}()
 	}
+
+	go func() {
+		ticker := time.NewTicker(5 * time.Second)
+		defer ticker.Stop()
+		logger.Info("native execution reconciler started")
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				if err := nativeReconciler.RunOnce(ctx); err != nil && !errors.Is(err, context.Canceled) {
+					// Native recovery is idempotent on Core Execution/output identity. A failed
+					// scan or transient database error is retried on the next tick.
+					logger.Warn("native execution reconciliation failed", "error", err)
+				}
+			}
+		}
+	}()
 
 	// The outbox dispatcher fans one event out to every handler the routing
 	// version requires, recording one confirmation per handler. It refuses to
