@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	certificationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -107,6 +108,17 @@ func NewEligibilityService(certifications *CertificationService, datasets *datas
 }
 
 func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilityQuery) (DeliveryEligibilityResult, error) {
+	return s.check(ctx, nil, query)
+}
+
+func (s *EligibilityService) CheckTx(ctx context.Context, tx pgx.Tx, query DeliveryEligibilityQuery) (DeliveryEligibilityResult, error) {
+	if tx == nil {
+		return DeliveryEligibilityResult{}, fmt.Errorf("delivery eligibility transaction is required")
+	}
+	return s.check(ctx, tx, query)
+}
+
+func (s *EligibilityService) check(ctx context.Context, tx pgx.Tx, query DeliveryEligibilityQuery) (DeliveryEligibilityResult, error) {
 	result := DeliveryEligibilityResult{
 		DatasetVersionGate: certificationdomain.GateResult{Blockers: []certificationdomain.Blocker{}},
 		CertificationGate:  certificationdomain.GateResult{Blockers: []certificationdomain.Blocker{}},
@@ -142,14 +154,25 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 		query.AsOf = time.Now().UTC()
 	}
 
-	workspaceID, err := s.rights.DatasetVersionWorkspace(ctx, query.DatasetVersionID)
+	var workspaceID uuid.UUID
+	var err error
+	if tx != nil {
+		workspaceID, err = s.rights.DatasetVersionWorkspaceTx(ctx, tx, query.DatasetVersionID)
+	} else {
+		workspaceID, err = s.rights.DatasetVersionWorkspace(ctx, query.DatasetVersionID)
+	}
 	if err != nil {
 		return result, err
 	}
 	if workspaceID != query.WorkspaceID {
 		return result, fmt.Errorf("DatasetVersion crosses workspace boundary")
 	}
-	version, err := s.datasets.GetVersion(ctx, query.DatasetVersionID)
+	var version datasetdomain.DatasetVersion
+	if tx != nil {
+		version, err = s.datasets.GetVersionTx(ctx, tx, query.DatasetVersionID)
+	} else {
+		version, err = s.datasets.GetVersion(ctx, query.DatasetVersionID)
+	}
 	if err != nil {
 		return result, err
 	}
@@ -164,10 +187,16 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 	}
 	result.Blockers = append(result.Blockers, result.DatasetVersionGate.Blockers...)
 
-	current, err := s.certifications.CheckCurrent(ctx, CurrentCertificationQuery{
+	currentQuery := CurrentCertificationQuery{
 		WorkspaceID: query.WorkspaceID, DatasetVersionID: query.DatasetVersionID, ProfileID: query.ProfileID, AsOf: query.AsOf,
 		DeliveryContext: certificationdomain.DeliveryContext{Purpose: query.Purpose, Action: query.Action, Consumer: query.Consumer, Delivery: query.Delivery},
-	})
+	}
+	var current CurrentCertificationResult
+	if tx != nil {
+		current, err = s.certifications.CheckCurrentTx(ctx, tx, currentQuery)
+	} else {
+		current, err = s.certifications.CheckCurrent(ctx, currentQuery)
+	}
 	if err != nil {
 		return result, err
 	}
@@ -176,7 +205,12 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 	result.Blockers = append(result.Blockers, current.Gate.Blockers...)
 
 	if current.Certification.ID != uuid.Nil && current.Gate.Allowed {
-		currentInputs, err := s.rights.RequiredLineageInputs(ctx, query.DatasetVersionID)
+		var currentInputs []rightsinfra.LineageInput
+		if tx != nil {
+			currentInputs, err = s.rights.RequiredLineageInputsTx(ctx, tx, query.DatasetVersionID)
+		} else {
+			currentInputs, err = s.rights.RequiredLineageInputs(ctx, query.DatasetVersionID)
+		}
 		if err != nil {
 			return result, err
 		}
@@ -190,7 +224,12 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 				result.Blockers = append(result.Blockers, blocker)
 			}
 			if current.Certification.EffectiveRightsSnapshotID != nil {
-				snapshot, err := s.rights.GetEffectiveRights(ctx, *current.Certification.EffectiveRightsSnapshotID)
+				var snapshot rightsdomain.EffectiveRightsSnapshot
+				if tx != nil {
+					snapshot, err = s.rights.GetEffectiveRightsTx(ctx, tx, *current.Certification.EffectiveRightsSnapshotID)
+				} else {
+					snapshot, err = s.rights.GetEffectiveRights(ctx, *current.Certification.EffectiveRightsSnapshotID)
+				}
 				if err != nil {
 					return result, err
 				}
@@ -202,7 +241,7 @@ func (s *EligibilityService) Check(ctx context.Context, query DeliveryEligibilit
 			}
 			if len(result.EntitlementGate.Blockers) == 0 {
 				for _, input := range currentInputs {
-					check, blocker, err := s.checkInputEntitlement(ctx, query, input)
+					check, blocker, err := s.checkInputEntitlement(ctx, tx, query, input)
 					if err != nil {
 						return result, err
 					}
@@ -308,7 +347,7 @@ func sameEligibilityLineage(frozen []rightsdomain.EffectiveRightsInput, current 
 	return true
 }
 
-func (s *EligibilityService) checkInputEntitlement(ctx context.Context, query DeliveryEligibilityQuery, input rightsinfra.LineageInput) (EntitlementCheck, *certificationdomain.Blocker, error) {
+func (s *EligibilityService) checkInputEntitlement(ctx context.Context, tx pgx.Tx, query DeliveryEligibilityQuery, input rightsinfra.LineageInput) (EntitlementCheck, *certificationdomain.Blocker, error) {
 	check := EntitlementCheck{DataResourceID: input.DataResourceID, Path: rightsdomain.EntitlementDirectUse}
 	if !input.ResourceMapped || input.DataResourceID == uuid.Nil {
 		return check, &certificationdomain.Blocker{Code: "CURRENT_ENTITLEMENT_RESOURCE_UNMAPPED", Detail: input.DatasetVersionID.String() + ": required source DatasetVersion has no DataResource mapping"}, nil
@@ -327,7 +366,12 @@ func (s *EligibilityService) checkInputEntitlement(ctx context.Context, query De
 		Scope: scope,
 		Path:  rightsdomain.EntitlementDirectUse,
 	}
-	direct, err := s.rights.CheckCurrentEntitlement(ctx, request)
+	var direct rightsdomain.EntitlementDecision
+	if tx != nil {
+		direct, err = s.rights.CheckCurrentEntitlementTx(ctx, tx, request)
+	} else {
+		direct, err = s.rights.CheckCurrentEntitlement(ctx, request)
+	}
 	if err != nil {
 		return check, nil, err
 	}
@@ -338,7 +382,12 @@ func (s *EligibilityService) checkInputEntitlement(ctx context.Context, query De
 
 	request.Path = rightsdomain.EntitlementDownstream
 	check.Path = request.Path
-	downstream, err := s.rights.CheckCurrentEntitlement(ctx, request)
+	var downstream rightsdomain.EntitlementDecision
+	if tx != nil {
+		downstream, err = s.rights.CheckCurrentEntitlementTx(ctx, tx, request)
+	} else {
+		downstream, err = s.rights.CheckCurrentEntitlement(ctx, request)
+	}
 	if err != nil {
 		return check, nil, err
 	}
