@@ -26,7 +26,6 @@ func (r *PostgresRepository) UpdateExecutionEngine(ctx context.Context, tx pgx.T
 	return nil
 }
 
-
 func (r *PostgresRepository) ListStaleNativeExecutionIDs(ctx context.Context, startedBefore time.Time, after uuid.UUID, limit int) ([]uuid.UUID, error) {
 	if limit <= 0 {
 		limit = 100
