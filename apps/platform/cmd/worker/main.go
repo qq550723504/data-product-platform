@@ -61,6 +61,18 @@ func main() {
 	}
 	defer db.Close()
 
+	// Long-lived native execution ownership must not consume the same pgx pool
+	// used by repositories. Otherwise N concurrent workers can hold all business
+	// connections as advisory-lock leases and then deadlock waiting for their own
+	// repository reads. The dedicated pool is only used for execution ownership
+	// and transactions nested under that ownership context.
+	nativeLockDB, err := database.Open(ctx, cfg.PostgresDSN)
+	if err != nil {
+		logger.Error("open native execution lock postgres pool", "error", err)
+		os.Exit(1)
+	}
+	defer nativeLockDB.Close()
+
 	objectStore, err := storage.New(
 		cfg.Storage.Endpoint,
 		cfg.Storage.AccessKey,
@@ -91,6 +103,7 @@ func main() {
 	executionEnqueuer := workflowqueue.NewClient(queueClient)
 
 	txManager := transaction.NewManager(db)
+	nativeLockManager := transaction.NewManager(nativeLockDB)
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
 	entityRepo := entityinfra.NewPostgresRepository(db)
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
@@ -125,8 +138,8 @@ func main() {
 		managedReconciler = workflowapp.NewManagedReconciler(executionService, workflowRepo, hopBridge)
 		logger.Info("Apache Hop managed execution enabled", "base_url", cfg.Hop.BaseURL, "artifact_root", artifactRoot)
 	}
-	nativeReconciler := workflowapp.NewNativeReconciler(txManager, executionService, workflowRepo, datasetRepo, processingEngine)
-	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine, managedBridges...).WithNativeExecutionLocker(txManager)
+	nativeReconciler := workflowapp.NewNativeReconciler(nativeLockManager, executionService, workflowRepo, datasetRepo, processingEngine)
+	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine, managedBridges...).WithNativeExecutionLocker(nativeLockManager)
 
 	var metadataService *metadataapp.Service
 	if cfg.OpenMetadata.Enabled {
