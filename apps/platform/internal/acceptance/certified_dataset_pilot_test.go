@@ -39,6 +39,7 @@ import (
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	parkindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/cost"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
@@ -576,14 +577,23 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		ActorID:      &actorID,
 	}}
 	certificationService := certificationapp.NewCertificationService(txManager, profileRepo, certificationRepo, resolver)
-	certification, err := certificationService.Evaluate(ctx, certificationapp.EvaluateDatasetCertificationCommand{
+	certificationCostActivityID := uuid.New()
+	certificationCommand := certificationapp.EvaluateDatasetCertificationCommand{
 		WorkspaceID:      workspaceID,
 		DatasetVersionID: outputVersion.ID,
 		ProfileID:        profile.ID,
 		IdempotencyKey:   "pilot-certification-" + suffix,
 		ActorID:          &actorID,
 		TraceID:          traceID,
-	})
+		CostActivity: &cost.CertificationActivity{
+			ActivityID:  certificationCostActivityID,
+			CostType:    cost.CertificationEvaluationActivity,
+			Quantity:    1,
+			Unit:        "certification",
+			PricingMode: "ACTUAL",
+		},
+	}
+	certification, err := certificationService.Evaluate(ctx, certificationCommand)
 	if err != nil {
 		t.Fatalf("evaluate pilot DatasetCertification: %v", err)
 	}
@@ -594,6 +604,14 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 		certification.RightsSnapshotID == nil || *certification.RightsSnapshotID != rightsSnapshot.ID ||
 		certification.EvidenceSnapshotID == nil || *certification.EvidenceSnapshotID != supportingEvidence.ID {
 		t.Fatalf("pilot certification did not freeze expected rights/evidence facts: %+v", certification)
+	}
+
+	certificationReplay, err := certificationService.Evaluate(ctx, certificationCommand)
+	if err != nil {
+		t.Fatalf("replay pilot DatasetCertification: %v", err)
+	}
+	if certificationReplay.ID != certification.ID {
+		t.Fatalf("pilot certification replay = %s, want original %s", certificationReplay.ID, certification.ID)
 	}
 
 	t.Run("certification snapshot memberships reject tamper without changing history", func(t *testing.T) {
@@ -1788,6 +1806,159 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 	if replay.PayloadReady || !replay.ReplayRequired || replay.Operation.ID != delivered.Operation.ID {
 		t.Fatalf("same-key pilot DIRECT_DATA replay = %#v", replay)
 	}
+
+	t.Run("cost audit and evidence remain traceable and replay-safe", func(t *testing.T) {
+		var qualityCostCount int
+		if err := pool.QueryRow(ctx, `
+			SELECT count(DISTINCT e.id)
+			FROM cost_event e
+			JOIN cost_allocation ca ON ca.cost_event_id=e.id
+			JOIN quality_assessment_attempt_outcome o
+			  ON o.attempt_id=ca.quality_assessment_attempt_id
+			WHERE o.assessment_id=$1
+			  AND e.cost_type='QUALITY_ENGINE_INVOCATION'
+		`, qualityResult.ID).Scan(&qualityCostCount); err != nil {
+			t.Fatalf("count Pilot Quality cost events: %v", err)
+		}
+		if qualityCostCount != 1 {
+			t.Fatalf("Pilot Quality cost events = %d, want 1", qualityCostCount)
+		}
+
+		var rightsVerificationCostCount int
+		if err := pool.QueryRow(ctx, `
+			SELECT count(DISTINCT e.id)
+			FROM cost_event e
+			JOIN cost_allocation ca ON ca.cost_event_id=e.id
+			JOIN rights_declaration_verification v
+			  ON v.id=ca.rights_declaration_verification_id
+			JOIN authorization_provenance_binding b
+			  ON b.rights_declaration_id=v.declaration_id
+			WHERE b.authorization_id=$1
+			  AND e.cost_type='RIGHTS_DECLARATION_VERIFICATION'
+		`, authorization.ID).Scan(&rightsVerificationCostCount); err != nil {
+			t.Fatalf("count Pilot Rights verification cost events: %v", err)
+		}
+		if rightsVerificationCostCount != 3 {
+			t.Fatalf("Pilot Rights verification cost events = %d, want 3", rightsVerificationCostCount)
+		}
+
+		var effectiveRightsCostCount int
+		if err := pool.QueryRow(ctx, `
+			SELECT count(*)
+			FROM cost_event e
+			JOIN cost_allocation ca ON ca.cost_event_id=e.id
+			WHERE ca.effective_rights_snapshot_id=$1
+			  AND e.cost_type='EFFECTIVE_RIGHTS_COMPUTE'
+		`, effectiveRights.ID).Scan(&effectiveRightsCostCount); err != nil {
+			t.Fatalf("count Pilot EffectiveRights cost events: %v", err)
+		}
+		if effectiveRightsCostCount != 1 {
+			t.Fatalf("Pilot EffectiveRights cost events = %d, want 1", effectiveRightsCostCount)
+		}
+
+		var certificationCostCount int
+		if err := pool.QueryRow(ctx, `
+			SELECT count(*)
+			FROM cost_event e
+			JOIN cost_allocation ca ON ca.cost_event_id=e.id
+			WHERE ca.dataset_certification_id=$1
+			  AND e.cost_type='CERTIFICATION_EVALUATION'
+		`, certification.ID).Scan(&certificationCostCount); err != nil {
+			t.Fatalf("count Pilot Certification cost events: %v", err)
+		}
+		if certificationCostCount != 1 {
+			t.Fatalf("Pilot Certification cost events = %d, want 1", certificationCostCount)
+		}
+
+		var directDataCostCount int
+		if err := pool.QueryRow(ctx, `
+			SELECT count(*)
+			FROM cost_event e
+			JOIN cost_allocation ca ON ca.cost_event_id=e.id
+			WHERE ca.delivery_operation_id=$1
+			  AND e.cost_type='DIRECT_DATA_DELIVERY_ATTEMPT'
+			  AND e.activity_id=$1
+		`, delivered.Operation.ID).Scan(&directDataCostCount); err != nil {
+			t.Fatalf("count Pilot DIRECT_DATA cost events: %v", err)
+		}
+		if directDataCostCount != 1 {
+			t.Fatalf("Pilot DIRECT_DATA cost events = %d, want 1", directDataCostCount)
+		}
+
+		// Replays above must reuse the same Certification/DeliveryOperation and
+		// therefore must not append another physical activity cost.
+		var certificationCostAfterReplay, directDataCostAfterReplay int
+		if err := pool.QueryRow(ctx, `
+			SELECT count(*)
+			FROM cost_event e
+			JOIN cost_allocation ca ON ca.cost_event_id=e.id
+			WHERE ca.dataset_certification_id=$1
+			  AND e.cost_type='CERTIFICATION_EVALUATION'
+		`, certification.ID).Scan(&certificationCostAfterReplay); err != nil {
+			t.Fatalf("count replayed Pilot Certification cost events: %v", err)
+		}
+		if err := pool.QueryRow(ctx, `
+			SELECT count(*)
+			FROM cost_event e
+			JOIN cost_allocation ca ON ca.cost_event_id=e.id
+			WHERE ca.delivery_operation_id=$1
+			  AND e.cost_type='DIRECT_DATA_DELIVERY_ATTEMPT'
+		`, delivered.Operation.ID).Scan(&directDataCostAfterReplay); err != nil {
+			t.Fatalf("count replayed Pilot DIRECT_DATA cost events: %v", err)
+		}
+		if certificationCostAfterReplay != 1 || directDataCostAfterReplay != 1 {
+			t.Fatalf("Pilot replay duplicated costs: certification=%d delivery=%d, want 1/1",
+				certificationCostAfterReplay, directDataCostAfterReplay)
+		}
+
+		type traceExpectation struct {
+			label        string
+			objectType   string
+			objectID     uuid.UUID
+			evidenceType string
+			sourceType   string
+		}
+		for _, expected := range []traceExpectation{
+			{label: "Quality", objectType: "QUALITY_RESULT", objectID: qualityResult.ID, evidenceType: "QUALITY_RESULT", sourceType: "QUALITY_RESULT"},
+			{label: "EffectiveRights", objectType: "EFFECTIVE_RIGHTS_SNAPSHOT", objectID: effectiveRights.ID, evidenceType: "EFFECTIVE_RIGHTS_SNAPSHOT", sourceType: "EFFECTIVE_RIGHTS_SNAPSHOT"},
+			{label: "Certification", objectType: "DATASET_CERTIFICATION", objectID: certification.ID, evidenceType: "DATASET_CERTIFICATION_DECISION", sourceType: "DATASET_CERTIFICATION"},
+			{label: "Delivery", objectType: "DELIVERY_OPERATION", objectID: delivered.Operation.ID, evidenceType: "", sourceType: "DELIVERY_OPERATION"},
+		} {
+			var auditCount int
+			if err := pool.QueryRow(ctx, `
+				SELECT count(*)
+				FROM audit_event
+				WHERE object_type=$1 AND object_id=$2
+			`, expected.objectType, expected.objectID).Scan(&auditCount); err != nil {
+				t.Fatalf("count Pilot %s Audit facts: %v", expected.label, err)
+			}
+			if auditCount == 0 {
+				t.Fatalf("Pilot %s has no Audit facts", expected.label)
+			}
+
+			var evidenceCount int
+			if expected.evidenceType != "" {
+				if err := pool.QueryRow(ctx, `
+					SELECT count(*)
+					FROM evidence
+					WHERE source_type=$1 AND source_id=$2 AND evidence_type=$3
+				`, expected.sourceType, expected.objectID, expected.evidenceType).Scan(&evidenceCount); err != nil {
+					t.Fatalf("count Pilot %s Evidence facts: %v", expected.label, err)
+				}
+			} else {
+				if err := pool.QueryRow(ctx, `
+					SELECT count(*)
+					FROM evidence
+					WHERE source_type=$1 AND source_id=$2
+				`, expected.sourceType, expected.objectID).Scan(&evidenceCount); err != nil {
+					t.Fatalf("count Pilot %s Evidence facts: %v", expected.label, err)
+				}
+			}
+			if evidenceCount == 0 {
+				t.Fatalf("Pilot %s has no Evidence facts", expected.label)
+			}
+		}
+	})
 
 	// A UI/preflight ALLOWED result is not an authorization token. Re-check the
 	// exact current context, then revoke the underlying Authorization before a
