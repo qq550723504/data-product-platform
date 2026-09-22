@@ -24,12 +24,12 @@ type ObjectStore interface {
 }
 
 type UploadVersionCommand struct {
-	DatasetID              uuid.UUID
-	Filename               string
-	ContentType            string
-	Content                []byte
-	ActorID                *uuid.UUID
-	TraceID                string
+	DatasetID                   uuid.UUID
+	Filename                    string
+	ContentType                 string
+	Content                     []byte
+	ActorID                     *uuid.UUID
+	TraceID                     string
 	GeneratedByExecutionID      *uuid.UUID
 	GeneratedByEntityMatchJobID *uuid.UUID
 	Metadata                    map[string]any
@@ -195,12 +195,12 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 		}
 
 		event, err := outbox.NewEvent("DATASET_VERSION", version.ID, "DatasetVersionCreated", map[string]any{
-			"datasetVersionId":       version.ID,
-			"datasetId":              version.DatasetID,
-			"versionNo":              version.VersionNo,
-			"status":                 version.Status,
-			"previousStatus":         string(current.Status),
-			"checksum":               version.ChecksumValue,
+			"datasetVersionId":            version.ID,
+			"datasetId":                   version.DatasetID,
+			"versionNo":                   version.VersionNo,
+			"status":                      version.Status,
+			"previousStatus":              string(current.Status),
+			"checksum":                    version.ChecksumValue,
 			"generatedByExecutionId":      version.GeneratedByExecutionID,
 			"generatedByEntityMatchJobId": version.GeneratedByEntityMatchJobID,
 		})
@@ -218,13 +218,13 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 			ObjectType: "DATASET_VERSION",
 			ObjectID:   version.ID,
 			AfterState: map[string]any{
-				"datasetId":              version.DatasetID,
-				"versionNo":              version.VersionNo,
-				"status":                 version.Status,
-				"previousStatus":         string(current.Status),
-				"storageUri":             version.StorageURI,
-				"checksum":               version.ChecksumValue,
-				"rowCount":               rowCount,
+				"datasetId":                   version.DatasetID,
+				"versionNo":                   version.VersionNo,
+				"status":                      version.Status,
+				"previousStatus":              string(current.Status),
+				"storageUri":                  version.StorageURI,
+				"checksum":                    version.ChecksumValue,
+				"rowCount":                    rowCount,
 				"generatedByExecutionId":      version.GeneratedByExecutionID,
 				"generatedByEntityMatchJobId": version.GeneratedByEntityMatchJobID,
 			},
