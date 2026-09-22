@@ -440,6 +440,20 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	assertLiveCount(t, ctx, pool, 0, "SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='ProductReleased'", blocked.ID)
 	manifest["snapshotId"], manifest["rootHash"] = trace.EvidenceSnapshot.ID, trace.EvidenceSnapshot.RootHash
 
+	// Certified Dataset browser acceptance must render the same immutable CURATED
+	// output already proven by the release trace and real MinIO checksum reads.
+	if certification.DatasetVersionID != output.ID || certification.QualityAssessmentID != quality.ID ||
+		certification.EffectiveRightsSnapshotID == nil || *certification.EffectiveRightsSnapshotID != effectiveRights.ID ||
+		certification.EvidenceSnapshotID == nil || *certification.EvidenceSnapshotID != certifiedEvidence.ID {
+		t.Fatalf("Certified Dataset facts do not bind the traced CURATED output: %+v", certification)
+	}
+	certifiedEvidenceView, err := evidence.NewQueryRepository(pool).GetSnapshot(ctx, certifiedEvidence.ID)
+	liveOK(t, err, "read Certified Dataset evidence snapshot before browser walk")
+	if !certifiedEvidenceView.IntegrityValid {
+		t.Fatalf("Certified Dataset evidence snapshot %s failed integrity", certifiedEvidence.ID)
+	}
+	runLiveBrowser(t, ctx, "certified", manifest, artifacts)
+
 	// B: a published Release must show the decision that produced it, not whatever
 	// entity_mapping currently points at. A post-release manual correction moves the
 	// current mapping to another entity through the same immutable decision path Core
@@ -524,7 +538,7 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 		"verified": true, "workspaceId": workspaceID, "releaseId": release.ID, "evidenceSnapshotId": trace.EvidenceSnapshot.ID,
 		"rootHash": trace.EvidenceSnapshot.RootHash, "reviewedCandidates": len(pending), "checksummedDatasetVersions": len(trace.DatasetVersions),
 		"evidenceRecords": len(trace.Evidence), "costEvents": len(trace.CostEvents), "auditEventsInTrace": len(trace.AuditEvents),
-		"production": "real native Worker via Redis", "browserPhases": []string{"review", "publish", "history"},
+		"production": "real native Worker via Redis", "browserPhases": []string{"review", "publish", "certified", "history"},
 		"boundaries": "Preparation via actual Core application commands; not all-UI onboarding, IAM, Hop or Splink acceptance",
 	})
 	t.Logf("LIVE_CORE_BROWSER_VERIFIED release=%s snapshot=%s rootHash=%s", release.ID, trace.EvidenceSnapshot.ID, trace.EvidenceSnapshot.RootHash)
