@@ -90,7 +90,6 @@ func TestAnnotationSnapshotFinalizationFreezesHeaderAndMembership(t *testing.T) 
 	`, "membership is finalized", fx.snapshotID, fx.taskID, fx.resultID)
 }
 
-
 func TestAnnotationWorkspaceIsolationFailsClosed(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
@@ -208,7 +207,6 @@ func TestAnnotationSnapshotLateMembershipWriterFailsClosed(t *testing.T) {
 		t.Fatal("late membership writer did not converge")
 	}
 }
-
 
 func TestAnnotationReviewCostUsesPhysicalAttemptIdentity(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
