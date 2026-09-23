@@ -3,6 +3,10 @@
 -- identities. This prevents a successful replay alias from being claimed later
 -- by another result.
 
+-- Prevent concurrent Result writes between canonical-alias backfill and
+-- trigger installation. The migration transaction holds this lock to commit.
+LOCK TABLE annotation_result IN SHARE ROW EXCLUSIVE MODE;
+
 CREATE TABLE annotation_result_alias (
     workspace_id                uuid NOT NULL,
     campaign_id                 uuid NOT NULL REFERENCES annotation_campaign(id),
