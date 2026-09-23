@@ -216,4 +216,3 @@ func TestProviderReplayIgnoresObservationAlias(t *testing.T) {
 		t.Fatal("alias-key replay must remain strict when observation alias differs")
 	}
 }
-
