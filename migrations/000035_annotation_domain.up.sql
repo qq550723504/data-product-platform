@@ -757,6 +757,10 @@ DECLARE
     result_count integer;
     decision_count integer;
     output_count integer;
+    persisted_tasks jsonb;
+    persisted_results jsonb;
+    persisted_decisions jsonb;
+    persisted_outputs jsonb;
 BEGIN
     IF TG_OP='DELETE' THEN
         RAISE EXCEPTION 'annotation snapshot is immutable';
@@ -805,6 +809,79 @@ BEGIN
        OR output_count <> OLD.expected_output_count
        OR decision_count <> task_count THEN
         RAISE EXCEPTION 'annotation snapshot persisted membership does not match expected counts';
+    END IF;
+
+    IF jsonb_typeof(NEW.manifest->'tasks') IS DISTINCT FROM 'array'
+       OR jsonb_typeof(NEW.manifest->'results') IS DISTINCT FROM 'array'
+       OR jsonb_typeof(NEW.manifest->'decisions') IS DISTINCT FROM 'array'
+       OR jsonb_typeof(NEW.manifest->'outputs') IS DISTINCT FROM 'array' THEN
+        RAISE EXCEPTION 'annotation snapshot manifest must contain membership arrays';
+    END IF;
+
+    SELECT COALESCE(
+        jsonb_agg(
+            jsonb_build_object(
+                'id', st.task_id::text,
+                'sourceItemRef', st.source_item_ref,
+                'sourceContentSha256', st.source_content_sha256,
+                'taskTextSha256', st.task_text_sha256
+            ) ORDER BY st.task_id::text
+        ),
+        '[]'::jsonb
+    ) INTO persisted_tasks
+    FROM annotation_snapshot_task st
+    WHERE st.snapshot_id=OLD.id;
+
+    SELECT COALESCE(
+        jsonb_agg(
+            jsonb_strip_nulls(jsonb_build_object(
+                'id', sr.result_id::text,
+                'taskId', sr.task_id::text,
+                'canonicalPayloadSha256', sr.canonical_payload_sha256,
+                'authorRef', sr.author_ref,
+                'correctedFromResultId', r.corrected_from_result_id::text
+            )) ORDER BY sr.result_id::text
+        ),
+        '[]'::jsonb
+    ) INTO persisted_results
+    FROM annotation_snapshot_result sr
+    JOIN annotation_result r ON r.id=sr.result_id
+    WHERE sr.snapshot_id=OLD.id;
+
+    SELECT COALESCE(
+        jsonb_agg(
+            jsonb_strip_nulls(jsonb_build_object(
+                'id', sd.decision_id::text,
+                'taskId', sd.task_id::text,
+                'outcome', sd.outcome,
+                'reviewedResultId', sd.reviewed_result_id::text,
+                'selectedResultId', sd.selected_result_id::text,
+                'reviewerRef', sd.reviewer_ref,
+                'reason', sd.reason
+            )) ORDER BY sd.decision_id::text
+        ),
+        '[]'::jsonb
+    ) INTO persisted_decisions
+    FROM annotation_snapshot_decision sd
+    WHERE sd.snapshot_id=OLD.id;
+
+    SELECT COALESCE(
+        jsonb_agg(
+            jsonb_build_object(
+                'taskId', so.task_id::text,
+                'selectedResultId', so.selected_result_id::text
+            ) ORDER BY so.task_id::text
+        ),
+        '[]'::jsonb
+    ) INTO persisted_outputs
+    FROM annotation_snapshot_output so
+    WHERE so.snapshot_id=OLD.id;
+
+    IF NEW.manifest->'tasks' IS DISTINCT FROM persisted_tasks
+       OR NEW.manifest->'results' IS DISTINCT FROM persisted_results
+       OR NEW.manifest->'decisions' IS DISTINCT FROM persisted_decisions
+       OR NEW.manifest->'outputs' IS DISTINCT FROM persisted_outputs THEN
+        RAISE EXCEPTION 'annotation snapshot manifest membership does not match persisted membership';
     END IF;
 
     IF EXISTS (
