@@ -44,7 +44,7 @@ export default async function DatasetDetailPage({ params }: { params: Promise<{ 
         ) : (
           <div className="table-card">
             <table className="data-table">
-              <thead><tr><th>版本</th><th>状态</th><th>行数</th><th>大小</th><th>质量</th><th>合规</th><th>生产执行</th><th>时间</th></tr></thead>
+              <thead><tr><th>版本</th><th>状态</th><th>行数</th><th>大小</th><th>生产执行</th><th>时间</th></tr></thead>
               <tbody>
                 {versions.map((version) => (
                   <tr key={version.id}>
@@ -52,8 +52,6 @@ export default async function DatasetDetailPage({ params }: { params: Promise<{ 
                     <td><Badge value={version.status} /></td>
                     <td>{version.rowCount ?? "—"}</td>
                     <td>{formatBytes(version.byteSize)}</td>
-                    <td><Badge value={version.qualityStatus} /></td>
-                    <td><Badge value={version.complianceStatus} /></td>
                     <td>
                       {version.generatedByExecutionId ? (
                         <Link className="text-link mono" href={`/production/${version.generatedByExecutionId}`}>{shortId(version.generatedByExecutionId)}</Link>
