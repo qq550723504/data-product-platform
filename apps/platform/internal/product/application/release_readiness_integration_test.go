@@ -241,6 +241,61 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		t.Fatalf("rights-mismatch readiness = %s blockers=%v, want RIGHTS_SNAPSHOT_RELEASE_MISMATCH", mismatchReadiness.Overall, mismatchReadiness.Blockers)
 	}
 
+	contextMismatchRelease, err := service.CreateRelease(ctx, application.CreateReleaseCommand{
+		ProductID:        product.ID,
+		ProductVersionID: version.ID,
+		ReleaseNo:        "R-READINESS-RIGHTS-CONTEXT-MISMATCH",
+		Datasets:         []domain.ReleaseDataset{{DatasetVersionID: datasetVersionID, Role: domain.DatasetPrimary}},
+		TraceID:          "release-readiness-e2e",
+	})
+	if err != nil {
+		t.Fatalf("create rights-context-mismatch ProductRelease: %v", err)
+	}
+	contextMismatchSnapshotID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO rights_snapshot (
+			id, workspace_id, product_release_id, purpose, consumer_ref, as_of,
+			manifest, root_hash, created_at, status
+		) VALUES (
+			$1,$2,$3,'ENTERPRISE_CREDIT_RISK_SUPPORT','LICENSED_BANK',now(),
+			jsonb_build_object(
+				'purpose','ENTERPRISE_CREDIT_RISK_SUPPORT',
+				'consumerRef','LICENSED_BANK',
+				'authorizations',jsonb_build_array(
+					jsonb_build_object(
+						'authorizationId',$4::text,
+						'code','FROZEN-CONTEXT-MISMATCH',
+						'grantorRef','PARK-OPERATOR',
+						'granteeRef','WRONG_BANK',
+						'purpose','ENTERPRISE_CREDIT_RISK_SUPPORT',
+						'resources',jsonb_build_array()
+					)
+				)
+			),
+			$5,now(),'BUILDING'
+		)
+	`, contextMismatchSnapshotID, workspaceID, contextMismatchRelease.ID, authorizationID, repeatHex(12)); err != nil {
+		t.Fatalf("insert context-mismatch RightsSnapshot: %v", err)
+	}
+	insertRightsProvenanceFixture(t, ctx, pool, workspaceID, authorizationID, contextMismatchSnapshotID)
+	if _, err := pool.Exec(ctx, `UPDATE rights_snapshot SET status='FINALIZED' WHERE id=$1`, contextMismatchSnapshotID); err != nil {
+		t.Fatalf("finalize context-mismatch RightsSnapshot: %v", err)
+	}
+	contextMismatchReadiness, err := service.ValidateRelease(ctx, application.ValidateReleaseCommand{
+		ReleaseID:          contextMismatchRelease.ID,
+		ContractVersionID:  contractVersionID,
+		RightsSnapshotID:   contextMismatchSnapshotID,
+		QualityResultID:    qualityResultID,
+		ComplianceResultID: complianceResultID,
+		TraceID:            "release-readiness-e2e",
+	})
+	if err != nil {
+		t.Fatalf("validate rights-context-mismatch release: %v", err)
+	}
+	if contextMismatchReadiness.Overall != "NOT_READY" || !slices.Contains(contextMismatchReadiness.Blockers, "RIGHTS_CONTEXT_MISMATCH") {
+		t.Fatalf("rights-context-mismatch readiness = %s blockers=%v, want RIGHTS_CONTEXT_MISMATCH", contextMismatchReadiness.Overall, contextMismatchReadiness.Blockers)
+	}
+
 	blockingRelease, err := service.CreateRelease(ctx, application.CreateReleaseCommand{
 		ProductID:        product.ID,
 		ProductVersionID: version.ID,
