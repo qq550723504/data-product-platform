@@ -103,6 +103,46 @@ func (s *EngineService) claimEngineAttempt(
 		if operation.Status == annotationdomain.EngineOperationPending {
 			attemptKind = annotationdomain.EngineAttemptSubmit
 		}
+		if attemptKind == annotationdomain.EngineAttemptSubmit &&
+			operation.OperationKind == annotationdomain.EngineOperationSubmitTasks {
+			if s.sendGuard == nil {
+				return ErrActivationGuardRequired
+			}
+			campaign, guardErr := s.repo.GetCampaignTx(ctx, tx, operation.CampaignID)
+			if guardErr != nil {
+				return guardErr
+			}
+			if guardErr := s.sendGuard.ValidateEngineSendTx(ctx, tx, campaign); guardErr != nil {
+				return guardErr
+			}
+			if _, guardErr := evidence.Append(
+				ctx,
+				tx,
+				evidence.Record{
+					WorkspaceID: operation.WorkspaceID,
+					EvidenceType: "ANNOTATION_ENGINE_SEND_AUTHORIZED",
+					Title: "Annotation engine data send authorized",
+					SourceType: "CORE",
+					Metadata: map[string]any{
+						"campaignId": operation.CampaignID,
+						"operationId": operation.ID,
+						"payloadManifestSha256": operation.PayloadManifestSHA256,
+						"consumerRef": campaign.ConsumerRef,
+						"purpose": campaign.Purpose,
+						"action": "PROCESS",
+						"provider": operation.Provider,
+						"providerInstance": operation.ProviderInstanceRef,
+					},
+				},
+				evidence.Relation{
+					ObjectType: "ANNOTATION_ENGINE_OPERATION",
+					ObjectID: operation.ID,
+					RelationType: "SEND_AUTHORIZATION_EVIDENCE",
+				},
+			); guardErr != nil {
+				return guardErr
+			}
+		}
 		attempt, err = s.repo.StartEngineAttempt(
 			ctx,
 			tx,
