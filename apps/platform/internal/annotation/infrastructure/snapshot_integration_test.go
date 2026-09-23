@@ -143,7 +143,7 @@ func TestAnnotationSnapshotRejectsDirectFinalizedInsert(t *testing.T) {
 			id, workspace_id, campaign_id, status, manifest, manifest_hash_payload, root_hash,
 			expected_task_count, expected_result_count, expected_decision_count, expected_output_count,
 			finalized_at
-		) VALUES ($1,$2,$3,'FINALIZED',$4,$4,$5,1,1,1,1,now())
+		) VALUES ($1,$2,$3,'FINALIZED',$4,$5,$6,1,1,1,1,now())
 	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.manifest, fx.rootHash)
 	if err == nil || !strings.Contains(err.Error(), "must start BUILDING") {
 		t.Fatalf("direct FINALIZED insert error = %v, want BUILDING guard", err)
