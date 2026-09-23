@@ -9,11 +9,13 @@ END;
 $guard_down$;
 
 DROP TRIGGER IF EXISTS trg_product_version_finalized_on_commit ON product_version;
+DROP TRIGGER IF EXISTS trg_product_version_insert_guard ON product_version;
 DROP TRIGGER IF EXISTS trg_product_asset_immutable_insert ON product_asset;
 DROP TRIGGER IF EXISTS trg_product_version_immutable_update ON product_version;
 DROP TRIGGER IF EXISTS trg_product_version_immutable_delete ON product_version;
 
 DROP FUNCTION IF EXISTS require_product_version_finalized_on_commit();
+DROP FUNCTION IF EXISTS guard_product_version_insert();
 DROP FUNCTION IF EXISTS guard_product_asset_insert();
 DROP FUNCTION IF EXISTS guard_product_version_mutation();
 
