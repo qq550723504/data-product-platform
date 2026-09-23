@@ -397,7 +397,7 @@ func (s *Service) ReviewAnnotation(ctx context.Context, cmd ReviewAnnotationComm
 		return ReviewAnnotationResult{Attempt: attempt, Outcome: outcome, Decision: &decision}, nil
 	}
 	if !errors.Is(err, annotationinfra.ErrStaleRevision) {
-		if outcomeErr := s.recordReviewFailure(ctx, cmd, attempt, annotationdomain.ReviewAttemptRejected, "REVIEW_FAILED"); outcomeErr != nil {
+		if _, outcomeErr := s.recordReviewFailure(ctx, cmd, attempt, annotationdomain.ReviewAttemptRejected, "REVIEW_FAILED"); outcomeErr != nil {
 			return ReviewAnnotationResult{}, fmt.Errorf("review failed: %v; record outcome: %w", err, outcomeErr)
 		}
 		return ReviewAnnotationResult{}, err
