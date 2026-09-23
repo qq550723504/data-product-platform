@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -205,9 +206,40 @@ func (r *Repository) InsertReviewDecision(
 		decision.ReviewedResultID, decision.SelectedResultID, decision.ReviewerRef, decision.Outcome,
 		decision.Reason, decision.ExpectedTaskRevision, decision.CreatedAt)
 	if err != nil {
+		if strings.Contains(err.Error(), "expected task/attempt CAS") ||
+			strings.Contains(err.Error(), "lost task CAS") ||
+			strings.Contains(err.Error(), "uq_annotation_review_decision_task") {
+			return ErrStaleRevision
+		}
 		return fmt.Errorf("insert annotation review decision: %w", err)
 	}
 	return nil
+}
+
+func (r *Repository) GetDecisionByAttempt(
+	ctx context.Context,
+	attemptID uuid.UUID,
+) (annotationdomain.ReviewDecision, error) {
+	var decision annotationdomain.ReviewDecision
+	err := r.pool.QueryRow(ctx, `
+		SELECT id, workspace_id, campaign_id, task_id, review_attempt_id,
+		       reviewed_result_id, selected_result_id, reviewer_ref, outcome, reason,
+		       expected_task_revision, created_at
+		  FROM annotation_review_decision
+		 WHERE review_attempt_id=$1
+	`, attemptID).Scan(
+		&decision.ID, &decision.WorkspaceID, &decision.CampaignID, &decision.TaskID,
+		&decision.ReviewAttemptID, &decision.ReviewedResultID, &decision.SelectedResultID,
+		&decision.ReviewerRef, &decision.Outcome, &decision.Reason,
+		&decision.ExpectedTaskRevision, &decision.CreatedAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.ReviewDecision{}, pgx.ErrNoRows
+	}
+	if err != nil {
+		return annotationdomain.ReviewDecision{}, fmt.Errorf("get annotation review decision by attempt: %w", err)
+	}
+	return decision, nil
 }
 
 func (r *Repository) GetCampaign(ctx context.Context, campaignID uuid.UUID) (annotationdomain.Campaign, error) {
