@@ -115,7 +115,7 @@ Pilot reviewer 必须不同于该 Task 的主标注者。CORRECT 由 reviewer �
 
 一个 Task 在 Pilot 只允许一个成功的终态 Decision。Task 的 current_decision_id 如有只是指向这个事实的 projection；DB 唯一约束和 expected-revision CAS 都要保护它。禁止按最大 created_at、provider ground_truth、provider reviewed 标志或“存在过 ACCEPT”决定权威结果。
 
-两个 reviewer 竞争：持同一 Task revision 的第一个事务成功；后者冲突且不留下 correction Result、Decision、Audit/Cost 等孤立业务事实。UI 展示冲突并要求重新读取，不自动改 revision 重试。相同幂等键、相同规范化请求只返回已有事实；相同键不同语义冲突。身份和访问授权必须先验证，幂等命中不泄漏别的 workspace 的结果。
+两个 reviewer 竞争：持同一 Task revision 的第一个事务成功；后者冲突时不得留下 correction Result、Decision 或 current projection 等看起来已生效的业务事实，但**真实已经发生的人工审核 activity 不能被事务回滚吞掉**。每次 reviewer 实际提交审核都使用独立稳定 activity identity；若 CAS 失败，则记录 non-success review-attempt Cost fact（并可附 Audit/Evidence observation），明确 outcome=STALE_CONFLICT/等价失败结果，不得伪装为成功 Decision。UI 展示冲突并要求重新读取，不自动改 revision 重试。相同幂等键、相同规范化请求只返回已有事实；同一 physical review attempt 的网络/事务重放不得重复计费；新的真实人工尝试使用新的 activity identity。相同键不同语义冲突。身份和访问授权必须先验证，幂等命中不泄漏别的 workspace 的结果。
 
 结果回收与审核也共享 revision：回收先提交则旧审核冲突；审核先提交则后到 provider 内容只成为 observation。错误的已终态审核不能覆写，Pilot 通过新 Campaign 重新审核；旧认证是否退出 current set，必须另走显式 CertificationDisposition，不隐式级联重写。
 
@@ -174,7 +174,7 @@ Finalize 在上述锁内重读完整事实，不使用事务外 preflight 作为
 
 沿用现有 Outbox、worker、Evidence/Audit、CostEvent/typed CostAllocation；不建第二套队列或通用审核引擎。所有关键业务 Command 的事实、Audit、Evidence 和事件入 Outbox 同事务；新增事件需声明 required handlers 或 retention-only。
 
-审核成本归属于真实成功的 review activity identity；幂等重放不重复记账，失败 CAS 不能伪造成功人工审核成本。实际外部调用成本按独立 physical attempt 保留，含失败、unknown 和 reconcile，不被 Campaign 顶层幂等吞掉。金额未知只记录可信 quantity/unit；不从缺失 duration 编造费用。
+审核成本按**真实发生的 human review physical attempt** 记账，而不是只按成功 Decision 记账：成功审核产生成功 outcome 的 review activity Cost fact；已经实际完成工作但因 expected-revision/CAS 竞争失败的审核，也必须以独立稳定 activity identity 保留 non-success outcome 成本事实。业务 Decision/correction/projection 可以回滚，真实劳动成本不能静默丢失。same-attempt 的命令/网络/事务重放未产生新人工工作时去重；新的真实人工重试使用新的 activity identity。失败 CAS 绝不能伪造成成功审核。实际外部调用成本同样按独立 physical attempt 保留，含失败、unknown 和 reconcile，不被 Campaign 顶层幂等吞掉。金额未知只记录可信 quantity/unit；不从缺失 duration 编造费用。
 
 #111 可复用可信 reviewer 解析、mandatory reason、expected-revision CAS、不可变 decision 与审计写法。但 Entity selection 和 Annotation label review 的对象、允许选项、状态机不同；#111 不成为前置依赖，不抽一个万能 ReviewTask/BPMN aggregate。
 
