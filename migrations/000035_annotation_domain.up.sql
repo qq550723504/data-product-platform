@@ -784,6 +784,9 @@ BEGIN
      WHERE id=target_snapshot
      FOR UPDATE;
 
+    IF parent_status IS NULL THEN
+        RAISE EXCEPTION 'annotation snapshot parent is not visible';
+    END IF;
     IF parent_status <> 'BUILDING' THEN
         RAISE EXCEPTION 'annotation snapshot membership is finalized';
     END IF;
