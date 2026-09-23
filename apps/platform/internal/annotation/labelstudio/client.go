@@ -134,6 +134,7 @@ func (c *Client) LookupCampaignBinding(
 			"page_size": []string{"100"},
 		}
 		var page struct {
+			Count int `json:"count"`
 			Results []struct {
 				ID          json.Number `json:"id"`
 				Description string      `json:"description"`
@@ -163,8 +164,8 @@ func (c *Client) LookupCampaignBinding(
 			}
 			matched = append(matched, binding)
 		}
-		if page.Total > 0 {
-			if pageNumber*100 >= page.Total {
+		if page.Count > 0 {
+			if pageNumber*100 >= page.Count {
 				break
 			}
 		} else if page.Next == nil || strings.TrimSpace(fmt.Sprint(page.Next)) == "" {
