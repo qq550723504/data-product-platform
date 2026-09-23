@@ -83,16 +83,6 @@ func TestPublishedReleaseLineagePublishFirstFreezesHistory(t *testing.T) {
 		t.Fatalf("rollback lineage mutation tx: %v", err)
 	}
 
-	if _, err := pool.Exec(ctx, `
-		UPDATE product_release SET status='PUBLISHED', released_at=now()
-		WHERE id=$1 AND status='READY'
-	`, release.ID); err == nil || !strings.Contains(err.Error(), "requires fenced publish command") {
-		t.Fatalf("direct SQL publish error = %v, want fenced publish rejection", err)
-	}
-
-	if err := repo.PermitReleasePublish(ctx, publishTx, release.ID); err != nil {
-		t.Fatalf("permit release publish: %v", err)
-	}
 	if _, err := publishTx.Exec(ctx, `
 		UPDATE product_release SET status='PUBLISHED', released_at=now()
 		WHERE id=$1 AND status='READY'
@@ -319,10 +309,6 @@ func TestDetachedLineageSubtreeCannotAttachAcrossPublish(t *testing.T) {
 			publishDone <- err
 			return
 		}
-		if err := repo.PermitReleasePublish(ctx, tx, release.ID); err != nil {
-			publishDone <- err
-			return
-		}
 		if _, err := tx.Exec(ctx, `
 			UPDATE product_release SET status='PUBLISHED', released_at=now()
 			WHERE id=$1 AND status='READY'
@@ -383,6 +369,77 @@ func TestDetachedLineageSubtreeCannotAttachAcrossPublish(t *testing.T) {
 		VALUES ($1,$2,'DERIVED_FROM')
 	`, rootID, yID); err == nil || !strings.Contains(err.Error(), "published release history is frozen") {
 		t.Fatalf("post-publish detached subtree attach error = %v, want frozen history", err)
+	}
+}
+
+func TestDirectSQLReleasePublishSerializesWithLineageFence(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, inputID := insertReleaseMembershipFixture(t, ctx, pool)
+	outputID := release.Datasets[0].DatasetVersionID
+
+	// A direct lineage INSERT acquires the database-enforced workspace fence.
+	mutationTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin lineage mutation tx: %v", err)
+	}
+	defer mutationTx.Rollback(ctx)
+	if _, err := mutationTx.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, inputID); err != nil {
+		t.Fatalf("insert in-flight lineage edge: %v", err)
+	}
+
+	type result struct{ err error }
+	started := make(chan struct{})
+	done := make(chan result, 1)
+	go func() {
+		close(started)
+		_, err := pool.Exec(ctx, `
+			UPDATE product_release
+			SET status='PUBLISHED', released_at=now()
+			WHERE id=$1 AND status='READY'
+		`, release.ID)
+		done <- result{err: err}
+	}()
+
+	<-started
+	select {
+	case outcome := <-done:
+		t.Fatalf("direct SQL publication bypassed lineage fence: %v", outcome.err)
+	case <-time.After(150 * time.Millisecond):
+		// Expected: READY->PUBLISHED trigger is waiting on the same workspace fence.
+	}
+
+	if err := mutationTx.Commit(ctx); err != nil {
+		t.Fatalf("commit lineage mutation: %v", err)
+	}
+
+	select {
+	case outcome := <-done:
+		if outcome.err != nil {
+			t.Fatalf("direct SQL publication after lineage commit: %v", outcome.err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for direct SQL publication to resume")
+	}
+
+	var status string
+	if err := pool.QueryRow(ctx, `SELECT status FROM product_release WHERE id=$1`, release.ID).Scan(&status); err != nil {
+		t.Fatalf("read direct-published release: %v", err)
+	}
+	if status != "PUBLISHED" {
+		t.Fatalf("direct-published release status = %s, want PUBLISHED", status)
 	}
 }
 
