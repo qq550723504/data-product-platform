@@ -160,6 +160,57 @@ func TestAuthorizationSnapshotAndContractLifecycle(t *testing.T) {
 		t.Fatal("rejected cross workspace authorization was persisted")
 	}
 
+	foreignProductID := uuid.New()
+	foreignProductVersionID := uuid.New()
+	foreignReleaseID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO data_product (id, workspace_id, code, name)
+		VALUES ($1,$2,$3,'Foreign rights release')
+	`, foreignProductID, foreignWorkspace, "RIGHTS-FOREIGN-PRODUCT-"+uuid.NewString()); err != nil {
+		t.Fatalf("insert foreign rights product: %v", err)
+	}
+	versionTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin foreign ProductVersion fixture: %v", err)
+	}
+	if _, err := versionTx.Exec(ctx, `
+		INSERT INTO product_version (
+			id, product_id, major_version, minor_version, patch_version,
+			build_status, expected_asset_count
+		) VALUES ($1,$2,1,0,0,'BUILDING',0)
+	`, foreignProductVersionID, foreignProductID); err != nil {
+		_ = versionTx.Rollback(ctx)
+		t.Fatalf("insert foreign ProductVersion: %v", err)
+	}
+	if _, err := versionTx.Exec(ctx, `
+		UPDATE product_version SET build_status='FINALIZED'
+		WHERE id=$1 AND build_status='BUILDING'
+	`, foreignProductVersionID); err != nil {
+		_ = versionTx.Rollback(ctx)
+		t.Fatalf("finalize foreign ProductVersion: %v", err)
+	}
+	if err := versionTx.Commit(ctx); err != nil {
+		t.Fatalf("commit foreign ProductVersion: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO product_release (
+			id, product_id, product_version_id, release_no, status, metadata
+		) VALUES ($1,$2,$3,$4,'DRAFT','{}'::jsonb)
+	`, foreignReleaseID, foreignProductID, foreignProductVersionID, "RIGHTS-FOREIGN-"+uuid.NewString()); err != nil {
+		t.Fatalf("insert foreign ProductRelease: %v", err)
+	}
+	if _, err := rightsService.CreateSnapshot(ctx, rightsapp.CreateSnapshotCommand{
+		WorkspaceID:      workspaceID,
+		ProductReleaseID: &foreignReleaseID,
+		Purpose:          "ENTERPRISE_CREDIT_RISK_SUPPORT",
+		ConsumerRef:      "LICENSED_BANK",
+		AsOf:             time.Now().UTC(),
+		AuthorizationIDs: []uuid.UUID{authorization.ID},
+		TraceID:          "rights-contract-e2e",
+	}); !errors.Is(err, rightsdomain.ErrInvalidRightsSnapshot) {
+		t.Fatalf("cross-workspace release snapshot error = %v, want ErrInvalidRightsSnapshot", err)
+	}
+
 	snapshot, err := rightsService.CreateSnapshot(ctx, rightsapp.CreateSnapshotCommand{
 		WorkspaceID:      workspaceID,
 		Purpose:          "ENTERPRISE_CREDIT_RISK_SUPPORT",
