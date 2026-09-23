@@ -103,14 +103,14 @@ func (s *EngineService) PrepareTasks(
 
 		task.SourceItemRef = strings.TrimSpace(task.SourceItemRef)
 		task.SourceSHA256 = strings.TrimSpace(task.SourceSHA256)
-		task.TaskText = strings.TrimSpace(task.TaskText)
 		task.TaskTextSHA256 = strings.TrimSpace(task.TaskTextSHA256)
 		task.CorrelationKey = strings.TrimSpace(task.CorrelationKey)
 
 		if task.SourceItemRef != coreTask.SourceItemRef ||
 			task.SourceSHA256 != coreTask.SourceContentSHA256 ||
 			task.TaskTextSHA256 != coreTask.TaskTextSHA256 ||
-			task.TaskText == "" ||
+			hashBytes([]byte(task.TaskText)) != coreTask.TaskTextSHA256 ||
+			strings.TrimSpace(task.TaskText) == "" ||
 			task.CorrelationKey == "" {
 			return annotationdomain.EngineOperation{}, annotationdomain.ErrInvalidTask
 		}
