@@ -186,6 +186,18 @@ CREATE TABLE annotation_result (
 CREATE INDEX idx_annotation_result_task
     ON annotation_result(task_id, created_at, id);
 
+CREATE UNIQUE INDEX uq_annotation_result_provider_observation
+    ON annotation_result(
+        workspace_id,
+        campaign_id,
+        provider_binding_ref,
+        external_task_id,
+        external_annotation_id,
+        COALESCE(external_revision, ''),
+        canonical_payload_sha256
+    )
+    WHERE corrected_from_result_id IS NULL;
+
 -- Physical human work is durable independently from the authoritative decision.
 -- A review attempt is inserted before the Decision CAS transaction. If the CAS
 -- loses, the attempt remains and gets a STALE_CONFLICT outcome/cost fact.
