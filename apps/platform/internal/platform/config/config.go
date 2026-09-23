@@ -84,6 +84,17 @@ type SplinkConfig struct {
 	TimeoutSeconds        int
 }
 
+type LabelStudioConfig struct {
+	Enabled        bool
+	BaseURL        string
+	Token          string
+	InstanceRef    string
+	TimeoutSeconds int
+	PollSeconds    int
+	LeaseSeconds   int
+	BatchSize      int
+}
+
 func Load() (Config, error) {
 	redisDB, err := intEnv("REDIS_DB", 0)
 	if err != nil {
@@ -182,6 +193,16 @@ func Load() (Config, error) {
 			PolicyVersion:         stringEnv("SPLINK_POLICY_VERSION", "1.0.0"),
 			TimeoutSeconds:        splinkTimeoutSeconds,
 		},
+		LabelStudio: LabelStudioConfig{
+			Enabled:        labelStudioEnabled,
+			BaseURL:        os.Getenv("LABEL_STUDIO_BASE_URL"),
+			Token:          os.Getenv("LABEL_STUDIO_TOKEN"),
+			InstanceRef:    stringEnv("LABEL_STUDIO_INSTANCE_REF", "label-studio-reference"),
+			TimeoutSeconds: labelStudioTimeoutSeconds,
+			PollSeconds:    labelStudioPollSeconds,
+			LeaseSeconds:   labelStudioLeaseSeconds,
+			BatchSize:      labelStudioBatchSize,
+		},
 	}
 
 	if cfg.PostgresDSN == "" {
@@ -226,6 +247,17 @@ func Load() (Config, error) {
 		}
 		if cfg.LabelStudio.TimeoutSeconds <= 0 {
 			return Config{}, fmt.Errorf("LABEL_STUDIO_TIMEOUT_SECONDS must be positive")
+		}
+	}
+	if cfg.LabelStudio.Enabled {
+		if strings.TrimSpace(cfg.LabelStudio.BaseURL) == "" ||
+			strings.TrimSpace(cfg.LabelStudio.Token) == "" ||
+			strings.TrimSpace(cfg.LabelStudio.InstanceRef) == "" {
+			return Config{}, fmt.Errorf("LABEL_STUDIO_BASE_URL, LABEL_STUDIO_TOKEN, and LABEL_STUDIO_INSTANCE_REF must be configured when Label Studio is enabled")
+		}
+		if cfg.LabelStudio.TimeoutSeconds <= 0 || cfg.LabelStudio.PollSeconds <= 0 ||
+			cfg.LabelStudio.LeaseSeconds <= 0 || cfg.LabelStudio.BatchSize <= 0 {
+			return Config{}, fmt.Errorf("Label Studio timeout, poll, lease, and batch settings must be positive")
 		}
 	}
 	if cfg.Splink.Enabled {
