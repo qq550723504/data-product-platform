@@ -74,6 +74,9 @@ func (g *CoreActivationGuard) Preflight(
 	if g == nil || g.datasets == nil || g.contexts == nil || g.objects == nil || g.entitlements == nil {
 		return ActivationProof{}, ErrActivationGuardRequired
 	}
+	if err := validateFrozenPilotContracts(campaign); err != nil {
+		return ActivationProof{}, err
+	}
 	version, err := g.datasets.GetVersion(ctx, campaign.InputDatasetVersionID)
 	if err != nil {
 		return ActivationProof{}, err
@@ -155,6 +158,16 @@ func (g *CoreActivationGuard) Preflight(
 		}
 		if task.SourceContentSHA256 != rowHash {
 			return ActivationProof{}, fmt.Errorf("annotation task %s source hash does not match input row", ref)
+		}
+		if strings.TrimSpace(task.PrimaryAnnotatorRef) == "" {
+			return ActivationProof{}, fmt.Errorf("annotation task %s is missing primary annotator", ref)
+		}
+		taskTextHash, err := rendererTaskTextSHA256(campaign.Renderer, row)
+		if err != nil {
+			return ActivationProof{}, err
+		}
+		if task.TaskTextSHA256 != taskTextHash {
+			return ActivationProof{}, fmt.Errorf("annotation task %s text hash does not match frozen renderer", ref)
 		}
 	}
 	manifestHash, err := taskManifestHash(tasks)
