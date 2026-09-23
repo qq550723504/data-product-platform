@@ -196,9 +196,6 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			if err := s.repo.InsertResult(ctx, tx, result); err != nil {
 				return err
 			}
-			if err := s.datasetRepo.SetQualityStatus(ctx, tx, version.ID, string(result.GateDecision)); err != nil {
-				return err
-			}
 			if _, err := evidence.Append(ctx, tx, evidence.Record{
 				WorkspaceID:  cmd.WorkspaceID,
 				EvidenceType: "QUALITY_RESULT",
