@@ -378,6 +378,101 @@ func (r *Repository) ListEngineTaskBindings(
 	return bindings, nil
 }
 
+func (r *Repository) ListRunnableEngineOperations(
+	ctx context.Context,
+	limit int,
+) ([]annotationdomain.EngineOperation, error) {
+	if limit <= 0 {
+		limit = 50
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT id, workspace_id, campaign_id, provider, provider_instance_ref,
+		       operation_kind, request_id, request_fingerprint,
+		       payload_manifest, payload_manifest_hash_payload, payload_manifest_sha256,
+		       status, revision, COALESCE(claimed_by,''), claim_expires_at, created_at, updated_at
+		  FROM annotation_engine_operation
+		 WHERE status IN ('PENDING','UNKNOWN')
+		    OR (status='SENDING' AND claim_expires_at IS NOT NULL AND claim_expires_at <= now())
+		 ORDER BY created_at, id
+		 LIMIT $1
+	`, limit)
+	if err != nil {
+		return nil, fmt.Errorf("list runnable annotation engine operations: %w", err)
+	}
+	defer rows.Close()
+
+	operations := make([]annotationdomain.EngineOperation, 0)
+	for rows.Next() {
+		var operation annotationdomain.EngineOperation
+		if err := rows.Scan(
+			&operation.ID,
+			&operation.WorkspaceID,
+			&operation.CampaignID,
+			&operation.Provider,
+			&operation.ProviderInstanceRef,
+			&operation.OperationKind,
+			&operation.RequestID,
+			&operation.RequestFingerprint,
+			&operation.PayloadManifest,
+			&operation.PayloadManifestHash,
+			&operation.PayloadManifestSHA256,
+			&operation.Status,
+			&operation.Revision,
+			&operation.ClaimedBy,
+			&operation.ClaimExpiresAt,
+			&operation.CreatedAt,
+			&operation.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan runnable annotation engine operation: %w", err)
+		}
+		operations = append(operations, operation)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate runnable annotation engine operations: %w", err)
+	}
+	return operations, nil
+}
+
+func (r *Repository) ListResultReconcileCampaignIDs(
+	ctx context.Context,
+	limit int,
+) ([]uuid.UUID, error) {
+	if limit <= 0 {
+		limit = 50
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT DISTINCT c.id
+		  FROM annotation_campaign c
+		  JOIN annotation_engine_campaign_binding cb ON cb.campaign_id=c.id
+		  JOIN annotation_engine_operation o
+		    ON o.campaign_id=c.id
+		   AND o.operation_kind='SUBMIT_TASKS'
+		   AND o.status='MATCHED'
+		 WHERE c.status='ACTIVE'
+		   AND EXISTS (
+		       SELECT 1 FROM annotation_engine_task_binding tb WHERE tb.campaign_id=c.id
+		   )
+		 ORDER BY c.id
+		 LIMIT $1
+	`, limit)
+	if err != nil {
+		return nil, fmt.Errorf("list annotation result reconcile campaigns: %w", err)
+	}
+	defer rows.Close()
+	ids := make([]uuid.UUID, 0)
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("scan annotation result reconcile campaign: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate annotation result reconcile campaigns: %w", err)
+	}
+	return ids, nil
+}
+
 type rowQuerier interface {
 	QueryRow(context.Context, string, ...any) pgx.Row
 }
