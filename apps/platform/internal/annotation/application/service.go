@@ -184,7 +184,6 @@ func (s *Service) CreateTasks(ctx context.Context, cmd CreateTasksCommand) ([]an
 			return nil, annotationdomain.ErrInvalidTask
 		}
 		seenSourceItems[task.SourceItemRef] = struct{}{}
-		task.ID = stableTaskID(cmd.CampaignID, task.SourceItemRef)
 		tasks = append(tasks, task)
 	}
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
@@ -952,13 +951,6 @@ func campaignFingerprint(spec annotationdomain.CampaignSpec) (string, error) {
 		return "", fmt.Errorf("marshal annotation campaign fingerprint: %w", err)
 	}
 	return hashBytes(encoded), nil
-}
-
-func stableTaskID(campaignID uuid.UUID, sourceItemRef string) uuid.UUID {
-	return uuid.NewSHA1(
-		uuid.NameSpaceURL,
-		[]byte("annotation-task:"+campaignID.String()+":"+strings.TrimSpace(sourceItemRef)),
-	)
 }
 
 func taskManifestHash(tasks []annotationdomain.Task) (string, error) {
