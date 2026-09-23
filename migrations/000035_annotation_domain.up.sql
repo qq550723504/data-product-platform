@@ -144,14 +144,14 @@ CREATE TABLE annotation_review_attempt (
     task_id                     uuid NOT NULL REFERENCES annotation_task(id),
     reviewer_ref                varchar(255) NOT NULL,
     expected_task_revision      bigint NOT NULL,
-    action                      varchar(16) NOT NULL,
+    review_action               varchar(16) NOT NULL,
     reason                      text NOT NULL,
     idempotency_key             varchar(255) NOT NULL,
     request_fingerprint         varchar(64) NOT NULL,
     created_at                  timestamptz NOT NULL DEFAULT now(),
     CONSTRAINT uq_annotation_review_attempt_key UNIQUE (workspace_id, idempotency_key),
     CONSTRAINT ck_annotation_review_attempt_revision CHECK (expected_task_revision >= 1),
-    CONSTRAINT ck_annotation_review_attempt_action CHECK (action IN ('ACCEPT','REJECT','CORRECT')),
+    CONSTRAINT ck_annotation_review_attempt_action CHECK (review_action IN ('ACCEPT','REJECT','CORRECT')),
     CONSTRAINT ck_annotation_review_attempt_reason CHECK (length(btrim(reason)) > 0),
     CONSTRAINT ck_annotation_review_attempt_fingerprint CHECK (request_fingerprint ~ '^[0-9a-f]{64}$')
 );
@@ -622,7 +622,7 @@ BEGIN
        OR attempt_row.task_id IS DISTINCT FROM NEW.task_id
        OR attempt_row.reviewer_ref IS DISTINCT FROM NEW.reviewer_ref
        OR attempt_row.expected_task_revision IS DISTINCT FROM NEW.expected_task_revision
-       OR attempt_row.action IS DISTINCT FROM NEW.outcome
+       OR attempt_row.review_action IS DISTINCT FROM NEW.outcome
        OR attempt_row.reason IS DISTINCT FROM NEW.reason THEN
         RAISE EXCEPTION 'annotation review decision failed expected task/attempt CAS';
     END IF;
@@ -1166,7 +1166,7 @@ CREATE TABLE annotation_review_attempt (
     task_id                     uuid NOT NULL REFERENCES annotation_task(id),
     reviewer_ref                varchar(255) NOT NULL,
     expected_task_revision      bigint NOT NULL,
-    action                      varchar(16) NOT NULL,
+    review_action               varchar(16) NOT NULL,
     reason                      text NOT NULL,
     idempotency_key             varchar(255) NOT NULL,
     request_fingerprint         varchar(64) NOT NULL,
@@ -1644,7 +1644,7 @@ BEGIN
        OR attempt_row.task_id IS DISTINCT FROM NEW.task_id
        OR attempt_row.reviewer_ref IS DISTINCT FROM NEW.reviewer_ref
        OR attempt_row.expected_task_revision IS DISTINCT FROM NEW.expected_task_revision
-       OR attempt_row.action IS DISTINCT FROM NEW.outcome
+       OR attempt_row.review_action IS DISTINCT FROM NEW.outcome
        OR attempt_row.reason IS DISTINCT FROM NEW.reason THEN
         RAISE EXCEPTION 'annotation review decision failed expected task/attempt CAS';
     END IF;
