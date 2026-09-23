@@ -1,0 +1,197 @@
+package infrastructure_test
+
+import (
+	"context"
+	"errors"
+	"os"
+	"strings"
+	"testing"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
+)
+
+func TestPublishedReleaseLineagePublishFirstFreezesHistory(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, firstInputID := insertReleaseMembershipFixture(t, ctx, pool)
+	secondInputID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version (
+			id, dataset_id, version_no, status, storage_uri, checksum_algorithm, checksum_value, metadata, ready_at
+		)
+		SELECT $1, dataset_id, 3, 'READY', $2, 'SHA256', $3, '{}'::jsonb, now()
+		FROM dataset_version WHERE id=$4
+	`, secondInputID, "s3://release-lineage/"+secondInputID.String(), strings.Repeat("c", 64), firstInputID); err != nil {
+		t.Fatalf("insert second lineage input: %v", err)
+	}
+	outputID := release.Datasets[0].DatasetVersionID
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, firstInputID); err != nil {
+		t.Fatalf("insert initial lineage edge: %v", err)
+	}
+
+	repo := infrastructure.NewPostgresRepository(pool)
+	publishTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin publish tx: %v", err)
+	}
+	defer publishTx.Rollback(ctx)
+	if err := repo.LockReleaseMembershipForPublish(ctx, publishTx, release); err != nil {
+		t.Fatalf("lock release membership: %v", err)
+	}
+	if err := repo.LockReleaseLineageForPublish(ctx, publishTx, release.ID); err != nil {
+		t.Fatalf("lock release lineage: %v", err)
+	}
+
+	mutationTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin lineage mutation tx: %v", err)
+	}
+	defer mutationTx.Rollback(ctx)
+	if _, err := mutationTx.Exec(ctx, "SET LOCAL lock_timeout = '100ms'"); err != nil {
+		t.Fatalf("set mutation lock timeout: %v", err)
+	}
+	_, err = mutationTx.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, secondInputID)
+	if !isLockTimeout(err) {
+		t.Fatalf("concurrent lineage INSERT error = %v, want lock timeout while publish owns lineage closure", err)
+	}
+	if err := mutationTx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+		t.Fatalf("rollback lineage mutation tx: %v", err)
+	}
+
+	if _, err := publishTx.Exec(ctx, `
+		UPDATE product_release SET status='PUBLISHED', released_at=now()
+		WHERE id=$1 AND status='READY'
+	`, release.ID); err != nil {
+		t.Fatalf("publish release: %v", err)
+	}
+	if err := publishTx.Commit(ctx); err != nil {
+		t.Fatalf("commit publish tx: %v", err)
+	}
+
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, secondInputID); err == nil || !strings.Contains(err.Error(), "published release history is frozen") {
+		t.Fatalf("post-publish lineage INSERT error = %v, want frozen history", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE dataset_version_lineage SET relation_type='SOURCE_OF'
+		WHERE output_version_id=$1 AND input_version_id=$2 AND relation_type='DERIVED_FROM'
+	`, outputID, firstInputID); err == nil || !strings.Contains(err.Error(), "append-only") {
+		t.Fatalf("post-publish lineage UPDATE error = %v, want append-only rejection", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		DELETE FROM dataset_version_lineage
+		WHERE output_version_id=$1 AND input_version_id=$2 AND relation_type='DERIVED_FROM'
+	`, outputID, firstInputID); err == nil || !strings.Contains(err.Error(), "append-only") {
+		t.Fatalf("post-publish lineage DELETE error = %v, want append-only rejection", err)
+	}
+
+	var edges int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM dataset_version_lineage
+		WHERE output_version_id=$1
+	`, outputID).Scan(&edges); err != nil {
+		t.Fatalf("count frozen lineage edges: %v", err)
+	}
+	if edges != 1 {
+		t.Fatalf("frozen lineage edges = %d, want 1", edges)
+	}
+}
+
+func TestPublishedReleaseLineageMutationFirstSerializesPublish(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, inputID := insertReleaseMembershipFixture(t, ctx, pool)
+	outputID := release.Datasets[0].DatasetVersionID
+	repo := infrastructure.NewPostgresRepository(pool)
+
+	mutationTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin lineage mutation tx: %v", err)
+	}
+	defer mutationTx.Rollback(ctx)
+	if _, err := mutationTx.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, inputID); err != nil {
+		t.Fatalf("insert in-flight lineage edge: %v", err)
+	}
+
+	publishTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin publish tx: %v", err)
+	}
+	defer publishTx.Rollback(ctx)
+	if err := repo.LockReleaseMembershipForPublish(ctx, publishTx, release); err != nil {
+		t.Fatalf("lock release membership: %v", err)
+	}
+	if _, err := publishTx.Exec(ctx, "SET LOCAL lock_timeout = '100ms'"); err != nil {
+		t.Fatalf("set publish lock timeout: %v", err)
+	}
+	if err := repo.LockReleaseLineageForPublish(ctx, publishTx, release.ID); !isLockTimeout(err) {
+		t.Fatalf("publish lineage lock error = %v, want lock timeout behind lineage mutation", err)
+	}
+	if err := publishTx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+		t.Fatalf("rollback publish tx: %v", err)
+	}
+
+	if err := mutationTx.Commit(ctx); err != nil {
+		t.Fatalf("commit lineage mutation: %v", err)
+	}
+
+	checkTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin publish retry tx: %v", err)
+	}
+	defer checkTx.Rollback(ctx)
+	if err := repo.LockReleaseMembershipForPublish(ctx, checkTx, release); err != nil {
+		t.Fatalf("retry lock release membership: %v", err)
+	}
+	if err := repo.LockReleaseLineageForPublish(ctx, checkTx, release.ID); err != nil {
+		t.Fatalf("retry lock release lineage: %v", err)
+	}
+	var closureCount int
+	if err := checkTx.QueryRow(ctx, `
+		WITH RECURSIVE lineage(version_id) AS (
+			SELECT dataset_version_id FROM product_release_dataset WHERE release_id=$1
+			UNION
+			SELECT dvl.input_version_id
+			FROM dataset_version_lineage dvl
+			JOIN lineage l ON l.version_id=dvl.output_version_id
+		)
+		SELECT count(*) FROM lineage
+	`, release.ID).Scan(&closureCount); err != nil {
+		t.Fatalf("read lineage closure after mutation commit: %v", err)
+	}
+	if closureCount != 2 {
+		t.Fatalf("lineage closure count = %d, want 2", closureCount)
+	}
+}
