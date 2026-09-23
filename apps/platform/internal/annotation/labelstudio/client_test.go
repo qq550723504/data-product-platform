@@ -133,7 +133,8 @@ func TestLabelStudioTransportFailureIsRetryableWithoutLeakingBody(t *testing.T) 
 		t.Fatal("expected provider error")
 	}
 	engineErr, ok := err.(*annotationapp.AnnotationEngineError)
-	if !ok || !engineErr.Retryable || engineErr.StatusCode != http.StatusServiceUnavailable {
+	if !ok || !engineErr.Retryable || !engineErr.OutcomeUncertain ||
+		engineErr.StatusCode != http.StatusServiceUnavailable {
 		t.Fatalf("engine error = %#v", err)
 	}
 	if strings.Contains(err.Error(), "secret detail") || strings.Contains(err.Error(), "Label Studio") {
