@@ -102,7 +102,7 @@ func TestAnnotationWorkspaceIsolationFailsClosed(t *testing.T) {
 
 	fx := createAnnotationDBFixture(t, ctx, pool)
 	foreignWorkspace := uuid.New()
-	specContent := "annotation-fixture-spec"
+	specContent := annotationFixtureSpecContent()
 	specHash := sha256Hex([]byte(specContent))
 
 	_, err := pool.Exec(ctx, `
@@ -456,6 +456,28 @@ func TestAnnotationProviderObservationIdentityDeduplicatesAliasChanges(t *testin
 	}
 }
 
+
+func TestAnnotationDatabaseRejectsPayloadOutsideFrozenSchema(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	base := createAnnotationDBFixture(t, ctx, pool)
+	campaignID, taskID, _ := createAnnotationReviewRaceFixture(t, ctx, pool, base)
+
+	payload := []byte("{\"label\":\"NOT-ALLOWED\"}")
+	_, err := pool.Exec(ctx, `
+		INSERT INTO annotation_result(
+			id, workspace_id, campaign_id, task_id, author_ref,
+			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
+			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','schema-test-provider','schema-test-task',
+		          'schema-test-ann','1','schema-test-alias',$5,$6,'fixture-v1')
+	`, uuid.New(), base.workspaceID, campaignID, taskID, payload, sha256Hex(payload))
+	if err == nil || !strings.Contains(err.Error(), "violates frozen schema") {
+		t.Fatalf("schema-invalid direct insert error = %v, want frozen schema rejection", err)
+	}
+}
+
 func TestAnnotationResultFirstMakesOldReviewStale(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
@@ -678,7 +700,7 @@ func createAnnotationReviewRaceFixture(
 	campaignID := uuid.New()
 	taskID := uuid.New()
 	resultID := uuid.New()
-	specContent := "annotation-fixture-spec"
+	specContent := annotationFixtureSpecContent()
 	specHash := sha256Hex([]byte(specContent))
 
 	if _, err := pool.Exec(ctx, `
@@ -828,7 +850,7 @@ func createAnnotationDBFixture(t *testing.T, ctx context.Context, pool *pgxpool.
 		t.Fatalf("insert dataset certification: %v", err)
 	}
 
-	specContent := "annotation-fixture-spec"
+	specContent := annotationFixtureSpecContent()
 	specHash := sha256Hex([]byte(specContent))
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO annotation_campaign(
@@ -964,12 +986,17 @@ func insertAnnotationSnapshotAggregate(t *testing.T, ctx context.Context, tx pgx
 	}
 }
 
+
+func annotationFixtureSpecContent() string {
+	return `{"kind":"single-label-v1","labels":["A","RACE","DEDUP","newer","late","too-late","FOREIGN"]}`
+}
+
 func annotationFixtureManifest(
 	workspaceID, campaignID, versionID, certificationID, resourceID, taskID, resultID, attemptID, decisionID uuid.UUID,
 	payloadHash, inputChecksum string,
 	builtAt, resultCreatedAt time.Time,
 ) []byte {
-	specContent := "annotation-fixture-spec"
+	specContent := annotationFixtureSpecContent()
 	specHash := sha256Hex([]byte(specContent))
 	spec := func(ref string) map[string]any {
 		return map[string]any{
