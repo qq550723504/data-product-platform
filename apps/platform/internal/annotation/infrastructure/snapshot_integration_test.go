@@ -127,9 +127,10 @@ func TestAnnotationWorkspaceIsolationFailsClosed(t *testing.T) {
 	payload := []byte("{\"label\":\"FOREIGN\"}")
 	_, err = pool.Exec(ctx, `
 		INSERT INTO annotation_result(
-			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
-			canonical_payload, canonical_payload_sha256, normalizer_version
-		) VALUES ($1,$2,$3,$4,'annotator','foreign:obs',$5,$6,'fixture-v1')
+			id, workspace_id, campaign_id, task_id, author_ref,
+			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
+			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','fixture-provider','foreign-obs-task','foreign-obs-annotation','1','foreign:obs',$5,$6,'fixture-v1')
 	`, uuid.New(), foreignWorkspace, fx.campaignID, fx.taskID, payload, sha256Hex(payload))
 	if err == nil || !strings.Contains(err.Error(), "does not match active task") {
 		t.Fatalf("cross-workspace result error = %v, want active task workspace rejection", err)
@@ -267,9 +268,10 @@ func TestAnnotationSnapshotSealRejectsLateResult(t *testing.T) {
 	payload := []byte("{\"label\":\"late\"}")
 	_, err = pool.Exec(ctx, `
 		INSERT INTO annotation_result(
-			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
-			canonical_payload, canonical_payload_sha256, normalizer_version
-		) VALUES ($1,$2,$3,$4,'annotator','obs:late',$5,$6,'fixture-v1')
+			id, workspace_id, campaign_id, task_id, author_ref,
+			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
+			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','fixture-provider','obs-late-task','obs-late-annotation','1','obs:late',$5,$6,'fixture-v1')
 	`, uuid.New(), fx.workspaceID, fx.campaignID, fx.taskID, payload, sha256Hex(payload))
 	if err == nil || !strings.Contains(err.Error(), "requires ACTIVE campaign") {
 		t.Fatalf("late result error = %v, want sealed campaign rejection", err)
@@ -444,9 +446,10 @@ func TestAnnotationResultFirstMakesOldReviewStale(t *testing.T) {
 	payload := []byte("{\"label\":\"newer\"}")
 	if _, err := resultTx.Exec(ctx, `
 		INSERT INTO annotation_result(
-			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
-			canonical_payload, canonical_payload_sha256, normalizer_version
-		) VALUES ($1,$2,$3,$4,'annotator','obs:newer',$5,$6,'fixture-v1')
+			id, workspace_id, campaign_id, task_id, author_ref,
+			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
+			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','fixture-provider','obs-newer-task','obs-newer-annotation','1','obs:newer',$5,$6,'fixture-v1')
 	`, uuid.New(), base.workspaceID, campaignID, taskID, payload, sha256Hex(payload)); err != nil {
 		_ = resultTx.Rollback(ctx)
 		t.Fatalf("insert newer result: %v", err)
@@ -509,9 +512,10 @@ func TestAnnotationReviewFirstRejectsLaterResult(t *testing.T) {
 	payload := []byte("{\"label\":\"too-late\"}")
 	_, err := pool.Exec(ctx, `
 		INSERT INTO annotation_result(
-			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
-			canonical_payload, canonical_payload_sha256, normalizer_version
-		) VALUES ($1,$2,$3,$4,'annotator','obs:after-review',$5,$6,'fixture-v1')
+			id, workspace_id, campaign_id, task_id, author_ref,
+			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
+			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','fixture-provider','obs-after-review-task','obs-after-review-annotation','1','obs:after-review',$5,$6,'fixture-v1')
 	`, uuid.New(), fx.workspaceID, fx.campaignID, fx.taskID, payload, sha256Hex(payload))
 	if err == nil || !strings.Contains(err.Error(), "does not match active task") {
 		t.Fatalf("post-review result error = %v, want terminal task rejection", err)
@@ -679,9 +683,10 @@ func createAnnotationReviewRaceFixture(
 	payload := []byte("{\"label\":\"RACE\"}")
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO annotation_result(
-			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
-			canonical_payload, canonical_payload_sha256, normalizer_version
-		) VALUES ($1,$2,$3,$4,'annotator','obs:race',$5,$6,'fixture-v1')
+			id, workspace_id, campaign_id, task_id, author_ref,
+			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
+			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','fixture-provider','obs-race-task','obs-race-annotation','1','obs:race',$5,$6,'fixture-v1')
 	`, resultID, base.workspaceID, campaignID, taskID, payload, sha256Hex(payload)); err != nil {
 		t.Fatalf("insert race result: %v", err)
 	}
@@ -829,9 +834,10 @@ func createAnnotationDBFixture(t *testing.T, ctx context.Context, pool *pgxpool.
 	payloadHash := sha256Hex(payload)
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO annotation_result(
-			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
-			canonical_payload, canonical_payload_sha256, normalizer_version, created_at
-		) VALUES ($1,$2,$3,$4,'annotator','obs:1',$5,$6,'fixture-v1',$7)
+			id, workspace_id, campaign_id, task_id, author_ref,
+			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
+			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version, created_at
+		) VALUES ($1,$2,$3,$4,'annotator','fixture-provider','obs-1-task','obs-1-annotation','1','obs:1',$5,$6,'fixture-v1',$7)
 	`, resultID, workspaceID, campaignID, taskID, payload, payloadHash, resultCreatedAt); err != nil {
 		t.Fatalf("insert annotation result: %v", err)
 	}
@@ -966,8 +972,8 @@ func annotationFixtureManifest(
 		}},
 		"results": []map[string]any{{
 			"id": resultID.String(), "taskId": taskID.String(),
-			"authorRef": "annotator", "providerBindingRef": "",
-			"externalTaskId": "", "externalAnnotationId": "", "externalRevision": "",
+			"authorRef": "annotator", "providerBindingRef": "fixture-provider",
+			"externalTaskId": "obs-1-task", "externalAnnotationId": "obs-1-annotation", "externalRevision": "1",
 			"observationKey": "obs:1", "canonicalPayloadSha256": payloadHash,
 			"normalizerVersion": "fixture-v1", "createdAtUnixMicros": resultCreatedAt.UTC().UnixMicro(),
 			"createdBy": "",
