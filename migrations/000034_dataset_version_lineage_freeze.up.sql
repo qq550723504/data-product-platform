@@ -118,6 +118,10 @@ BEGIN
         RAISE EXCEPTION 'product_release identity is immutable';
     END IF;
 
+    IF NEW.status = 'WITHDRAWN' AND OLD.status IS DISTINCT FROM 'WITHDRAWN' THEN
+        RAISE EXCEPTION 'ProductRelease WITHDRAWN transition is not implemented';
+    END IF;
+
     IF NEW.status = 'PUBLISHED' AND OLD.status IS DISTINCT FROM 'PUBLISHED' THEN
         IF OLD.status <> 'READY' THEN
             RAISE EXCEPTION 'ProductRelease can only transition to PUBLISHED from READY';
