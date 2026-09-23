@@ -93,9 +93,6 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (compliancedomain.Res
 		if err := s.repo.InsertResult(ctx, tx, result); err != nil {
 			return err
 		}
-		if err := s.datasetRepo.SetComplianceStatus(ctx, tx, version.ID, string(result.GateDecision)); err != nil {
-			return err
-		}
 		if _, err := evidence.Append(ctx, tx, evidence.Record{
 			WorkspaceID:  cmd.WorkspaceID,
 			EvidenceType: "COMPLIANCE_RESULT",
