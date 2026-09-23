@@ -175,7 +175,7 @@ func (r *Repository) InsertCampaign(ctx context.Context, tx pgx.Tx, campaign ann
 	return nil
 }
 
-func (r *Repository) InsertTask(ctx context.Context, tx pgx.Tx, task annotationdomain.Task) error {
+func (r *Repository) InsertTask(ctx context.Context, tx pgx.Tx, task annotationdomain.Task) (bool, error) {
 	tag, err := tx.Exec(ctx, `
 		INSERT INTO annotation_task (
 			id, workspace_id, campaign_id, source_item_ref, source_content_sha256,
@@ -185,10 +185,10 @@ func (r *Repository) InsertTask(ctx context.Context, tx pgx.Tx, task annotationd
 	`, task.ID, task.WorkspaceID, task.CampaignID, task.SourceItemRef, task.SourceContentSHA256,
 		task.TaskTextSHA256, task.PrimaryAnnotatorRef, task.Status, task.Revision, task.CreatedAt)
 	if err != nil {
-		return fmt.Errorf("insert annotation task: %w", err)
+		return false, fmt.Errorf("insert annotation task: %w", err)
 	}
 	if tag.RowsAffected() == 1 {
-		return nil
+		return true, nil
 	}
 
 	var existing annotationdomain.Task
@@ -204,7 +204,7 @@ func (r *Repository) InsertTask(ctx context.Context, tx pgx.Tx, task annotationd
 		&existing.Status, &existing.Revision, &existing.CurrentDecisionID, &existing.CreatedAt,
 	)
 	if err != nil {
-		return fmt.Errorf("read replayed annotation task: %w", err)
+		return false, fmt.Errorf("read replayed annotation task: %w", err)
 	}
 	if existing.ID != task.ID ||
 		existing.WorkspaceID != task.WorkspaceID ||
@@ -216,9 +216,9 @@ func (r *Repository) InsertTask(ctx context.Context, tx pgx.Tx, task annotationd
 		existing.Status != annotationdomain.TaskPending ||
 		existing.Revision != 1 ||
 		existing.CurrentDecisionID != nil {
-		return ErrTaskIdempotencyConflict
+		return false, ErrTaskIdempotencyConflict
 	}
-	return nil
+	return false, nil
 }
 
 func (r *Repository) ActivateCampaign(
