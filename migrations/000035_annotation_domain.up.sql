@@ -180,6 +180,14 @@ CREATE TABLE annotation_result (
     ),
     CONSTRAINT ck_annotation_result_correction_self CHECK (
         corrected_from_result_id IS NULL OR corrected_from_result_id <> id
+    ),
+    CONSTRAINT ck_annotation_result_provider_provenance CHECK (
+        corrected_from_result_id IS NOT NULL
+        OR (
+            provider_binding_ref IS NOT NULL AND length(btrim(provider_binding_ref)) > 0
+            AND external_task_id IS NOT NULL AND length(btrim(external_task_id)) > 0
+            AND external_annotation_id IS NOT NULL AND length(btrim(external_annotation_id)) > 0
+        )
     )
 );
 
