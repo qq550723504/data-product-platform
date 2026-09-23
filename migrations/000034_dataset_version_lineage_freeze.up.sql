@@ -97,6 +97,22 @@ BEFORE INSERT OR UPDATE OR DELETE ON dataset_version_lineage
 FOR EACH ROW EXECUTE FUNCTION guard_dataset_version_lineage_mutation();
 
 
+CREATE OR REPLACE FUNCTION guard_dataset_workspace_identity()
+RETURNS trigger AS $dataset_workspace_guard$
+BEGIN
+    IF OLD.workspace_id IS DISTINCT FROM NEW.workspace_id THEN
+        RAISE EXCEPTION 'dataset workspace identity is immutable';
+    END IF;
+    RETURN NEW;
+END;
+$dataset_workspace_guard$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_dataset_workspace_identity ON dataset;
+CREATE TRIGGER trg_dataset_workspace_identity
+BEFORE UPDATE OF workspace_id ON dataset
+FOR EACH ROW EXECUTE FUNCTION guard_dataset_workspace_identity();
+
+
 CREATE OR REPLACE FUNCTION guard_product_release_history()
 RETURNS trigger AS $release_history_guard$
 DECLARE
