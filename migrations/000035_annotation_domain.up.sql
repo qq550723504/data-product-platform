@@ -1173,7 +1173,7 @@ CREATE TABLE annotation_review_attempt (
     created_at                  timestamptz NOT NULL DEFAULT now(),
     CONSTRAINT uq_annotation_review_attempt_key UNIQUE (workspace_id, idempotency_key),
     CONSTRAINT ck_annotation_review_attempt_revision CHECK (expected_task_revision >= 1),
-    CONSTRAINT ck_annotation_review_attempt_action CHECK (action IN ('ACCEPT','REJECT','CORRECT')),
+    CONSTRAINT ck_annotation_review_attempt_action CHECK (review_action IN ('ACCEPT','REJECT','CORRECT')),
     CONSTRAINT ck_annotation_review_attempt_reason CHECK (length(btrim(reason)) > 0),
     CONSTRAINT ck_annotation_review_attempt_fingerprint CHECK (request_fingerprint ~ '^[0-9a-f]{64}$')
 );
