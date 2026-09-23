@@ -397,19 +397,19 @@ Engine Adapter 错误需要映射为平台统一错误模型。
 
 这条规则不适用于正常业务生命周期（如 DEPRECATED/SUPERSEDED）、当前协议必需的 retry/idempotency/crash recovery、配置默认值、实体 alias 语义以及 append-only 历史事实。
 
-核心 POC 已完成。当前阶段是 #129 Certified Dataset 受控试点。QualityAssessment 核心已由 #140 落地；#131 仅保留 review 后新增的 CostAllocation 等 follow-up。
+核心 POC 与 #129 Certified Dataset 第一阶段受控试点均已完成。#136 E2E1–E2E20 已全部 PASS；第一阶段完成不等于生产上线批准，也不自动启动第二阶段。
 
-第一阶段主任务：
+第一阶段完成状态：
 
 - #131 QualityAssessment follow-up / CostAllocation ✅
 - #132 Quality Engine ✅
 - #133 Quality Report ✅
 - #137 Data Rights Provenance ✅
 - #134 DatasetCertification ✅
-- #135 API / UI
-- #136 E2E Pilot
+- #135 API / UI ✅
+- #136 E2E Pilot ✅ E2E1–E2E20
 
-除非对应 Issue 明确要求，第一阶段不要主动加入：
+下一阶段应基于 Pilot 证据与真实产品优先级单独立项。除非对应 Issue 明确要求，不要主动加入：
 
 - T4/T5/T6 全套生产可靠性路线作为前置
 - 完整 Billing / Settlement / ERP
