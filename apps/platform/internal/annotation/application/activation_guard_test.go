@@ -77,6 +77,19 @@ func (fakeActivationEntitlementChecker) CheckCurrentEntitlementTx(
 	return rightsdomain.EntitlementDecision{Decision: rightsdomain.DecisionAllowed}, nil
 }
 
+type capturingActivationEntitlementChecker struct {
+	requests []rightsdomain.EntitlementRequest
+}
+
+func (f *capturingActivationEntitlementChecker) CheckCurrentEntitlementTx(
+	_ context.Context,
+	_ pgx.Tx,
+	request rightsdomain.EntitlementRequest,
+) (rightsdomain.EntitlementDecision, error) {
+	f.requests = append(f.requests, request)
+	return rightsdomain.EntitlementDecision{Decision: rightsdomain.DecisionAllowed}, nil
+}
+
 func TestCoreActivationGuardPreflightProvesExactCSVTaskMembership(t *testing.T) {
 	workspaceID := uuid.New()
 	datasetID := uuid.New()
@@ -220,3 +233,26 @@ func TestCoreActivationGuardPreflightRejectsTaskTextMismatch(t *testing.T) {
 		t.Fatalf("Preflight error = %v, want renderer task-text mismatch", err)
 	}
 }
+
+func TestCoreActivationGuardAlwaysRequiresProcessEntitlement(t *testing.T) {
+	checker := &capturingActivationEntitlementChecker{}
+	guard := &CoreActivationGuard{entitlements: checker}
+	resourceID := uuid.New()
+	campaign := annotationdomain.Campaign{
+		WorkspaceID: uuid.New(),
+		Purpose:     "gold-pilot",
+		Action:      "READ",
+		ConsumerRef: "consumer",
+	}
+
+	if err := guard.checkCurrentResourceEntitlement(t.Context(), nil, campaign, resourceID); err != nil {
+		t.Fatalf("checkCurrentResourceEntitlement: %v", err)
+	}
+	if len(checker.requests) != 1 {
+		t.Fatalf("entitlement request count = %d, want 1", len(checker.requests))
+	}
+	if checker.requests[0].Action != "PROCESS" {
+		t.Fatalf("entitlement action = %q, want PROCESS", checker.requests[0].Action)
+	}
+}
+
