@@ -163,9 +163,22 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 		INSERT INTO rights_snapshot (
 			id, workspace_id, product_release_id, purpose, consumer_ref, as_of, manifest, root_hash, created_at, status
 		) VALUES ($1,$2,$3,'ENTERPRISE_CREDIT_RISK_SUPPORT','LICENSED_BANK',now(),
-		          '{"purpose":"ENTERPRISE_CREDIT_RISK_SUPPORT","consumerRef":"LICENSED_BANK","authorizations":[]}'::jsonb,
+		          jsonb_build_object(
+		              'purpose','ENTERPRISE_CREDIT_RISK_SUPPORT',
+		              'consumerRef','LICENSED_BANK',
+		              'authorizations',jsonb_build_array(
+		                  jsonb_build_object(
+		                      'authorizationId',$4::text,
+		                      'code','PUBLISH-AUTH-FROZEN',
+		                      'grantorRef','PARK-OPERATOR',
+		                      'granteeRef','LICENSED_BANK',
+		                      'purpose','ENTERPRISE_CREDIT_RISK_SUPPORT',
+		                      'resources',jsonb_build_array()
+		                  )
+		              )
+		          ),
 		          'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc',now(),'BUILDING')
-	`, rightsSnapshotID, workspaceID, releaseID)
+	`, rightsSnapshotID, workspaceID, releaseID, authorizationID)
 	insertRightsProvenanceFixture(t, ctx, pool, workspaceID, authorizationID, rightsSnapshotID)
 	mustExec(t, ctx, pool, `UPDATE rights_snapshot SET status='FINALIZED' WHERE id=$1`, rightsSnapshotID)
 	mustExec(t, ctx, pool, `
