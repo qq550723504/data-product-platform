@@ -1,4 +1,21 @@
 -- Refuse to reopen immutable annotation history by rollback once any facts exist.
+-- Lock every annotation write surface before checking emptiness so a concurrent
+-- writer cannot commit history between the guard and destructive DROP statements.
+LOCK TABLE
+    annotation_campaign,
+    annotation_campaign_command,
+    annotation_task,
+    annotation_result,
+    annotation_review_attempt,
+    annotation_review_attempt_outcome,
+    annotation_review_decision,
+    annotation_snapshot,
+    annotation_snapshot_task,
+    annotation_snapshot_result,
+    annotation_snapshot_decision,
+    annotation_snapshot_output
+IN ACCESS EXCLUSIVE MODE;
+
 DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM annotation_campaign LIMIT 1)
