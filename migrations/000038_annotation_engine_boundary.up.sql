@@ -33,7 +33,9 @@ CREATE TABLE annotation_engine_operation (
     CONSTRAINT ck_annotation_engine_operation_request CHECK (
         length(btrim(request_id)) > 0
         AND request_fingerprint ~ '^[0-9a-f]{64}$'
-        AND payload_manifest_sha256 ~ '^[0-9a-f]{64}
+        AND payload_manifest_sha256 ~ '^[0-9a-f]{64}$'
+        AND convert_from(payload_manifest_hash_payload, 'UTF8')::jsonb = payload_manifest
+        AND encode(digest(payload_manifest_hash_payload, 'sha256'), 'hex') = payload_manifest_sha256
     ),
     CONSTRAINT ck_annotation_engine_operation_claim CHECK (
         (claimed_by IS NULL AND claim_expires_at IS NULL)
