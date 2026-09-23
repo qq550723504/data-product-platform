@@ -67,8 +67,8 @@ func (c *Client) EnsureCampaignBinding(ctx context.Context, req annotationapp.En
 	}
 
 	var project struct {
-		ID          json.Number \`json:"id"\`
-		LabelConfig string      \`json:"label_config"\`
+		ID          json.Number `json:"id"`
+		LabelConfig string      `json:"label_config"`
 	}
 	if err := c.requestJSON(ctx, http.MethodPost, "/api/projects", nil, body, &project); err != nil {
 		return annotationapp.EngineCampaignBinding{}, err
@@ -136,8 +136,8 @@ func (c *Client) SubmitTasks(ctx context.Context, req annotationapp.EngineSubmit
 	path := "/api/projects/" + url.PathEscape(req.Binding.ExternalProjectID) + "/import"
 
 	var response struct {
-		TaskCount int           \`json:"task_count"\`
-		TaskIDs   []json.Number \`json:"task_ids"\`
+		TaskCount int           `json:"task_count"`
+		TaskIDs   []json.Number `json:"task_ids"`
 	}
 	if err := c.requestJSON(ctx, http.MethodPost, path, query, body, &response); err != nil {
 		return annotationapp.EngineSubmission{}, err
@@ -187,10 +187,10 @@ func (c *Client) LookupSubmission(ctx context.Context, req annotationapp.EngineL
 		}
 		var page struct {
 			Tasks []struct {
-				ID   json.Number    \`json:"id"\`
-				Meta map[string]any \`json:"meta"\`
-			} \`json:"tasks"\`
-			Next any \`json:"next"\`
+				ID   json.Number    `json:"id"`
+				Meta map[string]any `json:"meta"`
+			} `json:"tasks"`
+			Next any `json:"next"`
 		}
 		if err := c.requestJSON(ctx, http.MethodGet, "/api/tasks", query, nil, &page); err != nil {
 			return annotationapp.EngineSubmission{}, err
@@ -260,17 +260,17 @@ func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineC
 	}
 	var response struct {
 		Tasks []struct {
-			ID          json.Number    \`json:"id"\`
-			Meta        map[string]any \`json:"meta"\`
+			ID          json.Number    `json:"id"`
+			Meta        map[string]any `json:"meta"`
 			Annotations []struct {
-				ID           json.Number \`json:"id"\`
-				CompletedBy  any         \`json:"completed_by"\`
-				WasCancelled bool        \`json:"was_cancelled"\`
-				Result       []any       \`json:"result"\`
-				UpdatedAt    string      \`json:"updated_at"\`
-			} \`json:"annotations"\`
-		} \`json:"tasks"\`
-		Next any \`json:"next"\`
+				ID           json.Number `json:"id"`
+				CompletedBy  any         `json:"completed_by"`
+				WasCancelled bool        `json:"was_cancelled"`
+				Result       []any       `json:"result"`
+				UpdatedAt    string      `json:"updated_at"`
+			} `json:"annotations"`
+		} `json:"tasks"`
+		Next any `json:"next"`
 	}
 	if err := c.requestJSON(ctx, http.MethodGet, "/api/tasks", query, nil, &response); err != nil {
 		return annotationapp.EngineResultPage{}, err
