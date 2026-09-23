@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -145,53 +146,71 @@ func TestPublishedReleaseLineageMutationFirstSerializesPublish(t *testing.T) {
 		t.Fatalf("insert in-flight lineage edge: %v", err)
 	}
 
-	publishTx, err := pool.Begin(ctx)
-	if err != nil {
-		t.Fatalf("begin publish tx: %v", err)
+	type publishOutcome struct {
+		closureCount int
+		err          error
 	}
-	defer publishTx.Rollback(ctx)
-	if err := repo.LockReleaseMembershipForPublish(ctx, publishTx, release); err != nil {
-		t.Fatalf("lock release membership: %v", err)
-	}
-	if _, err := publishTx.Exec(ctx, "SET LOCAL lock_timeout = '100ms'"); err != nil {
-		t.Fatalf("set publish lock timeout: %v", err)
-	}
-	if err := repo.LockReleaseLineageForPublish(ctx, publishTx, release.ID); !isLockTimeout(err) {
-		t.Fatalf("publish lineage lock error = %v, want lock timeout behind lineage mutation", err)
-	}
-	if err := publishTx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
-		t.Fatalf("rollback publish tx: %v", err)
+	started := make(chan struct{})
+	done := make(chan publishOutcome, 1)
+	go func() {
+		publishTx, err := pool.Begin(ctx)
+		if err != nil {
+			done <- publishOutcome{err: err}
+			return
+		}
+		defer publishTx.Rollback(ctx)
+		close(started)
+
+		// This blocks on the ProductRelease parent row held by the lineage INSERT.
+		// The lineage closure query is intentionally executed only after that lock
+		// is acquired, so it must see the mutation once the blocker commits.
+		if err := repo.LockReleaseMembershipForPublish(ctx, publishTx, release); err != nil {
+			done <- publishOutcome{err: err}
+			return
+		}
+		if err := repo.LockReleaseLineageForPublish(ctx, publishTx, release.ID); err != nil {
+			done <- publishOutcome{err: err}
+			return
+		}
+
+		var closureCount int
+		if err := publishTx.QueryRow(ctx, `
+			WITH RECURSIVE lineage(version_id) AS (
+				SELECT dataset_version_id FROM product_release_dataset WHERE release_id=$1
+				UNION
+				SELECT dvl.input_version_id
+				FROM dataset_version_lineage dvl
+				JOIN lineage l ON l.version_id=dvl.output_version_id
+			)
+			SELECT count(*) FROM lineage
+		`, release.ID).Scan(&closureCount); err != nil {
+			done <- publishOutcome{err: err}
+			return
+		}
+		done <- publishOutcome{closureCount: closureCount}
+	}()
+
+	<-started
+	select {
+	case outcome := <-done:
+		t.Fatalf("publish did not block behind lineage mutation: %+v", outcome)
+	case <-time.After(150 * time.Millisecond):
+		// Expected: publish is waiting on the shared ProductRelease parent fence.
 	}
 
 	if err := mutationTx.Commit(ctx); err != nil {
 		t.Fatalf("commit lineage mutation: %v", err)
 	}
 
-	checkTx, err := pool.Begin(ctx)
-	if err != nil {
-		t.Fatalf("begin publish retry tx: %v", err)
-	}
-	defer checkTx.Rollback(ctx)
-	if err := repo.LockReleaseMembershipForPublish(ctx, checkTx, release); err != nil {
-		t.Fatalf("retry lock release membership: %v", err)
-	}
-	if err := repo.LockReleaseLineageForPublish(ctx, checkTx, release.ID); err != nil {
-		t.Fatalf("retry lock release lineage: %v", err)
-	}
-	var closureCount int
-	if err := checkTx.QueryRow(ctx, `
-		WITH RECURSIVE lineage(version_id) AS (
-			SELECT dataset_version_id FROM product_release_dataset WHERE release_id=$1
-			UNION
-			SELECT dvl.input_version_id
-			FROM dataset_version_lineage dvl
-			JOIN lineage l ON l.version_id=dvl.output_version_id
-		)
-		SELECT count(*) FROM lineage
-	`, release.ID).Scan(&closureCount); err != nil {
-		t.Fatalf("read lineage closure after mutation commit: %v", err)
-	}
-	if closureCount != 2 {
-		t.Fatalf("lineage closure count = %d, want 2", closureCount)
+	select {
+	case outcome := <-done:
+		if outcome.err != nil {
+			t.Fatalf("publish after lineage commit: %v", outcome.err)
+		}
+		if outcome.closureCount != 2 {
+			t.Fatalf("lineage closure count after blocked publish resumed = %d, want 2", outcome.closureCount)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for blocked publish to resume")
 	}
 }
