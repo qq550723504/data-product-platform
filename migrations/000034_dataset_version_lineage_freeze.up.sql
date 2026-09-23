@@ -118,7 +118,11 @@ BEGIN
         RAISE EXCEPTION 'product_release identity is immutable';
     END IF;
 
-    IF OLD.status = 'READY' AND NEW.status = 'PUBLISHED' THEN
+    IF NEW.status = 'PUBLISHED' AND OLD.status IS DISTINCT FROM 'PUBLISHED' THEN
+        IF OLD.status <> 'READY' THEN
+            RAISE EXCEPTION 'ProductRelease can only transition to PUBLISHED from READY';
+        END IF;
+
         SELECT p.workspace_id
           INTO release_workspace
           FROM data_product p
@@ -128,10 +132,9 @@ BEGIN
             RAISE EXCEPTION 'ProductRelease product workspace does not exist';
         END IF;
 
-        -- Database-enforced publication fence. This is not a caller-minted
-        -- permit: every READY->PUBLISHED transition, including direct SQL,
-        -- must actually acquire the same workspace row lock used by lineage
-        -- INSERTs before the state change can complete.
+        -- Database-enforced publication fence. Every transition into PUBLISHED
+        -- must come from READY and acquire the same workspace row lock used by
+        -- lineage INSERTs before the state change can complete.
         INSERT INTO delivery_authorization_fence(workspace_id)
         VALUES (release_workspace)
         ON CONFLICT (workspace_id) DO NOTHING;
