@@ -88,6 +88,9 @@ func TestAnnotationSnapshotFinalizationFreezesHeaderAndMembership(t *testing.T) 
 		INSERT INTO annotation_snapshot_output(snapshot_id, task_id, selected_result_id)
 		VALUES ($1,$2,$3)
 	`, "membership is finalized", fx.snapshotID, fx.taskID, fx.resultID)
+	assertAnnotationMutationRejected(t, pool, ctx, `
+		UPDATE annotation_task SET revision=revision+1 WHERE id=$1
+	`, "immutable outside ACTIVE campaign", fx.taskID)
 }
 
 func TestAnnotationWorkspaceIsolationFailsClosed(t *testing.T) {
