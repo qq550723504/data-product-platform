@@ -1,0 +1,1185 @@
+package application
+
+import (
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"sort"
+	"strings"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
+	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+)
+
+var (
+	ErrIdempotencyConflict     = errors.New("annotation idempotency key reused with different input")
+	ErrIdempotencyKeyRequired  = errors.New("annotation idempotency key is required")
+	ErrActivationGuardRequired = errors.New("annotation activation guard is required")
+	ErrActivationGuardRejected = errors.New("annotation activation guard rejected campaign")
+)
+
+type ActivationProof struct {
+	TaskManifestHash string
+	TaskCount        int
+	InputChecksum    string
+	InputStorageURI  string
+	InputByteSize    int64
+	InputRowCount    int64
+	InputContentType string
+	SourceResourceID uuid.UUID
+}
+
+type ActivationGuard interface {
+	Preflight(
+		ctx context.Context,
+		campaign annotationdomain.Campaign,
+		tasks []annotationdomain.Task,
+	) (ActivationProof, error)
+	ValidateActivationTx(
+		ctx context.Context,
+		tx pgx.Tx,
+		campaign annotationdomain.Campaign,
+		proof ActivationProof,
+	) error
+}
+
+type Service struct {
+	tx              *transaction.Manager
+	repo            *annotationinfra.Repository
+	activationGuard ActivationGuard
+}
+
+func NewService(
+	tx *transaction.Manager,
+	repo *annotationinfra.Repository,
+	activationGuard ActivationGuard,
+) *Service {
+	return &Service{tx: tx, repo: repo, activationGuard: activationGuard}
+}
+
+type CreateCampaignCommand struct {
+	Spec           annotationdomain.CampaignSpec
+	IdempotencyKey string
+	TraceID        string
+}
+
+func (s *Service) CreateCampaign(ctx context.Context, cmd CreateCampaignCommand) (annotationdomain.Campaign, error) {
+	cmd.IdempotencyKey = strings.TrimSpace(cmd.IdempotencyKey)
+	if cmd.IdempotencyKey == "" {
+		return annotationdomain.Campaign{}, ErrIdempotencyKeyRequired
+	}
+	fingerprint, err := campaignFingerprint(cmd.Spec)
+	if err != nil {
+		return annotationdomain.Campaign{}, err
+	}
+	if existing, storedFingerprint, readErr := s.repo.GetCampaignByCommandKey(
+		ctx, cmd.Spec.WorkspaceID, cmd.IdempotencyKey,
+	); readErr == nil {
+		if storedFingerprint != fingerprint {
+			return annotationdomain.Campaign{}, ErrIdempotencyConflict
+		}
+		return existing, nil
+	} else if !errors.Is(readErr, pgx.ErrNoRows) {
+		return annotationdomain.Campaign{}, readErr
+	}
+
+	campaign, err := annotationdomain.NewCampaign(cmd.Spec, time.Now().UTC())
+	if err != nil {
+		return annotationdomain.Campaign{}, err
+	}
+	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if err := s.repo.InsertCampaign(ctx, tx, campaign); err != nil {
+			return err
+		}
+		if err := s.repo.InsertCampaignCommand(
+			ctx, tx, campaign.WorkspaceID, cmd.IdempotencyKey, fingerprint, campaign.ID,
+		); err != nil {
+			return err
+		}
+		if err := appendEvent(ctx, tx, "ANNOTATION_CAMPAIGN", campaign.ID, "AnnotationCampaignCreated", map[string]any{
+			"campaignId": campaign.ID, "workspaceId": campaign.WorkspaceID,
+			"inputDatasetVersionId": campaign.InputDatasetVersionID,
+			"inputCertificationId":  campaign.InputCertificationID,
+		}); err != nil {
+			return err
+		}
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			WorkspaceID: campaign.WorkspaceID, EvidenceType: "ANNOTATION_CAMPAIGN_CREATED",
+			Title: "Annotation campaign created", SourceType: "CORE",
+			Metadata: map[string]any{
+				"inputDatasetVersionId": campaign.InputDatasetVersionID,
+				"schemaHash":            campaign.Schema.ContentSHA256,
+				"taxonomyHash":          campaign.Taxonomy.ContentSHA256,
+				"requestFingerprint":    fingerprint,
+			},
+			CreatedBy: cmd.Spec.ActorID,
+		}, evidence.Relation{ObjectType: "ANNOTATION_CAMPAIGN", ObjectID: campaign.ID, RelationType: "CREATION_EVIDENCE"}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &campaign.WorkspaceID, ActorType: actorType(cmd.Spec.ActorID),
+			ActorID: cmd.Spec.ActorID, Action: "ANNOTATION_CAMPAIGN_CREATED",
+			ObjectType: "ANNOTATION_CAMPAIGN", ObjectID: campaign.ID,
+			AfterState: map[string]any{
+				"status": campaign.Status, "revision": campaign.Revision,
+				"inputDatasetVersionId": campaign.InputDatasetVersionID,
+				"requestFingerprint":    fingerprint,
+			},
+			TraceID: cmd.TraceID,
+		})
+	})
+	if err == nil {
+		return campaign, nil
+	}
+	existing, storedFingerprint, readErr := s.repo.GetCampaignByCommandKey(
+		ctx, cmd.Spec.WorkspaceID, cmd.IdempotencyKey,
+	)
+	if readErr == nil {
+		if storedFingerprint != fingerprint {
+			return annotationdomain.Campaign{}, ErrIdempotencyConflict
+		}
+		return existing, nil
+	}
+	return annotationdomain.Campaign{}, err
+}
+
+type TaskInput struct {
+	SourceItemRef       string
+	SourceContentSHA256 string
+	TaskTextSHA256      string
+	PrimaryAnnotatorRef string
+}
+
+type CreateTasksCommand struct {
+	WorkspaceID uuid.UUID
+	CampaignID  uuid.UUID
+	Tasks       []TaskInput
+	ActorID     *uuid.UUID
+	TraceID     string
+}
+
+func (s *Service) CreateTasks(ctx context.Context, cmd CreateTasksCommand) ([]annotationdomain.Task, error) {
+	if cmd.WorkspaceID == uuid.Nil || cmd.CampaignID == uuid.Nil || len(cmd.Tasks) == 0 {
+		return nil, annotationdomain.ErrInvalidTask
+	}
+	tasks := make([]annotationdomain.Task, 0, len(cmd.Tasks))
+	now := time.Now().UTC()
+	seenSourceItems := make(map[string]struct{}, len(cmd.Tasks))
+	for _, input := range cmd.Tasks {
+		task, err := annotationdomain.NewTask(
+			cmd.WorkspaceID, cmd.CampaignID, input.SourceItemRef,
+			input.SourceContentSHA256, input.TaskTextSHA256, input.PrimaryAnnotatorRef, now,
+		)
+		if err != nil {
+			return nil, err
+		}
+		if _, exists := seenSourceItems[task.SourceItemRef]; exists {
+			return nil, annotationdomain.ErrInvalidTask
+		}
+		seenSourceItems[task.SourceItemRef] = struct{}{}
+		tasks = append(tasks, task)
+	}
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		campaign, err := s.repo.GetCampaignTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignDraft {
+			return annotationdomain.ErrInvalidCampaign
+		}
+		createdCount := 0
+		for _, task := range tasks {
+			created, err := s.repo.InsertTask(ctx, tx, task)
+			if err != nil {
+				return err
+			}
+			if created {
+				createdCount++
+			}
+		}
+		if createdCount == 0 {
+			return nil
+		}
+		if err := appendEvent(ctx, tx, "ANNOTATION_CAMPAIGN", cmd.CampaignID, "AnnotationTasksCreated", map[string]any{
+			"campaignId": cmd.CampaignID, "workspaceId": cmd.WorkspaceID,
+			"count": createdCount, "requestedCount": len(tasks),
+		}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &cmd.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID,
+			Action: "ANNOTATION_TASKS_CREATED", ObjectType: "ANNOTATION_CAMPAIGN", ObjectID: cmd.CampaignID,
+			AfterState: map[string]any{"count": createdCount, "requestedCount": len(tasks)}, TraceID: cmd.TraceID,
+		})
+	})
+	return tasks, err
+}
+
+type ActivateCampaignCommand struct {
+	WorkspaceID      uuid.UUID
+	CampaignID       uuid.UUID
+	ExpectedRevision int64
+	ActorID          *uuid.UUID
+	TraceID          string
+}
+
+func (s *Service) ActivateCampaign(ctx context.Context, cmd ActivateCampaignCommand) (annotationdomain.Campaign, error) {
+	var activated annotationdomain.Campaign
+	if s.activationGuard == nil {
+		return annotationdomain.Campaign{}, ErrActivationGuardRequired
+	}
+	preflight, err := s.repo.GetCampaign(ctx, cmd.CampaignID)
+	if err != nil {
+		return annotationdomain.Campaign{}, err
+	}
+	if preflight.WorkspaceID != cmd.WorkspaceID || preflight.Status != annotationdomain.CampaignDraft {
+		return annotationdomain.Campaign{}, annotationdomain.ErrInvalidCampaign
+	}
+	preflightTasks, err := s.repo.ListTasks(ctx, cmd.CampaignID)
+	if err != nil {
+		return annotationdomain.Campaign{}, err
+	}
+	if len(preflightTasks) == 0 {
+		return annotationdomain.Campaign{}, annotationdomain.ErrInvalidCampaign
+	}
+	proof, err := s.activationGuard.Preflight(ctx, preflight, preflightTasks)
+	if err != nil {
+		return annotationdomain.Campaign{}, fmt.Errorf("%w: %v", ErrActivationGuardRejected, err)
+	}
+	if proof.TaskCount != len(preflightTasks) || proof.TaskManifestHash == "" {
+		return annotationdomain.Campaign{}, ErrActivationGuardRejected
+	}
+
+	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if err := s.activationGuard.ValidateActivationTx(ctx, tx, preflight, proof); err != nil {
+			return fmt.Errorf("%w: %v", ErrActivationGuardRejected, err)
+		}
+		campaign, err := s.repo.LockCampaignTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignDraft ||
+			campaign.Revision != cmd.ExpectedRevision {
+			return annotationinfra.ErrStaleRevision
+		}
+		if err := s.repo.LockTasksTx(ctx, tx, cmd.CampaignID); err != nil {
+			return err
+		}
+		tasks, err := s.repo.ListTasksTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if len(tasks) == 0 {
+			return annotationdomain.ErrInvalidCampaign
+		}
+		manifestHash, err := taskManifestHash(tasks)
+		if err != nil {
+			return err
+		}
+		if len(tasks) != proof.TaskCount || manifestHash != proof.TaskManifestHash {
+			return annotationinfra.ErrStaleRevision
+		}
+		now := time.Now().UTC()
+		if err := s.repo.ActivateCampaign(
+			ctx, tx, cmd.CampaignID, cmd.ExpectedRevision, len(tasks), manifestHash, proof.InputChecksum, now,
+		); err != nil {
+			return err
+		}
+		activated = campaign
+		activated.Status = annotationdomain.CampaignActive
+		activated.Revision = campaign.Revision + 1
+		activated.ExpectedTaskCount = len(tasks)
+		activated.TaskManifestHash = manifestHash
+		activated.InputChecksumSHA256 = proof.InputChecksum
+		activated.ActivatedAt = &now
+
+		if err := appendEvent(ctx, tx, "ANNOTATION_CAMPAIGN", cmd.CampaignID, "AnnotationCampaignActivated", map[string]any{
+			"campaignId": cmd.CampaignID, "taskCount": len(tasks), "taskManifestHash": manifestHash,
+		}); err != nil {
+			return err
+		}
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			WorkspaceID: cmd.WorkspaceID, EvidenceType: "ANNOTATION_TASK_MANIFEST_FROZEN",
+			Title: "Annotation task manifest frozen", SourceType: "CORE",
+			Metadata:  map[string]any{"taskCount": len(tasks), "taskManifestHash": manifestHash},
+			CreatedBy: cmd.ActorID,
+		}, evidence.Relation{ObjectType: "ANNOTATION_CAMPAIGN", ObjectID: cmd.CampaignID, RelationType: "TASK_MANIFEST"}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &cmd.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID,
+			Action: "ANNOTATION_CAMPAIGN_ACTIVATED", ObjectType: "ANNOTATION_CAMPAIGN", ObjectID: cmd.CampaignID,
+			BeforeState: map[string]any{"status": campaign.Status, "revision": campaign.Revision},
+			AfterState: map[string]any{
+				"status": annotationdomain.CampaignActive, "revision": campaign.Revision + 1,
+				"taskCount": len(tasks), "taskManifestHash": manifestHash,
+			},
+			TraceID: cmd.TraceID,
+		})
+	})
+	return activated, err
+}
+
+type RecordResultCommand struct {
+	WorkspaceID            uuid.UUID
+	CampaignID             uuid.UUID
+	TaskID                 uuid.UUID
+	ExpectedTaskRevision   int64
+	AuthorRef              string
+	ProviderBindingRef     string
+	ExternalTaskID         string
+	ExternalAnnotationID   string
+	ExternalRevision       string
+	ObservationKey         string
+	CanonicalPayload       []byte
+	CanonicalPayloadSHA256 string
+	NormalizerVersion      string
+	ActorID                *uuid.UUID
+	TraceID                string
+}
+
+func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCommand) (annotationdomain.Result, error) {
+	cmd.ProviderBindingRef = strings.TrimSpace(cmd.ProviderBindingRef)
+	cmd.ExternalTaskID = strings.TrimSpace(cmd.ExternalTaskID)
+	cmd.ExternalAnnotationID = strings.TrimSpace(cmd.ExternalAnnotationID)
+	cmd.ExternalRevision = strings.TrimSpace(cmd.ExternalRevision)
+	cmd.ObservationKey = strings.TrimSpace(cmd.ObservationKey)
+	cmd.AuthorRef = strings.TrimSpace(cmd.AuthorRef)
+	cmd.NormalizerVersion = strings.TrimSpace(cmd.NormalizerVersion)
+
+	if existing, err := s.repo.GetResultByProviderObservation(
+		ctx, cmd.WorkspaceID, cmd.CampaignID,
+		cmd.ProviderBindingRef, cmd.ExternalTaskID, cmd.ExternalAnnotationID,
+		cmd.ExternalRevision, cmd.CanonicalPayloadSHA256,
+	); err == nil {
+		if resultReplayMatches(existing, cmd) {
+			return existing, nil
+		}
+		return annotationdomain.Result{}, ErrIdempotencyConflict
+	} else if !errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.Result{}, err
+	}
+
+	if existing, err := s.repo.GetResultByObservation(ctx, cmd.WorkspaceID, cmd.CampaignID, cmd.ObservationKey); err == nil {
+		if resultReplayMatches(existing, cmd) {
+			return existing, nil
+		}
+		return annotationdomain.Result{}, ErrIdempotencyConflict
+	} else if !errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.Result{}, err
+	}
+
+	if hashBytes(cmd.CanonicalPayload) != cmd.CanonicalPayloadSHA256 {
+		return annotationdomain.Result{}, annotationdomain.ErrInvalidResult
+	}
+	result := annotationdomain.Result{
+		ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID, TaskID: cmd.TaskID,
+		AuthorRef: cmd.AuthorRef, ProviderBindingRef: cmd.ProviderBindingRef,
+		ExternalTaskID: cmd.ExternalTaskID, ExternalAnnotationID: cmd.ExternalAnnotationID,
+		ExternalRevision: cmd.ExternalRevision, ObservationKey: cmd.ObservationKey,
+		CanonicalPayload:       append([]byte(nil), cmd.CanonicalPayload...),
+		CanonicalPayloadSHA256: cmd.CanonicalPayloadSHA256, NormalizerVersion: cmd.NormalizerVersion,
+		CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID,
+	}
+	if err := result.Validate(); err != nil {
+		return annotationdomain.Result{}, err
+	}
+
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		campaign, err := s.repo.GetCampaignTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignActive {
+			return annotationdomain.ErrInvalidResult
+		}
+		if err := validateAnnotationPayload(campaign.Schema, result.CanonicalPayload); err != nil {
+			return err
+		}
+		task, err := s.repo.GetTaskTx(ctx, tx, cmd.TaskID)
+		if err != nil {
+			return err
+		}
+		if task.WorkspaceID != cmd.WorkspaceID || task.CampaignID != cmd.CampaignID ||
+			task.Revision != cmd.ExpectedTaskRevision {
+			return annotationinfra.ErrStaleRevision
+		}
+		if err := s.repo.InsertResult(ctx, tx, result); err != nil {
+			return err
+		}
+		if err := s.repo.AdvanceTaskForResult(ctx, tx, cmd.TaskID, cmd.ExpectedTaskRevision); err != nil {
+			return err
+		}
+		if err := appendEvent(ctx, tx, "ANNOTATION_TASK", cmd.TaskID, "AnnotationResultRecorded", map[string]any{
+			"taskId": cmd.TaskID, "resultId": result.ID, "payloadSha256": result.CanonicalPayloadSHA256,
+		}); err != nil {
+			return err
+		}
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			WorkspaceID: cmd.WorkspaceID, EvidenceType: "ANNOTATION_RESULT_RECORDED",
+			Title: "Annotation result recorded", SourceType: "CORE",
+			Metadata: map[string]any{
+				"taskId": cmd.TaskID, "resultId": result.ID,
+				"payloadSha256":     result.CanonicalPayloadSHA256,
+				"normalizerVersion": result.NormalizerVersion,
+			},
+			CreatedBy: cmd.ActorID,
+		}, evidence.Relation{ObjectType: "ANNOTATION_RESULT", ObjectID: result.ID, RelationType: "RESULT_EVIDENCE"}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &cmd.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID,
+			Action: "ANNOTATION_RESULT_RECORDED", ObjectType: "ANNOTATION_RESULT", ObjectID: result.ID,
+			AfterState: map[string]any{
+				"taskId": cmd.TaskID, "payloadSha256": result.CanonicalPayloadSHA256,
+			},
+			TraceID: cmd.TraceID,
+		})
+	})
+	if err != nil {
+		if existing, readErr := s.repo.GetResultByProviderObservation(
+			ctx, cmd.WorkspaceID, cmd.CampaignID,
+			cmd.ProviderBindingRef, cmd.ExternalTaskID, cmd.ExternalAnnotationID,
+			cmd.ExternalRevision, cmd.CanonicalPayloadSHA256,
+		); readErr == nil {
+			if resultReplayMatches(existing, cmd) {
+				return existing, nil
+			}
+			return annotationdomain.Result{}, ErrIdempotencyConflict
+		}
+		if existing, readErr := s.repo.GetResultByObservation(ctx, cmd.WorkspaceID, cmd.CampaignID, cmd.ObservationKey); readErr == nil {
+			if resultReplayMatches(existing, cmd) {
+				return existing, nil
+			}
+			return annotationdomain.Result{}, ErrIdempotencyConflict
+		}
+		return annotationdomain.Result{}, err
+	}
+	return result, nil
+}
+
+type ReviewAnnotationCommand struct {
+	WorkspaceID          uuid.UUID
+	CampaignID           uuid.UUID
+	TaskID               uuid.UUID
+	ExpectedTaskRevision int64
+	ReviewerRef          string
+	Action               string
+	Reason               string
+	IdempotencyKey       string
+	ReviewedResultID     *uuid.UUID
+	CorrectedPayload     []byte
+	CorrectedPayloadHash string
+	ActorID              *uuid.UUID
+	TraceID              string
+}
+
+type ReviewAnnotationResult struct {
+	Attempt  annotationdomain.ReviewAttempt
+	Outcome  annotationdomain.ReviewAttemptOutcome
+	Decision *annotationdomain.ReviewDecision
+}
+
+func (s *Service) ReviewAnnotation(ctx context.Context, cmd ReviewAnnotationCommand) (ReviewAnnotationResult, error) {
+	fingerprint, err := reviewFingerprint(cmd)
+	if err != nil {
+		return ReviewAnnotationResult{}, err
+	}
+
+	attempt, err := s.ensureReviewAttempt(ctx, cmd, fingerprint)
+	if err != nil {
+		return ReviewAnnotationResult{}, err
+	}
+	if outcome, err := s.repo.GetReviewAttemptOutcome(ctx, attempt.ID); err == nil {
+		var decision *annotationdomain.ReviewDecision
+		if existing, decisionErr := s.repo.GetDecisionByAttempt(ctx, attempt.ID); decisionErr == nil {
+			decision = &existing
+		} else if !errors.Is(decisionErr, pgx.ErrNoRows) {
+			return ReviewAnnotationResult{}, decisionErr
+		}
+		return ReviewAnnotationResult{Attempt: attempt, Outcome: outcome, Decision: decision}, nil
+	} else if !errors.Is(err, pgx.ErrNoRows) {
+		return ReviewAnnotationResult{}, err
+	}
+
+	decision, err := s.commitReviewDecision(ctx, cmd, attempt)
+	if err == nil {
+		outcome, outcomeErr := s.repo.GetReviewAttemptOutcome(ctx, attempt.ID)
+		if outcomeErr != nil {
+			return ReviewAnnotationResult{}, outcomeErr
+		}
+		return ReviewAnnotationResult{Attempt: attempt, Outcome: outcome, Decision: &decision}, nil
+	}
+
+	// The authoritative transaction may have lost the Task CAS only because an
+	// identical same-key replay won and committed this physical attempt first.
+	// Re-read before appending any failure outcome so one attempt converges to
+	// exactly one terminal outcome.
+	if terminal, found, replayErr := s.readTerminalReview(ctx, attempt); replayErr != nil {
+		return ReviewAnnotationResult{}, replayErr
+	} else if found {
+		return terminal, terminalReviewError(terminal, err)
+	}
+
+	if !errors.Is(err, annotationinfra.ErrStaleRevision) {
+		if _, outcomeErr := s.recordReviewFailure(ctx, cmd, attempt, annotationdomain.ReviewAttemptRejected, "REVIEW_FAILED"); outcomeErr != nil {
+			if terminal, found, replayErr := s.readTerminalReview(ctx, attempt); replayErr == nil && found {
+				return terminal, terminalReviewError(terminal, err)
+			}
+			return ReviewAnnotationResult{}, fmt.Errorf("review failed: %v; record outcome: %w", err, outcomeErr)
+		}
+		return ReviewAnnotationResult{}, err
+	}
+	outcome, outcomeErr := s.recordReviewFailure(ctx, cmd, attempt, annotationdomain.ReviewAttemptStaleConflict, "STALE_REVISION")
+	if outcomeErr != nil {
+		if terminal, found, replayErr := s.readTerminalReview(ctx, attempt); replayErr == nil && found {
+			return terminal, terminalReviewError(terminal, err)
+		}
+		return ReviewAnnotationResult{}, fmt.Errorf("review stale: %v; record outcome: %w", err, outcomeErr)
+	}
+	return ReviewAnnotationResult{Attempt: attempt, Outcome: outcome}, annotationinfra.ErrStaleRevision
+}
+
+func (s *Service) readTerminalReview(
+	ctx context.Context,
+	attempt annotationdomain.ReviewAttempt,
+) (ReviewAnnotationResult, bool, error) {
+	outcome, err := s.repo.GetReviewAttemptOutcome(ctx, attempt.ID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ReviewAnnotationResult{}, false, nil
+	}
+	if err != nil {
+		return ReviewAnnotationResult{}, false, err
+	}
+	var decision *annotationdomain.ReviewDecision
+	if existing, decisionErr := s.repo.GetDecisionByAttempt(ctx, attempt.ID); decisionErr == nil {
+		decision = &existing
+	} else if !errors.Is(decisionErr, pgx.ErrNoRows) {
+		return ReviewAnnotationResult{}, false, decisionErr
+	}
+	return ReviewAnnotationResult{Attempt: attempt, Outcome: outcome, Decision: decision}, true, nil
+}
+
+func terminalReviewError(result ReviewAnnotationResult, fallback error) error {
+	switch result.Outcome.Outcome {
+	case annotationdomain.ReviewAttemptSucceeded:
+		return nil
+	case annotationdomain.ReviewAttemptStaleConflict:
+		return annotationinfra.ErrStaleRevision
+	default:
+		return fallback
+	}
+}
+
+func (s *Service) ensureReviewAttempt(
+	ctx context.Context,
+	cmd ReviewAnnotationCommand,
+	fingerprint string,
+) (annotationdomain.ReviewAttempt, error) {
+	if existing, err := s.repo.GetReviewAttemptByKey(ctx, cmd.WorkspaceID, cmd.IdempotencyKey); err == nil {
+		if existing.RequestFingerprint != fingerprint {
+			return annotationdomain.ReviewAttempt{}, ErrIdempotencyConflict
+		}
+		return existing, nil
+	} else if !errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.ReviewAttempt{}, err
+	}
+
+	attempt := annotationdomain.ReviewAttempt{
+		ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID, TaskID: cmd.TaskID,
+		ReviewerRef: strings.TrimSpace(cmd.ReviewerRef), ExpectedTaskRevision: cmd.ExpectedTaskRevision,
+		Action: cmd.Action, Reason: strings.TrimSpace(cmd.Reason), IdempotencyKey: cmd.IdempotencyKey,
+		RequestFingerprint: fingerprint, CreatedAt: time.Now().UTC(),
+	}
+	if err := attempt.Validate(); err != nil {
+		return annotationdomain.ReviewAttempt{}, err
+	}
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if err := s.repo.InsertReviewAttempt(ctx, tx, attempt); err != nil {
+			return err
+		}
+		if err := cost.AppendAnnotationReviewActivity(ctx, tx, cost.AnnotationReviewActivity{
+			WorkspaceID: cmd.WorkspaceID, AttemptID: attempt.ID, Quantity: 1, Unit: "review",
+			PricingMode: "ACTUAL", Metadata: map[string]any{
+				"taskId": cmd.TaskID, "action": cmd.Action, "reviewerRef": cmd.ReviewerRef,
+			}, OccurredAt: attempt.CreatedAt,
+		}); err != nil {
+			return err
+		}
+		if err := appendEvent(ctx, tx, "ANNOTATION_REVIEW_ATTEMPT", attempt.ID, "AnnotationReviewAttemptStarted", map[string]any{
+			"attemptId": attempt.ID, "taskId": cmd.TaskID, "action": cmd.Action,
+		}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &cmd.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID,
+			Action: "ANNOTATION_REVIEW_ATTEMPT_STARTED", ObjectType: "ANNOTATION_REVIEW_ATTEMPT",
+			ObjectID: attempt.ID, AfterState: map[string]any{
+				"taskId": cmd.TaskID, "expectedTaskRevision": cmd.ExpectedTaskRevision, "action": cmd.Action,
+			}, Reason: cmd.Reason, TraceID: cmd.TraceID,
+		})
+	})
+	if err != nil {
+		if existing, readErr := s.repo.GetReviewAttemptByKey(ctx, cmd.WorkspaceID, cmd.IdempotencyKey); readErr == nil {
+			if existing.RequestFingerprint == fingerprint {
+				return existing, nil
+			}
+			return annotationdomain.ReviewAttempt{}, ErrIdempotencyConflict
+		}
+		return annotationdomain.ReviewAttempt{}, err
+	}
+	return attempt, nil
+}
+
+func (s *Service) commitReviewDecision(
+	ctx context.Context,
+	cmd ReviewAnnotationCommand,
+	attempt annotationdomain.ReviewAttempt,
+) (annotationdomain.ReviewDecision, error) {
+	var decision annotationdomain.ReviewDecision
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var selectedResultID *uuid.UUID
+		if cmd.Action == annotationdomain.ReviewAccept {
+			if cmd.ReviewedResultID == nil {
+				return annotationdomain.ErrInvalidReviewDecision
+			}
+			selectedResultID = cmd.ReviewedResultID
+		}
+		if cmd.Action == annotationdomain.ReviewCorrect {
+			if cmd.ReviewedResultID == nil || hashBytes(cmd.CorrectedPayload) != cmd.CorrectedPayloadHash {
+				return annotationdomain.ErrInvalidReviewDecision
+			}
+			campaign, err := s.repo.GetCampaignTx(ctx, tx, cmd.CampaignID)
+			if err != nil {
+				return err
+			}
+			if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignActive {
+				return annotationdomain.ErrInvalidReviewDecision
+			}
+			if err := validateAnnotationPayload(campaign.Schema, cmd.CorrectedPayload); err != nil {
+				return err
+			}
+			correctionID := uuid.New()
+			correction := annotationdomain.Result{
+				ID: correctionID, WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID, TaskID: cmd.TaskID,
+				AuthorRef: cmd.ReviewerRef, ObservationKey: "review-correction:" + attempt.ID.String(),
+				CanonicalPayload:       append([]byte(nil), cmd.CorrectedPayload...),
+				CanonicalPayloadSHA256: cmd.CorrectedPayloadHash, NormalizerVersion: "review-correction-v1",
+				CorrectedFromResultID: cmd.ReviewedResultID, CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID,
+			}
+			if err := s.repo.InsertResult(ctx, tx, correction); err != nil {
+				return err
+			}
+			selectedResultID = &correctionID
+		}
+
+		decision = annotationdomain.ReviewDecision{
+			ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID, TaskID: cmd.TaskID,
+			ReviewAttemptID: attempt.ID, ReviewedResultID: cmd.ReviewedResultID, SelectedResultID: selectedResultID,
+			ReviewerRef: cmd.ReviewerRef, Outcome: cmd.Action, Reason: cmd.Reason,
+			ExpectedTaskRevision: cmd.ExpectedTaskRevision, CreatedAt: time.Now().UTC(),
+		}
+		if err := s.repo.InsertReviewDecision(ctx, tx, decision); err != nil {
+			return err
+		}
+		outcome := annotationdomain.ReviewAttemptOutcome{
+			ID: uuid.New(), AttemptID: attempt.ID, Outcome: annotationdomain.ReviewAttemptSucceeded, OccurredAt: time.Now().UTC(),
+		}
+		if err := s.repo.InsertReviewAttemptOutcome(ctx, tx, outcome); err != nil {
+			return err
+		}
+		if err := appendEvent(ctx, tx, "ANNOTATION_TASK", cmd.TaskID, "AnnotationReviewed", map[string]any{
+			"taskId": cmd.TaskID, "decisionId": decision.ID, "outcome": decision.Outcome,
+			"selectedResultId": decision.SelectedResultID,
+		}); err != nil {
+			return err
+		}
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			WorkspaceID: cmd.WorkspaceID, EvidenceType: "ANNOTATION_REVIEW_DECISION",
+			Title: "Annotation review decision", SourceType: "CORE",
+			Metadata: map[string]any{
+				"taskId": cmd.TaskID, "decisionId": decision.ID, "outcome": decision.Outcome,
+				"reviewedResultId": decision.ReviewedResultID, "selectedResultId": decision.SelectedResultID,
+			}, CreatedBy: cmd.ActorID,
+		}, evidence.Relation{ObjectType: "ANNOTATION_REVIEW_DECISION", ObjectID: decision.ID, RelationType: "DECISION_EVIDENCE"}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &cmd.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID,
+			Action: "ANNOTATION_REVIEWED", ObjectType: "ANNOTATION_REVIEW_DECISION", ObjectID: decision.ID,
+			AfterState: map[string]any{
+				"taskId": cmd.TaskID, "outcome": decision.Outcome, "selectedResultId": decision.SelectedResultID,
+			}, Reason: cmd.Reason, TraceID: cmd.TraceID,
+		})
+	})
+	return decision, err
+}
+
+func (s *Service) recordReviewFailure(
+	ctx context.Context,
+	cmd ReviewAnnotationCommand,
+	attempt annotationdomain.ReviewAttempt,
+	outcomeValue string,
+	errorCode string,
+) (annotationdomain.ReviewAttemptOutcome, error) {
+	outcome := annotationdomain.ReviewAttemptOutcome{
+		ID: uuid.New(), AttemptID: attempt.ID, Outcome: outcomeValue, ErrorCode: errorCode, OccurredAt: time.Now().UTC(),
+	}
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if err := s.repo.InsertReviewAttemptOutcome(ctx, tx, outcome); err != nil {
+			return err
+		}
+		if err := appendEvent(ctx, tx, "ANNOTATION_REVIEW_ATTEMPT", attempt.ID, "AnnotationReviewAttemptFailed", map[string]any{
+			"attemptId": attempt.ID, "taskId": cmd.TaskID, "outcome": outcomeValue, "errorCode": errorCode,
+		}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &cmd.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID,
+			Action: "ANNOTATION_REVIEW_ATTEMPT_FAILED", ObjectType: "ANNOTATION_REVIEW_ATTEMPT",
+			ObjectID: attempt.ID, AfterState: map[string]any{"outcome": outcomeValue, "errorCode": errorCode},
+			Reason: cmd.Reason, TraceID: cmd.TraceID,
+		})
+	})
+	return outcome, err
+}
+
+type FinalizeAnnotationSnapshotCommand struct {
+	WorkspaceID uuid.UUID
+	CampaignID  uuid.UUID
+	ActorID     *uuid.UUID
+	TraceID     string
+}
+
+func (s *Service) FinalizeAnnotationSnapshot(
+	ctx context.Context,
+	cmd FinalizeAnnotationSnapshotCommand,
+) (annotationdomain.Snapshot, error) {
+	if existing, found, err := s.finalizedSnapshotReplay(ctx, cmd.WorkspaceID, cmd.CampaignID); err != nil {
+		return annotationdomain.Snapshot{}, err
+	} else if found {
+		return existing, nil
+	}
+
+	var snapshot annotationdomain.Snapshot
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		campaign, err := s.repo.LockCampaignTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignActive {
+			return annotationdomain.ErrInvalidSnapshot
+		}
+		if err := s.repo.LockTasksTx(ctx, tx, cmd.CampaignID); err != nil {
+			return err
+		}
+		tasks, err := s.repo.ListTasksTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		results, err := s.repo.ListResultsTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		decisions, err := s.repo.ListDecisionsTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if len(tasks) == 0 || len(tasks) != campaign.ExpectedTaskCount || len(decisions) != len(tasks) {
+			return annotationdomain.ErrInvalidSnapshot
+		}
+
+		now := time.Now().UTC().Truncate(time.Microsecond)
+		manifest, outputCount, err := snapshotManifest(campaign, tasks, results, decisions, now, cmd.ActorID)
+		if err != nil {
+			return err
+		}
+		snapshot = annotationdomain.Snapshot{
+			ID:          stableSnapshotID(cmd.WorkspaceID, cmd.CampaignID),
+			WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID,
+			Status: annotationdomain.SnapshotBuilding, Manifest: manifest,
+			ManifestHashPayload: append([]byte(nil), manifest...), RootHash: hashBytes(manifest),
+			ExpectedTaskCount: len(tasks), ExpectedResultCount: len(results),
+			ExpectedDecisionCount: len(decisions), ExpectedOutputCount: outputCount,
+			CreatedAt: now, CreatedBy: cmd.ActorID,
+		}
+		if err := snapshot.Validate(); err != nil {
+			return err
+		}
+		if err := s.repo.InsertAndFinalizeSnapshot(ctx, tx, snapshot, tasks, results, decisions, now); err != nil {
+			return err
+		}
+		snapshot.Status = annotationdomain.SnapshotFinalized
+		snapshot.FinalizedAt = &now
+
+		if err := appendEvent(ctx, tx, "ANNOTATION_SNAPSHOT", snapshot.ID, "AnnotationSnapshotFinalized", map[string]any{
+			"snapshotId": snapshot.ID, "campaignId": cmd.CampaignID,
+			"rootHash": snapshot.RootHash, "taskCount": len(tasks),
+			"resultCount": len(results), "decisionCount": len(decisions), "outputCount": outputCount,
+		}); err != nil {
+			return err
+		}
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			WorkspaceID: cmd.WorkspaceID, EvidenceType: "ANNOTATION_SNAPSHOT_FINALIZED",
+			Title: "Annotation snapshot finalized", SourceType: "CORE",
+			Metadata: map[string]any{
+				"campaignId": cmd.CampaignID, "rootHash": snapshot.RootHash,
+				"taskCount": len(tasks), "resultCount": len(results),
+				"decisionCount": len(decisions), "outputCount": outputCount,
+			}, CreatedBy: cmd.ActorID,
+		}, evidence.Relation{ObjectType: "ANNOTATION_SNAPSHOT", ObjectID: snapshot.ID, RelationType: "FINALIZATION_EVIDENCE"}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &cmd.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID,
+			Action: "ANNOTATION_SNAPSHOT_FINALIZED", ObjectType: "ANNOTATION_SNAPSHOT", ObjectID: snapshot.ID,
+			AfterState: map[string]any{
+				"campaignId": cmd.CampaignID, "rootHash": snapshot.RootHash,
+				"taskCount": len(tasks), "resultCount": len(results),
+				"decisionCount": len(decisions), "outputCount": outputCount,
+			}, TraceID: cmd.TraceID,
+		})
+	})
+	if err != nil {
+		if existing, found, replayErr := s.finalizedSnapshotReplay(ctx, cmd.WorkspaceID, cmd.CampaignID); replayErr == nil && found {
+			return existing, nil
+		}
+	}
+	return snapshot, err
+}
+
+func (s *Service) finalizedSnapshotReplay(
+	ctx context.Context,
+	workspaceID, campaignID uuid.UUID,
+) (annotationdomain.Snapshot, bool, error) {
+	if workspaceID == uuid.Nil || campaignID == uuid.Nil {
+		return annotationdomain.Snapshot{}, false, annotationdomain.ErrInvalidSnapshot
+	}
+	snapshot, err := s.repo.GetSnapshotByCampaign(ctx, workspaceID, campaignID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.Snapshot{}, false, nil
+	}
+	if err != nil {
+		return annotationdomain.Snapshot{}, false, err
+	}
+	if snapshot.Status != annotationdomain.SnapshotFinalized || snapshot.FinalizedAt == nil {
+		return annotationdomain.Snapshot{}, false, annotationdomain.ErrInvalidSnapshot
+	}
+	valid, err := s.repo.GetSnapshotIntegrity(ctx, snapshot.ID)
+	if err != nil {
+		return annotationdomain.Snapshot{}, false, err
+	}
+	if !valid {
+		return annotationdomain.Snapshot{}, false, annotationdomain.ErrInvalidSnapshot
+	}
+	return snapshot, true, nil
+}
+
+func stableSnapshotID(workspaceID, campaignID uuid.UUID) uuid.UUID {
+	return uuid.NewSHA1(
+		uuid.NameSpaceURL,
+		[]byte("annotation-snapshot:"+workspaceID.String()+":"+campaignID.String()),
+	)
+}
+
+func snapshotManifest(
+	campaign annotationdomain.Campaign,
+	tasks []annotationdomain.Task,
+	results []annotationdomain.Result,
+	decisions []annotationdomain.ReviewDecision,
+	builtAt time.Time,
+	builtBy *uuid.UUID,
+) ([]byte, int, error) {
+	type frozenSpecItem struct {
+		Ref             string `json:"ref"`
+		Version         string `json:"version"`
+		ContentSHA256   string `json:"contentSha256"`
+		ContentSnapshot string `json:"contentSnapshot"`
+	}
+	toFrozen := func(value annotationdomain.FrozenSpec) frozenSpecItem {
+		return frozenSpecItem{
+			Ref: value.Ref, Version: value.Version,
+			ContentSHA256: value.ContentSHA256, ContentSnapshot: value.ContentSnapshot,
+		}
+	}
+	type taskItem struct {
+		ID                  string `json:"id"`
+		SourceItemRef       string `json:"sourceItemRef"`
+		SourceContentSHA256 string `json:"sourceContentSha256"`
+		TaskTextSHA256      string `json:"taskTextSha256"`
+		PrimaryAnnotatorRef string `json:"primaryAnnotatorRef"`
+	}
+	type resultItem struct {
+		ID                     string  `json:"id"`
+		TaskID                 string  `json:"taskId"`
+		AuthorRef              string  `json:"authorRef"`
+		ProviderBindingRef     string  `json:"providerBindingRef"`
+		ExternalTaskID         string  `json:"externalTaskId"`
+		ExternalAnnotationID   string  `json:"externalAnnotationId"`
+		ExternalRevision       string  `json:"externalRevision"`
+		ObservationKey         string  `json:"observationKey"`
+		CanonicalPayloadSHA256 string  `json:"canonicalPayloadSha256"`
+		NormalizerVersion      string  `json:"normalizerVersion"`
+		CorrectedFromResultID  *string `json:"correctedFromResultId,omitempty"`
+		CreatedAtUnixMicros    int64   `json:"createdAtUnixMicros"`
+		CreatedBy              string  `json:"createdBy"`
+	}
+	type decisionItem struct {
+		ID                   string  `json:"id"`
+		TaskID               string  `json:"taskId"`
+		ReviewAttemptID      string  `json:"reviewAttemptId"`
+		Outcome              string  `json:"outcome"`
+		ReviewedResultID     *string `json:"reviewedResultId,omitempty"`
+		SelectedResultID     *string `json:"selectedResultId,omitempty"`
+		ReviewerRef          string  `json:"reviewerRef"`
+		Reason               string  `json:"reason"`
+		ExpectedTaskRevision int64   `json:"expectedTaskRevision"`
+	}
+	type outputItem struct {
+		TaskID           string `json:"taskId"`
+		SelectedResultID string `json:"selectedResultId"`
+	}
+	type manifest struct {
+		FormatVersion            string         `json:"formatVersion"`
+		WorkspaceID              string         `json:"workspaceId"`
+		CampaignID               string         `json:"campaignId"`
+		InputDatasetVersionID    string         `json:"inputDatasetVersionId"`
+		InputChecksumAlgorithm   string         `json:"inputChecksumAlgorithm"`
+		InputChecksumSHA256      string         `json:"inputChecksumSha256"`
+		InputCertificationID     string         `json:"inputCertificationId"`
+		AnnotationContributionID string         `json:"annotationContributionResourceId"`
+		Purpose                  string         `json:"purpose"`
+		Action                   string         `json:"action"`
+		ConsumerRef              string         `json:"consumerRef"`
+		ScopeType                string         `json:"scopeType"`
+		ScopeRef                 string         `json:"scopeRef"`
+		TaskManifestHash         string         `json:"taskManifestHash"`
+		Schema                   frozenSpecItem `json:"schema"`
+		Taxonomy                 frozenSpecItem `json:"taxonomy"`
+		Rubric                   frozenSpecItem `json:"rubric"`
+		Renderer                 frozenSpecItem `json:"renderer"`
+		ReviewPolicy             frozenSpecItem `json:"reviewPolicy"`
+		BuiltAtUnixMicros        int64          `json:"builtAtUnixMicros"`
+		BuiltBy                  string         `json:"builtBy"`
+		Tasks                    []taskItem     `json:"tasks"`
+		Results                  []resultItem   `json:"results"`
+		Decisions                []decisionItem `json:"decisions"`
+		Outputs                  []outputItem   `json:"outputs"`
+	}
+
+	if campaign.InputChecksumSHA256 == "" {
+		return nil, 0, annotationdomain.ErrInvalidSnapshot
+	}
+	builtAt = builtAt.UTC().Truncate(time.Microsecond)
+	builtByValue := ""
+	if builtBy != nil {
+		builtByValue = builtBy.String()
+	}
+
+	taskItems := make([]taskItem, 0, len(tasks))
+	for _, task := range tasks {
+		taskItems = append(taskItems, taskItem{
+			ID: task.ID.String(), SourceItemRef: task.SourceItemRef,
+			SourceContentSHA256: task.SourceContentSHA256, TaskTextSHA256: task.TaskTextSHA256,
+			PrimaryAnnotatorRef: task.PrimaryAnnotatorRef,
+		})
+	}
+	resultItems := make([]resultItem, 0, len(results))
+	for _, result := range results {
+		var corrected *string
+		if result.CorrectedFromResultID != nil {
+			value := result.CorrectedFromResultID.String()
+			corrected = &value
+		}
+		createdBy := ""
+		if result.CreatedBy != nil {
+			createdBy = result.CreatedBy.String()
+		}
+		resultItems = append(resultItems, resultItem{
+			ID: result.ID.String(), TaskID: result.TaskID.String(), AuthorRef: result.AuthorRef,
+			ProviderBindingRef: result.ProviderBindingRef, ExternalTaskID: result.ExternalTaskID,
+			ExternalAnnotationID: result.ExternalAnnotationID, ExternalRevision: result.ExternalRevision,
+			ObservationKey: result.ObservationKey, CanonicalPayloadSHA256: result.CanonicalPayloadSHA256,
+			NormalizerVersion: result.NormalizerVersion, CorrectedFromResultID: corrected,
+			CreatedAtUnixMicros: result.CreatedAt.UTC().UnixMicro(), CreatedBy: createdBy,
+		})
+	}
+	decisionItems := make([]decisionItem, 0, len(decisions))
+	outputs := make([]outputItem, 0)
+	for _, decision := range decisions {
+		var reviewed, selected *string
+		if decision.ReviewedResultID != nil {
+			value := decision.ReviewedResultID.String()
+			reviewed = &value
+		}
+		if decision.SelectedResultID != nil {
+			value := decision.SelectedResultID.String()
+			selected = &value
+		}
+		decisionItems = append(decisionItems, decisionItem{
+			ID: decision.ID.String(), TaskID: decision.TaskID.String(),
+			ReviewAttemptID: decision.ReviewAttemptID.String(), Outcome: decision.Outcome,
+			ReviewedResultID: reviewed, SelectedResultID: selected,
+			ReviewerRef: decision.ReviewerRef, Reason: decision.Reason,
+			ExpectedTaskRevision: decision.ExpectedTaskRevision,
+		})
+		if selected != nil && (decision.Outcome == annotationdomain.ReviewAccept || decision.Outcome == annotationdomain.ReviewCorrect) {
+			outputs = append(outputs, outputItem{TaskID: decision.TaskID.String(), SelectedResultID: *selected})
+		}
+	}
+	sort.Slice(taskItems, func(i, j int) bool { return taskItems[i].ID < taskItems[j].ID })
+	sort.Slice(resultItems, func(i, j int) bool { return resultItems[i].ID < resultItems[j].ID })
+	sort.Slice(decisionItems, func(i, j int) bool { return decisionItems[i].ID < decisionItems[j].ID })
+	sort.Slice(outputs, func(i, j int) bool { return outputs[i].TaskID < outputs[j].TaskID })
+
+	encoded, err := json.Marshal(manifest{
+		FormatVersion: "annotation-snapshot-v1", WorkspaceID: campaign.WorkspaceID.String(),
+		CampaignID: campaign.ID.String(), InputDatasetVersionID: campaign.InputDatasetVersionID.String(),
+		InputChecksumAlgorithm: "SHA256", InputChecksumSHA256: campaign.InputChecksumSHA256,
+		InputCertificationID:     campaign.InputCertificationID.String(),
+		AnnotationContributionID: campaign.AnnotationContributionID.String(),
+		Purpose:                  campaign.Purpose, Action: campaign.Action, ConsumerRef: campaign.ConsumerRef,
+		ScopeType: campaign.ScopeType, ScopeRef: campaign.ScopeRef, TaskManifestHash: campaign.TaskManifestHash,
+		Schema: toFrozen(campaign.Schema), Taxonomy: toFrozen(campaign.Taxonomy), Rubric: toFrozen(campaign.Rubric),
+		Renderer: toFrozen(campaign.Renderer), ReviewPolicy: toFrozen(campaign.ReviewPolicy),
+		BuiltAtUnixMicros: builtAt.UnixMicro(), BuiltBy: builtByValue,
+		Tasks: taskItems, Results: resultItems, Decisions: decisionItems, Outputs: outputs,
+	})
+	if err != nil {
+		return nil, 0, fmt.Errorf("marshal annotation snapshot manifest: %w", err)
+	}
+	return encoded, len(outputs), nil
+}
+
+func appendEvent(
+	ctx context.Context,
+	tx pgx.Tx,
+	aggregateType string,
+	aggregateID uuid.UUID,
+	eventType string,
+	payload any,
+) error {
+	event, err := outbox.NewEvent(aggregateType, aggregateID, eventType, payload)
+	if err != nil {
+		return err
+	}
+	return outbox.Append(ctx, tx, event)
+}
+
+func actorType(actorID *uuid.UUID) string {
+	if actorID == nil {
+		return "SYSTEM"
+	}
+	return "USER"
+}
+
+func campaignFingerprint(spec annotationdomain.CampaignSpec) (string, error) {
+	payload := struct {
+		RequestedID              uuid.UUID                   `json:"requestedId"`
+		WorkspaceID              uuid.UUID                   `json:"workspaceId"`
+		InputDatasetVersionID    uuid.UUID                   `json:"inputDatasetVersionId"`
+		InputCertificationID     uuid.UUID                   `json:"inputCertificationId"`
+		AnnotationContributionID uuid.UUID                   `json:"annotationContributionResourceId"`
+		Purpose                  string                      `json:"purpose"`
+		Action                   string                      `json:"action"`
+		ConsumerRef              string                      `json:"consumerRef"`
+		ScopeType                string                      `json:"scopeType"`
+		ScopeRef                 string                      `json:"scopeRef"`
+		Schema                   annotationdomain.FrozenSpec `json:"schema"`
+		Taxonomy                 annotationdomain.FrozenSpec `json:"taxonomy"`
+		Rubric                   annotationdomain.FrozenSpec `json:"rubric"`
+		Renderer                 annotationdomain.FrozenSpec `json:"renderer"`
+		ReviewPolicy             annotationdomain.FrozenSpec `json:"reviewPolicy"`
+		ActorID                  *uuid.UUID                  `json:"actorId"`
+	}{
+		RequestedID: spec.ID, WorkspaceID: spec.WorkspaceID,
+		InputDatasetVersionID:    spec.InputDatasetVersionID,
+		InputCertificationID:     spec.InputCertificationID,
+		AnnotationContributionID: spec.AnnotationContributionID,
+		Purpose:                  strings.TrimSpace(spec.Purpose), Action: strings.TrimSpace(spec.Action),
+		ConsumerRef: strings.TrimSpace(spec.ConsumerRef), ScopeType: strings.TrimSpace(spec.ScopeType),
+		ScopeRef: strings.TrimSpace(spec.ScopeRef), Schema: spec.Schema, Taxonomy: spec.Taxonomy,
+		Rubric: spec.Rubric, Renderer: spec.Renderer, ReviewPolicy: spec.ReviewPolicy, ActorID: spec.ActorID,
+	}
+	encoded, err := json.Marshal(payload)
+	if err != nil {
+		return "", fmt.Errorf("marshal annotation campaign fingerprint: %w", err)
+	}
+	return hashBytes(encoded), nil
+}
+
+func taskManifestHash(tasks []annotationdomain.Task) (string, error) {
+	type item struct {
+		ID                  string `json:"id"`
+		SourceItemRef       string `json:"sourceItemRef"`
+		SourceContentSHA256 string `json:"sourceContentSha256"`
+		TaskTextSHA256      string `json:"taskTextSha256"`
+		PrimaryAnnotatorRef string `json:"primaryAnnotatorRef"`
+	}
+	items := make([]item, 0, len(tasks))
+	for _, task := range tasks {
+		items = append(items, item{
+			ID: task.ID.String(), SourceItemRef: task.SourceItemRef,
+			SourceContentSHA256: task.SourceContentSHA256, TaskTextSHA256: task.TaskTextSHA256,
+			PrimaryAnnotatorRef: task.PrimaryAnnotatorRef,
+		})
+	}
+	sort.Slice(items, func(i, j int) bool { return items[i].ID < items[j].ID })
+	encoded, err := json.Marshal(items)
+	if err != nil {
+		return "", err
+	}
+	return hashBytes(encoded), nil
+}
+
+func reviewFingerprint(cmd ReviewAnnotationCommand) (string, error) {
+	payload := struct {
+		WorkspaceID          uuid.UUID  `json:"workspaceId"`
+		CampaignID           uuid.UUID  `json:"campaignId"`
+		TaskID               uuid.UUID  `json:"taskId"`
+		ExpectedTaskRevision int64      `json:"expectedTaskRevision"`
+		ReviewerRef          string     `json:"reviewerRef"`
+		Action               string     `json:"action"`
+		Reason               string     `json:"reason"`
+		ReviewedResultID     *uuid.UUID `json:"reviewedResultId"`
+		CorrectedPayloadHash string     `json:"correctedPayloadHash"`
+	}{
+		WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID, TaskID: cmd.TaskID,
+		ExpectedTaskRevision: cmd.ExpectedTaskRevision, ReviewerRef: strings.TrimSpace(cmd.ReviewerRef),
+		Action: cmd.Action, Reason: strings.TrimSpace(cmd.Reason), ReviewedResultID: cmd.ReviewedResultID,
+		CorrectedPayloadHash: cmd.CorrectedPayloadHash,
+	}
+	encoded, err := json.Marshal(payload)
+	if err != nil {
+		return "", err
+	}
+	return hashBytes(encoded), nil
+}
+
+func resultReplayMatches(existing annotationdomain.Result, cmd RecordResultCommand) bool {
+	return existing.TaskID == cmd.TaskID &&
+		existing.AuthorRef == strings.TrimSpace(cmd.AuthorRef) &&
+		existing.ProviderBindingRef == strings.TrimSpace(cmd.ProviderBindingRef) &&
+		existing.ExternalTaskID == strings.TrimSpace(cmd.ExternalTaskID) &&
+		existing.ExternalAnnotationID == strings.TrimSpace(cmd.ExternalAnnotationID) &&
+		existing.ExternalRevision == strings.TrimSpace(cmd.ExternalRevision) &&
+		existing.ObservationKey == strings.TrimSpace(cmd.ObservationKey) &&
+		existing.CanonicalPayloadSHA256 == strings.TrimSpace(cmd.CanonicalPayloadSHA256) &&
+		existing.NormalizerVersion == strings.TrimSpace(cmd.NormalizerVersion)
+}
+
+func hashBytes(value []byte) string {
+	digest := sha256.Sum256(value)
+	return hex.EncodeToString(digest[:])
+}
