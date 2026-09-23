@@ -466,7 +466,7 @@ func TestDatasetWorkspaceIdentityIsImmutable(t *testing.T) {
 	}
 }
 
-func TestPublishedLineageFreezeIgnoresMutableProductWorkspace(t *testing.T) {
+func TestDataProductWorkspaceIdentityIsImmutable(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
 		t.Skip("TEST_POSTGRES_DSN is not set")
@@ -478,51 +478,11 @@ func TestPublishedLineageFreezeIgnoresMutableProductWorkspace(t *testing.T) {
 	}
 	defer pool.Close()
 
-	release, inputID := insertReleaseMembershipFixture(t, ctx, pool)
-	outputID := release.Datasets[0].DatasetVersionID
-	workspaceID := releaseWorkspaceID(t, ctx, pool, release.ProductID)
-
-	publishTx, err := pool.Begin(ctx)
-	if err != nil {
-		t.Fatalf("begin publish tx: %v", err)
-	}
-	defer publishTx.Rollback(ctx)
-	if _, err := deliveryfence.Lock(ctx, publishTx, workspaceID); err != nil {
-		t.Fatalf("lock workspace fence: %v", err)
-	}
-	if _, err := publishTx.Exec(ctx, `
-		UPDATE product_release SET status='PUBLISHED', released_at=now()
-		WHERE id=$1 AND status='READY'
-	`, release.ID); err != nil {
-		t.Fatalf("publish release: %v", err)
-	}
-	if err := publishTx.Commit(ctx); err != nil {
-		t.Fatalf("commit release publish: %v", err)
-	}
-
+	release, _ := insertReleaseMembershipFixture(t, ctx, pool)
 	if _, err := pool.Exec(ctx, `
 		UPDATE data_product SET workspace_id=$2 WHERE id=$1
-	`, release.ProductID, uuid.New()); err != nil {
-		t.Fatalf("move published product workspace fixture: %v", err)
-	}
-
-	newInputID := uuid.New()
-	if _, err := pool.Exec(ctx, `
-		INSERT INTO dataset_version (
-			id, dataset_id, version_no, status, storage_uri,
-			checksum_algorithm, checksum_value, metadata, ready_at
-		)
-		SELECT $1, dataset_id, 99, 'READY', $2, 'SHA256', $3, '{}'::jsonb, now()
-		FROM dataset_version WHERE id=$4
-	`, newInputID, "s3://workspace-independent-freeze/"+newInputID.String(), strings.Repeat("9", 64), inputID); err != nil {
-		t.Fatalf("insert post-publish lineage input: %v", err)
-	}
-
-	if _, err := pool.Exec(ctx, `
-		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
-		VALUES ($1,$2,'DERIVED_FROM')
-	`, outputID, newInputID); err == nil || !strings.Contains(err.Error(), "published release history is frozen") {
-		t.Fatalf("lineage after product workspace move error = %v, want frozen history", err)
+	`, release.ProductID, uuid.New()); err == nil || !strings.Contains(err.Error(), "data_product workspace identity is immutable") {
+		t.Fatalf("data_product workspace move error = %v, want immutable workspace rejection", err)
 	}
 }
 
