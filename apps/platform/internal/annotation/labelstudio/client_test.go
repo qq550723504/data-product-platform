@@ -14,6 +14,11 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/labelstudio"
 )
 
+const (
+	testSchema = `{"kind":"single-label-v1","labels":["EVIDENCE_SUFFICIENT","EVIDENCE_INSUFFICIENT","EVIDENCE_CONFLICT"]}`
+	testLabelConfig = "<View><Text name=\"text\" value=\"$text\"/><Choices name=\"label\" toName=\"text\" choice=\"single\"><Choice value=\"EVIDENCE_SUFFICIENT\"/><Choice value=\"EVIDENCE_INSUFFICIENT\"/><Choice value=\"EVIDENCE_CONFLICT\"/></Choices></View>"
+)
+
 func TestLabelStudioCreateProjectAndSubmitTasks(t *testing.T) {
 	var imported []map[string]any
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +33,7 @@ func TestLabelStudioCreateProjectAndSubmitTasks(t *testing.T) {
 			}
 			writeJSON(t, w, map[string]any{
 				"id":           41,
-				"label_config": "<View><Choices name=\"label\" toName=\"text\"/></View>",
+				"label_config": testLabelConfig,
 			})
 		case "/api/projects/41/import":
 			if r.URL.Query().Get("return_task_ids") != "true" {
@@ -62,7 +67,7 @@ func TestLabelStudioCreateProjectAndSubmitTasks(t *testing.T) {
 		RequestID:          "campaign-create-1",
 		RequestFingerprint: strings.Repeat("a", 64),
 		Title:              "gold-pilot",
-		SchemaContent:      schema,
+		SchemaContent:      testSchema,
 		SchemaSHA256:       strings.Repeat("b", 64),
 	})
 	if err != nil {
@@ -127,7 +132,7 @@ func TestLabelStudioTransportFailureIsRetryableWithoutLeakingBody(t *testing.T) 
 		RequestID:          "request",
 		RequestFingerprint: strings.Repeat("a", 64),
 		Title:              "pilot",
-		SchemaContent:      schema,
+		SchemaContent:      testSchema,
 		SchemaSHA256:       strings.Repeat("b", 64),
 	})
 	if err == nil {
@@ -153,7 +158,7 @@ func TestLabelStudioLookupCampaignBindingRecoversExactProject(t *testing.T) {
 	expectedDescription := "core_campaign_id=" + campaignID.String() +
 		" core_request_id=" + requestID +
 		" core_request_fingerprint=" + fingerprint +
-		" core_config_sha256=" + configHash
+		" core_schema_sha256=" + configHash
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/api/projects/" || r.Method != http.MethodGet {
@@ -186,8 +191,7 @@ func TestLabelStudioLookupCampaignBindingRecoversExactProject(t *testing.T) {
 		RequestID:          requestID,
 		RequestFingerprint: fingerprint,
 		Title:              "gold-pilot",
-		LabelConfig:        config,
-		SchemaContent:      schema,
+		SchemaContent:      testSchema,
 		SchemaSHA256:       configHash,
 	})
 	if err != nil {
@@ -214,7 +218,7 @@ func TestLabelStudioLookupCampaignBindingDoesNotProveAbsence(t *testing.T) {
 		CampaignID:         uuid.New(),
 		RequestID:          "campaign-create-1",
 		RequestFingerprint: strings.Repeat("a", 64),
-		SchemaContent:      schema,
+		SchemaContent:      testSchema,
 		SchemaSHA256:       strings.Repeat("b", 64),
 	})
 	if err != nil {
