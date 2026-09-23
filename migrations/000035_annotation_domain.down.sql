@@ -74,6 +74,7 @@ DROP TABLE annotation_review_attempt_outcome;
 DROP TABLE annotation_review_attempt;
 DROP TABLE annotation_result;
 DROP TABLE annotation_task;
+DROP TABLE annotation_campaign_command;
 DROP TABLE annotation_campaign;
 
 DROP FUNCTION IF EXISTS require_annotation_snapshot_finalized_on_commit();
@@ -88,5 +89,6 @@ DROP FUNCTION IF EXISTS guard_annotation_result_insert();
 DROP FUNCTION IF EXISTS guard_annotation_task_update();
 DROP FUNCTION IF EXISTS guard_annotation_task_insert();
 DROP FUNCTION IF EXISTS guard_annotation_campaign_update();
+DROP FUNCTION IF EXISTS validate_annotation_campaign_command_insert();
 DROP FUNCTION IF EXISTS validate_annotation_campaign_insert();
 DROP FUNCTION IF EXISTS prevent_annotation_append_only_mutation();
