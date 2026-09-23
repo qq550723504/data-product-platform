@@ -559,7 +559,13 @@ func (s *Service) commitReviewDecision(
 ) (annotationdomain.ReviewDecision, error) {
 	var decision annotationdomain.ReviewDecision
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		selectedResultID := cmd.ReviewedResultID
+		var selectedResultID *uuid.UUID
+		if cmd.Action == annotationdomain.ReviewAccept {
+			if cmd.ReviewedResultID == nil {
+				return annotationdomain.ErrInvalidReviewDecision
+			}
+			selectedResultID = cmd.ReviewedResultID
+		}
 		if cmd.Action == annotationdomain.ReviewCorrect {
 			if cmd.ReviewedResultID == nil || hashBytes(cmd.CorrectedPayload) != cmd.CorrectedPayloadHash {
 				return annotationdomain.ErrInvalidReviewDecision
@@ -1008,7 +1014,12 @@ func reviewFingerprint(cmd ReviewAnnotationCommand) (string, error) {
 func resultReplayMatches(existing annotationdomain.Result, cmd RecordResultCommand) bool {
 	return existing.TaskID == cmd.TaskID &&
 		existing.AuthorRef == strings.TrimSpace(cmd.AuthorRef) &&
-		existing.CanonicalPayloadSHA256 == cmd.CanonicalPayloadSHA256 &&
+		existing.ProviderBindingRef == strings.TrimSpace(cmd.ProviderBindingRef) &&
+		existing.ExternalTaskID == strings.TrimSpace(cmd.ExternalTaskID) &&
+		existing.ExternalAnnotationID == strings.TrimSpace(cmd.ExternalAnnotationID) &&
+		existing.ExternalRevision == strings.TrimSpace(cmd.ExternalRevision) &&
+		existing.ObservationKey == strings.TrimSpace(cmd.ObservationKey) &&
+		existing.CanonicalPayloadSHA256 == strings.TrimSpace(cmd.CanonicalPayloadSHA256) &&
 		existing.NormalizerVersion == strings.TrimSpace(cmd.NormalizerVersion)
 }
 
