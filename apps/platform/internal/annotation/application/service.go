@@ -1187,10 +1187,25 @@ func (s *Service) ensureReplayAliasAvailable(
 	}
 	aliased, err := s.repo.GetResultByObservation(ctx, cmd.WorkspaceID, cmd.CampaignID, alias)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return nil
+		return validateReplayAlias(existing, alias, nil)
 	}
 	if err != nil {
 		return err
+	}
+	return validateReplayAlias(existing, alias, &aliased)
+}
+
+func validateReplayAlias(
+	existing annotationdomain.Result,
+	requestedAlias string,
+	aliased *annotationdomain.Result,
+) error {
+	requestedAlias = strings.TrimSpace(requestedAlias)
+	if requestedAlias == "" {
+		return annotationdomain.ErrInvalidResult
+	}
+	if requestedAlias == existing.ObservationKey || aliased == nil {
+		return nil
 	}
 	if aliased.ID != existing.ID {
 		return ErrIdempotencyConflict
