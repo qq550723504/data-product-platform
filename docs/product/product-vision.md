@@ -10,15 +10,16 @@ Data Product Platform 是一套数据产品与高质量数据集生产治理平�
 
 ## 当前阶段
 
-核心 POC 已完成。
+核心 POC 与 #129 Certified Dataset 第一阶段 MVP / enterprise-activity 纵向 Pilot 均已完成，E2E1–E2E20 全部 PASS。
 
-当前进入 #129 Certified Dataset 受控试点，主要验证：
+第一阶段已经验证：
 
-1. 原始数据能否被加工成可验收的高质量数据集；
-2. 质量报告是否能解释为什么通过或失败；
-3. 数据权利来源和授权是否能证明为什么可以使用和交付；
-4. Certified Dataset 是否能支撑数据产品、AI 数据或可信数据空间交付；
-5. 与原人工流程相比能减少多少工时与交付周期。
+1. 原始数据可以被加工成可验收的 Certified Dataset；
+2. 质量报告可以解释为什么通过或失败；
+3. 数据权利来源和授权可以解释为什么允许或拒绝使用与交付；
+4. Certified Dataset 可以完成受控的 trusted DIRECT_DATA 交付与 UI/trace 验收。
+
+第一阶段完成不等于生产上线批准。下一阶段不自动启动，应基于真实产品优先级，从 AI / Gold Dataset、Delivery Hardening / external provider、Core reliability debt 或客户/行业反馈驱动增强中单独立项。
 
 ## 核心问题
 
