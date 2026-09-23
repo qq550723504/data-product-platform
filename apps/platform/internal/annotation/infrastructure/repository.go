@@ -460,6 +460,97 @@ func (r *Repository) InsertAndFinalizeSnapshot(
 	return nil
 }
 
+
+func (r *Repository) GetSnapshotIntegrity(ctx context.Context, snapshotID uuid.UUID) (bool, error) {
+	var valid bool
+	err := r.pool.QueryRow(ctx, `
+		WITH task_membership AS (
+			SELECT COALESCE(
+				jsonb_agg(
+					jsonb_build_object(
+						'id', st.task_id::text,
+						'sourceItemRef', st.source_item_ref,
+						'sourceContentSha256', st.source_content_sha256,
+						'taskTextSha256', st.task_text_sha256
+					) ORDER BY st.task_id::text
+				), '[]'::jsonb
+			) AS value, count(*) AS count
+			FROM annotation_snapshot_task st
+			WHERE st.snapshot_id=$1
+		),
+		result_membership AS (
+			SELECT COALESCE(
+				jsonb_agg(
+					jsonb_strip_nulls(jsonb_build_object(
+						'id', sr.result_id::text,
+						'taskId', sr.task_id::text,
+						'canonicalPayloadSha256', sr.canonical_payload_sha256,
+						'authorRef', sr.author_ref,
+						'correctedFromResultId', r.corrected_from_result_id::text
+					)) ORDER BY sr.result_id::text
+				), '[]'::jsonb
+			) AS value, count(*) AS count
+			FROM annotation_snapshot_result sr
+			JOIN annotation_result r ON r.id=sr.result_id
+			WHERE sr.snapshot_id=$1
+		),
+		decision_membership AS (
+			SELECT COALESCE(
+				jsonb_agg(
+					jsonb_strip_nulls(jsonb_build_object(
+						'id', sd.decision_id::text,
+						'taskId', sd.task_id::text,
+						'outcome', sd.outcome,
+						'reviewedResultId', sd.reviewed_result_id::text,
+						'selectedResultId', sd.selected_result_id::text,
+						'reviewerRef', sd.reviewer_ref,
+						'reason', sd.reason
+					)) ORDER BY sd.decision_id::text
+				), '[]'::jsonb
+			) AS value, count(*) AS count
+			FROM annotation_snapshot_decision sd
+			WHERE sd.snapshot_id=$1
+		),
+		output_membership AS (
+			SELECT COALESCE(
+				jsonb_agg(
+					jsonb_build_object(
+						'taskId', so.task_id::text,
+						'selectedResultId', so.selected_result_id::text
+					) ORDER BY so.task_id::text
+				), '[]'::jsonb
+			) AS value, count(*) AS count
+			FROM annotation_snapshot_output so
+			WHERE so.snapshot_id=$1
+		)
+		SELECT
+			s.status='FINALIZED'
+			AND convert_from(s.manifest_hash_payload, 'UTF8')::jsonb = s.manifest
+			AND encode(digest(s.manifest_hash_payload, 'sha256'), 'hex') = s.root_hash
+			AND s.manifest->'tasks' = tm.value
+			AND s.manifest->'results' = rm.value
+			AND s.manifest->'decisions' = dm.value
+			AND s.manifest->'outputs' = om.value
+			AND s.expected_task_count = tm.count
+			AND s.expected_result_count = rm.count
+			AND s.expected_decision_count = dm.count
+			AND s.expected_output_count = om.count
+		FROM annotation_snapshot s
+		CROSS JOIN task_membership tm
+		CROSS JOIN result_membership rm
+		CROSS JOIN decision_membership dm
+		CROSS JOIN output_membership om
+		WHERE s.id=$1
+	`, snapshotID).Scan(&valid)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return false, annotationdomain.ErrInvalidSnapshot
+	}
+	if err != nil {
+		return false, fmt.Errorf("verify annotation snapshot integrity: %w", err)
+	}
+	return valid, nil
+}
+
 func (r *Repository) GetResultByObservation(
 	ctx context.Context,
 	workspaceID, campaignID uuid.UUID,
