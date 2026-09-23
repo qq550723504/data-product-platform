@@ -4,18 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"sort"
-	"strings"
 	"time"
 
-"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
+	"github.com/google/uuid"
 	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
@@ -25,7 +18,11 @@ type EngineService struct {
 	engine AnnotationEnginePort
 }
 
-func NewEngineService(tx *transaction.Manager, repo *annotationinfra.Repository, engine AnnotationEnginePort) *EngineService {
+func NewEngineService(
+	tx *transaction.Manager,
+	repo *annotationinfra.Repository,
+	engine AnnotationEnginePort,
+) *EngineService {
 	return &EngineService{tx: tx, repo: repo, engine: engine}
 }
 
@@ -48,57 +45,120 @@ type PrepareEngineTasksCommand struct {
 }
 
 type engineCampaignManifest struct {
-	Kind          string `json:"kind"`
-	WorkspaceID   string `json:"workspaceId"`
-	CampaignID    string `json:"campaignId"`
-	Title         string `json:"title"`
-	SchemaContent string `json:"schemaContent"`
-	SchemaSHA256  string `json:"schemaSha256"`
+	Kind          string
+	WorkspaceID   string
+	CampaignID    string
+	Title         string
+	SchemaContent string
+	SchemaSHA256  string
 }
 
 type engineTasksManifest struct {
-	Kind        string        `json:"kind"`
-	WorkspaceID string        `json:"workspaceId"`
-	CampaignID  string        `json:"campaignId"`
-	Binding     engineBinding `json:"binding"`
-	Tasks       []EngineTask  `json:"tasks"`
+	Kind        string
+	WorkspaceID string
+	CampaignID  string
+	Binding     engineBinding
+	Tasks       []EngineTask
 }
 
 type engineBinding struct {
-	Provider          string `json:"provider"`
-	ProviderInstance  string `json:"providerInstance"`
-	ExternalProjectID string `json:"externalProjectId"`
-	RequestID         string `json:"requestId"`
-	ConfigSHA256      string `json:"configSha256"`
+	Provider          string
+	ProviderInstance  string
+	ExternalProjectID string
+	RequestID         string
+	ConfigSHA256      string
 }
 
-func (s *EngineService) PrepareCampaign(ctx context.Context, cmd PrepareEngineCampaignCommand) (annotationdomain.EngineOperation, error) {
-	if s == nil || s.tx == nil || s.repo == nil || s.engine == nil {
-		return annotationdomain.EngineOperation{}, errors.New("annotation engine service is not configured")
-	}
-	cmd.RequestID = strings.TrimSpace(cmd.RequestID)
-	cmd.Title = strings.TrimSpace(cmd.Title)
-	if cmd.WorkspaceID == uuid.Nil || cmd.CampaignID == uuid.Nil || cmd.RequestID == "" || cmd.Title == "" {
-		return annotationdomain.EngineOperation{}, annotationdomain.ErrInvalidEngineOperation
-	}
-
- campaign, err := s.repo.GetCampaign(ctx, cmd.CampaignID)
-	if err != nil {
-		return annotationdomain.EngineOperation{}, err
-	}
-	if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignActive {
-		return annotationdomain.EngineOperation{}, annotationdomain.ErrInvalidCampaign
-	}
-	manifest := engineCampaignManifest{
-		Kind:          annotationdomain.EngineOperationEnsureCampaign,
-		WorkspaceID:   cmd.WorkspaceID.String(),
-		CampaignID:    cmd.CampaignID.String(),
-		Title:         cmd.Title,
-		SchemaContent: campaign.Schema.ContentSnapshot,
-		SchemaSHA256:  campaign.Schema.ContentSHA256,
-	}
-	return s.prepareOperation(ctx, campaign, cmd.RequestID, manifest, cmd.ActorID, cmd.TraceID)
+type EngineDispatchResult struct {
+	Operation annotationdomain.EngineOperation
+	AttemptID uuid.UUID
 }
 
-func (s *EngineService) PrepareTasks(ctx context.Context, cmd PrepareEngineTasksCommand) (annotationdomain.EngineOperation, error) {
+type engineResolution struct {
+	State           EngineLookupState
+	CampaignBinding *EngineCampaignBinding
+	ExternalTaskIDs map[uuid.UUID]string
+	DiagnosticRef   string
+}
+
+func (s *EngineService) configured() error {
 	if s == nil || s.tx == nil || s.repo == nil || s.engine == nil {
+		return errors.New("annotation engine service is not configured")
+	}
+	return nil
+}
+
+func decodeCampaignManifest(operation annotationdomain.EngineOperation) (engineCampaignManifest, error) {
+	var manifest engineCampaignManifest
+	err := json.Unmarshal(operation.PayloadManifestHash, &manifest)
+	return manifest, err
+}
+
+func decodeTasksManifest(operation annotationdomain.EngineOperation) (engineTasksManifest, error) {
+	var manifest engineTasksManifest
+	err := json.Unmarshal(operation.PayloadManifestHash, &manifest)
+	return manifest, err
+}
+
+func terminalEngineOperation(status string) bool {
+	switch status {
+	case annotationdomain.EngineOperationMatched,
+		annotationdomain.EngineOperationRejected,
+		annotationdomain.EngineOperationConflict:
+		return true
+	default:
+		return false
+	}
+}
+
+func validLease(lease time.Duration) bool {
+	return lease > 0
+}
+
+func engineLookupRequest(request EngineSubmitRequest) EngineLookupRequest {
+	return EngineLookupRequest{
+		WorkspaceID: request.WorkspaceID,
+		CampaignID: request.CampaignID,
+		Binding: request.Binding,
+		RequestID: request.RequestID,
+		RequestFingerprint: request.RequestFingerprint,
+		Tasks: request.Tasks,
+	}
+}
+
+func engineCampaignRequest(
+	operation annotationdomain.EngineOperation,
+	manifest engineCampaignManifest,
+) EngineCampaignRequest {
+	return EngineCampaignRequest{
+		WorkspaceID: operation.WorkspaceID,
+		CampaignID: operation.CampaignID,
+		RequestID: operation.RequestID,
+		RequestFingerprint: operation.RequestFingerprint,
+		Title: manifest.Title,
+		SchemaContent: manifest.SchemaContent,
+		SchemaSHA256: manifest.SchemaSHA256,
+	}
+}
+
+func engineSubmitRequest(
+	operation annotationdomain.EngineOperation,
+	manifest engineTasksManifest,
+) EngineSubmitRequest {
+	return EngineSubmitRequest{
+		WorkspaceID: operation.WorkspaceID,
+		CampaignID: operation.CampaignID,
+		Binding: EngineCampaignBinding{
+			Provider: manifest.Binding.Provider,
+			ProviderInstance: manifest.Binding.ProviderInstance,
+			ExternalProjectID: manifest.Binding.ExternalProjectID,
+			RequestID: manifest.Binding.RequestID,
+			ConfigSHA256: manifest.Binding.ConfigSHA256,
+		},
+		RequestID: operation.RequestID,
+		RequestFingerprint: operation.RequestFingerprint,
+		Tasks: manifest.Tasks,
+	}
+}
+
+var _ = context.Background
