@@ -83,6 +83,16 @@ func TestPublishedReleaseLineagePublishFirstFreezesHistory(t *testing.T) {
 		t.Fatalf("rollback lineage mutation tx: %v", err)
 	}
 
+	if _, err := pool.Exec(ctx, `
+		UPDATE product_release SET status='PUBLISHED', released_at=now()
+		WHERE id=$1 AND status='READY'
+	`, release.ID); err == nil || !strings.Contains(err.Error(), "requires fenced publish command") {
+		t.Fatalf("direct SQL publish error = %v, want fenced publish rejection", err)
+	}
+
+	if err := repo.PermitReleasePublish(ctx, publishTx, release.ID); err != nil {
+		t.Fatalf("permit release publish: %v", err)
+	}
 	if _, err := publishTx.Exec(ctx, `
 		UPDATE product_release SET status='PUBLISHED', released_at=now()
 		WHERE id=$1 AND status='READY'
@@ -306,6 +316,10 @@ func TestDetachedLineageSubtreeCannotAttachAcrossPublish(t *testing.T) {
 			return
 		}
 		if err := repo.LockReleaseLineageForPublish(ctx, tx, release.ID); err != nil {
+			publishDone <- err
+			return
+		}
+		if err := repo.PermitReleasePublish(ctx, tx, release.ID); err != nil {
 			publishDone <- err
 			return
 		}
