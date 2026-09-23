@@ -321,6 +321,42 @@ func (r *Repository) InsertEngineTaskBinding(
 	return false, nil
 }
 
+func (r *Repository) ListEngineTaskBindings(
+	ctx context.Context,
+	campaignID uuid.UUID,
+) ([]annotationdomain.EngineTaskBinding, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT id, workspace_id, campaign_binding_id, campaign_id, task_id, external_task_id, created_at
+		  FROM annotation_engine_task_binding
+		 WHERE campaign_id=$1
+		 ORDER BY task_id
+	`, campaignID)
+	if err != nil {
+		return nil, fmt.Errorf("list annotation engine task bindings: %w", err)
+	}
+	defer rows.Close()
+
+	bindings := make([]annotationdomain.EngineTaskBinding, 0)
+	for rows.Next() {
+		var binding annotationdomain.EngineTaskBinding
+		if err := rows.Scan(
+			&binding.ID,
+			&binding.WorkspaceID,
+			&binding.CampaignBindingID,
+			&binding.CampaignID,
+			&binding.TaskID,
+			&binding.ExternalTaskID,
+			&binding.CreatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan annotation engine task binding: %w", err)
+		}
+		bindings = append(bindings, binding)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate annotation engine task bindings: %w", err)
+	}
+	return bindings, nil
+}
 type rowQuerier interface {
 	QueryRow(context.Context, string, ...any) pgx.Row
 }
