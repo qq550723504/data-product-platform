@@ -1,6 +1,6 @@
 # Data Product Platform PRD V1.1
 
-> V1.1 基线：核心 POC 已完成，当前进入 Certified Dataset 受控试点。历史 POC 范围保留在 docs/poc/poc-technical-plan-v1.md。
+> V1.1 基线：核心 POC 与 Certified Dataset 第一阶段 MVP / enterprise-activity 纵向 Pilot 均已完成；第一阶段完成不等于生产上线批准。历史 POC 范围保留在 docs/poc/poc-technical-plan-v1.md，Pilot 验收见 docs/product/certified-dataset-pilot-acceptance.md。
 
 ## 1. 产品目标
 
@@ -89,7 +89,7 @@ Certified or governed DatasetVersion
 - 行业模板
 - 系统管理
 
-当前试点优先扩展现有 DatasetVersion 页面，不先扩张大量一级导航。
+第一阶段 Pilot 已完成时仍优先复用现有 DatasetVersion 页面，不因阶段结束自动扩张大量一级导航；后续新增产品入口应由独立需求驱动。
 
 ## 6. 核心业务对象
 
@@ -355,7 +355,7 @@ ProductRelease Readiness 与 DatasetCertification 不互相替代。
 
 POC 已验证 Raw / Standardized / Curated、Entity Resolution、Workflow / Execution、Quality / Compliance、Contract、Product Release、Cost / Evidence 和生产 decision trace。
 
-Pilot 在同一链路增加：
+Certified Dataset 第一阶段 Pilot 已在同一链路完成并验证：
 
 - QualityAssessment rule snapshot
 - 六维 Quality Report
@@ -364,8 +364,9 @@ Pilot 在同一链路增加：
 - CertificationProfile
 - DatasetCertification
 - Certified Dataset UI/API
+- trusted DIRECT_DATA delivery
 
-最终至少产生一个由 reference fixture 驱动的 CERTIFIED CURATED DatasetVersion，并同时验证失败路径。
+reference fixture 已产生 CERTIFIED CURATED DatasetVersion，并完成成功/失败路径、E2E1–E2E20 与最终 browser/live-core 验收。
 
 ## 14. 第一阶段非目标
 

@@ -4,9 +4,9 @@
 
 核心 POC 已完成。本路线是 POC 之后的受控试点，目标是把已经验证的数据生产内核组合成客户可验收的“高质量数据集”交付物。
 
-主 Epic：#129（OPEN；第一阶段纵向验收完成后再关闭）。
+主 Epic：#129。Certified Dataset 第一阶段 MVP / enterprise-activity 纵向 Pilot 已完成，E2E1–E2E20 全部 PASS；该完成状态不等于生产上线批准。
 
-第一阶段完成后，平台应能够把一组原始数据生产为：
+第一阶段已证明平台能够把一组原始数据生产为：
 
 ~~~text
 有明确 DatasetVersion

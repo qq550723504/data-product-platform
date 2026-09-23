@@ -102,11 +102,12 @@ DatasetCertification
 CertificationDisposition (REVOKED / SUPERSEDED)   # #134 / PR #149
 ~~~
 
-**仍在推进 / 尚未完成第一阶段：**
+**第一阶段已完成：**
 
 ~~~text
-Certified Dataset API / UI                         # #135
-enterprise-activity E2E Pilot                     # #136
+Certified Dataset API / UI                         # #135 ✅
+trusted DIRECT_DATA delivery                      # #135 ✅
+enterprise-activity E2E Pilot                     # #136 ✅ E2E1–E2E20
 ~~~
 
 QualityAssessment 核心已通过 #140 / migration 000019 落地；#132 Quality Engine 与 #133 Quality Report 也已在该模型上完成扩展。继续复用 `quality_result` / `quality_finding` 作为兼容存储名，不得再次创建平行 QualityAssessment 表族。

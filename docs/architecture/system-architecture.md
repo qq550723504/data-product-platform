@@ -63,7 +63,7 @@ Core 保存：
 - ProductVersion / ProductRelease
 - Cost / Evidence / Audit
 
-其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights 已进入 main；#134 Certification 已由 PR #149 进入 main；DeliveryOperation 核心切片已进入 main，但 #135 API/UI 与剩余交付范围仍开放。
+其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA 与 #136 enterprise-activity E2E Pilot 均已完成第一阶段验收。后续 delivery/provider、IAM、性能/SLA 或 AI/Gold Dataset 能力按真实需求单独立项。
 
 外部 Engine 只提供执行能力，不拥有上述核心业务状态。
 
@@ -219,12 +219,13 @@ Core 不允许出现 PARK 等行业专属分支。
 
 ## 9. 当前阶段边界
 
-当前是 #129 Certified Dataset 受控试点。
+#129 Certified Dataset 第一阶段受控试点已经完成，E2E1–E2E20 全部 PASS。当前没有自动承接的第二阶段；新的工作必须由真实产品需求或独立 Issue 明确进入范围。
 
-第一阶段优先验证业务闭环，不以以下事项作为前置：
+第一阶段完成不表示以下能力已经完成，也不应在没有具体 Issue 的情况下自动扩入当前范围：
 
 - T4/T5/T6 全部可靠性实现
 - 完整 IAM / 灾备 / 性能平台
 - 微服务拆分
-- Label Studio / X-AnyLabeling 第二阶段
+- Label Studio / X-AnyLabeling / Gold Dataset
 - 数据市场 / Billing
+- bearer / presigned provider delivery hardening
