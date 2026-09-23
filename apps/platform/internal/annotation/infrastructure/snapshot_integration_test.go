@@ -144,7 +144,7 @@ func TestAnnotationSnapshotRejectsDirectFinalizedInsert(t *testing.T) {
 			expected_task_count, expected_result_count, expected_decision_count, expected_output_count,
 			finalized_at
 		) VALUES ($1,$2,$3,'FINALIZED',$4,$4,$5,1,1,1,1,now())
-	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.rootHash)
+	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.manifest, fx.rootHash)
 	if err == nil || !strings.Contains(err.Error(), "must start BUILDING") {
 		t.Fatalf("direct FINALIZED insert error = %v, want BUILDING guard", err)
 	}
@@ -163,8 +163,8 @@ func TestAnnotationSnapshotCannotCommitUnfinishedBuilding(t *testing.T) {
 		INSERT INTO annotation_snapshot(
 			id, workspace_id, campaign_id, manifest, manifest_hash_payload, root_hash,
 			expected_task_count, expected_result_count, expected_decision_count, expected_output_count
-		) VALUES ($1,$2,$3,$4,$4,$5,1,1,1,1)
-	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.rootHash); err != nil {
+		) VALUES ($1,$2,$3,$4,$5,$6,1,1,1,1)
+	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.manifest, fx.rootHash); err != nil {
 		_ = tx.Rollback(ctx)
 		t.Fatalf("insert BUILDING snapshot: %v", err)
 	}
@@ -208,7 +208,7 @@ func TestAnnotationSnapshotDoubleFinalizerLeavesOneSnapshot(t *testing.T) {
 			INSERT INTO annotation_snapshot(
 				id, workspace_id, campaign_id, manifest, manifest_hash_payload, root_hash,
 				expected_task_count, expected_result_count, expected_decision_count, expected_output_count
-			) VALUES ($1,$2,$3,$4,$4,$5,1,1,1,1)
+			) VALUES ($1,$2,$3,$4,$5,$6,1,1,1,1)
 		`, loserSnapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.rootHash)
 		loserDone <- loserErr
 	}()
@@ -873,8 +873,9 @@ func insertAnnotationSnapshotAggregate(t *testing.T, ctx context.Context, tx pgx
 		INSERT INTO annotation_snapshot(
 			id, workspace_id, campaign_id, manifest, manifest_hash_payload, root_hash,
 			expected_task_count, expected_result_count, expected_decision_count, expected_output_count
-		) VALUES ($1,$2,$3,$4,$4,$5,1,1,1,1)
-	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.rootHash); err != nil {
+		) VALUES ($1,$2,$3,$4,$5,$6,1,1,1,1)
+	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.manifest, fx.rootHash); err != nil {
+		_ = tx.Rollback(ctx)
 		t.Fatalf("insert annotation snapshot: %v", err)
 	}
 	if _, err := tx.Exec(ctx, `
@@ -882,6 +883,7 @@ func insertAnnotationSnapshotAggregate(t *testing.T, ctx context.Context, tx pgx
 			snapshot_id, task_id, source_item_ref, source_content_sha256, task_text_sha256
 		) VALUES ($1,$2,'row:1',$3,$4)
 	`, fx.snapshotID, fx.taskID, strings.Repeat("a", 64), strings.Repeat("b", 64)); err != nil {
+		_ = tx.Rollback(ctx)
 		t.Fatalf("insert snapshot task: %v", err)
 	}
 	if _, err := tx.Exec(ctx, `
@@ -889,6 +891,7 @@ func insertAnnotationSnapshotAggregate(t *testing.T, ctx context.Context, tx pgx
 			snapshot_id, result_id, task_id, canonical_payload_sha256, author_ref
 		) VALUES ($1,$2,$3,$4,'annotator')
 	`, fx.snapshotID, fx.resultID, fx.taskID, fx.payloadHash); err != nil {
+		_ = tx.Rollback(ctx)
 		t.Fatalf("insert snapshot result: %v", err)
 	}
 	if _, err := tx.Exec(ctx, `
@@ -897,12 +900,14 @@ func insertAnnotationSnapshotAggregate(t *testing.T, ctx context.Context, tx pgx
 			selected_result_id, reviewer_ref, reason
 		) VALUES ($1,$2,$3,'ACCEPT',$4,$4,'reviewer','verified')
 	`, fx.snapshotID, fx.decisionID, fx.taskID, fx.resultID); err != nil {
+		_ = tx.Rollback(ctx)
 		t.Fatalf("insert snapshot decision: %v", err)
 	}
 	if _, err := tx.Exec(ctx, `
 		INSERT INTO annotation_snapshot_output(snapshot_id, task_id, selected_result_id)
 		VALUES ($1,$2,$3)
 	`, fx.snapshotID, fx.taskID, fx.resultID); err != nil {
+		_ = tx.Rollback(ctx)
 		t.Fatalf("insert snapshot output: %v", err)
 	}
 }
