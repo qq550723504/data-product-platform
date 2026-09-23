@@ -657,6 +657,12 @@ func (s *Service) FinalizeAnnotationSnapshot(
 	ctx context.Context,
 	cmd FinalizeAnnotationSnapshotCommand,
 ) (annotationdomain.Snapshot, error) {
+	if existing, found, err := s.finalizedSnapshotReplay(ctx, cmd.WorkspaceID, cmd.CampaignID); err != nil {
+		return annotationdomain.Snapshot{}, err
+	} else if found {
+		return existing, nil
+	}
+
 	var snapshot annotationdomain.Snapshot
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		campaign, err := s.repo.LockCampaignTx(ctx, tx, cmd.CampaignID)
@@ -691,7 +697,8 @@ func (s *Service) FinalizeAnnotationSnapshot(
 		}
 		now := time.Now().UTC()
 		snapshot = annotationdomain.Snapshot{
-			ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID,
+			ID: stableSnapshotID(cmd.WorkspaceID, cmd.CampaignID),
+			WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID,
 			Status: annotationdomain.SnapshotBuilding, Manifest: manifest,
 			ManifestHashPayload: append([]byte(nil), manifest...), RootHash: hashBytes(manifest),
 			ExpectedTaskCount: len(tasks), ExpectedResultCount: len(results),
@@ -735,7 +742,46 @@ func (s *Service) FinalizeAnnotationSnapshot(
 			}, TraceID: cmd.TraceID,
 		})
 	})
+	if err != nil {
+		if existing, found, replayErr := s.finalizedSnapshotReplay(ctx, cmd.WorkspaceID, cmd.CampaignID); replayErr == nil && found {
+			return existing, nil
+		}
+	}
 	return snapshot, err
+}
+
+func (s *Service) finalizedSnapshotReplay(
+	ctx context.Context,
+	workspaceID, campaignID uuid.UUID,
+) (annotationdomain.Snapshot, bool, error) {
+	if workspaceID == uuid.Nil || campaignID == uuid.Nil {
+		return annotationdomain.Snapshot{}, false, annotationdomain.ErrInvalidSnapshot
+	}
+	snapshot, err := s.repo.GetSnapshotByCampaign(ctx, workspaceID, campaignID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.Snapshot{}, false, nil
+	}
+	if err != nil {
+		return annotationdomain.Snapshot{}, false, err
+	}
+	if snapshot.Status != annotationdomain.SnapshotFinalized || snapshot.FinalizedAt == nil {
+		return annotationdomain.Snapshot{}, false, annotationdomain.ErrInvalidSnapshot
+	}
+	valid, err := s.repo.GetSnapshotIntegrity(ctx, snapshot.ID)
+	if err != nil {
+		return annotationdomain.Snapshot{}, false, err
+	}
+	if !valid {
+		return annotationdomain.Snapshot{}, false, annotationdomain.ErrInvalidSnapshot
+	}
+	return snapshot, true, nil
+}
+
+func stableSnapshotID(workspaceID, campaignID uuid.UUID) uuid.UUID {
+	return uuid.NewSHA1(
+		uuid.NameSpaceURL,
+		[]byte("annotation-snapshot:"+workspaceID.String()+":"+campaignID.String()),
+	)
 }
 
 func snapshotManifest(
