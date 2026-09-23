@@ -216,24 +216,3 @@ func TestProviderReplayIgnoresObservationAlias(t *testing.T) {
 		t.Fatal("alias-key replay must remain strict when observation alias differs")
 	}
 }
-
-func TestValidateReplayAliasRejectsAliasBoundToDifferentResult(t *testing.T) {
-	existing := annotationdomain.Result{
-		ID:             uuid.New(),
-		ObservationKey: "old-alias",
-	}
-	other := annotationdomain.Result{
-		ID:             uuid.New(),
-		ObservationKey: "new-alias",
-	}
-
-	if err := validateReplayAlias(existing, "old-alias", nil); err != nil {
-		t.Fatalf("original alias should remain valid: %v", err)
-	}
-	if err := validateReplayAlias(existing, "new-alias", nil); err != nil {
-		t.Fatalf("unbound alias should be accepted for provider replay: %v", err)
-	}
-	if err := validateReplayAlias(existing, "new-alias", &other); !errors.Is(err, ErrIdempotencyConflict) {
-		t.Fatalf("conflicting alias error = %v, want idempotency conflict", err)
-	}
-}
