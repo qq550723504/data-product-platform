@@ -19,6 +19,7 @@ type Config struct {
 	OpenMetadata     OpenMetadataConfig
 	Hop              HopConfig
 	Splink           SplinkConfig
+	LabelStudio      LabelStudioConfig
 }
 
 type RightsAPIConfig struct {
@@ -63,6 +64,14 @@ type HopConfig struct {
 	Password string
 }
 
+type LabelStudioConfig struct {
+	Enabled        bool
+	BaseURL        string
+	Token          string
+	InstanceRef    string
+	TimeoutSeconds int
+}
+
 type SplinkConfig struct {
 	Enabled               bool
 	BaseURL               string
@@ -98,6 +107,14 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 	splinkEnabled, err := boolEnv("SPLINK_ENABLED", false)
+	if err != nil {
+		return Config{}, err
+	}
+	labelStudioEnabled, err := boolEnv("LABEL_STUDIO_ENABLED", false)
+	if err != nil {
+		return Config{}, err
+	}
+	labelStudioTimeoutSeconds, err := intEnv("LABEL_STUDIO_TIMEOUT_SECONDS", 30)
 	if err != nil {
 		return Config{}, err
 	}
@@ -147,6 +164,13 @@ func Load() (Config, error) {
 			Username: os.Getenv("HOP_SERVER_USERNAME"),
 			Password: os.Getenv("HOP_SERVER_PASSWORD"),
 		},
+		LabelStudio: LabelStudioConfig{
+			Enabled:        labelStudioEnabled,
+			BaseURL:        os.Getenv("LABEL_STUDIO_BASE_URL"),
+			Token:          os.Getenv("LABEL_STUDIO_TOKEN"),
+			InstanceRef:    stringEnv("LABEL_STUDIO_INSTANCE_REF", "label-studio-local"),
+			TimeoutSeconds: labelStudioTimeoutSeconds,
+		},
 		Splink: SplinkConfig{
 			Enabled:               splinkEnabled,
 			BaseURL:               os.Getenv("SPLINK_SERVICE_URL"),
@@ -192,6 +216,16 @@ func Load() (Config, error) {
 		}
 		if cfg.Hop.Username == "" || cfg.Hop.Password == "" {
 			return Config{}, fmt.Errorf("HOP_SERVER_USERNAME and HOP_SERVER_PASSWORD must not be empty when Apache Hop is enabled")
+		}
+	}
+	if cfg.LabelStudio.Enabled {
+		if strings.TrimSpace(cfg.LabelStudio.BaseURL) == "" ||
+			strings.TrimSpace(cfg.LabelStudio.Token) == "" ||
+			strings.TrimSpace(cfg.LabelStudio.InstanceRef) == "" {
+			return Config{}, fmt.Errorf("LABEL_STUDIO_BASE_URL, LABEL_STUDIO_TOKEN, and LABEL_STUDIO_INSTANCE_REF must be configured when Label Studio is enabled")
+		}
+		if cfg.LabelStudio.TimeoutSeconds <= 0 {
+			return Config{}, fmt.Errorf("LABEL_STUDIO_TIMEOUT_SECONDS must be positive")
 		}
 	}
 	if cfg.Splink.Enabled {
