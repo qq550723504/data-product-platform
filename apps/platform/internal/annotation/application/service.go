@@ -490,17 +490,65 @@ func (s *Service) ReviewAnnotation(ctx context.Context, cmd ReviewAnnotationComm
 		}
 		return ReviewAnnotationResult{Attempt: attempt, Outcome: outcome, Decision: &decision}, nil
 	}
+
+	// The authoritative transaction may have lost the Task CAS only because an
+	// identical same-key replay won and committed this physical attempt first.
+	// Re-read before appending any failure outcome so one attempt converges to
+	// exactly one terminal outcome.
+	if terminal, found, replayErr := s.readTerminalReview(ctx, attempt); replayErr != nil {
+		return ReviewAnnotationResult{}, replayErr
+	} else if found {
+		return terminal, terminalReviewError(terminal, err)
+	}
+
 	if !errors.Is(err, annotationinfra.ErrStaleRevision) {
 		if _, outcomeErr := s.recordReviewFailure(ctx, cmd, attempt, annotationdomain.ReviewAttemptRejected, "REVIEW_FAILED"); outcomeErr != nil {
+			if terminal, found, replayErr := s.readTerminalReview(ctx, attempt); replayErr == nil && found {
+				return terminal, terminalReviewError(terminal, err)
+			}
 			return ReviewAnnotationResult{}, fmt.Errorf("review failed: %v; record outcome: %w", err, outcomeErr)
 		}
 		return ReviewAnnotationResult{}, err
 	}
 	outcome, outcomeErr := s.recordReviewFailure(ctx, cmd, attempt, annotationdomain.ReviewAttemptStaleConflict, "STALE_REVISION")
 	if outcomeErr != nil {
+		if terminal, found, replayErr := s.readTerminalReview(ctx, attempt); replayErr == nil && found {
+			return terminal, terminalReviewError(terminal, err)
+		}
 		return ReviewAnnotationResult{}, fmt.Errorf("review stale: %v; record outcome: %w", err, outcomeErr)
 	}
 	return ReviewAnnotationResult{Attempt: attempt, Outcome: outcome}, annotationinfra.ErrStaleRevision
+}
+
+func (s *Service) readTerminalReview(
+	ctx context.Context,
+	attempt annotationdomain.ReviewAttempt,
+) (ReviewAnnotationResult, bool, error) {
+	outcome, err := s.repo.GetReviewAttemptOutcome(ctx, attempt.ID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ReviewAnnotationResult{}, false, nil
+	}
+	if err != nil {
+		return ReviewAnnotationResult{}, false, err
+	}
+	var decision *annotationdomain.ReviewDecision
+	if existing, decisionErr := s.repo.GetDecisionByAttempt(ctx, attempt.ID); decisionErr == nil {
+		decision = &existing
+	} else if !errors.Is(decisionErr, pgx.ErrNoRows) {
+		return ReviewAnnotationResult{}, false, decisionErr
+	}
+	return ReviewAnnotationResult{Attempt: attempt, Outcome: outcome, Decision: decision}, true, nil
+}
+
+func terminalReviewError(result ReviewAnnotationResult, fallback error) error {
+	switch result.Outcome.Outcome {
+	case annotationdomain.ReviewAttemptSucceeded:
+		return nil
+	case annotationdomain.ReviewAttemptStaleConflict:
+		return annotationinfra.ErrStaleRevision
+	default:
+		return fallback
+	}
 }
 
 func (s *Service) ensureReviewAttempt(
