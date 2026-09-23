@@ -292,7 +292,7 @@ func (s *Service) ActivateCampaign(ctx context.Context, cmd ActivateCampaignComm
 		}
 		now := time.Now().UTC()
 		if err := s.repo.ActivateCampaign(
-			ctx, tx, cmd.CampaignID, cmd.ExpectedRevision, len(tasks), manifestHash, now,
+			ctx, tx, cmd.CampaignID, cmd.ExpectedRevision, len(tasks), manifestHash, proof.InputChecksum, now,
 		); err != nil {
 			return err
 		}
@@ -301,6 +301,7 @@ func (s *Service) ActivateCampaign(ctx context.Context, cmd ActivateCampaignComm
 		activated.Revision = campaign.Revision + 1
 		activated.ExpectedTaskCount = len(tasks)
 		activated.TaskManifestHash = manifestHash
+		activated.InputChecksumSHA256 = proof.InputChecksum
 		activated.ActivatedAt = &now
 
 		if err := appendEvent(ctx, tx, "ANNOTATION_CAMPAIGN", cmd.CampaignID, "AnnotationCampaignActivated", map[string]any{
