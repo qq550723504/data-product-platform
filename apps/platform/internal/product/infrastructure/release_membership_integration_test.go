@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
@@ -153,9 +154,7 @@ func TestProductReleaseDatasetMembershipMutationFirstInvalidatesStalePublishView
 	}
 }
 
-func insertReleaseMembershipFixture(t *testing.T, ctx context.Context, pool interface {
-	Exec(context.Context, string, ...any) (pgconn.CommandTag, error)
-}, ) (domain.ProductRelease, uuid.UUID) {
+func insertReleaseMembershipFixture(t *testing.T, ctx context.Context, pool *pgxpool.Pool) (domain.ProductRelease, uuid.UUID) {
 	t.Helper()
 	workspaceID := uuid.New()
 	productID := uuid.New()
