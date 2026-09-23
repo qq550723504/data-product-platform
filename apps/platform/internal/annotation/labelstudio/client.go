@@ -43,7 +43,8 @@ func NewClient(baseURL, token, instanceRef string, httpClient *http.Client) (*Cl
 	return &Client{baseURL: baseURL, token: token, instanceRef: instanceRef, httpClient: httpClient}, nil
 }
 
-func (c *Client) Provider() string { return Provider }
+func (c *Client) Provider() string    { return Provider }
+func (c *Client) InstanceRef() string { return c.instanceRef }
 
 func (c *Client) EnsureCampaignBinding(ctx context.Context, req annotationapp.EngineCampaignRequest) (annotationapp.EngineCampaignBinding, error) {
 	if req.WorkspaceID == uuid.Nil || req.CampaignID == uuid.Nil ||
