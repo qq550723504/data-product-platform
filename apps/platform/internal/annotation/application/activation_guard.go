@@ -205,7 +205,7 @@ func (g *CoreActivationGuard) ValidateActivationTx(
 	if err != nil {
 		return err
 	}
-	decision, err := g.entitlements.CheckCurrentEntitlementTx(ctx, tx, rightsdomain.EntitlementRequest{
+	request := rightsdomain.EntitlementRequest{
 		WorkspaceID:    campaign.WorkspaceID,
 		DataResourceID: sourceResourceID,
 		ConsumerRef:    strings.TrimSpace(campaign.ConsumerRef),
@@ -213,7 +213,17 @@ func (g *CoreActivationGuard) ValidateActivationTx(
 		Action:         strings.TrimSpace(campaign.Action),
 		Scope:          scope,
 		Path:           rightsdomain.EntitlementDirectUse,
-	})
+	}
+	decision, err := g.entitlements.CheckCurrentEntitlementTx(ctx, tx, request)
+	if err != nil {
+		return err
+	}
+	if decision.Decision == rightsdomain.DecisionAllowed {
+		return nil
+	}
+
+	request.Path = rightsdomain.EntitlementDownstream
+	decision, err = g.entitlements.CheckCurrentEntitlementTx(ctx, tx, request)
 	if err != nil {
 		return err
 	}
