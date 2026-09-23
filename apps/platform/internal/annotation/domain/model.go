@@ -166,11 +166,12 @@ func NewTask(workspaceID, campaignID uuid.UUID, sourceItemRef, sourceHash, taskT
 	if now.IsZero() {
 		now = time.Now().UTC()
 	}
+	stableSourceRef := strings.TrimSpace(sourceItemRef)
 	return Task{
-		ID:                  uuid.New(),
+		ID:                  uuid.NewSHA1(uuid.NameSpaceURL, []byte("annotation-task:"+workspaceID.String()+":"+campaignID.String()+":"+stableSourceRef)),
 		WorkspaceID:         workspaceID,
 		CampaignID:          campaignID,
-		SourceItemRef:       strings.TrimSpace(sourceItemRef),
+		SourceItemRef:       stableSourceRef,
 		SourceContentSHA256: sourceHash,
 		TaskTextSHA256:      taskTextHash,
 		PrimaryAnnotatorRef: strings.TrimSpace(annotatorRef),
