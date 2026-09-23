@@ -134,7 +134,7 @@ func (c *Client) LookupCampaignBinding(
 			"page_size": []string{"100"},
 		}
 		var page struct {
-			Count int `json:"count"`
+			Count   int `json:"count"`
 			Results []struct {
 				ID          json.Number `json:"id"`
 				Description string      `json:"description"`
