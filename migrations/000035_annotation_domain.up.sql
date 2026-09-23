@@ -125,7 +125,9 @@ CREATE TABLE annotation_result (
     created_by                      uuid,
     CONSTRAINT uq_annotation_result_observation UNIQUE (workspace_id, campaign_id, observation_key),
     CONSTRAINT ck_annotation_result_payload_hash CHECK (
-        canonical_payload_sha256 ~ '^[0-9a-f]{64}
+        canonical_payload_sha256 ~ '^[0-9a-f]{64}$'
+        AND encode(digest(canonical_payload, 'sha256'), 'hex') = canonical_payload_sha256
+    ),
     CONSTRAINT ck_annotation_result_correction_self CHECK (
         corrected_from_result_id IS NULL OR corrected_from_result_id <> id
     )
