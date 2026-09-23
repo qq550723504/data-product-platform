@@ -163,7 +163,11 @@ func (c *Client) LookupCampaignBinding(
 			}
 			matched = append(matched, binding)
 		}
-		if page.Next == nil || strings.TrimSpace(fmt.Sprint(page.Next)) == "" {
+		if page.Total > 0 {
+			if pageNumber*100 >= page.Total {
+				break
+			}
+		} else if page.Next == nil || strings.TrimSpace(fmt.Sprint(page.Next)) == "" {
 			break
 		}
 		pageNumber++
@@ -289,6 +293,7 @@ func (c *Client) LookupSubmission(ctx context.Context, req annotationapp.EngineL
 			"page_size": []string{"100"},
 		}
 		var page struct {
+			Total int `json:"total"`
 			Tasks []struct {
 				ID   json.Number    `json:"id"`
 				Meta map[string]any `json:"meta"`
@@ -360,8 +365,10 @@ func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineC
 		"project":   []string{binding.ExternalProjectID},
 		"page":      []string{strconv.Itoa(cursor.Offset/100 + 1)},
 		"page_size": []string{"100"},
+		"fields":    []string{"all"},
 	}
 	var response struct {
+		Total int `json:"total"`
 		Tasks []struct {
 			ID          json.Number    `json:"id"`
 			Meta        map[string]any `json:"meta"`
@@ -410,7 +417,12 @@ func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineC
 		}
 	}
 	var next *annotationapp.EngineResultCursor
-	if response.Next != nil && strings.TrimSpace(fmt.Sprint(response.Next)) != "" {
+	currentPage := cursor.Offset/100 + 1
+	if response.Total > 0 {
+		if currentPage*100 < response.Total {
+			next = &annotationapp.EngineResultCursor{Offset: cursor.Offset + 100}
+		}
+	} else if response.Next != nil && strings.TrimSpace(fmt.Sprint(response.Next)) != "" {
 		next = &annotationapp.EngineResultCursor{Offset: cursor.Offset + 100}
 	}
 	return annotationapp.EngineResultPage{Results: results, NextCursor: next}, nil
