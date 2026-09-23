@@ -57,30 +57,30 @@ func (s FrozenSpec) Validate(name string) error {
 }
 
 type Campaign struct {
-	ID                         uuid.UUID
-	WorkspaceID                uuid.UUID
-	InputDatasetVersionID      uuid.UUID
-	InputCertificationID       uuid.UUID
-	AnnotationContributionID   uuid.UUID
-	Purpose                    string
-	Action                     string
-	ConsumerRef                string
-	ScopeType                  string
-	ScopeRef                   string
-	Schema                     FrozenSpec
-	Taxonomy                   FrozenSpec
-	Rubric                     FrozenSpec
-	Renderer                   FrozenSpec
-	ReviewPolicy               FrozenSpec
-	Status                     string
-	Revision                   int64
-	ExpectedTaskCount          int
-	TaskManifestHash           string
-	CreatedAt                  time.Time
-	CreatedBy                  *uuid.UUID
-	ActivatedAt                *time.Time
-	SealedAt                   *time.Time
-	CancelledAt                *time.Time
+	ID                       uuid.UUID
+	WorkspaceID              uuid.UUID
+	InputDatasetVersionID    uuid.UUID
+	InputCertificationID     uuid.UUID
+	AnnotationContributionID uuid.UUID
+	Purpose                  string
+	Action                   string
+	ConsumerRef              string
+	ScopeType                string
+	ScopeRef                 string
+	Schema                   FrozenSpec
+	Taxonomy                 FrozenSpec
+	Rubric                   FrozenSpec
+	Renderer                 FrozenSpec
+	ReviewPolicy             FrozenSpec
+	Status                   string
+	Revision                 int64
+	ExpectedTaskCount        int
+	TaskManifestHash         string
+	CreatedAt                time.Time
+	CreatedBy                *uuid.UUID
+	ActivatedAt              *time.Time
+	SealedAt                 *time.Time
+	CancelledAt              *time.Time
 }
 
 type CampaignSpec struct {
@@ -123,15 +123,25 @@ func NewCampaign(spec CampaignSpec, now time.Time) (Campaign, error) {
 		now = time.Now().UTC()
 	}
 	return Campaign{
-		ID: spec.ID, WorkspaceID: spec.WorkspaceID,
-		InputDatasetVersionID: spec.InputDatasetVersionID,
-		InputCertificationID: spec.InputCertificationID,
+		ID:                       spec.ID,
+		WorkspaceID:              spec.WorkspaceID,
+		InputDatasetVersionID:    spec.InputDatasetVersionID,
+		InputCertificationID:     spec.InputCertificationID,
 		AnnotationContributionID: spec.AnnotationContributionID,
-		Purpose: strings.TrimSpace(spec.Purpose), Action: strings.TrimSpace(spec.Action),
-		ConsumerRef: strings.TrimSpace(spec.ConsumerRef), ScopeType: strings.TrimSpace(spec.ScopeType),
-		ScopeRef: strings.TrimSpace(spec.ScopeRef), Schema: spec.Schema, Taxonomy: spec.Taxonomy,
-		Rubric: spec.Rubric, Renderer: spec.Renderer, ReviewPolicy: spec.ReviewPolicy,
-		Status: CampaignDraft, Revision: 1, CreatedAt: now.UTC(), CreatedBy: spec.ActorID,
+		Purpose:                  strings.TrimSpace(spec.Purpose),
+		Action:                   strings.TrimSpace(spec.Action),
+		ConsumerRef:              strings.TrimSpace(spec.ConsumerRef),
+		ScopeType:                strings.TrimSpace(spec.ScopeType),
+		ScopeRef:                 strings.TrimSpace(spec.ScopeRef),
+		Schema:                   spec.Schema,
+		Taxonomy:                 spec.Taxonomy,
+		Rubric:                   spec.Rubric,
+		Renderer:                 spec.Renderer,
+		ReviewPolicy:             spec.ReviewPolicy,
+		Status:                   CampaignDraft,
+		Revision:                 1,
+		CreatedAt:                now.UTC(),
+		CreatedBy:                spec.ActorID,
 	}, nil
 }
 
@@ -158,10 +168,16 @@ func NewTask(workspaceID, campaignID uuid.UUID, sourceItemRef, sourceHash, taskT
 		now = time.Now().UTC()
 	}
 	return Task{
-		ID: uuid.New(), WorkspaceID: workspaceID, CampaignID: campaignID,
-		SourceItemRef: strings.TrimSpace(sourceItemRef), SourceContentSHA256: sourceHash,
-		TaskTextSHA256: taskTextHash, PrimaryAnnotatorRef: strings.TrimSpace(annotatorRef),
-		Status: TaskPending, Revision: 1, CreatedAt: now.UTC(),
+		ID:                  uuid.New(),
+		WorkspaceID:         workspaceID,
+		CampaignID:          campaignID,
+		SourceItemRef:       strings.TrimSpace(sourceItemRef),
+		SourceContentSHA256: sourceHash,
+		TaskTextSHA256:      taskTextHash,
+		PrimaryAnnotatorRef: strings.TrimSpace(annotatorRef),
+		Status:              TaskPending,
+		Revision:            1,
+		CreatedAt:           now.UTC(),
 	}, nil
 }
 
