@@ -821,7 +821,7 @@ func createAnnotationDBFixture(t *testing.T, ctx context.Context, pool *pgxpool.
 		   SET status='ACTIVE', revision=2, expected_task_count=1,
 		       task_manifest_hash=$2, input_checksum_sha256=$3, activated_at=now()
 		 WHERE id=$1
-	`, campaignID, strings.Repeat("c", 64), base.inputChecksum); err != nil {
+	`, campaignID, strings.Repeat("c", 64), inputChecksum); err != nil {
 		t.Fatalf("activate annotation campaign: %v", err)
 	}
 
