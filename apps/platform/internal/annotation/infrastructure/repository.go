@@ -460,7 +460,6 @@ func (r *Repository) InsertAndFinalizeSnapshot(
 	return nil
 }
 
-
 func (r *Repository) GetSnapshotIntegrity(ctx context.Context, snapshotID uuid.UUID) (bool, error) {
 	var valid bool
 	err := r.pool.QueryRow(ctx, `
