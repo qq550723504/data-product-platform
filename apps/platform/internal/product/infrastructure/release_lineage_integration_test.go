@@ -443,6 +443,35 @@ func TestDirectSQLReleasePublishSerializesWithLineageFence(t *testing.T) {
 	}
 }
 
+func TestDirectSQLReleasePublishRejectsNonReadyTransition(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, _ := insertReleaseMembershipFixture(t, ctx, pool)
+	if _, err := pool.Exec(ctx, `
+		UPDATE product_release
+		SET status='DRAFT', released_at=NULL
+		WHERE id=$1 AND status='READY'
+	`, release.ID); err != nil {
+		t.Fatalf("move fixture release back to DRAFT: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE product_release
+		SET status='PUBLISHED', released_at=now()
+		WHERE id=$1 AND status='DRAFT'
+	`, release.ID); err == nil || !strings.Contains(err.Error(), "only transition to PUBLISHED from READY") {
+		t.Fatalf("DRAFT->PUBLISHED error = %v, want READY-only publication rejection", err)
+	}
+}
+
 func TestDatasetVersionLineageRejectsCrossWorkspaceEdge(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
