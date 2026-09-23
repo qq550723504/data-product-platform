@@ -59,6 +59,9 @@ func TestProductReleaseDatasetMembershipPublishFirstFreezesMutations(t *testing.
 		t.Fatalf("rollback mutation tx: %v", err)
 	}
 
+	if err := repo.PermitReleasePublish(ctx, publishTx, release.ID); err != nil {
+		t.Fatalf("permit release publish: %v", err)
+	}
 	if _, err := publishTx.Exec(ctx, `
 		UPDATE product_release SET status='PUBLISHED', released_at=now()
 		WHERE id=$1 AND status='READY'
