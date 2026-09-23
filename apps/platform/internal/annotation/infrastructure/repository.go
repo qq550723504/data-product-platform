@@ -17,6 +17,7 @@ var (
 	ErrCampaignNotFound        = errors.New("annotation campaign not found")
 	ErrTaskNotFound            = errors.New("annotation task not found")
 	ErrTaskIdempotencyConflict = errors.New("annotation task idempotency conflict")
+	ErrResultAliasConflict     = errors.New("annotation result alias conflict")
 	ErrStaleRevision           = errors.New("annotation revision conflict")
 )
 
@@ -795,13 +796,14 @@ func (r *Repository) GetResultByObservation(
 	var result annotationdomain.Result
 	var payload []byte
 	err := r.pool.QueryRow(ctx, `
-		SELECT id, workspace_id, campaign_id, task_id, author_ref,
-		       COALESCE(provider_binding_ref,''), COALESCE(external_task_id,''),
-		       COALESCE(external_annotation_id,''), COALESCE(external_revision,''),
-		       observation_key, canonical_payload, canonical_payload_sha256,
-		       normalizer_version, corrected_from_result_id, created_at, created_by
-		  FROM annotation_result
-		 WHERE workspace_id=$1 AND campaign_id=$2 AND observation_key=$3
+		SELECT r.id, r.workspace_id, r.campaign_id, r.task_id, r.author_ref,
+		       COALESCE(r.provider_binding_ref,''), COALESCE(r.external_task_id,''),
+		       COALESCE(r.external_annotation_id,''), COALESCE(r.external_revision,''),
+		       r.observation_key, r.canonical_payload, r.canonical_payload_sha256,
+		       r.normalizer_version, r.corrected_from_result_id, r.created_at, r.created_by
+		  FROM annotation_result_alias a
+		  JOIN annotation_result r ON r.id=a.result_id
+		 WHERE a.workspace_id=$1 AND a.campaign_id=$2 AND a.alias=$3
 	`, workspaceID, campaignID, observationKey).Scan(
 		&result.ID, &result.WorkspaceID, &result.CampaignID, &result.TaskID, &result.AuthorRef,
 		&result.ProviderBindingRef, &result.ExternalTaskID, &result.ExternalAnnotationID,
@@ -812,10 +814,43 @@ func (r *Repository) GetResultByObservation(
 		return annotationdomain.Result{}, pgx.ErrNoRows
 	}
 	if err != nil {
-		return annotationdomain.Result{}, fmt.Errorf("get annotation result by observation: %w", err)
+		return annotationdomain.Result{}, fmt.Errorf("get annotation result by observation alias: %w", err)
 	}
 	result.CanonicalPayload = payload
 	return result, nil
+}
+
+func (r *Repository) ReserveResultAlias(
+	ctx context.Context,
+	workspaceID, campaignID uuid.UUID,
+	alias string,
+	resultID uuid.UUID,
+) error {
+	if workspaceID == uuid.Nil || campaignID == uuid.Nil || resultID == uuid.Nil || strings.TrimSpace(alias) == "" {
+		return ErrResultAliasConflict
+	}
+	alias = strings.TrimSpace(alias)
+
+	if _, err := r.pool.Exec(ctx, `
+		INSERT INTO annotation_result_alias(workspace_id, campaign_id, alias, result_id)
+		VALUES ($1,$2,$3,$4)
+		ON CONFLICT (workspace_id, campaign_id, alias) DO NOTHING
+	`, workspaceID, campaignID, alias, resultID); err != nil {
+		return fmt.Errorf("reserve annotation result alias: %w", err)
+	}
+
+	var mappedResultID uuid.UUID
+	if err := r.pool.QueryRow(ctx, `
+		SELECT result_id
+		  FROM annotation_result_alias
+		 WHERE workspace_id=$1 AND campaign_id=$2 AND alias=$3
+	`, workspaceID, campaignID, alias).Scan(&mappedResultID); err != nil {
+		return fmt.Errorf("read annotation result alias reservation: %w", err)
+	}
+	if mappedResultID != resultID {
+		return ErrResultAliasConflict
+	}
+	return nil
 }
 
 func (r *Repository) GetReviewAttemptByKey(
