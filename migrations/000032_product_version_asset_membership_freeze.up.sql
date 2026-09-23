@@ -29,6 +29,20 @@ ALTER TABLE product_version
     ADD CONSTRAINT ck_product_version_expected_asset_count
         CHECK (expected_asset_count >= 0);
 
+CREATE OR REPLACE FUNCTION guard_product_version_insert()
+RETURNS trigger AS $insert_guard$
+BEGIN
+    IF NEW.build_status <> 'BUILDING' THEN
+        RAISE EXCEPTION 'new product_version must start BUILDING';
+    END IF;
+    RETURN NEW;
+END;
+$insert_guard$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_product_version_insert_guard
+BEFORE INSERT ON product_version
+FOR EACH ROW EXECUTE FUNCTION guard_product_version_insert();
+
 CREATE OR REPLACE FUNCTION guard_product_version_mutation()
 RETURNS trigger AS $version_guard$
 DECLARE
