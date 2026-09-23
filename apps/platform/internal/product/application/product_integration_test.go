@@ -100,6 +100,37 @@ func TestProductVersionAndDraftReleaseAreFrozenBeforeGovernanceGates(t *testing.
 		t.Fatal("expected ProductVersion mutation to be rejected")
 	}
 
+	var buildStatus string
+	if err := pool.QueryRow(ctx, `SELECT build_status FROM product_version WHERE id=$1`, version.ID).Scan(&buildStatus); err != nil {
+		t.Fatalf("read ProductVersion build status: %v", err)
+	}
+	if buildStatus != "FINALIZED" {
+		t.Fatalf("ProductVersion build status = %s, want FINALIZED", buildStatus)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO product_asset (
+			id, product_version_id, asset_type, name, dataset_id, delivery_config, schema_snapshot
+		) VALUES ($1,$2,'DATASET','late_asset',$3,'{}'::jsonb,'{}'::jsonb)
+	`, uuid.New(), version.ID, datasetID); err == nil {
+		t.Fatal("expected late ProductAsset insert to finalized ProductVersion to be rejected")
+	}
+
+	buildingTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin unfinalized ProductVersion transaction: %v", err)
+	}
+	if _, err := buildingTx.Exec(ctx, `
+		INSERT INTO product_version (
+			id, product_id, major_version, minor_version, patch_version, build_status
+		) VALUES ($1,$2,2,0,0,'BUILDING')
+	`, uuid.New(), product.ID); err != nil {
+		_ = buildingTx.Rollback(ctx)
+		t.Fatalf("insert BUILDING ProductVersion: %v", err)
+	}
+	if err := buildingTx.Commit(ctx); err == nil {
+		t.Fatal("expected BUILDING ProductVersion commit to fail closed")
+	}
+
 	release, err := service.CreateRelease(ctx, application.CreateReleaseCommand{
 		ProductID:        product.ID,
 		ProductVersionID: version.ID,
