@@ -243,7 +243,7 @@ func (r *PostgresRepository) readinessFacts(ctx context.Context, q readinessQuer
 			LEFT JOIN rights_snapshot_authorization rsa ON rsa.rights_snapshot_id=rs.id
 			LEFT JOIN data_authorization da ON da.id=rsa.authorization_id
 			WHERE rs.id=$1
-			GROUP BY rs.workspace_id, rs.product_release_id, rs.status, rs.purpose, rs.consumer_ref, rs.manifest
+			GROUP BY rs.id, rs.workspace_id, rs.product_release_id, rs.status, rs.purpose, rs.consumer_ref, rs.manifest
 		`, *release.RightsSnapshotID, now.UTC()).Scan(
 			&snapshotWorkspace,
 			&snapshotReleaseID,
