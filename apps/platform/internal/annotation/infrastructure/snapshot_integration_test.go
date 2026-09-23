@@ -456,7 +456,6 @@ func TestAnnotationProviderObservationIdentityDeduplicatesAliasChanges(t *testin
 	}
 }
 
-
 func TestAnnotationDatabaseSchemaValidationMatchesGoTrimSpace(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
