@@ -12,6 +12,9 @@ BEGIN
 END;
 $lineage_guard_down$;
 
+DROP TRIGGER IF EXISTS trg_dataset_workspace_identity ON dataset;
+DROP FUNCTION IF EXISTS guard_dataset_workspace_identity();
+
 DROP TRIGGER IF EXISTS trg_dataset_version_lineage_immutable ON dataset_version_lineage;
 DROP FUNCTION IF EXISTS guard_dataset_version_lineage_mutation();
 
