@@ -377,6 +377,7 @@ func (r *Repository) ListEngineTaskBindings(
 	}
 	return bindings, nil
 }
+
 type rowQuerier interface {
 	QueryRow(context.Context, string, ...any) pgx.Row
 }
