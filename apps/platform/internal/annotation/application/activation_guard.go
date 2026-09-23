@@ -49,9 +49,9 @@ type ActivationEntitlementChecker interface {
 }
 
 type CoreActivationGuard struct {
-	datasets    ActivationDatasetReader
-	contexts    ActivationContextReader
-	objects     ActivationObjectReader
+	datasets     ActivationDatasetReader
+	contexts     ActivationContextReader
+	objects      ActivationObjectReader
 	entitlements ActivationEntitlementChecker
 }
 
