@@ -97,19 +97,19 @@ OpenMetadata 仅作为 Governance Projection。
 - DatasetVersion
 - EntityMappingDecision
 - Execution dependency preparation / binding / mapping usage
-- ProductVersion
-- ProductRelease published bindings / published release history（领域 invariant；当前 `product_release` 行已有 guard，但 `product_release_dataset` membership 的 DB-level freeze 仍是 #99 已知缺口）
+- ProductVersion（#199 已冻结 finalized asset membership）
+- ProductRelease published bindings / published release history（#198 已补齐 dataset membership freeze；#202 冻结 published lineage ancestry）
 - ContractVersion
 - WorkflowVersion
-- EvidenceSnapshot（领域 immutable invariant；当前 header guard 已有，但 `evidence_snapshot_item` membership INSERT/DELETE/UPDATE 的 DB-level freeze 仍是 #99 已知缺口）
-- RightsSnapshot（领域 immutable invariant；`rights_snapshot` header 与 authorization/declaration/provenance membership guards 已由 migration 000024 落地；DRAFT→FINALIZED 与并发 membership mutation 的真实 PostgreSQL concurrency regression 仍需持续验证，不能仅凭 trigger 声称并发线性化已证明）
+- EvidenceSnapshot（#180 已补齐 header、manifest/root 与 exact membership 的 DB-level freeze）
+- RightsSnapshot（领域 immutable invariant；`rights_snapshot` header 与 authorization/declaration/provenance membership guards 已由 migration 000024 落地；finalization 与并发 membership mutation 的真实 PostgreSQL concurrency regression 仍需持续验证，不能仅凭 trigger 声称并发线性化已证明）
 - QualityAssessment（已实现；兼容存储名 quality_result / quality_finding）
 - verified RightsDeclaration / verification fact（#137 起）
 - AuthorizationProvenanceBinding / BindingDisposition（#137 起）
 - CertificationProfile snapshot（#134 起）
 - DatasetCertification / CertificationDisposition（#134 起）
 
-ProductRelease 特例：DRAFT / VALIDATING / READY 等发布前阶段允许显式 Command 按状态机更新 status 与 validation bindings；进入 PUBLISHED 后，当前 `guard_product_release_history` 只保护 `product_release` 主行的 UPDATE/DELETE。**当前 `product_release_dataset` membership 尚无数据库 INSERT/UPDATE/DELETE guard（#99 open），因此不能声称数据库已经完整冻结 published dataset bindings。** 领域 invariant 仍要求 published bindings 不可变；在 #99 补齐 membership guard 前，这是已知 enforcement gap。SUSPENDED / WITHDRAWN 目前只是 schema 枚举中的保留状态，不得声称已有 PUBLISHED → SUSPENDED/WITHDRAWN live transition；未来启用需要独立 migration + Command，同时不得回退 binding freeze。
+ProductRelease 特例：DRAFT / VALIDATING / READY 等发布前阶段允许显式 Command 按状态机更新 status 与 validation bindings；进入 PUBLISHED 后，release 主行与 dataset membership 不可回溯改写。#198 / migration 000031 已引入 parent-first membership guards 与 publish-time exact membership 校验；#202 / migration 000034 进一步通过 workspace delivery fence 与 lineage closure 锁冻结 published ancestry。#99 已关闭；这不表示所有 standalone DatasetVersion 的 lineage 自动在 READY 时冻结。SUSPENDED / WITHDRAWN 目前只是 schema 枚举中的保留状态，不得声称已有 PUBLISHED → SUSPENDED/WITHDRAWN live transition；未来启用需要独立 migration + Command，同时不得回退 binding freeze。
 
 DeliveryOperation 也是受控 lifecycle row，不得把整行视为创建即 immutable：PREPARED / ISSUANCE_PENDING / CONTAINMENT_PENDING / terminal 状态需要由显式 delivery/reconciliation Command 更新。**row 上的 status/current_gate_decision 只能是当前 projection。每一次 initial/retry/reconciliation/terminal-finalize/credential-replay gate 都必须追加 immutable DeliveryGateEvaluation（或等价 fact），保存 decision/blockers + dependency fence/revision + trusted caller/effective consumer/context；状态迁移也追加 transition history，并引用驱动它的 evaluation/provider attempt。** 已记录的 evaluation/transition/issuance history 不得覆盖；不要安装会阻止合法 lifecycle projection 更新的全行 immutable guard。
 
@@ -254,7 +254,7 @@ CSV
 → Evidence
 ~~~
 
-当前 Certified Dataset Pilot 切片：
+已完成的 Certified Dataset Pilot 切片：
 
 ~~~text
 DataResource
@@ -397,7 +397,7 @@ Engine Adapter 错误需要映射为平台统一错误模型。
 
 这条规则不适用于正常业务生命周期（如 DEPRECATED/SUPERSEDED）、当前协议必需的 retry/idempotency/crash recovery、配置默认值、实体 alias 语义以及 append-only 历史事实。
 
-核心 POC 与 #129 Certified Dataset 第一阶段受控试点均已完成。#136 E2E1–E2E20 已全部 PASS；第一阶段完成不等于生产上线批准，也不自动启动第二阶段。
+核心 POC 与 #129 Certified Dataset 第一阶段受控试点均已完成。#136 E2E1–E2E20 已全部 PASS；第一阶段完成不等于生产上线批准。
 
 第一阶段完成状态：
 
@@ -409,7 +409,11 @@ Engine Adapter 错误需要映射为平台统一错误模型。
 - #135 API / UI ✅
 - #136 E2E Pilot ✅ E2E1–E2E20
 
-下一阶段应基于 Pilot 证据与真实产品优先级单独立项。除非对应 Issue 明确要求，不要主动加入：
+第二阶段已由 #203 AI / Gold Dataset Epic 正式立项；当前 #209 只交付文档、ADR 与 Mermaid 架构基线。**#209 的文档 PR 合并并验收关闭前，不启动 #204 的 migration/domain/repository/API implementation。** #204–#208 的 Gold 业务实现与真实 Pilot 尚未完成，不得把设计中的组件、状态机或集成契约描述为已实现能力。
+
+Gold 产品范围及权威文档索引见 `docs/product/gold-dataset.md`，跨模块决定见 ADR-0012。Annotation Domain、Engine integration、Gold production 三份专门文档分别拥有事实/冻结、外部协议、生产/认证契约；总览文档不得维护平行的冲突规则。
+
+除非对应 Issue 明确要求，不要主动加入：
 
 - T4/T5/T6 全套生产可靠性路线作为前置
 - 完整 Billing / Settlement / ERP
@@ -418,10 +422,10 @@ Engine Adapter 错误需要映射为平台统一错误模型。
 - 复杂 Service Mesh / 过早微服务拆分
 - AI 黑盒风控模型
 - 高敏门禁 / 人脸 / 视频数据
-- Label Studio / X-AnyLabeling / Gold Dataset 第二阶段实现
+- 超出 #203/#209 Pilot 的 Label Studio 能力、X-AnyLabeling adapter、多模态全覆盖或通用标注 SaaS
 - 完整法律合同管理或自动法律推理
 
-文档基线见 docs/product/certified-dataset-pilot.md、docs/architecture/certified-dataset.md、docs/architecture/data-rights-provenance.md。
+第一阶段文档基线仍见 docs/product/certified-dataset-pilot.md、docs/architecture/certified-dataset.md、docs/architecture/data-rights-provenance.md；不反向改写历史验收范围。
 
 ## 17. Review Convergence and Merge Contract
 
