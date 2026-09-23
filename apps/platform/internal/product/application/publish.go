@@ -80,6 +80,9 @@ func (s *Service) PublishRelease(ctx context.Context, cmd PublishReleaseCommand)
 		if err := s.repo.LockReleaseMembershipForPublish(ctx, tx, release); err != nil {
 			return err
 		}
+		if err := s.repo.LockReleaseLineageForPublish(ctx, tx, release.ID); err != nil {
+			return err
+		}
 		created, err := evidence.CreateSnapshot(
 			ctx,
 			tx,
