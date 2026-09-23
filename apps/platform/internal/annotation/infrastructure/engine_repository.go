@@ -466,6 +466,7 @@ func (r *Repository) ListCampaignIDsNeedingEngineResults(
 	}
 	return ids, nil
 }
+
 type rowQuerier interface {
 	QueryRow(context.Context, string, ...any) pgx.Row
 }
