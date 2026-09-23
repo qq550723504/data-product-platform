@@ -350,8 +350,9 @@ func (s *Service) ReviewAnnotation(ctx context.Context, cmd ReviewAnnotationComm
 
 	decision, err := s.commitReviewDecision(ctx, cmd, attempt)
 	if err == nil {
-		outcome := annotationdomain.ReviewAttemptOutcome{
-			ID: uuid.New(), AttemptID: attempt.ID, Outcome: annotationdomain.ReviewAttemptSucceeded, OccurredAt: time.Now().UTC(),
+		outcome, outcomeErr := s.repo.GetReviewAttemptOutcome(ctx, attempt.ID)
+		if outcomeErr != nil {
+			return ReviewAnnotationResult{}, outcomeErr
 		}
 		return ReviewAnnotationResult{Attempt: attempt, Outcome: outcome, Decision: &decision}, nil
 	}
@@ -523,6 +524,209 @@ func (s *Service) recordReviewFailure(
 		})
 	})
 	return outcome, err
+}
+
+
+type FinalizeAnnotationSnapshotCommand struct {
+	WorkspaceID uuid.UUID
+	CampaignID  uuid.UUID
+	ActorID     *uuid.UUID
+	TraceID     string
+}
+
+func (s *Service) FinalizeAnnotationSnapshot(
+	ctx context.Context,
+	cmd FinalizeAnnotationSnapshotCommand,
+) (annotationdomain.Snapshot, error) {
+	var snapshot annotationdomain.Snapshot
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		campaign, err := s.repo.GetCampaignTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignActive {
+			return annotationdomain.ErrInvalidSnapshot
+		}
+		tasks, err := s.repo.ListTasksTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		results, err := s.repo.ListResultsTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		decisions, err := s.repo.ListDecisionsTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if len(tasks) == 0 || len(tasks) != campaign.ExpectedTaskCount || len(decisions) != len(tasks) {
+			return annotationdomain.ErrInvalidSnapshot
+		}
+
+		manifest, outputCount, err := snapshotManifest(campaign, tasks, results, decisions)
+		if err != nil {
+			return err
+		}
+		now := time.Now().UTC()
+		snapshot = annotationdomain.Snapshot{
+			ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID,
+			Status: annotationdomain.SnapshotBuilding, Manifest: manifest,
+			ManifestHashPayload: append([]byte(nil), manifest...), RootHash: hashBytes(manifest),
+			ExpectedTaskCount: len(tasks), ExpectedResultCount: len(results),
+			ExpectedDecisionCount: len(decisions), ExpectedOutputCount: outputCount,
+			CreatedAt: now, CreatedBy: cmd.ActorID,
+		}
+		if err := snapshot.Validate(); err != nil {
+			return err
+		}
+		if err := s.repo.InsertAndFinalizeSnapshot(ctx, tx, snapshot, tasks, results, decisions, now); err != nil {
+			return err
+		}
+		snapshot.Status = annotationdomain.SnapshotFinalized
+		snapshot.FinalizedAt = &now
+
+		if err := appendEvent(ctx, tx, "ANNOTATION_SNAPSHOT", snapshot.ID, "AnnotationSnapshotFinalized", map[string]any{
+			"snapshotId": snapshot.ID, "campaignId": cmd.CampaignID,
+			"rootHash": snapshot.RootHash, "taskCount": len(tasks),
+			"resultCount": len(results), "decisionCount": len(decisions), "outputCount": outputCount,
+		}); err != nil {
+			return err
+		}
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			WorkspaceID: cmd.WorkspaceID, EvidenceType: "ANNOTATION_SNAPSHOT_FINALIZED",
+			Title: "Annotation snapshot finalized", SourceType: "CORE",
+			Metadata: map[string]any{
+				"campaignId": cmd.CampaignID, "rootHash": snapshot.RootHash,
+				"taskCount": len(tasks), "resultCount": len(results),
+				"decisionCount": len(decisions), "outputCount": outputCount,
+			}, CreatedBy: cmd.ActorID,
+		}, evidence.Relation{ObjectType: "ANNOTATION_SNAPSHOT", ObjectID: snapshot.ID, RelationType: "FINALIZATION_EVIDENCE"}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &cmd.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID,
+			Action: "ANNOTATION_SNAPSHOT_FINALIZED", ObjectType: "ANNOTATION_SNAPSHOT", ObjectID: snapshot.ID,
+			AfterState: map[string]any{
+				"campaignId": cmd.CampaignID, "rootHash": snapshot.RootHash,
+				"taskCount": len(tasks), "resultCount": len(results),
+				"decisionCount": len(decisions), "outputCount": outputCount,
+			}, TraceID: cmd.TraceID,
+		})
+	})
+	return snapshot, err
+}
+
+func snapshotManifest(
+	campaign annotationdomain.Campaign,
+	tasks []annotationdomain.Task,
+	results []annotationdomain.Result,
+	decisions []annotationdomain.ReviewDecision,
+) ([]byte, int, error) {
+	type taskItem struct {
+		ID                  string `json:"id"`
+		SourceItemRef       string `json:"sourceItemRef"`
+		SourceContentSHA256 string `json:"sourceContentSha256"`
+		TaskTextSHA256      string `json:"taskTextSha256"`
+	}
+	type resultItem struct {
+		ID                    string  `json:"id"`
+		TaskID                string  `json:"taskId"`
+		CanonicalPayloadSHA256 string  `json:"canonicalPayloadSha256"`
+		AuthorRef             string  `json:"authorRef"`
+		CorrectedFromResultID *string `json:"correctedFromResultId,omitempty"`
+	}
+	type decisionItem struct {
+		ID               string  `json:"id"`
+		TaskID           string  `json:"taskId"`
+		Outcome          string  `json:"outcome"`
+		ReviewedResultID *string `json:"reviewedResultId,omitempty"`
+		SelectedResultID *string `json:"selectedResultId,omitempty"`
+		ReviewerRef      string  `json:"reviewerRef"`
+		Reason           string  `json:"reason"`
+	}
+	type outputItem struct {
+		TaskID           string `json:"taskId"`
+		SelectedResultID string `json:"selectedResultId"`
+	}
+	type manifest struct {
+		FormatVersion                 string         `json:"formatVersion"`
+		CampaignID                    string         `json:"campaignId"`
+		InputDatasetVersionID         string         `json:"inputDatasetVersionId"`
+		InputCertificationID          string         `json:"inputCertificationId"`
+		AnnotationContributionID      string         `json:"annotationContributionResourceId"`
+		TaskManifestHash              string         `json:"taskManifestHash"`
+		SchemaHash                    string         `json:"schemaHash"`
+		TaxonomyHash                  string         `json:"taxonomyHash"`
+		RubricHash                    string         `json:"rubricHash"`
+		RendererHash                  string         `json:"rendererHash"`
+		ReviewPolicyHash              string         `json:"reviewPolicyHash"`
+		Tasks                         []taskItem     `json:"tasks"`
+		Results                       []resultItem   `json:"results"`
+		Decisions                     []decisionItem `json:"decisions"`
+		Outputs                       []outputItem   `json:"outputs"`
+	}
+
+	taskItems := make([]taskItem, 0, len(tasks))
+	for _, task := range tasks {
+		taskItems = append(taskItems, taskItem{
+			ID: task.ID.String(), SourceItemRef: task.SourceItemRef,
+			SourceContentSHA256: task.SourceContentSHA256, TaskTextSHA256: task.TaskTextSHA256,
+		})
+	}
+	resultItems := make([]resultItem, 0, len(results))
+	for _, result := range results {
+		var corrected *string
+		if result.CorrectedFromResultID != nil {
+			value := result.CorrectedFromResultID.String()
+			corrected = &value
+		}
+		resultItems = append(resultItems, resultItem{
+			ID: result.ID.String(), TaskID: result.TaskID.String(),
+			CanonicalPayloadSHA256: result.CanonicalPayloadSHA256,
+			AuthorRef: result.AuthorRef, CorrectedFromResultID: corrected,
+		})
+	}
+	decisionItems := make([]decisionItem, 0, len(decisions))
+	outputs := make([]outputItem, 0)
+	for _, decision := range decisions {
+		var reviewed, selected *string
+		if decision.ReviewedResultID != nil {
+			value := decision.ReviewedResultID.String()
+			reviewed = &value
+		}
+		if decision.SelectedResultID != nil {
+			value := decision.SelectedResultID.String()
+			selected = &value
+		}
+		decisionItems = append(decisionItems, decisionItem{
+			ID: decision.ID.String(), TaskID: decision.TaskID.String(), Outcome: decision.Outcome,
+			ReviewedResultID: reviewed, SelectedResultID: selected,
+			ReviewerRef: decision.ReviewerRef, Reason: decision.Reason,
+		})
+		if selected != nil && (decision.Outcome == annotationdomain.ReviewAccept || decision.Outcome == annotationdomain.ReviewCorrect) {
+			outputs = append(outputs, outputItem{TaskID: decision.TaskID.String(), SelectedResultID: *selected})
+		}
+	}
+	sort.Slice(taskItems, func(i, j int) bool { return taskItems[i].ID < taskItems[j].ID })
+	sort.Slice(resultItems, func(i, j int) bool { return resultItems[i].ID < resultItems[j].ID })
+	sort.Slice(decisionItems, func(i, j int) bool { return decisionItems[i].ID < decisionItems[j].ID })
+	sort.Slice(outputs, func(i, j int) bool { return outputs[i].TaskID < outputs[j].TaskID })
+
+	encoded, err := json.Marshal(manifest{
+		FormatVersion: "annotation-snapshot-v1", CampaignID: campaign.ID.String(),
+		InputDatasetVersionID: campaign.InputDatasetVersionID.String(),
+		InputCertificationID: campaign.InputCertificationID.String(),
+		AnnotationContributionID: campaign.AnnotationContributionID.String(),
+		TaskManifestHash: campaign.TaskManifestHash,
+		SchemaHash: campaign.Schema.ContentSHA256, TaxonomyHash: campaign.Taxonomy.ContentSHA256,
+		RubricHash: campaign.Rubric.ContentSHA256, RendererHash: campaign.Renderer.ContentSHA256,
+		ReviewPolicyHash: campaign.ReviewPolicy.ContentSHA256,
+		Tasks: taskItems, Results: resultItems, Decisions: decisionItems, Outputs: outputs,
+	})
+	if err != nil {
+		return nil, 0, fmt.Errorf("marshal annotation snapshot manifest: %w", err)
+	}
+	return encoded, len(outputs), nil
 }
 
 func appendEvent(
