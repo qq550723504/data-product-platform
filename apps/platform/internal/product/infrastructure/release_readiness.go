@@ -20,6 +20,9 @@ type ReadinessFacts struct {
 	ProductionDependencyBindingComplete bool
 	RightsSnapshotExists                bool
 	RightsSnapshotWorkspaceMatch        bool
+	RightsSnapshotReleaseMatch          bool
+	RightsSnapshotFinalized             bool
+	RightsSnapshotContextMatch          bool
 	RightsCurrentlyValid                bool
 	RightsCoverageKnown                 bool
 	RightsCoverageComplete              bool
@@ -145,16 +148,29 @@ func (r *PostgresRepository) readinessFacts(ctx context.Context, q readinessQuer
 
 	if release.RightsSnapshotID != nil {
 		var snapshotWorkspace uuid.UUID
+		var snapshotReleaseID *uuid.UUID
+		var snapshotStatus string
 		var purpose string
 		var authorizationCount int
+		var contextMatch bool
 		var currentlyValid bool
 		err := q.QueryRow(ctx, `
 			SELECT rs.workspace_id,
+			       rs.product_release_id,
+			       rs.status,
 			       rs.purpose,
 			       count(rsa.authorization_id),
+			       COALESCE(
+			           (rs.manifest->>'purpose')=rs.purpose
+			           AND COALESCE(rs.manifest->>'consumerRef','')=COALESCE(rs.consumer_ref,'')
+			           AND bool_and(
+			               da.purpose=rs.purpose
+			               AND da.grantee_ref=rs.consumer_ref
+			           ),
+			           false
+			       ),
 			       COALESCE(bool_and(
 			           da.status='ACTIVE'
-			           AND da.purpose=rs.purpose
 			           AND (da.valid_from IS NULL OR da.valid_from <= $2)
 			           AND (da.valid_to IS NULL OR da.valid_to > $2)
 			           AND EXISTS (
@@ -183,11 +199,22 @@ func (r *PostgresRepository) readinessFacts(ctx context.Context, q readinessQuer
 			LEFT JOIN rights_snapshot_authorization rsa ON rsa.rights_snapshot_id=rs.id
 			LEFT JOIN data_authorization da ON da.id=rsa.authorization_id
 			WHERE rs.id=$1
-			GROUP BY rs.workspace_id, rs.purpose
-		`, *release.RightsSnapshotID, now.UTC()).Scan(&snapshotWorkspace, &purpose, &authorizationCount, &currentlyValid)
+			GROUP BY rs.workspace_id, rs.product_release_id, rs.status, rs.purpose, rs.consumer_ref, rs.manifest
+		`, *release.RightsSnapshotID, now.UTC()).Scan(
+			&snapshotWorkspace,
+			&snapshotReleaseID,
+			&snapshotStatus,
+			&purpose,
+			&authorizationCount,
+			&contextMatch,
+			&currentlyValid,
+		)
 		if err == nil {
 			facts.RightsSnapshotExists = true
 			facts.RightsSnapshotWorkspaceMatch = snapshotWorkspace == product.WorkspaceID
+			facts.RightsSnapshotReleaseMatch = snapshotReleaseID != nil && *snapshotReleaseID == release.ID
+			facts.RightsSnapshotFinalized = snapshotStatus == "FINALIZED"
+			facts.RightsSnapshotContextMatch = authorizationCount > 0 && contextMatch
 			facts.RightsCurrentlyValid = authorizationCount > 0 && currentlyValid
 			coverage, err := evaluateRightsCoverage(ctx, q, *release.RightsSnapshotID, releaseDatasetVersionIDs, now)
 			if err != nil {
