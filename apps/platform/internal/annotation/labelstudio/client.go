@@ -487,10 +487,10 @@ func labelConfigFromSchema(schemaContent string) (string, string, error) {
 	return config, hex.EncodeToString(sum[:]), nil
 }
 
-func correlationDescription(campaignID uuid.UUID, requestID, fingerprint, configSHA string) string {
+func correlationDescription(campaignID uuid.UUID, requestID, fingerprint, schemaSHA string) string {
 	return fmt.Sprintf(
-		"core_campaign_id=%s core_request_id=%s core_request_fingerprint=%s core_config_sha256=%s",
-		campaignID, strings.TrimSpace(requestID), strings.TrimSpace(fingerprint), strings.TrimSpace(configSHA),
+		"core_campaign_id=%s core_request_id=%s core_request_fingerprint=%s core_schema_sha256=%s",
+		campaignID, strings.TrimSpace(requestID), strings.TrimSpace(fingerprint), strings.TrimSpace(schemaSHA),
 	)
 }
 
