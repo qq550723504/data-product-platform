@@ -267,7 +267,7 @@ func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCo
 			return err
 		}
 		if err := appendEvent(ctx, tx, "ANNOTATION_TASK", cmd.TaskID, "AnnotationResultRecorded", map[string]any{
-			"taskId": cmd.TaskID, "resultId": result.ID, "payloadSha256":     result.CanonicalPayloadSHA256,
+			"taskId": cmd.TaskID, "resultId": result.ID, "payloadSha256": result.CanonicalPayloadSHA256,
 		}); err != nil {
 			return err
 		}
@@ -276,7 +276,7 @@ func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCo
 			Title: "Annotation result recorded", SourceType: "CORE",
 			Metadata: map[string]any{
 				"taskId": cmd.TaskID, "resultId": result.ID,
-				"payloadSha256": result.CanonicalPayloadSHA256,
+				"payloadSha256":     result.CanonicalPayloadSHA256,
 				"normalizerVersion": result.NormalizerVersion,
 			},
 			CreatedBy: cmd.ActorID,
