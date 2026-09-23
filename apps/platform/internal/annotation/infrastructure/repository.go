@@ -604,6 +604,33 @@ func (r *Repository) InsertAndFinalizeSnapshot(
 	return nil
 }
 
+func (r *Repository) GetSnapshotByCampaign(
+	ctx context.Context,
+	workspaceID, campaignID uuid.UUID,
+) (annotationdomain.Snapshot, error) {
+	var snapshot annotationdomain.Snapshot
+	err := r.pool.QueryRow(ctx, `
+		SELECT id, workspace_id, campaign_id, status, manifest, manifest_hash_payload, root_hash,
+		       expected_task_count, expected_result_count, expected_decision_count, expected_output_count,
+		       created_at, created_by, finalized_at
+		  FROM annotation_snapshot
+		 WHERE workspace_id=$1 AND campaign_id=$2
+	`, workspaceID, campaignID).Scan(
+		&snapshot.ID, &snapshot.WorkspaceID, &snapshot.CampaignID, &snapshot.Status,
+		&snapshot.Manifest, &snapshot.ManifestHashPayload, &snapshot.RootHash,
+		&snapshot.ExpectedTaskCount, &snapshot.ExpectedResultCount,
+		&snapshot.ExpectedDecisionCount, &snapshot.ExpectedOutputCount,
+		&snapshot.CreatedAt, &snapshot.CreatedBy, &snapshot.FinalizedAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.Snapshot{}, pgx.ErrNoRows
+	}
+	if err != nil {
+		return annotationdomain.Snapshot{}, fmt.Errorf("get annotation snapshot by campaign: %w", err)
+	}
+	return snapshot, nil
+}
+
 func (r *Repository) GetSnapshotIntegrity(ctx context.Context, snapshotID uuid.UUID) (bool, error) {
 	var valid bool
 	err := r.pool.QueryRow(ctx, `
