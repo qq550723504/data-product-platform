@@ -259,6 +259,165 @@ func (r *Repository) GetTaskTx(ctx context.Context, tx pgx.Tx, taskID uuid.UUID)
 }
 
 
+
+func (r *Repository) ListResultsTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	campaignID uuid.UUID,
+) ([]annotationdomain.Result, error) {
+	rows, err := tx.Query(ctx, `
+		SELECT id, workspace_id, campaign_id, task_id, author_ref,
+		       COALESCE(provider_binding_ref,''), COALESCE(external_task_id,''),
+		       COALESCE(external_annotation_id,''), COALESCE(external_revision,''),
+		       observation_key, canonical_payload, canonical_payload_sha256,
+		       normalizer_version, corrected_from_result_id, created_at, created_by
+		  FROM annotation_result
+		 WHERE campaign_id=$1
+		 ORDER BY id
+	`, campaignID)
+	if err != nil {
+		return nil, fmt.Errorf("list annotation results: %w", err)
+	}
+	defer rows.Close()
+	results := make([]annotationdomain.Result, 0)
+	for rows.Next() {
+		var result annotationdomain.Result
+		var payload []byte
+		if err := rows.Scan(
+			&result.ID, &result.WorkspaceID, &result.CampaignID, &result.TaskID, &result.AuthorRef,
+			&result.ProviderBindingRef, &result.ExternalTaskID, &result.ExternalAnnotationID,
+			&result.ExternalRevision, &result.ObservationKey, &payload, &result.CanonicalPayloadSHA256,
+			&result.NormalizerVersion, &result.CorrectedFromResultID, &result.CreatedAt, &result.CreatedBy,
+		); err != nil {
+			return nil, fmt.Errorf("scan annotation result: %w", err)
+		}
+		result.CanonicalPayload = payload
+		results = append(results, result)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate annotation results: %w", err)
+	}
+	return results, nil
+}
+
+func (r *Repository) ListDecisionsTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	campaignID uuid.UUID,
+) ([]annotationdomain.ReviewDecision, error) {
+	rows, err := tx.Query(ctx, `
+		SELECT id, workspace_id, campaign_id, task_id, review_attempt_id,
+		       reviewed_result_id, selected_result_id, reviewer_ref, outcome, reason,
+		       expected_task_revision, created_at
+		  FROM annotation_review_decision
+		 WHERE campaign_id=$1
+		 ORDER BY id
+	`, campaignID)
+	if err != nil {
+		return nil, fmt.Errorf("list annotation review decisions: %w", err)
+	}
+	defer rows.Close()
+	decisions := make([]annotationdomain.ReviewDecision, 0)
+	for rows.Next() {
+		var decision annotationdomain.ReviewDecision
+		if err := rows.Scan(
+			&decision.ID, &decision.WorkspaceID, &decision.CampaignID, &decision.TaskID,
+			&decision.ReviewAttemptID, &decision.ReviewedResultID, &decision.SelectedResultID,
+			&decision.ReviewerRef, &decision.Outcome, &decision.Reason,
+			&decision.ExpectedTaskRevision, &decision.CreatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan annotation review decision: %w", err)
+		}
+		decisions = append(decisions, decision)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate annotation review decisions: %w", err)
+	}
+	return decisions, nil
+}
+
+func (r *Repository) InsertAndFinalizeSnapshot(
+	ctx context.Context,
+	tx pgx.Tx,
+	snapshot annotationdomain.Snapshot,
+	tasks []annotationdomain.Task,
+	results []annotationdomain.Result,
+	decisions []annotationdomain.ReviewDecision,
+	finalizedAt time.Time,
+) error {
+	if err := snapshot.Validate(); err != nil {
+		return err
+	}
+	if snapshot.Status != annotationdomain.SnapshotBuilding {
+		return annotationdomain.ErrInvalidSnapshot
+	}
+
+	if _, err := tx.Exec(ctx, `
+		INSERT INTO annotation_snapshot (
+			id, workspace_id, campaign_id, status, manifest, manifest_hash_payload, root_hash,
+			expected_task_count, expected_result_count, expected_decision_count, expected_output_count,
+			created_at, created_by
+		) VALUES ($1,$2,$3,'BUILDING',$4,$5,$6,$7,$8,$9,$10,$11,$12)
+	`, snapshot.ID, snapshot.WorkspaceID, snapshot.CampaignID, snapshot.Manifest,
+		snapshot.ManifestHashPayload, snapshot.RootHash, snapshot.ExpectedTaskCount,
+		snapshot.ExpectedResultCount, snapshot.ExpectedDecisionCount, snapshot.ExpectedOutputCount,
+		snapshot.CreatedAt, snapshot.CreatedBy); err != nil {
+		return fmt.Errorf("insert annotation snapshot: %w", err)
+	}
+
+	for _, task := range tasks {
+		if _, err := tx.Exec(ctx, `
+			INSERT INTO annotation_snapshot_task (
+				snapshot_id, task_id, source_item_ref, source_content_sha256, task_text_sha256
+			) VALUES ($1,$2,$3,$4,$5)
+		`, snapshot.ID, task.ID, task.SourceItemRef, task.SourceContentSHA256, task.TaskTextSHA256); err != nil {
+			return fmt.Errorf("insert annotation snapshot task: %w", err)
+		}
+	}
+	for _, result := range results {
+		if _, err := tx.Exec(ctx, `
+			INSERT INTO annotation_snapshot_result (
+				snapshot_id, result_id, task_id, canonical_payload_sha256, author_ref
+			) VALUES ($1,$2,$3,$4,$5)
+		`, snapshot.ID, result.ID, result.TaskID, result.CanonicalPayloadSHA256, result.AuthorRef); err != nil {
+			return fmt.Errorf("insert annotation snapshot result: %w", err)
+		}
+	}
+	for _, decision := range decisions {
+		if _, err := tx.Exec(ctx, `
+			INSERT INTO annotation_snapshot_decision (
+				snapshot_id, decision_id, task_id, outcome, reviewed_result_id,
+				selected_result_id, reviewer_ref, reason
+			) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+		`, snapshot.ID, decision.ID, decision.TaskID, decision.Outcome,
+			decision.ReviewedResultID, decision.SelectedResultID, decision.ReviewerRef, decision.Reason); err != nil {
+			return fmt.Errorf("insert annotation snapshot decision: %w", err)
+		}
+		if decision.SelectedResultID != nil &&
+			(decision.Outcome == annotationdomain.ReviewAccept || decision.Outcome == annotationdomain.ReviewCorrect) {
+			if _, err := tx.Exec(ctx, `
+				INSERT INTO annotation_snapshot_output (snapshot_id, task_id, selected_result_id)
+				VALUES ($1,$2,$3)
+			`, snapshot.ID, decision.TaskID, decision.SelectedResultID); err != nil {
+				return fmt.Errorf("insert annotation snapshot output: %w", err)
+			}
+		}
+	}
+
+	tag, err := tx.Exec(ctx, `
+		UPDATE annotation_snapshot
+		   SET status='FINALIZED', finalized_at=$2
+		 WHERE id=$1 AND status='BUILDING'
+	`, snapshot.ID, finalizedAt)
+	if err != nil {
+		return fmt.Errorf("finalize annotation snapshot: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return ErrStaleRevision
+	}
+	return nil
+}
+
 func (r *Repository) GetResultByObservation(
 	ctx context.Context,
 	workspaceID, campaignID uuid.UUID,
