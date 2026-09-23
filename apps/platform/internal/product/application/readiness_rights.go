@@ -6,6 +6,9 @@ func evaluateRightsReadiness(facts infrastructure.ReadinessFacts) (CheckStatus, 
 	details := map[string]any{
 		"snapshotExists":           facts.RightsSnapshotExists,
 		"workspaceMatch":           facts.RightsSnapshotWorkspaceMatch,
+		"releaseMatch":             facts.RightsSnapshotReleaseMatch,
+		"finalized":                facts.RightsSnapshotFinalized,
+		"contextMatch":             facts.RightsSnapshotContextMatch,
 		"currentlyValid":           facts.RightsCurrentlyValid,
 		"coverageKnown":            facts.RightsCoverageKnown,
 		"coverageComplete":         facts.RightsCoverageComplete,
@@ -17,7 +20,19 @@ func evaluateRightsReadiness(facts infrastructure.ReadinessFacts) (CheckStatus, 
 	if !facts.RightsSnapshotExists {
 		return CheckFail, []string{"RIGHTS_SNAPSHOT_MISSING"}, details
 	}
-	if !facts.RightsSnapshotWorkspaceMatch || !facts.RightsCurrentlyValid {
+	if !facts.RightsSnapshotWorkspaceMatch {
+		return CheckFail, []string{"RIGHTS_INVALID"}, details
+	}
+	if !facts.RightsSnapshotReleaseMatch {
+		return CheckFail, []string{"RIGHTS_SNAPSHOT_RELEASE_MISMATCH"}, details
+	}
+	if !facts.RightsSnapshotFinalized {
+		return CheckFail, []string{"RIGHTS_SNAPSHOT_NOT_FINALIZED"}, details
+	}
+	if !facts.RightsSnapshotContextMatch {
+		return CheckFail, []string{"RIGHTS_CONTEXT_MISMATCH"}, details
+	}
+	if !facts.RightsCurrentlyValid {
 		return CheckFail, []string{"RIGHTS_INVALID"}, details
 	}
 	if facts.RightsCoverageKnown && len(facts.MissingResourceIDs) > 0 {
