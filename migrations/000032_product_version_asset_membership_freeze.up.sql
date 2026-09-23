@@ -1,17 +1,28 @@
 -- Freeze ProductVersion asset membership as part of ProductVersion creation.
 --
--- Existing ProductVersion rows are historical and become FINALIZED immediately.
+-- This repository has no production/customer rows to preserve. Migration 000032
+-- establishes the strict current contract only; existing development databases
+-- with ProductVersion rows must be rebuilt instead of backfilled.
+--
 -- New application-created versions explicitly start BUILDING, insert all assets
 -- while holding the parent row lock, then transition to FINALIZED in the same
 -- transaction. BUILDING is not allowed to commit.
 
 LOCK TABLE product_version, product_asset IN ACCESS EXCLUSIVE MODE;
 
+DO $precondition$
+BEGIN
+    IF EXISTS (SELECT 1 FROM product_version) THEN
+        RAISE EXCEPTION 'migration 000032 requires an empty product_version table; rebuild the development database';
+    END IF;
+END;
+$precondition$;
+
 DROP TRIGGER IF EXISTS trg_product_version_immutable_update ON product_version;
 DROP TRIGGER IF EXISTS trg_product_version_immutable_delete ON product_version;
 
 ALTER TABLE product_version
-    ADD COLUMN build_status varchar(16) NOT NULL DEFAULT 'FINALIZED',
+    ADD COLUMN build_status varchar(16) NOT NULL,
     ADD CONSTRAINT ck_product_version_build_status
         CHECK (build_status IN ('BUILDING','FINALIZED'));
 
