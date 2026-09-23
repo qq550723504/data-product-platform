@@ -5,6 +5,7 @@ import (
 	"errors"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
@@ -29,17 +30,19 @@ func TestSnapshotManifestKeepsRejectedTaskInDecisionDenominator(t *testing.T) {
 		InputCertificationID:     uuid.New(),
 		AnnotationContributionID: uuid.New(),
 		TaskManifestHash:         strings.Repeat("a", 64),
-		Schema:                   annotationdomain.FrozenSpec{ContentSHA256: strings.Repeat("b", 64)},
-		Taxonomy:                 annotationdomain.FrozenSpec{ContentSHA256: strings.Repeat("c", 64)},
-		Rubric:                   annotationdomain.FrozenSpec{ContentSHA256: strings.Repeat("d", 64)},
-		Renderer:                 annotationdomain.FrozenSpec{ContentSHA256: strings.Repeat("e", 64)},
-		ReviewPolicy:             annotationdomain.FrozenSpec{ContentSHA256: strings.Repeat("f", 64)},
+		InputChecksumSHA256:      strings.Repeat("9", 64),
+		Schema:                   annotationdomain.FrozenSpec{Ref: "schema", Version: "1", ContentSHA256: strings.Repeat("b", 64), ContentSnapshot: "schema"},
+		Taxonomy:                 annotationdomain.FrozenSpec{Ref: "taxonomy", Version: "1", ContentSHA256: strings.Repeat("c", 64), ContentSnapshot: "taxonomy"},
+		Rubric:                   annotationdomain.FrozenSpec{Ref: "rubric", Version: "1", ContentSHA256: strings.Repeat("d", 64), ContentSnapshot: "rubric"},
+		Renderer:                 annotationdomain.FrozenSpec{Ref: "renderer", Version: "1", ContentSHA256: strings.Repeat("e", 64), ContentSnapshot: "renderer"},
+		ReviewPolicy:             annotationdomain.FrozenSpec{Ref: "review", Version: "1", ContentSHA256: strings.Repeat("f", 64), ContentSnapshot: "review"},
 	}
 	taskID := uuid.New()
 	task := annotationdomain.Task{
 		ID: taskID, WorkspaceID: campaign.WorkspaceID, CampaignID: campaign.ID,
 		SourceItemRef: "row:1", SourceContentSHA256: strings.Repeat("1", 64),
-		TaskTextSHA256: strings.Repeat("2", 64), Status: annotationdomain.TaskReviewed, Revision: 2,
+		TaskTextSHA256: strings.Repeat("2", 64), PrimaryAnnotatorRef: "annotator",
+		Status: annotationdomain.TaskReviewed, Revision: 2,
 	}
 	decision := annotationdomain.ReviewDecision{
 		ID: uuid.New(), WorkspaceID: campaign.WorkspaceID, CampaignID: campaign.ID, TaskID: taskID,
@@ -47,7 +50,10 @@ func TestSnapshotManifestKeepsRejectedTaskInDecisionDenominator(t *testing.T) {
 		Reason: "invalid annotation", ExpectedTaskRevision: 1,
 	}
 
-	encoded, outputCount, err := snapshotManifest(campaign, []annotationdomain.Task{task}, nil, []annotationdomain.ReviewDecision{decision})
+	builtAt := time.Date(2026, 9, 23, 10, 0, 0, 123456000, time.UTC)
+	encoded, outputCount, err := snapshotManifest(
+		campaign, []annotationdomain.Task{task}, nil, []annotationdomain.ReviewDecision{decision}, builtAt, nil,
+	)
 	if err != nil {
 		t.Fatalf("snapshotManifest: %v", err)
 	}
@@ -158,5 +164,18 @@ func TestReviewFingerprintChangesWithConflictingPayload(t *testing.T) {
 	}
 	if left == right {
 		t.Fatal("review fingerprint must change when same-key command semantics change")
+	}
+}
+
+func TestValidateAnnotationPayloadAgainstFrozenSchema(t *testing.T) {
+	schema := pilotSchemaSpec("A", "B")
+	if err := validateAnnotationPayload(schema, []byte("{\"label\":\"A\"}")); err != nil {
+		t.Fatalf("valid payload: %v", err)
+	}
+	if err := validateAnnotationPayload(schema, []byte("{\"label\":\"C\"}")); err == nil {
+		t.Fatal("unknown label should be rejected")
+	}
+	if err := validateAnnotationPayload(schema, []byte("{\"label\":\"A\",\"extra\":true}")); err == nil {
+		t.Fatal("payload with fields outside frozen schema should be rejected")
 	}
 }
