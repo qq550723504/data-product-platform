@@ -141,21 +141,20 @@ func (r *PostgresRepository) SaveAuthorizationState(ctx context.Context, tx pgx.
 }
 
 func (r *PostgresRepository) ValidateSnapshotReleaseContext(ctx context.Context, tx pgx.Tx, releaseID, workspaceID uuid.UUID) error {
-	var releaseWorkspace uuid.UUID
+	var exists bool
 	err := tx.QueryRow(ctx, `
-		SELECT p.workspace_id
-		FROM product_release r
-		JOIN data_product p ON p.id=r.product_id
-		WHERE r.id=$1
-	`, releaseID).Scan(&releaseWorkspace)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return fmt.Errorf("rights snapshot ProductRelease %s: %w", releaseID, ErrNotFound)
-	}
+		SELECT EXISTS (
+			SELECT 1
+			FROM product_release r
+			JOIN data_product p ON p.id=r.product_id
+			WHERE r.id=$1 AND p.workspace_id=$2
+		)
+	`, releaseID, workspaceID).Scan(&exists)
 	if err != nil {
-		return fmt.Errorf("read rights snapshot ProductRelease workspace: %w", err)
+		return fmt.Errorf("validate rights snapshot ProductRelease context: %w", err)
 	}
-	if releaseWorkspace != workspaceID {
-		return fmt.Errorf("%w: ProductRelease %s belongs to workspace %s", domain.ErrInvalidRightsSnapshot, releaseID, releaseWorkspace)
+	if !exists {
+		return fmt.Errorf("rights snapshot ProductRelease context: %w", ErrNotFound)
 	}
 	return nil
 }
