@@ -14,9 +14,10 @@ import (
 )
 
 var (
-	ErrCampaignNotFound = errors.New("annotation campaign not found")
-	ErrTaskNotFound     = errors.New("annotation task not found")
-	ErrStaleRevision    = errors.New("annotation revision conflict")
+	ErrCampaignNotFound        = errors.New("annotation campaign not found")
+	ErrTaskNotFound            = errors.New("annotation task not found")
+	ErrTaskIdempotencyConflict = errors.New("annotation task idempotency conflict")
+	ErrStaleRevision           = errors.New("annotation revision conflict")
 )
 
 type Repository struct {
@@ -95,6 +96,49 @@ func (r *Repository) ValidateCurrentInputCertificationTx(
 	return nil
 }
 
+func (r *Repository) InsertCampaignCommand(
+	ctx context.Context,
+	tx pgx.Tx,
+	workspaceID uuid.UUID,
+	idempotencyKey, requestFingerprint string,
+	campaignID uuid.UUID,
+) error {
+	_, err := tx.Exec(ctx, `
+		INSERT INTO annotation_campaign_command (
+			workspace_id, idempotency_key, request_fingerprint, campaign_id
+		) VALUES ($1,$2,$3,$4)
+	`, workspaceID, idempotencyKey, requestFingerprint, campaignID)
+	if err != nil {
+		return fmt.Errorf("insert annotation campaign command: %w", err)
+	}
+	return nil
+}
+
+func (r *Repository) GetCampaignByCommandKey(
+	ctx context.Context,
+	workspaceID uuid.UUID,
+	idempotencyKey string,
+) (annotationdomain.Campaign, string, error) {
+	var campaignID uuid.UUID
+	var fingerprint string
+	err := r.pool.QueryRow(ctx, `
+		SELECT campaign_id, request_fingerprint
+		  FROM annotation_campaign_command
+		 WHERE workspace_id=$1 AND idempotency_key=$2
+	`, workspaceID, idempotencyKey).Scan(&campaignID, &fingerprint)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.Campaign{}, "", pgx.ErrNoRows
+	}
+	if err != nil {
+		return annotationdomain.Campaign{}, "", fmt.Errorf("get annotation campaign command: %w", err)
+	}
+	campaign, err := r.GetCampaign(ctx, campaignID)
+	if err != nil {
+		return annotationdomain.Campaign{}, "", err
+	}
+	return campaign, fingerprint, nil
+}
+
 func (r *Repository) InsertCampaign(ctx context.Context, tx pgx.Tx, campaign annotationdomain.Campaign) error {
 	if campaign.ID == uuid.Nil {
 		return annotationdomain.ErrInvalidCampaign
@@ -132,15 +176,47 @@ func (r *Repository) InsertCampaign(ctx context.Context, tx pgx.Tx, campaign ann
 }
 
 func (r *Repository) InsertTask(ctx context.Context, tx pgx.Tx, task annotationdomain.Task) error {
-	_, err := tx.Exec(ctx, `
+	tag, err := tx.Exec(ctx, `
 		INSERT INTO annotation_task (
 			id, workspace_id, campaign_id, source_item_ref, source_content_sha256,
 			task_text_sha256, primary_annotator_ref, status, revision, created_at
 		) VALUES ($1,$2,$3,$4,$5,$6,NULLIF($7,''),$8,$9,$10)
+		ON CONFLICT (campaign_id, source_item_ref) DO NOTHING
 	`, task.ID, task.WorkspaceID, task.CampaignID, task.SourceItemRef, task.SourceContentSHA256,
 		task.TaskTextSHA256, task.PrimaryAnnotatorRef, task.Status, task.Revision, task.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("insert annotation task: %w", err)
+	}
+	if tag.RowsAffected() == 1 {
+		return nil
+	}
+
+	var existing annotationdomain.Task
+	err = tx.QueryRow(ctx, `
+		SELECT id, workspace_id, campaign_id, source_item_ref, source_content_sha256,
+		       task_text_sha256, COALESCE(primary_annotator_ref,''), status, revision,
+		       current_decision_id, created_at
+		  FROM annotation_task
+		 WHERE campaign_id=$1 AND source_item_ref=$2
+	`, task.CampaignID, task.SourceItemRef).Scan(
+		&existing.ID, &existing.WorkspaceID, &existing.CampaignID, &existing.SourceItemRef,
+		&existing.SourceContentSHA256, &existing.TaskTextSHA256, &existing.PrimaryAnnotatorRef,
+		&existing.Status, &existing.Revision, &existing.CurrentDecisionID, &existing.CreatedAt,
+	)
+	if err != nil {
+		return fmt.Errorf("read replayed annotation task: %w", err)
+	}
+	if existing.ID != task.ID ||
+		existing.WorkspaceID != task.WorkspaceID ||
+		existing.CampaignID != task.CampaignID ||
+		existing.SourceItemRef != task.SourceItemRef ||
+		existing.SourceContentSHA256 != task.SourceContentSHA256 ||
+		existing.TaskTextSHA256 != task.TaskTextSHA256 ||
+		existing.PrimaryAnnotatorRef != task.PrimaryAnnotatorRef ||
+		existing.Status != annotationdomain.TaskPending ||
+		existing.Revision != 1 ||
+		existing.CurrentDecisionID != nil {
+		return ErrTaskIdempotencyConflict
 	}
 	return nil
 }
