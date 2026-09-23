@@ -212,12 +212,12 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 			id, workspace_id, code, name, lifecycle_status, health_status, metadata, created_at, updated_at
 		) VALUES ($1,$2,$3,'企业经营活跃度','PUBLISHED','HEALTHY','{}'::jsonb,now(),now())
 	`, productID, workspaceID, "TRACE-PRODUCT-"+uuid.NewString())
-	mustExec(t, ctx, pool, `
+	mustBuildProductVersion(t, ctx, pool, productVersionID, `
 		INSERT INTO product_version (
 			id, product_id, major_version, minor_version, patch_version, workflow_version_id,
-			entity_policy_ref, indicator_set_ref, definition_snapshot, created_at
+			entity_policy_ref, indicator_set_ref, definition_snapshot, build_status, expected_asset_count, created_at
 		) VALUES ($1,$2,1,0,0,$3,'park/matching/company-match-policy-v1.yaml',
-		          'park/indicators/enterprise-activity-v1.yaml','{}'::jsonb,now())
+		          'park/indicators/enterprise-activity-v1.yaml','{}'::jsonb,'BUILDING',0,now())
 	`, productVersionID, productID, workflowVersionID)
 
 	tx, err = pool.Begin(ctx)
@@ -473,9 +473,9 @@ func TestReleaseTraceBindsMappingsToDecisionNotCurrentProjection(t *testing.T) {
 		INSERT INTO data_product (id, workspace_id, code, name, lifecycle_status, health_status, metadata, created_at, updated_at)
 		VALUES ($1,$2,$3,'Bound mapping product','PUBLISHED','HEALTHY','{}'::jsonb,now(),now())
 	`, productID, workspaceID, "BIND-PRODUCT-"+uuid.NewString())
-	mustExec(t, ctx, pool, `
-		INSERT INTO product_version (id, product_id, major_version, minor_version, patch_version, definition_snapshot, created_at)
-		VALUES ($1,$2,1,0,0,'{}'::jsonb,now())
+	mustBuildProductVersion(t, ctx, pool, productVersionID, `
+		INSERT INTO product_version (id, product_id, major_version, minor_version, patch_version, definition_snapshot, build_status, expected_asset_count, created_at)
+		VALUES ($1,$2,1,0,0,'{}'::jsonb,'BUILDING',0,now())
 	`, productVersionID, productID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_release (id, product_id, product_version_id, release_no, status, metadata, created_at, released_at)
@@ -570,6 +570,29 @@ func assertMutationRejected(t *testing.T, ctx context.Context, pool *pgxpool.Poo
 	t.Helper()
 	if _, err := pool.Exec(ctx, query, args...); err == nil {
 		t.Fatalf("historical mutation unexpectedly succeeded: %s", query)
+	}
+}
+
+func mustBuildProductVersion(t *testing.T, ctx context.Context, pool *pgxpool.Pool, versionID uuid.UUID, query string, args ...any) {
+	t.Helper()
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin ProductVersion fixture: %v", err)
+	}
+	if _, err := tx.Exec(ctx, query, args...); err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("insert ProductVersion fixture: %v", err)
+	}
+	if _, err := tx.Exec(ctx, `
+		UPDATE product_version
+		SET build_status='FINALIZED'
+		WHERE id=$1 AND build_status='BUILDING'
+	`, versionID); err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("finalize ProductVersion fixture: %v", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("commit ProductVersion fixture: %v", err)
 	}
 }
 
