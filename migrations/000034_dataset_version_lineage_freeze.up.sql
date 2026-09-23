@@ -102,7 +102,7 @@ FOR EACH ROW EXECUTE FUNCTION guard_dataset_version_lineage_mutation();
 CREATE OR REPLACE FUNCTION guard_product_release_history()
 RETURNS trigger AS $release_history_guard$
 DECLARE
-    publish_permit text;
+    release_workspace uuid;
 BEGIN
     IF TG_OP = 'DELETE' THEN
         RAISE EXCEPTION 'product_release is historical and cannot be deleted';
@@ -119,10 +119,27 @@ BEGIN
     END IF;
 
     IF OLD.status = 'READY' AND NEW.status = 'PUBLISHED' THEN
-        publish_permit := current_setting('app.product_release_publish_id', true);
-        IF publish_permit IS DISTINCT FROM OLD.id::text THEN
-            RAISE EXCEPTION 'ProductRelease publication requires fenced publish command';
+        SELECT p.workspace_id
+          INTO release_workspace
+          FROM data_product p
+         WHERE p.id=OLD.product_id;
+
+        IF release_workspace IS NULL THEN
+            RAISE EXCEPTION 'ProductRelease product workspace does not exist';
         END IF;
+
+        -- Database-enforced publication fence. This is not a caller-minted
+        -- permit: every READY->PUBLISHED transition, including direct SQL,
+        -- must actually acquire the same workspace row lock used by lineage
+        -- INSERTs before the state change can complete.
+        INSERT INTO delivery_authorization_fence(workspace_id)
+        VALUES (release_workspace)
+        ON CONFLICT (workspace_id) DO NOTHING;
+
+        PERFORM 1
+          FROM delivery_authorization_fence
+         WHERE workspace_id=release_workspace
+         FOR UPDATE;
     END IF;
 
     RETURN NEW;
