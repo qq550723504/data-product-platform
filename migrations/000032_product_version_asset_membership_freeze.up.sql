@@ -23,11 +23,16 @@ DROP TRIGGER IF EXISTS trg_product_version_immutable_delete ON product_version;
 
 ALTER TABLE product_version
     ADD COLUMN build_status varchar(16) NOT NULL,
+    ADD COLUMN expected_asset_count integer NOT NULL,
     ADD CONSTRAINT ck_product_version_build_status
-        CHECK (build_status IN ('BUILDING','FINALIZED'));
+        CHECK (build_status IN ('BUILDING','FINALIZED')),
+    ADD CONSTRAINT ck_product_version_expected_asset_count
+        CHECK (expected_asset_count >= 0);
 
 CREATE OR REPLACE FUNCTION guard_product_version_mutation()
 RETURNS trigger AS $version_guard$
+DECLARE
+    actual_asset_count integer;
 BEGIN
     IF TG_OP = 'DELETE' THEN
         RAISE EXCEPTION 'product_version is immutable; create a new version instead';
@@ -44,10 +49,22 @@ BEGIN
            NEW.entity_policy_ref IS DISTINCT FROM OLD.entity_policy_ref OR
            NEW.indicator_set_ref IS DISTINCT FROM OLD.indicator_set_ref OR
            NEW.definition_snapshot IS DISTINCT FROM OLD.definition_snapshot OR
+           NEW.expected_asset_count IS DISTINCT FROM OLD.expected_asset_count OR
            NEW.created_at IS DISTINCT FROM OLD.created_at OR
            NEW.created_by IS DISTINCT FROM OLD.created_by THEN
             RAISE EXCEPTION 'product_version content is immutable';
         END IF;
+
+        SELECT count(*)
+          INTO actual_asset_count
+          FROM product_asset
+         WHERE product_version_id=OLD.id;
+
+        IF actual_asset_count <> OLD.expected_asset_count THEN
+            RAISE EXCEPTION 'product_version % asset membership count mismatch: expected %, got %',
+                OLD.id, OLD.expected_asset_count, actual_asset_count;
+        END IF;
+
         RETURN NEW;
     END IF;
 
