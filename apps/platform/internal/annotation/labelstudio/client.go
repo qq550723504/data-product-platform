@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"encoding/xml"
 
 	"github.com/google/uuid"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
@@ -49,17 +50,23 @@ func (c *Client) InstanceRef() string { return c.instanceRef }
 func (c *Client) EnsureCampaignBinding(ctx context.Context, req annotationapp.EngineCampaignRequest) (annotationapp.EngineCampaignBinding, error) {
 	if req.WorkspaceID == uuid.Nil || req.CampaignID == uuid.Nil ||
 		strings.TrimSpace(req.RequestID) == "" || strings.TrimSpace(req.RequestFingerprint) == "" ||
-		strings.TrimSpace(req.Title) == "" || strings.TrimSpace(req.LabelConfig) == "" ||
-		strings.TrimSpace(req.ConfigSHA256) == "" {
+		strings.TrimSpace(req.Title) == "" || strings.TrimSpace(req.SchemaContent) == "" ||
+		strings.TrimSpace(req.SchemaSHA256) == "" {
 		return annotationapp.EngineCampaignBinding{}, annotationapp.NewAnnotationEngineError(
 			annotationapp.ErrAnnotationEngineInvalidRequest, "ensure campaign binding", false, 0, nil,
 		)
 	}
 
+	labelConfig, configSHA256, err := labelConfigFromSchema(req.SchemaContent)
+	if err != nil {
+		return annotationapp.EngineCampaignBinding{}, annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidRequest, "build label config", false, 0, err,
+		)
+	}
 	body, err := json.Marshal(map[string]any{
 		"title":        req.Title,
-		"label_config": req.LabelConfig,
-		"description":  correlationDescription(req.CampaignID, req.RequestID, req.RequestFingerprint, req.ConfigSHA256),
+		"label_config": labelConfig,
+		"description":  correlationDescription(req.CampaignID, req.RequestID, req.RequestFingerprint, req.SchemaSHA256),
 	})
 	if err != nil {
 		return annotationapp.EngineCampaignBinding{}, annotationapp.NewAnnotationEngineError(
@@ -80,7 +87,7 @@ func (c *Client) EnsureCampaignBinding(ctx context.Context, req annotationapp.En
 		)
 	}
 	if strings.TrimSpace(project.LabelConfig) != "" &&
-		strings.TrimSpace(project.LabelConfig) != strings.TrimSpace(req.LabelConfig) {
+		strings.TrimSpace(project.LabelConfig) != strings.TrimSpace(labelConfig) {
 		return annotationapp.EngineCampaignBinding{}, annotationapp.NewAnnotationEngineError(
 			annotationapp.ErrAnnotationEngineInvalidResponse, "verify project config", false, 0, nil,
 		)
@@ -90,7 +97,7 @@ func (c *Client) EnsureCampaignBinding(ctx context.Context, req annotationapp.En
 		ProviderInstance:  c.instanceRef,
 		ExternalProjectID: project.ID.String(),
 		RequestID:         req.RequestID,
-		ConfigSHA256:      req.ConfigSHA256,
+		ConfigSHA256:      configSHA256,
 	}, nil
 }
 
@@ -100,17 +107,23 @@ func (c *Client) LookupCampaignBinding(
 ) (annotationapp.EngineCampaignLookup, error) {
 	if req.WorkspaceID == uuid.Nil || req.CampaignID == uuid.Nil ||
 		strings.TrimSpace(req.RequestID) == "" || strings.TrimSpace(req.RequestFingerprint) == "" ||
-		strings.TrimSpace(req.ConfigSHA256) == "" {
+		strings.TrimSpace(req.SchemaContent) == "" || strings.TrimSpace(req.SchemaSHA256) == "" {
 		return annotationapp.EngineCampaignLookup{}, annotationapp.NewAnnotationEngineError(
 			annotationapp.ErrAnnotationEngineInvalidRequest, "lookup campaign binding", false, 0, nil,
 		)
 	}
 
+	labelConfig, configSHA256, err := labelConfigFromSchema(req.SchemaContent)
+	if err != nil {
+		return annotationapp.EngineCampaignLookup{}, annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidRequest, "build label config", false, 0, err,
+		)
+	}
 	expectedDescription := correlationDescription(
 		req.CampaignID,
 		req.RequestID,
 		req.RequestFingerprint,
-		req.ConfigSHA256,
+		req.SchemaSHA256,
 	)
 	pageNumber := 1
 	var matched []annotationapp.EngineCampaignBinding
@@ -135,8 +148,7 @@ func (c *Client) LookupCampaignBinding(
 			if strings.TrimSpace(project.Description) != expectedDescription {
 				continue
 			}
-			if strings.TrimSpace(req.LabelConfig) != "" &&
-				strings.TrimSpace(project.LabelConfig) != strings.TrimSpace(req.LabelConfig) {
+			if strings.TrimSpace(project.LabelConfig) != strings.TrimSpace(labelConfig) {
 				return annotationapp.EngineCampaignLookup{
 					State:         annotationapp.EngineLookupConflict,
 					DiagnosticRef: "correlated project config mismatch",
@@ -147,7 +159,7 @@ func (c *Client) LookupCampaignBinding(
 				ProviderInstance:  c.instanceRef,
 				ExternalProjectID: project.ID.String(),
 				RequestID:         req.RequestID,
-				ConfigSHA256:      req.ConfigSHA256,
+				ConfigSHA256:      configSHA256,
 			}
 			matched = append(matched, binding)
 		}
@@ -436,6 +448,43 @@ func validateBinding(instanceRef string, binding annotationapp.EngineCampaignBin
 		)
 	}
 	return nil
+}
+
+type singleLabelSchema struct {
+	Kind   string   `json:"kind"`
+	Labels []string `json:"labels"`
+}
+
+func labelConfigFromSchema(schemaContent string) (string, string, error) {
+	var schema singleLabelSchema
+	if err := json.Unmarshal([]byte(schemaContent), &schema); err != nil {
+		return "", "", err
+	}
+	if schema.Kind != "single-label-v1" || len(schema.Labels) == 0 {
+		return "", "", fmt.Errorf("unsupported annotation schema")
+	}
+	var b strings.Builder
+	b.WriteString(`<View><Text name="text" value="$text"/><Choices name="label" toName="text" choice="single">`)
+	seen := make(map[string]struct{}, len(schema.Labels))
+	for _, label := range schema.Labels {
+		label = strings.TrimSpace(label)
+		if label == "" {
+			return "", "", fmt.Errorf("annotation schema contains empty label")
+		}
+		if _, ok := seen[label]; ok {
+			return "", "", fmt.Errorf("annotation schema contains duplicate label")
+		}
+		seen[label] = struct{}{}
+		b.WriteString(`<Choice value="`)
+		if err := xml.EscapeText(&b, []byte(label)); err != nil {
+			return "", "", err
+		}
+		b.WriteString(`"/>`)
+	}
+	b.WriteString(`</Choices></View>`)
+	config := b.String()
+	sum := sha256.Sum256([]byte(config))
+	return config, hex.EncodeToString(sum[:]), nil
 }
 
 func correlationDescription(campaignID uuid.UUID, requestID, fingerprint, configSHA string) string {
