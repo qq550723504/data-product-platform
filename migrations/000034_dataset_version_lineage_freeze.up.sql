@@ -97,3 +97,34 @@ $lineage_guard$ LANGUAGE plpgsql;
 CREATE TRIGGER trg_dataset_version_lineage_immutable
 BEFORE INSERT OR UPDATE OR DELETE ON dataset_version_lineage
 FOR EACH ROW EXECUTE FUNCTION guard_dataset_version_lineage_mutation();
+
+
+CREATE OR REPLACE FUNCTION guard_product_release_history()
+RETURNS trigger AS $release_history_guard$
+DECLARE
+    publish_permit text;
+BEGIN
+    IF TG_OP = 'DELETE' THEN
+        RAISE EXCEPTION 'product_release is historical and cannot be deleted';
+    END IF;
+
+    IF OLD.status IN ('PUBLISHED','WITHDRAWN') THEN
+        RAISE EXCEPTION 'product_release in status % is immutable', OLD.status;
+    END IF;
+
+    IF OLD.product_id IS DISTINCT FROM NEW.product_id OR
+       OLD.product_version_id IS DISTINCT FROM NEW.product_version_id OR
+       OLD.release_no IS DISTINCT FROM NEW.release_no THEN
+        RAISE EXCEPTION 'product_release identity is immutable';
+    END IF;
+
+    IF OLD.status = 'READY' AND NEW.status = 'PUBLISHED' THEN
+        publish_permit := current_setting('app.product_release_publish_id', true);
+        IF publish_permit IS DISTINCT FROM OLD.id::text THEN
+            RAISE EXCEPTION 'ProductRelease publication requires fenced publish command';
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$release_history_guard$ LANGUAGE plpgsql;
