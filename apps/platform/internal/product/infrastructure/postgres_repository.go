@@ -84,11 +84,11 @@ func (r *PostgresRepository) InsertVersion(ctx context.Context, tx pgx.Tx, versi
 		INSERT INTO product_version (
 			id, product_id, major_version, minor_version, patch_version, workflow_version_id,
 			contract_version_id, entity_policy_ref, indicator_set_ref, definition_snapshot,
-			build_status, created_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'BUILDING',$11,$12)
+			build_status, expected_asset_count, created_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'BUILDING',$11,$12,$13)
 	`, version.ID, version.ProductID, version.MajorVersion, version.MinorVersion, version.PatchVersion,
 		version.WorkflowVersionID, version.ContractVersionID, nullableString(version.EntityPolicyRef),
-		nullableString(version.IndicatorSetRef), definition, version.CreatedAt, version.CreatedBy)
+		nullableString(version.IndicatorSetRef), definition, len(version.Assets), version.CreatedAt, version.CreatedBy)
 	if err != nil {
 		return fmt.Errorf("insert product version: %w", err)
 	}
