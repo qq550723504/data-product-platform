@@ -415,6 +415,105 @@ func TestAnnotationReviewCostUsesPhysicalAttemptIdentity(t *testing.T) {
 	}
 }
 
+
+func TestAnnotationResultFirstMakesOldReviewStale(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	base := createAnnotationDBFixture(t, ctx, pool)
+	campaignID, taskID, firstResultID := createAnnotationReviewRaceFixture(t, ctx, pool, base)
+	attemptID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO annotation_review_attempt(
+			id, workspace_id, campaign_id, task_id, reviewer_ref, expected_task_revision,
+			review_action, reason, idempotency_key, request_fingerprint
+		) VALUES ($1,$2,$3,$4,'reviewer',2,'ACCEPT','old revision',$5,$6)
+	`, attemptID, base.workspaceID, campaignID, taskID,
+		"result-first-"+uuid.NewString(), strings.Repeat("8", 64)); err != nil {
+		t.Fatalf("insert review attempt: %v", err)
+	}
+
+	resultTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin result transaction: %v", err)
+	}
+	payload := []byte("{\"label\":\"newer\"}")
+	if _, err := resultTx.Exec(ctx, `
+		INSERT INTO annotation_result(
+			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
+			canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','obs:newer',$5,$6,'fixture-v1')
+	`, uuid.New(), base.workspaceID, campaignID, taskID, payload, sha256Hex(payload)); err != nil {
+		_ = resultTx.Rollback(ctx)
+		t.Fatalf("insert newer result: %v", err)
+	}
+	if _, err := resultTx.Exec(ctx, `
+		UPDATE annotation_task
+		   SET status='REVIEWABLE', revision=revision+1
+		 WHERE id=$1 AND revision=2
+	`, taskID); err != nil {
+		_ = resultTx.Rollback(ctx)
+		t.Fatalf("advance task for newer result: %v", err)
+	}
+
+	reviewDone := make(chan error, 1)
+	go func() {
+		reviewCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_, reviewErr := pool.Exec(reviewCtx, `
+			INSERT INTO annotation_review_decision(
+				id, workspace_id, campaign_id, task_id, review_attempt_id,
+				reviewed_result_id, selected_result_id, reviewer_ref, outcome, reason,
+				expected_task_revision
+			) VALUES ($1,$2,$3,$4,$5,$6,$6,'reviewer','ACCEPT','old revision',2)
+		`, uuid.New(), base.workspaceID, campaignID, taskID, attemptID, firstResultID)
+		reviewDone <- reviewErr
+	}()
+
+	time.Sleep(150 * time.Millisecond)
+	if err := resultTx.Commit(ctx); err != nil {
+		t.Fatalf("commit newer result: %v", err)
+	}
+
+	select {
+	case reviewErr := <-reviewDone:
+		if reviewErr == nil || !strings.Contains(reviewErr.Error(), "expected task/attempt CAS") {
+			t.Fatalf("old review error = %v, want stale CAS", reviewErr)
+		}
+	case <-time.After(6 * time.Second):
+		t.Fatal("old review did not converge")
+	}
+
+	var revision int64
+	var decisionCount int
+	if err := pool.QueryRow(ctx, `SELECT revision FROM annotation_task WHERE id=$1`, taskID).Scan(&revision); err != nil {
+		t.Fatalf("read task revision: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM annotation_review_decision WHERE task_id=$1`, taskID).Scan(&decisionCount); err != nil {
+		t.Fatalf("count decisions: %v", err)
+	}
+	if revision != 3 || decisionCount != 0 {
+		t.Fatalf("result-first state revision/decisions = %d/%d, want 3/0", revision, decisionCount)
+	}
+}
+
+func TestAnnotationReviewFirstRejectsLaterResult(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	fx := createAnnotationDBFixture(t, ctx, pool)
+	payload := []byte("{\"label\":\"too-late\"}")
+	_, err := pool.Exec(ctx, `
+		INSERT INTO annotation_result(
+			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
+			canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','obs:after-review',$5,$6,'fixture-v1')
+	`, uuid.New(), fx.workspaceID, fx.campaignID, fx.taskID, payload, sha256Hex(payload))
+	if err == nil || !strings.Contains(err.Error(), "does not match active task") {
+		t.Fatalf("post-review result error = %v, want terminal task rejection", err)
+	}
+}
+
 func TestAnnotationReviewDecisionSerializesConcurrentReviewers(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
