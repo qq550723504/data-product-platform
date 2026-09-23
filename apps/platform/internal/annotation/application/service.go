@@ -33,6 +33,10 @@ type ActivationProof struct {
 	TaskManifestHash string
 	TaskCount        int
 	InputChecksum    string
+	InputStorageURI  string
+	InputByteSize    int64
+	InputRowCount    int64
+	InputContentType string
 	SourceResourceID uuid.UUID
 }
 
