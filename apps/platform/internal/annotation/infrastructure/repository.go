@@ -625,12 +625,32 @@ func (r *Repository) GetReviewAttemptOutcome(
 	return outcome, nil
 }
 
+
+func (r *Repository) ListTasks(
+	ctx context.Context,
+	campaignID uuid.UUID,
+) ([]annotationdomain.Task, error) {
+	return listTasks(ctx, r.pool, campaignID)
+}
+
 func (r *Repository) ListTasksTx(
 	ctx context.Context,
 	tx pgx.Tx,
 	campaignID uuid.UUID,
 ) ([]annotationdomain.Task, error) {
-	rows, err := tx.Query(ctx, `
+	return listTasks(ctx, tx, campaignID)
+}
+
+type rowQueryer interface {
+	Query(context.Context, string, ...any) (pgx.Rows, error)
+}
+
+func listTasks(
+	ctx context.Context,
+	q rowQueryer,
+	campaignID uuid.UUID,
+) ([]annotationdomain.Task, error) {
+	rows, err := q.Query(ctx, `
 		SELECT id, workspace_id, campaign_id, source_item_ref, source_content_sha256,
 		       task_text_sha256, COALESCE(primary_annotator_ref,''), status, revision,
 		       current_decision_id, created_at
