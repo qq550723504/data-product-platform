@@ -472,6 +472,28 @@ func TestDirectSQLReleasePublishRejectsNonReadyTransition(t *testing.T) {
 	}
 }
 
+func TestDirectSQLReleaseWithdrawFailsClosed(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, _ := insertReleaseMembershipFixture(t, ctx, pool)
+	if _, err := pool.Exec(ctx, `
+		UPDATE product_release
+		SET status='WITHDRAWN'
+		WHERE id=$1 AND status='READY'
+	`, release.ID); err == nil || !strings.Contains(err.Error(), "WITHDRAWN transition is not implemented") {
+		t.Fatalf("READY->WITHDRAWN error = %v, want unsupported-withdraw rejection", err)
+	}
+}
+
 func TestDatasetVersionLineageRejectsCrossWorkspaceEdge(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
