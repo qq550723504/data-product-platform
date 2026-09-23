@@ -59,8 +59,6 @@ func TestLabelStudioCreateProjectAndSubmitTasks(t *testing.T) {
 	}
 	workspaceID := uuid.New()
 	campaignID := uuid.New()
-	schema := `{"kind":"single-label-v1","labels":["EVIDENCE_SUFFICIENT","EVIDENCE_INSUFFICIENT","EVIDENCE_CONFLICT"]}`
-	config := "<View><Text name=\"text\" value=\"$text\"/><Choices name=\"label\" toName=\"text\" choice=\"single\"><Choice value=\"EVIDENCE_SUFFICIENT\"/><Choice value=\"EVIDENCE_INSUFFICIENT\"/><Choice value=\"EVIDENCE_CONFLICT\"/></Choices></View>"
 	binding, err := client.EnsureCampaignBinding(context.Background(), annotationapp.EngineCampaignRequest{
 		WorkspaceID:        workspaceID,
 		CampaignID:         campaignID,
