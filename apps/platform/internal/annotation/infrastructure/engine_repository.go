@@ -67,6 +67,43 @@ func (r *Repository) GetEngineOperation(ctx context.Context, operationID uuid.UU
 	return getEngineOperationByID(ctx, r.pool, operationID)
 }
 
+func (r *Repository) GetEngineOperationTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	operationID uuid.UUID,
+) (annotationdomain.EngineOperation, error) {
+	return getEngineOperationByID(ctx, tx, operationID)
+}
+
+func (r *Repository) RecoverExpiredEngineSending(
+	ctx context.Context,
+	tx pgx.Tx,
+	operationID uuid.UUID,
+	now time.Time,
+) (annotationdomain.EngineOperation, error) {
+	if operationID == uuid.Nil {
+		return annotationdomain.EngineOperation{}, annotationdomain.ErrInvalidEngineOperation
+	}
+	if now.IsZero() {
+		now = time.Now().UTC()
+	}
+	tag, err := tx.Exec(ctx, `
+		UPDATE annotation_engine_operation
+		   SET status='UNKNOWN', claimed_by=NULL, claim_expires_at=NULL, revision=revision+1
+		 WHERE id=$1
+		   AND status='SENDING'
+		   AND claim_expires_at IS NOT NULL
+		   AND claim_expires_at <= $2
+	`, operationID, now.UTC())
+	if err != nil {
+		return annotationdomain.EngineOperation{}, fmt.Errorf("recover expired annotation engine send: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return annotationdomain.EngineOperation{}, ErrEngineClaimBusy
+	}
+	return getEngineOperationByID(ctx, tx, operationID)
+}
+
 func (r *Repository) ClaimEngineOperation(
 	ctx context.Context,
 	tx pgx.Tx,
