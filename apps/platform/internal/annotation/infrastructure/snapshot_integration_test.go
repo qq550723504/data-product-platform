@@ -534,6 +534,74 @@ func TestAnnotationDatabaseRejectsPayloadOutsideFrozenSchema(t *testing.T) {
 	}
 }
 
+
+func TestAnnotationResultAliasReservationIsAtomicAndAppendOnly(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	base := createAnnotationDBFixture(t, ctx, pool)
+	campaignID, taskID, firstResultID := createAnnotationReviewRaceFixture(t, ctx, pool, base)
+
+	secondResultID := uuid.New()
+	payload := []byte("{\"label\":\"A\"}")
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO annotation_result(
+			id, workspace_id, campaign_id, task_id, author_ref,
+			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
+			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES (
+			$1,$2,$3,$4,'annotator','alias-race-provider','alias-race-task',
+			'alias-race-second','1','alias-race-second-canonical',$5,$6,'fixture-v1'
+		)
+	`, secondResultID, base.workspaceID, campaignID, taskID, payload, sha256Hex(payload)); err != nil {
+		t.Fatalf("insert second alias-race result: %v", err)
+	}
+
+	repo := NewRepository(pool)
+	alias := "shared-replay-alias"
+	type reservation struct {
+		resultID uuid.UUID
+		err      error
+	}
+	results := make(chan reservation, 2)
+	for _, resultID := range []uuid.UUID{firstResultID, secondResultID} {
+		resultID := resultID
+		go func() {
+			results <- reservation{
+				resultID: resultID,
+				err: repo.ReserveResultAlias(ctx, base.workspaceID, campaignID, alias, resultID),
+			}
+		}()
+	}
+
+	first := <-results
+	second := <-results
+	var winner, loser reservation
+	switch {
+	case first.err == nil && second.err == ErrResultAliasConflict:
+		winner, loser = first, second
+	case second.err == nil && first.err == ErrResultAliasConflict:
+		winner, loser = second, first
+	default:
+		t.Fatalf("alias race results = (%s,%v) / (%s,%v), want one success and one alias conflict",
+			first.resultID, first.err, second.resultID, second.err)
+	}
+
+	resolved, err := repo.GetResultByObservation(ctx, base.workspaceID, campaignID, alias)
+	if err != nil {
+		t.Fatalf("resolve reserved alias: %v", err)
+	}
+	if resolved.ID != winner.resultID {
+		t.Fatalf("alias resolved to %s, want winner %s", resolved.ID, winner.resultID)
+	}
+	if err := repo.ReserveResultAlias(ctx, base.workspaceID, campaignID, alias, winner.resultID); err != nil {
+		t.Fatalf("winner alias replay must stay idempotent: %v", err)
+	}
+	if err := repo.ReserveResultAlias(ctx, base.workspaceID, campaignID, alias, loser.resultID); err != ErrResultAliasConflict {
+		t.Fatalf("loser alias replay error = %v, want alias conflict", err)
+	}
+}
+
 func TestAnnotationResultFirstMakesOldReviewStale(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
