@@ -130,7 +130,7 @@ func (s *Service) CreateCampaign(ctx context.Context, cmd CreateCampaignCommand)
 			AfterState: map[string]any{
 				"status": campaign.Status, "revision": campaign.Revision,
 				"inputDatasetVersionId": campaign.InputDatasetVersionID,
-				"requestFingerprint": fingerprint,
+				"requestFingerprint":    fingerprint,
 			},
 			TraceID: cmd.TraceID,
 		})
@@ -697,7 +697,7 @@ func (s *Service) FinalizeAnnotationSnapshot(
 		}
 		now := time.Now().UTC()
 		snapshot = annotationdomain.Snapshot{
-			ID: stableSnapshotID(cmd.WorkspaceID, cmd.CampaignID),
+			ID:          stableSnapshotID(cmd.WorkspaceID, cmd.CampaignID),
 			WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID,
 			Status: annotationdomain.SnapshotBuilding, Manifest: manifest,
 			ManifestHashPayload: append([]byte(nil), manifest...), RootHash: hashBytes(manifest),
@@ -939,10 +939,10 @@ func campaignFingerprint(spec annotationdomain.CampaignSpec) (string, error) {
 		ActorID                  *uuid.UUID                  `json:"actorId"`
 	}{
 		RequestedID: spec.ID, WorkspaceID: spec.WorkspaceID,
-		InputDatasetVersionID: spec.InputDatasetVersionID,
-		InputCertificationID: spec.InputCertificationID,
+		InputDatasetVersionID:    spec.InputDatasetVersionID,
+		InputCertificationID:     spec.InputCertificationID,
 		AnnotationContributionID: spec.AnnotationContributionID,
-		Purpose: strings.TrimSpace(spec.Purpose), Action: strings.TrimSpace(spec.Action),
+		Purpose:                  strings.TrimSpace(spec.Purpose), Action: strings.TrimSpace(spec.Action),
 		ConsumerRef: strings.TrimSpace(spec.ConsumerRef), ScopeType: strings.TrimSpace(spec.ScopeType),
 		ScopeRef: strings.TrimSpace(spec.ScopeRef), Schema: spec.Schema, Taxonomy: spec.Taxonomy,
 		Rubric: spec.Rubric, Renderer: spec.Renderer, ReviewPolicy: spec.ReviewPolicy, ActorID: spec.ActorID,
