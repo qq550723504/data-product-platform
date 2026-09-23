@@ -226,6 +226,117 @@ func (r *Repository) GetTaskTx(ctx context.Context, tx pgx.Tx, taskID uuid.UUID)
 	return getTask(ctx, tx, taskID)
 }
 
+
+func (r *Repository) GetResultByObservation(
+	ctx context.Context,
+	workspaceID, campaignID uuid.UUID,
+	observationKey string,
+) (annotationdomain.Result, error) {
+	var result annotationdomain.Result
+	var payload []byte
+	err := r.pool.QueryRow(ctx, `
+		SELECT id, workspace_id, campaign_id, task_id, author_ref,
+		       COALESCE(provider_binding_ref,''), COALESCE(external_task_id,''),
+		       COALESCE(external_annotation_id,''), COALESCE(external_revision,''),
+		       observation_key, canonical_payload, canonical_payload_sha256,
+		       normalizer_version, corrected_from_result_id, created_at, created_by
+		  FROM annotation_result
+		 WHERE workspace_id=$1 AND campaign_id=$2 AND observation_key=$3
+	`, workspaceID, campaignID, observationKey).Scan(
+		&result.ID, &result.WorkspaceID, &result.CampaignID, &result.TaskID, &result.AuthorRef,
+		&result.ProviderBindingRef, &result.ExternalTaskID, &result.ExternalAnnotationID,
+		&result.ExternalRevision, &result.ObservationKey, &payload, &result.CanonicalPayloadSHA256,
+		&result.NormalizerVersion, &result.CorrectedFromResultID, &result.CreatedAt, &result.CreatedBy,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.Result{}, pgx.ErrNoRows
+	}
+	if err != nil {
+		return annotationdomain.Result{}, fmt.Errorf("get annotation result by observation: %w", err)
+	}
+	result.CanonicalPayload = payload
+	return result, nil
+}
+
+func (r *Repository) GetReviewAttemptByKey(
+	ctx context.Context,
+	workspaceID uuid.UUID,
+	idempotencyKey string,
+) (annotationdomain.ReviewAttempt, error) {
+	var attempt annotationdomain.ReviewAttempt
+	err := r.pool.QueryRow(ctx, `
+		SELECT id, workspace_id, campaign_id, task_id, reviewer_ref, expected_task_revision,
+		       action, reason, idempotency_key, request_fingerprint, created_at
+		  FROM annotation_review_attempt
+		 WHERE workspace_id=$1 AND idempotency_key=$2
+	`, workspaceID, idempotencyKey).Scan(
+		&attempt.ID, &attempt.WorkspaceID, &attempt.CampaignID, &attempt.TaskID,
+		&attempt.ReviewerRef, &attempt.ExpectedTaskRevision, &attempt.Action, &attempt.Reason,
+		&attempt.IdempotencyKey, &attempt.RequestFingerprint, &attempt.CreatedAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.ReviewAttempt{}, pgx.ErrNoRows
+	}
+	if err != nil {
+		return annotationdomain.ReviewAttempt{}, fmt.Errorf("get annotation review attempt by key: %w", err)
+	}
+	return attempt, nil
+}
+
+func (r *Repository) GetReviewAttemptOutcome(
+	ctx context.Context,
+	attemptID uuid.UUID,
+) (annotationdomain.ReviewAttemptOutcome, error) {
+	var outcome annotationdomain.ReviewAttemptOutcome
+	err := r.pool.QueryRow(ctx, `
+		SELECT id, attempt_id, outcome, COALESCE(error_code,''), occurred_at
+		  FROM annotation_review_attempt_outcome
+		 WHERE attempt_id=$1
+	`, attemptID).Scan(&outcome.ID, &outcome.AttemptID, &outcome.Outcome, &outcome.ErrorCode, &outcome.OccurredAt)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.ReviewAttemptOutcome{}, pgx.ErrNoRows
+	}
+	if err != nil {
+		return annotationdomain.ReviewAttemptOutcome{}, fmt.Errorf("get annotation review attempt outcome: %w", err)
+	}
+	return outcome, nil
+}
+
+func (r *Repository) ListTasksTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	campaignID uuid.UUID,
+) ([]annotationdomain.Task, error) {
+	rows, err := tx.Query(ctx, `
+		SELECT id, workspace_id, campaign_id, source_item_ref, source_content_sha256,
+		       task_text_sha256, COALESCE(primary_annotator_ref,''), status, revision,
+		       current_decision_id, created_at
+		  FROM annotation_task
+		 WHERE campaign_id=$1
+		 ORDER BY id
+	`, campaignID)
+	if err != nil {
+		return nil, fmt.Errorf("list annotation tasks: %w", err)
+	}
+	defer rows.Close()
+	tasks := make([]annotationdomain.Task, 0)
+	for rows.Next() {
+		var task annotationdomain.Task
+		if err := rows.Scan(
+			&task.ID, &task.WorkspaceID, &task.CampaignID, &task.SourceItemRef,
+			&task.SourceContentSHA256, &task.TaskTextSHA256, &task.PrimaryAnnotatorRef,
+			&task.Status, &task.Revision, &task.CurrentDecisionID, &task.CreatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan annotation task: %w", err)
+		}
+		tasks = append(tasks, task)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate annotation tasks: %w", err)
+	}
+	return tasks, nil
+}
+
 type queryer interface {
 	QueryRow(context.Context, string, ...any) pgx.Row
 }
