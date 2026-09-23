@@ -238,6 +238,41 @@ func TestAnnotationSnapshotDoubleFinalizerLeavesOneSnapshot(t *testing.T) {
 	}
 }
 
+
+func TestAnnotationSnapshotSealRejectsLateResult(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	fx := createAnnotationDBFixture(t, ctx, pool)
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin snapshot transaction: %v", err)
+	}
+	insertAnnotationSnapshotAggregate(t, ctx, tx, fx)
+	if _, err := tx.Exec(ctx, `
+		UPDATE annotation_snapshot
+		   SET status='FINALIZED', finalized_at=now()
+		 WHERE id=$1
+	`, fx.snapshotID); err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("finalize snapshot: %v", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("commit finalized snapshot: %v", err)
+	}
+
+	payload := []byte("{\"label\":\"late\"}")
+	_, err = pool.Exec(ctx, `
+		INSERT INTO annotation_result(
+			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
+			canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','obs:late',$5,$6,'fixture-v1')
+	`, uuid.New(), fx.workspaceID, fx.campaignID, fx.taskID, payload, sha256Hex(payload))
+	if err == nil || !strings.Contains(err.Error(), "requires ACTIVE campaign") {
+		t.Fatalf("late result error = %v, want sealed campaign rejection", err)
+	}
+}
+
 func TestAnnotationSnapshotRejectsManifestMembershipMismatch(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
