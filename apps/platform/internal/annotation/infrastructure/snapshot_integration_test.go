@@ -162,7 +162,6 @@ func TestAnnotationSnapshotLateMembershipWriterFailsClosed(t *testing.T) {
 }
 
 
-
 func TestAnnotationReviewCostUsesPhysicalAttemptIdentity(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
