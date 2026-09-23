@@ -752,6 +752,15 @@ DECLARE
     campaign_status varchar(16);
     campaign_workspace uuid;
     campaign_expected integer;
+    campaign_input_version uuid;
+    campaign_input_certification uuid;
+    campaign_contribution_resource uuid;
+    campaign_task_manifest_hash varchar(64);
+    campaign_schema_hash varchar(64);
+    campaign_taxonomy_hash varchar(64);
+    campaign_rubric_hash varchar(64);
+    campaign_renderer_hash varchar(64);
+    campaign_review_policy_hash varchar(64);
     task_count integer;
     result_count integer;
     decision_count integer;
@@ -785,8 +794,14 @@ BEGIN
         RAISE EXCEPTION 'annotation snapshot content is immutable';
     END IF;
 
-    SELECT status, workspace_id, expected_task_count
-      INTO campaign_status, campaign_workspace, campaign_expected
+    SELECT status, workspace_id, expected_task_count,
+           input_dataset_version_id, input_certification_id, annotation_contribution_resource_id,
+           task_manifest_hash, schema_content_sha256, taxonomy_content_sha256,
+           rubric_content_sha256, renderer_content_sha256, review_policy_content_sha256
+      INTO campaign_status, campaign_workspace, campaign_expected,
+           campaign_input_version, campaign_input_certification, campaign_contribution_resource,
+           campaign_task_manifest_hash, campaign_schema_hash, campaign_taxonomy_hash,
+           campaign_rubric_hash, campaign_renderer_hash, campaign_review_policy_hash
       FROM annotation_campaign
      WHERE id=OLD.campaign_id
      FOR UPDATE;
@@ -795,6 +810,20 @@ BEGIN
        OR campaign_workspace IS DISTINCT FROM OLD.workspace_id
        OR campaign_expected IS DISTINCT FROM OLD.expected_task_count THEN
         RAISE EXCEPTION 'annotation snapshot campaign is not sealable';
+    END IF;
+
+    IF NEW.manifest->>'formatVersion' IS DISTINCT FROM 'annotation-snapshot-v1'
+       OR NEW.manifest->>'campaignId' IS DISTINCT FROM OLD.campaign_id::text
+       OR NEW.manifest->>'inputDatasetVersionId' IS DISTINCT FROM campaign_input_version::text
+       OR NEW.manifest->>'inputCertificationId' IS DISTINCT FROM campaign_input_certification::text
+       OR NEW.manifest->>'annotationContributionResourceId' IS DISTINCT FROM campaign_contribution_resource::text
+       OR NEW.manifest->>'taskManifestHash' IS DISTINCT FROM campaign_task_manifest_hash
+       OR NEW.manifest->>'schemaHash' IS DISTINCT FROM campaign_schema_hash
+       OR NEW.manifest->>'taxonomyHash' IS DISTINCT FROM campaign_taxonomy_hash
+       OR NEW.manifest->>'rubricHash' IS DISTINCT FROM campaign_rubric_hash
+       OR NEW.manifest->>'rendererHash' IS DISTINCT FROM campaign_renderer_hash
+       OR NEW.manifest->>'reviewPolicyHash' IS DISTINCT FROM campaign_review_policy_hash THEN
+        RAISE EXCEPTION 'annotation snapshot manifest header does not match frozen campaign facts';
     END IF;
 
     SELECT count(*) INTO task_count FROM annotation_snapshot_task WHERE snapshot_id=OLD.id;
