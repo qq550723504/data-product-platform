@@ -246,12 +246,17 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 		INSERT INTO product_release (
 			id, product_id, product_version_id, release_no, status, evidence_snapshot_id,
 			metadata, created_at, released_at
-		) VALUES ($1,$2,$3,'R-TRACE-001','PUBLISHED',$4,'{}'::jsonb,now(),now())
+		) VALUES ($1,$2,$3,'R-TRACE-001','READY',$4,'{}'::jsonb,now(),NULL)
 	`, releaseID, productID, productVersionID, snapshot.ID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_release_dataset (release_id, dataset_version_id, role)
 		VALUES ($1,$2,'PRIMARY')
 	`, releaseID, curatedVersionID)
+	mustExec(t, ctx, pool, `
+		UPDATE product_release
+		SET status='PUBLISHED', released_at=now()
+		WHERE id=$1 AND status='READY'
+	`, releaseID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO audit_event (workspace_id, actor_type, action, object_type, object_id, metadata)
 		VALUES ($1,'SYSTEM','PRODUCT_RELEASE_PUBLISHED','PRODUCT_RELEASE',$2,'{}'::jsonb),
@@ -474,12 +479,17 @@ func TestReleaseTraceBindsMappingsToDecisionNotCurrentProjection(t *testing.T) {
 	`, productVersionID, productID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_release (id, product_id, product_version_id, release_no, status, metadata, created_at, released_at)
-		VALUES ($1,$2,$3,'R-BIND-001','PUBLISHED','{}'::jsonb,now(),now())
+		VALUES ($1,$2,$3,'R-BIND-001','READY','{}'::jsonb,now(),NULL)
 	`, releaseID, productID, productVersionID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_release_dataset (release_id, dataset_version_id, role)
 		VALUES ($1,$2,'PRIMARY')
 	`, releaseID, standardizedVersionID)
+	mustExec(t, ctx, pool, `
+		UPDATE product_release
+		SET status='PUBLISHED', released_at=now()
+		WHERE id=$1 AND status='READY'
+	`, releaseID)
 
 	repo := traceability.NewRepository(pool)
 	trace, err := repo.ProductRelease(ctx, releaseID)
