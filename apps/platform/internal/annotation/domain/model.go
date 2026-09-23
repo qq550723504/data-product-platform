@@ -160,7 +160,7 @@ type Task struct {
 
 func NewTask(workspaceID, campaignID uuid.UUID, sourceItemRef, sourceHash, taskTextHash, annotatorRef string, now time.Time) (Task, error) {
 	if workspaceID == uuid.Nil || campaignID == uuid.Nil || strings.TrimSpace(sourceItemRef) == "" ||
-		!isSHA256(sourceHash) || !isSHA256(taskTextHash) {
+		strings.TrimSpace(annotatorRef) == "" || !isSHA256(sourceHash) || !isSHA256(taskTextHash) {
 		return Task{}, ErrInvalidTask
 	}
 	if now.IsZero() {
