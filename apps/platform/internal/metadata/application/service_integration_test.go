@@ -76,11 +76,29 @@ func TestBindingAndProductReleasedProjectionAreRetrySafe(t *testing.T) {
 	`, productID, workspaceID, "DP-"+uuid.NewString()); err != nil {
 		t.Fatalf("insert DataProduct: %v", err)
 	}
-	if _, err := pool.Exec(ctx, `
-		INSERT INTO product_version (id, product_id, major_version, minor_version, patch_version, definition_snapshot)
-		VALUES ($1,$2,1,0,0,'{}'::jsonb)
+	versionTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin ProductVersion fixture: %v", err)
+	}
+	if _, err := versionTx.Exec(ctx, `
+		INSERT INTO product_version (
+			id, product_id, major_version, minor_version, patch_version,
+			definition_snapshot, build_status, expected_asset_count
+		) VALUES ($1,$2,1,0,0,'{}'::jsonb,'BUILDING',0)
 	`, versionID, productID); err != nil {
+		_ = versionTx.Rollback(ctx)
 		t.Fatalf("insert ProductVersion: %v", err)
+	}
+	if _, err := versionTx.Exec(ctx, `
+		UPDATE product_version
+		SET build_status='FINALIZED'
+		WHERE id=$1 AND build_status='BUILDING'
+	`, versionID); err != nil {
+		_ = versionTx.Rollback(ctx)
+		t.Fatalf("finalize ProductVersion: %v", err)
+	}
+	if err := versionTx.Commit(ctx); err != nil {
+		t.Fatalf("commit ProductVersion fixture: %v", err)
 	}
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO product_release (id, product_id, product_version_id, release_no, status, metadata, released_at)
