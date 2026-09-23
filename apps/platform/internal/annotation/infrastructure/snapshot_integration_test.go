@@ -242,7 +242,7 @@ func TestAnnotationReviewCostUsesPhysicalAttemptIdentity(t *testing.T) {
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO annotation_review_attempt(
 			id, workspace_id, campaign_id, task_id, reviewer_ref, expected_task_revision,
-			review_action, reason, idempotency_key, request_fingerprint
+			review_review_action, reason, idempotency_key, request_fingerprint
 		) VALUES ($1,$2,$3,$4,'reviewer-loser',2,'ACCEPT','stale work',$5,$6)
 	`, loserAttempt, fx.workspaceID, fx.campaignID, fx.taskID,
 		"cost-loser-"+uuid.NewString(), strings.Repeat("9", 64)); err != nil {
@@ -291,7 +291,7 @@ func TestAnnotationReviewDecisionSerializesConcurrentReviewers(t *testing.T) {
 		if _, err := pool.Exec(ctx, `
 			INSERT INTO annotation_review_attempt(
 				id, workspace_id, campaign_id, task_id, reviewer_ref, expected_task_revision,
-				action, reason, idempotency_key, request_fingerprint
+				review_action, reason, idempotency_key, request_fingerprint
 			) VALUES ($1,$2,$3,$4,$5,2,'ACCEPT','race review',$6,$7)
 		`, attempt.id, base.workspaceID, campaignID, taskID, attempt.reviewer, attempt.key, strings.Repeat("f", 64)); err != nil {
 			t.Fatalf("insert race review attempt: %v", err)
@@ -594,7 +594,7 @@ func createAnnotationDBFixture(t *testing.T, ctx context.Context, pool *pgxpool.
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO annotation_review_attempt(
 			id, workspace_id, campaign_id, task_id, reviewer_ref, expected_task_revision,
-			action, reason, idempotency_key, request_fingerprint
+			review_action, reason, idempotency_key, request_fingerprint
 		) VALUES ($1,$2,$3,$4,'reviewer',2,'ACCEPT','verified',$5,$6)
 	`, attemptID, workspaceID, campaignID, taskID, "review-"+uuid.NewString(), strings.Repeat("e", 64)); err != nil {
 		t.Fatalf("insert review attempt: %v", err)
