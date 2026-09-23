@@ -10,7 +10,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
 )
 
@@ -46,11 +48,15 @@ func TestPublishedReleaseLineagePublishFirstFreezesHistory(t *testing.T) {
 	}
 
 	repo := infrastructure.NewPostgresRepository(pool)
+	workspaceID := releaseWorkspaceID(t, ctx, pool, release.ProductID)
 	publishTx, err := pool.Begin(ctx)
 	if err != nil {
 		t.Fatalf("begin publish tx: %v", err)
 	}
 	defer publishTx.Rollback(ctx)
+	if _, err := deliveryfence.Lock(ctx, publishTx, workspaceID); err != nil {
+		t.Fatalf("lock publish workspace fence: %v", err)
+	}
 	if err := repo.LockReleaseMembershipForPublish(ctx, publishTx, release); err != nil {
 		t.Fatalf("lock release membership: %v", err)
 	}
@@ -106,6 +112,19 @@ func TestPublishedReleaseLineagePublishFirstFreezesHistory(t *testing.T) {
 		t.Fatalf("post-publish lineage DELETE error = %v, want append-only rejection", err)
 	}
 
+	replayTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin lineage replay tx: %v", err)
+	}
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	if err := datasetRepo.AddLineage(ctx, replayTx, outputID, firstInputID, "DERIVED_FROM", nil); err != nil {
+		_ = replayTx.Rollback(ctx)
+		t.Fatalf("idempotent published lineage replay: %v", err)
+	}
+	if err := replayTx.Commit(ctx); err != nil {
+		t.Fatalf("commit idempotent lineage replay: %v", err)
+	}
+
 	var edges int
 	if err := pool.QueryRow(ctx, `
 		SELECT count(*) FROM dataset_version_lineage
@@ -133,6 +152,7 @@ func TestPublishedReleaseLineageMutationFirstSerializesPublish(t *testing.T) {
 	release, inputID := insertReleaseMembershipFixture(t, ctx, pool)
 	outputID := release.Datasets[0].DatasetVersionID
 	repo := infrastructure.NewPostgresRepository(pool)
+	workspaceID := releaseWorkspaceID(t, ctx, pool, release.ProductID)
 
 	mutationTx, err := pool.Begin(ctx)
 	if err != nil {
@@ -161,9 +181,13 @@ func TestPublishedReleaseLineageMutationFirstSerializesPublish(t *testing.T) {
 		defer publishTx.Rollback(ctx)
 		close(started)
 
-		// This blocks on the ProductRelease parent row held by the lineage INSERT.
-		// The lineage closure query is intentionally executed only after that lock
-		// is acquired, so it must see the mutation once the blocker commits.
+		// This blocks on the workspace delivery fence held by the lineage INSERT.
+		// The release and lineage closure are read only after the shared fence is
+		// acquired, so the resumed publisher must see the committed mutation.
+		if _, err := deliveryfence.Lock(ctx, publishTx, workspaceID); err != nil {
+			done <- publishOutcome{err: err}
+			return
+		}
 		if err := repo.LockReleaseMembershipForPublish(ctx, publishTx, release); err != nil {
 			done <- publishOutcome{err: err}
 			return
@@ -195,7 +219,7 @@ func TestPublishedReleaseLineageMutationFirstSerializesPublish(t *testing.T) {
 	case outcome := <-done:
 		t.Fatalf("publish did not block behind lineage mutation: %+v", outcome)
 	case <-time.After(150 * time.Millisecond):
-		// Expected: publish is waiting on the shared ProductRelease parent fence.
+		// Expected: publish is waiting on the shared workspace delivery fence.
 	}
 
 	if err := mutationTx.Commit(ctx); err != nil {
@@ -213,4 +237,57 @@ func TestPublishedReleaseLineageMutationFirstSerializesPublish(t *testing.T) {
 	case <-time.After(5 * time.Second):
 		t.Fatal("timed out waiting for blocked publish to resume")
 	}
+}
+
+
+func TestDatasetVersionLineageRejectsCrossWorkspaceEdge(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, _ := insertReleaseMembershipFixture(t, ctx, pool)
+	outputID := release.Datasets[0].DatasetVersionID
+	foreignWorkspaceID := uuid.New()
+	foreignDatasetID := uuid.New()
+	foreignVersionID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset (id, workspace_id, code, name, dataset_type)
+		VALUES ($1,$2,$3,'Foreign lineage dataset','RAW')
+	`, foreignDatasetID, foreignWorkspaceID, "LINEAGE-FOREIGN-"+uuid.NewString()); err != nil {
+		t.Fatalf("insert foreign dataset: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version (
+			id, dataset_id, version_no, status, storage_uri,
+			checksum_algorithm, checksum_value, metadata, ready_at
+		) VALUES ($1,$2,1,'READY',$3,'SHA256',$4,'{}'::jsonb,now())
+	`, foreignVersionID, foreignDatasetID, "s3://foreign-lineage/"+foreignVersionID.String(), strings.Repeat("f", 64)); err != nil {
+		t.Fatalf("insert foreign dataset version: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, foreignVersionID); err == nil || !strings.Contains(err.Error(), "crosses workspace boundary") {
+		t.Fatalf("cross-workspace lineage error = %v, want workspace-boundary rejection", err)
+	}
+}
+
+func releaseWorkspaceID(t *testing.T, ctx context.Context, pool interface {
+	QueryRow(context.Context, string, ...any) pgx.Row
+}, productID uuid.UUID) uuid.UUID {
+	t.Helper()
+	var workspaceID uuid.UUID
+	if err := pool.QueryRow(ctx, `
+		SELECT workspace_id FROM data_product WHERE id=$1
+	`, productID).Scan(&workspaceID); err != nil {
+		t.Fatalf("resolve release workspace: %v", err)
+	}
+	return workspaceID
 }
