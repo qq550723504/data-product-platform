@@ -534,7 +534,6 @@ func TestAnnotationDatabaseRejectsPayloadOutsideFrozenSchema(t *testing.T) {
 	}
 }
 
-
 func TestAnnotationResultAliasReservationIsAtomicAndAppendOnly(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
@@ -569,7 +568,7 @@ func TestAnnotationResultAliasReservationIsAtomicAndAppendOnly(t *testing.T) {
 		go func() {
 			results <- reservation{
 				resultID: resultID,
-				err: repo.ReserveResultAlias(ctx, base.workspaceID, campaignID, alias, resultID),
+				err:      repo.ReserveResultAlias(ctx, base.workspaceID, campaignID, alias, resultID),
 			}
 		}()
 	}
