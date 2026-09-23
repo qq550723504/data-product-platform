@@ -2,6 +2,18 @@
 -- Enforce the frozen Pilot annotation schema at the database boundary so
 -- repository/direct-SQL writes cannot seal schema-invalid annotation history.
 
+CREATE OR REPLACE FUNCTION annotation_trim_space(value text)
+RETURNS text AS $$
+    SELECT btrim(
+        value,
+        chr(9) || chr(10) || chr(11) || chr(12) || chr(13) || chr(32) ||
+        chr(133) || chr(160) || chr(5760) ||
+        chr(8192) || chr(8193) || chr(8194) || chr(8195) || chr(8196) ||
+        chr(8197) || chr(8198) || chr(8199) || chr(8200) || chr(8201) || chr(8202) ||
+        chr(8232) || chr(8233) || chr(8239) || chr(8287) || chr(12288)
+    );
+$$ LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE;
+
 CREATE OR REPLACE FUNCTION annotation_payload_matches_frozen_schema(
     schema_snapshot text,
     canonical_payload bytea
@@ -31,7 +43,7 @@ BEGIN
         RETURN false;
     END IF;
 
-    SELECT count(*), count(DISTINCT value)
+    SELECT count(*), count(DISTINCT annotation_trim_space(value))
       INTO label_count, distinct_label_count
       FROM jsonb_array_elements_text(schema_json->'labels') labels(value);
 
@@ -39,7 +51,7 @@ BEGIN
        OR EXISTS (
             SELECT 1
               FROM jsonb_array_elements_text(schema_json->'labels') labels(value)
-             WHERE value = '' OR value IS DISTINCT FROM btrim(value)
+             WHERE annotation_trim_space(value) = ''
        ) THEN
         RETURN false;
     END IF;
@@ -52,14 +64,14 @@ BEGIN
     END IF;
 
     label := payload_json->>'label';
-    IF label IS NULL OR label = '' OR label IS DISTINCT FROM btrim(label) THEN
+    IF label IS NULL OR label = '' OR label IS DISTINCT FROM annotation_trim_space(label) THEN
         RETURN false;
     END IF;
 
     RETURN EXISTS (
         SELECT 1
           FROM jsonb_array_elements_text(schema_json->'labels') labels(value)
-         WHERE value = label
+         WHERE annotation_trim_space(value) = label
     );
 EXCEPTION
     WHEN others THEN
