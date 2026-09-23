@@ -240,6 +240,139 @@ func TestPublishedReleaseLineageMutationFirstSerializesPublish(t *testing.T) {
 }
 
 
+func TestDetachedLineageSubtreeCannotAttachAcrossPublish(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, seedVersionID := insertReleaseMembershipFixture(t, ctx, pool)
+	rootID := release.Datasets[0].DatasetVersionID
+	workspaceID := releaseWorkspaceID(t, ctx, pool, release.ProductID)
+	yID := uuid.New()
+	zID := uuid.New()
+	for index, versionID := range []uuid.UUID{yID, zID} {
+		if _, err := pool.Exec(ctx, `
+			INSERT INTO dataset_version (
+				id, dataset_id, version_no, status, storage_uri,
+				checksum_algorithm, checksum_value, metadata, ready_at
+			)
+			SELECT $1, dataset_id, $2, 'READY', $3, 'SHA256', $4, '{}'::jsonb, now()
+			FROM dataset_version WHERE id=$5
+		`, versionID, 10+index, "s3://detached-lineage/"+versionID.String(), strings.Repeat(string(rune('d'+index)), 64), seedVersionID); err != nil {
+			t.Fatalf("insert detached lineage version %d: %v", index, err)
+		}
+	}
+
+	// Build a detached subtree while holding the workspace lineage/delivery fence.
+	detachedTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin detached lineage tx: %v", err)
+	}
+	defer detachedTx.Rollback(ctx)
+	if _, err := detachedTx.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, yID, zID); err != nil {
+		t.Fatalf("insert detached Y->Z edge: %v", err)
+	}
+
+	repo := infrastructure.NewPostgresRepository(pool)
+	started := make(chan struct{})
+	fenceAcquired := make(chan struct{})
+	continuePublish := make(chan struct{})
+	publishDone := make(chan error, 1)
+	go func() {
+		tx, err := pool.Begin(ctx)
+		if err != nil {
+			publishDone <- err
+			return
+		}
+		defer tx.Rollback(ctx)
+		close(started)
+		if _, err := deliveryfence.Lock(ctx, tx, workspaceID); err != nil {
+			publishDone <- err
+			return
+		}
+		close(fenceAcquired)
+		<-continuePublish
+		if err := repo.LockReleaseMembershipForPublish(ctx, tx, release); err != nil {
+			publishDone <- err
+			return
+		}
+		if err := repo.LockReleaseLineageForPublish(ctx, tx, release.ID); err != nil {
+			publishDone <- err
+			return
+		}
+		if _, err := tx.Exec(ctx, `
+			UPDATE product_release SET status='PUBLISHED', released_at=now()
+			WHERE id=$1 AND status='READY'
+		`, release.ID); err != nil {
+			publishDone <- err
+			return
+		}
+		publishDone <- tx.Commit(ctx)
+	}()
+
+	<-started
+	select {
+	case <-fenceAcquired:
+		t.Fatal("publish acquired workspace fence before detached lineage mutation committed")
+	case <-time.After(150 * time.Millisecond):
+	}
+	if err := detachedTx.Commit(ctx); err != nil {
+		t.Fatalf("commit detached lineage subtree: %v", err)
+	}
+
+	select {
+	case <-fenceAcquired:
+	case <-time.After(5 * time.Second):
+		t.Fatal("publish did not acquire workspace fence after detached mutation committed")
+	}
+
+	// While publish owns the workspace fence, attaching the detached subtree to
+	// the release root cannot pass the trigger.
+	attachTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin subtree attach tx: %v", err)
+	}
+	if _, err := attachTx.Exec(ctx, "SET LOCAL lock_timeout = '100ms'"); err != nil {
+		t.Fatalf("set subtree attach lock timeout: %v", err)
+	}
+	_, err = attachTx.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, rootID, yID)
+	if !isLockTimeout(err) {
+		_ = attachTx.Rollback(ctx)
+		t.Fatalf("subtree attach while publish owns fence error = %v, want lock timeout", err)
+	}
+	_ = attachTx.Rollback(ctx)
+
+	close(continuePublish)
+	select {
+	case err := <-publishDone:
+		if err != nil {
+			t.Fatalf("publish detached-subtree release: %v", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for publish to commit")
+	}
+
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, rootID, yID); err == nil || !strings.Contains(err.Error(), "published release history is frozen") {
+		t.Fatalf("post-publish detached subtree attach error = %v, want frozen history", err)
+	}
+}
+
 func TestDatasetVersionLineageRejectsCrossWorkspaceEdge(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
