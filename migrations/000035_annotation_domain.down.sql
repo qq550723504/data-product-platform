@@ -89,6 +89,7 @@ DROP FUNCTION IF EXISTS guard_annotation_result_insert();
 DROP FUNCTION IF EXISTS guard_annotation_task_update();
 DROP FUNCTION IF EXISTS guard_annotation_task_insert();
 DROP FUNCTION IF EXISTS guard_annotation_campaign_update();
+DROP FUNCTION IF EXISTS prevent_annotation_campaign_command_mutation();
 DROP FUNCTION IF EXISTS validate_annotation_campaign_command_insert();
 DROP FUNCTION IF EXISTS validate_annotation_campaign_insert();
 DROP FUNCTION IF EXISTS prevent_annotation_append_only_mutation();
