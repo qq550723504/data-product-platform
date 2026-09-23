@@ -82,8 +82,6 @@ type DatasetVersion struct {
 	GeneratedByExecutionID      *uuid.UUID
 	GeneratedByEntityMatchJobID *uuid.UUID
 	RightsSnapshotID            *uuid.UUID
-	QualityStatus               string
-	ComplianceStatus            string
 	SnapshotFrom                *time.Time
 	SnapshotTo                  *time.Time
 	Metadata                    map[string]any
