@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -26,6 +27,10 @@ type Client struct {
 	token       string
 	instanceRef string
 	httpClient  *http.Client
+
+	authMu               sync.Mutex
+	accessToken          string
+	accessTokenExpiresAt time.Time
 }
 
 func NewClient(baseURL, token, instanceRef string, httpClient *http.Client) (*Client, error) {
@@ -524,6 +529,104 @@ func normalizeBaseURL(raw string) (string, error) {
 	return strings.TrimRight(parsed.String(), "/"), nil
 }
 
+func (c *Client) authorizationHeader(ctx context.Context) (string, error) {
+	if strings.Count(c.token, ".") != 2 {
+		return "Token " + c.token, nil
+	}
+
+	c.authMu.Lock()
+	defer c.authMu.Unlock()
+
+	now := time.Now().UTC()
+	if c.accessToken != "" && now.Before(c.accessTokenExpiresAt) {
+		return "Bearer " + c.accessToken, nil
+	}
+
+	body, err := json.Marshal(map[string]string{"refresh": c.token})
+	if err != nil {
+		return "", annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidRequest,
+			"encode personal access token refresh",
+			false,
+			0,
+			err,
+		)
+	}
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		c.baseURL+"/api/token/refresh",
+		bytes.NewReader(body),
+	)
+	if err != nil {
+		return "", annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidRequest,
+			"create personal access token refresh request",
+			false,
+			0,
+			err,
+		)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return "", annotationapp.NewAnnotationEngineOutcomeError(
+			annotationapp.ErrAnnotationEngineUnavailable,
+			"refresh personal access token",
+			true,
+			false,
+			0,
+			err,
+		)
+	}
+	defer resp.Body.Close()
+
+	raw, readErr := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
+	if readErr != nil {
+		return "", annotationapp.NewAnnotationEngineOutcomeError(
+			annotationapp.ErrAnnotationEngineUnavailable,
+			"read personal access token refresh response",
+			true,
+			false,
+			resp.StatusCode,
+			readErr,
+		)
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		kind, retryable := classifyHTTPStatus(resp.StatusCode)
+		return "", annotationapp.NewAnnotationEngineOutcomeError(
+			kind,
+			"refresh personal access token",
+			retryable,
+			false,
+			resp.StatusCode,
+			nil,
+		)
+	}
+
+	var tokenResponse struct {
+		Access string `json:"access"`
+	}
+	if err := json.Unmarshal(raw, &tokenResponse); err != nil ||
+		strings.TrimSpace(tokenResponse.Access) == "" {
+		return "", annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidResponse,
+			"decode personal access token refresh response",
+			false,
+			resp.StatusCode,
+			err,
+		)
+	}
+
+	c.accessToken = strings.TrimSpace(tokenResponse.Access)
+	// Label Studio access tokens are short-lived (about five minutes). Refresh
+	// proactively so normal API calls do not race the expiry boundary.
+	c.accessTokenExpiresAt = now.Add(4 * time.Minute)
+	return "Bearer " + c.accessToken, nil
+}
+
 func (c *Client) requestJSON(ctx context.Context, method, path string, query url.Values, body []byte, target any) error {
 	requestURL := c.baseURL + path
 	if len(query) > 0 {
@@ -539,7 +642,11 @@ func (c *Client) requestJSON(ctx context.Context, method, path string, query url
 			annotationapp.ErrAnnotationEngineInvalidRequest, "create request", false, 0, err,
 		)
 	}
-	req.Header.Set("Authorization", "Token "+c.token)
+	authorization, err := c.authorizationHeader(ctx)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Authorization", authorization)
 	req.Header.Set("Accept", "application/json")
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
