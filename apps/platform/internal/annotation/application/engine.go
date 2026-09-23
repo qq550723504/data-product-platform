@@ -107,6 +107,7 @@ type EngineResultPage struct {
 
 type AnnotationEnginePort interface {
 	Provider() string
+	InstanceRef() string
 	EnsureCampaignBinding(context.Context, EngineCampaignRequest) (EngineCampaignBinding, error)
 	LookupCampaignBinding(context.Context, EngineCampaignRequest) (EngineCampaignLookup, error)
 	SubmitTasks(context.Context, EngineSubmitRequest) (EngineSubmission, error)
