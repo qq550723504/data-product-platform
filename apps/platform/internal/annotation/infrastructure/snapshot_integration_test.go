@@ -422,6 +422,41 @@ func TestAnnotationReviewCostUsesPhysicalAttemptIdentity(t *testing.T) {
 	}
 }
 
+
+func TestAnnotationProviderObservationIdentityDeduplicatesAliasChanges(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	base := createAnnotationDBFixture(t, ctx, pool)
+	campaignID, taskID, _ := createAnnotationReviewRaceFixture(t, ctx, pool, base)
+
+	payload := []byte("{\"label\":\"DEDUP\"}")
+	payloadHash := sha256Hex(payload)
+	firstID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO annotation_result(
+			id, workspace_id, campaign_id, task_id, author_ref,
+			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
+			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','dedup-provider','dedup-task','dedup-ann','7',
+		          'caller-alias-a',$5,$6,'fixture-v1')
+	`, firstID, base.workspaceID, campaignID, taskID, payload, payloadHash); err != nil {
+		t.Fatalf("insert first provider observation: %v", err)
+	}
+
+	_, err := pool.Exec(ctx, `
+		INSERT INTO annotation_result(
+			id, workspace_id, campaign_id, task_id, author_ref,
+			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
+			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','dedup-provider','dedup-task','dedup-ann','7',
+		          'caller-alias-b',$5,$6,'fixture-v1')
+	`, uuid.New(), base.workspaceID, campaignID, taskID, payload, payloadHash)
+	if err == nil || !strings.Contains(err.Error(), "uq_annotation_result_provider_observation") {
+		t.Fatalf("duplicate provider observation error = %v, want provider identity unique violation", err)
+	}
+}
+
 func TestAnnotationResultFirstMakesOldReviewStale(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
