@@ -287,7 +287,11 @@ RETURNS trigger AS $$
 BEGIN
     RAISE EXCEPTION '% is append-only annotation history', TG_TABLE_NAME;
 END;
-$$ LANGUAGE plpgsql;
+$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_annotation_campaign_command_immutable
+BEFORE UPDATE OR DELETE ON annotation_campaign_command
+FOR EACH ROW EXECUTE FUNCTION prevent_annotation_append_only_mutation();
 
 CREATE TRIGGER trg_annotation_result_immutable
 BEFORE UPDATE OR DELETE ON annotation_result
@@ -1191,10 +1195,6 @@ $ LANGUAGE plpgsql;
 CREATE TRIGGER trg_annotation_campaign_command_insert
 BEFORE INSERT ON annotation_campaign_command
 FOR EACH ROW EXECUTE FUNCTION validate_annotation_campaign_command_insert();
-
-CREATE TRIGGER trg_annotation_campaign_command_immutable
-BEFORE UPDATE OR DELETE ON annotation_campaign_command
-FOR EACH ROW EXECUTE FUNCTION prevent_annotation_append_only_mutation();
 
 CREATE TABLE annotation_task (
     id                          uuid PRIMARY KEY,
