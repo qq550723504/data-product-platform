@@ -201,13 +201,30 @@ func (g *CoreActivationGuard) ValidateActivationTx(
 	); err != nil {
 		return err
 	}
-	scope, err := rightsdomain.NewNormalizedScope("ALL_RESOURCE", sourceResourceID.String())
+	for _, resourceID := range []uuid.UUID{sourceResourceID, campaign.AnnotationContributionID} {
+		if err := g.checkCurrentResourceEntitlement(ctx, tx, campaign, resourceID); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (g *CoreActivationGuard) checkCurrentResourceEntitlement(
+	ctx context.Context,
+	tx pgx.Tx,
+	campaign annotationdomain.Campaign,
+	resourceID uuid.UUID,
+) error {
+	if resourceID == uuid.Nil {
+		return rightsdomain.ErrEntitlementBlocked
+	}
+	scope, err := rightsdomain.NewNormalizedScope("ALL_RESOURCE", resourceID.String())
 	if err != nil {
 		return err
 	}
 	request := rightsdomain.EntitlementRequest{
 		WorkspaceID:    campaign.WorkspaceID,
-		DataResourceID: sourceResourceID,
+		DataResourceID: resourceID,
 		ConsumerRef:    strings.TrimSpace(campaign.ConsumerRef),
 		Purpose:        strings.TrimSpace(campaign.Purpose),
 		Action:         strings.TrimSpace(campaign.Action),
@@ -221,7 +238,6 @@ func (g *CoreActivationGuard) ValidateActivationTx(
 	if decision.Decision == rightsdomain.DecisionAllowed {
 		return nil
 	}
-
 	request.Path = rightsdomain.EntitlementDownstream
 	decision, err = g.entitlements.CheckCurrentEntitlementTx(ctx, tx, request)
 	if err != nil {
