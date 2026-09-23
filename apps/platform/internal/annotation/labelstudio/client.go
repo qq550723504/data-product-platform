@@ -93,6 +93,96 @@ func (c *Client) EnsureCampaignBinding(ctx context.Context, req annotationapp.En
 	}, nil
 }
 
+func (c *Client) LookupCampaignBinding(
+	ctx context.Context,
+	req annotationapp.EngineCampaignRequest,
+) (annotationapp.EngineCampaignLookup, error) {
+	if req.WorkspaceID == uuid.Nil || req.CampaignID == uuid.Nil ||
+		strings.TrimSpace(req.RequestID) == "" || strings.TrimSpace(req.RequestFingerprint) == "" ||
+		strings.TrimSpace(req.ConfigSHA256) == "" {
+		return annotationapp.EngineCampaignLookup{}, annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidRequest, "lookup campaign binding", false, 0, nil,
+		)
+	}
+
+	expectedDescription := correlationDescription(
+		req.CampaignID,
+		req.RequestID,
+		req.RequestFingerprint,
+		req.ConfigSHA256,
+	)
+	pageNumber := 1
+	var matched []annotationapp.EngineCampaignBinding
+	for {
+		query := url.Values{
+			"search":    []string{req.RequestID},
+			"page":      []string{strconv.Itoa(pageNumber)},
+			"page_size": []string{"100"},
+		}
+		var page struct {
+			Results []struct {
+				ID          json.Number `json:"id"`
+				Description string      `json:"description"`
+				LabelConfig string      `json:"label_config"`
+			} `json:"results"`
+			Next any `json:"next"`
+		}
+		if err := c.requestJSON(ctx, http.MethodGet, "/api/projects/", query, nil, &page); err != nil {
+			return annotationapp.EngineCampaignLookup{}, err
+		}
+		for _, project := range page.Results {
+			if strings.TrimSpace(project.Description) != expectedDescription {
+				continue
+			}
+			if strings.TrimSpace(req.LabelConfig) != "" &&
+				strings.TrimSpace(project.LabelConfig) != strings.TrimSpace(req.LabelConfig) {
+				return annotationapp.EngineCampaignLookup{
+					State:         annotationapp.EngineLookupConflict,
+					DiagnosticRef: "correlated project config mismatch",
+				}, nil
+			}
+			binding := annotationapp.EngineCampaignBinding{
+				Provider:          Provider,
+				ProviderInstance:  c.instanceRef,
+				ExternalProjectID: project.ID.String(),
+				RequestID:         req.RequestID,
+				ConfigSHA256:      req.ConfigSHA256,
+			}
+			matched = append(matched, binding)
+		}
+		if page.Next == nil || strings.TrimSpace(fmt.Sprint(page.Next)) == "" {
+			break
+		}
+		pageNumber++
+		if pageNumber > 1000 {
+			return annotationapp.EngineCampaignLookup{}, annotationapp.NewAnnotationEngineError(
+				annotationapp.ErrAnnotationEngineInvalidResponse,
+				"lookup campaign binding pagination",
+				false,
+				0,
+				nil,
+			)
+		}
+	}
+	switch len(matched) {
+	case 0:
+		return annotationapp.EngineCampaignLookup{
+			State:         annotationapp.EngineLookupUnknown,
+			DiagnosticRef: "project absence not proven",
+		}, nil
+	case 1:
+		return annotationapp.EngineCampaignLookup{
+			State:   annotationapp.EngineLookupMatched,
+			Binding: &matched[0],
+		}, nil
+	default:
+		return annotationapp.EngineCampaignLookup{
+			State:         annotationapp.EngineLookupConflict,
+			DiagnosticRef: "duplicate correlated projects",
+		}, nil
+	}
+}
+
 func (c *Client) SubmitTasks(ctx context.Context, req annotationapp.EngineSubmitRequest) (annotationapp.EngineSubmission, error) {
 	if err := validateBinding(c.instanceRef, req.Binding); err != nil {
 		return annotationapp.EngineSubmission{}, err
