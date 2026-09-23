@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	testSchema = `{"kind":"single-label-v1","labels":["EVIDENCE_SUFFICIENT","EVIDENCE_INSUFFICIENT","EVIDENCE_CONFLICT"]}`
+	testSchema      = `{"kind":"single-label-v1","labels":["EVIDENCE_SUFFICIENT","EVIDENCE_INSUFFICIENT","EVIDENCE_CONFLICT"]}`
 	testLabelConfig = "<View><Text name=\"text\" value=\"$text\"/><Choices name=\"label\" toName=\"text\" choice=\"single\"><Choice value=\"EVIDENCE_SUFFICIENT\"/><Choice value=\"EVIDENCE_INSUFFICIENT\"/><Choice value=\"EVIDENCE_CONFLICT\"/></Choices></View>"
 )
 
