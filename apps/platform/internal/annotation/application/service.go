@@ -375,6 +375,16 @@ func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCo
 	}
 
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		campaign, err := s.repo.GetCampaignTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignActive {
+			return annotationdomain.ErrInvalidResult
+		}
+		if err := validateAnnotationPayload(campaign.Schema, result.CanonicalPayload); err != nil {
+			return err
+		}
 		task, err := s.repo.GetTaskTx(ctx, tx, cmd.TaskID)
 		if err != nil {
 			return err
@@ -569,6 +579,16 @@ func (s *Service) commitReviewDecision(
 		if cmd.Action == annotationdomain.ReviewCorrect {
 			if cmd.ReviewedResultID == nil || hashBytes(cmd.CorrectedPayload) != cmd.CorrectedPayloadHash {
 				return annotationdomain.ErrInvalidReviewDecision
+			}
+			campaign, err := s.repo.GetCampaignTx(ctx, tx, cmd.CampaignID)
+			if err != nil {
+				return err
+			}
+			if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignActive {
+				return annotationdomain.ErrInvalidReviewDecision
+			}
+			if err := validateAnnotationPayload(campaign.Schema, cmd.CorrectedPayload); err != nil {
+				return err
 			}
 			correctionID := uuid.New()
 			correction := annotationdomain.Result{
