@@ -351,7 +351,6 @@ func AppendQualityAssessmentAttemptActivity(ctx context.Context, tx pgx.Tx, acti
 	return nil
 }
 
-
 type AnnotationReviewActivity struct {
 	WorkspaceID uuid.UUID
 	AttemptID   uuid.UUID
