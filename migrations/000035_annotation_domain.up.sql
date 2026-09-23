@@ -829,12 +829,33 @@ DECLARE
     campaign_input_version uuid;
     campaign_input_certification uuid;
     campaign_contribution_resource uuid;
+    campaign_input_checksum varchar(64);
+    campaign_purpose varchar(128);
+    campaign_action varchar(64);
+    campaign_consumer_ref varchar(255);
+    campaign_scope_type varchar(64);
+    campaign_scope_ref varchar(512);
     campaign_task_manifest_hash varchar(64);
+    campaign_schema_ref varchar(512);
+    campaign_schema_version varchar(64);
     campaign_schema_hash varchar(64);
+    campaign_schema_content text;
+    campaign_taxonomy_ref varchar(512);
+    campaign_taxonomy_version varchar(64);
     campaign_taxonomy_hash varchar(64);
+    campaign_taxonomy_content text;
+    campaign_rubric_ref varchar(512);
+    campaign_rubric_version varchar(64);
     campaign_rubric_hash varchar(64);
+    campaign_rubric_content text;
+    campaign_renderer_ref varchar(512);
+    campaign_renderer_version varchar(64);
     campaign_renderer_hash varchar(64);
+    campaign_renderer_content text;
+    campaign_review_policy_ref varchar(512);
+    campaign_review_policy_version varchar(64);
     campaign_review_policy_hash varchar(64);
+    campaign_review_policy_content text;
     task_count integer;
     result_count integer;
     decision_count integer;
@@ -870,12 +891,22 @@ BEGIN
 
     SELECT status, workspace_id, expected_task_count,
            input_dataset_version_id, input_certification_id, annotation_contribution_resource_id,
-           task_manifest_hash, schema_content_sha256, taxonomy_content_sha256,
-           rubric_content_sha256, renderer_content_sha256, review_policy_content_sha256
+           input_checksum_sha256, purpose, action, consumer_ref, scope_type, scope_ref,
+           task_manifest_hash,
+           schema_ref, schema_version, schema_content_sha256, schema_content_snapshot,
+           taxonomy_ref, taxonomy_version, taxonomy_content_sha256, taxonomy_content_snapshot,
+           rubric_ref, rubric_version, rubric_content_sha256, rubric_content_snapshot,
+           renderer_ref, renderer_version, renderer_content_sha256, renderer_content_snapshot,
+           review_policy_ref, review_policy_version, review_policy_content_sha256, review_policy_content_snapshot
       INTO campaign_status, campaign_workspace, campaign_expected,
            campaign_input_version, campaign_input_certification, campaign_contribution_resource,
-           campaign_task_manifest_hash, campaign_schema_hash, campaign_taxonomy_hash,
-           campaign_rubric_hash, campaign_renderer_hash, campaign_review_policy_hash
+           campaign_input_checksum, campaign_purpose, campaign_action, campaign_consumer_ref,
+           campaign_scope_type, campaign_scope_ref, campaign_task_manifest_hash,
+           campaign_schema_ref, campaign_schema_version, campaign_schema_hash, campaign_schema_content,
+           campaign_taxonomy_ref, campaign_taxonomy_version, campaign_taxonomy_hash, campaign_taxonomy_content,
+           campaign_rubric_ref, campaign_rubric_version, campaign_rubric_hash, campaign_rubric_content,
+           campaign_renderer_ref, campaign_renderer_version, campaign_renderer_hash, campaign_renderer_content,
+           campaign_review_policy_ref, campaign_review_policy_version, campaign_review_policy_hash, campaign_review_policy_content
       FROM annotation_campaign
      WHERE id=OLD.campaign_id
      FOR UPDATE;
@@ -887,16 +918,42 @@ BEGIN
     END IF;
 
     IF NEW.manifest->>'formatVersion' IS DISTINCT FROM 'annotation-snapshot-v1'
+       OR NEW.manifest->>'workspaceId' IS DISTINCT FROM OLD.workspace_id::text
        OR NEW.manifest->>'campaignId' IS DISTINCT FROM OLD.campaign_id::text
        OR NEW.manifest->>'inputDatasetVersionId' IS DISTINCT FROM campaign_input_version::text
+       OR NEW.manifest->>'inputChecksumAlgorithm' IS DISTINCT FROM 'SHA256'
+       OR NEW.manifest->>'inputChecksumSha256' IS DISTINCT FROM campaign_input_checksum
        OR NEW.manifest->>'inputCertificationId' IS DISTINCT FROM campaign_input_certification::text
        OR NEW.manifest->>'annotationContributionResourceId' IS DISTINCT FROM campaign_contribution_resource::text
+       OR NEW.manifest->>'purpose' IS DISTINCT FROM campaign_purpose
+       OR NEW.manifest->>'action' IS DISTINCT FROM campaign_action
+       OR NEW.manifest->>'consumerRef' IS DISTINCT FROM COALESCE(campaign_consumer_ref, '')
+       OR NEW.manifest->>'scopeType' IS DISTINCT FROM COALESCE(campaign_scope_type, '')
+       OR NEW.manifest->>'scopeRef' IS DISTINCT FROM COALESCE(campaign_scope_ref, '')
        OR NEW.manifest->>'taskManifestHash' IS DISTINCT FROM campaign_task_manifest_hash
-       OR NEW.manifest->>'schemaHash' IS DISTINCT FROM campaign_schema_hash
-       OR NEW.manifest->>'taxonomyHash' IS DISTINCT FROM campaign_taxonomy_hash
-       OR NEW.manifest->>'rubricHash' IS DISTINCT FROM campaign_rubric_hash
-       OR NEW.manifest->>'rendererHash' IS DISTINCT FROM campaign_renderer_hash
-       OR NEW.manifest->>'reviewPolicyHash' IS DISTINCT FROM campaign_review_policy_hash THEN
+       OR NEW.manifest->'schema' IS DISTINCT FROM jsonb_build_object(
+            'ref', campaign_schema_ref, 'version', campaign_schema_version,
+            'contentSha256', campaign_schema_hash, 'contentSnapshot', campaign_schema_content
+       )
+       OR NEW.manifest->'taxonomy' IS DISTINCT FROM jsonb_build_object(
+            'ref', campaign_taxonomy_ref, 'version', campaign_taxonomy_version,
+            'contentSha256', campaign_taxonomy_hash, 'contentSnapshot', campaign_taxonomy_content
+       )
+       OR NEW.manifest->'rubric' IS DISTINCT FROM jsonb_build_object(
+            'ref', campaign_rubric_ref, 'version', campaign_rubric_version,
+            'contentSha256', campaign_rubric_hash, 'contentSnapshot', campaign_rubric_content
+       )
+       OR NEW.manifest->'renderer' IS DISTINCT FROM jsonb_build_object(
+            'ref', campaign_renderer_ref, 'version', campaign_renderer_version,
+            'contentSha256', campaign_renderer_hash, 'contentSnapshot', campaign_renderer_content
+       )
+       OR NEW.manifest->'reviewPolicy' IS DISTINCT FROM jsonb_build_object(
+            'ref', campaign_review_policy_ref, 'version', campaign_review_policy_version,
+            'contentSha256', campaign_review_policy_hash, 'contentSnapshot', campaign_review_policy_content
+       )
+       OR (NEW.manifest->>'builtAtUnixMicros')::bigint IS DISTINCT FROM
+            floor(extract(epoch FROM OLD.created_at) * 1000000)::bigint
+       OR NEW.manifest->>'builtBy' IS DISTINCT FROM COALESCE(OLD.created_by::text, '') THEN
         RAISE EXCEPTION 'annotation snapshot manifest header does not match frozen campaign facts';
     END IF;
 
@@ -926,12 +983,14 @@ BEGIN
                 'id', st.task_id::text,
                 'sourceItemRef', st.source_item_ref,
                 'sourceContentSha256', st.source_content_sha256,
-                'taskTextSha256', st.task_text_sha256
+                'taskTextSha256', st.task_text_sha256,
+                'primaryAnnotatorRef', t.primary_annotator_ref
             ) ORDER BY st.task_id::text
         ),
         '[]'::jsonb
     ) INTO persisted_tasks
     FROM annotation_snapshot_task st
+    JOIN annotation_task t ON t.id=st.task_id
     WHERE st.snapshot_id=OLD.id;
 
     SELECT COALESCE(
@@ -939,9 +998,17 @@ BEGIN
             jsonb_strip_nulls(jsonb_build_object(
                 'id', sr.result_id::text,
                 'taskId', sr.task_id::text,
-                'canonicalPayloadSha256', sr.canonical_payload_sha256,
                 'authorRef', sr.author_ref,
-                'correctedFromResultId', r.corrected_from_result_id::text
+                'providerBindingRef', COALESCE(r.provider_binding_ref, ''),
+                'externalTaskId', COALESCE(r.external_task_id, ''),
+                'externalAnnotationId', COALESCE(r.external_annotation_id, ''),
+                'externalRevision', COALESCE(r.external_revision, ''),
+                'observationKey', r.observation_key,
+                'canonicalPayloadSha256', sr.canonical_payload_sha256,
+                'normalizerVersion', r.normalizer_version,
+                'correctedFromResultId', r.corrected_from_result_id::text,
+                'createdAtUnixMicros', floor(extract(epoch FROM r.created_at) * 1000000)::bigint,
+                'createdBy', COALESCE(r.created_by::text, '')
             )) ORDER BY sr.result_id::text
         ),
         '[]'::jsonb
@@ -955,16 +1022,19 @@ BEGIN
             jsonb_strip_nulls(jsonb_build_object(
                 'id', sd.decision_id::text,
                 'taskId', sd.task_id::text,
+                'reviewAttemptId', d.review_attempt_id::text,
                 'outcome', sd.outcome,
                 'reviewedResultId', sd.reviewed_result_id::text,
                 'selectedResultId', sd.selected_result_id::text,
                 'reviewerRef', sd.reviewer_ref,
-                'reason', sd.reason
+                'reason', sd.reason,
+                'expectedTaskRevision', d.expected_task_revision
             )) ORDER BY sd.decision_id::text
         ),
         '[]'::jsonb
     ) INTO persisted_decisions
     FROM annotation_snapshot_decision sd
+    JOIN annotation_review_decision d ON d.id=sd.decision_id
     WHERE sd.snapshot_id=OLD.id;
 
     SELECT COALESCE(
