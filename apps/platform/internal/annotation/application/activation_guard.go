@@ -232,6 +232,48 @@ func (g *CoreActivationGuard) ValidateActivationTx(
 	return nil
 }
 
+func (g *CoreActivationGuard) ValidateEngineSendTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	campaign annotationdomain.Campaign,
+) error {
+	if g == nil || g.datasets == nil || g.contexts == nil || g.entitlements == nil {
+		return ErrActivationGuardRequired
+	}
+	if _, err := deliveryfence.Lock(ctx, tx, campaign.WorkspaceID); err != nil {
+		return err
+	}
+	version, err := g.datasets.GetVersionTx(ctx, tx, campaign.InputDatasetVersionID)
+	if err != nil {
+		return err
+	}
+	if version.Status != datasetdomain.VersionReady {
+		return fmt.Errorf("annotation input DatasetVersion is not READY at engine send")
+	}
+	workspaceID, sourceResourceID, err := g.contexts.DatasetAnnotationContextTx(ctx, tx, version.DatasetID)
+	if err != nil {
+		return err
+	}
+	if workspaceID != campaign.WorkspaceID || sourceResourceID == uuid.Nil {
+		return fmt.Errorf("annotation input dataset context changed before engine send")
+	}
+	if err := g.contexts.ValidateCurrentInputCertificationTx(
+		ctx,
+		tx,
+		campaign.WorkspaceID,
+		campaign.InputCertificationID,
+		campaign.InputDatasetVersionID,
+	); err != nil {
+		return err
+	}
+	for _, resourceID := range []uuid.UUID{sourceResourceID, campaign.AnnotationContributionID} {
+		if err := g.checkCurrentResourceEntitlement(ctx, tx, campaign, resourceID); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (g *CoreActivationGuard) checkCurrentResourceEntitlement(
 	ctx context.Context,
 	tx pgx.Tx,
