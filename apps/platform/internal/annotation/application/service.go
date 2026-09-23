@@ -31,6 +31,8 @@ var (
 type ActivationProof struct {
 	TaskManifestHash string
 	TaskCount        int
+	InputChecksum    string
+	SourceResourceID uuid.UUID
 }
 
 type ActivationGuard interface {
