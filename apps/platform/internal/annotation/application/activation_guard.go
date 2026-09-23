@@ -189,6 +189,28 @@ func (g *CoreActivationGuard) ValidateActivationTx(
 		!strings.EqualFold(strings.TrimSpace(version.ChecksumValue), proof.InputChecksum) {
 		return fmt.Errorf("annotation input DatasetVersion changed after preflight")
 	}
+	reader, err := g.objects.Get(ctx, version.StorageURI)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+	limit := maxAnnotationPilotInputBytes
+	if version.ByteSize != nil && *version.ByteSize >= 0 && *version.ByteSize < limit {
+		limit = *version.ByteSize
+	}
+	payload, err := io.ReadAll(io.LimitReader(reader, limit+1))
+	if err != nil {
+		return fmt.Errorf("re-read annotation input object: %w", err)
+	}
+	if int64(len(payload)) > limit {
+		return fmt.Errorf("annotation input object exceeds verified byte limit during activation")
+	}
+	if version.ByteSize != nil && int64(len(payload)) != *version.ByteSize {
+		return fmt.Errorf("annotation input object byte size changed after preflight")
+	}
+	if !strings.EqualFold(sha256HexBytes(payload), proof.InputChecksum) {
+		return fmt.Errorf("annotation input object checksum changed after preflight")
+	}
 	workspaceID, sourceResourceID, err := g.contexts.DatasetAnnotationContextTx(ctx, tx, version.DatasetID)
 	if err != nil {
 		return err
