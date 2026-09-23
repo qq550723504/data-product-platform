@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,7 +14,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"encoding/xml"
 
 	"github.com/google/uuid"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
