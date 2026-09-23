@@ -9,6 +9,9 @@ services:
       - dpp-label-studio:/label-studio/data
     environment:
       LABEL_STUDIO_HOST: http://localhost:8082
+      USERNAME: ci@example.com
+      PASSWORD: label-studio-ci-password
+      DISABLE_SIGNUP_WITHOUT_LINK: "1"
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8080/health || exit 1"]
       interval: 5s
