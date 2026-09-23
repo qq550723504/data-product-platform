@@ -422,7 +422,6 @@ func TestAnnotationReviewCostUsesPhysicalAttemptIdentity(t *testing.T) {
 	}
 }
 
-
 func TestAnnotationProviderObservationIdentityDeduplicatesAliasChanges(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
