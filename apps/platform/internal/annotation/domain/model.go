@@ -23,7 +23,6 @@ const (
 	ReviewReject  = "REJECT"
 	ReviewCorrect = "CORRECT"
 
-	ReviewAttemptStarted       = "STARTED"
 	ReviewAttemptSucceeded     = "SUCCEEDED"
 	ReviewAttemptStaleConflict = "STALE_CONFLICT"
 	ReviewAttemptRejected      = "REJECTED"
@@ -202,7 +201,7 @@ type Result struct {
 
 func (r Result) Validate() error {
 	if r.ID == uuid.Nil || r.WorkspaceID == uuid.Nil || r.CampaignID == uuid.Nil || r.TaskID == uuid.Nil ||
-		strings.TrimSpace(r.AuthorRef) == "" || len(r.CanonicalPayload) == 0 ||
+		strings.TrimSpace(r.AuthorRef) == "" || strings.TrimSpace(r.ObservationKey) == "" || len(r.CanonicalPayload) == 0 ||
 		!isSHA256(r.CanonicalPayloadSHA256) || strings.TrimSpace(r.NormalizerVersion) == "" {
 		return ErrInvalidResult
 	}
