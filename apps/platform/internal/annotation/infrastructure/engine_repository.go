@@ -473,6 +473,94 @@ func (r *Repository) ListResultReconcileCampaignIDs(
 	return ids, nil
 }
 
+func (r *Repository) ListDispatchableEngineOperationIDs(
+	ctx context.Context,
+	provider, providerInstance string,
+	limit int,
+) ([]uuid.UUID, error) {
+	if limit <= 0 {
+		limit = 20
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT id
+		  FROM annotation_engine_operation
+		 WHERE provider=$1
+		   AND provider_instance_ref=$2
+		   AND (
+		       status IN ('PENDING','UNKNOWN')
+		       OR (status='SENDING' AND claim_expires_at IS NOT NULL AND claim_expires_at <= now())
+		   )
+		 ORDER BY updated_at, id
+		 LIMIT $3
+	`, provider, providerInstance, limit)
+	if err != nil {
+		return nil, fmt.Errorf("list dispatchable annotation engine operations: %w", err)
+	}
+	defer rows.Close()
+	ids := make([]uuid.UUID, 0, limit)
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("scan dispatchable annotation engine operation: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate dispatchable annotation engine operations: %w", err)
+	}
+	return ids, nil
+}
+
+func (r *Repository) ListCampaignIDsNeedingEngineResults(
+	ctx context.Context,
+	provider, providerInstance string,
+	limit int,
+) ([]uuid.UUID, error) {
+	if limit <= 0 {
+		limit = 20
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT DISTINCT c.id
+		  FROM annotation_campaign c
+		  JOIN annotation_engine_campaign_binding b ON b.campaign_id=c.id
+		 WHERE c.status='ACTIVE'
+		   AND b.provider=$1
+		   AND b.provider_instance_ref=$2
+		   AND EXISTS (
+		       SELECT 1
+		         FROM annotation_engine_operation o
+		        WHERE o.campaign_id=c.id
+		          AND o.provider=b.provider
+		          AND o.provider_instance_ref=b.provider_instance_ref
+		          AND o.operation_kind='SUBMIT_TASKS'
+		          AND o.status='MATCHED'
+		   )
+		   AND EXISTS (
+		       SELECT 1
+		         FROM annotation_task t
+		        WHERE t.campaign_id=c.id
+		          AND t.status='PENDING'
+		   )
+		 ORDER BY c.id
+		 LIMIT $3
+	`, provider, providerInstance, limit)
+	if err != nil {
+		return nil, fmt.Errorf("list annotation campaigns needing engine results: %w", err)
+	}
+	defer rows.Close()
+	ids := make([]uuid.UUID, 0, limit)
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("scan annotation campaign needing engine results: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate annotation campaigns needing engine results: %w", err)
+	}
+	return ids, nil
+}
 type rowQuerier interface {
 	QueryRow(context.Context, string, ...any) pgx.Row
 }
