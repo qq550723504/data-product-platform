@@ -30,8 +30,8 @@ type EngineCampaignRequest struct {
 	RequestID          string
 	RequestFingerprint string
 	Title              string
-	LabelConfig        string
-	ConfigSHA256       string
+	SchemaContent      string
+	SchemaSHA256       string
 }
 
 type EngineCampaignBinding struct {
