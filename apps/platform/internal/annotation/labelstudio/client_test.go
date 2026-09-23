@@ -174,8 +174,8 @@ func TestLabelStudioLookupSubmissionReturnsUnknownForPartialMatch(t *testing.T) 
 		WorkspaceID: uuid.New(),
 		CampaignID:  uuid.New(),
 		Binding: annotationapp.EngineCampaignBinding{
-			Provider: ProviderName(),
-			ProviderInstance: "local-ls",
+			Provider:          ProviderName(),
+			ProviderInstance:  "local-ls",
 			ExternalProjectID: "41",
 		},
 		RequestID:          "submit-1",
