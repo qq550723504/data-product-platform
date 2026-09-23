@@ -119,24 +119,24 @@ func (s *EngineService) claimEngineAttempt(
 				ctx,
 				tx,
 				evidence.Record{
-					WorkspaceID: operation.WorkspaceID,
+					WorkspaceID:  operation.WorkspaceID,
 					EvidenceType: "ANNOTATION_ENGINE_SEND_AUTHORIZED",
-					Title: "Annotation engine data send authorized",
-					SourceType: "CORE",
+					Title:        "Annotation engine data send authorized",
+					SourceType:   "CORE",
 					Metadata: map[string]any{
-						"campaignId": operation.CampaignID,
-						"operationId": operation.ID,
+						"campaignId":            operation.CampaignID,
+						"operationId":           operation.ID,
 						"payloadManifestSha256": operation.PayloadManifestSHA256,
-						"consumerRef": campaign.ConsumerRef,
-						"purpose": campaign.Purpose,
-						"action": "PROCESS",
-						"provider": operation.Provider,
-						"providerInstance": operation.ProviderInstanceRef,
+						"consumerRef":           campaign.ConsumerRef,
+						"purpose":               campaign.Purpose,
+						"action":                "PROCESS",
+						"provider":              operation.Provider,
+						"providerInstance":      operation.ProviderInstanceRef,
 					},
 				},
 				evidence.Relation{
-					ObjectType: "ANNOTATION_ENGINE_OPERATION",
-					ObjectID: operation.ID,
+					ObjectType:   "ANNOTATION_ENGINE_OPERATION",
+					ObjectID:     operation.ID,
 					RelationType: "SEND_AUTHORIZATION_EVIDENCE",
 				},
 			); guardErr != nil {
@@ -160,16 +160,16 @@ func (s *EngineService) claimEngineAttempt(
 			tx,
 			cost.AnnotationEngineActivity{
 				WorkspaceID: operation.WorkspaceID,
-				AttemptID: attempt.ID,
-				Quantity: 1,
-				Unit: "invocation",
+				AttemptID:   attempt.ID,
+				Quantity:    1,
+				Unit:        "invocation",
 				PricingMode: "ACTUAL",
 				Metadata: map[string]any{
-					"provider": operation.Provider,
+					"provider":         operation.Provider,
 					"providerInstance": operation.ProviderInstanceRef,
-					"operationKind": operation.OperationKind,
-					"attemptKind": attempt.AttemptKind,
-					"attemptNo": attempt.AttemptNo,
+					"operationKind":    operation.OperationKind,
+					"attemptKind":      attempt.AttemptKind,
+					"attemptNo":        attempt.AttemptNo,
 				},
 				OccurredAt: attempt.StartedAt,
 			},
@@ -201,10 +201,10 @@ func (s *EngineService) claimEngineAttempt(
 			"AnnotationEngineAttemptStarted",
 			map[string]any{
 				"operationId": operation.ID,
-				"attemptId": attempt.ID,
-				"attemptNo": attempt.AttemptNo,
+				"attemptId":   attempt.ID,
+				"attemptNo":   attempt.AttemptNo,
 				"attemptKind": attempt.AttemptKind,
-				"provider": operation.Provider,
+				"provider":    operation.Provider,
 			},
 		)
 	})
@@ -229,7 +229,7 @@ func (s *EngineService) invokeEngine(
 				return engineResolution{}, err
 			}
 			return engineResolution{
-				State: EngineLookupMatched,
+				State:           EngineLookupMatched,
 				CampaignBinding: &binding,
 			}, nil
 		}
@@ -239,9 +239,9 @@ func (s *EngineService) invokeEngine(
 			return engineResolution{}, err
 		}
 		return engineResolution{
-			State: lookup.State,
+			State:           lookup.State,
 			CampaignBinding: lookup.Binding,
-			DiagnosticRef: lookup.DiagnosticRef,
+			DiagnosticRef:   lookup.DiagnosticRef,
 		}, nil
 
 	case annotationdomain.EngineOperationSubmitTasks:
@@ -256,9 +256,9 @@ func (s *EngineService) invokeEngine(
 				return engineResolution{}, err
 			}
 			return engineResolution{
-				State: submission.State,
+				State:           submission.State,
 				ExternalTaskIDs: submission.ExternalTaskIDs,
-				DiagnosticRef: submission.DiagnosticRef,
+				DiagnosticRef:   submission.DiagnosticRef,
 			}, nil
 		}
 
@@ -267,9 +267,9 @@ func (s *EngineService) invokeEngine(
 			return engineResolution{}, err
 		}
 		return engineResolution{
-			State: lookup.State,
+			State:           lookup.State,
 			ExternalTaskIDs: lookup.ExternalTaskIDs,
-			DiagnosticRef: lookup.DiagnosticRef,
+			DiagnosticRef:   lookup.DiagnosticRef,
 		}, nil
 
 	default:
@@ -304,12 +304,12 @@ func (s *EngineService) finalizeEngineAttempt(
 			ctx,
 			tx,
 			annotationdomain.EngineAttemptOutcome{
-				ID: uuid.New(),
-				AttemptID: attempt.ID,
-				Outcome: attemptOutcome,
+				ID:                 uuid.New(),
+				AttemptID:          attempt.ID,
+				Outcome:            attemptOutcome,
 				ProviderStatusCode: statusCode,
-				DiagnosticRef: diagnostic,
-				OccurredAt: time.Now().UTC(),
+				DiagnosticRef:      diagnostic,
+				OccurredAt:         time.Now().UTC(),
 			},
 		); err != nil {
 			return err
@@ -344,23 +344,23 @@ func (s *EngineService) finalizeEngineAttempt(
 			ctx,
 			tx,
 			evidence.Record{
-				WorkspaceID: operation.WorkspaceID,
+				WorkspaceID:  operation.WorkspaceID,
 				EvidenceType: "ANNOTATION_ENGINE_ATTEMPT",
-				Title: "Annotation engine attempt observed",
-				SourceType: "ENGINE_ADAPTER",
+				Title:        "Annotation engine attempt observed",
+				SourceType:   "ENGINE_ADAPTER",
 				Metadata: map[string]any{
-					"attemptId": attempt.ID,
-					"attemptNo": attempt.AttemptNo,
-					"attemptKind": attempt.AttemptKind,
-					"outcome": attemptOutcome,
+					"attemptId":       attempt.ID,
+					"attemptNo":       attempt.AttemptNo,
+					"attemptKind":     attempt.AttemptKind,
+					"outcome":         attemptOutcome,
 					"operationStatus": targetStatus,
-					"provider": operation.Provider,
-					"diagnosticRef": diagnostic,
+					"provider":        operation.Provider,
+					"diagnosticRef":   diagnostic,
 				},
 			},
 			evidence.Relation{
-				ObjectType: "ANNOTATION_ENGINE_OPERATION",
-				ObjectID: operation.ID,
+				ObjectType:   "ANNOTATION_ENGINE_OPERATION",
+				ObjectID:     operation.ID,
 				RelationType: "ENGINE_ATTEMPT_EVIDENCE",
 			},
 		); err != nil {
@@ -369,13 +369,13 @@ func (s *EngineService) finalizeEngineAttempt(
 
 		if err := audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &operation.WorkspaceID,
-			ActorType: "SYSTEM",
-			Action: "ANNOTATION_ENGINE_ATTEMPT_RECORDED",
-			ObjectType: "ANNOTATION_ENGINE_OPERATION",
-			ObjectID: operation.ID,
+			ActorType:   "SYSTEM",
+			Action:      "ANNOTATION_ENGINE_ATTEMPT_RECORDED",
+			ObjectType:  "ANNOTATION_ENGINE_OPERATION",
+			ObjectID:    operation.ID,
 			AfterState: map[string]any{
-				"status": targetStatus,
-				"attemptId": attempt.ID,
+				"status":         targetStatus,
+				"attemptId":      attempt.ID,
 				"attemptOutcome": attemptOutcome,
 			},
 		}); err != nil {
@@ -389,9 +389,9 @@ func (s *EngineService) finalizeEngineAttempt(
 			operation.ID,
 			"AnnotationEngineOperationResolved",
 			map[string]any{
-				"operationId": operation.ID,
-				"attemptId": attempt.ID,
-				"status": targetStatus,
+				"operationId":    operation.ID,
+				"attemptId":      attempt.ID,
+				"status":         targetStatus,
 				"attemptOutcome": attemptOutcome,
 			},
 		)
