@@ -22,15 +22,33 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
-var ErrIdempotencyConflict = errors.New("annotation idempotency key reused with different input")
+var (
+	ErrIdempotencyConflict      = errors.New("annotation idempotency key reused with different input")
+	ErrActivationGuardRequired  = errors.New("annotation activation guard is required")
+	ErrActivationGuardRejected  = errors.New("annotation activation guard rejected campaign")
+)
 
-type Service struct {
-	tx   *transaction.Manager
-	repo *annotationinfra.Repository
+type ActivationGuard interface {
+	ValidateActivation(
+		ctx context.Context,
+		tx pgx.Tx,
+		campaign annotationdomain.Campaign,
+		tasks []annotationdomain.Task,
+	) error
 }
 
-func NewService(tx *transaction.Manager, repo *annotationinfra.Repository) *Service {
-	return &Service{tx: tx, repo: repo}
+type Service struct {
+	tx              *transaction.Manager
+	repo            *annotationinfra.Repository
+	activationGuard ActivationGuard
+}
+
+func NewService(
+	tx *transaction.Manager,
+	repo *annotationinfra.Repository,
+	activationGuard ActivationGuard,
+) *Service {
+	return &Service{tx: tx, repo: repo, activationGuard: activationGuard}
 }
 
 type CreateCampaignCommand struct {
@@ -148,13 +166,35 @@ type ActivateCampaignCommand struct {
 
 func (s *Service) ActivateCampaign(ctx context.Context, cmd ActivateCampaignCommand) (annotationdomain.Campaign, error) {
 	var activated annotationdomain.Campaign
-	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		campaign, err := s.repo.GetCampaignTx(ctx, tx, cmd.CampaignID)
+	if s.activationGuard == nil {
+		return annotationdomain.Campaign{}, ErrActivationGuardRequired
+	}
+	preflight, err := s.repo.GetCampaign(ctx, cmd.CampaignID)
+	if err != nil {
+		return annotationdomain.Campaign{}, err
+	}
+	if preflight.WorkspaceID != cmd.WorkspaceID || preflight.Status != annotationdomain.CampaignDraft {
+		return annotationdomain.Campaign{}, annotationdomain.ErrInvalidCampaign
+	}
+
+	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		preflightTasks, err := s.repo.ListTasksTx(ctx, tx, cmd.CampaignID)
 		if err != nil {
 			return err
 		}
-		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignDraft {
-			return annotationdomain.ErrInvalidCampaign
+		if err := s.activationGuard.ValidateActivation(ctx, tx, preflight, preflightTasks); err != nil {
+			return fmt.Errorf("%w: %v", ErrActivationGuardRejected, err)
+		}
+		campaign, err := s.repo.LockCampaignTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignDraft ||
+			campaign.Revision != cmd.ExpectedRevision {
+			return annotationinfra.ErrStaleRevision
+		}
+		if err := s.repo.LockTasksTx(ctx, tx, cmd.CampaignID); err != nil {
+			return err
 		}
 		tasks, err := s.repo.ListTasksTx(ctx, tx, cmd.CampaignID)
 		if err != nil {
@@ -539,12 +579,15 @@ func (s *Service) FinalizeAnnotationSnapshot(
 ) (annotationdomain.Snapshot, error) {
 	var snapshot annotationdomain.Snapshot
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		campaign, err := s.repo.GetCampaignTx(ctx, tx, cmd.CampaignID)
+		campaign, err := s.repo.LockCampaignTx(ctx, tx, cmd.CampaignID)
 		if err != nil {
 			return err
 		}
 		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignActive {
 			return annotationdomain.ErrInvalidSnapshot
+		}
+		if err := s.repo.LockTasksTx(ctx, tx, cmd.CampaignID); err != nil {
+			return err
 		}
 		tasks, err := s.repo.ListTasksTx(ctx, tx, cmd.CampaignID)
 		if err != nil {
