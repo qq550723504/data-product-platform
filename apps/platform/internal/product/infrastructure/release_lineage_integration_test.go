@@ -239,7 +239,6 @@ func TestPublishedReleaseLineageMutationFirstSerializesPublish(t *testing.T) {
 	}
 }
 
-
 func TestDetachedLineageSubtreeCannotAttachAcrossPublish(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
