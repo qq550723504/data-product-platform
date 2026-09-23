@@ -748,6 +748,45 @@ func (r *Repository) GetSnapshotIntegrity(ctx context.Context, snapshotID uuid.U
 	return valid, nil
 }
 
+func (r *Repository) GetResultByProviderObservation(
+	ctx context.Context,
+	workspaceID, campaignID uuid.UUID,
+	providerBindingRef, externalTaskID, externalAnnotationID, externalRevision, payloadSHA256 string,
+) (annotationdomain.Result, error) {
+	var result annotationdomain.Result
+	var payload []byte
+	err := r.pool.QueryRow(ctx, `
+		SELECT id, workspace_id, campaign_id, task_id, author_ref,
+		       COALESCE(provider_binding_ref,''), COALESCE(external_task_id,''),
+		       COALESCE(external_annotation_id,''), COALESCE(external_revision,''),
+		       observation_key, canonical_payload, canonical_payload_sha256,
+		       normalizer_version, corrected_from_result_id, created_at, created_by
+		  FROM annotation_result
+		 WHERE workspace_id=$1
+		   AND campaign_id=$2
+		   AND provider_binding_ref=$3
+		   AND external_task_id=$4
+		   AND external_annotation_id=$5
+		   AND COALESCE(external_revision,'')=$6
+		   AND canonical_payload_sha256=$7
+		   AND corrected_from_result_id IS NULL
+	`, workspaceID, campaignID, providerBindingRef, externalTaskID, externalAnnotationID,
+		externalRevision, payloadSHA256).Scan(
+		&result.ID, &result.WorkspaceID, &result.CampaignID, &result.TaskID, &result.AuthorRef,
+		&result.ProviderBindingRef, &result.ExternalTaskID, &result.ExternalAnnotationID,
+		&result.ExternalRevision, &result.ObservationKey, &payload, &result.CanonicalPayloadSHA256,
+		&result.NormalizerVersion, &result.CorrectedFromResultID, &result.CreatedAt, &result.CreatedBy,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.Result{}, pgx.ErrNoRows
+	}
+	if err != nil {
+		return annotationdomain.Result{}, fmt.Errorf("get annotation result by provider observation: %w", err)
+	}
+	result.CanonicalPayload = payload
+	return result, nil
+}
+
 func (r *Repository) GetResultByObservation(
 	ctx context.Context,
 	workspaceID, campaignID uuid.UUID,
