@@ -1093,14 +1093,32 @@ BEGIN
            )
     ) OR EXISTS (
         SELECT 1
+          FROM annotation_snapshot_result sr
+          JOIN annotation_result r ON r.id=sr.result_id
+         WHERE sr.snapshot_id=OLD.id
+           AND (
+               r.campaign_id IS DISTINCT FROM OLD.campaign_id
+               OR r.workspace_id IS DISTINCT FROM OLD.workspace_id
+           )
+    ) OR EXISTS (
+        SELECT 1
           FROM annotation_review_decision d
          WHERE d.campaign_id=OLD.campaign_id
            AND NOT EXISTS (
                SELECT 1 FROM annotation_snapshot_decision sd
                 WHERE sd.snapshot_id=OLD.id AND sd.decision_id=d.id
            )
+    ) OR EXISTS (
+        SELECT 1
+          FROM annotation_snapshot_decision sd
+          JOIN annotation_review_decision d ON d.id=sd.decision_id
+         WHERE sd.snapshot_id=OLD.id
+           AND (
+               d.campaign_id IS DISTINCT FROM OLD.campaign_id
+               OR d.workspace_id IS DISTINCT FROM OLD.workspace_id
+           )
     ) THEN
-        RAISE EXCEPTION 'annotation snapshot result/decision membership is incomplete';
+        RAISE EXCEPTION 'annotation snapshot result/decision membership crosses campaign boundary or is incomplete';
     END IF;
 
     IF EXISTS (
