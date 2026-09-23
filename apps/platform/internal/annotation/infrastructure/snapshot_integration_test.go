@@ -133,7 +133,6 @@ func TestAnnotationWorkspaceIsolationFailsClosed(t *testing.T) {
 	}
 }
 
-
 func TestAnnotationSnapshotRejectsDirectFinalizedInsert(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
