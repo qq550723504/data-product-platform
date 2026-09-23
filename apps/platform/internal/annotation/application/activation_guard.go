@@ -250,7 +250,7 @@ func (g *CoreActivationGuard) checkCurrentResourceEntitlement(
 		DataResourceID: resourceID,
 		ConsumerRef:    strings.TrimSpace(campaign.ConsumerRef),
 		Purpose:        strings.TrimSpace(campaign.Purpose),
-		Action:         strings.TrimSpace(campaign.Action),
+		Action:         "PROCESS",
 		Scope:          scope,
 		Path:           rightsdomain.EntitlementDirectUse,
 	}
