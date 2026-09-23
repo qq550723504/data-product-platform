@@ -160,4 +160,3 @@ func TestReviewFingerprintChangesWithConflictingPayload(t *testing.T) {
 		t.Fatal("review fingerprint must change when same-key command semantics change")
 	}
 }
-
