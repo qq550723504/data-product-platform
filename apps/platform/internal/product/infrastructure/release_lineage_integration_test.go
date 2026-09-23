@@ -386,6 +386,22 @@ func TestDirectSQLReleasePublishFailsClosedWhenLineageFenceBusy(t *testing.T) {
 
 	release, inputID := insertReleaseMembershipFixture(t, ctx, pool)
 	outputID := release.Datasets[0].DatasetVersionID
+	workspaceID := releaseWorkspaceID(t, ctx, pool, release.ProductID)
+
+	// Ensure the fence row is committed before creating contention. This mirrors
+	// the application publish path and lets the direct-SQL guard exercise NOWAIT
+	// against a visible, busy fence instead of failing earlier on missing setup.
+	initTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin fence init tx: %v", err)
+	}
+	if _, err := deliveryfence.Lock(ctx, initTx, workspaceID); err != nil {
+		_ = initTx.Rollback(ctx)
+		t.Fatalf("initialize workspace fence: %v", err)
+	}
+	if err := initTx.Commit(ctx); err != nil {
+		t.Fatalf("commit workspace fence init: %v", err)
+	}
 
 	mutationTx, err := pool.Begin(ctx)
 	if err != nil {
