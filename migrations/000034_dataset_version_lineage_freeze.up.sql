@@ -74,10 +74,8 @@ BEGIN
         WITH RECURSIVE published_lineage(version_id) AS (
             SELECT prd.dataset_version_id
               FROM product_release pr
-              JOIN data_product p ON p.id=pr.product_id
               JOIN product_release_dataset prd ON prd.release_id=pr.id
-             WHERE p.workspace_id=output_workspace
-               AND pr.status IN ('PUBLISHED','WITHDRAWN')
+             WHERE pr.status IN ('PUBLISHED','WITHDRAWN')
             UNION
             SELECT dvl.input_version_id
               FROM dataset_version_lineage dvl
@@ -136,17 +134,24 @@ BEGIN
             RAISE EXCEPTION 'ProductRelease product workspace does not exist';
         END IF;
 
-        -- Database-enforced publication fence. Every transition into PUBLISHED
-        -- must come from READY and acquire the same workspace row lock used by
-        -- lineage INSERTs before the state change can complete.
-        INSERT INTO delivery_authorization_fence(workspace_id)
-        VALUES (release_workspace)
-        ON CONFLICT (workspace_id) DO NOTHING;
+        -- Application publication acquires this workspace fence before touching
+        -- ProductRelease. A direct UPDATE already owns the ProductRelease row,
+        -- so the trigger must never block waiting for the fence or it could invert
+        -- the lock order. NOWAIT makes direct SQL fail closed under contention,
+        -- while the normal fenced command succeeds because it already owns the row.
+        BEGIN
+            PERFORM 1
+              FROM delivery_authorization_fence
+             WHERE workspace_id=release_workspace
+             FOR UPDATE NOWAIT;
 
-        PERFORM 1
-          FROM delivery_authorization_fence
-         WHERE workspace_id=release_workspace
-         FOR UPDATE;
+            IF NOT FOUND THEN
+                RAISE EXCEPTION 'ProductRelease publication requires initialized workspace delivery fence';
+            END IF;
+        EXCEPTION
+            WHEN lock_not_available THEN
+                RAISE EXCEPTION 'ProductRelease publication conflicts with workspace delivery fence';
+        END;
     END IF;
 
     RETURN NEW;
