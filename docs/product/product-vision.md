@@ -6,7 +6,7 @@ Data Product Platform 是一套数据产品与高质量数据集生产治理平�
 
 它围绕不可变 DatasetVersion，把数据接入、标准化、实体对齐、加工、质量评测、权利证明、合规、认证、交付和数据产品发布串成可验证的生产链。
 
-平台核心数据库负责业务真相；OpenMetadata、Hop、Splink、Soda/GX、Label Studio 等外部系统通过 Adapter 提供能力，不拥有核心业务状态。
+平台核心数据库负责业务真相；OpenMetadata、Hop、Splink、Soda/GX、Label Studio 等外部系统通过 Adapter 提供能力，不拥有核心业务状态。能力规划不等同于这些适配器都已实现。
 
 ## 当前阶段
 
@@ -19,7 +19,9 @@ Data Product Platform 是一套数据产品与高质量数据集生产治理平�
 3. 数据权利来源和授权可以解释为什么允许或拒绝使用与交付；
 4. Certified Dataset 可以完成受控的 trusted DIRECT_DATA 交付与 UI/trace 验收。
 
-第一阶段完成不等于生产上线批准。下一阶段不自动启动，应基于真实产品优先级，从 AI / Gold Dataset、Delivery Hardening / external provider、Core reliability debt 或客户/行业反馈驱动增强中单独立项。
+第一阶段完成不等于生产上线批准。第二阶段已由 #203 AI / Gold Dataset Epic 正式立项，当前为 #209 文档架构基线；#204–#208 的业务实现和真实 Pilot 尚未完成。先合并并验收架构基线，再启动 #204，不把设计内容描述为已上线能力。
+
+本阶段只选择一个受控、合成数据、单标签、独立人工审核的 Gold 生产闭环。Delivery Hardening / external provider、完整 IAM/SLA/灾备和其他行业能力仍由真实需求独立决定，不跟随 Gold 自动启动。
 
 ## 核心问题
 
@@ -35,6 +37,8 @@ Data Product Platform 是一套数据产品与高质量数据集生产治理平�
 8. 为什么某个 DatasetVersion 可以被认证？
 9. Data Product 为什么可以发布？
 10. 成本与 Evidence 在哪里？
+
+第二阶段进一步回答：谁标注、谁审核、选中了哪个不可变结果，哪些任务被拒绝，为什么这份具体输出满足明确 Gold Profile？
 
 ## 核心链路
 
@@ -58,9 +62,11 @@ Certified Dataset 后可以进入：
 Certified Dataset
 ├── Data Product / Product Release
 ├── Trusted Data Offering
-├── AI Dataset → Gold / Benchmark（第二阶段）
+├── Annotation / Review → Gold Dataset（#203 设计基线，待实现）
 └── External Delivery
 ~~~
+
+Gold 不是绝对正确或通用 benchmark 声明；模型训练、train/test split、统计代表性与 benchmark 评估不属于当前 Pilot。
 
 ## 产品能力结构
 
@@ -79,6 +85,7 @@ Certified Dataset / Data Product Core
         ├── Compliance / Contract
         ├── DatasetCertification
         ├── ProductRelease
+        ├── Annotation / Review / Snapshot（#203 设计，待实现）
         └── Cost / Evidence / Audit
         ↓
 Engine Adapter Layer
@@ -104,6 +111,14 @@ Immutable DatasetVersion
 
 DatasetVersion 内容变化后必须创建新版本并重新评测、重新认证。
 
+## Gold Dataset 第二阶段设计
+
+Gold 候选仍是新的 DatasetVersion，不是独立 GoldDataset 主实体。它绑定完整冻结的 AnnotationSnapshot、规范版本、实际 producer 与完整源数据/标注贡献权利依赖，再经新 QualityAssessment 和明确 Gold Profile 认证；不能把 input certification 复制给 output。
+
+通用标注交互和分发由 Label Studio reference adapter 复用，Core 持有结果接纳、审核权威性、冻结事实与认证语义。provider 当前状态不得改写历史；历史 CERTIFIED 不替代当前交付授权。
+
+唯一产品范围、16 个关键问题定案及实现归属见 [gold-dataset.md](gold-dataset.md)；跨模块决策见 [ADR-0012](../adr/0012-gold-dataset-annotation-boundary.md)。本文只提供产品摘要，不另定义一套状态机。
+
 ## 数据权利原则
 
 平台内 owner_id 表示资产责任/归属，不自动等于现实世界法律上的数据所有权。
@@ -119,7 +134,7 @@ RightsDeclaration
 → DatasetCertification
 ~~~
 
-平台记录声明、依据、授权、限制和 Evidence，不自动裁定现实世界法律所有权。
+平台记录声明、依据、授权、限制和 Evidence，不自动裁定现实世界法律所有权。完成标注、拥有引擎账号或引擎的开源许可均不自动产生数据使用权。
 
 ## 通用 Core 与行业包
 
@@ -147,4 +162,4 @@ Industry Pack 可以提供：
 - POC 目标：Raw Data → Product Release → Cost/Evidence
 - Pilot 目标：Raw Data → Certified Dataset → 可解释认证
 
-activity_score 等 V1 指标仅用于验证数据生产生命周期和可解释性，不是经过验证的授信模型。
+activity_score 等 V1 指标仅用于验证数据生产生命周期和可解释性，不是经过验证的授信模型。Gold Reference 延续其合成内容验证记录标注/审核，不改变原契约用途，也不生成信用或违约判断。
