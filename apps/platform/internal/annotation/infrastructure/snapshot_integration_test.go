@@ -159,6 +159,182 @@ func TestAnnotationSnapshotLateMembershipWriterFailsClosed(t *testing.T) {
 	}
 }
 
+
+func TestAnnotationReviewDecisionSerializesConcurrentReviewers(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	base := createAnnotationDBFixture(t, ctx, pool)
+	campaignID, taskID, resultID := createAnnotationReviewRaceFixture(t, ctx, pool, base)
+	winnerAttempt := uuid.New()
+	loserAttempt := uuid.New()
+	for _, attempt := range []struct {
+		id       uuid.UUID
+		reviewer string
+		key      string
+	}{
+		{winnerAttempt, "reviewer-a", "race-a-" + uuid.NewString()},
+		{loserAttempt, "reviewer-b", "race-b-" + uuid.NewString()},
+	} {
+		if _, err := pool.Exec(ctx, `
+			INSERT INTO annotation_review_attempt(
+				id, workspace_id, campaign_id, task_id, reviewer_ref, expected_task_revision,
+				action, reason, idempotency_key, request_fingerprint
+			) VALUES ($1,$2,$3,$4,$5,2,'ACCEPT','race review',$6,$7)
+		`, attempt.id, base.workspaceID, campaignID, taskID, attempt.reviewer, attempt.key, strings.Repeat("f", 64)); err != nil {
+			t.Fatalf("insert race review attempt: %v", err)
+		}
+	}
+
+	winnerTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin winner review: %v", err)
+	}
+	winnerDecision := uuid.New()
+	if _, err := winnerTx.Exec(ctx, `
+		INSERT INTO annotation_review_decision(
+			id, workspace_id, campaign_id, task_id, review_attempt_id,
+			reviewed_result_id, selected_result_id, reviewer_ref, outcome, reason,
+			expected_task_revision
+		) VALUES ($1,$2,$3,$4,$5,$6,$6,'reviewer-a','ACCEPT','race review',2)
+	`, winnerDecision, base.workspaceID, campaignID, taskID, winnerAttempt, resultID); err != nil {
+		_ = winnerTx.Rollback(ctx)
+		t.Fatalf("insert winner decision: %v", err)
+	}
+	if _, err := winnerTx.Exec(ctx, `
+		INSERT INTO annotation_review_attempt_outcome(id, attempt_id, outcome)
+		VALUES ($1,$2,'SUCCEEDED')
+	`, uuid.New(), winnerAttempt); err != nil {
+		_ = winnerTx.Rollback(ctx)
+		t.Fatalf("insert winner outcome: %v", err)
+	}
+
+	loserDone := make(chan error, 1)
+	go func() {
+		loserCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		loserTx, beginErr := pool.Begin(loserCtx)
+		if beginErr != nil {
+			loserDone <- beginErr
+			return
+		}
+		defer loserTx.Rollback(context.Background())
+		_, insertErr := loserTx.Exec(loserCtx, `
+			INSERT INTO annotation_review_decision(
+				id, workspace_id, campaign_id, task_id, review_attempt_id,
+				reviewed_result_id, selected_result_id, reviewer_ref, outcome, reason,
+				expected_task_revision
+			) VALUES ($1,$2,$3,$4,$5,$6,$6,'reviewer-b','ACCEPT','race review',2)
+		`, uuid.New(), base.workspaceID, campaignID, taskID, loserAttempt, resultID)
+		if insertErr == nil {
+			insertErr = loserTx.Commit(loserCtx)
+		}
+		loserDone <- insertErr
+	}()
+
+	time.Sleep(150 * time.Millisecond)
+	if err := winnerTx.Commit(ctx); err != nil {
+		t.Fatalf("commit winner review: %v", err)
+	}
+
+	select {
+	case loserErr := <-loserDone:
+		if loserErr == nil || !strings.Contains(loserErr.Error(), "expected task/attempt CAS") {
+			t.Fatalf("losing review error = %v, want stale CAS rejection", loserErr)
+		}
+	case <-time.After(6 * time.Second):
+		t.Fatal("losing reviewer did not converge")
+	}
+
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO annotation_review_attempt_outcome(id, attempt_id, outcome, error_code)
+		VALUES ($1,$2,'STALE_CONFLICT','STALE_REVISION')
+	`, uuid.New(), loserAttempt); err != nil {
+		t.Fatalf("record losing review outcome: %v", err)
+	}
+
+	var decisionCount int
+	var taskRevision int64
+	var currentDecision uuid.UUID
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM annotation_review_decision WHERE task_id=$1
+	`, taskID).Scan(&decisionCount); err != nil {
+		t.Fatalf("count race decisions: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT revision, current_decision_id FROM annotation_task WHERE id=$1
+	`, taskID).Scan(&taskRevision, &currentDecision); err != nil {
+		t.Fatalf("read race task projection: %v", err)
+	}
+	if decisionCount != 1 || taskRevision != 3 || currentDecision != winnerDecision {
+		t.Fatalf("race result decisions/revision/current = %d/%d/%s, want 1/3/%s",
+			decisionCount, taskRevision, currentDecision, winnerDecision)
+	}
+}
+
+func createAnnotationReviewRaceFixture(
+	t *testing.T,
+	ctx context.Context,
+	pool *pgxpool.Pool,
+	base annotationDBFixture,
+) (uuid.UUID, uuid.UUID, uuid.UUID) {
+	t.Helper()
+	campaignID := uuid.New()
+	taskID := uuid.New()
+	resultID := uuid.New()
+	specContent := "annotation-fixture-spec"
+	specHash := sha256Hex([]byte(specContent))
+
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO annotation_campaign(
+			id, workspace_id, input_dataset_version_id, input_certification_id,
+			annotation_contribution_resource_id, purpose, action,
+			schema_ref, schema_version, schema_content_sha256, schema_content_snapshot,
+			taxonomy_ref, taxonomy_version, taxonomy_content_sha256, taxonomy_content_snapshot,
+			rubric_ref, rubric_version, rubric_content_sha256, rubric_content_snapshot,
+			renderer_ref, renderer_version, renderer_content_sha256, renderer_content_snapshot,
+			review_policy_ref, review_policy_version, review_policy_content_sha256, review_policy_content_snapshot
+		) VALUES (
+			$1,$2,$3,$4,$5,'gold-pilot','PROCESS',
+			'schema','1',$6,$7,'taxonomy','1',$6,$7,'rubric','1',$6,$7,
+			'renderer','1',$6,$7,'review','1',$6,$7
+		)
+	`, campaignID, base.workspaceID, base.versionID, base.certificationID, base.resourceID, specHash, specContent); err != nil {
+		t.Fatalf("insert race campaign: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO annotation_task(
+			id, workspace_id, campaign_id, source_item_ref, source_content_sha256,
+			task_text_sha256, primary_annotator_ref
+		) VALUES ($1,$2,$3,'row:race',$4,$5,'annotator')
+	`, taskID, base.workspaceID, campaignID, strings.Repeat("a", 64), strings.Repeat("b", 64)); err != nil {
+		t.Fatalf("insert race task: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE annotation_campaign
+		   SET status='ACTIVE', revision=2, expected_task_count=1,
+		       task_manifest_hash=$2, activated_at=now()
+		 WHERE id=$1
+	`, campaignID, strings.Repeat("c", 64)); err != nil {
+		t.Fatalf("activate race campaign: %v", err)
+	}
+	payload := []byte("{\"label\":\"RACE\"}")
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO annotation_result(
+			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
+			canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','obs:race',$5,$6,'fixture-v1')
+	`, resultID, base.workspaceID, campaignID, taskID, payload, sha256Hex(payload)); err != nil {
+		t.Fatalf("insert race result: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE annotation_task SET status='REVIEWABLE', revision=2 WHERE id=$1
+	`, taskID); err != nil {
+		t.Fatalf("make race task reviewable: %v", err)
+	}
+	return campaignID, taskID, resultID
+}
+
 func openAnnotationTestDB(t *testing.T) (*pgxpool.Pool, context.Context) {
 	t.Helper()
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
