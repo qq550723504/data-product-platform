@@ -163,6 +163,50 @@ func (r *PostgresRepository) readinessFacts(ctx context.Context, q readinessQuer
 			       COALESCE(
 			           (rs.manifest->>'purpose')=rs.purpose
 			           AND COALESCE(rs.manifest->>'consumerRef','')=COALESCE(rs.consumer_ref,'')
+			           AND (
+			               SELECT count(*)
+			               FROM jsonb_array_elements(
+			                   CASE
+			                       WHEN jsonb_typeof(rs.manifest->'authorizations')='array'
+			                       THEN rs.manifest->'authorizations'
+			                       ELSE '[]'::jsonb
+			                   END
+			               )
+			           ) = count(rsa.authorization_id)
+			           AND NOT EXISTS (
+			               SELECT 1
+			               FROM jsonb_array_elements(
+			                   CASE
+			                       WHEN jsonb_typeof(rs.manifest->'authorizations')='array'
+			                       THEN rs.manifest->'authorizations'
+			                       ELSE '[]'::jsonb
+			                   END
+			               ) frozen_authorization
+			               WHERE COALESCE(frozen_authorization->>'purpose','') <> rs.purpose
+			                  OR COALESCE(frozen_authorization->>'granteeRef','') <> COALESCE(rs.consumer_ref,'')
+			                  OR NOT EXISTS (
+			                      SELECT 1
+			                      FROM rights_snapshot_authorization membership
+			                      WHERE membership.rights_snapshot_id=rs.id
+			                        AND membership.authorization_id::text=frozen_authorization->>'authorizationId'
+			                  )
+			           )
+			           AND NOT EXISTS (
+			               SELECT 1
+			               FROM rights_snapshot_authorization membership
+			               WHERE membership.rights_snapshot_id=rs.id
+			                 AND NOT EXISTS (
+			                     SELECT 1
+			                     FROM jsonb_array_elements(
+			                         CASE
+			                             WHEN jsonb_typeof(rs.manifest->'authorizations')='array'
+			                             THEN rs.manifest->'authorizations'
+			                             ELSE '[]'::jsonb
+			                         END
+			                     ) frozen_authorization
+			                     WHERE frozen_authorization->>'authorizationId'=membership.authorization_id::text
+			                 )
+			           )
 			           AND bool_and(
 			               da.purpose=rs.purpose
 			               AND da.grantee_ref=rs.consumer_ref
