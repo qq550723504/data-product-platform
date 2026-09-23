@@ -24,6 +24,7 @@ import (
 
 var (
 	ErrIdempotencyConflict     = errors.New("annotation idempotency key reused with different input")
+	ErrIdempotencyKeyRequired  = errors.New("annotation idempotency key is required")
 	ErrActivationGuardRequired = errors.New("annotation activation guard is required")
 	ErrActivationGuardRejected = errors.New("annotation activation guard rejected campaign")
 )
@@ -64,17 +65,42 @@ func NewService(
 }
 
 type CreateCampaignCommand struct {
-	Spec    annotationdomain.CampaignSpec
-	TraceID string
+	Spec           annotationdomain.CampaignSpec
+	IdempotencyKey string
+	TraceID        string
 }
 
 func (s *Service) CreateCampaign(ctx context.Context, cmd CreateCampaignCommand) (annotationdomain.Campaign, error) {
+	cmd.IdempotencyKey = strings.TrimSpace(cmd.IdempotencyKey)
+	if cmd.IdempotencyKey == "" {
+		return annotationdomain.Campaign{}, ErrIdempotencyKeyRequired
+	}
+	fingerprint, err := campaignFingerprint(cmd.Spec)
+	if err != nil {
+		return annotationdomain.Campaign{}, err
+	}
+	if existing, storedFingerprint, readErr := s.repo.GetCampaignByCommandKey(
+		ctx, cmd.Spec.WorkspaceID, cmd.IdempotencyKey,
+	); readErr == nil {
+		if storedFingerprint != fingerprint {
+			return annotationdomain.Campaign{}, ErrIdempotencyConflict
+		}
+		return existing, nil
+	} else if !errors.Is(readErr, pgx.ErrNoRows) {
+		return annotationdomain.Campaign{}, readErr
+	}
+
 	campaign, err := annotationdomain.NewCampaign(cmd.Spec, time.Now().UTC())
 	if err != nil {
 		return annotationdomain.Campaign{}, err
 	}
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		if err := s.repo.InsertCampaign(ctx, tx, campaign); err != nil {
+			return err
+		}
+		if err := s.repo.InsertCampaignCommand(
+			ctx, tx, campaign.WorkspaceID, cmd.IdempotencyKey, fingerprint, campaign.ID,
+		); err != nil {
 			return err
 		}
 		if err := appendEvent(ctx, tx, "ANNOTATION_CAMPAIGN", campaign.ID, "AnnotationCampaignCreated", map[string]any{
@@ -91,6 +117,7 @@ func (s *Service) CreateCampaign(ctx context.Context, cmd CreateCampaignCommand)
 				"inputDatasetVersionId": campaign.InputDatasetVersionID,
 				"schemaHash":            campaign.Schema.ContentSHA256,
 				"taxonomyHash":          campaign.Taxonomy.ContentSHA256,
+				"requestFingerprint":    fingerprint,
 			},
 			CreatedBy: cmd.Spec.ActorID,
 		}, evidence.Relation{ObjectType: "ANNOTATION_CAMPAIGN", ObjectID: campaign.ID, RelationType: "CREATION_EVIDENCE"}); err != nil {
@@ -103,11 +130,24 @@ func (s *Service) CreateCampaign(ctx context.Context, cmd CreateCampaignCommand)
 			AfterState: map[string]any{
 				"status": campaign.Status, "revision": campaign.Revision,
 				"inputDatasetVersionId": campaign.InputDatasetVersionID,
+				"requestFingerprint": fingerprint,
 			},
 			TraceID: cmd.TraceID,
 		})
 	})
-	return campaign, err
+	if err == nil {
+		return campaign, nil
+	}
+	existing, storedFingerprint, readErr := s.repo.GetCampaignByCommandKey(
+		ctx, cmd.Spec.WorkspaceID, cmd.IdempotencyKey,
+	)
+	if readErr == nil {
+		if storedFingerprint != fingerprint {
+			return annotationdomain.Campaign{}, ErrIdempotencyConflict
+		}
+		return existing, nil
+	}
+	return annotationdomain.Campaign{}, err
 }
 
 type TaskInput struct {
@@ -131,6 +171,7 @@ func (s *Service) CreateTasks(ctx context.Context, cmd CreateTasksCommand) ([]an
 	}
 	tasks := make([]annotationdomain.Task, 0, len(cmd.Tasks))
 	now := time.Now().UTC()
+	seenSourceItems := make(map[string]struct{}, len(cmd.Tasks))
 	for _, input := range cmd.Tasks {
 		task, err := annotationdomain.NewTask(
 			cmd.WorkspaceID, cmd.CampaignID, input.SourceItemRef,
@@ -139,6 +180,11 @@ func (s *Service) CreateTasks(ctx context.Context, cmd CreateTasksCommand) ([]an
 		if err != nil {
 			return nil, err
 		}
+		if _, exists := seenSourceItems[task.SourceItemRef]; exists {
+			return nil, annotationdomain.ErrInvalidTask
+		}
+		seenSourceItems[task.SourceItemRef] = struct{}{}
+		task.ID = stableTaskID(cmd.CampaignID, task.SourceItemRef)
 		tasks = append(tasks, task)
 	}
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
@@ -149,20 +195,29 @@ func (s *Service) CreateTasks(ctx context.Context, cmd CreateTasksCommand) ([]an
 		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignDraft {
 			return annotationdomain.ErrInvalidCampaign
 		}
+		createdCount := 0
 		for _, task := range tasks {
-			if err := s.repo.InsertTask(ctx, tx, task); err != nil {
+			created, err := s.repo.InsertTask(ctx, tx, task)
+			if err != nil {
 				return err
 			}
+			if created {
+				createdCount++
+			}
+		}
+		if createdCount == 0 {
+			return nil
 		}
 		if err := appendEvent(ctx, tx, "ANNOTATION_CAMPAIGN", cmd.CampaignID, "AnnotationTasksCreated", map[string]any{
-			"campaignId": cmd.CampaignID, "workspaceId": cmd.WorkspaceID, "count": len(tasks),
+			"campaignId": cmd.CampaignID, "workspaceId": cmd.WorkspaceID,
+			"count": createdCount, "requestedCount": len(tasks),
 		}); err != nil {
 			return err
 		}
 		return audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &cmd.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID,
 			Action: "ANNOTATION_TASKS_CREATED", ObjectType: "ANNOTATION_CAMPAIGN", ObjectID: cmd.CampaignID,
-			AfterState: map[string]any{"count": len(tasks)}, TraceID: cmd.TraceID,
+			AfterState: map[string]any{"count": createdCount, "requestedCount": len(tasks)}, TraceID: cmd.TraceID,
 		})
 	})
 	return tasks, err
@@ -816,6 +871,48 @@ func actorType(actorID *uuid.UUID) string {
 		return "SYSTEM"
 	}
 	return "USER"
+}
+
+func campaignFingerprint(spec annotationdomain.CampaignSpec) (string, error) {
+	payload := struct {
+		RequestedID              uuid.UUID                   `json:"requestedId"`
+		WorkspaceID              uuid.UUID                   `json:"workspaceId"`
+		InputDatasetVersionID    uuid.UUID                   `json:"inputDatasetVersionId"`
+		InputCertificationID     uuid.UUID                   `json:"inputCertificationId"`
+		AnnotationContributionID uuid.UUID                   `json:"annotationContributionResourceId"`
+		Purpose                  string                      `json:"purpose"`
+		Action                   string                      `json:"action"`
+		ConsumerRef              string                      `json:"consumerRef"`
+		ScopeType                string                      `json:"scopeType"`
+		ScopeRef                 string                      `json:"scopeRef"`
+		Schema                   annotationdomain.FrozenSpec `json:"schema"`
+		Taxonomy                 annotationdomain.FrozenSpec `json:"taxonomy"`
+		Rubric                   annotationdomain.FrozenSpec `json:"rubric"`
+		Renderer                 annotationdomain.FrozenSpec `json:"renderer"`
+		ReviewPolicy             annotationdomain.FrozenSpec `json:"reviewPolicy"`
+		ActorID                  *uuid.UUID                  `json:"actorId"`
+	}{
+		RequestedID: spec.ID, WorkspaceID: spec.WorkspaceID,
+		InputDatasetVersionID: spec.InputDatasetVersionID,
+		InputCertificationID: spec.InputCertificationID,
+		AnnotationContributionID: spec.AnnotationContributionID,
+		Purpose: strings.TrimSpace(spec.Purpose), Action: strings.TrimSpace(spec.Action),
+		ConsumerRef: strings.TrimSpace(spec.ConsumerRef), ScopeType: strings.TrimSpace(spec.ScopeType),
+		ScopeRef: strings.TrimSpace(spec.ScopeRef), Schema: spec.Schema, Taxonomy: spec.Taxonomy,
+		Rubric: spec.Rubric, Renderer: spec.Renderer, ReviewPolicy: spec.ReviewPolicy, ActorID: spec.ActorID,
+	}
+	encoded, err := json.Marshal(payload)
+	if err != nil {
+		return "", fmt.Errorf("marshal annotation campaign fingerprint: %w", err)
+	}
+	return hashBytes(encoded), nil
+}
+
+func stableTaskID(campaignID uuid.UUID, sourceItemRef string) uuid.UUID {
+	return uuid.NewSHA1(
+		uuid.NameSpaceURL,
+		[]byte("annotation-task:"+campaignID.String()+":"+strings.TrimSpace(sourceItemRef)),
+	)
 }
 
 func taskManifestHash(tasks []annotationdomain.Task) (string, error) {
