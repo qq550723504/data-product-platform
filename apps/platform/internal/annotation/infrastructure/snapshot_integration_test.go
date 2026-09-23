@@ -673,7 +673,7 @@ func createAnnotationReviewRaceFixture(
 		   SET status='ACTIVE', revision=2, expected_task_count=1,
 		       task_manifest_hash=$2, input_checksum_sha256=$3, activated_at=now()
 		 WHERE id=$1
-	`, campaignID, strings.Repeat("c", 64), inputChecksum); err != nil {
+	`, campaignID, strings.Repeat("c", 64), base.inputChecksum); err != nil {
 		t.Fatalf("activate race campaign: %v", err)
 	}
 	payload := []byte("{\"label\":\"RACE\"}")
