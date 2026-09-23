@@ -17,6 +17,7 @@ const NativeEngineInvocation = "NATIVE_ENGINE_INVOCATION"
 const (
 	CertificationEvaluationActivity  = "CERTIFICATION_EVALUATION"
 	CertificationDispositionActivity = "CERTIFICATION_DISPOSITION"
+	AnnotationReviewActivity         = "ANNOTATION_REVIEW"
 )
 
 type Event struct {
@@ -346,6 +347,87 @@ func AppendQualityAssessmentAttemptActivity(ctx context.Context, tx pgx.Tx, acti
 	}
 	if *allocatedAttemptID != activity.AttemptID {
 		return fmt.Errorf("cost activity %s is already allocated to attempt %s", activity.AttemptID, *allocatedAttemptID)
+	}
+	return nil
+}
+
+
+type AnnotationReviewActivity struct {
+	WorkspaceID uuid.UUID
+	AttemptID   uuid.UUID
+	Quantity    float64
+	Unit        string
+	Amount      *float64
+	Currency    string
+	PricingMode string
+	Metadata    map[string]any
+	OccurredAt  time.Time
+}
+
+func AppendAnnotationReviewActivity(ctx context.Context, tx pgx.Tx, activity AnnotationReviewActivity) error {
+	if activity.WorkspaceID == uuid.Nil || activity.AttemptID == uuid.Nil {
+		return errors.New("annotation review cost activity requires workspace and attempt IDs")
+	}
+	if activity.Quantity <= 0 {
+		return errors.New("annotation review cost activity quantity must be positive")
+	}
+	if activity.Unit == "" {
+		activity.Unit = "review"
+	}
+	if activity.PricingMode == "" {
+		activity.PricingMode = "ACTUAL"
+	}
+	if activity.OccurredAt.IsZero() {
+		activity.OccurredAt = time.Now().UTC()
+	}
+	if activity.Metadata == nil {
+		activity.Metadata = map[string]any{}
+	}
+	metadata, err := json.Marshal(activity.Metadata)
+	if err != nil {
+		return fmt.Errorf("marshal annotation review cost metadata: %w", err)
+	}
+
+	var costEventID uuid.UUID
+	err = tx.QueryRow(ctx, `
+		INSERT INTO cost_event (
+			id, workspace_id, execution_id, activity_id, cost_type, quantity, unit,
+			amount, currency, pricing_mode, metadata, occurred_at
+		) VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+		ON CONFLICT (workspace_id, activity_id, cost_type)
+		WHERE activity_id IS NOT NULL DO NOTHING
+		RETURNING id
+	`, uuid.New(), activity.WorkspaceID, activity.AttemptID, AnnotationReviewActivity,
+		activity.Quantity, activity.Unit, activity.Amount, nullable(activity.Currency),
+		activity.PricingMode, metadata, activity.OccurredAt).Scan(&costEventID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		err = tx.QueryRow(ctx, `
+			SELECT id FROM cost_event
+			WHERE workspace_id=$1 AND activity_id=$2 AND cost_type=$3
+		`, activity.WorkspaceID, activity.AttemptID, AnnotationReviewActivity).Scan(&costEventID)
+	}
+	if err != nil {
+		return fmt.Errorf("append annotation review cost event: %w", err)
+	}
+
+	if _, err := tx.Exec(ctx, `
+		INSERT INTO cost_allocation(id, cost_event_id, annotation_review_attempt_id)
+		VALUES ($1,$2,$3)
+		ON CONFLICT (cost_event_id) DO NOTHING
+	`, uuid.New(), costEventID, activity.AttemptID); err != nil {
+		return fmt.Errorf("allocate annotation review cost event: %w", err)
+	}
+
+	var allocatedAttemptID *uuid.UUID
+	if err := tx.QueryRow(ctx, `
+		SELECT annotation_review_attempt_id
+		FROM cost_allocation
+		WHERE cost_event_id=$1
+	`, costEventID).Scan(&allocatedAttemptID); err != nil {
+		return fmt.Errorf("verify annotation review cost allocation: %w", err)
+	}
+	if allocatedAttemptID == nil || *allocatedAttemptID != activity.AttemptID {
+		return fmt.Errorf("cost activity %s is allocated to a different annotation review subject", activity.AttemptID)
 	}
 	return nil
 }
