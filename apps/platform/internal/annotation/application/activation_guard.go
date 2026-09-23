@@ -165,6 +165,10 @@ func (g *CoreActivationGuard) Preflight(
 		TaskManifestHash: manifestHash,
 		TaskCount:        len(tasks),
 		InputChecksum:    inputChecksum,
+		InputStorageURI:  version.StorageURI,
+		InputByteSize:    int64(len(payload)),
+		InputRowCount:    *version.RowCount,
+		InputContentType: strings.TrimSpace(version.ContentType),
 		SourceResourceID: sourceResourceID,
 	}, nil
 }
@@ -186,30 +190,14 @@ func (g *CoreActivationGuard) ValidateActivationTx(
 		return err
 	}
 	if version.Status != datasetdomain.VersionReady ||
-		!strings.EqualFold(strings.TrimSpace(version.ChecksumValue), proof.InputChecksum) {
-		return fmt.Errorf("annotation input DatasetVersion changed after preflight")
-	}
-	reader, err := g.objects.Get(ctx, version.StorageURI)
-	if err != nil {
-		return err
-	}
-	defer reader.Close()
-	limit := maxAnnotationPilotInputBytes
-	if version.ByteSize != nil && *version.ByteSize >= 0 && *version.ByteSize < limit {
-		limit = *version.ByteSize
-	}
-	payload, err := io.ReadAll(io.LimitReader(reader, limit+1))
-	if err != nil {
-		return fmt.Errorf("re-read annotation input object: %w", err)
-	}
-	if int64(len(payload)) > limit {
-		return fmt.Errorf("annotation input object exceeds verified byte limit during activation")
-	}
-	if version.ByteSize != nil && int64(len(payload)) != *version.ByteSize {
-		return fmt.Errorf("annotation input object byte size changed after preflight")
-	}
-	if !strings.EqualFold(sha256HexBytes(payload), proof.InputChecksum) {
-		return fmt.Errorf("annotation input object checksum changed after preflight")
+		!strings.EqualFold(strings.TrimSpace(version.ChecksumAlgorithm), "SHA256") ||
+		!strings.EqualFold(strings.TrimSpace(version.ChecksumValue), proof.InputChecksum) ||
+		strings.TrimSpace(version.StorageURI) != proof.InputStorageURI ||
+		strings.TrimSpace(version.ContentType) != proof.InputContentType ||
+		version.ByteSize == nil || *version.ByteSize != proof.InputByteSize ||
+		version.RowCount == nil || *version.RowCount != proof.InputRowCount ||
+		proof.InputRowCount != int64(proof.TaskCount) {
+		return fmt.Errorf("annotation input DatasetVersion identity changed after preflight")
 	}
 	workspaceID, sourceResourceID, err := g.contexts.DatasetAnnotationContextTx(ctx, tx, version.DatasetID)
 	if err != nil {
