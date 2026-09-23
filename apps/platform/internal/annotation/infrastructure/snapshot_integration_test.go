@@ -883,9 +883,10 @@ func insertAnnotationSnapshotAggregate(t *testing.T, ctx context.Context, tx pgx
 	if _, err := tx.Exec(ctx, `
 		INSERT INTO annotation_snapshot(
 			id, workspace_id, campaign_id, manifest, manifest_hash_payload, root_hash,
-			expected_task_count, expected_result_count, expected_decision_count, expected_output_count
-		) VALUES ($1,$2,$3,$4,$5,$6,1,1,1,1)
-	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.manifest, fx.rootHash); err != nil {
+			expected_task_count, expected_result_count, expected_decision_count, expected_output_count,
+			created_at
+		) VALUES ($1,$2,$3,$4,$5,$6,1,1,1,1,$7)
+	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.manifest, fx.rootHash, fx.builtAt); err != nil {
 		_ = tx.Rollback(ctx)
 		t.Fatalf("insert annotation snapshot: %v", err)
 	}
