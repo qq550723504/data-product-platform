@@ -25,13 +25,13 @@ const (
 )
 
 type EngineCampaignRequest struct {
-	WorkspaceID         uuid.UUID
-	CampaignID          uuid.UUID
-	RequestID           string
-	RequestFingerprint  string
-	Title               string
-	LabelConfig         string
-	ConfigSHA256        string
+	WorkspaceID        uuid.UUID
+	CampaignID         uuid.UUID
+	RequestID          string
+	RequestFingerprint string
+	Title              string
+	LabelConfig        string
+	ConfigSHA256       string
 }
 
 type EngineCampaignBinding struct {
@@ -52,12 +52,12 @@ type EngineTask struct {
 }
 
 type EngineSubmitRequest struct {
-	WorkspaceID         uuid.UUID
-	CampaignID          uuid.UUID
-	Binding             EngineCampaignBinding
-	RequestID           string
-	RequestFingerprint  string
-	Tasks               []EngineTask
+	WorkspaceID        uuid.UUID
+	CampaignID         uuid.UUID
+	Binding            EngineCampaignBinding
+	RequestID          string
+	RequestFingerprint string
+	Tasks              []EngineTask
 }
 
 type EngineSubmission struct {
@@ -68,12 +68,12 @@ type EngineSubmission struct {
 }
 
 type EngineLookupRequest struct {
-	WorkspaceID         uuid.UUID
-	CampaignID          uuid.UUID
-	Binding             EngineCampaignBinding
-	RequestID           string
-	RequestFingerprint  string
-	Tasks               []EngineTask
+	WorkspaceID        uuid.UUID
+	CampaignID         uuid.UUID
+	Binding            EngineCampaignBinding
+	RequestID          string
+	RequestFingerprint string
+	Tasks              []EngineTask
 }
 
 type EngineResultCursor struct {
@@ -81,7 +81,7 @@ type EngineResultCursor struct {
 }
 
 type EngineResultObservation struct {
-	TaskID                uuid.UUID
+	TaskID                 uuid.UUID
 	ExternalTaskID         string
 	ExternalAnnotationID   string
 	ExternalRevision       string
@@ -141,10 +141,10 @@ func (e *AnnotationEngineError) Unwrap() error {
 
 func NewAnnotationEngineError(kind error, operation string, retryable bool, statusCode int, cause error) error {
 	return &AnnotationEngineError{
-		Kind: kind,
-		Operation: strings.TrimSpace(operation),
-		Retryable: retryable,
+		Kind:       kind,
+		Operation:  strings.TrimSpace(operation),
+		Retryable:  retryable,
 		StatusCode: statusCode,
-		Cause: cause,
+		Cause:      cause,
 	}
 }
