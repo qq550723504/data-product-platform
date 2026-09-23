@@ -228,6 +228,7 @@ func (r *Repository) ActivateCampaign(
 	expectedRevision int64,
 	expectedTaskCount int,
 	taskManifestHash string,
+	inputChecksumSHA256 string,
 	activatedAt time.Time,
 ) error {
 	tag, err := tx.Exec(ctx, `
@@ -236,9 +237,10 @@ func (r *Repository) ActivateCampaign(
 		       revision=revision+1,
 		       expected_task_count=$3,
 		       task_manifest_hash=$4,
-		       activated_at=$5
+		       input_checksum_sha256=$5,
+		       activated_at=$6
 		 WHERE id=$1 AND revision=$2 AND status='DRAFT'
-	`, campaignID, expectedRevision, expectedTaskCount, taskManifestHash, activatedAt)
+	`, campaignID, expectedRevision, expectedTaskCount, taskManifestHash, inputChecksumSHA256, activatedAt)
 	if err != nil {
 		return fmt.Errorf("activate annotation campaign: %w", err)
 	}
@@ -866,7 +868,7 @@ func getCampaign(ctx context.Context, q queryer, campaignID uuid.UUID) (annotati
 		       renderer_ref, renderer_version, renderer_content_sha256, renderer_content_snapshot,
 		       review_policy_ref, review_policy_version, review_policy_content_sha256, review_policy_content_snapshot,
 		       status, revision, COALESCE(expected_task_count,0), COALESCE(task_manifest_hash,''),
-		       created_at, created_by, activated_at, sealed_at, cancelled_at
+		       COALESCE(input_checksum_sha256,''), created_at, created_by, activated_at, sealed_at, cancelled_at
 		  FROM annotation_campaign
 		 WHERE id=$1
 	`, campaignID).Scan(
@@ -878,7 +880,7 @@ func getCampaign(ctx context.Context, q queryer, campaignID uuid.UUID) (annotati
 		&c.Renderer.Ref, &c.Renderer.Version, &c.Renderer.ContentSHA256, &c.Renderer.ContentSnapshot,
 		&c.ReviewPolicy.Ref, &c.ReviewPolicy.Version, &c.ReviewPolicy.ContentSHA256, &c.ReviewPolicy.ContentSnapshot,
 		&c.Status, &c.Revision, &c.ExpectedTaskCount, &c.TaskManifestHash,
-		&c.CreatedAt, &c.CreatedBy, &c.ActivatedAt, &c.SealedAt, &c.CancelledAt,
+		&c.InputChecksumSHA256, &c.CreatedAt, &c.CreatedBy, &c.ActivatedAt, &c.SealedAt, &c.CancelledAt,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return annotationdomain.Campaign{}, ErrCampaignNotFound
