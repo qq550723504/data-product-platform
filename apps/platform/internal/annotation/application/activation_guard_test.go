@@ -255,4 +255,3 @@ func TestCoreActivationGuardAlwaysRequiresProcessEntitlement(t *testing.T) {
 		t.Fatalf("entitlement action = %q, want PROCESS", checker.requests[0].Action)
 	}
 }
-
