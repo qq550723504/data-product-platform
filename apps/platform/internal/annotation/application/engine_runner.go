@@ -47,21 +47,27 @@ func (r *EngineRunner) RunOnce(ctx context.Context) error {
 	}
 
 	var runErrs []error
-	operations, err := r.repo.ListRunnableEngineOperations(ctx, r.batchSize)
+	operationIDs, err := r.repo.ListDispatchableEngineOperationIDs(
+		ctx,
+		r.service.engine.Provider(),
+		r.service.engine.InstanceRef(),
+		r.batchSize,
+	)
 	if err != nil {
 		return err
 	}
-	for _, operation := range operations {
-		if operation.Provider != r.service.engine.Provider() ||
-			operation.ProviderInstanceRef != r.service.engine.InstanceRef() {
-			continue
-		}
-		if _, err := r.service.Dispatch(ctx, operation.ID, r.workerRef, r.lease); err != nil {
-			runErrs = append(runErrs, fmt.Errorf("dispatch annotation engine operation %s: %w", operation.ID, err))
+	for _, operationID := range operationIDs {
+		if _, err := r.service.Dispatch(ctx, operationID, r.workerRef, r.lease); err != nil {
+			runErrs = append(runErrs, fmt.Errorf("dispatch annotation engine operation %s: %w", operationID, err))
 		}
 	}
 
-	campaignIDs, err := r.repo.ListResultReconcileCampaignIDs(ctx, r.batchSize)
+	campaignIDs, err := r.repo.ListCampaignIDsNeedingEngineResults(
+		ctx,
+		r.service.engine.Provider(),
+		r.service.engine.InstanceRef(),
+		r.batchSize,
+	)
 	if err != nil {
 		runErrs = append(runErrs, err)
 	} else {
