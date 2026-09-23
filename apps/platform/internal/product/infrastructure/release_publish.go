@@ -133,6 +133,16 @@ func (r *PostgresRepository) LockReleaseLineageForPublish(ctx context.Context, t
 	return nil
 }
 
+func (r *PostgresRepository) PermitReleasePublish(ctx context.Context, tx pgx.Tx, releaseID uuid.UUID) error {
+	if releaseID == uuid.Nil {
+		return fmt.Errorf("release publish permit requires release id")
+	}
+	if _, err := tx.Exec(ctx, `SELECT set_config('app.product_release_publish_id', $1, true)`, releaseID.String()); err != nil {
+		return fmt.Errorf("set fenced ProductRelease publish permit: %w", err)
+	}
+	return nil
+}
+
 func (r *PostgresRepository) PublishRelease(ctx context.Context, tx pgx.Tx, release domain.ProductRelease, evidenceSnapshotID uuid.UUID, actorID *uuid.UUID) error {
 	now := time.Now().UTC()
 	commandTag, err := tx.Exec(ctx, `
