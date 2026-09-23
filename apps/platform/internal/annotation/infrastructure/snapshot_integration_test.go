@@ -242,7 +242,7 @@ func TestAnnotationReviewCostUsesPhysicalAttemptIdentity(t *testing.T) {
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO annotation_review_attempt(
 			id, workspace_id, campaign_id, task_id, reviewer_ref, expected_task_revision,
-			action, reason, idempotency_key, request_fingerprint
+			review_action, reason, idempotency_key, request_fingerprint
 		) VALUES ($1,$2,$3,$4,'reviewer-loser',2,'ACCEPT','stale work',$5,$6)
 	`, loserAttempt, fx.workspaceID, fx.campaignID, fx.taskID,
 		"cost-loser-"+uuid.NewString(), strings.Repeat("9", 64)); err != nil {
