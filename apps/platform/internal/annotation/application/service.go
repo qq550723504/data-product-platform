@@ -363,7 +363,7 @@ func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCo
 		cmd.ProviderBindingRef, cmd.ExternalTaskID, cmd.ExternalAnnotationID,
 		cmd.ExternalRevision, cmd.CanonicalPayloadSHA256,
 	); err == nil {
-		if resultReplayMatches(existing, cmd) {
+		if providerResultReplayMatches(existing, cmd) {
 			return existing, nil
 		}
 		return annotationdomain.Result{}, ErrIdempotencyConflict
@@ -453,7 +453,7 @@ func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCo
 			cmd.ProviderBindingRef, cmd.ExternalTaskID, cmd.ExternalAnnotationID,
 			cmd.ExternalRevision, cmd.CanonicalPayloadSHA256,
 		); readErr == nil {
-			if resultReplayMatches(existing, cmd) {
+			if providerResultReplayMatches(existing, cmd) {
 				return existing, nil
 			}
 			return annotationdomain.Result{}, ErrIdempotencyConflict
@@ -1165,6 +1165,17 @@ func reviewFingerprint(cmd ReviewAnnotationCommand) (string, error) {
 		return "", err
 	}
 	return hashBytes(encoded), nil
+}
+
+func providerResultReplayMatches(existing annotationdomain.Result, cmd RecordResultCommand) bool {
+	return existing.TaskID == cmd.TaskID &&
+		existing.AuthorRef == strings.TrimSpace(cmd.AuthorRef) &&
+		existing.ProviderBindingRef == strings.TrimSpace(cmd.ProviderBindingRef) &&
+		existing.ExternalTaskID == strings.TrimSpace(cmd.ExternalTaskID) &&
+		existing.ExternalAnnotationID == strings.TrimSpace(cmd.ExternalAnnotationID) &&
+		existing.ExternalRevision == strings.TrimSpace(cmd.ExternalRevision) &&
+		existing.CanonicalPayloadSHA256 == strings.TrimSpace(cmd.CanonicalPayloadSHA256) &&
+		existing.NormalizerVersion == strings.TrimSpace(cmd.NormalizerVersion)
 }
 
 func resultReplayMatches(existing annotationdomain.Result, cmd RecordResultCommand) bool {
