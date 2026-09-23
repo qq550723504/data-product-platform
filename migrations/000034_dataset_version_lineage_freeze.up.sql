@@ -113,6 +113,22 @@ BEFORE UPDATE OF workspace_id ON dataset
 FOR EACH ROW EXECUTE FUNCTION guard_dataset_workspace_identity();
 
 
+CREATE OR REPLACE FUNCTION guard_data_product_workspace_identity()
+RETURNS trigger AS $data_product_workspace_guard$
+BEGIN
+    IF OLD.workspace_id IS DISTINCT FROM NEW.workspace_id THEN
+        RAISE EXCEPTION 'data_product workspace identity is immutable';
+    END IF;
+    RETURN NEW;
+END;
+$data_product_workspace_guard$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_data_product_workspace_identity ON data_product;
+CREATE TRIGGER trg_data_product_workspace_identity
+BEFORE UPDATE OF workspace_id ON data_product
+FOR EACH ROW EXECUTE FUNCTION guard_data_product_workspace_identity();
+
+
 CREATE OR REPLACE FUNCTION guard_product_release_history()
 RETURNS trigger AS $release_history_guard$
 DECLARE
