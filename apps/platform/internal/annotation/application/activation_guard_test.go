@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"strings"
 	"testing"
@@ -50,6 +51,22 @@ func (f fakeActivationObjectReader) Get(context.Context, string) (io.ReadCloser,
 	return io.NopCloser(strings.NewReader(f.content)), nil
 }
 
+func pilotSchemaSpec(labels ...string) annotationdomain.FrozenSpec {
+	content, _ := json.Marshal(pilotSchemaContract{Kind: pilotSchemaKind, Labels: labels})
+	return annotationdomain.FrozenSpec{
+		Ref: "activity-record-review", Version: "1.0.0",
+		ContentSHA256: sha256HexBytes(content), ContentSnapshot: string(content),
+	}
+}
+
+func pilotRendererSpec(fields ...string) annotationdomain.FrozenSpec {
+	content, _ := json.Marshal(pilotRendererContract{Kind: pilotRendererKind, Fields: fields})
+	return annotationdomain.FrozenSpec{
+		Ref: "activity-record-renderer", Version: "1.0.0",
+		ContentSHA256: sha256HexBytes(content), ContentSnapshot: string(content),
+	}
+}
+
 type fakeActivationEntitlementChecker struct{}
 
 func (fakeActivationEntitlementChecker) CheckCurrentEntitlementTx(
@@ -88,19 +105,29 @@ func TestCoreActivationGuardPreflightProvesExactCSVTaskMembership(t *testing.T) 
 		fakeActivationObjectReader{content: csv},
 		fakeActivationEntitlementChecker{},
 	)
+	renderer := pilotRendererSpec("name", "value")
 	campaign := annotationdomain.Campaign{
 		ID: campaignID, WorkspaceID: workspaceID, InputDatasetVersionID: versionID,
+		Schema: pilotSchemaSpec("A", "B"), Renderer: renderer,
+	}
+	task1Hash, err := rendererTaskTextSHA256(renderer, map[string]string{"name": "alpha", "value": "1"})
+	if err != nil {
+		t.Fatalf("task 1 render hash: %v", err)
+	}
+	task2Hash, err := rendererTaskTextSHA256(renderer, map[string]string{"name": "beta", "value": "2"})
+	if err != nil {
+		t.Fatalf("task 2 render hash: %v", err)
 	}
 	tasks := []annotationdomain.Task{
 		{
 			ID: uuid.New(), WorkspaceID: workspaceID, CampaignID: campaignID,
 			SourceItemRef: "row:1", SourceContentSHA256: row1,
-			TaskTextSHA256: strings.Repeat("a", 64),
+			TaskTextSHA256: task1Hash, PrimaryAnnotatorRef: "annotator",
 		},
 		{
 			ID: uuid.New(), WorkspaceID: workspaceID, CampaignID: campaignID,
 			SourceItemRef: "row:2", SourceContentSHA256: row2,
-			TaskTextSHA256: strings.Repeat("b", 64),
+			TaskTextSHA256: task2Hash, PrimaryAnnotatorRef: "annotator",
 		},
 	}
 	proof, err := guard.Preflight(t.Context(), campaign, tasks)
@@ -138,14 +165,58 @@ func TestCoreActivationGuardPreflightRejectsRowHashMismatch(t *testing.T) {
 		fakeActivationObjectReader{content: csv},
 		fakeActivationEntitlementChecker{},
 	)
+	renderer := pilotRendererSpec("name")
+	taskTextHash, hashErr := rendererTaskTextSHA256(renderer, map[string]string{"name": "alpha"})
+	if hashErr != nil {
+		t.Fatalf("render task hash: %v", hashErr)
+	}
 	_, err := guard.Preflight(t.Context(), annotationdomain.Campaign{
 		ID: campaignID, WorkspaceID: workspaceID, InputDatasetVersionID: versionID,
+		Schema: pilotSchemaSpec("A"), Renderer: renderer,
 	}, []annotationdomain.Task{{
 		ID: uuid.New(), WorkspaceID: workspaceID, CampaignID: campaignID,
 		SourceItemRef: "row:1", SourceContentSHA256: strings.Repeat("0", 64),
-		TaskTextSHA256: strings.Repeat("a", 64),
+		TaskTextSHA256: taskTextHash, PrimaryAnnotatorRef: "annotator",
 	}})
 	if err == nil || !strings.Contains(err.Error(), "source hash does not match") {
 		t.Fatalf("Preflight error = %v, want source hash mismatch", err)
+	}
+}
+
+func TestCoreActivationGuardPreflightRejectsTaskTextMismatch(t *testing.T) {
+	workspaceID := uuid.New()
+	datasetID := uuid.New()
+	versionID := uuid.New()
+	resourceID := uuid.New()
+	campaignID := uuid.New()
+	csv := "name\nalpha\n"
+	rowCount := int64(1)
+	byteSize := int64(len(csv))
+	renderer := pilotRendererSpec("name")
+	rowHash, err := normalizedRowHash(map[string]string{"name": "alpha"})
+	if err != nil {
+		t.Fatalf("row hash: %v", err)
+	}
+	guard := NewCoreActivationGuard(
+		fakeActivationDatasetReader{version: datasetdomain.DatasetVersion{
+			ID: versionID, DatasetID: datasetID, Status: datasetdomain.VersionReady,
+			StorageURI: "s3://fixture/input.csv", ContentType: "text/csv",
+			RowCount: &rowCount, ByteSize: &byteSize,
+			ChecksumAlgorithm: "SHA256", ChecksumValue: sha256HexBytes([]byte(csv)),
+		}},
+		fakeActivationContextReader{workspaceID: workspaceID, sourceResourceID: resourceID},
+		fakeActivationObjectReader{content: csv},
+		fakeActivationEntitlementChecker{},
+	)
+	_, err = guard.Preflight(t.Context(), annotationdomain.Campaign{
+		ID: campaignID, WorkspaceID: workspaceID, InputDatasetVersionID: versionID,
+		Schema: pilotSchemaSpec("A"), Renderer: renderer,
+	}, []annotationdomain.Task{{
+		ID: uuid.New(), WorkspaceID: workspaceID, CampaignID: campaignID,
+		SourceItemRef: "row:1", SourceContentSHA256: rowHash,
+		TaskTextSHA256: strings.Repeat("f", 64), PrimaryAnnotatorRef: "annotator",
+	}})
+	if err == nil || !strings.Contains(err.Error(), "text hash does not match frozen renderer") {
+		t.Fatalf("Preflight error = %v, want renderer task-text mismatch", err)
 	}
 }
