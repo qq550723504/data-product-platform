@@ -30,8 +30,6 @@ const versionColumns = `
 	COALESCE(checksum_algorithm, ''),
 	COALESCE(checksum_value, ''),
 	generated_by_execution_id, generated_by_entity_match_job_id, rights_snapshot_id,
-	COALESCE(quality_status, ''),
-	COALESCE(compliance_status, ''),
 	snapshot_from, snapshot_to, metadata, created_at, created_by, ready_at,
 	invalidated_at, COALESCE(invalidation_reason, '')`
 
@@ -462,8 +460,6 @@ func scanVersion(row pgx.Row) (domain.DatasetVersion, error) {
 		&v.GeneratedByExecutionID,
 		&v.GeneratedByEntityMatchJobID,
 		&v.RightsSnapshotID,
-		&v.QualityStatus,
-		&v.ComplianceStatus,
 		&v.SnapshotFrom,
 		&v.SnapshotTo,
 		&metadataBytes,
