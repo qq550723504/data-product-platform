@@ -238,7 +238,6 @@ func TestAnnotationSnapshotDoubleFinalizerLeavesOneSnapshot(t *testing.T) {
 	}
 }
 
-
 func TestAnnotationSnapshotSealRejectsLateResult(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
@@ -414,7 +413,6 @@ func TestAnnotationReviewCostUsesPhysicalAttemptIdentity(t *testing.T) {
 		t.Fatalf("annotation review cost events/allocations = %d/%d, want 2/2", eventCount, allocationCount)
 	}
 }
-
 
 func TestAnnotationResultFirstMakesOldReviewStale(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
