@@ -218,7 +218,7 @@ func (s *EngineService) prepareOperation(
 					"provider":              operation.Provider,
 					"providerInstance":      operation.ProviderInstanceRef,
 					"requestId":             operation.RequestID,
-					"requestFingerprint": operation.RequestFingerprint,
+					"requestFingerprint":    operation.RequestFingerprint,
 					"payloadManifestSha256": operation.PayloadManifestSHA256,
 				},
 				CreatedBy: actorID,
