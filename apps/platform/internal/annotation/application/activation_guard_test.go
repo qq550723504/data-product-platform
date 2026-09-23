@@ -108,7 +108,12 @@ func TestCoreActivationGuardPreflightProvesExactCSVTaskMembership(t *testing.T) 
 		t.Fatalf("Preflight: %v", err)
 	}
 	if proof.TaskCount != 2 || proof.SourceResourceID != resourceID ||
-		proof.InputChecksum != sha256HexBytes([]byte(csv)) || proof.TaskManifestHash == "" {
+		proof.InputChecksum != sha256HexBytes([]byte(csv)) ||
+		proof.InputStorageURI != "s3://fixture/input.csv" ||
+		proof.InputByteSize != int64(len(csv)) ||
+		proof.InputRowCount != 2 ||
+		proof.InputContentType != "text/csv" ||
+		proof.TaskManifestHash == "" {
 		t.Fatalf("unexpected activation proof: %#v", proof)
 	}
 }
