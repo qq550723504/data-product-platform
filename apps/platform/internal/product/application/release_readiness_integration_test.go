@@ -14,6 +14,8 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
+	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
+	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
 
 func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
@@ -77,7 +79,7 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		INSERT INTO data_authorization (
 			id, workspace_id, code, grantor_ref, grantee_ref, purpose, status,
 			valid_from, valid_to, metadata, created_at, updated_at
-		) VALUES ($1,$2,$3,'PARK-OPERATOR','DATA-PRODUCT-PLATFORM','ENTERPRISE_CREDIT_RISK_SUPPORT','ACTIVE',
+		) VALUES ($1,$2,$3,'PARK-OPERATOR','LICENSED_BANK','ENTERPRISE_CREDIT_RISK_SUPPORT','ACTIVE',
 		          $4,$5,'{}'::jsonb,now(),now())
 	`, authorizationID, workspaceID, "AUTH-"+uuid.NewString(), validFrom, validTo); err != nil {
 		t.Fatalf("insert Authorization: %v", err)
@@ -86,7 +88,7 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		INSERT INTO rights_snapshot (
 			id, workspace_id, purpose, consumer_ref, as_of, manifest, root_hash, created_at, status
 		) VALUES ($1,$2,'ENTERPRISE_CREDIT_RISK_SUPPORT','LICENSED_BANK',now(),
-		          '{"purpose":"ENTERPRISE_CREDIT_RISK_SUPPORT","authorizations":[]}'::jsonb,
+		          '{"purpose":"ENTERPRISE_CREDIT_RISK_SUPPORT","consumerRef":"LICENSED_BANK","authorizations":[]}'::jsonb,
 		          'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',now(),'BUILDING')
 	`, rightsSnapshotID, workspaceID); err != nil {
 		t.Fatalf("insert RightsSnapshot: %v", err)
@@ -138,6 +140,22 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	txManager := transaction.NewManager(pool)
 	repo := infrastructure.NewPostgresRepository(pool)
 	service := application.NewService(txManager, repo)
+	rightsService := rightsapp.NewService(txManager, rightsinfra.NewPostgresRepository(pool))
+	createReleaseSnapshot := func(releaseID uuid.UUID) uuid.UUID {
+		t.Helper()
+		snapshot, err := rightsService.CreateSnapshot(ctx, rightsapp.CreateSnapshotCommand{
+			WorkspaceID:      workspaceID,
+			ProductReleaseID: &releaseID,
+			Purpose:          "ENTERPRISE_CREDIT_RISK_SUPPORT",
+			ConsumerRef:      "LICENSED_BANK",
+			AuthorizationIDs: []uuid.UUID{authorizationID},
+			TraceID:          "release-readiness-rights",
+		})
+		if err != nil {
+			t.Fatalf("create release-bound RightsSnapshot: %v", err)
+		}
+		return snapshot.ID
+	}
 	product, err := service.CreateProduct(ctx, application.CreateProductCommand{
 		WorkspaceID: workspaceID,
 		Code:        "DP-READINESS-" + uuid.NewString(),
@@ -174,11 +192,12 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create ProductRelease: %v", err)
 	}
+	releaseRightsSnapshotID := createReleaseSnapshot(release.ID)
 
 	result, err := service.ValidateRelease(ctx, application.ValidateReleaseCommand{
 		ReleaseID:          release.ID,
 		ContractVersionID:  contractVersionID,
-		RightsSnapshotID:   rightsSnapshotID,
+		RightsSnapshotID:   releaseRightsSnapshotID,
 		QualityResultID:    qualityResultID,
 		ComplianceResultID: complianceResultID,
 		TraceID:            "release-readiness-e2e",
@@ -197,6 +216,31 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 		t.Fatalf("release status = %s, want READY", storedRelease.Status)
 	}
 
+	mismatchRelease, err := service.CreateRelease(ctx, application.CreateReleaseCommand{
+		ProductID:        product.ID,
+		ProductVersionID: version.ID,
+		ReleaseNo:        "R-READINESS-RIGHTS-MISMATCH",
+		Datasets:         []domain.ReleaseDataset{{DatasetVersionID: datasetVersionID, Role: domain.DatasetPrimary}},
+		TraceID:          "release-readiness-e2e",
+	})
+	if err != nil {
+		t.Fatalf("create rights-mismatch ProductRelease: %v", err)
+	}
+	mismatchReadiness, err := service.ValidateRelease(ctx, application.ValidateReleaseCommand{
+		ReleaseID:          mismatchRelease.ID,
+		ContractVersionID:  contractVersionID,
+		RightsSnapshotID:   releaseRightsSnapshotID,
+		QualityResultID:    qualityResultID,
+		ComplianceResultID: complianceResultID,
+		TraceID:            "release-readiness-e2e",
+	})
+	if err != nil {
+		t.Fatalf("validate rights-mismatch release: %v", err)
+	}
+	if mismatchReadiness.Overall != "NOT_READY" || !slices.Contains(mismatchReadiness.Blockers, "RIGHTS_SNAPSHOT_RELEASE_MISMATCH") {
+		t.Fatalf("rights-mismatch readiness = %s blockers=%v, want RIGHTS_SNAPSHOT_RELEASE_MISMATCH", mismatchReadiness.Overall, mismatchReadiness.Blockers)
+	}
+
 	blockingRelease, err := service.CreateRelease(ctx, application.CreateReleaseCommand{
 		ProductID:        product.ID,
 		ProductVersionID: version.ID,
@@ -207,6 +251,7 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create blocking ProductRelease: %v", err)
 	}
+	blockingRightsSnapshotID := createReleaseSnapshot(blockingRelease.ID)
 	badQualityID := uuid.New()
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO quality_result (
@@ -222,7 +267,7 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	blocked, err := service.ValidateRelease(ctx, application.ValidateReleaseCommand{
 		ReleaseID:          blockingRelease.ID,
 		ContractVersionID:  contractVersionID,
-		RightsSnapshotID:   rightsSnapshotID,
+		RightsSnapshotID:   blockingRightsSnapshotID,
 		QualityResultID:    badQualityID,
 		ComplianceResultID: complianceResultID,
 		TraceID:            "release-readiness-e2e",
@@ -274,10 +319,11 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create foreign ProductRelease: %v", err)
 	}
+	foreignRightsSnapshotID := createReleaseSnapshot(foreignRelease.ID)
 	foreignReadiness, err := service.ValidateRelease(ctx, application.ValidateReleaseCommand{
 		ReleaseID:          foreignRelease.ID,
 		ContractVersionID:  contractVersionID,
-		RightsSnapshotID:   rightsSnapshotID,
+		RightsSnapshotID:   foreignRightsSnapshotID,
 		QualityResultID:    qualityResultID,
 		ComplianceResultID: complianceResultID,
 		TraceID:            "release-readiness-e2e",
