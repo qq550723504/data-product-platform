@@ -321,6 +321,26 @@ func (r *Repository) InsertEngineTaskBinding(
 	return false, nil
 }
 
+func (r *Repository) GetMatchedTaskSubmissionOperation(
+	ctx context.Context,
+	campaignID uuid.UUID,
+	provider, providerInstance string,
+) (annotationdomain.EngineOperation, error) {
+	return scanEngineOperation(r.pool.QueryRow(ctx, `
+		SELECT id, workspace_id, campaign_id, provider, provider_instance_ref,
+		       operation_kind, request_id, request_fingerprint,
+		       payload_manifest, payload_manifest_hash_payload, payload_manifest_sha256,
+		       status, revision, COALESCE(claimed_by,''), claim_expires_at, created_at, updated_at
+		  FROM annotation_engine_operation
+		 WHERE campaign_id=$1
+		   AND provider=$2
+		   AND provider_instance_ref=$3
+		   AND operation_kind='SUBMIT_TASKS'
+		   AND status='MATCHED'
+		 ORDER BY created_at DESC, id DESC
+		 LIMIT 1
+	`, campaignID, provider, providerInstance))
+}
 func (r *Repository) ListEngineTaskBindings(
 	ctx context.Context,
 	campaignID uuid.UUID,
