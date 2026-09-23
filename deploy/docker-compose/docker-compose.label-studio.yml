@@ -1,0 +1,19 @@
+services:
+  label-studio:
+    # Label Studio Community 1.23.0, pinned by repository digest for the #205
+    # reference integration slice. Do not replace with latest/nightly in CI.
+    image: heartexlabs/label-studio@sha256:aa461572e8f9d86a1bf9520c1db620204e86160fd2f80dd7e9d40ac84a8828ea
+    ports:
+      - "8082:8080"
+    volumes:
+      - dpp-label-studio:/label-studio/data
+    environment:
+      LABEL_STUDIO_HOST: http://localhost:8082
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8080/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  dpp-label-studio:
