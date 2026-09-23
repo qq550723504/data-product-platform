@@ -75,6 +75,7 @@ type Campaign struct {
 	Revision                 int64
 	ExpectedTaskCount        int
 	TaskManifestHash         string
+	InputChecksumSHA256      string
 	CreatedAt                time.Time
 	CreatedBy                *uuid.UUID
 	ActivatedAt              *time.Time
