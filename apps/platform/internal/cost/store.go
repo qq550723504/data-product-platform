@@ -17,7 +17,7 @@ const NativeEngineInvocation = "NATIVE_ENGINE_INVOCATION"
 const (
 	CertificationEvaluationActivity  = "CERTIFICATION_EVALUATION"
 	CertificationDispositionActivity = "CERTIFICATION_DISPOSITION"
-	AnnotationReviewActivity         = "ANNOTATION_REVIEW"
+	AnnotationReviewCostType         = "ANNOTATION_REVIEW"
 )
 
 type Event struct {
@@ -396,14 +396,14 @@ func AppendAnnotationReviewActivity(ctx context.Context, tx pgx.Tx, activity Ann
 		ON CONFLICT (workspace_id, activity_id, cost_type)
 		WHERE activity_id IS NOT NULL DO NOTHING
 		RETURNING id
-	`, uuid.New(), activity.WorkspaceID, activity.AttemptID, AnnotationReviewActivity,
+	`, uuid.New(), activity.WorkspaceID, activity.AttemptID, AnnotationReviewCostType,
 		activity.Quantity, activity.Unit, activity.Amount, nullable(activity.Currency),
 		activity.PricingMode, metadata, activity.OccurredAt).Scan(&costEventID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		err = tx.QueryRow(ctx, `
 			SELECT id FROM cost_event
 			WHERE workspace_id=$1 AND activity_id=$2 AND cost_type=$3
-		`, activity.WorkspaceID, activity.AttemptID, AnnotationReviewActivity).Scan(&costEventID)
+		`, activity.WorkspaceID, activity.AttemptID, AnnotationReviewCostType).Scan(&costEventID)
 	}
 	if err != nil {
 		return fmt.Errorf("append annotation review cost event: %w", err)
