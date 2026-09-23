@@ -13,7 +13,7 @@ const docsPassing = () => ({
   ...Object.fromEntries(requiredJobs.map((name) => [name, { result: 'skipped' }])),
 });
 
-test('all seven groups must succeed for non-doc changes', () => assert.doesNotThrow(() => assertRequiredChecks(fullPassing(), false)));
+test('all eight groups must succeed for non-doc changes', () => assert.doesNotThrow(() => assertRequiredChecks(fullPassing(), false)));
 test('docs-only gate accepts only explicit skips after successful classification', () => assert.doesNotThrow(() => assertRequiredChecks(docsPassing(), true)));
 
 for (const name of requiredJobs) {
