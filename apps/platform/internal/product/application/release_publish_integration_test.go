@@ -72,19 +72,9 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 		INSERT INTO data_authorization (
 			id, workspace_id, code, grantor_ref, grantee_ref, purpose, status,
 			valid_from, valid_to, metadata, created_at, updated_at
-		) VALUES ($1,$2,$3,'PARK-OPERATOR','DATA-PRODUCT-PLATFORM','ENTERPRISE_CREDIT_RISK_SUPPORT','ACTIVE',
+		) VALUES ($1,$2,$3,'PARK-OPERATOR','LICENSED_BANK','ENTERPRISE_CREDIT_RISK_SUPPORT','ACTIVE',
 		          $4,$5,'{}'::jsonb,now(),now())
 	`, authorizationID, workspaceID, "PUBLISH-AUTH-"+uuid.NewString(), validFrom, validTo)
-	mustExec(t, ctx, pool, `
-		INSERT INTO rights_snapshot (
-			id, workspace_id, purpose, consumer_ref, as_of, manifest, root_hash, created_at, status
-		) VALUES ($1,$2,'ENTERPRISE_CREDIT_RISK_SUPPORT','LICENSED_BANK',now(),
-		          '{"purpose":"ENTERPRISE_CREDIT_RISK_SUPPORT","authorizations":[]}'::jsonb,
-		          'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc',now(),'BUILDING')
-	`, rightsSnapshotID, workspaceID)
-	insertRightsProvenanceFixture(t, ctx, pool, workspaceID, authorizationID, rightsSnapshotID)
-	mustExec(t, ctx, pool, `UPDATE rights_snapshot SET status='FINALIZED' WHERE id=$1`, rightsSnapshotID)
-
 	mustExec(t, ctx, pool, `
 		INSERT INTO quality_result (
 			id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
@@ -163,12 +153,37 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 			id, product_id, product_version_id, release_no, status,
 			contract_version_id, rights_snapshot_id, quality_result_id, compliance_result_id,
 			metadata, created_at
-		) VALUES ($1,$2,$3,'R-PUBLISH-001','READY',$4,$5,$6,$7,'{}'::jsonb,now())
-	`, releaseID, productID, productVersionID, contractVersionID, rightsSnapshotID, qualityResultID, complianceResultID)
+		) VALUES ($1,$2,$3,'R-PUBLISH-001','READY',$4,NULL,$5,$6,'{}'::jsonb,now())
+	`, releaseID, productID, productVersionID, contractVersionID, qualityResultID, complianceResultID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_release_dataset (release_id, dataset_version_id, role)
 		VALUES ($1,$2,'PRIMARY')
 	`, releaseID, datasetVersionID)
+	mustExec(t, ctx, pool, `
+		INSERT INTO rights_snapshot (
+			id, workspace_id, product_release_id, purpose, consumer_ref, as_of, manifest, root_hash, created_at, status
+		) VALUES ($1,$2,$3,'ENTERPRISE_CREDIT_RISK_SUPPORT','LICENSED_BANK',now(),
+		          jsonb_build_object(
+		              'purpose','ENTERPRISE_CREDIT_RISK_SUPPORT',
+		              'consumerRef','LICENSED_BANK',
+		              'authorizations',jsonb_build_array(
+		                  jsonb_build_object(
+		                      'authorizationId',$4::text,
+		                      'code','PUBLISH-AUTH-FROZEN',
+		                      'grantorRef','PARK-OPERATOR',
+		                      'granteeRef','LICENSED_BANK',
+		                      'purpose','ENTERPRISE_CREDIT_RISK_SUPPORT',
+		                      'resources',jsonb_build_array()
+		                  )
+		              )
+		          ),
+		          'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc',now(),'BUILDING')
+	`, rightsSnapshotID, workspaceID, releaseID, authorizationID)
+	insertRightsProvenanceFixture(t, ctx, pool, workspaceID, authorizationID, rightsSnapshotID)
+	mustExec(t, ctx, pool, `UPDATE rights_snapshot SET status='FINALIZED' WHERE id=$1`, rightsSnapshotID)
+	mustExec(t, ctx, pool, `
+		UPDATE product_release SET rights_snapshot_id=$2 WHERE id=$1 AND status='READY'
+	`, releaseID, rightsSnapshotID)
 
 	txManager := transaction.NewManager(pool)
 	repo := infrastructure.NewPostgresRepository(pool)

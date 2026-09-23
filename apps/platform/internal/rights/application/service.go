@@ -210,6 +210,11 @@ func (s *Service) CreateSnapshot(ctx context.Context, cmd CreateSnapshotCommand)
 		if _, err := deliveryfence.Lock(ctx, tx, snapshot.WorkspaceID); err != nil {
 			return err
 		}
+		if snapshot.ProductReleaseID != nil {
+			if err := s.repo.ValidateSnapshotReleaseContext(ctx, tx, *snapshot.ProductReleaseID, snapshot.WorkspaceID); err != nil {
+				return err
+			}
+		}
 		if err := s.repo.InsertSnapshot(ctx, tx, snapshot); err != nil {
 			return err
 		}

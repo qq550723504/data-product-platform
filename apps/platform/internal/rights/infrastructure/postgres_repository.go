@@ -140,6 +140,25 @@ func (r *PostgresRepository) SaveAuthorizationState(ctx context.Context, tx pgx.
 	return nil
 }
 
+func (r *PostgresRepository) ValidateSnapshotReleaseContext(ctx context.Context, tx pgx.Tx, releaseID, workspaceID uuid.UUID) error {
+	var exists bool
+	err := tx.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1
+			FROM product_release r
+			JOIN data_product p ON p.id=r.product_id
+			WHERE r.id=$1 AND p.workspace_id=$2
+		)
+	`, releaseID, workspaceID).Scan(&exists)
+	if err != nil {
+		return fmt.Errorf("validate rights snapshot ProductRelease context: %w", err)
+	}
+	if !exists {
+		return fmt.Errorf("rights snapshot ProductRelease context: %w", ErrNotFound)
+	}
+	return nil
+}
+
 func (r *PostgresRepository) InsertSnapshot(ctx context.Context, tx pgx.Tx, snapshot domain.RightsSnapshot) error {
 	manifest, err := json.Marshal(snapshot.Manifest)
 	if err != nil {
