@@ -131,6 +131,30 @@ func TestProductVersionAndDraftReleaseAreFrozenBeforeGovernanceGates(t *testing.
 		t.Fatal("expected BUILDING ProductVersion commit to fail closed")
 	}
 
+	mismatchTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin ProductVersion asset-count mismatch transaction: %v", err)
+	}
+	mismatchVersionID := uuid.New()
+	if _, err := mismatchTx.Exec(ctx, `
+		INSERT INTO product_version (
+			id, product_id, major_version, minor_version, patch_version,
+			build_status, expected_asset_count
+		) VALUES ($1,$2,3,0,0,'BUILDING',1)
+	`, mismatchVersionID, product.ID); err != nil {
+		_ = mismatchTx.Rollback(ctx)
+		t.Fatalf("insert mismatched BUILDING ProductVersion: %v", err)
+	}
+	if _, err := mismatchTx.Exec(ctx, `
+		UPDATE product_version
+		SET build_status='FINALIZED'
+		WHERE id=$1 AND build_status='BUILDING'
+	`, mismatchVersionID); err == nil {
+		_ = mismatchTx.Rollback(ctx)
+		t.Fatal("expected ProductVersion finalize to reject incomplete asset membership")
+	}
+	_ = mismatchTx.Rollback(ctx)
+
 	release, err := service.CreateRelease(ctx, application.CreateReleaseCommand{
 		ProductID:        product.ID,
 		ProductVersionID: version.ID,
