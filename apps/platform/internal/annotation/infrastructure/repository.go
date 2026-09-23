@@ -27,7 +27,6 @@ func NewRepository(pool *pgxpool.Pool) *Repository {
 	return &Repository{pool: pool}
 }
 
-
 func (r *Repository) DatasetAnnotationContext(
 	ctx context.Context,
 	datasetID uuid.UUID,
@@ -693,7 +692,6 @@ func (r *Repository) GetReviewAttemptOutcome(
 	}
 	return outcome, nil
 }
-
 
 func (r *Repository) ListTasks(
 	ctx context.Context,
