@@ -242,7 +242,6 @@ func (r *Repository) GetDecisionByAttempt(
 	return decision, nil
 }
 
-
 func (r *Repository) LockCampaignTx(
 	ctx context.Context,
 	tx pgx.Tx,
