@@ -151,7 +151,6 @@ func TestLabelStudioLookupCampaignBindingRecoversExactProject(t *testing.T) {
 	requestID := "campaign-create-1"
 	fingerprint := strings.Repeat("a", 64)
 	configHash := strings.Repeat("b", 64)
-	schema := `{"kind":"single-label-v1","labels":["EVIDENCE_SUFFICIENT","EVIDENCE_INSUFFICIENT","EVIDENCE_CONFLICT"]}`
 	config := "<View><Text name=\"text\" value=\"$text\"/><Choices name=\"label\" toName=\"text\" choice=\"single\"><Choice value=\"EVIDENCE_SUFFICIENT\"/><Choice value=\"EVIDENCE_INSUFFICIENT\"/><Choice value=\"EVIDENCE_CONFLICT\"/></Choices></View>"
 	expectedDescription := "core_campaign_id=" + campaignID.String() +
 		" core_request_id=" + requestID +
