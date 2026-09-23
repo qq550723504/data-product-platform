@@ -23,9 +23,9 @@ import (
 )
 
 var (
-	ErrIdempotencyConflict      = errors.New("annotation idempotency key reused with different input")
-	ErrActivationGuardRequired  = errors.New("annotation activation guard is required")
-	ErrActivationGuardRejected  = errors.New("annotation activation guard rejected campaign")
+	ErrIdempotencyConflict     = errors.New("annotation idempotency key reused with different input")
+	ErrActivationGuardRequired = errors.New("annotation activation guard is required")
+	ErrActivationGuardRejected = errors.New("annotation activation guard rejected campaign")
 )
 
 type ActivationGuard interface {
