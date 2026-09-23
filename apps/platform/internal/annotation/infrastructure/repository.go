@@ -643,11 +643,13 @@ func (r *Repository) GetSnapshotIntegrity(ctx context.Context, snapshotID uuid.U
 						'id', st.task_id::text,
 						'sourceItemRef', st.source_item_ref,
 						'sourceContentSha256', st.source_content_sha256,
-						'taskTextSha256', st.task_text_sha256
+						'taskTextSha256', st.task_text_sha256,
+						'primaryAnnotatorRef', t.primary_annotator_ref
 					) ORDER BY st.task_id::text
 				), '[]'::jsonb
 			) AS value, count(*) AS count
 			FROM annotation_snapshot_task st
+			JOIN annotation_task t ON t.id=st.task_id
 			WHERE st.snapshot_id=$1
 		),
 		result_membership AS (
@@ -656,9 +658,17 @@ func (r *Repository) GetSnapshotIntegrity(ctx context.Context, snapshotID uuid.U
 					jsonb_strip_nulls(jsonb_build_object(
 						'id', sr.result_id::text,
 						'taskId', sr.task_id::text,
-						'canonicalPayloadSha256', sr.canonical_payload_sha256,
 						'authorRef', sr.author_ref,
-						'correctedFromResultId', r.corrected_from_result_id::text
+						'providerBindingRef', COALESCE(r.provider_binding_ref,''),
+						'externalTaskId', COALESCE(r.external_task_id,''),
+						'externalAnnotationId', COALESCE(r.external_annotation_id,''),
+						'externalRevision', COALESCE(r.external_revision,''),
+						'observationKey', r.observation_key,
+						'canonicalPayloadSha256', sr.canonical_payload_sha256,
+						'normalizerVersion', r.normalizer_version,
+						'correctedFromResultId', r.corrected_from_result_id::text,
+						'createdAtUnixMicros', floor(extract(epoch FROM r.created_at) * 1000000)::bigint,
+						'createdBy', COALESCE(r.created_by::text,'')
 					)) ORDER BY sr.result_id::text
 				), '[]'::jsonb
 			) AS value, count(*) AS count
@@ -672,15 +682,18 @@ func (r *Repository) GetSnapshotIntegrity(ctx context.Context, snapshotID uuid.U
 					jsonb_strip_nulls(jsonb_build_object(
 						'id', sd.decision_id::text,
 						'taskId', sd.task_id::text,
+						'reviewAttemptId', d.review_attempt_id::text,
 						'outcome', sd.outcome,
 						'reviewedResultId', sd.reviewed_result_id::text,
 						'selectedResultId', sd.selected_result_id::text,
 						'reviewerRef', sd.reviewer_ref,
-						'reason', sd.reason
+						'reason', sd.reason,
+						'expectedTaskRevision', d.expected_task_revision
 					)) ORDER BY sd.decision_id::text
 				), '[]'::jsonb
 			) AS value, count(*) AS count
 			FROM annotation_snapshot_decision sd
+			JOIN annotation_review_decision d ON d.id=sd.decision_id
 			WHERE sd.snapshot_id=$1
 		),
 		output_membership AS (
@@ -707,7 +720,19 @@ func (r *Repository) GetSnapshotIntegrity(ctx context.Context, snapshotID uuid.U
 			AND s.expected_result_count = rm.count
 			AND s.expected_decision_count = dm.count
 			AND s.expected_output_count = om.count
+			AND s.manifest->>'workspaceId' = s.workspace_id::text
+			AND s.manifest->>'campaignId' = s.campaign_id::text
+			AND s.manifest->>'inputDatasetVersionId' = c.input_dataset_version_id::text
+			AND s.manifest->>'inputChecksumAlgorithm' = 'SHA256'
+			AND s.manifest->>'inputChecksumSha256' = c.input_checksum_sha256
+			AND s.manifest->>'inputCertificationId' = c.input_certification_id::text
+			AND s.manifest->>'annotationContributionResourceId' = c.annotation_contribution_resource_id::text
+			AND s.manifest->>'taskManifestHash' = c.task_manifest_hash
+			AND (s.manifest->>'builtAtUnixMicros')::bigint =
+				floor(extract(epoch FROM s.created_at) * 1000000)::bigint
+			AND s.manifest->>'builtBy' = COALESCE(s.created_by::text,'')
 		FROM annotation_snapshot s
+		JOIN annotation_campaign c ON c.id=s.campaign_id
 		CROSS JOIN task_membership tm
 		CROSS JOIN result_membership rm
 		CROSS JOIN decision_membership dm
