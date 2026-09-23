@@ -111,8 +111,6 @@ type DatasetVersion struct {
 	Checksum               string     `json:"checksum"`
 	GeneratedByExecutionID *uuid.UUID `json:"generatedByExecutionId,omitempty"`
 	RightsSnapshotID       *uuid.UUID `json:"rightsSnapshotId,omitempty"`
-	QualityStatus          string     `json:"qualityStatus"`
-	ComplianceStatus       string     `json:"complianceStatus"`
 	CreatedAt              time.Time  `json:"createdAt"`
 	ReadyAt                *time.Time `json:"readyAt,omitempty"`
 	InvalidatedAt          *time.Time `json:"invalidatedAt,omitempty"`
@@ -338,8 +336,7 @@ func (r *Repository) ListDatasetVersions(ctx context.Context, datasetID uuid.UUI
 		SELECT id, dataset_id, version_no, status, COALESCE(schema_version,''), COALESCE(storage_type,''),
 		       COALESCE(storage_uri,''), COALESCE(content_type,''), row_count, byte_size,
 		       COALESCE(checksum_algorithm,''), COALESCE(checksum_value,''), generated_by_execution_id,
-		       rights_snapshot_id, COALESCE(quality_status,''), COALESCE(compliance_status,''),
-		       created_at, ready_at, invalidated_at, COALESCE(invalidation_reason,'')
+		       rights_snapshot_id, created_at, ready_at, invalidated_at, COALESCE(invalidation_reason,'')
 		FROM dataset_version WHERE dataset_id=$1
 		ORDER BY version_no DESC LIMIT $2 OFFSET $3
 	`, datasetID, limit, offset)
@@ -353,8 +350,8 @@ func (r *Repository) ListDatasetVersions(ctx context.Context, datasetID uuid.UUI
 		if err := rows.Scan(
 			&item.ID, &item.DatasetID, &item.VersionNo, &item.Status, &item.SchemaVersion, &item.StorageType,
 			&item.StorageURI, &item.ContentType, &item.RowCount, &item.ByteSize, &item.ChecksumAlgorithm,
-			&item.Checksum, &item.GeneratedByExecutionID, &item.RightsSnapshotID, &item.QualityStatus,
-			&item.ComplianceStatus, &item.CreatedAt, &item.ReadyAt, &item.InvalidatedAt, &item.InvalidationReason,
+			&item.Checksum, &item.GeneratedByExecutionID, &item.RightsSnapshotID,
+			&item.CreatedAt, &item.ReadyAt, &item.InvalidatedAt, &item.InvalidationReason,
 		); err != nil {
 			return List[DatasetVersion]{}, fmt.Errorf("scan dataset version: %w", err)
 		}
