@@ -170,11 +170,29 @@ func insertReleaseMembershipFixture(t *testing.T, ctx context.Context, pool *pgx
 	`, productID, workspaceID, "REL-MEM-"+uuid.NewString()); err != nil {
 		t.Fatalf("insert product: %v", err)
 	}
-	if _, err := pool.Exec(ctx, `
-		INSERT INTO product_version (id, product_id, major_version, minor_version, patch_version)
-		VALUES ($1,$2,1,0,0)
+	versionTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin product version fixture: %v", err)
+	}
+	if _, err := versionTx.Exec(ctx, `
+		INSERT INTO product_version (
+			id, product_id, major_version, minor_version, patch_version,
+			build_status, expected_asset_count
+		) VALUES ($1,$2,1,0,0,'BUILDING',0)
 	`, productVersionID, productID); err != nil {
+		_ = versionTx.Rollback(ctx)
 		t.Fatalf("insert product version: %v", err)
+	}
+	if _, err := versionTx.Exec(ctx, `
+		UPDATE product_version
+		SET build_status='FINALIZED'
+		WHERE id=$1 AND build_status='BUILDING'
+	`, productVersionID); err != nil {
+		_ = versionTx.Rollback(ctx)
+		t.Fatalf("finalize product version: %v", err)
+	}
+	if err := versionTx.Commit(ctx); err != nil {
+		t.Fatalf("commit product version fixture: %v", err)
 	}
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO dataset (id, workspace_id, code, name, dataset_type)
