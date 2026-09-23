@@ -116,12 +116,12 @@ func (c *Client) SubmitTasks(ctx context.Context, req annotationapp.EngineSubmit
 		payload = append(payload, map[string]any{
 			"data": map[string]any{"text": task.TaskText},
 			"meta": map[string]any{
-				"core_task_id":            task.TaskID.String(),
-				"core_source_item_ref":    task.SourceItemRef,
-				"core_source_sha256":      task.SourceSHA256,
-				"core_task_text_sha256":   task.TaskTextSHA256,
-				"core_correlation_key":    task.CorrelationKey,
-				"core_request_id":         req.RequestID,
+				"core_task_id":             task.TaskID.String(),
+				"core_source_item_ref":     task.SourceItemRef,
+				"core_source_sha256":       task.SourceSHA256,
+				"core_task_text_sha256":    task.TaskTextSHA256,
+				"core_correlation_key":     task.CorrelationKey,
+				"core_request_id":          req.RequestID,
 				"core_request_fingerprint": req.RequestFingerprint,
 			},
 		})
@@ -294,15 +294,15 @@ func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineC
 			payload, _ := json.Marshal(map[string]string{"label": label})
 			sum := sha256.Sum256(payload)
 			results = append(results, annotationapp.EngineResultObservation{
-				TaskID:                coreTaskID,
-				ExternalTaskID:        task.ID.String(),
-				ExternalAnnotationID:  annotation.ID.String(),
-				ExternalRevision:      strings.TrimSpace(annotation.UpdatedAt),
-				AuthorRef:             fmt.Sprint(annotation.CompletedBy),
-				CanonicalPayload:      payload,
+				TaskID:                 coreTaskID,
+				ExternalTaskID:         task.ID.String(),
+				ExternalAnnotationID:   annotation.ID.String(),
+				ExternalRevision:       strings.TrimSpace(annotation.UpdatedAt),
+				AuthorRef:              fmt.Sprint(annotation.CompletedBy),
+				CanonicalPayload:       payload,
 				CanonicalPayloadSHA256: hex.EncodeToString(sum[:]),
-				NormalizerVersion:     "labelstudio-single-label-v1",
-				ProviderSubmitted:     true,
+				NormalizerVersion:      "labelstudio-single-label-v1",
+				ProviderSubmitted:      true,
 			})
 		}
 	}
