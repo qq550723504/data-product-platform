@@ -91,7 +91,22 @@ CREATE TABLE annotation_campaign_command (
     PRIMARY KEY (workspace_id, idempotency_key),
     CONSTRAINT uq_annotation_campaign_command_campaign UNIQUE (campaign_id),
     CONSTRAINT ck_annotation_campaign_command_fingerprint CHECK (
-        request_fingerprint ~ '^[0-9a-f]{64}
+        request_fingerprint ~ '^[0-9a-f]{64}$'
+    )
+);
+
+CREATE OR REPLACE FUNCTION prevent_annotation_campaign_command_mutation()
+RETURNS trigger AS $$
+BEGIN
+    RAISE EXCEPTION 'annotation campaign command mapping is immutable';
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_annotation_campaign_command_immutable
+BEFORE UPDATE OR DELETE ON annotation_campaign_command
+FOR EACH ROW EXECUTE FUNCTION prevent_annotation_campaign_command_mutation();
+
+CREATE TABLE annotation_task (
     id                          uuid PRIMARY KEY,
     workspace_id                uuid NOT NULL,
     campaign_id                 uuid NOT NULL REFERENCES annotation_campaign(id),
