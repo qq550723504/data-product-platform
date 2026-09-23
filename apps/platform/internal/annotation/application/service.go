@@ -350,6 +350,27 @@ type RecordResultCommand struct {
 }
 
 func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCommand) (annotationdomain.Result, error) {
+	cmd.ProviderBindingRef = strings.TrimSpace(cmd.ProviderBindingRef)
+	cmd.ExternalTaskID = strings.TrimSpace(cmd.ExternalTaskID)
+	cmd.ExternalAnnotationID = strings.TrimSpace(cmd.ExternalAnnotationID)
+	cmd.ExternalRevision = strings.TrimSpace(cmd.ExternalRevision)
+	cmd.ObservationKey = strings.TrimSpace(cmd.ObservationKey)
+	cmd.AuthorRef = strings.TrimSpace(cmd.AuthorRef)
+	cmd.NormalizerVersion = strings.TrimSpace(cmd.NormalizerVersion)
+
+	if existing, err := s.repo.GetResultByProviderObservation(
+		ctx, cmd.WorkspaceID, cmd.CampaignID,
+		cmd.ProviderBindingRef, cmd.ExternalTaskID, cmd.ExternalAnnotationID,
+		cmd.ExternalRevision, cmd.CanonicalPayloadSHA256,
+	); err == nil {
+		if resultReplayMatches(existing, cmd) {
+			return existing, nil
+		}
+		return annotationdomain.Result{}, ErrIdempotencyConflict
+	} else if !errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.Result{}, err
+	}
+
 	if existing, err := s.repo.GetResultByObservation(ctx, cmd.WorkspaceID, cmd.CampaignID, cmd.ObservationKey); err == nil {
 		if resultReplayMatches(existing, cmd) {
 			return existing, nil
@@ -427,6 +448,16 @@ func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCo
 		})
 	})
 	if err != nil {
+		if existing, readErr := s.repo.GetResultByProviderObservation(
+			ctx, cmd.WorkspaceID, cmd.CampaignID,
+			cmd.ProviderBindingRef, cmd.ExternalTaskID, cmd.ExternalAnnotationID,
+			cmd.ExternalRevision, cmd.CanonicalPayloadSHA256,
+		); readErr == nil {
+			if resultReplayMatches(existing, cmd) {
+				return existing, nil
+			}
+			return annotationdomain.Result{}, ErrIdempotencyConflict
+		}
 		if existing, readErr := s.repo.GetResultByObservation(ctx, cmd.WorkspaceID, cmd.CampaignID, cmd.ObservationKey); readErr == nil {
 			if resultReplayMatches(existing, cmd) {
 				return existing, nil
