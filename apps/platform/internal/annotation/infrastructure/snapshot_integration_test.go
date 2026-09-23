@@ -133,6 +133,112 @@ func TestAnnotationWorkspaceIsolationFailsClosed(t *testing.T) {
 	}
 }
 
+
+func TestAnnotationSnapshotRejectsDirectFinalizedInsert(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	fx := createAnnotationDBFixture(t, ctx, pool)
+	_, err := pool.Exec(ctx, `
+		INSERT INTO annotation_snapshot(
+			id, workspace_id, campaign_id, status, manifest, manifest_hash_payload, root_hash,
+			expected_task_count, expected_result_count, expected_decision_count, expected_output_count,
+			finalized_at
+		) VALUES ($1,$2,$3,'FINALIZED',$4,$4,$5,1,1,1,1,now())
+	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.rootHash)
+	if err == nil || !strings.Contains(err.Error(), "must start BUILDING") {
+		t.Fatalf("direct FINALIZED insert error = %v, want BUILDING guard", err)
+	}
+}
+
+func TestAnnotationSnapshotCannotCommitUnfinishedBuilding(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	fx := createAnnotationDBFixture(t, ctx, pool)
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin unfinished snapshot: %v", err)
+	}
+	if _, err := tx.Exec(ctx, `
+		INSERT INTO annotation_snapshot(
+			id, workspace_id, campaign_id, manifest, manifest_hash_payload, root_hash,
+			expected_task_count, expected_result_count, expected_decision_count, expected_output_count
+		) VALUES ($1,$2,$3,$4,$4,$5,1,1,1,1)
+	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.rootHash); err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("insert BUILDING snapshot: %v", err)
+	}
+	err = tx.Commit(ctx)
+	if err == nil || !strings.Contains(err.Error(), "must be FINALIZED before commit") {
+		t.Fatalf("unfinished BUILDING commit error = %v, want deferred finalization guard", err)
+	}
+
+	var count int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM annotation_snapshot WHERE id=$1`, fx.snapshotID).Scan(&count); err != nil {
+		t.Fatalf("count rolled-back BUILDING snapshot: %v", err)
+	}
+	if count != 0 {
+		t.Fatalf("unfinished BUILDING snapshot persisted: count=%d", count)
+	}
+}
+
+func TestAnnotationSnapshotDoubleFinalizerLeavesOneSnapshot(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	fx := createAnnotationDBFixture(t, ctx, pool)
+	winner, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin winner finalizer: %v", err)
+	}
+	insertAnnotationSnapshotAggregate(t, ctx, winner, fx)
+	if _, err := winner.Exec(ctx, `
+		UPDATE annotation_snapshot SET status='FINALIZED', finalized_at=now() WHERE id=$1
+	`, fx.snapshotID); err != nil {
+		_ = winner.Rollback(ctx)
+		t.Fatalf("finalize winner snapshot: %v", err)
+	}
+
+	loserDone := make(chan error, 1)
+	loserSnapshotID := uuid.New()
+	go func() {
+		loserCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_, loserErr := pool.Exec(loserCtx, `
+			INSERT INTO annotation_snapshot(
+				id, workspace_id, campaign_id, manifest, manifest_hash_payload, root_hash,
+				expected_task_count, expected_result_count, expected_decision_count, expected_output_count
+			) VALUES ($1,$2,$3,$4,$4,$5,1,1,1,1)
+		`, loserSnapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.rootHash)
+		loserDone <- loserErr
+	}()
+
+	time.Sleep(150 * time.Millisecond)
+	if err := winner.Commit(ctx); err != nil {
+		t.Fatalf("commit winner finalizer: %v", err)
+	}
+
+	select {
+	case loserErr := <-loserDone:
+		if loserErr == nil {
+			t.Fatal("second finalizer unexpectedly inserted a second snapshot")
+		}
+	case <-time.After(6 * time.Second):
+		t.Fatal("second finalizer did not converge")
+	}
+
+	var count int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM annotation_snapshot WHERE campaign_id=$1 AND status='FINALIZED'
+	`, fx.campaignID).Scan(&count); err != nil {
+		t.Fatalf("count finalized snapshots: %v", err)
+	}
+	if count != 1 {
+		t.Fatalf("finalized snapshot count = %d, want 1", count)
+	}
+}
+
 func TestAnnotationSnapshotRejectsManifestMembershipMismatch(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
