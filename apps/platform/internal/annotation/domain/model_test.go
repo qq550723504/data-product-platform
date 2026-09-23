@@ -95,8 +95,8 @@ func TestReviewAttemptAllowsNonSuccessPhysicalActivity(t *testing.T) {
 		ExpectedTaskRevision: 3,
 		Action:               ReviewAccept,
 		Reason:               "checked",
-		IdempotencyKey:     "attempt-1",
-		RequestFingerprint: strings.Repeat("b", 64),
+		IdempotencyKey:       "attempt-1",
+		RequestFingerprint:   strings.Repeat("b", 64),
 	}
 	if err := a.Validate(); err != nil {
 		t.Fatalf("review attempt start must remain a valid auditable activity: %v", err)
