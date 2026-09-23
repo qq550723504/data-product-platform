@@ -456,6 +456,64 @@ func TestAnnotationProviderObservationIdentityDeduplicatesAliasChanges(t *testin
 	}
 }
 
+
+func TestAnnotationDatabaseSchemaValidationMatchesGoTrimSpace(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	cases := []struct {
+		name    string
+		schema  string
+		payload string
+		want    bool
+	}{
+		{
+			name:    "schema tab is normalized",
+			schema:  "{\"kind\":\"single-label-v1\",\"labels\":[\"\\tA\"]}",
+			payload: "{\"label\":\"A\"}",
+			want:    true,
+		},
+		{
+			name:    "payload tab is rejected as non-normalized",
+			schema:  "{\"kind\":\"single-label-v1\",\"labels\":[\"A\"]}",
+			payload: "{\"label\":\"\\tA\"}",
+			want:    false,
+		},
+		{
+			name:    "schema nbsp is normalized",
+			schema:  "{\"kind\":\"single-label-v1\",\"labels\":[\"\\u00a0A\"]}",
+			payload: "{\"label\":\"A\"}",
+			want:    true,
+		},
+		{
+			name:    "payload nbsp is rejected as non-normalized",
+			schema:  "{\"kind\":\"single-label-v1\",\"labels\":[\"A\"]}",
+			payload: "{\"label\":\"\\u00a0A\"}",
+			want:    false,
+		},
+		{
+			name:    "schema labels duplicate after trim",
+			schema:  "{\"kind\":\"single-label-v1\",\"labels\":[\"A\",\"\\tA\"]}",
+			payload: "{\"label\":\"A\"}",
+			want:    false,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			var got bool
+			if err := pool.QueryRow(ctx, `
+				SELECT annotation_payload_matches_frozen_schema($1, convert_to($2, 'UTF8'))
+			`, tc.schema, tc.payload).Scan(&got); err != nil {
+				t.Fatalf("schema validation query: %v", err)
+			}
+			if got != tc.want {
+				t.Fatalf("schema validation = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
+
 func TestAnnotationDatabaseRejectsPayloadOutsideFrozenSchema(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
