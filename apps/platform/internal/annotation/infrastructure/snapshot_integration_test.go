@@ -65,6 +65,13 @@ func TestAnnotationSnapshotFinalizationFreezesHeaderAndMembership(t *testing.T) 
 	if snapshotStatus != "FINALIZED" || campaignStatus != "SEALED" {
 		t.Fatalf("snapshot/campaign = %s/%s, want FINALIZED/SEALED", snapshotStatus, campaignStatus)
 	}
+	integrityValid, err := NewRepository(pool).GetSnapshotIntegrity(ctx, fx.snapshotID)
+	if err != nil {
+		t.Fatalf("verify snapshot integrity: %v", err)
+	}
+	if !integrityValid {
+		t.Fatal("finalized annotation snapshot integrity is invalid")
+	}
 
 	assertAnnotationMutationRejected(t, pool, ctx, `
 		UPDATE annotation_snapshot SET expected_output_count=0 WHERE id=$1
@@ -81,6 +88,47 @@ func TestAnnotationSnapshotFinalizationFreezesHeaderAndMembership(t *testing.T) 
 		INSERT INTO annotation_snapshot_output(snapshot_id, task_id, selected_result_id)
 		VALUES ($1,$2,$3)
 	`, "membership is finalized", fx.snapshotID, fx.taskID, fx.resultID)
+}
+
+
+func TestAnnotationWorkspaceIsolationFailsClosed(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	fx := createAnnotationDBFixture(t, ctx, pool)
+	foreignWorkspace := uuid.New()
+	specContent := "annotation-fixture-spec"
+	specHash := sha256Hex([]byte(specContent))
+
+	_, err := pool.Exec(ctx, `
+		INSERT INTO annotation_campaign(
+			id, workspace_id, input_dataset_version_id, input_certification_id,
+			annotation_contribution_resource_id, purpose, action,
+			schema_ref, schema_version, schema_content_sha256, schema_content_snapshot,
+			taxonomy_ref, taxonomy_version, taxonomy_content_sha256, taxonomy_content_snapshot,
+			rubric_ref, rubric_version, rubric_content_sha256, rubric_content_snapshot,
+			renderer_ref, renderer_version, renderer_content_sha256, renderer_content_snapshot,
+			review_policy_ref, review_policy_version, review_policy_content_sha256, review_policy_content_snapshot
+		) VALUES (
+			$1,$2,$3,$4,$5,'gold-pilot','PROCESS',
+			'schema','1',$6,$7,'taxonomy','1',$6,$7,'rubric','1',$6,$7,
+			'renderer','1',$6,$7,'review','1',$6,$7
+		)
+	`, uuid.New(), foreignWorkspace, fx.versionID, fx.certificationID, fx.resourceID, specHash, specContent)
+	if err == nil || !strings.Contains(err.Error(), "does not match workspace") {
+		t.Fatalf("cross-workspace campaign error = %v, want workspace rejection", err)
+	}
+
+	payload := []byte("{\"label\":\"FOREIGN\"}")
+	_, err = pool.Exec(ctx, `
+		INSERT INTO annotation_result(
+			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
+			canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES ($1,$2,$3,$4,'annotator','foreign:obs',$5,$6,'fixture-v1')
+	`, uuid.New(), foreignWorkspace, fx.campaignID, fx.taskID, payload, sha256Hex(payload))
+	if err == nil || !strings.Contains(err.Error(), "does not match active task") {
+		t.Fatalf("cross-workspace result error = %v, want active task workspace rejection", err)
+	}
 }
 
 func TestAnnotationSnapshotRejectsManifestMembershipMismatch(t *testing.T) {
