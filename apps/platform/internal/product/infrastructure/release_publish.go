@@ -46,6 +46,64 @@ func (r *PostgresRepository) InsertIdempotency(ctx context.Context, tx pgx.Tx, w
 	return nil
 }
 
+func (r *PostgresRepository) LockReleaseMembershipForPublish(ctx context.Context, tx pgx.Tx, expected domain.ProductRelease) error {
+	var status domain.ReleaseStatus
+	if err := tx.QueryRow(ctx, `
+		SELECT status
+		FROM product_release
+		WHERE id=$1
+		FOR UPDATE
+	`, expected.ID).Scan(&status); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return ErrNotFound
+		}
+		return fmt.Errorf("lock ProductRelease for publish: %w", err)
+	}
+	if status != domain.ReleaseReady {
+		return domain.ErrReleaseNotReady
+	}
+
+	rows, err := tx.Query(ctx, `
+		SELECT dataset_version_id, role
+		FROM product_release_dataset
+		WHERE release_id=$1
+		ORDER BY role, dataset_version_id
+	`, expected.ID)
+	if err != nil {
+		return fmt.Errorf("read locked release dataset membership: %w", err)
+	}
+	defer rows.Close()
+
+	actual := make([]domain.ReleaseDataset, 0, len(expected.Datasets))
+	for rows.Next() {
+		var binding domain.ReleaseDataset
+		if err := rows.Scan(&binding.DatasetVersionID, &binding.Role); err != nil {
+			return fmt.Errorf("scan locked release dataset membership: %w", err)
+		}
+		actual = append(actual, binding)
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("iterate locked release dataset membership: %w", err)
+	}
+
+	wanted := append([]domain.ReleaseDataset(nil), expected.Datasets...)
+	sort.Slice(wanted, func(i, j int) bool {
+		if wanted[i].Role == wanted[j].Role {
+			return wanted[i].DatasetVersionID.String() < wanted[j].DatasetVersionID.String()
+		}
+		return wanted[i].Role < wanted[j].Role
+	})
+	if len(actual) != len(wanted) {
+		return fmt.Errorf("release dataset membership changed before publish")
+	}
+	for i := range wanted {
+		if actual[i] != wanted[i] {
+			return fmt.Errorf("release dataset membership changed before publish")
+		}
+	}
+	return nil
+}
+
 func (r *PostgresRepository) PublishRelease(ctx context.Context, tx pgx.Tx, release domain.ProductRelease, evidenceSnapshotID uuid.UUID, actorID *uuid.UUID) error {
 	now := time.Now().UTC()
 	commandTag, err := tx.Exec(ctx, `
