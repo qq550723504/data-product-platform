@@ -330,7 +330,7 @@ E2E18 final live-core Certified Dataset browser gate：**PASS — #194 / CI #998
   - Current Entitlement = ALLOWED
   - 预检区域无 BLOCKED；
 - browser 前置 Go acceptance 证明：
-  - 同一 DatasetVersion 出现在 immutable ProductRelease trace；
+  - 同一 DatasetVersion 在验收时可通过 ProductRelease trace 追溯；该断言是 point-in-time trace verification，不表示 `product_release_dataset` membership 已具备数据库级不可变性；
   - 真实 MinIO bytes 的 SHA256 与 persisted DatasetVersion checksum 一致；
   - Certification 指向同一 DatasetVersion / QualityAssessment / EffectiveRightsSnapshot / EvidenceSnapshot；
   - Certification EvidenceSnapshot integrity valid。
@@ -357,7 +357,7 @@ CI #998 同时通过：go-platform、web-console、browser-contracts、demo life
    - 16.7% 人工复核触达率只属于该 fixture。
 
 5. **仍有非 Pilot blocker 的 Core debt**
-   - #99 ProductRelease / ProductVersion 其余冻结项；
+   - #99 ProductRelease / ProductVersion 其余冻结项，包括 `product_release_dataset` membership 的 DB-level freeze；
    - #100 Metadata stale projection / Hop unknown submit / manual-upload idempotency 等；
    - 只有后续真实场景复现时才升级优先级。
 
