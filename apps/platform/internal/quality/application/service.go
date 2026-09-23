@@ -14,6 +14,7 @@ import (
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/industrypack"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/tabular"
@@ -196,7 +197,7 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			if err := s.repo.InsertResult(ctx, tx, result); err != nil {
 				return err
 			}
-			if err := s.datasetRepo.SetQualityStatus(ctx, tx, version.ID, string(result.GateDecision)); err != nil {
+			if _, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID); err != nil {
 				return err
 			}
 			if _, err := evidence.Append(ctx, tx, evidence.Record{

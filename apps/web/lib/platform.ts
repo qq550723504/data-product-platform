@@ -89,8 +89,6 @@ export type DatasetVersion = {
   checksum: string;
   generatedByExecutionId?: string;
   rightsSnapshotId?: string;
-  qualityStatus: string;
-  complianceStatus: string;
   createdAt: string;
   readyAt?: string;
   invalidatedAt?: string;
