@@ -451,7 +451,7 @@ BEFORE INSERT ON annotation_task
 FOR EACH ROW EXECUTE FUNCTION guard_annotation_task_insert();
 
 CREATE OR REPLACE FUNCTION guard_annotation_task_update()
-RETURNS trigger AS $
+RETURNS trigger AS $$
 DECLARE
     campaign_status varchar(16);
 BEGIN
