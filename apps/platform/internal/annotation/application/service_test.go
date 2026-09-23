@@ -72,12 +72,12 @@ func TestTaskManifestHashIsOrderIndependent(t *testing.T) {
 	campaignID := uuid.New()
 	workspaceID := uuid.New()
 	first := annotationdomain.Task{
-		ID: uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+		ID:          uuid.MustParse("00000000-0000-0000-0000-000000000001"),
 		WorkspaceID: workspaceID, CampaignID: campaignID, SourceItemRef: "row:1",
 		SourceContentSHA256: strings.Repeat("1", 64), TaskTextSHA256: strings.Repeat("2", 64),
 	}
 	second := annotationdomain.Task{
-		ID: uuid.MustParse("00000000-0000-0000-0000-000000000002"),
+		ID:          uuid.MustParse("00000000-0000-0000-0000-000000000002"),
 		WorkspaceID: workspaceID, CampaignID: campaignID, SourceItemRef: "row:2",
 		SourceContentSHA256: strings.Repeat("3", 64), TaskTextSHA256: strings.Repeat("4", 64),
 	}
