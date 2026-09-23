@@ -456,7 +456,6 @@ func TestAnnotationProviderObservationIdentityDeduplicatesAliasChanges(t *testin
 	}
 }
 
-
 func TestAnnotationDatabaseRejectsPayloadOutsideFrozenSchema(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
@@ -985,7 +984,6 @@ func insertAnnotationSnapshotAggregate(t *testing.T, ctx context.Context, tx pgx
 		t.Fatalf("insert snapshot output: %v", err)
 	}
 }
-
 
 func annotationFixtureSpecContent() string {
 	return `{"kind":"single-label-v1","labels":["A","RACE","DEDUP","newer","late","too-late","FOREIGN"]}`
