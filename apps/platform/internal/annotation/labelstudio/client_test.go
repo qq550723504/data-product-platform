@@ -142,6 +142,85 @@ func TestLabelStudioTransportFailureIsRetryableWithoutLeakingBody(t *testing.T) 
 	}
 }
 
+func TestLabelStudioLookupCampaignBindingRecoversExactProject(t *testing.T) {
+	campaignID := uuid.New()
+	requestID := "campaign-create-1"
+	fingerprint := strings.Repeat("a", 64)
+	configHash := strings.Repeat("b", 64)
+	config := "<View><Choices name=\"label\" toName=\"text\"/></View>"
+	expectedDescription := "core_campaign_id=" + campaignID.String() +
+		" core_request_id=" + requestID +
+		" core_request_fingerprint=" + fingerprint +
+		" core_config_sha256=" + configHash
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/projects/" || r.Method != http.MethodGet {
+			http.NotFound(w, r)
+			return
+		}
+		if r.URL.Query().Get("search") != requestID {
+			t.Fatalf("search = %q", r.URL.Query().Get("search"))
+		}
+		writeJSON(t, w, map[string]any{
+			"results": []any{
+				map[string]any{
+					"id":           41,
+					"description":  expectedDescription,
+					"label_config": config,
+				},
+			},
+			"next": nil,
+		})
+	}))
+	defer server.Close()
+
+	client, err := labelstudio.NewClient(server.URL, "secret", "local-ls", server.Client())
+	if err != nil {
+		t.Fatalf("new client: %v", err)
+	}
+	lookup, err := client.LookupCampaignBinding(context.Background(), annotationapp.EngineCampaignRequest{
+		WorkspaceID:        uuid.New(),
+		CampaignID:         campaignID,
+		RequestID:          requestID,
+		RequestFingerprint: fingerprint,
+		Title:              "gold-pilot",
+		LabelConfig:        config,
+		ConfigSHA256:       configHash,
+	})
+	if err != nil {
+		t.Fatalf("lookup campaign binding: %v", err)
+	}
+	if lookup.State != annotationapp.EngineLookupMatched || lookup.Binding == nil ||
+		lookup.Binding.ExternalProjectID != "41" {
+		t.Fatalf("lookup = %+v", lookup)
+	}
+}
+
+func TestLabelStudioLookupCampaignBindingDoesNotProveAbsence(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		writeJSON(t, w, map[string]any{"results": []any{}, "next": nil})
+	}))
+	defer server.Close()
+
+	client, err := labelstudio.NewClient(server.URL, "secret", "local-ls", server.Client())
+	if err != nil {
+		t.Fatalf("new client: %v", err)
+	}
+	lookup, err := client.LookupCampaignBinding(context.Background(), annotationapp.EngineCampaignRequest{
+		WorkspaceID:        uuid.New(),
+		CampaignID:         uuid.New(),
+		RequestID:          "campaign-create-1",
+		RequestFingerprint: strings.Repeat("a", 64),
+		ConfigSHA256:       strings.Repeat("b", 64),
+	})
+	if err != nil {
+		t.Fatalf("lookup campaign binding: %v", err)
+	}
+	if lookup.State != annotationapp.EngineLookupUnknown {
+		t.Fatalf("lookup state = %s, want UNKNOWN", lookup.State)
+	}
+}
+
 func TestLabelStudioLookupSubmissionReturnsUnknownForPartialMatch(t *testing.T) {
 	task1 := uuid.New()
 	task2 := uuid.New()
