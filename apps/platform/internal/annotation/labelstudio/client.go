@@ -393,20 +393,37 @@ func (c *Client) requestJSON(ctx context.Context, method, path string, query url
 	}
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return annotationapp.NewAnnotationEngineError(
-			annotationapp.ErrAnnotationEngineUnavailable, "provider request", true, 0, err,
+		return annotationapp.NewAnnotationEngineOutcomeError(
+			annotationapp.ErrAnnotationEngineUnavailable,
+			"provider request",
+			true,
+			method != http.MethodGet,
+			0,
+			err,
 		)
 	}
 	defer resp.Body.Close()
 	raw, readErr := io.ReadAll(io.LimitReader(resp.Body, 8<<20))
 	if readErr != nil {
-		return annotationapp.NewAnnotationEngineError(
-			annotationapp.ErrAnnotationEngineUnavailable, "read provider response", true, resp.StatusCode, readErr,
+		return annotationapp.NewAnnotationEngineOutcomeError(
+			annotationapp.ErrAnnotationEngineUnavailable,
+			"read provider response",
+			true,
+			method != http.MethodGet,
+			resp.StatusCode,
+			readErr,
 		)
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		kind, retryable := classifyHTTPStatus(resp.StatusCode)
-		return annotationapp.NewAnnotationEngineError(kind, "provider request", retryable, resp.StatusCode, nil)
+		return annotationapp.NewAnnotationEngineOutcomeError(
+			kind,
+			"provider request",
+			retryable,
+			retryable && method != http.MethodGet,
+			resp.StatusCode,
+			nil,
+		)
 	}
 	if target == nil || len(bytes.TrimSpace(raw)) == 0 {
 		return nil
@@ -414,8 +431,13 @@ func (c *Client) requestJSON(ctx context.Context, method, path string, query url
 	decoder := json.NewDecoder(bytes.NewReader(raw))
 	decoder.UseNumber()
 	if err := decoder.Decode(target); err != nil {
-		return annotationapp.NewAnnotationEngineError(
-			annotationapp.ErrAnnotationEngineInvalidResponse, "decode provider response", false, resp.StatusCode, err,
+		return annotationapp.NewAnnotationEngineOutcomeError(
+			annotationapp.ErrAnnotationEngineInvalidResponse,
+			"decode provider response",
+			false,
+			method != http.MethodGet,
+			resp.StatusCode,
+			err,
 		)
 	}
 	return nil
