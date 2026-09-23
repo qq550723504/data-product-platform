@@ -18,20 +18,6 @@ BEGIN
         RAISE EXCEPTION 'dataset_version_lineage is append-only';
     END IF;
 
-    -- Preserve AddLineage crash/replay idempotency. The repository uses
-    -- ON CONFLICT DO NOTHING, so an already-recorded identical edge must reach
-    -- the uniqueness check instead of being rejected by the published-history
-    -- guard first.
-    IF EXISTS (
-        SELECT 1
-        FROM dataset_version_lineage
-        WHERE output_version_id=NEW.output_version_id
-          AND input_version_id=NEW.input_version_id
-          AND relation_type=NEW.relation_type
-    ) THEN
-        RETURN NEW;
-    END IF;
-
     SELECT d.workspace_id
       INTO output_workspace
       FROM dataset_version v
@@ -52,10 +38,6 @@ BEGIN
         RAISE EXCEPTION 'lineage input DatasetVersion % does not exist', NEW.input_version_id;
     END IF;
 
-    IF input_workspace <> output_workspace THEN
-        RAISE EXCEPTION 'dataset_version_lineage crosses workspace boundary';
-    END IF;
-
     -- Shared workspace fence for all lineage writes, including direct SQL.
     -- Publish acquires this same fence before locking ProductRelease or lineage,
     -- so the order is always fence -> release -> closure.
@@ -67,6 +49,23 @@ BEGIN
       FROM delivery_authorization_fence
      WHERE workspace_id=output_workspace
      FOR UPDATE;
+
+    -- Preserve AddLineage crash/replay idempotency under the same fence used by
+    -- publish. This second-state check cannot race with publication or another
+    -- lineage writer in the workspace.
+    IF EXISTS (
+        SELECT 1
+        FROM dataset_version_lineage
+        WHERE output_version_id=NEW.output_version_id
+          AND input_version_id=NEW.input_version_id
+          AND relation_type=NEW.relation_type
+    ) THEN
+        RETURN NEW;
+    END IF;
+
+    IF input_workspace <> output_workspace THEN
+        RAISE EXCEPTION 'dataset_version_lineage crosses workspace boundary';
+    END IF;
 
     -- The workspace fence makes this reachability snapshot stable: no other
     -- lineage INSERT in the workspace and no ProductRelease publication in the
