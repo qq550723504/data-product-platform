@@ -441,6 +441,31 @@ func TestDirectSQLReleasePublishFailsClosedWhenLineageFenceBusy(t *testing.T) {
 	}
 }
 
+func TestDatasetWorkspaceIdentityIsImmutable(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, _ := insertReleaseMembershipFixture(t, ctx, pool)
+	outputID := release.Datasets[0].DatasetVersionID
+	var datasetID uuid.UUID
+	if err := pool.QueryRow(ctx, `SELECT dataset_id FROM dataset_version WHERE id=$1`, outputID).Scan(&datasetID); err != nil {
+		t.Fatalf("resolve release dataset: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE dataset SET workspace_id=$2 WHERE id=$1
+	`, datasetID, uuid.New()); err == nil || !strings.Contains(err.Error(), "dataset workspace identity is immutable") {
+		t.Fatalf("dataset workspace move error = %v, want immutable workspace rejection", err)
+	}
+}
+
 func TestPublishedLineageFreezeIgnoresMutableProductWorkspace(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
