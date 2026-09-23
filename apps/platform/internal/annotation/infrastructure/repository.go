@@ -27,6 +27,75 @@ func NewRepository(pool *pgxpool.Pool) *Repository {
 	return &Repository{pool: pool}
 }
 
+
+func (r *Repository) DatasetAnnotationContext(
+	ctx context.Context,
+	datasetID uuid.UUID,
+) (workspaceID, sourceResourceID uuid.UUID, err error) {
+	err = r.pool.QueryRow(ctx, `
+		SELECT workspace_id, source_resource_id
+		  FROM dataset
+		 WHERE id=$1 AND deleted_at IS NULL
+	`, datasetID).Scan(&workspaceID, &sourceResourceID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return uuid.Nil, uuid.Nil, ErrCampaignNotFound
+	}
+	if err != nil {
+		return uuid.Nil, uuid.Nil, fmt.Errorf("read annotation dataset context: %w", err)
+	}
+	return workspaceID, sourceResourceID, nil
+}
+
+func (r *Repository) DatasetAnnotationContextTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	datasetID uuid.UUID,
+) (workspaceID, sourceResourceID uuid.UUID, err error) {
+	err = tx.QueryRow(ctx, `
+		SELECT workspace_id, source_resource_id
+		  FROM dataset
+		 WHERE id=$1 AND deleted_at IS NULL
+	`, datasetID).Scan(&workspaceID, &sourceResourceID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return uuid.Nil, uuid.Nil, ErrCampaignNotFound
+	}
+	if err != nil {
+		return uuid.Nil, uuid.Nil, fmt.Errorf("read annotation dataset context: %w", err)
+	}
+	return workspaceID, sourceResourceID, nil
+}
+
+func (r *Repository) ValidateCurrentInputCertificationTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	workspaceID, certificationID, datasetVersionID uuid.UUID,
+) error {
+	var decision string
+	err := tx.QueryRow(ctx, `
+		SELECT decision
+		  FROM dataset_certification c
+		 WHERE c.id=$1
+		   AND c.workspace_id=$2
+		   AND c.dataset_version_id=$3
+		   AND NOT EXISTS (
+		       SELECT 1
+		         FROM certification_disposition d
+		        WHERE d.certification_id=c.id
+		          AND d.effective_at <= now()
+		   )
+	`, certificationID, workspaceID, datasetVersionID).Scan(&decision)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return fmt.Errorf("annotation input certification is not current")
+	}
+	if err != nil {
+		return fmt.Errorf("validate annotation input certification: %w", err)
+	}
+	if decision != "CERTIFIED" {
+		return fmt.Errorf("annotation input certification is not certified")
+	}
+	return nil
+}
+
 func (r *Repository) InsertCampaign(ctx context.Context, tx pgx.Tx, campaign annotationdomain.Campaign) error {
 	if campaign.ID == uuid.Nil {
 		return annotationdomain.ErrInvalidCampaign
