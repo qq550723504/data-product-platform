@@ -320,7 +320,7 @@ func validReviewAction(v string) bool {
 
 func validReviewAttemptOutcome(v string) bool {
 	switch v {
-	case ReviewAttemptStarted, ReviewAttemptSucceeded, ReviewAttemptStaleConflict, ReviewAttemptRejected:
+	case ReviewAttemptSucceeded, ReviewAttemptStaleConflict, ReviewAttemptRejected:
 		return true
 	default:
 		return false
