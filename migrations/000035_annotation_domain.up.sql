@@ -468,6 +468,9 @@ BEGIN
     IF OLD.status='PENDING' AND NEW.status='REVIEWABLE' AND NEW.current_decision_id IS NULL THEN
         RETURN NEW;
     END IF;
+    IF OLD.status='REVIEWABLE' AND NEW.status='REVIEWABLE' AND NEW.current_decision_id IS NULL THEN
+        RETURN NEW;
+    END IF;
     IF OLD.status IN ('PENDING','REVIEWABLE')
        AND NEW.status='REVIEWED'
        AND NEW.current_decision_id IS NOT NULL THEN
