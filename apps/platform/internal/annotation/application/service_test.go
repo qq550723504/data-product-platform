@@ -93,3 +93,71 @@ func TestTaskManifestHashIsOrderIndependent(t *testing.T) {
 		t.Fatalf("task manifest hash depends on input order: %s != %s", left, right)
 	}
 }
+
+func TestCampaignFingerprintChangesWithSemanticPayload(t *testing.T) {
+	base := annotationdomain.CampaignSpec{
+		WorkspaceID:              uuid.New(),
+		InputDatasetVersionID:    uuid.New(),
+		InputCertificationID:     uuid.New(),
+		AnnotationContributionID: uuid.New(),
+		Purpose:                  "gold-training",
+		Action:                   "PROCESS",
+		Schema: annotationdomain.FrozenSpec{
+			Ref: "schema", Version: "1", ContentSHA256: strings.Repeat("a", 64), ContentSnapshot: "schema",
+		},
+		Taxonomy: annotationdomain.FrozenSpec{
+			Ref: "taxonomy", Version: "1", ContentSHA256: strings.Repeat("b", 64), ContentSnapshot: "taxonomy",
+		},
+		Rubric: annotationdomain.FrozenSpec{
+			Ref: "rubric", Version: "1", ContentSHA256: strings.Repeat("c", 64), ContentSnapshot: "rubric",
+		},
+		Renderer: annotationdomain.FrozenSpec{
+			Ref: "renderer", Version: "1", ContentSHA256: strings.Repeat("d", 64), ContentSnapshot: "renderer",
+		},
+		ReviewPolicy: annotationdomain.FrozenSpec{
+			Ref: "review", Version: "1", ContentSHA256: strings.Repeat("e", 64), ContentSnapshot: "review",
+		},
+	}
+	left, err := campaignFingerprint(base)
+	if err != nil {
+		t.Fatalf("campaign fingerprint: %v", err)
+	}
+	changed := base
+	changed.Purpose = "different-purpose"
+	right, err := campaignFingerprint(changed)
+	if err != nil {
+		t.Fatalf("changed campaign fingerprint: %v", err)
+	}
+	if left == right {
+		t.Fatal("campaign fingerprint must change when command semantics change")
+	}
+}
+
+func TestReviewFingerprintChangesWithConflictingPayload(t *testing.T) {
+	resultID := uuid.New()
+	base := ReviewAnnotationCommand{
+		WorkspaceID:          uuid.New(),
+		CampaignID:           uuid.New(),
+		TaskID:               uuid.New(),
+		ExpectedTaskRevision: 2,
+		ReviewerRef:          "reviewer",
+		Action:               annotationdomain.ReviewAccept,
+		Reason:               "verified",
+		IdempotencyKey:       "review-key",
+		ReviewedResultID:     &resultID,
+	}
+	left, err := reviewFingerprint(base)
+	if err != nil {
+		t.Fatalf("review fingerprint: %v", err)
+	}
+	changed := base
+	changed.Reason = "different-reason"
+	right, err := reviewFingerprint(changed)
+	if err != nil {
+		t.Fatalf("changed review fingerprint: %v", err)
+	}
+	if left == right {
+		t.Fatal("review fingerprint must change when same-key command semantics change")
+	}
+}
+
