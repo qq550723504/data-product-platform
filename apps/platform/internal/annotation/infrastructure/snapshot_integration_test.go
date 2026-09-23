@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 )
 
@@ -22,6 +23,7 @@ type annotationDBFixture struct {
 	taskID          uuid.UUID
 	resultID        uuid.UUID
 	decisionID      uuid.UUID
+	attemptID       uuid.UUID
 	snapshotID      uuid.UUID
 	versionID       uuid.UUID
 	certificationID uuid.UUID
@@ -159,6 +161,71 @@ func TestAnnotationSnapshotLateMembershipWriterFailsClosed(t *testing.T) {
 	}
 }
 
+
+
+func TestAnnotationReviewCostUsesPhysicalAttemptIdentity(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	fx := createAnnotationDBFixture(t, ctx, pool)
+	appendCost := func(attemptID uuid.UUID) {
+		t.Helper()
+		tx, err := pool.Begin(ctx)
+		if err != nil {
+			t.Fatalf("begin cost transaction: %v", err)
+		}
+		if err := cost.AppendAnnotationReviewActivity(ctx, tx, cost.AnnotationReviewActivity{
+			WorkspaceID: fx.workspaceID,
+			AttemptID:   attemptID,
+			Quantity:    1,
+			Unit:        "review",
+			PricingMode: "ACTUAL",
+			Metadata:    map[string]any{"test": "annotation-review"},
+		}); err != nil {
+			_ = tx.Rollback(ctx)
+			t.Fatalf("append annotation review cost: %v", err)
+		}
+		if err := tx.Commit(ctx); err != nil {
+			t.Fatalf("commit annotation review cost: %v", err)
+		}
+	}
+
+	appendCost(fx.attemptID)
+	appendCost(fx.attemptID)
+
+	loserAttempt := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO annotation_review_attempt(
+			id, workspace_id, campaign_id, task_id, reviewer_ref, expected_task_revision,
+			action, reason, idempotency_key, request_fingerprint
+		) VALUES ($1,$2,$3,$4,'reviewer-loser',2,'ACCEPT','stale work',$5,$6)
+	`, loserAttempt, fx.workspaceID, fx.campaignID, fx.taskID,
+		"cost-loser-"+uuid.NewString(), strings.Repeat("9", 64)); err != nil {
+		t.Fatalf("insert losing review attempt: %v", err)
+	}
+	appendCost(loserAttempt)
+
+	var eventCount, allocationCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		  FROM cost_event
+		 WHERE workspace_id=$1
+		   AND cost_type=$2
+		   AND activity_id IN ($3,$4)
+	`, fx.workspaceID, cost.AnnotationReviewCostType, fx.attemptID, loserAttempt).Scan(&eventCount); err != nil {
+		t.Fatalf("count annotation review cost events: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		  FROM cost_allocation
+		 WHERE annotation_review_attempt_id IN ($1,$2)
+	`, fx.attemptID, loserAttempt).Scan(&allocationCount); err != nil {
+		t.Fatalf("count annotation review cost allocations: %v", err)
+	}
+	if eventCount != 2 || allocationCount != 2 {
+		t.Fatalf("annotation review cost events/allocations = %d/%d, want 2/2", eventCount, allocationCount)
+	}
+}
 
 func TestAnnotationReviewDecisionSerializesConcurrentReviewers(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
@@ -509,7 +576,7 @@ func createAnnotationDBFixture(t *testing.T, ctx context.Context, pool *pgxpool.
 	)
 	return annotationDBFixture{
 		workspaceID: workspaceID, campaignID: campaignID, taskID: taskID,
-		resultID: resultID, decisionID: decisionID, snapshotID: snapshotID,
+		resultID: resultID, decisionID: decisionID, attemptID: attemptID, snapshotID: snapshotID,
 		versionID: versionID, certificationID: certificationID, resourceID: resourceID,
 		manifest: manifest, rootHash: sha256Hex(manifest), payloadHash: payloadHash,
 	}
