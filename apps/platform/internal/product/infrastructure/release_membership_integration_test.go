@@ -12,6 +12,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
 )
@@ -30,12 +31,16 @@ func TestProductReleaseDatasetMembershipPublishFirstFreezesMutations(t *testing.
 
 	release, secondVersionID := insertReleaseMembershipFixture(t, ctx, pool)
 	repo := infrastructure.NewPostgresRepository(pool)
+	workspaceID := releaseWorkspaceID(t, ctx, pool, release.ProductID)
 
 	publishTx, err := pool.Begin(ctx)
 	if err != nil {
 		t.Fatalf("begin publish tx: %v", err)
 	}
 	defer publishTx.Rollback(ctx)
+	if _, err := deliveryfence.Lock(ctx, publishTx, workspaceID); err != nil {
+		t.Fatalf("lock publish workspace fence: %v", err)
+	}
 	if err := repo.LockReleaseMembershipForPublish(ctx, publishTx, release); err != nil {
 		t.Fatalf("lock release membership: %v", err)
 	}
