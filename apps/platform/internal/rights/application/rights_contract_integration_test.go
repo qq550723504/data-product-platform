@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 	"time"
 
@@ -207,8 +208,10 @@ func TestAuthorizationSnapshotAndContractLifecycle(t *testing.T) {
 		AsOf:             time.Now().UTC(),
 		AuthorizationIDs: []uuid.UUID{authorization.ID},
 		TraceID:          "rights-contract-e2e",
-	}); !errors.Is(err, rightsdomain.ErrInvalidRightsSnapshot) {
-		t.Fatalf("cross-workspace release snapshot error = %v, want ErrInvalidRightsSnapshot", err)
+	}); !errors.Is(err, rightsinfra.ErrNotFound) {
+		t.Fatalf("cross-workspace release snapshot error = %v, want ErrNotFound", err)
+	} else if strings.Contains(err.Error(), foreignWorkspace.String()) {
+		t.Fatalf("cross-workspace release snapshot error leaks foreign workspace: %v", err)
 	}
 
 	snapshot, err := rightsService.CreateSnapshot(ctx, rightsapp.CreateSnapshotCommand{
