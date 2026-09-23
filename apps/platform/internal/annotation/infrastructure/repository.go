@@ -242,6 +242,51 @@ func (r *Repository) GetDecisionByAttempt(
 	return decision, nil
 }
 
+
+func (r *Repository) LockCampaignTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	campaignID uuid.UUID,
+) (annotationdomain.Campaign, error) {
+	var id uuid.UUID
+	if err := tx.QueryRow(ctx, `
+		SELECT id FROM annotation_campaign WHERE id=$1 FOR UPDATE
+	`, campaignID).Scan(&id); errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.Campaign{}, ErrCampaignNotFound
+	} else if err != nil {
+		return annotationdomain.Campaign{}, fmt.Errorf("lock annotation campaign: %w", err)
+	}
+	return getCampaign(ctx, tx, campaignID)
+}
+
+func (r *Repository) LockTasksTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	campaignID uuid.UUID,
+) error {
+	rows, err := tx.Query(ctx, `
+		SELECT id
+		  FROM annotation_task
+		 WHERE campaign_id=$1
+		 ORDER BY id
+		 FOR UPDATE
+	`, campaignID)
+	if err != nil {
+		return fmt.Errorf("lock annotation tasks: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return fmt.Errorf("scan locked annotation task: %w", err)
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("iterate locked annotation tasks: %w", err)
+	}
+	return nil
+}
+
 func (r *Repository) GetCampaign(ctx context.Context, campaignID uuid.UUID) (annotationdomain.Campaign, error) {
 	return getCampaign(ctx, r.pool, campaignID)
 }
