@@ -1,0 +1,95 @@
+package application
+
+import (
+	"encoding/json"
+	"errors"
+	"strings"
+	"testing"
+
+	"github.com/google/uuid"
+	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
+)
+
+func TestActivateCampaignFailsClosedWithoutGuard(t *testing.T) {
+	service := NewService(nil, nil, nil)
+	_, err := service.ActivateCampaign(t.Context(), ActivateCampaignCommand{
+		WorkspaceID: uuid.New(),
+		CampaignID:  uuid.New(),
+	})
+	if !errors.Is(err, ErrActivationGuardRequired) {
+		t.Fatalf("ActivateCampaign error = %v, want activation guard required", err)
+	}
+}
+
+func TestSnapshotManifestKeepsRejectedTaskInDecisionDenominator(t *testing.T) {
+	campaign := annotationdomain.Campaign{
+		ID:                       uuid.New(),
+		WorkspaceID:              uuid.New(),
+		InputDatasetVersionID:    uuid.New(),
+		InputCertificationID:     uuid.New(),
+		AnnotationContributionID: uuid.New(),
+		TaskManifestHash:         strings.Repeat("a", 64),
+		Schema:                   annotationdomain.FrozenSpec{ContentSHA256: strings.Repeat("b", 64)},
+		Taxonomy:                 annotationdomain.FrozenSpec{ContentSHA256: strings.Repeat("c", 64)},
+		Rubric:                   annotationdomain.FrozenSpec{ContentSHA256: strings.Repeat("d", 64)},
+		Renderer:                 annotationdomain.FrozenSpec{ContentSHA256: strings.Repeat("e", 64)},
+		ReviewPolicy:             annotationdomain.FrozenSpec{ContentSHA256: strings.Repeat("f", 64)},
+	}
+	taskID := uuid.New()
+	task := annotationdomain.Task{
+		ID: taskID, WorkspaceID: campaign.WorkspaceID, CampaignID: campaign.ID,
+		SourceItemRef: "row:1", SourceContentSHA256: strings.Repeat("1", 64),
+		TaskTextSHA256: strings.Repeat("2", 64), Status: annotationdomain.TaskReviewed, Revision: 2,
+	}
+	decision := annotationdomain.ReviewDecision{
+		ID: uuid.New(), WorkspaceID: campaign.WorkspaceID, CampaignID: campaign.ID, TaskID: taskID,
+		ReviewAttemptID: uuid.New(), ReviewerRef: "reviewer", Outcome: annotationdomain.ReviewReject,
+		Reason: "invalid annotation", ExpectedTaskRevision: 1,
+	}
+
+	encoded, outputCount, err := snapshotManifest(campaign, []annotationdomain.Task{task}, nil, []annotationdomain.ReviewDecision{decision})
+	if err != nil {
+		t.Fatalf("snapshotManifest: %v", err)
+	}
+	if outputCount != 0 {
+		t.Fatalf("output count = %d, want 0 for REJECT", outputCount)
+	}
+	var manifest struct {
+		Tasks     []any `json:"tasks"`
+		Decisions []any `json:"decisions"`
+		Outputs   []any `json:"outputs"`
+	}
+	if err := json.Unmarshal(encoded, &manifest); err != nil {
+		t.Fatalf("decode manifest: %v", err)
+	}
+	if len(manifest.Tasks) != 1 || len(manifest.Decisions) != 1 || len(manifest.Outputs) != 0 {
+		t.Fatalf("manifest denominator tasks/decisions/outputs = %d/%d/%d, want 1/1/0",
+			len(manifest.Tasks), len(manifest.Decisions), len(manifest.Outputs))
+	}
+}
+
+func TestTaskManifestHashIsOrderIndependent(t *testing.T) {
+	campaignID := uuid.New()
+	workspaceID := uuid.New()
+	first := annotationdomain.Task{
+		ID: uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+		WorkspaceID: workspaceID, CampaignID: campaignID, SourceItemRef: "row:1",
+		SourceContentSHA256: strings.Repeat("1", 64), TaskTextSHA256: strings.Repeat("2", 64),
+	}
+	second := annotationdomain.Task{
+		ID: uuid.MustParse("00000000-0000-0000-0000-000000000002"),
+		WorkspaceID: workspaceID, CampaignID: campaignID, SourceItemRef: "row:2",
+		SourceContentSHA256: strings.Repeat("3", 64), TaskTextSHA256: strings.Repeat("4", 64),
+	}
+	left, err := taskManifestHash([]annotationdomain.Task{first, second})
+	if err != nil {
+		t.Fatalf("hash left: %v", err)
+	}
+	right, err := taskManifestHash([]annotationdomain.Task{second, first})
+	if err != nil {
+		t.Fatalf("hash right: %v", err)
+	}
+	if left != right {
+		t.Fatalf("task manifest hash depends on input order: %s != %s", left, right)
+	}
+}
