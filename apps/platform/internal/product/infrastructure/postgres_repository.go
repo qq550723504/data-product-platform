@@ -84,8 +84,8 @@ func (r *PostgresRepository) InsertVersion(ctx context.Context, tx pgx.Tx, versi
 		INSERT INTO product_version (
 			id, product_id, major_version, minor_version, patch_version, workflow_version_id,
 			contract_version_id, entity_policy_ref, indicator_set_ref, definition_snapshot,
-			created_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+			build_status, created_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'BUILDING',$11,$12)
 	`, version.ID, version.ProductID, version.MajorVersion, version.MinorVersion, version.PatchVersion,
 		version.WorkflowVersionID, version.ContractVersionID, nullableString(version.EntityPolicyRef),
 		nullableString(version.IndicatorSetRef), definition, version.CreatedAt, version.CreatedBy)
@@ -96,6 +96,13 @@ func (r *PostgresRepository) InsertVersion(ctx context.Context, tx pgx.Tx, versi
 		if err := r.insertAsset(ctx, tx, asset); err != nil {
 			return err
 		}
+	}
+	if _, err := tx.Exec(ctx, `
+		UPDATE product_version
+		SET build_status='FINALIZED'
+		WHERE id=$1 AND build_status='BUILDING'
+	`, version.ID); err != nil {
+		return fmt.Errorf("finalize product version asset membership: %w", err)
 	}
 	if _, err := tx.Exec(ctx, `
 		UPDATE data_product
