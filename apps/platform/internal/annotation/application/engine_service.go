@@ -128,12 +128,12 @@ func validLease(lease time.Duration) bool {
 
 func engineLookupRequest(request EngineSubmitRequest) EngineLookupRequest {
 	return EngineLookupRequest{
-		WorkspaceID: request.WorkspaceID,
-		CampaignID: request.CampaignID,
-		Binding: request.Binding,
-		RequestID: request.RequestID,
+		WorkspaceID:        request.WorkspaceID,
+		CampaignID:         request.CampaignID,
+		Binding:            request.Binding,
+		RequestID:          request.RequestID,
 		RequestFingerprint: request.RequestFingerprint,
-		Tasks: request.Tasks,
+		Tasks:              request.Tasks,
 	}
 }
 
@@ -142,13 +142,13 @@ func engineCampaignRequest(
 	manifest engineCampaignManifest,
 ) EngineCampaignRequest {
 	return EngineCampaignRequest{
-		WorkspaceID: operation.WorkspaceID,
-		CampaignID: operation.CampaignID,
-		RequestID: operation.RequestID,
+		WorkspaceID:        operation.WorkspaceID,
+		CampaignID:         operation.CampaignID,
+		RequestID:          operation.RequestID,
 		RequestFingerprint: operation.RequestFingerprint,
-		Title: manifest.Title,
-		SchemaContent: manifest.SchemaContent,
-		SchemaSHA256: manifest.SchemaSHA256,
+		Title:              manifest.Title,
+		SchemaContent:      manifest.SchemaContent,
+		SchemaSHA256:       manifest.SchemaSHA256,
 	}
 }
 
@@ -158,17 +158,17 @@ func engineSubmitRequest(
 ) EngineSubmitRequest {
 	return EngineSubmitRequest{
 		WorkspaceID: operation.WorkspaceID,
-		CampaignID: operation.CampaignID,
+		CampaignID:  operation.CampaignID,
 		Binding: EngineCampaignBinding{
-			Provider: manifest.Binding.Provider,
-			ProviderInstance: manifest.Binding.ProviderInstance,
+			Provider:          manifest.Binding.Provider,
+			ProviderInstance:  manifest.Binding.ProviderInstance,
 			ExternalProjectID: manifest.Binding.ExternalProjectID,
-			RequestID: manifest.Binding.RequestID,
-			ConfigSHA256: manifest.Binding.ConfigSHA256,
+			RequestID:         manifest.Binding.RequestID,
+			ConfigSHA256:      manifest.Binding.ConfigSHA256,
 		},
-		RequestID: operation.RequestID,
+		RequestID:          operation.RequestID,
 		RequestFingerprint: operation.RequestFingerprint,
-		Tasks: manifest.Tasks,
+		Tasks:              manifest.Tasks,
 	}
 }
 
