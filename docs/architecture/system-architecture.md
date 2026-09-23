@@ -1,6 +1,6 @@
 # 系统架构 V1.3
 
-> 第一阶段 Certified Dataset / trusted DIRECT_DATA 已完成受控 Pilot。第二阶段 #203 已立项，当前为 #209 文档架构基线；下文标为 Gold 的组件、Port 和证明扩展仍待 #204–#208 实现。文档中的 future credential 协议不表示已验证该 provider 能力。
+> 第一阶段 Certified Dataset / trusted DIRECT_DATA 已完成受控 Pilot。第二阶段 #203 已立项；#209 架构基线与 #204 Annotation Core Domain 已完成，当前推进 #205 Label Studio reference adapter；#206–#208 的 Gold Quality / production / certification 与 live Pilot 仍待实现。文档中的 future credential 协议不表示已验证该 provider 能力。
 
 ## 1. 架构风格
 
@@ -24,7 +24,7 @@ platform-api (Go)
       │   ├── product
       │   ├── cost
       │   ├── evidence
-      │   └── annotation / review / snapshot（#203 设计，待实现）
+      │   └── annotation / review / snapshot（#204 Core 已实现）
       │
       ├── PostgreSQL
       ├── Redis
@@ -49,7 +49,7 @@ Engine Adapter Layer
       ├── EntityResolutionEngine → Rules/Splink
       ├── QualityEngine → Native / future Soda/GX
       ├── ComplianceEngine → Rules / future Presidio
-      └── AnnotationEngine → Label Studio（#205 计划）；X-AnyLabeling（不在本 Pilot）
+      └── AnnotationEngine → Label Studio（#205 current）；X-AnyLabeling（不在本 Pilot）
 ~~~
 
 ## 2. Core Platform 业务真相
@@ -66,9 +66,9 @@ Core 保存：
 - ProductVersion / ProductRelease
 - Cost / Evidence / Audit
 
-其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA 与 #136 enterprise-activity E2E Pilot 均已完成第一阶段验收。AI/Gold Dataset 已由 #203 立项，但 #204–#208 尚未实现；其他 delivery/provider、IAM、性能/SLA 工作仍按真实需求另行立项。
+其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA 与 #136 enterprise-activity E2E Pilot 均已完成第一阶段验收。AI/Gold Dataset 已由 #203 立项，#209 与 #204 已完成，当前推进 #205；#206–#208 尚未完成。其他 delivery/provider、IAM、性能/SLA 工作仍按真实需求另行立项。
 
-第二阶段计划新增的 Annotation Campaign/Task、已接纳 Result、ReviewDecision、Snapshot 和 Gold production binding 也属于 Core facts。外部 Engine 只提供执行能力，不拥有上述核心业务状态；具体 contract 由第10节链接的专门文档拥有。
+#204 已实现的 Annotation Campaign/Task、已接纳 Result、ReviewDecision 与 Snapshot 属于 Core facts；#207 计划新增的 Gold production binding 同样必须属于 Core facts。外部 Engine 只提供执行能力，不拥有上述核心业务状态；具体 contract 由第10节链接的专门文档拥有。
 
 ## 3. 控制面 / 数据面
 
@@ -225,9 +225,9 @@ Core 不允许出现 PARK 等行业专属分支。
 
 ## 9. 当前阶段边界
 
-#129 Certified Dataset 第一阶段受控试点已经完成，E2E1–E2E20 全部 PASS。第二阶段由 #203 明确立项，并以 #209 文档架构基线作为 #204 开始编码的前置；#204–#208 尚未完成。
+#129 Certified Dataset 第一阶段受控试点已经完成，E2E1–E2E20 全部 PASS。第二阶段由 #203 明确立项；#209 文档架构基线与 #204 Annotation Core Domain 已完成，当前推进 #205 Label Studio reference adapter，#206–#208 尚未完成。
 
-第一阶段完成或 #209 文档合并都不表示以下能力已经完成，也不应自动扩入当前范围：
+第一阶段完成、#209 文档合并或 #204 Annotation Core 完成都不表示以下能力已经完成，也不应自动扩入当前范围：
 
 - T4/T5/T6 全部可靠性实现
 - 完整 IAM / 灾备 / 性能平台
@@ -236,7 +236,7 @@ Core 不允许出现 PARK 等行业专属分支。
 - 数据市场 / Billing
 - bearer / presigned provider delivery hardening
 
-## 10. Gold Dataset 架构基线（设计，待实现）
+## 10. Gold Dataset 架构基线（#204 Core 已实现；#205–#208 待完成）
 
 ```mermaid
 flowchart LR
@@ -252,6 +252,8 @@ flowchart LR
     Output --> Cert[Quality Rights and Gold Certification]
     Cert --> Delivery[Existing CurrentDeliveryGate and DIRECT_DATA]
 ```
+
+图中 Annotation Campaign / Task / Result / ReviewDecision / Snapshot 的 Core Domain 已由 #204 实现；Label Studio submit/reconcile、Gold Quality、Gold production / certification 与 live Pilot 仍分别由 #205–#208 完成。
 
 Core 保留已接纳 payload/事实，不依赖 provider current state 解释历史。标注前授权、外部 unknown outcome、完整任务分母、独立审核、standalone 冻结依赖以及 annotation contribution 的 current rights 都属于本阶段必需契约；不要复制状态或只增加 UI Gold 标志。
 
