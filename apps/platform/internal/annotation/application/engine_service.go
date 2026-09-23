@@ -7,23 +7,34 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
+type EngineSendAuthorizationGuard interface {
+	ValidateEngineSendTx(
+		ctx context.Context,
+		tx pgx.Tx,
+		campaign annotationdomain.Campaign,
+	) error
+}
+
 type EngineService struct {
-	tx     *transaction.Manager
-	repo   *annotationinfra.Repository
-	engine AnnotationEnginePort
+	tx        *transaction.Manager
+	repo      *annotationinfra.Repository
+	engine    AnnotationEnginePort
+	sendGuard EngineSendAuthorizationGuard
 }
 
 func NewEngineService(
 	tx *transaction.Manager,
 	repo *annotationinfra.Repository,
 	engine AnnotationEnginePort,
+	sendGuard EngineSendAuthorizationGuard,
 ) *EngineService {
-	return &EngineService{tx: tx, repo: repo, engine: engine}
+	return &EngineService{tx: tx, repo: repo, engine: engine, sendGuard: sendGuard}
 }
 
 type PrepareEngineCampaignCommand struct {
