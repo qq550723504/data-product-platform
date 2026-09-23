@@ -54,15 +54,16 @@ func TestLabelStudioCreateProjectAndSubmitTasks(t *testing.T) {
 	}
 	workspaceID := uuid.New()
 	campaignID := uuid.New()
-	config := "<View><Choices name=\"label\" toName=\"text\"/></View>"
+	schema := `{"kind":"single-label-v1","labels":["EVIDENCE_SUFFICIENT","EVIDENCE_INSUFFICIENT","EVIDENCE_CONFLICT"]}`
+	config := "<View><Text name=\"text\" value=\"$text\"/><Choices name=\"label\" toName=\"text\" choice=\"single\"><Choice value=\"EVIDENCE_SUFFICIENT\"/><Choice value=\"EVIDENCE_INSUFFICIENT\"/><Choice value=\"EVIDENCE_CONFLICT\"/></Choices></View>"
 	binding, err := client.EnsureCampaignBinding(context.Background(), annotationapp.EngineCampaignRequest{
 		WorkspaceID:        workspaceID,
 		CampaignID:         campaignID,
 		RequestID:          "campaign-create-1",
 		RequestFingerprint: strings.Repeat("a", 64),
 		Title:              "gold-pilot",
-		LabelConfig:        config,
-		ConfigSHA256:       strings.Repeat("b", 64),
+		SchemaContent:      schema,
+		SchemaSHA256:       strings.Repeat("b", 64),
 	})
 	if err != nil {
 		t.Fatalf("ensure binding: %v", err)
@@ -126,8 +127,8 @@ func TestLabelStudioTransportFailureIsRetryableWithoutLeakingBody(t *testing.T) 
 		RequestID:          "request",
 		RequestFingerprint: strings.Repeat("a", 64),
 		Title:              "pilot",
-		LabelConfig:        "<View/>",
-		ConfigSHA256:       strings.Repeat("b", 64),
+		SchemaContent:      schema,
+		SchemaSHA256:       strings.Repeat("b", 64),
 	})
 	if err == nil {
 		t.Fatal("expected provider error")
@@ -147,7 +148,8 @@ func TestLabelStudioLookupCampaignBindingRecoversExactProject(t *testing.T) {
 	requestID := "campaign-create-1"
 	fingerprint := strings.Repeat("a", 64)
 	configHash := strings.Repeat("b", 64)
-	config := "<View><Choices name=\"label\" toName=\"text\"/></View>"
+	schema := `{"kind":"single-label-v1","labels":["EVIDENCE_SUFFICIENT","EVIDENCE_INSUFFICIENT","EVIDENCE_CONFLICT"]}`
+	config := "<View><Text name=\"text\" value=\"$text\"/><Choices name=\"label\" toName=\"text\" choice=\"single\"><Choice value=\"EVIDENCE_SUFFICIENT\"/><Choice value=\"EVIDENCE_INSUFFICIENT\"/><Choice value=\"EVIDENCE_CONFLICT\"/></Choices></View>"
 	expectedDescription := "core_campaign_id=" + campaignID.String() +
 		" core_request_id=" + requestID +
 		" core_request_fingerprint=" + fingerprint +
@@ -185,7 +187,8 @@ func TestLabelStudioLookupCampaignBindingRecoversExactProject(t *testing.T) {
 		RequestFingerprint: fingerprint,
 		Title:              "gold-pilot",
 		LabelConfig:        config,
-		ConfigSHA256:       configHash,
+		SchemaContent:      schema,
+		SchemaSHA256:       configHash,
 	})
 	if err != nil {
 		t.Fatalf("lookup campaign binding: %v", err)
@@ -211,7 +214,8 @@ func TestLabelStudioLookupCampaignBindingDoesNotProveAbsence(t *testing.T) {
 		CampaignID:         uuid.New(),
 		RequestID:          "campaign-create-1",
 		RequestFingerprint: strings.Repeat("a", 64),
-		ConfigSHA256:       strings.Repeat("b", 64),
+		SchemaContent:      schema,
+		SchemaSHA256:       strings.Repeat("b", 64),
 	})
 	if err != nil {
 		t.Fatalf("lookup campaign binding: %v", err)
