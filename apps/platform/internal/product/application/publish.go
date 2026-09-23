@@ -74,10 +74,19 @@ func (s *Service) PublishRelease(ctx context.Context, cmd PublishReleaseCommand)
 
 	var snapshot evidence.Snapshot
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		// All delivery-affecting mutations, including lineage INSERT, acquire the
+		// workspace fence first. Keep publish on the same lock order:
+		// workspace fence -> ProductRelease -> lineage closure.
+		if _, err := deliveryfence.Lock(ctx, tx, product.WorkspaceID); err != nil {
+			return err
+		}
 		// ProductRelease dataset membership and publish share the same parent-row
 		// linearization point. If membership changed after the preflight/manifest
 		// read, fail instead of publishing a snapshot built from stale bindings.
 		if err := s.repo.LockReleaseMembershipForPublish(ctx, tx, release); err != nil {
+			return err
+		}
+		if err := s.repo.LockReleaseLineageForPublish(ctx, tx, release.ID); err != nil {
 			return err
 		}
 		created, err := evidence.CreateSnapshot(
@@ -94,9 +103,6 @@ func (s *Service) PublishRelease(ctx context.Context, cmd PublishReleaseCommand)
 			return err
 		}
 		snapshot = created
-		if _, err := deliveryfence.Lock(ctx, tx, product.WorkspaceID); err != nil {
-			return err
-		}
 		facts, err := s.repo.ReadinessFactsTx(ctx, tx, release, product, version, time.Now().UTC())
 		if err != nil {
 			return err

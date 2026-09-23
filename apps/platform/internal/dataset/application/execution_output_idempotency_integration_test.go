@@ -625,7 +625,7 @@ func TestInvalidatedOutputIsNotSilentlyReused(t *testing.T) {
 // for the same (output, input, relation) triple, which would double-count inputs
 // in release traceability.
 func TestLineageReplayKeepsOneEdgePerInput(t *testing.T) {
-	fixture, _, datasetID := newC2AFixture(t, fakeStore{})
+	fixture, workspaceID, datasetID := newC2AFixture(t, fakeStore{})
 	executionID := uuid.New()
 	output, err := fixture.upload.Handle(fixture.ctx, fixture.outputCommand(datasetID, executionID, "id,name\n1,alpha\n"))
 	if err != nil {
@@ -633,7 +633,7 @@ func TestLineageReplayKeepsOneEdgePerInput(t *testing.T) {
 	}
 
 	inputDataset := application.CreateDatasetCommand{
-		WorkspaceID: uuid.New(),
+		WorkspaceID: workspaceID,
 		Code:        "C2A-INPUT-" + uuid.NewString(),
 		Name:        "C2-a lineage input",
 		DatasetType: domain.DatasetTypeRaw,

@@ -1,0 +1,590 @@
+package infrastructure_test
+
+import (
+	"context"
+	"errors"
+	"os"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
+)
+
+func TestPublishedReleaseLineagePublishFirstFreezesHistory(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, firstInputID := insertReleaseMembershipFixture(t, ctx, pool)
+	secondInputID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version (
+			id, dataset_id, version_no, status, storage_uri, checksum_algorithm, checksum_value, metadata, ready_at
+		)
+		SELECT $1, dataset_id, 3, 'READY', $2, 'SHA256', $3, '{}'::jsonb, now()
+		FROM dataset_version WHERE id=$4
+	`, secondInputID, "s3://release-lineage/"+secondInputID.String(), strings.Repeat("c", 64), firstInputID); err != nil {
+		t.Fatalf("insert second lineage input: %v", err)
+	}
+	outputID := release.Datasets[0].DatasetVersionID
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, firstInputID); err != nil {
+		t.Fatalf("insert initial lineage edge: %v", err)
+	}
+
+	repo := infrastructure.NewPostgresRepository(pool)
+	workspaceID := releaseWorkspaceID(t, ctx, pool, release.ProductID)
+	publishTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin publish tx: %v", err)
+	}
+	defer publishTx.Rollback(ctx)
+	if _, err := deliveryfence.Lock(ctx, publishTx, workspaceID); err != nil {
+		t.Fatalf("lock publish workspace fence: %v", err)
+	}
+	if err := repo.LockReleaseMembershipForPublish(ctx, publishTx, release); err != nil {
+		t.Fatalf("lock release membership: %v", err)
+	}
+	if err := repo.LockReleaseLineageForPublish(ctx, publishTx, release.ID); err != nil {
+		t.Fatalf("lock release lineage: %v", err)
+	}
+
+	mutationTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin lineage mutation tx: %v", err)
+	}
+	defer mutationTx.Rollback(ctx)
+	if _, err := mutationTx.Exec(ctx, "SET LOCAL lock_timeout = '100ms'"); err != nil {
+		t.Fatalf("set mutation lock timeout: %v", err)
+	}
+	_, err = mutationTx.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, secondInputID)
+	if !isLockTimeout(err) {
+		t.Fatalf("concurrent lineage INSERT error = %v, want lock timeout while publish owns lineage closure", err)
+	}
+	if err := mutationTx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+		t.Fatalf("rollback lineage mutation tx: %v", err)
+	}
+
+	if _, err := publishTx.Exec(ctx, `
+		UPDATE product_release SET status='PUBLISHED', released_at=now()
+		WHERE id=$1 AND status='READY'
+	`, release.ID); err != nil {
+		t.Fatalf("publish release: %v", err)
+	}
+	if err := publishTx.Commit(ctx); err != nil {
+		t.Fatalf("commit publish tx: %v", err)
+	}
+
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, secondInputID); err == nil || !strings.Contains(err.Error(), "published release history is frozen") {
+		t.Fatalf("post-publish lineage INSERT error = %v, want frozen history", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE dataset_version_lineage SET relation_type='SOURCE_OF'
+		WHERE output_version_id=$1 AND input_version_id=$2 AND relation_type='DERIVED_FROM'
+	`, outputID, firstInputID); err == nil || !strings.Contains(err.Error(), "append-only") {
+		t.Fatalf("post-publish lineage UPDATE error = %v, want append-only rejection", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		DELETE FROM dataset_version_lineage
+		WHERE output_version_id=$1 AND input_version_id=$2 AND relation_type='DERIVED_FROM'
+	`, outputID, firstInputID); err == nil || !strings.Contains(err.Error(), "append-only") {
+		t.Fatalf("post-publish lineage DELETE error = %v, want append-only rejection", err)
+	}
+
+	replayTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin lineage replay tx: %v", err)
+	}
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	if err := datasetRepo.AddLineage(ctx, replayTx, outputID, firstInputID, "DERIVED_FROM", nil); err != nil {
+		_ = replayTx.Rollback(ctx)
+		t.Fatalf("idempotent published lineage replay: %v", err)
+	}
+	if err := replayTx.Commit(ctx); err != nil {
+		t.Fatalf("commit idempotent lineage replay: %v", err)
+	}
+
+	var edges int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM dataset_version_lineage
+		WHERE output_version_id=$1
+	`, outputID).Scan(&edges); err != nil {
+		t.Fatalf("count frozen lineage edges: %v", err)
+	}
+	if edges != 1 {
+		t.Fatalf("frozen lineage edges = %d, want 1", edges)
+	}
+}
+
+func TestPublishedReleaseLineageMutationFirstSerializesPublish(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, inputID := insertReleaseMembershipFixture(t, ctx, pool)
+	outputID := release.Datasets[0].DatasetVersionID
+	repo := infrastructure.NewPostgresRepository(pool)
+	workspaceID := releaseWorkspaceID(t, ctx, pool, release.ProductID)
+
+	mutationTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin lineage mutation tx: %v", err)
+	}
+	defer mutationTx.Rollback(ctx)
+	if _, err := mutationTx.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, inputID); err != nil {
+		t.Fatalf("insert in-flight lineage edge: %v", err)
+	}
+
+	type publishOutcome struct {
+		closureCount int
+		err          error
+	}
+	started := make(chan struct{})
+	done := make(chan publishOutcome, 1)
+	go func() {
+		publishTx, err := pool.Begin(ctx)
+		if err != nil {
+			done <- publishOutcome{err: err}
+			return
+		}
+		defer publishTx.Rollback(ctx)
+		close(started)
+
+		// This blocks on the workspace delivery fence held by the lineage INSERT.
+		// The release and lineage closure are read only after the shared fence is
+		// acquired, so the resumed publisher must see the committed mutation.
+		if _, err := deliveryfence.Lock(ctx, publishTx, workspaceID); err != nil {
+			done <- publishOutcome{err: err}
+			return
+		}
+		if err := repo.LockReleaseMembershipForPublish(ctx, publishTx, release); err != nil {
+			done <- publishOutcome{err: err}
+			return
+		}
+		if err := repo.LockReleaseLineageForPublish(ctx, publishTx, release.ID); err != nil {
+			done <- publishOutcome{err: err}
+			return
+		}
+
+		var closureCount int
+		if err := publishTx.QueryRow(ctx, `
+			WITH RECURSIVE lineage(version_id) AS (
+				SELECT dataset_version_id FROM product_release_dataset WHERE release_id=$1
+				UNION
+				SELECT dvl.input_version_id
+				FROM dataset_version_lineage dvl
+				JOIN lineage l ON l.version_id=dvl.output_version_id
+			)
+			SELECT count(*) FROM lineage
+		`, release.ID).Scan(&closureCount); err != nil {
+			done <- publishOutcome{err: err}
+			return
+		}
+		done <- publishOutcome{closureCount: closureCount}
+	}()
+
+	<-started
+	select {
+	case outcome := <-done:
+		t.Fatalf("publish did not block behind lineage mutation: %+v", outcome)
+	case <-time.After(150 * time.Millisecond):
+		// Expected: publish is waiting on the shared workspace delivery fence.
+	}
+
+	if err := mutationTx.Commit(ctx); err != nil {
+		t.Fatalf("commit lineage mutation: %v", err)
+	}
+
+	select {
+	case outcome := <-done:
+		if outcome.err != nil {
+			t.Fatalf("publish after lineage commit: %v", outcome.err)
+		}
+		if outcome.closureCount != 2 {
+			t.Fatalf("lineage closure count after blocked publish resumed = %d, want 2", outcome.closureCount)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for blocked publish to resume")
+	}
+}
+
+func TestDetachedLineageSubtreeCannotAttachAcrossPublish(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, seedVersionID := insertReleaseMembershipFixture(t, ctx, pool)
+	rootID := release.Datasets[0].DatasetVersionID
+	workspaceID := releaseWorkspaceID(t, ctx, pool, release.ProductID)
+	yID := uuid.New()
+	zID := uuid.New()
+	for index, versionID := range []uuid.UUID{yID, zID} {
+		if _, err := pool.Exec(ctx, `
+			INSERT INTO dataset_version (
+				id, dataset_id, version_no, status, storage_uri,
+				checksum_algorithm, checksum_value, metadata, ready_at
+			)
+			SELECT $1, dataset_id, $2, 'READY', $3, 'SHA256', $4, '{}'::jsonb, now()
+			FROM dataset_version WHERE id=$5
+		`, versionID, 10+index, "s3://detached-lineage/"+versionID.String(), strings.Repeat(string(rune('d'+index)), 64), seedVersionID); err != nil {
+			t.Fatalf("insert detached lineage version %d: %v", index, err)
+		}
+	}
+
+	// Build a detached subtree while holding the workspace lineage/delivery fence.
+	detachedTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin detached lineage tx: %v", err)
+	}
+	defer detachedTx.Rollback(ctx)
+	if _, err := detachedTx.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, yID, zID); err != nil {
+		t.Fatalf("insert detached Y->Z edge: %v", err)
+	}
+
+	repo := infrastructure.NewPostgresRepository(pool)
+	started := make(chan struct{})
+	fenceAcquired := make(chan struct{})
+	continuePublish := make(chan struct{})
+	publishDone := make(chan error, 1)
+	go func() {
+		tx, err := pool.Begin(ctx)
+		if err != nil {
+			publishDone <- err
+			return
+		}
+		defer tx.Rollback(ctx)
+		close(started)
+		if _, err := deliveryfence.Lock(ctx, tx, workspaceID); err != nil {
+			publishDone <- err
+			return
+		}
+		close(fenceAcquired)
+		<-continuePublish
+		if err := repo.LockReleaseMembershipForPublish(ctx, tx, release); err != nil {
+			publishDone <- err
+			return
+		}
+		if err := repo.LockReleaseLineageForPublish(ctx, tx, release.ID); err != nil {
+			publishDone <- err
+			return
+		}
+		if _, err := tx.Exec(ctx, `
+			UPDATE product_release SET status='PUBLISHED', released_at=now()
+			WHERE id=$1 AND status='READY'
+		`, release.ID); err != nil {
+			publishDone <- err
+			return
+		}
+		publishDone <- tx.Commit(ctx)
+	}()
+
+	<-started
+	select {
+	case <-fenceAcquired:
+		t.Fatal("publish acquired workspace fence before detached lineage mutation committed")
+	case <-time.After(150 * time.Millisecond):
+	}
+	if err := detachedTx.Commit(ctx); err != nil {
+		t.Fatalf("commit detached lineage subtree: %v", err)
+	}
+
+	select {
+	case <-fenceAcquired:
+	case <-time.After(5 * time.Second):
+		t.Fatal("publish did not acquire workspace fence after detached mutation committed")
+	}
+
+	// While publish owns the workspace fence, attaching the detached subtree to
+	// the release root cannot pass the trigger.
+	attachTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin subtree attach tx: %v", err)
+	}
+	if _, err := attachTx.Exec(ctx, "SET LOCAL lock_timeout = '100ms'"); err != nil {
+		t.Fatalf("set subtree attach lock timeout: %v", err)
+	}
+	_, err = attachTx.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, rootID, yID)
+	if !isLockTimeout(err) {
+		_ = attachTx.Rollback(ctx)
+		t.Fatalf("subtree attach while publish owns fence error = %v, want lock timeout", err)
+	}
+	_ = attachTx.Rollback(ctx)
+
+	close(continuePublish)
+	select {
+	case err := <-publishDone:
+		if err != nil {
+			t.Fatalf("publish detached-subtree release: %v", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for publish to commit")
+	}
+
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, rootID, yID); err == nil || !strings.Contains(err.Error(), "published release history is frozen") {
+		t.Fatalf("post-publish detached subtree attach error = %v, want frozen history", err)
+	}
+}
+
+func TestDirectSQLReleasePublishFailsClosedWhenLineageFenceBusy(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, inputID := insertReleaseMembershipFixture(t, ctx, pool)
+	outputID := release.Datasets[0].DatasetVersionID
+	workspaceID := releaseWorkspaceID(t, ctx, pool, release.ProductID)
+
+	// Ensure the fence row is committed before creating contention. This mirrors
+	// the application publish path and lets the direct-SQL guard exercise NOWAIT
+	// against a visible, busy fence instead of failing earlier on missing setup.
+	initTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin fence init tx: %v", err)
+	}
+	if _, err := deliveryfence.Lock(ctx, initTx, workspaceID); err != nil {
+		_ = initTx.Rollback(ctx)
+		t.Fatalf("initialize workspace fence: %v", err)
+	}
+	if err := initTx.Commit(ctx); err != nil {
+		t.Fatalf("commit workspace fence init: %v", err)
+	}
+
+	mutationTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin lineage mutation tx: %v", err)
+	}
+	defer mutationTx.Rollback(ctx)
+	if _, err := mutationTx.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, inputID); err != nil {
+		t.Fatalf("insert in-flight lineage edge: %v", err)
+	}
+
+	start := time.Now()
+	_, err = pool.Exec(ctx, `
+		UPDATE product_release
+		SET status='PUBLISHED', released_at=now()
+		WHERE id=$1 AND status='READY'
+	`, release.ID)
+	if err == nil || !strings.Contains(err.Error(), "conflicts with workspace delivery fence") {
+		t.Fatalf("direct SQL publication error = %v, want immediate workspace-fence conflict", err)
+	}
+	if time.Since(start) > 2*time.Second {
+		t.Fatalf("direct SQL publication blocked instead of failing closed")
+	}
+
+	if err := mutationTx.Commit(ctx); err != nil {
+		t.Fatalf("commit lineage mutation: %v", err)
+	}
+
+	var status string
+	if err := pool.QueryRow(ctx, `SELECT status FROM product_release WHERE id=$1`, release.ID).Scan(&status); err != nil {
+		t.Fatalf("read release after rejected direct publish: %v", err)
+	}
+	if status != "READY" {
+		t.Fatalf("release status after rejected direct publish = %s, want READY", status)
+	}
+}
+
+func TestDatasetWorkspaceIdentityIsImmutable(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, _ := insertReleaseMembershipFixture(t, ctx, pool)
+	outputID := release.Datasets[0].DatasetVersionID
+	var datasetID uuid.UUID
+	if err := pool.QueryRow(ctx, `SELECT dataset_id FROM dataset_version WHERE id=$1`, outputID).Scan(&datasetID); err != nil {
+		t.Fatalf("resolve release dataset: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE dataset SET workspace_id=$2 WHERE id=$1
+	`, datasetID, uuid.New()); err == nil || !strings.Contains(err.Error(), "dataset workspace identity is immutable") {
+		t.Fatalf("dataset workspace move error = %v, want immutable workspace rejection", err)
+	}
+}
+
+func TestDataProductWorkspaceIdentityIsImmutable(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, _ := insertReleaseMembershipFixture(t, ctx, pool)
+	if _, err := pool.Exec(ctx, `
+		UPDATE data_product SET workspace_id=$2 WHERE id=$1
+	`, release.ProductID, uuid.New()); err == nil || !strings.Contains(err.Error(), "data_product workspace identity is immutable") {
+		t.Fatalf("data_product workspace move error = %v, want immutable workspace rejection", err)
+	}
+}
+
+func TestDirectSQLReleasePublishRejectsNonReadyTransition(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, _ := insertReleaseMembershipFixture(t, ctx, pool)
+	if _, err := pool.Exec(ctx, `
+		UPDATE product_release
+		SET status='DRAFT', released_at=NULL
+		WHERE id=$1 AND status='READY'
+	`, release.ID); err != nil {
+		t.Fatalf("move fixture release back to DRAFT: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE product_release
+		SET status='PUBLISHED', released_at=now()
+		WHERE id=$1 AND status='DRAFT'
+	`, release.ID); err == nil || !strings.Contains(err.Error(), "only transition to PUBLISHED from READY") {
+		t.Fatalf("DRAFT->PUBLISHED error = %v, want READY-only publication rejection", err)
+	}
+}
+
+func TestDirectSQLReleaseWithdrawFailsClosed(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, _ := insertReleaseMembershipFixture(t, ctx, pool)
+	if _, err := pool.Exec(ctx, `
+		UPDATE product_release
+		SET status='WITHDRAWN'
+		WHERE id=$1 AND status='READY'
+	`, release.ID); err == nil || !strings.Contains(err.Error(), "WITHDRAWN transition is not implemented") {
+		t.Fatalf("READY->WITHDRAWN error = %v, want unsupported-withdraw rejection", err)
+	}
+}
+
+func TestDatasetVersionLineageRejectsCrossWorkspaceEdge(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	release, _ := insertReleaseMembershipFixture(t, ctx, pool)
+	outputID := release.Datasets[0].DatasetVersionID
+	foreignWorkspaceID := uuid.New()
+	foreignDatasetID := uuid.New()
+	foreignVersionID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset (id, workspace_id, code, name, dataset_type)
+		VALUES ($1,$2,$3,'Foreign lineage dataset','RAW')
+	`, foreignDatasetID, foreignWorkspaceID, "LINEAGE-FOREIGN-"+uuid.NewString()); err != nil {
+		t.Fatalf("insert foreign dataset: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version (
+			id, dataset_id, version_no, status, storage_uri,
+			checksum_algorithm, checksum_value, metadata, ready_at
+		) VALUES ($1,$2,1,'READY',$3,'SHA256',$4,'{}'::jsonb,now())
+	`, foreignVersionID, foreignDatasetID, "s3://foreign-lineage/"+foreignVersionID.String(), strings.Repeat("f", 64)); err != nil {
+		t.Fatalf("insert foreign dataset version: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type)
+		VALUES ($1,$2,'DERIVED_FROM')
+	`, outputID, foreignVersionID); err == nil || !strings.Contains(err.Error(), "crosses workspace boundary") {
+		t.Fatalf("cross-workspace lineage error = %v, want workspace-boundary rejection", err)
+	}
+}
+
+func releaseWorkspaceID(t *testing.T, ctx context.Context, pool interface {
+	QueryRow(context.Context, string, ...any) pgx.Row
+}, productID uuid.UUID) uuid.UUID {
+	t.Helper()
+	var workspaceID uuid.UUID
+	if err := pool.QueryRow(ctx, `
+		SELECT workspace_id FROM data_product WHERE id=$1
+	`, productID).Scan(&workspaceID); err != nil {
+		t.Fatalf("resolve release workspace: %v", err)
+	}
+	return workspaceID
+}
