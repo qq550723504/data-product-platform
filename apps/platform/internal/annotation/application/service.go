@@ -50,7 +50,7 @@ func (s *Service) CreateCampaign(ctx context.Context, cmd CreateCampaignCommand)
 		if err := appendEvent(ctx, tx, "ANNOTATION_CAMPAIGN", campaign.ID, "AnnotationCampaignCreated", map[string]any{
 			"campaignId": campaign.ID, "workspaceId": campaign.WorkspaceID,
 			"inputDatasetVersionId": campaign.InputDatasetVersionID,
-			"inputCertificationId": campaign.InputCertificationID,
+			"inputCertificationId":  campaign.InputCertificationID,
 		}); err != nil {
 			return err
 		}
@@ -59,8 +59,8 @@ func (s *Service) CreateCampaign(ctx context.Context, cmd CreateCampaignCommand)
 			Title: "Annotation campaign created", SourceType: "CORE",
 			Metadata: map[string]any{
 				"inputDatasetVersionId": campaign.InputDatasetVersionID,
-				"schemaHash": campaign.Schema.ContentSHA256,
-				"taxonomyHash": campaign.Taxonomy.ContentSHA256,
+				"schemaHash":            campaign.Schema.ContentSHA256,
+				"taxonomyHash":          campaign.Taxonomy.ContentSHA256,
 			},
 			CreatedBy: cmd.Spec.ActorID,
 		}, evidence.Relation{ObjectType: "ANNOTATION_CAMPAIGN", ObjectID: campaign.ID, RelationType: "CREATION_EVIDENCE"}); err != nil {
@@ -188,7 +188,7 @@ func (s *Service) ActivateCampaign(ctx context.Context, cmd ActivateCampaignComm
 		if _, err := evidence.Append(ctx, tx, evidence.Record{
 			WorkspaceID: cmd.WorkspaceID, EvidenceType: "ANNOTATION_TASK_MANIFEST_FROZEN",
 			Title: "Annotation task manifest frozen", SourceType: "CORE",
-			Metadata: map[string]any{"taskCount": len(tasks), "taskManifestHash": manifestHash},
+			Metadata:  map[string]any{"taskCount": len(tasks), "taskManifestHash": manifestHash},
 			CreatedBy: cmd.ActorID,
 		}, evidence.Relation{ObjectType: "ANNOTATION_CAMPAIGN", ObjectID: cmd.CampaignID, RelationType: "TASK_MANIFEST"}); err != nil {
 			return err
@@ -243,7 +243,7 @@ func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCo
 		AuthorRef: cmd.AuthorRef, ProviderBindingRef: cmd.ProviderBindingRef,
 		ExternalTaskID: cmd.ExternalTaskID, ExternalAnnotationID: cmd.ExternalAnnotationID,
 		ExternalRevision: cmd.ExternalRevision, ObservationKey: cmd.ObservationKey,
-		CanonicalPayload: append([]byte(nil), cmd.CanonicalPayload...),
+		CanonicalPayload:       append([]byte(nil), cmd.CanonicalPayload...),
 		CanonicalPayloadSHA256: cmd.CanonicalPayloadSHA256, NormalizerVersion: cmd.NormalizerVersion,
 		CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID,
 	}
@@ -267,7 +267,7 @@ func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCo
 			return err
 		}
 		if err := appendEvent(ctx, tx, "ANNOTATION_TASK", cmd.TaskID, "AnnotationResultRecorded", map[string]any{
-			"taskId": cmd.TaskID, "resultId": result.ID, "payloadSha256": result.CanonicalPayloadSHA256,
+			"taskId": cmd.TaskID, "resultId": result.ID, "payloadSha256":     result.CanonicalPayloadSHA256,
 		}); err != nil {
 			return err
 		}
@@ -445,7 +445,7 @@ func (s *Service) commitReviewDecision(
 			correction := annotationdomain.Result{
 				ID: correctionID, WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID, TaskID: cmd.TaskID,
 				AuthorRef: cmd.ReviewerRef, ObservationKey: "review-correction:" + attempt.ID.String(),
-				CanonicalPayload: append([]byte(nil), cmd.CorrectedPayload...),
+				CanonicalPayload:       append([]byte(nil), cmd.CorrectedPayload...),
 				CanonicalPayloadSHA256: cmd.CorrectedPayloadHash, NormalizerVersion: "review-correction-v1",
 				CorrectedFromResultID: cmd.ReviewedResultID, CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID,
 			}
@@ -525,7 +525,6 @@ func (s *Service) recordReviewFailure(
 	})
 	return outcome, err
 }
-
 
 type FinalizeAnnotationSnapshotCommand struct {
 	WorkspaceID uuid.UUID
@@ -629,11 +628,11 @@ func snapshotManifest(
 		TaskTextSHA256      string `json:"taskTextSha256"`
 	}
 	type resultItem struct {
-		ID                    string  `json:"id"`
-		TaskID                string  `json:"taskId"`
+		ID                     string  `json:"id"`
+		TaskID                 string  `json:"taskId"`
 		CanonicalPayloadSHA256 string  `json:"canonicalPayloadSha256"`
-		AuthorRef             string  `json:"authorRef"`
-		CorrectedFromResultID *string `json:"correctedFromResultId,omitempty"`
+		AuthorRef              string  `json:"authorRef"`
+		CorrectedFromResultID  *string `json:"correctedFromResultId,omitempty"`
 	}
 	type decisionItem struct {
 		ID               string  `json:"id"`
@@ -649,21 +648,21 @@ func snapshotManifest(
 		SelectedResultID string `json:"selectedResultId"`
 	}
 	type manifest struct {
-		FormatVersion                 string         `json:"formatVersion"`
-		CampaignID                    string         `json:"campaignId"`
-		InputDatasetVersionID         string         `json:"inputDatasetVersionId"`
-		InputCertificationID          string         `json:"inputCertificationId"`
-		AnnotationContributionID      string         `json:"annotationContributionResourceId"`
-		TaskManifestHash              string         `json:"taskManifestHash"`
-		SchemaHash                    string         `json:"schemaHash"`
-		TaxonomyHash                  string         `json:"taxonomyHash"`
-		RubricHash                    string         `json:"rubricHash"`
-		RendererHash                  string         `json:"rendererHash"`
-		ReviewPolicyHash              string         `json:"reviewPolicyHash"`
-		Tasks                         []taskItem     `json:"tasks"`
-		Results                       []resultItem   `json:"results"`
-		Decisions                     []decisionItem `json:"decisions"`
-		Outputs                       []outputItem   `json:"outputs"`
+		FormatVersion            string         `json:"formatVersion"`
+		CampaignID               string         `json:"campaignId"`
+		InputDatasetVersionID    string         `json:"inputDatasetVersionId"`
+		InputCertificationID     string         `json:"inputCertificationId"`
+		AnnotationContributionID string         `json:"annotationContributionResourceId"`
+		TaskManifestHash         string         `json:"taskManifestHash"`
+		SchemaHash               string         `json:"schemaHash"`
+		TaxonomyHash             string         `json:"taxonomyHash"`
+		RubricHash               string         `json:"rubricHash"`
+		RendererHash             string         `json:"rendererHash"`
+		ReviewPolicyHash         string         `json:"reviewPolicyHash"`
+		Tasks                    []taskItem     `json:"tasks"`
+		Results                  []resultItem   `json:"results"`
+		Decisions                []decisionItem `json:"decisions"`
+		Outputs                  []outputItem   `json:"outputs"`
 	}
 
 	taskItems := make([]taskItem, 0, len(tasks))
@@ -683,7 +682,7 @@ func snapshotManifest(
 		resultItems = append(resultItems, resultItem{
 			ID: result.ID.String(), TaskID: result.TaskID.String(),
 			CanonicalPayloadSHA256: result.CanonicalPayloadSHA256,
-			AuthorRef: result.AuthorRef, CorrectedFromResultID: corrected,
+			AuthorRef:              result.AuthorRef, CorrectedFromResultID: corrected,
 		})
 	}
 	decisionItems := make([]decisionItem, 0, len(decisions))
@@ -714,14 +713,14 @@ func snapshotManifest(
 
 	encoded, err := json.Marshal(manifest{
 		FormatVersion: "annotation-snapshot-v1", CampaignID: campaign.ID.String(),
-		InputDatasetVersionID: campaign.InputDatasetVersionID.String(),
-		InputCertificationID: campaign.InputCertificationID.String(),
+		InputDatasetVersionID:    campaign.InputDatasetVersionID.String(),
+		InputCertificationID:     campaign.InputCertificationID.String(),
 		AnnotationContributionID: campaign.AnnotationContributionID.String(),
-		TaskManifestHash: campaign.TaskManifestHash,
-		SchemaHash: campaign.Schema.ContentSHA256, TaxonomyHash: campaign.Taxonomy.ContentSHA256,
+		TaskManifestHash:         campaign.TaskManifestHash,
+		SchemaHash:               campaign.Schema.ContentSHA256, TaxonomyHash: campaign.Taxonomy.ContentSHA256,
 		RubricHash: campaign.Rubric.ContentSHA256, RendererHash: campaign.Renderer.ContentSHA256,
 		ReviewPolicyHash: campaign.ReviewPolicy.ContentSHA256,
-		Tasks: taskItems, Results: resultItems, Decisions: decisionItems, Outputs: outputs,
+		Tasks:            taskItems, Results: resultItems, Decisions: decisionItems, Outputs: outputs,
 	})
 	if err != nil {
 		return nil, 0, fmt.Errorf("marshal annotation snapshot manifest: %w", err)
