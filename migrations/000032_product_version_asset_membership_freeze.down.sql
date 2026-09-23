@@ -19,7 +19,9 @@ DROP FUNCTION IF EXISTS guard_product_version_mutation();
 
 ALTER TABLE product_version
     DROP CONSTRAINT IF EXISTS ck_product_version_build_status,
-    DROP COLUMN IF EXISTS build_status;
+    DROP CONSTRAINT IF EXISTS ck_product_version_expected_asset_count,
+    DROP COLUMN IF EXISTS build_status,
+    DROP COLUMN IF EXISTS expected_asset_count;
 
 CREATE OR REPLACE FUNCTION prevent_product_version_mutation()
 RETURNS trigger AS $$
