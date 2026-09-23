@@ -104,6 +104,35 @@ func (r *PostgresRepository) LockReleaseMembershipForPublish(ctx context.Context
 	return nil
 }
 
+func (r *PostgresRepository) LockReleaseLineageForPublish(ctx context.Context, tx pgx.Tx, releaseID uuid.UUID) error {
+	rows, err := tx.Query(ctx, `
+		WITH RECURSIVE lineage(version_id) AS (
+			SELECT dataset_version_id
+			FROM product_release_dataset
+			WHERE release_id=$1
+			UNION
+			SELECT dvl.input_version_id
+			FROM dataset_version_lineage dvl
+			JOIN lineage l ON l.version_id=dvl.output_version_id
+		)
+		SELECT dv.id
+		FROM dataset_version dv
+		JOIN lineage l ON l.version_id=dv.id
+		ORDER BY dv.id
+		FOR UPDATE
+	`, releaseID)
+	if err != nil {
+		return fmt.Errorf("lock ProductRelease lineage closure: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("iterate ProductRelease lineage closure locks: %w", err)
+	}
+	return nil
+}
+
 func (r *PostgresRepository) PublishRelease(ctx context.Context, tx pgx.Tx, release domain.ProductRelease, evidenceSnapshotID uuid.UUID, actorID *uuid.UUID) error {
 	now := time.Now().UTC()
 	commandTag, err := tx.Exec(ctx, `
