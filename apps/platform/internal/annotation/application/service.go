@@ -363,10 +363,13 @@ func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCo
 		cmd.ProviderBindingRef, cmd.ExternalTaskID, cmd.ExternalAnnotationID,
 		cmd.ExternalRevision, cmd.CanonicalPayloadSHA256,
 	); err == nil {
-		if resultReplayMatches(existing, cmd) {
-			return existing, nil
+		if !providerResultReplayMatches(existing, cmd) {
+			return annotationdomain.Result{}, ErrIdempotencyConflict
 		}
-		return annotationdomain.Result{}, ErrIdempotencyConflict
+		if err := s.ensureReplayAliasAvailable(ctx, existing, cmd); err != nil {
+			return annotationdomain.Result{}, err
+		}
+		return existing, nil
 	} else if !errors.Is(err, pgx.ErrNoRows) {
 		return annotationdomain.Result{}, err
 	}
@@ -453,10 +456,13 @@ func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCo
 			cmd.ProviderBindingRef, cmd.ExternalTaskID, cmd.ExternalAnnotationID,
 			cmd.ExternalRevision, cmd.CanonicalPayloadSHA256,
 		); readErr == nil {
-			if resultReplayMatches(existing, cmd) {
-				return existing, nil
+			if !providerResultReplayMatches(existing, cmd) {
+				return annotationdomain.Result{}, ErrIdempotencyConflict
 			}
-			return annotationdomain.Result{}, ErrIdempotencyConflict
+			if aliasErr := s.ensureReplayAliasAvailable(ctx, existing, cmd); aliasErr != nil {
+				return annotationdomain.Result{}, aliasErr
+			}
+			return existing, nil
 		}
 		if existing, readErr := s.repo.GetResultByObservation(ctx, cmd.WorkspaceID, cmd.CampaignID, cmd.ObservationKey); readErr == nil {
 			if resultReplayMatches(existing, cmd) {
@@ -1165,6 +1171,37 @@ func reviewFingerprint(cmd ReviewAnnotationCommand) (string, error) {
 		return "", err
 	}
 	return hashBytes(encoded), nil
+}
+
+func (s *Service) ensureReplayAliasAvailable(
+	ctx context.Context,
+	existing annotationdomain.Result,
+	cmd RecordResultCommand,
+) error {
+	alias := strings.TrimSpace(cmd.ObservationKey)
+	if alias == "" {
+		return annotationdomain.ErrInvalidResult
+	}
+	if err := s.repo.ReserveResultAlias(
+		ctx, cmd.WorkspaceID, cmd.CampaignID, alias, existing.ID,
+	); err != nil {
+		if errors.Is(err, annotationinfra.ErrResultAliasConflict) {
+			return ErrIdempotencyConflict
+		}
+		return err
+	}
+	return nil
+}
+
+func providerResultReplayMatches(existing annotationdomain.Result, cmd RecordResultCommand) bool {
+	return existing.TaskID == cmd.TaskID &&
+		existing.AuthorRef == strings.TrimSpace(cmd.AuthorRef) &&
+		existing.ProviderBindingRef == strings.TrimSpace(cmd.ProviderBindingRef) &&
+		existing.ExternalTaskID == strings.TrimSpace(cmd.ExternalTaskID) &&
+		existing.ExternalAnnotationID == strings.TrimSpace(cmd.ExternalAnnotationID) &&
+		existing.ExternalRevision == strings.TrimSpace(cmd.ExternalRevision) &&
+		existing.CanonicalPayloadSHA256 == strings.TrimSpace(cmd.CanonicalPayloadSHA256) &&
+		existing.NormalizerVersion == strings.TrimSpace(cmd.NormalizerVersion)
 }
 
 func resultReplayMatches(existing annotationdomain.Result, cmd RecordResultCommand) bool {

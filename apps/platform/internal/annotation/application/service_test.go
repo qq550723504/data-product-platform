@@ -179,3 +179,40 @@ func TestValidateAnnotationPayloadAgainstFrozenSchema(t *testing.T) {
 		t.Fatal("payload with fields outside frozen schema should be rejected")
 	}
 }
+
+func TestProviderReplayIgnoresObservationAlias(t *testing.T) {
+	existing := annotationdomain.Result{
+		ID:                     uuid.New(),
+		WorkspaceID:            uuid.New(),
+		CampaignID:             uuid.New(),
+		TaskID:                 uuid.New(),
+		AuthorRef:              "annotator",
+		ProviderBindingRef:     "provider-binding",
+		ExternalTaskID:         "external-task",
+		ExternalAnnotationID:   "external-annotation",
+		ExternalRevision:       "7",
+		ObservationKey:         "old-alias",
+		CanonicalPayloadSHA256: strings.Repeat("a", 64),
+		NormalizerVersion:      "v1",
+	}
+	cmd := RecordResultCommand{
+		WorkspaceID:            existing.WorkspaceID,
+		CampaignID:             existing.CampaignID,
+		TaskID:                 existing.TaskID,
+		AuthorRef:              existing.AuthorRef,
+		ProviderBindingRef:     existing.ProviderBindingRef,
+		ExternalTaskID:         existing.ExternalTaskID,
+		ExternalAnnotationID:   existing.ExternalAnnotationID,
+		ExternalRevision:       existing.ExternalRevision,
+		ObservationKey:         "new-alias",
+		CanonicalPayloadSHA256: existing.CanonicalPayloadSHA256,
+		NormalizerVersion:      existing.NormalizerVersion,
+	}
+
+	if !providerResultReplayMatches(existing, cmd) {
+		t.Fatal("provider identity replay should ignore observation alias")
+	}
+	if resultReplayMatches(existing, cmd) {
+		t.Fatal("alias-key replay must remain strict when observation alias differs")
+	}
+}
