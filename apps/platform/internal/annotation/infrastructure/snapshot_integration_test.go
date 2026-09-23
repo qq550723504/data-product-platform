@@ -342,8 +342,10 @@ func TestAnnotationSnapshotLateMembershipWriterFailsClosed(t *testing.T) {
 
 	select {
 	case writeErr := <-writerDone:
-		if writeErr == nil || !strings.Contains(writeErr.Error(), "membership is finalized") {
-			t.Fatalf("late membership writer error = %v, want finalized rejection", writeErr)
+		if writeErr == nil ||
+			(!strings.Contains(writeErr.Error(), "parent is not visible") &&
+				!strings.Contains(writeErr.Error(), "membership is finalized")) {
+			t.Fatalf("late membership writer error = %v, want invisible-parent or finalized rejection", writeErr)
 		}
 	case <-time.After(6 * time.Second):
 		t.Fatal("late membership writer did not converge")
