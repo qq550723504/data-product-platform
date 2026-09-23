@@ -95,12 +95,17 @@ func TestReviewAttemptAllowsNonSuccessPhysicalActivity(t *testing.T) {
 		ExpectedTaskRevision: 3,
 		Action:               ReviewAccept,
 		Reason:               "checked",
-		IdempotencyKey:       "attempt-1",
-		RequestFingerprint:   strings.Repeat("b", 64),
-		Outcome:              ReviewAttemptStaleConflict,
+		IdempotencyKey:     "attempt-1",
+		RequestFingerprint: strings.Repeat("b", 64),
 	}
 	if err := a.Validate(); err != nil {
-		t.Fatalf("stale review attempt must remain a valid auditable activity: %v", err)
+		t.Fatalf("review attempt start must remain a valid auditable activity: %v", err)
+	}
+	o := ReviewAttemptOutcome{
+		ID: uuid.New(), AttemptID: a.ID, Outcome: ReviewAttemptStaleConflict,
+	}
+	if err := o.Validate(); err != nil {
+		t.Fatalf("stale review attempt outcome must remain auditable: %v", err)
 	}
 }
 
