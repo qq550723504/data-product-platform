@@ -126,22 +126,38 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 			id, workspace_id, code, name, lifecycle_status, health_status, metadata, created_at, updated_at
 		) VALUES ($1,$2,$3,'企业经营活跃度','READY','HEALTHY','{}'::jsonb,now(),now())
 	`, productID, workspaceID, "DP-PUBLISH-"+uuid.NewString())
-	mustExec(t, ctx, pool, `
+	versionTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin ProductVersion fixture transaction: %v", err)
+	}
+	if _, err := versionTx.Exec(ctx, `
 		INSERT INTO product_version (
 			id, product_id, major_version, minor_version, patch_version,
 			contract_version_id, definition_snapshot, build_status, expected_asset_count, created_at
 		) VALUES ($1,$2,1,0,0,$3,'{"reference":"enterprise-activity"}'::jsonb,'BUILDING',1,now())
-	`, productVersionID, productID, contractVersionID)
-	mustExec(t, ctx, pool, `
+	`, productVersionID, productID, contractVersionID); err != nil {
+		_ = versionTx.Rollback(ctx)
+		t.Fatalf("insert ProductVersion fixture: %v", err)
+	}
+	if _, err := versionTx.Exec(ctx, `
 		INSERT INTO product_asset (
 			id, product_version_id, asset_type, name, dataset_id, delivery_config, created_at
 		) VALUES ($1,$2,'DATASET','enterprise_activity_curated',$3,'{"mode":"DATASET"}'::jsonb,now())
-	`, uuid.New(), productVersionID, datasetID)
-	mustExec(t, ctx, pool, `
+	`, uuid.New(), productVersionID, datasetID); err != nil {
+		_ = versionTx.Rollback(ctx)
+		t.Fatalf("insert ProductAsset fixture: %v", err)
+	}
+	if _, err := versionTx.Exec(ctx, `
 		UPDATE product_version
 		SET build_status='FINALIZED'
 		WHERE id=$1 AND build_status='BUILDING'
-	`, productVersionID)
+	`, productVersionID); err != nil {
+		_ = versionTx.Rollback(ctx)
+		t.Fatalf("finalize ProductVersion fixture: %v", err)
+	}
+	if err := versionTx.Commit(ctx); err != nil {
+		t.Fatalf("commit ProductVersion fixture: %v", err)
+	}
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_release (
 			id, product_id, product_version_id, release_no, status,
