@@ -121,8 +121,8 @@ func TestProductVersionAndDraftReleaseAreFrozenBeforeGovernanceGates(t *testing.
 	}
 	if _, err := buildingTx.Exec(ctx, `
 		INSERT INTO product_version (
-			id, product_id, major_version, minor_version, patch_version, build_status
-		) VALUES ($1,$2,2,0,0,'BUILDING')
+			id, product_id, major_version, minor_version, patch_version, build_status, expected_asset_count
+		) VALUES ($1,$2,2,0,0,'BUILDING',0)
 	`, uuid.New(), product.ID); err != nil {
 		_ = buildingTx.Rollback(ctx)
 		t.Fatalf("insert BUILDING ProductVersion: %v", err)
