@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -11,6 +12,9 @@ import (
 	"time"
 
 	"github.com/hibiken/asynq"
+	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
+	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
+	annotationlabelstudio "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/labelstudio"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
@@ -26,6 +30,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
+	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowhop "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/hop"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
@@ -105,6 +110,8 @@ func main() {
 	txManager := transaction.NewManager(db)
 	nativeLockManager := transaction.NewManager(nativeLockDB)
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
+	annotationRepo := annotationinfra.NewRepository(db)
+	rightsRepo := rightsinfra.NewPostgresRepository(db)
 	entityRepo := entityinfra.NewPostgresRepository(db)
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
 	datasetWriter := datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore)
@@ -140,6 +147,57 @@ func main() {
 	}
 	nativeReconciler := workflowapp.NewNativeReconciler(nativeLockManager, executionService, workflowRepo, datasetRepo, processingEngine)
 	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine, managedBridges...).WithNativeExecutionLocker(nativeLockManager)
+
+	var annotationEngineRunner *annotationapp.EngineRunner
+	if cfg.LabelStudio.Enabled {
+		httpClient := &http.Client{Timeout: time.Duration(cfg.LabelStudio.TimeoutSeconds) * time.Second}
+		labelStudioClient, err := annotationlabelstudio.NewClient(
+			cfg.LabelStudio.BaseURL,
+			cfg.LabelStudio.Token,
+			cfg.LabelStudio.InstanceRef,
+			httpClient,
+		)
+		if err != nil {
+			logger.Error("create Label Studio annotation engine", "error", err)
+			os.Exit(1)
+		}
+		activationGuard := annotationapp.NewCoreActivationGuard(
+			datasetRepo,
+			annotationRepo,
+			objectStore,
+			rightsRepo,
+		)
+		annotationService := annotationapp.NewService(txManager, annotationRepo, activationGuard)
+		engineService := annotationapp.NewEngineService(
+			txManager,
+			annotationRepo,
+			labelStudioClient,
+			activationGuard,
+		)
+		resultReconciler := annotationapp.NewEngineResultReconciler(
+			txManager,
+			annotationRepo,
+			labelStudioClient,
+			annotationService,
+		)
+		hostname, _ := os.Hostname()
+		if hostname == "" {
+			hostname = "unknown-host"
+		}
+		annotationEngineRunner = annotationapp.NewEngineRunner(
+			annotationRepo,
+			engineService,
+			resultReconciler,
+			"annotation-worker:"+hostname,
+			time.Duration(cfg.LabelStudio.LeaseSeconds)*time.Second,
+			cfg.LabelStudio.BatchSize,
+		)
+		logger.Info(
+			"Label Studio annotation engine enabled",
+			"base_url", cfg.LabelStudio.BaseURL,
+			"instance_ref", cfg.LabelStudio.InstanceRef,
+		)
+	}
 
 	var metadataService *metadataapp.Service
 	if cfg.OpenMetadata.Enabled {
@@ -194,6 +252,28 @@ func main() {
 						// Remote engines are independent runtimes. A transient status/finalization
 						// failure must not stop the worker; the next tick retries reconciliation.
 						logger.Warn("managed execution reconciliation failed", "error", err)
+					}
+				}
+			}
+		}()
+	}
+
+	if annotationEngineRunner != nil {
+		go func() {
+			ticker := time.NewTicker(time.Duration(cfg.LabelStudio.PollSeconds) * time.Second)
+			defer ticker.Stop()
+			logger.Info(
+				"annotation engine reconciler started",
+				"provider", annotationlabelstudio.Provider,
+				"instance_ref", cfg.LabelStudio.InstanceRef,
+			)
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-ticker.C:
+					if err := annotationEngineRunner.RunOnce(ctx); err != nil && !errors.Is(err, context.Canceled) {
+						logger.Warn("annotation engine reconciliation failed", "error", err)
 					}
 				}
 			}
