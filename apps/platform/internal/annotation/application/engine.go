@@ -108,11 +108,12 @@ type AnnotationEnginePort interface {
 }
 
 type AnnotationEngineError struct {
-	Kind       error
-	Operation  string
-	Retryable  bool
-	StatusCode int
-	Cause      error
+	Kind             error
+	Operation        string
+	Retryable        bool
+	OutcomeUncertain bool
+	StatusCode       int
+	Cause            error
 }
 
 func (e *AnnotationEngineError) Error() string {
@@ -140,11 +141,23 @@ func (e *AnnotationEngineError) Unwrap() error {
 }
 
 func NewAnnotationEngineError(kind error, operation string, retryable bool, statusCode int, cause error) error {
+	return NewAnnotationEngineOutcomeError(kind, operation, retryable, false, statusCode, cause)
+}
+
+func NewAnnotationEngineOutcomeError(
+	kind error,
+	operation string,
+	retryable bool,
+	outcomeUncertain bool,
+	statusCode int,
+	cause error,
+) error {
 	return &AnnotationEngineError{
-		Kind:       kind,
-		Operation:  strings.TrimSpace(operation),
-		Retryable:  retryable,
-		StatusCode: statusCode,
-		Cause:      cause,
+		Kind:             kind,
+		Operation:        strings.TrimSpace(operation),
+		Retryable:        retryable,
+		OutcomeUncertain: outcomeUncertain,
+		StatusCode:       statusCode,
+		Cause:            cause,
 	}
 }
