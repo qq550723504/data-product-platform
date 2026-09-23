@@ -1,6 +1,6 @@
-# 核心领域模型 V1.1
+# 核心领域模型 V1.2
 
-> V1.1 增加 Certified Dataset 与 Data Rights Provenance 模型。QualityAssessment 已通过 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA 与 #136 enterprise-activity E2E Pilot 均已完成第一阶段验收。后续交付增强、IAM、性能/SLA 或 AI/Gold Dataset 能力按真实需求单独立项。
+> V1.1 的 Certified Dataset 与 Data Rights Provenance 已完成第一阶段验收：QualityAssessment 经 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA、#136 E2E Pilot 均已完成。V1.2 增加 #203/#209 Gold 架构摘要，第11节仍是设计，待 #204–#208 实现；不代表生产上线批准。
 
 ## 1. 主业务链
 
@@ -33,7 +33,7 @@ Dataset
                     │
                     ├── DataProduct / ProductRelease
                     ├── Trusted Data Offering
-                    └── AI Dataset（后续）
+                    └── Annotation / Gold Dataset（#203 设计，待实现）
 ~~~
 
 横向能力：Cost · Evidence · Audit · Version · Rights · Quality。
@@ -74,6 +74,8 @@ DeliveryOperation 是每次 standalone delivery 尝试的稳定业务事实/操�
 - 持有当前 gate/status projection；真正的每次 gate decision / blockers / dependency revision 与状态迁移由 append-only DeliveryGateEvaluation / DeliveryTransition facts 冻结；
 - 作为 Audit/Evidence/CostAllocation 的强类型 subject。
 
+本节保留总体 delivery contract，其中 credential/provider 分支并非已完成的第一阶段实现；已验收范围仅为 trusted DIRECT_DATA，Gold Pilot 也复用该模式。
+
 受控生命周期至少表达：
 
 ~~~text
@@ -104,7 +106,9 @@ provider 成功但 terminal DB commit 失败时，恢复流程必须使用同一
 
 DataProduct 是稳定产品身份。当前公开 API 中 DataProduct 创建为 DRAFT，成功 PublishProductRelease 会将其更新为 PUBLISHED；DESIGNING/DEVELOPING/TESTING/READY/ACTIVE/SUSPENDED/DEPRECATED/RETIRED 虽保留在 domain/schema 枚举中，但当前没有显式 lifecycle Command，因此不视为 API 可达迁移。
 
-ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定。进入 PUBLISHED 后，领域 invariant 要求 release row 与 dataset membership 都不可被回溯改写；**但当前数据库只由 `guard_product_release_history` 保护 `product_release` 主行，`product_release_dataset` 仍缺 INSERT/UPDATE/DELETE membership guard（#99 open）**。因此当前不能把“published bindings 已由数据库整体冻结”描述为已实现事实；这是已有 Core enforcement gap。SUSPENDED/WITHDRAWN 虽仍存在于 schema 枚举，但当前不是从 PUBLISHED 可达的 live transition；未来启用需要独立 migration + Command，并同时保持/补齐 membership immutability。
+ProductRelease 是有显式生命周期的发布聚合。DRAFT/VALIDATING/READY 阶段允许按 Command 更新校验状态与绑定。进入 PUBLISHED 后，release row 与 dataset membership 不可回溯改写：#198 / migration 000031 已补齐 `product_release_dataset` 的 parent-first mutation guards 和 publish-time exact membership 校验；#202 / migration 000034 进一步冻结 published release 的 lineage ancestry，并与 workspace delivery fence 下的发布线性化。ProductVersion asset membership 已由 #199 冻结，RightsSnapshot release context proof 已由 #201 收口，#99 已关闭。
+
+这不是所有 standalone DatasetVersion lineage 的自动冻结。SUSPENDED/WITHDRAWN 仍只是 schema 保留值，当前没有从 PUBLISHED 可达的 live Command；未来启用需独立 migration + Command，不能回退历史冻结。
 
 Certified Dataset 可独立作为交付对象，不要求必须包装成 DataProduct；实际 standalone delivery 由持久化 DeliveryOperation 表达。进入 CurrentDeliveryGate 前先建立 trusted caller principal → effective consumer/workspace（on-behalf-of 必须有当前有效 delegation），随后再校验 DatasetVersion 当前可用性、当前有效的 CERTIFIED DatasetCertification，以及 effective consumer / purpose / action 的 CurrentEntitlementGate。DatasetCertification 只保留认证时点结论。
 
@@ -347,9 +351,9 @@ Rights verification、QualityAssessment、DatasetCertification 都应将 Evidenc
 - WorkflowVersion
 - execution dependency facts
 - ContractVersion
-- ProductVersion
-- ProductRelease published bindings / published release history（目标 immutable invariant；`product_release_dataset` DB membership guard 仍由 #99 跟踪）
-- EvidenceSnapshot（目标 immutable invariant；当前 header guard 已有，但 `evidence_snapshot_item` membership DB guard 仍由 #99 跟踪）
+- ProductVersion（含 #199 的 finalized asset membership）
+- ProductRelease published bindings / published release history（#198 membership freeze、#202 published lineage ancestry freeze）
+- EvidenceSnapshot（#180 已收口 header、manifest/root 和 exact membership freeze）
 - RightsSnapshot（immutable invariant；header 与 authorization/declaration/provenance membership guards 已由 migration 000024 落地；真实 PostgreSQL 并发冻结回归仍需持续验证）
 - QualityAssessment（已实现）
 - DeliveryOperation 的固定 request/idempotency identity、已冻结 gate/issuance history 与 terminal outcome（#135）；DeliveryOperation lifecycle row 本身不是从创建起 immutable
@@ -361,3 +365,28 @@ Rights verification、QualityAssessment、DatasetCertification 都应将 Evidenc
 DeliveryOperation 特例：它与 Execution 类似，是受控 lifecycle row。PREPARED / ISSUANCE_PENDING / CONTAINMENT_PENDING / terminal 状态允许由显式 delivery/reconciliation Command 更新；不得给整行安装“创建后禁止 UPDATE”的不可变 guard。不可回写的是已经确定的 request/idempotency identity、provider_request_key（确定后稳定）、已提交的 gate/issuance transition history，以及 terminal outcome 的业务含义。需要审计每次迁移时使用 append-only Event/Audit/Evidence/Outbox/transition facts。
 
 错误通过追加新事实修正，不覆盖历史。
+
+## 11. Annotation / Gold 模型（#209 设计，待实现）
+
+```text
+AnnotationCampaign（冻结 input/schema/rubric/task manifest）
+  └─ AnnotationTask（稳定 source item identity）
+       ├─ AnnotationResult*（append-only 修订）
+       └─ AnnotationReviewDecision（Pilot 唯一终态明确选择）
+                    ↓
+         FINALIZED AnnotationSnapshot（完整任务、结果、处置）
+                    ↓
+         Execution + immutable Gold production binding
+                    ↓
+         新 DatasetVersion → 新 QualityAssessment / EffectiveRights
+                    ↓
+         Gold Profile 下的 DatasetCertification
+                    ↓
+         现有 CurrentDeliveryGate / DIRECT_DATA
+```
+
+这不是独立 GoldDataset 主实体。Campaign/Task lifecycle 与 Result/Decision/Snapshot 历史分离，CORRECT 追加事实，完整任务分母不因 REJECT 变小；provider current state 不拥有选中结果。
+
+Standalone Gold 的生产绑定必须冻结实际输入闭包及标注贡献的权利依赖，不能把 Snapshot ID 当作 DatasetVersion lineage 外键，也不能等待 ProductRelease 发布才冻结历史。原始来源与标注贡献的 current entitlement 在每次交付时重新证明。
+
+权威语义、状态机/锁序、外部 unknown recovery 和跨 Issue 实施归属见 [Annotation Domain](annotation-domain.md)、[Engine integration](annotation-engine-integration.md)、[Gold production](gold-dataset-production.md)；产品定义和 16 项定案见 [gold-dataset.md](../product/gold-dataset.md)，跨模块决定见 [ADR-0012](../adr/0012-gold-dataset-annotation-boundary.md)。本节只作总览，不独立维护平行 contract。

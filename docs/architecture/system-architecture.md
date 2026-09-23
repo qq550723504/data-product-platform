@@ -1,4 +1,6 @@
-# 系统架构 V1.2
+# 系统架构 V1.3
+
+> 第一阶段 Certified Dataset / trusted DIRECT_DATA 已完成受控 Pilot。第二阶段 #203 已立项，当前为 #209 文档架构基线；下文标为 Gold 的组件、Port 和证明扩展仍待 #204–#208 实现。文档中的 future credential 协议不表示已验证该 provider 能力。
 
 ## 1. 架构风格
 
@@ -21,7 +23,8 @@ platform-api (Go)
       │   ├── contract
       │   ├── product
       │   ├── cost
-      │   └── evidence
+      │   ├── evidence
+      │   └── annotation / review / snapshot（#203 设计，待实现）
       │
       ├── PostgreSQL
       ├── Redis
@@ -46,7 +49,7 @@ Engine Adapter Layer
       ├── EntityResolutionEngine → Rules/Splink
       ├── QualityEngine → Native / future Soda/GX
       ├── ComplianceEngine → Rules / future Presidio
-      └── AnnotationEngine → future Label Studio/X-AnyLabeling
+      └── AnnotationEngine → Label Studio（#205 计划）；X-AnyLabeling（不在本 Pilot）
 ~~~
 
 ## 2. Core Platform 业务真相
@@ -63,9 +66,9 @@ Core 保存：
 - ProductVersion / ProductRelease
 - Cost / Evidence / Audit
 
-其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA 与 #136 enterprise-activity E2E Pilot 均已完成第一阶段验收。后续 delivery/provider、IAM、性能/SLA 或 AI/Gold Dataset 能力按真实需求单独立项。
+其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA 与 #136 enterprise-activity E2E Pilot 均已完成第一阶段验收。AI/Gold Dataset 已由 #203 立项，但 #204–#208 尚未实现；其他 delivery/provider、IAM、性能/SLA 工作仍按真实需求另行立项。
 
-外部 Engine 只提供执行能力，不拥有上述核心业务状态。
+第二阶段计划新增的 Annotation Campaign/Task、已接纳 Result、ReviewDecision、Snapshot 和 Gold production binding 也属于 Core facts。外部 Engine 只提供执行能力，不拥有上述核心业务状态；具体 contract 由第10节链接的专门文档拥有。
 
 ## 3. 控制面 / 数据面
 
@@ -154,6 +157,8 @@ Certified DatasetVersion
 
 Certified Dataset 可以作为独立交付对象，也可以继续进入 Data Product / ProductRelease；独立交付必须由 server-side delivery command 执行。该 Command 先从 authenticated caller principal 解析 effective consumer/workspace；on-behalf-of 必须验证当前有效 delegation，不能信任请求 consumer 自证身份。随后在返回数据或签发 URL/token/credential 前重新执行 CurrentDeliveryGate：检查 DatasetVersion 当前可用性、CurrentCertificationGate（明确且未 REVOKED/SUPERSEDED 的 CERTIFIED 事实），再通过 CurrentEntitlementGate 重新校验当前 Rights provenance / Authorization / Effective Rights。Eligibility query 不能替代 delivery-time authorization。
 
+以下保留外部 credential 的架构要求，但第一阶段只验收 trusted DIRECT_DATA，Gold Pilot 也不引入 bearer/presigned provider。
+
 外部 credential issuance 使用 DB-first crash-safe protocol：
 1. 先持久化 DeliveryOperation PREPARED/ISSUANCE_PENDING + stable provider_request_key；
 2. DB commit 成功后才执行外部 issuance；
@@ -196,9 +201,10 @@ Projection 故障不得改变 Core 业务真相。
 - Outbox dispatcher / handler
 - Workflow 任务处理
 - Engine 对账/维护任务（按已实施范围）
-- DeliveryOperation ISSUANCE_PENDING reconciliation / provider outcome recovery（#135 起）
+- DeliveryOperation ISSUANCE_PENDING reconciliation / provider outcome recovery（按对应 provider 实施范围，不是已完成 Pilot 结论）
 - 授权过期处理
 - 元数据投影
+- #205 的 Annotation submit/reconcile 与 #207 的 Gold build 复用既有运行时（待实现）
 - 后续可加入周期性质量/认证维护，但不属于当前 MVP 前置
 
 ## 8. Industry Pack
@@ -219,13 +225,34 @@ Core 不允许出现 PARK 等行业专属分支。
 
 ## 9. 当前阶段边界
 
-#129 Certified Dataset 第一阶段受控试点已经完成，E2E1–E2E20 全部 PASS。当前没有自动承接的第二阶段；新的工作必须由真实产品需求或独立 Issue 明确进入范围。
+#129 Certified Dataset 第一阶段受控试点已经完成，E2E1–E2E20 全部 PASS。第二阶段由 #203 明确立项，并以 #209 文档架构基线作为 #204 开始编码的前置；#204–#208 尚未完成。
 
-第一阶段完成不表示以下能力已经完成，也不应在没有具体 Issue 的情况下自动扩入当前范围：
+第一阶段完成或 #209 文档合并都不表示以下能力已经完成，也不应自动扩入当前范围：
 
 - T4/T5/T6 全部可靠性实现
 - 完整 IAM / 灾备 / 性能平台
 - 微服务拆分
-- Label Studio / X-AnyLabeling / Gold Dataset
+- X-AnyLabeling、多模态全覆盖、多轮共识或完整标注 SaaS
 - 数据市场 / Billing
 - bearer / presigned provider delivery hardening
+
+## 10. Gold Dataset 架构基线（设计，待实现）
+
+```mermaid
+flowchart LR
+    Input[Certified input version] --> Campaign[Annotation Campaign]
+    Campaign --> Port[AnnotationEnginePort]
+    Port --> LS[Label Studio]
+    LS --> Acceptance[Core result acceptance]
+    Acceptance --> Review[Independent Core review]
+    Review --> Snapshot[FINALIZED AnnotationSnapshot]
+    Input --> Build[Execution and frozen Gold production binding]
+    Snapshot --> Build
+    Build --> Output[New DatasetVersion]
+    Output --> Cert[Quality Rights and Gold Certification]
+    Cert --> Delivery[Existing CurrentDeliveryGate and DIRECT_DATA]
+```
+
+Core 保留已接纳 payload/事实，不依赖 provider current state 解释历史。标注前授权、外部 unknown outcome、完整任务分母、独立审核、standalone 冻结依赖以及 annotation contribution 的 current rights 都属于本阶段必需契约；不要复制状态或只增加 UI Gold 标志。
+
+权威文档：[产品范围与 16 项定案](../product/gold-dataset.md)、[Annotation Domain](annotation-domain.md)、[Engine integration](annotation-engine-integration.md)、[Gold production / certification](gold-dataset-production.md)、[ADR-0012](../adr/0012-gold-dataset-annotation-boundary.md)。本节只提供组件摘要，不另定义状态机；具体新增范围和后续 Issue 归属以上述文档为准。
