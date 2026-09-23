@@ -28,12 +28,22 @@ var (
 	ErrActivationGuardRejected = errors.New("annotation activation guard rejected campaign")
 )
 
+type ActivationProof struct {
+	TaskManifestHash string
+	TaskCount        int
+}
+
 type ActivationGuard interface {
-	ValidateActivation(
+	Preflight(
+		ctx context.Context,
+		campaign annotationdomain.Campaign,
+		tasks []annotationdomain.Task,
+	) (ActivationProof, error)
+	ValidateActivationTx(
 		ctx context.Context,
 		tx pgx.Tx,
 		campaign annotationdomain.Campaign,
-		tasks []annotationdomain.Task,
+		proof ActivationProof,
 	) error
 }
 
@@ -176,13 +186,23 @@ func (s *Service) ActivateCampaign(ctx context.Context, cmd ActivateCampaignComm
 	if preflight.WorkspaceID != cmd.WorkspaceID || preflight.Status != annotationdomain.CampaignDraft {
 		return annotationdomain.Campaign{}, annotationdomain.ErrInvalidCampaign
 	}
+	preflightTasks, err := s.repo.ListTasks(ctx, cmd.CampaignID)
+	if err != nil {
+		return annotationdomain.Campaign{}, err
+	}
+	if len(preflightTasks) == 0 {
+		return annotationdomain.Campaign{}, annotationdomain.ErrInvalidCampaign
+	}
+	proof, err := s.activationGuard.Preflight(ctx, preflight, preflightTasks)
+	if err != nil {
+		return annotationdomain.Campaign{}, fmt.Errorf("%w: %v", ErrActivationGuardRejected, err)
+	}
+	if proof.TaskCount != len(preflightTasks) || proof.TaskManifestHash == "" {
+		return annotationdomain.Campaign{}, ErrActivationGuardRejected
+	}
 
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		preflightTasks, err := s.repo.ListTasksTx(ctx, tx, cmd.CampaignID)
-		if err != nil {
-			return err
-		}
-		if err := s.activationGuard.ValidateActivation(ctx, tx, preflight, preflightTasks); err != nil {
+		if err := s.activationGuard.ValidateActivationTx(ctx, tx, preflight, proof); err != nil {
 			return fmt.Errorf("%w: %v", ErrActivationGuardRejected, err)
 		}
 		campaign, err := s.repo.LockCampaignTx(ctx, tx, cmd.CampaignID)
@@ -206,6 +226,9 @@ func (s *Service) ActivateCampaign(ctx context.Context, cmd ActivateCampaignComm
 		manifestHash, err := taskManifestHash(tasks)
 		if err != nil {
 			return err
+		}
+		if len(tasks) != proof.TaskCount || manifestHash != proof.TaskManifestHash {
+			return annotationinfra.ErrStaleRevision
 		}
 		now := time.Now().UTC()
 		if err := s.repo.ActivateCampaign(
