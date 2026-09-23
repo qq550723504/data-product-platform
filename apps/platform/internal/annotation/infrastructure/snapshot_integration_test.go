@@ -31,6 +31,9 @@ type annotationDBFixture struct {
 	manifest        []byte
 	rootHash        string
 	payloadHash     string
+	inputChecksum   string
+	builtAt         time.Time
+	resultCreatedAt time.Time
 }
 
 func TestAnnotationSnapshotFinalizationFreezesHeaderAndMembership(t *testing.T) {
@@ -162,9 +165,10 @@ func TestAnnotationSnapshotCannotCommitUnfinishedBuilding(t *testing.T) {
 	if _, err := tx.Exec(ctx, `
 		INSERT INTO annotation_snapshot(
 			id, workspace_id, campaign_id, manifest, manifest_hash_payload, root_hash,
-			expected_task_count, expected_result_count, expected_decision_count, expected_output_count
-		) VALUES ($1,$2,$3,$4,$5,$6,1,1,1,1)
-	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.manifest, fx.rootHash); err != nil {
+			expected_task_count, expected_result_count, expected_decision_count, expected_output_count,
+			created_at
+		) VALUES ($1,$2,$3,$4,$5,$6,1,1,1,1,$7)
+	`, fx.snapshotID, fx.workspaceID, fx.campaignID, fx.manifest, fx.manifest, fx.rootHash, fx.builtAt); err != nil {
 		_ = tx.Rollback(ctx)
 		t.Fatalf("insert BUILDING snapshot: %v", err)
 	}
@@ -667,9 +671,9 @@ func createAnnotationReviewRaceFixture(
 	if _, err := pool.Exec(ctx, `
 		UPDATE annotation_campaign
 		   SET status='ACTIVE', revision=2, expected_task_count=1,
-		       task_manifest_hash=$2, activated_at=now()
+		       task_manifest_hash=$2, input_checksum_sha256=$3, activated_at=now()
 		 WHERE id=$1
-	`, campaignID, strings.Repeat("c", 64)); err != nil {
+	`, campaignID, strings.Repeat("c", 64), inputChecksum); err != nil {
 		t.Fatalf("activate race campaign: %v", err)
 	}
 	payload := []byte("{\"label\":\"RACE\"}")
@@ -720,6 +724,9 @@ func createAnnotationDBFixture(t *testing.T, ctx context.Context, pool *pgxpool.
 	decisionID := uuid.New()
 	snapshotID := uuid.New()
 	codeSuffix := strings.ReplaceAll(uuid.NewString(), "-", "")[:10]
+	inputChecksum := strings.Repeat("1", 64)
+	builtAt := time.Date(2026, 9, 23, 10, 0, 0, 123456000, time.UTC)
+	resultCreatedAt := time.Date(2026, 9, 23, 9, 59, 59, 654321000, time.UTC)
 
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO data_resource(id, workspace_id, code, name, resource_type, lifecycle_status)
@@ -738,7 +745,7 @@ func createAnnotationDBFixture(t *testing.T, ctx context.Context, pool *pgxpool.
 			id, dataset_id, version_no, status, storage_type, storage_uri,
 			content_type, row_count, checksum_algorithm, checksum_value, ready_at
 		) VALUES ($1,$2,1,'READY','OBJECT','test://annotation','application/json',1,'SHA256',$3,now())
-	`, versionID, datasetID, strings.Repeat("1", 64)); err != nil {
+	`, versionID, datasetID, inputChecksum); err != nil {
 		t.Fatalf("insert dataset version: %v", err)
 	}
 
@@ -812,9 +819,9 @@ func createAnnotationDBFixture(t *testing.T, ctx context.Context, pool *pgxpool.
 	if _, err := pool.Exec(ctx, `
 		UPDATE annotation_campaign
 		   SET status='ACTIVE', revision=2, expected_task_count=1,
-		       task_manifest_hash=$2, activated_at=now()
+		       task_manifest_hash=$2, input_checksum_sha256=$3, activated_at=now()
 		 WHERE id=$1
-	`, campaignID, strings.Repeat("c", 64)); err != nil {
+	`, campaignID, strings.Repeat("c", 64), base.inputChecksum); err != nil {
 		t.Fatalf("activate annotation campaign: %v", err)
 	}
 
@@ -823,9 +830,9 @@ func createAnnotationDBFixture(t *testing.T, ctx context.Context, pool *pgxpool.
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO annotation_result(
 			id, workspace_id, campaign_id, task_id, author_ref, observation_key,
-			canonical_payload, canonical_payload_sha256, normalizer_version
-		) VALUES ($1,$2,$3,$4,'annotator','obs:1',$5,$6,'fixture-v1')
-	`, resultID, workspaceID, campaignID, taskID, payload, payloadHash); err != nil {
+			canonical_payload, canonical_payload_sha256, normalizer_version, created_at
+		) VALUES ($1,$2,$3,$4,'annotator','obs:1',$5,$6,'fixture-v1',$7)
+	`, resultID, workspaceID, campaignID, taskID, payload, payloadHash, resultCreatedAt); err != nil {
 		t.Fatalf("insert annotation result: %v", err)
 	}
 	if _, err := pool.Exec(ctx, `
@@ -858,14 +865,16 @@ func createAnnotationDBFixture(t *testing.T, ctx context.Context, pool *pgxpool.
 	}
 
 	manifest := annotationFixtureManifest(
-		campaignID, versionID, certificationID, resourceID,
-		taskID, resultID, decisionID, payloadHash,
+		workspaceID, campaignID, versionID, certificationID, resourceID,
+		taskID, resultID, attemptID, decisionID, payloadHash, inputChecksum,
+		builtAt, resultCreatedAt,
 	)
 	return annotationDBFixture{
 		workspaceID: workspaceID, campaignID: campaignID, taskID: taskID,
 		resultID: resultID, decisionID: decisionID, attemptID: attemptID, snapshotID: snapshotID,
 		versionID: versionID, certificationID: certificationID, resourceID: resourceID,
 		manifest: manifest, rootHash: sha256Hex(manifest), payloadHash: payloadHash,
+		inputChecksum: inputChecksum, builtAt: builtAt, resultCreatedAt: resultCreatedAt,
 	}
 }
 
@@ -915,35 +924,58 @@ func insertAnnotationSnapshotAggregate(t *testing.T, ctx context.Context, tx pgx
 }
 
 func annotationFixtureManifest(
-	campaignID, versionID, certificationID, resourceID, taskID, resultID, decisionID uuid.UUID,
-	payloadHash string,
+	workspaceID, campaignID, versionID, certificationID, resourceID, taskID, resultID, attemptID, decisionID uuid.UUID,
+	payloadHash, inputChecksum string,
+	builtAt, resultCreatedAt time.Time,
 ) []byte {
-	specHash := sha256Hex([]byte("annotation-fixture-spec"))
+	specContent := "annotation-fixture-spec"
+	specHash := sha256Hex([]byte(specContent))
+	spec := func(ref string) map[string]any {
+		return map[string]any{
+			"ref": ref, "version": "1", "contentSha256": specHash, "contentSnapshot": specContent,
+		}
+	}
 	manifest := map[string]any{
 		"formatVersion":                    "annotation-snapshot-v1",
+		"workspaceId":                      workspaceID.String(),
 		"campaignId":                       campaignID.String(),
 		"inputDatasetVersionId":            versionID.String(),
+		"inputChecksumAlgorithm":           "SHA256",
+		"inputChecksumSha256":              inputChecksum,
 		"inputCertificationId":             certificationID.String(),
 		"annotationContributionResourceId": resourceID.String(),
+		"purpose":                          "gold-pilot",
+		"action":                           "PROCESS",
+		"consumerRef":                      "",
+		"scopeType":                        "",
+		"scopeRef":                         "",
 		"taskManifestHash":                 strings.Repeat("c", 64),
-		"schemaHash":                       specHash,
-		"taxonomyHash":                     specHash,
-		"rubricHash":                       specHash,
-		"rendererHash":                     specHash,
-		"reviewPolicyHash":                 specHash,
+		"schema":                           spec("schema"),
+		"taxonomy":                         spec("taxonomy"),
+		"rubric":                           spec("rubric"),
+		"renderer":                         spec("renderer"),
+		"reviewPolicy":                     spec("review"),
+		"builtAtUnixMicros":                builtAt.UTC().UnixMicro(),
+		"builtBy":                          "",
 		"tasks": []map[string]any{{
 			"id": taskID.String(), "sourceItemRef": "row:1",
 			"sourceContentSha256": strings.Repeat("a", 64),
 			"taskTextSha256":      strings.Repeat("b", 64),
+			"primaryAnnotatorRef": "annotator",
 		}},
 		"results": []map[string]any{{
 			"id": resultID.String(), "taskId": taskID.String(),
-			"canonicalPayloadSha256": payloadHash, "authorRef": "annotator",
+			"authorRef": "annotator", "providerBindingRef": "",
+			"externalTaskId": "", "externalAnnotationId": "", "externalRevision": "",
+			"observationKey": "obs:1", "canonicalPayloadSha256": payloadHash,
+			"normalizerVersion": "fixture-v1", "createdAtUnixMicros": resultCreatedAt.UTC().UnixMicro(),
+			"createdBy": "",
 		}},
 		"decisions": []map[string]any{{
-			"id": decisionID.String(), "taskId": taskID.String(), "outcome": "ACCEPT",
+			"id": decisionID.String(), "taskId": taskID.String(),
+			"reviewAttemptId": attemptID.String(), "outcome": "ACCEPT",
 			"reviewedResultId": resultID.String(), "selectedResultId": resultID.String(),
-			"reviewerRef": "reviewer", "reason": "verified",
+			"reviewerRef": "reviewer", "reason": "verified", "expectedTaskRevision": int64(2),
 		}},
 		"outputs": []map[string]any{{
 			"taskId": taskID.String(), "selectedResultId": resultID.String(),
