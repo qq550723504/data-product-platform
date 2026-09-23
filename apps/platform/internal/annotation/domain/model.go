@@ -207,6 +207,12 @@ func (r Result) Validate() error {
 		!isSHA256(r.CanonicalPayloadSHA256) || strings.TrimSpace(r.NormalizerVersion) == "" {
 		return ErrInvalidResult
 	}
+	if r.CorrectedFromResultID == nil &&
+		(strings.TrimSpace(r.ProviderBindingRef) == "" ||
+			strings.TrimSpace(r.ExternalTaskID) == "" ||
+			strings.TrimSpace(r.ExternalAnnotationID) == "") {
+		return ErrInvalidResult
+	}
 	return nil
 }
 
