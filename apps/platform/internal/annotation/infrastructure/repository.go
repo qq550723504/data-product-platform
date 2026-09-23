@@ -258,7 +258,6 @@ func (r *Repository) GetTaskTx(ctx context.Context, tx pgx.Tx, taskID uuid.UUID)
 	return getTask(ctx, tx, taskID)
 }
 
-
 func (r *Repository) ListResultsTx(
 	ctx context.Context,
 	tx pgx.Tx,
