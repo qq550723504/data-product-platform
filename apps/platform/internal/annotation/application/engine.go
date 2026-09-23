@@ -42,6 +42,12 @@ type EngineCampaignBinding struct {
 	ConfigSHA256      string
 }
 
+type EngineCampaignLookup struct {
+	State         EngineLookupState
+	Binding       *EngineCampaignBinding
+	DiagnosticRef string
+}
+
 type EngineTask struct {
 	TaskID         uuid.UUID
 	SourceItemRef  string
@@ -102,6 +108,7 @@ type EngineResultPage struct {
 type AnnotationEnginePort interface {
 	Provider() string
 	EnsureCampaignBinding(context.Context, EngineCampaignRequest) (EngineCampaignBinding, error)
+	LookupCampaignBinding(context.Context, EngineCampaignRequest) (EngineCampaignLookup, error)
 	SubmitTasks(context.Context, EngineSubmitRequest) (EngineSubmission, error)
 	LookupSubmission(context.Context, EngineLookupRequest) (EngineSubmission, error)
 	FetchResults(context.Context, EngineCampaignBinding, EngineResultCursor) (EngineResultPage, error)
