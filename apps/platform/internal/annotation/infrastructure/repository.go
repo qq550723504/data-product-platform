@@ -226,7 +226,7 @@ func (r *Repository) InsertReviewAttempt(ctx context.Context, tx pgx.Tx, attempt
 	_, err := tx.Exec(ctx, `
 		INSERT INTO annotation_review_attempt (
 			id, workspace_id, campaign_id, task_id, reviewer_ref, expected_task_revision,
-			review_review_action, reason, idempotency_key, request_fingerprint, created_at
+			review_action, reason, idempotency_key, request_fingerprint, created_at
 		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
 	`, attempt.ID, attempt.WorkspaceID, attempt.CampaignID, attempt.TaskID, attempt.ReviewerRef,
 		attempt.ExpectedTaskRevision, attempt.Action, attempt.Reason, attempt.IdempotencyKey,
