@@ -129,14 +129,19 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_version (
 			id, product_id, major_version, minor_version, patch_version,
-			contract_version_id, definition_snapshot, created_at
-		) VALUES ($1,$2,1,0,0,$3,'{"reference":"enterprise-activity"}'::jsonb,now())
+			contract_version_id, definition_snapshot, build_status, created_at
+		) VALUES ($1,$2,1,0,0,$3,'{"reference":"enterprise-activity"}'::jsonb,'BUILDING',now())
 	`, productVersionID, productID, contractVersionID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_asset (
 			id, product_version_id, asset_type, name, dataset_id, delivery_config, created_at
 		) VALUES ($1,$2,'DATASET','enterprise_activity_curated',$3,'{"mode":"DATASET"}'::jsonb,now())
 	`, uuid.New(), productVersionID, datasetID)
+	mustExec(t, ctx, pool, `
+		UPDATE product_version
+		SET build_status='FINALIZED'
+		WHERE id=$1 AND build_status='BUILDING'
+	`, productVersionID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_release (
 			id, product_id, product_version_id, release_no, status,
