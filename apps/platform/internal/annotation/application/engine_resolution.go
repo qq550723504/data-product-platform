@@ -28,15 +28,15 @@ func (s *EngineService) persistEngineBindings(
 			ctx,
 			tx,
 			annotationdomain.EngineCampaignBinding{
-				ID: uuid.New(),
-				WorkspaceID: operation.WorkspaceID,
-				CampaignID: operation.CampaignID,
-				Provider: binding.Provider,
-				ProviderInstance: binding.ProviderInstance,
+				ID:                uuid.New(),
+				WorkspaceID:       operation.WorkspaceID,
+				CampaignID:        operation.CampaignID,
+				Provider:          binding.Provider,
+				ProviderInstance:  binding.ProviderInstance,
 				ExternalProjectID: binding.ExternalProjectID,
-				RequestID: binding.RequestID,
-				ConfigSHA256: binding.ConfigSHA256,
-				CreatedAt: now,
+				RequestID:         binding.RequestID,
+				ConfigSHA256:      binding.ConfigSHA256,
+				CreatedAt:         now,
 			},
 		)
 		return err
@@ -70,13 +70,13 @@ func (s *EngineService) persistEngineBindings(
 				ctx,
 				tx,
 				annotationdomain.EngineTaskBinding{
-					ID: uuid.New(),
-					WorkspaceID: operation.WorkspaceID,
+					ID:                uuid.New(),
+					WorkspaceID:       operation.WorkspaceID,
 					CampaignBindingID: binding.ID,
-					CampaignID: operation.CampaignID,
-					TaskID: taskID,
-					ExternalTaskID: externalTaskID,
-					CreatedAt: now,
+					CampaignID:        operation.CampaignID,
+					TaskID:            taskID,
+					ExternalTaskID:    externalTaskID,
+					CreatedAt:         now,
 				},
 			); err != nil {
 				return err
