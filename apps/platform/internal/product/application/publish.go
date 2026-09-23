@@ -74,6 +74,12 @@ func (s *Service) PublishRelease(ctx context.Context, cmd PublishReleaseCommand)
 
 	var snapshot evidence.Snapshot
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		// ProductRelease dataset membership and publish share the same parent-row
+		// linearization point. If membership changed after the preflight/manifest
+		// read, fail instead of publishing a snapshot built from stale bindings.
+		if err := s.repo.LockReleaseMembershipForPublish(ctx, tx, release); err != nil {
+			return err
+		}
 		created, err := evidence.CreateSnapshot(
 			ctx,
 			tx,
