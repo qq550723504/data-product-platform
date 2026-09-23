@@ -215,9 +215,9 @@ func TestPublishedProductReleaseTraceability(t *testing.T) {
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_version (
 			id, product_id, major_version, minor_version, patch_version, workflow_version_id,
-			entity_policy_ref, indicator_set_ref, definition_snapshot, created_at
+			entity_policy_ref, indicator_set_ref, definition_snapshot, build_status, created_at
 		) VALUES ($1,$2,1,0,0,$3,'park/matching/company-match-policy-v1.yaml',
-		          'park/indicators/enterprise-activity-v1.yaml','{}'::jsonb,now())
+		          'park/indicators/enterprise-activity-v1.yaml','{}'::jsonb,'FINALIZED',now())
 	`, productVersionID, productID, workflowVersionID)
 
 	tx, err = pool.Begin(ctx)
@@ -474,8 +474,8 @@ func TestReleaseTraceBindsMappingsToDecisionNotCurrentProjection(t *testing.T) {
 		VALUES ($1,$2,$3,'Bound mapping product','PUBLISHED','HEALTHY','{}'::jsonb,now(),now())
 	`, productID, workspaceID, "BIND-PRODUCT-"+uuid.NewString())
 	mustExec(t, ctx, pool, `
-		INSERT INTO product_version (id, product_id, major_version, minor_version, patch_version, definition_snapshot, created_at)
-		VALUES ($1,$2,1,0,0,'{}'::jsonb,now())
+		INSERT INTO product_version (id, product_id, major_version, minor_version, patch_version, definition_snapshot, build_status, created_at)
+		VALUES ($1,$2,1,0,0,'{}'::jsonb,'FINALIZED',now())
 	`, productVersionID, productID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO product_release (id, product_id, product_version_id, release_no, status, metadata, created_at, released_at)
