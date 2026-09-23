@@ -451,8 +451,19 @@ BEFORE INSERT ON annotation_task
 FOR EACH ROW EXECUTE FUNCTION guard_annotation_task_insert();
 
 CREATE OR REPLACE FUNCTION guard_annotation_task_update()
-RETURNS trigger AS $$
+RETURNS trigger AS $
+DECLARE
+    campaign_status varchar(16);
 BEGIN
+    SELECT status
+      INTO campaign_status
+      FROM annotation_campaign
+     WHERE id=OLD.campaign_id
+     FOR UPDATE;
+    IF campaign_status <> 'ACTIVE' THEN
+        RAISE EXCEPTION 'annotation task is immutable outside ACTIVE campaign';
+    END IF;
+
     IF NEW.id IS DISTINCT FROM OLD.id
        OR NEW.workspace_id IS DISTINCT FROM OLD.workspace_id
        OR NEW.campaign_id IS DISTINCT FROM OLD.campaign_id
