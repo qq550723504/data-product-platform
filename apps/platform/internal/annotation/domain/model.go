@@ -220,7 +220,6 @@ type ReviewAttempt struct {
 	Reason               string
 	IdempotencyKey       string
 	RequestFingerprint   string
-	Outcome              string
 	CreatedAt            time.Time
 }
 
@@ -228,8 +227,22 @@ func (a ReviewAttempt) Validate() error {
 	if a.ID == uuid.Nil || a.WorkspaceID == uuid.Nil || a.CampaignID == uuid.Nil || a.TaskID == uuid.Nil ||
 		strings.TrimSpace(a.ReviewerRef) == "" || a.ExpectedTaskRevision < 1 ||
 		!validReviewAction(a.Action) || strings.TrimSpace(a.Reason) == "" ||
-		strings.TrimSpace(a.IdempotencyKey) == "" || !isSHA256(a.RequestFingerprint) ||
-		!validReviewAttemptOutcome(a.Outcome) {
+		strings.TrimSpace(a.IdempotencyKey) == "" || !isSHA256(a.RequestFingerprint) {
+		return ErrInvalidReviewAttempt
+	}
+	return nil
+}
+
+type ReviewAttemptOutcome struct {
+	ID         uuid.UUID
+	AttemptID  uuid.UUID
+	Outcome    string
+	ErrorCode  string
+	OccurredAt time.Time
+}
+
+func (o ReviewAttemptOutcome) Validate() error {
+	if o.ID == uuid.Nil || o.AttemptID == uuid.Nil || !validReviewAttemptOutcome(o.Outcome) {
 		return ErrInvalidReviewAttempt
 	}
 	return nil
