@@ -237,4 +237,3 @@ func TestValidateReplayAliasRejectsAliasBoundToDifferentResult(t *testing.T) {
 		t.Fatalf("conflicting alias error = %v, want idempotency conflict", err)
 	}
 }
-
