@@ -244,12 +244,7 @@ func main() {
 
 	certificationProfileRepo := certificationinfra.NewProfileRepository(db)
 	certificationRepo := certificationinfra.NewCertificationRepository(db)
-	certificationService := certificationapp.NewCertificationService(
-		txManager,
-		certificationProfileRepo,
-		certificationRepo,
-		certificationapp.NewReferenceEvidenceResolver(),
-	)
+	certificationService := certificationapp.NewCertificationService(txManager, certificationProfileRepo, certificationRepo, nil)
 	certificationEligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
 	certificationHandler := certificationhttp.NewHandler(certificationService, certificationEligibility, datasetRepo)
 
