@@ -244,7 +244,7 @@ func (h *Handler) review(w http.ResponseWriter, r *http.Request, confirm bool) {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "ENTITY_MATCH_CANDIDATE_READ_FAILED", "entity match candidate lookup failed", nil)
 		return
 	}
-	job, err := h.repo.GetJob(r.Context(), candidate.JobID)
+	candidateJob, err := h.repo.GetJob(r.Context(), candidate.JobID)
 	if err != nil {
 		if errors.Is(err, infrastructure.ErrNotFound) {
 			httpserver.WriteError(w, r, http.StatusNotFound, "ENTITY_MATCH_JOB_NOT_FOUND", "entity match job not found", nil)
@@ -253,7 +253,7 @@ func (h *Handler) review(w http.ResponseWriter, r *http.Request, confirm bool) {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "ENTITY_MATCH_JOB_READ_FAILED", "entity match job lookup failed", nil)
 		return
 	}
-	principal, err := h.resolver.Resolve(r, job.WorkspaceID, platformprincipal.CapabilityHumanDecision)
+	principal, err := h.resolver.Resolve(r, candidateJob.WorkspaceID, platformprincipal.CapabilityHumanDecision)
 	if err != nil {
 		switch {
 		case errors.Is(err, platformprincipal.ErrNotConfigured):
