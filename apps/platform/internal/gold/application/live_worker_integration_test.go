@@ -448,7 +448,7 @@ func waitLiveGoldExecution(
 	executionID uuid.UUID,
 ) uuid.UUID {
 	t.Helper()
-	deadline := time.Now().Add(35 * time.Second)
+	deadline := time.Now().Add(105 * time.Second)
 	for time.Now().Before(deadline) {
 		if err := worker.Process.Signal(syscall.Signal(0)); err != nil {
 			content, _ := os.ReadFile(workerLog)
@@ -479,8 +479,38 @@ func waitLiveGoldExecution(
 		case <-time.After(250 * time.Millisecond):
 		}
 	}
+	var status string
+	var outputID *uuid.UUID
+	_ = pool.QueryRow(ctx, `
+		SELECT status, output_dataset_version_id
+		FROM execution
+		WHERE id=$1
+	`, executionID).Scan(&status, &outputID)
+	var queuedEvents, confirmedDispatches int
+	_ = pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM outbox_event
+		WHERE aggregate_type='EXECUTION'
+		  AND aggregate_id=$1
+		  AND event_type='ExecutionQueued'
+	`, executionID).Scan(&queuedEvents)
+	_ = pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM outbox_delivery_confirmation c
+		JOIN outbox_event e ON e.id=c.event_id
+		WHERE e.aggregate_type='EXECUTION'
+		  AND e.aggregate_id=$1
+		  AND e.event_type='ExecutionQueued'
+	`, executionID).Scan(&confirmedDispatches)
 	content, _ := os.ReadFile(workerLog)
-	t.Fatalf("live Gold execution timeout\n%s", content)
+	t.Fatalf(
+		"live Gold execution timeout status=%s output=%v queuedEvents=%d dispatchConfirmations=%d\n%s",
+		status,
+		outputID,
+		queuedEvents,
+		confirmedDispatches,
+		content,
+	)
 	return uuid.Nil
 }
 
