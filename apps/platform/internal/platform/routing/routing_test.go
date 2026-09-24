@@ -24,6 +24,7 @@ var eventVocabulary = []string{
 	"AnnotationCampaignActivated",
 	"AnnotationCampaignCreated",
 	"AnnotationEngineAttemptStarted",
+	"AnnotationEngineManualResolutionApplied",
 	"AnnotationEngineManualResolutionRequired",
 	"AnnotationEngineOperationPrepared",
 	"AnnotationEngineOperationResolved",
