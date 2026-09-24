@@ -17,6 +17,8 @@ import (
 type ApplicabilityMode string
 
 const (
+	GoldCertificationProfileRef = "gold/dataset-v1"
+
 	ApplicabilityAny      ApplicabilityMode = "ANY"
 	ApplicabilityExplicit ApplicabilityMode = "EXPLICIT"
 )
