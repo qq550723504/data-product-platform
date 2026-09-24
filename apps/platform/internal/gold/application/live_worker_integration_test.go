@@ -496,7 +496,7 @@ func waitLiveGoldExecution(
 	`, executionID).Scan(&queuedEvents)
 	_ = pool.QueryRow(ctx, `
 		SELECT count(*)
-		FROM outbox_delivery_confirmation c
+		FROM outbox_event_consumption c
 		JOIN outbox_event e ON e.id=c.event_id
 		WHERE e.aggregate_type='EXECUTION'
 		  AND e.aggregate_id=$1
