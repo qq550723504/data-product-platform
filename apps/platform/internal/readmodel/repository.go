@@ -370,15 +370,16 @@ func (r *Repository) GoldExplanation(
 			sd.reviewed_result_id,
 			sd.selected_result_id,
 			COALESCE(sr.canonical_payload_sha256,''),
-			COALESCE(sr.author_ref,''),
-			COALESCE(sr.provider_binding_ref,''),
-			COALESCE(sr.external_task_id,''),
-			COALESCE(sr.external_annotation_id,''),
+			COALESCE(rr.author_ref,''),
+			COALESCE(rr.provider_binding_ref,''),
+			COALESCE(rr.external_task_id,''),
+			COALESCE(rr.external_annotation_id,''),
 			d.created_at
 		FROM annotation_snapshot_task st
 		JOIN annotation_snapshot_decision sd
 		  ON sd.snapshot_id=st.snapshot_id AND sd.task_id=st.task_id
 		JOIN annotation_review_decision d ON d.id=sd.decision_id
+		LEFT JOIN annotation_result rr ON rr.id=sd.reviewed_result_id
 		LEFT JOIN annotation_result sr ON sr.id=sd.selected_result_id
 		WHERE st.snapshot_id=$1
 		ORDER BY st.source_item_ref, st.task_id
