@@ -412,7 +412,7 @@ export default async function DatasetVersionDetailPage({
                         <span className="mono">{review.selectedResultSha256 ? shortId(review.selectedResultSha256) : "—"}</span>
                       </td>
                       <td>
-                        <span className="mono">{review.providerBindingRef ? shortId(review.providerBindingRef) : "—"}</span><br />
+                        <span className="mono">{review.providerBindingRef || "—"}</span><br />
                         <span className="mono">task {review.externalTaskId || "—"}</span><br />
                         <span className="mono">annotation {review.externalAnnotationId || "—"}</span>
                       </td>
