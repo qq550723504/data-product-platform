@@ -101,7 +101,6 @@ func TestExpiredAnnotationEngineSendRecoversOnlyToUnknown(t *testing.T) {
 	}
 }
 
-
 func TestExpiredSendWithCommittedOutcomeRecoversAndAcceptsLateObservation(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
