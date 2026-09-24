@@ -14,6 +14,7 @@ type Config struct {
 	IndustryPackRoot string
 	RightsAPI        RightsAPIConfig
 	DeliveryAPI      DeliveryAPIConfig
+	HumanDecisionAPI HumanDecisionAPIConfig
 	Redis            RedisConfig
 	Storage          StorageConfig
 	OpenMetadata     OpenMetadataConfig
@@ -33,6 +34,14 @@ type DeliveryAPIConfig struct {
 	Token        string
 	PrincipalRef string
 	ConsumerRef  string
+	WorkspaceIDs []string
+}
+
+type HumanDecisionAPIConfig struct {
+	Enabled      bool
+	Token        string
+	Subject      string
+	ActorID      string
 	WorkspaceIDs []string
 }
 
@@ -101,6 +110,10 @@ func Load() (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
+	humanDecisionAPIEnabled, err := boolEnv("HUMAN_DECISION_API_ENABLED", false)
+	if err != nil {
+		return Config{}, err
+	}
 	openMetadataEnabled, err := boolEnv("OPENMETADATA_ENABLED", false)
 	if err != nil {
 		return Config{}, err
@@ -154,6 +167,13 @@ func Load() (Config, error) {
 			PrincipalRef: os.Getenv("DELIVERY_API_PRINCIPAL_REF"),
 			ConsumerRef:  os.Getenv("DELIVERY_API_CONSUMER_REF"),
 			WorkspaceIDs: stringListEnv("DELIVERY_API_WORKSPACE_IDS"),
+		},
+		HumanDecisionAPI: HumanDecisionAPIConfig{
+			Enabled:      humanDecisionAPIEnabled,
+			Token:        os.Getenv("HUMAN_DECISION_API_TOKEN"),
+			Subject:      os.Getenv("HUMAN_DECISION_API_SUBJECT"),
+			ActorID:      os.Getenv("HUMAN_DECISION_API_ACTOR_ID"),
+			WorkspaceIDs: stringListEnv("HUMAN_DECISION_API_WORKSPACE_IDS"),
 		},
 		Redis: RedisConfig{
 			Addr:     stringEnv("REDIS_ADDR", "localhost:6379"),
@@ -219,6 +239,9 @@ func Load() (Config, error) {
 	}
 	if cfg.DeliveryAPI.Enabled && (strings.TrimSpace(cfg.DeliveryAPI.Token) == "" || strings.TrimSpace(cfg.DeliveryAPI.PrincipalRef) == "" || strings.TrimSpace(cfg.DeliveryAPI.ConsumerRef) == "" || len(cfg.DeliveryAPI.WorkspaceIDs) == 0) {
 		return Config{}, fmt.Errorf("DELIVERY_API_TOKEN, DELIVERY_API_PRINCIPAL_REF, DELIVERY_API_CONSUMER_REF, and DELIVERY_API_WORKSPACE_IDS must be configured when direct delivery is enabled")
+	}
+	if cfg.HumanDecisionAPI.Enabled && (strings.TrimSpace(cfg.HumanDecisionAPI.Token) == "" || strings.TrimSpace(cfg.HumanDecisionAPI.ActorID) == "" || len(cfg.HumanDecisionAPI.WorkspaceIDs) == 0) {
+		return Config{}, fmt.Errorf("HUMAN_DECISION_API_TOKEN, HUMAN_DECISION_API_ACTOR_ID, and HUMAN_DECISION_API_WORKSPACE_IDS must be configured when human decision API is enabled")
 	}
 	if cfg.OpenMetadata.Enabled {
 		if cfg.OpenMetadata.BaseURL == "" {

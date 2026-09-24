@@ -10,7 +10,7 @@ const ids = {
   entity: "55555555-5555-4555-8555-555555555555",
   foreign: "66666666-6666-4666-8666-666666666666",
 };
-const config = { enabled: true, workspaceId: ids.workspace, actorId: ids.actor, apiBaseUrl: "http://core.invalid" };
+const config = { enabled: true, workspaceId: ids.workspace, token: "review-secret", apiBaseUrl: "http://core.invalid" };
 const job = { id: ids.job, workspaceId: ids.workspace, status: "WAITING_REVIEW" };
 const candidate = { id: ids.candidate, jobId: ids.job, status: "PENDING", candidateEntityId: ids.entity };
 function form(overrides = {}) {
@@ -31,7 +31,7 @@ function stub(responses = [job, candidate, { ...job, status: "SUCCEEDED" }]) {
   return { calls, request };
 }
 for (const decision of ["confirm", "reject"]) {
-  test(`${decision}: scope checked, server actor and trimmed reason forwarded once`, async () => {
+  test(`${decision}: scope checked, server credential and trimmed reason forwarded once`, async () => {
     const transport = stub();
     const result = await executeReview(form({ decision, actorId: ids.foreign, workspaceId: ids.foreign }), config, transport.request);
     assert.equal(result.ok, true);
@@ -40,7 +40,8 @@ for (const decision of ["confirm", "reject"]) {
     assert.equal(transport.calls[1].url, `http://core.invalid/api/v1/entity-match-reviews/${ids.candidate}`);
     const { url, init } = transport.calls[2];
     assert.equal(url, `http://core.invalid/api/v1/entity-match-reviews/${ids.candidate}/${decision}`);
-    assert.equal(init.headers["X-Actor-ID"], ids.actor);
+    assert.equal(init.headers.Authorization, "Bearer review-secret");
+    assert.equal(init.headers["X-Actor-ID"], undefined);
     assert.deepEqual(JSON.parse(init.body), { reason: "已核对来源记录" });
     assert.equal(init.cache, "no-store");
     assert.equal(init.redirect, "error");
@@ -48,9 +49,8 @@ for (const decision of ["confirm", "reject"]) {
   });
 }
 for (const [name, settings] of [
-  ["disabled", { enabled: false }], ["missing reviewer", { actorId: null }],
-  ["invalid reviewer", { actorId: "bad" }], ["nil reviewer", { actorId: "00000000-0000-0000-0000-000000000000" }],
-  ["missing workspace", { workspaceId: null }],
+  ["disabled", { enabled: false }], ["missing credential", { token: null }],
+  ["blank credential", { token: "   " }], ["missing workspace", { workspaceId: null }],
 ]) {
   test(`${name}: no upstream request`, async () => {
     const transport = stub([]);

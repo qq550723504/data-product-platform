@@ -11,7 +11,7 @@ export async function reviewCandidate(
   const result = await executeReview(form, {
     enabled: process.env.POC_ENABLE_REVIEW_ACTIONS === "true",
     workspaceId: configuredWorkspaceId(),
-    actorId: process.env.POC_REVIEWER_ID?.trim(),
+    token: process.env.HUMAN_DECISION_API_TOKEN?.trim(),
     apiBaseUrl: process.env.PLATFORM_API_BASE_URL ?? "http://localhost:8080",
   });
   if (result.ok || result.refreshRequired) {

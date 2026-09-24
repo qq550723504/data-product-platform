@@ -6,11 +6,11 @@
 
 打开 `/reviews`，对照候选 ID 与溯源信息（provenance）比较原始与归一化后的源记录，填写原因（1–2000 字符），然后确认或拒绝。浏览器调用 Server Action。在提交核心命令之前，服务端会：
 
-1. 要求显式启用的 POC 开关，以及已配置的 workspace/reviewer UUID。
-2. 拉取该 job，并校验其 workspace 与身份。
+1. 要求显式启用的 POC 开关、workspace，以及仅存在于服务端的 Human Decision API credential。
+2. 拉取该 job，并在 Web 侧做 workspace 预检。
 3. 按 `candidateId` 定向拉取该候选（不加载整个 job 的候选列表），并校验候选归属关系与 PENDING 状态。
 4. 确认操作必须提供候选实体；拒绝操作绝不创建实体。
-5. 以去除首尾空白的原因（reason）和服务端推导出的 `X-Actor-ID` 调用既有的 `/confirm` 或 `/reject` 命令。状态迁移、映射与证据由 Core 拥有。
+5. Web Server Action 使用 Bearer credential 调用既有 `/confirm` 或 `/reject` 命令。Core 根据候选所属 job 的 authoritative workspace 解析 `RequestPrincipal`，校验 workspace + `HUMAN_DECISION` capability，并从 principal 得到 reviewer actor；客户端提交的 `X-Actor-ID` 不参与权威身份决定。状态迁移、映射与证据由 Core 拥有。
 
 返回的核心 job 状态会被展示；队列、工作台与数据集列表会被重新校验。POST 超时被视为结果未知，而不是确证的失败。不会自动重试任何写操作。应刷新并检查后再重试。
 
@@ -21,13 +21,13 @@
 在 `apps/web/.env.local` 中新增（既有的 API/workspace 配置仍然适用）：
 
 ```dotenv
-# 默认为只读。仅在可信的本地/网络边界内启用。
+# 默认为只读。
 POC_ENABLE_REVIEW_ACTIONS=true
-# 设置为该隔离 POC 所用实际操作员的 UUID。
-POC_REVIEWER_ID=
+# 仅服务端可见；必须与 Core 的 HUMAN_DECISION_API_TOKEN 一致。
+HUMAN_DECISION_API_TOKEN=
 ```
 
-配置了执行主体（actor）**并不等于身份认证或授权**。绝不要信任由浏览器提供的 reviewer。在对外或多用户部署之前，必须用经校验的会话身份替换这个共享的 POC actor，在 Core 中强制校验 reviewer 权限与 workspace 归属，并限制对核心 API 的直接访问。UI 的归属校验并不能保护对全局核心端点的直接调用。不要仅仅因为存在这个开关就公开暴露该控制台。
+Core 现在通过可替换的 `RequestPrincipal` resolver 建立最小可信身份边界：credential、actor、workspace allowlist 与 capability 都由服务端配置决定，浏览器不能通过 actor 字段伪造 reviewer。当前 reference resolver 仍只是 controlled-pilot 的静态 bearer 适配器，不等于生产 IAM；生产环境应替换为 OIDC/session 等受验证的身份提供者，而 application/domain 层保持不感知具体 provider。
 
 Next.js 与 eslint-config-next 从 15.2.4 升级到 15.5.24，即 2026-08-25 记录的受维护 15.x 安全版本：
 https://nextjs.org/blog/august-2026-security-release
@@ -37,11 +37,11 @@ https://nextjs.org/blog/august-2026-security-release
 
 `npm run test:reviews` 会编译与框架无关的边界层，并注入伪造的核心传输层（fake Core transport）运行 Node 契约测试（无需外部服务）。`npm run build` 会在 Next 生产构建之前运行这些测试，因此既有的 web CI 构建也会对它们设置门禁。同时请运行 `npm run typecheck` 与 `npm run lint`。
 
-本次交付已在本地验证：25 个传输/校验测试，覆盖确认/拒绝、actor 伪造、workspace/候选作用域、缺失原因、非 PENDING 候选、缺失实体、畸形响应、409 与超时，以及"预检必须使用定向候选查询而非整个 job 队列"。这些不是真实 Go/PostgreSQL 集成测试，也不是浏览器 E2E 测试。
+Web 契约测试覆盖确认/拒绝、客户端 actor 字段不参与身份、workspace/候选作用域、缺失 credential、缺失原因、非 PENDING 候选、缺失实体、畸形响应、409 与超时，以及"预检必须使用定向候选查询而非整个 job 队列"。Core 的 principal 包另有 credential / workspace / capability / forged-header 回归测试。真实 PostgreSQL HTTP acceptance 仍应作为 #214 收口条件。
 
 仍需要针对真实已播种（seeded）POC 做浏览器验收：
 
-- 默认配置显示只读队列；缺少 reviewer 时阻止写入。
+- 默认配置显示只读队列；缺少 Human Decision credential 时阻止写入。
 - 空/仅空白的原因无法提交；聚焦的控件可键盘操作。
 - 确认/拒绝能够到达 Core，并在刷新后移除候选。
 - 返回的 job 状态以及（存在时）生成的版本可见。

@@ -14,10 +14,11 @@ Object.assign(process.env, {
   NODE_ENV: "production", HOSTNAME: "127.0.0.1", PORT: "13100",
   PLATFORM_API_BASE_URL: "http://127.0.0.1:18080", POC_WORKSPACE_ID: manifest.workspaceId,
   POC_ENABLE_INGEST_ACTIONS: process.env.LIVE_BROWSER_PHASE === "ingest" ? "true" : "false", POC_INGEST_ACTOR_ID: manifest.ingestActorId ?? "",
-  POC_ENABLE_REVIEW_ACTIONS: "true", POC_REVIEWER_ID: manifest.reviewerId,
+  POC_ENABLE_REVIEW_ACTIONS: "true", HUMAN_DECISION_API_TOKEN: process.env.HUMAN_DECISION_API_TOKEN,
   POC_ENABLE_RELEASE_ACTIONS: "true", POC_RELEASE_ACTOR_ID: manifest.publisherId,
   NEXT_TELEMETRY_DISABLED: "1",
 });
+if (!process.env.HUMAN_DECISION_API_TOKEN) throw new Error("Missing live Human Decision credential");
 const web = fileURLToPath(new URL("../../apps/web/", import.meta.url));
 let server;
 for (const path of [join(web, ".next/standalone/server.js"), join(web, ".next/standalone/apps/web/server.js")]) {

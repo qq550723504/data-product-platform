@@ -73,7 +73,7 @@ export function createFixtureServer() {
         return send(404, { error: "unknown control route" });
       }
       const body = req.method === "POST" ? await bodyOf(req) : undefined;
-      state.requests.push({ method: req.method, path: url.pathname, body, actor: req.headers["x-actor-id"], idempotencyKey: req.headers["idempotency-key"] });
+      state.requests.push({ method: req.method, path: url.pathname, body, actor: req.headers["x-actor-id"], authorization: req.headers["authorization"], idempotencyKey: req.headers["idempotency-key"] });
       const workspace = `/api/v1/workspaces/${ids.workspace}`;
       const releasePath = `/api/v1/product-releases/${ids.release}`;
       const product = {
@@ -123,9 +123,9 @@ export function createFixtureServer() {
         });
       }
       if (req.method === "POST") {
-        if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
         const reviewPrefix = `/api/v1/entity-match-reviews/${ids.candidate}/`;
         if ([reviewPrefix + "confirm", reviewPrefix + "reject"].includes(url.pathname)) {
+          if (req.headers["authorization"] !== "Bearer review-secret") return send(401, { error: { code: "AUTHENTICATION_REQUIRED" } });
           if (typeof body.reason !== "string" || !body.reason.trim()) return send(400, { error: { code: "REVIEW_REASON_REQUIRED" } });
           // A stale or absent token must never replace the decision the reviewer
           // saw; only the exact observed decision is accepted.
@@ -135,6 +135,7 @@ export function createFixtureServer() {
           return send(200, { ...job, status: "SUCCEEDED" });
         }
         if (url.pathname === `${releasePath}/publish`) {
+          if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
           if (!req.headers["idempotency-key"]) return send(400, { error: { code: "FIXTURE_KEY_REQUIRED" } });
           if (state.scenario === "publish-conflict" || state.scenario !== "ready" || state.releaseStatus !== "READY") return send(409, { error: { code: "PRODUCT_RELEASE_NOT_READY" } });
           state.releaseStatus = "PUBLISHED";

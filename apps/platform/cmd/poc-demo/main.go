@@ -208,7 +208,23 @@ func (d *demo) prepare() error {
 	if count != 0 {
 		return errors.New("manifest missing but business database is nonempty; refusing to seed")
 	}
-	d.m = manifest{Schema: 1, Workspace: uuid.New(), Actor: uuid.New(), Reviewer: uuid.New(), Publisher: uuid.New()}
+	workspaceID := uuid.New()
+	reviewerID := uuid.New()
+	var err error
+	if d.cfg.HumanDecisionAPI.Enabled {
+		if len(d.cfg.HumanDecisionAPI.WorkspaceIDs) != 1 {
+			return errors.New("demo human decision principal requires exactly one workspace")
+		}
+		workspaceID, err = uuid.Parse(d.cfg.HumanDecisionAPI.WorkspaceIDs[0])
+		if err != nil || workspaceID == uuid.Nil {
+			return errors.New("invalid demo human decision workspace")
+		}
+		reviewerID, err = uuid.Parse(d.cfg.HumanDecisionAPI.ActorID)
+		if err != nil || reviewerID == uuid.Nil {
+			return errors.New("invalid demo human decision reviewer")
+		}
+	}
+	d.m = manifest{Schema: 1, Workspace: workspaceID, Actor: uuid.New(), Reviewer: reviewerID, Publisher: uuid.New()}
 	if err := d.save("INITIALIZING"); err != nil {
 		return err
 	}

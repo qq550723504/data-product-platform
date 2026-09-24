@@ -14,6 +14,11 @@ x-core-environment: &core-environment
   OPENMETADATA_ENABLED: 'false'
   HOP_ENABLED: 'false'
   SPLINK_ENABLED: 'false'
+  HUMAN_DECISION_API_ENABLED: 'true'
+  HUMAN_DECISION_API_TOKEN: demo-review-secret
+  HUMAN_DECISION_API_SUBJECT: demo-reviewer
+  HUMAN_DECISION_API_ACTOR_ID: 22222222-2222-4222-8222-222222222222
+  HUMAN_DECISION_API_WORKSPACE_IDS: 11111111-1111-4111-8111-111111111111
   POC_DEMO_ACK: SYNTHETIC_LOCAL_ONLY
 services:
   postgres:
@@ -88,6 +93,8 @@ services:
     build:
       context: .
       dockerfile: deploy/demo/Dockerfile.web
+    environment:
+      HUMAN_DECISION_API_TOKEN: demo-review-secret
     volumes: [demo-state:/demo-state:ro]
     ports: ['127.0.0.1:3180:3000']
     depends_on:

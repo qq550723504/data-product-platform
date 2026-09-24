@@ -89,13 +89,18 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 
 	artifacts := repoPath(t, ".artifacts", "live-browser")
 	liveOK(t, os.MkdirAll(artifacts, 0700), "create test artifacts")
+	workspaceID, seedActor, reviewerID, publisherID := uuid.New(), uuid.New(), uuid.New(), uuid.New()
+	t.Setenv("HUMAN_DECISION_API_ENABLED", "true")
+	t.Setenv("HUMAN_DECISION_API_TOKEN", "live-review-secret")
+	t.Setenv("HUMAN_DECISION_API_SUBJECT", "live-browser-reviewer")
+	t.Setenv("HUMAN_DECISION_API_ACTOR_ID", reviewerID.String())
+	t.Setenv("HUMAN_DECISION_API_WORKSPACE_IDS", workspaceID.String())
 	// Probe before spawning: never send commands to a pre-existing API process.
 	listener, err := net.Listen("tcp", "127.0.0.1:18080")
 	liveOK(t, err, "API port must be unused")
 	liveOK(t, listener.Close(), "release API port")
 	api := startLiveProcess(t, ctx, filepath.Join(artifacts, "platform-api"), repoPath(t, "apps", "platform"), filepath.Join(artifacts, "api.log"))
 	startLiveProcess(t, ctx, filepath.Join(artifacts, "platform-worker"), repoPath(t, "apps", "platform"), filepath.Join(artifacts, "worker.log"))
-	workspaceID, seedActor, reviewerID, publisherID := uuid.New(), uuid.New(), uuid.New(), uuid.New()
 	liveWaitAPI(t, ctx, api, workspaceID)
 	traceID, suffix := "browser-live-"+uuid.NewString(), uuid.NewString()
 	reason := "LIVE_BROWSER_REVIEW_" + suffix
@@ -622,6 +627,9 @@ func livePost(t *testing.T, ctx context.Context, path string, actor uuid.UUID, k
 	liveOK(t, err, "create negative-control request")
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Actor-ID", actor.String())
+	if strings.Contains(path, "/entity-match-reviews/") {
+		req.Header.Set("Authorization", "Bearer live-review-secret")
+	}
 	if key != "" {
 		req.Header.Set("Idempotency-Key", key)
 	}

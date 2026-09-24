@@ -5,7 +5,7 @@ const webRoot = fileURLToPath(new URL("../../apps/web/", import.meta.url));
 const webEnv = {
   PLATFORM_API_BASE_URL: "http://127.0.0.1:4400", POC_WORKSPACE_ID: ids.workspace,
   POC_ENABLE_INGEST_ACTIONS: "false", POC_INGEST_ACTOR_ID: "",
-  POC_REVIEWER_ID: ids.actor, POC_RELEASE_ACTOR_ID: ids.actor, NEXT_TELEMETRY_DISABLED: "1",
+  HUMAN_DECISION_API_TOKEN: "review-secret", POC_RELEASE_ACTOR_ID: ids.actor, NEXT_TELEMETRY_DISABLED: "1",
 };
 function consoleServer(port, enabled) {
   return {

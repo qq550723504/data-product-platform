@@ -34,11 +34,16 @@ func TestBrowserCSVIngest(t *testing.T) {
 	defer pool.Close()
 	artifacts := repoPath(t, ".artifacts", "live-browser")
 	liveJSONFile(t, filepath.Join(artifacts, "ingest-verification.json"), map[string]any{"verified": false})
+	workspace, actor, reviewer, publisher := uuid.New(), uuid.New(), uuid.New(), uuid.New()
+	t.Setenv("HUMAN_DECISION_API_ENABLED", "true")
+	t.Setenv("HUMAN_DECISION_API_TOKEN", "live-ingest-review-secret")
+	t.Setenv("HUMAN_DECISION_API_SUBJECT", "live-ingest-reviewer")
+	t.Setenv("HUMAN_DECISION_API_ACTOR_ID", reviewer.String())
+	t.Setenv("HUMAN_DECISION_API_WORKSPACE_IDS", workspace.String())
 	listener, err := net.Listen("tcp", "127.0.0.1:18080")
 	liveOK(t, err, "CSV API port must be unused")
 	liveOK(t, listener.Close(), "release CSV API port")
 	api := startLiveProcess(t, ctx, filepath.Join(artifacts, "platform-api"), repoPath(t, "apps", "platform"), filepath.Join(artifacts, "ingest-api.log"))
-	workspace, actor, reviewer, publisher := uuid.New(), uuid.New(), uuid.New(), uuid.New()
 	liveWaitAPI(t, ctx, api, workspace)
 	nonce := uuid.NewString()[:8]
 	name, reason := "UI-CSV-"+nonce, "INGEST_REVIEW_"+nonce
