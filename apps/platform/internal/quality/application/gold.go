@@ -219,15 +219,15 @@ func (s *Service) RunGold(ctx context.Context, cmd GoldRunCommand) (domain.Asses
 				eventType = "QualityReviewRequired"
 			}
 			event, err := outbox.NewEvent("QUALITY_RESULT", result.ID, eventType, map[string]any{
-				"qualityResultId":          result.ID,
-				"datasetVersionId":         version.ID,
-				"productionBindingId":      binding.ID,
-				"annotationSnapshotId":     binding.AnnotationSnapshotID,
-				"gateDecision":             result.GateDecision,
-				"ruleSetVersion":           result.RuleSetVersion,
-				"ruleSetContentSha256":     result.RuleSetContentSHA256,
-				"evaluatorName":            result.EvaluatorName,
-				"evaluatorVersion":         result.EvaluatorVersion,
+				"qualityResultId":      result.ID,
+				"datasetVersionId":     version.ID,
+				"productionBindingId":  binding.ID,
+				"annotationSnapshotId": binding.AnnotationSnapshotID,
+				"gateDecision":         result.GateDecision,
+				"ruleSetVersion":       result.RuleSetVersion,
+				"ruleSetContentSha256": result.RuleSetContentSHA256,
+				"evaluatorName":        result.EvaluatorName,
+				"evaluatorVersion":     result.EvaluatorVersion,
 			})
 			if err != nil {
 				return err
@@ -243,11 +243,11 @@ func (s *Service) RunGold(ctx context.Context, cmd GoldRunCommand) (domain.Asses
 				ObjectType:  "QUALITY_RESULT",
 				ObjectID:    result.ID,
 				AfterState: map[string]any{
-					"datasetVersionId":         version.ID,
-					"productionBindingId":       binding.ID,
-					"annotationSnapshotId":      binding.AnnotationSnapshotID,
-					"gateDecision":              result.GateDecision,
-					"ruleSetContentSha256":      result.RuleSetContentSHA256,
+					"datasetVersionId":     version.ID,
+					"productionBindingId":  binding.ID,
+					"annotationSnapshotId": binding.AnnotationSnapshotID,
+					"gateDecision":         result.GateDecision,
+					"ruleSetContentSha256": result.RuleSetContentSHA256,
 				},
 				TraceID: cmd.TraceID,
 			}); err != nil {
