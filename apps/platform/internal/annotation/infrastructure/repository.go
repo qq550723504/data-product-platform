@@ -1011,3 +1011,49 @@ func getTask(ctx context.Context, q queryer, taskID uuid.UUID) (annotationdomain
 	}
 	return task, nil
 }
+
+
+type SnapshotSelectedResult struct {
+	TaskID                 uuid.UUID
+	ResultID               uuid.UUID
+	CanonicalPayload       []byte
+	CanonicalPayloadSHA256 string
+	CorrectedFromResultID  *uuid.UUID
+}
+
+func (r *Repository) ListSnapshotSelectedResults(
+	ctx context.Context,
+	snapshotID uuid.UUID,
+) ([]SnapshotSelectedResult, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT so.task_id, so.selected_result_id, r.canonical_payload,
+		       r.canonical_payload_sha256, r.corrected_from_result_id
+		FROM annotation_snapshot_output so
+		JOIN annotation_result r ON r.id=so.selected_result_id
+		WHERE so.snapshot_id=$1
+		ORDER BY so.task_id
+	`, snapshotID)
+	if err != nil {
+		return nil, fmt.Errorf("list annotation snapshot selected results: %w", err)
+	}
+	defer rows.Close()
+
+	results := make([]SnapshotSelectedResult, 0)
+	for rows.Next() {
+		var result SnapshotSelectedResult
+		if err := rows.Scan(
+			&result.TaskID,
+			&result.ResultID,
+			&result.CanonicalPayload,
+			&result.CanonicalPayloadSHA256,
+			&result.CorrectedFromResultID,
+		); err != nil {
+			return nil, fmt.Errorf("scan annotation snapshot selected result: %w", err)
+		}
+		results = append(results, result)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate annotation snapshot selected results: %w", err)
+	}
+	return results, nil
+}
