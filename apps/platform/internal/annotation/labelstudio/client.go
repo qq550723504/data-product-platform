@@ -206,6 +206,43 @@ func (c *Client) LookupCampaignBinding(
 	}
 }
 
+func (c *Client) VerifyCampaignBinding(
+	ctx context.Context,
+	binding annotationapp.EngineCampaignBinding,
+) error {
+	if err := validateBinding(c.instanceRef, binding); err != nil {
+		return err
+	}
+	var project struct {
+		ID          json.Number `json:"id"`
+		LabelConfig string      `json:"label_config"`
+	}
+	path := "/api/projects/" + url.PathEscape(binding.ExternalProjectID)
+	if err := c.requestJSON(ctx, http.MethodGet, path, nil, nil, &project); err != nil {
+		return err
+	}
+	if project.ID.String() != binding.ExternalProjectID || strings.TrimSpace(project.LabelConfig) == "" {
+		return annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidResponse,
+			"verify campaign binding",
+			false,
+			0,
+			nil,
+		)
+	}
+	sum := sha256.Sum256([]byte(strings.TrimSpace(project.LabelConfig)))
+	if hex.EncodeToString(sum[:]) != strings.TrimSpace(binding.ConfigSHA256) {
+		return annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidResponse,
+			"verify campaign binding config",
+			false,
+			0,
+			nil,
+		)
+	}
+	return nil
+}
+
 func (c *Client) SubmitTasks(ctx context.Context, req annotationapp.EngineSubmitRequest) (annotationapp.EngineSubmission, error) {
 	if err := validateBinding(c.instanceRef, req.Binding); err != nil {
 		return annotationapp.EngineSubmission{}, err
@@ -256,43 +293,35 @@ func (c *Client) SubmitTasks(ctx context.Context, req annotationapp.EngineSubmit
 		return annotationapp.EngineSubmission{}, err
 	}
 	if len(response.TaskIDs) != len(req.Tasks) || (response.TaskCount != 0 && response.TaskCount != len(req.Tasks)) {
-		return annotationapp.EngineSubmission{}, annotationapp.NewAnnotationEngineError(
-			annotationapp.ErrAnnotationEngineInvalidResponse, "verify task import", false, 0, nil,
+		return annotationapp.EngineSubmission{}, annotationapp.NewAnnotationEngineOutcomeError(
+			annotationapp.ErrAnnotationEngineInvalidResponse,
+			"verify task import response",
+			false,
+			true,
+			0,
+			nil,
 		)
 	}
 	external := make(map[uuid.UUID]string, len(req.Tasks))
 	for i, externalID := range response.TaskIDs {
 		if strings.TrimSpace(externalID.String()) == "" {
-			return annotationapp.EngineSubmission{}, annotationapp.NewAnnotationEngineError(
-				annotationapp.ErrAnnotationEngineInvalidResponse, "verify task ids", false, 0, nil,
+			return annotationapp.EngineSubmission{}, annotationapp.NewAnnotationEngineOutcomeError(
+				annotationapp.ErrAnnotationEngineInvalidResponse,
+				"verify task import response",
+				false,
+				true,
+				0,
+				nil,
 			)
 		}
 		external[req.Tasks[i].TaskID] = externalID.String()
 	}
-	verified, err := c.LookupSubmission(ctx, annotationapp.EngineLookupRequest{
-		WorkspaceID:        req.WorkspaceID,
-		CampaignID:         req.CampaignID,
-		Binding:            req.Binding,
-		RequestID:          req.RequestID,
-		RequestFingerprint: req.RequestFingerprint,
-		Tasks:              req.Tasks,
-	})
-	if err != nil {
-		return annotationapp.EngineSubmission{}, err
-	}
-	if verified.State != annotationapp.EngineLookupMatched {
-		return verified, nil
-	}
-	for taskID, importedID := range external {
-		if verified.ExternalTaskIDs[taskID] != importedID {
-			return annotationapp.EngineSubmission{
-				State:         annotationapp.EngineLookupConflict,
-				RequestID:     req.RequestID,
-				DiagnosticRef: "import response disagrees with persisted correlated task",
-			}, nil
-		}
-	}
-	return verified, nil
+	return annotationapp.EngineSubmission{
+		State:           annotationapp.EngineLookupUnknown,
+		RequestID:       req.RequestID,
+		ExternalTaskIDs: external,
+		DiagnosticRef:   "task import accepted; persisted payload verification required",
+	}, nil
 }
 
 func (c *Client) LookupSubmission(ctx context.Context, req annotationapp.EngineLookupRequest) (annotationapp.EngineSubmission, error) {
