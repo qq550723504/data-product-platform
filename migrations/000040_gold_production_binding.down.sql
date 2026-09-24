@@ -30,3 +30,14 @@ DROP FUNCTION IF EXISTS prevent_gold_build_request_mutation();
 DROP TRIGGER IF EXISTS trg_gold_build_request_insert ON gold_build_request;
 DROP FUNCTION IF EXISTS guard_gold_build_request_insert();
 DROP TABLE IF EXISTS gold_build_request;
+
+
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM execution WHERE target_period IS NULL OR btrim(target_period)='') THEN
+        RAISE EXCEPTION 'refusing rollback while periodless execution history exists';
+    END IF;
+END
+$$;
+
+ALTER TABLE execution ALTER COLUMN target_period SET NOT NULL;
