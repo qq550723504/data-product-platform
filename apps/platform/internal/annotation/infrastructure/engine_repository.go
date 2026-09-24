@@ -14,9 +14,9 @@ import (
 )
 
 var (
-	ErrEngineOperationConflict  = errors.New("annotation engine operation conflict")
-	ErrEngineClaimBusy          = errors.New("annotation engine operation claim busy")
-	ErrEngineBindingConflict    = errors.New("annotation engine binding conflict")
+	ErrEngineOperationConflict    = errors.New("annotation engine operation conflict")
+	ErrEngineClaimBusy            = errors.New("annotation engine operation claim busy")
+	ErrEngineBindingConflict      = errors.New("annotation engine binding conflict")
 	ErrEngineOperationsUnsettled  = errors.New("annotation engine operations are unsettled")
 	ErrEngineActorBindingNotFound = errors.New("annotation engine actor binding not found")
 )
