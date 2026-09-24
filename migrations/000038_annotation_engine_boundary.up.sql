@@ -65,11 +65,13 @@ CREATE INDEX idx_annotation_engine_attempt_operation
 CREATE TABLE annotation_engine_attempt_outcome (
     id                          uuid PRIMARY KEY,
     attempt_id                  uuid NOT NULL REFERENCES annotation_engine_attempt(id),
+    observation_no              integer NOT NULL,
     outcome                     varchar(24) NOT NULL,
     provider_status_code        integer,
     diagnostic_ref              varchar(512),
     occurred_at                 timestamptz NOT NULL DEFAULT now(),
-    CONSTRAINT uq_annotation_engine_attempt_outcome UNIQUE (attempt_id),
+    CONSTRAINT uq_annotation_engine_attempt_outcome UNIQUE (attempt_id, observation_no),
+    CONSTRAINT ck_annotation_engine_attempt_observation_no CHECK (observation_no > 0),
     CONSTRAINT ck_annotation_engine_attempt_outcome
         CHECK (outcome IN ('SUCCEEDED','UNKNOWN','REJECTED','CONFLICT','FAILED_PRE_SEND')),
     CONSTRAINT ck_annotation_engine_attempt_status_code
