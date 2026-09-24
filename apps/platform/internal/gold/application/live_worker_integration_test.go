@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"os"
 	"os/exec"
@@ -17,8 +18,14 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
+	certificationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
+	certificationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
+	certificationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
+	deliveryapp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application"
+	deliverydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/domain"
+	deliveryinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
@@ -28,12 +35,16 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
+	rightsdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
+	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 )
 
 type liveGoldFixture struct {
 	workspaceID            uuid.UUID
+	inputResourceID        uuid.UUID
 	inputDatasetVersionID  uuid.UUID
 	inputCertificationID   uuid.UUID
 	contributionResourceID uuid.UUID
@@ -245,6 +256,361 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 	if replayedAssessment.ID != assessment.ID {
 		t.Fatalf("quality replay assessment=%s want=%s", replayedAssessment.ID, assessment.ID)
 	}
+
+	actorID := uuid.New()
+	rightsRepo := rightsinfra.NewPostgresRepository(pool)
+	requiredResources, err := rightsRepo.RequiredLineageInputs(ctx, outputVersion.ID)
+	if err != nil {
+		t.Fatalf("resolve live Gold required rights resources: %v", err)
+	}
+	if len(requiredResources) != 2 {
+		t.Fatalf("live Gold required rights resources=%+v want 2", requiredResources)
+	}
+	var sawDataset, sawAnnotationContribution bool
+	for _, required := range requiredResources {
+		switch required.DependencyKind {
+		case rightsdomain.EffectiveDependencyDatasetVersion:
+			if required.DatasetVersionID != fixture.inputDatasetVersionID ||
+				required.DataResourceID != fixture.inputResourceID ||
+				!required.ResourceMapped {
+				t.Fatalf("live Gold dataset rights dependency=%+v", required)
+			}
+			sawDataset = true
+		case rightsdomain.EffectiveDependencyAnnotationContribution:
+			if required.DatasetVersionID != uuid.Nil ||
+				required.DataResourceID != fixture.contributionResourceID ||
+				!required.ResourceMapped {
+				t.Fatalf("live Gold annotation rights dependency=%+v", required)
+			}
+			sawAnnotationContribution = true
+		default:
+			t.Fatalf("unexpected live Gold rights dependency kind %q", required.DependencyKind)
+		}
+	}
+	if !sawDataset || !sawAnnotationContribution {
+		t.Fatalf("live Gold typed rights dependencies dataset=%v annotation=%v", sawDataset, sawAnnotationContribution)
+	}
+
+	rightsService := rightsapp.NewService(txManager, rightsRepo)
+	var annotationRightsDeclarationID uuid.UUID
+	for _, rightsResourceID := range []uuid.UUID{fixture.inputResourceID, fixture.contributionResourceID} {
+		declaration, err := rightsService.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{
+			Spec: rightsdomain.RightsDeclarationSpec{
+				WorkspaceID:       fixture.workspaceID,
+				DataResourceID:    rightsResourceID,
+				ClaimantRef:       "LIVE-GOLD-RIGHTS-HOLDER",
+				BasisType:         "LICENSE",
+				BasisRef:          "live-gold-delivery",
+				ConsumerScopeType: "EXPLICIT",
+				ConsumerRef:       "GOLD-PILOT-CONSUMER",
+				Parties: []rightsdomain.RightsParty{{
+					PartyRef: "LIVE-GOLD-RIGHTS-HOLDER",
+					Role:     "RIGHTS_HOLDER",
+				}},
+				Permissions: []rightsdomain.RightsPermission{{
+					Kind:    rightsdomain.PermissionUse,
+					Action:  "USE",
+					Purpose: "GOLD-PILOT",
+					Scope: rightsdomain.NormalizedScope{
+						Type: "ALL_RESOURCE",
+						Ref:  rightsResourceID.String(),
+					},
+				}},
+				ActorID: &actorID,
+			},
+			TraceID: "live-gold-delivery-rights",
+		})
+		if err != nil {
+			t.Fatalf("create live Gold rights declaration for %s: %v", rightsResourceID, err)
+		}
+		if _, err := rightsService.VerifyRightsDeclaration(ctx, rightsapp.VerifyRightsDeclarationCommand{
+			DeclarationID: declaration.ID,
+			Outcome:       rightsdomain.DeclarationVerified,
+			ActorID:       &actorID,
+			TraceID:       "live-gold-delivery-rights",
+		}); err != nil {
+			t.Fatalf("verify live Gold rights declaration for %s: %v", rightsResourceID, err)
+		}
+		if rightsResourceID == fixture.contributionResourceID {
+			annotationRightsDeclarationID = declaration.ID
+		}
+	}
+	if annotationRightsDeclarationID == uuid.Nil {
+		t.Fatal("live Gold annotation contribution rights declaration was not captured")
+	}
+
+	allowedRights, err := rightsService.ComputeEffectiveRights(ctx, rightsapp.ComputeEffectiveRightsCommand{
+		WorkspaceID:            fixture.workspaceID,
+		TargetDatasetVersionID: outputVersion.ID,
+		ConsumerRef:            "GOLD-PILOT-CONSUMER",
+		Purpose:                "GOLD-PILOT",
+		AsOf:                   time.Now().UTC(),
+		AsOfProvided:           true,
+		ActivityID:             ptrUUID(uuid.New()),
+		ActorID:                &actorID,
+		TraceID:                "live-gold-delivery-rights-allowed",
+	})
+	if err != nil {
+		t.Fatalf("compute live Gold EffectiveRights: %v", err)
+	}
+	var useAllowed bool
+	for _, action := range allowedRights.Actions {
+		if action.Action == "USE" {
+			useAllowed = action.Decision == rightsdomain.DecisionAllowed
+		}
+	}
+	if !useAllowed {
+		t.Fatalf("live Gold EffectiveRights USE must be ALLOWED: %+v", allowedRights.Actions)
+	}
+
+	evidenceTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin live Gold certification evidence tx: %v", err)
+	}
+	evidenceRecord, err := evidence.Append(ctx, evidenceTx, evidence.Record{
+		WorkspaceID:  fixture.workspaceID,
+		EvidenceType: "GOLD_CERTIFICATION_INPUT",
+		Title:        "Live Gold certification frozen input",
+		SourceType:   "DATASET_VERSION",
+		SourceID:     &outputVersion.ID,
+		Metadata: map[string]any{
+			"goldProductionBindingId":   binding.ID,
+			"annotationSnapshotId":      fixture.snapshotID,
+			"qualityAssessmentId":       assessment.ID,
+			"effectiveRightsSnapshotId": allowedRights.ID,
+		},
+		CreatedBy: &actorID,
+	}, evidence.Relation{
+		ObjectType:   "DATASET_VERSION",
+		ObjectID:     outputVersion.ID,
+		RelationType: "CERTIFICATION_INPUT",
+	})
+	if err != nil {
+		_ = evidenceTx.Rollback(ctx)
+		t.Fatalf("append live Gold certification evidence: %v", err)
+	}
+	certificationEvidence, err := evidence.CreateSnapshot(
+		ctx,
+		evidenceTx,
+		fixture.workspaceID,
+		"DATASET_VERSION",
+		outputVersion.ID,
+		map[string]any{
+			"goldProductionBindingId": binding.ID,
+			"annotationSnapshotId":    fixture.snapshotID,
+		},
+		[]evidence.SnapshotItem{{
+			EvidenceID: evidenceRecord.ID,
+			Category:   "GOLD_CERTIFICATION_INPUT",
+		}},
+		&actorID,
+	)
+	if err != nil {
+		_ = evidenceTx.Rollback(ctx)
+		t.Fatalf("create live Gold EvidenceSnapshot: %v", err)
+	}
+	if err := evidenceTx.Commit(ctx); err != nil {
+		t.Fatalf("commit live Gold certification evidence: %v", err)
+	}
+
+	goldProfileSpec, err := certificationdomain.NewGoldCertificationProfile(
+		"GOLD-PILOT",
+		"USE",
+		"GOLD-PILOT-CONSUMER",
+		[]certificationdomain.ScopeRef{
+			{Type: "ALL_RESOURCE", Ref: fixture.inputResourceID.String()},
+			{Type: "ALL_RESOURCE", Ref: fixture.contributionResourceID.String()},
+		},
+	)
+	if err != nil {
+		t.Fatalf("build live Gold CertificationProfile: %v", err)
+	}
+	profileRepo := certificationinfra.NewProfileRepository(pool)
+	profileService := certificationapp.NewProfileService(txManager, profileRepo)
+	goldProfile, err := profileService.Create(ctx, certificationapp.CreateProfileCommand{
+		WorkspaceID: fixture.workspaceID,
+		Profile:     goldProfileSpec,
+		ActorID:     &actorID,
+		TraceID:     "live-gold-certification-profile",
+	})
+	if err != nil {
+		t.Fatalf("create live Gold CertificationProfile: %v", err)
+	}
+
+	certificationRepo := certificationinfra.NewCertificationRepository(pool)
+	certificationService := certificationapp.NewCertificationService(
+		txManager,
+		profileRepo,
+		certificationRepo,
+		certificationapp.NewReferenceEvidenceResolver(),
+	)
+	certificationKey := "live-gold-certification-" + uuid.NewString()
+	certification, err := certificationService.Evaluate(ctx, certificationapp.EvaluateDatasetCertificationCommand{
+		WorkspaceID:               fixture.workspaceID,
+		DatasetVersionID:          outputVersion.ID,
+		ProfileID:                 goldProfile.ID,
+		QualityAssessmentID:       assessment.ID,
+		EffectiveRightsSnapshotID: &allowedRights.ID,
+		EvidenceSnapshotID:        &certificationEvidence.ID,
+		IdempotencyKey:            certificationKey,
+		ActorID:                   &actorID,
+		TraceID:                   "live-gold-certification",
+		Now:                       time.Now().UTC(),
+	})
+	if err != nil {
+		t.Fatalf("evaluate live Gold certification: %v", err)
+	}
+	if certification.Decision != certificationdomain.DecisionCertified ||
+		certification.GoldProductionBindingID == nil ||
+		*certification.GoldProductionBindingID != binding.ID ||
+		certification.AnnotationSnapshotID == nil ||
+		*certification.AnnotationSnapshotID != fixture.snapshotID {
+		t.Fatalf("live Gold certification=%+v", certification)
+	}
+
+	eligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
+	directGate := deliveryapp.NewCertificationDirectDataGate(eligibility)
+	deliveryRepo := deliveryinfra.NewPostgresRepository(pool)
+	directService := deliveryapp.NewDirectDataService(txManager, deliveryRepo, directGate, datasetRepo)
+	deliveryKey := "live-gold-direct-" + uuid.NewString()
+	deliveryCommand := deliveryapp.DirectDataCommand{
+		WorkspaceID:          fixture.workspaceID,
+		DatasetVersionID:     outputVersion.ID,
+		ProfileID:            goldProfile.ID,
+		PrincipalRef:         "live-gold-principal",
+		EffectiveConsumerRef: "GOLD-PILOT-CONSUMER",
+		Purpose:              "GOLD-PILOT",
+		Action:               "USE",
+		ScopeType:            "ALL_RESOURCE",
+		ScopeRef:             outputVersion.ID.String(),
+		IdempotencyKey:       deliveryKey,
+		TraceID:              "live-gold-direct-data",
+	}
+	delivered, err := directService.Deliver(ctx, deliveryCommand)
+	if err != nil {
+		t.Fatalf("issue live Gold DIRECT_DATA: %v", err)
+	}
+	if !delivered.PayloadReady ||
+		delivered.Operation.Status != deliverydomain.StatusIssued ||
+		delivered.DatasetVersion.ID != outputVersion.ID ||
+		delivered.Operation.CertificationRef == nil ||
+		*delivered.Operation.CertificationRef != certification.ID {
+		t.Fatalf("live Gold DIRECT_DATA result=%+v", delivered)
+	}
+
+	replayedDelivery, err := directService.Deliver(ctx, deliveryCommand)
+	if !errors.Is(err, deliveryapp.ErrDirectDataReplayRequiresNewAttempt) ||
+		!replayedDelivery.ReplayRequired ||
+		replayedDelivery.Operation.ID != delivered.Operation.ID {
+		t.Fatalf("live Gold delivery replay=%+v err=%v", replayedDelivery, err)
+	}
+	goldCount(t, ctx, pool, 1, `
+		SELECT count(*) FROM delivery_operation
+		WHERE workspace_id=$1 AND idempotency_key=$2
+	`, fixture.workspaceID, deliveryKey)
+	goldCount(t, ctx, pool, 1, `
+		SELECT count(*)
+		FROM cost_allocation
+		WHERE delivery_operation_id=$1
+	`, delivered.Operation.ID)
+
+	if _, err := rightsService.DisposeRightsDeclaration(ctx, rightsapp.DisposeRightsDeclarationCommand{
+		DeclarationID: annotationRightsDeclarationID,
+		Disposition:   rightsdomain.DispositionInvalidated,
+		EffectiveAt:   time.Now().UTC(),
+		Reason:        "live Gold annotation contribution rights withdrawn",
+		ActorID:       &actorID,
+		TraceID:       "live-gold-rights-revoked",
+	}); err != nil {
+		t.Fatalf("revoke live Gold annotation rights: %v", err)
+	}
+	blockedRightsCommand := deliveryCommand
+	blockedRightsCommand.IdempotencyKey = "live-gold-rights-blocked-" + uuid.NewString()
+	blockedRights, err := directService.Deliver(ctx, blockedRightsCommand)
+	if err != nil {
+		t.Fatalf("deliver after live Gold rights revoke: %v", err)
+	}
+	if blockedRights.PayloadReady || blockedRights.Operation.Status != deliverydomain.StatusBlocked ||
+		!containsLiveGoldBlocker(blockedRights.Blockers, "CURRENT_ENTITLEMENT_BLOCKED") {
+		t.Fatalf("live Gold rights-revoked delivery=%+v", blockedRights)
+	}
+
+	replacementRights, err := rightsService.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{
+		Spec: rightsdomain.RightsDeclarationSpec{
+			WorkspaceID:       fixture.workspaceID,
+			DataResourceID:    fixture.contributionResourceID,
+			ClaimantRef:       "LIVE-GOLD-RIGHTS-HOLDER",
+			BasisType:         "LICENSE",
+			BasisRef:          "live-gold-delivery-restored",
+			ConsumerScopeType: "EXPLICIT",
+			ConsumerRef:       "GOLD-PILOT-CONSUMER",
+			Parties: []rightsdomain.RightsParty{{
+				PartyRef: "LIVE-GOLD-RIGHTS-HOLDER",
+				Role:     "RIGHTS_HOLDER",
+			}},
+			Permissions: []rightsdomain.RightsPermission{{
+				Kind:    rightsdomain.PermissionUse,
+				Action:  "USE",
+				Purpose: "GOLD-PILOT",
+				Scope: rightsdomain.NormalizedScope{
+					Type: "ALL_RESOURCE",
+					Ref:  fixture.contributionResourceID.String(),
+				},
+			}},
+			ActorID: &actorID,
+		},
+		TraceID: "live-gold-rights-restored",
+	})
+	if err != nil {
+		t.Fatalf("replace live Gold annotation rights: %v", err)
+	}
+	if _, err := rightsService.VerifyRightsDeclaration(ctx, rightsapp.VerifyRightsDeclarationCommand{
+		DeclarationID: replacementRights.ID,
+		Outcome:       rightsdomain.DeclarationVerified,
+		ActorID:       &actorID,
+		TraceID:       "live-gold-rights-restored",
+	}); err != nil {
+		t.Fatalf("verify replacement live Gold annotation rights: %v", err)
+	}
+	restoredCommand := deliveryCommand
+	restoredCommand.IdempotencyKey = "live-gold-rights-restored-" + uuid.NewString()
+	restoredDelivery, err := directService.Deliver(ctx, restoredCommand)
+	if err != nil {
+		t.Fatalf("deliver after live Gold rights restoration: %v", err)
+	}
+	if !restoredDelivery.PayloadReady || restoredDelivery.Operation.Status != deliverydomain.StatusIssued {
+		t.Fatalf("live Gold restored-rights delivery=%+v", restoredDelivery)
+	}
+
+	invalidateService := datasetapp.NewInvalidateVersionService(txManager, datasetRepo)
+	invalidated, err := invalidateService.Handle(ctx, datasetapp.InvalidateVersionCommand{
+		VersionID: outputVersion.ID,
+		Reason:    "live Gold invalidation negative control",
+		ActorID:   &actorID,
+		TraceID:   "live-gold-invalidated",
+	})
+	if err != nil {
+		t.Fatalf("invalidate live Gold DatasetVersion: %v", err)
+	}
+	if invalidated.Status != "INVALID" {
+		t.Fatalf("invalidated live Gold DatasetVersion status=%s", invalidated.Status)
+	}
+	blockedInvalidCommand := deliveryCommand
+	blockedInvalidCommand.IdempotencyKey = "live-gold-invalid-blocked-" + uuid.NewString()
+	blockedInvalid, err := directService.Deliver(ctx, blockedInvalidCommand)
+	if err != nil {
+		t.Fatalf("deliver invalid live Gold DatasetVersion: %v", err)
+	}
+	if blockedInvalid.PayloadReady ||
+		blockedInvalid.Operation.Status != deliverydomain.StatusBlocked ||
+		!containsLiveGoldBlocker(blockedInvalid.Blockers, "DATASET_VERSION_INVALID") {
+		t.Fatalf("live Gold invalid-version delivery=%+v", blockedInvalid)
+	}
+
+	goldCount(t, ctx, pool, 1, `
+		SELECT count(*) FROM dataset_certification
+		WHERE id=$1 AND decision='CERTIFIED'
+	`, certification.ID)
 }
 
 func seedLiveGoldSnapshotFixture(
@@ -259,6 +625,7 @@ func seedLiveGoldSnapshotFixture(
 	t.Helper()
 	workspaceID := uuid.New()
 	contributionResourceID := uuid.New()
+	inputResourceID := uuid.New()
 	datasetID := uuid.New()
 	versionID := uuid.New()
 	qualityID := uuid.New()
@@ -281,14 +648,18 @@ func seedLiveGoldSnapshotFixture(
 
 	goldSQL(t, ctx, pool, `
 		INSERT INTO data_resource(id, workspace_id, code, name, resource_type, lifecycle_status)
-		VALUES ($1,$2,$3,'live Gold annotation contribution','OTHER','READY')
-	`, contributionResourceID, workspaceID, "LIVE-GOLD-ANN-"+suffix)
+		VALUES
+			($1,$3,$4,'live Gold annotation contribution','OTHER','READY'),
+			($2,$3,$5,'live Gold input source','TABLE_LIKE','READY')
+	`, contributionResourceID, inputResourceID, workspaceID, "LIVE-GOLD-ANN-"+suffix, "LIVE-GOLD-SRC-"+suffix)
+	goldSQL(t, ctx, pool, `
+		INSERT INTO dataset(id, workspace_id, code, name, dataset_type, source_resource_id)
+		VALUES ($1,$3,$4,'live Gold input','CURATED',$5)
+	`, datasetID, outputDatasetID, workspaceID, "LIVE-GOLD-IN-"+suffix, inputResourceID)
 	goldSQL(t, ctx, pool, `
 		INSERT INTO dataset(id, workspace_id, code, name, dataset_type)
-		VALUES
-			($1,$3,$4,'live Gold input','CURATED'),
-			($2,$3,$5,'live Gold output','CURATED')
-	`, datasetID, outputDatasetID, workspaceID, "LIVE-GOLD-IN-"+suffix, "LIVE-GOLD-OUT-"+suffix)
+		VALUES ($1,$2,$3,'live Gold output','CURATED')
+	`, outputDatasetID, workspaceID, "LIVE-GOLD-OUT-"+suffix)
 	goldSQL(t, ctx, pool, `
 		INSERT INTO dataset_version(
 			id, dataset_id, version_no, status, storage_type, storage_uri,
@@ -392,6 +763,7 @@ func seedLiveGoldSnapshotFixture(
 
 	return liveGoldFixture{
 		workspaceID:            workspaceID,
+		inputResourceID:        inputResourceID,
 		inputDatasetVersionID:  versionID,
 		inputCertificationID:   certificationID,
 		contributionResourceID: contributionResourceID,
@@ -577,4 +949,14 @@ func readLiveGoldObject(
 		t.Fatalf("read live Gold object bytes: %v", err)
 	}
 	return content
+}
+
+
+func containsLiveGoldBlocker(blockers []string, want string) bool {
+	for _, blocker := range blockers {
+		if blocker == want {
+			return true
+		}
+	}
+	return false
 }
