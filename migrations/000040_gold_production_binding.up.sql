@@ -321,7 +321,7 @@ BEGIN
     END IF;
 
     SELECT d.workspace_id, v.dataset_id, v.status, v.generated_by_execution_id,
-           v.checksum_value, COALESCE(v.row_count,0)
+           v.checksum_value, COALESCE(v.row_count,0) AS row_count
       INTO output_row
       FROM dataset_version v
       JOIN dataset d ON d.id=v.dataset_id
@@ -331,7 +331,7 @@ BEGIN
        OR output_row.status <> 'READY'
        OR output_row.generated_by_execution_id IS DISTINCT FROM NEW.execution_id
        OR lower(output_row.checksum_value) IS DISTINCT FROM lower(NEW.output_checksum_sha256)
-       OR output_row.coalesce IS DISTINCT FROM NEW.output_row_count THEN
+       OR output_row.row_count IS DISTINCT FROM NEW.output_row_count THEN
         RAISE EXCEPTION 'gold production output DatasetVersion identity mismatch';
     END IF;
 
@@ -345,6 +345,45 @@ BEGIN
 
     IF member_count <> snapshot_task_count OR selected_count <> NEW.output_row_count THEN
         RAISE EXCEPTION 'gold production binding membership/output count mismatch';
+    END IF;
+
+    IF NEW.manifest->>'formatVersion' IS DISTINCT FROM 'gold-production-binding-v1'
+       OR NEW.manifest->>'workspaceId' IS DISTINCT FROM NEW.workspace_id::text
+       OR NEW.manifest->>'executionId' IS DISTINCT FROM NEW.execution_id::text
+       OR NEW.manifest->>'workflowVersionId' IS DISTINCT FROM NEW.workflow_version_id::text
+       OR NEW.manifest->>'inputDatasetVersionId' IS DISTINCT FROM NEW.input_dataset_version_id::text
+       OR NEW.manifest->>'inputCertificationId' IS DISTINCT FROM NEW.input_certification_id::text
+       OR NEW.manifest->>'annotationCampaignId' IS DISTINCT FROM NEW.annotation_campaign_id::text
+       OR NEW.manifest->>'annotationSnapshotId' IS DISTINCT FROM NEW.annotation_snapshot_id::text
+       OR NEW.manifest->>'annotationContributionResourceId' IS DISTINCT FROM NEW.annotation_contribution_resource_id::text
+       OR NEW.manifest->>'outputDatasetVersionId' IS DISTINCT FROM NEW.output_dataset_version_id::text
+       OR NEW.manifest->>'inputChecksumSha256' IS DISTINCT FROM NEW.input_checksum_sha256
+       OR NEW.manifest->>'snapshotRootHash' IS DISTINCT FROM NEW.snapshot_root_hash
+       OR NEW.manifest->>'outputChecksumSha256' IS DISTINCT FROM NEW.output_checksum_sha256
+       OR (NEW.manifest->>'outputRowCount')::bigint IS DISTINCT FROM NEW.output_row_count THEN
+        RAISE EXCEPTION 'gold production binding manifest header mismatch';
+    END IF;
+
+    IF NEW.manifest->'members' IS DISTINCT FROM (
+        SELECT COALESCE(
+            jsonb_agg(
+                jsonb_strip_nulls(jsonb_build_object(
+                    'taskId', m.task_id::text,
+                    'sourceItemRef', m.source_item_ref,
+                    'sourceContentSha256', m.source_content_sha256,
+                    'decisionId', m.decision_id::text,
+                    'outcome', m.outcome,
+                    'reviewedResultId', m.reviewed_result_id::text,
+                    'selectedResultId', m.selected_result_id::text,
+                    'selectedResultSha256', m.selected_result_sha256,
+                    'outputRowIndex', m.output_row_index
+                )) ORDER BY m.task_id::text
+            ), '[]'::jsonb
+        )
+        FROM gold_production_member m
+        WHERE m.binding_id=NEW.id
+    ) THEN
+        RAISE EXCEPTION 'gold production binding manifest membership mismatch';
     END IF;
 
     RETURN NEW;
