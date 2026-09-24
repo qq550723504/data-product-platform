@@ -139,7 +139,6 @@ func TestAnnotationEngineBoundaryRejectsCrossWorkspaceFacts(t *testing.T) {
 	}
 }
 
-
 func TestAnnotationSnapshotGateRejectsUnsettledEngineOperations(t *testing.T) {
 	pool, ctx := openAnnotationTestDB(t)
 	defer pool.Close()
