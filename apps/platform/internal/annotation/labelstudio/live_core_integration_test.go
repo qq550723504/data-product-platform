@@ -351,7 +351,7 @@ func seedLiveCoreAnnotationFixture(
 			id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
 			gate_decision, metrics, rule_set_content_sha256, rule_set_content,
 			evaluator_name, evaluator_version
-		) VALUES ($1,$2,$3,'live-input','1','PASS','{}'::jsonb,$4,'live-input','fixture','1')
+		) VALUES ($1,$2,$3,'live-input','1','PASS','{"dimensions":{}}'::jsonb,$4,'live-input','fixture','1')
 	`, qualityID, workspaceID, versionID, sha256HexString("live-input"))
 	profileContent := "live-labelstudio-input-profile"
 	profileHash := sha256HexString(profileContent)
