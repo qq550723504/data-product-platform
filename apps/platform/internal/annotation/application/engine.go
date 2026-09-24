@@ -91,7 +91,7 @@ type EngineResultObservation struct {
 	ExternalTaskID         string
 	ExternalAnnotationID   string
 	ExternalRevision       string
-	AuthorRef              string
+	ExternalAuthorRef      string
 	CanonicalPayload       []byte
 	CanonicalPayloadSHA256 string
 	NormalizerVersion      string
