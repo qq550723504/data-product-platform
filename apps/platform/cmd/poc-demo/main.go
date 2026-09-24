@@ -210,6 +210,7 @@ func (d *demo) prepare() error {
 	}
 	workspaceID := uuid.New()
 	reviewerID := uuid.New()
+	var err error
 	if d.cfg.HumanDecisionAPI.Enabled {
 		if len(d.cfg.HumanDecisionAPI.WorkspaceIDs) != 1 {
 			return errors.New("demo human decision principal requires exactly one workspace")
