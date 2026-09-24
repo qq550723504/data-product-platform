@@ -13,7 +13,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -27,10 +26,6 @@ type Client struct {
 	token       string
 	instanceRef string
 	httpClient  *http.Client
-
-	authMu               sync.Mutex
-	accessToken          string
-	accessTokenExpiresAt time.Time
 }
 
 func NewClient(baseURL, token, instanceRef string, httpClient *http.Client) (*Client, error) {
