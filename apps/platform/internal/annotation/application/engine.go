@@ -110,6 +110,7 @@ type AnnotationEnginePort interface {
 	InstanceRef() string
 	EnsureCampaignBinding(context.Context, EngineCampaignRequest) (EngineCampaignBinding, error)
 	LookupCampaignBinding(context.Context, EngineCampaignRequest) (EngineCampaignLookup, error)
+	VerifyCampaignBinding(context.Context, EngineCampaignBinding) error
 	SubmitTasks(context.Context, EngineSubmitRequest) (EngineSubmission, error)
 	LookupSubmission(context.Context, EngineLookupRequest) (EngineSubmission, error)
 	FetchResults(context.Context, EngineLookupRequest, EngineResultCursor) (EngineResultPage, error)
