@@ -17,16 +17,24 @@ import (
 )
 
 type fakeReviewService struct {
-	calls  int
-	last   annotationapp.ReviewAnnotationCommand
-	result annotationapp.ReviewAnnotationResult
-	err    error
+	calls           int
+	last            annotationapp.ReviewAnnotationCommand
+	result          annotationapp.ReviewAnnotationResult
+	err             error
+	preflight       annotationapp.GoldQualityPreflight
+	preflightErr    error
+	preflightCalls  int
 }
 
 func (f *fakeReviewService) ReviewAnnotation(_ context.Context, cmd annotationapp.ReviewAnnotationCommand) (annotationapp.ReviewAnnotationResult, error) {
 	f.calls++
 	f.last = cmd
 	return f.result, f.err
+}
+
+func (f *fakeReviewService) GoldQualityPreflight(_ context.Context, _, _ uuid.UUID) (annotationapp.GoldQualityPreflight, error) {
+	f.preflightCalls++
+	return f.preflight, f.preflightErr
 }
 
 func TestAnnotationReviewHTTPUsesTrustedPrincipalActor(t *testing.T) {
@@ -198,4 +206,65 @@ func reviewPath(workspaceID, campaignID, taskID uuid.UUID) string {
 	return "/api/v1/workspaces/" + workspaceID.String() +
 		"/annotation-campaigns/" + campaignID.String() +
 		"/tasks/" + taskID.String() + "/review"
+}
+
+
+func TestGoldQualityPreflightHTTPIsReadOnlyAndExplicitlyNotFormalAssessment(t *testing.T) {
+	workspaceID := uuid.New()
+	campaignID := uuid.New()
+	snapshotID := uuid.New()
+	service := &fakeReviewService{
+		preflight: annotationapp.GoldQualityPreflight{
+			WorkspaceID: workspaceID,
+			CampaignID: campaignID,
+			SnapshotID: snapshotID,
+			SnapshotRoot: strings.Repeat("f", 64),
+			Blocking: false,
+			Metrics: map[string]any{"taskCount": 2, "agreement": "NOT_APPLICABLE"},
+		},
+	}
+	mux := http.NewServeMux()
+	NewHandler(service, nil).Register(mux)
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/api/v1/workspaces/"+workspaceID.String()+"/annotation-campaigns/"+campaignID.String()+"/gold-quality-preflight",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	mux.ServeHTTP(recorder, request)
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("status=%d body=%s", recorder.Code, recorder.Body.String())
+	}
+	if service.preflightCalls != 1 || service.calls != 0 {
+		t.Fatalf("preflight/review calls=%d/%d", service.preflightCalls, service.calls)
+	}
+	body := recorder.Body.String()
+	for _, want := range []string{
+		`"mode":"PREFLIGHT"`,
+		`"formalAssessmentCreated":false`,
+		`"snapshotId":"` + snapshotID.String() + `"`,
+		`"agreement":"NOT_APPLICABLE"`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("response missing %s: %s", want, body)
+		}
+	}
+}
+
+func TestGoldQualityPreflightHTTPFailsClosedWithoutFinalizedSnapshot(t *testing.T) {
+	workspaceID := uuid.New()
+	campaignID := uuid.New()
+	service := &fakeReviewService{preflightErr: annotationdomain.ErrInvalidSnapshot}
+	mux := http.NewServeMux()
+	NewHandler(service, nil).Register(mux)
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/api/v1/workspaces/"+workspaceID.String()+"/annotation-campaigns/"+campaignID.String()+"/gold-quality-preflight",
+		nil,
+	)
+	recorder := httptest.NewRecorder()
+	mux.ServeHTTP(recorder, request)
+	if recorder.Code != http.StatusConflict || !strings.Contains(recorder.Body.String(), "GOLD_QUALITY_PREFLIGHT_UNAVAILABLE") {
+		t.Fatalf("status=%d body=%s", recorder.Code, recorder.Body.String())
+	}
 }
