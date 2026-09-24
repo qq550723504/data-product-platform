@@ -413,22 +413,21 @@ func (s *EngineService) finalizeEngineAttempt(
 		}
 	}
 
-	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		if err := s.repo.AppendEngineAttemptOutcome(
-			ctx,
-			tx,
-			annotationdomain.EngineAttemptOutcome{
-				ID:                 uuid.New(),
-				AttemptID:          attempt.ID,
-				Outcome:            attemptOutcome,
-				ProviderStatusCode: statusCode,
-				DiagnosticRef:      diagnostic,
-				OccurredAt:         time.Now().UTC(),
-			},
-		); err != nil {
-			return err
-		}
+	outcome := annotationdomain.EngineAttemptOutcome{
+		ID:                 uuid.New(),
+		AttemptID:          attempt.ID,
+		Outcome:            attemptOutcome,
+		ProviderStatusCode: statusCode,
+		DiagnosticRef:      diagnostic,
+		OccurredAt:         time.Now().UTC(),
+	}
+	if err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		return s.repo.AppendEngineAttemptOutcome(ctx, tx, outcome)
+	}); err != nil {
+		return operation, err
+	}
 
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		if targetStatus == annotationdomain.EngineOperationMatched {
 			if err := s.persistEngineBindings(ctx, tx, operation, resolution); err != nil {
 				return err
