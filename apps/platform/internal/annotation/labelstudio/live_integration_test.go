@@ -62,6 +62,10 @@ func TestLabelStudioLiveReference(t *testing.T) {
 		lookup.Binding.ExternalProjectID != binding.ExternalProjectID {
 		t.Fatalf("project lookup = %+v", lookup)
 	}
+	binding = *lookup.Binding
+	if err := client.VerifyCampaignBinding(context.Background(), binding); err != nil {
+		t.Fatalf("verify project binding: %v", err)
+	}
 
 	task1 := uuid.New()
 	task2 := uuid.New()
@@ -89,7 +93,7 @@ func TestLabelStudioLiveReference(t *testing.T) {
 	if err != nil {
 		t.Fatalf("submit tasks: %v", err)
 	}
-	if submission.State != annotationapp.EngineLookupMatched || len(submission.ExternalTaskIDs) != 2 {
+	if submission.State != annotationapp.EngineLookupUnknown || len(submission.ExternalTaskIDs) != 2 {
 		t.Fatalf("submission = %+v", submission)
 	}
 
@@ -115,7 +119,7 @@ func TestLabelStudioLiveReference(t *testing.T) {
 		httpClient,
 		baseURL,
 		accessToken,
-		submission.ExternalTaskIDs[task1],
+		reconciled.ExternalTaskIDs[task1],
 		"EVIDENCE_SUFFICIENT",
 	)
 
@@ -139,7 +143,7 @@ func TestLabelStudioLiveReference(t *testing.T) {
 		if got := string(result.CanonicalPayload); got != `{"label":"EVIDENCE_SUFFICIENT"}` {
 			t.Fatalf("canonical payload = %s", got)
 		}
-		if result.ExternalTaskID != submission.ExternalTaskIDs[task1] ||
+		if result.ExternalTaskID != reconciled.ExternalTaskIDs[task1] ||
 			result.ExternalAnnotationID == "" ||
 			result.ExternalAuthorRef == "" ||
 			result.CanonicalPayloadSHA256 != sha256HexString(`{"label":"EVIDENCE_SUFFICIENT"}`) {
