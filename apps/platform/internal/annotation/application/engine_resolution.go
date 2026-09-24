@@ -93,9 +93,10 @@ func resolutionStatus(state EngineLookupState, err error, attemptKind string) (s
 	if err != nil {
 		var engineErr *AnnotationEngineError
 		if errors.As(err, &engineErr) {
-			if attemptKind == annotationdomain.EngineAttemptSubmit &&
-				engineErr.Retryable &&
-				!engineErr.OutcomeUncertain {
+			if attemptKind != annotationdomain.EngineAttemptSubmit {
+				return annotationdomain.EngineOperationUnknown, annotationdomain.EngineAttemptUnknown
+			}
+			if engineErr.Retryable && !engineErr.OutcomeUncertain {
 				return annotationdomain.EngineOperationPending, annotationdomain.EngineAttemptFailedPreSend
 			}
 			if engineErr.OutcomeUncertain || engineErr.Retryable {
