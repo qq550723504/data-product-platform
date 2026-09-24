@@ -125,8 +125,18 @@ func (r *EngineResultReconciler) ReconcileCampaign(ctx context.Context, campaign
 			if task.WorkspaceID != campaign.WorkspaceID || task.CampaignID != campaignID {
 				return annotationinfra.ErrEngineBindingConflict
 			}
-			if strings.TrimSpace(observation.AuthorRef) != strings.TrimSpace(task.PrimaryAnnotatorRef) {
-				return fmt.Errorf("annotation provider author does not match primary annotator binding")
+			actorBinding, err := r.repo.ResolveEngineActorBinding(
+				ctx,
+				campaign.WorkspaceID,
+				binding.Provider,
+				binding.ProviderInstance,
+				strings.TrimSpace(observation.ExternalAuthorRef),
+			)
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(actorBinding.CoreActorRef) != strings.TrimSpace(task.PrimaryAnnotatorRef) {
+				return fmt.Errorf("annotation provider actor binding does not match primary annotator")
 			}
 			observationKey := providerObservationKey(r.engine.InstanceRef(), binding.ExternalProjectID, observation)
 			if _, err := r.recorder.RecordAnnotationResult(ctx, RecordResultCommand{
@@ -134,7 +144,7 @@ func (r *EngineResultReconciler) ReconcileCampaign(ctx context.Context, campaign
 				CampaignID:             campaignID,
 				TaskID:                 observation.TaskID,
 				ExpectedTaskRevision:   task.Revision,
-				AuthorRef:              strings.TrimSpace(observation.AuthorRef),
+				AuthorRef:              strings.TrimSpace(actorBinding.CoreActorRef),
 				ProviderBindingRef:     binding.ID.String(),
 				ExternalTaskID:         strings.TrimSpace(observation.ExternalTaskID),
 				ExternalAnnotationID:   strings.TrimSpace(observation.ExternalAnnotationID),
