@@ -86,7 +86,6 @@ func TestResolutionStatusRetriesDefinitePreSendFailure(t *testing.T) {
 	}
 }
 
-
 func TestResolutionStatusRecordsAcceptedSubmitBeforeVerification(t *testing.T) {
 	status, outcome := resolutionStatus(
 		EngineLookupUnknown,
