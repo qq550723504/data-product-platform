@@ -497,7 +497,6 @@ func goldTestSHA256(value []byte) string {
 	return hex.EncodeToString(sum[:])
 }
 
-
 func ptrUUID(value uuid.UUID) *uuid.UUID {
 	return &value
 }
