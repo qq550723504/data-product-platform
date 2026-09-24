@@ -1,0 +1,359 @@
+package application
+
+import (
+	"bytes"
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"io"
+	"os"
+	"strings"
+	"sync"
+	"testing"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
+	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
+	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
+	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
+	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
+	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
+	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
+	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
+	workflowdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
+	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
+)
+
+type goldMemoryStore struct {
+	mu      sync.Mutex
+	objects map[string][]byte
+}
+
+func newGoldMemoryStore() *goldMemoryStore {
+	return &goldMemoryStore{objects: map[string][]byte{}}
+}
+
+func (s *goldMemoryStore) Put(_ context.Context, objectName string, reader io.Reader, _ int64, _ string) (string, error) {
+	content, err := io.ReadAll(reader)
+	if err != nil {
+		return "", err
+	}
+	uri := "mem://" + objectName
+	s.mu.Lock()
+	s.objects[uri] = append([]byte(nil), content...)
+	s.mu.Unlock()
+	return uri, nil
+}
+
+func (s *goldMemoryStore) Get(_ context.Context, storageURI string) (io.ReadCloser, error) {
+	s.mu.Lock()
+	content := append([]byte(nil), s.objects[storageURI]...)
+	s.mu.Unlock()
+	return io.NopCloser(bytes.NewReader(content)), nil
+}
+
+func (s *goldMemoryStore) seed(uri string, content []byte) {
+	s.mu.Lock()
+	s.objects[uri] = append([]byte(nil), content...)
+	s.mu.Unlock()
+}
+
+func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	router, err := routing.NewRouter(false)
+	if err != nil {
+		t.Fatalf("routing: %v", err)
+	}
+	outbox.ConfigureAppendObligation(router)
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	annotationRepo := annotationinfra.NewRepository(pool)
+	workflowRepo := workflowinfra.NewPostgresRepository(pool)
+	store := newGoldMemoryStore()
+	datasetWriter := datasetapp.NewUploadVersionService(txManager, datasetRepo, store)
+	annotationService := annotationapp.NewService(txManager, annotationRepo, nil)
+	workflowVersionService := workflowapp.NewWorkflowVersionService(txManager, workflowRepo)
+	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
+	goldRepo := goldinfra.NewPostgresRepository(pool)
+	goldService := NewService(txManager, goldRepo, workflowRepo, annotationRepo, datasetRepo, datasetWriter, store)
+
+	workspaceID := uuid.New()
+	actorID := uuid.New()
+	inputCSV := []byte("company_id,activity_level\nc1,HIGH\nc2,LOW\n")
+	inputURI := "mem://gold-input.csv"
+	store.seed(inputURI, inputCSV)
+	inputChecksum := goldTestSHA256(inputCSV)
+
+	resourceID := uuid.New()
+	inputDatasetID := uuid.New()
+	inputVersionID := uuid.New()
+	qualityID := uuid.New()
+	profileID := uuid.New()
+	certificationID := uuid.New()
+	campaignID := uuid.New()
+	task1 := uuid.New()
+	task2 := uuid.New()
+	result1 := uuid.New()
+	result2 := uuid.New()
+	outputDatasetID := uuid.New()
+	suffix := strings.ReplaceAll(uuid.NewString(), "-", "")[:10]
+	specContent := `{"kind":"single-label-v1","labels":["A","B"]}`
+	specHash := goldTestSHA256([]byte(specContent))
+
+	goldSQL(t, ctx, pool, `
+		INSERT INTO data_resource(id, workspace_id, code, name, resource_type, lifecycle_status)
+		VALUES ($1,$2,$3,'gold annotation contribution','OTHER','READY')
+	`, resourceID, workspaceID, "GOLD-ANN-"+suffix)
+	goldSQL(t, ctx, pool, `
+		INSERT INTO dataset(id, workspace_id, code, name, dataset_type)
+		VALUES ($1,$2,$3,'gold input','CURATED')
+	`, inputDatasetID, workspaceID, "GOLD-IN-"+suffix)
+	goldSQL(t, ctx, pool, `
+		INSERT INTO dataset_version(
+			id, dataset_id, version_no, status, storage_type, storage_uri,
+			content_type, row_count, byte_size, checksum_algorithm, checksum_value, ready_at
+		) VALUES ($1,$2,1,'READY','OBJECT',$3,'text/csv',2,$4,'SHA256',$5,now())
+	`, inputVersionID, inputDatasetID, inputURI, int64(len(inputCSV)), inputChecksum)
+
+	ruleContent := "gold-builder-input-quality"
+	goldSQL(t, ctx, pool, `
+		INSERT INTO quality_result(
+			id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
+			gate_decision, metrics, rule_set_content_sha256, rule_set_content,
+			evaluator_name, evaluator_version
+		) VALUES ($1,$2,$3,'gold-builder-input','1','PASS',$4,$5,$6,'fixture','1')
+	`, qualityID, workspaceID, inputVersionID, []byte(`{"dimensions":{}}`), goldTestSHA256([]byte(ruleContent)), ruleContent)
+
+	profileContent := "gold-builder-input-profile"
+	profileHash := goldTestSHA256([]byte(profileContent))
+	goldSQL(t, ctx, pool, `
+		INSERT INTO certification_profile(
+			id, workspace_id, profile_ref, code, name, version, content_sha256, content_snapshot,
+			purpose_mode, action_mode, consumer_mode, delivery_mode,
+			quality_gate_required, rights_required, compliance_required, contract_required,
+			traceability_required, evidence_required, membership_state
+		) VALUES ($1,$2,'gold-builder-input',$3,'gold builder input','1',$4,$5,
+		          'ANY','ANY','ANY','ANY',true,false,false,false,false,false,'DRAFT')
+	`, profileID, workspaceID, "GBP-"+suffix, profileHash, profileContent)
+	goldSQL(t, ctx, pool, "UPDATE certification_profile SET membership_state='FINALIZED' WHERE id=$1", profileID)
+	goldSQL(t, ctx, pool, `
+		INSERT INTO dataset_certification(
+			id, workspace_id, dataset_version_id, quality_assessment_id,
+			certification_profile_id, profile_ref, profile_version,
+			profile_content_sha256, profile_content_snapshot,
+			decision, blockers, reason, issued_at
+		) VALUES ($1,$2,$3,$4,$5,'gold-builder-input','1',$6,$7,'CERTIFIED','[]'::jsonb,'fixture',now())
+	`, certificationID, workspaceID, inputVersionID, qualityID, profileID, profileHash, profileContent)
+
+	goldSQL(t, ctx, pool, `
+		INSERT INTO annotation_campaign(
+			id, workspace_id, input_dataset_version_id, input_certification_id,
+			annotation_contribution_resource_id, purpose, action,
+			schema_ref, schema_version, schema_content_sha256, schema_content_snapshot,
+			taxonomy_ref, taxonomy_version, taxonomy_content_sha256, taxonomy_content_snapshot,
+			rubric_ref, rubric_version, rubric_content_sha256, rubric_content_snapshot,
+			renderer_ref, renderer_version, renderer_content_sha256, renderer_content_snapshot,
+			review_policy_ref, review_policy_version, review_policy_content_sha256, review_policy_content_snapshot
+		) VALUES (
+			$1,$2,$3,$4,$5,'gold-pilot','PROCESS',
+			'schema','1',$6,$7,'taxonomy','1',$6,$7,'rubric','1',$6,$7,
+			'renderer','1',$6,$7,'review','1',$6,$7
+		)
+	`, campaignID, workspaceID, inputVersionID, certificationID, resourceID, specHash, specContent)
+	goldSQL(t, ctx, pool, `
+		INSERT INTO annotation_task(
+			id, workspace_id, campaign_id, source_item_ref, source_content_sha256,
+			task_text_sha256, primary_annotator_ref
+		) VALUES
+			($1,$3,$4,'row:1',$5,$6,'annotator'),
+			($2,$3,$4,'row:2',$7,$8,'annotator')
+	`, task1, task2, workspaceID, campaignID, strings.Repeat("a", 64), strings.Repeat("b", 64), strings.Repeat("c", 64), strings.Repeat("d", 64))
+	goldSQL(t, ctx, pool, `
+		UPDATE annotation_campaign
+		   SET status='ACTIVE', revision=2, expected_task_count=2,
+		       task_manifest_hash=$2, input_checksum_sha256=$3, activated_at=now()
+		 WHERE id=$1
+	`, campaignID, strings.Repeat("e", 64), inputChecksum)
+
+	payloadA := []byte(`{"label":"A"}`)
+	goldSQL(t, ctx, pool, `
+		INSERT INTO annotation_result(
+			id, workspace_id, campaign_id, task_id, author_ref,
+			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
+			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
+		) VALUES
+			($1,$3,$4,$5,'annotator','fixture-provider','task-1','ann-1','1',$7,$8,$9,'fixture-v1'),
+			($2,$3,$4,$6,'annotator','fixture-provider','task-2','ann-2','1',$10,$8,$9,'fixture-v1')
+	`, result1, result2, workspaceID, campaignID, task1, task2,
+		"gold-result:"+uuid.NewString(), payloadA, goldTestSHA256(payloadA), "gold-result:"+uuid.NewString())
+	goldSQL(t, ctx, pool, "UPDATE annotation_task SET status='REVIEWABLE', revision=2 WHERE campaign_id=$1", campaignID)
+
+	if _, err := annotationService.ReviewAnnotation(ctx, annotationapp.ReviewAnnotationCommand{
+		WorkspaceID: workspaceID, CampaignID: campaignID, TaskID: task1,
+		ExpectedTaskRevision: 2, ReviewerRef: actorID.String(), Action: annotationdomain.ReviewAccept,
+		Reason: "accept", IdempotencyKey: "accept-"+uuid.NewString(), ReviewedResultID: &result1,
+		ActorID: &actorID, TraceID: "gold-builder-test",
+	}); err != nil {
+		t.Fatalf("accept task: %v", err)
+	}
+	corrected := []byte(`{"label":"B"}`)
+	if _, err := annotationService.ReviewAnnotation(ctx, annotationapp.ReviewAnnotationCommand{
+		WorkspaceID: workspaceID, CampaignID: campaignID, TaskID: task2,
+		ExpectedTaskRevision: 2, ReviewerRef: actorID.String(), Action: annotationdomain.ReviewCorrect,
+		Reason: "correct", IdempotencyKey: "correct-"+uuid.NewString(), ReviewedResultID: &result2,
+		CorrectedPayload: corrected, CorrectedPayloadHash: goldTestSHA256(corrected),
+		ActorID: &actorID, TraceID: "gold-builder-test",
+	}); err != nil {
+		t.Fatalf("correct task: %v", err)
+	}
+	snapshot, err := annotationService.FinalizeAnnotationSnapshot(ctx, annotationapp.FinalizeAnnotationSnapshotCommand{
+		WorkspaceID: workspaceID, CampaignID: campaignID, ActorID: &actorID, TraceID: "gold-builder-test",
+	})
+	if err != nil {
+		t.Fatalf("finalize annotation snapshot: %v", err)
+	}
+
+	goldSQL(t, ctx, pool, `
+		INSERT INTO dataset(id, workspace_id, code, name, dataset_type)
+		VALUES ($1,$2,$3,'gold candidate output','CURATED')
+	`, outputDatasetID, workspaceID, "GOLD-OUT-"+suffix)
+
+	workflowVersion, err := workflowVersionService.Create(ctx, workflowapp.CreateWorkflowVersionCommand{
+		WorkspaceID: workspaceID,
+		Code: "GOLD-BUILDER-"+suffix,
+		Name: "Gold builder",
+		Version: "1.0.0",
+		DefinitionRef: "test/gold-builder.yaml",
+		DefinitionYAML: []byte("spec:\n  processor: GOLD_DATASET_BUILDER_V1\n  execution:\n    requiresTargetPeriod: false\n"),
+		ActorID: &actorID,
+		TraceID: "gold-builder-test",
+	})
+	if err != nil {
+		t.Fatalf("create workflow version: %v", err)
+	}
+
+	command := CreateBuildCommand{
+		WorkspaceID: workspaceID,
+		WorkflowVersionID: workflowVersion.ID,
+		OutputDatasetID: outputDatasetID,
+		InputDatasetVersionID: inputVersionID,
+		InputCertificationID: certificationID,
+		AnnotationCampaignID: campaignID,
+		AnnotationSnapshotID: snapshot.ID,
+		AnnotationContributionResourceID: resourceID,
+		IdempotencyKey: "gold-build-"+uuid.NewString(),
+		ActorID: &actorID,
+		TraceID: "gold-builder-test",
+	}
+	execution, err := goldService.CreateBuild(ctx, command)
+	if err != nil {
+		t.Fatalf("create build: %v", err)
+	}
+	replay, err := goldService.CreateBuild(ctx, command)
+	if err != nil {
+		t.Fatalf("replay build: %v", err)
+	}
+	if replay.ID != execution.ID {
+		t.Fatalf("replay execution=%s want=%s", replay.ID, execution.ID)
+	}
+	if execution.TargetPeriod != "" {
+		t.Fatalf("target period=%q want empty", execution.TargetPeriod)
+	}
+
+	started, err := executionService.StartWithReferenceCheck(ctx, execution.ID, "native:"+execution.ID.String(), "gold-builder-test")
+	if err != nil {
+		t.Fatalf("start execution: %v", err)
+	}
+	request := workflowapp.ProcessingRequestFromExecution(started, workflowVersion)
+	result, err := goldService.Execute(ctx, request)
+	if err != nil {
+		t.Fatalf("execute Gold build: %v", err)
+	}
+	if _, err := executionService.Succeed(ctx, execution.ID, result.OutputDatasetVersionID, result.Metrics, "gold-builder-test"); err != nil {
+		t.Fatalf("succeed execution: %v", err)
+	}
+
+	output, err := datasetRepo.GetVersion(ctx, result.OutputDatasetVersionID)
+	if err != nil {
+		t.Fatalf("read output: %v", err)
+	}
+	if output.Status != datasetdomain.VersionReady || output.RowCount == nil || *output.RowCount != 2 {
+		t.Fatalf("output status/rows=%s/%v", output.Status, output.RowCount)
+	}
+	reader, err := store.Get(ctx, output.StorageURI)
+	if err != nil {
+		t.Fatalf("read output object: %v", err)
+	}
+	outputBytes, err := io.ReadAll(reader)
+	_ = reader.Close()
+	if err != nil {
+		t.Fatalf("read output bytes: %v", err)
+	}
+	text := string(outputBytes)
+	if !strings.Contains(text, "gold_label,annotation_result_id,review_decision_id") ||
+		!strings.Contains(text, "c1,HIGH,A,") || !strings.Contains(text, "c2,LOW,B,") {
+		t.Fatalf("unexpected Gold output:\n%s", text)
+	}
+
+	binding, err := goldRepo.GetBindingByExecution(ctx, execution.ID)
+	if err != nil {
+		t.Fatalf("read binding: %v", err)
+	}
+	if binding.Status != "FINALIZED" || binding.OutputDatasetVersionID != output.ID ||
+		binding.AnnotationSnapshotID != snapshot.ID || binding.OutputRowCount != 2 {
+		t.Fatalf("binding=%+v", binding)
+	}
+	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM gold_build_request WHERE execution_id=$1", execution.ID)
+	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM gold_production_binding WHERE execution_id=$1", execution.ID)
+	goldCount(t, ctx, pool, 2, "SELECT count(*) FROM gold_production_member WHERE binding_id=$1", binding.ID)
+	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM dataset_version WHERE dataset_id=$1 AND generated_by_execution_id=$2", outputDatasetID, execution.ID)
+	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM dataset_version_lineage WHERE output_version_id=$1 AND input_version_id=$2 AND relation_type='DERIVED_FROM'", output.ID, inputVersionID)
+
+	replayedResult, err := goldService.Execute(ctx, request)
+	if err != nil {
+		t.Fatalf("replay execute: %v", err)
+	}
+	if replayedResult.OutputDatasetVersionID != output.ID {
+		t.Fatalf("replayed output=%s want=%s", replayedResult.OutputDatasetVersionID, output.ID)
+	}
+	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM gold_production_binding WHERE execution_id=$1", execution.ID)
+	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM dataset_version WHERE dataset_id=$1 AND generated_by_execution_id=$2", outputDatasetID, execution.ID)
+}
+
+func goldSQL(t *testing.T, ctx context.Context, pool *pgxpool.Pool, query string, args ...any) {
+	t.Helper()
+	if _, err := pool.Exec(ctx, query, args...); err != nil {
+		t.Fatalf("fixture SQL: %v", err)
+	}
+}
+
+func goldCount(t *testing.T, ctx context.Context, pool *pgxpool.Pool, want int, query string, args ...any) {
+	t.Helper()
+	var got int
+	if err := pool.QueryRow(ctx, query, args...).Scan(&got); err != nil {
+		t.Fatalf("count: %v", err)
+	}
+	if got != want {
+		t.Fatalf("count=%d want=%d query=%s", got, want, query)
+	}
+}
+
+func goldTestSHA256(value []byte) string {
+	sum := sha256.Sum256(value)
+	return hex.EncodeToString(sum[:])
+}
