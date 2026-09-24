@@ -178,6 +178,14 @@ func (s *EngineService) prepareOperation(
 	}
 
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		lockedCampaign, err := s.repo.LockCampaignTx(ctx, tx, operation.CampaignID)
+		if err != nil {
+			return err
+		}
+		if lockedCampaign.WorkspaceID != operation.WorkspaceID ||
+			lockedCampaign.Status != annotationdomain.CampaignActive {
+			return annotationdomain.ErrInvalidCampaign
+		}
 		created, err := s.repo.InsertEngineOperation(ctx, tx, operation)
 		if err != nil {
 			return err
