@@ -109,10 +109,35 @@ func TestLabelStudioCreateProjectAndSubmitTasks(t *testing.T) {
 	if err != nil {
 		t.Fatalf("submit tasks: %v", err)
 	}
-	if submitted.State != annotationapp.EngineLookupMatched ||
+	if submitted.State != annotationapp.EngineLookupUnknown ||
 		submitted.ExternalTaskIDs[task1] != "101" ||
 		submitted.ExternalTaskIDs[task2] != "102" {
 		t.Fatalf("submission = %+v", submitted)
+	}
+	verified, err := client.LookupSubmission(context.Background(), annotationapp.EngineLookupRequest{
+		WorkspaceID:        workspaceID,
+		CampaignID:         campaignID,
+		Binding:            binding,
+		RequestID:          "submit-1",
+		RequestFingerprint: strings.Repeat("c", 64),
+		Tasks: []annotationapp.EngineTask{
+			{
+				TaskID: task1, SourceItemRef: "row-1", SourceSHA256: strings.Repeat("d", 64),
+				TaskText: "first", TaskTextSHA256: strings.Repeat("e", 64), CorrelationKey: "task-1",
+			},
+			{
+				TaskID: task2, SourceItemRef: "row-2", SourceSHA256: strings.Repeat("f", 64),
+				TaskText: "second", TaskTextSHA256: strings.Repeat("1", 64), CorrelationKey: "task-2",
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("lookup submitted tasks: %v", err)
+	}
+	if verified.State != annotationapp.EngineLookupMatched ||
+		verified.ExternalTaskIDs[task1] != "101" ||
+		verified.ExternalTaskIDs[task2] != "102" {
+		t.Fatalf("verified submission = %+v", verified)
 	}
 	if len(imported) != 2 {
 		t.Fatalf("imported tasks = %d", len(imported))
@@ -182,11 +207,36 @@ func TestLabelStudioSubmitTasksRejectsMutatedPersistedPayload(t *testing.T) {
 	if err != nil {
 		t.Fatalf("submit tasks: %v", err)
 	}
-	if submission.State != annotationapp.EngineLookupConflict {
-		t.Fatalf("submission state = %s, want CONFLICT", submission.State)
+	if submission.State != annotationapp.EngineLookupUnknown {
+		t.Fatalf("submission state = %s, want UNKNOWN before verification", submission.State)
 	}
-	if !strings.Contains(submission.DiagnosticRef, "payload mismatch") {
-		t.Fatalf("diagnostic = %q", submission.DiagnosticRef)
+	verified, err := client.LookupSubmission(context.Background(), annotationapp.EngineLookupRequest{
+		WorkspaceID: uuid.New(),
+		CampaignID:  uuid.New(),
+		Binding: annotationapp.EngineCampaignBinding{
+			Provider:          labelstudio.Provider,
+			ProviderInstance:  "local-ls",
+			ExternalProjectID: "41",
+		},
+		RequestID:          "submit-mutated",
+		RequestFingerprint: strings.Repeat("a", 64),
+		Tasks: []annotationapp.EngineTask{{
+			TaskID:         taskID,
+			SourceItemRef:  "row-1",
+			SourceSHA256:   strings.Repeat("b", 64),
+			TaskText:       "frozen-text",
+			TaskTextSHA256: strings.Repeat("c", 64),
+			CorrelationKey: "task-" + taskID.String(),
+		}},
+	})
+	if err != nil {
+		t.Fatalf("lookup mutated tasks: %v", err)
+	}
+	if verified.State != annotationapp.EngineLookupConflict {
+		t.Fatalf("verified state = %s, want CONFLICT", verified.State)
+	}
+	if !strings.Contains(verified.DiagnosticRef, "payload mismatch") {
+		t.Fatalf("diagnostic = %q", verified.DiagnosticRef)
 	}
 }
 
