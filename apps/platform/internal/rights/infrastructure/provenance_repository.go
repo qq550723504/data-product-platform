@@ -559,45 +559,82 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 }
 
 type LineageInput struct {
+	DependencyKind  string
 	DatasetVersionID uuid.UUID
 	DataResourceID   uuid.UUID
 	ResourceMapped   bool
 }
 
+const requiredResourcesSQL = `
+	WITH RECURSIVE lineage(version_id) AS (
+		SELECT $1::uuid
+		UNION
+		SELECT l.input_version_id
+		  FROM dataset_version_lineage l
+		  JOIN lineage x ON x.version_id=l.output_version_id
+	),
+	dataset_dependencies AS (
+		SELECT DISTINCT
+		       'DATASET_VERSION'::text AS dependency_kind,
+		       l.version_id AS dataset_version_id,
+		       d.source_resource_id AS data_resource_id
+		  FROM lineage l
+		  JOIN dataset_version v ON v.id=l.version_id
+		  JOIN dataset d ON d.id=v.dataset_id
+		 WHERE NOT EXISTS (
+		       SELECT 1
+		         FROM dataset_version_lineage child
+		        WHERE child.output_version_id=l.version_id
+		 )
+	),
+	gold_resource_dependencies AS (
+		SELECT DISTINCT
+		       'ANNOTATION_CONTRIBUTION_RESOURCE'::text AS dependency_kind,
+		       NULL::uuid AS dataset_version_id,
+		       g.annotation_contribution_resource_id AS data_resource_id
+		  FROM lineage l
+		  JOIN gold_production_binding g
+		    ON g.output_dataset_version_id=l.version_id
+		   AND g.status='FINALIZED'
+	)
+	SELECT dependency_kind, dataset_version_id, data_resource_id
+	  FROM (
+		SELECT * FROM dataset_dependencies
+		UNION
+		SELECT * FROM gold_resource_dependencies
+	  ) required
+	 ORDER BY dependency_kind, COALESCE(dataset_version_id::text,''), COALESCE(data_resource_id::text,'')
+`
+
 func (r *PostgresRepository) RequiredLineageInputs(ctx context.Context, target uuid.UUID) ([]LineageInput, error) {
-	rows, err := r.pool.Query(ctx, `WITH RECURSIVE lineage(version_id) AS (SELECT $1::uuid UNION SELECT l.input_version_id FROM dataset_version_lineage l JOIN lineage x ON x.version_id=l.output_version_id) SELECT DISTINCT l.version_id,d.source_resource_id FROM lineage l JOIN dataset_version v ON v.id=l.version_id JOIN dataset d ON d.id=v.dataset_id WHERE NOT EXISTS (SELECT 1 FROM dataset_version_lineage child WHERE child.output_version_id=l.version_id) ORDER BY l.version_id`, target)
+	rows, err := r.pool.Query(ctx, requiredResourcesSQL, target)
 	if err != nil {
-		return nil, fmt.Errorf("resolve effective rights lineage: %w", err)
+		return nil, fmt.Errorf("resolve required rights resources: %w", err)
 	}
 	defer rows.Close()
-	var inputs []LineageInput
-	for rows.Next() {
-		var i LineageInput
-		var resourceID *uuid.UUID
-		if err := rows.Scan(&i.DatasetVersionID, &resourceID); err != nil {
-			return nil, err
-		}
-		if resourceID != nil {
-			i.DataResourceID = *resourceID
-			i.ResourceMapped = true
-		}
-		inputs = append(inputs, i)
-	}
-	return inputs, rows.Err()
+	return scanRequiredRightsResources(rows)
 }
 
 func (r *PostgresRepository) RequiredLineageInputsTx(ctx context.Context, tx pgx.Tx, target uuid.UUID) ([]LineageInput, error) {
-	rows, err := tx.Query(ctx, `WITH RECURSIVE lineage(version_id) AS (SELECT $1::uuid UNION SELECT l.input_version_id FROM dataset_version_lineage l JOIN lineage x ON x.version_id=l.output_version_id) SELECT DISTINCT l.version_id,d.source_resource_id FROM lineage l JOIN dataset_version v ON v.id=l.version_id JOIN dataset d ON d.id=v.dataset_id WHERE NOT EXISTS (SELECT 1 FROM dataset_version_lineage child WHERE child.output_version_id=l.version_id) ORDER BY l.version_id`, target)
+	rows, err := tx.Query(ctx, requiredResourcesSQL, target)
 	if err != nil {
-		return nil, fmt.Errorf("resolve effective rights lineage in transaction: %w", err)
+		return nil, fmt.Errorf("resolve required rights resources in transaction: %w", err)
 	}
 	defer rows.Close()
+	return scanRequiredRightsResources(rows)
+}
+
+func scanRequiredRightsResources(rows pgx.Rows) ([]LineageInput, error) {
 	var inputs []LineageInput
 	for rows.Next() {
 		var input LineageInput
+		var datasetVersionID *uuid.UUID
 		var resourceID *uuid.UUID
-		if err := rows.Scan(&input.DatasetVersionID, &resourceID); err != nil {
+		if err := rows.Scan(&input.DependencyKind, &datasetVersionID, &resourceID); err != nil {
 			return nil, err
+		}
+		if datasetVersionID != nil {
+			input.DatasetVersionID = *datasetVersionID
 		}
 		if resourceID != nil {
 			input.DataResourceID = *resourceID
@@ -655,7 +692,7 @@ func currentDirectDeclaration(ctx context.Context, q queryer, workspaceID, resou
 func HashEffectiveInputs(inputs []domain.EffectiveRightsInput) string {
 	parts := make([]string, 0, len(inputs))
 	for _, i := range inputs {
-		parts = append(parts, strings.Join([]string{i.InputDatasetVersionID.String(), i.DataResourceID.String(), i.InputHash}, "|"))
+		parts = append(parts, strings.Join([]string{i.DependencyKind, i.InputDatasetVersionID.String(), i.DataResourceID.String(), i.InputHash}, "|"))
 	}
 	sort.Strings(parts)
 	h := sha256.Sum256([]byte(strings.Join(parts, "\n")))
