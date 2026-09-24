@@ -17,10 +17,10 @@ import (
 	"github.com/jackc/pgx/v5"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
-	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/matching"
+	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/indicator"
@@ -510,7 +510,6 @@ func formatOptional(value *float64) string {
 	}
 	return fmt.Sprintf("%.2f", *value)
 }
-
 
 func processorName(definition map[string]any) string {
 	spec, ok := definition["spec"].(map[string]any)
