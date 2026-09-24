@@ -495,7 +495,7 @@ jobs:
           set -euo pipefail
           TOKEN="$(docker compose -f deploy/docker-compose/docker-compose.label-studio.yml exec -T label-studio \
             python3 /label-studio/label_studio/manage.py shell -c \
-            "from users.models import User; from jwt_auth.models import LSAPIToken; u=User.objects.get(email='ci@example.com'); print(LSAPIToken.for_user(u).get_full_jwt())" \
+            "from users.models import User; from rest_framework.authtoken.models import Token; u=User.objects.get(email='ci@example.com'); print(Token.objects.get_or_create(user=u)[0].key)" \
             | tail -n 1 | tr -d '\r')"
           test -n "$TOKEN"
           echo "::add-mask::$TOKEN"
