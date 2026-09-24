@@ -49,11 +49,12 @@ services:
     environment:
       MINIO_ROOT_USER: demo-only
       MINIO_ROOT_PASSWORD: demo-only-not-production
+      MC_HOST_local: http://demo-only:demo-only-not-production@127.0.0.1:9000
     volumes: [object-data:/data]
     healthcheck:
-      test: [CMD, curl, -f, http://localhost:9000/minio/health/live]
+      test: [CMD, mc, ready, local]
       interval: 2s
-      timeout: 2s
+      timeout: 5s
       retries: 30
   api:
     image: '${COMPOSE_PROJECT_NAME}-core:local'
