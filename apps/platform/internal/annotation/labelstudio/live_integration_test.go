@@ -134,7 +134,7 @@ func TestLabelStudioLiveReference(t *testing.T) {
 		}
 		if result.ExternalTaskID != submission.ExternalTaskIDs[task1] ||
 			result.ExternalAnnotationID == "" ||
-			result.AuthorRef == "" ||
+			result.ExternalAuthorRef == "" ||
 			result.CanonicalPayloadSHA256 != sha256HexString(`{"label":"EVIDENCE_SUFFICIENT"}`) {
 			t.Fatalf("normalized result = %+v", result)
 		}
