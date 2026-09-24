@@ -89,47 +89,15 @@ func evaluateGoldQualityPreflight(
 ) (GoldQualityPreflight, error) {
 	n := len(manifest.Tasks)
 	d := len(manifest.Decisions)
-	a := len(manifest.Outputs)
 	rejected := 0
 	corrected := 0
 	accepted := 0
-	for _, decision := range manifest.Decisions {
-		switch decision.Outcome {
-		case annotationdomain.ReviewAccept:
-			accepted++
-		case annotationdomain.ReviewCorrect:
-			corrected++
-		case annotationdomain.ReviewReject:
-			rejected++
-		}
-	}
 
-	findings := make([]qualitydomain.Finding, 0, 8)
-	metrics := map[string]any{
-		"taskCount":          n,
-		"selectedCount":      a,
-		"reviewedCount":      d,
-		"acceptedCount":      accepted,
-		"rejectedCount":      rejected,
-		"correctedCount":     corrected,
-		"annotationCoverage": ratioObservation(a, n),
-		"reviewedCoverage":   ratioObservation(d, n),
-		"reviewPassRate":     ratioObservation(accepted+corrected, d),
-		"agreement":          "NOT_APPLICABLE",
-	}
-
-	findings = append(findings,
-		ratioFinding("GOLD-ANNOTATION-COVERAGE", "COMPLETENESS", "CRITICAL",
-			"Every frozen task must have an ACCEPT/CORRECT selected result.", a, n, n > 0 && a == n),
-		ratioFinding("GOLD-REVIEWED-COVERAGE", "COMPLETENESS", "CRITICAL",
-			"Every frozen task must have a terminal review decision.", d, n, n > 0 && d == n),
-		countZeroFinding("GOLD-REJECTED-COUNT", "ACCURACY", "CRITICAL",
-			"Gold Pilot requires zero REJECT decisions.", rejected),
-	)
-
+	taskIDs := make(map[string]struct{}, n)
 	sourceSeen := make(map[string]struct{}, n)
 	duplicateSources := make([]any, 0)
 	for _, task := range manifest.Tasks {
+		taskIDs[task.ID] = struct{}{}
 		ref := strings.TrimSpace(task.SourceItemRef)
 		if ref == "" {
 			duplicateSources = append(duplicateSources, map[string]any{"taskId": task.ID, "sourceItemRef": ref})
@@ -140,23 +108,51 @@ func evaluateGoldQualityPreflight(
 		}
 		sourceSeen[ref] = struct{}{}
 	}
-	findings = append(findings, sampleFinding(
-		"GOLD-SOURCE-UNIQUENESS", "UNIQUENESS", "CRITICAL",
-		"Frozen tasks must have non-empty unique source item references.",
-		len(duplicateSources) == 0, len(duplicateSources), duplicateSources,
-	))
 
-	taskIDs := make(map[string]struct{}, n)
-	for _, task := range manifest.Tasks {
-		taskIDs[task.ID] = struct{}{}
+	decisionByTask := make(map[string]struct {
+		Outcome          string
+		SelectedResultID string
+	}, d)
+	for _, decision := range manifest.Decisions {
+		selectedID := ""
+		if decision.SelectedResultID != nil {
+			selectedID = strings.TrimSpace(*decision.SelectedResultID)
+		}
+		decisionByTask[decision.TaskID] = struct {
+			Outcome          string
+			SelectedResultID string
+		}{Outcome: decision.Outcome, SelectedResultID: selectedID}
+		switch decision.Outcome {
+		case annotationdomain.ReviewAccept:
+			accepted++
+		case annotationdomain.ReviewCorrect:
+			corrected++
+		case annotationdomain.ReviewReject:
+			rejected++
+		}
 	}
+
 	resultByID := make(map[string]annotationinfra.SnapshotSelectedResult, len(selected))
+	correctedFromCount := 0
 	for _, result := range selected {
 		resultByID[result.ResultID.String()] = result
+		if result.CorrectedFromResultID != nil {
+			correctedFromCount++
+		}
 	}
 
 	mappingProblems := make([]any, 0)
+	schemaProblems := make([]any, 0)
+	usableSelectedTasks := make(map[string]struct{}, len(manifest.Outputs))
+	outputSeen := make(map[string]struct{}, len(manifest.Outputs))
 	for _, output := range manifest.Outputs {
+		if _, duplicated := outputSeen[output.TaskID]; duplicated {
+			mappingProblems = append(mappingProblems, map[string]any{
+				"taskId": output.TaskID, "reason": "task appears more than once in outputs",
+			})
+			continue
+		}
+		outputSeen[output.TaskID] = struct{}{}
 		if _, ok := taskIDs[output.TaskID]; !ok {
 			mappingProblems = append(mappingProblems, map[string]any{"taskId": output.TaskID, "reason": "output task not frozen"})
 			continue
@@ -168,34 +164,65 @@ func evaluateGoldQualityPreflight(
 		}
 		if result.TaskID.String() != output.TaskID {
 			mappingProblems = append(mappingProblems, map[string]any{"taskId": output.TaskID, "selectedResultId": output.SelectedResultID, "reason": "selected result belongs to different task"})
+			continue
 		}
+		decision, ok := decisionByTask[output.TaskID]
+		if !ok || (decision.Outcome != annotationdomain.ReviewAccept && decision.Outcome != annotationdomain.ReviewCorrect) ||
+			decision.SelectedResultID != output.SelectedResultID {
+			mappingProblems = append(mappingProblems, map[string]any{"taskId": output.TaskID, "selectedResultId": output.SelectedResultID, "reason": "output does not match terminal ACCEPT/CORRECT decision"})
+			continue
+		}
+		if err := validateAnnotationPayload(campaign.Schema, result.CanonicalPayload); err != nil {
+			schemaProblems = append(schemaProblems, map[string]any{"taskId": result.TaskID, "resultId": result.ResultID})
+			continue
+		}
+		usableSelectedTasks[output.TaskID] = struct{}{}
 	}
 	if len(selected) != len(manifest.Outputs) {
 		mappingProblems = append(mappingProblems, map[string]any{"selectedResultCount": len(selected), "outputCount": len(manifest.Outputs), "reason": "selected result/output count mismatch"})
 	}
-	findings = append(findings, sampleFinding(
-		"GOLD-OUTPUT-TASK-MAPPING", "CONSISTENCY", "CRITICAL",
-		"Each output must map one frozen task to its exact selected result.",
-		len(mappingProblems) == 0, len(mappingProblems), mappingProblems,
-	))
 
-	schemaProblems := make([]any, 0)
-	correctedFromCount := 0
-	for _, result := range selected {
-		if err := validateAnnotationPayload(campaign.Schema, result.CanonicalPayload); err != nil {
-			schemaProblems = append(schemaProblems, map[string]any{"taskId": result.TaskID, "resultId": result.ResultID})
-		}
-		if result.CorrectedFromResultID != nil {
-			correctedFromCount++
-		}
+	a := len(usableSelectedTasks)
+	findings := make([]qualitydomain.Finding, 0, 8)
+	metrics := map[string]any{
+		"taskCount":              n,
+		"selectedCount":          len(manifest.Outputs),
+		"usableSelectedCount":    a,
+		"reviewedCount":          d,
+		"acceptedCount":          accepted,
+		"rejectedCount":          rejected,
+		"correctedCount":         corrected,
+		"correctedSelectedCount": correctedFromCount,
+		"schemaInvalidCount":     len(schemaProblems),
+		"annotationCoverage":     ratioObservation(a, n),
+		"reviewedCoverage":       ratioObservation(d, n),
+		"reviewPassRate":         ratioObservation(accepted+corrected, d),
+		"agreement":              "NOT_APPLICABLE",
 	}
-	metrics["schemaInvalidCount"] = len(schemaProblems)
-	metrics["correctedSelectedCount"] = correctedFromCount
-	findings = append(findings, sampleFinding(
-		"GOLD-SCHEMA-VALIDITY", "ACCURACY", "CRITICAL",
-		"Every selected result must validate against the frozen campaign schema.",
-		len(schemaProblems) == 0 && len(selected) == a, len(schemaProblems), schemaProblems,
-	))
+
+	findings = append(findings,
+		ratioFinding("GOLD-ANNOTATION-COVERAGE", "COMPLETENESS", "CRITICAL",
+			"Every frozen task must have a schema-valid ACCEPT/CORRECT selected result.", a, n, n > 0 && a == n),
+		ratioFinding("GOLD-REVIEWED-COVERAGE", "COMPLETENESS", "CRITICAL",
+			"Every frozen task must have a terminal review decision.", d, n, n > 0 && d == n),
+		countZeroFinding("GOLD-REJECTED-COUNT", "ACCURACY", "CRITICAL",
+			"Gold Pilot requires zero REJECT decisions.", rejected),
+		sampleFinding(
+			"GOLD-SOURCE-UNIQUENESS", "UNIQUENESS", "CRITICAL",
+			"Frozen tasks must have non-empty unique source item references.",
+			len(duplicateSources) == 0, len(duplicateSources), duplicateSources,
+		),
+		sampleFinding(
+			"GOLD-OUTPUT-TASK-MAPPING", "CONSISTENCY", "CRITICAL",
+			"Each output must map one frozen task to the exact result selected by its ACCEPT/CORRECT decision.",
+			len(mappingProblems) == 0, len(mappingProblems), mappingProblems,
+		),
+		sampleFinding(
+			"GOLD-SCHEMA-VALIDITY", "ACCURACY", "CRITICAL",
+			"Every selected result must validate against the frozen campaign schema.",
+			len(schemaProblems) == 0 && len(selected) == len(manifest.Outputs), len(schemaProblems), schemaProblems,
+		),
+	)
 
 	provenanceProblems := make([]any, 0)
 	if strings.TrimSpace(rootHash) == "" {
@@ -219,7 +246,7 @@ func evaluateGoldQualityPreflight(
 		len(provenanceProblems) == 0, len(provenanceProblems), provenanceProblems,
 	))
 
-	agreement := qualitydomain.Finding{
+	findings = append(findings, qualitydomain.Finding{
 		RuleID:    "GOLD-AGREEMENT",
 		Dimension: "CONSISTENCY",
 		Severity:  "INFO",
@@ -229,8 +256,7 @@ func evaluateGoldQualityPreflight(
 			"agreement":                     "NOT_APPLICABLE",
 			"multiAnnotationFactsAvailable": false,
 		},
-	}
-	findings = append(findings, agreement)
+	})
 
 	blocking := false
 	for _, finding := range findings {
