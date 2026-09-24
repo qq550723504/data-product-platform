@@ -125,6 +125,26 @@ func (b EngineCampaignBinding) Validate() error {
 	return nil
 }
 
+type EngineActorBinding struct {
+	ID               uuid.UUID
+	WorkspaceID      uuid.UUID
+	Provider         string
+	ProviderInstance string
+	ExternalActorRef string
+	CoreActorRef     string
+	CreatedAt        time.Time
+	CreatedBy        *uuid.UUID
+}
+
+func (b EngineActorBinding) Validate() error {
+	if b.ID == uuid.Nil || b.WorkspaceID == uuid.Nil ||
+		strings.TrimSpace(b.Provider) == "" || strings.TrimSpace(b.ProviderInstance) == "" ||
+		strings.TrimSpace(b.ExternalActorRef) == "" || strings.TrimSpace(b.CoreActorRef) == "" {
+		return ErrInvalidEngineBinding
+	}
+	return nil
+}
+
 type EngineTaskBinding struct {
 	ID                uuid.UUID
 	WorkspaceID       uuid.UUID
