@@ -4,7 +4,8 @@ LOCK TABLE
     annotation_engine_attempt,
     annotation_engine_attempt_outcome,
     annotation_engine_campaign_binding,
-    annotation_engine_task_binding
+    annotation_engine_task_binding,
+    annotation_engine_actor_binding
 IN ACCESS EXCLUSIVE MODE;
 
 DO $$
@@ -13,7 +14,8 @@ BEGIN
        OR EXISTS (SELECT 1 FROM annotation_engine_attempt LIMIT 1)
        OR EXISTS (SELECT 1 FROM annotation_engine_attempt_outcome LIMIT 1)
        OR EXISTS (SELECT 1 FROM annotation_engine_campaign_binding LIMIT 1)
-       OR EXISTS (SELECT 1 FROM annotation_engine_task_binding LIMIT 1) THEN
+       OR EXISTS (SELECT 1 FROM annotation_engine_task_binding LIMIT 1)
+       OR EXISTS (SELECT 1 FROM annotation_engine_actor_binding LIMIT 1) THEN
         RAISE EXCEPTION 'cannot rollback annotation engine durable boundary with history';
     END IF;
 END;
@@ -22,6 +24,7 @@ $$;
 DROP TRIGGER IF EXISTS trg_annotation_engine_attempt_outcome_insert ON annotation_engine_attempt_outcome;
 DROP FUNCTION IF EXISTS validate_annotation_engine_attempt_outcome_insert();
 
+DROP TRIGGER IF EXISTS trg_annotation_engine_actor_binding_immutable ON annotation_engine_actor_binding;
 DROP TRIGGER IF EXISTS trg_annotation_engine_task_binding_immutable ON annotation_engine_task_binding;
 DROP TRIGGER IF EXISTS trg_annotation_engine_campaign_binding_immutable ON annotation_engine_campaign_binding;
 DROP TRIGGER IF EXISTS trg_annotation_engine_attempt_outcome_immutable ON annotation_engine_attempt_outcome;
@@ -46,6 +49,7 @@ DROP FUNCTION IF EXISTS guard_annotation_engine_operation_update();
 DROP TRIGGER IF EXISTS trg_annotation_engine_operation_insert ON annotation_engine_operation;
 DROP FUNCTION IF EXISTS validate_annotation_engine_operation_insert();
 
+DROP TABLE annotation_engine_actor_binding;
 DROP TABLE annotation_engine_task_binding;
 DROP TABLE annotation_engine_campaign_binding;
 DROP TABLE annotation_engine_attempt_outcome;
