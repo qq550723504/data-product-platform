@@ -2,6 +2,8 @@ package labelstudio_test
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -237,6 +239,38 @@ func TestLabelStudioSubmitTasksRejectsMutatedPersistedPayload(t *testing.T) {
 	}
 	if !strings.Contains(verified.DiagnosticRef, "payload mismatch") {
 		t.Fatalf("diagnostic = %q", verified.DiagnosticRef)
+	}
+}
+
+func TestLabelStudioVerifyCampaignBindingRejectsChangedConfig(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/projects/41" || r.Method != http.MethodGet {
+			http.NotFound(w, r)
+			return
+		}
+		writeJSON(t, w, map[string]any{
+			"id":           41,
+			"label_config": "<View><Text name=\"changed\" value=\"$text\"/></View>",
+		})
+	}))
+	defer server.Close()
+
+	client, err := labelstudio.NewClient(server.URL, "secret", "local-ls", server.Client())
+	if err != nil {
+		t.Fatalf("new client: %v", err)
+	}
+	sum := sha256.Sum256([]byte(testLabelConfig))
+	err = client.VerifyCampaignBinding(context.Background(), annotationapp.EngineCampaignBinding{
+		Provider:          labelstudio.Provider,
+		ProviderInstance:  "local-ls",
+		ExternalProjectID: "41",
+		ConfigSHA256:      hex.EncodeToString(sum[:]),
+	})
+	if err == nil {
+		t.Fatal("expected changed project config to be rejected")
+	}
+	if !strings.Contains(err.Error(), "invalid response") {
+		t.Fatalf("verify error = %v", err)
 	}
 }
 
