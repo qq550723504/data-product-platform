@@ -87,14 +87,67 @@ func (r *Repository) RecoverExpiredEngineSending(
 	if now.IsZero() {
 		now = time.Now().UTC()
 	}
+
+	operation, err := getEngineOperationByIDForUpdate(ctx, tx, operationID)
+	if err != nil {
+		return annotationdomain.EngineOperation{}, err
+	}
+	if operation.Status != annotationdomain.EngineOperationSending ||
+		operation.ClaimExpiresAt == nil ||
+		operation.ClaimExpiresAt.After(now.UTC()) {
+		return annotationdomain.EngineOperation{}, ErrEngineClaimBusy
+	}
+
+	var attemptID uuid.UUID
+	err = tx.QueryRow(ctx, `
+		SELECT a.id
+		  FROM annotation_engine_attempt a
+		 WHERE a.operation_id=$1
+		   AND a.attempt_kind='SUBMIT'
+		   AND NOT EXISTS (
+		       SELECT 1
+		         FROM annotation_engine_attempt_outcome o
+		        WHERE o.attempt_id=a.id
+		   )
+		 ORDER BY a.attempt_no DESC
+		 LIMIT 1
+		 FOR UPDATE
+	`, operationID).Scan(&attemptID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.EngineOperation{}, fmt.Errorf(
+			"recover expired annotation engine send: missing unresolved SUBMIT attempt",
+		)
+	}
+	if err != nil {
+		return annotationdomain.EngineOperation{}, fmt.Errorf(
+			"recover expired annotation engine send attempt: %w",
+			err,
+		)
+	}
+
+	if err := r.AppendEngineAttemptOutcome(
+		ctx,
+		tx,
+		annotationdomain.EngineAttemptOutcome{
+			ID:            uuid.New(),
+			AttemptID:     attemptID,
+			Outcome:       annotationdomain.EngineAttemptUnknown,
+			DiagnosticRef: "worker lease expired after durable send claim",
+			OccurredAt:    now.UTC(),
+		},
+	); err != nil {
+		return annotationdomain.EngineOperation{}, err
+	}
+
 	tag, err := tx.Exec(ctx, `
 		UPDATE annotation_engine_operation
 		   SET status='UNKNOWN', claimed_by=NULL, claim_expires_at=NULL, revision=revision+1
 		 WHERE id=$1
+		   AND revision=$2
 		   AND status='SENDING'
 		   AND claim_expires_at IS NOT NULL
-		   AND claim_expires_at <= $2
-	`, operationID, now.UTC())
+		   AND claim_expires_at <= $3
+	`, operationID, operation.Revision, now.UTC())
 	if err != nil {
 		return annotationdomain.EngineOperation{}, fmt.Errorf("recover expired annotation engine send: %w", err)
 	}
