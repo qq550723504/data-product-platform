@@ -43,6 +43,9 @@ func NewClient(baseURL, token, instanceRef string, httpClient *http.Client) (*Cl
 	if token == "" || instanceRef == "" {
 		return nil, fmt.Errorf("Label Studio token and provider instance are required")
 	}
+	if strings.Count(token, ".") == 2 {
+		return nil, fmt.Errorf("Label Studio JWT refresh tokens are not supported by the reference adapter; configure a direct API token")
+	}
 	if httpClient == nil {
 		httpClient = &http.Client{Timeout: 30 * time.Second}
 	}
@@ -97,13 +100,30 @@ func (c *Client) EnsureCampaignBinding(ctx context.Context, req annotationapp.En
 			annotationapp.ErrAnnotationEngineInvalidResponse, "verify project config", false, 0, nil,
 		)
 	}
-	return annotationapp.EngineCampaignBinding{
-		Provider:          Provider,
-		ProviderInstance:  c.instanceRef,
-		ExternalProjectID: project.ID.String(),
-		RequestID:         req.RequestID,
-		ConfigSHA256:      configSHA256,
-	}, nil
+	lookup, err := c.LookupCampaignBinding(ctx, req)
+	if err != nil {
+		return annotationapp.EngineCampaignBinding{}, err
+	}
+	if lookup.State != annotationapp.EngineLookupMatched || lookup.Binding == nil {
+		return annotationapp.EngineCampaignBinding{}, annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidResponse,
+			"verify created project",
+			false,
+			0,
+			nil,
+		)
+	}
+	if lookup.Binding.ExternalProjectID != project.ID.String() ||
+		lookup.Binding.ConfigSHA256 != configSHA256 {
+		return annotationapp.EngineCampaignBinding{}, annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidResponse,
+			"verify created project identity",
+			false,
+			0,
+			nil,
+		)
+	}
+	return *lookup.Binding, nil
 }
 
 func (c *Client) LookupCampaignBinding(
@@ -424,6 +444,9 @@ func (c *Client) FetchResults(ctx context.Context, req annotationapp.EngineLooku
 			annotationapp.ErrAnnotationEngineInvalidRequest, "fetch results", false, 0, nil,
 		)
 	}
+	if err := c.verifyProjectConfig(ctx, req.Binding); err != nil {
+		return annotationapp.EngineResultPage{}, err
+	}
 	query := url.Values{
 		"project":   []string{req.Binding.ExternalProjectID},
 		"page":      []string{strconv.Itoa(cursor.Offset/100 + 1)},
@@ -564,6 +587,40 @@ func remoteTaskMatches(
 		correlationKey == task.CorrelationKey
 }
 
+func (c *Client) verifyProjectConfig(
+	ctx context.Context,
+	binding annotationapp.EngineCampaignBinding,
+) error {
+	var project struct {
+		ID          json.Number `json:"id"`
+		LabelConfig string      `json:"label_config"`
+	}
+	path := "/api/projects/" + url.PathEscape(binding.ExternalProjectID)
+	if err := c.requestJSON(ctx, http.MethodGet, path, nil, nil, &project); err != nil {
+		return err
+	}
+	if strings.TrimSpace(project.ID.String()) != strings.TrimSpace(binding.ExternalProjectID) {
+		return annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidResponse,
+			"verify project identity",
+			false,
+			0,
+			nil,
+		)
+	}
+	sum := sha256.Sum256([]byte(strings.TrimSpace(project.LabelConfig)))
+	if hex.EncodeToString(sum[:]) != strings.TrimSpace(binding.ConfigSHA256) {
+		return annotationapp.NewAnnotationEngineError(
+			annotationapp.ErrAnnotationEngineInvalidResponse,
+			"verify project config",
+			false,
+			0,
+			nil,
+		)
+	}
+	return nil
+}
+
 func singleChoiceLabel(result []any) (string, bool) {
 	for _, raw := range result {
 		item, ok := raw.(map[string]any)
@@ -659,102 +716,8 @@ func normalizeBaseURL(raw string) (string, error) {
 	return strings.TrimRight(parsed.String(), "/"), nil
 }
 
-func (c *Client) authorizationHeader(ctx context.Context) (string, error) {
-	if strings.Count(c.token, ".") != 2 {
-		return "Token " + c.token, nil
-	}
-
-	c.authMu.Lock()
-	defer c.authMu.Unlock()
-
-	now := time.Now().UTC()
-	if c.accessToken != "" && now.Before(c.accessTokenExpiresAt) {
-		return "Bearer " + c.accessToken, nil
-	}
-
-	body, err := json.Marshal(map[string]string{"refresh": c.token})
-	if err != nil {
-		return "", annotationapp.NewAnnotationEngineError(
-			annotationapp.ErrAnnotationEngineInvalidRequest,
-			"encode personal access token refresh",
-			false,
-			0,
-			err,
-		)
-	}
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodPost,
-		c.baseURL+"/api/token/refresh",
-		bytes.NewReader(body),
-	)
-	if err != nil {
-		return "", annotationapp.NewAnnotationEngineError(
-			annotationapp.ErrAnnotationEngineInvalidRequest,
-			"create personal access token refresh request",
-			false,
-			0,
-			err,
-		)
-	}
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return "", annotationapp.NewAnnotationEngineOutcomeError(
-			annotationapp.ErrAnnotationEngineUnavailable,
-			"refresh personal access token",
-			true,
-			false,
-			0,
-			err,
-		)
-	}
-	defer resp.Body.Close()
-
-	raw, readErr := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
-	if readErr != nil {
-		return "", annotationapp.NewAnnotationEngineOutcomeError(
-			annotationapp.ErrAnnotationEngineUnavailable,
-			"read personal access token refresh response",
-			true,
-			false,
-			resp.StatusCode,
-			readErr,
-		)
-	}
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		kind, retryable := classifyHTTPStatus(resp.StatusCode)
-		return "", annotationapp.NewAnnotationEngineOutcomeError(
-			kind,
-			"refresh personal access token",
-			retryable,
-			false,
-			resp.StatusCode,
-			nil,
-		)
-	}
-
-	var tokenResponse struct {
-		Access string `json:"access"`
-	}
-	if err := json.Unmarshal(raw, &tokenResponse); err != nil ||
-		strings.TrimSpace(tokenResponse.Access) == "" {
-		return "", annotationapp.NewAnnotationEngineError(
-			annotationapp.ErrAnnotationEngineInvalidResponse,
-			"decode personal access token refresh response",
-			false,
-			resp.StatusCode,
-			err,
-		)
-	}
-
-	c.accessToken = strings.TrimSpace(tokenResponse.Access)
-	// Label Studio access tokens are short-lived (about five minutes). Refresh
-	// proactively so normal API calls do not race the expiry boundary.
-	c.accessTokenExpiresAt = now.Add(4 * time.Minute)
-	return "Bearer " + c.accessToken, nil
+func (c *Client) authorizationHeader(_ context.Context) (string, error) {
+	return "Token " + c.token, nil
 }
 
 func (c *Client) requestJSON(ctx context.Context, method, path string, query url.Values, body []byte, target any) error {
