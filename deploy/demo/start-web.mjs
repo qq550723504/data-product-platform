@@ -8,9 +8,10 @@ if (manifest.schema !== 1 || !["REVIEW", "READY"].includes(manifest.stage) ||
 Object.assign(process.env, {
   PLATFORM_API_BASE_URL: "http://api:8080", POC_WORKSPACE_ID: manifest.workspaceId,
   POC_INGEST_ACTOR_ID: manifest.seedActorId, POC_ENABLE_INGEST_ACTIONS: "true",
-  POC_REVIEWER_ID: manifest.reviewerId, POC_RELEASE_ACTOR_ID: manifest.publisherId,
+  HUMAN_DECISION_API_TOKEN: process.env.HUMAN_DECISION_API_TOKEN, POC_RELEASE_ACTOR_ID: manifest.publisherId,
   POC_ENABLE_REVIEW_ACTIONS: "true", POC_ENABLE_RELEASE_ACTIONS: "true",
   HOSTNAME: "0.0.0.0", PORT: "3000",
 });
-console.warn("SYNTHETIC LOCAL DEMO ONLY: configured actors are not authentication. Do not expose publicly.");
+if (!process.env.HUMAN_DECISION_API_TOKEN) throw new Error("Demo Human Decision credential is missing.");
+console.warn("SYNTHETIC LOCAL DEMO ONLY: static trusted principals are controlled-pilot authentication, not production IAM. Do not expose publicly.");
 await import("./server.js");
