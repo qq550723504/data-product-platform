@@ -153,7 +153,7 @@ func NewExecution(workspaceID, workflowVersionID, outputDatasetID uuid.UUID, tar
 		return Execution{}, ErrInvalidExecutionOutput
 	}
 	targetPeriod = strings.TrimSpace(targetPeriod)
-	if !validTargetPeriod(targetPeriod) {
+	if targetPeriod != "" && !validTargetPeriod(targetPeriod) {
 		return Execution{}, ErrInvalidTargetPeriod
 	}
 	if len(inputs) == 0 {
