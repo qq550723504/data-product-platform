@@ -25,7 +25,6 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
-	workflowdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 )
 
