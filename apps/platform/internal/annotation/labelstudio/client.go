@@ -386,8 +386,8 @@ func (c *Client) LookupSubmission(ctx context.Context, req annotationapp.EngineL
 	}, nil
 }
 
-func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineCampaignBinding, cursor annotationapp.EngineResultCursor) (annotationapp.EngineResultPage, error) {
-	if err := validateBinding(c.instanceRef, binding); err != nil {
+func (c *Client) FetchResults(ctx context.Context, req annotationapp.EngineLookupRequest, cursor annotationapp.EngineResultCursor) (annotationapp.EngineResultPage, error) {
+	if err := validateBinding(c.instanceRef, req.Binding); err != nil {
 		return annotationapp.EngineResultPage{}, err
 	}
 	if cursor.Offset < 0 {
@@ -396,7 +396,7 @@ func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineC
 		)
 	}
 	query := url.Values{
-		"project":   []string{binding.ExternalProjectID},
+		"project":   []string{req.Binding.ExternalProjectID},
 		"page":      []string{strconv.Itoa(cursor.Offset/100 + 1)},
 		"page_size": []string{"100"},
 		"fields":    []string{"all"},
@@ -405,6 +405,7 @@ func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineC
 		Total int `json:"total"`
 		Tasks []struct {
 			ID          json.Number    `json:"id"`
+			Data        map[string]any `json:"data"`
 			Meta        map[string]any `json:"meta"`
 			Annotations []struct {
 				ID           json.Number `json:"id"`
@@ -420,12 +421,33 @@ func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineC
 		return annotationapp.EngineResultPage{}, err
 	}
 
+	expected := make(map[string]annotationapp.EngineTask, len(req.Tasks))
+	for _, task := range req.Tasks {
+		expected[task.TaskID.String()] = task
+	}
 	results := make([]annotationapp.EngineResultObservation, 0)
 	for _, task := range response.Tasks {
 		coreTaskText, _ := task.Meta["core_task_id"].(string)
 		coreTaskID, err := uuid.Parse(strings.TrimSpace(coreTaskText))
 		if err != nil {
 			continue
+		}
+		expectedTask, tracked := expected[coreTaskID.String()]
+		if !tracked {
+			continue
+		}
+		requestID, _ := task.Meta["core_request_id"].(string)
+		fingerprint, _ := task.Meta["core_request_fingerprint"].(string)
+		if requestID != req.RequestID ||
+			fingerprint != req.RequestFingerprint ||
+			!remoteTaskMatches(expectedTask, task.Data, task.Meta) {
+			return annotationapp.EngineResultPage{}, annotationapp.NewAnnotationEngineError(
+				annotationapp.ErrAnnotationEngineInvalidResponse,
+				"verify result task payload",
+				false,
+				0,
+				nil,
+			)
 		}
 		for _, annotation := range task.Annotations {
 			if annotation.WasCancelled {
