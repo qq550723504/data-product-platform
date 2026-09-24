@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
@@ -227,9 +228,7 @@ func TestAnnotationReviewHTTPRejectsUntrustedAndStaleWithoutDecision(t *testing.
 	})
 }
 
-func seedReviewIntegrationFixture(t *testing.T, ctx context.Context, pool interface {
-	Exec(context.Context, string, ...any) (pgconn.CommandTag, error)
-}) reviewIntegrationFixture {
+func seedReviewIntegrationFixture(t *testing.T, ctx context.Context, pool *pgxpool.Pool) reviewIntegrationFixture {
 	t.Helper()
 	workspaceID := uuid.New()
 	resourceID := uuid.New()
@@ -332,11 +331,7 @@ func seedReviewIntegrationFixture(t *testing.T, ctx context.Context, pool interf
 	return reviewIntegrationFixture{workspaceID: workspaceID, campaignID: campaignID, taskID: taskID, resultID: resultID}
 }
 
-type reviewFixtureExecer interface {
-	Exec(context.Context, string, ...any) (pgconn.CommandTag, error)
-}
-
-func mustExecReviewFixture(t *testing.T, ctx context.Context, execer reviewFixtureExecer, query string, args ...any) {
+func mustExecReviewFixture(t *testing.T, ctx context.Context, execer *pgxpool.Pool, query string, args ...any) {
 	t.Helper()
 	if _, err := execer.Exec(ctx, query, args...); err != nil {
 		t.Fatalf("review fixture SQL: %v", err)
@@ -365,9 +360,7 @@ func postAnnotationReviewIntegration(
 	return recorder
 }
 
-func assertAnnotationReviewCount(t *testing.T, ctx context.Context, pool interface {
-	QueryRow(context.Context, string, ...any) pgx.Row
-}, want int, query string, args ...any) {
+func assertAnnotationReviewCount(t *testing.T, ctx context.Context, pool *pgxpool.Pool, want int, query string, args ...any) {
 	t.Helper()
 	var got int
 	if err := pool.QueryRow(ctx, query, args...).Scan(&got); err != nil {
