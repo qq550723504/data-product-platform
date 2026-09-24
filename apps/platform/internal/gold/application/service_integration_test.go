@@ -113,6 +113,14 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	suffix := strings.ReplaceAll(uuid.NewString(), "-", "")[:10]
 	specContent := `{"kind":"single-label-v1","labels":["A","B"]}`
 	specHash := goldTestSHA256([]byte(specContent))
+	row1Hash, err := goldSourceRowHash(map[string]string{"company_id": "c1", "activity_level": "HIGH"})
+	if err != nil {
+		t.Fatalf("row1 hash: %v", err)
+	}
+	row2Hash, err := goldSourceRowHash(map[string]string{"company_id": "c2", "activity_level": "LOW"})
+	if err != nil {
+		t.Fatalf("row2 hash: %v", err)
+	}
 
 	goldSQL(t, ctx, pool, `
 		INSERT INTO data_resource(id, workspace_id, code, name, resource_type, lifecycle_status)
@@ -181,7 +189,7 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 		) VALUES
 			($1,$3,$4,'row:1',$5,$6,'annotator'),
 			($2,$3,$4,'row:2',$7,$8,'annotator')
-	`, task1, task2, workspaceID, campaignID, strings.Repeat("a", 64), strings.Repeat("b", 64), strings.Repeat("c", 64), strings.Repeat("d", 64))
+	`, task1, task2, workspaceID, campaignID, row1Hash, strings.Repeat("b", 64), row2Hash, strings.Repeat("d", 64))
 	goldSQL(t, ctx, pool, `
 		UPDATE annotation_campaign
 		   SET status='ACTIVE', revision=2, expected_task_count=2,
