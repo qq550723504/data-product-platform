@@ -471,20 +471,34 @@ func (c *Client) FetchResults(ctx context.Context, req annotationapp.EngineLooku
 	}
 	results := make([]annotationapp.EngineResultObservation, 0)
 	for _, task := range response.Tasks {
+		requestID, _ := task.Meta["core_request_id"].(string)
+		fingerprint, _ := task.Meta["core_request_fingerprint"].(string)
+		if requestID != req.RequestID || fingerprint != req.RequestFingerprint {
+			continue
+		}
+
 		coreTaskText, _ := task.Meta["core_task_id"].(string)
 		coreTaskID, err := uuid.Parse(strings.TrimSpace(coreTaskText))
 		if err != nil {
-			continue
+			return annotationapp.EngineResultPage{}, annotationapp.NewAnnotationEngineError(
+				annotationapp.ErrAnnotationEngineInvalidResponse,
+				"verify correlated result task identity",
+				false,
+				0,
+				err,
+			)
 		}
 		expectedTask, tracked := expected[coreTaskID.String()]
 		if !tracked {
-			continue
+			return annotationapp.EngineResultPage{}, annotationapp.NewAnnotationEngineError(
+				annotationapp.ErrAnnotationEngineInvalidResponse,
+				"verify correlated result task identity",
+				false,
+				0,
+				nil,
+			)
 		}
-		requestID, _ := task.Meta["core_request_id"].(string)
-		fingerprint, _ := task.Meta["core_request_fingerprint"].(string)
-		if requestID != req.RequestID ||
-			fingerprint != req.RequestFingerprint ||
-			!remoteTaskMatches(expectedTask, task.Data, task.Meta) {
+		if !remoteTaskMatches(expectedTask, task.Data, task.Meta) {
 			return annotationapp.EngineResultPage{}, annotationapp.NewAnnotationEngineError(
 				annotationapp.ErrAnnotationEngineInvalidResponse,
 				"verify result task payload",
