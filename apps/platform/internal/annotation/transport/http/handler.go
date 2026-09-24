@@ -1,6 +1,7 @@
 package annotationhttp
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -17,12 +18,16 @@ import (
 	platformprincipal "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 )
 
+type ReviewService interface {
+	ReviewAnnotation(context.Context, annotationapp.ReviewAnnotationCommand) (annotationapp.ReviewAnnotationResult, error)
+}
+
 type Handler struct {
-	service  *annotationapp.Service
+	service  ReviewService
 	resolver platformprincipal.Resolver
 }
 
-func NewHandler(service *annotationapp.Service, resolver platformprincipal.Resolver) *Handler {
+func NewHandler(service ReviewService, resolver platformprincipal.Resolver) *Handler {
 	return &Handler{service: service, resolver: resolver}
 }
 
