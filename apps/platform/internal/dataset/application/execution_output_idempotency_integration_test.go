@@ -713,7 +713,6 @@ func containsUniqueViolation(err error) bool {
 	return bytes.Contains([]byte(err.Error()), []byte("uq_dataset_version_execution_output"))
 }
 
-
 func TestPublishFinalizerFailureCannotCommitReadyVersion(t *testing.T) {
 	fixture, _, datasetID := newC2AFixture(t, fakeStore{})
 	executionID := uuid.New()
