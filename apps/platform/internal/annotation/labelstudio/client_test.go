@@ -23,6 +23,7 @@ const (
 
 func TestLabelStudioCreateProjectAndSubmitTasks(t *testing.T) {
 	var imported []map[string]any
+	var projectDescription string
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Authorization") != "Token secret" {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
@@ -33,9 +34,29 @@ func TestLabelStudioCreateProjectAndSubmitTasks(t *testing.T) {
 			if r.Method != http.MethodPost {
 				t.Fatalf("project method = %s", r.Method)
 			}
+			var payload map[string]any
+			if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+				t.Fatalf("decode project request: %v", err)
+			}
+			projectDescription, _ = payload["description"].(string)
 			writeJSON(t, w, map[string]any{
 				"id":           41,
 				"label_config": testLabelConfig,
+			})
+		case "/api/projects/":
+			if r.Method != http.MethodGet {
+				t.Fatalf("project lookup method = %s", r.Method)
+			}
+			writeJSON(t, w, map[string]any{
+				"count": 1,
+				"results": []any{
+					map[string]any{
+						"id":           41,
+						"description":  projectDescription,
+						"label_config": testLabelConfig,
+					},
+				},
+				"next": nil,
 			})
 		case "/api/projects/41/import":
 			if r.URL.Query().Get("return_task_ids") != "true" {
