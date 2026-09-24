@@ -648,14 +648,14 @@ func sameEffectiveRightsRequest(existing domain.EffectiveRightsSnapshot, request
 }
 
 func (s *Service) buildEffectiveRightsSnapshotTx(ctx context.Context, tx pgx.Tx, cmd ComputeEffectiveRightsCommand, inputs []infrastructure.LineageInput) (domain.EffectiveRightsSnapshot, error) {
-	snapshot := domain.EffectiveRightsSnapshot{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, TargetDatasetVersionID: cmd.TargetDatasetVersionID, CalculationAsOf: cmd.AsOf.UTC().Round(time.Microsecond), ConsumerRef: strings.TrimSpace(cmd.ConsumerRef), Purpose: strings.TrimSpace(cmd.Purpose), CalculationRuleVersion: "intersection-v1", CalculationRuleHash: "rights-intersection-v1", CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
+	snapshot := domain.EffectiveRightsSnapshot{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, TargetDatasetVersionID: cmd.TargetDatasetVersionID, CalculationAsOf: cmd.AsOf.UTC().Round(time.Microsecond), ConsumerRef: strings.TrimSpace(cmd.ConsumerRef), Purpose: strings.TrimSpace(cmd.Purpose), CalculationRuleVersion: "intersection-v2", CalculationRuleHash: "rights-intersection-typed-required-resources-v2", CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
 	if cmd.ActivityID != nil {
 		snapshot.ID = uuid.NewSHA1(uuid.NameSpaceURL, []byte("effective-rights-compute:"+cmd.WorkspaceID.String()+":"+cmd.ActivityID.String()))
 	}
 	provenanceByInput := make([]map[string]effectiveRightsProvenanceDecision, len(inputs))
 	for idx, lineage := range inputs {
 		if !lineage.ResourceMapped || lineage.DataResourceID == uuid.Nil {
-			return domain.EffectiveRightsSnapshot{}, fmt.Errorf("%w: lineage input %s has no mapped data resource", domain.ErrEffectiveRights, lineage.DatasetVersionID)
+			return domain.EffectiveRightsSnapshot{}, fmt.Errorf("%w: required dependency %s/%s has no mapped data resource", domain.ErrEffectiveRights, lineage.DependencyKind, lineage.DatasetVersionID)
 		}
 		provenanceByInput[idx] = make(map[string]effectiveRightsProvenanceDecision)
 		for _, action := range domain.SupportedRightsActions {
@@ -663,12 +663,12 @@ func (s *Service) buildEffectiveRightsSnapshotTx(ctx context.Context, tx pgx.Tx,
 			if err == nil {
 				provenanceByInput[idx][action] = provenance
 			} else if !errors.Is(err, domain.ErrDeclarationNotVerified) {
-				return domain.EffectiveRightsSnapshot{}, fmt.Errorf("resolve current rights provenance for input %s action %s: %w", lineage.DatasetVersionID, action, err)
+				return domain.EffectiveRightsSnapshot{}, fmt.Errorf("resolve current rights provenance for dependency %s/%s resource %s action %s: %w", lineage.DependencyKind, lineage.DatasetVersionID, lineage.DataResourceID, action, err)
 			}
 		}
-		input := domain.EffectiveRightsInput{ID: uuid.New(), InputDatasetVersionID: lineage.DatasetVersionID, DataResourceID: lineage.DataResourceID}
+		input := domain.EffectiveRightsInput{ID: uuid.New(), DependencyKind: lineage.DependencyKind, InputDatasetVersionID: lineage.DatasetVersionID, DataResourceID: lineage.DataResourceID}
 		if len(provenanceByInput[idx]) == 0 {
-			digest := sha256.Sum256([]byte("NO_PROVENANCE|" + lineage.DatasetVersionID.String() + "|" + lineage.DataResourceID.String()))
+			digest := sha256.Sum256([]byte("NO_PROVENANCE|" + lineage.DependencyKind + "|" + lineage.DatasetVersionID.String() + "|" + lineage.DataResourceID.String()))
 			input.InputHash = fmt.Sprintf("%x", digest[:])
 		} else {
 			selected := provenanceByInput[idx][domain.SupportedRightsActions[0]]
