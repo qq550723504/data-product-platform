@@ -51,19 +51,19 @@ go run ./cmd/migrate -direction up -dir ../../migrations
 go build -o "$ARTIFACTS/platform-api" ./cmd/api
 go build -o "$ARTIFACTS/platform-worker" ./cmd/worker
 # Pipefail keeps assertion/compile errors red even though logs are preserved.
-go test -count=1 -run '^TestLabelStudioLiveReference -timeout 6m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/ingest-live.log"
+go test -count=1 -run '^TestLabelStudioLiveReference
 
 # Re-run existing Go regressions after the live slice, with its opt-in disabled.
 LIVE_BROWSER_ACCEPTANCE=0 go test -count=1 ./... 2>&1 | tee "$ARTIFACTS/go-regressions.log"
  -timeout 2m -v ./internal/annotation/labelstudio 2>&1 | tee "$ARTIFACTS/label-studio-live.log"
 
-go test -count=1 -run '^TestBrowserLiveCorePOC -timeout 6m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/ingest-live.log"
+go test -count=1 -run '^TestBrowserLiveCorePOC
 
 # Re-run existing Go regressions after the live slice, with its opt-in disabled.
 LIVE_BROWSER_ACCEPTANCE=0 go test -count=1 ./... 2>&1 | tee "$ARTIFACTS/go-regressions.log"
  -timeout 9m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/core-live.log"
 
-go test -count=1 -run '^TestBrowserCSVIngest -timeout 6m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/ingest-live.log"
+go test -count=1 -run '^TestBrowserCSVIngest
 
 # Re-run existing Go regressions after the live slice, with its opt-in disabled.
 LIVE_BROWSER_ACCEPTANCE=0 go test -count=1 ./... 2>&1 | tee "$ARTIFACTS/go-regressions.log"
