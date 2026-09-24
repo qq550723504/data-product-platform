@@ -193,7 +193,10 @@ func evaluateGoldQualityPreflight(
 		"rejectedCount":          rejected,
 		"correctedCount":         corrected,
 		"correctedSelectedCount": correctedFromCount,
+		"invalidCount":           len(schemaProblems),
 		"schemaInvalidCount":     len(schemaProblems),
+		"mappingInvalidCount":    len(mappingProblems),
+		"duplicateSourceCount":   len(duplicateSources),
 		"annotationCoverage":     ratioObservation(a, n),
 		"reviewedCoverage":       ratioObservation(d, n),
 		"reviewPassRate":         ratioObservation(accepted+corrected, d),
@@ -240,6 +243,7 @@ func evaluateGoldQualityPreflight(
 			provenanceProblems = append(provenanceProblems, map[string]any{"taskId": decision.TaskID, "reason": "selected result provenance missing"})
 		}
 	}
+	metrics["provenanceInvalidCount"] = len(provenanceProblems)
 	findings = append(findings, sampleFinding(
 		"GOLD-PROVENANCE-COMPLETE", "TRACEABILITY", "CRITICAL",
 		"Snapshot, schema, decisions and selected result provenance must be complete.",
