@@ -39,6 +39,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	platformprincipal "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/queue"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
@@ -179,7 +180,19 @@ func main() {
 			"policy_version", cfg.Splink.PolicyVersion,
 		)
 	}
-	entityHandler := entityhttp.NewHandler(entityService, entityRepo)
+	humanDecisionResolver, err := platformprincipal.NewStaticResolver(
+		cfg.HumanDecisionAPI.Enabled,
+		cfg.HumanDecisionAPI.Token,
+		cfg.HumanDecisionAPI.Subject,
+		cfg.HumanDecisionAPI.ActorID,
+		cfg.HumanDecisionAPI.WorkspaceIDs,
+		[]string{platformprincipal.CapabilityHumanDecision},
+	)
+	if err != nil {
+		logger.Error("configure human decision principal boundary", "error", err)
+		os.Exit(1)
+	}
+	entityHandler := entityhttp.NewHandler(entityService, entityRepo, humanDecisionResolver)
 
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
 	workflowVersionService := workflowapp.NewWorkflowVersionService(txManager, workflowRepo)
