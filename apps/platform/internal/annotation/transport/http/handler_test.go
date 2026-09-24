@@ -17,13 +17,13 @@ import (
 )
 
 type fakeReviewService struct {
-	calls           int
-	last            annotationapp.ReviewAnnotationCommand
-	result          annotationapp.ReviewAnnotationResult
-	err             error
-	preflight       annotationapp.GoldQualityPreflight
-	preflightErr    error
-	preflightCalls  int
+	calls          int
+	last           annotationapp.ReviewAnnotationCommand
+	result         annotationapp.ReviewAnnotationResult
+	err            error
+	preflight      annotationapp.GoldQualityPreflight
+	preflightErr   error
+	preflightCalls int
 }
 
 func (f *fakeReviewService) ReviewAnnotation(_ context.Context, cmd annotationapp.ReviewAnnotationCommand) (annotationapp.ReviewAnnotationResult, error) {
@@ -208,19 +208,18 @@ func reviewPath(workspaceID, campaignID, taskID uuid.UUID) string {
 		"/tasks/" + taskID.String() + "/review"
 }
 
-
 func TestGoldQualityPreflightHTTPIsReadOnlyAndExplicitlyNotFormalAssessment(t *testing.T) {
 	workspaceID := uuid.New()
 	campaignID := uuid.New()
 	snapshotID := uuid.New()
 	service := &fakeReviewService{
 		preflight: annotationapp.GoldQualityPreflight{
-			WorkspaceID: workspaceID,
-			CampaignID: campaignID,
-			SnapshotID: snapshotID,
+			WorkspaceID:  workspaceID,
+			CampaignID:   campaignID,
+			SnapshotID:   snapshotID,
 			SnapshotRoot: strings.Repeat("f", 64),
-			Blocking: false,
-			Metrics: map[string]any{"taskCount": 2, "agreement": "NOT_APPLICABLE"},
+			Blocking:     false,
+			Metrics:      map[string]any{"taskCount": 2, "agreement": "NOT_APPLICABLE"},
 		},
 	}
 	mux := http.NewServeMux()
