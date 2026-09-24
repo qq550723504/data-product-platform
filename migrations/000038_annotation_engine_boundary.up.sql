@@ -114,6 +114,27 @@ CREATE TABLE annotation_engine_task_binding (
         CHECK (length(btrim(external_task_id)) > 0)
 );
 
+CREATE TABLE annotation_engine_actor_binding (
+    id                          uuid PRIMARY KEY,
+    workspace_id                uuid NOT NULL,
+    provider                    varchar(64) NOT NULL,
+    provider_instance_ref       varchar(255) NOT NULL,
+    external_actor_ref          varchar(512) NOT NULL,
+    core_actor_ref              varchar(512) NOT NULL,
+    created_at                  timestamptz NOT NULL DEFAULT now(),
+    created_by                  uuid,
+    CONSTRAINT uq_annotation_engine_actor_external
+        UNIQUE (workspace_id, provider, provider_instance_ref, external_actor_ref),
+    CONSTRAINT uq_annotation_engine_actor_core
+        UNIQUE (workspace_id, provider, provider_instance_ref, core_actor_ref),
+    CONSTRAINT ck_annotation_engine_actor_binding_values CHECK (
+        length(btrim(provider)) > 0
+        AND length(btrim(provider_instance_ref)) > 0
+        AND length(btrim(external_actor_ref)) > 0
+        AND length(btrim(core_actor_ref)) > 0
+    )
+);
+
 CREATE OR REPLACE FUNCTION validate_annotation_engine_operation_insert()
 RETURNS trigger AS $operation$
 DECLARE
@@ -285,6 +306,10 @@ FOR EACH ROW EXECUTE FUNCTION prevent_annotation_engine_append_only_mutation();
 
 CREATE TRIGGER trg_annotation_engine_task_binding_immutable
 BEFORE UPDATE OR DELETE ON annotation_engine_task_binding
+FOR EACH ROW EXECUTE FUNCTION prevent_annotation_engine_append_only_mutation();
+
+CREATE TRIGGER trg_annotation_engine_actor_binding_immutable
+BEFORE UPDATE OR DELETE ON annotation_engine_actor_binding
 FOR EACH ROW EXECUTE FUNCTION prevent_annotation_engine_append_only_mutation();
 
 CREATE OR REPLACE FUNCTION validate_annotation_engine_attempt_outcome_insert()
