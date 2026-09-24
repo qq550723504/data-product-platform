@@ -202,6 +202,7 @@ func main() {
 
 	annotationRepo := annotationinfra.NewRepository(db)
 	annotationService := annotationapp.NewService(txManager, annotationRepo, nil)
+	goldRepo := goldinfra.NewPostgresRepository(db)
 	annotationHandler := annotationhttp.NewHandler(annotationService, humanDecisionResolver)
 
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
@@ -210,7 +211,7 @@ func main() {
 	workflowHandler := workflowhttp.NewHandler(workflowVersionService, executionService, workflowRepo)
 	goldService := goldapp.NewService(
 		txManager,
-		goldinfra.NewPostgresRepository(db),
+		goldRepo,
 		workflowRepo,
 		annotationRepo,
 		datasetRepo,
@@ -237,7 +238,8 @@ func main() {
 	contractHandler := contracthttp.NewHandler(contractService, contractRepo)
 
 	qualityRepo := qualityinfra.NewPostgresRepository(db)
-	qualityService := qualityapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, qualityRepo, objectStore, evidence.NewQueryRepository(db))
+	qualityService := qualityapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, qualityRepo, objectStore, evidence.NewQueryRepository(db)).
+		ConfigureGold(goldRepo, annotationService)
 	qualityHandler := qualityhttp.NewHandlerWithCost(qualityService, qualityRepo, evidence.NewQueryRepository(db), cost.NewQueryRepository(db))
 
 	certificationProfileRepo := certificationinfra.NewProfileRepository(db)
