@@ -10,10 +10,10 @@ import (
 )
 
 var (
-	ErrUnauthenticated = errors.New("authenticated principal required")
-	ErrWorkspaceDenied = errors.New("principal is not authorized for workspace")
+	ErrUnauthenticated  = errors.New("authenticated principal required")
+	ErrWorkspaceDenied  = errors.New("principal is not authorized for workspace")
 	ErrCapabilityDenied = errors.New("principal lacks required capability")
-	ErrNotConfigured = errors.New("principal resolver is not configured")
+	ErrNotConfigured    = errors.New("principal resolver is not configured")
 )
 
 const CapabilityHumanDecision = "HUMAN_DECISION"
