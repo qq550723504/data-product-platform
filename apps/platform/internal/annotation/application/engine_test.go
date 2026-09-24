@@ -98,7 +98,6 @@ func TestResolutionStatusRecordsAcceptedSubmitBeforeVerification(t *testing.T) {
 	}
 }
 
-
 func TestResolutionStatusKeepsLookupAuthorizationFailureUnknown(t *testing.T) {
 	err := NewAnnotationEngineOutcomeError(
 		ErrAnnotationEngineUnauthorized,
