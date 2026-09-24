@@ -545,6 +545,23 @@ func (r *Repository) ListEngineTaskBindings(
 	return bindings, nil
 }
 
+func (r *Repository) CountEngineAttempts(
+	ctx context.Context,
+	operationID uuid.UUID,
+	attemptKind string,
+) (int, error) {
+	var count int
+	if err := r.pool.QueryRow(ctx, `
+		SELECT count(*)
+		  FROM annotation_engine_attempt
+		 WHERE operation_id=$1
+		   AND attempt_kind=$2
+	`, operationID, attemptKind).Scan(&count); err != nil {
+		return 0, fmt.Errorf("count annotation engine attempts: %w", err)
+	}
+	return count, nil
+}
+
 func (r *Repository) ListDispatchableEngineOperationIDs(
 	ctx context.Context,
 	provider, providerInstance string,
