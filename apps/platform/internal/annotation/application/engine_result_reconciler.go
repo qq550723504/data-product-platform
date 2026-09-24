@@ -90,6 +90,16 @@ func (r *EngineResultReconciler) ReconcileCampaign(ctx context.Context, campaign
 		return err
 	}
 
+	if err := r.verifyCampaignBinding(ctx, operation, EngineCampaignBinding{
+		Provider:          binding.Provider,
+		ProviderInstance:  binding.ProviderInstance,
+		ExternalProjectID: binding.ExternalProjectID,
+		RequestID:         binding.RequestID,
+		ConfigSHA256:      binding.ConfigSHA256,
+	}); err != nil {
+		return err
+	}
+
 	manifest, err := decodeTasksManifest(operation)
 	if err != nil {
 		return err
@@ -164,6 +174,115 @@ func (r *EngineResultReconciler) ReconcileCampaign(ctx context.Context, campaign
 		}
 		cursor = *page.NextCursor
 	}
+}
+
+func (r *EngineResultReconciler) verifyCampaignBinding(
+	ctx context.Context,
+	operation annotationdomain.EngineOperation,
+	binding EngineCampaignBinding,
+) error {
+	var attempt annotationdomain.EngineAttempt
+	if err := r.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		attempt, err = r.repo.StartEngineAttempt(
+			ctx,
+			tx,
+			operation.WorkspaceID,
+			operation.ID,
+			annotationdomain.EngineAttemptLookup,
+			time.Now().UTC(),
+		)
+		if err != nil {
+			return err
+		}
+		if err := cost.AppendAnnotationEngineActivity(ctx, tx, cost.AnnotationEngineActivity{
+			WorkspaceID: operation.WorkspaceID,
+			AttemptID:   attempt.ID,
+			Quantity:    1,
+			Unit:        "invocation",
+			PricingMode: "ACTUAL",
+			Metadata: map[string]any{
+				"provider":      operation.Provider,
+				"operationKind": operation.OperationKind,
+				"attemptKind":   attempt.AttemptKind,
+				"attemptNo":     attempt.AttemptNo,
+				"purpose":       "VERIFY_CAMPAIGN_BINDING",
+			},
+			OccurredAt: attempt.StartedAt,
+		}); err != nil {
+			return err
+		}
+		return appendEvent(ctx, tx, "ANNOTATION_ENGINE_OPERATION", operation.ID, "AnnotationEngineAttemptStarted", map[string]any{
+			"operationId": operation.ID,
+			"attemptId":   attempt.ID,
+			"attemptNo":   attempt.AttemptNo,
+			"attemptKind": attempt.AttemptKind,
+			"purpose":     "VERIFY_CAMPAIGN_BINDING",
+		})
+	}); err != nil {
+		return err
+	}
+
+	remoteErr := r.engine.VerifyCampaignBinding(ctx, binding)
+	outcome := annotationdomain.EngineAttemptSucceeded
+	var statusCode *int
+	diagnostic := ""
+	if remoteErr != nil {
+		outcome = annotationdomain.EngineAttemptUnknown
+		var engineErr *AnnotationEngineError
+		if errors.As(remoteErr, &engineErr) {
+			if engineErr.StatusCode != 0 {
+				code := engineErr.StatusCode
+				statusCode = &code
+			}
+			if engineErr.Kind != nil {
+				diagnostic = engineErr.Kind.Error()
+			}
+			if !engineErr.Retryable && !engineErr.OutcomeUncertain {
+				outcome = annotationdomain.EngineAttemptRejected
+			}
+		}
+	}
+	if err := r.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if err := r.repo.AppendEngineAttemptOutcome(ctx, tx, annotationdomain.EngineAttemptOutcome{
+			ID:                 uuid.New(),
+			AttemptID:          attempt.ID,
+			Outcome:            outcome,
+			ProviderStatusCode: statusCode,
+			DiagnosticRef:      diagnostic,
+			OccurredAt:         time.Now().UTC(),
+		}); err != nil {
+			return err
+		}
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			WorkspaceID:  operation.WorkspaceID,
+			EvidenceType: "ANNOTATION_ENGINE_BINDING_VERIFY",
+			Title:        "Annotation engine campaign binding verified",
+			SourceType:   "ENGINE_ADAPTER",
+			Metadata: map[string]any{
+				"attemptId": attempt.ID,
+				"outcome":   outcome,
+				"provider":  operation.Provider,
+			},
+		}, evidence.Relation{
+			ObjectType:   "ANNOTATION_ENGINE_OPERATION",
+			ObjectID:     operation.ID,
+			RelationType: "BINDING_VERIFY_EVIDENCE",
+		}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &operation.WorkspaceID,
+			ActorType:   "SYSTEM",
+			Action:      "ANNOTATION_ENGINE_BINDING_VERIFIED",
+			ObjectType:  "ANNOTATION_ENGINE_OPERATION",
+			ObjectID:    operation.ID,
+			AfterState:  map[string]any{"attemptId": attempt.ID, "outcome": outcome},
+		})
+	}); err != nil {
+		return err
+	}
+	return remoteErr
 }
 
 func (r *EngineResultReconciler) startFetchAttempt(
