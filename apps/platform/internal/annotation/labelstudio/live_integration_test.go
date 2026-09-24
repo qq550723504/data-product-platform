@@ -117,7 +117,7 @@ func TestLabelStudioLiveReference(t *testing.T) {
 		t,
 		httpClient,
 		baseURL,
-		accessToken,
+		token,
 		reconciled.ExternalTaskIDs[task1],
 		"EVIDENCE_SUFFICIENT",
 	)
