@@ -239,6 +239,85 @@ func scanCertification(row certificationScanner, profile domain.ProfileSnapshot)
 	return certification, nil
 }
 
+func (r *CertificationRepository) GoldProofCurrent(
+	ctx context.Context,
+	certification domain.DatasetCertification,
+) (bool, error) {
+	return goldProofCurrent(ctx, r.pool, certification)
+}
+
+func (r *CertificationRepository) GoldProofCurrentTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	certification domain.DatasetCertification,
+) (bool, error) {
+	if tx == nil {
+		return false, fmt.Errorf("certification transaction is required")
+	}
+	return goldProofCurrent(ctx, tx, certification)
+}
+
+func goldProofCurrent(
+	ctx context.Context,
+	q certificationQueryer,
+	certification domain.DatasetCertification,
+) (bool, error) {
+	if certification.Profile.ProfileRef != domain.GoldCertificationProfileRef {
+		return true, nil
+	}
+	if certification.GoldProductionBindingID == nil ||
+		certification.AnnotationSnapshotID == nil ||
+		strings.TrimSpace(certification.AnnotationSnapshotRootHash) == "" ||
+		strings.TrimSpace(certification.AnnotationSchemaSHA256) == "" ||
+		strings.TrimSpace(certification.AnnotationTaxonomySHA256) == "" ||
+		strings.TrimSpace(certification.GoldProductionBindingRootHash) == "" {
+		return false, nil
+	}
+
+	var current bool
+	err := q.QueryRow(ctx, `
+		SELECT EXISTS (
+			SELECT 1
+			FROM gold_production_binding g
+			JOIN annotation_snapshot s ON s.id=g.annotation_snapshot_id
+			JOIN annotation_campaign c ON c.id=g.annotation_campaign_id
+			JOIN quality_result qr ON qr.id=$4
+			WHERE g.id=$1
+			  AND g.workspace_id=$2
+			  AND g.output_dataset_version_id=$3
+			  AND g.status='FINALIZED'
+			  AND g.annotation_snapshot_id=$5
+			  AND g.snapshot_root_hash=$6
+			  AND g.schema_content_sha256=$7
+			  AND g.taxonomy_content_sha256=$8
+			  AND g.root_hash=$9
+			  AND s.status='FINALIZED'
+			  AND s.root_hash=$6
+			  AND c.schema_content_sha256=$7
+			  AND c.taxonomy_content_sha256=$8
+			  AND qr.workspace_id=$2
+			  AND qr.dataset_version_id=$3
+			  AND qr.rule_set_ref='gold/quality/annotation-v1'
+			  AND qr.evaluator_name='gold-quality'
+			  AND qr.gate_decision='PASS'
+		)
+	`,
+		*certification.GoldProductionBindingID,
+		certification.WorkspaceID,
+		certification.DatasetVersionID,
+		certification.QualityAssessmentID,
+		*certification.AnnotationSnapshotID,
+		certification.AnnotationSnapshotRootHash,
+		certification.AnnotationSchemaSHA256,
+		certification.AnnotationTaxonomySHA256,
+		certification.GoldProductionBindingRootHash,
+	).Scan(&current)
+	if err != nil {
+		return false, fmt.Errorf("verify current Gold certification proof: %w", err)
+	}
+	return current, nil
+}
+
 func (r *CertificationRepository) GetCertificationProfileID(ctx context.Context, certificationID uuid.UUID) (uuid.UUID, error) {
 	var profileID uuid.UUID
 	if err := r.pool.QueryRow(ctx, `SELECT certification_profile_id FROM dataset_certification WHERE id=$1`, certificationID).Scan(&profileID); errors.Is(err, pgx.ErrNoRows) {

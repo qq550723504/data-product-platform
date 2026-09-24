@@ -204,7 +204,30 @@ func (s *EligibilityService) check(ctx context.Context, tx pgx.Tx, query Deliver
 	result.CertificationGate = current.Gate
 	result.Blockers = append(result.Blockers, current.Gate.Blockers...)
 
-	if current.Certification.ID != uuid.Nil && current.Gate.Allowed {
+	if current.Certification.ID != uuid.Nil &&
+		current.Gate.Allowed &&
+		current.Certification.Profile.ProfileRef == certificationdomain.GoldCertificationProfileRef {
+		var goldProofCurrent bool
+		if tx != nil {
+			goldProofCurrent, err = s.certifications.certificationRepo.GoldProofCurrentTx(ctx, tx, current.Certification)
+		} else {
+			goldProofCurrent, err = s.certifications.certificationRepo.GoldProofCurrent(ctx, current.Certification)
+		}
+		if err != nil {
+			return result, err
+		}
+		if !goldProofCurrent {
+			result.CertificationGate.Allowed = false
+			blocker := certificationdomain.Blocker{
+				Code:   "GOLD_PRODUCTION_PROOF_NOT_CURRENT",
+				Detail: "Gold certification no longer matches the exact current production binding, annotation snapshot, quality assessment, schema, or taxonomy proof",
+			}
+			result.CertificationGate.Blockers = append(result.CertificationGate.Blockers, blocker)
+			result.Blockers = append(result.Blockers, blocker)
+		}
+	}
+
+	if current.Certification.ID != uuid.Nil && result.CertificationGate.Allowed {
 		var currentInputs []rightsinfra.LineageInput
 		if tx != nil {
 			currentInputs, err = s.rights.RequiredLineageInputsTx(ctx, tx, query.DatasetVersionID)
@@ -326,16 +349,24 @@ func sameEligibilityLineage(frozen []rightsdomain.EffectiveRightsInput, current 
 	frozenIDs := make([]string, 0, len(frozen))
 	currentIDs := make([]string, 0, len(current))
 	for _, input := range frozen {
-		if input.DataResourceID == uuid.Nil {
+		if strings.TrimSpace(input.DependencyKind) == "" || input.DataResourceID == uuid.Nil {
 			return false
 		}
-		frozenIDs = append(frozenIDs, input.InputDatasetVersionID.String()+":"+input.DataResourceID.String())
+		frozenIDs = append(frozenIDs, strings.Join([]string{
+			input.DependencyKind,
+			input.InputDatasetVersionID.String(),
+			input.DataResourceID.String(),
+		}, ":"))
 	}
 	for _, input := range current {
-		if !input.ResourceMapped || input.DataResourceID == uuid.Nil {
+		if strings.TrimSpace(input.DependencyKind) == "" || !input.ResourceMapped || input.DataResourceID == uuid.Nil {
 			return false
 		}
-		currentIDs = append(currentIDs, input.DatasetVersionID.String()+":"+input.DataResourceID.String())
+		currentIDs = append(currentIDs, strings.Join([]string{
+			input.DependencyKind,
+			input.DatasetVersionID.String(),
+			input.DataResourceID.String(),
+		}, ":"))
 	}
 	sort.Strings(frozenIDs)
 	sort.Strings(currentIDs)
