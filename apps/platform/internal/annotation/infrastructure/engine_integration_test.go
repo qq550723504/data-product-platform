@@ -51,12 +51,24 @@ func TestAnnotationEngineOperationAndBindingsAreDurableCoreFacts(t *testing.T) {
 		t.Fatalf("insert engine attempt: %v", err)
 	}
 	outcomeID := uuid.New()
-	if _, err := pool.Exec(ctx, `
-		INSERT INTO annotation_engine_attempt_outcome(
-			id, attempt_id, outcome, provider_status_code, diagnostic_ref
-		) VALUES ($1,$2,'UNKNOWN',504,'transport-timeout')
-	`, outcomeID, attemptID); err != nil {
+	statusCode := 504
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin engine attempt outcome transaction: %v", err)
+	}
+	if err := NewRepository(pool).AppendEngineAttemptOutcome(ctx, tx, annotationdomain.EngineAttemptOutcome{
+		ID:                 outcomeID,
+		AttemptID:          attemptID,
+		Outcome:            annotationdomain.EngineAttemptUnknown,
+		ProviderStatusCode: &statusCode,
+		DiagnosticRef:      "transport-timeout",
+		OccurredAt:         time.Now().UTC(),
+	}); err != nil {
+		_ = tx.Rollback(ctx)
 		t.Fatalf("insert engine attempt outcome: %v", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("commit engine attempt outcome: %v", err)
 	}
 	_, err = pool.Exec(ctx, `
 		UPDATE annotation_engine_attempt_outcome SET outcome='SUCCEEDED' WHERE id=$1
