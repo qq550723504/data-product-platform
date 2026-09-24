@@ -611,7 +611,7 @@ func (r *Repository) ListCampaignIDsNeedingEngineResults(
 		       SELECT 1
 		         FROM annotation_task t
 		        WHERE t.campaign_id=c.id
-		          AND t.status='PENDING'
+		          AND t.status IN ('PENDING','REVIEWABLE')
 		   )
 		 ORDER BY c.id
 		 LIMIT $3
