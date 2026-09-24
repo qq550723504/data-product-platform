@@ -116,6 +116,9 @@ func resolutionStatus(state EngineLookupState, err error, attemptKind string) (s
 	case EngineLookupConflict:
 		return annotationdomain.EngineOperationConflict, annotationdomain.EngineAttemptConflict
 	default:
+		if attemptKind == annotationdomain.EngineAttemptSubmit {
+			return annotationdomain.EngineOperationUnknown, annotationdomain.EngineAttemptSucceeded
+		}
 		return annotationdomain.EngineOperationUnknown, annotationdomain.EngineAttemptUnknown
 	}
 }
