@@ -654,8 +654,8 @@ func seedLiveGoldSnapshotFixture(
 	`, contributionResourceID, inputResourceID, workspaceID, "LIVE-GOLD-ANN-"+suffix, "LIVE-GOLD-SRC-"+suffix)
 	goldSQL(t, ctx, pool, `
 		INSERT INTO dataset(id, workspace_id, code, name, dataset_type, source_resource_id)
-		VALUES ($1,$3,$4,'live Gold input','CURATED',$5)
-	`, datasetID, outputDatasetID, workspaceID, "LIVE-GOLD-IN-"+suffix, inputResourceID)
+		VALUES ($1,$2,$3,'live Gold input','CURATED',$4)
+	`, datasetID, workspaceID, "LIVE-GOLD-IN-"+suffix, inputResourceID)
 	goldSQL(t, ctx, pool, `
 		INSERT INTO dataset(id, workspace_id, code, name, dataset_type)
 		VALUES ($1,$2,$3,'live Gold output','CURATED')
