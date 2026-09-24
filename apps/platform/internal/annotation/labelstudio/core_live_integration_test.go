@@ -37,13 +37,13 @@ func (allowLiveEngineSend) ValidateEngineSendTx(
 }
 
 type liveCoreAnnotationFixture struct {
-	workspaceID       uuid.UUID
-	campaignID        uuid.UUID
-	taskID            uuid.UUID
-	sourceSHA256      string
-	taskText          string
-	taskTextSHA256    string
-	primaryAnnotator  string
+	workspaceID      uuid.UUID
+	campaignID       uuid.UUID
+	taskID           uuid.UUID
+	sourceSHA256     string
+	taskText         string
+	taskTextSHA256   string
+	primaryAnnotator string
 }
 
 func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
@@ -121,12 +121,12 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 	defer deleteProject(t, &http.Client{Timeout: 30 * time.Second}, baseURL, token, binding.ExternalProjectID)
 
 	engineTask := annotationapp.EngineTask{
-		TaskID:          fixture.taskID,
-		SourceItemRef:   "row:1",
-		SourceSHA256:    fixture.sourceSHA256,
-		TaskText:        fixture.taskText,
-		TaskTextSHA256:  fixture.taskTextSHA256,
-		CorrelationKey:  "core-task-" + fixture.taskID.String(),
+		TaskID:         fixture.taskID,
+		SourceItemRef:  "row:1",
+		SourceSHA256:   fixture.sourceSHA256,
+		TaskText:       fixture.taskText,
+		TaskTextSHA256: fixture.taskTextSHA256,
+		CorrelationKey: "core-task-" + fixture.taskID.String(),
 	}
 	taskOperation, err := engineService.PrepareTasks(ctx, annotationapp.PrepareEngineTasksCommand{
 		WorkspaceID: fixture.workspaceID,
