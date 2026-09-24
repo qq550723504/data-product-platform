@@ -212,6 +212,7 @@ func scanCertification(row certificationScanner, profile domain.ProfileSnapshot)
 	var blockers []byte
 	var decision string
 	var effectiveHash, contextHash *string
+	var annotationRootHash, annotationSchemaHash, annotationTaxonomyHash, goldBindingRootHash *string
 	if err := row.Scan(
 		&certification.ID, &certification.WorkspaceID, &certification.DatasetVersionID,
 		&certification.QualityAssessmentID, &certification.RightsSnapshotID,
