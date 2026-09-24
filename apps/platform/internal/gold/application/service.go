@@ -352,7 +352,8 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 	if err != nil {
 		return workflowapp.ProcessingResult{}, err
 	}
-	outputVersion, err := s.datasetWriter.Handle(ctx, datasetapp.UploadVersionCommand{
+	var binding goldinfra.ProductionBinding
+	outputVersion, err := s.datasetWriter.HandleWithFinalizer(ctx, datasetapp.UploadVersionCommand{
 		DatasetID: request.OutputDatasetID,
 		Filename: "gold-" + snapshot.ID.String() + ".csv",
 		ContentType: "text/csv; charset=utf-8",
@@ -368,31 +369,38 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 			"annotationSnapshotRoot": snapshot.RootHash,
 			"gateStatus": "PENDING_GOLD_QUALITY_AND_CERTIFICATION",
 		},
-	})
-	if err != nil {
-		return workflowapp.ProcessingResult{}, err
-	}
-	if outputVersion.RowCount == nil || *outputVersion.RowCount != int64(outputRows) {
-		return workflowapp.ProcessingResult{}, fmt.Errorf("%w: output row count mismatch", ErrInvalidBuildRequest)
-	}
+	}, func(ctx context.Context, tx pgx.Tx, published datasetdomain.DatasetVersion) error {
+		if published.RowCount == nil || *published.RowCount != int64(outputRows) {
+			return fmt.Errorf("%w: output row count mismatch", ErrInvalidBuildRequest)
+		}
+		if existing, readErr := s.goldRepo.GetBindingByExecution(ctx, request.ExecutionID); readErr == nil {
+			if existing.Status != "FINALIZED" || existing.OutputDatasetVersionID != published.ID {
+				return ErrInvalidBuildRequest
+			}
+			binding = existing
+			return nil
+		} else if !errors.Is(readErr, goldinfra.ErrNotFound) {
+			return readErr
+		}
 
-	binding, err := buildProductionBinding(
-		request, buildRequest, campaign, inputVersion, outputVersion, productionMembers,
-	)
-	if err != nil {
-		return workflowapp.ProcessingResult{}, err
-	}
-	finalizedAt := time.Now().UTC().Truncate(time.Microsecond)
-	if err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		built, buildErr := buildProductionBinding(
+			request, buildRequest, campaign, inputVersion, published, productionMembers,
+		)
+		if buildErr != nil {
+			return buildErr
+		}
+		built.CreatedBy = buildRequest.CreatedBy
+		binding = built
 		if err := s.datasetRepo.AddLineage(
-			ctx, tx, outputVersion.ID, inputVersion.ID, "DERIVED_FROM", &request.ExecutionID,
+			ctx, tx, published.ID, inputVersion.ID, "DERIVED_FROM", &request.ExecutionID,
 		); err != nil {
 			return err
 		}
-		if err := s.goldRepo.InsertAndFinalizeBinding(ctx, tx, binding, productionMembers, finalizedAt); err != nil {
+		finalizedAt := time.Now().UTC().Truncate(time.Microsecond)
+		if err := s.goldRepo.InsertAndFinalizeBinding(ctx, tx, built, productionMembers, finalizedAt); err != nil {
 			return err
 		}
-		bindingID := binding.ID
+		bindingID := built.ID
 		if _, err := evidence.Append(ctx, tx, evidence.Record{
 			WorkspaceID: request.WorkspaceID,
 			EvidenceType: "GOLD_PRODUCTION_BINDING_FINALIZED",
@@ -402,22 +410,23 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 			Metadata: map[string]any{
 				"bindingId": bindingID,
 				"inputDatasetVersionId": inputVersion.ID,
-				"outputDatasetVersionId": outputVersion.ID,
+				"outputDatasetVersionId": published.ID,
 				"annotationSnapshotId": snapshot.ID,
 				"snapshotRootHash": snapshot.RootHash,
-				"bindingRootHash": binding.RootHash,
+				"bindingRootHash": built.RootHash,
 				"outputRowCount": outputRows,
 			},
-		}, evidence.Relation{ObjectType: "DATASET_VERSION", ObjectID: outputVersion.ID, RelationType: "GOLD_PRODUCTION"}); err != nil {
+			CreatedBy: buildRequest.CreatedBy,
+		}, evidence.Relation{ObjectType: "DATASET_VERSION", ObjectID: published.ID, RelationType: "GOLD_PRODUCTION"}); err != nil {
 			return err
 		}
-		event, err := outbox.NewEvent("GOLD_PRODUCTION_BINDING", binding.ID, "GoldProductionBindingFinalized", map[string]any{
-			"bindingId": binding.ID,
+		event, err := outbox.NewEvent("GOLD_PRODUCTION_BINDING", built.ID, "GoldProductionBindingFinalized", map[string]any{
+			"bindingId": built.ID,
 			"executionId": request.ExecutionID,
 			"inputDatasetVersionId": inputVersion.ID,
-			"outputDatasetVersionId": outputVersion.ID,
+			"outputDatasetVersionId": published.ID,
 			"annotationSnapshotId": snapshot.ID,
-			"rootHash": binding.RootHash,
+			"rootHash": built.RootHash,
 		})
 		if err != nil {
 			return err
@@ -427,26 +436,26 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 		}
 		return audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &request.WorkspaceID,
-			ActorType: "SERVICE",
+			ActorType: actorType(buildRequest.CreatedBy),
+			ActorID: buildRequest.CreatedBy,
 			Action: "GOLD_PRODUCTION_BINDING_FINALIZED",
 			ObjectType: "GOLD_PRODUCTION_BINDING",
-			ObjectID: binding.ID,
+			ObjectID: built.ID,
 			AfterState: map[string]any{
 				"status": "FINALIZED",
-				"outputDatasetVersionId": outputVersion.ID,
+				"outputDatasetVersionId": published.ID,
 				"annotationSnapshotId": snapshot.ID,
-				"rootHash": binding.RootHash,
+				"rootHash": built.RootHash,
 				"outputRowCount": outputRows,
 			},
 			TraceID: request.ExecutionID.String(),
 		})
-	}); err != nil {
-		if existing, readErr := s.goldRepo.GetBindingByExecution(ctx, request.ExecutionID); readErr == nil &&
-			existing.Status == "FINALIZED" && existing.OutputDatasetVersionID == outputVersion.ID {
-			binding = existing
-		} else {
-			return workflowapp.ProcessingResult{}, err
-		}
+	})
+	if err != nil {
+		return workflowapp.ProcessingResult{}, err
+	}
+	if binding.ID == uuid.Nil {
+		return workflowapp.ProcessingResult{}, fmt.Errorf("%w: finalized Gold binding was not resolved", ErrInvalidBuildRequest)
 	}
 
 	return workflowapp.ProcessingResult{
