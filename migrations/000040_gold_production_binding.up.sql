@@ -1,4 +1,9 @@
 -- #207 Gold candidate production binding.
+
+-- target_period was an Enterprise Activity workflow concern, not a universal Execution identity.
+-- Existing workflows remain period-required in application validation; Gold builder explicitly opts out.
+ALTER TABLE execution ALTER COLUMN target_period DROP NOT NULL;
+
 -- A Gold candidate is still a normal immutable DatasetVersion. This aggregate
 -- freezes the exact producer/input/annotation facts that make that version a
 -- Gold-produced version; it is not a second GoldDataset entity.
