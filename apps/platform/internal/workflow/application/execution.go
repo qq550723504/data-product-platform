@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -44,6 +45,13 @@ func NewExecutionService(tx *transaction.Manager, repo *infrastructure.PostgresR
 }
 
 func (s *ExecutionService) Create(ctx context.Context, cmd CreateExecutionCommand) (domain.Execution, error) {
+	workflowVersion, err := s.repo.GetVersion(ctx, cmd.WorkflowVersionID)
+	if err != nil {
+		return domain.Execution{}, err
+	}
+	if workflowRequiresTargetPeriod(workflowVersion.Definition) && strings.TrimSpace(cmd.TargetPeriod) == "" {
+		return domain.Execution{}, domain.ErrInvalidTargetPeriod
+	}
 	key, err := domain.NormalizeIdempotencyKey(cmd.IdempotencyKey)
 	if err != nil {
 		return domain.Execution{}, err
@@ -556,4 +564,20 @@ func hashExecutionRequest(payload any) (string, error) {
 	}
 	hash := sha256.Sum256(encoded)
 	return hex.EncodeToString(hash[:]), nil
+}
+
+func workflowRequiresTargetPeriod(definition map[string]any) bool {
+	spec, ok := definition["spec"].(map[string]any)
+	if !ok {
+		return true
+	}
+	execution, ok := spec["execution"].(map[string]any)
+	if !ok {
+		return true
+	}
+	required, ok := execution["requiresTargetPeriod"].(bool)
+	if !ok {
+		return true
+	}
+	return required
 }

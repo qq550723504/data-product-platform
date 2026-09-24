@@ -97,3 +97,22 @@ func TestNormalizeIdempotencyKeyRequiresStableNonEmptyValue(t *testing.T) {
 		t.Fatalf("normalized key = %q/%v, want stable-key", key, err)
 	}
 }
+
+func TestExecutionDomainAllowsWorkflowValidatedEmptyTargetPeriod(t *testing.T) {
+	execution, err := NewExecution(uuid.New(), uuid.New(), uuid.New(), "", []InputBinding{{
+		Name:             "gold_input",
+		DatasetVersionID: uuid.New(),
+	}}, nil)
+	if err != nil {
+		t.Fatalf("periodless execution domain value: %v", err)
+	}
+	if execution.TargetPeriod != "" {
+		t.Fatalf("target period = %q, want empty", execution.TargetPeriod)
+	}
+	if _, err := NewExecution(uuid.New(), uuid.New(), uuid.New(), "not-a-period", []InputBinding{{
+		Name:             "gold_input",
+		DatasetVersionID: uuid.New(),
+	}}, nil); !errors.Is(err, ErrInvalidTargetPeriod) {
+		t.Fatalf("malformed non-empty target period error = %v, want invalid target period", err)
+	}
+}
