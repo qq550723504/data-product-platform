@@ -26,8 +26,130 @@ func NewHandler(certifications *application.CertificationService, eligibility *a
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
+	mux.HandleFunc("POST /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/certifications", h.evaluate)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/certifications", h.history)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/delivery-eligibility", h.deliveryEligibility)
+}
+
+type evaluateRequest struct {
+	ProfileID                 string  `json:"profileId"`
+	QualityAssessmentID       string  `json:"qualityAssessmentId"`
+	RightsSnapshotID          *string `json:"rightsSnapshotId,omitempty"`
+	EffectiveRightsSnapshotID *string `json:"effectiveRightsSnapshotId,omitempty"`
+	ComplianceResultID        *string `json:"complianceResultId,omitempty"`
+	ContractVersionID         *string `json:"contractVersionId,omitempty"`
+	TraceabilityEvidenceID    *string `json:"traceabilityEvidenceId,omitempty"`
+	EvidenceSnapshotID        *string `json:"evidenceSnapshotId,omitempty"`
+}
+
+func (h *Handler) evaluate(w http.ResponseWriter, r *http.Request) {
+	workspaceID, versionID, ok := parseWorkspaceVersion(w, r)
+	if !ok {
+		return
+	}
+	if !h.requireVersionWorkspace(w, r, workspaceID, versionID) {
+		return
+	}
+	if h == nil || h.certifications == nil {
+		httpserver.WriteError(w, r, http.StatusServiceUnavailable, "CERTIFICATION_WRITE_NOT_CONFIGURED", "certification write dependencies are incomplete", nil)
+		return
+	}
+	var req evaluateRequest
+	decoder := json.NewDecoder(http.MaxBytesReader(w, r.Body, 1<<20))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&req); err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_REQUEST", "certification request must be valid JSON", nil)
+		return
+	}
+	profileID, err := parseRequiredUUID(req.ProfileID)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_PROFILE_ID", "profileId must be a non-nil UUID", nil)
+		return
+	}
+	qualityAssessmentID, err := parseRequiredUUID(req.QualityAssessmentID)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_QUALITY_ASSESSMENT_ID", "qualityAssessmentId must be a non-nil UUID", nil)
+		return
+	}
+	parseOptional := func(raw *string) (*uuid.UUID, bool) {
+		if raw == nil || strings.TrimSpace(*raw) == "" {
+			return nil, true
+		}
+		id, err := parseRequiredUUID(*raw)
+		if err != nil {
+			return nil, false
+		}
+		return &id, true
+	}
+	rightsSnapshotID, ok := parseOptional(req.RightsSnapshotID)
+	if !ok {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_RIGHTS_SNAPSHOT_ID", "rightsSnapshotId must be a non-nil UUID", nil)
+		return
+	}
+	effectiveRightsSnapshotID, ok := parseOptional(req.EffectiveRightsSnapshotID)
+	if !ok {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_EFFECTIVE_RIGHTS_SNAPSHOT_ID", "effectiveRightsSnapshotId must be a non-nil UUID", nil)
+		return
+	}
+	complianceResultID, ok := parseOptional(req.ComplianceResultID)
+	if !ok {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_COMPLIANCE_RESULT_ID", "complianceResultId must be a non-nil UUID", nil)
+		return
+	}
+	contractVersionID, ok := parseOptional(req.ContractVersionID)
+	if !ok {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CONTRACT_VERSION_ID", "contractVersionId must be a non-nil UUID", nil)
+		return
+	}
+	traceabilityEvidenceID, ok := parseOptional(req.TraceabilityEvidenceID)
+	if !ok {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_TRACEABILITY_EVIDENCE_ID", "traceabilityEvidenceId must be a non-nil UUID", nil)
+		return
+	}
+	evidenceSnapshotID, ok := parseOptional(req.EvidenceSnapshotID)
+	if !ok {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_EVIDENCE_SNAPSHOT_ID", "evidenceSnapshotId must be a non-nil UUID", nil)
+		return
+	}
+	key := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	if key == "" {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key is required", nil)
+		return
+	}
+	actorID, err := parseActorID(r)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a non-nil UUID when supplied", nil)
+		return
+	}
+	result, err := h.certifications.Evaluate(r.Context(), application.EvaluateDatasetCertificationCommand{
+		WorkspaceID:               workspaceID,
+		DatasetVersionID:          versionID,
+		ProfileID:                 profileID,
+		QualityAssessmentID:       qualityAssessmentID,
+		RightsSnapshotID:          rightsSnapshotID,
+		EffectiveRightsSnapshotID: effectiveRightsSnapshotID,
+		ComplianceResultID:        complianceResultID,
+		ContractVersionID:         contractVersionID,
+		TraceabilityEvidenceID:    traceabilityEvidenceID,
+		EvidenceSnapshotID:        evidenceSnapshotID,
+		IdempotencyKey:            key,
+		ActorID:                   actorID,
+		TraceID:                   httpserver.RequestID(r.Context()),
+		Now:                       time.Now().UTC(),
+	})
+	if err != nil {
+		if errors.Is(err, application.ErrCertificationIdempotencyConflict) {
+			httpserver.WriteError(w, r, http.StatusConflict, "CERTIFICATION_IDEMPOTENCY_CONFLICT", "Idempotency-Key is already bound to different certification evidence", nil)
+			return
+		}
+		if errors.Is(err, certificationinfra.ErrProfileNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "CERTIFICATION_PROFILE_NOT_FOUND", "CertificationProfile was not found", nil)
+			return
+		}
+		httpserver.WriteError(w, r, http.StatusConflict, "CERTIFICATION_REJECTED", err.Error(), nil)
+		return
+	}
+	writeJSON(w, http.StatusCreated, historyItemResponse(application.CertificationHistoryItem{Certification: result}))
 }
 
 func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
@@ -228,4 +350,25 @@ func writeJSON(w http.ResponseWriter, status int, value any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(value)
+}
+
+
+func parseRequiredUUID(value string) (uuid.UUID, error) {
+	id, err := uuid.Parse(strings.TrimSpace(value))
+	if err != nil || id == uuid.Nil {
+		return uuid.Nil, errors.New("invalid UUID")
+	}
+	return id, nil
+}
+
+func parseActorID(r *http.Request) (*uuid.UUID, error) {
+	value := strings.TrimSpace(r.Header.Get("X-Actor-ID"))
+	if value == "" {
+		return nil, nil
+	}
+	id, err := parseRequiredUUID(value)
+	if err != nil {
+		return nil, err
+	}
+	return &id, nil
 }
