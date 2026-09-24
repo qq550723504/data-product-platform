@@ -66,7 +66,6 @@ func TestResolutionStatusMapsProviderConflict(t *testing.T) {
 	}
 }
 
-
 func TestResolutionStatusRetriesDefinitePreSendFailure(t *testing.T) {
 	err := NewAnnotationEngineOutcomeError(
 		ErrAnnotationEngineUnavailable,
