@@ -515,6 +515,13 @@ func buildGoldCSV(table tabular.Table, frozen []goldinfra.FrozenMember) ([]byte,
 		if !ok {
 			return nil, nil, 0, fmt.Errorf("%w: frozen snapshot is missing %s", ErrInvalidBuildRequest, ref)
 		}
+		sourceHash, err := goldSourceRowHash(table.Rows[i])
+		if err != nil {
+			return nil, nil, 0, err
+		}
+		if sourceHash != strings.ToLower(member.SourceContentSHA256) {
+			return nil, nil, 0, fmt.Errorf("%w: frozen source hash mismatch for %s", ErrInvalidBuildRequest, ref)
+		}
 		production := goldinfra.ProductionMember{
 			TaskID: member.TaskID,
 			SourceItemRef: member.SourceItemRef,
@@ -770,4 +777,13 @@ func ParseRowReference(value string) (int, error) {
 		return 0, ErrInvalidBuildRequest
 	}
 	return index, nil
+}
+
+
+func goldSourceRowHash(row map[string]string) (string, error) {
+	encoded, err := json.Marshal(row)
+	if err != nil {
+		return "", fmt.Errorf("marshal Gold source row: %w", err)
+	}
+	return hashBytes(encoded), nil
 }
