@@ -1,10 +1,13 @@
 package infrastructure
 
 import (
+	"errors"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
+	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 )
 
 func TestAnnotationEngineOperationAndBindingsAreDurableCoreFacts(t *testing.T) {
@@ -133,5 +136,124 @@ func TestAnnotationEngineBoundaryRejectsCrossWorkspaceFacts(t *testing.T) {
 	`, uuid.New(), foreignWorkspace, operationID)
 	if err == nil || !strings.Contains(err.Error(), "crosses operation workspace") {
 		t.Fatalf("cross-workspace attempt error = %v", err)
+	}
+}
+
+
+func TestAnnotationSnapshotGateRejectsUnsettledEngineOperations(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	fx := createAnnotationDBFixture(t, ctx, pool)
+	manifest := []byte("{\"operation\":\"submit\"}")
+	operationID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO annotation_engine_operation(
+			id, workspace_id, campaign_id, provider, provider_instance_ref,
+			operation_kind, request_id, request_fingerprint,
+			payload_manifest, payload_manifest_hash_payload, payload_manifest_sha256
+		) VALUES (
+			$1,$2,$3,'LABEL_STUDIO','local-ls','SUBMIT_TASKS',
+			'snapshot-gate',$4,$5::jsonb,$6,$7
+		)
+	`, operationID, fx.workspaceID, fx.campaignID, strings.Repeat("6", 64),
+		string(manifest), manifest, sha256Hex(manifest)); err != nil {
+		t.Fatalf("insert unsettled engine operation: %v", err)
+	}
+
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin unsettled gate transaction: %v", err)
+	}
+	err = NewRepository(pool).LockAndRequireEngineOperationsSettledTx(ctx, tx, fx.campaignID)
+	_ = tx.Rollback(ctx)
+	if !errors.Is(err, ErrEngineOperationsUnsettled) {
+		t.Fatalf("unsettled gate error = %v, want ErrEngineOperationsUnsettled", err)
+	}
+
+	if _, err := pool.Exec(ctx, `
+		UPDATE annotation_engine_operation
+		   SET status='MATCHED', revision=revision+1
+		 WHERE id=$1
+	`, operationID); err != nil {
+		t.Fatalf("settle engine operation: %v", err)
+	}
+
+	tx, err = pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin settled gate transaction: %v", err)
+	}
+	if err := NewRepository(pool).LockAndRequireEngineOperationsSettledTx(ctx, tx, fx.campaignID); err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("settled engine operation blocked snapshot gate: %v", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("commit settled gate transaction: %v", err)
+	}
+}
+
+func TestAnnotationEngineActorBindingIsImmutableAndUnambiguous(t *testing.T) {
+	pool, ctx := openAnnotationTestDB(t)
+	defer pool.Close()
+
+	fx := createAnnotationDBFixture(t, ctx, pool)
+	repo := NewRepository(pool)
+	binding := annotationdomain.EngineActorBinding{
+		ID:               uuid.New(),
+		WorkspaceID:      fx.workspaceID,
+		Provider:         "LABEL_STUDIO",
+		ProviderInstance: "local-ls",
+		ExternalActorRef: "17",
+		CoreActorRef:     "user:annotator-1",
+		CreatedAt:        time.Now().UTC(),
+	}
+
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin actor binding transaction: %v", err)
+	}
+	created, err := repo.InsertEngineActorBinding(ctx, tx, binding)
+	if err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("insert actor binding: %v", err)
+	}
+	if !created {
+		_ = tx.Rollback(ctx)
+		t.Fatal("actor binding was not created")
+	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("commit actor binding: %v", err)
+	}
+
+	resolved, err := repo.ResolveEngineActorBinding(
+		ctx, fx.workspaceID, "LABEL_STUDIO", "local-ls", "17",
+	)
+	if err != nil {
+		t.Fatalf("resolve actor binding: %v", err)
+	}
+	if resolved.CoreActorRef != "user:annotator-1" {
+		t.Fatalf("core actor ref = %q", resolved.CoreActorRef)
+	}
+
+	_, err = pool.Exec(ctx, `
+		UPDATE annotation_engine_actor_binding
+		   SET core_actor_ref='user:other'
+		 WHERE id=$1
+	`, binding.ID)
+	if err == nil || !strings.Contains(err.Error(), "append-only annotation engine history") {
+		t.Fatalf("actor binding mutation error = %v", err)
+	}
+
+	conflict := binding
+	conflict.ID = uuid.New()
+	conflict.ExternalActorRef = "18"
+	tx, err = pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin actor conflict transaction: %v", err)
+	}
+	_, err = repo.InsertEngineActorBinding(ctx, tx, conflict)
+	_ = tx.Rollback(ctx)
+	if !errors.Is(err, ErrEngineBindingConflict) {
+		t.Fatalf("actor binding conflict error = %v, want ErrEngineBindingConflict", err)
 	}
 }
