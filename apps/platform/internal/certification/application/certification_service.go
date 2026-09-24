@@ -52,14 +52,21 @@ func NewCertificationService(
 }
 
 type EvaluateDatasetCertificationCommand struct {
-	WorkspaceID      uuid.UUID
-	DatasetVersionID uuid.UUID
-	ProfileID        uuid.UUID
-	IdempotencyKey   string
-	ActorID          *uuid.UUID
-	TraceID          string
-	Now              time.Time
-	CostActivity     *cost.CertificationActivity
+	WorkspaceID               uuid.UUID
+	DatasetVersionID          uuid.UUID
+	ProfileID                 uuid.UUID
+	QualityAssessmentID       uuid.UUID
+	RightsSnapshotID          *uuid.UUID
+	EffectiveRightsSnapshotID *uuid.UUID
+	ComplianceResultID        *uuid.UUID
+	ContractVersionID         *uuid.UUID
+	TraceabilityEvidenceID    *uuid.UUID
+	EvidenceSnapshotID        *uuid.UUID
+	IdempotencyKey            string
+	ActorID                   *uuid.UUID
+	TraceID                   string
+	Now                       time.Time
+	CostActivity              *cost.CertificationActivity
 }
 
 type ChangeCertificationDispositionCommand struct {
@@ -235,10 +242,21 @@ func (s *CertificationService) Evaluate(ctx context.Context, cmd EvaluateDataset
 
 func certificationFingerprint(cmd EvaluateDatasetCertificationCommand) (string, error) {
 	payload, err := json.Marshal(struct {
-		WorkspaceID      uuid.UUID `json:"workspaceId"`
-		DatasetVersionID uuid.UUID `json:"datasetVersionId"`
-		ProfileID        uuid.UUID `json:"profileId"`
-	}{cmd.WorkspaceID, cmd.DatasetVersionID, cmd.ProfileID})
+		WorkspaceID               uuid.UUID  `json:"workspaceId"`
+		DatasetVersionID          uuid.UUID  `json:"datasetVersionId"`
+		ProfileID                 uuid.UUID  `json:"profileId"`
+		QualityAssessmentID       uuid.UUID  `json:"qualityAssessmentId"`
+		RightsSnapshotID          *uuid.UUID `json:"rightsSnapshotId,omitempty"`
+		EffectiveRightsSnapshotID *uuid.UUID `json:"effectiveRightsSnapshotId,omitempty"`
+		ComplianceResultID        *uuid.UUID `json:"complianceResultId,omitempty"`
+		ContractVersionID         *uuid.UUID `json:"contractVersionId,omitempty"`
+		TraceabilityEvidenceID    *uuid.UUID `json:"traceabilityEvidenceId,omitempty"`
+		EvidenceSnapshotID        *uuid.UUID `json:"evidenceSnapshotId,omitempty"`
+	}{
+		cmd.WorkspaceID, cmd.DatasetVersionID, cmd.ProfileID, cmd.QualityAssessmentID,
+		cmd.RightsSnapshotID, cmd.EffectiveRightsSnapshotID, cmd.ComplianceResultID,
+		cmd.ContractVersionID, cmd.TraceabilityEvidenceID, cmd.EvidenceSnapshotID,
+	})
 	if err != nil {
 		return "", fmt.Errorf("marshal certification idempotency fingerprint: %w", err)
 	}

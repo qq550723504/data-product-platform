@@ -17,6 +17,8 @@ import (
 type ApplicabilityMode string
 
 const (
+	GoldCertificationProfileRef = "gold/dataset-v1"
+
 	ApplicabilityAny      ApplicabilityMode = "ANY"
 	ApplicabilityExplicit ApplicabilityMode = "EXPLICIT"
 )
@@ -74,6 +76,56 @@ type ProfileSnapshot struct {
 	Content       []byte     `json:"content"`
 	CreatedAt     time.Time  `json:"createdAt"`
 	CreatedBy     *uuid.UUID `json:"createdBy,omitempty"`
+}
+
+func NewGoldCertificationProfile(
+	purpose, action, consumer string,
+	scopes []ScopeRef,
+) (CertificationProfile, error) {
+	profile := CertificationProfile{
+		ProfileRef: GoldCertificationProfileRef,
+		Code:       "GOLD_DATASET",
+		Name:       "Gold Dataset",
+		Version:    "1.0.0",
+		Purpose:    Applicability{Mode: ApplicabilityExplicit, Values: []string{purpose}},
+		Actions:    Applicability{Mode: ApplicabilityExplicit, Values: []string{action}},
+		Consumers:  Applicability{Mode: ApplicabilityExplicit, Values: []string{consumer}},
+		Delivery:   Applicability{Mode: ApplicabilityExplicit, Values: []string{"DIRECT_DATA"}},
+		RequiredQualityDimensions: []string{
+			"COMPLETENESS",
+			"ACCURACY",
+			"CONSISTENCY",
+			"UNIQUENESS",
+			"TRACEABILITY",
+		},
+		RequiredCriticalRules: []string{
+			"GOLD-ANNOTATION-COVERAGE",
+			"GOLD-REVIEWED-COVERAGE",
+			"GOLD-REJECTED-COUNT",
+			"GOLD-SOURCE-UNIQUENESS",
+			"GOLD-OUTPUT-TASK-MAPPING",
+			"GOLD-SCHEMA-VALIDITY",
+			"GOLD-PROVENANCE-COMPLETE",
+			"GOLD-OUTPUT-COUNT",
+		},
+		QualityGateRequired: true,
+		Rights: RightsRequirement{
+			Required:  true,
+			Purpose:   Applicability{Mode: ApplicabilityExplicit, Values: []string{purpose}},
+			Actions:   Applicability{Mode: ApplicabilityExplicit, Values: []string{action}},
+			Consumers: Applicability{Mode: ApplicabilityExplicit, Values: []string{consumer}},
+			Scopes:    ScopeApplicability{Mode: ApplicabilityExplicit, Values: append([]ScopeRef(nil), scopes...)},
+		},
+		ComplianceRequired:   false,
+		ContractRequired:     false,
+		TraceabilityRequired: false,
+		EvidenceRequired:     true,
+	}
+	normalized, err := profile.normalized()
+	if err != nil {
+		return CertificationProfile{}, err
+	}
+	return normalized, nil
 }
 
 var (

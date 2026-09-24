@@ -15,6 +15,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
+	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
 
 var ErrCertificationNotFound = errors.New("dataset certification not found")
@@ -58,16 +59,22 @@ func (r *CertificationRepository) InsertCertification(ctx context.Context, tx pg
 			profile_ref, profile_version, profile_content_sha256, profile_content_snapshot,
 			rights_snapshot_id, effective_rights_snapshot_id, effective_rights_snapshot_hash,
 			frozen_rights_context_hash, compliance_result_id, contract_version_id,
-			traceability_evidence_id, evidence_snapshot_id, decision, blockers, reason, issued_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)
+			traceability_evidence_id, evidence_snapshot_id,
+			gold_production_binding_id, annotation_snapshot_id, annotation_snapshot_root_hash,
+			annotation_schema_content_sha256, annotation_taxonomy_content_sha256,
+			gold_production_binding_root_hash,
+			decision, blockers, reason, issued_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28)
 	`, certification.ID, certification.WorkspaceID, certification.DatasetVersionID,
 		certification.QualityAssessmentID, certification.Profile.ID, certification.Profile.ProfileRef,
 		certification.Profile.Version, certification.Profile.ContentSHA256, string(certification.Profile.Content),
 		certification.RightsSnapshotID, certification.EffectiveRightsSnapshotID,
 		nullableString(certification.EffectiveRightsSnapshotHash), nullableString(certification.FrozenRightsContextHash),
 		certification.ComplianceResultID, certification.ContractVersionID, certification.TraceabilityEvidenceID,
-		certification.EvidenceSnapshotID, certification.Decision, blockers, certification.Reason,
-		certification.IssuedAt, certification.ActorID)
+		certification.EvidenceSnapshotID, certification.GoldProductionBindingID, certification.AnnotationSnapshotID,
+		nullableString(certification.AnnotationSnapshotRootHash), nullableString(certification.AnnotationSchemaSHA256),
+		nullableString(certification.AnnotationTaxonomySHA256), nullableString(certification.GoldProductionBindingRootHash),
+		certification.Decision, blockers, certification.Reason, certification.IssuedAt, certification.ActorID)
 	if err != nil {
 		return fmt.Errorf("insert dataset certification: %w", err)
 	}
@@ -79,11 +86,16 @@ func (r *CertificationRepository) GetCertificationTx(ctx context.Context, tx pgx
 	var blockers []byte
 	var decision string
 	var effectiveHash, contextHash *string
+	var annotationRootHash, annotationSchemaHash, annotationTaxonomyHash, goldBindingRootHash *string
 	if err := tx.QueryRow(ctx, `
 		SELECT id, workspace_id, dataset_version_id, quality_assessment_id,
 		       rights_snapshot_id, effective_rights_snapshot_id, effective_rights_snapshot_hash,
 		       frozen_rights_context_hash, compliance_result_id, contract_version_id,
-		       traceability_evidence_id, evidence_snapshot_id, decision, blockers, reason, issued_at, created_by
+		       traceability_evidence_id, evidence_snapshot_id,
+		       gold_production_binding_id, annotation_snapshot_id, annotation_snapshot_root_hash,
+		       annotation_schema_content_sha256, annotation_taxonomy_content_sha256,
+		       gold_production_binding_root_hash,
+		       decision, blockers, reason, issued_at, created_by
 		FROM dataset_certification WHERE id=$1
 	`, certificationID).Scan(
 		&certification.ID, &certification.WorkspaceID, &certification.DatasetVersionID,
@@ -91,6 +103,8 @@ func (r *CertificationRepository) GetCertificationTx(ctx context.Context, tx pgx
 		&certification.EffectiveRightsSnapshotID, &effectiveHash, &contextHash,
 		&certification.ComplianceResultID, &certification.ContractVersionID,
 		&certification.TraceabilityEvidenceID, &certification.EvidenceSnapshotID,
+		&certification.GoldProductionBindingID, &certification.AnnotationSnapshotID,
+		&annotationRootHash, &annotationSchemaHash, &annotationTaxonomyHash, &goldBindingRootHash,
 		&decision, &blockers, &certification.Reason, &certification.IssuedAt, &certification.ActorID,
 	); errors.Is(err, pgx.ErrNoRows) {
 		return domain.DatasetCertification{}, ErrCertificationNotFound
@@ -103,6 +117,10 @@ func (r *CertificationRepository) GetCertificationTx(ctx context.Context, tx pgx
 	certification.Decision = domain.Decision(decision)
 	certification.EffectiveRightsSnapshotHash = dereferenceString(effectiveHash)
 	certification.FrozenRightsContextHash = dereferenceString(contextHash)
+	certification.AnnotationSnapshotRootHash = dereferenceString(annotationRootHash)
+	certification.AnnotationSchemaSHA256 = dereferenceString(annotationSchemaHash)
+	certification.AnnotationTaxonomySHA256 = dereferenceString(annotationTaxonomyHash)
+	certification.GoldProductionBindingRootHash = dereferenceString(goldBindingRootHash)
 	certification.Profile = profile
 	return certification, nil
 }
@@ -126,7 +144,11 @@ func listCertificationHistory(ctx context.Context, q certificationQueryer, works
 		SELECT id, workspace_id, dataset_version_id, quality_assessment_id,
 		       rights_snapshot_id, effective_rights_snapshot_id, effective_rights_snapshot_hash,
 		       frozen_rights_context_hash, compliance_result_id, contract_version_id,
-		       traceability_evidence_id, evidence_snapshot_id, decision, blockers, reason, issued_at, created_by
+		       traceability_evidence_id, evidence_snapshot_id,
+		       gold_production_binding_id, annotation_snapshot_id, annotation_snapshot_root_hash,
+		       annotation_schema_content_sha256, annotation_taxonomy_content_sha256,
+		       gold_production_binding_root_hash,
+		       decision, blockers, reason, issued_at, created_by
 		FROM dataset_certification
 		WHERE workspace_id=$1 AND dataset_version_id=$2 AND certification_profile_id=$3
 		  AND issued_at <= $4
@@ -190,12 +212,15 @@ func scanCertification(row certificationScanner, profile domain.ProfileSnapshot)
 	var blockers []byte
 	var decision string
 	var effectiveHash, contextHash *string
+	var annotationRootHash, annotationSchemaHash, annotationTaxonomyHash, goldBindingRootHash *string
 	if err := row.Scan(
 		&certification.ID, &certification.WorkspaceID, &certification.DatasetVersionID,
 		&certification.QualityAssessmentID, &certification.RightsSnapshotID,
 		&certification.EffectiveRightsSnapshotID, &effectiveHash, &contextHash,
 		&certification.ComplianceResultID, &certification.ContractVersionID,
 		&certification.TraceabilityEvidenceID, &certification.EvidenceSnapshotID,
+		&certification.GoldProductionBindingID, &certification.AnnotationSnapshotID,
+		&annotationRootHash, &annotationSchemaHash, &annotationTaxonomyHash, &goldBindingRootHash,
 		&decision, &blockers, &certification.Reason, &certification.IssuedAt, &certification.ActorID,
 	); err != nil {
 		return domain.DatasetCertification{}, fmt.Errorf("scan dataset certification: %w", err)
@@ -206,6 +231,10 @@ func scanCertification(row certificationScanner, profile domain.ProfileSnapshot)
 	certification.Decision = domain.Decision(decision)
 	certification.EffectiveRightsSnapshotHash = dereferenceString(effectiveHash)
 	certification.FrozenRightsContextHash = dereferenceString(contextHash)
+	certification.AnnotationSnapshotRootHash = dereferenceString(annotationRootHash)
+	certification.AnnotationSchemaSHA256 = dereferenceString(annotationSchemaHash)
+	certification.AnnotationTaxonomySHA256 = dereferenceString(annotationTaxonomyHash)
+	certification.GoldProductionBindingRootHash = dereferenceString(goldBindingRootHash)
 	certification.Profile = profile
 	return certification, nil
 }
@@ -332,13 +361,15 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 	// Rebind QualityAssessment from immutable stored facts. Resolver fields are
 	// only candidate references and must not decide certification.
 	var qualityWorkspaceID, qualityDatasetVersionID uuid.UUID
-	var qualityGate string
+	var qualityGate, qualityRuleSetRef, qualityEvaluatorName string
 	if err := tx.QueryRow(ctx, `
-		SELECT workspace_id, dataset_version_id, gate_decision
+		SELECT workspace_id, dataset_version_id, gate_decision, rule_set_ref, evaluator_name
 		FROM quality_result
 		WHERE id=$1
 		FOR SHARE
-	`, input.Quality.ID).Scan(&qualityWorkspaceID, &qualityDatasetVersionID, &qualityGate); err != nil {
+	`, input.Quality.ID).Scan(
+		&qualityWorkspaceID, &qualityDatasetVersionID, &qualityGate, &qualityRuleSetRef, &qualityEvaluatorName,
+	); err != nil {
 		return fmt.Errorf("load QualityAssessment for certification: %w", err)
 	}
 	input.Quality.WorkspaceID = qualityWorkspaceID
@@ -508,69 +539,23 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 		}
 		rows.Close()
 
-		var snapshotInputs []uuid.UUID
-		rows, err = tx.Query(ctx, `
-			SELECT input_dataset_version_id
-			FROM effective_rights_input
-			WHERE snapshot_id=$1
-			ORDER BY input_dataset_version_id
-		`, rights.EffectiveRightsSnapshotID)
+		snapshotInputs, err := rightsinfra.EffectiveRightsInputsTx(ctx, tx, rights.EffectiveRightsSnapshotID)
 		if err != nil {
-			return fmt.Errorf("load EffectiveRightsSnapshot lineage membership: %w", err)
+			return err
 		}
-		for rows.Next() {
-			var id uuid.UUID
-			if err := rows.Scan(&id); err != nil {
-				rows.Close()
-				return fmt.Errorf("scan EffectiveRightsSnapshot lineage member: %w", err)
-			}
-			snapshotInputs = append(snapshotInputs, id)
-		}
-		if err := rows.Err(); err != nil {
-			rows.Close()
-			return fmt.Errorf("iterate EffectiveRightsSnapshot lineage membership: %w", err)
-		}
-		rows.Close()
-
-		var lineageInputs []uuid.UUID
-		rows, err = tx.Query(ctx, `
-			WITH RECURSIVE lineage(version_id) AS (
-				SELECT input_version_id
-				FROM dataset_version_lineage
-				WHERE output_version_id=$1
-				UNION
-				SELECT edge.input_version_id
-				FROM dataset_version_lineage edge
-				JOIN lineage parent ON parent.version_id=edge.output_version_id
-			)
-			SELECT DISTINCT l.version_id
-			FROM lineage l
-			WHERE NOT EXISTS (
-				SELECT 1 FROM dataset_version_lineage child
-				WHERE child.output_version_id=l.version_id
-			)
-			ORDER BY l.version_id
-		`, input.DatasetVersionID)
+		targetInputs, err := rightsinfra.RequiredLineageInputsTx(ctx, tx, input.DatasetVersionID)
 		if err != nil {
-			return fmt.Errorf("load DatasetVersion lineage for certification: %w", err)
+			return err
 		}
-		for rows.Next() {
-			var id uuid.UUID
-			if err := rows.Scan(&id); err != nil {
-				rows.Close()
-				return fmt.Errorf("scan DatasetVersion lineage member: %w", err)
-			}
-			lineageInputs = append(lineageInputs, id)
+		if err := tx.QueryRow(ctx, `
+			SELECT EXISTS(
+				SELECT 1 FROM dataset_version_lineage WHERE output_version_id=$1
+			)
+		`, input.DatasetVersionID).Scan(&input.Derived); err != nil {
+			return fmt.Errorf("resolve DatasetVersion derived state for certification: %w", err)
 		}
-		if err := rows.Err(); err != nil {
-			rows.Close()
-			return fmt.Errorf("iterate DatasetVersion lineage: %w", err)
-		}
-		rows.Close()
-
-		input.Derived = len(lineageInputs) > 0
-		rights.RequiredInputSetHash = hashUUIDSet(snapshotInputs)
-		rights.TargetLineageInputSetHash = hashUUIDSet(lineageInputs)
+		rights.RequiredInputSetHash = rightsinfra.HashRequiredResourceMembership(snapshotInputs)
+		rights.TargetLineageInputSetHash = rightsinfra.HashRequiredResourceMembership(targetInputs)
 		rights.FrozenRightsContextHash = hashStrings(
 			rights.EffectiveRightsSnapshotID.String(),
 			rights.EffectiveRightsSnapshotHash,
@@ -631,6 +616,48 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 		}
 	}
 
+	if profile.ProfileRef == domain.GoldCertificationProfileRef {
+		if !strings.EqualFold(strings.TrimSpace(qualityRuleSetRef), "gold/quality/annotation-v1") ||
+			!strings.EqualFold(strings.TrimSpace(qualityEvaluatorName), "gold-quality") {
+			return fmt.Errorf("Gold certification requires the formal Gold QualityAssessment")
+		}
+		var gold domain.GoldProductionEvidence
+		var bindingStatus, snapshotStatus string
+		var snapshotRoot string
+		var campaignSchemaHash, campaignTaxonomyHash string
+		if err := tx.QueryRow(ctx, `
+			SELECT g.id, g.workspace_id, g.output_dataset_version_id,
+			       g.annotation_snapshot_id, g.snapshot_root_hash,
+			       g.schema_content_sha256, g.taxonomy_content_sha256,
+			       g.root_hash, g.status,
+			       s.status, s.root_hash,
+			       c.schema_content_sha256, c.taxonomy_content_sha256
+			FROM gold_production_binding g
+			JOIN annotation_snapshot s ON s.id=g.annotation_snapshot_id
+			JOIN annotation_campaign c ON c.id=g.annotation_campaign_id
+			WHERE g.output_dataset_version_id=$1
+			FOR SHARE OF g, s, c
+		`, input.DatasetVersionID).Scan(
+			&gold.BindingID, &gold.WorkspaceID, &gold.DatasetVersionID,
+			&gold.AnnotationSnapshotID, &gold.AnnotationSnapshotRoot,
+			&gold.SchemaContentSHA256, &gold.TaxonomyContentSHA256,
+			&gold.ProductionBindingRootHash, &bindingStatus,
+			&snapshotStatus, &snapshotRoot,
+			&campaignSchemaHash, &campaignTaxonomyHash,
+		); err != nil {
+			return fmt.Errorf("load Gold production proof for certification: %w", err)
+		}
+		gold.Finalized =
+			bindingStatus == "FINALIZED" &&
+				snapshotStatus == "FINALIZED" &&
+				gold.WorkspaceID == input.WorkspaceID &&
+				gold.DatasetVersionID == input.DatasetVersionID &&
+				gold.AnnotationSnapshotRoot == snapshotRoot &&
+				gold.SchemaContentSHA256 == campaignSchemaHash &&
+				gold.TaxonomyContentSHA256 == campaignTaxonomyHash
+		input.Gold = &gold
+	}
+
 	if input.Traceability != nil && input.Traceability.ID != uuid.Nil {
 		var workspaceID uuid.UUID
 		var objectType string
@@ -669,15 +696,6 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 		input.Evidence.Complete = err == nil && evidenceWorkspace == input.WorkspaceID && objectType == "DATASET_VERSION" && objectID == input.DatasetVersionID
 	}
 	return nil
-}
-
-func hashUUIDSet(values []uuid.UUID) string {
-	parts := make([]string, 0, len(values))
-	for _, value := range values {
-		parts = append(parts, value.String())
-	}
-	sort.Strings(parts)
-	return hashStrings(parts...)
 }
 
 func hashStrings(values ...string) string {
