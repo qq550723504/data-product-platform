@@ -243,5 +243,37 @@ func (h *Handler) goldQualityPreflight(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	writeJSON(w, http.StatusOK, result)
+	writeJSON(w, http.StatusOK, goldQualityPreflightResponse(result))
+}
+
+
+func goldQualityPreflightResponse(result annotationapp.GoldQualityPreflight) map[string]any {
+	findings := make([]map[string]any, 0, len(result.Findings))
+	for _, finding := range result.Findings {
+		status := string(finding.Status)
+		if finding.Status == "SKIPPED" {
+			status = "NOT_APPLICABLE"
+		}
+		findings = append(findings, map[string]any{
+			"ruleId":        finding.RuleID,
+			"dimension":     finding.Dimension,
+			"severity":      finding.Severity,
+			"status":        status,
+			"observed":      finding.Observed,
+			"affectedCount": finding.Observed["affectedCount"],
+			"sample":        finding.Observed["sample"],
+			"reason":        finding.Message,
+		})
+	}
+	return map[string]any{
+		"workspaceId":  result.WorkspaceID,
+		"campaignId":   result.CampaignID,
+		"snapshotId":   result.SnapshotID,
+		"snapshotRoot": result.SnapshotRoot,
+		"blocking":     result.Blocking,
+		"metrics":      result.Metrics,
+		"findings":     findings,
+		"mode":         "PREFLIGHT",
+		"formalAssessmentCreated": false,
+	}
 }
