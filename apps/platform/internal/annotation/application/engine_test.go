@@ -97,3 +97,24 @@ func TestResolutionStatusRecordsAcceptedSubmitBeforeVerification(t *testing.T) {
 		t.Fatalf("resolution = %s/%s, want UNKNOWN/SUCCEEDED", status, outcome)
 	}
 }
+
+
+func TestResolutionStatusKeepsLookupAuthorizationFailureUnknown(t *testing.T) {
+	err := NewAnnotationEngineOutcomeError(
+		ErrAnnotationEngineUnauthorized,
+		"lookup submission",
+		false,
+		false,
+		403,
+		errors.New("permission revoked"),
+	)
+	status, outcome := resolutionStatus(
+		EngineLookupUnknown,
+		err,
+		annotationdomain.EngineAttemptLookup,
+	)
+	if status != annotationdomain.EngineOperationUnknown ||
+		outcome != annotationdomain.EngineAttemptUnknown {
+		t.Fatalf("resolution = %s/%s, want UNKNOWN/UNKNOWN", status, outcome)
+	}
+}
