@@ -465,7 +465,7 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 
 	return workflowapp.ProcessingResult{
 		OutputDatasetVersionID: outputVersion.ID,
-		EngineExecutionID: "gold:" + request.ExecutionID.String(),
+		EngineExecutionID:      "gold:" + request.ExecutionID.String(),
 		Metrics: map[string]any{
 			"inputRows":        len(table.Rows),
 			"outputRows":       outputRows,
