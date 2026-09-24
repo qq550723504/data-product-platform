@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-Certified Dataset 第一阶段 MVP / enterprise-activity 纵向 Pilot 已完成。第二阶段已由 #203 AI / Gold Dataset Epic 立项，当前交付 #209 的文档架构基线；#204–#208 的业务实现和 Pilot 验收尚未完成。
+Certified Dataset 第一阶段 MVP / enterprise-activity 纵向 Pilot 已完成。第二阶段已由 #203 AI / Gold Dataset Epic 立项；#209 架构基线与 #204 Annotation Core Domain 已完成，当前进入 #205 Label Studio reference adapter，#206–#208 的 Human Review / Gold Quality、Gold 生产认证与真实 Pilot 尚未完成。
 
 ~~~text
 核心 POC                              ✅
@@ -17,10 +17,14 @@ Trusted DIRECT_DATA Delivery            ✅
 #99 / #100 定向 Reliability Closeout   ✅
 #136 enterprise-activity E2E Pilot      ✅ E2E1–E2E20
         ↓
-#203 AI / Gold Dataset 第二阶段        ← 已立项，未完成实现
-  #209 Architecture Baseline          ← docs / ADR only
-        ↓（文档 PR 合并、验收关闭后）
-  #204 → #205 → #206 → #207 → #208
+#203 AI / Gold Dataset 第二阶段        ← 已立项
+  #209 Architecture Baseline          ✅
+        ↓
+  #204 Annotation Core Domain         ✅
+        ↓
+  #205 Label Studio Adapter           ← current
+        ↓
+  #206 → #207 → #208
 ~~~
 
 第一阶段主 Epic #129 与纵向 Pilot #136 已关闭。完整验收证据见：
@@ -45,7 +49,7 @@ Trusted DIRECT_DATA Delivery            ✅
 
 后续 #198–#202 已收口 #99 的 ProductRelease/ProductVersion membership、legacy projection、Rights binding 和发布后 lineage 冻结；#99 已关闭。#100 的其余可靠性项仍按真实场景跟踪，不把定向 Pilot closeout 误写成全部 debt 完成。
 
-第一阶段明确没有扩大到 bearer/presigned provider、provider containment/recovery、完整生产 IAM、灾备、性能 SLA、Label Studio / X-AnyLabeling 或 AI Gold Dataset。第二阶段仅按 #203/#209 进入受控 Gold Pilot：Label Studio reference adapter、人工审核、冻结标注证据、Gold 生产/认证；其他方向不自动进入范围，文档设计也不表示功能已经可用。
+第一阶段明确没有扩大到 bearer/presigned provider、provider containment/recovery、完整生产 IAM、灾备、性能 SLA、Label Studio / X-AnyLabeling 或 AI Gold Dataset。第二阶段按 #203 进入受控 Gold Pilot：#209 架构基线与 #204 Annotation Core Domain 已完成，当前推进 #205 Label Studio reference adapter；人工审核 / Gold Quality、Gold 生产认证与完整 Pilot 仍由 #206–#208 验证。其他方向不自动进入范围，已完成 Core Domain 也不表示完整 Gold 功能已经可用。
 
 ## 本地试用入口
 
@@ -78,7 +82,7 @@ node deploy/demo/demo.mjs up
 9. docs/poc/poc-technical-plan-v1.md
 10. examples/enterprise-activity/README.md
 
-第二阶段权威文档入口：[Gold 产品基线与 16 个架构问题定案](docs/product/gold-dataset.md) → [Annotation Domain](docs/architecture/annotation-domain.md) → [Engine integration](docs/architecture/annotation-engine-integration.md) → [Gold production / certification](docs/architecture/gold-dataset-production.md)；跨模块决定见 [ADR-0012](docs/adr/0012-gold-dataset-annotation-boundary.md)。#209 文档 PR 合并并验收关闭前，不启动 #204 的 migration/domain implementation。
+第二阶段权威文档入口：[Gold 产品基线与 16 个架构问题定案](docs/product/gold-dataset.md) → [Annotation Domain](docs/architecture/annotation-domain.md) → [Engine integration](docs/architecture/annotation-engine-integration.md) → [Gold production / certification](docs/architecture/gold-dataset-production.md)；跨模块决定见 [ADR-0012](docs/adr/0012-gold-dataset-annotation-boundary.md)。#209 与 #204 已完成；当前实现入口为 #205，后续按 #206 → #207 → #208 继续纵向闭环。
 
 ## 核心业务链
 
@@ -107,7 +111,7 @@ Certified Dataset
    │
    ├── Data Product / Product Release
    ├── Trusted Data Offering
-   ├── AI / Gold Dataset（#203 设计基线；#204–#208 待实现）
+   ├── AI / Gold Dataset（#209/#204 已完成；#205–#208 继续实现与验收）
    └── External Delivery
 ~~~
 

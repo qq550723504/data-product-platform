@@ -19,7 +19,7 @@ Data Product Platform 是一套数据产品与高质量数据集生产治理平�
 3. 数据权利来源和授权可以解释为什么允许或拒绝使用与交付；
 4. Certified Dataset 可以完成受控的 trusted DIRECT_DATA 交付与 UI/trace 验收。
 
-第一阶段完成不等于生产上线批准。第二阶段已由 #203 AI / Gold Dataset Epic 正式立项，当前为 #209 文档架构基线；#204–#208 的业务实现和真实 Pilot 尚未完成。先合并并验收架构基线，再启动 #204，不把设计内容描述为已上线能力。
+第一阶段完成不等于生产上线批准。第二阶段已由 #203 AI / Gold Dataset Epic 正式立项；#209 架构基线与 #204 Annotation Core Domain 已完成，当前推进 #205 Label Studio reference adapter。#206–#208 的 Human Review / Gold Quality、Gold DatasetVersion / Certification 与真实 Pilot 尚未完成；已实现 Annotation Core 不等于完整 Gold 能力已经上线。
 
 本阶段只选择一个受控、合成数据、单标签、独立人工审核的 Gold 生产闭环。Delivery Hardening / external provider、完整 IAM/SLA/灾备和其他行业能力仍由真实需求独立决定，不跟随 Gold 自动启动。
 
@@ -62,7 +62,7 @@ Certified Dataset 后可以进入：
 Certified Dataset
 ├── Data Product / Product Release
 ├── Trusted Data Offering
-├── Annotation / Review → Gold Dataset（#203 设计基线，待实现）
+├── Annotation / Review → Gold Dataset（#204 Core 已实现；#205–#208 待完成）
 └── External Delivery
 ~~~
 
@@ -85,7 +85,7 @@ Certified Dataset / Data Product Core
         ├── Compliance / Contract
         ├── DatasetCertification
         ├── ProductRelease
-        ├── Annotation / Review / Snapshot（#203 设计，待实现）
+        ├── Annotation / Review / Snapshot（#204 Core 已实现；Engine / Gold 闭环继续推进）
         └── Cost / Evidence / Audit
         ↓
 Engine Adapter Layer
@@ -111,7 +111,9 @@ Immutable DatasetVersion
 
 DatasetVersion 内容变化后必须创建新版本并重新评测、重新认证。
 
-## Gold Dataset 第二阶段设计
+## Gold Dataset 第二阶段基线
+
+当前实现状态：#204 已落地 Annotation Campaign / Task / immutable Result / ReviewDecision / FINALIZED Snapshot 的 Core Domain 与冻结约束；#205–#208 继续完成外部 Engine、Gold Quality / production / certification 与 live Pilot。
 
 Gold 候选仍是新的 DatasetVersion，不是独立 GoldDataset 主实体。它绑定完整冻结的 AnnotationSnapshot、规范版本、实际 producer 与完整源数据/标注贡献权利依赖，再经新 QualityAssessment 和明确 Gold Profile 认证；不能把 input certification 复制给 output。
 
