@@ -35,7 +35,7 @@ func TestResolutionStatusKeepsUncertainWritesUnknown(t *testing.T) {
 		503,
 		errors.New("connection reset after write"),
 	)
-	status, outcome := resolutionStatus(EngineLookupUnknown, err)
+	status, outcome := resolutionStatus(EngineLookupUnknown, err, annotationdomain.EngineAttemptSubmit)
 	if status != annotationdomain.EngineOperationUnknown ||
 		outcome != annotationdomain.EngineAttemptUnknown {
 		t.Fatalf("resolution = %s/%s, want UNKNOWN/UNKNOWN", status, outcome)
@@ -51,7 +51,7 @@ func TestResolutionStatusMapsDefiniteRejectWithoutRetry(t *testing.T) {
 		400,
 		errors.New("bad request"),
 	)
-	status, outcome := resolutionStatus(EngineLookupUnknown, err)
+	status, outcome := resolutionStatus(EngineLookupUnknown, err, annotationdomain.EngineAttemptSubmit)
 	if status != annotationdomain.EngineOperationRejected ||
 		outcome != annotationdomain.EngineAttemptRejected {
 		t.Fatalf("resolution = %s/%s, want REJECTED/REJECTED", status, outcome)
@@ -59,9 +59,30 @@ func TestResolutionStatusMapsDefiniteRejectWithoutRetry(t *testing.T) {
 }
 
 func TestResolutionStatusMapsProviderConflict(t *testing.T) {
-	status, outcome := resolutionStatus(EngineLookupConflict, nil)
+	status, outcome := resolutionStatus(EngineLookupConflict, nil, annotationdomain.EngineAttemptLookup)
 	if status != annotationdomain.EngineOperationConflict ||
 		outcome != annotationdomain.EngineAttemptConflict {
 		t.Fatalf("resolution = %s/%s, want CONFLICT/CONFLICT", status, outcome)
+	}
+}
+
+
+func TestResolutionStatusRetriesDefinitePreSendFailure(t *testing.T) {
+	err := NewAnnotationEngineOutcomeError(
+		ErrAnnotationEngineUnavailable,
+		"submit tasks",
+		true,
+		false,
+		0,
+		errors.New("credential refresh failed before send"),
+	)
+	status, outcome := resolutionStatus(
+		EngineLookupUnknown,
+		err,
+		annotationdomain.EngineAttemptSubmit,
+	)
+	if status != annotationdomain.EngineOperationPending ||
+		outcome != annotationdomain.EngineAttemptFailedPreSend {
+		t.Fatalf("resolution = %s/%s, want PENDING/FAILED_PRE_SEND", status, outcome)
 	}
 }
