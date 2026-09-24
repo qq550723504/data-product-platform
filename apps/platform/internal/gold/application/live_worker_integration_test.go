@@ -33,13 +33,13 @@ import (
 )
 
 type liveGoldFixture struct {
-	workspaceID             uuid.UUID
-	inputDatasetVersionID   uuid.UUID
-	inputCertificationID    uuid.UUID
-	contributionResourceID  uuid.UUID
-	campaignID              uuid.UUID
-	snapshotID              uuid.UUID
-	outputDatasetID         uuid.UUID
+	workspaceID            uuid.UUID
+	inputDatasetVersionID  uuid.UUID
+	inputCertificationID   uuid.UUID
+	contributionResourceID uuid.UUID
+	campaignID             uuid.UUID
+	snapshotID             uuid.UUID
+	outputDatasetID        uuid.UUID
 }
 
 func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
@@ -504,4 +504,3 @@ func readLiveGoldObject(
 	}
 	return content
 }
-
