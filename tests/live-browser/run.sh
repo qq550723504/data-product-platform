@@ -28,8 +28,18 @@ cleanup() {
 }
 trap cleanup EXIT
 "${COMPOSE[@]}" config --quiet
-"${COMPOSE[@]}" up -d --wait --wait-timeout 90
-for image in postgres:16-alpine redis:7-alpine quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z; do
+"${COMPOSE[@]}" up -d --wait --wait-timeout 120
+
+LABEL_STUDIO_TOKEN="$("${COMPOSE[@]}" exec -T label-studio \
+  python3 /label-studio/label_studio/manage.py shell -c \
+  "from users.models import User; from rest_framework.authtoken.models import Token; u=User.objects.get(email='live@example.com'); print(Token.objects.get_or_create(user=u)[0].key)" \
+  | tail -n 1 | tr -d '\r')"
+test -n "$LABEL_STUDIO_TOKEN"
+export TEST_LABEL_STUDIO_URL=http://127.0.0.1:18082
+export TEST_LABEL_STUDIO_TOKEN="$LABEL_STUDIO_TOKEN"
+
+for image in postgres:16-alpine redis:7-alpine quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z \
+  heartexlabs/label-studio@sha256:aa461572e8f9d86a1bf9520c1db620204e86160fd2f80dd7e9d40ac84a8828ea; do
   docker image inspect "$image" --format '{{json .RepoDigests}}'
 done > "$ARTIFACTS/images.txt"
 git -C "$ROOT" rev-parse HEAD > "$ARTIFACTS/source-sha.txt"
@@ -38,9 +48,23 @@ go run ./cmd/migrate -direction up -dir ../../migrations
 go build -o "$ARTIFACTS/platform-api" ./cmd/api
 go build -o "$ARTIFACTS/platform-worker" ./cmd/worker
 # Pipefail keeps assertion/compile errors red even though logs are preserved.
-go test -count=1 -run '^TestBrowserLiveCorePOC$' -timeout 9m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/core-live.log"
+go test -count=1 -run '^TestLabelStudioLiveReference -timeout 6m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/ingest-live.log"
 
-go test -count=1 -run '^TestBrowserCSVIngest$' -timeout 6m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/ingest-live.log"
+# Re-run existing Go regressions after the live slice, with its opt-in disabled.
+LIVE_BROWSER_ACCEPTANCE=0 go test -count=1 ./... 2>&1 | tee "$ARTIFACTS/go-regressions.log"
+ -timeout 2m -v ./internal/annotation/labelstudio 2>&1 | tee "$ARTIFACTS/label-studio-live.log"
+
+go test -count=1 -run '^TestBrowserLiveCorePOC -timeout 6m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/ingest-live.log"
+
+# Re-run existing Go regressions after the live slice, with its opt-in disabled.
+LIVE_BROWSER_ACCEPTANCE=0 go test -count=1 ./... 2>&1 | tee "$ARTIFACTS/go-regressions.log"
+ -timeout 9m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/core-live.log"
+
+go test -count=1 -run '^TestBrowserCSVIngest -timeout 6m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/ingest-live.log"
+
+# Re-run existing Go regressions after the live slice, with its opt-in disabled.
+LIVE_BROWSER_ACCEPTANCE=0 go test -count=1 ./... 2>&1 | tee "$ARTIFACTS/go-regressions.log"
+ -timeout 6m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/ingest-live.log"
 
 # Re-run existing Go regressions after the live slice, with its opt-in disabled.
 LIVE_BROWSER_ACCEPTANCE=0 go test -count=1 ./... 2>&1 | tee "$ARTIFACTS/go-regressions.log"
