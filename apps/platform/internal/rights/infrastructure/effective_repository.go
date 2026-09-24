@@ -32,7 +32,11 @@ func (r *PostgresRepository) InsertEffectiveRightsHeader(ctx context.Context, tx
 }
 
 func (r *PostgresRepository) InsertEffectiveRightsInput(ctx context.Context, tx pgx.Tx, input domain.EffectiveRightsInput, snapshotID uuid.UUID) error {
-	_, err := tx.Exec(ctx, `INSERT INTO effective_rights_input(id,snapshot_id,input_dataset_version_id,data_resource_id,rights_snapshot_id,declaration_id,binding_id,input_hash) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, input.ID, snapshotID, input.InputDatasetVersionID, input.DataResourceID, input.RightsSnapshotID, input.DeclarationID, input.BindingID, input.InputHash)
+	var datasetVersionID any
+	if input.InputDatasetVersionID != uuid.Nil {
+		datasetVersionID = input.InputDatasetVersionID
+	}
+	_, err := tx.Exec(ctx, `INSERT INTO effective_rights_input(id,snapshot_id,dependency_kind,input_dataset_version_id,data_resource_id,rights_snapshot_id,declaration_id,binding_id,input_hash) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, input.ID, snapshotID, input.DependencyKind, datasetVersionID, input.DataResourceID, input.RightsSnapshotID, input.DeclarationID, input.BindingID, input.InputHash)
 	if err != nil {
 		return fmt.Errorf("insert effective rights input: %w", err)
 	}
@@ -114,15 +118,19 @@ func loadEffectiveRights(ctx context.Context, q effectiveRightsQueryer, id uuid.
 	}
 	s.ConsumerRef = consumer
 	s.Status = status
-	rows, err := q.Query(ctx, `SELECT id,input_dataset_version_id,data_resource_id,rights_snapshot_id,declaration_id,binding_id,input_hash FROM effective_rights_input WHERE snapshot_id=$1 ORDER BY input_dataset_version_id`, id)
+	rows, err := q.Query(ctx, `SELECT id,dependency_kind,input_dataset_version_id,data_resource_id,rights_snapshot_id,declaration_id,binding_id,input_hash FROM effective_rights_input WHERE snapshot_id=$1 ORDER BY dependency_kind,COALESCE(input_dataset_version_id::text,''),data_resource_id`, id)
 	if err != nil {
 		return s, err
 	}
 	for rows.Next() {
 		var i domain.EffectiveRightsInput
-		if err := rows.Scan(&i.ID, &i.InputDatasetVersionID, &i.DataResourceID, &i.RightsSnapshotID, &i.DeclarationID, &i.BindingID, &i.InputHash); err != nil {
+		var datasetVersionID *uuid.UUID
+		if err := rows.Scan(&i.ID, &i.DependencyKind, &datasetVersionID, &i.DataResourceID, &i.RightsSnapshotID, &i.DeclarationID, &i.BindingID, &i.InputHash); err != nil {
 			rows.Close()
 			return s, err
+		}
+		if datasetVersionID != nil {
+			i.InputDatasetVersionID = *datasetVersionID
 		}
 		s.Inputs = append(s.Inputs, i)
 	}
@@ -186,10 +194,12 @@ func EffectiveRightsRootHash(snapshot domain.EffectiveRightsSnapshot) string {
 	parts := []string{snapshot.TargetDatasetVersionID.String(), snapshot.CalculationAsOf.UTC().String(), snapshot.ConsumerRef, snapshot.Purpose, snapshot.CalculationRuleVersion, snapshot.CalculationRuleHash, snapshot.RequiredInputHash}
 	inputs := append([]domain.EffectiveRightsInput(nil), snapshot.Inputs...)
 	sort.Slice(inputs, func(i, j int) bool {
-		return inputs[i].InputDatasetVersionID.String() < inputs[j].InputDatasetVersionID.String()
+		left := inputs[i].DependencyKind + "|" + inputs[i].InputDatasetVersionID.String() + "|" + inputs[i].DataResourceID.String()
+		right := inputs[j].DependencyKind + "|" + inputs[j].InputDatasetVersionID.String() + "|" + inputs[j].DataResourceID.String()
+		return left < right
 	})
 	for _, i := range inputs {
-		parts = append(parts, "I|"+i.InputDatasetVersionID.String()+"|"+i.DataResourceID.String()+"|"+i.InputHash)
+		parts = append(parts, "I|"+i.DependencyKind+"|"+i.InputDatasetVersionID.String()+"|"+i.DataResourceID.String()+"|"+i.InputHash)
 	}
 	actions := append([]domain.EffectiveRightsAction(nil), snapshot.Actions...)
 	sort.Slice(actions, func(i, j int) bool {
