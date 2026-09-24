@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -290,9 +291,7 @@ func assertReviewHTTPPending(t *testing.T, ctx context.Context, repo *entityinfr
 	}
 }
 
-func reviewHTTPSideEffectCounts(t *testing.T, ctx context.Context, pool interface {
-	QueryRow(context.Context, string, ...any) interface{ Scan(...any) error }
-}) (int, int, int) {
+func reviewHTTPSideEffectCounts(t *testing.T, ctx context.Context, pool *pgxpool.Pool) (int, int, int) {
 	t.Helper()
 	var auditCount, evidenceCount, outboxCount int
 	if err := pool.QueryRow(ctx, "SELECT count(*) FROM audit_event").Scan(&auditCount); err != nil {
@@ -307,9 +306,7 @@ func reviewHTTPSideEffectCounts(t *testing.T, ctx context.Context, pool interfac
 	return auditCount, evidenceCount, outboxCount
 }
 
-func assertReviewHTTPSideEffectCounts(t *testing.T, ctx context.Context, pool interface {
-	QueryRow(context.Context, string, ...any) interface{ Scan(...any) error }
-}, auditWant, evidenceWant, outboxWant int) {
+func assertReviewHTTPSideEffectCounts(t *testing.T, ctx context.Context, pool *pgxpool.Pool, auditWant, evidenceWant, outboxWant int) {
 	t.Helper()
 	auditGot, evidenceGot, outboxGot := reviewHTTPSideEffectCounts(t, ctx, pool)
 	if auditGot != auditWant || evidenceGot != evidenceWant || outboxGot != outboxWant {
