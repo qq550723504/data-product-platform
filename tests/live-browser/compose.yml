@@ -27,7 +27,7 @@ services:
     # annotation adapter smoke gate. Disposable test infrastructure only.
     image: heartexlabs/label-studio@sha256:aa461572e8f9d86a1bf9520c1db620204e86160fd2f80dd7e9d40ac84a8828ea
     ports: ["127.0.0.1:18082:8080"]
-    tmpfs: [/label-studio/data]
+    volumes: [live-label-studio:/label-studio/data]
     environment:
       LABEL_STUDIO_HOST: http://localhost:18082
       USERNAME: live@example.com
@@ -54,3 +54,6 @@ services:
       interval: 2s
       timeout: 2s
       retries: 30
+
+volumes:
+  live-label-studio:
