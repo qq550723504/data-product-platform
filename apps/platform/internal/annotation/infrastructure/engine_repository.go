@@ -576,7 +576,17 @@ func (r *Repository) ListDispatchableEngineOperationIDs(
 		 WHERE provider=$1
 		   AND provider_instance_ref=$2
 		   AND (
-		       status IN ('PENDING','UNKNOWN')
+		       status='PENDING'
+		       OR (
+		           status='UNKNOWN'
+		           AND NOT EXISTS (
+		               SELECT 1
+		                 FROM annotation_engine_attempt a
+		                WHERE a.operation_id=annotation_engine_operation.id
+		                  AND a.attempt_kind='LOOKUP'
+		                  AND a.started_at > now() - interval '30 seconds'
+		           )
+		       )
 		       OR (status='SENDING' AND claim_expires_at IS NOT NULL AND claim_expires_at <= now())
 		   )
 		 ORDER BY updated_at, id
