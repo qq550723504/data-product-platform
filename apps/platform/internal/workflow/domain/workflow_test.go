@@ -98,7 +98,6 @@ func TestNormalizeIdempotencyKeyRequiresStableNonEmptyValue(t *testing.T) {
 	}
 }
 
-
 func TestExecutionDomainAllowsWorkflowValidatedEmptyTargetPeriod(t *testing.T) {
 	execution, err := NewExecution(uuid.New(), uuid.New(), uuid.New(), "", []InputBinding{{
 		Name:             "gold_input",
