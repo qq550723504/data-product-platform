@@ -15,6 +15,8 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 )
 
+const maxAutomaticUnknownLookups = 5
+
 func (s *EngineService) Dispatch(
 	ctx context.Context,
 	operationID uuid.UUID,
@@ -78,12 +80,121 @@ func (s *EngineService) Dispatch(
 	return EngineDispatchResult{Operation: final, AttemptID: attempt.ID}, nil
 }
 
+func (s *EngineService) requireManualEngineResolution(
+	ctx context.Context,
+	operation annotationdomain.EngineOperation,
+	workerRef string,
+	lease time.Duration,
+	lookupCount int,
+) (annotationdomain.EngineOperation, error) {
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		claimed, err := s.repo.ClaimEngineOperation(
+			ctx,
+			tx,
+			operation.ID,
+			operation.Revision,
+			workerRef,
+			time.Now().UTC().Add(lease),
+		)
+		if err != nil {
+			return err
+		}
+		if claimed.Status != annotationdomain.EngineOperationUnknown {
+			return annotationinfra.ErrEngineClaimBusy
+		}
+		operation, err = s.repo.TransitionEngineOperation(
+			ctx,
+			tx,
+			claimed.ID,
+			claimed.Revision,
+			workerRef,
+			annotationdomain.EngineOperationUnknown,
+			annotationdomain.EngineOperationManualResolution,
+			true,
+		)
+		if err != nil {
+			return err
+		}
+		if _, err := evidence.Append(ctx, tx, evidence.Record{
+			WorkspaceID:  operation.WorkspaceID,
+			EvidenceType: "ANNOTATION_ENGINE_MANUAL_RESOLUTION_REQUIRED",
+			Title:        "Annotation engine operation requires manual resolution",
+			SourceType:   "CORE",
+			Metadata: map[string]any{
+				"operationId": operation.ID,
+				"provider": operation.Provider,
+				"providerInstance": operation.ProviderInstanceRef,
+				"lookupCount": lookupCount,
+				"automaticLookupLimit": maxAutomaticUnknownLookups,
+			},
+		}, evidence.Relation{
+			ObjectType:   "ANNOTATION_ENGINE_OPERATION",
+			ObjectID:     operation.ID,
+			RelationType: "MANUAL_RESOLUTION_EVIDENCE",
+		}); err != nil {
+			return err
+		}
+		if err := audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &operation.WorkspaceID,
+			ActorType:   "SYSTEM",
+			Action:      "ANNOTATION_ENGINE_MANUAL_RESOLUTION_REQUIRED",
+			ObjectType:  "ANNOTATION_ENGINE_OPERATION",
+			ObjectID:    operation.ID,
+			AfterState: map[string]any{
+				"status": operation.Status,
+				"lookupCount": lookupCount,
+				"automaticLookupLimit": maxAutomaticUnknownLookups,
+			},
+		}); err != nil {
+			return err
+		}
+		return appendEvent(
+			ctx,
+			tx,
+			"ANNOTATION_ENGINE_OPERATION",
+			operation.ID,
+			"AnnotationEngineManualResolutionRequired",
+			map[string]any{
+				"operationId": operation.ID,
+				"status": operation.Status,
+				"lookupCount": lookupCount,
+				"automaticLookupLimit": maxAutomaticUnknownLookups,
+			},
+		)
+	})
+	return operation, err
+}
+
 func (s *EngineService) claimEngineAttempt(
 	ctx context.Context,
 	operation annotationdomain.EngineOperation,
 	workerRef string,
 	lease time.Duration,
 ) (annotationdomain.EngineAttempt, annotationdomain.EngineOperation, error) {
+	if operation.Status == annotationdomain.EngineOperationUnknown {
+		lookupCount, countErr := s.repo.CountEngineAttempts(
+			ctx,
+			operation.ID,
+			annotationdomain.EngineAttemptLookup,
+		)
+		if countErr != nil {
+			return EngineDispatchResult{}, countErr
+		}
+		if lookupCount >= maxAutomaticUnknownLookups {
+			manual, manualErr := s.requireManualEngineResolution(
+				ctx,
+				operation,
+				workerRef,
+				lease,
+				lookupCount,
+			)
+			if manualErr != nil {
+				return EngineDispatchResult{}, manualErr
+			}
+			return EngineDispatchResult{Operation: manual}, nil
+		}
+	}
+
 	var attempt annotationdomain.EngineAttempt
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		claimed, err := s.repo.ClaimEngineOperation(
