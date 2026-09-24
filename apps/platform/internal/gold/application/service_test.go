@@ -59,7 +59,7 @@ func TestBuildGoldCSVPreservesSourceOrderAndSkipsRejectedTask(t *testing.T) {
 func TestBuildGoldCSVRejectsMissingFrozenTask(t *testing.T) {
 	table := tabular.Table{
 		Headers: []string{"id"},
-		Rows: []map[string]string{{"id": "1"}, {"id": "2"}},
+		Rows:    []map[string]string{{"id": "1"}, {"id": "2"}},
 	}
 	_, _, _, err := buildGoldCSV(table, []goldinfra.FrozenMember{{
 		TaskID: uuid.New(), SourceItemRef: "row:1", SourceContentSHA256: mustGoldSourceHash(t, table.Rows[0]),
@@ -69,7 +69,6 @@ func TestBuildGoldCSVRejectsMissingFrozenTask(t *testing.T) {
 		t.Fatalf("error=%v want missing row:2", err)
 	}
 }
-
 
 func mustGoldSourceHash(t *testing.T, row map[string]string) string {
 	t.Helper()
