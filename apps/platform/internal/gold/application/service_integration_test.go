@@ -552,9 +552,9 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 		SourceType:   "DATASET_VERSION",
 		SourceID:     &output.ID,
 		Metadata: map[string]any{
-			"goldProductionBindingId": binding.ID,
-			"annotationSnapshotId":     snapshot.ID,
-			"qualityAssessmentId":      assessment.ID,
+			"goldProductionBindingId":   binding.ID,
+			"annotationSnapshotId":      snapshot.ID,
+			"qualityAssessmentId":       assessment.ID,
 			"effectiveRightsSnapshotId": allowedRights.ID,
 		},
 		CreatedBy: &actorID,
@@ -575,7 +575,7 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 		output.ID,
 		map[string]any{
 			"goldProductionBindingId": binding.ID,
-			"annotationSnapshotId":     snapshot.ID,
+			"annotationSnapshotId":    snapshot.ID,
 		},
 		[]evidence.SnapshotItem{{
 			EvidenceID: evidenceRecord.ID,
