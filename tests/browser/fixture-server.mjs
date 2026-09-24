@@ -11,6 +11,13 @@ export const ids = {
   candidate: "77777777-7777-4777-8777-777777777777",
   entity: "88888888-8888-4888-8888-888888888888",
   decision: "99999999-9999-4999-8999-999999999999",
+  goldDataset: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  goldVersion: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  goldAssessment: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+  goldProfile: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+  goldCertification: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+  goldBinding: "ffffffff-ffff-4fff-8fff-ffffffffffff",
+  goldSnapshot: "12121212-1212-4212-8212-121212121212",
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
@@ -87,6 +94,64 @@ export function createFixtureServer() {
         status: state.releaseStatus, createdAt: stamp, datasets: [], releaseNotes: "Synthetic browser fixture",
         ...(state.releaseStatus === "PUBLISHED" ? { releasedAt: stamp } : {}),
       };
+      const goldDataset = {
+        id: ids.goldDataset, workspaceId: ids.workspace, code: "GOLD_BROWSER_FIXTURE",
+        name: "Gold 浏览器验收数据集", description: "Synthetic Gold fixture", datasetType: "CURATED",
+        lifecycleStatus: "ACTIVE", currentVersionId: ids.goldVersion, createdAt: stamp, updatedAt: stamp,
+      };
+      const goldVersion = {
+        id: ids.goldVersion, datasetId: ids.goldDataset, versionNo: 1, status: "READY",
+        schemaVersion: "gold-v1", storageType: "OBJECT", storageUri: "s3://fixture/gold.csv",
+        contentType: "text/csv", rowCount: 2, byteSize: 128, checksumAlgorithm: "SHA256",
+        checksum: "1".repeat(64), generatedByExecutionId: ids.job, createdAt: stamp, readyAt: stamp,
+        invalidationReason: "",
+      };
+      const goldAssessment = {
+        id: ids.goldAssessment, workspaceId: ids.workspace, datasetVersionId: ids.goldVersion,
+        ruleSetRef: "gold/quality/annotation-v1", ruleSetVersion: "1",
+        ruleSetContentSha256: "2".repeat(64), evaluatorName: "gold-quality", evaluatorVersion: "1",
+        gateDecision: "PASS",
+        metrics: { formalAssessment: true, productionBindingId: ids.goldBinding, annotationSnapshotId: ids.goldSnapshot },
+        dimensionSummary: {
+          COMPLETENESS: { dimension: "COMPLETENESS", status: "PASS", ruleCount: 2, evaluatedCount: 2, failedCount: 0 },
+          TRACEABILITY: { dimension: "TRACEABILITY", status: "PASS", ruleCount: 1, evaluatedCount: 1, failedCount: 0 },
+        },
+        createdAt: stamp,
+      };
+      const goldProfile = {
+        id: ids.goldProfile, workspaceId: ids.workspace, profileRef: "gold/dataset-v1",
+        code: "GOLD_DATASET", name: "Gold Dataset", version: "1.0.0", contentSha256: "3".repeat(64),
+        purpose: { mode: "EXPLICIT", values: ["GOLD-PILOT"] },
+        actions: { mode: "EXPLICIT", values: ["USE"] },
+        consumers: { mode: "EXPLICIT", values: ["GOLD-PILOT-CONSUMER"] },
+        delivery: { mode: "EXPLICIT", values: ["DIRECT_DATA"] },
+        requiredQualityDimensions: ["COMPLETENESS", "TRACEABILITY"],
+        requiredCriticalRules: ["GOLD-ANNOTATION-COVERAGE", "GOLD-PROVENANCE-COMPLETE"],
+        qualityGateRequired: true,
+        rights: {
+          required: true,
+          purpose: { mode: "EXPLICIT", values: ["GOLD-PILOT"] },
+          actions: { mode: "EXPLICIT", values: ["USE"] },
+          consumers: { mode: "EXPLICIT", values: ["GOLD-PILOT-CONSUMER"] },
+          scopes: { mode: "EXPLICIT", values: [{ type: "ALL_RESOURCE", ref: ids.goldDataset }] },
+        },
+        complianceRequired: false, contractRequired: false, traceabilityRequired: false, evidenceRequired: true,
+      };
+      const goldCertification = {
+        id: ids.goldCertification, workspaceId: ids.workspace, datasetVersionId: ids.goldVersion,
+        qualityAssessmentId: ids.goldAssessment, decision: "CERTIFIED", blockers: [],
+        reason: "all profile requirements satisfied", issuedAt: stamp,
+        effectiveRightsSnapshotId: "34343434-3434-4434-8434-343434343434",
+        effectiveRightsSnapshotHash: "4".repeat(64), frozenRightsContextHash: "5".repeat(64),
+        evidenceSnapshotId: "56565656-5656-4656-8656-565656565656",
+        goldProductionBindingId: ids.goldBinding,
+        annotationSnapshotId: ids.goldSnapshot,
+        annotationSnapshotRootHash: "6".repeat(64),
+        annotationSchemaSha256: "7".repeat(64),
+        annotationTaxonomySha256: "8".repeat(64),
+        goldProductionBindingRootHash: "9".repeat(64),
+        profile: goldProfile, dispositions: [],
+      };
       const job = { id: ids.job, workspaceId: ids.workspace, status: state.candidateStatus === "PENDING" ? "WAITING_REVIEW" : "SUCCEEDED" };
       const candidate = {
         id: ids.candidate, candidateId: ids.candidate, jobId: ids.job, workspaceId: ids.workspace,
@@ -114,7 +179,35 @@ export function createFixtureServer() {
         if (url.pathname === `/api/v1/entity-match-reviews/${ids.candidate}`) return send(200, candidate);
         if (url.pathname === `/api/v1/entity-match-jobs/${ids.job}/reviews`) return send(200, { items: [candidate] });
         if (url.pathname === `${workspace}/data-resources`) return send(200, page(state.scenario === "paginated-resources" ? fixtureResources(30) : []));
-        if (["/datasets", "/executions"].some((suffix) => url.pathname === workspace + suffix)) return send(200, page([]));
+        if (url.pathname === `${workspace}/datasets/${ids.goldDataset}`) return send(200, goldDataset);
+        if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}`) return send(200, goldVersion);
+        if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/quality-assessments`) {
+          return send(200, { datasetVersionId: ids.goldVersion, items: [goldAssessment], page: { total: 1, limit: 25, offset: 0 } });
+        }
+        if (url.pathname === `/api/v1/quality-assessments/${ids.goldAssessment}/report`) {
+          return send(200, {
+            ...goldAssessment,
+            findings: { items: [], page: { total: 0, limit: 50, offset: 0 } },
+            evidence: [{ id: "78787878-7878-4878-8878-787878787878", workspaceId: ids.workspace, evidenceType: "GOLD_QUALITY_ASSESSMENT", relationType: "ASSESSMENT_EVIDENCE", sourceType: "QUALITY_ASSESSMENT", sourceId: ids.goldAssessment, hashAlgorithm: "SHA256", hashValue: "a".repeat(64), createdAt: stamp }],
+            auditEvents: [],
+          });
+        }
+        if (url.pathname === `${workspace}/dataset-versions/${ids.goldVersion}/certifications`) {
+          return send(200, { workspaceId: ids.workspace, datasetVersionId: ids.goldVersion, asOf: stamp, items: [goldCertification] });
+        }
+        if (url.pathname === `${workspace}/dataset-versions/${ids.goldVersion}/delivery-eligibility`) {
+          return send(200, {
+            allowed: true, blockers: [],
+            datasetVersion: { status: "READY", allowed: true, blockers: [] },
+            certification: { allowed: true, blockers: [], current: goldCertification },
+            entitlement: {
+              allowed: true, blockers: [],
+              checks: [{ dataResourceId: ids.goldDataset, path: "DIRECT_USE", decision: "ALLOWED", reason: "fixture verified rights" }],
+            },
+          });
+        }
+        if (url.pathname === `${workspace}/datasets`) return send(200, page([goldDataset]));
+        if (url.pathname === `${workspace}/executions`) return send(200, page([]));
         if (url.pathname === `${workspace}/workbench`) return send(200, {
           workspaceId: ids.workspace, counts: { dataResources: 0, datasets: 0, dataProducts: 1 },
           reviewQueue: { pending: state.candidateStatus === "PENDING" ? 1 : 0, unresolved: 0, conflicts: 0 },
