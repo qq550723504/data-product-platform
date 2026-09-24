@@ -289,7 +289,7 @@ func (s *EngineService) finalizeEngineAttempt(
 	resolution engineResolution,
 	remoteErr error,
 ) (annotationdomain.EngineOperation, error) {
-	targetStatus, attemptOutcome := resolutionStatus(resolution.State, remoteErr)
+	targetStatus, attemptOutcome := resolutionStatus(resolution.State, remoteErr, attempt.AttemptKind)
 	var statusCode *int
 	diagnostic := strings.TrimSpace(resolution.DiagnosticRef)
 	var engineErr *AnnotationEngineError
