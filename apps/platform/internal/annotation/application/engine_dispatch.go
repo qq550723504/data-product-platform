@@ -228,13 +228,12 @@ func (s *EngineService) invokeEngine(
 		}
 		request := engineCampaignRequest(operation, manifest)
 		if attempt.AttemptKind == annotationdomain.EngineAttemptSubmit {
-			binding, err := s.engine.EnsureCampaignBinding(ctx, request)
-			if err != nil {
+			if _, err := s.engine.EnsureCampaignBinding(ctx, request); err != nil {
 				return engineResolution{}, err
 			}
 			return engineResolution{
-				State:           EngineLookupMatched,
-				CampaignBinding: &binding,
+				State:         EngineLookupUnknown,
+				DiagnosticRef: "project creation accepted; persisted binding verification required",
 			}, nil
 		}
 
