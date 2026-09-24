@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -601,8 +602,12 @@ func buildProductionBinding(
 		OutputRowCount                   int64            `json:"outputRowCount"`
 		Members                          []manifestMember `json:"members"`
 	}
-	items := make([]manifestMember, 0, len(members))
-	for _, member := range members {
+	orderedMembers := append([]goldinfra.ProductionMember(nil), members...)
+	sort.Slice(orderedMembers, func(i, j int) bool {
+		return orderedMembers[i].TaskID.String() < orderedMembers[j].TaskID.String()
+	})
+	items := make([]manifestMember, 0, len(orderedMembers))
+	for _, member := range orderedMembers {
 		var reviewed, selected *string
 		if member.ReviewedResultID != nil {
 			value := member.ReviewedResultID.String()
