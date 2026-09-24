@@ -12,11 +12,11 @@ const (
 	EngineOperationEnsureCampaign = "ENSURE_CAMPAIGN"
 	EngineOperationSubmitTasks    = "SUBMIT_TASKS"
 
-	EngineOperationPending  = "PENDING"
-	EngineOperationSending  = "SENDING"
-	EngineOperationUnknown  = "UNKNOWN"
-	EngineOperationMatched  = "MATCHED"
-	EngineOperationRejected = "REJECTED"
+	EngineOperationPending          = "PENDING"
+	EngineOperationSending          = "SENDING"
+	EngineOperationUnknown          = "UNKNOWN"
+	EngineOperationMatched          = "MATCHED"
+	EngineOperationRejected         = "REJECTED"
 	EngineOperationConflict         = "CONFLICT"
 	EngineOperationManualResolution = "MANUAL_RESOLUTION"
 
