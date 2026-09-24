@@ -21,6 +21,9 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS trg_annotation_snapshot_engine_settlement ON annotation_snapshot;
+DROP FUNCTION IF EXISTS guard_annotation_snapshot_engine_settlement();
+
 DROP TRIGGER IF EXISTS trg_annotation_engine_attempt_outcome_insert ON annotation_engine_attempt_outcome;
 DROP FUNCTION IF EXISTS validate_annotation_engine_attempt_outcome_insert();
 
