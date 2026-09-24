@@ -106,18 +106,13 @@ func (r *Repository) RecoverExpiredEngineSending(
 		  FROM annotation_engine_attempt a
 		 WHERE a.operation_id=$1
 		   AND a.attempt_kind='SUBMIT'
-		   AND NOT EXISTS (
-		       SELECT 1
-		         FROM annotation_engine_attempt_outcome o
-		        WHERE o.attempt_id=a.id
-		   )
 		 ORDER BY a.attempt_no DESC
 		 LIMIT 1
 		 FOR UPDATE
 	`, operationID).Scan(&attemptID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return annotationdomain.EngineOperation{}, fmt.Errorf(
-			"recover expired annotation engine send: missing unresolved SUBMIT attempt",
+			"recover expired annotation engine send: missing SUBMIT attempt",
 		)
 	}
 	if err != nil {
@@ -127,18 +122,31 @@ func (r *Repository) RecoverExpiredEngineSending(
 		)
 	}
 
-	if err := r.AppendEngineAttemptOutcome(
-		ctx,
-		tx,
-		annotationdomain.EngineAttemptOutcome{
-			ID:            uuid.New(),
-			AttemptID:     attemptID,
-			Outcome:       annotationdomain.EngineAttemptUnknown,
-			DiagnosticRef: "worker lease expired after durable send claim",
-			OccurredAt:    now.UTC(),
-		},
-	); err != nil {
-		return annotationdomain.EngineOperation{}, err
+	var outcomeCount int
+	if err := tx.QueryRow(ctx, `
+		SELECT count(*)
+		  FROM annotation_engine_attempt_outcome
+		 WHERE attempt_id=$1
+	`, attemptID).Scan(&outcomeCount); err != nil {
+		return annotationdomain.EngineOperation{}, fmt.Errorf(
+			"count annotation engine attempt outcomes: %w",
+			err,
+		)
+	}
+	if outcomeCount == 0 {
+		if err := r.AppendEngineAttemptOutcome(
+			ctx,
+			tx,
+			annotationdomain.EngineAttemptOutcome{
+				ID:            uuid.New(),
+				AttemptID:     attemptID,
+				Outcome:       annotationdomain.EngineAttemptUnknown,
+				DiagnosticRef: "worker lease expired after durable send claim",
+				OccurredAt:    now.UTC(),
+			},
+		); err != nil {
+			return annotationdomain.EngineOperation{}, err
+		}
 	}
 
 	tag, err := tx.Exec(ctx, `
@@ -279,11 +287,29 @@ func (r *Repository) AppendEngineAttemptOutcome(
 	if outcome.OccurredAt.IsZero() {
 		outcome.OccurredAt = time.Now().UTC()
 	}
+
+	if _, err := tx.Exec(ctx, `
+		SELECT 1
+		  FROM annotation_engine_attempt
+		 WHERE id=$1
+		 FOR UPDATE
+	`, outcome.AttemptID); err != nil {
+		return fmt.Errorf("lock annotation engine attempt for outcome append: %w", err)
+	}
+	var observationNo int
+	if err := tx.QueryRow(ctx, `
+		SELECT COALESCE(MAX(observation_no),0)+1
+		  FROM annotation_engine_attempt_outcome
+		 WHERE attempt_id=$1
+	`, outcome.AttemptID).Scan(&observationNo); err != nil {
+		return fmt.Errorf("next annotation engine attempt outcome observation: %w", err)
+	}
+
 	_, err := tx.Exec(ctx, `
         INSERT INTO annotation_engine_attempt_outcome(
-            id, attempt_id, outcome, provider_status_code, diagnostic_ref, occurred_at
-        ) VALUES ($1,$2,$3,$4,NULLIF($5,''),$6)
-    `, outcome.ID, outcome.AttemptID, outcome.Outcome, outcome.ProviderStatusCode,
+            id, attempt_id, observation_no, outcome, provider_status_code, diagnostic_ref, occurred_at
+        ) VALUES ($1,$2,$3,$4,$5,NULLIF($6,''),$7)
+    `, outcome.ID, outcome.AttemptID, observationNo, outcome.Outcome, outcome.ProviderStatusCode,
 		outcome.DiagnosticRef, outcome.OccurredAt.UTC())
 	if err != nil {
 		return fmt.Errorf("append annotation engine attempt outcome: %w", err)
