@@ -47,6 +47,18 @@ func TestLabelStudioCreateProjectAndSubmitTasks(t *testing.T) {
 				"task_count": 2,
 				"task_ids":   []int{101, 102},
 			})
+		case "/api/tasks":
+			if len(imported) != 2 {
+				t.Fatalf("lookup before import: %d tasks", len(imported))
+			}
+			writeJSON(t, w, map[string]any{
+				"total": 2,
+				"tasks": []any{
+					map[string]any{"id": 101, "data": imported[0]["data"], "meta": imported[0]["meta"]},
+					map[string]any{"id": 102, "data": imported[1]["data"], "meta": imported[1]["meta"]},
+				},
+				"next": nil,
+			})
 		default:
 			http.NotFound(w, r)
 		}
@@ -111,6 +123,70 @@ func TestLabelStudioCreateProjectAndSubmitTasks(t *testing.T) {
 	}
 	if meta["core_task_id"] != task1.String() || meta["core_request_id"] != "submit-1" {
 		t.Fatalf("correlation meta = %+v", meta)
+	}
+}
+
+func TestLabelStudioSubmitTasksRejectsMutatedPersistedPayload(t *testing.T) {
+	var imported []map[string]any
+	taskID := uuid.New()
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/projects/41/import":
+			raw, _ := io.ReadAll(r.Body)
+			if err := json.Unmarshal(raw, &imported); err != nil {
+				t.Fatalf("decode import: %v", err)
+			}
+			writeJSON(t, w, map[string]any{"task_count": 1, "task_ids": []int{101}})
+		case "/api/tasks":
+			meta := imported[0]["meta"]
+			writeJSON(t, w, map[string]any{
+				"total": 1,
+				"tasks": []any{
+					map[string]any{
+						"id":   101,
+						"data": map[string]any{"text": "provider-mutated-text"},
+						"meta": meta,
+					},
+				},
+				"next": nil,
+			})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := labelstudio.NewClient(server.URL, "secret", "local-ls", server.Client())
+	if err != nil {
+		t.Fatalf("new client: %v", err)
+	}
+	submission, err := client.SubmitTasks(context.Background(), annotationapp.EngineSubmitRequest{
+		WorkspaceID: uuid.New(),
+		CampaignID:  uuid.New(),
+		Binding: annotationapp.EngineCampaignBinding{
+			Provider:          labelstudio.Provider,
+			ProviderInstance:  "local-ls",
+			ExternalProjectID: "41",
+		},
+		RequestID:          "submit-mutated",
+		RequestFingerprint: strings.Repeat("a", 64),
+		Tasks: []annotationapp.EngineTask{{
+			TaskID:         taskID,
+			SourceItemRef:  "row-1",
+			SourceSHA256:   strings.Repeat("b", 64),
+			TaskText:       "frozen-text",
+			TaskTextSHA256: strings.Repeat("c", 64),
+			CorrelationKey: "task-" + taskID.String(),
+		}},
+	})
+	if err != nil {
+		t.Fatalf("submit tasks: %v", err)
+	}
+	if submission.State != annotationapp.EngineLookupConflict {
+		t.Fatalf("submission state = %s, want CONFLICT", submission.State)
+	}
+	if !strings.Contains(submission.DiagnosticRef, "payload mismatch") {
+		t.Fatalf("diagnostic = %q", submission.DiagnosticRef)
 	}
 }
 
