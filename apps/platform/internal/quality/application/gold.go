@@ -23,11 +23,11 @@ import (
 )
 
 const (
-	GoldRuleSetRef      = "gold/quality/annotation-v1"
-	GoldRuleSetVersion  = "1.0.0"
-	GoldEvaluatorName   = "gold-quality"
+	GoldRuleSetRef       = "gold/quality/annotation-v1"
+	GoldRuleSetVersion   = "1.0.0"
+	GoldEvaluatorName    = "gold-quality"
 	GoldEvaluatorVersion = "1"
-	goldRuleSetContent = `{"id":"gold-annotation-quality","version":"1.0.0","evaluator":"gold-quality@1","rules":[{"id":"GOLD-ANNOTATION-COVERAGE","metric":"usableSelectedCount/taskCount","operator":"EQ","threshold":"1/1","severity":"CRITICAL"},{"id":"GOLD-REVIEWED-COVERAGE","metric":"reviewedCount/taskCount","operator":"EQ","threshold":"1/1","severity":"CRITICAL"},{"id":"GOLD-REJECTED-COUNT","metric":"rejectedCount","operator":"EQ","threshold":0,"severity":"CRITICAL"},{"id":"GOLD-SOURCE-UNIQUENESS","metric":"duplicateSourceCount","operator":"EQ","threshold":0,"severity":"CRITICAL"},{"id":"GOLD-OUTPUT-TASK-MAPPING","metric":"mappingInvalidCount","operator":"EQ","threshold":0,"severity":"CRITICAL"},{"id":"GOLD-SCHEMA-VALIDITY","metric":"schemaInvalidCount","operator":"EQ","threshold":0,"severity":"CRITICAL"},{"id":"GOLD-PROVENANCE-COMPLETE","metric":"provenanceInvalidCount","operator":"EQ","threshold":0,"severity":"CRITICAL"},{"id":"GOLD-OUTPUT-COUNT","metric":"outputRowCount==bindingOutputRowCount==usableSelectedCount","operator":"TRUE","threshold":true,"severity":"CRITICAL"},{"id":"GOLD-AGREEMENT","metric":"agreement","operator":"NOT_APPLICABLE_FOR_SINGLE_ANNOTATOR","severity":"INFO"}]}`
+	goldRuleSetContent   = `{"id":"gold-annotation-quality","version":"1.0.0","evaluator":"gold-quality@1","rules":[{"id":"GOLD-ANNOTATION-COVERAGE","metric":"usableSelectedCount/taskCount","operator":"EQ","threshold":"1/1","severity":"CRITICAL"},{"id":"GOLD-REVIEWED-COVERAGE","metric":"reviewedCount/taskCount","operator":"EQ","threshold":"1/1","severity":"CRITICAL"},{"id":"GOLD-REJECTED-COUNT","metric":"rejectedCount","operator":"EQ","threshold":0,"severity":"CRITICAL"},{"id":"GOLD-SOURCE-UNIQUENESS","metric":"duplicateSourceCount","operator":"EQ","threshold":0,"severity":"CRITICAL"},{"id":"GOLD-OUTPUT-TASK-MAPPING","metric":"mappingInvalidCount","operator":"EQ","threshold":0,"severity":"CRITICAL"},{"id":"GOLD-SCHEMA-VALIDITY","metric":"schemaInvalidCount","operator":"EQ","threshold":0,"severity":"CRITICAL"},{"id":"GOLD-PROVENANCE-COMPLETE","metric":"provenanceInvalidCount","operator":"EQ","threshold":0,"severity":"CRITICAL"},{"id":"GOLD-OUTPUT-COUNT","metric":"outputRowCount==bindingOutputRowCount==usableSelectedCount","operator":"TRUE","threshold":true,"severity":"CRITICAL"},{"id":"GOLD-AGREEMENT","metric":"agreement","operator":"NOT_APPLICABLE_FOR_SINGLE_ANNOTATOR","severity":"INFO"}]}`
 )
 
 var (
@@ -194,7 +194,7 @@ func (s *Service) RunGold(ctx context.Context, cmd GoldRunCommand) (domain.Asses
 				SourceType:   "QUALITY_RESULT",
 				SourceID:     &result.ID,
 				Metadata: map[string]any{
-					"datasetVersionId":          version.ID,
+					"datasetVersionId":           version.ID,
 					"productionBindingId":        binding.ID,
 					"productionBindingRootHash":  binding.RootHash,
 					"annotationSnapshotId":       binding.AnnotationSnapshotID,
@@ -320,7 +320,7 @@ func goldOutputCountFinding(
 		Severity:  "CRITICAL",
 		Status:    domain.FindingPass,
 		Observed: map[string]any{
-			"outputRowCount":       actual,
+			"outputRowCount":        actual,
 			"bindingOutputRowCount": binding.OutputRowCount,
 			"usableSelectedCount":   usable,
 			"expectation":           "output rows must equal schema-valid ACCEPT/CORRECT selected tasks",
