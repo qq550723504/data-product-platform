@@ -351,11 +351,11 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	).ConfigureGold(goldRepo, annotationService)
 	assessmentAttemptID := uuid.New()
 	assessment, err := qualityService.RunGold(ctx, qualityapp.GoldRunCommand{
-		WorkspaceID: workspaceID,
-		DatasetVersionID: output.ID,
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    output.ID,
 		AssessmentAttemptID: assessmentAttemptID,
-		ActorID: &actorID,
-		TraceID: "gold-builder-formal-quality",
+		ActorID:             &actorID,
+		TraceID:             "gold-builder-formal-quality",
 	})
 	if err != nil {
 		t.Fatalf("run formal Gold quality: %v", err)
@@ -376,11 +376,11 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM quality_finding WHERE result_id=$1 AND rule_id='GOLD-OUTPUT-COUNT'", assessment.ID)
 
 	replayedAssessment, err := qualityService.RunGold(ctx, qualityapp.GoldRunCommand{
-		WorkspaceID: workspaceID,
-		DatasetVersionID: output.ID,
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    output.ID,
 		AssessmentAttemptID: assessmentAttemptID,
-		ActorID: &actorID,
-		TraceID: "gold-builder-formal-quality-replay",
+		ActorID:             &actorID,
+		TraceID:             "gold-builder-formal-quality-replay",
 	})
 	if err != nil {
 		t.Fatalf("replay formal Gold quality: %v", err)
@@ -391,11 +391,11 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM quality_result WHERE id=$1", assessment.ID)
 
 	_, err = qualityService.RunGold(ctx, qualityapp.GoldRunCommand{
-		WorkspaceID: workspaceID,
-		DatasetVersionID: inputVersionID,
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    inputVersionID,
 		AssessmentAttemptID: uuid.New(),
-		ActorID: &actorID,
-		TraceID: "non-gold-formal-quality-must-fail",
+		ActorID:             &actorID,
+		TraceID:             "non-gold-formal-quality-must-fail",
 	})
 	if !errors.Is(err, qualityapp.ErrGoldProductionProof) {
 		t.Fatalf("non-Gold DatasetVersion formal assessment error=%v, want Gold production proof failure", err)
