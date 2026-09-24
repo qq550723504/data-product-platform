@@ -135,6 +135,9 @@ export default async function DatasetVersionDetailPage({
     const latestReport = latestAssessment ? await platform.qualityReport(latestAssessment.id, findingsLimit, findingsOffset) : null;
     const evidenceCertification = eligibility?.certification.current
       ?? history.items.find((item) => item.profile.id === selectedProfile?.id);
+    const goldExplanation = evidenceCertification?.profile.profileRef === "gold/dataset-v1"
+      ? await platform.goldExplanation(versionId)
+      : null;
 
     return (
       <>
@@ -350,6 +353,74 @@ export default async function DatasetVersionDetailPage({
               { label: "Formal Gold Quality", value: <><span className="mono">{evidenceCertification.qualityAssessmentId}</span>{latestAssessment?.ruleSetRef === "gold/quality/annotation-v1" ? <> · <Badge value={latestAssessment.gateDecision} /></> : null}</> },
               { label: "Gold Certification", value: <span className="mono">{evidenceCertification.id}</span> },
             ]} />
+          </section>
+        ) : null}
+
+        {goldExplanation ? (
+          <section className="detail-card" style={{ marginBottom: 24 }} data-testid="gold-production-chain">
+            <div className="panel-header">
+              <h2>Gold Production Chain</h2>
+              <span className="eyebrow">Core frozen facts</span>
+            </div>
+            <DefinitionList items={[
+              { label: "Input DatasetVersion", value: <span className="mono">{goldExplanation.inputDatasetVersionId}</span> },
+              { label: "Input Certification", value: <span className="mono">{goldExplanation.inputCertificationId}</span> },
+              { label: "Annotation Contribution", value: <span className="mono">{goldExplanation.annotationContributionResourceId}</span> },
+              { label: "Annotation Campaign", value: <><span className="mono">{goldExplanation.campaign.id}</span> · <Badge value={goldExplanation.campaign.status} /></> },
+              { label: "Purpose / Action", value: `${goldExplanation.campaign.purpose} / ${goldExplanation.campaign.action}` },
+              { label: "Schema", value: <><span>{goldExplanation.campaign.schemaRef} / {goldExplanation.campaign.schemaVersion}</span><br /><span className="mono">{goldExplanation.campaign.schemaSha256}</span></> },
+              { label: "Taxonomy", value: <><span>{goldExplanation.campaign.taxonomyRef} / {goldExplanation.campaign.taxonomyVersion}</span><br /><span className="mono">{goldExplanation.campaign.taxonomySha256}</span></> },
+              { label: "Tasks / Results / Reviews / Outputs", value: `${goldExplanation.campaign.taskCount} / ${goldExplanation.campaign.resultCount} / ${goldExplanation.campaign.reviewDecisionCount} / ${goldExplanation.campaign.selectedOutputCount}` },
+              { label: "FINALIZED Snapshot", value: <><span className="mono">{goldExplanation.snapshot.id}</span> · <Badge value={goldExplanation.snapshot.status} /><br /><span className="mono">{goldExplanation.snapshot.rootHash}</span></> },
+              { label: "Gold Build Execution", value: <Link href={`/production/${goldExplanation.executionId}`}>{goldExplanation.executionId}</Link> },
+            ]} />
+
+            <div className="panel-header" style={{ marginTop: 18 }}>
+              <h3>Annotation / Human Review</h3>
+              <span className="eyebrow">{goldExplanation.reviews.length} frozen decisions</span>
+            </div>
+            <div className="table-card">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Source</th>
+                    <th>Annotation</th>
+                    <th>Review</th>
+                    <th>Selected Result</th>
+                    <th>Provider provenance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {goldExplanation.reviews.map((review) => (
+                    <tr key={review.decisionId}>
+                      <td>
+                        <strong>{review.sourceItemRef}</strong><br />
+                        <span className="mono">{shortId(review.sourceContentSha256)}</span>
+                      </td>
+                      <td>
+                        {review.annotationAuthorRef || "—"}<br />
+                        <span className="mono">{review.reviewedResultId ? shortId(review.reviewedResultId) : "—"}</span>
+                      </td>
+                      <td>
+                        <Badge value={review.outcome} /><br />
+                        <span>{review.reviewerRef}</span><br />
+                        <span>{review.reason}</span><br />
+                        <span>{formatDate(review.decisionCreatedAt)}</span>
+                      </td>
+                      <td>
+                        <span className="mono">{review.selectedResultId ? shortId(review.selectedResultId) : "—"}</span><br />
+                        <span className="mono">{review.selectedResultSha256 ? shortId(review.selectedResultSha256) : "—"}</span>
+                      </td>
+                      <td>
+                        <span className="mono">{review.providerBindingRef ? shortId(review.providerBindingRef) : "—"}</span><br />
+                        <span className="mono">task {review.externalTaskId || "—"}</span><br />
+                        <span className="mono">annotation {review.externalAnnotationId || "—"}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </section>
         ) : null}
 
