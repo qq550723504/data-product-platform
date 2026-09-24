@@ -117,7 +117,7 @@ func TestEvaluateGoldQualityPreflightNeverTreatsEmptySnapshotAsPassing(t *testin
 func goldPreflightTestCampaign(workspaceID, campaignID uuid.UUID) annotationdomain.Campaign {
 	schema := `{"kind":"single-label-v1","labels":["A","B"]}`
 	return annotationdomain.Campaign{
-		ID: campaignID,
+		ID:          campaignID,
 		WorkspaceID: workspaceID,
 		Schema: annotationdomain.FrozenSpec{
 			Ref: "schema", Version: "1", ContentSHA256: strings.Repeat("1", 64), ContentSnapshot: schema,
