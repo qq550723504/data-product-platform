@@ -122,18 +122,18 @@ func (r *Repository) RecoverExpiredEngineSending(
 		)
 	}
 
-	var outcomeCount int
-	if err := tx.QueryRow(ctx, `
-		SELECT count(*)
+	var latestOutcome string
+	err = tx.QueryRow(ctx, `
+		SELECT outcome
 		  FROM annotation_engine_attempt_outcome
 		 WHERE attempt_id=$1
-	`, attemptID).Scan(&outcomeCount); err != nil {
-		return annotationdomain.EngineOperation{}, fmt.Errorf(
-			"count annotation engine attempt outcomes: %w",
-			err,
-		)
-	}
-	if outcomeCount == 0 {
+		 ORDER BY observation_no DESC
+		 LIMIT 1
+	`, attemptID).Scan(&latestOutcome)
+
+	targetStatus := annotationdomain.EngineOperationUnknown
+	switch {
+	case errors.Is(err, pgx.ErrNoRows):
 		if err := r.AppendEngineAttemptOutcome(
 			ctx,
 			tx,
@@ -147,17 +147,38 @@ func (r *Repository) RecoverExpiredEngineSending(
 		); err != nil {
 			return annotationdomain.EngineOperation{}, err
 		}
+	case err != nil:
+		return annotationdomain.EngineOperation{}, fmt.Errorf(
+			"read latest annotation engine attempt outcome: %w",
+			err,
+		)
+	default:
+		switch latestOutcome {
+		case annotationdomain.EngineAttemptFailedPreSend:
+			targetStatus = annotationdomain.EngineOperationPending
+		case annotationdomain.EngineAttemptRejected:
+			targetStatus = annotationdomain.EngineOperationRejected
+		case annotationdomain.EngineAttemptConflict:
+			targetStatus = annotationdomain.EngineOperationConflict
+		case annotationdomain.EngineAttemptSucceeded, annotationdomain.EngineAttemptUnknown:
+			targetStatus = annotationdomain.EngineOperationUnknown
+		default:
+			return annotationdomain.EngineOperation{}, fmt.Errorf(
+				"recover expired annotation engine send: unsupported attempt outcome %q",
+				latestOutcome,
+			)
+		}
 	}
 
 	tag, err := tx.Exec(ctx, `
 		UPDATE annotation_engine_operation
-		   SET status='UNKNOWN', claimed_by=NULL, claim_expires_at=NULL, revision=revision+1
+		   SET status=$4, claimed_by=NULL, claim_expires_at=NULL, revision=revision+1
 		 WHERE id=$1
 		   AND revision=$2
 		   AND status='SENDING'
 		   AND claim_expires_at IS NOT NULL
 		   AND claim_expires_at <= $3
-	`, operationID, operation.Revision, now.UTC())
+	`, operationID, operation.Revision, now.UTC(), targetStatus)
 	if err != nil {
 		return annotationdomain.EngineOperation{}, fmt.Errorf("recover expired annotation engine send: %w", err)
 	}
