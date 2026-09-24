@@ -74,6 +74,8 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 		t.Fatalf("ensure live object bucket: %v", err)
 	}
 
+	worker, workerLog := startLiveGoldWorker(t, ctx, workerBinary)
+
 	inputText := "Review the evidence and choose the supported label."
 	inputCSV := []byte("id,text\n1," + inputText + "\n")
 	inputObject := "gold-live/input-" + uuid.NewString() + ".csv"
@@ -133,6 +135,8 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 		datasetWriter,
 		store,
 	)
+	waitLiveOutboxIdle(t, ctx, pool, worker, workerLog)
+
 	buildKey := "live-gold-build-" + uuid.NewString()
 	buildCommand := CreateBuildCommand{
 		WorkspaceID:                      fixture.workspaceID,
@@ -158,7 +162,6 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 		t.Fatalf("build replay execution=%s want=%s", replayExecution.ID, execution.ID)
 	}
 
-	worker, workerLog := startLiveGoldWorker(t, ctx, workerBinary)
 	outputVersionID := waitLiveGoldExecution(t, ctx, pool, worker, workerLog, execution.ID)
 
 	outputVersion, err := datasetRepo.GetVersion(ctx, outputVersionID)
@@ -439,6 +442,47 @@ func startLiveGoldWorker(
 	return cmd, logPath
 }
 
+func waitLiveOutboxIdle(
+	t *testing.T,
+	ctx context.Context,
+	pool *pgxpool.Pool,
+	worker *exec.Cmd,
+	workerLog string,
+) {
+	t.Helper()
+	deadline := time.Now().Add(75 * time.Second)
+	for time.Now().Before(deadline) {
+		if err := worker.Process.Signal(syscall.Signal(0)); err != nil {
+			content, _ := os.ReadFile(workerLog)
+			t.Fatalf("live worker exited while draining outbox backlog: %v\n%s", err, content)
+		}
+		var pending int
+		if err := pool.QueryRow(ctx, `
+			SELECT count(*)
+			FROM outbox_event
+			WHERE status IN ('PENDING','PROCESSING','FAILED')
+		`).Scan(&pending); err != nil {
+			t.Fatalf("count live outbox backlog: %v", err)
+		}
+		if pending == 0 {
+			return
+		}
+		select {
+		case <-ctx.Done():
+			t.Fatal(ctx.Err())
+		case <-time.After(250 * time.Millisecond):
+		}
+	}
+	var pending int
+	_ = pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM outbox_event
+		WHERE status IN ('PENDING','PROCESSING','FAILED')
+	`).Scan(&pending)
+	content, _ := os.ReadFile(workerLog)
+	t.Fatalf("live outbox backlog did not drain pending=%d\n%s", pending, content)
+}
+
 func waitLiveGoldExecution(
 	t *testing.T,
 	ctx context.Context,
@@ -448,7 +492,7 @@ func waitLiveGoldExecution(
 	executionID uuid.UUID,
 ) uuid.UUID {
 	t.Helper()
-	deadline := time.Now().Add(105 * time.Second)
+	deadline := time.Now().Add(40 * time.Second)
 	for time.Now().Before(deadline) {
 		if err := worker.Process.Signal(syscall.Signal(0)); err != nil {
 			content, _ := os.ReadFile(workerLog)
