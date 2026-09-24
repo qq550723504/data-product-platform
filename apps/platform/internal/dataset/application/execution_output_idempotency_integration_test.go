@@ -712,3 +712,51 @@ func assertSingle(t *testing.T, fixture c2aFixture, query string, argument any, 
 func containsUniqueViolation(err error) bool {
 	return bytes.Contains([]byte(err.Error()), []byte("uq_dataset_version_execution_output"))
 }
+
+
+func TestPublishFinalizerFailureCannotCommitReadyVersion(t *testing.T) {
+	fixture, _, datasetID := newC2AFixture(t, fakeStore{})
+	executionID := uuid.New()
+	finalizerErr := errors.New("binding finalization failed")
+
+	_, err := fixture.upload.HandleWithFinalizer(
+		fixture.ctx,
+		fixture.outputCommand(datasetID, executionID, "id,name\n1,alpha\n"),
+		func(context.Context, pgx.Tx, domain.DatasetVersion) error {
+			return finalizerErr
+		},
+	)
+	if !errors.Is(err, finalizerErr) {
+		t.Fatalf("publish error = %v, want finalizer failure", err)
+	}
+
+	version, err := fixture.repo.FindVersionByExecution(fixture.ctx, executionID)
+	if err != nil {
+		t.Fatalf("read half-product after finalizer failure: %v", err)
+	}
+	if version.Status == domain.VersionReady {
+		t.Fatalf("finalizer failure committed READY version %s", version.ID)
+	}
+	if version.Status != domain.VersionCreated && version.Status != domain.VersionProcessing && version.Status != domain.VersionFailed {
+		t.Fatalf("half-product status = %s, want non-READY recoverable state", version.Status)
+	}
+
+	var current *uuid.UUID
+	if err := fixture.pool.QueryRow(fixture.ctx, `SELECT current_version_id FROM dataset WHERE id=$1`, datasetID).Scan(&current); err != nil {
+		t.Fatalf("read dataset current version: %v", err)
+	}
+	if current != nil && *current == version.ID {
+		t.Fatalf("failed finalizer exposed version %s as current", version.ID)
+	}
+
+	var readyEvents int
+	if err := fixture.pool.QueryRow(fixture.ctx, `
+		SELECT count(*) FROM outbox_event
+		WHERE aggregate_id=$1 AND event_type='DatasetVersionCreated'
+	`, version.ID).Scan(&readyEvents); err != nil {
+		t.Fatalf("count ready events: %v", err)
+	}
+	if readyEvents != 0 {
+		t.Fatalf("finalizer failure emitted %d DatasetVersionCreated events", readyEvents)
+	}
+}
