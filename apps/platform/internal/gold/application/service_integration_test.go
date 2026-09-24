@@ -24,6 +24,7 @@ import (
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
+	deliveryapp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
@@ -476,6 +477,7 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 		  AND data_resource_id=$2
 	`, effectiveRights.ID, resourceID)
 
+	var sourceRightsDeclarationID, annotationRightsDeclarationID uuid.UUID
 	for _, rightsResourceID := range []uuid.UUID{inputResourceID, resourceID} {
 		declaration, err := rightsService.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{
 			Spec: rightsdomain.RightsDeclarationSpec{
@@ -514,6 +516,14 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 		}); err != nil {
 			t.Fatalf("verify Gold rights declaration for %s: %v", rightsResourceID, err)
 		}
+		if rightsResourceID == inputResourceID {
+			sourceRightsDeclarationID = declaration.ID
+		} else if rightsResourceID == resourceID {
+			annotationRightsDeclarationID = declaration.ID
+		}
+	}
+	if sourceRightsDeclarationID == uuid.Nil || annotationRightsDeclarationID == uuid.Nil {
+		t.Fatalf("Gold rights declaration identities source=%s annotation=%s", sourceRightsDeclarationID, annotationRightsDeclarationID)
 	}
 
 	allowedRights, err := rightsService.ComputeEffectiveRights(ctx, rightsapp.ComputeEffectiveRightsCommand{
@@ -677,6 +687,93 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 		t.Fatalf("replayed certification=%s want=%s", replayedCertification.ID, certification.ID)
 	}
 	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM dataset_certification WHERE id=$1", certification.ID)
+
+	eligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
+	directGate := deliveryapp.NewCertificationDirectDataGate(eligibility)
+	gateTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin Gold DIRECT_DATA gate tx: %v", err)
+	}
+	gateResult, err := directGate.EvaluateDirectData(ctx, gateTx, deliveryapp.DirectDataGateRequest{
+		OperationID:          uuid.New(),
+		WorkspaceID:          workspaceID,
+		DatasetVersionID:     output.ID,
+		ProfileID:            goldProfile.ID,
+		PrincipalRef:         "gold-principal",
+		EffectiveConsumerRef: "GOLD-PILOT-CONSUMER",
+		Purpose:              "GOLD-PILOT",
+		Action:               "USE",
+		ScopeType:            "ALL_RESOURCE",
+		ScopeRef:             output.ID.String(),
+		DeliveryChannel:      "DIRECT_DATA",
+		DeliveryMode:         "DIRECT_DATA",
+		RequestedExpiresAt:   time.Now().UTC().Add(5 * time.Minute),
+	})
+	if err != nil {
+		_ = gateTx.Rollback(ctx)
+		t.Fatalf("evaluate Gold DIRECT_DATA gate: %v", err)
+	}
+	if !gateResult.Evaluation.Allowed ||
+		gateResult.CertificationRef == nil ||
+		*gateResult.CertificationRef != certification.ID {
+		_ = gateTx.Rollback(ctx)
+		t.Fatalf("Gold DIRECT_DATA gate=%+v certification=%v", gateResult.Evaluation, gateResult.CertificationRef)
+	}
+	if err := gateTx.Rollback(ctx); err != nil {
+		t.Fatalf("rollback read-only Gold gate tx: %v", err)
+	}
+
+	if _, err := rightsService.DisposeRightsDeclaration(ctx, rightsapp.DisposeRightsDeclarationCommand{
+		DeclarationID: annotationRightsDeclarationID,
+		Disposition:   rightsdomain.DispositionInvalidated,
+		EffectiveAt:   time.Now().UTC(),
+		Reason:        "annotation contribution rights withdrawn",
+		ActorID:       &actorID,
+		TraceID:       "gold-delivery-rights-revoked",
+	}); err != nil {
+		t.Fatalf("invalidate annotation contribution rights: %v", err)
+	}
+
+	blockedTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin blocked Gold DIRECT_DATA gate tx: %v", err)
+	}
+	blockedGate, err := directGate.EvaluateDirectData(ctx, blockedTx, deliveryapp.DirectDataGateRequest{
+		OperationID:          uuid.New(),
+		WorkspaceID:          workspaceID,
+		DatasetVersionID:     output.ID,
+		ProfileID:            goldProfile.ID,
+		PrincipalRef:         "gold-principal",
+		EffectiveConsumerRef: "GOLD-PILOT-CONSUMER",
+		Purpose:              "GOLD-PILOT",
+		Action:               "USE",
+		ScopeType:            "ALL_RESOURCE",
+		ScopeRef:             output.ID.String(),
+		DeliveryChannel:      "DIRECT_DATA",
+		DeliveryMode:         "DIRECT_DATA",
+		RequestedExpiresAt:   time.Now().UTC().Add(5 * time.Minute),
+	})
+	if err != nil {
+		_ = blockedTx.Rollback(ctx)
+		t.Fatalf("reevaluate Gold DIRECT_DATA gate after rights revocation: %v", err)
+	}
+	if blockedGate.Evaluation.Allowed {
+		_ = blockedTx.Rollback(ctx)
+		t.Fatalf("Gold DIRECT_DATA remained allowed after annotation rights revocation: %+v", blockedGate.Evaluation)
+	}
+	var entitlementBlocked bool
+	for _, blocker := range blockedGate.Evaluation.Blockers {
+		if blocker == "CURRENT_ENTITLEMENT_BLOCKED" {
+			entitlementBlocked = true
+		}
+	}
+	if !entitlementBlocked {
+		_ = blockedTx.Rollback(ctx)
+		t.Fatalf("Gold DIRECT_DATA blockers=%v want CURRENT_ENTITLEMENT_BLOCKED", blockedGate.Evaluation.Blockers)
+	}
+	if err := blockedTx.Rollback(ctx); err != nil {
+		t.Fatalf("rollback blocked Gold gate tx: %v", err)
+	}
 }
 
 func goldSQL(t *testing.T, ctx context.Context, pool *pgxpool.Pool, query string, args ...any) {
