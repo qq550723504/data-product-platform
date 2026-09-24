@@ -2,7 +2,7 @@ import { pathToFileURL } from 'node:url';
 
 export const requiredJobs = Object.freeze([
   'go-platform', 'web-console', 'hop-smoke', 'splink-smoke',
-  'browser-contracts', 'live-core', 'demo',
+  'label-studio-smoke', 'browser-contracts', 'live-core', 'demo',
 ]);
 
 export function assertRequiredChecks(needs, docsOnly = false) {
@@ -28,8 +28,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const docsOnly = process.env.CI_DOCS_ONLY === 'true';
     assertRequiredChecks(JSON.parse(process.env.CI_NEEDS ?? 'null'), docsOnly);
     console.log(docsOnly
-      ? 'Documentation-only change classified successfully; all seven heavy job groups were skipped.'
-      : 'All seven required job groups completed successfully.');
+      ? 'Documentation-only change classified successfully; all eight heavy job groups were skipped.'
+      : 'All eight required job groups completed successfully.');
   } catch (error) {
     console.error(error instanceof Error ? error.message : 'Invalid gate input');
     process.exitCode = 1;

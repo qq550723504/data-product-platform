@@ -421,6 +421,104 @@ jobs:
         if: steps.changes.outputs.run_splink != 'true'
         run: echo "No Splink runtime/adapter/evaluation files changed; smoke test skipped."
 
+  label-studio-smoke:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
+    name: label-studio-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect Label Studio reference changes
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run_label_studio=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+            BASE="origin/${{ github.base_ref }}"
+          else
+            BASE="HEAD^"
+          fi
+          CHANGED="$(git diff --name-only "$BASE" HEAD -- \
+            'apps/platform/internal/annotation/**' \
+            'apps/platform/internal/platform/config/config.go' \
+            'apps/platform/cmd/worker/main.go' \
+            'apps/platform/internal/cost/store.go' \
+            'apps/platform/internal/platform/routing/**' \
+            'migrations/000038_annotation_engine_boundary.*' \
+            'migrations/000039_annotation_engine_cost.*' \
+            'deploy/docker-compose/docker-compose.label-studio.yml')"
+          if [ -n "$CHANGED" ]; then
+            echo "$CHANGED"
+            echo "run_label_studio=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run_label_studio=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Go
+        if: steps.changes.outputs.run_label_studio == 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache-dependency-path: apps/platform/go.sum
+
+      - name: Start pinned Label Studio reference runtime
+        if: steps.changes.outputs.run_label_studio == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker compose -f deploy/docker-compose/docker-compose.label-studio.yml up -d label-studio
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8082/ >/dev/null; then
+              break
+            fi
+            if [ "$attempt" -eq 60 ]; then
+              docker compose -f deploy/docker-compose/docker-compose.label-studio.yml logs label-studio
+              exit 1
+            fi
+            sleep 2
+          done
+
+      - name: Bootstrap ephemeral Label Studio API token
+        if: steps.changes.outputs.run_label_studio == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="$(docker compose -f deploy/docker-compose/docker-compose.label-studio.yml exec -T label-studio \
+            python3 /label-studio/label_studio/manage.py shell -c \
+            "from users.models import User; from rest_framework.authtoken.models import Token; u=User.objects.get(email='ci@example.com'); print(Token.objects.get_or_create(user=u)[0].key)" \
+            | tail -n 1 | tr -d '\r')"
+          test -n "$TOKEN"
+          echo "::add-mask::$TOKEN"
+          echo "TEST_LABEL_STUDIO_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+          echo "TEST_LABEL_STUDIO_URL=http://127.0.0.1:8082" >> "$GITHUB_ENV"
+
+      - name: Run real Label Studio adapter smoke
+        if: steps.changes.outputs.run_label_studio == 'true'
+        working-directory: apps/platform
+        run: go test ./internal/annotation/labelstudio -run TestLabelStudioLiveReference -count=1 -v
+
+      - name: Skip Label Studio runtime smoke when unrelated
+        if: steps.changes.outputs.run_label_studio != 'true'
+        run: echo "No Annotation/Label Studio runtime files changed; smoke test skipped."
+
+      - name: Preserve Label Studio logs on failure
+        if: failure() && steps.changes.outputs.run_label_studio == 'true'
+        run: docker compose -f deploy/docker-compose/docker-compose.label-studio.yml logs label-studio
+
+      - name: Stop Label Studio reference runtime
+        if: always() && steps.changes.outputs.run_label_studio == 'true'
+        run: docker compose -f deploy/docker-compose/docker-compose.label-studio.yml down -v
+
   browser-contracts:
     needs: changes
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
@@ -437,7 +535,7 @@ jobs:
   required:
     name: required
     if: ${{ always() }}
-    needs: [changes, go-platform, web-console, hop-smoke, splink-smoke, browser-contracts, live-core, demo]
+    needs: [changes, go-platform, web-console, hop-smoke, splink-smoke, label-studio-smoke, browser-contracts, live-core, demo]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
