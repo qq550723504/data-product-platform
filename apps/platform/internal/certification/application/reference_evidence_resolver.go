@@ -28,7 +28,7 @@ func (r *ReferenceEvidenceResolver) Resolve(
 		Quality: domain.QualityAssessmentEvidence{
 			ID: cmd.QualityAssessmentID,
 		},
-		ActorID: cmd.ActorID,
+		ActorID:  cmd.ActorID,
 		IssuedAt: cmd.Now,
 	}
 	if profile.Rights.Required {
