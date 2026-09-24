@@ -951,7 +951,6 @@ func readLiveGoldObject(
 	return content
 }
 
-
 func containsLiveGoldBlocker(blockers []string, want string) bool {
 	for _, blocker := range blockers {
 		if blocker == want {
