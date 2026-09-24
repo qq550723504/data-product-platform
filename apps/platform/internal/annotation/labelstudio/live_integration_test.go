@@ -119,7 +119,14 @@ func TestLabelStudioLiveReference(t *testing.T) {
 		"EVIDENCE_SUFFICIENT",
 	)
 
-	page, err := client.FetchResults(context.Background(), binding, annotationapp.EngineResultCursor{})
+	page, err := client.FetchResults(context.Background(), annotationapp.EngineLookupRequest{
+		WorkspaceID:        submitRequest.WorkspaceID,
+		CampaignID:         submitRequest.CampaignID,
+		Binding:            submitRequest.Binding,
+		RequestID:          submitRequest.RequestID,
+		RequestFingerprint: submitRequest.RequestFingerprint,
+		Tasks:              submitRequest.Tasks,
+	}, annotationapp.EngineResultCursor{})
 	if err != nil {
 		t.Fatalf("fetch results: %v", err)
 	}
