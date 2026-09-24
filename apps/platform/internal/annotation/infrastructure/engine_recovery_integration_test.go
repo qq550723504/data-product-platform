@@ -221,7 +221,6 @@ func TestExpiredSendWithCommittedOutcomeRecoversAndAcceptsLateObservation(t *tes
 	}
 }
 
-
 func TestExpiredSendRestoresDefiniteCommittedOutcome(t *testing.T) {
 	tests := []struct {
 		name          string
