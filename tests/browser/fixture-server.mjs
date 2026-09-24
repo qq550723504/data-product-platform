@@ -152,6 +152,81 @@ export function createFixtureServer() {
         goldProductionBindingRootHash: "9".repeat(64),
         profile: goldProfile, dispositions: [],
       };
+      const goldExplanation = {
+        workspaceId: ids.workspace,
+        outputDatasetVersionId: ids.goldVersion,
+        inputDatasetVersionId: "13131313-1313-4313-8313-131313131313",
+        inputCertificationId: "14141414-1414-4414-8414-141414141414",
+        executionId: ids.job,
+        goldProductionBindingId: ids.goldBinding,
+        goldProductionBindingRootHash: "9".repeat(64),
+        annotationContributionResourceId: "15151515-1515-4515-8515-151515151515",
+        campaign: {
+          id: "16161616-1616-4616-8616-161616161616",
+          status: "ACTIVE",
+          purpose: "GOLD-PILOT",
+          action: "PROCESS",
+          schemaRef: "gold/schema",
+          schemaVersion: "1",
+          schemaSha256: "7".repeat(64),
+          taxonomyRef: "gold/taxonomy",
+          taxonomyVersion: "1",
+          taxonomySha256: "8".repeat(64),
+          expectedTaskCount: 2,
+          taskCount: 2,
+          resultCount: 2,
+          reviewDecisionCount: 2,
+          selectedOutputCount: 2,
+          createdAt: stamp,
+          activatedAt: stamp,
+        },
+        snapshot: {
+          id: ids.goldSnapshot,
+          status: "FINALIZED",
+          rootHash: "6".repeat(64),
+          expectedTaskCount: 2,
+          expectedResultCount: 2,
+          expectedDecisionCount: 2,
+          expectedOutputCount: 2,
+          finalizedAt: stamp,
+        },
+        reviews: [
+          {
+            taskId: "17171717-1717-4717-8717-171717171717",
+            sourceItemRef: "row:1",
+            sourceContentSha256: "a".repeat(64),
+            decisionId: "18181818-1818-4818-8818-181818181818",
+            outcome: "ACCEPT",
+            reviewerRef: "reviewer:gold-fixture",
+            reason: "evidence is sufficient",
+            reviewedResultId: "19191919-1919-4919-8919-191919191919",
+            selectedResultId: "19191919-1919-4919-8919-191919191919",
+            selectedResultSha256: "b".repeat(64),
+            annotationAuthorRef: "annotator:label-studio-17",
+            providerBindingRef: "label-studio/project/123",
+            externalTaskId: "456",
+            externalAnnotationId: "789",
+            decisionCreatedAt: stamp,
+          },
+          {
+            taskId: "20202020-2020-4020-8020-202020202020",
+            sourceItemRef: "row:2",
+            sourceContentSha256: "c".repeat(64),
+            decisionId: "21212121-2121-4121-8121-212121212121",
+            outcome: "CORRECT",
+            reviewerRef: "reviewer:gold-fixture",
+            reason: "corrected provider label",
+            reviewedResultId: "22222222-2222-4222-8222-222222222223",
+            selectedResultId: "23232323-2323-4323-8323-232323232323",
+            selectedResultSha256: "d".repeat(64),
+            annotationAuthorRef: "annotator:label-studio-17",
+            providerBindingRef: "label-studio/project/123",
+            externalTaskId: "457",
+            externalAnnotationId: "790",
+            decisionCreatedAt: stamp,
+          },
+        ],
+      };
       const job = { id: ids.job, workspaceId: ids.workspace, status: state.candidateStatus === "PENDING" ? "WAITING_REVIEW" : "SUCCEEDED" };
       const candidate = {
         id: ids.candidate, candidateId: ids.candidate, jobId: ids.job, workspaceId: ids.workspace,
@@ -191,6 +266,9 @@ export function createFixtureServer() {
             evidence: [{ id: "78787878-7878-4878-8878-787878787878", workspaceId: ids.workspace, evidenceType: "GOLD_QUALITY_ASSESSMENT", relationType: "ASSESSMENT_EVIDENCE", sourceType: "QUALITY_ASSESSMENT", sourceId: ids.goldAssessment, hashAlgorithm: "SHA256", hashValue: "a".repeat(64), createdAt: stamp }],
             auditEvents: [],
           });
+        }
+        if (url.pathname === `${workspace}/dataset-versions/${ids.goldVersion}/gold-explanation`) {
+          return send(200, goldExplanation);
         }
         if (url.pathname === `${workspace}/dataset-versions/${ids.goldVersion}/certifications`) {
           return send(200, { workspaceId: ids.workspace, datasetVersionId: ids.goldVersion, asOf: stamp, items: [goldCertification] });

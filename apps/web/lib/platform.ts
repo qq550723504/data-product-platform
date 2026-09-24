@@ -398,6 +398,63 @@ export type DeliveryEligibility = {
   };
 };
 
+export type GoldExplanation = {
+  workspaceId: string;
+  outputDatasetVersionId: string;
+  inputDatasetVersionId: string;
+  inputCertificationId: string;
+  executionId: string;
+  goldProductionBindingId: string;
+  goldProductionBindingRootHash: string;
+  annotationContributionResourceId: string;
+  campaign: {
+    id: string;
+    status: string;
+    purpose: string;
+    action: string;
+    schemaRef: string;
+    schemaVersion: string;
+    schemaSha256: string;
+    taxonomyRef: string;
+    taxonomyVersion: string;
+    taxonomySha256: string;
+    expectedTaskCount: number;
+    taskCount: number;
+    resultCount: number;
+    reviewDecisionCount: number;
+    selectedOutputCount: number;
+    createdAt: string;
+    activatedAt?: string;
+  };
+  snapshot: {
+    id: string;
+    status: string;
+    rootHash: string;
+    expectedTaskCount: number;
+    expectedResultCount: number;
+    expectedDecisionCount: number;
+    expectedOutputCount: number;
+    finalizedAt?: string;
+  };
+  reviews: Array<{
+    taskId: string;
+    sourceItemRef: string;
+    sourceContentSha256: string;
+    decisionId: string;
+    outcome: string;
+    reviewerRef: string;
+    reason: string;
+    reviewedResultId?: string;
+    selectedResultId?: string;
+    selectedResultSha256?: string;
+    annotationAuthorRef?: string;
+    providerBindingRef?: string;
+    externalTaskId?: string;
+    externalAnnotationId?: string;
+    decisionCreatedAt: string;
+  }>;
+};
+
 export type ReleaseCheckStatus = "PASS" | "FAIL" | "PENDING" | string;
 export type ReleaseReadiness = {
   releaseId: string;
@@ -486,6 +543,10 @@ export const platform = {
   certificationHistory: (versionId: string) =>
     apiGet<CertificationHistory>(
       workspacePath(`/dataset-versions/${encodeURIComponent(versionId)}/certifications`),
+    ),
+  goldExplanation: (versionId: string) =>
+    apiGet<GoldExplanation>(
+      workspacePath(`/dataset-versions/${encodeURIComponent(versionId)}/gold-explanation`),
     ),
   deliveryEligibility: (
     versionId: string,
