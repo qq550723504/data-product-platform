@@ -237,6 +237,42 @@ func (r *Repository) TransitionEngineOperation(
 	return getEngineOperationByID(ctx, tx, operationID)
 }
 
+func (r *Repository) ResolveManualEngineOperation(
+	ctx context.Context,
+	tx pgx.Tx,
+	operationID uuid.UUID,
+	expectedRevision int64,
+	targetStatus string,
+) (annotationdomain.EngineOperation, error) {
+	if operationID == uuid.Nil || expectedRevision < 1 {
+		return annotationdomain.EngineOperation{}, annotationdomain.ErrInvalidEngineOperation
+	}
+	switch targetStatus {
+	case annotationdomain.EngineOperationMatched,
+		annotationdomain.EngineOperationRejected,
+		annotationdomain.EngineOperationConflict:
+	default:
+		return annotationdomain.EngineOperation{}, annotationdomain.ErrInvalidEngineOperation
+	}
+	tag, err := tx.Exec(ctx, `
+		UPDATE annotation_engine_operation
+		   SET status=$3,
+		       claimed_by=NULL,
+		       claim_expires_at=NULL,
+		       revision=revision+1
+		 WHERE id=$1
+		   AND revision=$2
+		   AND status='MANUAL_RESOLUTION'
+	`, operationID, expectedRevision, targetStatus)
+	if err != nil {
+		return annotationdomain.EngineOperation{}, fmt.Errorf("resolve manual annotation engine operation: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return annotationdomain.EngineOperation{}, ErrEngineClaimBusy
+	}
+	return getEngineOperationByID(ctx, tx, operationID)
+}
+
 func (r *Repository) StartEngineAttempt(
 	ctx context.Context,
 	tx pgx.Tx,
