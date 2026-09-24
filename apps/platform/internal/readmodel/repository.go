@@ -214,22 +214,22 @@ type GoldExplanation struct {
 }
 
 type GoldCampaignExplanation struct {
-	ID                  uuid.UUID `json:"id"`
-	Status              string    `json:"status"`
-	Purpose             string    `json:"purpose"`
-	Action              string    `json:"action"`
-	SchemaRef           string    `json:"schemaRef"`
-	SchemaVersion       string    `json:"schemaVersion"`
-	SchemaSHA256        string    `json:"schemaSha256"`
-	TaxonomyRef         string    `json:"taxonomyRef"`
-	TaxonomyVersion     string    `json:"taxonomyVersion"`
-	TaxonomySHA256      string    `json:"taxonomySha256"`
-	ExpectedTaskCount   int       `json:"expectedTaskCount"`
-	TaskCount           int       `json:"taskCount"`
-	ResultCount         int       `json:"resultCount"`
-	ReviewDecisionCount int       `json:"reviewDecisionCount"`
-	SelectedOutputCount int       `json:"selectedOutputCount"`
-	CreatedAt           time.Time `json:"createdAt"`
+	ID                  uuid.UUID  `json:"id"`
+	Status              string     `json:"status"`
+	Purpose             string     `json:"purpose"`
+	Action              string     `json:"action"`
+	SchemaRef           string     `json:"schemaRef"`
+	SchemaVersion       string     `json:"schemaVersion"`
+	SchemaSHA256        string     `json:"schemaSha256"`
+	TaxonomyRef         string     `json:"taxonomyRef"`
+	TaxonomyVersion     string     `json:"taxonomyVersion"`
+	TaxonomySHA256      string     `json:"taxonomySha256"`
+	ExpectedTaskCount   int        `json:"expectedTaskCount"`
+	TaskCount           int        `json:"taskCount"`
+	ResultCount         int        `json:"resultCount"`
+	ReviewDecisionCount int        `json:"reviewDecisionCount"`
+	SelectedOutputCount int        `json:"selectedOutputCount"`
+	CreatedAt           time.Time  `json:"createdAt"`
 	ActivatedAt         *time.Time `json:"activatedAt,omitempty"`
 }
 
@@ -245,21 +245,21 @@ type GoldSnapshotExplanation struct {
 }
 
 type GoldReviewExplanation struct {
-	TaskID                 uuid.UUID  `json:"taskId"`
-	SourceItemRef          string     `json:"sourceItemRef"`
-	SourceContentSHA256    string     `json:"sourceContentSha256"`
-	DecisionID             uuid.UUID  `json:"decisionId"`
-	Outcome                string     `json:"outcome"`
-	ReviewerRef            string     `json:"reviewerRef"`
-	Reason                 string     `json:"reason"`
-	ReviewedResultID       *uuid.UUID `json:"reviewedResultId,omitempty"`
-	SelectedResultID       *uuid.UUID `json:"selectedResultId,omitempty"`
-	SelectedResultSHA256   string     `json:"selectedResultSha256,omitempty"`
-	AnnotationAuthorRef    string     `json:"annotationAuthorRef,omitempty"`
-	ProviderBindingRef     string     `json:"providerBindingRef,omitempty"`
-	ExternalTaskID         string     `json:"externalTaskId,omitempty"`
-	ExternalAnnotationID   string     `json:"externalAnnotationId,omitempty"`
-	DecisionCreatedAt      time.Time  `json:"decisionCreatedAt"`
+	TaskID               uuid.UUID  `json:"taskId"`
+	SourceItemRef        string     `json:"sourceItemRef"`
+	SourceContentSHA256  string     `json:"sourceContentSha256"`
+	DecisionID           uuid.UUID  `json:"decisionId"`
+	Outcome              string     `json:"outcome"`
+	ReviewerRef          string     `json:"reviewerRef"`
+	Reason               string     `json:"reason"`
+	ReviewedResultID     *uuid.UUID `json:"reviewedResultId,omitempty"`
+	SelectedResultID     *uuid.UUID `json:"selectedResultId,omitempty"`
+	SelectedResultSHA256 string     `json:"selectedResultSha256,omitempty"`
+	AnnotationAuthorRef  string     `json:"annotationAuthorRef,omitempty"`
+	ProviderBindingRef   string     `json:"providerBindingRef,omitempty"`
+	ExternalTaskID       string     `json:"externalTaskId,omitempty"`
+	ExternalAnnotationID string     `json:"externalAnnotationId,omitempty"`
+	DecisionCreatedAt    time.Time  `json:"decisionCreatedAt"`
 }
 
 type Repository struct {
