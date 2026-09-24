@@ -106,6 +106,29 @@ func (r *PostgresRepository) InsertBuildRequest(ctx context.Context, tx pgx.Tx, 
 	return nil
 }
 
+func (r *PostgresRepository) GetBuildRequestTx(ctx context.Context, tx pgx.Tx, executionID uuid.UUID) (BuildRequest, error) {
+	var request BuildRequest
+	err := tx.QueryRow(ctx, `
+		SELECT execution_id, workspace_id, input_dataset_version_id, input_certification_id,
+		       annotation_campaign_id, annotation_snapshot_id, annotation_contribution_resource_id,
+		       snapshot_root_hash, request_fingerprint, created_at, created_by
+		  FROM gold_build_request
+		 WHERE execution_id=$1
+	`, executionID).Scan(
+		&request.ExecutionID, &request.WorkspaceID, &request.InputDatasetVersionID,
+		&request.InputCertificationID, &request.AnnotationCampaignID, &request.AnnotationSnapshotID,
+		&request.AnnotationContributionResourceID, &request.SnapshotRootHash,
+		&request.RequestFingerprint, &request.CreatedAt, &request.CreatedBy,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return BuildRequest{}, ErrNotFound
+	}
+	if err != nil {
+		return BuildRequest{}, fmt.Errorf("get Gold build request tx: %w", err)
+	}
+	return request, nil
+}
+
 func (r *PostgresRepository) GetBuildRequest(ctx context.Context, executionID uuid.UUID) (BuildRequest, error) {
 	var request BuildRequest
 	err := r.pool.QueryRow(ctx, `
