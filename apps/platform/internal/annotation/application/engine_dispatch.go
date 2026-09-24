@@ -108,9 +108,13 @@ func (s *EngineService) claimEngineAttempt(
 			if s.sendGuard == nil {
 				return ErrActivationGuardRequired
 			}
-			campaign, guardErr := s.repo.GetCampaignTx(ctx, tx, operation.CampaignID)
+			campaign, guardErr := s.repo.LockCampaignTx(ctx, tx, operation.CampaignID)
 			if guardErr != nil {
 				return guardErr
+			}
+			if campaign.WorkspaceID != operation.WorkspaceID ||
+				campaign.Status != annotationdomain.CampaignActive {
+				return annotationdomain.ErrInvalidCampaign
 			}
 			if guardErr := s.sendGuard.ValidateEngineSendTx(ctx, tx, campaign); guardErr != nil {
 				return guardErr
