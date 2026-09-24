@@ -23,6 +23,7 @@ var eventVocabulary = []string{
 	"AuthorizationSuspended",
 	"AnnotationCampaignActivated",
 	"AnnotationCampaignCreated",
+	"AnnotationEngineActorBound",
 	"AnnotationEngineAttemptStarted",
 	"AnnotationEngineManualResolutionApplied",
 	"AnnotationEngineManualResolutionRequired",

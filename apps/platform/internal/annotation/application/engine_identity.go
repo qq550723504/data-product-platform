@@ -84,7 +84,7 @@ func (s *EngineService) BindActor(
 		); err != nil {
 			return err
 		}
-		return audit.Append(ctx, tx, audit.Event{
+		if err := audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &binding.WorkspaceID,
 			ActorType:   actorType(cmd.ActorID),
 			ActorID:     cmd.ActorID,
@@ -98,7 +98,24 @@ func (s *EngineService) BindActor(
 				"coreActorRef":     binding.CoreActorRef,
 			},
 			TraceID: cmd.TraceID,
-		})
+		}); err != nil {
+			return err
+		}
+		return appendEvent(
+			ctx,
+			tx,
+			"ANNOTATION_ENGINE_ACTOR_BINDING",
+			binding.ID,
+			"AnnotationEngineActorBound",
+			map[string]any{
+				"bindingId":        binding.ID,
+				"workspaceId":      binding.WorkspaceID,
+				"provider":         binding.Provider,
+				"providerInstance": binding.ProviderInstance,
+				"externalActorRef": binding.ExternalActorRef,
+				"coreActorRef":     binding.CoreActorRef,
+			},
+		)
 	})
 	return binding, err
 }

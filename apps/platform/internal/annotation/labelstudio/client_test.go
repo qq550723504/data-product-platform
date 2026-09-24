@@ -469,3 +469,60 @@ func writeJSON(t *testing.T, w http.ResponseWriter, value any) {
 		t.Fatalf("encode response: %v", err)
 	}
 }
+
+func TestLabelStudioFetchResultsRejectsMalformedCorrelatedTaskID(t *testing.T) {
+	taskID := uuid.New()
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/tasks" {
+			http.NotFound(w, r)
+			return
+		}
+		writeJSON(t, w, map[string]any{
+			"total": 1,
+			"tasks": []any{
+				map[string]any{
+					"id":   101,
+					"data": map[string]any{"text": "frozen-text"},
+					"meta": map[string]any{
+						"core_task_id":             "not-a-uuid",
+						"core_request_id":          "submit-1",
+						"core_request_fingerprint": "fp-1",
+					},
+					"annotations": []any{},
+				},
+			},
+			"next": nil,
+		})
+	}))
+	defer server.Close()
+
+	client, err := labelstudio.NewClient(server.URL, "secret", "local-ls", server.Client())
+	if err != nil {
+		t.Fatalf("new client: %v", err)
+	}
+	_, err = client.FetchResults(context.Background(), annotationapp.EngineLookupRequest{
+		WorkspaceID: uuid.New(),
+		CampaignID:  uuid.New(),
+		Binding: annotationapp.EngineCampaignBinding{
+			Provider:          labelstudio.Provider,
+			ProviderInstance:  "local-ls",
+			ExternalProjectID: "41",
+		},
+		RequestID:          "submit-1",
+		RequestFingerprint: "fp-1",
+		Tasks: []annotationapp.EngineTask{{
+			TaskID:         taskID,
+			SourceItemRef:  "row-1",
+			SourceSHA256:   strings.Repeat("b", 64),
+			TaskText:       "frozen-text",
+			TaskTextSHA256: strings.Repeat("c", 64),
+			CorrelationKey: "task-" + taskID.String(),
+		}},
+	}, annotationapp.EngineResultCursor{})
+	if err == nil {
+		t.Fatal("expected malformed correlated Core task ID to fail closed")
+	}
+	if !strings.Contains(err.Error(), "invalid response") {
+		t.Fatalf("fetch error = %v", err)
+	}
+}

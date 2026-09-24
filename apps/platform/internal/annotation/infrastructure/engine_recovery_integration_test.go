@@ -220,3 +220,99 @@ func TestExpiredSendWithCommittedOutcomeRecoversAndAcceptsLateObservation(t *tes
 		t.Fatalf("attempt observations = %v", got)
 	}
 }
+
+func TestExpiredSendRestoresDefiniteCommittedOutcome(t *testing.T) {
+	tests := []struct {
+		name          string
+		outcome       string
+		expectedState string
+	}{
+		{
+			name:          "pre-send failure is retryable",
+			outcome:       annotationdomain.EngineAttemptFailedPreSend,
+			expectedState: annotationdomain.EngineOperationPending,
+		},
+		{
+			name:          "provider rejection is terminal",
+			outcome:       annotationdomain.EngineAttemptRejected,
+			expectedState: annotationdomain.EngineOperationRejected,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pool, ctx := openAnnotationTestDB(t)
+			defer pool.Close()
+
+			fx := createAnnotationDBFixture(t, ctx, pool)
+			repo := NewRepository(pool)
+			operationID := uuid.New()
+			manifest := []byte("{\"operation\":\"submit\",\"tasks\":[\"" + fx.taskID.String() + "\"]}")
+			if _, err := pool.Exec(ctx, `
+				INSERT INTO annotation_engine_operation(
+					id, workspace_id, campaign_id, provider, provider_instance_ref,
+					operation_kind, request_id, request_fingerprint,
+					payload_manifest, payload_manifest_hash_payload, payload_manifest_sha256
+				) VALUES (
+					$1,$2,$3,'LABEL_STUDIO','local-ls','SUBMIT_TASKS',
+					$4,$5,$6::jsonb,$7,$8
+				)
+			`, operationID, fx.workspaceID, fx.campaignID, "recover-"+uuid.NewString(),
+				strings.Repeat("a", 64), string(manifest), manifest, sha256Hex(manifest)); err != nil {
+				t.Fatalf("insert engine operation: %v", err)
+			}
+
+			attemptID := uuid.New()
+			if _, err := pool.Exec(ctx, `
+				INSERT INTO annotation_engine_attempt(
+					id, workspace_id, operation_id, attempt_no, attempt_kind
+				) VALUES ($1,$2,$3,1,'SUBMIT')
+			`, attemptID, fx.workspaceID, operationID); err != nil {
+				t.Fatalf("insert submit attempt: %v", err)
+			}
+			if _, err := pool.Exec(ctx, `
+				UPDATE annotation_engine_operation
+				   SET status='SENDING',
+				       claimed_by='dead-worker',
+				       claim_expires_at=$2,
+				       revision=revision+1
+				 WHERE id=$1
+			`, operationID, time.Now().UTC().Add(-time.Minute)); err != nil {
+				t.Fatalf("mark operation SENDING: %v", err)
+			}
+
+			tx, err := pool.Begin(ctx)
+			if err != nil {
+				t.Fatalf("begin outcome transaction: %v", err)
+			}
+			if err := repo.AppendEngineAttemptOutcome(ctx, tx, annotationdomain.EngineAttemptOutcome{
+				ID:         uuid.New(),
+				AttemptID:  attemptID,
+				Outcome:    tt.outcome,
+				OccurredAt: time.Now().UTC(),
+			}); err != nil {
+				_ = tx.Rollback(ctx)
+				t.Fatalf("append outcome: %v", err)
+			}
+			if err := tx.Commit(ctx); err != nil {
+				t.Fatalf("commit outcome: %v", err)
+			}
+
+			tx, err = pool.Begin(ctx)
+			if err != nil {
+				t.Fatalf("begin recovery transaction: %v", err)
+			}
+			recovered, err := repo.RecoverExpiredEngineSending(ctx, tx, operationID, time.Now().UTC())
+			if err != nil {
+				_ = tx.Rollback(ctx)
+				t.Fatalf("recover expired send: %v", err)
+			}
+			if err := tx.Commit(ctx); err != nil {
+				t.Fatalf("commit recovery: %v", err)
+			}
+			if recovered.Status != tt.expectedState {
+				t.Fatalf("recovered status = %s, want %s", recovered.Status, tt.expectedState)
+			}
+		})
+	}
+}
