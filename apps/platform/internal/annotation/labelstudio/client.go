@@ -439,9 +439,6 @@ func (c *Client) FetchResults(ctx context.Context, req annotationapp.EngineLooku
 			annotationapp.ErrAnnotationEngineInvalidRequest, "fetch results", false, 0, nil,
 		)
 	}
-	if err := c.verifyProjectConfig(ctx, req.Binding); err != nil {
-		return annotationapp.EngineResultPage{}, err
-	}
 	query := url.Values{
 		"project":   []string{req.Binding.ExternalProjectID},
 		"page":      []string{strconv.Itoa(cursor.Offset/100 + 1)},
