@@ -98,17 +98,17 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	execution, err := h.service.CreateBuild(r.Context(), goldapp.CreateBuildCommand{
-		WorkspaceID: workspaceID,
-		WorkflowVersionID: workflowVersionID,
-		OutputDatasetID: outputDatasetID,
-		InputDatasetVersionID: inputDatasetVersionID,
-		InputCertificationID: inputCertificationID,
-		AnnotationCampaignID: campaignID,
-		AnnotationSnapshotID: snapshotID,
+		WorkspaceID:                      workspaceID,
+		WorkflowVersionID:                workflowVersionID,
+		OutputDatasetID:                  outputDatasetID,
+		InputDatasetVersionID:            inputDatasetVersionID,
+		InputCertificationID:             inputCertificationID,
+		AnnotationCampaignID:             campaignID,
+		AnnotationSnapshotID:             snapshotID,
 		AnnotationContributionResourceID: contributionID,
-		IdempotencyKey: idempotencyKey,
-		ActorID: actorID,
-		TraceID: httpserver.RequestID(r.Context()),
+		IdempotencyKey:                   idempotencyKey,
+		ActorID:                          actorID,
+		TraceID:                          httpserver.RequestID(r.Context()),
 	})
 	if err != nil {
 		switch {
@@ -122,12 +122,12 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusAccepted, map[string]any{
-		"executionId": execution.ID,
-		"status": execution.Status,
-		"workflowVersionId": execution.WorkflowVersionID,
-		"outputDatasetId": execution.OutputDatasetID,
+		"executionId":           execution.ID,
+		"status":                execution.Status,
+		"workflowVersionId":     execution.WorkflowVersionID,
+		"outputDatasetId":       execution.OutputDatasetID,
 		"inputDatasetVersionId": inputDatasetVersionID,
-		"annotationSnapshotId": snapshotID,
+		"annotationSnapshotId":  snapshotID,
 	})
 }
 
