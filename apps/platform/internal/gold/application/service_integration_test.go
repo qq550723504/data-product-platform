@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"io"
 	"os"
 	"strings"
@@ -388,6 +389,21 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 		t.Fatalf("replayed assessment=%s want=%s", replayedAssessment.ID, assessment.ID)
 	}
 	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM quality_result WHERE id=$1", assessment.ID)
+
+	_, err = qualityService.RunGold(ctx, qualityapp.GoldRunCommand{
+		WorkspaceID: workspaceID,
+		DatasetVersionID: inputVersionID,
+		AssessmentAttemptID: uuid.New(),
+		ActorID: &actorID,
+		TraceID: "non-gold-formal-quality-must-fail",
+	})
+	if !errors.Is(err, qualityapp.ErrGoldProductionProof) {
+		t.Fatalf("non-Gold DatasetVersion formal assessment error=%v, want Gold production proof failure", err)
+	}
+	goldCount(t, ctx, pool, 0, `
+		SELECT count(*) FROM quality_result
+		WHERE dataset_version_id=$1 AND rule_set_ref=$2
+	`, inputVersionID, qualityapp.GoldRuleSetRef)
 }
 
 func goldSQL(t *testing.T, ctx context.Context, pool *pgxpool.Pool, query string, args ...any) {
