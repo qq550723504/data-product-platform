@@ -63,7 +63,12 @@ test("Gold DatasetVersion explains frozen production proof and current delivery"
   await expect(proof).toContainText(ids.goldCertification);
   await expect(page.getByRole("heading", { name: "Current Delivery Eligibility" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "预检结果" })).toBeVisible();
-  await expect(page.getByText("ALLOWED", { exact: true })).toHaveCount(4);
+  const eligibility = page.getByRole("heading", { name: "预检结果" }).locator("..");
+  await expect(eligibility).toContainText("ALLOWED");
+  await expect(page.getByRole("cell", { name: "DatasetVersion usability" }).locator("..")).toContainText("ALLOWED");
+  await expect(page.getByRole("cell", { name: "Current Certification" }).locator("..")).toContainText("ALLOWED");
+  await expect(page.getByRole("cell", { name: "Current Entitlement" }).locator("..")).toContainText("ALLOWED");
+  await expect(page.getByText("fixture verified rights", { exact: true }).locator("..")).toContainText("ALLOWED");
   expect(await writes(request)).toHaveLength(0);
 });
 
