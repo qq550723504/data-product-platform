@@ -330,6 +330,29 @@ export default async function DatasetVersionDetailPage({
           </div>
         )}
 
+        {evidenceCertification?.profile.profileRef === "gold/dataset-v1" ? (
+          <section className="detail-card" style={{ marginBottom: 24 }} data-testid="gold-production-proof">
+            <div className="panel-header">
+              <h2>Gold Production Proof</h2>
+              <span className="eyebrow">Frozen annotation facts</span>
+            </div>
+            <div className="callout">
+              <strong>这是 Gold DatasetVersion 的冻结生产证明</strong>
+              <p>这些引用来自 immutable DatasetCertification，不读取 Label Studio 当前状态，也不会被后续 annotation/provider mutation 改写。</p>
+            </div>
+            <DefinitionList items={[
+              { label: "GoldProductionBinding", value: evidenceCertification.goldProductionBindingId ? <span className="mono">{evidenceCertification.goldProductionBindingId}</span> : "—" },
+              { label: "Binding root", value: evidenceCertification.goldProductionBindingRootHash ? <span className="mono">{evidenceCertification.goldProductionBindingRootHash}</span> : "—" },
+              { label: "AnnotationSnapshot", value: evidenceCertification.annotationSnapshotId ? <span className="mono">{evidenceCertification.annotationSnapshotId}</span> : "—" },
+              { label: "Snapshot root", value: evidenceCertification.annotationSnapshotRootHash ? <span className="mono">{evidenceCertification.annotationSnapshotRootHash}</span> : "—" },
+              { label: "Schema SHA-256", value: evidenceCertification.annotationSchemaSha256 ? <span className="mono">{evidenceCertification.annotationSchemaSha256}</span> : "—" },
+              { label: "Taxonomy SHA-256", value: evidenceCertification.annotationTaxonomySha256 ? <span className="mono">{evidenceCertification.annotationTaxonomySha256}</span> : "—" },
+              { label: "Formal Gold Quality", value: <><span className="mono">{evidenceCertification.qualityAssessmentId}</span>{latestAssessment?.ruleSetRef === "gold/quality/annotation-v1" ? <> · <Badge value={latestAssessment.gateDecision} /></> : null}</> },
+              { label: "Gold Certification", value: <span className="mono">{evidenceCertification.id}</span> },
+            ]} />
+          </section>
+        ) : null}
+
         {selectedProfile ? (
           <section className="detail-card" style={{ marginBottom: 24 }}>
             <div className="panel-header"><h2>Rights summary</h2><span className="eyebrow">Frozen certification context</span></div>

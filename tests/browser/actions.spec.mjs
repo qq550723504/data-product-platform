@@ -50,6 +50,28 @@ for (const [decision, label, status] of [["confirm", "确认匹配", "CONFIRMED"
   });
 }
 
+test("Gold DatasetVersion explains frozen production proof and current delivery", async ({ page, request }) => {
+  await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
+  const proof = page.getByTestId("gold-production-proof");
+  await expect(proof).toBeVisible();
+  await expect(proof).toContainText("Gold Production Proof");
+  await expect(proof).toContainText(ids.goldBinding);
+  await expect(proof).toContainText(ids.goldSnapshot);
+  await expect(proof).toContainText("7".repeat(64));
+  await expect(proof).toContainText("8".repeat(64));
+  await expect(proof).toContainText(ids.goldAssessment);
+  await expect(proof).toContainText(ids.goldCertification);
+  await expect(page.getByRole("heading", { name: "Current Delivery Eligibility" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "预检结果" })).toBeVisible();
+  const eligibility = page.getByRole("heading", { name: "预检结果" }).locator("..");
+  await expect(eligibility).toContainText("ALLOWED");
+  await expect(page.getByRole("cell", { name: "DatasetVersion usability" }).locator("..")).toContainText("ALLOWED");
+  await expect(page.getByRole("cell", { name: "Current Certification" }).locator("..")).toContainText("ALLOWED");
+  await expect(page.getByRole("cell", { name: "Current Entitlement" }).locator("..")).toContainText("ALLOWED");
+  await expect(page.getByText("fixture verified rights", { exact: true }).locator("..")).toContainText("ALLOWED");
+  expect(await writes(request)).toHaveLength(0);
+});
+
 test("populated eight-gate readiness publishes once with a server idempotency key", async ({ page, request }) => {
   await page.goto(productPath);
   const gates = ["production", "dataset", "rights", "quality", "compliance", "contract", "evidence", "delivery"];
