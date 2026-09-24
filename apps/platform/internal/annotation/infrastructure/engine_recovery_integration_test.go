@@ -28,6 +28,14 @@ func TestExpiredAnnotationEngineSendRecoversOnlyToUnknown(t *testing.T) {
 		string(manifest), manifest, sha256Hex(manifest)); err != nil {
 		t.Fatalf("insert engine operation: %v", err)
 	}
+	attemptID := uuid.New()
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO annotation_engine_attempt(
+			id, workspace_id, operation_id, attempt_no, attempt_kind
+		) VALUES ($1,$2,$3,1,'SUBMIT')
+	`, attemptID, fx.workspaceID, operationID); err != nil {
+		t.Fatalf("insert durable submit attempt: %v", err)
+	}
 	if _, err := pool.Exec(ctx, `
 		UPDATE annotation_engine_operation
 		   SET status='SENDING',
@@ -71,7 +79,22 @@ func TestExpiredAnnotationEngineSendRecoversOnlyToUnknown(t *testing.T) {
 	`, operationID).Scan(&submitAttemptCount); err != nil {
 		t.Fatalf("count submit attempts: %v", err)
 	}
-	if submitAttemptCount != 0 {
-		t.Fatalf("recovery created %d submit attempts, want 0", submitAttemptCount)
+	if submitAttemptCount != 1 {
+		t.Fatalf("submit attempt count = %d, want 1", submitAttemptCount)
+	}
+
+	var outcome, diagnostic string
+	if err := pool.QueryRow(ctx, `
+		SELECT outcome, COALESCE(diagnostic_ref,'')
+		  FROM annotation_engine_attempt_outcome
+		 WHERE attempt_id=$1
+	`, attemptID).Scan(&outcome, &diagnostic); err != nil {
+		t.Fatalf("read recovered submit attempt outcome: %v", err)
+	}
+	if outcome != "UNKNOWN" {
+		t.Fatalf("recovered submit attempt outcome = %s, want UNKNOWN", outcome)
+	}
+	if !strings.Contains(diagnostic, "lease expired") {
+		t.Fatalf("recovery diagnostic = %q", diagnostic)
 	}
 }
