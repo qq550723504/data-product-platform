@@ -35,7 +35,7 @@ services:
       DISABLE_SIGNUP_WITHOUT_LINK: "1"
       LABEL_STUDIO_ENABLE_LEGACY_API_TOKEN: "true"
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8080/health || exit 1"]
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen(\'http://127.0.0.1:8080/\', timeout=2)\" >/dev/null 2>&1 || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 30
