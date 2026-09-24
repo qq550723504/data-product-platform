@@ -40,7 +40,7 @@ LABEL_STUDIO_TOKEN="$("${COMPOSE[@]}" exec -T label-studio \
 test -n "$LABEL_STUDIO_TOKEN"
 export TEST_LABEL_STUDIO_URL=http://127.0.0.1:18082
 export TEST_LABEL_STUDIO_TOKEN="$LABEL_STUDIO_TOKEN"
-for image in postgres:16-alpine redis:7-alpine quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z \
+for image in postgres:16-alpine redis:7-alpine minio/minio@sha256:a1ea29fa28355559ef137d71fc570e508a214ec84ff8083e39bc5428980b015e \
   heartexlabs/label-studio@sha256:aa461572e8f9d86a1bf9520c1db620204e86160fd2f80dd7e9d40ac84a8828ea; do
   docker image inspect "$image" --format '{{json .RepoDigests}}'
 done > "$ARTIFACTS/images.txt"
