@@ -616,12 +616,44 @@ func (r *PostgresRepository) RequiredLineageInputs(ctx context.Context, target u
 }
 
 func (r *PostgresRepository) RequiredLineageInputsTx(ctx context.Context, tx pgx.Tx, target uuid.UUID) ([]LineageInput, error) {
+	return RequiredLineageInputsTx(ctx, tx, target)
+}
+
+func RequiredLineageInputsTx(ctx context.Context, tx pgx.Tx, target uuid.UUID) ([]LineageInput, error) {
 	rows, err := tx.Query(ctx, requiredResourcesSQL, target)
 	if err != nil {
 		return nil, fmt.Errorf("resolve required rights resources in transaction: %w", err)
 	}
 	defer rows.Close()
 	return scanRequiredRightsResources(rows)
+}
+
+func EffectiveRightsInputsTx(ctx context.Context, tx pgx.Tx, snapshotID uuid.UUID) ([]LineageInput, error) {
+	rows, err := tx.Query(ctx, `
+		SELECT dependency_kind, input_dataset_version_id, data_resource_id
+		FROM effective_rights_input
+		WHERE snapshot_id=$1
+		ORDER BY dependency_kind, COALESCE(input_dataset_version_id::text,''), data_resource_id
+	`, snapshotID)
+	if err != nil {
+		return nil, fmt.Errorf("resolve frozen Effective Rights resources: %w", err)
+	}
+	defer rows.Close()
+	return scanRequiredRightsResources(rows)
+}
+
+func HashRequiredResourceMembership(inputs []LineageInput) string {
+	parts := make([]string, 0, len(inputs))
+	for _, input := range inputs {
+		parts = append(parts, strings.Join([]string{
+			strings.TrimSpace(input.DependencyKind),
+			input.DatasetVersionID.String(),
+			input.DataResourceID.String(),
+		}, "|"))
+	}
+	sort.Strings(parts)
+	h := sha256.Sum256([]byte(strings.Join(parts, "\n")))
+	return hex.EncodeToString(h[:])
 }
 
 func scanRequiredRightsResources(rows pgx.Rows) ([]LineageInput, error) {
