@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -28,6 +29,9 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
+	rightsdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
+	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 )
@@ -103,6 +107,7 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	inputChecksum := goldTestSHA256(inputCSV)
 
 	resourceID := uuid.New()
+	inputResourceID := uuid.New()
 	inputDatasetID := uuid.New()
 	inputVersionID := uuid.New()
 	qualityID := uuid.New()
@@ -128,12 +133,14 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 
 	goldSQL(t, ctx, pool, `
 		INSERT INTO data_resource(id, workspace_id, code, name, resource_type, lifecycle_status)
-		VALUES ($1,$2,$3,'gold annotation contribution','OTHER','READY')
-	`, resourceID, workspaceID, "GOLD-ANN-"+suffix)
+		VALUES
+			($1,$3,$4,'gold annotation contribution','OTHER','READY'),
+			($2,$3,$5,'gold input source','TABLE_LIKE','READY')
+	`, resourceID, inputResourceID, workspaceID, "GOLD-ANN-"+suffix, "GOLD-SRC-"+suffix)
 	goldSQL(t, ctx, pool, `
-		INSERT INTO dataset(id, workspace_id, code, name, dataset_type)
-		VALUES ($1,$2,$3,'gold input','CURATED')
-	`, inputDatasetID, workspaceID, "GOLD-IN-"+suffix)
+		INSERT INTO dataset(id, workspace_id, code, name, dataset_type, source_resource_id)
+		VALUES ($1,$2,$3,'gold input','CURATED',$4)
+	`, inputDatasetID, workspaceID, "GOLD-IN-"+suffix, inputResourceID)
 	goldSQL(t, ctx, pool, `
 		INSERT INTO dataset_version(
 			id, dataset_id, version_no, status, storage_type, storage_uri,
@@ -404,6 +411,67 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 		SELECT count(*) FROM quality_result
 		WHERE dataset_version_id=$1 AND rule_set_ref=$2
 	`, inputVersionID, qualityapp.GoldRuleSetRef)
+
+	rightsRepo := rightsinfra.NewPostgresRepository(pool)
+	requiredResources, err := rightsRepo.RequiredLineageInputs(ctx, output.ID)
+	if err != nil {
+		t.Fatalf("resolve Gold required rights resources: %v", err)
+	}
+	if len(requiredResources) != 2 {
+		t.Fatalf("required Gold resources=%+v want 2", requiredResources)
+	}
+	var sawDataset, sawAnnotationContribution bool
+	for _, required := range requiredResources {
+		switch required.DependencyKind {
+		case rightsdomain.EffectiveDependencyDatasetVersion:
+			if required.DatasetVersionID != inputVersionID || required.DataResourceID != inputResourceID || !required.ResourceMapped {
+				t.Fatalf("dataset required resource=%+v", required)
+			}
+			sawDataset = true
+		case rightsdomain.EffectiveDependencyAnnotationContribution:
+			if required.DatasetVersionID != uuid.Nil || required.DataResourceID != resourceID || !required.ResourceMapped {
+				t.Fatalf("annotation contribution required resource=%+v", required)
+			}
+			sawAnnotationContribution = true
+		default:
+			t.Fatalf("unexpected Gold dependency kind %q", required.DependencyKind)
+		}
+	}
+	if !sawDataset || !sawAnnotationContribution {
+		t.Fatalf("typed Gold required resources missing dataset=%v annotation=%v", sawDataset, sawAnnotationContribution)
+	}
+
+	rightsService := rightsapp.NewService(txManager, rightsRepo)
+	effectiveRights, err := rightsService.ComputeEffectiveRights(ctx, rightsapp.ComputeEffectiveRightsCommand{
+		WorkspaceID:            workspaceID,
+		TargetDatasetVersionID: output.ID,
+		ConsumerRef:            "GOLD-PILOT-CONSUMER",
+		Purpose:                "GOLD-PILOT",
+		AsOf:                   time.Now().UTC(),
+		AsOfProvided:           true,
+		ActivityID:             ptrUUID(uuid.New()),
+		ActorID:                &actorID,
+		TraceID:                "gold-required-resources",
+	})
+	if err != nil {
+		t.Fatalf("compute Gold effective rights: %v", err)
+	}
+	if effectiveRights.Status != "FINALIZED" || len(effectiveRights.Inputs) != 2 {
+		t.Fatalf("effective Gold rights status/inputs=%s/%+v", effectiveRights.Status, effectiveRights.Inputs)
+	}
+	for _, action := range effectiveRights.Actions {
+		if action.Decision != rightsdomain.DecisionNotAllowed || action.BlockingInputID == nil {
+			t.Fatalf("Gold effective rights action should fail closed without provenance: %+v", action)
+		}
+	}
+	goldCount(t, ctx, pool, 1, `
+		SELECT count(*)
+		FROM effective_rights_input
+		WHERE snapshot_id=$1
+		  AND dependency_kind='ANNOTATION_CONTRIBUTION_RESOURCE'
+		  AND input_dataset_version_id IS NULL
+		  AND data_resource_id=$2
+	`, effectiveRights.ID, resourceID)
 }
 
 func goldSQL(t *testing.T, ctx context.Context, pool *pgxpool.Pool, query string, args ...any) {
@@ -427,4 +495,9 @@ func goldCount(t *testing.T, ctx context.Context, pool *pgxpool.Pool, want int, 
 func goldTestSHA256(value []byte) string {
 	sum := sha256.Sum256(value)
 	return hex.EncodeToString(sum[:])
+}
+
+
+func ptrUUID(value uuid.UUID) *uuid.UUID {
+	return &value
 }
