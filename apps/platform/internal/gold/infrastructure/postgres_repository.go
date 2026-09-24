@@ -29,15 +29,15 @@ type BuildRequest struct {
 }
 
 type FrozenMember struct {
-	TaskID                 uuid.UUID
-	SourceItemRef          string
-	SourceContentSHA256    string
-	DecisionID             uuid.UUID
-	Outcome                string
-	ReviewedResultID       *uuid.UUID
-	SelectedResultID       *uuid.UUID
-	SelectedResultSHA256   string
-	SelectedPayload        []byte
+	TaskID               uuid.UUID
+	SourceItemRef        string
+	SourceContentSHA256  string
+	DecisionID           uuid.UUID
+	Outcome              string
+	ReviewedResultID     *uuid.UUID
+	SelectedResultID     *uuid.UUID
+	SelectedResultSHA256 string
+	SelectedPayload      []byte
 }
 
 type ProductionBinding struct {
