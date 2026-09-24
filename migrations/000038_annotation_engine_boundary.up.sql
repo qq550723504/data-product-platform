@@ -312,6 +312,33 @@ CREATE TRIGGER trg_annotation_engine_actor_binding_immutable
 BEFORE UPDATE OR DELETE ON annotation_engine_actor_binding
 FOR EACH ROW EXECUTE FUNCTION prevent_annotation_engine_append_only_mutation();
 
+CREATE OR REPLACE FUNCTION guard_annotation_snapshot_engine_settlement()
+RETURNS trigger AS $snapshot_engine_settlement$
+BEGIN
+    IF OLD.status='BUILDING' AND NEW.status='FINALIZED' THEN
+        PERFORM id
+          FROM annotation_engine_operation
+         WHERE campaign_id=NEW.campaign_id
+         ORDER BY id
+         FOR UPDATE;
+
+        IF EXISTS (
+            SELECT 1
+              FROM annotation_engine_operation
+             WHERE campaign_id=NEW.campaign_id
+               AND status IN ('PENDING','SENDING','UNKNOWN')
+        ) THEN
+            RAISE EXCEPTION 'annotation snapshot cannot finalize with unsettled engine operations';
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$snapshot_engine_settlement$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_annotation_snapshot_engine_settlement
+BEFORE UPDATE OF status ON annotation_snapshot
+FOR EACH ROW EXECUTE FUNCTION guard_annotation_snapshot_engine_settlement();
+
 CREATE OR REPLACE FUNCTION validate_annotation_engine_attempt_outcome_insert()
 RETURNS trigger AS $attempt_outcome$
 BEGIN
