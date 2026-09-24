@@ -435,6 +435,16 @@ func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineC
 			if !ok {
 				continue
 			}
+			externalAuthorRef, ok := labelStudioActorRef(annotation.CompletedBy)
+			if !ok {
+				return annotationapp.EngineResultPage{}, annotationapp.NewAnnotationEngineError(
+					annotationapp.ErrAnnotationEngineInvalidResponse,
+					"normalize annotation author",
+					false,
+					0,
+					nil,
+				)
+			}
 			payload, _ := json.Marshal(map[string]string{"label": label})
 			sum := sha256.Sum256(payload)
 			results = append(results, annotationapp.EngineResultObservation{
@@ -442,7 +452,7 @@ func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineC
 				ExternalTaskID:         task.ID.String(),
 				ExternalAnnotationID:   annotation.ID.String(),
 				ExternalRevision:       strings.TrimSpace(annotation.UpdatedAt),
-				AuthorRef:              fmt.Sprint(annotation.CompletedBy),
+				ExternalAuthorRef:      externalAuthorRef,
 				CanonicalPayload:       payload,
 				CanonicalPayloadSHA256: hex.EncodeToString(sum[:]),
 				NormalizerVersion:      "labelstudio-single-label-v1",
@@ -460,6 +470,29 @@ func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineC
 		next = &annotationapp.EngineResultCursor{Offset: cursor.Offset + 100}
 	}
 	return annotationapp.EngineResultPage{Results: results, NextCursor: next}, nil
+}
+
+func labelStudioActorRef(value any) (string, bool) {
+	switch actor := value.(type) {
+	case json.Number:
+		ref := strings.TrimSpace(actor.String())
+		return ref, ref != ""
+	case string:
+		ref := strings.TrimSpace(actor)
+		return ref, ref != ""
+	case float64:
+		ref := strconv.FormatInt(int64(actor), 10)
+		return ref, actor == float64(int64(actor))
+	case map[string]any:
+		for _, key := range []string{"id", "pk"} {
+			if candidate, ok := actor[key]; ok {
+				if ref, ok := labelStudioActorRef(candidate); ok {
+					return ref, true
+				}
+			}
+		}
+	}
+	return "", false
 }
 
 func remoteTaskMatches(
