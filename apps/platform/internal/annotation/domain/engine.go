@@ -17,7 +17,8 @@ const (
 	EngineOperationUnknown  = "UNKNOWN"
 	EngineOperationMatched  = "MATCHED"
 	EngineOperationRejected = "REJECTED"
-	EngineOperationConflict = "CONFLICT"
+	EngineOperationConflict         = "CONFLICT"
+	EngineOperationManualResolution = "MANUAL_RESOLUTION"
 
 	EngineAttemptSubmit = "SUBMIT"
 	EngineAttemptLookup = "LOOKUP"
@@ -170,7 +171,8 @@ func validEngineOperationKind(value string) bool {
 func validEngineOperationStatus(value string) bool {
 	switch value {
 	case EngineOperationPending, EngineOperationSending, EngineOperationUnknown,
-		EngineOperationMatched, EngineOperationRejected, EngineOperationConflict:
+		EngineOperationMatched, EngineOperationRejected, EngineOperationConflict,
+		EngineOperationManualResolution:
 		return true
 	default:
 		return false
