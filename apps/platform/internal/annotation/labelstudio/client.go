@@ -269,11 +269,30 @@ func (c *Client) SubmitTasks(ctx context.Context, req annotationapp.EngineSubmit
 		}
 		external[req.Tasks[i].TaskID] = externalID.String()
 	}
-	return annotationapp.EngineSubmission{
-		State:           annotationapp.EngineLookupMatched,
-		RequestID:       req.RequestID,
-		ExternalTaskIDs: external,
-	}, nil
+	verified, err := c.LookupSubmission(ctx, annotationapp.EngineLookupRequest{
+		WorkspaceID:        req.WorkspaceID,
+		CampaignID:         req.CampaignID,
+		Binding:            req.Binding,
+		RequestID:          req.RequestID,
+		RequestFingerprint: req.RequestFingerprint,
+		Tasks:              req.Tasks,
+	})
+	if err != nil {
+		return annotationapp.EngineSubmission{}, err
+	}
+	if verified.State != annotationapp.EngineLookupMatched {
+		return verified, nil
+	}
+	for taskID, importedID := range external {
+		if verified.ExternalTaskIDs[taskID] != importedID {
+			return annotationapp.EngineSubmission{
+				State:         annotationapp.EngineLookupConflict,
+				RequestID:     req.RequestID,
+				DiagnosticRef: "import response disagrees with persisted correlated task",
+			}, nil
+		}
+	}
+	return verified, nil
 }
 
 func (c *Client) LookupSubmission(ctx context.Context, req annotationapp.EngineLookupRequest) (annotationapp.EngineSubmission, error) {
@@ -297,11 +316,13 @@ func (c *Client) LookupSubmission(ctx context.Context, req annotationapp.EngineL
 			"project":   []string{req.Binding.ExternalProjectID},
 			"page":      []string{strconv.Itoa(pageNumber)},
 			"page_size": []string{"100"},
+			"fields":    []string{"all"},
 		}
 		var page struct {
 			Total int `json:"total"`
 			Tasks []struct {
 				ID   json.Number    `json:"id"`
+				Data map[string]any `json:"data"`
 				Meta map[string]any `json:"meta"`
 			} `json:"tasks"`
 			Next any `json:"next"`
@@ -322,6 +343,13 @@ func (c *Client) LookupSubmission(ctx context.Context, req annotationapp.EngineL
 					State:         annotationapp.EngineLookupConflict,
 					RequestID:     req.RequestID,
 					DiagnosticRef: "unexpected correlated task",
+				}, nil
+			}
+			if !remoteTaskMatches(task, remote.Data, remote.Meta) {
+				return annotationapp.EngineSubmission{
+					State:         annotationapp.EngineLookupConflict,
+					RequestID:     req.RequestID,
+					DiagnosticRef: "correlated task payload mismatch",
 				}, nil
 			}
 			if previous, exists := matched[task.TaskID]; exists && previous != remote.ID.String() {
@@ -432,6 +460,24 @@ func (c *Client) FetchResults(ctx context.Context, binding annotationapp.EngineC
 		next = &annotationapp.EngineResultCursor{Offset: cursor.Offset + 100}
 	}
 	return annotationapp.EngineResultPage{Results: results, NextCursor: next}, nil
+}
+
+func remoteTaskMatches(
+	task annotationapp.EngineTask,
+	data map[string]any,
+	meta map[string]any,
+) bool {
+	text, _ := data["text"].(string)
+	sourceItemRef, _ := meta["core_source_item_ref"].(string)
+	sourceSHA256, _ := meta["core_source_sha256"].(string)
+	taskTextSHA256, _ := meta["core_task_text_sha256"].(string)
+	correlationKey, _ := meta["core_correlation_key"].(string)
+
+	return text == task.TaskText &&
+		sourceItemRef == task.SourceItemRef &&
+		sourceSHA256 == task.SourceSHA256 &&
+		taskTextSHA256 == task.TaskTextSHA256 &&
+		correlationKey == task.CorrelationKey
 }
 
 func singleChoiceLabel(result []any) (string, bool) {
