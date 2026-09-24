@@ -112,7 +112,7 @@ type AnnotationEnginePort interface {
 	LookupCampaignBinding(context.Context, EngineCampaignRequest) (EngineCampaignLookup, error)
 	SubmitTasks(context.Context, EngineSubmitRequest) (EngineSubmission, error)
 	LookupSubmission(context.Context, EngineLookupRequest) (EngineSubmission, error)
-	FetchResults(context.Context, EngineCampaignBinding, EngineResultCursor) (EngineResultPage, error)
+	FetchResults(context.Context, EngineLookupRequest, EngineResultCursor) (EngineResultPage, error)
 }
 
 type AnnotationEngineError struct {
