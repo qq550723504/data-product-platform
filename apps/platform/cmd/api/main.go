@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
+	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
+	annotationhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/transport/http"
 	certificationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
 	certificationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
 	certificationhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/transport/http"
@@ -194,6 +197,10 @@ func main() {
 	}
 	entityHandler := entityhttp.NewHandler(entityService, entityRepo, humanDecisionResolver)
 
+	annotationRepo := annotationinfra.NewRepository(db)
+	annotationService := annotationapp.NewService(txManager, annotationRepo, nil)
+	annotationHandler := annotationhttp.NewHandler(annotationService, humanDecisionResolver)
+
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
 	workflowVersionService := workflowapp.NewWorkflowVersionService(txManager, workflowRepo)
 	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
@@ -278,6 +285,7 @@ func main() {
 			resourceHandler.Register,
 			datasetHandler.Register,
 			entityHandler.Register,
+			annotationHandler.Register,
 			workflowHandler.Register,
 			productHandler.Register,
 			productHandler.RegisterValidation,
