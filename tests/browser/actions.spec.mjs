@@ -44,7 +44,8 @@ for (const [decision, label, status] of [["confirm", "确认匹配", "CONFIRMED"
     const commands = await writes(request);
     expect(commands).toHaveLength(1);
     expect(commands[0].path).toBe(`/api/v1/entity-match-reviews/${ids.candidate}/${decision}`);
-    expect(commands[0].actor).toBe(ids.actor);
+    expect(commands[0].authorization).toBe("Bearer review-secret");
+    expect(commands[0].actor).toBeUndefined();
     expect(commands[0].body).toEqual({ reason: "已核对测试来源", expectedDecisionId: ids.decision });
   });
 }
