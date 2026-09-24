@@ -63,10 +63,10 @@ type EvaluateDatasetCertificationCommand struct {
 	TraceabilityEvidenceID    *uuid.UUID
 	EvidenceSnapshotID        *uuid.UUID
 	IdempotencyKey            string
-	ActorID          *uuid.UUID
-	TraceID          string
-	Now              time.Time
-	CostActivity     *cost.CertificationActivity
+	ActorID                   *uuid.UUID
+	TraceID                   string
+	Now                       time.Time
+	CostActivity              *cost.CertificationActivity
 }
 
 type ChangeCertificationDispositionCommand struct {
