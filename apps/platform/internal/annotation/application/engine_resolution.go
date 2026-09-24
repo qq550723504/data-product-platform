@@ -89,10 +89,15 @@ func (s *EngineService) persistEngineBindings(
 	}
 }
 
-func resolutionStatus(state EngineLookupState, err error) (string, string) {
+func resolutionStatus(state EngineLookupState, err error, attemptKind string) (string, string) {
 	if err != nil {
 		var engineErr *AnnotationEngineError
 		if errors.As(err, &engineErr) {
+			if attemptKind == annotationdomain.EngineAttemptSubmit &&
+				engineErr.Retryable &&
+				!engineErr.OutcomeUncertain {
+				return annotationdomain.EngineOperationPending, annotationdomain.EngineAttemptFailedPreSend
+			}
 			if engineErr.OutcomeUncertain || engineErr.Retryable {
 				return annotationdomain.EngineOperationUnknown, annotationdomain.EngineAttemptUnknown
 			}
