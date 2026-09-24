@@ -44,6 +44,7 @@ func NewHandlerWithCost(service *application.Service, repo *infrastructure.Postg
 
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/dataset-versions/{versionId}/quality-checks", h.run)
+	mux.HandleFunc("POST /api/v1/dataset-versions/{versionId}/gold-quality-checks", h.runGold)
 	mux.HandleFunc("GET /api/v1/quality-results/{resultId}", h.get)
 	mux.HandleFunc("GET /api/v1/quality-assessments/{assessmentId}", h.getAssessment)
 	mux.HandleFunc("GET /api/v1/quality-assessments/{assessmentId}/report", h.getReport)
@@ -54,6 +55,11 @@ func (h *Handler) Register(mux *http.ServeMux) {
 type runRequest struct {
 	WorkspaceID         string `json:"workspaceId"`
 	RuleSetRef          string `json:"ruleSetRef"`
+	AssessmentAttemptID string `json:"assessmentAttemptId"`
+}
+
+type runGoldRequest struct {
+	WorkspaceID         string `json:"workspaceId"`
 	AssessmentAttemptID string `json:"assessmentAttemptId"`
 }
 
@@ -116,6 +122,60 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		httpserver.WriteError(w, r, http.StatusBadRequest, "QUALITY_CHECK_FAILED", err.Error(), nil)
+		return
+	}
+	writeJSON(w, http.StatusCreated, resultResponse(result))
+}
+
+func (h *Handler) runGold(w http.ResponseWriter, r *http.Request) {
+	versionID, err := uuid.Parse(r.PathValue("versionId"))
+	if err != nil || versionID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DATASET_VERSION_ID", "versionId must be a non-nil UUID", nil)
+		return
+	}
+	var req runGoldRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_JSON", "invalid JSON request", nil)
+		return
+	}
+	workspaceID, err := uuid.Parse(strings.TrimSpace(req.WorkspaceID))
+	if err != nil || workspaceID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_WORKSPACE_ID", "workspaceId must be a non-nil UUID", nil)
+		return
+	}
+	attemptID, err := uuid.Parse(strings.TrimSpace(req.AssessmentAttemptID))
+	if err != nil || attemptID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ASSESSMENT_ATTEMPT_ID", "assessmentAttemptId must be a non-nil UUID", nil)
+		return
+	}
+	actorID, err := parseActorID(r)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
+		return
+	}
+
+	result, err := h.service.RunGold(r.Context(), application.GoldRunCommand{
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    versionID,
+		AssessmentAttemptID: attemptID,
+		ActorID:             actorID,
+		TraceID:             httpserver.RequestID(r.Context()),
+	})
+	if err != nil {
+		switch {
+		case errors.Is(err, application.ErrAssessmentAttemptInProgress):
+			httpserver.WriteError(w, r, http.StatusConflict, "QUALITY_ASSESSMENT_ATTEMPT_IN_PROGRESS", "assessmentAttemptId is already being evaluated", nil)
+		case errors.Is(err, application.ErrAssessmentAttemptFailed):
+			httpserver.WriteError(w, r, http.StatusConflict, "QUALITY_ASSESSMENT_ATTEMPT_FAILED", "assessmentAttemptId already has a failed evaluation", nil)
+		case errors.Is(err, datasetdomain.ErrDatasetWorkspace):
+			httpserver.WriteError(w, r, http.StatusBadRequest, "DATASET_WORKSPACE_MISMATCH", "the DatasetVersion must belong to the declared workspace", nil)
+		case errors.Is(err, application.ErrGoldQualityNotConfigured):
+			httpserver.WriteError(w, r, http.StatusServiceUnavailable, "GOLD_QUALITY_NOT_CONFIGURED", "formal Gold quality assessment is not configured", nil)
+		case errors.Is(err, application.ErrGoldProductionProof):
+			httpserver.WriteError(w, r, http.StatusConflict, "GOLD_PRODUCTION_PROOF_INVALID", "formal Gold quality requires an exact FINALIZED production binding", nil)
+		default:
+			httpserver.WriteError(w, r, http.StatusBadRequest, "GOLD_QUALITY_CHECK_FAILED", err.Error(), nil)
+		}
 		return
 	}
 	writeJSON(w, http.StatusCreated, resultResponse(result))
