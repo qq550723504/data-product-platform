@@ -41,6 +41,8 @@ type UploadVersionService struct {
 	store ObjectStore
 }
 
+type VersionPublishFinalizer func(context.Context, pgx.Tx, domain.DatasetVersion) error
+
 func NewUploadVersionService(tx *transaction.Manager, repo *infrastructure.PostgresRepository, store ObjectStore) *UploadVersionService {
 	return &UploadVersionService{tx: tx, repo: repo, store: store}
 }
@@ -61,6 +63,25 @@ func NewUploadVersionService(tx *transaction.Manager, repo *infrastructure.Postg
 // Execution share the row, so nothing may be published on the strength of the
 // state this call allocated.
 func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionCommand) (domain.DatasetVersion, error) {
+	return s.handle(ctx, cmd, nil)
+}
+
+func (s *UploadVersionService) HandleWithFinalizer(
+	ctx context.Context,
+	cmd UploadVersionCommand,
+	finalizer VersionPublishFinalizer,
+) (domain.DatasetVersion, error) {
+	if finalizer == nil {
+		return domain.DatasetVersion{}, fmt.Errorf("dataset version publish finalizer is required")
+	}
+	return s.handle(ctx, cmd, finalizer)
+}
+
+func (s *UploadVersionService) handle(
+	ctx context.Context,
+	cmd UploadVersionCommand,
+	finalizer VersionPublishFinalizer,
+) (domain.DatasetVersion, error) {
 	if cmd.GeneratedByExecutionID != nil && cmd.GeneratedByEntityMatchJobID != nil {
 		return domain.DatasetVersion{}, fmt.Errorf("dataset version cannot have both execution and entity-match producers")
 	}
@@ -136,6 +157,14 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 	}
 	// Replay of an already published output: no object write, no new facts.
 	if alreadyPublished {
+		if finalizer == nil {
+			return version, nil
+		}
+		if err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+			return finalizer(ctx, tx, version)
+		}); err != nil {
+			return domain.DatasetVersion{}, err
+		}
 		return version, nil
 	}
 
@@ -192,6 +221,11 @@ func (s *UploadVersionService) Handle(ctx context.Context, cmd UploadVersionComm
 
 		if err := s.repo.SetReady(ctx, tx, version); err != nil {
 			return err
+		}
+		if finalizer != nil {
+			if err := finalizer(ctx, tx, version); err != nil {
+				return err
+			}
 		}
 
 		event, err := outbox.NewEvent("DATASET_VERSION", version.ID, "DatasetVersionCreated", map[string]any{
