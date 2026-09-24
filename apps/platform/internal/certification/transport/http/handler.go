@@ -358,7 +358,6 @@ func writeJSON(w http.ResponseWriter, status int, value any) {
 	_ = json.NewEncoder(w).Encode(value)
 }
 
-
 func parseRequiredUUID(value string) (uuid.UUID, error) {
 	id, err := uuid.Parse(strings.TrimSpace(value))
 	if err != nil || id == uuid.Nil {
