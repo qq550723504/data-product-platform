@@ -31,7 +31,6 @@ func TestLabelStudioLiveReference(t *testing.T) {
 	if err != nil {
 		t.Fatalf("new Label Studio client: %v", err)
 	}
-	accessToken := refreshPersonalAccessToken(t, httpClient, baseURL, token)
 
 	workspaceID := uuid.New()
 	campaignID := uuid.New()
@@ -52,7 +51,7 @@ func TestLabelStudioLiveReference(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create project: %v", err)
 	}
-	defer deleteProject(t, httpClient, baseURL, accessToken, binding.ExternalProjectID)
+	defer deleteProject(t, httpClient, baseURL, token, binding.ExternalProjectID)
 
 	lookup, err := client.LookupCampaignBinding(context.Background(), projectRequest)
 	if err != nil {
@@ -155,43 +154,6 @@ func TestLabelStudioLiveReference(t *testing.T) {
 	}
 }
 
-func refreshPersonalAccessToken(
-	t *testing.T,
-	client *http.Client,
-	baseURL, refreshToken string,
-) string {
-	t.Helper()
-	body, err := json.Marshal(map[string]string{"refresh": refreshToken})
-	if err != nil {
-		t.Fatalf("marshal PAT refresh request: %v", err)
-	}
-	request, err := http.NewRequest(
-		http.MethodPost,
-		strings.TrimRight(baseURL, "/")+"/api/token/refresh",
-		bytes.NewReader(body),
-	)
-	if err != nil {
-		t.Fatalf("create PAT refresh request: %v", err)
-	}
-	request.Header.Set("Content-Type", "application/json")
-	response, err := client.Do(request)
-	if err != nil {
-		t.Fatalf("refresh Label Studio PAT: %v", err)
-	}
-	defer response.Body.Close()
-	raw, _ := io.ReadAll(io.LimitReader(response.Body, 1<<20))
-	if response.StatusCode < 200 || response.StatusCode >= 300 {
-		t.Fatalf("refresh Label Studio PAT status=%d body=%s", response.StatusCode, string(raw))
-	}
-	var payload struct {
-		Access string `json:"access"`
-	}
-	if err := json.Unmarshal(raw, &payload); err != nil || strings.TrimSpace(payload.Access) == "" {
-		t.Fatalf("decode Label Studio access token: %v body=%s", err, string(raw))
-	}
-	return strings.TrimSpace(payload.Access)
-}
-
 func createAnnotation(
 	t *testing.T,
 	client *http.Client,
@@ -222,7 +184,7 @@ func createAnnotation(
 	if err != nil {
 		t.Fatalf("create annotation request: %v", err)
 	}
-	request.Header.Set("Authorization", "Bearer "+token)
+	request.Header.Set("Authorization", "Token "+token)
 	request.Header.Set("Content-Type", "application/json")
 	response, err := client.Do(request)
 	if err != nil {
@@ -246,7 +208,7 @@ func deleteProject(t *testing.T, client *http.Client, baseURL, token, projectID 
 		t.Logf("create project cleanup request: %v", err)
 		return
 	}
-	request.Header.Set("Authorization", "Bearer "+token)
+	request.Header.Set("Authorization", "Token "+token)
 	response, err := client.Do(request)
 	if err != nil {
 		t.Logf("delete live Label Studio project: %v", err)
