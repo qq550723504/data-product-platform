@@ -649,12 +649,12 @@ func (r *CertificationRepository) BindTrustedEvaluationFactsTx(ctx context.Conte
 		}
 		gold.Finalized =
 			bindingStatus == "FINALIZED" &&
-			snapshotStatus == "FINALIZED" &&
-			gold.WorkspaceID == input.WorkspaceID &&
-			gold.DatasetVersionID == input.DatasetVersionID &&
-			gold.AnnotationSnapshotRoot == snapshotRoot &&
-			gold.SchemaContentSHA256 == campaignSchemaHash &&
-			gold.TaxonomyContentSHA256 == campaignTaxonomyHash
+				snapshotStatus == "FINALIZED" &&
+				gold.WorkspaceID == input.WorkspaceID &&
+				gold.DatasetVersionID == input.DatasetVersionID &&
+				gold.AnnotationSnapshotRoot == snapshotRoot &&
+				gold.SchemaContentSHA256 == campaignSchemaHash &&
+				gold.TaxonomyContentSHA256 == campaignTaxonomyHash
 		input.Gold = &gold
 	}
 
