@@ -61,6 +61,23 @@ test("Gold DatasetVersion explains frozen production proof and current delivery"
   await expect(proof).toContainText("8".repeat(64));
   await expect(proof).toContainText(ids.goldAssessment);
   await expect(proof).toContainText(ids.goldCertification);
+
+  const chain = page.getByTestId("gold-production-chain");
+  await expect(chain).toBeVisible();
+  await expect(chain).toContainText("Gold Production Chain");
+  await expect(chain).toContainText("GOLD-PILOT / PROCESS");
+  await expect(chain).toContainText("gold/schema / 1");
+  await expect(chain).toContainText("gold/taxonomy / 1");
+  await expect(chain).toContainText("row:1");
+  await expect(chain).toContainText("annotator:label-studio-17");
+  await expect(chain).toContainText("reviewer:gold-fixture");
+  await expect(chain).toContainText("evidence is sufficient");
+  await expect(chain).toContainText("label-studio/project/123");
+  await expect(chain).toContainText("task 456");
+  await expect(chain).toContainText("annotation 789");
+  await expect(chain).toContainText("row:2");
+  await expect(chain).toContainText("corrected provider label");
+
   await expect(page.getByRole("heading", { name: "Current Delivery Eligibility" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "预检结果" })).toBeVisible();
   const eligibility = page.getByRole("heading", { name: "预检结果" }).locator("..");
