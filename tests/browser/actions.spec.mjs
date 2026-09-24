@@ -77,6 +77,8 @@ test("Gold DatasetVersion explains frozen production proof and current delivery"
   await expect(chain).toContainText("annotation 789");
   await expect(chain).toContainText("row:2");
   await expect(chain).toContainText("corrected provider label");
+  await expect(chain).toContainText("task 457");
+  await expect(chain).toContainText("annotation 790");
 
   await expect(page.getByRole("heading", { name: "Current Delivery Eligibility" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "预检结果" })).toBeVisible();
