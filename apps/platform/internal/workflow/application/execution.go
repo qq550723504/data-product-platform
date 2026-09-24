@@ -566,7 +566,6 @@ func hashExecutionRequest(payload any) (string, error) {
 	return hex.EncodeToString(hash[:]), nil
 }
 
-
 func workflowRequiresTargetPeriod(definition map[string]any) bool {
 	spec, ok := definition["spec"].(map[string]any)
 	if !ok {
