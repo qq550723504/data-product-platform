@@ -33,6 +33,9 @@ import (
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	entitysplink "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/splink"
 	entityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/transport/http"
+	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
+	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
+	goldhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
 	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
@@ -205,6 +208,16 @@ func main() {
 	workflowVersionService := workflowapp.NewWorkflowVersionService(txManager, workflowRepo)
 	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
 	workflowHandler := workflowhttp.NewHandler(workflowVersionService, executionService, workflowRepo)
+	goldService := goldapp.NewService(
+		txManager,
+		goldinfra.NewPostgresRepository(db),
+		workflowRepo,
+		annotationRepo,
+		datasetRepo,
+		datasetWriter,
+		objectStore,
+	)
+	goldHandler := goldhttp.NewHandler(goldService)
 
 	productRepo := productinfra.NewPostgresRepository(db)
 	productService := productapp.NewService(txManager, productRepo)
@@ -287,6 +300,7 @@ func main() {
 			entityHandler.Register,
 			annotationHandler.Register,
 			workflowHandler.Register,
+			goldHandler.Register,
 			productHandler.Register,
 			productHandler.RegisterValidation,
 			productHandler.RegisterPublish,
