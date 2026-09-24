@@ -787,6 +787,9 @@ func (s *Service) FinalizeAnnotationSnapshot(
 		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignActive {
 			return annotationdomain.ErrInvalidSnapshot
 		}
+		if err := s.repo.LockAndRequireEngineOperationsSettledTx(ctx, tx, cmd.CampaignID); err != nil {
+			return err
+		}
 		if err := s.repo.LockTasksTx(ctx, tx, cmd.CampaignID); err != nil {
 			return err
 		}
