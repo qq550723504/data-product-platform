@@ -35,7 +35,7 @@ import (
 
 const (
 	ProcessorGoldDatasetBuilderV1 = "GOLD_DATASET_BUILDER_V1"
-	createBuildCommandType         = "GOLD.CREATE_BUILD"
+	createBuildCommandType        = "GOLD.CREATE_BUILD"
 )
 
 var (
@@ -208,28 +208,28 @@ func (s *Service) CreateBuild(ctx context.Context, cmd CreateBuildCommand) (work
 			return err
 		}
 		if _, err := evidence.Append(ctx, tx, evidence.Record{
-			WorkspaceID: cmd.WorkspaceID,
+			WorkspaceID:  cmd.WorkspaceID,
 			EvidenceType: "GOLD_BUILD_REQUEST_FROZEN",
-			Title: "Gold build request frozen",
-			SourceType: "EXECUTION",
-			SourceID: &execution.ID,
+			Title:        "Gold build request frozen",
+			SourceType:   "EXECUTION",
+			SourceID:     &execution.ID,
 			Metadata: map[string]any{
 				"inputDatasetVersionId": cmd.InputDatasetVersionID,
-				"inputCertificationId": cmd.InputCertificationID,
-				"annotationCampaignId": cmd.AnnotationCampaignID,
-				"annotationSnapshotId": cmd.AnnotationSnapshotID,
-				"snapshotRootHash": snapshot.RootHash,
-				"requestFingerprint": fingerprint,
+				"inputCertificationId":  cmd.InputCertificationID,
+				"annotationCampaignId":  cmd.AnnotationCampaignID,
+				"annotationSnapshotId":  cmd.AnnotationSnapshotID,
+				"snapshotRootHash":      snapshot.RootHash,
+				"requestFingerprint":    fingerprint,
 			},
 			CreatedBy: cmd.ActorID,
 		}, evidence.Relation{ObjectType: "EXECUTION", ObjectID: execution.ID, RelationType: "GOLD_BUILD_REQUEST"}); err != nil {
 			return err
 		}
 		event, err := outbox.NewEvent("EXECUTION", execution.ID, "ExecutionQueued", map[string]any{
-			"executionId": execution.ID,
-			"workflowVersionId": execution.WorkflowVersionID,
-			"status": execution.Status,
-			"attempt": execution.Attempt,
+			"executionId":            execution.ID,
+			"workflowVersionId":      execution.WorkflowVersionID,
+			"status":                 execution.Status,
+			"attempt":                execution.Attempt,
 			"outputDatasetVersionId": execution.OutputDatasetVersionID,
 		})
 		if err != nil {
@@ -240,16 +240,16 @@ func (s *Service) CreateBuild(ctx context.Context, cmd CreateBuildCommand) (work
 		}
 		if err := audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &cmd.WorkspaceID,
-			ActorType: actorType(cmd.ActorID),
-			ActorID: cmd.ActorID,
-			Action: "GOLD_BUILD_QUEUED",
-			ObjectType: "EXECUTION",
-			ObjectID: execution.ID,
+			ActorType:   actorType(cmd.ActorID),
+			ActorID:     cmd.ActorID,
+			Action:      "GOLD_BUILD_QUEUED",
+			ObjectType:  "EXECUTION",
+			ObjectID:    execution.ID,
 			AfterState: map[string]any{
-				"status": execution.Status,
+				"status":                execution.Status,
 				"inputDatasetVersionId": cmd.InputDatasetVersionID,
-				"annotationSnapshotId": cmd.AnnotationSnapshotID,
-				"snapshotRootHash": snapshot.RootHash,
+				"annotationSnapshotId":  cmd.AnnotationSnapshotID,
+				"snapshotRootHash":      snapshot.RootHash,
 			},
 			TraceID: cmd.TraceID,
 		}); err != nil {
@@ -279,12 +279,12 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 		}
 		return workflowapp.ProcessingResult{
 			OutputDatasetVersionID: existing.OutputDatasetVersionID,
-			EngineExecutionID: "gold:" + request.ExecutionID.String(),
+			EngineExecutionID:      "gold:" + request.ExecutionID.String(),
 			Metrics: map[string]any{
-				"outputRows": existing.OutputRowCount,
-				"bindingId": existing.ID,
+				"outputRows":      existing.OutputRowCount,
+				"bindingId":       existing.ID,
 				"bindingRootHash": existing.RootHash,
-				"outputReused": true,
+				"outputReused":    true,
 			},
 		}, nil
 	} else if !errors.Is(err, goldinfra.ErrNotFound) {
@@ -355,20 +355,20 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 	}
 	var binding goldinfra.ProductionBinding
 	outputVersion, err := s.datasetWriter.HandleWithFinalizer(ctx, datasetapp.UploadVersionCommand{
-		DatasetID: request.OutputDatasetID,
-		Filename: "gold-" + snapshot.ID.String() + ".csv",
-		ContentType: "text/csv; charset=utf-8",
-		Content: content,
-		TraceID: request.ExecutionID.String(),
+		DatasetID:              request.OutputDatasetID,
+		Filename:               "gold-" + snapshot.ID.String() + ".csv",
+		ContentType:            "text/csv; charset=utf-8",
+		Content:                content,
+		TraceID:                request.ExecutionID.String(),
 		GeneratedByExecutionID: &request.ExecutionID,
 		Metadata: map[string]any{
-			"goldCandidate": true,
-			"goldBuilder": ProcessorGoldDatasetBuilderV1,
-			"workflowVersionId": request.WorkflowVersion.ID,
-			"inputDatasetVersionId": buildRequest.InputDatasetVersionID,
-			"annotationSnapshotId": snapshot.ID,
+			"goldCandidate":          true,
+			"goldBuilder":            ProcessorGoldDatasetBuilderV1,
+			"workflowVersionId":      request.WorkflowVersion.ID,
+			"inputDatasetVersionId":  buildRequest.InputDatasetVersionID,
+			"annotationSnapshotId":   snapshot.ID,
 			"annotationSnapshotRoot": snapshot.RootHash,
-			"gateStatus": "PENDING_GOLD_QUALITY_AND_CERTIFICATION",
+			"gateStatus":             "PENDING_GOLD_QUALITY_AND_CERTIFICATION",
 		},
 	}, func(ctx context.Context, tx pgx.Tx, published datasetdomain.DatasetVersion) error {
 		if published.RowCount == nil || *published.RowCount != int64(outputRows) {
@@ -403,31 +403,31 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 		}
 		bindingID := built.ID
 		if _, err := evidence.Append(ctx, tx, evidence.Record{
-			WorkspaceID: request.WorkspaceID,
+			WorkspaceID:  request.WorkspaceID,
 			EvidenceType: "GOLD_PRODUCTION_BINDING_FINALIZED",
-			Title: "Gold production binding finalized",
-			SourceType: "EXECUTION",
-			SourceID: &request.ExecutionID,
+			Title:        "Gold production binding finalized",
+			SourceType:   "EXECUTION",
+			SourceID:     &request.ExecutionID,
 			Metadata: map[string]any{
-				"bindingId": bindingID,
-				"inputDatasetVersionId": inputVersion.ID,
+				"bindingId":              bindingID,
+				"inputDatasetVersionId":  inputVersion.ID,
 				"outputDatasetVersionId": published.ID,
-				"annotationSnapshotId": snapshot.ID,
-				"snapshotRootHash": snapshot.RootHash,
-				"bindingRootHash": built.RootHash,
-				"outputRowCount": outputRows,
+				"annotationSnapshotId":   snapshot.ID,
+				"snapshotRootHash":       snapshot.RootHash,
+				"bindingRootHash":        built.RootHash,
+				"outputRowCount":         outputRows,
 			},
 			CreatedBy: buildRequest.CreatedBy,
 		}, evidence.Relation{ObjectType: "DATASET_VERSION", ObjectID: published.ID, RelationType: "GOLD_PRODUCTION"}); err != nil {
 			return err
 		}
 		event, err := outbox.NewEvent("GOLD_PRODUCTION_BINDING", built.ID, "GoldProductionBindingFinalized", map[string]any{
-			"bindingId": built.ID,
-			"executionId": request.ExecutionID,
-			"inputDatasetVersionId": inputVersion.ID,
+			"bindingId":              built.ID,
+			"executionId":            request.ExecutionID,
+			"inputDatasetVersionId":  inputVersion.ID,
 			"outputDatasetVersionId": published.ID,
-			"annotationSnapshotId": snapshot.ID,
-			"rootHash": built.RootHash,
+			"annotationSnapshotId":   snapshot.ID,
+			"rootHash":               built.RootHash,
 		})
 		if err != nil {
 			return err
@@ -437,17 +437,17 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 		}
 		return audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &request.WorkspaceID,
-			ActorType: actorType(buildRequest.CreatedBy),
-			ActorID: buildRequest.CreatedBy,
-			Action: "GOLD_PRODUCTION_BINDING_FINALIZED",
-			ObjectType: "GOLD_PRODUCTION_BINDING",
-			ObjectID: built.ID,
+			ActorType:   actorType(buildRequest.CreatedBy),
+			ActorID:     buildRequest.CreatedBy,
+			Action:      "GOLD_PRODUCTION_BINDING_FINALIZED",
+			ObjectType:  "GOLD_PRODUCTION_BINDING",
+			ObjectID:    built.ID,
 			AfterState: map[string]any{
-				"status": "FINALIZED",
+				"status":                 "FINALIZED",
 				"outputDatasetVersionId": published.ID,
-				"annotationSnapshotId": snapshot.ID,
-				"rootHash": built.RootHash,
-				"outputRowCount": outputRows,
+				"annotationSnapshotId":   snapshot.ID,
+				"rootHash":               built.RootHash,
+				"outputRowCount":         outputRows,
 			},
 			TraceID: request.ExecutionID.String(),
 		})
@@ -467,12 +467,12 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 		OutputDatasetVersionID: outputVersion.ID,
 		EngineExecutionID: "gold:" + request.ExecutionID.String(),
 		Metrics: map[string]any{
-			"inputRows": len(table.Rows),
-			"outputRows": outputRows,
-			"rejectedRows": len(table.Rows) - outputRows,
-			"bindingId": binding.ID,
-			"bindingRootHash": binding.RootHash,
-			"snapshotId": snapshot.ID,
+			"inputRows":        len(table.Rows),
+			"outputRows":       outputRows,
+			"rejectedRows":     len(table.Rows) - outputRows,
+			"bindingId":        binding.ID,
+			"bindingRootHash":  binding.RootHash,
+			"snapshotId":       snapshot.ID,
 			"snapshotRootHash": snapshot.RootHash,
 		},
 	}, nil
@@ -523,13 +523,13 @@ func buildGoldCSV(table tabular.Table, frozen []goldinfra.FrozenMember) ([]byte,
 			return nil, nil, 0, fmt.Errorf("%w: frozen source hash mismatch for %s", ErrInvalidBuildRequest, ref)
 		}
 		production := goldinfra.ProductionMember{
-			TaskID: member.TaskID,
-			SourceItemRef: member.SourceItemRef,
+			TaskID:              member.TaskID,
+			SourceItemRef:       member.SourceItemRef,
 			SourceContentSHA256: member.SourceContentSHA256,
-			DecisionID: member.DecisionID,
-			Outcome: member.Outcome,
-			ReviewedResultID: member.ReviewedResultID,
-			SelectedResultID: member.SelectedResultID,
+			DecisionID:          member.DecisionID,
+			Outcome:             member.Outcome,
+			ReviewedResultID:    member.ReviewedResultID,
+			SelectedResultID:    member.SelectedResultID,
 		}
 		switch member.Outcome {
 		case annotationdomain.ReviewReject:
@@ -629,33 +629,33 @@ func buildProductionBinding(
 			selected = &value
 		}
 		items = append(items, manifestMember{
-			TaskID: member.TaskID.String(),
-			SourceItemRef: member.SourceItemRef,
-			SourceContentSHA256: member.SourceContentSHA256,
-			DecisionID: member.DecisionID.String(),
-			Outcome: member.Outcome,
-			ReviewedResultID: reviewed,
-			SelectedResultID: selected,
+			TaskID:               member.TaskID.String(),
+			SourceItemRef:        member.SourceItemRef,
+			SourceContentSHA256:  member.SourceContentSHA256,
+			DecisionID:           member.DecisionID.String(),
+			Outcome:              member.Outcome,
+			ReviewedResultID:     reviewed,
+			SelectedResultID:     selected,
 			SelectedResultSHA256: member.SelectedResultSHA256,
-			OutputRowIndex: member.OutputRowIndex,
+			OutputRowIndex:       member.OutputRowIndex,
 		})
 	}
 	payload, err := json.Marshal(manifest{
-		FormatVersion: "gold-production-binding-v1",
-		WorkspaceID: request.WorkspaceID.String(),
-		ExecutionID: request.ExecutionID.String(),
-		WorkflowVersionID: request.WorkflowVersion.ID.String(),
-		InputDatasetVersionID: buildRequest.InputDatasetVersionID.String(),
-		InputCertificationID: buildRequest.InputCertificationID.String(),
-		AnnotationCampaignID: buildRequest.AnnotationCampaignID.String(),
-		AnnotationSnapshotID: buildRequest.AnnotationSnapshotID.String(),
+		FormatVersion:                    "gold-production-binding-v1",
+		WorkspaceID:                      request.WorkspaceID.String(),
+		ExecutionID:                      request.ExecutionID.String(),
+		WorkflowVersionID:                request.WorkflowVersion.ID.String(),
+		InputDatasetVersionID:            buildRequest.InputDatasetVersionID.String(),
+		InputCertificationID:             buildRequest.InputCertificationID.String(),
+		AnnotationCampaignID:             buildRequest.AnnotationCampaignID.String(),
+		AnnotationSnapshotID:             buildRequest.AnnotationSnapshotID.String(),
 		AnnotationContributionResourceID: buildRequest.AnnotationContributionResourceID.String(),
-		OutputDatasetVersionID: outputVersion.ID.String(),
-		InputChecksumSHA256: strings.ToLower(inputVersion.ChecksumValue),
-		SnapshotRootHash: buildRequest.SnapshotRootHash,
-		OutputChecksumSHA256: strings.ToLower(outputVersion.ChecksumValue),
-		OutputRowCount: *outputVersion.RowCount,
-		Members: items,
+		OutputDatasetVersionID:           outputVersion.ID.String(),
+		InputChecksumSHA256:              strings.ToLower(inputVersion.ChecksumValue),
+		SnapshotRootHash:                 buildRequest.SnapshotRootHash,
+		OutputChecksumSHA256:             strings.ToLower(outputVersion.ChecksumValue),
+		OutputRowCount:                   *outputVersion.RowCount,
+		Members:                          items,
 	})
 	if err != nil {
 		return goldinfra.ProductionBinding{}, err
@@ -663,56 +663,56 @@ func buildProductionBinding(
 	rootHash := hashBytes(payload)
 	now := time.Now().UTC().Truncate(time.Microsecond)
 	return goldinfra.ProductionBinding{
-		ID: uuid.NewSHA1(uuid.NameSpaceURL, []byte("gold-production-binding:"+request.ExecutionID.String())),
-		WorkspaceID: request.WorkspaceID,
-		ExecutionID: request.ExecutionID,
-		WorkflowVersionID: request.WorkflowVersion.ID,
-		InputDatasetVersionID: buildRequest.InputDatasetVersionID,
-		InputCertificationID: buildRequest.InputCertificationID,
-		AnnotationCampaignID: buildRequest.AnnotationCampaignID,
-		AnnotationSnapshotID: buildRequest.AnnotationSnapshotID,
+		ID:                               uuid.NewSHA1(uuid.NameSpaceURL, []byte("gold-production-binding:"+request.ExecutionID.String())),
+		WorkspaceID:                      request.WorkspaceID,
+		ExecutionID:                      request.ExecutionID,
+		WorkflowVersionID:                request.WorkflowVersion.ID,
+		InputDatasetVersionID:            buildRequest.InputDatasetVersionID,
+		InputCertificationID:             buildRequest.InputCertificationID,
+		AnnotationCampaignID:             buildRequest.AnnotationCampaignID,
+		AnnotationSnapshotID:             buildRequest.AnnotationSnapshotID,
 		AnnotationContributionResourceID: buildRequest.AnnotationContributionResourceID,
-		OutputDatasetVersionID: outputVersion.ID,
-		InputChecksumSHA256: strings.ToLower(inputVersion.ChecksumValue),
-		SnapshotRootHash: buildRequest.SnapshotRootHash,
-		SchemaContentSHA256: campaign.Schema.ContentSHA256,
-		TaxonomyContentSHA256: campaign.Taxonomy.ContentSHA256,
-		RubricContentSHA256: campaign.Rubric.ContentSHA256,
-		RendererContentSHA256: campaign.Renderer.ContentSHA256,
-		ReviewPolicyContentSHA256: campaign.ReviewPolicy.ContentSHA256,
-		OutputChecksumSHA256: strings.ToLower(outputVersion.ChecksumValue),
-		OutputRowCount: *outputVersion.RowCount,
-		Manifest: payload,
-		ManifestHashPayload: append([]byte(nil), payload...),
-		RootHash: rootHash,
-		Status: "BUILDING",
-		CreatedAt: now,
+		OutputDatasetVersionID:           outputVersion.ID,
+		InputChecksumSHA256:              strings.ToLower(inputVersion.ChecksumValue),
+		SnapshotRootHash:                 buildRequest.SnapshotRootHash,
+		SchemaContentSHA256:              campaign.Schema.ContentSHA256,
+		TaxonomyContentSHA256:            campaign.Taxonomy.ContentSHA256,
+		RubricContentSHA256:              campaign.Rubric.ContentSHA256,
+		RendererContentSHA256:            campaign.Renderer.ContentSHA256,
+		ReviewPolicyContentSHA256:        campaign.ReviewPolicy.ContentSHA256,
+		OutputChecksumSHA256:             strings.ToLower(outputVersion.ChecksumValue),
+		OutputRowCount:                   *outputVersion.RowCount,
+		Manifest:                         payload,
+		ManifestHashPayload:              append([]byte(nil), payload...),
+		RootHash:                         rootHash,
+		Status:                           "BUILDING",
+		CreatedAt:                        now,
 	}, nil
 }
 
 func buildFingerprint(cmd CreateBuildCommand, snapshotRoot string) (string, error) {
 	payload := struct {
-		WorkspaceID                      uuid.UUID `json:"workspaceId"`
-		WorkflowVersionID                uuid.UUID `json:"workflowVersionId"`
-		OutputDatasetID                  uuid.UUID `json:"outputDatasetId"`
-		InputDatasetVersionID            uuid.UUID `json:"inputDatasetVersionId"`
-		InputCertificationID             uuid.UUID `json:"inputCertificationId"`
-		AnnotationCampaignID             uuid.UUID `json:"annotationCampaignId"`
-		AnnotationSnapshotID             uuid.UUID `json:"annotationSnapshotId"`
-		AnnotationContributionResourceID uuid.UUID `json:"annotationContributionResourceId"`
-		SnapshotRootHash                 string    `json:"snapshotRootHash"`
+		WorkspaceID                      uuid.UUID  `json:"workspaceId"`
+		WorkflowVersionID                uuid.UUID  `json:"workflowVersionId"`
+		OutputDatasetID                  uuid.UUID  `json:"outputDatasetId"`
+		InputDatasetVersionID            uuid.UUID  `json:"inputDatasetVersionId"`
+		InputCertificationID             uuid.UUID  `json:"inputCertificationId"`
+		AnnotationCampaignID             uuid.UUID  `json:"annotationCampaignId"`
+		AnnotationSnapshotID             uuid.UUID  `json:"annotationSnapshotId"`
+		AnnotationContributionResourceID uuid.UUID  `json:"annotationContributionResourceId"`
+		SnapshotRootHash                 string     `json:"snapshotRootHash"`
 		ActorID                          *uuid.UUID `json:"actorId,omitempty"`
 	}{
-		WorkspaceID: cmd.WorkspaceID,
-		WorkflowVersionID: cmd.WorkflowVersionID,
-		OutputDatasetID: cmd.OutputDatasetID,
-		InputDatasetVersionID: cmd.InputDatasetVersionID,
-		InputCertificationID: cmd.InputCertificationID,
-		AnnotationCampaignID: cmd.AnnotationCampaignID,
-		AnnotationSnapshotID: cmd.AnnotationSnapshotID,
+		WorkspaceID:                      cmd.WorkspaceID,
+		WorkflowVersionID:                cmd.WorkflowVersionID,
+		OutputDatasetID:                  cmd.OutputDatasetID,
+		InputDatasetVersionID:            cmd.InputDatasetVersionID,
+		InputCertificationID:             cmd.InputCertificationID,
+		AnnotationCampaignID:             cmd.AnnotationCampaignID,
+		AnnotationSnapshotID:             cmd.AnnotationSnapshotID,
 		AnnotationContributionResourceID: cmd.AnnotationContributionResourceID,
-		SnapshotRootHash: snapshotRoot,
-		ActorID: cmd.ActorID,
+		SnapshotRootHash:                 snapshotRoot,
+		ActorID:                          cmd.ActorID,
 	}
 	encoded, err := json.Marshal(payload)
 	if err != nil {
@@ -778,7 +778,6 @@ func ParseRowReference(value string) (int, error) {
 	}
 	return index, nil
 }
-
 
 func goldSourceRowHash(row map[string]string) (string, error) {
 	encoded, err := json.Marshal(row)
