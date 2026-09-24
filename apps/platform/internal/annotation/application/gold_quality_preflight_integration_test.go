@@ -74,7 +74,7 @@ func TestGoldQualityPreflightReadsFinalizedSnapshotWithoutCreatingAssessment(t *
 	}
 
 	var qualityBefore int
-	if err := pool.QueryRow(ctx, "SELECT count(*) FROM quality_result").Scan(&qualityBefore); err != nil {
+	if err := pool.QueryRow(ctx, "SELECT count(*) FROM quality_result WHERE workspace_id=$1", fx.workspaceID).Scan(&qualityBefore); err != nil {
 		t.Fatalf("count quality before: %v", err)
 	}
 
@@ -94,7 +94,7 @@ func TestGoldQualityPreflightReadsFinalizedSnapshotWithoutCreatingAssessment(t *
 	}
 
 	var qualityAfter int
-	if err := pool.QueryRow(ctx, "SELECT count(*) FROM quality_result").Scan(&qualityAfter); err != nil {
+	if err := pool.QueryRow(ctx, "SELECT count(*) FROM quality_result WHERE workspace_id=$1", fx.workspaceID).Scan(&qualityAfter); err != nil {
 		t.Fatalf("count quality after: %v", err)
 	}
 	if qualityAfter != qualityBefore {
