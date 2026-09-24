@@ -1012,7 +1012,6 @@ func getTask(ctx context.Context, q queryer, taskID uuid.UUID) (annotationdomain
 	return task, nil
 }
 
-
 type SnapshotSelectedResult struct {
 	TaskID                 uuid.UUID
 	ResultID               uuid.UUID
