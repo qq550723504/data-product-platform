@@ -85,3 +85,16 @@ func TestResolutionStatusRetriesDefinitePreSendFailure(t *testing.T) {
 		t.Fatalf("resolution = %s/%s, want PENDING/FAILED_PRE_SEND", status, outcome)
 	}
 }
+
+
+func TestResolutionStatusRecordsAcceptedSubmitBeforeVerification(t *testing.T) {
+	status, outcome := resolutionStatus(
+		EngineLookupUnknown,
+		nil,
+		annotationdomain.EngineAttemptSubmit,
+	)
+	if status != annotationdomain.EngineOperationUnknown ||
+		outcome != annotationdomain.EngineAttemptSucceeded {
+		t.Fatalf("resolution = %s/%s, want UNKNOWN/SUCCEEDED", status, outcome)
+	}
+}
