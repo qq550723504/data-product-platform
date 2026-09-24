@@ -210,7 +210,6 @@ func writeJSON(w http.ResponseWriter, status int, value any) {
 	_ = json.NewEncoder(w).Encode(value)
 }
 
-
 func (h *Handler) goldQualityPreflight(w http.ResponseWriter, r *http.Request) {
 	if h == nil || h.service == nil {
 		httpserver.WriteError(w, r, http.StatusServiceUnavailable, "ANNOTATION_SERVICE_NOT_CONFIGURED", "annotation service is not configured", nil)
@@ -246,7 +245,6 @@ func (h *Handler) goldQualityPreflight(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, goldQualityPreflightResponse(result))
 }
 
-
 func goldQualityPreflightResponse(result annotationapp.GoldQualityPreflight) map[string]any {
 	findings := make([]map[string]any, 0, len(result.Findings))
 	for _, finding := range result.Findings {
@@ -266,14 +264,14 @@ func goldQualityPreflightResponse(result annotationapp.GoldQualityPreflight) map
 		})
 	}
 	return map[string]any{
-		"workspaceId":  result.WorkspaceID,
-		"campaignId":   result.CampaignID,
-		"snapshotId":   result.SnapshotID,
-		"snapshotRoot": result.SnapshotRoot,
-		"blocking":     result.Blocking,
-		"metrics":      result.Metrics,
-		"findings":     findings,
-		"mode":         "PREFLIGHT",
+		"workspaceId":             result.WorkspaceID,
+		"campaignId":              result.CampaignID,
+		"snapshotId":              result.SnapshotID,
+		"snapshotRoot":            result.SnapshotRoot,
+		"blocking":                result.Blocking,
+		"metrics":                 result.Metrics,
+		"findings":                findings,
+		"mode":                    "PREFLIGHT",
 		"formalAssessmentCreated": false,
 	}
 }
