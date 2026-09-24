@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -15,6 +14,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
@@ -247,9 +247,7 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 func seedLiveGoldSnapshotFixture(
 	t *testing.T,
 	ctx context.Context,
-	pool interface {
-		Exec(context.Context, string, ...any) (interface{ RowsAffected() int64 }, error)
-	},
+	pool *pgxpool.Pool,
 	annotationService *annotationapp.Service,
 	inputURI string,
 	inputCSV []byte,
@@ -444,11 +442,7 @@ func startLiveGoldWorker(
 func waitLiveGoldExecution(
 	t *testing.T,
 	ctx context.Context,
-	pool interface {
-		QueryRow(context.Context, string, ...any) interface {
-			Scan(...any) error
-		}
-	},
+	pool *pgxpool.Pool,
 	worker *exec.Cmd,
 	workerLog string,
 	executionID uuid.UUID,
@@ -511,4 +505,3 @@ func readLiveGoldObject(
 	return content
 }
 
-var _ = fmt.Sprintf
