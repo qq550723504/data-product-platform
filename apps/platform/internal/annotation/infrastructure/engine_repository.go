@@ -17,7 +17,8 @@ var (
 	ErrEngineOperationConflict  = errors.New("annotation engine operation conflict")
 	ErrEngineClaimBusy          = errors.New("annotation engine operation claim busy")
 	ErrEngineBindingConflict    = errors.New("annotation engine binding conflict")
-	ErrEngineOperationsUnsettled = errors.New("annotation engine operations are unsettled")
+	ErrEngineOperationsUnsettled  = errors.New("annotation engine operations are unsettled")
+	ErrEngineActorBindingNotFound = errors.New("annotation engine actor binding not found")
 )
 
 func (r *Repository) InsertEngineOperation(
@@ -373,6 +374,81 @@ func (r *Repository) InsertEngineTaskBinding(
 		return false, ErrEngineBindingConflict
 	}
 	return false, nil
+}
+
+func (r *Repository) InsertEngineActorBinding(
+	ctx context.Context,
+	tx pgx.Tx,
+	binding annotationdomain.EngineActorBinding,
+) (bool, error) {
+	if err := binding.Validate(); err != nil {
+		return false, err
+	}
+	tag, err := tx.Exec(ctx, `
+		INSERT INTO annotation_engine_actor_binding(
+			id, workspace_id, provider, provider_instance_ref,
+			external_actor_ref, core_actor_ref, created_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+		ON CONFLICT DO NOTHING
+	`, binding.ID, binding.WorkspaceID, binding.Provider, binding.ProviderInstance,
+		binding.ExternalActorRef, binding.CoreActorRef, binding.CreatedAt, binding.CreatedBy)
+	if err != nil {
+		return false, fmt.Errorf("insert annotation engine actor binding: %w", err)
+	}
+	if tag.RowsAffected() == 1 {
+		return true, nil
+	}
+
+	existing, err := r.ResolveEngineActorBinding(
+		ctx,
+		binding.WorkspaceID,
+		binding.Provider,
+		binding.ProviderInstance,
+		binding.ExternalActorRef,
+	)
+	if errors.Is(err, ErrEngineActorBindingNotFound) {
+		return false, ErrEngineBindingConflict
+	}
+	if err != nil {
+		return false, err
+	}
+	if existing.ID != binding.ID || existing.CoreActorRef != binding.CoreActorRef {
+		return false, ErrEngineBindingConflict
+	}
+	return false, nil
+}
+
+func (r *Repository) ResolveEngineActorBinding(
+	ctx context.Context,
+	workspaceID uuid.UUID,
+	provider, providerInstance, externalActorRef string,
+) (annotationdomain.EngineActorBinding, error) {
+	var binding annotationdomain.EngineActorBinding
+	err := r.pool.QueryRow(ctx, `
+		SELECT id, workspace_id, provider, provider_instance_ref,
+		       external_actor_ref, core_actor_ref, created_at, created_by
+		  FROM annotation_engine_actor_binding
+		 WHERE workspace_id=$1
+		   AND provider=$2
+		   AND provider_instance_ref=$3
+		   AND external_actor_ref=$4
+	`, workspaceID, provider, providerInstance, externalActorRef).Scan(
+		&binding.ID,
+		&binding.WorkspaceID,
+		&binding.Provider,
+		&binding.ProviderInstance,
+		&binding.ExternalActorRef,
+		&binding.CoreActorRef,
+		&binding.CreatedAt,
+		&binding.CreatedBy,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return annotationdomain.EngineActorBinding{}, ErrEngineActorBindingNotFound
+	}
+	if err != nil {
+		return annotationdomain.EngineActorBinding{}, fmt.Errorf("resolve annotation engine actor binding: %w", err)
+	}
+	return binding, nil
 }
 
 func (r *Repository) LockAndRequireEngineOperationsSettledTx(
