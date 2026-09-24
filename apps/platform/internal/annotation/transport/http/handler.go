@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
@@ -20,6 +21,10 @@ import (
 
 type ReviewService interface {
 	ReviewAnnotation(context.Context, annotationapp.ReviewAnnotationCommand) (annotationapp.ReviewAnnotationResult, error)
+}
+
+type GoldPreflightService interface {
+	GoldQualityPreflight(context.Context, uuid.UUID, uuid.UUID) (annotationapp.GoldQualityPreflight, error)
 }
 
 type Handler struct {
@@ -35,6 +40,10 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc(
 		"POST /api/v1/workspaces/{workspaceId}/annotation-campaigns/{campaignId}/tasks/{taskId}/review",
 		h.review,
+	)
+	mux.HandleFunc(
+		"GET /api/v1/workspaces/{workspaceId}/annotation-campaigns/{campaignId}/gold-quality-preflight",
+		h.goldQualityPreflight,
 	)
 }
 
@@ -199,4 +208,70 @@ func writeJSON(w http.ResponseWriter, status int, value any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(value)
+}
+
+func (h *Handler) goldQualityPreflight(w http.ResponseWriter, r *http.Request) {
+	if h == nil || h.service == nil {
+		httpserver.WriteError(w, r, http.StatusServiceUnavailable, "ANNOTATION_SERVICE_NOT_CONFIGURED", "annotation service is not configured", nil)
+		return
+	}
+	service, ok := h.service.(GoldPreflightService)
+	if !ok {
+		httpserver.WriteError(w, r, http.StatusServiceUnavailable, "GOLD_QUALITY_PREFLIGHT_NOT_CONFIGURED", "Gold quality preflight is not configured", nil)
+		return
+	}
+	workspaceID, err := parseNonNilUUID(r.PathValue("workspaceId"))
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_WORKSPACE_ID", "workspaceId must be a non-nil UUID", nil)
+		return
+	}
+	campaignID, err := parseNonNilUUID(r.PathValue("campaignId"))
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ANNOTATION_CAMPAIGN_ID", "campaignId must be a non-nil UUID", nil)
+		return
+	}
+	result, err := service.GoldQualityPreflight(r.Context(), workspaceID, campaignID)
+	if err != nil {
+		switch {
+		case errors.Is(err, pgx.ErrNoRows), errors.Is(err, annotationinfra.ErrCampaignNotFound):
+			httpserver.WriteError(w, r, http.StatusNotFound, "ANNOTATION_SNAPSHOT_NOT_FOUND", "finalized annotation snapshot was not found", nil)
+		case errors.Is(err, annotationdomain.ErrInvalidSnapshot):
+			httpserver.WriteError(w, r, http.StatusConflict, "GOLD_QUALITY_PREFLIGHT_UNAVAILABLE", "Gold quality preflight requires a valid FINALIZED annotation snapshot", nil)
+		default:
+			httpserver.WriteError(w, r, http.StatusInternalServerError, "GOLD_QUALITY_PREFLIGHT_FAILED", "Gold quality preflight failed", nil)
+		}
+		return
+	}
+	writeJSON(w, http.StatusOK, goldQualityPreflightResponse(result))
+}
+
+func goldQualityPreflightResponse(result annotationapp.GoldQualityPreflight) map[string]any {
+	findings := make([]map[string]any, 0, len(result.Findings))
+	for _, finding := range result.Findings {
+		status := string(finding.Status)
+		if finding.Status == "SKIPPED" {
+			status = "NOT_APPLICABLE"
+		}
+		findings = append(findings, map[string]any{
+			"ruleId":        finding.RuleID,
+			"dimension":     finding.Dimension,
+			"severity":      finding.Severity,
+			"status":        status,
+			"observed":      finding.Observed,
+			"affectedCount": finding.Observed["affectedCount"],
+			"sample":        finding.Observed["sample"],
+			"reason":        finding.Message,
+		})
+	}
+	return map[string]any{
+		"workspaceId":             result.WorkspaceID,
+		"campaignId":              result.CampaignID,
+		"snapshotId":              result.SnapshotID,
+		"snapshotRoot":            result.SnapshotRoot,
+		"blocking":                result.Blocking,
+		"metrics":                 result.Metrics,
+		"findings":                findings,
+		"mode":                    "PREFLIGHT",
+		"formalAssessmentCreated": false,
+	}
 }

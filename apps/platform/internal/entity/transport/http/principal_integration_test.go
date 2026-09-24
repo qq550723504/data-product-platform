@@ -168,7 +168,7 @@ func TestEntityReviewHTTPRequiresTrustedPrincipalAndPersistsResolvedActor(t *tes
 	trustedMux := http.NewServeMux()
 	NewHandler(service, entityRepo, trustedResolver).Register(trustedMux)
 
-	baselineAudit, baselineEvidence, baselineOutbox := reviewHTTPSideEffectCounts(t, ctx, pool)
+	baselineAudit, baselineEvidence, baselineOutbox := reviewHTTPSideEffectCounts(t, ctx, pool, candidateID)
 
 	t.Run("unauthenticated fails before business side effects", func(t *testing.T) {
 		recorder := postReviewHTTP(t, trustedMux, candidateID, "", forgedActor)
@@ -177,7 +177,7 @@ func TestEntityReviewHTTPRequiresTrustedPrincipalAndPersistsResolvedActor(t *tes
 		}
 		assertReviewHTTPErrorCode(t, recorder, "AUTHENTICATION_REQUIRED")
 		assertReviewHTTPPending(t, ctx, entityRepo, candidateID)
-		assertReviewHTTPSideEffectCounts(t, ctx, pool, baselineAudit, baselineEvidence, baselineOutbox)
+		assertReviewHTTPSideEffectCounts(t, ctx, pool, candidateID, baselineAudit, baselineEvidence, baselineOutbox)
 	})
 
 	foreignResolver, err := platformprincipal.NewStaticResolver(
@@ -201,7 +201,7 @@ func TestEntityReviewHTTPRequiresTrustedPrincipalAndPersistsResolvedActor(t *tes
 		}
 		assertReviewHTTPErrorCode(t, recorder, "WORKSPACE_ACCESS_DENIED")
 		assertReviewHTTPPending(t, ctx, entityRepo, candidateID)
-		assertReviewHTTPSideEffectCounts(t, ctx, pool, baselineAudit, baselineEvidence, baselineOutbox)
+		assertReviewHTTPSideEffectCounts(t, ctx, pool, candidateID, baselineAudit, baselineEvidence, baselineOutbox)
 	})
 
 	t.Run("forged actor header cannot change authoritative reviewer", func(t *testing.T) {
@@ -298,27 +298,45 @@ func assertReviewHTTPPending(t *testing.T, ctx context.Context, repo *entityinfr
 	}
 }
 
-func reviewHTTPSideEffectCounts(t *testing.T, ctx context.Context, pool *pgxpool.Pool) (int, int, int) {
+func reviewHTTPSideEffectCounts(t *testing.T, ctx context.Context, pool *pgxpool.Pool, candidateID uuid.UUID) (int, int, int) {
 	t.Helper()
 	var auditCount, evidenceCount, outboxCount int
-	if err := pool.QueryRow(ctx, "SELECT count(*) FROM audit_event").Scan(&auditCount); err != nil {
-		t.Fatalf("count audit events: %v", err)
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM audit_event
+		WHERE object_type='ENTITY_MATCH_CANDIDATE' AND object_id=$1
+		  AND action IN ('ENTITY_MATCH_CONFIRMED','ENTITY_MATCH_REJECTED')
+	`, candidateID).Scan(&auditCount); err != nil {
+		t.Fatalf("count candidate review audit events: %v", err)
 	}
-	if err := pool.QueryRow(ctx, "SELECT count(*) FROM evidence").Scan(&evidenceCount); err != nil {
-		t.Fatalf("count evidence: %v", err)
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM evidence
+		WHERE source_type='ENTITY_MATCH_CANDIDATE' AND source_id=$1
+		  AND evidence_type='ENTITY_MATCH_REVIEW'
+	`, candidateID).Scan(&evidenceCount); err != nil {
+		t.Fatalf("count candidate review evidence: %v", err)
 	}
-	if err := pool.QueryRow(ctx, "SELECT count(*) FROM outbox_event").Scan(&outboxCount); err != nil {
-		t.Fatalf("count outbox events: %v", err)
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM outbox_event
+		WHERE event_type='EntityMappingDecisionRecorded'
+		  AND payload->>'sourceCandidateId'=$1
+	`, candidateID.String()).Scan(&outboxCount); err != nil {
+		t.Fatalf("count candidate review outbox events: %v", err)
 	}
 	return auditCount, evidenceCount, outboxCount
 }
 
-func assertReviewHTTPSideEffectCounts(t *testing.T, ctx context.Context, pool *pgxpool.Pool, auditWant, evidenceWant, outboxWant int) {
+func assertReviewHTTPSideEffectCounts(
+	t *testing.T,
+	ctx context.Context,
+	pool *pgxpool.Pool,
+	candidateID uuid.UUID,
+	auditWant, evidenceWant, outboxWant int,
+) {
 	t.Helper()
-	auditGot, evidenceGot, outboxGot := reviewHTTPSideEffectCounts(t, ctx, pool)
+	auditGot, evidenceGot, outboxGot := reviewHTTPSideEffectCounts(t, ctx, pool, candidateID)
 	if auditGot != auditWant || evidenceGot != evidenceWant || outboxGot != outboxWant {
 		t.Fatalf(
-			"side effects changed after rejected request: audit=%d/%d evidence=%d/%d outbox=%d/%d",
+			"candidate review side effects changed after rejected request: audit=%d/%d evidence=%d/%d outbox=%d/%d",
 			auditGot, auditWant, evidenceGot, evidenceWant, outboxGot, outboxWant,
 		)
 	}
