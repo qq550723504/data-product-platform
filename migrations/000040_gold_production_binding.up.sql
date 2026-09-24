@@ -143,7 +143,7 @@ BEGIN
     SELECT status, workspace_id, annotation_snapshot_id
       INTO binding_status, binding_workspace, binding_snapshot
       FROM gold_production_binding
-     WHERE id=COALESCE(NEW.binding_id, OLD.binding_id)
+     WHERE id=CASE WHEN TG_OP='DELETE' THEN OLD.binding_id ELSE NEW.binding_id END
      FOR UPDATE;
 
     IF NOT FOUND THEN
