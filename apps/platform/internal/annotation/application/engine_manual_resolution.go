@@ -13,15 +13,15 @@ import (
 )
 
 type ResolveManualEngineOperationCommand struct {
-	WorkspaceID        uuid.UUID
-	OperationID        uuid.UUID
-	ExpectedRevision   int64
-	TargetStatus       string
-	CampaignBinding    *EngineCampaignBinding
-	ExternalTaskIDs    map[uuid.UUID]string
-	Reason             string
-	ActorID            *uuid.UUID
-	TraceID            string
+	WorkspaceID      uuid.UUID
+	OperationID      uuid.UUID
+	ExpectedRevision int64
+	TargetStatus     string
+	CampaignBinding  *EngineCampaignBinding
+	ExternalTaskIDs  map[uuid.UUID]string
+	Reason           string
+	ActorID          *uuid.UUID
+	TraceID          string
 }
 
 func (s *EngineService) ResolveManualOperation(
@@ -108,10 +108,10 @@ func (s *EngineService) ResolveManualOperation(
 			Title:        "Annotation engine operation manually resolved",
 			SourceType:   "CORE",
 			Metadata: map[string]any{
-				"operationId": operation.ID,
+				"operationId":  operation.ID,
 				"targetStatus": operation.Status,
-				"reason":      cmd.Reason,
-				"resolvedAt":  time.Now().UTC(),
+				"reason":       cmd.Reason,
+				"resolvedAt":   time.Now().UTC(),
 			},
 			CreatedBy: cmd.ActorID,
 		}, evidence.Relation{
