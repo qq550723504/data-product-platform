@@ -62,5 +62,8 @@ go test -count=1 -run '^TestLabelStudioLiveCoreResultReviewAndSnapshot$' -timeou
 
 go test -count=1 -run '^TestLiveGoldWorkerBuildAndFormalQuality$' -timeout 3m -v ./internal/gold/application 2>&1 | tee "$ARTIFACTS/gold-worker-quality-live.log"
 
-# Re-run existing Go regressions after the live slice, with its opt-in disabled.
+# Re-run existing Go regressions after the live slice, with all live-only
+# provider/worker opt-ins removed so the long live tests are not executed twice
+# or concurrently with fault-injection suites sharing PostgreSQL/Redis.
+unset TEST_LABEL_STUDIO_URL TEST_LABEL_STUDIO_TOKEN LIVE_PLATFORM_WORKER LIVE_BROWSER_ARTIFACTS
 LIVE_BROWSER_ACCEPTANCE=0 go test -count=1 ./... 2>&1 | tee "$ARTIFACTS/go-regressions.log"
