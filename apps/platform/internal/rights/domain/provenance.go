@@ -342,8 +342,14 @@ func HashDelegationEdges(edges []DelegationEdge) string {
 	return hex.EncodeToString(digest[:])
 }
 
+const (
+	EffectiveDependencyDatasetVersion         = "DATASET_VERSION"
+	EffectiveDependencyAnnotationContribution = "ANNOTATION_CONTRIBUTION_RESOURCE"
+)
+
 type EffectiveRightsInput struct {
 	ID                    uuid.UUID
+	DependencyKind        string
 	InputDatasetVersionID uuid.UUID
 	DataResourceID        uuid.UUID
 	RightsSnapshotID      *uuid.UUID
