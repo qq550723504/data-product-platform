@@ -28,7 +28,10 @@ cleanup() {
 }
 trap cleanup EXIT
 "${COMPOSE[@]}" config --quiet
-"${COMPOSE[@]}" up -d --wait --wait-timeout 120
+if ! "${COMPOSE[@]}" up -d --wait --wait-timeout 120; then
+  "${COMPOSE[@]}" logs --no-color label-studio || true
+  exit 1
+fi
 
 LABEL_STUDIO_TOKEN="$("${COMPOSE[@]}" exec -T label-studio \
   python3 /label-studio/label_studio/manage.py shell -c \
