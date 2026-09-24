@@ -238,7 +238,7 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	goldSQL(t, ctx, pool, `
 		INSERT INTO dataset(id, workspace_id, code, name, dataset_type)
 		VALUES ($1,$2,$3,'gold candidate output','CURATED')
-	`, outputDatasetID, workspaceID, "GOLD-OUT-" + suffix)
+	`, outputDatasetID, workspaceID, "GOLD-OUT-"+suffix)
 
 	workflowVersion, err := workflowVersionService.Create(ctx, workflowapp.CreateWorkflowVersionCommand{
 		WorkspaceID:    workspaceID,
