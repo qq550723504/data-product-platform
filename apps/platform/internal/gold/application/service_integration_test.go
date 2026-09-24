@@ -18,6 +18,9 @@ import (
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
+	certificationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
+	certificationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
+	certificationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -472,6 +475,208 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 		  AND input_dataset_version_id IS NULL
 		  AND data_resource_id=$2
 	`, effectiveRights.ID, resourceID)
+
+	for _, rightsResourceID := range []uuid.UUID{inputResourceID, resourceID} {
+		declaration, err := rightsService.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{
+			Spec: rightsdomain.RightsDeclarationSpec{
+				WorkspaceID:       workspaceID,
+				DataResourceID:    rightsResourceID,
+				ClaimantRef:       "GOLD-RIGHTS-HOLDER",
+				BasisType:         "LICENSE",
+				BasisRef:          "gold-certification-test",
+				ConsumerScopeType: "EXPLICIT",
+				ConsumerRef:       "GOLD-PILOT-CONSUMER",
+				Parties: []rightsdomain.RightsParty{{
+					PartyRef: "GOLD-RIGHTS-HOLDER",
+					Role:     "RIGHTS_HOLDER",
+				}},
+				Permissions: []rightsdomain.RightsPermission{{
+					Kind:    rightsdomain.PermissionUse,
+					Action:  "USE",
+					Purpose: "GOLD-PILOT",
+					Scope: rightsdomain.NormalizedScope{
+						Type: "ALL_RESOURCE",
+						Ref:  rightsResourceID.String(),
+					},
+				}},
+				ActorID: &actorID,
+			},
+			TraceID: "gold-certification-rights",
+		})
+		if err != nil {
+			t.Fatalf("create Gold rights declaration for %s: %v", rightsResourceID, err)
+		}
+		if _, err := rightsService.VerifyRightsDeclaration(ctx, rightsapp.VerifyRightsDeclarationCommand{
+			DeclarationID: declaration.ID,
+			Outcome:       rightsdomain.DeclarationVerified,
+			ActorID:       &actorID,
+			TraceID:       "gold-certification-rights",
+		}); err != nil {
+			t.Fatalf("verify Gold rights declaration for %s: %v", rightsResourceID, err)
+		}
+	}
+
+	allowedRights, err := rightsService.ComputeEffectiveRights(ctx, rightsapp.ComputeEffectiveRightsCommand{
+		WorkspaceID:            workspaceID,
+		TargetDatasetVersionID: output.ID,
+		ConsumerRef:            "GOLD-PILOT-CONSUMER",
+		Purpose:                "GOLD-PILOT",
+		AsOf:                   time.Now().UTC(),
+		AsOfProvided:           true,
+		ActivityID:             ptrUUID(uuid.New()),
+		ActorID:                &actorID,
+		TraceID:                "gold-certification-rights-allowed",
+	})
+	if err != nil {
+		t.Fatalf("compute allowed Gold effective rights: %v", err)
+	}
+	var useAllowed bool
+	for _, action := range allowedRights.Actions {
+		if action.Action == "USE" {
+			useAllowed = action.Decision == rightsdomain.DecisionAllowed
+		}
+	}
+	if !useAllowed {
+		t.Fatalf("Gold EffectiveRights USE must be ALLOWED: %+v", allowedRights.Actions)
+	}
+
+	var certificationEvidence evidence.Snapshot
+	evidenceTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin Gold certification evidence tx: %v", err)
+	}
+	evidenceRecord, err := evidence.Append(ctx, evidenceTx, evidence.Record{
+		WorkspaceID:  workspaceID,
+		EvidenceType: "GOLD_CERTIFICATION_INPUT",
+		Title:        "Gold certification frozen input",
+		SourceType:   "DATASET_VERSION",
+		SourceID:     &output.ID,
+		Metadata: map[string]any{
+			"goldProductionBindingId": binding.ID,
+			"annotationSnapshotId":     snapshot.ID,
+			"qualityAssessmentId":      assessment.ID,
+			"effectiveRightsSnapshotId": allowedRights.ID,
+		},
+		CreatedBy: &actorID,
+	}, evidence.Relation{
+		ObjectType:   "DATASET_VERSION",
+		ObjectID:     output.ID,
+		RelationType: "CERTIFICATION_INPUT",
+	})
+	if err != nil {
+		_ = evidenceTx.Rollback(ctx)
+		t.Fatalf("append Gold certification evidence: %v", err)
+	}
+	certificationEvidence, err = evidence.CreateSnapshot(
+		ctx,
+		evidenceTx,
+		workspaceID,
+		"DATASET_VERSION",
+		output.ID,
+		map[string]any{
+			"goldProductionBindingId": binding.ID,
+			"annotationSnapshotId":     snapshot.ID,
+		},
+		[]evidence.SnapshotItem{{
+			EvidenceID: evidenceRecord.ID,
+			Category:   "GOLD_CERTIFICATION_INPUT",
+		}},
+		&actorID,
+	)
+	if err != nil {
+		_ = evidenceTx.Rollback(ctx)
+		t.Fatalf("create Gold certification EvidenceSnapshot: %v", err)
+	}
+	if err := evidenceTx.Commit(ctx); err != nil {
+		t.Fatalf("commit Gold certification evidence: %v", err)
+	}
+
+	goldProfileSpec, err := certificationdomain.NewGoldCertificationProfile(
+		"GOLD-PILOT",
+		"USE",
+		"GOLD-PILOT-CONSUMER",
+		[]certificationdomain.ScopeRef{
+			{Type: "ALL_RESOURCE", Ref: inputResourceID.String()},
+			{Type: "ALL_RESOURCE", Ref: resourceID.String()},
+		},
+	)
+	if err != nil {
+		t.Fatalf("build Gold CertificationProfile: %v", err)
+	}
+	profileRepo := certificationinfra.NewProfileRepository(pool)
+	profileService := certificationapp.NewProfileService(txManager, profileRepo)
+	goldProfile, err := profileService.Create(ctx, certificationapp.CreateProfileCommand{
+		WorkspaceID: workspaceID,
+		Profile:     goldProfileSpec,
+		ActorID:     &actorID,
+		TraceID:     "gold-certification-profile",
+	})
+	if err != nil {
+		t.Fatalf("create Gold CertificationProfile: %v", err)
+	}
+
+	certificationRepo := certificationinfra.NewCertificationRepository(pool)
+	certificationService := certificationapp.NewCertificationService(
+		txManager,
+		profileRepo,
+		certificationRepo,
+		certificationapp.NewReferenceEvidenceResolver(),
+	)
+	certificationKey := "gold-certification-" + uuid.NewString()
+	certification, err := certificationService.Evaluate(ctx, certificationapp.EvaluateDatasetCertificationCommand{
+		WorkspaceID:               workspaceID,
+		DatasetVersionID:          output.ID,
+		ProfileID:                 goldProfile.ID,
+		QualityAssessmentID:       assessment.ID,
+		EffectiveRightsSnapshotID: &allowedRights.ID,
+		EvidenceSnapshotID:        &certificationEvidence.ID,
+		IdempotencyKey:            certificationKey,
+		ActorID:                   &actorID,
+		TraceID:                   "gold-certification",
+		Now:                       time.Now().UTC(),
+	})
+	if err != nil {
+		t.Fatalf("evaluate Gold certification: %v", err)
+	}
+	if certification.Decision != certificationdomain.DecisionCertified {
+		t.Fatalf("Gold certification decision=%s blockers=%+v", certification.Decision, certification.Blockers)
+	}
+	if certification.GoldProductionBindingID == nil || *certification.GoldProductionBindingID != binding.ID ||
+		certification.AnnotationSnapshotID == nil || *certification.AnnotationSnapshotID != snapshot.ID ||
+		certification.AnnotationSnapshotRootHash != snapshot.RootHash ||
+		certification.AnnotationSchemaSHA256 != binding.SchemaContentSHA256 ||
+		certification.AnnotationTaxonomySHA256 != binding.TaxonomyContentSHA256 ||
+		certification.GoldProductionBindingRootHash != binding.RootHash {
+		t.Fatalf("Gold certification proof mismatch: %+v", certification)
+	}
+	goldCount(t, ctx, pool, 1, `
+		SELECT count(*)
+		FROM dataset_certification
+		WHERE id=$1
+		  AND dataset_version_id=$2
+		  AND gold_production_binding_id=$3
+		  AND annotation_snapshot_id=$4
+	`, certification.ID, output.ID, binding.ID, snapshot.ID)
+
+	replayedCertification, err := certificationService.Evaluate(ctx, certificationapp.EvaluateDatasetCertificationCommand{
+		WorkspaceID:               workspaceID,
+		DatasetVersionID:          output.ID,
+		ProfileID:                 goldProfile.ID,
+		QualityAssessmentID:       assessment.ID,
+		EffectiveRightsSnapshotID: &allowedRights.ID,
+		EvidenceSnapshotID:        &certificationEvidence.ID,
+		IdempotencyKey:            certificationKey,
+		ActorID:                   &actorID,
+		TraceID:                   "gold-certification-replay",
+		Now:                       time.Now().UTC(),
+	})
+	if err != nil {
+		t.Fatalf("replay Gold certification: %v", err)
+	}
+	if replayedCertification.ID != certification.ID {
+		t.Fatalf("replayed certification=%s want=%s", replayedCertification.ID, certification.ID)
+	}
+	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM dataset_certification WHERE id=$1", certification.ID)
 }
 
 func goldSQL(t *testing.T, ctx context.Context, pool *pgxpool.Pool, query string, args ...any) {
