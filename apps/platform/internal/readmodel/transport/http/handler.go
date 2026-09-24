@@ -32,6 +32,7 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/datasets", h.listDatasets)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/datasets/{datasetId}", h.getDataset)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/datasets/{datasetId}/versions", h.listDatasetVersions)
+	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/gold-explanation", h.goldExplanation)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/executions", h.listExecutions)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/entity-match-reviews", h.listEntityReviews)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/data-products", h.listDataProducts)
@@ -156,6 +157,27 @@ func (h *Handler) listDatasetVersions(w http.ResponseWriter, r *http.Request) {
 	result, err := h.repo.ListDatasetVersions(r.Context(), datasetID, limit, offset)
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "DATASET_VERSIONS_READ_FAILED", err.Error(), nil)
+		return
+	}
+	writeJSON(w, http.StatusOK, result)
+}
+
+func (h *Handler) goldExplanation(w http.ResponseWriter, r *http.Request) {
+	workspaceID, ok := workspaceID(w, r)
+	if !ok {
+		return
+	}
+	versionID, ok := pathUUID(w, r, "versionId", "INVALID_DATASET_VERSION_ID")
+	if !ok {
+		return
+	}
+	result, err := h.repo.GoldExplanation(r.Context(), workspaceID, versionID)
+	if err != nil {
+		if errors.Is(err, readmodel.ErrNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "GOLD_EXPLANATION_NOT_FOUND", "Gold explanation was not found for this DatasetVersion", nil)
+			return
+		}
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "GOLD_EXPLANATION_READ_FAILED", err.Error(), nil)
 		return
 	}
 	writeJSON(w, http.StatusOK, result)
