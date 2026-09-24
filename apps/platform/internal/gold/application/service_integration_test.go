@@ -213,7 +213,7 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	if _, err := annotationService.ReviewAnnotation(ctx, annotationapp.ReviewAnnotationCommand{
 		WorkspaceID: workspaceID, CampaignID: campaignID, TaskID: task1,
 		ExpectedTaskRevision: 2, ReviewerRef: actorID.String(), Action: annotationdomain.ReviewAccept,
-		Reason: "accept", IdempotencyKey: "accept-"+uuid.NewString(), ReviewedResultID: &result1,
+		Reason: "accept", IdempotencyKey: "accept-" + uuid.NewString(), ReviewedResultID: &result1,
 		ActorID: &actorID, TraceID: "gold-builder-test",
 	}); err != nil {
 		t.Fatalf("accept task: %v", err)
@@ -222,7 +222,7 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	if _, err := annotationService.ReviewAnnotation(ctx, annotationapp.ReviewAnnotationCommand{
 		WorkspaceID: workspaceID, CampaignID: campaignID, TaskID: task2,
 		ExpectedTaskRevision: 2, ReviewerRef: actorID.String(), Action: annotationdomain.ReviewCorrect,
-		Reason: "correct", IdempotencyKey: "correct-"+uuid.NewString(), ReviewedResultID: &result2,
+		Reason: "correct", IdempotencyKey: "correct-" + uuid.NewString(), ReviewedResultID: &result2,
 		CorrectedPayload: corrected, CorrectedPayloadHash: goldTestSHA256(corrected),
 		ActorID: &actorID, TraceID: "gold-builder-test",
 	}); err != nil {
@@ -238,34 +238,34 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	goldSQL(t, ctx, pool, `
 		INSERT INTO dataset(id, workspace_id, code, name, dataset_type)
 		VALUES ($1,$2,$3,'gold candidate output','CURATED')
-	`, outputDatasetID, workspaceID, "GOLD-OUT-"+suffix)
+	`, outputDatasetID, workspaceID, "GOLD-OUT-" + suffix)
 
 	workflowVersion, err := workflowVersionService.Create(ctx, workflowapp.CreateWorkflowVersionCommand{
-		WorkspaceID: workspaceID,
-		Code: "GOLD-BUILDER-"+suffix,
-		Name: "Gold builder",
-		Version: "1.0.0",
-		DefinitionRef: "test/gold-builder.yaml",
+		WorkspaceID:    workspaceID,
+		Code:           "GOLD-BUILDER-" + suffix,
+		Name:           "Gold builder",
+		Version:        "1.0.0",
+		DefinitionRef:  "test/gold-builder.yaml",
 		DefinitionYAML: []byte("spec:\n  processor: GOLD_DATASET_BUILDER_V1\n  execution:\n    requiresTargetPeriod: false\n"),
-		ActorID: &actorID,
-		TraceID: "gold-builder-test",
+		ActorID:        &actorID,
+		TraceID:        "gold-builder-test",
 	})
 	if err != nil {
 		t.Fatalf("create workflow version: %v", err)
 	}
 
 	command := CreateBuildCommand{
-		WorkspaceID: workspaceID,
-		WorkflowVersionID: workflowVersion.ID,
-		OutputDatasetID: outputDatasetID,
-		InputDatasetVersionID: inputVersionID,
-		InputCertificationID: certificationID,
-		AnnotationCampaignID: campaignID,
-		AnnotationSnapshotID: snapshot.ID,
+		WorkspaceID:                      workspaceID,
+		WorkflowVersionID:                workflowVersion.ID,
+		OutputDatasetID:                  outputDatasetID,
+		InputDatasetVersionID:            inputVersionID,
+		InputCertificationID:             certificationID,
+		AnnotationCampaignID:             campaignID,
+		AnnotationSnapshotID:             snapshot.ID,
 		AnnotationContributionResourceID: resourceID,
-		IdempotencyKey: "gold-build-"+uuid.NewString(),
-		ActorID: &actorID,
-		TraceID: "gold-builder-test",
+		IdempotencyKey:                   "gold-build-" + uuid.NewString(),
+		ActorID:                          &actorID,
+		TraceID:                          "gold-builder-test",
 	}
 	execution, err := goldService.CreateBuild(ctx, command)
 	if err != nil {
