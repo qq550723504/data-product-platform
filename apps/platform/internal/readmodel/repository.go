@@ -199,12 +199,222 @@ type ProductRelease struct {
 	ReleasedAt         *time.Time `json:"releasedAt,omitempty"`
 }
 
+type GoldExplanation struct {
+	WorkspaceID                      uuid.UUID               `json:"workspaceId"`
+	OutputDatasetVersionID           uuid.UUID               `json:"outputDatasetVersionId"`
+	InputDatasetVersionID            uuid.UUID               `json:"inputDatasetVersionId"`
+	InputCertificationID             uuid.UUID               `json:"inputCertificationId"`
+	ExecutionID                      uuid.UUID               `json:"executionId"`
+	GoldProductionBindingID          uuid.UUID               `json:"goldProductionBindingId"`
+	GoldProductionBindingRootHash    string                  `json:"goldProductionBindingRootHash"`
+	AnnotationContributionResourceID uuid.UUID               `json:"annotationContributionResourceId"`
+	Campaign                         GoldCampaignExplanation `json:"campaign"`
+	Snapshot                         GoldSnapshotExplanation `json:"snapshot"`
+	Reviews                          []GoldReviewExplanation `json:"reviews"`
+}
+
+type GoldCampaignExplanation struct {
+	ID                  uuid.UUID `json:"id"`
+	Status              string    `json:"status"`
+	Purpose             string    `json:"purpose"`
+	Action              string    `json:"action"`
+	SchemaRef           string    `json:"schemaRef"`
+	SchemaVersion       string    `json:"schemaVersion"`
+	SchemaSHA256        string    `json:"schemaSha256"`
+	TaxonomyRef         string    `json:"taxonomyRef"`
+	TaxonomyVersion     string    `json:"taxonomyVersion"`
+	TaxonomySHA256      string    `json:"taxonomySha256"`
+	ExpectedTaskCount   int       `json:"expectedTaskCount"`
+	TaskCount           int       `json:"taskCount"`
+	ResultCount         int       `json:"resultCount"`
+	ReviewDecisionCount int       `json:"reviewDecisionCount"`
+	SelectedOutputCount int       `json:"selectedOutputCount"`
+	CreatedAt           time.Time `json:"createdAt"`
+	ActivatedAt         *time.Time `json:"activatedAt,omitempty"`
+}
+
+type GoldSnapshotExplanation struct {
+	ID                    uuid.UUID  `json:"id"`
+	Status                string     `json:"status"`
+	RootHash              string     `json:"rootHash"`
+	ExpectedTaskCount     int        `json:"expectedTaskCount"`
+	ExpectedResultCount   int        `json:"expectedResultCount"`
+	ExpectedDecisionCount int        `json:"expectedDecisionCount"`
+	ExpectedOutputCount   int        `json:"expectedOutputCount"`
+	FinalizedAt           *time.Time `json:"finalizedAt,omitempty"`
+}
+
+type GoldReviewExplanation struct {
+	TaskID                 uuid.UUID  `json:"taskId"`
+	SourceItemRef          string     `json:"sourceItemRef"`
+	SourceContentSHA256    string     `json:"sourceContentSha256"`
+	DecisionID             uuid.UUID  `json:"decisionId"`
+	Outcome                string     `json:"outcome"`
+	ReviewerRef            string     `json:"reviewerRef"`
+	Reason                 string     `json:"reason"`
+	ReviewedResultID       *uuid.UUID `json:"reviewedResultId,omitempty"`
+	SelectedResultID       *uuid.UUID `json:"selectedResultId,omitempty"`
+	SelectedResultSHA256   string     `json:"selectedResultSha256,omitempty"`
+	AnnotationAuthorRef    string     `json:"annotationAuthorRef,omitempty"`
+	ProviderBindingRef     string     `json:"providerBindingRef,omitempty"`
+	ExternalTaskID         string     `json:"externalTaskId,omitempty"`
+	ExternalAnnotationID   string     `json:"externalAnnotationId,omitempty"`
+	DecisionCreatedAt      time.Time  `json:"decisionCreatedAt"`
+}
+
 type Repository struct {
 	pool *pgxpool.Pool
 }
 
 func NewRepository(pool *pgxpool.Pool) *Repository {
 	return &Repository{pool: pool}
+}
+
+func (r *Repository) GoldExplanation(
+	ctx context.Context,
+	workspaceID, outputDatasetVersionID uuid.UUID,
+) (GoldExplanation, error) {
+	var result GoldExplanation
+	err := r.pool.QueryRow(ctx, `
+		SELECT
+			g.workspace_id,
+			g.output_dataset_version_id,
+			g.input_dataset_version_id,
+			g.input_certification_id,
+			g.execution_id,
+			g.id,
+			g.root_hash,
+			g.annotation_contribution_resource_id,
+			c.id,
+			c.status,
+			c.purpose,
+			c.action,
+			c.schema_ref,
+			c.schema_version,
+			c.schema_content_sha256,
+			c.taxonomy_ref,
+			c.taxonomy_version,
+			c.taxonomy_content_sha256,
+			COALESCE(c.expected_task_count,0),
+			(SELECT count(*) FROM annotation_task t WHERE t.campaign_id=c.id),
+			(SELECT count(*) FROM annotation_result ar WHERE ar.campaign_id=c.id),
+			(SELECT count(*) FROM annotation_review_decision d WHERE d.campaign_id=c.id),
+			(SELECT count(*) FROM annotation_snapshot_output so WHERE so.snapshot_id=s.id),
+			c.created_at,
+			c.activated_at,
+			s.id,
+			s.status,
+			s.root_hash,
+			s.expected_task_count,
+			s.expected_result_count,
+			s.expected_decision_count,
+			s.expected_output_count,
+			s.finalized_at
+		FROM gold_production_binding g
+		JOIN annotation_campaign c ON c.id=g.annotation_campaign_id
+		JOIN annotation_snapshot s ON s.id=g.annotation_snapshot_id
+		WHERE g.workspace_id=$1
+		  AND g.output_dataset_version_id=$2
+		  AND g.status='FINALIZED'
+	`, workspaceID, outputDatasetVersionID).Scan(
+		&result.WorkspaceID,
+		&result.OutputDatasetVersionID,
+		&result.InputDatasetVersionID,
+		&result.InputCertificationID,
+		&result.ExecutionID,
+		&result.GoldProductionBindingID,
+		&result.GoldProductionBindingRootHash,
+		&result.AnnotationContributionResourceID,
+		&result.Campaign.ID,
+		&result.Campaign.Status,
+		&result.Campaign.Purpose,
+		&result.Campaign.Action,
+		&result.Campaign.SchemaRef,
+		&result.Campaign.SchemaVersion,
+		&result.Campaign.SchemaSHA256,
+		&result.Campaign.TaxonomyRef,
+		&result.Campaign.TaxonomyVersion,
+		&result.Campaign.TaxonomySHA256,
+		&result.Campaign.ExpectedTaskCount,
+		&result.Campaign.TaskCount,
+		&result.Campaign.ResultCount,
+		&result.Campaign.ReviewDecisionCount,
+		&result.Campaign.SelectedOutputCount,
+		&result.Campaign.CreatedAt,
+		&result.Campaign.ActivatedAt,
+		&result.Snapshot.ID,
+		&result.Snapshot.Status,
+		&result.Snapshot.RootHash,
+		&result.Snapshot.ExpectedTaskCount,
+		&result.Snapshot.ExpectedResultCount,
+		&result.Snapshot.ExpectedDecisionCount,
+		&result.Snapshot.ExpectedOutputCount,
+		&result.Snapshot.FinalizedAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return GoldExplanation{}, ErrNotFound
+	}
+	if err != nil {
+		return GoldExplanation{}, fmt.Errorf("read Gold explanation: %w", err)
+	}
+
+	rows, err := r.pool.Query(ctx, `
+		SELECT
+			st.task_id,
+			st.source_item_ref,
+			st.source_content_sha256,
+			sd.decision_id,
+			sd.outcome,
+			sd.reviewer_ref,
+			sd.reason,
+			sd.reviewed_result_id,
+			sd.selected_result_id,
+			COALESCE(sr.canonical_payload_sha256,''),
+			COALESCE(sr.author_ref,''),
+			COALESCE(sr.provider_binding_ref,''),
+			COALESCE(sr.external_task_id,''),
+			COALESCE(sr.external_annotation_id,''),
+			d.created_at
+		FROM annotation_snapshot_task st
+		JOIN annotation_snapshot_decision sd
+		  ON sd.snapshot_id=st.snapshot_id AND sd.task_id=st.task_id
+		JOIN annotation_review_decision d ON d.id=sd.decision_id
+		LEFT JOIN annotation_result sr ON sr.id=sd.selected_result_id
+		WHERE st.snapshot_id=$1
+		ORDER BY st.source_item_ref, st.task_id
+	`, result.Snapshot.ID)
+	if err != nil {
+		return GoldExplanation{}, fmt.Errorf("read Gold explanation reviews: %w", err)
+	}
+	defer rows.Close()
+	result.Reviews = make([]GoldReviewExplanation, 0)
+	for rows.Next() {
+		var item GoldReviewExplanation
+		if err := rows.Scan(
+			&item.TaskID,
+			&item.SourceItemRef,
+			&item.SourceContentSHA256,
+			&item.DecisionID,
+			&item.Outcome,
+			&item.ReviewerRef,
+			&item.Reason,
+			&item.ReviewedResultID,
+			&item.SelectedResultID,
+			&item.SelectedResultSHA256,
+			&item.AnnotationAuthorRef,
+			&item.ProviderBindingRef,
+			&item.ExternalTaskID,
+			&item.ExternalAnnotationID,
+			&item.DecisionCreatedAt,
+		); err != nil {
+			return GoldExplanation{}, fmt.Errorf("scan Gold explanation review: %w", err)
+		}
+		result.Reviews = append(result.Reviews, item)
+	}
+	if err := rows.Err(); err != nil {
+		return GoldExplanation{}, fmt.Errorf("iterate Gold explanation reviews: %w", err)
+	}
+	return result, nil
 }
 
 func (r *Repository) Workbench(ctx context.Context, workspaceID uuid.UUID) (WorkbenchSummary, error) {
