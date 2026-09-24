@@ -361,6 +361,12 @@ export type DatasetCertification = {
   contractVersionId?: string;
   traceabilityEvidenceId?: string;
   evidenceSnapshotId?: string;
+  goldProductionBindingId?: string;
+  annotationSnapshotId?: string;
+  annotationSnapshotRootHash?: string;
+  annotationSchemaSha256?: string;
+  annotationTaxonomySha256?: string;
+  goldProductionBindingRootHash?: string;
   profile: CertificationProfile;
   dispositions: CertificationDisposition[];
 };
