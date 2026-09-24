@@ -28,7 +28,7 @@ const (
 // whenever an event type's required-handler set changes. Dispatch logs and
 // dead-letter diagnostics reference it, so the obligation that was in force when
 // an event was handled stays auditable.
-const Version = "c1-v12"
+const Version = "c1-v13"
 
 // VersionFor folds the deployment profile into the routing version so the same
 // version string always describes the same required-handler set. Enabling or
@@ -90,6 +90,7 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "AnnotationEngineOperationPrepared"},
 		{EventType: "AnnotationEngineAttemptStarted"},
 		{EventType: "AnnotationEngineOperationResolved"},
+		{EventType: "AnnotationEngineManualResolutionRequired"},
 		{EventType: "EntityMappingDecisionRecorded"},
 		{EventType: "EntityMatchCompleted"},
 		{EventType: "WorkflowVersionCreated"},
