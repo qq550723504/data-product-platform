@@ -108,15 +108,6 @@ func (s *Service) RunGold(ctx context.Context, cmd GoldRunCommand) (domain.Asses
 	if err := validateGoldBindingForAssessment(binding, version, cmd.WorkspaceID); err != nil {
 		return domain.Assessment{}, err
 	}
-	preflight, err := s.goldPreflight.GoldQualityPreflight(ctx, cmd.WorkspaceID, binding.AnnotationCampaignID)
-	if err != nil {
-		return domain.Assessment{}, fmt.Errorf("%w: evaluate frozen annotation facts: %v", ErrGoldProductionProof, err)
-	}
-	if preflight.SnapshotID != binding.AnnotationSnapshotID ||
-		preflight.SnapshotRoot != binding.SnapshotRootHash {
-		return domain.Assessment{}, fmt.Errorf("%w: preflight snapshot does not match production binding", ErrGoldProductionProof)
-	}
-
 	var result domain.Assessment
 	var replayAssessmentID uuid.UUID
 	err = s.tx.WithAdvisoryLock(ctx, assessmentAttemptLockPrefix+attemptID.String(), func(ctx context.Context) error {
@@ -141,6 +132,23 @@ func (s *Service) RunGold(ctx context.Context, cmd GoldRunCommand) (domain.Asses
 			}
 			replayAssessmentID = *state.AssessmentID
 			return nil
+		}
+
+		preflight, err := s.goldPreflight.GoldQualityPreflight(ctx, cmd.WorkspaceID, binding.AnnotationCampaignID)
+		if err != nil {
+			wrapped := fmt.Errorf("%w: evaluate frozen annotation facts: %v", ErrGoldProductionProof, err)
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, base, attemptID, wrapped.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("%v; record attempt outcome: %w", wrapped, outcomeErr)
+			}
+			return wrapped
+		}
+		if preflight.SnapshotID != binding.AnnotationSnapshotID ||
+			preflight.SnapshotRoot != binding.SnapshotRootHash {
+			wrapped := fmt.Errorf("%w: preflight snapshot does not match production binding", ErrGoldProductionProof)
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, base, attemptID, wrapped.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("%v; record attempt outcome: %w", wrapped, outcomeErr)
+			}
+			return wrapped
 		}
 
 		findings := cloneGoldFindings(preflight.Findings)
