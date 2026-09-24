@@ -22,6 +22,8 @@ import (
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	platformprincipal "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
@@ -61,6 +63,11 @@ func TestEntityReviewHTTPRequiresTrustedPrincipalAndPersistsResolvedActor(t *tes
 		t.Skip("TEST_POSTGRES_DSN is not set")
 	}
 	ctx := context.Background()
+	obligationRouter, err := routing.NewRouter(false)
+	if err != nil {
+		t.Fatalf("build routing obligation: %v", err)
+	}
+	outbox.ConfigureAppendObligation(obligationRouter)
 	pool, err := database.Open(ctx, dsn)
 	if err != nil {
 		t.Fatalf("open postgres: %v", err)
