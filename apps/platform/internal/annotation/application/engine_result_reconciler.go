@@ -90,19 +90,19 @@ func (r *EngineResultReconciler) ReconcileCampaign(ctx context.Context, campaign
 		return err
 	}
 
+	manifest, err := decodeTasksManifest(operation)
+	if err != nil {
+		return err
+	}
+	frozenRequest := engineLookupRequest(engineSubmitRequest(operation, manifest))
+
 	cursor := EngineResultCursor{}
 	for {
 		attempt, err := r.startFetchAttempt(ctx, operation)
 		if err != nil {
 			return err
 		}
-		page, fetchErr := r.engine.FetchResults(ctx, EngineCampaignBinding{
-			Provider:          binding.Provider,
-			ProviderInstance:  binding.ProviderInstance,
-			ExternalProjectID: binding.ExternalProjectID,
-			RequestID:         binding.RequestID,
-			ConfigSHA256:      binding.ConfigSHA256,
-		}, cursor)
+		page, fetchErr := r.engine.FetchResults(ctx, frozenRequest, cursor)
 		if err := r.finishFetchAttempt(ctx, operation, attempt, fetchErr); err != nil {
 			return err
 		}
