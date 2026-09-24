@@ -18,6 +18,8 @@ import (
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
+	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
+	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	parkindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
 	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
@@ -116,6 +118,15 @@ func main() {
 	workflowRepo := workflowinfra.NewPostgresRepository(db)
 	datasetWriter := datasetapp.NewUploadVersionService(txManager, datasetRepo, objectStore)
 	executionService := workflowapp.NewExecutionService(txManager, workflowRepo)
+	goldService := goldapp.NewService(
+		txManager,
+		goldinfra.NewPostgresRepository(db),
+		workflowRepo,
+		annotationRepo,
+		datasetRepo,
+		datasetWriter,
+		objectStore,
+	)
 	processingEngine := nativeengine.NewEngine(
 		cfg.IndustryPackRoot,
 		txManager,
@@ -125,6 +136,7 @@ func main() {
 		datasetWriter,
 		objectStore,
 		parkindicator.NewCalculator(),
+		goldService,
 	)
 
 	managedBridges := make([]workflowapp.ManagedExecutionBridge, 0, 1)
