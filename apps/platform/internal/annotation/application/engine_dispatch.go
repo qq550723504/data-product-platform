@@ -121,10 +121,10 @@ func (s *EngineService) requireManualEngineResolution(
 			Title:        "Annotation engine operation requires manual resolution",
 			SourceType:   "CORE",
 			Metadata: map[string]any{
-				"operationId": operation.ID,
-				"provider": operation.Provider,
-				"providerInstance": operation.ProviderInstanceRef,
-				"lookupCount": lookupCount,
+				"operationId":          operation.ID,
+				"provider":             operation.Provider,
+				"providerInstance":     operation.ProviderInstanceRef,
+				"lookupCount":          lookupCount,
 				"automaticLookupLimit": maxAutomaticUnknownLookups,
 			},
 		}, evidence.Relation{
@@ -141,8 +141,8 @@ func (s *EngineService) requireManualEngineResolution(
 			ObjectType:  "ANNOTATION_ENGINE_OPERATION",
 			ObjectID:    operation.ID,
 			AfterState: map[string]any{
-				"status": operation.Status,
-				"lookupCount": lookupCount,
+				"status":               operation.Status,
+				"lookupCount":          lookupCount,
 				"automaticLookupLimit": maxAutomaticUnknownLookups,
 			},
 		}); err != nil {
@@ -155,9 +155,9 @@ func (s *EngineService) requireManualEngineResolution(
 			operation.ID,
 			"AnnotationEngineManualResolutionRequired",
 			map[string]any{
-				"operationId": operation.ID,
-				"status": operation.Status,
-				"lookupCount": lookupCount,
+				"operationId":          operation.ID,
+				"status":               operation.Status,
+				"lookupCount":          lookupCount,
 				"automaticLookupLimit": maxAutomaticUnknownLookups,
 			},
 		)
