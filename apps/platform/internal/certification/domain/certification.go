@@ -89,6 +89,18 @@ type EvidenceSnapshot struct {
 	Complete         bool
 }
 
+type GoldProductionEvidence struct {
+	BindingID                uuid.UUID
+	WorkspaceID              uuid.UUID
+	DatasetVersionID         uuid.UUID
+	AnnotationSnapshotID     uuid.UUID
+	AnnotationSnapshotRoot   string
+	SchemaContentSHA256      string
+	TaxonomyContentSHA256    string
+	ProductionBindingRootHash string
+	Finalized                bool
+}
+
 type EvaluationInput struct {
 	WorkspaceID          uuid.UUID
 	DatasetVersionID     uuid.UUID
@@ -100,6 +112,7 @@ type EvaluationInput struct {
 	Contract             *ContractEvidence
 	Traceability         *TraceabilityEvidence
 	Evidence             *EvidenceSnapshot
+	Gold                 *GoldProductionEvidence
 	IssuedAt             time.Time
 	ActorID              *uuid.UUID
 }
@@ -118,6 +131,12 @@ type DatasetCertification struct {
 	ContractVersionID           *uuid.UUID
 	TraceabilityEvidenceID      *uuid.UUID
 	EvidenceSnapshotID          *uuid.UUID
+	GoldProductionBindingID     *uuid.UUID
+	AnnotationSnapshotID        *uuid.UUID
+	AnnotationSnapshotRootHash  string
+	AnnotationSchemaSHA256      string
+	AnnotationTaxonomySHA256    string
+	GoldProductionBindingRootHash string
 	Decision                    Decision
 	Blockers                    []Blocker
 	Reason                      string
@@ -254,6 +273,31 @@ func Evaluate(profile ProfileSnapshot, input EvaluationInput) (DatasetCertificat
 		} else {
 			id := input.Evidence.ID
 			certification.EvidenceSnapshotID = &id
+		}
+	}
+
+	if profile.ProfileRef == GoldCertificationProfileRef {
+		if input.Gold == nil {
+			add("GOLD_PRODUCTION_EVIDENCE_MISSING", "Gold certification requires frozen production evidence")
+		} else if input.Gold.BindingID == uuid.Nil ||
+			input.Gold.WorkspaceID != input.WorkspaceID ||
+			input.Gold.DatasetVersionID != input.DatasetVersionID ||
+			input.Gold.AnnotationSnapshotID == uuid.Nil ||
+			!input.Gold.Finalized ||
+			strings.TrimSpace(input.Gold.AnnotationSnapshotRoot) == "" ||
+			strings.TrimSpace(input.Gold.SchemaContentSHA256) == "" ||
+			strings.TrimSpace(input.Gold.TaxonomyContentSHA256) == "" ||
+			strings.TrimSpace(input.Gold.ProductionBindingRootHash) == "" {
+			add("GOLD_PRODUCTION_EVIDENCE_INVALID", "Gold production binding, annotation snapshot, schema/taxonomy hashes, and binding root must match the target")
+		} else {
+			bindingID := input.Gold.BindingID
+			snapshotID := input.Gold.AnnotationSnapshotID
+			certification.GoldProductionBindingID = &bindingID
+			certification.AnnotationSnapshotID = &snapshotID
+			certification.AnnotationSnapshotRootHash = input.Gold.AnnotationSnapshotRoot
+			certification.AnnotationSchemaSHA256 = input.Gold.SchemaContentSHA256
+			certification.AnnotationTaxonomySHA256 = input.Gold.TaxonomyContentSHA256
+			certification.GoldProductionBindingRootHash = input.Gold.ProductionBindingRootHash
 		}
 	}
 
