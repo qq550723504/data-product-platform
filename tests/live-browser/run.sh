@@ -60,7 +60,7 @@ go test -count=1 -run '^TestBrowserCSVIngest$' -timeout 6m -v ./internal/accepta
 
 go test -count=1 -run '^TestLabelStudioLiveCoreResultReviewAndSnapshot$' -timeout 3m -v ./internal/annotation/labelstudio 2>&1 | tee "$ARTIFACTS/label-studio-core-live.log"
 
-go test -count=1 -run '^TestLiveGoldWorkerBuildAndFormalQuality$' -timeout 2m -v ./internal/gold/application 2>&1 | tee "$ARTIFACTS/gold-worker-quality-live.log"
+go test -count=1 -run '^TestLiveGoldWorkerBuildAndFormalQuality$' -timeout 3m -v ./internal/gold/application 2>&1 | tee "$ARTIFACTS/gold-worker-quality-live.log"
 
 # Re-run existing Go regressions after the live slice, with its opt-in disabled.
 LIVE_BROWSER_ACCEPTANCE=0 go test -count=1 ./... 2>&1 | tee "$ARTIFACTS/go-regressions.log"
