@@ -144,7 +144,6 @@ func TestLabelStudioLiveReference(t *testing.T) {
 	}
 }
 
-
 func refreshPersonalAccessToken(
 	t *testing.T,
 	client *http.Client,
