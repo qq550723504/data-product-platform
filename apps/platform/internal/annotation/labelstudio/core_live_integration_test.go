@@ -13,6 +13,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
@@ -341,7 +342,7 @@ func seedLiveCoreAnnotationFixture(
 	t *testing.T,
 	ctx context.Context,
 	pool interface {
-		Exec(context.Context, string, ...any) (pgx.CommandTag, error)
+		Exec(context.Context, string, ...any) (pgconn.CommandTag, error)
 	},
 ) liveCoreAnnotationFixture {
 	t.Helper()
