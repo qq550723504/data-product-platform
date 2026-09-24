@@ -17,6 +17,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
+	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/matching"
@@ -44,9 +45,14 @@ type Engine struct {
 	datasetWriter       *datasetapp.UploadVersionService
 	store               ObjectStore
 	indicatorCalculator indicator.Calculator
+	goldBuilder         workflowapp.ProcessingEngine
 }
 
-func NewEngine(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, entityRepo *entityinfra.PostgresRepository, workflowRepo *workflowinfra.PostgresRepository, datasetWriter *datasetapp.UploadVersionService, store ObjectStore, calculator indicator.Calculator) *Engine {
+func NewEngine(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, entityRepo *entityinfra.PostgresRepository, workflowRepo *workflowinfra.PostgresRepository, datasetWriter *datasetapp.UploadVersionService, store ObjectStore, calculator indicator.Calculator, specialized ...workflowapp.ProcessingEngine) *Engine {
+	var goldBuilder workflowapp.ProcessingEngine
+	if len(specialized) > 0 {
+		goldBuilder = specialized[0]
+	}
 	return &Engine{
 		industryPackRoot:    industryPackRoot,
 		tx:                  tx,
@@ -56,6 +62,7 @@ func NewEngine(industryPackRoot string, tx *transaction.Manager, datasetRepo *da
 		datasetWriter:       datasetWriter,
 		store:               store,
 		indicatorCalculator: calculator,
+		goldBuilder:         goldBuilder,
 	}
 }
 
@@ -86,6 +93,12 @@ func (e *Engine) Execute(ctx context.Context, request workflowapp.ProcessingRequ
 }
 
 func (e *Engine) execute(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.ProcessingResult, error) {
+	if processor := processorName(request.WorkflowVersion.Definition); processor == goldapp.ProcessorGoldDatasetBuilderV1 {
+		if e.goldBuilder == nil {
+			return workflowapp.ProcessingResult{}, fmt.Errorf("Gold dataset builder is not configured")
+		}
+		return e.goldBuilder.Execute(ctx, request)
+	}
 	if e.indicatorCalculator == nil {
 		return workflowapp.ProcessingResult{}, fmt.Errorf("native workflow has no industry-pack indicator calculator")
 	}
@@ -496,4 +509,14 @@ func formatOptional(value *float64) string {
 		return ""
 	}
 	return fmt.Sprintf("%.2f", *value)
+}
+
+
+func processorName(definition map[string]any) string {
+	spec, ok := definition["spec"].(map[string]any)
+	if !ok {
+		return ""
+	}
+	processor, _ := spec["processor"].(string)
+	return strings.TrimSpace(processor)
 }
