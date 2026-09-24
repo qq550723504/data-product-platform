@@ -25,7 +25,7 @@ CREATE TABLE annotation_engine_operation (
     CONSTRAINT ck_annotation_engine_operation_kind
         CHECK (operation_kind IN ('ENSURE_CAMPAIGN','SUBMIT_TASKS')),
     CONSTRAINT ck_annotation_engine_operation_status
-        CHECK (status IN ('PENDING','SENDING','UNKNOWN','MATCHED','REJECTED','CONFLICT')),
+        CHECK (status IN ('PENDING','SENDING','UNKNOWN','MATCHED','REJECTED','CONFLICT','MANUAL_RESOLUTION')),
     CONSTRAINT ck_annotation_engine_operation_revision CHECK (revision >= 1),
     CONSTRAINT ck_annotation_engine_operation_provider CHECK (
         length(btrim(provider)) > 0 AND length(btrim(provider_instance_ref)) > 0
@@ -326,7 +326,7 @@ BEGIN
             SELECT 1
               FROM annotation_engine_operation
              WHERE campaign_id=NEW.campaign_id
-               AND status IN ('PENDING','SENDING','UNKNOWN')
+               AND status IN ('PENDING','SENDING','UNKNOWN','MANUAL_RESOLUTION')
         ) THEN
             RAISE EXCEPTION 'annotation snapshot cannot finalize with unsettled engine operations';
         END IF;
