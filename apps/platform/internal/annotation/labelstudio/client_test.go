@@ -470,7 +470,6 @@ func writeJSON(t *testing.T, w http.ResponseWriter, value any) {
 	}
 }
 
-
 func TestLabelStudioFetchResultsRejectsMalformedCorrelatedTaskID(t *testing.T) {
 	taskID := uuid.New()
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
