@@ -33,6 +33,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	readmodel "github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel"
 	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
 	rightsdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
 	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
@@ -339,6 +340,33 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	if binding.Status != "FINALIZED" || binding.OutputDatasetVersionID != output.ID ||
 		binding.AnnotationSnapshotID != snapshot.ID || binding.OutputRowCount != 2 {
 		t.Fatalf("binding=%+v", binding)
+	}
+
+	explanation, err := readmodel.NewRepository(pool).GoldExplanation(ctx, workspaceID, output.ID)
+	if err != nil {
+		t.Fatalf("read Gold explanation projection: %v", err)
+	}
+	if explanation.InputDatasetVersionID != inputVersionID ||
+		explanation.InputCertificationID != certificationID ||
+		explanation.ExecutionID != execution.ID ||
+		explanation.GoldProductionBindingID != binding.ID ||
+		explanation.Campaign.ID != campaignID ||
+		explanation.Snapshot.ID != snapshot.ID {
+		t.Fatalf("Gold explanation identity mismatch: %+v", explanation)
+	}
+	if explanation.Campaign.TaskCount != 2 ||
+		explanation.Campaign.ReviewDecisionCount != 2 ||
+		explanation.Campaign.SelectedOutputCount != 2 ||
+		len(explanation.Reviews) != 2 {
+		t.Fatalf("Gold explanation counts/reviews=%+v", explanation)
+	}
+	for _, review := range explanation.Reviews {
+		if review.ReviewerRef != actorID.String() ||
+			strings.TrimSpace(review.Reason) == "" ||
+			review.SelectedResultID == nil ||
+			strings.TrimSpace(review.SelectedResultSHA256) == "" {
+			t.Fatalf("Gold explanation review provenance=%+v", review)
+		}
 	}
 	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM gold_build_request WHERE execution_id=$1", execution.ID)
 	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM gold_production_binding WHERE execution_id=$1", execution.ID)
