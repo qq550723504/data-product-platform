@@ -309,8 +309,8 @@ func ratioObservation(numerator, denominator int) map[string]any {
 		rate = fmt.Sprintf("%d/%d", numerator, denominator)
 	}
 	return map[string]any{
-		"numerator": numerator,
+		"numerator":   numerator,
 		"denominator": denominator,
-		"rate": rate,
+		"rate":        rate,
 	}
 }
