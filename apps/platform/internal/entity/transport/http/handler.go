@@ -12,15 +12,21 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
+	platformprincipal "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 )
 
 type Handler struct {
-	service *application.MatchService
-	repo    *infrastructure.PostgresRepository
+	service  *application.MatchService
+	repo     *infrastructure.PostgresRepository
+	resolver platformprincipal.Resolver
 }
 
-func NewHandler(service *application.MatchService, repo *infrastructure.PostgresRepository) *Handler {
-	return &Handler{service: service, repo: repo}
+func NewHandler(service *application.MatchService, repo *infrastructure.PostgresRepository, resolvers ...platformprincipal.Resolver) *Handler {
+	var resolver platformprincipal.Resolver
+	if len(resolvers) > 0 {
+		resolver = resolvers[0]
+	}
+	return &Handler{service: service, repo: repo, resolver: resolver}
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
@@ -225,11 +231,43 @@ func (h *Handler) review(w http.ResponseWriter, r *http.Request, confirm bool) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CANDIDATE_ID", "candidateId must be a UUID", nil)
 		return
 	}
-	actorID, err := parseActorID(r)
-	if err != nil || actorID == nil {
-		httpserver.WriteError(w, r, http.StatusBadRequest, "REVIEWER_REQUIRED", "valid X-Actor-ID is required for manual review", nil)
+	if h == nil || h.repo == nil || h.service == nil || h.resolver == nil {
+		httpserver.WriteError(w, r, http.StatusServiceUnavailable, "HUMAN_DECISION_NOT_CONFIGURED", "human decision principal boundary is not configured", nil)
 		return
 	}
+	candidate, err := h.repo.GetCandidate(r.Context(), candidateID)
+	if err != nil {
+		if errors.Is(err, infrastructure.ErrNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "ENTITY_MATCH_CANDIDATE_NOT_FOUND", "entity match candidate not found", nil)
+			return
+		}
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "ENTITY_MATCH_CANDIDATE_READ_FAILED", "entity match candidate lookup failed", nil)
+		return
+	}
+	job, err := h.repo.GetJob(r.Context(), candidate.JobID)
+	if err != nil {
+		if errors.Is(err, infrastructure.ErrNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "ENTITY_MATCH_JOB_NOT_FOUND", "entity match job not found", nil)
+			return
+		}
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "ENTITY_MATCH_JOB_READ_FAILED", "entity match job lookup failed", nil)
+		return
+	}
+	principal, err := h.resolver.Resolve(r, job.WorkspaceID, platformprincipal.CapabilityHumanDecision)
+	if err != nil {
+		switch {
+		case errors.Is(err, platformprincipal.ErrNotConfigured):
+			httpserver.WriteError(w, r, http.StatusServiceUnavailable, "HUMAN_DECISION_NOT_CONFIGURED", "human decision principal boundary is not configured", nil)
+		case errors.Is(err, platformprincipal.ErrUnauthenticated):
+			httpserver.WriteError(w, r, http.StatusUnauthorized, "AUTHENTICATION_REQUIRED", "authenticated reviewer is required", nil)
+		case errors.Is(err, platformprincipal.ErrWorkspaceDenied), errors.Is(err, platformprincipal.ErrCapabilityDenied):
+			httpserver.WriteError(w, r, http.StatusForbidden, "WORKSPACE_ACCESS_DENIED", "authenticated reviewer is not authorized for this workspace", nil)
+		default:
+			httpserver.WriteError(w, r, http.StatusInternalServerError, "PRINCIPAL_RESOLUTION_FAILED", "reviewer principal resolution failed", nil)
+		}
+		return
+	}
+	actorID := principal.ActorID
 	var req reviewRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_JSON", "invalid JSON request", nil)
@@ -246,7 +284,7 @@ func (h *Handler) review(w http.ResponseWriter, r *http.Request, confirm bool) {
 	}
 	command := application.ReviewCommand{
 		CandidateID:        candidateID,
-		ReviewerID:         *actorID,
+		ReviewerID:         actorID,
 		Reason:             req.Reason,
 		TraceID:            httpserver.RequestID(r.Context()),
 		ExpectedDecisionID: expectedDecisionID,
