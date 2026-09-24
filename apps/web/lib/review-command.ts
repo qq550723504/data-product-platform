@@ -2,7 +2,7 @@
 export type ReviewConfig = {
   enabled: boolean;
   workspaceId?: string | null;
-  actorId?: string | null;
+  token?: string | null;
   apiBaseUrl: string;
 };
 export type ReviewJob = {
@@ -33,7 +33,7 @@ export function isReviewId(value: unknown): value is string {
 export function reviewConfigurationError(config: ReviewConfig): string | null {
   if (!config.enabled) return "人工审核写入默认关闭；仅在受信任的 POC 环境设置 POC_ENABLE_REVIEW_ACTIONS=true。";
   if (!isReviewId(config.workspaceId)) return "请配置有效的 POC_WORKSPACE_ID。";
-  if (!isReviewId(config.actorId)) return "请配置有效的服务端 POC_REVIEWER_ID；不能使用浏览器传入的审核人身份。";
+  if (typeof config.token !== "string" || !config.token.trim()) return "请配置服务端 HUMAN_DECISION_API_TOKEN；审核身份由 Core 的可信 principal 边界解析。";
   return null;
 }
 function record(value: unknown): Record<string, unknown> {
@@ -72,7 +72,7 @@ export async function executeReview(
     const configurationError = reviewConfigurationError(config);
     if (configurationError) throw new ReviewCommandError(configurationError, "REVIEW_NOT_CONFIGURED");
     const workspaceId = config.workspaceId as string;
-    const actorId = config.actorId as string;
+    const token = config.token!.trim();
     const jobId = form.get("jobId");
     const candidateId = form.get("candidateId");
     const decision = form.get("decision");
@@ -137,7 +137,7 @@ export async function executeReview(
     attemptedWrite = true;
     const result = await json(`/api/v1/entity-match-reviews/${candidateId}/${decision}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-Actor-ID": actorId },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify(expectedDecisionId ? { reason: rawReason.trim(), expectedDecisionId } : { reason: rawReason.trim() }),
     });
     const job = parseJob(result, jobId, workspaceId);
