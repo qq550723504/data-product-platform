@@ -449,7 +449,7 @@ func seedLiveCoreAnnotationFixture(
 }
 
 type liveSQLExecer interface {
-	Exec(context.Context, string, ...any) (pgx.CommandTag, error)
+	Exec(context.Context, string, ...any) (pgconn.CommandTag, error)
 }
 
 func liveSQL(
