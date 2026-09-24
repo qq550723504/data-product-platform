@@ -135,6 +135,9 @@ func (r *EngineResultReconciler) ReconcileCampaign(ctx context.Context, campaign
 			if task.WorkspaceID != campaign.WorkspaceID || task.CampaignID != campaignID {
 				return annotationinfra.ErrEngineBindingConflict
 			}
+			if task.Status == annotationdomain.TaskReviewed {
+				continue
+			}
 			actorBinding, err := r.repo.ResolveEngineActorBinding(
 				ctx,
 				campaign.WorkspaceID,
