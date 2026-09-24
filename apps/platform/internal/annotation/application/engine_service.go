@@ -115,7 +115,8 @@ func terminalEngineOperation(status string) bool {
 	switch status {
 	case annotationdomain.EngineOperationMatched,
 		annotationdomain.EngineOperationRejected,
-		annotationdomain.EngineOperationConflict:
+		annotationdomain.EngineOperationConflict,
+		annotationdomain.EngineOperationManualResolution:
 		return true
 	default:
 		return false
