@@ -90,15 +90,15 @@ type EvidenceSnapshot struct {
 }
 
 type GoldProductionEvidence struct {
-	BindingID                uuid.UUID
-	WorkspaceID              uuid.UUID
-	DatasetVersionID         uuid.UUID
-	AnnotationSnapshotID     uuid.UUID
-	AnnotationSnapshotRoot   string
-	SchemaContentSHA256      string
-	TaxonomyContentSHA256    string
+	BindingID                 uuid.UUID
+	WorkspaceID               uuid.UUID
+	DatasetVersionID          uuid.UUID
+	AnnotationSnapshotID      uuid.UUID
+	AnnotationSnapshotRoot    string
+	SchemaContentSHA256       string
+	TaxonomyContentSHA256     string
 	ProductionBindingRootHash string
-	Finalized                bool
+	Finalized                 bool
 }
 
 type EvaluationInput struct {
@@ -118,30 +118,30 @@ type EvaluationInput struct {
 }
 
 type DatasetCertification struct {
-	ID                          uuid.UUID
-	WorkspaceID                 uuid.UUID
-	DatasetVersionID            uuid.UUID
-	QualityAssessmentID         uuid.UUID
-	Profile                     ProfileSnapshot
-	RightsSnapshotID            *uuid.UUID
-	EffectiveRightsSnapshotID   *uuid.UUID
-	EffectiveRightsSnapshotHash string
-	FrozenRightsContextHash     string
-	ComplianceResultID          *uuid.UUID
-	ContractVersionID           *uuid.UUID
-	TraceabilityEvidenceID      *uuid.UUID
-	EvidenceSnapshotID          *uuid.UUID
-	GoldProductionBindingID     *uuid.UUID
-	AnnotationSnapshotID        *uuid.UUID
-	AnnotationSnapshotRootHash  string
-	AnnotationSchemaSHA256      string
-	AnnotationTaxonomySHA256    string
+	ID                            uuid.UUID
+	WorkspaceID                   uuid.UUID
+	DatasetVersionID              uuid.UUID
+	QualityAssessmentID           uuid.UUID
+	Profile                       ProfileSnapshot
+	RightsSnapshotID              *uuid.UUID
+	EffectiveRightsSnapshotID     *uuid.UUID
+	EffectiveRightsSnapshotHash   string
+	FrozenRightsContextHash       string
+	ComplianceResultID            *uuid.UUID
+	ContractVersionID             *uuid.UUID
+	TraceabilityEvidenceID        *uuid.UUID
+	EvidenceSnapshotID            *uuid.UUID
+	GoldProductionBindingID       *uuid.UUID
+	AnnotationSnapshotID          *uuid.UUID
+	AnnotationSnapshotRootHash    string
+	AnnotationSchemaSHA256        string
+	AnnotationTaxonomySHA256      string
 	GoldProductionBindingRootHash string
-	Decision                    Decision
-	Blockers                    []Blocker
-	Reason                      string
-	IssuedAt                    time.Time
-	ActorID                     *uuid.UUID
+	Decision                      Decision
+	Blockers                      []Blocker
+	Reason                        string
+	IssuedAt                      time.Time
+	ActorID                       *uuid.UUID
 }
 
 type CertificationDisposition struct {
