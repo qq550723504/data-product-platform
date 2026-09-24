@@ -57,6 +57,30 @@ func (s *EngineService) Dispatch(
 		}
 	}
 
+	if operation.Status == annotationdomain.EngineOperationUnknown {
+		lookupCount, countErr := s.repo.CountEngineAttempts(
+			ctx,
+			operation.ID,
+			annotationdomain.EngineAttemptLookup,
+		)
+		if countErr != nil {
+			return EngineDispatchResult{}, countErr
+		}
+		if lookupCount >= maxAutomaticUnknownLookups {
+			manual, manualErr := s.requireManualEngineResolution(
+				ctx,
+				operation,
+				workerRef,
+				lease,
+				lookupCount,
+			)
+			if manualErr != nil {
+				return EngineDispatchResult{}, manualErr
+			}
+			return EngineDispatchResult{Operation: manual}, nil
+		}
+	}
+
 	attempt, claimed, err := s.claimEngineAttempt(ctx, operation, workerRef, lease)
 	if err != nil {
 		return EngineDispatchResult{}, err
@@ -171,30 +195,6 @@ func (s *EngineService) claimEngineAttempt(
 	workerRef string,
 	lease time.Duration,
 ) (annotationdomain.EngineAttempt, annotationdomain.EngineOperation, error) {
-	if operation.Status == annotationdomain.EngineOperationUnknown {
-		lookupCount, countErr := s.repo.CountEngineAttempts(
-			ctx,
-			operation.ID,
-			annotationdomain.EngineAttemptLookup,
-		)
-		if countErr != nil {
-			return EngineDispatchResult{}, countErr
-		}
-		if lookupCount >= maxAutomaticUnknownLookups {
-			manual, manualErr := s.requireManualEngineResolution(
-				ctx,
-				operation,
-				workerRef,
-				lease,
-				lookupCount,
-			)
-			if manualErr != nil {
-				return EngineDispatchResult{}, manualErr
-			}
-			return EngineDispatchResult{Operation: manual}, nil
-		}
-	}
-
 	var attempt annotationdomain.EngineAttempt
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		claimed, err := s.repo.ClaimEngineOperation(
