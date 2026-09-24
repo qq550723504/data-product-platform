@@ -456,7 +456,11 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 		return workflowapp.ProcessingResult{}, err
 	}
 	if binding.ID == uuid.Nil {
-		return workflowapp.ProcessingResult{}, fmt.Errorf("%w: finalized Gold binding was not resolved", ErrInvalidBuildRequest)
+		existing, readErr := s.goldRepo.GetBindingByExecution(ctx, request.ExecutionID)
+		if readErr != nil || existing.Status != "FINALIZED" || existing.OutputDatasetVersionID != outputVersion.ID {
+			return workflowapp.ProcessingResult{}, fmt.Errorf("%w: finalized Gold binding was not resolved", ErrInvalidBuildRequest)
+		}
+		binding = existing
 	}
 
 	return workflowapp.ProcessingResult{
