@@ -92,12 +92,12 @@ func TestLabelStudioLiveResultBecomesReviewedFinalizedCoreSnapshot(t *testing.T)
 	defer deleteProject(t, httpClient, baseURL, token, campaignBinding.ExternalProjectID)
 
 	engineTask := annotationapp.EngineTask{
-		TaskID:          fx.taskID,
-		SourceItemRef:   "row:1",
-		SourceSHA256:    fx.sourceSHA,
-		TaskText:        fx.taskText,
-		TaskTextSHA256:  sha256HexString(fx.taskText),
-		CorrelationKey:  "live-core-" + fx.taskID.String(),
+		TaskID:         fx.taskID,
+		SourceItemRef:  "row:1",
+		SourceSHA256:   fx.sourceSHA,
+		TaskText:       fx.taskText,
+		TaskTextSHA256: sha256HexString(fx.taskText),
+		CorrelationKey: "live-core-" + fx.taskID.String(),
 	}
 	taskOperation, err := engineService.PrepareTasks(ctx, annotationapp.PrepareEngineTasksCommand{
 		WorkspaceID: fx.workspaceID,
@@ -403,14 +403,14 @@ func seedLiveCoreAnnotationFixture(
 	`, taskID, workspaceID, campaignID, sourceSHA, sha256HexString(taskText), annotatorRef)
 
 	return liveCoreAnnotationFixture{
-		workspaceID: workspaceID,
-		campaignID: campaignID,
-		taskID: taskID,
-		actorID: actorID,
-		reviewerID: reviewerID,
+		workspaceID:  workspaceID,
+		campaignID:   campaignID,
+		taskID:       taskID,
+		actorID:      actorID,
+		reviewerID:   reviewerID,
 		annotatorRef: annotatorRef,
-		sourceSHA: sourceSHA,
-		taskText: taskText,
+		sourceSHA:    sourceSHA,
+		taskText:     taskText,
 	}
 }
 
@@ -420,4 +420,3 @@ func liveSQL(t *testing.T, ctx context.Context, execer *pgxpool.Pool, query stri
 		t.Fatalf("live fixture SQL: %v", err)
 	}
 }
-
