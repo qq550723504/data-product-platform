@@ -13,6 +13,7 @@ import (
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
+	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/industrypack"
@@ -43,6 +44,8 @@ type Service struct {
 	repo             *infrastructure.PostgresRepository
 	store            ObjectStore
 	evidenceRepo     *evidence.QueryRepository
+	goldRepo         *goldinfra.PostgresRepository
+	goldPreflight    GoldPreflightProvider
 }
 
 func NewService(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, repo *infrastructure.PostgresRepository, store ObjectStore, evidenceRepos ...*evidence.QueryRepository) *Service {

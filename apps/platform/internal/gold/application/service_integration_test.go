@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"io"
 	"os"
 	"strings"
@@ -19,11 +20,14 @@ import (
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
+	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	workflowinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/infrastructure"
 )
@@ -340,6 +344,66 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	}
 	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM gold_production_binding WHERE execution_id=$1", execution.ID)
 	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM dataset_version WHERE dataset_id=$1 AND generated_by_execution_id=$2", outputDatasetID, execution.ID)
+
+	qualityRepo := qualityinfra.NewPostgresRepository(pool)
+	qualityService := qualityapp.NewService(
+		"", txManager, datasetRepo, qualityRepo, store, evidence.NewQueryRepository(pool),
+	).ConfigureGold(goldRepo, annotationService)
+	assessmentAttemptID := uuid.New()
+	assessment, err := qualityService.RunGold(ctx, qualityapp.GoldRunCommand{
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    output.ID,
+		AssessmentAttemptID: assessmentAttemptID,
+		ActorID:             &actorID,
+		TraceID:             "gold-builder-formal-quality",
+	})
+	if err != nil {
+		t.Fatalf("run formal Gold quality: %v", err)
+	}
+	if assessment.DatasetVersionID != output.ID || assessment.GateDecision != "PASS" {
+		t.Fatalf("formal Gold assessment target/gate=%s/%s want=%s/PASS", assessment.DatasetVersionID, assessment.GateDecision, output.ID)
+	}
+	if assessment.RuleSetRef != qualityapp.GoldRuleSetRef ||
+		assessment.EvaluatorName != qualityapp.GoldEvaluatorName {
+		t.Fatalf("formal Gold rule/evaluator=%s/%s", assessment.RuleSetRef, assessment.EvaluatorName)
+	}
+	if assessment.Metrics["productionBindingId"] != binding.ID.String() ||
+		assessment.Metrics["annotationSnapshotId"] != snapshot.ID.String() ||
+		assessment.Metrics["formalAssessment"] != true {
+		t.Fatalf("formal Gold assessment metrics=%+v", assessment.Metrics)
+	}
+	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM quality_result WHERE id=$1 AND dataset_version_id=$2", assessment.ID, output.ID)
+	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM quality_finding WHERE result_id=$1 AND rule_id='GOLD-OUTPUT-COUNT'", assessment.ID)
+
+	replayedAssessment, err := qualityService.RunGold(ctx, qualityapp.GoldRunCommand{
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    output.ID,
+		AssessmentAttemptID: assessmentAttemptID,
+		ActorID:             &actorID,
+		TraceID:             "gold-builder-formal-quality-replay",
+	})
+	if err != nil {
+		t.Fatalf("replay formal Gold quality: %v", err)
+	}
+	if replayedAssessment.ID != assessment.ID {
+		t.Fatalf("replayed assessment=%s want=%s", replayedAssessment.ID, assessment.ID)
+	}
+	goldCount(t, ctx, pool, 1, "SELECT count(*) FROM quality_result WHERE id=$1", assessment.ID)
+
+	_, err = qualityService.RunGold(ctx, qualityapp.GoldRunCommand{
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    inputVersionID,
+		AssessmentAttemptID: uuid.New(),
+		ActorID:             &actorID,
+		TraceID:             "non-gold-formal-quality-must-fail",
+	})
+	if !errors.Is(err, qualityapp.ErrGoldProductionProof) {
+		t.Fatalf("non-Gold DatasetVersion formal assessment error=%v, want Gold production proof failure", err)
+	}
+	goldCount(t, ctx, pool, 0, `
+		SELECT count(*) FROM quality_result
+		WHERE dataset_version_id=$1 AND rule_set_ref=$2
+	`, inputVersionID, qualityapp.GoldRuleSetRef)
 }
 
 func goldSQL(t *testing.T, ctx context.Context, pool *pgxpool.Pool, query string, args ...any) {

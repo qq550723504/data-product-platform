@@ -187,6 +187,43 @@ func (r *PostgresRepository) ListSnapshotMembers(ctx context.Context, snapshotID
 	return members, nil
 }
 
+func (r *PostgresRepository) GetBindingByOutput(ctx context.Context, outputDatasetVersionID uuid.UUID) (ProductionBinding, error) {
+	var binding ProductionBinding
+	var manifest []byte
+	err := r.pool.QueryRow(ctx, `
+		SELECT id, workspace_id, execution_id, workflow_version_id,
+		       input_dataset_version_id, input_certification_id,
+		       annotation_campaign_id, annotation_snapshot_id, annotation_contribution_resource_id,
+		       output_dataset_version_id, input_checksum_sha256, snapshot_root_hash,
+		       schema_content_sha256, taxonomy_content_sha256, rubric_content_sha256,
+		       renderer_content_sha256, review_policy_content_sha256,
+		       output_checksum_sha256, output_row_count, manifest, manifest_hash_payload,
+		       root_hash, status, created_at, created_by, finalized_at
+		  FROM gold_production_binding
+		 WHERE output_dataset_version_id=$1
+	`, outputDatasetVersionID).Scan(
+		&binding.ID, &binding.WorkspaceID, &binding.ExecutionID, &binding.WorkflowVersionID,
+		&binding.InputDatasetVersionID, &binding.InputCertificationID,
+		&binding.AnnotationCampaignID, &binding.AnnotationSnapshotID,
+		&binding.AnnotationContributionResourceID, &binding.OutputDatasetVersionID,
+		&binding.InputChecksumSHA256, &binding.SnapshotRootHash,
+		&binding.SchemaContentSHA256, &binding.TaxonomyContentSHA256,
+		&binding.RubricContentSHA256, &binding.RendererContentSHA256,
+		&binding.ReviewPolicyContentSHA256, &binding.OutputChecksumSHA256,
+		&binding.OutputRowCount, &manifest, &binding.ManifestHashPayload,
+		&binding.RootHash, &binding.Status, &binding.CreatedAt, &binding.CreatedBy,
+		&binding.FinalizedAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ProductionBinding{}, ErrNotFound
+	}
+	if err != nil {
+		return ProductionBinding{}, fmt.Errorf("get Gold production binding by output: %w", err)
+	}
+	binding.Manifest = append([]byte(nil), manifest...)
+	return binding, nil
+}
+
 func (r *PostgresRepository) GetBindingByExecution(ctx context.Context, executionID uuid.UUID) (ProductionBinding, error) {
 	var binding ProductionBinding
 	var manifest []byte
