@@ -49,6 +49,8 @@ cd "$ROOT/apps/platform"
 go run ./cmd/migrate -direction up -dir ../../migrations
 go build -o "$ARTIFACTS/platform-api" ./cmd/api
 go build -o "$ARTIFACTS/platform-worker" ./cmd/worker
+export LIVE_PLATFORM_WORKER="$ARTIFACTS/platform-worker"
+export LIVE_BROWSER_ARTIFACTS="$ARTIFACTS"
 # Pipefail keeps assertion/compile errors red even though logs are preserved.
 go test -count=1 -run '^TestLabelStudioLiveReference$' -timeout 2m -v ./internal/annotation/labelstudio 2>&1 | tee "$ARTIFACTS/label-studio-live.log"
 
@@ -57,6 +59,8 @@ go test -count=1 -run '^TestBrowserLiveCorePOC$' -timeout 9m -v ./internal/accep
 go test -count=1 -run '^TestBrowserCSVIngest$' -timeout 6m -v ./internal/acceptance 2>&1 | tee "$ARTIFACTS/ingest-live.log"
 
 go test -count=1 -run '^TestLabelStudioLiveCoreResultReviewAndSnapshot$' -timeout 3m -v ./internal/annotation/labelstudio 2>&1 | tee "$ARTIFACTS/label-studio-core-live.log"
+
+go test -count=1 -run '^TestLiveGoldWorkerBuildAndFormalQuality$' -timeout 2m -v ./internal/gold/application 2>&1 | tee "$ARTIFACTS/gold-worker-quality-live.log"
 
 # Re-run existing Go regressions after the live slice, with its opt-in disabled.
 LIVE_BROWSER_ACCEPTANCE=0 go test -count=1 ./... 2>&1 | tee "$ARTIFACTS/go-regressions.log"
