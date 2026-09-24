@@ -559,7 +559,7 @@ func checkCurrentEntitlement(ctx context.Context, q queryer, request domain.Enti
 }
 
 type LineageInput struct {
-	DependencyKind  string
+	DependencyKind   string
 	DatasetVersionID uuid.UUID
 	DataResourceID   uuid.UUID
 	ResourceMapped   bool
