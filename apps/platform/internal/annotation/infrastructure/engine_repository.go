@@ -14,9 +14,10 @@ import (
 )
 
 var (
-	ErrEngineOperationConflict = errors.New("annotation engine operation conflict")
-	ErrEngineClaimBusy         = errors.New("annotation engine operation claim busy")
-	ErrEngineBindingConflict   = errors.New("annotation engine binding conflict")
+	ErrEngineOperationConflict  = errors.New("annotation engine operation conflict")
+	ErrEngineClaimBusy          = errors.New("annotation engine operation claim busy")
+	ErrEngineBindingConflict    = errors.New("annotation engine binding conflict")
+	ErrEngineOperationsUnsettled = errors.New("annotation engine operations are unsettled")
 )
 
 func (r *Repository) InsertEngineOperation(
@@ -372,6 +373,43 @@ func (r *Repository) InsertEngineTaskBinding(
 		return false, ErrEngineBindingConflict
 	}
 	return false, nil
+}
+
+func (r *Repository) LockAndRequireEngineOperationsSettledTx(
+	ctx context.Context,
+	tx pgx.Tx,
+	campaignID uuid.UUID,
+) error {
+	rows, err := tx.Query(ctx, `
+		SELECT id, status
+		  FROM annotation_engine_operation
+		 WHERE campaign_id=$1
+		 ORDER BY id
+		 FOR UPDATE
+	`, campaignID)
+	if err != nil {
+		return fmt.Errorf("lock annotation engine operations: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var operationID uuid.UUID
+		var status string
+		if err := rows.Scan(&operationID, &status); err != nil {
+			return fmt.Errorf("scan locked annotation engine operation: %w", err)
+		}
+		switch status {
+		case annotationdomain.EngineOperationMatched,
+			annotationdomain.EngineOperationRejected,
+			annotationdomain.EngineOperationConflict:
+		default:
+			return fmt.Errorf("%w: operation %s is %s", ErrEngineOperationsUnsettled, operationID, status)
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("iterate locked annotation engine operations: %w", err)
+	}
+	return nil
 }
 
 func (r *Repository) GetMatchedTaskSubmissionOperation(
