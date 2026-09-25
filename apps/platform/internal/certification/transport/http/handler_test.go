@@ -36,7 +36,11 @@ func TestHistoryItemResponseIncludesFrozenGoldProductionProof(t *testing.T) {
 			WorkspaceID:                   uuid.New(),
 			DatasetVersionID:              uuid.New(),
 			QualityAssessmentID:           uuid.New(),
-			Profile:                       domain.ProfileSnapshot{ProfileRef: domain.GoldCertificationProfileRef},
+			Profile: domain.ProfileSnapshot{
+				CertificationProfile: domain.CertificationProfile{
+					ProfileRef: domain.GoldCertificationProfileRef,
+				},
+			},
 			GoldProductionBindingID:       &bindingID,
 			AnnotationSnapshotID:          &snapshotID,
 			AnnotationSnapshotRootHash:    strings.Repeat("a", 64),
