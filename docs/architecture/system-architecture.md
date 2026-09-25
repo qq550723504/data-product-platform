@@ -1,6 +1,6 @@
 # 系统架构 V1.3
 
-> 第一阶段 Certified Dataset / trusted DIRECT_DATA 已完成受控 Pilot。第二阶段 #203 已立项；#209 架构基线与 #204 Annotation Core Domain 已完成，当前推进 #205 Label Studio reference adapter；#206–#208 的 Gold Quality / production / certification 与 live Pilot 仍待实现。文档中的 future credential 协议不表示已验证该 provider 能力。
+> 第一阶段 Certified Dataset / trusted DIRECT_DATA 已完成受控 Pilot。第二阶段 #203 中 #209、#204–#207 的主要实现已完成；#208 已分别验证 real Label Studio、Gold build/quality/certification/DIRECT_DATA 与 Gold explainability，但共享事实的 real LS → same Gold build 纵向链和 live-core Gold UI Playwright 仍待补齐，External Explanation Test 也未执行。文档中的 future credential 协议不表示已验证该 provider 能力。
 
 ## 1. 架构风格
 
@@ -49,7 +49,7 @@ Engine Adapter Layer
       ├── EntityResolutionEngine → Rules/Splink
       ├── QualityEngine → Native / future Soda/GX
       ├── ComplianceEngine → Rules / future Presidio
-      └── AnnotationEngine → Label Studio（#205 current）；X-AnyLabeling（不在本 Pilot）
+      └── AnnotationEngine → Label Studio（#205 reference adapter 已实现）；X-AnyLabeling（不在本 Pilot）
 ~~~
 
 ## 2. Core Platform 业务真相
@@ -66,9 +66,9 @@ Core 保存：
 - ProductVersion / ProductRelease
 - Cost / Evidence / Audit
 
-其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA 与 #136 enterprise-activity E2E Pilot 均已完成第一阶段验收。AI/Gold Dataset 已由 #203 立项，#209 与 #204 已完成，当前推进 #205；#206–#208 尚未完成。其他 delivery/provider、IAM、性能/SLA 工作仍按真实需求另行立项。
+其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA 与 #136 enterprise-activity E2E Pilot 均已完成第一阶段验收。AI/Gold Dataset 已由 #203 立项；#209、#204–#207 已完成，#208 已有分段自动化证据，但 shared-facts live vertical E2E、live-core Gold UI browser E2E 与 External Explanation Test 尚未完成。其他 delivery/provider、IAM、性能/SLA 工作仍按真实需求另行立项。
 
-#204 已实现的 Annotation Campaign/Task、已接纳 Result、ReviewDecision 与 Snapshot 属于 Core facts；#207 计划新增的 Gold production binding 同样必须属于 Core facts。外部 Engine 只提供执行能力，不拥有上述核心业务状态；具体 contract 由第10节链接的专门文档拥有。
+#204 已实现的 Annotation Campaign/Task、已接纳 Result、ReviewDecision 与 Snapshot 属于 Core facts；#207 已实现的 Gold production binding 同样属于 Core facts。外部 Engine 只提供执行能力，不拥有上述核心业务状态；具体 contract 由第10节链接的专门文档拥有。
 
 ## 3. 控制面 / 数据面
 
@@ -204,7 +204,7 @@ Projection 故障不得改变 Core 业务真相。
 - DeliveryOperation ISSUANCE_PENDING reconciliation / provider outcome recovery（按对应 provider 实施范围，不是已完成 Pilot 结论）
 - 授权过期处理
 - 元数据投影
-- #205 的 Annotation submit/reconcile 与 #207 的 Gold build 复用既有运行时（待实现）
+- #205 的 Annotation submit/reconcile 与 #207 的 Gold build 已复用既有运行时
 - 后续可加入周期性质量/认证维护，但不属于当前 MVP 前置
 
 ## 8. Industry Pack
@@ -225,7 +225,7 @@ Core 不允许出现 PARK 等行业专属分支。
 
 ## 9. 当前阶段边界
 
-#129 Certified Dataset 第一阶段受控试点已经完成，E2E1–E2E20 全部 PASS。第二阶段由 #203 明确立项；#209 文档架构基线与 #204 Annotation Core Domain 已完成，当前推进 #205 Label Studio reference adapter，#206–#208 尚未完成。
+#129 Certified Dataset 第一阶段受控试点已经完成，E2E1–E2E20 全部 PASS。第二阶段由 #203 明确立项；#209、#204–#207 已完成，#208 已覆盖各关键阶段但尚未证明共享事实贯穿的 live vertical E2E，也尚未用 Playwright 在 live-core 真实 Gold 输出上完成 UI 验收，External Explanation Test 同样待执行。
 
 第一阶段完成、#209 文档合并或 #204 Annotation Core 完成都不表示以下能力已经完成，也不应自动扩入当前范围：
 
@@ -236,7 +236,7 @@ Core 不允许出现 PARK 等行业专属分支。
 - 数据市场 / Billing
 - bearer / presigned provider delivery hardening
 
-## 10. Gold Dataset 架构基线（#204 Core 已实现；#205–#208 待完成）
+## 10. Gold Dataset 架构基线（#204–#207 已实现；#208 live vertical/browser acceptance 待收敛）
 
 ```mermaid
 flowchart LR
@@ -253,7 +253,7 @@ flowchart LR
     Cert --> Delivery[Existing CurrentDeliveryGate and DIRECT_DATA]
 ```
 
-图中 Annotation Campaign / Task / Result / ReviewDecision / Snapshot 的 Core Domain 已由 #204 实现；Label Studio submit/reconcile、Gold Quality、Gold production / certification 与 live Pilot 仍分别由 #205–#208 完成。
+图中 Annotation Campaign / Task / Result / ReviewDecision / Snapshot 的 Core Domain 已由 #204 实现；Label Studio submit/reconcile（#205）、Gold Quality（#206）、Gold production / certification（#207）均已实现。#208 当前仍需把 real Label Studio 产生的同一 Snapshot 贯穿到 Gold build/delivery，并在 live-core 真实 Gold 输出上完成 Playwright UI 验收。
 
 Core 保留已接纳 payload/事实，不依赖 provider current state 解释历史。标注前授权、外部 unknown outcome、完整任务分母、独立审核、standalone 冻结依赖以及 annotation contribution 的 current rights 都属于本阶段必需契约；不要复制状态或只增加 UI Gold 标志。
 
