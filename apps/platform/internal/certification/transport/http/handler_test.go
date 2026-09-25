@@ -32,10 +32,10 @@ func TestHistoryItemResponseIncludesFrozenGoldProductionProof(t *testing.T) {
 	snapshotID := uuid.New()
 	item := application.CertificationHistoryItem{
 		Certification: domain.DatasetCertification{
-			ID:                            uuid.New(),
-			WorkspaceID:                   uuid.New(),
-			DatasetVersionID:              uuid.New(),
-			QualityAssessmentID:           uuid.New(),
+			ID:                  uuid.New(),
+			WorkspaceID:         uuid.New(),
+			DatasetVersionID:    uuid.New(),
+			QualityAssessmentID: uuid.New(),
 			Profile: domain.ProfileSnapshot{
 				CertificationProfile: domain.CertificationProfile{
 					ProfileRef: domain.GoldCertificationProfileRef,
