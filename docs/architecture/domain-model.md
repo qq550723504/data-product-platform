@@ -385,7 +385,7 @@ AnnotationCampaign（冻结 input/schema/rubric/task manifest）
          现有 CurrentDeliveryGate / DIRECT_DATA
 ```
 
-当前实现状态：#204 已实现 AnnotationCampaign / AnnotationTask / immutable AnnotationResult / AnnotationReviewDecision / AnnotationSnapshot 及其 workspace、幂等、并发与冻结约束；#205 Label Studio reference adapter、#206 trusted review / Gold Quality、#207 Gold production / certification 已实现。#208 已有分段自动化覆盖，但 shared-facts live vertical E2E、live-core Gold UI Playwright 与 External Explanation Test 仍待完成。
+当前实现状态：#204 已实现 AnnotationCampaign / AnnotationTask / immutable AnnotationResult / AnnotationReviewDecision / AnnotationSnapshot 及其 workspace、幂等、并发与冻结约束；#205 Label Studio reference adapter、#206 trusted review / Gold Quality、#207 Gold production / certification 已实现。#208 的 shared-facts live vertical E2E 已完成并通过 required live-core gate；当前仅剩 live-core Gold UI Playwright 与 External Explanation Test。
 
 这不是独立 GoldDataset 主实体。Campaign/Task lifecycle 与 Result/Decision/Snapshot 历史分离，CORRECT 追加事实，完整任务分母不因 REJECT 变小；provider current state 不拥有选中结果。
 
