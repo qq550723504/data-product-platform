@@ -19,7 +19,7 @@ Data Product Platform 是一套数据产品与高质量数据集生产治理平�
 3. 数据权利来源和授权可以解释为什么允许或拒绝使用与交付；
 4. Certified Dataset 可以完成受控的 trusted DIRECT_DATA 交付与 UI/trace 验收。
 
-第一阶段完成不等于生产上线批准。第二阶段已由 #203 AI / Gold Dataset Epic 正式立项；#209 架构基线与 #204 Annotation Core Domain 已完成，当前推进 #205 Label Studio reference adapter。#206–#208 的 Human Review / Gold Quality、Gold DatasetVersion / Certification 与真实 Pilot 尚未完成；已实现 Annotation Core 不等于完整 Gold 能力已经上线。
+第一阶段完成不等于生产上线批准。第二阶段 #203 AI / Gold Dataset Epic 已完成主要工程闭环：#209、#204–#207 均已完成，#208 的 real Label Studio、Human Review、Gold build/quality/certification、browser/live-core、DIRECT_DATA 与 Cost/Evidence/Audit 自动化验收均已通过。当前 External Explanation Test 仍待未参与实现的人员仅凭产品 UI 执行，因此第二阶段尚不能描述为最终 Pilot PASS 或 production-ready；#203 仍保持开放。
 
 本阶段只选择一个受控、合成数据、单标签、独立人工审核的 Gold 生产闭环。Delivery Hardening / external provider、完整 IAM/SLA/灾备和其他行业能力仍由真实需求独立决定，不跟随 Gold 自动启动。
 
@@ -62,7 +62,7 @@ Certified Dataset 后可以进入：
 Certified Dataset
 ├── Data Product / Product Release
 ├── Trusted Data Offering
-├── Annotation / Review → Gold Dataset（#204 Core 已实现；#205–#208 待完成）
+├── Annotation / Review → Gold Dataset（#204–#208 自动化纵向验收已完成；External Explanation Test 待执行）
 └── External Delivery
 ~~~
 
@@ -85,7 +85,7 @@ Certified Dataset / Data Product Core
         ├── Compliance / Contract
         ├── DatasetCertification
         ├── ProductRelease
-        ├── Annotation / Review / Snapshot（#204 Core 已实现；Engine / Gold 闭环继续推进）
+        ├── Annotation / Review / Snapshot（真实 Label Studio + trusted review + frozen snapshot 已验证）
         └── Cost / Evidence / Audit
         ↓
 Engine Adapter Layer
@@ -113,13 +113,13 @@ DatasetVersion 内容变化后必须创建新版本并重新评测、重新认�
 
 ## Gold Dataset 第二阶段基线
 
-当前实现状态：#204 已落地 Annotation Campaign / Task / immutable Result / ReviewDecision / FINALIZED Snapshot 的 Core Domain 与冻结约束；#205–#208 继续完成外部 Engine、Gold Quality / production / certification 与 live Pilot。
+当前实现状态：#204–#207 已完成 Annotation Core、Label Studio reference adapter、trusted Human Review、Gold Quality、Gold DatasetVersion build 与 Gold Certification；#208 已完成 real browser/live-core 的自动化纵向验收，并验证 DIRECT_DATA fresh re-gate 以及按阶段回溯的 Cost / Evidence / Audit。External Explanation Test 仍为最终人工验收项。
 
 Gold 候选仍是新的 DatasetVersion，不是独立 GoldDataset 主实体。它绑定完整冻结的 AnnotationSnapshot、规范版本、实际 producer 与完整源数据/标注贡献权利依赖，再经新 QualityAssessment 和明确 Gold Profile 认证；不能把 input certification 复制给 output。
 
 通用标注交互和分发由 Label Studio reference adapter 复用，Core 持有结果接纳、审核权威性、冻结事实与认证语义。provider 当前状态不得改写历史；历史 CERTIFIED 不替代当前交付授权。
 
-唯一产品范围、16 个关键问题定案及实现归属见 [gold-dataset.md](gold-dataset.md)；跨模块决策见 [ADR-0012](../adr/0012-gold-dataset-annotation-boundary.md)。本文只提供产品摘要，不另定义一套状态机。
+唯一产品范围、16 个关键问题定案及实现归属见 [gold-dataset.md](gold-dataset.md)；自动化验收事实见 [Gold Dataset Pilot 验收报告](../poc/gold-dataset-pilot-acceptance.md)，最终人工证伪协议见 [Gold External Explanation Test](../poc/gold-external-explanation-test.md)；跨模块决策见 [ADR-0012](../adr/0012-gold-dataset-annotation-boundary.md)。本文只提供产品摘要，不另定义一套状态机。
 
 ## 数据权利原则
 
