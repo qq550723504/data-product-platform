@@ -6,6 +6,7 @@ const data = JSON.parse(await readFile(process.env.LIVE_BROWSER_MANIFEST, "utf8"
 const productPath = `/products/${data.productId}`;
 const tracePath = `${productPath}/releases/${data.releaseId}`;
 const certifiedPath = `/datasets/${data.certifiedDatasetId}/versions/${data.certifiedVersionId}`;
+const goldPath = data.goldDatasetId && data.goldVersionId ? `/datasets/${data.goldDatasetId}/versions/${data.goldVersionId}` : "";
 
 function releaseCard(page, id) {
   return page.locator("article").filter({ has: page.locator(`input[name="releaseId"][value="${id}"]`) });
@@ -96,6 +97,47 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
       await expect(row).toContainText("ALLOWED");
     }
     await expect(preflight.getByText("BLOCKED", { exact: true })).toHaveCount(0);
+  } else if (phase === "gold") {
+    expect(goldPath).not.toBe("");
+    await page.goto(goldPath);
+    await expect(page).toHaveURL(new RegExp(`${goldPath}(?:\\?.*)?$`));
+    await expect(page.getByRole("heading", { name: "DatasetVersion 质量与认证", exact: true })).toBeVisible();
+
+    await expect(page.getByText(data.goldVersionId, { exact: true })).toBeVisible();
+    await expect(page.getByText(data.outputChecksum, { exact: true })).toBeVisible();
+
+    const proof = page.getByTestId("gold-production-proof");
+    await expect(proof).toBeVisible();
+    await expect(proof).toContainText("Gold Production Proof");
+    await expect(proof).toContainText(data.goldBindingId);
+    await expect(proof).toContainText(data.goldSnapshotId);
+    await expect(proof).toContainText(data.goldAssessmentId);
+    await expect(proof).toContainText(data.goldCertificationId);
+
+    const chain = page.getByTestId("gold-production-chain");
+    await expect(chain).toBeVisible();
+    await expect(chain).toContainText("GOLD-PILOT / PROCESS");
+    await expect(chain).toContainText("activity-record-review / 1.0.0");
+    await expect(chain).toContainText("row:1");
+    await expect(chain).toContainText("row:2");
+    await expect(chain).toContainText("annotator:live-core");
+    await expect(chain).toContainText("ACCEPT");
+    await expect(chain).toContainText("CORRECT");
+    await expect(chain).toContainText("Reference Pilot provider label verified");
+    await expect(chain).toContainText("Reference Pilot provider label corrected");
+
+    const trace = page.getByTestId("gold-trace-summary");
+    await expect(trace).toBeVisible();
+    for (const phaseName of ["HUMAN_REVIEW", "GOLD_BUILD", "GOLD_QUALITY", "GOLD_CERTIFICATION", "DIRECT_DATA"]) {
+      await expect(trace).toContainText(phaseName);
+    }
+
+    await expect(page.getByRole("heading", { name: "Current Delivery Eligibility", exact: true })).toBeVisible();
+    const preflight = page.getByRole("heading", { name: "预检结果", exact: true }).locator("xpath=ancestor::section");
+    await expect(preflight).toContainText(data.expectedDelivery);
+    await expect(preflight).toContainText(data.expectedBlocker);
+    const usability = preflight.locator("tbody tr").filter({ hasText: "DatasetVersion usability" });
+    await expect(usability).toContainText("BLOCKED");
   } else if (phase === "history") {
     // New browser context + fresh standalone process, reading persisted history.
     await page.goto("/evidence");
