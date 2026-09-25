@@ -2,9 +2,9 @@
 
 Issue: #208（GitHub 已重新打开）  
 Parent: #203（仍开放）  
-Status: **SHARED-FACTS LIVE VERTICAL PASS / LIVE GOLD UI E2E PENDING / EXTERNAL EXPLANATION TEST PENDING**
+Status: **AUTOMATED LIVE PILOT PASS / EXTERNAL EXPLANATION TEST PENDING**
 
-> 本报告只记录已由仓库 CI、browser、live-core 和 PostgreSQL integration 证明的事实。shared-facts live vertical E2E 已通过：real Label Studio 的同一 Reference Pilot 事实经 ACCEPT/CORRECT、FINALIZED AnnotationSnapshot 后直接进入 Gold build / quality / certification / DIRECT_DATA。Gold UI Playwright 仍未针对 live-core 真实 Gold 输出执行，External Explanation Test 也尚未执行，因此本 Pilot 暂不能标记为最终通过，也不得描述为 production-ready。GitHub #208 曾于 2026-09-25 在这些验收门禁完成前关闭，现已按原 DoD 重新打开；父 Epic #203 同样保持开放。
+> 本报告只记录已由仓库 CI、browser、live-core 和 PostgreSQL integration 证明的事实。自动化 live Pilot 已通过：real Label Studio 的同一 Reference Pilot 事实经 ACCEPT/CORRECT、FINALIZED AnnotationSnapshot 后直接进入 Gold build / quality / certification / DIRECT_DATA，Playwright 随后在 live-core 上打开同一真实 Gold DatasetVersion 并验证 frozen production proof、review decisions、Cost / Evidence / Audit 与 Current Delivery Eligibility。External Explanation Test 尚未执行，因此本 Pilot 暂不能标记为最终通过，也不得描述为 production-ready。GitHub #208 继续保持开放，父 Epic #203 同样保持开放。
 
 ## 1. Pilot 目标
 
@@ -160,7 +160,7 @@ Audit 输出 actor/action/object/trace/timestamp。
 
 | # | #208 完成定义 | 状态 | 证据 |
 |---|---|---|---|
-| 1 | real browser E2E PASS | **PENDING** | Gold UI Playwright 当前为 fixture-backed；尚未针对 live-core 真实 Gold 输出运行 |
+| 1 | real browser E2E PASS | **PASS** | #243：Playwright 针对 live-core 真实 Gold DatasetVersion 验证 frozen production proof / review / trace / current delivery eligibility |
 | 2 | live-core required gate PASS | **PASS** | #242：real Label Studio Reference Pilot → ACCEPT/CORRECT → 同一 FINALIZED Snapshot → Gold build/quality/certification/DIRECT_DATA |
 | 3 | Gold bytes/checksum 与 persisted facts 一致 | PASS | #235 |
 | 4 | UI 可追到 annotation/review/source/quality/rights/certification | PASS | #231/#238/#239 |
@@ -176,9 +176,9 @@ Audit 输出 actor/action/object/trace/timestamp。
 
 已由 #242 验证：真实 Label Studio → Core review 产生的 FINALIZED AnnotationSnapshot 直接成为后续 Gold build 输入，并继续走 worker / MinIO / quality / certification / DIRECT_DATA；阶段边界不再重新构造 annotation_result/review/snapshot fixture。该共享事实链执行 `docs/product/gold-dataset.md` 定义的 Reference Pilot，使用 enterprise-activity 记录字段与 `activity-record-review@1.0.0` 标签语义，并在同一 Campaign 中覆盖至少 1 次 ACCEPT 和 1 次 CORRECT。
 
-### 6.2 Live-core Gold UI browser E2E — PENDING
+### 6.2 Live-core Gold UI browser E2E — PASS
 
-必须在 live-core 环境中让 Playwright 打开由上述真实 Gold 链路产生的 DatasetVersion/Gold 页面，并验证 source / annotation / review / quality / certification / delivery / Cost-Evidence-Audit explainability。fixture-server 浏览器测试不能替代该门禁。
+已由 #243 验证：Playwright 在 live-core 环境中打开由真实 shared-facts Gold 链路产生的 DatasetVersion/Gold 页面，并验证 source / annotation / review / quality / certification / delivery / Cost-Evidence-Audit explainability；Certification history API 同时补齐 frozen Gold production proof 字段，避免 UI 从 current provider state 或动态 binding 回填历史事实。
 
 ### 6.3 External Explanation Test — PENDING
 
@@ -233,13 +233,13 @@ Audit 输出 actor/action/object/trace/timestamp。
 
 - **分段自动化覆盖：PASS**
 - **Shared-facts live vertical E2E：PASS**
-- **Live-core Gold UI browser E2E：PENDING**
+- **Live-core Gold UI browser E2E：PASS**
 - **Explainability / trace fixture automation：PASS**
 - **External Explanation Test：PENDING**
-- **#208 GitHub Issue：已重新打开；shared-facts live vertical 已完成，继续跟踪 live Gold UI browser / human explanation 门禁**
-- **#203 Epic 最终收口：BLOCKED BY LIVE GOLD UI BROWSER E2E + HUMAN EXPLANATION TEST**
+- **#208 GitHub Issue：已重新打开；全部自动化门禁已完成，继续跟踪 External Explanation Test**
+- **#203 Epic 最终收口：BLOCKED BY HUMAN EXPLANATION TEST ONLY**
 
-剩余 live Gold UI browser E2E 与人工测试完成并记录 PASS 后，才可以：
+External Explanation Test 完成并记录 PASS 后，才可以：
 
 1. 将本文档状态改为 FINAL / PASS；
 2. 关闭重新打开的 #208，并在 Issue / 验收报告中关联最终验收结果；
