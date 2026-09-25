@@ -174,7 +174,7 @@ Audit 输出 actor/action/object/trace/timestamp。
 
 ### 6.1 Shared-facts live vertical E2E — PENDING
 
-必须让真实 Label Studio → Core review 产生的 FINALIZED AnnotationSnapshot 直接成为后续 Gold build 的输入，继续走 worker / MinIO / quality / certification / DIRECT_DATA，不能在阶段边界重新用 SQL/fixture 构造另一套 annotation facts。
+必须让真实 Label Studio → Core review 产生的 FINALIZED AnnotationSnapshot 直接成为后续 Gold build 的输入，继续走 worker / MinIO / quality / certification / DIRECT_DATA，不能在阶段边界重新用 SQL/fixture 构造另一套 annotation facts。该共享事实链必须执行 `docs/product/gold-dataset.md` 定义的 Reference Pilot：使用 enterprise-activity 记录字段与 `activity-record-review@1.0.0` 标签语义，成功场景至少包含 1 次 ACCEPT 和 1 次 CORRECT；generic 单任务/单 ACCEPT smoke 不能替代该门禁。
 
 ### 6.2 Live-core Gold UI browser E2E — PENDING
 
