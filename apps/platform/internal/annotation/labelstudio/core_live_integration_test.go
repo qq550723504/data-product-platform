@@ -15,18 +15,22 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/labelstudio"
 	annotationhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/transport/http"
+	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	platformprincipal "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
+	rightsdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
+	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
 
 type allowLiveEngineSend struct{}
@@ -116,12 +120,15 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 
 	txManager := transaction.NewManager(pool)
 	repo := annotationinfra.NewRepository(pool)
-	annotationService := annotationapp.NewService(txManager, repo, nil)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	rightsRepo := rightsinfra.NewPostgresRepository(pool)
+	activationGuard := annotationapp.NewCoreActivationGuard(datasetRepo, repo, store, rightsRepo)
+	annotationService := annotationapp.NewService(txManager, repo, activationGuard)
 	engineService := annotationapp.NewEngineService(
 		txManager,
 		repo,
 		client,
-		allowLiveEngineSend{},
+		activationGuard,
 	)
 	reconciler := annotationapp.NewEngineResultReconciler(
 		txManager,
@@ -137,6 +144,19 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 		15*time.Second,
 		10,
 	)
+
+	activated, err := annotationService.ActivateCampaign(ctx, annotationapp.ActivateCampaignCommand{
+		WorkspaceID:      fixture.workspaceID,
+		CampaignID:       fixture.campaignID,
+		ExpectedRevision: 1,
+		TraceID:          "live-labelstudio-core",
+	})
+	if err != nil {
+		t.Fatalf("activate Reference Pilot through CoreActivationGuard: %v", err)
+	}
+	if activated.Status != annotationdomain.CampaignActive || activated.ExpectedTaskCount != len(fixture.tasks) {
+		t.Fatalf("activated Reference Pilot=%+v", activated)
+	}
 
 	campaignOperation, err := engineService.PrepareCampaign(ctx, annotationapp.PrepareEngineCampaignCommand{
 		WorkspaceID: fixture.workspaceID,
@@ -464,9 +484,7 @@ func runEngineOperationToMatched(
 func seedLiveCoreAnnotationFixture(
 	t *testing.T,
 	ctx context.Context,
-	pool interface {
-		Exec(context.Context, string, ...any) (pgconn.CommandTag, error)
-	},
+	pool *pgxpool.Pool,
 	store *storage.Store,
 ) liveCoreAnnotationFixture {
 	t.Helper()
@@ -513,6 +531,14 @@ func seedLiveCoreAnnotationFixture(
 	inputChecksum := sha256HexString(string(inputCSV))
 	schema := `{"kind":"single-label-v1","labels":["INCONSISTENT_OUTPUT","INSUFFICIENT_INPUT","SUFFICIENT_INPUT"]}`
 	schemaHash := sha256HexString(schema)
+	taxonomy := `{"kind":"label-taxonomy-v1","labels":["INCONSISTENT_OUTPUT","INSUFFICIENT_INPUT","SUFFICIENT_INPUT"]}`
+	taxonomyHash := sha256HexString(taxonomy)
+	rubric := `{"kind":"review-rubric-v1","rule":"label enterprise activity input sufficiency"}`
+	rubricHash := sha256HexString(rubric)
+	renderer := `{"kind":"field-list-v1","fields":["company_id","period","lease_activity","energy_activity","visit_activity","activity_score","activity_level","indicator_coverage"]}`
+	rendererHash := sha256HexString(renderer)
+	reviewPolicy := `{"kind":"independent-review-v1","required":true}`
+	reviewPolicyHash := sha256HexString(reviewPolicy)
 	primaryAnnotator := "annotator:live-core"
 
 	makeTask := func(taskID uuid.UUID, sourceItemRef string, row map[string]string, providerLabel string) liveCoreAnnotationTaskFixture {
@@ -520,11 +546,28 @@ func seedLiveCoreAnnotationFixture(
 		if marshalErr != nil {
 			t.Fatalf("marshal Reference Pilot source row: %v", marshalErr)
 		}
-		taskText := fmt.Sprintf(
-			"company_id=%s period=%s lease_activity=%s energy_activity=%s visit_activity=%s activity_score=%s activity_level=%s indicator_coverage=%s",
-			row["company_id"], row["period"], row["lease_activity"], row["energy_activity"], row["visit_activity"],
-			row["activity_score"], row["activity_level"], row["indicator_coverage"],
-		)
+		type renderedField struct {
+			Name  string `json:"name"`
+			Value string `json:"value"`
+		}
+		type renderedTask struct {
+			RendererRef     string          `json:"rendererRef"`
+			RendererVersion string          `json:"rendererVersion"`
+			Fields          []renderedField `json:"fields"`
+		}
+		fields := make([]renderedField, 0, len(headers))
+		for _, header := range headers {
+			fields = append(fields, renderedField{Name: header, Value: row[header]})
+		}
+		rendered, marshalErr := json.Marshal(renderedTask{
+			RendererRef:     "enterprise-activity-record",
+			RendererVersion: "1.0.0",
+			Fields:          fields,
+		})
+		if marshalErr != nil {
+			t.Fatalf("render Reference Pilot task: %v", marshalErr)
+		}
+		taskText := string(rendered)
 		return liveCoreAnnotationTaskFixture{
 			taskID:         taskID,
 			sourceItemRef:  sourceItemRef,
@@ -550,6 +593,11 @@ func seedLiveCoreAnnotationFixture(
 		INSERT INTO dataset(id, workspace_id, code, name, dataset_type, source_resource_id)
 		VALUES ($1,$2,$3,'enterprise activity Gold Reference input','CURATED',$4)
 	`, datasetID, workspaceID, "LIVE-DS-"+suffix, inputResourceID)
+	seedLiveAnnotationProcessRights(
+		t, ctx, pool, workspaceID,
+		[]uuid.UUID{inputResourceID, contributionResourceID},
+		"gold-pilot-consumer", "GOLD-PILOT",
+	)
 	liveSQL(t, ctx, pool, `
 		INSERT INTO dataset_version(
 			id, dataset_id, version_no, status, storage_type, storage_uri,
@@ -590,21 +638,26 @@ func seedLiveCoreAnnotationFixture(
 	liveSQL(t, ctx, pool, `
 		INSERT INTO annotation_campaign(
 			id, workspace_id, input_dataset_version_id, input_certification_id,
-			annotation_contribution_resource_id, purpose, action,
+			annotation_contribution_resource_id, purpose, action, consumer_ref,
 			schema_ref, schema_version, schema_content_sha256, schema_content_snapshot,
 			taxonomy_ref, taxonomy_version, taxonomy_content_sha256, taxonomy_content_snapshot,
 			rubric_ref, rubric_version, rubric_content_sha256, rubric_content_snapshot,
 			renderer_ref, renderer_version, renderer_content_sha256, renderer_content_snapshot,
 			review_policy_ref, review_policy_version, review_policy_content_sha256, review_policy_content_snapshot
 		) VALUES (
-			$1,$2,$3,$4,$5,'GOLD-PILOT','PROCESS',
+			$1,$2,$3,$4,$5,'GOLD-PILOT','PROCESS','gold-pilot-consumer',
 			'activity-record-review','1.0.0',$6,$7,
-			'activity-record-review','1.0.0',$6,$7,
-			'activity-record-review','1.0.0',$6,$7,
-			'enterprise-activity-record','1.0.0',$6,$7,
-			'independent-review','1.0.0',$6,$7
+			'activity-record-taxonomy','1.0.0',$8,$9,
+			'activity-record-rubric','1.0.0',$10,$11,
+			'enterprise-activity-record','1.0.0',$12,$13,
+			'independent-review','1.0.0',$14,$15
 		)
-	`, campaignID, workspaceID, versionID, certificationID, contributionResourceID, schemaHash, schema)
+	`, campaignID, workspaceID, versionID, certificationID, contributionResourceID,
+		schemaHash, schema,
+		taxonomyHash, taxonomy,
+		rubricHash, rubric,
+		rendererHash, renderer,
+		reviewPolicyHash, reviewPolicy)
 	for _, task := range tasks {
 		liveSQL(t, ctx, pool, `
 			INSERT INTO annotation_task(
@@ -613,13 +666,6 @@ func seedLiveCoreAnnotationFixture(
 			) VALUES ($1,$2,$3,$4,$5,$6,$7)
 		`, task.taskID, workspaceID, campaignID, task.sourceItemRef, task.sourceSHA256, task.taskTextSHA256, primaryAnnotator)
 	}
-	liveSQL(t, ctx, pool, `
-		UPDATE annotation_campaign
-		   SET status='ACTIVE', revision=2, expected_task_count=2,
-		       task_manifest_hash=$2, input_checksum_sha256=$3, activated_at=now()
-		 WHERE id=$1
-	`, campaignID, strings.Repeat("c", 64), inputChecksum)
-
 	return liveCoreAnnotationFixture{
 		workspaceID:            workspaceID,
 		inputResourceID:        inputResourceID,
@@ -629,6 +675,107 @@ func seedLiveCoreAnnotationFixture(
 		campaignID:             campaignID,
 		tasks:                  tasks,
 		primaryAnnotator:       primaryAnnotator,
+	}
+}
+
+func seedLiveAnnotationProcessRights(
+	t *testing.T,
+	ctx context.Context,
+	pool *pgxpool.Pool,
+	workspaceID uuid.UUID,
+	resourceIDs []uuid.UUID,
+	consumerRef, purpose string,
+) {
+	t.Helper()
+	txManager := transaction.NewManager(pool)
+	rightsRepo := rightsinfra.NewPostgresRepository(pool)
+	rightsService := rightsapp.NewService(txManager, rightsRepo)
+	validFrom := time.Now().UTC().Add(-time.Hour)
+	validTo := time.Now().UTC().Add(24 * time.Hour)
+
+	for _, resourceID := range resourceIDs {
+		authorization, err := rightsService.Create(ctx, rightsapp.CreateAuthorizationCommand{
+			WorkspaceID: workspaceID,
+			Code:        "LIVE-ANN-AUTH-" + uuid.NewString(),
+			GrantorRef:  "PARK-OPERATOR",
+			GranteeRef:  consumerRef,
+			Purpose:     purpose,
+			ValidFrom:   &validFrom,
+			ValidTo:     &validTo,
+			Resources: []rightsdomain.ResourceGrantSpec{{
+				DataResourceID: resourceID,
+				Actions:        []string{"PROCESS"},
+				ScopeType:      "ALL_RESOURCE",
+				ScopeRef:       resourceID.String(),
+				Scope:          map[string]any{"pilot": "gold-reference"},
+			}},
+			TraceID: "live-labelstudio-core",
+		})
+		if err != nil {
+			t.Fatalf("create annotation authorization for %s: %v", resourceID, err)
+		}
+		authorization, err = rightsService.Submit(ctx, rightsapp.TransitionCommand{
+			AuthorizationID: authorization.ID, TraceID: "live-labelstudio-core",
+		})
+		if err != nil {
+			t.Fatalf("submit annotation authorization for %s: %v", resourceID, err)
+		}
+		authorization, err = rightsService.Approve(ctx, rightsapp.TransitionCommand{
+			AuthorizationID: authorization.ID, TraceID: "live-labelstudio-core",
+		})
+		if err != nil {
+			t.Fatalf("approve annotation authorization for %s: %v", resourceID, err)
+		}
+		authorization, err = rightsService.Activate(ctx, rightsapp.TransitionCommand{
+			AuthorizationID: authorization.ID, At: time.Now().UTC(), TraceID: "live-labelstudio-core",
+		})
+		if err != nil {
+			t.Fatalf("activate annotation authorization for %s: %v", resourceID, err)
+		}
+
+		declaration, err := rightsService.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{
+			Spec: rightsdomain.RightsDeclarationSpec{
+				WorkspaceID:    workspaceID,
+				DataResourceID: resourceID,
+				ClaimantRef:    "PARK-OPERATOR",
+				BasisType:      "LICENSE",
+				BasisRef:       "live-gold-reference-pilot",
+				Parties: []rightsdomain.RightsParty{{
+					PartyRef: "PARK-OPERATOR", Role: "RIGHTS_HOLDER",
+				}},
+				Permissions: []rightsdomain.RightsPermission{{
+					Kind:    rightsdomain.PermissionGrant,
+					Action:  "PROCESS",
+					Purpose: purpose,
+					Scope: rightsdomain.NormalizedScope{
+						Type: "ALL_RESOURCE", Ref: resourceID.String(),
+					},
+				}},
+			},
+			TraceID: "live-labelstudio-core",
+		})
+		if err != nil {
+			t.Fatalf("create annotation rights declaration for %s: %v", resourceID, err)
+		}
+		if _, err := rightsService.VerifyRightsDeclaration(ctx, rightsapp.VerifyRightsDeclarationCommand{
+			DeclarationID: declaration.ID,
+			Outcome:       rightsdomain.DeclarationVerified,
+			TraceID:       "live-labelstudio-core",
+		}); err != nil {
+			t.Fatalf("verify annotation rights declaration for %s: %v", resourceID, err)
+		}
+		if _, err := rightsService.BindAuthorizationProvenance(ctx, rightsapp.BindAuthorizationProvenanceCommand{
+			WorkspaceID:     workspaceID,
+			AuthorizationID: authorization.ID,
+			DataResourceID:  resourceID,
+			DeclarationID:   declaration.ID,
+			GrantorRef:      "PARK-OPERATOR",
+			AuthorityMode:   rightsdomain.AuthorityDirect,
+			AsOf:            time.Now().UTC(),
+			TraceID:         "live-labelstudio-core",
+		}); err != nil {
+			t.Fatalf("bind annotation authorization provenance for %s: %v", resourceID, err)
+		}
 	}
 }
 
