@@ -225,7 +225,7 @@ Core 不允许出现 PARK 等行业专属分支。
 
 ## 9. 当前阶段边界
 
-#129 Certified Dataset 第一阶段受控试点已经完成，E2E1–E2E20 全部 PASS。第二阶段由 #203 明确立项；#209、#204–#207 已完成，#208 已覆盖各关键阶段但尚未证明共享事实贯穿的 live vertical E2E，也尚未用 Playwright 在 live-core 真实 Gold 输出上完成 UI 验收，External Explanation Test 同样待执行。
+#129 Certified Dataset 第一阶段受控试点已经完成，E2E1–E2E20 全部 PASS。第二阶段由 #203 明确立项；#209、#204–#207 已完成，#208 的共享事实 live vertical E2E 已通过 required live-core gate，当前尚未用 Playwright 在 live-core 真实 Gold 输出上完成 UI 验收，External Explanation Test 同样待执行。
 
 第一阶段完成、#209 文档合并或 #204 Annotation Core 完成都不表示以下能力已经完成，也不应自动扩入当前范围：
 
