@@ -553,6 +553,50 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	t.Logf("LIVE_CORE_BROWSER_VERIFIED release=%s snapshot=%s rootHash=%s", release.ID, trace.EvidenceSnapshot.ID, trace.EvidenceSnapshot.RootHash)
 }
 
+func TestBrowserLiveGoldExistingCore(t *testing.T) {
+	if os.Getenv("LIVE_BROWSER_ACCEPTANCE") != "1" {
+		t.Skip("opt-in: run tests/live-browser against its disposable local stack")
+	}
+
+	artifacts := repoPath(t, ".artifacts", "live-browser")
+	manifestPath := filepath.Join(artifacts, "gold-live-ui.json")
+	raw, err := os.ReadFile(manifestPath)
+	liveOK(t, err, "read live Gold UI manifest")
+
+	var manifest map[string]any
+	liveOK(t, json.Unmarshal(raw, &manifest), "decode live Gold UI manifest")
+	workspaceRaw, ok := manifest["workspaceId"].(string)
+	if !ok || strings.TrimSpace(workspaceRaw) == "" {
+		t.Fatal("live Gold UI manifest is missing workspaceId")
+	}
+	workspaceID, err := uuid.Parse(workspaceRaw)
+	liveOK(t, err, "parse live Gold workspace")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+
+	// This phase is read-only. The IDs satisfy the standalone console's existing
+	// trusted-action configuration contract but no review/release action is invoked.
+	manifest["reviewerId"] = uuid.New().String()
+	manifest["publisherId"] = uuid.New().String()
+	t.Setenv("HUMAN_DECISION_API_TOKEN", "live-review-secret")
+
+	listener, err := net.Listen("tcp", "127.0.0.1:18080")
+	liveOK(t, err, "Gold UI API port must be unused")
+	liveOK(t, listener.Close(), "release Gold UI API port")
+
+	api := startLiveProcess(
+		t,
+		ctx,
+		filepath.Join(artifacts, "platform-api"),
+		repoPath(t, "apps", "platform"),
+		filepath.Join(artifacts, "gold-ui-api.log"),
+	)
+	liveWaitAPI(t, ctx, api, workspaceID)
+	runLiveBrowser(t, ctx, "gold", manifest, artifacts)
+	t.Logf("LIVE_GOLD_BROWSER_VERIFIED workspace=%s version=%v", workspaceID, manifest["goldVersionId"])
+}
+
 func validateLiveConfig(cfg config.Config) error {
 	u, err := url.Parse(cfg.PostgresDSN)
 	if err != nil || u.Host != "127.0.0.1:15432" || u.Path != "/dpp_browser_live" || u.Scheme != "postgres" {
