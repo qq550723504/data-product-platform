@@ -55,6 +55,16 @@ type liveGoldFixture struct {
 	outputDatasetID        uuid.UUID
 }
 
+type liveGoldSharedManifest struct {
+	WorkspaceID            uuid.UUID `json:"workspaceId"`
+	InputResourceID        uuid.UUID `json:"inputResourceId"`
+	InputDatasetVersionID  uuid.UUID `json:"inputDatasetVersionId"`
+	InputCertificationID   uuid.UUID `json:"inputCertificationId"`
+	ContributionResourceID uuid.UUID `json:"contributionResourceId"`
+	CampaignID             uuid.UUID `json:"campaignId"`
+	SnapshotID             uuid.UUID `json:"snapshotId"`
+}
+
 func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 	dsn := strings.TrimSpace(os.Getenv("TEST_POSTGRES_DSN"))
 	workerBinary := strings.TrimSpace(os.Getenv("LIVE_PLATFORM_WORKER"))
@@ -89,33 +99,11 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 
 	worker, workerLog := startLiveGoldWorker(t, ctx, workerBinary)
 
-	inputText := "Review the evidence and choose the supported label."
-	inputCSV := []byte("id,text\n1," + inputText + "\n")
-	inputObject := "gold-live/input-" + uuid.NewString() + ".csv"
-	inputURI, err := store.Put(
-		ctx,
-		inputObject,
-		bytes.NewReader(inputCSV),
-		int64(len(inputCSV)),
-		"text/csv",
-	)
-	if err != nil {
-		t.Fatalf("put live Gold input: %v", err)
-	}
-
 	txManager := transaction.NewManager(pool)
 	datasetRepo := datasetinfra.NewPostgresRepository(pool)
 	annotationRepo := annotationinfra.NewRepository(pool)
 	annotationService := annotationapp.NewService(txManager, annotationRepo, nil)
-	fixture := seedLiveGoldSnapshotFixture(
-		t,
-		ctx,
-		pool,
-		annotationService,
-		inputURI,
-		inputCSV,
-		inputText,
-	)
+	fixture := loadLiveGoldSharedFixture(t, ctx, pool)
 
 	workflowRepo := workflowinfra.NewPostgresRepository(pool)
 	workflowVersionService := workflowapp.NewWorkflowVersionService(txManager, workflowRepo)
@@ -184,7 +172,7 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 	if outputVersion.GeneratedByExecutionID == nil ||
 		*outputVersion.GeneratedByExecutionID != execution.ID ||
 		outputVersion.RowCount == nil ||
-		*outputVersion.RowCount != 1 {
+		*outputVersion.RowCount != 2 {
 		t.Fatalf("Gold output producer/rows=%+v", outputVersion)
 	}
 	outputBytes := readLiveGoldObject(t, ctx, store, outputVersion.StorageURI)
@@ -192,7 +180,7 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 		t.Fatalf("Gold output checksum bytes=%s persisted=%s", got, outputVersion.ChecksumValue)
 	}
 	if !bytes.Contains(outputBytes, []byte("gold_label")) ||
-		!bytes.Contains(outputBytes, []byte("EVIDENCE_SUFFICIENT")) {
+		!bytes.Contains(outputBytes, []byte("SUFFICIENT_INPUT")) {
 		t.Fatalf("unexpected Gold output bytes: %s", outputBytes)
 	}
 
@@ -642,162 +630,66 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 	`, certification.ID)
 }
 
-func seedLiveGoldSnapshotFixture(
+func loadLiveGoldSharedFixture(
 	t *testing.T,
 	ctx context.Context,
 	pool *pgxpool.Pool,
-	annotationService *annotationapp.Service,
-	inputURI string,
-	inputCSV []byte,
-	inputText string,
 ) liveGoldFixture {
 	t.Helper()
-	workspaceID := uuid.New()
-	contributionResourceID := uuid.New()
-	inputResourceID := uuid.New()
-	datasetID := uuid.New()
-	versionID := uuid.New()
-	qualityID := uuid.New()
-	profileID := uuid.New()
-	certificationID := uuid.New()
-	campaignID := uuid.New()
-	taskID := uuid.New()
-	resultID := uuid.New()
+	artifacts := strings.TrimSpace(os.Getenv("LIVE_BROWSER_ARTIFACTS"))
+	if artifacts == "" {
+		t.Fatal("LIVE_BROWSER_ARTIFACTS is required for shared-facts Gold acceptance")
+	}
+	path := filepath.Join(artifacts, "gold-shared-facts.json")
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read shared Gold facts manifest: %v", err)
+	}
+	var manifest liveGoldSharedManifest
+	if err := json.Unmarshal(content, &manifest); err != nil {
+		t.Fatalf("decode shared Gold facts manifest: %v", err)
+	}
+	for name, id := range map[string]uuid.UUID{
+		"workspace":                        manifest.WorkspaceID,
+		"input resource":                   manifest.InputResourceID,
+		"input DatasetVersion":             manifest.InputDatasetVersionID,
+		"input certification":              manifest.InputCertificationID,
+		"annotation contribution resource": manifest.ContributionResourceID,
+		"campaign":                         manifest.CampaignID,
+		"snapshot":                         manifest.SnapshotID,
+	} {
+		if id == uuid.Nil {
+			t.Fatalf("shared Gold manifest has empty %s id", name)
+		}
+	}
+
+	var snapshotStatus string
+	if err := pool.QueryRow(ctx, `
+		SELECT status
+		FROM annotation_snapshot
+		WHERE id=$1 AND workspace_id=$2 AND campaign_id=$3
+	`, manifest.SnapshotID, manifest.WorkspaceID, manifest.CampaignID).Scan(&snapshotStatus); err != nil {
+		t.Fatalf("verify shared FINALIZED AnnotationSnapshot: %v", err)
+	}
+	if snapshotStatus != "FINALIZED" {
+		t.Fatalf("shared AnnotationSnapshot status=%s want=FINALIZED", snapshotStatus)
+	}
+
 	outputDatasetID := uuid.New()
 	suffix := strings.ReplaceAll(uuid.NewString(), "-", "")[:10]
-	inputChecksum := goldTestSHA256(inputCSV)
-	schema := `{"kind":"single-label-v1","labels":["EVIDENCE_SUFFICIENT","EVIDENCE_INSUFFICIENT","EVIDENCE_CONFLICT"]}`
-	schemaHash := goldTestSHA256([]byte(schema))
-	taskTextHash := goldTestSHA256([]byte(inputText))
-	sourcePayload, err := json.Marshal(map[string]string{"id": "1", "text": inputText})
-	if err != nil {
-		t.Fatalf("marshal live Gold source row: %v", err)
-	}
-	sourceHash := goldTestSHA256(sourcePayload)
-
-	goldSQL(t, ctx, pool, `
-		INSERT INTO data_resource(id, workspace_id, code, name, resource_type, lifecycle_status)
-		VALUES
-			($1,$3,$4,'live Gold annotation contribution','OTHER','READY'),
-			($2,$3,$5,'live Gold input source','TABLE_LIKE','READY')
-	`, contributionResourceID, inputResourceID, workspaceID, "LIVE-GOLD-ANN-"+suffix, "LIVE-GOLD-SRC-"+suffix)
-	goldSQL(t, ctx, pool, `
-		INSERT INTO dataset(id, workspace_id, code, name, dataset_type, source_resource_id)
-		VALUES ($1,$2,$3,'live Gold input','CURATED',$4)
-	`, datasetID, workspaceID, "LIVE-GOLD-IN-"+suffix, inputResourceID)
 	goldSQL(t, ctx, pool, `
 		INSERT INTO dataset(id, workspace_id, code, name, dataset_type)
-		VALUES ($1,$2,$3,'live Gold output','CURATED')
-	`, outputDatasetID, workspaceID, "LIVE-GOLD-OUT-"+suffix)
-	goldSQL(t, ctx, pool, `
-		INSERT INTO dataset_version(
-			id, dataset_id, version_no, status, storage_type, storage_uri,
-			content_type, row_count, byte_size, checksum_algorithm, checksum_value, ready_at
-		) VALUES ($1,$2,1,'READY','OBJECT',$3,'text/csv',1,$4,'SHA256',$5,now())
-	`, versionID, datasetID, inputURI, int64(len(inputCSV)), inputChecksum)
-
-	ruleContent := "live-gold-input-quality"
-	goldSQL(t, ctx, pool, `
-		INSERT INTO quality_result(
-			id, workspace_id, dataset_version_id, rule_set_ref, rule_set_version,
-			gate_decision, metrics, rule_set_content_sha256, rule_set_content,
-			evaluator_name, evaluator_version
-		) VALUES ($1,$2,$3,'live-gold-input','1','PASS',$4,$5,$6,'fixture','1')
-	`, qualityID, workspaceID, versionID, []byte(`{"dimensions":{}}`), goldTestSHA256([]byte(ruleContent)), ruleContent)
-
-	profileContent := "live-gold-input-profile"
-	profileHash := goldTestSHA256([]byte(profileContent))
-	goldSQL(t, ctx, pool, `
-		INSERT INTO certification_profile(
-			id, workspace_id, profile_ref, code, name, version, content_sha256, content_snapshot,
-			purpose_mode, action_mode, consumer_mode, delivery_mode,
-			quality_gate_required, rights_required, compliance_required, contract_required,
-			traceability_required, evidence_required, membership_state
-		) VALUES ($1,$2,'live-gold-input',$3,'live Gold input','1',$4,$5,
-		          'ANY','ANY','ANY','ANY',true,false,false,false,false,false,'DRAFT')
-	`, profileID, workspaceID, "LIVE-GOLD-PROFILE-"+suffix, profileHash, profileContent)
-	goldSQL(t, ctx, pool, "UPDATE certification_profile SET membership_state='FINALIZED' WHERE id=$1", profileID)
-	goldSQL(t, ctx, pool, `
-		INSERT INTO dataset_certification(
-			id, workspace_id, dataset_version_id, quality_assessment_id,
-			certification_profile_id, profile_ref, profile_version,
-			profile_content_sha256, profile_content_snapshot,
-			decision, blockers, reason, issued_at
-		) VALUES ($1,$2,$3,$4,$5,'live-gold-input','1',$6,$7,'CERTIFIED','[]'::jsonb,'fixture',now())
-	`, certificationID, workspaceID, versionID, qualityID, profileID, profileHash, profileContent)
-
-	goldSQL(t, ctx, pool, `
-		INSERT INTO annotation_campaign(
-			id, workspace_id, input_dataset_version_id, input_certification_id,
-			annotation_contribution_resource_id, purpose, action,
-			schema_ref, schema_version, schema_content_sha256, schema_content_snapshot,
-			taxonomy_ref, taxonomy_version, taxonomy_content_sha256, taxonomy_content_snapshot,
-			rubric_ref, rubric_version, rubric_content_sha256, rubric_content_snapshot,
-			renderer_ref, renderer_version, renderer_content_sha256, renderer_content_snapshot,
-			review_policy_ref, review_policy_version, review_policy_content_sha256, review_policy_content_snapshot
-		) VALUES (
-			$1,$2,$3,$4,$5,'GOLD-PILOT','PROCESS',
-			'schema','1',$6,$7,'taxonomy','1',$6,$7,'rubric','1',$6,$7,
-			'renderer','1',$6,$7,'review','1',$6,$7
-		)
-	`, campaignID, workspaceID, versionID, certificationID, contributionResourceID, schemaHash, schema)
-	goldSQL(t, ctx, pool, `
-		INSERT INTO annotation_task(
-			id, workspace_id, campaign_id, source_item_ref, source_content_sha256,
-			task_text_sha256, primary_annotator_ref
-		) VALUES ($1,$2,$3,'row:1',$4,$5,'annotator:live-gold')
-	`, taskID, workspaceID, campaignID, sourceHash, taskTextHash)
-	goldSQL(t, ctx, pool, `
-		UPDATE annotation_campaign
-		   SET status='ACTIVE', revision=2, expected_task_count=1,
-		       task_manifest_hash=$2, input_checksum_sha256=$3, activated_at=now()
-		 WHERE id=$1
-	`, campaignID, strings.Repeat("c", 64), inputChecksum)
-
-	payload := []byte(`{"label":"EVIDENCE_SUFFICIENT"}`)
-	goldSQL(t, ctx, pool, `
-		INSERT INTO annotation_result(
-			id, workspace_id, campaign_id, task_id, author_ref,
-			provider_binding_ref, external_task_id, external_annotation_id, external_revision,
-			observation_key, canonical_payload, canonical_payload_sha256, normalizer_version
-		) VALUES ($1,$2,$3,$4,'annotator:live-gold','live-provider','live-task','live-annotation','1',$5,$6,$7,'live-v1')
-	`, resultID, workspaceID, campaignID, taskID, "live-gold:"+uuid.NewString(), payload, goldTestSHA256(payload))
-	goldSQL(t, ctx, pool, "UPDATE annotation_task SET status='REVIEWABLE', revision=2 WHERE id=$1", taskID)
-
-	reviewerID := uuid.New()
-	if _, err := annotationService.ReviewAnnotation(ctx, annotationapp.ReviewAnnotationCommand{
-		WorkspaceID:          workspaceID,
-		CampaignID:           campaignID,
-		TaskID:               taskID,
-		ExpectedTaskRevision: 2,
-		ReviewerRef:          reviewerID.String(),
-		Action:               "ACCEPT",
-		Reason:               "live Gold worker input accepted",
-		IdempotencyKey:       "live-gold-review-" + uuid.NewString(),
-		ReviewedResultID:     &resultID,
-		ActorID:              &reviewerID,
-		TraceID:              "live-gold-worker",
-	}); err != nil {
-		t.Fatalf("review live Gold input: %v", err)
-	}
-	snapshot, err := annotationService.FinalizeAnnotationSnapshot(ctx, annotationapp.FinalizeAnnotationSnapshotCommand{
-		WorkspaceID: workspaceID,
-		CampaignID:  campaignID,
-		ActorID:     &reviewerID,
-		TraceID:     "live-gold-worker",
-	})
-	if err != nil {
-		t.Fatalf("finalize live Gold snapshot: %v", err)
-	}
+		VALUES ($1,$2,$3,'live Gold output from real Label Studio facts','CURATED')
+	`, outputDatasetID, manifest.WorkspaceID, "LIVE-GOLD-SHARED-OUT-"+suffix)
 
 	return liveGoldFixture{
-		workspaceID:            workspaceID,
-		inputResourceID:        inputResourceID,
-		inputDatasetVersionID:  versionID,
-		inputCertificationID:   certificationID,
-		contributionResourceID: contributionResourceID,
-		campaignID:             campaignID,
-		snapshotID:             snapshot.ID,
+		workspaceID:            manifest.WorkspaceID,
+		inputResourceID:        manifest.InputResourceID,
+		inputDatasetVersionID:  manifest.InputDatasetVersionID,
+		inputCertificationID:   manifest.InputCertificationID,
+		contributionResourceID: manifest.ContributionResourceID,
+		campaignID:             manifest.CampaignID,
+		snapshotID:             manifest.SnapshotID,
 		outputDatasetID:        outputDatasetID,
 	}
 }
