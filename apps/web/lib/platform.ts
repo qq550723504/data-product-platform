@@ -453,6 +453,46 @@ export type GoldExplanation = {
     externalAnnotationId?: string;
     decisionCreatedAt: string;
   }>;
+  trace: {
+    costs: Array<{
+      id: string;
+      phase: string;
+      subjectType: string;
+      subjectId: string;
+      costType: string;
+      quantity: number;
+      unit: string;
+      amount?: number;
+      currency?: string;
+      pricingMode: string;
+      occurredAt: string;
+    }>;
+    evidence: Array<{
+      id: string;
+      phase: string;
+      subjectType: string;
+      subjectId: string;
+      evidenceType: string;
+      relationType: string;
+      sourceType?: string;
+      sourceId?: string;
+      hashAlgorithm?: string;
+      hashValue?: string;
+      createdAt: string;
+      createdBy?: string;
+    }>;
+    audit: Array<{
+      id: string;
+      phase: string;
+      objectType: string;
+      objectId: string;
+      action: string;
+      actorType: string;
+      actorId?: string;
+      traceId?: string;
+      occurredAt: string;
+    }>;
+  };
 };
 
 export type ReleaseCheckStatus = "PASS" | "FAIL" | "PENDING" | string;
