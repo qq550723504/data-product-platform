@@ -65,6 +65,19 @@ type liveGoldSharedManifest struct {
 	SnapshotID             uuid.UUID `json:"snapshotId"`
 }
 
+type liveGoldUIManifest struct {
+	WorkspaceID         uuid.UUID `json:"workspaceId"`
+	GoldDatasetID       uuid.UUID `json:"goldDatasetId"`
+	GoldVersionID       uuid.UUID `json:"goldVersionId"`
+	GoldBindingID       uuid.UUID `json:"goldBindingId"`
+	GoldSnapshotID      uuid.UUID `json:"goldSnapshotId"`
+	GoldAssessmentID    uuid.UUID `json:"goldAssessmentId"`
+	GoldCertificationID uuid.UUID `json:"goldCertificationId"`
+	OutputChecksum      string    `json:"outputChecksum"`
+	ExpectedDelivery    string    `json:"expectedDelivery"`
+	ExpectedBlocker     string    `json:"expectedBlocker"`
+}
+
 func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 	dsn := strings.TrimSpace(os.Getenv("TEST_POSTGRES_DSN"))
 	workerBinary := strings.TrimSpace(os.Getenv("LIVE_PLATFORM_WORKER"))
@@ -628,6 +641,35 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 		SELECT count(*) FROM dataset_certification
 		WHERE id=$1 AND decision='CERTIFIED'
 	`, certification.ID)
+
+	writeLiveGoldUIManifest(t, liveGoldUIManifest{
+		WorkspaceID:         fixture.workspaceID,
+		GoldDatasetID:       fixture.outputDatasetID,
+		GoldVersionID:       outputVersion.ID,
+		GoldBindingID:       binding.ID,
+		GoldSnapshotID:      fixture.snapshotID,
+		GoldAssessmentID:    assessment.ID,
+		GoldCertificationID: certification.ID,
+		OutputChecksum:      outputVersion.ChecksumValue,
+		ExpectedDelivery:    "BLOCKED",
+		ExpectedBlocker:     "DATASET_VERSION_INVALID",
+	})
+}
+
+func writeLiveGoldUIManifest(t *testing.T, manifest liveGoldUIManifest) {
+	t.Helper()
+	artifacts := strings.TrimSpace(os.Getenv("LIVE_BROWSER_ARTIFACTS"))
+	if artifacts == "" {
+		t.Fatal("LIVE_BROWSER_ARTIFACTS is required for live Gold UI acceptance")
+	}
+	content, err := json.MarshalIndent(manifest, "", "  ")
+	if err != nil {
+		t.Fatalf("marshal live Gold UI manifest: %v", err)
+	}
+	path := filepath.Join(artifacts, "gold-live-ui.json")
+	if err := os.WriteFile(path, append(content, '\n'), 0o600); err != nil {
+		t.Fatalf("write live Gold UI manifest: %v", err)
+	}
 }
 
 func loadLiveGoldSharedFixture(
