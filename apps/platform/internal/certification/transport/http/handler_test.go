@@ -27,7 +27,6 @@ func TestHistoryRejectsInvalidWorkspaceID(t *testing.T) {
 	}
 }
 
-
 func TestHistoryItemResponseIncludesFrozenGoldProductionProof(t *testing.T) {
 	bindingID := uuid.New()
 	snapshotID := uuid.New()
