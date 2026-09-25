@@ -1,6 +1,6 @@
 # 系统架构 V1.3
 
-> 第一阶段 Certified Dataset / trusted DIRECT_DATA 已完成受控 Pilot。第二阶段 #203 中 #209、#204–#207 的主要实现已完成；#208 已分别验证 real Label Studio、Gold build/quality/certification/DIRECT_DATA 与 Gold explainability，但共享事实的 real LS → same Gold build 纵向链和 live-core Gold UI Playwright 仍待补齐，External Explanation Test 也未执行。文档中的 future credential 协议不表示已验证该 provider 能力。
+> 第一阶段 Certified Dataset / trusted DIRECT_DATA 已完成受控 Pilot。第二阶段 #203 中 #209、#204–#207 的主要实现已完成；#208 的 shared-facts real Label Studio → same Gold build 纵向链已通过 required live-core gate，当前仅剩 live-core Gold UI Playwright 与 External Explanation Test。文档中的 future credential 协议不表示已验证该 provider 能力。
 
 ## 1. 架构风格
 
@@ -66,7 +66,7 @@ Core 保存：
 - ProductVersion / ProductRelease
 - Cost / Evidence / Audit
 
-其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA 与 #136 enterprise-activity E2E Pilot 均已完成第一阶段验收。AI/Gold Dataset 已由 #203 立项；#209、#204–#207 已完成，#208 已有分段自动化证据，但 shared-facts live vertical E2E、live-core Gold UI browser E2E 与 External Explanation Test 尚未完成。其他 delivery/provider、IAM、性能/SLA 工作仍按真实需求另行立项。
+其中 QualityAssessment 核心已由 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA 与 #136 enterprise-activity E2E Pilot 均已完成第一阶段验收。AI/Gold Dataset 已由 #203 立项；#209、#204–#207 已完成，#208 的 shared-facts live vertical E2E 已通过 required live-core gate，live-core Gold UI browser E2E 与 External Explanation Test 尚未完成。其他 delivery/provider、IAM、性能/SLA 工作仍按真实需求另行立项。
 
 #204 已实现的 Annotation Campaign/Task、已接纳 Result、ReviewDecision 与 Snapshot 属于 Core facts；#207 已实现的 Gold production binding 同样属于 Core facts。外部 Engine 只提供执行能力，不拥有上述核心业务状态；具体 contract 由第10节链接的专门文档拥有。
 
@@ -236,7 +236,7 @@ Core 不允许出现 PARK 等行业专属分支。
 - 数据市场 / Billing
 - bearer / presigned provider delivery hardening
 
-## 10. Gold Dataset 架构基线（#204–#207 已实现；#208 live vertical/browser acceptance 待收敛）
+## 10. Gold Dataset 架构基线（#204–#207 已实现；#208 shared-facts vertical 已通过，browser/human acceptance 待收敛）
 
 ```mermaid
 flowchart LR
@@ -253,7 +253,7 @@ flowchart LR
     Cert --> Delivery[Existing CurrentDeliveryGate and DIRECT_DATA]
 ```
 
-图中 Annotation Campaign / Task / Result / ReviewDecision / Snapshot 的 Core Domain 已由 #204 实现；Label Studio submit/reconcile（#205）、Gold Quality（#206）、Gold production / certification（#207）均已实现。#208 当前仍需把 real Label Studio 产生的同一 Snapshot 贯穿到 Gold build/delivery，并在 live-core 真实 Gold 输出上完成 Playwright UI 验收。
+图中 Annotation Campaign / Task / Result / ReviewDecision / Snapshot 的 Core Domain 已由 #204 实现；Label Studio submit/reconcile（#205）、Gold Quality（#206）、Gold production / certification（#207）均已实现。#208 已验证 real Label Studio 产生的同一 FINALIZED Snapshot 贯穿 Gold build/quality/certification/DIRECT_DATA；当前仅需在 live-core 真实 Gold 输出上完成 Playwright UI 验收。
 
 Core 保留已接纳 payload/事实，不依赖 provider current state 解释历史。标注前授权、外部 unknown outcome、完整任务分母、独立审核、standalone 冻结依赖以及 annotation contribution 的 current rights 都属于本阶段必需契约；不要复制状态或只增加 UI Gold 标志。
 
