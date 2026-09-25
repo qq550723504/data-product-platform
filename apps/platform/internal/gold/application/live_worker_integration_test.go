@@ -539,7 +539,7 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 	if !goldTraceHasEvidencePhase(liveExplanation.Trace.Evidence, "DIRECT_DATA") {
 		t.Fatalf("live Gold trace missing DIRECT_DATA evidence: %+v", liveExplanation.Trace.Evidence)
 	}
-	if !goldTraceHasAuditAction(liveExplanation.Trace.Audit, "DATASET_DELIVERY_ISSUED") {
+	if !goldTraceHasAuditAction(liveExplanation.Trace.Audit, "DATASETDELIVERYISSUED") {
 		t.Fatalf("live Gold trace missing delivery audit: %+v", liveExplanation.Trace.Audit)
 	}
 
