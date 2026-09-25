@@ -80,6 +80,26 @@ test("Gold DatasetVersion explains frozen production proof and current delivery"
   await expect(chain).toContainText("task 457");
   await expect(chain).toContainText("annotation 790");
 
+  const trace = page.getByTestId("gold-trace-summary");
+  await expect(trace).toBeVisible();
+  await expect(trace).toContainText("Gold Cost / Evidence / Audit Trace");
+  await expect(trace).toContainText("HUMAN_REVIEW");
+  await expect(trace).toContainText("ANNOTATION_REVIEW");
+  await expect(trace).toContainText("GOLD_BUILD");
+  await expect(trace).toContainText("GOLD_QUALITY");
+  await expect(trace).toContainText("QUALITY_ENGINE_INVOCATION");
+  await expect(trace).toContainText("GOLD_CERTIFICATION");
+  await expect(trace).toContainText("CERTIFICATION_EVALUATION");
+  await expect(trace).toContainText("DIRECT_DATA");
+  await expect(trace).toContainText("DIRECT_DATA_DELIVERY_ATTEMPT");
+  await expect(trace).toContainText("GOLD_PRODUCTION_BINDING_FINALIZED");
+  await expect(trace).toContainText("GOLD_QUALITY_ASSESSMENT");
+  await expect(trace).toContainText("DATASET_DELIVERY_ISSUED");
+  await expect(trace).toContainText("ANNOTATION_REVIEWED");
+  await expect(trace).toContainText("trace-build");
+  await expect(trace).toContainText("trace-certification");
+  await expect(trace).toContainText("trace-delivery");
+
   await expect(page.getByRole("heading", { name: "Current Delivery Eligibility" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "预检结果" })).toBeVisible();
   const eligibility = page.getByRole("heading", { name: "预检结果" }).locator("..");
