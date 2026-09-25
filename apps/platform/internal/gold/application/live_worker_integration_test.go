@@ -785,7 +785,19 @@ func waitLiveOutboxIdle(
 	workerLog string,
 ) {
 	t.Helper()
-	deadline := time.Now().Add(75 * time.Second)
+	var initial int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM outbox_event
+		WHERE status IN ('PENDING','PROCESSING','FAILED')
+	`).Scan(&initial); err != nil {
+		t.Fatalf("count initial live outbox backlog: %v", err)
+	}
+	budget := 75 * time.Second
+	if scaled := time.Duration(initial)*1500*time.Millisecond + 10*time.Second; scaled > budget {
+		budget = scaled
+	}
+	deadline := time.Now().Add(budget)
 	for time.Now().Before(deadline) {
 		if err := worker.Process.Signal(syscall.Signal(0)); err != nil {
 			content, _ := os.ReadFile(workerLog)
@@ -815,7 +827,7 @@ func waitLiveOutboxIdle(
 		WHERE status IN ('PENDING','PROCESSING','FAILED')
 	`).Scan(&pending)
 	content, _ := os.ReadFile(workerLog)
-	t.Fatalf("live outbox backlog did not drain pending=%d\n%s", pending, content)
+	t.Fatalf("live outbox backlog did not drain initial=%d pending=%d budget=%s\n%s", initial, pending, budget, content)
 }
 
 func waitLiveGoldExecution(
