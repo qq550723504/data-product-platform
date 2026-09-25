@@ -409,7 +409,7 @@ Engine Adapter 错误需要映射为平台统一错误模型。
 - #135 API / UI ✅
 - #136 E2E Pilot ✅ E2E1–E2E20
 
-第二阶段已由 #203 AI / Gold Dataset Epic 正式立项；#209 文档/ADR 架构基线与 #204–#207 的 Annotation Core、Label Studio reference adapter、trusted Human Review / Gold Quality、Gold DatasetVersion / Certification 已完成。#208 已有分段自动化覆盖，但仍需补齐 shared-facts live vertical E2E、live-core 真实 Gold 输出的 Playwright UI 验收，以及 External Explanation Test；在这些门禁完成前，不得把整个 Gold Pilot 描述为最终 PASS 或 production-ready。
+第二阶段已由 #203 AI / Gold Dataset Epic 正式立项；#209 文档/ADR 架构基线与 #204–#207 的 Annotation Core、Label Studio reference adapter、trusted Human Review / Gold Quality、Gold DatasetVersion / Certification 已完成。#208 的 shared-facts live vertical E2E 已通过 real Label Studio → ACCEPT/CORRECT → FINALIZED AnnotationSnapshot → Gold build/quality/certification/DIRECT_DATA 验证；当前仅剩 live-core 真实 Gold 输出的 Playwright UI 验收与 External Explanation Test。在这些门禁完成前，不得把整个 Gold Pilot 描述为最终 PASS 或 production-ready。
 
 Gold 产品范围及权威文档索引见 `docs/product/gold-dataset.md`，跨模块决定见 ADR-0012。Annotation Domain、Engine integration、Gold production 三份专门文档分别拥有事实/冻结、外部协议、生产/认证契约；总览文档不得维护平行的冲突规则。
 
