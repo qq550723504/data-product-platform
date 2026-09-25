@@ -19,10 +19,10 @@ import (
 	"github.com/jackc/pgx/v5"
 	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
@@ -411,7 +411,7 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 			Unit:        "build",
 			PricingMode: "ACTUAL",
 			Metadata: map[string]any{
-				"outputDatasetVersionId": published.ID,
+				"outputDatasetVersionId":  published.ID,
 				"goldProductionBindingId": built.ID,
 				"annotationSnapshotId":    snapshot.ID,
 			},
