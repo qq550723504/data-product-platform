@@ -21,6 +21,7 @@ import (
 	certificationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
 	certificationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
 	certificationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	deliveryapp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application"
@@ -35,6 +36,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	readmodel "github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel"
 	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
 	rightsdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
 	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
@@ -456,6 +458,13 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 		ActorID:                   &actorID,
 		TraceID:                   "live-gold-certification",
 		Now:                       time.Now().UTC(),
+		CostActivity: &cost.CertificationActivity{
+			ActivityID:  uuid.New(),
+			Quantity:    1,
+			Unit:        "certification",
+			PricingMode: "ACTUAL",
+			Metadata:    map[string]any{"phase": "live-gold-certification"},
+		},
 	})
 	if err != nil {
 		t.Fatalf("evaluate live Gold certification: %v", err)
@@ -513,6 +522,26 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 		FROM cost_allocation
 		WHERE delivery_operation_id=$1
 	`, delivered.Operation.ID)
+
+	liveExplanation, err := readmodel.NewRepository(pool).GoldExplanation(
+		ctx,
+		fixture.workspaceID,
+		outputVersion.ID,
+	)
+	if err != nil {
+		t.Fatalf("read live Gold explanation trace: %v", err)
+	}
+	for _, phase := range []string{"HUMAN_REVIEW", "GOLD_BUILD", "GOLD_QUALITY", "GOLD_CERTIFICATION", "DIRECT_DATA"} {
+		if !goldTraceHasCostPhase(liveExplanation.Trace.Costs, phase) {
+			t.Fatalf("live Gold trace missing cost phase %s: %+v", phase, liveExplanation.Trace.Costs)
+		}
+	}
+	if !goldTraceHasEvidencePhase(liveExplanation.Trace.Evidence, "DIRECT_DATA") {
+		t.Fatalf("live Gold trace missing DIRECT_DATA evidence: %+v", liveExplanation.Trace.Evidence)
+	}
+	if !goldTraceHasAuditAction(liveExplanation.Trace.Audit, "DATASETDELIVERYISSUED") {
+		t.Fatalf("live Gold trace missing delivery audit: %+v", liveExplanation.Trace.Audit)
+	}
 
 	if _, err := rightsService.DisposeRightsDeclaration(ctx, rightsapp.DisposeRightsDeclarationCommand{
 		DeclarationID: annotationRightsDeclarationID,

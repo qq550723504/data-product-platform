@@ -424,6 +424,93 @@ export default async function DatasetVersionDetailPage({
           </section>
         ) : null}
 
+        {goldExplanation ? (
+          <section className="detail-card" style={{ marginBottom: 24 }} data-testid="gold-trace-summary">
+            <div className="panel-header">
+              <h2>Gold Cost / Evidence / Audit Trace</h2>
+              <span className="eyebrow">
+                {goldExplanation.trace.costs.length} Cost · {goldExplanation.trace.evidence.length} Evidence · {goldExplanation.trace.audit.length} Audit
+              </span>
+            </div>
+            <div className="callout">
+              <strong>按生产阶段聚合的可追溯引用</strong>
+              <p>这里只展示有界的 subject / hash / actor / trace 引用，不加载底层大 metadata；用于解释 Annotation、Review、Build、Quality、Certification 与 Delivery 的成本和证据链。</p>
+            </div>
+
+            <div className="panel-header" style={{ marginTop: 18 }}>
+              <h3>Cost</h3>
+              <span className="eyebrow">{goldExplanation.trace.costs.length} events</span>
+            </div>
+            {goldExplanation.trace.costs.length ? (
+              <div className="table-card">
+                <table className="data-table">
+                  <thead><tr><th>Phase</th><th>Cost</th><th>Subject</th><th>Quantity</th><th>Amount</th><th>Time</th></tr></thead>
+                  <tbody>
+                    {goldExplanation.trace.costs.map((item) => (
+                      <tr key={item.id}>
+                        <td>{item.phase}</td>
+                        <td>{item.costType}<br /><span className="mono">{item.pricingMode}</span></td>
+                        <td>{item.subjectType}<br /><span className="mono">{shortId(item.subjectId)}</span></td>
+                        <td>{item.quantity} {item.unit}</td>
+                        <td>{item.amount === undefined ? "—" : String(item.amount) + (item.currency ? " " + item.currency : "")}</td>
+                        <td>{formatDate(item.occurredAt)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : <EmptyState title="暂无 Cost 引用" description="当前 Gold 链没有可展示的成本事件。" />}
+
+            <div className="panel-header" style={{ marginTop: 18 }}>
+              <h3>Evidence</h3>
+              <span className="eyebrow">{goldExplanation.trace.evidence.length} refs</span>
+            </div>
+            {goldExplanation.trace.evidence.length ? (
+              <div className="table-card">
+                <table className="data-table">
+                  <thead><tr><th>Phase</th><th>Evidence</th><th>Subject</th><th>Relation</th><th>Hash</th><th>Time</th></tr></thead>
+                  <tbody>
+                    {goldExplanation.trace.evidence.map((item) => (
+                      <tr key={item.phase + ":" + item.id + ":" + item.subjectId}>
+                        <td>{item.phase}</td>
+                        <td>{item.evidenceType}<br /><span className="mono">{shortId(item.id)}</span></td>
+                        <td>{item.subjectType}<br /><span className="mono">{shortId(item.subjectId)}</span></td>
+                        <td>{item.relationType}</td>
+                        <td className="mono">{item.hashValue ? shortId(item.hashValue) : "—"}</td>
+                        <td>{formatDate(item.createdAt)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : <EmptyState title="暂无 Evidence 引用" description="当前 Gold 链没有可展示的 Evidence relation。" />}
+
+            <div className="panel-header" style={{ marginTop: 18 }}>
+              <h3>Audit</h3>
+              <span className="eyebrow">{goldExplanation.trace.audit.length} refs</span>
+            </div>
+            {goldExplanation.trace.audit.length ? (
+              <div className="table-card">
+                <table className="data-table">
+                  <thead><tr><th>Phase</th><th>Action</th><th>Object</th><th>Actor</th><th>Trace</th><th>Time</th></tr></thead>
+                  <tbody>
+                    {goldExplanation.trace.audit.map((item) => (
+                      <tr key={item.id}>
+                        <td>{item.phase}</td>
+                        <td>{item.action}</td>
+                        <td>{item.objectType}<br /><span className="mono">{shortId(item.objectId)}</span></td>
+                        <td>{item.actorType}<br /><span className="mono">{item.actorId ? shortId(item.actorId) : "—"}</span></td>
+                        <td className="mono">{item.traceId || "—"}</td>
+                        <td>{formatDate(item.occurredAt)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : <EmptyState title="暂无 Audit 引用" description="当前 Gold 链没有可展示的 AuditEvent。" />}
+          </section>
+        ) : null}
+
         {selectedProfile ? (
           <section className="detail-card" style={{ marginBottom: 24 }}>
             <div className="panel-header"><h2>Rights summary</h2><span className="eyebrow">Frozen certification context</span></div>

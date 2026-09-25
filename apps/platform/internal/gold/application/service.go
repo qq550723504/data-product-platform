@@ -19,6 +19,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -399,6 +400,23 @@ func (s *Service) Execute(ctx context.Context, request workflowapp.ProcessingReq
 		}
 		finalizedAt := time.Now().UTC().Truncate(time.Microsecond)
 		if err := s.goldRepo.InsertAndFinalizeBinding(ctx, tx, built, productionMembers, finalizedAt); err != nil {
+			return err
+		}
+		if err := cost.Append(ctx, tx, cost.Event{
+			WorkspaceID: request.WorkspaceID,
+			ExecutionID: &request.ExecutionID,
+			ActivityID:  request.ExecutionID,
+			CostType:    "GOLD_BUILD_EXECUTION",
+			Quantity:    1,
+			Unit:        "build",
+			PricingMode: "ACTUAL",
+			Metadata: map[string]any{
+				"outputDatasetVersionId":  published.ID,
+				"goldProductionBindingId": built.ID,
+				"annotationSnapshotId":    snapshot.ID,
+			},
+			OccurredAt: finalizedAt,
+		}); err != nil {
 			return err
 		}
 		bindingID := built.ID
