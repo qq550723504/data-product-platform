@@ -1,10 +1,10 @@
 # Gold Dataset Pilot 验收报告
 
-Issue: #208  
-Parent: #203  
+Issue: #208（GitHub 已关闭）  
+Parent: #203（仍开放）  
 Status: **AUTOMATED ACCEPTANCE PASS / EXTERNAL EXPLANATION TEST PENDING**
 
-> 本报告只记录已由仓库 CI、browser、live-core 和 PostgreSQL integration 证明的事实。人工 External Explanation Test 尚未执行，因此本 Pilot 暂不能标记为最终通过，也不得描述为 production-ready。
+> 本报告只记录已由仓库 CI、browser、live-core 和 PostgreSQL integration 证明的事实。人工 External Explanation Test 尚未执行，因此本 Pilot 暂不能标记为最终通过，也不得描述为 production-ready。GitHub #208 已于 2026-09-25 在该人工测试完成前关闭；该 Issue 状态不改变本文定义的剩余人工验收门禁，父 Epic #203 仍保持开放。
 
 ## 1. Pilot 目标
 
@@ -224,11 +224,12 @@ Audit 输出 actor/action/object/trace/timestamp。
 - **自动化 Gold vertical acceptance：PASS**
 - **Explainability / trace automation：PASS**
 - **External Explanation Test：PENDING**
-- **最终 #208 / #203 closure：BLOCKED BY HUMAN EXPLANATION TEST ONLY**
+- **#208 GitHub Issue：已关闭，但原完成定义中的 External Explanation Test 尚未满足**
+- **#203 Epic 最终收口：BLOCKED BY HUMAN EXPLANATION TEST ONLY**
 
 人工测试完成并记录 PASS 后，才可以：
 
 1. 将本文档状态改为 FINAL / PASS；
-2. 关闭 #208；
+2. 将 #208 的关闭状态与最终人工验收结果补充关联记录，避免把提前关闭误读为验收已完整通过；
 3. 更新并关闭 #203 Epic。
 
