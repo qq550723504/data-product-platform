@@ -2,9 +2,9 @@
 
 Issue: #208（GitHub 已关闭）  
 Parent: #203（仍开放）  
-Status: **AUTOMATED ACCEPTANCE PASS / EXTERNAL EXPLANATION TEST PENDING**
+Status: **SEGMENTED AUTOMATION PASS / LIVE VERTICAL E2E PENDING / EXTERNAL EXPLANATION TEST PENDING**
 
-> 本报告只记录已由仓库 CI、browser、live-core 和 PostgreSQL integration 证明的事实。人工 External Explanation Test 尚未执行，因此本 Pilot 暂不能标记为最终通过，也不得描述为 production-ready。GitHub #208 已于 2026-09-25 在该人工测试完成前关闭；该 Issue 状态不改变本文定义的剩余人工验收门禁，父 Epic #203 仍保持开放。
+> 本报告只记录已由仓库 CI、browser、live-core 和 PostgreSQL integration 证明的事实。当前证据是分段自动化覆盖，而不是一条共享事实贯穿 real Label Studio → Gold build → live Gold UI 的单链路 E2E：Gold build live test 使用独立 Snapshot fixture，Gold UI Playwright 仍运行在 fixture server。External Explanation Test 也尚未执行，因此本 Pilot 暂不能标记为最终通过，也不得描述为 production-ready。GitHub #208 已于 2026-09-25 在这些验收门禁完成前关闭；该 Issue 状态不改变本文定义的剩余验收要求，父 Epic #203 仍保持开放。
 
 ## 1. Pilot 目标
 
@@ -43,7 +43,7 @@ Label Studio 使用 disposable test runtime 与临时 API token，不依赖 prov
 
 ## 3. 自动化验收结果
 
-### 3.1 Gold Dataset UI / explainability — PASS
+### 3.1 Gold Dataset UI / explainability — PASS（fixture-backed browser）
 
 PR #231 / #238 / #239 已验证 DatasetVersion 详情可解释：
 
@@ -63,7 +63,7 @@ PR #231 / #238 / #239 已验证 DatasetVersion 详情可解释：
 
 UI 只读，不使用 Label Studio current state 替代 Core frozen facts。
 
-### 3.2 Real Label Studio -> Core AnnotationResult — PASS
+### 3.2 Real Label Studio -> Core AnnotationResult / Review / Snapshot — PASS
 
 PR #232 / #234 已验证：
 
@@ -82,9 +82,9 @@ PR #232 / #234 已验证：
 
 AnnotationResult 与 ReviewDecision 不通过测试 SQL 直接插入。
 
-### 3.3 FINALIZED Snapshot -> real Gold worker / MinIO — PASS
+### 3.3 FINALIZED Snapshot fixture -> real Gold worker / MinIO — PASS
 
-PR #235 已验证：
+PR #235 已验证 downstream Gold 生产链，但该测试使用独立构造的 FINALIZED Snapshot fixture，尚未直接消费 §3.2 real Label Studio 链路生成的同一 Snapshot：
 
 - CreateBuild idempotency replay -> same Execution
 - ExecutionQueued outbox
@@ -160,8 +160,8 @@ Audit 输出 actor/action/object/trace/timestamp。
 
 | # | #208 完成定义 | 状态 | 证据 |
 |---|---|---|---|
-| 1 | real browser E2E PASS | PASS | browser + live-core required CI |
-| 2 | live-core required gate PASS | PASS | #232/#234/#235/#236 live-core |
+| 1 | real browser E2E PASS | **PENDING** | Gold UI Playwright 当前为 fixture-backed；尚未针对 live-core 真实 Gold 输出运行 |
+| 2 | live-core required gate PASS | **PARTIAL** | real Label Studio 与 live Gold build 均已分别通过，但 downstream build 未消费 upstream real LS 产生的同一 Snapshot |
 | 3 | Gold bytes/checksum 与 persisted facts 一致 | PASS | #235 |
 | 4 | UI 可追到 annotation/review/source/quality/rights/certification | PASS | #231/#238/#239 |
 | 5 | DIRECT_DATA fresh re-gate | PASS | #230/#236 |
@@ -170,7 +170,17 @@ Audit 输出 actor/action/object/trace/timestamp。
 | 8 | 输出最终 Pilot 验收报告 | DRAFT | 本文档；待人工测试后定稿 |
 | 9 | 列出未验证边界并禁止 production-ready 描述 | PASS | 见第 7 节 |
 
-## 6. External Explanation Test — PENDING
+## 6. 剩余验收门禁
+
+### 6.1 Shared-facts live vertical E2E — PENDING
+
+必须让真实 Label Studio → Core review 产生的 FINALIZED AnnotationSnapshot 直接成为后续 Gold build 的输入，继续走 worker / MinIO / quality / certification / DIRECT_DATA，不能在阶段边界重新用 SQL/fixture 构造另一套 annotation facts。
+
+### 6.2 Live-core Gold UI browser E2E — PENDING
+
+必须在 live-core 环境中让 Playwright 打开由上述真实 Gold 链路产生的 DatasetVersion/Gold 页面，并验证 source / annotation / review / quality / certification / delivery / Cost-Evidence-Audit explainability。fixture-server 浏览器测试不能替代该门禁。
+
+### 6.3 External Explanation Test — PENDING
 
 人工测试必须由至少 1 名未参与该 Gold 链路实现的人执行。
 
@@ -221,13 +231,15 @@ Audit 输出 actor/action/object/trace/timestamp。
 
 截至本报告生成时：
 
-- **自动化 Gold vertical acceptance：PASS**
-- **Explainability / trace automation：PASS**
+- **分段自动化覆盖：PASS**
+- **Shared-facts live vertical E2E：PENDING**
+- **Live-core Gold UI browser E2E：PENDING**
+- **Explainability / trace fixture automation：PASS**
 - **External Explanation Test：PENDING**
-- **#208 GitHub Issue：已关闭，但原完成定义中的 External Explanation Test 尚未满足**
-- **#203 Epic 最终收口：BLOCKED BY HUMAN EXPLANATION TEST ONLY**
+- **#208 GitHub Issue：已关闭，但原完成定义中的 live vertical/browser/human explanation 门禁尚未全部满足**
+- **#203 Epic 最终收口：BLOCKED BY THE TWO LIVE AUTOMATION GAPS + HUMAN EXPLANATION TEST**
 
-人工测试完成并记录 PASS 后，才可以：
+上述两个 live 自动化缺口与人工测试全部完成并记录 PASS 后，才可以：
 
 1. 将本文档状态改为 FINAL / PASS；
 2. 将 #208 的关闭状态与最终人工验收结果补充关联记录，避免把提前关闭误读为验收已完整通过；
