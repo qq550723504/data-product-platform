@@ -21,6 +21,7 @@ import (
 	certificationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
 	certificationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
 	certificationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
@@ -672,6 +673,13 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 		ActorID:                   &actorID,
 		TraceID:                   "gold-certification",
 		Now:                       time.Now().UTC(),
+		CostActivity: &cost.CertificationActivity{
+			ActivityID:  uuid.New(),
+			Quantity:    1,
+			Unit:        "certification",
+			PricingMode: "ACTUAL",
+			Metadata:    map[string]any{"phase": "gold-certification"},
+		},
 	})
 	if err != nil {
 		t.Fatalf("evaluate Gold certification: %v", err)
@@ -802,6 +810,32 @@ func TestGoldCandidateBuilderCreatesOneOutputBindingAndLineageOnReplay(t *testin
 	if err := blockedTx.Rollback(ctx); err != nil {
 		t.Fatalf("rollback blocked Gold gate tx: %v", err)
 	}
+
+	finalExplanation, err := readmodel.NewRepository(pool).GoldExplanation(ctx, workspaceID, output.ID)
+	if err != nil {
+		t.Fatalf("read completed Gold trace explanation: %v", err)
+	}
+	for _, phase := range []string{"HUMAN_REVIEW", "GOLD_BUILD", "GOLD_QUALITY", "GOLD_CERTIFICATION"} {
+		if !goldTraceHasCostPhase(finalExplanation.Trace.Costs, phase) {
+			t.Fatalf("Gold trace missing cost phase %s: %+v", phase, finalExplanation.Trace.Costs)
+		}
+	}
+	for _, phase := range []string{"HUMAN_REVIEW", "SNAPSHOT", "GOLD_BUILD", "GOLD_QUALITY", "GOLD_CERTIFICATION"} {
+		if !goldTraceHasEvidencePhase(finalExplanation.Trace.Evidence, phase) {
+			t.Fatalf("Gold trace missing evidence phase %s: %+v", phase, finalExplanation.Trace.Evidence)
+		}
+	}
+	for _, action := range []string{
+		"ANNOTATION_REVIEWED",
+		"ANNOTATION_SNAPSHOT_FINALIZED",
+		"GOLD_PRODUCTION_BINDING_FINALIZED",
+		"GOLD_QUALITY_ASSESSMENT_COMPLETED",
+		"DATASET_CERTIFIED",
+	} {
+		if !goldTraceHasAuditAction(finalExplanation.Trace.Audit, action) {
+			t.Fatalf("Gold trace missing audit action %s: %+v", action, finalExplanation.Trace.Audit)
+		}
+	}
 }
 
 func goldSQL(t *testing.T, ctx context.Context, pool *pgxpool.Pool, query string, args ...any) {
@@ -829,4 +863,32 @@ func goldTestSHA256(value []byte) string {
 
 func ptrUUID(value uuid.UUID) *uuid.UUID {
 	return &value
+}
+
+
+func goldTraceHasCostPhase(items []readmodel.GoldCostReference, phase string) bool {
+	for _, item := range items {
+		if item.Phase == phase {
+			return true
+		}
+	}
+	return false
+}
+
+func goldTraceHasEvidencePhase(items []readmodel.GoldEvidenceReference, phase string) bool {
+	for _, item := range items {
+		if item.Phase == phase {
+			return true
+		}
+	}
+	return false
+}
+
+func goldTraceHasAuditAction(items []readmodel.GoldAuditReference, action string) bool {
+	for _, item := range items {
+		if item.Action == action {
+			return true
+		}
+	}
+	return false
 }
