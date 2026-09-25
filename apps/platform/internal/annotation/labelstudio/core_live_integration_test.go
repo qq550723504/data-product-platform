@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
@@ -32,16 +32,6 @@ import (
 	rightsdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
 	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
-
-type allowLiveEngineSend struct{}
-
-func (allowLiveEngineSend) ValidateEngineSendTx(
-	context.Context,
-	pgx.Tx,
-	annotationdomain.Campaign,
-) error {
-	return nil
-}
 
 type liveCoreAnnotationTaskFixture struct {
 	taskID         uuid.UUID
