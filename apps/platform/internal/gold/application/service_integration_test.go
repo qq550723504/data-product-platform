@@ -865,7 +865,6 @@ func ptrUUID(value uuid.UUID) *uuid.UUID {
 	return &value
 }
 
-
 func goldTraceHasCostPhase(items []readmodel.GoldCostReference, phase string) bool {
 	for _, item := range items {
 		if item.Phase == phase {
