@@ -221,17 +221,17 @@ type GoldTraceSummary struct {
 }
 
 type GoldCostReference struct {
-	ID         uuid.UUID  `json:"id"`
-	Phase      string     `json:"phase"`
+	ID          uuid.UUID `json:"id"`
+	Phase       string    `json:"phase"`
 	SubjectType string    `json:"subjectType"`
-	SubjectID  uuid.UUID  `json:"subjectId"`
-	CostType   string     `json:"costType"`
-	Quantity   float64    `json:"quantity"`
-	Unit       string     `json:"unit"`
-	Amount     *float64   `json:"amount,omitempty"`
-	Currency   string     `json:"currency,omitempty"`
+	SubjectID   uuid.UUID `json:"subjectId"`
+	CostType    string    `json:"costType"`
+	Quantity    float64   `json:"quantity"`
+	Unit        string    `json:"unit"`
+	Amount      *float64  `json:"amount,omitempty"`
+	Currency    string    `json:"currency,omitempty"`
 	PricingMode string    `json:"pricingMode"`
-	OccurredAt time.Time  `json:"occurredAt"`
+	OccurredAt  time.Time `json:"occurredAt"`
 }
 
 type GoldEvidenceReference struct {
@@ -250,15 +250,15 @@ type GoldEvidenceReference struct {
 }
 
 type GoldAuditReference struct {
-	ID          uuid.UUID  `json:"id"`
-	Phase       string     `json:"phase"`
-	ObjectType  string     `json:"objectType"`
-	ObjectID    uuid.UUID  `json:"objectId"`
-	Action      string     `json:"action"`
-	ActorType   string     `json:"actorType"`
-	ActorID     *uuid.UUID `json:"actorId,omitempty"`
-	TraceID     string     `json:"traceId,omitempty"`
-	OccurredAt  time.Time  `json:"occurredAt"`
+	ID         uuid.UUID  `json:"id"`
+	Phase      string     `json:"phase"`
+	ObjectType string     `json:"objectType"`
+	ObjectID   uuid.UUID  `json:"objectId"`
+	Action     string     `json:"action"`
+	ActorType  string     `json:"actorType"`
+	ActorID    *uuid.UUID `json:"actorId,omitempty"`
+	TraceID    string     `json:"traceId,omitempty"`
+	OccurredAt time.Time  `json:"occurredAt"`
 }
 
 type GoldCampaignExplanation struct {
@@ -471,7 +471,6 @@ func (r *Repository) GoldExplanation(
 	result.Trace = trace
 	return result, nil
 }
-
 
 func (r *Repository) goldTraceSummary(ctx context.Context, explanation GoldExplanation) (GoldTraceSummary, error) {
 	var result GoldTraceSummary
