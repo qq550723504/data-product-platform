@@ -3,10 +3,12 @@ package labelstudio_test
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -23,6 +25,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	platformprincipal "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
@@ -36,22 +39,47 @@ func (allowLiveEngineSend) ValidateEngineSendTx(
 	return nil
 }
 
+type liveCoreAnnotationTaskFixture struct {
+	taskID         uuid.UUID
+	sourceItemRef  string
+	sourceSHA256   string
+	taskText       string
+	taskTextSHA256 string
+	providerLabel  string
+	finalLabel     string
+}
+
 type liveCoreAnnotationFixture struct {
-	workspaceID      uuid.UUID
-	campaignID       uuid.UUID
-	taskID           uuid.UUID
-	sourceSHA256     string
-	taskText         string
-	taskTextSHA256   string
-	primaryAnnotator string
+	workspaceID            uuid.UUID
+	inputResourceID        uuid.UUID
+	inputDatasetVersionID  uuid.UUID
+	inputCertificationID   uuid.UUID
+	contributionResourceID uuid.UUID
+	campaignID             uuid.UUID
+	tasks                  []liveCoreAnnotationTaskFixture
+	primaryAnnotator       string
+}
+
+type liveGoldSharedManifest struct {
+	WorkspaceID            uuid.UUID `json:"workspaceId"`
+	InputResourceID        uuid.UUID `json:"inputResourceId"`
+	InputDatasetVersionID  uuid.UUID `json:"inputDatasetVersionId"`
+	InputCertificationID   uuid.UUID `json:"inputCertificationId"`
+	ContributionResourceID uuid.UUID `json:"contributionResourceId"`
+	CampaignID             uuid.UUID `json:"campaignId"`
+	SnapshotID             uuid.UUID `json:"snapshotId"`
 }
 
 func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 	baseURL := strings.TrimSpace(os.Getenv("TEST_LABEL_STUDIO_URL"))
 	token := strings.TrimSpace(os.Getenv("TEST_LABEL_STUDIO_TOKEN"))
 	dsn := strings.TrimSpace(os.Getenv("TEST_POSTGRES_DSN"))
-	if baseURL == "" || token == "" || dsn == "" {
-		t.Skip("TEST_LABEL_STUDIO_URL, TEST_LABEL_STUDIO_TOKEN, and TEST_POSTGRES_DSN are required")
+	endpoint := strings.TrimSpace(os.Getenv("OBJECT_STORAGE_ENDPOINT"))
+	bucket := strings.TrimSpace(os.Getenv("OBJECT_STORAGE_BUCKET"))
+	accessKey := strings.TrimSpace(os.Getenv("OBJECT_STORAGE_ACCESS_KEY"))
+	secretKey := strings.TrimSpace(os.Getenv("OBJECT_STORAGE_SECRET_KEY"))
+	if baseURL == "" || token == "" || dsn == "" || endpoint == "" || bucket == "" || accessKey == "" || secretKey == "" {
+		t.Skip("Label Studio, PostgreSQL, and object storage live-test environment are required")
 	}
 
 	ctx := context.Background()
@@ -67,7 +95,15 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 	}
 	defer pool.Close()
 
-	fixture := seedLiveCoreAnnotationFixture(t, ctx, pool)
+	store, err := storage.New(endpoint, accessKey, secretKey, bucket, false)
+	if err != nil {
+		t.Fatalf("create live object store: %v", err)
+	}
+	if err := store.EnsureBucket(ctx); err != nil {
+		t.Fatalf("ensure live object bucket: %v", err)
+	}
+
+	fixture := seedLiveCoreAnnotationFixture(t, ctx, pool, store)
 	client, err := labelstudio.NewClient(
 		baseURL,
 		token,
@@ -106,7 +142,7 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 		WorkspaceID: fixture.workspaceID,
 		CampaignID:  fixture.campaignID,
 		RequestID:   "live-campaign-" + uuid.NewString(),
-		Title:       "Live Core Gold campaign",
+		Title:       "Enterprise activity Gold Reference Pilot",
 		TraceID:     "live-labelstudio-core",
 	})
 	if err != nil {
@@ -120,19 +156,22 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 	}
 	defer deleteProject(t, &http.Client{Timeout: 30 * time.Second}, baseURL, token, binding.ExternalProjectID)
 
-	engineTask := annotationapp.EngineTask{
-		TaskID:         fixture.taskID,
-		SourceItemRef:  "row:1",
-		SourceSHA256:   fixture.sourceSHA256,
-		TaskText:       fixture.taskText,
-		TaskTextSHA256: fixture.taskTextSHA256,
-		CorrelationKey: "core-task-" + fixture.taskID.String(),
+	engineTasks := make([]annotationapp.EngineTask, 0, len(fixture.tasks))
+	for _, task := range fixture.tasks {
+		engineTasks = append(engineTasks, annotationapp.EngineTask{
+			TaskID:         task.taskID,
+			SourceItemRef:  task.sourceItemRef,
+			SourceSHA256:   task.sourceSHA256,
+			TaskText:       task.taskText,
+			TaskTextSHA256: task.taskTextSHA256,
+			CorrelationKey: "core-task-" + task.taskID.String(),
+		})
 	}
 	taskOperation, err := engineService.PrepareTasks(ctx, annotationapp.PrepareEngineTasksCommand{
 		WorkspaceID: fixture.workspaceID,
 		CampaignID:  fixture.campaignID,
 		RequestID:   "live-tasks-" + uuid.NewString(),
-		Tasks:       []annotationapp.EngineTask{engineTask},
+		Tasks:       engineTasks,
 		TraceID:     "live-labelstudio-core",
 	})
 	if err != nil {
@@ -144,11 +183,20 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read engine task bindings: %v", err)
 	}
-	if len(taskBindings) != 1 || taskBindings[0].TaskID != fixture.taskID {
+	if len(taskBindings) != len(fixture.tasks) {
 		t.Fatalf("task bindings=%+v", taskBindings)
 	}
-	externalTaskID := taskBindings[0].ExternalTaskID
-	createAnnotation(t, &http.Client{Timeout: 30 * time.Second}, baseURL, token, externalTaskID, "EVIDENCE_SUFFICIENT")
+	externalTaskByID := make(map[uuid.UUID]string, len(taskBindings))
+	for _, taskBinding := range taskBindings {
+		externalTaskByID[taskBinding.TaskID] = taskBinding.ExternalTaskID
+	}
+	for _, task := range fixture.tasks {
+		externalTaskID := externalTaskByID[task.taskID]
+		if externalTaskID == "" {
+			t.Fatalf("missing provider binding for task %s", task.taskID)
+		}
+		createAnnotation(t, &http.Client{Timeout: 30 * time.Second}, baseURL, token, externalTaskID, task.providerLabel)
+	}
 
 	lookupBinding := annotationapp.EngineCampaignBinding{
 		Provider:          binding.Provider,
@@ -163,15 +211,23 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 		Binding:            lookupBinding,
 		RequestID:          taskOperation.RequestID,
 		RequestFingerprint: taskOperation.RequestFingerprint,
-		Tasks:              []annotationapp.EngineTask{engineTask},
+		Tasks:              engineTasks,
 	}, annotationapp.EngineResultCursor{})
 	if err != nil {
 		t.Fatalf("discover provider actor for Core binding: %v", err)
 	}
-	if len(page.Results) != 1 || strings.TrimSpace(page.Results[0].ExternalAuthorRef) == "" {
+	if len(page.Results) != len(fixture.tasks) {
 		t.Fatalf("provider results=%+v", page.Results)
 	}
-	externalActorRef := page.Results[0].ExternalAuthorRef
+	externalActorRef := strings.TrimSpace(page.Results[0].ExternalAuthorRef)
+	if externalActorRef == "" {
+		t.Fatalf("provider result has empty author: %+v", page.Results[0])
+	}
+	for _, result := range page.Results {
+		if strings.TrimSpace(result.ExternalAuthorRef) != externalActorRef {
+			t.Fatalf("Reference Pilot provider results use different authors: %+v", page.Results)
+		}
+	}
 	liveSQL(t, ctx, pool, `
 		INSERT INTO annotation_engine_actor_binding(
 			id, workspace_id, provider, provider_instance_ref,
@@ -188,50 +244,59 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 	)
 
 	if err := runner.RunOnce(ctx); err != nil {
-		t.Fatalf("reconcile live Label Studio result through EngineRunner: %v", err)
+		t.Fatalf("reconcile live Label Studio results through EngineRunner: %v", err)
 	}
 
-	var resultID uuid.UUID
-	var authorRef, providerBindingRef, storedExternalTaskID, externalAnnotationID, payloadHash string
-	if err := pool.QueryRow(ctx, `
-		SELECT id, author_ref, provider_binding_ref, external_task_id,
-		       external_annotation_id, canonical_payload_sha256
-		FROM annotation_result
-		WHERE task_id=$1
-	`, fixture.taskID).Scan(
-		&resultID,
-		&authorRef,
-		&providerBindingRef,
-		&storedExternalTaskID,
-		&externalAnnotationID,
-		&payloadHash,
-	); err != nil {
-		t.Fatalf("read reconciled Core AnnotationResult: %v", err)
+	type taskResult struct {
+		resultID uuid.UUID
+		revision int64
 	}
-	if authorRef != fixture.primaryAnnotator ||
-		providerBindingRef != binding.ID.String() ||
-		storedExternalTaskID != externalTaskID ||
-		externalAnnotationID == "" ||
-		payloadHash != sha256HexString(`{"label":"EVIDENCE_SUFFICIENT"}`) {
-		t.Fatalf(
-			"Core AnnotationResult provenance author=%s binding=%s task=%s annotation=%s payload=%s",
-			authorRef,
-			providerBindingRef,
-			storedExternalTaskID,
-			externalAnnotationID,
-			payloadHash,
-		)
-	}
+	taskResults := make(map[uuid.UUID]taskResult, len(fixture.tasks))
+	for _, task := range fixture.tasks {
+		var resultID uuid.UUID
+		var authorRef, providerBindingRef, storedExternalTaskID, externalAnnotationID, payloadHash string
+		if err := pool.QueryRow(ctx, `
+			SELECT id, author_ref, provider_binding_ref, external_task_id,
+			       external_annotation_id, canonical_payload_sha256
+			FROM annotation_result
+			WHERE task_id=$1
+		`, task.taskID).Scan(
+			&resultID,
+			&authorRef,
+			&providerBindingRef,
+			&storedExternalTaskID,
+			&externalAnnotationID,
+			&payloadHash,
+		); err != nil {
+			t.Fatalf("read reconciled Core AnnotationResult for task %s: %v", task.taskID, err)
+		}
+		if authorRef != fixture.primaryAnnotator ||
+			providerBindingRef != binding.ID.String() ||
+			storedExternalTaskID != externalTaskByID[task.taskID] ||
+			externalAnnotationID == "" ||
+			payloadHash != sha256HexString(`{"label":"`+task.providerLabel+`"}`) {
+			t.Fatalf(
+				"Core AnnotationResult provenance task=%s author=%s binding=%s providerTask=%s annotation=%s payload=%s",
+				task.taskID,
+				authorRef,
+				providerBindingRef,
+				storedExternalTaskID,
+				externalAnnotationID,
+				payloadHash,
+			)
+		}
 
-	var taskStatus string
-	var taskRevision int64
-	if err := pool.QueryRow(ctx, `
-		SELECT status, revision FROM annotation_task WHERE id=$1
-	`, fixture.taskID).Scan(&taskStatus, &taskRevision); err != nil {
-		t.Fatalf("read reconciled task: %v", err)
-	}
-	if taskStatus != annotationdomain.TaskReviewable || taskRevision < 2 {
-		t.Fatalf("task status/revision=%s/%d", taskStatus, taskRevision)
+		var taskStatus string
+		var taskRevision int64
+		if err := pool.QueryRow(ctx, `
+			SELECT status, revision FROM annotation_task WHERE id=$1
+		`, task.taskID).Scan(&taskStatus, &taskRevision); err != nil {
+			t.Fatalf("read reconciled task %s: %v", task.taskID, err)
+		}
+		if taskStatus != annotationdomain.TaskReviewable || taskRevision < 2 {
+			t.Fatalf("task %s status/revision=%s/%d", task.taskID, taskStatus, taskRevision)
+		}
+		taskResults[task.taskID] = taskResult{resultID: resultID, revision: taskRevision}
 	}
 
 	reviewerID := uuid.New()
@@ -248,39 +313,57 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 	}
 	mux := http.NewServeMux()
 	annotationhttp.NewHandler(annotationService, resolver).Register(mux)
-	reviewBody := fmt.Sprintf(
-		`{"expectedTaskRevision":%d,"action":"ACCEPT","reason":"live provider result verified","reviewedResultId":%q}`,
-		taskRevision,
-		resultID.String(),
-	)
-	request := httptest.NewRequest(
-		http.MethodPost,
-		"/api/v1/workspaces/"+fixture.workspaceID.String()+
-			"/annotation-campaigns/"+fixture.campaignID.String()+
-			"/tasks/"+fixture.taskID.String()+"/review",
-		bytes.NewBufferString(reviewBody),
-	)
-	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("Authorization", "Bearer live-core-review-secret")
-	request.Header.Set("Idempotency-Key", "live-review-"+uuid.NewString())
-	request.Header.Set("X-Actor-ID", uuid.NewString())
-	recorder := httptest.NewRecorder()
-	mux.ServeHTTP(recorder, request)
-	if recorder.Code != http.StatusOK {
-		t.Fatalf("trusted review status=%d body=%s", recorder.Code, recorder.Body.String())
-	}
 
-	var reviewerRef string
-	var selectedResultID uuid.UUID
-	if err := pool.QueryRow(ctx, `
-		SELECT reviewer_ref, selected_result_id
-		FROM annotation_review_decision
-		WHERE task_id=$1
-	`, fixture.taskID).Scan(&reviewerRef, &selectedResultID); err != nil {
-		t.Fatalf("read review decision: %v", err)
-	}
-	if reviewerRef != reviewerID.String() || selectedResultID != resultID {
-		t.Fatalf("review decision reviewer/result=%s/%s want=%s/%s", reviewerRef, selectedResultID, reviewerID, resultID)
+	accepted := fixture.tasks[0]
+	acceptedResult := taskResults[accepted.taskID]
+	reviewLiveCoreTask(
+		t, mux, fixture.workspaceID, fixture.campaignID, accepted.taskID,
+		acceptedResult.revision, acceptedResult.resultID, "ACCEPT",
+		"Reference Pilot provider label verified", nil,
+	)
+
+	corrected := fixture.tasks[1]
+	correctedResult := taskResults[corrected.taskID]
+	correctedPayload := []byte(`{"label":"` + corrected.finalLabel + `"}`)
+	reviewLiveCoreTask(
+		t, mux, fixture.workspaceID, fixture.campaignID, corrected.taskID,
+		correctedResult.revision, correctedResult.resultID, "CORRECT",
+		"Reference Pilot provider label corrected", correctedPayload,
+	)
+
+	for index, task := range fixture.tasks {
+		var reviewerRef, outcome string
+		var selectedResultID uuid.UUID
+		if err := pool.QueryRow(ctx, `
+			SELECT reviewer_ref, selected_result_id, outcome
+			FROM annotation_review_decision
+			WHERE task_id=$1
+		`, task.taskID).Scan(&reviewerRef, &selectedResultID, &outcome); err != nil {
+			t.Fatalf("read review decision for task %s: %v", task.taskID, err)
+		}
+		if reviewerRef != reviewerID.String() {
+			t.Fatalf("reviewer for task %s=%s want=%s", task.taskID, reviewerRef, reviewerID)
+		}
+		if index == 0 {
+			if outcome != annotationdomain.ReviewAccept || selectedResultID != taskResults[task.taskID].resultID {
+				t.Fatalf("ACCEPT decision task=%s outcome=%s selected=%s", task.taskID, outcome, selectedResultID)
+			}
+			continue
+		}
+		if outcome != annotationdomain.ReviewCorrect || selectedResultID == taskResults[task.taskID].resultID {
+			t.Fatalf("CORRECT decision task=%s outcome=%s selected=%s provider=%s", task.taskID, outcome, selectedResultID, taskResults[task.taskID].resultID)
+		}
+		var selectedPayloadHash string
+		if err := pool.QueryRow(ctx, `
+			SELECT canonical_payload_sha256
+			FROM annotation_result
+			WHERE id=$1
+		`, selectedResultID).Scan(&selectedPayloadHash); err != nil {
+			t.Fatalf("read corrected selected result: %v", err)
+		}
+		if selectedPayloadHash != sha256HexString(string(correctedPayload)) {
+			t.Fatalf("corrected result payload hash=%s", selectedPayloadHash)
+		}
 	}
 
 	snapshot, err := annotationService.FinalizeAnnotationSnapshot(ctx, annotationapp.FinalizeAnnotationSnapshotCommand{
@@ -294,10 +377,10 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 	}
 	if snapshot.Status != annotationdomain.SnapshotFinalized ||
 		snapshot.FinalizedAt == nil ||
-		snapshot.ExpectedTaskCount != 1 ||
-		snapshot.ExpectedResultCount != 1 ||
-		snapshot.ExpectedDecisionCount != 1 ||
-		snapshot.ExpectedOutputCount != 1 {
+		snapshot.ExpectedTaskCount != 2 ||
+		snapshot.ExpectedResultCount != 3 ||
+		snapshot.ExpectedDecisionCount != 2 ||
+		snapshot.ExpectedOutputCount != 2 {
 		t.Fatalf("snapshot=%+v", snapshot)
 	}
 	valid, err := repo.GetSnapshotIntegrity(ctx, snapshot.ID)
@@ -306,6 +389,46 @@ func TestLabelStudioLiveCoreResultReviewAndSnapshot(t *testing.T) {
 	}
 	if !valid {
 		t.Fatal("FINALIZED live annotation snapshot failed integrity verification")
+	}
+	writeLiveGoldSharedManifest(t, fixture, snapshot.ID)
+}
+
+func reviewLiveCoreTask(
+	t *testing.T,
+	mux *http.ServeMux,
+	workspaceID, campaignID, taskID uuid.UUID,
+	expectedRevision int64,
+	reviewedResultID uuid.UUID,
+	action, reason string,
+	correctedPayload []byte,
+) {
+	t.Helper()
+	body := fmt.Sprintf(
+		`{"expectedTaskRevision":%d,"action":%q,"reason":%q,"reviewedResultId":%q`,
+		expectedRevision,
+		action,
+		reason,
+		reviewedResultID.String(),
+	)
+	if len(correctedPayload) > 0 {
+		body += `,"correctedPayload":` + string(correctedPayload)
+	}
+	body += "}"
+	request := httptest.NewRequest(
+		http.MethodPost,
+		"/api/v1/workspaces/"+workspaceID.String()+
+			"/annotation-campaigns/"+campaignID.String()+
+			"/tasks/"+taskID.String()+"/review",
+		bytes.NewBufferString(body),
+	)
+	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set("Authorization", "Bearer live-core-review-secret")
+	request.Header.Set("Idempotency-Key", "live-review-"+uuid.NewString())
+	request.Header.Set("X-Actor-ID", uuid.NewString())
+	recorder := httptest.NewRecorder()
+	mux.ServeHTTP(recorder, request)
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("trusted %s review status=%d body=%s", action, recorder.Code, recorder.Body.String())
 	}
 }
 
@@ -344,40 +467,95 @@ func seedLiveCoreAnnotationFixture(
 	pool interface {
 		Exec(context.Context, string, ...any) (pgconn.CommandTag, error)
 	},
+	store *storage.Store,
 ) liveCoreAnnotationFixture {
 	t.Helper()
 	workspaceID := uuid.New()
-	resourceID := uuid.New()
+	contributionResourceID := uuid.New()
+	inputResourceID := uuid.New()
 	datasetID := uuid.New()
 	versionID := uuid.New()
 	qualityID := uuid.New()
 	profileID := uuid.New()
 	certificationID := uuid.New()
 	campaignID := uuid.New()
-	taskID := uuid.New()
+	task1ID := uuid.New()
+	task2ID := uuid.New()
 	suffix := strings.ReplaceAll(uuid.NewString(), "-", "")[:10]
-	inputChecksum := strings.Repeat("1", 64)
-	schema := `{"kind":"single-label-v1","labels":["EVIDENCE_SUFFICIENT","EVIDENCE_INSUFFICIENT","EVIDENCE_CONFLICT"]}`
+
+	headers := []string{
+		"company_id", "period", "lease_activity", "energy_activity", "visit_activity",
+		"activity_score", "activity_level", "indicator_coverage",
+	}
+	row1 := map[string]string{
+		"company_id": "C001", "period": "2026-09",
+		"lease_activity": "1", "energy_activity": "1", "visit_activity": "1",
+		"activity_score": "100", "activity_level": "HIGH", "indicator_coverage": "100",
+	}
+	row2 := map[string]string{
+		"company_id": "C002", "period": "2026-09",
+		"lease_activity": "1", "energy_activity": "1", "visit_activity": "1",
+		"activity_score": "90", "activity_level": "MEDIUM", "indicator_coverage": "100",
+	}
+	csvLine := func(row map[string]string) string {
+		values := make([]string, 0, len(headers))
+		for _, header := range headers {
+			values = append(values, row[header])
+		}
+		return strings.Join(values, ",")
+	}
+	inputCSV := []byte(strings.Join(headers, ",") + "\n" + csvLine(row1) + "\n" + csvLine(row2) + "\n")
+	inputObject := "gold-shared/input-" + uuid.NewString() + ".csv"
+	inputURI, err := store.Put(ctx, inputObject, bytes.NewReader(inputCSV), int64(len(inputCSV)), "text/csv")
+	if err != nil {
+		t.Fatalf("put live shared Gold input: %v", err)
+	}
+	inputChecksum := sha256HexString(string(inputCSV))
+	schema := `{"kind":"single-label-v1","labels":["INCONSISTENT_OUTPUT","INSUFFICIENT_INPUT","SUFFICIENT_INPUT"]}`
 	schemaHash := sha256HexString(schema)
-	taskText := "Review the evidence and choose the supported label."
-	taskTextHash := sha256HexString(taskText)
-	sourceHash := strings.Repeat("a", 64)
 	primaryAnnotator := "annotator:live-core"
+
+	makeTask := func(taskID uuid.UUID, sourceItemRef string, row map[string]string, providerLabel string) liveCoreAnnotationTaskFixture {
+		sourcePayload, marshalErr := json.Marshal(row)
+		if marshalErr != nil {
+			t.Fatalf("marshal Reference Pilot source row: %v", marshalErr)
+		}
+		taskText := fmt.Sprintf(
+			"company_id=%s period=%s lease_activity=%s energy_activity=%s visit_activity=%s activity_score=%s activity_level=%s indicator_coverage=%s",
+			row["company_id"], row["period"], row["lease_activity"], row["energy_activity"], row["visit_activity"],
+			row["activity_score"], row["activity_level"], row["indicator_coverage"],
+		)
+		return liveCoreAnnotationTaskFixture{
+			taskID:         taskID,
+			sourceItemRef:  sourceItemRef,
+			sourceSHA256:   sha256HexString(string(sourcePayload)),
+			taskText:       taskText,
+			taskTextSHA256: sha256HexString(taskText),
+			providerLabel:  providerLabel,
+			finalLabel:     "SUFFICIENT_INPUT",
+		}
+	}
+	tasks := []liveCoreAnnotationTaskFixture{
+		makeTask(task1ID, "row:1", row1, "SUFFICIENT_INPUT"),
+		makeTask(task2ID, "row:2", row2, "INCONSISTENT_OUTPUT"),
+	}
 
 	liveSQL(t, ctx, pool, `
 		INSERT INTO data_resource(id, workspace_id, code, name, resource_type, lifecycle_status)
-		VALUES ($1,$2,$3,'live annotation contribution','OTHER','READY')
-	`, resourceID, workspaceID, "LIVE-ANN-"+suffix)
+		VALUES
+			($1,$3,$4,'live annotation contribution','OTHER','READY'),
+			($2,$3,$5,'enterprise activity Gold Reference input','TABLE_LIKE','READY')
+	`, contributionResourceID, inputResourceID, workspaceID, "LIVE-ANN-"+suffix, "LIVE-SRC-"+suffix)
 	liveSQL(t, ctx, pool, `
-		INSERT INTO dataset(id, workspace_id, code, name, dataset_type)
-		VALUES ($1,$2,$3,'live annotation input','CURATED')
-	`, datasetID, workspaceID, "LIVE-DS-"+suffix)
+		INSERT INTO dataset(id, workspace_id, code, name, dataset_type, source_resource_id)
+		VALUES ($1,$2,$3,'enterprise activity Gold Reference input','CURATED',$4)
+	`, datasetID, workspaceID, "LIVE-DS-"+suffix, inputResourceID)
 	liveSQL(t, ctx, pool, `
 		INSERT INTO dataset_version(
 			id, dataset_id, version_no, status, storage_type, storage_uri,
-			content_type, row_count, checksum_algorithm, checksum_value, ready_at
-		) VALUES ($1,$2,1,'READY','OBJECT','test://live-labelstudio','text/csv',1,'SHA256',$3,now())
-	`, versionID, datasetID, inputChecksum)
+			content_type, row_count, byte_size, checksum_algorithm, checksum_value, ready_at
+		) VALUES ($1,$2,1,'READY','OBJECT',$3,'text/csv',2,$4,'SHA256',$5,now())
+	`, versionID, datasetID, inputURI, int64(len(inputCSV)), inputChecksum)
 
 	ruleContent := "live-labelstudio-input-quality"
 	liveSQL(t, ctx, pool, `
@@ -420,31 +598,62 @@ func seedLiveCoreAnnotationFixture(
 			review_policy_ref, review_policy_version, review_policy_content_sha256, review_policy_content_snapshot
 		) VALUES (
 			$1,$2,$3,$4,$5,'GOLD-PILOT','PROCESS',
-			'schema','1',$6,$7,'taxonomy','1',$6,$7,'rubric','1',$6,$7,
-			'renderer','1',$6,$7,'review','1',$6,$7
+			'activity-record-review','1.0.0',$6,$7,
+			'activity-record-review','1.0.0',$6,$7,
+			'activity-record-review','1.0.0',$6,$7,
+			'enterprise-activity-record','1.0.0',$6,$7,
+			'independent-review','1.0.0',$6,$7
 		)
-	`, campaignID, workspaceID, versionID, certificationID, resourceID, schemaHash, schema)
-	liveSQL(t, ctx, pool, `
-		INSERT INTO annotation_task(
-			id, workspace_id, campaign_id, source_item_ref, source_content_sha256,
-			task_text_sha256, primary_annotator_ref
-		) VALUES ($1,$2,$3,'row:1',$4,$5,$6)
-	`, taskID, workspaceID, campaignID, sourceHash, taskTextHash, primaryAnnotator)
+	`, campaignID, workspaceID, versionID, certificationID, contributionResourceID, schemaHash, schema)
+	for _, task := range tasks {
+		liveSQL(t, ctx, pool, `
+			INSERT INTO annotation_task(
+				id, workspace_id, campaign_id, source_item_ref, source_content_sha256,
+				task_text_sha256, primary_annotator_ref
+			) VALUES ($1,$2,$3,$4,$5,$6,$7)
+		`, task.taskID, workspaceID, campaignID, task.sourceItemRef, task.sourceSHA256, task.taskTextSHA256, primaryAnnotator)
+	}
 	liveSQL(t, ctx, pool, `
 		UPDATE annotation_campaign
-		   SET status='ACTIVE', revision=2, expected_task_count=1,
+		   SET status='ACTIVE', revision=2, expected_task_count=2,
 		       task_manifest_hash=$2, input_checksum_sha256=$3, activated_at=now()
 		 WHERE id=$1
 	`, campaignID, strings.Repeat("c", 64), inputChecksum)
 
 	return liveCoreAnnotationFixture{
-		workspaceID:      workspaceID,
-		campaignID:       campaignID,
-		taskID:           taskID,
-		sourceSHA256:     sourceHash,
-		taskText:         taskText,
-		taskTextSHA256:   taskTextHash,
-		primaryAnnotator: primaryAnnotator,
+		workspaceID:            workspaceID,
+		inputResourceID:        inputResourceID,
+		inputDatasetVersionID:  versionID,
+		inputCertificationID:   certificationID,
+		contributionResourceID: contributionResourceID,
+		campaignID:             campaignID,
+		tasks:                  tasks,
+		primaryAnnotator:       primaryAnnotator,
+	}
+}
+
+func writeLiveGoldSharedManifest(t *testing.T, fixture liveCoreAnnotationFixture, snapshotID uuid.UUID) {
+	t.Helper()
+	artifacts := strings.TrimSpace(os.Getenv("LIVE_BROWSER_ARTIFACTS"))
+	if artifacts == "" {
+		t.Fatal("LIVE_BROWSER_ARTIFACTS is required for shared-facts Gold acceptance")
+	}
+	manifest := liveGoldSharedManifest{
+		WorkspaceID:            fixture.workspaceID,
+		InputResourceID:        fixture.inputResourceID,
+		InputDatasetVersionID:  fixture.inputDatasetVersionID,
+		InputCertificationID:   fixture.inputCertificationID,
+		ContributionResourceID: fixture.contributionResourceID,
+		CampaignID:             fixture.campaignID,
+		SnapshotID:             snapshotID,
+	}
+	content, err := json.MarshalIndent(manifest, "", "  ")
+	if err != nil {
+		t.Fatalf("marshal shared Gold manifest: %v", err)
+	}
+	path := filepath.Join(artifacts, "gold-shared-facts.json")
+	if err := os.WriteFile(path, append(content, '\n'), 0o600); err != nil {
+		t.Fatalf("write shared Gold manifest: %v", err)
 	}
 }
 

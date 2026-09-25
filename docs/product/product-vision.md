@@ -19,7 +19,7 @@ Data Product Platform 是一套数据产品与高质量数据集生产治理平�
 3. 数据权利来源和授权可以解释为什么允许或拒绝使用与交付；
 4. Certified Dataset 可以完成受控的 trusted DIRECT_DATA 交付与 UI/trace 验收。
 
-第一阶段完成不等于生产上线批准。第二阶段 #203 AI / Gold Dataset Epic 已完成 #209、#204–#207 的主要工程实现，并分别覆盖 real Label Studio result/review/snapshot、Gold build/quality/certification/DIRECT_DATA、Gold explainability UI 与 Cost/Evidence/Audit。#208 尚未形成一个从 real Label Studio 事实持续传递到同一 Gold build 的单链路 live E2E，Gold UI 也尚未在 live-core 真实输出上由 Playwright 验证；External Explanation Test 同样待执行。因此第二阶段尚不能描述为最终 Pilot PASS 或 production-ready；#203 仍保持开放。
+第一阶段完成不等于生产上线批准。第二阶段 #203 AI / Gold Dataset Epic 已完成 #209、#204–#207 的主要工程实现；#208 已把 real Label Studio result/review（ACCEPT/CORRECT）/FINALIZED Snapshot 与 Gold build/quality/certification/DIRECT_DATA 串成同一共享事实链并通过 required live-core gate。Gold UI 尚未在 live-core 真实输出上由 Playwright 验证，External Explanation Test 同样待执行。因此第二阶段尚不能描述为最终 Pilot PASS 或 production-ready；#203 仍保持开放。
 
 本阶段只选择一个受控、合成数据、单标签、独立人工审核的 Gold 生产闭环。Delivery Hardening / external provider、完整 IAM/SLA/灾备和其他行业能力仍由真实需求独立决定，不跟随 Gold 自动启动。
 
@@ -62,7 +62,7 @@ Certified Dataset 后可以进入：
 Certified Dataset
 ├── Data Product / Product Release
 ├── Trusted Data Offering
-├── Annotation / Review → Gold Dataset（#204–#207 已实现；#208 仍需共享事实链、live Gold UI 与人工解释验收）
+├── Annotation / Review → Gold Dataset（#204–#207 已实现；#208 shared-facts live vertical 已通过，仍需 live Gold UI 与人工解释验收）
 └── External Delivery
 ~~~
 
@@ -113,7 +113,7 @@ DatasetVersion 内容变化后必须创建新版本并重新评测、重新认�
 
 ## Gold Dataset 第二阶段基线
 
-当前实现状态：#204–#207 已完成 Annotation Core、Label Studio reference adapter、trusted Human Review、Gold Quality、Gold DatasetVersion build 与 Gold Certification；#208 已有 real Label Studio、live Gold worker/MinIO、DIRECT_DATA、fixture-backed Gold UI explainability 与 Cost/Evidence/Audit 的分段自动化证据，但尚缺 real Label Studio 事实直接进入同一 Gold build 的共享事实链，以及针对 live-core 真实 Gold 输出的 Playwright UI 阶段。External Explanation Test 也仍待执行。
+当前实现状态：#204–#207 已完成 Annotation Core、Label Studio reference adapter、trusted Human Review、Gold Quality、Gold DatasetVersion build 与 Gold Certification；#208 已完成 real Label Studio → ACCEPT/CORRECT → FINALIZED Snapshot → live Gold worker/MinIO → quality/certification/DIRECT_DATA 的共享事实纵向链，并通过 required live-core gate。fixture-backed Gold UI explainability 与 Cost/Evidence/Audit 已有覆盖；当前还缺针对 live-core 真实 Gold 输出的 Playwright UI 阶段，External Explanation Test 也仍待执行。
 
 Gold 候选仍是新的 DatasetVersion，不是独立 GoldDataset 主实体。它绑定完整冻结的 AnnotationSnapshot、规范版本、实际 producer 与完整源数据/标注贡献权利依赖，再经新 QualityAssessment 和明确 Gold Profile 认证；不能把 input certification 复制给 output。
 
