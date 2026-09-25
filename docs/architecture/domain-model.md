@@ -1,6 +1,6 @@
 # 核心领域模型 V1.2
 
-> V1.1 的 Certified Dataset 与 Data Rights Provenance 已完成第一阶段验收：QualityAssessment 经 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA、#136 E2E Pilot 均已完成。V1.2 的 #203/#209 Gold 架构基线及 #204–#207 的 Engine、Review、Gold Quality / production / certification 已实现；#208 仍需补齐 shared-facts live vertical E2E、live-core Gold UI Playwright 与 External Explanation Test，不代表生产上线批准。
+> V1.1 的 Certified Dataset 与 Data Rights Provenance 已完成第一阶段验收：QualityAssessment 经 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA、#136 E2E Pilot 均已完成。V1.2 的 #203/#209 Gold 架构基线及 #204–#207 的 Engine、Review、Gold Quality / production / certification 已实现；#208 的 shared-facts live vertical E2E 已通过 required live-core gate，当前仅剩 live-core Gold UI Playwright 与 External Explanation Test，不代表生产上线批准。
 
 ## 1. 主业务链
 
@@ -33,7 +33,7 @@ Dataset
                     │
                     ├── DataProduct / ProductRelease
                     ├── Trusted Data Offering
-                    └── Annotation / Gold Dataset（#204–#207 已实现；#208 live vertical/browser/human acceptance 待收敛）
+                    └── Annotation / Gold Dataset（#204–#207 已实现；#208 shared-facts vertical 已通过，browser/human acceptance 待收敛）
 ~~~
 
 横向能力：Cost · Evidence · Audit · Version · Rights · Quality。
