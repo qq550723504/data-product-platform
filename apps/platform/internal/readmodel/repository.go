@@ -211,6 +211,54 @@ type GoldExplanation struct {
 	Campaign                         GoldCampaignExplanation `json:"campaign"`
 	Snapshot                         GoldSnapshotExplanation `json:"snapshot"`
 	Reviews                          []GoldReviewExplanation `json:"reviews"`
+	Trace                            GoldTraceSummary        `json:"trace"`
+}
+
+type GoldTraceSummary struct {
+	Costs    []GoldCostReference     `json:"costs"`
+	Evidence []GoldEvidenceReference `json:"evidence"`
+	Audit    []GoldAuditReference    `json:"audit"`
+}
+
+type GoldCostReference struct {
+	ID         uuid.UUID  `json:"id"`
+	Phase      string     `json:"phase"`
+	SubjectType string    `json:"subjectType"`
+	SubjectID  uuid.UUID  `json:"subjectId"`
+	CostType   string     `json:"costType"`
+	Quantity   float64    `json:"quantity"`
+	Unit       string     `json:"unit"`
+	Amount     *float64   `json:"amount,omitempty"`
+	Currency   string     `json:"currency,omitempty"`
+	PricingMode string    `json:"pricingMode"`
+	OccurredAt time.Time  `json:"occurredAt"`
+}
+
+type GoldEvidenceReference struct {
+	ID            uuid.UUID  `json:"id"`
+	Phase         string     `json:"phase"`
+	SubjectType   string     `json:"subjectType"`
+	SubjectID     uuid.UUID  `json:"subjectId"`
+	EvidenceType  string     `json:"evidenceType"`
+	RelationType  string     `json:"relationType"`
+	SourceType    string     `json:"sourceType,omitempty"`
+	SourceID      *uuid.UUID `json:"sourceId,omitempty"`
+	HashAlgorithm string     `json:"hashAlgorithm,omitempty"`
+	HashValue     string     `json:"hashValue,omitempty"`
+	CreatedAt     time.Time  `json:"createdAt"`
+	CreatedBy     *uuid.UUID `json:"createdBy,omitempty"`
+}
+
+type GoldAuditReference struct {
+	ID          uuid.UUID  `json:"id"`
+	Phase       string     `json:"phase"`
+	ObjectType  string     `json:"objectType"`
+	ObjectID    uuid.UUID  `json:"objectId"`
+	Action      string     `json:"action"`
+	ActorType   string     `json:"actorType"`
+	ActorID     *uuid.UUID `json:"actorId,omitempty"`
+	TraceID     string     `json:"traceId,omitempty"`
+	OccurredAt  time.Time  `json:"occurredAt"`
 }
 
 type GoldCampaignExplanation struct {
@@ -415,7 +463,242 @@ func (r *Repository) GoldExplanation(
 	if err := rows.Err(); err != nil {
 		return GoldExplanation{}, fmt.Errorf("iterate Gold explanation reviews: %w", err)
 	}
+
+	trace, err := r.goldTraceSummary(ctx, result)
+	if err != nil {
+		return GoldExplanation{}, err
+	}
+	result.Trace = trace
 	return result, nil
+}
+
+
+func (r *Repository) goldTraceSummary(ctx context.Context, explanation GoldExplanation) (GoldTraceSummary, error) {
+	var result GoldTraceSummary
+	var err error
+	result.Costs, err = r.goldCostReferences(ctx, explanation)
+	if err != nil {
+		return GoldTraceSummary{}, err
+	}
+	result.Evidence, err = r.goldEvidenceReferences(ctx, explanation)
+	if err != nil {
+		return GoldTraceSummary{}, err
+	}
+	result.Audit, err = r.goldAuditReferences(ctx, explanation)
+	if err != nil {
+		return GoldTraceSummary{}, err
+	}
+	return result, nil
+}
+
+func (r *Repository) goldCostReferences(ctx context.Context, explanation GoldExplanation) ([]GoldCostReference, error) {
+	rows, err := r.pool.Query(ctx, `
+		WITH subjects AS (
+			SELECT 'ANNOTATION_ENGINE'::text AS phase, 'ANNOTATION_ENGINE_ATTEMPT'::text AS subject_type,
+			       a.id AS subject_id, ca.cost_event_id
+			FROM annotation_engine_attempt a
+			JOIN annotation_engine_operation o ON o.id=a.operation_id
+			JOIN cost_allocation ca ON ca.annotation_engine_attempt_id=a.id
+			WHERE o.campaign_id=$1
+			UNION ALL
+			SELECT 'HUMAN_REVIEW', 'ANNOTATION_REVIEW_ATTEMPT',
+			       a.id, ca.cost_event_id
+			FROM annotation_review_attempt a
+			JOIN cost_allocation ca ON ca.annotation_review_attempt_id=a.id
+			WHERE a.campaign_id=$1
+			UNION ALL
+			SELECT 'GOLD_BUILD', 'EXECUTION',
+			       $2::uuid, e.id
+			FROM cost_event e
+			WHERE e.execution_id=$2
+			UNION ALL
+			SELECT 'GOLD_QUALITY', 'QUALITY_RESULT',
+			       q.id, ca.cost_event_id
+			FROM quality_result q
+			JOIN cost_allocation ca
+			  ON ca.quality_assessment_id=q.id
+			WHERE q.dataset_version_id=$3
+			  AND q.rule_set_ref='gold/quality/annotation-v1'
+			UNION ALL
+			SELECT 'GOLD_QUALITY', 'QUALITY_RESULT',
+			       q.id, ca.cost_event_id
+			FROM quality_result q
+			JOIN quality_assessment_attempt_outcome o
+			  ON o.assessment_id=q.id AND o.outcome='SUCCEEDED'
+			JOIN cost_allocation ca
+			  ON ca.quality_assessment_attempt_id=o.attempt_id
+			WHERE q.dataset_version_id=$3
+			  AND q.rule_set_ref='gold/quality/annotation-v1'
+			UNION ALL
+			SELECT 'GOLD_CERTIFICATION', 'DATASET_CERTIFICATION',
+			       dc.id, ca.cost_event_id
+			FROM dataset_certification dc
+			JOIN cost_allocation ca ON ca.dataset_certification_id=dc.id
+			WHERE dc.dataset_version_id=$3
+			  AND dc.profile_ref='gold/dataset-v1'
+			UNION ALL
+			SELECT 'DIRECT_DATA', 'DELIVERY_OPERATION',
+			       d.id, ca.cost_event_id
+			FROM delivery_operation d
+			JOIN cost_allocation ca ON ca.delivery_operation_id=d.id
+			WHERE d.dataset_version_id=$3
+			  AND d.delivery_mode='DIRECT_DATA'
+		)
+		SELECT e.id, s.phase, s.subject_type, s.subject_id,
+		       e.cost_type, e.quantity, e.unit, e.amount,
+		       COALESCE(e.currency,''), e.pricing_mode, e.occurred_at
+		FROM subjects s
+		JOIN cost_event e ON e.id=s.cost_event_id
+		WHERE e.workspace_id=$4
+		ORDER BY e.occurred_at, e.id
+		LIMIT 100
+	`, explanation.Campaign.ID, explanation.ExecutionID, explanation.OutputDatasetVersionID, explanation.WorkspaceID)
+	if err != nil {
+		return nil, fmt.Errorf("read Gold trace costs: %w", err)
+	}
+	defer rows.Close()
+	items := make([]GoldCostReference, 0)
+	for rows.Next() {
+		var item GoldCostReference
+		if err := rows.Scan(
+			&item.ID, &item.Phase, &item.SubjectType, &item.SubjectID,
+			&item.CostType, &item.Quantity, &item.Unit, &item.Amount,
+			&item.Currency, &item.PricingMode, &item.OccurredAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan Gold trace cost: %w", err)
+		}
+		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate Gold trace costs: %w", err)
+	}
+	return items, nil
+}
+
+func (r *Repository) goldEvidenceReferences(ctx context.Context, explanation GoldExplanation) ([]GoldEvidenceReference, error) {
+	rows, err := r.pool.Query(ctx, `
+		WITH subjects AS (
+			SELECT 'CAMPAIGN'::text AS phase, 'ANNOTATION_CAMPAIGN'::text AS object_type, $1::uuid AS object_id
+			UNION ALL
+			SELECT 'HUMAN_REVIEW', 'ANNOTATION_REVIEW_DECISION', d.decision_id
+			FROM annotation_snapshot_decision d
+			WHERE d.snapshot_id=$2
+			UNION ALL
+			SELECT 'GOLD_BUILD', 'EXECUTION', $3::uuid
+			UNION ALL
+			SELECT 'GOLD_BUILD', 'GOLD_PRODUCTION_BINDING', $4::uuid
+			UNION ALL
+			SELECT 'GOLD_OUTPUT', 'DATASET_VERSION', $5::uuid
+			UNION ALL
+			SELECT 'GOLD_QUALITY', 'QUALITY_RESULT', q.id
+			FROM quality_result q
+			WHERE q.dataset_version_id=$5
+			  AND q.rule_set_ref='gold/quality/annotation-v1'
+			UNION ALL
+			SELECT 'GOLD_CERTIFICATION', 'DATASET_CERTIFICATION', dc.id
+			FROM dataset_certification dc
+			WHERE dc.dataset_version_id=$5
+			  AND dc.profile_ref='gold/dataset-v1'
+			UNION ALL
+			SELECT 'DIRECT_DATA', 'DELIVERY_OPERATION', d.id
+			FROM delivery_operation d
+			WHERE d.dataset_version_id=$5
+			  AND d.delivery_mode='DIRECT_DATA'
+		)
+		SELECT e.id, s.phase, s.object_type, s.object_id,
+		       e.evidence_type, er.relation_type, COALESCE(e.source_type,''),
+		       e.source_id, COALESCE(e.hash_algorithm,''), COALESCE(e.hash_value,''),
+		       e.created_at, e.created_by
+		FROM subjects s
+		JOIN evidence_relation er
+		  ON er.object_type=s.object_type AND er.object_id=s.object_id
+		JOIN evidence e ON e.id=er.evidence_id
+		WHERE e.workspace_id=$6
+		ORDER BY e.created_at, e.id
+		LIMIT 100
+	`, explanation.Campaign.ID, explanation.Snapshot.ID, explanation.ExecutionID,
+		explanation.GoldProductionBindingID, explanation.OutputDatasetVersionID, explanation.WorkspaceID)
+	if err != nil {
+		return nil, fmt.Errorf("read Gold trace evidence: %w", err)
+	}
+	defer rows.Close()
+	items := make([]GoldEvidenceReference, 0)
+	for rows.Next() {
+		var item GoldEvidenceReference
+		if err := rows.Scan(
+			&item.ID, &item.Phase, &item.SubjectType, &item.SubjectID,
+			&item.EvidenceType, &item.RelationType, &item.SourceType, &item.SourceID,
+			&item.HashAlgorithm, &item.HashValue, &item.CreatedAt, &item.CreatedBy,
+		); err != nil {
+			return nil, fmt.Errorf("scan Gold trace evidence: %w", err)
+		}
+		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate Gold trace evidence: %w", err)
+	}
+	return items, nil
+}
+
+func (r *Repository) goldAuditReferences(ctx context.Context, explanation GoldExplanation) ([]GoldAuditReference, error) {
+	rows, err := r.pool.Query(ctx, `
+		WITH subjects AS (
+			SELECT 'CAMPAIGN'::text AS phase, 'ANNOTATION_CAMPAIGN'::text AS object_type, $1::uuid AS object_id
+			UNION ALL
+			SELECT 'HUMAN_REVIEW', 'ANNOTATION_REVIEW_DECISION', d.decision_id
+			FROM annotation_snapshot_decision d
+			WHERE d.snapshot_id=$2
+			UNION ALL
+			SELECT 'GOLD_BUILD', 'EXECUTION', $3::uuid
+			UNION ALL
+			SELECT 'GOLD_BUILD', 'GOLD_PRODUCTION_BINDING', $4::uuid
+			UNION ALL
+			SELECT 'GOLD_OUTPUT', 'DATASET_VERSION', $5::uuid
+			UNION ALL
+			SELECT 'GOLD_QUALITY', 'QUALITY_RESULT', q.id
+			FROM quality_result q
+			WHERE q.dataset_version_id=$5
+			  AND q.rule_set_ref='gold/quality/annotation-v1'
+			UNION ALL
+			SELECT 'GOLD_CERTIFICATION', 'DATASET_CERTIFICATION', dc.id
+			FROM dataset_certification dc
+			WHERE dc.dataset_version_id=$5
+			  AND dc.profile_ref='gold/dataset-v1'
+			UNION ALL
+			SELECT 'DIRECT_DATA', 'DELIVERY_OPERATION', d.id
+			FROM delivery_operation d
+			WHERE d.dataset_version_id=$5
+			  AND d.delivery_mode='DIRECT_DATA'
+		)
+		SELECT a.id, s.phase, a.object_type, a.object_id,
+		       a.action, a.actor_type, a.actor_id, COALESCE(a.trace_id,''), a.occurred_at
+		FROM subjects s
+		JOIN audit_event a
+		  ON a.object_type=s.object_type AND a.object_id=s.object_id
+		WHERE a.workspace_id=$6
+		ORDER BY a.occurred_at, a.id
+		LIMIT 100
+	`, explanation.Campaign.ID, explanation.Snapshot.ID, explanation.ExecutionID,
+		explanation.GoldProductionBindingID, explanation.OutputDatasetVersionID, explanation.WorkspaceID)
+	if err != nil {
+		return nil, fmt.Errorf("read Gold trace audit: %w", err)
+	}
+	defer rows.Close()
+	items := make([]GoldAuditReference, 0)
+	for rows.Next() {
+		var item GoldAuditReference
+		if err := rows.Scan(
+			&item.ID, &item.Phase, &item.ObjectType, &item.ObjectID,
+			&item.Action, &item.ActorType, &item.ActorID, &item.TraceID, &item.OccurredAt,
+		); err != nil {
+			return nil, fmt.Errorf("scan Gold trace audit: %w", err)
+		}
+		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate Gold trace audit: %w", err)
+	}
+	return items, nil
 }
 
 func (r *Repository) Workbench(ctx context.Context, workspaceID uuid.UUID) (WorkbenchSummary, error) {
