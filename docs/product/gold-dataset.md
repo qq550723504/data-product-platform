@@ -1,7 +1,7 @@
 # Gold Dataset：第二阶段产品与验收基线
 
-> 状态：设计基线，随 #209 文档 PR 合并生效；不是已实现能力或生产上线批准。
-> 日期：2026-09-23。父 Epic：#203；实施：#204–#208。
+> 状态：第二阶段设计基线 + 已实现能力说明；#204–#207 的主要工程实现已完成，#208 已有分段自动化证据，但真实共享事实链与 live Gold UI browser E2E 尚待补齐，External Explanation Test 仍待执行；不是生产上线批准。
+> 日期：2026-09-25。父 Epic：#203；实施：#204–#208。
 > 第一阶段的历史完成定义不变，见 [Certified Dataset Pilot 验收](certified-dataset-pilot-acceptance.md)。
 
 ## 1. 产品定义
@@ -110,17 +110,23 @@ Gold 认证必须重新证明质量、标注快照、实际生产依赖和当前
 
 ## 7. 实施和收敛门禁
 
-#209 仅交付设计。其文档 PR 合并、Issue 验收关闭后才启动 #204；不因为本文描述了状态机就标记功能完成。
+#209 的架构基线已完成，#204–#207 的 Core / adapter / review / quality / build / certification 已实现。#208 已分别证明 real Label Studio → Core review/snapshot、live Gold worker/MinIO → quality/certification/DIRECT_DATA，以及 fixture-backed Gold UI explainability / Cost-Evidence-Audit；但这些证据尚未构成一条共享事实的真实纵向 E2E。当前还需：让 downstream Gold build 直接消费 real Label Studio 链路产生的同一 FINALIZED Snapshot；在 live-core 上由 Playwright 打开真实 Gold 输出的 UI；随后执行 External Explanation Test。
 
 ```text
-#209 架构基线 → #204 Core facts/freeze → #205 adapter
-                                      → #206 review/quality
-                                      → #207 build/certification → #208 live Pilot
+#209 架构基线 ✅
+  → #204 Core facts/freeze ✅
+  → #205 Label Studio adapter ✅
+  → #206 trusted review / Gold quality ✅
+  → #207 Gold build / certification ✅
+  → #208 segmented automated coverage ✅
+      ├─ real LS facts → same Gold build ⏳
+      ├─ live-core Gold UI Playwright ⏳
+      └─ External Explanation Test ⏳
 ```
 
-Review 按 [AGENTS.md §17](../../AGENTS.md) 的有限 merge contract：当前必要路径不可实现、越权/泄漏、不可变性或并发破坏、两份权威契约冲突是 blocker；规模优化、多适配器、多轮复审、可选监控属于 follow-up。不得把规范审阅变成新的通用工作流工程。
+自动化验收事实与未验证边界见 [Gold Dataset Pilot 验收报告](../poc/gold-dataset-pilot-acceptance.md)；人工测试协议见 [Gold External Explanation Test](../poc/gold-external-explanation-test.md)。在上述两个自动化纵向缺口和人工测试全部完成前，不得把第二阶段写成最终 Pilot PASS 或 production-ready。
 
-最终 #208 报告需给出 exact commit、fixture、全部成功/失败用例、浏览器证据、bytes/checksum、成本/审计/证据和未验证边界。#209 的文档检查不能替代这些运行时验收。
+Review 继续按 [AGENTS.md §17](../../AGENTS.md) 的有限 merge contract：当前必要路径不可实现、越权/泄漏、不可变性或并发破坏、两份权威契约冲突是 blocker；规模优化、多适配器、多轮复审、可选监控属于 follow-up。不得把规范审阅变成新的通用工作流工程。
 
 ## 8. 非目标
 

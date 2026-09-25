@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-Certified Dataset 第一阶段 MVP / enterprise-activity 纵向 Pilot 已完成。第二阶段已由 #203 AI / Gold Dataset Epic 立项；#209 架构基线与 #204 Annotation Core Domain 已完成，当前进入 #205 Label Studio reference adapter，#206–#208 的 Human Review / Gold Quality、Gold 生产认证与真实 Pilot 尚未完成。
+Certified Dataset 第一阶段 MVP / enterprise-activity 纵向 Pilot 已完成。第二阶段 #203 AI / Gold Dataset Epic 已完成 #209、#204–#207 的主要工程实现，并分别验证了 real Label Studio → Core review/snapshot、Gold build/quality/certification/DIRECT_DATA、fixture-backed Gold UI explainability 与 Cost/Evidence/Audit。#208 仍有两个真实纵向验收缺口：当前 Gold build live test 未直接消费 real Label Studio 链路产生的同一 Snapshot，且 Gold UI 尚未在 live-core 上由 Playwright 针对真实 Gold 输出执行；External Explanation Test 也尚未执行。因此第二阶段不得描述为最终 Pilot PASS 或 production-ready；#203 继续保持开放。
 
 ~~~text
 核心 POC                              ✅
@@ -17,14 +17,21 @@ Trusted DIRECT_DATA Delivery            ✅
 #99 / #100 定向 Reliability Closeout   ✅
 #136 enterprise-activity E2E Pilot      ✅ E2E1–E2E20
         ↓
-#203 AI / Gold Dataset 第二阶段        ← 已立项
+#203 AI / Gold Dataset 第二阶段        ← 收尾
   #209 Architecture Baseline          ✅
         ↓
   #204 Annotation Core Domain         ✅
         ↓
-  #205 Label Studio Adapter           ← current
+  #205 Label Studio Adapter           ✅
         ↓
-  #206 → #207 → #208
+  #206 Human Review / Gold Quality    ✅
+        ↓
+  #207 Gold Build / Certification     ✅
+        ↓
+  #208 UI / browser / live-core       ⏳ vertical gaps remain
+        ├─ real LS facts → same Gold build       ⏳
+        ├─ live-core Gold UI Playwright          ⏳
+        └─ External Explanation Test             ⏳
 ~~~
 
 第一阶段主 Epic #129 与纵向 Pilot #136 已关闭。完整验收证据见：
@@ -49,7 +56,7 @@ Trusted DIRECT_DATA Delivery            ✅
 
 后续 #198–#202 已收口 #99 的 ProductRelease/ProductVersion membership、legacy projection、Rights binding 和发布后 lineage 冻结；#99 已关闭。#100 的其余可靠性项仍按真实场景跟踪，不把定向 Pilot closeout 误写成全部 debt 完成。
 
-第一阶段明确没有扩大到 bearer/presigned provider、provider containment/recovery、完整生产 IAM、灾备、性能 SLA、Label Studio / X-AnyLabeling 或 AI Gold Dataset。第二阶段按 #203 进入受控 Gold Pilot：#209 架构基线与 #204 Annotation Core Domain 已完成，当前推进 #205 Label Studio reference adapter；人工审核 / Gold Quality、Gold 生产认证与完整 Pilot 仍由 #206–#208 验证。其他方向不自动进入范围，已完成 Core Domain 也不表示完整 Gold 功能已经可用。
+第一阶段明确没有扩大到 bearer/presigned provider、provider containment/recovery、完整生产 IAM、灾备、性能 SLA、Label Studio / X-AnyLabeling 或 AI Gold Dataset。第二阶段 #203 的受控 Gold Pilot 已完成 #209、#204–#207 的主要实现，并对真实 Label Studio 接入、trusted Human Review / FINALIZED AnnotationSnapshot、Gold build / quality / rights / certification / DIRECT_DATA、以及 UI explainability / bounded Cost-Evidence-Audit 做了分段自动化验证。当前还不能宣称整条真实链路已经由一个共享事实链 E2E 证明：Gold build live test 目前使用独立 fixture Snapshot，而 Gold UI Playwright 仍是 fixture-backed，不是针对 live-core 真实 Gold 输出。#208 需要补齐这两个自动化缺口并执行 External Explanation Test 后再做最终 Pilot 收口。
 
 ## 本地试用入口
 
@@ -82,7 +89,7 @@ node deploy/demo/demo.mjs up
 9. docs/poc/poc-technical-plan-v1.md
 10. examples/enterprise-activity/README.md
 
-第二阶段权威文档入口：[Gold 产品基线与 16 个架构问题定案](docs/product/gold-dataset.md) → [Annotation Domain](docs/architecture/annotation-domain.md) → [Engine integration](docs/architecture/annotation-engine-integration.md) → [Gold production / certification](docs/architecture/gold-dataset-production.md)；跨模块决定见 [ADR-0012](docs/adr/0012-gold-dataset-annotation-boundary.md)。#209 与 #204 已完成；当前实现入口为 #205，后续按 #206 → #207 → #208 继续纵向闭环。
+第二阶段权威文档入口：[Gold 产品基线与 16 个架构问题定案](docs/product/gold-dataset.md) → [Annotation Domain](docs/architecture/annotation-domain.md) → [Engine integration](docs/architecture/annotation-engine-integration.md) → [Gold production / certification](docs/architecture/gold-dataset-production.md) → [Gold Pilot 验收报告](docs/poc/gold-dataset-pilot-acceptance.md) → [External Explanation Test](docs/poc/gold-external-explanation-test.md)；跨模块决定见 [ADR-0012](docs/adr/0012-gold-dataset-annotation-boundary.md)。#209、#204–#207 的实现已完成；#208 已有分段自动化证据，但仍需补齐 real Label Studio facts → same Gold build 的共享事实链、live-core Gold UI Playwright，以及 External Explanation Test，之后才能最终收口。
 
 ## 核心业务链
 
@@ -111,7 +118,7 @@ Certified Dataset
    │
    ├── Data Product / Product Release
    ├── Trusted Data Offering
-   ├── AI / Gold Dataset（#209/#204 已完成；#205–#208 继续实现与验收）
+   ├── AI / Gold Dataset（#209/#204–#207 已实现；#208 尚有共享事实链、live Gold UI 与人工解释测试缺口）
    └── External Delivery
 ~~~
 

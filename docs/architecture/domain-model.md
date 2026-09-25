@@ -1,6 +1,6 @@
 # 核心领域模型 V1.2
 
-> V1.1 的 Certified Dataset 与 Data Rights Provenance 已完成第一阶段验收：QualityAssessment 经 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA、#136 E2E Pilot 均已完成。V1.2 的 #203/#209 Gold 架构基线已由 #204 落地 Annotation Core Domain；#205–#208 的 Engine、Gold Quality / production / certification 与 live Pilot 仍待完成，不代表生产上线批准。
+> V1.1 的 Certified Dataset 与 Data Rights Provenance 已完成第一阶段验收：QualityAssessment 经 #140 / migration 000019 落地；#137 Rights / Effective Rights、#134 Certification、#135 API/UI + trusted DIRECT_DATA、#136 E2E Pilot 均已完成。V1.2 的 #203/#209 Gold 架构基线及 #204–#207 的 Engine、Review、Gold Quality / production / certification 已实现；#208 仍需补齐 shared-facts live vertical E2E、live-core Gold UI Playwright 与 External Explanation Test，不代表生产上线批准。
 
 ## 1. 主业务链
 
@@ -33,7 +33,7 @@ Dataset
                     │
                     ├── DataProduct / ProductRelease
                     ├── Trusted Data Offering
-                    └── Annotation / Gold Dataset（#204 Core 已实现；#205–#208 待完成）
+                    └── Annotation / Gold Dataset（#204–#207 已实现；#208 live vertical/browser/human acceptance 待收敛）
 ~~~
 
 横向能力：Cost · Evidence · Audit · Version · Rights · Quality。
@@ -366,7 +366,7 @@ DeliveryOperation 特例：它与 Execution 类似，是受控 lifecycle row。P
 
 错误通过追加新事实修正，不覆盖历史。
 
-## 11. Annotation / Gold 模型（#209 基线；#204 Core 已实现，#205–#208 待完成）
+## 11. Annotation / Gold 模型（#209 基线；#204–#207 已实现，#208 验收待收敛）
 
 ```text
 AnnotationCampaign（冻结 input/schema/rubric/task manifest）
@@ -385,7 +385,7 @@ AnnotationCampaign（冻结 input/schema/rubric/task manifest）
          现有 CurrentDeliveryGate / DIRECT_DATA
 ```
 
-当前实现状态：#204 已实现 AnnotationCampaign / AnnotationTask / immutable AnnotationResult / AnnotationReviewDecision / AnnotationSnapshot 及其 workspace、幂等、并发与冻结约束；图中的外部 Annotation Engine、Gold Quality、Gold production / certification 与 live Pilot 分别继续由 #205–#208 完成。
+当前实现状态：#204 已实现 AnnotationCampaign / AnnotationTask / immutable AnnotationResult / AnnotationReviewDecision / AnnotationSnapshot 及其 workspace、幂等、并发与冻结约束；#205 Label Studio reference adapter、#206 trusted review / Gold Quality、#207 Gold production / certification 已实现。#208 已有分段自动化覆盖，但 shared-facts live vertical E2E、live-core Gold UI Playwright 与 External Explanation Test 仍待完成。
 
 这不是独立 GoldDataset 主实体。Campaign/Task lifecycle 与 Result/Decision/Snapshot 历史分离，CORRECT 追加事实，完整任务分母不因 REJECT 变小；provider current state 不拥有选中结果。
 
