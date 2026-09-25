@@ -588,7 +588,9 @@ func (r *Repository) goldEvidenceReferences(ctx context.Context, explanation Gol
 			UNION ALL
 			SELECT 'GOLD_BUILD', 'GOLD_PRODUCTION_BINDING', $4::uuid
 			UNION ALL
-			SELECT 'GOLD_OUTPUT', 'DATASET_VERSION', $5::uuid
+			SELECT 'SNAPSHOT', 'ANNOTATION_SNAPSHOT', $2::uuid
+			UNION ALL
+			SELECT 'GOLD_BUILD', 'DATASET_VERSION', $5::uuid
 			UNION ALL
 			SELECT 'GOLD_QUALITY', 'QUALITY_RESULT', q.id
 			FROM quality_result q
@@ -653,7 +655,9 @@ func (r *Repository) goldAuditReferences(ctx context.Context, explanation GoldEx
 			UNION ALL
 			SELECT 'GOLD_BUILD', 'GOLD_PRODUCTION_BINDING', $4::uuid
 			UNION ALL
-			SELECT 'GOLD_OUTPUT', 'DATASET_VERSION', $5::uuid
+			SELECT 'SNAPSHOT', 'ANNOTATION_SNAPSHOT', $2::uuid
+			UNION ALL
+			SELECT 'GOLD_BUILD', 'DATASET_VERSION', $5::uuid
 			UNION ALL
 			SELECT 'GOLD_QUALITY', 'QUALITY_RESULT', q.id
 			FROM quality_result q
