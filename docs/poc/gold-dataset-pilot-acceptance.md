@@ -1,10 +1,10 @@
 # Gold Dataset Pilot 验收报告
 
-Issue: #208（GitHub 已关闭）  
+Issue: #208（GitHub 已重新打开）  
 Parent: #203（仍开放）  
 Status: **SEGMENTED AUTOMATION PASS / LIVE VERTICAL E2E PENDING / EXTERNAL EXPLANATION TEST PENDING**
 
-> 本报告只记录已由仓库 CI、browser、live-core 和 PostgreSQL integration 证明的事实。当前证据是分段自动化覆盖，而不是一条共享事实贯穿 real Label Studio → Gold build → live Gold UI 的单链路 E2E：Gold build live test 使用独立 Snapshot fixture，Gold UI Playwright 仍运行在 fixture server。External Explanation Test 也尚未执行，因此本 Pilot 暂不能标记为最终通过，也不得描述为 production-ready。GitHub #208 已于 2026-09-25 在这些验收门禁完成前关闭；该 Issue 状态不改变本文定义的剩余验收要求，父 Epic #203 仍保持开放。
+> 本报告只记录已由仓库 CI、browser、live-core 和 PostgreSQL integration 证明的事实。当前证据是分段自动化覆盖，而不是一条共享事实贯穿 real Label Studio → Gold build → live Gold UI 的单链路 E2E：Gold build live test 使用独立 Snapshot fixture，Gold UI Playwright 仍运行在 fixture server。External Explanation Test 也尚未执行，因此本 Pilot 暂不能标记为最终通过，也不得描述为 production-ready。GitHub #208 曾于 2026-09-25 在这些验收门禁完成前关闭，现已按原 DoD 重新打开；父 Epic #203 同样保持开放。
 
 ## 1. Pilot 目标
 
@@ -236,12 +236,12 @@ Audit 输出 actor/action/object/trace/timestamp。
 - **Live-core Gold UI browser E2E：PENDING**
 - **Explainability / trace fixture automation：PASS**
 - **External Explanation Test：PENDING**
-- **#208 GitHub Issue：已关闭，但原完成定义中的 live vertical/browser/human explanation 门禁尚未全部满足**
+- **#208 GitHub Issue：已重新打开，继续跟踪 live vertical/browser/human explanation 门禁**
 - **#203 Epic 最终收口：BLOCKED BY THE TWO LIVE AUTOMATION GAPS + HUMAN EXPLANATION TEST**
 
 上述两个 live 自动化缺口与人工测试全部完成并记录 PASS 后，才可以：
 
 1. 将本文档状态改为 FINAL / PASS；
-2. 将 #208 的关闭状态与最终人工验收结果补充关联记录，避免把提前关闭误读为验收已完整通过；
+2. 关闭重新打开的 #208，并在 Issue / 验收报告中关联最终验收结果；
 3. 更新并关闭 #203 Epic。
 
