@@ -94,7 +94,7 @@ test("Gold DatasetVersion explains frozen production proof and current delivery"
   await expect(trace).toContainText("DIRECT_DATA_DELIVERY_ATTEMPT");
   await expect(trace).toContainText("GOLD_PRODUCTION_BINDING_FINALIZED");
   await expect(trace).toContainText("GOLD_QUALITY_ASSESSMENT");
-  await expect(trace).toContainText("DATASET_DELIVERY_ISSUED");
+  await expect(trace).toContainText("DATASETDELIVERYISSUED");
   await expect(trace).toContainText("ANNOTATION_REVIEWED");
   await expect(trace).toContainText("trace-build");
   await expect(trace).toContainText("trace-certification");
