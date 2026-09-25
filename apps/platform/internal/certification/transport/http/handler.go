@@ -171,8 +171,14 @@ func historyItemResponse(item application.CertificationHistoryItem) map[string]a
 		"effectiveRightsSnapshotHash": certification.EffectiveRightsSnapshotHash, "frozenRightsContextHash": certification.FrozenRightsContextHash,
 		"complianceResultId": certification.ComplianceResultID, "contractVersionId": certification.ContractVersionID,
 		"traceabilityEvidenceId": certification.TraceabilityEvidenceID, "evidenceSnapshotId": certification.EvidenceSnapshotID,
-		"profile":      profileResponse(certification.Profile),
-		"dispositions": dispositions,
+		"goldProductionBindingId":       certification.GoldProductionBindingID,
+		"annotationSnapshotId":          certification.AnnotationSnapshotID,
+		"annotationSnapshotRootHash":    certification.AnnotationSnapshotRootHash,
+		"annotationSchemaSha256":        certification.AnnotationSchemaSHA256,
+		"annotationTaxonomySha256":      certification.AnnotationTaxonomySHA256,
+		"goldProductionBindingRootHash": certification.GoldProductionBindingRootHash,
+		"profile":                       profileResponse(certification.Profile),
+		"dispositions":                  dispositions,
 	}
 }
 

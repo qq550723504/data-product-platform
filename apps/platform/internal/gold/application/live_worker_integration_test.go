@@ -65,6 +65,19 @@ type liveGoldSharedManifest struct {
 	SnapshotID             uuid.UUID `json:"snapshotId"`
 }
 
+type liveGoldUIManifest struct {
+	WorkspaceID         uuid.UUID `json:"workspaceId"`
+	GoldDatasetID       uuid.UUID `json:"goldDatasetId"`
+	GoldVersionID       uuid.UUID `json:"goldVersionId"`
+	GoldBindingID       uuid.UUID `json:"goldBindingId"`
+	GoldSnapshotID      uuid.UUID `json:"goldSnapshotId"`
+	GoldAssessmentID    uuid.UUID `json:"goldAssessmentId"`
+	GoldCertificationID uuid.UUID `json:"goldCertificationId"`
+	OutputChecksum      string    `json:"outputChecksum"`
+	ExpectedDelivery    string    `json:"expectedDelivery"`
+	ExpectedBlocker     string    `json:"expectedBlocker"`
+}
+
 func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 	dsn := strings.TrimSpace(os.Getenv("TEST_POSTGRES_DSN"))
 	workerBinary := strings.TrimSpace(os.Getenv("LIVE_PLATFORM_WORKER"))
@@ -628,6 +641,35 @@ func TestLiveGoldWorkerBuildAndFormalQuality(t *testing.T) {
 		SELECT count(*) FROM dataset_certification
 		WHERE id=$1 AND decision='CERTIFIED'
 	`, certification.ID)
+
+	writeLiveGoldUIManifest(t, liveGoldUIManifest{
+		WorkspaceID:         fixture.workspaceID,
+		GoldDatasetID:       fixture.outputDatasetID,
+		GoldVersionID:       outputVersion.ID,
+		GoldBindingID:       binding.ID,
+		GoldSnapshotID:      fixture.snapshotID,
+		GoldAssessmentID:    assessment.ID,
+		GoldCertificationID: certification.ID,
+		OutputChecksum:      outputVersion.ChecksumValue,
+		ExpectedDelivery:    "BLOCKED",
+		ExpectedBlocker:     "DATASET_VERSION_INVALID",
+	})
+}
+
+func writeLiveGoldUIManifest(t *testing.T, manifest liveGoldUIManifest) {
+	t.Helper()
+	artifacts := strings.TrimSpace(os.Getenv("LIVE_BROWSER_ARTIFACTS"))
+	if artifacts == "" {
+		t.Fatal("LIVE_BROWSER_ARTIFACTS is required for live Gold UI acceptance")
+	}
+	content, err := json.MarshalIndent(manifest, "", "  ")
+	if err != nil {
+		t.Fatalf("marshal live Gold UI manifest: %v", err)
+	}
+	path := filepath.Join(artifacts, "gold-live-ui.json")
+	if err := os.WriteFile(path, append(content, '\n'), 0o600); err != nil {
+		t.Fatalf("write live Gold UI manifest: %v", err)
+	}
 }
 
 func loadLiveGoldSharedFixture(
@@ -743,7 +785,19 @@ func waitLiveOutboxIdle(
 	workerLog string,
 ) {
 	t.Helper()
-	deadline := time.Now().Add(75 * time.Second)
+	var initial int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM outbox_event
+		WHERE status IN ('PENDING','PROCESSING','FAILED')
+	`).Scan(&initial); err != nil {
+		t.Fatalf("count initial live outbox backlog: %v", err)
+	}
+	budget := 75 * time.Second
+	if scaled := time.Duration(initial)*1500*time.Millisecond + 10*time.Second; scaled > budget {
+		budget = scaled
+	}
+	deadline := time.Now().Add(budget)
 	for time.Now().Before(deadline) {
 		if err := worker.Process.Signal(syscall.Signal(0)); err != nil {
 			content, _ := os.ReadFile(workerLog)
@@ -773,7 +827,7 @@ func waitLiveOutboxIdle(
 		WHERE status IN ('PENDING','PROCESSING','FAILED')
 	`).Scan(&pending)
 	content, _ := os.ReadFile(workerLog)
-	t.Fatalf("live outbox backlog did not drain pending=%d\n%s", pending, content)
+	t.Fatalf("live outbox backlog did not drain initial=%d pending=%d budget=%s\n%s", initial, pending, budget, content)
 }
 
 func waitLiveGoldExecution(
