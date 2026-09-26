@@ -215,6 +215,7 @@ type reviewRequest struct {
 	// ExpectedDecisionID is an optional optimistic concurrency token. When set,
 	// the review only succeeds while this decision is still the current one.
 	ExpectedDecisionID string `json:"expectedDecisionId"`
+	SelectedEntityID   string `json:"selectedEntityId"`
 }
 
 func (h *Handler) confirm(w http.ResponseWriter, r *http.Request) {
@@ -273,6 +274,15 @@ func (h *Handler) review(w http.ResponseWriter, r *http.Request, confirm bool) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_JSON", "invalid JSON request", nil)
 		return
 	}
+	var selectedEntityID *uuid.UUID
+	if strings.TrimSpace(req.SelectedEntityID) != "" {
+		parsed, err := uuid.Parse(req.SelectedEntityID)
+		if err != nil || parsed == uuid.Nil {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_SELECTED_ENTITY_ID", "selectedEntityId must be a non-nil UUID", nil)
+			return
+		}
+		selectedEntityID = &parsed
+	}
 	var expectedDecisionID *uuid.UUID
 	if strings.TrimSpace(req.ExpectedDecisionID) != "" {
 		parsed, err := uuid.Parse(req.ExpectedDecisionID)
@@ -288,6 +298,7 @@ func (h *Handler) review(w http.ResponseWriter, r *http.Request, confirm bool) {
 		Reason:             req.Reason,
 		TraceID:            httpserver.RequestID(r.Context()),
 		ExpectedDecisionID: expectedDecisionID,
+		SelectedEntityID:   selectedEntityID,
 	}
 	var job domain.MatchJob
 	if confirm {
@@ -305,6 +316,12 @@ func (h *Handler) review(w http.ResponseWriter, r *http.Request, confirm bool) {
 		case errors.Is(err, domain.ErrReviewerReasonRequired):
 			status = http.StatusBadRequest
 			code = "REVIEW_REASON_REQUIRED"
+		case errors.Is(err, domain.ErrCandidateEntityRequired):
+			status = http.StatusBadRequest
+			code = "ENTITY_SELECTION_REQUIRED"
+		case errors.Is(err, domain.ErrCandidateSelectionNotAllowed):
+			status = http.StatusBadRequest
+			code = "ENTITY_SELECTION_NOT_ALLOWED"
 		case errors.Is(err, domain.ErrMappingDecisionConflict):
 			code = "ENTITY_MAPPING_DECISION_CONFLICT"
 		case errors.Is(err, domain.ErrMappingDecisionExpectationRequired):
@@ -347,6 +364,7 @@ func candidateResponse(candidate domain.MatchCandidate) map[string]any {
 		"sourceKey":          candidate.SourceKey,
 		"sourceName":         candidate.SourceName,
 		"candidateEntityId":  candidate.CandidateEntityID,
+		"alternatives":       candidate.Alternatives,
 		"decision":           candidate.Decision,
 		"status":             candidate.Status,
 		"matchMethod":        candidate.MatchMethod,
