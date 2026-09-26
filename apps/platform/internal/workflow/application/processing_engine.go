@@ -56,6 +56,11 @@ type ManagedSubmitRequest struct {
 	Parameters    map[string]string
 }
 
+type ManagedRunLookup struct {
+	Name  string
+	RunID string
+}
+
 type EngineRun struct {
 	ID           string
 	Name         string
