@@ -69,6 +69,25 @@ node deploy/demo/demo.mjs reset --confirm=DELETE_DEMO_DATA
 
 演示清单保存在专用数据卷，Core 不读取它作权限判断。原生 Worker、业务状态迁移、不可变历史和审核/发布命令不因演示便利而放宽。
 
+## Dead-letter 运维重放
+
+Core 镜像包含显式的 `outbox-replay` operator tool；Compose 通过 `tools` profile 暴露它。它只允许重放已经进入 `DEAD_LETTER` 的原事件，要求明确的 operator actor、稳定幂等键与理由，并在同一事务写入 immutable replay fact 和 Audit。不要用 SQL 手工修改 `outbox_event.status`。
+
+在与当前 Compose 项目相同的环境中执行：
+
+```sh
+docker compose -f deploy/demo/compose.yml --profile tools run --rm outbox-replay \
+  -event-id=EVENT_UUID \
+  -actor-id=OPERATOR_ACTOR_UUID \
+  -idempotency-key=INCIDENT_OR_REQUEST_KEY \
+  -reason='dependency recovered after incident' \
+  -trace-id=OPTIONAL_INCIDENT_TRACE
+```
+
+该工具复用容器内的 `POSTGRES_DSN`，不会生成新的业务事件；原 event ID、payload、routing obligation 和已经成功的 handler acknowledgement 都保持不变。重放后 dispatcher 只继续未确认的 handler。重复使用同一幂等键和相同语义返回原 replay fact；同键不同语义会显式冲突。
+
+这只是受控恢复入口，不是完整运维后台、自动无限重放或双人审批系统；生产环境应由既有部署/IAM 流程限制谁能启动该 operator tool。
+
 ## 云主机上的私人演示
 
 在自己的云主机本地 Docker daemon 上运行相同命令，保留所有 loopback 绑定。通过 SSH 本地端口转发访问，不开放安全组中的 3180、5432、6379、9000 或 8080。示例：
