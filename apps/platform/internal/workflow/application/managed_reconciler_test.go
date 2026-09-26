@@ -93,23 +93,35 @@ func (s *fakeManagedStateService) Fail(_ context.Context, _ uuid.UUID, code, mes
 }
 
 type fakeManagedBridge struct {
-	state       EngineRunState
-	startErr    error
-	startCalls  int
-	startRunID  string
-	statusErr   error
-	statusCalls int
-	finalizeErr error
-	outputID    uuid.UUID
+	state           EngineRunState
+	prepareStartErr error
+	startErr        error
+	startCalls      int
+	startRunID      string
+	statusErr       error
+	statusCalls     int
+	finalizeErr     error
+	outputID        uuid.UUID
 }
 
 func (b *fakeManagedBridge) EngineType() string { return "HOP" }
 
-func (b *fakeManagedBridge) PrepareSubmission(context.Context, ProcessingRequest) (EngineRun, error) {
+func (b *fakeManagedBridge) PrepareRegisterRequest(context.Context, ProcessingRequest) (ManagedSubmitRequest, error) {
+	return ManagedSubmitRequest{}, errors.New("not used")
+}
+
+func (b *fakeManagedBridge) InvokeRegisterSubmission(context.Context, ManagedSubmitRequest) (EngineRun, error) {
 	return EngineRun{}, errors.New("not used")
 }
 
-func (b *fakeManagedBridge) StartSubmission(_ context.Context, _ ProcessingRequest, runID string) (EngineRun, error) {
+func (b *fakeManagedBridge) PrepareStartRequest(context.Context, ProcessingRequest) (ManagedSubmitRequest, error) {
+	if b.prepareStartErr != nil {
+		return ManagedSubmitRequest{}, b.prepareStartErr
+	}
+	return ManagedSubmitRequest{Name: "energy-monthly"}, nil
+}
+
+func (b *fakeManagedBridge) InvokeStartSubmission(_ context.Context, _ ManagedSubmitRequest, runID string) (EngineRun, error) {
 	b.startCalls++
 	b.startRunID = runID
 	if b.startErr != nil {
@@ -118,8 +130,8 @@ func (b *fakeManagedBridge) StartSubmission(_ context.Context, _ ProcessingReque
 	return EngineRun{ID: runID, State: b.state}, nil
 }
 
-func (b *fakeManagedBridge) RecoverSubmission(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error) {
-	return b.StartSubmission(ctx, request, runID)
+func (b *fakeManagedBridge) InvokeRecoverSubmission(ctx context.Context, request ManagedSubmitRequest, runID string) (EngineRun, error) {
+	return b.InvokeStartSubmission(ctx, request, runID)
 }
 
 func (b *fakeManagedBridge) Status(context.Context, ProcessingRequest, string) (EngineRun, error) {
@@ -488,6 +500,38 @@ func TestManagedReconcilerExpiresUncertainSubmittingExecution(t *testing.T) {
 	}
 	if state.failed != 1 || state.failCode != "REMOTE_SUBMISSION_OUTCOME_UNKNOWN" {
 		t.Fatalf("expected uncertain submission failure, got count=%d code=%q", state.failed, state.failCode)
+	}
+}
+
+func TestManagedReconcilerDoesNotRecordProviderAttemptForLocalRecoveryPreparationFailure(t *testing.T) {
+	claimedAt := time.Now().UTC().Add(-10 * time.Minute)
+	execution := domain.Execution{
+		ID:                uuid.New(),
+		WorkspaceID:       uuid.New(),
+		WorkflowVersionID: uuid.New(),
+		OutputDatasetID:   uuid.New(),
+		TargetPeriod:      "2026-09",
+		Status:            domain.ExecutionSubmitting,
+		EngineType:        "HOP",
+		EngineExecutionID: "hop-run-local-prep-failure",
+		StartedAt:         &claimedAt,
+	}
+	repo := &fakeManagedRepo{
+		execution: execution,
+		version:   domain.WorkflowVersion{ID: execution.WorkflowVersionID},
+	}
+	state := &fakeManagedStateService{}
+	bridge := &fakeManagedBridge{prepareStartErr: errors.New("local input lookup failed")}
+	reconciler := NewManagedReconciler(state, repo, bridge).WithRecoveryLocker(&fakeRecoveryLocker{})
+
+	if err := reconciler.RunOnce(context.Background()); err == nil {
+		t.Fatal("expected local recovery preparation error")
+	}
+	if len(state.recoveryAttempts) != 0 {
+		t.Fatalf("provider recovery attempts=%d, want 0 for local preparation failure", len(state.recoveryAttempts))
+	}
+	if bridge.startCalls != 0 {
+		t.Fatalf("provider recovery calls=%d, want 0", bridge.startCalls)
 	}
 }
 
