@@ -165,25 +165,48 @@ func (c *Client) startSubmission(ctx context.Context, request workflowapp.Manage
 
 	if _, err := c.webResultRequest(ctx, http.MethodGet, "/hop/startPipeline", startQuery, nil, ""); err != nil {
 		classified := classifySubmitOutcome("start pipeline", err)
-		if workflowapp.IsManagedEngineOutcomeUnknown(classified) {
-			return workflowapp.EngineRun{ID: runID, Name: name, State: workflowapp.EngineRunQueued}, classified
-		}
 		if !recovery {
+			if workflowapp.IsManagedEngineOutcomeUnknown(classified) {
+				return workflowapp.EngineRun{ID: runID, Name: name, State: workflowapp.EngineRunQueued}, classified
+			}
 			// On the first start attempt, an explicit provider rejection is
 			// authoritative. Merely being able to query the prepared id does not
 			// prove execution ever started.
 			return workflowapp.EngineRun{}, classified
 		}
 
+		// Recovery always probes the durable run id, regardless of whether the
+		// repeated start failed ambiguously or was explicitly rejected. Started
+		// or terminal evidence wins over the start response.
 		run, statusErr := c.Status(ctx, name, runID)
-		if statusErr != nil || !remoteRunHasStarted(run) {
-			return workflowapp.EngineRun{}, classified
+		if statusErr == nil && remoteRunHasStarted(run) {
+			if run.Metrics == nil {
+				run.Metrics = map[string]any{}
+			}
+			run.Metrics["definitionRef"] = request.DefinitionRef
+			return run, nil
 		}
-		if run.Metrics == nil {
-			run.Metrics = map[string]any{}
+		if statusErr != nil {
+			// Without authoritative status, even a secondary explicit rejection
+			// cannot disprove that an earlier start request was accepted.
+			return workflowapp.EngineRun{ID: runID, Name: name, State: workflowapp.EngineRunQueued},
+				workflowapp.NewManagedEngineError(
+					workflowapp.ManagedEngineOutcomeUnknown,
+					"recover submission",
+					true,
+					0,
+					errors.Join(classified, statusErr),
+				)
 		}
-		run.Metrics["definitionRef"] = request.DefinitionRef
-		return run, nil
+		if workflowapp.IsManagedEngineOutcomeUnknown(classified) {
+			// Status is queryable but does not yet prove execution started. Keep
+			// the outcome unresolved; a later cycle can observe started evidence.
+			return workflowapp.EngineRun{ID: runID, Name: name, State: workflowapp.EngineRunQueued}, classified
+		}
+		// The repeated start was definitely rejected and the authoritative status
+		// still shows no started/terminal evidence. This is the only recovery
+		// rejection safe to terminalize in Core.
+		return workflowapp.EngineRun{}, classified
 	}
 
 	run, err := c.Status(ctx, name, runID)
