@@ -401,8 +401,8 @@ func TestManagedReconcilerConfirmsKnownUncertainSubmission(t *testing.T) {
 	if bridge.startCalls != 1 || bridge.startRunID != "hop-run-1" || state.started != 1 || state.engineExecutionID != "hop-run-1" {
 		t.Fatalf("startCalls=%d startRunID=%q started=%d engineExecutionID=%q", bridge.startCalls, bridge.startRunID, state.started, state.engineExecutionID)
 	}
-	if len(state.recoveryAttempts) != 1 || len(state.recoveryOutcomes) != 1 || state.recoveryOutcomes[0] != "ACCEPTED" {
-		t.Fatalf("accepted recovery accounting attempts=%d outcomes=%v", len(state.recoveryAttempts), state.recoveryOutcomes)
+	if len(state.recoveryAttempts) != 1 || len(state.recoveryOutcomes) != 1 || state.recoveryOutcomes[0] != "SUCCEEDED" {
+		t.Fatalf("successful recovery accounting attempts=%d outcomes=%v", len(state.recoveryAttempts), state.recoveryOutcomes)
 	}
 	if state.failed != 0 {
 		t.Fatalf("known remote identity must not expire as unknown; failed=%d", state.failed)
@@ -440,6 +440,15 @@ func TestManagedReconcilerKeepsKnownSubmissionWhenStartOutcomeUnknown(t *testing
 	}
 	if len(state.recoveryAttempts) != 1 || len(state.recoveryOutcomes) != 1 || state.recoveryOutcomes[0] != "OUTCOME_UNKNOWN" {
 		t.Fatalf("unknown recovery accounting attempts=%d outcomes=%v", len(state.recoveryAttempts), state.recoveryOutcomes)
+	}
+	if bridge.statusCalls != 1 {
+		t.Fatalf("ambiguous recovery must perform one separately-accounted status probe; statusCalls=%d", bridge.statusCalls)
+	}
+	if len(state.providerAttempts) != 1 || len(state.providerPhases) != 1 || state.providerPhases[0] != "STATUS" {
+		t.Fatalf("status accounting attempts=%d phases=%v, want one STATUS attempt", len(state.providerAttempts), state.providerPhases)
+	}
+	if len(state.providerOutcomes) != 1 {
+		t.Fatalf("status outcomes=%v, want one status observation", state.providerOutcomes)
 	}
 }
 
