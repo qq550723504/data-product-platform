@@ -122,10 +122,11 @@ func NewPublisher(pool *pgxpool.Pool, cfg Config) *Publisher {
 // claim is one held dispatch lease. token must accompany every terminal write;
 // a claim whose lease was taken over can no longer change the event state.
 type claim struct {
-	Event PublishedEvent
-	token uuid.UUID
-	pool  *pgxpool.Pool
-	cfg   Config
+	Event       PublishedEvent
+	token       uuid.UUID
+	pool        *pgxpool.Pool
+	cfg         Config
+	attemptBase int
 
 	// routingVersion and requiredHandlers are the event's frozen obligation.
 	routingVersion   string
@@ -224,6 +225,7 @@ func (p *Publisher) claimOneRouted(ctx context.Context) (*claim, error) {
 		version          int16
 		routingVersion   string
 		requiredHandlers []string
+		attemptBase      int
 	)
 	err = tx.QueryRow(ctx, `
 		UPDATE outbox_event
@@ -242,7 +244,7 @@ func (p *Publisher) claimOneRouted(ctx context.Context) (*claim, error) {
 			LIMIT 1
 		)
 		RETURNING id, aggregate_type, aggregate_id, event_type, event_version, payload, attempts,
-		          routing_version, required_handlers
+		          routing_version, required_handlers, attempt_base
 	`, statusProcessing, now.Add(p.cfg.ClaimTTL), token, p.cfg.ConsumerName,
 		statusPending, statusFailed).Scan(
 		&event.ID,
@@ -254,6 +256,7 @@ func (p *Publisher) claimOneRouted(ctx context.Context) (*claim, error) {
 		&event.Attempts,
 		&routingVersion,
 		&requiredHandlers,
+		&attemptBase,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
@@ -272,6 +275,7 @@ func (p *Publisher) claimOneRouted(ctx context.Context) (*claim, error) {
 		token:            token,
 		pool:             p.pool,
 		cfg:              p.cfg,
+		attemptBase:      attemptBase,
 		routingVersion:   routingVersion,
 		requiredHandlers: requiredHandlers,
 	}, nil
@@ -368,7 +372,7 @@ func (c *claim) Fail(ctx context.Context, cause error) (string, error) {
 	delay := nextFailureDelay(c.Event.Attempts, c.cfg)
 	status := statusFailed
 	deadLettered := false
-	if c.Event.Attempts >= c.cfg.MaxAttempts {
+	if c.Event.Attempts-c.attemptBase >= c.cfg.MaxAttempts {
 		status = statusDeadLetter
 		deadLettered = true
 		delay = 0
