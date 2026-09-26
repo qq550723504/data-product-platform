@@ -44,7 +44,11 @@ func (r *PostgresRepository) InsertCandidate(ctx context.Context, tx pgx.Tx, can
 	if err != nil {
 		return fmt.Errorf("marshal normalized payload: %w", err)
 	}
-	alternatives, err := json.Marshal(candidate.Alternatives)
+	candidateAlternatives := candidate.Alternatives
+	if candidateAlternatives == nil {
+		candidateAlternatives = []domain.CandidateAlternative{}
+	}
+	alternatives, err := json.Marshal(candidateAlternatives)
 	if err != nil {
 		return fmt.Errorf("marshal candidate alternatives: %w", err)
 	}
