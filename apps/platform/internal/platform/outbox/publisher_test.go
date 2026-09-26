@@ -33,6 +33,21 @@ func TestNextFailureDelayBacksOffAndCaps(t *testing.T) {
 	}
 }
 
+
+func TestFailureDelayRestartsAfterOperatorReplay(t *testing.T) {
+	cfg := Config{FailureBase: 5 * time.Second, FailureCap: 5 * time.Minute}
+	c := &claim{
+		Event:       PublishedEvent{Attempts: 13},
+		attemptBase: 12,
+		cfg:         cfg,
+	}
+
+	got := failureDelayForClaim(c)
+	if got < cfg.FailureBase || got > cfg.FailureBase+cfg.FailureBase/4 {
+		t.Fatalf("first post-replay delay = %s, want base plus up to 25%% jitter", got)
+	}
+}
+
 func TestNextFailureDelayClampsLowAttempts(t *testing.T) {
 	cfg := Config{FailureBase: time.Second, FailureCap: time.Minute}
 	if got := nextFailureDelay(0, cfg); got < time.Second {
