@@ -39,16 +39,9 @@ func (Engine) Evaluate(_ context.Context, request qualityengine.Request) (qualit
 	if err != nil {
 		return qualityengine.Result{}, err
 	}
-	gate, err := policy.GateDecision(findings)
-	if err != nil {
-		return qualityengine.Result{}, err
-	}
 	return qualityengine.Result{
-		RuleSetVersion:       policy.Metadata.Version,
-		RuleSetContentSHA256: policy.SourceContentSHA256,
-		Findings:             findings,
-		Metrics:              metrics,
-		GateDecision:         gate,
+		Findings: findings,
+		Metrics:  metrics,
 		ExecutionMetadata: map[string]any{
 			"engine":  EvaluatorName,
 			"version": EvaluatorVersion,
