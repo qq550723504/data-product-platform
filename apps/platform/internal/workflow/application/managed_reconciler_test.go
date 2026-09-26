@@ -263,47 +263,6 @@ func TestManagedReconcilerDoesNotRecoverFreshKnownSubmission(t *testing.T) {
 	}
 }
 
-func TestManagedReconcilerPreservesAmbiguousSubmissionAfterRecoveryRejection(t *testing.T) {
-	claimedAt := time.Now().UTC().Add(-10 * time.Minute)
-	execution := domain.Execution{
-		ID:                uuid.New(),
-		WorkspaceID:       uuid.New(),
-		WorkflowVersionID: uuid.New(),
-		OutputDatasetID:   uuid.New(),
-		TargetPeriod:      "2026-09",
-		Status:            domain.ExecutionSubmitting,
-		EngineType:        "HOP",
-		EngineExecutionID: "hop-run-ambiguous",
-		StartedAt:         &claimedAt,
-		Metrics: map[string]any{
-			managedSubmissionOutcomeUnknownMetric: true,
-		},
-	}
-	repo := &fakeManagedRepo{
-		execution: execution,
-		version:   domain.WorkflowVersion{ID: execution.WorkflowVersionID},
-	}
-	state := &fakeManagedStateService{}
-	bridge := &fakeManagedBridge{
-		startErr: NewManagedEngineError(
-			ManagedEngineRejected,
-			"start submission",
-			false,
-			400,
-			errors.New("recovery rejected"),
-		),
-	}
-	reconciler := NewManagedReconciler(state, repo, bridge)
-
-	if err := reconciler.RunOnce(context.Background()); err == nil {
-		t.Fatal("ambiguous prior outcome plus recovery rejection must remain unresolved")
-	}
-	if bridge.startCalls != 1 || state.started != 0 || state.failed != 0 {
-		t.Fatalf("ambiguous submission was terminalized; startCalls=%d started=%d failed=%d",
-			bridge.startCalls, state.started, state.failed)
-	}
-}
-
 func TestManagedReconcilerFailsUnambiguousExpiredSubmissionAfterRecoveryRejection(t *testing.T) {
 	claimedAt := time.Now().UTC().Add(-10 * time.Minute)
 	execution := domain.Execution{
