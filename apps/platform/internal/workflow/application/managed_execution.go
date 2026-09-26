@@ -16,7 +16,8 @@ import (
 // import stay behind this boundary.
 type ManagedExecutionBridge interface {
 	EngineType() string
-	Submit(ctx context.Context, request ProcessingRequest) (EngineRun, error)
+	PrepareSubmission(ctx context.Context, request ProcessingRequest) (EngineRun, error)
+	StartSubmission(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error)
 	Status(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error)
 	Finalize(ctx context.Context, request ProcessingRequest, run EngineRun) (ProcessingResult, error)
 }
