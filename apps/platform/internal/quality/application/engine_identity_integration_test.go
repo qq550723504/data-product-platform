@@ -121,17 +121,17 @@ spec:
 		t.Fatalf("provider failure created assessment/findings = %d/%d, want 0/0", assessmentCount, findingCount)
 	}
 
-	var outcome, storedEngine string
+	var outcome, storedEngine, storedVersion string
 	if err := pool.QueryRow(ctx, `
-		SELECT a.engine_name, o.outcome
+		SELECT a.engine_name, a.engine_version, o.outcome
 		FROM quality_assessment_attempt a
 		JOIN quality_assessment_attempt_outcome o ON o.attempt_id=a.id
 		WHERE a.id=$1
-	`, attemptID).Scan(&storedEngine, &outcome); err != nil {
+	`, attemptID).Scan(&storedEngine, &storedVersion, &outcome); err != nil {
 		t.Fatalf("read failed attempt: %v", err)
 	}
-	if storedEngine != "failing-engine" || outcome != "FAILED" {
-		t.Fatalf("failed attempt = engine %q outcome %q", storedEngine, outcome)
+	if storedEngine != "failing-engine" || storedVersion != "1" || outcome != "FAILED" {
+		t.Fatalf("failed attempt = engine %q/%q outcome %q", storedEngine, storedVersion, outcome)
 	}
 
 	_, replayErr := service.Run(ctx, qualityapp.RunCommand{
@@ -211,13 +211,13 @@ spec:
 		t.Fatalf("cross-engine attempt replay error = %v, want ErrAssessmentAttemptConflict", err)
 	}
 
-	var storedEngine string
+	var storedEngine, storedVersion string
 	if err := pool.QueryRow(ctx, `
-		SELECT engine_name FROM quality_assessment_attempt WHERE id=$1
-	`, attemptID).Scan(&storedEngine); err != nil {
+		SELECT engine_name, engine_version FROM quality_assessment_attempt WHERE id=$1
+	`, attemptID).Scan(&storedEngine, &storedVersion); err != nil {
 		t.Fatalf("read attempt engine: %v", err)
 	}
-	if storedEngine != "native-quality" {
-		t.Fatalf("stored engine = %q, want native-quality", storedEngine)
+	if storedEngine != "native-quality" || storedVersion != "2" {
+		t.Fatalf("stored engine = %q/%q, want native-quality/2", storedEngine, storedVersion)
 	}
 }
