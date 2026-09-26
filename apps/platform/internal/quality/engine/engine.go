@@ -34,7 +34,7 @@ type DatasetContext struct {
 }
 
 type Request struct {
-	AttemptID       uuid.UUID
+	AttemptID        uuid.UUID
 	DatasetVersionID uuid.UUID
 	RuleSet          RuleSet
 	Dataset          DatasetContext
