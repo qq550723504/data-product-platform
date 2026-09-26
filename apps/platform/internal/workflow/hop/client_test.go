@@ -308,3 +308,66 @@ func writeJSON(t *testing.T, w http.ResponseWriter, value any) {
 		t.Fatalf("encode response: %v", err)
 	}
 }
+
+
+func TestHopSubmitClassifiesTransportFailureAsOutcomeUnknown(t *testing.T) {
+	client, err := hop.NewClient("http://hop", "cluster", "secret", &http.Client{
+		Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+			return nil, errors.New("response lost after request write")
+		}),
+	})
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+
+	_, err = client.Submit(context.Background(), workflowapp.ManagedSubmitRequest{
+		Name:       "pipeline",
+		Definition: []byte(`<pipeline_configuration/>`),
+	})
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, 0)
+}
+
+func TestHopSubmitClassifiesStartServiceFailureAsOutcomeUnknown(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/registerPipeline":
+			writeXML(w, `<webresult><result>OK</result><message>registered</message><id>run-unknown</id></webresult>`)
+		case "/hop/startPipeline":
+			http.Error(w, "temporarily unavailable", http.StatusServiceUnavailable)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	_, err = client.Submit(context.Background(), workflowapp.ManagedSubmitRequest{
+		Name:       "pipeline",
+		Definition: []byte(`<pipeline_configuration/>`),
+	})
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, http.StatusServiceUnavailable)
+}
+
+func TestHopSubmitTreatsSuccessfulRegistrationWithoutDurableIDAsOutcomeUnknown(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/hop/registerPipeline" {
+			http.NotFound(w, r)
+			return
+		}
+		writeXML(w, `<webresult><result>OK</result><message>registered</message><id></id></webresult>`)
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	_, err = client.Submit(context.Background(), workflowapp.ManagedSubmitRequest{
+		Name:       "pipeline",
+		Definition: []byte(`<pipeline_configuration/>`),
+	})
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, 0)
+}
