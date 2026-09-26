@@ -76,18 +76,6 @@ func (s *RequeueService) Requeue(ctx context.Context, cmd RequeueOutboxEventComm
 	}
 	defer func() { _ = tx.Rollback(context.Background()) }()
 
-	if existing, found, err := findReplayTx(ctx, tx, cmd.EventID, cmd.IdempotencyKey); err != nil {
-		return ReplayFact{}, err
-	} else if found {
-		if existing.RequestFingerprint != fingerprint {
-			return ReplayFact{}, ErrReplayIdempotencyConflict
-		}
-		if err := tx.Commit(ctx); err != nil {
-			return ReplayFact{}, fmt.Errorf("commit outbox replay idempotent read: %w", err)
-		}
-		return existing, nil
-	}
-
 	var (
 		status         string
 		eventVersion   int16
@@ -104,6 +92,22 @@ func (s *RequeueService) Requeue(ctx context.Context, cmd RequeueOutboxEventComm
 	if err != nil {
 		return ReplayFact{}, fmt.Errorf("lock dead-lettered outbox event: %w", err)
 	}
+
+	// Serialize every replay intent on the original event first. A concurrent
+	// same-key request waits here, then observes the replay fact committed by
+	// the winner and returns it instead of misclassifying the now-PENDING event.
+	if existing, found, err := findReplayTx(ctx, tx, cmd.EventID, cmd.IdempotencyKey); err != nil {
+		return ReplayFact{}, err
+	} else if found {
+		if existing.RequestFingerprint != fingerprint {
+			return ReplayFact{}, ErrReplayIdempotencyConflict
+		}
+		if err := tx.Commit(ctx); err != nil {
+			return ReplayFact{}, fmt.Errorf("commit outbox replay idempotent read: %w", err)
+		}
+		return existing, nil
+	}
+
 	if int(eventVersion) > MaxSupportedEventVersion {
 		return ReplayFact{}, fmt.Errorf("%w: event version %d exceeds max supported %d", ErrReplayUnsupportedVersion, eventVersion, MaxSupportedEventVersion)
 	}
