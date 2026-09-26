@@ -165,11 +165,11 @@ func (h *Handler) upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	version, err := h.uploadVersion.Handle(r.Context(), application.UploadVersionCommand{
-		DatasetID:   datasetID,
-		Filename:    header.Filename,
-		ContentType: contentType,
-		Content:     content,
-		ActorID:     actorID,
+		DatasetID:      datasetID,
+		Filename:       header.Filename,
+		ContentType:    contentType,
+		Content:        content,
+		ActorID:        actorID,
 		TraceID:        httpserver.RequestID(r.Context()),
 		IdempotencyKey: idempotencyKey,
 	})
