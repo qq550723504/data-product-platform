@@ -142,11 +142,24 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 				return fmt.Errorf("load workflow version for uncertain submission %s: %w", executionID, err)
 			}
 			request := ProcessingRequestFromExecution(execution, version)
-			if _, err := bridge.Status(ctx, request, execution.EngineExecutionID); err != nil {
-				// A durable remote id exists. Never turn an unavailable status
-				// lookup into a definite Core failure that would permit a
-				// duplicate retry; keep SUBMITTING and retry reconciliation.
-				return fmt.Errorf("reconcile uncertain %s submission %s: %w", execution.EngineType, executionID, err)
+			if _, err := bridge.StartSubmission(ctx, request, execution.EngineExecutionID); err != nil {
+				if IsManagedEngineOutcomeUnknown(err) {
+					// The id is durable, so recovery keeps retrying the same remote
+					// identity and never registers a second run.
+					return fmt.Errorf("reconcile uncertain %s start for execution %s: %w", execution.EngineType, executionID, err)
+				}
+				_, failErr := r.service.Fail(
+					ctx,
+					execution.ID,
+					"REMOTE_SUBMIT_FAILED",
+					"remote processing engine start was rejected",
+					map[string]any{"engineType": execution.EngineType, "externalExecutionId": execution.EngineExecutionID},
+					execution.ID.String(),
+				)
+				if failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
+					return fmt.Errorf("terminalize rejected managed start %s: %w", executionID, failErr)
+				}
+				return nil
 			}
 			if _, err := r.service.Start(ctx, execution.ID, execution.EngineExecutionID, execution.ID.String()); err != nil &&
 				!errors.Is(err, domain.ErrInvalidTransition) {
