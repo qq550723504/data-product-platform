@@ -127,6 +127,14 @@ func (c *Client) PrepareSubmission(ctx context.Context, request workflowapp.Mana
 }
 
 func (c *Client) StartSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest, runID string) (workflowapp.EngineRun, error) {
+	return c.startSubmission(ctx, request, runID, false)
+}
+
+func (c *Client) RecoverSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest, runID string) (workflowapp.EngineRun, error) {
+	return c.startSubmission(ctx, request, runID, true)
+}
+
+func (c *Client) startSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest, runID string, recovery bool) (workflowapp.EngineRun, error) {
 	name := strings.TrimSpace(request.Name)
 	runID = strings.TrimSpace(runID)
 	if name == "" || runID == "" {
@@ -154,28 +162,32 @@ func (c *Client) StartSubmission(ctx context.Context, request workflowapp.Manage
 		}
 		startQuery.Set(key, value)
 	}
+
 	if _, err := c.webResultRequest(ctx, http.MethodGet, "/hop/startPipeline", startQuery, nil, ""); err != nil {
 		classified := classifySubmitOutcome("start pipeline", err)
 		if workflowapp.IsManagedEngineOutcomeUnknown(classified) {
 			return workflowapp.EngineRun{ID: runID, Name: name, State: workflowapp.EngineRunQueued}, classified
 		}
-		// A replay of the same prepared remote identity may be rejected because
-		// the first start already took effect. If that exact run is queryable,
-		// treat the replay as successful rather than converting it to a Core failure.
-		if run, statusErr := c.Status(ctx, name, runID); statusErr == nil {
-			if run.Metrics == nil {
-				run.Metrics = map[string]any{}
-			}
-			run.Metrics["definitionRef"] = request.DefinitionRef
-			return run, nil
+		if !recovery {
+			// On the first start attempt, an explicit provider rejection is
+			// authoritative. Merely being able to query the prepared id does not
+			// prove execution ever started.
+			return workflowapp.EngineRun{}, classified
 		}
-		return workflowapp.EngineRun{}, classified
+
+		run, statusErr := c.Status(ctx, name, runID)
+		if statusErr != nil || !remoteRunHasStarted(run) {
+			return workflowapp.EngineRun{}, classified
+		}
+		if run.Metrics == nil {
+			run.Metrics = map[string]any{}
+		}
+		run.Metrics["definitionRef"] = request.DefinitionRef
+		return run, nil
 	}
 
 	run, err := c.Status(ctx, name, runID)
 	if err != nil {
-		// Start returned success but the immediate status probe can race provider
-		// visibility. Preserve the durable id and let reconciliation continue.
 		return workflowapp.EngineRun{
 			ID:      runID,
 			Name:    name,
@@ -188,6 +200,18 @@ func (c *Client) StartSubmission(ctx context.Context, request workflowapp.Manage
 	}
 	run.Metrics["definitionRef"] = request.DefinitionRef
 	return run, nil
+}
+
+func remoteRunHasStarted(run workflowapp.EngineRun) bool {
+	if run.StartedAt != nil || run.FinishedAt != nil {
+		return true
+	}
+	switch run.State {
+	case workflowapp.EngineRunSucceeded, workflowapp.EngineRunFailed, workflowapp.EngineRunCancelled:
+		return true
+	default:
+		return false
+	}
 }
 
 func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRequest) (workflowapp.EngineRun, error) {
