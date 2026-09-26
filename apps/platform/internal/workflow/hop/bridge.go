@@ -56,40 +56,67 @@ func NewBridge(engine workflowapp.ManagedProcessingEngine, artifactRoot string, 
 
 func (b *Bridge) EngineType() string { return "HOP" }
 
-func (b *Bridge) Submit(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.EngineRun, error) {
-	cfg, err := b.config(request)
+func (b *Bridge) PrepareSubmission(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.EngineRun, error) {
+	submitRequest, err := b.managedSubmitRequest(ctx, request)
 	if err != nil {
 		return workflowapp.EngineRun{}, err
+	}
+	return b.engine.PrepareSubmission(ctx, submitRequest)
+}
+
+func (b *Bridge) StartSubmission(ctx context.Context, request workflowapp.ProcessingRequest, runID string) (workflowapp.EngineRun, error) {
+	submitRequest, err := b.managedSubmitRequest(ctx, request)
+	if err != nil {
+		return workflowapp.EngineRun{}, err
+	}
+	run, err := b.engine.StartSubmission(ctx, submitRequest, runID)
+	if run.Metrics == nil {
+		run.Metrics = map[string]any{}
+	}
+	_, outputURI := b.stagingOutput(request, mustManagedConfig(request))
+	run.Metrics["stagingOutputUri"] = outputURI
+	run.Metrics["workflowDefinitionRef"] = request.WorkflowVersion.DefinitionRef
+	if cfg, cfgErr := b.config(request); cfgErr == nil {
+		run.Metrics["hopDefinitionRef"] = cfg.DefinitionRef
+	}
+	return run, err
+}
+
+func (b *Bridge) managedSubmitRequest(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.ManagedSubmitRequest, error) {
+	cfg, err := b.config(request)
+	if err != nil {
+		return workflowapp.ManagedSubmitRequest{}, err
 	}
 	definition, err := b.loadDefinition(cfg)
 	if err != nil {
-		return workflowapp.EngineRun{}, err
+		return workflowapp.ManagedSubmitRequest{}, err
 	}
 	parameters, _, err := b.executionParameters(ctx, request, cfg)
 	if err != nil {
-		return workflowapp.EngineRun{}, err
+		return workflowapp.ManagedSubmitRequest{}, err
 	}
-
-	run, err := b.engine.Submit(ctx, workflowapp.ManagedSubmitRequest{
+	return workflowapp.ManagedSubmitRequest{
 		Name:          cfg.Name,
 		DefinitionRef: cfg.DefinitionRef,
 		Definition:    wrapPipelineConfiguration(definition),
 		ContentType:   cfg.ContentType,
 		Parameters:    parameters,
-	})
-	if err != nil {
-		// Some submit errors intentionally carry a durable remote run id so Core
-		// can reconcile an ambiguous start without dispatching duplicate work.
-		return run, err
+	}, nil
+}
+
+func mustManagedConfig(request workflowapp.ProcessingRequest) managedConfig {
+	spec, _ := asMap(request.WorkflowVersion.Definition["spec"])
+	managed, _ := asMap(spec["managedExecution"])
+	cfg := managedConfig{
+		Name:              strings.TrimSpace(stringValue(managed["name"])),
+		DefinitionRef:     strings.TrimSpace(stringValue(managed["definitionRef"])),
+		OutputFilename:    strings.TrimSpace(stringValue(managed["outputFilename"])),
+		OutputContentType: strings.TrimSpace(stringValue(managed["outputContentType"])),
 	}
-	if run.Metrics == nil {
-		run.Metrics = map[string]any{}
+	if cfg.OutputFilename == "" {
+		cfg.OutputFilename = "managed-output.csv"
 	}
-	_, outputURI := b.stagingOutput(request, cfg)
-	run.Metrics["stagingOutputUri"] = outputURI
-	run.Metrics["workflowDefinitionRef"] = request.WorkflowVersion.DefinitionRef
-	run.Metrics["hopDefinitionRef"] = cfg.DefinitionRef
-	return run, nil
+	return cfg
 }
 
 func (b *Bridge) Status(ctx context.Context, request workflowapp.ProcessingRequest, runID string) (workflowapp.EngineRun, error) {
