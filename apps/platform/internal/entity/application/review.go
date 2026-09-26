@@ -209,11 +209,11 @@ func reviewSourceOrigin(candidate domain.MatchCandidate) domain.SourceOrigin {
 
 func reviewEvidenceMetadata(job domain.MatchJob, candidate domain.MatchCandidate, decision string) map[string]any {
 	return map[string]any{
-		"decision":           decision,
-		"sourceKey":          candidate.SourceKey,
-		"candidateEntityId":  candidate.CandidateEntityID,
+		"decision":              decision,
+		"sourceKey":             candidate.SourceKey,
+		"candidateEntityId":     candidate.CandidateEntityID,
 		"candidateAlternatives": candidate.Alternatives,
-		"matchMethod":        candidate.MatchMethod,
+		"matchMethod":           candidate.MatchMethod,
 		"matchRuleId":        candidate.MatchRuleID,
 		"confidence":         candidate.Confidence,
 		"matchPolicyRef":     job.PolicyRef,
