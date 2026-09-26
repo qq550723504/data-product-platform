@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -25,6 +26,124 @@ func (neverCalledQualityEngine) Descriptor() qualityengine.Descriptor {
 }
 func (neverCalledQualityEngine) Evaluate(context.Context, qualityengine.Request) (qualityengine.Result, error) {
 	return qualityengine.Result{}, errors.New("reference engine should not run for conflicting attempt identity")
+}
+
+type failingQualityEngine struct {
+	calls int
+}
+
+func (*failingQualityEngine) Descriptor() qualityengine.Descriptor {
+	return qualityengine.Descriptor{Name: "failing-engine", Version: "1", Capabilities: []string{"not_null"}}
+}
+func (e *failingQualityEngine) Evaluate(context.Context, qualityengine.Request) (qualityengine.Result, error) {
+	e.calls++
+	return qualityengine.Result{}, errors.New("provider execution unavailable")
+}
+
+func TestQualityEngineFailureDoesNotBecomeRuleFailure(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	workspaceID := uuid.New()
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	store := newMemoryStore()
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
+	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, store)
+	dataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "ENGINE-FAILURE")
+	version := uploadCSV(t, ctx, uploadDataset, dataset.ID, "engine-failure.csv", "company_id\nCOMPANY-001\n", nil)
+
+	root := t.TempDir()
+	content := []byte(`apiVersion: quality/v1
+kind: QualityRuleSet
+metadata:
+  name: engine-failure
+  version: 1.0.0
+spec:
+  rules:
+    - id: QA-COMPANY-ID
+      dimension: COMPLETENESS
+      type: not_null
+      target: company_id
+      threshold: 1
+      required: true
+      severity: CRITICAL
+  gate:
+    criticalFailure: FAIL
+    highFailure: REVIEW
+    warningFailure: PASS_WITH_WARNING
+`)
+	if err := os.WriteFile(filepath.Join(root, "engine.yaml"), content, 0o600); err != nil {
+		t.Fatalf("write policy: %v", err)
+	}
+
+	service := qualityapp.NewService(root, txManager, datasetRepo, qualityinfra.NewPostgresRepository(pool), store)
+	provider := &failingQualityEngine{}
+	if err := service.RegisterEngine(provider); err != nil {
+		t.Fatalf("register failing engine: %v", err)
+	}
+	attemptID := uuid.New()
+	_, err = service.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: version.ID, RuleSetRef: "engine.yaml",
+		EngineName: "failing-engine", AssessmentAttemptID: attemptID,
+	})
+	if err == nil || !strings.Contains(err.Error(), "provider execution unavailable") {
+		t.Fatalf("engine failure error = %v", err)
+	}
+	if provider.calls != 1 {
+		t.Fatalf("provider calls = %d, want 1", provider.calls)
+	}
+
+	var assessmentCount, findingCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*) FROM quality_result
+		WHERE workspace_id=$1 AND dataset_version_id=$2
+	`, workspaceID, version.ID).Scan(&assessmentCount); err != nil {
+		t.Fatalf("count quality assessments: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM quality_finding f
+		JOIN quality_result r ON r.id=f.result_id
+		WHERE r.workspace_id=$1 AND r.dataset_version_id=$2
+	`, workspaceID, version.ID).Scan(&findingCount); err != nil {
+		t.Fatalf("count quality findings: %v", err)
+	}
+	if assessmentCount != 0 || findingCount != 0 {
+		t.Fatalf("provider failure created assessment/findings = %d/%d, want 0/0", assessmentCount, findingCount)
+	}
+
+	var outcome, storedEngine string
+	if err := pool.QueryRow(ctx, `
+		SELECT a.engine_name, o.outcome
+		FROM quality_assessment_attempt a
+		JOIN quality_assessment_attempt_outcome o ON o.attempt_id=a.id
+		WHERE a.id=$1
+	`, attemptID).Scan(&storedEngine, &outcome); err != nil {
+		t.Fatalf("read failed attempt: %v", err)
+	}
+	if storedEngine != "failing-engine" || outcome != "FAILED" {
+		t.Fatalf("failed attempt = engine %q outcome %q", storedEngine, outcome)
+	}
+
+	_, replayErr := service.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: version.ID, RuleSetRef: "engine.yaml",
+		EngineName: "failing-engine", AssessmentAttemptID: attemptID,
+	})
+	if !errors.Is(replayErr, qualityapp.ErrAssessmentAttemptFailed) {
+		t.Fatalf("failed engine replay error = %v, want ErrAssessmentAttemptFailed", replayErr)
+	}
+	if provider.calls != 1 {
+		t.Fatalf("provider calls after replay = %d, want 1", provider.calls)
+	}
 }
 
 func TestQualityAttemptIdentityIncludesEngine(t *testing.T) {
