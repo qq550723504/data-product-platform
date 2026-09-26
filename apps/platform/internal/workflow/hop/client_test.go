@@ -374,7 +374,6 @@ func TestHopSubmitTreatsSuccessfulRegistrationWithoutDurableIDAsOutcomeUnknown(t
 	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, 0)
 }
 
-
 func TestHopPrepareSubmissionDoesNotStartRemoteWork(t *testing.T) {
 	var registerCalls, startCalls int
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
