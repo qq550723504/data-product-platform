@@ -144,6 +144,7 @@ export type EntityReview = {
   source: Record<string, string>;
   normalized: Record<string, string>;
   candidateEntityId?: string;
+  alternatives: Array<{ entityId: string; canonicalKey: string; canonicalName: string }>;
   decision: string;
   status: string;
   // Optimistic-concurrency token: the mapping decision that was current when the
