@@ -31,3 +31,17 @@ CREATE TABLE outbox_event_replay (
 
 CREATE INDEX idx_outbox_event_replay_event
     ON outbox_event_replay (event_id, created_at, id);
+
+CREATE OR REPLACE FUNCTION reject_outbox_event_replay_mutation()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RAISE EXCEPTION 'outbox_event_replay is immutable';
+END;
+$$;
+
+CREATE TRIGGER trg_outbox_event_replay_immutable
+    BEFORE UPDATE OR DELETE ON outbox_event_replay
+    FOR EACH ROW
+    EXECUTE FUNCTION reject_outbox_event_replay_mutation();
