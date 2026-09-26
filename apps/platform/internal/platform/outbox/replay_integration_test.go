@@ -27,10 +27,12 @@ func insertDeadLetterEvent(t *testing.T, eventType string, attempts int, handler
 		t.Fatalf("set dead-letter error: %v", err)
 	}
 	t.Cleanup(func() {
-		_, _ = pool.Exec(context.Background(), "DELETE FROM audit_event WHERE object_type='OUTBOX_EVENT' AND object_id=$1", id)
-		_, _ = pool.Exec(context.Background(), "DELETE FROM outbox_event_replay WHERE event_id=$1", id)
-		_, _ = pool.Exec(context.Background(), "DELETE FROM outbox_event_consumption WHERE event_id=$1", id)
-		_, _ = pool.Exec(context.Background(), "DELETE FROM outbox_event WHERE id=$1", id)
+		// Replay facts are immutable by design. CI uses a disposable database, so
+		// facts created by replay tests are intentionally retained until database
+		// teardown. Events are driven to a non-claimable terminal state in each
+		// successful replay test to avoid interfering with later claim scans.
+		_, _ = pool.Exec(context.Background(), "DELETE FROM outbox_event_consumption WHERE event_id=$1 AND NOT EXISTS (SELECT 1 FROM outbox_event_replay WHERE event_id=$1)", id)
+		_, _ = pool.Exec(context.Background(), "DELETE FROM outbox_event WHERE id=$1 AND NOT EXISTS (SELECT 1 FROM outbox_event_replay WHERE event_id=$1)", id)
 	})
 	return id
 }
@@ -113,6 +115,9 @@ func TestRequeueIsIdempotentAuditedAndPreservesHistory(t *testing.T) {
 	conflict.Reason = "different operator intent"
 	if _, err := service.Requeue(ctx, conflict); !errors.Is(err, ErrReplayIdempotencyConflict) {
 		t.Fatalf("semantic conflict error = %v, want ErrReplayIdempotencyConflict", err)
+	}
+	if err := NewPublisher(pool, testConfig(t, nil)).publishOnce(ctx, func(context.Context, PublishedEvent) error { return nil }); err != nil {
+		t.Fatalf("publish replayed event: %v", err)
 	}
 }
 
@@ -232,5 +237,90 @@ func TestConcurrentRequeueOnlyOneIntentWins(t *testing.T) {
 	}
 	if count != 1 {
 		t.Fatalf("concurrent replay facts=%d, want 1", count)
+	}
+	if err := NewPublisher(pool, testConfig(t, nil)).publishOnce(ctx, func(context.Context, PublishedEvent) error { return nil }); err != nil {
+		t.Fatalf("publish concurrently requeued event: %v", err)
+	}
+}
+
+
+func TestConcurrentSameKeyRequeueReturnsSameFact(t *testing.T) {
+	ctx := context.Background()
+	pool := newTestPool(t)
+	eventID := insertDeadLetterEvent(t, "ReplaySameKeyConcurrent", 12, nil)
+	service := NewRequeueService(pool)
+	actorID := uuid.New()
+	cmd := RequeueOutboxEventCommand{
+		EventID: eventID, IdempotencyKey: "same-key", ActorID: actorID, Reason: "dependency recovered",
+	}
+
+	type result struct {
+		fact ReplayFact
+		err  error
+	}
+	start := make(chan struct{})
+	results := make(chan result, 2)
+	var wg sync.WaitGroup
+	for i := 0; i < 2; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			<-start
+			fact, err := service.Requeue(ctx, cmd)
+			results <- result{fact: fact, err: err}
+		}()
+	}
+	close(start)
+	wg.Wait()
+	close(results)
+
+	var ids []uuid.UUID
+	for got := range results {
+		if got.err != nil {
+			t.Fatalf("same-key concurrent replay: %v", got.err)
+		}
+		ids = append(ids, got.fact.ID)
+	}
+	if len(ids) != 2 || ids[0] != ids[1] {
+		t.Fatalf("same-key replay ids=%v, want two identical IDs", ids)
+	}
+	var count int
+	if err := pool.QueryRow(ctx, "SELECT count(*) FROM outbox_event_replay WHERE event_id=$1", eventID).Scan(&count); err != nil {
+		t.Fatalf("count same-key replay facts: %v", err)
+	}
+	if count != 1 {
+		t.Fatalf("same-key replay facts=%d, want 1", count)
+	}
+	if err := NewPublisher(pool, testConfig(t, nil)).publishOnce(ctx, func(context.Context, PublishedEvent) error { return nil }); err != nil {
+		t.Fatalf("publish same-key replayed event: %v", err)
+	}
+}
+
+func TestReplayFactsAreImmutableInPostgres(t *testing.T) {
+	ctx := context.Background()
+	pool := newTestPool(t)
+	eventID := insertDeadLetterEvent(t, "ReplayImmutable", 12, nil)
+	fact, err := NewRequeueService(pool).Requeue(ctx, RequeueOutboxEventCommand{
+		EventID: eventID, IdempotencyKey: "immutable", ActorID: uuid.New(), Reason: "dependency recovered",
+	})
+	if err != nil {
+		t.Fatalf("requeue: %v", err)
+	}
+
+	if _, err := pool.Exec(ctx, "UPDATE outbox_event_replay SET reason='rewritten' WHERE id=$1", fact.ID); err == nil {
+		t.Fatal("UPDATE of immutable outbox replay fact unexpectedly succeeded")
+	}
+	if _, err := pool.Exec(ctx, "DELETE FROM outbox_event_replay WHERE id=$1", fact.ID); err == nil {
+		t.Fatal("DELETE of immutable outbox replay fact unexpectedly succeeded")
+	}
+	var reason string
+	if err := pool.QueryRow(ctx, "SELECT reason FROM outbox_event_replay WHERE id=$1", fact.ID).Scan(&reason); err != nil {
+		t.Fatalf("read immutable replay fact: %v", err)
+	}
+	if reason != "dependency recovered" {
+		t.Fatalf("immutable replay reason=%q, want original", reason)
+	}
+	if err := NewPublisher(pool, testConfig(t, nil)).publishOnce(ctx, func(context.Context, PublishedEvent) error { return nil }); err != nil {
+		t.Fatalf("publish immutable-test replayed event: %v", err)
 	}
 }
