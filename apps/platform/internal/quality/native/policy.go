@@ -181,17 +181,21 @@ func LoadPolicy(path string) (Policy, error) {
 	if err != nil {
 		return Policy{}, fmt.Errorf("read quality policy %q: %w", path, err)
 	}
+	return LoadPolicyBytes(content, path)
+}
+
+func LoadPolicyBytes(content []byte, sourceRef string) (Policy, error) {
 	var policy Policy
 	decoder := yaml.NewDecoder(bytes.NewReader(content))
 	decoder.KnownFields(true)
 	if err := decoder.Decode(&policy); err != nil {
-		return Policy{}, fmt.Errorf("decode quality policy %q: %w", path, err)
+		return Policy{}, fmt.Errorf("decode quality policy %q: %w", sourceRef, err)
 	}
 	if err := validatePolicy(policy, true); err != nil {
-		return Policy{}, fmt.Errorf("validate quality policy %q: %w", path, err)
+		return Policy{}, fmt.Errorf("validate quality policy %q: %w", sourceRef, err)
 	}
 	if err := normalizeAndValidateGate(&policy); err != nil {
-		return Policy{}, fmt.Errorf("validate quality policy %q: %w", path, err)
+		return Policy{}, fmt.Errorf("validate quality policy %q: %w", sourceRef, err)
 	}
 	for i := range policy.Spec.Rules {
 		policy.Spec.Rules[i].Dimension = normalizeDimension(policy.Spec.Rules[i].Dimension)
