@@ -33,15 +33,17 @@ const (
 )
 
 var (
-	ErrInvalidWorkspace     = errors.New("workspace id is required")
-	ErrInvalidDatasetCode   = errors.New("dataset code is required")
-	ErrInvalidDatasetName   = errors.New("dataset name is required")
-	ErrInvalidDatasetType   = errors.New("invalid dataset type")
-	ErrInvalidVersion       = errors.New("version number must be positive")
-	ErrInvalidTransition    = errors.New("invalid dataset version state transition")
-	ErrStaleVersionRecovery = errors.New("dataset version recovery would replace a newer current version")
-	ErrImmutableVersion     = errors.New("dataset version is immutable")
-	ErrInvalidReadyMetadata = errors.New("ready dataset version requires storage URI and checksum")
+	ErrInvalidWorkspace       = errors.New("workspace id is required")
+	ErrInvalidDatasetCode     = errors.New("dataset code is required")
+	ErrInvalidDatasetName     = errors.New("dataset name is required")
+	ErrInvalidDatasetType     = errors.New("invalid dataset type")
+	ErrInvalidVersion         = errors.New("version number must be positive")
+	ErrInvalidTransition      = errors.New("invalid dataset version state transition")
+	ErrStaleVersionRecovery   = errors.New("dataset version recovery would replace a newer current version")
+	ErrImmutableVersion       = errors.New("dataset version is immutable")
+	ErrInvalidReadyMetadata   = errors.New("ready dataset version requires storage URI and checksum")
+	ErrIdempotencyKeyRequired = errors.New("dataset upload idempotency key is required")
+	ErrIdempotencyConflict    = errors.New("dataset upload idempotency key is already bound to another request")
 	// ErrSourceResourceWorkspace rejects a dataset whose source DataResource
 	// belongs to another workspace.
 	ErrSourceResourceWorkspace = errors.New("source resource belongs to a different workspace")

@@ -11,6 +11,22 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 )
 
+func TestUploadRequiresIdempotencyKey(t *testing.T) {
+	datasetID := uuid.New()
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/datasets/"+datasetID.String()+"/versions", strings.NewReader(""))
+	req.SetPathValue("datasetId", datasetID.String())
+	response := httptest.NewRecorder()
+
+	(&Handler{}).upload(response, req)
+
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusBadRequest)
+	}
+	if !strings.Contains(response.Body.String(), "IDEMPOTENCY_KEY_REQUIRED") {
+		t.Fatalf("body = %s, want IDEMPOTENCY_KEY_REQUIRED", response.Body.String())
+	}
+}
+
 func TestGetVersionRequiresWorkspaceID(t *testing.T) {
 	versionID := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/dataset-versions/"+versionID.String(), nil)

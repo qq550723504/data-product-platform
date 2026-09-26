@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"io"
 	"path/filepath"
@@ -30,6 +32,7 @@ type UploadVersionCommand struct {
 	Content                     []byte
 	ActorID                     *uuid.UUID
 	TraceID                     string
+	IdempotencyKey              string
 	GeneratedByExecutionID      *uuid.UUID
 	GeneratedByEntityMatchJobID *uuid.UUID
 	Metadata                    map[string]any
@@ -85,6 +88,21 @@ func (s *UploadVersionService) handle(
 	if cmd.GeneratedByExecutionID != nil && cmd.GeneratedByEntityMatchJobID != nil {
 		return domain.DatasetVersion{}, fmt.Errorf("dataset version cannot have both execution and entity-match producers")
 	}
+	key := strings.TrimSpace(cmd.IdempotencyKey)
+	if key != "" && (cmd.GeneratedByExecutionID != nil || cmd.GeneratedByEntityMatchJobID != nil) {
+		return domain.DatasetVersion{}, fmt.Errorf("dataset upload command idempotency cannot be combined with producer identity")
+	}
+	if len(key) > 255 {
+		return domain.DatasetVersion{}, domain.ErrIdempotencyConflict
+	}
+	var uploadFingerprint string
+	if key != "" {
+		var err error
+		uploadFingerprint, err = uploadVersionFingerprint(cmd)
+		if err != nil {
+			return domain.DatasetVersion{}, err
+		}
+	}
 	if len(cmd.Content) == 0 {
 		return domain.DatasetVersion{}, fmt.Errorf("dataset version content is empty")
 	}
@@ -99,11 +117,50 @@ func (s *UploadVersionService) handle(
 	// published: there is nothing left to write, and no new fact to record.
 	alreadyPublished := false
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		allocated, reused, err := s.repo.AllocateVersion(ctx, tx, cmd.DatasetID, cmd.ActorID, cmd.GeneratedByExecutionID, cmd.GeneratedByEntityMatchJobID)
-		if err != nil {
-			return err
+		reused := false
+		if key != "" {
+			workspaceID, err := s.repo.WorkspaceForDatasetTx(ctx, tx, cmd.DatasetID)
+			if err != nil {
+				return err
+			}
+			if err := s.repo.LockUploadIdempotencyTx(ctx, tx, workspaceID, key); err != nil {
+				return err
+			}
+			record, found, err := s.repo.FindUploadIdempotencyTx(ctx, tx, workspaceID, key)
+			if err != nil {
+				return err
+			}
+			if found {
+				if record.RequestFingerprint != uploadFingerprint {
+					return domain.ErrIdempotencyConflict
+				}
+				stored, err := s.repo.GetVersionTx(ctx, tx, record.VersionID)
+				if err != nil {
+					return fmt.Errorf("load idempotent dataset upload: %w", err)
+				}
+				if stored.DatasetID != cmd.DatasetID {
+					return domain.ErrIdempotencyConflict
+				}
+				version = stored
+				reused = true
+			} else {
+				allocated, _, err := s.repo.AllocateVersion(ctx, tx, cmd.DatasetID, cmd.ActorID, nil, nil)
+				if err != nil {
+					return err
+				}
+				if err := s.repo.InsertUploadIdempotencyTx(ctx, tx, workspaceID, key, allocated.ID, uploadFingerprint); err != nil {
+					return err
+				}
+				version = allocated
+			}
+		} else {
+			allocated, wasReused, err := s.repo.AllocateVersion(ctx, tx, cmd.DatasetID, cmd.ActorID, cmd.GeneratedByExecutionID, cmd.GeneratedByEntityMatchJobID)
+			if err != nil {
+				return err
+			}
+			version = allocated
+			reused = wasReused
 		}
-		version = allocated
 		if !reused {
 			return audit.Append(ctx, tx, audit.Event{
 				ActorType:  actorType(cmd.ActorID),
@@ -120,11 +177,17 @@ func (s *UploadVersionService) handle(
 			})
 		}
 
-		// A READY version is a published fact: reuse it without rewriting anything.
+		// A command-idempotency replay resolves to the original DatasetVersion
+		// identity even if a later lifecycle command superseded or invalidated it.
+		// Those terminal states are historical changes to the same fact, not
+		// permission to allocate a replacement for the same upload command.
+		if key != "" && reused && (version.Status == domain.VersionReady || version.Status == domain.VersionSuperseded || version.Status == domain.VersionInvalid) {
+			alreadyPublished = true
+			return nil
+		}
+		// A READY producer output is already published. Entity Match may also
+		// recover against its immutable historical SUPERSEDED output.
 		if version.Status == domain.VersionReady || (version.Status == domain.VersionSuperseded && cmd.GeneratedByEntityMatchJobID != nil) {
-			// A MatchJob may recover after its already-published historical output was
-			// superseded by a later DatasetVersion. That immutable output still proves
-			// what this job produced and is safe to re-bind to the job.
 			alreadyPublished = true
 			return nil
 		}
@@ -141,7 +204,7 @@ func (s *UploadVersionService) handle(
 			ObjectType: "DATASET_VERSION",
 			ObjectID:   version.ID,
 			BeforeState: map[string]any{
-				"status": allocated.Status,
+				"status": version.Status,
 			},
 			AfterState: map[string]any{
 				"status":    version.Status,
@@ -389,4 +452,31 @@ func sanitizeFilename(filename string) string {
 		return "dataset.bin"
 	}
 	return strings.ReplaceAll(filename, " ", "_")
+}
+
+type uploadVersionFingerprintPayload struct {
+	DatasetID   uuid.UUID      `json:"datasetId"`
+	Filename    string         `json:"filename"`
+	ContentType string         `json:"contentType"`
+	ContentSHA  string         `json:"contentSha256"`
+	ActorID     *uuid.UUID     `json:"actorId,omitempty"`
+	Metadata    map[string]any `json:"metadata,omitempty"`
+}
+
+func uploadVersionFingerprint(cmd UploadVersionCommand) (string, error) {
+	contentHash := sha256.Sum256(cmd.Content)
+	payload := uploadVersionFingerprintPayload{
+		DatasetID:   cmd.DatasetID,
+		Filename:    sanitizeFilename(cmd.Filename),
+		ContentType: strings.TrimSpace(strings.ToLower(cmd.ContentType)),
+		ContentSHA:  hex.EncodeToString(contentHash[:]),
+		ActorID:     cmd.ActorID,
+		Metadata:    cmd.Metadata,
+	}
+	encoded, err := json.Marshal(payload)
+	if err != nil {
+		return "", fmt.Errorf("marshal dataset upload idempotency fingerprint: %w", err)
+	}
+	digest := sha256.Sum256(encoded)
+	return hex.EncodeToString(digest[:]), nil
 }

@@ -23,14 +23,14 @@ function configured(config: IngestConfig) {
   return { workspaceId: config.workspaceId as string, actorId: config.actorId as string };
 }
 function transport(config: IngestConfig, request: typeof fetch, beforeWrite: () => void) {
-  return async (path: string, body?: Record<string, unknown> | FormData): Promise<Record<string, unknown>> => {
+  return async (path: string, body?: Record<string, unknown> | FormData, idempotencyKey?: string): Promise<Record<string, unknown>> => {
     const multipart = body instanceof FormData;
     if (body) beforeWrite();
     let response: Response;
     try {
       response = await request(`${config.apiBaseUrl.replace(/\/$/, "")}${path}`, {
         method: body ? "POST" : "GET", cache: "no-store", redirect: "error", signal: AbortSignal.timeout(60000),
-        headers: { Accept: "application/json", ...(body ? { "X-Actor-ID": config.actorId as string } : {}), ...(!multipart && body ? { "Content-Type": "application/json" } : {}) },
+        headers: { Accept: "application/json", ...(body ? { "X-Actor-ID": config.actorId as string } : {}), ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}), ...(!multipart && body ? { "Content-Type": "application/json" } : {}) },
         body: multipart ? body : body ? JSON.stringify(body) : undefined,
       });
     } catch { throw new Error("暂时无法确认 Core 请求结果。"); }
@@ -89,7 +89,7 @@ export async function importCSV(operationId: string, form: FormData, config: Ing
     state.datasetId = created(await json("/api/v1/datasets", { workspaceId, code, name: (name as string).trim(), description, datasetType: "RAW", sourceResourceId: state.resourceId }), workspaceId, "RAW", code);
     const multipart = new FormData();
     multipart.set("file", file, `company-import-${operationId}.csv`);
-    const version = await json(`/api/v1/datasets/${state.datasetId}/versions`, multipart);
+    const version = await json(`/api/v1/datasets/${state.datasetId}/versions`, multipart, `csv-ingest:${operationId}`);
     if (isId(version.id) && same(version.datasetId, state.datasetId)) state.versionId = version.id;
     if (!state.versionId || version.status !== "READY" || version.byteSize !== bytes.length || version.rowCount !== inspected.rowCount || version.checksumAlgorithm !== "SHA256" || version.checksum !== checksum) throw new Error("RAW 版本状态、记录数或原始文件校验和不一致。");
     return { ...state, ok: true, locked: true, rowCount: inspected.rowCount, checksum, message: "原始 CSV 已保存为 RAW 版本，SHA-256 与上传字节一致。请确认下一步的主体解析策略。" };

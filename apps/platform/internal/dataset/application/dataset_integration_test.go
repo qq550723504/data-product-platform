@@ -168,6 +168,79 @@ func TestDatasetVersionUploadIsSequentialTraceableAndImmutable(t *testing.T) {
 	}
 }
 
+func TestDatasetUploadIdempotencyReturnsSameVersionAndRejectsKeyReuse(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	txManager := transaction.NewManager(pool)
+	repo := infrastructure.NewPostgresRepository(pool)
+	createDataset := application.NewCreateDatasetService(txManager, repo, resourceinfra.NewPostgresRepository())
+	upload := application.NewUploadVersionService(txManager, repo, fakeStore{})
+
+	workspaceID := uuid.New()
+	dataset, err := createDataset.Handle(ctx, application.CreateDatasetCommand{
+		WorkspaceID: workspaceID,
+		Code:        "IDEMPOTENT-UPLOAD-" + uuid.NewString(),
+		Name:        "Idempotent upload dataset",
+		DatasetType: domain.DatasetTypeRaw,
+		TraceID:     "dataset-upload-idempotency",
+	})
+	if err != nil {
+		t.Fatalf("create dataset: %v", err)
+	}
+
+	key := "upload-" + uuid.NewString()
+	cmd := application.UploadVersionCommand{
+		DatasetID:      dataset.ID,
+		Filename:       "manual.csv",
+		ContentType:    "text/csv",
+		Content:        []byte("source_id,name\n1,alpha\n"),
+		IdempotencyKey: key,
+		TraceID:        "dataset-upload-idempotency",
+	}
+
+	first, err := upload.Handle(ctx, cmd)
+	if err != nil {
+		t.Fatalf("first upload: %v", err)
+	}
+	replay, err := upload.Handle(ctx, cmd)
+	if err != nil {
+		t.Fatalf("replayed upload: %v", err)
+	}
+	if replay.ID != first.ID || replay.VersionNo != first.VersionNo {
+		t.Fatalf("replay returned version %s/v%d, want %s/v%d", replay.ID, replay.VersionNo, first.ID, first.VersionNo)
+	}
+
+	var versionCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM dataset_version WHERE dataset_id=$1`, dataset.ID).Scan(&versionCount); err != nil {
+		t.Fatalf("count dataset versions: %v", err)
+	}
+	if versionCount != 1 {
+		t.Fatalf("dataset versions after replay = %d, want 1", versionCount)
+	}
+
+	conflict := cmd
+	conflict.Content = []byte("source_id,name\n1,beta\n")
+	if _, err := upload.Handle(ctx, conflict); !errors.Is(err, domain.ErrIdempotencyConflict) {
+		t.Fatalf("same key with different request error = %v, want ErrIdempotencyConflict", err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM dataset_version WHERE dataset_id=$1`, dataset.ID).Scan(&versionCount); err != nil {
+		t.Fatalf("count dataset versions after conflict: %v", err)
+	}
+	if versionCount != 1 {
+		t.Fatalf("dataset versions after key conflict = %d, want 1", versionCount)
+	}
+}
+
 func TestDatasetCreateRejectsSourceResourceFromAnotherWorkspace(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {

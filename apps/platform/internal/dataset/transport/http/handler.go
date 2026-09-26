@@ -137,6 +137,11 @@ func (h *Handler) upload(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ACTOR_ID", "X-Actor-ID must be a UUID", nil)
 		return
 	}
+	idempotencyKey := r.Header.Get("Idempotency-Key")
+	if idempotencyKey == "" {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "IDEMPOTENCY_KEY_REQUIRED", "Idempotency-Key header is required", nil)
+		return
+	}
 
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadBytes)
 	if err := r.ParseMultipartForm(maxUploadBytes); err != nil {
@@ -160,12 +165,13 @@ func (h *Handler) upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	version, err := h.uploadVersion.Handle(r.Context(), application.UploadVersionCommand{
-		DatasetID:   datasetID,
-		Filename:    header.Filename,
-		ContentType: contentType,
-		Content:     content,
-		ActorID:     actorID,
-		TraceID:     httpserver.RequestID(r.Context()),
+		DatasetID:      datasetID,
+		Filename:       header.Filename,
+		ContentType:    contentType,
+		Content:        content,
+		ActorID:        actorID,
+		TraceID:        httpserver.RequestID(r.Context()),
+		IdempotencyKey: idempotencyKey,
 	})
 	if err != nil {
 		status := http.StatusInternalServerError
@@ -173,6 +179,9 @@ func (h *Handler) upload(w http.ResponseWriter, r *http.Request) {
 		if errors.Is(err, infrastructure.ErrNotFound) {
 			status = http.StatusNotFound
 			code = "DATASET_NOT_FOUND"
+		} else if errors.Is(err, domain.ErrIdempotencyConflict) {
+			status = http.StatusConflict
+			code = "IDEMPOTENCY_KEY_CONFLICT"
 		}
 		httpserver.WriteError(w, r, status, code, err.Error(), nil)
 		return
