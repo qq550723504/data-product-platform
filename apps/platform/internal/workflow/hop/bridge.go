@@ -88,6 +88,31 @@ func (b *Bridge) StartSubmission(ctx context.Context, request workflowapp.Proces
 	return run, err
 }
 
+func (b *Bridge) RecoverSubmission(ctx context.Context, request workflowapp.ProcessingRequest, runID string) (workflowapp.EngineRun, error) {
+	cfg, err := b.config(request)
+	if err != nil {
+		return workflowapp.EngineRun{}, err
+	}
+	parameters, _, err := b.executionParameters(ctx, request, cfg)
+	if err != nil {
+		return workflowapp.EngineRun{}, err
+	}
+	run, err := b.engine.RecoverSubmission(ctx, workflowapp.ManagedSubmitRequest{
+		Name:          cfg.Name,
+		DefinitionRef: cfg.DefinitionRef,
+		Parameters:    parameters,
+	}, runID)
+	if run.Metrics == nil {
+		run.Metrics = map[string]any{}
+	}
+	_, outputURI := b.stagingOutput(request, cfg)
+	run.Metrics["stagingOutputUri"] = outputURI
+	run.Metrics["workflowDefinitionRef"] = request.WorkflowVersion.DefinitionRef
+	run.Metrics["hopDefinitionRef"] = cfg.DefinitionRef
+	return run, err
+}
+
+
 func (b *Bridge) managedSubmitRequest(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.ManagedSubmitRequest, error) {
 	cfg, err := b.config(request)
 	if err != nil {
