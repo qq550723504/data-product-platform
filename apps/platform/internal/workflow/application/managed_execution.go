@@ -159,12 +159,6 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 					// identity and never registers a second run.
 					return fmt.Errorf("reconcile uncertain %s start for execution %s: %w", execution.EngineType, executionID, err)
 				}
-				if ManagedSubmissionOutcomeWasUnknown(execution) {
-					// A later rejection cannot retroactively prove that the first
-					// start request was not accepted. Keep the Core fact unresolved
-					// until the provider yields authoritative run evidence.
-					return fmt.Errorf("preserve ambiguous %s submission for execution %s after recovery rejection: %w", execution.EngineType, executionID, err)
-				}
 				_, failErr := r.service.Fail(
 					ctx,
 					execution.ID,
