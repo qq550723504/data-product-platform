@@ -33,7 +33,6 @@ func TestNextFailureDelayBacksOffAndCaps(t *testing.T) {
 	}
 }
 
-
 func TestFailureDelayRestartsAfterOperatorReplay(t *testing.T) {
 	cfg := Config{FailureBase: 5 * time.Second, FailureCap: 5 * time.Minute}
 	c := &claim{
