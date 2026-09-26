@@ -302,12 +302,16 @@ func (r *ManagedReconciler) recoverExpiredSubmission(ctx context.Context, bridge
 		return fmt.Errorf("load workflow version for uncertain submission %s: %w", executionID, err)
 	}
 	request := ProcessingRequestFromExecution(execution, version)
+	preparedRequest, err := bridge.PrepareStartRequest(ctx, request)
+	if err != nil {
+		return fmt.Errorf("prepare managed submission recovery %s before provider call: %w", executionID, err)
+	}
 	attemptID, err := r.service.RecordManagedSubmissionRecoveryAttempt(ctx, execution.ID, execution.ID.String())
 	if err != nil {
 		return fmt.Errorf("record managed submission recovery attempt %s: %w", executionID, err)
 	}
 
-	if _, err := bridge.RecoverSubmission(ctx, request, execution.EngineExecutionID); err != nil {
+	if _, err := bridge.InvokeRecoverSubmission(ctx, preparedRequest, execution.EngineExecutionID); err != nil {
 		outcome := "RETRYABLE_ERROR"
 		if IsManagedEngineOutcomeUnknown(err) {
 			outcome = "OUTCOME_UNKNOWN"
