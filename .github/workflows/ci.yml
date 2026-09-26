@@ -154,11 +154,12 @@ jobs:
       - name: Test
         run: go test ./...
 
-      - name: Build API / worker / migrate
+      - name: Build API / worker / migrate / operator tools
         run: |
           go build ./cmd/api
           go build ./cmd/worker
           go build ./cmd/migrate
+          go build ./cmd/outbox-replay
 
   web-console:
     needs: changes
