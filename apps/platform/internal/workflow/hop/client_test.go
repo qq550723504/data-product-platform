@@ -450,6 +450,59 @@ func TestHopInitialStartKeepsDefiniteRejectionEvenWhenPreparedRunIsQueryable(t *
 	assertManagedEngineError(t, err, workflowapp.ManagedEngineInvalidRequest, false, http.StatusBadRequest)
 }
 
+func TestHopRecoveryUsesStartedStatusAfterAmbiguousStartResponse(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/startPipeline":
+			http.Error(w, "transient start response", http.StatusServiceUnavailable)
+		case "/hop/pipelineStatus":
+			writeJSON(t, w, map[string]any{
+				"id":                 "prepared-run",
+				"pipelineName":       "pipeline",
+				"statusDescription":  "Running",
+				"executionStartDate": "2026-09-26T08:00:00.000+0000",
+				"result":             map[string]any{"nrErrors": 0},
+			})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	run, err := client.RecoverSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
+	if err != nil {
+		t.Fatalf("recover ambiguous start with authoritative status: %v", err)
+	}
+	if run.ID != "prepared-run" || run.StartedAt == nil || run.State != workflowapp.EngineRunRunning {
+		t.Fatalf("recovered run = %+v, want authoritative started evidence", run)
+	}
+}
+
+func TestHopRecoveryKeepsOutcomeUnknownWhenStatusUnavailable(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/startPipeline":
+			http.Error(w, "definite secondary rejection", http.StatusConflict)
+		case "/hop/pipelineStatus":
+			http.Error(w, "status unavailable", http.StatusServiceUnavailable)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	_, err = client.RecoverSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, 0)
+}
+
 func TestHopRecoveryRequiresEvidenceThatPreparedRunStarted(t *testing.T) {
 	started := false
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
