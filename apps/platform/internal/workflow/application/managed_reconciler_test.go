@@ -92,7 +92,6 @@ func (b *fakeManagedBridge) RecoverSubmission(ctx context.Context, request Proce
 	return b.StartSubmission(ctx, request, runID)
 }
 
-
 func (b *fakeManagedBridge) Status(context.Context, ProcessingRequest, string) (EngineRun, error) {
 	b.statusCalls++
 	if b.statusErr != nil {
