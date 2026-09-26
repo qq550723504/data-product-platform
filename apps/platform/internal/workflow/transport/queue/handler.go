@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/hibiken/asynq"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
@@ -14,11 +15,12 @@ import (
 )
 
 type Handler struct {
-	service      *workflowapp.ExecutionService
-	repo         *workflowinfra.PostgresRepository
-	native       workflowapp.ProcessingEngine
-	nativeLocker workflowapp.NativeRecoveryLocker
-	managed      map[string]workflowapp.ManagedExecutionBridge
+	service       *workflowapp.ExecutionService
+	repo          *workflowinfra.PostgresRepository
+	native        workflowapp.ProcessingEngine
+	nativeLocker  workflowapp.NativeRecoveryLocker
+	managedLocker workflowapp.NativeRecoveryLocker
+	managed       map[string]workflowapp.ManagedExecutionBridge
 }
 
 func NewHandler(service *workflowapp.ExecutionService, repo *workflowinfra.PostgresRepository, native workflowapp.ProcessingEngine, managed ...workflowapp.ManagedExecutionBridge) *Handler {
@@ -37,6 +39,11 @@ func NewHandler(service *workflowapp.ExecutionService, repo *workflowinfra.Postg
 
 func (h *Handler) WithNativeExecutionLocker(locker workflowapp.NativeRecoveryLocker) *Handler {
 	h.nativeLocker = locker
+	return h
+}
+
+func (h *Handler) WithManagedSubmissionLocker(locker workflowapp.NativeRecoveryLocker) *Handler {
+	h.managedLocker = locker
 	return h
 }
 
@@ -180,23 +187,61 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 		return fmt.Errorf("persist remote start armed phase for execution %s: %w", execution.ID, err)
 	}
 
-	run, err := bridge.StartSubmission(ctx, request, prepared.ID)
+	if h.managedLocker == nil {
+		return fmt.Errorf("managed submission locker is not configured")
+	}
+	err = h.managedLocker.WithAdvisoryLock(ctx, workflowapp.ManagedSubmissionRecoveryLockKey(execution.ID), func(ctx context.Context) error {
+		current, err := h.repo.GetExecution(ctx, execution.ID)
+		if err != nil {
+			return fmt.Errorf("reload managed submission %s before start: %w", execution.ID, err)
+		}
+		if current.Status != domain.ExecutionSubmitting || current.EngineExecutionID != prepared.ID {
+			return nil
+		}
+		claimedAt := current.StartedAt
+		if claimedAt == nil {
+			claimedAt = &current.CreatedAt
+		}
+		if time.Since(*claimedAt) >= workflowapp.DefaultManagedSubmissionTimeout {
+			// The original submitter's lease expired. Recovery owns any further
+			// provider interaction for this durable remote identity.
+			return nil
+		}
+		return h.startManagedSubmissionLocked(ctx, current, request, engineType, prepared.ID, bridge)
+	})
+	if errors.Is(err, transaction.ErrAdvisoryLockBusy) {
+		return nil
+	}
+	return err
+}
+
+func (h *Handler) startManagedSubmissionLocked(
+	ctx context.Context,
+	execution domain.Execution,
+	request workflowapp.ProcessingRequest,
+	engineType, runID string,
+	bridge workflowapp.ManagedExecutionBridge,
+) error {
+	run, err := bridge.StartSubmission(ctx, request, runID)
 	if err != nil {
 		if managedSubmissionOutcomeUnknown(err) {
 			if _, markErr := h.service.MarkManagedSubmissionOutcomeUnknown(ctx, execution.ID, execution.ID.String()); markErr != nil &&
 				!errors.Is(markErr, domain.ErrInvalidTransition) {
 				return fmt.Errorf("persist unknown remote start outcome for execution %s: %w", execution.ID, markErr)
 			}
-			// The durable id and armed phase already exist in Core. Keep
-			// SUBMITTING; reconciliation can only use the same remote identity.
 			return nil
+		}
+		if !workflowapp.IsManagedEngineDefiniteRejection(err) {
+			// Local/config/storage errors are not authoritative proof of a
+			// remote rejection. Keep SUBMITTING for fenced reconciliation.
+			return fmt.Errorf("managed submission start remains unresolved for execution %s: %w", execution.ID, err)
 		}
 		if _, failErr := h.service.Fail(
 			ctx,
 			execution.ID,
 			"REMOTE_SUBMIT_FAILED",
 			"remote processing engine start was rejected",
-			map[string]any{"engineType": engineType, "externalExecutionId": prepared.ID},
+			map[string]any{"engineType": engineType, "externalExecutionId": runID},
 			execution.ID.String(),
 		); failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
 			return fmt.Errorf("persist remote start failure for execution %s: %w", execution.ID, failErr)
@@ -204,17 +249,15 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 		return nil
 	}
 	if strings.TrimSpace(run.ID) == "" {
-		run.ID = prepared.ID
+		run.ID = runID
 	}
 
-	if _, err := h.service.Start(ctx, execution.ID, prepared.ID, execution.ID.String()); err != nil {
+	if _, err := h.service.Start(ctx, execution.ID, runID, execution.ID.String()); err != nil {
 		if errors.Is(err, domain.ErrInvalidTransition) {
 			return nil
 		}
 		return fmt.Errorf("mark managed execution %s running: %w", execution.ID, err)
 	}
-	// Even if the remote runtime reports a terminal state immediately, completion
-	// is delegated to ManagedReconciler so output import follows one serialized path.
 	return nil
 }
 
