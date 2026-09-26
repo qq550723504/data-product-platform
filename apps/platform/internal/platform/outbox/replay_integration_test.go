@@ -243,7 +243,6 @@ func TestConcurrentRequeueOnlyOneIntentWins(t *testing.T) {
 	}
 }
 
-
 func TestConcurrentSameKeyRequeueReturnsSameFact(t *testing.T) {
 	ctx := context.Background()
 	pool := newTestPool(t)
