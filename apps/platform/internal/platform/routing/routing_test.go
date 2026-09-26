@@ -60,6 +60,7 @@ var eventVocabulary = []string{
 	"DataResourceCreated",
 	"DatasetCreated",
 	"DatasetVersionCreated",
+	"DatasetVersionSuperseded",
 	"DatasetVersionFailed",
 	"DatasetVersionInvalidated",
 	"EntityMappingDecisionRecorded",
