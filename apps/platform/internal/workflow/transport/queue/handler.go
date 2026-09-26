@@ -136,7 +136,24 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 	execution = claimed
 	request = workflowapp.ProcessingRequestFromExecution(execution, request.WorkflowVersion)
 
-	prepared, err := bridge.PrepareSubmission(ctx, request)
+	registerRequest, err := bridge.PrepareRegisterRequest(ctx, request)
+	if err != nil {
+		return h.failManagedSubmissionPreparation(ctx, execution, engineType, "REGISTER", err)
+	}
+	registerAttemptID, err := h.service.RecordManagedSubmissionAttempt(ctx, execution.ID, "REGISTER", execution.ID.String())
+	if err != nil {
+		return fmt.Errorf("record managed register attempt for execution %s: %w", execution.ID, err)
+	}
+	prepared, err := bridge.InvokeRegisterSubmission(ctx, registerRequest)
+	registerOutcome := managedSubmissionAttemptOutcome(err)
+	if err == nil && strings.TrimSpace(prepared.ID) == "" {
+		registerOutcome = "INVALID_RESPONSE"
+	}
+	if recordErr := h.service.RecordManagedSubmissionAttemptOutcome(
+		ctx, execution.ID, registerAttemptID, "REGISTER", registerOutcome, execution.ID.String(),
+	); recordErr != nil {
+		return fmt.Errorf("record managed register outcome for execution %s: %w", execution.ID, recordErr)
+	}
 	if err != nil {
 		if managedSubmissionOutcomeUnknown(err) {
 			// Registration may have reached the provider but no durable identity
@@ -177,6 +194,11 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 		return fmt.Errorf("persist prepared remote submission reference for execution %s: %w", execution.ID, err)
 	}
 
+	startRequest, err := bridge.PrepareStartRequest(ctx, request)
+	if err != nil {
+		return h.failManagedSubmissionPreparation(ctx, execution, engineType, "START", err)
+	}
+
 	// Persist an "armed" phase before the remote side effect. This closes the
 	// crash/DB-commit window without claiming that an ambiguous response has
 	// actually occurred yet.
@@ -207,7 +229,7 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 			// provider interaction for this durable remote identity.
 			return nil
 		}
-		return h.startManagedSubmissionLocked(ctx, current, request, engineType, prepared.ID, bridge)
+		return h.startManagedSubmissionLocked(ctx, current, startRequest, engineType, prepared.ID, bridge)
 	})
 	if errors.Is(err, transaction.ErrAdvisoryLockBusy) {
 		return nil
@@ -218,11 +240,20 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 func (h *Handler) startManagedSubmissionLocked(
 	ctx context.Context,
 	execution domain.Execution,
-	request workflowapp.ProcessingRequest,
+	request workflowapp.ManagedSubmitRequest,
 	engineType, runID string,
 	bridge workflowapp.ManagedExecutionBridge,
 ) error {
-	run, err := bridge.StartSubmission(ctx, request, runID)
+	attemptID, err := h.service.RecordManagedSubmissionAttempt(ctx, execution.ID, "START", execution.ID.String())
+	if err != nil {
+		return fmt.Errorf("record managed start attempt for execution %s: %w", execution.ID, err)
+	}
+	run, err := bridge.InvokeStartSubmission(ctx, request, runID)
+	if recordErr := h.service.RecordManagedSubmissionAttemptOutcome(
+		ctx, execution.ID, attemptID, "START", managedSubmissionAttemptOutcome(err), execution.ID.String(),
+	); recordErr != nil {
+		return fmt.Errorf("record managed start outcome for execution %s: %w", execution.ID, recordErr)
+	}
 	if err != nil {
 		if managedSubmissionOutcomeUnknown(err) {
 			if _, markErr := h.service.MarkManagedSubmissionOutcomeUnknown(ctx, execution.ID, execution.ID.String()); markErr != nil &&
@@ -263,6 +294,40 @@ func (h *Handler) startManagedSubmissionLocked(
 
 func managedSubmissionOutcomeUnknown(err error) bool {
 	return workflowapp.IsManagedEngineOutcomeUnknown(err)
+}
+
+func managedSubmissionAttemptOutcome(err error) string {
+	if err == nil {
+		return "SUCCEEDED"
+	}
+	if workflowapp.IsManagedEngineOutcomeUnknown(err) {
+		return "OUTCOME_UNKNOWN"
+	}
+	if workflowapp.IsManagedEngineDefiniteRejection(err) {
+		return "DEFINITE_REJECTION"
+	}
+	var managedErr *workflowapp.ManagedEngineError
+	if errors.As(err, &managedErr) {
+		return string(managedErr.Kind)
+	}
+	return "LOCAL_ERROR"
+}
+
+func (h *Handler) failManagedSubmissionPreparation(ctx context.Context, execution domain.Execution, engineType, phase string, cause error) error {
+	if isReferenceFailure(cause) {
+		return h.quarantine(ctx, execution, cause)
+	}
+	if _, failErr := h.service.Fail(
+		ctx,
+		execution.ID,
+		"MANAGED_SUBMIT_PREPARATION_FAILED",
+		"managed processing submission preparation failed before provider call",
+		map[string]any{"engineType": engineType, "phase": phase},
+		execution.ID.String(),
+	); failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
+		return fmt.Errorf("persist managed submission preparation failure for execution %s: %w", execution.ID, failErr)
+	}
+	return nil
 }
 
 func (h *Handler) executeNative(ctx context.Context, execution domain.Execution, request workflowapp.ProcessingRequest) error {
