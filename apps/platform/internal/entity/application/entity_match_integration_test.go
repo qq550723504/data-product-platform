@@ -391,6 +391,17 @@ func TestAmbiguousMatchRequiresExplicitFrozenSelection(t *testing.T) {
 	}); !errors.Is(err, domain.ErrCandidateSelectionNotAllowed) {
 		t.Fatalf("confirmation outside frozen alternatives error = %v, want ErrCandidateSelectionNotAllowed", err)
 	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE entity SET status='RETIRED', retired_at=now() WHERE id=$1
+	`, first.ID); err != nil {
+		t.Fatalf("retire frozen alternative: %v", err)
+	}
+	if _, err := service.Confirm(ctx, entityapp.ReviewCommand{
+		CandidateID: candidate.ID, ReviewerID: reviewerID, Reason: "retired alternative must fail",
+		SelectedEntityID: &first.ID,
+	}); !errors.Is(err, domain.ErrCandidateSelectionNotAllowed) {
+		t.Fatalf("confirmation of retired frozen alternative error = %v, want ErrCandidateSelectionNotAllowed", err)
+	}
 	pending, err := entityRepo.GetCandidate(ctx, candidate.ID)
 	if err != nil {
 		t.Fatalf("reload pending candidate: %v", err)
