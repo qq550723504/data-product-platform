@@ -73,11 +73,15 @@ func (b *Bridge) PrepareStartRequest(ctx context.Context, request workflowapp.Pr
 	if err != nil {
 		return workflowapp.ManagedSubmitRequest{}, err
 	}
-	return workflowapp.ManagedSubmitRequest{
+	prepared := workflowapp.ManagedSubmitRequest{
 		Name:          cfg.Name,
 		DefinitionRef: cfg.DefinitionRef,
 		Parameters:    parameters,
-	}, nil
+	}
+	if err := validateManagedSubmitRequest(prepared, false); err != nil {
+		return workflowapp.ManagedSubmitRequest{}, err
+	}
+	return prepared, nil
 }
 
 func (b *Bridge) InvokeStartSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest, runID string) (workflowapp.EngineRun, error) {
@@ -101,21 +105,55 @@ func (b *Bridge) managedSubmitRequest(ctx context.Context, request workflowapp.P
 	if err != nil {
 		return workflowapp.ManagedSubmitRequest{}, err
 	}
-	return workflowapp.ManagedSubmitRequest{
+	prepared := workflowapp.ManagedSubmitRequest{
 		Name:          cfg.Name,
 		DefinitionRef: cfg.DefinitionRef,
 		Definition:    wrapPipelineConfiguration(definition),
 		ContentType:   cfg.ContentType,
 		Parameters:    parameters,
-	}, nil
+	}
+	if err := validateManagedSubmitRequest(prepared, true); err != nil {
+		return workflowapp.ManagedSubmitRequest{}, err
+	}
+	return prepared, nil
 }
 
-func (b *Bridge) Status(ctx context.Context, request workflowapp.ProcessingRequest, runID string) (workflowapp.EngineRun, error) {
+func (b *Bridge) PrepareStatusLookup(_ context.Context, request workflowapp.ProcessingRequest, runID string) (workflowapp.ManagedRunLookup, error) {
 	cfg, err := b.config(request)
 	if err != nil {
-		return workflowapp.EngineRun{}, err
+		return workflowapp.ManagedRunLookup{}, err
 	}
-	return b.engine.Status(ctx, cfg.Name, runID)
+	runID = strings.TrimSpace(runID)
+	if runID == "" {
+		return workflowapp.ManagedRunLookup{}, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidRequest, "prepare status lookup", false, 0,
+			fmt.Errorf("durable execution id is required"),
+		)
+	}
+	return workflowapp.ManagedRunLookup{Name: cfg.Name, RunID: runID}, nil
+}
+
+func (b *Bridge) InvokeStatus(ctx context.Context, lookup workflowapp.ManagedRunLookup) (workflowapp.EngineRun, error) {
+	return b.engine.Status(ctx, lookup.Name, lookup.RunID)
+}
+
+func validateManagedSubmitRequest(request workflowapp.ManagedSubmitRequest, requireDefinition bool) error {
+	if strings.TrimSpace(request.Name) == "" || (requireDefinition && len(request.Definition) == 0) {
+		return workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidRequest, "prepare provider request", false, 0,
+			fmt.Errorf("pipeline name and required definition are required"),
+		)
+	}
+	for key := range request.Parameters {
+		switch strings.ToLower(strings.TrimSpace(key)) {
+		case "name", "id", "xml":
+			return workflowapp.NewManagedEngineError(
+				workflowapp.ManagedEngineInvalidRequest, "prepare provider request", false, 0,
+				fmt.Errorf("parameter %q is reserved for remote run identity", key),
+			)
+		}
+	}
+	return nil
 }
 
 func (b *Bridge) Finalize(ctx context.Context, request workflowapp.ProcessingRequest, run workflowapp.EngineRun) (workflowapp.ProcessingResult, error) {
