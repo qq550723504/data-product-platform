@@ -1,6 +1,9 @@
 package application
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type ManagedEngineErrorKind string
 
@@ -11,6 +14,7 @@ const (
 	ManagedEngineUnavailable     ManagedEngineErrorKind = "UNAVAILABLE"
 	ManagedEngineInvalidResponse ManagedEngineErrorKind = "INVALID_RESPONSE"
 	ManagedEngineRejected        ManagedEngineErrorKind = "REJECTED"
+	ManagedEngineOutcomeUnknown  ManagedEngineErrorKind = "OUTCOME_UNKNOWN"
 	ManagedEngineOutputInvalid   ManagedEngineErrorKind = "OUTPUT_INVALID"
 )
 
@@ -53,4 +57,9 @@ func NewManagedEngineError(kind ManagedEngineErrorKind, operation string, retrya
 		StatusCode: statusCode,
 		Cause:      cause,
 	}
+}
+
+func IsManagedEngineOutcomeUnknown(err error) bool {
+	var managed *ManagedEngineError
+	return errors.As(err, &managed) && managed.Kind == ManagedEngineOutcomeUnknown
 }
