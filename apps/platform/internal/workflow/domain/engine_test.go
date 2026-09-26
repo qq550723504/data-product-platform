@@ -81,7 +81,6 @@ func TestExecutionSelectEngineRejectsEmpty(t *testing.T) {
 	}
 }
 
-
 func TestExecutionAttachManagedSubmissionReferenceKeepsSubmitting(t *testing.T) {
 	execution, err := NewExecution(
 		uuid.New(),
