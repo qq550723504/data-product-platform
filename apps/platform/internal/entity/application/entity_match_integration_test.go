@@ -238,6 +238,163 @@ func TestCompanyEntityResolutionReferenceSlice(t *testing.T) {
 	}
 }
 
+func TestFailedMatchJobDecisionsRemainHistoryNotAuthority(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	store := newMemoryStore()
+	createDataset := application.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
+	uploadDataset := application.NewUploadVersionService(txManager, datasetRepo, store)
+	entityRepo := entityinfra.NewPostgresRepository(pool)
+
+	workspaceID := uuid.New()
+	rawDataset, err := createDataset.Handle(ctx, application.CreateDatasetCommand{
+		WorkspaceID: workspaceID,
+		Code:        "ENTITY-FAILURE-RAW-" + uuid.NewString(),
+		Name:        "Entity failure RAW",
+		DatasetType: datasetdomain.DatasetTypeRaw,
+		TraceID:     "entity-failure-authority",
+	})
+	if err != nil {
+		t.Fatalf("create raw dataset: %v", err)
+	}
+	standardizedDataset, err := createDataset.Handle(ctx, application.CreateDatasetCommand{
+		WorkspaceID: workspaceID,
+		Code:        "ENTITY-FAILURE-STD-" + uuid.NewString(),
+		Name:        "Entity failure standardized",
+		DatasetType: datasetdomain.DatasetTypeStandardized,
+		TraceID:     "entity-failure-authority",
+	})
+	if err != nil {
+		t.Fatalf("create standardized dataset: %v", err)
+	}
+
+	sourceRef := "entity-failure-authority.csv"
+	sourceKey := "ENT-FAIL-001"
+	creditCode := "91310000TESTFAIL001"
+	validCSV := []byte("source_company_id,company_name,unified_social_credit_code\n" +
+		sourceKey + ",Failure Authority Co," + creditCode + "\n")
+	validVersion, err := uploadDataset.Handle(ctx, application.UploadVersionCommand{
+		DatasetID:   rawDataset.ID,
+		Filename:    "entity-failure-authority-valid.csv",
+		ContentType: "text/csv",
+		Content:     validCSV,
+		TraceID:     "entity-failure-authority",
+	})
+	if err != nil {
+		t.Fatalf("upload valid raw dataset: %v", err)
+	}
+
+	service := entityapp.NewMatchService(repoPath(t, "industry-packs"), txManager, entityRepo, datasetRepo, uploadDataset, store)
+	firstJob, err := service.Start(ctx, entityapp.StartJobCommand{
+		WorkspaceID:           workspaceID,
+		InputDatasetVersionID: validVersion.ID,
+		OutputDatasetID:       standardizedDataset.ID,
+		SourceType:            "CSV",
+		SourceRef:             sourceRef,
+		SourceRole:            domain.SourceAnchor,
+		PolicyRef:             "park/matching/company-match-policy-v1.yaml",
+		TraceID:               "entity-failure-authority-first",
+	})
+	if err != nil {
+		t.Fatalf("start first entity match job: %v", err)
+	}
+	if firstJob.Status != domain.JobSucceeded {
+		t.Fatalf("first job status = %s, want SUCCEEDED", firstJob.Status)
+	}
+
+	authoritativeBefore, err := entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", sourceRef, sourceKey)
+	if err != nil {
+		t.Fatalf("read first authoritative mapping: %v", err)
+	}
+	if authoritativeBefore.CurrentDecisionID == nil {
+		t.Fatal("first authoritative mapping has no decision")
+	}
+	firstDecisionID := *authoritativeBefore.CurrentDecisionID
+
+	failingCSV := []byte("source_company_id,company_name,unified_social_credit_code\n" +
+		sourceKey + ",Failure Authority Co," + creditCode + "\n" +
+		"ENT-FAIL-002,," + "91310000TESTFAIL002" + "\n")
+	failingVersion, err := uploadDataset.Handle(ctx, application.UploadVersionCommand{
+		DatasetID:   rawDataset.ID,
+		Filename:    "entity-failure-authority-failing.csv",
+		ContentType: "text/csv",
+		Content:     failingCSV,
+		TraceID:     "entity-failure-authority",
+	})
+	if err != nil {
+		t.Fatalf("upload failing raw dataset: %v", err)
+	}
+
+	if _, err := service.Start(ctx, entityapp.StartJobCommand{
+		WorkspaceID:           workspaceID,
+		InputDatasetVersionID: failingVersion.ID,
+		OutputDatasetID:       standardizedDataset.ID,
+		SourceType:            "CSV",
+		SourceRef:             sourceRef,
+		SourceRole:            domain.SourceAnchor,
+		PolicyRef:             "park/matching/company-match-policy-v1.yaml",
+		TraceID:               "entity-failure-authority-second",
+	}); err == nil {
+		t.Fatal("second entity match job unexpectedly succeeded")
+	}
+
+	var failedJobID uuid.UUID
+	if err := pool.QueryRow(ctx, `
+		SELECT id
+		FROM entity_match_job
+		WHERE workspace_id=$1 AND source_ref=$2 AND status='FAILED'
+		ORDER BY created_at DESC
+		LIMIT 1
+	`, workspaceID, sourceRef).Scan(&failedJobID); err != nil {
+		t.Fatalf("find failed entity match job: %v", err)
+	}
+
+	var failedDecisionCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM entity_mapping_decision
+		WHERE workspace_id=$1 AND source_job_id=$2 AND source_key=$3
+	`, workspaceID, failedJobID, sourceKey).Scan(&failedDecisionCount); err != nil {
+		t.Fatalf("count failed-job decisions: %v", err)
+	}
+	if failedDecisionCount != 1 {
+		t.Fatalf("failed-job decision count = %d, want 1 immutable history fact", failedDecisionCount)
+	}
+
+	history, err := entityRepo.ListMappingDecisions(ctx, workspaceID, "CSV", sourceRef, sourceKey)
+	if err != nil {
+		t.Fatalf("list mapping decision history: %v", err)
+	}
+	if len(history) != 2 {
+		t.Fatalf("mapping decision history count = %d, want 2", len(history))
+	}
+	if history[1].SourceJobID == nil || *history[1].SourceJobID != failedJobID {
+		t.Fatalf("latest immutable decision source job = %v, want failed job %s", history[1].SourceJobID, failedJobID)
+	}
+
+	authoritativeAfter, err := entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", sourceRef, sourceKey)
+	if err != nil {
+		t.Fatalf("read authoritative mapping after failed job: %v", err)
+	}
+	if authoritativeAfter.CurrentDecisionID == nil || *authoritativeAfter.CurrentDecisionID != firstDecisionID {
+		t.Fatalf("authoritative decision after failed job = %v, want prior successful decision %s", authoritativeAfter.CurrentDecisionID, firstDecisionID)
+	}
+	if authoritativeAfter.EntityID != authoritativeBefore.EntityID {
+		t.Fatalf("authoritative entity after failed job = %s, want %s", authoritativeAfter.EntityID, authoritativeBefore.EntityID)
+	}
+}
+
 func TestMatchJobRejectsDatasetsFromAnotherWorkspaceOrType(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
