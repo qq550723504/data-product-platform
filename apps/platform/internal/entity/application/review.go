@@ -19,6 +19,9 @@ type ReviewCommand struct {
 	// ExpectedDecisionID is an optional optimistic concurrency token. When set,
 	// the confirmation only succeeds while this decision is still current.
 	ExpectedDecisionID *uuid.UUID
+	// SelectedEntityID is required only when the candidate contains frozen
+	// alternatives but no preselected entity.
+	SelectedEntityID *uuid.UUID
 }
 
 func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.MatchJob, error) {
@@ -29,6 +32,18 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 	job, err := s.entityRepo.GetJob(ctx, candidate.JobID)
 	if err != nil {
 		return domain.MatchJob{}, err
+	}
+	if cmd.SelectedEntityID != nil {
+		selected, err := s.entityRepo.GetEntity(ctx, *cmd.SelectedEntityID)
+		if err != nil {
+			return domain.MatchJob{}, err
+		}
+		if selected.WorkspaceID != job.WorkspaceID || selected.EntityTypeID != job.EntityTypeID || selected.Status != domain.EntityActive {
+			return domain.MatchJob{}, domain.ErrCandidateSelectionNotAllowed
+		}
+		if err := candidate.SelectAlternative(selected.ID); err != nil {
+			return domain.MatchJob{}, err
+		}
 	}
 	if err := candidate.Confirm(cmd.ReviewerID, cmd.Reason); err != nil {
 		return domain.MatchJob{}, err
@@ -58,7 +73,7 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 		}
 		decision, err := s.entityRepo.RecordMappingDecision(ctx, tx, domain.MappingDecisionCommand{
 			Mapping:           mapping,
-			SourceOrigin:      domain.OriginMatchCandidate,
+			SourceOrigin:      reviewSourceOrigin(candidate),
 			SourceJobID:       &job.ID,
 			SourceCandidateID: &candidate.ID,
 			IdempotencyKey:    "confirm:" + candidate.ID.String(),
@@ -185,11 +200,19 @@ func (s *MatchService) Reject(ctx context.Context, cmd ReviewCommand) (domain.Ma
 	return s.entityRepo.GetJob(ctx, job.ID)
 }
 
+func reviewSourceOrigin(candidate domain.MatchCandidate) domain.SourceOrigin {
+	if len(candidate.Alternatives) > 0 {
+		return domain.OriginManualReview
+	}
+	return domain.OriginMatchCandidate
+}
+
 func reviewEvidenceMetadata(job domain.MatchJob, candidate domain.MatchCandidate, decision string) map[string]any {
 	return map[string]any{
 		"decision":           decision,
 		"sourceKey":          candidate.SourceKey,
 		"candidateEntityId":  candidate.CandidateEntityID,
+		"candidateAlternatives": candidate.Alternatives,
 		"matchMethod":        candidate.MatchMethod,
 		"matchRuleId":        candidate.MatchRuleID,
 		"confidence":         candidate.Confidence,
