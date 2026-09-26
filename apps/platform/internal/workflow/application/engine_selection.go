@@ -87,6 +87,48 @@ func (s *ExecutionService) AttachManagedSubmissionReference(ctx context.Context,
 	return result, err
 }
 
+const managedSubmissionOutcomeUnknownMetric = "submissionOutcomeUnknown"
+
+func (s *ExecutionService) MarkManagedSubmissionOutcomeUnknown(ctx context.Context, executionID uuid.UUID, traceID string) (domain.Execution, error) {
+	var result domain.Execution
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		execution, err := s.repo.GetExecutionTx(ctx, tx, executionID, true)
+		if err != nil {
+			return err
+		}
+		if execution.Status != domain.ExecutionSubmitting || execution.EngineExecutionID == "" {
+			return domain.ErrInvalidTransition
+		}
+		before := executionAuditState(execution)
+		metrics := cloneMetrics(execution.Metrics)
+		metrics[managedSubmissionOutcomeUnknownMetric] = true
+		execution.Metrics = metrics
+		if err := s.repo.SaveExecutionState(ctx, tx, execution, domain.ExecutionSubmitting); err != nil {
+			return err
+		}
+		if err := audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &execution.WorkspaceID,
+			ActorType:   "SERVICE",
+			Action:      "EXECUTION_SUBMISSION_OUTCOME_UNKNOWN",
+			ObjectType:  "EXECUTION",
+			ObjectID:    execution.ID,
+			BeforeState: before,
+			AfterState:  executionAuditState(execution),
+			TraceID:     traceID,
+		}); err != nil {
+			return err
+		}
+		result = execution
+		return nil
+	})
+	return result, err
+}
+
+func ManagedSubmissionOutcomeWasUnknown(execution domain.Execution) bool {
+	value, ok := execution.Metrics[managedSubmissionOutcomeUnknownMetric]
+	return ok && value == true
+}
+
 // BeginManagedSubmission is the durable dispatch claim for a remote runtime.
 // The state transition is persisted before any network call is made. Concurrent
 // queue deliveries race on the expected QUEUED state and only one can win.
