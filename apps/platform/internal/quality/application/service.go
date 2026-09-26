@@ -101,6 +101,54 @@ func (s *Service) resolveEngine(name string) (qualityengine.Engine, error) {
 	return provider, nil
 }
 
+func validateEngineCapabilities(descriptor qualityengine.Descriptor, policy native.Policy) error {
+	supported := make(map[string]struct{}, len(descriptor.Capabilities))
+	for _, capability := range descriptor.Capabilities {
+		supported[strings.ToLower(strings.TrimSpace(capability))] = struct{}{}
+	}
+	if _, ok := supported["*"]; ok {
+		return nil
+	}
+	for _, rule := range policy.Spec.Rules {
+		ruleType := strings.ToLower(strings.TrimSpace(rule.Type))
+		if _, ok := supported[ruleType]; !ok {
+			return fmt.Errorf("quality engine %s does not support rule type %s", descriptor.Name, ruleType)
+		}
+	}
+	return nil
+}
+
+func normalizeEngineFindings(policy native.Policy, findings []domain.Finding) ([]domain.Finding, error) {
+	expected := make(map[string]native.Rule, len(policy.Spec.Rules))
+	for _, rule := range policy.Spec.Rules {
+		expected[rule.ID] = rule
+	}
+	if len(findings) != len(expected) {
+		return nil, fmt.Errorf("quality engine returned %d findings for %d rules", len(findings), len(expected))
+	}
+	seen := make(map[string]struct{}, len(findings))
+	normalized := make([]domain.Finding, 0, len(findings))
+	for _, finding := range findings {
+		rule, ok := expected[finding.RuleID]
+		if !ok {
+			return nil, fmt.Errorf("quality engine returned unknown rule id %q", finding.RuleID)
+		}
+		if _, duplicate := seen[finding.RuleID]; duplicate {
+			return nil, fmt.Errorf("quality engine returned duplicate rule id %q", finding.RuleID)
+		}
+		seen[finding.RuleID] = struct{}{}
+		switch finding.Status {
+		case domain.FindingPass, domain.FindingFail, domain.FindingSkipped:
+		default:
+			return nil, fmt.Errorf("quality engine returned unsupported finding status %q for %s", finding.Status, finding.RuleID)
+		}
+		finding.Dimension = rule.Dimension
+		finding.Severity = rule.Severity
+		normalized = append(normalized, finding)
+	}
+	return normalized, nil
+}
+
 type RunCommand struct {
 	WorkspaceID         uuid.UUID
 	DatasetVersionID    uuid.UUID
@@ -195,6 +243,12 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			}
 			return err
 		}
+		if err := validateEngineCapabilities(provider.Descriptor(), corePolicy); err != nil {
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("validate quality engine capabilities: %v; record attempt outcome: %w", err, outcomeErr)
+			}
+			return err
+		}
 		reader, err := s.store.Get(ctx, version.StorageURI)
 		if err != nil {
 			wrappedErr := fmt.Errorf("open DatasetVersion object: %w", err)
@@ -245,6 +299,14 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			}
 			return err
 		}
+		normalizedFindings, err := normalizeEngineFindings(corePolicy, engineResult.Findings)
+		if err != nil {
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("normalize quality engine result: %v; record attempt outcome: %w", err, outcomeErr)
+			}
+			return err
+		}
+		engineResult.Findings = normalizedFindings
 		descriptor := provider.Descriptor()
 		contentDigest := sha256.Sum256(policyContent)
 		result = domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, corePolicy.Metadata.Version,
@@ -279,6 +341,8 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 					"gateDecision":         result.GateDecision,
 					"evaluatorName":        result.EvaluatorName,
 					"evaluatorVersion":     result.EvaluatorVersion,
+					"diagnosticsRef":       engineResult.DiagnosticsRef,
+					"engineMetadata":       engineResult.ExecutionMetadata,
 					"metrics":              result.Metrics,
 				},
 				CreatedBy: cmd.ActorID,
