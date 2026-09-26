@@ -80,3 +80,33 @@ func TestExecutionSelectEngineRejectsEmpty(t *testing.T) {
 		t.Fatalf("expected ErrInvalidEngineType, got %v", err)
 	}
 }
+
+
+func TestExecutionAttachManagedSubmissionReferenceKeepsSubmitting(t *testing.T) {
+	execution, err := NewExecution(
+		uuid.New(),
+		uuid.New(),
+		uuid.New(),
+		"2026-09",
+		[]InputBinding{{Name: "energy_standardized", DatasetVersionID: uuid.New()}},
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("new execution: %v", err)
+	}
+	if err := execution.BeginManagedSubmission("HOP"); err != nil {
+		t.Fatalf("begin managed submission: %v", err)
+	}
+	if err := execution.AttachManagedSubmissionReference(" hop-run-1 "); err != nil {
+		t.Fatalf("attach managed submission reference: %v", err)
+	}
+	if execution.Status != ExecutionSubmitting || execution.EngineExecutionID != "hop-run-1" {
+		t.Fatalf("unexpected uncertain submission state: %#v", execution)
+	}
+	if err := execution.AttachManagedSubmissionReference("hop-run-1"); err != nil {
+		t.Fatalf("same remote identity should replay idempotently: %v", err)
+	}
+	if err := execution.AttachManagedSubmissionReference("hop-run-2"); err != ErrInvalidTransition {
+		t.Fatalf("different remote identity must conflict, got %v", err)
+	}
+}
