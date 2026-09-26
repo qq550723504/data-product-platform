@@ -65,6 +65,7 @@ type AssessmentAttempt struct {
 	WorkspaceID      uuid.UUID
 	DatasetVersionID uuid.UUID
 	RuleSetRef       string
+	EngineName       string
 	LeaseExpiresAt   time.Time
 	LeaseExpired     bool
 	State            AssessmentAttemptState
@@ -147,15 +148,15 @@ func (r *PostgresRepository) InsertResult(ctx context.Context, tx pgx.Tx, result
 	return nil
 }
 
-func (r *PostgresRepository) ReconcileAssessmentAttempt(ctx context.Context, tx pgx.Tx, attemptID, workspaceID, datasetVersionID uuid.UUID, ruleSetRef string, now time.Time) (AssessmentAttempt, bool, error) {
+func (r *PostgresRepository) ReconcileAssessmentAttempt(ctx context.Context, tx pgx.Tx, attemptID, workspaceID, datasetVersionID uuid.UUID, ruleSetRef, engineName string, now time.Time) (AssessmentAttempt, bool, error) {
 	var attempt AssessmentAttempt
 	err := tx.QueryRow(ctx, `
-		SELECT workspace_id, dataset_version_id, rule_set_ref, lease_expires_at
+		SELECT workspace_id, dataset_version_id, rule_set_ref, engine_name, lease_expires_at
 		FROM quality_assessment_attempt
 		WHERE id=$1
 		FOR UPDATE
 	`, attemptID).Scan(
-		&attempt.WorkspaceID, &attempt.DatasetVersionID, &attempt.RuleSetRef,
+		&attempt.WorkspaceID, &attempt.DatasetVersionID, &attempt.RuleSetRef, &attempt.EngineName,
 		&attempt.LeaseExpiresAt,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -164,7 +165,8 @@ func (r *PostgresRepository) ReconcileAssessmentAttempt(ctx context.Context, tx 
 	if err != nil {
 		return AssessmentAttempt{}, false, fmt.Errorf("load quality assessment attempt %s: %w", attemptID, err)
 	}
-	if attempt.WorkspaceID != workspaceID || attempt.DatasetVersionID != datasetVersionID || attempt.RuleSetRef != ruleSetRef {
+	if attempt.WorkspaceID != workspaceID || attempt.DatasetVersionID != datasetVersionID ||
+		attempt.RuleSetRef != ruleSetRef || attempt.EngineName != engineName {
 		return AssessmentAttempt{}, false, fmt.Errorf("%w: %s", ErrAssessmentAttemptConflict, attemptID)
 	}
 	if err := tx.QueryRow(ctx, `
@@ -190,15 +192,15 @@ func (r *PostgresRepository) ReconcileAssessmentAttempt(ctx context.Context, tx 
 // evaluator is invoked. A false return means another caller already owns the
 // same attempt identity; its terminal outcome, if any, is returned to the
 // caller without re-running the evaluator.
-func (r *PostgresRepository) ClaimAssessmentAttempt(ctx context.Context, tx pgx.Tx, attemptID, workspaceID, datasetVersionID uuid.UUID, ruleSetRef string, startedAt, leaseExpiresAt time.Time, actorID *uuid.UUID) (bool, AssessmentAttemptState, error) {
+func (r *PostgresRepository) ClaimAssessmentAttempt(ctx context.Context, tx pgx.Tx, attemptID, workspaceID, datasetVersionID uuid.UUID, ruleSetRef, engineName string, startedAt, leaseExpiresAt time.Time, actorID *uuid.UUID) (bool, AssessmentAttemptState, error) {
 	var insertedID uuid.UUID
 	err := tx.QueryRow(ctx, `
 		INSERT INTO quality_assessment_attempt (
-			id, workspace_id, dataset_version_id, rule_set_ref, started_at, lease_expires_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7)
+			id, workspace_id, dataset_version_id, rule_set_ref, engine_name, started_at, lease_expires_at, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
 		ON CONFLICT (id) DO NOTHING
 		RETURNING id
-	`, attemptID, workspaceID, datasetVersionID, ruleSetRef, startedAt, leaseExpiresAt, actorID).Scan(&insertedID)
+	`, attemptID, workspaceID, datasetVersionID, ruleSetRef, engineName, startedAt, leaseExpiresAt, actorID).Scan(&insertedID)
 	if err == nil {
 		return true, AssessmentAttemptState{}, nil
 	}
@@ -207,15 +209,16 @@ func (r *PostgresRepository) ClaimAssessmentAttempt(ctx context.Context, tx pgx.
 	}
 
 	var existingWorkspaceID, existingDatasetVersionID uuid.UUID
-	var existingRuleSetRef string
+	var existingRuleSetRef, existingEngineName string
 	if err := tx.QueryRow(ctx, `
-		SELECT workspace_id, dataset_version_id, rule_set_ref
+		SELECT workspace_id, dataset_version_id, rule_set_ref, engine_name
 		FROM quality_assessment_attempt
 		WHERE id=$1
-	`, attemptID).Scan(&existingWorkspaceID, &existingDatasetVersionID, &existingRuleSetRef); err != nil {
+	`, attemptID).Scan(&existingWorkspaceID, &existingDatasetVersionID, &existingRuleSetRef, &existingEngineName); err != nil {
 		return false, AssessmentAttemptState{}, fmt.Errorf("load quality assessment attempt %s: %w", attemptID, err)
 	}
-	if existingWorkspaceID != workspaceID || existingDatasetVersionID != datasetVersionID || existingRuleSetRef != ruleSetRef {
+	if existingWorkspaceID != workspaceID || existingDatasetVersionID != datasetVersionID ||
+		existingRuleSetRef != ruleSetRef || existingEngineName != engineName {
 		return false, AssessmentAttemptState{}, fmt.Errorf("%w: %s", ErrAssessmentAttemptConflict, attemptID)
 	}
 
