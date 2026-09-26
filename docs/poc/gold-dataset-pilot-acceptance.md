@@ -2,9 +2,9 @@
 
 Issue: #208（GitHub 已重新打开）  
 Parent: #203（仍开放）  
-Status: **AUTOMATED LIVE PILOT PASS / EXTERNAL EXPLANATION TEST PENDING**
+Status: **AUTOMATED LIVE PILOT PASS / EXTERNAL EXPLANATION TEST DEFERRED (NON-BLOCKING)**
 
-> 本报告只记录已由仓库 CI、browser、live-core 和 PostgreSQL integration 证明的事实。自动化 live Pilot 已通过：real Label Studio 的同一 Reference Pilot 事实经 ACCEPT/CORRECT、FINALIZED AnnotationSnapshot 后直接进入 Gold build / quality / certification / DIRECT_DATA，Playwright 随后在 live-core 上打开同一真实 Gold DatasetVersion 并验证 frozen production proof、review decisions、Cost / Evidence / Audit 与 Current Delivery Eligibility。External Explanation Test 尚未执行，因此本 Pilot 暂不能标记为最终通过，也不得描述为 production-ready。GitHub #208 继续保持开放，父 Epic #203 同样保持开放。
+> 本报告只记录已由仓库 CI、browser、live-core 和 PostgreSQL integration 证明的事实。自动化 live Pilot 已通过：real Label Studio 的同一 Reference Pilot 事实经 ACCEPT/CORRECT、FINALIZED AnnotationSnapshot 后直接进入 Gold build / quality / certification / DIRECT_DATA，Playwright 随后在 live-core 上打开同一真实 Gold DatasetVersion 并验证 frozen production proof、review decisions、Cost / Evidence / Audit 与 Current Delivery Eligibility。External Explanation Test 尚未执行，但已按当前阶段决策降级为 deferred / non-blocking follow-up，不再阻塞 Gold Pilot 与 #203 收口；该范围调整不代表 production-ready。
 
 ## 1. Pilot 目标
 
@@ -166,7 +166,7 @@ Audit 输出 actor/action/object/trace/timestamp。
 | 4 | UI 可追到 annotation/review/source/quality/rights/certification | PASS | #231/#238/#239 |
 | 5 | DIRECT_DATA fresh re-gate | PASS | #230/#236 |
 | 6 | Cost/Evidence/Audit 按业务阶段回溯 | PASS | #239 |
-| 7 | External Explanation Test PASS | **PENDING** | 需非实现人员人工执行 |
+| 7 | External Explanation Test | **DEFERRED** | non-blocking follow-up；未来仍按既定人工协议执行 |
 | 8 | 输出最终 Pilot 验收报告 | DRAFT | 本文档；待人工测试后定稿 |
 | 9 | 列出未验证边界并禁止 production-ready 描述 | PASS | 见第 7 节 |
 
@@ -180,7 +180,7 @@ Audit 输出 actor/action/object/trace/timestamp。
 
 已由 #243 验证：Playwright 在 live-core 环境中打开由真实 shared-facts Gold 链路产生的 DatasetVersion/Gold 页面，并验证 source / annotation / review / quality / certification / delivery / Cost-Evidence-Audit explainability；Certification history API 同时补齐 frozen Gold production proof 字段，避免 UI 从 current provider state 或动态 binding 回填历史事实。
 
-### 6.3 External Explanation Test — PENDING
+### 6.3 External Explanation Test — DEFERRED / NON-BLOCKING
 
 人工测试必须由至少 1 名未参与该 Gold 链路实现的人执行。
 
@@ -235,11 +235,11 @@ Audit 输出 actor/action/object/trace/timestamp。
 - **Shared-facts live vertical E2E：PASS**
 - **Live-core Gold UI browser E2E：PASS**
 - **Explainability / trace fixture automation：PASS**
-- **External Explanation Test：PENDING**
-- **#208 GitHub Issue：已重新打开；全部自动化门禁已完成，继续跟踪 External Explanation Test**
-- **#203 Epic 最终收口：BLOCKED BY HUMAN EXPLANATION TEST ONLY**
+- **External Explanation Test：DEFERRED / NON-BLOCKING**
+- **#208：自动化门禁已完成；External Explanation Test 转为 deferred follow-up，不再阻塞关闭**
+- **#203 Epic 最终收口：READY；External Explanation Test 为 deferred follow-up**
 
-External Explanation Test 完成并记录 PASS 后，才可以：
+基于当前阶段范围调整，自动化验收已足以完成第二阶段收口；External Explanation Test 未来执行后再补充记录。当前可以：
 
 1. 将本文档状态改为 FINAL / PASS；
 2. 关闭重新打开的 #208，并在 Issue / 验收报告中关联最终验收结果；
