@@ -196,38 +196,63 @@ func (s *ExecutionService) start(ctx context.Context, executionID uuid.UUID, eng
 	return execution, err
 }
 
-func (s *ExecutionService) RecordManagedSubmissionAttempt(ctx context.Context, executionID uuid.UUID, phase, traceID string) (uuid.UUID, error) {
+const (
+	managedProviderPendingAttemptIDMetric = "managedProviderPendingAttemptId"
+	managedProviderPendingPhaseMetric     = "managedProviderPendingPhase"
+	managedProviderPendingRecoveryMetric  = "managedProviderPendingRecovery"
+)
+
+func (s *ExecutionService) RecordManagedProviderAttempt(ctx context.Context, executionID uuid.UUID, phase string, recovery bool, traceID string) (uuid.UUID, error) {
 	var attemptID uuid.UUID
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		execution, err := s.repo.GetExecutionTx(ctx, tx, executionID, true)
 		if err != nil {
 			return err
 		}
-		if execution.Status != domain.ExecutionSubmitting {
+		switch execution.Status {
+		case domain.ExecutionSubmitting, domain.ExecutionRunning:
+		default:
 			return domain.ErrInvalidTransition
 		}
+		metrics := cloneMetrics(execution.Metrics)
+		if pending, _ := metrics[managedProviderPendingAttemptIDMetric].(string); strings.TrimSpace(pending) != "" {
+			return fmt.Errorf("managed provider attempt %s still awaits durable observation", pending)
+		}
+
 		attemptID = uuid.New()
+		metrics[managedProviderPendingAttemptIDMetric] = attemptID.String()
+		metrics[managedProviderPendingPhaseMetric] = phase
+		metrics[managedProviderPendingRecoveryMetric] = recovery
+		execution.Metrics = metrics
+		if err := s.repo.SaveExecutionState(ctx, tx, execution, execution.Status); err != nil {
+			return err
+		}
+
 		executionIDCopy := execution.ID
+		metadata := map[string]any{
+			"engineType": execution.EngineType,
+			"phase":      phase,
+			"recovery":   recovery,
+		}
+		if execution.EngineExecutionID != "" {
+			metadata["externalExecutionId"] = execution.EngineExecutionID
+		}
 		if err := cost.Append(ctx, tx, cost.Event{
 			WorkspaceID: execution.WorkspaceID,
 			ExecutionID: &executionIDCopy,
 			ActivityID:  attemptID,
-			CostType:    "MANAGED_SUBMISSION_PROVIDER_ATTEMPT",
+			CostType:    "MANAGED_PROVIDER_INVOCATION",
 			Quantity:    1,
 			Unit:        "attempt",
 			PricingMode: "POC_ESTIMATE",
-			Metadata: map[string]any{
-				"engineType": execution.EngineType,
-				"phase":      phase,
-				"recovery":   false,
-			},
+			Metadata:    metadata,
 		}); err != nil {
 			return err
 		}
 		return audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &execution.WorkspaceID,
 			ActorType:   "SERVICE",
-			Action:      "EXECUTION_SUBMISSION_PROVIDER_ATTEMPT_STARTED",
+			Action:      "MANAGED_PROVIDER_ATTEMPT_STARTED",
 			ObjectType:  "EXECUTION",
 			ObjectID:    execution.ID,
 			AfterState: map[string]any{
@@ -235,6 +260,7 @@ func (s *ExecutionService) RecordManagedSubmissionAttempt(ctx context.Context, e
 				"activityId": attemptID,
 				"engineType": execution.EngineType,
 				"phase":      phase,
+				"recovery":   recovery,
 			},
 			TraceID: traceID,
 		})
@@ -242,95 +268,107 @@ func (s *ExecutionService) RecordManagedSubmissionAttempt(ctx context.Context, e
 	return attemptID, err
 }
 
-func (s *ExecutionService) RecordManagedSubmissionAttemptOutcome(ctx context.Context, executionID, attemptID uuid.UUID, phase, outcome, traceID string) error {
+func (s *ExecutionService) RecordManagedProviderObservation(ctx context.Context, executionID, attemptID uuid.UUID, outcome, traceID string) error {
 	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		execution, err := s.repo.GetExecutionTx(ctx, tx, executionID, true)
 		if err != nil {
 			return err
 		}
-		return audit.Append(ctx, tx, audit.Event{
+		metrics := cloneMetrics(execution.Metrics)
+		pending, _ := metrics[managedProviderPendingAttemptIDMetric].(string)
+		if strings.TrimSpace(pending) == "" {
+			// Observation commit may have succeeded while the caller lost the
+			// response. Treat replay as idempotent once the pending pointer is gone.
+			return nil
+		}
+		if pending != attemptID.String() {
+			return fmt.Errorf("managed provider observation %s does not match pending attempt %s", attemptID, pending)
+		}
+		phase, _ := metrics[managedProviderPendingPhaseMetric].(string)
+		recovery, _ := metrics[managedProviderPendingRecoveryMetric].(bool)
+
+		if err := audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &execution.WorkspaceID,
 			ActorType:   "SERVICE",
-			Action:      "EXECUTION_SUBMISSION_PROVIDER_ATTEMPT_COMPLETED",
+			Action:      "MANAGED_PROVIDER_ATTEMPT_OBSERVED",
 			ObjectType:  "EXECUTION",
 			ObjectID:    execution.ID,
 			AfterState: map[string]any{
 				"status":     execution.Status,
 				"activityId": attemptID,
 				"phase":      phase,
+				"recovery":   recovery,
 				"outcome":    outcome,
 			},
 			TraceID: traceID,
-		})
+		}); err != nil {
+			return err
+		}
+
+		delete(metrics, managedProviderPendingAttemptIDMetric)
+		delete(metrics, managedProviderPendingPhaseMetric)
+		delete(metrics, managedProviderPendingRecoveryMetric)
+		execution.Metrics = metrics
+		return s.repo.SaveExecutionState(ctx, tx, execution, execution.Status)
 	})
+}
+
+func (s *ExecutionService) ResolvePendingManagedProviderAttemptUnknown(ctx context.Context, executionID uuid.UUID, traceID string) error {
+	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		execution, err := s.repo.GetExecutionTx(ctx, tx, executionID, true)
+		if err != nil {
+			return err
+		}
+		metrics := cloneMetrics(execution.Metrics)
+		pending, _ := metrics[managedProviderPendingAttemptIDMetric].(string)
+		if strings.TrimSpace(pending) == "" {
+			return nil
+		}
+		attemptID, err := uuid.Parse(pending)
+		if err != nil {
+			return fmt.Errorf("parse pending managed provider attempt %q: %w", pending, err)
+		}
+		phase, _ := metrics[managedProviderPendingPhaseMetric].(string)
+		recovery, _ := metrics[managedProviderPendingRecoveryMetric].(bool)
+		if err := audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &execution.WorkspaceID,
+			ActorType:   "SERVICE",
+			Action:      "MANAGED_PROVIDER_ATTEMPT_OBSERVED",
+			ObjectType:  "EXECUTION",
+			ObjectID:    execution.ID,
+			AfterState: map[string]any{
+				"status":     execution.Status,
+				"activityId": attemptID,
+				"phase":      phase,
+				"recovery":   recovery,
+				"outcome":    "OUTCOME_UNKNOWN_AFTER_PERSIST_FAILURE",
+			},
+			TraceID: traceID,
+		}); err != nil {
+			return err
+		}
+		delete(metrics, managedProviderPendingAttemptIDMetric)
+		delete(metrics, managedProviderPendingPhaseMetric)
+		delete(metrics, managedProviderPendingRecoveryMetric)
+		execution.Metrics = metrics
+		return s.repo.SaveExecutionState(ctx, tx, execution, execution.Status)
+	})
+}
+
+func (s *ExecutionService) RecordManagedSubmissionAttempt(ctx context.Context, executionID uuid.UUID, phase, traceID string) (uuid.UUID, error) {
+	return s.RecordManagedProviderAttempt(ctx, executionID, phase, false, traceID)
+}
+
+func (s *ExecutionService) RecordManagedSubmissionAttemptOutcome(ctx context.Context, executionID, attemptID uuid.UUID, _ string, outcome, traceID string) error {
+	return s.RecordManagedProviderObservation(ctx, executionID, attemptID, outcome, traceID)
 }
 
 func (s *ExecutionService) RecordManagedSubmissionRecoveryAttempt(ctx context.Context, executionID uuid.UUID, traceID string) (uuid.UUID, error) {
-	var attemptID uuid.UUID
-	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		execution, err := s.repo.GetExecutionTx(ctx, tx, executionID, true)
-		if err != nil {
-			return err
-		}
-		if execution.Status != domain.ExecutionSubmitting || execution.EngineExecutionID == "" {
-			return domain.ErrInvalidTransition
-		}
-		attemptID = uuid.New()
-		executionIDCopy := execution.ID
-		if err := cost.Append(ctx, tx, cost.Event{
-			WorkspaceID: execution.WorkspaceID,
-			ExecutionID: &executionIDCopy,
-			ActivityID:  attemptID,
-			CostType:    "MANAGED_SUBMISSION_RECOVERY_ATTEMPT",
-			Quantity:    1,
-			Unit:        "attempt",
-			PricingMode: "POC_ESTIMATE",
-			Metadata: map[string]any{
-				"engineType":          execution.EngineType,
-				"externalExecutionId": execution.EngineExecutionID,
-				"recovery":            true,
-			},
-		}); err != nil {
-			return err
-		}
-		return audit.Append(ctx, tx, audit.Event{
-			WorkspaceID: &execution.WorkspaceID,
-			ActorType:   "SERVICE",
-			Action:      "EXECUTION_SUBMISSION_RECOVERY_ATTEMPT_STARTED",
-			ObjectType:  "EXECUTION",
-			ObjectID:    execution.ID,
-			AfterState: map[string]any{
-				"status":              execution.Status,
-				"activityId":          attemptID,
-				"engineType":          execution.EngineType,
-				"externalExecutionId": execution.EngineExecutionID,
-			},
-			TraceID: traceID,
-		})
-	})
-	return attemptID, err
+	return s.RecordManagedProviderAttempt(ctx, executionID, "RECOVERY_START", true, traceID)
 }
 
 func (s *ExecutionService) RecordManagedSubmissionRecoveryOutcome(ctx context.Context, executionID, attemptID uuid.UUID, outcome, traceID string) error {
-	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		execution, err := s.repo.GetExecutionTx(ctx, tx, executionID, true)
-		if err != nil {
-			return err
-		}
-		return audit.Append(ctx, tx, audit.Event{
-			WorkspaceID: &execution.WorkspaceID,
-			ActorType:   "SERVICE",
-			Action:      "EXECUTION_SUBMISSION_RECOVERY_ATTEMPT_COMPLETED",
-			ObjectType:  "EXECUTION",
-			ObjectID:    execution.ID,
-			AfterState: map[string]any{
-				"status":     execution.Status,
-				"activityId": attemptID,
-				"outcome":    outcome,
-			},
-			TraceID: traceID,
-		})
-	})
+	return s.RecordManagedProviderObservation(ctx, executionID, attemptID, outcome, traceID)
 }
 
 func (s *ExecutionService) RecordNativeRecovery(ctx context.Context, executionID uuid.UUID, action, traceID string) error {
