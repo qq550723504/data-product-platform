@@ -170,16 +170,21 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 		return fmt.Errorf("persist prepared remote submission reference for execution %s: %w", execution.ID, err)
 	}
 
+	// Once a remote start may be attempted, Core must fail closed across every
+	// crash/response-loss/DB-commit window. Persist the ambiguity fence before
+	// the remote side effect; if this write fails, do not call StartSubmission.
+	if _, err := h.service.MarkManagedSubmissionOutcomeUnknown(ctx, execution.ID, execution.ID.String()); err != nil {
+		if errors.Is(err, domain.ErrInvalidTransition) {
+			return nil
+		}
+		return fmt.Errorf("persist remote start ambiguity fence for execution %s: %w", execution.ID, err)
+	}
+
 	run, err := bridge.StartSubmission(ctx, request, prepared.ID)
 	if err != nil {
 		if managedSubmissionOutcomeUnknown(err) {
-			// The durable id is already frozen in Core. Persist the ambiguity so
-			// later recovery cannot misclassify a secondary rejection as proof
-			// that the original start was never accepted.
-			if _, markErr := h.service.MarkManagedSubmissionOutcomeUnknown(ctx, execution.ID, execution.ID.String()); markErr != nil &&
-				!errors.Is(markErr, domain.ErrInvalidTransition) {
-				return fmt.Errorf("persist unknown remote start outcome for execution %s: %w", execution.ID, markErr)
-			}
+			// The durable id and ambiguity fence already exist in Core. Keep
+			// SUBMITTING; reconciliation can only use the same remote identity.
 			return nil
 		}
 		if _, failErr := h.service.Fail(
