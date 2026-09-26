@@ -362,6 +362,10 @@ const (
 	lostOutcome       = "lost"
 )
 
+func failureDelayForClaim(c *claim) time.Duration {
+	return nextFailureDelay(c.Event.Attempts-c.attemptBase, c.cfg)
+}
+
 // Fail conditionally records a dispatch failure. It returns which outcome was
 // applied: failed (retry scheduled), dead-lettered, or lost (another claim
 // holder owns the event now).
@@ -370,7 +374,7 @@ func (c *claim) Fail(ctx context.Context, cause error) (string, error) {
 		cause = errors.New("outbox dispatch failed")
 	}
 	generationAttempts := c.Event.Attempts - c.attemptBase
-	delay := nextFailureDelay(generationAttempts, c.cfg)
+	delay := failureDelayForClaim(c)
 	status := statusFailed
 	deadLettered := false
 	if generationAttempts >= c.cfg.MaxAttempts {
