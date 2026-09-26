@@ -63,17 +63,29 @@ func (s *fakeManagedStateService) Fail(_ context.Context, _ uuid.UUID, code, mes
 }
 
 type fakeManagedBridge struct {
-	state       EngineRunState
-	statusErr   error
-	statusCalls int
-	finalizeErr error
-	outputID    uuid.UUID
+	state        EngineRunState
+	startErr     error
+	startCalls   int
+	startRunID   string
+	statusErr    error
+	statusCalls  int
+	finalizeErr  error
+	outputID     uuid.UUID
 }
 
 func (b *fakeManagedBridge) EngineType() string { return "HOP" }
 
-func (b *fakeManagedBridge) Submit(context.Context, ProcessingRequest) (EngineRun, error) {
+func (b *fakeManagedBridge) PrepareSubmission(context.Context, ProcessingRequest) (EngineRun, error) {
 	return EngineRun{}, errors.New("not used")
+}
+
+func (b *fakeManagedBridge) StartSubmission(_ context.Context, _ ProcessingRequest, runID string) (EngineRun, error) {
+	b.startCalls++
+	b.startRunID = runID
+	if b.startErr != nil {
+		return EngineRun{ID: runID, State: EngineRunQueued}, b.startErr
+	}
+	return EngineRun{ID: runID, State: b.state}, nil
 }
 
 func (b *fakeManagedBridge) Status(context.Context, ProcessingRequest, string) (EngineRun, error) {
@@ -241,15 +253,15 @@ func TestManagedReconcilerConfirmsKnownUncertainSubmission(t *testing.T) {
 	if err := reconciler.RunOnce(context.Background()); err != nil {
 		t.Fatalf("reconcile known uncertain submission: %v", err)
 	}
-	if bridge.statusCalls != 1 || state.started != 1 || state.engineExecutionID != "hop-run-1" {
-		t.Fatalf("statusCalls=%d started=%d engineExecutionID=%q", bridge.statusCalls, state.started, state.engineExecutionID)
+	if bridge.startCalls != 1 || bridge.startRunID != "hop-run-1" || state.started != 1 || state.engineExecutionID != "hop-run-1" {
+		t.Fatalf("startCalls=%d startRunID=%q started=%d engineExecutionID=%q", bridge.startCalls, bridge.startRunID, state.started, state.engineExecutionID)
 	}
 	if state.failed != 0 {
 		t.Fatalf("known remote identity must not expire as unknown; failed=%d", state.failed)
 	}
 }
 
-func TestManagedReconcilerKeepsKnownSubmissionWhenStatusUnavailable(t *testing.T) {
+func TestManagedReconcilerKeepsKnownSubmissionWhenStartOutcomeUnknown(t *testing.T) {
 	claimedAt := time.Now().UTC().Add(-10 * time.Minute)
 	execution := domain.Execution{
 		ID:                uuid.New(),
@@ -268,15 +280,15 @@ func TestManagedReconcilerKeepsKnownSubmissionWhenStatusUnavailable(t *testing.T
 	}
 	state := &fakeManagedStateService{}
 	bridge := &fakeManagedBridge{
-		statusErr: NewManagedEngineError(ManagedEngineUnavailable, "status", true, 503, errors.New("provider unavailable")),
+		startErr: NewManagedEngineError(ManagedEngineOutcomeUnknown, "start", true, 503, errors.New("response lost")),
 	}
 	reconciler := NewManagedReconciler(state, repo, bridge)
 
 	if err := reconciler.RunOnce(context.Background()); err == nil {
-		t.Fatal("expected status lookup error while preserving SUBMITTING")
+		t.Fatal("expected start outcome-unknown error while preserving SUBMITTING")
 	}
-	if bridge.statusCalls != 1 || state.started != 0 || state.failed != 0 {
-		t.Fatalf("statusCalls=%d started=%d failed=%d, want 1/0/0", bridge.statusCalls, state.started, state.failed)
+	if bridge.startCalls != 1 || bridge.startRunID != "hop-run-1" || state.started != 0 || state.failed != 0 {
+		t.Fatalf("startCalls=%d startRunID=%q started=%d failed=%d, want 1/hop-run-1/0/0", bridge.startCalls, bridge.startRunID, state.started, state.failed)
 	}
 }
 
