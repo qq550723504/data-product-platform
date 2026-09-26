@@ -88,6 +88,11 @@ func (b *fakeManagedBridge) StartSubmission(_ context.Context, _ ProcessingReque
 	return EngineRun{ID: runID, State: b.state}, nil
 }
 
+func (b *fakeManagedBridge) RecoverSubmission(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error) {
+	return b.StartSubmission(ctx, request, runID)
+}
+
+
 func (b *fakeManagedBridge) Status(context.Context, ProcessingRequest, string) (EngineRun, error) {
 	b.statusCalls++
 	if b.statusErr != nil {
