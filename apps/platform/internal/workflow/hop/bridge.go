@@ -56,60 +56,36 @@ func NewBridge(engine workflowapp.ManagedProcessingEngine, artifactRoot string, 
 
 func (b *Bridge) EngineType() string { return "HOP" }
 
-func (b *Bridge) PrepareSubmission(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.EngineRun, error) {
-	submitRequest, err := b.managedSubmitRequest(ctx, request)
-	if err != nil {
-		return workflowapp.EngineRun{}, err
-	}
-	return b.engine.PrepareSubmission(ctx, submitRequest)
+func (b *Bridge) PrepareRegisterRequest(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.ManagedSubmitRequest, error) {
+	return b.managedSubmitRequest(ctx, request)
 }
 
-func (b *Bridge) StartSubmission(ctx context.Context, request workflowapp.ProcessingRequest, runID string) (workflowapp.EngineRun, error) {
+func (b *Bridge) InvokeRegisterSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest) (workflowapp.EngineRun, error) {
+	return b.engine.PrepareSubmission(ctx, request)
+}
+
+func (b *Bridge) PrepareStartRequest(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.ManagedSubmitRequest, error) {
 	cfg, err := b.config(request)
 	if err != nil {
-		return workflowapp.EngineRun{}, err
+		return workflowapp.ManagedSubmitRequest{}, err
 	}
 	parameters, _, err := b.executionParameters(ctx, request, cfg)
 	if err != nil {
-		return workflowapp.EngineRun{}, err
+		return workflowapp.ManagedSubmitRequest{}, err
 	}
-	run, err := b.engine.StartSubmission(ctx, workflowapp.ManagedSubmitRequest{
+	return workflowapp.ManagedSubmitRequest{
 		Name:          cfg.Name,
 		DefinitionRef: cfg.DefinitionRef,
 		Parameters:    parameters,
-	}, runID)
-	if run.Metrics == nil {
-		run.Metrics = map[string]any{}
-	}
-	_, outputURI := b.stagingOutput(request, cfg)
-	run.Metrics["stagingOutputUri"] = outputURI
-	run.Metrics["workflowDefinitionRef"] = request.WorkflowVersion.DefinitionRef
-	run.Metrics["hopDefinitionRef"] = cfg.DefinitionRef
-	return run, err
+	}, nil
 }
 
-func (b *Bridge) RecoverSubmission(ctx context.Context, request workflowapp.ProcessingRequest, runID string) (workflowapp.EngineRun, error) {
-	cfg, err := b.config(request)
-	if err != nil {
-		return workflowapp.EngineRun{}, err
-	}
-	parameters, _, err := b.executionParameters(ctx, request, cfg)
-	if err != nil {
-		return workflowapp.EngineRun{}, err
-	}
-	run, err := b.engine.RecoverSubmission(ctx, workflowapp.ManagedSubmitRequest{
-		Name:          cfg.Name,
-		DefinitionRef: cfg.DefinitionRef,
-		Parameters:    parameters,
-	}, runID)
-	if run.Metrics == nil {
-		run.Metrics = map[string]any{}
-	}
-	_, outputURI := b.stagingOutput(request, cfg)
-	run.Metrics["stagingOutputUri"] = outputURI
-	run.Metrics["workflowDefinitionRef"] = request.WorkflowVersion.DefinitionRef
-	run.Metrics["hopDefinitionRef"] = cfg.DefinitionRef
-	return run, err
+func (b *Bridge) InvokeStartSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest, runID string) (workflowapp.EngineRun, error) {
+	return b.engine.StartSubmission(ctx, request, runID)
+}
+
+func (b *Bridge) InvokeRecoverSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest, runID string) (workflowapp.EngineRun, error) {
+	return b.engine.RecoverSubmission(ctx, request, runID)
 }
 
 func (b *Bridge) managedSubmitRequest(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.ManagedSubmitRequest, error) {
