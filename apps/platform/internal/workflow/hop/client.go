@@ -2,9 +2,9 @@ package hop
 
 import (
 	"compress/gzip"
-	"errors"
 	"context"
 	"encoding/base64"
+	"errors"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
