@@ -177,11 +177,17 @@ func (s *UploadVersionService) handle(
 			})
 		}
 
-		// A READY version is a published fact: reuse it without rewriting anything.
+		// A command-idempotency replay resolves to the original DatasetVersion
+		// identity even if a later lifecycle command superseded or invalidated it.
+		// Those terminal states are historical changes to the same fact, not
+		// permission to allocate a replacement for the same upload command.
+		if key != "" && reused && (version.Status == domain.VersionReady || version.Status == domain.VersionSuperseded || version.Status == domain.VersionInvalid) {
+			alreadyPublished = true
+			return nil
+		}
+		// A READY producer output is already published. Entity Match may also
+		// recover against its immutable historical SUPERSEDED output.
 		if version.Status == domain.VersionReady || (version.Status == domain.VersionSuperseded && cmd.GeneratedByEntityMatchJobID != nil) {
-			// A MatchJob may recover after its already-published historical output was
-			// superseded by a later DatasetVersion. That immutable output still proves
-			// what this job produced and is safe to re-bind to the job.
 			alreadyPublished = true
 			return nil
 		}
