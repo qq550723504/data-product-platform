@@ -137,6 +137,16 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 	}
 
 	if execution.Status == domain.ExecutionSubmitting {
+		claimedAt := execution.StartedAt
+		if claimedAt == nil {
+			claimedAt = &execution.CreatedAt
+		}
+		if time.Since(*claimedAt) < r.submissionTimeout {
+			// The original submitter still owns the submission lease. Recovery
+			// must not issue a concurrent start for the same durable remote id.
+			return nil
+		}
+
 		if strings.TrimSpace(execution.EngineExecutionID) != "" {
 			version, err := r.repo.GetVersion(ctx, execution.WorkflowVersionID)
 			if err != nil {
@@ -148,6 +158,12 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 					// The id is durable, so recovery keeps retrying the same remote
 					// identity and never registers a second run.
 					return fmt.Errorf("reconcile uncertain %s start for execution %s: %w", execution.EngineType, executionID, err)
+				}
+				if ManagedSubmissionOutcomeWasUnknown(execution) {
+					// A later rejection cannot retroactively prove that the first
+					// start request was not accepted. Keep the Core fact unresolved
+					// until the provider yields authoritative run evidence.
+					return fmt.Errorf("preserve ambiguous %s submission for execution %s after recovery rejection: %w", execution.EngineType, executionID, err)
 				}
 				_, failErr := r.service.Fail(
 					ctx,
@@ -169,13 +185,6 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 			return nil
 		}
 
-		claimedAt := execution.StartedAt
-		if claimedAt == nil {
-			claimedAt = &execution.CreatedAt
-		}
-		if time.Since(*claimedAt) < r.submissionTimeout {
-			return nil
-		}
 		_, err := r.service.Fail(
 			ctx,
 			execution.ID,
