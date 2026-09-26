@@ -37,6 +37,12 @@ type PostgresRepository struct {
 	pool *pgxpool.Pool
 }
 
+type UploadIdempotencyRecord struct {
+	VersionID          uuid.UUID
+	RequestFingerprint string
+}
+
+
 func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 	return &PostgresRepository{pool: pool}
 }
@@ -441,6 +447,49 @@ func (r *PostgresRepository) GetWorkspaceAndType(ctx context.Context, datasetID 
 		return uuid.Nil, "", fmt.Errorf("read dataset workspace and type: %w", err)
 	}
 	return workspaceID, datasetType, nil
+}
+
+func (r *PostgresRepository) FindUploadIdempotencyTx(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, key string) (UploadIdempotencyRecord, bool, error) {
+	var record UploadIdempotencyRecord
+	err := tx.QueryRow(ctx, `
+		SELECT object_id, COALESCE(request_fingerprint, '')
+		FROM command_idempotency
+		WHERE workspace_id=$1 AND command_type='DATASET.UPLOAD_VERSION' AND idempotency_key=$2
+		FOR UPDATE
+	`, workspaceID, key).Scan(&record.VersionID, &record.RequestFingerprint)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return UploadIdempotencyRecord{}, false, nil
+	}
+	if err != nil {
+		return UploadIdempotencyRecord{}, false, fmt.Errorf("find dataset upload idempotency record: %w", err)
+	}
+	return record, true, nil
+}
+
+func (r *PostgresRepository) InsertUploadIdempotencyTx(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, key string, versionID uuid.UUID, fingerprint string) error {
+	_, err := tx.Exec(ctx, `
+		INSERT INTO command_idempotency (
+			workspace_id, command_type, idempotency_key, object_id, result_ref, request_fingerprint
+		) VALUES ($1, 'DATASET.UPLOAD_VERSION', $2, $3, $3, $4)
+	`, workspaceID, key, versionID, fingerprint)
+	if err != nil {
+		return fmt.Errorf("insert dataset upload idempotency record: %w", err)
+	}
+	return nil
+}
+
+func (r *PostgresRepository) WorkspaceForDatasetTx(ctx context.Context, tx pgx.Tx, datasetID uuid.UUID) (uuid.UUID, error) {
+	var workspaceID uuid.UUID
+	err := tx.QueryRow(ctx, `
+		SELECT workspace_id FROM dataset WHERE id=$1 AND deleted_at IS NULL
+	`, datasetID).Scan(&workspaceID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return uuid.Nil, ErrNotFound
+	}
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("read dataset workspace: %w", err)
+	}
+	return workspaceID, nil
 }
 
 func (r *PostgresRepository) GetVersion(ctx context.Context, versionID uuid.UUID) (domain.DatasetVersion, error) {
