@@ -369,10 +369,11 @@ func (c *claim) Fail(ctx context.Context, cause error) (string, error) {
 	if cause == nil {
 		cause = errors.New("outbox dispatch failed")
 	}
-	delay := nextFailureDelay(c.Event.Attempts, c.cfg)
+	generationAttempts := c.Event.Attempts - c.attemptBase
+	delay := nextFailureDelay(generationAttempts, c.cfg)
 	status := statusFailed
 	deadLettered := false
-	if c.Event.Attempts-c.attemptBase >= c.cfg.MaxAttempts {
+	if generationAttempts >= c.cfg.MaxAttempts {
 		status = statusDeadLetter
 		deadLettered = true
 		delay = 0
