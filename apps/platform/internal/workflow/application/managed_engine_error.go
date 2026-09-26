@@ -63,3 +63,16 @@ func IsManagedEngineOutcomeUnknown(err error) bool {
 	var managed *ManagedEngineError
 	return errors.As(err, &managed) && managed.Kind == ManagedEngineOutcomeUnknown
 }
+
+func IsManagedEngineDefiniteRejection(err error) bool {
+	var managed *ManagedEngineError
+	if !errors.As(err, &managed) {
+		return false
+	}
+	switch managed.Kind {
+	case ManagedEngineInvalidRequest, ManagedEngineNotFound, ManagedEngineUnauthorized, ManagedEngineRejected:
+		return true
+	default:
+		return false
+	}
+}
