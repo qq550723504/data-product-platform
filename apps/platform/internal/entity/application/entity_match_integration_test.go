@@ -411,11 +411,11 @@ func TestAmbiguousMatchRequiresExplicitFrozenSelection(t *testing.T) {
 	}
 
 	job, err = service.Confirm(ctx, entityapp.ReviewCommand{
-		CandidateID:       candidate.ID,
-		ReviewerID:        reviewerID,
-		Reason:            "explicitly selected the second frozen alternative",
+		CandidateID:      candidate.ID,
+		ReviewerID:       reviewerID,
+		Reason:           "explicitly selected the second frozen alternative",
 		SelectedEntityID: &second.ID,
-		TraceID:           "ambiguous-selection-confirm",
+		TraceID:          "ambiguous-selection-confirm",
 	})
 	if err != nil {
 		t.Fatalf("confirm selected alternative: %v", err)
