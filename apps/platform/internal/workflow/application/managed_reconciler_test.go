@@ -7,8 +7,22 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
 )
+
+type fakeManagedRecoveryLocker struct {
+	calls int
+	busy  bool
+}
+
+func (l *fakeManagedRecoveryLocker) WithAdvisoryLock(ctx context.Context, _ string, fn func(context.Context) error) error {
+	l.calls++
+	if l.busy {
+		return transaction.ErrAdvisoryLockBusy
+	}
+	return fn(ctx)
+}
 
 type fakeManagedRepo struct {
 	execution domain.Execution
@@ -290,7 +304,7 @@ func TestManagedReconcilerFailsUnambiguousExpiredSubmissionAfterRecoveryRejectio
 			errors.New("provider rejected recovery"),
 		),
 	}
-	reconciler := NewManagedReconciler(state, repo, bridge)
+	reconciler := NewManagedReconciler(state, repo, bridge).WithRecoveryLocker(&fakeManagedRecoveryLocker{})
 
 	if err := reconciler.RunOnce(context.Background()); err != nil {
 		t.Fatalf("terminalize definite recovery rejection: %v", err)
@@ -320,7 +334,7 @@ func TestManagedReconcilerConfirmsKnownUncertainSubmission(t *testing.T) {
 	}
 	state := &fakeManagedStateService{}
 	bridge := &fakeManagedBridge{state: EngineRunRunning}
-	reconciler := NewManagedReconciler(state, repo, bridge)
+	reconciler := NewManagedReconciler(state, repo, bridge).WithRecoveryLocker(&fakeManagedRecoveryLocker{})
 
 	if err := reconciler.RunOnce(context.Background()); err != nil {
 		t.Fatalf("reconcile known uncertain submission: %v", err)
@@ -354,13 +368,74 @@ func TestManagedReconcilerKeepsKnownSubmissionWhenStartOutcomeUnknown(t *testing
 	bridge := &fakeManagedBridge{
 		startErr: NewManagedEngineError(ManagedEngineOutcomeUnknown, "start", true, 503, errors.New("response lost")),
 	}
-	reconciler := NewManagedReconciler(state, repo, bridge)
+	reconciler := NewManagedReconciler(state, repo, bridge).WithRecoveryLocker(&fakeManagedRecoveryLocker{})
 
 	if err := reconciler.RunOnce(context.Background()); err == nil {
 		t.Fatal("expected start outcome-unknown error while preserving SUBMITTING")
 	}
 	if bridge.startCalls != 1 || bridge.startRunID != "hop-run-1" || state.started != 0 || state.failed != 0 {
 		t.Fatalf("startCalls=%d startRunID=%q started=%d failed=%d, want 1/hop-run-1/0/0", bridge.startCalls, bridge.startRunID, state.started, state.failed)
+	}
+}
+
+func TestManagedReconcilerSkipsExpiredSubmissionWhenRecoveryLockBusy(t *testing.T) {
+	claimedAt := time.Now().UTC().Add(-10 * time.Minute)
+	execution := domain.Execution{
+		ID:                uuid.New(),
+		WorkspaceID:       uuid.New(),
+		WorkflowVersionID: uuid.New(),
+		OutputDatasetID:   uuid.New(),
+		TargetPeriod:      "2026-09",
+		Status:            domain.ExecutionSubmitting,
+		EngineType:        "HOP",
+		EngineExecutionID: "hop-run-busy",
+		StartedAt:         &claimedAt,
+	}
+	repo := &fakeManagedRepo{
+		execution: execution,
+		version:   domain.WorkflowVersion{ID: execution.WorkflowVersionID},
+	}
+	state := &fakeManagedStateService{}
+	bridge := &fakeManagedBridge{state: EngineRunRunning}
+	locker := &fakeManagedRecoveryLocker{busy: true}
+	reconciler := NewManagedReconciler(state, repo, bridge).WithRecoveryLocker(locker)
+
+	if err := reconciler.RunOnce(context.Background()); err != nil {
+		t.Fatalf("busy recovery lock should be a no-op: %v", err)
+	}
+	if locker.calls != 1 || bridge.startCalls != 0 || state.started != 0 || state.failed != 0 {
+		t.Fatalf("busy recovery must not start or terminalize; locks=%d starts=%d started=%d failed=%d",
+			locker.calls, bridge.startCalls, state.started, state.failed)
+	}
+}
+
+func TestManagedReconcilerKeepsExpiredSubmissionOnLocalRecoveryError(t *testing.T) {
+	claimedAt := time.Now().UTC().Add(-10 * time.Minute)
+	execution := domain.Execution{
+		ID:                uuid.New(),
+		WorkspaceID:       uuid.New(),
+		WorkflowVersionID: uuid.New(),
+		OutputDatasetID:   uuid.New(),
+		TargetPeriod:      "2026-09",
+		Status:            domain.ExecutionSubmitting,
+		EngineType:        "HOP",
+		EngineExecutionID: "hop-run-local-error",
+		StartedAt:         &claimedAt,
+	}
+	repo := &fakeManagedRepo{
+		execution: execution,
+		version:   domain.WorkflowVersion{ID: execution.WorkflowVersionID},
+	}
+	state := &fakeManagedStateService{}
+	bridge := &fakeManagedBridge{startErr: errors.New("local dataset lookup failed")}
+	reconciler := NewManagedReconciler(state, repo, bridge).WithRecoveryLocker(&fakeManagedRecoveryLocker{})
+
+	if err := reconciler.RunOnce(context.Background()); err == nil {
+		t.Fatal("expected local recovery error to remain retryable")
+	}
+	if bridge.startCalls != 1 || state.started != 0 || state.failed != 0 {
+		t.Fatalf("local recovery error must not terminalize; starts=%d started=%d failed=%d",
+			bridge.startCalls, state.started, state.failed)
 	}
 }
 
