@@ -522,7 +522,7 @@ func TestManagedReconcilerDoesNotRecordProviderAttemptForLocalRecoveryPreparatio
 	}
 	state := &fakeManagedStateService{}
 	bridge := &fakeManagedBridge{prepareStartErr: errors.New("local input lookup failed")}
-	reconciler := NewManagedReconciler(state, repo, bridge).WithRecoveryLocker(&fakeRecoveryLocker{})
+	reconciler := NewManagedReconciler(state, repo, bridge).WithRecoveryLocker(&fakeManagedRecoveryLocker{})
 
 	if err := reconciler.RunOnce(context.Background()); err == nil {
 		t.Fatal("expected local recovery preparation error")
