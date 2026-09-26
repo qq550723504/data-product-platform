@@ -6,7 +6,10 @@ import (
 	"time"
 )
 
-var ErrInvalidEngineType = errors.New("execution engine type is required")
+var (
+	ErrInvalidEngineType        = errors.New("execution engine type is required")
+	ErrInvalidEngineExecutionID = errors.New("execution engine execution id is required")
+)
 
 // SelectEngine changes the runtime selected for a queued Execution.
 // Engine selection is mutable only before execution starts; retries preserve
@@ -20,6 +23,25 @@ func (e *Execution) SelectEngine(engineType string) error {
 		return ErrInvalidEngineType
 	}
 	e.EngineType = engineType
+	return nil
+}
+
+// AttachManagedSubmissionReference records a durable remote identity while the
+// outcome of the start request is still uncertain. It deliberately keeps the
+// Execution in SUBMITTING until reconciliation confirms the remote run is
+// queryable.
+func (e *Execution) AttachManagedSubmissionReference(engineExecutionID string) error {
+	if e.Status != ExecutionSubmitting {
+		return ErrInvalidTransition
+	}
+	engineExecutionID = strings.TrimSpace(engineExecutionID)
+	if engineExecutionID == "" {
+		return ErrInvalidEngineExecutionID
+	}
+	if e.EngineExecutionID != "" && e.EngineExecutionID != engineExecutionID {
+		return ErrInvalidTransition
+	}
+	e.EngineExecutionID = engineExecutionID
 	return nil
 }
 
