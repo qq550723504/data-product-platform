@@ -23,6 +23,24 @@ Data Product Platform 是一套数据产品与高质量数据集生产治理平�
 
 本阶段只选择一个受控、合成数据、单标签、独立人工审核的 Gold 生产闭环。Delivery Hardening / external provider、完整 IAM/SLA/灾备和其他行业能力仍由真实需求独立决定，不跟随 Gold 自动启动。
 
+## 当前明确产品边界
+
+### 不提供数据资产会计入表结论
+
+平台保存 Rights、Cost、Evidence、Audit 等事实，是为了让数据生产、权利与成本可以追溯；这些事实**不等于会计确认、资产计量或法律权利裁定**。
+
+当前不提供数据资产估值、摊销、减值、资产负债表入表，也不把 CostEvent 自动映射为会计科目、凭证或财务报表。平台记录的 owner / Rights Provenance / Authorization 也不会自动裁定现实世界的持有权、加工使用权或经营权。
+
+未来只有在真实项目给出明确的会计/法务口径、责任主体与验收标准时，才单独立项；现有事实模型可以作为专业系统输入，但不提前承诺会计能力。
+
+### 不承诺 Continuous / Streaming Data Product
+
+当前产品语义是**明确输入 → 有边界处理 → immutable DatasetVersion → 评测 / 认证 / 交付**。
+
+持续 CDC、消息流或流计算可以作为未来的数据接入/处理方式，但当前不把无边界 stream 建模为持续原地变化的 DatasetVersion，也不承诺 checkpoint / window / watermark exactly-once、永不结束的 Workflow Execution、streaming SLA 或 stateful recovery。
+
+真实 Kafka / Flink / IoT continuous product 场景出现时，应先定义 streaming product semantics 和验收边界，再决定是否扩展 Core；这不是当前 roadmap 承诺。
+
 ## 核心问题
 
 平台必须能回答：

@@ -58,6 +58,31 @@ Trusted DIRECT_DATA Delivery            ✅
 
 第一阶段明确没有扩大到 bearer/presigned provider、provider containment/recovery、完整生产 IAM、灾备、性能 SLA、Label Studio / X-AnyLabeling 或 AI Gold Dataset。第二阶段 #203 的受控 Gold Pilot 已完成 #209、#204–#207 的主要实现，并已把真实 Label Studio 接入、trusted Human Review（ACCEPT/CORRECT）/ FINALIZED AnnotationSnapshot、downstream Gold build / quality / rights / certification / DIRECT_DATA 与 live-core Gold UI Playwright 串成同一共享事实链，required CI 已通过。External Explanation Test 暂缓执行并降级为 non-blocking follow-up；第二阶段可收口，但该决定不等于 production-ready。
 
+## 当前明确非目标
+
+### 数据资产会计入表
+
+当前平台**不提供数据资产会计确认、计量或入表结论**。Rights / Cost / Evidence 是可审计的业务事实，但不会自动产生：
+
+- 数据资产会计确认、估值、摊销、减值或资产负债表结论；
+- 持有权、加工使用权、经营权等现实世界法律权利的裁定；
+- CostEvent 到会计科目、凭证或财务报表的映射。
+
+这些事实未来可以作为专业会计、法务或资产管理系统的输入；只有真实客户项目出现明确口径、责任主体和验收标准时，才单独定义该能力，不把未来可能性写成当前承诺。
+
+### Streaming / Continuous Data Product
+
+当前 Core 只承诺**有边界、不可变、版本化的 DatasetVersion 生产语义**。即使上游未来接入 CDC / Kafka / Flink 等持续数据源，需要进入质量、认证或交付链时，也必须按明确 snapshot / window / cut 形成新的 DatasetVersion。
+
+当前**不承诺**：
+
+- 无边界 stream 直接作为持续原地变化的当前 DatasetVersion；
+- checkpoint / window / watermark 的 exactly-once 数据产品语义；
+- 永不结束的 Workflow Execution；
+- streaming SLA 或 stateful recovery。
+
+未来出现真实 continuous data-product 场景时，应先定义独立的 streaming product semantics，再决定是否扩展 DatasetVersion / Execution，而不是把现有 batch/versioned 模型隐式解释成 streaming。
+
 ## 本地试用入口
 
 当前仓库仍保留 POC 合成数据演示和 CSV 接入切片。CI 通过不等于商业上线批准。
