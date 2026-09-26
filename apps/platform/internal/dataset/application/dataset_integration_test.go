@@ -111,6 +111,30 @@ func TestDatasetVersionUploadIsSequentialTraceableAndImmutable(t *testing.T) {
 		t.Fatalf("v1 status = %s, want SUPERSEDED", storedV1.Status)
 	}
 
+	var supersededEventCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM outbox_event
+		WHERE aggregate_id = $1 AND event_type = 'DatasetVersionSuperseded'
+	`, v1.ID).Scan(&supersededEventCount); err != nil {
+		t.Fatalf("count superseded outbox events: %v", err)
+	}
+	if supersededEventCount != 1 {
+		t.Fatalf("DatasetVersionSuperseded events = %d, want 1", supersededEventCount)
+	}
+
+	var supersededAuditCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM audit_event
+		WHERE object_id = $1 AND action = 'DATASET_VERSION_SUPERSEDED'
+	`, v1.ID).Scan(&supersededAuditCount); err != nil {
+		t.Fatalf("count superseded audit events: %v", err)
+	}
+	if supersededAuditCount != 1 {
+		t.Fatalf("DATASET_VERSION_SUPERSEDED audit events = %d, want 1", supersededAuditCount)
+	}
+
 	if _, err := pool.Exec(ctx, `UPDATE dataset_version SET checksum_value = 'tampered' WHERE id = $1`, v2.ID); err == nil {
 		t.Fatal("expected READY dataset_version content update to be rejected")
 	}
