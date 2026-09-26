@@ -42,9 +42,8 @@ func (Engine) Evaluate(_ context.Context, request qualityengine.Request) (qualit
 	return qualityengine.Result{
 		Findings: findings,
 		Metrics:  metrics,
-		ExecutionMetadata: map[string]any{
-			"engine":  EvaluatorName,
-			"version": EvaluatorVersion,
+		Execution: qualityengine.ExecutionMetadata{
+			ExecutionRef: request.AttemptID.String(),
 		},
 	}, nil
 }
