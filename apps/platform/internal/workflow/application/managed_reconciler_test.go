@@ -45,22 +45,46 @@ func (r *fakeManagedRepo) GetVersion(context.Context, uuid.UUID) (domain.Workflo
 }
 
 type fakeManagedStateService struct {
-	started           int
-	succeeded         int
-	failed            int
-	outputID          uuid.UUID
-	engineExecutionID string
-	failCode          string
-	failMessage       string
-	metrics           map[string]any
-	recoveryAttempts  []uuid.UUID
-	recoveryOutcomes  []string
+	started            int
+	succeeded          int
+	failed             int
+	outputID           uuid.UUID
+	engineExecutionID  string
+	failCode           string
+	failMessage        string
+	metrics            map[string]any
+	recoveryAttempts   []uuid.UUID
+	recoveryOutcomes   []string
+	providerAttempts   []uuid.UUID
+	providerPhases     []string
+	providerOutcomes   []string
+	pendingResolutions int
 }
 
 func (s *fakeManagedStateService) Start(_ context.Context, _ uuid.UUID, engineExecutionID, _ string) (domain.Execution, error) {
 	s.started++
 	s.engineExecutionID = engineExecutionID
 	return domain.Execution{Status: domain.ExecutionRunning, EngineExecutionID: engineExecutionID}, nil
+}
+
+func (s *fakeManagedStateService) RecordManagedProviderAttempt(_ context.Context, _ uuid.UUID, phase string, _ bool, _ string) (uuid.UUID, error) {
+	id := uuid.New()
+	s.providerAttempts = append(s.providerAttempts, id)
+	s.providerPhases = append(s.providerPhases, phase)
+	return id, nil
+}
+
+func (s *fakeManagedStateService) RecordManagedProviderObservation(_ context.Context, _ uuid.UUID, attemptID uuid.UUID, outcome, _ string) error {
+	if len(s.providerAttempts) == 0 || s.providerAttempts[len(s.providerAttempts)-1] != attemptID {
+		return errors.New("unknown provider attempt")
+	}
+	s.providerOutcomes = append(s.providerOutcomes, outcome)
+	return nil
+}
+
+func (s *fakeManagedStateService) ResolvePendingManagedProviderAttemptUnknown(_ context.Context, _ uuid.UUID, _ string) error {
+	s.pendingResolutions++
+	return nil
 }
 
 func (s *fakeManagedStateService) RecordManagedSubmissionRecoveryAttempt(_ context.Context, _ uuid.UUID, _ string) (uuid.UUID, error) {
@@ -134,14 +158,18 @@ func (b *fakeManagedBridge) InvokeRecoverSubmission(ctx context.Context, request
 	return b.InvokeStartSubmission(ctx, request, runID)
 }
 
-func (b *fakeManagedBridge) Status(context.Context, ProcessingRequest, string) (EngineRun, error) {
+func (b *fakeManagedBridge) PrepareStatusLookup(_ context.Context, _ ProcessingRequest, runID string) (ManagedRunLookup, error) {
+	return ManagedRunLookup{Name: "energy-monthly", RunID: runID}, nil
+}
+
+func (b *fakeManagedBridge) InvokeStatus(_ context.Context, lookup ManagedRunLookup) (EngineRun, error) {
 	b.statusCalls++
 	if b.statusErr != nil {
 		return EngineRun{}, b.statusErr
 	}
 	return EngineRun{
-		ID:           "hop-run-1",
-		Name:         "energy-monthly",
+		ID:           lookup.RunID,
+		Name:         lookup.Name,
 		State:        b.state,
 		ErrorMessage: "provider-specific stack trace must not enter Core error_message",
 		Metrics:      map[string]any{"nrErrors": 0},
