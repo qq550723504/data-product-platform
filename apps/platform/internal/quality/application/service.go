@@ -490,7 +490,7 @@ func (s *Service) claimAttempt(ctx context.Context, cmd RunCommand, attemptID uu
 			Unit:        "assessment",
 			PricingMode: "ACTUAL",
 			Metadata: map[string]any{
-				"ruleSetRef": cmd.RuleSetRef,
+				"ruleSetRef":    cmd.RuleSetRef,
 				"engineName":    cmd.EngineName,
 				"engineVersion": cmd.engineVersion,
 				"stage":         "evaluation_started",
