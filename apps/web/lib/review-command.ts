@@ -161,7 +161,7 @@ export async function executeReview(
     attemptedWrite = true;
     const payload: Record<string, string> = { reason: rawReason.trim() };
     if (expectedDecisionId) payload.expectedDecisionId = expectedDecisionId;
-    if (selectedEntityId) payload.selectedEntityId = selectedEntityId;
+    if (decision === "confirm" && selectedEntityId) payload.selectedEntityId = selectedEntityId;
     const result = await json(`/api/v1/entity-match-reviews/${candidateId}/${decision}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
