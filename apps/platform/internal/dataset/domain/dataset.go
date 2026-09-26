@@ -33,11 +33,11 @@ const (
 )
 
 var (
-	ErrInvalidWorkspace     = errors.New("workspace id is required")
-	ErrInvalidDatasetCode   = errors.New("dataset code is required")
-	ErrInvalidDatasetName   = errors.New("dataset name is required")
-	ErrInvalidDatasetType   = errors.New("invalid dataset type")
-	ErrInvalidVersion       = errors.New("version number must be positive")
+	ErrInvalidWorkspace       = errors.New("workspace id is required")
+	ErrInvalidDatasetCode     = errors.New("dataset code is required")
+	ErrInvalidDatasetName     = errors.New("dataset name is required")
+	ErrInvalidDatasetType     = errors.New("invalid dataset type")
+	ErrInvalidVersion         = errors.New("version number must be positive")
 	ErrInvalidTransition      = errors.New("invalid dataset version state transition")
 	ErrStaleVersionRecovery   = errors.New("dataset version recovery would replace a newer current version")
 	ErrImmutableVersion       = errors.New("dataset version is immutable")
