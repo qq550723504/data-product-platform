@@ -31,12 +31,20 @@ func (r *fakeManagedRepo) GetVersion(context.Context, uuid.UUID) (domain.Workflo
 }
 
 type fakeManagedStateService struct {
-	succeeded   int
-	failed      int
-	outputID    uuid.UUID
-	failCode    string
-	failMessage string
-	metrics     map[string]any
+	started           int
+	succeeded         int
+	failed            int
+	outputID          uuid.UUID
+	engineExecutionID string
+	failCode          string
+	failMessage       string
+	metrics           map[string]any
+}
+
+func (s *fakeManagedStateService) Start(_ context.Context, _ uuid.UUID, engineExecutionID, _ string) (domain.Execution, error) {
+	s.started++
+	s.engineExecutionID = engineExecutionID
+	return domain.Execution{Status: domain.ExecutionRunning, EngineExecutionID: engineExecutionID}, nil
 }
 
 func (s *fakeManagedStateService) Succeed(_ context.Context, _ uuid.UUID, outputDatasetVersionID uuid.UUID, metrics map[string]any, _ string) (domain.Execution, error) {
@@ -56,6 +64,8 @@ func (s *fakeManagedStateService) Fail(_ context.Context, _ uuid.UUID, code, mes
 
 type fakeManagedBridge struct {
 	state       EngineRunState
+	statusErr   error
+	statusCalls int
 	finalizeErr error
 	outputID    uuid.UUID
 }
@@ -67,6 +77,10 @@ func (b *fakeManagedBridge) Submit(context.Context, ProcessingRequest) (EngineRu
 }
 
 func (b *fakeManagedBridge) Status(context.Context, ProcessingRequest, string) (EngineRun, error) {
+	b.statusCalls++
+	if b.statusErr != nil {
+		return EngineRun{}, b.statusErr
+	}
 	return EngineRun{
 		ID:           "hop-run-1",
 		Name:         "energy-monthly",
@@ -200,6 +214,69 @@ func TestManagedReconcilerLeavesRunningRemoteExecutionUntouched(t *testing.T) {
 	}
 	if state.succeeded != 0 || state.failed != 0 {
 		t.Fatalf("non-terminal remote run must not transition Core execution; succeeded=%d failed=%d", state.succeeded, state.failed)
+	}
+}
+
+func TestManagedReconcilerConfirmsKnownUncertainSubmission(t *testing.T) {
+	claimedAt := time.Now().UTC().Add(-10 * time.Minute)
+	execution := domain.Execution{
+		ID:                uuid.New(),
+		WorkspaceID:       uuid.New(),
+		WorkflowVersionID: uuid.New(),
+		OutputDatasetID:   uuid.New(),
+		TargetPeriod:      "2026-09",
+		Status:            domain.ExecutionSubmitting,
+		EngineType:        "HOP",
+		EngineExecutionID: "hop-run-1",
+		StartedAt:         &claimedAt,
+	}
+	repo := &fakeManagedRepo{
+		execution: execution,
+		version:   domain.WorkflowVersion{ID: execution.WorkflowVersionID},
+	}
+	state := &fakeManagedStateService{}
+	bridge := &fakeManagedBridge{state: EngineRunRunning}
+	reconciler := NewManagedReconciler(state, repo, bridge)
+
+	if err := reconciler.RunOnce(context.Background()); err != nil {
+		t.Fatalf("reconcile known uncertain submission: %v", err)
+	}
+	if bridge.statusCalls != 1 || state.started != 1 || state.engineExecutionID != "hop-run-1" {
+		t.Fatalf("statusCalls=%d started=%d engineExecutionID=%q", bridge.statusCalls, state.started, state.engineExecutionID)
+	}
+	if state.failed != 0 {
+		t.Fatalf("known remote identity must not expire as unknown; failed=%d", state.failed)
+	}
+}
+
+func TestManagedReconcilerKeepsKnownSubmissionWhenStatusUnavailable(t *testing.T) {
+	claimedAt := time.Now().UTC().Add(-10 * time.Minute)
+	execution := domain.Execution{
+		ID:                uuid.New(),
+		WorkspaceID:       uuid.New(),
+		WorkflowVersionID: uuid.New(),
+		OutputDatasetID:   uuid.New(),
+		TargetPeriod:      "2026-09",
+		Status:            domain.ExecutionSubmitting,
+		EngineType:        "HOP",
+		EngineExecutionID: "hop-run-1",
+		StartedAt:         &claimedAt,
+	}
+	repo := &fakeManagedRepo{
+		execution: execution,
+		version:   domain.WorkflowVersion{ID: execution.WorkflowVersionID},
+	}
+	state := &fakeManagedStateService{}
+	bridge := &fakeManagedBridge{
+		statusErr: NewManagedEngineError(ManagedEngineUnavailable, "status", true, 503, errors.New("provider unavailable")),
+	}
+	reconciler := NewManagedReconciler(state, repo, bridge)
+
+	if err := reconciler.RunOnce(context.Background()); err == nil {
+		t.Fatal("expected status lookup error while preserving SUBMITTING")
+	}
+	if bridge.statusCalls != 1 || state.started != 0 || state.failed != 0 {
+		t.Fatalf("statusCalls=%d started=%d failed=%d, want 1/0/0", bridge.statusCalls, state.started, state.failed)
 	}
 }
 
