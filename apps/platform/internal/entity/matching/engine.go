@@ -38,6 +38,7 @@ type Result struct {
 	EngineName    string
 	EngineVersion string
 	ModelVersion  string
+	Alternatives  []domain.Entity
 
 	// Ambiguous marks a deterministic rule that found several equally valid
 	// canonical entities. The decision stays with a human reviewer and must not
@@ -275,9 +276,10 @@ func (e *Engine) evaluateRule(ctx context.Context, entityTypeID uuid.UUID, compa
 			// would assign the source row to an arbitrary canonical entity, so
 			// surface the conflict for review with no candidate entity.
 			return Result{
-				Decision:  domain.DecisionReview,
-				Method:    "NAME_ADDRESS_AMBIGUOUS",
-				Ambiguous: true,
+				Decision:     domain.DecisionReview,
+				Method:       "NAME_ADDRESS_AMBIGUOUS",
+				Ambiguous:    true,
+				Alternatives: append([]domain.Entity(nil), entities...),
 			}, true, nil
 		}
 	}
