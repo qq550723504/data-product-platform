@@ -132,10 +132,17 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 	run, err := bridge.Submit(ctx, request)
 	if err != nil {
 		if managedSubmissionOutcomeUnknown(err) {
-			// The request may already have been accepted remotely. Keep the Core
-			// Execution in SUBMITTING and let ManagedReconciler's submission lease
-			// expire it as REMOTE_SUBMISSION_OUTCOME_UNKNOWN if no durable run ID
-			// ever becomes available. Never fabricate a definite failure here.
+			// The request may already have been accepted remotely. If the adapter
+			// learned a durable remote id before the ambiguous response, freeze it
+			// while staying SUBMITTING so ManagedReconciler can inspect that exact
+			// run instead of allowing a duplicate submission.
+			if remoteID := strings.TrimSpace(run.ID); remoteID != "" {
+				if _, attachErr := h.service.AttachManagedSubmissionReference(
+					ctx, execution.ID, remoteID, execution.ID.String(),
+				); attachErr != nil && !errors.Is(attachErr, domain.ErrInvalidTransition) {
+					return fmt.Errorf("persist uncertain remote submission reference for execution %s: %w", execution.ID, attachErr)
+				}
+			}
 			return nil
 		}
 		if _, failErr := h.service.Fail(
