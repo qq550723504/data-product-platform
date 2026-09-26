@@ -1,6 +1,6 @@
 # Outbox 派发与操作幂等设计（C1）
 
-- 状态：**设计 + C1-a/C1-b/T2 已实现，扇出前置（统一 dispatcher）已实现**。C1-a（向前迁移 `000015_outbox_delivery_hardening`：
+- 状态：**设计 + C1-a/C1-b/C1-e/T2 已实现，扇出前置（统一 dispatcher）已实现**。C1-a（向前迁移 `000015_outbox_delivery_hardening`：
   `event_version` / `claim_token` / 死信状态 / 可领取索引 / 每消费者确认表）与
   C1-b（publisher：claim token 守卫、指数退避、最大尝试、死信、瞬时错误容错、稳定排序、
   事件版本兼容）已落地并通过回归测试。
@@ -13,6 +13,10 @@
   只在事务内写入 Outbox，由 `execution-queue` handler 经真实 Redis/asynq 入队；旧的
   当前 Execution 入队事件都冻结为 `execution-queue` 义务；历史 retention-only 对账路径已移除，
   不再维护针对开发阶段旧事件的补派发兼容流程。
+  C1-e（#215）已实现显式 `RequeueOutboxEvent`：`000043_outbox_dead_letter_replay` 保存 immutable replay fact，
+  保留原 event ID / payload / routing obligation / handler acknowledgement 与累计 attempts；`attempt_base` 仅定义
+  当前人工重放 generation 的 retry/backoff 预算。operator 通过 core image 内的 `outbox-replay` CLI 调用，
+  同一事务记录 operator/reason/idempotency fingerprint 与 `OUTBOX_EVENT_REQUEUED` Audit。
 - 关联：issue #103（Domain Event / AuditEvent / Transactional Outbox 覆盖缺口）、
   #110（持久化执行 + 入队超时的恢复，禁止盲重复创建）、#100（关键 Command 幂等）；
   AGENTS.md §4（显式 Command）、§5（Domain Event + Audit + Transactional Outbox）、
@@ -28,7 +32,8 @@
 3. 操作幂等键的命名与持久化约定（复用 `command_idempotency`）。（C1-c）
 4. 把 **Execution 入队** 从「事务提交后直接 `queue.EnqueueExecution`」迁移为
    「事务内写 Outbox，由 worker 派发」的设计。（C1-d）
-5. 上述各项的测试与验收计划。
+5. DEAD_LETTER 的显式、幂等、可审计人工重放与 operator 入口。（C1-e）
+6. 上述各项的测试与验收计划。
 
 ### 1.2 明确不改动（保护边界）
 
@@ -96,7 +101,7 @@ G3（`idx_outbox_claimable` 覆盖 `PROCESSING`）、G4（瞬时错误退避继�
 G5（`ORDER BY created_at, id` 稳定 tiebreaker）。
 **T2 已关闭**：G6（Execution 请求幂等键）、G7（Execution 入队经 Outbox）。
 G8 的统一 handler 契约仍由消费方状态保护与本轮 `execution-queue` handler 测试覆盖；
-死信重放 Command 仍不在 T2 范围内。
+死信重放不属于 T2，但已由 C1-e / #215 独立实现。
 
 ## 3. 目标语义
 
@@ -163,11 +168,16 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
   影响行数为 0 即表示**已失去处理权**，旧处理者不得再改该事件状态（仅校验
   `status = 'PROCESSING'` 不够：重启后的新处理者会留下同样的 `PROCESSING` 状态）。
   领取令牌只保护 DB 回写，**无法撤销已发出的队列/外部请求**，因此消费侧仍需幂等。
-- `DEAD_LETTER` 只能由显式 Command（如 `RequeueOutboxEvent`）回到 `PENDING`，
-  记录操作者与理由（AGENTS §4）。
+- `DEAD_LETTER` 只能由显式 `RequeueOutboxEvent` Command 回到 `PENDING`，记录操作者、理由、
+  稳定幂等键与请求指纹（AGENTS §4）。当前部署入口是 core image 内的 `outbox-replay` CLI；
+  不提供 generic PATCH/SQL 状态修改入口。
 - `DEAD_LETTER` 的语义是**自动派发已停止**，**不是**「Execution 执行失败」或
-  「业务动作失败」。重放必须记录操作者、理由与独立的**重放记录**，保留原 `event_id`
-  与历史尝试（`attempts` / `last_error` / `dead_lettered_at`），不抹掉旧尝试。
+  「业务动作失败」。重放会追加 immutable `outbox_event_replay` 事实，保留原 `event_id`
+  与历史尝试（`attempts` / `last_error` / `dead_lettered_at`），不抹掉旧尝试；数据库 trigger
+  禁止 replay fact 的 UPDATE/DELETE，down migration 在已有 replay history 时 fail closed。
+- `attempts` 是跨 replay generation 的累计历史；`attempt_base` 记录当前 generation 的起点。
+  达到 `MaxAttempts` 与指数退避都使用 `attempts - attempt_base`，因此显式 replay 会获得新的自动重试预算，
+  同时保留总尝试次数。
 
 ### 4.3 派发确认与恢复规则
 
@@ -176,8 +186,8 @@ C1-a/C1-b 的已实现形态是**平铺 payload + 独立 `event_version` 列**�
 | claim | `FOR UPDATE SKIP LOCKED`，单条；事务内标记 `PROCESSING`、生成本次 `claim_token` 并提交后再调用 handler |
 | 租约 | `available_at = now() + claimTTL`；`claimTTL` 可按事件类型配置，默认 30s |
 | 终止性回写 | `PUBLISHED` / `FAILED` / `DEAD_LETTER` 全部按 `(id, status='PROCESSING', claim_token)` 条件更新；0 行 = 丢失处理权，旧处理者只记日志、不改状态 |
-| 退避 | `available_at = now() + min(base * 2^(attempts-1), cap) + jitter`，默认 base 5s、cap 5m |
-| 最大尝试 | 默认 `maxAttempts = 12`，达到后 → `DEAD_LETTER`（关闭 G2）；死信后不再被 claim |
+| 退避 | `available_at = now() + min(base * 2^(generationAttempts-1), cap) + jitter`，默认 base 5s、cap 5m；`generationAttempts = attempts - attempt_base` |
+| 最大尝试 | 默认 `maxAttempts = 12`，当前 generation 达到上限后 → `DEAD_LETTER`；显式 replay 更新 `attempt_base=attempts`，累计 attempts 不清零 |
 | 派发顺序 | `ORDER BY created_at, id`（稳定 tiebreaker，关闭 G5 的一半） |
 | 严格 per-aggregate 顺序 | 可选增强：claim 时排除「同 `aggregate_type + aggregate_id` 存在更早未完成事件」的行。**默认关闭**，需要时按事件类型开启 |
 | worker 容错 | handler 失败 → 记 `FAILED`/`DEAD_LETTER`，`Run` 继续；**瞬时 DB 错误退避后继续**；只有 `ctx` 取消或**致命 DB 条件**（SQLSTATE 类 `42`/`28`/`3D`/`3F`：缺表/缺列/无权限/库模式不存在）才终止 `Run`（关闭 G4）。缺表/权限/schema 不兼容**不能**无限循环伪装正常 |
@@ -275,8 +285,13 @@ T2 实现：
    快速失败（`TestRunSurvivesHandlerFailureAndDispatchesFollowingEvents`、
    `TestRunStopsOnFatalSchemaError`）；退避与致命错误分类有纯单测。
 
-**未实现（明确未完成项）**：死信重放 Command（`RequeueOutboxEvent`）及其 Audit 尚未实现，
-留待 C1-e；因此「死信人工处置」目前只有诊断信息，没有重放入口。
+**C1-e / #215 已实现**：`RequeueOutboxEvent` 只接受 `DEAD_LETTER`，拒绝未知事件版本；同一 event +
+幂等键同语义返回同一 replay fact，同键不同语义冲突，并发 replay 在原 event `FOR UPDATE` 锁上收敛。
+`outbox_event_replay` 保存 prior attempts/error/dead-letter time、operator 与 reason，数据库层不可 UPDATE/DELETE；
+同事务追加 `OUTBOX_EVENT_REQUEUED` Audit。重放保留既有 handler acknowledgement，因此 dispatcher 只执行未确认 handler。
+operator 入口为已打包进 core image 的 `outbox-replay` CLI，Compose `tools` profile 提供部署调用路径。真实 PostgreSQL
+覆盖正常事件拒绝、unknown version、幂等/冲突、same-key 并发、partial handler resume、immutable replay fact、
+fresh retry/backoff generation 与并发独立 replay intent。
 
 ### 5.2 统一 dispatcher 与每处理器确认（真实 PostgreSQL）
 
@@ -347,7 +362,7 @@ T2 实现：
 | C1-c / T2-a | 请求幂等：`WORKFLOW.CREATE_EXECUTION` / `WORKFLOW.RETRY_EXECUTION`、canonical 指纹、严格 `Idempotency-Key`、并发收敛 | **已实现**（`000017`） |
 | C1-d / T2-b | Execution 入队改经 Outbox（`Create` **与** Retry 两个入口）+ `execution-queue` Redis/asynq handler + 路由版本升级 | **已实现** |
 | T2-c | pre-production 遗留 `QUEUED` 对账兼容路径 | **已移除**（#159 cleanup） |
-| C1-e | 死信重放 Command（操作者、理由、独立重放记录，保留原 `event_id`） | 待实现（未完成项） |
+| C1-e | 死信重放 Command + immutable replay fact + Audit + operator CLI；保留原 `event_id` / routing obligation / handler confirmations | **已实现**（#215 / `000043`） |
 | C2 | 原生执行恢复与输出幂等（另文） | 设计已合入 |
 
 迁移号约定：编号按**实际合并顺序**分配，不预先锁定；C1-a 占用 `000015`，扇出前置占用 `000016`。
@@ -362,7 +377,7 @@ C1-a ~ C1-d 允许在同一聚焦 PR 内完成（共享同一迁移与 publisher
 
 1. `maxAttempts` 与 `claimTTL` 是否按 `event_type` 配置，还是全局默认值（当前全局默认）。
 2. 是否引入严格的 per-aggregate 顺序（成本 vs 必要性；当前默认关闭）。
-3. 死信重放的用户入口与审批/双人复核程度（AGENTS §4），以及重放记录的落库形态。
+3. 是否在未来真实生产 IAM/运维场景中为现有 operator CLI 增加审批/双人复核或后台 UI；当前 replay fact 落库形态与 CLI 入口已实现，不为尚未出现的审批需求提前扩平台。
 4. 事件版本升级策略：同 `event_type` 多版本并存 vs 新增 `event_type`；以及
    envelope 迁移是否需要一个显式的转换步骤（C1-c/C1-d）。
 5. `outbox_event_consumption` 的保留策略（长期不清理 vs 按窗口归档）。
