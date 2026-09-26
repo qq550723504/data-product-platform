@@ -131,6 +131,13 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 
 	run, err := bridge.Submit(ctx, request)
 	if err != nil {
+		if managedSubmissionOutcomeUnknown(err) {
+			// The request may already have been accepted remotely. Keep the Core
+			// Execution in SUBMITTING and let ManagedReconciler's submission lease
+			// expire it as REMOTE_SUBMISSION_OUTCOME_UNKNOWN if no durable run ID
+			// ever becomes available. Never fabricate a definite failure here.
+			return nil
+		}
 		if _, failErr := h.service.Fail(
 			ctx,
 			execution.ID,
@@ -161,6 +168,10 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 	// Even if the remote runtime reports a terminal state immediately, completion
 	// is delegated to ManagedReconciler so output import follows one serialized path.
 	return nil
+}
+
+func managedSubmissionOutcomeUnknown(err error) bool {
+	return workflowapp.IsManagedEngineOutcomeUnknown(err)
 }
 
 func (h *Handler) executeNative(ctx context.Context, execution domain.Execution, request workflowapp.ProcessingRequest) error {
