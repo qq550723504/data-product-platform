@@ -39,6 +39,9 @@ type ManagedExecutionRepository interface {
 
 type ManagedExecutionStateService interface {
 	Start(ctx context.Context, executionID uuid.UUID, engineExecutionID, traceID string) (domain.Execution, error)
+	RecordManagedProviderAttempt(ctx context.Context, executionID uuid.UUID, phase string, recovery bool, traceID string) (uuid.UUID, error)
+	RecordManagedProviderObservation(ctx context.Context, executionID, attemptID uuid.UUID, outcome, traceID string) error
+	ResolvePendingManagedProviderAttemptUnknown(ctx context.Context, executionID uuid.UUID, traceID string) error
 	RecordManagedSubmissionRecoveryAttempt(ctx context.Context, executionID uuid.UUID, traceID string) (uuid.UUID, error)
 	RecordManagedSubmissionRecoveryOutcome(ctx context.Context, executionID, attemptID uuid.UUID, outcome, traceID string) error
 	Succeed(ctx context.Context, executionID, outputDatasetVersionID uuid.UUID, metrics map[string]any, traceID string) (domain.Execution, error)
@@ -182,6 +185,9 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 			return err
 		}
 
+		if err := r.service.ResolvePendingManagedProviderAttemptUnknown(ctx, execution.ID, execution.ID.String()); err != nil {
+			return fmt.Errorf("resolve pending submission observation %s: %w", executionID, err)
+		}
 		_, err := r.service.Fail(
 			ctx,
 			execution.ID,
@@ -204,7 +210,25 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 		return fmt.Errorf("load workflow version for execution %s: %w", executionID, err)
 	}
 	request := ProcessingRequestFromExecution(execution, version)
-	run, err := bridge.Status(ctx, request, execution.EngineExecutionID)
+	if err := r.service.ResolvePendingManagedProviderAttemptUnknown(ctx, execution.ID, execution.ID.String()); err != nil {
+		return fmt.Errorf("resolve pending managed provider observation for execution %s: %w", executionID, err)
+	}
+	statusLookup, err := bridge.PrepareStatusLookup(ctx, request, execution.EngineExecutionID)
+	if err != nil {
+		return fmt.Errorf("prepare %s status lookup for execution %s: %w", execution.EngineType, executionID, err)
+	}
+	statusAttemptID, err := r.service.RecordManagedProviderAttempt(ctx, execution.ID, "STATUS", true, execution.ID.String())
+	if err != nil {
+		return fmt.Errorf("record managed status attempt for execution %s: %w", executionID, err)
+	}
+	run, err := bridge.InvokeStatus(ctx, statusLookup)
+	statusOutcome := "SUCCEEDED"
+	if err != nil {
+		statusOutcome = managedProviderOutcome(err)
+	}
+	if recordErr := r.service.RecordManagedProviderObservation(ctx, execution.ID, statusAttemptID, statusOutcome, execution.ID.String()); recordErr != nil {
+		return fmt.Errorf("record managed status observation for execution %s: %w", executionID, recordErr)
+	}
 	if err != nil {
 		return fmt.Errorf("reconcile %s status for execution %s: %w", execution.EngineType, executionID, err)
 	}
@@ -298,6 +322,10 @@ func (r *ManagedReconciler) recoverExpiredSubmission(ctx context.Context, bridge
 		return nil
 	}
 
+	if err := r.service.ResolvePendingManagedProviderAttemptUnknown(ctx, execution.ID, execution.ID.String()); err != nil {
+		return fmt.Errorf("resolve pending recovery observation %s: %w", executionID, err)
+	}
+
 	version, err := r.repo.GetVersion(ctx, execution.WorkflowVersionID)
 	if err != nil {
 		return fmt.Errorf("load workflow version for uncertain submission %s: %w", executionID, err)
@@ -352,6 +380,23 @@ func (r *ManagedReconciler) recoverExpiredSubmission(ctx context.Context, bridge
 		return fmt.Errorf("confirm managed submission %s: %w", executionID, err)
 	}
 	return nil
+}
+
+func managedProviderOutcome(err error) string {
+	if err == nil {
+		return "SUCCEEDED"
+	}
+	if IsManagedEngineOutcomeUnknown(err) {
+		return "OUTCOME_UNKNOWN"
+	}
+	if IsManagedEngineDefiniteRejection(err) {
+		return "DEFINITE_REJECTION"
+	}
+	var managedErr *ManagedEngineError
+	if errors.As(err, &managedErr) {
+		return string(managedErr.Kind)
+	}
+	return "LOCAL_ERROR"
 }
 
 func cloneMetrics(source map[string]any) map[string]any {
