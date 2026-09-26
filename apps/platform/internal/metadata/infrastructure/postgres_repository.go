@@ -12,7 +12,10 @@ import (
 	metadatadomain "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain"
 )
 
-var ErrNotFound = errors.New("metadata projection record not found")
+var (
+	ErrNotFound               = errors.New("metadata projection record not found")
+	ErrStaleProjectionAttempt = errors.New("stale metadata projection attempt")
+)
 
 type PostgresRepository struct {
 	pool *pgxpool.Pool
@@ -96,15 +99,16 @@ func (r *PostgresRepository) ListBindings(ctx context.Context, resourceID uuid.U
 	return result, nil
 }
 
-func (r *PostgresRepository) BeginProjection(ctx context.Context, tx pgx.Tx, projection metadatadomain.GovernanceProjection) error {
+func (r *PostgresRepository) BeginProjection(ctx context.Context, tx pgx.Tx, projection metadatadomain.GovernanceProjection) (int, error) {
 	metadata, err := json.Marshal(projection.Metadata)
 	if err != nil {
-		return fmt.Errorf("marshal governance projection metadata: %w", err)
+		return 0, fmt.Errorf("marshal governance projection metadata: %w", err)
 	}
 	if projection.ID == uuid.Nil {
 		projection.ID = uuid.New()
 	}
-	_, err = tx.Exec(ctx, `
+	var attempt int
+	err = tx.QueryRow(ctx, `
 		INSERT INTO governance_projection (
 			id, workspace_id, provider, object_type, object_id, source_event_id,
 			status, attempts, last_error, metadata, created_at, updated_at
@@ -118,49 +122,53 @@ func (r *PostgresRepository) BeginProjection(ctx context.Context, tx pgx.Tx, pro
 			last_error = NULL,
 			metadata = EXCLUDED.metadata,
 			updated_at = now()
+		RETURNING attempts
 	`, projection.ID, projection.WorkspaceID, projection.Provider, projection.ObjectType,
-		projection.ObjectID, projection.SourceEventID, metadata)
+		projection.ObjectID, projection.SourceEventID, metadata).Scan(&attempt)
 	if err != nil {
-		return fmt.Errorf("begin governance projection: %w", err)
+		return 0, fmt.Errorf("begin governance projection: %w", err)
 	}
-	return nil
+	return attempt, nil
 }
 
-func (r *PostgresRepository) MarkProjectionSucceeded(ctx context.Context, tx pgx.Tx, provider metadatadomain.Provider, objectType string, objectID uuid.UUID, externalID, externalFQN string, metadata map[string]any) error {
+func (r *PostgresRepository) MarkProjectionSucceeded(ctx context.Context, tx pgx.Tx, provider metadatadomain.Provider, objectType string, objectID, expectedSourceEventID uuid.UUID, expectedAttempt int, externalID, externalFQN string, metadata map[string]any) error {
 	encoded, err := json.Marshal(metadata)
 	if err != nil {
 		return fmt.Errorf("marshal governance projection success metadata: %w", err)
 	}
 	tag, err := tx.Exec(ctx, `
 		UPDATE governance_projection
-		SET status='SUCCEEDED', external_id=$4, external_fqn=$5, metadata=$6,
+		SET status='SUCCEEDED', external_id=$6, external_fqn=$7, metadata=$8,
 		    last_error=NULL, projected_at=now(), updated_at=now()
 		WHERE provider=$1 AND object_type=$2 AND object_id=$3
-	`, provider, objectType, objectID, nullableString(externalID), nullableString(externalFQN), encoded)
+		  AND source_event_id=$4 AND attempts=$5 AND status='PENDING'
+	`, provider, objectType, objectID, expectedSourceEventID, expectedAttempt,
+		nullableString(externalID), nullableString(externalFQN), encoded)
 	if err != nil {
 		return fmt.Errorf("mark governance projection succeeded: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return ErrNotFound
+		return ErrStaleProjectionAttempt
 	}
 	return nil
 }
 
-func (r *PostgresRepository) MarkProjectionFailed(ctx context.Context, tx pgx.Tx, provider metadatadomain.Provider, objectType string, objectID uuid.UUID, cause error) error {
+func (r *PostgresRepository) MarkProjectionFailed(ctx context.Context, tx pgx.Tx, provider metadatadomain.Provider, objectType string, objectID, expectedSourceEventID uuid.UUID, expectedAttempt int, cause error) error {
 	message := ""
 	if cause != nil {
 		message = cause.Error()
 	}
 	tag, err := tx.Exec(ctx, `
 		UPDATE governance_projection
-		SET status='FAILED', last_error=$4, updated_at=now()
+		SET status='FAILED', last_error=$6, updated_at=now()
 		WHERE provider=$1 AND object_type=$2 AND object_id=$3
-	`, provider, objectType, objectID, message)
+		  AND source_event_id=$4 AND attempts=$5 AND status='PENDING'
+	`, provider, objectType, objectID, expectedSourceEventID, expectedAttempt, message)
 	if err != nil {
 		return fmt.Errorf("mark governance projection failed: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return ErrNotFound
+		return ErrStaleProjectionAttempt
 	}
 	return nil
 }
