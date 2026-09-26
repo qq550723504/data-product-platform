@@ -231,7 +231,7 @@ func isEntityMatchOutputConflict(err error) bool {
 func (r *PostgresRepository) insertVersion(ctx context.Context, tx pgx.Tx, version domain.DatasetVersion) error {
 	metadata, err := json.Marshal(version.Metadata)
 	if err != nil {
-		return nil, fmt.Errorf("marshal dataset version metadata: %w", err)
+		return fmt.Errorf("marshal dataset version metadata: %w", err)
 	}
 	_, err = tx.Exec(ctx, `
 		INSERT INTO dataset_version (
