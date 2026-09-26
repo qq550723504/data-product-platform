@@ -28,6 +28,7 @@ type ManagedExecutionRepository interface {
 }
 
 type ManagedExecutionStateService interface {
+	Start(ctx context.Context, executionID uuid.UUID, engineExecutionID, traceID string) (domain.Execution, error)
 	Succeed(ctx context.Context, executionID, outputDatasetVersionID uuid.UUID, metrics map[string]any, traceID string) (domain.Execution, error)
 	Fail(ctx context.Context, executionID uuid.UUID, code, message string, metrics map[string]any, traceID string) (domain.Execution, error)
 }
@@ -134,6 +135,25 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 	}
 
 	if execution.Status == domain.ExecutionSubmitting {
+		if strings.TrimSpace(execution.EngineExecutionID) != "" {
+			version, err := r.repo.GetVersion(ctx, execution.WorkflowVersionID)
+			if err != nil {
+				return fmt.Errorf("load workflow version for uncertain submission %s: %w", executionID, err)
+			}
+			request := ProcessingRequestFromExecution(execution, version)
+			if _, err := bridge.Status(ctx, request, execution.EngineExecutionID); err != nil {
+				// A durable remote id exists. Never turn an unavailable status
+				// lookup into a definite Core failure that would permit a
+				// duplicate retry; keep SUBMITTING and retry reconciliation.
+				return fmt.Errorf("reconcile uncertain %s submission %s: %w", execution.EngineType, executionID, err)
+			}
+			if _, err := r.service.Start(ctx, execution.ID, execution.EngineExecutionID, execution.ID.String()); err != nil &&
+				!errors.Is(err, domain.ErrInvalidTransition) {
+				return fmt.Errorf("confirm managed submission %s: %w", executionID, err)
+			}
+			return nil
+		}
+
 		claimedAt := execution.StartedAt
 		if claimedAt == nil {
 			claimedAt = &execution.CreatedAt
