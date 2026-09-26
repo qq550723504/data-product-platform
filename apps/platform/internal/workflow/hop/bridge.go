@@ -65,20 +65,26 @@ func (b *Bridge) PrepareSubmission(ctx context.Context, request workflowapp.Proc
 }
 
 func (b *Bridge) StartSubmission(ctx context.Context, request workflowapp.ProcessingRequest, runID string) (workflowapp.EngineRun, error) {
-	submitRequest, err := b.managedSubmitRequest(ctx, request)
+	cfg, err := b.config(request)
 	if err != nil {
 		return workflowapp.EngineRun{}, err
 	}
-	run, err := b.engine.StartSubmission(ctx, submitRequest, runID)
+	parameters, _, err := b.executionParameters(ctx, request, cfg)
+	if err != nil {
+		return workflowapp.EngineRun{}, err
+	}
+	run, err := b.engine.StartSubmission(ctx, workflowapp.ManagedSubmitRequest{
+		Name:          cfg.Name,
+		DefinitionRef: cfg.DefinitionRef,
+		Parameters:    parameters,
+	}, runID)
 	if run.Metrics == nil {
 		run.Metrics = map[string]any{}
 	}
-	_, outputURI := b.stagingOutput(request, mustManagedConfig(request))
+	_, outputURI := b.stagingOutput(request, cfg)
 	run.Metrics["stagingOutputUri"] = outputURI
 	run.Metrics["workflowDefinitionRef"] = request.WorkflowVersion.DefinitionRef
-	if cfg, cfgErr := b.config(request); cfgErr == nil {
-		run.Metrics["hopDefinitionRef"] = cfg.DefinitionRef
-	}
+	run.Metrics["hopDefinitionRef"] = cfg.DefinitionRef
 	return run, err
 }
 
@@ -102,21 +108,6 @@ func (b *Bridge) managedSubmitRequest(ctx context.Context, request workflowapp.P
 		ContentType:   cfg.ContentType,
 		Parameters:    parameters,
 	}, nil
-}
-
-func mustManagedConfig(request workflowapp.ProcessingRequest) managedConfig {
-	spec, _ := asMap(request.WorkflowVersion.Definition["spec"])
-	managed, _ := asMap(spec["managedExecution"])
-	cfg := managedConfig{
-		Name:              strings.TrimSpace(stringValue(managed["name"])),
-		DefinitionRef:     strings.TrimSpace(stringValue(managed["definitionRef"])),
-		OutputFilename:    strings.TrimSpace(stringValue(managed["outputFilename"])),
-		OutputContentType: strings.TrimSpace(stringValue(managed["outputContentType"])),
-	}
-	if cfg.OutputFilename == "" {
-		cfg.OutputFilename = "managed-output.csv"
-	}
-	return cfg
 }
 
 func (b *Bridge) Status(ctx context.Context, request workflowapp.ProcessingRequest, runID string) (workflowapp.EngineRun, error) {
