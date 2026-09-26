@@ -449,6 +449,13 @@ func (r *PostgresRepository) GetWorkspaceAndType(ctx context.Context, datasetID 
 	return workspaceID, datasetType, nil
 }
 
+func (r *PostgresRepository) LockUploadIdempotencyTx(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, key string) error {
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtext($1), hashtext($2))`, workspaceID.String(), "DATASET.UPLOAD_VERSION:"+key); err != nil {
+		return fmt.Errorf("lock dataset upload idempotency key: %w", err)
+	}
+	return nil
+}
+
 func (r *PostgresRepository) FindUploadIdempotencyTx(ctx context.Context, tx pgx.Tx, workspaceID uuid.UUID, key string) (UploadIdempotencyRecord, bool, error) {
 	var record UploadIdempotencyRecord
 	err := tx.QueryRow(ctx, `
