@@ -154,11 +154,14 @@ func main() {
 			os.Exit(1)
 		}
 		managedBridges = append(managedBridges, hopBridge)
-		managedReconciler = workflowapp.NewManagedReconciler(executionService, workflowRepo, hopBridge)
+		managedReconciler = workflowapp.NewManagedReconciler(executionService, workflowRepo, hopBridge).
+			WithRecoveryLocker(nativeLockManager)
 		logger.Info("Apache Hop managed execution enabled", "base_url", cfg.Hop.BaseURL, "artifact_root", artifactRoot)
 	}
 	nativeReconciler := workflowapp.NewNativeReconciler(nativeLockManager, executionService, workflowRepo, datasetRepo, processingEngine)
-	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine, managedBridges...).WithNativeExecutionLocker(nativeLockManager)
+	workflowTaskHandler := workflowqueue.NewHandler(executionService, workflowRepo, processingEngine, managedBridges...).
+		WithNativeExecutionLocker(nativeLockManager).
+		WithManagedSubmissionLocker(nativeLockManager)
 
 	var annotationEngineRunner *annotationapp.EngineRunner
 	if cfg.LabelStudio.Enabled {

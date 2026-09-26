@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/domain"
 )
 
@@ -16,8 +17,17 @@ import (
 // import stay behind this boundary.
 type ManagedExecutionBridge interface {
 	EngineType() string
-	Submit(ctx context.Context, request ProcessingRequest) (EngineRun, error)
-	Status(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error)
+
+	// Local preparation must finish before a physical provider attempt is
+	// recorded. Invoke* methods are the exact external side-effect boundary.
+	PrepareRegisterRequest(ctx context.Context, request ProcessingRequest) (ManagedSubmitRequest, error)
+	InvokeRegisterSubmission(ctx context.Context, request ManagedSubmitRequest) (EngineRun, error)
+	PrepareStartRequest(ctx context.Context, request ProcessingRequest) (ManagedSubmitRequest, error)
+	InvokeStartSubmission(ctx context.Context, request ManagedSubmitRequest, runID string) (EngineRun, error)
+	InvokeRecoverSubmission(ctx context.Context, request ManagedSubmitRequest, runID string) (EngineRun, error)
+	PrepareStatusLookup(ctx context.Context, request ProcessingRequest, runID string) (ManagedRunLookup, error)
+	InvokeStatus(ctx context.Context, lookup ManagedRunLookup) (EngineRun, error)
+
 	Finalize(ctx context.Context, request ProcessingRequest, run EngineRun) (ProcessingResult, error)
 }
 
@@ -28,6 +38,12 @@ type ManagedExecutionRepository interface {
 }
 
 type ManagedExecutionStateService interface {
+	Start(ctx context.Context, executionID uuid.UUID, engineExecutionID, traceID string) (domain.Execution, error)
+	RecordManagedProviderAttempt(ctx context.Context, executionID uuid.UUID, phase string, recovery bool, traceID string) (uuid.UUID, error)
+	RecordManagedProviderObservation(ctx context.Context, executionID, attemptID uuid.UUID, outcome, traceID string) error
+	ResolvePendingManagedProviderAttemptUnknown(ctx context.Context, executionID uuid.UUID, traceID string) error
+	RecordManagedSubmissionRecoveryAttempt(ctx context.Context, executionID uuid.UUID, traceID string) (uuid.UUID, error)
+	RecordManagedSubmissionRecoveryOutcome(ctx context.Context, executionID, attemptID uuid.UUID, outcome, traceID string) error
 	Succeed(ctx context.Context, executionID, outputDatasetVersionID uuid.UUID, metrics map[string]any, traceID string) (domain.Execution, error)
 	Fail(ctx context.Context, executionID uuid.UUID, code, message string, metrics map[string]any, traceID string) (domain.Execution, error)
 }
@@ -75,10 +91,13 @@ func stringMap(value any) (map[string]any, bool) {
 	}
 }
 
+const DefaultManagedSubmissionTimeout = 5 * time.Minute
+
 type ManagedReconciler struct {
 	service           ManagedExecutionStateService
 	repo              ManagedExecutionRepository
 	bridges           map[string]ManagedExecutionBridge
+	recoveryLocker    NativeRecoveryLocker
 	limit             int
 	submissionTimeout time.Duration
 }
@@ -99,8 +118,17 @@ func NewManagedReconciler(service ManagedExecutionStateService, repo ManagedExec
 		repo:              repo,
 		bridges:           registry,
 		limit:             100,
-		submissionTimeout: 5 * time.Minute,
+		submissionTimeout: DefaultManagedSubmissionTimeout,
 	}
+}
+
+func ManagedSubmissionRecoveryLockKey(executionID uuid.UUID) string {
+	return "managed-submission-recovery:" + executionID.String()
+}
+
+func (r *ManagedReconciler) WithRecoveryLocker(locker NativeRecoveryLocker) *ManagedReconciler {
+	r.recoveryLocker = locker
+	return r
 }
 
 func (r *ManagedReconciler) RunOnce(ctx context.Context) error {
@@ -139,7 +167,26 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 			claimedAt = &execution.CreatedAt
 		}
 		if time.Since(*claimedAt) < r.submissionTimeout {
+			// The original submitter still owns the submission lease. Recovery
+			// must not issue a concurrent start for the same durable remote id.
 			return nil
+		}
+
+		if strings.TrimSpace(execution.EngineExecutionID) != "" {
+			if r.recoveryLocker == nil {
+				return fmt.Errorf("managed submission recovery locker is not configured")
+			}
+			err := r.recoveryLocker.WithAdvisoryLock(ctx, ManagedSubmissionRecoveryLockKey(executionID), func(ctx context.Context) error {
+				return r.recoverExpiredSubmission(ctx, bridge, executionID)
+			})
+			if errors.Is(err, transaction.ErrAdvisoryLockBusy) {
+				return nil
+			}
+			return err
+		}
+
+		if err := r.service.ResolvePendingManagedProviderAttemptUnknown(ctx, execution.ID, execution.ID.String()); err != nil {
+			return fmt.Errorf("resolve pending submission observation %s: %w", executionID, err)
 		}
 		_, err := r.service.Fail(
 			ctx,
@@ -163,7 +210,7 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 		return fmt.Errorf("load workflow version for execution %s: %w", executionID, err)
 	}
 	request := ProcessingRequestFromExecution(execution, version)
-	run, err := bridge.Status(ctx, request, execution.EngineExecutionID)
+	run, err := r.probeManagedStatus(ctx, bridge, execution, request, true)
 	if err != nil {
 		return fmt.Errorf("reconcile %s status for execution %s: %w", execution.EngineType, executionID, err)
 	}
@@ -239,6 +286,139 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 	default:
 		return nil
 	}
+}
+
+func (r *ManagedReconciler) recoverExpiredSubmission(ctx context.Context, bridge ManagedExecutionBridge, executionID uuid.UUID) error {
+	execution, err := r.repo.GetExecution(ctx, executionID)
+	if err != nil {
+		return fmt.Errorf("reload managed execution %s for submission recovery: %w", executionID, err)
+	}
+	if execution.Status != domain.ExecutionSubmitting || strings.TrimSpace(execution.EngineExecutionID) == "" {
+		return nil
+	}
+	claimedAt := execution.StartedAt
+	if claimedAt == nil {
+		claimedAt = &execution.CreatedAt
+	}
+	if time.Since(*claimedAt) < r.submissionTimeout {
+		return nil
+	}
+
+	if err := r.service.ResolvePendingManagedProviderAttemptUnknown(ctx, execution.ID, execution.ID.String()); err != nil {
+		return fmt.Errorf("resolve pending recovery observation %s: %w", executionID, err)
+	}
+
+	version, err := r.repo.GetVersion(ctx, execution.WorkflowVersionID)
+	if err != nil {
+		return fmt.Errorf("load workflow version for uncertain submission %s: %w", executionID, err)
+	}
+	request := ProcessingRequestFromExecution(execution, version)
+	preparedRequest, err := bridge.PrepareStartRequest(ctx, request)
+	if err != nil {
+		return fmt.Errorf("prepare managed submission recovery %s before provider call: %w", executionID, err)
+	}
+	attemptID, err := r.service.RecordManagedSubmissionRecoveryAttempt(ctx, execution.ID, execution.ID.String())
+	if err != nil {
+		return fmt.Errorf("record managed submission recovery attempt %s: %w", executionID, err)
+	}
+
+	_, startErr := bridge.InvokeRecoverSubmission(ctx, preparedRequest, execution.EngineExecutionID)
+	if recordErr := r.service.RecordManagedSubmissionRecoveryOutcome(
+		ctx, execution.ID, attemptID, managedProviderOutcome(startErr), execution.ID.String(),
+	); recordErr != nil {
+		return fmt.Errorf("record managed submission recovery outcome %s: %w", executionID, recordErr)
+	}
+	if startErr == nil {
+		if _, err := r.service.Start(ctx, execution.ID, execution.EngineExecutionID, execution.ID.String()); err != nil &&
+			!errors.Is(err, domain.ErrInvalidTransition) {
+			return fmt.Errorf("confirm managed submission %s: %w", executionID, err)
+		}
+		return nil
+	}
+
+	statusRun, statusErr := r.probeManagedStatus(ctx, bridge, execution, request, true)
+	if statusErr == nil && managedRunHasStarted(statusRun) {
+		if _, err := r.service.Start(ctx, execution.ID, execution.EngineExecutionID, execution.ID.String()); err != nil &&
+			!errors.Is(err, domain.ErrInvalidTransition) {
+			return fmt.Errorf("confirm recovered managed submission %s: %w", executionID, err)
+		}
+		return nil
+	}
+	if statusErr != nil {
+		return fmt.Errorf("reconcile uncertain %s start for execution %s: %w", execution.EngineType, executionID, errors.Join(startErr, statusErr))
+	}
+	if !IsManagedEngineDefiniteRejection(startErr) {
+		return fmt.Errorf("reconcile uncertain %s start for execution %s: %w", execution.EngineType, executionID, startErr)
+	}
+
+	_, failErr := r.service.Fail(
+		ctx,
+		execution.ID,
+		"REMOTE_SUBMIT_FAILED",
+		"remote processing engine start was rejected",
+		map[string]any{"engineType": execution.EngineType, "externalExecutionId": execution.EngineExecutionID, "recoveryAttemptId": attemptID},
+		execution.ID.String(),
+	)
+	if failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
+		return fmt.Errorf("terminalize rejected managed start %s: %w", executionID, failErr)
+	}
+	return nil
+}
+
+func (r *ManagedReconciler) probeManagedStatus(
+	ctx context.Context,
+	bridge ManagedExecutionBridge,
+	execution domain.Execution,
+	request ProcessingRequest,
+	recovery bool,
+) (EngineRun, error) {
+	if err := r.service.ResolvePendingManagedProviderAttemptUnknown(ctx, execution.ID, execution.ID.String()); err != nil {
+		return EngineRun{}, fmt.Errorf("resolve pending managed provider observation: %w", err)
+	}
+	lookup, err := bridge.PrepareStatusLookup(ctx, request, execution.EngineExecutionID)
+	if err != nil {
+		return EngineRun{}, err
+	}
+	attemptID, err := r.service.RecordManagedProviderAttempt(ctx, execution.ID, "STATUS", recovery, execution.ID.String())
+	if err != nil {
+		return EngineRun{}, err
+	}
+	run, callErr := bridge.InvokeStatus(ctx, lookup)
+	if recordErr := r.service.RecordManagedProviderObservation(
+		ctx, execution.ID, attemptID, managedProviderOutcome(callErr), execution.ID.String(),
+	); recordErr != nil {
+		return EngineRun{}, fmt.Errorf("record managed status observation: %w", recordErr)
+	}
+	return run, callErr
+}
+
+func managedRunHasStarted(run EngineRun) bool {
+	if run.StartedAt != nil || run.FinishedAt != nil {
+		return true
+	}
+	switch run.State {
+	case EngineRunRunning, EngineRunSucceeded, EngineRunFailed, EngineRunCancelled:
+		return true
+	default:
+		return false
+	}
+}
+
+func managedProviderOutcome(err error) string {
+	if err == nil {
+		return "SUCCEEDED"
+	}
+	if IsManagedEngineOutcomeUnknown(err) {
+		return "OUTCOME_UNKNOWN"
+	}
+	if IsManagedEngineDefiniteRejection(err) {
+		return "DEFINITE_REJECTION"
+	}
+	var managedErr *ManagedEngineError
+	if errors.As(err, &managedErr) {
+		return string(managedErr.Kind)
+	}
+	return "LOCAL_ERROR"
 }
 
 func cloneMetrics(source map[string]any) map[string]any {

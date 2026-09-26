@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -88,11 +89,11 @@ type pipelineStatus struct {
 	ExecutionEndDate    *string          `json:"executionEndDate"`
 }
 
-func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRequest) (workflowapp.EngineRun, error) {
+func (c *Client) PrepareSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest) (workflowapp.EngineRun, error) {
 	name := strings.TrimSpace(request.Name)
 	if name == "" || len(request.Definition) == 0 {
 		return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
-			workflowapp.ManagedEngineInvalidRequest, "submit", false, 0,
+			workflowapp.ManagedEngineInvalidRequest, "prepare submission", false, 0,
 			fmt.Errorf("pipeline name and pipeline configuration are required"),
 		)
 	}
@@ -100,7 +101,7 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 		switch strings.ToLower(strings.TrimSpace(key)) {
 		case "name", "id", "xml":
 			return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
-				workflowapp.ManagedEngineInvalidRequest, "submit", false, 0,
+				workflowapp.ManagedEngineInvalidRequest, "prepare submission", false, 0,
 				fmt.Errorf("parameter %q is reserved for remote run identity", key),
 			)
 		}
@@ -109,18 +110,42 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 	registerQuery := url.Values{"xml": []string{"Y"}}
 	registered, err := c.webResultRequest(ctx, http.MethodPost, "/hop/registerPipeline", registerQuery, request.Definition, request.ContentType)
 	if err != nil {
-		return workflowapp.EngineRun{}, err
+		return workflowapp.EngineRun{}, classifySubmitOutcome("register pipeline", err)
 	}
 	if strings.TrimSpace(registered.ID) == "" {
 		return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
-			workflowapp.ManagedEngineInvalidResponse, "register pipeline", false, 0,
-			fmt.Errorf("remote registration returned no execution id"),
+			workflowapp.ManagedEngineOutcomeUnknown, "register pipeline", true, 0,
+			fmt.Errorf("remote registration reported success without a durable execution id"),
 		)
 	}
+	return workflowapp.EngineRun{
+		ID:      strings.TrimSpace(registered.ID),
+		Name:    name,
+		State:   workflowapp.EngineRunQueued,
+		Metrics: map[string]any{"definitionRef": request.DefinitionRef},
+	}, nil
+}
 
+func (c *Client) StartSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest, runID string) (workflowapp.EngineRun, error) {
+	return c.invokeStartSubmission(ctx, request, runID)
+}
+
+func (c *Client) RecoverSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest, runID string) (workflowapp.EngineRun, error) {
+	return c.invokeStartSubmission(ctx, request, runID)
+}
+
+func (c *Client) invokeStartSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest, runID string) (workflowapp.EngineRun, error) {
+	name := strings.TrimSpace(request.Name)
+	runID = strings.TrimSpace(runID)
+	if name == "" || runID == "" {
+		return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidRequest, "start submission", false, 0,
+			fmt.Errorf("pipeline name and durable execution id are required"),
+		)
+	}
 	startQuery := url.Values{
 		"name": []string{name},
-		"id":   []string{registered.ID},
+		"id":   []string{runID},
 		"xml":  []string{"Y"},
 	}
 	for key, value := range request.Parameters {
@@ -128,28 +153,65 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 		if key == "" {
 			continue
 		}
+		switch strings.ToLower(key) {
+		case "name", "id", "xml":
+			return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
+				workflowapp.ManagedEngineInvalidRequest, "start submission", false, 0,
+				fmt.Errorf("parameter %q is reserved for remote run identity", key),
+			)
+		}
 		startQuery.Set(key, value)
 	}
-	if _, err := c.webResultRequest(ctx, http.MethodGet, "/hop/startPipeline", startQuery, nil, ""); err != nil {
-		return workflowapp.EngineRun{}, err
-	}
 
-	run, err := c.Status(ctx, name, registered.ID)
+	if _, err := c.webResultRequest(ctx, http.MethodGet, "/hop/startPipeline", startQuery, nil, ""); err != nil {
+		return workflowapp.EngineRun{ID: runID, Name: name, State: workflowapp.EngineRunQueued}, classifySubmitOutcome("start pipeline", err)
+	}
+	return workflowapp.EngineRun{
+		ID:      runID,
+		Name:    name,
+		State:   workflowapp.EngineRunQueued,
+		Metrics: map[string]any{"definitionRef": request.DefinitionRef},
+	}, nil
+}
+
+func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRequest) (workflowapp.EngineRun, error) {
+	prepared, err := c.PrepareSubmission(ctx, request)
 	if err != nil {
-		// Registration/start already succeeded. Preserve the external id even if the
-		// immediate status probe races Hop Server startup; the reconciler can recover.
-		return workflowapp.EngineRun{
-			ID:      registered.ID,
-			Name:    name,
-			State:   workflowapp.EngineRunQueued,
-			Metrics: map[string]any{"definitionRef": request.DefinitionRef},
-		}, nil
+		return prepared, err
 	}
-	if run.Metrics == nil {
-		run.Metrics = map[string]any{}
+	return c.StartSubmission(ctx, request, prepared.ID)
+}
+
+func classifySubmitOutcome(operation string, err error) error {
+	if err == nil {
+		return nil
 	}
-	run.Metrics["definitionRef"] = request.DefinitionRef
-	return run, nil
+	var managed *workflowapp.ManagedEngineError
+	if errors.As(err, &managed) {
+		switch managed.Kind {
+		case workflowapp.ManagedEngineUnavailable, workflowapp.ManagedEngineInvalidResponse:
+			return workflowapp.NewManagedEngineError(
+				workflowapp.ManagedEngineOutcomeUnknown,
+				operation,
+				true,
+				managed.StatusCode,
+				err,
+			)
+		default:
+			// Explicit provider rejection / authorization / request errors are
+			// definite failures: the provider told us the request was not accepted.
+			return err
+		}
+	}
+	// Adapters should normally return ManagedEngineError, but a raw transport
+	// error at submit time is still outcome-unknown rather than definite failure.
+	return workflowapp.NewManagedEngineError(
+		workflowapp.ManagedEngineOutcomeUnknown,
+		operation,
+		true,
+		0,
+		err,
+	)
 }
 
 func (c *Client) Status(ctx context.Context, name, runID string) (workflowapp.EngineRun, error) {

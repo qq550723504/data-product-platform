@@ -102,8 +102,8 @@ func TestManagedHopLifecycle(t *testing.T) {
 	if err != nil {
 		t.Fatalf("submit Hop run: %v", err)
 	}
-	if run.ID != runID || run.State != workflowapp.EngineRunRunning || run.StartedAt == nil {
-		t.Fatalf("submitted run = %+v", run)
+	if run.ID != runID || run.State != workflowapp.EngineRunQueued || run.StartedAt != nil {
+		t.Fatalf("submitted run = %+v, want durable id with QUEUED state before explicit status probe", run)
 	}
 	if run.Metrics["definitionRef"] != "examples/enterprise-activity/hop/aggregate.hpl" {
 		t.Fatalf("definition ref missing from run metrics: %+v", run.Metrics)
@@ -128,8 +128,8 @@ func TestManagedHopLifecycle(t *testing.T) {
 	if err := client.Cancel(context.Background(), pipelineName, runID); err != nil {
 		t.Fatalf("cancel Hop run: %v", err)
 	}
-	if statusCalls < 3 {
-		t.Fatalf("status calls = %d, want submit probe + logs + metrics", statusCalls)
+	if statusCalls != 2 {
+		t.Fatalf("status calls = %d, want only explicit logs + metrics probes", statusCalls)
 	}
 }
 
@@ -306,5 +306,239 @@ func writeJSON(t *testing.T, w http.ResponseWriter, value any) {
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(value); err != nil {
 		t.Fatalf("encode response: %v", err)
+	}
+}
+
+func TestHopSubmitClassifiesTransportFailureAsOutcomeUnknown(t *testing.T) {
+	client, err := hop.NewClient("http://hop", "cluster", "secret", &http.Client{
+		Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+			return nil, errors.New("response lost after request write")
+		}),
+	})
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+
+	_, err = client.Submit(context.Background(), workflowapp.ManagedSubmitRequest{
+		Name:       "pipeline",
+		Definition: []byte(`<pipeline_configuration/>`),
+	})
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, 0)
+}
+
+func TestHopSubmitClassifiesStartServiceFailureAsOutcomeUnknown(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/registerPipeline":
+			writeXML(w, `<webresult><result>OK</result><message>registered</message><id>run-unknown</id></webresult>`)
+		case "/hop/startPipeline":
+			http.Error(w, "temporarily unavailable", http.StatusServiceUnavailable)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	run, err := client.Submit(context.Background(), workflowapp.ManagedSubmitRequest{
+		Name:       "pipeline",
+		Definition: []byte(`<pipeline_configuration/>`),
+	})
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, http.StatusServiceUnavailable)
+	if run.ID != "run-unknown" || run.State != workflowapp.EngineRunQueued {
+		t.Fatalf("ambiguous start run = %+v, want durable id run-unknown", run)
+	}
+}
+
+func TestHopSubmitTreatsSuccessfulRegistrationWithoutDurableIDAsOutcomeUnknown(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/hop/registerPipeline" {
+			http.NotFound(w, r)
+			return
+		}
+		writeXML(w, `<webresult><result>OK</result><message>registered</message><id></id></webresult>`)
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	_, err = client.Submit(context.Background(), workflowapp.ManagedSubmitRequest{
+		Name:       "pipeline",
+		Definition: []byte(`<pipeline_configuration/>`),
+	})
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, 0)
+}
+
+func TestHopPrepareSubmissionDoesNotStartRemoteWork(t *testing.T) {
+	var registerCalls, startCalls int
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/registerPipeline":
+			registerCalls++
+			writeXML(w, `<webresult><result>OK</result><message>registered</message><id>prepared-run</id></webresult>`)
+		case "/hop/startPipeline":
+			startCalls++
+			writeXML(w, `<webresult><result>OK</result><message>started</message><id></id></webresult>`)
+		case "/hop/pipelineStatus":
+			writeJSON(t, w, map[string]any{
+				"id":                "prepared-run",
+				"pipelineName":      "pipeline",
+				"statusDescription": "Running",
+				"result":            map[string]any{"nrErrors": 0},
+			})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	request := workflowapp.ManagedSubmitRequest{
+		Name:          "pipeline",
+		DefinitionRef: "pipeline.hpl",
+		Definition:    []byte(`<pipeline_configuration/>`),
+		Parameters:    map[string]string{"TARGET_PERIOD": "2026-09"},
+	}
+	prepared, err := client.PrepareSubmission(context.Background(), request)
+	if err != nil {
+		t.Fatalf("prepare submission: %v", err)
+	}
+	if prepared.ID != "prepared-run" || registerCalls != 1 || startCalls != 0 {
+		t.Fatalf("prepared=%+v registerCalls=%d startCalls=%d, want durable id with no start", prepared, registerCalls, startCalls)
+	}
+
+	started, err := client.StartSubmission(context.Background(), request, prepared.ID)
+	if err != nil {
+		t.Fatalf("start prepared submission: %v", err)
+	}
+	if started.ID != prepared.ID || startCalls != 1 {
+		t.Fatalf("started=%+v startCalls=%d, want same prepared id and one start", started, startCalls)
+	}
+}
+
+func TestHopInitialStartKeepsDefiniteRejectionEvenWhenPreparedRunIsQueryable(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/startPipeline":
+			http.Error(w, "rejected", http.StatusBadRequest)
+		case "/hop/pipelineStatus":
+			writeJSON(t, w, map[string]any{
+				"id":                "prepared-run",
+				"pipelineName":      "pipeline",
+				"statusDescription": "",
+				"result":            map[string]any{"nrErrors": 0},
+			})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	_, err = client.StartSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineInvalidRequest, false, http.StatusBadRequest)
+}
+
+func TestHopRecoveryUsesStartedStatusAfterAmbiguousStartResponse(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/startPipeline":
+			http.Error(w, "transient start response", http.StatusServiceUnavailable)
+		case "/hop/pipelineStatus":
+			writeJSON(t, w, map[string]any{
+				"id":                 "prepared-run",
+				"pipelineName":       "pipeline",
+				"statusDescription":  "Running",
+				"executionStartDate": "2026-09-26T08:00:00.000+0000",
+				"result":             map[string]any{"nrErrors": 0},
+			})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	run, err := client.RecoverSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, http.StatusServiceUnavailable)
+	if run.ID != "prepared-run" || run.State != workflowapp.EngineRunQueued {
+		t.Fatalf("recovery run = %+v, want durable id preserved for reconciler status probe", run)
+	}
+}
+
+func TestHopRecoveryKeepsOutcomeUnknownWhenStatusUnavailable(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/startPipeline":
+			http.Error(w, "definite secondary rejection", http.StatusConflict)
+		case "/hop/pipelineStatus":
+			http.Error(w, "status unavailable", http.StatusServiceUnavailable)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	_, err = client.RecoverSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineRejected, false, http.StatusConflict)
+}
+
+func TestHopRecoveryRequiresEvidenceThatPreparedRunStarted(t *testing.T) {
+	started := false
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/startPipeline":
+			http.Error(w, "already handled", http.StatusConflict)
+		case "/hop/pipelineStatus":
+			response := map[string]any{
+				"id":                "prepared-run",
+				"pipelineName":      "pipeline",
+				"statusDescription": "",
+				"result":            map[string]any{"nrErrors": 0},
+			}
+			if started {
+				response["statusDescription"] = "Running"
+				response["executionStartDate"] = "2026-09-26T08:00:00.000+0000"
+			}
+			writeJSON(t, w, response)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+
+	_, err = client.RecoverSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineRejected, false, http.StatusConflict)
+
+	started = true
+	run, err := client.Status(context.Background(), "pipeline", "prepared-run")
+	if err != nil {
+		t.Fatalf("explicit status probe for prepared submission: %v", err)
+	}
+	if run.ID != "prepared-run" || run.StartedAt == nil || run.State != workflowapp.EngineRunRunning {
+		t.Fatalf("status run = %+v, want same durable id with started evidence", run)
 	}
 }

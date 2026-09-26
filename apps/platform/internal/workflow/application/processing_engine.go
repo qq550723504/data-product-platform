@@ -56,6 +56,11 @@ type ManagedSubmitRequest struct {
 	Parameters    map[string]string
 }
 
+type ManagedRunLookup struct {
+	Name  string
+	RunID string
+}
+
 type EngineRun struct {
 	ID           string
 	Name         string
@@ -75,6 +80,14 @@ type EngineLogPage struct {
 // ManagedProcessingEngine models the lifecycle exposed by remote runtimes such as
 // Apache Hop Server. The external run ID remains separate from Core Execution.ID.
 type ManagedProcessingEngine interface {
+	// PrepareSubmission allocates a durable remote run identity without starting work.
+	// Core must persist the returned ID before StartSubmission is invoked.
+	PrepareSubmission(ctx context.Context, request ManagedSubmitRequest) (EngineRun, error)
+	StartSubmission(ctx context.Context, request ManagedSubmitRequest, runID string) (EngineRun, error)
+	RecoverSubmission(ctx context.Context, request ManagedSubmitRequest, runID string) (EngineRun, error)
+
+	// Submit remains a convenience composition for direct adapter callers. Core's
+	// queue handler uses the two-phase methods above to close the crash window.
 	Submit(ctx context.Context, request ManagedSubmitRequest) (EngineRun, error)
 	Status(ctx context.Context, name, runID string) (EngineRun, error)
 	Cancel(ctx context.Context, name, runID string) error
