@@ -173,8 +173,13 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 	run, err := bridge.StartSubmission(ctx, request, prepared.ID)
 	if err != nil {
 		if managedSubmissionOutcomeUnknown(err) {
-			// The durable id is already frozen in Core. Reconciliation retries
-			// start/status against that same identity; it never registers again.
+			// The durable id is already frozen in Core. Persist the ambiguity so
+			// later recovery cannot misclassify a secondary rejection as proof
+			// that the original start was never accepted.
+			if _, markErr := h.service.MarkManagedSubmissionOutcomeUnknown(ctx, execution.ID, execution.ID.String()); markErr != nil &&
+				!errors.Is(markErr, domain.ErrInvalidTransition) {
+				return fmt.Errorf("persist unknown remote start outcome for execution %s: %w", execution.ID, markErr)
+			}
 			return nil
 		}
 		if _, failErr := h.service.Fail(
