@@ -243,21 +243,36 @@ func (r *PostgresRepository) RecordMappingDecision(ctx context.Context, tx pgx.T
 		return domain.MappingDecision{}, err
 	}
 
-	// Lock the current projection row so the concurrency check and the human
-	// priority rule observe a stable current decision.
+	// Lock the physical projection row before updating it. The physical pointer
+	// may name a decision from a RUNNING / WAITING_REVIEW / FAILED match job, so
+	// it is not itself the authority boundary. Concurrency and human-priority
+	// checks must use the latest authoritative decision selected by
+	// getMappingBySource: job-scoped decisions become authoritative only after
+	// their job reaches SUCCEEDED.
 	mappingID := mapping.ID
-	var currentDecisionID *uuid.UUID
-	var currentStatus *domain.MappingStatus
 	err = tx.QueryRow(ctx, `
-		SELECT em.id, em.current_decision_id, d.status
+		SELECT em.id
 		FROM entity_mapping em
-		LEFT JOIN entity_mapping_decision d
-		  ON d.workspace_id = em.workspace_id AND d.id = em.current_decision_id
 		WHERE em.workspace_id=$1 AND em.source_type=$2 AND em.source_ref=$3 AND em.source_key=$4
 		FOR UPDATE OF em
-	`, mapping.WorkspaceID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey).Scan(&mappingID, &currentDecisionID, &currentStatus)
+	`, mapping.WorkspaceID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey).Scan(&mappingID)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		return domain.MappingDecision{}, fmt.Errorf("lock current entity mapping: %w", err)
+	}
+
+	var currentDecisionID *uuid.UUID
+	var currentStatus *domain.MappingStatus
+	current, currentErr := getMappingBySource(ctx, tx, mapping.WorkspaceID, mapping.SourceType, mapping.SourceRef, mapping.SourceKey)
+	switch {
+	case currentErr == nil:
+		currentDecisionID = current.CurrentDecisionID
+		status := current.Status
+		currentStatus = &status
+	case errors.Is(currentErr, ErrNotFound):
+		// No authoritative decision exists yet. This is expected when the only
+		// history belongs to unfinished or failed Entity Match jobs.
+	default:
+		return domain.MappingDecision{}, currentErr
 	}
 
 	if err := domain.EnsureMappingDecisionExpectation(currentDecisionID, cmd.ExpectCurrentDecision, cmd.ExpectedCurrentDecisionID, mapping.Status); err != nil {
