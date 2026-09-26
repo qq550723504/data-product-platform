@@ -113,6 +113,11 @@ type RunCommand struct {
 }
 
 func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, error) {
+	provider, err := s.resolveEngine(cmd.EngineName)
+	if err != nil {
+		return domain.Assessment{}, err
+	}
+	cmd.EngineName = strings.ToLower(strings.TrimSpace(provider.Descriptor().Name))
 	attemptID := cmd.AssessmentAttemptID
 	if attemptID == uuid.Nil {
 		attemptID = uuid.New()
@@ -182,13 +187,6 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 				return fmt.Errorf("read quality policy: %v; record attempt outcome: %w", err, outcomeErr)
 			}
 			return fmt.Errorf("read quality policy %q: %w", policyPath, err)
-		}
-		provider, err := s.resolveEngine(cmd.EngineName)
-		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("resolve quality engine: %v; record attempt outcome: %w", err, outcomeErr)
-			}
-			return err
 		}
 		reader, err := s.store.Get(ctx, version.StorageURI)
 		if err != nil {
@@ -370,7 +368,7 @@ func (s *Service) reconcileAttemptState(ctx context.Context, cmd RunCommand, att
 	var state infrastructure.AssessmentAttemptState
 	var found bool
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		attempt, attemptFound, err := s.repo.ReconcileAssessmentAttempt(ctx, tx, attemptID, cmd.WorkspaceID, cmd.DatasetVersionID, cmd.RuleSetRef, time.Now().UTC())
+		attempt, attemptFound, err := s.repo.ReconcileAssessmentAttempt(ctx, tx, attemptID, cmd.WorkspaceID, cmd.DatasetVersionID, cmd.RuleSetRef, cmd.EngineName, time.Now().UTC())
 		if errors.Is(err, infrastructure.ErrAssessmentAttemptConflict) {
 			return fmt.Errorf("%w: %v", ErrAssessmentAttemptConflict, err)
 		}
@@ -397,7 +395,7 @@ func (s *Service) claimAttempt(ctx context.Context, cmd RunCommand, attemptID uu
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		var err error
 		claimed, state, err = s.repo.ClaimAssessmentAttempt(ctx, tx, attemptID, cmd.WorkspaceID,
-			cmd.DatasetVersionID, cmd.RuleSetRef, startedAt, time.Now().UTC().Add(assessmentAttemptLeaseDuration), cmd.ActorID)
+			cmd.DatasetVersionID, cmd.RuleSetRef, cmd.EngineName, startedAt, time.Now().UTC().Add(assessmentAttemptLeaseDuration), cmd.ActorID)
 		if errors.Is(err, infrastructure.ErrAssessmentAttemptConflict) {
 			return fmt.Errorf("%w: %v", ErrAssessmentAttemptConflict, err)
 		}
@@ -413,6 +411,7 @@ func (s *Service) claimAttempt(ctx context.Context, cmd RunCommand, attemptID uu
 			PricingMode: "ACTUAL",
 			Metadata: map[string]any{
 				"ruleSetRef": cmd.RuleSetRef,
+				"engineName": cmd.EngineName,
 				"stage":      "evaluation_started",
 			},
 			OccurredAt: startedAt,
@@ -439,6 +438,7 @@ func (s *Service) appendAttemptFailureFacts(ctx context.Context, tx pgx.Tx, cmd 
 		"workspaceId":                cmd.WorkspaceID,
 		"datasetVersionId":           cmd.DatasetVersionID,
 		"ruleSetRef":                 cmd.RuleSetRef,
+		"engineName":                 cmd.EngineName,
 		"outcome":                    "FAILED",
 		"errorMessage":               errorMessage,
 	}
