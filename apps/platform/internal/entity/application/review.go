@@ -36,7 +36,7 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 	if cmd.SelectedEntityID != nil {
 		selected, err := s.entityRepo.GetEntity(ctx, *cmd.SelectedEntityID)
 		if err != nil {
-			return domain.MatchJob{}, err
+			return domain.MatchJob{}, fmt.Errorf("%w: %v", domain.ErrCandidateSelectionNotAllowed, err)
 		}
 		if selected.WorkspaceID != job.WorkspaceID || selected.EntityTypeID != job.EntityTypeID || selected.Status != domain.EntityActive {
 			return domain.MatchJob{}, domain.ErrCandidateSelectionNotAllowed
