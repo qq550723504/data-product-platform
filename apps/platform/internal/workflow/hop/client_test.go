@@ -373,3 +373,54 @@ func TestHopSubmitTreatsSuccessfulRegistrationWithoutDurableIDAsOutcomeUnknown(t
 	})
 	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, 0)
 }
+
+
+func TestHopPrepareSubmissionDoesNotStartRemoteWork(t *testing.T) {
+	var registerCalls, startCalls int
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/registerPipeline":
+			registerCalls++
+			writeXML(w, `<webresult><result>OK</result><message>registered</message><id>prepared-run</id></webresult>`)
+		case "/hop/startPipeline":
+			startCalls++
+			writeXML(w, `<webresult><result>OK</result><message>started</message><id></id></webresult>`)
+		case "/hop/pipelineStatus":
+			writeJSON(t, w, map[string]any{
+				"id":                "prepared-run",
+				"pipelineName":      "pipeline",
+				"statusDescription": "Running",
+				"result":            map[string]any{"nrErrors": 0},
+			})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	request := workflowapp.ManagedSubmitRequest{
+		Name:          "pipeline",
+		DefinitionRef: "pipeline.hpl",
+		Definition:    []byte(`<pipeline_configuration/>`),
+		Parameters:    map[string]string{"TARGET_PERIOD": "2026-09"},
+	}
+	prepared, err := client.PrepareSubmission(context.Background(), request)
+	if err != nil {
+		t.Fatalf("prepare submission: %v", err)
+	}
+	if prepared.ID != "prepared-run" || registerCalls != 1 || startCalls != 0 {
+		t.Fatalf("prepared=%+v registerCalls=%d startCalls=%d, want durable id with no start", prepared, registerCalls, startCalls)
+	}
+
+	started, err := client.StartSubmission(context.Background(), request, prepared.ID)
+	if err != nil {
+		t.Fatalf("start prepared submission: %v", err)
+	}
+	if started.ID != prepared.ID || startCalls != 1 {
+		t.Fatalf("started=%+v startCalls=%d, want same prepared id and one start", started, startCalls)
+	}
+}
