@@ -423,3 +423,72 @@ func TestHopPrepareSubmissionDoesNotStartRemoteWork(t *testing.T) {
 		t.Fatalf("started=%+v startCalls=%d, want same prepared id and one start", started, startCalls)
 	}
 }
+
+
+func TestHopInitialStartKeepsDefiniteRejectionEvenWhenPreparedRunIsQueryable(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/startPipeline":
+			http.Error(w, "rejected", http.StatusBadRequest)
+		case "/hop/pipelineStatus":
+			writeJSON(t, w, map[string]any{
+				"id":                "prepared-run",
+				"pipelineName":      "pipeline",
+				"statusDescription": "",
+				"result":            map[string]any{"nrErrors": 0},
+			})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+	_, err = client.StartSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineInvalidRequest, false, http.StatusBadRequest)
+}
+
+func TestHopRecoveryRequiresEvidenceThatPreparedRunStarted(t *testing.T) {
+	started := false
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/hop/startPipeline":
+			http.Error(w, "already handled", http.StatusConflict)
+		case "/hop/pipelineStatus":
+			response := map[string]any{
+				"id":                "prepared-run",
+				"pipelineName":      "pipeline",
+				"statusDescription": "",
+				"result":            map[string]any{"nrErrors": 0},
+			}
+			if started {
+				response["statusDescription"] = "Running"
+				response["executionStartDate"] = "2026-09-26T08:00:00.000+0000"
+			}
+			writeJSON(t, w, response)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := hop.NewClient(server.URL, "cluster", "secret", server.Client())
+	if err != nil {
+		t.Fatalf("create Hop client: %v", err)
+	}
+
+	_, err = client.RecoverSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineRejected, false, http.StatusConflict)
+
+	started = true
+	run, err := client.RecoverSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
+	if err != nil {
+		t.Fatalf("recover already-started submission: %v", err)
+	}
+	if run.ID != "prepared-run" || run.StartedAt == nil {
+		t.Fatalf("recovered run = %+v, want same durable id with started evidence", run)
+	}
+}
