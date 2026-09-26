@@ -129,44 +129,71 @@ func (h *Handler) submitManaged(ctx context.Context, execution domain.Execution,
 	execution = claimed
 	request = workflowapp.ProcessingRequestFromExecution(execution, request.WorkflowVersion)
 
-	run, err := bridge.Submit(ctx, request)
+	prepared, err := bridge.PrepareSubmission(ctx, request)
 	if err != nil {
 		if managedSubmissionOutcomeUnknown(err) {
-			// The request may already have been accepted remotely. If the adapter
-			// learned a durable remote id before the ambiguous response, freeze it
-			// while staying SUBMITTING so ManagedReconciler can inspect that exact
-			// run instead of allowing a duplicate submission.
-			if remoteID := strings.TrimSpace(run.ID); remoteID != "" {
-				if _, attachErr := h.service.AttachManagedSubmissionReference(
-					ctx, execution.ID, remoteID, execution.ID.String(),
-				); attachErr != nil && !errors.Is(attachErr, domain.ErrInvalidTransition) {
-					return fmt.Errorf("persist uncertain remote submission reference for execution %s: %w", execution.ID, attachErr)
-				}
-			}
+			// Registration may have reached the provider but no durable identity
+			// was returned. Keep SUBMITTING; the lease will expire to an explicit
+			// unknown-outcome failure rather than allowing an automatic resubmit.
 			return nil
 		}
 		if _, failErr := h.service.Fail(
 			ctx,
 			execution.ID,
 			"REMOTE_SUBMIT_FAILED",
-			"remote processing engine submission failed",
+			"remote processing engine submission was rejected before start",
 			map[string]any{"engineType": engineType},
 			execution.ID.String(),
 		); failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
-			return fmt.Errorf("persist remote submit failure for execution %s: %w", execution.ID, failErr)
+			return fmt.Errorf("persist remote prepare failure for execution %s: %w", execution.ID, failErr)
 		}
 		return nil
 	}
-	if strings.TrimSpace(run.ID) == "" {
+	if strings.TrimSpace(prepared.ID) == "" {
 		if _, failErr := h.service.Fail(ctx, execution.ID, "REMOTE_SUBMIT_INVALID", "remote processing engine returned no durable execution id", map[string]any{
 			"engineType": engineType,
 		}, execution.ID.String()); failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
-			return fmt.Errorf("persist invalid remote submit result: %w", failErr)
+			return fmt.Errorf("persist invalid remote prepare result: %w", failErr)
 		}
 		return nil
 	}
 
-	if _, err := h.service.Start(ctx, execution.ID, run.ID, execution.ID.String()); err != nil {
+	// The durable remote identity must be committed before remote work starts.
+	// If this write fails, no StartSubmission call has happened, so an Asynq
+	// retry cannot create duplicate remote work.
+	if _, err := h.service.AttachManagedSubmissionReference(
+		ctx, execution.ID, prepared.ID, execution.ID.String(),
+	); err != nil {
+		if errors.Is(err, domain.ErrInvalidTransition) {
+			return nil
+		}
+		return fmt.Errorf("persist prepared remote submission reference for execution %s: %w", execution.ID, err)
+	}
+
+	run, err := bridge.StartSubmission(ctx, request, prepared.ID)
+	if err != nil {
+		if managedSubmissionOutcomeUnknown(err) {
+			// The durable id is already frozen in Core. Reconciliation retries
+			// start/status against that same identity; it never registers again.
+			return nil
+		}
+		if _, failErr := h.service.Fail(
+			ctx,
+			execution.ID,
+			"REMOTE_SUBMIT_FAILED",
+			"remote processing engine start was rejected",
+			map[string]any{"engineType": engineType, "externalExecutionId": prepared.ID},
+			execution.ID.String(),
+		); failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
+			return fmt.Errorf("persist remote start failure for execution %s: %w", execution.ID, failErr)
+		}
+		return nil
+	}
+	if strings.TrimSpace(run.ID) == "" {
+		run.ID = prepared.ID
+	}
+
+	if _, err := h.service.Start(ctx, execution.ID, prepared.ID, execution.ID.String()); err != nil {
 		if errors.Is(err, domain.ErrInvalidTransition) {
 			return nil
 		}
