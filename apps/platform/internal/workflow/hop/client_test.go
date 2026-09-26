@@ -102,8 +102,8 @@ func TestManagedHopLifecycle(t *testing.T) {
 	if err != nil {
 		t.Fatalf("submit Hop run: %v", err)
 	}
-	if run.ID != runID || run.State != workflowapp.EngineRunRunning || run.StartedAt == nil {
-		t.Fatalf("submitted run = %+v", run)
+	if run.ID != runID || run.State != workflowapp.EngineRunQueued || run.StartedAt != nil {
+		t.Fatalf("submitted run = %+v, want durable id with QUEUED state before explicit status probe", run)
 	}
 	if run.Metrics["definitionRef"] != "examples/enterprise-activity/hop/aggregate.hpl" {
 		t.Fatalf("definition ref missing from run metrics: %+v", run.Metrics)
@@ -128,8 +128,8 @@ func TestManagedHopLifecycle(t *testing.T) {
 	if err := client.Cancel(context.Background(), pipelineName, runID); err != nil {
 		t.Fatalf("cancel Hop run: %v", err)
 	}
-	if statusCalls < 3 {
-		t.Fatalf("status calls = %d, want submit probe + logs + metrics", statusCalls)
+	if statusCalls != 2 {
+		t.Fatalf("status calls = %d, want only explicit logs + metrics probes", statusCalls)
 	}
 }
 
@@ -474,11 +474,9 @@ func TestHopRecoveryUsesStartedStatusAfterAmbiguousStartResponse(t *testing.T) {
 		t.Fatalf("create Hop client: %v", err)
 	}
 	run, err := client.RecoverSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
-	if err != nil {
-		t.Fatalf("recover ambiguous start with authoritative status: %v", err)
-	}
-	if run.ID != "prepared-run" || run.StartedAt == nil || run.State != workflowapp.EngineRunRunning {
-		t.Fatalf("recovered run = %+v, want authoritative started evidence", run)
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, http.StatusServiceUnavailable)
+	if run.ID != "prepared-run" || run.State != workflowapp.EngineRunQueued {
+		t.Fatalf("recovery run = %+v, want durable id preserved for reconciler status probe", run)
 	}
 }
 
@@ -500,7 +498,7 @@ func TestHopRecoveryKeepsOutcomeUnknownWhenStatusUnavailable(t *testing.T) {
 		t.Fatalf("create Hop client: %v", err)
 	}
 	_, err = client.RecoverSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
-	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, 0)
+	assertManagedEngineError(t, err, workflowapp.ManagedEngineRejected, false, http.StatusConflict)
 }
 
 func TestHopRecoveryRequiresEvidenceThatPreparedRunStarted(t *testing.T) {
@@ -536,11 +534,11 @@ func TestHopRecoveryRequiresEvidenceThatPreparedRunStarted(t *testing.T) {
 	assertManagedEngineError(t, err, workflowapp.ManagedEngineRejected, false, http.StatusConflict)
 
 	started = true
-	run, err := client.RecoverSubmission(context.Background(), workflowapp.ManagedSubmitRequest{Name: "pipeline"}, "prepared-run")
+	run, err := client.Status(context.Background(), "pipeline", "prepared-run")
 	if err != nil {
-		t.Fatalf("recover already-started submission: %v", err)
+		t.Fatalf("explicit status probe for prepared submission: %v", err)
 	}
-	if run.ID != "prepared-run" || run.StartedAt == nil {
-		t.Fatalf("recovered run = %+v, want same durable id with started evidence", run)
+	if run.ID != "prepared-run" || run.StartedAt == nil || run.State != workflowapp.EngineRunRunning {
+		t.Fatalf("status run = %+v, want same durable id with started evidence", run)
 	}
 }
