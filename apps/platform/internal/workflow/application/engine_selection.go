@@ -87,9 +87,20 @@ func (s *ExecutionService) AttachManagedSubmissionReference(ctx context.Context,
 	return result, err
 }
 
-const managedSubmissionOutcomeUnknownMetric = "submissionOutcomeUnknown"
+const (
+	managedSubmissionStartArmedMetric     = "submissionStartArmed"
+	managedSubmissionOutcomeUnknownMetric = "submissionOutcomeUnknown"
+)
+
+func (s *ExecutionService) MarkManagedSubmissionStartArmed(ctx context.Context, executionID uuid.UUID, traceID string) (domain.Execution, error) {
+	return s.markManagedSubmissionMetric(ctx, executionID, managedSubmissionStartArmedMetric, "EXECUTION_SUBMISSION_START_ARMED", traceID)
+}
 
 func (s *ExecutionService) MarkManagedSubmissionOutcomeUnknown(ctx context.Context, executionID uuid.UUID, traceID string) (domain.Execution, error) {
+	return s.markManagedSubmissionMetric(ctx, executionID, managedSubmissionOutcomeUnknownMetric, "EXECUTION_SUBMISSION_OUTCOME_UNKNOWN", traceID)
+}
+
+func (s *ExecutionService) markManagedSubmissionMetric(ctx context.Context, executionID uuid.UUID, key, action, traceID string) (domain.Execution, error) {
 	var result domain.Execution
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		execution, err := s.repo.GetExecutionTx(ctx, tx, executionID, true)
@@ -101,7 +112,7 @@ func (s *ExecutionService) MarkManagedSubmissionOutcomeUnknown(ctx context.Conte
 		}
 		before := executionAuditState(execution)
 		metrics := cloneMetrics(execution.Metrics)
-		metrics[managedSubmissionOutcomeUnknownMetric] = true
+		metrics[key] = true
 		execution.Metrics = metrics
 		if err := s.repo.SaveExecutionState(ctx, tx, execution, domain.ExecutionSubmitting); err != nil {
 			return err
@@ -109,7 +120,7 @@ func (s *ExecutionService) MarkManagedSubmissionOutcomeUnknown(ctx context.Conte
 		if err := audit.Append(ctx, tx, audit.Event{
 			WorkspaceID: &execution.WorkspaceID,
 			ActorType:   "SERVICE",
-			Action:      "EXECUTION_SUBMISSION_OUTCOME_UNKNOWN",
+			Action:      action,
 			ObjectType:  "EXECUTION",
 			ObjectID:    execution.ID,
 			BeforeState: before,
