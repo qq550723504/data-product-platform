@@ -90,6 +90,13 @@ services:
     entrypoint: [poc-demo]
     command: [prepare]
     volumes: [demo-state:/demo-state]
+  outbox-replay:
+    image: '${COMPOSE_PROJECT_NAME}-core:local'
+    profiles: [tools]
+    environment: *core-environment
+    entrypoint: [outbox-replay]
+    depends_on:
+      postgres: {condition: service_healthy}
   web:
     build:
       context: .
