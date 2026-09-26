@@ -145,6 +145,15 @@ func (r *PostgresRepository) ListByLegalRepresentative(ctx context.Context, enti
 	return entities, rows.Err()
 }
 
+func (r *PostgresRepository) GetEntity(ctx context.Context, entityID uuid.UUID) (domain.Entity, error) {
+	return scanEntity(r.pool.QueryRow(ctx, `
+		SELECT id, workspace_id, entity_type_id, COALESCE(canonical_key,''), canonical_name,
+		       attributes, status, created_at, created_by
+		FROM entity
+		WHERE id=$1
+	`, entityID))
+}
+
 func (r *PostgresRepository) findOne(ctx context.Context, query string, args ...any) (*domain.Entity, error) {
 	entity, err := scanEntity(r.pool.QueryRow(ctx, query, args...))
 	if errors.Is(err, ErrNotFound) {
