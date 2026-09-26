@@ -42,7 +42,6 @@ type UploadIdempotencyRecord struct {
 	RequestFingerprint string
 }
 
-
 func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 	return &PostgresRepository{pool: pool}
 }
