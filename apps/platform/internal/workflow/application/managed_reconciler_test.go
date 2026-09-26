@@ -63,14 +63,14 @@ func (s *fakeManagedStateService) Fail(_ context.Context, _ uuid.UUID, code, mes
 }
 
 type fakeManagedBridge struct {
-	state        EngineRunState
-	startErr     error
-	startCalls   int
-	startRunID   string
-	statusErr    error
-	statusCalls  int
-	finalizeErr  error
-	outputID     uuid.UUID
+	state       EngineRunState
+	startErr    error
+	startCalls  int
+	startRunID  string
+	statusErr   error
+	statusCalls int
+	finalizeErr error
+	outputID    uuid.UUID
 }
 
 func (b *fakeManagedBridge) EngineType() string { return "HOP" }
