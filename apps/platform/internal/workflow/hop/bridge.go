@@ -112,7 +112,6 @@ func (b *Bridge) RecoverSubmission(ctx context.Context, request workflowapp.Proc
 	return run, err
 }
 
-
 func (b *Bridge) managedSubmitRequest(ctx context.Context, request workflowapp.ProcessingRequest) (workflowapp.ManagedSubmitRequest, error) {
 	cfg, err := b.config(request)
 	if err != nil {
