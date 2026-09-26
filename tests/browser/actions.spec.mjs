@@ -50,6 +50,31 @@ for (const [decision, label, status] of [["confirm", "确认匹配", "CONFIRMED"
   });
 }
 
+test("ambiguous entity review requires explicit frozen alternative selection", async ({ page, request }) => {
+  await scenario(request, "ambiguous-review");
+  await page.goto("/reviews");
+  const form = page.getByRole("form", { name: "审核 测试来源记录" });
+  const confirm = form.getByRole("button", { name: "确认匹配" });
+  const select = form.getByLabel("选择匹配实体（必选）");
+  await expect(select).toBeVisible();
+  await expect(select.locator("option")).toHaveCount(3);
+  await expect(select).toContainText("测试候选 A");
+  await expect(select).toContainText("测试候选 B");
+  await form.getByLabel("审核理由（必填）").fill("明确选择同名同址实体");
+  await expect(confirm).toBeDisabled();
+  await select.selectOption(ids.alternative);
+  await expect(confirm).toBeEnabled();
+  await confirm.click();
+  await expect(page.getByRole("status").filter({ hasText: "已选择实体并确认候选；任务状态：SUCCEEDED" })).toBeVisible();
+  const commands = await writes(request);
+  expect(commands).toHaveLength(1);
+  expect(commands[0].body).toEqual({
+    reason: "明确选择同名同址实体",
+    expectedDecisionId: ids.decision,
+    selectedEntityId: ids.alternative,
+  });
+});
+
 test("Gold DatasetVersion explains frozen production proof and current delivery", async ({ page, request }) => {
   await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
   const proof = page.getByTestId("gold-production-proof");

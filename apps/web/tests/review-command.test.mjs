@@ -9,6 +9,7 @@ const ids = {
   candidate: "44444444-4444-4444-8444-444444444444",
   entity: "55555555-5555-4555-8555-555555555555",
   foreign: "66666666-6666-4666-8666-666666666666",
+  alternative: "77777777-7777-4777-8777-777777777777",
 };
 const config = { enabled: true, workspaceId: ids.workspace, token: "review-secret", apiBaseUrl: "http://core.invalid" };
 const job = { id: ids.job, workspaceId: ids.workspace, status: "WAITING_REVIEW" };
@@ -90,6 +91,39 @@ test("a pending candidate without an entity may be rejected, not confirmed", asy
   const transport = stub([job, { ...candidate, candidateEntityId: null }, job]);
   assert.equal((await executeReview(form({ decision: "reject" }), config, transport.request)).ok, true);
 });
+test("ambiguous candidate requires an explicit frozen alternative and forwards it", async () => {
+  const ambiguous = {
+    ...candidate,
+    candidateEntityId: null,
+    alternatives: [
+      { entityId: ids.entity, canonicalKey: "A", canonicalName: "同名企业 A" },
+      { entityId: ids.alternative, canonicalKey: "B", canonicalName: "同名企业 B" },
+    ],
+  };
+  const missing = stub([job, ambiguous]);
+  assert.equal((await executeReview(form(), config, missing.request)).ok, false);
+  assert.equal(missing.calls.length, 2);
+
+  const selected = stub([job, ambiguous, { ...job, status: "SUCCEEDED" }]);
+  const result = await executeReview(form({ selectedEntityId: ids.alternative }), config, selected.request);
+  assert.equal(result.ok, true);
+  assert.deepEqual(JSON.parse(selected.calls[2].init.body), {
+    reason: "已核对来源记录",
+    selectedEntityId: ids.alternative,
+  });
+});
+
+test("selection outside the frozen alternatives never posts", async () => {
+  const ambiguous = {
+    ...candidate,
+    candidateEntityId: null,
+    alternatives: [{ entityId: ids.entity, canonicalKey: "A", canonicalName: "同名企业 A" }],
+  };
+  const transport = stub([job, ambiguous]);
+  assert.equal((await executeReview(form({ selectedEntityId: ids.foreign }), config, transport.request)).ok, false);
+  assert.equal(transport.calls.length, 2);
+});
+
 test("invalid candidate response blocks the command", async () => {
   const transport = stub([job, null]);
   assert.equal((await executeReview(form(), config, transport.request)).ok, false);

@@ -238,6 +238,242 @@ func TestCompanyEntityResolutionReferenceSlice(t *testing.T) {
 	}
 }
 
+func TestAmbiguousMatchRequiresExplicitFrozenSelection(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	store := newMemoryStore()
+	createDataset := application.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
+	uploadDataset := application.NewUploadVersionService(txManager, datasetRepo, store)
+	entityRepo := entityinfra.NewPostgresRepository(pool)
+
+	workspaceID := uuid.New()
+	entityType, err := domain.NewEntityType(
+		workspaceID, "COMPANY", "Company",
+		"park/matching/company-match-policy-v1.yaml", "1.0.0",
+	)
+	if err != nil {
+		t.Fatalf("new entity type: %v", err)
+	}
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin entity seed: %v", err)
+	}
+	storedType, err := entityRepo.EnsureEntityType(ctx, tx, entityType)
+	if err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("ensure entity type: %v", err)
+	}
+	common := map[string]any{
+		"normalized_company_name":       "同名科技有限公司",
+		"normalized_registered_address": "深圳市南山区1号",
+	}
+	first, err := domain.NewEntity(workspaceID, storedType.ID, "AMB-A", "同名科技 A", common, nil)
+	if err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("new first entity: %v", err)
+	}
+	second, err := domain.NewEntity(workspaceID, storedType.ID, "AMB-B", "同名科技 B", common, nil)
+	if err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("new second entity: %v", err)
+	}
+	outsider, err := domain.NewEntity(workspaceID, storedType.ID, "OUTSIDE", "其他企业", map[string]any{
+		"normalized_company_name":       "其他企业",
+		"normalized_registered_address": "其他地址",
+	}, nil)
+	if err != nil {
+		_ = tx.Rollback(ctx)
+		t.Fatalf("new outsider entity: %v", err)
+	}
+	for _, entity := range []domain.Entity{first, second, outsider} {
+		if err := entityRepo.InsertEntity(ctx, tx, entity); err != nil {
+			_ = tx.Rollback(ctx)
+			t.Fatalf("insert entity %s: %v", entity.ID, err)
+		}
+	}
+	if err := tx.Commit(ctx); err != nil {
+		t.Fatalf("commit entity seed: %v", err)
+	}
+
+	rawDataset, err := createDataset.Handle(ctx, application.CreateDatasetCommand{
+		WorkspaceID: workspaceID,
+		Code:        "AMBIGUOUS-RAW-" + uuid.NewString(),
+		Name:        "Ambiguous RAW",
+		DatasetType: datasetdomain.DatasetTypeRaw,
+		TraceID:     "ambiguous-selection",
+	})
+	if err != nil {
+		t.Fatalf("create raw dataset: %v", err)
+	}
+	outputDataset, err := createDataset.Handle(ctx, application.CreateDatasetCommand{
+		WorkspaceID: workspaceID,
+		Code:        "AMBIGUOUS-STD-" + uuid.NewString(),
+		Name:        "Ambiguous standardized",
+		DatasetType: datasetdomain.DatasetTypeStandardized,
+		TraceID:     "ambiguous-selection",
+	})
+	if err != nil {
+		t.Fatalf("create standardized dataset: %v", err)
+	}
+	rawVersion, err := uploadDataset.Handle(ctx, application.UploadVersionCommand{
+		DatasetID:   rawDataset.ID,
+		Filename:    "ambiguous.csv",
+		ContentType: "text/csv",
+		Content: []byte("source_company_id,company_name,registered_address\n" +
+			"AMB-001,同名科技有限公司,深圳市南山区1号\n"),
+		TraceID: "ambiguous-selection",
+	})
+	if err != nil {
+		t.Fatalf("upload ambiguous dataset: %v", err)
+	}
+
+	service := entityapp.NewMatchService(
+		repoPath(t, "industry-packs"), txManager, entityRepo, datasetRepo, uploadDataset, store,
+	)
+	job, err := service.Start(ctx, entityapp.StartJobCommand{
+		WorkspaceID:           workspaceID,
+		InputDatasetVersionID: rawVersion.ID,
+		OutputDatasetID:       outputDataset.ID,
+		SourceType:            "CSV",
+		SourceRef:             "ambiguous.csv",
+		SourceRole:            domain.SourceReference,
+		PolicyRef:             "park/matching/company-match-policy-v1.yaml",
+		TraceID:               "ambiguous-selection",
+	})
+	if err != nil {
+		t.Fatalf("start ambiguous job: %v", err)
+	}
+	if job.Status != domain.JobWaitingReview {
+		t.Fatalf("job status = %s, want WAITING_REVIEW", job.Status)
+	}
+	candidates, err := entityRepo.ListCandidates(ctx, job.ID)
+	if err != nil {
+		t.Fatalf("list candidates: %v", err)
+	}
+	if len(candidates) != 1 {
+		t.Fatalf("candidate count = %d, want 1", len(candidates))
+	}
+	candidate := candidates[0]
+	if candidate.Status != domain.CandidatePending || candidate.CandidateEntityID != nil {
+		t.Fatalf("ambiguous candidate = status %s entity %v, want PENDING/nil", candidate.Status, candidate.CandidateEntityID)
+	}
+	if candidate.MatchMethod != "NAME_ADDRESS_AMBIGUOUS" || len(candidate.Alternatives) != 2 {
+		t.Fatalf("ambiguous candidate did not freeze alternatives: method=%s alternatives=%+v", candidate.MatchMethod, candidate.Alternatives)
+	}
+	alternativeIDs := map[uuid.UUID]bool{}
+	for _, alternative := range candidate.Alternatives {
+		alternativeIDs[alternative.EntityID] = true
+	}
+	if !alternativeIDs[first.ID] || !alternativeIDs[second.ID] || alternativeIDs[outsider.ID] {
+		t.Fatalf("frozen alternatives = %+v, want first+second only", candidate.Alternatives)
+	}
+
+	reviewerID := uuid.New()
+	if _, err := service.Confirm(ctx, entityapp.ReviewCommand{
+		CandidateID: candidate.ID, ReviewerID: reviewerID, Reason: "must choose explicitly",
+	}); !errors.Is(err, domain.ErrCandidateEntityRequired) {
+		t.Fatalf("confirmation without selection error = %v, want ErrCandidateEntityRequired", err)
+	}
+	if _, err := service.Confirm(ctx, entityapp.ReviewCommand{
+		CandidateID: candidate.ID, ReviewerID: reviewerID, Reason: "not an offered entity",
+		SelectedEntityID: &outsider.ID,
+	}); !errors.Is(err, domain.ErrCandidateSelectionNotAllowed) {
+		t.Fatalf("confirmation outside frozen alternatives error = %v, want ErrCandidateSelectionNotAllowed", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE entity SET status='RETIRED', retired_at=now() WHERE id=$1
+	`, first.ID); err != nil {
+		t.Fatalf("retire frozen alternative: %v", err)
+	}
+	if _, err := service.Confirm(ctx, entityapp.ReviewCommand{
+		CandidateID: candidate.ID, ReviewerID: reviewerID, Reason: "retired alternative must fail",
+		SelectedEntityID: &first.ID,
+	}); !errors.Is(err, domain.ErrCandidateSelectionNotAllowed) {
+		t.Fatalf("confirmation of retired frozen alternative error = %v, want ErrCandidateSelectionNotAllowed", err)
+	}
+	pending, err := entityRepo.GetCandidate(ctx, candidate.ID)
+	if err != nil {
+		t.Fatalf("reload pending candidate: %v", err)
+	}
+	if pending.Status != domain.CandidatePending || pending.CandidateEntityID != nil {
+		t.Fatalf("rejected selections mutated candidate: %+v", pending)
+	}
+	var rejectedSideEffects int
+	if err := pool.QueryRow(ctx, `
+		SELECT
+			(SELECT count(*) FROM evidence WHERE source_type='ENTITY_MATCH_CANDIDATE' AND source_id=$1)
+		  + (SELECT count(*) FROM audit_event WHERE object_type='ENTITY_MATCH_CANDIDATE' AND object_id=$1)
+	`, candidate.ID).Scan(&rejectedSideEffects); err != nil {
+		t.Fatalf("count rejected selection side effects: %v", err)
+	}
+	if rejectedSideEffects != 0 {
+		t.Fatalf("rejected selections wrote %d side effects, want 0", rejectedSideEffects)
+	}
+
+	job, err = service.Confirm(ctx, entityapp.ReviewCommand{
+		CandidateID:      candidate.ID,
+		ReviewerID:       reviewerID,
+		Reason:           "explicitly selected the second frozen alternative",
+		SelectedEntityID: &second.ID,
+		TraceID:          "ambiguous-selection-confirm",
+	})
+	if err != nil {
+		t.Fatalf("confirm selected alternative: %v", err)
+	}
+	if job.Status != domain.JobSucceeded || job.OutputDatasetVersionID == nil {
+		t.Fatalf("job after explicit selection = %s / %v, want SUCCEEDED with output", job.Status, job.OutputDatasetVersionID)
+	}
+	confirmed, err := entityRepo.GetCandidate(ctx, candidate.ID)
+	if err != nil {
+		t.Fatalf("reload confirmed candidate: %v", err)
+	}
+	if confirmed.Status != domain.CandidateConfirmed || confirmed.CandidateEntityID == nil || *confirmed.CandidateEntityID != second.ID {
+		t.Fatalf("confirmed candidate = %+v, want selected entity %s", confirmed, second.ID)
+	}
+	mapping, err := entityRepo.GetMappingBySource(ctx, workspaceID, "CSV", "ambiguous.csv", "AMB-001")
+	if err != nil {
+		t.Fatalf("read selected mapping: %v", err)
+	}
+	if mapping.EntityID != second.ID || mapping.ReviewedBy == nil || *mapping.ReviewedBy != reviewerID {
+		t.Fatalf("selected mapping = %+v, want entity %s/reviewer %s", mapping, second.ID, reviewerID)
+	}
+	var origin string
+	if err := pool.QueryRow(ctx, `
+		SELECT source_origin
+		FROM entity_mapping_decision
+		WHERE source_candidate_id=$1
+	`, candidate.ID).Scan(&origin); err != nil {
+		t.Fatalf("read mapping decision provenance: %v", err)
+	}
+	if origin != string(domain.OriginManualReview) {
+		t.Fatalf("mapping decision origin = %s, want %s", origin, domain.OriginManualReview)
+	}
+
+	if _, err := pool.Exec(ctx, `
+		UPDATE entity_match_candidate SET candidate_alternatives='[]'::jsonb WHERE id=$1
+	`, candidate.ID); err == nil {
+		t.Fatal("candidate alternatives mutation unexpectedly succeeded")
+	}
+	frozen, err := entityRepo.GetCandidate(ctx, candidate.ID)
+	if err != nil {
+		t.Fatalf("reload frozen alternatives: %v", err)
+	}
+	if len(frozen.Alternatives) != 2 {
+		t.Fatalf("frozen alternatives changed after rejected mutation: %+v", frozen.Alternatives)
+	}
+}
+
 func TestFailedMatchJobDecisionsRemainHistoryNotAuthority(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {

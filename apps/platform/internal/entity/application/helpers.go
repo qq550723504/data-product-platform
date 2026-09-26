@@ -80,6 +80,12 @@ func newCandidate(jobID uuid.UUID, record matching.CompanyRecord, normalized mat
 		status = domain.CandidatePending
 	}
 
+	alternatives := make([]domain.CandidateAlternative, 0, len(result.Alternatives))
+	for _, entity := range result.Alternatives {
+		alternatives = append(alternatives, domain.CandidateAlternative{
+			EntityID: entity.ID, CanonicalKey: entity.CanonicalKey, CanonicalName: entity.CanonicalName,
+		})
+	}
 	var entityID *uuid.UUID
 	if result.Entity != nil {
 		id := result.Entity.ID
@@ -93,6 +99,7 @@ func newCandidate(jobID uuid.UUID, record matching.CompanyRecord, normalized mat
 		SourcePayload:      record.Raw,
 		NormalizedPayload:  normalizedMap(normalized),
 		CandidateEntityID:  entityID,
+		Alternatives:       alternatives,
 		Decision:           result.Decision,
 		Status:             status,
 		MatchMethod:        result.Method,

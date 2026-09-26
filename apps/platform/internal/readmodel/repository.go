@@ -145,6 +145,7 @@ type EntityReview struct {
 	Source            json.RawMessage `json:"source"`
 	Normalized        json.RawMessage `json:"normalized"`
 	CandidateEntityID *uuid.UUID      `json:"candidateEntityId,omitempty"`
+	Alternatives      json.RawMessage `json:"alternatives"`
 	Decision          string          `json:"decision"`
 	Status            string          `json:"status"`
 	// CurrentMappingDecisionID is the mapping decision that is current for this
@@ -916,7 +917,7 @@ func (r *Repository) ListEntityReviews(ctx context.Context, workspaceID uuid.UUI
 	offsetPos := len(args)
 	rows, err := r.pool.Query(ctx, `
 		SELECT c.id, c.job_id, j.workspace_id, c.source_key, COALESCE(c.source_name,''), c.source_payload,
-		       c.normalized_payload, c.candidate_entity_id, c.decision, c.status, c.match_method,
+		       c.normalized_payload, c.candidate_entity_id, c.candidate_alternatives, c.decision, c.status, c.match_method,
 		       COALESCE(c.match_rule_id,''), COALESCE(c.confidence,0), c.match_engine_name,
 		       c.match_engine_version, c.match_model_version, j.policy_ref, j.policy_version, c.created_at,
 		       em.current_decision_id
@@ -936,10 +937,10 @@ func (r *Repository) ListEntityReviews(ctx context.Context, workspaceID uuid.UUI
 	items := make([]EntityReview, 0)
 	for rows.Next() {
 		var item EntityReview
-		var source, normalized []byte
+		var source, normalized, alternatives []byte
 		if err := rows.Scan(
 			&item.CandidateID, &item.JobID, &item.WorkspaceID, &item.SourceKey, &item.SourceName, &source,
-			&normalized, &item.CandidateEntityID, &item.Decision, &item.Status, &item.MatchMethod,
+			&normalized, &item.CandidateEntityID, &alternatives, &item.Decision, &item.Status, &item.MatchMethod,
 			&item.MatchRuleID, &item.Confidence, &item.EngineName, &item.EngineVersion, &item.ModelVersion,
 			&item.PolicyRef, &item.PolicyVersion, &item.CreatedAt, &item.CurrentMappingDecisionID,
 		); err != nil {
@@ -947,6 +948,7 @@ func (r *Repository) ListEntityReviews(ctx context.Context, workspaceID uuid.UUI
 		}
 		item.Source = append(json.RawMessage(nil), source...)
 		item.Normalized = append(json.RawMessage(nil), normalized...)
+		item.Alternatives = append(json.RawMessage(nil), alternatives...)
 		items = append(items, item)
 	}
 	if err := rows.Err(); err != nil {

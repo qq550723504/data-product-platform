@@ -320,6 +320,9 @@ func TestAmbiguousNameAddressMatchRequiresReviewInsteadOfPickingAnEntity(t *test
 	if result.Entity != nil {
 		t.Fatalf("ambiguous match must not select a canonical entity: %#v", result.Entity)
 	}
+	if len(result.Alternatives) != 2 || result.Alternatives[0].ID != first.ID || result.Alternatives[1].ID != second.ID {
+		t.Fatalf("ambiguous match must preserve all equally valid alternatives: %#v", result.Alternatives)
+	}
 	if result.Confidence != 0 {
 		t.Fatalf("ambiguous match must not claim the rule confidence: %#v", result)
 	}

@@ -85,10 +85,10 @@ func (r *PostgresRepository) FindByCanonicalKey(ctx context.Context, entityTypeI
 	`, entityTypeID, canonicalKey)
 }
 
-// FindByNameAddress returns the ACTIVE entities that share the same normalized
-// name and address, capped at two rows because callers only need to distinguish
-// "exactly one" from "ambiguous". The schema permits duplicates, and picking one
-// arbitrarily would attach a source row to the wrong canonical entity.
+// FindByNameAddress returns every ACTIVE entity that shared the same normalized
+// name and address when the candidate was produced. Ambiguous review freezes
+// this set so a reviewer can select explicitly without a later re-query changing
+// the historical candidate facts.
 func (r *PostgresRepository) FindByNameAddress(ctx context.Context, entityTypeID uuid.UUID, normalizedName, normalizedAddress string) ([]domain.Entity, error) {
 	if normalizedName == "" || normalizedAddress == "" {
 		return nil, nil
@@ -101,13 +101,12 @@ func (r *PostgresRepository) FindByNameAddress(ctx context.Context, entityTypeID
 		  AND attributes->>'normalized_company_name'=$2
 		  AND attributes->>'normalized_registered_address'=$3
 		ORDER BY id
-		LIMIT 2
 	`, entityTypeID, normalizedName, normalizedAddress)
 	if err != nil {
 		return nil, fmt.Errorf("find entities by name and address: %w", err)
 	}
 	defer rows.Close()
-	entities := make([]domain.Entity, 0, 2)
+	entities := make([]domain.Entity, 0)
 	for rows.Next() {
 		entity, err := scanEntity(rows)
 		if err != nil {
@@ -143,6 +142,25 @@ func (r *PostgresRepository) ListByLegalRepresentative(ctx context.Context, enti
 		entities = append(entities, entity)
 	}
 	return entities, rows.Err()
+}
+
+func (r *PostgresRepository) GetEntity(ctx context.Context, entityID uuid.UUID) (domain.Entity, error) {
+	return scanEntity(r.pool.QueryRow(ctx, `
+		SELECT id, workspace_id, entity_type_id, COALESCE(canonical_key,''), canonical_name,
+		       attributes, status, created_at, created_by
+		FROM entity
+		WHERE id=$1
+	`, entityID))
+}
+
+func (r *PostgresRepository) GetEntityTx(ctx context.Context, tx pgx.Tx, entityID uuid.UUID) (domain.Entity, error) {
+	return scanEntity(tx.QueryRow(ctx, `
+		SELECT id, workspace_id, entity_type_id, COALESCE(canonical_key,''), canonical_name,
+		       attributes, status, created_at, created_by
+		FROM entity
+		WHERE id=$1
+		FOR SHARE
+	`, entityID))
 }
 
 func (r *PostgresRepository) findOne(ctx context.Context, query string, args ...any) (*domain.Entity, error) {

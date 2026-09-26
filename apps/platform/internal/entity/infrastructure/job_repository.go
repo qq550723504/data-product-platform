@@ -44,15 +44,23 @@ func (r *PostgresRepository) InsertCandidate(ctx context.Context, tx pgx.Tx, can
 	if err != nil {
 		return fmt.Errorf("marshal normalized payload: %w", err)
 	}
+	candidateAlternatives := candidate.Alternatives
+	if candidateAlternatives == nil {
+		candidateAlternatives = []domain.CandidateAlternative{}
+	}
+	alternatives, err := json.Marshal(candidateAlternatives)
+	if err != nil {
+		return fmt.Errorf("marshal candidate alternatives: %w", err)
+	}
 	_, err = tx.Exec(ctx, `
 		INSERT INTO entity_match_candidate (
 			id, job_id, source_key, source_name, source_payload, normalized_payload,
-			candidate_entity_id, decision, status, match_method, match_rule_id,
+			candidate_entity_id, candidate_alternatives, decision, status, match_method, match_rule_id,
 			match_engine_name, match_engine_version, match_model_version,
 			confidence, reviewed_by, reviewed_at, reviewer_reason, evidence_id, created_at
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
 	`, candidate.ID, candidate.JobID, candidate.SourceKey, candidate.SourceName, sourcePayload, normalizedPayload,
-		candidate.CandidateEntityID, candidate.Decision, candidate.Status, candidate.MatchMethod,
+		candidate.CandidateEntityID, alternatives, candidate.Decision, candidate.Status, candidate.MatchMethod,
 		candidate.MatchRuleID, candidate.MatchEngineName, candidate.MatchEngineVersion, candidate.MatchModelVersion,
 		candidate.Confidence, candidate.ReviewedBy, candidate.ReviewedAt,
 		candidate.ReviewerReason, candidate.EvidenceID, candidate.CreatedAt)
@@ -120,16 +128,16 @@ func (r *PostgresRepository) GetJob(ctx context.Context, jobID uuid.UUID) (domai
 
 func (r *PostgresRepository) GetCandidate(ctx context.Context, candidateID uuid.UUID) (domain.MatchCandidate, error) {
 	var candidate domain.MatchCandidate
-	var sourcePayload, normalizedPayload []byte
+	var sourcePayload, normalizedPayload, alternatives []byte
 	err := r.pool.QueryRow(ctx, `
 		SELECT id, job_id, source_key, COALESCE(source_name,''), source_payload, normalized_payload,
-		       candidate_entity_id, decision, status, match_method, COALESCE(match_rule_id,''),
+		       candidate_entity_id, candidate_alternatives, decision, status, match_method, COALESCE(match_rule_id,''),
 		       match_engine_name, match_engine_version, match_model_version,
 		       COALESCE(confidence,0), reviewed_by, reviewed_at, COALESCE(reviewer_reason,''), evidence_id, created_at
 		FROM entity_match_candidate WHERE id=$1
 	`, candidateID).Scan(
 		&candidate.ID, &candidate.JobID, &candidate.SourceKey, &candidate.SourceName,
-		&sourcePayload, &normalizedPayload, &candidate.CandidateEntityID, &candidate.Decision,
+		&sourcePayload, &normalizedPayload, &candidate.CandidateEntityID, &alternatives, &candidate.Decision,
 		&candidate.Status, &candidate.MatchMethod, &candidate.MatchRuleID,
 		&candidate.MatchEngineName, &candidate.MatchEngineVersion, &candidate.MatchModelVersion,
 		&candidate.Confidence, &candidate.ReviewedBy, &candidate.ReviewedAt, &candidate.ReviewerReason,
@@ -147,15 +155,18 @@ func (r *PostgresRepository) GetCandidate(ctx context.Context, candidateID uuid.
 	if err := json.Unmarshal(normalizedPayload, &candidate.NormalizedPayload); err != nil {
 		return domain.MatchCandidate{}, fmt.Errorf("decode normalized payload: %w", err)
 	}
+	if err := json.Unmarshal(alternatives, &candidate.Alternatives); err != nil {
+		return domain.MatchCandidate{}, fmt.Errorf("decode candidate alternatives: %w", err)
+	}
 	return candidate, nil
 }
 
 func (r *PostgresRepository) UpdateCandidateReview(ctx context.Context, tx pgx.Tx, candidate domain.MatchCandidate) error {
 	commandTag, err := tx.Exec(ctx, `
 		UPDATE entity_match_candidate
-		SET status=$2, reviewed_by=$3, reviewed_at=$4, reviewer_reason=$5, evidence_id=$6
+		SET status=$2, reviewed_by=$3, reviewed_at=$4, reviewer_reason=$5, evidence_id=$6, candidate_entity_id=$7
 		WHERE id=$1 AND status='PENDING'
-	`, candidate.ID, candidate.Status, candidate.ReviewedBy, candidate.ReviewedAt, candidate.ReviewerReason, candidate.EvidenceID)
+	`, candidate.ID, candidate.Status, candidate.ReviewedBy, candidate.ReviewedAt, candidate.ReviewerReason, candidate.EvidenceID, candidate.CandidateEntityID)
 	if err != nil {
 		return fmt.Errorf("update entity match candidate review: %w", err)
 	}
@@ -168,7 +179,7 @@ func (r *PostgresRepository) UpdateCandidateReview(ctx context.Context, tx pgx.T
 func (r *PostgresRepository) ListCandidates(ctx context.Context, jobID uuid.UUID) ([]domain.MatchCandidate, error) {
 	rows, err := r.pool.Query(ctx, `
 		SELECT id, job_id, source_key, COALESCE(source_name,''), source_payload, normalized_payload,
-		       candidate_entity_id, decision, status, match_method, COALESCE(match_rule_id,''),
+		       candidate_entity_id, candidate_alternatives, decision, status, match_method, COALESCE(match_rule_id,''),
 		       match_engine_name, match_engine_version, match_model_version,
 		       COALESCE(confidence,0), reviewed_by, reviewed_at, COALESCE(reviewer_reason,''), evidence_id, created_at
 		FROM entity_match_candidate WHERE job_id=$1 ORDER BY created_at, source_key
@@ -181,9 +192,9 @@ func (r *PostgresRepository) ListCandidates(ctx context.Context, jobID uuid.UUID
 	result := make([]domain.MatchCandidate, 0)
 	for rows.Next() {
 		var c domain.MatchCandidate
-		var sourcePayload, normalizedPayload []byte
+		var sourcePayload, normalizedPayload, alternatives []byte
 		if err := rows.Scan(&c.ID, &c.JobID, &c.SourceKey, &c.SourceName, &sourcePayload, &normalizedPayload,
-			&c.CandidateEntityID, &c.Decision, &c.Status, &c.MatchMethod, &c.MatchRuleID,
+			&c.CandidateEntityID, &alternatives, &c.Decision, &c.Status, &c.MatchMethod, &c.MatchRuleID,
 			&c.MatchEngineName, &c.MatchEngineVersion, &c.MatchModelVersion,
 			&c.Confidence, &c.ReviewedBy, &c.ReviewedAt, &c.ReviewerReason, &c.EvidenceID, &c.CreatedAt); err != nil {
 			return nil, fmt.Errorf("scan entity match candidate: %w", err)
@@ -192,6 +203,9 @@ func (r *PostgresRepository) ListCandidates(ctx context.Context, jobID uuid.UUID
 			return nil, err
 		}
 		if err := json.Unmarshal(normalizedPayload, &c.NormalizedPayload); err != nil {
+			return nil, err
+		}
+		if err := json.Unmarshal(alternatives, &c.Alternatives); err != nil {
 			return nil, err
 		}
 		result = append(result, c)
