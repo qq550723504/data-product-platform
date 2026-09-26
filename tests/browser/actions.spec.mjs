@@ -57,8 +57,9 @@ test("ambiguous entity review requires explicit frozen alternative selection", a
   const confirm = form.getByRole("button", { name: "确认匹配" });
   const select = form.getByLabel("选择匹配实体（必选）");
   await expect(select).toBeVisible();
-  await expect(form.getByRole("option", { name: /测试候选 A/ })).toBeVisible();
-  await expect(form.getByRole("option", { name: /测试候选 B/ })).toBeVisible();
+  await expect(select.locator("option")).toHaveCount(3);
+  await expect(select).toContainText("测试候选 A");
+  await expect(select).toContainText("测试候选 B");
   await form.getByLabel("审核理由（必填）").fill("明确选择同名同址实体");
   await expect(confirm).toBeDisabled();
   await select.selectOption(ids.alternative);
