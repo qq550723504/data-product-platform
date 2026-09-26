@@ -10,6 +10,7 @@ export const ids = {
   job: "66666666-6666-4666-8666-666666666666",
   candidate: "77777777-7777-4777-8777-777777777777",
   entity: "88888888-8888-4888-8888-888888888888",
+  alternative: "abababab-abab-4bab-8bab-abababababab",
   decision: "99999999-9999-4999-8999-999999999999",
   goldDataset: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
   goldVersion: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
@@ -21,7 +22,7 @@ export const ids = {
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
-const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "review-conflict", "publish-conflict", "paginated-resources"]);
+const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources"]);
 const pass = { production: "PASS", dataset: "PASS", rights: "PASS", quality: "PASS", compliance: "PASS", contract: "PASS", evidence: "PASS", delivery: "PASS" };
 function fixtureResources(count) {
   return Array.from({ length: count }, (_, index) => {
@@ -254,7 +255,15 @@ export function createFixtureServer() {
       const candidate = {
         id: ids.candidate, candidateId: ids.candidate, jobId: ids.job, workspaceId: ids.workspace,
         sourceKey: "fixture-row-1", sourceName: "测试来源记录", source: { name: "测试来源记录" }, normalized: { name: "测试来源记录" },
-        candidateEntityId: ids.entity, status: state.candidateStatus, decision: "REVIEW", matchMethod: "RULE",
+        ...(state.scenario === "ambiguous-review"
+          ? {
+              alternatives: [
+                { entityId: ids.entity, canonicalKey: "FIXTURE-A", canonicalName: "测试候选 A" },
+                { entityId: ids.alternative, canonicalKey: "FIXTURE-B", canonicalName: "测试候选 B" },
+              ],
+            }
+          : { candidateEntityId: ids.entity, alternatives: [] }),
+        status: state.candidateStatus, decision: "REVIEW", matchMethod: "RULE",
         matchRuleId: "fixture-rule", confidence: 0.8, engineName: "fixture", engineVersion: "1", modelVersion: "1",
         policyRef: "test/policy", policyVersion: "1", createdAt: stamp,
         // The reviewer observes the mapping decision that is current when the
@@ -324,6 +333,9 @@ export function createFixtureServer() {
           // A stale or absent token must never replace the decision the reviewer
           // saw; only the exact observed decision is accepted.
           if (body.expectedDecisionId !== ids.decision) return send(409, { error: { code: "ENTITY_MAPPING_DECISION_CONFLICT" } });
+          if (state.scenario === "ambiguous-review" && body.selectedEntityId !== ids.alternative) {
+            return send(400, { error: { code: "ENTITY_SELECTION_NOT_ALLOWED" } });
+          }
           if (state.scenario === "review-conflict" || state.candidateStatus !== "PENDING") return send(409, { error: { code: "REVIEW_CONFLICT" } });
           state.candidateStatus = url.pathname.endsWith("/confirm") ? "CONFIRMED" : "REJECTED";
           return send(200, { ...job, status: "SUCCEEDED" });
