@@ -2,9 +2,13 @@ package application
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -21,6 +25,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/tabular"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
+	qualityengine "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/engine"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/native"
 )
@@ -46,26 +51,61 @@ type Service struct {
 	evidenceRepo     *evidence.QueryRepository
 	goldRepo         *goldinfra.PostgresRepository
 	goldPreflight    GoldPreflightProvider
+	engines          map[string]qualityengine.Engine
+	defaultEngine    string
 }
 
 func NewService(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, repo *infrastructure.PostgresRepository, store ObjectStore, evidenceRepos ...*evidence.QueryRepository) *Service {
+	nativeEngine := native.NewEngine()
 	service := &Service{
 		industryPackRoot: industryPackRoot,
 		tx:               tx,
 		datasetRepo:      datasetRepo,
 		repo:             repo,
 		store:            store,
+		engines:          map[string]qualityengine.Engine{},
+		defaultEngine:    strings.ToLower(nativeEngine.Descriptor().Name),
 	}
+	service.engines[service.defaultEngine] = nativeEngine
 	if len(evidenceRepos) > 0 {
 		service.evidenceRepo = evidenceRepos[0]
 	}
 	return service
 }
 
+func (s *Service) RegisterEngine(provider qualityengine.Engine) error {
+	if provider == nil {
+		return fmt.Errorf("quality engine is required")
+	}
+	descriptor := provider.Descriptor()
+	name := strings.ToLower(strings.TrimSpace(descriptor.Name))
+	if name == "" || strings.TrimSpace(descriptor.Version) == "" {
+		return fmt.Errorf("quality engine descriptor requires name and version")
+	}
+	if s.engines == nil {
+		s.engines = map[string]qualityengine.Engine{}
+	}
+	s.engines[name] = provider
+	return nil
+}
+
+func (s *Service) resolveEngine(name string) (qualityengine.Engine, error) {
+	name = strings.ToLower(strings.TrimSpace(name))
+	if name == "" {
+		name = s.defaultEngine
+	}
+	provider, ok := s.engines[name]
+	if !ok {
+		return nil, fmt.Errorf("quality engine %q is not registered", name)
+	}
+	return provider, nil
+}
+
 type RunCommand struct {
 	WorkspaceID         uuid.UUID
 	DatasetVersionID    uuid.UUID
 	RuleSetRef          string
+	EngineName          string
 	AssessmentAttemptID uuid.UUID
 	ActorID             *uuid.UUID
 	TraceID             string
@@ -136,10 +176,17 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			}
 			return err
 		}
-		policy, err := native.LoadPolicy(policyPath)
+		policyContent, err := os.ReadFile(policyPath)
 		if err != nil {
 			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("load quality policy: %v; record attempt outcome: %w", err, outcomeErr)
+				return fmt.Errorf("read quality policy: %v; record attempt outcome: %w", err, outcomeErr)
+			}
+			return fmt.Errorf("read quality policy %q: %w", policyPath, err)
+		}
+		provider, err := s.resolveEngine(cmd.EngineName)
+		if err != nil {
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("resolve quality engine: %v; record attempt outcome: %w", err, outcomeErr)
 			}
 			return err
 		}
@@ -171,13 +218,21 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			evidencePresent = &present
 		}
 		lineagePresent := version.GeneratedByExecutionID != nil
-		findings, metrics, err := native.Evaluate(policy, native.DatasetContext{
-			Table:           table,
-			Metadata:        version.Metadata,
-			ReadyAt:         version.ReadyAt,
-			Now:             cmd.Now,
-			LineagePresent:  &lineagePresent,
-			EvidencePresent: evidencePresent,
+		engineResult, err := provider.Evaluate(ctx, qualityengine.Request{
+			AttemptID:        attemptID,
+			DatasetVersionID: version.ID,
+			RuleSet: qualityengine.RuleSet{
+				Ref:     cmd.RuleSetRef,
+				Content: append([]byte(nil), policyContent...),
+			},
+			Dataset: qualityengine.DatasetContext{
+				Table:           table,
+				Metadata:        version.Metadata,
+				ReadyAt:         version.ReadyAt,
+				Now:             cmd.Now,
+				LineagePresent:  &lineagePresent,
+				EvidencePresent: evidencePresent,
+			},
 		})
 		if err != nil {
 			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
@@ -185,16 +240,12 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			}
 			return err
 		}
-		result = domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, policy.Metadata.Version,
-			policy.SourceContentSHA256, policy.SourceContent, native.EvaluatorName, native.EvaluatorVersion,
-			metrics, findings, cmd.ActorID)
-		result.GateDecision, err = policy.GateDecision(findings)
-		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("derive quality gate decision: %v; record attempt outcome: %w", err, outcomeErr)
-			}
-			return fmt.Errorf("derive quality gate decision: %w", err)
-		}
+		descriptor := provider.Descriptor()
+		contentDigest := sha256.Sum256(policyContent)
+		result = domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, engineResult.RuleSetVersion,
+			hex.EncodeToString(contentDigest[:]), string(policyContent), descriptor.Name, descriptor.Version,
+			engineResult.Metrics, engineResult.Findings, cmd.ActorID)
+		result.GateDecision = engineResult.GateDecision
 
 		err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 			if err := s.repo.InsertResult(ctx, tx, result); err != nil {
@@ -215,6 +266,8 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 					"ruleSetVersion":       result.RuleSetVersion,
 					"ruleSetContentSha256": result.RuleSetContentSHA256,
 					"gateDecision":         result.GateDecision,
+					"evaluatorName":        result.EvaluatorName,
+					"evaluatorVersion":     result.EvaluatorVersion,
 					"metrics":              result.Metrics,
 				},
 				CreatedBy: cmd.ActorID,
