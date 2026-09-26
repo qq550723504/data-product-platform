@@ -66,11 +66,11 @@ func (o SourceOrigin) Valid() bool {
 }
 
 var (
-	ErrInvalidEntityType       = errors.New("entity type is invalid")
-	ErrInvalidEntity           = errors.New("entity is invalid")
-	ErrReviewerReasonRequired  = errors.New("reviewer reason is required")
-	ErrCandidateNotReviewable  = errors.New("match candidate is not reviewable")
-	ErrCandidateEntityRequired     = errors.New("candidate entity is required")
+	ErrInvalidEntityType            = errors.New("entity type is invalid")
+	ErrInvalidEntity                = errors.New("entity is invalid")
+	ErrReviewerReasonRequired       = errors.New("reviewer reason is required")
+	ErrCandidateNotReviewable       = errors.New("match candidate is not reviewable")
+	ErrCandidateEntityRequired      = errors.New("candidate entity is required")
 	ErrCandidateSelectionNotAllowed = errors.New("selected entity is not an allowed candidate alternative")
 	// ErrOutputDatasetType rejects entity resolution output written into a
 	// dataset that is not a STANDARDIZED dataset.
@@ -229,9 +229,9 @@ type MatchJob struct {
 }
 
 type CandidateAlternative struct {
-	EntityID      uuid.UUID `json:"entityId"`
-	CanonicalKey string    `json:"canonicalKey"`
-	CanonicalName string   `json:"canonicalName"`
+	EntityID       uuid.UUID `json:"entityId"`
+	CanonicalKey  string    `json:"canonicalKey"`
+	CanonicalName string    `json:"canonicalName"`
 }
 
 type MatchCandidate struct {
@@ -412,8 +412,11 @@ func (c *MatchCandidate) SelectAlternative(entityID uuid.UUID) error {
 }
 
 func (c *MatchCandidate) Confirm(reviewerID uuid.UUID, reason string) error {
-	if c.Status != CandidatePending || c.CandidateEntityID == nil {
+	if c.Status != CandidatePending {
 		return ErrCandidateNotReviewable
+	}
+	if c.CandidateEntityID == nil {
+		return ErrCandidateEntityRequired
 	}
 	reason = strings.TrimSpace(reason)
 	if reviewerID == uuid.Nil || reason == "" {
