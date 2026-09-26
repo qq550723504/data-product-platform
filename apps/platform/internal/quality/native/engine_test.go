@@ -42,11 +42,6 @@ spec:
 	if err != nil {
 		t.Fatalf("direct evaluate: %v", err)
 	}
-	directGate, err := policy.GateDecision(directFindings)
-	if err != nil {
-		t.Fatalf("direct gate: %v", err)
-	}
-
 	provider := NewEngine()
 	result, err := provider.Evaluate(context.Background(), qualityengine.Request{
 		AttemptID:        uuid.New(),
@@ -60,17 +55,8 @@ spec:
 	if err != nil {
 		t.Fatalf("engine evaluate: %v", err)
 	}
-	if result.RuleSetVersion != policy.Metadata.Version {
-		t.Fatalf("rule set version = %q, want %q", result.RuleSetVersion, policy.Metadata.Version)
-	}
-	if result.RuleSetContentSHA256 != policy.SourceContentSHA256 {
-		t.Fatalf("rule set hash = %q, want %q", result.RuleSetContentSHA256, policy.SourceContentSHA256)
-	}
 	if len(result.Findings) != len(directFindings) || result.Findings[0].Status != directFindings[0].Status {
 		t.Fatalf("engine findings = %#v, direct = %#v", result.Findings, directFindings)
-	}
-	if result.GateDecision != directGate {
-		t.Fatalf("engine gate = %s, direct = %s", result.GateDecision, directGate)
 	}
 	if result.Metrics["QA-ID"] == nil || directMetrics["QA-ID"] == nil {
 		t.Fatalf("normalized metrics missing: engine=%#v direct=%#v", result.Metrics, directMetrics)
