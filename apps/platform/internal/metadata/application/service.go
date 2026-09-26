@@ -125,8 +125,11 @@ func (s *Service) ProjectProductRelease(ctx context.Context, sourceEventID, rele
 			"evidenceSnapshot": release.EvidenceSnapshotID,
 		},
 	}
+	var attempt int
 	if err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		return s.repo.BeginProjection(ctx, tx, projection)
+		var err error
+		attempt, err = s.repo.BeginProjection(ctx, tx, projection)
+		return err
 	}); err != nil {
 		return err
 	}
@@ -143,7 +146,7 @@ func (s *Service) ProjectProductRelease(ctx context.Context, sourceEventID, rele
 	})
 	if projectErr != nil {
 		markErr := s.tx.Do(context.Background(), func(ctx context.Context, tx pgx.Tx) error {
-			return s.repo.MarkProjectionFailed(ctx, tx, s.provider, "PRODUCT_RELEASE", release.ID, projectErr)
+			return s.repo.MarkProjectionFailed(ctx, tx, s.provider, "PRODUCT_RELEASE", release.ID, sourceEventID, attempt, projectErr)
 		})
 		if markErr != nil {
 			return fmt.Errorf("metadata projection failed: %v; persist projection failure: %w", projectErr, markErr)
@@ -152,7 +155,7 @@ func (s *Service) ProjectProductRelease(ctx context.Context, sourceEventID, rele
 	}
 
 	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		return s.repo.MarkProjectionSucceeded(ctx, tx, s.provider, "PRODUCT_RELEASE", release.ID,
+		return s.repo.MarkProjectionSucceeded(ctx, tx, s.provider, "PRODUCT_RELEASE", release.ID, sourceEventID, attempt,
 			external.ID, external.FullyQualifiedName, map[string]any{
 				"productId":        product.ID,
 				"productCode":      product.Code,
