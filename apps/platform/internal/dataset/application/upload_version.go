@@ -219,8 +219,43 @@ func (s *UploadVersionService) handle(
 		// is the one that publishes. SetReady performs the transition under the lock
 		// and fails loudly if the row is no longer publishable.
 
-		if err := s.repo.SetReady(ctx, tx, version); err != nil {
+		superseded, err := s.repo.SetReady(ctx, tx, version)
+		if err != nil {
 			return err
+		}
+		if superseded != nil {
+			event, err := outbox.NewEvent("DATASET_VERSION", superseded.ID, "DatasetVersionSuperseded", map[string]any{
+				"datasetVersionId":     superseded.ID,
+				"datasetId":            superseded.DatasetID,
+				"versionNo":            superseded.VersionNo,
+				"previousStatus":       domain.VersionReady,
+				"status":               domain.VersionSuperseded,
+				"replacementVersionId": version.ID,
+			})
+			if err != nil {
+				return fmt.Errorf("create dataset version superseded event: %w", err)
+			}
+			if err := outbox.Append(ctx, tx, event); err != nil {
+				return err
+			}
+			if err := audit.Append(ctx, tx, audit.Event{
+				ActorType:  actorType(cmd.ActorID),
+				ActorID:    cmd.ActorID,
+				Action:     "DATASET_VERSION_SUPERSEDED",
+				ObjectType: "DATASET_VERSION",
+				ObjectID:   superseded.ID,
+				BeforeState: map[string]any{
+					"status": domain.VersionReady,
+				},
+				AfterState: map[string]any{
+					"status":               domain.VersionSuperseded,
+					"replacementVersionId": version.ID,
+				},
+				Reason:  "a newer DatasetVersion became current",
+				TraceID: cmd.TraceID,
+			}); err != nil {
+				return err
+			}
 		}
 		if finalizer != nil {
 			if err := finalizer(ctx, tx, version); err != nil {
