@@ -343,11 +343,14 @@ func TestHopSubmitClassifiesStartServiceFailureAsOutcomeUnknown(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create Hop client: %v", err)
 	}
-	_, err = client.Submit(context.Background(), workflowapp.ManagedSubmitRequest{
+	run, err := client.Submit(context.Background(), workflowapp.ManagedSubmitRequest{
 		Name:       "pipeline",
 		Definition: []byte(`<pipeline_configuration/>`),
 	})
 	assertManagedEngineError(t, err, workflowapp.ManagedEngineOutcomeUnknown, true, http.StatusServiceUnavailable)
+	if run.ID != "run-unknown" || run.State != workflowapp.EngineRunQueued {
+		t.Fatalf("ambiguous start run = %+v, want durable id run-unknown", run)
+	}
 }
 
 func TestHopSubmitTreatsSuccessfulRegistrationWithoutDurableIDAsOutcomeUnknown(t *testing.T) {
