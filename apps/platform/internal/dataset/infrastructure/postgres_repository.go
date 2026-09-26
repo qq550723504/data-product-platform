@@ -231,7 +231,7 @@ func isEntityMatchOutputConflict(err error) bool {
 func (r *PostgresRepository) insertVersion(ctx context.Context, tx pgx.Tx, version domain.DatasetVersion) error {
 	metadata, err := json.Marshal(version.Metadata)
 	if err != nil {
-		return fmt.Errorf("marshal dataset version metadata: %w", err)
+		return nil, fmt.Errorf("marshal dataset version metadata: %w", err)
 	}
 	_, err = tx.Exec(ctx, `
 		INSERT INTO dataset_version (
@@ -268,34 +268,44 @@ func (r *PostgresRepository) LockVersion(ctx context.Context, tx pgx.Tx, version
 // is no longer publishable (for example another caller already invalidated it),
 // and reporting success there would announce a READY fact the database does not
 // hold.
-func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version domain.DatasetVersion) error {
+func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version domain.DatasetVersion) (*domain.DatasetVersion, error) {
 	if version.Status != domain.VersionReady {
-		return fmt.Errorf("set ready requires READY domain state")
+		return nil, fmt.Errorf("set ready requires READY domain state")
 	}
 	workspaceID, err := r.workspaceForDataset(ctx, tx, version.DatasetID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if _, err := deliveryfence.Advance(ctx, tx, workspaceID); err != nil {
-		return err
+		return nil, err
 	}
 
 	var previousVersionID *uuid.UUID
 	if err := tx.QueryRow(ctx, `SELECT current_version_id FROM dataset WHERE id = $1 FOR UPDATE`, version.DatasetID).Scan(&previousVersionID); err != nil {
-		return fmt.Errorf("lock dataset current version: %w", err)
+		return nil, fmt.Errorf("lock dataset current version: %w", err)
 	}
+	var previousVersion *domain.DatasetVersion
 	if previousVersionID != nil && *previousVersionID != version.ID {
-		var previousVersionNo int64
-		if err := tx.QueryRow(ctx, `SELECT version_no FROM dataset_version WHERE id = $1`, *previousVersionID).Scan(&previousVersionNo); err != nil {
-			return fmt.Errorf("read current dataset version: %w", err)
+		lockedPrevious, err := scanVersion(tx.QueryRow(ctx, `
+			SELECT `+versionColumns+`
+			FROM dataset_version
+			WHERE id = $1
+			FOR UPDATE
+		`, *previousVersionID))
+		if err != nil {
+			return nil, fmt.Errorf("read current dataset version: %w", err)
 		}
-		if previousVersionNo > version.VersionNo {
-			return fmt.Errorf("dataset version %s is older than current version %s: %w", version.ID, *previousVersionID, domain.ErrStaleVersionRecovery)
+		if lockedPrevious.VersionNo > version.VersionNo {
+			return nil, fmt.Errorf("dataset version %s is older than current version %s: %w", version.ID, *previousVersionID, domain.ErrStaleVersionRecovery)
+		}
+		if lockedPrevious.Status == domain.VersionReady {
+			copy := lockedPrevious
+			previousVersion = &copy
 		}
 	}
 	metadata, err := json.Marshal(version.Metadata)
 	if err != nil {
-		return fmt.Errorf("marshal dataset version metadata: %w", err)
+		return nil, fmt.Errorf("marshal dataset version metadata: %w", err)
 	}
 
 	commandTag, err := tx.Exec(ctx, `
@@ -329,22 +339,28 @@ func (r *PostgresRepository) SetReady(ctx context.Context, tx pgx.Tx, version do
 		version.ReadyAt,
 	)
 	if err != nil {
-		return fmt.Errorf("mark dataset version ready: %w", err)
+		return nil, fmt.Errorf("mark dataset version ready: %w", err)
 	}
 	if commandTag.RowsAffected() != 1 {
-		return fmt.Errorf("mark dataset version ready: %w", domain.ErrInvalidTransition)
+		return nil, fmt.Errorf("mark dataset version ready: %w", domain.ErrInvalidTransition)
 	}
 
-	if previousVersionID != nil && *previousVersionID != version.ID {
-		if _, err := tx.Exec(ctx, `UPDATE dataset_version SET status = 'SUPERSEDED' WHERE id = $1 AND status = 'READY'`, *previousVersionID); err != nil {
-			return fmt.Errorf("supersede previous dataset version: %w", err)
+	if previousVersion != nil {
+		tag, err := tx.Exec(ctx, `UPDATE dataset_version SET status = 'SUPERSEDED' WHERE id = $1 AND status = 'READY'`, previousVersion.ID)
+		if err != nil {
+			return nil, fmt.Errorf("supersede previous dataset version: %w", err)
+		}
+		if tag.RowsAffected() == 1 {
+			previousVersion.Status = domain.VersionSuperseded
+		} else {
+			previousVersion = nil
 		}
 	}
 
 	if _, err := tx.Exec(ctx, `UPDATE dataset SET current_version_id = $2, updated_at = now() WHERE id = $1`, version.DatasetID, version.ID); err != nil {
-		return fmt.Errorf("set dataset current version: %w", err)
+		return nil, fmt.Errorf("set dataset current version: %w", err)
 	}
-	return nil
+	return previousVersion, nil
 }
 
 // SetFailed records a failed attempt on a half-product. It is deliberately
