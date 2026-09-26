@@ -78,6 +78,7 @@ export async function executeReview(
     const decision = form.get("decision");
     const rawReason = form.get("reason");
     const rawExpectedDecisionId = form.get("expectedDecisionId");
+    const rawSelectedEntityId = form.get("selectedEntityId");
     if (!isReviewId(jobId) || !isReviewId(candidateId)) {
       throw new ReviewCommandError("任务和候选标识必须是有效 UUID。", "INVALID_ID");
     }
@@ -92,6 +93,13 @@ export async function executeReview(
     }
     if (decision !== "confirm" && decision !== "reject") {
       throw new ReviewCommandError("请选择确认或拒绝。", "INVALID_DECISION");
+    }
+    let selectedEntityId: string | undefined;
+    if (typeof rawSelectedEntityId === "string" && rawSelectedEntityId.trim() !== "") {
+      if (!isReviewId(rawSelectedEntityId)) {
+        throw new ReviewCommandError("选择的实体标识无效，请刷新后重新核对。", "INVALID_SELECTED_ENTITY_ID");
+      }
+      selectedEntityId = rawSelectedEntityId.toLowerCase();
     }
     if (typeof rawReason !== "string" || !rawReason.trim() || rawReason.length > 2000) {
       throw new ReviewCommandError("请填写审核理由，且不要超过 2000 个字符。", "INVALID_REASON");
@@ -131,17 +139,36 @@ export async function executeReview(
     if (candidate.status !== "PENDING") {
       return { ok: false, message: "此候选已不在待审核状态，请刷新后核对。", refreshRequired: true };
     }
-    if (decision === "confirm" && !isReviewId(candidate.candidateEntityId)) {
-      throw new ReviewCommandError("此候选没有可确认的实体；不能自动创建或指定另一个实体。", "ENTITY_REQUIRED");
+    if (decision === "confirm") {
+      const currentEntityId = isReviewId(candidate.candidateEntityId) ? candidate.candidateEntityId.toLowerCase() : undefined;
+      const alternatives = Array.isArray(candidate.alternatives) ? candidate.alternatives.map(record) : [];
+      const allowedAlternativeIds = new Set(
+        alternatives.map((alternative) => alternative.entityId).filter(isReviewId).map((id) => id.toLowerCase()),
+      );
+      if (currentEntityId) {
+        if (selectedEntityId && selectedEntityId !== currentEntityId) {
+          throw new ReviewCommandError("此候选已有明确实体，不能改选其他实体。", "ENTITY_SELECTION_NOT_ALLOWED");
+        }
+      } else {
+        if (!selectedEntityId) {
+          throw new ReviewCommandError("请从冻结候选实体中明确选择一个实体。", "ENTITY_SELECTION_REQUIRED");
+        }
+        if (!allowedAlternativeIds.has(selectedEntityId)) {
+          throw new ReviewCommandError("选择的实体不在该候选的冻结备选集合中。", "ENTITY_SELECTION_NOT_ALLOWED");
+        }
+      }
     }
     attemptedWrite = true;
+    const payload: Record<string, string> = { reason: rawReason.trim() };
+    if (expectedDecisionId) payload.expectedDecisionId = expectedDecisionId;
+    if (selectedEntityId) payload.selectedEntityId = selectedEntityId;
     const result = await json(`/api/v1/entity-match-reviews/${candidateId}/${decision}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify(expectedDecisionId ? { reason: rawReason.trim(), expectedDecisionId } : { reason: rawReason.trim() }),
+      body: JSON.stringify(payload),
     });
     const job = parseJob(result, jobId, workspaceId);
-    return { ok: true, message: `${decision === "confirm" ? "已确认" : "已拒绝"}候选；任务状态：${job.status}。`, job };
+    return { ok: true, message: `${decision === "confirm" ? (selectedEntityId ? "已选择实体并确认" : "已确认") : "已拒绝"}候选；任务状态：${job.status}。`, job };
   } catch (error) {
     const detail = error instanceof ReviewCommandError ? error.message : "暂时无法核实 Core API 的响应。";
     return {
