@@ -25,8 +25,9 @@ type ManagedExecutionBridge interface {
 	PrepareStartRequest(ctx context.Context, request ProcessingRequest) (ManagedSubmitRequest, error)
 	InvokeStartSubmission(ctx context.Context, request ManagedSubmitRequest, runID string) (EngineRun, error)
 	InvokeRecoverSubmission(ctx context.Context, request ManagedSubmitRequest, runID string) (EngineRun, error)
+	PrepareStatusLookup(ctx context.Context, request ProcessingRequest, runID string) (ManagedRunLookup, error)
+	InvokeStatus(ctx context.Context, lookup ManagedRunLookup) (EngineRun, error)
 
-	Status(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error)
 	Finalize(ctx context.Context, request ProcessingRequest, run EngineRun) (ProcessingResult, error)
 }
 
