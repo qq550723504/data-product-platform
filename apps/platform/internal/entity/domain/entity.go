@@ -70,7 +70,8 @@ var (
 	ErrInvalidEntity           = errors.New("entity is invalid")
 	ErrReviewerReasonRequired  = errors.New("reviewer reason is required")
 	ErrCandidateNotReviewable  = errors.New("match candidate is not reviewable")
-	ErrCandidateEntityRequired = errors.New("candidate entity is required")
+	ErrCandidateEntityRequired     = errors.New("candidate entity is required")
+	ErrCandidateSelectionNotAllowed = errors.New("selected entity is not an allowed candidate alternative")
 	// ErrOutputDatasetType rejects entity resolution output written into a
 	// dataset that is not a STANDARDIZED dataset.
 	ErrOutputDatasetType = errors.New("entity resolution output dataset must be STANDARDIZED")
@@ -227,6 +228,12 @@ type MatchJob struct {
 	FinishedAt             *time.Time
 }
 
+type CandidateAlternative struct {
+	EntityID      uuid.UUID `json:"entityId"`
+	CanonicalKey string    `json:"canonicalKey"`
+	CanonicalName string   `json:"canonicalName"`
+}
+
 type MatchCandidate struct {
 	ID                 uuid.UUID
 	JobID              uuid.UUID
@@ -235,6 +242,7 @@ type MatchCandidate struct {
 	SourcePayload      map[string]string
 	NormalizedPayload  map[string]string
 	CandidateEntityID  *uuid.UUID
+	Alternatives       []CandidateAlternative
 	Decision           MatchDecision
 	Status             CandidateStatus
 	MatchMethod        string
@@ -387,6 +395,20 @@ func NormalizeMappingDecisionKey(value string) (string, error) {
 		return "", ErrMappingDecisionKeyConflict
 	}
 	return value, nil
+}
+
+func (c *MatchCandidate) SelectAlternative(entityID uuid.UUID) error {
+	if c.Status != CandidatePending || entityID == uuid.Nil {
+		return ErrCandidateNotReviewable
+	}
+	for _, alternative := range c.Alternatives {
+		if alternative.EntityID == entityID {
+			selected := entityID
+			c.CandidateEntityID = &selected
+			return nil
+		}
+	}
+	return ErrCandidateSelectionNotAllowed
 }
 
 func (c *MatchCandidate) Confirm(reviewerID uuid.UUID, reason string) error {
