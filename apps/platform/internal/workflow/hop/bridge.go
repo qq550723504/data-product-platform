@@ -78,7 +78,9 @@ func (b *Bridge) Submit(ctx context.Context, request workflowapp.ProcessingReque
 		Parameters:    parameters,
 	})
 	if err != nil {
-		return workflowapp.EngineRun{}, err
+		// Some submit errors intentionally carry a durable remote run id so Core
+		// can reconcile an ambiguous start without dispatching duplicate work.
+		return run, err
 	}
 	if run.Metrics == nil {
 		run.Metrics = map[string]any{}
