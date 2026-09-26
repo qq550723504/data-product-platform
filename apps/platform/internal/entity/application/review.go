@@ -33,23 +33,28 @@ func (s *MatchService) Confirm(ctx context.Context, cmd ReviewCommand) (domain.M
 	if err != nil {
 		return domain.MatchJob{}, err
 	}
-	if cmd.SelectedEntityID != nil {
-		selected, err := s.entityRepo.GetEntity(ctx, *cmd.SelectedEntityID)
-		if err != nil {
-			return domain.MatchJob{}, fmt.Errorf("%w: %v", domain.ErrCandidateSelectionNotAllowed, err)
-		}
-		if selected.WorkspaceID != job.WorkspaceID || selected.EntityTypeID != job.EntityTypeID || selected.Status != domain.EntityActive {
-			return domain.MatchJob{}, domain.ErrCandidateSelectionNotAllowed
-		}
-		if err := candidate.SelectAlternative(selected.ID); err != nil {
+	if cmd.SelectedEntityID == nil {
+		if err := candidate.Confirm(cmd.ReviewerID, cmd.Reason); err != nil {
 			return domain.MatchJob{}, err
 		}
 	}
-	if err := candidate.Confirm(cmd.ReviewerID, cmd.Reason); err != nil {
-		return domain.MatchJob{}, err
-	}
 
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if cmd.SelectedEntityID != nil {
+			selected, err := s.entityRepo.GetEntityTx(ctx, tx, *cmd.SelectedEntityID)
+			if err != nil {
+				return fmt.Errorf("%w: %v", domain.ErrCandidateSelectionNotAllowed, err)
+			}
+			if selected.WorkspaceID != job.WorkspaceID || selected.EntityTypeID != job.EntityTypeID || selected.Status != domain.EntityActive {
+				return domain.ErrCandidateSelectionNotAllowed
+			}
+			if err := candidate.SelectAlternative(selected.ID); err != nil {
+				return err
+			}
+			if err := candidate.Confirm(cmd.ReviewerID, cmd.Reason); err != nil {
+				return err
+			}
+		}
 		record, err := evidence.Append(ctx, tx, evidence.Record{
 			WorkspaceID:  job.WorkspaceID,
 			EvidenceType: "ENTITY_MATCH_REVIEW",
