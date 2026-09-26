@@ -196,6 +196,74 @@ func (s *ExecutionService) start(ctx context.Context, executionID uuid.UUID, eng
 	return execution, err
 }
 
+func (s *ExecutionService) RecordManagedSubmissionRecoveryAttempt(ctx context.Context, executionID uuid.UUID, traceID string) (uuid.UUID, error) {
+	var attemptID uuid.UUID
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		execution, err := s.repo.GetExecutionTx(ctx, tx, executionID, true)
+		if err != nil {
+			return err
+		}
+		if execution.Status != domain.ExecutionSubmitting || execution.EngineExecutionID == "" {
+			return domain.ErrInvalidTransition
+		}
+		attemptID = uuid.New()
+		executionIDCopy := execution.ID
+		if err := cost.Append(ctx, tx, cost.Event{
+			WorkspaceID: execution.WorkspaceID,
+			ExecutionID: &executionIDCopy,
+			ActivityID:  attemptID,
+			CostType:    "MANAGED_SUBMISSION_RECOVERY_ATTEMPT",
+			Quantity:    1,
+			Unit:        "attempt",
+			PricingMode: "POC_ESTIMATE",
+			Metadata: map[string]any{
+				"engineType":          execution.EngineType,
+				"externalExecutionId": execution.EngineExecutionID,
+				"recovery":            true,
+			},
+		}); err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &execution.WorkspaceID,
+			ActorType:   "SERVICE",
+			Action:      "EXECUTION_SUBMISSION_RECOVERY_ATTEMPT_STARTED",
+			ObjectType:  "EXECUTION",
+			ObjectID:    execution.ID,
+			AfterState: map[string]any{
+				"status":              execution.Status,
+				"activityId":          attemptID,
+				"engineType":          execution.EngineType,
+				"externalExecutionId": execution.EngineExecutionID,
+			},
+			TraceID: traceID,
+		})
+	})
+	return attemptID, err
+}
+
+func (s *ExecutionService) RecordManagedSubmissionRecoveryOutcome(ctx context.Context, executionID, attemptID uuid.UUID, outcome, traceID string) error {
+	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		execution, err := s.repo.GetExecutionTx(ctx, tx, executionID, true)
+		if err != nil {
+			return err
+		}
+		return audit.Append(ctx, tx, audit.Event{
+			WorkspaceID: &execution.WorkspaceID,
+			ActorType:   "SERVICE",
+			Action:      "EXECUTION_SUBMISSION_RECOVERY_ATTEMPT_COMPLETED",
+			ObjectType:  "EXECUTION",
+			ObjectID:    execution.ID,
+			AfterState: map[string]any{
+				"status":     execution.Status,
+				"activityId": attemptID,
+				"outcome":    outcome,
+			},
+			TraceID: traceID,
+		})
+	})
+}
+
 func (s *ExecutionService) RecordNativeRecovery(ctx context.Context, executionID uuid.UUID, action, traceID string) error {
 	return s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		execution, err := s.repo.GetExecutionTx(ctx, tx, executionID, true)
