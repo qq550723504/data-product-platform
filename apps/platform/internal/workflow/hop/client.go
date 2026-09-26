@@ -2,6 +2,7 @@ package hop
 
 import (
 	"compress/gzip"
+	"errors"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -109,12 +110,12 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 	registerQuery := url.Values{"xml": []string{"Y"}}
 	registered, err := c.webResultRequest(ctx, http.MethodPost, "/hop/registerPipeline", registerQuery, request.Definition, request.ContentType)
 	if err != nil {
-		return workflowapp.EngineRun{}, err
+		return workflowapp.EngineRun{}, classifySubmitOutcome("register pipeline", err)
 	}
 	if strings.TrimSpace(registered.ID) == "" {
 		return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
-			workflowapp.ManagedEngineInvalidResponse, "register pipeline", false, 0,
-			fmt.Errorf("remote registration returned no execution id"),
+			workflowapp.ManagedEngineOutcomeUnknown, "register pipeline", true, 0,
+			fmt.Errorf("remote registration reported success without a durable execution id"),
 		)
 	}
 
@@ -131,7 +132,7 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 		startQuery.Set(key, value)
 	}
 	if _, err := c.webResultRequest(ctx, http.MethodGet, "/hop/startPipeline", startQuery, nil, ""); err != nil {
-		return workflowapp.EngineRun{}, err
+		return workflowapp.EngineRun{}, classifySubmitOutcome("start pipeline", err)
 	}
 
 	run, err := c.Status(ctx, name, registered.ID)
@@ -150,6 +151,38 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 	}
 	run.Metrics["definitionRef"] = request.DefinitionRef
 	return run, nil
+}
+
+func classifySubmitOutcome(operation string, err error) error {
+	if err == nil {
+		return nil
+	}
+	var managed *workflowapp.ManagedEngineError
+	if errors.As(err, &managed) {
+		switch managed.Kind {
+		case workflowapp.ManagedEngineUnavailable, workflowapp.ManagedEngineInvalidResponse:
+			return workflowapp.NewManagedEngineError(
+				workflowapp.ManagedEngineOutcomeUnknown,
+				operation,
+				true,
+				managed.StatusCode,
+				err,
+			)
+		default:
+			// Explicit provider rejection / authorization / request errors are
+			// definite failures: the provider told us the request was not accepted.
+			return err
+		}
+	}
+	// Adapters should normally return ManagedEngineError, but a raw transport
+	// error at submit time is still outcome-unknown rather than definite failure.
+	return workflowapp.NewManagedEngineError(
+		workflowapp.ManagedEngineOutcomeUnknown,
+		operation,
+		true,
+		0,
+		err,
+	)
 }
 
 func (c *Client) Status(ctx context.Context, name, runID string) (workflowapp.EngineRun, error) {
