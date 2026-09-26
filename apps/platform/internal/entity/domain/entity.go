@@ -229,7 +229,7 @@ type MatchJob struct {
 }
 
 type CandidateAlternative struct {
-	EntityID       uuid.UUID `json:"entityId"`
+	EntityID      uuid.UUID `json:"entityId"`
 	CanonicalKey  string    `json:"canonicalKey"`
 	CanonicalName string    `json:"canonicalName"`
 }
