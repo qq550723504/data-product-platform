@@ -132,7 +132,16 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 		startQuery.Set(key, value)
 	}
 	if _, err := c.webResultRequest(ctx, http.MethodGet, "/hop/startPipeline", startQuery, nil, ""); err != nil {
-		return workflowapp.EngineRun{}, classifySubmitOutcome("start pipeline", err)
+		classified := classifySubmitOutcome("start pipeline", err)
+		if workflowapp.IsManagedEngineOutcomeUnknown(classified) {
+			return workflowapp.EngineRun{
+				ID:      registered.ID,
+				Name:    name,
+				State:   workflowapp.EngineRunQueued,
+				Metrics: map[string]any{"definitionRef": request.DefinitionRef},
+			}, classified
+		}
+		return workflowapp.EngineRun{}, classified
 	}
 
 	run, err := c.Status(ctx, name, registered.ID)
