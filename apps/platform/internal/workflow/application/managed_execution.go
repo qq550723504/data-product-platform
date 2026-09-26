@@ -32,6 +32,8 @@ type ManagedExecutionRepository interface {
 
 type ManagedExecutionStateService interface {
 	Start(ctx context.Context, executionID uuid.UUID, engineExecutionID, traceID string) (domain.Execution, error)
+	RecordManagedSubmissionRecoveryAttempt(ctx context.Context, executionID uuid.UUID, traceID string) (uuid.UUID, error)
+	RecordManagedSubmissionRecoveryOutcome(ctx context.Context, executionID, attemptID uuid.UUID, outcome, traceID string) error
 	Succeed(ctx context.Context, executionID, outputDatasetVersionID uuid.UUID, metrics map[string]any, traceID string) (domain.Execution, error)
 	Fail(ctx context.Context, executionID uuid.UUID, code, message string, metrics map[string]any, traceID string) (domain.Execution, error)
 }
@@ -79,6 +81,8 @@ func stringMap(value any) (map[string]any, bool) {
 	}
 }
 
+const DefaultManagedSubmissionTimeout = 5 * time.Minute
+
 type ManagedReconciler struct {
 	service           ManagedExecutionStateService
 	repo              ManagedExecutionRepository
@@ -104,7 +108,7 @@ func NewManagedReconciler(service ManagedExecutionStateService, repo ManagedExec
 		repo:              repo,
 		bridges:           registry,
 		limit:             100,
-		submissionTimeout: 5 * time.Minute,
+		submissionTimeout: DefaultManagedSubmissionTimeout,
 	}
 }
 
@@ -292,7 +296,25 @@ func (r *ManagedReconciler) recoverExpiredSubmission(ctx context.Context, bridge
 		return fmt.Errorf("load workflow version for uncertain submission %s: %w", executionID, err)
 	}
 	request := ProcessingRequestFromExecution(execution, version)
+	attemptID, err := r.service.RecordManagedSubmissionRecoveryAttempt(ctx, execution.ID, execution.ID.String())
+	if err != nil {
+		return fmt.Errorf("record managed submission recovery attempt %s: %w", executionID, err)
+	}
+
 	if _, err := bridge.RecoverSubmission(ctx, request, execution.EngineExecutionID); err != nil {
+		outcome := "RETRYABLE_ERROR"
+		if IsManagedEngineOutcomeUnknown(err) {
+			outcome = "OUTCOME_UNKNOWN"
+		} else if IsManagedEngineDefiniteRejection(err) {
+			outcome = "DEFINITE_REJECTION"
+		} else if managedErr := new(ManagedEngineError); errors.As(err, &managedErr) {
+			outcome = string(managedErr.Kind)
+		} else {
+			outcome = "LOCAL_ERROR"
+		}
+		if recordErr := r.service.RecordManagedSubmissionRecoveryOutcome(ctx, execution.ID, attemptID, outcome, execution.ID.String()); recordErr != nil {
+			return fmt.Errorf("record managed submission recovery outcome %s: %w", executionID, recordErr)
+		}
 		if !IsManagedEngineDefiniteRejection(err) {
 			// Local/config/storage errors and remote outcome-unknown/unavailable
 			// failures are not authoritative proof that the remote start failed.
@@ -303,13 +325,16 @@ func (r *ManagedReconciler) recoverExpiredSubmission(ctx context.Context, bridge
 			execution.ID,
 			"REMOTE_SUBMIT_FAILED",
 			"remote processing engine start was rejected",
-			map[string]any{"engineType": execution.EngineType, "externalExecutionId": execution.EngineExecutionID},
+			map[string]any{"engineType": execution.EngineType, "externalExecutionId": execution.EngineExecutionID, "recoveryAttemptId": attemptID},
 			execution.ID.String(),
 		)
 		if failErr != nil && !errors.Is(failErr, domain.ErrInvalidTransition) {
 			return fmt.Errorf("terminalize rejected managed start %s: %w", executionID, failErr)
 		}
 		return nil
+	}
+	if err := r.service.RecordManagedSubmissionRecoveryOutcome(ctx, execution.ID, attemptID, "ACCEPTED", execution.ID.String()); err != nil {
+		return fmt.Errorf("record managed submission recovery success %s: %w", executionID, err)
 	}
 	if _, err := r.service.Start(ctx, execution.ID, execution.EngineExecutionID, execution.ID.String()); err != nil &&
 		!errors.Is(err, domain.ErrInvalidTransition) {
