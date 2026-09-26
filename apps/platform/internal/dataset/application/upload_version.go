@@ -204,7 +204,7 @@ func (s *UploadVersionService) handle(
 			ObjectType: "DATASET_VERSION",
 			ObjectID:   version.ID,
 			BeforeState: map[string]any{
-				"status": allocated.Status,
+				"status": version.Status,
 			},
 			AfterState: map[string]any{
 				"status":    version.Status,
@@ -453,7 +453,6 @@ func sanitizeFilename(filename string) string {
 	}
 	return strings.ReplaceAll(filename, " ", "_")
 }
-
 
 type uploadVersionFingerprintPayload struct {
 	DatasetID   uuid.UUID      `json:"datasetId"`
