@@ -157,7 +157,6 @@ func TestResourceBindingAndGovernanceProjectionPersistence(t *testing.T) {
 	}
 }
 
-
 func TestGovernanceProjectionRejectsStaleCompletion(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
