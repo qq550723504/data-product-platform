@@ -11,6 +11,7 @@ import styles from "./review-queue.module.css";
 
 function ReviewForm({ review, onResult }: { review: EntityReview; onResult: (result: ReviewActionState) => void }) {
   const [reason, setReason] = useState("");
+  const [selectedEntityId, setSelectedEntityId] = useState(review.candidateEntityId ?? "");
   const [state, action, pending] = useActionState(async (previous: ReviewActionState, form: FormData) => {
     const result = await reviewCandidate(previous, form);
     onResult(result);
@@ -23,16 +24,28 @@ function ReviewForm({ review, onResult }: { review: EntityReview; onResult: (res
       <input type="hidden" name="jobId" value={review.jobId} />
       {/* The token is what the reviewer actually saw, not a value read at submit. */}
       <input type="hidden" name="expectedDecisionId" value={review.currentMappingDecisionId ?? ""} />
+      {!review.candidateEntityId && review.alternatives.length > 0 ? <>
+        <label htmlFor={`entity-${review.candidateId}`}>选择匹配实体（必选）</label>
+        <select id={`entity-${review.candidateId}`} name="selectedEntityId" required value={selectedEntityId}
+          onChange={(event) => setSelectedEntityId(event.target.value)} disabled={locked}>
+          <option value="">请选择冻结候选实体</option>
+          {review.alternatives.map((alternative) => <option key={alternative.entityId} value={alternative.entityId}>
+            {alternative.canonicalName || alternative.entityId}{alternative.canonicalKey ? ` · ${alternative.canonicalKey}` : ""}
+          </option>)}
+        </select>
+      </> : null}
       <label htmlFor={`reason-${review.candidateId}`}>审核理由（必填）</label>
       <textarea id={`reason-${review.candidateId}`} name="reason" required maxLength={2000} rows={3}
         value={reason} onChange={(event) => setReason(event.target.value)} disabled={locked}
         placeholder="说明核对了哪些来源、为什么确认或拒绝此候选。" />
       <div className={styles.buttons}>
-        <button type="submit" name="decision" value="confirm" disabled={locked || !reason.trim() || !review.candidateEntityId}>确认匹配</button>
+        <button type="submit" name="decision" value="confirm"
+          disabled={locked || !reason.trim() || (!review.candidateEntityId && !selectedEntityId)}>确认匹配</button>
         <button type="submit" name="decision" value="reject" disabled={locked || !reason.trim()}>拒绝匹配</button>
         {pending ? <span role="status">正在提交，请勿重复操作…</span> : null}
       </div>
-      {!review.candidateEntityId ? <small>没有候选实体，不能确认；拒绝也不会自动新建实体。</small> : null}
+      {!review.candidateEntityId && review.alternatives.length === 0 ? <small>没有可选择的冻结候选实体，不能确认；拒绝也不会自动新建实体。</small> : null}
+      {!review.candidateEntityId && review.alternatives.length > 0 ? <small>只能从本次匹配时冻结的候选集合中选择；提交时 Core 会再次验证实体仍为当前工作区同类型的 ACTIVE 实体。</small> : null}
       {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
       {state.refreshRequired ? <button type="button" onClick={() => window.location.reload()}>重新加载并核对结果</button> : null}
     </form>
@@ -75,6 +88,7 @@ export function ReviewQueue({ items, actionsEnabled }: { items: EntityReview[]; 
                   <dt>匹配方法</dt><dd>{review.matchMethod || "—"}</dd>
                   <dt>匹配规则</dt><dd>{review.matchRuleId || "—"}</dd>
                   <dt>候选实体</dt><dd>{review.candidateEntityId || "—"}</dd>
+                  <dt>冻结备选</dt><dd>{review.alternatives.length ? review.alternatives.map((item) => item.canonicalName || item.entityId).join(" / ") : "—"}</dd>
                   <dt>策略引用</dt><dd>{review.policyRef || "—"}</dd>
                   <dt>策略版本</dt><dd>{review.policyVersion || "—"}</dd>
                   <dt>诊断引擎</dt><dd>{review.engineName || "未提供"}</dd>
