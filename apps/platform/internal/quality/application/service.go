@@ -188,6 +188,13 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			}
 			return fmt.Errorf("read quality policy %q: %w", policyPath, err)
 		}
+		corePolicy, err := native.LoadPolicyBytes(policyContent, cmd.RuleSetRef)
+		if err != nil {
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("validate frozen quality policy: %v; record attempt outcome: %w", err, outcomeErr)
+			}
+			return err
+		}
 		reader, err := s.store.Get(ctx, version.StorageURI)
 		if err != nil {
 			wrappedErr := fmt.Errorf("open DatasetVersion object: %w", err)
@@ -240,10 +247,16 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 		}
 		descriptor := provider.Descriptor()
 		contentDigest := sha256.Sum256(policyContent)
-		result = domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, engineResult.RuleSetVersion,
+		result = domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, corePolicy.Metadata.Version,
 			hex.EncodeToString(contentDigest[:]), string(policyContent), descriptor.Name, descriptor.Version,
 			engineResult.Metrics, engineResult.Findings, cmd.ActorID)
-		result.GateDecision = engineResult.GateDecision
+		result.GateDecision, err = corePolicy.GateDecision(engineResult.Findings)
+		if err != nil {
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("derive quality gate decision: %v; record attempt outcome: %w", err, outcomeErr)
+			}
+			return fmt.Errorf("derive quality gate decision: %w", err)
+		}
 
 		err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 			if err := s.repo.InsertResult(ctx, tx, result); err != nil {
