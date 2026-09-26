@@ -53,12 +53,28 @@ type fakeManagedStateService struct {
 	failCode          string
 	failMessage       string
 	metrics           map[string]any
+	recoveryAttempts  []uuid.UUID
+	recoveryOutcomes  []string
 }
 
 func (s *fakeManagedStateService) Start(_ context.Context, _ uuid.UUID, engineExecutionID, _ string) (domain.Execution, error) {
 	s.started++
 	s.engineExecutionID = engineExecutionID
 	return domain.Execution{Status: domain.ExecutionRunning, EngineExecutionID: engineExecutionID}, nil
+}
+
+func (s *fakeManagedStateService) RecordManagedSubmissionRecoveryAttempt(_ context.Context, _ uuid.UUID, _ string) (uuid.UUID, error) {
+	id := uuid.New()
+	s.recoveryAttempts = append(s.recoveryAttempts, id)
+	return id, nil
+}
+
+func (s *fakeManagedStateService) RecordManagedSubmissionRecoveryOutcome(_ context.Context, _ uuid.UUID, attemptID uuid.UUID, outcome, _ string) error {
+	if len(s.recoveryAttempts) == 0 || s.recoveryAttempts[len(s.recoveryAttempts)-1] != attemptID {
+		return errors.New("unknown recovery attempt")
+	}
+	s.recoveryOutcomes = append(s.recoveryOutcomes, outcome)
+	return nil
 }
 
 func (s *fakeManagedStateService) Succeed(_ context.Context, _ uuid.UUID, outputDatasetVersionID uuid.UUID, metrics map[string]any, _ string) (domain.Execution, error) {
@@ -313,6 +329,9 @@ func TestManagedReconcilerFailsUnambiguousExpiredSubmissionAfterRecoveryRejectio
 		t.Fatalf("unambiguous rejection must fail; startCalls=%d failed=%d code=%q",
 			bridge.startCalls, state.failed, state.failCode)
 	}
+	if len(state.recoveryAttempts) != 1 || len(state.recoveryOutcomes) != 1 || state.recoveryOutcomes[0] != "DEFINITE_REJECTION" {
+		t.Fatalf("rejection accounting attempts=%d outcomes=%v", len(state.recoveryAttempts), state.recoveryOutcomes)
+	}
 }
 
 func TestManagedReconcilerConfirmsKnownUncertainSubmission(t *testing.T) {
@@ -341,6 +360,9 @@ func TestManagedReconcilerConfirmsKnownUncertainSubmission(t *testing.T) {
 	}
 	if bridge.startCalls != 1 || bridge.startRunID != "hop-run-1" || state.started != 1 || state.engineExecutionID != "hop-run-1" {
 		t.Fatalf("startCalls=%d startRunID=%q started=%d engineExecutionID=%q", bridge.startCalls, bridge.startRunID, state.started, state.engineExecutionID)
+	}
+	if len(state.recoveryAttempts) != 1 || len(state.recoveryOutcomes) != 1 || state.recoveryOutcomes[0] != "ACCEPTED" {
+		t.Fatalf("accepted recovery accounting attempts=%d outcomes=%v", len(state.recoveryAttempts), state.recoveryOutcomes)
 	}
 	if state.failed != 0 {
 		t.Fatalf("known remote identity must not expire as unknown; failed=%d", state.failed)
@@ -376,6 +398,9 @@ func TestManagedReconcilerKeepsKnownSubmissionWhenStartOutcomeUnknown(t *testing
 	if bridge.startCalls != 1 || bridge.startRunID != "hop-run-1" || state.started != 0 || state.failed != 0 {
 		t.Fatalf("startCalls=%d startRunID=%q started=%d failed=%d, want 1/hop-run-1/0/0", bridge.startCalls, bridge.startRunID, state.started, state.failed)
 	}
+	if len(state.recoveryAttempts) != 1 || len(state.recoveryOutcomes) != 1 || state.recoveryOutcomes[0] != "OUTCOME_UNKNOWN" {
+		t.Fatalf("unknown recovery accounting attempts=%d outcomes=%v", len(state.recoveryAttempts), state.recoveryOutcomes)
+	}
 }
 
 func TestManagedReconcilerSkipsExpiredSubmissionWhenRecoveryLockBusy(t *testing.T) {
@@ -403,9 +428,9 @@ func TestManagedReconcilerSkipsExpiredSubmissionWhenRecoveryLockBusy(t *testing.
 	if err := reconciler.RunOnce(context.Background()); err != nil {
 		t.Fatalf("busy recovery lock should be a no-op: %v", err)
 	}
-	if locker.calls != 1 || bridge.startCalls != 0 || state.started != 0 || state.failed != 0 {
-		t.Fatalf("busy recovery must not start or terminalize; locks=%d starts=%d started=%d failed=%d",
-			locker.calls, bridge.startCalls, state.started, state.failed)
+	if locker.calls != 1 || bridge.startCalls != 0 || state.started != 0 || state.failed != 0 || len(state.recoveryAttempts) != 0 {
+		t.Fatalf("busy recovery must not start, account, or terminalize; locks=%d starts=%d started=%d failed=%d attempts=%d",
+			locker.calls, bridge.startCalls, state.started, state.failed, len(state.recoveryAttempts))
 	}
 }
 
@@ -436,6 +461,9 @@ func TestManagedReconcilerKeepsExpiredSubmissionOnLocalRecoveryError(t *testing.
 	if bridge.startCalls != 1 || state.started != 0 || state.failed != 0 {
 		t.Fatalf("local recovery error must not terminalize; starts=%d started=%d failed=%d",
 			bridge.startCalls, state.started, state.failed)
+	}
+	if len(state.recoveryAttempts) != 1 || len(state.recoveryOutcomes) != 1 || state.recoveryOutcomes[0] != "LOCAL_ERROR" {
+		t.Fatalf("local recovery accounting attempts=%d outcomes=%v, want one LOCAL_ERROR", len(state.recoveryAttempts), state.recoveryOutcomes)
 	}
 }
 
