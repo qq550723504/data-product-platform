@@ -18,6 +18,7 @@ type ManagedExecutionBridge interface {
 	EngineType() string
 	PrepareSubmission(ctx context.Context, request ProcessingRequest) (EngineRun, error)
 	StartSubmission(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error)
+	RecoverSubmission(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error)
 	Status(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error)
 	Finalize(ctx context.Context, request ProcessingRequest, run EngineRun) (ProcessingResult, error)
 }
@@ -142,7 +143,7 @@ func (r *ManagedReconciler) reconcileOne(ctx context.Context, bridge ManagedExec
 				return fmt.Errorf("load workflow version for uncertain submission %s: %w", executionID, err)
 			}
 			request := ProcessingRequestFromExecution(execution, version)
-			if _, err := bridge.StartSubmission(ctx, request, execution.EngineExecutionID); err != nil {
+			if _, err := bridge.RecoverSubmission(ctx, request, execution.EngineExecutionID); err != nil {
 				if IsManagedEngineOutcomeUnknown(err) {
 					// The id is durable, so recovery keeps retrying the same remote
 					// identity and never registers a second run.
