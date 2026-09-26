@@ -40,6 +40,7 @@ test("upload preserves original bytes, scopes records and ignores browser actor/
   assert.equal(t.calls.length,4);
   for (const call of t.calls.slice(1)) { assert.equal(call.init.headers["X-Actor-ID"],ids.actor); assert.equal(call.init.redirect,"error"); }
   assert.equal(JSON.parse(t.calls[1].init.body).workspaceId,ids.workspace);
+  assert.equal(t.calls[3].init.headers["Idempotency-Key"],`csv-ingest:${ids.operation}`);
   const file=t.calls[3].init.body.get("file"); assert.deepEqual(Buffer.from(await file.arrayBuffer()),bytes);
   assert.equal(file.name,`company-import-${ids.operation}.csv`);
   assert.equal(t.calls.some(c=>c.url.includes("entity-match-jobs")),false);
