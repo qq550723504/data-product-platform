@@ -89,11 +89,11 @@ type pipelineStatus struct {
 	ExecutionEndDate    *string          `json:"executionEndDate"`
 }
 
-func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRequest) (workflowapp.EngineRun, error) {
+func (c *Client) PrepareSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest) (workflowapp.EngineRun, error) {
 	name := strings.TrimSpace(request.Name)
 	if name == "" || len(request.Definition) == 0 {
 		return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
-			workflowapp.ManagedEngineInvalidRequest, "submit", false, 0,
+			workflowapp.ManagedEngineInvalidRequest, "prepare submission", false, 0,
 			fmt.Errorf("pipeline name and pipeline configuration are required"),
 		)
 	}
@@ -101,7 +101,7 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 		switch strings.ToLower(strings.TrimSpace(key)) {
 		case "name", "id", "xml":
 			return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
-				workflowapp.ManagedEngineInvalidRequest, "submit", false, 0,
+				workflowapp.ManagedEngineInvalidRequest, "prepare submission", false, 0,
 				fmt.Errorf("parameter %q is reserved for remote run identity", key),
 			)
 		}
@@ -118,10 +118,26 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 			fmt.Errorf("remote registration reported success without a durable execution id"),
 		)
 	}
+	return workflowapp.EngineRun{
+		ID:      strings.TrimSpace(registered.ID),
+		Name:    name,
+		State:   workflowapp.EngineRunQueued,
+		Metrics: map[string]any{"definitionRef": request.DefinitionRef},
+	}, nil
+}
 
+func (c *Client) StartSubmission(ctx context.Context, request workflowapp.ManagedSubmitRequest, runID string) (workflowapp.EngineRun, error) {
+	name := strings.TrimSpace(request.Name)
+	runID = strings.TrimSpace(runID)
+	if name == "" || runID == "" {
+		return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidRequest, "start submission", false, 0,
+			fmt.Errorf("pipeline name and durable execution id are required"),
+		)
+	}
 	startQuery := url.Values{
 		"name": []string{name},
-		"id":   []string{registered.ID},
+		"id":   []string{runID},
 		"xml":  []string{"Y"},
 	}
 	for key, value := range request.Parameters {
@@ -129,27 +145,39 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 		if key == "" {
 			continue
 		}
+		switch strings.ToLower(key) {
+		case "name", "id", "xml":
+			return workflowapp.EngineRun{}, workflowapp.NewManagedEngineError(
+				workflowapp.ManagedEngineInvalidRequest, "start submission", false, 0,
+				fmt.Errorf("parameter %q is reserved for remote run identity", key),
+			)
+		}
 		startQuery.Set(key, value)
 	}
 	if _, err := c.webResultRequest(ctx, http.MethodGet, "/hop/startPipeline", startQuery, nil, ""); err != nil {
 		classified := classifySubmitOutcome("start pipeline", err)
 		if workflowapp.IsManagedEngineOutcomeUnknown(classified) {
-			return workflowapp.EngineRun{
-				ID:      registered.ID,
-				Name:    name,
-				State:   workflowapp.EngineRunQueued,
-				Metrics: map[string]any{"definitionRef": request.DefinitionRef},
-			}, classified
+			return workflowapp.EngineRun{ID: runID, Name: name, State: workflowapp.EngineRunQueued}, classified
+		}
+		// A replay of the same prepared remote identity may be rejected because
+		// the first start already took effect. If that exact run is queryable,
+		// treat the replay as successful rather than converting it to a Core failure.
+		if run, statusErr := c.Status(ctx, name, runID); statusErr == nil {
+			if run.Metrics == nil {
+				run.Metrics = map[string]any{}
+			}
+			run.Metrics["definitionRef"] = request.DefinitionRef
+			return run, nil
 		}
 		return workflowapp.EngineRun{}, classified
 	}
 
-	run, err := c.Status(ctx, name, registered.ID)
+	run, err := c.Status(ctx, name, runID)
 	if err != nil {
-		// Registration/start already succeeded. Preserve the external id even if the
-		// immediate status probe races Hop Server startup; the reconciler can recover.
+		// Start returned success but the immediate status probe can race provider
+		// visibility. Preserve the durable id and let reconciliation continue.
 		return workflowapp.EngineRun{
-			ID:      registered.ID,
+			ID:      runID,
 			Name:    name,
 			State:   workflowapp.EngineRunQueued,
 			Metrics: map[string]any{"definitionRef": request.DefinitionRef},
@@ -160,6 +188,14 @@ func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRe
 	}
 	run.Metrics["definitionRef"] = request.DefinitionRef
 	return run, nil
+}
+
+func (c *Client) Submit(ctx context.Context, request workflowapp.ManagedSubmitRequest) (workflowapp.EngineRun, error) {
+	prepared, err := c.PrepareSubmission(ctx, request)
+	if err != nil {
+		return prepared, err
+	}
+	return c.StartSubmission(ctx, request, prepared.ID)
 }
 
 func classifySubmitOutcome(operation string, err error) error {
