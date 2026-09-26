@@ -42,11 +42,16 @@ type Request struct {
 
 // Result contains only normalized Core quality semantics plus optional safe
 // provider diagnostics metadata. It is not itself a QualityAssessment.
+type ExecutionMetadata struct {
+	ExecutionRef   string
+	DurationMillis int64
+}
+
 type Result struct {
-	Findings          []domain.Finding
-	Metrics           map[string]any
-	DiagnosticsRef    string
-	ExecutionMetadata map[string]any
+	Findings       []domain.Finding
+	Metrics        map[string]any
+	DiagnosticsRef string
+	Execution      ExecutionMetadata
 }
 
 type Engine interface {
