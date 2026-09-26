@@ -79,6 +79,7 @@ type ManagedProcessingEngine interface {
 	// Core must persist the returned ID before StartSubmission is invoked.
 	PrepareSubmission(ctx context.Context, request ManagedSubmitRequest) (EngineRun, error)
 	StartSubmission(ctx context.Context, request ManagedSubmitRequest, runID string) (EngineRun, error)
+	RecoverSubmission(ctx context.Context, request ManagedSubmitRequest, runID string) (EngineRun, error)
 
 	// Submit remains a convenience composition for direct adapter callers. Core's
 	// queue handler uses the two-phase methods above to close the crash window.
