@@ -17,9 +17,15 @@ import (
 // import stay behind this boundary.
 type ManagedExecutionBridge interface {
 	EngineType() string
-	PrepareSubmission(ctx context.Context, request ProcessingRequest) (EngineRun, error)
-	StartSubmission(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error)
-	RecoverSubmission(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error)
+
+	// Local preparation must finish before a physical provider attempt is
+	// recorded. Invoke* methods are the exact external side-effect boundary.
+	PrepareRegisterRequest(ctx context.Context, request ProcessingRequest) (ManagedSubmitRequest, error)
+	InvokeRegisterSubmission(ctx context.Context, request ManagedSubmitRequest) (EngineRun, error)
+	PrepareStartRequest(ctx context.Context, request ProcessingRequest) (ManagedSubmitRequest, error)
+	InvokeStartSubmission(ctx context.Context, request ManagedSubmitRequest, runID string) (EngineRun, error)
+	InvokeRecoverSubmission(ctx context.Context, request ManagedSubmitRequest, runID string) (EngineRun, error)
+
 	Status(ctx context.Context, request ProcessingRequest, runID string) (EngineRun, error)
 	Finalize(ctx context.Context, request ProcessingRequest, run EngineRun) (ProcessingResult, error)
 }
