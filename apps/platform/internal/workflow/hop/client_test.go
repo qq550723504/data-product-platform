@@ -309,7 +309,6 @@ func writeJSON(t *testing.T, w http.ResponseWriter, value any) {
 	}
 }
 
-
 func TestHopSubmitClassifiesTransportFailureAsOutcomeUnknown(t *testing.T) {
 	client, err := hop.NewClient("http://hop", "cluster", "secret", &http.Client{
 		Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
