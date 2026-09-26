@@ -145,7 +145,7 @@ type EntityReview struct {
 	Source            json.RawMessage `json:"source"`
 	Normalized        json.RawMessage `json:"normalized"`
 	CandidateEntityID *uuid.UUID      `json:"candidateEntityId,omitempty"`
-	Alternatives       json.RawMessage `json:"alternatives"`
+	Alternatives      json.RawMessage `json:"alternatives"`
 	Decision          string          `json:"decision"`
 	Status            string          `json:"status"`
 	// CurrentMappingDecisionID is the mapping decision that is current for this
