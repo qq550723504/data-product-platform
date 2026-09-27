@@ -22,7 +22,7 @@ func TestClientProbeAndEvaluate(t *testing.T) {
 		case "/health":
 			_ = json.NewEncoder(w).Encode(map[string]any{
 				"status": "ok", "engineName": EngineName, "engineVersion": "1.23.2",
-				"capabilities": []string{"not_null", "unique", "range", "enum"},
+				"capabilities": []string{"not_null", "completeness_ratio", "unique", "duplicate_ratio", "range", "enum"},
 			})
 		case "/v1/evaluate":
 			var req evaluateRequest
