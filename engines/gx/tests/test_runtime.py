@@ -135,6 +135,7 @@ def test_health_remains_public_when_evaluation_token_is_enabled() -> None:
     runtime.API_TOKEN = "secret-token"
     try:
         assert client.get("/health").status_code == 200
+        assert client.get("/ready").status_code == 401
         response = client.post(
             "/v1/evaluate",
             json={
@@ -345,3 +346,34 @@ spec:
     )
     assert response.status_code == 200, response.text
     assert response.json()["findings"][0]["status"] == "FAIL"
+
+
+def test_core_yaml_dialect_keeps_on_off_yes_no_as_strings() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: yaml-dialect
+  version: 1
+spec:
+  rules:
+    - id: ENUM
+      type: enum
+      target: state
+      parameters:
+        values: [ON, OFF, YES, NO]
+        allowNull: false
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/yaml-dialect.yaml",
+            "ruleSetContent": policy,
+            "headers": ["state"],
+            "rows": [{"state": "ON"}, {"state": "OFF"}, {"state": "YES"}, {"state": "NO"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["status"] == "PASS"
