@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"encoding/json"
+	"strings"
 	"testing"
 	"time"
 
@@ -56,6 +57,8 @@ func TestServiceRejectsInvalidQualityEngineDescriptor(t *testing.T) {
 	for _, descriptor := range []qualityengine.Descriptor{
 		{Name: "", Version: "1"},
 		{Name: "REFERENCE", Version: ""},
+		{Name: strings.Repeat("n", 129), Version: "1"},
+		{Name: "REFERENCE", Version: strings.Repeat("v", 65)},
 	} {
 		if err := service.RegisterEngine(testQualityEngine{descriptor: descriptor}); err == nil {
 			t.Fatalf("descriptor %#v unexpectedly accepted", descriptor)
