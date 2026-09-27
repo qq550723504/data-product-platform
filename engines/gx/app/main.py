@@ -225,13 +225,13 @@ def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) ->
         return FindingResult(
             ruleId=rule_id,
             status="FAIL" if required else "SKIPPED",
-            observed={"affectedCount": 1 if required else 0, "total": total, "observedValue": 0.0, "threshold": 1.0},
+            observed={"affectedCount": 1 if required else 0, "total": total, "observedValue": _ratio_payload(Fraction(0, 1)), "threshold": _ratio_payload(Fraction(1, 1))},
         )
     if total == 0:
         return FindingResult(
             ruleId=rule_id,
             status="FAIL" if required else "SKIPPED",
-            observed={"affectedCount": 0, "total": 0, "observedValue": 0.0, "threshold": 1.0},
+            observed={"affectedCount": 0, "total": 0, "observedValue": _ratio_payload(Fraction(0, 1)), "threshold": _ratio_payload(Fraction(1, 1))},
         )
 
     if rule_type in {"unique", "duplicate_ratio"}:
@@ -251,18 +251,16 @@ def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) ->
     affected = max(0, local_invalid if rule_type == "range" else unexpected + local_invalid)
 
     success = affected == 0
+    observed_ratio = Fraction(total - affected, total)
+    threshold_ratio = Fraction(threshold)
     if rule_type in {"not_null", "completeness_ratio"}:
-        observed_ratio = Fraction(total - affected, total)
-        observed_value = float(observed_ratio)
-        success = observed_ratio >= Fraction(threshold)
-    else:
-        observed_value = max(0.0, min(1.0, 1.0 - affected / total))
+        success = observed_ratio >= threshold_ratio
 
     observed = {
         "affectedCount": 0 if success else affected,
         "total": total,
-        "observedValue": observed_value,
-        "threshold": float(threshold),
+        "observedValue": _ratio_payload(observed_ratio),
+        "threshold": _ratio_payload(threshold_ratio),
     }
     return FindingResult(ruleId=rule_id, status="PASS" if success else "FAIL", observed=observed)
 
@@ -284,7 +282,7 @@ def _evaluate_uniqueness_rule(dataframe: pd.DataFrame, rule: dict[str, Any]) -> 
         return FindingResult(
             ruleId=rule_id,
             status=status,
-            observed={"affectedCount": 0, "total": 0, "observedValue": 0.0, "threshold": float(threshold)},
+            observed={"affectedCount": 0, "total": 0, "observedValue": _ratio_payload(Fraction(0, 1)), "threshold": _ratio_payload(Fraction(threshold))},
         )
 
     batch = _batch_for_dataframe(prepared)
@@ -325,8 +323,8 @@ def _evaluate_uniqueness_rule(dataframe: pd.DataFrame, rule: dict[str, Any]) -> 
         observed={
             "affectedCount": 0 if success else duplicate_count,
             "total": non_null,
-            "observedValue": observed_value,
-            "threshold": float(threshold),
+            "observedValue": _ratio_payload(unique_ratio if rule_type == "unique" else duplicate_ratio),
+            "threshold": _ratio_payload(threshold_ratio),
         },
     )
 
@@ -439,6 +437,11 @@ def _ratio_threshold_decimal(rule: dict[str, Any], fallback: Decimal) -> Decimal
     if value < 0 or value > 1:
         raise HTTPException(status_code=400, detail="ratio threshold is out of range")
     return value
+
+
+def _ratio_payload(value: Fraction | Decimal) -> dict[str, int]:
+    ratio = value if isinstance(value, Fraction) else Fraction(value)
+    return {"numerator": ratio.numerator, "denominator": ratio.denominator}
 
 
 def _parameter_bool(value: Any, fallback: bool) -> bool:
