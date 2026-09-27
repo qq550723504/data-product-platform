@@ -173,3 +173,34 @@ func TestClientClassifiesTransientHTTPStatuses(t *testing.T) {
 		})
 	}
 }
+
+func TestClientPreservesExactRuleID(t *testing.T) {
+	attemptID := uuid.New()
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"engine": map[string]any{
+				"name": EngineName, "version": "1.23.2",
+				"capabilities": []string{"not_null", "completeness_ratio", "unique", "duplicate_ratio", "range", "enum"},
+			},
+			"findings": []map[string]any{{
+				"ruleId": " RULE WITH SPACE ", "status": "PASS",
+				"observed": map[string]any{"affectedCount": 0, "total": 1, "observedValue": 1, "threshold": 1},
+			}},
+			"execution": map[string]any{"ref": attemptID.String(), "durationMillis": 1},
+		})
+	}))
+	defer server.Close()
+	client, err := NewClient(Config{BaseURL: server.URL, ExpectedEngineVersion: "1.23.2"}, server.Client())
+	if err != nil {
+		t.Fatalf("new client: %v", err)
+	}
+	result, err := client.Evaluate(context.Background(), qualityengine.Request{
+		AttemptID: attemptID, DatasetVersionID: uuid.New(),
+	})
+	if err != nil {
+		t.Fatalf("evaluate: %v", err)
+	}
+	if len(result.Findings) != 1 || result.Findings[0].RuleID != " RULE WITH SPACE " {
+		t.Fatalf("rule id was normalized: %#v", result.Findings)
+	}
+}
