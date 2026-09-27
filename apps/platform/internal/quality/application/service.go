@@ -301,10 +301,11 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			},
 		})
 		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("quality evaluation failed: %v; record attempt outcome: %w", err, outcomeErr)
+			safeErr := qualityengine.SanitizeError(err)
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, safeErr.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("%v; record attempt outcome: %w", safeErr, outcomeErr)
 			}
-			return err
+			return safeErr
 		}
 		normalizedFindings, err := normalizeEngineFindings(corePolicy, engineResult.Findings)
 		if err != nil {
