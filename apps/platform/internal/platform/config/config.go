@@ -20,6 +20,7 @@ type Config struct {
 	OpenMetadata     OpenMetadataConfig
 	Hop              HopConfig
 	Splink           SplinkConfig
+	GX               GXConfig
 	LabelStudio      LabelStudioConfig
 }
 
@@ -85,6 +86,14 @@ type SplinkConfig struct {
 	TimeoutSeconds        int
 }
 
+type GXConfig struct {
+	Enabled               bool
+	BaseURL               string
+	Token                 string
+	ExpectedEngineVersion string
+	TimeoutSeconds        int
+}
+
 type LabelStudioConfig struct {
 	Enabled        bool
 	BaseURL        string
@@ -126,6 +135,10 @@ func Load() (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
+	gxEnabled, err := boolEnv("GX_ENABLED", false)
+	if err != nil {
+		return Config{}, err
+	}
 	labelStudioEnabled, err := boolEnv("LABEL_STUDIO_ENABLED", false)
 	if err != nil {
 		return Config{}, err
@@ -147,6 +160,10 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 	splinkTimeoutSeconds, err := intEnv("SPLINK_TIMEOUT_SECONDS", 20)
+	if err != nil {
+		return Config{}, err
+	}
+	gxTimeoutSeconds, err := intEnv("GX_TIMEOUT_SECONDS", 30)
 	if err != nil {
 		return Config{}, err
 	}
@@ -210,6 +227,13 @@ func Load() (Config, error) {
 			PolicyVersion:         stringEnv("SPLINK_POLICY_VERSION", "1.0.0"),
 			TimeoutSeconds:        splinkTimeoutSeconds,
 		},
+		GX: GXConfig{
+			Enabled:               gxEnabled,
+			BaseURL:               os.Getenv("GX_SERVICE_URL"),
+			Token:                 os.Getenv("GX_SERVICE_TOKEN"),
+			ExpectedEngineVersion: stringEnv("GX_EXPECTED_VERSION", "1.23.2"),
+			TimeoutSeconds:        gxTimeoutSeconds,
+		},
 		LabelStudio: LabelStudioConfig{
 			Enabled:        labelStudioEnabled,
 			BaseURL:        os.Getenv("LABEL_STUDIO_BASE_URL"),
@@ -268,6 +292,17 @@ func Load() (Config, error) {
 		if cfg.LabelStudio.TimeoutSeconds <= 0 || cfg.LabelStudio.PollSeconds <= 0 ||
 			cfg.LabelStudio.LeaseSeconds <= 0 || cfg.LabelStudio.BatchSize <= 0 {
 			return Config{}, fmt.Errorf("Label Studio timeout, poll, lease, and batch settings must be positive")
+		}
+	}
+	if cfg.GX.Enabled {
+		if strings.TrimSpace(cfg.GX.BaseURL) == "" {
+			return Config{}, fmt.Errorf("GX_SERVICE_URL must not be empty when GX is enabled")
+		}
+		if strings.TrimSpace(cfg.GX.ExpectedEngineVersion) == "" {
+			return Config{}, fmt.Errorf("GX_EXPECTED_VERSION must not be empty when GX is enabled")
+		}
+		if cfg.GX.TimeoutSeconds <= 0 {
+			return Config{}, fmt.Errorf("GX_TIMEOUT_SECONDS must be positive")
 		}
 	}
 	if cfg.Splink.Enabled {
