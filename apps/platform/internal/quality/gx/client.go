@@ -215,6 +215,12 @@ func (c *Client) request(ctx context.Context, method, path string, payload any, 
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, 1<<20))
+		switch resp.StatusCode {
+		case http.StatusRequestTimeout:
+			return qualityengine.NewExecutionError(qualityengine.ErrorProviderTimeout, true)
+		case http.StatusTooManyRequests:
+			return qualityengine.NewExecutionError(qualityengine.ErrorProviderUnavailable, true)
+		}
 		if resp.StatusCode >= 500 {
 			return qualityengine.NewExecutionError(qualityengine.ErrorProviderUnavailable, true)
 		}
