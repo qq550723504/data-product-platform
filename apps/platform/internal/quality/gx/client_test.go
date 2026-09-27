@@ -19,7 +19,7 @@ func TestClientProbeAndEvaluate(t *testing.T) {
 	versionID := uuid.New()
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case "/health":
+		case "/ready":
 			_ = json.NewEncoder(w).Encode(map[string]any{
 				"status": "ok", "engineName": EngineName, "engineVersion": "1.23.2",
 				"capabilities": []string{"not_null", "completeness_ratio", "unique", "duplicate_ratio", "range", "enum"},
