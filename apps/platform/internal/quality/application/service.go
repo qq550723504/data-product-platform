@@ -10,6 +10,7 @@ import (
 	"io"
 	"math"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -87,6 +88,9 @@ func (s *Service) RegisterEngine(provider qualityengine.Engine) error {
 	if s.engines == nil {
 		s.engines = map[string]qualityengine.Engine{}
 	}
+	if _, exists := s.engines[name]; exists {
+		return fmt.Errorf("quality engine %q is already registered", name)
+	}
 	s.engines[name] = provider
 	return nil
 }
@@ -122,7 +126,13 @@ func validateEngineCapabilities(descriptor qualityengine.Descriptor, policy nati
 
 func safeProviderNumber(value any) (any, bool) {
 	switch typed := value.(type) {
-	case int, int32, int64, uint, uint32, uint64, json.Number:
+	case int, int32, int64, uint, uint32, uint64:
+		return typed, true
+	case json.Number:
+		parsed, err := strconv.ParseFloat(typed.String(), 64)
+		if err != nil || math.IsNaN(parsed) || math.IsInf(parsed, 0) {
+			return nil, false
+		}
 		return typed, true
 	case float32:
 		if math.IsNaN(float64(typed)) || math.IsInf(float64(typed), 0) {
