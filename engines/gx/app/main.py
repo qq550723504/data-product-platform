@@ -37,7 +37,11 @@ class CoreRuleSetLoader(yaml.SafeLoader):
 
 
 CoreRuleSetLoader.yaml_implicit_resolvers = {
-    key: [(tag, resolver) for tag, resolver in value if tag != "tag:yaml.org,2002:bool"]
+    key: [
+        (tag, resolver)
+        for tag, resolver in value
+        if tag not in {"tag:yaml.org,2002:bool", "tag:yaml.org,2002:timestamp"}
+    ]
     for key, value in yaml.SafeLoader.yaml_implicit_resolvers.items()
 }
 CoreRuleSetLoader.add_implicit_resolver(
