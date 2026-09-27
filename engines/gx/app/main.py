@@ -32,6 +32,21 @@ SUPPORTED_RULE_TYPES = {
 app = FastAPI(title="Data Product Platform GX Quality Engine", version="0.1.0")
 
 
+class CoreRuleSetLoader(yaml.SafeLoader):
+    pass
+
+
+CoreRuleSetLoader.yaml_implicit_resolvers = {
+    key: [(tag, resolver) for tag, resolver in value if tag != "tag:yaml.org,2002:bool"]
+    for key, value in yaml.SafeLoader.yaml_implicit_resolvers.items()
+}
+CoreRuleSetLoader.add_implicit_resolver(
+    "tag:yaml.org,2002:bool",
+    re.compile(r"^(?:true|false|True|False|TRUE|FALSE)$"),
+    list("tTfF"),
+)
+
+
 class EvaluateRequest(BaseModel):
     attemptId: str = Field(min_length=1)
     datasetVersionId: str = Field(min_length=1)
@@ -82,6 +97,11 @@ def health() -> dict[str, Any]:
     }
 
 
+@app.get("/ready")
+def ready(_: None = Depends(authorize)) -> dict[str, Any]:
+    return health()
+
+
 @app.post("/v1/evaluate", response_model=EvaluateResponse)
 def evaluate(request: EvaluateRequest, _: None = Depends(authorize)) -> EvaluateResponse:
     started = time.monotonic()
@@ -123,8 +143,8 @@ def evaluate(request: EvaluateRequest, _: None = Depends(authorize)) -> Evaluate
 
 def _load_policy(content: str) -> dict[str, Any]:
     try:
-        policy = yaml.safe_load(content)
-        root = yaml.compose(content)
+        policy = yaml.load(content, Loader=CoreRuleSetLoader)
+        root = yaml.compose(content, Loader=CoreRuleSetLoader)
     except yaml.YAMLError as exc:
         raise HTTPException(status_code=400, detail="invalid quality rule set") from exc
     if not isinstance(policy, dict) or policy.get("kind") != "QualityRuleSet":
