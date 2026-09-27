@@ -458,6 +458,7 @@ jobs:
             exit 0
           fi
           CHANGED="$(git diff --name-only "$BASE" "$HEAD_REF" -- \
+            '.github/workflows/ci.yml' \
             'engines/gx/**' \
             'apps/platform/internal/quality/gx/**' \
             'apps/platform/internal/quality/engine/**' \
