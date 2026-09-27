@@ -3,6 +3,7 @@ package application_test
 import (
 	"context"
 	"errors"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,6 +15,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	qualityengine "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/engine"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
 	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
@@ -38,6 +40,191 @@ func (*failingQualityEngine) Descriptor() qualityengine.Descriptor {
 func (e *failingQualityEngine) Evaluate(context.Context, qualityengine.Request) (qualityengine.Result, error) {
 	e.calls++
 	return qualityengine.Result{}, errors.New("provider execution unavailable")
+}
+
+type malformedQualityEngine struct {
+	calls int
+}
+
+func (*malformedQualityEngine) Descriptor() qualityengine.Descriptor {
+	return qualityengine.Descriptor{Name: "malformed-engine", Version: "1", Capabilities: []string{"not_null"}}
+}
+func (e *malformedQualityEngine) Evaluate(context.Context, qualityengine.Request) (qualityengine.Result, error) {
+	e.calls++
+	return qualityengine.Result{
+		Findings: []domain.Finding{{
+			RuleID: "https://provider.internal?token=secret",
+			Status: domain.FindingPass,
+		}},
+		Metrics: map[string]any{"provider": "ignored"},
+	}, nil
+}
+
+type objectReadFailStore struct{}
+
+func (objectReadFailStore) Get(context.Context, string) (io.ReadCloser, error) {
+	return nil, errors.New("object store offline before provider invocation")
+}
+
+func TestLocalPreparationFailureDoesNotCreateInvocationCost(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	workspaceID := uuid.New()
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	uploadStore := newMemoryStore()
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
+	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, uploadStore)
+	dataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "ENGINE-PREP")
+	version := uploadCSV(t, ctx, uploadDataset, dataset.ID, "engine-prep.csv", "company_id\nCOMPANY-001\n", nil)
+
+	root := t.TempDir()
+	content := []byte(`apiVersion: quality/v1
+kind: QualityRuleSet
+metadata:
+  name: engine-prep
+  version: 1.0.0
+spec:
+  rules:
+    - id: QA-COMPANY-ID
+      dimension: COMPLETENESS
+      type: not_null
+      target: company_id
+      threshold: 1
+      required: true
+      severity: CRITICAL
+  gate:
+    criticalFailure: FAIL
+    highFailure: REVIEW
+    warningFailure: PASS_WITH_WARNING
+`)
+	if err := os.WriteFile(filepath.Join(root, "engine.yaml"), content, 0o600); err != nil {
+		t.Fatalf("write policy: %v", err)
+	}
+
+	service := qualityapp.NewService(root, txManager, datasetRepo, qualityinfra.NewPostgresRepository(pool), objectReadFailStore{})
+	attemptID := uuid.New()
+	_, err = service.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: version.ID, RuleSetRef: "engine.yaml",
+		AssessmentAttemptID: attemptID,
+	})
+	if err == nil || !strings.Contains(err.Error(), "object store offline") {
+		t.Fatalf("local preparation error = %v", err)
+	}
+
+	var attemptCount, costCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM quality_assessment_attempt WHERE id=$1`, attemptID).Scan(&attemptCount); err != nil {
+		t.Fatalf("count preparation attempts: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM cost_event e
+		JOIN cost_allocation a ON a.cost_event_id=e.id
+		WHERE a.quality_assessment_attempt_id=$1
+	`, attemptID).Scan(&costCount); err != nil {
+		t.Fatalf("count preparation costs: %v", err)
+	}
+	if attemptCount != 0 || costCount != 0 {
+		t.Fatalf("local preparation created attempt/cost = %d/%d, want 0/0", attemptCount, costCount)
+	}
+}
+
+func TestMalformedEngineResultIsSanitizedAndFailsAttempt(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	workspaceID := uuid.New()
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	store := newMemoryStore()
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
+	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, store)
+	dataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "ENGINE-MALFORMED")
+	version := uploadCSV(t, ctx, uploadDataset, dataset.ID, "engine-malformed.csv", "company_id\nCOMPANY-001\n", nil)
+
+	root := t.TempDir()
+	content := []byte(`apiVersion: quality/v1
+kind: QualityRuleSet
+metadata:
+  name: engine-malformed
+  version: 1.0.0
+spec:
+  rules:
+    - id: QA-COMPANY-ID
+      dimension: COMPLETENESS
+      type: not_null
+      target: company_id
+      threshold: 1
+      required: true
+      severity: CRITICAL
+  gate:
+    criticalFailure: FAIL
+    highFailure: REVIEW
+    warningFailure: PASS_WITH_WARNING
+`)
+	if err := os.WriteFile(filepath.Join(root, "engine.yaml"), content, 0o600); err != nil {
+		t.Fatalf("write policy: %v", err)
+	}
+
+	service := qualityapp.NewService(root, txManager, datasetRepo, qualityinfra.NewPostgresRepository(pool), store)
+	provider := &malformedQualityEngine{}
+	if err := service.RegisterEngine(provider); err != nil {
+		t.Fatalf("register malformed engine: %v", err)
+	}
+	attemptID := uuid.New()
+	_, err = service.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: version.ID, RuleSetRef: "engine.yaml",
+		EngineName: "malformed-engine", AssessmentAttemptID: attemptID,
+	})
+	if err == nil || !strings.Contains(err.Error(), "PROVIDER_INVALID_RESPONSE") ||
+		strings.Contains(err.Error(), "provider.internal") {
+		t.Fatalf("malformed provider error was not sanitized: %v", err)
+	}
+	if provider.calls != 1 {
+		t.Fatalf("provider calls = %d, want 1", provider.calls)
+	}
+
+	var persistedError, outcome string
+	if err := pool.QueryRow(ctx, `
+		SELECT outcome, COALESCE(error_message,'')
+		FROM quality_assessment_attempt_outcome
+		WHERE attempt_id=$1
+	`, attemptID).Scan(&outcome, &persistedError); err != nil {
+		t.Fatalf("read malformed attempt outcome: %v", err)
+	}
+	if outcome != "FAILED" || !strings.Contains(persistedError, "PROVIDER_INVALID_RESPONSE") ||
+		strings.Contains(persistedError, "provider.internal") {
+		t.Fatalf("malformed persisted error = %q/%q", outcome, persistedError)
+	}
+	var costCount int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM cost_event e
+		JOIN cost_allocation a ON a.cost_event_id=e.id
+		WHERE a.quality_assessment_attempt_id=$1
+	`, attemptID).Scan(&costCount); err != nil {
+		t.Fatalf("count malformed invocation cost: %v", err)
+	}
+	if costCount != 1 {
+		t.Fatalf("malformed provider invocation cost = %d, want 1", costCount)
+	}
 }
 
 func TestUnsupportedEngineCapabilityDoesNotCreateInvocationCost(t *testing.T) {
