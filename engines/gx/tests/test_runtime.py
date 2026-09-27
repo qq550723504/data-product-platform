@@ -469,3 +469,65 @@ spec:
     )
     assert response.status_code == 200, response.text
     assert response.json()["findings"][0]["ruleId"] == " RULE WITH SPACE "
+
+
+def test_target_is_preserved_exactly() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: exact-target
+  version: 1
+spec:
+  rules:
+    - id: TARGET
+      type: not_null
+      target: " id "
+      threshold: 1
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/exact-target.yaml",
+            "ruleSetContent": policy,
+            "headers": ["id"],
+            "rows": [{"id": "A"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["status"] == "FAIL"
+
+
+def test_allow_null_accepts_all_core_string_boolean_spellings() -> None:
+    for raw, expected in [("t", "PASS"), ("1", "PASS"), ("f", "FAIL"), ("0", "FAIL")]:
+        policy = f"""apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: bool-{raw}
+  version: 1
+spec:
+  rules:
+    - id: RANGE
+      type: range
+      target: score
+      parameters:
+        min: 0
+        max: 1
+        allowNull: "{raw}"
+      required: true
+"""
+        response = client.post(
+            "/v1/evaluate",
+            json={
+                "attemptId": "11111111-1111-4111-8111-111111111111",
+                "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+                "ruleSetRef": f"quality/bool-{raw}.yaml",
+                "ruleSetContent": policy,
+                "headers": ["score"],
+                "rows": [{"score": ""}],
+            },
+        )
+        assert response.status_code == 200, response.text
+        assert response.json()["findings"][0]["status"] == expected
