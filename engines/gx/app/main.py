@@ -200,8 +200,8 @@ def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) ->
     raw_rule_id = rule.get("id", "")
     rule_id = str(raw_rule_id)
     rule_type = str(rule.get("type", "")).strip().lower()
-    target = str(rule.get("target", "")).strip()
-    if rule_id == "" or rule_type not in SUPPORTED_RULE_TYPES or not target:
+    target = str(rule.get("target", ""))
+    if rule_id == "" or rule_type not in SUPPORTED_RULE_TYPES or target == "":
         raise HTTPException(status_code=400, detail="invalid supported quality rule")
     required = bool(rule.get("required"))
     total = len(dataframe)
@@ -431,9 +431,9 @@ def _parameter_bool(value: Any, fallback: bool) -> bool:
         return value
     if isinstance(value, str):
         normalized = value.strip().lower()
-        if normalized == "true":
+        if normalized in {"1", "t", "true"}:
             return True
-        if normalized == "false":
+        if normalized in {"0", "f", "false"}:
             return False
     raise HTTPException(status_code=400, detail="boolean rule parameter is invalid")
 
