@@ -167,7 +167,7 @@ func safeProviderNumber(value any) (any, bool) {
 		if err != nil || math.IsNaN(parsed) || math.IsInf(parsed, 0) {
 			return nil, false
 		}
-		return typed, true
+		return parsed, true
 	case float32:
 		if math.IsNaN(float64(typed)) || math.IsInf(float64(typed), 0) {
 			return nil, false
