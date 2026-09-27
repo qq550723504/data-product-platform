@@ -197,10 +197,11 @@ def _is_numeric_scalar(node: Any) -> bool:
 
 
 def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) -> FindingResult:
-    rule_id = str(rule.get("id", "")).strip()
+    raw_rule_id = rule.get("id", "")
+    rule_id = str(raw_rule_id)
     rule_type = str(rule.get("type", "")).strip().lower()
     target = str(rule.get("target", "")).strip()
-    if not rule_id or rule_type not in SUPPORTED_RULE_TYPES or not target:
+    if rule_id == "" or rule_type not in SUPPORTED_RULE_TYPES or not target:
         raise HTTPException(status_code=400, detail="invalid supported quality rule")
     required = bool(rule.get("required"))
     total = len(dataframe)
@@ -348,7 +349,7 @@ def _expectation_for_rule(
             raise HTTPException(status_code=400, detail="range minimum exceeds maximum")
         minimum = float(minimum_decimal)
         maximum = float(maximum_decimal)
-        allow_null = bool(parameters.get("allowNull", True))
+        allow_null = _parameter_bool(parameters.get("allowNull"), True)
         prepared = dataframe.copy()
         normalized = prepared[target].astype("string").str.strip()
         blank_mask = normalized == ""
@@ -393,7 +394,7 @@ def _expectation_for_rule(
         values = [item.strip() for item in values]
         if any(not item for item in values):
             raise HTTPException(status_code=400, detail="enum rule values are invalid")
-        allow_null = bool(parameters.get("allowNull", True))
+        allow_null = _parameter_bool(parameters.get("allowNull"), True)
         prepared = dataframe.copy()
         exact = prepared[target].astype("string")
         missing_mask = exact == ""
@@ -421,6 +422,20 @@ def _ratio_threshold_decimal(rule: dict[str, Any], fallback: Decimal) -> Decimal
     if value < 0 or value > 1:
         raise HTTPException(status_code=400, detail="ratio threshold is out of range")
     return value
+
+
+def _parameter_bool(value: Any, fallback: bool) -> bool:
+    if value is None:
+        return fallback
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized == "true":
+            return True
+        if normalized == "false":
+            return False
+    raise HTTPException(status_code=400, detail="boolean rule parameter is invalid")
 
 
 def _finite_float(value: Any) -> float:
