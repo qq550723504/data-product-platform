@@ -531,3 +531,93 @@ spec:
         )
         assert response.status_code == 200, response.text
         assert response.json()["findings"][0]["status"] == expected
+
+
+def test_uniqueness_rule_id_is_preserved_exactly() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: exact-unique-id
+  version: 1
+spec:
+  rules:
+    - id: " UNIQUE WITH SPACE "
+      type: unique
+      target: id
+      threshold: 1
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/exact-unique-id.yaml",
+            "ruleSetContent": policy,
+            "headers": ["id"],
+            "rows": [{"id": "A"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["ruleId"] == " UNIQUE WITH SPACE "
+
+
+def test_duplicate_headers_follow_collapsed_row_map_semantics() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: duplicate-headers
+  version: 1
+spec:
+  rules:
+    - id: DUP-HEADER
+      type: not_null
+      target: id
+      threshold: 1
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/duplicate-headers.yaml",
+            "ruleSetContent": policy,
+            "headers": ["id", "id"],
+            "rows": [{"id": "last-value"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["status"] == "PASS"
+
+
+def test_empty_required_rule_reports_zero_affected_rows() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: empty-observation
+  version: 1
+spec:
+  rules:
+    - id: EMPTY
+      type: not_null
+      target: id
+      threshold: 1
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/empty-observation.yaml",
+            "ruleSetContent": policy,
+            "headers": ["id"],
+            "rows": [],
+        },
+    )
+    assert response.status_code == 200, response.text
+    finding = response.json()["findings"][0]
+    assert finding["status"] == "FAIL"
+    assert finding["observed"]["affectedCount"] == 0
+    assert finding["observed"]["total"] == 0
