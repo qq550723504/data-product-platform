@@ -127,3 +127,20 @@ func TestClientClassifiesHTTPClientTimeout(t *testing.T) {
 		t.Fatalf("timeout error = %v, want PROVIDER_TIMEOUT", err)
 	}
 }
+
+func TestClientProbeRejectsMissingCapability(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"status": "ok", "engineName": EngineName, "engineVersion": "1.23.2",
+			"capabilities": []string{"not_null"},
+		})
+	}))
+	defer server.Close()
+	client, err := NewClient(Config{BaseURL: server.URL, ExpectedEngineVersion: "1.23.2"}, server.Client())
+	if err != nil {
+		t.Fatalf("new client: %v", err)
+	}
+	if err := client.Probe(context.Background()); err == nil {
+		t.Fatal("probe accepted incomplete capability set")
+	}
+}
