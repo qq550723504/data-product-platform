@@ -111,7 +111,7 @@ func (c *Client) Descriptor() qualityengine.Descriptor {
 
 func (c *Client) Probe(ctx context.Context) error {
 	var health healthResponse
-	if err := c.request(ctx, http.MethodGet, "/health", nil, &health); err != nil {
+	if err := c.request(ctx, http.MethodGet, "/ready", nil, &health); err != nil {
 		return err
 	}
 	if strings.TrimSpace(health.Status) != "ok" ||
