@@ -377,3 +377,34 @@ spec:
     )
     assert response.status_code == 200, response.text
     assert response.json()["findings"][0]["status"] == "PASS"
+
+
+def test_core_yaml_dialect_keeps_timestamp_looking_enum_as_string() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: timestamp-enum
+  version: 1
+spec:
+  rules:
+    - id: ENUM
+      type: enum
+      target: day
+      parameters:
+        values: [2026-01-01]
+        allowNull: false
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/timestamp-enum.yaml",
+            "ruleSetContent": policy,
+            "headers": ["day"],
+            "rows": [{"day": "2026-01-01"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["status"] == "PASS"
