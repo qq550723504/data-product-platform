@@ -107,3 +107,40 @@ func TestSanitizeErrorPreservesAllowlistedCode(t *testing.T) {
 		t.Fatalf("allowlisted classified error changed: %q", safe.Error())
 	}
 }
+
+func TestNormalizeExternalEngineFindingsDropsFreeFormProviderPayloads(t *testing.T) {
+	findings, metrics, err := normalizeExternalEngineFindings([]domain.Finding{{
+		RuleID:  "R1",
+		Status:  domain.FindingFail,
+		Message: "https://provider.internal/error?token=secret",
+		Observed: map[string]any{
+			"observedValue": 0.5,
+			"threshold":     1.0,
+			"affectedCount": 2,
+		},
+	}})
+	if err != nil {
+		t.Fatalf("sanitize external finding: %v", err)
+	}
+	if findings[0].Message != "quality rule failed" {
+		t.Fatalf("provider message survived: %q", findings[0].Message)
+	}
+	if _, ok := metrics["R1"]; !ok {
+		t.Fatalf("metrics were not rebuilt from safe observation: %#v", metrics)
+	}
+}
+
+func TestNormalizeExternalEngineFindingsRejectsSamplesAndFreeFormMetrics(t *testing.T) {
+	if _, _, err := normalizeExternalEngineFindings([]domain.Finding{{
+		RuleID: "R1", Status: domain.FindingFail,
+		Observed: map[string]any{"sample": []any{"secret-row-value"}},
+	}}); err == nil {
+		t.Fatal("provider sample payload was accepted")
+	}
+	if _, _, err := normalizeExternalEngineFindings([]domain.Finding{{
+		RuleID: "R1", Status: domain.FindingFail,
+		Observed: map[string]any{"observedValue": "https://internal/token=secret"},
+	}}); err == nil {
+		t.Fatal("provider string observation was accepted")
+	}
+}
