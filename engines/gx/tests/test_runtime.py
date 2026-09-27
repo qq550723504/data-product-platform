@@ -313,3 +313,35 @@ spec:
     )
     assert padded.status_code == 200, padded.text
     assert padded.json()["findings"][0]["status"] == "FAIL"
+
+
+def test_range_rejects_non_core_numeric_spelling() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: numeric-spelling
+  version: 1
+spec:
+  rules:
+    - id: RANGE
+      type: range
+      target: score
+      parameters:
+        min: 0
+        max: 2000
+        allowNull: true
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/numeric-spelling.yaml",
+            "ruleSetContent": policy,
+            "headers": ["score"],
+            "rows": [{"score": "1_000"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["status"] == "FAIL"
