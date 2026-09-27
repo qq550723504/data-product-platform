@@ -2,7 +2,10 @@ package engine
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -53,6 +56,18 @@ type Result struct {
 	Metrics        map[string]any
 	DiagnosticsRef string
 	Execution      ExecutionMetadata
+}
+
+func SafeReference(value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return ""
+	}
+	if parsed, err := uuid.Parse(value); err == nil {
+		return parsed.String()
+	}
+	digest := sha256.Sum256([]byte(value))
+	return "sha256:" + hex.EncodeToString(digest[:])
 }
 
 type ExecutionErrorCode string
