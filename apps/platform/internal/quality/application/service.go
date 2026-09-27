@@ -302,6 +302,11 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			return safeErr
 		}
 		engineResult.Findings = normalizedFindings
+		engineResult.DiagnosticsRef = qualityengine.SafeReference(engineResult.DiagnosticsRef)
+		engineResult.Execution.ExecutionRef = qualityengine.SafeReference(engineResult.Execution.ExecutionRef)
+		if engineResult.Execution.DurationMillis < 0 {
+			engineResult.Execution.DurationMillis = 0
+		}
 		contentDigest := sha256.Sum256(policyContent)
 		result = domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, corePolicy.Metadata.Version,
 			hex.EncodeToString(contentDigest[:]), string(policyContent), descriptor.Name, descriptor.Version,
