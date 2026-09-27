@@ -757,6 +757,7 @@ spec:
 
 def test_enum_policy_values_use_core_whitespace_definition() -> None:
     value = "\u001cHIGH\u001c"
+    yaml_value = "\\u001cHIGH\\u001c"
     policy = f"""apiVersion: dataprod.platform/v1alpha1
 kind: QualityRuleSet
 metadata:
