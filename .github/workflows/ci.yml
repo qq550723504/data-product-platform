@@ -461,6 +461,8 @@ jobs:
             'engines/gx/**' \
             'apps/platform/internal/quality/gx/**' \
             'apps/platform/internal/quality/engine/**' \
+            'apps/platform/internal/quality/native/**' \
+            'apps/platform/internal/platform/tabular/**' \
             'apps/platform/internal/quality/application/**' \
             'apps/platform/internal/quality/transport/http/**' \
             'apps/platform/internal/platform/config/config.go' \
