@@ -69,7 +69,7 @@ func TestClientProbeAndEvaluate(t *testing.T) {
 		RuleSet: qualityengine.RuleSet{Ref: "quality/test.yaml", Content: []byte("kind: QualityRuleSet")},
 		Dataset: qualityengine.DatasetContext{Table: tabular.Table{
 			Headers: []string{"id"},
-			Rows: []map[string]string{{"id": "A"}, {"id": ""}},
+			Rows:    []map[string]string{{"id": "A"}, {"id": ""}},
 		}},
 	})
 	if err != nil {
@@ -86,8 +86,8 @@ func TestClientProbeAndEvaluate(t *testing.T) {
 func TestClientRejectsProviderIdentityMismatch(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"engine": map[string]any{"name": "other", "version": "1.23.2"},
-			"findings": []any{},
+			"engine":    map[string]any{"name": "other", "version": "1.23.2"},
+			"findings":  []any{},
 			"execution": map[string]any{"ref": uuid.NewString(), "durationMillis": 1},
 		})
 	}))
