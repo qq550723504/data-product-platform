@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	qualityengine "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/engine"
@@ -75,13 +76,16 @@ func TestNormalizeEngineFindingsAllowsSkippedOptionalRule(t *testing.T) {
 		Target: "id", Required: false, Severity: "WARNING",
 	}}
 	findings, err := normalizeEngineFindings(policy, []domain.Finding{{
-		RuleID: "OPTIONAL", Status: domain.FindingSkipped,
+		RuleID: "OPTIONAL", Status: domain.FindingSkipped, CreatedAt: time.Now().UTC(),
 	}})
 	if err != nil {
 		t.Fatalf("optional skipped rule rejected: %v", err)
 	}
 	if findings[0].Severity != "WARNING" || findings[0].Dimension != "COMPLETENESS" {
 		t.Fatalf("Core metadata not restored: %#v", findings[0])
+	}
+	if !findings[0].CreatedAt.IsZero() {
+		t.Fatalf("provider finding timestamp survived normalization: %s", findings[0].CreatedAt)
 	}
 }
 
