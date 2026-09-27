@@ -1,0 +1,125 @@
+from fastapi.testclient import TestClient
+
+from app.main import ENGINE_NAME, ENGINE_VERSION, app
+
+client = TestClient(app)
+
+
+def _policy() -> str:
+    return """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: gx-contract
+  version: 1.0.0
+spec:
+  rules:
+    - id: NOT_NULL
+      type: not_null
+      target: id
+      threshold: 1
+      required: true
+    - id: COMPLETE
+      type: completeness_ratio
+      target: id
+      threshold: 0.5
+      required: true
+    - id: UNIQUE
+      type: unique
+      target: id
+      threshold: 1
+      required: true
+    - id: DUPLICATE_RATIO
+      type: duplicate_ratio
+      target: id
+      threshold: 0.8
+      required: true
+    - id: RANGE
+      type: range
+      target: score
+      parameters:
+        min: 0
+        max: 100
+        allowNull: false
+      required: true
+    - id: ENUM
+      type: enum
+      target: level
+      parameters:
+        values: [HIGH, LOW]
+        allowNull: false
+      required: true
+"""
+
+
+def test_health_reports_pinned_gx_capabilities() -> None:
+    response = client.get("/health")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["engineName"] == ENGINE_NAME
+    assert body["engineVersion"] == ENGINE_VERSION
+    assert set(body["capabilities"]) == {
+        "not_null",
+        "completeness_ratio",
+        "unique",
+        "duplicate_ratio",
+        "range",
+        "enum",
+    }
+
+
+def test_evaluate_returns_bounded_rule_observations() -> None:
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/gx-contract.yaml",
+            "ruleSetContent": _policy(),
+            "headers": ["id", "score", "level"],
+            "rows": [
+                {"id": "A", "score": "10", "level": "HIGH"},
+                {"id": "", "score": "200", "level": "OTHER"},
+                {"id": "A", "score": "50", "level": "LOW"},
+            ],
+        },
+    )
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["engine"]["name"] == ENGINE_NAME
+    assert body["execution"]["ref"] == "11111111-1111-4111-8111-111111111111"
+    findings = {item["ruleId"]: item for item in body["findings"]}
+    assert set(findings) == {"NOT_NULL", "COMPLETE", "UNIQUE", "DUPLICATE_RATIO", "RANGE", "ENUM"}
+    assert findings["NOT_NULL"]["status"] == "FAIL"
+    assert findings["COMPLETE"]["status"] == "PASS"
+    assert findings["UNIQUE"]["status"] == "FAIL"
+    assert findings["RANGE"]["status"] == "FAIL"
+    assert findings["ENUM"]["status"] == "FAIL"
+    for item in findings.values():
+        assert set(item["observed"]).issubset({"affectedCount", "total", "observedValue", "threshold"})
+
+
+def test_unsupported_rule_fails_before_validation() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: unsupported
+  version: 1
+spec:
+  rules:
+    - id: REGEX
+      type: regex
+      target: id
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/unsupported.yaml",
+            "ruleSetContent": policy,
+            "headers": ["id"],
+            "rows": [{"id": "A"}],
+        },
+    )
+    assert response.status_code == 409
