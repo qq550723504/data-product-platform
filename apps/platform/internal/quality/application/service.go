@@ -148,6 +148,7 @@ func normalizeEngineFindings(policy native.Policy, findings []domain.Finding) ([
 		}
 		finding.Dimension = rule.Dimension
 		finding.Severity = rule.Severity
+		finding.CreatedAt = time.Time{}
 		normalized = append(normalized, finding)
 	}
 	return normalized, nil
@@ -222,6 +223,28 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	if err := validateEngineCapabilities(descriptor, corePolicy); err != nil {
 		return domain.Assessment{}, err
 	}
+	reader, err := s.store.Get(ctx, version.StorageURI)
+	if err != nil {
+		return domain.Assessment{}, fmt.Errorf("open DatasetVersion object: %w", err)
+	}
+	table, err := tabular.ReadCSV(reader)
+	closeErr := reader.Close()
+	if err != nil {
+		return domain.Assessment{}, fmt.Errorf("read DatasetVersion object: %w", err)
+	}
+	if closeErr != nil {
+		return domain.Assessment{}, fmt.Errorf("close DatasetVersion object: %w", closeErr)
+	}
+	var evidencePresent *bool
+	if s.evidenceRepo != nil {
+		present, err := s.evidenceRepo.HasSupportingEvidenceForObject(ctx, "DATASET_VERSION", version.ID)
+		if err != nil {
+			return domain.Assessment{}, fmt.Errorf("resolve DatasetVersion evidence facts: %w", err)
+		}
+		evidencePresent = &present
+	}
+	lineagePresent := version.GeneratedByExecutionID != nil
+
 	var result domain.Assessment
 	var replayAssessmentID uuid.UUID
 	err = s.tx.WithAdvisoryLock(ctx, assessmentAttemptLockPrefix+attemptID.String(), func(ctx context.Context) error {
@@ -247,34 +270,6 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			replayAssessmentID = *state.AssessmentID
 			return nil
 		}
-		reader, err := s.store.Get(ctx, version.StorageURI)
-		if err != nil {
-			wrappedErr := fmt.Errorf("open DatasetVersion object: %w", err)
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, wrappedErr.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("%v; record attempt outcome: %w", wrappedErr, outcomeErr)
-			}
-			return wrappedErr
-		}
-		defer reader.Close()
-		table, err := tabular.ReadCSV(reader)
-		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("read DatasetVersion object: %v; record attempt outcome: %w", err, outcomeErr)
-			}
-			return err
-		}
-		var evidencePresent *bool
-		if s.evidenceRepo != nil {
-			present, err := s.evidenceRepo.HasSupportingEvidenceForObject(ctx, "DATASET_VERSION", version.ID)
-			if err != nil {
-				if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-					return fmt.Errorf("resolve DatasetVersion evidence facts: %v; record attempt outcome: %w", err, outcomeErr)
-				}
-				return fmt.Errorf("resolve DatasetVersion evidence facts: %w", err)
-			}
-			evidencePresent = &present
-		}
-		lineagePresent := version.GeneratedByExecutionID != nil
 		engineResult, err := provider.Evaluate(ctx, qualityengine.Request{
 			AttemptID:        attemptID,
 			DatasetVersionID: version.ID,
@@ -300,10 +295,11 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 		}
 		normalizedFindings, err := normalizeEngineFindings(corePolicy, engineResult.Findings)
 		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("normalize quality engine result: %v; record attempt outcome: %w", err, outcomeErr)
+			safeErr := qualityengine.NewExecutionError(qualityengine.ErrorProviderInvalidResponse, false)
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, safeErr.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("%v; record attempt outcome: %w", safeErr, outcomeErr)
 			}
-			return err
+			return safeErr
 		}
 		engineResult.Findings = normalizedFindings
 		contentDigest := sha256.Sum256(policyContent)
