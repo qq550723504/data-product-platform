@@ -144,3 +144,32 @@ func TestClientProbeRejectsMissingCapability(t *testing.T) {
 		t.Fatal("probe accepted incomplete capability set")
 	}
 }
+
+func TestClientClassifiesTransientHTTPStatuses(t *testing.T) {
+	for _, tc := range []struct {
+		status int
+		want   string
+	}{
+		{http.StatusRequestTimeout, "quality engine execution failed: PROVIDER_TIMEOUT"},
+		{http.StatusTooManyRequests, "quality engine execution failed: PROVIDER_UNAVAILABLE"},
+	} {
+		t.Run(http.StatusText(tc.status), func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(tc.status)
+			}))
+			defer server.Close()
+			client, err := NewClient(Config{
+				BaseURL: server.URL, ExpectedEngineVersion: "1.23.2",
+			}, server.Client())
+			if err != nil {
+				t.Fatalf("new client: %v", err)
+			}
+			_, err = client.Evaluate(context.Background(), qualityengine.Request{
+				AttemptID: uuid.New(), DatasetVersionID: uuid.New(),
+			})
+			if err == nil || err.Error() != tc.want {
+				t.Fatalf("status %d error = %v, want %s", tc.status, err, tc.want)
+			}
+		})
+	}
+}
