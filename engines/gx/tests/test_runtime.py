@@ -149,3 +149,93 @@ def test_health_remains_public_when_evaluation_token_is_enabled() -> None:
         assert response.status_code == 401
     finally:
         runtime.API_TOKEN = original
+
+
+def test_required_rule_fails_on_empty_dataset_and_optional_missing_target_skips() -> None:
+    required_policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: empty-required
+  version: 1
+spec:
+  rules:
+    - id: REQUIRED
+      type: not_null
+      target: id
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/empty-required.yaml",
+            "ruleSetContent": required_policy,
+            "headers": ["id"],
+            "rows": [],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["status"] == "FAIL"
+
+    optional_policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: missing-optional
+  version: 1
+spec:
+  rules:
+    - id: OPTIONAL
+      type: enum
+      target: missing_column
+      parameters:
+        values: [A, B]
+      required: false
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/missing-optional.yaml",
+            "ruleSetContent": optional_policy,
+            "headers": ["id"],
+            "rows": [{"id": "A"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["status"] == "SKIPPED"
+
+
+def test_range_preserves_exact_decimal_boundary() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: exact-range
+  version: 1
+spec:
+  rules:
+    - id: EXACT
+      type: range
+      target: score
+      parameters:
+        min: 0
+        max: 0.1
+        allowNull: true
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/exact-range.yaml",
+            "ruleSetContent": policy,
+            "headers": ["score"],
+            "rows": [{"score": "0.10000000000000001"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    finding = response.json()["findings"][0]
+    assert finding["status"] == "FAIL"
+    assert finding["observed"]["affectedCount"] == 1
