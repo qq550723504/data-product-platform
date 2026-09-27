@@ -2,6 +2,7 @@ package engine
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -52,6 +53,29 @@ type Result struct {
 	Metrics        map[string]any
 	DiagnosticsRef string
 	Execution      ExecutionMetadata
+}
+
+type ExecutionError struct {
+	Code      string
+	Retryable bool
+}
+
+func (e ExecutionError) Error() string {
+	if e.Code == "" {
+		return "quality engine execution failed"
+	}
+	return "quality engine execution failed: " + e.Code
+}
+
+func SanitizeError(err error) error {
+	if err == nil {
+		return nil
+	}
+	var classified ExecutionError
+	if errors.As(err, &classified) {
+		return classified
+	}
+	return ExecutionError{Code: "PROVIDER_EXECUTION_FAILED"}
 }
 
 type Engine interface {
