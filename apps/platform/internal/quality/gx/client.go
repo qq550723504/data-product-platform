@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/tabular"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
@@ -132,13 +133,22 @@ func (c *Client) Probe(ctx context.Context) error {
 }
 
 func (c *Client) Evaluate(ctx context.Context, request qualityengine.Request) (qualityengine.Result, error) {
+	rows, err := providerRows(request.Dataset.Table)
+	if err != nil {
+		return qualityengine.Result{}, err
+	}
+	for _, header := range request.Dataset.Table.Headers {
+		if !utf8.ValidString(header) {
+			return qualityengine.Result{}, qualityengine.NewExecutionError(qualityengine.ErrorProviderExecutionFailed, false)
+		}
+	}
 	payload := evaluateRequest{
 		AttemptID:        request.AttemptID.String(),
 		DatasetVersionID: request.DatasetVersionID.String(),
 		RuleSetRef:       request.RuleSet.Ref,
 		RuleSetContent:   string(request.RuleSet.Content),
 		Headers:          append([]string(nil), request.Dataset.Table.Headers...),
-		Rows:             providerRows(request.Dataset.Table),
+		Rows:             rows,
 	}
 	var response evaluateResponse
 	if err := c.request(ctx, http.MethodPost, "/v1/evaluate", payload, &response); err != nil {
@@ -234,16 +244,20 @@ func (c *Client) request(ctx context.Context, method, path string, payload any, 
 	return nil
 }
 
-func providerRows(table tabular.Table) []map[string]string {
+func providerRows(table tabular.Table) ([]map[string]string, error) {
 	result := make([]map[string]string, 0, len(table.Rows))
 	for rowIndex := range table.Rows {
 		row := make(map[string]string, len(table.Headers))
 		for _, header := range table.Headers {
-			row[header] = table.RawValue(rowIndex, header)
+			value := table.RawValue(rowIndex, header)
+			if !utf8.ValidString(value) {
+				return nil, qualityengine.NewExecutionError(qualityengine.ErrorProviderExecutionFailed, false)
+			}
+			row[header] = value
 		}
 		result = append(result, row)
 	}
-	return result
+	return result, nil
 }
 
 var _ qualityengine.Engine = (*Client)(nil)
