@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -192,7 +193,10 @@ func (c *Client) request(ctx context.Context, method, path string, payload any, 
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		if ctx.Err() != nil {
+		if ctx.Err() != nil || errors.Is(err, context.DeadlineExceeded) {
+			return qualityengine.NewExecutionError(qualityengine.ErrorProviderTimeout, true)
+		}
+		if timeoutErr, ok := err.(interface{ Timeout() bool }); ok && timeoutErr.Timeout() {
 			return qualityengine.NewExecutionError(qualityengine.ErrorProviderTimeout, true)
 		}
 		return qualityengine.NewExecutionError(qualityengine.ErrorProviderUnavailable, true)
