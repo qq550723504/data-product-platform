@@ -4,7 +4,9 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
+	"math"
 	"fmt"
 	"io"
 	"os"
@@ -116,6 +118,89 @@ func validateEngineCapabilities(descriptor qualityengine.Descriptor, policy nati
 		}
 	}
 	return nil
+}
+
+func safeProviderNumber(value any) (any, bool) {
+	switch typed := value.(type) {
+	case int, int32, int64, uint, uint32, uint64, json.Number:
+		return typed, true
+	case float32:
+		if math.IsNaN(float64(typed)) || math.IsInf(float64(typed), 0) {
+			return nil, false
+		}
+		return typed, true
+	case float64:
+		if math.IsNaN(typed) || math.IsInf(typed, 0) {
+			return nil, false
+		}
+		return typed, true
+	case bool:
+		return typed, true
+	case nil:
+		return nil, true
+	default:
+		return nil, false
+	}
+}
+
+func sanitizeProviderObservation(observed map[string]any) (map[string]any, error) {
+	if observed == nil {
+		return map[string]any{}, nil
+	}
+	allowed := map[string]struct{}{
+		"observedValue": {}, "threshold": {}, "affectedCount": {}, "total": {},
+		"nonNull": {}, "unique": {}, "rate": {}, "duplicateRate": {},
+		"invalidCount": {}, "validCount": {}, "count": {}, "available": {},
+		"minimum": {}, "maximum": {},
+	}
+	result := make(map[string]any, len(observed))
+	for key, value := range observed {
+		if _, ok := allowed[key]; !ok {
+			return nil, fmt.Errorf("provider observation contains unsupported field")
+		}
+		if scalar, ok := safeProviderNumber(value); ok {
+			result[key] = scalar
+			continue
+		}
+		ratio, ok := value.(map[string]any)
+		if !ok || len(ratio) == 0 || len(ratio) > 2 {
+			return nil, fmt.Errorf("provider observation contains unsupported value")
+		}
+		safeRatio := make(map[string]any, len(ratio))
+		for ratioKey, ratioValue := range ratio {
+			if ratioKey != "numerator" && ratioKey != "denominator" {
+				return nil, fmt.Errorf("provider observation contains unsupported ratio field")
+			}
+			safeValue, ok := safeProviderNumber(ratioValue)
+			if !ok {
+				return nil, fmt.Errorf("provider observation contains unsupported ratio value")
+			}
+			safeRatio[ratioKey] = safeValue
+		}
+		result[key] = safeRatio
+	}
+	return result, nil
+}
+
+func normalizeExternalEngineFindings(findings []domain.Finding) ([]domain.Finding, map[string]any, error) {
+	metrics := make(map[string]any, len(findings))
+	for index := range findings {
+		observed, err := sanitizeProviderObservation(findings[index].Observed)
+		if err != nil {
+			return nil, nil, err
+		}
+		findings[index].Observed = observed
+		switch findings[index].Status {
+		case domain.FindingFail:
+			findings[index].Message = "quality rule failed"
+		case domain.FindingSkipped:
+			findings[index].Message = "quality rule skipped"
+		default:
+			findings[index].Message = ""
+		}
+		metrics[findings[index].RuleID] = observed
+	}
+	return findings, metrics, nil
 }
 
 func normalizeEngineFindings(policy native.Policy, findings []domain.Finding) ([]domain.Finding, error) {
@@ -302,6 +387,18 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			return safeErr
 		}
 		engineResult.Findings = normalizedFindings
+		if cmd.EngineName != strings.ToLower(native.EvaluatorName) {
+			safeFindings, safeMetrics, sanitizeErr := normalizeExternalEngineFindings(engineResult.Findings)
+			if sanitizeErr != nil {
+				safeErr := qualityengine.NewExecutionError(qualityengine.ErrorProviderInvalidResponse, false)
+				if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, safeErr.Error(), time.Now().UTC()); outcomeErr != nil {
+					return fmt.Errorf("%v; record attempt outcome: %w", safeErr, outcomeErr)
+				}
+				return safeErr
+			}
+			engineResult.Findings = safeFindings
+			engineResult.Metrics = safeMetrics
+		}
 		engineResult.DiagnosticsRef = qualityengine.SafeReference(engineResult.DiagnosticsRef)
 		engineResult.Execution.ExecutionRef = qualityengine.SafeReference(engineResult.Execution.ExecutionRef)
 		if engineResult.Execution.DurationMillis < 0 {
