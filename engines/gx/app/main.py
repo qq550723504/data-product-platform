@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import os
+import re
 import time
 from decimal import Decimal, InvalidOperation
 from importlib.metadata import version
@@ -17,6 +18,8 @@ ENGINE_NAME = "gx-core"
 ENGINE_VERSION = version("great-expectations")
 API_TOKEN = os.getenv("GX_ENGINE_API_TOKEN", "").strip()
 MAX_ROWS = int(os.getenv("GX_ENGINE_MAX_ROWS", "100000"))
+CORE_DECIMAL_PATTERN = re.compile(r"^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?$")
+
 SUPPORTED_RULE_TYPES = {
     "not_null",
     "completeness_ratio",
@@ -336,6 +339,9 @@ def _expectation_for_rule(
                 if not allow_null:
                     local_invalid += 1
                 continue
+            if not CORE_DECIMAL_PATTERN.fullmatch(text):
+                local_invalid += 1
+                continue
             try:
                 value = Decimal(text)
             except (InvalidOperation, ValueError):
@@ -404,8 +410,11 @@ def _finite_float(value: Any) -> float:
 
 
 def _finite_decimal(value: Any) -> Decimal:
+    text = str(value).strip()
+    if not CORE_DECIMAL_PATTERN.fullmatch(text):
+        raise HTTPException(status_code=400, detail="numeric rule parameter is invalid")
     try:
-        number = Decimal(str(value))
+        number = Decimal(text)
     except (InvalidOperation, ValueError) as exc:
         raise HTTPException(status_code=400, detail="numeric rule parameter is invalid") from exc
     if not number.is_finite():
