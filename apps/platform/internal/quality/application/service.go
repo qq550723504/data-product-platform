@@ -87,8 +87,15 @@ func (s *Service) RegisterEngine(provider qualityengine.Engine) error {
 	}
 	descriptor := provider.Descriptor()
 	name := strings.ToLower(strings.TrimSpace(descriptor.Name))
-	if name == "" || strings.TrimSpace(descriptor.Version) == "" {
+	version := strings.TrimSpace(descriptor.Version)
+	if name == "" || version == "" {
 		return fmt.Errorf("quality engine descriptor requires name and version")
+	}
+	if len(name) > 128 {
+		return fmt.Errorf("quality engine name must not exceed 128 bytes")
+	}
+	if len(version) > 64 {
+		return fmt.Errorf("quality engine version must not exceed 64 bytes")
 	}
 	if s.engines == nil {
 		s.engines = map[string]qualityengine.Engine{}
@@ -100,7 +107,7 @@ func (s *Service) RegisterEngine(provider qualityengine.Engine) error {
 		return fmt.Errorf("quality engine %q is already registered", name)
 	}
 	descriptor.Name = strings.TrimSpace(descriptor.Name)
-	descriptor.Version = strings.TrimSpace(descriptor.Version)
+	descriptor.Version = version
 	descriptor.Capabilities = append([]string(nil), descriptor.Capabilities...)
 	s.engines[name] = provider
 	s.engineDescriptors[name] = descriptor
