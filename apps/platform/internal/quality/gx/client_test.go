@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/tabular"
@@ -101,5 +102,28 @@ func TestClientRejectsProviderIdentityMismatch(t *testing.T) {
 	})
 	if err == nil {
 		t.Fatal("provider identity mismatch was accepted")
+	}
+}
+
+func TestClientClassifiesHTTPClientTimeout(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(100 * time.Millisecond)
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	httpClient := server.Client()
+	httpClient.Timeout = 10 * time.Millisecond
+	client, err := NewClient(Config{
+		BaseURL: server.URL, ExpectedEngineVersion: "1.23.2",
+	}, httpClient)
+	if err != nil {
+		t.Fatalf("new client: %v", err)
+	}
+	_, err = client.Evaluate(context.Background(), qualityengine.Request{
+		AttemptID: uuid.New(), DatasetVersionID: uuid.New(),
+	})
+	if err == nil || err.Error() != "quality engine execution failed: PROVIDER_TIMEOUT" {
+		t.Fatalf("timeout error = %v, want PROVIDER_TIMEOUT", err)
 	}
 }
