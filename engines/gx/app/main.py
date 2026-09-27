@@ -159,10 +159,9 @@ def _restore_exact_numeric_scalars(root: Any, rules: list[dict[str, Any]]) -> No
 
 
 def _mapping_value(node: yaml.MappingNode, key: str) -> Any:
-    for index in range(0, len(node.value), 2):
-        key_node = node.value[index]
+    for key_node, value_node in node.value:
         if key_node.value == key:
-            return node.value[index + 1]
+            return value_node
     return None
 
 
