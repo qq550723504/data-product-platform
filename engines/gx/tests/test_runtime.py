@@ -1,3 +1,4 @@
+import app.main as runtime
 from fastapi.testclient import TestClient
 
 from app.main import ENGINE_NAME, ENGINE_VERSION, app
@@ -127,3 +128,24 @@ spec:
         },
     )
     assert response.status_code == 409
+
+
+def test_health_remains_public_when_evaluation_token_is_enabled() -> None:
+    original = runtime.API_TOKEN
+    runtime.API_TOKEN = "secret-token"
+    try:
+        assert client.get("/health").status_code == 200
+        response = client.post(
+            "/v1/evaluate",
+            json={
+                "attemptId": "11111111-1111-4111-8111-111111111111",
+                "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+                "ruleSetRef": "quality/gx-contract.yaml",
+                "ruleSetContent": _policy(),
+                "headers": ["id", "score", "level"],
+                "rows": [{"id": "A", "score": "10", "level": "HIGH"}],
+            },
+        )
+        assert response.status_code == 401
+    finally:
+        runtime.API_TOKEN = original
