@@ -40,6 +40,81 @@ func (e *failingQualityEngine) Evaluate(context.Context, qualityengine.Request) 
 	return qualityengine.Result{}, errors.New("provider execution unavailable")
 }
 
+func TestUnsupportedEngineCapabilityDoesNotCreateInvocationCost(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	workspaceID := uuid.New()
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	store := newMemoryStore()
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
+	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, store)
+	dataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "ENGINE-CAPABILITY")
+	version := uploadCSV(t, ctx, uploadDataset, dataset.ID, "engine-capability.csv", "company_id\nCOMPANY-001\n", nil)
+
+	root := t.TempDir()
+	content := []byte(`apiVersion: quality/v1
+kind: QualityRuleSet
+metadata:
+  name: engine-capability
+  version: 1.0.0
+spec:
+  rules:
+    - id: QA-COMPANY-ID
+      dimension: COMPLETENESS
+      type: not_null
+      target: company_id
+      threshold: 1
+      required: true
+      severity: CRITICAL
+  gate:
+    criticalFailure: FAIL
+    highFailure: REVIEW
+    warningFailure: PASS_WITH_WARNING
+`)
+	if err := os.WriteFile(filepath.Join(root, "engine.yaml"), content, 0o600); err != nil {
+		t.Fatalf("write policy: %v", err)
+	}
+
+	service := qualityapp.NewService(root, txManager, datasetRepo, qualityinfra.NewPostgresRepository(pool), store)
+	if err := service.RegisterEngine(neverCalledQualityEngine{}); err != nil {
+		t.Fatalf("register reference engine: %v", err)
+	}
+	attemptID := uuid.New()
+	_, err = service.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: version.ID, RuleSetRef: "engine.yaml",
+		EngineName: "reference-engine", AssessmentAttemptID: attemptID,
+	})
+	if err == nil || !strings.Contains(err.Error(), "does not support rule type not_null") {
+		t.Fatalf("capability preflight error = %v", err)
+	}
+
+	var attemptCount, costCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM quality_assessment_attempt WHERE id=$1`, attemptID).Scan(&attemptCount); err != nil {
+		t.Fatalf("count preflight attempts: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM cost_event e
+		JOIN cost_allocation a ON a.cost_event_id=e.id
+		WHERE a.quality_assessment_attempt_id=$1
+	`, attemptID).Scan(&costCount); err != nil {
+		t.Fatalf("count preflight costs: %v", err)
+	}
+	if attemptCount != 0 || costCount != 0 {
+		t.Fatalf("capability preflight created attempt/cost = %d/%d, want 0/0", attemptCount, costCount)
+	}
+}
+
 func TestQualityEngineFailureDoesNotBecomeRuleFailure(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
