@@ -5,6 +5,7 @@ import os
 import re
 import time
 from decimal import Decimal, InvalidOperation
+from fractions import Fraction
 from importlib.metadata import version
 from typing import Any
 
@@ -251,9 +252,9 @@ def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) ->
 
     success = affected == 0
     if rule_type in {"not_null", "completeness_ratio"}:
-        observed_ratio = Decimal(total - affected) / Decimal(total)
+        observed_ratio = Fraction(total - affected, total)
         observed_value = float(observed_ratio)
-        success = observed_ratio >= threshold
+        success = observed_ratio >= Fraction(threshold)
     else:
         observed_value = max(0.0, min(1.0, 1.0 - affected / total))
 
@@ -308,14 +309,15 @@ def _evaluate_uniqueness_rule(dataframe: pd.DataFrame, rule: dict[str, Any]) -> 
         raise HTTPException(status_code=502, detail="GX validation returned invalid unique count")
 
     duplicate_count = non_null - unique_count
-    unique_ratio = Decimal(unique_count) / Decimal(non_null)
-    duplicate_ratio = Decimal(duplicate_count) / Decimal(non_null)
+    unique_ratio = Fraction(unique_count, non_null)
+    duplicate_ratio = Fraction(duplicate_count, non_null)
+    threshold_ratio = Fraction(threshold)
     if rule_type == "unique":
         observed_value = float(unique_ratio)
-        success = unique_ratio >= threshold
+        success = unique_ratio >= threshold_ratio
     else:
         observed_value = float(duplicate_ratio)
-        success = duplicate_ratio <= threshold
+        success = duplicate_ratio <= threshold_ratio
 
     return FindingResult(
         ruleId=rule_id,
@@ -406,7 +408,7 @@ def _expectation_for_rule(
         values = parameters.get("values", parameters.get("allowedValues"))
         if not isinstance(values, list) or not values or any(not isinstance(item, str) for item in values):
             raise HTTPException(status_code=400, detail="enum rule values are invalid")
-        values = [item.strip() for item in values]
+        values = [_core_trim(item) for item in values]
         if any(not item for item in values):
             raise HTTPException(status_code=400, detail="enum rule values are invalid")
         allow_null = _parameter_bool(parameters.get("allowNull"), True)
