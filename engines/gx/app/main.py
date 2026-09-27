@@ -208,16 +208,17 @@ def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) ->
 
     success = affected == 0
     if rule_type in {"not_null", "completeness_ratio"}:
-        observed_value = 1.0 if total == 0 else max(0.0, min(1.0, 1.0 - affected / total))
-        success = observed_value >= threshold
+        observed_ratio = Decimal(total - affected) / Decimal(total)
+        observed_value = float(observed_ratio)
+        success = observed_ratio >= threshold
     else:
-        observed_value = 1.0 if total == 0 else max(0.0, min(1.0, 1.0 - affected / total))
+        observed_value = max(0.0, min(1.0, 1.0 - affected / total))
 
     observed = {
         "affectedCount": affected,
         "total": total,
         "observedValue": observed_value,
-        "threshold": threshold,
+        "threshold": float(threshold),
     }
     return FindingResult(ruleId=rule_id, status="PASS" if success else "FAIL", observed=observed)
 
@@ -226,7 +227,7 @@ def _evaluate_uniqueness_rule(dataframe: pd.DataFrame, rule: dict[str, Any]) -> 
     rule_id = str(rule["id"]).strip()
     rule_type = str(rule["type"]).strip().lower()
     target = str(rule["target"]).strip()
-    threshold = _ratio_threshold(rule, 1.0 if rule_type == "unique" else 0.0)
+    threshold = _ratio_threshold_decimal(rule, Decimal("1") if rule_type == "unique" else Decimal("0"))
 
     prepared = dataframe.copy()
     normalized = prepared[target].astype("string").str.strip()
@@ -239,7 +240,7 @@ def _evaluate_uniqueness_rule(dataframe: pd.DataFrame, rule: dict[str, Any]) -> 
         return FindingResult(
             ruleId=rule_id,
             status=status,
-            observed={"affectedCount": 0, "total": 0, "observedValue": 0.0, "threshold": threshold},
+            observed={"affectedCount": 0, "total": 0, "observedValue": 0.0, "threshold": float(threshold)},
         )
 
     batch = _batch_for_dataframe(prepared)
@@ -264,13 +265,13 @@ def _evaluate_uniqueness_rule(dataframe: pd.DataFrame, rule: dict[str, Any]) -> 
         raise HTTPException(status_code=502, detail="GX validation returned invalid unique count")
 
     duplicate_count = non_null - unique_count
-    unique_ratio = unique_count / non_null
-    duplicate_ratio = duplicate_count / non_null
+    unique_ratio = Decimal(unique_count) / Decimal(non_null)
+    duplicate_ratio = Decimal(duplicate_count) / Decimal(non_null)
     if rule_type == "unique":
-        observed_value = unique_ratio
+        observed_value = float(unique_ratio)
         success = unique_ratio >= threshold
     else:
-        observed_value = duplicate_ratio
+        observed_value = float(duplicate_ratio)
         success = duplicate_ratio <= threshold
 
     return FindingResult(
@@ -280,7 +281,7 @@ def _evaluate_uniqueness_rule(dataframe: pd.DataFrame, rule: dict[str, Any]) -> 
             "affectedCount": duplicate_count,
             "total": non_null,
             "observedValue": observed_value,
-            "threshold": threshold,
+            "threshold": float(threshold),
         },
     )
 
@@ -295,19 +296,19 @@ def _batch_for_dataframe(dataframe: pd.DataFrame) -> Any:
 
 def _expectation_for_rule(
     dataframe: pd.DataFrame, rule: dict[str, Any]
-) -> tuple[Any, pd.DataFrame, float, int]:
+) -> tuple[Any, pd.DataFrame, Decimal, int]:
     rule_type = str(rule["type"]).strip().lower()
     target = str(rule["target"]).strip()
     parameters = rule.get("parameters") or {}
 
     if rule_type in {"not_null", "completeness_ratio"}:
-        threshold = _ratio_threshold(rule, 1.0)
+        threshold = _ratio_threshold_decimal(rule, Decimal("1"))
         prepared = dataframe.copy()
         normalized = prepared[target].astype("string").str.strip()
         normalized = normalized.mask(normalized == "", pd.NA)
         prepared[target] = normalized
         return (
-            gx.expectations.ExpectColumnValuesToNotBeNull(column=target, mostly=threshold),
+            gx.expectations.ExpectColumnValuesToNotBeNull(column=target, mostly=float(threshold)),
             prepared,
             threshold,
             0,
@@ -351,13 +352,16 @@ def _expectation_for_rule(
                 mostly=1.0,
             ),
             prepared,
-            1.0,
+            Decimal("1"),
             local_invalid,
         )
 
     if rule_type == "enum":
         values = parameters.get("values", parameters.get("allowedValues"))
         if not isinstance(values, list) or not values or any(not isinstance(item, str) for item in values):
+            raise HTTPException(status_code=400, detail="enum rule values are invalid")
+        values = [item.strip() for item in values]
+        if any(not item for item in values):
             raise HTTPException(status_code=400, detail="enum rule values are invalid")
         allow_null = bool(parameters.get("allowNull", True))
         prepared = dataframe.copy()
@@ -372,18 +376,18 @@ def _expectation_for_rule(
                 mostly=1.0,
             ),
             prepared,
-            1.0,
+            Decimal("1"),
             local_invalid,
         )
 
     raise HTTPException(status_code=409, detail="unsupported GX rule type")
 
 
-def _ratio_threshold(rule: dict[str, Any], fallback: float) -> float:
+def _ratio_threshold_decimal(rule: dict[str, Any], fallback: Decimal) -> Decimal:
     raw = rule.get("threshold")
     if raw is None:
-        raw = (rule.get("parameters") or {}).get("threshold", fallback)
-    value = _finite_float(raw)
+        raw = (rule.get("parameters") or {}).get("threshold", str(fallback))
+    value = _finite_decimal(raw)
     if value < 0 or value > 1:
         raise HTTPException(status_code=400, detail="ratio threshold is out of range")
     return value
