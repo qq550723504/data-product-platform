@@ -621,3 +621,75 @@ spec:
     assert finding["status"] == "FAIL"
     assert finding["observed"]["affectedCount"] == 0
     assert finding["observed"]["total"] == 0
+
+
+def test_core_whitespace_definition_excludes_ascii_information_separator() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: core-whitespace
+  version: 1
+spec:
+  rules:
+    - id: RANGE
+      type: range
+      target: score
+      parameters:
+        min: 0
+        max: 1
+        allowNull: true
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/core-whitespace.yaml",
+            "ruleSetContent": policy,
+            "headers": ["score"],
+            "rows": [{"score": "\u001c"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    finding = response.json()["findings"][0]
+    assert finding["status"] == "FAIL"
+    assert finding["observed"]["affectedCount"] == 1
+
+
+def test_passing_ratio_rules_report_zero_affected_rows_like_native() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: tolerated-ratios
+  version: 1
+spec:
+  rules:
+    - id: COMPLETE
+      type: completeness_ratio
+      target: id
+      threshold: 0.5
+      required: true
+    - id: UNIQUE
+      type: unique
+      target: id
+      threshold: 0.5
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/tolerated-ratios.yaml",
+            "ruleSetContent": policy,
+            "headers": ["id"],
+            "rows": [{"id": "A"}, {"id": ""}, {"id": "A"}, {"id": "B"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    findings = {item["ruleId"]: item for item in response.json()["findings"]}
+    assert findings["COMPLETE"]["status"] == "PASS"
+    assert findings["COMPLETE"]["observed"]["affectedCount"] == 0
+    assert findings["UNIQUE"]["status"] == "PASS"
+    assert findings["UNIQUE"]["observed"]["affectedCount"] == 0
