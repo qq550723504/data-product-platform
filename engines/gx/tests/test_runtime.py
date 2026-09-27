@@ -768,7 +768,7 @@ spec:
       type: enum
       target: level
       parameters:
-        values: ["{value}"]
+        values: ["{yaml_value}"]
         allowNull: false
       required: true
 """
