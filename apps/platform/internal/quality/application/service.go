@@ -2,9 +2,17 @@ package application
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"math"
+	"os"
+	"regexp"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -21,6 +29,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/tabular"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
+	qualityengine "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/engine"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/native"
 )
@@ -38,34 +47,248 @@ const assessmentAttemptLeaseDuration = time.Hour
 const assessmentAttemptLockPrefix = "quality-assessment-attempt:"
 
 type Service struct {
-	industryPackRoot string
-	tx               *transaction.Manager
-	datasetRepo      *datasetinfra.PostgresRepository
-	repo             *infrastructure.PostgresRepository
-	store            ObjectStore
-	evidenceRepo     *evidence.QueryRepository
-	goldRepo         *goldinfra.PostgresRepository
-	goldPreflight    GoldPreflightProvider
+	industryPackRoot  string
+	tx                *transaction.Manager
+	datasetRepo       *datasetinfra.PostgresRepository
+	repo              *infrastructure.PostgresRepository
+	store             ObjectStore
+	evidenceRepo      *evidence.QueryRepository
+	goldRepo          *goldinfra.PostgresRepository
+	goldPreflight     GoldPreflightProvider
+	engines           map[string]qualityengine.Engine
+	engineDescriptors map[string]qualityengine.Descriptor
+	defaultEngine     string
 }
 
 func NewService(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, repo *infrastructure.PostgresRepository, store ObjectStore, evidenceRepos ...*evidence.QueryRepository) *Service {
+	nativeEngine := native.NewEngine()
 	service := &Service{
-		industryPackRoot: industryPackRoot,
-		tx:               tx,
-		datasetRepo:      datasetRepo,
-		repo:             repo,
-		store:            store,
+		industryPackRoot:  industryPackRoot,
+		tx:                tx,
+		datasetRepo:       datasetRepo,
+		repo:              repo,
+		store:             store,
+		engines:           map[string]qualityengine.Engine{},
+		engineDescriptors: map[string]qualityengine.Descriptor{},
+		defaultEngine:     strings.ToLower(nativeEngine.Descriptor().Name),
 	}
+	nativeDescriptor := nativeEngine.Descriptor()
+	service.engines[service.defaultEngine] = nativeEngine
+	service.engineDescriptors[service.defaultEngine] = nativeDescriptor
 	if len(evidenceRepos) > 0 {
 		service.evidenceRepo = evidenceRepos[0]
 	}
 	return service
 }
 
+func (s *Service) RegisterEngine(provider qualityengine.Engine) error {
+	if provider == nil {
+		return fmt.Errorf("quality engine is required")
+	}
+	descriptor := provider.Descriptor()
+	name := strings.ToLower(strings.TrimSpace(descriptor.Name))
+	version := strings.TrimSpace(descriptor.Version)
+	if name == "" || version == "" {
+		return fmt.Errorf("quality engine descriptor requires name and version")
+	}
+	if len(name) > 128 {
+		return fmt.Errorf("quality engine name must not exceed 128 bytes")
+	}
+	if len(version) > 64 {
+		return fmt.Errorf("quality engine version must not exceed 64 bytes")
+	}
+	if s.engines == nil {
+		s.engines = map[string]qualityengine.Engine{}
+	}
+	if s.engineDescriptors == nil {
+		s.engineDescriptors = map[string]qualityengine.Descriptor{}
+	}
+	if _, exists := s.engines[name]; exists {
+		return fmt.Errorf("quality engine %q is already registered", name)
+	}
+	descriptor.Name = strings.TrimSpace(descriptor.Name)
+	descriptor.Version = version
+	descriptor.Capabilities = append([]string(nil), descriptor.Capabilities...)
+	s.engines[name] = provider
+	s.engineDescriptors[name] = descriptor
+	return nil
+}
+
+func (s *Service) resolveEngine(name string) (qualityengine.Engine, error) {
+	provider, _, _, err := s.resolveEngineRegistration(name)
+	return provider, err
+}
+
+func (s *Service) resolveEngineRegistration(name string) (qualityengine.Engine, qualityengine.Descriptor, string, error) {
+	name = strings.ToLower(strings.TrimSpace(name))
+	if name == "" {
+		name = s.defaultEngine
+	}
+	provider, ok := s.engines[name]
+	if !ok {
+		return nil, qualityengine.Descriptor{}, "", fmt.Errorf("quality engine %q is not registered", name)
+	}
+	descriptor, ok := s.engineDescriptors[name]
+	if !ok {
+		return nil, qualityengine.Descriptor{}, "", fmt.Errorf("quality engine %q descriptor is not registered", name)
+	}
+	return provider, descriptor, name, nil
+}
+
+func validateEngineCapabilities(descriptor qualityengine.Descriptor, policy native.Policy) error {
+	supported := make(map[string]struct{}, len(descriptor.Capabilities))
+	for _, capability := range descriptor.Capabilities {
+		supported[strings.ToLower(strings.TrimSpace(capability))] = struct{}{}
+	}
+	if _, ok := supported["*"]; ok {
+		return nil
+	}
+	for _, rule := range policy.Spec.Rules {
+		ruleType := strings.ToLower(strings.TrimSpace(rule.Type))
+		if _, ok := supported[ruleType]; !ok {
+			return fmt.Errorf("quality engine %s does not support rule type %s", descriptor.Name, ruleType)
+		}
+	}
+	return nil
+}
+
+var jsonNumberPattern = regexp.MustCompile("^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$")
+
+func safeProviderNumber(value any) (any, bool) {
+	switch typed := value.(type) {
+	case int, int32, int64, uint, uint32, uint64:
+		return typed, true
+	case json.Number:
+		text := typed.String()
+		if !jsonNumberPattern.MatchString(text) {
+			return nil, false
+		}
+		parsed, err := strconv.ParseFloat(text, 64)
+		if err != nil || math.IsNaN(parsed) || math.IsInf(parsed, 0) {
+			return nil, false
+		}
+		return parsed, true
+	case float32:
+		if math.IsNaN(float64(typed)) || math.IsInf(float64(typed), 0) {
+			return nil, false
+		}
+		return typed, true
+	case float64:
+		if math.IsNaN(typed) || math.IsInf(typed, 0) {
+			return nil, false
+		}
+		return typed, true
+	case bool:
+		return typed, true
+	case nil:
+		return nil, true
+	default:
+		return nil, false
+	}
+}
+
+func sanitizeProviderObservation(observed map[string]any) (map[string]any, error) {
+	if observed == nil {
+		return map[string]any{}, nil
+	}
+	allowed := map[string]struct{}{
+		"observedValue": {}, "threshold": {}, "affectedCount": {}, "total": {},
+		"nonNull": {}, "unique": {}, "rate": {}, "duplicateRate": {},
+		"invalidCount": {}, "validCount": {}, "count": {}, "available": {},
+		"minimum": {}, "maximum": {},
+	}
+	result := make(map[string]any, len(observed))
+	for key, value := range observed {
+		if _, ok := allowed[key]; !ok {
+			return nil, fmt.Errorf("provider observation contains unsupported field")
+		}
+		if scalar, ok := safeProviderNumber(value); ok {
+			result[key] = scalar
+			continue
+		}
+		ratio, ok := value.(map[string]any)
+		if !ok || len(ratio) == 0 || len(ratio) > 2 {
+			return nil, fmt.Errorf("provider observation contains unsupported value")
+		}
+		safeRatio := make(map[string]any, len(ratio))
+		for ratioKey, ratioValue := range ratio {
+			if ratioKey != "numerator" && ratioKey != "denominator" {
+				return nil, fmt.Errorf("provider observation contains unsupported ratio field")
+			}
+			safeValue, ok := safeProviderNumber(ratioValue)
+			if !ok {
+				return nil, fmt.Errorf("provider observation contains unsupported ratio value")
+			}
+			safeRatio[ratioKey] = safeValue
+		}
+		result[key] = safeRatio
+	}
+	return result, nil
+}
+
+func normalizeExternalEngineFindings(findings []domain.Finding) ([]domain.Finding, map[string]any, error) {
+	metrics := make(map[string]any, len(findings))
+	for index := range findings {
+		observed, err := sanitizeProviderObservation(findings[index].Observed)
+		if err != nil {
+			return nil, nil, err
+		}
+		findings[index].Observed = observed
+		switch findings[index].Status {
+		case domain.FindingFail:
+			findings[index].Message = "quality rule failed"
+		case domain.FindingSkipped:
+			findings[index].Message = "quality rule skipped"
+		default:
+			findings[index].Message = ""
+		}
+		metrics[findings[index].RuleID] = observed
+	}
+	return findings, metrics, nil
+}
+
+func normalizeEngineFindings(policy native.Policy, findings []domain.Finding) ([]domain.Finding, error) {
+	expected := make(map[string]native.Rule, len(policy.Spec.Rules))
+	for _, rule := range policy.Spec.Rules {
+		expected[rule.ID] = rule
+	}
+	if len(findings) != len(expected) {
+		return nil, fmt.Errorf("quality engine returned %d findings for %d rules", len(findings), len(expected))
+	}
+	seen := make(map[string]struct{}, len(findings))
+	normalized := make([]domain.Finding, 0, len(findings))
+	for _, finding := range findings {
+		rule, ok := expected[finding.RuleID]
+		if !ok {
+			return nil, fmt.Errorf("quality engine returned unknown rule id %q", finding.RuleID)
+		}
+		if _, duplicate := seen[finding.RuleID]; duplicate {
+			return nil, fmt.Errorf("quality engine returned duplicate rule id %q", finding.RuleID)
+		}
+		seen[finding.RuleID] = struct{}{}
+		switch finding.Status {
+		case domain.FindingPass, domain.FindingFail:
+		case domain.FindingSkipped:
+			if rule.Required {
+				return nil, fmt.Errorf("quality engine skipped required rule %q", finding.RuleID)
+			}
+		default:
+			return nil, fmt.Errorf("quality engine returned unsupported finding status %q for %s", finding.Status, finding.RuleID)
+		}
+		finding.Dimension = rule.Dimension
+		finding.Severity = rule.Severity
+		finding.CreatedAt = time.Time{}
+		normalized = append(normalized, finding)
+	}
+	return normalized, nil
+}
+
 type RunCommand struct {
 	WorkspaceID         uuid.UUID
 	DatasetVersionID    uuid.UUID
 	RuleSetRef          string
+	EngineName          string
+	engineVersion       string
 	AssessmentAttemptID uuid.UUID
 	ActorID             *uuid.UUID
 	TraceID             string
@@ -73,6 +296,12 @@ type RunCommand struct {
 }
 
 func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, error) {
+	provider, descriptor, registeredName, err := s.resolveEngineRegistration(cmd.EngineName)
+	if err != nil {
+		return domain.Assessment{}, err
+	}
+	cmd.EngineName = registeredName
+	cmd.engineVersion = descriptor.Version
 	attemptID := cmd.AssessmentAttemptID
 	if attemptID == uuid.Nil {
 		attemptID = uuid.New()
@@ -104,6 +333,46 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	if version.Status != datasetdomain.VersionReady && version.Status != datasetdomain.VersionSuperseded {
 		return domain.Assessment{}, fmt.Errorf("quality checks require READY or SUPERSEDED DatasetVersion, got %s", version.Status)
 	}
+	// Policy resolution and capability checks are local preflight. They happen
+	// before the physical engine attempt is claimed/costed because no provider
+	// invocation has occurred yet.
+	policyPath, err := industrypack.ResolvePath(s.industryPackRoot, cmd.RuleSetRef)
+	if err != nil {
+		return domain.Assessment{}, err
+	}
+	policyContent, err := os.ReadFile(policyPath)
+	if err != nil {
+		return domain.Assessment{}, fmt.Errorf("read quality policy %q: %w", policyPath, err)
+	}
+	corePolicy, err := native.LoadPolicyBytes(policyContent, cmd.RuleSetRef)
+	if err != nil {
+		return domain.Assessment{}, err
+	}
+	if err := validateEngineCapabilities(descriptor, corePolicy); err != nil {
+		return domain.Assessment{}, err
+	}
+	reader, err := s.store.Get(ctx, version.StorageURI)
+	if err != nil {
+		return domain.Assessment{}, fmt.Errorf("open DatasetVersion object: %w", err)
+	}
+	table, err := tabular.ReadCSV(reader)
+	closeErr := reader.Close()
+	if err != nil {
+		return domain.Assessment{}, fmt.Errorf("read DatasetVersion object: %w", err)
+	}
+	if closeErr != nil {
+		return domain.Assessment{}, fmt.Errorf("close DatasetVersion object: %w", closeErr)
+	}
+	var evidencePresent *bool
+	if s.evidenceRepo != nil {
+		present, err := s.evidenceRepo.HasSupportingEvidenceForObject(ctx, "DATASET_VERSION", version.ID)
+		if err != nil {
+			return domain.Assessment{}, fmt.Errorf("resolve DatasetVersion evidence facts: %w", err)
+		}
+		evidencePresent = &present
+	}
+	lineagePresent := version.GeneratedByExecutionID != nil
+
 	var result domain.Assessment
 	var replayAssessmentID uuid.UUID
 	err = s.tx.WithAdvisoryLock(ctx, assessmentAttemptLockPrefix+attemptID.String(), func(ctx context.Context) error {
@@ -129,66 +398,60 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			replayAssessmentID = *state.AssessmentID
 			return nil
 		}
-		policyPath, err := industrypack.ResolvePath(s.industryPackRoot, cmd.RuleSetRef)
-		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("resolve quality policy: %v; record attempt outcome: %w", err, outcomeErr)
-			}
-			return err
-		}
-		policy, err := native.LoadPolicy(policyPath)
-		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("load quality policy: %v; record attempt outcome: %w", err, outcomeErr)
-			}
-			return err
-		}
-		reader, err := s.store.Get(ctx, version.StorageURI)
-		if err != nil {
-			wrappedErr := fmt.Errorf("open DatasetVersion object: %w", err)
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, wrappedErr.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("%v; record attempt outcome: %w", wrappedErr, outcomeErr)
-			}
-			return wrappedErr
-		}
-		defer reader.Close()
-		table, err := tabular.ReadCSV(reader)
-		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("read DatasetVersion object: %v; record attempt outcome: %w", err, outcomeErr)
-			}
-			return err
-		}
-		var evidencePresent *bool
-		if s.evidenceRepo != nil {
-			present, err := s.evidenceRepo.HasSupportingEvidenceForObject(ctx, "DATASET_VERSION", version.ID)
-			if err != nil {
-				if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-					return fmt.Errorf("resolve DatasetVersion evidence facts: %v; record attempt outcome: %w", err, outcomeErr)
-				}
-				return fmt.Errorf("resolve DatasetVersion evidence facts: %w", err)
-			}
-			evidencePresent = &present
-		}
-		lineagePresent := version.GeneratedByExecutionID != nil
-		findings, metrics, err := native.Evaluate(policy, native.DatasetContext{
-			Table:           table,
-			Metadata:        version.Metadata,
-			ReadyAt:         version.ReadyAt,
-			Now:             cmd.Now,
-			LineagePresent:  &lineagePresent,
-			EvidencePresent: evidencePresent,
+		engineResult, err := provider.Evaluate(ctx, qualityengine.Request{
+			AttemptID:        attemptID,
+			DatasetVersionID: version.ID,
+			RuleSet: qualityengine.RuleSet{
+				Ref:     cmd.RuleSetRef,
+				Content: append([]byte(nil), policyContent...),
+			},
+			Dataset: qualityengine.DatasetContext{
+				Table:           table,
+				Metadata:        version.Metadata,
+				ReadyAt:         version.ReadyAt,
+				Now:             cmd.Now,
+				LineagePresent:  &lineagePresent,
+				EvidencePresent: evidencePresent,
+			},
 		})
 		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("quality evaluation failed: %v; record attempt outcome: %w", err, outcomeErr)
+			safeErr := qualityengine.SanitizeError(err)
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, safeErr.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("%v; record attempt outcome: %w", safeErr, outcomeErr)
 			}
-			return err
+			return safeErr
 		}
-		result = domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, policy.Metadata.Version,
-			policy.SourceContentSHA256, policy.SourceContent, native.EvaluatorName, native.EvaluatorVersion,
-			metrics, findings, cmd.ActorID)
-		result.GateDecision, err = policy.GateDecision(findings)
+		normalizedFindings, err := normalizeEngineFindings(corePolicy, engineResult.Findings)
+		if err != nil {
+			safeErr := qualityengine.NewExecutionError(qualityengine.ErrorProviderInvalidResponse, false)
+			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, safeErr.Error(), time.Now().UTC()); outcomeErr != nil {
+				return fmt.Errorf("%v; record attempt outcome: %w", safeErr, outcomeErr)
+			}
+			return safeErr
+		}
+		engineResult.Findings = normalizedFindings
+		if cmd.EngineName != strings.ToLower(native.EvaluatorName) {
+			safeFindings, safeMetrics, sanitizeErr := normalizeExternalEngineFindings(engineResult.Findings)
+			if sanitizeErr != nil {
+				safeErr := qualityengine.NewExecutionError(qualityengine.ErrorProviderInvalidResponse, false)
+				if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, safeErr.Error(), time.Now().UTC()); outcomeErr != nil {
+					return fmt.Errorf("%v; record attempt outcome: %w", safeErr, outcomeErr)
+				}
+				return safeErr
+			}
+			engineResult.Findings = safeFindings
+			engineResult.Metrics = safeMetrics
+		}
+		engineResult.DiagnosticsRef = qualityengine.SafeReference(engineResult.DiagnosticsRef)
+		engineResult.Execution.ExecutionRef = qualityengine.SafeReference(engineResult.Execution.ExecutionRef)
+		if engineResult.Execution.DurationMillis < 0 {
+			engineResult.Execution.DurationMillis = 0
+		}
+		contentDigest := sha256.Sum256(policyContent)
+		result = domain.NewAssessment(cmd.WorkspaceID, version.ID, cmd.RuleSetRef, corePolicy.Metadata.Version,
+			hex.EncodeToString(contentDigest[:]), string(policyContent), descriptor.Name, descriptor.Version,
+			engineResult.Metrics, engineResult.Findings, cmd.ActorID)
+		result.GateDecision, err = corePolicy.GateDecision(engineResult.Findings)
 		if err != nil {
 			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
 				return fmt.Errorf("derive quality gate decision: %v; record attempt outcome: %w", err, outcomeErr)
@@ -215,6 +478,11 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 					"ruleSetVersion":       result.RuleSetVersion,
 					"ruleSetContentSha256": result.RuleSetContentSHA256,
 					"gateDecision":         result.GateDecision,
+					"evaluatorName":        result.EvaluatorName,
+					"evaluatorVersion":     result.EvaluatorVersion,
+					"diagnosticsRef":       engineResult.DiagnosticsRef,
+					"engineExecutionRef":   engineResult.Execution.ExecutionRef,
+					"engineDurationMillis": engineResult.Execution.DurationMillis,
 					"metrics":              result.Metrics,
 				},
 				CreatedBy: cmd.ActorID,
@@ -317,7 +585,7 @@ func (s *Service) reconcileAttemptState(ctx context.Context, cmd RunCommand, att
 	var state infrastructure.AssessmentAttemptState
 	var found bool
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		attempt, attemptFound, err := s.repo.ReconcileAssessmentAttempt(ctx, tx, attemptID, cmd.WorkspaceID, cmd.DatasetVersionID, cmd.RuleSetRef, time.Now().UTC())
+		attempt, attemptFound, err := s.repo.ReconcileAssessmentAttempt(ctx, tx, attemptID, cmd.WorkspaceID, cmd.DatasetVersionID, cmd.RuleSetRef, cmd.EngineName, cmd.engineVersion, time.Now().UTC())
 		if errors.Is(err, infrastructure.ErrAssessmentAttemptConflict) {
 			return fmt.Errorf("%w: %v", ErrAssessmentAttemptConflict, err)
 		}
@@ -344,7 +612,7 @@ func (s *Service) claimAttempt(ctx context.Context, cmd RunCommand, attemptID uu
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		var err error
 		claimed, state, err = s.repo.ClaimAssessmentAttempt(ctx, tx, attemptID, cmd.WorkspaceID,
-			cmd.DatasetVersionID, cmd.RuleSetRef, startedAt, time.Now().UTC().Add(assessmentAttemptLeaseDuration), cmd.ActorID)
+			cmd.DatasetVersionID, cmd.RuleSetRef, cmd.EngineName, cmd.engineVersion, startedAt, time.Now().UTC().Add(assessmentAttemptLeaseDuration), cmd.ActorID)
 		if errors.Is(err, infrastructure.ErrAssessmentAttemptConflict) {
 			return fmt.Errorf("%w: %v", ErrAssessmentAttemptConflict, err)
 		}
@@ -359,8 +627,10 @@ func (s *Service) claimAttempt(ctx context.Context, cmd RunCommand, attemptID uu
 			Unit:        "assessment",
 			PricingMode: "ACTUAL",
 			Metadata: map[string]any{
-				"ruleSetRef": cmd.RuleSetRef,
-				"stage":      "evaluation_started",
+				"ruleSetRef":    cmd.RuleSetRef,
+				"engineName":    cmd.EngineName,
+				"engineVersion": cmd.engineVersion,
+				"stage":         "evaluation_started",
 			},
 			OccurredAt: startedAt,
 		})
@@ -386,6 +656,8 @@ func (s *Service) appendAttemptFailureFacts(ctx context.Context, tx pgx.Tx, cmd 
 		"workspaceId":                cmd.WorkspaceID,
 		"datasetVersionId":           cmd.DatasetVersionID,
 		"ruleSetRef":                 cmd.RuleSetRef,
+		"engineName":                 cmd.EngineName,
+		"engineVersion":              cmd.engineVersion,
 		"outcome":                    "FAILED",
 		"errorMessage":               errorMessage,
 	}

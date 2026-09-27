@@ -56,6 +56,20 @@ func (s *Service) ConfigureGold(
 	return s
 }
 
+func goldAttemptRunCommand(cmd GoldRunCommand, attemptID uuid.UUID) RunCommand {
+	return RunCommand{
+		WorkspaceID:         cmd.WorkspaceID,
+		DatasetVersionID:    cmd.DatasetVersionID,
+		RuleSetRef:          GoldRuleSetRef,
+		EngineName:          GoldEvaluatorName,
+		engineVersion:       GoldEvaluatorVersion,
+		AssessmentAttemptID: attemptID,
+		ActorID:             cmd.ActorID,
+		TraceID:             cmd.TraceID,
+		Now:                 time.Now().UTC(),
+	}
+}
+
 func (s *Service) RunGold(ctx context.Context, cmd GoldRunCommand) (domain.Assessment, error) {
 	if s == nil || s.goldRepo == nil || s.goldPreflight == nil {
 		return domain.Assessment{}, ErrGoldQualityNotConfigured
@@ -64,15 +78,7 @@ func (s *Service) RunGold(ctx context.Context, cmd GoldRunCommand) (domain.Asses
 	if attemptID == uuid.Nil {
 		attemptID = uuid.New()
 	}
-	base := RunCommand{
-		WorkspaceID:         cmd.WorkspaceID,
-		DatasetVersionID:    cmd.DatasetVersionID,
-		RuleSetRef:          GoldRuleSetRef,
-		AssessmentAttemptID: attemptID,
-		ActorID:             cmd.ActorID,
-		TraceID:             cmd.TraceID,
-		Now:                 time.Now().UTC(),
-	}
+	base := goldAttemptRunCommand(cmd, attemptID)
 	if cmd.AssessmentAttemptID != uuid.Nil {
 		attempt, found, err := s.reconcileAttempt(ctx, base, attemptID)
 		if err != nil {
