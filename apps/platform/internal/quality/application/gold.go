@@ -68,6 +68,8 @@ func (s *Service) RunGold(ctx context.Context, cmd GoldRunCommand) (domain.Asses
 		WorkspaceID:         cmd.WorkspaceID,
 		DatasetVersionID:    cmd.DatasetVersionID,
 		RuleSetRef:          GoldRuleSetRef,
+		EngineName:          GoldEvaluatorName,
+		engineVersion:       GoldEvaluatorVersion,
 		AssessmentAttemptID: attemptID,
 		ActorID:             cmd.ActorID,
 		TraceID:             cmd.TraceID,
