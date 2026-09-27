@@ -138,7 +138,11 @@ func normalizeEngineFindings(policy native.Policy, findings []domain.Finding) ([
 		}
 		seen[finding.RuleID] = struct{}{}
 		switch finding.Status {
-		case domain.FindingPass, domain.FindingFail, domain.FindingSkipped:
+		case domain.FindingPass, domain.FindingFail:
+		case domain.FindingSkipped:
+			if rule.Required {
+				return nil, fmt.Errorf("quality engine skipped required rule %q", finding.RuleID)
+			}
 		default:
 			return nil, fmt.Errorf("quality engine returned unsupported finding status %q for %s", finding.Status, finding.RuleID)
 		}
