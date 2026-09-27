@@ -408,3 +408,64 @@ spec:
     )
     assert response.status_code == 200, response.text
     assert response.json()["findings"][0]["status"] == "PASS"
+
+
+def test_allow_null_string_false_matches_core_semantics() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: quoted-bool
+  version: 1
+spec:
+  rules:
+    - id: RANGE
+      type: range
+      target: score
+      parameters:
+        min: 0
+        max: 1
+        allowNull: "false"
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/quoted-bool.yaml",
+            "ruleSetContent": policy,
+            "headers": ["score"],
+            "rows": [{"score": ""}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["status"] == "FAIL"
+
+
+def test_rule_id_is_preserved_exactly() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: exact-id
+  version: 1
+spec:
+  rules:
+    - id: " RULE WITH SPACE "
+      type: not_null
+      target: id
+      threshold: 1
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/exact-id.yaml",
+            "ruleSetContent": policy,
+            "headers": ["id"],
+            "rows": [{"id": "A"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["ruleId"] == " RULE WITH SPACE "
