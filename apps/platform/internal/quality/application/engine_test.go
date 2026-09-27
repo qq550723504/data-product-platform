@@ -4,7 +4,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	qualityengine "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/engine"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/native"
 )
 
 type testQualityEngine struct {
@@ -50,5 +52,35 @@ func TestServiceRejectsInvalidQualityEngineDescriptor(t *testing.T) {
 	}
 	if _, err := service.resolveEngine("missing"); err == nil {
 		t.Fatal("unregistered engine unexpectedly resolved")
+	}
+}
+
+func TestNormalizeEngineFindingsRejectsSkippedRequiredRule(t *testing.T) {
+	policy := native.Policy{}
+	policy.Spec.Rules = []native.Rule{{
+		ID: "REQUIRED", Dimension: "COMPLETENESS", Type: native.RuleTypeNotNull,
+		Target: "id", Required: true, Severity: "CRITICAL",
+	}}
+	if _, err := normalizeEngineFindings(policy, []domain.Finding{{
+		RuleID: "REQUIRED", Status: domain.FindingSkipped,
+	}}); err == nil {
+		t.Fatal("skipped required rule was accepted")
+	}
+}
+
+func TestNormalizeEngineFindingsAllowsSkippedOptionalRule(t *testing.T) {
+	policy := native.Policy{}
+	policy.Spec.Rules = []native.Rule{{
+		ID: "OPTIONAL", Dimension: "COMPLETENESS", Type: native.RuleTypeNotNull,
+		Target: "id", Required: false, Severity: "WARNING",
+	}}
+	findings, err := normalizeEngineFindings(policy, []domain.Finding{{
+		RuleID: "OPTIONAL", Status: domain.FindingSkipped,
+	}})
+	if err != nil {
+		t.Fatalf("optional skipped rule rejected: %v", err)
+	}
+	if findings[0].Severity != "WARNING" || findings[0].Dimension != "COMPLETENESS" {
+		t.Fatalf("Core metadata not restored: %#v", findings[0])
 	}
 }
