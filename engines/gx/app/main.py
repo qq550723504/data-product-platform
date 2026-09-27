@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import os
 import time
+from decimal import Decimal, InvalidOperation
 from importlib.metadata import version
 from typing import Any
 
@@ -120,6 +121,7 @@ def evaluate(request: EvaluateRequest, _: None = Depends(authorize)) -> Evaluate
 def _load_policy(content: str) -> dict[str, Any]:
     try:
         policy = yaml.safe_load(content)
+        root = yaml.compose(content)
     except yaml.YAMLError as exc:
         raise HTTPException(status_code=400, detail="invalid quality rule set") from exc
     if not isinstance(policy, dict) or policy.get("kind") != "QualityRuleSet":
@@ -127,7 +129,45 @@ def _load_policy(content: str) -> dict[str, Any]:
     rules = policy.get("spec", {}).get("rules")
     if not isinstance(rules, list) or not rules:
         raise HTTPException(status_code=400, detail="quality rule set has no rules")
+    _restore_exact_numeric_scalars(root, rules)
     return policy
+
+
+def _restore_exact_numeric_scalars(root: Any, rules: list[dict[str, Any]]) -> None:
+    if not isinstance(root, yaml.MappingNode):
+        return
+    spec = _mapping_value(root, "spec")
+    if not isinstance(spec, yaml.MappingNode):
+        return
+    rule_nodes = _mapping_value(spec, "rules")
+    if not isinstance(rule_nodes, yaml.SequenceNode):
+        return
+    for rule, rule_node in zip(rules, rule_nodes.value):
+        if not isinstance(rule, dict) or not isinstance(rule_node, yaml.MappingNode):
+            continue
+        threshold = _mapping_value(rule_node, "threshold")
+        if _is_numeric_scalar(threshold):
+            rule["threshold"] = threshold.value
+        parameters_node = _mapping_value(rule_node, "parameters")
+        parameters = rule.get("parameters")
+        if not isinstance(parameters_node, yaml.MappingNode) or not isinstance(parameters, dict):
+            continue
+        for key in ("min", "max", "threshold"):
+            scalar = _mapping_value(parameters_node, key)
+            if _is_numeric_scalar(scalar):
+                parameters[key] = scalar.value
+
+
+def _mapping_value(node: yaml.MappingNode, key: str) -> Any:
+    for index in range(0, len(node.value), 2):
+        key_node = node.value[index]
+        if key_node.value == key:
+            return node.value[index + 1]
+    return None
+
+
+def _is_numeric_scalar(node: Any) -> bool:
+    return isinstance(node, yaml.ScalarNode) and node.tag in {"tag:yaml.org,2002:int", "tag:yaml.org,2002:float"}
 
 
 def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) -> FindingResult:
@@ -136,12 +176,19 @@ def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) ->
     target = str(rule.get("target", "")).strip()
     if not rule_id or rule_type not in SUPPORTED_RULE_TYPES or not target:
         raise HTTPException(status_code=400, detail="invalid supported quality rule")
+    required = bool(rule.get("required"))
+    total = len(dataframe)
     if target not in dataframe.columns:
-        total = len(dataframe)
         return FindingResult(
             ruleId=rule_id,
-            status="FAIL",
-            observed={"affectedCount": total, "total": total, "observedValue": 0.0, "threshold": 1.0},
+            status="FAIL" if required else "SKIPPED",
+            observed={"affectedCount": 1 if required else 0, "total": total, "observedValue": 0.0, "threshold": 1.0},
+        )
+    if total == 0:
+        return FindingResult(
+            ruleId=rule_id,
+            status="FAIL" if required else "SKIPPED",
+            observed={"affectedCount": 1 if required else 0, "total": 0, "observedValue": 0.0, "threshold": 1.0},
         )
 
     if rule_type in {"unique", "duplicate_ratio"}:
@@ -158,7 +205,7 @@ def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) ->
     result = payload.get("result") or {}
     total = len(dataframe)
     unexpected = int(result.get("unexpected_count") or 0)
-    affected = max(0, unexpected + local_invalid)
+    affected = max(0, local_invalid if rule_type == "range" else unexpected + local_invalid)
 
     success = affected == 0
     if rule_type in {"not_null", "completeness_ratio"}:
@@ -268,18 +315,35 @@ def _expectation_for_rule(
         )
 
     if rule_type == "range":
-        minimum = _finite_float(parameters.get("min"))
-        maximum = _finite_float(parameters.get("max"))
+        minimum_decimal = _finite_decimal(parameters.get("min"))
+        maximum_decimal = _finite_decimal(parameters.get("max"))
+        if minimum_decimal > maximum_decimal:
+            raise HTTPException(status_code=400, detail="range minimum exceeds maximum")
+        minimum = float(minimum_decimal)
+        maximum = float(maximum_decimal)
         allow_null = bool(parameters.get("allowNull", True))
         prepared = dataframe.copy()
         normalized = prepared[target].astype("string").str.strip()
         blank_mask = normalized == ""
         normalized = normalized.mask(blank_mask, pd.NA)
         numeric = pd.to_numeric(normalized, errors="coerce")
-        invalid_numeric = int((normalized.notna() & numeric.isna()).sum())
-        missing = int(blank_mask.sum())
         prepared[target] = numeric
-        local_invalid = invalid_numeric + (0 if allow_null else missing)
+
+        local_invalid = 0
+        for raw in dataframe[target].tolist():
+            text = str(raw).strip()
+            if text == "":
+                if not allow_null:
+                    local_invalid += 1
+                continue
+            try:
+                value = Decimal(text)
+            except (InvalidOperation, ValueError):
+                local_invalid += 1
+                continue
+            if not value.is_finite() or value < minimum_decimal or value > maximum_decimal:
+                local_invalid += 1
+
         return (
             gx.expectations.ExpectColumnValuesToBeBetween(
                 column=target,
@@ -332,6 +396,16 @@ def _finite_float(value: Any) -> float:
     except (TypeError, ValueError) as exc:
         raise HTTPException(status_code=400, detail="numeric rule parameter is invalid") from exc
     if not math.isfinite(number):
+        raise HTTPException(status_code=400, detail="numeric rule parameter is invalid")
+    return number
+
+
+def _finite_decimal(value: Any) -> Decimal:
+    try:
+        number = Decimal(str(value))
+    except (InvalidOperation, ValueError) as exc:
+        raise HTTPException(status_code=400, detail="numeric rule parameter is invalid") from exc
+    if not number.is_finite():
         raise HTTPException(status_code=400, detail="numeric rule parameter is invalid")
     return number
 
