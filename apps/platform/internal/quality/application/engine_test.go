@@ -226,3 +226,14 @@ func TestSafeProviderNumberRequiresExactJSONNumberGrammar(t *testing.T) {
 		}
 	}
 }
+
+func TestSafeProviderNumberCanonicalizesHugeJSONNumber(t *testing.T) {
+	raw := json.Number("0." + strings.Repeat("0", 20000) + "1")
+	value, ok := safeProviderNumber(raw)
+	if !ok {
+		t.Fatal("finite JSON number should be accepted")
+	}
+	if _, isFloat := value.(float64); !isFloat {
+		t.Fatalf("provider json.Number was not canonicalized: %#v", value)
+	}
+}
