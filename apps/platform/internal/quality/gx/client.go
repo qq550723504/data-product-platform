@@ -160,7 +160,7 @@ func (c *Client) Evaluate(ctx context.Context, request qualityengine.Request) (q
 		default:
 			return qualityengine.Result{}, qualityengine.NewExecutionError(qualityengine.ErrorProviderInvalidResponse, false)
 		}
-		ruleID := strings.TrimSpace(item.RuleID)
+		ruleID := item.RuleID
 		if ruleID == "" {
 			return qualityengine.Result{}, qualityengine.NewExecutionError(qualityengine.ErrorProviderInvalidResponse, false)
 		}
