@@ -55,16 +55,46 @@ type Result struct {
 	Execution      ExecutionMetadata
 }
 
+type ExecutionErrorCode string
+
+const (
+	ErrorProviderExecutionFailed ExecutionErrorCode = "PROVIDER_EXECUTION_FAILED"
+	ErrorProviderTimeout         ExecutionErrorCode = "PROVIDER_TIMEOUT"
+	ErrorProviderUnavailable     ExecutionErrorCode = "PROVIDER_UNAVAILABLE"
+	ErrorProviderInvalidResponse ExecutionErrorCode = "PROVIDER_INVALID_RESPONSE"
+)
+
 type ExecutionError struct {
-	Code      string
-	Retryable bool
+	code      ExecutionErrorCode
+	retryable bool
 }
 
-func (e ExecutionError) Error() string {
-	if e.Code == "" {
-		return "quality engine execution failed"
+func NewExecutionError(code ExecutionErrorCode, retryable bool) error {
+	if !validExecutionErrorCode(code) {
+		code = ErrorProviderExecutionFailed
+		retryable = false
 	}
-	return "quality engine execution failed: " + e.Code
+	return ExecutionError{code: code, retryable: retryable}
+}
+
+func (e ExecutionError) Code() ExecutionErrorCode { return e.code }
+func (e ExecutionError) Retryable() bool          { return e.retryable }
+
+func (e ExecutionError) Error() string {
+	code := e.code
+	if !validExecutionErrorCode(code) {
+		code = ErrorProviderExecutionFailed
+	}
+	return "quality engine execution failed: " + string(code)
+}
+
+func validExecutionErrorCode(code ExecutionErrorCode) bool {
+	switch code {
+	case ErrorProviderExecutionFailed, ErrorProviderTimeout, ErrorProviderUnavailable, ErrorProviderInvalidResponse:
+		return true
+	default:
+		return false
+	}
 }
 
 func SanitizeError(err error) error {
@@ -72,10 +102,10 @@ func SanitizeError(err error) error {
 		return nil
 	}
 	var classified ExecutionError
-	if errors.As(err, &classified) {
+	if errors.As(err, &classified) && validExecutionErrorCode(classified.code) {
 		return classified
 	}
-	return ExecutionError{Code: "PROVIDER_EXECUTION_FAILED"}
+	return NewExecutionError(ErrorProviderExecutionFailed, false)
 }
 
 type Engine interface {
