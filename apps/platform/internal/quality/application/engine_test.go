@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 	"time"
 
@@ -142,5 +143,36 @@ func TestNormalizeExternalEngineFindingsRejectsSamplesAndFreeFormMetrics(t *test
 		Observed: map[string]any{"observedValue": "https://internal/token=secret"},
 	}}); err == nil {
 		t.Fatal("provider string observation was accepted")
+	}
+}
+
+func TestRegisterEngineRejectsReservedOrDuplicateIdentity(t *testing.T) {
+	service := NewService("", nil, nil, nil, nil)
+	if err := service.RegisterEngine(testQualityEngine{
+		descriptor: qualityengine.Descriptor{Name: "native-quality", Version: "999"},
+	}); err == nil {
+		t.Fatal("reserved native-quality identity was replaceable")
+	}
+
+	custom := testQualityEngine{descriptor: qualityengine.Descriptor{Name: "REFERENCE", Version: "1"}}
+	if err := service.RegisterEngine(custom); err != nil {
+		t.Fatalf("register reference engine: %v", err)
+	}
+	if err := service.RegisterEngine(testQualityEngine{
+		descriptor: qualityengine.Descriptor{Name: " reference ", Version: "2"},
+	}); err == nil {
+		t.Fatal("duplicate normalized engine identity was replaceable")
+	}
+}
+
+func TestSafeProviderNumberRejectsInvalidJSONNumber(t *testing.T) {
+	if _, ok := safeProviderNumber(json.Number("https://internal?token=secret")); ok {
+		t.Fatal("invalid json.Number was accepted")
+	}
+	if _, ok := safeProviderNumber(json.Number("1e10000")); ok {
+		t.Fatal("non-finite json.Number was accepted")
+	}
+	if value, ok := safeProviderNumber(json.Number("1.25")); !ok || value == nil {
+		t.Fatalf("valid json.Number rejected: %#v %v", value, ok)
 	}
 }
