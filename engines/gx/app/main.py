@@ -124,7 +124,8 @@ def evaluate(request: EvaluateRequest, _: None = Depends(authorize)) -> Evaluate
     if unsupported:
         raise HTTPException(status_code=409, detail="rule set contains unsupported GX rule types")
 
-    dataframe = pd.DataFrame(request.rows, columns=request.headers)
+    headers = list(dict.fromkeys(request.headers))
+    dataframe = pd.DataFrame(request.rows, columns=headers)
 
     context = gx.get_context(mode="ephemeral")
     source = context.data_sources.add_pandas("request")
@@ -215,7 +216,7 @@ def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) ->
         return FindingResult(
             ruleId=rule_id,
             status="FAIL" if required else "SKIPPED",
-            observed={"affectedCount": 1 if required else 0, "total": 0, "observedValue": 0.0, "threshold": 1.0},
+            observed={"affectedCount": 0, "total": 0, "observedValue": 0.0, "threshold": 1.0},
         )
 
     if rule_type in {"unique", "duplicate_ratio"}:
@@ -252,7 +253,7 @@ def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) ->
 
 
 def _evaluate_uniqueness_rule(dataframe: pd.DataFrame, rule: dict[str, Any]) -> FindingResult:
-    rule_id = str(rule["id"]).strip()
+    rule_id = str(rule["id"])
     rule_type = str(rule["type"]).strip().lower()
     target = str(rule["target"]).strip()
     threshold = _ratio_threshold_decimal(rule, Decimal("1") if rule_type == "unique" else Decimal("0"))
