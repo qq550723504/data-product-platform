@@ -145,7 +145,9 @@ func validateEngineCapabilities(descriptor qualityengine.Descriptor, policy nati
 	return nil
 }
 
-var jsonNumberPattern = regexp.MustCompile("^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$")\n\nfunc safeProviderNumber(value any) (any, bool) {
+var jsonNumberPattern = regexp.MustCompile("^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$")
+
+func safeProviderNumber(value any) (any, bool) {
 	switch typed := value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
 		return typed, true
