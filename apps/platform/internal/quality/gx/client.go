@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/tabular"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
 	qualityengine "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/engine"
 )
