@@ -239,3 +239,77 @@ spec:
     finding = response.json()["findings"][0]
     assert finding["status"] == "FAIL"
     assert finding["observed"]["affectedCount"] == 1
+
+
+def test_ratio_threshold_preserves_exact_decimal_semantics() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: exact-ratio
+  version: 1
+spec:
+  rules:
+    - id: COMPLETE
+      type: completeness_ratio
+      target: id
+      threshold: 0.50000000000000001
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/exact-ratio.yaml",
+            "ruleSetContent": policy,
+            "headers": ["id"],
+            "rows": [{"id": "A"}, {"id": ""}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["status"] == "FAIL"
+
+
+def test_enum_policy_values_are_trimmed_but_cells_remain_exact() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: enum-trim
+  version: 1
+spec:
+  rules:
+    - id: ENUM
+      type: enum
+      target: level
+      parameters:
+        values: [" HIGH "]
+        allowNull: false
+      required: true
+"""
+    exact = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/enum-trim.yaml",
+            "ruleSetContent": policy,
+            "headers": ["level"],
+            "rows": [{"level": "HIGH"}],
+        },
+    )
+    assert exact.status_code == 200, exact.text
+    assert exact.json()["findings"][0]["status"] == "PASS"
+
+    padded = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111112",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/enum-trim.yaml",
+            "ruleSetContent": policy,
+            "headers": ["level"],
+            "rows": [{"level": " HIGH "}],
+        },
+    )
+    assert padded.status_code == 200, padded.text
+    assert padded.json()["findings"][0]["status"] == "FAIL"
