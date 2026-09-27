@@ -204,3 +204,33 @@ func TestClientPreservesExactRuleID(t *testing.T) {
 		t.Fatalf("rule id was normalized: %#v", result.Findings)
 	}
 }
+
+func TestClientRejectsInvalidUTF8BeforeTransport(t *testing.T) {
+	calls := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer server.Close()
+
+	client, err := NewClient(Config{BaseURL: server.URL, ExpectedEngineVersion: "1.23.2"}, server.Client())
+	if err != nil {
+		t.Fatalf("new client: %v", err)
+	}
+	_, err = client.Evaluate(context.Background(), qualityengine.Request{
+		AttemptID: uuid.New(), DatasetVersionID: uuid.New(),
+		Dataset: qualityengine.DatasetContext{Table: tabular.Table{
+			Headers: []string{"id"},
+			Rows: []map[string]string{
+				{"id": string([]byte{0xff})},
+				{"id": string([]byte{0xfe})},
+			},
+		}},
+	})
+	if err == nil || err.Error() != "quality engine execution failed: PROVIDER_EXECUTION_FAILED" {
+		t.Fatalf("invalid UTF-8 error = %v, want PROVIDER_EXECUTION_FAILED", err)
+	}
+	if calls != 0 {
+		t.Fatalf("provider calls = %d, want 0", calls)
+	}
+}
