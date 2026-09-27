@@ -119,6 +119,15 @@ func (c *Client) Probe(ctx context.Context) error {
 		strings.TrimSpace(health.EngineVersion) != c.descriptor.Version {
 		return qualityengine.NewExecutionError(qualityengine.ErrorProviderInvalidResponse, false)
 	}
+	reported := make(map[string]struct{}, len(health.Capabilities))
+	for _, capability := range health.Capabilities {
+		reported[strings.ToLower(strings.TrimSpace(capability))] = struct{}{}
+	}
+	for _, capability := range c.descriptor.Capabilities {
+		if _, ok := reported[capability]; !ok {
+			return qualityengine.NewExecutionError(qualityengine.ErrorProviderInvalidResponse, false)
+		}
+	}
 	return nil
 }
 
