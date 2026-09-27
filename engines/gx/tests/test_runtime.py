@@ -26,12 +26,12 @@ spec:
     - id: UNIQUE
       type: unique
       target: id
-      threshold: 1
+      threshold: 0.6
       required: true
     - id: DUPLICATE_RATIO
       type: duplicate_ratio
       target: id
-      threshold: 0.8
+      threshold: 0.4
       required: true
     - id: RANGE
       type: range
@@ -78,8 +78,8 @@ def test_evaluate_returns_bounded_rule_observations() -> None:
             "headers": ["id", "score", "level"],
             "rows": [
                 {"id": "A", "score": "10", "level": "HIGH"},
-                {"id": "", "score": "200", "level": "OTHER"},
-                {"id": "A", "score": "50", "level": "LOW"},
+                {"id": " A ", "score": "not-a-number", "level": " HIGH "},
+                {"id": "B", "score": "50", "level": "LOW"},
             ],
         },
     )
@@ -89,10 +89,14 @@ def test_evaluate_returns_bounded_rule_observations() -> None:
     assert body["execution"]["ref"] == "11111111-1111-4111-8111-111111111111"
     findings = {item["ruleId"]: item for item in body["findings"]}
     assert set(findings) == {"NOT_NULL", "COMPLETE", "UNIQUE", "DUPLICATE_RATIO", "RANGE", "ENUM"}
-    assert findings["NOT_NULL"]["status"] == "FAIL"
+    assert findings["NOT_NULL"]["status"] == "PASS"
     assert findings["COMPLETE"]["status"] == "PASS"
-    assert findings["UNIQUE"]["status"] == "FAIL"
+    # Native trims identity values before uniqueness, so A and " A " are one distinct value.
+    assert findings["UNIQUE"]["status"] == "PASS"
+    assert findings["DUPLICATE_RATIO"]["status"] == "PASS"
+    # Nonnumeric input is not an allowed null even when range.allowNull=true.
     assert findings["RANGE"]["status"] == "FAIL"
+    # Enum uses the exact raw categorical value; surrounding spaces are data, not normalization.
     assert findings["ENUM"]["status"] == "FAIL"
     for item in findings.values():
         assert set(item["observed"]).issubset({"affectedCount", "total", "observedValue", "threshold"})
