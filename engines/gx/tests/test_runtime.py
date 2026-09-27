@@ -752,7 +752,13 @@ spec:
         },
     )
     assert response.status_code == 200, response.text
-    assert response.json()["findings"][0]["status"] == "FAIL"
+    finding = response.json()["findings"][0]
+    assert finding["status"] == "FAIL"
+    assert finding["observed"]["observedValue"] == {"numerator": 2, "denominator": 3}
+    assert finding["observed"]["threshold"] == {
+        "numerator": 6666666666666666666666666667,
+        "denominator": 10000000000000000000000000000,
+    }
 
 
 def test_enum_policy_values_use_core_whitespace_definition() -> None:
