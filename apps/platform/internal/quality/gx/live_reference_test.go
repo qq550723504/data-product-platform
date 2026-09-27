@@ -3,6 +3,7 @@ package gx
 import (
 	"context"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -55,7 +56,7 @@ spec:
       dimension: UNIQUENESS
       type: unique
       target: id
-      threshold: 1
+      threshold: 0.6
       required: true
       severity: HIGH
     - id: DUPLICATE_RATIO
@@ -63,7 +64,7 @@ spec:
       dimension: UNIQUENESS
       type: duplicate_ratio
       target: id
-      threshold: 1
+      threshold: 0.4
       required: true
       severity: HIGH
     - id: RANGE
@@ -92,17 +93,14 @@ spec:
     highFailure: REVIEW
     warningFailure: PASS_WITH_WARNING
 `)
+	table, err := tabular.ReadCSV(strings.NewReader("id,score,level\nA,10,HIGH\n A ,not-a-number, HIGH \nB,50,LOW\n"))
+	if err != nil {
+		t.Fatalf("read contract CSV: %v", err)
+	}
 	request := qualityengine.Request{
 		AttemptID: uuid.New(), DatasetVersionID: uuid.New(),
 		RuleSet: qualityengine.RuleSet{Ref: "quality/gx-live.yaml", Content: ruleSet},
-		Dataset: qualityengine.DatasetContext{Table: tabular.Table{
-			Headers: []string{"id", "score", "level"},
-			Rows: []map[string]string{
-				{"id": "A", "score": "10", "level": "HIGH"},
-				{"id": "", "score": "200", "level": "OTHER"},
-				{"id": "A", "score": "50", "level": "LOW"},
-			},
-		}},
+		Dataset: qualityengine.DatasetContext{Table: table},
 	}
 
 	nativeResult, err := native.NewEngine().Evaluate(ctx, request)
