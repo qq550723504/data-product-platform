@@ -127,7 +127,7 @@ func (c *Client) Evaluate(ctx context.Context, request qualityengine.Request) (q
 		RuleSetRef:       request.RuleSet.Ref,
 		RuleSetContent:   string(request.RuleSet.Content),
 		Headers:          append([]string(nil), request.Dataset.Table.Headers...),
-		Rows:             cloneRows(request.Dataset.Table.Rows),
+		Rows:             providerRows(request.Dataset.Table),
 	}
 	var response evaluateResponse
 	if err := c.request(ctx, http.MethodPost, "/v1/evaluate", payload, &response); err != nil {
@@ -214,14 +214,14 @@ func (c *Client) request(ctx context.Context, method, path string, payload any, 
 	return nil
 }
 
-func cloneRows(rows []map[string]string) []map[string]string {
-	result := make([]map[string]string, 0, len(rows))
-	for _, row := range rows {
-		copyRow := make(map[string]string, len(row))
-		for key, value := range row {
-			copyRow[key] = value
+func providerRows(table tabular.Table) []map[string]string {
+	result := make([]map[string]string, 0, len(table.Rows))
+	for rowIndex := range table.Rows {
+		row := make(map[string]string, len(table.Headers))
+		for _, header := range table.Headers {
+			row[header] = table.RawValue(rowIndex, header)
 		}
-		result = append(result, copyRow)
+		result = append(result, row)
 	}
 	return result
 }
