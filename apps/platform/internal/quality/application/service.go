@@ -204,6 +204,24 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	if version.Status != datasetdomain.VersionReady && version.Status != datasetdomain.VersionSuperseded {
 		return domain.Assessment{}, fmt.Errorf("quality checks require READY or SUPERSEDED DatasetVersion, got %s", version.Status)
 	}
+	// Policy resolution and capability checks are local preflight. They happen
+	// before the physical engine attempt is claimed/costed because no provider
+	// invocation has occurred yet.
+	policyPath, err := industrypack.ResolvePath(s.industryPackRoot, cmd.RuleSetRef)
+	if err != nil {
+		return domain.Assessment{}, err
+	}
+	policyContent, err := os.ReadFile(policyPath)
+	if err != nil {
+		return domain.Assessment{}, fmt.Errorf("read quality policy %q: %w", policyPath, err)
+	}
+	corePolicy, err := native.LoadPolicyBytes(policyContent, cmd.RuleSetRef)
+	if err != nil {
+		return domain.Assessment{}, err
+	}
+	if err := validateEngineCapabilities(descriptor, corePolicy); err != nil {
+		return domain.Assessment{}, err
+	}
 	var result domain.Assessment
 	var replayAssessmentID uuid.UUID
 	err = s.tx.WithAdvisoryLock(ctx, assessmentAttemptLockPrefix+attemptID.String(), func(ctx context.Context) error {
@@ -228,33 +246,6 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 			}
 			replayAssessmentID = *state.AssessmentID
 			return nil
-		}
-		policyPath, err := industrypack.ResolvePath(s.industryPackRoot, cmd.RuleSetRef)
-		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("resolve quality policy: %v; record attempt outcome: %w", err, outcomeErr)
-			}
-			return err
-		}
-		policyContent, err := os.ReadFile(policyPath)
-		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("read quality policy: %v; record attempt outcome: %w", err, outcomeErr)
-			}
-			return fmt.Errorf("read quality policy %q: %w", policyPath, err)
-		}
-		corePolicy, err := native.LoadPolicyBytes(policyContent, cmd.RuleSetRef)
-		if err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("validate frozen quality policy: %v; record attempt outcome: %w", err, outcomeErr)
-			}
-			return err
-		}
-		if err := validateEngineCapabilities(provider.Descriptor(), corePolicy); err != nil {
-			if outcomeErr := s.recordAttemptFailureAfterEvaluation(ctx, cmd, attemptID, err.Error(), time.Now().UTC()); outcomeErr != nil {
-				return fmt.Errorf("validate quality engine capabilities: %v; record attempt outcome: %w", err, outcomeErr)
-			}
-			return err
 		}
 		reader, err := s.store.Get(ctx, version.StorageURI)
 		if err != nil {
