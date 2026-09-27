@@ -55,6 +55,7 @@ func (h *Handler) Register(mux *http.ServeMux) {
 type runRequest struct {
 	WorkspaceID         string `json:"workspaceId"`
 	RuleSetRef          string `json:"ruleSetRef"`
+	EngineName          string `json:"engineName"`
 	AssessmentAttemptID string `json:"assessmentAttemptId"`
 }
 
@@ -103,6 +104,7 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 		WorkspaceID:         workspaceID,
 		DatasetVersionID:    versionID,
 		RuleSetRef:          ruleSetRef,
+		EngineName:          strings.TrimSpace(req.EngineName),
 		AssessmentAttemptID: assessmentAttemptID,
 		ActorID:             actorID,
 		TraceID:             httpserver.RequestID(r.Context()),
