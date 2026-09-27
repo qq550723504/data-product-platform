@@ -95,8 +95,9 @@ spec:
 		WorkspaceID: workspaceID, DatasetVersionID: version.ID, RuleSetRef: "engine.yaml",
 		EngineName: "failing-engine", AssessmentAttemptID: attemptID,
 	})
-	if err == nil || !strings.Contains(err.Error(), "provider execution unavailable") {
-		t.Fatalf("engine failure error = %v", err)
+	if err == nil || !strings.Contains(err.Error(), "PROVIDER_EXECUTION_FAILED") ||
+		strings.Contains(err.Error(), "provider execution unavailable") {
+		t.Fatalf("engine failure error was not sanitized: %v", err)
 	}
 	if provider.calls != 1 {
 		t.Fatalf("provider calls = %d, want 1", provider.calls)
@@ -132,6 +133,18 @@ spec:
 	}
 	if storedEngine != "failing-engine" || storedVersion != "1" || outcome != "FAILED" {
 		t.Fatalf("failed attempt = engine %q/%q outcome %q", storedEngine, storedVersion, outcome)
+	}
+	var persistedError string
+	if err := pool.QueryRow(ctx, `
+		SELECT COALESCE(error_message,'')
+		FROM quality_assessment_attempt_outcome
+		WHERE attempt_id=$1
+	`, attemptID).Scan(&persistedError); err != nil {
+		t.Fatalf("read failed attempt error: %v", err)
+	}
+	if !strings.Contains(persistedError, "PROVIDER_EXECUTION_FAILED") ||
+		strings.Contains(persistedError, "provider execution unavailable") {
+		t.Fatalf("persisted provider error was not sanitized: %q", persistedError)
 	}
 
 	_, replayErr := service.Run(ctx, qualityapp.RunCommand{
