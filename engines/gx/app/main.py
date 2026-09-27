@@ -173,6 +173,13 @@ def _restore_exact_numeric_scalars(root: Any, rules: list[dict[str, Any]]) -> No
     for rule, rule_node in zip(rules, rule_nodes.value):
         if not isinstance(rule, dict) or not isinstance(rule_node, yaml.MappingNode):
             continue
+        # Go yaml.v3 decodes these typed struct fields as strings even when an
+        # unquoted scalar resembles a YAML boolean/number. Recover the exact
+        # scalar spelling from the compose tree before adapter evaluation.
+        for key in ("id", "stage", "dimension", "type", "target", "severity"):
+            scalar = _mapping_value(rule_node, key)
+            if isinstance(scalar, yaml.ScalarNode):
+                rule[key] = scalar.value
         threshold = _mapping_value(rule_node, "threshold")
         if _is_numeric_scalar(threshold):
             rule["threshold"] = threshold.value
