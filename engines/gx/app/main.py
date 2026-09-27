@@ -197,6 +197,13 @@ def _is_numeric_scalar(node: Any) -> bool:
     return isinstance(node, yaml.ScalarNode) and node.tag in {"tag:yaml.org,2002:int", "tag:yaml.org,2002:float"}
 
 
+CORE_TRIM_CHARS = " \t\n\v\f\r\u0085\u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000"
+
+
+def _core_trim(value: Any) -> str:
+    return str(value).strip(CORE_TRIM_CHARS)
+
+
 def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) -> FindingResult:
     raw_rule_id = rule.get("id", "")
     rule_id = str(raw_rule_id)
@@ -244,7 +251,7 @@ def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) ->
         observed_value = max(0.0, min(1.0, 1.0 - affected / total))
 
     observed = {
-        "affectedCount": affected,
+        "affectedCount": 0 if success else affected,
         "total": total,
         "observedValue": observed_value,
         "threshold": float(threshold),
@@ -255,11 +262,11 @@ def _evaluate_rule(batch: Any, dataframe: pd.DataFrame, rule: dict[str, Any]) ->
 def _evaluate_uniqueness_rule(dataframe: pd.DataFrame, rule: dict[str, Any]) -> FindingResult:
     rule_id = str(rule["id"])
     rule_type = str(rule["type"]).strip().lower()
-    target = str(rule["target"]).strip()
+    target = str(rule["target"])
     threshold = _ratio_threshold_decimal(rule, Decimal("1") if rule_type == "unique" else Decimal("0"))
 
     prepared = dataframe.copy()
-    normalized = prepared[target].astype("string").str.strip()
+    normalized = prepared[target].astype("string").map(_core_trim).astype("string")
     normalized = normalized.mask(normalized == "", pd.NA)
     prepared[target] = normalized
     non_null = int(normalized.notna().sum())
@@ -307,7 +314,7 @@ def _evaluate_uniqueness_rule(dataframe: pd.DataFrame, rule: dict[str, Any]) -> 
         ruleId=rule_id,
         status="PASS" if success else "FAIL",
         observed={
-            "affectedCount": duplicate_count,
+            "affectedCount": 0 if success else duplicate_count,
             "total": non_null,
             "observedValue": observed_value,
             "threshold": float(threshold),
@@ -327,13 +334,13 @@ def _expectation_for_rule(
     dataframe: pd.DataFrame, rule: dict[str, Any]
 ) -> tuple[Any, pd.DataFrame, Decimal, int]:
     rule_type = str(rule["type"]).strip().lower()
-    target = str(rule["target"]).strip()
+    target = str(rule["target"])
     parameters = rule.get("parameters") or {}
 
     if rule_type in {"not_null", "completeness_ratio"}:
         threshold = _ratio_threshold_decimal(rule, Decimal("1"))
         prepared = dataframe.copy()
-        normalized = prepared[target].astype("string").str.strip()
+        normalized = prepared[target].astype("string").map(_core_trim).astype("string")
         normalized = normalized.mask(normalized == "", pd.NA)
         prepared[target] = normalized
         return (
@@ -352,7 +359,7 @@ def _expectation_for_rule(
         maximum = float(maximum_decimal)
         allow_null = _parameter_bool(parameters.get("allowNull"), True)
         prepared = dataframe.copy()
-        normalized = prepared[target].astype("string").str.strip()
+        normalized = prepared[target].astype("string").map(_core_trim).astype("string")
         blank_mask = normalized == ""
         normalized = normalized.mask(blank_mask, pd.NA)
         numeric = pd.to_numeric(normalized, errors="coerce")
@@ -360,7 +367,7 @@ def _expectation_for_rule(
 
         local_invalid = 0
         for raw in dataframe[target].tolist():
-            text = str(raw).strip()
+            text = _core_trim(raw)
             if text == "":
                 if not allow_null:
                     local_invalid += 1
