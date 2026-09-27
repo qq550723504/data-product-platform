@@ -693,3 +693,34 @@ spec:
     assert findings["COMPLETE"]["observed"]["affectedCount"] == 0
     assert findings["UNIQUE"]["status"] == "PASS"
     assert findings["UNIQUE"]["observed"]["affectedCount"] == 0
+
+
+def test_boolean_looking_typed_string_fields_keep_original_scalar_spelling() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: boolean-looking-target
+  version: 1
+spec:
+  rules:
+    - id: true
+      type: not_null
+      target: true
+      threshold: 1
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/boolean-looking-target.yaml",
+            "ruleSetContent": policy,
+            "headers": ["true"],
+            "rows": [{"true": "value"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    finding = response.json()["findings"][0]
+    assert finding["ruleId"] == "true"
+    assert finding["status"] == "PASS"
