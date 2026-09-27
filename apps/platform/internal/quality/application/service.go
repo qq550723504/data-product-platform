@@ -47,30 +47,30 @@ const assessmentAttemptLeaseDuration = time.Hour
 const assessmentAttemptLockPrefix = "quality-assessment-attempt:"
 
 type Service struct {
-	industryPackRoot string
-	tx               *transaction.Manager
-	datasetRepo      *datasetinfra.PostgresRepository
-	repo             *infrastructure.PostgresRepository
-	store            ObjectStore
-	evidenceRepo     *evidence.QueryRepository
-	goldRepo         *goldinfra.PostgresRepository
-	goldPreflight    GoldPreflightProvider
-	engines          map[string]qualityengine.Engine
+	industryPackRoot  string
+	tx                *transaction.Manager
+	datasetRepo       *datasetinfra.PostgresRepository
+	repo              *infrastructure.PostgresRepository
+	store             ObjectStore
+	evidenceRepo      *evidence.QueryRepository
+	goldRepo          *goldinfra.PostgresRepository
+	goldPreflight     GoldPreflightProvider
+	engines           map[string]qualityengine.Engine
 	engineDescriptors map[string]qualityengine.Descriptor
-	defaultEngine    string
+	defaultEngine     string
 }
 
 func NewService(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, repo *infrastructure.PostgresRepository, store ObjectStore, evidenceRepos ...*evidence.QueryRepository) *Service {
 	nativeEngine := native.NewEngine()
 	service := &Service{
-		industryPackRoot: industryPackRoot,
-		tx:               tx,
-		datasetRepo:      datasetRepo,
-		repo:             repo,
-		store:            store,
-		engines:            map[string]qualityengine.Engine{},
-		engineDescriptors:  map[string]qualityengine.Descriptor{},
-		defaultEngine:      strings.ToLower(nativeEngine.Descriptor().Name),
+		industryPackRoot:  industryPackRoot,
+		tx:                tx,
+		datasetRepo:       datasetRepo,
+		repo:              repo,
+		store:             store,
+		engines:           map[string]qualityengine.Engine{},
+		engineDescriptors: map[string]qualityengine.Descriptor{},
+		defaultEngine:     strings.ToLower(nativeEngine.Descriptor().Name),
 	}
 	nativeDescriptor := nativeEngine.Descriptor()
 	service.engines[service.defaultEngine] = nativeEngine
