@@ -84,3 +84,22 @@ func TestNormalizeEngineFindingsAllowsSkippedOptionalRule(t *testing.T) {
 		t.Fatalf("Core metadata not restored: %#v", findings[0])
 	}
 }
+
+func TestSanitizeErrorRejectsFreeFormClassifiedCode(t *testing.T) {
+	raw := qualityengine.NewExecutionError(
+		qualityengine.ExecutionErrorCode("https://provider.internal?token=secret"),
+		true,
+	)
+	safe := qualityengine.SanitizeError(raw)
+	if safe.Error() != "quality engine execution failed: PROVIDER_EXECUTION_FAILED" {
+		t.Fatalf("unsafe classified error survived: %q", safe.Error())
+	}
+}
+
+func TestSanitizeErrorPreservesAllowlistedCode(t *testing.T) {
+	raw := qualityengine.NewExecutionError(qualityengine.ErrorProviderTimeout, true)
+	safe := qualityengine.SanitizeError(raw)
+	if safe.Error() != "quality engine execution failed: PROVIDER_TIMEOUT" {
+		t.Fatalf("allowlisted classified error changed: %q", safe.Error())
+	}
+}
