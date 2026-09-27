@@ -69,7 +69,7 @@ def authorize(authorization: str | None = Header(default=None)) -> None:
 
 
 @app.get("/health")
-def health(_: None = Depends(authorize)) -> dict[str, Any]:
+def health() -> dict[str, Any]:
     return {
         "status": "ok",
         "engineName": ENGINE_NAME,
