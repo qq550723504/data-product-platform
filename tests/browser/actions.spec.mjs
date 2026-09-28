@@ -29,33 +29,7 @@ test("workbench surfaces actionable review and release items", async ({ page }) 
     `/products/${ids.product}#releases`,
   );
   await attention.getByRole("link", { name: "去发布", exact: true }).click();
-  await expect(page).toHaveURL(new RegExp(`/products/${ids.product}#releasesimport { test, expect } from "@playwright/test";
-import { ids, fixtureToken } from "./fixture-server.mjs";
-const control = "http://127.0.0.1:4400/__control";
-const headers = { "x-fixture-token": fixtureToken };
-const productPath = `/products/${ids.product}`;
-async function scenario(request, value, reset = false) {
-  const response = await request.post(`${control}/${reset ? "reset" : "scenario"}`, { headers, data: { scenario: value } });
-  expect(response.ok()).toBeTruthy();
-}
-async function state(request) {
-  const response = await request.get(`${control}/state`, { headers });
-  expect(response.ok()).toBeTruthy();
-  return response.json();
-}
-async function writes(request) { return (await state(request)).requests.filter((call) => call.method === "POST"); }
-
-test.beforeEach(async ({ request }) => { await scenario(request, "ready", true); });
-
-test("workbench surfaces actionable review and release items", async ({ page }) => {
-  await page.goto("/");
-  const attention = page.getByTestId("needs-attention");
-  await expect(attention).toBeVisible();
-  await expect(attention.getByRole("heading", { name: "Needs Attention", exact: true })).toBeVisible();
-  await expect(attention.getByText("实体审核队列", { exact: true })).toBeVisible();
-  await expect(attention.getByText("Release 待发布", { exact: true })).toBeVisible();
-  await expect(attention.getByRole("link", { name: "进入审核", exact: true })).toHaveAttribute("href", "/reviews");
-));
+  await expect(page).toHaveURL(new RegExp(`/products/${ids.product}#releases$`));
   await expect(page.locator("#releases")).toBeVisible();
 });
 
