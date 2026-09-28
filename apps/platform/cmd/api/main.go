@@ -54,6 +54,7 @@ import (
 	productinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
 	producthttp "github.com/qq550723504/data-product-platform/apps/platform/internal/product/transport/http"
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
+	qualitygx "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/gx"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
 	qualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel"
@@ -240,6 +241,30 @@ func main() {
 	qualityRepo := qualityinfra.NewPostgresRepository(db)
 	qualityService := qualityapp.NewService(cfg.IndustryPackRoot, txManager, datasetRepo, qualityRepo, objectStore, evidence.NewQueryRepository(db)).
 		ConfigureGold(goldRepo, annotationService)
+	if cfg.GX.Enabled {
+		gxClient, err := qualitygx.NewClient(qualitygx.Config{
+			BaseURL:               cfg.GX.BaseURL,
+			Token:                 cfg.GX.Token,
+			ExpectedEngineVersion: cfg.GX.ExpectedEngineVersion,
+			Timeout:               time.Duration(cfg.GX.TimeoutSeconds) * time.Second,
+		}, nil)
+		if err != nil {
+			logger.Error("create GX quality engine", "error", err)
+			os.Exit(1)
+		}
+		if err := gxClient.Probe(ctx); err != nil {
+			logger.Error("probe GX quality engine", "error", err)
+			os.Exit(1)
+		}
+		if err := qualityService.RegisterEngine(gxClient); err != nil {
+			logger.Error("register GX quality engine", "error", err)
+			os.Exit(1)
+		}
+		logger.Info("GX quality engine enabled",
+			"base_url", cfg.GX.BaseURL,
+			"engine_version", cfg.GX.ExpectedEngineVersion,
+		)
+	}
 	qualityHandler := qualityhttp.NewHandlerWithCost(qualityService, qualityRepo, evidence.NewQueryRepository(db), cost.NewQueryRepository(db))
 
 	certificationProfileRepo := certificationinfra.NewProfileRepository(db)

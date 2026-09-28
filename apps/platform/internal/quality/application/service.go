@@ -9,11 +9,13 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"math/big"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -153,6 +155,52 @@ func validateEngineCapabilities(descriptor qualityengine.Descriptor, policy nati
 }
 
 var jsonNumberPattern = regexp.MustCompile("^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$")
+var jsonIntegerPattern = regexp.MustCompile("^-?(?:0|[1-9][0-9]*)$")
+
+func safeProviderRatioInteger(value any) (json.Number, bool) {
+	var integer big.Int
+	switch typed := value.(type) {
+	case int:
+		integer.SetInt64(int64(typed))
+	case int32:
+		integer.SetInt64(int64(typed))
+	case int64:
+		integer.SetInt64(typed)
+	case uint:
+		integer.SetUint64(uint64(typed))
+	case uint32:
+		integer.SetUint64(uint64(typed))
+	case uint64:
+		integer.SetUint64(typed)
+	case json.Number:
+		text := typed.String()
+		if !jsonIntegerPattern.MatchString(text) {
+			return "", false
+		}
+		if _, ok := integer.SetString(text, 10); !ok {
+			return "", false
+		}
+	default:
+		return "", false
+	}
+	return json.Number(integer.String()), true
+}
+
+func validateExternalEngineTable(table tabular.Table) error {
+	for _, header := range table.Headers {
+		if !utf8.ValidString(header) {
+			return fmt.Errorf("quality engine input contains invalid UTF-8")
+		}
+	}
+	for rowIndex := range table.Rows {
+		for _, header := range table.Headers {
+			if !utf8.ValidString(table.RawValue(rowIndex, header)) {
+				return fmt.Errorf("quality engine input contains invalid UTF-8")
+			}
+		}
+	}
+	return nil
+}
 
 func safeProviderNumber(value any) (any, bool) {
 	switch typed := value.(type) {
@@ -215,9 +263,15 @@ func sanitizeProviderObservation(observed map[string]any) (map[string]any, error
 			if ratioKey != "numerator" && ratioKey != "denominator" {
 				return nil, fmt.Errorf("provider observation contains unsupported ratio field")
 			}
-			safeValue, ok := safeProviderNumber(ratioValue)
+			safeValue, ok := safeProviderRatioInteger(ratioValue)
 			if !ok {
 				return nil, fmt.Errorf("provider observation contains unsupported ratio value")
+			}
+			if ratioKey == "denominator" {
+				var denominator big.Int
+				if _, ok := denominator.SetString(safeValue.String(), 10); !ok || denominator.Sign() <= 0 {
+					return nil, fmt.Errorf("provider observation ratio denominator must be positive")
+				}
 			}
 			safeRatio[ratioKey] = safeValue
 		}
@@ -362,6 +416,11 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	}
 	if closeErr != nil {
 		return domain.Assessment{}, fmt.Errorf("close DatasetVersion object: %w", closeErr)
+	}
+	if cmd.EngineName != strings.ToLower(native.EvaluatorName) {
+		if err := validateExternalEngineTable(table); err != nil {
+			return domain.Assessment{}, err
+		}
 	}
 	var evidencePresent *bool
 	if s.evidenceRepo != nil {

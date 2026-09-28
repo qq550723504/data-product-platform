@@ -496,3 +496,94 @@ spec:
 		t.Fatalf("stored engine = %q/%q, want native-quality/2", storedEngine, storedVersion)
 	}
 }
+
+func TestInvalidUTF8ExternalEngineInputFailsBeforeAttemptClaim(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	workspaceID := uuid.New()
+	txManager := transaction.NewManager(pool)
+	datasetRepo := datasetinfra.NewPostgresRepository(pool)
+	store := newMemoryStore()
+	createDataset := datasetapp.NewCreateDatasetService(txManager, datasetRepo, resourceinfra.NewPostgresRepository())
+	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, store)
+	dataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "ENGINE-UTF8")
+
+	invalidCSV := append([]byte("company_id\n"), 0xff)
+	invalidCSV = append(invalidCSV, '\n')
+	version, err := uploadDataset.Handle(ctx, datasetapp.UploadVersionCommand{
+		DatasetID:      dataset.ID,
+		Filename:       "invalid-utf8.csv",
+		ContentType:    "text/csv",
+		Content:        invalidCSV,
+		IdempotencyKey: "engine-invalid-utf8-" + uuid.NewString(),
+	})
+	if err != nil {
+		t.Fatalf("upload invalid UTF-8 fixture: %v", err)
+	}
+
+	root := t.TempDir()
+	content := []byte(`apiVersion: quality/v1
+kind: QualityRuleSet
+metadata:
+  name: engine-utf8
+  version: 1.0.0
+spec:
+  rules:
+    - id: QA-COMPANY-ID
+      dimension: COMPLETENESS
+      type: not_null
+      target: company_id
+      threshold: 1
+      required: true
+      severity: CRITICAL
+  gate:
+    criticalFailure: FAIL
+    highFailure: REVIEW
+    warningFailure: PASS_WITH_WARNING
+`)
+	if err := os.WriteFile(filepath.Join(root, "engine.yaml"), content, 0o600); err != nil {
+		t.Fatalf("write policy: %v", err)
+	}
+
+	service := qualityapp.NewService(root, txManager, datasetRepo, qualityinfra.NewPostgresRepository(pool), store)
+	provider := &failingQualityEngine{}
+	if err := service.RegisterEngine(provider); err != nil {
+		t.Fatalf("register external engine: %v", err)
+	}
+	attemptID := uuid.New()
+	_, err = service.Run(ctx, qualityapp.RunCommand{
+		WorkspaceID: workspaceID, DatasetVersionID: version.ID, RuleSetRef: "engine.yaml",
+		EngineName: "failing-engine", AssessmentAttemptID: attemptID,
+	})
+	if err == nil || !strings.Contains(err.Error(), "invalid UTF-8") {
+		t.Fatalf("invalid UTF-8 preflight error = %v", err)
+	}
+	if provider.calls != 0 {
+		t.Fatalf("provider calls = %d, want 0", provider.calls)
+	}
+
+	var attemptCount, costCount int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM quality_assessment_attempt WHERE id=$1`, attemptID).Scan(&attemptCount); err != nil {
+		t.Fatalf("count UTF-8 attempts: %v", err)
+	}
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM cost_event e
+		JOIN cost_allocation a ON a.cost_event_id=e.id
+		WHERE a.quality_assessment_attempt_id=$1
+	`, attemptID).Scan(&costCount); err != nil {
+		t.Fatalf("count UTF-8 costs: %v", err)
+	}
+	if attemptCount != 0 || costCount != 0 {
+		t.Fatalf("invalid UTF-8 created attempt/cost = %d/%d, want 0/0", attemptCount, costCount)
+	}
+}

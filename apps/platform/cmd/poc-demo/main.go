@@ -178,7 +178,7 @@ func validateConfig(cfg config.Config, ack string) error {
 	if err != nil || u.Scheme != "postgres" || u.Host != "postgres:5432" || u.Path != "/dpp_demo" {
 		return errors.New("only the dedicated Compose dpp_demo database is allowed")
 	}
-	if ack != "SYNTHETIC_LOCAL_ONLY" || cfg.Environment != "poc-demo" || cfg.Redis.Addr != "redis:6379" || cfg.Redis.DB != 0 || cfg.Storage.Endpoint != "minio:9000" || cfg.Storage.Bucket != "dpp-demo" || cfg.Storage.UseSSL || cfg.OpenMetadata.Enabled || cfg.Hop.Enabled || cfg.Splink.Enabled {
+	if ack != "SYNTHETIC_LOCAL_ONLY" || cfg.Environment != "poc-demo" || cfg.Redis.Addr != "redis:6379" || cfg.Redis.DB != 0 || cfg.Storage.Endpoint != "minio:9000" || cfg.Storage.Bucket != "dpp-demo" || cfg.Storage.UseSSL || cfg.OpenMetadata.Enabled || cfg.Hop.Enabled || cfg.Splink.Enabled || cfg.GX.Enabled {
 		return errors.New("refusing non-demo service configuration")
 	}
 	return nil

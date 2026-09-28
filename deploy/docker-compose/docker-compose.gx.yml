@@ -1,0 +1,19 @@
+services:
+  gx:
+    build:
+      context: ../../engines/gx
+    environment:
+      GX_ANALYTICS_ENABLED: "false"
+      GX_ENGINE_API_TOKEN: ${GX_SERVICE_TOKEN:-}
+      GX_ENGINE_MAX_ROWS: ${GX_ENGINE_MAX_ROWS:-100000}
+    ports:
+      - "8092:8092"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8092/health', timeout=2).read()"
+      interval: 3s
+      timeout: 3s
+      retries: 20
