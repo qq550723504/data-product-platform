@@ -40,9 +40,9 @@ export default async function WorkbenchPage() {
     const attentionCount =
       summary.reviewQueue.pending +
       unresolvedFailures.page.total +
-      summary.releases.failed +
+      failedReleases.page.total +
       validatingReleases.page.total +
-      summary.releases.ready;
+      readyReleases.page.total;
 
     return (
       <>
@@ -122,11 +122,11 @@ export default async function WorkbenchPage() {
                     </tr>
                   ) : null}
 
-                  {summary.releases.failed > 0 ? (
+                  {failedReleases.page.total > 0 ? (
                     <tr>
                       <td className="primary-cell">
                         <strong>Release 失败</strong>
-                        <span>{summary.releases.failed} 个 Release 处于失败状态</span>
+                        <span>{failedReleases.page.total} 个 Release 处于失败状态</span>
                       </td>
                       <td><Badge value="FAILED" /></td>
                       <td>{failedRelease ? `${failedReleaseProduct?.name ?? "Data Product"} · ${failedRelease.releaseNo}` : "查看数据产品定位失败 Release"}</td>
@@ -170,11 +170,11 @@ export default async function WorkbenchPage() {
                     </tr>
                   ) : null}
 
-                  {summary.releases.ready > 0 ? (
+                  {readyReleases.page.total > 0 ? (
                     <tr>
                       <td className="primary-cell">
                         <strong>Release 待发布</strong>
-                        <span>{summary.releases.ready} 个 Release 已通过 Readiness</span>
+                        <span>{readyReleases.page.total} 个 Release 已通过 Readiness</span>
                       </td>
                       <td><Badge value="READY" /></td>
                       <td>{readyRelease ? `${readyReleaseProduct?.name ?? "Data Product"} · ${readyRelease.releaseNo}` : "已有 Release 可进入发布动作"}</td>
