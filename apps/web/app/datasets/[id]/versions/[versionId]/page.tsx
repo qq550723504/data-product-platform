@@ -686,6 +686,7 @@ export default async function DatasetVersionDetailPage({
         ) : (
           <>
             <form method="get" className="detail-card" style={{ marginBottom: 18 }}>
+              <input type="hidden" name="view" value="eligibility" />
               <div className="definition-list">
                 <div><dt>Profile</dt><dd>
                   <select name="profileId" defaultValue={requested.profileId}>
