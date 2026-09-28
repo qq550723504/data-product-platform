@@ -18,15 +18,20 @@ export default async function WorkbenchPage() {
   }
 
   try {
-    const [summary, executions, products] = await Promise.all([
+    const [summary, executions, products, failedReleases, readyReleases] = await Promise.all([
       platform.workbench(),
       platform.executions(20, 0),
       platform.products(50, 0),
+      platform.workspaceReleases("FAILED", 10, 0),
+      platform.workspaceReleases("READY", 10, 0),
     ]);
     const activeExecutions = summary.executions.queued + summary.executions.submitting + summary.executions.running;
     const failedExecutions = executions.items.filter((execution) => execution.status === "FAILED");
-    const failedProducts = products.items.filter((product) => product.latestReleaseStatus === "FAILED");
-    const readyProducts = products.items.filter((product) => product.latestReleaseStatus === "READY");
+    const productById = new Map(products.items.map((product) => [product.id, product]));
+    const failedRelease = failedReleases.items[0];
+    const readyRelease = readyReleases.items[0];
+    const failedReleaseProduct = failedRelease ? productById.get(failedRelease.productId) : undefined;
+    const readyReleaseProduct = readyRelease ? productById.get(readyRelease.productId) : undefined;
     const attentionCount = summary.reviewQueue.pending + summary.executions.failed + summary.releases.failed + summary.releases.ready;
 
     return (
@@ -114,11 +119,13 @@ export default async function WorkbenchPage() {
                         <span>{summary.releases.failed} 个 Release 处于失败状态</span>
                       </td>
                       <td><Badge value="FAILED" /></td>
-                      <td>{failedProducts[0] ? `${failedProducts[0].name} · ${failedProducts[0].latestReleaseNo}` : "查看数据产品定位失败 Release"}</td>
+                      <td>{failedRelease ? `${failedReleaseProduct?.name ?? "Data Product"} · ${failedRelease.releaseNo}` : "查看数据产品定位失败 Release"}</td>
                       <td>
                         <Link
                           className="text-link"
-                          href={failedProducts[0] ? `/products/${failedProducts[0].id}` : "/products"}
+                          href={failedRelease
+                            ? `/products/${failedRelease.productId}/releases/${failedRelease.id}`
+                            : "/products"}
                         >
                           查看 Release
                         </Link>
@@ -133,11 +140,13 @@ export default async function WorkbenchPage() {
                         <span>{summary.releases.ready} 个 Release 已通过 Readiness</span>
                       </td>
                       <td><Badge value="READY" /></td>
-                      <td>{readyProducts[0] ? `${readyProducts[0].name} · ${readyProducts[0].latestReleaseNo}` : "已有 Release 可进入发布动作"}</td>
+                      <td>{readyRelease ? `${readyReleaseProduct?.name ?? "Data Product"} · ${readyRelease.releaseNo}` : "已有 Release 可进入发布动作"}</td>
                       <td>
                         <Link
                           className="text-link"
-                          href={readyProducts[0] ? `/products/${readyProducts[0].id}` : "/products"}
+                          href={readyRelease
+                            ? `/products/${readyRelease.productId}/releases/${readyRelease.id}`
+                            : "/products"}
                         >
                           去发布
                         </Link>
