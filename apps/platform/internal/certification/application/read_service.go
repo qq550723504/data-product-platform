@@ -22,10 +22,11 @@ type CertificationHistoryItem struct {
 }
 
 type CertificationHistoryPage struct {
-	Items  []CertificationHistoryItem
-	Limit  int
-	Offset int
-	Total  int
+	Items    []CertificationHistoryItem
+	Profiles []certificationdomain.ProfileSnapshot
+	Limit    int
+	Offset   int
+	Total    int
 }
 
 func (s *CertificationService) ListDatasetHistoryPage(
@@ -51,7 +52,23 @@ func (s *CertificationService) ListDatasetHistoryPage(
 	if err != nil {
 		return CertificationHistoryPage{}, err
 	}
-	profiles := make(map[uuid.UUID]certificationdomain.ProfileSnapshot)
+	profileIDs, err := s.certificationRepo.ListProfileIDsForDatasetVersion(ctx, workspaceID, datasetVersionID, asOf)
+	if err != nil {
+		return CertificationHistoryPage{}, err
+	}
+	profiles := make(map[uuid.UUID]certificationdomain.ProfileSnapshot, len(profileIDs))
+	profileList := make([]certificationdomain.ProfileSnapshot, 0, len(profileIDs))
+	for _, profileID := range profileIDs {
+		profile, err := s.profileRepo.GetProfile(ctx, profileID)
+		if err != nil {
+			return CertificationHistoryPage{}, err
+		}
+		if profile.WorkspaceID != workspaceID {
+			return CertificationHistoryPage{}, fmt.Errorf("certification profile crosses workspace boundary")
+		}
+		profiles[profileID] = profile
+		profileList = append(profileList, profile)
+	}
 	dispositions := make(map[uuid.UUID][]certificationdomain.CertificationDisposition)
 	for _, disposition := range page.Dispositions {
 		dispositions[disposition.CertificationID] = append(dispositions[disposition.CertificationID], disposition)
@@ -61,14 +78,7 @@ func (s *CertificationService) ListDatasetHistoryPage(
 	for _, row := range page.Rows {
 		profile, ok := profiles[row.ProfileID]
 		if !ok {
-			profile, err = s.profileRepo.GetProfile(ctx, row.ProfileID)
-			if err != nil {
-				return CertificationHistoryPage{}, err
-			}
-			if profile.WorkspaceID != workspaceID {
-				return CertificationHistoryPage{}, fmt.Errorf("certification profile crosses workspace boundary")
-			}
-			profiles[row.ProfileID] = profile
+			return CertificationHistoryPage{}, fmt.Errorf("certification history references an unavailable profile")
 		}
 		certification := row.Certification
 		certification.Profile = profile
@@ -78,10 +88,11 @@ func (s *CertificationService) ListDatasetHistoryPage(
 		})
 	}
 	return CertificationHistoryPage{
-		Items:  items,
-		Limit:  limit,
-		Offset: offset,
-		Total:  page.Total,
+		Items:    items,
+		Profiles: profileList,
+		Limit:    limit,
+		Offset:   offset,
+		Total:    page.Total,
 	}, nil
 }
 
