@@ -900,15 +900,42 @@ func (r *Repository) ListExecutions(ctx context.Context, workspaceID uuid.UUID, 
 
 func (r *Repository) ListUnresolvedFailedExecutions(ctx context.Context, workspaceID uuid.UUID, limit, offset int) (List[Execution], error) {
 	const lineageCTE = `
-		WITH RECURSIVE retry_tree AS (
-			SELECT e.id AS root_id, e.id AS execution_id, e.status, e.created_at
-			FROM execution e
-			WHERE e.workspace_id=$1
-			  AND e.retry_of_execution_id IS NULL
+		WITH RECURSIVE failed_ancestors AS (
+			SELECT failed.id AS seed_id,
+			       failed.id AS execution_id,
+			       failed.retry_of_execution_id
+			FROM execution failed
+			WHERE failed.workspace_id=$1
+			  AND failed.status='FAILED'
 
 			UNION ALL
 
-			SELECT tree.root_id, child.id, child.status, child.created_at
+			SELECT ancestors.seed_id,
+			       parent.id,
+			       parent.retry_of_execution_id
+			FROM failed_ancestors ancestors
+			JOIN execution parent ON parent.id=ancestors.retry_of_execution_id
+			WHERE parent.workspace_id=$1
+		),
+		candidate_roots AS (
+			SELECT DISTINCT execution_id AS root_id
+			FROM failed_ancestors
+			WHERE retry_of_execution_id IS NULL
+		),
+		retry_tree AS (
+			SELECT roots.root_id,
+			       root.id AS execution_id,
+			       root.status,
+			       root.created_at
+			FROM candidate_roots roots
+			JOIN execution root ON root.id=roots.root_id
+
+			UNION ALL
+
+			SELECT tree.root_id,
+			       child.id,
+			       child.status,
+			       child.created_at
 			FROM retry_tree tree
 			JOIN execution child ON child.retry_of_execution_id=tree.execution_id
 			WHERE child.workspace_id=$1
@@ -935,19 +962,11 @@ func (r *Repository) ListUnresolvedFailedExecutions(ctx context.Context, workspa
 		)
 	`
 
-	total, err := r.count(ctx, lineageCTE+`
-		SELECT count(*)
-		FROM unresolved_failed
-		WHERE failure_rank=1
-	`, workspaceID)
-	if err != nil {
-		return List[Execution]{}, err
-	}
-
 	rows, err := r.pool.Query(ctx, lineageCTE+`
 		SELECT e.id, e.workspace_id, e.workflow_version_id, w.code, w.name, wv.version,
 		       e.output_dataset_id, e.output_dataset_version_id, e.target_period, e.status, e.attempt,
-		       e.engine_type, COALESCE(e.error_code,''), e.created_at, e.started_at, e.finished_at
+		       e.engine_type, COALESCE(e.error_code,''), e.created_at, e.started_at, e.finished_at,
+		       count(*) OVER ()
 		FROM unresolved_failed unresolved
 		JOIN execution e ON e.id=unresolved.execution_id
 		JOIN workflow_version wv ON wv.id=e.workflow_version_id
@@ -961,6 +980,7 @@ func (r *Repository) ListUnresolvedFailedExecutions(ctx context.Context, workspa
 	}
 	defer rows.Close()
 
+	total := 0
 	items := make([]Execution, 0)
 	for rows.Next() {
 		var item Execution
@@ -968,6 +988,7 @@ func (r *Repository) ListUnresolvedFailedExecutions(ctx context.Context, workspa
 			&item.ID, &item.WorkspaceID, &item.WorkflowVersionID, &item.WorkflowCode, &item.WorkflowName,
 			&item.WorkflowVersion, &item.OutputDatasetID, &item.OutputDatasetVersionID, &item.TargetPeriod,
 			&item.Status, &item.Attempt, &item.EngineType, &item.ErrorCode, &item.CreatedAt, &item.StartedAt, &item.FinishedAt,
+			&total,
 		); err != nil {
 			return List[Execution]{}, fmt.Errorf("scan unresolved failed execution: %w", err)
 		}
@@ -976,6 +997,20 @@ func (r *Repository) ListUnresolvedFailedExecutions(ctx context.Context, workspa
 	if err := rows.Err(); err != nil {
 		return List[Execution]{}, fmt.Errorf("iterate unresolved failed executions: %w", err)
 	}
+
+	// Workbench always asks for the first page. Preserve pagination metadata for
+	// callers that request a later page past the end without paying a second
+	// lineage scan on the normal path.
+	if len(items) == 0 && offset > 0 {
+		if err := r.pool.QueryRow(ctx, lineageCTE+`
+			SELECT count(*)
+			FROM unresolved_failed
+			WHERE failure_rank=1
+		`, workspaceID).Scan(&total); err != nil {
+			return List[Execution]{}, fmt.Errorf("count unresolved failed executions: %w", err)
+		}
+	}
+
 	return List[Execution]{Items: items, Page: Page{Limit: limit, Offset: offset, Total: total}}, nil
 }
 
