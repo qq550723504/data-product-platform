@@ -155,10 +155,11 @@ func (s *CertificationService) Evaluate(ctx context.Context, cmd EvaluateDataset
 		// A new certification fact can change CurrentCertificationGate. Serialize
 		// it with terminal delivery authorization; idempotent replay above does
 		// not advance the revision.
-		if _, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID); err != nil {
+		historyRevision, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID)
+		if err != nil {
 			return err
 		}
-		if err := s.certificationRepo.InsertCertification(ctx, tx, candidate); err != nil {
+		if err := s.certificationRepo.InsertCertification(ctx, tx, candidate, historyRevision); err != nil {
 			return err
 		}
 		decisionEvidenceID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("dataset-certification-evidence:"+candidate.ID.String()))
@@ -342,10 +343,11 @@ func (s *CertificationService) ChangeDisposition(ctx context.Context, cmd Change
 		// REVOCATION/SUPERSEDE changes whether an issued certification is current.
 		// Advance the same workspace fence held by terminal delivery finalization
 		// so one side is unambiguously first in the PostgreSQL order.
-		if _, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID); err != nil {
+		historyRevision, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID)
+		if err != nil {
 			return err
 		}
-		if err := s.certificationRepo.InsertDisposition(ctx, tx, candidate); err != nil {
+		if err := s.certificationRepo.InsertDisposition(ctx, tx, candidate, historyRevision); err != nil {
 			return err
 		}
 		decisionEvidenceID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("certification-disposition-evidence:"+candidate.ID.String()))
