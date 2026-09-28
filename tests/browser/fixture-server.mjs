@@ -312,7 +312,7 @@ export function createFixtureServer() {
             asOf: stamp,
             items,
             profiles: [goldProfile],
-            page: { total: 1, limit, offset },
+            page: { total: 1, limit, offset, anchorRevision: 0 },
           });
         }
         if (url.pathname === `${workspace}/dataset-versions/${ids.goldVersion}/delivery-eligibility`) {
