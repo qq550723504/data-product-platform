@@ -236,7 +236,6 @@ func TestListEntityReviewsExposesCurrentMappingDecision(t *testing.T) {
 	}
 }
 
-
 func TestUnresolvedFailedExecutionsResolveAcrossRetryLineage(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
