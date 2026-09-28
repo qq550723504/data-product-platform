@@ -214,16 +214,16 @@ test("readiness checklist explains the failing gate and action", async ({ page, 
   await expect(rights).toContainText("权利");
   await expect(rights).toContainText("FAIL");
   await expect(rights).toContainText("RIGHTS_SNAPSHOT_MISSING");
+  const production = page.getByTestId("readiness-production");
+  await expect(production).toContainText("PASS");
+  await expect(production.getByRole("link")).toHaveCount(0);
+
   const governanceHref = "/products/" + ids.product + "/releases/" + ids.release + "#release-governance";
   await expect(rights.getByRole("link", { name: "处理 / 查看依据 →", exact: true })).toHaveAttribute("href", governanceHref);
   await rights.getByRole("link", { name: "处理 / 查看依据 →", exact: true }).click();
   await expect(page).toHaveURL(new RegExp("/products/" + ids.product + "/releases/" + ids.release + "#release-governance$"));
   await expect(page.getByRole("heading", { name: "Release Governance Bindings", exact: true })).toBeVisible();
   await expect(page.getByText("RIGHTS_SNAPSHOT_MISSING", { exact: true })).toBeVisible();
-
-  const production = page.getByTestId("readiness-production");
-  await expect(production).toContainText("PASS");
-  await expect(production.getByRole("link")).toHaveCount(0);
 
   await page.goto(productPath);
   await expect(page.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
