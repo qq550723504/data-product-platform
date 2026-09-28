@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -42,7 +43,15 @@ func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	items, err := h.certifications.ListDatasetHistory(r.Context(), workspaceID, versionID, asOf)
+	limit, offset, anchorRevision, ok := parseHistoryPage(w, r)
+	if !ok {
+		return
+	}
+	selectedProfileID, ok := parseOptionalHistoryProfile(w, r)
+	if !ok {
+		return
+	}
+	page, err := h.certifications.ListDatasetHistoryPage(r.Context(), workspaceID, versionID, asOf, limit, offset, anchorRevision, selectedProfileID)
 	if err != nil {
 		if errors.Is(err, certificationinfra.ErrProfileNotFound) || errors.Is(err, datasetinfra.ErrNotFound) {
 			httpserver.WriteError(w, r, http.StatusNotFound, "CERTIFICATION_HISTORY_NOT_FOUND", "certification history was not found", nil)
@@ -51,15 +60,23 @@ func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "CERTIFICATION_HISTORY_READ_FAILED", err.Error(), nil)
 		return
 	}
-	response := make([]map[string]any, 0, len(items))
-	for _, item := range items {
+	response := make([]map[string]any, 0, len(page.Items))
+	for _, item := range page.Items {
 		response = append(response, historyItemResponse(item))
+	}
+	profiles := make([]map[string]any, 0, len(page.Profiles))
+	for _, profile := range page.Profiles {
+		profiles = append(profiles, profileResponse(profile))
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"workspaceId":      workspaceID,
 		"datasetVersionId": versionID,
 		"asOf":             asOf,
 		"items":            response,
+		"profiles":         profiles,
+		"page": map[string]any{
+			"limit": page.Limit, "offset": page.Offset, "total": page.Total, "anchorRevision": page.AnchorRevision,
+		},
 	})
 }
 
@@ -151,6 +168,54 @@ func parseAsOf(w http.ResponseWriter, r *http.Request) (time.Time, bool) {
 		return time.Time{}, false
 	}
 	return parsed.UTC(), true
+}
+
+func parseHistoryPage(w http.ResponseWriter, r *http.Request) (int, int, *int64, bool) {
+	const (
+		defaultLimit = 25
+		maxLimit     = 100
+	)
+	limit := defaultLimit
+	if raw := strings.TrimSpace(r.URL.Query().Get("limit")); raw != "" {
+		value, err := strconv.Atoi(raw)
+		if err != nil || value <= 0 || value > maxLimit {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_HISTORY_LIMIT", "limit must be an integer between 1 and 100", nil)
+			return 0, 0, nil, false
+		}
+		limit = value
+	}
+	offset := 0
+	if raw := strings.TrimSpace(r.URL.Query().Get("offset")); raw != "" {
+		value, err := strconv.Atoi(raw)
+		if err != nil || value < 0 {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_HISTORY_OFFSET", "offset must be a non-negative integer", nil)
+			return 0, 0, nil, false
+		}
+		offset = value
+	}
+	var anchorRevision *int64
+	if raw := strings.TrimSpace(r.URL.Query().Get("anchorRevision")); raw != "" {
+		value, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil || value < 0 {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_HISTORY_ANCHOR", "anchorRevision must be a non-negative integer", nil)
+			return 0, 0, nil, false
+		}
+		anchorRevision = &value
+	}
+	return limit, offset, anchorRevision, true
+}
+
+func parseOptionalHistoryProfile(w http.ResponseWriter, r *http.Request) (*uuid.UUID, bool) {
+	raw := strings.TrimSpace(r.URL.Query().Get("profileId"))
+	if raw == "" {
+		return nil, true
+	}
+	profileID, err := uuid.Parse(raw)
+	if err != nil || profileID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_PROFILE_ID", "profileId must be a non-nil UUID", nil)
+		return nil, false
+	}
+	return &profileID, true
 }
 
 func historyItemResponse(item application.CertificationHistoryItem) map[string]any {

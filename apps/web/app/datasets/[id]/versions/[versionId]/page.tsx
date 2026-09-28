@@ -23,6 +23,9 @@ type Query = {
   scopeRef?: string;
   findingsOffset?: string;
   assessmentOffset?: string;
+  certificationOffset?: string;
+  certificationAsOf?: string;
+  certificationRevision?: string;
 };
 
 function firstValue(values?: string[]): string {
@@ -84,9 +87,11 @@ export default async function DatasetVersionDetailPage({
   const query = await searchParams;
   const findingsOffset = Math.max(0, Number.parseInt(query.findingsOffset ?? "0", 10) || 0);
   const assessmentOffset = Math.max(0, Number.parseInt(query.assessmentOffset ?? "0", 10) || 0);
+  const certificationOffset = Math.max(0, Number.parseInt(query.certificationOffset ?? "0", 10) || 0);
   const findingsLimit = 50;
   const assessmentLimit = 25;
-  const pageHref = (key: "findingsOffset" | "assessmentOffset", offset: number) => {
+  const certificationLimit = 25;
+  const pageHref = (key: "findingsOffset" | "assessmentOffset" | "certificationOffset", offset: number) => {
     const next = new URLSearchParams();
     for (const [queryKey, value] of Object.entries(query)) {
       if (value) next.set(queryKey, value);
@@ -103,15 +108,22 @@ export default async function DatasetVersionDetailPage({
       platform.datasetVersion(versionId),
       platform.qualityAssessments(versionId, assessmentLimit, assessmentOffset),
       assessmentOffset === 0 ? Promise.resolve(null) : platform.qualityAssessments(versionId, 1, 0),
-      platform.certificationHistory(versionId),
+      platform.certificationHistory(
+        versionId,
+        certificationLimit,
+        certificationOffset,
+        query.certificationAsOf ?? "",
+        query.certificationRevision === undefined ? undefined : Math.max(0, Number.parseInt(query.certificationRevision, 10) || 0),
+        query.profileId ?? "",
+      ),
     ]);
 
     if (version.datasetId !== dataset.id) {
       throw new Error("DatasetVersion 不属于当前 Dataset");
     }
 
-    const profileMap = new Map(history.items.map((item) => [item.profile.id, item.profile]));
-    const profiles = Array.from(profileMap.values());
+    const profileMap = new Map(history.profiles.map((profile) => [profile.id, profile]));
+    const profiles = history.profiles;
     const selectedProfile = profileMap.get(query.profileId ?? "") ?? profiles[0];
     const profileScope = selectedProfile?.rights.scopes.values?.[0];
     const requested = {
@@ -122,6 +134,21 @@ export default async function DatasetVersionDetailPage({
       delivery: query.delivery ?? firstValue(selectedProfile?.delivery.values),
       scopeType: query.scopeType ?? profileScope?.type ?? "ALL_RESOURCE",
       scopeRef: query.scopeRef ?? profileScope?.ref ?? "",
+    };
+    const certificationPageHref = (offset: number) => {
+      const next = new URLSearchParams();
+      for (const [queryKey, value] of Object.entries(query)) {
+        if (value) next.set(queryKey, value);
+      }
+      for (const [key, value] of Object.entries(requested)) {
+        if (value) next.set(key, value);
+      }
+      if (offset > 0) next.set("certificationOffset", String(offset));
+      else next.delete("certificationOffset");
+      next.set("certificationAsOf", history.asOf);
+      next.set("certificationRevision", String(history.page.anchorRevision));
+      const suffix = next.toString();
+      return `/datasets/${id}/versions/${versionId}${suffix ? `?${suffix}` : ""}`;
     };
     const canCheck = requested.profileId.trim() !== ""
       && requested.consumer.trim() !== ""
@@ -303,7 +330,7 @@ export default async function DatasetVersionDetailPage({
           </>
         )}
 
-        <div className="panel-header"><h2>Certification 历史</h2><span className="eyebrow">{history.items.length} Facts</span></div>
+        <div className="panel-header"><h2>Certification 历史</h2><span className="eyebrow">{history.page.total} Facts</span></div>
         {history.items.length === 0 ? (
           <EmptyState title="NOT_CERTIFIED" description="该 DatasetVersion 尚无 DatasetCertification 历史事实。" />
         ) : (
@@ -332,6 +359,22 @@ export default async function DatasetVersionDetailPage({
             </table>
           </div>
         )}
+        {history.page.total > certificationLimit ? (
+          <div className="panel-header" style={{ marginBottom: 24 }}>
+            <span className="eyebrow">
+              {history.page.offset + 1}–{Math.min(history.page.offset + history.items.length, history.page.total)}
+              {" / "}{history.page.total}
+            </span>
+            <div className="badge-row">
+              {history.page.offset > 0 ? (
+                <Link href={certificationPageHref(Math.max(0, history.page.offset - certificationLimit))}>上一页</Link>
+              ) : null}
+              {history.page.offset + history.items.length < history.page.total ? (
+                <Link href={certificationPageHref(history.page.offset + history.items.length)}>下一页</Link>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
 
         {evidenceCertification?.profile.profileRef === "gold/dataset-v1" ? (
           <section className="detail-card" style={{ marginBottom: 24 }} data-testid="gold-production-proof">

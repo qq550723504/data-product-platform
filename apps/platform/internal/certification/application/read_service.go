@@ -21,6 +21,81 @@ type CertificationHistoryItem struct {
 	Dispositions  []certificationdomain.CertificationDisposition
 }
 
+type CertificationHistoryPage struct {
+	Items          []CertificationHistoryItem
+	Profiles       []certificationdomain.ProfileSnapshot
+	Limit          int
+	Offset         int
+	Total          int
+	AnchorRevision int64
+}
+
+func (s *CertificationService) ListDatasetHistoryPage(
+	ctx context.Context,
+	workspaceID, datasetVersionID uuid.UUID,
+	asOf time.Time,
+	limit, offset int,
+	anchorRevision *int64,
+	selectedProfileID *uuid.UUID,
+) (CertificationHistoryPage, error) {
+	if workspaceID == uuid.Nil || datasetVersionID == uuid.Nil {
+		return CertificationHistoryPage{}, fmt.Errorf("workspace and DatasetVersion are required")
+	}
+	if s == nil || s.profileRepo == nil || s.certificationRepo == nil {
+		return CertificationHistoryPage{}, fmt.Errorf("certification query dependencies are incomplete")
+	}
+	if limit <= 0 || offset < 0 {
+		return CertificationHistoryPage{}, fmt.Errorf("certification history limit must be positive and offset must be non-negative")
+	}
+	if asOf.IsZero() {
+		asOf = time.Now().UTC()
+	}
+
+	page, err := s.certificationRepo.ListDatasetCertificationHistoryPage(ctx, workspaceID, datasetVersionID, asOf, limit, offset, anchorRevision, selectedProfileID)
+	if err != nil {
+		return CertificationHistoryPage{}, err
+	}
+	profiles := make(map[uuid.UUID]certificationdomain.ProfileSnapshot, len(page.ProfileIDs))
+	profileList := make([]certificationdomain.ProfileSnapshot, 0, len(page.ProfileIDs))
+	for _, profileID := range page.ProfileIDs {
+		profile, err := s.profileRepo.GetProfile(ctx, profileID)
+		if err != nil {
+			return CertificationHistoryPage{}, err
+		}
+		if profile.WorkspaceID != workspaceID {
+			return CertificationHistoryPage{}, fmt.Errorf("certification profile crosses workspace boundary")
+		}
+		profiles[profileID] = profile
+		profileList = append(profileList, profile)
+	}
+	dispositions := make(map[uuid.UUID][]certificationdomain.CertificationDisposition)
+	for _, disposition := range page.Dispositions {
+		dispositions[disposition.CertificationID] = append(dispositions[disposition.CertificationID], disposition)
+	}
+
+	items := make([]CertificationHistoryItem, 0, len(page.Rows))
+	for _, row := range page.Rows {
+		profile, ok := profiles[row.ProfileID]
+		if !ok {
+			return CertificationHistoryPage{}, fmt.Errorf("certification history references an unavailable profile")
+		}
+		certification := row.Certification
+		certification.Profile = profile
+		items = append(items, CertificationHistoryItem{
+			Certification: certification,
+			Dispositions:  dispositions[certification.ID],
+		})
+	}
+	return CertificationHistoryPage{
+		Items:          items,
+		Profiles:       profileList,
+		Limit:          limit,
+		Offset:         offset,
+		Total:          page.Total,
+		AnchorRevision: page.AnchorRevision,
+	}, nil
+}
+
 func (s *CertificationService) ListDatasetHistory(ctx context.Context, workspaceID, datasetVersionID uuid.UUID, asOf time.Time) ([]CertificationHistoryItem, error) {
 	if workspaceID == uuid.Nil || datasetVersionID == uuid.Nil {
 		return nil, fmt.Errorf("workspace and DatasetVersion are required")
