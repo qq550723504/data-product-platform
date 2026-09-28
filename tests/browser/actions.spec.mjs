@@ -202,6 +202,9 @@ for (const value of ["empty-checks", "missing-evidence", "null-checks", "blocker
     await page.goto(productPath);
     await expect(page.getByTestId("readiness-problem")).toBeVisible();
     await expect(page.getByRole("region", { name: "Release Readiness Checklist" })).toBeVisible();
+    if (value === "future-gate") {
+      await expect(page.getByTestId("readiness-futureGate")).toContainText("FAIL");
+    }
     await expect(page.getByText("所有 Readiness Gate 已通过")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
     expect(await writes(request)).toHaveLength(0);
