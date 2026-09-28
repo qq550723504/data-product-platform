@@ -392,6 +392,8 @@ func draftReadinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.Rea
 			"production": map[string]any{
 				"datasetVersionId": facts.TargetDatasetVersionID,
 				"executionPresent": facts.ProductionExecutionPresent,
+				"workflowMatch": facts.ProductionWorkflowMatch,
+				"lineageComplete": facts.ProductionLineageComplete,
 			},
 			"productionDependencyBinding": map[string]any{
 				"required": facts.ProductionDependencyBindingRequired,
