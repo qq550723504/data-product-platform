@@ -33,6 +33,24 @@ test("workbench surfaces actionable review and release items", async ({ page }) 
   await expect(page.locator("#releases")).toBeVisible();
 });
 
+test("attention center lists current actionable work", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: "待办中心", exact: true })).toHaveAttribute("href", "/attention");
+  await expect(page.getByTestId("needs-attention").getByRole("link", { name: "查看全部", exact: true })).toHaveAttribute("href", "/attention");
+
+  await page.goto("/attention");
+  await expect(page.getByRole("heading", { name: "待办中心", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "实体审核", exact: true })).toBeVisible();
+  await expect(page.getByText("测试来源记录", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "进入审核队列", exact: true })).toHaveAttribute("href", "/reviews");
+
+  await expect(page.getByRole("heading", { name: "Release 待发布", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "去发布", exact: true })).toHaveAttribute(
+    "href",
+    `/products/${ids.product}#releases`,
+  );
+});
+
 test("readonly runtime never enables review or publishing", async ({ page, request }) => {
   await page.goto("http://127.0.0.1:3101/reviews");
   await expect(page.getByText("当前为只读审核队列")).toBeVisible();
