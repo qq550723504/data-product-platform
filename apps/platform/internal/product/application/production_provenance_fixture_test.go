@@ -50,11 +50,18 @@ func createProductionExecutionFixture(t *testing.T, ctx context.Context, pool *p
 		mustExec(t, ctx, pool, `INSERT INTO execution_input (execution_id, input_name, dataset_version_id) VALUES ($1,$2,$3)`,
 			executionID, inputName, inputVersionID)
 	}
-	for _, dep := range []struct{name string; dataset bool}{
-		{"enterprise_resolution", true}, {"company_match_policy", false}, {"indicator_policy", false},
+	for _, dep := range []struct {
+		name    string
+		dataset bool
+	}{
+		{"enterprise_resolution", true},
+		{"company_match_policy", false},
+		{"indicator_policy", false},
 	} {
 		var datasetVersion any
-		if dep.dataset { datasetVersion = inputVersionID }
+		if dep.dataset {
+			datasetVersion = inputVersionID
+		}
 		mustExec(t, ctx, pool, `
 			INSERT INTO execution_dependency_binding (
 				execution_id, workspace_id, dependency_name, dataset_version_id, reference, version, content_sha256, content
