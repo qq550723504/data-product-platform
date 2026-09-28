@@ -200,6 +200,17 @@ type ProductRelease struct {
 	ReleasedAt         *time.Time `json:"releasedAt,omitempty"`
 }
 
+type ReleaseAttentionGroup struct {
+	Items []ProductRelease `json:"items"`
+	Page  Page             `json:"page"`
+}
+
+type WorkspaceReleaseAttention struct {
+	Failed     ReleaseAttentionGroup `json:"failed"`
+	Validating ReleaseAttentionGroup `json:"validating"`
+	Ready      ReleaseAttentionGroup `json:"ready"`
+}
+
 type GoldExplanation struct {
 	WorkspaceID                      uuid.UUID               `json:"workspaceId"`
 	OutputDatasetVersionID           uuid.UUID               `json:"outputDatasetVersionId"`
@@ -1110,6 +1121,76 @@ func (r *Repository) ListDataProducts(ctx context.Context, workspaceID uuid.UUID
 		return List[DataProduct]{}, fmt.Errorf("iterate data products: %w", err)
 	}
 	return List[DataProduct]{Items: items, Page: Page{Limit: limit, Offset: offset, Total: total}}, nil
+}
+
+func (r *Repository) WorkspaceReleaseAttention(ctx context.Context, workspaceID uuid.UUID, limit int) (WorkspaceReleaseAttention, error) {
+	result := WorkspaceReleaseAttention{
+		Failed:     ReleaseAttentionGroup{Items: make([]ProductRelease, 0), Page: Page{Limit: limit}},
+		Validating: ReleaseAttentionGroup{Items: make([]ProductRelease, 0), Page: Page{Limit: limit}},
+		Ready:      ReleaseAttentionGroup{Items: make([]ProductRelease, 0), Page: Page{Limit: limit}},
+	}
+
+	rows, err := r.pool.Query(ctx, `
+		WITH ranked AS (
+			SELECT pr.id, pr.product_id, pr.product_version_id, pr.release_no, pr.status,
+			       pr.contract_version_id, pr.rights_snapshot_id, pr.quality_result_id,
+			       pr.compliance_result_id, pr.evidence_snapshot_id, COALESCE(pr.release_notes,'') AS release_notes,
+			       pr.created_at, pr.released_at,
+			       count(*) OVER (PARTITION BY pr.status) AS status_total,
+			       row_number() OVER (
+				       PARTITION BY pr.status
+				       ORDER BY pr.created_at DESC, pr.id
+			       ) AS status_rank
+			FROM product_release pr
+			JOIN data_product p ON p.id=pr.product_id
+			WHERE p.workspace_id=$1
+			  AND p.deleted_at IS NULL
+			  AND pr.status IN ('FAILED','VALIDATING','READY')
+		)
+		SELECT id, product_id, product_version_id, release_no, status,
+		       contract_version_id, rights_snapshot_id, quality_result_id,
+		       compliance_result_id, evidence_snapshot_id, release_notes,
+		       created_at, released_at, status_total
+		FROM ranked
+		WHERE status_rank <= $2
+		ORDER BY CASE status
+			WHEN 'FAILED' THEN 1
+			WHEN 'VALIDATING' THEN 2
+			WHEN 'READY' THEN 3
+			ELSE 4
+		END, created_at DESC, id
+	`, workspaceID, limit)
+	if err != nil {
+		return WorkspaceReleaseAttention{}, fmt.Errorf("list workspace release attention: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var item ProductRelease
+		var total int
+		if err := rows.Scan(
+			&item.ID, &item.ProductID, &item.ProductVersionID, &item.ReleaseNo, &item.Status,
+			&item.ContractVersionID, &item.RightsSnapshotID, &item.QualityResultID, &item.ComplianceResultID,
+			&item.EvidenceSnapshotID, &item.ReleaseNotes, &item.CreatedAt, &item.ReleasedAt, &total,
+		); err != nil {
+			return WorkspaceReleaseAttention{}, fmt.Errorf("scan workspace release attention: %w", err)
+		}
+		switch item.Status {
+		case "FAILED":
+			result.Failed.Items = append(result.Failed.Items, item)
+			result.Failed.Page.Total = total
+		case "VALIDATING":
+			result.Validating.Items = append(result.Validating.Items, item)
+			result.Validating.Page.Total = total
+		case "READY":
+			result.Ready.Items = append(result.Ready.Items, item)
+			result.Ready.Page.Total = total
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return WorkspaceReleaseAttention{}, fmt.Errorf("iterate workspace release attention: %w", err)
+	}
+	return result, nil
 }
 
 func (r *Repository) ListWorkspaceReleases(ctx context.Context, workspaceID uuid.UUID, status string, limit, offset int) (List[ProductRelease], error) {
