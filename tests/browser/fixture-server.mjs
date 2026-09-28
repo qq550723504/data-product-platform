@@ -333,6 +333,7 @@ export function createFixtureServer() {
         }
         if (url.pathname === `${workspace}/datasets`) return send(200, page([goldDataset]));
         if (url.pathname === `${workspace}/executions`) return send(200, page([]));
+        if (url.pathname === `${workspace}/attention/failed-executions`) return send(200, page([]));
         if (url.pathname === `${workspace}/workbench`) return send(200, {
           workspaceId: ids.workspace, counts: { dataResources: 0, datasets: 0, dataProducts: 1 },
           reviewQueue: { pending: state.candidateStatus === "PENDING" ? 1 : 0, unresolved: 0, conflicts: 0 },
