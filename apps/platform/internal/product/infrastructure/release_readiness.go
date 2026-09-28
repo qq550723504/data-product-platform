@@ -357,9 +357,9 @@ func (r *PostgresRepository) readinessFacts(ctx context.Context, q readinessQuer
 							SELECT 1
 							FROM dataset_version_lineage l
 							WHERE l.output_version_id=$1
-							  AND l.execution_id=$2
 							  AND (
-								  l.relation_type <> 'DERIVED_FROM'
+								  l.execution_id IS DISTINCT FROM $2
+								  OR l.relation_type <> 'DERIVED_FROM'
 								  OR NOT EXISTS(
 									  SELECT 1
 									  FROM execution_input i
