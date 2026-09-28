@@ -85,7 +85,6 @@ func (s *CertificationService) ListDatasetHistoryPage(
 	}, nil
 }
 
-
 func (s *CertificationService) ListDatasetHistory(ctx context.Context, workspaceID, datasetVersionID uuid.UUID, asOf time.Time) ([]CertificationHistoryItem, error) {
 	if workspaceID == uuid.Nil || datasetVersionID == uuid.Nil {
 		return nil, fmt.Errorf("workspace and DatasetVersion are required")
