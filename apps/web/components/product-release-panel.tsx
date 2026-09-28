@@ -20,8 +20,8 @@ const gateActions: Record<string, string> = {
   quality: "处理 Quality gate 失败项",
   compliance: "处理 Compliance gate 阻塞项",
   contract: "绑定有效 Data Contract",
-  evidence: "补齐并冻结 Evidence Snapshot",
-  delivery: "配置可交付 ProductVersion 资产",
+  evidence: "为目标 DatasetVersion 补齐 Readiness 所需的 Evidence 关系",
+  delivery: "创建包含交付资产的新 ProductVersion，并基于该版本创建新 Release",
 };
 
 function gateState(value: unknown): string {
@@ -38,6 +38,19 @@ function gateSymbol(status: string): string {
       return "…";
     default:
       return "?";
+  }
+}
+
+function gateHint(gate: string, status: string): string {
+  switch (status.toUpperCase()) {
+    case "PASS":
+      return "Gate 已通过";
+    case "PENDING":
+      return "先执行 Release Validation；此 Gate 尚未评估";
+    case "FAIL":
+      return gateActions[gate] ?? "根据 Core blocker 处理失败条件";
+    default:
+      return "查看 Core Readiness 详情，确认该 Gate 的当前状态";
   }
 }
 
@@ -94,7 +107,6 @@ export function ProductReleasePanel({ productId, items, actionsEnabled }: { prod
               <div className="readiness-gates">
                 {requiredReleaseGates.map((gate) => {
                   const status = gateState(item.readiness.checks?.[gate]);
-                  const passed = status.toUpperCase() === "PASS";
                   return (
                     <div
                       className={`readiness-gate readiness-gate-${status.toLowerCase()}`}
@@ -104,7 +116,7 @@ export function ProductReleasePanel({ productId, items, actionsEnabled }: { prod
                       <span className="readiness-gate-symbol" aria-hidden="true">{gateSymbol(status)}</span>
                       <div className="readiness-gate-copy">
                         <strong>{gateLabels[gate]}</strong>
-                        <small>{passed ? "Gate 已通过" : gateActions[gate]}</small>
+                        <small>{gateHint(gate, status)}</small>
                       </div>
                       <Badge value={status} />
                     </div>
