@@ -378,7 +378,7 @@ export type CertificationHistory = {
   asOf: string;
   items: DatasetCertification[];
   profiles: CertificationProfile[];
-  page: PageMeta;
+  page: PageMeta & { anchorRevision: number };
 };
 
 export type DeliveryEligibility = {
@@ -583,9 +583,10 @@ export const platform = {
     apiGet<QualityReport>(
       `/api/v1/quality-assessments/${encodeURIComponent(assessmentId)}/report?workspaceId=${encodeURIComponent(requireWorkspace())}&limit=${limit}&offset=${offset}`,
     ),
-  certificationHistory: (versionId: string, limit = 25, offset = 0, asOf = "") => {
+  certificationHistory: (versionId: string, limit = 25, offset = 0, asOf = "", anchorRevision?: number) => {
     const query = new URLSearchParams({ limit: String(limit), offset: String(offset) });
     if (asOf) query.set("asOf", asOf);
+    if (anchorRevision !== undefined) query.set("anchorRevision", String(anchorRevision));
     return apiGet<CertificationHistory>(
       workspacePath(
         `/dataset-versions/${encodeURIComponent(versionId)}/certifications?${query.toString()}`,
