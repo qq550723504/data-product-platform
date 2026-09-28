@@ -60,11 +60,16 @@ func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 	for _, item := range page.Items {
 		response = append(response, historyItemResponse(item))
 	}
+	profiles := make([]map[string]any, 0, len(page.Profiles))
+	for _, profile := range page.Profiles {
+		profiles = append(profiles, profileResponse(profile))
+	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"workspaceId":      workspaceID,
 		"datasetVersionId": versionID,
 		"asOf":             asOf,
 		"items":            response,
+		"profiles":         profiles,
 		"page": map[string]any{
 			"limit": page.Limit, "offset": page.Offset, "total": page.Total,
 		},
