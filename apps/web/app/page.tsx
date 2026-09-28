@@ -66,7 +66,10 @@ export default async function WorkbenchPage() {
         <section className="panel" style={{ marginTop: 18 }} data-testid="needs-attention">
           <div className="panel-header">
             <h2>Needs Attention</h2>
-            <Badge value={attentionCount ? "ACTION_REQUIRED" : "CLEAR"} />
+            <div className="badge-row">
+              <Badge value={attentionCount ? "ACTION_REQUIRED" : "CLEAR"} />
+              <Link href="/attention">查看全部</Link>
+            </div>
           </div>
           {attentionCount === 0 ? (
             <EmptyState
