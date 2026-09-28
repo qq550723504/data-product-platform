@@ -57,6 +57,7 @@ func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
 	asOf time.Time,
 	limit, offset int,
 	anchorRevision *int64,
+	selectedProfileID *uuid.UUID,
 ) (DatasetCertificationHistoryPage, error) {
 	if asOf.IsZero() {
 		asOf = time.Now().UTC()
@@ -96,32 +97,6 @@ func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
 	`, workspaceID, datasetVersionID, asOf.UTC(), resolvedAnchor).Scan(&page.Total); err != nil {
 		return DatasetCertificationHistoryPage{}, fmt.Errorf("count dataset certification history: %w", err)
 	}
-
-	profileRows, err := r.pool.Query(ctx, `
-		SELECT DISTINCT certification_profile_id
-		FROM dataset_certification
-		WHERE workspace_id=$1
-		  AND dataset_version_id=$2
-		  AND issued_at <= $3
-		  AND history_revision <= $4
-		ORDER BY certification_profile_id
-	`, workspaceID, datasetVersionID, asOf.UTC(), resolvedAnchor)
-	if err != nil {
-		return DatasetCertificationHistoryPage{}, fmt.Errorf("list certification history profiles: %w", err)
-	}
-	for profileRows.Next() {
-		var profileID uuid.UUID
-		if err := profileRows.Scan(&profileID); err != nil {
-			profileRows.Close()
-			return DatasetCertificationHistoryPage{}, fmt.Errorf("scan certification history profile: %w", err)
-		}
-		page.ProfileIDs = append(page.ProfileIDs, profileID)
-	}
-	if err := profileRows.Err(); err != nil {
-		profileRows.Close()
-		return DatasetCertificationHistoryPage{}, fmt.Errorf("iterate certification history profiles: %w", err)
-	}
-	profileRows.Close()
 
 	rows, err := r.pool.Query(ctx, `
 		SELECT certification_profile_id,
@@ -182,6 +157,36 @@ func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
 	}
 	if err := rows.Err(); err != nil {
 		return DatasetCertificationHistoryPage{}, fmt.Errorf("iterate dataset certification history page: %w", err)
+	}
+
+	profileSeen := make(map[uuid.UUID]struct{}, len(page.Rows)+1)
+	for _, row := range page.Rows {
+		if _, exists := profileSeen[row.ProfileID]; exists {
+			continue
+		}
+		profileSeen[row.ProfileID] = struct{}{}
+		page.ProfileIDs = append(page.ProfileIDs, row.ProfileID)
+	}
+	if selectedProfileID != nil && *selectedProfileID != uuid.Nil {
+		if _, exists := profileSeen[*selectedProfileID]; !exists {
+			var selectedInSnapshot bool
+			if err := r.pool.QueryRow(ctx, `
+				SELECT EXISTS(
+					SELECT 1
+					FROM dataset_certification
+					WHERE workspace_id=$1
+					  AND dataset_version_id=$2
+					  AND certification_profile_id=$3
+					  AND issued_at <= $4
+					  AND history_revision <= $5
+				)
+			`, workspaceID, datasetVersionID, *selectedProfileID, asOf.UTC(), resolvedAnchor).Scan(&selectedInSnapshot); err != nil {
+				return DatasetCertificationHistoryPage{}, fmt.Errorf("validate selected certification profile in history snapshot: %w", err)
+			}
+			if selectedInSnapshot {
+				page.ProfileIDs = append(page.ProfileIDs, *selectedProfileID)
+			}
+		}
 	}
 
 	if len(certificationIDs) == 0 {
