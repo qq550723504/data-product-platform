@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -42,7 +43,11 @@ func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	items, err := h.certifications.ListDatasetHistory(r.Context(), workspaceID, versionID, asOf)
+	limit, offset, ok := parseHistoryPage(w, r)
+	if !ok {
+		return
+	}
+	page, err := h.certifications.ListDatasetHistoryPage(r.Context(), workspaceID, versionID, asOf, limit, offset)
 	if err != nil {
 		if errors.Is(err, certificationinfra.ErrProfileNotFound) || errors.Is(err, datasetinfra.ErrNotFound) {
 			httpserver.WriteError(w, r, http.StatusNotFound, "CERTIFICATION_HISTORY_NOT_FOUND", "certification history was not found", nil)
@@ -51,8 +56,8 @@ func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "CERTIFICATION_HISTORY_READ_FAILED", err.Error(), nil)
 		return
 	}
-	response := make([]map[string]any, 0, len(items))
-	for _, item := range items {
+	response := make([]map[string]any, 0, len(page.Items))
+	for _, item := range page.Items {
 		response = append(response, historyItemResponse(item))
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
@@ -60,6 +65,9 @@ func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 		"datasetVersionId": versionID,
 		"asOf":             asOf,
 		"items":            response,
+		"page": map[string]any{
+			"limit": page.Limit, "offset": page.Offset, "total": page.Total,
+		},
 	})
 }
 
@@ -151,6 +159,32 @@ func parseAsOf(w http.ResponseWriter, r *http.Request) (time.Time, bool) {
 		return time.Time{}, false
 	}
 	return parsed.UTC(), true
+}
+
+func parseHistoryPage(w http.ResponseWriter, r *http.Request) (int, int, bool) {
+	const (
+		defaultLimit = 25
+		maxLimit     = 100
+	)
+	limit := defaultLimit
+	if raw := strings.TrimSpace(r.URL.Query().Get("limit")); raw != "" {
+		value, err := strconv.Atoi(raw)
+		if err != nil || value <= 0 || value > maxLimit {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_HISTORY_LIMIT", "limit must be an integer between 1 and 100", nil)
+			return 0, 0, false
+		}
+		limit = value
+	}
+	offset := 0
+	if raw := strings.TrimSpace(r.URL.Query().Get("offset")); raw != "" {
+		value, err := strconv.Atoi(raw)
+		if err != nil || value < 0 {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_HISTORY_OFFSET", "offset must be a non-negative integer", nil)
+			return 0, 0, false
+		}
+		offset = value
+	}
+	return limit, offset, true
 }
 
 func historyItemResponse(item application.CertificationHistoryItem) map[string]any {
