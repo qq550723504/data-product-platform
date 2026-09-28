@@ -25,14 +25,14 @@ const gateDescriptions: Record<string, string> = {
 };
 
 const gateAnchors: Record<string, string> = {
-  production: "trace",
-  dataset: "trace",
-  rights: "governance",
-  quality: "governance",
-  compliance: "governance",
-  contract: "governance",
-  evidence: "trace",
-  delivery: "assets",
+  production: "release-production",
+  dataset: "release-dataset",
+  rights: "release-governance",
+  quality: "release-governance",
+  compliance: "release-governance",
+  contract: "release-governance",
+  evidence: "release-evidence",
+  delivery: "release-delivery",
 };
 
 function blockerGate(blocker: string): string | null {
@@ -103,9 +103,7 @@ export function ProductReleasePanel({ productId, items, actionsEnabled }: { prod
                     : [],
                   gate,
                 );
-                const target = gateAnchors[gate] === "trace"
-                  ? `/products/${productId}/releases/${item.release.id}`
-                  : `#${gateAnchors[gate]}`;
+                const target = `/products/${productId}/releases/${item.release.id}#${gateAnchors[gate]}`;
                 return (
                   <div
                     className={`readiness-check readiness-check-${status.toLowerCase()}`}
