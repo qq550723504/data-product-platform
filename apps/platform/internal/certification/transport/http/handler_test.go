@@ -121,14 +121,13 @@ func TestParseHistoryPageBounds(t *testing.T) {
 	}
 }
 
-
 func TestParseOptionalHistoryProfile(t *testing.T) {
 	valid := uuid.New()
 	tests := []struct {
-		name    string
-		query   string
-		want    *uuid.UUID
-		wantOK  bool
+		name   string
+		query  string
+		want   *uuid.UUID
+		wantOK bool
 	}{
 		{name: "missing", query: "", wantOK: true},
 		{name: "valid", query: "?profileId=" + valid.String(), want: &valid, wantOK: true},
