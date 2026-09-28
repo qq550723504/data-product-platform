@@ -237,15 +237,22 @@ func NewProductRelease(productID, productVersionID uuid.UUID, releaseNo string, 
 		return ProductRelease{}, ErrInvalidRelease
 	}
 	seen := map[string]struct{}{}
+	productionTargets := 0
 	for _, binding := range datasets {
 		if binding.DatasetVersionID == uuid.Nil || !validDatasetRole(binding.Role) {
 			return ProductRelease{}, ErrInvalidRelease
+		}
+		if binding.Role == DatasetPrimary || binding.Role == DatasetOutput {
+			productionTargets++
 		}
 		key := binding.DatasetVersionID.String() + ":" + string(binding.Role)
 		if _, exists := seen[key]; exists {
 			return ProductRelease{}, fmt.Errorf("%w: duplicate dataset binding", ErrInvalidRelease)
 		}
 		seen[key] = struct{}{}
+	}
+	if productionTargets != 1 {
+		return ProductRelease{}, fmt.Errorf("%w: exactly one PRIMARY or OUTPUT dataset is required", ErrInvalidRelease)
 	}
 	if metadata == nil {
 		metadata = map[string]any{}
