@@ -113,6 +113,13 @@ func TestCertificationAndDispositionAppendDecisionEvidence(t *testing.T) {
 		t.Fatalf("evaluate certification: %v", err)
 	}
 	assertEvidenceRelation(t, pool, "DATASET_CERTIFICATION", certification.ID, "DECISION_EVIDENCE")
+	var certificationRevision int64
+	if err := pool.QueryRow(ctx, `SELECT history_revision FROM dataset_certification WHERE id=$1`, certification.ID).Scan(&certificationRevision); err != nil {
+		t.Fatalf("read certification history revision: %v", err)
+	}
+	if certificationRevision <= 0 {
+		t.Fatalf("certification history revision = %d, want > 0", certificationRevision)
+	}
 
 	if _, err := service.ChangeDisposition(ctx, ChangeCertificationDispositionCommand{
 		WorkspaceID:     workspaceID,
@@ -129,6 +136,13 @@ func TestCertificationAndDispositionAppendDecisionEvidence(t *testing.T) {
 		t.Fatalf("load certification disposition: %v", err)
 	}
 	assertEvidenceRelation(t, pool, "CERTIFICATION_DISPOSITION", dispositionID, "DISPOSITION_EVIDENCE")
+	var dispositionRevision int64
+	if err := pool.QueryRow(ctx, `SELECT history_revision FROM certification_disposition WHERE id=$1`, dispositionID).Scan(&dispositionRevision); err != nil {
+		t.Fatalf("read disposition history revision: %v", err)
+	}
+	if dispositionRevision <= certificationRevision {
+		t.Fatalf("disposition history revision = %d, want > certification revision %d", dispositionRevision, certificationRevision)
+	}
 }
 
 func TestCertificationDispositionSerializesWithDeliveryAuthorizationFence(t *testing.T) {
