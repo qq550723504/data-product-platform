@@ -16,6 +16,8 @@ type ReadinessFacts struct {
 	TargetDatasetID                     *uuid.UUID
 	AllDatasetsUsable                   bool
 	ProductionExecutionPresent          bool
+	ProductionWorkflowMatch             bool
+	ProductionLineageComplete           bool
 	ProductionDependencyBindingRequired bool
 	ProductionDependencyBindingComplete bool
 	RightsSnapshotExists                bool
@@ -315,18 +317,44 @@ func (r *PostgresRepository) readinessFacts(ctx context.Context, q readinessQuer
 			var executionID uuid.UUID
 			var executionStatus string
 			var executionOutputVersionID *uuid.UUID
+			var executionWorkflowVersionID uuid.UUID
 			if err := q.QueryRow(ctx, `
-				SELECT e.id, e.status, e.output_dataset_version_id
+				SELECT e.id, e.status, e.output_dataset_version_id, e.workflow_version_id
 				FROM dataset_version v
 				JOIN execution e ON e.id=v.generated_by_execution_id
 				WHERE v.id=$1
-			`, *facts.TargetDatasetVersionID).Scan(&executionID, &executionStatus, &executionOutputVersionID); err != nil {
+			`, *facts.TargetDatasetVersionID).Scan(&executionID, &executionStatus, &executionOutputVersionID, &executionWorkflowVersionID); err != nil {
 				return ReadinessFacts{}, fmt.Errorf("read producing execution for dependency readiness: %w", err)
 			}
+			facts.ProductionWorkflowMatch = version.WorkflowVersionID == nil || executionWorkflowVersionID == *version.WorkflowVersionID
 			if executionStatus != "SUCCEEDED" || executionOutputVersionID == nil || *executionOutputVersionID != *facts.TargetDatasetVersionID {
 				facts.ProductionDependencyBindingRequired = true
 				facts.ProductionDependencyBindingComplete = false
-			} else if err := q.QueryRow(ctx, `
+			} else {
+				if err := q.QueryRow(ctx, `
+					SELECT
+						EXISTS(
+							SELECT 1
+							FROM dataset_version_lineage l
+							WHERE l.output_version_id=$1
+							  AND l.execution_id=$2
+						)
+						AND NOT EXISTS(
+							SELECT 1
+							FROM execution_input i
+							WHERE i.execution_id=$2
+							  AND NOT EXISTS(
+								  SELECT 1
+								  FROM dataset_version_lineage l
+								  WHERE l.output_version_id=$1
+								    AND l.input_version_id=i.dataset_version_id
+								    AND l.execution_id=$2
+							  )
+						)
+				`, *facts.TargetDatasetVersionID, executionID).Scan(&facts.ProductionLineageComplete); err != nil {
+					return ReadinessFacts{}, fmt.Errorf("read production lineage readiness: %w", err)
+				}
+				if err := q.QueryRow(ctx, `
 					WITH execution_inputs AS (
 						SELECT input_name, dataset_version_id
 						FROM execution_input
@@ -388,7 +416,8 @@ func (r *PostgresRepository) readinessFacts(ctx context.Context, q readinessQuer
 							  )
 							)
 			`, executionID, product.WorkspaceID).Scan(&facts.ProductionDependencyBindingComplete); err != nil {
-				return ReadinessFacts{}, fmt.Errorf("read production dependency readiness: %w", err)
+					return ReadinessFacts{}, fmt.Errorf("read production dependency readiness: %w", err)
+				}
 			}
 		}
 		if err := q.QueryRow(ctx, `
