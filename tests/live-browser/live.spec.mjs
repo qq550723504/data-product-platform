@@ -99,8 +99,6 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
 
     await page.getByRole("link", { name: "Eligibility", exact: true }).click();
     await expect(page).toHaveURL(/view=eligibility/);
-    await page.getByRole("link", { name: "Eligibility", exact: true }).click();
-    await expect(page).toHaveURL(/view=eligibility/);
     await expect(page.getByRole("heading", { name: "Current Delivery Eligibility", exact: true })).toBeVisible();
     const preflight = page.getByRole("heading", { name: "预检结果", exact: true }).locator("xpath=ancestor::section");
     for (const gate of ["DatasetVersion usability", "Current Certification", "Current Entitlement"]) {
@@ -146,6 +144,8 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
       await expect(trace).toContainText(phaseName);
     }
 
+    await page.getByRole("link", { name: "Eligibility", exact: true }).click();
+    await expect(page).toHaveURL(/view=eligibility/);
     await expect(page.getByRole("heading", { name: "Current Delivery Eligibility", exact: true })).toBeVisible();
     const preflight = page.getByRole("heading", { name: "预检结果", exact: true }).locator("xpath=ancestor::section");
     await expect(preflight).toContainText(data.expectedDelivery);
