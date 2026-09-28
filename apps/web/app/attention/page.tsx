@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Badge, EmptyState, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
+import { collectAllPages } from "@/lib/pagination";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 
 const PAGE_SIZE = 25;
@@ -103,7 +104,7 @@ export default async function AttentionPage({
     const [reviews, failures, products, releaseSnapshot] = await Promise.all([
       platform.reviews("PENDING", PAGE_SIZE, reviewOffset),
       platform.unresolvedFailedExecutions(PAGE_SIZE, failureOffset),
-      platform.products(100, 0),
+      collectAllPages(platform.products, 100),
       platform.releaseAttention(PAGE_SIZE),
     ]);
 
@@ -124,7 +125,7 @@ export default async function AttentionPage({
       validating: validatingPage,
       ready: readyPage,
     };
-    const productById = new Map(products.items.map((product) => [product.id, product]));
+    const productById = new Map(products.map((product) => [product.id, product]));
     const total =
       reviews.page.total +
       failures.page.total +
