@@ -120,3 +120,39 @@ func TestParseHistoryPageBounds(t *testing.T) {
 		})
 	}
 }
+
+
+func TestParseOptionalHistoryProfile(t *testing.T) {
+	valid := uuid.New()
+	tests := []struct {
+		name    string
+		query   string
+		want    *uuid.UUID
+		wantOK  bool
+	}{
+		{name: "missing", query: "", wantOK: true},
+		{name: "valid", query: "?profileId=" + valid.String(), want: &valid, wantOK: true},
+		{name: "invalid", query: "?profileId=not-a-uuid", wantOK: false},
+		{name: "nil uuid", query: "?profileId=00000000-0000-0000-0000-000000000000", wantOK: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/certifications"+tt.query, nil)
+			response := httptest.NewRecorder()
+			got, ok := parseOptionalHistoryProfile(response, req)
+			if ok != tt.wantOK {
+				t.Fatalf("ok = %v, want %v; body=%s", ok, tt.wantOK, response.Body.String())
+			}
+			if !ok {
+				if response.Code != http.StatusBadRequest {
+					t.Fatalf("status = %d, want %d", response.Code, http.StatusBadRequest)
+				}
+				return
+			}
+			if (got == nil) != (tt.want == nil) || (got != nil && *got != *tt.want) {
+				t.Fatalf("profile = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
