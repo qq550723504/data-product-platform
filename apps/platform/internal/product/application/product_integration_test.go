@@ -3,6 +3,7 @@ package application_test
 import (
 	"context"
 	"os"
+	"slices"
 	"testing"
 
 	"github.com/google/uuid"
@@ -179,8 +180,11 @@ func TestProductVersionAndDraftReleaseAreFrozenBeforeGovernanceGates(t *testing.
 	if readiness.Overall != "NOT_READY" {
 		t.Fatalf("readiness overall = %s, want NOT_READY", readiness.Overall)
 	}
-	if readiness.Checks["production"] != application.CheckPass || readiness.Checks["dataset"] != application.CheckPass {
+	if readiness.Checks["production"] != application.CheckFail || readiness.Checks["dataset"] != application.CheckPass {
 		t.Fatalf("production/dataset readiness = %#v", readiness.Checks)
+	}
+	if !slices.Contains(readiness.Blockers, "PRODUCTION_EXECUTION_MISSING") {
+		t.Fatalf("draft blockers = %v, want PRODUCTION_EXECUTION_MISSING", readiness.Blockers)
 	}
 	for _, gate := range []string{"rights", "quality", "compliance", "contract", "evidence", "delivery"} {
 		if readiness.Checks[gate] != application.CheckPending {
