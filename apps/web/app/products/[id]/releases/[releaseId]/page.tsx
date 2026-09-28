@@ -37,8 +37,16 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
   try {
     const product = await scopedProduct(id);
     const scoped = await scopedRelease(product.id, releaseId);
-    const trace = await productReleaseTrace(scoped.id);
+    const [trace, readiness] = await Promise.all([
+      productReleaseTrace(scoped.id),
+      platform.releaseReadiness(scoped.id),
+    ]);
     validateReleaseTraceScope(trace, { workspaceId, productId: product.id, releaseId: scoped.id });
+    const evidenceReadiness = readiness.details?.evidence as {
+      datasetVersionId?: string | null;
+      relationCount?: number;
+      requiredCount?: number;
+    } | undefined;
 
     return (
       <>
@@ -130,6 +138,18 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
               <tr key={mapping.decisionId}><td className="primary-cell"><strong>{mapping.sourceName || mapping.sourceKey}</strong><span>{mapping.sourceType} · {mapping.sourceRef}</span></td><td className="mono">{shortId(mapping.entityId)}</td><td><Badge value={mapping.status} /></td><td className="mono"><span>{mapping.decisionId}</span><br /><small>{mapping.decidedAt ? formatDate(mapping.decidedAt) : "—"}</small></td><td>{mapping.matchMethod}{mapping.matchRuleId ? ` · ${mapping.matchRuleId}` : ""}<br /><small>{mapping.matchPolicyVersion}</small></td><td>{(mapping.confidence * 100).toFixed(1)}%</td><td>{mapping.evidenceId ? <span className="mono">{shortId(mapping.evidenceId)}</span> : "—"}{mapping.reviewerReason ? <><br /><small>{mapping.reviewerReason}</small></> : null}</td></tr>
             ))}</tbody></table></div>
           )}
+        </section>
+
+        <section className="detail-card" style={{ marginBottom: 18 }} data-testid="target-evidence-readiness">
+          <div className="panel-header"><h2>Target Evidence Readiness</h2><Badge value={readiness.checks?.evidence ?? "UNKNOWN"} /></div>
+          <DefinitionList items={[
+            { label: "Target DatasetVersion", value: evidenceReadiness?.datasetVersionId ? <span className="mono">{evidenceReadiness.datasetVersionId}</span> : "—" },
+            { label: "Readiness relation count", value: evidenceReadiness?.relationCount ?? "—" },
+            { label: "Required relation count", value: evidenceReadiness?.requiredCount ?? "—" },
+          ]} />
+          <p style={{ marginTop: 12, color: "var(--muted)", lineHeight: 1.6 }}>
+            Evidence Readiness 只统计目标 DatasetVersion 的 Evidence 关系；下方 Evidence Records 是整条 Release lineage 的聚合记录，不能替代门禁计数。
+          </p>
         </section>
 
         <section style={{ marginBottom: 22 }}>
