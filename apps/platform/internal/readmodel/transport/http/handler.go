@@ -35,6 +35,7 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/gold-explanation", h.goldExplanation)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/executions", h.listExecutions)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/attention/failed-executions", h.listUnresolvedFailedExecutions)
+	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/attention/releases", h.releaseAttention)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/entity-match-reviews", h.listEntityReviews)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/data-products", h.listDataProducts)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/product-releases", h.listWorkspaceReleases)
@@ -214,6 +215,27 @@ func (h *Handler) listUnresolvedFailedExecutions(w http.ResponseWriter, r *http.
 	result, err := h.repo.ListUnresolvedFailedExecutions(r.Context(), workspaceID, limit, offset)
 	if err != nil {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "FAILED_EXECUTIONS_READ_FAILED", err.Error(), nil)
+		return
+	}
+	writeJSON(w, http.StatusOK, result)
+}
+
+func (h *Handler) releaseAttention(w http.ResponseWriter, r *http.Request) {
+	workspaceID, ok := workspaceID(w, r)
+	if !ok {
+		return
+	}
+	limit, offset, ok := pagination(w, r)
+	if !ok {
+		return
+	}
+	if offset != 0 {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ATTENTION_OFFSET", "release attention offset must be zero", nil)
+		return
+	}
+	result, err := h.repo.WorkspaceReleaseAttention(r.Context(), workspaceID, limit)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "RELEASE_ATTENTION_READ_FAILED", err.Error(), nil)
 		return
 	}
 	writeJSON(w, http.StatusOK, result)
