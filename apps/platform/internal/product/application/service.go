@@ -380,14 +380,14 @@ func readinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.Readines
 	blockers := make([]string, 0)
 	details := map[string]any{}
 
-	if facts.TargetDatasetVersionID != nil {
-		if facts.ProductionDependencyBindingRequired && !facts.ProductionDependencyBindingComplete {
-			blockers = append(blockers, "PRODUCTION_DEPENDENCY_BINDING_INCOMPLETE")
-		} else {
-			checks["production"] = CheckPass
-		}
-	} else {
+	if facts.TargetDatasetVersionID == nil {
 		blockers = append(blockers, "PRODUCTION_DATASET_MISSING")
+	} else if !facts.ProductionExecutionPresent {
+		blockers = append(blockers, "PRODUCTION_EXECUTION_MISSING")
+	} else if facts.ProductionDependencyBindingRequired && !facts.ProductionDependencyBindingComplete {
+		blockers = append(blockers, "PRODUCTION_DEPENDENCY_BINDING_INCOMPLETE")
+	} else {
+		checks["production"] = CheckPass
 	}
 	if facts.AllDatasetsUsable && facts.TargetDatasetVersionID != nil {
 		checks["dataset"] = CheckPass
@@ -437,9 +437,11 @@ func readinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.Readines
 	} else {
 		blockers = append(blockers, "DELIVERY_ASSET_MISSING")
 	}
-	details["productionDependencyBinding"] = map[string]any{
-		"required": facts.ProductionDependencyBindingRequired,
-		"complete": facts.ProductionDependencyBindingComplete,
+	details["production"] = map[string]any{
+		"datasetVersionId": facts.TargetDatasetVersionID,
+		"executionPresent": facts.ProductionExecutionPresent,
+		"dependencyBindingRequired": facts.ProductionDependencyBindingRequired,
+		"dependencyBindingComplete": facts.ProductionDependencyBindingComplete,
 	}
 
 	sort.Strings(blockers)
