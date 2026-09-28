@@ -18,21 +18,30 @@ export default async function WorkbenchPage() {
   }
 
   try {
-    const [summary, executions, products, failedReleases, readyReleases] = await Promise.all([
+    const [summary, executions, products, failedReleases, validatingReleases, readyReleases] = await Promise.all([
       platform.workbench(),
       platform.executions(20, 0),
       platform.products(50, 0),
       platform.workspaceReleases("FAILED", 10, 0),
+      platform.workspaceReleases("VALIDATING", 10, 0),
       platform.workspaceReleases("READY", 10, 0),
     ]);
     const activeExecutions = summary.executions.queued + summary.executions.submitting + summary.executions.running;
     const failedExecutions = executions.items.filter((execution) => execution.status === "FAILED");
     const productById = new Map(products.items.map((product) => [product.id, product]));
     const failedRelease = failedReleases.items[0];
+    const validatingRelease = validatingReleases.items[0];
     const readyRelease = readyReleases.items[0];
     const failedReleaseProduct = failedRelease ? productById.get(failedRelease.productId) : undefined;
+    const validatingReleaseProduct = validatingRelease ? productById.get(validatingRelease.productId) : undefined;
     const readyReleaseProduct = readyRelease ? productById.get(readyRelease.productId) : undefined;
-    const attentionCount = summary.reviewQueue.pending + summary.executions.failed + summary.releases.failed + summary.releases.ready;
+    const validatingReadiness = validatingRelease ? await platform.releaseReadiness(validatingRelease.id) : null;
+    const attentionCount =
+      summary.reviewQueue.pending +
+      summary.executions.failed +
+      summary.releases.failed +
+      validatingReleases.page.total +
+      summary.releases.ready;
 
     return (
       <>
@@ -133,6 +142,33 @@ export default async function WorkbenchPage() {
                     </tr>
                   ) : null}
 
+                  {validatingReleases.page.total > 0 ? (
+                    <tr>
+                      <td className="primary-cell">
+                        <strong>Release Readiness 阻塞</strong>
+                        <span>{validatingReleases.page.total} 个 Release 仍在 VALIDATING</span>
+                      </td>
+                      <td><Badge value="BLOCKED" /></td>
+                      <td>
+                        {validatingReadiness?.blockers.length
+                          ? validatingReadiness.blockers.slice(0, 3).join(" · ")
+                          : validatingRelease
+                            ? `${validatingReleaseProduct?.name ?? "Data Product"} · ${validatingRelease.releaseNo}`
+                            : "查看 Release Readiness"}
+                      </td>
+                      <td>
+                        <Link
+                          className="text-link"
+                          href={validatingRelease
+                            ? `/products/${validatingRelease.productId}/releases/${validatingRelease.id}`
+                            : "/products"}
+                        >
+                          查看 Blockers
+                        </Link>
+                      </td>
+                    </tr>
+                  ) : null}
+
                   {summary.releases.ready > 0 ? (
                     <tr>
                       <td className="primary-cell">
@@ -145,7 +181,7 @@ export default async function WorkbenchPage() {
                         <Link
                           className="text-link"
                           href={readyRelease
-                            ? `/products/${readyRelease.productId}/releases/${readyRelease.id}`
+                            ? `/products/${readyRelease.productId}#releases`
                             : "/products"}
                         >
                           去发布
