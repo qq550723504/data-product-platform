@@ -268,35 +268,9 @@ func sanitizeProviderObservation(observed map[string]any) (map[string]any, error
 				return nil, fmt.Errorf("provider observation contains unsupported ratio value")
 			}
 			if ratioKey == "denominator" {
-				switch typed := safeValue.(type) {
-				case int:
-					if typed == 0 {
-						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
-					}
-				case int32:
-					if typed == 0 {
-						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
-					}
-				case int64:
-					if typed == 0 {
-						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
-					}
-				case uint:
-					if typed == 0 {
-						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
-					}
-				case uint32:
-					if typed == 0 {
-						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
-					}
-				case uint64:
-					if typed == 0 {
-						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
-					}
-				case json.Number:
-					if typed.String() == "0" {
-						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
-					}
+				var denominator big.Int
+				if _, ok := denominator.SetString(safeValue.String(), 10); !ok || denominator.Sign() <= 0 {
+					return nil, fmt.Errorf("provider observation ratio denominator must be positive")
 				}
 			}
 			safeRatio[ratioKey] = safeValue
