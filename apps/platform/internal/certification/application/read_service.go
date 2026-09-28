@@ -86,10 +86,10 @@ func (s *CertificationService) ListDatasetHistoryPage(
 		})
 	}
 	return CertificationHistoryPage{
-		Items:    items,
-		Profiles: profileList,
-		Limit:    limit,
-		Offset:   offset,
+		Items:          items,
+		Profiles:       profileList,
+		Limit:          limit,
+		Offset:         offset,
 		Total:          page.Total,
 		AnchorRevision: page.AnchorRevision,
 	}, nil
