@@ -22,11 +22,12 @@ type CertificationHistoryItem struct {
 }
 
 type CertificationHistoryPage struct {
-	Items    []CertificationHistoryItem
-	Profiles []certificationdomain.ProfileSnapshot
-	Limit    int
-	Offset   int
-	Total    int
+	Items          []CertificationHistoryItem
+	Profiles       []certificationdomain.ProfileSnapshot
+	Limit          int
+	Offset         int
+	Total          int
+	AnchorRevision int64
 }
 
 func (s *CertificationService) ListDatasetHistoryPage(
@@ -34,6 +35,7 @@ func (s *CertificationService) ListDatasetHistoryPage(
 	workspaceID, datasetVersionID uuid.UUID,
 	asOf time.Time,
 	limit, offset int,
+	anchorRevision *int64,
 ) (CertificationHistoryPage, error) {
 	if workspaceID == uuid.Nil || datasetVersionID == uuid.Nil {
 		return CertificationHistoryPage{}, fmt.Errorf("workspace and DatasetVersion are required")
@@ -48,17 +50,13 @@ func (s *CertificationService) ListDatasetHistoryPage(
 		asOf = time.Now().UTC()
 	}
 
-	page, err := s.certificationRepo.ListDatasetCertificationHistoryPage(ctx, workspaceID, datasetVersionID, asOf, limit, offset)
+	page, err := s.certificationRepo.ListDatasetCertificationHistoryPage(ctx, workspaceID, datasetVersionID, asOf, limit, offset, anchorRevision)
 	if err != nil {
 		return CertificationHistoryPage{}, err
 	}
-	profileIDs, err := s.certificationRepo.ListProfileIDsForDatasetVersion(ctx, workspaceID, datasetVersionID, asOf)
-	if err != nil {
-		return CertificationHistoryPage{}, err
-	}
-	profiles := make(map[uuid.UUID]certificationdomain.ProfileSnapshot, len(profileIDs))
-	profileList := make([]certificationdomain.ProfileSnapshot, 0, len(profileIDs))
-	for _, profileID := range profileIDs {
+	profiles := make(map[uuid.UUID]certificationdomain.ProfileSnapshot, len(page.ProfileIDs))
+	profileList := make([]certificationdomain.ProfileSnapshot, 0, len(page.ProfileIDs))
+	for _, profileID := range page.ProfileIDs {
 		profile, err := s.profileRepo.GetProfile(ctx, profileID)
 		if err != nil {
 			return CertificationHistoryPage{}, err
@@ -92,7 +90,8 @@ func (s *CertificationService) ListDatasetHistoryPage(
 		Profiles: profileList,
 		Limit:    limit,
 		Offset:   offset,
-		Total:    page.Total,
+		Total:          page.Total,
+		AnchorRevision: page.AnchorRevision,
 	}, nil
 }
 
