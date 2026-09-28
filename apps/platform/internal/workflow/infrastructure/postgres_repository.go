@@ -301,6 +301,17 @@ func (r *PostgresRepository) GetExecutionTx(ctx context.Context, tx pgx.Tx, exec
 	return r.getExecution(ctx, tx, executionID, forUpdate)
 }
 
+func (r *PostgresRepository) DatasetIDForVersion(ctx context.Context, versionID uuid.UUID) (uuid.UUID, error) {
+	var datasetID uuid.UUID
+	if err := r.pool.QueryRow(ctx, `SELECT dataset_id FROM dataset_version WHERE id=$1`, versionID).Scan(&datasetID); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return uuid.Nil, ErrNotFound
+		}
+		return uuid.Nil, fmt.Errorf("resolve dataset for version: %w", err)
+	}
+	return datasetID, nil
+}
+
 func (r *PostgresRepository) getExecution(ctx context.Context, q executionQuerier, executionID uuid.UUID, forUpdate bool) (domain.Execution, error) {
 	var execution domain.Execution
 	var metrics []byte

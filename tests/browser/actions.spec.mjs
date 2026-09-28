@@ -110,6 +110,18 @@ test("ambiguous entity review requires explicit frozen alternative selection", a
   });
 });
 
+test("execution detail exposes navigable frozen lineage and retry semantics", async ({ page }) => {
+  await page.goto(`/production/${ids.job}`);
+
+  await expect(page.getByText("FIXTURE_EXECUTION_FAILED", { exact: true })).toBeVisible();
+  await expect(page.getByText("Core Retry 会基于同一冻结输入创建新的 Execution", { exact: false })).toBeVisible();
+  await expect(page.getByRole("link", { name: ids.retryParent.slice(0, 8) })).toHaveAttribute("href", `/production/${ids.retryParent}`);
+
+  const versionHref = `/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`;
+  await expect(page.getByRole("link", { name: ids.goldVersion.slice(0, 8) }).first()).toHaveAttribute("href", versionHref);
+  await expect(page.getByRole("link", { name: ids.goldVersion, exact: true })).toHaveAttribute("href", versionHref);
+});
+
 test("Gold DatasetVersion explains frozen production proof and current delivery", async ({ page, request }) => {
   await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
   await expect(page.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
