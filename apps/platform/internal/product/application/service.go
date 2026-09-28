@@ -368,6 +368,10 @@ func draftReadinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.Rea
 		blockers = append(blockers, "PRODUCTION_DATASET_MISSING")
 	} else if !facts.ProductionExecutionPresent {
 		blockers = append(blockers, "PRODUCTION_EXECUTION_MISSING")
+	} else if !facts.ProductionWorkflowMatch {
+		blockers = append(blockers, "PRODUCTION_WORKFLOW_MISMATCH")
+	} else if !facts.ProductionLineageComplete {
+		blockers = append(blockers, "PRODUCTION_LINEAGE_INCOMPLETE")
 	} else if facts.ProductionDependencyBindingRequired && !facts.ProductionDependencyBindingComplete {
 		blockers = append(blockers, "PRODUCTION_DEPENDENCY_BINDING_INCOMPLETE")
 	} else {
@@ -415,6 +419,10 @@ func readinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.Readines
 		blockers = append(blockers, "PRODUCTION_DATASET_MISSING")
 	} else if !facts.ProductionExecutionPresent {
 		blockers = append(blockers, "PRODUCTION_EXECUTION_MISSING")
+	} else if !facts.ProductionWorkflowMatch {
+		blockers = append(blockers, "PRODUCTION_WORKFLOW_MISMATCH")
+	} else if !facts.ProductionLineageComplete {
+		blockers = append(blockers, "PRODUCTION_LINEAGE_INCOMPLETE")
 	} else if facts.ProductionDependencyBindingRequired && !facts.ProductionDependencyBindingComplete {
 		blockers = append(blockers, "PRODUCTION_DEPENDENCY_BINDING_INCOMPLETE")
 	} else {
@@ -471,6 +479,8 @@ func readinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.Readines
 	details["production"] = map[string]any{
 		"datasetVersionId": facts.TargetDatasetVersionID,
 		"executionPresent": facts.ProductionExecutionPresent,
+		"workflowMatch": facts.ProductionWorkflowMatch,
+		"lineageComplete": facts.ProductionLineageComplete,
 	}
 	details["productionDependencyBinding"] = map[string]any{
 		"required": facts.ProductionDependencyBindingRequired,
