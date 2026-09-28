@@ -328,7 +328,7 @@ func pagination(w http.ResponseWriter, r *http.Request) (int, int, bool) {
 
 func validReleaseStatus(value string) bool {
 	switch value {
-	case "DRAFT", "READY", "PUBLISHED", "FAILED":
+	case "DRAFT", "VALIDATING", "READY", "PUBLISHED", "FAILED":
 		return true
 	default:
 		return false
