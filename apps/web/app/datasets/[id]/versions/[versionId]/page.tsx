@@ -24,6 +24,7 @@ type Query = {
   findingsOffset?: string;
   assessmentOffset?: string;
   certificationOffset?: string;
+  certificationAsOf?: string;
 };
 
 function firstValue(values?: string[]): string {
@@ -106,15 +107,15 @@ export default async function DatasetVersionDetailPage({
       platform.datasetVersion(versionId),
       platform.qualityAssessments(versionId, assessmentLimit, assessmentOffset),
       assessmentOffset === 0 ? Promise.resolve(null) : platform.qualityAssessments(versionId, 1, 0),
-      platform.certificationHistory(versionId, certificationLimit, certificationOffset),
+      platform.certificationHistory(versionId, certificationLimit, certificationOffset, query.certificationAsOf ?? ""),
     ]);
 
     if (version.datasetId !== dataset.id) {
       throw new Error("DatasetVersion 不属于当前 Dataset");
     }
 
-    const profileMap = new Map(history.items.map((item) => [item.profile.id, item.profile]));
-    const profiles = Array.from(profileMap.values());
+    const profileMap = new Map(history.profiles.map((profile) => [profile.id, profile]));
+    const profiles = history.profiles;
     const selectedProfile = profileMap.get(query.profileId ?? "") ?? profiles[0];
     const profileScope = selectedProfile?.rights.scopes.values?.[0];
     const requested = {
@@ -136,6 +137,7 @@ export default async function DatasetVersionDetailPage({
       }
       if (offset > 0) next.set("certificationOffset", String(offset));
       else next.delete("certificationOffset");
+      next.set("certificationAsOf", history.asOf);
       const suffix = next.toString();
       return `/datasets/${id}/versions/${versionId}${suffix ? `?${suffix}` : ""}`;
     };
