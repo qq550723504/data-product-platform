@@ -114,6 +114,7 @@ export default async function DatasetVersionDetailPage({
         certificationOffset,
         query.certificationAsOf ?? "",
         query.certificationRevision === undefined ? undefined : Math.max(0, Number.parseInt(query.certificationRevision, 10) || 0),
+        query.profileId ?? "",
       ),
     ]);
 
