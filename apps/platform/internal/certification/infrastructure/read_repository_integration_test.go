@@ -106,7 +106,7 @@ func TestListDatasetCertificationHistoryPageIsBoundedAndStable(t *testing.T) {
 
 	repo := NewCertificationRepository(pool)
 	page, err := repo.ListDatasetCertificationHistoryPage(
-		ctx, workspaceID, versionID, base.Add(3*time.Minute), 2, 0,
+		ctx, workspaceID, versionID, base.Add(3*time.Minute), 2, 0, nil,
 	)
 	if err != nil {
 		t.Fatalf("list first history page: %v", err)
@@ -122,7 +122,7 @@ func TestListDatasetCertificationHistoryPageIsBoundedAndStable(t *testing.T) {
 	}
 
 	next, err := repo.ListDatasetCertificationHistoryPage(
-		ctx, workspaceID, versionID, base.Add(3*time.Minute), 2, 2,
+		ctx, workspaceID, versionID, base.Add(3*time.Minute), 2, 2, &page.AnchorRevision,
 	)
 	if err != nil {
 		t.Fatalf("list second history page: %v", err)
