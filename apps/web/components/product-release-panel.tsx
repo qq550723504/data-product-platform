@@ -107,7 +107,7 @@ export function ProductReleasePanel({ productId, items, actionsEnabled }: { prod
               <div className="readiness-gates">
                 {[
                   ...requiredReleaseGates,
-                  ...Object.keys(item.readiness.checks ?? {}).filter((gate) => !requiredReleaseGates.includes(gate)),
+                  ...Object.keys(item.readiness.checks ?? {}).filter((gate) => !(requiredReleaseGates as readonly string[]).includes(gate)),
                 ].map((gate) => {
                   const status = gateState(item.readiness.checks?.[gate]);
                   return (
