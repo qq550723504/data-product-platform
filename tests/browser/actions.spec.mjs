@@ -218,14 +218,26 @@ test("readiness checklist explains the failing gate and action", async ({ page, 
   await expect(rights.getByRole("link", { name: "处理 / 查看依据 →", exact: true })).toHaveAttribute("href", governanceHref);
   await rights.getByRole("link", { name: "处理 / 查看依据 →", exact: true }).click();
   await expect(page).toHaveURL(new RegExp("/products/" + ids.product + "/releases/" + ids.release + "#release-governance$"));
-  await expect(page.getByRole("heading", { name: "Frozen ProductVersion Governance", exact: true })).toBeVisible();
-  await expect(page.getByText(ids.version, { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Release Governance Bindings", exact: true })).toBeVisible();
+  await expect(page.getByText("RIGHTS_SNAPSHOT_MISSING", { exact: true })).toBeVisible();
 
   const production = page.getByTestId("readiness-production");
   await expect(production).toContainText("PASS");
   await expect(production.getByRole("link")).toHaveCount(0);
 
   await page.goto(productPath);
+  await expect(page.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
+  expect(await writes(request)).toHaveLength(0);
+});
+test("readiness checklist keeps action for PASS plus blocker contradiction", async ({ page, request }) => {
+  await scenario(request, "blocker");
+  await page.goto(productPath);
+
+  const rights = page.getByTestId("readiness-rights");
+  await expect(rights).toContainText("PASS");
+  await expect(rights).toContainText("BLOCKED");
+  await expect(rights).toContainText("RIGHTS_REVOKED");
+  await expect(rights.getByRole("link", { name: "处理 / 查看依据 →", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
   expect(await writes(request)).toHaveLength(0);
 });
