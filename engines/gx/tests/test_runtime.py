@@ -854,3 +854,31 @@ spec:
     threshold = response.json()["findings"][0]["observed"]["threshold"]
     assert threshold["numerator"] == 1
     assert len(str(threshold["denominator"])) == 4301
+
+
+def test_rule_set_kind_uses_core_trim_semantics() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: " QualityRuleSet "
+metadata:
+  name: spaced-kind
+  version: 1
+spec:
+  rules:
+    - id: REQUIRED
+      type: not_null
+      target: id
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/spaced-kind.yaml",
+            "ruleSetContent": policy,
+            "headers": ["id"],
+            "rows": [{"id": "A"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["status"] == "PASS"
