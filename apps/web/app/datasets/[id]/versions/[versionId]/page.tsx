@@ -254,6 +254,11 @@ export default async function DatasetVersionDetailPage({
                 <span>Delivery</span>
                 <strong><Badge value={eligibility ? (eligibility.allowed ? "ALLOWED" : "BLOCKED") : "NOT_CHECKED"} /></strong>
                 <small>{selectedProfile?.name ?? "No profile selected"}</small>
+                {eligibility ? (
+                  <small className="status-context">
+                    {requested.consumer} · {requested.purpose} · {requested.action} · {requested.delivery} · {requested.scopeType}{requested.scopeRef ? `:${requested.scopeRef}` : ""}
+                  </small>
+                ) : null}
               </article>
             </section>
             <section className="detail-card">
