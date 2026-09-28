@@ -161,7 +161,7 @@ def _load_policy(content: str) -> dict[str, Any]:
         root = yaml.compose(content, Loader=CoreRuleSetLoader)
     except yaml.YAMLError as exc:
         raise HTTPException(status_code=400, detail="invalid quality rule set") from exc
-    if not isinstance(policy, dict) or policy.get("kind") != "QualityRuleSet":
+    if not isinstance(policy, dict) or _core_trim(policy.get("kind", "")) != "QualityRuleSet":
         raise HTTPException(status_code=400, detail="invalid quality rule set")
     rules = policy.get("spec", {}).get("rules")
     if not isinstance(rules, list) or not rules:
