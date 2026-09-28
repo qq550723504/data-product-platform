@@ -380,6 +380,21 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 		t.Fatalf("create incomplete-binding execution: %v", err)
 	}
 	incompleteOutput := mustUploadCSV(t, ctx, uploadDataset, activityDataset.ID, "incomplete-binding-"+suffix+".csv", []byte(outputCSV), map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0}, &incompleteExecution.ID, &actorID, traceID)
+	if _, err := pool.Exec(ctx, `
+		UPDATE execution
+		SET status='SUCCEEDED', output_dataset_version_id=$2, started_at=COALESCE(started_at, now()), finished_at=now()
+		WHERE id=$1
+	`, incompleteExecution.ID, incompleteOutput.ID); err != nil {
+		t.Fatalf("finalize incomplete-binding execution fixture: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version_lineage (output_version_id, input_version_id, relation_type, execution_id)
+		SELECT $1, dataset_version_id, 'DERIVED_FROM', $2
+		FROM execution_input
+		WHERE execution_id=$2
+	`, incompleteOutput.ID, incompleteExecution.ID); err != nil {
+		t.Fatalf("insert incomplete-binding execution lineage: %v", err)
+	}
 	incompleteQuality, err := qualityService.Run(ctx, qualityapp.RunCommand{
 		WorkspaceID: workspaceID, DatasetVersionID: incompleteOutput.ID, RuleSetRef: qualityRuleSetRef,
 		ActorID: &actorID, TraceID: traceID, Now: incompleteOutput.ReadyAt.Add(30 * time.Minute),
