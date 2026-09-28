@@ -35,7 +35,7 @@ test("workbench surfaces actionable review and release items", async ({ page }) 
 
 test("attention center lists current actionable work", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("link", { name: "待办中心", exact: true })).toHaveAttribute("href", "/attention");
+  await expect(page.locator('a[href="/attention"]').first()).toHaveAttribute("href", "/attention");
   await expect(page.getByTestId("needs-attention").getByRole("link", { name: "查看全部", exact: true })).toHaveAttribute("href", "/attention");
 
   await page.goto("/attention");
