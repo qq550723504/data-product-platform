@@ -311,6 +311,7 @@ export function createFixtureServer() {
             datasetVersionId: ids.goldVersion,
             asOf: stamp,
             items,
+            profiles: [goldProfile],
             page: { total: 1, limit, offset },
           });
         }
