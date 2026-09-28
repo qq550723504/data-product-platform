@@ -26,7 +26,7 @@ test("workbench surfaces actionable review and release items", async ({ page }) 
   await expect(attention.getByRole("link", { name: "进入审核", exact: true })).toHaveAttribute("href", "/reviews");
   await expect(attention.getByRole("link", { name: "去发布", exact: true })).toHaveAttribute(
     "href",
-    `/products/${ids.product}/releases/${ids.release}`,
+    `/products/${ids.product}#releases`,
   );
 });
 
