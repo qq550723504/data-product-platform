@@ -79,10 +79,9 @@ func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
 		if *anchorRevision < 0 {
 			return DatasetCertificationHistoryPage{}, fmt.Errorf("certification history anchor revision must be non-negative")
 		}
-		if *anchorRevision > currentRevision {
-			return DatasetCertificationHistoryPage{}, fmt.Errorf("certification history anchor revision is ahead of committed history")
+		if *anchorRevision <= currentRevision {
+			resolvedAnchor = *anchorRevision
 		}
-		resolvedAnchor = *anchorRevision
 	}
 
 	page := DatasetCertificationHistoryPage{
