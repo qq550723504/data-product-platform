@@ -13,6 +13,45 @@ const gateLabels: Record<string, string> = {
   compliance: "合规", contract: "Data Contract", evidence: "证据", delivery: "交付资产",
 };
 
+const gateDescriptions: Record<string, string> = {
+  production: "确认目标 DatasetVersion 有可信生产 Execution、匹配 WorkflowVersion，并具备完整生产血缘。",
+  dataset: "确认 Release 绑定的 DatasetVersion 当前仍可读取且没有失效。",
+  rights: "确认冻结 RightsSnapshot 与当前产品、用途和授权要求一致。",
+  quality: "确认冻结 QualityResult 对应目标 DatasetVersion 且 Gate 可接受。",
+  compliance: "确认冻结 ComplianceResult 对应目标 DatasetVersion 且通过合规 Gate。",
+  contract: "确认 Release 绑定已发布且匹配当前产品的 Data Contract。",
+  evidence: "确认 Release 有足够的 Evidence 支撑并可进入冻结证据快照。",
+  delivery: "确认 ProductVersion 定义了可交付资产。",
+};
+
+const gateAnchors: Record<string, string> = {
+  production: "trace",
+  dataset: "trace",
+  rights: "governance",
+  quality: "governance",
+  compliance: "governance",
+  contract: "governance",
+  evidence: "trace",
+  delivery: "assets",
+};
+
+function blockerGate(blocker: string): string | null {
+  if (blocker.startsWith("PRODUCTION_")) return "production";
+  if (blocker.startsWith("DATASET_")) return "dataset";
+  if (blocker.startsWith("RIGHTS_") || blocker.startsWith("ENTITLEMENT_")) return "rights";
+  if (blocker.startsWith("QUALITY_")) return "quality";
+  if (blocker.startsWith("COMPLIANCE_")) return "compliance";
+  if (blocker.startsWith("CONTRACT_")) return "contract";
+  if (blocker.startsWith("EVIDENCE_")) return "evidence";
+  if (blocker.startsWith("DELIVERY_")) return "delivery";
+  if (requiredReleaseGates.includes(blocker as (typeof requiredReleaseGates)[number])) return blocker;
+  return null;
+}
+
+function blockersForGate(blockers: string[], gate: string): string[] {
+  return blockers.filter((blocker) => blockerGate(blocker) === gate);
+}
+
 export type ReleasePanelItem = { release: ProductRelease; readiness: ReleaseReadiness };
 
 function PublishForm({ productId, item, enabled }: { productId: string; item: ReleasePanelItem; enabled: boolean }) {
@@ -55,18 +94,56 @@ export function ProductReleasePanel({ productId, items, actionsEnabled }: { prod
             <p style={{ marginTop: 8 }}>
               <Link className="text-link" href={`/products/${productId}/releases/${item.release.id}`}>查看 Release → DatasetVersion → Execution → Evidence 完整证据链 →</Link>
             </p>
-            <div className="metric-grid" style={{ marginTop: 16 }}>
-              {requiredReleaseGates.map((gate) => (
-                <div className="metric-card" key={gate} data-testid={`readiness-${gate}`}>
-                  <span>{gateLabels[gate]}</span>
-                  <Badge value={typeof item.readiness.checks?.[gate] === "string" ? item.readiness.checks[gate] : "UNKNOWN"} />
-                </div>
-              ))}
+            <div className="readiness-checklist" style={{ marginTop: 16 }}>
+              {requiredReleaseGates.map((gate) => {
+                const status = typeof item.readiness.checks?.[gate] === "string" ? item.readiness.checks[gate] : "UNKNOWN";
+                const gateBlockers = blockersForGate(
+                  Array.isArray(item.readiness.blockers)
+                    ? item.readiness.blockers.filter((value): value is string => typeof value === "string")
+                    : [],
+                  gate,
+                );
+                const target = gateAnchors[gate] === "trace"
+                  ? `/products/${productId}/releases/${item.release.id}`
+                  : `#${gateAnchors[gate]}`;
+                return (
+                  <div
+                    className={`readiness-check readiness-check-${status.toLowerCase()}`}
+                    key={gate}
+                    data-testid={`readiness-${gate}`}
+                  >
+                    <div className="readiness-check-main">
+                      <span className="readiness-check-icon" aria-hidden="true">
+                        {status === "PASS" ? "✓" : status === "PENDING" ? "…" : "!"}
+                      </span>
+                      <div>
+                        <div className="readiness-check-title">
+                          <strong>{gateLabels[gate]}</strong>
+                          <Badge value={status} />
+                        </div>
+                        <p>{gateDescriptions[gate]}</p>
+                        {gateBlockers.length ? (
+                          <div className="readiness-blockers">
+                            {gateBlockers.map((blocker) => <code key={blocker}>{blocker}</code>)}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                    {status !== "PASS" ? <Link className="text-link" href={target}>处理 / 查看依据 →</Link> : null}
+                  </div>
+                );
+              })}
             </div>
             {problem ? (
               <div className="callout callout-warn" style={{ marginTop: 16 }} data-testid="readiness-problem">
                 <strong>发布条件尚未完整通过</strong><p>{problem}</p>
-                {Array.isArray(item.readiness.blockers) && item.readiness.blockers.length > 0 ? <p>{item.readiness.blockers.filter((value) => typeof value === "string").join(" · ")}</p> : null}
+                {(() => {
+                  const blockers = Array.isArray(item.readiness.blockers)
+                    ? item.readiness.blockers.filter((value): value is string => typeof value === "string")
+                    : [];
+                  const unknown = blockers.filter((blocker) => blockerGate(blocker) === null);
+                  return unknown.length ? <p>其他 Core blocker：{unknown.join(" · ")}</p> : null;
+                })()}
               </div>
             ) : (
               <div className="callout" style={{ marginTop: 16 }}><strong>所有 Readiness Gate 已通过</strong></div>
