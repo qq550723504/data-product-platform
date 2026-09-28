@@ -277,6 +277,11 @@ export function createFixtureServer() {
       }
       if (req.method === "GET") {
         if (url.pathname === `${workspace}/data-products`) return send(200, page([product]));
+        if (url.pathname === `${workspace}/product-releases`) {
+          const status = url.searchParams.get("status") ?? "";
+          const items = !status || state.releaseStatus === status ? [release] : [];
+          return send(200, page(items));
+        }
         if (url.pathname === `${workspace}/data-products/${ids.product}/releases`) return send(200, page([release]));
         if (url.pathname === releasePath) return send(200, release);
         if (url.pathname === `${releasePath}/readiness`) return send(200, readiness(state.scenario));
