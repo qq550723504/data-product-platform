@@ -206,6 +206,24 @@ for (const value of ["empty-checks", "missing-evidence", "null-checks", "blocker
   });
 }
 
+test("readiness checklist explains the failing gate and action", async ({ page, request }) => {
+  await scenario(request, "failed-rights");
+  await page.goto(productPath);
+
+  const rights = page.getByTestId("readiness-rights");
+  await expect(rights).toContainText("权利");
+  await expect(rights).toContainText("FAIL");
+  await expect(rights).toContainText("RIGHTS_SNAPSHOT_MISSING");
+  await expect(rights.getByRole("link", { name: "处理 / 查看依据 →", exact: true })).toHaveAttribute("href", "#governance");
+
+  const production = page.getByTestId("readiness-production");
+  await expect(production).toContainText("PASS");
+  await expect(production.getByRole("link")).toHaveCount(0);
+
+  await expect(page.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
+  expect(await writes(request)).toHaveLength(0);
+});
+
 test("readiness changes after render: Server Action rechecks and never posts publish", async ({ page, request }) => {
   await page.goto(productPath);
   const publish = page.getByRole("button", { name: "发布 Release", exact: true });
