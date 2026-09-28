@@ -231,7 +231,7 @@ func Load() (Config, error) {
 			Enabled:               gxEnabled,
 			BaseURL:               os.Getenv("GX_SERVICE_URL"),
 			Token:                 os.Getenv("GX_SERVICE_TOKEN"),
-			ExpectedEngineVersion: stringEnv("GX_EXPECTED_VERSION", "1.23.2"),
+			ExpectedEngineVersion: stringEnv("GX_EXPECTED_VERSION", "1.0.0+gx.1.23.2"),
 			TimeoutSeconds:        gxTimeoutSeconds,
 		},
 		LabelStudio: LabelStudioConfig{
