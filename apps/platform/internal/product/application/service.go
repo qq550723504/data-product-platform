@@ -488,6 +488,11 @@ func readinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.Readines
 		"required": facts.ProductionDependencyBindingRequired,
 		"complete": facts.ProductionDependencyBindingComplete,
 	}
+	details["evidence"] = map[string]any{
+		"datasetVersionId": facts.TargetDatasetVersionID,
+		"relationCount":    facts.EvidenceCount,
+		"requiredCount":    2,
+	}
 
 	sort.Strings(blockers)
 	overall := "NOT_READY"
