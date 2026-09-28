@@ -114,6 +114,7 @@ export default async function DatasetVersionDetailPage({
         certificationOffset,
         query.certificationAsOf ?? "",
         query.certificationRevision === undefined ? undefined : Math.max(0, Number.parseInt(query.certificationRevision, 10) || 0),
+        query.profileId ?? "",
       ),
     ]);
 
@@ -126,7 +127,7 @@ export default async function DatasetVersionDetailPage({
     const selectedProfile = profileMap.get(query.profileId ?? "") ?? profiles[0];
     const profileScope = selectedProfile?.rights.scopes.values?.[0];
     const requested = {
-      profileId: query.profileId ?? selectedProfile?.id ?? "",
+      profileId: selectedProfile?.id ?? "",
       consumer: query.consumer ?? firstValue(selectedProfile?.consumers.values),
       purpose: query.purpose ?? firstValue(selectedProfile?.purpose.values),
       action: query.action ?? firstValue(selectedProfile?.actions.values),
