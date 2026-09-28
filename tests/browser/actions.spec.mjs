@@ -24,7 +24,10 @@ test("workbench surfaces actionable review and release items", async ({ page }) 
   await expect(attention.getByText("实体审核队列", { exact: true })).toBeVisible();
   await expect(attention.getByText("Release 待发布", { exact: true })).toBeVisible();
   await expect(attention.getByRole("link", { name: "进入审核", exact: true })).toHaveAttribute("href", "/reviews");
-  await expect(attention.getByRole("link", { name: "去发布", exact: true })).toHaveAttribute("href", productPath);
+  await expect(attention.getByRole("link", { name: "去发布", exact: true })).toHaveAttribute(
+    "href",
+    `/products/${ids.product}/releases/${ids.release}`,
+  );
 });
 
 test("readonly runtime never enables review or publishing", async ({ page, request }) => {
