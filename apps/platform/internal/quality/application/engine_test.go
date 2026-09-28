@@ -237,3 +237,43 @@ func TestSafeProviderNumberCanonicalizesHugeJSONNumber(t *testing.T) {
 		t.Fatalf("provider json.Number was not canonicalized: %#v", value)
 	}
 }
+
+func TestSanitizeProviderObservationPreservesExactRatioIntegers(t *testing.T) {
+	hugeDenominator := "1" + strings.Repeat("0", 400)
+	observed, err := sanitizeProviderObservation(map[string]any{
+		"observedValue": map[string]any{
+			"numerator":   json.Number("50000000000000001"),
+			"denominator": json.Number("100000000000000000"),
+		},
+		"threshold": map[string]any{
+			"numerator":   json.Number("1"),
+			"denominator": json.Number(hugeDenominator),
+		},
+	})
+	if err != nil {
+		t.Fatalf("sanitize exact ratio: %v", err)
+	}
+	valueRatio := observed["observedValue"].(map[string]any)
+	if got := valueRatio["numerator"].(json.Number).String(); got != "50000000000000001" {
+		t.Fatalf("numerator = %s, precision changed", got)
+	}
+	if got := valueRatio["denominator"].(json.Number).String(); got != "100000000000000000" {
+		t.Fatalf("denominator = %s, precision changed", got)
+	}
+	thresholdRatio := observed["threshold"].(map[string]any)
+	if got := thresholdRatio["denominator"].(json.Number).String(); got != hugeDenominator {
+		t.Fatalf("huge denominator changed: %s", got)
+	}
+}
+
+func TestSanitizeProviderObservationRejectsNonPositiveRatioDenominator(t *testing.T) {
+	for _, denominator := range []json.Number{"0", "-1"} {
+		if _, err := sanitizeProviderObservation(map[string]any{
+			"observedValue": map[string]any{
+				"numerator": json.Number("1"), "denominator": denominator,
+			},
+		}); err == nil {
+			t.Fatalf("denominator %s was accepted", denominator)
+		}
+	}
+}
