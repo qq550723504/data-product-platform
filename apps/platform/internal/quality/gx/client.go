@@ -18,7 +18,10 @@ import (
 	qualityengine "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/engine"
 )
 
-const EngineName = "gx-core"
+const (
+	EngineName    = "gx-core"
+	EngineVersion = "1.0.0+gx.1.23.2"
+)
 
 type Config struct {
 	BaseURL               string
