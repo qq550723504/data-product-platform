@@ -44,14 +44,16 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 		INSERT INTO dataset (id, workspace_id, code, name, dataset_type, lifecycle_status, metadata, created_at, updated_at)
 		VALUES ($1,$2,$3,'Enterprise Activity','CURATED','ACTIVE','{}'::jsonb,now(),now())
 	`, datasetID, workspaceID, "PUBLISH-DATASET-"+uuid.NewString())
+	production := createProductionExecutionFixture(t, ctx, pool, workspaceID, datasetID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO dataset_version (
 			id, dataset_id, version_no, status, storage_type, storage_uri, content_type,
 			checksum_algorithm, checksum_value, generated_by_execution_id, metadata, created_at, ready_at
 		) VALUES ($1,$2,1,'READY','OBJECT_STORAGE','s3://test-bucket/enterprise-activity.csv','text/csv',
-		          'SHA256','aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',NULL,
+		          'SHA256','aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',$3,
 		          '{"workflowVersion":"1.0.0","indicatorSet":"park-enterprise-activity@1.0.0","entityPolicyVersion":"1.0.0"}'::jsonb,now(),now())
-	`, datasetVersionID, datasetID)
+	`, datasetVersionID, datasetID, production.ExecutionID)
+	bindProductionOutputFixture(t, ctx, pool, production, datasetVersionID)
 
 	mustExec(t, ctx, pool, `
 		INSERT INTO data_contract (id, workspace_id, code, name, product_code)
