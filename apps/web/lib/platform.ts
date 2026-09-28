@@ -637,6 +637,13 @@ export const platform = {
     apiGet<PageResult<ProductRelease>>(
       workspacePath(`/data-products/${encodeURIComponent(productId)}/releases?limit=${limit}&offset=${offset}`),
     ),
+  workspaceReleases: (status = "", limit = 20, offset = 0) => {
+    const query = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+    if (status) query.set("status", status);
+    return apiGet<PageResult<ProductRelease>>(
+      workspacePath(`/product-releases?${query.toString()}`),
+    );
+  },
   productVersion: (versionId: string) =>
     apiGet<ProductVersion>(`/api/v1/product-versions/${encodeURIComponent(versionId)}`),
   release: (releaseId: string) =>
