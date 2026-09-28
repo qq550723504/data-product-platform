@@ -181,6 +181,7 @@ test("Gold DatasetVersion explains frozen production proof and current delivery"
 test("populated eight-gate readiness publishes once with a server idempotency key", async ({ page, request }) => {
   await page.goto(productPath);
   const gates = ["production", "dataset", "rights", "quality", "compliance", "contract", "evidence", "delivery"];
+  await expect(page.getByRole("region", { name: "Release Readiness Checklist" })).toBeVisible();
   for (const gate of gates) await expect(page.getByTestId(`readiness-${gate}`)).toContainText("PASS");
   await expect(page.getByText("所有 Readiness Gate 已通过")).toBeVisible();
   await page.getByRole("button", { name: "发布 Release", exact: true }).click();
@@ -200,6 +201,7 @@ for (const value of ["empty-checks", "missing-evidence", "null-checks", "blocker
     await scenario(request, value);
     await page.goto(productPath);
     await expect(page.getByTestId("readiness-problem")).toBeVisible();
+    await expect(page.getByRole("region", { name: "Release Readiness Checklist" })).toBeVisible();
     await expect(page.getByText("所有 Readiness Gate 已通过")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
     expect(await writes(request)).toHaveLength(0);
