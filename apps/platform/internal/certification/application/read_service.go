@@ -36,6 +36,7 @@ func (s *CertificationService) ListDatasetHistoryPage(
 	asOf time.Time,
 	limit, offset int,
 	anchorRevision *int64,
+	selectedProfileID *uuid.UUID,
 ) (CertificationHistoryPage, error) {
 	if workspaceID == uuid.Nil || datasetVersionID == uuid.Nil {
 		return CertificationHistoryPage{}, fmt.Errorf("workspace and DatasetVersion are required")
@@ -50,17 +51,13 @@ func (s *CertificationService) ListDatasetHistoryPage(
 		asOf = time.Now().UTC()
 	}
 
-	page, err := s.certificationRepo.ListDatasetCertificationHistoryPage(ctx, workspaceID, datasetVersionID, asOf, limit, offset, anchorRevision)
+	page, err := s.certificationRepo.ListDatasetCertificationHistoryPage(ctx, workspaceID, datasetVersionID, asOf, limit, offset, anchorRevision, selectedProfileID)
 	if err != nil {
 		return CertificationHistoryPage{}, err
 	}
-	profileIDs, err := s.certificationRepo.ListProfileIDsForDatasetVersion(ctx, workspaceID, datasetVersionID, time.Now().UTC())
-	if err != nil {
-		return CertificationHistoryPage{}, err
-	}
-	profiles := make(map[uuid.UUID]certificationdomain.ProfileSnapshot, len(profileIDs))
-	profileList := make([]certificationdomain.ProfileSnapshot, 0, len(profileIDs))
-	for _, profileID := range profileIDs {
+	profiles := make(map[uuid.UUID]certificationdomain.ProfileSnapshot, len(page.ProfileIDs))
+	profileList := make([]certificationdomain.ProfileSnapshot, 0, len(page.ProfileIDs))
+	for _, profileID := range page.ProfileIDs {
 		profile, err := s.profileRepo.GetProfile(ctx, profileID)
 		if err != nil {
 			return CertificationHistoryPage{}, err
