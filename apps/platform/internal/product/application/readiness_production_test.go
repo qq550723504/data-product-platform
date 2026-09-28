@@ -22,3 +22,22 @@ func TestReadinessProductionRequiresProducingExecution(t *testing.T) {
 		t.Fatalf("blockers = %v, want PRODUCTION_EXECUTION_MISSING", result.Blockers)
 	}
 }
+
+
+func TestDraftReadinessDoesNotClaimProductionWithoutExecution(t *testing.T) {
+	target := uuid.New()
+	result := draftReadinessResultFromFacts(uuid.New(), infrastructure.ReadinessFacts{
+		TargetDatasetVersionID: &target,
+		AllDatasetsUsable:      true,
+	})
+
+	if result.Checks["production"] != CheckFail {
+		t.Fatalf("draft production check = %s, want FAIL", result.Checks["production"])
+	}
+	if result.Checks["rights"] != CheckPending {
+		t.Fatalf("draft rights check = %s, want PENDING", result.Checks["rights"])
+	}
+	if !slices.Contains(result.Blockers, "PRODUCTION_EXECUTION_MISSING") {
+		t.Fatalf("draft blockers = %v, want PRODUCTION_EXECUTION_MISSING", result.Blockers)
+	}
+}
