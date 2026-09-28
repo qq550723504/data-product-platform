@@ -377,6 +377,7 @@ export type CertificationHistory = {
   datasetVersionId: string;
   asOf: string;
   items: DatasetCertification[];
+  profiles: CertificationProfile[];
   page: PageMeta;
 };
 
@@ -582,12 +583,15 @@ export const platform = {
     apiGet<QualityReport>(
       `/api/v1/quality-assessments/${encodeURIComponent(assessmentId)}/report?workspaceId=${encodeURIComponent(requireWorkspace())}&limit=${limit}&offset=${offset}`,
     ),
-  certificationHistory: (versionId: string, limit = 25, offset = 0) =>
-    apiGet<CertificationHistory>(
+  certificationHistory: (versionId: string, limit = 25, offset = 0, asOf = "") => {
+    const query = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+    if (asOf) query.set("asOf", asOf);
+    return apiGet<CertificationHistory>(
       workspacePath(
-        `/dataset-versions/${encodeURIComponent(versionId)}/certifications?limit=${limit}&offset=${offset}`,
+        `/dataset-versions/${encodeURIComponent(versionId)}/certifications?${query.toString()}`,
       ),
-    ),
+    );
+  },
   goldExplanation: (versionId: string) =>
     apiGet<GoldExplanation>(
       workspacePath(`/dataset-versions/${encodeURIComponent(versionId)}/gold-explanation`),
