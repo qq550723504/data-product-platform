@@ -77,7 +77,6 @@ func TestHistoryItemResponseIncludesFrozenGoldProductionProof(t *testing.T) {
 	assertString("goldProductionBindingRootHash", strings.Repeat("d", 64))
 }
 
-
 func TestParseHistoryPageBounds(t *testing.T) {
 	tests := []struct {
 		name       string
