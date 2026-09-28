@@ -41,6 +41,7 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	`, datasetID, workspaceID, "READINESS-DATASET-"+uuid.NewString(), "Readiness curated dataset"); err != nil {
 		t.Fatalf("insert dataset: %v", err)
 	}
+	production := createProductionExecutionFixture(t, ctx, pool, workspaceID, datasetID)
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO dataset_version (
 			id, dataset_id, version_no, status, storage_type, storage_uri,
@@ -48,10 +49,11 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 			metadata, created_at, ready_at
 		) VALUES ($1,$2,1,'READY','OBJECT_STORAGE','s3://test-bucket/readiness.csv',
 		          'text/csv','SHA256','bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
-		          NULL,'{}'::jsonb,now(),now())
-	`, datasetVersionID, datasetID); err != nil {
+		          $3,'{}'::jsonb,now(),now())
+	`, datasetVersionID, datasetID, production.ExecutionID); err != nil {
 		t.Fatalf("insert DatasetVersion: %v", err)
 	}
+	bindProductionOutputFixture(t, ctx, pool, production, datasetVersionID)
 
 	contractID := uuid.New()
 	contractVersionID := uuid.New()

@@ -14,6 +14,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/entity/matching"
@@ -50,6 +51,13 @@ func (e *Engine) prepareDependencies(ctx context.Context, request workflowapp.Pr
 	resolutionVersionID := bindings[enterpriseResolutionInput]
 	if resolutionVersionID == uuid.Nil {
 		return preparedNativeDependencies{}, fmt.Errorf("native enterprise activity workflow requires input %s", enterpriseResolutionInput)
+	}
+	resolutionVersion, err := e.datasetRepo.GetVersion(ctx, resolutionVersionID)
+	if err != nil {
+		return preparedNativeDependencies{}, fmt.Errorf("revalidate enterprise_resolution %s: %w", resolutionVersionID, err)
+	}
+	if resolutionVersion.Status != datasetdomain.VersionReady && resolutionVersion.Status != datasetdomain.VersionSuperseded {
+		return preparedNativeDependencies{}, fmt.Errorf("enterprise_resolution %s is not readable for workflow execution: status=%s", resolutionVersionID, resolutionVersion.Status)
 	}
 
 	if existing, found, err := e.workflowRepo.GetDependencyPreparation(ctx, request.ExecutionID); err != nil {
