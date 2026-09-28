@@ -440,8 +440,10 @@ func readinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.Readines
 	details["production"] = map[string]any{
 		"datasetVersionId": facts.TargetDatasetVersionID,
 		"executionPresent": facts.ProductionExecutionPresent,
-		"dependencyBindingRequired": facts.ProductionDependencyBindingRequired,
-		"dependencyBindingComplete": facts.ProductionDependencyBindingComplete,
+	}
+	details["productionDependencyBinding"] = map[string]any{
+		"required": facts.ProductionDependencyBindingRequired,
+		"complete": facts.ProductionDependencyBindingComplete,
 	}
 
 	sort.Strings(blockers)
