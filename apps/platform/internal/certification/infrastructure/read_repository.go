@@ -38,7 +38,6 @@ func (r *CertificationRepository) ListProfileIDsForDatasetVersion(ctx context.Co
 	return ids, nil
 }
 
-
 type DatasetCertificationHistoryPageRow struct {
 	ProfileID     uuid.UUID
 	Certification domain.DatasetCertification
