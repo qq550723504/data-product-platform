@@ -47,7 +47,11 @@ func (h *Handler) history(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	page, err := h.certifications.ListDatasetHistoryPage(r.Context(), workspaceID, versionID, asOf, limit, offset, anchorRevision)
+	selectedProfileID, ok := parseOptionalHistoryProfile(w, r)
+	if !ok {
+		return
+	}
+	page, err := h.certifications.ListDatasetHistoryPage(r.Context(), workspaceID, versionID, asOf, limit, offset, anchorRevision, selectedProfileID)
 	if err != nil {
 		if errors.Is(err, certificationinfra.ErrProfileNotFound) || errors.Is(err, datasetinfra.ErrNotFound) {
 			httpserver.WriteError(w, r, http.StatusNotFound, "CERTIFICATION_HISTORY_NOT_FOUND", "certification history was not found", nil)
@@ -199,6 +203,19 @@ func parseHistoryPage(w http.ResponseWriter, r *http.Request) (int, int, *int64,
 		anchorRevision = &value
 	}
 	return limit, offset, anchorRevision, true
+}
+
+func parseOptionalHistoryProfile(w http.ResponseWriter, r *http.Request) (*uuid.UUID, bool) {
+	raw := strings.TrimSpace(r.URL.Query().Get("profileId"))
+	if raw == "" {
+		return nil, true
+	}
+	profileID, err := uuid.Parse(raw)
+	if err != nil || profileID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_CERTIFICATION_PROFILE_ID", "profileId must be a non-nil UUID", nil)
+		return nil, false
+	}
+	return &profileID, true
 }
 
 func historyItemResponse(item application.CertificationHistoryItem) map[string]any {
