@@ -28,7 +28,7 @@ POST /v1/evaluate
 
 ## License / version
 
-reference runtime 锁定 `great-expectations==1.23.2`。该版本 PyPI 元数据标识为 Apache-2.0。
+reference runtime 锁定 `great-expectations==1.23.2`，adapter contract 版本为 `1.0.0`，对外 engine version 为 `1.0.0+gx.1.23.2`。adapter 的解析、归一化或规则映射语义变化时必须提升 contract 版本；GX 依赖升级也会改变组合版本。GX 1.23.2 的 PyPI 元数据标识为 Apache-2.0。
 
 ## Run
 
