@@ -333,24 +333,6 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 	if err != nil {
 		return ReadinessResult{}, err
 	}
-	if release.Status == domain.ReleaseDraft {
-		checks := map[string]CheckStatus{
-			"production": CheckPass,
-			"dataset":    CheckPass,
-			"rights":     CheckPending,
-			"quality":    CheckPending,
-			"compliance": CheckPending,
-			"contract":   CheckPending,
-			"evidence":   CheckPending,
-			"delivery":   CheckPending,
-		}
-		return ReadinessResult{
-			ReleaseID: release.ID,
-			Overall:   "NOT_READY",
-			Checks:    checks,
-			Blockers:  []string{"rights", "quality", "compliance", "contract", "evidence", "delivery"},
-		}, nil
-	}
 	product, err := s.repo.GetProduct(ctx, release.ProductID)
 	if err != nil {
 		return ReadinessResult{}, err
@@ -363,7 +345,56 @@ func (s *Service) Readiness(ctx context.Context, releaseID uuid.UUID) (Readiness
 	if err != nil {
 		return ReadinessResult{}, err
 	}
+	if release.Status == domain.ReleaseDraft {
+		return draftReadinessResultFromFacts(release.ID, facts), nil
+	}
 	return readinessResultFromFacts(release.ID, facts), nil
+}
+
+func draftReadinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.ReadinessFacts) ReadinessResult {
+	checks := map[string]CheckStatus{
+		"production": CheckFail,
+		"dataset":    CheckFail,
+		"rights":     CheckPending,
+		"quality":    CheckPending,
+		"compliance": CheckPending,
+		"contract":   CheckPending,
+		"evidence":   CheckPending,
+		"delivery":   CheckPending,
+	}
+	blockers := []string{"rights", "quality", "compliance", "contract", "evidence", "delivery"}
+
+	if facts.TargetDatasetVersionID == nil {
+		blockers = append(blockers, "PRODUCTION_DATASET_MISSING")
+	} else if !facts.ProductionExecutionPresent {
+		blockers = append(blockers, "PRODUCTION_EXECUTION_MISSING")
+	} else if facts.ProductionDependencyBindingRequired && !facts.ProductionDependencyBindingComplete {
+		blockers = append(blockers, "PRODUCTION_DEPENDENCY_BINDING_INCOMPLETE")
+	} else {
+		checks["production"] = CheckPass
+	}
+	if facts.AllDatasetsUsable && facts.TargetDatasetVersionID != nil {
+		checks["dataset"] = CheckPass
+	} else {
+		blockers = append(blockers, "DATASET_NOT_USABLE")
+	}
+	sort.Strings(blockers)
+	return ReadinessResult{
+		ReleaseID: releaseID,
+		Overall:   "NOT_READY",
+		Checks:    checks,
+		Blockers:  blockers,
+		Details: map[string]any{
+			"production": map[string]any{
+				"datasetVersionId": facts.TargetDatasetVersionID,
+				"executionPresent": facts.ProductionExecutionPresent,
+			},
+			"productionDependencyBinding": map[string]any{
+				"required": facts.ProductionDependencyBindingRequired,
+				"complete": facts.ProductionDependencyBindingComplete,
+			},
+		},
+	}
 }
 
 func readinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.ReadinessFacts) ReadinessResult {
