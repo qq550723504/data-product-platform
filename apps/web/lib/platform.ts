@@ -624,6 +624,10 @@ export const platform = {
   },
   executions: (limit = 100, offset = 0) =>
     apiGet<PageResult<ExecutionSummary>>(workspacePath(`/executions?limit=${limit}&offset=${offset}`)),
+  unresolvedFailedExecutions: (limit = 20, offset = 0) =>
+    apiGet<PageResult<ExecutionSummary>>(
+      workspacePath(`/attention/failed-executions?limit=${limit}&offset=${offset}`),
+    ),
   execution: (id: string) => apiGet<ExecutionDetail>(`/api/v1/executions/${encodeURIComponent(id)}`),
   reviews: (status = "", limit = 100, offset = 0) => {
     const filter = status ? `&status=${encodeURIComponent(status)}` : "";
