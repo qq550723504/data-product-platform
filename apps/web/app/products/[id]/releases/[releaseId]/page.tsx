@@ -104,7 +104,7 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
           )}
         </section>
 
-        <section className="detail-card" id="release-evidence" style={{ marginBottom: 18 }}>
+        <section className="detail-card" id="release-evidence-snapshot" style={{ marginBottom: 18 }}>
           <div className="panel-header"><h2>EvidenceSnapshot</h2><span className="eyebrow">Frozen Evidence Set</span></div>
           {!trace.evidenceSnapshot ? (
             <EmptyState title="没有 EvidenceSnapshot" description="该 Release 尚未冻结证据快照；界面不会从其他记录推测一个快照。" />
@@ -175,7 +175,7 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
           )}
         </section>
 
-        <section style={{ marginBottom: 22 }}>
+        <section id="release-evidence" style={{ marginBottom: 22 }}>
           <div className="panel-header"><h2>Evidence Records</h2><span className="eyebrow">{trace.evidence.length} Facts</span></div>
           {trace.evidence.length === 0 ? <EmptyState title="没有 Evidence 记录" description="Core traceability 没有返回支持该 Release 的 Evidence。" /> : (
             <div className="table-card"><table className="data-table"><thead><tr><th>Evidence</th><th>Source</th><th>Relation</th><th>Integrity</th><th>Hash</th><th>Time</th></tr></thead><tbody>{trace.evidence.map((item) => (
