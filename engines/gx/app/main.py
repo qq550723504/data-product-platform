@@ -17,7 +17,9 @@ from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field
 
 ENGINE_NAME = "gx-core"
-ENGINE_VERSION = version("great-expectations")
+ADAPTER_VERSION = "1.0.0"
+GX_VERSION = version("great-expectations")
+ENGINE_VERSION = f"{ADAPTER_VERSION}+gx.{GX_VERSION}"
 if hasattr(sys, "set_int_max_str_digits"):
     # Core quality ratios use exact rationals. Python's default 4300-digit
     # int-to-decimal guard would otherwise make valid frozen thresholds such
