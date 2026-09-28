@@ -21,7 +21,7 @@ func TestClientProbeAndEvaluate(t *testing.T) {
 		switch r.URL.Path {
 		case "/ready":
 			_ = json.NewEncoder(w).Encode(map[string]any{
-				"status": "ok", "engineName": EngineName, "engineVersion": "1.23.2",
+				"status": "ok", "engineName": EngineName, "engineVersion": EngineVersion,
 				"capabilities": []string{"not_null", "completeness_ratio", "unique", "duplicate_ratio", "range", "enum"},
 			})
 		case "/v1/evaluate":
@@ -40,7 +40,7 @@ func TestClientProbeAndEvaluate(t *testing.T) {
 			}
 			_ = json.NewEncoder(w).Encode(map[string]any{
 				"engine": map[string]any{
-					"name": EngineName, "version": "1.23.2",
+					"name": EngineName, "version": EngineVersion,
 					"capabilities": []string{"not_null"},
 				},
 				"findings": []map[string]any{{
@@ -56,7 +56,7 @@ func TestClientProbeAndEvaluate(t *testing.T) {
 	defer server.Close()
 
 	client, err := NewClient(Config{
-		BaseURL: server.URL, ExpectedEngineVersion: "1.23.2",
+		BaseURL: server.URL, ExpectedEngineVersion: EngineVersion,
 	}, server.Client())
 	if err != nil {
 		t.Fatalf("new client: %v", err)
@@ -87,13 +87,13 @@ func TestClientProbeAndEvaluate(t *testing.T) {
 func TestClientRejectsProviderIdentityMismatch(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"engine":    map[string]any{"name": "other", "version": "1.23.2"},
+			"engine":    map[string]any{"name": "other", "version": EngineVersion},
 			"findings":  []any{},
 			"execution": map[string]any{"ref": uuid.NewString(), "durationMillis": 1},
 		})
 	}))
 	defer server.Close()
-	client, err := NewClient(Config{BaseURL: server.URL, ExpectedEngineVersion: "1.23.2"}, server.Client())
+	client, err := NewClient(Config{BaseURL: server.URL, ExpectedEngineVersion: EngineVersion}, server.Client())
 	if err != nil {
 		t.Fatalf("new client: %v", err)
 	}
@@ -115,7 +115,7 @@ func TestClientClassifiesHTTPClientTimeout(t *testing.T) {
 	httpClient := server.Client()
 	httpClient.Timeout = 10 * time.Millisecond
 	client, err := NewClient(Config{
-		BaseURL: server.URL, ExpectedEngineVersion: "1.23.2",
+		BaseURL: server.URL, ExpectedEngineVersion: EngineVersion,
 	}, httpClient)
 	if err != nil {
 		t.Fatalf("new client: %v", err)
@@ -131,12 +131,12 @@ func TestClientClassifiesHTTPClientTimeout(t *testing.T) {
 func TestClientProbeRejectsMissingCapability(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"status": "ok", "engineName": EngineName, "engineVersion": "1.23.2",
+			"status": "ok", "engineName": EngineName, "engineVersion": EngineVersion,
 			"capabilities": []string{"not_null"},
 		})
 	}))
 	defer server.Close()
-	client, err := NewClient(Config{BaseURL: server.URL, ExpectedEngineVersion: "1.23.2"}, server.Client())
+	client, err := NewClient(Config{BaseURL: server.URL, ExpectedEngineVersion: EngineVersion}, server.Client())
 	if err != nil {
 		t.Fatalf("new client: %v", err)
 	}
@@ -159,7 +159,7 @@ func TestClientClassifiesTransientHTTPStatuses(t *testing.T) {
 			}))
 			defer server.Close()
 			client, err := NewClient(Config{
-				BaseURL: server.URL, ExpectedEngineVersion: "1.23.2",
+				BaseURL: server.URL, ExpectedEngineVersion: EngineVersion,
 			}, server.Client())
 			if err != nil {
 				t.Fatalf("new client: %v", err)
@@ -179,7 +179,7 @@ func TestClientPreservesExactRuleID(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"engine": map[string]any{
-				"name": EngineName, "version": "1.23.2",
+				"name": EngineName, "version": EngineVersion,
 				"capabilities": []string{"not_null", "completeness_ratio", "unique", "duplicate_ratio", "range", "enum"},
 			},
 			"findings": []map[string]any{{
@@ -190,7 +190,7 @@ func TestClientPreservesExactRuleID(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	client, err := NewClient(Config{BaseURL: server.URL, ExpectedEngineVersion: "1.23.2"}, server.Client())
+	client, err := NewClient(Config{BaseURL: server.URL, ExpectedEngineVersion: EngineVersion}, server.Client())
 	if err != nil {
 		t.Fatalf("new client: %v", err)
 	}
@@ -213,7 +213,7 @@ func TestClientRejectsInvalidUTF8BeforeTransport(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client, err := NewClient(Config{BaseURL: server.URL, ExpectedEngineVersion: "1.23.2"}, server.Client())
+	client, err := NewClient(Config{BaseURL: server.URL, ExpectedEngineVersion: EngineVersion}, server.Client())
 	if err != nil {
 		t.Fatalf("new client: %v", err)
 	}
