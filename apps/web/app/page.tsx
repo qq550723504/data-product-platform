@@ -18,18 +18,19 @@ export default async function WorkbenchPage() {
   }
 
   try {
-    const [summary, executions, unresolvedFailures, products, failedReleases, validatingReleases, readyReleases] = await Promise.all([
+    const [summary, executions, unresolvedFailures, products, releaseAttention] = await Promise.all([
       platform.workbench(),
       platform.executions(20, 0),
       platform.unresolvedFailedExecutions(20, 0),
       platform.products(50, 0),
-      platform.workspaceReleases("FAILED", 10, 0),
-      platform.workspaceReleases("VALIDATING", 10, 0),
-      platform.workspaceReleases("READY", 10, 0),
+      platform.releaseAttention(10),
     ]);
     const activeExecutions = summary.executions.queued + summary.executions.submitting + summary.executions.running;
     const failedExecutions = unresolvedFailures.items;
     const productById = new Map(products.items.map((product) => [product.id, product]));
+    const failedReleases = releaseAttention.failed;
+    const validatingReleases = releaseAttention.validating;
+    const readyReleases = releaseAttention.ready;
     const failedRelease = failedReleases.items[0];
     const validatingRelease = validatingReleases.items[0];
     const readyRelease = readyReleases.items[0];
