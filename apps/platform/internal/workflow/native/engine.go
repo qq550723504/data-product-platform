@@ -16,6 +16,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
+	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	entitydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/domain"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
@@ -237,6 +238,9 @@ func (e *Engine) readInput(ctx context.Context, versionID uuid.UUID) (version st
 	datasetVersion, err := e.datasetRepo.GetVersion(ctx, versionID)
 	if err != nil {
 		return version, nil, "", err
+	}
+	if datasetVersion.Status != datasetdomain.VersionReady && datasetVersion.Status != datasetdomain.VersionSuperseded {
+		return version, nil, "", fmt.Errorf("dataset version %s is not readable for workflow execution: status=%s", datasetVersion.ID, datasetVersion.Status)
 	}
 	version.ID = datasetVersion.ID
 	reader, err := e.store.Get(ctx, datasetVersion.StorageURI)
