@@ -104,20 +104,23 @@ export function ProductReleasePanel({ productId, items, actionsEnabled }: { prod
                   gate,
                 );
                 const target = `/products/${productId}/releases/${item.release.id}#${gateAnchors[gate]}`;
+                const actionRequired = status !== "PASS" || gateBlockers.length > 0;
+                const visualState = actionRequired ? (status === "PENDING" ? "pending" : "fail") : "pass";
                 return (
                   <div
-                    className={`readiness-check readiness-check-${status.toLowerCase()}`}
+                    className={`readiness-check readiness-check-${visualState}`}
                     key={gate}
                     data-testid={`readiness-${gate}`}
                   >
                     <div className="readiness-check-main">
                       <span className="readiness-check-icon" aria-hidden="true">
-                        {status === "PASS" ? "✓" : status === "PENDING" ? "…" : "!"}
+                        {!actionRequired ? "✓" : status === "PENDING" ? "…" : "!"}
                       </span>
                       <div>
                         <div className="readiness-check-title">
                           <strong>{gateLabels[gate]}</strong>
                           <Badge value={status} />
+                          {status === "PASS" && gateBlockers.length > 0 ? <Badge value="BLOCKED" tone="bad" /> : null}
                         </div>
                         <p>{gateDescriptions[gate]}</p>
                         {gateBlockers.length ? (
@@ -127,7 +130,7 @@ export function ProductReleasePanel({ productId, items, actionsEnabled }: { prod
                         ) : null}
                       </div>
                     </div>
-                    {status !== "PASS" ? <Link className="text-link" href={target}>处理 / 查看依据 →</Link> : null}
+                    {actionRequired ? <Link className="text-link" href={target}>处理 / 查看依据 →</Link> : null}
                   </div>
                 );
               })}
