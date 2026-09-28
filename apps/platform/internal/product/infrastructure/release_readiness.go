@@ -338,6 +338,7 @@ func (r *PostgresRepository) readinessFacts(ctx context.Context, q readinessQuer
 							FROM dataset_version_lineage l
 							WHERE l.output_version_id=$1
 							  AND l.execution_id=$2
+							  AND l.relation_type='DERIVED_FROM'
 						)
 						AND NOT EXISTS(
 							SELECT 1
@@ -349,6 +350,22 @@ func (r *PostgresRepository) readinessFacts(ctx context.Context, q readinessQuer
 								  WHERE l.output_version_id=$1
 								    AND l.input_version_id=i.dataset_version_id
 								    AND l.execution_id=$2
+								    AND l.relation_type='DERIVED_FROM'
+							  )
+						)
+						AND NOT EXISTS(
+							SELECT 1
+							FROM dataset_version_lineage l
+							WHERE l.output_version_id=$1
+							  AND l.execution_id=$2
+							  AND (
+								  l.relation_type <> 'DERIVED_FROM'
+								  OR NOT EXISTS(
+									  SELECT 1
+									  FROM execution_input i
+									  WHERE i.execution_id=$2
+									    AND i.dataset_version_id=l.input_version_id
+								  )
 							  )
 						)
 				`, *facts.TargetDatasetVersionID, executionID).Scan(&facts.ProductionLineageComplete); err != nil {
