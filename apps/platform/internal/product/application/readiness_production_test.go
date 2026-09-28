@@ -1,0 +1,24 @@
+package application
+
+import (
+	"slices"
+	"testing"
+
+	"github.com/google/uuid"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
+)
+
+func TestReadinessProductionRequiresProducingExecution(t *testing.T) {
+	target := uuid.New()
+	result := readinessResultFromFacts(uuid.New(), infrastructure.ReadinessFacts{
+		TargetDatasetVersionID: &target,
+		AllDatasetsUsable:      true,
+	})
+
+	if result.Checks["production"] != CheckFail {
+		t.Fatalf("production check = %s, want FAIL", result.Checks["production"])
+	}
+	if !slices.Contains(result.Blockers, "PRODUCTION_EXECUTION_MISSING") {
+		t.Fatalf("blockers = %v, want PRODUCTION_EXECUTION_MISSING", result.Blockers)
+	}
+}
