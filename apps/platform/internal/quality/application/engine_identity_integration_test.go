@@ -517,13 +517,13 @@ func TestInvalidUTF8ExternalEngineInputFailsBeforeAttemptClaim(t *testing.T) {
 	uploadDataset := datasetapp.NewUploadVersionService(txManager, datasetRepo, store)
 	dataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "ENGINE-UTF8")
 
+	invalidCSV := append([]byte("company_id\n"), 0xff)
+	invalidCSV = append(invalidCSV, '\n')
 	version, err := uploadDataset.Handle(ctx, datasetapp.UploadVersionCommand{
 		DatasetID:      dataset.ID,
 		Filename:       "invalid-utf8.csv",
 		ContentType:    "text/csv",
-		Content:        []byte{'c', 'o', 'm', 'p', 'a', 'n', 'y', '_', 'i', 'd', '
-', 0xff, '
-'},
+		Content:        invalidCSV,
 		IdempotencyKey: "engine-invalid-utf8-" + uuid.NewString(),
 	})
 	if err != nil {
