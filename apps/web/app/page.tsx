@@ -18,16 +18,17 @@ export default async function WorkbenchPage() {
   }
 
   try {
-    const [summary, executions, products, failedReleases, validatingReleases, readyReleases] = await Promise.all([
+    const [summary, executions, unresolvedFailures, products, failedReleases, validatingReleases, readyReleases] = await Promise.all([
       platform.workbench(),
       platform.executions(20, 0),
+      platform.unresolvedFailedExecutions(20, 0),
       platform.products(50, 0),
       platform.workspaceReleases("FAILED", 10, 0),
       platform.workspaceReleases("VALIDATING", 10, 0),
       platform.workspaceReleases("READY", 10, 0),
     ]);
     const activeExecutions = summary.executions.queued + summary.executions.submitting + summary.executions.running;
-    const failedExecutions = executions.items.filter((execution) => execution.status === "FAILED");
+    const failedExecutions = unresolvedFailures.items;
     const productById = new Map(products.items.map((product) => [product.id, product]));
     const failedRelease = failedReleases.items[0];
     const validatingRelease = validatingReleases.items[0];
@@ -38,7 +39,7 @@ export default async function WorkbenchPage() {
     const validatingReadiness = validatingRelease ? await platform.releaseReadiness(validatingRelease.id) : null;
     const attentionCount =
       summary.reviewQueue.pending +
-      summary.executions.failed +
+      unresolvedFailures.page.total +
       summary.releases.failed +
       validatingReleases.page.total +
       summary.releases.ready;
@@ -98,11 +99,11 @@ export default async function WorkbenchPage() {
                     </tr>
                   ) : null}
 
-                  {summary.executions.failed > 0 ? (
+                  {unresolvedFailures.page.total > 0 ? (
                     <tr>
                       <td className="primary-cell">
                         <strong>生产执行失败</strong>
-                        <span>{summary.executions.failed} 条失败记录</span>
+                        <span>{unresolvedFailures.page.total} 条未解决失败</span>
                       </td>
                       <td><Badge value="FAILED" /></td>
                       <td>
@@ -160,7 +161,7 @@ export default async function WorkbenchPage() {
                         <Link
                           className="text-link"
                           href={validatingRelease
-                            ? `/products/${validatingRelease.productId}/releases/${validatingRelease.id}`
+                            ? `/products/${validatingRelease.productId}#releases`
                             : "/products"}
                         >
                           查看 Blockers
