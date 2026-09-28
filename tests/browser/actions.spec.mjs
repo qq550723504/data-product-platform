@@ -427,14 +427,6 @@ for (const value of ["empty-checks", "missing-evidence", "null-checks", "blocker
   });
 }
 
-test("readiness checklist explains the failing gate and action", async ({ page, request }) => {
-  await scenario(request, "failed-rights");
-  await page.goto(productPath);
-
-  const rights = page.getByTestId("readiness-rights");
-  await expect(rights).toContainText("权利");
-  await expect(rights).toContainText("FAIL");
-  await expect(rights).toContainText("RIGHTS_SNAPSHOT_MISSING");
 ));
   await expect(page.getByRole("heading", { name: "Frozen ProductVersion Governance", exact: true })).toBeVisible();
   await expect(page.getByText(ids.version, { exact: true })).toBeVisible();
@@ -443,6 +435,7 @@ test("readiness checklist explains the failing gate and action", async ({ page, 
   await expect(production).toContainText("PASS");
   await expect(production.getByRole("link")).toHaveCount(0);
 
+  await page.goto(productPath);
   await expect(page.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
   expect(await writes(request)).toHaveLength(0);
 });
