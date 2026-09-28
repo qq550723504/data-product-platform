@@ -898,6 +898,60 @@ func (r *Repository) ListExecutions(ctx context.Context, workspaceID uuid.UUID, 
 	return List[Execution]{Items: items, Page: Page{Limit: limit, Offset: offset, Total: total}}, nil
 }
 
+func (r *Repository) ListUnresolvedFailedExecutions(ctx context.Context, workspaceID uuid.UUID, limit, offset int) (List[Execution], error) {
+	const predicate = `
+		FROM execution e
+		WHERE e.workspace_id=$1
+		  AND e.status='FAILED'
+		  AND NOT EXISTS (
+			  SELECT 1
+			  FROM execution retry
+			  WHERE retry.retry_of_execution_id=e.id
+		  )
+	`
+	total, err := r.count(ctx, "SELECT count(*)"+predicate, workspaceID)
+	if err != nil {
+		return List[Execution]{}, err
+	}
+	rows, err := r.pool.Query(ctx, `
+		SELECT e.id, e.workspace_id, e.workflow_version_id, w.code, w.name, wv.version,
+		       e.output_dataset_id, e.output_dataset_version_id, e.target_period, e.status, e.attempt,
+		       e.engine_type, COALESCE(e.error_code,''), e.created_at, e.started_at, e.finished_at
+		FROM execution e
+		JOIN workflow_version wv ON wv.id=e.workflow_version_id
+		JOIN workflow w ON w.id=wv.workflow_id
+		WHERE e.workspace_id=$1
+		  AND e.status='FAILED'
+		  AND NOT EXISTS (
+			  SELECT 1
+			  FROM execution retry
+			  WHERE retry.retry_of_execution_id=e.id
+		  )
+		ORDER BY e.created_at DESC, e.id
+		LIMIT $2 OFFSET $3
+	`, workspaceID, limit, offset)
+	if err != nil {
+		return List[Execution]{}, fmt.Errorf("list unresolved failed executions: %w", err)
+	}
+	defer rows.Close()
+	items := make([]Execution, 0)
+	for rows.Next() {
+		var item Execution
+		if err := rows.Scan(
+			&item.ID, &item.WorkspaceID, &item.WorkflowVersionID, &item.WorkflowCode, &item.WorkflowName,
+			&item.WorkflowVersion, &item.OutputDatasetID, &item.OutputDatasetVersionID, &item.TargetPeriod,
+			&item.Status, &item.Attempt, &item.EngineType, &item.ErrorCode, &item.CreatedAt, &item.StartedAt, &item.FinishedAt,
+		); err != nil {
+			return List[Execution]{}, fmt.Errorf("scan unresolved failed execution: %w", err)
+		}
+		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return List[Execution]{}, fmt.Errorf("iterate unresolved failed executions: %w", err)
+	}
+	return List[Execution]{Items: items, Page: Page{Limit: limit, Offset: offset, Total: total}}, nil
+}
+
 func (r *Repository) ListEntityReviews(ctx context.Context, workspaceID uuid.UUID, status string, limit, offset int) (List[EntityReview], error) {
 	args := []any{workspaceID}
 	filter := ""
