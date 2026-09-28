@@ -41,7 +41,6 @@ func TestDraftReadinessDoesNotClaimProductionWithoutExecution(t *testing.T) {
 	}
 }
 
-
 func TestReadinessProductionRejectsWorkflowMismatch(t *testing.T) {
 	target := uuid.New()
 	result := readinessResultFromFacts(uuid.New(), infrastructure.ReadinessFacts{
