@@ -121,6 +121,28 @@ func TestListDatasetCertificationHistoryPageIsBoundedAndStable(t *testing.T) {
 		t.Fatalf("page dispositions = %#v, want only certification %s", page.Dispositions, third)
 	}
 
+	// Simulate a certification that commits after page 1. Runtime writes obtain
+	// the next delivery-fence revision before insert, so its older issued_at must
+	// not shift the offset boundary of the already anchored history snapshot.
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO delivery_authorization_fence (workspace_id, revision)
+		VALUES ($1,1)
+		ON CONFLICT (workspace_id) DO UPDATE SET revision=1
+	`, workspaceID); err != nil {
+		t.Fatalf("advance fixture history revision: %v", err)
+	}
+	late := uuid.MustParse("00000000-0000-0000-0000-000000000004")
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_certification (
+			id, workspace_id, dataset_version_id, quality_assessment_id,
+			certification_profile_id, profile_ref, profile_version,
+			profile_content_sha256, profile_content_snapshot, decision,
+			blockers, reason, issued_at, history_revision
+		) VALUES ($1,$2,$3,$4,$5,$6,'1',$7,'{}','CERTIFIED','[]'::jsonb,'late commit',$8,1)
+	`, late, workspaceID, versionID, qualityID, profileID, profileRef, profileHash, base.Add(2*time.Minute)); err != nil {
+		t.Fatalf("insert late certification: %v", err)
+	}
+
 	next, err := repo.ListDatasetCertificationHistoryPage(
 		ctx, workspaceID, versionID, base.Add(3*time.Minute), 2, 2, &page.AnchorRevision,
 	)
