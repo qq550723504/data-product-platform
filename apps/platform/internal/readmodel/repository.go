@@ -996,6 +996,64 @@ func (r *Repository) ListDataProducts(ctx context.Context, workspaceID uuid.UUID
 	return List[DataProduct]{Items: items, Page: Page{Limit: limit, Offset: offset, Total: total}}, nil
 }
 
+func (r *Repository) ListWorkspaceReleases(ctx context.Context, workspaceID uuid.UUID, status string, limit, offset int) (List[ProductRelease], error) {
+	countQuery := `
+		SELECT count(*)
+		FROM product_release pr
+		JOIN data_product p ON p.id=pr.product_id
+		WHERE p.workspace_id=$1 AND p.deleted_at IS NULL
+	`
+	args := []any{workspaceID}
+	if status != "" {
+		countQuery += " AND pr.status=$2"
+		args = append(args, status)
+	}
+	total, err := r.count(ctx, countQuery, args...)
+	if err != nil {
+		return List[ProductRelease]{}, err
+	}
+
+	query := `
+		SELECT pr.id, pr.product_id, pr.product_version_id, pr.release_no, pr.status,
+		       pr.contract_version_id, pr.rights_snapshot_id, pr.quality_result_id,
+		       pr.compliance_result_id, pr.evidence_snapshot_id, COALESCE(pr.release_notes,''),
+		       pr.created_at, pr.released_at
+		FROM product_release pr
+		JOIN data_product p ON p.id=pr.product_id
+		WHERE p.workspace_id=$1 AND p.deleted_at IS NULL
+	`
+	queryArgs := []any{workspaceID}
+	if status != "" {
+		query += " AND pr.status=$2"
+		queryArgs = append(queryArgs, status)
+	}
+	query += " ORDER BY pr.created_at DESC, pr.id LIMIT $" + fmt.Sprint(len(queryArgs)+1) + " OFFSET $" + fmt.Sprint(len(queryArgs)+2)
+	queryArgs = append(queryArgs, limit, offset)
+
+	rows, err := r.pool.Query(ctx, query, queryArgs...)
+	if err != nil {
+		return List[ProductRelease]{}, fmt.Errorf("list workspace releases: %w", err)
+	}
+	defer rows.Close()
+
+	items := make([]ProductRelease, 0)
+	for rows.Next() {
+		var item ProductRelease
+		if err := rows.Scan(
+			&item.ID, &item.ProductID, &item.ProductVersionID, &item.ReleaseNo, &item.Status,
+			&item.ContractVersionID, &item.RightsSnapshotID, &item.QualityResultID, &item.ComplianceResultID,
+			&item.EvidenceSnapshotID, &item.ReleaseNotes, &item.CreatedAt, &item.ReleasedAt,
+		); err != nil {
+			return List[ProductRelease]{}, fmt.Errorf("scan workspace release: %w", err)
+		}
+		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return List[ProductRelease]{}, fmt.Errorf("iterate workspace releases: %w", err)
+	}
+	return List[ProductRelease]{Items: items, Page: Page{Limit: limit, Offset: offset, Total: total}}, nil
+}
+
 func (r *Repository) ListProductReleases(ctx context.Context, productID uuid.UUID, limit, offset int) (List[ProductRelease], error) {
 	total, err := r.count(ctx, `SELECT count(*) FROM product_release WHERE product_id=$1`, productID)
 	if err != nil {
