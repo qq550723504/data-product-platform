@@ -14,7 +14,7 @@ const gateLabels: Record<string, string> = {
 };
 
 const gateActions: Record<string, string> = {
-  production: "检查生产 Execution 与 lineage 是否完整",
+  production: "若绑定 DatasetVersion 缺少不可变的生产 provenance，重新生产有 Execution lineage 的 DatasetVersion 并创建新 Release",
   dataset: "若绑定 DatasetVersion 已不可用，生产或选择替代版本并创建新 Release",
   rights: "若当前 Release 允许重绑，创建并冻结该 Release 的新 Rights Snapshot 后重新绑定；否则先创建新 Release，再为新 Release 创建并冻结 Rights Snapshot",
   quality: "处理 Quality gate 失败项",
