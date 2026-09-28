@@ -46,7 +46,6 @@ type DatasetCertificationHistoryPageRow struct {
 type DatasetCertificationHistoryPage struct {
 	Rows           []DatasetCertificationHistoryPageRow
 	Dispositions   []domain.CertificationDisposition
-	ProfileIDs     []uuid.UUID
 	Total          int
 	AnchorRevision int64
 }
@@ -57,7 +56,6 @@ func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
 	asOf time.Time,
 	limit, offset int,
 	anchorRevision *int64,
-	selectedProfileID *uuid.UUID,
 ) (DatasetCertificationHistoryPage, error) {
 	if asOf.IsZero() {
 		asOf = time.Now().UTC()
@@ -89,7 +87,6 @@ func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
 
 	page := DatasetCertificationHistoryPage{
 		Rows:           make([]DatasetCertificationHistoryPageRow, 0, limit),
-		ProfileIDs:     make([]uuid.UUID, 0),
 		AnchorRevision: resolvedAnchor,
 	}
 	if err := r.pool.QueryRow(ctx, `
@@ -162,42 +159,6 @@ func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
 	}
 	if err := rows.Err(); err != nil {
 		return DatasetCertificationHistoryPage{}, fmt.Errorf("iterate dataset certification history page: %w", err)
-	}
-
-	profileRows, err := r.pool.Query(ctx, `
-		SELECT DISTINCT certification_profile_id
-		FROM dataset_certification
-		WHERE workspace_id=$1
-		  AND dataset_version_id=$2
-		  AND issued_at <= $3
-		  AND history_revision <= $4
-		ORDER BY certification_profile_id
-	`, workspaceID, datasetVersionID, asOf.UTC(), resolvedAnchor)
-	if err != nil {
-		return DatasetCertificationHistoryPage{}, fmt.Errorf("list certification profiles for history snapshot: %w", err)
-	}
-	defer profileRows.Close()
-	for profileRows.Next() {
-		var profileID uuid.UUID
-		if err := profileRows.Scan(&profileID); err != nil {
-			return DatasetCertificationHistoryPage{}, fmt.Errorf("scan certification profile for history snapshot: %w", err)
-		}
-		page.ProfileIDs = append(page.ProfileIDs, profileID)
-	}
-	if err := profileRows.Err(); err != nil {
-		return DatasetCertificationHistoryPage{}, fmt.Errorf("iterate certification profiles for history snapshot: %w", err)
-	}
-	if selectedProfileID != nil && *selectedProfileID != uuid.Nil {
-		found := false
-		for _, profileID := range page.ProfileIDs {
-			if profileID == *selectedProfileID {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return DatasetCertificationHistoryPage{}, fmt.Errorf("selected certification profile is not present in history snapshot")
-		}
 	}
 
 	if len(certificationIDs) == 0 {
