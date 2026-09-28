@@ -36,6 +36,7 @@ func (s *CertificationService) ListDatasetHistoryPage(
 	asOf time.Time,
 	limit, offset int,
 	anchorRevision *int64,
+	selectedProfileID *uuid.UUID,
 ) (CertificationHistoryPage, error) {
 	if workspaceID == uuid.Nil || datasetVersionID == uuid.Nil {
 		return CertificationHistoryPage{}, fmt.Errorf("workspace and DatasetVersion are required")
@@ -50,7 +51,7 @@ func (s *CertificationService) ListDatasetHistoryPage(
 		asOf = time.Now().UTC()
 	}
 
-	page, err := s.certificationRepo.ListDatasetCertificationHistoryPage(ctx, workspaceID, datasetVersionID, asOf, limit, offset, anchorRevision)
+	page, err := s.certificationRepo.ListDatasetCertificationHistoryPage(ctx, workspaceID, datasetVersionID, asOf, limit, offset, anchorRevision, selectedProfileID)
 	if err != nil {
 		return CertificationHistoryPage{}, err
 	}
