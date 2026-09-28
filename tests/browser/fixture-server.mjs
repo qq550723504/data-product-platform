@@ -43,7 +43,11 @@ function readiness(scenario) {
   if (scenario === "missing-evidence") delete result.checks.evidence;
   if (scenario === "blocker") result.blockers = ["RIGHTS_REVOKED"];
   if (scenario === "future-gate") result.checks.futureGate = "FAIL";
-  if (scenario === "failed-rights") result.checks.rights = "FAIL";
+  if (scenario === "failed-rights") {
+    result.checks.rights = "FAIL";
+    result.overall = "NOT_READY";
+    result.blockers = ["RIGHTS_SNAPSHOT_MISSING"];
+  }
   return result;
 }
 async function bodyOf(req) {
