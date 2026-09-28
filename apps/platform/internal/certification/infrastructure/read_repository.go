@@ -44,9 +44,11 @@ type DatasetCertificationHistoryPageRow struct {
 }
 
 type DatasetCertificationHistoryPage struct {
-	Rows         []DatasetCertificationHistoryPageRow
-	Dispositions []domain.CertificationDisposition
-	Total        int
+	Rows           []DatasetCertificationHistoryPageRow
+	Dispositions   []domain.CertificationDisposition
+	ProfileIDs     []uuid.UUID
+	Total          int
+	AnchorRevision int64
 }
 
 func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
@@ -54,6 +56,7 @@ func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
 	workspaceID, datasetVersionID uuid.UUID,
 	asOf time.Time,
 	limit, offset int,
+	anchorRevision *int64,
 ) (DatasetCertificationHistoryPage, error) {
 	if asOf.IsZero() {
 		asOf = time.Now().UTC()
@@ -62,14 +65,63 @@ func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
 		return DatasetCertificationHistoryPage{}, fmt.Errorf("certification history limit must be positive and offset must be non-negative")
 	}
 
-	var total int
+	resolvedAnchor := int64(0)
+	if anchorRevision != nil {
+		if *anchorRevision < 0 {
+			return DatasetCertificationHistoryPage{}, fmt.Errorf("certification history anchor revision must be non-negative")
+		}
+		resolvedAnchor = *anchorRevision
+	} else if err := r.pool.QueryRow(ctx, `
+		SELECT COALESCE((
+			SELECT revision
+			FROM delivery_authorization_fence
+			WHERE workspace_id=$1
+		), 0)
+	`, workspaceID).Scan(&resolvedAnchor); err != nil {
+		return DatasetCertificationHistoryPage{}, fmt.Errorf("read certification history anchor revision: %w", err)
+	}
+
+	page := DatasetCertificationHistoryPage{
+		Rows:           make([]DatasetCertificationHistoryPageRow, 0, limit),
+		ProfileIDs:     make([]uuid.UUID, 0),
+		AnchorRevision: resolvedAnchor,
+	}
 	if err := r.pool.QueryRow(ctx, `
 		SELECT count(*)
 		FROM dataset_certification
-		WHERE workspace_id=$1 AND dataset_version_id=$2 AND issued_at <= $3
-	`, workspaceID, datasetVersionID, asOf.UTC()).Scan(&total); err != nil {
+		WHERE workspace_id=$1
+		  AND dataset_version_id=$2
+		  AND issued_at <= $3
+		  AND history_revision <= $4
+	`, workspaceID, datasetVersionID, asOf.UTC(), resolvedAnchor).Scan(&page.Total); err != nil {
 		return DatasetCertificationHistoryPage{}, fmt.Errorf("count dataset certification history: %w", err)
 	}
+
+	profileRows, err := r.pool.Query(ctx, `
+		SELECT DISTINCT certification_profile_id
+		FROM dataset_certification
+		WHERE workspace_id=$1
+		  AND dataset_version_id=$2
+		  AND issued_at <= $3
+		  AND history_revision <= $4
+		ORDER BY certification_profile_id
+	`, workspaceID, datasetVersionID, asOf.UTC(), resolvedAnchor)
+	if err != nil {
+		return DatasetCertificationHistoryPage{}, fmt.Errorf("list certification history profiles: %w", err)
+	}
+	for profileRows.Next() {
+		var profileID uuid.UUID
+		if err := profileRows.Scan(&profileID); err != nil {
+			profileRows.Close()
+			return DatasetCertificationHistoryPage{}, fmt.Errorf("scan certification history profile: %w", err)
+		}
+		page.ProfileIDs = append(page.ProfileIDs, profileID)
+	}
+	if err := profileRows.Err(); err != nil {
+		profileRows.Close()
+		return DatasetCertificationHistoryPage{}, fmt.Errorf("iterate certification history profiles: %w", err)
+	}
+	profileRows.Close()
 
 	rows, err := r.pool.Query(ctx, `
 		SELECT certification_profile_id,
@@ -82,19 +134,18 @@ func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
 		       gold_production_binding_root_hash,
 		       decision, blockers, reason, issued_at, created_by
 		FROM dataset_certification
-		WHERE workspace_id=$1 AND dataset_version_id=$2 AND issued_at <= $3
+		WHERE workspace_id=$1
+		  AND dataset_version_id=$2
+		  AND issued_at <= $3
+		  AND history_revision <= $4
 		ORDER BY issued_at DESC, id DESC
-		LIMIT $4 OFFSET $5
-	`, workspaceID, datasetVersionID, asOf.UTC(), limit, offset)
+		LIMIT $5 OFFSET $6
+	`, workspaceID, datasetVersionID, asOf.UTC(), resolvedAnchor, limit, offset)
 	if err != nil {
 		return DatasetCertificationHistoryPage{}, fmt.Errorf("list dataset certification history page: %w", err)
 	}
 	defer rows.Close()
 
-	page := DatasetCertificationHistoryPage{
-		Rows:  make([]DatasetCertificationHistoryPageRow, 0, limit),
-		Total: total,
-	}
 	certificationIDs := make([]uuid.UUID, 0, limit)
 	for rows.Next() {
 		var row DatasetCertificationHistoryPageRow
@@ -140,9 +191,11 @@ func (r *CertificationRepository) ListDatasetCertificationHistoryPage(
 		SELECT id, workspace_id, certification_id, disposition, effective_at,
 		       reason, superseded_by_certification_id, evidence_snapshot_id, created_by
 		FROM certification_disposition
-		WHERE certification_id = ANY($1::uuid[]) AND effective_at <= $2
+		WHERE certification_id = ANY($1::uuid[])
+		  AND effective_at <= $2
+		  AND history_revision <= $3
 		ORDER BY certification_id, effective_at, id
-	`, certificationIDs, asOf.UTC())
+	`, certificationIDs, asOf.UTC(), resolvedAnchor)
 	if err != nil {
 		return DatasetCertificationHistoryPage{}, fmt.Errorf("list certification dispositions for history page: %w", err)
 	}
