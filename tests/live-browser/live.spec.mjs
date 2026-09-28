@@ -67,6 +67,8 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
     await expect(page.getByText(data.outputChecksum, { exact: true })).toBeVisible();
     await expect(page.locator(`a[href="/production/${data.executionId}"]`)).toBeVisible();
 
+    await page.getByRole("link", { name: "Quality", exact: true }).click();
+    await expect(page).toHaveURL(/view=quality/);
     await expect(page.getByRole("heading", { name: "Quality Assessment", exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Quality Report", exact: true })).toBeVisible();
     await expect(page.getByText(data.qualityAssessmentId, { exact: true })).toBeVisible();
@@ -78,17 +80,25 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
       await expect(row).toContainText("PASS");
     }
 
+    await page.getByRole("link", { name: "Certification", exact: true }).click();
+    await expect(page).toHaveURL(/view=certification/);
     await expect(page.getByRole("heading", { name: "Certification 历史", exact: true })).toBeVisible();
     await expect(page.getByText("CERTIFIED", { exact: true }).first()).toBeVisible();
 
+    await page.getByRole("link", { name: "Eligibility", exact: true }).click();
+    await expect(page).toHaveURL(/view=eligibility/);
     await expect(page.getByRole("heading", { name: "Rights summary", exact: true })).toBeVisible();
     await expect(page.getByText(data.effectiveRightsSnapshotId, { exact: true })).toBeVisible();
     await expect(page.getByText(data.effectiveRightsHash, { exact: true })).toBeVisible();
 
-    await expect(page.getByRole("heading", { name: "Evidence", exact: true })).toBeVisible();
+    await page.getByRole("link", { name: "Provenance", exact: true }).click();
+    await expect(page).toHaveURL(/view=provenance/);
+    await expect(page.getByRole("heading", { name: "Evidence / Traceability", exact: true })).toBeVisible();
     await expect(page.getByText(data.certificationEvidenceSnapshotId, { exact: true }).first()).toBeVisible();
     await expect(page.getByText(data.certificationId, { exact: true })).toBeVisible();
 
+    await page.getByRole("link", { name: "Eligibility", exact: true }).click();
+    await expect(page).toHaveURL(/view=eligibility/);
     await expect(page.getByRole("heading", { name: "Current Delivery Eligibility", exact: true })).toBeVisible();
     const preflight = page.getByRole("heading", { name: "预检结果", exact: true }).locator("xpath=ancestor::section");
     for (const gate of ["DatasetVersion usability", "Current Certification", "Current Entitlement"]) {
@@ -106,6 +116,8 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
     await expect(page.getByText(data.goldVersionId, { exact: true })).toBeVisible();
     await expect(page.getByText(data.outputChecksum, { exact: true })).toBeVisible();
 
+    await page.getByRole("link", { name: "Provenance", exact: true }).click();
+    await expect(page).toHaveURL(/view=provenance/);
     const proof = page.getByTestId("gold-production-proof");
     await expect(proof).toBeVisible();
     await expect(proof).toContainText("Gold Production Proof");
@@ -132,6 +144,8 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
       await expect(trace).toContainText(phaseName);
     }
 
+    await page.getByRole("link", { name: "Eligibility", exact: true }).click();
+    await expect(page).toHaveURL(/view=eligibility/);
     await expect(page.getByRole("heading", { name: "Current Delivery Eligibility", exact: true })).toBeVisible();
     const preflight = page.getByRole("heading", { name: "预检结果", exact: true }).locator("xpath=ancestor::section");
     await expect(preflight).toContainText(data.expectedDelivery);

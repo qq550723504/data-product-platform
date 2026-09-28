@@ -13,7 +13,10 @@ import {
 } from "@/components/ui";
 import { configuredWorkspaceId, platform, type CertificationBlocker, type DatasetCertification } from "@/lib/platform";
 
+type DatasetVersionView = "overview" | "quality" | "certification" | "eligibility" | "provenance";
+
 type Query = {
+  view?: string;
   profileId?: string;
   consumer?: string;
   purpose?: string;
@@ -88,9 +91,24 @@ export default async function DatasetVersionDetailPage({
   const findingsOffset = Math.max(0, Number.parseInt(query.findingsOffset ?? "0", 10) || 0);
   const assessmentOffset = Math.max(0, Number.parseInt(query.assessmentOffset ?? "0", 10) || 0);
   const certificationOffset = Math.max(0, Number.parseInt(query.certificationOffset ?? "0", 10) || 0);
+  const view: DatasetVersionView = ["quality", "certification", "eligibility", "provenance"].includes(query.view ?? "")
+    ? query.view as DatasetVersionView
+    : "overview";
   const findingsLimit = 50;
   const assessmentLimit = 25;
   const certificationLimit = 25;
+  const viewHref = (target: DatasetVersionView) => {
+    const next = new URLSearchParams();
+    for (const [queryKey, value] of Object.entries(query)) {
+      if (value && !["findingsOffset", "assessmentOffset", "certificationOffset", "certificationAsOf", "certificationRevision"].includes(queryKey)) {
+        next.set(queryKey, value);
+      }
+    }
+    if (target === "overview") next.delete("view");
+    else next.set("view", target);
+    const suffix = next.toString();
+    return `/datasets/${id}/versions/${versionId}${suffix ? `?${suffix}` : ""}`;
+  };
   const pageHref = (key: "findingsOffset" | "assessmentOffset" | "certificationOffset", offset: number) => {
     const next = new URLSearchParams();
     for (const [queryKey, value] of Object.entries(query)) {
@@ -176,6 +194,25 @@ export default async function DatasetVersionDetailPage({
           action={<div className="badge-row"><Badge value={version.status} /><Badge value={latestAssessment?.gateDecision ?? "NOT_ASSESSED"} /></div>}
         />
 
+        <nav className="detail-tabs" aria-label="DatasetVersion 详情视图">
+          {([
+            ["overview", "Overview"],
+            ["quality", "Quality"],
+            ["certification", "Certification"],
+            ["eligibility", "Eligibility"],
+            ["provenance", "Provenance"],
+          ] as Array<[DatasetVersionView, string]>).map(([target, label]) => (
+            <Link
+              key={target}
+              href={viewHref(target)}
+              className={`detail-tab ${view === target ? "active" : ""}`}
+              aria-current={view === target ? "page" : undefined}
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
+
         <section className="detail-card" style={{ marginBottom: 18 }}>
           <h2>版本事实</h2>
           <DefinitionList items={[
@@ -189,6 +226,55 @@ export default async function DatasetVersionDetailPage({
           ]} />
         </section>
 
+        {view === "overview" ? (
+          <>
+            <section className="status-overview" aria-label="DatasetVersion 当前状态摘要">
+              <article className="status-overview-card">
+                <span>Version</span>
+                <strong><Badge value={version.status} /></strong>
+                <small>{version.rowCount ?? "—"} rows · {formatBytes(version.byteSize)}</small>
+              </article>
+              <article className="status-overview-card">
+                <span>Quality</span>
+                <strong><Badge value={latestAssessment?.gateDecision ?? "NOT_ASSESSED"} /></strong>
+                <small>{quality.page.total} assessments</small>
+              </article>
+              <article className="status-overview-card">
+                <span>Certification</span>
+                <strong>
+                  <Badge value={
+                    eligibility
+                      ? (eligibility.certification.allowed ? "CURRENT" : "NOT_CURRENT")
+                      : (history.page.total ? "HISTORY_ONLY" : "NOT_CERTIFIED")
+                  } />
+                </strong>
+                <small>{history.page.total} immutable facts</small>
+              </article>
+              <article className="status-overview-card">
+                <span>Delivery</span>
+                <strong><Badge value={eligibility ? (eligibility.allowed ? "ALLOWED" : "BLOCKED") : "NOT_CHECKED"} /></strong>
+                <small>{selectedProfile?.name ?? "No profile selected"}</small>
+                {eligibility ? (
+                  <small className="status-context">
+                    {requested.consumer} · {requested.purpose} · {requested.action} · {requested.delivery} · {requested.scopeType}{requested.scopeRef ? `:${requested.scopeRef}` : ""}
+                  </small>
+                ) : null}
+              </article>
+            </section>
+            <section className="detail-card">
+              <div className="panel-header"><h2>下一步</h2><span className="eyebrow">Drill down</span></div>
+              <div className="quick-links">
+                <Link href={viewHref("quality")}>查看 Quality 评测 →</Link>
+                <Link href={viewHref("certification")}>查看 Certification 历史 →</Link>
+                <Link href={viewHref("eligibility")}>检查当前可交付性 →</Link>
+                <Link href={viewHref("provenance")}>查看 Provenance / Gold proof →</Link>
+              </div>
+            </section>
+          </>
+        ) : null}
+
+        {view === "quality" ? (
+          <>
         <div className="panel-header"><h2>Quality Assessment</h2><span className="eyebrow">{quality.page.total} Assessments</span></div>
         {!latestAssessment ? (
           <EmptyState title="尚未评测" description="该 DatasetVersion 还没有 QualityAssessment。" />
@@ -330,6 +416,11 @@ export default async function DatasetVersionDetailPage({
           </>
         )}
 
+          </>
+        ) : null}
+
+        {view === "certification" ? (
+          <>
         <div className="panel-header"><h2>Certification 历史</h2><span className="eyebrow">{history.page.total} Facts</span></div>
         {history.items.length === 0 ? (
           <EmptyState title="NOT_CERTIFIED" description="该 DatasetVersion 尚无 DatasetCertification 历史事实。" />
@@ -376,6 +467,11 @@ export default async function DatasetVersionDetailPage({
           </div>
         ) : null}
 
+          </>
+        ) : null}
+
+        {view === "provenance" ? (
+          <>
         {evidenceCertification?.profile.profileRef === "gold/dataset-v1" ? (
           <section className="detail-card" style={{ marginBottom: 24 }} data-testid="gold-production-proof">
             <div className="panel-header">
@@ -554,6 +650,25 @@ export default async function DatasetVersionDetailPage({
           </section>
         ) : null}
 
+
+        <section className="detail-card" style={{ marginBottom: 24 }} data-testid="generic-provenance-summary">
+          <div className="panel-header"><h2>Evidence / Traceability</h2><span className="eyebrow">Frozen references</span></div>
+          {!latestReport?.evidence.length && !evidenceCertification?.evidenceSnapshotId && !evidenceCertification?.traceabilityEvidenceId ? (
+            <EmptyState title="暂无 Provenance 引用" description="当前 DatasetVersion 暂无可展示的质量 Evidence、EvidenceSnapshot 或 Traceability Evidence。" />
+          ) : (
+            <DefinitionList items={[
+              { label: "Quality evidence", value: latestReport?.evidence.length ? latestReport.evidence.map((item) => <div key={item.id}><span className="mono">{shortId(item.id)}</span> · {item.evidenceType}</div>) : "—" },
+              { label: "Certification EvidenceSnapshot", value: evidenceCertification?.evidenceSnapshotId ? <span className="mono">{evidenceCertification.evidenceSnapshotId}</span> : "—" },
+              { label: "Traceability Evidence", value: evidenceCertification?.traceabilityEvidenceId ? <span className="mono">{evidenceCertification.traceabilityEvidenceId}</span> : "—" },
+              { label: "Certification", value: evidenceCertification ? <span className="mono">{evidenceCertification.id}</span> : "—" },
+            ]} />
+          )}
+        </section>
+          </>
+        ) : null}
+
+        {view === "eligibility" ? (
+          <>
         {selectedProfile ? (
           <section className="detail-card" style={{ marginBottom: 24 }}>
             <div className="panel-header"><h2>Rights summary</h2><span className="eyebrow">Frozen certification context</span></div>
@@ -576,26 +691,13 @@ export default async function DatasetVersionDetailPage({
           </section>
         ) : null}
 
-        <section className="detail-card" style={{ marginBottom: 24 }}>
-          <div className="panel-header"><h2>Evidence</h2><span className="eyebrow">Frozen references</span></div>
-          {!latestReport?.evidence.length && !evidenceCertification?.evidenceSnapshotId && !evidenceCertification?.traceabilityEvidenceId ? (
-            <EmptyState title="暂无 Evidence 引用" description="当前版本尚未返回质量或认证 Evidence 引用。" />
-          ) : (
-            <DefinitionList items={[
-              { label: "Quality evidence", value: latestReport?.evidence.length ? latestReport.evidence.map((item) => <div key={item.id}><span className="mono">{shortId(item.id)}</span> · {item.evidenceType}</div>) : "—" },
-              { label: "Certification EvidenceSnapshot", value: evidenceCertification?.evidenceSnapshotId ? <span className="mono">{evidenceCertification.evidenceSnapshotId}</span> : "—" },
-              { label: "Traceability Evidence", value: evidenceCertification?.traceabilityEvidenceId ? <span className="mono">{evidenceCertification.traceabilityEvidenceId}</span> : "—" },
-              { label: "Certification", value: evidenceCertification ? <span className="mono">{evidenceCertification.id}</span> : "—" },
-            ]} />
-          )}
-        </section>
-
         <div className="panel-header"><h2>Current Delivery Eligibility</h2><span className="eyebrow">Preflight only</span></div>
         {profiles.length === 0 ? (
           <EmptyState title="无法执行当前资格检查" description="需要至少一个 CertificationProfile 历史事实。" />
         ) : (
           <>
             <form method="get" className="detail-card" style={{ marginBottom: 18 }}>
+              <input type="hidden" name="view" value="eligibility" />
               <div className="definition-list">
                 <div><dt>Profile</dt><dd>
                   <select name="profileId" defaultValue={requested.profileId}>
@@ -652,6 +754,8 @@ export default async function DatasetVersionDetailPage({
             )}
           </>
         )}
+          </>
+        ) : null}
       </>
     );
   } catch (error) {
