@@ -83,14 +83,17 @@ func TestParseHistoryPageBounds(t *testing.T) {
 		query      string
 		wantLimit  int
 		wantOffset int
+		wantAnchor *int64
 		wantOK     bool
 	}{
 		{name: "defaults", query: "", wantLimit: 25, wantOffset: 0, wantOK: true},
 		{name: "explicit", query: "?limit=50&offset=100", wantLimit: 50, wantOffset: 100, wantOK: true},
 		{name: "max limit", query: "?limit=100", wantLimit: 100, wantOffset: 0, wantOK: true},
+		{name: "anchor", query: "?anchorRevision=42", wantLimit: 25, wantOffset: 0, wantAnchor: func() *int64 { value := int64(42); return &value }(), wantOK: true},
 		{name: "zero limit", query: "?limit=0", wantOK: false},
 		{name: "too large limit", query: "?limit=101", wantOK: false},
 		{name: "negative offset", query: "?offset=-1", wantOK: false},
+		{name: "negative anchor", query: "?anchorRevision=-1", wantOK: false},
 		{name: "non numeric", query: "?limit=nope", wantOK: false},
 	}
 
@@ -98,7 +101,7 @@ func TestParseHistoryPageBounds(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req := httptest.NewRequest(http.MethodGet, "/certifications"+tt.query, nil)
 			response := httptest.NewRecorder()
-			limit, offset, ok := parseHistoryPage(response, req)
+			limit, offset, anchor, ok := parseHistoryPage(response, req)
 			if ok != tt.wantOK {
 				t.Fatalf("ok = %v, want %v; body=%s", ok, tt.wantOK, response.Body.String())
 			}
@@ -110,6 +113,9 @@ func TestParseHistoryPageBounds(t *testing.T) {
 			}
 			if limit != tt.wantLimit || offset != tt.wantOffset {
 				t.Fatalf("page = limit %d offset %d, want limit %d offset %d", limit, offset, tt.wantLimit, tt.wantOffset)
+			}
+			if (anchor == nil) != (tt.wantAnchor == nil) || (anchor != nil && *anchor != *tt.wantAnchor) {
+				t.Fatalf("anchor = %v, want %v", anchor, tt.wantAnchor)
 			}
 		})
 	}
