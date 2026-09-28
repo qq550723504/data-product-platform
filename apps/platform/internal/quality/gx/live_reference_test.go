@@ -18,7 +18,7 @@ func TestGXLiveReferenceMatchesNativePassFailSemantics(t *testing.T) {
 		t.Skip("TEST_GX_URL is not set")
 	}
 	client, err := NewClient(Config{
-		BaseURL: baseURL, ExpectedEngineVersion: "1.23.2",
+		BaseURL: baseURL, ExpectedEngineVersion: EngineVersion,
 	}, nil)
 	if err != nil {
 		t.Fatalf("new GX client: %v", err)
