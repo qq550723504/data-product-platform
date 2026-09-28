@@ -583,10 +583,18 @@ export const platform = {
     apiGet<QualityReport>(
       `/api/v1/quality-assessments/${encodeURIComponent(assessmentId)}/report?workspaceId=${encodeURIComponent(requireWorkspace())}&limit=${limit}&offset=${offset}`,
     ),
-  certificationHistory: (versionId: string, limit = 25, offset = 0, asOf = "", anchorRevision?: number) => {
+  certificationHistory: (
+    versionId: string,
+    limit = 25,
+    offset = 0,
+    asOf = "",
+    anchorRevision?: number,
+    profileId = "",
+  ) => {
     const query = new URLSearchParams({ limit: String(limit), offset: String(offset) });
     if (asOf) query.set("asOf", asOf);
     if (anchorRevision !== undefined) query.set("anchorRevision", String(anchorRevision));
+    if (profileId) query.set("profileId", profileId);
     return apiGet<CertificationHistory>(
       workspacePath(
         `/dataset-versions/${encodeURIComponent(versionId)}/certifications?${query.toString()}`,
