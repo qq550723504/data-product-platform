@@ -155,182 +155,35 @@ func validateEngineCapabilities(descriptor qualityengine.Descriptor, policy nati
 }
 
 var jsonNumberPattern = regexp.MustCompile("^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$")
+var jsonIntegerPattern = regexp.MustCompile("^-?(?:0|[1-9][0-9]*)$")
 
-func safeProviderRatioInteger(value any) (any, bool) {
+func safeProviderRatioInteger(value any) (json.Number, bool) {
+	var integer big.Int
 	switch typed := value.(type) {
-	case int, int32, int64, uint, uint32, uint64:
-		return typed, true
+	case int:
+		integer.SetInt64(int64(typed))
+	case int32:
+		integer.SetInt64(int64(typed))
+	case int64:
+		integer.SetInt64(typed)
+	case uint:
+		integer.SetUint64(uint64(typed))
+	case uint32:
+		integer.SetUint64(uint64(typed))
+	case uint64:
+		integer.SetUint64(typed)
 	case json.Number:
 		text := typed.String()
-		if !regexp.MustCompile(`^-?(?:0|[1-9][0-9]*)package application
-
-import (
-	"context"
-	"crypto/sha256"
-	"encoding/hex"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
-	"math"
-	"math/big"
-	"os"
-	"regexp"
-	"strconv"
-	"strings"
-	"time"
-	"unicode/utf8"
-
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
-	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
-	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
-	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/industrypack"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/tabular"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
-	qualityengine "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/engine"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/native"
-)
-
-type ObjectStore interface {
-	Get(ctx context.Context, storageURI string) (io.ReadCloser, error)
-}
-
-var ErrAssessmentAttemptConflict = errors.New("quality assessment attempt conflicts with an existing assessment")
-var ErrAssessmentAttemptInProgress = errors.New("quality assessment attempt is already in progress")
-var ErrAssessmentAttemptFailed = errors.New("quality assessment attempt already failed")
-
-const attemptOutcomeRecoveryTimeout = 5 * time.Second
-const assessmentAttemptLeaseDuration = time.Hour
-const assessmentAttemptLockPrefix = "quality-assessment-attempt:"
-
-type Service struct {
-	industryPackRoot  string
-	tx                *transaction.Manager
-	datasetRepo       *datasetinfra.PostgresRepository
-	repo              *infrastructure.PostgresRepository
-	store             ObjectStore
-	evidenceRepo      *evidence.QueryRepository
-	goldRepo          *goldinfra.PostgresRepository
-	goldPreflight     GoldPreflightProvider
-	engines           map[string]qualityengine.Engine
-	engineDescriptors map[string]qualityengine.Descriptor
-	defaultEngine     string
-}
-
-func NewService(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, repo *infrastructure.PostgresRepository, store ObjectStore, evidenceRepos ...*evidence.QueryRepository) *Service {
-	nativeEngine := native.NewEngine()
-	service := &Service{
-		industryPackRoot:  industryPackRoot,
-		tx:                tx,
-		datasetRepo:       datasetRepo,
-		repo:              repo,
-		store:             store,
-		engines:           map[string]qualityengine.Engine{},
-		engineDescriptors: map[string]qualityengine.Descriptor{},
-		defaultEngine:     strings.ToLower(nativeEngine.Descriptor().Name),
-	}
-	nativeDescriptor := nativeEngine.Descriptor()
-	service.engines[service.defaultEngine] = nativeEngine
-	service.engineDescriptors[service.defaultEngine] = nativeDescriptor
-	if len(evidenceRepos) > 0 {
-		service.evidenceRepo = evidenceRepos[0]
-	}
-	return service
-}
-
-func (s *Service) RegisterEngine(provider qualityengine.Engine) error {
-	if provider == nil {
-		return fmt.Errorf("quality engine is required")
-	}
-	descriptor := provider.Descriptor()
-	name := strings.ToLower(strings.TrimSpace(descriptor.Name))
-	version := strings.TrimSpace(descriptor.Version)
-	if name == "" || version == "" {
-		return fmt.Errorf("quality engine descriptor requires name and version")
-	}
-	if len(name) > 128 {
-		return fmt.Errorf("quality engine name must not exceed 128 bytes")
-	}
-	if len(version) > 64 {
-		return fmt.Errorf("quality engine version must not exceed 64 bytes")
-	}
-	if s.engines == nil {
-		s.engines = map[string]qualityengine.Engine{}
-	}
-	if s.engineDescriptors == nil {
-		s.engineDescriptors = map[string]qualityengine.Descriptor{}
-	}
-	if _, exists := s.engines[name]; exists {
-		return fmt.Errorf("quality engine %q is already registered", name)
-	}
-	descriptor.Name = strings.TrimSpace(descriptor.Name)
-	descriptor.Version = version
-	descriptor.Capabilities = append([]string(nil), descriptor.Capabilities...)
-	s.engines[name] = provider
-	s.engineDescriptors[name] = descriptor
-	return nil
-}
-
-func (s *Service) resolveEngine(name string) (qualityengine.Engine, error) {
-	provider, _, _, err := s.resolveEngineRegistration(name)
-	return provider, err
-}
-
-func (s *Service) resolveEngineRegistration(name string) (qualityengine.Engine, qualityengine.Descriptor, string, error) {
-	name = strings.ToLower(strings.TrimSpace(name))
-	if name == "" {
-		name = s.defaultEngine
-	}
-	provider, ok := s.engines[name]
-	if !ok {
-		return nil, qualityengine.Descriptor{}, "", fmt.Errorf("quality engine %q is not registered", name)
-	}
-	descriptor, ok := s.engineDescriptors[name]
-	if !ok {
-		return nil, qualityengine.Descriptor{}, "", fmt.Errorf("quality engine %q descriptor is not registered", name)
-	}
-	return provider, descriptor, name, nil
-}
-
-func validateEngineCapabilities(descriptor qualityengine.Descriptor, policy native.Policy) error {
-	supported := make(map[string]struct{}, len(descriptor.Capabilities))
-	for _, capability := range descriptor.Capabilities {
-		supported[strings.ToLower(strings.TrimSpace(capability))] = struct{}{}
-	}
-	if _, ok := supported["*"]; ok {
-		return nil
-	}
-	for _, rule := range policy.Spec.Rules {
-		ruleType := strings.ToLower(strings.TrimSpace(rule.Type))
-		if _, ok := supported[ruleType]; !ok {
-			return fmt.Errorf("quality engine %s does not support rule type %s", descriptor.Name, ruleType)
+		if !jsonIntegerPattern.MatchString(text) {
+			return "", false
 		}
-	}
-	return nil
-}
-
-var jsonNumberPattern = regexp.MustCompile("^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$")
-
-).MatchString(text) {
-			return nil, false
-		}
-		integer := new(big.Int)
 		if _, ok := integer.SetString(text, 10); !ok {
-			return nil, false
+			return "", false
 		}
-		return json.Number(integer.String()), true
 	default:
-		return nil, false
+		return "", false
 	}
+	return json.Number(integer.String()), true
 }
 
 func validateExternalEngineTable(table tabular.Table) error {
