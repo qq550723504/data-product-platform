@@ -462,7 +462,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 	if releaseTrace.EvidenceSnapshot == nil || !releaseTrace.EvidenceSnapshot.IntegrityValid || releaseTrace.EvidenceSnapshot.ID != *published.EvidenceSnapshotID {
 		t.Fatalf("release EvidenceSnapshot trace is invalid: %+v", releaseTrace.EvidenceSnapshot)
 	}
-	if !containsDatasetVersion(releaseTrace.DatasetVersions, outputVersion.ID) || !containsDatasetVersion(releaseTrace.DatasetVersions, enterpriseVersion.ID) || !containsDatasetVersion(releaseTrace.DatasetVersions, leaseVersion.ID) || !containsDatasetVersion(releaseTrace.DatasetVersions, energyVersion.ID) {
+	if !containsDatasetVersion(releaseTrace.DatasetVersions, outputVersion.ID) || !containsDatasetVersion(releaseTrace.DatasetVersions, standardizedVersionID) || !containsDatasetVersion(releaseTrace.DatasetVersions, enterpriseVersion.ID) || !containsDatasetVersion(releaseTrace.DatasetVersions, leaseVersion.ID) || !containsDatasetVersion(releaseTrace.DatasetVersions, energyVersion.ID) {
 		t.Fatalf("release DatasetVersion lineage is incomplete: %+v", releaseTrace.DatasetVersions)
 	}
 	if len(releaseTrace.Executions) != 1 || releaseTrace.Executions[0].ID != execution.ID || releaseTrace.Executions[0].WorkflowVersionID != workflowVersion.ID {
