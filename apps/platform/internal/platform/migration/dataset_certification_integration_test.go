@@ -314,3 +314,15 @@ func TestDatasetCertificationAllowsSeededRawEffectiveRightsLeaf(t *testing.T) {
 		t.Fatalf("certify raw DatasetVersion with seeded effective-rights leaf: %v", err)
 	}
 }
+
+
+func TestCertificationHistoryPaginationMigrationRefusesPopulatedRollback(t *testing.T) {
+	pool := scratchDatabase(t, 46)
+	workspaceID := uuid.New()
+	insertCertificationFixture(t, pool, workspaceID, "CERT-HISTORY-DOWN-"+uuid.NewString(), "CERTIFIED")
+
+	if err := tryApplyMigrationFile(t, pool, 46, "down"); err == nil ||
+		!strings.Contains(err.Error(), "refusing to downgrade certification history pagination metadata") {
+		t.Fatalf("certification history pagination down error = %v, want populated-history refusal", err)
+	}
+}
