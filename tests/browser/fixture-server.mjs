@@ -303,7 +303,16 @@ export function createFixtureServer() {
           return send(200, goldExplanation);
         }
         if (url.pathname === `${workspace}/dataset-versions/${ids.goldVersion}/certifications`) {
-          return send(200, { workspaceId: ids.workspace, datasetVersionId: ids.goldVersion, asOf: stamp, items: [goldCertification] });
+          const limit = Math.max(1, Number(url.searchParams.get("limit")) || 25);
+          const offset = Math.max(0, Number(url.searchParams.get("offset")) || 0);
+          const items = [goldCertification].slice(offset, offset + limit);
+          return send(200, {
+            workspaceId: ids.workspace,
+            datasetVersionId: ids.goldVersion,
+            asOf: stamp,
+            items,
+            page: { total: 1, limit, offset },
+          });
         }
         if (url.pathname === `${workspace}/dataset-versions/${ids.goldVersion}/delivery-eligibility`) {
           return send(200, {
