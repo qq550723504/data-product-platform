@@ -241,7 +241,13 @@ export default async function DatasetVersionDetailPage({
               </article>
               <article className="status-overview-card">
                 <span>Certification</span>
-                <strong><Badge value={evidenceCertification?.decision ?? "NOT_CERTIFIED"} /></strong>
+                <strong>
+                  <Badge value={
+                    eligibility
+                      ? (eligibility.certification.allowed ? "CURRENT" : "NOT_CURRENT")
+                      : (history.page.total ? "HISTORY_ONLY" : "NOT_CERTIFIED")
+                  } />
+                </strong>
                 <small>{history.page.total} immutable facts</small>
               </article>
               <article className="status-overview-card">
@@ -639,6 +645,20 @@ export default async function DatasetVersionDetailPage({
           </section>
         ) : null}
 
+
+        <section className="detail-card" style={{ marginBottom: 24 }} data-testid="generic-provenance-summary">
+          <div className="panel-header"><h2>Evidence / Traceability</h2><span className="eyebrow">Frozen references</span></div>
+          {!latestReport?.evidence.length && !evidenceCertification?.evidenceSnapshotId && !evidenceCertification?.traceabilityEvidenceId ? (
+            <EmptyState title="暂无 Provenance 引用" description="当前 DatasetVersion 暂无可展示的质量 Evidence、EvidenceSnapshot 或 Traceability Evidence。" />
+          ) : (
+            <DefinitionList items={[
+              { label: "Quality evidence", value: latestReport?.evidence.length ? latestReport.evidence.map((item) => <div key={item.id}><span className="mono">{shortId(item.id)}</span> · {item.evidenceType}</div>) : "—" },
+              { label: "Certification EvidenceSnapshot", value: evidenceCertification?.evidenceSnapshotId ? <span className="mono">{evidenceCertification.evidenceSnapshotId}</span> : "—" },
+              { label: "Traceability Evidence", value: evidenceCertification?.traceabilityEvidenceId ? <span className="mono">{evidenceCertification.traceabilityEvidenceId}</span> : "—" },
+              { label: "Certification", value: evidenceCertification ? <span className="mono">{evidenceCertification.id}</span> : "—" },
+            ]} />
+          )}
+        </section>
           </>
         ) : null}
 
@@ -665,20 +685,6 @@ export default async function DatasetVersionDetailPage({
             ) : null}
           </section>
         ) : null}
-
-        <section className="detail-card" style={{ marginBottom: 24 }}>
-          <div className="panel-header"><h2>Evidence</h2><span className="eyebrow">Frozen references</span></div>
-          {!latestReport?.evidence.length && !evidenceCertification?.evidenceSnapshotId && !evidenceCertification?.traceabilityEvidenceId ? (
-            <EmptyState title="暂无 Evidence 引用" description="当前版本尚未返回质量或认证 Evidence 引用。" />
-          ) : (
-            <DefinitionList items={[
-              { label: "Quality evidence", value: latestReport?.evidence.length ? latestReport.evidence.map((item) => <div key={item.id}><span className="mono">{shortId(item.id)}</span> · {item.evidenceType}</div>) : "—" },
-              { label: "Certification EvidenceSnapshot", value: evidenceCertification?.evidenceSnapshotId ? <span className="mono">{evidenceCertification.evidenceSnapshotId}</span> : "—" },
-              { label: "Traceability Evidence", value: evidenceCertification?.traceabilityEvidenceId ? <span className="mono">{evidenceCertification.traceabilityEvidenceId}</span> : "—" },
-              { label: "Certification", value: evidenceCertification ? <span className="mono">{evidenceCertification.id}</span> : "—" },
-            ]} />
-          )}
-        </section>
 
         <div className="panel-header"><h2>Current Delivery Eligibility</h2><span className="eyebrow">Preflight only</span></div>
         {profiles.length === 0 ? (
