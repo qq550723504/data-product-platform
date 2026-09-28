@@ -47,7 +47,7 @@ test(`real Core browser phase: ${phase}`, async ({ page }, testInfo) => {
     const blocked = releaseCard(page, data.blockedReleaseId);
     await expect(blocked.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
     const card = releaseCard(page, data.releaseId);
-    const gates = card.locator(".metric-grid .metric-card");
+    const gates = card.locator(".readiness-gate");
     await expect(gates).toHaveCount(8);
     for (let index = 0; index < 8; index++) await expect(gates.nth(index)).toContainText("PASS");
     await expect(card.getByText("所有 Readiness Gate 已通过", { exact: true })).toBeVisible();

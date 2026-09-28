@@ -13,6 +13,47 @@ const gateLabels: Record<string, string> = {
   compliance: "合规", contract: "Data Contract", evidence: "证据", delivery: "交付资产",
 };
 
+const gateActions: Record<string, string> = {
+  production: "若绑定 DatasetVersion 缺少不可变的生产 provenance，重新生产有 Execution lineage 的 DatasetVersion 并创建新 Release",
+  dataset: "若绑定 DatasetVersion 已不可用，生产或选择替代版本并创建新 Release",
+  rights: "若当前 Release 允许重绑，创建并冻结该 Release 的新 Rights Snapshot 后重新绑定；否则先创建新 Release，再为新 Release 创建并冻结 Rights Snapshot",
+  quality: "处理 Quality gate 失败项",
+  compliance: "处理 Compliance gate 阻塞项",
+  contract: "若 Release 绑定错误，改绑到 ProductVersion 已冻结的 Contract；若冻结 Contract 缺失或错误，创建新 ProductVersion 和新 Release",
+  evidence: "为目标 DatasetVersion 补齐 Readiness 所需的 Evidence 关系",
+  delivery: "创建包含交付资产的新 ProductVersion，并基于该版本创建新 Release",
+};
+
+function gateState(value: unknown): string {
+  return typeof value === "string" && value.trim() ? value : "UNKNOWN";
+}
+
+function gateSymbol(status: string): string {
+  switch (status.toUpperCase()) {
+    case "PASS":
+      return "✓";
+    case "FAIL":
+      return "×";
+    case "PENDING":
+      return "…";
+    default:
+      return "?";
+  }
+}
+
+function gateHint(gate: string, status: string): string {
+  switch (status.toUpperCase()) {
+    case "PASS":
+      return "Gate 已通过";
+    case "PENDING":
+      return "先执行 Release Validation；此 Gate 尚未评估";
+    case "FAIL":
+      return gateActions[gate] ?? "根据 Core blocker 处理失败条件";
+    default:
+      return "查看 Core Readiness 详情，确认该 Gate 的当前状态";
+  }
+}
+
 export type ReleasePanelItem = { release: ProductRelease; readiness: ReleaseReadiness };
 
 function PublishForm({ productId, item, enabled }: { productId: string; item: ReleasePanelItem; enabled: boolean }) {
@@ -55,22 +96,58 @@ export function ProductReleasePanel({ productId, items, actionsEnabled }: { prod
             <p style={{ marginTop: 8 }}>
               <Link className="text-link" href={`/products/${productId}/releases/${item.release.id}`}>查看 Release → DatasetVersion → Execution → Evidence 完整证据链 →</Link>
             </p>
-            <div className="metric-grid" style={{ marginTop: 16 }}>
-              {requiredReleaseGates.map((gate) => (
-                <div className="metric-card" key={gate} data-testid={`readiness-${gate}`}>
-                  <span>{gateLabels[gate]}</span>
-                  <Badge value={typeof item.readiness.checks?.[gate] === "string" ? item.readiness.checks[gate] : "UNKNOWN"} />
+            <section className="readiness-checklist" aria-label="Release Readiness Checklist">
+              <div className="readiness-checklist-header">
+                <div>
+                  <span className="eyebrow">Release Readiness</span>
+                  <h3>发布门禁清单</h3>
                 </div>
-              ))}
-            </div>
-            {problem ? (
-              <div className="callout callout-warn" style={{ marginTop: 16 }} data-testid="readiness-problem">
-                <strong>发布条件尚未完整通过</strong><p>{problem}</p>
-                {Array.isArray(item.readiness.blockers) && item.readiness.blockers.length > 0 ? <p>{item.readiness.blockers.filter((value) => typeof value === "string").join(" · ")}</p> : null}
+                <Badge value={item.readiness.overall} />
               </div>
-            ) : (
-              <div className="callout" style={{ marginTop: 16 }}><strong>所有 Readiness Gate 已通过</strong></div>
-            )}
+              <div className="readiness-gates">
+                {[
+                  ...requiredReleaseGates,
+                  ...Object.keys(item.readiness.checks ?? {}).filter((gate) => !(requiredReleaseGates as readonly string[]).includes(gate)),
+                ].map((gate) => {
+                  const status = gateState(item.readiness.checks?.[gate]);
+                  return (
+                    <div
+                      className={`readiness-gate readiness-gate-${status.toLowerCase()}`}
+                      key={gate}
+                      data-testid={`readiness-${gate}`}
+                    >
+                      <span className="readiness-gate-symbol" aria-hidden="true">{gateSymbol(status)}</span>
+                      <div className="readiness-gate-copy">
+                        <strong>{gateLabels[gate] ?? gate}</strong>
+                        <small>{gateHint(gate, status)}</small>
+                      </div>
+                      <Badge value={status} />
+                    </div>
+                  );
+                })}
+              </div>
+              {problem ? (
+                <div className="readiness-blockers" data-testid="readiness-problem">
+                  <strong>发布条件尚未完整通过</strong>
+                  <p>{problem}</p>
+                  {Array.isArray(item.readiness.blockers) && item.readiness.blockers.length > 0 ? (
+                    <ul>
+                      {item.readiness.blockers
+                        .filter((value): value is string => typeof value === "string")
+                        .map((value) => <li key={value}><code>{value}</code></li>)}
+                    </ul>
+                  ) : null}
+                  <Link className="text-link" href={`/products/${productId}/releases/${item.release.id}`}>
+                    查看完整 Release 证据链与冻结引用 →
+                  </Link>
+                </div>
+              ) : (
+                <div className="readiness-ready">
+                  <span aria-hidden="true">✓</span>
+                  <div><strong>所有 Readiness Gate 已通过</strong><small>Release 已具备发布门禁条件。</small></div>
+                </div>
+              )}
+            </section>
             <details style={{ marginTop: 16 }}>
               <summary>冻结引用与 Readiness 详情</summary>
               <dl className="definition-list" style={{ marginTop: 12 }}>

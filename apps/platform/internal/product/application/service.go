@@ -399,6 +399,11 @@ func draftReadinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.Rea
 				"required": facts.ProductionDependencyBindingRequired,
 				"complete": facts.ProductionDependencyBindingComplete,
 			},
+			"evidence": map[string]any{
+				"datasetVersionId": facts.TargetDatasetVersionID,
+				"relationCount":    facts.EvidenceCount,
+				"requiredCount":    2,
+			},
 		},
 	}
 }
@@ -487,6 +492,11 @@ func readinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.Readines
 	details["productionDependencyBinding"] = map[string]any{
 		"required": facts.ProductionDependencyBindingRequired,
 		"complete": facts.ProductionDependencyBindingComplete,
+	}
+	details["evidence"] = map[string]any{
+		"datasetVersionId": facts.TargetDatasetVersionID,
+		"relationCount":    facts.EvidenceCount,
+		"requiredCount":    2,
 	}
 
 	sort.Strings(blockers)
