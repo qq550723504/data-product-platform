@@ -33,7 +33,11 @@ export default async function ProductDetailPage({
     const product = await scopedProduct(id);
     // Release history is immutable and can grow without bound. Render one
     // server-side page at a time so detail/readiness fan-out stays bounded.
-    const releasePage = await platform.releases(product.id, LIST_PAGE_SIZE, offset);
+    let releasePage = await platform.releases(product.id, LIST_PAGE_SIZE, offset);
+    if (releasePage.page.total > 0 && releasePage.items.length === 0 && offset > 0) {
+      const lastOffset = Math.floor((releasePage.page.total - 1) / LIST_PAGE_SIZE) * LIST_PAGE_SIZE;
+      releasePage = await platform.releases(product.id, LIST_PAGE_SIZE, lastOffset);
+    }
     const releasedItems = releasePage.items;
     const version = product.currentVersionId ? await platform.productVersion(product.currentVersionId) : null;
     if (version && version.productId.toLowerCase() !== product.id.toLowerCase()) {
