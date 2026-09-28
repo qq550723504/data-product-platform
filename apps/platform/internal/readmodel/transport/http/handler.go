@@ -36,6 +36,7 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/executions", h.listExecutions)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/entity-match-reviews", h.listEntityReviews)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/data-products", h.listDataProducts)
+	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/product-releases", h.listWorkspaceReleases)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/data-products/{productId}/releases", h.listProductReleases)
 }
 
@@ -239,6 +240,28 @@ func (h *Handler) listDataProducts(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, result)
 }
 
+func (h *Handler) listWorkspaceReleases(w http.ResponseWriter, r *http.Request) {
+	workspaceID, ok := workspaceID(w, r)
+	if !ok {
+		return
+	}
+	limit, offset, ok := pagination(w, r)
+	if !ok {
+		return
+	}
+	status := strings.ToUpper(strings.TrimSpace(r.URL.Query().Get("status")))
+	if status != "" && !validReleaseStatus(status) {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_RELEASE_STATUS", "unsupported release status", map[string]any{"status": status})
+		return
+	}
+	result, err := h.repo.ListWorkspaceReleases(r.Context(), workspaceID, status, limit, offset)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "PRODUCT_RELEASES_READ_FAILED", err.Error(), nil)
+		return
+	}
+	writeJSON(w, http.StatusOK, result)
+}
+
 func (h *Handler) listProductReleases(w http.ResponseWriter, r *http.Request) {
 	workspaceID, ok := workspaceID(w, r)
 	if !ok {
@@ -301,6 +324,15 @@ func pagination(w http.ResponseWriter, r *http.Request) (int, int, bool) {
 		}
 	}
 	return limit, offset, true
+}
+
+func validReleaseStatus(value string) bool {
+	switch value {
+	case "DRAFT", "READY", "PUBLISHED", "FAILED":
+		return true
+	default:
+		return false
+	}
 }
 
 func validReviewStatus(value string) bool {
