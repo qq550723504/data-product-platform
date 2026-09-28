@@ -23,7 +23,6 @@ func TestReadinessProductionRequiresProducingExecution(t *testing.T) {
 	}
 }
 
-
 func TestDraftReadinessDoesNotClaimProductionWithoutExecution(t *testing.T) {
 	target := uuid.New()
 	result := draftReadinessResultFromFacts(uuid.New(), infrastructure.ReadinessFacts{
@@ -39,5 +38,36 @@ func TestDraftReadinessDoesNotClaimProductionWithoutExecution(t *testing.T) {
 	}
 	if !slices.Contains(result.Blockers, "PRODUCTION_EXECUTION_MISSING") {
 		t.Fatalf("draft blockers = %v, want PRODUCTION_EXECUTION_MISSING", result.Blockers)
+	}
+}
+
+
+func TestReadinessProductionRejectsWorkflowMismatch(t *testing.T) {
+	target := uuid.New()
+	result := readinessResultFromFacts(uuid.New(), infrastructure.ReadinessFacts{
+		TargetDatasetVersionID:     &target,
+		AllDatasetsUsable:          true,
+		ProductionExecutionPresent: true,
+		ProductionWorkflowMatch:    false,
+		ProductionLineageComplete:  true,
+	})
+
+	if !slices.Contains(result.Blockers, "PRODUCTION_WORKFLOW_MISMATCH") {
+		t.Fatalf("blockers = %v, want PRODUCTION_WORKFLOW_MISMATCH", result.Blockers)
+	}
+}
+
+func TestReadinessProductionRejectsMissingLineage(t *testing.T) {
+	target := uuid.New()
+	result := readinessResultFromFacts(uuid.New(), infrastructure.ReadinessFacts{
+		TargetDatasetVersionID:     &target,
+		AllDatasetsUsable:          true,
+		ProductionExecutionPresent: true,
+		ProductionWorkflowMatch:    true,
+		ProductionLineageComplete:  false,
+	})
+
+	if !slices.Contains(result.Blockers, "PRODUCTION_LINEAGE_INCOMPLETE") {
+		t.Fatalf("blockers = %v, want PRODUCTION_LINEAGE_INCOMPLETE", result.Blockers)
 	}
 }
