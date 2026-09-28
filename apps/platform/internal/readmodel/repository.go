@@ -899,34 +899,60 @@ func (r *Repository) ListExecutions(ctx context.Context, workspaceID uuid.UUID, 
 }
 
 func (r *Repository) ListUnresolvedFailedExecutions(ctx context.Context, workspaceID uuid.UUID, limit, offset int) (List[Execution], error) {
-	const predicate = `
-		FROM execution e
-		WHERE e.workspace_id=$1
-		  AND e.status='FAILED'
-		  AND NOT EXISTS (
-			  SELECT 1
-			  FROM execution retry
-			  WHERE retry.retry_of_execution_id=e.id
-		  )
+	const lineageCTE = `
+		WITH RECURSIVE retry_tree AS (
+			SELECT e.id AS root_id, e.id AS execution_id, e.status, e.created_at
+			FROM execution e
+			WHERE e.workspace_id=$1
+			  AND e.retry_of_execution_id IS NULL
+
+			UNION ALL
+
+			SELECT tree.root_id, child.id, child.status, child.created_at
+			FROM retry_tree tree
+			JOIN execution child ON child.retry_of_execution_id=tree.execution_id
+			WHERE child.workspace_id=$1
+		),
+		root_state AS (
+			SELECT root_id,
+			       bool_or(status='SUCCEEDED') AS has_success,
+			       bool_or(status IN ('QUEUED','SUBMITTING','RUNNING')) AS has_active
+			FROM retry_tree
+			GROUP BY root_id
+		),
+		unresolved_failed AS (
+			SELECT tree.root_id,
+			       tree.execution_id,
+			       row_number() OVER (
+				       PARTITION BY tree.root_id
+				       ORDER BY tree.created_at DESC, tree.execution_id DESC
+			       ) AS failure_rank
+			FROM retry_tree tree
+			JOIN root_state state ON state.root_id=tree.root_id
+			WHERE tree.status='FAILED'
+			  AND NOT state.has_success
+			  AND NOT state.has_active
+		)
 	`
-	total, err := r.count(ctx, "SELECT count(*)"+predicate, workspaceID)
+
+	total, err := r.count(ctx, lineageCTE+`
+		SELECT count(*)
+		FROM unresolved_failed
+		WHERE failure_rank=1
+	`, workspaceID)
 	if err != nil {
 		return List[Execution]{}, err
 	}
-	rows, err := r.pool.Query(ctx, `
+
+	rows, err := r.pool.Query(ctx, lineageCTE+`
 		SELECT e.id, e.workspace_id, e.workflow_version_id, w.code, w.name, wv.version,
 		       e.output_dataset_id, e.output_dataset_version_id, e.target_period, e.status, e.attempt,
 		       e.engine_type, COALESCE(e.error_code,''), e.created_at, e.started_at, e.finished_at
-		FROM execution e
+		FROM unresolved_failed unresolved
+		JOIN execution e ON e.id=unresolved.execution_id
 		JOIN workflow_version wv ON wv.id=e.workflow_version_id
 		JOIN workflow w ON w.id=wv.workflow_id
-		WHERE e.workspace_id=$1
-		  AND e.status='FAILED'
-		  AND NOT EXISTS (
-			  SELECT 1
-			  FROM execution retry
-			  WHERE retry.retry_of_execution_id=e.id
-		  )
+		WHERE unresolved.failure_rank=1
 		ORDER BY e.created_at DESC, e.id
 		LIMIT $2 OFFSET $3
 	`, workspaceID, limit, offset)
@@ -934,6 +960,7 @@ func (r *Repository) ListUnresolvedFailedExecutions(ctx context.Context, workspa
 		return List[Execution]{}, fmt.Errorf("list unresolved failed executions: %w", err)
 	}
 	defer rows.Close()
+
 	items := make([]Execution, 0)
 	for rows.Next() {
 		var item Execution
