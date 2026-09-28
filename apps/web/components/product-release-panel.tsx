@@ -105,7 +105,10 @@ export function ProductReleasePanel({ productId, items, actionsEnabled }: { prod
                 <Badge value={item.readiness.overall} />
               </div>
               <div className="readiness-gates">
-                {requiredReleaseGates.map((gate) => {
+                {[
+                  ...requiredReleaseGates,
+                  ...Object.keys(item.readiness.checks ?? {}).filter((gate) => !requiredReleaseGates.includes(gate)),
+                ].map((gate) => {
                   const status = gateState(item.readiness.checks?.[gate]);
                   return (
                     <div
@@ -115,7 +118,7 @@ export function ProductReleasePanel({ productId, items, actionsEnabled }: { prod
                     >
                       <span className="readiness-gate-symbol" aria-hidden="true">{gateSymbol(status)}</span>
                       <div className="readiness-gate-copy">
-                        <strong>{gateLabels[gate]}</strong>
+                        <strong>{gateLabels[gate] ?? gate}</strong>
                         <small>{gateHint(gate, status)}</small>
                       </div>
                       <Badge value={status} />
