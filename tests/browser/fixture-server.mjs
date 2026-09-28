@@ -277,6 +277,23 @@ export function createFixtureServer() {
       }
       if (req.method === "GET") {
         if (url.pathname === `${workspace}/data-products`) return send(200, page([product]));
+        if (url.pathname === `${workspace}/product-releases`) {
+          const status = url.searchParams.get("status") ?? "";
+          const items = !status || state.releaseStatus === status ? [release] : [];
+          return send(200, page(items));
+        }
+        if (url.pathname === `${workspace}/attention/releases`) {
+          const limit = Math.max(1, Number(url.searchParams.get("limit")) || 10);
+          const group = (status) => {
+            const items = state.releaseStatus === status ? [release] : [];
+            return { items: items.slice(0, limit), page: { total: items.length, limit, offset: 0 } };
+          };
+          return send(200, {
+            failed: group("FAILED"),
+            validating: group("VALIDATING"),
+            ready: group("READY"),
+          });
+        }
         if (url.pathname === `${workspace}/data-products/${ids.product}/releases`) return send(200, page([release]));
         if (url.pathname === releasePath) return send(200, release);
         if (url.pathname === `${releasePath}/readiness`) return send(200, readiness(state.scenario));
@@ -328,6 +345,7 @@ export function createFixtureServer() {
         }
         if (url.pathname === `${workspace}/datasets`) return send(200, page([goldDataset]));
         if (url.pathname === `${workspace}/executions`) return send(200, page([]));
+        if (url.pathname === `${workspace}/attention/failed-executions`) return send(200, page([]));
         if (url.pathname === `${workspace}/workbench`) return send(200, {
           workspaceId: ids.workspace, counts: { dataResources: 0, datasets: 0, dataProducts: 1 },
           reviewQueue: { pending: state.candidateStatus === "PENDING" ? 1 : 0, unresolved: 0, conflicts: 0 },

@@ -200,6 +200,17 @@ type ProductRelease struct {
 	ReleasedAt         *time.Time `json:"releasedAt,omitempty"`
 }
 
+type ReleaseAttentionGroup struct {
+	Items []ProductRelease `json:"items"`
+	Page  Page             `json:"page"`
+}
+
+type WorkspaceReleaseAttention struct {
+	Failed     ReleaseAttentionGroup `json:"failed"`
+	Validating ReleaseAttentionGroup `json:"validating"`
+	Ready      ReleaseAttentionGroup `json:"ready"`
+}
+
 type GoldExplanation struct {
 	WorkspaceID                      uuid.UUID               `json:"workspaceId"`
 	OutputDatasetVersionID           uuid.UUID               `json:"outputDatasetVersionId"`
@@ -898,6 +909,122 @@ func (r *Repository) ListExecutions(ctx context.Context, workspaceID uuid.UUID, 
 	return List[Execution]{Items: items, Page: Page{Limit: limit, Offset: offset, Total: total}}, nil
 }
 
+func (r *Repository) ListUnresolvedFailedExecutions(ctx context.Context, workspaceID uuid.UUID, limit, offset int) (List[Execution], error) {
+	const lineageCTE = `
+		WITH RECURSIVE failed_ancestors AS (
+			SELECT failed.id AS seed_id,
+			       failed.id AS execution_id,
+			       failed.retry_of_execution_id
+			FROM execution failed
+			WHERE failed.workspace_id=$1
+			  AND failed.status='FAILED'
+
+			UNION ALL
+
+			SELECT ancestors.seed_id,
+			       parent.id,
+			       parent.retry_of_execution_id
+			FROM failed_ancestors ancestors
+			JOIN execution parent ON parent.id=ancestors.retry_of_execution_id
+			WHERE parent.workspace_id=$1
+		),
+		candidate_roots AS (
+			SELECT DISTINCT execution_id AS root_id
+			FROM failed_ancestors
+			WHERE retry_of_execution_id IS NULL
+		),
+		retry_tree AS (
+			SELECT roots.root_id,
+			       root.id AS execution_id,
+			       root.status,
+			       root.created_at
+			FROM candidate_roots roots
+			JOIN execution root ON root.id=roots.root_id
+
+			UNION ALL
+
+			SELECT tree.root_id,
+			       child.id,
+			       child.status,
+			       child.created_at
+			FROM retry_tree tree
+			JOIN execution child ON child.retry_of_execution_id=tree.execution_id
+			WHERE child.workspace_id=$1
+		),
+		root_state AS (
+			SELECT root_id,
+			       bool_or(status='SUCCEEDED') AS has_success,
+			       bool_or(status IN ('QUEUED','SUBMITTING','RUNNING')) AS has_active
+			FROM retry_tree
+			GROUP BY root_id
+		),
+		unresolved_failed AS (
+			SELECT tree.root_id,
+			       tree.execution_id,
+			       row_number() OVER (
+				       PARTITION BY tree.root_id
+				       ORDER BY tree.created_at DESC, tree.execution_id DESC
+			       ) AS failure_rank
+			FROM retry_tree tree
+			JOIN root_state state ON state.root_id=tree.root_id
+			WHERE tree.status='FAILED'
+			  AND NOT state.has_success
+			  AND NOT state.has_active
+		)
+	`
+
+	rows, err := r.pool.Query(ctx, lineageCTE+`
+		SELECT e.id, e.workspace_id, e.workflow_version_id, w.code, w.name, wv.version,
+		       e.output_dataset_id, e.output_dataset_version_id, e.target_period, e.status, e.attempt,
+		       e.engine_type, COALESCE(e.error_code,''), e.created_at, e.started_at, e.finished_at,
+		       count(*) OVER ()
+		FROM unresolved_failed unresolved
+		JOIN execution e ON e.id=unresolved.execution_id
+		JOIN workflow_version wv ON wv.id=e.workflow_version_id
+		JOIN workflow w ON w.id=wv.workflow_id
+		WHERE unresolved.failure_rank=1
+		ORDER BY e.created_at DESC, e.id
+		LIMIT $2 OFFSET $3
+	`, workspaceID, limit, offset)
+	if err != nil {
+		return List[Execution]{}, fmt.Errorf("list unresolved failed executions: %w", err)
+	}
+	defer rows.Close()
+
+	total := 0
+	items := make([]Execution, 0)
+	for rows.Next() {
+		var item Execution
+		if err := rows.Scan(
+			&item.ID, &item.WorkspaceID, &item.WorkflowVersionID, &item.WorkflowCode, &item.WorkflowName,
+			&item.WorkflowVersion, &item.OutputDatasetID, &item.OutputDatasetVersionID, &item.TargetPeriod,
+			&item.Status, &item.Attempt, &item.EngineType, &item.ErrorCode, &item.CreatedAt, &item.StartedAt, &item.FinishedAt,
+			&total,
+		); err != nil {
+			return List[Execution]{}, fmt.Errorf("scan unresolved failed execution: %w", err)
+		}
+		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return List[Execution]{}, fmt.Errorf("iterate unresolved failed executions: %w", err)
+	}
+
+	// Workbench always asks for the first page. Preserve pagination metadata for
+	// callers that request a later page past the end without paying a second
+	// lineage scan on the normal path.
+	if len(items) == 0 && offset > 0 {
+		if err := r.pool.QueryRow(ctx, lineageCTE+`
+			SELECT count(*)
+			FROM unresolved_failed
+			WHERE failure_rank=1
+		`, workspaceID).Scan(&total); err != nil {
+			return List[Execution]{}, fmt.Errorf("count unresolved failed executions: %w", err)
+		}
+	}
+
+	return List[Execution]{Items: items, Page: Page{Limit: limit, Offset: offset, Total: total}}, nil
+}
+
 func (r *Repository) ListEntityReviews(ctx context.Context, workspaceID uuid.UUID, status string, limit, offset int) (List[EntityReview], error) {
 	args := []any{workspaceID}
 	filter := ""
@@ -994,6 +1121,134 @@ func (r *Repository) ListDataProducts(ctx context.Context, workspaceID uuid.UUID
 		return List[DataProduct]{}, fmt.Errorf("iterate data products: %w", err)
 	}
 	return List[DataProduct]{Items: items, Page: Page{Limit: limit, Offset: offset, Total: total}}, nil
+}
+
+func (r *Repository) WorkspaceReleaseAttention(ctx context.Context, workspaceID uuid.UUID, limit int) (WorkspaceReleaseAttention, error) {
+	result := WorkspaceReleaseAttention{
+		Failed:     ReleaseAttentionGroup{Items: make([]ProductRelease, 0), Page: Page{Limit: limit}},
+		Validating: ReleaseAttentionGroup{Items: make([]ProductRelease, 0), Page: Page{Limit: limit}},
+		Ready:      ReleaseAttentionGroup{Items: make([]ProductRelease, 0), Page: Page{Limit: limit}},
+	}
+
+	rows, err := r.pool.Query(ctx, `
+		WITH ranked AS (
+			SELECT pr.id, pr.product_id, pr.product_version_id, pr.release_no, pr.status,
+			       pr.contract_version_id, pr.rights_snapshot_id, pr.quality_result_id,
+			       pr.compliance_result_id, pr.evidence_snapshot_id, COALESCE(pr.release_notes,'') AS release_notes,
+			       pr.created_at, pr.released_at,
+			       count(*) OVER (PARTITION BY pr.status) AS status_total,
+			       row_number() OVER (
+				       PARTITION BY pr.status
+				       ORDER BY pr.created_at DESC, pr.id
+			       ) AS status_rank
+			FROM product_release pr
+			JOIN data_product p ON p.id=pr.product_id
+			WHERE p.workspace_id=$1
+			  AND p.deleted_at IS NULL
+			  AND pr.status IN ('FAILED','VALIDATING','READY')
+		)
+		SELECT id, product_id, product_version_id, release_no, status,
+		       contract_version_id, rights_snapshot_id, quality_result_id,
+		       compliance_result_id, evidence_snapshot_id, release_notes,
+		       created_at, released_at, status_total
+		FROM ranked
+		WHERE status_rank <= $2
+		ORDER BY CASE status
+			WHEN 'FAILED' THEN 1
+			WHEN 'VALIDATING' THEN 2
+			WHEN 'READY' THEN 3
+			ELSE 4
+		END, created_at DESC, id
+	`, workspaceID, limit)
+	if err != nil {
+		return WorkspaceReleaseAttention{}, fmt.Errorf("list workspace release attention: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var item ProductRelease
+		var total int
+		if err := rows.Scan(
+			&item.ID, &item.ProductID, &item.ProductVersionID, &item.ReleaseNo, &item.Status,
+			&item.ContractVersionID, &item.RightsSnapshotID, &item.QualityResultID, &item.ComplianceResultID,
+			&item.EvidenceSnapshotID, &item.ReleaseNotes, &item.CreatedAt, &item.ReleasedAt, &total,
+		); err != nil {
+			return WorkspaceReleaseAttention{}, fmt.Errorf("scan workspace release attention: %w", err)
+		}
+		switch item.Status {
+		case "FAILED":
+			result.Failed.Items = append(result.Failed.Items, item)
+			result.Failed.Page.Total = total
+		case "VALIDATING":
+			result.Validating.Items = append(result.Validating.Items, item)
+			result.Validating.Page.Total = total
+		case "READY":
+			result.Ready.Items = append(result.Ready.Items, item)
+			result.Ready.Page.Total = total
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return WorkspaceReleaseAttention{}, fmt.Errorf("iterate workspace release attention: %w", err)
+	}
+	return result, nil
+}
+
+func (r *Repository) ListWorkspaceReleases(ctx context.Context, workspaceID uuid.UUID, status string, limit, offset int) (List[ProductRelease], error) {
+	countQuery := `
+		SELECT count(*)
+		FROM product_release pr
+		JOIN data_product p ON p.id=pr.product_id
+		WHERE p.workspace_id=$1 AND p.deleted_at IS NULL
+	`
+	args := []any{workspaceID}
+	if status != "" {
+		countQuery += " AND pr.status=$2"
+		args = append(args, status)
+	}
+	total, err := r.count(ctx, countQuery, args...)
+	if err != nil {
+		return List[ProductRelease]{}, err
+	}
+
+	query := `
+		SELECT pr.id, pr.product_id, pr.product_version_id, pr.release_no, pr.status,
+		       pr.contract_version_id, pr.rights_snapshot_id, pr.quality_result_id,
+		       pr.compliance_result_id, pr.evidence_snapshot_id, COALESCE(pr.release_notes,''),
+		       pr.created_at, pr.released_at
+		FROM product_release pr
+		JOIN data_product p ON p.id=pr.product_id
+		WHERE p.workspace_id=$1 AND p.deleted_at IS NULL
+	`
+	queryArgs := []any{workspaceID}
+	if status != "" {
+		query += " AND pr.status=$2"
+		queryArgs = append(queryArgs, status)
+	}
+	query += " ORDER BY pr.created_at DESC, pr.id LIMIT $" + fmt.Sprint(len(queryArgs)+1) + " OFFSET $" + fmt.Sprint(len(queryArgs)+2)
+	queryArgs = append(queryArgs, limit, offset)
+
+	rows, err := r.pool.Query(ctx, query, queryArgs...)
+	if err != nil {
+		return List[ProductRelease]{}, fmt.Errorf("list workspace releases: %w", err)
+	}
+	defer rows.Close()
+
+	items := make([]ProductRelease, 0)
+	for rows.Next() {
+		var item ProductRelease
+		if err := rows.Scan(
+			&item.ID, &item.ProductID, &item.ProductVersionID, &item.ReleaseNo, &item.Status,
+			&item.ContractVersionID, &item.RightsSnapshotID, &item.QualityResultID, &item.ComplianceResultID,
+			&item.EvidenceSnapshotID, &item.ReleaseNotes, &item.CreatedAt, &item.ReleasedAt,
+		); err != nil {
+			return List[ProductRelease]{}, fmt.Errorf("scan workspace release: %w", err)
+		}
+		items = append(items, item)
+	}
+	if err := rows.Err(); err != nil {
+		return List[ProductRelease]{}, fmt.Errorf("iterate workspace releases: %w", err)
+	}
+	return List[ProductRelease]{Items: items, Page: Page{Limit: limit, Offset: offset, Total: total}}, nil
 }
 
 func (r *Repository) ListProductReleases(ctx context.Context, productID uuid.UUID, limit, offset int) (List[ProductRelease], error) {

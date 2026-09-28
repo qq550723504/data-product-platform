@@ -3,6 +3,7 @@ package readmodel_test
 import (
 	"context"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -232,5 +233,90 @@ func TestListEntityReviewsExposesCurrentMappingDecision(t *testing.T) {
 	got := after.Items[0].CurrentMappingDecisionID
 	if got == nil || *got != decision.ID {
 		t.Fatalf("current mapping decision = %v, want %s", got, decision.ID)
+	}
+}
+
+func TestUnresolvedFailedExecutionsResolveAcrossRetryLineage(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	workspaceID := uuid.New()
+	datasetID := uuid.New()
+	workflowID := uuid.New()
+	workflowVersionID := uuid.New()
+	suffix := uuid.NewString()
+
+	rootResolved := uuid.New()
+	failedSibling := uuid.New()
+	successSibling := uuid.New()
+	rootUnresolved := uuid.New()
+	latestFailed := uuid.New()
+
+	defer func() {
+		_, _ = pool.Exec(ctx, `DELETE FROM execution WHERE id=ANY($1)`, []uuid.UUID{
+			failedSibling, successSibling, rootResolved, latestFailed, rootUnresolved,
+		})
+		_, _ = pool.Exec(ctx, `DELETE FROM workflow_version WHERE id=$1`, workflowVersionID)
+		_, _ = pool.Exec(ctx, `DELETE FROM workflow WHERE id=$1`, workflowID)
+		_, _ = pool.Exec(ctx, `DELETE FROM dataset WHERE id=$1`, datasetID)
+	}()
+
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset (id, workspace_id, code, name, dataset_type, lifecycle_status)
+		VALUES ($1,$2,$3,'Attention dataset','CURATED','ACTIVE')
+	`, datasetID, workspaceID, "ATTN-"+suffix); err != nil {
+		t.Fatalf("insert dataset: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO workflow (id, workspace_id, code, name, status)
+		VALUES ($1,$2,$3,'Attention workflow','ACTIVE')
+	`, workflowID, workspaceID, "ATTN-WF-"+suffix); err != nil {
+		t.Fatalf("insert workflow: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO workflow_version (
+			id, workflow_id, version, definition_ref, definition_sha256, definition
+		) VALUES ($1,$2,'1','test://attention',$3,'{}'::jsonb)
+	`, workflowVersionID, workflowID, "a"+strings.Repeat("0", 63)); err != nil {
+		t.Fatalf("insert workflow version: %v", err)
+	}
+
+	insertExecution := func(id uuid.UUID, status string, attempt int, retryOf *uuid.UUID) {
+		t.Helper()
+		if _, err := pool.Exec(ctx, `
+			INSERT INTO execution (
+				id, workspace_id, workflow_version_id, output_dataset_id, target_period,
+				status, attempt, retry_of_execution_id, engine_type, created_at
+			) VALUES ($1,$2,$3,$4,'2026-09',$5,$6,$7,'NATIVE',now() + ($8::int * interval '1 second'))
+		`, id, workspaceID, workflowVersionID, datasetID, status, attempt, retryOf, attempt); err != nil {
+			t.Fatalf("insert execution %s: %v", id, err)
+		}
+	}
+
+	insertExecution(rootResolved, "FAILED", 1, nil)
+	insertExecution(failedSibling, "FAILED", 2, &rootResolved)
+	insertExecution(successSibling, "SUCCEEDED", 2, &rootResolved)
+
+	insertExecution(rootUnresolved, "FAILED", 1, nil)
+	insertExecution(latestFailed, "FAILED", 2, &rootUnresolved)
+
+	repo := readmodel.NewRepository(pool)
+	result, err := repo.ListUnresolvedFailedExecutions(ctx, workspaceID, 10, 0)
+	if err != nil {
+		t.Fatalf("list unresolved failed executions: %v", err)
+	}
+	if result.Page.Total != 1 || len(result.Items) != 1 {
+		t.Fatalf("unresolved failures = total %d items %d, want 1/1", result.Page.Total, len(result.Items))
+	}
+	if result.Items[0].ID != latestFailed {
+		t.Fatalf("unresolved failure = %s, want latest failed leaf %s", result.Items[0].ID, latestFailed)
 	}
 }

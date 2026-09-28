@@ -227,6 +227,12 @@ export type ProductRelease = {
   createdAt: string;
   releasedAt?: string;
 };
+export type WorkspaceReleaseAttention = {
+  failed: PageResult<ProductRelease>;
+  validating: PageResult<ProductRelease>;
+  ready: PageResult<ProductRelease>;
+};
+
 
 export type QualityDimensionSummary = {
   dimension: string;
@@ -624,6 +630,14 @@ export const platform = {
   },
   executions: (limit = 100, offset = 0) =>
     apiGet<PageResult<ExecutionSummary>>(workspacePath(`/executions?limit=${limit}&offset=${offset}`)),
+  unresolvedFailedExecutions: (limit = 20, offset = 0) =>
+    apiGet<PageResult<ExecutionSummary>>(
+      workspacePath(`/attention/failed-executions?limit=${limit}&offset=${offset}`),
+    ),
+  releaseAttention: (limit = 10) =>
+    apiGet<WorkspaceReleaseAttention>(
+      workspacePath(`/attention/releases?limit=${limit}&offset=0`),
+    ),
   execution: (id: string) => apiGet<ExecutionDetail>(`/api/v1/executions/${encodeURIComponent(id)}`),
   reviews: (status = "", limit = 100, offset = 0) => {
     const filter = status ? `&status=${encodeURIComponent(status)}` : "";
@@ -637,6 +651,13 @@ export const platform = {
     apiGet<PageResult<ProductRelease>>(
       workspacePath(`/data-products/${encodeURIComponent(productId)}/releases?limit=${limit}&offset=${offset}`),
     ),
+  workspaceReleases: (status = "", limit = 20, offset = 0) => {
+    const query = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+    if (status) query.set("status", status);
+    return apiGet<PageResult<ProductRelease>>(
+      workspacePath(`/product-releases?${query.toString()}`),
+    );
+  },
   productVersion: (versionId: string) =>
     apiGet<ProductVersion>(`/api/v1/product-versions/${encodeURIComponent(versionId)}`),
   release: (releaseId: string) =>

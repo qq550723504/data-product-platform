@@ -16,6 +16,23 @@ async function writes(request) { return (await state(request)).requests.filter((
 
 test.beforeEach(async ({ request }) => { await scenario(request, "ready", true); });
 
+test("workbench surfaces actionable review and release items", async ({ page }) => {
+  await page.goto("/");
+  const attention = page.getByTestId("needs-attention");
+  await expect(attention).toBeVisible();
+  await expect(attention.getByRole("heading", { name: "Needs Attention", exact: true })).toBeVisible();
+  await expect(attention.getByText("实体审核队列", { exact: true })).toBeVisible();
+  await expect(attention.getByText("Release 待发布", { exact: true })).toBeVisible();
+  await expect(attention.getByRole("link", { name: "进入审核", exact: true })).toHaveAttribute("href", "/reviews");
+  await expect(attention.getByRole("link", { name: "去发布", exact: true })).toHaveAttribute(
+    "href",
+    `/products/${ids.product}#releases`,
+  );
+  await attention.getByRole("link", { name: "去发布", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`/products/${ids.product}#releases$`));
+  await expect(page.locator("#releases")).toBeVisible();
+});
+
 test("readonly runtime never enables review or publishing", async ({ page, request }) => {
   await page.goto("http://127.0.0.1:3101/reviews");
   await expect(page.getByText("当前为只读审核队列")).toBeVisible();
