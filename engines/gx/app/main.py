@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import os
 import re
+import sys
 import time
 from decimal import Decimal, InvalidOperation
 from fractions import Fraction
@@ -17,6 +18,11 @@ from pydantic import BaseModel, Field
 
 ENGINE_NAME = "gx-core"
 ENGINE_VERSION = version("great-expectations")
+if hasattr(sys, "set_int_max_str_digits"):
+    # Core quality ratios use exact rationals. Python's default 4300-digit
+    # int-to-decimal guard would otherwise make valid frozen thresholds such
+    # as 1e-4300 fail during JSON serialization.
+    sys.set_int_max_str_digits(0)
 API_TOKEN = os.getenv("GX_ENGINE_API_TOKEN", "").strip()
 MAX_ROWS = int(os.getenv("GX_ENGINE_MAX_ROWS", "100000"))
 CORE_DECIMAL_PATTERN = re.compile(r"^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?$")
@@ -192,6 +198,14 @@ def _restore_exact_numeric_scalars(root: Any, rules: list[dict[str, Any]]) -> No
             scalar = _mapping_value(parameters_node, key)
             if _is_numeric_scalar(scalar):
                 parameters[key] = scalar.value
+        for key in ("values", "allowedValues"):
+            values_node = _mapping_value(parameters_node, key)
+            values = parameters.get(key)
+            if isinstance(values_node, yaml.SequenceNode) and isinstance(values, list):
+                parameters[key] = [
+                    item.value if isinstance(item, yaml.ScalarNode) else value
+                    for value, item in zip(values, values_node.value)
+                ]
 
 
 def _mapping_value(node: yaml.MappingNode, key: str) -> Any:
