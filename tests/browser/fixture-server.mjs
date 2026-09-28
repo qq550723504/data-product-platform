@@ -22,7 +22,7 @@ export const ids = {
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
-const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources"]);
+const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases"]);
 const pass = { production: "PASS", dataset: "PASS", rights: "PASS", quality: "PASS", compliance: "PASS", contract: "PASS", evidence: "PASS", delivery: "PASS" };
 function fixtureResources(count) {
   return Array.from({ length: count }, (_, index) => {
@@ -36,6 +36,23 @@ function fixtureResources(count) {
     };
   });
 }
+
+function fixtureReleases(count) {
+  return Array.from({ length: count }, (_, index) => {
+    const n = index + 1;
+    return {
+      id: `${String(n).padStart(8, "0")}-1111-4111-8111-${String(n).padStart(12, "0")}`,
+      productId: ids.product,
+      productVersionId: ids.version,
+      releaseNo: `R${n}`,
+      status: "READY",
+      createdAt: new Date(Date.parse(stamp) + index * 1000).toISOString(),
+      releaseNotes: "Synthetic paginated release fixture",
+      datasets: [],
+    };
+  });
+}
+
 function readiness(scenario) {
   const result = { releaseId: ids.release, overall: "READY", checks: { ...pass }, blockers: [], details: {} };
   if (scenario === "empty-checks") result.checks = {};
@@ -294,7 +311,21 @@ export function createFixtureServer() {
             ready: group("READY"),
           });
         }
-        if (url.pathname === `${workspace}/data-products/${ids.product}/releases`) return send(200, page([release]));
+        if (url.pathname === `${workspace}/data-products/${ids.product}/releases`) {
+          return send(200, page(state.scenario === "paginated-releases" ? fixtureReleases(30) : [release]));
+        }
+        if (state.scenario === "paginated-releases") {
+          const releaseMatch = url.pathname.match(/^\/api\/v1\/product-releases\/([0-9a-f-]+)$/);
+          if (releaseMatch) {
+            const item = fixtureReleases(30).find((candidate) => candidate.id === releaseMatch[1]);
+            if (item) return send(200, item);
+          }
+          const readinessMatch = url.pathname.match(/^\/api\/v1\/product-releases\/([0-9a-f-]+)\/readiness$/);
+          if (readinessMatch) {
+            const item = fixtureReleases(30).find((candidate) => candidate.id === readinessMatch[1]);
+            if (item) return send(200, { ...readiness(state.scenario), releaseId: item.id });
+          }
+        }
         if (url.pathname === releasePath) return send(200, release);
         if (url.pathname === `${releasePath}/readiness`) return send(200, readiness(state.scenario));
         if (url.pathname === `/api/v1/product-versions/${ids.version}`) return send(200, { id: ids.version, productId: ids.product, version: "1.0.0", definition: {}, assets: [] });

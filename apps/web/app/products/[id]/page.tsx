@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { BackLink, Badge, DefinitionList, EmptyState, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
+import { BackLink, Badge, DefinitionList, EmptyState, LoadError, PageHeader, Pagination, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { ProductReleasePanel, type ReleasePanelItem } from "@/components/product-release-panel";
-import { collectAllPages } from "@/lib/pagination";
+import { LIST_PAGE_SIZE, parsePageOffset } from "@/lib/pagination";
 import { configuredWorkspaceId, platform, type DataProduct } from "@/lib/platform";
 import { findAcrossPages } from "@/lib/scoped-lookup";
 
@@ -16,17 +16,29 @@ async function scopedProduct(id: string): Promise<DataProduct> {
   return product;
 }
 
-export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProductDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ offset?: string }>;
+}) {
   if (!configuredWorkspaceId()) {
     return <><PageHeader title="数据产品详情" /><SetupRequired /></>;
   }
   const { id } = await params;
+  const offset = parsePageOffset((await searchParams).offset);
 
   try {
     const product = await scopedProduct(id);
-    // Release history is immutable and unbounded; drain every page so older
-    // releases are not silently dropped from the panel.
-    const releasedItems = await collectAllPages((limit, offset) => platform.releases(product.id, limit, offset));
+    // Release history is immutable and can grow without bound. Render one
+    // server-side page at a time so detail/readiness fan-out stays bounded.
+    let releasePage = await platform.releases(product.id, LIST_PAGE_SIZE, offset);
+    if (releasePage.page.total > 0 && releasePage.items.length === 0 && offset > 0) {
+      const lastOffset = Math.floor((releasePage.page.total - 1) / LIST_PAGE_SIZE) * LIST_PAGE_SIZE;
+      releasePage = await platform.releases(product.id, LIST_PAGE_SIZE, lastOffset);
+    }
+    const releasedItems = releasePage.items;
     const version = product.currentVersionId ? await platform.productVersion(product.currentVersionId) : null;
     if (version && version.productId.toLowerCase() !== product.id.toLowerCase()) {
       throw new Error("当前 ProductVersion 与数据产品不匹配。");
@@ -111,9 +123,26 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <section id="releases">
           <div className="panel-header">
             <div><h2>ProductRelease 与 Readiness</h2><p>逐项显示 production、dataset、rights、quality、compliance、contract、evidence、delivery 八个 Gate。</p></div>
-            <span className="eyebrow">{releases.length} Releases</span>
+            <span className="eyebrow">{releasePage.page.total} Releases</span>
           </div>
-          <ProductReleasePanel productId={product.id} items={releases} actionsEnabled={actionsEnabled} />
+          {releasePage.page.total > 0 && releases.length === 0 ? (
+            <div className="callout callout-warn">
+              <strong>该页没有 Release</strong>
+              <p>当前偏移超出历史范围，请使用下方分页返回有效页。</p>
+            </div>
+          ) : (
+            <ProductReleasePanel productId={product.id} items={releases} actionsEnabled={actionsEnabled} />
+          )}
+          {releasePage.page.total > 0 ? (
+            <Pagination
+              basePath={`/products/${product.id}`}
+              offset={releasePage.page.offset}
+              itemCount={releasePage.items.length}
+              total={releasePage.page.total}
+              pageSize={LIST_PAGE_SIZE}
+              label="ProductRelease 历史分页"
+            />
+          ) : null}
         </section>
       </>
     );
