@@ -25,6 +25,7 @@ type Query = {
   assessmentOffset?: string;
   certificationOffset?: string;
   certificationAsOf?: string;
+  certificationRevision?: string;
 };
 
 function firstValue(values?: string[]): string {
@@ -107,7 +108,13 @@ export default async function DatasetVersionDetailPage({
       platform.datasetVersion(versionId),
       platform.qualityAssessments(versionId, assessmentLimit, assessmentOffset),
       assessmentOffset === 0 ? Promise.resolve(null) : platform.qualityAssessments(versionId, 1, 0),
-      platform.certificationHistory(versionId, certificationLimit, certificationOffset, query.certificationAsOf ?? ""),
+      platform.certificationHistory(
+        versionId,
+        certificationLimit,
+        certificationOffset,
+        query.certificationAsOf ?? "",
+        query.certificationRevision === undefined ? undefined : Math.max(0, Number.parseInt(query.certificationRevision, 10) || 0),
+      ),
     ]);
 
     if (version.datasetId !== dataset.id) {
@@ -138,6 +145,7 @@ export default async function DatasetVersionDetailPage({
       if (offset > 0) next.set("certificationOffset", String(offset));
       else next.delete("certificationOffset");
       next.set("certificationAsOf", history.asOf);
+      next.set("certificationRevision", String(history.page.anchorRevision));
       const suffix = next.toString();
       return `/datasets/${id}/versions/${versionId}${suffix ? `?${suffix}` : ""}`;
     };
