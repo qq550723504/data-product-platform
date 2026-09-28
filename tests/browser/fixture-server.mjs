@@ -282,6 +282,18 @@ export function createFixtureServer() {
           const items = !status || state.releaseStatus === status ? [release] : [];
           return send(200, page(items));
         }
+        if (url.pathname === `${workspace}/attention/releases`) {
+          const limit = Math.max(1, Number(url.searchParams.get("limit")) || 10);
+          const group = (status) => {
+            const items = state.releaseStatus === status ? [release] : [];
+            return { items: items.slice(0, limit), page: { total: items.length, limit, offset: 0 } };
+          };
+          return send(200, {
+            failed: group("FAILED"),
+            validating: group("VALIDATING"),
+            ready: group("READY"),
+          });
+        }
         if (url.pathname === `${workspace}/data-products/${ids.product}/releases`) return send(200, page([release]));
         if (url.pathname === releasePath) return send(200, release);
         if (url.pathname === `${releasePath}/readiness`) return send(200, readiness(state.scenario));
