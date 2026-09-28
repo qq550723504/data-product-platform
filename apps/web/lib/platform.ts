@@ -377,6 +377,7 @@ export type CertificationHistory = {
   datasetVersionId: string;
   asOf: string;
   items: DatasetCertification[];
+  page: PageMeta;
 };
 
 export type DeliveryEligibility = {
@@ -581,9 +582,11 @@ export const platform = {
     apiGet<QualityReport>(
       `/api/v1/quality-assessments/${encodeURIComponent(assessmentId)}/report?workspaceId=${encodeURIComponent(requireWorkspace())}&limit=${limit}&offset=${offset}`,
     ),
-  certificationHistory: (versionId: string) =>
+  certificationHistory: (versionId: string, limit = 25, offset = 0) =>
     apiGet<CertificationHistory>(
-      workspacePath(`/dataset-versions/${encodeURIComponent(versionId)}/certifications`),
+      workspacePath(
+        `/dataset-versions/${encodeURIComponent(versionId)}/certifications?limit=${limit}&offset=${offset}`,
+      ),
     ),
   goldExplanation: (versionId: string) =>
     apiGet<GoldExplanation>(
