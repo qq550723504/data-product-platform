@@ -589,10 +589,12 @@ export const platform = {
     offset = 0,
     asOf = "",
     anchorRevision?: number,
+    profileId = "",
   ) => {
     const query = new URLSearchParams({ limit: String(limit), offset: String(offset) });
     if (asOf) query.set("asOf", asOf);
     if (anchorRevision !== undefined) query.set("anchorRevision", String(anchorRevision));
+    if (profileId) query.set("profileId", profileId);
     return apiGet<CertificationHistory>(
       workspacePath(
         `/dataset-versions/${encodeURIComponent(versionId)}/certifications?${query.toString()}`,
