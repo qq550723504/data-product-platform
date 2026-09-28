@@ -227,6 +227,12 @@ export type ProductRelease = {
   createdAt: string;
   releasedAt?: string;
 };
+export type WorkspaceReleaseAttention = {
+  failed: PageResult<ProductRelease>;
+  validating: PageResult<ProductRelease>;
+  ready: PageResult<ProductRelease>;
+};
+
 
 export type QualityDimensionSummary = {
   dimension: string;
@@ -627,6 +633,10 @@ export const platform = {
   unresolvedFailedExecutions: (limit = 20, offset = 0) =>
     apiGet<PageResult<ExecutionSummary>>(
       workspacePath(`/attention/failed-executions?limit=${limit}&offset=${offset}`),
+    ),
+  releaseAttention: (limit = 10) =>
+    apiGet<WorkspaceReleaseAttention>(
+      workspacePath(`/attention/releases?limit=${limit}&offset=0`),
     ),
   execution: (id: string) => apiGet<ExecutionDetail>(`/api/v1/executions/${encodeURIComponent(id)}`),
   reviews: (status = "", limit = 100, offset = 0) => {
