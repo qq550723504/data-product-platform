@@ -9,11 +9,13 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"math/big"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -154,6 +156,199 @@ func validateEngineCapabilities(descriptor qualityengine.Descriptor, policy nati
 
 var jsonNumberPattern = regexp.MustCompile("^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$")
 
+func safeProviderRatioInteger(value any) (any, bool) {
+	switch typed := value.(type) {
+	case int, int32, int64, uint, uint32, uint64:
+		return typed, true
+	case json.Number:
+		text := typed.String()
+		if !regexp.MustCompile(`^-?(?:0|[1-9][0-9]*)package application
+
+import (
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"math"
+	"math/big"
+	"os"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
+	"unicode/utf8"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
+	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
+	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
+	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/industrypack"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/tabular"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/domain"
+	qualityengine "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/engine"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/quality/native"
+)
+
+type ObjectStore interface {
+	Get(ctx context.Context, storageURI string) (io.ReadCloser, error)
+}
+
+var ErrAssessmentAttemptConflict = errors.New("quality assessment attempt conflicts with an existing assessment")
+var ErrAssessmentAttemptInProgress = errors.New("quality assessment attempt is already in progress")
+var ErrAssessmentAttemptFailed = errors.New("quality assessment attempt already failed")
+
+const attemptOutcomeRecoveryTimeout = 5 * time.Second
+const assessmentAttemptLeaseDuration = time.Hour
+const assessmentAttemptLockPrefix = "quality-assessment-attempt:"
+
+type Service struct {
+	industryPackRoot  string
+	tx                *transaction.Manager
+	datasetRepo       *datasetinfra.PostgresRepository
+	repo              *infrastructure.PostgresRepository
+	store             ObjectStore
+	evidenceRepo      *evidence.QueryRepository
+	goldRepo          *goldinfra.PostgresRepository
+	goldPreflight     GoldPreflightProvider
+	engines           map[string]qualityengine.Engine
+	engineDescriptors map[string]qualityengine.Descriptor
+	defaultEngine     string
+}
+
+func NewService(industryPackRoot string, tx *transaction.Manager, datasetRepo *datasetinfra.PostgresRepository, repo *infrastructure.PostgresRepository, store ObjectStore, evidenceRepos ...*evidence.QueryRepository) *Service {
+	nativeEngine := native.NewEngine()
+	service := &Service{
+		industryPackRoot:  industryPackRoot,
+		tx:                tx,
+		datasetRepo:       datasetRepo,
+		repo:              repo,
+		store:             store,
+		engines:           map[string]qualityengine.Engine{},
+		engineDescriptors: map[string]qualityengine.Descriptor{},
+		defaultEngine:     strings.ToLower(nativeEngine.Descriptor().Name),
+	}
+	nativeDescriptor := nativeEngine.Descriptor()
+	service.engines[service.defaultEngine] = nativeEngine
+	service.engineDescriptors[service.defaultEngine] = nativeDescriptor
+	if len(evidenceRepos) > 0 {
+		service.evidenceRepo = evidenceRepos[0]
+	}
+	return service
+}
+
+func (s *Service) RegisterEngine(provider qualityengine.Engine) error {
+	if provider == nil {
+		return fmt.Errorf("quality engine is required")
+	}
+	descriptor := provider.Descriptor()
+	name := strings.ToLower(strings.TrimSpace(descriptor.Name))
+	version := strings.TrimSpace(descriptor.Version)
+	if name == "" || version == "" {
+		return fmt.Errorf("quality engine descriptor requires name and version")
+	}
+	if len(name) > 128 {
+		return fmt.Errorf("quality engine name must not exceed 128 bytes")
+	}
+	if len(version) > 64 {
+		return fmt.Errorf("quality engine version must not exceed 64 bytes")
+	}
+	if s.engines == nil {
+		s.engines = map[string]qualityengine.Engine{}
+	}
+	if s.engineDescriptors == nil {
+		s.engineDescriptors = map[string]qualityengine.Descriptor{}
+	}
+	if _, exists := s.engines[name]; exists {
+		return fmt.Errorf("quality engine %q is already registered", name)
+	}
+	descriptor.Name = strings.TrimSpace(descriptor.Name)
+	descriptor.Version = version
+	descriptor.Capabilities = append([]string(nil), descriptor.Capabilities...)
+	s.engines[name] = provider
+	s.engineDescriptors[name] = descriptor
+	return nil
+}
+
+func (s *Service) resolveEngine(name string) (qualityengine.Engine, error) {
+	provider, _, _, err := s.resolveEngineRegistration(name)
+	return provider, err
+}
+
+func (s *Service) resolveEngineRegistration(name string) (qualityengine.Engine, qualityengine.Descriptor, string, error) {
+	name = strings.ToLower(strings.TrimSpace(name))
+	if name == "" {
+		name = s.defaultEngine
+	}
+	provider, ok := s.engines[name]
+	if !ok {
+		return nil, qualityengine.Descriptor{}, "", fmt.Errorf("quality engine %q is not registered", name)
+	}
+	descriptor, ok := s.engineDescriptors[name]
+	if !ok {
+		return nil, qualityengine.Descriptor{}, "", fmt.Errorf("quality engine %q descriptor is not registered", name)
+	}
+	return provider, descriptor, name, nil
+}
+
+func validateEngineCapabilities(descriptor qualityengine.Descriptor, policy native.Policy) error {
+	supported := make(map[string]struct{}, len(descriptor.Capabilities))
+	for _, capability := range descriptor.Capabilities {
+		supported[strings.ToLower(strings.TrimSpace(capability))] = struct{}{}
+	}
+	if _, ok := supported["*"]; ok {
+		return nil
+	}
+	for _, rule := range policy.Spec.Rules {
+		ruleType := strings.ToLower(strings.TrimSpace(rule.Type))
+		if _, ok := supported[ruleType]; !ok {
+			return fmt.Errorf("quality engine %s does not support rule type %s", descriptor.Name, ruleType)
+		}
+	}
+	return nil
+}
+
+var jsonNumberPattern = regexp.MustCompile("^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$")
+
+).MatchString(text) {
+			return nil, false
+		}
+		integer := new(big.Int)
+		if _, ok := integer.SetString(text, 10); !ok {
+			return nil, false
+		}
+		return json.Number(integer.String()), true
+	default:
+		return nil, false
+	}
+}
+
+func validateExternalEngineTable(table tabular.Table) error {
+	for _, header := range table.Headers {
+		if !utf8.ValidString(header) {
+			return fmt.Errorf("quality engine input contains invalid UTF-8")
+		}
+	}
+	for rowIndex := range table.Rows {
+		for _, header := range table.Headers {
+			if !utf8.ValidString(table.RawValue(rowIndex, header)) {
+				return fmt.Errorf("quality engine input contains invalid UTF-8")
+			}
+		}
+	}
+	return nil
+}
+
 func safeProviderNumber(value any) (any, bool) {
 	switch typed := value.(type) {
 	case int, int32, int64, uint, uint32, uint64:
@@ -215,9 +410,41 @@ func sanitizeProviderObservation(observed map[string]any) (map[string]any, error
 			if ratioKey != "numerator" && ratioKey != "denominator" {
 				return nil, fmt.Errorf("provider observation contains unsupported ratio field")
 			}
-			safeValue, ok := safeProviderNumber(ratioValue)
+			safeValue, ok := safeProviderRatioInteger(ratioValue)
 			if !ok {
 				return nil, fmt.Errorf("provider observation contains unsupported ratio value")
+			}
+			if ratioKey == "denominator" {
+				switch typed := safeValue.(type) {
+				case int:
+					if typed == 0 {
+						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
+					}
+				case int32:
+					if typed == 0 {
+						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
+					}
+				case int64:
+					if typed == 0 {
+						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
+					}
+				case uint:
+					if typed == 0 {
+						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
+					}
+				case uint32:
+					if typed == 0 {
+						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
+					}
+				case uint64:
+					if typed == 0 {
+						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
+					}
+				case json.Number:
+					if typed.String() == "0" {
+						return nil, fmt.Errorf("provider observation ratio denominator must be non-zero")
+					}
+				}
 			}
 			safeRatio[ratioKey] = safeValue
 		}
@@ -362,6 +589,11 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (domain.Assessment, e
 	}
 	if closeErr != nil {
 		return domain.Assessment{}, fmt.Errorf("close DatasetVersion object: %w", closeErr)
+	}
+	if cmd.EngineName != strings.ToLower(native.EvaluatorName) {
+		if err := validateExternalEngineTable(table); err != nil {
+			return domain.Assessment{}, err
+		}
 	}
 	var evidencePresent *bool
 	if s.evidenceRepo != nil {
