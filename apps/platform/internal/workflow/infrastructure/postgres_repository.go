@@ -321,8 +321,10 @@ func (r *PostgresRepository) DatasetIDsForVersions(ctx context.Context, versionI
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("iterate datasets for versions: %w", err)
 	}
-	if len(result) != len(versionIDs) {
-		return nil, ErrNotFound
+	for _, versionID := range versionIDs {
+		if _, ok := result[versionID]; !ok {
+			return nil, ErrNotFound
+		}
 	}
 	return result, nil
 }
