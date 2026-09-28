@@ -121,8 +121,6 @@ func TestParseHistoryPageBounds(t *testing.T) {
 	}
 }
 
-
-
 func TestParseOptionalHistoryProfile(t *testing.T) {
 	valid := uuid.New()
 	tests := []struct {
