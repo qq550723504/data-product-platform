@@ -80,7 +80,7 @@ test("Gold DatasetVersion explains frozen production proof and current delivery"
   await expect(page.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
   await expect(page.getByText("下一步", { exact: true })).toBeVisible();
 
-  await page.getByRole("link", { name: "Provenance" }).click();
+  await page.getByRole("link", { name: "Provenance", exact: true }).click();
   await expect(page).toHaveURL(/view=provenance/);
   const proof = page.getByTestId("gold-production-proof");
   await expect(proof).toBeVisible();
@@ -130,7 +130,7 @@ test("Gold DatasetVersion explains frozen production proof and current delivery"
   await expect(trace).toContainText("trace-certification");
   await expect(trace).toContainText("trace-delivery");
 
-  await page.getByRole("link", { name: "Eligibility" }).click();
+  await page.getByRole("link", { name: "Eligibility", exact: true }).click();
   await expect(page).toHaveURL(/view=eligibility/);
   await expect(page.getByRole("heading", { name: "Current Delivery Eligibility" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "预检结果" })).toBeVisible();
