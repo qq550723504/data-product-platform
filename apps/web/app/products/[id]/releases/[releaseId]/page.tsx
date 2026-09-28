@@ -37,8 +37,14 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
   try {
     const product = await scopedProduct(id);
     const scoped = await scopedRelease(product.id, releaseId);
-    const trace = await productReleaseTrace(scoped.id);
+    const [trace, frozenVersion] = await Promise.all([
+      productReleaseTrace(scoped.id),
+      platform.productVersion(scoped.productVersionId),
+    ]);
     validateReleaseTraceScope(trace, { workspaceId, productId: product.id, releaseId: scoped.id });
+    if (frozenVersion.id.toLowerCase() !== scoped.productVersionId.toLowerCase() || frozenVersion.productId.toLowerCase() !== product.id.toLowerCase()) {
+      throw new Error("Release 的冻结 ProductVersion 与当前证据链范围不匹配。");
+    }
 
     return (
       <>
@@ -61,7 +67,44 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
           ]} />
         </section>
 
-        <section className="detail-card" style={{ marginBottom: 18 }}>
+        <section className="detail-card" id="release-governance" style={{ marginBottom: 18 }}>
+          <div className="panel-header"><h2>Frozen ProductVersion Governance</h2><span className="eyebrow">Release-scoped</span></div>
+          <DefinitionList items={[
+            { label: "ProductVersion", value: <span className="mono">{frozenVersion.id}</span> },
+            { label: "Version", value: frozenVersion.version },
+            { label: "Workflow Version", value: <span className="mono">{frozenVersion.workflowVersionId ?? "—"}</span> },
+            { label: "Contract Version", value: <span className="mono">{frozenVersion.contractVersionId ?? "—"}</span> },
+            { label: "Entity Policy", value: frozenVersion.entityPolicyRef || "—" },
+            { label: "Indicator Set", value: frozenVersion.indicatorSetRef || "—" },
+          ]} />
+          <details style={{ marginTop: 14 }}>
+            <summary>Frozen ProductVersion definition</summary>
+            <pre className="json-preview">{JSON.stringify(frozenVersion.definition, null, 2)}</pre>
+          </details>
+        </section>
+
+        <section className="detail-card" id="release-delivery" style={{ marginBottom: 18 }}>
+          <div className="panel-header"><h2>Frozen Delivery Assets</h2><span className="eyebrow">{frozenVersion.assets.length} Assets</span></div>
+          {frozenVersion.assets.length === 0 ? (
+            <EmptyState title="该 Release 的 ProductVersion 没有交付资产" description="Delivery Gate 会保持阻塞，直到冻结版本定义可交付资产。" />
+          ) : (
+            <div className="table-card">
+              <table className="data-table">
+                <thead><tr><th>资产</th><th>类型</th><th>Dataset</th><th>外部引用</th></tr></thead>
+                <tbody>{frozenVersion.assets.map((asset) => (
+                  <tr key={asset.id}>
+                    <td className="primary-cell"><strong>{asset.name}</strong><span className="mono">{shortId(asset.id)}</span></td>
+                    <td><Badge value={asset.assetType} tone="info" /></td>
+                    <td>{asset.datasetId ? <Link className="text-link mono" href={`/datasets/${asset.datasetId}`}>{shortId(asset.datasetId)}</Link> : "—"}</td>
+                    <td className="mono">{asset.externalRef || "—"}</td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        <section className="detail-card" id="release-evidence" style={{ marginBottom: 18 }}>
           <div className="panel-header"><h2>EvidenceSnapshot</h2><span className="eyebrow">Frozen Evidence Set</span></div>
           {!trace.evidenceSnapshot ? (
             <EmptyState title="没有 EvidenceSnapshot" description="该 Release 尚未冻结证据快照；界面不会从其他记录推测一个快照。" />
@@ -82,7 +125,7 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
           )}
         </section>
 
-        <section style={{ marginBottom: 22 }}>
+        <section id="release-dataset" style={{ marginBottom: 22 }}>
           <div className="panel-header"><h2>DatasetVersion Lineage</h2><span className="eyebrow">{trace.datasetVersions.length} Versions</span></div>
           {trace.datasetVersions.length === 0 ? <EmptyState title="没有 DatasetVersion 血缘" description="Core traceability 没有返回该 Release 的数据版本链。" /> : (
             <div className="table-card"><table className="data-table"><thead><tr><th>Dataset</th><th>版本/类型</th><th>Release Role</th><th>状态</th><th>生产执行</th><th>Source Resource</th><th>Checksum</th></tr></thead><tbody>
@@ -101,7 +144,7 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
           )}
         </section>
 
-        <section style={{ marginBottom: 22 }}>
+        <section id="release-production" style={{ marginBottom: 22 }}>
           <div className="panel-header"><h2>Execution Provenance</h2><span className="eyebrow">{trace.executions.length} Executions</span></div>
           {trace.executions.length === 0 ? <EmptyState title="没有生产 Execution" description="血缘中没有 DatasetVersion 关联到 Core Execution。" /> : (
             <div className="table-card"><table className="data-table"><thead><tr><th>Execution</th><th>状态</th><th>Workflow Version</th><th>Runtime</th><th>Target</th><th>Definition Hash</th></tr></thead><tbody>{trace.executions.map((execution) => (
