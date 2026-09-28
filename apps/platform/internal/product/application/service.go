@@ -399,6 +399,11 @@ func draftReadinessResultFromFacts(releaseID uuid.UUID, facts infrastructure.Rea
 				"required": facts.ProductionDependencyBindingRequired,
 				"complete": facts.ProductionDependencyBindingComplete,
 			},
+			"evidence": map[string]any{
+				"datasetVersionId": facts.TargetDatasetVersionID,
+				"relationCount":    facts.EvidenceCount,
+				"requiredCount":    2,
+			},
 		},
 	}
 }
