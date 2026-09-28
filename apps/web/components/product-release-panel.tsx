@@ -15,11 +15,11 @@ const gateLabels: Record<string, string> = {
 
 const gateActions: Record<string, string> = {
   production: "检查生产 Execution 与 lineage 是否完整",
-  dataset: "确认绑定 DatasetVersion 当前可用",
+  dataset: "若绑定 DatasetVersion 已不可用，生产或选择替代版本并创建新 Release",
   rights: "创建并冻结新的 Rights Snapshot；按允许的 Release 生命周期重新绑定，否则创建新 Release",
   quality: "处理 Quality gate 失败项",
   compliance: "处理 Compliance gate 阻塞项",
-  contract: "绑定有效 Data Contract",
+  contract: "若 Release 绑定错误，改绑到 ProductVersion 已冻结的 Contract；若冻结 Contract 缺失或错误，创建新 ProductVersion 和新 Release",
   evidence: "为目标 DatasetVersion 补齐 Readiness 所需的 Evidence 关系",
   delivery: "创建包含交付资产的新 ProductVersion，并基于该版本创建新 Release",
 };
