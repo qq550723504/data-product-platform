@@ -99,6 +99,20 @@ export function createFixtureServer() {
         status: state.releaseStatus, createdAt: stamp, datasets: [], releaseNotes: "Synthetic browser fixture",
         ...(state.releaseStatus === "PUBLISHED" ? { releasedAt: stamp } : {}),
       };
+      const releaseTrace = {
+        releaseId: ids.release,
+        releaseNo: "R1",
+        status: state.releaseStatus,
+        productId: ids.product,
+        productVersionId: ids.version,
+        datasetVersions: [],
+        executions: [],
+        entityMatchJobs: [],
+        entityMappings: [],
+        evidence: [],
+        costEvents: [],
+        auditEvents: [],
+      };
       const goldDataset = {
         id: ids.goldDataset, workspaceId: ids.workspace, code: "GOLD_BROWSER_FIXTURE",
         name: "Gold 浏览器验收数据集", description: "Synthetic Gold fixture", datasetType: "CURATED",
@@ -300,6 +314,7 @@ export function createFixtureServer() {
         }
         if (url.pathname === `${workspace}/data-products/${ids.product}/releases`) return send(200, page([release]));
         if (url.pathname === releasePath) return send(200, release);
+        if (url.pathname === `/api/v1/traceability/product-releases/${ids.release}`) return send(200, releaseTrace);
         if (url.pathname === `${releasePath}/readiness`) return send(200, readiness(state.scenario));
         if (url.pathname === `/api/v1/product-versions/${ids.version}`) return send(200, { id: ids.version, productId: ids.product, version: "1.0.0", definition: {}, assets: [] });
         if (url.pathname === `${workspace}/entity-match-reviews`) return send(200, page(state.candidateStatus === "PENDING" ? [candidate] : []));
