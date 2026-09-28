@@ -315,7 +315,6 @@ func TestDatasetCertificationAllowsSeededRawEffectiveRightsLeaf(t *testing.T) {
 	}
 }
 
-
 func TestCertificationHistoryPaginationMigrationRefusesPopulatedRollback(t *testing.T) {
 	pool := scratchDatabase(t, 46)
 	workspaceID := uuid.New()
