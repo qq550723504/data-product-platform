@@ -792,3 +792,65 @@ spec:
     )
     assert response.status_code == 200, response.text
     assert response.json()["findings"][0]["status"] == "PASS"
+
+
+def test_plain_sexagesimal_enum_value_matches_core_yaml12_string() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: yaml12-enum
+  version: 1
+spec:
+  rules:
+    - id: ENUM
+      type: enum
+      target: code
+      parameters:
+        values: [1:20]
+        allowNull: false
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/yaml12-enum.yaml",
+            "ruleSetContent": policy,
+            "headers": ["code"],
+            "rows": [{"code": "1:20"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["findings"][0]["status"] == "PASS"
+
+
+def test_extreme_exact_ratio_threshold_serializes_without_python_digit_limit() -> None:
+    policy = """apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: huge-ratio
+  version: 1
+spec:
+  rules:
+    - id: COMPLETE
+      type: completeness_ratio
+      target: id
+      threshold: 1e-4300
+      required: true
+"""
+    response = client.post(
+        "/v1/evaluate",
+        json={
+            "attemptId": "11111111-1111-4111-8111-111111111111",
+            "datasetVersionId": "22222222-2222-4222-8222-222222222222",
+            "ruleSetRef": "quality/huge-ratio.yaml",
+            "ruleSetContent": policy,
+            "headers": ["id"],
+            "rows": [{"id": "A"}],
+        },
+    )
+    assert response.status_code == 200, response.text
+    threshold = response.json()["findings"][0]["observed"]["threshold"]
+    assert threshold["numerator"] == 1
+    assert len(str(threshold["denominator"])) == 4301
