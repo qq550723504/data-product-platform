@@ -37,13 +37,17 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
   try {
     const product = await scopedProduct(id);
     const scoped = await scopedRelease(product.id, releaseId);
-    const [trace, frozenVersion] = await Promise.all([
+    const [trace, frozenVersion, readiness] = await Promise.all([
       productReleaseTrace(scoped.id),
       platform.productVersion(scoped.productVersionId),
+      platform.releaseReadiness(scoped.id),
     ]);
     validateReleaseTraceScope(trace, { workspaceId, productId: product.id, releaseId: scoped.id });
     if (frozenVersion.id.toLowerCase() !== scoped.productVersionId.toLowerCase() || frozenVersion.productId.toLowerCase() !== product.id.toLowerCase()) {
       throw new Error("Release 的冻结 ProductVersion 与当前证据链范围不匹配。");
+    }
+    if (readiness.releaseId.toLowerCase() !== scoped.id.toLowerCase()) {
+      throw new Error("Release Readiness 与当前 Release 范围不匹配。");
     }
 
     return (
@@ -67,7 +71,7 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
           ]} />
         </section>
 
-        <section className="detail-card" id="release-governance" style={{ marginBottom: 18 }}>
+        <section className="detail-card" id="release-product-version" style={{ marginBottom: 18 }}>
           <div className="panel-header"><h2>Frozen ProductVersion Governance</h2><span className="eyebrow">Release-scoped</span></div>
           <DefinitionList items={[
             { label: "ProductVersion", value: <span className="mono">{frozenVersion.id}</span> },
@@ -81,6 +85,35 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
             <summary>Frozen ProductVersion definition</summary>
             <pre className="json-preview">{JSON.stringify(frozenVersion.definition, null, 2)}</pre>
           </details>
+        </section>
+
+        <section className="detail-card" id="release-governance" style={{ marginBottom: 18 }}>
+          <div className="panel-header">
+            <h2>Release Governance Bindings</h2>
+            <div className="badge-row">
+              <Badge value={readiness.overall} />
+              <Badge value={scoped.status} />
+            </div>
+          </div>
+          <DefinitionList items={[
+            { label: "Rights Snapshot", value: <><span className="mono">{scoped.rightsSnapshotId ?? "—"}</span> · <Badge value={String(readiness.checks?.rights ?? "UNKNOWN")} /></> },
+            { label: "Quality Result", value: <><span className="mono">{scoped.qualityResultId ?? "—"}</span> · <Badge value={String(readiness.checks?.quality ?? "UNKNOWN")} /></> },
+            { label: "Compliance Result", value: <><span className="mono">{scoped.complianceResultId ?? "—"}</span> · <Badge value={String(readiness.checks?.compliance ?? "UNKNOWN")} /></> },
+            { label: "Contract Version", value: <><span className="mono">{scoped.contractVersionId ?? "—"}</span> · <Badge value={String(readiness.checks?.contract ?? "UNKNOWN")} /></> },
+            { label: "Evidence Snapshot", value: <span className="mono">{scoped.evidenceSnapshotId ?? "—"}</span> },
+            { label: "Delivery Gate", value: <Badge value={String(readiness.checks?.delivery ?? "UNKNOWN")} /> },
+          ]} />
+          {readiness.blockers?.length ? (
+            <div className="readiness-blockers" style={{ marginTop: 14 }}>
+              {readiness.blockers.map((blocker) => <code key={blocker}>{blocker}</code>)}
+            </div>
+          ) : null}
+          {readiness.details && Object.keys(readiness.details).length ? (
+            <details style={{ marginTop: 14 }}>
+              <summary>Release Readiness details</summary>
+              <pre className="json-preview">{JSON.stringify(readiness.details, null, 2)}</pre>
+            </details>
+          ) : null}
         </section>
 
         <section className="detail-card" id="release-delivery" style={{ marginBottom: 18 }}>
