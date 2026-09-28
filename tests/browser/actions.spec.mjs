@@ -245,6 +245,31 @@ for (const [value, route, buttonName] of [["review-conflict", "/reviews", "确�
   });
 }
 
+test("product detail paginates release history before loading readiness", async ({ page, request }) => {
+  await scenario(request, "paginated-releases");
+  await page.goto(`/products/${ids.product}`);
+
+  await expect(page.getByText("第 1 / 2 页 · 本页 25 条 · 共 30 条")).toBeVisible();
+  await expect(page.getByText("Release R1", { exact: true })).toBeVisible();
+  await expect(page.getByText("Release R25", { exact: true })).toBeVisible();
+  await expect(page.getByText("Release R26", { exact: true })).toHaveCount(0);
+
+  await page.getByRole("link", { name: "下一页" }).click();
+  await expect(page).toHaveURL(new RegExp(`/products/${ids.product}\\?offset=25$`));
+  await expect(page.getByText("第 2 / 2 页 · 本页 5 条 · 共 30 条")).toBeVisible();
+  await expect(page.getByText("Release R26", { exact: true })).toBeVisible();
+  await expect(page.getByText("Release R30", { exact: true })).toBeVisible();
+  await expect(page.getByText("Release R1", { exact: true })).toHaveCount(0);
+
+  await page.goto(`/products/${ids.product}?offset=1000`);
+  await expect(page.getByText("第 2 / 2 页 · 本页 5 条 · 共 30 条")).toBeVisible();
+  await expect(page.getByText("Release R26", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "上一页" })).toHaveAttribute(
+    "href",
+    `/products/${ids.product}?offset=0`,
+  );
+});
+
 test("list pages paginate on the server with explicit controls", async ({ page, request }) => {
   await scenario(request, "paginated-resources");
   await page.goto("/resources");
