@@ -295,8 +295,8 @@ func TestUnresolvedFailedExecutionsResolveAcrossRetryLineage(t *testing.T) {
 			INSERT INTO execution (
 				id, workspace_id, workflow_version_id, output_dataset_id, target_period,
 				status, attempt, retry_of_execution_id, engine_type, created_at
-			) VALUES ($1,$2,$3,$4,'2026-09',$5,$6,$7,'NATIVE',now() + ($6 * interval '1 second'))
-		`, id, workspaceID, workflowVersionID, datasetID, status, attempt, retryOf); err != nil {
+			) VALUES ($1,$2,$3,$4,'2026-09',$5,$6,$7,'NATIVE',now() + ($8::int * interval '1 second'))
+		`, id, workspaceID, workflowVersionID, datasetID, status, attempt, retryOf, attempt); err != nil {
 			t.Fatalf("insert execution %s: %v", id, err)
 		}
 	}
