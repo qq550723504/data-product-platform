@@ -45,7 +45,7 @@ func NewCertificationRepository(pool *pgxpool.Pool) *CertificationRepository {
 	return &CertificationRepository{pool: pool}
 }
 
-func (r *CertificationRepository) InsertCertification(ctx context.Context, tx pgx.Tx, certification domain.DatasetCertification) error {
+func (r *CertificationRepository) InsertCertification(ctx context.Context, tx pgx.Tx, certification domain.DatasetCertification, historyRevision int64) error {
 	blockers, err := json.Marshal(certification.Blockers)
 	if err != nil {
 		return fmt.Errorf("marshal certification blockers: %w", err)
@@ -63,8 +63,8 @@ func (r *CertificationRepository) InsertCertification(ctx context.Context, tx pg
 			gold_production_binding_id, annotation_snapshot_id, annotation_snapshot_root_hash,
 			annotation_schema_content_sha256, annotation_taxonomy_content_sha256,
 			gold_production_binding_root_hash,
-			decision, blockers, reason, issued_at, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28)
+			decision, blockers, reason, issued_at, created_by, history_revision
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29)
 	`, certification.ID, certification.WorkspaceID, certification.DatasetVersionID,
 		certification.QualityAssessmentID, certification.Profile.ID, certification.Profile.ProfileRef,
 		certification.Profile.Version, certification.Profile.ContentSHA256, string(certification.Profile.Content),
@@ -74,7 +74,7 @@ func (r *CertificationRepository) InsertCertification(ctx context.Context, tx pg
 		certification.EvidenceSnapshotID, certification.GoldProductionBindingID, certification.AnnotationSnapshotID,
 		nullableString(certification.AnnotationSnapshotRootHash), nullableString(certification.AnnotationSchemaSHA256),
 		nullableString(certification.AnnotationTaxonomySHA256), nullableString(certification.GoldProductionBindingRootHash),
-		certification.Decision, blockers, certification.Reason, certification.IssuedAt, certification.ActorID)
+		certification.Decision, blockers, certification.Reason, certification.IssuedAt, certification.ActorID, historyRevision)
 	if err != nil {
 		return fmt.Errorf("insert dataset certification: %w", err)
 	}
@@ -343,15 +343,15 @@ func (r *CertificationRepository) GetCertificationTargetTx(ctx context.Context, 
 	return target, nil
 }
 
-func (r *CertificationRepository) InsertDisposition(ctx context.Context, tx pgx.Tx, disposition domain.CertificationDisposition) error {
+func (r *CertificationRepository) InsertDisposition(ctx context.Context, tx pgx.Tx, disposition domain.CertificationDisposition, historyRevision int64) error {
 	_, err := tx.Exec(ctx, `
 		INSERT INTO certification_disposition (
 			id, workspace_id, certification_id, disposition, effective_at, reason,
-			superseded_by_certification_id, evidence_snapshot_id, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+			superseded_by_certification_id, evidence_snapshot_id, created_by, history_revision
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
 	`, disposition.ID, disposition.WorkspaceID, disposition.CertificationID, disposition.Disposition,
 		disposition.EffectiveAt, disposition.Reason, disposition.SupersededByCertificationID,
-		disposition.EvidenceSnapshotID, disposition.ActorID)
+		disposition.EvidenceSnapshotID, disposition.ActorID, historyRevision)
 	if err != nil {
 		return fmt.Errorf("insert certification disposition: %w", err)
 	}
