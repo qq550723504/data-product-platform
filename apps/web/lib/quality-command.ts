@@ -65,6 +65,7 @@ export async function executeQualityCheck(
   const ruleSetRefValue=form.get("ruleSetRef");
   const engineNameValue=form.get("engineName");
   const ruleSetRef=typeof ruleSetRefValue==="string"?ruleSetRefValue.trim():"";
+  const effectiveRuleSetRef=ruleSetRef || "park/quality/enterprise-activity-quality-v1.yaml";
   const engineName=typeof engineNameValue==="string"?engineNameValue.trim():"";
   if(!isUUID(datasetId)||!isUUID(versionId)||!isUUID(attemptId)) return {ok:false,message:"Dataset、DatasetVersion 和 assessmentAttemptId 必须是有效 UUID。"};
   if(ruleSetRef.length>512||engineName.length>128) return {ok:false,message:"Quality 配置字段过长。"};
@@ -99,6 +100,9 @@ export async function executeQualityCheck(
       if(!sameId(status.id,attemptId)||!sameId(status.workspaceId,workspaceId)||!sameId(status.datasetVersionId,versionId)) {
         throw new QualityCommandError("Quality attempt 与当前 DatasetVersion 不匹配。","ATTEMPT_SCOPE_MISMATCH");
       }
+      if(status.ruleSetRef !== effectiveRuleSetRef || (engineName && String(status.engineName ?? "").toLowerCase() !== engineName.toLowerCase())) {
+        throw new QualityCommandError("Quality attempt 与当前 Rule Set / Engine 请求不匹配。","ATTEMPT_REQUEST_MISMATCH");
+      }
       if(status.outcome==="SUCCEEDED"&&isUUID(status.assessmentId)){
         return {ok:true,message:"Quality Check 已完成。",attemptId,assessmentId:status.assessmentId};
       }
@@ -116,7 +120,7 @@ export async function executeQualityCheck(
     const result=await json(`/api/v1/dataset-versions/${versionId}/quality-checks`,{
       method:"POST",
       headers:{"Content-Type":"application/json","X-Actor-ID":actorId},
-      body:JSON.stringify({workspaceId,ruleSetRef,engineName,assessmentAttemptId:attemptId}),
+      body:JSON.stringify({workspaceId,ruleSetRef:effectiveRuleSetRef,engineName,assessmentAttemptId:attemptId}),
     });
     if(!isUUID(result.id)||!sameId(result.workspaceId,workspaceId)||!sameId(result.datasetVersionId,versionId)){
       throw new QualityCommandError("Quality Check 返回了不一致的 Assessment。","INVALID_RESPONSE");
