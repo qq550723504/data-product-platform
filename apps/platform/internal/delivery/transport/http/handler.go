@@ -14,12 +14,17 @@ import (
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	deliveryapp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application"
 	deliverydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/domain"
+	deliveryinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
 
 type DirectDataCommandService interface {
 	Deliver(rctx context.Context, command deliveryapp.DirectDataCommand) (deliveryapp.DirectDataResult, error)
+}
+
+type DirectDataRecoveryService interface {
+	RecoverDirectData(context.Context, uuid.UUID, string) (deliveryapp.DirectDataRecoveryResult, error)
 }
 
 type ObjectStore interface {
@@ -38,6 +43,7 @@ func NewHandler(service DirectDataCommandService, resolver PrincipalResolver, st
 
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/deliveries", h.deliver)
+	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/direct-data-deliveries/recovery", h.recoverDirectData)
 }
 
 type deliverRequest struct {
@@ -48,6 +54,84 @@ type deliverRequest struct {
 	ScopeType                  string `json:"scopeType"`
 	ScopeRef                   string `json:"scopeRef,omitempty"`
 	RetryOfDeliveryOperationID string `json:"retryOfDeliveryOperationId,omitempty"`
+}
+
+func (h *Handler) recoverDirectData(w http.ResponseWriter, r *http.Request) {
+	workspaceID, err := uuid.Parse(strings.TrimSpace(r.PathValue("workspaceId")))
+	if err != nil || workspaceID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_WORKSPACE_ID", "workspaceId must be a non-nil UUID", nil)
+		return
+	}
+	if h == nil || h.service == nil || h.resolver == nil {
+		httpserver.WriteError(w, r, http.StatusServiceUnavailable, "DIRECT_DATA_DELIVERY_NOT_CONFIGURED", "direct data delivery is not configured", nil)
+		return
+	}
+	recovery, ok := h.service.(DirectDataRecoveryService)
+	if !ok {
+		httpserver.WriteError(w, r, http.StatusServiceUnavailable, "DIRECT_DATA_RECOVERY_NOT_CONFIGURED", "direct data delivery recovery is not configured", nil)
+		return
+	}
+	idempotencyKey := strings.TrimSpace(r.URL.Query().Get("idempotencyKey"))
+	if idempotencyKey == "" || len(idempotencyKey) > 255 {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_IDEMPOTENCY_KEY", "idempotencyKey is required and must be at most 255 characters", nil)
+		return
+	}
+	consumer := strings.TrimSpace(r.URL.Query().Get("consumer"))
+	caller, err := h.resolver.Resolve(r, workspaceID, consumer)
+	if err != nil {
+		switch {
+		case errors.Is(err, ErrDeliveryNotConfigured):
+			httpserver.WriteError(w, r, http.StatusServiceUnavailable, "DIRECT_DATA_DELIVERY_NOT_CONFIGURED", "direct data delivery trusted caller boundary is not configured", nil)
+		case errors.Is(err, ErrCallerIdentityUntrusted):
+			httpserver.WriteError(w, r, http.StatusUnauthorized, "CALLER_IDENTITY_UNTRUSTED", "a trusted authenticated caller is required", nil)
+		case errors.Is(err, ErrCallerWorkspaceDenied):
+			httpserver.WriteError(w, r, http.StatusForbidden, "CALLER_WORKSPACE_ACCESS_DENIED", "the authenticated caller is not authorized for this workspace", nil)
+		case errors.Is(err, ErrConsumerPrincipalMismatch):
+			httpserver.WriteError(w, r, http.StatusForbidden, "CONSUMER_PRINCIPAL_MISMATCH", "requested consumer is not represented by the authenticated caller", nil)
+		default:
+			httpserver.WriteError(w, r, http.StatusInternalServerError, "CALLER_RESOLUTION_FAILED", "trusted caller resolution failed", nil)
+		}
+		return
+	}
+
+	result, err := recovery.RecoverDirectData(r.Context(), workspaceID, idempotencyKey)
+	if err != nil {
+		if errors.Is(err, deliveryinfra.ErrNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "DIRECT_DATA_DELIVERY_NOT_FOUND", "direct data delivery attempt was not found", nil)
+			return
+		}
+		if errors.Is(err, deliverydomain.ErrInvalidOperation) {
+			httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_DELIVERY_REQUEST", err.Error(), nil)
+			return
+		}
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "DIRECT_DATA_RECOVERY_FAILED", "direct data delivery recovery failed", nil)
+		return
+	}
+	operation := result.Operation
+	if operation.PrincipalRef != caller.PrincipalRef || operation.EffectiveConsumerRef != caller.EffectiveConsumerRef {
+		httpserver.WriteError(w, r, http.StatusNotFound, "DIRECT_DATA_DELIVERY_NOT_FOUND", "direct data delivery attempt was not found", nil)
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"operationId":                operation.ID,
+		"profileId":                  result.CertificationProfileID,
+		"workspaceId":                operation.WorkspaceID,
+		"datasetVersionId":           operation.DatasetVersionID,
+		"retryOfDeliveryOperationId": operation.RetryOfDeliveryOperationID,
+		"idempotencyKey":             operation.IdempotencyKey,
+		"status":                     operation.Status,
+		"gateDecision":               operation.CurrentGateDecision,
+		"principalRef":               operation.PrincipalRef,
+		"consumer":                   operation.EffectiveConsumerRef,
+		"purpose":                    operation.Purpose,
+		"action":                     operation.Action,
+		"scopeRef":                   operation.ScopeRef,
+		"deliveryChannel":            operation.DeliveryChannel,
+		"deliveryMode":               operation.DeliveryMode,
+		"terminalReason":             operation.TerminalReason,
+		"createdAt":                  operation.CreatedAt,
+		"updatedAt":                  operation.UpdatedAt,
+	})
 }
 
 func (h *Handler) deliver(w http.ResponseWriter, r *http.Request) {

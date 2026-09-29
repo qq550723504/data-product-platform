@@ -17,10 +17,13 @@ import (
 )
 
 type fakeDirectService struct {
-	result deliveryapp.DirectDataResult
-	err    error
-	calls  int
-	order  *[]string
+	result         deliveryapp.DirectDataResult
+	err            error
+	recoveryResult deliveryapp.DirectDataRecoveryResult
+	recoveryErr    error
+	calls          int
+	recoveryCalls  int
+	order          *[]string
 }
 
 func (s *fakeDirectService) Deliver(_ context.Context, _ deliveryapp.DirectDataCommand) (deliveryapp.DirectDataResult, error) {
@@ -29,6 +32,11 @@ func (s *fakeDirectService) Deliver(_ context.Context, _ deliveryapp.DirectDataC
 		*s.order = append(*s.order, "service")
 	}
 	return s.result, s.err
+}
+
+func (s *fakeDirectService) RecoverDirectData(_ context.Context, _ uuid.UUID, _ string) (deliveryapp.DirectDataRecoveryResult, error) {
+	s.recoveryCalls++
+	return s.recoveryResult, s.recoveryErr
 }
 
 type fakeObjectStore struct {
@@ -191,6 +199,81 @@ func executeDeliveryRequest(t *testing.T, handler *Handler, workspaceID, version
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Authorization", "Bearer "+token)
 	request.Header.Set("Idempotency-Key", key)
+	response := httptest.NewRecorder()
+	mux := http.NewServeMux()
+	handler.Register(mux)
+	mux.ServeHTTP(response, request)
+	return response
+}
+
+func TestDeliveryRecoveryReturnsTrustedOperation(t *testing.T) {
+	workspaceID, versionID := uuid.New(), uuid.New()
+	resolver, err := NewStaticPrincipalResolver(true, "secret", "principal-a", "consumer-a", []string{workspaceID.String()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	operationID, profileID := uuid.New(), uuid.New()
+	service := &fakeDirectService{recoveryResult: deliveryapp.DirectDataRecoveryResult{
+		CertificationProfileID: profileID,
+		Operation: deliverydomain.Operation{
+			ID: operationID, WorkspaceID: workspaceID, DatasetVersionID: versionID,
+			IdempotencyKey: "delivery-key", Status: deliverydomain.StatusIssued, CurrentGateDecision: "ALLOWED",
+			PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
+			Purpose: "RESEARCH", Action: "READ", ScopeRef: versionID.String(),
+			DeliveryChannel: "DIRECT_DATA", DeliveryMode: "DIRECT_DATA",
+		}}}
+	response := executeRecoveryRequest(t, NewHandler(service, resolver, &fakeObjectStore{}), workspaceID, "consumer-a", "delivery-key", "secret")
+	if response.Code != http.StatusOK {
+		t.Fatalf("response = %d %s", response.Code, response.Body.String())
+	}
+	for _, expected := range []string{operationID.String(), profileID.String(), versionID.String(), "\"status\":\"ISSUED\"", "\"consumer\":\"consumer-a\""} {
+		if !strings.Contains(response.Body.String(), expected) {
+			t.Fatalf("response = %s, missing %s", response.Body.String(), expected)
+		}
+	}
+	if service.recoveryCalls != 1 {
+		t.Fatalf("recovery calls = %d, want 1", service.recoveryCalls)
+	}
+}
+
+func TestDeliveryRecoveryHidesForeignPrincipalOperation(t *testing.T) {
+	workspaceID := uuid.New()
+	resolver, err := NewStaticPrincipalResolver(true, "secret", "principal-a", "consumer-a", []string{workspaceID.String()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	service := &fakeDirectService{recoveryResult: deliveryapp.DirectDataRecoveryResult{Operation: deliverydomain.Operation{
+		ID: uuid.New(), WorkspaceID: workspaceID, DatasetVersionID: uuid.New(),
+		IdempotencyKey: "delivery-key", Status: deliverydomain.StatusIssued,
+		PrincipalRef: "principal-b", EffectiveConsumerRef: "consumer-b",
+	}}}
+	response := executeRecoveryRequest(t, NewHandler(service, resolver, &fakeObjectStore{}), workspaceID, "consumer-a", "delivery-key", "secret")
+	if response.Code != http.StatusNotFound || !strings.Contains(response.Body.String(), "DIRECT_DATA_DELIVERY_NOT_FOUND") {
+		t.Fatalf("response = %d %s", response.Code, response.Body.String())
+	}
+}
+
+func TestDeliveryRecoveryRejectsUntrustedCallerBeforeRead(t *testing.T) {
+	workspaceID := uuid.New()
+	resolver, err := NewStaticPrincipalResolver(true, "secret", "principal-a", "consumer-a", []string{workspaceID.String()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	service := &fakeDirectService{}
+	response := executeRecoveryRequest(t, NewHandler(service, resolver, &fakeObjectStore{}), workspaceID, "consumer-a", "delivery-key", "wrong")
+	if response.Code != http.StatusUnauthorized || service.recoveryCalls != 0 {
+		t.Fatalf("response=%d recoveryCalls=%d", response.Code, service.recoveryCalls)
+	}
+}
+
+func executeRecoveryRequest(t *testing.T, handler *Handler, workspaceID uuid.UUID, consumer, key, token string) *httptest.ResponseRecorder {
+	t.Helper()
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/api/v1/workspaces/"+workspaceID.String()+"/direct-data-deliveries/recovery?consumer="+consumer+"&idempotencyKey="+key,
+		nil,
+	)
+	request.Header.Set("Authorization", "Bearer "+token)
 	response := httptest.NewRecorder()
 	mux := http.NewServeMux()
 	handler.Register(mux)
