@@ -99,8 +99,7 @@ func (r *PostgresRepository) GetResult(ctx context.Context, resultID uuid.UUID) 
 	var result domain.Result
 	var summary []byte
 	err := r.pool.QueryRow(ctx, `
-		SELECT id, COALESCE(assessment_attempt_id,'00000000-0000-0000-0000-000000000000'::uuid),
-		       workspace_id, dataset_version_id, policy_ref, policy_version,
+		SELECT id, assessment_attempt_id, workspace_id, dataset_version_id, policy_ref, policy_version,
 		       gate_decision, summary, created_at, created_by
 		FROM compliance_result WHERE id=$1
 	`, resultID).Scan(&result.ID, &result.AssessmentAttemptID, &result.WorkspaceID, &result.DatasetVersionID, &result.PolicyRef,
