@@ -739,7 +739,7 @@ export default async function DatasetVersionDetailPage({
                       <tbody>
                         {eligibility.entitlement.checks.map((check) => (
                           <tr key={`${check.dataResourceId}:${check.path}`}>
-                            <td className="mono">{shortId(check.dataResourceId)}</td>
+                            <td><Link className="text-link mono" href={`/resources/${check.dataResourceId}`}>{shortId(check.dataResourceId)}</Link></td>
                             <td>{check.path}</td>
                             <td><Badge value={check.decision} /></td>
                             <td>{check.reason}</td>

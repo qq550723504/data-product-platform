@@ -378,7 +378,7 @@ export function createFixtureServer() {
             certification: { allowed: true, blockers: [], current: goldCertification },
             entitlement: {
               allowed: true, blockers: [],
-              checks: [{ dataResourceId: ids.goldDataset, path: "DIRECT_USE", decision: "ALLOWED", reason: "fixture verified rights" }],
+              checks: [{ dataResourceId: ids.sourceResource, path: "DIRECT_USE", decision: "ALLOWED", reason: "fixture verified rights" }],
             },
           });
         }
