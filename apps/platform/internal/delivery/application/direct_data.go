@@ -104,7 +104,8 @@ func NewDirectDataService(tx *transaction.Manager, repo *infrastructure.Postgres
 // DatasetVersion.StorageURI only after this method returns PayloadReady=true,
 // which means the ISSUED transaction has already committed.
 type DirectDataRecoveryResult struct {
-	Operation domain.Operation
+	Operation              domain.Operation
+	CertificationProfileID uuid.UUID
 }
 
 func (s *DirectDataService) RecoverDirectData(
@@ -123,7 +124,11 @@ func (s *DirectDataService) RecoverDirectData(
 	if err != nil {
 		return DirectDataRecoveryResult{}, err
 	}
-	return DirectDataRecoveryResult{Operation: operation}, nil
+	profileID, err := s.repo.GetTerminalGateCertificationProfileRead(ctx, operation.ID)
+	if err != nil {
+		return DirectDataRecoveryResult{}, err
+	}
+	return DirectDataRecoveryResult{Operation: operation, CertificationProfileID: profileID}, nil
 }
 
 func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) (DirectDataResult, error) {
