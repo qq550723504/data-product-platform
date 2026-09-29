@@ -5,7 +5,7 @@ const webRoot = fileURLToPath(new URL("../../apps/web/", import.meta.url));
 const webEnv = {
   PLATFORM_API_BASE_URL: "http://127.0.0.1:4400", POC_WORKSPACE_ID: ids.workspace,
   POC_ENABLE_INGEST_ACTIONS: "false", POC_INGEST_ACTOR_ID: "",
-  HUMAN_DECISION_API_TOKEN: "review-secret", DELIVERY_API_TOKEN: "delivery-secret", DELIVERY_API_CONSUMER_REF: "GOLD-PILOT-CONSUMER", POC_RELEASE_ACTOR_ID: ids.actor, POC_EXECUTION_ACTOR_ID: ids.actor, POC_DATASET_ACTOR_ID: ids.actor, POC_QUALITY_ACTOR_ID: ids.actor, POC_COMPLIANCE_ACTOR_ID: ids.actor, NEXT_TELEMETRY_DISABLED: "1",
+  HUMAN_DECISION_API_TOKEN: "review-secret", DELIVERY_API_TOKEN: "delivery-secret", DELIVERY_API_CONSUMER_REF: "GOLD-PILOT-CONSUMER", DELIVERY_API_PRINCIPAL_REF: "browser-principal", DELIVERY_WEB_GATEWAY_TOKEN: "gateway-secret", POC_RELEASE_ACTOR_ID: ids.actor, POC_EXECUTION_ACTOR_ID: ids.actor, POC_DATASET_ACTOR_ID: ids.actor, POC_QUALITY_ACTOR_ID: ids.actor, POC_COMPLIANCE_ACTOR_ID: ids.actor, NEXT_TELEMETRY_DISABLED: "1",
 };
 function consoleServer(port, enabled) {
   return {
@@ -19,7 +19,7 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI), retries: 0, timeout: 30000,
   expect: { timeout: 10000 },
   reporter: [["list"], ["html", { open: "never" }]],
-  use: { browserName: "chromium", baseURL: "http://127.0.0.1:3100", trace: "retain-on-failure", screenshot: "only-on-failure" },
+  use: { browserName: "chromium", baseURL: "http://127.0.0.1:3100", trace: "retain-on-failure", screenshot: "only-on-failure", extraHTTPHeaders: { "X-Authenticated-Principal": "browser-principal", "X-Delivery-Web-Gateway": "gateway-secret" } },
   webServer: [
     { command: "node fixture-server.mjs", env: { BROWSER_FIXTURE: "1" }, url: "http://127.0.0.1:4400/__health", reuseExistingServer: false },
     consoleServer(3100, true), consoleServer(3101, false),
