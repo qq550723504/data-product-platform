@@ -355,6 +355,8 @@ test("Direct Data delivery freezes identity, recovers after refresh, and creates
   let deliveryCalls = snapshot.requests.filter((call) => call.method === "POST" && call.path === `/api/v1/workspaces/${ids.workspace}/dataset-versions/${ids.goldVersion}/deliveries`);
   expect(deliveryCalls).toHaveLength(1);
   expect(deliveryCalls[0].authorization).toBe("Bearer delivery-secret");
+  expect(deliveryCalls[0].gateway).toBeUndefined();
+  expect(deliveryCalls[0].authenticatedPrincipal).toBeUndefined();
   expect(deliveryCalls[0].idempotencyKey).toBe(firstKey);
   expect(deliveryCalls[0].body.profileId).toBe(ids.goldProfile);
   expect(deliveryCalls[0].body.consumer).toBe("GOLD-PILOT-CONSUMER");
@@ -398,6 +400,15 @@ test("Direct Data delivery freezes identity, recovers after refresh, and creates
   expect(deliveryCalls).toHaveLength(2);
   expect(deliveryCalls[1].idempotencyKey).toBe(secondKey);
   expect(deliveryCalls[1].body.retryOfDeliveryOperationId).toBe(ids.deliveryOperation);
+});
+
+test("Direct Data proxy rejects callers outside the trusted web gateway", async () => {
+  const response = await fetch(
+    `http://127.0.0.1:3100/api/direct-data-deliveries?idempotencyKey=untrusted-key&consumer=GOLD-PILOT-CONSUMER&versionId=${ids.goldVersion}`,
+  );
+  expect(response.status).toBe(401);
+  const payload = await response.json();
+  expect(payload.error.code).toBe("WEB_CALLER_UNTRUSTED");
 });
 
 test("readonly runtime never enables Direct Data delivery", async ({ page, request }) => {
