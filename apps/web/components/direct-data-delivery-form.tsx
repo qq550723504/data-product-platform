@@ -39,6 +39,7 @@ function newKey() {
 export function DirectDataDeliveryForm(props: Props) {
   const [key, setKey] = useState(props.initialKey ?? "");
   const [recovery, setRecovery] = useState<Recovery | null>(null);
+  const [retryOf, setRetryOf] = useState<string | undefined>();
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
 
@@ -95,7 +96,8 @@ export function DirectDataDeliveryForm(props: Props) {
   const startFresh = (retryIssued: boolean) => {
     const next = newKey();
     setKey(next);
-    setRecovery(retryIssued ? recovery : null);
+    setRetryOf(retryIssued ? recovery?.operationId : undefined);
+    setRecovery(null);
     setMessage("");
     freezeUrl(next);
   };
@@ -112,7 +114,6 @@ export function DirectDataDeliveryForm(props: Props) {
     setPending(true);
     setMessage("");
     try {
-      const retryOf = recovery?.status === "ISSUED" ? recovery.operationId : undefined;
       const response = await fetch("/api/direct-data-deliveries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
