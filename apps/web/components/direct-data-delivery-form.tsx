@@ -37,16 +37,34 @@ function newKey() {
   return globalThis.crypto?.randomUUID?.() ?? "";
 }
 
+function canonicalCommandValue(value: string): string {
+  return value.trim().toUpperCase();
+}
+
+function sameUUID(left: string, right: string): boolean {
+  return left.toLowerCase() === right.toLowerCase();
+}
+
 export function DirectDataDeliveryForm(props: Props) {
   const [key, setKey] = useState(props.initialKey ?? "");
   const [recovery, setRecovery] = useState<Recovery | null>(null);
   const [retryOf, setRetryOf] = useState<string | undefined>(props.initialRetryOf);
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [recoveryPending, setRecoveryPending] = useState(Boolean(props.initialKey));
+  const [keyConfirmedAbsent, setKeyConfirmedAbsent] = useState(!props.initialKey);
 
-  const directData = props.delivery.trim().toUpperCase() === "DIRECT_DATA";
-  const supportedScope = props.scopeType.trim().toUpperCase() === "ALL_RESOURCE";
-  const canDeliver = props.enabled && props.allowed && directData && supportedScope && !submitted;
+  const directData = canonicalCommandValue(props.delivery) === "DIRECT_DATA";
+  const supportedScope = canonicalCommandValue(props.scopeType) === "ALL_RESOURCE";
+  const canDeliver =
+    props.enabled
+    && props.allowed
+    && directData
+    && supportedScope
+    && !submitted
+    && !recoveryPending
+    && keyConfirmedAbsent
+    && recovery === null;
 
   const freezeUrl = (nextKey: string, retryParent = retryOf) => {
     const url = new URL(window.location.href);
@@ -64,24 +82,36 @@ export function DirectDataDeliveryForm(props: Props) {
   };
 
   const recover = async (attemptKey: string) => {
-    const params = new URLSearchParams({ idempotencyKey: attemptKey, consumer: props.consumer, versionId: props.versionId });
-    const response = await fetch(`/api/direct-data-deliveries?${params.toString()}`, { cache: "no-store" });
-    if (response.status === 404) {
-      setRecovery(null);
-      return null;
+    setRecoveryPending(true);
+    setKeyConfirmedAbsent(false);
+    try {
+      const params = new URLSearchParams({ idempotencyKey: attemptKey, consumer: props.consumer, versionId: props.versionId });
+      const response = await fetch(`/api/direct-data-deliveries?${params.toString()}`, { cache: "no-store" });
+      if (response.status === 404) {
+        setRecovery(null);
+        setKeyConfirmedAbsent(true);
+        return null;
+      }
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        setMessage(payload?.error?.message ?? "无法恢复 Direct Data attempt。");
+        return null;
+      }
+      const value = await response.json() as Recovery;
+      if (
+        !sameUUID(value.profileId, props.profileId)
+        || value.consumer.trim() !== props.consumer.trim()
+        || canonicalCommandValue(value.purpose) !== canonicalCommandValue(props.purpose)
+        || canonicalCommandValue(value.action) !== canonicalCommandValue(props.action)
+      ) {
+        setMessage("恢复的 DeliveryOperation 与当前请求上下文不一致。");
+        return null;
+      }
+      setRecovery(value);
+      return value;
+    } finally {
+      setRecoveryPending(false);
     }
-    if (!response.ok) {
-      const payload = await response.json().catch(() => null);
-      setMessage(payload?.error?.message ?? "无法恢复 Direct Data attempt。");
-      return null;
-    }
-    const value = await response.json() as Recovery;
-    if (value.profileId !== props.profileId || value.consumer !== props.consumer || value.purpose !== props.purpose || value.action !== props.action) {
-      setMessage("恢复的 DeliveryOperation 与当前请求上下文不一致。");
-      return null;
-    }
-    setRecovery(value);
-    return value;
   };
 
   useEffect(() => {
@@ -102,6 +132,8 @@ export function DirectDataDeliveryForm(props: Props) {
     const retryParent = retryIssued ? recovery?.operationId : undefined;
     setRetryOf(retryParent);
     setRecovery(null);
+    setRecoveryPending(false);
+    setKeyConfirmedAbsent(true);
     setSubmitted(false);
     setMessage("");
     freezeUrl(next, retryParent);
@@ -115,6 +147,7 @@ export function DirectDataDeliveryForm(props: Props) {
     }
     freezeUrl(attemptKey);
     setSubmitted(true);
+    setKeyConfirmedAbsent(false);
     setMessage("下载请求已提交；如果下载响应中断，请刷新页面恢复当前 idempotency key。");
 
     const form = document.createElement("form");
@@ -161,6 +194,7 @@ export function DirectDataDeliveryForm(props: Props) {
         <div><dt>Consumer</dt><dd>{props.consumer}</dd></div>
         <div><dt>Delivery</dt><dd>{props.delivery}</dd></div>
       </div>
+      {recoveryPending ? <p role="status">正在恢复当前 Delivery attempt…</p> : null}
       {statusText ? <p role="status" data-testid="delivery-operation-status"><strong>{statusText}</strong></p> : null}
       {message ? <p role="status">{message}</p> : null}
       <button type="button" onClick={download} disabled={buttonDisabled}>
