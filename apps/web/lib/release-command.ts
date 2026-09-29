@@ -342,10 +342,23 @@ export async function executeCreateRelease(
       }
     }
 
-    const listed = itemArray(await json(
-      `/api/v1/workspaces/${workspaceId}/data-products/${productId}/releases?limit=100&offset=0`,
-    ));
-    const existingSummary = listed.find((release) => typeof release.releaseNo === "string" && release.releaseNo.trim() === releaseNo);
+    let releaseOffset = 0;
+    let existingSummary: Record<string, unknown> | undefined;
+    while (!existingSummary) {
+      const page = record(await json(
+        `/api/v1/workspaces/${workspaceId}/data-products/${productId}/releases?limit=100&offset=${releaseOffset}`,
+      ));
+      if (!Array.isArray(page.items)) {
+        throw new ReleaseCommandError("Core API 未返回有效 Release 列表。", "INVALID_RESPONSE");
+      }
+      const items = page.items.map(record);
+      existingSummary = items.find((release) => typeof release.releaseNo === "string" && release.releaseNo.trim() === releaseNo);
+      const meta = record(page.page);
+      const total = typeof meta.total === "number" ? meta.total : items.length;
+      const offset = typeof meta.offset === "number" ? meta.offset : releaseOffset;
+      if (existingSummary || offset + items.length >= total || items.length === 0) break;
+      releaseOffset = offset + items.length;
+    }
     if (existingSummary) {
       if (!isReleaseId(existingSummary.id)) {
         throw new ReleaseCommandError("Core Release 列表返回了无效标识。", "INVALID_RESPONSE");
