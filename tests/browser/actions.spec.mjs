@@ -295,8 +295,10 @@ test("Compliance Check preserves a custom policy with the recoverable attempt", 
   await form.getByLabel("Compliance Policy").fill(customPolicy);
   await form.getByRole("button", { name: "运行 Compliance Check", exact: true }).click();
 
-  await expect(page).toHaveURL(/complianceAttemptId=[0-9a-f-]{36}/);
-  await expect(page).toHaveURL(new RegExp(`compliancePolicyRef=${encodeURIComponent(customPolicy)}`));
+  await expect(page).toHaveURL((url) =>
+    /^[0-9a-f-]{36}$/i.test(url.searchParams.get("complianceAttemptId") ?? "")
+    && url.searchParams.get("compliancePolicyRef") === customPolicy,
+  );
 
   const attemptId = new URL(page.url()).searchParams.get("complianceAttemptId");
   expect(attemptId).toBeTruthy();
