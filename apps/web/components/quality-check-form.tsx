@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { runQualityCheck } from "@/app/datasets/[id]/versions/[versionId]/actions";
 import type { QualityAttempt } from "@/lib/platform";
 import type { QualityActionState } from "@/lib/quality-command";
@@ -25,7 +24,6 @@ export function QualityCheckForm({
   initialAttemptId?: string;
   attempt?: QualityAttempt | null;
 }) {
-  const router = useRouter();
   const [attemptId, setAttemptId] = useState(initialAttemptId ?? "");
   const [ruleSetRef, setRuleSetRef] = useState(attempt?.ruleSetRef ?? "");
   const [engineName, setEngineName] = useState(attempt?.engineName ?? "");
