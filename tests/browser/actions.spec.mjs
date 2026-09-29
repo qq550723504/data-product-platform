@@ -82,11 +82,12 @@ test("readonly runtime never enables review or publishing", async ({ page, reque
   await expect(page.getByRole("button", { name: "确认匹配" })).toHaveCount(0);
   await page.goto(`http://127.0.0.1:3101${productPath}`);
   await expect(page.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
-  const createForm = page.getByRole("form", { name: "创建 ProductRelease" });
-  await createForm.getByLabel("Gold output DatasetVersion").selectOption(ids.goldVersion);
-  await createForm.getByLabel("Gold output Role").selectOption("OUTPUT");
-  await createForm.getByRole("textbox", { name: "Release No" }).fill("R2");
-  await expect(createForm.getByRole("button", { name: "创建 Release Draft", exact: true })).toBeDisabled();
+  await expect(page.getByRole("form", { name: "创建 ProductRelease" })).toHaveCount(0);
+  await expect(page.getByText("Release 创建写入未启用", { exact: true })).toBeVisible();
+
+  const snapshot = await state(request);
+  const gets = snapshot.requests.filter((call) => call.method === "GET").map((call) => call.path);
+  expect(gets).not.toContain(`/api/v1/workspaces/${ids.workspace}/datasets/${ids.goldDataset}/versions`);
   expect(await writes(request)).toHaveLength(0);
 });
 
