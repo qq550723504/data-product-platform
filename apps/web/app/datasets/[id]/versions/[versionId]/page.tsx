@@ -13,10 +13,12 @@ import {
 } from "@/components/ui";
 import { DatasetVersionInvalidateForm } from "@/components/dataset-version-invalidate-form";
 import { QualityCheckForm } from "@/components/quality-check-form";
+import { ComplianceCheckForm } from "@/components/compliance-check-form";
 import { configuredWorkspaceId, platform, PlatformError, type CertificationBlocker, type DatasetCertification } from "@/lib/platform";
 import { isQualityAttemptId } from "@/lib/quality-command";
+import { isComplianceAttemptId } from "@/lib/compliance-command";
 
-type DatasetVersionView = "overview" | "quality" | "certification" | "eligibility" | "provenance";
+type DatasetVersionView = "overview" | "quality" | "compliance" | "certification" | "eligibility" | "provenance";
 
 type Query = {
   view?: string;
@@ -33,6 +35,7 @@ type Query = {
   certificationAsOf?: string;
   certificationRevision?: string;
   qualityAttemptId?: string;
+  complianceAttemptId?: string;
 };
 
 function firstValue(values?: string[]): string {
@@ -95,7 +98,7 @@ export default async function DatasetVersionDetailPage({
   const findingsOffset = Math.max(0, Number.parseInt(query.findingsOffset ?? "0", 10) || 0);
   const assessmentOffset = Math.max(0, Number.parseInt(query.assessmentOffset ?? "0", 10) || 0);
   const certificationOffset = Math.max(0, Number.parseInt(query.certificationOffset ?? "0", 10) || 0);
-  const view: DatasetVersionView = ["quality", "certification", "eligibility", "provenance"].includes(query.view ?? "")
+  const view: DatasetVersionView = ["quality", "compliance", "certification", "eligibility", "provenance"].includes(query.view ?? "")
     ? query.view as DatasetVersionView
     : "overview";
   const findingsLimit = 50;
@@ -192,6 +195,18 @@ export default async function DatasetVersionDetailPage({
         if (!(error instanceof PlatformError && error.status === 404)) throw error;
       }
     }
+    let complianceResult = null;
+    const complianceAttemptId = isComplianceAttemptId(query.complianceAttemptId) ? query.complianceAttemptId : undefined;
+    if (complianceAttemptId) {
+      try {
+        complianceResult = await platform.complianceAttempt(complianceAttemptId);
+        if (complianceResult.datasetVersionId.toLowerCase() !== version.id.toLowerCase()) {
+          throw new Error("Compliance attempt 不属于当前 DatasetVersion。");
+        }
+      } catch (error) {
+        if (!(error instanceof PlatformError && error.status === 404)) throw error;
+      }
+    }
     const latestAssessment = assessmentOffset === 0 ? quality.items[0] : latestQuality?.items[0];
     const latestReport = latestAssessment ? await platform.qualityReport(latestAssessment.id, findingsLimit, findingsOffset) : null;
     const evidenceCertification = eligibility?.certification.current
@@ -204,6 +219,8 @@ export default async function DatasetVersionDetailPage({
       process.env.POC_ENABLE_DATASET_ACTIONS === "true" && Boolean(process.env.POC_DATASET_ACTOR_ID?.trim());
     const qualityActionsEnabled =
       process.env.POC_ENABLE_QUALITY_ACTIONS === "true" && Boolean(process.env.POC_QUALITY_ACTOR_ID?.trim());
+    const complianceActionsEnabled =
+      process.env.POC_ENABLE_COMPLIANCE_ACTIONS === "true" && Boolean(process.env.POC_COMPLIANCE_ACTOR_ID?.trim());
 
     return (
       <>
@@ -219,6 +236,7 @@ export default async function DatasetVersionDetailPage({
           {([
             ["overview", "Overview"],
             ["quality", "Quality"],
+            ["compliance", "Compliance"],
             ["certification", "Certification"],
             ["eligibility", "Eligibility"],
             ["provenance", "Provenance"],
@@ -295,6 +313,7 @@ export default async function DatasetVersionDetailPage({
               <div className="panel-header"><h2>下一步</h2><span className="eyebrow">Drill down</span></div>
               <div className="quick-links">
                 <Link href={viewHref("quality")}>查看 Quality 评测 →</Link>
+                <Link href={viewHref("compliance")}>运行 / 恢复 Compliance Check →</Link>
                 <Link href={viewHref("certification")}>查看 Certification 历史 →</Link>
                 <Link href={viewHref("eligibility")}>检查当前可交付性 →</Link>
                 <Link href={viewHref("provenance")}>查看 Provenance / Gold proof →</Link>
@@ -455,6 +474,60 @@ export default async function DatasetVersionDetailPage({
           </>
         )}
 
+          </>
+        ) : null}
+
+        {view === "compliance" ? (
+          <>
+            <div className="panel-header">
+              <h2>Compliance Assessment</h2>
+              <span className="eyebrow">{complianceResult ? "Recovered result" : "No selected attempt"}</span>
+            </div>
+            <ComplianceCheckForm
+              key={complianceAttemptId ?? "new"}
+              datasetId={dataset.id}
+              versionId={version.id}
+              versionStatus={version.status}
+              enabled={complianceActionsEnabled}
+              initialAttemptId={complianceAttemptId}
+              result={complianceResult}
+            />
+            {complianceResult ? (
+              <>
+                <section className="detail-card" style={{ marginBottom: 18 }}>
+                  <div className="panel-header">
+                    <h3>Compliance Result</h3>
+                    <Badge value={complianceResult.gateDecision} />
+                  </div>
+                  <DefinitionList items={[
+                    { label: "Result", value: <span className="mono">{complianceResult.id}</span> },
+                    { label: "Attempt", value: <span className="mono">{complianceResult.assessmentAttemptId}</span> },
+                    { label: "Policy", value: <><span>{complianceResult.policyRef}</span><br /><span className="mono">{complianceResult.policyVersion}</span></> },
+                    { label: "评测时间", value: formatDate(complianceResult.createdAt) },
+                  ]} />
+                </section>
+                <div className="table-card" style={{ marginBottom: 24 }}>
+                  <table className="data-table">
+                    <thead><tr><th>Field</th><th>Category</th><th>Action</th><th>Status</th><th>Message</th></tr></thead>
+                    <tbody>
+                      {complianceResult.findings.length === 0 ? (
+                        <tr><td colSpan={5}>无 Compliance finding。</td></tr>
+                      ) : complianceResult.findings.map((finding) => (
+                        <tr key={finding.id}>
+                          <td>{finding.fieldName}</td>
+                          <td>{finding.category || "—"}</td>
+                          <td>{finding.action}</td>
+                          <td><Badge value={finding.status} /></td>
+                          <td>{finding.message || "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : (
+              <EmptyState title="尚未选择 Compliance attempt" description="运行一次 Compliance Check，或使用带 complianceAttemptId 的链接恢复已有结果。" />
+            )}
           </>
         ) : null}
 
