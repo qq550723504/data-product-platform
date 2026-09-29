@@ -139,6 +139,19 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func resultResponse(result domain.Result) map[string]any {
+	findings := make([]map[string]any, 0, len(result.Findings))
+	for _, finding := range result.Findings {
+		findings = append(findings, map[string]any{
+			"id":        finding.ID,
+			"resultId":  finding.ResultID,
+			"fieldName": finding.FieldName,
+			"category":  finding.Category,
+			"action":    finding.Action,
+			"status":    finding.Status,
+			"message":   finding.Message,
+			"createdAt": finding.CreatedAt,
+		})
+	}
 	return map[string]any{
 		"id":                  result.ID,
 		"assessmentAttemptId": result.AssessmentAttemptID,
@@ -148,7 +161,7 @@ func resultResponse(result domain.Result) map[string]any {
 		"policyVersion":       result.PolicyVersion,
 		"gateDecision":        result.GateDecision,
 		"summary":             result.Summary,
-		"findings":            result.Findings,
+		"findings":            findings,
 		"createdAt":           result.CreatedAt,
 	}
 }
