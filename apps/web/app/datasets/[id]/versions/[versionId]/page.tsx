@@ -36,6 +36,7 @@ type Query = {
   certificationRevision?: string;
   qualityAttemptId?: string;
   complianceAttemptId?: string;
+  compliancePolicyRef?: string;
 };
 
 function firstValue(values?: string[]): string {
@@ -197,6 +198,9 @@ export default async function DatasetVersionDetailPage({
     }
     let complianceResult = null;
     const complianceAttemptId = isComplianceAttemptId(query.complianceAttemptId) ? query.complianceAttemptId : undefined;
+    const compliancePolicyRef = typeof query.compliancePolicyRef === "string" && query.compliancePolicyRef.trim().length <= 1024
+      ? query.compliancePolicyRef.trim()
+      : undefined;
     if (complianceAttemptId) {
       try {
         complianceResult = await platform.complianceAttempt(complianceAttemptId);
@@ -490,6 +494,7 @@ export default async function DatasetVersionDetailPage({
               versionStatus={version.status}
               enabled={complianceActionsEnabled}
               initialAttemptId={complianceAttemptId}
+              initialPolicyRef={compliancePolicyRef}
               result={complianceResult}
             />
             {complianceResult ? (
