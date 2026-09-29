@@ -16,6 +16,7 @@ import (
 )
 
 var ErrNotFound = errors.New("quality assessment not found")
+var ErrAssessmentAttemptNotFound = errors.New("quality assessment attempt not found")
 var ErrAssessmentAttemptConflict = errors.New("quality assessment attempt conflicts with its original request")
 
 type PostgresRepository struct {
@@ -147,6 +148,38 @@ func (r *PostgresRepository) InsertResult(ctx context.Context, tx pgx.Tx, result
 		return fmt.Errorf("insert quality result: %w", err)
 	}
 	return nil
+}
+
+func (r *PostgresRepository) GetAssessmentAttempt(ctx context.Context, attemptID uuid.UUID, now time.Time) (AssessmentAttempt, error) {
+	var attempt AssessmentAttempt
+	err := r.pool.QueryRow(ctx, `
+		SELECT workspace_id, dataset_version_id, rule_set_ref, engine_name, engine_version, lease_expires_at
+		FROM quality_assessment_attempt
+		WHERE id=$1
+	`, attemptID).Scan(
+		&attempt.WorkspaceID, &attempt.DatasetVersionID, &attempt.RuleSetRef, &attempt.EngineName, &attempt.EngineVersion,
+		&attempt.LeaseExpiresAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return AssessmentAttempt{}, ErrAssessmentAttemptNotFound
+	}
+	if err != nil {
+		return AssessmentAttempt{}, fmt.Errorf("load quality assessment attempt %s: %w", attemptID, err)
+	}
+	if err := r.pool.QueryRow(ctx, `
+		SELECT outcome, assessment_id, COALESCE(error_message,'')
+		FROM quality_assessment_attempt_outcome
+		WHERE attempt_id=$1
+	`, attemptID).Scan(&attempt.State.Outcome, &attempt.State.AssessmentID, &attempt.State.ErrorMessage); errors.Is(err, pgx.ErrNoRows) {
+		attempt.State.Outcome = "IN_PROGRESS"
+		if now.IsZero() {
+			now = time.Now().UTC()
+		}
+		attempt.LeaseExpired = !now.Before(attempt.LeaseExpiresAt)
+	} else if err != nil {
+		return AssessmentAttempt{}, fmt.Errorf("load quality assessment attempt outcome %s: %w", attemptID, err)
+	}
+	return attempt, nil
 }
 
 func (r *PostgresRepository) ReconcileAssessmentAttempt(ctx context.Context, tx pgx.Tx, attemptID, workspaceID, datasetVersionID uuid.UUID, ruleSetRef, engineName, engineVersion string, now time.Time) (AssessmentAttempt, bool, error) {
