@@ -206,15 +206,16 @@ func executeDeliveryRequest(t *testing.T, handler *Handler, workspaceID, version
 	return response
 }
 
-
 func TestDeliveryRecoveryReturnsTrustedOperation(t *testing.T) {
 	workspaceID, versionID := uuid.New(), uuid.New()
 	resolver, err := NewStaticPrincipalResolver(true, "secret", "principal-a", "consumer-a", []string{workspaceID.String()})
 	if err != nil {
 		t.Fatal(err)
 	}
-	operationID := uuid.New()
-	service := &fakeDirectService{recoveryResult: deliveryapp.DirectDataRecoveryResult{Operation: deliverydomain.Operation{
+	operationID, profileID := uuid.New(), uuid.New()
+	service := &fakeDirectService{recoveryResult: deliveryapp.DirectDataRecoveryResult{
+		CertificationProfileID: profileID,
+		Operation: deliverydomain.Operation{
 		ID: operationID, WorkspaceID: workspaceID, DatasetVersionID: versionID,
 		IdempotencyKey: "delivery-key", Status: deliverydomain.StatusIssued, CurrentGateDecision: "ALLOWED",
 		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
@@ -225,7 +226,7 @@ func TestDeliveryRecoveryReturnsTrustedOperation(t *testing.T) {
 	if response.Code != http.StatusOK {
 		t.Fatalf("response = %d %s", response.Code, response.Body.String())
 	}
-	for _, expected := range []string{operationID.String(), versionID.String(), ""status":"ISSUED"", ""consumer":"consumer-a""} {
+	for _, expected := range []string{operationID.String(), profileID.String(), versionID.String(), ""status":"ISSUED"", ""consumer":"consumer-a""} {
 		if !strings.Contains(response.Body.String(), expected) {
 			t.Fatalf("response = %s, missing %s", response.Body.String(), expected)
 		}
