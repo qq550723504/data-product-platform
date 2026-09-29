@@ -27,8 +27,8 @@ export function QualityCheckForm({
 }) {
   const router = useRouter();
   const [attemptId, setAttemptId] = useState(initialAttemptId ?? "");
-  const [ruleSetRef, setRuleSetRef] = useState("");
-  const [engineName, setEngineName] = useState("");
+  const [ruleSetRef, setRuleSetRef] = useState(attempt?.ruleSetRef ?? "");
+  const [engineName, setEngineName] = useState(attempt?.engineName ?? "");
   const [state, action, pending] = useActionState<QualityActionState, FormData>(
     runQualityCheck,
     { ok: false, message: "" },
@@ -62,6 +62,16 @@ export function QualityCheckForm({
     url.searchParams.set("view", "quality");
     url.searchParams.set("qualityAttemptId", attemptId);
     window.history.replaceState(window.history.state, "", url.pathname + "?" + url.searchParams.toString());
+  };
+
+  const startFreshAttempt = () => {
+    const nextAttemptId = newAttemptId();
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", "quality");
+    url.searchParams.delete("qualityAttemptId");
+    setAttemptId(nextAttemptId);
+    window.history.replaceState(window.history.state, "", url.pathname + "?" + url.searchParams.toString());
+    router.refresh();
   };
 
   return (
@@ -114,10 +124,15 @@ export function QualityCheckForm({
         </div>
       </div>
 
-      {statusText ? <p role="status"><strong>{statusText}</strong></p> : null}
+      {statusText ? <p role="status" data-testid="quality-attempt-status"><strong>{statusText}</strong></p> : null}
       <button type="submit" disabled={!canSubmit}>
         {pending ? "正在执行，请勿重复操作…" : active ? "Quality Check 运行中" : terminal ? "Attempt 已结束" : "运行 Quality Check"}
       </button>
+      {terminal ? (
+        <button type="button" onClick={startFreshAttempt} style={{ marginLeft: 8 }}>
+          开始新的 Quality Check
+        </button>
+      ) : null}
       {!enabled ? <small style={{ display: "block", marginTop: 8 }}>Quality 写入默认关闭；受信任 POC 可由服务端启用。</small> : null}
       {enabled && !usable ? <small style={{ display: "block", marginTop: 8 }}>Core 只允许 READY / SUPERSEDED DatasetVersion 运行 Quality Check。</small> : null}
       {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
