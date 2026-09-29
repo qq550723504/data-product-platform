@@ -67,11 +67,11 @@ func (h *Handler) run(w http.ResponseWriter, r *http.Request) {
 	}
 	result, err := h.service.Run(r.Context(), application.RunCommand{
 		AssessmentAttemptID: attemptID,
-		WorkspaceID:          workspaceID,
-		DatasetVersionID:     versionID,
-		PolicyRef:            policyRef,
-		ActorID:              actorID,
-		TraceID:              httpserver.RequestID(r.Context()),
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    versionID,
+		PolicyRef:           policyRef,
+		ActorID:             actorID,
+		TraceID:             httpserver.RequestID(r.Context()),
 	})
 	if err != nil {
 		if errors.Is(err, infrastructure.ErrAssessmentAttemptConflict) {
