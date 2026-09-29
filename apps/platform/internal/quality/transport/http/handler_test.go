@@ -48,6 +48,37 @@ func TestRunRejectsMissingAssessmentAttemptID(t *testing.T) {
 	}
 }
 
+func TestAssessmentAttemptStatusRejectsInvalidAttemptID(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/quality-assessment-attempts/not-a-uuid?workspaceId="+uuid.NewString(), nil)
+	req.SetPathValue("attemptId", "not-a-uuid")
+	response := httptest.NewRecorder()
+
+	(&Handler{}).getAssessmentAttempt(response, req)
+
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusBadRequest)
+	}
+	if !strings.Contains(response.Body.String(), "INVALID_ASSESSMENT_ATTEMPT_ID") {
+		t.Fatalf("response = %s, want invalid attempt id error", response.Body.String())
+	}
+}
+
+func TestAssessmentAttemptStatusRequiresWorkspaceID(t *testing.T) {
+	attemptID := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/quality-assessment-attempts/"+attemptID.String(), nil)
+	req.SetPathValue("attemptId", attemptID.String())
+	response := httptest.NewRecorder()
+
+	(&Handler{}).getAssessmentAttempt(response, req)
+
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusBadRequest)
+	}
+	if !strings.Contains(response.Body.String(), "WORKSPACE_REQUIRED") {
+		t.Fatalf("response = %s, want workspace-required error", response.Body.String())
+	}
+}
+
 func TestReportRequiresWorkspaceID(t *testing.T) {
 	assessmentID := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/quality-assessments/"+assessmentID.String()+"/report", nil)

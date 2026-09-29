@@ -48,6 +48,7 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/quality-results/{resultId}", h.get)
 	mux.HandleFunc("GET /api/v1/quality-assessments/{assessmentId}", h.getAssessment)
 	mux.HandleFunc("GET /api/v1/quality-assessments/{assessmentId}/report", h.getReport)
+	mux.HandleFunc("GET /api/v1/quality-assessment-attempts/{attemptId}", h.getAssessmentAttempt)
 	mux.HandleFunc("GET /api/v1/dataset-versions/{versionId}/quality-assessments", h.listAssessments)
 	mux.HandleFunc("GET /api/v1/dataset-versions/{versionId}/quality-assessments/latest", h.latestAssessment)
 }
@@ -181,6 +182,49 @@ func (h *Handler) runGold(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusCreated, resultResponse(result))
+}
+
+func (h *Handler) getAssessmentAttempt(w http.ResponseWriter, r *http.Request) {
+	attemptID, err := uuid.Parse(strings.TrimSpace(r.PathValue("attemptId")))
+	if err != nil || attemptID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_ASSESSMENT_ATTEMPT_ID", "attemptId must be a non-nil UUID", nil)
+		return
+	}
+	workspaceValue := strings.TrimSpace(r.URL.Query().Get("workspaceId"))
+	if workspaceValue == "" {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "WORKSPACE_REQUIRED", "workspaceId is required", nil)
+		return
+	}
+	workspaceID, err := uuid.Parse(workspaceValue)
+	if err != nil || workspaceID == uuid.Nil {
+		httpserver.WriteError(w, r, http.StatusBadRequest, "INVALID_WORKSPACE_ID", "workspaceId must be a non-nil UUID", nil)
+		return
+	}
+	attempt, err := h.repo.GetAssessmentAttempt(r.Context(), attemptID, time.Now().UTC())
+	if err != nil {
+		if errors.Is(err, infrastructure.ErrAssessmentAttemptNotFound) {
+			httpserver.WriteError(w, r, http.StatusNotFound, "QUALITY_ASSESSMENT_ATTEMPT_NOT_FOUND", "quality assessment attempt not found", nil)
+			return
+		}
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "QUALITY_ASSESSMENT_ATTEMPT_READ_FAILED", "quality assessment attempt read failed", nil)
+		return
+	}
+	if attempt.WorkspaceID != workspaceID {
+		httpserver.WriteError(w, r, http.StatusNotFound, "QUALITY_ASSESSMENT_ATTEMPT_NOT_FOUND", "quality assessment attempt not found in workspace", nil)
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"id":               attemptID,
+		"workspaceId":      attempt.WorkspaceID,
+		"datasetVersionId": attempt.DatasetVersionID,
+		"ruleSetRef":       attempt.RuleSetRef,
+		"engineName":       attempt.EngineName,
+		"engineVersion":    attempt.EngineVersion,
+		"outcome":          attempt.State.Outcome,
+		"assessmentId":     attempt.State.AssessmentID,
+		"leaseExpiresAt":   attempt.LeaseExpiresAt,
+		"leaseExpired":     attempt.LeaseExpired,
+	})
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
