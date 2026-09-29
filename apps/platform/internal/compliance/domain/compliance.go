@@ -32,9 +32,10 @@ type Finding struct {
 }
 
 type Result struct {
-	ID               uuid.UUID
-	WorkspaceID      uuid.UUID
-	DatasetVersionID uuid.UUID
+	ID                  uuid.UUID
+	AssessmentAttemptID uuid.UUID
+	WorkspaceID         uuid.UUID
+	DatasetVersionID    uuid.UUID
 	PolicyRef        string
 	PolicyVersion    string
 	GateDecision     GateDecision
@@ -44,13 +45,14 @@ type Result struct {
 	CreatedBy        *uuid.UUID
 }
 
-func NewResult(workspaceID, datasetVersionID uuid.UUID, policyRef, policyVersion string, summary map[string]any, findings []Finding, actorID *uuid.UUID) Result {
+func NewResult(assessmentAttemptID, workspaceID, datasetVersionID uuid.UUID, policyRef, policyVersion string, summary map[string]any, findings []Finding, actorID *uuid.UUID) Result {
 	if summary == nil {
 		summary = map[string]any{}
 	}
 	result := Result{
-		ID:               uuid.New(),
-		WorkspaceID:      workspaceID,
+		ID:                  uuid.New(),
+		AssessmentAttemptID: assessmentAttemptID,
+		WorkspaceID:         workspaceID,
 		DatasetVersionID: datasetVersionID,
 		PolicyRef:        strings.TrimSpace(policyRef),
 		PolicyVersion:    strings.TrimSpace(policyVersion),
