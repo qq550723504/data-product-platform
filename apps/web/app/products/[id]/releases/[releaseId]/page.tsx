@@ -48,6 +48,10 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
       requiredCount?: number;
     } | undefined;
 
+    const targetEvidenceVersion = evidenceReadiness?.datasetVersionId
+      ? trace.datasetVersions.find((version) => version.id.toLowerCase() === evidenceReadiness.datasetVersionId?.toLowerCase())
+      : undefined;
+
     return (
       <>
         <BackLink href={`/products/${product.id}`}>返回 {product.name}</BackLink>
@@ -143,7 +147,14 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
         <section className="detail-card" style={{ marginBottom: 18 }} data-testid="target-evidence-readiness">
           <div className="panel-header"><h2>Target Evidence Readiness</h2><Badge value={readiness.checks?.evidence ?? "UNKNOWN"} /></div>
           <DefinitionList items={[
-            { label: "Target DatasetVersion", value: evidenceReadiness?.datasetVersionId ? <span className="mono">{evidenceReadiness.datasetVersionId}</span> : "—" },
+            {
+              label: "Target DatasetVersion",
+              value: evidenceReadiness?.datasetVersionId
+                ? targetEvidenceVersion
+                  ? <Link className="text-link mono" href={`/datasets/${targetEvidenceVersion.datasetId}/versions/${targetEvidenceVersion.id}`}>{evidenceReadiness.datasetVersionId}</Link>
+                  : <span className="mono">{evidenceReadiness.datasetVersionId}</span>
+                : "—",
+            },
             { label: "Readiness relation count", value: evidenceReadiness?.relationCount ?? "—" },
             { label: "Required relation count", value: evidenceReadiness?.requiredCount ?? "—" },
           ]} />
