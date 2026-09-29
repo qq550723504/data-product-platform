@@ -30,6 +30,7 @@ type Props = {
   scopeType: string;
   scopeRef: string;
   initialKey?: string;
+  initialRetryOf?: string;
 };
 
 function newKey() {
@@ -39,14 +40,14 @@ function newKey() {
 export function DirectDataDeliveryForm(props: Props) {
   const [key, setKey] = useState(props.initialKey ?? "");
   const [recovery, setRecovery] = useState<Recovery | null>(null);
-  const [retryOf, setRetryOf] = useState<string | undefined>();
+  const [retryOf, setRetryOf] = useState<string | undefined>(props.initialRetryOf);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
 
   const directData = props.delivery.trim().toUpperCase() === "DIRECT_DATA";
   const canDeliver = props.enabled && props.allowed && directData && !pending;
 
-  const freezeUrl = (nextKey: string) => {
+  const freezeUrl = (nextKey: string, retryParent = retryOf) => {
     const url = new URL(window.location.href);
     url.searchParams.set("view", "eligibility");
     url.searchParams.set("profileId", props.profileId);
@@ -57,6 +58,7 @@ export function DirectDataDeliveryForm(props: Props) {
     url.searchParams.set("scopeType", props.scopeType);
     if (props.scopeRef) url.searchParams.set("scopeRef", props.scopeRef); else url.searchParams.delete("scopeRef");
     url.searchParams.set("deliveryAttemptKey", nextKey);
+    if (retryParent) url.searchParams.set("deliveryRetryOf", retryParent); else url.searchParams.delete("deliveryRetryOf");
     window.history.replaceState(window.history.state, "", url.pathname + "?" + url.searchParams.toString());
   };
 
@@ -96,10 +98,11 @@ export function DirectDataDeliveryForm(props: Props) {
   const startFresh = (retryIssued: boolean) => {
     const next = newKey();
     setKey(next);
-    setRetryOf(retryIssued ? recovery?.operationId : undefined);
+    const retryParent = retryIssued ? recovery?.operationId : undefined;
+    setRetryOf(retryParent);
     setRecovery(null);
     setMessage("");
-    freezeUrl(next);
+    freezeUrl(next, retryParent);
   };
 
   const download = async () => {
