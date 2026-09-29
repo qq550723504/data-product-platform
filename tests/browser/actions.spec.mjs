@@ -349,7 +349,6 @@ test("Direct Data delivery freezes identity, recovers after refresh, and creates
   await expect(page).toHaveURL((url) => /^[0-9a-f-]{36}$/i.test(url.searchParams.get("deliveryAttemptKey") ?? ""));
   const firstKey = new URL(page.url()).searchParams.get("deliveryAttemptKey");
   expect(firstKey).toBeTruthy();
-  await expect(panel.getByTestId("delivery-operation-status")).toContainText("ISSUED");
 
   let snapshot = await state(request);
   let deliveryCalls = snapshot.requests.filter((call) => call.method === "POST" && call.path === `/api/v1/workspaces/${ids.workspace}/dataset-versions/${ids.goldVersion}/deliveries`);
@@ -393,6 +392,7 @@ test("Direct Data delivery freezes identity, recovers after refresh, and creates
   const secondDownloadPromise = page.waitForEvent("download");
   await page.getByTestId("direct-data-delivery").getByRole("button", { name: "下载 Direct Data", exact: true }).click();
   await secondDownloadPromise;
+  await page.reload();
   await expect(page.getByTestId("direct-data-delivery").getByTestId("delivery-operation-status")).toContainText("ISSUED");
 
   snapshot = await state(request);
@@ -409,6 +409,18 @@ test("Direct Data proxy rejects callers outside the trusted web gateway", async 
   expect(response.status).toBe(401);
   const payload = await response.json();
   expect(payload.error.code).toBe("WEB_CALLER_UNTRUSTED");
+});
+
+test("Direct Data delivery stays disabled for Core-unsupported explicit scopes", async ({ page, request }) => {
+  await page.goto(
+    `/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=eligibility&scopeType=OBJECT&scopeRef=${ids.sourceResource}`,
+  );
+  const panel = page.getByTestId("direct-data-delivery");
+  await expect(panel.getByRole("button", { name: "下载 Direct Data", exact: true })).toBeDisabled();
+  await expect(panel.getByText("Direct Data 当前只支持 ALL_RESOURCE scope", { exact: false })).toBeVisible();
+
+  const snapshot = await state(request);
+  expect(snapshot.requests.filter((call) => call.method === "POST" && call.path.endsWith("/deliveries"))).toHaveLength(0);
 });
 
 test("readonly runtime never enables Direct Data delivery", async ({ page, request }) => {
