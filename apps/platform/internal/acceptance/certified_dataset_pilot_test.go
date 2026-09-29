@@ -428,6 +428,7 @@ func TestCertifiedDatasetEnterpriseActivityPilotHappyPath(t *testing.T) {
 	}
 
 	complianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		AssessmentAttemptID: uuid.New(),
 		WorkspaceID: workspaceID, DatasetVersionID: outputVersion.ID, PolicyRef: complianceRef,
 		ActorID: &actorID, TraceID: traceID,
 	})
