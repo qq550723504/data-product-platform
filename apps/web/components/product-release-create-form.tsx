@@ -37,9 +37,10 @@ export function ProductReleaseCreateForm({
   );
 
   const selected = useMemo(
-    () => candidates
-      .map((candidate) => ({ candidate, selection: selections[candidate.assetId] }))
-      .filter((item) => item.selection?.versionId),
+    () => candidates.flatMap((candidate) => {
+      const selection = selections[candidate.assetId];
+      return selection?.versionId ? [{ candidate, selection }] : [];
+    }),
     [candidates, selections],
   );
   const productionTargets = selected.filter((item) => item.selection.role === "PRIMARY" || item.selection.role === "OUTPUT").length;
