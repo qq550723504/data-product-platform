@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BackLink, Badge, DefinitionList, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
+import { ExecutionRetryForm } from "@/components/execution-retry-form";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 
 function executionGuidance(status: string): string {
@@ -69,6 +70,11 @@ export default async function ExecutionDetailPage({ params }: { params: Promise<
                 <p>{execution.errorMessage || "执行失败"}</p>
               </div>
             ) : null}
+            <ExecutionRetryForm
+              executionId={execution.id}
+              status={execution.status}
+              enabled={process.env.POC_ENABLE_EXECUTION_ACTIONS === "true"}
+            />
           </div>
 
           <aside className="detail-card">
