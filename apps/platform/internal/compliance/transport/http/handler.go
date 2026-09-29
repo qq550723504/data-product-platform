@@ -139,9 +139,8 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func resultResponse(result domain.Result) map[string]any {
-	return map[string]any{
-		"id":                  result.ID,
-		"assessmentAttemptId": result.AssessmentAttemptID,
+	response := map[string]any{
+		"id":               result.ID,
 		"workspaceId":      result.WorkspaceID,
 		"datasetVersionId": result.DatasetVersionID,
 		"policyRef":        result.PolicyRef,
@@ -151,6 +150,10 @@ func resultResponse(result domain.Result) map[string]any {
 		"findings":         result.Findings,
 		"createdAt":        result.CreatedAt,
 	}
+	if result.AssessmentAttemptID != uuid.Nil {
+		response["assessmentAttemptId"] = result.AssessmentAttemptID
+	}
+	return response
 }
 
 func parseActorID(r *http.Request) (*uuid.UUID, error) {
