@@ -30,8 +30,18 @@ export default async function DatasetDetailPage({ params }: { params: Promise<{ 
           <h2>Dataset 定义</h2>
           <DefinitionList items={[
             { label: "Dataset 类型", value: dataset.datasetType },
-            { label: "Source Resource", value: shortId(dataset.sourceResourceId) },
-            { label: "Current Version", value: shortId(dataset.currentVersionId) },
+            {
+              label: "Source Resource",
+              value: dataset.sourceResourceId
+                ? <Link className="text-link mono" href={`/resources/${dataset.sourceResourceId}`}>{shortId(dataset.sourceResourceId)}</Link>
+                : "—",
+            },
+            {
+              label: "Current Version",
+              value: dataset.currentVersionId
+                ? <Link className="text-link mono" href={`/datasets/${dataset.id}/versions/${dataset.currentVersionId}`}>{shortId(dataset.currentVersionId)}</Link>
+                : "—",
+            },
             { label: "Project", value: shortId(dataset.projectId) },
             { label: "创建时间", value: formatDate(dataset.createdAt) },
             { label: "更新时间", value: formatDate(dataset.updatedAt) },

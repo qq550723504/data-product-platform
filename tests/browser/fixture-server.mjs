@@ -19,6 +19,7 @@ export const ids = {
   goldCertification: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
   goldBinding: "ffffffff-ffff-4fff-8fff-ffffffffffff",
   goldSnapshot: "12121212-1212-4212-8212-121212121212",
+  sourceResource: "23232323-2323-4323-8323-232323232323",
   retryParent: "41414141-4141-4141-8141-414141414141",
   retryChild: "43434343-4343-4343-8343-434343434343",
 };
@@ -121,7 +122,7 @@ export function createFixtureServer() {
       const goldDataset = {
         id: ids.goldDataset, workspaceId: ids.workspace, code: "GOLD_BROWSER_FIXTURE",
         name: "Gold 浏览器验收数据集", description: "Synthetic Gold fixture", datasetType: "CURATED",
-        lifecycleStatus: "ACTIVE", currentVersionId: ids.goldVersion, createdAt: stamp, updatedAt: stamp,
+        sourceResourceId: ids.sourceResource, lifecycleStatus: "ACTIVE", currentVersionId: ids.goldVersion, createdAt: stamp, updatedAt: stamp,
       };
       const goldVersion = {
         id: ids.goldVersion, datasetId: ids.goldDataset, versionNo: 1, status: "READY",
@@ -341,6 +342,7 @@ export function createFixtureServer() {
         if (url.pathname === `/api/v1/entity-match-jobs/${ids.job}/reviews`) return send(200, { items: [candidate] });
         if (url.pathname === `${workspace}/data-resources`) return send(200, page(state.scenario === "paginated-resources" ? fixtureResources(30) : []));
         if (url.pathname === `${workspace}/datasets/${ids.goldDataset}`) return send(200, goldDataset);
+        if (url.pathname === `${workspace}/datasets/${ids.goldDataset}/versions`) return send(200, page([goldVersion]));
         if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}`) return send(200, goldVersion);
         if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/quality-assessments`) {
           return send(200, { datasetVersionId: ids.goldVersion, items: [goldAssessment], page: { total: 1, limit: 25, offset: 0 } });

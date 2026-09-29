@@ -110,6 +110,19 @@ test("ambiguous entity review requires explicit frozen alternative selection", a
   });
 });
 
+test("Dataset detail links Core source resource and current version facts", async ({ page }) => {
+  await page.goto(`/datasets/${ids.goldDataset}`);
+
+  await expect(page.getByRole("link", { name: ids.sourceResource.slice(0, 8) })).toHaveAttribute(
+    "href",
+    `/resources/${ids.sourceResource}`,
+  );
+  await expect(page.getByRole("link", { name: ids.goldVersion.slice(0, 8) }).first()).toHaveAttribute(
+    "href",
+    `/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`,
+  );
+});
+
 test("execution detail exposes navigable frozen lineage and retry semantics", async ({ page }) => {
   await page.goto(`/production/${ids.job}`);
 
