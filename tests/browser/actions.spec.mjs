@@ -122,6 +122,151 @@ test("execution detail exposes navigable frozen lineage and retry semantics", as
   await expect(page.getByRole("link", { name: ids.goldVersion, exact: true })).toHaveAttribute("href", versionHref);
 });
 
+test("failed Execution retry creates and opens a new immutable Execution", async ({ page, request }) => {
+  await page.goto(`/production/${ids.job}`);
+  await page.getByRole("button", { name: "重试 Execution", exact: true }).click();
+
+  await expect(page).toHaveURL(new RegExp(`/production/${ids.retryChild}import { test, expect } from "@playwright/test";
+import { ids, fixtureToken } from "./fixture-server.mjs";
+const control = "http://127.0.0.1:4400/__control";
+const headers = { "x-fixture-token": fixtureToken };
+const productPath = `/products/${ids.product}`;
+async function scenario(request, value, reset = false) {
+  const response = await request.post(`${control}/${reset ? "reset" : "scenario"}`, { headers, data: { scenario: value } });
+  expect(response.ok()).toBeTruthy();
+}
+async function state(request) {
+  const response = await request.get(`${control}/state`, { headers });
+  expect(response.ok()).toBeTruthy();
+  return response.json();
+}
+async function writes(request) { return (await state(request)).requests.filter((call) => call.method === "POST"); }
+
+test.beforeEach(async ({ request }) => { await scenario(request, "ready", true); });
+
+test("workbench surfaces actionable review and release items", async ({ page }) => {
+  await page.goto("/");
+  const attention = page.getByTestId("needs-attention");
+  await expect(attention).toBeVisible();
+  await expect(attention.getByRole("heading", { name: "Needs Attention", exact: true })).toBeVisible();
+  await expect(attention.getByText("实体审核队列", { exact: true })).toBeVisible();
+  await expect(attention.getByText("Release 待发布", { exact: true })).toBeVisible();
+  await expect(attention.getByRole("link", { name: "进入审核", exact: true })).toHaveAttribute("href", "/reviews");
+  await expect(attention.getByRole("link", { name: "去发布", exact: true })).toHaveAttribute(
+    "href",
+    `/products/${ids.product}#releases`,
+  );
+  await attention.getByRole("link", { name: "去发布", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`/products/${ids.product}#releases$`));
+  await expect(page.locator("#releases")).toBeVisible();
+});
+
+test("attention center lists current actionable work", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator('a[href="/attention"]').first()).toHaveAttribute("href", "/attention");
+  await expect(page.getByTestId("needs-attention").getByRole("link", { name: "查看全部", exact: true })).toHaveAttribute("href", "/attention");
+
+  await page.goto("/attention");
+  await expect(page.getByRole("heading", { name: "待办中心", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "实体审核", exact: true })).toBeVisible();
+  await expect(page.getByText("测试来源记录", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "进入审核队列", exact: true })).toHaveAttribute("href", "/reviews");
+
+  await expect(page.getByRole("heading", { name: "Release 待发布", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "去发布", exact: true })).toHaveAttribute(
+    "href",
+    `/products/${ids.product}#releases`,
+  );
+});
+
+test("readonly runtime never enables review or publishing", async ({ page, request }) => {
+  await page.goto("http://127.0.0.1:3101/reviews");
+  await expect(page.getByText("当前为只读审核队列")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "测试来源记录", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "确认匹配" })).toHaveCount(0);
+  await page.goto(`http://127.0.0.1:3101${productPath}`);
+  await expect(page.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
+  expect(await writes(request)).toHaveLength(0);
+});
+
+for (const [decision, label, status] of [["confirm", "确认匹配", "CONFIRMED"], ["reject", "拒绝匹配", "REJECTED"]]) {
+  test(`review ${decision}: mandatory reason, server actor and refreshed queue`, async ({ page, request }) => {
+    await page.goto("/reviews");
+    const form = page.getByRole("form", { name: "审核 测试来源记录" });
+    const button = form.getByRole("button", { name: label });
+    await expect(button).toBeDisabled();
+    await form.getByLabel("审核理由（必填）").fill("   ");
+    await expect(button).toBeDisabled();
+    expect(await writes(request)).toHaveLength(0);
+    await form.getByLabel("审核理由（必填）").fill("  已核对测试来源  ");
+    await button.click();
+    await expect(page.getByText("当前页没有待审核候选")).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: "候选；任务状态：SUCCEEDED" }).first()).toBeVisible();
+    const result = await state(request);
+    expect(result.candidateStatus).toBe(status);
+    const commands = await writes(request);
+    expect(commands).toHaveLength(1);
+    expect(commands[0].path).toBe(`/api/v1/entity-match-reviews/${ids.candidate}/${decision}`);
+    expect(commands[0].authorization).toBe("Bearer review-secret");
+    expect(commands[0].actor).toBeUndefined();
+    expect(commands[0].body).toEqual({ reason: "已核对测试来源", expectedDecisionId: ids.decision });
+  });
+}
+
+test("ambiguous entity review requires explicit frozen alternative selection", async ({ page, request }) => {
+  await scenario(request, "ambiguous-review");
+  await page.goto("/reviews");
+  const form = page.getByRole("form", { name: "审核 测试来源记录" });
+  const confirm = form.getByRole("button", { name: "确认匹配" });
+  const select = form.getByLabel("选择匹配实体（必选）");
+  await expect(select).toBeVisible();
+  await expect(select.locator("option")).toHaveCount(3);
+  await expect(select).toContainText("测试候选 A");
+  await expect(select).toContainText("测试候选 B");
+  await form.getByLabel("审核理由（必填）").fill("明确选择同名同址实体");
+  await expect(confirm).toBeDisabled();
+  await select.selectOption(ids.alternative);
+  await expect(confirm).toBeEnabled();
+  await confirm.click();
+  await expect(page.getByRole("status").filter({ hasText: "已选择实体并确认候选；任务状态：SUCCEEDED" })).toBeVisible();
+  const commands = await writes(request);
+  expect(commands).toHaveLength(1);
+  expect(commands[0].body).toEqual({
+    reason: "明确选择同名同址实体",
+    expectedDecisionId: ids.decision,
+    selectedEntityId: ids.alternative,
+  });
+});
+
+test("execution detail exposes navigable frozen lineage and retry semantics", async ({ page }) => {
+  await page.goto(`/production/${ids.job}`);
+
+  await expect(page.getByText("FIXTURE_EXECUTION_FAILED", { exact: true })).toBeVisible();
+  await expect(page.getByText("Core Retry 会基于同一冻结输入创建新的 Execution", { exact: false })).toBeVisible();
+  await expect(page.getByRole("link", { name: ids.retryParent.slice(0, 8) })).toHaveAttribute("href", `/production/${ids.retryParent}`);
+
+  const versionHref = `/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`;
+  await expect(page.getByRole("link", { name: ids.goldVersion.slice(0, 8) }).first()).toHaveAttribute("href", versionHref);
+  await expect(page.getByRole("link", { name: ids.goldVersion, exact: true })).toHaveAttribute("href", versionHref);
+});
+
+));
+  await expect(page.getByText("Execution 已进入队列", { exact: false })).toBeVisible();
+  await expect(page.getByRole("link", { name: ids.job.slice(0, 8) })).toHaveAttribute("href", `/production/${ids.job}`);
+
+  const commands = await writes(request);
+  const retryCalls = commands.filter((call) => call.path === `/api/v1/executions/${ids.job}/retry`);
+  expect(retryCalls).toHaveLength(1);
+  expect(retryCalls[0].actor).toBe(ids.actor);
+  expect(retryCalls[0].idempotencyKey).toMatch(/^[0-9a-f-]{36}$/i);
+});
+
+test("readonly runtime does not enable Execution retry", async ({ page, request }) => {
+  await page.goto(`http://127.0.0.1:3101/production/${ids.job}`);
+  await expect(page.getByRole("button", { name: "重试 Execution", exact: true })).toBeDisabled();
+  expect(await writes(request)).toHaveLength(0);
+});
+
 test("Gold DatasetVersion explains frozen production proof and current delivery", async ({ page, request }) => {
   await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
   await expect(page.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
