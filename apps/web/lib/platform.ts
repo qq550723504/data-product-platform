@@ -242,6 +242,19 @@ export type QualityDimensionSummary = {
   failedCount: number;
 };
 
+export type QualityAttempt = {
+  id: string;
+  workspaceId: string;
+  datasetVersionId: string;
+  ruleSetRef: string;
+  engineName: string;
+  engineVersion: string;
+  outcome: string;
+  assessmentId?: string;
+  leaseExpiresAt: string;
+  leaseExpired: boolean;
+};
+
 export type QualityAssessment = {
   id: string;
   workspaceId: string;
@@ -580,6 +593,10 @@ export const platform = {
   datasetVersion: (versionId: string) =>
     apiGet<DatasetVersion>(
       `/api/v1/dataset-versions/${encodeURIComponent(versionId)}?workspaceId=${encodeURIComponent(requireWorkspace())}`,
+    ),
+  qualityAttempt: (attemptId: string) =>
+    apiGet<QualityAttempt>(
+      `/api/v1/quality-assessment-attempts/${encodeURIComponent(attemptId)}?workspaceId=${encodeURIComponent(requireWorkspace())}`,
     ),
   qualityAssessments: (versionId: string, limit = 25, offset = 0) =>
     apiGet<{ datasetVersionId: string; items: QualityAssessment[]; page: PageMeta }>(
