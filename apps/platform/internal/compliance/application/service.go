@@ -47,10 +47,10 @@ func NewService(industryPackRoot string, tx *transaction.Manager, datasetRepo *d
 type RunCommand struct {
 	AssessmentAttemptID uuid.UUID
 	WorkspaceID          uuid.UUID
-	DatasetVersionID uuid.UUID
-	PolicyRef        string
-	ActorID          *uuid.UUID
-	TraceID          string
+	DatasetVersionID     uuid.UUID
+	PolicyRef            string
+	ActorID              *uuid.UUID
+	TraceID              string
 }
 
 func (s *Service) Run(ctx context.Context, cmd RunCommand) (compliancedomain.Result, error) {
