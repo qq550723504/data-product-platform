@@ -222,8 +222,19 @@ test("Quality Check preserves attempt identity across refresh and does not dupli
   expect(qualityCalls[0].body.ruleSetRef).toBe("park/quality/enterprise-activity-quality-v1.yaml");
 
   await page.reload();
-  await expect(page.getByRole("form", { name: "运行 Quality Check" }).getByRole("status")).toContainText("SUCCEEDED");
+  const recoveredForm = page.getByRole("form", { name: "运行 Quality Check" });
+  await expect(recoveredForm.getByTestId("quality-attempt-status")).toContainText("SUCCEEDED");
+  await expect(recoveredForm.getByLabel("Quality Rule Set")).toHaveValue("park/quality/enterprise-activity-quality-v1.yaml");
+  await expect(recoveredForm.getByLabel("Quality Engine")).toHaveValue("native");
   await expect(page.getByText(ids.qualityAssessment, { exact: true })).toBeVisible();
+
+  commands = await writes(request);
+  qualityCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`);
+  expect(qualityCalls).toHaveLength(1);
+
+  await recoveredForm.getByRole("button", { name: "开始新的 Quality Check", exact: true }).click();
+  await expect(page).not.toHaveURL(/qualityAttemptId=/);
+  await expect(page.getByRole("form", { name: "运行 Quality Check" }).getByRole("button", { name: "运行 Quality Check", exact: true })).toBeEnabled();
 
   commands = await writes(request);
   qualityCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`);
