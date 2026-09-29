@@ -86,7 +86,7 @@ async function bodyOf(req) {
 export function createFixtureServer() {
   let state;
   const reset = (scenario = "ready") => {
-    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: false, complianceAttemptId: "", complianceCompleted: false, requests: [] };
+    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: false, complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, requests: [] };
   };
   reset();
   return createServer(async (req, res) => {
@@ -403,7 +403,7 @@ export function createFixtureServer() {
             assessmentAttemptId: state.complianceAttemptId,
             workspaceId: ids.workspace,
             datasetVersionId: ids.goldVersion,
-            policyRef: "park/compliance/enterprise-activity-compliance-v1.yaml",
+            policyRef: state.compliancePolicyRef || "park/compliance/enterprise-activity-compliance-v1.yaml",
             policyVersion: "1.0.0",
             gateDecision: "PASS",
             summary: { piiFields: 0 },
@@ -542,16 +542,17 @@ export function createFixtureServer() {
           if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
           if (body.workspaceId !== ids.workspace) return send(400, { error: { code: "DATASET_WORKSPACE_MISMATCH" } });
           if (typeof body.assessmentAttemptId !== "string" || !body.assessmentAttemptId) return send(400, { error: { code: "MISSING_ASSESSMENT_ATTEMPT_ID" } });
-          if (body.policyRef !== "park/compliance/enterprise-activity-compliance-v1.yaml") return send(400, { error: { code: "INVALID_POLICY_REF" } });
+          if (typeof body.policyRef !== "string" || !body.policyRef.trim()) return send(400, { error: { code: "INVALID_POLICY_REF" } });
           if (state.complianceAttemptId && state.complianceAttemptId !== body.assessmentAttemptId) return send(409, { error: { code: "COMPLIANCE_ASSESSMENT_ATTEMPT_CONFLICT" } });
           state.complianceAttemptId = body.assessmentAttemptId;
+          state.compliancePolicyRef = body.policyRef;
           state.complianceCompleted = true;
           return send(201, {
             id: ids.complianceResult,
             assessmentAttemptId: state.complianceAttemptId,
             workspaceId: ids.workspace,
             datasetVersionId: ids.goldVersion,
-            policyRef: body.policyRef,
+            policyRef: state.compliancePolicyRef,
             policyVersion: "1.0.0",
             gateDecision: "PASS",
             summary: { piiFields: 0 },
