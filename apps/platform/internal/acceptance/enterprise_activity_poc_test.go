@@ -253,6 +253,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 		t.Fatalf("Quality Gate = %s, want PASS; findings=%+v", qualityResult.GateDecision, qualityResult.Findings)
 	}
 	complianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		AssessmentAttemptID: uuid.New(),
 		WorkspaceID:      workspaceID,
 		DatasetVersionID: outputVersion.ID,
 		PolicyRef:        complianceRef,
@@ -403,6 +404,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 		t.Fatalf("incomplete-binding Quality Gate = %s err=%v, want PASS", incompleteQuality.GateDecision, err)
 	}
 	incompleteCompliance, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		AssessmentAttemptID: uuid.New(),
 		WorkspaceID: workspaceID, DatasetVersionID: incompleteOutput.ID, PolicyRef: complianceRef,
 		ActorID: &actorID, TraceID: traceID,
 	})
@@ -572,7 +574,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 		if badQuality.GateDecision != qualitydomain.GateFail {
 			t.Fatalf("blocking Quality Gate = %s, want FAIL", badQuality.GateDecision)
 		}
-		passCompliance, err := complianceService.Run(ctx, complianceapp.RunCommand{WorkspaceID: workspaceID, DatasetVersionID: badVersion.ID, PolicyRef: complianceRef, ActorID: &actorID, TraceID: traceID})
+		passCompliance, err := complianceService.Run(ctx, complianceapp.RunCommand{AssessmentAttemptID: uuid.New(), WorkspaceID: workspaceID, DatasetVersionID: badVersion.ID, PolicyRef: complianceRef, ActorID: &actorID, TraceID: traceID})
 		if err != nil || passCompliance.GateDecision != compliancedomain.GatePass {
 			t.Fatalf("control Compliance Gate = %s err=%v, want PASS", passCompliance.GateDecision, err)
 		}
@@ -588,7 +590,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 		if err != nil || passQuality.GateDecision != qualitydomain.GatePass {
 			t.Fatalf("control Quality Gate = %s err=%v, want PASS", passQuality.GateDecision, err)
 		}
-		badCompliance, err := complianceService.Run(ctx, complianceapp.RunCommand{WorkspaceID: workspaceID, DatasetVersionID: badVersion.ID, PolicyRef: complianceRef, ActorID: &actorID, TraceID: traceID})
+		badCompliance, err := complianceService.Run(ctx, complianceapp.RunCommand{AssessmentAttemptID: uuid.New(), WorkspaceID: workspaceID, DatasetVersionID: badVersion.ID, PolicyRef: complianceRef, ActorID: &actorID, TraceID: traceID})
 		if err != nil {
 			t.Fatalf("run blocking Compliance Gate: %v", err)
 		}
