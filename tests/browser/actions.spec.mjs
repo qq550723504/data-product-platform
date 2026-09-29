@@ -363,6 +363,7 @@ test("Direct Data delivery freezes identity, recovers after refresh, and creates
 
   await page.reload();
   const recoveredPanel = page.getByTestId("direct-data-delivery");
+  await expect(recoveredPanel.getByRole("button", { name: /下载 Direct Data|该 attempt 已签发/ })).toBeDisabled();
   await expect(recoveredPanel.getByTestId("delivery-operation-status")).toContainText("ISSUED");
 
   snapshot = await state(request);
@@ -409,6 +410,27 @@ test("Direct Data proxy rejects callers outside the trusted web gateway", async 
   expect(response.status).toBe(401);
   const payload = await response.json();
   expect(payload.error.code).toBe("WEB_CALLER_UNTRUSTED");
+});
+
+test("Direct Data recovery accepts Core-normalized purpose and action", async ({ page }) => {
+  const purpose = "  gold-pilot  ";
+  const action = "  use  ";
+  await page.goto(
+    `/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=eligibility&purpose=${encodeURIComponent(purpose)}&action=${encodeURIComponent(action)}`,
+  );
+
+  const panel = page.getByTestId("direct-data-delivery");
+  const firstDownloadPromise = page.waitForEvent("download");
+  await panel.getByRole("button", { name: "下载 Direct Data", exact: true }).click();
+  await firstDownloadPromise;
+
+  const attemptKey = new URL(page.url()).searchParams.get("deliveryAttemptKey");
+  expect(attemptKey).toBeTruthy();
+
+  await page.reload();
+  const recoveredPanel = page.getByTestId("direct-data-delivery");
+  await expect(recoveredPanel.getByTestId("delivery-operation-status")).toContainText("ISSUED");
+  await expect(recoveredPanel.getByRole("button", { name: "创建重试下载 attempt", exact: true })).toBeVisible();
 });
 
 test("Direct Data delivery stays disabled for Core-unsupported explicit scopes", async ({ page, request }) => {
