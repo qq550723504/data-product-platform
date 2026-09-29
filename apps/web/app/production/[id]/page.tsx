@@ -7,6 +7,8 @@ function executionGuidance(status: string): string {
   switch (status) {
     case "FAILED":
       return "该 Execution 是不可变失败事实。Core Retry 会基于同一冻结输入创建新的 Execution，不会改写本记录。";
+    case "CANCELLED":
+      return "该 Execution 已取消且历史事实保持不变。Core Retry 会基于同一冻结输入创建新的 Execution。";
     case "QUEUED":
       return "Execution 已进入队列，等待 worker 认领；当前记录不需要人工修改状态。";
     case "SUBMITTING":
