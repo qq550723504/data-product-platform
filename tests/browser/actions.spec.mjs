@@ -258,7 +258,7 @@ test("execution detail exposes navigable frozen lineage and retry semantics", as
   const retryCalls = commands.filter((call) => call.path === `/api/v1/executions/${ids.job}/retry`);
   expect(retryCalls).toHaveLength(1);
   expect(retryCalls[0].actor).toBe(ids.actor);
-  expect(retryCalls[0].idempotencyKey).toMatch(/^[0-9a-f-]{36}$/i);
+  expect(retryCalls[0].idempotencyKey).toBe(`ui-retry:${ids.job}`);
 });
 
 test("readonly runtime does not enable Execution retry", async ({ page, request }) => {
