@@ -81,11 +81,11 @@ export function ProductReleaseCreateForm({
       <div className="definition-list">
         <div>
           <dt>Release No</dt>
-          <dd><input name="releaseNo" value={releaseNo} onChange={(event) => setReleaseNo(event.target.value)} maxLength={64} required /></dd>
+          <dd><input aria-label="Release No" name="releaseNo" value={releaseNo} onChange={(event) => setReleaseNo(event.target.value)} maxLength={64} required /></dd>
         </div>
         <div>
           <dt>Release Notes</dt>
-          <dd><textarea name="releaseNotes" value={releaseNotes} onChange={(event) => setReleaseNotes(event.target.value)} maxLength={2000} rows={3} /></dd>
+          <dd><textarea aria-label="Release Notes" name="releaseNotes" value={releaseNotes} onChange={(event) => setReleaseNotes(event.target.value)} maxLength={2000} rows={3} /></dd>
         </div>
       </div>
 
