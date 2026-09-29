@@ -334,6 +334,75 @@ test("readonly runtime never enables Quality Check", async ({ page, request }) =
   expect(commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`)).toHaveLength(0);
 });
 
+test("Direct Data delivery freezes identity, recovers after refresh, and creates a linked retry", async ({ page, request }) => {
+  await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=eligibility`);
+
+  const panel = page.getByTestId("direct-data-delivery");
+  const downloadButton = panel.getByRole("button", { name: "下载 Direct Data", exact: true });
+  await expect(downloadButton).toBeEnabled();
+
+  const firstDownloadPromise = page.waitForEvent("download");
+  await downloadButton.click();
+  const firstDownload = await firstDownloadPromise;
+  expect(firstDownload.suggestedFilename()).toContain(ids.goldVersion);
+
+  await expect(page).toHaveURL((url) => /^[0-9a-f-]{36}$/i.test(url.searchParams.get("deliveryAttemptKey") ?? ""));
+  const firstKey = new URL(page.url()).searchParams.get("deliveryAttemptKey");
+  expect(firstKey).toBeTruthy();
+  await expect(panel.getByTestId("delivery-operation-status")).toContainText("ISSUED");
+
+  let snapshot = await state(request);
+  let deliveryCalls = snapshot.requests.filter((call) => call.method === "POST" && call.path === `/api/v1/workspaces/${ids.workspace}/dataset-versions/${ids.goldVersion}/deliveries`);
+  expect(deliveryCalls).toHaveLength(1);
+  expect(deliveryCalls[0].authorization).toBe("Bearer delivery-secret");
+  expect(deliveryCalls[0].idempotencyKey).toBe(firstKey);
+  expect(deliveryCalls[0].body.profileId).toBe(ids.goldProfile);
+  expect(deliveryCalls[0].body.consumer).toBe("GOLD-PILOT-CONSUMER");
+  expect(deliveryCalls[0].body.retryOfDeliveryOperationId).toBeUndefined();
+
+  await page.reload();
+  const recoveredPanel = page.getByTestId("direct-data-delivery");
+  await expect(recoveredPanel.getByTestId("delivery-operation-status")).toContainText("ISSUED");
+
+  snapshot = await state(request);
+  expect(snapshot.requests.some((call) =>
+    call.method === "GET"
+    && call.path === `/api/v1/workspaces/${ids.workspace}/direct-data-deliveries/recovery`
+    && call.authorization === "Bearer delivery-secret"
+  )).toBe(true);
+  deliveryCalls = snapshot.requests.filter((call) => call.method === "POST" && call.path.endsWith("/deliveries"));
+  expect(deliveryCalls).toHaveLength(1);
+
+  await recoveredPanel.getByRole("button", { name: "创建重试下载 attempt", exact: true }).click();
+  await expect(page).toHaveURL((url) => {
+    const nextKey = url.searchParams.get("deliveryAttemptKey");
+    return Boolean(nextKey && nextKey !== firstKey);
+  });
+  const secondKey = new URL(page.url()).searchParams.get("deliveryAttemptKey");
+  expect(secondKey).toBeTruthy();
+
+  const secondDownloadPromise = page.waitForEvent("download");
+  await page.getByTestId("direct-data-delivery").getByRole("button", { name: "下载 Direct Data", exact: true }).click();
+  await secondDownloadPromise;
+  await expect(page.getByTestId("direct-data-delivery").getByTestId("delivery-operation-status")).toContainText("ISSUED");
+
+  snapshot = await state(request);
+  deliveryCalls = snapshot.requests.filter((call) => call.method === "POST" && call.path.endsWith("/deliveries"));
+  expect(deliveryCalls).toHaveLength(2);
+  expect(deliveryCalls[1].idempotencyKey).toBe(secondKey);
+  expect(deliveryCalls[1].body.retryOfDeliveryOperationId).toBe(ids.deliveryOperation);
+});
+
+test("readonly runtime never enables Direct Data delivery", async ({ page, request }) => {
+  await page.goto(`http://127.0.0.1:3101/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=eligibility`);
+  const panel = page.getByTestId("direct-data-delivery");
+  await expect(panel.getByRole("button", { name: "下载 Direct Data", exact: true })).toBeDisabled();
+  await expect(panel.getByText("Direct Data 下载默认关闭", { exact: false })).toBeVisible();
+
+  const snapshot = await state(request);
+  expect(snapshot.requests.filter((call) => call.method === "POST" && call.path.endsWith("/deliveries"))).toHaveLength(0);
+});
+
 test("READY DatasetVersion can be invalidated through the Core command", async ({ page, request }) => {
   await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
 
