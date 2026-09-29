@@ -17,6 +17,94 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/product/infrastructure"
 )
 
+func TestValidateReleaseReferencesRejectsCrossWorkspaceDatasetVersion(t *testing.T) {
+	dsn := os.Getenv("TEST_POSTGRES_DSN")
+	if dsn == "" {
+		t.Skip("TEST_POSTGRES_DSN is not set")
+	}
+	ctx := context.Background()
+	pool, err := database.Open(ctx, dsn)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer pool.Close()
+
+	productWorkspaceID := uuid.New()
+	foreignWorkspaceID := uuid.New()
+	productID := uuid.New()
+	productVersionID := uuid.New()
+	foreignDatasetID := uuid.New()
+	foreignVersionID := uuid.New()
+
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO data_product (id, workspace_id, code, name)
+		VALUES ($1,$2,$3,'Release scope product')
+	`, productID, productWorkspaceID, "REL-SCOPE-"+uuid.NewString()); err != nil {
+		t.Fatalf("insert product: %v", err)
+	}
+
+	versionTx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin product version fixture: %v", err)
+	}
+	if _, err := versionTx.Exec(ctx, `
+		INSERT INTO product_version (
+			id, product_id, major_version, minor_version, patch_version,
+			build_status, expected_asset_count
+		) VALUES ($1,$2,1,0,0,'BUILDING',0)
+	`, productVersionID, productID); err != nil {
+		_ = versionTx.Rollback(ctx)
+		t.Fatalf("insert product version: %v", err)
+	}
+	if _, err := versionTx.Exec(ctx, `
+		UPDATE product_version SET build_status='FINALIZED'
+		WHERE id=$1 AND build_status='BUILDING'
+	`, productVersionID); err != nil {
+		_ = versionTx.Rollback(ctx)
+		t.Fatalf("finalize product version: %v", err)
+	}
+	if err := versionTx.Commit(ctx); err != nil {
+		t.Fatalf("commit product version fixture: %v", err)
+	}
+
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset (id, workspace_id, code, name, dataset_type)
+		VALUES ($1,$2,$3,'Foreign release dataset','CURATED')
+	`, foreignDatasetID, foreignWorkspaceID, "REL-SCOPE-DATASET-"+uuid.NewString()); err != nil {
+		t.Fatalf("insert foreign dataset: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO dataset_version (
+			id, dataset_id, version_no, status, storage_uri, checksum_algorithm, checksum_value, metadata, ready_at
+		) VALUES ($1,$2,1,'READY',$3,'SHA256',$4,'{}'::jsonb,now())
+	`, foreignVersionID, foreignDatasetID, "s3://release-scope/"+foreignVersionID.String(), strings.Repeat("a", 64)); err != nil {
+		t.Fatalf("insert foreign dataset version: %v", err)
+	}
+
+	release := domain.ProductRelease{
+		ID:               uuid.New(),
+		ProductID:        productID,
+		ProductVersionID: productVersionID,
+		ReleaseNo:        "R-" + uuid.NewString(),
+		Status:           domain.ReleaseDraft,
+		Datasets: []domain.ReleaseDataset{
+			{DatasetVersionID: foreignVersionID, Role: domain.DatasetPrimary},
+		},
+	}
+
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin validation tx: %v", err)
+	}
+	defer tx.Rollback(ctx)
+
+	repo := infrastructure.NewPostgresRepository(pool)
+	err = repo.ValidateReleaseReferences(ctx, tx, release)
+	if err == nil || !strings.Contains(err.Error(), "belongs to another workspace") {
+		t.Fatalf("ValidateReleaseReferences error = %v, want cross-workspace rejection", err)
+	}
+}
+
 func TestProductReleaseDatasetMembershipPublishFirstFreezesMutations(t *testing.T) {
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {

@@ -196,6 +196,14 @@ func (r *PostgresRepository) listAssets(ctx context.Context, versionID uuid.UUID
 }
 
 func (r *PostgresRepository) ValidateReleaseReferences(ctx context.Context, tx pgx.Tx, release domain.ProductRelease) error {
+	var productWorkspaceID uuid.UUID
+	if err := tx.QueryRow(ctx, `SELECT workspace_id FROM data_product WHERE id=$1 AND deleted_at IS NULL`, release.ProductID).Scan(&productWorkspaceID); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("product: %w", ErrNotFound)
+		}
+		return fmt.Errorf("validate product: %w", err)
+	}
+
 	var versionProductID uuid.UUID
 	if err := tx.QueryRow(ctx, `SELECT product_id FROM product_version WHERE id=$1`, release.ProductVersionID).Scan(&versionProductID); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -208,11 +216,20 @@ func (r *PostgresRepository) ValidateReleaseReferences(ctx context.Context, tx p
 	}
 	for _, binding := range release.Datasets {
 		var status string
-		if err := tx.QueryRow(ctx, `SELECT status FROM dataset_version WHERE id=$1`, binding.DatasetVersionID).Scan(&status); err != nil {
+		var datasetWorkspaceID uuid.UUID
+		if err := tx.QueryRow(ctx, `
+			SELECT dv.status, d.workspace_id
+			FROM dataset_version dv
+			JOIN dataset d ON d.id=dv.dataset_id
+			WHERE dv.id=$1
+		`, binding.DatasetVersionID).Scan(&status, &datasetWorkspaceID); err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
 				return fmt.Errorf("dataset version %s: %w", binding.DatasetVersionID, ErrNotFound)
 			}
 			return fmt.Errorf("validate dataset version %s: %w", binding.DatasetVersionID, err)
+		}
+		if datasetWorkspaceID != productWorkspaceID {
+			return fmt.Errorf("dataset version %s belongs to another workspace", binding.DatasetVersionID)
 		}
 		if status != "READY" && status != "SUPERSEDED" {
 			return fmt.Errorf("dataset version %s must be immutable and usable (READY or SUPERSEDED), got %s", binding.DatasetVersionID, status)
