@@ -235,6 +235,7 @@ const createdRelease = {
   releaseNo: "R2",
   status: "DRAFT",
   datasets: [{ datasetVersionId: ids.datasetVersion, role: "OUTPUT" }],
+  releaseNotes: "release notes",
 };
 
 function createStub(responses) {
