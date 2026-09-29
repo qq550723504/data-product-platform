@@ -71,8 +71,8 @@ export async function executeQualityCheck(
   if(ruleSetRef.length>512||engineName.length>128) return {ok:false,message:"Quality 配置字段过长。"};
 
   const base=config.apiBaseUrl.replace(/\/$/,"");
-  async function raw(path:string,init:RequestInit={}){
-    return request(`${base}${path}`,{...init,cache:"no-store",redirect:"error",signal:AbortSignal.timeout(15000),headers:{Accept:"application/json",...init.headers}});
+  async function raw(path:string,init:RequestInit={},timeoutMs=15000){
+    return request(`${base}${path}`,{...init,cache:"no-store",redirect:"error",signal:AbortSignal.timeout(timeoutMs),headers:{Accept:"application/json",...init.headers}});
   }
   async function json(path:string,init:RequestInit={}){
     const response=await raw(path,init);
@@ -120,11 +120,22 @@ export async function executeQualityCheck(
     }
 
     attemptedWrite=true;
-    const result=await json(`/api/v1/dataset-versions/${versionId}/quality-checks`,{
+    const writeResponse=await raw(`/api/v1/dataset-versions/${versionId}/quality-checks`,{
       method:"POST",
       headers:{"Content-Type":"application/json","X-Actor-ID":actorId},
       body:JSON.stringify({workspaceId,ruleSetRef:effectiveRuleSetRef,engineName,assessmentAttemptId:attemptId}),
-    });
+    },60000);
+    if(!writeResponse.ok){
+      let code=`HTTP_${writeResponse.status}`;
+      try{
+        const body=record(await writeResponse.json());
+        const e=body.error&&typeof body.error==="object"?record(body.error):body;
+        if(typeof e.code==="string") code=e.code;
+      }catch{}
+      throw new QualityCommandError(`Core API 拒绝了本次操作（HTTP ${writeResponse.status}，${code}）。`,code);
+    }
+    let result:Record<string,unknown>;
+    try{ result=record(await writeResponse.json()); }catch(e){ if(e instanceof QualityCommandError) throw e; throw new QualityCommandError("Core API 返回了无法解析的响应。","INVALID_RESPONSE"); }
     if(!isUUID(result.id)||!sameId(result.workspaceId,workspaceId)||!sameId(result.datasetVersionId,versionId)){
       throw new QualityCommandError("Quality Check 返回了不一致的 Assessment。","INVALID_RESPONSE");
     }
