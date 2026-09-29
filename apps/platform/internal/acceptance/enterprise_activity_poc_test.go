@@ -254,11 +254,11 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 	}
 	complianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
 		AssessmentAttemptID: uuid.New(),
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: outputVersion.ID,
-		PolicyRef:        complianceRef,
-		ActorID:          &actorID,
-		TraceID:          traceID,
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    outputVersion.ID,
+		PolicyRef:           complianceRef,
+		ActorID:             &actorID,
+		TraceID:             traceID,
 	})
 	if err != nil {
 		t.Fatalf("run Compliance Gate: %v", err)
@@ -405,7 +405,7 @@ func TestEnterpriseActivityCorePOCFullPath(t *testing.T) {
 	}
 	incompleteCompliance, err := complianceService.Run(ctx, complianceapp.RunCommand{
 		AssessmentAttemptID: uuid.New(),
-		WorkspaceID: workspaceID, DatasetVersionID: incompleteOutput.ID, PolicyRef: complianceRef,
+		WorkspaceID:         workspaceID, DatasetVersionID: incompleteOutput.ID, PolicyRef: complianceRef,
 		ActorID: &actorID, TraceID: traceID,
 	})
 	if err != nil || incompleteCompliance.GateDecision != compliancedomain.GatePass {
