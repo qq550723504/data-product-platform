@@ -171,6 +171,35 @@ test("Evidence Center uses workspace release read model without per-product rele
   expect(gets).not.toContain(`/api/v1/workspaces/${ids.workspace}/data-products/${ids.product}/releases`);
 });
 
+test("READY DatasetVersion can be invalidated through the Core command", async ({ page, request }) => {
+  await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
+
+  const form = page.getByRole("form", { name: "作废 DatasetVersion" });
+  const button = form.getByRole("button", { name: "作废 DatasetVersion", exact: true });
+  await expect(button).toBeDisabled();
+  await form.getByLabel("作废原因（必填）").fill("  上游来源已撤回  ");
+  await expect(button).toBeEnabled();
+  await button.click();
+
+  await expect(page.getByText("上游来源已撤回", { exact: true })).toBeVisible();
+  await expect(page.getByText("INVALID", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("form", { name: "作废 DatasetVersion" })).toHaveCount(0);
+
+  const commands = await writes(request);
+  const invalidateCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/invalidate`);
+  expect(invalidateCalls).toHaveLength(1);
+  expect(invalidateCalls[0].actor).toBe(ids.actor);
+  expect(invalidateCalls[0].body).toEqual({ reason: "上游来源已撤回" });
+});
+
+test("readonly runtime never enables DatasetVersion invalidation", async ({ page, request }) => {
+  await page.goto(`http://127.0.0.1:3101/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
+  const form = page.getByRole("form", { name: "作废 DatasetVersion" });
+  await form.getByLabel("作废原因（必填）").fill("只读环境不应写入");
+  await expect(form.getByRole("button", { name: "作废 DatasetVersion", exact: true })).toBeDisabled();
+  expect(await writes(request)).toHaveLength(0);
+});
+
 test("Gold DatasetVersion explains frozen production proof and current delivery", async ({ page, request }) => {
   await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
   await expect(page.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");

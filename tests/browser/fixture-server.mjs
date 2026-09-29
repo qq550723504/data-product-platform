@@ -82,7 +82,7 @@ async function bodyOf(req) {
 export function createFixtureServer() {
   let state;
   const reset = (scenario = "ready") => {
-    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", retryCreated: false, requests: [] };
+    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, requests: [] };
   };
   reset();
   return createServer(async (req, res) => {
@@ -125,11 +125,12 @@ export function createFixtureServer() {
         sourceResourceId: ids.sourceResource, lifecycleStatus: "ACTIVE", currentVersionId: ids.goldVersion, createdAt: stamp, updatedAt: stamp,
       };
       const goldVersion = {
-        id: ids.goldVersion, datasetId: ids.goldDataset, versionNo: 1, status: "READY",
+        id: ids.goldVersion, datasetId: ids.goldDataset, versionNo: 1, status: state.datasetVersionStatus,
         schemaVersion: "gold-v1", storageType: "OBJECT", storageUri: "s3://fixture/gold.csv",
         contentType: "text/csv", rowCount: 2, byteSize: 128, checksumAlgorithm: "SHA256",
         checksum: "1".repeat(64), generatedByExecutionId: ids.job, createdAt: stamp, readyAt: stamp,
-        invalidationReason: "",
+        ...(state.datasetVersionStatus === "INVALID" ? { invalidatedAt: stamp } : {}),
+        invalidationReason: state.invalidationReason,
       };
       const goldAssessment = {
         id: ids.goldAssessment, workspaceId: ids.workspace, datasetVersionId: ids.goldVersion,
@@ -447,6 +448,19 @@ export function createFixtureServer() {
           if (state.scenario === "review-conflict" || state.candidateStatus !== "PENDING") return send(409, { error: { code: "REVIEW_CONFLICT" } });
           state.candidateStatus = url.pathname.endsWith("/confirm") ? "CONFIRMED" : "REJECTED";
           return send(200, { ...job, status: "SUCCEEDED" });
+        }
+        if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/invalidate`) {
+          if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
+          if (state.datasetVersionStatus !== "READY") return send(409, { error: { code: "DATASET_VERSION_INVALID_TRANSITION" } });
+          if (typeof body.reason !== "string" || !body.reason.trim()) return send(400, { error: { code: "INVALID_REASON" } });
+          state.datasetVersionStatus = "INVALID";
+          state.invalidationReason = body.reason.trim();
+          return send(200, {
+            ...goldVersion,
+            status: "INVALID",
+            invalidatedAt: stamp,
+            invalidationReason: state.invalidationReason,
+          });
         }
         if (url.pathname === `/api/v1/executions/${ids.job}/retry`) {
           if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });

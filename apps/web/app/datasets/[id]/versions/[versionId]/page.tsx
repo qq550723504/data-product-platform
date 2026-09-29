@@ -11,6 +11,7 @@ import {
   formatDate,
   shortId,
 } from "@/components/ui";
+import { DatasetVersionInvalidateForm } from "@/components/dataset-version-invalidate-form";
 import { configuredWorkspaceId, platform, type CertificationBlocker, type DatasetCertification } from "@/lib/platform";
 
 type DatasetVersionView = "overview" | "quality" | "certification" | "eligibility" | "provenance";
@@ -184,6 +185,9 @@ export default async function DatasetVersionDetailPage({
       ? await platform.goldExplanation(versionId)
       : null;
 
+    const datasetActionsEnabled =
+      process.env.POC_ENABLE_DATASET_ACTIONS === "true" && Boolean(process.env.POC_DATASET_ACTOR_ID?.trim());
+
     return (
       <>
         <BackLink href={`/datasets/${dataset.id}`}>返回 {dataset.name}</BackLink>
@@ -223,8 +227,17 @@ export default async function DatasetVersionDetailPage({
             { label: "Checksum", value: version.checksum ? <span className="mono">{version.checksum}</span> : "—" },
             { label: "生产执行", value: version.generatedByExecutionId ? <Link href={`/production/${version.generatedByExecutionId}`}>{shortId(version.generatedByExecutionId)}</Link> : "—" },
             { label: "Ready At", value: formatDate(version.readyAt) },
+            { label: "Invalidated At", value: formatDate(version.invalidatedAt) },
+            { label: "Invalidation Reason", value: version.invalidationReason || "—" },
           ]} />
         </section>
+
+        <DatasetVersionInvalidateForm
+          datasetId={dataset.id}
+          versionId={version.id}
+          status={version.status}
+          enabled={datasetActionsEnabled}
+        />
 
         {view === "overview" ? (
           <>
