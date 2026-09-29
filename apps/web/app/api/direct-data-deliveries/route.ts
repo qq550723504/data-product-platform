@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { NextRequest } from "next/server";
 import { configuredWorkspaceId } from "@/lib/platform";
 
@@ -7,10 +8,12 @@ function config() {
   const workspaceId = configuredWorkspaceId();
   const token = process.env.DELIVERY_API_TOKEN?.trim() ?? "";
   const consumer = process.env.DELIVERY_API_CONSUMER_REF?.trim() ?? "";
+  const principal = process.env.DELIVERY_API_PRINCIPAL_REF?.trim() ?? "";
+  const gatewayToken = process.env.DELIVERY_WEB_GATEWAY_TOKEN?.trim() ?? "";
   const enabled = process.env.POC_ENABLE_DELIVERY_ACTIONS === "true";
   const apiBaseUrl = (process.env.PLATFORM_API_BASE_URL ?? "http://localhost:8080").replace(/\/$/, "");
-  if (!enabled || !workspaceId || !uuidPattern.test(workspaceId) || !token || !consumer) return null;
-  return { workspaceId, token, consumer, apiBaseUrl };
+  if (!enabled || !workspaceId || !uuidPattern.test(workspaceId) || !token || !consumer || !principal || !gatewayToken) return null;
+  return { workspaceId, token, consumer, principal, gatewayToken, apiBaseUrl };
 }
 
 function error(status: number, code: string, message: string, extra: Record<string, unknown> = {}) {
@@ -25,6 +28,24 @@ function safeUUID(value: unknown): value is string {
 }
 function safeText(value: unknown, max = 512): value is string {
   return typeof value === "string" && value.trim().length > 0 && value.trim().length <= max;
+}
+
+function secureEqual(left: string, right: string): boolean {
+  const a = Buffer.from(left);
+  const b = Buffer.from(right);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+function authorizeWebCaller(request: NextRequest, cfg: NonNullable<ReturnType<typeof config>>) {
+  const gateway = request.headers.get("x-delivery-web-gateway")?.trim() ?? "";
+  const principal = request.headers.get("x-authenticated-principal")?.trim() ?? "";
+  if (!gateway || !secureEqual(gateway, cfg.gatewayToken)) {
+    return error(401, "WEB_CALLER_UNTRUSTED", "Direct Data delivery requires a trusted authenticated web gateway.");
+  }
+  if (!principal || principal !== cfg.principal) {
+    return error(403, "WEB_CALLER_PRINCIPAL_MISMATCH", "Authenticated web principal is not authorized for this Delivery credential.");
+  }
+  return null;
 }
 
 async function upstreamError(response: Response) {
@@ -48,6 +69,8 @@ async function upstreamError(response: Response) {
 export async function GET(request: NextRequest) {
   const cfg = config();
   if (!cfg) return error(503, "DIRECT_DATA_UI_NOT_CONFIGURED", "Direct Data delivery is not configured.");
+  const authError = authorizeWebCaller(request, cfg);
+  if (authError) return authError;
   const key = request.nextUrl.searchParams.get("idempotencyKey")?.trim() ?? "";
   const consumer = request.nextUrl.searchParams.get("consumer")?.trim() ?? "";
   const versionId = request.nextUrl.searchParams.get("versionId")?.trim() ?? "";
@@ -89,6 +112,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const cfg = config();
   if (!cfg) return error(503, "DIRECT_DATA_UI_NOT_CONFIGURED", "Direct Data delivery is not configured.");
+  const authError = authorizeWebCaller(request, cfg);
+  if (authError) return authError;
 
   let body: Record<string, unknown>;
   try {
@@ -109,30 +134,37 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const upstream = await fetch(
-      `${cfg.apiBaseUrl}/api/v1/workspaces/${cfg.workspaceId}/dataset-versions/${versionId}/deliveries`,
-      {
-        method: "POST",
-        cache: "no-store",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/octet-stream,application/json",
-          Authorization: `Bearer ${cfg.token}`,
-          "Idempotency-Key": idempotencyKey.trim(),
-          "X-Trace-ID": crypto.randomUUID(),
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60000);
+    let upstream: Response;
+    try {
+      upstream = await fetch(
+        `${cfg.apiBaseUrl}/api/v1/workspaces/${cfg.workspaceId}/dataset-versions/${versionId}/deliveries`,
+        {
+          method: "POST",
+          cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/octet-stream,application/json",
+            Authorization: `Bearer ${cfg.token}`,
+            "Idempotency-Key": idempotencyKey.trim(),
+            "X-Trace-ID": crypto.randomUUID(),
+          },
+          body: JSON.stringify({
+            profileId,
+            consumer: consumer.trim(),
+            purpose: purpose.trim(),
+            action: action.trim(),
+            scopeType: scopeType.trim(),
+            scopeRef: scopeRef.trim(),
+            ...(retryOfDeliveryOperationId ? { retryOfDeliveryOperationId } : {}),
+          }),
+          signal: controller.signal,
         },
-        body: JSON.stringify({
-          profileId,
-          consumer: consumer.trim(),
-          purpose: purpose.trim(),
-          action: action.trim(),
-          scopeType: scopeType.trim(),
-          scopeRef: scopeRef.trim(),
-          ...(retryOfDeliveryOperationId ? { retryOfDeliveryOperationId } : {}),
-        }),
-        signal: AbortSignal.timeout(60000),
-      },
-    );
+      );
+    } finally {
+      clearTimeout(timeout);
+    }
     if (!upstream.ok) return upstreamError(upstream);
     if (!upstream.body) return error(502, "DIRECT_DATA_EMPTY_PAYLOAD", "Core authorized the delivery but returned no payload.");
     const headers = new Headers({
