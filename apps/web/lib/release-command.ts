@@ -368,6 +368,7 @@ export async function executeCreateRelease(
         !sameId(existing.productId, productId) ||
         !sameId(existing.productVersionId, productVersionId) ||
         existing.releaseNo !== releaseNo ||
+        (typeof existing.releaseNotes === "string" ? existing.releaseNotes.trim() : "") !== releaseNotes ||
         JSON.stringify(bindingFingerprint(responseBindings(existing.datasets))) !== JSON.stringify(expectedFingerprint)
       ) {
         throw new ReleaseCommandError("相同 Release No 已被不同的冻结内容占用。", "RELEASE_NO_CONFLICT");
