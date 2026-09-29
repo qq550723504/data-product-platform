@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 const { default: releases } = await import(new URL("../.release-tests/release-command.js", import.meta.url).href);
-const { executePublish } = releases;
+const { executeCreateRelease, executePublish } = releases;
 
 const ids = {
   workspace: "11111111-1111-4111-8111-111111111111",
@@ -10,6 +10,9 @@ const ids = {
   release: "44444444-4444-4444-8444-444444444444",
   version: "55555555-5555-4555-8555-555555555555",
   foreign: "66666666-6666-4666-8666-666666666666",
+  dataset: "77777777-7777-4777-8777-777777777777",
+  datasetVersion: "88888888-8888-4888-8888-888888888888",
+  createdRelease: "99999999-9999-4999-8999-999999999999",
 };
 const config = { enabled: true, workspaceId: ids.workspace, actorId: ids.actor, apiBaseUrl: "http://core.invalid" };
 const product = { id: ids.product, workspaceId: ids.workspace, name: "Enterprise Activity" };
@@ -192,4 +195,142 @@ test("read failure cannot trigger a write", async () => {
   assert.equal(result.ok, false);
   assert.equal(result.refreshRequired, false);
   assert.equal(transport.calls.length, 1);
+});
+
+
+function createForm(overrides = {}) {
+  const data = new FormData();
+  const values = {
+    productId: ids.product,
+    productVersionId: ids.version,
+    releaseNo: "R2",
+    releaseNotes: "  release notes  ",
+    ...overrides,
+  };
+  for (const [key, value] of Object.entries(values)) data.set(key, value);
+  data.append("datasetVersionId", ids.datasetVersion);
+  data.append("datasetRole", "OUTPUT");
+  return data;
+}
+
+const currentProduct = {
+  id: ids.product,
+  workspaceId: ids.workspace,
+  currentVersionId: ids.version,
+};
+const currentProductVersion = {
+  id: ids.version,
+  productId: ids.product,
+  assets: [{ id: ids.foreign, assetType: "DATASET", datasetId: ids.dataset }],
+};
+const usableDatasetVersion = {
+  id: ids.datasetVersion,
+  datasetId: ids.dataset,
+  status: "READY",
+};
+const createdRelease = {
+  id: ids.createdRelease,
+  productId: ids.product,
+  productVersionId: ids.version,
+  releaseNo: "R2",
+  status: "DRAFT",
+  datasets: [{ datasetVersionId: ids.datasetVersion, role: "OUTPUT" }],
+};
+
+function createStub(responses) {
+  const calls = [];
+  const request = async (url, init) => {
+    calls.push({ url, init });
+    const response = responses.shift();
+    if (response instanceof Error) throw response;
+    if (response instanceof Response) return response;
+    assert.notEqual(response, undefined, "unexpected request / automatic retry");
+    return Response.json(response);
+  };
+  return { calls, request };
+}
+
+test("create release: preflights frozen facts and posts explicit bindings once", async () => {
+  const transport = createStub([
+    currentProduct,
+    currentProductVersion,
+    usableDatasetVersion,
+    { items: [], page: { total: 0, limit: 100, offset: 0 } },
+    createdRelease,
+  ]);
+  const result = await executeCreateRelease(createForm(), config, transport.request);
+  assert.equal(result.ok, true);
+  assert.equal(result.release.id, ids.createdRelease);
+  assert.equal(transport.calls.length, 5);
+  const write = transport.calls[4];
+  assert.equal(write.url, `http://core.invalid/api/v1/data-products/${ids.product}/releases`);
+  assert.equal(write.init.method, "POST");
+  assert.equal(write.init.headers["X-Actor-ID"], ids.actor);
+  assert.deepEqual(JSON.parse(write.init.body), {
+    productVersionId: ids.version,
+    releaseNo: "R2",
+    datasets: [{ datasetVersionId: ids.datasetVersion, role: "OUTPUT" }],
+    releaseNotes: "release notes",
+    metadata: {},
+  });
+});
+
+test("create release: same releaseNo with identical frozen facts recovers without POST", async () => {
+  const transport = createStub([
+    currentProduct,
+    currentProductVersion,
+    usableDatasetVersion,
+    { items: [{ id: ids.createdRelease, productId: ids.product, releaseNo: "R2" }], page: { total: 1 } },
+    createdRelease,
+  ]);
+  const result = await executeCreateRelease(createForm(), config, transport.request);
+  assert.equal(result.ok, true);
+  assert.match(result.message, /已存在/);
+  assert.equal(transport.calls.length, 5);
+  assert.ok(transport.calls.every((call) => call.init?.method !== "POST"));
+});
+
+test("create release: stale ProductVersion stops before binding reads", async () => {
+  const transport = createStub([{ ...currentProduct, currentVersionId: ids.foreign }]);
+  const result = await executeCreateRelease(createForm(), config, transport.request);
+  assert.equal(result.ok, false);
+  assert.equal(result.refreshRequired, true);
+  assert.equal(transport.calls.length, 1);
+});
+
+test("create release: DatasetVersion outside ProductVersion assets is blocked", async () => {
+  const transport = createStub([
+    currentProduct,
+    currentProductVersion,
+    { ...usableDatasetVersion, datasetId: ids.foreign },
+  ]);
+  const result = await executeCreateRelease(createForm(), config, transport.request);
+  assert.equal(result.ok, false);
+  assert.equal(transport.calls.length, 3);
+  assert.ok(transport.calls.every((call) => call.init?.method !== "POST"));
+});
+
+test("create release: exactly one PRIMARY or OUTPUT is required before any Core request", async () => {
+  const data = createForm();
+  data.append("datasetVersionId", ids.foreign);
+  data.append("datasetRole", "PRIMARY");
+  const transport = createStub([]);
+  const result = await executeCreateRelease(data, config, transport.request);
+  assert.equal(result.ok, false);
+  assert.equal(transport.calls.length, 0);
+});
+
+test("create release: timeout after POST is ambiguous and never retried", async () => {
+  const transport = createStub([
+    currentProduct,
+    currentProductVersion,
+    usableDatasetVersion,
+    { items: [], page: { total: 0 } },
+    new Error("timeout"),
+  ]);
+  const result = await executeCreateRelease(createForm(), config, transport.request);
+  assert.equal(result.ok, false);
+  assert.equal(result.refreshRequired, true);
+  assert.match(result.message, /相同 Release No/);
+  assert.equal(transport.calls.length, 5);
 });
