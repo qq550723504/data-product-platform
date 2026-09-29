@@ -12,7 +12,9 @@ import {
   shortId,
 } from "@/components/ui";
 import { DatasetVersionInvalidateForm } from "@/components/dataset-version-invalidate-form";
-import { configuredWorkspaceId, platform, type CertificationBlocker, type DatasetCertification } from "@/lib/platform";
+import { QualityCheckForm } from "@/components/quality-check-form";
+import { configuredWorkspaceId, platform, PlatformError, type CertificationBlocker, type DatasetCertification } from "@/lib/platform";
+import { isQualityAttemptId } from "@/lib/quality-command";
 
 type DatasetVersionView = "overview" | "quality" | "certification" | "eligibility" | "provenance";
 
@@ -30,6 +32,7 @@ type Query = {
   certificationOffset?: string;
   certificationAsOf?: string;
   certificationRevision?: string;
+  qualityAttemptId?: string;
 };
 
 function firstValue(values?: string[]): string {
@@ -177,6 +180,18 @@ export default async function DatasetVersionDetailPage({
       && requested.scopeType.trim() !== ""
       && (requested.scopeType.trim().toUpperCase() === "ALL_RESOURCE" || requested.scopeRef.trim() !== "");
     const eligibility = canCheck ? await platform.deliveryEligibility(versionId, requested) : null;
+    let qualityAttempt = null;
+    const qualityAttemptId = isQualityAttemptId(query.qualityAttemptId) ? query.qualityAttemptId : undefined;
+    if (qualityAttemptId) {
+      try {
+        qualityAttempt = await platform.qualityAttempt(qualityAttemptId);
+        if (qualityAttempt.datasetVersionId.toLowerCase() !== version.id.toLowerCase()) {
+          throw new Error("Quality attempt 不属于当前 DatasetVersion。");
+        }
+      } catch (error) {
+        if (!(error instanceof PlatformError && error.status === 404)) throw error;
+      }
+    }
     const latestAssessment = assessmentOffset === 0 ? quality.items[0] : latestQuality?.items[0];
     const latestReport = latestAssessment ? await platform.qualityReport(latestAssessment.id, findingsLimit, findingsOffset) : null;
     const evidenceCertification = eligibility?.certification.current
@@ -187,6 +202,8 @@ export default async function DatasetVersionDetailPage({
 
     const datasetActionsEnabled =
       process.env.POC_ENABLE_DATASET_ACTIONS === "true" && Boolean(process.env.POC_DATASET_ACTOR_ID?.trim());
+    const qualityActionsEnabled =
+      process.env.POC_ENABLE_QUALITY_ACTIONS === "true" && Boolean(process.env.POC_QUALITY_ACTOR_ID?.trim());
 
     return (
       <>
@@ -289,6 +306,14 @@ export default async function DatasetVersionDetailPage({
         {view === "quality" ? (
           <>
         <div className="panel-header"><h2>Quality Assessment</h2><span className="eyebrow">{quality.page.total} Assessments</span></div>
+        <QualityCheckForm
+          datasetId={dataset.id}
+          versionId={version.id}
+          versionStatus={version.status}
+          enabled={qualityActionsEnabled}
+          initialAttemptId={qualityAttemptId}
+          attempt={qualityAttempt}
+        />
         {!latestAssessment ? (
           <EmptyState title="尚未评测" description="该 DatasetVersion 还没有 QualityAssessment。" />
         ) : (
