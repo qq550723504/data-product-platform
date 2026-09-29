@@ -22,6 +22,8 @@ export const ids = {
   sourceResource: "23232323-2323-4323-8323-232323232323",
   retryParent: "41414141-4141-4141-8141-414141414141",
   retryChild: "43434343-4343-4343-8343-434343434343",
+  createdRelease: "45454545-4545-4545-8545-454545454545",
+  productAsset: "46464646-4646-4646-8646-464646464646",
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
@@ -82,7 +84,7 @@ async function bodyOf(req) {
 export function createFixtureServer() {
   let state;
   const reset = (scenario = "ready") => {
-    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, requests: [] };
+    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, requests: [] };
   };
   reset();
   return createServer(async (req, res) => {
@@ -118,6 +120,12 @@ export function createFixtureServer() {
         id: ids.release, productId: ids.product, productVersionId: ids.version, releaseNo: "R1",
         status: state.releaseStatus, createdAt: stamp, datasets: [], releaseNotes: "Synthetic browser fixture",
         ...(state.releaseStatus === "PUBLISHED" ? { releasedAt: stamp } : {}),
+      };
+      const createdRelease = {
+        id: ids.createdRelease, productId: ids.product, productVersionId: ids.version, releaseNo: "R2",
+        status: "DRAFT", createdAt: stamp,
+        datasets: [{ datasetVersionId: ids.goldVersion, role: "OUTPUT" }],
+        releaseNotes: "Browser-created release",
       };
       const goldDataset = {
         id: ids.goldDataset, workspaceId: ids.workspace, code: "GOLD_BROWSER_FIXTURE",
@@ -302,9 +310,11 @@ export function createFixtureServer() {
       }
       if (req.method === "GET") {
         if (url.pathname === `${workspace}/data-products`) return send(200, page([product]));
+        if (url.pathname === `/api/v1/data-products/${ids.product}`) return send(200, product);
         if (url.pathname === `${workspace}/product-releases`) {
           const status = url.searchParams.get("status") ?? "";
-          const items = !status || state.releaseStatus === status ? [release] : [];
+          const available = [release, ...(state.releaseCreated ? [createdRelease] : [])];
+          const items = status ? available.filter((item) => item.status === status) : available;
           return send(200, page(items));
         }
         if (url.pathname === `${workspace}/attention/releases`) {
@@ -320,7 +330,8 @@ export function createFixtureServer() {
           });
         }
         if (url.pathname === `${workspace}/data-products/${ids.product}/releases`) {
-          return send(200, page(state.scenario === "paginated-releases" ? fixtureReleases(30) : [release]));
+          if (state.scenario === "paginated-releases") return send(200, page(fixtureReleases(30)));
+          return send(200, page([release, ...(state.releaseCreated ? [createdRelease] : [])]));
         }
         if (state.scenario === "paginated-releases") {
           const releaseMatch = url.pathname.match(/^\/api\/v1\/product-releases\/([0-9a-f-]+)$/);
@@ -336,7 +347,14 @@ export function createFixtureServer() {
         }
         if (url.pathname === releasePath) return send(200, release);
         if (url.pathname === `${releasePath}/readiness`) return send(200, readiness(state.scenario));
-        if (url.pathname === `/api/v1/product-versions/${ids.version}`) return send(200, { id: ids.version, productId: ids.product, version: "1.0.0", definition: {}, assets: [] });
+        if (url.pathname === `/api/v1/product-releases/${ids.createdRelease}` && state.releaseCreated) return send(200, createdRelease);
+        if (url.pathname === `/api/v1/product-releases/${ids.createdRelease}/readiness` && state.releaseCreated) {
+          return send(200, { releaseId: ids.createdRelease, overall: "NOT_READY", checks: { ...pass, rights: "PENDING", quality: "PENDING", compliance: "PENDING", contract: "PENDING", evidence: "PENDING" }, blockers: ["rights", "quality", "compliance", "contract", "evidence"], details: {} });
+        }
+        if (url.pathname === `/api/v1/product-versions/${ids.version}`) return send(200, {
+          id: ids.version, productId: ids.product, version: "1.0.0", definition: {},
+          assets: [{ id: ids.productAsset, assetType: "DATASET", name: "Gold output", datasetId: ids.goldDataset, externalRef: "", deliveryConfig: {}, schemaSnapshot: {} }],
+        });
         if (url.pathname === `${workspace}/entity-match-reviews`) return send(200, page(state.candidateStatus === "PENDING" ? [candidate] : []));
         if (url.pathname === `/api/v1/entity-match-jobs/${ids.job}`) return send(200, job);
         if (url.pathname === `/api/v1/entity-match-reviews/${ids.candidate}`) return send(200, candidate);
@@ -448,6 +466,16 @@ export function createFixtureServer() {
           if (state.scenario === "review-conflict" || state.candidateStatus !== "PENDING") return send(409, { error: { code: "REVIEW_CONFLICT" } });
           state.candidateStatus = url.pathname.endsWith("/confirm") ? "CONFIRMED" : "REJECTED";
           return send(200, { ...job, status: "SUCCEEDED" });
+        }
+        if (url.pathname === `/api/v1/data-products/${ids.product}/releases`) {
+          if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
+          if (body.productVersionId !== ids.version || body.releaseNo !== "R2") return send(400, { error: { code: "INVALID_RELEASE_FIXTURE" } });
+          if (!Array.isArray(body.datasets) || body.datasets.length !== 1 || body.datasets[0].datasetVersionId !== ids.goldVersion || body.datasets[0].role !== "OUTPUT") {
+            return send(400, { error: { code: "INVALID_RELEASE_DATASETS" } });
+          }
+          if (state.releaseCreated) return send(400, { error: { code: "PRODUCT_RELEASE_CREATE_FAILED" } });
+          state.releaseCreated = true;
+          return send(201, createdRelease);
         }
         if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/invalidate`) {
           if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });

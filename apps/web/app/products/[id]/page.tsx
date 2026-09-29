@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { BackLink, Badge, DefinitionList, EmptyState, LoadError, PageHeader, Pagination, SetupRequired, formatDate, shortId } from "@/components/ui";
+import { ProductReleaseCreateForm, type ReleaseDatasetCandidate } from "@/components/product-release-create-form";
 import { ProductReleasePanel, type ReleasePanelItem } from "@/components/product-release-panel";
-import { LIST_PAGE_SIZE, parsePageOffset } from "@/lib/pagination";
+import { collectAllPages, LIST_PAGE_SIZE, parsePageOffset } from "@/lib/pagination";
 import { configuredWorkspaceId, platform, type DataProduct } from "@/lib/platform";
 import { findAcrossPages } from "@/lib/scoped-lookup";
 
@@ -56,6 +57,39 @@ export default async function ProductDetailPage({
     }));
 
     const actionsEnabled = process.env.POC_ENABLE_RELEASE_ACTIONS === "true" && Boolean(process.env.POC_RELEASE_ACTOR_ID?.trim());
+    const releaseCandidates: ReleaseDatasetCandidate[] = [];
+    if (actionsEnabled && version) {
+      const datasetAssets = version.assets.filter((asset) => asset.assetType === "DATASET" && asset.datasetId);
+      const candidateCache = new Map<string, Awaited<ReturnType<typeof platform.datasetVersions>>["items"]>();
+      const datasetCache = new Map<string, Awaited<ReturnType<typeof platform.dataset>>>();
+      for (const asset of datasetAssets) {
+        const datasetId = asset.datasetId as string;
+        let versions = candidateCache.get(datasetId);
+        if (!versions) {
+          versions = await collectAllPages((limit, candidateOffset) => platform.datasetVersions(datasetId, limit, candidateOffset));
+          candidateCache.set(datasetId, versions);
+        }
+        let dataset = datasetCache.get(datasetId);
+        if (!dataset) {
+          dataset = await platform.dataset(datasetId);
+          datasetCache.set(datasetId, dataset);
+        }
+        releaseCandidates.push({
+          assetId: asset.id,
+          assetName: asset.name,
+          datasetId,
+          datasetName: dataset.name,
+          datasetCode: dataset.code,
+          versions: versions
+            .filter((candidate) => candidate.status === "READY" || candidate.status === "SUPERSEDED")
+            .map((candidate) => ({
+              id: candidate.id,
+              versionNo: candidate.versionNo,
+              status: candidate.status,
+            })),
+        });
+      }
+    }
 
     return (
       <>
@@ -121,6 +155,19 @@ export default async function ProductDetailPage({
         </section>
 
         <section id="releases">
+          {version && actionsEnabled ? (
+            <ProductReleaseCreateForm
+              productId={product.id}
+              productVersionId={version.id}
+              candidates={releaseCandidates}
+              enabled
+            />
+          ) : version ? (
+            <div className="callout" style={{ marginBottom: 18 }}>
+              <strong>Release 创建写入未启用</strong>
+              <p>当前运行时保持只读，因此不会加载 DatasetVersion 候选历史。受信任 POC 可由服务端启用 Release actions。</p>
+            </div>
+          ) : null}
           <div className="panel-header">
             <div><h2>ProductRelease 与 Readiness</h2><p>逐项显示 production、dataset、rights、quality、compliance、contract、evidence、delivery 八个 Gate。</p></div>
             <span className="eyebrow">{releasePage.page.total} Releases</span>

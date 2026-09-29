@@ -51,6 +51,30 @@ test("attention center lists current actionable work", async ({ page }) => {
   );
 });
 
+test("Product detail creates a DRAFT Release from explicit DatasetVersion bindings", async ({ page, request }) => {
+  await page.goto(productPath);
+  const form = page.getByRole("form", { name: "创建 ProductRelease" });
+  await form.getByLabel("Gold output DatasetVersion").selectOption(ids.goldVersion);
+  await form.getByLabel("Gold output Role").selectOption("OUTPUT");
+  await form.getByRole("textbox", { name: "Release No", exact: true }).fill("R2");
+  await form.getByRole("textbox", { name: "Release Notes", exact: true }).fill("Browser-created release");
+  await form.getByRole("button", { name: "创建 Release Draft", exact: true }).click();
+
+  await expect(form.getByRole("status")).toContainText("Release R2 已创建为 DRAFT");
+
+  const commands = await writes(request);
+  const createCalls = commands.filter((call) => call.path === `/api/v1/data-products/${ids.product}/releases`);
+  expect(createCalls).toHaveLength(1);
+  expect(createCalls[0].actor).toBe(ids.actor);
+  expect(createCalls[0].body).toEqual({
+    productVersionId: ids.version,
+    releaseNo: "R2",
+    datasets: [{ datasetVersionId: ids.goldVersion, role: "OUTPUT" }],
+    releaseNotes: "Browser-created release",
+    metadata: {},
+  });
+});
+
 test("readonly runtime never enables review or publishing", async ({ page, request }) => {
   await page.goto("http://127.0.0.1:3101/reviews");
   await expect(page.getByText("当前为只读审核队列")).toBeVisible();
@@ -58,6 +82,12 @@ test("readonly runtime never enables review or publishing", async ({ page, reque
   await expect(page.getByRole("button", { name: "确认匹配" })).toHaveCount(0);
   await page.goto(`http://127.0.0.1:3101${productPath}`);
   await expect(page.getByRole("button", { name: "发布 Release", exact: true })).toBeDisabled();
+  await expect(page.getByRole("form", { name: "创建 ProductRelease" })).toHaveCount(0);
+  await expect(page.getByText("Release 创建写入未启用", { exact: true })).toBeVisible();
+
+  const snapshot = await state(request);
+  const gets = snapshot.requests.filter((call) => call.method === "GET").map((call) => call.path);
+  expect(gets).not.toContain(`/api/v1/workspaces/${ids.workspace}/datasets/${ids.goldDataset}/versions`);
   expect(await writes(request)).toHaveLength(0);
 });
 

@@ -197,11 +197,20 @@ func (r *PostgresRepository) listAssets(ctx context.Context, versionID uuid.UUID
 
 func (r *PostgresRepository) ValidateReleaseReferences(ctx context.Context, tx pgx.Tx, release domain.ProductRelease) error {
 	var productWorkspaceID uuid.UUID
-	if err := tx.QueryRow(ctx, `SELECT workspace_id FROM data_product WHERE id=$1 AND deleted_at IS NULL`, release.ProductID).Scan(&productWorkspaceID); err != nil {
+	var currentVersionID *uuid.UUID
+	if err := tx.QueryRow(ctx, `
+		SELECT workspace_id, current_version_id
+		FROM data_product
+		WHERE id=$1 AND deleted_at IS NULL
+		FOR UPDATE
+	`, release.ProductID).Scan(&productWorkspaceID, &currentVersionID); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return fmt.Errorf("product: %w", ErrNotFound)
 		}
 		return fmt.Errorf("validate product: %w", err)
+	}
+	if currentVersionID == nil || *currentVersionID != release.ProductVersionID {
+		return fmt.Errorf("product version is not current for product")
 	}
 
 	var versionProductID uuid.UUID
