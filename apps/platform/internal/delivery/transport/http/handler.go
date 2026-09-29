@@ -14,8 +14,8 @@ import (
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	deliveryapp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application"
 	deliverydomain "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/domain"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 	deliveryinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
 	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
 
