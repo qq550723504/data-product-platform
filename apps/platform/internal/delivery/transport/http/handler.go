@@ -114,6 +114,7 @@ func (h *Handler) recoverDirectData(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"operationId":                operation.ID,
+		"profileId":                  result.CertificationProfileID,
 		"workspaceId":                operation.WorkspaceID,
 		"datasetVersionId":           operation.DatasetVersionID,
 		"retryOfDeliveryOperationId": operation.RetryOfDeliveryOperationID,
