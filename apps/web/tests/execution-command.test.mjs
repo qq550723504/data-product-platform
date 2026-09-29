@@ -70,6 +70,27 @@ test("non-retryable source never posts", async () => {
   assert.equal(posts, 0);
 });
 
+test("idempotent recovery accepts the same child after lifecycle advances", async () => {
+  let call = 0;
+  const request = async () => {
+    call++;
+    if (call === 1) return Response.json({
+      id: ids.source, workspaceId: ids.workspace, workflowVersionId: ids.workflow,
+      outputDatasetId: ids.dataset, targetPeriod: "2026-09", status: "FAILED", attempt: 2, engineType: "NATIVE",
+      inputs: [{ name: "source", datasetVersionId: ids.dataset }],
+    });
+    return Response.json({
+      id: ids.child, workspaceId: ids.workspace, workflowVersionId: ids.workflow,
+      outputDatasetId: ids.dataset, targetPeriod: "2026-09", status: "RUNNING", attempt: 3, engineType: "NATIVE",
+      retryOfExecutionId: ids.source, inputs: [{ name: "source", datasetVersionId: ids.dataset }],
+    }, { status: 202 });
+  };
+  const result = await executeRetry(form(), config(), "retry-key", request);
+  assert.equal(result.ok, true);
+  assert.equal(result.execution?.id, ids.child);
+  assert.equal(result.execution?.status, "RUNNING");
+});
+
 test("mismatched child fails closed after write and requires refresh", async () => {
   let call = 0;
   const request = async () => {
