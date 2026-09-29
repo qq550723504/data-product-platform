@@ -15,6 +15,7 @@ export function ComplianceCheckForm({
   versionStatus,
   enabled,
   initialAttemptId,
+  initialPolicyRef,
   result,
 }: {
   datasetId: string;
@@ -22,10 +23,11 @@ export function ComplianceCheckForm({
   versionStatus: string;
   enabled: boolean;
   initialAttemptId?: string;
+  initialPolicyRef?: string;
   result?: ComplianceResult | null;
 }) {
   const [attemptId, setAttemptId] = useState(initialAttemptId ?? "");
-  const [policyRef, setPolicyRef] = useState(result?.policyRef ?? "");
+  const [policyRef, setPolicyRef] = useState(result?.policyRef ?? initialPolicyRef ?? "");
   const [state, action, pending] = useActionState<ComplianceActionState, FormData>(
     runComplianceCheck,
     { ok: false, message: "" },
@@ -40,9 +42,11 @@ export function ComplianceCheckForm({
     const url = new URL(window.location.href);
     url.searchParams.set("view", "compliance");
     url.searchParams.set("complianceAttemptId", state.attemptId);
+    const effectivePolicyRef = policyRef.trim() || "park/compliance/enterprise-activity-compliance-v1.yaml";
+    url.searchParams.set("compliancePolicyRef", effectivePolicyRef);
     window.history.replaceState(window.history.state, "", url.pathname + "?" + url.searchParams.toString());
     if (state.attemptId !== attemptId) setAttemptId(state.attemptId);
-  }, [attemptId, state.attemptId]);
+  }, [attemptId, policyRef, state.attemptId]);
 
   const usable = versionStatus === "READY" || versionStatus === "SUPERSEDED";
   const terminal = Boolean(result);
@@ -53,6 +57,8 @@ export function ComplianceCheckForm({
     const url = new URL(window.location.href);
     url.searchParams.set("view", "compliance");
     url.searchParams.set("complianceAttemptId", attemptId);
+    const effectivePolicyRef = policyRef.trim() || "park/compliance/enterprise-activity-compliance-v1.yaml";
+    url.searchParams.set("compliancePolicyRef", effectivePolicyRef);
     window.history.replaceState(window.history.state, "", url.pathname + "?" + url.searchParams.toString());
   };
 
@@ -60,6 +66,7 @@ export function ComplianceCheckForm({
     const url = new URL(window.location.href);
     url.searchParams.set("view", "compliance");
     url.searchParams.delete("complianceAttemptId");
+    url.searchParams.delete("compliancePolicyRef");
     window.location.assign(url.pathname + "?" + url.searchParams.toString());
   };
 
