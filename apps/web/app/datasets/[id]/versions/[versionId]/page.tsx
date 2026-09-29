@@ -307,6 +307,7 @@ export default async function DatasetVersionDetailPage({
           <>
         <div className="panel-header"><h2>Quality Assessment</h2><span className="eyebrow">{quality.page.total} Assessments</span></div>
         <QualityCheckForm
+          key={qualityAttemptId ?? "new"}
           datasetId={dataset.id}
           versionId={version.id}
           versionStatus={version.status}
