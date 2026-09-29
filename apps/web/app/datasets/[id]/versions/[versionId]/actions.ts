@@ -7,6 +7,7 @@ import {
   type DatasetVersionActionState,
 } from "@/lib/dataset-version-command";
 import { executeQualityCheck, type QualityActionState } from "@/lib/quality-command";
+import { executeComplianceCheck, type ComplianceActionState } from "@/lib/compliance-command";
 
 export async function invalidateDatasetVersion(
   _previous: DatasetVersionActionState,
@@ -41,6 +42,30 @@ export async function runQualityCheck(
     enabled: process.env.POC_ENABLE_QUALITY_ACTIONS === "true",
     workspaceId: configuredWorkspaceId(),
     actorId: process.env.POC_QUALITY_ACTOR_ID?.trim(),
+    apiBaseUrl: process.env.PLATFORM_API_BASE_URL ?? "http://localhost:8080",
+  });
+
+  const datasetId = form.get("datasetId");
+  const versionId = form.get("versionId");
+  if ((result.ok || result.refreshRequired) && typeof datasetId === "string" && typeof versionId === "string") {
+    revalidatePath(`/datasets/${datasetId}/versions/${versionId}`);
+    revalidatePath(`/datasets/${datasetId}`);
+    revalidatePath("/datasets");
+    revalidatePath("/products");
+    revalidatePath("/");
+  }
+  return result;
+}
+
+
+export async function runComplianceCheck(
+  _previous: ComplianceActionState,
+  form: FormData,
+): Promise<ComplianceActionState> {
+  const result = await executeComplianceCheck(form, {
+    enabled: process.env.POC_ENABLE_COMPLIANCE_ACTIONS === "true",
+    workspaceId: configuredWorkspaceId(),
+    actorId: process.env.POC_COMPLIANCE_ACTOR_ID?.trim(),
     apiBaseUrl: process.env.PLATFORM_API_BASE_URL ?? "http://localhost:8080",
   });
 
