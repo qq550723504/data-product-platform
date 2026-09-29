@@ -117,9 +117,15 @@ export async function POST(request: NextRequest) {
 
   let body: Record<string, unknown>;
   try {
-    body = await request.json() as Record<string, unknown>;
+    const contentType = request.headers.get("content-type") ?? "";
+    if (contentType.includes("application/json")) {
+      body = await request.json() as Record<string, unknown>;
+    } else {
+      const form = await request.formData();
+      body = Object.fromEntries(form.entries());
+    }
   } catch {
-    return error(400, "INVALID_DELIVERY_REQUEST", "Delivery request must be valid JSON.");
+    return error(400, "INVALID_DELIVERY_REQUEST", "Delivery request must contain a valid request body.");
   }
 
   const { versionId, profileId, consumer, purpose, action, scopeType, scopeRef, idempotencyKey, retryOfDeliveryOperationId } = body;
@@ -128,6 +134,9 @@ export async function POST(request: NextRequest) {
     return error(400, "INVALID_DELIVERY_REQUEST", "Direct Data delivery context is incomplete or invalid.");
   }
   if (consumer.trim() !== cfg.consumer) return error(403, "CONSUMER_PRINCIPAL_MISMATCH", "Requested consumer does not match the trusted server binding.");
+  if (scopeType.trim().toUpperCase() !== "ALL_RESOURCE") {
+    return error(400, "DIRECT_DATA_SCOPE_UNSUPPORTED", "Direct Data currently supports only ALL_RESOURCE scope.");
+  }
   if (typeof scopeRef !== "string" || scopeRef.length > 1024) return error(400, "INVALID_DELIVERY_REQUEST", "scopeRef is invalid.");
   if (retryOfDeliveryOperationId !== undefined && retryOfDeliveryOperationId !== "" && !safeUUID(retryOfDeliveryOperationId)) {
     return error(400, "INVALID_DELIVERY_REQUEST", "retryOfDeliveryOperationId must be a UUID.");
