@@ -115,7 +115,7 @@ export function createFixtureServer() {
         return send(404, { error: "unknown control route" });
       }
       const body = req.method === "POST" ? await bodyOf(req) : undefined;
-      state.requests.push({ method: req.method, path: url.pathname, body, actor: req.headers["x-actor-id"], authorization: req.headers["authorization"], idempotencyKey: req.headers["idempotency-key"] });
+      state.requests.push({ method: req.method, path: url.pathname, body, actor: req.headers["x-actor-id"], authorization: req.headers["authorization"], idempotencyKey: req.headers["idempotency-key"], gateway: req.headers["x-delivery-web-gateway"], authenticatedPrincipal: req.headers["x-authenticated-principal"] });
       const workspace = `/api/v1/workspaces/${ids.workspace}`;
       const releasePath = `/api/v1/product-releases/${ids.release}`;
       const product = {
