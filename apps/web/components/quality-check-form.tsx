@@ -38,10 +38,6 @@ export function QualityCheckForm({
     if (!attemptId) setAttemptId(newAttemptId());
   }, [attemptId]);
 
-  useEffect(() => {
-    if (state.ok) router.refresh();
-  }, [router, state.ok]);
-
   const usable = versionStatus === "READY" || versionStatus === "SUPERSEDED";
   const terminal = attempt?.outcome === "SUCCEEDED" || attempt?.outcome === "FAILED";
   const active = attempt?.outcome === "IN_PROGRESS" && !attempt.leaseExpired;
@@ -136,6 +132,7 @@ export function QualityCheckForm({
       {!enabled ? <small style={{ display: "block", marginTop: 8 }}>Quality 写入默认关闭；受信任 POC 可由服务端启用。</small> : null}
       {enabled && !usable ? <small style={{ display: "block", marginTop: 8 }}>Core 只允许 READY / SUPERSEDED DatasetVersion 运行 Quality Check。</small> : null}
       {state.message ? <p role={state.ok ? "status" : "alert"}>{state.message}</p> : null}
+      {state.ok ? <button type="button" onClick={() => window.location.reload()}>刷新评测结果</button> : null}
       {state.refreshRequired ? <button type="button" onClick={() => window.location.reload()}>刷新并核对 attempt 状态</button> : null}
     </form>
   );
