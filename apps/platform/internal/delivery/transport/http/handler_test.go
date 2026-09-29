@@ -226,7 +226,7 @@ func TestDeliveryRecoveryReturnsTrustedOperation(t *testing.T) {
 	if response.Code != http.StatusOK {
 		t.Fatalf("response = %d %s", response.Code, response.Body.String())
 	}
-	for _, expected := range []string{operationID.String(), profileID.String(), versionID.String(), ""status":"ISSUED"", ""consumer":"consumer-a""} {
+	for _, expected := range []string{operationID.String(), profileID.String(), versionID.String(), "\"status\":\"ISSUED\"", "\"consumer\":\"consumer-a\""} {
 		if !strings.Contains(response.Body.String(), expected) {
 			t.Fatalf("response = %s, missing %s", response.Body.String(), expected)
 		}
