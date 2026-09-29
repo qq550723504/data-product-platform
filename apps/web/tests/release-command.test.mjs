@@ -290,6 +290,21 @@ test("create release: same releaseNo with identical frozen facts recovers withou
   assert.ok(transport.calls.every((call) => call.init?.method !== "POST"));
 });
 
+test("create release: same releaseNo with different notes is a frozen-content conflict", async () => {
+  const transport = createStub([
+    currentProduct,
+    currentProductVersion,
+    usableDatasetVersion,
+    { items: [{ id: ids.createdRelease, productId: ids.product, releaseNo: "R2" }], page: { total: 1 } },
+    { ...createdRelease, releaseNotes: "old notes" },
+  ]);
+  const result = await executeCreateRelease(createForm(), config, transport.request);
+  assert.equal(result.ok, false);
+  assert.match(result.message, /相同 Release No/);
+  assert.equal(transport.calls.length, 5);
+  assert.ok(transport.calls.every((call) => call.init?.method !== "POST"));
+});
+
 test("create release: stale ProductVersion stops before binding reads", async () => {
   const transport = createStub([{ ...currentProduct, currentVersionId: ids.foreign }]);
   const result = await executeCreateRelease(createForm(), config, transport.request);
