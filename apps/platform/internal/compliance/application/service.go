@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -54,6 +55,7 @@ type RunCommand struct {
 }
 
 func (s *Service) Run(ctx context.Context, cmd RunCommand) (compliancedomain.Result, error) {
+	cmd.PolicyRef = strings.TrimSpace(cmd.PolicyRef)
 	if cmd.AssessmentAttemptID == uuid.Nil {
 		return compliancedomain.Result{}, fmt.Errorf("assessment attempt id is required")
 	}
