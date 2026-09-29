@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 
@@ -44,7 +45,8 @@ func NewService(industryPackRoot string, tx *transaction.Manager, datasetRepo *d
 }
 
 type RunCommand struct {
-	WorkspaceID      uuid.UUID
+	AssessmentAttemptID uuid.UUID
+	WorkspaceID          uuid.UUID
 	DatasetVersionID uuid.UUID
 	PolicyRef        string
 	ActorID          *uuid.UUID
@@ -52,6 +54,17 @@ type RunCommand struct {
 }
 
 func (s *Service) Run(ctx context.Context, cmd RunCommand) (compliancedomain.Result, error) {
+	if cmd.AssessmentAttemptID == uuid.Nil {
+		return compliancedomain.Result{}, fmt.Errorf("assessment attempt id is required")
+	}
+	if existing, err := s.repo.GetResultByAssessmentAttempt(ctx, cmd.AssessmentAttemptID); err == nil {
+		if existing.WorkspaceID != cmd.WorkspaceID || existing.DatasetVersionID != cmd.DatasetVersionID || existing.PolicyRef != cmd.PolicyRef {
+			return compliancedomain.Result{}, complianceinfra.ErrAssessmentAttemptConflict
+		}
+		return existing, nil
+	} else if !errors.Is(err, complianceinfra.ErrNotFound) {
+		return compliancedomain.Result{}, err
+	}
 	version, err := s.datasetRepo.GetVersion(ctx, cmd.DatasetVersionID)
 	if err != nil {
 		return compliancedomain.Result{}, err
@@ -88,7 +101,7 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (compliancedomain.Res
 		return compliancedomain.Result{}, err
 	}
 	findings, summary := native.Evaluate(policy, table)
-	result := compliancedomain.NewResult(cmd.WorkspaceID, version.ID, cmd.PolicyRef, policy.Metadata.Version, summary, findings, cmd.ActorID)
+	result := compliancedomain.NewResult(cmd.AssessmentAttemptID, cmd.WorkspaceID, version.ID, cmd.PolicyRef, policy.Metadata.Version, summary, findings, cmd.ActorID)
 
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		if err := s.repo.InsertResult(ctx, tx, result); err != nil {
@@ -148,6 +161,16 @@ func (s *Service) Run(ctx context.Context, cmd RunCommand) (compliancedomain.Res
 			TraceID: cmd.TraceID,
 		})
 	})
+	if errors.Is(err, complianceinfra.ErrAssessmentAttemptConflict) {
+		existing, readErr := s.repo.GetResultByAssessmentAttempt(ctx, cmd.AssessmentAttemptID)
+		if readErr != nil {
+			return compliancedomain.Result{}, readErr
+		}
+		if existing.WorkspaceID != cmd.WorkspaceID || existing.DatasetVersionID != cmd.DatasetVersionID || existing.PolicyRef != cmd.PolicyRef {
+			return compliancedomain.Result{}, complianceinfra.ErrAssessmentAttemptConflict
+		}
+		return existing, nil
+	}
 	return result, err
 }
 
