@@ -287,6 +287,31 @@ test("Compliance Check preserves attempt identity across refresh and does not du
   expect(complianceCalls).toHaveLength(1);
 });
 
+test("Compliance Check preserves a custom policy with the recoverable attempt", async ({ page, request }) => {
+  await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=compliance`);
+
+  const form = page.getByRole("form", { name: "运行 Compliance Check" });
+  const customPolicy = "custom/compliance/customer-v2.yaml";
+  await form.getByLabel("Compliance Policy").fill(customPolicy);
+  await form.getByRole("button", { name: "运行 Compliance Check", exact: true }).click();
+
+  await expect(page).toHaveURL(/complianceAttemptId=[0-9a-f-]{36}/);
+  await expect(page).toHaveURL(new RegExp(`compliancePolicyRef=${encodeURIComponent(customPolicy)}`));
+
+  const attemptId = new URL(page.url()).searchParams.get("complianceAttemptId");
+  expect(attemptId).toBeTruthy();
+
+  await page.reload();
+  const recoveredForm = page.getByRole("form", { name: "运行 Compliance Check" });
+  await expect(recoveredForm.getByLabel("Compliance Policy")).toHaveValue(customPolicy);
+  await expect(recoveredForm.getByTestId("compliance-attempt-status")).toContainText("SUCCEEDED");
+
+  const commands = await writes(request);
+  const complianceCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/compliance-checks`);
+  expect(complianceCalls).toHaveLength(1);
+  expect(complianceCalls[0].body.policyRef).toBe(customPolicy);
+});
+
 test("readonly runtime never enables Compliance Check", async ({ page, request }) => {
   await page.goto(`http://127.0.0.1:3101/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=compliance`);
   const form = page.getByRole("form", { name: "运行 Compliance Check" });
