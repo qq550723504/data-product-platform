@@ -201,6 +201,59 @@ test("Evidence Center uses workspace release read model without per-product rele
   expect(gets).not.toContain(`/api/v1/workspaces/${ids.workspace}/data-products/${ids.product}/releases`);
 });
 
+test("Quality Check preserves attempt identity across refresh and does not duplicate execution", async ({ page, request }) => {
+  await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=quality`);
+
+  const form = page.getByRole("form", { name: "运行 Quality Check" });
+  const button = form.getByRole("button", { name: "运行 Quality Check", exact: true });
+  await expect(button).toBeEnabled();
+  await button.click();
+
+  await expect(page).toHaveURL(/qualityAttemptId=[0-9a-f-]{36}/);
+  const attemptId = new URL(page.url()).searchParams.get("qualityAttemptId");
+  expect(attemptId).toBeTruthy();
+  await expect(form.getByRole("status").last()).toContainText("Quality Check 已完成");
+
+  let commands = await writes(request);
+  let qualityCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`);
+  expect(qualityCalls).toHaveLength(1);
+  expect(qualityCalls[0].actor).toBe(ids.actor);
+  expect(qualityCalls[0].body.assessmentAttemptId).toBe(attemptId);
+  expect(qualityCalls[0].body.ruleSetRef).toBe("park/quality/enterprise-activity-quality-v1.yaml");
+
+  await page.reload();
+  await expect(page).toHaveURL(new RegExp(`qualityAttemptId=${attemptId}`));
+  const afterReload = await state(request);
+  expect(afterReload.requests.some((call) => call.method === "GET" && call.path === `/api/v1/quality-assessment-attempts/${attemptId}`)).toBe(true);
+  const recoveredForm = page.getByRole("form", { name: "运行 Quality Check" });
+  await expect(recoveredForm.getByTestId("quality-attempt-status")).toContainText("SUCCEEDED");
+  await expect(recoveredForm.getByLabel("Quality Rule Set")).toHaveValue("park/quality/enterprise-activity-quality-v1.yaml");
+  await expect(recoveredForm.getByLabel("Quality Engine")).toHaveValue("native");
+  await expect(page.getByText(ids.qualityAssessment, { exact: true })).toBeVisible();
+
+  commands = await writes(request);
+  qualityCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`);
+  expect(qualityCalls).toHaveLength(1);
+
+  await recoveredForm.getByRole("button", { name: "开始新的 Quality Check", exact: true }).click();
+  await expect(page).not.toHaveURL(/qualityAttemptId=/);
+  await expect(page.getByRole("form", { name: "运行 Quality Check" }).getByRole("button", { name: "运行 Quality Check", exact: true })).toBeEnabled();
+
+  commands = await writes(request);
+  qualityCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`);
+  expect(qualityCalls).toHaveLength(1);
+});
+
+test("readonly runtime never enables Quality Check", async ({ page, request }) => {
+  await page.goto(`http://127.0.0.1:3101/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=quality`);
+  const form = page.getByRole("form", { name: "运行 Quality Check" });
+  await expect(form.getByRole("button", { name: "运行 Quality Check", exact: true })).toBeDisabled();
+  await expect(form.getByText("Quality 写入默认关闭", { exact: false })).toBeVisible();
+
+  const commands = await writes(request);
+  expect(commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`)).toHaveLength(0);
+});
+
 test("READY DatasetVersion can be invalidated through the Core command", async ({ page, request }) => {
   await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
 
