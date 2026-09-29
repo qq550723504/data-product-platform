@@ -66,6 +66,11 @@ func TestValidateReleaseReferencesRejectsCrossWorkspaceDatasetVersion(t *testing
 	if err := versionTx.Commit(ctx); err != nil {
 		t.Fatalf("commit product version fixture: %v", err)
 	}
+	if _, err := pool.Exec(ctx, `
+		UPDATE data_product SET current_version_id=$2 WHERE id=$1
+	`, productID, productVersionID); err != nil {
+		t.Fatalf("set current product version: %v", err)
+	}
 
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO dataset (id, workspace_id, code, name, dataset_type)
