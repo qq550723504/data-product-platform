@@ -103,6 +103,29 @@ func NewDirectDataService(tx *transaction.Manager, repo *infrastructure.Postgres
 // transaction. It never reads object bytes. Callers may open the returned
 // DatasetVersion.StorageURI only after this method returns PayloadReady=true,
 // which means the ISSUED transaction has already committed.
+type DirectDataRecoveryResult struct {
+	Operation domain.Operation
+}
+
+func (s *DirectDataService) RecoverDirectData(
+	ctx context.Context,
+	workspaceID uuid.UUID,
+	idempotencyKey string,
+) (DirectDataRecoveryResult, error) {
+	if s == nil || s.repo == nil {
+		return DirectDataRecoveryResult{}, fmt.Errorf("direct data delivery service is not configured")
+	}
+	idempotencyKey = strings.TrimSpace(idempotencyKey)
+	if workspaceID == uuid.Nil || idempotencyKey == "" || len(idempotencyKey) > 255 {
+		return DirectDataRecoveryResult{}, domain.ErrInvalidOperation
+	}
+	operation, err := s.repo.GetOperationByIdempotency(ctx, workspaceID, directDataCommandType, idempotencyKey)
+	if err != nil {
+		return DirectDataRecoveryResult{}, err
+	}
+	return DirectDataRecoveryResult{Operation: operation}, nil
+}
+
 func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) (DirectDataResult, error) {
 	if s == nil || s.tx == nil || s.repo == nil || s.gate == nil || s.datasets == nil || s.now == nil {
 		return DirectDataResult{}, fmt.Errorf("direct data delivery service is not configured")
