@@ -143,6 +143,21 @@ test("readonly runtime does not enable Execution retry", async ({ page, request 
   expect(await writes(request)).toHaveLength(0);
 });
 
+test("Evidence Center uses workspace release read model without per-product release fan-out", async ({ page, request }) => {
+  await page.goto("/evidence");
+  await expect(page.getByRole("heading", { name: "证据中心", exact: true })).toBeVisible();
+  await expect(page.getByText("浏览器验收产品", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "查看 Trace →", exact: true })).toHaveAttribute(
+    "href",
+    `/products/${ids.product}/releases/${ids.release}`,
+  );
+
+  const snapshot = await state(request);
+  const gets = snapshot.requests.filter((call) => call.method === "GET").map((call) => call.path);
+  expect(gets).toContain(`/api/v1/workspaces/${ids.workspace}/product-releases`);
+  expect(gets).not.toContain(`/api/v1/workspaces/${ids.workspace}/data-products/${ids.product}/releases`);
+});
+
 test("Gold DatasetVersion explains frozen production proof and current delivery", async ({ page, request }) => {
   await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
   await expect(page.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");
