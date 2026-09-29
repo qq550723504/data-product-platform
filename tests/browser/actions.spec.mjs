@@ -244,6 +244,84 @@ test("Quality Check preserves attempt identity across refresh and does not dupli
   expect(qualityCalls).toHaveLength(1);
 });
 
+test("Compliance Check preserves attempt identity across refresh and does not duplicate result", async ({ page, request }) => {
+  await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=compliance`);
+
+  const form = page.getByRole("form", { name: "运行 Compliance Check" });
+  const button = form.getByRole("button", { name: "运行 Compliance Check", exact: true });
+  await expect(button).toBeEnabled();
+  await button.click();
+
+  await expect(page).toHaveURL(/complianceAttemptId=[0-9a-f-]{36}/);
+  const attemptId = new URL(page.url()).searchParams.get("complianceAttemptId");
+  expect(attemptId).toBeTruthy();
+  await expect(form.getByRole("status").last()).toContainText("Compliance Check 已完成");
+
+  let commands = await writes(request);
+  let complianceCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/compliance-checks`);
+  expect(complianceCalls).toHaveLength(1);
+  expect(complianceCalls[0].actor).toBe(ids.actor);
+  expect(complianceCalls[0].body.assessmentAttemptId).toBe(attemptId);
+  expect(complianceCalls[0].body.policyRef).toBe("park/compliance/enterprise-activity-compliance-v1.yaml");
+
+  await page.reload();
+  await expect(page).toHaveURL(new RegExp(`complianceAttemptId=${attemptId}`));
+  const afterReload = await state(request);
+  expect(afterReload.requests.some((call) => call.method === "GET" && call.path === `/api/v1/compliance-assessment-attempts/${attemptId}`)).toBe(true);
+
+  const recoveredForm = page.getByRole("form", { name: "运行 Compliance Check" });
+  await expect(recoveredForm.getByTestId("compliance-attempt-status")).toContainText("SUCCEEDED");
+  await expect(recoveredForm.getByLabel("Compliance Policy")).toHaveValue("park/compliance/enterprise-activity-compliance-v1.yaml");
+  await expect(page.getByText(ids.complianceResult, { exact: true })).toBeVisible();
+
+  commands = await writes(request);
+  complianceCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/compliance-checks`);
+  expect(complianceCalls).toHaveLength(1);
+
+  await recoveredForm.getByRole("button", { name: "开始新的 Compliance Check", exact: true }).click();
+  await expect(page).not.toHaveURL(/complianceAttemptId=/);
+  await expect(page.getByRole("form", { name: "运行 Compliance Check" }).getByRole("button", { name: "运行 Compliance Check", exact: true })).toBeEnabled();
+
+  commands = await writes(request);
+  complianceCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/compliance-checks`);
+  expect(complianceCalls).toHaveLength(1);
+});
+
+test("Compliance Check preserves a custom policy with the recoverable attempt", async ({ page, request }) => {
+  await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=compliance`);
+
+  const form = page.getByRole("form", { name: "运行 Compliance Check" });
+  const customPolicy = "custom/compliance/customer-v2.yaml";
+  await form.getByLabel("Compliance Policy").fill(customPolicy);
+  await form.getByRole("button", { name: "运行 Compliance Check", exact: true }).click();
+
+  await expect(page).toHaveURL(/complianceAttemptId=[0-9a-f-]{36}/);
+  await expect(page).toHaveURL(new RegExp(`compliancePolicyRef=${encodeURIComponent(customPolicy)}`));
+
+  const attemptId = new URL(page.url()).searchParams.get("complianceAttemptId");
+  expect(attemptId).toBeTruthy();
+
+  await page.reload();
+  const recoveredForm = page.getByRole("form", { name: "运行 Compliance Check" });
+  await expect(recoveredForm.getByLabel("Compliance Policy")).toHaveValue(customPolicy);
+  await expect(recoveredForm.getByTestId("compliance-attempt-status")).toContainText("SUCCEEDED");
+
+  const commands = await writes(request);
+  const complianceCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/compliance-checks`);
+  expect(complianceCalls).toHaveLength(1);
+  expect(complianceCalls[0].body.policyRef).toBe(customPolicy);
+});
+
+test("readonly runtime never enables Compliance Check", async ({ page, request }) => {
+  await page.goto(`http://127.0.0.1:3101/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=compliance`);
+  const form = page.getByRole("form", { name: "运行 Compliance Check" });
+  await expect(form.getByRole("button", { name: "运行 Compliance Check", exact: true })).toBeDisabled();
+  await expect(form.getByText("Compliance 写入默认关闭", { exact: false })).toBeVisible();
+
+  const commands = await writes(request);
+  expect(commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/compliance-checks`)).toHaveLength(0);
+});
+
 test("readonly runtime never enables Quality Check", async ({ page, request }) => {
   await page.goto(`http://127.0.0.1:3101/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=quality`);
   const form = page.getByRole("form", { name: "运行 Quality Check" });

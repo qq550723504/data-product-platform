@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "start": "next start",
-    "build": "npm run test:reviews && npm run test:releases && npm run test:executions && npm run test:dataset-versions && npm run test:quality && npm run test:trace && npm run test:ingest && next build",
+    "build": "npm run test:reviews && npm run test:releases && npm run test:executions && npm run test:dataset-versions && npm run test:quality && npm run test:compliance && npm run test:trace && npm run test:ingest && next build",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test:reviews": "tsc lib/review-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .review-tests && node --test tests/review-command.test.mjs",
@@ -14,7 +14,8 @@
     "test:ingest": "tsc lib/ingest-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .ingest-tests && node --test tests/csv-inspection.test.mjs tests/ingest-command.test.mjs",
     "test:executions": "tsc lib/execution-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .execution-tests && node --test tests/execution-command.test.mjs",
     "test:dataset-versions": "tsc lib/dataset-version-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .dataset-version-tests && node --test tests/dataset-version-command.test.mjs",
-    "test:quality": "tsc lib/quality-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .quality-tests && node --test tests/quality-command.test.mjs"
+    "test:quality": "tsc lib/quality-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .quality-tests && node --test tests/quality-command.test.mjs",
+    "test:compliance": "tsc lib/compliance-command.ts --target ES2022 --module commonjs --lib ES2022,DOM --strict --skipLibCheck --outDir .compliance-tests && node --test tests/compliance-command.test.mjs"
   },
   "dependencies": {
     "next": "15.5.24",

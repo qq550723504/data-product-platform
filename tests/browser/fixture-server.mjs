@@ -25,6 +25,7 @@ export const ids = {
   createdRelease: "45454545-4545-4545-8545-454545454545",
   productAsset: "46464646-4646-4646-8646-464646464646",
   qualityAssessment: "47474747-4747-4747-8747-474747474747",
+  complianceResult: "48484848-4848-4848-8848-484848484848",
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
@@ -85,7 +86,7 @@ async function bodyOf(req) {
 export function createFixtureServer() {
   let state;
   const reset = (scenario = "ready") => {
-    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: false, requests: [] };
+    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: false, complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, requests: [] };
   };
   reset();
   return createServer(async (req, res) => {
@@ -392,6 +393,24 @@ export function createFixtureServer() {
             leaseExpired: false,
           });
         }
+        const complianceAttemptMatch = url.pathname.match(/^\/api\/v1\/compliance-assessment-attempts\/([0-9a-f-]+)$/);
+        if (complianceAttemptMatch) {
+          if (!state.complianceAttemptId || complianceAttemptMatch[1] !== state.complianceAttemptId) {
+            return send(404, { error: { code: "COMPLIANCE_ASSESSMENT_ATTEMPT_NOT_FOUND" } });
+          }
+          return send(200, {
+            id: ids.complianceResult,
+            assessmentAttemptId: state.complianceAttemptId,
+            workspaceId: ids.workspace,
+            datasetVersionId: ids.goldVersion,
+            policyRef: state.compliancePolicyRef || "park/compliance/enterprise-activity-compliance-v1.yaml",
+            policyVersion: "1.0.0",
+            gateDecision: "PASS",
+            summary: { piiFields: 0 },
+            findings: [],
+            createdAt: "2026-09-29T08:30:00Z",
+          });
+        }
         if (url.pathname === `/api/v1/quality-assessments/${ids.qualityAssessment}/report` && state.qualityCompleted) {
           return send(200, {
             ...goldAssessment,
@@ -517,6 +536,28 @@ export function createFixtureServer() {
             id: ids.qualityAssessment,
             ruleSetRef: body.ruleSetRef,
             createdAt: "2026-09-29T08:00:00Z",
+          });
+        }
+        if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/compliance-checks`) {
+          if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
+          if (body.workspaceId !== ids.workspace) return send(400, { error: { code: "DATASET_WORKSPACE_MISMATCH" } });
+          if (typeof body.assessmentAttemptId !== "string" || !body.assessmentAttemptId) return send(400, { error: { code: "MISSING_ASSESSMENT_ATTEMPT_ID" } });
+          if (typeof body.policyRef !== "string" || !body.policyRef.trim()) return send(400, { error: { code: "INVALID_POLICY_REF" } });
+          if (state.complianceAttemptId && state.complianceAttemptId !== body.assessmentAttemptId) return send(409, { error: { code: "COMPLIANCE_ASSESSMENT_ATTEMPT_CONFLICT" } });
+          state.complianceAttemptId = body.assessmentAttemptId;
+          state.compliancePolicyRef = body.policyRef;
+          state.complianceCompleted = true;
+          return send(201, {
+            id: ids.complianceResult,
+            assessmentAttemptId: state.complianceAttemptId,
+            workspaceId: ids.workspace,
+            datasetVersionId: ids.goldVersion,
+            policyRef: state.compliancePolicyRef,
+            policyVersion: "1.0.0",
+            gateDecision: "PASS",
+            summary: { piiFields: 0 },
+            findings: [],
+            createdAt: "2026-09-29T08:30:00Z",
           });
         }
         if (url.pathname === `/api/v1/data-products/${ids.product}/releases`) {
