@@ -70,6 +70,44 @@ func (r *PostgresRepository) FindIdempotencyForCommand(ctx context.Context, tx p
 	return record, true, nil
 }
 
+func (r *PostgresRepository) GetOperationByIdempotency(
+	ctx context.Context,
+	workspaceID uuid.UUID,
+	commandType string,
+	idempotencyKey string,
+) (domain.Operation, error) {
+	var operation domain.Operation
+	err := r.pool.QueryRow(ctx, `
+		SELECT o.id, o.workspace_id, o.dataset_version_id, o.certification_ref,
+		       o.retry_of_delivery_operation_id, o.idempotency_key,
+		       o.provider_name, o.provider_request_key, o.status, o.current_gate_decision,
+		       o.dependency_revision, o.principal_ref, o.effective_consumer_ref, COALESCE(o.delegation_ref,''),
+		       o.purpose, o.action, o.scope_ref, o.delivery_channel, o.delivery_mode, o.requested_expires_at,
+		       o.fresh_cap_expires_at, COALESCE(o.credential_ref,''), COALESCE(o.credential_hash,''),
+		       o.provider_credential_expires_at, COALESCE(o.terminal_reason,''), o.created_at, o.updated_at
+		FROM command_idempotency i
+		JOIN delivery_operation o ON o.id=i.object_id
+		WHERE i.workspace_id=$1
+		  AND i.command_type=$2
+		  AND i.idempotency_key=$3
+	`, workspaceID, commandType, idempotencyKey).Scan(
+		&operation.ID, &operation.WorkspaceID, &operation.DatasetVersionID, &operation.CertificationRef,
+		&operation.RetryOfDeliveryOperationID, &operation.IdempotencyKey, &operation.ProviderName, &operation.ProviderRequestKey,
+		&operation.Status, &operation.CurrentGateDecision, &operation.DependencyRevision,
+		&operation.PrincipalRef, &operation.EffectiveConsumerRef, &operation.DelegationRef,
+		&operation.Purpose, &operation.Action, &operation.ScopeRef, &operation.DeliveryChannel, &operation.DeliveryMode,
+		&operation.RequestedExpiresAt, &operation.FreshCapExpiresAt, &operation.CredentialRef,
+		&operation.CredentialHash, &operation.ProviderCredentialExpiresAt, &operation.TerminalReason,
+		&operation.CreatedAt, &operation.UpdatedAt)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.Operation{}, ErrNotFound
+	}
+	if err != nil {
+		return domain.Operation{}, fmt.Errorf("get delivery operation by idempotency: %w", err)
+	}
+	return operation, nil
+}
+
 func (r *PostgresRepository) InsertOperation(ctx context.Context, tx pgx.Tx, operation domain.Operation) error {
 	_, err := tx.Exec(ctx, `
 		INSERT INTO delivery_operation(
