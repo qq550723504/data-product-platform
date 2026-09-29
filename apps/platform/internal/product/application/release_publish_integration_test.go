@@ -88,8 +88,8 @@ func TestPublishReleaseCreatesOneImmutableEvidenceSnapshotAndIsIdempotent(t *tes
 	`, qualityResultID, workspaceID, datasetVersionID)
 	mustExec(t, ctx, pool, `
 		INSERT INTO compliance_result (
-			id, workspace_id, dataset_version_id, policy_ref, policy_version, gate_decision, summary, created_at
-		) VALUES ($1,$2,$3,'park/compliance/enterprise-activity-compliance-v1.yaml','1.0.0','PASS','{"dimensions":{}}'::jsonb,now())
+			id, assessment_attempt_id, workspace_id, dataset_version_id, policy_ref, policy_version, gate_decision, summary, created_at
+		) VALUES ($1,$1,$2,$3,'park/compliance/enterprise-activity-compliance-v1.yaml','1.0.0','PASS','{"dimensions":{}}'::jsonb,now())
 	`, complianceResultID, workspaceID, datasetVersionID)
 
 	for i, evidenceType := range []string{"QUALITY_RESULT", "COMPLIANCE_RESULT"} {
