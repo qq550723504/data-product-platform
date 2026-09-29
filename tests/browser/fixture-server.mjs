@@ -26,6 +26,8 @@ export const ids = {
   productAsset: "46464646-4646-4646-8646-464646464646",
   qualityAssessment: "47474747-4747-4747-8747-474747474747",
   complianceResult: "48484848-4848-4848-8848-484848484848",
+  deliveryOperation: "49494949-4949-4949-8949-494949494949",
+  deliveryRetryOperation: "50505050-5050-4050-8050-505050505050",
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
@@ -86,7 +88,7 @@ async function bodyOf(req) {
 export function createFixtureServer() {
   let state;
   const reset = (scenario = "ready") => {
-    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: false, complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, requests: [] };
+    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: false, complianceAttemptId: "", compliancePolicyRef: "", complianceCompleted: false, deliveryAttempts: {}, deliveryCount: 0, requests: [] };
   };
   reset();
   return createServer(async (req, res) => {
@@ -94,6 +96,10 @@ export function createFixtureServer() {
     const send = (status, value) => {
       res.writeHead(status, { "Content-Type": "application/json", "Cache-Control": "no-store" });
       res.end(JSON.stringify(value));
+    };
+    const sendBytes = (status, value, headers = {}) => {
+      res.writeHead(status, { "Content-Type": "text/csv", "Cache-Control": "no-store", ...headers });
+      res.end(value);
     };
     try {
       if (url.pathname === "/__health" && req.method === "GET") return send(200, { fixture: true });
@@ -446,6 +452,13 @@ export function createFixtureServer() {
             page: { total: 1, limit, offset, anchorRevision: 0 },
           });
         }
+        if (url.pathname === `${workspace}/direct-data-deliveries/recovery`) {
+          if (req.headers["authorization"] !== "Bearer delivery-secret") return send(401, { error: { code: "CALLER_IDENTITY_UNTRUSTED" } });
+          if (url.searchParams.get("consumer") !== "GOLD-PILOT-CONSUMER") return send(403, { error: { code: "CONSUMER_PRINCIPAL_MISMATCH" } });
+          const attempt = state.deliveryAttempts[url.searchParams.get("idempotencyKey") ?? ""];
+          if (!attempt) return send(404, { error: { code: "DIRECT_DATA_DELIVERY_NOT_FOUND" } });
+          return send(200, attempt);
+        }
         if (url.pathname === `${workspace}/dataset-versions/${ids.goldVersion}/delivery-eligibility`) {
           return send(200, {
             allowed: true, blockers: [],
@@ -558,6 +571,46 @@ export function createFixtureServer() {
             summary: { piiFields: 0 },
             findings: [],
             createdAt: "2026-09-29T08:30:00Z",
+          });
+        }
+        if (url.pathname === `${workspace}/dataset-versions/${ids.goldVersion}/deliveries`) {
+          if (req.headers["authorization"] !== "Bearer delivery-secret") return send(401, { error: { code: "CALLER_IDENTITY_UNTRUSTED" } });
+          const key = req.headers["idempotency-key"];
+          if (typeof key !== "string" || !key) return send(400, { error: { code: "INVALID_IDEMPOTENCY_KEY" } });
+          if (body.profileId !== ids.goldProfile || body.consumer !== "GOLD-PILOT-CONSUMER" || body.purpose !== "GOLD-PILOT" || body.action !== "USE" || body.scopeType !== "ALL_RESOURCE") {
+            return send(400, { error: { code: "INVALID_DELIVERY_FIXTURE" } });
+          }
+          const existing = state.deliveryAttempts[key];
+          if (existing) return send(409, { code: "DIRECT_DATA_REPLAY_REQUIRES_NEW_ATTEMPT", operationId: existing.operationId, status: existing.status, message: "use a new attempt" });
+          if (body.retryOfDeliveryOperationId) {
+            const prior = Object.values(state.deliveryAttempts).find((item) => item.operationId === body.retryOfDeliveryOperationId);
+            if (!prior || prior.status !== "ISSUED" || prior.profileId !== body.profileId) return send(400, { error: { code: "INVALID_RETRY_OF_DELIVERY_OPERATION_ID" } });
+          }
+          state.deliveryCount += 1;
+          const operationId = state.deliveryCount === 1 ? ids.deliveryOperation : ids.deliveryRetryOperation;
+          state.deliveryAttempts[key] = {
+            operationId,
+            profileId: ids.goldProfile,
+            workspaceId: ids.workspace,
+            datasetVersionId: ids.goldVersion,
+            ...(body.retryOfDeliveryOperationId ? { retryOfDeliveryOperationId: body.retryOfDeliveryOperationId } : {}),
+            idempotencyKey: key,
+            status: "ISSUED",
+            gateDecision: "ALLOWED",
+            principalRef: "browser-principal",
+            consumer: "GOLD-PILOT-CONSUMER",
+            purpose: "GOLD-PILOT",
+            action: "USE",
+            scopeRef: ids.goldVersion,
+            deliveryChannel: "DIRECT_DATA",
+            deliveryMode: "DIRECT_DATA",
+            terminalReason: "",
+            createdAt: stamp,
+            updatedAt: stamp,
+          };
+          return sendBytes(200, "company_id,score\nCOMPANY-001,88\n", {
+            "X-Delivery-Operation-Id": operationId,
+            "Content-Disposition": "attachment; filename=fixture.csv",
           });
         }
         if (url.pathname === `/api/v1/data-products/${ids.product}/releases`) {
