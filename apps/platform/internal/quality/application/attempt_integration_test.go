@@ -217,6 +217,25 @@ spec:
 	if gotA, gotB := countAttemptCost(attemptA), countAttemptCost(attemptB); gotA != 1 || gotB != 1 {
 		t.Fatalf("physical attempt costs after replay A/B = %d/%d, want 1/1", gotA, gotB)
 	}
+
+	failedStatus, err := qualityRepo.GetAssessmentAttempt(ctx, attemptA, time.Now().UTC())
+	if err != nil {
+		t.Fatalf("read failed attempt status: %v", err)
+	}
+	if failedStatus.WorkspaceID != workspaceID || failedStatus.DatasetVersionID != version.ID ||
+		failedStatus.State.Outcome != "FAILED" || failedStatus.State.AssessmentID != nil {
+		t.Fatalf("failed attempt status = %+v, want scoped FAILED outcome without assessment", failedStatus)
+	}
+
+	succeededStatus, err := qualityRepo.GetAssessmentAttempt(ctx, attemptB, time.Now().UTC())
+	if err != nil {
+		t.Fatalf("read succeeded attempt status: %v", err)
+	}
+	if succeededStatus.WorkspaceID != workspaceID || succeededStatus.DatasetVersionID != version.ID ||
+		succeededStatus.State.Outcome != "SUCCEEDED" || succeededStatus.State.AssessmentID == nil ||
+		*succeededStatus.State.AssessmentID != assessment.ID {
+		t.Fatalf("succeeded attempt status = %+v, want scoped SUCCEEDED outcome for assessment %s", succeededStatus, assessment.ID)
+	}
 }
 
 func TestQualityAttemptReconcilesExpiredClaim(t *testing.T) {
