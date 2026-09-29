@@ -34,13 +34,14 @@ test("retry preflights source and posts once with server actor/idempotency", asy
     if (url.endsWith(`/api/v1/executions/${ids.source}`)) {
       return Response.json({
         id: ids.source, workspaceId: ids.workspace, workflowVersionId: ids.workflow,
-        outputDatasetId: ids.dataset, targetPeriod: "2026-09", status: "FAILED", attempt: 2,
+        outputDatasetId: ids.dataset, targetPeriod: "2026-09", status: "FAILED", attempt: 2, engineType: "NATIVE",
+        inputs: [{ name: "source", datasetVersionId: ids.dataset }],
       });
     }
     return Response.json({
       id: ids.child, workspaceId: ids.workspace, workflowVersionId: ids.workflow,
-      outputDatasetId: ids.dataset, targetPeriod: "2026-09", status: "QUEUED", attempt: 3,
-      retryOfExecutionId: ids.source,
+      outputDatasetId: ids.dataset, targetPeriod: "2026-09", status: "QUEUED", attempt: 3, engineType: "NATIVE",
+      retryOfExecutionId: ids.source, inputs: [{ name: "source", datasetVersionId: ids.dataset }],
     }, { status: 202 });
   };
 
@@ -59,7 +60,8 @@ test("non-retryable source never posts", async () => {
     if (init.method === "POST") posts++;
     return Response.json({
       id: ids.source, workspaceId: ids.workspace, workflowVersionId: ids.workflow,
-      outputDatasetId: ids.dataset, targetPeriod: "2026-09", status: "RUNNING", attempt: 2,
+      outputDatasetId: ids.dataset, targetPeriod: "2026-09", status: "RUNNING", attempt: 2, engineType: "NATIVE",
+      inputs: [{ name: "source", datasetVersionId: ids.dataset }],
     });
   };
   const result = await executeRetry(form(), config(), "retry-key", request);
@@ -74,12 +76,13 @@ test("mismatched child fails closed after write and requires refresh", async () 
     call++;
     if (call === 1) return Response.json({
       id: ids.source, workspaceId: ids.workspace, workflowVersionId: ids.workflow,
-      outputDatasetId: ids.dataset, status: "FAILED", attempt: 2,
+      outputDatasetId: ids.dataset, targetPeriod: "2026-09", status: "FAILED", attempt: 2, engineType: "NATIVE",
+      inputs: [{ name: "source", datasetVersionId: ids.dataset }],
     });
     return Response.json({
       id: ids.child, workspaceId: ids.workspace, workflowVersionId: ids.workflow,
-      outputDatasetId: ids.dataset, status: "QUEUED", attempt: 3,
-      retryOfExecutionId: ids.child,
+      outputDatasetId: ids.dataset, targetPeriod: "2026-09", status: "QUEUED", attempt: 3, engineType: "NATIVE",
+      retryOfExecutionId: ids.child, inputs: [{ name: "source", datasetVersionId: ids.dataset }],
     }, { status: 202 });
   };
   const result = await executeRetry(form(), config(), "retry-key", request);
