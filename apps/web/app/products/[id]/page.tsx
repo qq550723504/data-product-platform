@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { BackLink, Badge, DefinitionList, EmptyState, LoadError, PageHeader, Pagination, SetupRequired, formatDate, shortId } from "@/components/ui";
+import { ProductReleaseCreateForm, type ReleaseDatasetCandidate } from "@/components/product-release-create-form";
 import { ProductReleasePanel, type ReleasePanelItem } from "@/components/product-release-panel";
-import { LIST_PAGE_SIZE, parsePageOffset } from "@/lib/pagination";
+import { collectAllPages, LIST_PAGE_SIZE, parsePageOffset } from "@/lib/pagination";
 import { configuredWorkspaceId, platform, type DataProduct } from "@/lib/platform";
 import { findAcrossPages } from "@/lib/scoped-lookup";
 
@@ -54,6 +55,33 @@ export default async function ProductDetailPage({
       }
       return { release, readiness };
     }));
+
+    const datasetAssets = version?.assets.filter((asset) => asset.assetType === "DATASET" && asset.datasetId) ?? [];
+    const candidateCache = new Map<string, Awaited<ReturnType<typeof platform.datasetVersions>>["items"]>();
+    const releaseCandidates: ReleaseDatasetCandidate[] = [];
+    for (const asset of datasetAssets) {
+      const datasetId = asset.datasetId as string;
+      let versions = candidateCache.get(datasetId);
+      if (!versions) {
+        versions = await collectAllPages((limit, candidateOffset) => platform.datasetVersions(datasetId, limit, candidateOffset));
+        candidateCache.set(datasetId, versions);
+      }
+      const dataset = await platform.dataset(datasetId);
+      releaseCandidates.push({
+        assetId: asset.id,
+        assetName: asset.name,
+        datasetId,
+        datasetName: dataset.name,
+        datasetCode: dataset.code,
+        versions: versions
+          .filter((candidate) => candidate.status === "READY" || candidate.status === "SUPERSEDED")
+          .map((candidate) => ({
+            id: candidate.id,
+            versionNo: candidate.versionNo,
+            status: candidate.status,
+          })),
+      });
+    }
 
     const actionsEnabled = process.env.POC_ENABLE_RELEASE_ACTIONS === "true" && Boolean(process.env.POC_RELEASE_ACTOR_ID?.trim());
 
@@ -121,6 +149,14 @@ export default async function ProductDetailPage({
         </section>
 
         <section id="releases">
+          {version ? (
+            <ProductReleaseCreateForm
+              productId={product.id}
+              productVersionId={version.id}
+              candidates={releaseCandidates}
+              enabled={actionsEnabled}
+            />
+          ) : null}
           <div className="panel-header">
             <div><h2>ProductRelease 与 Readiness</h2><p>逐项显示 production、dataset、rights、quality、compliance、contract、evidence、delivery 八个 Gate。</p></div>
             <span className="eyebrow">{releasePage.page.total} Releases</span>
