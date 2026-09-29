@@ -341,7 +341,7 @@ func (d *demo) advance() error {
 	if err != nil {
 		return err
 	}
-	compliance, err := complianceapp.NewService(d.cfg.IndustryPackRoot, tx, datasets, complianceinfra.NewPostgresRepository(d.pool), d.store).Run(d.ctx, complianceapp.RunCommand{WorkspaceID: d.m.Workspace, DatasetVersionID: output.ID, PolicyRef: "park/compliance/enterprise-activity-compliance-v1.yaml", ActorID: &d.m.Actor})
+	compliance, err := complianceapp.NewService(d.cfg.IndustryPackRoot, tx, datasets, complianceinfra.NewPostgresRepository(d.pool), d.store).Run(d.ctx, complianceapp.RunCommand{AssessmentAttemptID: uuid.New(), WorkspaceID: d.m.Workspace, DatasetVersionID: output.ID, PolicyRef: "park/compliance/enterprise-activity-compliance-v1.yaml", ActorID: &d.m.Actor})
 	if err != nil {
 		return err
 	}
