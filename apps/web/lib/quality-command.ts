@@ -34,7 +34,8 @@ export class QualityCommandError extends Error {
 }
 
 const uuidPattern=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-function isUUID(v:unknown):v is string { return typeof v==="string" && uuidPattern.test(v) && v!=="00000000-0000-0000-0000-000000000000"; }
+export function isQualityAttemptId(v: unknown): v is string { return typeof v === "string" && uuidPattern.test(v) && v !== "00000000-0000-0000-0000-000000000000"; }
+function isUUID(v:unknown):v is string { return isQualityAttemptId(v); }
 function record(v:unknown):Record<string,unknown>{
   if(!v || typeof v!=="object" || Array.isArray(v)) throw new QualityCommandError("Core API 返回了无效的数据。","INVALID_RESPONSE");
   return v as Record<string,unknown>;
