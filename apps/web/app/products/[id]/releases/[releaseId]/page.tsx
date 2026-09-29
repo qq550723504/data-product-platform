@@ -52,6 +52,8 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
       ? trace.datasetVersions.find((version) => version.id.toLowerCase() === evidenceReadiness.datasetVersionId?.toLowerCase())
       : undefined;
 
+    const datasetVersionById = new Map(trace.datasetVersions.map((version) => [version.id.toLowerCase(), version]));
+
     return (
       <>
         <BackLink href={`/products/${product.id}`}>返回 {product.name}</BackLink>
@@ -134,7 +136,31 @@ export default async function ProductReleaseTracePage({ params }: { params: Prom
           <div className="panel-header"><h2>Entity Resolution</h2><span className="eyebrow">Policy + Human Review Provenance</span></div>
           {trace.entityMatchJobs.length === 0 ? <EmptyState title="没有 EntityMatchJob" description="该 Release 血缘没有经过实体解析，或 Core 未返回相关实体解析事实。" /> : (
             <div className="table-card"><table className="data-table"><thead><tr><th>Job</th><th>状态</th><th>Policy</th><th>Source</th><th>Input → Output</th></tr></thead><tbody>{trace.entityMatchJobs.map((job) => (
-              <tr key={job.id}><td className="mono">{shortId(job.id)}</td><td><Badge value={job.status} /></td><td>{job.policyRef}@{job.policyVersion}</td><td>{job.sourceType} · {job.sourceRef}</td><td className="mono">{shortId(job.inputDatasetVersionId)} → {shortId(job.outputDatasetVersionId)}</td></tr>
+              <tr key={job.id}>
+                <td className="mono">{shortId(job.id)}</td>
+                <td><Badge value={job.status} /></td>
+                <td>{job.policyRef}@{job.policyVersion}</td>
+                <td>{job.sourceType} · {job.sourceRef}</td>
+                <td>
+                  {(() => {
+                    const input = datasetVersionById.get(job.inputDatasetVersionId.toLowerCase());
+                    const output = job.outputDatasetVersionId ? datasetVersionById.get(job.outputDatasetVersionId.toLowerCase()) : undefined;
+                    return (
+                      <>
+                        {input
+                          ? <Link className="text-link mono" href={`/datasets/${input.datasetId}/versions/${input.id}`}>{shortId(job.inputDatasetVersionId)}</Link>
+                          : <span className="mono">{shortId(job.inputDatasetVersionId)}</span>}
+                        {" → "}
+                        {job.outputDatasetVersionId
+                          ? output
+                            ? <Link className="text-link mono" href={`/datasets/${output.datasetId}/versions/${output.id}`}>{shortId(job.outputDatasetVersionId)}</Link>
+                            : <span className="mono">{shortId(job.outputDatasetVersionId)}</span>
+                          : "—"}
+                      </>
+                    );
+                  })()}
+                </td>
+              </tr>
             ))}</tbody></table></div>
           )}
           {trace.entityMappings.length === 0 ? <div style={{ marginTop: 12 }}><EmptyState title="没有 EntityMapping" description="Core traceability 没有返回与这些解析作业相关的映射。" /></div> : (
