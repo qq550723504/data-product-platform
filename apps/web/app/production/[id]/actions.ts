@@ -9,7 +9,8 @@ export async function retryExecution(
   form: FormData,
 ): Promise<ExecutionActionState> {
   const executionId = form.get("executionId");
-  const idempotencyKey = typeof executionId === "string" ? `ui-retry:${executionId}` : "";
+  const canonicalExecutionId = typeof executionId === "string" ? executionId.trim().toLowerCase() : "";
+  const idempotencyKey = canonicalExecutionId ? `ui-retry:${canonicalExecutionId}` : "";
   const result = await executeRetry(
     form,
     {
