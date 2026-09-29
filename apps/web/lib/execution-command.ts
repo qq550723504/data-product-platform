@@ -53,6 +53,16 @@ function sameId(a: unknown, b: string): boolean {
   return isExecutionId(a) && a.toLowerCase() === b.toLowerCase();
 }
 
+function inputFingerprint(value: unknown): string[] {
+  if (!Array.isArray(value)) throw new ExecutionCommandError("Core API 未返回有效的冻结输入。", "INVALID_RESPONSE");
+  return value.map(record).map((input) => {
+    if (typeof input.name !== "string" || !input.name.trim() || !isExecutionId(input.datasetVersionId)) {
+      throw new ExecutionCommandError("Core API 未返回有效的冻结输入。", "INVALID_RESPONSE");
+    }
+    return `${input.name.trim()}:${String(input.datasetVersionId).toLowerCase()}`;
+  }).sort();
+}
+
 async function safeJSON(response: Response): Promise<unknown> {
   try {
     return await response.json();
@@ -112,9 +122,16 @@ export async function executeRetry(
     if (source.status !== "FAILED" && source.status !== "CANCELLED") {
       return { ok: false, message: "Core 只允许 FAILED 或 CANCELLED Execution 创建 Retry；请刷新后核对当前状态。", refreshRequired: true };
     }
-    if (!isExecutionId(source.workflowVersionId) || !isExecutionId(source.outputDatasetId) || typeof source.attempt !== "number") {
+    if (
+      !isExecutionId(source.workflowVersionId) ||
+      !isExecutionId(source.outputDatasetId) ||
+      typeof source.attempt !== "number" ||
+      typeof source.targetPeriod !== "string" ||
+      typeof source.engineType !== "string"
+    ) {
       throw new ExecutionCommandError("Core API 未返回完整的 Execution 冻结事实。", "INVALID_RESPONSE");
     }
+    const sourceInputs = inputFingerprint(source.inputs);
 
     attemptedWrite = true;
     const result = record(await json(`/api/v1/executions/${executionId}/retry`, {
@@ -135,8 +152,11 @@ export async function executeRetry(
       !sameId(result.retryOfExecutionId, executionId) ||
       !sameId(result.workflowVersionId, source.workflowVersionId as string) ||
       !sameId(result.outputDatasetId, source.outputDatasetId as string) ||
+      result.targetPeriod !== source.targetPeriod ||
+      result.engineType !== source.engineType ||
       result.status !== "QUEUED" ||
-      result.attempt !== (source.attempt as number) + 1
+      result.attempt !== (source.attempt as number) + 1 ||
+      JSON.stringify(inputFingerprint(result.inputs)) !== JSON.stringify(sourceInputs)
     ) {
       throw new ExecutionCommandError("Retry 返回的 Execution 与冻结源事实不一致。", "INVALID_RESPONSE");
     }
