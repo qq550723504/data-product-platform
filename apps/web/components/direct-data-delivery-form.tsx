@@ -42,10 +42,11 @@ export function DirectDataDeliveryForm(props: Props) {
   const [recovery, setRecovery] = useState<Recovery | null>(null);
   const [retryOf, setRetryOf] = useState<string | undefined>(props.initialRetryOf);
   const [message, setMessage] = useState("");
-  const [pending, setPending] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const directData = props.delivery.trim().toUpperCase() === "DIRECT_DATA";
-  const canDeliver = props.enabled && props.allowed && directData && !pending;
+  const supportedScope = props.scopeType.trim().toUpperCase() === "ALL_RESOURCE";
+  const canDeliver = props.enabled && props.allowed && directData && supportedScope && !submitted;
 
   const freezeUrl = (nextKey: string, retryParent = retryOf) => {
     const url = new URL(window.location.href);
@@ -101,59 +102,46 @@ export function DirectDataDeliveryForm(props: Props) {
     const retryParent = retryIssued ? recovery?.operationId : undefined;
     setRetryOf(retryParent);
     setRecovery(null);
+    setSubmitted(false);
     setMessage("");
     freezeUrl(next, retryParent);
   };
 
-  const download = async () => {
+  const download = () => {
     let attemptKey = key;
     if (!attemptKey) {
       attemptKey = newKey();
       setKey(attemptKey);
-      freezeUrl(attemptKey);
-    } else {
-      freezeUrl(attemptKey);
     }
-    setPending(true);
-    setMessage("");
-    try {
-      const response = await fetch("/api/direct-data-deliveries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          versionId: props.versionId,
-          profileId: props.profileId,
-          consumer: props.consumer,
-          purpose: props.purpose,
-          action: props.action,
-          scopeType: props.scopeType,
-          scopeRef: props.scopeRef,
-          idempotencyKey: attemptKey,
-          ...(retryOf ? { retryOfDeliveryOperationId: retryOf } : {}),
-        }),
-      });
-      if (!response.ok) {
-        const payload = await response.json().catch(() => null);
-        setMessage(payload?.error?.message ?? "Direct Data 下载失败。");
-        await recover(attemptKey);
-        return;
-      }
-      const blob = await response.blob();
-      const href = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = href;
-      anchor.download = `dataset-version-${props.versionId}`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      URL.revokeObjectURL(href);
-      setMessage("Direct Data 下载已授权并开始。");
-      await recover(attemptKey);
-    } catch {
-      setMessage("下载响应不确定；请刷新恢复当前 idempotency key，不要直接创建新 attempt。");
-    } finally {
-      setPending(false);
+    freezeUrl(attemptKey);
+    setSubmitted(true);
+    setMessage("下载请求已提交；如果下载响应中断，请刷新页面恢复当前 idempotency key。");
+
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "/api/direct-data-deliveries";
+    form.target = "direct-data-download-frame";
+    const fields: Record<string, string> = {
+      versionId: props.versionId,
+      profileId: props.profileId,
+      consumer: props.consumer,
+      purpose: props.purpose,
+      action: props.action,
+      scopeType: props.scopeType,
+      scopeRef: props.scopeRef,
+      idempotencyKey: attemptKey,
+      ...(retryOf ? { retryOfDeliveryOperationId: retryOf } : {}),
+    };
+    for (const [name, value] of Object.entries(fields)) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
     }
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
   };
 
   const terminal = recovery?.status === "ISSUED" || recovery?.status === "BLOCKED" || recovery?.status === "FAILED";
@@ -176,7 +164,7 @@ export function DirectDataDeliveryForm(props: Props) {
       {statusText ? <p role="status" data-testid="delivery-operation-status"><strong>{statusText}</strong></p> : null}
       {message ? <p role="status">{message}</p> : null}
       <button type="button" onClick={download} disabled={buttonDisabled}>
-        {pending ? "正在请求下载…" : recovery?.status === "ISSUED" ? "该 attempt 已签发" : "下载 Direct Data"}
+        {submitted ? "下载请求已提交" : recovery?.status === "ISSUED" ? "该 attempt 已签发" : "下载 Direct Data"}
       </button>
       {terminal ? (
         <button type="button" style={{ marginLeft: 8 }} onClick={() => startFresh(recovery?.status === "ISSUED")}>
@@ -186,6 +174,8 @@ export function DirectDataDeliveryForm(props: Props) {
       {!props.enabled ? <small style={{ display: "block", marginTop: 8 }}>Direct Data 下载默认关闭；需由服务端启用并配置 trusted delivery identity。</small> : null}
       {props.enabled && !props.allowed ? <small style={{ display: "block", marginTop: 8 }}>当前 Delivery Eligibility 为 BLOCKED，不能发起下载。</small> : null}
       {props.enabled && !directData ? <small style={{ display: "block", marginTop: 8 }}>当前 Profile 不是 DIRECT_DATA delivery。</small> : null}
+      {props.enabled && directData && !supportedScope ? <small style={{ display: "block", marginTop: 8 }}>Direct Data 当前只支持 ALL_RESOURCE scope。</small> : null}
+      <iframe name="direct-data-download-frame" title="Direct Data download transport" hidden />
     </section>
   );
 }
