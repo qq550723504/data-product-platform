@@ -1,6 +1,5 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { configuredWorkspaceId } from "@/lib/platform";
 import { executeRetry, type ExecutionActionState } from "@/lib/execution-command";
@@ -9,6 +8,8 @@ export async function retryExecution(
   _previous: ExecutionActionState,
   form: FormData,
 ): Promise<ExecutionActionState> {
+  const executionId = form.get("executionId");
+  const idempotencyKey = typeof executionId === "string" ? `ui-retry:${executionId}` : "";
   const result = await executeRetry(
     form,
     {
@@ -17,10 +18,8 @@ export async function retryExecution(
       actorId: process.env.POC_EXECUTION_ACTOR_ID?.trim(),
       apiBaseUrl: process.env.PLATFORM_API_BASE_URL ?? "http://localhost:8080",
     },
-    randomUUID(),
+    idempotencyKey,
   );
-
-  const executionId = form.get("executionId");
   if ((result.ok || result.refreshRequired) && typeof executionId === "string") {
     revalidatePath(`/production/${executionId}`);
     revalidatePath("/production");
