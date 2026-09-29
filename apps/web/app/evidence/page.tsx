@@ -9,15 +9,15 @@ export default async function EvidencePage() {
   }
 
   try {
-    const products = await collectAllPages((limit, offset) => platform.products(limit, offset));
-    const rows: Array<{ product: (typeof products)[number]; release: Awaited<ReturnType<typeof platform.releases>>["items"][number] }> = [];
-    // Keep release enumeration sequential to avoid an unbounded request fan-out
-    // when a workspace contains many products.
-    for (const product of products) {
-      const releases = await collectAllPages((limit, offset) => platform.releases(product.id, limit, offset));
-      rows.push(...releases.map((release) => ({ product, release })));
-    }
-    rows.sort((a, b) => Date.parse(b.release.createdAt) - Date.parse(a.release.createdAt));
+    const [products, releases] = await Promise.all([
+      collectAllPages((limit, offset) => platform.products(limit, offset)),
+      collectAllPages((limit, offset) => platform.workspaceReleases("", limit, offset)),
+    ]);
+    const productsById = new Map(products.map((product) => [product.id, product]));
+    const rows = releases
+      .map((release) => ({ product: productsById.get(release.productId), release }))
+      .filter((row): row is { product: (typeof products)[number]; release: (typeof releases)[number] } => Boolean(row.product))
+      .sort((a, b) => Date.parse(b.release.createdAt) - Date.parse(a.release.createdAt));
 
     return (
       <>
@@ -36,7 +36,7 @@ export default async function EvidencePage() {
               </span>
             ))}
           </div>
-          <p style={{ marginTop: 14 }}>Release 必须先从当前 Workspace 的 Data Product 发现；证据页会遍历全部分页，不会遗漏不可变历史，也不会要求操作者粘贴任意 UUID。</p>
+          <p style={{ marginTop: 14 }}>Release 直接从 Workspace 级 ProductRelease read model 读取，并与同一 Workspace 的 Data Product 目录关联；证据页会遍历全部分页，不会遗漏不可变历史，也不会要求操作者粘贴任意 UUID。</p>
         </section>
 
         <div className="panel-header"><h2>可追溯 ProductRelease</h2><span className="eyebrow">{rows.length} Releases</span></div>
