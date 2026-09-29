@@ -222,10 +222,10 @@ COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 	complianceAttemptID := uuid.New()
 	complianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
 		AssessmentAttemptID: complianceAttemptID,
-		WorkspaceID:          workspaceID,
-		DatasetVersionID:     passVersion.ID,
-		PolicyRef:            "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:              "governance-e2e",
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    passVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-e2e",
 	})
 	if err != nil {
 		t.Fatalf("run compliance gate: %v", err)
@@ -235,10 +235,10 @@ COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 	}
 	replayedCompliance, err := complianceService.Run(ctx, complianceapp.RunCommand{
 		AssessmentAttemptID: complianceAttemptID,
-		WorkspaceID:          workspaceID,
-		DatasetVersionID:     passVersion.ID,
-		PolicyRef:            "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:              "governance-e2e-compliance-replay",
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    passVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-e2e-compliance-replay",
 	})
 	if err != nil || replayedCompliance.ID != complianceResult.ID {
 		t.Fatalf("same compliance attempt replay = %s, err=%v; want original result %s", replayedCompliance.ID, err, complianceResult.ID)
@@ -260,10 +260,10 @@ COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 	}
 	replayedComplianceAfterInvalidation, err := complianceService.Run(ctx, complianceapp.RunCommand{
 		AssessmentAttemptID: complianceAttemptID,
-		WorkspaceID:          workspaceID,
-		DatasetVersionID:     passVersion.ID,
-		PolicyRef:            "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:              "governance-e2e-compliance-replay-after-invalidation",
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    passVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-e2e-compliance-replay-after-invalidation",
 	})
 	if err != nil || replayedComplianceAfterInvalidation.ID != complianceResult.ID {
 		t.Fatalf("same compliance attempt replay after invalidation = %s, err=%v; want original result %s", replayedComplianceAfterInvalidation.ID, err, complianceResult.ID)
@@ -293,10 +293,10 @@ COMPANY-003,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z,13800000000
 `, map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0})
 	badComplianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
 		AssessmentAttemptID: uuid.New(),
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: badComplianceVersion.ID,
-		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:          "governance-e2e",
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    badComplianceVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-e2e",
 	})
 	if err != nil {
 		t.Fatalf("run bad compliance gate: %v", err)
@@ -323,10 +323,10 @@ COMPANY-004,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 	}
 	if _, err := complianceService.Run(ctx, complianceapp.RunCommand{
 		AssessmentAttemptID: uuid.New(),
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: foreignVersion.ID,
-		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:          "governance-rejected",
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    foreignVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-rejected",
 	}); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
 		t.Fatalf("cross workspace compliance error = %v, want ErrDatasetWorkspace", err)
 	}
@@ -352,10 +352,10 @@ COMPANY-004,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 	}
 	if _, err := complianceService.Run(ctx, complianceapp.RunCommand{
 		AssessmentAttemptID: uuid.New(),
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: foreignVersion.ID,
-		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:          "governance-rejected",
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    foreignVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-rejected",
 	}); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
 		t.Fatalf("foreign non-READY compliance error = %v, want ErrDatasetWorkspace", err)
 	}
