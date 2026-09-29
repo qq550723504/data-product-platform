@@ -56,8 +56,8 @@ test("Product detail creates a DRAFT Release from explicit DatasetVersion bindin
   const form = page.getByRole("form", { name: "创建 ProductRelease" });
   await form.getByLabel("Gold output DatasetVersion").selectOption(ids.goldVersion);
   await form.getByLabel("Gold output Role").selectOption("OUTPUT");
-  await form.getByRole("textbox", { name: "Release No" }).fill("R2");
-  await form.getByRole("textbox", { name: "Release Notes" }).fill("Browser-created release");
+  await form.getByRole("textbox", { name: "Release No", exact: true }).fill("R2");
+  await form.getByRole("textbox", { name: "Release Notes", exact: true }).fill("Browser-created release");
   await form.getByRole("button", { name: "创建 Release Draft", exact: true }).click();
 
   await expect(form.getByRole("status")).toContainText("Release R2 已创建为 DRAFT");
