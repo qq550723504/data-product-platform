@@ -577,7 +577,13 @@ export function createFixtureServer() {
           if (req.headers["authorization"] !== "Bearer delivery-secret") return send(401, { error: { code: "CALLER_IDENTITY_UNTRUSTED" } });
           const key = req.headers["idempotency-key"];
           if (typeof key !== "string" || !key) return send(400, { error: { code: "INVALID_IDEMPOTENCY_KEY" } });
-          if (body.profileId !== ids.goldProfile || body.consumer !== "GOLD-PILOT-CONSUMER" || body.purpose !== "GOLD-PILOT" || body.action !== "USE" || body.scopeType !== "ALL_RESOURCE") {
+          if (
+            body.profileId !== ids.goldProfile
+            || body.consumer?.trim() !== "GOLD-PILOT-CONSUMER"
+            || body.purpose?.trim().toUpperCase() !== "GOLD-PILOT"
+            || body.action?.trim().toUpperCase() !== "USE"
+            || body.scopeType?.trim().toUpperCase() !== "ALL_RESOURCE"
+          ) {
             return send(400, { error: { code: "INVALID_DELIVERY_FIXTURE" } });
           }
           const existing = state.deliveryAttempts[key];
