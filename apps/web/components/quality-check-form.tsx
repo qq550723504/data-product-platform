@@ -38,6 +38,15 @@ export function QualityCheckForm({
     if (!attemptId) setAttemptId(newAttemptId());
   }, [attemptId]);
 
+  useEffect(() => {
+    if (!state.attemptId) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", "quality");
+    url.searchParams.set("qualityAttemptId", state.attemptId);
+    window.history.replaceState(window.history.state, "", url.pathname + "?" + url.searchParams.toString());
+    if (state.attemptId !== attemptId) setAttemptId(state.attemptId);
+  }, [attemptId, state.attemptId]);
+
   const usable = versionStatus === "READY" || versionStatus === "SUPERSEDED";
   const terminal = attempt?.outcome === "SUCCEEDED" || attempt?.outcome === "FAILED";
   const active = attempt?.outcome === "IN_PROGRESS" && !attempt.leaseExpired;
