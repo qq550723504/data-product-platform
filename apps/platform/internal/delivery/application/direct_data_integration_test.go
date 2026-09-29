@@ -119,6 +119,18 @@ func TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload(t *testing.T) 
 	if operations != 1 || issuedEvents != 1 || attempts != 0 || costs != 1 {
 		t.Fatalf("direct facts operations=%d issued_events=%d provider_attempts=%d costs=%d, want 1/1/0/1", operations, issuedEvents, attempts, costs)
 	}
+
+	recovered, err := service.RecoverDirectData(ctx, workspaceID, cmd.IdempotencyKey)
+	if err != nil {
+		t.Fatalf("recover direct delivery: %v", err)
+	}
+	if recovered.Operation.ID != first.Operation.ID ||
+		recovered.Operation.DatasetVersionID != versionID ||
+		recovered.Operation.Status != domain.StatusIssued ||
+		recovered.Operation.PrincipalRef != "principal-a" ||
+		recovered.Operation.EffectiveConsumerRef != "consumer-a" {
+		t.Fatalf("recovered direct delivery = %#v, want original issued operation %#v", recovered.Operation, first.Operation)
+	}
 }
 
 func TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked(t *testing.T) {
