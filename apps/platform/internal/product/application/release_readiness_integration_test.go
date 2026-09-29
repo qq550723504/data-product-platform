@@ -366,15 +366,30 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	`, foreignDatasetVersionID, foreignDatasetID, repeatHex(7), uuid.New()); err != nil {
 		t.Fatalf("insert foreign DatasetVersion: %v", err)
 	}
-	foreignRelease, err := service.CreateRelease(ctx, application.CreateReleaseCommand{
+	// This fixture intentionally represents historical bad data so Readiness can
+	// prove it fails closed. The production CreateRelease path now rejects this
+	// cross-workspace binding before insertion.
+	foreignRelease := domain.ProductRelease{
+		ID:               uuid.New(),
 		ProductID:        product.ID,
 		ProductVersionID: version.ID,
 		ReleaseNo:        "R-READINESS-FOREIGN",
+		Status:           domain.ReleaseDraft,
 		Datasets:         []domain.ReleaseDataset{{DatasetVersionID: foreignDatasetVersionID, Role: domain.DatasetPrimary}},
-		TraceID:          "release-readiness-e2e",
-	})
-	if err != nil {
-		t.Fatalf("create foreign ProductRelease: %v", err)
+		Metadata:         map[string]any{},
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO product_release (
+			id, product_id, product_version_id, release_no, status, metadata
+		) VALUES ($1,$2,$3,$4,'DRAFT','{}'::jsonb)
+	`, foreignRelease.ID, foreignRelease.ProductID, foreignRelease.ProductVersionID, foreignRelease.ReleaseNo); err != nil {
+		t.Fatalf("insert historical foreign ProductRelease fixture: %v", err)
+	}
+	if _, err := pool.Exec(ctx, `
+		INSERT INTO product_release_dataset (release_id, dataset_version_id, role)
+		VALUES ($1,$2,'PRIMARY')
+	`, foreignRelease.ID, foreignDatasetVersionID); err != nil {
+		t.Fatalf("insert historical foreign ProductRelease dataset fixture: %v", err)
 	}
 	foreignRightsSnapshotID := createReleaseSnapshot(foreignRelease.ID)
 	foreignReadiness, err := service.ValidateRelease(ctx, application.ValidateReleaseCommand{
