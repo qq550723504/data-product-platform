@@ -122,6 +122,27 @@ test("execution detail exposes navigable frozen lineage and retry semantics", as
   await expect(page.getByRole("link", { name: ids.goldVersion, exact: true })).toHaveAttribute("href", versionHref);
 });
 
+test("failed Execution retry creates and opens a new immutable Execution", async ({ page, request }) => {
+  await page.goto(`/production/${ids.job}`);
+  await page.getByRole("button", { name: "重试 Execution", exact: true }).click();
+
+  await expect(page).toHaveURL(new RegExp(`/production/${ids.retryChild}$`));
+  await expect(page.getByText("Execution 已进入队列", { exact: false })).toBeVisible();
+  await expect(page.getByRole("link", { name: ids.job.slice(0, 8) })).toHaveAttribute("href", `/production/${ids.job}`);
+
+  const commands = await writes(request);
+  const retryCalls = commands.filter((call) => call.path === `/api/v1/executions/${ids.job}/retry`);
+  expect(retryCalls).toHaveLength(1);
+  expect(retryCalls[0].actor).toBe(ids.actor);
+  expect(retryCalls[0].idempotencyKey).toBe(`ui-retry:${ids.job}`);
+});
+
+test("readonly runtime does not enable Execution retry", async ({ page, request }) => {
+  await page.goto(`http://127.0.0.1:3101/production/${ids.job}`);
+  await expect(page.getByRole("button", { name: "重试 Execution", exact: true })).toBeDisabled();
+  expect(await writes(request)).toHaveLength(0);
+});
+
 test("Gold DatasetVersion explains frozen production proof and current delivery", async ({ page, request }) => {
   await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
   await expect(page.getByRole("link", { name: "Overview" })).toHaveAttribute("aria-current", "page");

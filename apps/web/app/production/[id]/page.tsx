@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { BackLink, Badge, DefinitionList, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
+import { ExecutionRetryForm } from "@/components/execution-retry-form";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 
 function executionGuidance(status: string): string {
   switch (status) {
     case "FAILED":
       return "该 Execution 是不可变失败事实。Core Retry 会基于同一冻结输入创建新的 Execution，不会改写本记录。";
+    case "CANCELLED":
+      return "该 Execution 已取消且历史事实保持不变。Core Retry 会基于同一冻结输入创建新的 Execution。";
     case "QUEUED":
       return "Execution 已进入队列，等待 worker 认领；当前记录不需要人工修改状态。";
     case "SUBMITTING":
@@ -69,6 +72,11 @@ export default async function ExecutionDetailPage({ params }: { params: Promise<
                 <p>{execution.errorMessage || "执行失败"}</p>
               </div>
             ) : null}
+            <ExecutionRetryForm
+              executionId={execution.id}
+              status={execution.status}
+              enabled={process.env.POC_ENABLE_EXECUTION_ACTIONS === "true"}
+            />
           </div>
 
           <aside className="detail-card">

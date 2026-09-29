@@ -20,6 +20,7 @@ export const ids = {
   goldBinding: "ffffffff-ffff-4fff-8fff-ffffffffffff",
   goldSnapshot: "12121212-1212-4212-8212-121212121212",
   retryParent: "41414141-4141-4141-8141-414141414141",
+  retryChild: "43434343-4343-4343-8343-434343434343",
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
@@ -80,7 +81,7 @@ async function bodyOf(req) {
 export function createFixtureServer() {
   let state;
   const reset = (scenario = "ready") => {
-    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", requests: [] };
+    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", retryCreated: false, requests: [] };
   };
   reset();
   return createServer(async (req, res) => {
@@ -403,6 +404,25 @@ export function createFixtureServer() {
             finishedAt: stamp,
           });
         }
+        if (url.pathname === `/api/v1/executions/${ids.retryChild}` && state.retryCreated) {
+          return send(200, {
+            id: ids.retryChild,
+            workspaceId: ids.workspace,
+            workflowVersionId: "42424242-4242-4242-8242-424242424242",
+            outputDatasetId: ids.goldDataset,
+            targetPeriod: "2026-09",
+            status: "QUEUED",
+            attempt: 3,
+            retryOfExecutionId: ids.job,
+            engineType: "NATIVE",
+            engineExecutionId: "",
+            errorCode: "",
+            errorMessage: "",
+            metrics: {},
+            inputs: [{ name: "source", datasetId: ids.goldDataset, datasetVersionId: ids.goldVersion }],
+            createdAt: stamp,
+          });
+        }
         if (url.pathname === `${workspace}/attention/failed-executions`) return send(200, page([]));
         if (url.pathname === `${workspace}/workbench`) return send(200, {
           workspaceId: ids.workspace, counts: { dataResources: 0, datasets: 0, dataProducts: 1 },
@@ -425,6 +445,25 @@ export function createFixtureServer() {
           if (state.scenario === "review-conflict" || state.candidateStatus !== "PENDING") return send(409, { error: { code: "REVIEW_CONFLICT" } });
           state.candidateStatus = url.pathname.endsWith("/confirm") ? "CONFIRMED" : "REJECTED";
           return send(200, { ...job, status: "SUCCEEDED" });
+        }
+        if (url.pathname === `/api/v1/executions/${ids.job}/retry`) {
+          if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
+          if (!req.headers["idempotency-key"]) return send(400, { error: { code: "FIXTURE_KEY_REQUIRED" } });
+          state.retryCreated = true;
+          return send(202, {
+            id: ids.retryChild,
+            workspaceId: ids.workspace,
+            workflowVersionId: "42424242-4242-4242-8242-424242424242",
+            outputDatasetId: ids.goldDataset,
+            targetPeriod: "2026-09",
+            status: "QUEUED",
+            attempt: 3,
+            retryOfExecutionId: ids.job,
+            engineType: "NATIVE",
+            metrics: {},
+            inputs: [{ name: "source", datasetVersionId: ids.goldVersion }],
+            createdAt: stamp,
+          });
         }
         if (url.pathname === `${releasePath}/publish`) {
           if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
