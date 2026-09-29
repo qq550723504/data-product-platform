@@ -112,6 +112,9 @@ export async function executeQualityCheck(
       if(status.outcome==="IN_PROGRESS"&&status.leaseExpired!==true){
         return {ok:false,message:"Quality Check 正在运行中。",attemptId,refreshRequired:true};
       }
+      if(status.outcome!=="IN_PROGRESS" || status.leaseExpired!==true) {
+        throw new QualityCommandError("Quality attempt 返回了未知状态，已阻止重复执行。","UNKNOWN_ATTEMPT_STATE");
+      }
       // Lease expired: replay the same attempt ID so Core can reconcile it
       // without creating a second physical attempt.
     }
