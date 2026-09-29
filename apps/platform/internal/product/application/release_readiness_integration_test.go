@@ -115,9 +115,9 @@ func TestReleaseValidationUsesRealGovernanceResults(t *testing.T) {
 	}
 	if _, err := pool.Exec(ctx, `
 		INSERT INTO compliance_result (
-			id, workspace_id, dataset_version_id, policy_ref, policy_version,
+			id, assessment_attempt_id, workspace_id, dataset_version_id, policy_ref, policy_version,
 			gate_decision, summary, created_at
-		) VALUES ($1,$2,$3,'park/compliance/enterprise-activity-compliance-v1.yaml','1.0.0','PASS','{"dimensions":{}}'::jsonb,now())
+		) VALUES ($1,$1,$2,$3,'park/compliance/enterprise-activity-compliance-v1.yaml','1.0.0','PASS','{"dimensions":{}}'::jsonb,now())
 	`, complianceResultID, workspaceID, datasetVersionID); err != nil {
 		t.Fatalf("insert ComplianceResult: %v", err)
 	}
