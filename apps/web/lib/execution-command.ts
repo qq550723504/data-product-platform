@@ -154,7 +154,7 @@ export async function executeRetry(
       !sameId(result.outputDatasetId, source.outputDatasetId as string) ||
       result.targetPeriod !== source.targetPeriod ||
       result.engineType !== source.engineType ||
-      result.status !== "QUEUED" ||
+      !["QUEUED", "SUBMITTING", "RUNNING", "SUCCEEDED", "FAILED", "CANCELLED"].includes(String(result.status)) ||
       result.attempt !== (source.attempt as number) + 1 ||
       JSON.stringify(inputFingerprint(result.inputs)) !== JSON.stringify(sourceInputs)
     ) {
