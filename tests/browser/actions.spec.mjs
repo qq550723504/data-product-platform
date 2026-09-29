@@ -236,6 +236,10 @@ test("Gold DatasetVersion explains frozen production proof and current delivery"
   await expect(page.getByRole("cell", { name: "Current Certification" }).locator("..")).toContainText("ALLOWED");
   await expect(page.getByRole("cell", { name: "Current Entitlement" }).locator("..")).toContainText("ALLOWED");
   await expect(page.getByText("fixture verified rights", { exact: true }).locator("..")).toContainText("ALLOWED");
+  await expect(page.getByRole("link", { name: ids.sourceResource.slice(0, 8) })).toHaveAttribute(
+    "href",
+    `/resources/${ids.sourceResource}`,
+  );
   expect(await writes(request)).toHaveLength(0);
 });
 
