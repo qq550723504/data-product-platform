@@ -242,6 +242,30 @@ export type QualityDimensionSummary = {
   failedCount: number;
 };
 
+export type ComplianceFinding = {
+  id: string;
+  resultId: string;
+  fieldName: string;
+  category: string;
+  action: string;
+  status: string;
+  message: string;
+  createdAt: string;
+};
+
+export type ComplianceResult = {
+  id: string;
+  assessmentAttemptId: string;
+  workspaceId: string;
+  datasetVersionId: string;
+  policyRef: string;
+  policyVersion: string;
+  gateDecision: string;
+  summary: Record<string, unknown>;
+  findings: ComplianceFinding[];
+  createdAt: string;
+};
+
 export type QualityAttempt = {
   id: string;
   workspaceId: string;
@@ -593,6 +617,10 @@ export const platform = {
   datasetVersion: (versionId: string) =>
     apiGet<DatasetVersion>(
       `/api/v1/dataset-versions/${encodeURIComponent(versionId)}?workspaceId=${encodeURIComponent(requireWorkspace())}`,
+    ),
+  complianceAttempt: (attemptId: string) =>
+    apiGet<ComplianceResult>(
+      `/api/v1/compliance-assessment-attempts/${encodeURIComponent(attemptId)}?workspaceId=${encodeURIComponent(requireWorkspace())}`,
     ),
   qualityAttempt: (attemptId: string) =>
     apiGet<QualityAttempt>(
