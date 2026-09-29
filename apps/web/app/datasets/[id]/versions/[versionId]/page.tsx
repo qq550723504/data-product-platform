@@ -232,6 +232,8 @@ export default async function DatasetVersionDetailPage({
       process.env.POC_ENABLE_DELIVERY_ACTIONS === "true"
       && Boolean(process.env.DELIVERY_API_TOKEN?.trim())
       && Boolean(process.env.DELIVERY_API_CONSUMER_REF?.trim())
+      && Boolean(process.env.DELIVERY_API_PRINCIPAL_REF?.trim())
+      && Boolean(process.env.DELIVERY_WEB_GATEWAY_TOKEN?.trim())
       && process.env.DELIVERY_API_CONSUMER_REF?.trim() === requested.consumer.trim();
 
     return (
