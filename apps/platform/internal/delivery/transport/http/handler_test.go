@@ -216,12 +216,12 @@ func TestDeliveryRecoveryReturnsTrustedOperation(t *testing.T) {
 	service := &fakeDirectService{recoveryResult: deliveryapp.DirectDataRecoveryResult{
 		CertificationProfileID: profileID,
 		Operation: deliverydomain.Operation{
-		ID: operationID, WorkspaceID: workspaceID, DatasetVersionID: versionID,
-		IdempotencyKey: "delivery-key", Status: deliverydomain.StatusIssued, CurrentGateDecision: "ALLOWED",
-		PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
-		Purpose: "RESEARCH", Action: "READ", ScopeRef: versionID.String(),
-		DeliveryChannel: "DIRECT_DATA", DeliveryMode: "DIRECT_DATA",
-	}}}
+			ID: operationID, WorkspaceID: workspaceID, DatasetVersionID: versionID,
+			IdempotencyKey: "delivery-key", Status: deliverydomain.StatusIssued, CurrentGateDecision: "ALLOWED",
+			PrincipalRef: "principal-a", EffectiveConsumerRef: "consumer-a",
+			Purpose: "RESEARCH", Action: "READ", ScopeRef: versionID.String(),
+			DeliveryChannel: "DIRECT_DATA", DeliveryMode: "DIRECT_DATA",
+		}}}
 	response := executeRecoveryRequest(t, NewHandler(service, resolver, &fakeObjectStore{}), workspaceID, "consumer-a", "delivery-key", "secret")
 	if response.Code != http.StatusOK {
 		t.Fatalf("response = %d %s", response.Code, response.Body.String())
