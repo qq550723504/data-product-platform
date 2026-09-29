@@ -220,6 +220,7 @@ COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 	}
 
 	complianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		AssessmentAttemptID: uuid.New(),
 		WorkspaceID:      workspaceID,
 		DatasetVersionID: passVersion.ID,
 		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
@@ -270,6 +271,7 @@ COMPANY-002,2026-09,90,95,80,120,HIGH,100,2026-09-16T10:00:00Z
 COMPANY-003,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z,13800000000
 `, map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0})
 	badComplianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		AssessmentAttemptID: uuid.New(),
 		WorkspaceID:      workspaceID,
 		DatasetVersionID: badComplianceVersion.ID,
 		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
@@ -299,6 +301,7 @@ COMPANY-004,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 		t.Fatalf("cross workspace quality error = %v, want ErrDatasetWorkspace", err)
 	}
 	if _, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		AssessmentAttemptID: uuid.New(),
 		WorkspaceID:      workspaceID,
 		DatasetVersionID: foreignVersion.ID,
 		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
@@ -327,6 +330,7 @@ COMPANY-004,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 		t.Fatalf("foreign non-READY quality error = %v, want ErrDatasetWorkspace", err)
 	}
 	if _, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		AssessmentAttemptID: uuid.New(),
 		WorkspaceID:      workspaceID,
 		DatasetVersionID: foreignVersion.ID,
 		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
