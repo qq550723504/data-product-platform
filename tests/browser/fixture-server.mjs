@@ -24,6 +24,7 @@ export const ids = {
   retryChild: "43434343-4343-4343-8343-434343434343",
   createdRelease: "45454545-4545-4545-8545-454545454545",
   productAsset: "46464646-4646-4646-8646-464646464646",
+  qualityAssessment: "47474747-4747-4747-8747-474747474747",
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
@@ -84,7 +85,7 @@ async function bodyOf(req) {
 export function createFixtureServer() {
   let state;
   const reset = (scenario = "ready") => {
-    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, requests: [] };
+    state = { scenario, candidateStatus: "PENDING", releaseStatus: "READY", datasetVersionStatus: "READY", invalidationReason: "", retryCreated: false, releaseCreated: false, qualityAttemptId: "", qualityCompleted: false, requests: [] };
   };
   reset();
   return createServer(async (req, res) => {
@@ -364,7 +365,43 @@ export function createFixtureServer() {
         if (url.pathname === `${workspace}/datasets/${ids.goldDataset}/versions`) return send(200, page([goldVersion]));
         if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}`) return send(200, goldVersion);
         if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/quality-assessments`) {
-          return send(200, { datasetVersionId: ids.goldVersion, items: [goldAssessment], page: { total: 1, limit: 25, offset: 0 } });
+          const generatedAssessment = {
+            ...goldAssessment,
+            id: ids.qualityAssessment,
+            ruleSetRef: "park/quality/enterprise-activity-quality-v1.yaml",
+            createdAt: "2026-09-29T08:00:00Z",
+          };
+          const items = state.qualityCompleted ? [generatedAssessment, goldAssessment] : [goldAssessment];
+          return send(200, { datasetVersionId: ids.goldVersion, items, page: { total: items.length, limit: 25, offset: 0 } });
+        }
+        const qualityAttemptMatch = url.pathname.match(/^\/api\/v1\/quality-assessment-attempts\/([0-9a-f-]+)$/);
+        if (qualityAttemptMatch) {
+          if (!state.qualityAttemptId || qualityAttemptMatch[1] !== state.qualityAttemptId) {
+            return send(404, { error: { code: "QUALITY_ASSESSMENT_ATTEMPT_NOT_FOUND" } });
+          }
+          return send(200, {
+            id: state.qualityAttemptId,
+            workspaceId: ids.workspace,
+            datasetVersionId: ids.goldVersion,
+            ruleSetRef: "park/quality/enterprise-activity-quality-v1.yaml",
+            engineName: "native",
+            engineVersion: "1",
+            outcome: state.qualityCompleted ? "SUCCEEDED" : "IN_PROGRESS",
+            ...(state.qualityCompleted ? { assessmentId: ids.qualityAssessment } : {}),
+            leaseExpiresAt: "2026-09-29T09:00:00Z",
+            leaseExpired: false,
+          });
+        }
+        if (url.pathname === `/api/v1/quality-assessments/${ids.qualityAssessment}/report` && state.qualityCompleted) {
+          return send(200, {
+            ...goldAssessment,
+            id: ids.qualityAssessment,
+            ruleSetRef: "park/quality/enterprise-activity-quality-v1.yaml",
+            createdAt: "2026-09-29T08:00:00Z",
+            findings: { items: [], page: { total: 0, limit: 50, offset: 0 } },
+            evidence: [],
+            auditEvents: [],
+          });
         }
         if (url.pathname === `/api/v1/quality-assessments/${ids.goldAssessment}/report`) {
           return send(200, {
@@ -466,6 +503,21 @@ export function createFixtureServer() {
           if (state.scenario === "review-conflict" || state.candidateStatus !== "PENDING") return send(409, { error: { code: "REVIEW_CONFLICT" } });
           state.candidateStatus = url.pathname.endsWith("/confirm") ? "CONFIRMED" : "REJECTED";
           return send(200, { ...job, status: "SUCCEEDED" });
+        }
+        if (url.pathname === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`) {
+          if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
+          if (body.workspaceId !== ids.workspace) return send(400, { error: { code: "DATASET_WORKSPACE_MISMATCH" } });
+          if (typeof body.assessmentAttemptId !== "string" || !body.assessmentAttemptId) return send(400, { error: { code: "MISSING_ASSESSMENT_ATTEMPT_ID" } });
+          if (body.ruleSetRef !== "park/quality/enterprise-activity-quality-v1.yaml") return send(400, { error: { code: "INVALID_RULE_SET" } });
+          if (state.qualityAttemptId && state.qualityAttemptId !== body.assessmentAttemptId) return send(409, { error: { code: "QUALITY_ASSESSMENT_ATTEMPT_CONFLICT" } });
+          state.qualityAttemptId = body.assessmentAttemptId;
+          state.qualityCompleted = true;
+          return send(201, {
+            ...goldAssessment,
+            id: ids.qualityAssessment,
+            ruleSetRef: body.ruleSetRef,
+            createdAt: "2026-09-29T08:00:00Z",
+          });
         }
         if (url.pathname === `/api/v1/data-products/${ids.product}/releases`) {
           if (req.headers["x-actor-id"] !== ids.actor) return send(400, { error: { code: "FIXTURE_ACTOR_REQUIRED" } });
