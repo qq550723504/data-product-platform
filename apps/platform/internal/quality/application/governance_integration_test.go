@@ -219,18 +219,29 @@ COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 		t.Fatalf("latest second assessment = %s, err=%v; want %s", latest.ID, err, secondAssessment.ID)
 	}
 
+	complianceAttemptID := uuid.New()
 	complianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
-		AssessmentAttemptID: uuid.New(),
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: passVersion.ID,
-		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:          "governance-e2e",
+		AssessmentAttemptID: complianceAttemptID,
+		WorkspaceID:          workspaceID,
+		DatasetVersionID:     passVersion.ID,
+		PolicyRef:            "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:              "governance-e2e",
 	})
 	if err != nil {
 		t.Fatalf("run compliance gate: %v", err)
 	}
 	if complianceResult.GateDecision != compliancedomain.GatePass {
 		t.Fatalf("compliance gate = %s, want PASS; findings=%+v", complianceResult.GateDecision, complianceResult.Findings)
+	}
+	replayedCompliance, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		AssessmentAttemptID: complianceAttemptID,
+		WorkspaceID:          workspaceID,
+		DatasetVersionID:     passVersion.ID,
+		PolicyRef:            "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:              "governance-e2e-compliance-replay",
+	})
+	if err != nil || replayedCompliance.ID != complianceResult.ID {
+		t.Fatalf("same compliance attempt replay = %s, err=%v; want original result %s", replayedCompliance.ID, err, complianceResult.ID)
 	}
 
 	// A completed attempt is a stable replay fact. It must remain replayable even
@@ -246,6 +257,16 @@ COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 	})
 	if err != nil || replayedAfterInvalidation.ID != qualityResult.ID {
 		t.Fatalf("same quality attempt replay after invalidation = %s, err=%v; want original assessment %s", replayedAfterInvalidation.ID, err, qualityResult.ID)
+	}
+	replayedComplianceAfterInvalidation, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		AssessmentAttemptID: complianceAttemptID,
+		WorkspaceID:          workspaceID,
+		DatasetVersionID:     passVersion.ID,
+		PolicyRef:            "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:              "governance-e2e-compliance-replay-after-invalidation",
+	})
+	if err != nil || replayedComplianceAfterInvalidation.ID != complianceResult.ID {
+		t.Fatalf("same compliance attempt replay after invalidation = %s, err=%v; want original result %s", replayedComplianceAfterInvalidation.ID, err, complianceResult.ID)
 	}
 
 	badQualityDataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "GOV-BAD-QUALITY")
