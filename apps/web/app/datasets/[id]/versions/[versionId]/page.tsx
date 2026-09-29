@@ -39,6 +39,7 @@ type Query = {
   complianceAttemptId?: string;
   compliancePolicyRef?: string;
   deliveryAttemptKey?: string;
+  deliveryRetryOf?: string;
 };
 
 function firstValue(values?: string[]): string {
@@ -887,6 +888,7 @@ export default async function DatasetVersionDetailPage({
                   scopeType={requested.scopeType}
                   scopeRef={requested.scopeRef}
                   initialKey={typeof query.deliveryAttemptKey === "string" && query.deliveryAttemptKey.trim().length <= 255 ? query.deliveryAttemptKey.trim() : undefined}
+                  initialRetryOf={typeof query.deliveryRetryOf === "string" && /^[0-9a-f-]{36}$/i.test(query.deliveryRetryOf) ? query.deliveryRetryOf : undefined}
                 />
               </section>
             )}
