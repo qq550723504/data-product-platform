@@ -380,6 +380,13 @@ test("Direct Data delivery freezes identity, recovers after refresh, and creates
   });
   const secondKey = new URL(page.url()).searchParams.get("deliveryAttemptKey");
   expect(secondKey).toBeTruthy();
+  expect(new URL(page.url()).searchParams.get("deliveryRetryOf")).toBe(ids.deliveryOperation);
+
+  await page.reload();
+  await expect(page).toHaveURL((url) =>
+    url.searchParams.get("deliveryAttemptKey") === secondKey
+    && url.searchParams.get("deliveryRetryOf") === ids.deliveryOperation,
+  );
 
   const secondDownloadPromise = page.waitForEvent("download");
   await page.getByTestId("direct-data-delivery").getByRole("button", { name: "下载 Direct Data", exact: true }).click();
