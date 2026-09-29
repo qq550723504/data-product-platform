@@ -301,6 +301,34 @@ func (r *PostgresRepository) GetExecutionTx(ctx context.Context, tx pgx.Tx, exec
 	return r.getExecution(ctx, tx, executionID, forUpdate)
 }
 
+func (r *PostgresRepository) DatasetIDsForVersions(ctx context.Context, versionIDs []uuid.UUID) (map[uuid.UUID]uuid.UUID, error) {
+	result := make(map[uuid.UUID]uuid.UUID, len(versionIDs))
+	if len(versionIDs) == 0 {
+		return result, nil
+	}
+	rows, err := r.pool.Query(ctx, `SELECT id, dataset_id FROM dataset_version WHERE id = ANY($1::uuid[])`, versionIDs)
+	if err != nil {
+		return nil, fmt.Errorf("resolve datasets for versions: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var versionID, datasetID uuid.UUID
+		if err := rows.Scan(&versionID, &datasetID); err != nil {
+			return nil, fmt.Errorf("scan dataset for version: %w", err)
+		}
+		result[versionID] = datasetID
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate datasets for versions: %w", err)
+	}
+	for _, versionID := range versionIDs {
+		if _, ok := result[versionID]; !ok {
+			return nil, ErrNotFound
+		}
+	}
+	return result, nil
+}
+
 func (r *PostgresRepository) getExecution(ctx context.Context, q executionQuerier, executionID uuid.UUID, forUpdate bool) (domain.Execution, error) {
 	var execution domain.Execution
 	var metrics []byte

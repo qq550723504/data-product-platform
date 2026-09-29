@@ -185,7 +185,21 @@ func (h *Handler) getExecution(w http.ResponseWriter, r *http.Request) {
 		httpserver.WriteError(w, r, http.StatusInternalServerError, "EXECUTION_READ_FAILED", err.Error(), nil)
 		return
 	}
-	writeJSON(w, http.StatusOK, executionResponse(execution))
+	response := executionResponse(execution)
+	inputs := response["inputs"].([]map[string]any)
+	versionIDs := make([]uuid.UUID, 0, len(execution.Inputs))
+	for _, input := range execution.Inputs {
+		versionIDs = append(versionIDs, input.DatasetVersionID)
+	}
+	datasetIDs, err := h.repo.DatasetIDsForVersions(r.Context(), versionIDs)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusInternalServerError, "EXECUTION_READ_FAILED", "resolve execution input datasets", nil)
+		return
+	}
+	for i, input := range execution.Inputs {
+		inputs[i]["datasetId"] = datasetIDs[input.DatasetVersionID]
+	}
+	writeJSON(w, http.StatusOK, response)
 }
 
 func (h *Handler) retryExecution(w http.ResponseWriter, r *http.Request) {

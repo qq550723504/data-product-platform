@@ -19,6 +19,7 @@ export const ids = {
   goldCertification: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
   goldBinding: "ffffffff-ffff-4fff-8fff-ffffffffffff",
   goldSnapshot: "12121212-1212-4212-8212-121212121212",
+  retryParent: "41414141-4141-4141-8141-414141414141",
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
@@ -380,6 +381,28 @@ export function createFixtureServer() {
         }
         if (url.pathname === `${workspace}/datasets`) return send(200, page([goldDataset]));
         if (url.pathname === `${workspace}/executions`) return send(200, page([]));
+        if (url.pathname === `/api/v1/executions/${ids.job}`) {
+          return send(200, {
+            id: ids.job,
+            workspaceId: ids.workspace,
+            workflowVersionId: "42424242-4242-4242-8242-424242424242",
+            outputDatasetId: ids.goldDataset,
+            outputDatasetVersionId: ids.goldVersion,
+            targetPeriod: "2026-09",
+            status: "FAILED",
+            attempt: 2,
+            retryOfExecutionId: ids.retryParent,
+            engineType: "NATIVE",
+            engineExecutionId: "fixture-engine-execution",
+            errorCode: "FIXTURE_EXECUTION_FAILED",
+            errorMessage: "fixture failure",
+            metrics: { rowsRead: 2 },
+            inputs: [{ name: "source", datasetId: ids.goldDataset, datasetVersionId: ids.goldVersion }],
+            createdAt: stamp,
+            startedAt: stamp,
+            finishedAt: stamp,
+          });
+        }
         if (url.pathname === `${workspace}/attention/failed-executions`) return send(200, page([]));
         if (url.pathname === `${workspace}/workbench`) return send(200, {
           workspaceId: ids.workspace, counts: { dataResources: 0, datasets: 0, dataProducts: 1 },

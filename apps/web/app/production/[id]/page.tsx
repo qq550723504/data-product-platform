@@ -2,6 +2,23 @@ import Link from "next/link";
 import { BackLink, Badge, DefinitionList, LoadError, PageHeader, SetupRequired, formatDate, shortId } from "@/components/ui";
 import { configuredWorkspaceId, platform } from "@/lib/platform";
 
+function executionGuidance(status: string): string {
+  switch (status) {
+    case "FAILED":
+      return "该 Execution 是不可变失败事实。Core Retry 会基于同一冻结输入创建新的 Execution，不会改写本记录。";
+    case "QUEUED":
+      return "Execution 已进入队列，等待 worker 认领；当前记录不需要人工修改状态。";
+    case "SUBMITTING":
+      return "Core 正在向托管执行引擎提交任务；提交结果由 reconciliation 更新。";
+    case "RUNNING":
+      return "Execution 正在运行；输出 DatasetVersion 只有在 Core 成功完成并冻结后才会出现。";
+    case "SUCCEEDED":
+      return "Execution 已成功完成；输出 DatasetVersion 是本次执行冻结的结果事实。";
+    default:
+      return "Execution 状态由 Core 状态机维护；UI 仅展示当前不可变/受控事实。";
+  }
+}
+
 export default async function ExecutionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const workspaceId = configuredWorkspaceId();
   if (!workspaceId) {
@@ -33,12 +50,21 @@ export default async function ExecutionDetailPage({ params }: { params: Promise<
               { label: "Attempt", value: execution.attempt },
               { label: "Engine Type", value: execution.engineType || "NATIVE" },
               { label: "Engine Execution", value: <span className="mono">{execution.engineExecutionId || "—"}</span> },
-              { label: "Retry Of", value: <span className="mono">{shortId(execution.retryOfExecutionId)}</span> },
+              {
+                label: "Retry Of",
+                value: execution.retryOfExecutionId
+                  ? <Link className="text-link mono" href={`/production/${execution.retryOfExecutionId}`}>{shortId(execution.retryOfExecutionId)}</Link>
+                  : "—",
+              },
               { label: "开始时间", value: formatDate(execution.startedAt ?? execution.createdAt) },
               { label: "完成时间", value: formatDate(execution.finishedAt) },
             ]} />
+            <div className={`callout ${execution.status === "FAILED" ? "callout-bad" : "callout-neutral"}`} style={{ marginTop: 16 }}>
+              <strong>当前状态说明</strong>
+              <p>{executionGuidance(execution.status)}</p>
+            </div>
             {execution.errorCode || execution.errorMessage ? (
-              <div className="callout callout-bad" style={{ marginTop: 16 }}>
+              <div className="callout callout-bad" style={{ marginTop: 12 }}>
                 <strong>{execution.errorCode || "EXECUTION_FAILED"}</strong>
                 <p>{execution.errorMessage || "执行失败"}</p>
               </div>
@@ -49,7 +75,14 @@ export default async function ExecutionDetailPage({ params }: { params: Promise<
             <h2>输出</h2>
             <div className="status-stack" style={{ marginTop: 12 }}>
               <div className="status-row"><span>Output Dataset</span><Link className="text-link mono" href={`/datasets/${execution.outputDatasetId}`}>{shortId(execution.outputDatasetId)}</Link></div>
-              <div className="status-row"><span>Output Version</span><span className="mono">{shortId(execution.outputDatasetVersionId)}</span></div>
+              <div className="status-row">
+                <span>Output Version</span>
+                {execution.outputDatasetVersionId ? (
+                  <Link className="text-link mono" href={`/datasets/${execution.outputDatasetId}/versions/${execution.outputDatasetVersionId}`}>
+                    {shortId(execution.outputDatasetVersionId)}
+                  </Link>
+                ) : <span className="mono">—</span>}
+              </div>
               <div className="status-row"><span>Status</span><Badge value={execution.status} /></div>
             </div>
           </aside>
@@ -60,9 +93,18 @@ export default async function ExecutionDetailPage({ params }: { params: Promise<
           {execution.inputs.length === 0 ? <p>无输入版本。</p> : (
             <div className="table-card" style={{ marginTop: 14 }}>
               <table className="data-table">
-                <thead><tr><th>端口</th><th>DatasetVersion ID</th></tr></thead>
+                <thead><tr><th>端口</th><th>DatasetVersion</th></tr></thead>
                 <tbody>{execution.inputs.map((input) => (
-                  <tr key={`${input.name}-${input.datasetVersionId}`}><td>{input.name}</td><td className="mono">{input.datasetVersionId}</td></tr>
+                  <tr key={`${input.name}-${input.datasetVersionId}`}>
+                    <td>{input.name}</td>
+                    <td>
+                      {input.datasetId ? (
+                        <Link className="text-link mono" href={`/datasets/${input.datasetId}/versions/${input.datasetVersionId}`}>
+                          {input.datasetVersionId}
+                        </Link>
+                      ) : <span className="mono">{input.datasetVersionId}</span>}
+                    </td>
+                  </tr>
                 ))}</tbody>
               </table>
             </div>

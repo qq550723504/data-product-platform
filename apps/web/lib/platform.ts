@@ -129,7 +129,7 @@ export type ExecutionDetail = {
   errorCode: string;
   errorMessage: string;
   metrics: Record<string, unknown>;
-  inputs: Array<{ name: string; datasetVersionId: string }>;
+  inputs: Array<{ name: string; datasetId?: string; datasetVersionId: string }>;
   createdAt: string;
   startedAt?: string;
   finishedAt?: string;
