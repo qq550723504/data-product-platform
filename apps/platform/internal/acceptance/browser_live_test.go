@@ -237,7 +237,7 @@ func TestBrowserLiveCorePOC(t *testing.T) {
 	quality, err := qualityService.Run(ctx, qualityapp.RunCommand{WorkspaceID: workspaceID, DatasetVersionID: output.ID, RuleSetRef: qualityRuleSetRef, ActorID: &seedActor, TraceID: traceID, Now: output.ReadyAt.Add(30 * time.Minute)})
 	liveOK(t, err, "evaluate actual quality rules")
 	complianceService := complianceapp.NewService(cfg.IndustryPackRoot, tx, datasetRepo, complianceinfra.NewPostgresRepository(pool), store)
-	compliance, err := complianceService.Run(ctx, complianceapp.RunCommand{WorkspaceID: workspaceID, DatasetVersionID: output.ID, PolicyRef: complianceRef, ActorID: &seedActor, TraceID: traceID})
+	compliance, err := complianceService.Run(ctx, complianceapp.RunCommand{AssessmentAttemptID: uuid.New(), WorkspaceID: workspaceID, DatasetVersionID: output.ID, PolicyRef: complianceRef, ActorID: &seedActor, TraceID: traceID})
 	liveOK(t, err, "evaluate actual compliance rules")
 	contractService := contractapp.NewService(tx, contractinfra.NewPostgresRepository(pool))
 	contract, err := contractService.CreateVersionFromYAML(ctx, contractapp.CreateVersionFromYAMLCommand{
