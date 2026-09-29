@@ -219,17 +219,29 @@ COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 		t.Fatalf("latest second assessment = %s, err=%v; want %s", latest.ID, err, secondAssessment.ID)
 	}
 
+	complianceAttemptID := uuid.New()
 	complianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: passVersion.ID,
-		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:          "governance-e2e",
+		AssessmentAttemptID: complianceAttemptID,
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    passVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-e2e",
 	})
 	if err != nil {
 		t.Fatalf("run compliance gate: %v", err)
 	}
 	if complianceResult.GateDecision != compliancedomain.GatePass {
 		t.Fatalf("compliance gate = %s, want PASS; findings=%+v", complianceResult.GateDecision, complianceResult.Findings)
+	}
+	replayedCompliance, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		AssessmentAttemptID: complianceAttemptID,
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    passVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-e2e-compliance-replay",
+	})
+	if err != nil || replayedCompliance.ID != complianceResult.ID {
+		t.Fatalf("same compliance attempt replay = %s, err=%v; want original result %s", replayedCompliance.ID, err, complianceResult.ID)
 	}
 
 	// A completed attempt is a stable replay fact. It must remain replayable even
@@ -245,6 +257,16 @@ COMPANY-001,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 	})
 	if err != nil || replayedAfterInvalidation.ID != qualityResult.ID {
 		t.Fatalf("same quality attempt replay after invalidation = %s, err=%v; want original assessment %s", replayedAfterInvalidation.ID, err, qualityResult.ID)
+	}
+	replayedComplianceAfterInvalidation, err := complianceService.Run(ctx, complianceapp.RunCommand{
+		AssessmentAttemptID: complianceAttemptID,
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    passVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-e2e-compliance-replay-after-invalidation",
+	})
+	if err != nil || replayedComplianceAfterInvalidation.ID != complianceResult.ID {
+		t.Fatalf("same compliance attempt replay after invalidation = %s, err=%v; want original result %s", replayedComplianceAfterInvalidation.ID, err, complianceResult.ID)
 	}
 
 	badQualityDataset := createDatasetForTest(t, ctx, createDataset, workspaceID, "GOV-BAD-QUALITY")
@@ -270,10 +292,11 @@ COMPANY-002,2026-09,90,95,80,120,HIGH,100,2026-09-16T10:00:00Z
 COMPANY-003,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z,13800000000
 `, map[string]any{"unresolvedEntityRate": 0.0, "acceptedNegativeEnergyRate": 0.0})
 	badComplianceResult, err := complianceService.Run(ctx, complianceapp.RunCommand{
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: badComplianceVersion.ID,
-		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:          "governance-e2e",
+		AssessmentAttemptID: uuid.New(),
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    badComplianceVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-e2e",
 	})
 	if err != nil {
 		t.Fatalf("run bad compliance gate: %v", err)
@@ -299,10 +322,11 @@ COMPANY-004,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 		t.Fatalf("cross workspace quality error = %v, want ErrDatasetWorkspace", err)
 	}
 	if _, err := complianceService.Run(ctx, complianceapp.RunCommand{
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: foreignVersion.ID,
-		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:          "governance-rejected",
+		AssessmentAttemptID: uuid.New(),
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    foreignVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-rejected",
 	}); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
 		t.Fatalf("cross workspace compliance error = %v, want ErrDatasetWorkspace", err)
 	}
@@ -327,10 +351,11 @@ COMPANY-004,2026-09,90,95,80,88,HIGH,100,2026-09-16T10:00:00Z
 		t.Fatalf("foreign non-READY quality error = %v, want ErrDatasetWorkspace", err)
 	}
 	if _, err := complianceService.Run(ctx, complianceapp.RunCommand{
-		WorkspaceID:      workspaceID,
-		DatasetVersionID: foreignVersion.ID,
-		PolicyRef:        "park/compliance/enterprise-activity-compliance-v1.yaml",
-		TraceID:          "governance-rejected",
+		AssessmentAttemptID: uuid.New(),
+		WorkspaceID:         workspaceID,
+		DatasetVersionID:    foreignVersion.ID,
+		PolicyRef:           "park/compliance/enterprise-activity-compliance-v1.yaml",
+		TraceID:             "governance-rejected",
 	}); !errors.Is(err, datasetdomain.ErrDatasetWorkspace) {
 		t.Fatalf("foreign non-READY compliance error = %v, want ErrDatasetWorkspace", err)
 	}
