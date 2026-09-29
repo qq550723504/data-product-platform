@@ -78,7 +78,6 @@ func TestAssessmentAttemptStatusRejectsInvalidAttemptID(t *testing.T) {
 	}
 }
 
-
 func TestResultResponseUsesStableLowerCamelFindingKeys(t *testing.T) {
 	resultID := uuid.New()
 	findingID := uuid.New()
