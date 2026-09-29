@@ -70,13 +70,10 @@ export function QualityCheckForm({
   };
 
   const startFreshAttempt = () => {
-    const nextAttemptId = newAttemptId();
     const url = new URL(window.location.href);
     url.searchParams.set("view", "quality");
     url.searchParams.delete("qualityAttemptId");
-    setAttemptId(nextAttemptId);
-    window.history.replaceState(window.history.state, "", url.pathname + "?" + url.searchParams.toString());
-    router.refresh();
+    window.location.assign(url.pathname + "?" + url.searchParams.toString());
   };
 
   return (
