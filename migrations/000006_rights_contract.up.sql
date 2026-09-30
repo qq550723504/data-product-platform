@@ -101,18 +101,6 @@ ALTER TABLE product_release
     ADD CONSTRAINT fk_product_release_rights_snapshot
     FOREIGN KEY (rights_snapshot_id) REFERENCES rights_snapshot(id) NOT VALID;
 
--- Validate staged foreign keys explicitly after installation. NOT VALID keeps the
--- constraint installation safe for tables that already contain rows while still
--- enforcing the relationship for every new or updated row immediately.
-ALTER TABLE product_version
-    VALIDATE CONSTRAINT fk_product_version_contract_version;
-
-ALTER TABLE product_release
-    VALIDATE CONSTRAINT fk_product_release_contract_version;
-
-ALTER TABLE product_release
-    VALIDATE CONSTRAINT fk_product_release_rights_snapshot;
-
 CREATE OR REPLACE FUNCTION guard_contract_version_immutability()
 RETURNS trigger AS $$
 BEGIN
