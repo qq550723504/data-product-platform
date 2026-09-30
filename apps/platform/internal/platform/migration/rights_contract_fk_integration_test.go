@@ -3,9 +3,6 @@ package migration_test
 import (
 	"context"
 	"errors"
-	"os"
-	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -56,7 +53,7 @@ func TestRightsContractMigrationStagesAndValidatesForeignKeysForExistingRows(t *
 	insertLegacyProductGraph(t, pool, nil, nil, nil)
 
 	if err := tryApplyMigrationFile(t, pool, 6, "up"); err != nil {
-		t.Fatalf("apply rights/contract migration with existing compatible rows: %v", err)
+		t.Fatalf("install staged rights/contract foreign keys: %v", err)
 	}
 
 	rows, err := pool.Query(ctx, `
@@ -82,15 +79,37 @@ func TestRightsContractMigrationStagesAndValidatesForeignKeysForExistingRows(t *
 			t.Fatalf("scan staged foreign key: %v", err)
 		}
 		seen++
-		if !validated {
-			t.Fatalf("constraint %s remained NOT VALID after successful migration", name)
+		if validated {
+			t.Fatalf("constraint %s was validated before migration 000049", name)
 		}
 	}
 	if err := rows.Err(); err != nil {
 		t.Fatalf("iterate staged foreign keys: %v", err)
 	}
 	if seen != 3 {
-		t.Fatalf("validated foreign keys = %d, want 3", seen)
+		t.Fatalf("staged foreign keys = %d, want 3", seen)
+	}
+	rows.Close()
+
+	if err := tryApplyMigrationFile(t, pool, 49, "up"); err != nil {
+		t.Fatalf("validate staged rights/contract foreign keys: %v", err)
+	}
+
+	var unvalidated int
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM pg_constraint
+		WHERE conname = ANY($1)
+		  AND NOT convalidated
+	`, []string{
+		"fk_product_release_contract_version",
+		"fk_product_release_rights_snapshot",
+		"fk_product_version_contract_version",
+	}).Scan(&unvalidated); err != nil {
+		t.Fatalf("count unvalidated foreign keys: %v", err)
+	}
+	if unvalidated != 0 {
+		t.Fatalf("unvalidated foreign keys after migration 000049 = %d, want 0", unvalidated)
 	}
 }
 
@@ -101,17 +120,7 @@ func TestRightsContractMigrationEnforcesNewRowsBeforeHistoricalValidation(t *tes
 	historicalContractID := uuid.New()
 	insertLegacyProductGraph(t, pool, &historicalContractID, nil, nil)
 
-	migrationPath := filepath.Join(migrationsDir(t), "000006_rights_contract.up.sql")
-	content, err := os.ReadFile(migrationPath)
-	if err != nil {
-		t.Fatalf("read rights/contract migration: %v", err)
-	}
-	const validationMarker = "-- Validate staged foreign keys explicitly after installation."
-	parts := strings.SplitN(string(content), validationMarker, 2)
-	if len(parts) != 2 {
-		t.Fatalf("migration is missing staged-validation marker %q", validationMarker)
-	}
-	if _, err := pool.Exec(ctx, parts[0]); err != nil {
+	if err := tryApplyMigrationFile(t, pool, 6, "up"); err != nil {
 		t.Fatalf("install NOT VALID foreign keys over historical rows: %v", err)
 	}
 
@@ -147,10 +156,7 @@ func TestRightsContractMigrationEnforcesNewRowsBeforeHistoricalValidation(t *tes
 		t.Fatalf("new invalid reference error = %v, want fk_product_version_contract_version 23503", err)
 	}
 
-	_, err = pool.Exec(ctx, `
-		ALTER TABLE product_version
-			VALIDATE CONSTRAINT fk_product_version_contract_version
-	`)
+	err = tryApplyMigrationFile(t, pool, 49, "up")
 	if err == nil {
 		t.Fatal("historical invalid contract reference unexpectedly passed explicit validation")
 	}
