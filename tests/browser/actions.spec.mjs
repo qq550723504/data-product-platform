@@ -334,6 +334,127 @@ test("readonly runtime never enables Quality Check", async ({ page, request }) =
   expect(commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`)).toHaveLength(0);
 });
 
+test("Direct Data delivery freezes identity, recovers after refresh, and creates a linked retry", async ({ page, request }) => {
+  await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=eligibility`);
+
+  const panel = page.getByTestId("direct-data-delivery");
+  const downloadButton = panel.getByRole("button", { name: "下载 Direct Data", exact: true });
+  await expect(downloadButton).toBeEnabled();
+
+  const firstDownloadPromise = page.waitForEvent("download");
+  await downloadButton.click();
+  const firstDownload = await firstDownloadPromise;
+  expect(firstDownload.suggestedFilename()).toContain(ids.goldVersion);
+
+  await expect(page).toHaveURL((url) => /^[0-9a-f-]{36}$/i.test(url.searchParams.get("deliveryAttemptKey") ?? ""));
+  const firstKey = new URL(page.url()).searchParams.get("deliveryAttemptKey");
+  expect(firstKey).toBeTruthy();
+
+  let snapshot = await state(request);
+  let deliveryCalls = snapshot.requests.filter((call) => call.method === "POST" && call.path === `/api/v1/workspaces/${ids.workspace}/dataset-versions/${ids.goldVersion}/deliveries`);
+  expect(deliveryCalls).toHaveLength(1);
+  expect(deliveryCalls[0].authorization).toBe("Bearer delivery-secret");
+  expect(deliveryCalls[0].gateway).toBeUndefined();
+  expect(deliveryCalls[0].authenticatedPrincipal).toBeUndefined();
+  expect(deliveryCalls[0].idempotencyKey).toBe(firstKey);
+  expect(deliveryCalls[0].body.profileId).toBe(ids.goldProfile);
+  expect(deliveryCalls[0].body.consumer).toBe("GOLD-PILOT-CONSUMER");
+  expect(deliveryCalls[0].body.retryOfDeliveryOperationId).toBeUndefined();
+
+  await page.reload();
+  const recoveredPanel = page.getByTestId("direct-data-delivery");
+  await expect(recoveredPanel.getByRole("button", { name: /下载 Direct Data|该 attempt 已签发/ })).toBeDisabled();
+  await expect(recoveredPanel.getByTestId("delivery-operation-status")).toContainText("ISSUED");
+
+  snapshot = await state(request);
+  expect(snapshot.requests.some((call) =>
+    call.method === "GET"
+    && call.path === `/api/v1/workspaces/${ids.workspace}/direct-data-deliveries/recovery`
+    && call.authorization === "Bearer delivery-secret"
+  )).toBe(true);
+  deliveryCalls = snapshot.requests.filter((call) => call.method === "POST" && call.path.endsWith("/deliveries"));
+  expect(deliveryCalls).toHaveLength(1);
+
+  await recoveredPanel.getByRole("button", { name: "创建重试下载 attempt", exact: true }).click();
+  await expect(page).toHaveURL((url) => {
+    const nextKey = url.searchParams.get("deliveryAttemptKey");
+    return Boolean(nextKey && nextKey !== firstKey);
+  });
+  const secondKey = new URL(page.url()).searchParams.get("deliveryAttemptKey");
+  expect(secondKey).toBeTruthy();
+  expect(new URL(page.url()).searchParams.get("deliveryRetryOf")).toBe(ids.deliveryOperation);
+
+  await page.reload();
+  await expect(page).toHaveURL((url) =>
+    url.searchParams.get("deliveryAttemptKey") === secondKey
+    && url.searchParams.get("deliveryRetryOf") === ids.deliveryOperation,
+  );
+
+  const secondDownloadPromise = page.waitForEvent("download");
+  await page.getByTestId("direct-data-delivery").getByRole("button", { name: "下载 Direct Data", exact: true }).click();
+  await secondDownloadPromise;
+  await page.reload();
+  await expect(page.getByTestId("direct-data-delivery").getByTestId("delivery-operation-status")).toContainText("ISSUED");
+
+  snapshot = await state(request);
+  deliveryCalls = snapshot.requests.filter((call) => call.method === "POST" && call.path.endsWith("/deliveries"));
+  expect(deliveryCalls).toHaveLength(2);
+  expect(deliveryCalls[1].idempotencyKey).toBe(secondKey);
+  expect(deliveryCalls[1].body.retryOfDeliveryOperationId).toBe(ids.deliveryOperation);
+});
+
+test("Direct Data proxy rejects callers outside the trusted web gateway", async () => {
+  const response = await fetch(
+    `http://127.0.0.1:3100/api/direct-data-deliveries?idempotencyKey=untrusted-key&consumer=GOLD-PILOT-CONSUMER&versionId=${ids.goldVersion}`,
+  );
+  expect(response.status).toBe(401);
+  const payload = await response.json();
+  expect(payload.error.code).toBe("WEB_CALLER_UNTRUSTED");
+});
+
+test("Direct Data recovery accepts Core-normalized purpose and action", async ({ page }) => {
+  const purpose = "  gold-pilot  ";
+  const action = "  use  ";
+  await page.goto(
+    `/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=eligibility&purpose=${encodeURIComponent(purpose)}&action=${encodeURIComponent(action)}`,
+  );
+
+  const panel = page.getByTestId("direct-data-delivery");
+  const firstDownloadPromise = page.waitForEvent("download");
+  await panel.getByRole("button", { name: "下载 Direct Data", exact: true }).click();
+  await firstDownloadPromise;
+
+  const attemptKey = new URL(page.url()).searchParams.get("deliveryAttemptKey");
+  expect(attemptKey).toBeTruthy();
+
+  await page.reload();
+  const recoveredPanel = page.getByTestId("direct-data-delivery");
+  await expect(recoveredPanel.getByTestId("delivery-operation-status")).toContainText("ISSUED");
+  await expect(recoveredPanel.getByRole("button", { name: "创建重试下载 attempt", exact: true })).toBeVisible();
+});
+
+test("Direct Data delivery stays disabled for Core-unsupported explicit scopes", async ({ page, request }) => {
+  await page.goto(
+    `/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=eligibility&scopeType=OBJECT&scopeRef=${ids.sourceResource}`,
+  );
+  const panel = page.getByTestId("direct-data-delivery");
+  await expect(panel.getByRole("button", { name: "下载 Direct Data", exact: true })).toBeDisabled();
+  await expect(panel.getByText("Direct Data 当前只支持 ALL_RESOURCE scope", { exact: false })).toBeVisible();
+
+  const snapshot = await state(request);
+  expect(snapshot.requests.filter((call) => call.method === "POST" && call.path.endsWith("/deliveries"))).toHaveLength(0);
+});
+
+test("readonly runtime never enables Direct Data delivery", async ({ page, request }) => {
+  await page.goto(`http://127.0.0.1:3101/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=eligibility`);
+  const panel = page.getByTestId("direct-data-delivery");
+  await expect(panel.getByRole("button", { name: "下载 Direct Data", exact: true })).toBeDisabled();
+  await expect(panel.getByText("Direct Data 下载默认关闭", { exact: false })).toBeVisible();
+
+  const snapshot = await state(request);
+  expect(snapshot.requests.filter((call) => call.method === "POST" && call.path.endsWith("/deliveries"))).toHaveLength(0);
+});
+
 test("READY DatasetVersion can be invalidated through the Core command", async ({ page, request }) => {
   await page.goto(`/datasets/${ids.goldDataset}/versions/${ids.goldVersion}`);
 

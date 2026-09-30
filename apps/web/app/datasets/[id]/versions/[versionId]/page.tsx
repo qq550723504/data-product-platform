@@ -14,6 +14,7 @@ import {
 import { DatasetVersionInvalidateForm } from "@/components/dataset-version-invalidate-form";
 import { QualityCheckForm } from "@/components/quality-check-form";
 import { ComplianceCheckForm } from "@/components/compliance-check-form";
+import { DirectDataDeliveryForm } from "@/components/direct-data-delivery-form";
 import { configuredWorkspaceId, platform, PlatformError, type CertificationBlocker, type DatasetCertification } from "@/lib/platform";
 import { isQualityAttemptId } from "@/lib/quality-command";
 import { isComplianceAttemptId } from "@/lib/compliance-command";
@@ -37,6 +38,8 @@ type Query = {
   qualityAttemptId?: string;
   complianceAttemptId?: string;
   compliancePolicyRef?: string;
+  deliveryAttemptKey?: string;
+  deliveryRetryOf?: string;
 };
 
 function firstValue(values?: string[]): string {
@@ -225,6 +228,13 @@ export default async function DatasetVersionDetailPage({
       process.env.POC_ENABLE_QUALITY_ACTIONS === "true" && Boolean(process.env.POC_QUALITY_ACTOR_ID?.trim());
     const complianceActionsEnabled =
       process.env.POC_ENABLE_COMPLIANCE_ACTIONS === "true" && Boolean(process.env.POC_COMPLIANCE_ACTOR_ID?.trim());
+    const deliveryActionsEnabled =
+      process.env.POC_ENABLE_DELIVERY_ACTIONS === "true"
+      && Boolean(process.env.DELIVERY_API_TOKEN?.trim())
+      && Boolean(process.env.DELIVERY_API_CONSUMER_REF?.trim())
+      && Boolean(process.env.DELIVERY_API_PRINCIPAL_REF?.trim())
+      && Boolean(process.env.DELIVERY_WEB_GATEWAY_TOKEN?.trim())
+      && process.env.DELIVERY_API_CONSUMER_REF?.trim() === requested.consumer.trim();
 
     return (
       <>
@@ -867,6 +877,21 @@ export default async function DatasetVersionDetailPage({
                   </div>
                 ) : null}
                 {!eligibility.allowed ? <div className="callout callout-bad" style={{ marginTop: 14 }}><strong>当前不可交付</strong>{blockerList(eligibility.blockers)}</div> : null}
+                <DirectDataDeliveryForm
+                  datasetId={dataset.id}
+                  versionId={version.id}
+                  enabled={deliveryActionsEnabled}
+                  allowed={eligibility.allowed}
+                  profileId={requested.profileId}
+                  consumer={requested.consumer}
+                  purpose={requested.purpose}
+                  action={requested.action}
+                  delivery={requested.delivery}
+                  scopeType={requested.scopeType}
+                  scopeRef={requested.scopeRef}
+                  initialKey={typeof query.deliveryAttemptKey === "string" && query.deliveryAttemptKey.trim().length <= 255 ? query.deliveryAttemptKey.trim() : undefined}
+                  initialRetryOf={typeof query.deliveryRetryOf === "string" && /^[0-9a-f-]{36}$/i.test(query.deliveryRetryOf) ? query.deliveryRetryOf : undefined}
+                />
               </section>
             )}
           </>
