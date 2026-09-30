@@ -177,8 +177,9 @@ export function DirectDataDeliveryForm(props: Props) {
     form.remove();
   };
 
-  const terminal = recovery?.status === "ISSUED" || recovery?.status === "BLOCKED" || recovery?.status === "FAILED";
-  const buttonDisabled = !canDeliver || (recovery?.status === "ISSUED");
+  const recoveryStatus = recovery ? recovery.status : "";
+  const terminal = recoveryStatus === "ISSUED" || recoveryStatus === "BLOCKED" || recoveryStatus === "FAILED";
+  const buttonDisabled = !canDeliver;
 
   return (
     <section className="detail-card" style={{ marginTop: 18 }} data-testid="direct-data-delivery">
@@ -198,11 +199,11 @@ export function DirectDataDeliveryForm(props: Props) {
       {statusText ? <p role="status" data-testid="delivery-operation-status"><strong>{statusText}</strong></p> : null}
       {message ? <p role="status">{message}</p> : null}
       <button type="button" onClick={download} disabled={buttonDisabled}>
-        {submitted ? "下载请求已提交" : recovery?.status === "ISSUED" ? "该 attempt 已签发" : "下载 Direct Data"}
+        {submitted ? "下载请求已提交" : recoveryStatus === "ISSUED" ? "该 attempt 已签发" : "下载 Direct Data"}
       </button>
       {terminal ? (
-        <button type="button" style={{ marginLeft: 8 }} onClick={() => startFresh(recovery?.status === "ISSUED")}>
-          {recovery?.status === "ISSUED" ? "创建重试下载 attempt" : "创建新的下载 attempt"}
+        <button type="button" style={{ marginLeft: 8 }} onClick={() => startFresh(recoveryStatus === "ISSUED")}>
+          {recoveryStatus === "ISSUED" ? "创建重试下载 attempt" : "创建新的下载 attempt"}
         </button>
       ) : null}
       {!props.enabled ? <small style={{ display: "block", marginTop: 8 }}>Direct Data 下载默认关闭；需由服务端启用并配置 trusted delivery identity。</small> : null}
