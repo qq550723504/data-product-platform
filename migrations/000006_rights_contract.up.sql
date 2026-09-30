@@ -91,15 +91,15 @@ CREATE INDEX idx_contract_version_contract ON contract_version(contract_id, majo
 
 ALTER TABLE product_version
     ADD CONSTRAINT fk_product_version_contract_version
-    FOREIGN KEY (contract_version_id) REFERENCES contract_version(id);
+    FOREIGN KEY (contract_version_id) REFERENCES contract_version(id) NOT VALID;
 
 ALTER TABLE product_release
     ADD CONSTRAINT fk_product_release_contract_version
-    FOREIGN KEY (contract_version_id) REFERENCES contract_version(id);
+    FOREIGN KEY (contract_version_id) REFERENCES contract_version(id) NOT VALID;
 
 ALTER TABLE product_release
     ADD CONSTRAINT fk_product_release_rights_snapshot
-    FOREIGN KEY (rights_snapshot_id) REFERENCES rights_snapshot(id);
+    FOREIGN KEY (rights_snapshot_id) REFERENCES rights_snapshot(id) NOT VALID;
 
 CREATE OR REPLACE FUNCTION guard_contract_version_immutability()
 RETURNS trigger AS $$
