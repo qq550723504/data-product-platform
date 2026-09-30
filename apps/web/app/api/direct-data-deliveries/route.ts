@@ -84,7 +84,9 @@ export async function GET(request: NextRequest) {
     );
     if (!upstream.ok) return upstreamError(upstream);
     const payload = await upstream.json() as Record<string, unknown>;
-    if (payload.workspaceId !== cfg.workspaceId || payload.datasetVersionId !== versionId || payload.consumer !== consumer || payload.idempotencyKey !== key) {
+    const sameUuid = (value: unknown, expected: string) =>
+      typeof value === "string" && value.toLowerCase() === expected.toLowerCase();
+    if (!sameUuid(payload.workspaceId, cfg.workspaceId) || !sameUuid(payload.datasetVersionId, versionId) || payload.consumer !== consumer || payload.idempotencyKey !== key) {
       return error(502, "DIRECT_DATA_RECOVERY_SCOPE_MISMATCH", "Recovered delivery operation does not match the requested context.");
     }
     const result = {
