@@ -143,7 +143,7 @@ func TestRightsContractMigrationEnforcesNewRowsBeforeHistoricalValidation(t *tes
 	`, productID, uuid.New(), "MIGRATION-281-NEW-"+uuid.NewString()); err != nil {
 		t.Fatalf("insert product after staged constraint install: %v", err)
 	}
-	_, err = pool.Exec(ctx, `
+	_, err := pool.Exec(ctx, `
 		INSERT INTO product_version (
 			id, product_id, major_version, minor_version, patch_version, contract_version_id
 		) VALUES ($1,$2,1,0,0,$3)
