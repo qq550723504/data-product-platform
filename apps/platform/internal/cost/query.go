@@ -18,7 +18,7 @@ type Item struct {
 	CostType    string         `json:"costType"`
 	Quantity    float64        `json:"quantity"`
 	Unit        string         `json:"unit"`
-	Amount      *float64       `json:"amount,omitempty"`
+	Amount      *string        `json:"amount,omitempty"`
 	Currency    string         `json:"currency,omitempty"`
 	PricingMode string         `json:"pricingMode"`
 	Metadata    map[string]any `json:"metadata"`
@@ -36,7 +36,7 @@ func NewQueryRepository(pool *pgxpool.Pool) *QueryRepository {
 func (r *QueryRepository) ListByExecution(ctx context.Context, executionID uuid.UUID) ([]Item, error) {
 	rows, err := r.pool.Query(ctx, `
 		SELECT id, workspace_id, execution_id, cost_type, quantity, unit,
-		       activity_id, amount, COALESCE(currency,''), pricing_mode, metadata, occurred_at
+		       activity_id, amount::text, COALESCE(currency,''), pricing_mode, metadata, occurred_at
 		FROM cost_event
 		WHERE execution_id = $1
 		ORDER BY occurred_at, id
@@ -85,7 +85,7 @@ func (r *QueryRepository) ListByExecution(ctx context.Context, executionID uuid.
 func (r *QueryRepository) ListByQualityAssessment(ctx context.Context, assessmentID uuid.UUID) ([]Item, error) {
 	rows, err := r.pool.Query(ctx, `
 		SELECT e.id, e.workspace_id, e.execution_id, e.activity_id, e.cost_type,
-		       e.quantity, e.unit, e.amount, COALESCE(e.currency,''), e.pricing_mode,
+		       e.quantity, e.unit, e.amount::text, COALESCE(e.currency,''), e.pricing_mode,
 		       e.metadata, e.occurred_at
 		FROM cost_event e
 		JOIN cost_allocation a ON a.cost_event_id=e.id
