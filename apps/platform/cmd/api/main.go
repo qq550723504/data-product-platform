@@ -10,7 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
@@ -133,19 +132,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Use a read-only Redis PING for readiness; do not enqueue synthetic jobs
-	// on every kubelet probe.
-	redisProbe := redis.NewClient(&redis.Options{
-		Addr:     cfg.Redis.Addr,
-		Password: cfg.Redis.Password,
-		DB:       cfg.Redis.DB,
-	})
-	defer redisProbe.Close()
+	// Queue delivery is asynchronous via the worker/outbox. Redis outages
+	// must not remove PostgreSQL-backed API command handling from service.
 	readiness := func(ctx context.Context) error {
-		if err := db.Ping(ctx); err != nil {
-			return err
-		}
-		return redisProbe.Ping(ctx).Err()
+		return db.Ping(ctx)
 	}
 
 	txManager := transaction.NewManager(db)
