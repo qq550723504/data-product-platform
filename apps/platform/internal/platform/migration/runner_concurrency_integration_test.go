@@ -67,3 +67,34 @@ func TestRunnerConcurrentUpRechecksStateAfterAdvisoryLock(t *testing.T) {
 		t.Fatalf("migration side effects = %d, want 1", rows)
 	}
 }
+
+func TestRunnerUpRejectsChangedMigrationPredecessor(t *testing.T) {
+	pool := scratchDatabase(t, 0)
+	dir := t.TempDir()
+	ctx := context.Background()
+	if _, err := pool.Exec(ctx, `CREATE TABLE schema_migration (
+		version bigint PRIMARY KEY,
+		name text NOT NULL,
+		applied_at timestamptz NOT NULL DEFAULT now()
+	)`); err != nil {
+		t.Fatalf("prepare migration state: %v", err)
+	}
+	// A newer committed version must not allow an older unapplied migration
+	// to execute, even if its pre-lock check reported that version as missing.
+	if _, err := pool.Exec(ctx, `INSERT INTO schema_migration(version,name) VALUES (2,'concurrent-down-up')`); err != nil {
+		t.Fatalf("seed newer migration: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "000001_predecessor.up.sql"), []byte(`CREATE TABLE invalid_out_of_order_migration(id integer)`), 0o600); err != nil {
+		t.Fatalf("write migration fixture: %v", err)
+	}
+	if err := migration.NewRunner(pool, dir).Up(ctx); err == nil {
+		t.Fatal("up unexpectedly applied an out-of-order migration")
+	}
+	var exists bool
+	if err := pool.QueryRow(ctx, `SELECT to_regclass('invalid_out_of_order_migration') IS NOT NULL`).Scan(&exists); err != nil {
+		t.Fatalf("inspect migration side effect: %v", err)
+	}
+	if exists {
+		t.Fatal("out-of-order migration SQL executed")
+	}
+}
