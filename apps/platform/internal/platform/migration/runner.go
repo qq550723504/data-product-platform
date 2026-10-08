@@ -118,6 +118,18 @@ func (r *Runner) apply(ctx context.Context, file File, up bool) error {
 	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(810042001)`); err != nil {
 		return fmt.Errorf("lock migrations: %w", err)
 	}
+
+	// The state observed before waiting for the advisory lock may be stale.
+	// Recheck while holding the lock so a concurrent runner that committed
+	// this version while we waited cannot make us replay the same migration.
+	var applied bool
+	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM schema_migration WHERE version = $1)`, file.Version).Scan(&applied); err != nil {
+		return fmt.Errorf("recheck migration %d after lock: %w", file.Version, err)
+	}
+	if (up && applied) || (!up && !applied) {
+		return nil
+	}
+
 	// pgx v5 automatically uses the simple query protocol for Exec calls with
 	// zero arguments, which allows semicolon-separated migration statements.
 	if _, err := tx.Exec(ctx, string(sqlBytes)); err != nil {
