@@ -1,6 +1,6 @@
 # Annotation Engine：Core / Label Studio 集成边界
 
-> 状态：#209 设计基线；实现归 #205，真实部署/故障注入证据在 #208。
+> 状态：#209/#205/#208 官方 CE reference Pilot 历史基线保持不变；受控 fork 协议三文档补丁已获设计准入，C1（Core 唯一业务 reviewer）已确认。本轮仅落盘文档；未授权启动 D、跨仓实现或部署。
 > 产品范围：[Gold Dataset](../product/gold-dataset.md)。Core acceptance：[Annotation Domain](annotation-domain.md)。
 
 ## 1. 能力归属与部署边界
@@ -45,7 +45,9 @@ Core 保存 Campaign/input/schema/rubric/task identity、接纳结果、审核�
 
 仓库已有 dataset/storage/worker/quality/rights/certification，但没有通用标注交互；自研标注画布和任务队列不形成此产品的差异化价值。Core 新增的审核权威性、冻结事实和认证绑定则不能交给 provider，否则外部编辑会改写 Gold 历史。
 
-第一 adapter 使用 Label Studio Community 原生 API 和标注 UI，不 fork、不依赖 Enterprise 审核能力。官方提供导入、标注和结果导出接口，适合本次小规模文本单标签场景；Core 自己的 review 是对交付证据的领域接纳，不是再造一套标注 SaaS。[S1][S2][S3]
+#205/#208 已完成的第一 reference adapter 使用官方 Label Studio Community 1.23.0 原生 API 和标注 UI；该历史 Pilot 不 fork、不依赖 Enterprise 审核能力。[S1][S2][S3] 这不是禁止以后接入受控 fork 的绝对产品规则。
+
+新增受控 fork adapter 只复用已有 TaskAssignment 服务端写入控制和不可变正式 Submission，通过现有 Port 隔离；这些进程内执行点不能仅由外部 Adapter 保证。Core 继续持有业务接纳、审核和冻结权威，不复制通用画布、队列或审核引擎。本批协议及适用边界见 §5.1，不把两个仓库各自通过历史验收视为已完成跨仓验收。
 
 上游 LICENSE 为 Apache-2.0；#205 必须固定实际测试的 release/tag 与容器 digest，记录依赖许可及部署检查，不能用 latest 镜像声称已验证。维护评估依据上游 release history；本设计不把更新频率承诺为长期 SLA。[S4][S5]
 
@@ -115,11 +117,45 @@ sequenceDiagram
 
 Pilot 以持凭证的服务端 pull 为权威回收方式，webhook 不作为必需链路。未来 callback 最多触发已知 binding 的 pull；未经验证的 body 不直接写 Core Result，不接受任意 provider URL 或 workspace。
 
-Adapter 检查 provider instance、project/task binding、Core source identity/input hash、冻结 label config、作者绑定、提交/取消状态和 schema；再把规范化结果交给 RecordAnnotationResult。只有真实 submitted annotation 可参与审核，draft/prediction/cancelled 不行。官方导出可能包含取消任务，不能把“export 中有一行”当作通过。[S2]
+官方 CE reference 路径检查 provider instance、project/task binding、Core source identity/input hash、冻结 label config、作者绑定、提交/取消状态和 schema，再把普通 submitted annotation 规范化后交给 RecordAnnotationResult；draft/prediction/cancelled 不行。官方导出可能包含取消任务，不能把“export 中有一行”当作通过。[S2] 受控 fork 路径改读 §5.1 的不可变正式 Submission，不回退到普通 annotations。
 
 Provider timestamp 不决定 Core authoritative result。新的外部修订成为新 observation，未审核 Task 的有效修订经 Command 接纳；已审核/封存 Task 按 [Domain §3–4](annotation-domain.md) 保持不变。不得因删除外部 task/project 就级联删除 Core facts。
 
 历史解释依赖 Core 已接纳的 canonical payload、原始 observation 的受控 immutable copy/hash、来源身份及规范版本。对尚未回收就被删除的数据明确记录 unavailable，不编造旧 Result；如果生成 Gold 必需的结果缺失，阻断或显式 REJECT 后让 Gold quality 失败。Provider ground_truth 标志不是 Core review 或 Gold certification。
+
+### 5.1 受控 fork Submission 协议 v1
+
+本节仅适用于专用、有限合成 Pilot 的 `controlled-fork-submission-v1` adapter 模式；不改写 #205/#208 的官方 CE 历史。协议版本、normalizer、冻结 mapping/config 与 source commit/image digest 必须固定，不能用 latest 或未验证 main。模式由服务端冻结 binding 决定，不能由请求省略来源引用或接口失败选择降级。本节已获设计准入；文档落盘不表示 adapter 已实现，也不授权启动 D。
+
+B 的固定交接为 [fork #72](https://github.com/qq550723504/annotation-engine-label-studio/pull/72)，文档合并提交 `ab7b76a4a36b19060c527659e2a994ead05cc5e8`。使用该提交下的 [candidate handoff](https://github.com/qq550723504/annotation-engine-label-studio/blob/ab7b76a4a36b19060c527659e2a994ead05cc5e8/docs/authorization/issue48-release-candidate.md)、[manifest](https://github.com/qq550723504/annotation-engine-label-studio/blob/ab7b76a4a36b19060c527659e2a994ead05cc5e8/docs/authorization/issue48-rc48/manifest.json)、[assertion receipts](https://github.com/qq550723504/annotation-engine-label-studio/blob/ab7b76a4a36b19060c527659e2a994ead05cc5e8/docs/authorization/issue48-rc48/assertions.json) 和 [recorded Dockerfile](https://github.com/qq550723504/annotation-engine-label-studio/blob/ab7b76a4a36b19060c527659e2a994ead05cc5e8/docs/authorization/issue48-rc48/Dockerfile.recorded)，不跟随移动的 main 引用。
+
+| 固定产物字段 | B #72 记录 |
+| --- | --- |
+| 镜像源码提交 | `90153bb6450a160ed6a1a9129adce65b7c4b42f8`；与上述文档合并提交分开 |
+| 上游基线 / fork version | `1.23.0` / `1.23.0+fork.rc48.90153bb6` |
+| 平台 / runtime variant | `linux/amd64`；Debian bookworm / Python 3.11 / Node 20，原生 uWSGI/nginx |
+| 构建机本地 immutable reference | `annotation-engine-label-studio@sha256:d0876462957eebd2608223c4af6ec5f894eae7008f2fb3e236124dca5c3d36ce` |
+| OCI index digest | `sha256:d0876462957eebd2608223c4af6ec5f894eae7008f2fb3e236124dca5c3d36ce` |
+| Platform manifest digest | `sha256:42f13f52913e9e99b335f8ed794f54358e91173d143315e820a6e44808647410` |
+| Image config digest | `sha256:d432558c7f3689f21281644cf4614569f9fcc459e40908ae264aad36f649c38b` |
+
+该镜像仅在构建机本地 Docker image store 可用，尚未发布 registry，不能据此承诺其他主机可 pull。重新构建产生新 candidate，不能继承原验收。B 的 112 条服务端合成断言 PASS 不是 112 个独立产品场景，也不完成本协议的跨仓接入验收；受 Edge 信任的 HTTPS 浏览器验收仍为用户暂缓的 BLOCKED，完整本地双语协作浏览器、完整 86,400 秒调度周期、registry publication 和生产部署均为 NOT_RUN。#48/#44 继续开放。已选本地事务数据库审计表；部署前须满足交接文档中的配对安全状态、迁移和恢复边界。镜像分发、目标环境和跨仓实施需要分别授权，B #72 文档合并与本次设计准入均不等于 D 开工。
+
+用户已确认 C1：Core 是唯一业务 reviewer。Adapter 以授权的项目管理身份，通过普通 `GET /api/submissions/?project=P&page=N&page_size=100` 与 `GET /api/submissions/{id}/` 拉取正式提交，内部回收不要求 fork approval，不用 `reviewable=true`、`POST .../review/` 或 `GET .../release/` 替代读取。专用 Pilot 不运行第二次 fork 人工审核；自动 superseded 可作为修订历史，出现 fork 人工 review 则记录并隔离为混用流程，不自动变成 Core 决定。fork release 仍 manager + approved-only；正式 Submission 存在后的 mutable export/storage delivery 仍 fail closed。Core Gold build、认证和交付继续执行既有 rights、quality、certification 与 CurrentDeliveryGate，内部回收不授予交付资格。
+
+来源唯一 identity 是 `workspace-owned connection + provider instance/incarnation + source_kind=IMMUTABLE_SUBMISSION + Submission.id`。project/task、Campaign/binding、assignment/revision、作者、配置、normalizer 和任何内容 hash 均属于待核验的 fingerprint，不进入该唯一 key；否则同一 Submission 改 task/hash 会被伪装成新来源。完整 fingerprint、原子绑定及所有 replay/freeze 规则以 [Domain §3.1、§5–6](annotation-domain.md) 为权威。
+
+Adapter fingerprint 对应的可信字段包括：重算的 `result_snapshot/result_hash`、server-derived `submitted_by.id`、assignment ID 与 Submission.revision、snapshot project/task/annotation ID、Core task/input/source hash、冻结 campaign/task/actor mapping identities 与 mapping/config digest、schema/taxonomy/renderer 等冻结规范、normalizer version 和 canonical payload/hash。来源作者不取客户端字段或 current Annotation；mutable status/review、provider 时间戳、观察时间、physical attempt 和 observed-current assignment token 不改变 identity/fingerprint。snapshot 本身的冻结内容仍由 snapshot hash 覆盖。
+
+`assignment.version` 只作为写入令牌；Submission.revision 与 Core Task CAS revision 分开。首版不新增提交时 exact assignment version：记录 OBSERVED_CURRENT + observed_at，禁止由当前值减一猜历史 token；通过真实写入/撤销负例验证服务端令牌边界。Core schema version 来自冻结 Campaign binding，不伪称由 fork 返回。所有参与接纳的 mapping/config 版本不可就地替换。
+
+配置比较使用 exact `label_config` 内容的 SHA-256，不能使用 fork 的 Python 整数 `label_config_hash`。source hash 必须匹配固定 fork 的 `json.dumps(sort_keys=True, separators=(',', ':'), ensure_ascii=False)` UTF-8 SHA-256，并通过中文、转义、键序、null、整数/小数 golden vectors；不能假定 Go 默认 JSON 等价。draft/prediction/cancelled、缺作者或 schema/config/hash 错误一律拒绝；完整 snapshot 本体必须保存为 Core-controlled immutable bytes/object，并与规范化标签 hash 分开。
+
+复用现有 Result：ExternalAnnotationID 来自 immutable snapshot.annotation.id；ExternalRevision 为确定 opaque 引用 `submission/<id>/assignment/<id>/revision/<n>`。adapter 的 SourceObservation/SourceResultBinding 仅表示最小来源事实和强类型内部关系，不新增独立业务 aggregate、引擎或队列；Core Port/Command 只接收 provider-neutral verified source reference。两者不能靠 JSONB 中几个 ID 或同 label replay 替代。
+
+回收固定为 quiescent 有限批次：编排完成预定浏览器写入并确认无在途请求，枚举阶段不启动新写入；按 project 完整分页，核对预定 assignment/revision 集合，再按 exact Submission ID 验证。重复扫描只检测漂移；缺项、漂移、权限失败或预算耗尽保持未决，阻断该批后续审核/封存。单页空/404/403 不证明 absence。持续写入的全集完整性需要独立 cursor/read-fence follow-up，不是本批承诺。
+
+每次实际 engine invocation 保留 physical attempt、可信 quantity/unit、outcome 和可知成本信息；失败/UNKNOWN 不丢调用事实，也不猜金额、不收费或结算。现有 nullable Amount 可保持 NULL；ACTUAL 标记不等于已知账单。逻辑 Result replay 不重复业务事实，实际再次调用记录新 attempt。
 
 ## 6. 数据暴露、身份和授权
 
