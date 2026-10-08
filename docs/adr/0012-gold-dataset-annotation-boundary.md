@@ -51,6 +51,8 @@ Gold 生产必须绑定实际输入、AnnotationSnapshot、规范和 producer，
 | 独立 GoldDataset / GoldDelivery 主模型 | 重复 DatasetVersion 和当前授权机制，容易形成绕过路径 |
 | 只留文件 hash 和 provider URL | hash 不等于保留了可重建的内容，不能证明完整 membership |
 
+上述取舍属于 #205/#208 官方 CE reference Pilot 的历史决定；“Fork 标注系统并复制 Core 规则”仍不采用。后续专用合成 Pilot 复用既有受控 fork 的必要进程内 TaskAssignment/Submission 执行点、同时保持 Core 业务规则所有权的有限准入，见 [ADR-0013](0013-controlled-label-studio-submission-admission.md)。该补充随其文档 PR 合并生效，不回写本 ADR 的历史验收或授权 D 开工。
+
 ## 后果
 
 收益是可解释的审核来源、冻结生产历史、统一认证/授权以及可替换的引擎。代价是需要保存规范化 payload、精确 membership、typed production/rights dependencies，并验证引擎关联查找、修订与恢复能力；在 provider 不能证明结果时，安全优先于自动恢复的可用性。
