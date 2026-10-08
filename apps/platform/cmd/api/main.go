@@ -131,6 +131,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Queue delivery is asynchronous via the worker/outbox. Redis outages
+	// must not remove PostgreSQL-backed API command handling from service.
+	readiness := func(ctx context.Context) error {
+		return db.Ping(ctx)
+	}
+
 	txManager := transaction.NewManager(db)
 	readModelHandler := readmodelhttp.NewHandler(readmodel.NewRepository(db))
 
@@ -320,7 +326,7 @@ func main() {
 
 	server := &http.Server{
 		Addr: cfg.HTTPAddr,
-		Handler: httpserver.NewMux(
+		Handler: httpserver.NewMuxWithReadiness(readiness,
 			readModelHandler.Register,
 			resourceHandler.Register,
 			datasetHandler.Register,
