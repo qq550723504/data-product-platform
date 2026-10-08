@@ -14,21 +14,7 @@ import (
 
 // costAmountPattern admits at most 14 integral digits and 6 fractional digits,
 // matching PostgreSQL numeric(20,6) without silent rounding.
-var costAmountPattern = regexp.MustCompile(`^-?(?:[0-9]{1,14})(?:\\.[0-9]{1,6})?package cost
-
-import (
-	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"regexp"
-	"time"
-
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
-)
-
-)
+var costAmountPattern = regexp.MustCompile(`^-?[0-9]{1,14}(\.[0-9]{1,6})?$`)
 
 func validateAmount(amount *string) error {
 	if amount != nil && !costAmountPattern.MatchString(*amount) {
