@@ -38,7 +38,7 @@ func (r *Runner) Up(ctx context.Context) error {
 		return err
 	}
 
-	for _, file := range files {
+	for i, file := range files {
 		applied, err := r.isApplied(ctx, file.Version)
 		if err != nil {
 			return err
@@ -46,7 +46,11 @@ func (r *Runner) Up(ctx context.Context) error {
 		if applied {
 			continue
 		}
-		if err := r.apply(ctx, file, true); err != nil {
+		var predecessor int64
+		if i > 0 {
+			predecessor = files[i-1].Version
+		}
+		if err := r.apply(ctx, file, true, predecessor); err != nil {
 			return err
 		}
 	}
@@ -73,22 +77,34 @@ func (r *Runner) Down(ctx context.Context) error {
 	}
 	for _, file := range files {
 		if file.Version == version {
-			return r.apply(ctx, file, false)
+			return r.apply(ctx, file, false, 0)
 		}
 	}
 	return fmt.Errorf("down migration for version %d not found", version)
 }
 
 func (r *Runner) ensureTable(ctx context.Context) error {
-	_, err := r.pool.Exec(ctx, `
+	tx, err := r.pool.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
+	if err != nil {
+		return fmt.Errorf("begin migration bootstrap: %w", err)
+	}
+	defer func() { _ = tx.Rollback(context.Background()) }()
+
+	// CREATE TABLE IF NOT EXISTS alone is not safe against concurrent creators.
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(810042001)`); err != nil {
+		return fmt.Errorf("lock migration bootstrap: %w", err)
+	}
+	if _, err := tx.Exec(ctx, `
 		CREATE TABLE IF NOT EXISTS schema_migration (
 			version bigint PRIMARY KEY,
 			name text NOT NULL,
 			applied_at timestamptz NOT NULL DEFAULT now()
 		)
-	`)
-	if err != nil {
+	`); err != nil {
 		return fmt.Errorf("ensure schema_migration table: %w", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("commit migration bootstrap: %w", err)
 	}
 	return nil
 }
@@ -102,13 +118,13 @@ func (r *Runner) isApplied(ctx context.Context, version int64) (bool, error) {
 	return exists, nil
 }
 
-func (r *Runner) apply(ctx context.Context, file File, up bool) error {
+func (r *Runner) apply(ctx context.Context, file File, up bool, predecessor int64) error {
 	sqlBytes, err := os.ReadFile(file.Path)
 	if err != nil {
 		return fmt.Errorf("read migration %s: %w", file.Name, err)
 	}
 
-	tx, err := r.pool.BeginTx(ctx, pgx.TxOptions{})
+	tx, err := r.pool.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
 	if err != nil {
 		return fmt.Errorf("begin migration transaction: %w", err)
 	}
@@ -118,6 +134,38 @@ func (r *Runner) apply(ctx context.Context, file File, up bool) error {
 	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(810042001)`); err != nil {
 		return fmt.Errorf("lock migrations: %w", err)
 	}
+
+	// The state observed before waiting for the advisory lock may be stale.
+	// Recheck while holding the lock so a concurrent runner that committed
+	// this version while we waited cannot make us replay the same migration.
+	var applied bool
+	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM schema_migration WHERE version = $1)`, file.Version).Scan(&applied); err != nil {
+		return fmt.Errorf("recheck migration %d after lock: %w", file.Version, err)
+	}
+	if up {
+		if applied {
+			return nil
+		}
+		var latest int64
+		if err := tx.QueryRow(ctx, `SELECT COALESCE(MAX(version), 0) FROM schema_migration`).Scan(&latest); err != nil {
+			return fmt.Errorf("recheck migration predecessor after lock: %w", err)
+		}
+		if latest != predecessor {
+			return fmt.Errorf("cannot apply migration %d: latest applied version is %d, expected predecessor %d", file.Version, latest, predecessor)
+		}
+	} else {
+		if !applied {
+			return nil
+		}
+		var latest int64
+		if err := tx.QueryRow(ctx, `SELECT COALESCE(MAX(version), 0) FROM schema_migration`).Scan(&latest); err != nil {
+			return fmt.Errorf("recheck latest migration after lock: %w", err)
+		}
+		if latest != file.Version {
+			return fmt.Errorf("cannot roll back migration %d: latest applied version is %d", file.Version, latest)
+		}
+	}
+
 	// pgx v5 automatically uses the simple query protocol for Exec calls with
 	// zero arguments, which allows semicolon-separated migration statements.
 	if _, err := tx.Exec(ctx, string(sqlBytes)); err != nil {
