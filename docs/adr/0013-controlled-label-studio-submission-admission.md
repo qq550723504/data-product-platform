@@ -48,6 +48,31 @@ C1 保持：Core 是唯一业务 reviewer。Adapter 以已授权的项目管理�
 
 继续保留 Label Studio 的 Apache-2.0 许可和上游 notices。采用既有 controlled fork 的代价是维护小范围 server-side patches、升级差异和负例回归；固定基线不代表未来 release 自动兼容。升级必须重核所有受影响的 API/草稿/批量/导出/文件/存储写入边界、旧页面/令牌撤销和正式快照行为，重新固定来源、版本、镜像 digest 和 contract evidence。未验证的新构建不能继承旧 candidate 验收。
 
+### 维护活跃度与升级差额
+
+以下是 2026-10-08 的一次有界评估，不承诺 release 节奏或维护 SLA：
+
+| 对象 | 可核验的近期活动 | 本 Pilot 的判断和责任 |
+| --- | --- | --- |
+| 上游 HumanSignal/label-studio | 官方稳定 [1.23.1](https://github.com/HumanSignal/label-studio/releases/tag/1.23.1) 发布于 2026-09-25，[1.23.2](https://github.com/HumanSignal/label-studio/releases/tag/1.23.2) 发布于 2026-09-29；两者记录了安全相关修复 | 近期仍有维护活动；本 fork 的 1.23.0 基线落后于这些稳定补丁。不能因 nightly 活跃就导入 develop，也不能由版本号断言这些修复已经回移到固定 candidate |
+| 既有受控 fork | [#71](https://github.com/qq550723504/annotation-engine-label-studio/pull/71) 的修复合并 `6e5ef5adc68e1e83a8d8e15dc175b6d8c1e056ba`、[#49](https://github.com/qq550723504/annotation-engine-label-studio/pull/49) 的源码合并 `90153bb6450a160ed6a1a9129adce65b7c4b42f8` 和 [#72](https://github.com/qq550723504/annotation-engine-label-studio/pull/72) 的固定交接均发生于 2026-10-08 UTC | 能证明本项目近期在维护，不代表存在独立社区或长期支持能力。Fork 维护者承担 patch inventory、上游安全变更比对、升级/回移及其负例回归；Core 维护者承担 Adapter contract 兼容性 |
+
+1.23.1/1.23.2 的安全修复与本 candidate 的逐项差异/回移审查在本轮为 NOT_RUN；它是从有限 loopback 合成 Pilot 扩展到共享、真实数据或生产环境前必须解决的升级差额。该记录既不宣称当前 fork 已包含所有上游修复，也不凭版本号判定每一项都可利用。本批不升级基线或变更镜像；以后升级须独立 review，并重新验证授权、来源协议和实际运行 candidate。
+
+### 预期部署与运维成本
+
+估算基于 B #72 固定交接中的已验证拓扑和运行步骤，属于成本项/规模比较，不是容量测试或供应商报价。受控 fork 仍运行 Label Studio + 独立 PostgreSQL，不能把引擎数据库并入 Core；相较直接使用 CE，fork 特有增量主要是 patch/CI、配对安全状态、事务审计和升级/恢复验证，而不是新增一套标注产品。
+
+| 成本项 | 有限 Pilot 的预期规模与运维代价 |
+| --- | --- |
+| 常驻运行资源 | B 的双实例验证使用 2 个原生 uWSGI app、1 个共享 PostgreSQL 17.2 和 loopback TLS gateways；双实例比单实例多一个 app 的 CPU/RAM 与连接负载。复用获授权的现有项目/完整 Compose 配置，不按每次检查新建项目或复制常驻环境；本模式不要求增加 Redis、独立队列、外部审计服务或 Sidecar |
+| 持久化与恢复空间 | DB 保存账号、sessions、assignment、Submission snapshots 和审计，随事实保留而增长；另需镜像/构建缓存、备份、独立最新安全 checkpoint 和按需 restore 测试卷。B 记录四个最终测试卷保留、服务停止；保留空间仍有成本，不能把停服记作存储成本为零 |
+| 构建与维护计算 | Node/Python 依赖和 frontend/native image 构建，加上 fork 授权回归与 browser CI；每个新 candidate/升级有构建、回归、digest 和 contract 复核成本。该成本高于直接消费上游镜像，故复用固定候选并保持 patch 范围小 |
+| 操作人工 | 维护凭据/TLS 和当前 scope、观察 DB-only session expiry cleanup、审计与失败；cutover 要备份/排空 writers/迁移/配对核验。恢复要独立保留最新 checkpoint、停全部 writers、到新测试卷恢复/对账并清除全部恢复 sessions，再验证跨实例撤销。B 交接提供证据与流程，目标环境 operator 必须在环境授权时明确承接，不能假设已有无人值守生产运维 |
+| 容量、费用与预算 | 固定交接未测定 CPU/RAM 峰值、持久化 bytes/增长、CI runner 时间预算或人工工时，也未提供云/registry 单价；这些量与金额均为 UNKNOWN，而非 0。本专用有限合成 Pilot 不引入付费标注服务或付费 provider 调用；不能据此推导基础设施和人工免费。更大批次/目标环境需按其实际规模补容量与预算评估 |
+
+接受该有限成本的理由是保留已验证的引擎写入 fence/正式快照，并复用既有运行拓扑和 Core worker/reconciliation；自造画布、授权 sidecar 或另一队列会新增持续维护与一致性成本。此评估只支持当前有限协议的文档准入，不替代目标环境容量、运维验收或独立授权。
+
 B [#72 固定交接](https://github.com/qq550723504/annotation-engine-label-studio/blob/ab7b76a4a36b19060c527659e2a994ead05cc5e8/docs/authorization/issue48-release-candidate.md) 的文档合并 SHA 与上述镜像源码 SHA 分开；digest、构建输入与迁移/恢复边界以 integration 的固定 manifest 引用为准。镜像仅构建机本地可用，未发布 registry；112 条服务端合成断言和已有 fork API 不证明跨仓接入或受信任浏览器验收完成。
 
 退出时只替换 Adapter/连接及外部绑定；Core 已接纳的不可变 bytes、来源关系、Result/Decision/Snapshot 与 Gold 历史不回读旧引擎 current state。若上游 API 或受支持扩展以后能证明相同写入 fence 与正式提交契约，应优先复用并经新 contract/升级 review 替换，不扩大本 fork 的长期产品职责。
