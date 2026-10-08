@@ -7,7 +7,6 @@ require (
 	github.com/hibiken/asynq v0.25.1
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/minio/minio-go/v7 v7.0.83
-	github.com/redis/go-redis/v9 v9.7.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -23,6 +22,7 @@ require (
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.9 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
+	github.com/redis/go-redis/v9 v9.7.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/spf13/cast v1.7.0 // indirect
