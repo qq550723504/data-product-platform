@@ -1,6 +1,6 @@
 # Annotation Engine：Core / Label Studio 集成边界
 
-> 状态：#209/#205/#208 官方 CE reference Pilot 历史基线保持不变；受控 fork 协议三文档补丁已获设计准入，C1（Core 唯一业务 reviewer）已确认。本轮仅落盘文档；未授权启动 D、跨仓实现或部署。
+> 状态：#209/#205/#208 官方 CE reference Pilot 历史基线保持不变；C1（Core 唯一业务 reviewer）已确认，受控 fork 的有限准入依据补齐于 [ADR-0013](../adr/0013-controlled-label-studio-submission-admission.md)，随本次文档 PR 合并生效。本轮仅变更文档；未授权启动 D、跨仓实现或部署。
 > 产品范围：[Gold Dataset](../product/gold-dataset.md)。Core acceptance：[Annotation Domain](annotation-domain.md)。
 
 ## 1. 能力归属与部署边界
@@ -47,7 +47,7 @@ Core 保存 Campaign/input/schema/rubric/task identity、接纳结果、审核�
 
 #205/#208 已完成的第一 reference adapter 使用官方 Label Studio Community 1.23.0 原生 API 和标注 UI；该历史 Pilot 不 fork、不依赖 Enterprise 审核能力。[S1][S2][S3] 这不是禁止以后接入受控 fork 的绝对产品规则。
 
-新增受控 fork adapter 只复用已有 TaskAssignment 服务端写入控制和不可变正式 Submission，通过现有 Port 隔离；这些进程内执行点不能仅由外部 Adapter 保证。Core 继续持有业务接纳、审核和冻结权威，不复制通用画布、队列或审核引擎。本批协议及适用边界见 §5.1，不把两个仓库各自通过历史验收视为已完成跨仓验收。
+新增受控 fork adapter 只复用已有 TaskAssignment 服务端写入控制和不可变正式 Submission，通过现有 Port 隔离；这些进程内执行点不能仅由外部 Adapter 保证。Core 继续持有业务接纳、审核和冻结权威，不复制通用画布、队列或审核引擎。采用既有 fork 的证据、API/Extension/Adapter/Sidecar 取舍和有限例外以 [ADR-0013](../adr/0013-controlled-label-studio-submission-admission.md) 为权威，协议及适用边界见 §5.1；不把两个仓库各自通过历史验收视为已完成跨仓验收。
 
 上游 LICENSE 为 Apache-2.0；#205 必须固定实际测试的 release/tag 与容器 digest，记录依赖许可及部署检查，不能用 latest 镜像声称已验证。维护评估依据上游 release history；本设计不把更新频率承诺为长期 SLA。[S4][S5]
 
@@ -125,7 +125,7 @@ Provider timestamp 不决定 Core authoritative result。新的外部修订成�
 
 ### 5.1 受控 fork Submission 协议 v1
 
-本节仅适用于专用、有限合成 Pilot 的 `controlled-fork-submission-v1` adapter 模式；不改写 #205/#208 的官方 CE 历史。协议版本、normalizer、冻结 mapping/config 与 source commit/image digest 必须固定，不能用 latest 或未验证 main。模式由服务端冻结 binding 决定，不能由请求省略来源引用或接口失败选择降级。本节已获设计准入；文档落盘不表示 adapter 已实现，也不授权启动 D。
+本节仅适用于专用、有限合成 Pilot 的 `controlled-fork-submission-v1` adapter 模式；不改写 #205/#208 的官方 CE 历史。协议版本、normalizer、冻结 mapping/config 与 source commit/image digest 必须固定，不能用 latest 或未验证 main。模式由服务端冻结 binding 决定，不能由请求省略来源引用或接口失败选择降级。已确认的映射契约及 C1 保持不变；fork 的正式准入记录按 ADR-0013 随文档 PR 合并生效，文档落盘不表示 adapter 已实现，也不授权启动 D。
 
 B 的固定交接为 [fork #72](https://github.com/qq550723504/annotation-engine-label-studio/pull/72)，文档合并提交 `ab7b76a4a36b19060c527659e2a994ead05cc5e8`。使用该提交下的 [candidate handoff](https://github.com/qq550723504/annotation-engine-label-studio/blob/ab7b76a4a36b19060c527659e2a994ead05cc5e8/docs/authorization/issue48-release-candidate.md)、[manifest](https://github.com/qq550723504/annotation-engine-label-studio/blob/ab7b76a4a36b19060c527659e2a994ead05cc5e8/docs/authorization/issue48-rc48/manifest.json)、[assertion receipts](https://github.com/qq550723504/annotation-engine-label-studio/blob/ab7b76a4a36b19060c527659e2a994ead05cc5e8/docs/authorization/issue48-rc48/assertions.json) 和 [recorded Dockerfile](https://github.com/qq550723504/annotation-engine-label-studio/blob/ab7b76a4a36b19060c527659e2a994ead05cc5e8/docs/authorization/issue48-rc48/Dockerfile.recorded)，不跟随移动的 main 引用。
 

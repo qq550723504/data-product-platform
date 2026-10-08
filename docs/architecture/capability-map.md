@@ -21,7 +21,7 @@
 | Durable long-running workflow | External commodity when justified | 默认不新增；现有执行模型不足时再评估 Temporal | 只有跨天等待、人工 Signal、复杂恢复真正需要时引入 |
 | Entity matching algorithm | External / pluggable engine | Rules + Splink Adapter；未来可替换 | Core 自有 MappingDecision / Evidence / Human Override 语义 |
 | Quality execution engine | Pluggable engine | Native / industry-pack；可接外部 engine | Core 自有 QualityAssessment 历史事实与 gate 语义 |
-| Annotation | External commodity | Label Studio / X-AnyLabeling（后续阶段） | 标注系统不成为 Core System of Record |
+| Annotation | External commodity | 官方 Label Studio CE reference；专用合成 Pilot 的受控 fork 准入见 [ADR-0013](../adr/0013-controlled-label-studio-submission-admission.md)；X-AnyLabeling 仍为后续候选 | 标注系统不成为 Core System of Record；Core 通过 provider-neutral Port/Adapter 持有业务审核、来源/快照及 Gold 契约 |
 | Observability | External commodity | OpenTelemetry + Prometheus/Grafana（按阶段引入） | Audit/Evidence 不是 observability 的替代品，反之亦然 |
 | Resumable large-file upload | External commodity when needed | 先流式 HTTP；GB 级/断点需求再评估 tus/tusd | DatasetVersion 仍由 Core 在上传完成后建立业务事实 |
 | Database | External commodity | PostgreSQL | Domain invariant 仍由 Core + DB constraints 共同保证 |
@@ -101,6 +101,8 @@ Data Product Platform Core
 - 不把 Splink 等算法引擎的数据模型直接变成 Core Domain；
 - 不为了“未来可能需要”提前引入 Temporal、OPA、Service Mesh 等重量组件；
 - 不 Fork OpenMetadata、Label Studio、Keycloak/ZITADEL 等大型项目，除非 ADR 证明 Adapter / Extension 无法满足。
+
+Label Studio 的有限准入记录见 [ADR-0013](../adr/0013-controlled-label-studio-submission-admission.md)：仅复用现有受控 fork 在 assignment 写入及正式 Submission 生成时的进程内执行点，不复制 Core 规则，不新增并行标注/审核/队列产品。该例外随对应文档 PR 合并生效；未列出的产品、模式、edition 或生产场景仍须遵守上述 ADR 准入，不能据此直接实施或部署。
 
 ## 5. 变更规则
 
