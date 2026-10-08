@@ -10,6 +10,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/redis/go-redis/v9"
+
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
 	annotationhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/transport/http"
@@ -129,6 +131,21 @@ func main() {
 	if err := queue.EnqueueHealthPing(ctx, queueClient); err != nil {
 		logger.Error("verify Redis queue", "error", err)
 		os.Exit(1)
+	}
+
+	// Use a read-only Redis PING for readiness; do not enqueue synthetic jobs
+	// on every kubelet probe.
+	redisProbe := redis.NewClient(&redis.Options{
+		Addr: cfg.Redis.Addr,
+		Password: cfg.Redis.Password,
+		DB: cfg.Redis.DB,
+	})
+	defer redisProbe.Close()
+	readiness := func(ctx context.Context) error {
+		if err := db.Ping(ctx); err != nil {
+			return err
+		}
+		return redisProbe.Ping(ctx).Err()
 	}
 
 	txManager := transaction.NewManager(db)
@@ -320,7 +337,7 @@ func main() {
 
 	server := &http.Server{
 		Addr: cfg.HTTPAddr,
-		Handler: httpserver.NewMux(
+		Handler: httpserver.NewMuxWithReadiness(readiness,
 			readModelHandler.Register,
 			resourceHandler.Register,
 			datasetHandler.Register,
