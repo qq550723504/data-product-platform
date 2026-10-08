@@ -38,7 +38,7 @@ func (r *Runner) Up(ctx context.Context) error {
 		return err
 	}
 
-	for _, file := range files {
+	for i, file := range files {
 		applied, err := r.isApplied(ctx, file.Version)
 		if err != nil {
 			return err
@@ -46,7 +46,11 @@ func (r *Runner) Up(ctx context.Context) error {
 		if applied {
 			continue
 		}
-		if err := r.apply(ctx, file, true); err != nil {
+		var predecessor int64
+		if i > 0 {
+			predecessor = files[i-1].Version
+		}
+		if err := r.apply(ctx, file, true, predecessor); err != nil {
 			return err
 		}
 	}
@@ -73,7 +77,7 @@ func (r *Runner) Down(ctx context.Context) error {
 	}
 	for _, file := range files {
 		if file.Version == version {
-			return r.apply(ctx, file, false)
+			return r.apply(ctx, file, false, 0)
 		}
 	}
 	return fmt.Errorf("down migration for version %d not found", version)
@@ -114,7 +118,7 @@ func (r *Runner) isApplied(ctx context.Context, version int64) (bool, error) {
 	return exists, nil
 }
 
-func (r *Runner) apply(ctx context.Context, file File, up bool) error {
+func (r *Runner) apply(ctx context.Context, file File, up bool, predecessor int64) error {
 	sqlBytes, err := os.ReadFile(file.Path)
 	if err != nil {
 		return fmt.Errorf("read migration %s: %w", file.Name, err)
@@ -138,10 +142,18 @@ func (r *Runner) apply(ctx context.Context, file File, up bool) error {
 	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM schema_migration WHERE version = $1)`, file.Version).Scan(&applied); err != nil {
 		return fmt.Errorf("recheck migration %d after lock: %w", file.Version, err)
 	}
-	if up && applied {
-		return nil
-	}
-	if !up {
+	if up {
+		if applied {
+			return nil
+		}
+		var latest int64
+		if err := tx.QueryRow(ctx, `SELECT COALESCE(MAX(version), 0) FROM schema_migration`).Scan(&latest); err != nil {
+			return fmt.Errorf("recheck migration predecessor after lock: %w", err)
+		}
+		if latest != predecessor {
+			return fmt.Errorf("cannot apply migration %d: latest applied version is %d, expected predecessor %d", file.Version, latest, predecessor)
+		}
+	} else {
 		if !applied {
 			return nil
 		}
