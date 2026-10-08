@@ -236,7 +236,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Detect Hop reference changes
         id: changes
@@ -250,11 +250,19 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
             BASE="origin/${{ github.base_ref }}"
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            BASE="${{ github.event.before }}"
+            if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+              # New branch: conservatively execute this smoke job.
+              echo "run_hop=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
           else
-            BASE="HEAD^"
+            echo "Unsupported event" >&2
+            exit 1
           fi
 
-          CHANGED="$(git diff --name-only "$BASE" HEAD -- \
+          CHANGED="$(git diff --name-only "$BASE" "${{ github.sha }}" -- \
             'examples/enterprise-activity/hop/**' \
             'examples/enterprise-activity/workflow/energy-monthly-hop-v1.yaml' \
             'apps/platform/internal/workflow/hop/**' \
@@ -328,7 +336,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Detect Splink adapter changes
         id: changes
@@ -342,11 +350,19 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
             BASE="origin/${{ github.base_ref }}"
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            BASE="${{ github.event.before }}"
+            if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+              # New branch: conservatively execute this smoke job.
+              echo "run_splink=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
           else
-            BASE="HEAD^"
+            echo "Unsupported event" >&2
+            exit 1
           fi
 
-          CHANGED="$(git diff --name-only "$BASE" HEAD -- \
+          CHANGED="$(git diff --name-only "$BASE" "${{ github.sha }}" -- \
             'engines/splink/**' \
             'apps/platform/internal/entity/splink/**' \
             'apps/platform/internal/entity/matching/**' \
@@ -554,7 +570,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Detect Label Studio reference changes
         id: changes
@@ -568,10 +584,19 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
             BASE="origin/${{ github.base_ref }}"
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            BASE="${{ github.event.before }}"
+            if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+              # New branch: conservatively execute this smoke job.
+              echo "run_label_studio=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
           else
-            BASE="HEAD^"
+            echo "Unsupported event" >&2
+            exit 1
           fi
-          CHANGED="$(git diff --name-only "$BASE" HEAD -- \
+
+          CHANGED="$(git diff --name-only "$BASE" "${{ github.sha }}" -- \
             'apps/platform/internal/annotation/**' \
             'apps/platform/internal/platform/config/config.go' \
             'apps/platform/cmd/worker/main.go' \
