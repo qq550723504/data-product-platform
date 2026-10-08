@@ -10,7 +10,6 @@ import (
 	"syscall"
 	"time"
 
-
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
 	annotationhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/transport/http"
