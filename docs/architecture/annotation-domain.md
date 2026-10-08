@@ -97,9 +97,23 @@ Pilot 接受一个主标注者的多次结果修订；多个不同主标注者�
 
 RecordAnnotationResult 只在 ACTIVE 且 Task 尚未 REVIEWED 时接纳 schema-valid、已提交、非取消的结果。每次接纳生成新的 immutable Result，提升 Task revision。原始 observation、规范化 payload、adapter normalizer version、input/task/schema 身份和 hash 都可追溯；draft、prediction、取消或畸形结果不成为可选的合格 Result。
 
-外部同一 annotation 被修改，不 UPDATE 旧 Result。去重 identity 至少含 provider instance/binding、external task/annotation ID 和规范化内容 hash；provider revision 若存在一并留证，但不能只信 timestamp。不同外部 annotation ID 即便标签相同也是不同来源，不能仅凭 label hash 合并。重复回收完全相同事实返回原 Result；同 observation key 携带冲突内容时隔离报错。
+官方 CE mutable annotation reference 协议下，同一 annotation 修改产生新的 Result，不 UPDATE 旧 Result；observation identity 至少含 provider instance/binding、external task/annotation ID 和规范化内容 hash，provider revision 如有一并留证，不只信 timestamp。不同 annotation ID 即便标签相同也不合并。该 observation 规则不适用于声明不可变 source identity 的受控 fork 协议；后者必须遵守 §3.1，不能通过改变 task/hash 合法化同源冲突。
 
 REVIEWED/SEALED 之后到达的新外部内容只记 integration observation，不再改变该 Task 的候选集合、终态决定或快照。Core 不声称能重建尚未回收就已被 provider 覆盖/删除的历史。
+
+### 3.1 不可变来源 identity、绑定和 replay
+
+本节适用于服务端冻结 binding 声明的不可变提交协议；具体 fork 字段映射见 [Engine integration §5.1](annotation-engine-integration.md)。不回填未捕获的官方 CE 历史，也不按请求是否带 source reference 决定是否执行校验。
+
+source identity 的唯一 key 只含 workspace-owned connection、provider instance/incarnation、source kind 与 external immutable result ID；不得把可冲突的 task/project、Campaign/binding、assignment/revision 或 hash 加入 key。相同 key 必须指向同一完整 immutable fingerprint；同 key 不同 fingerprint 是冲突，不能产生第二份合法来源或 Result。同 assignment/revision 的不同来源 ID 也不得任选其一。
+
+fingerprint 必须覆盖可重算的完整 source snapshot/hash、可信作者、assignment identity/revision、provider project/task/原始 annotation identity、Core workspace/campaign/task/input/source identity/hash、冻结 campaign/task/actor mapping identities 及 mapping/config digest、冻结 schema/规范内容 hash、normalizer version 和 canonical payload/hash。mutable provider status/review、provider 时间戳、observed_at、physical attempt、observed-current assignment token 是观察元数据，不改变来源 identity/fingerprint，不决定 authoritative result。
+
+SourceObservation 保存可验证的不可变来源本体；SourceResultBinding 是原始 provider Result 到 exact source identity/fingerprint/payload 的强类型不可变关系，不是新业务 aggregate。原始 provider Result、SourceResultBinding、Task revision 和相关业务事件/Audit/Evidence 必须在同一接纳事务提交；绑定不能后补、换源、UPDATE/DELETE 或软删除。未接纳或晚到的 observation 可以单独保留，但不是 Snapshot 的业务成员。
+
+CORRECT Result 通过同事务保存的 corrected_from 指向原 Result；不伪造第二次 provider Submission。必须沿无环、同 workspace/task/input/schema 的 corrected_from 闭包到原始 Result 及其 SourceResultBinding；纠正内容保留自己的 payload/hash 和 reviewer 来源。
+
+RecordAnnotationResult 的每个返回已有事实的路径都先验证当前调用权限、完整来源 fingerprint、canonical payload/hash、normalizer、exact SourceResultBinding 和受控不可变来源本体：包括事务前 provider-observation/observation-key 命中、alias 命中，以及事务失败或唯一约束冲突后的重新读取。不能仅凭同 label/hash、旧 observation key 或已有 Result ID 返回成功；缺来源、绑定不符或同源冲突 fail closed，不经 alias 绕过。同源同 fingerprint replay 返回原事实，不提升 revision、不重复业务事件；当前授权仍须防止跨 workspace 泄漏。
 
 ## 4. ReviewDecision 与唯一 authoritative result
 
@@ -152,6 +166,10 @@ Hash 使用有格式版本、确定编码、确定 key/成员排序、显式 nul
 
 Snapshot 必须保留可验证的 payload 本体或 Core-controlled immutable object identity，不只留 hash。对象 missing/hash mismatch 导致读/构建 fail closed；保留 hash 本身不等于可恢复内容。禁止以 soft delete 修正历史；在该 Pilot 中不做自动清除被 snapshot/output/certification 引用的对象。
 
+受控不可变来源协议的 Snapshot 还必须冻结并验证来源闭包：完整 Result membership 中每个原始 provider Result 的 source identity/fingerprint/immutable payload hash，以及每个 CORRECT 的 corrected_from 闭包。ObservationKey 可以承诺该 identity/fingerprint，但必须有 exact、不可换源的 SourceResultBinding 和可重算的来源本体，不能只保留一个无法解析的 key/hash。
+
+Seal 与每次 read-integrity/build 校验都核验该闭包和其与 manifest/root 的绑定；缺 binding、缺 payload、hash/fingerprint 不符或 correction 关系异常时 fail closed。校验依赖 Core 捕获的不可变事实，不回读 provider current state；旧 FINALIZED root 不就地重算。来源完整性不能由现有标签 membership/count/root 校验代替。
+
 ## 6. Command、事务、锁与幂等
 
 | Command | 幂等/冲突边界 | 事务结果 |
@@ -159,14 +177,14 @@ Snapshot 必须保留可验证的 payload 本体或 Core-controlled immutable ob
 | CreateCampaign | workspace+command key+canonical fingerprint | 同键同语义一个 Campaign |
 | CreateTasks | campaign+source item；另校验 payload fingerprint | 不重复任务、不重连 source |
 | ActivateCampaign | expected Campaign revision/status | 原子冻结 task manifest |
-| RecordAnnotationResult | 完整 provider observation identity + hash；Task CAS | 新 Result 与 revision 同事务 |
+| RecordAnnotationResult | 所选协议的完整来源 identity/fingerprint；Task CAS；所有 replay 路径校验 | 新 Result 与 revision 同事务；不可变来源协议另含 exact SourceResultBinding |
 | ReviewAnnotation | command key + fingerprint、expected Task revision、唯一 terminal Decision | correction/decision/projection/Audit 原子化 |
 | FinalizeAnnotationSnapshot | campaign 唯一 snapshot + command fingerprint | snapshot 和 Campaign 原子 seal |
 | CancelCampaign | expected state/revision | 明确取消事实，不能覆盖历史 |
 
 固定锁序：需要当前权限 fence 的路径先取现有 workspace authorization/delivery fence；之后 Campaign parent → 按 Core ID 排序的 Task parents → Snapshot parent。每一种 accepted Result、Review、Task membership mutation 都先获取 Campaign parent 并检查状态，再取 Task；snapshot member 写入取同一 Snapshot parent。不得先锁 Task 再回头锁 Campaign。
 
-Finalize 在上述锁内重读完整事实，不使用事务外 preflight 作为提交依据。append-only/FINALIZED guards 必须在 DB 直接 INSERT/UPDATE/DELETE 下也生效；只有应用判断或无锁 trigger 不足以防止 late writer 穿越 seal。远程 HTTP、读取大对象、人工等待均不得放在这些锁内；先准备和校验不可变内容，再在短事务核对 identity/hash/revision。
+Finalize 在上述锁内重读完整事实，不使用事务外 preflight 作为提交依据。accepted source binding、Result/CORRECT/Review 和 Snapshot membership 写入共用上述 Campaign/Task parent 与必要 fence；不能先写 Result、后另事务补来源。append-only/FINALIZED guards 必须在 DB 直接 INSERT/UPDATE/DELETE 下也生效；只有应用判断或无锁 trigger 不足以防止 late writer 穿越 seal。远程 HTTP、读取大对象、人工等待均不得放在这些锁内；先准备和校验不可变来源本体，再在短事务复核同一 bytes/object identity、fingerprint、binding/hash/revision 和完整闭包。禁止清除被来源/Result/Snapshot 引用的 payload。review-first/seal-first 后到内容只追加 integration observation，不改变候选、Decision、binding 或 membership；writer-first 时 finalizer 看到完整接纳事实或明确阻断。
 
 并发验收至少覆盖：result-first/review-first、review-first/seal-first、membership-first/finalize-first、double finalizer、same-key conflicting payload、wrong-workspace、direct-final insert、unfinished BUILDING commit 和 finalized tamper。seal-first 后新 mutation 拒绝；writer-first 时 finalizer 看到其完整结果或明确阻断，不允许半个 correction 入快照。
 
@@ -183,3 +201,5 @@ Finalize 在上述锁内重读完整事实，不使用事务外 preflight 作为
 #204 实现模型、task manifest、结果/决定事务约束、snapshot exact freeze 和 DB/HTTP 负例；#206 增加用户审核操作与质量读取，不能在该阶段再发明一套审核终态。#205 只通过这些 Core acceptance Commands 接纳外部事实。#207 消费 FINALIZED snapshot，不回读 provider current state。
 
 本文件给出实施 contract，不预先提供全部表/API、更不宣称并发测试已通过。性能分片、多主标注者、仲裁、多轮 reopen、自动 retention 等只有真实场景要求时另立 Issue。
+
+新增受控 fork 合同存在明确实施差额：当前 service.go 的事务前及失败后 Result replay 尚未验证上述完整来源/SourceResultBinding 闭包；GetSnapshotIntegrity 尚未验证 source binding 与原始 immutable payload；现有 reconciler 的 REVIEWED/SEALED 跳过路径也未提供所需晚到留证。不得把本次文档修订或 #205/#208 历史 PASS 描述成这些能力已经实现。实施验收须覆盖同源同 label 但来源字段冲突、每个 replay 分支、binding/payload 丢失或篡改、CORRECT 闭包与 parent-first 竞争。
