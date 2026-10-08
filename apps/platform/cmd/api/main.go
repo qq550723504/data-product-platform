@@ -136,9 +136,9 @@ func main() {
 	// Use a read-only Redis PING for readiness; do not enqueue synthetic jobs
 	// on every kubelet probe.
 	redisProbe := redis.NewClient(&redis.Options{
-		Addr: cfg.Redis.Addr,
+		Addr:     cfg.Redis.Addr,
 		Password: cfg.Redis.Password,
-		DB: cfg.Redis.DB,
+		DB:       cfg.Redis.DB,
 	})
 	defer redisProbe.Close()
 	readiness := func(ctx context.Context) error {
