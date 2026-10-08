@@ -55,8 +55,8 @@ func writeHealth(w http.ResponseWriter, r *http.Request, status int, state strin
 	w.Header().Set("Cache-Control", "no-store")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(Health{
-		Status: state,
-		Time: time.Now().UTC().Format(time.RFC3339),
+		Status:    state,
+		Time:      time.Now().UTC().Format(time.RFC3339),
 		RequestID: RequestID(r.Context()),
 	})
 }
