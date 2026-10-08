@@ -5,11 +5,37 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
+
+// costAmountPattern admits at most 14 integral digits and 6 fractional digits,
+// matching PostgreSQL numeric(20,6) without silent rounding.
+var costAmountPattern = regexp.MustCompile(`^-?(?:[0-9]{1,14})(?:\\.[0-9]{1,6})?package cost
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"regexp"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+)
+
+)
+
+func validateAmount(amount *string) error {
+	if amount != nil && !costAmountPattern.MatchString(*amount) {
+		return fmt.Errorf("cost amount must be an exact numeric(20,6) decimal")
+	}
+	return nil
+}
 
 const QualityEngineInvocation = "QUALITY_ENGINE_INVOCATION"
 const NativeEngineInvocation = "NATIVE_ENGINE_INVOCATION"
@@ -29,7 +55,7 @@ type Event struct {
 	CostType    string
 	Quantity    float64
 	Unit        string
-	Amount      *float64
+	Amount      *string
 	Currency    string
 	PricingMode string
 	Metadata    map[string]any
@@ -37,6 +63,10 @@ type Event struct {
 }
 
 func Append(ctx context.Context, tx pgx.Tx, event Event) error {
+	if err := validateAmount(event.Amount); err != nil {
+		return err
+	}
+
 	if event.ID == uuid.Nil {
 		event.ID = uuid.New()
 	}
@@ -77,7 +107,7 @@ type QualityAssessmentActivity struct {
 	CostType     string
 	Quantity     float64
 	Unit         string
-	Amount       *float64
+	Amount       *string
 	Currency     string
 	PricingMode  string
 	Metadata     map[string]any
@@ -93,7 +123,7 @@ type QualityAssessmentAttemptActivity struct {
 	CostType    string
 	Quantity    float64
 	Unit        string
-	Amount      *float64
+	Amount      *string
 	Currency    string
 	PricingMode string
 	Metadata    map[string]any
@@ -111,7 +141,7 @@ type CertificationActivity struct {
 	CostType        string
 	Quantity        float64
 	Unit            string
-	Amount          *float64
+	Amount          *string
 	Currency        string
 	PricingMode     string
 	Metadata        map[string]any
@@ -119,6 +149,10 @@ type CertificationActivity struct {
 }
 
 func AppendCertificationActivity(ctx context.Context, tx pgx.Tx, activity CertificationActivity) error {
+	if err := validateAmount(activity.Amount); err != nil {
+		return err
+	}
+
 	if activity.WorkspaceID == uuid.Nil || activity.ActivityID == uuid.Nil {
 		return errors.New("certification cost activity requires workspace and activity IDs")
 	}
@@ -200,6 +234,10 @@ func AppendCertificationActivity(ctx context.Context, tx pgx.Tx, activity Certif
 // component is a no-op; a new attempt gets a new activity_id and therefore a
 // new cost fact.
 func AppendQualityAssessmentActivity(ctx context.Context, tx pgx.Tx, activity QualityAssessmentActivity) error {
+	if err := validateAmount(activity.Amount); err != nil {
+		return err
+	}
+
 	if activity.WorkspaceID == uuid.Nil || activity.AssessmentID == uuid.Nil || activity.AttemptID == uuid.Nil {
 		return errors.New("quality assessment cost activity requires workspace, assessment, and attempt IDs")
 	}
@@ -278,6 +316,10 @@ func AppendQualityAssessmentActivity(ctx context.Context, tx pgx.Tx, activity Qu
 // attempt's cost and its typed attempt allocation before evaluation starts.
 // Replaying the same attempt and component is a no-op.
 func AppendQualityAssessmentAttemptActivity(ctx context.Context, tx pgx.Tx, activity QualityAssessmentAttemptActivity) error {
+	if err := validateAmount(activity.Amount); err != nil {
+		return err
+	}
+
 	if activity.WorkspaceID == uuid.Nil || activity.AttemptID == uuid.Nil {
 		return errors.New("quality assessment attempt cost activity requires workspace and attempt IDs")
 	}
@@ -357,7 +399,7 @@ type AnnotationReviewActivity struct {
 	AttemptID   uuid.UUID
 	Quantity    float64
 	Unit        string
-	Amount      *float64
+	Amount      *string
 	Currency    string
 	PricingMode string
 	Metadata    map[string]any
@@ -365,6 +407,10 @@ type AnnotationReviewActivity struct {
 }
 
 func AppendAnnotationReviewActivity(ctx context.Context, tx pgx.Tx, activity AnnotationReviewActivity) error {
+	if err := validateAmount(activity.Amount); err != nil {
+		return err
+	}
+
 	if activity.WorkspaceID == uuid.Nil || activity.AttemptID == uuid.Nil {
 		return errors.New("annotation review cost activity requires workspace and attempt IDs")
 	}
@@ -437,7 +483,7 @@ type AnnotationEngineActivity struct {
 	AttemptID   uuid.UUID
 	Quantity    float64
 	Unit        string
-	Amount      *float64
+	Amount      *string
 	Currency    string
 	PricingMode string
 	Metadata    map[string]any
@@ -445,6 +491,10 @@ type AnnotationEngineActivity struct {
 }
 
 func AppendAnnotationEngineActivity(ctx context.Context, tx pgx.Tx, activity AnnotationEngineActivity) error {
+	if err := validateAmount(activity.Amount); err != nil {
+		return err
+	}
+
 	if activity.WorkspaceID == uuid.Nil || activity.AttemptID == uuid.Nil {
 		return errors.New("annotation engine cost activity requires workspace and attempt IDs")
 	}
