@@ -98,7 +98,8 @@ export type CostEvent = {
   costType: string;
   quantity: number;
   unit: string;
-  amount?: number;
+  /** Exact PostgreSQL numeric(20,6) decimal; never coerce to JS number. */
+  amount?: string;
   currency?: string;
   pricingMode: string;
   metadata: Record<string, unknown>;
