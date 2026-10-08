@@ -240,7 +240,7 @@ type GoldCostReference struct {
 	CostType    string    `json:"costType"`
 	Quantity    float64   `json:"quantity"`
 	Unit        string    `json:"unit"`
-	Amount      *float64  `json:"amount,omitempty"`
+	Amount      *string   `json:"amount,omitempty"`
 	Currency    string    `json:"currency,omitempty"`
 	PricingMode string    `json:"pricingMode"`
 	OccurredAt  time.Time `json:"occurredAt"`
@@ -556,7 +556,7 @@ func (r *Repository) goldCostReferences(ctx context.Context, explanation GoldExp
 			  AND d.delivery_mode='DIRECT_DATA'
 		)
 		SELECT e.id, s.phase, s.subject_type, s.subject_id,
-		       e.cost_type, e.quantity, e.unit, e.amount,
+		       e.cost_type, e.quantity, e.unit, e.amount::text,
 		       COALESCE(e.currency,''), e.pricing_mode, e.occurred_at
 		FROM subjects s
 		JOIN cost_event e ON e.id=s.cost_event_id
