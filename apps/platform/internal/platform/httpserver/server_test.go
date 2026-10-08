@@ -2,12 +2,12 @@ package httpserver
 
 import (
 	"context"
-	"errors"
-	"time"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestHealthIncludesRequestID(t *testing.T) {
