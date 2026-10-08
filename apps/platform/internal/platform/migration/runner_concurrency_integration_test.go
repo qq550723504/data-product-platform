@@ -13,6 +13,14 @@ import (
 func TestRunnerConcurrentUpRechecksStateAfterAdvisoryLock(t *testing.T) {
 	pool := scratchDatabase(t, 0)
 	dir := t.TempDir()
+	// Bootstrap separately: this test targets the post-lock version race.
+	if _, err := pool.Exec(context.Background(), `CREATE TABLE schema_migration (
+		version bigint PRIMARY KEY,
+		name text NOT NULL,
+		applied_at timestamptz NOT NULL DEFAULT now()
+	)`); err != nil {
+		t.Fatalf("prepare schema_migration: %v", err)
+	}
 
 	if err := os.WriteFile(filepath.Join(dir, "000001_concurrent.up.sql"), []byte(`
 		SELECT pg_sleep(0.4);
