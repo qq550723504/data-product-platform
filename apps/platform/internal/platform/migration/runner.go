@@ -108,7 +108,7 @@ func (r *Runner) apply(ctx context.Context, file File, up bool) error {
 		return fmt.Errorf("read migration %s: %w", file.Name, err)
 	}
 
-	tx, err := r.pool.BeginTx(ctx, pgx.TxOptions{})
+	tx, err := r.pool.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
 	if err != nil {
 		return fmt.Errorf("begin migration transaction: %w", err)
 	}
@@ -126,8 +126,20 @@ func (r *Runner) apply(ctx context.Context, file File, up bool) error {
 	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM schema_migration WHERE version = $1)`, file.Version).Scan(&applied); err != nil {
 		return fmt.Errorf("recheck migration %d after lock: %w", file.Version, err)
 	}
-	if (up && applied) || (!up && !applied) {
+	if up && applied {
 		return nil
+	}
+	if !up {
+		if !applied {
+			return nil
+		}
+		var latest int64
+		if err := tx.QueryRow(ctx, `SELECT COALESCE(MAX(version), 0) FROM schema_migration`).Scan(&latest); err != nil {
+			return fmt.Errorf("recheck latest migration after lock: %w", err)
+		}
+		if latest != file.Version {
+			return fmt.Errorf("cannot roll back migration %d: latest applied version is %d", file.Version, latest)
+		}
 	}
 
 	// pgx v5 automatically uses the simple query protocol for Exec calls with
