@@ -80,15 +80,27 @@ func (r *Runner) Down(ctx context.Context) error {
 }
 
 func (r *Runner) ensureTable(ctx context.Context) error {
-	_, err := r.pool.Exec(ctx, `
+	tx, err := r.pool.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
+	if err != nil {
+		return fmt.Errorf("begin migration bootstrap: %w", err)
+	}
+	defer func() { _ = tx.Rollback(context.Background()) }()
+
+	// CREATE TABLE IF NOT EXISTS alone is not safe against concurrent creators.
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(810042001)`); err != nil {
+		return fmt.Errorf("lock migration bootstrap: %w", err)
+	}
+	if _, err := tx.Exec(ctx, `
 		CREATE TABLE IF NOT EXISTS schema_migration (
 			version bigint PRIMARY KEY,
 			name text NOT NULL,
 			applied_at timestamptz NOT NULL DEFAULT now()
 		)
-	`)
-	if err != nil {
+	`); err != nil {
 		return fmt.Errorf("ensure schema_migration table: %w", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("commit migration bootstrap: %w", err)
 	}
 	return nil
 }
