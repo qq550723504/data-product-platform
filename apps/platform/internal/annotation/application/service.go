@@ -1,12 +1,14 @@
 package application
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"sort"
 	"strings"
 	"time"
@@ -332,6 +334,7 @@ func (s *Service) ActivateCampaign(ctx context.Context, cmd ActivateCampaignComm
 }
 
 type RecordResultCommand struct {
+	Source                 *annotationdomain.SourceObservation
 	WorkspaceID            uuid.UUID
 	CampaignID             uuid.UUID
 	TaskID                 uuid.UUID
@@ -357,122 +360,160 @@ func (s *Service) RecordAnnotationResult(ctx context.Context, cmd RecordResultCo
 	cmd.ObservationKey = strings.TrimSpace(cmd.ObservationKey)
 	cmd.AuthorRef = strings.TrimSpace(cmd.AuthorRef)
 	cmd.NormalizerVersion = strings.TrimSpace(cmd.NormalizerVersion)
-
-	if existing, err := s.repo.GetResultByProviderObservation(
-		ctx, cmd.WorkspaceID, cmd.CampaignID,
-		cmd.ProviderBindingRef, cmd.ExternalTaskID, cmd.ExternalAnnotationID,
-		cmd.ExternalRevision, cmd.CanonicalPayloadSHA256,
-	); err == nil {
-		if !providerResultReplayMatches(existing, cmd) {
-			return annotationdomain.Result{}, ErrIdempotencyConflict
-		}
-		if err := s.ensureReplayAliasAvailable(ctx, existing, cmd); err != nil {
-			return annotationdomain.Result{}, err
-		}
-		return existing, nil
-	} else if !errors.Is(err, pgx.ErrNoRows) {
-		return annotationdomain.Result{}, err
-	}
-
-	if existing, err := s.repo.GetResultByObservation(ctx, cmd.WorkspaceID, cmd.CampaignID, cmd.ObservationKey); err == nil {
-		if resultReplayMatches(existing, cmd) {
-			return existing, nil
-		}
-		return annotationdomain.Result{}, ErrIdempotencyConflict
-	} else if !errors.Is(err, pgx.ErrNoRows) {
-		return annotationdomain.Result{}, err
-	}
-
-	if hashBytes(cmd.CanonicalPayload) != cmd.CanonicalPayloadSHA256 {
+	if cmd.WorkspaceID == uuid.Nil || cmd.CampaignID == uuid.Nil || cmd.TaskID == uuid.Nil ||
+		cmd.ObservationKey == "" || hashBytes(cmd.CanonicalPayload) != cmd.CanonicalPayloadSHA256 {
 		return annotationdomain.Result{}, annotationdomain.ErrInvalidResult
 	}
-	result := annotationdomain.Result{
-		ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID, TaskID: cmd.TaskID,
-		AuthorRef: cmd.AuthorRef, ProviderBindingRef: cmd.ProviderBindingRef,
-		ExternalTaskID: cmd.ExternalTaskID, ExternalAnnotationID: cmd.ExternalAnnotationID,
-		ExternalRevision: cmd.ExternalRevision, ObservationKey: cmd.ObservationKey,
-		CanonicalPayload:       append([]byte(nil), cmd.CanonicalPayload...),
-		CanonicalPayloadSHA256: cmd.CanonicalPayloadSHA256, NormalizerVersion: cmd.NormalizerVersion,
-		CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID,
+	result, err := s.recordResultTx(ctx, cmd, true)
+	if err == nil {
+		return result, nil
 	}
-	if err := result.Validate(); err != nil {
-		return annotationdomain.Result{}, err
+	// A failed transaction or unique race cannot turn a stale preflight into
+	// authorization. All recovery reads use exactly the same guarded path.
+	replay, replayErr := s.recordResultTx(ctx, cmd, false)
+	if replayErr == nil {
+		return replay, nil
 	}
-
+	if !errors.Is(replayErr, pgx.ErrNoRows) {
+		return annotationdomain.Result{}, replayErr
+	}
+	return annotationdomain.Result{}, err
+}
+func (s *Service) recordResultTx(ctx context.Context, cmd RecordResultCommand, allowInsert bool) (annotationdomain.Result, error) {
+	var result annotationdomain.Result
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		campaign, err := s.repo.GetCampaignTx(ctx, tx, cmd.CampaignID)
+		if _, err := deliveryfence.Lock(ctx, tx, cmd.WorkspaceID); err != nil {
+			return err
+		}
+		campaign, err := s.repo.LockCampaignTx(ctx, tx, cmd.CampaignID)
 		if err != nil {
 			return err
 		}
-		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignActive {
+		if campaign.WorkspaceID != cmd.WorkspaceID {
 			return annotationdomain.ErrInvalidResult
-		}
-		if err := validateAnnotationPayload(campaign.Schema, result.CanonicalPayload); err != nil {
-			return err
 		}
 		task, err := s.repo.GetTaskTx(ctx, tx, cmd.TaskID)
 		if err != nil {
 			return err
 		}
-		if task.WorkspaceID != cmd.WorkspaceID || task.CampaignID != cmd.CampaignID ||
-			task.Revision != cmd.ExpectedTaskRevision {
+		if task.WorkspaceID != cmd.WorkspaceID || task.CampaignID != cmd.CampaignID {
+			return annotationdomain.ErrInvalidResult
+		}
+		binding, bindingErr := s.repo.GetEngineCampaignBindingTx(ctx, tx, cmd.CampaignID)
+		controlled := bindingErr == nil && binding.Protocol() == annotationdomain.ControlledSubmissionProtocol
+		if bindingErr != nil && !errors.Is(bindingErr, pgx.ErrNoRows) {
+			return bindingErr
+		}
+		if controlled {
+			guard, ok := s.activationGuard.(EngineSendAuthorizationGuard)
+			if !ok || guard == nil {
+				return ErrActivationGuardRequired
+			}
+			if err := guard.ValidateEngineSendTx(ctx, tx, campaign); err != nil {
+				return err
+			}
+			if cmd.Source == nil {
+				return annotationdomain.ErrSourceIntegrity
+			}
+			source := *cmd.Source
+			if err := source.Validate(); err != nil {
+				return err
+			}
+			if source.WorkspaceID != cmd.WorkspaceID || source.CampaignID != cmd.CampaignID || source.TaskID != cmd.TaskID ||
+				source.CampaignBindingID != binding.ID || source.ConnectionID != binding.ConnectionID ||
+				source.ProviderInstance != binding.ProviderInstance || source.ProviderIncarnation != binding.ProviderIncarnation ||
+				source.NormalizerVersion != binding.NormalizerVersion || source.ConfigSHA256 != binding.ConfigSHA256 || source.InputVersionID != campaign.InputDatasetVersionID ||
+				source.InputSHA256 != campaign.InputChecksumSHA256 || source.SchemaSHA256 != campaign.Schema.ContentSHA256 ||
+				source.TaxonomySHA256 != campaign.Taxonomy.ContentSHA256 || source.RubricSHA256 != campaign.Rubric.ContentSHA256 ||
+				source.RendererSHA256 != campaign.Renderer.ContentSHA256 || source.ReviewPolicySHA256 != campaign.ReviewPolicy.ContentSHA256 ||
+				source.SourceItemRef != task.SourceItemRef || source.SourceSHA256 != task.SourceContentSHA256 ||
+				source.TaskTextSHA256 != task.TaskTextSHA256 || source.CoreAuthorRef != task.PrimaryAnnotatorRef ||
+				source.ExternalRevision() != cmd.ExternalRevision || source.ExternalTaskID != cmd.ExternalTaskID ||
+				source.ExternalAnnotationID != cmd.ExternalAnnotationID || source.CoreAuthorRef != cmd.AuthorRef ||
+				source.CampaignBindingID.String() != cmd.ProviderBindingRef ||
+				source.NormalizerVersion != cmd.NormalizerVersion || source.CanonicalPayloadSHA256 != cmd.CanonicalPayloadSHA256 ||
+				!bytes.Equal(source.CanonicalPayload, cmd.CanonicalPayload) {
+				return annotationdomain.ErrSourceConflict
+			}
+		} else if cmd.Source != nil {
+			return annotationdomain.ErrSourceIntegrity
+		}
+		existing, readErr := s.repo.GetResultByProviderObservationTx(ctx, tx, cmd.WorkspaceID, cmd.CampaignID,
+			cmd.ProviderBindingRef, cmd.ExternalTaskID, cmd.ExternalAnnotationID, cmd.ExternalRevision, cmd.CanonicalPayloadSHA256)
+		if errors.Is(readErr, pgx.ErrNoRows) {
+			existing, readErr = s.repo.GetResultByObservationTx(ctx, tx, cmd.WorkspaceID, cmd.CampaignID, cmd.ObservationKey)
+		}
+		if readErr == nil {
+			if !providerResultReplayMatches(existing, cmd) || !bytes.Equal(existing.CanonicalPayload, cmd.CanonicalPayload) {
+				return ErrIdempotencyConflict
+			}
+			if controlled {
+				if err := s.repo.VerifySourceResultTx(ctx, tx, existing, *cmd.Source); err != nil {
+					return err
+				}
+			}
+			if err := s.repo.ReserveResultAliasTx(ctx, tx, cmd.WorkspaceID, cmd.CampaignID, cmd.ObservationKey, existing.ID); err != nil {
+				return err
+			}
+			result = existing
+			return nil
+		}
+		if !errors.Is(readErr, pgx.ErrNoRows) {
+			return readErr
+		}
+		if !allowInsert {
+			return pgx.ErrNoRows
+		}
+		if campaign.Status != annotationdomain.CampaignActive || task.Status == annotationdomain.TaskReviewed {
+			return annotationdomain.ErrInvalidResult
+		}
+		if task.Revision != cmd.ExpectedTaskRevision {
 			return annotationinfra.ErrStaleRevision
+		}
+		if err := validateAnnotationPayload(campaign.Schema, cmd.CanonicalPayload); err != nil {
+			return err
+		}
+		result = annotationdomain.Result{ID: uuid.New(), WorkspaceID: cmd.WorkspaceID, CampaignID: cmd.CampaignID, TaskID: cmd.TaskID,
+			AuthorRef: cmd.AuthorRef, ProviderBindingRef: cmd.ProviderBindingRef, ExternalTaskID: cmd.ExternalTaskID,
+			ExternalAnnotationID: cmd.ExternalAnnotationID, ExternalRevision: cmd.ExternalRevision, ObservationKey: cmd.ObservationKey,
+			CanonicalPayload: append([]byte(nil), cmd.CanonicalPayload...), CanonicalPayloadSHA256: cmd.CanonicalPayloadSHA256,
+			NormalizerVersion: cmd.NormalizerVersion, CreatedAt: time.Now().UTC(), CreatedBy: cmd.ActorID}
+		if err := result.Validate(); err != nil {
+			return err
+		}
+		if controlled {
+			if err := s.repo.StoreSourceTx(ctx, tx, *cmd.Source); err != nil {
+				return err
+			}
 		}
 		if err := s.repo.InsertResult(ctx, tx, result); err != nil {
 			return err
 		}
+		if controlled {
+			if err := s.repo.BindSourceResultTx(ctx, tx, result.ID, *cmd.Source); err != nil {
+				return err
+			}
+		}
 		if err := s.repo.AdvanceTaskForResult(ctx, tx, cmd.TaskID, cmd.ExpectedTaskRevision); err != nil {
 			return err
 		}
-		if err := appendEvent(ctx, tx, "ANNOTATION_TASK", cmd.TaskID, "AnnotationResultRecorded", map[string]any{
-			"taskId": cmd.TaskID, "resultId": result.ID, "payloadSha256": result.CanonicalPayloadSHA256,
-		}); err != nil {
+		metadata := map[string]any{"taskId": cmd.TaskID, "resultId": result.ID, "payloadSha256": result.CanonicalPayloadSHA256, "normalizerVersion": result.NormalizerVersion}
+		if controlled {
+			metadata["sourceId"] = cmd.Source.ID
+			metadata["sourceFingerprint"] = cmd.Source.Hash()
+		}
+		if err := appendEvent(ctx, tx, "ANNOTATION_TASK", cmd.TaskID, "AnnotationResultRecorded", metadata); err != nil {
 			return err
 		}
-		if _, err := evidence.Append(ctx, tx, evidence.Record{
-			WorkspaceID: cmd.WorkspaceID, EvidenceType: "ANNOTATION_RESULT_RECORDED",
-			Title: "Annotation result recorded", SourceType: "CORE",
-			Metadata: map[string]any{
-				"taskId": cmd.TaskID, "resultId": result.ID,
-				"payloadSha256":     result.CanonicalPayloadSHA256,
-				"normalizerVersion": result.NormalizerVersion,
-			},
-			CreatedBy: cmd.ActorID,
-		}, evidence.Relation{ObjectType: "ANNOTATION_RESULT", ObjectID: result.ID, RelationType: "RESULT_EVIDENCE"}); err != nil {
+		if _, err := evidence.Append(ctx, tx, evidence.Record{WorkspaceID: cmd.WorkspaceID, EvidenceType: "ANNOTATION_RESULT_RECORDED",
+			Title: "Annotation result recorded", SourceType: "CORE", Metadata: metadata, CreatedBy: cmd.ActorID},
+			evidence.Relation{ObjectType: "ANNOTATION_RESULT", ObjectID: result.ID, RelationType: "RESULT_EVIDENCE"}); err != nil {
 			return err
 		}
-		return audit.Append(ctx, tx, audit.Event{
-			WorkspaceID: &cmd.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID,
-			Action: "ANNOTATION_RESULT_RECORDED", ObjectType: "ANNOTATION_RESULT", ObjectID: result.ID,
-			AfterState: map[string]any{
-				"taskId": cmd.TaskID, "payloadSha256": result.CanonicalPayloadSHA256,
-			},
-			TraceID: cmd.TraceID,
-		})
+		return audit.Append(ctx, tx, audit.Event{WorkspaceID: &cmd.WorkspaceID, ActorType: actorType(cmd.ActorID), ActorID: cmd.ActorID,
+			Action: "ANNOTATION_RESULT_RECORDED", ObjectType: "ANNOTATION_RESULT", ObjectID: result.ID, AfterState: metadata, TraceID: cmd.TraceID})
 	})
-	if err != nil {
-		if existing, readErr := s.repo.GetResultByProviderObservation(
-			ctx, cmd.WorkspaceID, cmd.CampaignID,
-			cmd.ProviderBindingRef, cmd.ExternalTaskID, cmd.ExternalAnnotationID,
-			cmd.ExternalRevision, cmd.CanonicalPayloadSHA256,
-		); readErr == nil {
-			if !providerResultReplayMatches(existing, cmd) {
-				return annotationdomain.Result{}, ErrIdempotencyConflict
-			}
-			if aliasErr := s.ensureReplayAliasAvailable(ctx, existing, cmd); aliasErr != nil {
-				return annotationdomain.Result{}, aliasErr
-			}
-			return existing, nil
-		}
-		if existing, readErr := s.repo.GetResultByObservation(ctx, cmd.WorkspaceID, cmd.CampaignID, cmd.ObservationKey); readErr == nil {
-			if resultReplayMatches(existing, cmd) {
-				return existing, nil
-			}
-			return annotationdomain.Result{}, ErrIdempotencyConflict
-		}
-		return annotationdomain.Result{}, err
-	}
-	return result, nil
+	return result, err
 }
 
 type ReviewAnnotationCommand struct {
@@ -655,6 +696,25 @@ func (s *Service) commitReviewDecision(
 ) (annotationdomain.ReviewDecision, error) {
 	var decision annotationdomain.ReviewDecision
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		campaign, err := s.repo.LockCampaignTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if campaign.WorkspaceID != cmd.WorkspaceID || campaign.Status != annotationdomain.CampaignActive {
+			return annotationdomain.ErrInvalidReviewDecision
+		}
+		if err := s.repo.LockTasksTx(ctx, tx, cmd.CampaignID); err != nil {
+			return err
+		}
+		closure, err := s.repo.SourceClosureTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		if closure != nil {
+			if _, err := s.repo.LatestCompleteBatchTx(ctx, tx, cmd.CampaignID); err != nil {
+				return err
+			}
+		}
 		var selectedResultID *uuid.UUID
 		if cmd.Action == annotationdomain.ReviewAccept {
 			if cmd.ReviewedResultID == nil {
@@ -809,10 +869,34 @@ func (s *Service) FinalizeAnnotationSnapshot(
 			return annotationdomain.ErrInvalidSnapshot
 		}
 
+		closure, err := s.repo.SourceClosureTx(ctx, tx, cmd.CampaignID)
+		if err != nil {
+			return err
+		}
+		var batchReceiptID uuid.UUID
+		if closure != nil {
+			batchReceiptID, err = s.repo.LatestCompleteBatchTx(ctx, tx, cmd.CampaignID)
+			if err != nil {
+				return err
+			}
+		}
 		now := time.Now().UTC().Truncate(time.Microsecond)
 		manifest, outputCount, err := snapshotManifest(campaign, tasks, results, decisions, now, cmd.ActorID)
 		if err != nil {
 			return err
+		}
+		if closure != nil {
+			var enriched map[string]any
+			if err := json.Unmarshal(manifest, &enriched); err != nil {
+				return err
+			}
+			enriched["sourceProtocol"] = annotationdomain.ControlledSubmissionProtocol
+			enriched["sourceClosure"] = closure
+			enriched["submissionBatchReceiptId"] = batchReceiptID
+			manifest, err = json.Marshal(enriched)
+			if err != nil {
+				return err
+			}
 		}
 		snapshot = annotationdomain.Snapshot{
 			ID:          stableSnapshotID(cmd.WorkspaceID, cmd.CampaignID),

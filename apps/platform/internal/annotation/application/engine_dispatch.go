@@ -13,6 +13,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 )
 
 const maxAutomaticUnknownLookups = 5
@@ -197,6 +198,9 @@ func (s *EngineService) claimEngineAttempt(
 ) (annotationdomain.EngineAttempt, annotationdomain.EngineOperation, error) {
 	var attempt annotationdomain.EngineAttempt
 	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		if _, err := deliveryfence.Lock(ctx, tx, operation.WorkspaceID); err != nil {
+			return err
+		}
 		campaign, err := s.repo.LockCampaignTx(ctx, tx, operation.CampaignID)
 		if err != nil {
 			return err
@@ -271,28 +275,30 @@ func (s *EngineService) claimEngineAttempt(
 			return err
 		}
 
-		if err := cost.AppendAnnotationEngineActivity(
-			ctx,
-			tx,
-			cost.AnnotationEngineActivity{
-				WorkspaceID: operation.WorkspaceID,
-				AttemptID:   attempt.ID,
-				Quantity:    1,
-				Unit:        "invocation",
-				PricingMode: "ACTUAL",
-				Metadata: map[string]any{
-					"provider":         operation.Provider,
-					"providerInstance": operation.ProviderInstanceRef,
-					"operationKind":    operation.OperationKind,
-					"attemptKind":      attempt.AttemptKind,
-					"attemptNo":        attempt.AttemptNo,
+		if !controlledEngine(s.engine) {
+			if err := cost.AppendAnnotationEngineActivity(
+				ctx,
+				tx,
+				cost.AnnotationEngineActivity{
+					WorkspaceID: operation.WorkspaceID,
+					AttemptID:   attempt.ID,
+					Quantity:    1,
+					Unit:        "invocation",
+					PricingMode: "ACTUAL",
+					Metadata: map[string]any{
+						"provider":         operation.Provider,
+						"providerInstance": operation.ProviderInstanceRef,
+						"operationKind":    operation.OperationKind,
+						"attemptKind":      attempt.AttemptKind,
+						"attemptNo":        attempt.AttemptNo,
+					},
+					OccurredAt: attempt.StartedAt,
 				},
-				OccurredAt: attempt.StartedAt,
-			},
-		); err != nil {
-			return err
-		}
+			); err != nil {
+				return err
+			}
 
+		}
 		if attemptKind == annotationdomain.EngineAttemptSubmit {
 			operation, err = s.repo.TransitionEngineOperation(
 				ctx,
@@ -332,6 +338,9 @@ func (s *EngineService) invokeEngine(
 	operation annotationdomain.EngineOperation,
 	attempt annotationdomain.EngineAttempt,
 ) (engineResolution, error) {
+	if controlledEngine(s.engine) {
+		ctx = s.controlledInvocationContext(ctx, operation, attempt)
+	}
 	switch operation.OperationKind {
 	case annotationdomain.EngineOperationEnsureCampaign:
 		manifest, err := decodeCampaignManifest(operation)

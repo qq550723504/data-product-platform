@@ -1,0 +1,36 @@
+{
+  "python": "CPython 3.12",
+  "contract": "json.dumps(sort_keys=True,separators=(',',':'),ensure_ascii=False)",
+  "vectors": [
+    {
+      "raw": "{\"z\":null,\"a\":\"\\u4e2d\\u6587\"}",
+      "canonical": "{\"a\":\"中文\",\"z\":null}",
+      "sha256": "97621d25e78e90a9850fd9829d54e2e4c2eba1fc96b311057847b6249bf87a86"
+    },
+    {
+      "raw": "{\"quote\":\"\\\"\\\\\\n\\t\\b\\f\\r\",\"html\":\"<&>\"}",
+      "canonical": "{\"html\":\"<&>\",\"quote\":\"\\\"\\\\\\n\\t\\b\\f\\r\"}",
+      "sha256": "837bc7f2bd915f05c46961fa6f8a3ece4eb5ddeeb68f3bf9102a38a6cb176e3b"
+    },
+    {
+      "raw": "{\"b\":[true,false,null],\"a\":{\"z\":2,\"a\":1}}",
+      "canonical": "{\"a\":{\"a\":1,\"z\":2},\"b\":[true,false,null]}",
+      "sha256": "cb2e756fd70a4f65a289ba5bd4cd8a5b5b24905d5539fd7b5162362e61418fff"
+    },
+    {
+      "raw": "{\"integer\":9007199254740993123456789,\"negative\":-0,\"decimal\":1.0,\"small\":1e-7,\"large\":1e20}",
+      "canonical": "{\"decimal\":1.0,\"integer\":9007199254740993123456789,\"large\":1e+20,\"negative\":0,\"small\":1e-07}",
+      "sha256": "e509bc2b32737b60c1a6d2249a407a8398761a0243145254af5709f628664529"
+    },
+    {
+      "raw": "[-0.0,0.0001,0.00001,1e15,1e16,1.2345678901234567,5e-324]",
+      "canonical": "[-0.0,0.0001,1e-05,1000000000000000.0,1e+16,1.2345678901234567,5e-324]",
+      "sha256": "f4172ff495a95b6084094fcb519b1c4ed82212615338e38c7b9f745e15b935a2"
+    },
+    {
+      "raw": "{\"emoji\":\"\\ud83d\\ude00\",\"separator\":\"\\u2028\\u2029\"}",
+      "canonical": "{\"emoji\":\"😀\",\"separator\":\"  \"}",
+      "sha256": "f0ddfabe1766e0270d5448930b5a2ddc54eca326260e9de7ac632cb474141c2e"
+    }
+  ]
+}

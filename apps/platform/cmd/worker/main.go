@@ -11,8 +11,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/hibiken/asynq"
 	annotationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/application"
+	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 	annotationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/infrastructure"
 	annotationlabelstudio "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/labelstudio"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
@@ -175,6 +177,21 @@ func main() {
 		if err != nil {
 			logger.Error("create Label Studio annotation engine", "error", err)
 			os.Exit(1)
+		}
+		if cfg.LabelStudio.Protocol == annotationdomain.ControlledSubmissionProtocol {
+			connectionID, parseErr := uuid.Parse(cfg.LabelStudio.ConnectionID)
+			if parseErr != nil {
+				logger.Error("invalid controlled connection identity")
+				os.Exit(1)
+			}
+			labelStudioClient, err = annotationlabelstudio.NewControlledClient(cfg.LabelStudio.BaseURL, cfg.LabelStudio.Token, cfg.LabelStudio.InstanceRef,
+				annotationdomain.SourceContract{AdmissionProtocol: cfg.LabelStudio.Protocol, ConnectionID: connectionID,
+					ProviderIncarnation: cfg.LabelStudio.ProviderIncarnation, SourceCommit: cfg.LabelStudio.SourceCommit,
+					EngineVersion: cfg.LabelStudio.EngineVersion, ImageDigest: cfg.LabelStudio.ImageDigest, NormalizerVersion: cfg.LabelStudio.NormalizerVersion}, httpClient)
+			if err != nil {
+				logger.Error("invalid controlled source contract", "error", err)
+				os.Exit(1)
+			}
 		}
 		activationGuard := annotationapp.NewCoreActivationGuard(
 			datasetRepo,
