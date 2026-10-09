@@ -23,7 +23,8 @@ DROP TRIGGER annotation_source_receipt_validate ON annotation_source_receipt;
 DROP FUNCTION annotation_validate_source_insert(),annotation_validate_source_binding(),
  annotation_require_source_binding(),annotation_validate_batch(),annotation_require_complete_batch(),
  annotation_validate_controlled_binding(),annotation_validate_batch_receipt(),
- annotation_source_closure_json(uuid),annotation_snapshot_source_freeze(),annotation_validate_source_receipt();
+ annotation_source_closure_json(uuid),annotation_snapshot_source_freeze(),annotation_validate_source_receipt(),
+ annotation_source_is_expected(uuid,uuid,text,bigint),annotation_batch_membership_matches(uuid,uuid[],text[]);
 DROP TABLE annotation_source_receipt,annotation_source_result_binding,
  annotation_source_observation,annotation_submission_batch_receipt,annotation_submission_batch,annotation_source_connection_owner;
 ALTER TABLE annotation_engine_campaign_binding DROP CONSTRAINT ck_annotation_source_protocol,

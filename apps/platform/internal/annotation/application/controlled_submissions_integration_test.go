@@ -641,7 +641,9 @@ func TestControlledReviewFirstRejectsWaitingResultThenSeals(t *testing.T) {
 	changed.ID = changed.Identity()
 	late := make(chan error, 1)
 	go func() {
-		_, err := f.service.RecordAnnotationResult(ctx, f.command(changed, "waiting-late"))
+		lateCmd := f.command(changed, "waiting-late")
+		lateCmd.ExpectedTaskRevision = 2
+		_, err := f.service.RecordAnnotationResult(ctx, lateCmd)
 		late <- err
 	}()
 	if err := hold.Commit(ctx); err != nil {

@@ -435,6 +435,9 @@ func (s *Service) recordResultTx(ctx context.Context, cmd RecordResultCommand, a
 				!bytes.Equal(source.CanonicalPayload, cmd.CanonicalPayload) {
 				return annotationdomain.ErrSourceConflict
 			}
+			if err := s.repo.RequireExpectedSourceTx(ctx, tx, source); err != nil {
+				return err
+			}
 		} else if cmd.Source != nil {
 			return annotationdomain.ErrSourceIntegrity
 		}

@@ -127,6 +127,40 @@ CREATE TABLE annotation_submission_batch_receipt(
  CHECK(cardinality(source_ids)=cardinality(fingerprints))
 );
 
+-- Every original Result is confined to the immutable expected slots. Source-only
+-- observations remain available for late/quarantined evidence.
+CREATE FUNCTION annotation_source_is_expected(cid uuid,tid uuid,aid text,rev bigint)
+RETURNS boolean LANGUAGE sql STABLE AS $$
+ SELECT EXISTS(SELECT 1 FROM annotation_submission_batch b,
+ unnest(b.expected_task_ids,b.expected_assignment_ids,b.expected_revisions) AS e(t,a,r)
+ WHERE b.campaign_id=cid AND e.t=tid AND e.a=aid AND e.r=rev)
+$$;
+
+-- Use the same exact-membership predicate at completion, review, seal and read.
+-- Corrections share their original source; they do not add an expected slot.
+CREATE FUNCTION annotation_batch_membership_matches(cid uuid,ids uuid[],hashes text[])
+RETURNS boolean LANGUAGE sql STABLE AS $$
+ SELECT EXISTS(SELECT 1 FROM annotation_submission_batch batch WHERE batch.campaign_id=cid
+ AND cardinality(ids)=cardinality(batch.expected_task_ids)
+ AND cardinality(hashes)=cardinality(ids)
+ AND NOT EXISTS(SELECT 1 FROM unnest(ids) AS p(id) GROUP BY id HAVING count(*)>1)
+ AND (SELECT count(*) FROM annotation_result WHERE campaign_id=cid AND corrected_from_result_id IS NULL)=cardinality(ids)
+ AND NOT EXISTS(
+ SELECT 1 FROM unnest(batch.expected_task_ids,batch.expected_assignment_ids,batch.expected_revisions) AS e(t,a,r)
+ WHERE NOT EXISTS(SELECT 1 FROM annotation_source_observation s
+ JOIN annotation_source_result_binding b ON b.source_id=s.id
+ JOIN annotation_result r ON r.id=b.result_id
+ WHERE s.campaign_id=cid AND s.task_id=e.t AND s.assignment_id=e.a AND s.submission_revision=e.r
+ AND s.id=ANY(ids) AND r.campaign_id=cid AND r.corrected_from_result_id IS NULL))
+ AND NOT EXISTS(
+ SELECT 1 FROM unnest(ids,hashes) AS p(id,hash)
+ WHERE NOT EXISTS(SELECT 1 FROM annotation_source_observation s
+ JOIN annotation_source_result_binding b ON b.source_id=s.id
+ JOIN annotation_result r ON r.id=b.result_id
+ WHERE s.id=p.id AND s.campaign_id=cid AND s.fingerprint_sha256=p.hash
+ AND b.fingerprint_sha256=p.hash AND r.campaign_id=cid AND r.corrected_from_result_id IS NULL)))
+$$;
+
 CREATE FUNCTION annotation_validate_source_insert() RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE c annotation_campaign; t annotation_task; b annotation_engine_campaign_binding;
  tb annotation_engine_task_binding; ab annotation_engine_actor_binding;
@@ -187,6 +221,7 @@ BEGIN
  OR r.canonical_payload IS DISTINCT FROM s.canonical_payload
  OR r.canonical_payload_sha256 IS DISTINCT FROM s.canonical_payload_sha256
  OR r.normalizer_version IS DISTINCT FROM s.normalizer_version
+ OR NOT annotation_source_is_expected(s.campaign_id,s.task_id,s.assignment_id,s.submission_revision)
  OR NEW.fingerprint_sha256 IS DISTINCT FROM s.fingerprint_sha256
  OR NOT EXISTS(SELECT 1 FROM annotation_campaign WHERE id=r.campaign_id AND status='ACTIVE')
  OR EXISTS(SELECT 1 FROM annotation_review_decision WHERE task_id=r.task_id) THEN
@@ -237,14 +272,11 @@ BEGIN
  PERFORM id FROM annotation_campaign WHERE id=cid FOR UPDATE;
  IF EXISTS(SELECT 1 FROM annotation_engine_campaign_binding WHERE campaign_id=cid
  AND admission_protocol='controlled-fork-submission-v1')
- AND NOT EXISTS(SELECT 1 FROM annotation_submission_batch_receipt WHERE campaign_id=cid
- AND outcome='COMPLETE' ORDER BY sequence DESC LIMIT 1)
- THEN RAISE EXCEPTION 'controlled batch has no complete receipt'; END IF;
- IF EXISTS(SELECT 1 FROM annotation_engine_campaign_binding WHERE campaign_id=cid
- AND admission_protocol='controlled-fork-submission-v1')
- AND (SELECT outcome FROM annotation_submission_batch_receipt WHERE campaign_id=cid
- ORDER BY sequence DESC LIMIT 1) IS DISTINCT FROM 'COMPLETE'
- THEN RAISE EXCEPTION 'controlled batch is unresolved'; END IF;
+ AND NOT COALESCE((SELECT outcome='COMPLETE'
+ AND annotation_batch_membership_matches(campaign_id,source_ids,fingerprints)
+ FROM annotation_submission_batch_receipt WHERE campaign_id=cid
+ ORDER BY sequence DESC LIMIT 1),false)
+ THEN RAISE EXCEPTION 'controlled batch is unresolved or does not cover exact current membership'; END IF;
  RETURN NEW;
 END $$;
 CREATE TRIGGER annotation_review_batch_complete BEFORE INSERT ON annotation_review_decision
@@ -281,29 +313,12 @@ CREATE TRIGGER annotation_controlled_binding_validate BEFORE INSERT ON annotatio
  FOR EACH ROW EXECUTE FUNCTION annotation_validate_controlled_binding();
 
 CREATE FUNCTION annotation_validate_batch_receipt() RETURNS trigger LANGUAGE plpgsql AS $$
-DECLARE batch annotation_submission_batch;
 BEGIN
  PERFORM id FROM annotation_campaign WHERE id=NEW.campaign_id FOR UPDATE;
- SELECT * INTO batch FROM annotation_submission_batch WHERE campaign_id=NEW.campaign_id;
  IF NEW.outcome='COMPLETE' THEN
  IF NEW.scan_started_receipt_id IS DISTINCT FROM (SELECT id FROM annotation_submission_batch_receipt WHERE campaign_id=NEW.campaign_id ORDER BY sequence DESC LIMIT 1)
  OR NOT EXISTS(SELECT 1 FROM annotation_submission_batch_receipt WHERE id=NEW.scan_started_receipt_id AND campaign_id=NEW.campaign_id AND outcome='UNRESOLVED')
- OR cardinality(NEW.source_ids)<>cardinality(batch.expected_task_ids)
- OR EXISTS(SELECT 1 FROM unnest(NEW.source_ids) AS ids(id) GROUP BY id HAVING count(*)>1)
- OR EXISTS(
- SELECT 1 FROM unnest(batch.expected_task_ids,batch.expected_assignment_ids,batch.expected_revisions) AS e(t,a,r)
- WHERE NOT EXISTS(SELECT 1 FROM annotation_source_observation s
- JOIN annotation_source_result_binding b ON b.source_id=s.id
- WHERE s.campaign_id=NEW.campaign_id AND s.task_id=e.t AND s.assignment_id=e.a AND s.submission_revision=e.r
- AND s.id=ANY(NEW.source_ids)))
- OR EXISTS(
- SELECT 1 FROM unnest(NEW.source_ids,NEW.fingerprints) AS p(id,hash)
- WHERE NOT EXISTS(SELECT 1 FROM annotation_source_observation s
- JOIN annotation_source_result_binding b ON b.source_id=s.id
- WHERE s.id=p.id AND s.campaign_id=NEW.campaign_id AND s.fingerprint_sha256=p.hash
- AND b.fingerprint_sha256=p.hash))
- OR (SELECT count(*) FROM annotation_result WHERE campaign_id=NEW.campaign_id AND corrected_from_result_id IS NULL)
- <>cardinality(batch.expected_task_ids)
+ OR NOT annotation_batch_membership_matches(NEW.campaign_id,NEW.source_ids,NEW.fingerprints)
  THEN RAISE EXCEPTION 'Submission completion receipt does not cover exact accepted batch'; END IF;
  END IF;
  RETURN NEW;
@@ -353,8 +368,11 @@ BEGIN
  OR jsonb_array_length(closure)<>(SELECT count(*) FROM annotation_result WHERE campaign_id=NEW.campaign_id)
  OR EXISTS(SELECT 1 FROM annotation_result WHERE campaign_id=NEW.campaign_id
  AND encode(digest(canonical_payload,'sha256'),'hex')<>canonical_payload_sha256)
+ OR (NEW.manifest->>'submissionBatchReceiptId')::uuid IS DISTINCT FROM (SELECT id FROM annotation_submission_batch_receipt
+ WHERE campaign_id=NEW.campaign_id ORDER BY sequence DESC LIMIT 1)
  OR NOT EXISTS(SELECT 1 FROM annotation_submission_batch_receipt
- WHERE id=(NEW.manifest->>'submissionBatchReceiptId')::uuid AND campaign_id=NEW.campaign_id AND outcome='COMPLETE')
+ WHERE id=(NEW.manifest->>'submissionBatchReceiptId')::uuid AND campaign_id=NEW.campaign_id AND outcome='COMPLETE'
+ AND annotation_batch_membership_matches(campaign_id,source_ids,fingerprints))
  THEN RAISE EXCEPTION 'controlled Snapshot source closure is incomplete'; END IF;
  END IF; RETURN NEW;
 END $$;

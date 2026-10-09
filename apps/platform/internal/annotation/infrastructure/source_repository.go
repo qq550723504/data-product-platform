@@ -246,16 +246,34 @@ func (r *Repository) verifySnapshotSourceIntegrity(ctx context.Context, snapshot
 		return false, nil
 	}
 	var outcome string
-	if err := r.pool.QueryRow(ctx, "SELECT outcome FROM annotation_submission_batch_receipt WHERE id=$1 AND campaign_id=$2", frozen.BatchReceiptID, campaignID).Scan(&outcome); err != nil {
+	var exact bool
+	if err := r.pool.QueryRow(ctx, "SELECT outcome,annotation_batch_membership_matches(campaign_id,source_ids,fingerprints) FROM annotation_submission_batch_receipt WHERE id=$1 AND campaign_id=$2", frozen.BatchReceiptID, campaignID).Scan(&outcome, &exact); err != nil {
 		return false, err
 	}
-	return outcome == "COMPLETE", nil
+	return outcome == "COMPLETE" && exact, nil
+}
+
+// RequireExpectedSourceTx shares the Campaign fence with review/seal and batch
+// completion. Observations may be retained outside the set; original Results may not.
+func (r *Repository) RequireExpectedSourceTx(ctx context.Context, tx pgx.Tx, s annotationdomain.SourceObservation) error {
+	if _, err := r.LockCampaignTx(ctx, tx, s.CampaignID); err != nil {
+		return err
+	}
+	var expected bool
+	if err := tx.QueryRow(ctx, "SELECT annotation_source_is_expected($1,$2,$3,$4)", s.CampaignID, s.TaskID, s.AssignmentID, s.SubmissionRevision).Scan(&expected); err != nil {
+		return err
+	}
+	if !expected {
+		return fmt.Errorf("source outside frozen Submission batch: %w", annotationdomain.ErrSourceIntegrity)
+	}
+	return nil
 }
 func (r *Repository) LatestCompleteBatchTx(ctx context.Context, tx pgx.Tx, campaignID uuid.UUID) (uuid.UUID, error) {
 	var id uuid.UUID
 	var outcome string
-	err := tx.QueryRow(ctx, `SELECT id,outcome FROM annotation_submission_batch_receipt WHERE campaign_id=$1 ORDER BY sequence DESC LIMIT 1`, campaignID).Scan(&id, &outcome)
-	if err != nil || outcome != "COMPLETE" {
+	var exact bool
+	err := tx.QueryRow(ctx, `SELECT id,outcome,annotation_batch_membership_matches(campaign_id,source_ids,fingerprints) FROM annotation_submission_batch_receipt WHERE campaign_id=$1 ORDER BY sequence DESC LIMIT 1`, campaignID).Scan(&id, &outcome, &exact)
+	if err != nil || outcome != "COMPLETE" || !exact {
 		return uuid.Nil, fmt.Errorf("controlled batch is unresolved: %w", annotationdomain.ErrSourceIntegrity)
 	}
 	return id, nil
