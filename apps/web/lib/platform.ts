@@ -508,7 +508,7 @@ export type GoldExplanation = {
       costType: string;
       quantity: number;
       unit: string;
-      amount?: number;
+      amount?: string;
       currency?: string;
       pricingMode: string;
       occurredAt: string;
