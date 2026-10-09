@@ -179,11 +179,12 @@ func NewAnnotationEngineOutcomeError(
 // Adapter-verified provider-neutral source content. Core fills and checks its
 // own frozen context and mapping identities before admission.
 type EngineImmutableSource struct {
-	PhysicalAttemptID uuid.UUID
-	ExternalID        string
-	AssignmentID      string
-	Revision          int64
-	Snapshot          []byte
-	SnapshotSHA256    string
-	ExternalProjectID string
+	AssignmentObservation annotationdomain.AssignmentObservation
+	PhysicalAttemptID     uuid.UUID
+	ExternalID            string
+	AssignmentID          string
+	Revision              int64
+	Snapshot              []byte
+	SnapshotSHA256        string
+	ExternalProjectID     string
 }

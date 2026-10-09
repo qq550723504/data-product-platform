@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"strings"
+	"time"
 )
 
 const OfficialCEProtocol = "official-ce-reference-v1"
@@ -55,8 +56,15 @@ type SourceFingerprint struct {
 	SubmissionRevision     int64     `json:"submissionRevision"`
 }
 
+// AssignmentObservation is the write token read now, never the submit-time token.
+// It is appended to receipts and excluded from immutable identity/fingerprints.
+type AssignmentObservation struct {
+	Version    int64
+	ObservedAt time.Time
+}
 type SourceObservation struct {
-	ID uuid.UUID
+	AssignmentObservation AssignmentObservation
+	ID                    uuid.UUID
 	SourceFingerprint
 	Snapshot         []byte
 	CanonicalPayload []byte

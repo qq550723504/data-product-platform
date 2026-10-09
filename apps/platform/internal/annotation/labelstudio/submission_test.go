@@ -61,7 +61,7 @@ func controlledAdapterFixture(t *testing.T) (app.EngineLookupRequest, immutableS
 }
 
 func TestControlledSubmissionOrdinaryListDetailAndFailures(t *testing.T) {
-	for _, scenario := range []string{"valid", "fork-review", "author-drift", "body-drift", "bad-hash", "unauthorized", "missing-api", "exact-config", "no-observer", "downgrade", "pagination"} {
+	for _, scenario := range []string{"valid", "fork-review", "author-drift", "body-drift", "bad-hash", "unauthorized", "missing-api", "exact-config", "no-observer", "downgrade", "pagination", "assignment-reassigned", "assignment-mismatch", "assignment-missing-version"} {
 		t.Run(scenario, func(t *testing.T) {
 			req, source := controlledAdapterFixture(t)
 			var requests, starts, finishes int
@@ -132,6 +132,16 @@ func TestControlledSubmissionOrdinaryListDetailAndFailures(t *testing.T) {
 						}
 					}
 					write(map[string]any{"count": count, "next": next, "results": results})
+				case r.URL.Path == "/api/task-assignments/301/":
+					taskID, version := 101, 9
+					if scenario == "assignment-mismatch" {
+						taskID = 999
+					}
+					if scenario == "assignment-missing-version" {
+						version = 0
+					}
+					// Current assignee is deliberately different from submitted_by.
+					write(map[string]any{"id": 301, "task": taskID, "project": 41, "version": version, "assignee": 99})
 				case strings.HasPrefix(r.URL.Path, "/api/submissions/"):
 					exact := source
 					id := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/api/submissions/"), "/")
@@ -173,15 +183,15 @@ func TestControlledSubmissionOrdinaryListDetailAndFailures(t *testing.T) {
 				req.Binding.SourceContract = d.SourceContract{}
 			}
 			page, err := client.FetchResults(ctx, req, app.EngineResultCursor{})
-			valid := scenario == "valid" || scenario == "fork-review" || scenario == "pagination"
+			valid := scenario == "valid" || scenario == "fork-review" || scenario == "pagination" || scenario == "assignment-reassigned"
 			if valid && err != nil {
 				t.Fatal(err)
 			}
 			if !valid && err == nil {
 				t.Fatalf("%s silently accepted", scenario)
 			}
-			if scenario == "valid" || scenario == "fork-review" {
-				if len(page.Results) != 1 || page.Results[0].Source == nil || page.Results[0].ExternalAuthorRef != "7" || page.Results[0].Source.PhysicalAttemptID == uuid.Nil {
+			if scenario == "valid" || scenario == "fork-review" || scenario == "assignment-reassigned" {
+				if len(page.Results) != 1 || page.Results[0].Source == nil || page.Results[0].ExternalAuthorRef != "7" || page.Results[0].Source.PhysicalAttemptID == uuid.Nil || page.Results[0].Source.AssignmentObservation.Version != 9 || page.Results[0].Source.AssignmentObservation.ObservedAt.IsZero() {
 					t.Fatalf("observation %+v", page)
 				}
 				if page.Results[0].Quarantined != (scenario == "fork-review") {

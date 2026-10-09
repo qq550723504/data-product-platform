@@ -102,7 +102,7 @@ func newControlledFixture(t *testing.T) *controlledFixture {
 		SchemaSHA256: campaign.Schema.ContentSHA256, TaxonomySHA256: campaign.Taxonomy.ContentSHA256, RubricSHA256: campaign.Rubric.ContentSHA256, RendererSHA256: campaign.Renderer.ContentSHA256, ReviewPolicySHA256: campaign.ReviewPolicy.ContentSHA256,
 		NormalizerVersion: binding.NormalizerVersion, SnapshotSHA256: d.SourceDigest(raw), CanonicalPayloadSHA256: d.SourceDigest(payload)}
 	f.MappingSHA256 = f.MappingHash()
-	source := d.SourceObservation{ID: f.Identity(), SourceFingerprint: f, Snapshot: raw, CanonicalPayload: payload}
+	source := d.SourceObservation{ID: f.Identity(), SourceFingerprint: f, Snapshot: raw, CanonicalPayload: payload, AssignmentObservation: d.AssignmentObservation{Version: 9, ObservedAt: time.Now().UTC()}}
 	if err := source.Validate(); err != nil {
 		t.Fatal(err)
 	}
@@ -455,7 +455,7 @@ func (p *controlledBatchPort) FetchResults(ctx context.Context, req EngineLookup
 		s.Snapshot = []byte(`{"drift":"same label"}`)
 		s.SnapshotSHA256 = d.SourceDigest(s.Snapshot)
 	}
-	o := EngineResultObservation{TaskID: s.TaskID, ExternalTaskID: s.ExternalTaskID, ExternalAnnotationID: s.ExternalAnnotationID, ExternalRevision: s.ExternalRevision(), ExternalAuthorRef: s.ExternalAuthorRef, CanonicalPayload: s.CanonicalPayload, CanonicalPayloadSHA256: s.CanonicalPayloadSHA256, NormalizerVersion: s.NormalizerVersion, ProviderSubmitted: true, Source: &EngineImmutableSource{PhysicalAttemptID: attempt.ID, ExternalID: s.ExternalID, AssignmentID: s.AssignmentID, Revision: s.SubmissionRevision, Snapshot: s.Snapshot, SnapshotSHA256: s.SnapshotSHA256, ExternalProjectID: s.ExternalProjectID}}
+	o := EngineResultObservation{TaskID: s.TaskID, ExternalTaskID: s.ExternalTaskID, ExternalAnnotationID: s.ExternalAnnotationID, ExternalRevision: s.ExternalRevision(), ExternalAuthorRef: s.ExternalAuthorRef, CanonicalPayload: s.CanonicalPayload, CanonicalPayloadSHA256: s.CanonicalPayloadSHA256, NormalizerVersion: s.NormalizerVersion, ProviderSubmitted: true, Source: &EngineImmutableSource{AssignmentObservation: d.AssignmentObservation{Version: int64(p.calls + 9), ObservedAt: time.Now().UTC()}, PhysicalAttemptID: attempt.ID, ExternalID: s.ExternalID, AssignmentID: s.AssignmentID, Revision: s.SubmissionRevision, Snapshot: s.Snapshot, SnapshotSHA256: s.SnapshotSHA256, ExternalProjectID: s.ExternalProjectID}}
 	page := EngineResultPage{Results: []EngineResultObservation{o}}
 	if p.scenario == "missing" {
 		page.Results = nil
@@ -484,6 +484,13 @@ func TestControlledFiniteBatchCompletenessAndDrift(t *testing.T) {
 			err := r.ReconcileCampaign(t.Context(), f.source.CampaignID)
 			if scenario == "complete" && err != nil {
 				t.Fatal(err)
+			}
+			if scenario == "complete" {
+				var n int
+				var first, last int64
+				if err := f.pool.QueryRow(t.Context(), "SELECT count(*),min(observed_assignment_version),max(observed_assignment_version) FROM annotation_source_receipt WHERE campaign_id=$1 AND assignment_version_semantics='OBSERVED_CURRENT' AND observed_at IS NOT NULL", f.source.CampaignID).Scan(&n, &first, &last); err != nil || n != 2 || first != 10 || last != 11 {
+					t.Fatalf("current token receipts=%d/%d/%d err=%v", n, first, last, err)
+				}
 			}
 			if scenario != "complete" && err == nil {
 				t.Fatal("incomplete/unauthorized batch accepted")

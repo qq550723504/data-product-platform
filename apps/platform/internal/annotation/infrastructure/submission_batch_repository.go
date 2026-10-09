@@ -90,6 +90,9 @@ type SourceReceiptAppend struct {
 }
 
 func (r *Repository) AppendSourceReceiptTx(ctx context.Context, tx pgx.Tx, s annotationdomain.SourceObservation, attemptID uuid.UUID, disposition string) (SourceReceiptAppend, error) {
+	if s.AssignmentObservation.Version < 1 || s.AssignmentObservation.ObservedAt.IsZero() {
+		return SourceReceiptAppend{}, annotationdomain.ErrSourceIntegrity
+	}
 	if _, err := r.LockCampaignTx(ctx, tx, s.CampaignID); err != nil {
 		return SourceReceiptAppend{}, err
 	}
@@ -119,6 +122,6 @@ func (r *Repository) AppendSourceReceiptTx(ctx context.Context, tx pgx.Tx, s ann
 	if attemptID == uuid.Nil {
 		physicalID = nil
 	}
-	tag, err := tx.Exec(ctx, `INSERT INTO annotation_source_receipt(id,workspace_id,campaign_id,task_id,physical_attempt_id,source_id,incoming_fingerprint_sha256,snapshot,canonical_payload,disposition) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT(id) DO NOTHING`, id, s.WorkspaceID, s.CampaignID, s.TaskID, physicalID, sourceID, s.Hash(), s.Snapshot, s.CanonicalPayload, disposition)
+	tag, err := tx.Exec(ctx, `INSERT INTO annotation_source_receipt(id,workspace_id,campaign_id,task_id,physical_attempt_id,source_id,incoming_fingerprint_sha256,snapshot,canonical_payload,disposition,observed_assignment_version,observed_at,assignment_version_semantics) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'OBSERVED_CURRENT') ON CONFLICT(id) DO NOTHING`, id, s.WorkspaceID, s.CampaignID, s.TaskID, physicalID, sourceID, s.Hash(), s.Snapshot, s.CanonicalPayload, disposition, s.AssignmentObservation.Version, s.AssignmentObservation.ObservedAt)
 	return SourceReceiptAppend{ID: id, Created: tag.RowsAffected() == 1, Disposition: disposition}, err
 }

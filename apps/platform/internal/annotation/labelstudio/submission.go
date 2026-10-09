@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 )
 
 func NewControlledClient(baseURL, token, instanceRef string, contract annotationdomain.SourceContract, httpClient *http.Client) (*Client, error) {
@@ -113,6 +114,22 @@ func (c *Client) fetchSubmissions(ctx context.Context, req annotationapp.EngineL
 		if observer := annotationapp.EngineInvocationFromContext(ctx); observer != nil {
 			observation.Source.PhysicalAttemptID = observer.LastAttemptID
 		}
+		// A current write token is observation metadata, not a historical token.
+		// Reassignment does not change immutable submitted_by.
+		var assignment struct {
+			ID      json.Number `json:"id"`
+			Task    json.Number `json:"task"`
+			Project json.Number `json:"project"`
+			Version int64       `json:"version"`
+		}
+		if err := c.requestJSON(ctx, http.MethodGet, "/api/task-assignments/"+url.PathEscape(exact.Assignment.String())+"/", nil, nil, &assignment); err != nil {
+			return annotationapp.EngineResultPage{}, err
+		}
+		if assignment.ID != exact.Assignment || assignment.Task.String() != observation.ExternalTaskID ||
+			assignment.Project.String() != req.Binding.ExternalProjectID || assignment.Version < 1 {
+			return fail()
+		}
+		observation.Source.AssignmentObservation = annotationdomain.AssignmentObservation{Version: assignment.Version, ObservedAt: time.Now().UTC()}
 		result.Results = append(result.Results, observation)
 	}
 	hasNext := len(page.Next) > 0 && !bytes.Equal(bytes.TrimSpace(page.Next), []byte("null")) && string(page.Next) != "\"\""

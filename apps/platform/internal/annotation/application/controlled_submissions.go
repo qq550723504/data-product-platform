@@ -170,7 +170,10 @@ func (r *EngineResultReconciler) reconcileControlled(ctx context.Context, campai
 					RubricSHA256: campaign.Rubric.ContentSHA256, RendererSHA256: campaign.Renderer.ContentSHA256, ReviewPolicySHA256: campaign.ReviewPolicy.ContentSHA256,
 					NormalizerVersion: o.NormalizerVersion, SnapshotSHA256: o.Source.SnapshotSHA256, CanonicalPayloadSHA256: o.CanonicalPayloadSHA256}
 				f.MappingSHA256 = f.MappingHash()
-				source := annotationdomain.SourceObservation{ID: f.Identity(), SourceFingerprint: f, Snapshot: o.Source.Snapshot, CanonicalPayload: o.CanonicalPayload}
+				source := annotationdomain.SourceObservation{ID: f.Identity(), SourceFingerprint: f, Snapshot: o.Source.Snapshot, CanonicalPayload: o.CanonicalPayload, AssignmentObservation: o.Source.AssignmentObservation}
+				if source.AssignmentObservation.Version < 1 || source.AssignmentObservation.ObservedAt.IsZero() {
+					return nil, annotationdomain.ErrSourceIntegrity
+				}
 				if err := source.Validate(); err != nil {
 					return nil, err
 				}
@@ -285,7 +288,8 @@ func (r *EngineResultReconciler) sourceReceipt(ctx context.Context, source annot
 		if !receipt.Created {
 			return nil
 		}
-		metadata := map[string]any{"incomingSourceId": source.ID, "fingerprint": source.Hash(), "attemptId": attemptID, "disposition": receipt.Disposition}
+		metadata := map[string]any{"incomingSourceId": source.ID, "fingerprint": source.Hash(), "attemptId": attemptID, "disposition": receipt.Disposition,
+			"assignmentVersionSemantics": "OBSERVED_CURRENT", "observedAssignmentVersion": source.AssignmentObservation.Version, "observedAt": source.AssignmentObservation.ObservedAt}
 		if err := appendEvent(ctx, tx, "ANNOTATION_TASK", source.TaskID, "AnnotationSourceObserved", metadata); err != nil {
 			return err
 		}

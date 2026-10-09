@@ -96,6 +96,9 @@ CREATE TABLE annotation_source_receipt(
  snapshot bytea NOT NULL,
  canonical_payload bytea NOT NULL,
  disposition text NOT NULL CHECK(disposition IN ('OBSERVED','LATE','QUARANTINED','CONFLICT')),
+ observed_assignment_version bigint NOT NULL CHECK(observed_assignment_version>0),
+ observed_at timestamptz NOT NULL,
+ assignment_version_semantics text NOT NULL CHECK(assignment_version_semantics='OBSERVED_CURRENT'),
  created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE TABLE annotation_submission_batch(

@@ -22,7 +22,7 @@ Source identity excludes author, assignment/revision, task/project, binding/conf
 
 Snapshot v1 retains its existing header contract and adds `sourceProtocol`, exact `sourceClosure` and the immutable complete batch receipt. CORRECT traces the original provider source without fabricating another Submission. Finalization and GetSnapshotIntegrity verify the entire closure; existing Gold consumers use this integrity gate. FINALIZED roots are not rewritten. Late observations retain physical-attempt context and Audit/Evidence/Outbox without changing selected Results, Decisions or membership.
 
-The controlled Adapter only calls ordinary project/Submission list/detail APIs, compares exact label_config SHA-256, independently canonicalizes the Python snapshot, verifies list/detail agreement, and quarantines fork human review. Controlled HTTP calls require the existing physical-attempt observer, reject redirects, and retain distinct invocation costs/outcomes. An unavailable or mismatched controlled endpoint never selects the CE path.
+The controlled Adapter only calls ordinary project/Submission list/detail and assignment read APIs, compares exact label_config SHA-256, independently canonicalizes the Python snapshot, verifies list/detail agreement, and quarantines fork human review. Controlled HTTP calls require the existing physical-attempt observer, reject redirects, and retain distinct invocation costs/outcomes. An unavailable or mismatched controlled endpoint never selects the CE path. Current assignment.version is recorded as OBSERVED_CURRENT with observed_at in an append-only receipt and its Audit/Evidence; it is excluded from source identity/fingerprint and never inferred as the submit-time token. Current reassignment does not rewrite submitted_by.
 
 ## Configuration and finite orchestration
 
@@ -47,9 +47,9 @@ Local synthetic checks on 2026-10-09:
 | Check | Status | Evidence |
 | --- | --- | --- |
 | Fresh PostgreSQL 16 install through migration 000050 | PASS | Dedicated task container, new empty database |
-| Full `go test ./... -count=1` with real PostgreSQL | PASS | Fresh `dpp294_ci` database; includes Gold/rights/delivery/acceptance regressions |
+| Full `go test ./... -count=1` with real PostgreSQL | PASS | Fresh `dpp294_observed` database; includes Gold/rights/delivery/acceptance regressions |
 | `go vet ./...`; API/worker/migrate/outbox-replay build; Compose validation | PASS | Native Go and isolated environment |
-| Full-source replay/current-authority, rollback, deferred binding, same-source conflict | PASS | controlled_submissions_integration_test.go |
+| Empty down/up and historical down refusal | PASS | Parent-first exclusive locks; immutable source history blocks destructive rollback | PASS | controlled_submissions_integration_test.go |
 | Dual-connection review-first barrier, double finalizer, correction closure | PASS | Real PostgreSQL locks and independent review pool |
 | Missing/tampered source, finite completeness/drift/budget/revocation, late receipts | PASS | Source read/Gold preflight fail closed; immutable root retained |
 | CPython golden vectors and controlled list/detail, pagination, auth/config/downgrade failures | PASS | Independent CPython 3.12 vectors in testdata; httptest contract |
