@@ -1,7 +1,7 @@
 # PostgreSQL 接入 V1：#298 B0 选型与实施契约
 
 > 日期：2026-10-10；源码基线：`87b80de64825f600649106449e3ec2fd60b42d1b`（#301 已合并，#297 已关闭）。
-> Parent：[#298](https://github.com/qq550723504/data-product-platform/issues/298)；战略基线：[V2 蓝图](../product/full-lifecycle-governance-v2.md)、[ADR-0014](0014-full-lifecycle-governance-boundary.md)。
+> Parent：[#298](https://github.com/qq550723504/data-product-platform/issues/298)；战略基线：[V2 蓝图](../product/full-lifecycle-governance-v2.md)、[ADR-0014](../adr/0014-full-lifecycle-governance-boundary.md)。
 > 本文只完成 B0 的设计决策。B1 连接器运行验证、B2 Core 接纳、B3 用户端到端验收均未因此完成；没有部署或操作真实客户数据。
 
 ## 1. 有限目标和执行顺序
