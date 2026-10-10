@@ -56,12 +56,13 @@ type PrepareEngineTasksCommand struct {
 }
 
 type engineCampaignManifest struct {
-	Kind          string
-	WorkspaceID   string
-	CampaignID    string
-	Title         string
-	SchemaContent string
-	SchemaSHA256  string
+	SourceContract annotationdomain.SourceContract
+	Kind           string
+	WorkspaceID    string
+	CampaignID     string
+	Title          string
+	SchemaContent  string
+	SchemaSHA256   string
 }
 
 type engineTasksManifest struct {
@@ -73,6 +74,7 @@ type engineTasksManifest struct {
 }
 
 type engineBinding struct {
+	SourceContract    annotationdomain.SourceContract
 	Provider          string
 	ProviderInstance  string
 	ExternalProjectID string
@@ -143,6 +145,7 @@ func engineCampaignRequest(
 	manifest engineCampaignManifest,
 ) EngineCampaignRequest {
 	return EngineCampaignRequest{
+		SourceContract:     manifest.SourceContract,
 		WorkspaceID:        operation.WorkspaceID,
 		CampaignID:         operation.CampaignID,
 		RequestID:          operation.RequestID,
@@ -161,6 +164,7 @@ func engineSubmitRequest(
 		WorkspaceID: operation.WorkspaceID,
 		CampaignID:  operation.CampaignID,
 		Binding: EngineCampaignBinding{
+			SourceContract:    manifest.Binding.SourceContract,
 			Provider:          manifest.Binding.Provider,
 			ProviderInstance:  manifest.Binding.ProviderInstance,
 			ExternalProjectID: manifest.Binding.ExternalProjectID,

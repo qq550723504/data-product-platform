@@ -95,14 +95,21 @@ type GXConfig struct {
 }
 
 type LabelStudioConfig struct {
-	Enabled        bool
-	BaseURL        string
-	Token          string
-	InstanceRef    string
-	TimeoutSeconds int
-	PollSeconds    int
-	LeaseSeconds   int
-	BatchSize      int
+	Protocol            string
+	ConnectionID        string
+	ProviderIncarnation string
+	SourceCommit        string
+	EngineVersion       string
+	ImageDigest         string
+	NormalizerVersion   string
+	Enabled             bool
+	BaseURL             string
+	Token               string
+	InstanceRef         string
+	TimeoutSeconds      int
+	PollSeconds         int
+	LeaseSeconds        int
+	BatchSize           int
 }
 
 func Load() (Config, error) {
@@ -235,14 +242,21 @@ func Load() (Config, error) {
 			TimeoutSeconds:        gxTimeoutSeconds,
 		},
 		LabelStudio: LabelStudioConfig{
-			Enabled:        labelStudioEnabled,
-			BaseURL:        os.Getenv("LABEL_STUDIO_BASE_URL"),
-			Token:          os.Getenv("LABEL_STUDIO_TOKEN"),
-			InstanceRef:    stringEnv("LABEL_STUDIO_INSTANCE_REF", "label-studio-reference"),
-			TimeoutSeconds: labelStudioTimeoutSeconds,
-			PollSeconds:    labelStudioPollSeconds,
-			LeaseSeconds:   labelStudioLeaseSeconds,
-			BatchSize:      labelStudioBatchSize,
+			Protocol:            stringEnv("LABEL_STUDIO_ADMISSION_PROTOCOL", "official-ce-reference-v1"),
+			ConnectionID:        os.Getenv("LABEL_STUDIO_CONNECTION_ID"),
+			ProviderIncarnation: os.Getenv("LABEL_STUDIO_PROVIDER_INCARNATION"),
+			SourceCommit:        os.Getenv("LABEL_STUDIO_SOURCE_COMMIT"),
+			EngineVersion:       os.Getenv("LABEL_STUDIO_ENGINE_VERSION"),
+			ImageDigest:         os.Getenv("LABEL_STUDIO_IMAGE_DIGEST"),
+			NormalizerVersion:   os.Getenv("LABEL_STUDIO_NORMALIZER_VERSION"),
+			Enabled:             labelStudioEnabled,
+			BaseURL:             os.Getenv("LABEL_STUDIO_BASE_URL"),
+			Token:               os.Getenv("LABEL_STUDIO_TOKEN"),
+			InstanceRef:         stringEnv("LABEL_STUDIO_INSTANCE_REF", "label-studio-reference"),
+			TimeoutSeconds:      labelStudioTimeoutSeconds,
+			PollSeconds:         labelStudioPollSeconds,
+			LeaseSeconds:        labelStudioLeaseSeconds,
+			BatchSize:           labelStudioBatchSize,
 		},
 	}
 
@@ -284,6 +298,9 @@ func Load() (Config, error) {
 		}
 	}
 	if cfg.LabelStudio.Enabled {
+		if cfg.LabelStudio.Protocol != "official-ce-reference-v1" && cfg.LabelStudio.Protocol != "controlled-fork-submission-v1" {
+			return Config{}, fmt.Errorf("unsupported Label Studio admission protocol")
+		}
 		if strings.TrimSpace(cfg.LabelStudio.BaseURL) == "" ||
 			strings.TrimSpace(cfg.LabelStudio.Token) == "" ||
 			strings.TrimSpace(cfg.LabelStudio.InstanceRef) == "" {
