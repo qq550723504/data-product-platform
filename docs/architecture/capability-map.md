@@ -8,6 +8,8 @@
 
 本表描述的是**能力边界与默认选型方向**，不是声明所有候选组件已经部署。实际引入新组件仍需对应 Issue / ADR / Adapter contract。
 
+V2 的新增产品范围见 [全生命周期蓝图](../product/full-lifecycle-governance-v2.md)，逐项证据见 [能力差距评估](../product/full-lifecycle-governance-gap-assessment.md)，长期扩展边界见 [ADR-0014](../adr/0014-full-lifecycle-governance-boundary.md)。下表保留已有能力归属；第 6 节明确新增目标而非已实现能力。
+
 ## 1. Capability ownership
 
 | Capability | Ownership | Current / preferred implementation | Boundary |
@@ -113,3 +115,19 @@ Label Studio 的有限准入记录见 [ADR-0013](../adr/0013-controlled-label-st
 3. PR 中说明是否新增运行时组件；
 4. 新 Adapter 必须有 contract test；
 5. 不得在未更新边界文档时让第三方 SDK 类型泄漏进 Core Domain。
+
+## 6. 全生命周期治理新增目标（规划，不是已部署能力）
+
+| Capability | 目标归属与复用方向 | 首批范围 / 后续边界 |
+|---|---|---|
+| 外部资产纳管与统一发现 | OpenMetadata 元数据能力 + Core 稳定业务绑定；字段写入权与冲突规则按 ADR-0014 | B/#298 验证单来源；不强制复制全部数据，不把 live table 认证为 DatasetVersion |
+| 标准、术语、分类分级 | 复用 OpenMetadata 与 Industry Pack；参与 gate 的规则须版本化接纳 | B 最小责任/分类，C 变化处理；通用编辑器后续，不建第二套目录规则库 |
+| 数据清洗/转换 | 复用 Native/Hop + ProcessingEngine/ManagedProcessingEngine | B 固定模板、C 闭环；dbt 仅在明确 SQL 模型工程化与数据面需求时评估 |
+| 数据开发编排 | 复用现有 Workflow/Worker/Reconciliation | DolphinScheduler 为复杂调度缺口出现后的候选；同链路单一 scheduler/retry owner |
+| 持续探查/质量观察 | OpenMetadata/外部 evaluator 提供技术观察；Core 保留版本化评测与认证事实 | C/#299 只覆盖有限异常与时效/schema 变化，不新建完整 observability 产品 |
+| 治理问题修复 | 最小 Core 处置关联 + 现有执行/评测；先检查成熟问题/通知能力 | C 不建通用工单或审批引擎；关闭问题不自动质量通过 |
+| 数据访问/处理保护 | 外部身份/授权/脱敏能力 + Core 当前业务权限与执行边界 | B 受控连接/读取/处理/交付；目录权限、标签、Owner 不是数据访问许可 |
+| 保留、归档、销毁 | Core 处置资格与可审计事实 + 存储/外部 provider 执行 | D-design/#300 先冻结专门契约；不改 immutable guards、不声称 runtime 已实现 |
+| 数据使用运营 | 复用 Core Delivery/Audit 与既有外部集成路线 | 外部发布和 usage 仍归 #84/#86/#87；不重复建模或增加计费平台 |
+
+本节不新增 Domain 实体、状态、Port 或依赖。详细产品要求归 V2 蓝图，证据归差距评估，长期架构边界归 ADR-0014，实际 API/状态机仍归原有专门架构文档及后续有界实施任务。
