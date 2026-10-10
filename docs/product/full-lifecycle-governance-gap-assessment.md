@@ -18,20 +18,20 @@
 
 | 能力 | 当前证据与判定 | 目标差距 | 归属 / 下一步 |
 |---|---|---|---|
-| 产品主链 | 已有 DataResource→DatasetVersion→加工→质量/Rights→认证→交付的受控 Pilot [E1][E2] | 不能据此声称跨数据源、持续运营与销毁均可用 | 复用，A 只扩长期定位 |
+| 产品主链 | 已有 DataResource→DatasetVersion→加工→质量/Rights→认证→交付的受控 Pilot [E1]、[E2] | 不能据此声称跨数据源、持续运营与销毁均可用 | 复用，A 只扩长期定位 |
 | 发现/目录/元数据 | ADR-0002 与 MetadataEngine/ResourceBinding 已定义治理投影 [E3] | 需验证用户自己的来源发现、稳定绑定、责任/术语/标签呈现、陈旧状态与权限一致性 | B 单来源最小切片；通用目录不重造 |
-| 分类分级/标准 | Industry Pack/元数据边界已有，未见统一闭环验收 [E1][E3][E4] | 字段写入 owner、批准版本、分类与保护等级、进入业务 gate 的接纳方式未形成此目标下的完整契约 | B 最小责任与分类绑定，C 变化处理；全面设计器后续 |
+| 分类分级/标准 | Industry Pack/元数据边界已有，未见统一闭环验收 [E1]、[E3]、[E4] | 字段写入 owner、批准版本、分类与保护等级、进入业务 gate 的接纳方式未形成此目标下的完整契约 | B 最小责任与分类绑定，C 变化处理；全面设计器后续 |
 | CSV/File 接入 | 已有 /ingest，512 KiB/1000 rows 等窄界面约束，直接复用 Core commands [E5] | 不是通用 ingestion Port，不支持任意来源与清洗配置 | B 不复制 CSV handler 建各类 connector |
 | 数据库/API/CDC | ADR-0011、#164/#165 只完成职责和候选边界 [E6] | 无首个真实异构来源纵向运行证明；SeaTunnel 未选定默认实现 | B / #298；CDC 与其版本 cut 后续 |
-| 清洗/标准化 | 企业名/地址/信用代码规范化、日期解析、负能耗隔离等园区实现 [E7][E8] | 固定场景能力，不是通用清洗工作台；缺规则选择—前后差异—修复复检体验 | B 固定模板，C 异常闭环 |
-| 外部加工 | ManagedProcessingEngine 生命周期接口，Hop 月度能耗 SUM 参考工作流 [E9][E10] | 有适配不等于默认部署或通用加工产品；demo 的 HOP_ENABLED=false [E11] | 优先复用，不强行改成 dbt |
+| 清洗/标准化 | 企业名/地址/信用代码规范化、日期解析、负能耗隔离等园区实现 [E7]、[E8] | 固定场景能力，不是通用清洗工作台；缺规则选择—前后差异—修复复检体验 | B 固定模板，C 异常闭环 |
+| 外部加工 | ManagedProcessingEngine 生命周期接口，Hop 月度能耗 SUM 参考工作流 [E9]、[E10] | 有适配不等于默认部署或通用加工产品；demo 的 HOP_ENABLED=false [E11] | 优先复用，不强行改成 dbt |
 | 质量/认证 | 冻结评测、规则证据、Rights 与认证及受控交付已有 Pilot 证据 [E2] | 需覆盖新来源输出；live source profiler 不等于版本化质量证明；持续分派/复检未在该 Pilot 内验证 | B/C，不重建 QualityAssessment |
-| 实体/Gold | Rules/实体映射及官方 CE→Core Review→Snapshot→Gold 的受控链已有记录 [E1][E12] | 不能将 Entity 等同完整 MDM，也不能将受控 Gold 等同全模态/生产标注平台 | 既有能力复用；#294/#295 独立收尾 |
-| 数据安全与使用授权 | Core Rights/CurrentDeliveryGate 及 trusted DIRECT_DATA 已验证；CSV demo actor 不是认证 [E2][E5] | 最小可信身份必须覆盖新连接/读取/处理路径；目录 RBAC 不是全数据面授权；生产级 IAM/脱敏体系不能从现有 gate 推导 | B 受控边界；真实数据前专项准入 |
+| 实体/Gold | Rules/实体映射及官方 CE→Core Review→Snapshot→Gold 的受控链已有记录 [E1]、[E12] | 不能将 Entity 等同完整 MDM，也不能将受控 Gold 等同全模态/生产标注平台 | 既有能力复用；#294/#295 独立收尾 |
+| 数据安全与使用授权 | Core Rights/CurrentDeliveryGate 及 trusted DIRECT_DATA 已验证；CSV demo actor 不是认证 [E2]、[E5] | 最小可信身份必须覆盖新连接/读取/处理路径；目录 RBAC 不是全数据面授权；生产级 IAM/脱敏体系不能从现有 gate 推导 | B 受控边界；真实数据前专项准入 |
 | 数据服务与使用观察 | 当前受控 DIRECT_DATA；外部发布与 runtime/usage 仍由 #84/#86/#87 跟踪 | 不代表已具备通用 API 数据服务、外部使用审计或全链路撤回副本 | B 复用；外部能力不重复立项 |
-| 持续治理 | 有 Worker/Outbox/Reconciliation 和质量事实基础 [E1][E4] | 缺少统一“检测→分派→修复→复检”及有限时效/schema 变化场景验收 | C / #299 |
+| 持续治理 | 有 Worker/Outbox/Reconciliation 和质量事实基础 [E1]、[E4] | 缺少统一“检测→分派→修复→复检”及有限时效/schema 变化场景验收 | C / #299 |
 | 保留/归档/销毁 | 已有历史不可变及生命周期约束 [E13]；本轮检索未找到对应完整处置契约与运行验收 | 内容可用性、保全、派生/共享副本、备份、Evidence 敏感内容、恢复/删除并发须设计 | D-design / #300；runtime 尚未立项实施 |
-| 用户可操作与生产条件 | 本地演示、Certified/Gold 浏览器证据存在；当前仍非 production-ready [E1][E2][E12] | 非开发者在新来源上的独立操作与解释、最小部署安全及生命周期处置不能由旧测试替代 | B/C 单独验收；生产按场景批准 |
+| 用户可操作与生产条件 | 本地演示、Certified/Gold 浏览器证据存在；当前仍非 production-ready [E1]、[E2]、[E12] | 非开发者在新来源上的独立操作与解释、最小部署安全及生命周期处置不能由旧测试替代 | B/C 单独验收；生产按场景批准 |
 
 ## 3. 近期任务关系与真实进度
 
@@ -61,7 +61,9 @@
 
 表中历史 PASS 属于原报告，不是本轮新测试。后续开工应重新核对 main 与 #294/#295；不得照抄本文静态任务状态。官方组件资料只用于判断职责，不证明已选择的 edition/license、API/connector 或部署可行性。
 
-## 证据索引（固定基线）
+## 证据使用说明
+
+表内 E1–E13 分别链接到固定 main 版本的文件；E14 指向核查时的 PR。多个证据标记分别可点击，不把一个标记误当另一个标记的链接标题。
 
 [E1]: https://github.com/qq550723504/data-product-platform/blob/010a80c30b5a74a638faaaa27ebc7206634606f4/docs/product/product-vision.md
 [E2]: https://github.com/qq550723504/data-product-platform/blob/010a80c30b5a74a638faaaa27ebc7206634606f4/docs/product/certified-dataset-pilot-acceptance.md
