@@ -511,7 +511,8 @@ func TestC1RealPostgresAtomicReplayConcurrencyRetryCostsAndHistory(t *testing.T)
 			 (SELECT count(*) FROM cost_event WHERE workspace_id=$1),
 			 (SELECT count(*) FROM audit_event WHERE workspace_id=$1),
 			 (SELECT count(*) FROM evidence WHERE workspace_id=$1),
-			 (SELECT count(*) FROM outbox_event))::text)`, ws, cmd.CaseID).Scan(&hash)
+			 (SELECT count(*) FROM outbox_event WHERE aggregate_id=$2
+			   OR aggregate_id IN (SELECT id FROM execution WHERE workspace_id=$1)))::text)`, ws, cmd.CaseID).Scan(&hash)
 			if e != nil {
 				t.Fatal(e)
 			}
