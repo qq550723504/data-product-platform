@@ -380,6 +380,21 @@ func TestLiveCoreBatch(t *testing.T) {
 		l.call("POST", "/api/v1/ingestions", map[string]any{"workspaceId": l.ws, "requestKey": "credential-" + uuid.NewString(), "batchKey": "credential", "targets": targets}, 403)
 		l.checks["runtime_reload_requires_restart"] = "PASS"
 	})
+	t.Run("https-hop-is-rejected-before-dispatch", func(t *testing.T) {
+		l.t = t
+		changed := p
+		changed.HopURL = strings.Replace(p.HopURL, "http://", "https://", 1)
+		l.saveProfile(changed)
+		defer l.saveProfile(p)
+		before := l.count(`SELECT count(*) FROM ingestion_invocation`)
+		if handler, err := pilot.Build(pool, l.profilePath); handler != nil || !errors.Is(err, d.ErrDenied) {
+			t.Fatal("unsupported HTTPS Hop configuration was accepted")
+		}
+		if l.count(`SELECT count(*) FROM ingestion_invocation`) != before {
+			t.Fatal("rejected scheme created a provider invocation")
+		}
+		l.checks["unsupported_https_rejected"] = "PASS"
+	})
 	t.Run("claim-before-dispatch-is-not-actual-cost", func(t *testing.T) {
 		l.t = t
 		op := l.prepare()

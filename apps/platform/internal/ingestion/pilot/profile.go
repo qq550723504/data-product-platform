@@ -187,8 +187,9 @@ func Build(pool *pgxpool.Pool, path string) (*transport.Handler, error) {
 	}
 	// This pilot reads local staging and owns a local container runtime. A
 	// remote Hop host would give loopback/Docker-host endpoints other meanings.
+	// Only the verified HTTP/1 transport has complete-write cost observation.
 	endpoint, err := url.Parse(p.HopURL)
-	if err != nil {
+	if err != nil || endpoint.Scheme != "http" {
 		return nil, d.ErrDenied
 	}
 	ip := net.ParseIP(endpoint.Hostname())
