@@ -2,11 +2,15 @@
 
 ## Finite contract
 
-Base: main `21762737a76033667df4a138368070868a34fbf8` (includes #309). One writer, branch
+Current integration base: main `253ce3b4ef044a233de1179534422eed04ded660` (#311).
+The original browser trial below used main `21762737a76033667df4a138368070868a34fbf8` (#309). One writer, branch
 `codex/issue299-c1`; isolated synthetic PostgreSQL/Hop/Core/storage/browser runtime.
-#307's unmerged 000054 was superseded by main's 000055 (#309); its writer was
-notified to reserve 000057. C1 uses 000056. Shared routing/event vocabulary is integrated in independent
-candidates and rechecked against main before publication. C1 needs no new cost
+#311 subsequently occupied 000057. The coordinated unpublished numbering is now
+C1 000058 and #307 D1 000059–000061; each owner changes only its own checkout.
+Previously accepted 000056 trial schemas/binaries/evidence stay unchanged.
+The current candidate proves installation on an already installed main/000057,
+as well as a clean install; it retains both external-execution and remediation
+routes. Candidates are rechecked against main before publication. C1 needs no new cost
 allocation subject: existing physical Execution and Quality attempts own costs.
 #294/#295 and all retained #298 environments remain with their original owners.
 
@@ -73,7 +77,7 @@ approval system. No new dependency/provider or paid service is introduced.
 ## Original end-to-end acceptance record
 
 PASS on 2026-10-11, against code commit
-`bc62ebfa8846922916cba8bfa195cf6e495592f3` based on the main above. Subsequent
+`bc62ebfa8846922916cba8bfa195cf6e495592f3` based on main `21762737`. Subsequent
 evidence-only commit `635fa895` did not change that API or production web code.
 The review fixes below have their own subsequent verification record.
 API SHA256: `2633d367b912fcf58e2bda77b10c6aaa567a42948686728e18f68576b3aa3e3b`.
@@ -256,3 +260,57 @@ remains NOT_RUN; the PR remains Draft without automatic merge.
 ![Closed pending case retains the original recovery action](issue299-c1-evidence/review-closed-pending.png)
 
 ![Closed case recovers the committed PASS assessment](issue299-c1-evidence/review-closed-recovered.png)
+
+## Current input and stage review regression
+
+PASS on 2026-10-11 against C1 production code `b37979db`.
+The second review's two P2 findings were valid. Core now checks the typed RAW
+stage before accepting a detection/Quality attempt. The approved workflow YAML
+owns the complete required input contract. Before queue acceptance, Core binds
+the three exact RAW identities to the case's accepted ingestion receipt and
+requires the actual successful entity-resolution job/output for that receipt's
+enterprise input. Fresh retries revalidate the frozen original inputs. Caller
+omissions, duplicates, cross-batch replacements and unrelated resolution outputs
+cannot allocate an Execution. No second ingestion/resolution authority is added.
+
+Real PostgreSQL tests use existing ingestion Prepare/Dispatch/Recover/Admit and
+entity-match Commands to produce actual receipt/job facts with controlled
+adapters. They reject every missing input, cross-batch replacements, duplicate
+names and CURATED/STANDARDIZED detection, including READY/SUPERSEDED versions,
+before queue/Quality work. The full-suite replay oracle now scopes Outbox counts
+to the owned case and workspace Executions; unrelated parallel test writes no
+longer produce a false failure.
+
+A fresh production trial (`http://127.0.0.1:58985/batches`) used real Edge,
+PostgreSQL/Hop extraction, three-RAW acceptance, entity review and Native
+processing. Actual HTTP rejection checks passed before work allocation. The
+browser then assigned case `1a6fb201-6618-4f08-800c-ece397aa4f49`, observed real
+storage-disconnection failure, restored the gateway and explicitly retried to
+output `e5befd0f-b68b-4099-b2d9-ab08e2ec5d0b` in the approved asset. Counts remained
+14 energy inputs = 13 accepted + 1 quarantined; aggregation produced 5 enterprise
+rows. A real database-backend fault after Quality commit again left PENDING.
+After manual closure and refresh, the browser recovered the same recheck
+`8f7386ae-2ffb-47e1-a441-bd7f1ec99d0e` and PASS assessment
+`016cb2f8-f97f-44ba-bde2-ec128c83254e`; protected facts, physical invocation counts
+and costs were unchanged. The trial contains three Native invocation costs
+(baseline/failure/retry) and two Quality invocation costs (detection/recheck).
+Recovery added zero. Non-RAW HTTP detection was rejected with zero new facts.
+
+Main advanced to `253ce3b4` during closeout. The candidate integrates #311 and
+preserves its external execution routes alongside remediation. C1 production
+application/web/plan code is unchanged by that integration. Unpublished migration
+56 became 58, coordinated with #307's 59–61. A separate database actually
+installed latest main/57 first and then upgraded to C1/58; retained trial schemas
+and historical evidence were not renumbered or rewritten. Full Go tests/vet,
+real PostgreSQL race tests and API/worker builds passed on the integrated code.
+The integrated API also passed 27 HTTP/PostgreSQL recovery/history checks against
+the original retained C1 database; all 17 protected table sets matched, including
+nonempty published release and EvidenceSnapshot membership.
+
+These are targeted current-code regression and integration results. The original
+complete certification/download/revocation browser acceptance retains its exact
+original code/binary attribution above. Sanitized checks, identities, hashes and
+costs are in [review-input-proof.json](issue299-c1-evidence/review-input-proof.json).
+Manual explanation remains NOT_RUN; PR #310 remains Draft with no automatic merge.
+
+![Current code: real failure, successful retry and closed PASS recovery](issue299-c1-evidence/review-final-closed-recovered.png)
