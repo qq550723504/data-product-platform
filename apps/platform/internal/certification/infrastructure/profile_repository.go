@@ -27,6 +27,36 @@ func NewProfileRepository(pool *pgxpool.Pool) *ProfileRepository {
 	return &ProfileRepository{pool: pool}
 }
 
+func (r *ProfileRepository) ListProfiles(ctx context.Context, workspaceID uuid.UUID) ([]domain.ProfileSnapshot, error) {
+	rows, err := r.pool.Query(ctx, `SELECT id FROM certification_profile WHERE workspace_id=$1 AND membership_state='FINALIZED' ORDER BY code,version,id LIMIT 100`, workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	ids := make([]uuid.UUID, 0)
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			rows.Close()
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	err = rows.Err()
+	rows.Close()
+	if err != nil {
+		return nil, err
+	}
+	result := make([]domain.ProfileSnapshot, 0, len(ids))
+	for _, id := range ids {
+		v, err := r.GetProfile(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, v)
+	}
+	return result, nil
+}
+
 // InsertProfile creates and locks the parent in DRAFT state before writing its
 // normalized membership rows. The parent is finalized only after all rows are
 // present; child triggers lock the same parent and reject mutations after that

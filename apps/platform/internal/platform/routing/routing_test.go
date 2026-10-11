@@ -54,6 +54,7 @@ var eventVocabulary = []string{
 	"CertificationProfileCreated",
 	"DataProductCreated",
 	"DatasetCertified",
+	"DatasetCertificationInputsPrepared",
 	"DatasetCertificationRejected",
 	"DatasetCertificationRevoked",
 	"DatasetCertificationSuperseded",

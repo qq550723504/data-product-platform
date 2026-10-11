@@ -25,6 +25,12 @@ func NewPostgresRepository(pool *pgxpool.Pool) *PostgresRepository {
 	return &PostgresRepository{pool: pool}
 }
 
+func (r *PostgresRepository) ResourceInWorkspace(ctx context.Context, resourceID, workspaceID uuid.UUID) (bool, error) {
+	var exists bool
+	err := r.pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM data_resource WHERE id=$1 AND workspace_id=$2)`, resourceID, workspaceID).Scan(&exists)
+	return exists, err
+}
+
 func (r *PostgresRepository) UpsertBinding(ctx context.Context, tx pgx.Tx, binding metadatadomain.ResourceBinding) (metadatadomain.ResourceBinding, error) {
 	metadata, err := json.Marshal(binding.BindingMetadata)
 	if err != nil {

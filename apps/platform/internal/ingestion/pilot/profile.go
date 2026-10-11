@@ -147,6 +147,14 @@ func Build(pool *pgxpool.Pool, path string) (*transport.Handler, error) {
 	}
 	service := app.New(transaction.NewManager(pool), repo.New(pool), ds.NewPostgresRepository(pool), engine, store, p.Bucket)
 	h := &transport.Handler{Service: service}
+	h.Source = func() (any, error) {
+		fresh, err := Load(path)
+		if err != nil {
+			return nil, d.ErrDenied
+		}
+		// Public contract only: never serialize Profile, DSN or secret references.
+		return map[string]any{"connectionRef": fresh.ConnectionRef, "instanceRef": fresh.InstanceRef, "database": fresh.Database, "reader": fresh.Reader, "tables": fresh.Tables}, nil
+	}
 	h.Resolver = func() (principal.Resolver, error) {
 		fresh, err := Load(path)
 		if err != nil {

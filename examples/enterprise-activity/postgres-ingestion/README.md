@@ -1,5 +1,11 @@
 # PostgreSQL → Hop runnable validation (#298)
 
+B3's actual browser loop is implemented and locally exercised. See the [B3
+execution record](B3-RUN.md) and [31 independent live Core checks](results/2026-10-11/b3-report.json).
+Human explanation acceptance was explicitly deferred by the user. Healthy
+OpenMetadata binding/reconnect and remote CI remain NOT_RUN. The earlier B1/B2
+records below keep their original verification boundaries.
+
 This is the bounded B1 engine trial defined by [the existing contract](../../../docs/architecture/postgres-ingestion-v1.md). It runs PostgreSQL and Hop, loads the existing synthetic fixtures, and validates JDBC extraction into local staging. It creates no Core DatasetVersion, certification, delivery or production deployment.
 
 The [2026-10-11 recorded local run](results/2026-10-11/report.json) passed PGI-01–04 and the real reader privilege checks. Its implementation hashes use Git's LF source encoding; CSV hashes always cover the actual exported bytes. Its `base_sha` is the source checkout baseline, not a claim of remote CI approval.

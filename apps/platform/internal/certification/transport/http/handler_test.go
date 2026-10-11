@@ -11,6 +11,32 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
 )
 
+func TestCertificationCommandRejectsUntrustedActor(t *testing.T) {
+	ws, version := uuid.New(), uuid.New()
+	r := httptest.NewRequest(http.MethodPost, "/api/v1/workspaces/"+ws.String()+"/dataset-versions/"+version.String()+"/certifications", strings.NewReader(`{"decision":"CERTIFIED"}`))
+	r.SetPathValue("workspaceId", ws.String())
+	r.SetPathValue("versionId", version.String())
+	r.Header.Set("X-Actor-ID", uuid.NewString())
+	w := httptest.NewRecorder()
+	(&Handler{}).evaluate(w, r)
+	if w.Code != 401 || !strings.Contains(w.Body.String(), "AUTHENTICATION_REQUIRED") {
+		t.Fatal("body actor bypassed certification authority")
+	}
+}
+
+func TestSupersedeRequiresStableEffectiveAtBeforeMutation(t *testing.T) {
+	ws, id, actor := uuid.New(), uuid.New(), uuid.New()
+	r := httptest.NewRequest(http.MethodPost, "/supersede", strings.NewReader(`{"replacementId":"`+uuid.NewString()+`","reason":"explicit replacement"}`))
+	r.SetPathValue("workspaceId", ws.String())
+	r.SetPathValue("certificationId", id.String())
+	w := httptest.NewRecorder()
+	h := &Handler{Authorize: func(*http.Request, uuid.UUID) (*uuid.UUID, error) { return &actor, nil }}
+	h.supersede(w, r)
+	if w.Code != http.StatusBadRequest {
+		t.Fatalf("missing stable effectiveAt reached service: %d", w.Code)
+	}
+}
+
 func TestHistoryRejectsInvalidWorkspaceID(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/api/v1/workspaces/not-a-uuid/dataset-versions/not-a-uuid/certifications", nil)
 	req.SetPathValue("workspaceId", "not-a-uuid")

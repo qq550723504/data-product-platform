@@ -15,8 +15,9 @@ import (
 )
 
 type Handler struct {
-	service *metadataapp.Service
-	repo    *metadatainfra.PostgresRepository
+	service   *metadataapp.Service
+	repo      *metadatainfra.PostgresRepository
+	Authorize func(*http.Request, uuid.UUID) (*uuid.UUID, error)
 }
 
 func NewHandler(service *metadataapp.Service, repo *metadatainfra.PostgresRepository) *Handler {
@@ -25,8 +26,45 @@ func NewHandler(service *metadataapp.Service, repo *metadatainfra.PostgresReposi
 
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/v1/data-resources/{resourceId}/metadata-bindings", h.listBindings)
+	mux.HandleFunc("GET /api/v1/data-resources/{resourceId}/metadata-observation", h.observe)
 	mux.HandleFunc("POST /api/v1/data-resources/{resourceId}/metadata-bindings", h.bindResource)
 	mux.HandleFunc("GET /api/v1/governance-projections/{provider}/{objectType}/{objectId}", h.getProjection)
+}
+func (h *Handler) observe(w http.ResponseWriter, r *http.Request) {
+	ws, err := uuid.Parse(r.URL.Query().Get("workspaceId"))
+	if err != nil || ws == uuid.Nil {
+		httpserver.WriteError(w, r, 400, "INVALID_WORKSPACE_ID", "workspace required", nil)
+		return
+	}
+	if h.Authorize == nil {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted principal required", nil)
+		return
+	}
+	if actor, err := h.Authorize(r, ws); err != nil || actor == nil {
+		httpserver.WriteError(w, r, 403, "AUTHORITY_DENIED", "workspace authority denied", nil)
+		return
+	}
+	id, err := uuid.Parse(r.PathValue("resourceId"))
+	if err != nil {
+		httpserver.WriteError(w, r, 400, "INVALID_RESOURCE_ID", "resource required", nil)
+		return
+	}
+	if exists, err := h.repo.ResourceInWorkspace(r.Context(), id, ws); err != nil || !exists {
+		httpserver.WriteError(w, r, 404, "RESOURCE_NOT_FOUND", "resource not found in workspace", nil)
+		return
+	}
+	bindings, err := h.repo.ListBindings(r.Context(), id)
+	if err != nil {
+		httpserver.WriteError(w, r, 500, "METADATA_READ_FAILED", "metadata unavailable", nil)
+		return
+	}
+	if len(bindings) == 0 {
+		writeJSON(w, 200, map[string]any{"status": "UNKNOWN", "message": "No provider-confirmed metadata binding"})
+		return
+	}
+	b := bindings[0]
+	status, at := h.service.ObserveBinding(r.Context(), b)
+	writeJSON(w, 200, map[string]any{"status": status, "provider": b.Provider, "externalFqn": b.ExternalFQN, "version": b.BindingMetadata["version"], "lastConfirmedAt": b.UpdatedAt, "observedAt": at})
 }
 
 type bindResourceRequest struct {
@@ -159,6 +197,7 @@ func bindingResponse(binding metadatadomain.ResourceBinding) map[string]any {
 		"externalFqn":     binding.ExternalFQN,
 		"bindingMetadata": binding.BindingMetadata,
 		"primary":         binding.IsPrimary,
+		"updatedAt":       binding.UpdatedAt,
 	}
 }
 

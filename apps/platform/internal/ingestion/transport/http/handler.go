@@ -19,7 +19,8 @@ type Handler struct {
 	// Resolver is fetched for every check so revocation/config reload is fresh.
 	Resolver func() (principal.Resolver, error)
 	// Bind constructs the frozen source/template contract from server config.
-	Bind func(context.Context, uuid.UUID, string, string, []Target) (d.Request, error)
+	Bind   func(context.Context, uuid.UUID, string, string, []Target) (d.Request, error)
+	Source func() (any, error)
 }
 type Target struct {
 	Code       string    `json:"code"`
@@ -37,6 +38,73 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/ingestions", h.prepare)
 	mux.HandleFunc("POST /api/v1/ingestions/{id}/{command}", h.command)
 	mux.HandleFunc("GET /api/v1/ingestions/{id}", h.get)
+	mux.HandleFunc("GET /api/v1/ingestions", h.list)
+	mux.HandleFunc("GET /api/v1/ingestion-source", h.source)
+	mux.HandleFunc("GET /api/v1/ingestions/{id}/receipt", h.receipt)
+}
+func (h *Handler) source(w http.ResponseWriter, r *http.Request) {
+	ws, err := uuid.Parse(r.URL.Query().Get("workspaceId"))
+	if err == nil {
+		_, err = h.caller(r)(r.Context(), ws)
+	}
+	if err != nil || h.Source == nil {
+		reply(w, nil, d.ErrDenied)
+		return
+	}
+	v, err := h.Source()
+	reply(w, v, err)
+}
+func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
+	ws, err := uuid.Parse(r.URL.Query().Get("workspaceId"))
+	if err != nil {
+		reply(w, nil, d.ErrManifest)
+		return
+	}
+	p, err := h.caller(r)(r.Context(), ws)
+	if err != nil {
+		reply(w, nil, err)
+		return
+	}
+	rows, err := h.Service.Repo.Pool.Query(r.Context(), `SELECT id FROM ingestion_operation WHERE workspace_id=$1 AND actor_id=$2 AND principal_ref=$3 ORDER BY created_at DESC,id DESC LIMIT 100`, ws, p.ActorID, p.Subject)
+	if err != nil {
+		reply(w, nil, err)
+		return
+	}
+	ids := []uuid.UUID{}
+	for rows.Next() {
+		var id uuid.UUID
+		if err = rows.Scan(&id); err != nil {
+			break
+		}
+		ids = append(ids, id)
+	}
+	if err == nil {
+		err = rows.Err()
+	}
+	rows.Close()
+	if err != nil {
+		reply(w, nil, err)
+		return
+	}
+	ops := []d.Operation{}
+	for _, id := range ids {
+		op, e := h.Service.Repo.Load(r.Context(), h.Service.Repo.Pool, id, false)
+		if e != nil {
+			reply(w, nil, e)
+			return
+		}
+		ops = append(ops, op)
+	}
+	reply(w, map[string]any{"items": ops, "limit": 100}, nil)
+}
+func (h *Handler) receipt(w http.ResponseWriter, r *http.Request) {
+	op, err := h.operation(r)
+	if err != nil {
+		reply(w, nil, err)
+		return
+	}
+	v, err := h.Service.Repo.Receipt(r.Context(), h.Service.Repo.Pool, op.ID)
+	reply(w, v, err)
 }
 func decode(w http.ResponseWriter, r *http.Request, v any) error {
 	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
@@ -149,7 +217,7 @@ func (h *Handler) command(w http.ResponseWriter, r *http.Request) {
 		if err == nil {
 			result, err = h.Service.Admit(r.Context(), op.ID, m, h.caller(r))
 		}
-	case "dispatch", "recover", "retry-failed":
+	case "dispatch", "recover", "retry-failed", "accept":
 		// Commands carry no secret/config/engine parameters or generic status PATCH.
 		r.Body = http.MaxBytesReader(w, r.Body, 1)
 		b, e := io.ReadAll(r.Body)
@@ -164,6 +232,12 @@ func (h *Handler) command(w http.ResponseWriter, r *http.Request) {
 			result, err = h.Service.Recover(r.Context(), op.ID, h.caller(r))
 		case "retry-failed":
 			result, err = h.Service.RetryFailed(r.Context(), op.ID, h.caller(r))
+		case "accept":
+			if op.Manifest == nil {
+				err = d.ErrState
+			} else {
+				result, err = h.Service.Admit(r.Context(), op.ID, *op.Manifest, h.caller(r))
+			}
 		}
 	default:
 		err = pgx.ErrNoRows

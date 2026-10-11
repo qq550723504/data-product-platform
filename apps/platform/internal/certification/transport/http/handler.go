@@ -3,6 +3,7 @@ package certificationhttp
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,14 +13,18 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/certification/domain"
 	certificationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/cost"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
+	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
 )
 
 type Handler struct {
 	certifications *application.CertificationService
 	eligibility    *application.EligibilityService
 	datasets       *datasetinfra.PostgresRepository
+	Authorize      func(*http.Request, uuid.UUID) (*uuid.UUID, error)
+	Rights         *rightsapp.Service
 }
 
 func NewHandler(certifications *application.CertificationService, eligibility *application.EligibilityService, datasets *datasetinfra.PostgresRepository) *Handler {
@@ -27,8 +32,188 @@ func NewHandler(certifications *application.CertificationService, eligibility *a
 }
 
 func (h *Handler) Register(mux *http.ServeMux) {
+	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/certification-profiles", h.profiles)
+	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/certification-inputs", h.inputs)
+	mux.HandleFunc("POST /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/certification-inputs", h.prepareInputs)
+	mux.HandleFunc("POST /api/v1/workspaces/{workspaceId}/certifications/{certificationId}/supersede", h.supersede)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/certifications", h.history)
 	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/delivery-eligibility", h.deliveryEligibility)
+	mux.HandleFunc("POST /api/v1/workspaces/{workspaceId}/dataset-versions/{versionId}/certifications", h.evaluate)
+}
+
+func (h *Handler) supersede(w http.ResponseWriter, r *http.Request) {
+	ws, e1 := uuid.Parse(r.PathValue("workspaceId"))
+	id, e2 := uuid.Parse(r.PathValue("certificationId"))
+	if e1 != nil || e2 != nil {
+		httpserver.WriteError(w, r, 400, "INVALID_REFERENCE", "workspace and certification required", nil)
+		return
+	}
+	if h.Authorize == nil {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted principal required", nil)
+		return
+	}
+	actor, err := h.Authorize(r, ws)
+	if err != nil || actor == nil {
+		httpserver.WriteError(w, r, 403, "AUTHORITY_DENIED", "workspace authority denied", nil)
+		return
+	}
+	var body struct {
+		ReplacementID uuid.UUID `json:"replacementId"`
+		Reason        string    `json:"reason"`
+		EffectiveAt   time.Time `json:"effectiveAt"`
+	}
+	r.Body = http.MaxBytesReader(w, r.Body, 8192)
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	if dec.Decode(&body) != nil || dec.Decode(new(any)) != io.EOF || body.ReplacementID == uuid.Nil || body.ReplacementID == id || body.EffectiveAt.IsZero() || strings.TrimSpace(body.Reason) == "" || len(body.Reason) > 4096 {
+		httpserver.WriteError(w, r, 400, "INVALID_REFERENCE", "distinct replacement and reason required", nil)
+		return
+	}
+	key := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	activity := cost.CertificationActivity{ActivityID: uuid.NewSHA1(uuid.NameSpaceURL, []byte("certification-supersede:"+ws.String()+":"+key)), Quantity: 1, Unit: "DECISION", PricingMode: "ACTUAL_QUANTITY"}
+	v, err := h.certifications.ChangeDisposition(r.Context(), application.ChangeCertificationDispositionCommand{WorkspaceID: ws, CertificationID: id, Disposition: domain.DispositionSuperseded, SupersededByCertificationID: &body.ReplacementID, EffectiveAt: body.EffectiveAt, Reason: strings.TrimSpace(body.Reason), ActorID: actor, IdempotencyKey: key, TraceID: httpserver.RequestID(r.Context()), CostActivity: &activity})
+	if err != nil {
+		httpserver.WriteError(w, r, 409, "CERTIFICATION_SUPERSEDE_REJECTED", "replacement must be a same-target profile fact", nil)
+		return
+	}
+	writeJSON(w, 200, map[string]any{"id": v.ID, "disposition": v.Disposition})
+}
+
+func (h *Handler) inputsAuthority(w http.ResponseWriter, r *http.Request) (uuid.UUID, uuid.UUID, *uuid.UUID, bool) {
+	ws, v, ok := parseWorkspaceVersion(w, r)
+	if !ok {
+		return ws, v, nil, false
+	}
+	if h.Authorize == nil {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted principal required", nil)
+		return ws, v, nil, false
+	}
+	actor, err := h.Authorize(r, ws)
+	if err != nil || actor == nil {
+		httpserver.WriteError(w, r, 403, "AUTHORITY_DENIED", "workspace authority denied", nil)
+		return ws, v, nil, false
+	}
+	if !h.requireVersionWorkspace(w, r, ws, v) {
+		return ws, v, nil, false
+	}
+	return ws, v, actor, true
+}
+func (h *Handler) inputs(w http.ResponseWriter, r *http.Request) {
+	ws, v, _, ok := h.inputsAuthority(w, r)
+	if !ok {
+		return
+	}
+	p, e1 := uuid.Parse(r.URL.Query().Get("profileId"))
+	q, e2 := uuid.Parse(r.URL.Query().Get("qualityAssessmentId"))
+	if e1 != nil || e2 != nil {
+		httpserver.WriteError(w, r, 400, "INVALID_REFERENCE", "profile and quality references required", nil)
+		return
+	}
+	refs, err := h.certifications.PreparedInputs(r.Context(), ws, v, p, q)
+	if err != nil {
+		httpserver.WriteError(w, r, 500, "INPUTS_READ_FAILED", "prepared evidence unavailable", nil)
+		return
+	}
+	writeJSON(w, 200, refs)
+}
+func (h *Handler) prepareInputs(w http.ResponseWriter, r *http.Request) {
+	ws, v, actor, ok := h.inputsAuthority(w, r)
+	if !ok {
+		return
+	}
+	var body struct {
+		ProfileID           uuid.UUID `json:"profileId"`
+		QualityAssessmentID uuid.UUID `json:"qualityAssessmentId"`
+	}
+	r.Body = http.MaxBytesReader(w, r.Body, 4096)
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	if dec.Decode(&body) != nil || dec.Decode(new(any)) != io.EOF || body.ProfileID == uuid.Nil || body.QualityAssessmentID == uuid.Nil || h.Rights == nil {
+		httpserver.WriteError(w, r, 400, "INVALID_REFERENCE", "profile and quality references required", nil)
+		return
+	}
+	refs, err := h.certifications.PrepareInputs(r.Context(), h.Rights, application.PrepareCertificationInputsCommand{WorkspaceID: ws, DatasetVersionID: v, ProfileID: body.ProfileID, QualityAssessmentID: body.QualityAssessmentID, ActorID: actor, IdempotencyKey: r.Header.Get("Idempotency-Key"), TraceID: httpserver.RequestID(r.Context())})
+	if err != nil {
+		httpserver.WriteError(w, r, 409, "CERTIFICATION_INPUTS_NOT_PREPARED", "requires completed production, quality, one compliance result and one published contract; refresh to recover the same request", nil)
+		return
+	}
+	writeJSON(w, 200, refs)
+}
+
+func (h *Handler) profiles(w http.ResponseWriter, r *http.Request) {
+	ws, err := uuid.Parse(r.PathValue("workspaceId"))
+	if err != nil || ws == uuid.Nil {
+		httpserver.WriteError(w, r, 400, "INVALID_WORKSPACE_ID", "workspace required", nil)
+		return
+	}
+	if h.Authorize == nil {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted principal required", nil)
+		return
+	}
+	if actor, err := h.Authorize(r, ws); err != nil || actor == nil {
+		httpserver.WriteError(w, r, 403, "AUTHORITY_DENIED", "workspace authority denied", nil)
+		return
+	}
+	profiles, err := h.certifications.ListProfiles(r.Context(), ws)
+	if err != nil {
+		httpserver.WriteError(w, r, 500, "PROFILES_READ_FAILED", "certification profiles unavailable", nil)
+		return
+	}
+	items := make([]map[string]any, 0, len(profiles))
+	for _, p := range profiles {
+		items = append(items, profileResponse(p))
+	}
+	writeJSON(w, 200, map[string]any{"items": items})
+}
+
+// References identify immutable facts. The application rebinds their contents
+// from PostgreSQL; no caller-supplied PASS/rights decision is accepted.
+func (h *Handler) evaluate(w http.ResponseWriter, r *http.Request) {
+	ws, version, ok := parseWorkspaceVersion(w, r)
+	if !ok {
+		return
+	}
+	if h.Authorize == nil {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "certification command requires trusted principal", nil)
+		return
+	}
+	actor, err := h.Authorize(r, ws)
+	if err != nil || actor == nil {
+		httpserver.WriteError(w, r, 403, "AUTHORITY_DENIED", "certification authority denied", nil)
+		return
+	}
+	if !h.requireVersionWorkspace(w, r, ws, version) {
+		return
+	}
+	var body struct {
+		ProfileID                 uuid.UUID  `json:"profileId"`
+		QualityAssessmentID       uuid.UUID  `json:"qualityAssessmentId"`
+		RightsSnapshotID          *uuid.UUID `json:"rightsSnapshotId"`
+		EffectiveRightsSnapshotID *uuid.UUID `json:"effectiveRightsSnapshotId"`
+		ComplianceResultID        *uuid.UUID `json:"complianceResultId"`
+		ContractVersionID         *uuid.UUID `json:"contractVersionId"`
+		TraceabilityEvidenceID    *uuid.UUID `json:"traceabilityEvidenceId"`
+		EvidenceSnapshotID        *uuid.UUID `json:"evidenceSnapshotId"`
+	}
+	r.Body = http.MaxBytesReader(w, r.Body, 16384)
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	if dec.Decode(&body) != nil || dec.Decode(new(any)) != io.EOF {
+		httpserver.WriteError(w, r, 400, "INVALID_JSON", "invalid certification references", nil)
+		return
+	}
+	key := strings.TrimSpace(r.Header.Get("Idempotency-Key"))
+	activity := cost.CertificationActivity{WorkspaceID: ws, ActivityID: uuid.NewSHA1(uuid.NameSpaceURL, []byte("certification-http:"+ws.String()+":"+version.String()+":"+key)), Quantity: 1, Unit: "EVALUATION", PricingMode: "ACTUAL_QUANTITY"}
+	v, err := h.certifications.Evaluate(r.Context(), application.EvaluateDatasetCertificationCommand{WorkspaceID: ws, DatasetVersionID: version, ProfileID: body.ProfileID, QualityAssessmentID: body.QualityAssessmentID, RightsSnapshotID: body.RightsSnapshotID, EffectiveRightsSnapshotID: body.EffectiveRightsSnapshotID, ComplianceResultID: body.ComplianceResultID, ContractVersionID: body.ContractVersionID, TraceabilityEvidenceID: body.TraceabilityEvidenceID, EvidenceSnapshotID: body.EvidenceSnapshotID, IdempotencyKey: key, ActorID: actor, TraceID: httpserver.RequestID(r.Context()), Now: time.Now().UTC(), CostActivity: &activity})
+	if err != nil {
+		status := 400
+		if errors.Is(err, application.ErrCertificationIdempotencyConflict) {
+			status = 409
+		}
+		httpserver.WriteError(w, r, status, "CERTIFICATION_REJECTED", "certification references or command rejected", nil)
+		return
+	}
+	writeJSON(w, 200, map[string]any{"id": v.ID, "decision": v.Decision, "blockers": v.Blockers})
 }
 
 func (h *Handler) history(w http.ResponseWriter, r *http.Request) {

@@ -8,6 +8,8 @@
 
 2026-10-11 后续执行更新：B2 已实现并实跑三份 RAW 的 Core 原子接纳，PGI-05–07 的 manifest、幂等、并发、权限撤销和故障恢复矩阵通过。复现与有限运行边界见 [B2 runtime](../../examples/enterprise-activity/postgres-ingestion/README.md#b2-atomic-core-acceptance)，固定证据见 [B2 report](../../examples/enterprise-activity/postgres-ingestion/results/2026-10-11/b2-report.json)。采用既有 Port/Adapter、DatasetVersion repository、事务/fence、Outbox/Audit/Evidence/Cost 和原生 IAM/STS/条件写；未新增总体蓝图或第二套基础设施。B3 浏览器/既有加工认证交付/非开发者验收及远端 CI 仍为 NOT_RUN；本地 PASS 不等同于生产接纳。
 
+2026-10-11 B3 执行更新：来源详情/批次入口、既有实体审核与 Native 加工、质量/合规、页面准备认证证据、认证/明确替代及 DIRECT_DATA 下载已通过真实 Edge + live Core 验证。质量失败保留 REJECTED；授权撤销后从旧 ALLOWED 页面下载仍被阻断；metadata 不可用显示 UNKNOWN。固定证据见 [B3 实跑记录](../../examples/enterprise-activity/postgres-ingestion/B3-RUN.md)与 [31 项独立检查](../../examples/enterprise-activity/postgres-ingestion/results/2026-10-11/b3-report.json)。PGI-08 PASS；PGI-09 metadata 失联提示 PASS，人工解释按用户要求 NOT_RUN；健康 OpenMetadata 绑定/恢复和远端 CI 未验收。此前 B0/B1/B2 的 NOT_RUN 是对应时点记录，保留历史；本次没有追加总体蓝图或生产接纳结论。
+
 ## 1. 有限目标和执行顺序
 
 使用独立 PostgreSQL 来源、现有企业/租赁/能耗合成样本，在平台内完成一个批次的来源登记、抽取、清洗、质量评估、认证与 DIRECT_DATA 交付。主写者为当前接续 #298 的执行线程；当前独立分支只写本文，不触及 #294/#295 的 annotation 工作。后续代码沿单一串行 writer 推进，每个增量开工核对最新 main/活动 PR；不伪称已与不可见线程通信。

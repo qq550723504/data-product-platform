@@ -16,9 +16,10 @@ import (
 )
 
 type Handler struct {
-	service  *application.MatchService
-	repo     *infrastructure.PostgresRepository
-	resolver platformprincipal.Resolver
+	service   *application.MatchService
+	repo      *infrastructure.PostgresRepository
+	resolver  platformprincipal.Resolver
+	Authorize func(*http.Request, uuid.UUID) (*uuid.UUID, error)
 }
 
 func NewHandler(service *application.MatchService, repo *infrastructure.PostgresRepository, resolvers ...platformprincipal.Resolver) *Handler {
@@ -31,6 +32,7 @@ func NewHandler(service *application.MatchService, repo *infrastructure.Postgres
 
 func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/entity-match-jobs", h.startJob)
+	mux.HandleFunc("GET /api/v1/workspaces/{workspaceId}/entity-match-jobs", h.listJobs)
 	mux.HandleFunc("GET /api/v1/entity-match-jobs/{jobId}", h.getJob)
 	mux.HandleFunc("GET /api/v1/entity-match-jobs/{jobId}/reviews", h.listReviews)
 	// Targeted candidate lookup: review actions must verify one candidate without
@@ -40,6 +42,33 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v1/entity-match-reviews/{candidateId}/reject", h.reject)
 	mux.HandleFunc("GET /api/v1/entity-mappings", h.getMappingBySource)
 	mux.HandleFunc("GET /api/v1/entities/{entityId}/mappings", h.listEntityMappings)
+}
+func (h *Handler) listJobs(w http.ResponseWriter, r *http.Request) {
+	ws, e := uuid.Parse(r.PathValue("workspaceId"))
+	input, e2 := uuid.Parse(r.URL.Query().Get("inputVersionId"))
+	if e != nil || e2 != nil {
+		httpserver.WriteError(w, r, 400, "INVALID_ID", "workspace/input version required", nil)
+		return
+	}
+	if h.Authorize == nil {
+		httpserver.WriteError(w, r, 401, "AUTHENTICATION_REQUIRED", "trusted principal required", nil)
+		return
+	}
+	actor, err := h.Authorize(r, ws)
+	if err != nil || actor == nil {
+		httpserver.WriteError(w, r, 403, "AUTHORITY_DENIED", "workspace authority denied", nil)
+		return
+	}
+	jobs, e := h.repo.ListJobsForInput(r.Context(), ws, input)
+	if e != nil {
+		httpserver.WriteError(w, r, 500, "JOBS_READ_FAILED", "jobs unavailable", nil)
+		return
+	}
+	items := []map[string]any{}
+	for _, j := range jobs {
+		items = append(items, jobResponse(j))
+	}
+	writeJSON(w, 200, map[string]any{"items": items})
 }
 
 type startJobRequest struct {
