@@ -1,0 +1,5 @@
+FROM apache/hop:2.19.0@sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d
+USER root
+RUN rm /opt/hop/lib/jdbc/postgresql-*.jar
+COPY postgresql-42.7.14.jar /opt/hop/lib/jdbc/
+USER hop

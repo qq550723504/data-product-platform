@@ -1,0 +1,62 @@
+{
+  "batch": "fixture-quiescent-v1",
+  "contract": "postgres-ingestion-v1/B1-local",
+  "remote_id": "176fb1df-8ea1-4b77-b731-828d6bb14259",
+  "request_key": "dpp-pgi-9ea01970e048/start-loss",
+  "slots": [
+    {
+      "bytes": 1277,
+      "columns": [
+        "source_company_id",
+        "company_name",
+        "unified_social_credit_code",
+        "legal_representative",
+        "registered_address",
+        "entry_date",
+        "company_status",
+        "contact_name",
+        "mobile",
+        "email"
+      ],
+      "path": "start-loss/enterprise_raw.csv",
+      "rows": 6,
+      "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+      "slot": "enterprise_raw"
+    },
+    {
+      "bytes": 1323,
+      "columns": [
+        "lease_id",
+        "source_company_id",
+        "company_name",
+        "contract_start",
+        "contract_end",
+        "rent_amount",
+        "payment_due_date",
+        "payment_date",
+        "lease_status"
+      ],
+      "path": "start-loss/lease_raw.csv",
+      "rows": 10,
+      "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+      "slot": "lease_raw"
+    },
+    {
+      "bytes": 1318,
+      "columns": [
+        "meter_id",
+        "source_company_id",
+        "company_name",
+        "reading_time",
+        "energy_kwh"
+      ],
+      "path": "start-loss/energy_raw.csv",
+      "rows": 14,
+      "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+      "slot": "energy_raw"
+    }
+  ],
+  "source": "dpp_ingestion_source/dpp_source",
+  "source_schema_sha256": "8877582995746da28b65215080c064428139a08337d58aa0cae48ab428a48da9",
+  "template_sha256": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1"
+}

@@ -4,6 +4,8 @@
 > Parent：[#298](https://github.com/qq550723504/data-product-platform/issues/298)；战略基线：[V2 蓝图](../product/full-lifecycle-governance-v2.md)、[ADR-0014](../adr/0014-full-lifecycle-governance-boundary.md)。
 > 本文只完成 B0 的设计决策。B1 连接器运行验证、B2 Core 接纳、B3 用户端到端验收均未因此完成；没有部署或操作真实客户数据。
 
+2026-10-11 执行更新：B1 已在隔离本地 Docker 的真实 PostgreSQL 16.15 / Hop 2.19.0 / pgJDBC 42.7.14 组合实跑，PGI-01–04 的有限引擎试验通过。复现入口及协议发现见 [B1 runnable validation](../../examples/enterprise-activity/postgres-ingestion/README.md)，固定证据见 [B1 report](../../examples/enterprise-activity/postgres-ingestion/results/2026-10-11/report.json)。下文的 NOT_RUN 保留为 B0 当时的历史记录；本次仅验证本地 staging，实际对象存储、B2 Core 原子接纳和 B3 用户闭环仍未运行。CI 已接入新的真实 JDBC/fault smoke，远端 CI 结果需由提交后的运行独立确认。
+
 ## 1. 有限目标和执行顺序
 
 使用独立 PostgreSQL 来源、现有企业/租赁/能耗合成样本，在平台内完成一个批次的来源登记、抽取、清洗、质量评估、认证与 DIRECT_DATA 交付。主写者为当前接续 #298 的执行线程；当前独立分支只写本文，不触及 #294/#295 的 annotation 工作。后续代码沿单一串行 writer 推进，每个增量开工核对最新 main/活动 PR；不伪称已与不可见线程通信。
