@@ -111,11 +111,7 @@ func (l *live) count(sql string, args ...any) int {
 }
 func (l *live) empty(op d.Operation) {
 	l.t.Helper()
-	ids := []uuid.UUID{}
-	for _, s := range op.Request.Slots {
-		ids = append(ids, s.DatasetID)
-	}
-	if l.count(`SELECT count(*) FROM dataset_version WHERE dataset_id=ANY($1)`, ids) != 0 || l.count(`SELECT count(*) FROM ingestion_receipt WHERE operation_id=$1`, op.ID) != 0 {
+	if l.count(`SELECT count(*) FROM dataset_version WHERE storage_uri LIKE $1`, "s3://raw/core/"+l.ws.String()+"/"+op.ID.String()+"/%") != 0 || l.count(`SELECT count(*) FROM ingestion_receipt WHERE operation_id=$1`, op.ID) != 0 {
 		l.t.Fatal("partial RAW admission escaped")
 	}
 }
@@ -124,12 +120,12 @@ func (l *live) prepare() d.Operation {
 	targets := []transport.Target{}
 	for _, table := range l.cfg.Profile.Tables {
 		rid, did := uuid.New(), uuid.New()
-		code := table.Code + "-" + uuid.NewString()[:8]
-		_, err := l.pool.Exec(l.ctx, `INSERT INTO data_resource(id,workspace_id,code,name,resource_type,lifecycle_status) VALUES($1,$2,$3,$3,'TABLE_LIKE','READY')`, rid, l.ws, code)
+		code := l.cfg.Profile.ConnectionRef + "-" + table.Code
+		err := l.pool.QueryRow(l.ctx, `INSERT INTO data_resource(id,workspace_id,code,name,resource_type,lifecycle_status) VALUES($1,$2,$3,$3,'TABLE_LIKE','READY') ON CONFLICT(workspace_id,code) DO UPDATE SET code=EXCLUDED.code RETURNING id`, rid, l.ws, code).Scan(&rid)
 		if err != nil {
 			l.t.Fatal(err)
 		}
-		_, err = l.pool.Exec(l.ctx, `INSERT INTO dataset(id,workspace_id,code,name,dataset_type,source_resource_id) VALUES($1,$2,$3,$3,'RAW',$4)`, did, l.ws, code, rid)
+		err = l.pool.QueryRow(l.ctx, `INSERT INTO dataset(id,workspace_id,code,name,dataset_type,source_resource_id) VALUES($1,$2,$3,$3,'RAW',$4) ON CONFLICT(workspace_id,code) DO UPDATE SET code=EXCLUDED.code RETURNING id`, did, l.ws, code, rid).Scan(&did)
 		if err != nil {
 			l.t.Fatal(err)
 		}
@@ -334,6 +330,53 @@ func TestLiveCoreBatch(t *testing.T) {
 	l.server = httptest.NewServer(httpserver.NewMuxWithReadiness(pool.Ping, h.Register))
 	defer l.server.Close()
 
+	t.Run("server-owned-targets", func(t *testing.T) {
+		l.t = t
+		op := l.prepare()
+		targets := []transport.Target{}
+		for _, s := range op.Request.Slots {
+			targets = append(targets, transport.Target{Code: s.Code, DatasetID: s.DatasetID, ResourceID: s.ResourceID})
+		}
+		before := l.count(`SELECT count(*) FROM ingestion_operation WHERE workspace_id=$1`, l.ws)
+		for _, kind := range []string{"swapped", "repeated", "arbitrary"} {
+			bad := slices.Clone(targets)
+			switch kind {
+			case "swapped":
+				bad[0].DatasetID, bad[1].DatasetID = bad[1].DatasetID, bad[0].DatasetID
+				bad[0].ResourceID, bad[1].ResourceID = bad[1].ResourceID, bad[0].ResourceID
+			case "repeated":
+				bad[0].DatasetID, bad[0].ResourceID = bad[1].DatasetID, bad[1].ResourceID
+			case "arbitrary":
+				rid, did := uuid.New(), uuid.New()
+				if _, err := pool.Exec(ctx, `INSERT INTO data_resource(id,workspace_id,code,name,resource_type,lifecycle_status) VALUES($1,$2,$3,$3,'TABLE_LIKE','READY')`, rid, l.ws, "unrelated-"+rid.String()); err != nil {
+					t.Fatal(err)
+				}
+				if _, err := pool.Exec(ctx, `INSERT INTO dataset(id,workspace_id,code,name,dataset_type,source_resource_id) VALUES($1,$2,$3,$3,'RAW',$4)`, did, l.ws, "unrelated-"+did.String(), rid); err != nil {
+					t.Fatal(err)
+				}
+				bad[0].DatasetID, bad[0].ResourceID = did, rid
+			}
+			l.call("POST", "/api/v1/ingestions", map[string]any{"workspaceId": l.ws, "requestKey": "bad-" + uuid.NewString(), "batchKey": "bad-" + kind, "targets": bad}, 403)
+		}
+		if l.count(`SELECT count(*) FROM ingestion_operation WHERE workspace_id=$1`, l.ws) != before || l.count(`SELECT count(*) FROM ingestion_invocation WHERE workspace_id=$1`, l.ws) != 0 {
+			t.Fatal("rejected binding created operation or remote work")
+		}
+		l.empty(op)
+		// Re-resolve the same binding at dispatch, not only during Prepare.
+		rid := op.Request.Slots[0].ResourceID
+		if _, err := pool.Exec(ctx, `UPDATE data_resource SET code='renamed-'||id::text WHERE id=$1`, rid); err != nil {
+			t.Fatal(err)
+		}
+		l.command(op, "dispatch", nil, 403)
+		if _, err := pool.Exec(ctx, `UPDATE data_resource SET code=$2 WHERE id=$1`, rid, p.ConnectionRef+"-"+op.Request.Slots[0].Code); err != nil {
+			t.Fatal(err)
+		}
+		if l.count(`SELECT count(*) FROM ingestion_invocation WHERE operation_id=$1`, op.ID) != 0 {
+			t.Fatal("changed binding dispatched remote work")
+		}
+		l.checks["server_owned_target_binding"] = "PASS"
+	})
+
 	t.Run("manifest-negative-matrix", func(t *testing.T) {
 		l.t = t
 		op := l.completed()
@@ -419,10 +462,6 @@ func TestLiveCoreBatch(t *testing.T) {
 		var badVisibility atomic.Bool
 		observing := make(chan struct{})
 		observed := make(chan struct{})
-		datasetIDs := []uuid.UUID{}
-		for _, s := range op.Request.Slots {
-			datasetIDs = append(datasetIDs, s.DatasetID)
-		}
 		go func() {
 			defer close(observed)
 			for {
@@ -432,7 +471,7 @@ func TestLiveCoreBatch(t *testing.T) {
 				default:
 				}
 				var n int
-				if pool.QueryRow(ctx, `SELECT count(*) FROM dataset_version WHERE dataset_id=ANY($1)`, datasetIDs).Scan(&n) != nil || (n != 0 && n != 3) {
+				if pool.QueryRow(ctx, `SELECT count(*) FROM dataset_version WHERE storage_uri LIKE $1`, "s3://raw/core/"+l.ws.String()+"/"+op.ID.String()+"/%").Scan(&n) != nil || (n != 0 && n != 3) {
 					badVisibility.Store(true)
 					return
 				}

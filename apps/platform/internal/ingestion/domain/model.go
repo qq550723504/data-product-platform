@@ -115,12 +115,14 @@ func (r Request) Validate() error {
 	}
 	codes := map[string]bool{}
 	datasets := map[uuid.UUID]bool{}
+	resources := map[uuid.UUID]bool{}
 	for _, s := range r.Slots {
-		if !token.MatchString(s.Code) || codes[s.Code] || datasets[s.DatasetID] || s.DatasetID == uuid.Nil || s.ResourceID == uuid.Nil || s.Rows < 0 || len(s.Columns) == 0 {
+		if !token.MatchString(s.Code) || codes[s.Code] || datasets[s.DatasetID] || resources[s.ResourceID] || s.DatasetID == uuid.Nil || s.ResourceID == uuid.Nil || s.Rows < 0 || len(s.Columns) == 0 {
 			return ErrManifest
 		}
 		codes[s.Code] = true
 		datasets[s.DatasetID] = true
+		resources[s.ResourceID] = true
 		columns := map[string]bool{}
 		for _, c := range s.Columns {
 			if !token.MatchString(c) || columns[c] {

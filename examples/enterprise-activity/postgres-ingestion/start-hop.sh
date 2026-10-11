@@ -14,4 +14,7 @@ umask 077
 # parameters, process arguments, the host repository or archived evidence.
 printf '{"config":{"variables":[{"name":"SOURCE_DB_PASSWORD","value":"%s","description":"executor-private synthetic secret"}]}}\n' "$SOURCE_DB_PASSWORD" > "$HOP_CONFIG_FOLDER/hop-config.json"
 unset SOURCE_DB_PASSWORD
+# The private config remains 0600. CSV artifacts cross the Hop/Core UID
+# boundary and must be readable by the receiving process on Linux too.
+umask 022
 exec /opt/hop/hop-server.sh /run/secrets/hop-server.xml

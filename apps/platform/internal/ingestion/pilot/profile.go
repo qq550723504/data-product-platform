@@ -6,7 +6,6 @@ package pilot
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -91,6 +90,46 @@ func (p Profile) Source() (adapter.Config, error) {
 	c.SourceDSN = uri.String()
 	return c, nil
 }
+
+// The controlled profile reserves one unique resource/dataset code for each
+// source slot in a workspace. Resolve those Core identities on the server;
+// request target IDs are only consistency assertions, never binding authority.
+func targetIDs(ctx context.Context, q repo.Querier, ws uuid.UUID, connection, slot string) (uuid.UUID, uuid.UUID, error) {
+	var resource, dataset uuid.UUID
+	code := connection + "-" + slot
+	err := q.QueryRow(ctx, `SELECT r.id,d.id FROM data_resource r JOIN dataset d ON d.source_resource_id=r.id AND d.workspace_id=r.workspace_id WHERE r.workspace_id=$1 AND r.code=$2 AND d.code=$2 AND r.resource_type='TABLE_LIKE' AND d.dataset_type='RAW'`, ws, code).Scan(&resource, &dataset)
+	if err != nil {
+		return uuid.Nil, uuid.Nil, d.ErrDenied
+	}
+	return resource, dataset, nil
+}
+
+func validateTargets(ctx context.Context, q repo.Querier, p Profile, r d.Request) error {
+	if p.ConnectionRef != r.ConnectionRef || len(p.Tables) != 3 || len(r.Slots) != 3 {
+		return d.ErrDenied
+	}
+	seen := map[string]bool{}
+	for _, table := range p.Tables {
+		if seen[table.Code] {
+			return d.ErrDenied
+		}
+		seen[table.Code] = true
+		resource, dataset, err := targetIDs(ctx, q, r.WorkspaceID, p.ConnectionRef, table.Code)
+		if err != nil {
+			return err
+		}
+		matched := false
+		for _, slot := range r.Slots {
+			if slot.Code == table.Code && slot.ResourceID == resource && slot.DatasetID == dataset {
+				matched = true
+			}
+		}
+		if !matched {
+			return d.ErrDenied
+		}
+	}
+	return nil
+}
 func Build(pool *pgxpool.Pool, path string) (*transport.Handler, error) {
 	p, err := Load(path)
 	if err != nil {
@@ -146,6 +185,13 @@ func Build(pool *pgxpool.Pool, path string) (*transport.Handler, error) {
 		return storage.NewWithCredentials(fresh.StorageEndpoint, fresh.Bucket, fresh.StorageTLS, creds)
 	}
 	service := app.New(transaction.NewManager(pool), repo.New(pool), ds.NewPostgresRepository(pool), engine, store, p.Bucket)
+	service.TargetGuard = func(ctx context.Context, tx pgx.Tx, r d.Request) error {
+		fresh, err := Load(path)
+		if err != nil {
+			return d.ErrDenied
+		}
+		return validateTargets(ctx, tx, fresh, r)
+	}
 	h := &transport.Handler{Service: service}
 	h.Source = func() (any, error) {
 		fresh, err := Load(path)
@@ -187,8 +233,11 @@ func Build(pool *pgxpool.Pool, path string) (*transport.Handler, error) {
 				}
 			}
 			if !found {
-				return r, fmt.Errorf("unconfigured slot")
+				return r, d.ErrDenied
 			}
+		}
+		if err := validateTargets(ctx, pool, fresh, r); err != nil {
+			return r, err
 		}
 		return r, nil
 	}

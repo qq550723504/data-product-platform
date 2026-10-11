@@ -43,14 +43,17 @@ type Service struct {
 	Engine   Engine
 	Store    Store
 	Bucket   string
+	// TargetGuard resolves the server-owned source-to-Core binding while the
+	// resource/dataset rows are locked. It is required on every command boundary.
+	TargetGuard func(context.Context, pgx.Tx, d.Request) error
 }
 
 func New(tx *transaction.Manager, repo *infra.Repository, ds *datasetinfra.PostgresRepository, engine Engine, store Store, bucket string) *Service {
-	return &Service{tx, repo, ds, engine, store, bucket}
+	return &Service{Tx: tx, Repo: repo, Datasets: ds, Engine: engine, Store: store, Bucket: bucket}
 }
 
 func (s *Service) check(ctx context.Context, tx pgx.Tx, r d.Request, caller Caller) error {
-	if caller == nil || s.Engine == nil || s.Store == nil {
+	if caller == nil || s.Engine == nil || s.Store == nil || s.TargetGuard == nil {
 		return d.ErrDenied
 	}
 	p, err := caller(ctx, r.WorkspaceID)
@@ -80,6 +83,9 @@ func (s *Service) check(ctx context.Context, tx pgx.Tx, r d.Request, caller Call
 		if err != nil || !allowed {
 			return d.ErrDenied
 		}
+	}
+	if err := s.TargetGuard(ctx, tx, r); err != nil {
+		return d.ErrDenied
 	}
 	// Fresh source read privilege/config/schema check; failures stay fail closed.
 	if err := s.Engine.Check(ctx, r); err != nil {

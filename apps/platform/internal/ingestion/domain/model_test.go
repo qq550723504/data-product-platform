@@ -2,8 +2,25 @@ package domain
 
 import (
 	"bytes"
+	"strings"
 	"testing"
+
+	"github.com/google/uuid"
 )
+
+func TestDistinctSourceResources(t *testing.T) {
+	r := Request{WorkspaceID: uuid.New(), ActorID: uuid.New(), PrincipalRef: "operator", RequestKey: "request", BatchKey: "batch", ConnectionRef: "connection", InstanceRef: "instance", ConfigHash: strings.Repeat("a", 64), TemplateHash: strings.Repeat("b", 64), SchemaHash: strings.Repeat("c", 64)}
+	for _, code := range []string{"enterprise_raw", "lease_raw", "energy_raw"} {
+		r.Slots = append(r.Slots, Slot{Code: code, DatasetID: uuid.New(), ResourceID: uuid.New(), Columns: []string{"id"}, Rows: 1})
+	}
+	if err := r.Validate(); err != nil {
+		t.Fatal(err)
+	}
+	r.Slots[1].ResourceID = r.Slots[0].ResourceID
+	if _, err := r.Fingerprint(); err != ErrManifest {
+		t.Fatal("distinct datasets sharing one source resource were accepted")
+	}
+}
 
 func TestExactTextCSV(t *testing.T) {
 	original := []byte("id,value\n\"1\",\"  中文,\"\"引号\"\"\n下一行  \"\n2,\"\"\n3,2020/06/08\n4,-999\n")
