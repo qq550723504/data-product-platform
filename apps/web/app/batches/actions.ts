@@ -53,6 +53,6 @@ export async function startProduction(id:string,_old:BatchState):Promise<BatchSt
 }
 export async function refreshMetadata(resourceId:string,fqn:string,_old:BatchState):Promise<BatchState>{
   void _old;
-  try{if(!batchEnabled())throw new Error("操作未开放");await platform.resource(resourceId);await core(`/data-resources/${resourceId}/metadata-bindings`,"POST",{entityType:"TABLE",fullyQualifiedName:fqn,primary:true});revalidatePath(`/resources/${resourceId}`);return {message:"metadata 绑定已由提供方确认。"};}
+  try{if(!batchEnabled())throw new Error("操作未开放");await platform.resource(resourceId);await core(`/data-resources/${resourceId}/metadata-bindings?workspaceId=${workspace()}`,"POST",{entityType:"TABLE",fullyQualifiedName:fqn,primary:true},undefined,true);revalidatePath(`/resources/${resourceId}`);return {message:"metadata 绑定已由提供方确认。"};}
   catch(e){return {message:`治理信息 UNKNOWN / 不可用：${e instanceof Error?e.message:"刷新失败"}。Core 的数据、质量和认证历史仍保留。`};}
 }

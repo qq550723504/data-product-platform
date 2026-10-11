@@ -1,0 +1,49 @@
+=== RUN   TestObservationFailureAndIdentityMismatchPreserveConfirmedBinding
+--- PASS: TestObservationFailureAndIdentityMismatchPreserveConfirmedBinding (0.00s)
+=== RUN   TestObservationRequiresExactProviderIdentity
+--- PASS: TestObservationRequiresExactProviderIdentity (0.00s)
+=== RUN   TestObservationReadsCurrentRevisionWithoutChangingBinding
+--- PASS: TestObservationReadsCurrentRevisionWithoutChangingBinding (0.00s)
+=== RUN   TestDisabledObservationCannotClaimCurrentRevision
+--- PASS: TestDisabledObservationCannotClaimCurrentRevision (0.00s)
+=== RUN   TestBindingAndProductReleasedProjectionAreRetrySafe
+--- PASS: TestBindingAndProductReleasedProjectionAreRetrySafe (0.24s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application	2.520s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain	[no test files]
+=== RUN   TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset
+--- PASS: TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset (0.08s)
+=== RUN   TestResourceBindingAndGovernanceProjectionPersistence
+--- PASS: TestResourceBindingAndGovernanceProjectionPersistence (0.11s)
+=== RUN   TestGovernanceProjectionRejectsStaleCompletion
+--- PASS: TestGovernanceProjectionRejectsStaleCompletion (0.07s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure	2.527s
+=== RUN   TestClientGetTableAndUpsertDataProduct
+--- PASS: TestClientGetTableAndUpsertDataProduct (0.01s)
+=== RUN   TestClientMapsOpenMetadataErrorsToProviderNeutralContract
+--- PASS: TestClientMapsOpenMetadataErrorsToProviderNeutralContract (0.01s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata	1.983s
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_request
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/not_found
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unauthorized
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unavailable
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_response
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/rejected
+--- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_request (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/not_found (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unauthorized (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unavailable (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_response (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/rejected (0.00s)
+=== RUN   TestWriteBindingErrorMapsApplicationValidation
+--- PASS: TestWriteBindingErrorMapsApplicationValidation (0.00s)
+=== RUN   TestPublicProjectionErrorNeverExposesStoredProviderDetail
+--- PASS: TestPublicProjectionErrorNeverExposesStoredProviderDetail (0.00s)
+=== RUN   TestResourceMetadataRequiresWorkspaceAuthorityBeforeStorageOrProvider
+--- PASS: TestResourceMetadataRequiresWorkspaceAuthorityBeforeStorageOrProvider (0.00s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/transport/http	1.673s

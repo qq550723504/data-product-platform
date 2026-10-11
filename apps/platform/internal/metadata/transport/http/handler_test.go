@@ -8,6 +8,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/uuid"
+
 	metadataengine "github.com/qq550723504/data-product-platform/apps/platform/internal/engine/metadata"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/httpserver"
@@ -66,5 +68,31 @@ func TestPublicProjectionErrorNeverExposesStoredProviderDetail(t *testing.T) {
 	}
 	if got := publicProjectionError("   "); got != "" {
 		t.Fatalf("empty projection error = %q", got)
+	}
+}
+
+func TestResourceMetadataRequiresWorkspaceAuthorityBeforeStorageOrProvider(t *testing.T) {
+	workspace, resource := uuid.New(), uuid.New()
+	for _, endpoint := range []struct{ method, path string }{
+		{http.MethodPost, "metadata-bindings"},
+		{http.MethodGet, "metadata-bindings"},
+		{http.MethodGet, "metadata-observation"},
+	} {
+		for _, denied := range []bool{false, true} {
+			h := NewHandler(nil, nil)
+			want := http.StatusUnauthorized
+			if denied {
+				want = http.StatusForbidden
+				h.Authorize = func(*http.Request, uuid.UUID) (*uuid.UUID, error) { return nil, errors.New("denied") }
+			}
+			mux := http.NewServeMux()
+			h.Register(mux)
+			req := httptest.NewRequest(endpoint.method, "/api/v1/data-resources/"+resource.String()+"/"+endpoint.path+"?workspaceId="+workspace.String(), strings.NewReader(`{}`))
+			recorder := httptest.NewRecorder()
+			mux.ServeHTTP(recorder, req)
+			if recorder.Code != want {
+				t.Fatalf("%s %s denied=%v status=%d, want %d", endpoint.method, endpoint.path, denied, recorder.Code, want)
+			}
+		}
 	}
 }

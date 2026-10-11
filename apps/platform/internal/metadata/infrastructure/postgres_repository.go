@@ -15,6 +15,7 @@ import (
 var (
 	ErrNotFound               = errors.New("metadata projection record not found")
 	ErrStaleProjectionAttempt = errors.New("stale metadata projection attempt")
+	ErrBindingConflict        = errors.New("metadata asset is already bound to another resource")
 )
 
 type PostgresRepository struct {
@@ -48,11 +49,11 @@ func (r *PostgresRepository) UpsertBinding(ctx context.Context, tx pgx.Tx, bindi
 		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,now(),now())
 		ON CONFLICT (provider, entity_type, external_fqn)
 		DO UPDATE SET
-			resource_id = EXCLUDED.resource_id,
 			external_id = EXCLUDED.external_id,
 			binding_metadata = EXCLUDED.binding_metadata,
 			is_primary = EXCLUDED.is_primary,
 			updated_at = now()
+		WHERE resource_binding.resource_id = EXCLUDED.resource_id
 		RETURNING id, resource_id, provider, entity_type, COALESCE(external_id,''), external_fqn,
 		          binding_metadata, is_primary, created_at, updated_at
 	`, binding.ID, binding.ResourceID, binding.Provider, binding.EntityType, nullableString(binding.ExternalID),
@@ -62,6 +63,9 @@ func (r *PostgresRepository) UpsertBinding(ctx context.Context, tx pgx.Tx, bindi
 		&persisted.CreatedAt, &persisted.UpdatedAt,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return metadatadomain.ResourceBinding{}, ErrBindingConflict
+		}
 		return metadatadomain.ResourceBinding{}, fmt.Errorf("upsert resource binding: %w", err)
 	}
 	if err := json.Unmarshal(persistedMetadata, &persisted.BindingMetadata); err != nil {
