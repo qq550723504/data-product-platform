@@ -2,15 +2,18 @@
 
 ## Finite contract
 
-Current integration base: main `253ce3b4ef044a233de1179534422eed04ded660` (#311).
+Current integration base: main `d1772c085cd9615c2e43c2e74d5346e099d2279a` (#312).
 The original browser trial below used main `21762737a76033667df4a138368070868a34fbf8` (#309). One writer, branch
 `codex/issue299-c1`; isolated synthetic PostgreSQL/Hop/Core/storage/browser runtime.
-#311 subsequently occupied 000057. The coordinated unpublished numbering is now
-C1 000058 and #307 D1 000059–000061; each owner changes only its own checkout.
-Previously accepted 000056 trial schemas/binaries/evidence stay unchanged.
-The current candidate proves installation on an already installed main/000057,
-as well as a clean install; it retains both external-execution and remediation
-routes. Candidates are rechecked against main before publication. C1 needs no new cost
+#311 occupied 000057 and #312 subsequently occupied 000058. C1's unpublished
+migration is now 000059. #307's retained trial uses 000059–000063; those applied
+schemas and their original evidence remain unchanged. Its unpublished candidate
+must follow the eventual merged predecessor, coordinated through the two owners
+before publication. Each owner changes only its own checkout.
+Previously accepted C1 000056/000058 trial schemas/binaries/evidence stay unchanged.
+The current candidate proves installation on an already installed main/000058,
+as well as a clean install; it retains external-usage, external-execution and
+remediation routes. Candidates are rechecked against main before publication. C1 needs no new cost
 allocation subject: existing physical Execution and Quality attempts own costs.
 #294/#295 and all retained #298 environments remain with their original owners.
 
@@ -346,3 +349,29 @@ This reopens only the confirmed required-path blocker at the convergence
 checkpoint. Human explanation stays NOT_RUN; PR #310 stays Draft without merge.
 
 ![Different credentials: real retry and closed assessment recovery](issue299-c1-evidence/review-separated-credentials.png)
+
+## Main #312 integration regression
+
+After the reviewed `bf0b28c0` candidate passed all 11 CI jobs and received a
+completed exact-HEAD review with no findings, main advanced to `d1772c08` (#312).
+The routing version conflicted and the unpublished C1 migration 58 collided with
+main's external-usage migration 58. The candidate merges that exact main,
+preserves both event vocabularies and the main worker's usage reconciliation,
+and renames only the unpublished C1 migration to 59. Existing C1 application,
+HTTP, Web, industry rules and runtime harness code are unchanged from `bf0b28c0`.
+No old browser run is attributed to the newly compiled integrated binary.
+
+Two new isolated PostgreSQL databases were used: one actually installed exact
+main/58 before upgrading to C1/59; the other installed the entire candidate from
+empty. Both contain identical migration identities and external-usage/remediation
+table sets. Full Go tests, vet, real PostgreSQL remediation/routing/worker race
+tests, and API/worker builds passed. The existing applied C1/D1 databases, named
+volumes and historical acceptance artifacts were not changed by this work.
+Sanitized evidence is in
+[main-integration-proof.json](issue299-c1-evidence/main-integration-proof.json).
+
+Unpublished D1 numbering must be coordinated before either candidate is merged:
+the migration Runner requires the actual previous applied version, so overlapping
+numbers or inserting D1's old 59–63 after a higher C1 version cannot be treated as
+a safe upgrade. No compatibility shim or migration-history rewrite is introduced.
+PR #310 stays Draft without merge; human explanation remains NOT_RUN.
