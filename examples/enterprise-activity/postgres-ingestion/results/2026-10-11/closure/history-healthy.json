@@ -1,0 +1,183 @@
+{
+  "status": "PASS",
+  "phase": "healthy",
+  "workspaceId": "0d0dc3bf-1e91-4e87-86cc-a11c46dcb5fb",
+  "histories": {
+    "release-healthy": {
+      "ids": {
+        "Product": "467ddb02-9352-4a0f-a14a-9c0aafa2c8e7",
+        "Version": "db620173-4360-4888-8b82-167edb09b144",
+        "Release": "30c33685-6a62-455c-90e6-2eef6c2faab2",
+        "DatasetVersion": "d8ea1a3c-ba13-4528-a1fe-e88292b560bf",
+        "Quality": "66b89ffb-953e-4730-b5dd-311083a846b1",
+        "Compliance": "e4e87cc3-a8ff-4e7f-937f-f3befebd32e7",
+        "Rights": "42a4a8c3-3b26-4591-8749-9519c95073d3",
+        "Evidence": "390a9916-a38c-4cf0-83d3-b679667f2144"
+      },
+      "hashes": {
+        "release": "20a1fc7ce5566b24b55aa5968cee0c100b87ed1202a9e15c342a9b45417a0578",
+        "releaseMembership": "de1401ab12134062218b67ea84a5799fd566b3fabc5b59bab4c694567681044a",
+        "productVersion": "b6fea5aee1c26149f42531c09a3358446a70553db295a26139a66aacf4a9c4b5",
+        "productAssets": "d2ce5cf30dc52e67ec372426c9d73a44f41bb1cddf50e3cd9a36130b8344aa4a",
+        "ancestryVersions": "ab6c9efd8212d9a9a575710d75f09e8d8fc26d3c89e031cc0399e59713450d2a",
+        "ancestryLineage": "5d03b5dd06272daaa0f325fb1fadb65275effa4806dfcbceb4fa5feeb967a7ba",
+        "quality": "b81e224345f070f3548648cc207bcbc78847ae1b4a5ddafade74f60452884164",
+        "compliance": "bb4533a2b20898cff8265689df5942d687d11a11b9b287eccb8a6576fa0cf8b5",
+        "rights": "ee2aac126423b44ec905d4d8947d406e0eea0912277e98a75e06c74e58795e24",
+        "rightsAuthorizations": "c1599cc76501a172906e367dd9ea85f397b635491e612c179de44cd9ff7ffb5a",
+        "rightsDeclarations": "ade32eb206e557b73746e69b3ab7617e16c7b1562aa506376ed809f4bc64517b",
+        "rightsBindings": "3e1e0950c7865528bb4aaa7cd0a0fc4683ffdbd012517c08b610a16ed052ff40",
+        "evidenceSnapshot": "0b7f4f5aadb6492ae37a128722552e4905956765a8c64c0096157094518b1958",
+        "evidenceMembership": "aa68bda147b5e9dc810a3946497cdafde6bc7788d8c40884878dc935fbc724a9",
+        "evidence": "f284b3d96f080694f3e98380cb0e6ad140ad59d1198e0e0f144883b346b5ac26",
+        "publishAudit": "3a1bb963a9467d807c6b055d8698a579217d5851562fbec4c775215c3cc9993d"
+      },
+      "counts": {
+        "release": 1,
+        "releaseMembership": 1,
+        "productVersion": 1,
+        "productAssets": 1,
+        "ancestryVersions": 5,
+        "ancestryLineage": 5,
+        "quality": 1,
+        "compliance": 1,
+        "rights": 1,
+        "rightsAuthorizations": 1,
+        "rightsDeclarations": 3,
+        "rightsBindings": 3,
+        "evidenceSnapshot": 1,
+        "evidenceMembership": 3,
+        "evidence": 3,
+        "publishAudit": 1
+      },
+      "rootHash": "79a4e705f3212a9cf6c556e14467293bb98df5fd6add5945b83ccb37d83e517b"
+    }
+  },
+  "projections": {
+    "release-healthy": {
+      "object_id": "30c33685-6a62-455c-90e6-2eef6c2faab2",
+      "source_event_id": "fdba46a2-2b07-4668-8a49-9bd0b3c0feb4",
+      "status": "SUCCEEDED",
+      "attempts": 1,
+      "external_id": "1dd27fe8-921b-4fe5-8d76-b14233e9f292",
+      "external_fqn": "DP-ENTERPRISE-ACTIVITY",
+      "last_error": null
+    }
+  },
+  "sourceFactsHash": "d23ae00091dcf32f9c6fe04d1ef603e0a9bcf60d186f719e997c88ce69e2b117",
+  "bindingHash": "47c946431f8a146469e85ade983bc1f1f521d2ed264e4eef233fdff629981c88",
+  "observations": {
+    "29d96a17-0236-40e5-b821-77b4f0c3283f": {
+      "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+      "externalId": "6dcabfa0-c206-4f26-87c3-362d384cc15a",
+      "governance": {
+        "description": "PGI-09 synthetic source v1",
+        "owners": [
+          {
+            "id": "d7770ea3-8b35-46c0-b8fd-e119ab2508dd",
+            "type": "team",
+            "name": "PGIOwners",
+            "displayName": "PGI Synthetic Owners"
+          }
+        ],
+        "stewards": null,
+        "classifications": [
+          "PGISynthetic.Internal"
+        ],
+        "terms": [
+          "PGIPark.Activity"
+        ]
+      },
+      "lastConfirmedAt": "2026-10-11T17:20:08.154267+08:00",
+      "lastConfirmedVersion": 0.1,
+      "observedAt": "2026-10-11T09:21:27.753177Z",
+      "provider": "OPENMETADATA",
+      "status": "OBSERVED",
+      "version": 0.1
+    },
+    "798c1a31-2e81-47f3-a612-de188175ddf8": {
+      "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.enterprise",
+      "externalId": "6d5867f7-1ccc-4392-9cc5-becdae25da40",
+      "governance": {
+        "description": "PGI-09 synthetic source v1",
+        "owners": [
+          {
+            "id": "d7770ea3-8b35-46c0-b8fd-e119ab2508dd",
+            "type": "team",
+            "name": "PGIOwners",
+            "displayName": "PGI Synthetic Owners"
+          }
+        ],
+        "stewards": [
+          {
+            "id": "6789cb48-9ab9-46e3-9422-8b52795c6d9a",
+            "type": "team",
+            "name": "PGIStewards",
+            "displayName": "PGI Synthetic Stewards"
+          }
+        ],
+        "classifications": [
+          "PGISynthetic.Internal"
+        ],
+        "terms": [
+          "PGIPark.Activity"
+        ]
+      },
+      "lastConfirmedAt": "2026-10-11T17:20:48.612904+08:00",
+      "lastConfirmedVersion": 0.1,
+      "observedAt": "2026-10-11T09:21:27.7772557Z",
+      "provider": "OPENMETADATA",
+      "status": "OBSERVED",
+      "version": 0.1
+    },
+    "6b6d1102-594d-4169-8806-40e71602b16e": {
+      "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+      "externalId": "6c6d6992-98eb-4922-a69b-69b0bed93d98",
+      "governance": {
+        "description": "PGI-09 synthetic source v1",
+        "owners": [
+          {
+            "id": "d7770ea3-8b35-46c0-b8fd-e119ab2508dd",
+            "type": "team",
+            "name": "PGIOwners",
+            "displayName": "PGI Synthetic Owners"
+          }
+        ],
+        "stewards": [
+          {
+            "id": "6789cb48-9ab9-46e3-9422-8b52795c6d9a",
+            "type": "team",
+            "name": "PGIStewards",
+            "displayName": "PGI Synthetic Stewards"
+          }
+        ],
+        "classifications": [
+          "PGISynthetic.Internal"
+        ],
+        "terms": [
+          "PGIPark.Activity"
+        ]
+      },
+      "lastConfirmedAt": "2026-10-11T17:20:02.444603+08:00",
+      "lastConfirmedVersion": 0.1,
+      "observedAt": "2026-10-11T09:21:27.7992641Z",
+      "provider": "OPENMETADATA",
+      "status": "OBSERVED",
+      "version": 0.1
+    }
+  },
+  "gateDecisions": {
+    "datasetVersion": true,
+    "certification": true,
+    "entitlement": true
+  },
+  "compared": [],
+  "nativeDataProduct": {
+    "id": "1dd27fe8-921b-4fe5-8d76-b14233e9f292",
+    "fqn": "DP-ENTERPRISE-ACTIVITY",
+    "domains": [
+      "SyntheticPark"
+    ],
+    "version": 0.1
+  }
+}

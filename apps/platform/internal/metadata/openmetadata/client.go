@@ -44,22 +44,46 @@ func (c *Client) GetAsset(ctx context.Context, entityType, fullyQualifiedName st
 	var endpoint string
 	switch entityType {
 	case "TABLE":
-		endpoint = "/v1/tables/name/" + url.PathEscape(fullyQualifiedName)
+		endpoint = "/v1/tables/name/" + url.PathEscape(fullyQualifiedName) + "?fields=owners,tags,extension"
 	default:
 		return metadataengine.Asset{}, metadataengine.NewExternalError(metadataengine.ErrorInvalidRequest, "get asset", 0, fmt.Errorf("unsupported metadata asset type %q", entityType))
 	}
 
 	var response struct {
-		ID                 string `json:"id"`
-		Name               string `json:"name"`
-		FullyQualifiedName string `json:"fullyQualifiedName"`
-		DisplayName        string `json:"displayName"`
-		Description        string `json:"description"`
-		ServiceType        string `json:"serviceType"`
-		Version            any    `json:"version"`
+		ID                 string                          `json:"id"`
+		Name               string                          `json:"name"`
+		FullyQualifiedName string                          `json:"fullyQualifiedName"`
+		DisplayName        string                          `json:"displayName"`
+		Description        string                          `json:"description"`
+		ServiceType        string                          `json:"serviceType"`
+		Version            any                             `json:"version"`
+		Owners             []metadataengine.PartyReference `json:"owners"`
+		Tags               []struct {
+			FQN    string `json:"tagFQN"`
+			Source string `json:"source"`
+		} `json:"tags"`
+		Extension struct {
+			DataStewards []metadataengine.PartyReference `json:"dataStewards"`
+		} `json:"extension"`
 	}
 	if err := c.doJSON(ctx, http.MethodGet, endpoint, nil, &response); err != nil {
 		return metadataengine.Asset{}, err
+	}
+	governance := &metadataengine.GovernanceFields{
+		Description: response.Description,
+		Owners:      descriptiveParties(response.Owners),
+		Stewards:    descriptiveParties(response.Extension.DataStewards),
+	}
+	for _, tag := range response.Tags {
+		if strings.TrimSpace(tag.FQN) == "" {
+			continue
+		}
+		switch tag.Source {
+		case "Classification":
+			governance.Classifications = append(governance.Classifications, tag.FQN)
+		case "Glossary":
+			governance.Terms = append(governance.Terms, tag.FQN)
+		}
 	}
 	return metadataengine.Asset{
 		ID:                 response.ID,
@@ -68,11 +92,22 @@ func (c *Client) GetAsset(ctx context.Context, entityType, fullyQualifiedName st
 		FullyQualifiedName: response.FullyQualifiedName,
 		DisplayName:        response.DisplayName,
 		Description:        response.Description,
+		Governance:         governance,
 		Metadata: map[string]any{
 			"serviceType": response.ServiceType,
 			"version":     response.Version,
 		},
 	}, nil
+}
+
+func descriptiveParties(parties []metadataengine.PartyReference) []metadataengine.PartyReference {
+	var result []metadataengine.PartyReference
+	for _, party := range parties {
+		if strings.TrimSpace(party.ID) != "" && (party.Type == "user" || party.Type == "team") {
+			result = append(result, party)
+		}
+	}
+	return result
 }
 
 func (c *Client) UpsertDataProduct(ctx context.Context, product metadataengine.GovernanceProduct) (metadataengine.ExternalEntity, error) {
@@ -85,7 +120,7 @@ func (c *Client) UpsertDataProduct(ctx context.Context, product metadataengine.G
 		"name":        product.Name,
 		"displayName": strings.TrimSpace(product.DisplayName),
 		"description": strings.TrimSpace(product.Description),
-		"domain":      product.Domain,
+		"domains":     []string{product.Domain},
 	}
 	var response struct {
 		ID                 string `json:"id"`

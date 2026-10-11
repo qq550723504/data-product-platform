@@ -77,7 +77,7 @@ func (h *Handler) observe(w http.ResponseWriter, r *http.Request) {
 	}
 	b := bindings[0]
 	observation := h.service.ObserveBinding(r.Context(), b)
-	writeJSON(w, 200, map[string]any{"status": observation.Status, "provider": b.Provider, "externalId": b.ExternalID, "externalFqn": b.ExternalFQN, "version": observation.Version, "lastConfirmedVersion": b.BindingMetadata["version"], "lastConfirmedAt": b.UpdatedAt, "observedAt": observation.ObservedAt})
+	writeJSON(w, 200, map[string]any{"status": observation.Status, "provider": b.Provider, "externalId": b.ExternalID, "externalFqn": b.ExternalFQN, "version": observation.Version, "lastConfirmedVersion": b.BindingMetadata["version"], "lastConfirmedAt": b.UpdatedAt, "observedAt": observation.ObservedAt, "governance": observation.Governance})
 }
 
 type bindResourceRequest struct {

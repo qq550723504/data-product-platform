@@ -72,9 +72,32 @@ def catalog(output, seed):
     service = request("/v1/services/databaseServices", {"name": "dpp_source", "serviceType": "Postgres", "description": "PGI-09 synthetic catalog authored through native API"})
     database = request("/v1/databases", {"name": "dpp_ingestion_source", "service": service["fullyQualifiedName"]})
     schema = request("/v1/databaseSchemas", {"name": "dpp_source", "database": database["fullyQualifiedName"]})
+    owner = request("/v1/teams", {"name": "PGIOwners", "displayName": "PGI Synthetic Owners", "teamType": "Group"})
+    steward = request("/v1/teams", {"name": "PGIStewards", "displayName": "PGI Synthetic Stewards", "teamType": "Group"})
+    request("/v1/classifications", {"name": "PGISynthetic", "description": "Synthetic acceptance annotations"})
+    request("/v1/tags", {"name": "Internal", "classification": "PGISynthetic", "description": "Synthetic catalog classification"})
+    glossary = request("/v1/glossaries", {"name": "PGIPark", "description": "Synthetic park vocabulary"})
+    term = request("/v1/glossaryTerms", {"name": "Activity", "glossary": glossary["fullyQualifiedName"], "description": "Synthetic enterprise activity"})
+    table_type = request("/v1/metadata/types/name/table")
+    references_type = request("/v1/metadata/types/name/entityReferenceList")
+    request("/v1/metadata/types/" + table_type["id"], {
+        "name": "dataStewards", "description": "Explicit catalog Steward assignments for the bounded PGI Adapter",
+        "propertyType": {"id": references_type["id"], "type": "type"},
+        "customPropertyConfig": {"config": ["user", "team"]},
+    }, "PUT")
+    request("/v1/domains", {"name": "SyntheticPark", "description": "Isolated synthetic release projections", "domainType": "Source-aligned"})
     tables = []
     for name, (columns, _, _) in SLOTS.items():
-        table = request("/v1/tables", {"name": name, "databaseSchema": schema["fullyQualifiedName"], "description": "PGI-09 synthetic source v1", "columns": [{"name": column, "dataType": "TEXT"} for column in columns]})
+        table = request("/v1/tables", {
+            "name": name, "databaseSchema": schema["fullyQualifiedName"], "description": "PGI-09 synthetic source v1",
+            "columns": [{"name": column, "dataType": "TEXT"} for column in columns],
+            "owners": [{"id": owner["id"], "type": "team"}],
+            "tags": [
+                {"tagFQN": "PGISynthetic.Internal", "source": "Classification", "labelType": "Manual", "state": "Confirmed"},
+                {"tagFQN": term["fullyQualifiedName"], "source": "Glossary", "labelType": "Manual", "state": "Confirmed"},
+            ],
+            "extension": {"dataStewards": [{"id": steward["id"], "type": "team", "name": steward["name"], "displayName": steward["displayName"]}]} if name != "energy" else {},
+        })
         tables.append({key: table[key] for key in ("id", "name", "fullyQualifiedName", "version")})
     (output / "tables.json").write_text(json.dumps(tables, indent=2), encoding="utf-8")
     print(json.dumps({"version": version, "tables": tables, "token": "retained server-side"}))

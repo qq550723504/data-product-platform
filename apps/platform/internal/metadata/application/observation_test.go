@@ -36,7 +36,7 @@ func TestObservationFailureAndIdentityMismatchPreserveConfirmedBinding(t *testin
 		before := binding
 		s := &Service{engine: engine}
 		observation := s.ObserveBinding(context.Background(), binding)
-		if observation.Status != "STALE" || observation.ObservedAt != nil || !engine.bounded || !reflect.DeepEqual(before, binding) {
+		if observation.Status != "STALE" || observation.ObservedAt != nil || observation.Governance != nil || !engine.bounded || !reflect.DeepEqual(before, binding) {
 			t.Fatalf("failure rewrote confirmed binding or became current: %s %v", observation.Status, observation.ObservedAt)
 		}
 	}
@@ -52,9 +52,10 @@ func TestObservationRequiresExactProviderIdentity(t *testing.T) {
 
 func TestObservationReadsCurrentRevisionWithoutChangingBinding(t *testing.T) {
 	binding := metadatadomain.ResourceBinding{ExternalID: "confirmed-id", ExternalFQN: "db.schema.table", BindingMetadata: map[string]any{"version": 0.1}}
-	engine := &observationEngine{asset: metadataengine.Asset{ID: binding.ExternalID, FullyQualifiedName: binding.ExternalFQN, Metadata: map[string]any{"version": 0.2}}}
+	governance := &metadataengine.GovernanceFields{Description: "new directory annotation", Classifications: []string{"Synthetic.Internal"}}
+	engine := &observationEngine{asset: metadataengine.Asset{ID: binding.ExternalID, FullyQualifiedName: binding.ExternalFQN, Metadata: map[string]any{"version": 0.2}, Governance: governance}}
 	observed := (&Service{engine: engine}).ObserveBinding(context.Background(), binding)
-	if observed.Status != "OBSERVED" || observed.ObservedAt == nil || observed.Version != 0.2 || !engine.bounded {
+	if observed.Status != "OBSERVED" || observed.ObservedAt == nil || observed.Version != 0.2 || !reflect.DeepEqual(observed.Governance, governance) || !engine.bounded {
 		t.Fatalf("observation = %+v; want current provider revision", observed)
 	}
 	if binding.BindingMetadata["version"] != 0.1 {
