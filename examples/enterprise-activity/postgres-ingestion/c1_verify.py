@@ -17,13 +17,16 @@ class Oracle:
         self.ws = str(uuid.UUID(self.state["workspaceId"]))
         self.private = Path(self.state["private"])
         self.token = (self.private / "token").read_text().strip()
+        self.human_token = json.loads((self.private / "environment.json").read_text())["api"]["HUMAN_DECISION_API_TOKEN"]
     def rows(self, table, predicate="true"):
         q = f'SELECT row_to_json(t) FROM "{table}" t WHERE {predicate}'
         r = subprocess.run(["docker", "exec", self.container, "psql", "-U", "postgres", "-d", "dpp_ingestion_core", "-At", "-v", "ON_ERROR_STOP=1", "-c", q], capture_output=True, encoding="utf-8", check=True)
         return sorted([json.loads(line) for line in r.stdout.splitlines() if line.strip()], key=lambda v: json.dumps(v, sort_keys=True))
     def api(self, path, body, key, authorized=True):
         h = {"Content-Type":"application/json", "Idempotency-Key":key}
-        if authorized: h["Authorization"] = "Bearer " + self.token
+        if authorized:
+            token = self.human_token if "/quality-remediations" in path else self.token
+            h["Authorization"] = "Bearer " + token
         req = urllib.request.Request(self.state["api"] + "/api/v1" + path, data=json.dumps(body).encode(), headers=h, method="POST")
         try: response = urllib.request.urlopen(req, timeout=30)
         except urllib.error.HTTPError as error: response = error

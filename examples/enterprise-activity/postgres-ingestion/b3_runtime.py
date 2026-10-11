@@ -72,11 +72,15 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
         ap,wp,rp=port(),port(),port()
         command(["docker","run","-d","--name","dpp-pgi-b3-redis-"+suffix,"--network",net,"-p",f"127.0.0.1:{rp}:6379","redis:7-alpine","redis-server","--save","","--appendonly","no"]);names.append("dpp-pgi-b3-redis-"+suffix)
         api_env=dict(env,APP_ENV="pgi-b3-local",APP_HTTP_ADDR=f"127.0.0.1:{ap}",POSTGRES_DSN=cfg["DSN"],REDIS_ADDR=f"127.0.0.1:{rp}",OBJECT_STORAGE_ENDPOINT=f"127.0.0.1:{sp}",OBJECT_STORAGE_BUCKET="raw",OBJECT_STORAGE_ACCESS_KEY=rootkey,OBJECT_STORAGE_SECRET_KEY=rootsecret,OBJECT_STORAGE_USE_SSL="false",INGESTION_PROFILE=str(private/"profile.json"),INDUSTRY_PACK_ROOT=str(REPO/"industry-packs"),RIGHTS_API_TOKEN=token,RIGHTS_API_ACTOR_ID=public["actorId"],RIGHTS_API_WORKSPACE_IDS=public["workspaceId"],DELIVERY_API_ENABLED="true",DELIVERY_API_TOKEN=token,DELIVERY_API_PRINCIPAL_REF="b3-browser-operator",DELIVERY_API_CONSUMER_REF="LICENSED_BANK",DELIVERY_API_WORKSPACE_IDS=public["workspaceId"],HUMAN_DECISION_API_ENABLED="true",HUMAN_DECISION_API_TOKEN=token,HUMAN_DECISION_API_SUBJECT="b3-browser-reviewer",HUMAN_DECISION_API_ACTOR_ID=public["actorId"],HUMAN_DECISION_API_WORKSPACE_IDS=public["workspaceId"],OPENMETADATA_ENABLED="true",OPENMETADATA_BASE_URL=f"http://127.0.0.1:{port()}/api",OPENMETADATA_DOMAIN="SyntheticPark",HOP_ENABLED="false",SPLINK_ENABLED="false",GX_ENABLED="false",LABEL_STUDIO_ENABLED="false")
-        if remediation_plan_ref:api_env["QUALITY_REMEDIATION_PLAN_REF"]=remediation_plan_ref
+        if remediation_plan_ref:
+            api_env["QUALITY_REMEDIATION_PLAN_REF"]=remediation_plan_ref
+            # Distinct capabilities must not be hidden by a shared fixture token.
+            api_env["HUMAN_DECISION_API_TOKEN"]=secrets.token_hex(32)
         if metadata_url:api_env["OPENMETADATA_BASE_URL"]=metadata_url
         if metadata_token_file:api_env["OPENMETADATA_TOKEN"]=metadata_token_file.read_text(encoding="utf-8").strip()
         web_env=dict(env,PLATFORM_API_BASE_URL=f"http://127.0.0.1:{ap}",POC_WORKSPACE_ID=public["workspaceId"],POC_ENABLE_INGESTION_ACTIONS="true",POC_INGESTION_TOKEN_FILE=str(private/"token"),POC_RIGHTS_TOKEN_FILE=str(private/"token"),POC_INGEST_ACTOR_ID=public["actorId"],POC_INGESTION_WORKFLOW_ID=public["workflowVersionId"],POC_ENABLE_REVIEW_ACTIONS="true",POC_REVIEW_API_TOKEN=token,POC_REVIEW_ACTOR_ID=public["actorId"],POC_ENABLE_QUALITY_ACTIONS="true",POC_QUALITY_ACTOR_ID=public["actorId"],POC_ENABLE_COMPLIANCE_ACTIONS="true",POC_COMPLIANCE_ACTOR_ID=public["actorId"],POC_ENABLE_DELIVERY_ACTIONS="true",HUMAN_DECISION_API_TOKEN=token,DELIVERY_API_TOKEN=token,DELIVERY_API_CONSUMER_REF="LICENSED_BANK",DELIVERY_API_PRINCIPAL_REF="b3-browser-operator",DELIVERY_WEB_GATEWAY_TOKEN=secrets.token_hex(32))
         # Runtime secrets remain private and server-side; no NEXT_PUBLIC secret.
+        web_env["HUMAN_DECISION_API_TOKEN"]=api_env["HUMAN_DECISION_API_TOKEN"]
         web_env["NEXT_DIST_DIR"]=".next-"+binary_prefix
         # Next development RSC debug information can serialize server fetch
         # arguments (including Authorization). Real secret-isolation/browser

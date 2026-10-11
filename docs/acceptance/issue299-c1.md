@@ -314,3 +314,35 @@ costs are in [review-input-proof.json](issue299-c1-evidence/review-input-proof.j
 Manual explanation remains NOT_RUN; PR #310 remains Draft with no automatic merge.
 
 ![Current code: real failure, successful retry and closed PASS recovery](issue299-c1-evidence/review-final-closed-recovered.png)
+
+## Separated credential blocker recovery
+
+The third review of `fdf80524` found one valid P1 BLOCKER under the frozen contract:
+remediation page/detail/commands selected the Rights token rather than the
+existing Human Decision token. Shared fixture credentials had masked the failure.
+Web fix `fdd7bd0e` explicitly selects server-side `HUMAN_DECISION_API_TOKEN` for
+every remediation request and rejects missing human credentials before a request;
+it does not fall back to Rights or ingestion credentials. Existing batch/receipt/
+resolution reads retain their respective credential boundaries. C1 runtime setup
+now always generates different Human Decision and Rights credentials; the C1
+oracle selects Human Decision for remediation and the original credential for
+delivery. Core principal capabilities and gates remain authoritative.
+
+Real API checks with different tokens returned 200 for the human credential and
+403 for the Rights credential, including an accepted close-command replay with
+zero new facts. In real Edge, newly built production Web and a separate API
+process used those credentials on the retained owned C1 Core/Hop/storage/worker.
+A new batch was actually extracted/accepted and reviewed; browser detection,
+assignment, execution, genuine storage failure, explicit retry, recheck, close,
+refresh and original assessment recovery all passed. The recovered assessment is
+`ad50ee5b-4be4-4a8a-afa3-e56e4c31cda6`; this case incurred two real Native and two
+Quality invocations, while recovery incurred zero. Output record counts were
+14 = 13 accepted + 1 quarantined, with 5 aggregate enterprise rows.
+
+Web lint/typecheck, production build and existing command tests passed. Exact
+code/binary context, credential rejection and protected-fact comparisons are in
+[review-credential-proof.json](issue299-c1-evidence/review-credential-proof.json).
+This reopens only the confirmed required-path blocker at the convergence
+checkpoint. Human explanation stays NOT_RUN; PR #310 stays Draft without merge.
+
+![Different credentials: real retry and closed assessment recovery](issue299-c1-evidence/review-separated-credentials.png)
