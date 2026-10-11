@@ -26,3 +26,11 @@
 复现目录为 `apps/platform`。设置专用测试库 `POSTGRES_DSN/TEST_POSTGRES_DSN` 与专用 `REDIS_ADDR`，执行 `go run ./cmd/migrate -dir ../../migrations`、`go test ./... -count=1`、`go vet ./...`、`go build ./cmd/api ./cmd/worker ./cmd/migrate ./cmd/outbox-replay`、`CGO_ENABLED=1 go test -race ./internal/externalintegration/... -count=1`。缺少测试 DSN/Redis 时对应验证是 SKIP。Race run 未设置 Redis，仅 PG/usage concurrency 实跑；Redis contracts 已在 full suite 实跑。其他未配置外部 engine 的 live tests 仍为 SKIP，75 packages PASS 不表示所有外部产品路径已验收。
 
 [Verification manifest](issue87-local-verification.json) 保存 source/log SHA-256；原始输出位于本 worktree ignored `apps/platform/tmp/issue87/`。故意制造的 checkpoint RED 在新增 DB guard 后转 GREEN；失败安装/中间数据库保留作诊断，最终结果来自 fresh final verified schema。Billing/settlement、正式 NDI adapter、raw log search、持续自动采集、source ownership transfer、真实交付和生产部署为后续范围。
+
+## Review round 1 — removed adapter recovery
+
+[P1 原线程](https://github.com/qq550723504/data-product-platform/pull/312#discussion_r4241655962) 指出 registry/provider 移除后，durable pull 被 scanner 过滤，永远 PENDING。`TestUsageRemovedAdapterIsResolvedAfterWorkerRestart` 在 empty registry / unrelated provider 两例均先 RED（PENDING），修复 RunOnce 的 empty-registry 提前返回与 PendingUsage 的 provider filter 后均 GREEN。每次重新创建 importer 模拟 worker restart；要求追加一次 BLOCKED、0 provider reads / dispatch / cost、0 imported events、checkpoint revision=0，再重启不重复 resolution。25 条 bound、旋转扫描、source session ownership 与 fresh-authority RunPull 继续复用。
+
+PASS：新测试与 adapter/caller/concurrent-pull 定向回归、75 个 package 全量 Go、vet、api/worker/migrate/outbox-replay build、externalintegration 全包 race（本轮 Redis 也已配置实跑）、gofmt/diff。真实 PostgreSQL 使用新增 `issue87_review1`，保留已有测试库。容器重启后重新发现 loopback ports；不可沿用上次随机分配的端口。Migration 未改变，fresh up / down 与并发历史保护随全量测试实跑。
+
+本轮 source/log 指纹见 [review verification manifest](issue87-review1-verification.json)。Exact-HEAD GitHub CI 与 reviewer 👍 必须针对修复后的候选重新核对，原 `5ef3a132` 的 CI 成功不替代新 HEAD 门禁。本地验证未执行真实 NDI/provider、部署或数据交付。

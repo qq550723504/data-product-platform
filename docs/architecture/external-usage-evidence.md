@@ -29,6 +29,8 @@
 
 显式 RequestUsagePull（严格 empty body + Idempotency-Key）冻结 source 的 checkpoint revision/from-cursor；默认不自动开启无限轮询。现有 worker reconciliation 扫描持久 pending pulls；Outbox pull-request event 明确 retention-only，PG work row 是恢复依据，不引入新 queue handler/runtime。same command replay 返回 receipt，changed source/caller fingerprint 拒绝。
 
+扫描以持久 pending work 为依据，不以当前 registry/provider 是否存在作为过滤条件；registry 为空或对应 adapter 已移除时也要扫描，并由同一 fresh-authority RunPull 路径追加 BLOCKED resolution。保持每批最多 25、旋转扫描和 source ownership；此收口不调用 provider、不计 invocation 成本、不推进 cursor。
+
 复用现有独立 lock pool/session ownership，按 source 串行 remote I/O。固定 command key → binding → source → pull → occurrence 顺序；关联只读取 immutable published facts。每次实际 Read 前先持久 physical call start，dispatch marker + quantity=1 invocation CostEvent + typed CostAllocation/Evidence/Audit/Outbox 同事务提交；调用失败、timeout、commit failure 也保留已发生成本。start-only 不计已调用成本；crash 后只读同 cursor 可用新的 physical call identity 重读，真实重读独立计费。
 
 严格 normalized page 先存 append-only outcome（受控恢复 buffer，不是原始 provider payload），再 fresh-authorize，在 source parent row lock 内验证 checkpoint revision，原子写入 dedup/quarantine/correlation + checkpoint + pull resolution + Evidence/Audit/Outbox。提交故障保留 page，下一次恢复不重新调用 provider。无有效 page 时不得推进 cursor。DB deferred constraint 要求 occurrence 与初始 decision 一同提交；checkpoint guard 验证 page 每个 identity/hash 都已有 canonical decision 或 conflict quarantine，不能跳过 page 内的事件。stale concurrent pull 不接纳旧 page、不回退 cursor；失去 caller/binding/adapter authority 不导入关系。parent-first DB guards 同样串行 checkpoint/acceptance 与 concurrent writes。source/checkpoint/pull/call/dispatch/outcome/occurrence/decision/conflict/resolution 全 append-only；destructive down 先锁 parents/children，存在历史即拒绝。

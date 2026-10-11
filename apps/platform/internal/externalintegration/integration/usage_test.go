@@ -522,3 +522,36 @@ func TestUsageReadDeadlinePreservesInvocationCost(t *testing.T) {
 	}
 	f.usageCosts(t, 1)
 }
+
+func TestUsageRemovedAdapterIsResolvedAfterWorkerRestart(t *testing.T) {
+	for _, mode := range []string{"empty-registry", "unrelated-provider"} {
+		t.Run(mode, func(t *testing.T) {
+			f := usageSetup(t, false, true)
+			p := f.pull(t, "removed-adapter")
+			var adapters []ports.Adapter
+			if mode == "unrelated-provider" {
+				adapters = append(adapters, f.provider.Adapter("unrelated-"+f.ws.String(), "synthetic"))
+			}
+			registry, err := ports.NewRegistry(adapters...)
+			must(t, err)
+			f.executor.Registry = registry
+			// A fresh importer models a worker restart without any in-memory scan state.
+			importer := app.NewUsageImporter(f.executor)
+			must(t, importer.RunOnce(f.ctx))
+			got, err := f.service.Repo.UsagePull(f.ctx, f.pool, f.ws, p.ID)
+			must(t, err)
+			if got.Outcome != "BLOCKED" {
+				t.Fatalf("removed adapter left durable pull %s; want BLOCKED", got.Outcome)
+			}
+			must(t, app.NewUsageImporter(f.executor).RunOnce(f.ctx))
+			var resolutions int
+			must(t, f.pool.QueryRow(f.ctx, `SELECT count(*) FROM external_usage_resolution WHERE pull_id=$1`, p.ID).Scan(&resolutions))
+			source, err := f.service.Repo.UsageSource(f.ctx, f.pool, f.ws, f.source, false)
+			must(t, err)
+			if resolutions != 1 || f.feed.Reads.Load() != 0 || source.Revision != 0 || len(f.events(t)) != 0 {
+				t.Fatal("removed adapter resolution repeated, dispatched or advanced the source")
+			}
+			f.usageCosts(t, 0)
+		})
+	}
+}

@@ -133,17 +133,10 @@ func usageGateError(err error) bool {
 	return errors.Is(err, d.ErrDenied) || errors.Is(err, d.ErrState) || errors.Is(err, d.ErrUnsupported) || errors.Is(err, principal.ErrCapabilityDenied) || errors.Is(err, principal.ErrWorkspaceDenied) || errors.Is(err, principal.ErrNotConfigured)
 }
 func (u *UsageImporter) RunOnce(ctx context.Context) error {
-	providers := []string{}
-	for _, a := range u.External.Registry.List() {
-		// Configured providers may have lost the capability since source creation.
-		// RunPull resolves that authority change without dispatching another read.
-		providers = append(providers, a.Provider)
-	}
-	if len(providers) == 0 {
-		return nil
-	}
 	u.scanMu.Lock()
-	pulls, err := u.External.Core.Repo.PendingUsage(ctx, providers, u.scanAfter)
+	// Durable work survives removal of its adapter. RunPull records BLOCKED
+	// without I/O when the current registry no longer supports the source.
+	pulls, err := u.External.Core.Repo.PendingUsage(ctx, u.scanAfter)
 	if err == nil && len(pulls) > 0 {
 		u.scanAfter = pulls[len(pulls)-1].ID
 	}

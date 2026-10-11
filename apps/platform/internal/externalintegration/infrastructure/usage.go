@@ -83,8 +83,8 @@ func (r *Repository) UsagePulls(ctx context.Context, ws, source uuid.UUID, l, o 
 	}
 	return out, rows.Err()
 }
-func (r *Repository) PendingUsage(ctx context.Context, providers []string, after uuid.UUID) ([]d.UsagePull, error) {
-	rows, err := r.Pool.Query(ctx, pullSelect+` JOIN external_usage_source s ON s.id=p.source_id WHERE r.pull_id IS NULL AND s.provider=ANY($1) ORDER BY CASE WHEN p.id>$2 THEN 0 ELSE 1 END,p.id LIMIT 25`, providers, after)
+func (r *Repository) PendingUsage(ctx context.Context, after uuid.UUID) ([]d.UsagePull, error) {
+	rows, err := r.Pool.Query(ctx, pullSelect+` WHERE r.pull_id IS NULL ORDER BY CASE WHEN p.id>$1 THEN 0 ELSE 1 END,p.id LIMIT 25`, after)
 	if err != nil {
 		return nil, err
 	}
