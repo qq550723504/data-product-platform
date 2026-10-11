@@ -28,6 +28,12 @@ type CatalogPublisher interface {
 type DeliveryConnector interface {
 	PrepareDelivery(context.Context, d.Request, Invocation) error
 }
+
+// Read is replayable metadata lookup, never acknowledgement/deletion/delivery.
+// It obeys Invocation's dispatch/cancellation/no-hidden-retry contract.
+type UsageEventSource interface {
+	Read(context.Context, d.UsageReadRequest, Invocation) (d.UsagePage, error)
+}
 type Capabilities struct {
 	IdentityVerification   bool `json:"identityVerification"`
 	IdentifierVerification bool `json:"identifierVerification"`
@@ -35,6 +41,7 @@ type Capabilities struct {
 	StableRequestKeys      bool `json:"stableRequestKeys"`
 	AuthoritativeLookup    bool `json:"authoritativeLookup"`
 	DataDelivery           bool `json:"dataDelivery"`
+	UsageEvents            bool `json:"usageEvents"`
 }
 type Descriptor struct {
 	Provider     string       `json:"provider"`
@@ -48,6 +55,7 @@ type Adapter struct {
 	Identifier ExternalIdentifierProvider
 	Catalog    CatalogPublisher
 	Delivery   DeliveryConnector
+	Usage      UsageEventSource
 }
 type Registry struct{ entries map[string]Adapter }
 
@@ -55,6 +63,9 @@ func NewRegistry(adapters ...Adapter) (*Registry, error) {
 	r := &Registry{entries: map[string]Adapter{}}
 	for _, a := range adapters {
 		c := a.Capabilities
+		if c.UsageEvents != (a.Usage != nil) {
+			return nil, d.ErrUnsupported
+		}
 		if !d.ValidProvider(a.Provider) || !d.ValidText(a.Instance, 128) || !d.ValidText(a.Revision, 64) || a.Identity == nil || a.Identifier == nil || a.Catalog == nil || a.Delivery == nil || !c.IdentityVerification || !c.IdentifierVerification || !c.CatalogPublication || !c.StableRequestKeys || !c.AuthoritativeLookup || c.DataDelivery {
 			return nil, d.ErrUnsupported
 		}

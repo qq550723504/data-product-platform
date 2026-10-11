@@ -94,5 +94,5 @@ func (c *Client) Adapter(provider, instance string) ports.Adapter {
 	// Changing the endpoint is a different adapter identity even if a deployment
 	// reuses its display name. Recovery must never query another provider origin.
 	hash := sha256.Sum256([]byte(Revision + "\n" + c.base))
-	return ports.Adapter{Descriptor: ports.Descriptor{Provider: provider, Instance: instance, Revision: hex.EncodeToString(hash[:]), Capabilities: ports.Capabilities{IdentityVerification: true, IdentifierVerification: true, CatalogPublication: true, StableRequestKeys: true, AuthoritativeLookup: true}}, Identity: c, Identifier: c, Catalog: c, Delivery: c}
+	return ports.Adapter{Descriptor: ports.Descriptor{Provider: provider, Instance: instance, Revision: hex.EncodeToString(hash[:]), Capabilities: ports.Capabilities{IdentityVerification: true, IdentifierVerification: true, CatalogPublication: true, StableRequestKeys: true, AuthoritativeLookup: true, UsageEvents: true}}, Identity: c, Identifier: c, Catalog: c, Delivery: c, Usage: c}
 }

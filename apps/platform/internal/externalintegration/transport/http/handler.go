@@ -19,6 +19,7 @@ type Handler struct {
 	Service  *app.Service
 	Resolver principal.Resolver
 	Executor *app.Executor
+	Usage    *app.UsageImporter
 }
 
 func (h *Handler) WithExecutor(e *app.Executor) *Handler { h.Executor = e; return h }
@@ -48,6 +49,17 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET "+base+"/providers", h.wrap(h.providers))
 	mux.HandleFunc("GET "+base+"/publications/{id}/attempts", h.wrap(h.attempts))
 	mux.HandleFunc("GET "+base+"/publications/{id}/attempts/{attemptId}/calls", h.wrap(h.calls))
+	mux.HandleFunc("POST "+base+"/usage-sources", h.usage(h.createUsageSource))
+	mux.HandleFunc("GET "+base+"/usage-sources", h.usage(h.usageSources))
+	mux.HandleFunc("GET "+base+"/usage-sources/{id}", h.usage(h.usageSource))
+	mux.HandleFunc("POST "+base+"/usage-sources/{id}/pull", h.usage(h.requestUsagePull))
+	mux.HandleFunc("GET "+base+"/usage-sources/{id}/pulls", h.usage(h.usagePulls))
+	mux.HandleFunc("GET "+base+"/usage-pulls/{id}", h.usage(h.usagePull))
+	mux.HandleFunc("GET "+base+"/usage-pulls/{id}/calls", h.usage(h.usageCalls))
+	mux.HandleFunc("GET "+base+"/usage-events", h.usage(h.usageEvents))
+	mux.HandleFunc("GET "+base+"/usage-events/{id}", h.usage(h.usageEvent))
+	mux.HandleFunc("POST "+base+"/usage-events/{id}/recheck", h.usage(h.recheckUsage))
+	mux.HandleFunc("GET "+base+"/usage-conflicts", h.usage(h.usageConflicts))
 }
 func (h *Handler) wrap(fn endpoint) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

@@ -55,4 +55,6 @@ Evidence basis 必须已经存在于同 workspace，关联记录是 caller asser
 
 ## Ownership checkpoint
 
+后续执行 contract 由 [External publication execution — #86](external-publication-execution.md) 拥有；usage/runtime 的 source、immutable occurrence/decision、cursor 与关联由 [External usage evidence — #87](external-usage-evidence.md) 拥有。本文保留 #84 发布意图范围，不另定义执行或使用事实。
+
 本聊天为 #84 唯一 writer，worktree `issue84-external-core` / branch `codex/issue84-external-core`。#307 原 writer 已占用 000054；本次 000055 只依赖 merged main，不继承其未合并 contract。#294 / Draft #295 的 000050 与暂停联调不动。bootstrap/config/routing 最小接入在 rebase/merge 前按最新 main 串行整合；迁移编号必须再次核对。

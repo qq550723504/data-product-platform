@@ -18,6 +18,7 @@ import (
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
+	externalapp "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/application"
 	externalpilot "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/pilot"
 	externalqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/transport/queue"
 	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
@@ -119,6 +120,7 @@ func main() {
 		os.Exit(1)
 	}
 	externalExecutor.WithLocker(nativeLockManager)
+	usageImporter := externalapp.NewUsageImporter(externalExecutor)
 	externalEnqueuer := externalqueue.NewClient(queueClient)
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
 	annotationRepo := annotationinfra.NewRepository(db)
@@ -266,6 +268,9 @@ func main() {
 			case <-ticker.C:
 				if err := externalExecutor.RunOnce(ctx); err != nil && !errors.Is(err, context.Canceled) {
 					logger.Error("external publication reconciliation failed", "error", err)
+				}
+				if err := usageImporter.RunOnce(ctx); err != nil && !errors.Is(err, context.Canceled) {
+					logger.Error("external usage reconciliation failed", "error", err)
 				}
 			}
 		}

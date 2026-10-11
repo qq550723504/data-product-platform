@@ -29,7 +29,7 @@ const (
 // whenever an event type's required-handler set changes. Dispatch logs and
 // dead-letter diagnostics reference it, so the obligation that was in force when
 // an event was handled stays auditable.
-const Version = "c1-v19+external-core1+execution1"
+const Version = "c1-v19+external-core1+execution1+usage1"
 
 // VersionFor folds the deployment profile into the routing version so the same
 // version string always describes the same required-handler set. Enabling or
@@ -90,6 +90,18 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "ExternalPublicationAttemptResolved"},
 		{EventType: "ExternalPublicationRegistered"},
 		{EventType: "ExternalPublicationPublished"},
+		// Usage pulls are durable PG work, consumed by the existing worker scan.
+		{EventType: "ExternalUsageSourceCreated"},
+		{EventType: "ExternalUsagePullRequested"},
+		{EventType: "ExternalUsageCallStarted"},
+		{EventType: "ExternalUsageCallDispatched"},
+		{EventType: "ExternalUsageOutcomeRecorded"},
+		{EventType: "ExternalUsageRecorded"},
+		{EventType: "ExternalUsageQuarantined"},
+		{EventType: "ExternalUsageAccepted"},
+		{EventType: "ExternalUsageConflictQuarantined"},
+		{EventType: "ExternalUsageCheckpointCommitted"},
+		{EventType: "ExternalUsagePullResolved"},
 		{EventType: "IngestionPrepared"},
 		{EventType: "IngestionInvocationStarted"},
 		{EventType: "IngestionInvocationDispatched"},
