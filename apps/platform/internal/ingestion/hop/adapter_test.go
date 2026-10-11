@@ -1,16 +1,83 @@
 package hop
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	d "github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/domain"
 	w "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	whop "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/hop"
+	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"sync/atomic"
 	"testing"
+	"time"
 )
+
+type unwrittenConn struct{ net.Conn }
+
+func (c unwrittenConn) Write([]byte) (int, error) { return 0, io.ErrClosedPipe }
+
+func TestBufferedHeadersAreNotConfirmedDispatch(t *testing.T) {
+	clientSide, peer := net.Pipe()
+	defer peer.Close()
+	transport := &http.Transport{DialContext: func(context.Context, string, string) (net.Conn, error) { return unwrittenConn{clientSide}, nil }}
+	defer transport.CloseIdleConnections()
+	client, err := whop.NewClient("http://controlled.invalid", "unit-reader", "unit-only", NewHTTPClient(10*time.Second, transport))
+	if err != nil {
+		t.Fatal(err)
+	}
+	recorded := atomic.Int64{}
+	ctx, observed := observeRequest(context.Background(), func() { recorded.Add(1) })
+	_, err = client.StartSubmission(ctx, w.ManagedSubmitRequest{Name: "unit-pipeline"}, "unit-id")
+	if err == nil {
+		t.Fatal("controlled network write failure did not occur")
+	}
+	if observed.State() != d.DispatchUnconfirmed {
+		t.Fatal("ambiguous write was treated as safe to redispatch")
+	}
+	if recorded.Load() != 0 {
+		t.Fatal("buffered headers invented an ACTUAL dispatch before any network write")
+	}
+}
+
+func TestDispatchIsConfirmedBeforeProviderReply(t *testing.T) {
+	for _, kind := range []string{"start", "large-register"} {
+		t.Run(kind, func(t *testing.T) {
+			release := make(chan struct{})
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				_, _ = io.Copy(io.Discard, r.Body)
+				<-release
+				w.WriteHeader(503)
+			}))
+			defer server.Close()
+			defer close(release)
+			client, err := whop.NewClient(server.URL, "unit-reader", "unit-only", NewHTTPClient(5*time.Second, server.Client().Transport.(*http.Transport)))
+			if err != nil {
+				t.Fatal(err)
+			}
+			recorded := make(chan struct{})
+			ctx, observed := observeRequest(context.Background(), func() { close(recorded) })
+			go func() {
+				if kind == "start" {
+					_, _ = client.StartSubmission(ctx, w.ManagedSubmitRequest{Name: "unit-pipeline"}, "unit-id")
+				} else {
+					_, _ = client.PrepareSubmission(ctx, w.ManagedSubmitRequest{Name: "unit-pipeline", Definition: bytes.Repeat([]byte("x"), 16385), ContentType: "application/xml"})
+				}
+			}()
+			select {
+			case <-recorded:
+				if observed.State() != d.Dispatched {
+					t.Fatal("successful full network write was not confirmed")
+				}
+			case <-time.After(2 * time.Second):
+				t.Fatal("dispatch observation waited for the provider reply")
+			}
+		})
+	}
+}
 
 func TestMetadataUsesTheProbedEndpoint(t *testing.T) {
 	for _, scenario := range []string{"valid", "hostname", "port", "custom-url", "alternate-mode", "unknown-field"} {
@@ -44,20 +111,21 @@ func TestRequestDispatchObservation(t *testing.T) {
 	writes := atomic.Int64{}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { writes.Add(1); w.WriteHeader(503) }))
 	defer server.Close()
-	client, err := whop.NewClient(server.URL, "unit-reader", "unit-only", server.Client())
+	client, err := whop.NewClient(server.URL, "unit-reader", "unit-only", NewHTTPClient(10*time.Second, server.Client().Transport.(*http.Transport)))
 	if err != nil {
 		t.Fatal(err)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	call, written := observeRequest(ctx)
+	recorded := atomic.Int64{}
+	call, written := observeRequest(ctx, func() { recorded.Add(1) })
 	_, _ = client.StartSubmission(call, w.ManagedSubmitRequest{Name: "unit-pipeline"}, "unit-id")
-	if written.Load() || writes.Load() != 0 {
+	if written.State() != d.NotDispatched || writes.Load() != 0 || recorded.Load() != 0 {
 		t.Fatal("cancelled pre-dispatch was charged as written")
 	}
-	call, written = observeRequest(context.Background())
+	call, written = observeRequest(context.Background(), func() { recorded.Add(1) })
 	_, _ = client.StartSubmission(call, w.ManagedSubmitRequest{Name: "unit-pipeline"}, "unit-id")
-	if !written.Load() || writes.Load() != 1 {
+	if written.State() != d.Dispatched || writes.Load() != 1 || recorded.Load() != 1 {
 		t.Fatal("real failed HTTP call was not observed")
 	}
 }

@@ -7,6 +7,8 @@ import (
 	"io"
 	"slices"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -27,11 +29,12 @@ type Caller func(context.Context, uuid.UUID) (principal.RequestPrincipal, error)
 type Engine interface {
 	Version() string
 	Check(context.Context, d.Request) error
-	// The bool reports an attempted provider HTTP call, including uncertain
-	// responses. Local preflight failure returns false.
-	Register(context.Context, d.Operation) (string, bool, error)
-	Start(context.Context, d.Operation) (bool, error)
-	Status(context.Context, d.Operation) (string, bool, error)
+	// Notify a confirmed request write before waiting for its response. The
+	// callback must return promptly; it cannot block the HTTP response path.
+	// Buffered or failed writes remain unconfirmed; preflight never notifies.
+	Register(context.Context, d.Operation, func()) (string, d.DispatchState, error)
+	Start(context.Context, d.Operation, func()) (d.DispatchState, error)
+	Status(context.Context, d.Operation, func()) (string, d.DispatchState, error)
 	Manifest(context.Context, d.Operation) (d.Manifest, error)
 }
 type Store interface {
@@ -54,8 +57,8 @@ func New(tx *transaction.Manager, repo *infra.Repository, ds *datasetinfra.Postg
 	return &Service{Tx: tx, Repo: repo, Datasets: ds, Engine: engine, Store: store, Bucket: bucket}
 }
 
-func (s *Service) check(ctx context.Context, tx pgx.Tx, r d.Request, caller Caller) error {
-	if caller == nil || s.Engine == nil || s.Store == nil || s.TargetGuard == nil {
+func (s *Service) checkCaller(ctx context.Context, r d.Request, caller Caller) error {
+	if caller == nil {
 		return d.ErrDenied
 	}
 	p, err := caller(ctx, r.WorkspaceID)
@@ -64,6 +67,15 @@ func (s *Service) check(ctx context.Context, tx pgx.Tx, r d.Request, caller Call
 	}
 	if p.ActorID != r.ActorID || p.Subject != r.PrincipalRef || p.WorkspaceID != r.WorkspaceID || !p.HasCapability("INGEST_RAW") {
 		return d.ErrDenied
+	}
+	return nil
+}
+func (s *Service) check(ctx context.Context, tx pgx.Tx, r d.Request, caller Caller) error {
+	if s.Engine == nil || s.Store == nil || s.TargetGuard == nil {
+		return d.ErrDenied
+	}
+	if err := s.checkCaller(ctx, r, caller); err != nil {
+		return err
 	}
 	if err := r.Validate(); err != nil {
 		return err
@@ -165,21 +177,41 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 		return op, err
 	}
 	state, remote := "UNKNOWN", op.RemoteID
-	attempted := false
+	dispatch := d.NotDispatched
 	var m *d.Manifest
+	// Recording a known physical dispatch must not depend on the eventual
+	// result, operation projection or request cancellation. Failed recording is
+	// retried when the adapter returns its dispatch observation below.
+	var dispatchOnce sync.Once
+	dispatchRecorded := make(chan struct{})
+	dispatched := func() {
+		dispatchOnce.Do(func() {
+			go func() {
+				defer close(dispatchRecorded)
+				noteCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)
+				defer cancel()
+				_ = s.Tx.Do(noteCtx, func(ctx context.Context, tx pgx.Tx) error {
+					if _, err := s.Repo.Load(ctx, tx, id, true); err != nil {
+						return err
+					}
+					return s.recordDispatch(ctx, tx, op, invocation, kind)
+				})
+			}()
+		})
+	}
 	switch kind {
 	case "REGISTER":
-		remote, attempted, err = s.Engine.Register(ctx, op)
+		remote, dispatch, err = s.Engine.Register(ctx, op, dispatched)
 		if err == nil && remote != "" {
 			state = "REGISTERED"
 		}
 	case "START":
-		attempted, err = s.Engine.Start(ctx, op)
+		dispatch, err = s.Engine.Start(ctx, op, dispatched)
 		if err == nil {
 			state = "RUNNING"
 		}
 	case "STATUS":
-		state, attempted, err = s.Engine.Status(ctx, op)
+		state, dispatch, err = s.Engine.Status(ctx, op, dispatched)
 		if err != nil {
 			state = "UNKNOWN"
 		}
@@ -196,39 +228,50 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 			}
 		}
 	}
+	// A failed read-only STATUS does not prove that the existing pipeline
+	// failed. Only a definitely unsent REGISTER/START permits a new attempt.
+	if err != nil && dispatch == d.NotDispatched && kind != "STATUS" {
+		state = "FAILED"
+	}
 	if state != "REGISTERED" && state != "RUNNING" && state != "SUCCEEDED" && state != "FAILED" {
 		state = "UNKNOWN"
 	}
+	if dispatch == d.Dispatched {
+		// Start/finish the bounded independent recording after consuming the
+		// provider reply, outside its HTTP deadline. The outcome transaction
+		// below retains the returned dispatch state as an idempotent retry.
+		dispatched()
+		<-dispatchRecorded
+	}
 	// Use a bounded detached context to retain a lost/cancelled call observation.
-	finishCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 30_000_000_000)
+	finishCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)
 	defer cancel()
+	// Commit the immutable result first. A failed projection/commit or process
+	// exit afterward is recoverable without another physical register/start.
 	finishErr := s.Tx.Do(finishCtx, func(ctx context.Context, tx pgx.Tx) error {
-		current, err := s.Repo.Load(ctx, tx, id, true)
+		if _, err := s.Repo.Load(ctx, tx, id, true); err != nil {
+			return err
+		}
+		if dispatch == d.Dispatched {
+			if err := s.recordDispatch(ctx, tx, op, invocation, kind); err != nil {
+				return err
+			}
+		}
+		if err := s.Repo.SaveOutcome(ctx, tx, infra.Outcome{InvocationID: invocation, AttemptID: op.AttemptID, Kind: kind, State: state, RemoteID: remote, Dispatch: dispatch, Manifest: m}); err != nil {
+			return err
+		}
+		return s.fact(ctx, tx, op, "IngestionInvocationOutcomeRecorded", map[string]any{"invocationId": invocation, "attemptId": op.AttemptID, "state": state, "providerDispatched": dispatch == d.Dispatched, "dispatchState": dispatch})
+	})
+	if finishErr != nil {
+		return op, finishErr
+	}
+	finishErr = s.Tx.Do(finishCtx, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		op, err = s.Repo.Load(ctx, tx, id, true)
 		if err != nil {
 			return err
 		}
-		if current.AttemptID != op.AttemptID {
-			return d.ErrConflict
-		}
-		if attempted {
-			if err := s.Repo.ActualInvocationCost(ctx, tx, op, invocation, kind); err != nil {
-				return err
-			}
-		}
-		// Concurrent status calls may not regress an already durable completion.
-		if current.State == "SUCCEEDED" || current.State == "ACCEPTED" || current.State == "FAILED" {
-			_, err := tx.Exec(ctx, `INSERT INTO ingestion_observation(id,invocation_id,state,remote_id) VALUES($1,$2,$3,$4)`, uuid.New(), invocation, state, remote)
-			op = current
-			if err != nil {
-				return err
-			}
-			return s.fact(ctx, tx, op, "IngestionObserved", map[string]any{"invocationId": invocation, "attemptId": op.AttemptID, "state": state, "providerDispatched": attempted, "late": true})
-		}
-		if err = s.Repo.Observe(ctx, tx, &current, invocation, state, remote, m); err != nil {
-			return err
-		}
-		op = current
-		return s.fact(ctx, tx, op, "IngestionObserved", map[string]any{"invocationId": invocation, "attemptId": op.AttemptID, "state": state, "providerDispatched": attempted})
+		return s.applyOutcomes(ctx, tx, &op)
 	})
 	if finishErr != nil {
 		return op, finishErr
@@ -237,6 +280,47 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 		return op, d.ErrUnknown
 	}
 	return op, nil
+}
+
+func (s *Service) recordDispatch(ctx context.Context, tx pgx.Tx, op d.Operation, invocation uuid.UUID, kind string) error {
+	fresh, err := s.Repo.ActualInvocationCost(ctx, tx, op, invocation, kind)
+	if err != nil || !fresh {
+		return err
+	}
+	return s.fact(ctx, tx, op, "IngestionInvocationDispatched", map[string]any{"invocationId": invocation, "attemptId": op.AttemptID, "kind": kind})
+}
+
+// Called under the operation lock. The existing immutable observation is the
+// application marker; projection, marker and event/audit/evidence commit once.
+// Known past activity is recorded even if source authority has since changed;
+// current gates still run before any new provider work or RAW admission.
+func (s *Service) applyOutcomes(ctx context.Context, tx pgx.Tx, op *d.Operation) error {
+	outcomes, err := s.Repo.PendingOutcomes(ctx, tx, op.ID)
+	if err != nil {
+		return err
+	}
+	for _, o := range outcomes {
+		historical := *op
+		historical.AttemptID = o.AttemptID
+		if o.Dispatch == d.Dispatched {
+			if err := s.recordDispatch(ctx, tx, historical, o.InvocationID, o.Kind); err != nil {
+				return err
+			}
+		}
+		late := o.AttemptID != op.AttemptID || op.State == "SUCCEEDED" || op.State == "ACCEPTED" || op.State == "FAILED"
+		if late {
+			_, err = tx.Exec(ctx, `INSERT INTO ingestion_observation(id,invocation_id,state,remote_id) VALUES($1,$2,$3,$4)`, uuid.New(), o.InvocationID, o.State, o.RemoteID)
+		} else {
+			err = s.Repo.Observe(ctx, tx, op, o.InvocationID, o.State, o.RemoteID, o.Manifest)
+		}
+		if err != nil {
+			return err
+		}
+		if err := s.fact(ctx, tx, historical, "IngestionObserved", map[string]any{"invocationId": o.InvocationID, "attemptId": o.AttemptID, "state": o.State, "providerDispatched": o.Dispatch == d.Dispatched, "dispatchState": o.Dispatch, "late": late}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Dispatch issues each physical register/start at most once. A durable claim
@@ -251,6 +335,9 @@ func (s *Service) Dispatch(ctx context.Context, id uuid.UUID, caller Caller) (d.
 		if err != nil {
 			return op, err
 		}
+		if op.State == "FAILED" {
+			return op, nil
+		}
 	}
 	if op.State == "REGISTERED" {
 		return s.invoke(ctx, id, "START", caller)
@@ -258,8 +345,23 @@ func (s *Service) Dispatch(ctx context.Context, id uuid.UUID, caller Caller) (d.
 	return op, d.ErrState
 }
 func (s *Service) Recover(ctx context.Context, id uuid.UUID, caller Caller) (d.Operation, error) {
-	op, err := s.Repo.Load(ctx, s.Repo.Pool, id, false)
+	var op d.Operation
+	err := s.Tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		op, err = s.Repo.Load(ctx, tx, id, true)
+		if err != nil {
+			return err
+		}
+		if err = s.checkCaller(ctx, op.Request, caller); err != nil {
+			return err
+		}
+		return s.applyOutcomes(ctx, tx, &op)
+	})
 	if err != nil {
+		return op, err
+	}
+	if op.State == "REGISTERED" || op.State == "FAILED" {
+		err = s.Tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error { return s.check(ctx, tx, op.Request, caller) })
 		return op, err
 	}
 	if op.RemoteID == "" {
