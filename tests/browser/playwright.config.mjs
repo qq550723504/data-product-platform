@@ -11,7 +11,7 @@ function consoleServer(port, enabled, ingestion = false) {
   return {
     command: `node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port ${port}`,
     cwd: webRoot, url: `http://127.0.0.1:${port}/reviews`, reuseExistingServer: false, timeout: 60000,
-    env: { ...webEnv, POC_ENABLE_REVIEW_ACTIONS: String(enabled), POC_ENABLE_RELEASE_ACTIONS: String(enabled), POC_ENABLE_EXECUTION_ACTIONS: String(enabled), POC_ENABLE_DATASET_ACTIONS: String(enabled), POC_ENABLE_QUALITY_ACTIONS: String(enabled), POC_ENABLE_COMPLIANCE_ACTIONS: String(enabled), POC_ENABLE_DELIVERY_ACTIONS: String(enabled), POC_ENABLE_INGESTION_ACTIONS: String(ingestion), POC_RIGHTS_TOKEN_FILE: fileURLToPath(new URL("../../.data/browser-fixture-rights-token", import.meta.url)) },
+    env: { ...webEnv, POC_ENABLE_REVIEW_ACTIONS: String(enabled), POC_ENABLE_RELEASE_ACTIONS: String(enabled), POC_ENABLE_EXECUTION_ACTIONS: String(enabled), POC_ENABLE_DATASET_ACTIONS: String(enabled), POC_ENABLE_QUALITY_ACTIONS: String(enabled), POC_ENABLE_COMPLIANCE_ACTIONS: String(enabled), POC_ENABLE_DELIVERY_ACTIONS: String(enabled), POC_ENABLE_INGESTION_ACTIONS: String(ingestion), POC_RIGHTS_TOKEN_FILE: fileURLToPath(new URL("../../.data/browser-fixture-rights-token", import.meta.url)), POC_INGESTION_TOKEN_FILE: fileURLToPath(new URL("../../.data/browser-fixture-rights-token", import.meta.url)) },
   };
 }
 export default defineConfig({

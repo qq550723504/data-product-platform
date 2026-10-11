@@ -20,6 +20,7 @@ export const ids = {
   goldProfile: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
   secondProfile: "dadadada-dada-4dad-8dad-dadadadadada",
   secondEvidence: "b2b2b2b2-b2b2-4b2b-8b2b-b2b2b2b2b2b2",
+  ingestion: "23232323-2323-4232-8232-232323232323",
   goldCertification: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
   goldBinding: "ffffffff-ffff-4fff-8fff-ffffffffffff",
   goldSnapshot: "12121212-1212-4212-8212-121212121212",
@@ -35,7 +36,7 @@ export const ids = {
 };
 export const fixtureToken = "local-browser-test-only";
 const stamp = "2026-09-17T00:00:00Z";
-const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles"]);
+const scenarios = new Set(["ready", "empty-checks", "missing-evidence", "null-checks", "blocker", "future-gate", "failed-rights", "pending-gates", "review-conflict", "ambiguous-review", "publish-conflict", "paginated-resources", "paginated-releases", "multiple-certification-profiles","batch-registered","batch-registering"]);
 const pass = { production: "PASS", dataset: "PASS", rights: "PASS", quality: "PASS", compliance: "PASS", contract: "PASS", evidence: "PASS", delivery: "PASS" };
 function fixtureResources(count) {
   return Array.from({ length: count }, (_, index) => {
@@ -321,6 +322,10 @@ export function createFixtureServer() {
         return { items: items.slice(offset, offset + limit), page: { total: items.length, limit, offset } };
       }
       if (req.method === "GET") {
+        if (url.pathname === `/api/v1/ingestions/${ids.ingestion}`) {
+          if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(401, {});
+          return send(200, {id:ids.ingestion,state:state.batchDispatched?"RUNNING":state.scenario==="batch-registered"?"REGISTERED":"REGISTERING",attemptId:ids.job,remoteId:state.scenario==="batch-registered"?"known-remote-run":"",request:{workspaceId:ids.workspace,batchKey:"Recoverable batch",connectionRef:"fixture-source",instanceRef:"fixture-instance",templateHash:"a".repeat(64),schemaHash:"b".repeat(64),slots:[]}});
+        }
         if (url.pathname === `${workspace}/certification-profiles`) {
           if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(401, {});
           return send(200, { items: [goldProfile, { ...goldProfile, id: ids.secondProfile, name: "Second profile" }] });
@@ -536,6 +541,15 @@ export function createFixtureServer() {
         });
       }
       if (req.method === "POST") {
+        if (url.pathname === `/api/v1/ingestions/${ids.ingestion}/dispatch`) {
+          if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(401, {});
+          if(state.scenario!=="batch-registered"||state.batchDispatched)return send(409,{code:"INVALID_STATE"});
+          state.batchDispatched=true;return send(200,{id:ids.ingestion,state:"RUNNING"});
+        }
+        if (url.pathname === `/api/v1/ingestions/${ids.ingestion}/recover`) {
+          if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(401, {});
+          return send(503,{code:"OUTCOME_UNKNOWN"});
+        }
         if (url.pathname === `${workspace}/dataset-versions/${ids.goldVersion}/certification-inputs`) {
           if (req.headers.authorization !== "Bearer rights-fixture-secret") return send(401, {});
           if (body.profileId !== ids.secondProfile || body.qualityAssessmentId !== ids.goldAssessment) return send(400, {code:"PROFILE_INPUT_MISMATCH"});

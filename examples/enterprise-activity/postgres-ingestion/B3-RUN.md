@@ -167,3 +167,14 @@ checking endpoint equality and allocated invocation costs:
 [screenshot](results/2026-10-11/b3-source-runtime-review.png).
 These are ingestion regressions, not a repeat of the historical 31-check B3
 certification/delivery oracle. Human explanation remains NOT_RUN.
+
+The final UI closure check also reproduced two crash-window dead ends in real
+browser/HTTP-fixture tests: REGISTERED could not invoke the existing dispatch
+command, and REGISTERING could not invoke the existing recovery command. The
+page now exposes those state-appropriate commands. The browser asserts a single
+dispatch on the original registered operation, then disables further starts;
+uncertain registration returns OUTCOME_UNKNOWN without a new ingestion/start
+or RAW acceptance. These two fixture regressions exercise UI command routing,
+separately from the real provider/B2 recovery matrix and live B3 oracle above.
+All 43 browser contracts, the complete Next build (204 command tests) and
+separate restored-configuration typecheck/lint pass after this fix.

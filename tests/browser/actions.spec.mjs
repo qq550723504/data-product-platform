@@ -16,6 +16,30 @@ async function writes(request) { return (await state(request)).requests.filter((
 
 test.beforeEach(async ({ request }) => { await scenario(request, "ready", true); });
 
+test("Registered batch resumes the same operation after a pre-start crash",async({page,request})=>{
+ await scenario(request,"batch-registered",true);
+ await page.goto(`http://127.0.0.1:3102/batches/${ids.ingestion}`);
+ await page.getByRole("button",{name:"启动抽取",exact:true}).click();
+ await expect(page.getByText("RUNNING",{exact:true})).toBeVisible();
+ await page.reload();
+ await expect(page.getByRole("button",{name:"启动抽取",exact:true})).toBeDisabled();
+ const commands=await writes(request);
+ expect(commands.filter(c=>c.path===`/api/v1/ingestions/${ids.ingestion}/dispatch`)).toHaveLength(1);
+ expect(commands.some(c=>c.path==="/api/v1/ingestions")).toBe(false);
+});
+
+test("Registering batch can query its uncertain outcome without a second start",async({page,request})=>{
+ await scenario(request,"batch-registering",true);
+ await page.goto(`http://127.0.0.1:3102/batches/${ids.ingestion}`);
+ await expect(page.getByRole("button",{name:"启动抽取",exact:true})).toBeDisabled();
+ await page.getByRole("button",{name:"核对原运行",exact:true}).click();
+ await expect(page.getByRole("status")).toContainText("OUTCOME_UNKNOWN");
+ await expect(page.getByRole("button",{name:"原子接纳三份 RAW",exact:true})).toBeDisabled();
+ const commands=await writes(request);
+ expect(commands.filter(c=>c.path===`/api/v1/ingestions/${ids.ingestion}/recover`)).toHaveLength(1);
+ expect(commands.some(c=>c.path.endsWith("/dispatch")||c.path==="/api/v1/ingestions")).toBe(false);
+});
+
 test("Certification profile selection reloads that profile's evidence before prepare and evaluate", async ({ page, request }) => {
   await scenario(request, "multiple-certification-profiles", true);
   await page.goto(`http://127.0.0.1:3102/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=certification&profileId=${ids.goldProfile}`);
