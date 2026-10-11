@@ -113,3 +113,33 @@ func TestPreparationRefusesConfiguredOutputWithoutIO(t *testing.T) {
 		t.Fatal("recovery would re-create a populated fixture", err)
 	}
 }
+
+func TestDeleteCandidateRejectsProtectedTargetsAndReplayBeforeIO(t *testing.T) {
+	c := fixtureConfig(t)
+	if err := os.Mkdir(c.OutputDirectory, 0700); err != nil {
+		t.Fatal(err)
+	}
+	objects := []object{
+		{CopyID: uuid.New(), Namespace: namespaces[0], Key: "fixture/a.csv", Version: "synthetic-native-id", Retention: "NONE", LegalHold: true},
+		{CopyID: uuid.New(), Namespace: namespaces[1], Key: "fixture/b.csv", Version: "synthetic-native-id", Retention: "NONE"},
+		{CopyID: uuid.New(), Namespace: namespaces[0], Key: "fixture/b.csv", Version: "synthetic-native-id", Retention: "NONE", LegalHold: true},
+		{CopyID: uuid.New(), Namespace: namespaces[1], Key: "fixture/a.csv", Version: "synthetic-native-id", Retention: "GOVERNANCE"},
+	}
+	manifest := map[string]any{"schema": "lifecycle307-predelete-manifest-v1", "run_id": c.RunID, "workspace_id": c.WorkspaceID, "provider_instance_id": c.ProviderInstanceID, "incarnation_id": c.IncarnationID, "objects": objects}
+	b, err := json.Marshal(manifest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = os.WriteFile(filepath.Join(c.OutputDirectory, "manifest.json"), b, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err = prepareUnprotectedPlan(context.Background(), "not-read-before-rejection", c); err == nil || !strings.Contains(err.Error(), "invalid") {
+		t.Fatal("protected target admitted", err)
+	}
+	if err = os.WriteFile(filepath.Join(c.OutputDirectory, "deletion-candidate.json"), []byte(`{}`), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err = prepareUnprotectedPlan(context.Background(), "not-read-before-rejection", c); err == nil || !strings.Contains(err.Error(), "already") {
+		t.Fatal("candidate replay admitted", err)
+	}
+}

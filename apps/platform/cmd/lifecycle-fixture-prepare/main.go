@@ -210,6 +210,9 @@ func prepare(ctx context.Context, path string) error {
 	if !c.Enabled {
 		return errors.New("fixture authority disabled")
 	}
+	if os.Getenv("LIFECYCLE_FIXTURE_PREPARE_UNPROTECTED_PLAN") == "1" {
+		return prepareUnprotectedPlan(ctx, path, c)
+	}
 	if os.Getenv("LIFECYCLE_FIXTURE_INSPECT_REGISTERED") == "1" {
 		return inspectRegistered(ctx, path, c)
 	}
@@ -401,6 +404,85 @@ func prepare(ctx context.Context, path string) error {
 		return errors.New("fixture registry transaction failed; preserve provider versions")
 	}
 	return finish(ctx, path, c, pool, objects)
+}
+
+// This separate non-destructive command prepares the two-object execution
+// candidate from the already verified manifest. It performs no storage I/O.
+func prepareUnprotectedPlan(ctx context.Context, path string, c config) error {
+	var m struct {
+		Schema      string    `json:"schema"`
+		Run         uuid.UUID `json:"run_id"`
+		Workspace   uuid.UUID `json:"workspace_id"`
+		Provider    uuid.UUID `json:"provider_instance_id"`
+		Incarnation uuid.UUID `json:"incarnation_id"`
+		Objects     []object  `json:"objects"`
+	}
+	b, err := os.ReadFile(filepath.Join(c.OutputDirectory, "manifest.json"))
+	if err != nil || json.Unmarshal(b, &m) != nil || m.Schema != "lifecycle307-predelete-manifest-v1" || m.Run != c.RunID || m.Workspace != c.WorkspaceID || m.Provider != c.ProviderInstanceID || m.Incarnation != c.IncarnationID || len(m.Objects) != 4 {
+		return errors.New("verified manifest scope required")
+	}
+	output := filepath.Join(c.OutputDirectory, "deletion-candidate.json")
+	if _, err = os.Stat(output); !os.IsNotExist(err) {
+		return errors.New("deletion candidate already prepared")
+	}
+	var ids []uuid.UUID
+	var targets []object
+	for _, o := range m.Objects {
+		if (o.Namespace == namespaces[0] && o.Key == "fixture/a.csv") || (o.Namespace == namespaces[1] && o.Key == "fixture/b.csv") {
+			if o.CopyID == uuid.Nil || o.LegalHold || o.Retention != "NONE" || o.Version == "" || o.Version == "null" {
+				return errors.New("unprotected candidate manifest invalid")
+			}
+			ids = append(ids, o.CopyID)
+			targets = append(targets, o)
+		}
+	}
+	if len(ids) != 2 || ids[0] == ids[1] {
+		return errors.New("exact two-object candidate required")
+	}
+	pool, err := pgxpool.New(ctx, c.PostgresDSN)
+	if err != nil {
+		return errors.New("fixture database unavailable")
+	}
+	defer pool.Close()
+	// Registry identities are immutable; verify manifest equality before the
+	// command can append a plan. The command re-loads/re-authorizes independently.
+	err = transaction.NewManager(pool).Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		copies, e := (&infrastructure.PostgresRepository{}).LoadFixtureCopies(ctx, tx, c.WorkspaceID, ids)
+		if e != nil {
+			return e
+		}
+		for _, copy := range copies {
+			found := false
+			for _, o := range targets {
+				if copy.ID == o.CopyID && copy.DatasetVersionID == o.DatasetVersionID && copy.ProviderInstanceID == c.ProviderInstanceID && copy.IncarnationID == c.IncarnationID && copy.Namespace == o.Namespace && copy.Key == o.Key && copy.ProviderVersion == o.Version && copy.ContentSHA256 == o.SHA256 && copy.ByteSize == o.Bytes {
+					found = true
+				}
+			}
+			if !found {
+				return errors.New("registered candidate differs from verified manifest")
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return errors.New("candidate registry validation failed")
+	}
+	router, err := routing.NewRouter(false)
+	if err != nil {
+		return err
+	}
+	outbox.ConfigureAppendObligation(router)
+	defer outbox.ConfigureAppendObligation(nil)
+	a := authority{path: path, token: c.Token, run: c.RunID}
+	p, err := lc.NewPlanService(transaction.NewManager(pool), &infrastructure.PostgresRepository{}, a).PrepareDeletePlan(ctx, lc.PrepareDeletePlanCommand{WorkspaceID: c.WorkspaceID, CopyIDs: ids, IdempotencyKey: "unprotected-candidate:" + c.RunID.String()})
+	if err != nil {
+		return errors.New("unprotected scope preparation failed")
+	}
+	b, err = json.MarshalIndent(map[string]any{"run_id": c.RunID, "workspace_id": c.WorkspaceID, "plan_id": p.ID, "scope_hash": p.ContentHash, "hash_algorithm": domain.PlanHashAlgorithm, "status": p.Status, "action": p.Action, "approval": "PENDING_USER_CONFIRMATION", "targets": targets, "storage_requests": 0, "delete_requests": 0, "cleanup_requests": 0}, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(output, append(b, '\n'), 0600)
 }
 
 // Registered recovery is read-only at the provider. It cannot create namespaces,

@@ -9,11 +9,11 @@
 
 业务规则仍以 [Lifecycle Contract](../architecture/data-lifecycle.md)、[ADR-0015](../adr/0015-data-lifecycle-disposition-boundary.md) 和 [设计验收 §4–6](../product/data-lifecycle-design-acceptance.md) 为准。本文只记录当前增量与证据，不另建生命周期规则。
 
-当前聊天为 #307 唯一 writer。branch `codex/issue307-lifecycle-d1`，worktree `C:\Users\Henry\.codex\worktrees\issue307-lifecycle-d1\data-product-platform`，起始 base `9502bd1`；第三增量结束时 main 已合入 #308，当前独立分支更新至 `origin/main@3a59b591d25e7d07fc38956a7ae729d74967215b`。主工作区保持原 HEAD，不写 #298/#294 的 worktrees、代码或运行环境。首轮 App inventory transport 不可用；后续已恢复并重新核查 active threads/artifacts、Git worktrees、GitHub PR 与 remote main。#307 为 native Git worktree，App 确认它不属于 managed worktree；不修改 App metadata。
+当前聊天为 #307 唯一 writer。branch `codex/issue307-lifecycle-d1`，worktree `C:\Users\Henry\.codex\worktrees\issue307-lifecycle-d1\data-product-platform`，起始 base `9502bd1`；第三增量结束时更新至 #308/main `3a59b591...`，第五增量后开发分支再 rebase 至 #309/main `21762737a76033667df4a138368070868a34fbf8`。原生 fixture 仍固定在运行时的旧 base/schema，不跟随 rebase 升级。主工作区保持原 HEAD，不写 #298/#294 的 worktrees、代码或运行环境。首轮 App inventory transport 不可用；后续已恢复并重新核查 active threads/artifacts、Git worktrees、GitHub PR 与 remote main。#307 为 native Git worktree，App 确认它不属于 managed worktree；不修改 App metadata。
 
-Main 已含 migrations 000051–000053，D1 使用 **000054**；该 migration 尚未发布，在当前严格 schema 内增加 facts，不添加双读/兼容 fallback。Draft #295 仍携旧 000050，原 owner 后续须在发布前解决其排序；本片不恢复该任务。共享改动限新增事件 routing/vocabulary、migration runner 重复版本拒绝、现有 CostEvent/CostAllocation 的 typed lifecycle attempt allocation；未引入新依赖、队列或存储 engine。
+Main 已含 #309 / **000055**，#299/C1 Draft #310 固定 **000056**，D1 未发布 migration 已从原 **000054** 重排到 **000057**，避免在 main 000055 之后后装低版本。发布/合并前仍需串行核对 #310 的实际顺序与共享 routing；不抢占 C1 或忽略低版本候选未合入的 dependency。原生 fixture 的 000054 历史库及 SQL snapshot 保留，不在其上安装000057，也不添加旧行/双读/兼容 fallback。Draft #295 的旧000050排序由原 owner 解决，不恢复该任务。共享改动限事件 vocabulary、migration runner 重复版本拒绝、CostEvent/CostAllocation typed lifecycle allocation，未引入新依赖、队列或 engine。
 
-第四增量期间核验 #299/C1 线程中用户的“先协调 #307 的迁移与共享写域”授权后，已与其原 writer 协调：000054 保留给 #307，000055 由 #299 预留；共享 routing、single-subject / workspace cost guards 按先进入 main 的候选串行 rebase/集成，保留双方强类型 subject 分支。#307 当前 routing 为 c1-v23，不改 C1 模块/页面或既有 API/worker 注册。
+第四增量期间核验 #299/C1 线程中用户的“先协调 #307 的迁移与共享写域”授权后，与其原 writer 协调；原预留号随后因 #309 实际合入调整为000055=#309、000056=#299/C1、000057=#307。开发 routing 合并为 **c1-v23+external-core1**，保留 #309 全部事件及十五类 Lifecycle 事件；native fixture 的旧 c1-v23 obligation 历史不改写。single-subject / workspace cost guards 和后续 C1 routing 按实际入 main 顺序再集成。#307 不改 C1 模块/页面或既有 API/worker 注册。
 
 ## 首个增量的有限 contract
 
@@ -130,4 +130,8 @@ Run `a6b30840-3e76-49ad-91d3-f0c399fcf170` 只使用 27/26-byte synthetic CSV。
 
 本轮 `go test -race -count=1 ./cmd/lifecycle-fixture-prepare ./internal/platform/storage ./internal/lifecycle/... ./internal/platform/routing ./internal/cost` PASS，含当前 authority 禁用、无删除/reader capability、foreign/destructive shape、隐式重发拒绝、finalized output 恢复拒绝与 native absence-of-protection 正负例。此次该命令未配置 TEST_POSTGRES_DSN，PG unit suites SKIP；实际 fixture Journal/plan/restriction 另由上述 native + PG 实跑证明，之前18项 PG concurrency/constraint tests 记录仍保留。完整 LC / delete / absence finalize / archive/restore / business reader / PR CI / main CI 仍 NOT_RUN。
 
-本次 fixture 固定 main `3a59b591...` + 当时未发布 D1 migration 000054；private SQL snapshot、binary 与 manifest hashes保留。期间 main 合入 #309/000055，#299/C1 预留000056；D1 开发 migration 需重排000057并重新与 main 集成，不能把重排后的 migration 安装到本次已保留的 fixture 历史库，也不能以兼容/重跑为名擦除它。
+本次 fixture 固定 main `3a59b591...` + 当时未发布 D1 migration 000054；private SQL snapshot、binary 与 manifest hashes保留。开发分支已 rebase main21762737并重排000057，保留 #309 与 Lifecycle 两侧 routing；没有把新 migration 安装到本次历史库，也没有擦除 fixture。
+
+删除确认另有**两份无保护对象**的独立非破坏计划：[deletion-candidate.json](../../examples/lifecycle-d1/results/a6b30840-3e76-49ad-91d3-f0c399fcf170/deletion-candidate.json)。通过现有 PrepareDeletePlan 创建，仅 SQL command，无 storage I/O。它不是四份全量盘点计划的审批；两份保护对象仅作门禁阻断验收。确认绑定此 exact scope hash，cleanup/解除保护/bypass 不在授权范围。
+
+候选计划 `83d0ad2c-0df0-4245-8fbf-6d7190bb77cc`，hash `7c2847699997663ca453db54e0fab1565ad67fc9434c0c2c507c6adaa056a09f`。[读回](../../examples/lifecycle-d1/results/a6b30840-3e76-49ad-91d3-f0c399fcf170/deletion-plan-readback.json) 为2 plans/hash全部一致、19 calls/cost、42 Event/Audit/Evidence、approval/dispatch/delete attempt=0。开发重排后的 main000055 + D1000057 在另一台已有专属 tmpfs PostgreSQL (`dpp-lifecycle307-pg-20261011`，loopback59045、无 storage/volume mounts) 上干净 up PASS，之后停止该 scratch container；未对保留 fixture 安装 migration 或执行 down。最终模块 `go test ./...` 和 `go vet ./...` PASS；外部 PG/MinIO integration 未在该模块命令开启，完整 runtime/CI NOT_RUN。

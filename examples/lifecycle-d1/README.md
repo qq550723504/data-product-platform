@@ -18,12 +18,14 @@
 
 失败时保留全部对象和历史。`LIFECYCLE_FIXTURE_RESUME_EMPTY=1` 仅能在 registry/database 与 native namespace **均为空**、输出只有 bootstrap receipts 的情况下显式恢复；不是自动重试。`LIFECYCLE_FIXTURE_INSPECT_REGISTERED=1` 只读取已有四个 registry exact versions，不能创建 namespace/policy/identity/version；它仍需当前 enabled authority，已 finalized manifest 拒绝 replay。不要复制、覆盖或移除已登记历史来“重跑成功”。
 
+`LIFECYCLE_FIXTURE_PREPARE_UNPROTECTED_PLAN=1` 是另一个非破坏 command：读取已验证 manifest，先与 immutable registry 比对，只为 online/A + quarantine/B 创建两对象冻结候选。它不访问 storage、不授予 approval/dispatch、不能解除保护，输出 deletion-candidate.json；已有候选拒绝 replay。仍需临时启用当前可信 fixture authority，完成后立即禁用。此次通过独立 `-scope` helper 执行，退出成功、无 named volumes、新 network member 或 provider requests。
+
 准备程序 seeded READY 只表示已验证的合成 content identity。两个 namespace 的同 hash 对象都是输入 fixture，不能作为 archive/restore 成功事实；没有 Rights、Quality、Certification、正常业务 reader、真实交付或完整 D1 验收。
 
 ## 本次保留环境
 
 Run `a6b30840-3e76-49ad-91d3-f0c399fcf170` 保留三台运行中的服务、已退出成功的 prepare helper，以及 PostgreSQL/object 两个 named volumes。初次脚本尝试中的空 credentials 目录也未清理；没有清理任何对象、bucket 或 volume。
 
-本次运行冻结在 main `3a59b591d25e7d07fc38956a7ae729d74967215b` + 本地 D1 schema 000054；完整 SQL snapshot 私下保留。期间 #309 把 000055 合入 main，开发候选随后须重排迁移；**不得把新编号 migration 再安装到已保留的这套历史库，或因此重建/擦除本 fixture**。清单保存执行时 source/binary hashes，后续入口修正不覆盖原生版本/运行证据。
+本次 native 运行冻结在 main `3a59b591d25e7d07fc38956a7ae729d74967215b` + 本地 D1 schema 000054；完整 SQL snapshot 私下保留。期间 #309 把000055合入 main，开发候选已 rebase `21762737...` 并重排000057，#299/C1保留000056；**不得把新编号 migration 再安装到已保留的这套历史库，或因此重建/擦除本 fixture**。清单保存 native 执行时 source/binary hashes；后续 CLI trace 同步及 SQL-only 候选入口修正不覆盖原生版本/运行证据。
 
 测试：`go test -race -count=1 ./cmd/lifecycle-fixture-prepare ./internal/platform/storage ./internal/lifecycle/... ./internal/platform/routing ./internal/cost`；native provider +真实 PostgreSQL 成功记录在 run artifacts。没有调用 DELETE，包括预期返回拒绝的负例。
