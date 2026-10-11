@@ -1,6 +1,6 @@
 # #307 D1 开发与验收记录
 
-> 2026-10-11；D1 OPEN。已完成三个本地增量：plan foundation、restriction/hold/reader occupancy、DB-only approval/dispatch/physical observations；完整 D1 runtime **NOT_RUN**。
+> 2026-10-11；D1 OPEN。已完成四个本地增量：plan foundation、restriction/hold/reader occupancy、DB-only approval/dispatch/physical observations、非删除 storage inspection / 逐 HTTP 调用 Journal；完整 D1 runtime **NOT_RUN**。
 > 用户已授权创建 Issue 并开发，仅受控合成对象；实际 provider 删除（含测试/cleanup）仍须先确认环境和 exact object/version 清单。
 
 ## 权威与写入归属
@@ -12,6 +12,8 @@
 当前聊天为 #307 唯一 writer。branch `codex/issue307-lifecycle-d1`，worktree `C:\Users\Henry\.codex\worktrees\issue307-lifecycle-d1\data-product-platform`，起始 base `9502bd1`；第三增量结束时 main 已合入 #308，当前独立分支更新至 `origin/main@3a59b591d25e7d07fc38956a7ae729d74967215b`。主工作区保持原 HEAD，不写 #298/#294 的 worktrees、代码或运行环境。首轮 App inventory transport 不可用；后续已恢复并重新核查 active threads/artifacts、Git worktrees、GitHub PR 与 remote main。#307 为 native Git worktree，App 确认它不属于 managed worktree；不修改 App metadata。
 
 Main 已含 migrations 000051–000053，D1 使用 **000054**；该 migration 尚未发布，在当前严格 schema 内增加 facts，不添加双读/兼容 fallback。Draft #295 仍携旧 000050，原 owner 后续须在发布前解决其排序；本片不恢复该任务。共享改动限新增事件 routing/vocabulary、migration runner 重复版本拒绝、现有 CostEvent/CostAllocation 的 typed lifecycle attempt allocation；未引入新依赖、队列或存储 engine。
+
+第四增量期间核验 #299/C1 线程中用户的“先协调 #307 的迁移与共享写域”授权后，已与其原 writer 协调：000054 保留给 #307，000055 由 #299 预留；共享 routing、single-subject / workspace cost guards 按先进入 main 的候选串行 rebase/集成，保留双方强类型 subject 分支。#307 当前 routing 为 c1-v23，不改 C1 模块/页面或既有 API/worker 注册。
 
 ## 首个增量的有限 contract
 
@@ -57,9 +59,27 @@ Reuse Check：复用现有 transaction/deliveryfence、command_idempotency、Aud
 
 Merge blockers 仍包括当前增量的越权/跨 tenant、scope/expiry bypass、丢失成本、未知重发、frozen input 竞态、晚到 hold 无冲突证据、事务部分提交与必需测试失败。Provider absence/finalize、lookup/reconciliation 的独立 physical attempts、fixture HTTP/worker 与完整 D1 仍属 #307 待开发项。
 
+## 第四个增量的有限 contract
+
+业务结果：增加 SDK 无关的 `StorageInspector` / `StorageCallJournal` Ports，并复用 MinIO v7.0.83 实现 exact-version HEAD、retention/hold 与受控 namespace 的完整单页版本盘点。每个实际 HTTP 请求由真实 PostgreSQL Journal 在 I/O 前提交 immutable start，返回/丢响应后追加 observation；CONFIRMED invocation 复用既有 CostEvent/typed CostAllocation，失败和 UNKNOWN 也不吞成本。当前没有 native storage 配置、API/worker/data-plane wiring。
+
+- Server-owned config 固定 workspace、provider instance/incarnation、endpoint 和恰好两个 namespace。每次调用同时匹配 registry 的完整 copy identity；URI/endpoint/namespace 不从 client command 接收。Copy 必须为 non-null exact version；HEAD response 必须 echo 同一 version、非 delete marker 且长度一致。返回的 SHA256 仍是 registry 历史 identity，HEAD **不验证实际 bytes/hash**。
+- Inspector 只允许三个 metadata GET 形状及 exact HEAD；普通 object GET、PUT/POST/DELETE、额外 query、错 endpoint、bare-key 均在 transport 前拒绝。原 Put/Get Store 的权限未扩大；本增量没有 DeleteExactCopy、Archive/Restore、absence finalize 或直接提供 payload 的方法。
+- 固定 Region/path-style，SDK `MaxRetries=1` 明确禁用默认重试；关闭 net/http keep-alive 重用重试及 HTTP/2，禁止隐式 proxy 和 redirect。一个 operation context 只准一个实际 HTTP 请求；retention + hold 的两个请求有各自 physical ID，不合并成本。
+- 每个 namespace 只支持完整、成功、最多 2 MiB 的单页 native version inventory。403/404、错 Name/Prefix、缺失/重复 envelope、unknown root member、missing/null version、delete marker 混淆、截断页或后续分页均不能冒充完整扫描。保留每个版本/delete marker 和 observed time/response SHA；它不是“已销毁”结论，不覆盖内部介质、备份、replication 或未登记系统。
+- 不支持/错配/损坏 provider result 使用 typed error；不把异常字符串、credential、headers 或 payload 写入 Journal。Metadata 响应有大小/deadline 上限。取消后使用独立短 proof context 保存已经发生的调用；Journal start/observation 失败均返回 UNKNOWN，start 保留，不自动重发。
+- Journal Start 在既有 fence 与 Dataset → Version → Copy 锁序下复核当前 inspection authority 与完整 registry identity，然后提交；外部 I/O 不持这些锁。同 physical ID 的 Start 不能二次 admission。Observation 来源只限 server-owned instrumented Adapter，未提供 client receipt API；原 caller 随后撤权不删除已经发生的 cost，但新 Start 会拒绝。
+- `lifecycle_storage_call` / `lifecycle_storage_observation` append-only、强类型 workspace/copy/call scope；observed/invoked 时间不得早于 start，同 physical call 的后续观察不得藏入第二次 invocation。confirmed observation、quantity=1 / amount=NULL CostEvent、`lifecycle_storage_call_id` allocation、Event/Audit/Evidence/retention-only Outbox 同事务；uncertain start 没有确定 quantity。同 receipt replay 去重，独立新 call 独立计账。routing 使用 c1-v23。
+
+Reuse Check：现有 MinIO client、transaction/deliveryfence、registry、LifecycleAuthority、Evidence/Audit/Outbox 与 CostEvent 足以承接；新增的只是 exact-copy scope 和逐物理调用事实，没有第二账本、generic storage runtime、SDK、scheduler 或 IAM。真实 current authority/provider credential scope、固定 incarnation/container 验证、business gate freshness、native API contract 和真正业务 reader 仍需 fixture 入口验证，本增量未把 metadata inspection 作为 CurrentDisposalDependencies ALLOWED。
+
+非删除 artifact preflight：官方 [repo metadata](https://api.github.com/repos/minio/minio) / [latest release](https://api.github.com/repos/minio/minio/releases/latest) 再核对仍 archived=true / tag `RELEASE.2025-10-15T17-29-55Z`。历史 #298 report 的 image `086b0874…` 本机已不存在；当前本机 image `sha256:d11a0cb81cffefa89aa17635273bcd3d224c30185d956486182ab2aa28b6aee0` 内的 `/usr/local/bin/minio` SHA256 为 `fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8`，与原 report 一致。独立 `--network none` / `--version` 显示 commit `9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a`、Go 1.26.5、AGPLv3，但运行时 version label 为 **DEVELOPMENT.GOGET**；不把 tag 名称当 runtime label 或继承旧 image admission。只做 binary/version 读取，未启动 storage server、未挂 data、未接触 #298 retained 环境。后续独立 fixture 必须固定实际 image/binary/source、专属 network/volumes 与唯一 gateway，并保留 unsigned-trailer mitigation；production admission 不在本片。
+
+Merge blockers：未提交 start 就发送请求、SDK/transport 隐式重发、错 exact scope/损坏 inventory 被接纳、跨 workspace 或错 copy 计账、撤权使已发调用消失、mutable call history、同调用吞掉重试成本、proof/cost 部分提交和必需测试失败。本轮 Ports/Journal 的有限完成不关闭 D1，也不替代 provider-native/封闭 fixture/worker/LC 验收。
+
 ## 已执行检查
 
-仅使用独立 PostgreSQL：container `dpp-lifecycle307-pg-20261011`，image ID `sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea`，data 使用 tmpfs、无 volume mounts。各轮 loopback 分别为 `127.0.0.1:54802`、`:58798`、第三轮 `:64285`。Lifecycle integration tests 各自创建/移除唯一 scratch DB；migration suite 的旧 T3/B2 case 使用本容器已初始化的基础库。测试完成后停止本容器；不挂对象存储，不读/清既有 retained volumes。
+仅使用独立 PostgreSQL：container `dpp-lifecycle307-pg-20261011`，image ID `sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea`，data 使用 tmpfs、无 volume mounts。各轮 loopback 分别为 `127.0.0.1:54802`、`:58798`、第三轮 `:64285`、第四轮 `:63760`。Lifecycle integration tests 各自创建/移除唯一 scratch DB；migration suite 的旧 T3/B2 case 使用本容器已初始化的基础库。测试完成后停止本容器；不挂对象存储，不读/清既有 retained volumes。
 
 | 检查 | 状态 / 证明范围 |
 |---|---|
@@ -77,7 +97,11 @@ Merge blockers 仍包括当前增量的越权/跨 tenant、scope/expiry bypass�
 | PG dispatch/hold 与 gate freeze 双顺序：真实 fence/parent lock wait、late input/forged hash 拒绝、完整 hash 保留、late hold conflict 原子证明 | PASS；DB admission，完整 native LC-06/07/11 NOT_RUN |
 | PG observation/cost：start 与 invocation 分开、unknown 保留、failed/timeout 按 physical ID 计账、resolution 去重、routing failure 整体 rollback | PASS；合成观察事实，没有真实 provider invocation/费用 |
 | PG elapsed window：reader/query 与 dispatch/query 期间到期，0 reader pin / physical attempt | PASS |
+| SDK inspection contract：exact version/长度/delete marker、foreign scope、403/404/503/redirect、丢响应、无 journal/no-op admission、metadata request allowlist、retention/hold 与完整单页 inventory 负例 | PASS；httptest 合成 HTTP，MinIO v7.0.83；没有 native provider/data read/delete |
+| PG HTTP-call Journal：start 提交、同 physical ID 不二次 admission、fresh authority、scope identity、unknown 与 confirmed 分开、failed / revoked-caller 成本、same receipt/resolution 去重、新 call 独立成本、immutable scope/time/quantity guards | PASS；真实 PG，合成 transport observations |
+| PG Journal proof rollback：start routing failure 0 start；observation routing failure 0 observation/cost、保留原 uncertain start | PASS |
 | `go test -race -count=1 ./internal/lifecycle/... ./internal/platform/routing ./internal/cost`（独立 PG） | PASS；16 个 lifecycle PG top-level tests，含双顺序 subcases |
+| 第四增量 `go test -race -count=1 ./internal/lifecycle/... ./internal/platform/storage ./internal/platform/routing ./internal/cost`（独立 PG） | PASS；新增两个 Journal PG tests，共 18 个 lifecycle PG top-level tests；首次新测试误查不存在的 domain_event 表，改为既有 outbox_event 后完整范围重跑通过 |
 | migration version collision / normal pair | PASS；up/down duplicate 明确拒绝 |
 | `go test -count=1 ./internal/platform/migration`（独立已初始化 PG） | PASS；首次在 restart 后空基础库运行的旧 T3/B2 schema precheck 失败，初始化本测试库后补跑通过 |
 | `go test ./...` / `go vet ./...` / formatting 与 diff 检查 | PASS；module tests 未配置 live provider/PG，该轮外部 integration SKIP；上述 PG tests 另有独立实跑证据 |
@@ -88,7 +112,7 @@ Merge blockers 仍包括当前增量的越权/跨 tenant、scope/expiry bypass�
 
 ## 后续开发和删除确认
 
-下一步仍在 #307 内：接入真实 fixture authority/current gate/reader owner，retention policy/inventory/material reference facts；MinIO native Adapter 与 existing worker reconciliation（每个真实 lookup/verify 也独立 attempt/cost）；scoped absence receipt/finalize；受控 archive/restore ledger；封闭 fixture HTTP/worker 路径与完整 D1 LC 验收。Native SDK 的隐式重试须受控，不能把多次实际请求吞入单次成本 identity。既有 production processing/delivery 的全面纳管按 D2 与原 owner 协调。
+下一步仍在 #307 内：封闭 fixture 入口与独立 native storage 环境、实际登记 copy/version 清单；接入真实 fixture authority/current gate/reader owner 与 retention policy/inventory/material reference facts；补 MinIO native delete/archive/restore Adapter 与 existing worker reconciliation（每个真实 lookup/verify 也独立 attempt/cost）；scoped absence receipt/finalize、restore ledger、封闭 fixture HTTP/worker 与完整 D1 LC 验收。非删除 metadata Inspector / Journal 已有局部 contract，但 native I/O 仍 NOT_RUN；不能据此放行 deletion 或 business read。既有 production processing/delivery 的全面纳管按 D2 与原 owner 协调。
 
 实际 provider destructive test 前先建立独立 D1 storage 环境，生成**已实际登记**的 manifest：project/container/network、provider build/image/SDK、workspace、两个 namespace、每个 key + version/generation/hash/bytes、计划 scope hash、retention/hold、允许动作、cleanup 与 excluded scope。提交用户并收到明确确认后才调用 deletion；当前尚无 live object/version 清单，批准状态 **PENDING**，不得提前用 bare-key 列表或 SQL fixture ID 冒充它。
 

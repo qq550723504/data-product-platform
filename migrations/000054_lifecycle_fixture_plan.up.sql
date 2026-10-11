@@ -476,16 +476,70 @@ DO $$ DECLARE name text; BEGIN
  END LOOP;
 END $$;
 
+-- One physical non-destructive HTTP call, distinct from delete dispatch. The
+-- complete exact target is resolved through immutable registered copy facts.
+CREATE TABLE lifecycle_storage_call (
+ id uuid PRIMARY KEY CHECK(id <> '00000000-0000-0000-0000-000000000000'),
+ workspace_id uuid NOT NULL,
+ copy_id uuid NOT NULL,
+ operation varchar(40) NOT NULL CHECK(operation IN ('STAT_EXACT','INSPECT_RETENTION','INSPECT_LEGAL_HOLD','LIST_NAMESPACE_VERSIONS')),
+ started_at timestamptz NOT NULL,
+ actor_id uuid NOT NULL CHECK(actor_id <> '00000000-0000-0000-0000-000000000000'),
+ principal_ref varchar(255) NOT NULL CHECK(principal_ref <> ''),
+ dependency_revision bigint NOT NULL CHECK(dependency_revision >= 0),
+ FOREIGN KEY(workspace_id,copy_id) REFERENCES lifecycle_fixture_copy(workspace_id,id),
+ UNIQUE(workspace_id,id)
+);
+CREATE TABLE lifecycle_storage_observation (
+ id uuid PRIMARY KEY,
+ workspace_id uuid NOT NULL,
+ call_id uuid NOT NULL,
+ observed_at timestamptz NOT NULL,
+ invoked_at timestamptz,
+ http_status integer NOT NULL CHECK(http_status=0 OR http_status BETWEEN 100 AND 599),
+ request_ref varchar(256) NOT NULL,
+ response_sha256 varchar(64) NOT NULL CHECK(response_sha256='' OR response_sha256 ~ '^[0-9a-f]{64}$'),
+ failure varchar(16) NOT NULL CHECK(failure IN ('','TRANSPORT','CONTRACT','JOURNAL')),
+ proof_sha256 varchar(64) NOT NULL CHECK(proof_sha256 ~ '^[0-9a-f]{64}$'),
+ FOREIGN KEY(workspace_id,call_id) REFERENCES lifecycle_storage_call(workspace_id,id),
+ UNIQUE(call_id,proof_sha256),
+ CHECK(invoked_at IS NULL OR invoked_at <= observed_at),
+ CHECK(http_status=0 OR invoked_at IS NOT NULL)
+);
+CREATE FUNCTION lifecycle_storage_observation_guard() RETURNS trigger AS $$
+DECLARE started timestamptz;
+BEGIN
+ SELECT started_at INTO started FROM lifecycle_storage_call WHERE id=NEW.call_id AND workspace_id=NEW.workspace_id FOR UPDATE;
+ IF started IS NULL OR NEW.observed_at < started OR NEW.invoked_at < started THEN
+  RAISE EXCEPTION 'storage observation precedes exact call start';
+ END IF;
+ IF NEW.invoked_at IS NOT NULL AND EXISTS(SELECT 1 FROM lifecycle_storage_observation
+  WHERE call_id=NEW.call_id AND invoked_at IS NOT NULL AND invoked_at <> NEW.invoked_at) THEN
+  RAISE EXCEPTION 'one storage call cannot hide multiple physical invocations';
+ END IF;
+ RETURN NEW;
+END; $$ LANGUAGE plpgsql;
+CREATE TRIGGER lifecycle_storage_observation_scope BEFORE INSERT ON lifecycle_storage_observation
+ FOR EACH ROW EXECUTE FUNCTION lifecycle_storage_observation_guard();
+DO $$ DECLARE name text; BEGIN
+ FOREACH name IN ARRAY ARRAY['lifecycle_storage_call','lifecycle_storage_observation'] LOOP
+  EXECUTE format('CREATE TRIGGER %I BEFORE UPDATE OR DELETE ON %I FOR EACH ROW EXECUTE FUNCTION lifecycle_fixture_identity_immutable()',name||'_immutable',name);
+  EXECUTE format('CREATE TRIGGER %I BEFORE TRUNCATE ON %I FOR EACH STATEMENT EXECUTE FUNCTION lifecycle_fixture_identity_immutable()',name||'_no_truncate',name);
+ END LOOP;
+END $$;
+
 ALTER TABLE cost_allocation ADD COLUMN lifecycle_provider_attempt_id uuid REFERENCES lifecycle_provider_attempt(id);
+ALTER TABLE cost_allocation ADD COLUMN lifecycle_storage_call_id uuid REFERENCES lifecycle_storage_call(id);
 ALTER TABLE cost_allocation DROP CONSTRAINT ck_cost_allocation_single_subject;
 ALTER TABLE cost_allocation ADD CONSTRAINT ck_cost_allocation_single_subject CHECK (
  num_nonnulls(delivery_operation_id,quality_assessment_id,quality_assessment_attempt_id,
  rights_declaration_id,rights_declaration_verification_id,rights_declaration_disposition_id,
  authorization_provenance_binding_id,authorization_provenance_binding_disposition_id,
  effective_rights_snapshot_id,dataset_certification_id,certification_disposition_id,
- annotation_review_attempt_id,annotation_engine_attempt_id,ingestion_invocation_id,lifecycle_provider_attempt_id)=1
+ annotation_review_attempt_id,annotation_engine_attempt_id,ingestion_invocation_id,lifecycle_provider_attempt_id,lifecycle_storage_call_id)=1
 );
 CREATE INDEX idx_cost_allocation_lifecycle ON cost_allocation(lifecycle_provider_attempt_id) WHERE lifecycle_provider_attempt_id IS NOT NULL;
+CREATE INDEX idx_cost_allocation_lifecycle_storage ON cost_allocation(lifecycle_storage_call_id) WHERE lifecycle_storage_call_id IS NOT NULL;
 CREATE FUNCTION lifecycle_cost_attempt_guard() RETURNS trigger AS $$
 BEGIN
  IF NEW.lifecycle_provider_attempt_id IS NOT NULL AND NOT EXISTS(
@@ -495,6 +549,14 @@ BEGIN
    AND e.cost_type='LIFECYCLE_PROVIDER_INVOCATION' AND e.quantity=1 AND e.unit='invocation'
    AND e.amount IS NULL AND e.pricing_mode='ACTUAL' AND e.occurred_at=o.invoked_at) THEN
   RAISE EXCEPTION 'lifecycle cost requires one confirmed physical invocation';
+ END IF;
+ IF NEW.lifecycle_storage_call_id IS NOT NULL AND NOT EXISTS(
+  SELECT 1 FROM cost_event e JOIN lifecycle_storage_call a ON a.id=NEW.lifecycle_storage_call_id
+  JOIN lifecycle_storage_observation o ON o.call_id=a.id AND o.invoked_at IS NOT NULL
+  WHERE e.id=NEW.cost_event_id AND e.workspace_id=a.workspace_id AND e.activity_id=a.id
+   AND e.cost_type='LIFECYCLE_PROVIDER_INVOCATION' AND e.quantity=1 AND e.unit='invocation'
+   AND e.amount IS NULL AND e.pricing_mode='ACTUAL' AND e.occurred_at=o.invoked_at) THEN
+  RAISE EXCEPTION 'lifecycle inspection cost requires a confirmed physical invocation';
  END IF;
  RETURN NEW;
 END; $$ LANGUAGE plpgsql;
@@ -531,6 +593,8 @@ BEGIN
   SELECT workspace_id INTO subject_workspace FROM annotation_engine_attempt WHERE id=NEW.annotation_engine_attempt_id;
  ELSIF NEW.ingestion_invocation_id IS NOT NULL THEN
   SELECT workspace_id INTO subject_workspace FROM ingestion_invocation WHERE id=NEW.ingestion_invocation_id;
+ ELSIF NEW.lifecycle_storage_call_id IS NOT NULL THEN
+  SELECT workspace_id INTO subject_workspace FROM lifecycle_storage_call WHERE id=NEW.lifecycle_storage_call_id;
  ELSE
   SELECT workspace_id INTO subject_workspace FROM lifecycle_provider_attempt WHERE id=NEW.lifecycle_provider_attempt_id;
  END IF;

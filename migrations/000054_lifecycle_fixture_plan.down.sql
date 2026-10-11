@@ -5,7 +5,8 @@ LOCK TABLE lifecycle_fixture_namespace, lifecycle_fixture_copy, lifecycle_dispos
            lifecycle_disposition_approval, lifecycle_approval_revocation, lifecycle_disposition_gate_evaluation,
            lifecycle_disposition_dependency_evaluation, lifecycle_disposition_retention_evaluation,
            lifecycle_disposition_dispatch, lifecycle_provider_attempt, lifecycle_provider_observation,
-           lifecycle_dispatch_release, lifecycle_hold_dispatch_conflict, cost_allocation IN ACCESS EXCLUSIVE MODE;
+           lifecycle_dispatch_release, lifecycle_hold_dispatch_conflict, lifecycle_storage_call,
+           lifecycle_storage_observation, cost_allocation IN ACCESS EXCLUSIVE MODE;
 DO $$ BEGIN
     IF EXISTS (SELECT 1 FROM lifecycle_fixture_namespace) OR
        EXISTS (SELECT 1 FROM lifecycle_fixture_copy) OR EXISTS (SELECT 1 FROM lifecycle_disposition_plan) THEN
@@ -16,6 +17,7 @@ DROP TRIGGER lifecycle_cost_attempt ON cost_allocation;
 DROP FUNCTION lifecycle_cost_attempt_guard();
 ALTER TABLE cost_allocation DROP CONSTRAINT ck_cost_allocation_single_subject;
 ALTER TABLE cost_allocation DROP COLUMN lifecycle_provider_attempt_id;
+ALTER TABLE cost_allocation DROP COLUMN lifecycle_storage_call_id;
 ALTER TABLE cost_allocation ADD CONSTRAINT ck_cost_allocation_single_subject CHECK (
  num_nonnulls(delivery_operation_id,quality_assessment_id,quality_assessment_attempt_id,
  rights_declaration_id,rights_declaration_verification_id,rights_declaration_disposition_id,
@@ -59,6 +61,9 @@ BEGIN
  IF event_workspace IS DISTINCT FROM subject_workspace THEN RAISE EXCEPTION 'cost allocation crosses workspace boundary'; END IF;
  RETURN NEW;
 END; $$ LANGUAGE plpgsql;
+DROP TABLE lifecycle_storage_observation;
+DROP TABLE lifecycle_storage_call;
+DROP FUNCTION lifecycle_storage_observation_guard();
 DROP TABLE lifecycle_hold_dispatch_conflict;
 DROP TABLE lifecycle_dispatch_release;
 DROP TABLE lifecycle_provider_observation;

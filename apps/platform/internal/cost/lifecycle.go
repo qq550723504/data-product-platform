@@ -16,6 +16,16 @@ const LifecycleProviderInvocation = "LIFECYCLE_PROVIDER_INVOCATION"
 // or timed-out invocation. Start-only uncertainty has no definite quantity.
 // The existing CostEvent / CostAllocation stores remain the system of record.
 func AppendLifecycleProviderActivity(ctx context.Context, tx pgx.Tx, workspace, attemptID uuid.UUID, invokedAt time.Time) error {
+	return appendLifecycleInvocation(ctx, tx, workspace, attemptID, invokedAt, "lifecycle_provider_attempt_id")
+}
+
+// AppendLifecycleStorageActivity reuses the same ledger and per-physical-call
+// cost type, with an inspection-call subject rather than a delete reservation.
+func AppendLifecycleStorageActivity(ctx context.Context, tx pgx.Tx, workspace, callID uuid.UUID, invokedAt time.Time) error {
+	return appendLifecycleInvocation(ctx, tx, workspace, callID, invokedAt, "lifecycle_storage_call_id")
+}
+
+func appendLifecycleInvocation(ctx context.Context, tx pgx.Tx, workspace, attemptID uuid.UUID, invokedAt time.Time, subjectColumn string) error {
 	if workspace == uuid.Nil || attemptID == uuid.Nil || invokedAt.IsZero() {
 		return errors.New("lifecycle cost requires exact workspace/attempt/invocation time")
 	}
@@ -32,12 +42,12 @@ func AppendLifecycleProviderActivity(ctx context.Context, tx pgx.Tx, workspace, 
 	if err != nil {
 		return fmt.Errorf("append lifecycle provider cost: %w", err)
 	}
-	if _, err := tx.Exec(ctx, `INSERT INTO cost_allocation(id,cost_event_id,lifecycle_provider_attempt_id) VALUES($1,$2,$3)
+	if _, err := tx.Exec(ctx, `INSERT INTO cost_allocation(id,cost_event_id,`+subjectColumn+`) VALUES($1,$2,$3)
 		ON CONFLICT(cost_event_id) DO NOTHING`, uuid.New(), id, attemptID); err != nil {
 		return err
 	}
 	var allocated *uuid.UUID
-	if err := tx.QueryRow(ctx, `SELECT lifecycle_provider_attempt_id FROM cost_allocation WHERE cost_event_id=$1`, id).Scan(&allocated); err != nil {
+	if err := tx.QueryRow(ctx, `SELECT `+subjectColumn+` FROM cost_allocation WHERE cost_event_id=$1`, id).Scan(&allocated); err != nil {
 		return err
 	}
 	if allocated == nil || *allocated != attemptID {

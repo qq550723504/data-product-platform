@@ -90,6 +90,8 @@ var eventVocabulary = []string{
 	"LifecycleDispositionDispatched",
 	"LifecycleDispositionBlocked",
 	"LifecycleProviderAttemptObserved",
+	"LifecycleStorageCallStarted",
+	"LifecycleStorageCallObserved",
 	"LifecycleDispositionReservationReleased",
 	"DatasetCreated",
 	"DatasetVersionCreated",
