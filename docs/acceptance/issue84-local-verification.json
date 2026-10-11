@@ -1,0 +1,95 @@
+{
+  "issue": 84,
+  "base_sha": "3a59b591d25e7d07fc38956a7ae729d74967215b",
+  "verified_at": "2026-10-11",
+  "timezone": "Asia/Singapore",
+  "go": "go1.26.5 windows/amd64",
+  "postgres": "16.15",
+  "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "database": "issue84_final",
+  "checks": [
+    {
+      "command": "go test ./... -count=1",
+      "status": "PASS",
+      "log": "apps/platform/tmp/issue84/go-test.log",
+      "sha256": "5e6ead0b789a10ea44bb5c7ac8d461f2c8756dbd13f1f3e9decf1bac42879b95"
+    },
+    {
+      "command": "go test -race ./internal/externalintegration/... -count=1",
+      "status": "PASS",
+      "log": "apps/platform/tmp/issue84/race.log",
+      "sha256": "26158f18564e1f30ee97fcc40a4a484b35ecd39aec0ca5a911b9220f62c91863"
+    },
+    {
+      "command": "go vet ./...",
+      "status": "PASS",
+      "log": "apps/platform/tmp/issue84/vet.log"
+    },
+    {
+      "command": "go build ./cmd/api ./cmd/worker ./cmd/migrate ./cmd/outbox-replay",
+      "status": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS"
+    }
+  ],
+  "not_run": [
+    "candidate CI",
+    "independent review",
+    "merge/main CI for this change",
+    "real external provider execution",
+    "production deployment",
+    "browser/business acceptance"
+  ],
+  "implementation_sha256": [
+    {
+      "path": "apps/platform/cmd/api/main.go",
+      "sha256": "57037b43bddbf822e8762bd5efd1eebbf1554669231b84f1133f5eb31ca561f8"
+    },
+    {
+      "path": "apps/platform/internal/platform/routing/routing.go",
+      "sha256": "baf5558823b4ffbaae455ab30ebad8dfda3a9dd2753019dc7f7b1e39b01ca723"
+    },
+    {
+      "path": "apps/platform/internal/platform/routing/routing_test.go",
+      "sha256": "ead2ecbdc68bb931e3af4d61383526c44d9cb0cbdccdc74f809490cc5a3ba31f"
+    },
+    {
+      "path": "migrations/000055_external_integration_core.up.sql",
+      "sha256": "1a49885460315b58f8daa98af49ee95a507ec0d6ba505b62cc0c00db34f0a51c"
+    },
+    {
+      "path": "migrations/000055_external_integration_core.down.sql",
+      "sha256": "1b43209354ecc02bc596bb22ad93d000adadd9d631d29dbf637fd4863ececa54"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/transport/http/handler.go",
+      "sha256": "b32cb9601d7ac22510d48b3e9069a20a0510ec0c01e88aee536a91b4bb252efb"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/pilot/build.go",
+      "sha256": "aa735ab49b1707e3568961e5d81e9dde35dc57204330ea5f5dbe754def3e5d08"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/integration/core_test.go",
+      "sha256": "33aa9a74e15bee9d0a542dd873b105abcc9e89a19df62520e7bee5d8fef82ba1"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/infrastructure/repository.go",
+      "sha256": "20b89c0ba69f7e5818d30cdb9478326fea0c9c8d1333dd945bdfc68f88797a6f"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/application/service.go",
+      "sha256": "7c76ad5f4e90fe15e1d4d302ebf4115cd74d780b4f0f6d882d275cb33892b837"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/domain/model_test.go",
+      "sha256": "7c10cd0801cf640ae9c5816c0a9b6ef7381c75a5649782f3d7316be7893a1ddd"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/domain/model.go",
+      "sha256": "fe3618a11f01918cd960b6a410818a73b220d86e969d76b631aa3a1708969158"
+    }
+  ]
+}

@@ -159,6 +159,8 @@ Connector Usage Evidence
 
 在 ProductRelease 稳定之后，实现提供方中立的模型：
 
+#84 的当前实施边界、可达状态、主体归属、幂等/并发与 HTTP contract 见 [External Integration Core](external-integration-core.md)。本增量只记录 Core 关联与发布意图；外部注册/发布结果及执行恢复由 #86 接入，使用事件由 #87 接入。
+
 - `external_identity_binding`
 - `external_identifier`
 - `external_publication`

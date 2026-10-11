@@ -34,6 +34,7 @@ import (
 	entitysplink "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/splink"
 	entityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/evidence"
+	externalpilot "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/pilot"
 	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	goldhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/transport/http"
@@ -338,6 +339,11 @@ func main() {
 		cost.NewQueryRepository(db),
 		traceability.NewRepository(db),
 	)
+	externalHandler, err := externalpilot.Build(db)
+	if err != nil {
+		logger.Error("configure external integration principal boundary", "error", err)
+		os.Exit(1)
+	}
 
 	server := &http.Server{
 		Addr: cfg.HTTPAddr,
@@ -361,6 +367,7 @@ func main() {
 			metadataHandler.Register,
 			registerIngestion,
 			traceabilityHandler.Register,
+			externalHandler.Register,
 		),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
