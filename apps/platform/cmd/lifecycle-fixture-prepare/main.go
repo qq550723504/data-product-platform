@@ -40,6 +40,7 @@ var namespaces = []string{"dpp-lifecycle307-online", "dpp-lifecycle307-quarantin
 type config struct {
 	RunID, WorkspaceID, ProviderInstanceID, IncarnationID, ActorID                     uuid.UUID
 	Enabled                                                                            bool
+	ArchiveAcceptance                                                                  bool
 	Endpoint, PostgresDSN, RootAccess, RootSecret, InspectAccess, InspectSecret, Token string
 	OutputDirectory                                                                    string
 	Environment                                                                        json.RawMessage
@@ -608,6 +609,9 @@ func finish(ctx context.Context, path string, c config, pool *pgxpool.Pool, obje
 	manager := transaction.NewManager(pool)
 	occupancy := lc.NewOccupancyService(manager, repo, a, nil, nil)
 	for _, v := range versions {
+		if c.ArchiveAcceptance && v == objects[0].DatasetVersionID {
+			continue // Only this new run's A is eligible for finite synthetic use.
+		}
 		if _, err = occupancy.RestrictContentUse(ctx, lc.RestrictContentUseCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: "fixture-restrict:" + v.String()}, DatasetVersionID: v, BasisRef: "closed-synthetic-fixture-no-business-reader"}); err != nil {
 			return errors.New("fixture restriction failed")
 		}
@@ -677,7 +681,11 @@ func finish(ctx context.Context, path string, c config, pool *pgxpool.Pool, obje
 		}
 		counts[table] = count
 	}
-	if counts["lifecycle_storage_call"] != priorCalls+14 || counts["lifecycle_storage_observation"] != priorObservations+14 || counts["cost_allocation"] != priorCosts+14 || counts["lifecycle_fixture_copy"] != 4 || counts["lifecycle_content_use_restriction"] != 2 || counts["lifecycle_disposition_approval"] != 0 || counts["lifecycle_disposition_dispatch"] != 0 || counts["lifecycle_provider_attempt"] != 0 || counts["lifecycle_reader_pin"] != 0 {
+	expectedRestrictions := 2
+	if c.ArchiveAcceptance {
+		expectedRestrictions = 1
+	}
+	if counts["lifecycle_storage_call"] != priorCalls+14 || counts["lifecycle_storage_observation"] != priorObservations+14 || counts["cost_allocation"] != priorCosts+14 || counts["lifecycle_fixture_copy"] != 4 || counts["lifecycle_content_use_restriction"] != expectedRestrictions || counts["lifecycle_disposition_approval"] != 0 || counts["lifecycle_disposition_dispatch"] != 0 || counts["lifecycle_provider_attempt"] != 0 || counts["lifecycle_reader_pin"] != 0 {
 		return errors.New("fixture final fact counts mismatch")
 	}
 	manifest := map[string]any{"schema": "lifecycle307-predelete-manifest-v1", "created_at": time.Now().UTC(), "run_id": c.RunID, "workspace_id": c.WorkspaceID,

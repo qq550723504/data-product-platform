@@ -1,10 +1,10 @@
-param([Parameter(Mandatory=$true)][string]$PrivateRoot)
+param([Parameter(Mandatory=$true)][string]$PrivateRoot,[switch]$ArchiveAcceptance)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $privateBase = [IO.Path]::GetFullPath($PrivateRoot)
 if ($privateBase.StartsWith($repo + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw 'Private credentials must stay outside the checkout.' }
-function Write-Utf8([string]$Path, [string]$Value) { [IO.File]::WriteAllText($Path, $Value, [Text.UTF8Encoding]::new($false)) }
+function Write-Utf8([string]$Path, [string]$Value) { [IO.File]::WriteAllText($Path, $Value.Replace("`r`n","`n"), [Text.UTF8Encoding]::new($false)) }
 function New-Secret { $bytes = [byte[]]::new(32); [Security.Cryptography.RandomNumberGenerator]::Fill($bytes); [Convert]::ToHexString($bytes).ToLowerInvariant() }
 function Docker([Parameter(ValueFromRemainingArguments=$true)][string[]]$Arguments) {
  $result = & docker.exe @Arguments 2>&1
@@ -46,6 +46,7 @@ $images = @{
  postgres = 'sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea'
  gateway = 'sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f'
 }
+if ($ArchiveAcceptance) { $images.minio = 'sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741' }
 foreach ($image in $images.Values) { Docker @('image','inspect',$image,'--format','{{.Id}}') | Out-Null }
 $network = $project + '-private'
 $pgVolume = $project + '-postgres'
@@ -71,4 +72,4 @@ Docker @('create','--pull','never','--name',$names.gateway,'--label',$label,'--n
 Write-Utf8 (Join-Path $private 'resources.json') (@{run_id=$run;project=$project;network=$network;volumes=@($pgVolume,$objectVolume);containers=$names} | ConvertTo-Json -Depth 8)
 foreach ($name in $names.Values) { Docker @('start',$name) | Out-Null }
 Docker @('exec',$names.gateway,'caddy','validate','--config','/etc/caddy/Caddyfile','--adapter','caddyfile') | Out-Null
-& (Join-Path $PSScriptRoot 'finish-prepare.ps1') -PrivateDirectory $private
+& (Join-Path $PSScriptRoot 'finish-prepare.ps1') -PrivateDirectory $private -ArchiveAcceptance:$ArchiveAcceptance

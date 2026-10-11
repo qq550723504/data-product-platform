@@ -16,7 +16,7 @@ type FixtureReferenceCount struct {
 // consumption. Every other relationship conservatively blocks, including a new
 // module's FK; no lifecycle owner silently downgrades another owner's history.
 func InspectFixtureReferences(ctx context.Context, tx pgx.Tx, c domain.Copy) (domain.Check, []FixtureReferenceCount, error) {
-	rows, err := tx.Query(ctx, `SELECT ns.nspname,t.relname,a.attname FROM pg_constraint f JOIN pg_class t ON t.oid=f.conrelid JOIN pg_namespace ns ON ns.oid=t.relnamespace JOIN LATERAL unnest(f.conkey,f.confkey) AS k(local_col,foreign_col) ON true JOIN pg_attribute a ON a.attrelid=t.oid AND a.attnum=k.local_col JOIN pg_attribute b ON b.attrelid=f.confrelid AND b.attnum=k.foreign_col WHERE f.contype='f' AND f.confrelid='dataset_version'::regclass AND b.attname='id' AND t.relname NOT IN ('lifecycle_fixture_copy','lifecycle_content_use_restriction') ORDER BY ns.nspname,t.relname,a.attname`)
+	rows, err := tx.Query(ctx, `SELECT ns.nspname,t.relname,a.attname FROM pg_constraint f JOIN pg_class t ON t.oid=f.conrelid JOIN pg_namespace ns ON ns.oid=t.relnamespace JOIN LATERAL unnest(f.conkey,f.confkey) AS k(local_col,foreign_col) ON true JOIN pg_attribute a ON a.attrelid=t.oid AND a.attnum=k.local_col JOIN pg_attribute b ON b.attrelid=f.confrelid AND b.attnum=k.foreign_col WHERE f.contype='f' AND f.confrelid='dataset_version'::regclass AND b.attname='id' AND t.relname NOT IN ('lifecycle_fixture_copy','lifecycle_content_use_restriction','lifecycle_copy_policy','lifecycle_restore_checkpoint') ORDER BY ns.nspname,t.relname,a.attname`)
 	if err != nil {
 		return domain.Unknown, nil, err
 	}

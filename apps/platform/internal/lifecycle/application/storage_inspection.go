@@ -72,20 +72,23 @@ const (
 // included. For listing, CopyID is the registered subject motivating the scan;
 // Version/Key remain that subject's identity, not a listing prefix.
 type StorageCallStart struct {
-	ID        uuid.UUID
-	Copy      domain.Copy
-	Operation string
-	StartedAt time.Time
+	ID              uuid.UUID
+	Copy            domain.Copy
+	Operation       string
+	StartedAt       time.Time
+	CopyOperationID uuid.UUID             // nonzero only for an already frozen custody intent
+	CopyIntent      *domain.CopyOperation // full frozen target, checked before I/O
 }
 
 type StorageCallObservation struct {
-	CallID         uuid.UUID
-	ObservedAt     time.Time
-	InvokedAt      *time.Time
-	HTTPStatus     int
-	RequestRef     string
-	ResponseSHA256 string
-	Failure        string // empty, TRANSPORT, CONTRACT or JOURNAL
+	CallID            uuid.UUID
+	ObservedAt        time.Time
+	InvokedAt         *time.Time
+	HTTPStatus        int
+	RequestRef        string
+	ResponseSHA256    string
+	Failure           string // empty, TRANSPORT, CONTRACT or JOURNAL
+	CopyResultVersion string // native COPY response header, never inferred from key
 }
 
 // StorageCallJournal must commit immutable starts before I/O, and append

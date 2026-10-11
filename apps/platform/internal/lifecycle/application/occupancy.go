@@ -343,6 +343,20 @@ func (s *OccupancyService) AdmitFixtureReader(ctx context.Context, cmd AdmitFixt
 		if restricted {
 			return uuid.Nil, domain.ErrUseBlocked
 		}
+		occupancy, err := s.repo.CopyOccupancy(ctx, tx, copy)
+		if err != nil {
+			return uuid.Nil, err
+		}
+		if occupancy.UnresolvedDispatches > 0 {
+			return uuid.Nil, domain.ErrUseBlocked
+		}
+		var quarantine bool
+		if err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_copy_operation o WHERE o.target_copy_id=$1 AND NOT EXISTS(SELECT 1 FROM lifecycle_copy_decision d WHERE d.operation_id=o.id AND d.decision='ONLINE'))`, copy.ID).Scan(&quarantine); err != nil {
+			return uuid.Nil, err
+		}
+		if quarantine {
+			return uuid.Nil, domain.ErrUseBlocked
+		}
 		decision, err := s.useGate.EvaluateFixtureUse(ctx, tx, UseGateRequest{Copy: copy, ReaderID: cmd.ReaderID, Caller: caller, AsOf: at, DependencyRevision: gateRevision})
 		if err != nil {
 			return uuid.Nil, err

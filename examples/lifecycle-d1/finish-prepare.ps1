@@ -1,5 +1,5 @@
 # Completes the owned empty environment; never retries provider writes or cleans.
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory)
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[switch]$ArchiveAcceptance)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
@@ -9,7 +9,7 @@ function Docker([Parameter(ValueFromRemainingArguments=$true)][string[]]$Argumen
  if ($LASTEXITCODE -ne 0) { throw "Docker $($Arguments[0]) failed; all resources retained" }
  return ($result -join "`n").Trim()
 }
-function Write-Utf8([string]$Path,[string]$Value){[IO.File]::WriteAllText($Path,$Value,[Text.UTF8Encoding]::new($false))}
+function Write-Utf8([string]$Path,[string]$Value){[IO.File]::WriteAllText($Path,$Value.Replace("`r`n","`n"),[Text.UTF8Encoding]::new($false))}
 function New-Secret {$b=[byte[]]::new(32);[Security.Cryptography.RandomNumberGenerator]::Fill($b);[Convert]::ToHexString($b).ToLowerInvariant()}
 function Inspect([string]$Name){(Docker @('inspect',$Name)|ConvertFrom-Json)[0]}
 $r=Get-Content -LiteralPath (Join-Path $private 'resources.json') -Raw|ConvertFrom-Json
@@ -27,7 +27,9 @@ foreach ($item in @($pg,$mi,$gw)){
 $net=(Docker @('network','inspect',$r.network)|ConvertFrom-Json)[0]
 if (-not $net.Internal -or @($net.Containers.PSObject.Properties).Count -ne 3 -or $net.Labels.'lifecycle307.run' -ne $run){throw 'Closed network scope mismatch'}
 foreach($volume in $r.volumes){$v=(Docker @('volume','inspect',$volume)|ConvertFrom-Json)[0];if($v.Labels.'lifecycle307.run' -ne $run){throw 'Volume owner mismatch'}}
-if ($mi.Image -ne 'sha256:a9eb76492485dd496bfd69b4114e47137f2da1a1a87e4a9b273cb21476cb1a98' -or $pg.Image -ne 'sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea' -or $gw.Image -ne 'sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f'){throw 'Pinned image mismatch'}
+$expectedMinio = 'sha256:a9eb76492485dd496bfd69b4114e47137f2da1a1a87e4a9b273cb21476cb1a98'
+if ($ArchiveAcceptance) { $expectedMinio = 'sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741' }
+if ($mi.Image -ne $expectedMinio -or $pg.Image -ne 'sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea' -or $gw.Image -ne 'sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f'){throw 'Pinned image mismatch'}
 $binaryHash=(Docker @('exec',$r.containers.minio,'sha256sum','/usr/local/bin/minio')).Split(' ')[0]
 if($binaryHash -ne 'fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8'){throw 'Pinned binary mismatch'}
 $nativeVersion=Docker @('exec',$r.containers.minio,'/usr/local/bin/minio','--version')
@@ -59,7 +61,7 @@ $environment=@{
 $pgSecret=[IO.File]::ReadAllText((Join-Path $private 'pgpass'))
 $config=@{
  RunID=$run;WorkspaceID=[guid]::NewGuid().ToString();ProviderInstanceID=[guid]::NewGuid().ToString();IncarnationID=[guid]::NewGuid().ToString();ActorID=[guid]::NewGuid().ToString()
- Enabled=$true;Endpoint='127.0.0.1:9000';PostgresDSN="postgres://fixture:${pgSecret}@$($r.containers.postgres):5432/lifecycle307?sslmode=disable"
+ Enabled=$true;ArchiveAcceptance=[bool]$ArchiveAcceptance;Endpoint='127.0.0.1:9000';PostgresDSN="postgres://fixture:${pgSecret}@$($r.containers.postgres):5432/lifecycle307?sslmode=disable"
  RootAccess=$rootAccess;RootSecret=[IO.File]::ReadAllText((Join-Path $private 'secret'));InspectAccess='inspect'+$run.Replace('-','').Substring(0,12);InspectSecret=(New-Secret);Token=(New-Secret)
  OutputDirectory="/run/output/$run";Environment=$environment
 }

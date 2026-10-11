@@ -119,8 +119,8 @@ func (j *PostgresStorageCallJournal) ObserveStorageCall(ctx context.Context, o S
 			return ErrStorageContract
 		}
 		id := uuid.New()
-		tag, err := tx.Exec(ctx, `INSERT INTO lifecycle_storage_observation(id,workspace_id,call_id,observed_at,invoked_at,http_status,request_ref,response_sha256,failure,proof_sha256)
-		 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT(call_id,proof_sha256) DO NOTHING`, id, w, o.CallID, o.ObservedAt, o.InvokedAt, o.HTTPStatus, o.RequestRef, o.ResponseSHA256, o.Failure, proof)
+		tag, err := tx.Exec(ctx, `INSERT INTO lifecycle_storage_observation(id,workspace_id,call_id,observed_at,invoked_at,http_status,request_ref,response_sha256,failure,proof_sha256,copy_result_version)
+		 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NULLIF($11,'')) ON CONFLICT(call_id,proof_sha256) DO NOTHING`, id, w, o.CallID, o.ObservedAt, o.InvokedAt, o.HTTPStatus, o.RequestRef, o.ResponseSHA256, o.Failure, proof, o.CopyResultVersion)
 		if err != nil {
 			return err
 		}
@@ -138,6 +138,9 @@ func (j *PostgresStorageCallJournal) ObserveStorageCall(ctx context.Context, o S
 }
 
 func validStorageObservation(o StorageCallObservation) bool {
+	if o.CopyResultVersion != "" && (!validText(o.CopyResultVersion, 1024) || o.CopyResultVersion == "null") {
+		return false
+	}
 	if o.CallID == uuid.Nil || o.ObservedAt.IsZero() || (o.InvokedAt != nil && (o.InvokedAt.IsZero() || o.InvokedAt.After(o.ObservedAt))) ||
 		(o.HTTPStatus != 0 && (o.HTTPStatus < 100 || o.HTTPStatus > 599 || o.InvokedAt == nil)) || len(o.RequestRef) > 256 || strings.ContainsAny(o.RequestRef, "\x00\r\n") {
 		return false

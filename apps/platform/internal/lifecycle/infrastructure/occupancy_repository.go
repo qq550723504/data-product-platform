@@ -180,7 +180,10 @@ func (r *PostgresRepository) CopyOccupancy(ctx context.Context, tx pgx.Tx, c dom
 	if err != nil {
 		return o, err
 	}
-	err = tx.QueryRow(ctx, `SELECT count(*) FROM lifecycle_disposition_dispatch d WHERE d.workspace_id=$1 AND d.copy_id=$2
-		AND NOT EXISTS(SELECT 1 FROM lifecycle_dispatch_release r WHERE r.dispatch_id=d.id)`, c.WorkspaceID, c.ID).Scan(&o.UnresolvedDispatches)
+	err = tx.QueryRow(ctx, `SELECT
+	 (SELECT count(*) FROM lifecycle_disposition_dispatch d WHERE d.workspace_id=$1 AND d.copy_id=$2
+		AND NOT EXISTS(SELECT 1 FROM lifecycle_dispatch_release r WHERE r.dispatch_id=d.id)) +
+	 (SELECT count(*) FROM lifecycle_copy_operation p WHERE p.workspace_id=$1 AND (p.source_copy_id=$2 OR p.target_copy_id=$2)
+		AND NOT EXISTS(SELECT 1 FROM lifecycle_copy_verification v WHERE v.operation_id=p.id))`, c.WorkspaceID, c.ID).Scan(&o.UnresolvedDispatches)
 	return o, err
 }
