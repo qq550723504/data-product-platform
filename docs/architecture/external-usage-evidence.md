@@ -2,7 +2,7 @@
 
 ## Goal, authority and ownership
 
-在已合并 #84/#86 的 main `253ce3b4ef044a233de1179534422eed04ded660` 上，将提供方中立的 usage/access/delivery/connector-log 观察追加到 Evidence Graph。本文、#87、ADR-0009、External Core 和 External publication execution 是权威；生产 Release、Delivery、Rights 与 EvidenceSnapshot 仍由原 contract 拥有。本聊天唯一 writer；复用隔离 worktree，branch `codex/issue87-usage`。000058 由本次拥有，000054/#307、000056/#299/#310 不继承未合并实现。只推送和提 Draft PR，不 Ready/merge/deploy/close Issue。
+在已合并 #84/#86 的 main `253ce3b4ef044a233de1179534422eed04ded660` 上，将提供方中立的 usage/access/delivery/connector-log 观察追加到 Evidence Graph。本文、#87、ADR-0009、External Core 和 External publication execution 是权威；生产 Release、Delivery、Rights 与 EvidenceSnapshot 仍由原 contract 拥有。本聊天唯一 writer；复用隔离 worktree，branch `codex/issue87-usage`。000058 由本次拥有，000054/#307、000056/#299/#310 不继承未合并实现。初始交付为 Draft PR #312；2026-10-11 用户追加授权转 Ready、处理评审，在最终 HEAD 收到 reviewer 👍 且 CI 全绿后合并，再验证对应 merge SHA 的 push/main CI。未授权部署、真实 provider 调用或关闭 Issue。
 
 ## Reuse / Build-vs-Buy
 

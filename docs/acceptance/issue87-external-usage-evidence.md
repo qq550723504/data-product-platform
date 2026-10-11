@@ -2,6 +2,8 @@
 
 2026-10-11，Asia/Singapore。开发前核对并复查 main `253ce3b4ef044a233de1179534422eed04ded660`：#84/#86 代码已由 #309/#311 合并，matching push/main CI `38136308837` 全绿，Issue #86 仍 OPEN。现有 Draft #295/000050、#310/000056 与 #307/000054 的未合并实现未继承；本次 sole writer，branch `codex/issue87-usage`，migration 000058。
 
+下表是创建 Draft 时的本地验证快照。后续 Ready/review/CI/merge 状态以 PR #312 的 exact-HEAD 记录为准；新增合并授权见设计文档，不回写初始验证结果。
+
 权威为 [External usage evidence](../architecture/external-usage-evidence.md)、[External publication execution](../architecture/external-publication-execution.md)、[External Core](../architecture/external-integration-core.md)、[Issue #87](https://github.com/qq550723504/data-product-platform/issues/87) / parent #47、ADR-0009 与 AGENTS §17。设计先于开发落地；复用 registry、principal/Authority、PostgreSQL transaction/session lock、worker reconciliation、command idempotency、Evidence/Audit/Cost/Outbox，没有新增 collector、queue runtime、SDK 或 OSS fork。
 
 | Check | Status | Evidence |
