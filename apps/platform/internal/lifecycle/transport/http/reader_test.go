@@ -2,11 +2,13 @@ package http
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	lc "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application"
@@ -17,6 +19,56 @@ type recordingReader struct {
 	calls  int
 	cmd    lc.AdmitFixtureReaderCommand
 	replay bool
+}
+
+type flushOwner struct {
+	header           http.Header
+	entered, release chan struct{}
+	deadline         time.Time
+	writes           int
+}
+
+func (w *flushOwner) Header() http.Header                { return w.header }
+func (w *flushOwner) WriteHeader(int)                    {}
+func (w *flushOwner) Write(b []byte) (int, error)        { w.writes++; return len(b), nil }
+func (w *flushOwner) SetWriteDeadline(t time.Time) error { w.deadline = t; return nil }
+func (w *flushOwner) FlushError() error                  { close(w.entered); <-w.release; return io.ErrClosedPipe }
+func TestHTTPPinnedOutputIncludesFlushAndDeadline(t *testing.T) {
+	owner := &flushOwner{header: http.Header{}, entered: make(chan struct{}), release: make(chan struct{})}
+	until := time.Now().Add(time.Minute)
+	ctx, cancel := context.WithDeadline(context.Background(), until)
+	defer cancel()
+	w := &responseWriter{ResponseWriter: owner, ctx: ctx}
+	done := make(chan error, 1)
+	go func() { _, e := w.WriteContext(ctx, []byte("synthetic")); done <- e }()
+	<-owner.entered
+	if owner.writes != 1 || !owner.deadline.Equal(until) {
+		t.Fatal("owned write deadline missing")
+	}
+	select {
+	case <-done:
+		t.Fatal("write returned before actual flush stopped")
+	default:
+	}
+	cancel()
+	select {
+	case <-done:
+		t.Fatal("cancel treated as flush stop")
+	default:
+	}
+	close(owner.release)
+	if e := <-done; !errors.Is(e, io.ErrClosedPipe) {
+		t.Fatal(e)
+	}
+	unsupported := &responseWriter{ResponseWriter: httptest.NewRecorder(), ctx: ctx}
+	if n, e := unsupported.WriteContext(ctx, []byte("synthetic")); n != 0 || !errors.Is(e, context.Canceled) {
+		t.Fatal("cancelled output emitted bytes")
+	}
+	fresh, c := context.WithDeadline(context.Background(), until)
+	defer c()
+	if n, e := unsupported.WriteContext(fresh, []byte("synthetic")); n != 0 || !errors.Is(e, http.ErrNotSupported) {
+		t.Fatal("unsupported deadline wrote bytes", n, e)
+	}
 }
 
 func (s *recordingReader) ReadTo(_ context.Context, c lc.AdmitFixtureReaderCommand, w io.Writer) (lc.FixtureReadResult, error) {

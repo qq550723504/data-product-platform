@@ -37,6 +37,12 @@ type PinnedReaderPort interface {
 	ReadExactPinned(context.Context, domain.Copy, domain.ReaderPin) (PinnedReadResult, error)
 }
 
+// A transport with buffering must synchronously finish its actual output
+// (including flush) before returning. Context caps the owned write deadline.
+type PinnedOutputWriter interface {
+	WriteContext(context.Context, []byte) (int, error)
+}
+
 type FixtureReadResult struct {
 	Admission     ReaderAdmission
 	CallID        uuid.UUID
@@ -127,7 +133,13 @@ func (s *FixtureReaderService) ReadTo(ctx context.Context, cmd AdmitFixtureReade
 		readErr = readCtx.Err()
 	}
 	if readErr == nil {
-		n, writeErr := dst.Write(read.Bytes)
+		var n int
+		var writeErr error
+		if output, ok := dst.(PinnedOutputWriter); ok {
+			n, writeErr = output.WriteContext(readCtx, read.Bytes)
+		} else {
+			n, writeErr = dst.Write(read.Bytes)
+		}
 		result.BytesWritten = int64(n)
 		readErr = writeErr
 		if writeErr == nil && n != len(read.Bytes) {

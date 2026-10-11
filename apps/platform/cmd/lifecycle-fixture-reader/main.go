@@ -258,6 +258,8 @@ type slowWriter struct {
 	ctx              context.Context
 }
 
+func (w slowWriter) Unwrap() http.ResponseWriter { return w.ResponseWriter }
+
 func (w slowWriter) Write(b []byte) (int, error) {
 	close(w.entered)
 	<-w.release

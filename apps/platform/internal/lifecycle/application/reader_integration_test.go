@@ -95,6 +95,42 @@ type blockingReaderWriter struct {
 	fail             bool
 }
 
+type flushingReaderWriter struct{ blockingReaderWriter }
+
+func (w *flushingReaderWriter) WriteContext(ctx context.Context, b []byte) (int, error) {
+	// Write can buffer successfully, but its output owner still has a flush.
+	close(w.entered)
+	<-w.release
+	return 0, ctx.Err()
+}
+
+func TestFixtureReaderWaitsForBufferedOutputFlushOwner(t *testing.T) {
+	pool, w, c, o, s, _, plan := newReaderFixture(t)
+	ctx, cancel := context.WithCancel(readerContext(o))
+	defer cancel()
+	writer := &flushingReaderWriter{blockingReaderWriter{entered: make(chan struct{}), release: make(chan struct{})}}
+	done := make(chan error, 1)
+	go func() {
+		_, e := s.ReadTo(ctx, AdmitFixtureReaderCommand{CommandHeader: CommandHeader{w, "buffered-output-flush"}, CopyID: c.ID, ReaderID: uuid.New()}, writer)
+		done <- e
+	}()
+	<-writer.entered
+	if occupancyFor(t, o, w, plan.ID, c.ID).ActiveReaders != 1 || count(t, pool, `SELECT count(*) FROM lifecycle_reader_termination`) != 0 {
+		t.Fatal("buffered write released pin before flush")
+	}
+	cancel()
+	if occupancyFor(t, o, w, plan.ID, c.ID).ActiveReaders != 1 {
+		t.Fatal("cancel released pending flush")
+	}
+	close(writer.release)
+	if e := <-done; !errors.Is(e, context.Canceled) {
+		t.Fatal(e)
+	}
+	if occupancyFor(t, o, w, plan.ID, c.ID).ActiveReaders != 0 {
+		t.Fatal("confirmed flush stop failed to release owner pin")
+	}
+}
+
 func (w *blockingReaderWriter) Write(b []byte) (int, error) {
 	close(w.entered)
 	<-w.release

@@ -55,7 +55,7 @@ func (h ReaderHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/octet-stream")
-	tracked := &responseWriter{ResponseWriter: w}
+	tracked := &responseWriter{ResponseWriter: w, ctx: r.Context()}
 	result, e := h.Service.ReadTo(lc.WithFixtureReaderCaller(r.Context(), caller), lc.AdmitFixtureReaderCommand{CommandHeader: lc.CommandHeader{WorkspaceID: h.WorkspaceID, IdempotencyKey: r.Header.Get("Idempotency-Key")}, CopyID: body.CopyID, ReaderID: body.ReaderID}, tracked)
 	if tracked.written > 0 {
 		return
@@ -72,11 +72,27 @@ func (h ReaderHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 type responseWriter struct {
 	http.ResponseWriter
+	ctx     context.Context
 	written int64
 }
 
 func (w *responseWriter) Write(b []byte) (int, error) {
+	return w.WriteContext(w.ctx, b)
+}
+func (w *responseWriter) WriteContext(ctx context.Context, b []byte) (int, error) {
+	if e := ctx.Err(); e != nil {
+		return 0, e
+	}
+	controller := http.NewResponseController(w.ResponseWriter)
+	if until, ok := ctx.Deadline(); ok {
+		if e := controller.SetWriteDeadline(until); e != nil {
+			return 0, e
+		}
+	}
 	n, e := w.ResponseWriter.Write(b)
 	w.written += int64(n)
+	if e == nil && n > 0 {
+		e = controller.Flush()
+	}
 	return n, e
 }
