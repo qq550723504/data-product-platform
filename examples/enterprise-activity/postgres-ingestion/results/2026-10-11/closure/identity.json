@@ -68,19 +68,20 @@
     "examples/enterprise-activity/postgres-ingestion/closure_verify.py": "380f665591d45fae3f094bbf6f750ef2bd13c387d13257bc843519560d005474"
   },
   "artifact_sha256": {
-    "b3-report.json": "b2d9ed22606f17d0325dc034095da9617c15094962ad9933753775f54dd0058b",
+    "b3-report.json": "ac7b7b57b0f0d16283e3ed12b914172713045ea6b0347e0274a1808309153806",
     "certification-superseded.jpg": "bd227bfce51da56b96db582c1ac55d1087ad725a58dced08e42f6e34144211e0",
     "certified.jpg": "e6cc0ffa6508f4185a16a0cd19d9e859549a96a313a0c26fb0302c0fe277f4b5",
     "governance-healthy.jpg": "e3d1e497b7eded693b0c291c469fa59149d0fef70a4b832b98bf445e14708e6f",
     "governance-outage.jpg": "512c7221f104a952979eebc88ec05a6ca4ef6f86272fd1eeb24f0012ef42fdcb",
     "governance-recovered.jpg": "fe2a007a5d2fa57b4034467d823ab70d313abb8316b392de82a10306f73300ea",
-    "history-healthy.json": "d60a444af9d681ef04afea5afe808a7073d539fe4e416acc3cab96a33ae63127",
-    "history-outage.json": "7b83fd8c3756276b62f188e23183019f23402914fa5b720523ad49cefb9931c0",
-    "history-post-revocation.json": "3cb8f8dfcd4cf01fc837f932007bd7253d80415671cf298a5031f70c14d233a4",
-    "history-projection-failed.json": "242a241a657808405332ac4a765f16193ccd089ac9e60c3a0aea0de9f64e8759",
-    "history-recovered.json": "258b79a07970869848c76ff2c6bceb431599a23d949d900585e3152cd517f120",
-    "native-contract-green.json": "f4c3b6f9744eb6ae18dc54fc961eafc1e8aee18abb23dfb82d3fec961d3411be",
-    "native-contract-red.json": "ee8c5f72dcd0d7774e317a112b7ddac47b01a4c8f00ac221efb0d4d1f53f1fcd",
+    "history-healthy.json": "dc4b16532739a36fcc08760c2121d76db24c7d373138cef224ae194f89de987d",
+    "history-outage.json": "1842768fbb626d005031d5f02a4a6e54238060446be53e13eba9359d12a887d7",
+    "history-post-revocation.json": "248ca9df1606df18a82a0562b020848fe79a21db3237196f58e056b6dcd73d64",
+    "history-projection-failed.json": "2d30c2ff6e5fcc24319a37ea79245ba33744a1279d37f645421e833c4e5ff8b1",
+    "history-recovered.json": "78bae4557c869dbd3db6a5987d890d1688a0adfa6bd4ca9fffd5b25b3448420a",
+    "native-contract-green.json": "2d5356567ab7d3953555a3ebfa8bf1367dcfc6eeb8b6ec194c4e6181f6acd0a1",
+    "native-contract-red.json": "a0b17903d7e87d2039c03b418af7a0614d35f2d065b9c65dbbe856c46db84418",
+    "projection-routing.json": "fb6797378f2f1a474b5b0f06064774108688ed2c4c34add90ff1d8589a3f88a3",
     "publication-during-outage.jpg": "52e64e02b1f4ba5610db5ee5278bf2b1300d7c2d6661417f01f4bea67ced53d3",
     "publication-recovered.jpg": "52e64e02b1f4ba5610db5ee5278bf2b1300d7c2d6661417f01f4bea67ced53d3",
     "quality-rejected.jpg": "cbdef4a0787701ccedcb48dad48786fe5a04d44fb1af3cc1322466c051c66b2a",
@@ -88,15 +89,19 @@
     "raw-accepted.jpg": "215a08ca232df6b6d0ce5eb6c9178c087a143fa64967beded28345e46a5f33c2",
     "revoked-again-blocked.jpg": "aca13548fb3a1c79581d66d451802f6b5755d27ea20908284f190e6893b62bc0",
     "revoked-blocked.jpg": "aca13548fb3a1c79581d66d451802f6b5755d27ea20908284f190e6893b62bc0",
-    "rights-revocation-1.json": "db972142e6f694eb8d0e7c912b34266b53337a2c04e09e40b4fc060e3ec78203",
-    "rights-revocation-2.json": "40fbc359057946b37fb630251b12f72bb2d22154ea514fde7531bd9ef2447729",
+    "rights-revocation-1.json": "ff5cdd62752d21220b6879ae278a47886f0393d617f859cbe475595f11421a5f",
+    "rights-revocation-2.json": "ccbc896dddbe847b1ea54a5161295be637815eaa04c113d487eff0aa024a3e3a",
     "secret-isolation-red.json": "5e8f05725eda00e2e1cc8b0dc3e25999e8ca9f82ee64adcc447ae9490835f9e2",
     "steward-unassigned.jpg": "9b5d6bc91daf0c4b389394187372c8c8a67876f9f5306f3a5583d6e664a24798"
   },
   "known_secret_artifact_scan": {
     "status": "PASS",
     "known_values": 11,
-    "files": 24
+    "files": 25
   },
-  "human_explanation": "NOT_RUN"
+  "human_explanation": "NOT_RUN",
+  "artifact_hash_encoding": {
+    "text": "UTF-8 with LF",
+    "images": "exact bytes"
+  }
 }
