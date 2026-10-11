@@ -30,8 +30,8 @@ if($network.Id -ne '6bec8f5e4e1164a0716740fade68c36b6fc995954186b876b20416357c2d
 if((Invoke-FixtureDocker @('exec',$resources.containers.minio,'sha256sum','/usr/local/bin/minio')).Split(' ')[0] -ne 'fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8'){throw 'Provider binary changed'}
 foreach($volume in @("${project}-postgres","${project}-objects")){$v=(Invoke-FixtureDocker @('volume','inspect',$volume)|ConvertFrom-Json)[0];if($v.Labels.'lifecycle307.run' -ne $run){throw 'Retained volume owner mismatch'}}
 Write-Utf8 (Join-Path $output 'delete-environment-before.json') (@{as_of=[DateTimeOffset]::UtcNow;network_id=$network.Id;internal=$true;containers=$topology;object_cleanup=0;volume_cleanup=0}|ConvertTo-Json -Depth 12)
-$extension=Join-Path $repo 'migrations/000059_lifecycle_scoped_completion.up.sql'
-$reconciliationExtension=Join-Path $repo 'migrations/000060_lifecycle_denied_reconciliation.up.sql'
+$extension=Join-Path $repo 'migrations/000060_lifecycle_scoped_completion.up.sql'
+$reconciliationExtension=Join-Path $repo 'migrations/000061_lifecycle_denied_reconciliation.up.sql'
 $baseVersion=Invoke-FixtureDocker @('exec',$resources.containers.postgres,'psql','-U','fixture','-d','lifecycle307','-Atc','SELECT max(version) FROM schema_migration')
 if($baseVersion -ne '54'){throw 'Retained schema baseline changed; explicit schema preflight required'}
 $oldOS=$env:GOOS;$oldArch=$env:GOARCH;$oldCGO=$env:CGO_ENABLED
@@ -43,7 +43,7 @@ Get-Content -LiteralPath $extension -Raw | & docker exec -i $resources.container
 if($LASTEXITCODE -ne 0){throw 'Additive extension failed; transaction rolled back, no provider deletion'}
 Get-Content -LiteralPath $reconciliationExtension -Raw | & docker exec -i $resources.containers.postgres psql -U fixture -d lifecycle307 -v ON_ERROR_STOP=1 -1 | Out-Null
 if($LASTEXITCODE -ne 0){throw 'Additive reconciliation extension failed; no provider deletion'}
-Write-Utf8 (Join-Path $output 'delete-schema-extension.json') (@{base_schema_version=54;extension_file='000059_lifecycle_scoped_completion.up.sql';extension_sha256=(Hash $extension);reconciliation_extension_file='000060_lifecycle_denied_reconciliation.up.sql';reconciliation_extension_sha256=(Hash $reconciliationExtension);schema_migration_unchanged=$true;binary_sha256=(Hash (Join-Path $private 'exact-delete'));applied_at=[DateTimeOffset]::UtcNow;note='Preserved fixture snapshot54 plus explicit additive59+60 tables. Fresh installation uses main55/57+D158/59/60.'}|ConvertTo-Json)
+Write-Utf8 (Join-Path $output 'delete-schema-extension.json') (@{base_schema_version=54;extension_file='000060_lifecycle_scoped_completion.up.sql';extension_sha256=(Hash $extension);reconciliation_extension_file='000061_lifecycle_denied_reconciliation.up.sql';reconciliation_extension_sha256=(Hash $reconciliationExtension);schema_migration_unchanged=$true;binary_sha256=(Hash (Join-Path $private 'exact-delete'));applied_at=[DateTimeOffset]::UtcNow;note='Preserved fixture snapshot54 plus explicit additive60+61 tables. Fresh installation uses main55/57+D159/60/61; coordinated C1 owns unpublished58.'}|ConvertTo-Json)
 $confirmed=[DateTimeOffset]::UtcNow
 $permission=@{Enabled=$true;RunID=$run;WorkspaceID=$config.WorkspaceID;PlanHash='7c2847699997663ca453db54e0fab1565ad67fc9434c0c2c507c6adaa056a09f';DeleteAccess='delete'+$run.Replace('-','').Substring(0,12);DeleteSecret=(Secret);BasisRef='human-confirmed:2026-10-11:dpp-lifecycle307-a6b30840:exact-two-unprotected-versions';TopologySHA256=(Hash (Join-Path $output 'delete-environment-before.json'));ConfirmedAt=$confirmed.ToString('o');ExpiresAt=$confirmed.AddHours(1).ToString('o')}
 Write-Utf8 (Join-Path $private 'delete-permission.json') ($permission|ConvertTo-Json)

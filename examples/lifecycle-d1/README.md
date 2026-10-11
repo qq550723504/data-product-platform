@@ -26,7 +26,7 @@
 
 Run `a6b30840-3e76-49ad-91d3-f0c399fcf170` 保留三台运行中的服务、已退出成功的 prepare helper，以及 PostgreSQL/object 两个 named volumes。初次脚本尝试中的空 credentials 目录也未清理；没有清理任何对象、bucket 或 volume。
 
-本次 native 准备冻结在 main `3a59b591d25e7d07fc38956a7ae729d74967215b` + 本地 D1 schema000054；完整 SQL snapshot 私下保留。确认删除时只安装当时开发编号additive58/59，`schema_migration` 仍为54。收口开发分支已 rebase #311/main `253ce3b4...`：main55/57，D1当前58/59/60，#299/C1尚持56；**不得把重编号后的 foundation 再安装到这套历史库，或因此重建/擦除本 fixture**。清单保存各次 native 执行时 source/binary/SQL hashes，不改写成新 main 实跑。
+本次 native 准备冻结在 main `3a59b591d25e7d07fc38956a7ae729d74967215b` + 本地 D1 schema000054；完整 SQL snapshot 私下保留。确认删除时只安装当时开发编号additive58/59，`schema_migration` 仍为54。收口开发分支已 rebase #311/main `253ce3b4...`：main55/57，协调后 C1 未发布58、D1当前59/60/61；**不得把重编号后的 foundation 再安装到这套历史库，或因此重建/擦除本 fixture**。清单保存各次 native 执行时 source/binary/SQL hashes，不改写成新 main 实跑。
 
 准备阶段测试：`go test -race -count=1 ./cmd/lifecycle-fixture-prepare ./internal/platform/storage ./internal/lifecycle/... ./internal/platform/routing ./internal/cost`；native provider +真实 PostgreSQL 成功记录在 run artifacts。准备阶段没有调用 DELETE，包括预期返回拒绝的负例。
 
