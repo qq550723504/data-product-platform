@@ -26,6 +26,12 @@
 
 Run `a6b30840-3e76-49ad-91d3-f0c399fcf170` 保留三台运行中的服务、已退出成功的 prepare helper，以及 PostgreSQL/object 两个 named volumes。初次脚本尝试中的空 credentials 目录也未清理；没有清理任何对象、bucket 或 volume。
 
-本次 native 运行冻结在 main `3a59b591d25e7d07fc38956a7ae729d74967215b` + 本地 D1 schema 000054；完整 SQL snapshot 私下保留。期间 #309 把000055合入 main，开发候选已 rebase `21762737...` 并重排000057，#299/C1保留000056；**不得把新编号 migration 再安装到已保留的这套历史库，或因此重建/擦除本 fixture**。清单保存 native 执行时 source/binary hashes；后续 CLI trace 同步及 SQL-only 候选入口修正不覆盖原生版本/运行证据。
+本次 native 准备冻结在 main `3a59b591d25e7d07fc38956a7ae729d74967215b` + 本地 D1 schema000054；完整 SQL snapshot 私下保留。确认删除时只安装当时开发编号additive58/59，`schema_migration` 仍为54。收口开发分支已 rebase #311/main `253ce3b4...`：main55/57，D1当前58/59/60，#299/C1尚持56；**不得把重编号后的 foundation 再安装到这套历史库，或因此重建/擦除本 fixture**。清单保存各次 native 执行时 source/binary/SQL hashes，不改写成新 main 实跑。
 
-测试：`go test -race -count=1 ./cmd/lifecycle-fixture-prepare ./internal/platform/storage ./internal/lifecycle/... ./internal/platform/routing ./internal/cost`；native provider +真实 PostgreSQL 成功记录在 run artifacts。没有调用 DELETE，包括预期返回拒绝的负例。
+准备阶段测试：`go test -race -count=1 ./cmd/lifecycle-fixture-prepare ./internal/platform/storage ./internal/lifecycle/... ./internal/platform/routing ./internal/cost`；native provider +真实 PostgreSQL 成功记录在 run artifacts。准备阶段没有调用 DELETE，包括预期返回拒绝的负例。
+
+## 已确认的两版本删除
+
+用户随后确认本环境及 online/A、quarantine/B 两份无保护 exact versions，已完成 DELETE、完整 native inventory、两份 absence receipts 与精确范围 completion：[受控删除报告](results/a6b30840-3e76-49ad-91d3-f0c399fcf170/delete-review.md)。另外两份保护对象保持原保护，只做 metadata/HEAD/inventory 与领域 prerequisite 阻断核验，native DELETE=0。执行身份已禁用，gateway 恢复 DELETE 全拒绝，原对象/volumes 不清理。
+
+`run-confirmed-delete.ps1` 是这一固定 run 的有限执行记录入口，要求 `-HumanConfirmedExactTwoVersions`，独立 permission/identity、有限窗口及 registry/native topology preflight。已存在 `delete-acceptance.json` 会拒绝再次执行；本次完成后不得重新启用。新对象或环境需要新的清单和用户确认，不能复用本次批准。完整 D1 的 archive/restore、真实业务 reader/worker 等仍待开发。

@@ -21,7 +21,9 @@ DB 读回：4 copies、2 restrictions、1 synthetic test policy basis、1 approv
 
 原 DENIED attempt 只在新真实 positive exact HEAD 后追加 [对账释放](denied-reconciliation-d48516df-b126-4af3-826d-3f64362d8cea.json)，不是 NOT_SENT，不擦除已发生成本。再次执行需要新 finite/current gate 和 physical start；UNKNOWN/start-only 不适用这条释放路径。
 
-执行二进制为 [v5 window](delete-execution-window-v5.json) 的 SHA；历史 v3/v4/原 bootstrap 二进制分别保留，没有覆盖对应 hashes。fixture DB 保留旧54 baseline，加装经过测试的 additive58+59 tables；`schema_migration` 仍为54，没有安装重复57、伪造完整升级或擦除旧库。Fresh PostgreSQL tests 按 main55 + D157/58/59 安装通过；C1 尚预留56，发布前仍需串行核对实际 merge 顺序和共享 routing。
+执行二进制为 [v5 window](delete-execution-window-v5.json) 的 SHA；历史 v3/v4/原 bootstrap 二进制分别保留，没有覆盖对应 hashes。fixture DB 保留旧54 baseline，加装原执行时编号additive58+59 tables；`schema_migration` 仍为54，没有安装重复 foundation、伪造完整升级或擦除旧库。原执行阶段 Fresh PostgreSQL tests 按 main55 + D157/58/59 安装通过。
+
+收口时 #311 合入 main57，开发代码已 rebase `253ce3b4ef044a233de1179534422eed04ded660`；D1 未发布 migrations 当前为58 foundation、59 scoped completion、60 denied reconciliation，routing 为 `c1-v24+external-core1+execution1`。代码 commit `c9170eac` 在另一台专属 tmpfs PostgreSQL（无 storage/volume mounts）上按当前 main55/57+D158/59/60 新建 scratch DB，`go test -race -count=1 ./internal/lifecycle/... ./internal/platform/storage ./internal/platform/routing ./cmd/lifecycle-fixture-delete` PASS；同时模块 `go test -count=1 ./...` 与 `go vet ./...` PASS（模块命令未启用外部 PG/provider integration，PG 证明来自独立 race 命令）。这次 rebase 验证没有再次 native DELETE 或更改保留 fixture；历史执行 artifacts 的原文件名、SHA、schema/binary 时间点保持原样。#310/C1 仍持56，发布前需由原 owner 核对其 migration 顺序和共享 routing。
 
 执行窗口已关闭：两种 fixture principal 配置 disabled，native executor SetUserStatus=disabled（HTTP200），[网关 DELETE 全拒绝](delete-window-closed-v5.json)，PUT/POST/payload GET 关闭。内部网络仍只有原三个服务，无 host ports；原两个 named volumes 保留。object cleanup=0、volume cleanup=0；没有解除 hold/retention、没有 bypass。首次脚本预检的 PowerShell 命令重名/自动参数问题在任何 schema/provider 工作前修正，不把预检卡住算执行。
 

@@ -2,6 +2,7 @@
 
 > 2026-10-11；D1 OPEN。新增受控 exact-version DELETE、denied reconciliation、native absence receipt / scoped completion。用户本聊天已确认固定环境及两份无保护版本，本次范围验收 **PASS**；完整 D1 runtime **NOT_RUN**。
 > 仅受控合成对象；另外两份保护对象仅只读阻断核验，native DELETE=0，未解除/bypass。object/volume cleanup=0。其他实际删除仍需先确认其环境与 exact object/version 清单。
+> 下文各增量记录保留当时的状态、编号及执行证据；当前受控删除结论见第六增量与受控删除报告。
 
 ## 权威与写入归属
 
@@ -9,9 +10,9 @@
 
 业务规则仍以 [Lifecycle Contract](../architecture/data-lifecycle.md)、[ADR-0015](../adr/0015-data-lifecycle-disposition-boundary.md) 和 [设计验收 §4–6](../product/data-lifecycle-design-acceptance.md) 为准。本文只记录当前增量与证据，不另建生命周期规则。
 
-当前聊天为 #307 唯一 writer。branch `codex/issue307-lifecycle-d1`，worktree `C:\Users\Henry\.codex\worktrees\issue307-lifecycle-d1\data-product-platform`，起始 base `9502bd1`；第三增量结束时更新至 #308/main `3a59b591...`，第五增量后开发分支再 rebase 至 #309/main `21762737a76033667df4a138368070868a34fbf8`。原生 fixture 仍固定在运行时的旧 base/schema，不跟随 rebase 升级。主工作区保持原 HEAD，不写 #298/#294 的 worktrees、代码或运行环境。首轮 App inventory transport 不可用；后续已恢复并重新核查 active threads/artifacts、Git worktrees、GitHub PR 与 remote main。#307 为 native Git worktree，App 确认它不属于 managed worktree；不修改 App metadata。
+当前聊天为 #307 唯一 writer。branch `codex/issue307-lifecycle-d1`，worktree `C:\Users\Henry\.codex\worktrees\issue307-lifecycle-d1\data-product-platform`，起始 base `9502bd1`；第三增量结束时更新至 #308/main `3a59b591...`，第五增量后更新至 #309/main `21762737...`；本次收口已 rebase 至 #311/main `253ce3b4ef044a233de1179534422eed04ded660`。原生 fixture 仍固定在运行时的旧 base/schema，不跟随 rebase 升级。主工作区保持原 HEAD，不写 #298/#294 的 worktrees、代码或运行环境。首轮 App inventory transport 不可用；后续已恢复并重新核查 active threads/artifacts、Git worktrees、GitHub PR 与 remote main。#307 为 native Git worktree，App 确认它不属于 managed worktree；不修改 App metadata。
 
-Main 已含 #309 / **000055**，#299/C1 Draft #310 固定 **000056**，D1 未发布 migration 已从原 **000054** 重排到 **000057**，避免在 main 000055 之后后装低版本。发布/合并前仍需串行核对 #310 的实际顺序与共享 routing；不抢占 C1 或忽略低版本候选未合入的 dependency。原生 fixture 的 000054 历史库及 SQL snapshot 保留，不在其上安装000057，也不添加旧行/双读/兼容 fallback。Draft #295 的旧000050排序由原 owner 解决，不恢复该任务。共享改动限事件 vocabulary、migration runner 重复版本拒绝、CostEvent/CostAllocation typed lifecycle allocation，未引入新依赖、队列或 engine。
+Main 已含 #309 / **000055** 与 #311 / **000057**。D1 未发布 foundation 从原000054、上一开发编号000057重排为 **000058**；scoped completion 与 denied reconciliation 分别为 **000059 / 000060**。#299/C1 Draft #310 仍持000056，发布/合并前需要其原 owner 按当前 main 核对编号顺序与共享 routing；不抢占 C1 或忽略低版本候选未合入的 dependency。原生 fixture 的000054历史库与原执行时additive58/59及其 SQL/binary hashes 保留，不安装重编号后的重复 foundation，不添加旧行/双读/兼容 fallback。Draft #295 的旧000050排序由原 owner 解决，不恢复该任务。共享改动限事件 vocabulary、migration runner 重复版本拒绝、CostEvent/CostAllocation typed lifecycle allocation，未引入新依赖、队列或 engine。
 
 第四增量期间核验 #299/C1 线程中用户的“先协调 #307 的迁移与共享写域”授权后，与其原 writer 协调；原预留号随后因 #309 实际合入调整为000055=#309、000056=#299/C1、000057=#307。开发 routing 合并为 **c1-v23+external-core1**，保留 #309 全部事件及十五类 Lifecycle 事件；native fixture 的旧 c1-v23 obligation 历史不改写。single-subject / workspace cost guards 和后续 C1 routing 按实际入 main 顺序再集成。#307 不改 C1 模块/页面或既有 API/worker 注册。
 
@@ -142,6 +143,8 @@ Run `a6b30840-3e76-49ad-91d3-f0c399fcf170` 只使用 27/26-byte synthetic CSV。
 
 复用 MinIO SDK/native IAM、原事务/fence、Cost/Audit/Evidence/Outbox。新增一次性 durable send claim，append-only scoped receipts/completion；confirmed DENIED 只在新 exact positive HEAD 后追加对账释放，再经 fresh dispatch 创建新 physical attempt。UNKNOWN/start-only 不盲删、不自动释放。实际3次 DELETE 调用（1拒绝、2接受）均计独立 invocation 成本；61次 metadata calls +3次 DELETE 对应64 allocations/quantity，amount=NULL，142 Event/Audit/Evidence，旧 BLOCKED/denial 保留。任何 provider 接受结果本身不是完成证明。
 
-Migration57 仍为 D1 foundation；58 增加 send/absence/completion/test basis，59 增加 confirmed denied + fresh presence reconciliation。Fresh PostgreSQL 按 main55+D157/58/59 测试通过；原 native fixture54仅安装明确 additive58+59，不安装重复57、不伪造 schema_migration 升级、不清库。routing 为 c1-v24+external-core1；#310/C1 56 和共享写域在 PR 发布前按实际 merge 顺序重新检查。
+原生执行时开发编号为57 foundation、58 send/absence/completion/test basis、59 confirmed denied + fresh presence reconciliation；该轮 Fresh PostgreSQL 按 main55+D157/58/59 测试通过。收口时 #311 合入 main57，开发分支已 rebase `253ce3b4...`，D1 当前编号为58/59/60，routing 为 **c1-v24+external-core1+execution1**，保留两侧全部事件。原 native fixture54仅安装原执行时明确 additive58+59，不再安装重排后的 foundation、不伪造 schema_migration 升级、不清库。原执行 artifacts 中的文件名、SHA 和 binary 保留其真实时间点，不改写成新 main 执行。#310/C1 56 和共享写域在 PR 发布前按实际 merge 顺序重新检查。
 
 最终 execution/preparation authority disabled，native IAM executor disabled，gateway DELETE 全拒绝且不开放 payload GET/PUT/POST；原网络、服务和两 named volumes 保留。无解除保护/bypass/对象 cleanup/volume cleanup。完整 D1 的 archive/restore、真实 reader/processing/delivery、自动 worker recovery/恢复 ledger 等仍待开发/NOT_RUN；不把这次两份版本的范围完成当全域销毁或整 Issue 完成。无 push/PR/merge/CI 授权，#307 OPEN。
+
+Rebase 后代码 commit `c9170eac` 的检查：专属 tmpfs PostgreSQL、无 storage/volume mounts、loopback55995；每项 Lifecycle PG test 新建唯一 scratch DB，按 main55/57+D158/59/60 完整 up。`go test -race -count=1 ./internal/lifecycle/... ./internal/platform/storage ./internal/platform/routing ./cmd/lifecycle-fixture-delete` PASS；模块 `go test -count=1 ./...` 与 `go vet ./...` PASS。模块命令的外部 PG/provider integration 未启用，真实 PG 证明来自独立 race 命令；native 删除证明来自原执行 artifacts。没有在 rebase 后重发 native DELETE，或升级保留 fixture。
