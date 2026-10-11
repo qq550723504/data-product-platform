@@ -108,10 +108,9 @@ def run(runtime, output, previous=None, download=None):
         closed = o.rows("quality_remediation_close", f"case_id='{cid}'")
         with ThreadPoolExecutor(max_workers=8) as workers:
             replies = list(workers.map(lambda _:o.api(base+"/retry",dict(reason=retry["reason"]),retry["request_key"]),range(8)))
+        check("eight HTTP same-key retries recover same execution including after closure",all(s==200 and b["executionId"]==retry["execution_id"] for s,b in replies))
         if closed:
-            check("closed case blocks further handling", all(s==409 for s,b in replies))
-        else:
-            check("eight HTTP same-key retries recover same execution",all(s==200 and b["executionId"]==retry["execution_id"] for s,b in replies))
+            check("closed case blocks new execution admission",o.api(base+"/retry",dict(reason=retry["reason"]),"closed-new-execution")[0]==409)
         rc = rechecks[0]
         response = o.api(base+"/recheck",dict(executionLinkId=rc["execution_link_id"]),rc["request_key"])
         check("accepted recheck recovers same identity after close",response[0]==200 and response[1]["recheckId"]==rc["id"])

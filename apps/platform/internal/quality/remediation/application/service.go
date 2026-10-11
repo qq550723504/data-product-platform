@@ -87,13 +87,17 @@ func (s *Service) Detect(ctx context.Context, cmd Command, version uuid.UUID) (D
 		return result, domain.ErrEvidence
 	}
 	var failed *qualitydomain.Finding
+	formatValid := false
 	for i := range assessment.Findings {
 		f := &assessment.Findings[i]
+		if f.RuleID == s.Plan.Spec.DetectionFormatRuleID && f.Status == qualitydomain.FindingPass {
+			formatValid = true
+		}
 		if f.RuleID == s.Plan.Spec.DetectionRuleID && f.Status == qualitydomain.FindingFail {
 			failed = f
 		}
 	}
-	if failed == nil {
+	if failed == nil || !formatValid {
 		return result, nil
 	}
 	invalid, e := strconv.ParseInt(fmt.Sprint(failed.Observed["affectedCount"]), 10, 64)
@@ -162,7 +166,7 @@ func (s *Service) Assign(ctx context.Context, cmd Command) (uuid.UUID, error) {
 		return id, err
 	}
 	err := s.Tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		_, _, err := s.lock(ctx, tx, cmd, false, false)
+		_, _, err := s.lock(ctx, tx, cmd, false, true)
 		if err != nil {
 			return err
 		}
@@ -176,6 +180,9 @@ func (s *Service) Assign(ctx context.Context, cmd Command) (uuid.UUID, error) {
 			return nil
 		}
 		if !errors.Is(err, pgx.ErrNoRows) {
+			return err
+		}
+		if _, _, err = s.lock(ctx, tx, cmd, false, false); err != nil {
 			return err
 		}
 		id = uuid.New()
@@ -198,7 +205,7 @@ func (s *Service) Execute(ctx context.Context, cmd ExecuteCommand) (workflowdoma
 		return result, err
 	}
 	err := s.Tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		c, assignment, err := s.lock(ctx, tx, cmd.Command, true, false)
+		c, _, err := s.lock(ctx, tx, cmd.Command, false, true)
 		if err != nil {
 			return err
 		}
@@ -228,6 +235,26 @@ func (s *Service) Execute(ctx context.Context, cmd ExecuteCommand) (workflowdoma
 		if !errors.Is(err, pgx.ErrNoRows) {
 			return err
 		}
+		_, assignment, err := s.lock(ctx, tx, cmd.Command, true, false)
+		if err != nil {
+			return err
+		}
+		if c.PlanHash != s.Plan.Hash {
+			return domain.ErrScope
+		}
+		// The versioned server-side plan owns the destination binding. Caller
+		// input cannot select another asset, even in the same workspace.
+		var approvedOutput uuid.UUID
+		var outputType string
+		if err = tx.QueryRow(ctx, `SELECT id,dataset_type FROM dataset WHERE workspace_id=$1 AND code=$2 FOR SHARE`, c.WorkspaceID, s.Plan.Spec.OutputDatasetCode).Scan(&approvedOutput, &outputType); err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return domain.ErrScope
+			}
+			return err
+		}
+		if outputType != "CURATED" || (!cmd.Retry && cmd.OutputDatasetID != approvedOutput) {
+			return domain.ErrScope
+		}
 		var previous uuid.UUID
 		var ordinal int
 		err = tx.QueryRow(ctx, `SELECT execution_id,ordinal FROM quality_remediation_execution WHERE case_id=$1 ORDER BY ordinal DESC LIMIT 1`, c.ID).Scan(&previous, &ordinal)
@@ -237,6 +264,13 @@ func (s *Service) Execute(ctx context.Context, cmd ExecuteCommand) (workflowdoma
 		if cmd.Retry {
 			if previous == uuid.Nil {
 				return domain.ErrAttempt
+			}
+			prior, e := s.Workflows.GetExecutionTx(ctx, tx, previous, false)
+			if e != nil {
+				return e
+			}
+			if prior.OutputDatasetID != approvedOutput {
+				return domain.ErrScope
 			}
 			result, err = s.Executions.RetryInTransaction(ctx, tx, workflowapp.RetryExecutionCommand{ExecutionID: previous, IdempotencyKey: executionKey(c.ID, cmd.Key), ActorID: &cmd.ActorID, TraceID: cmd.TraceID})
 		} else {
@@ -304,12 +338,9 @@ func (s *Service) Recheck(ctx context.Context, cmd Command, linkID uuid.UUID) (u
 	}
 	err := s.Tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		var err error
-		c, _, err = s.lock(ctx, tx, cmd, true, true)
+		c, _, err = s.lock(ctx, tx, cmd, false, true)
 		if err != nil {
 			return err
-		}
-		if c.RecheckRuleHash != s.Plan.RecheckHash || c.PlanHash != s.Plan.Hash {
-			return domain.ErrScope
 		}
 		var actor, priorLink uuid.UUID
 		err = tx.QueryRow(ctx, `SELECT id,actor_id,execution_link_id FROM quality_remediation_recheck WHERE case_id=$1 AND request_key=$2`, c.ID, cmd.Key).Scan(&id, &actor, &priorLink)
@@ -318,12 +349,11 @@ func (s *Service) Recheck(ctx context.Context, cmd Command, linkID uuid.UUID) (u
 				return domain.ErrConflict
 			}
 		} else if errors.Is(err, pgx.ErrNoRows) {
-			var closed bool
-			if err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM quality_remediation_close WHERE case_id=$1)`, c.ID).Scan(&closed); err != nil {
+			if _, _, err = s.lock(ctx, tx, cmd, true, false); err != nil {
 				return err
 			}
-			if closed {
-				return domain.ErrClosed
+			if c.RecheckRuleHash != s.Plan.RecheckHash || c.PlanHash != s.Plan.Hash {
+				return domain.ErrScope
 			}
 			id = uuid.New()
 			_, err = tx.Exec(ctx, `INSERT INTO quality_remediation_recheck(id,case_id,execution_link_id,quality_attempt_id,actor_id,request_key) VALUES($1,$2,$3,$1,$4,$5)`, id, c.ID, linkID, cmd.ActorID, cmd.Key)

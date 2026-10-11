@@ -6,6 +6,8 @@ metadata:
 spec:
   detectionRuleSetRef: park/quality/energy-raw-nonnegative-v1.yaml
   detectionRuleId: QA-ENERGY-NONNEGATIVE
+  detectionFormatRuleId: QA-ENERGY-DECIMAL-FORMAT
+  outputDatasetCode: dpp-source-reader-curated
   workflowDefinitionRef: examples/enterprise-activity/workflow/workflow-v1.yaml
   inputName: energy_raw
   quarantineReasonCode: NEGATIVE_ENERGY_KWH

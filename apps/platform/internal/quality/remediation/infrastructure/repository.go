@@ -32,7 +32,7 @@ func (r *Repository) Detail(ctx context.Context, workspace, id uuid.UUID) (map[s
  'attempts',COALESCE((SELECT jsonb_agg(jsonb_build_object('id',l.id,'ordinal',l.ordinal,'reason',l.reason,'executionId',e.id,
  'status',e.status,'errorCode',e.error_code,'errorMessage',e.error_message,'outputDatasetId',e.output_dataset_id,'outputVersionId',e.output_dataset_version_id,'metrics',e.metrics)
  ORDER BY l.ordinal) FROM quality_remediation_execution l JOIN execution e ON e.id=l.execution_id WHERE l.case_id=c.id),'[]'::jsonb),
- 'rechecks',COALESCE((SELECT jsonb_agg(jsonb_build_object('id',rc.id,'qualityAttemptId',rc.quality_attempt_id,
+ 'rechecks',COALESCE((SELECT jsonb_agg(jsonb_build_object('id',rc.id,'qualityAttemptId',rc.quality_attempt_id,'requestKey',rc.request_key,
  'executionLinkId',rc.execution_link_id,'outcome',COALESCE(o.outcome,'PENDING'),'errorCode',o.error_code,
  'assessmentId',o.assessment_id,'gateDecision',q.gate_decision) ORDER BY rc.created_at,rc.id)
  FROM quality_remediation_recheck rc LEFT JOIN quality_remediation_recheck_outcome o ON o.id=rc.id LEFT JOIN quality_result q ON q.id=o.assessment_id

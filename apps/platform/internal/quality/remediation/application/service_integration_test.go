@@ -186,7 +186,7 @@ func TestC1RealPostgresAtomicReplayConcurrencyRetryCostsAndHistory(t *testing.T)
 	if err != nil {
 		t.Fatal(err)
 	}
-	output, err := creator.Handle(ctx, datasetapp.CreateDatasetCommand{WorkspaceID: ws, Code: uuid.NewString(), Name: "C1 output", DatasetType: datasetdomain.DatasetTypeCurated})
+	output, err := creator.Handle(ctx, datasetapp.CreateDatasetCommand{WorkspaceID: ws, Code: plan.Spec.OutputDatasetCode, Name: "C1 approved output", DatasetType: datasetdomain.DatasetTypeCurated})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -229,11 +229,38 @@ func TestC1RealPostgresAtomicReplayConcurrencyRetryCostsAndHistory(t *testing.T)
 		t.Fatal(err)
 	}
 	cmd.Key = "assign"
-	if _, err = service.Assign(ctx, cmd); err != nil {
+	assignmentID, err := service.Assign(ctx, cmd)
+	if err != nil {
 		t.Fatal(err)
 	}
+	assignmentCommand := cmd
 	command := application.ExecuteCommand{Command: cmd, WorkflowVersionID: wf.ID, OutputDatasetID: output.ID, TargetPeriod: "2025-03", Inputs: []workflowdomain.InputBinding{{Name: plan.Spec.InputName, DatasetVersionID: input.ID}}}
 	command.Key = "execute"
+	t.Run("approved destination rejects unrelated curated and raw assets before queue acceptance", func(t *testing.T) {
+		unrelated, e := creator.Handle(ctx, datasetapp.CreateDatasetCommand{WorkspaceID: ws, Code: uuid.NewString(), Name: "Unrelated CURATED", DatasetType: datasetdomain.DatasetTypeCurated})
+		if e != nil {
+			t.Fatal(e)
+		}
+		for _, target := range []uuid.UUID{unrelated.ID, raw.ID} {
+			bad := command
+			bad.OutputDatasetID = target
+			if _, e = service.Execute(ctx, bad); !errors.Is(e, domain.ErrScope) {
+				t.Fatal("unapproved output accepted", e)
+			}
+		}
+		service.Plan.Spec.OutputDatasetCode = raw.Code
+		bad := command
+		bad.OutputDatasetID = raw.ID
+		_, e = service.Execute(ctx, bad)
+		service.Plan = plan
+		if !errors.Is(e, domain.ErrScope) {
+			t.Fatal("approved code bound to RAW accepted", e)
+		}
+		var count int
+		if e = pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE workspace_id=$1`, ws).Scan(&count); e != nil || count != 0 {
+			t.Fatal("invalid destination created execution or queue work", e, count)
+		}
+	})
 	t.Run("case proof failure rolls back execution queue and association", func(t *testing.T) {
 		var routes []outbox.Route
 		for _, route := range routing.Routes(false) {
@@ -421,9 +448,27 @@ func TestC1RealPostgresAtomicReplayConcurrencyRetryCostsAndHistory(t *testing.T)
 	if _, err = service.Close(ctx, cmd); err != nil {
 		t.Fatal("close replay", err)
 	}
+	detail, err := service.Repo.Detail(ctx, ws, cmd.CaseID)
+	if err != nil {
+		t.Fatal("closed pending projection", err)
+	}
+	var pendingProjection map[string]any
+	for _, raw := range detail["rechecks"].([]any) {
+		row := raw.(map[string]any)
+		if row["id"] == lostID.String() {
+			pendingProjection = row
+		}
+	}
+	if pendingProjection == nil || pendingProjection["outcome"] != "PENDING" || pendingProjection["requestKey"] != lostCommand.Key || pendingProjection["executionLinkId"] != link.String() {
+		t.Fatal("browser cannot recover the exact accepted recheck after close", pendingProjection)
+	}
+	// Accepted work is owned by its frozen case/attempt, even if the current
+	// admission plan has changed. This recovery performs no new evaluation.
+	service.Plan.Hash = "changed-current-admission-plan"
 	if recovered, e := service.Recheck(ctx, lostCommand, link); e != nil || recovered != lostID || qe.calls.Load() != callsAfterLostResponse {
 		t.Fatal("closed case did not recover committed quality without new physical work", e)
 	}
+	service.Plan = plan
 	lostCommand.Key = "new-recheck-after-close"
 	if _, e := service.Recheck(ctx, lostCommand, link); !errors.Is(e, domain.ErrClosed) {
 		t.Fatal("closed case admitted a new evaluation", e)
@@ -431,5 +476,76 @@ func TestC1RealPostgresAtomicReplayConcurrencyRetryCostsAndHistory(t *testing.T)
 	if _, err = service.Execute(ctx, application.ExecuteCommand{Command: cmd, Retry: true}); !errors.Is(err, domain.ErrClosed) {
 		t.Fatal("closed case started execution", err)
 	}
-	t.Logf("real PG: 8 same-key requests -> one execution; failed+retry native calls/costs=2; detection+failed+successful quality physical calls=%d; old RAW unchanged", qe.calls.Load())
+	t.Run("closed accepted assignment execution and retry recover without any additional facts", func(t *testing.T) {
+		counts := func() string {
+			var hash string
+			e := pool.QueryRow(ctx, `SELECT md5(jsonb_build_array(
+			 (SELECT count(*) FROM execution WHERE workspace_id=$1),
+			 (SELECT count(*) FROM quality_remediation_assignment WHERE case_id=$2),
+			 (SELECT count(*) FROM quality_remediation_execution WHERE case_id=$2),
+			 (SELECT count(*) FROM cost_event WHERE workspace_id=$1),
+			 (SELECT count(*) FROM audit_event WHERE workspace_id=$1),
+			 (SELECT count(*) FROM evidence WHERE workspace_id=$1),
+			 (SELECT count(*) FROM outbox_event))::text)`, ws, cmd.CaseID).Scan(&hash)
+			if e != nil {
+				t.Fatal(e)
+			}
+			return hash
+		}
+		before := counts()
+		if id, e := service.Assign(ctx, assignmentCommand); e != nil || id != assignmentID {
+			t.Fatal("closed accepted assignment recovery", e)
+		}
+		if got, e := service.Execute(ctx, command); e != nil || got.ID != first.ID {
+			t.Fatal("closed accepted execution recovery", e)
+		}
+		if got, e := service.Execute(ctx, retry); e != nil || got.ID != child.ID {
+			t.Fatal("closed accepted retry recovery", e)
+		}
+		bad := command
+		bad.OutputDatasetID = raw.ID
+		if _, e := service.Execute(ctx, bad); !errors.Is(e, domain.ErrConflict) {
+			t.Fatal("changed recovered destination accepted", e)
+		}
+		badAssign := assignmentCommand
+		badAssign.ActorID = uuid.New()
+		if _, e := service.Assign(ctx, badAssign); !errors.Is(e, domain.ErrConflict) {
+			t.Fatal("changed recovered assignment actor accepted", e)
+		}
+		badAssign = assignmentCommand
+		badAssign.Key = "new-assignment-after-close"
+		if _, e := service.Assign(ctx, badAssign); !errors.Is(e, domain.ErrClosed) {
+			t.Fatal("new closed assignment accepted", e)
+		}
+		if counts() != before {
+			t.Fatal("accepted recovery created facts or costs")
+		}
+	})
+	t.Run("only proven negative finite decimals create a remediation case", func(t *testing.T) {
+		for _, test := range []struct {
+			value    string
+			negative bool
+			gate     string
+		}{
+			{"-12.5", true, "FAIL"}, {"", false, "FAIL"}, {"bad", false, "FAIL"}, {"NaN", false, "FAIL"},
+			{"Infinity", false, "FAIL"}, {"-0", false, "PASS"}, {"-.0", false, "PASS"}, {"+10.5", false, "PASS"},
+			{"bad\nM-006,-12.5", false, "FAIL"},
+		} {
+			t.Run(test.value, func(t *testing.T) {
+				d, e := creator.Handle(ctx, datasetapp.CreateDatasetCommand{WorkspaceID: ws, Code: uuid.NewString(), Name: "Controlled decimal", DatasetType: datasetdomain.DatasetTypeRaw})
+				if e != nil {
+					t.Fatal(e)
+				}
+				v, e := writer.Handle(ctx, datasetapp.UploadVersionCommand{DatasetID: d.ID, Filename: "raw.csv", ContentType: "text/csv", Content: []byte("meter_id,energy_kwh\nM-001," + test.value + "\n")})
+				if e != nil {
+					t.Fatal(e)
+				}
+				got, e := service.Detect(ctx, application.Command{WorkspaceID: ws, ActorID: actor, Key: uuid.NewString()}, v.ID)
+				if e != nil || (got.CaseID != nil) != test.negative || got.Decision != test.gate {
+					t.Fatalf("negative evidence: result=%+v error=%v", got, e)
+				}
+			})
+		}
+	})
+	t.Logf("real PG: 8 same-key requests -> one execution; failed+retry native calls/costs=2; detection/recheck/format evidence quality physical calls=%d; old RAW unchanged", qe.calls.Load())
 }

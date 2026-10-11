@@ -21,6 +21,8 @@ type Plan struct {
 	Spec struct {
 		DetectionRuleSetRef   string `yaml:"detectionRuleSetRef"`
 		DetectionRuleID       string `yaml:"detectionRuleId"`
+		DetectionFormatRuleID string `yaml:"detectionFormatRuleId"`
+		OutputDatasetCode     string `yaml:"outputDatasetCode"`
 		WorkflowDefinitionRef string `yaml:"workflowDefinitionRef"`
 		InputName             string `yaml:"inputName"`
 		QuarantineReasonCode  string `yaml:"quarantineReasonCode"`
@@ -53,7 +55,7 @@ func LoadPlan(root, ref string) (Plan, error) {
 	if p.Kind != "RemediationPlan" || p.Metadata.Version == "" || p.Metadata.Name == "" {
 		return p, fmt.Errorf("invalid remediation plan")
 	}
-	for _, v := range []string{p.Spec.DetectionRuleID, p.Spec.InputName, p.Spec.QuarantineReasonCode, p.Spec.DetectionRuleSetRef, p.Spec.RecheckRuleSetRef, p.Spec.WorkflowDefinitionRef} {
+	for _, v := range []string{p.Spec.DetectionRuleID, p.Spec.DetectionFormatRuleID, p.Spec.OutputDatasetCode, p.Spec.InputName, p.Spec.QuarantineReasonCode, p.Spec.DetectionRuleSetRef, p.Spec.RecheckRuleSetRef, p.Spec.WorkflowDefinitionRef} {
 		if strings.TrimSpace(v) == "" {
 			return p, fmt.Errorf("incomplete remediation plan")
 		}
