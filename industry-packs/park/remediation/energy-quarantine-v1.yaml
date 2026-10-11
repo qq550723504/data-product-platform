@@ -1,0 +1,15 @@
+apiVersion: dataprod.platform/v1alpha1
+kind: RemediationPlan
+metadata:
+  name: energy-quarantine
+  version: 1.0.0
+spec:
+  detectionRuleSetRef: park/quality/energy-raw-nonnegative-v1.yaml
+  detectionRuleId: QA-ENERGY-NONNEGATIVE
+  detectionFormatRuleId: QA-ENERGY-DECIMAL-FORMAT
+  outputDatasetCode: dpp-source-reader-curated
+  resolutionSourceInputName: enterprise_raw
+  workflowDefinitionRef: examples/enterprise-activity/workflow/workflow-v1.yaml
+  inputName: energy_raw
+  quarantineReasonCode: NEGATIVE_ENERGY_KWH
+  recheckRuleSetRef: park/quality/enterprise-activity-quality-v1.yaml

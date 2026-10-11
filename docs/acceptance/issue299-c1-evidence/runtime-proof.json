@@ -1,0 +1,561 @@
+{
+  "status": "PASS",
+  "observedAt": "2026-10-11T10:57:12.115002+00:00",
+  "baseMain": "21762737a76033667df4a138368070868a34fbf8",
+  "codeCommit": "bc62ebfa8846922916cba8bfa195cf6e495592f3",
+  "apiSha256": "2633d367b912fcf58e2bda77b10c6aaa567a42948686728e18f68576b3aa3e3b",
+  "webMode": "production",
+  "workspaceId": "5672a267-31a9-48a0-a8c5-3dcb0d46efab",
+  "caseId": "5f682e33-c5ae-4108-b671-8a18aa4e6b30",
+  "outputVersion": "c64a947d-c2a2-4104-8006-af0c652951e6",
+  "browser": "real Edge; operator actions through production Next UI",
+  "runtime": {
+    "web": "http://127.0.0.1:52175",
+    "api": "http://127.0.0.1:60161",
+    "metadata": "offline projection; PGI-09 previously owned by #298, not rerun by C1",
+    "migrations": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      51,
+      52,
+      53,
+      55,
+      56
+    ],
+    "images": [
+      {
+        "name": "dpp-pgi-b3-storage-724e5805918f",
+        "image": "dpp-pgi-minio:2025-10-15",
+        "id": "sha256:b8be398f33ebc33e0e02487b81da568513c8afe305a1d2c372dc9b43d72b743a"
+      },
+      {
+        "name": "dpp-pgi-b3-gateway-724e5805918f",
+        "image": "caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+        "id": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
+      },
+      {
+        "name": "dpp-pgi-b3-core-724e5805918f",
+        "image": "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+      },
+      {
+        "name": "dpp-pgi-b3-redis-724e5805918f",
+        "image": "redis:7-alpine",
+        "id": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"
+      },
+      {
+        "name": "dpp-pgi-724e5805918f-source",
+        "image": "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+      },
+      {
+        "name": "dpp-pgi-724e5805918f-hop",
+        "image": "dpp-pgi-hop-jdbc:42.7.14",
+        "id": "sha256:96f803fdaa01b0f06c5e03b27d53c6dc657234e68ebb0e7938e4030992c6eec7"
+      }
+    ]
+  },
+  "openChecks": [
+    {
+      "name": "one actual negative finding case",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "actual negative RAW detection is 1/14",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "real failure and explicit retry preserve two attempts",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "output is a new immutable version",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "quarantine preserves negative original",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "energy grain conserved separately from enterprise aggregation",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "one independent recheck",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "full existing ruleset assessed new output PASS",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "all three real native invocations charged incl failure",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "eight HTTP same-key retries recover same execution",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "accepted recheck recovers same identity after close",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "changed same-key handling reason rejects",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "forged actor without credential rejects",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "foreign workspace rejects",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "replays create no facts or cost",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "real browser payload matches output hash",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "manual closure did not turn RAW failure into certification",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "new output has independent certification",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "issued history retained and stale ALLOWED request blocked",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "actual source authorization revoked",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "blocked same-key recovery outputs zero dataset payload",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "old direct-data issued recovery never resends bytes",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "business and audit facts contain no configured secrets",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "final production browser responses contain no configured secrets",
+      "status": "PASS",
+      "detail": null
+    }
+  ],
+  "closedChecks": [
+    {
+      "name": "one actual negative finding case",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "actual negative RAW detection is 1/14",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "real failure and explicit retry preserve two attempts",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "output is a new immutable version",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "quarantine preserves negative original",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "energy grain conserved separately from enterprise aggregation",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "one independent recheck",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "full existing ruleset assessed new output PASS",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "all three real native invocations charged incl failure",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "closed case blocks further handling",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "accepted recheck recovers same identity after close",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "closed case blocks new recheck admission",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "manual close same-key recovery is stable",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "changed same-key handling reason rejects",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "forged actor without credential rejects",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "foreign workspace rejects",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "replays create no facts or cost",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "real browser payload matches output hash",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "manual closure did not turn RAW failure into certification",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "new output has independent certification",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "issued history retained and stale ALLOWED request blocked",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "actual source authorization revoked",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "blocked same-key recovery outputs zero dataset payload",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "old direct-data issued recovery never resends bytes",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "business and audit facts contain no configured secrets",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "final production browser responses contain no configured secrets",
+      "status": "PASS",
+      "detail": null
+    }
+  ],
+  "history": {
+    "dataset_version": {
+      "count": 5,
+      "beforeSha256": "72ee272618074f1e5008c4e35837b134d25028fe73ec32522a50bd12c61c86bf",
+      "openSha256": "72ee272618074f1e5008c4e35837b134d25028fe73ec32522a50bd12c61c86bf",
+      "closedSha256": "72ee272618074f1e5008c4e35837b134d25028fe73ec32522a50bd12c61c86bf"
+    },
+    "dataset_version_lineage": {
+      "count": 5,
+      "beforeSha256": "06a494f209ad6099384f7817cad472607b732a9391d399c3879bcca942db8488",
+      "openSha256": "06a494f209ad6099384f7817cad472607b732a9391d399c3879bcca942db8488",
+      "closedSha256": "06a494f209ad6099384f7817cad472607b732a9391d399c3879bcca942db8488"
+    },
+    "quality_result": {
+      "count": 1,
+      "beforeSha256": "2ee3ed5d67426f7b8ab2fe93ebce5424af3a1745e1caae5f8b76c3041ab14ff4",
+      "openSha256": "2ee3ed5d67426f7b8ab2fe93ebce5424af3a1745e1caae5f8b76c3041ab14ff4",
+      "closedSha256": "2ee3ed5d67426f7b8ab2fe93ebce5424af3a1745e1caae5f8b76c3041ab14ff4"
+    },
+    "quality_finding": {
+      "count": 11,
+      "beforeSha256": "58cb3c31c0ddbec62b86d4ac6ba1ebf23580413b41e194ea201588a6bafd97a0",
+      "openSha256": "58cb3c31c0ddbec62b86d4ac6ba1ebf23580413b41e194ea201588a6bafd97a0",
+      "closedSha256": "58cb3c31c0ddbec62b86d4ac6ba1ebf23580413b41e194ea201588a6bafd97a0"
+    },
+    "compliance_result": {
+      "count": 1,
+      "beforeSha256": "333af627135d32c6b60afc61337c20090ba1f07b7896ed1ba55b8f8173411541",
+      "openSha256": "333af627135d32c6b60afc61337c20090ba1f07b7896ed1ba55b8f8173411541",
+      "closedSha256": "333af627135d32c6b60afc61337c20090ba1f07b7896ed1ba55b8f8173411541"
+    },
+    "dataset_certification": {
+      "count": 1,
+      "beforeSha256": "eac93f9d9734fa7e4f742febd2eca0f7df2aebff5bdee2a56470a5b0e96bc644",
+      "openSha256": "eac93f9d9734fa7e4f742febd2eca0f7df2aebff5bdee2a56470a5b0e96bc644",
+      "closedSha256": "eac93f9d9734fa7e4f742febd2eca0f7df2aebff5bdee2a56470a5b0e96bc644"
+    },
+    "evidence_snapshot": {
+      "count": 3,
+      "beforeSha256": "73e5d9c6d66f120cb02bd04a49c71b79c0d6e6fe4ed354b2e2a09ddf6229dc02",
+      "openSha256": "73e5d9c6d66f120cb02bd04a49c71b79c0d6e6fe4ed354b2e2a09ddf6229dc02",
+      "closedSha256": "73e5d9c6d66f120cb02bd04a49c71b79c0d6e6fe4ed354b2e2a09ddf6229dc02"
+    },
+    "evidence_snapshot_item": {
+      "count": 8,
+      "beforeSha256": "a737df1fc3080664a8ad3413ddb5fbffa0308ee55e07c23d196a9367136b0dc2",
+      "openSha256": "a737df1fc3080664a8ad3413ddb5fbffa0308ee55e07c23d196a9367136b0dc2",
+      "closedSha256": "a737df1fc3080664a8ad3413ddb5fbffa0308ee55e07c23d196a9367136b0dc2"
+    },
+    "rights_snapshot": {
+      "count": 2,
+      "beforeSha256": "9411b63fbe37dbfd4d021a93282a33c270c0a5f4d95c154279f3e8075bd37f39",
+      "openSha256": "9411b63fbe37dbfd4d021a93282a33c270c0a5f4d95c154279f3e8075bd37f39",
+      "closedSha256": "9411b63fbe37dbfd4d021a93282a33c270c0a5f4d95c154279f3e8075bd37f39"
+    },
+    "rights_snapshot_authorization": {
+      "count": 2,
+      "beforeSha256": "ad3994bcf637532efb6f5ea58d5194ad477cc1718f6f5f6f440bf4519fc98b33",
+      "openSha256": "ad3994bcf637532efb6f5ea58d5194ad477cc1718f6f5f6f440bf4519fc98b33",
+      "closedSha256": "ad3994bcf637532efb6f5ea58d5194ad477cc1718f6f5f6f440bf4519fc98b33"
+    },
+    "rights_snapshot_declaration": {
+      "count": 6,
+      "beforeSha256": "90f10b17dc1e494270d2ac2c79b47ad9e8ac042c01163e2bf9442163b917e4d3",
+      "openSha256": "90f10b17dc1e494270d2ac2c79b47ad9e8ac042c01163e2bf9442163b917e4d3",
+      "closedSha256": "90f10b17dc1e494270d2ac2c79b47ad9e8ac042c01163e2bf9442163b917e4d3"
+    },
+    "rights_snapshot_provenance_binding": {
+      "count": 6,
+      "beforeSha256": "0e755f77fd4970eb16871140d779e9beae6e522471798a7680b523f3bd1d4673",
+      "openSha256": "0e755f77fd4970eb16871140d779e9beae6e522471798a7680b523f3bd1d4673",
+      "closedSha256": "0e755f77fd4970eb16871140d779e9beae6e522471798a7680b523f3bd1d4673"
+    },
+    "effective_rights_snapshot": {
+      "count": 1,
+      "beforeSha256": "8ad950a26db6570137542bb021576d22bf53c85304b2dd7ec047c88ce0c38145",
+      "openSha256": "8ad950a26db6570137542bb021576d22bf53c85304b2dd7ec047c88ce0c38145",
+      "closedSha256": "8ad950a26db6570137542bb021576d22bf53c85304b2dd7ec047c88ce0c38145"
+    },
+    "product_version": {
+      "count": 1,
+      "beforeSha256": "a2b215e718d352148c357dfd3b7498d3c46f23b29783d2feffc6a40b72b5976d",
+      "openSha256": "a2b215e718d352148c357dfd3b7498d3c46f23b29783d2feffc6a40b72b5976d",
+      "closedSha256": "a2b215e718d352148c357dfd3b7498d3c46f23b29783d2feffc6a40b72b5976d"
+    },
+    "product_asset": {
+      "count": 1,
+      "beforeSha256": "6dbf1992195bfe366b5ed74049d0941de5731e55ce121213f6b40b873d30bf80",
+      "openSha256": "6dbf1992195bfe366b5ed74049d0941de5731e55ce121213f6b40b873d30bf80",
+      "closedSha256": "6dbf1992195bfe366b5ed74049d0941de5731e55ce121213f6b40b873d30bf80"
+    },
+    "product_release": {
+      "count": 1,
+      "beforeSha256": "27081fad511746a8152aecd1246895493f286c3b7669b4b91e866d17d739809e",
+      "openSha256": "27081fad511746a8152aecd1246895493f286c3b7669b4b91e866d17d739809e",
+      "closedSha256": "27081fad511746a8152aecd1246895493f286c3b7669b4b91e866d17d739809e"
+    },
+    "product_release_dataset": {
+      "count": 1,
+      "beforeSha256": "2d43e0a0305b363ed9b5151942134dfc811b13420570c4066df999a4e745774a",
+      "openSha256": "2d43e0a0305b363ed9b5151942134dfc811b13420570c4066df999a4e745774a",
+      "closedSha256": "2d43e0a0305b363ed9b5151942134dfc811b13420570c4066df999a4e745774a"
+    }
+  },
+  "historyNote": "Exact original row membership/content; dataset_version hash permits only the existing audited READY -> SUPERSEDED lifecycle transition, restoring READY for comparison.",
+  "quality_remediation_assignment": [
+    {
+      "id": "5d7ddb79-88b1-433e-a4d3-efc075f24a6c",
+      "case_id": "5f682e33-c5ae-4108-b671-8a18aa4e6b30",
+      "actor_id": "618f1cb4-7f14-4dd2-8b2b-a29601ed345f",
+      "reason": "最终 C1：当前受信任操作者核对负数原值并负责受控隔离",
+      "request_key": "8a7af5ba-e760-417b-83ec-0a20bcd7b3dd",
+      "ordinal": 1,
+      "created_at": "2026-10-11T10:50:17.367115+00:00"
+    }
+  ],
+  "quality_remediation_execution": [
+    {
+      "id": "a7f594c1-ff72-410a-94a1-8323e9ebb114",
+      "case_id": "5f682e33-c5ae-4108-b671-8a18aa4e6b30",
+      "execution_id": "b4f7c6a0-b647-444c-8cda-dd2fa77a9049",
+      "assignment_id": "5d7ddb79-88b1-433e-a4d3-efc075f24a6c",
+      "ordinal": 1,
+      "actor_id": "618f1cb4-7f14-4dd2-8b2b-a29601ed345f",
+      "request_key": "3c801ae1-f81e-4638-a170-d4e4b7ff3286",
+      "reason": "最终 C1 存储故障验收：固定规则执行，原负数不得覆盖",
+      "created_at": "2026-10-11T10:50:36.094711+00:00"
+    },
+    {
+      "id": "e4728efc-36b8-4609-9393-0cb7ac10ac9f",
+      "case_id": "5f682e33-c5ae-4108-b671-8a18aa4e6b30",
+      "execution_id": "267bd3e6-1e37-4332-82c6-5167f7cf4d4d",
+      "assignment_id": "5d7ddb79-88b1-433e-a4d3-efc075f24a6c",
+      "ordinal": 2,
+      "actor_id": "618f1cb4-7f14-4dd2-8b2b-a29601ed345f",
+      "request_key": "c7b72e8e-72e3-4b82-9917-3184b8d5fab3",
+      "reason": "最终 C1：已确认失败且网关恢复，显式新 Execution 重试",
+      "created_at": "2026-10-11T10:51:03.822204+00:00"
+    }
+  ],
+  "quality_remediation_recheck": [
+    {
+      "id": "9f9733f7-135a-40ac-9be9-c41abb87fe2a",
+      "case_id": "5f682e33-c5ae-4108-b671-8a18aa4e6b30",
+      "execution_link_id": "e4728efc-36b8-4609-9393-0cb7ac10ac9f",
+      "quality_attempt_id": "9f9733f7-135a-40ac-9be9-c41abb87fe2a",
+      "actor_id": "618f1cb4-7f14-4dd2-8b2b-a29601ed345f",
+      "request_key": "555bd1b6-d00d-4c6a-a8f5-0e53c2f63c62",
+      "created_at": "2026-10-11T10:54:15.696417+00:00"
+    }
+  ],
+  "quality_remediation_recheck_outcome": [
+    {
+      "id": "9f9733f7-135a-40ac-9be9-c41abb87fe2a",
+      "assessment_id": "b5c24966-a467-41fb-97cb-477ae828f736",
+      "outcome": "ASSESSED",
+      "error_code": "",
+      "created_at": "2026-10-11T10:54:15.73842+00:00"
+    }
+  ],
+  "quality_remediation_close": [
+    {
+      "id": "86b2ad80-cc73-4514-bc38-2082f1b71b3a",
+      "case_id": "5f682e33-c5ae-4108-b671-8a18aa4e6b30",
+      "actor_id": "618f1cb4-7f14-4dd2-8b2b-a29601ed345f",
+      "request_key": "4020bd69-869c-415c-a1dd-2435cdebcbd7",
+      "reason": "C1 浏览器验收完成：仅记录人工关闭，原 RAW 失败和认证/交付门禁独立保留",
+      "created_at": "2026-10-11T10:55:46.180667+00:00"
+    }
+  ],
+  "deliveryHistory": [
+    {
+      "id": "7bcb7b3f-a5c6-4cfa-85b4-8a71d64a8cf0",
+      "status": "ISSUED",
+      "dataset_version_id": "c64a947d-c2a2-4104-8006-af0c652951e6",
+      "terminal_reason": null,
+      "idempotency_key": "ab9868e8-bf64-4960-846c-71d6caa792c1"
+    },
+    {
+      "id": "647a5019-54fb-430c-bffb-1c4302c34b0c",
+      "status": "BLOCKED",
+      "dataset_version_id": "c64a947d-c2a2-4104-8006-af0c652951e6",
+      "terminal_reason": "CURRENT_ENTITLEMENT_BLOCKED",
+      "idempotency_key": "cfb53c38-35c6-4b8a-a0d6-89c244842674"
+    }
+  ],
+  "costCounts": {
+    "CERTIFICATION_EVALUATION": 3,
+    "INGESTION_ENGINE_INVOCATION": 3,
+    "INGESTION_INVOCATION_INTENT": 3,
+    "NATIVE_ENGINE_INVOCATION": 3,
+    "RIGHTS_DECLARATION_VERIFICATION": 3,
+    "QUALITY_ENGINE_INVOCATION": 3,
+    "DIRECT_DATA_DELIVERY_ATTEMPT": 2,
+    "EFFECTIVE_RIGHTS_COMPUTE": 2,
+    "AUTHORIZATION_PROVENANCE_BINDING": 3,
+    "PROCESSING_EXECUTION": 2
+  },
+  "download": {
+    "byteSize": 640,
+    "sha256": "a2545a5642fbf076840d2b2f03848973e990b0c12de6a7ffcbfc6dd990af0eb6"
+  }
+}

@@ -9,10 +9,16 @@ export type Receipt = {id:string;manifestHash:string;bindings:Array<{code:string
 export type Job = {id:string;workspaceId:string;inputDatasetVersionId:string;status:string;outputDatasetVersionId?:string};
 export function batchEnabled(){return process.env.POC_ENABLE_INGESTION_ACTIONS==="true";}
 export function workspace(){const ws=configuredWorkspaceId();if(!ws)throw new Error("Workspace 未配置");return ws;}
-export async function core<T>(path:string,method="GET",body?:unknown,key?:string,rights=false):Promise<T>{
-  const tokenFile=rights?process.env.POC_RIGHTS_TOKEN_FILE:process.env.POC_INGESTION_TOKEN_FILE;
-  if(!tokenFile)throw new Error("受信任的操作凭据未配置");
-  const token=(await readFile(tokenFile,"utf8")).trim();
+export async function core<T>(path:string,method="GET",body?:unknown,key?:string,credential:boolean|"human-decision"=false):Promise<T>{
+  let token:string;
+  if(credential==="human-decision"){
+    token=process.env.HUMAN_DECISION_API_TOKEN?.trim()??"";
+    if(!token)throw new Error("受信任的人工决策凭据未配置");
+  }else{
+    const tokenFile=credential?process.env.POC_RIGHTS_TOKEN_FILE:process.env.POC_INGESTION_TOKEN_FILE;
+    if(!tokenFile)throw new Error("受信任的操作凭据未配置");
+    token=(await readFile(tokenFile,"utf8")).trim();
+  }
   const response=await fetch(`${process.env.PLATFORM_API_BASE_URL??"http://localhost:8080"}/api/v1${path}`,{method,cache:"no-store",redirect:"error",signal:AbortSignal.timeout(60000),headers:{Accept:"application/json",Authorization:`Bearer ${token}`,"Content-Type":"application/json",...(key?{"Idempotency-Key":key}:{}),...(process.env.POC_INGEST_ACTOR_ID?{"X-Actor-ID":process.env.POC_INGEST_ACTOR_ID}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});
   if(!response.ok){let code=`HTTP_${response.status}`;try{const data=await response.json();code=data.code??data.error?.code??code;}catch{}throw new PlatformError(`Core 拒绝操作：${code}`,response.status,code);}
   return await response.json() as T;

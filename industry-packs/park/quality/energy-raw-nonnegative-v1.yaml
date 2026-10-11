@@ -1,0 +1,33 @@
+apiVersion: dataprod.platform/v1alpha1
+kind: QualityRuleSet
+metadata:
+  name: energy-raw-nonnegative
+  version: 1.0.0
+spec:
+  rules:
+    - id: QA-ENERGY-DECIMAL-FORMAT
+      stage: RAW
+      dimension: CONSISTENCY
+      type: regex
+      target: energy_kwh
+      parameters:
+        pattern: '^[+-]?([0-9]+(\.[0-9]*)?|\.[0-9]+)$'
+        allowNull: false
+      required: true
+      severity: CRITICAL
+      description: Only finite PostgreSQL decimal readings are eligible for the approved negative-value quarantine; malformed or missing readings require separate handling.
+    - id: QA-ENERGY-NONNEGATIVE
+      stage: RAW
+      dimension: ACCURACY
+      type: regex
+      target: energy_kwh
+      parameters:
+        pattern: '^(\+?([0-9]+(\.[0-9]*)?|\.[0-9]+)|-(0+(\.0*)?|\.0+))$'
+        allowNull: false
+      required: true
+      severity: CRITICAL
+      description: PostgreSQL numeric decimal readings must be nonnegative; negative originals are quarantined by the existing workflow.
+  gate:
+    criticalFailure: FAIL
+    highFailure: REVIEW
+    warningFailure: PASS_WITH_WARNING
