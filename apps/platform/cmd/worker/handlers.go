@@ -74,6 +74,7 @@ func workerHandlerRegistrations(service governanceProjector, enqueuer workflowqu
 			Name:   routing.HandlerMetadataProjection,
 			Handle: metadataProjectionHandler(service, logger),
 		})
+		registrations = append(registrations, outbox.HandlerRegistration{Name: routing.HandlerSourceSchemaObservation, Handle: metadataProjectionHandler(service, logger)})
 	}
 	return registrations
 }

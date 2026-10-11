@@ -1,0 +1,24 @@
+package metadata
+
+import (
+	"context"
+	"github.com/google/uuid"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain"
+	"time"
+)
+
+// SourceSchemaObserver executes a native source discovery workflow. A plain
+// catalog GET or catalog revision is deliberately insufficient for this port.
+type SourceSchemaObserver interface {
+	Plan(context.Context) (domain.SchemaPlan, error)
+	Scan(context.Context, uuid.UUID, func() error) (SourceSchema, error)
+	Stop(context.Context, uuid.UUID) error
+}
+type SourceSchema struct {
+	ExternalID    string                `json:"externalId"`
+	ExternalFQN   string                `json:"externalFqn"`
+	ConnectorHash string                `json:"connectorHash"`
+	Columns       []domain.SchemaColumn `json:"columns"`
+	StartedAt     time.Time             `json:"startedAt"`
+	CompletedAt   time.Time             `json:"completedAt"`
+}

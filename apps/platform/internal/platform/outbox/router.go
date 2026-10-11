@@ -38,6 +38,9 @@ func NewRouter(version string, routes []Route) (*Router, error) {
 	if version == "" {
 		return nil, fmt.Errorf("outbox routing version is required")
 	}
+	if len(version) > 64 {
+		return nil, fmt.Errorf("outbox routing version must fit 64 bytes")
+	}
 	r := &Router{version: version, routes: make(map[string][]string, len(routes))}
 	for _, route := range routes {
 		eventType := strings.TrimSpace(route.EventType)

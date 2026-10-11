@@ -14,6 +14,7 @@ func TestNewRouterRejectsInvalidDeclarations(t *testing.T) {
 		want    string
 	}{
 		{"missing version", "  ", []Route{{EventType: "A"}}, "routing version is required"},
+		{"oversized version", strings.Repeat("v", 65), []Route{{EventType: "A"}}, "64 bytes"},
 		{"empty event type", "v1", []Route{{EventType: " "}}, "empty event type"},
 		{"duplicate event type", "v1", []Route{{EventType: "A"}, {EventType: "A"}}, "more than once"},
 		{"empty handler name", "v1", []Route{{EventType: "A", RequiredHandlers: []string{" "}}}, "empty required handler"},

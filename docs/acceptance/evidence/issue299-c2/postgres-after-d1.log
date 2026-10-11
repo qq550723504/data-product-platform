@@ -1,0 +1,8 @@
+=== RUN   TestSourceSchemaRejectsReplacedPrimaryBinding
+--- PASS: TestSourceSchemaRejectsReplacedPrimaryBinding (0.04s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application	0.781s
+=== RUN   TestSourceSchemaFactsConcurrencyAndCostIsolation
+--- PASS: TestSourceSchemaFactsConcurrencyAndCostIsolation (0.19s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure	0.936s

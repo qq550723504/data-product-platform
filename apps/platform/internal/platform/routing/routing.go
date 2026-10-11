@@ -22,6 +22,7 @@ import (
 const (
 	HandlerExecutionQueue           = "execution-queue"
 	HandlerMetadataProjection       = "metadata-projection"
+	HandlerSourceSchemaObservation  = "source-schema-observation"
 	HandlerExternalPublicationQueue = "external-publication-queue"
 	HandlerLifecycleRecoveryQueue   = "lifecycle-recovery-queue"
 )
@@ -30,7 +31,7 @@ const (
 // whenever an event type's required-handler set changes. Dispatch logs and
 // dead-letter diagnostics reference it, so the obligation that was in force when
 // an event was handled stays auditable.
-const Version = "c1-v26+ext1+exec1+usage1+rem1+life2"
+const Version = "c1-v27+ext1+exec1+usage1+rem1+life2+schema1"
 
 // VersionFor folds the deployment profile into the routing version so the same
 // version string always describes the same required-handler set. Enabling or
@@ -61,6 +62,10 @@ func Routes(governanceProjection bool) []outbox.Route {
 		// governance provider configured. Without one the release event is
 		// explicitly retention-only, not an implicit no-op.
 		{EventType: "ProductReleased", RequiredHandlers: productReleased},
+		{EventType: "SourceSchemaObservationRequested", RequiredHandlers: sourceSchemaHandlers(governanceProjection)},
+		{EventType: "SourceSchemaScanStarted"},
+		{EventType: "SourceSchemaObserved"},
+		{EventType: "SourceSchemaHandlingRecorded"},
 
 		// New execution acceptance is delivered only through this outbox
 		// obligation.
@@ -230,4 +235,11 @@ func Routes(governanceProjection bool) []outbox.Route {
 // NewRouter builds the validated routing table for a deployment profile.
 func NewRouter(governanceProjection bool) (*outbox.Router, error) {
 	return outbox.NewRouter(VersionFor(governanceProjection), Routes(governanceProjection))
+}
+
+func sourceSchemaHandlers(enabled bool) []string {
+	if enabled {
+		return []string{HandlerSourceSchemaObservation}
+	}
+	return []string{}
 }
