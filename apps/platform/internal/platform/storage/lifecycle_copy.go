@@ -7,6 +7,7 @@ import (
 	"crypto/tls"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -37,13 +38,21 @@ type LifecycleCopier struct {
 }
 type copyCallKey struct{}
 type custodyCall struct {
-	op        domain.CopyOperation
-	copy      domain.Copy
-	operation string
-	id        uuid.UUID
-	mu        sync.Mutex
-	sent      bool
+	op          domain.CopyOperation
+	copy        domain.Copy
+	operation   string
+	id          uuid.UUID
+	mu          sync.Mutex
+	sent        bool
+	observation lc.StorageCallObservation
 }
+
+func (c *custodyCall) result() lc.StorageCallObservation {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.observation
+}
+
 type copyTransport struct {
 	base     http.RoundTripper
 	endpoint *url.URL
@@ -151,19 +160,41 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	if r.URL.Scheme != t.endpoint.Scheme || r.URL.Host != t.endpoint.Host || r.URL.User != nil || r.Header.Get("X-Amz-Bypass-Governance-Retention") != "" || r.Header.Get("X-Amz-Content-Sha256") == "STREAMING-UNSIGNED-PAYLOAD-TRAILER" {
 		return nil, lc.ErrStorageScope
 	}
-	if c.operation == lc.StorageVerifyCopy {
+	if c.operation == lc.StorageRecoverCopyVersions {
+		q := r.URL.Query()
+		if r.Method != "GET" || r.URL.Path != "/"+c.op.TargetNamespace+"/" || r.Header.Get("X-Amz-Copy-Source") != "" || !q.Has("versions") || q.Get("versions") != "" || q.Get("prefix") != "" || q.Get("delimiter") != "" || q.Get("key-marker") != "" || q.Get("version-id-marker") != "" {
+			return nil, lc.ErrStorageScope
+		}
+		for key, values := range q {
+			if len(values) != 1 || (key != "versions" && key != "prefix" && key != "delimiter" && key != "max-keys" && key != "encoding-type") {
+				return nil, lc.ErrStorageScope
+			}
+		}
+	} else if c.operation == lc.StorageRecoverCopyExact {
+		q := r.URL.Query()
+		if r.Method != "HEAD" || r.URL.Path != "/"+c.op.TargetNamespace+"/"+c.op.TargetKey || len(q) != 1 || len(q["versionId"]) != 1 || q.Get("versionId") != c.copy.ProviderVersion || r.Header.Get("X-Amz-Copy-Source") != "" {
+			return nil, lc.ErrStorageScope
+		}
+	} else if c.operation == lc.StorageVerifyCopy {
 		q := r.URL.Query()
 		if r.Method != "GET" || r.URL.Path != "/"+c.copy.Namespace+"/"+c.copy.Key || len(q) != 1 || len(q["versionId"]) != 1 || q.Get("versionId") != c.copy.ProviderVersion || r.Header.Get("X-Amz-Copy-Source") != "" {
 			return nil, lc.ErrStorageScope
 		}
 	} else {
+		if c.operation != lc.StorageArchiveCopy && c.operation != lc.StorageRestoreCopy {
+			return nil, lc.ErrStorageUnsupported
+		}
 		source, e := url.Parse(r.Header.Get("X-Amz-Copy-Source"))
 		if e != nil || source.Host != "" || source.Fragment != "" || strings.TrimPrefix(source.Path, "/") != c.op.Source.Namespace+"/"+c.op.Source.Key || source.Query().Get("versionId") != c.op.Source.ProviderVersion || len(source.Query()) != 1 || len(source.Query()["versionId"]) != 1 || r.Method != "PUT" || r.URL.Path != "/"+c.op.TargetNamespace+"/"+c.op.TargetKey || r.URL.RawQuery != "" || r.Header.Get("X-Amz-Meta-Lifecycle-Operation") != c.op.ID.String() {
 			return nil, lc.ErrStorageScope
 		}
 	}
 	started := time.Now().UTC()
-	if e := t.journal.StartStorageCall(r.Context(), lc.StorageCallStart{ID: c.id, Copy: c.copy, Operation: c.operation, StartedAt: started, CopyOperationID: c.op.ID, CopyIntent: &c.op}); e != nil {
+	journalCopy := c.copy
+	if c.operation == lc.StorageRecoverCopyVersions || c.operation == lc.StorageRecoverCopyExact {
+		journalCopy = c.op.Source
+	}
+	if e := t.journal.StartStorageCall(r.Context(), lc.StorageCallStart{ID: c.id, Copy: journalCopy, Operation: c.operation, StartedAt: started, CopyOperationID: c.op.ID, CopyIntent: &c.op}); e != nil {
 		return nil, e
 	}
 	var invoked *time.Time
@@ -194,8 +225,24 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 			proof.Failure = "CONTRACT"
 			e = lc.ErrStorageContract
 		}
-		if resp.StatusCode == 200 {
+		if resp.StatusCode == 200 && c.operation == lc.StorageRecoverCopyVersions {
+			if validateFixtureInventory(b, c.op.TargetNamespace) != nil {
+				proof.Failure = "CONTRACT"
+				e = lc.ErrStorageContract
+			}
+		} else if resp.StatusCode == 200 {
 			version := resp.Header.Get("X-Amz-Version-Id")
+			if c.operation == lc.StorageRecoverCopyExact {
+				proof.CopyOperationTag, _ = uuid.Parse(resp.Header.Get("X-Amz-Meta-Lifecycle-Operation"))
+				size := resp.ContentLength
+				proof.CopyResultBytes = &size
+				sum := sha256.Sum256([]byte(version + "\n" + proof.CopyOperationTag.String() + "\n" + fmt.Sprint(size)))
+				proof.ResponseSHA256 = hex.EncodeToString(sum[:])
+				if version != c.copy.ProviderVersion || size != c.copy.ByteSize || proof.CopyOperationTag != c.op.ID {
+					proof.Failure = "CONTRACT"
+					e = lc.ErrStorageContract
+				}
+			}
 			if c.operation != lc.StorageVerifyCopy {
 				proof.CopyResultVersion = version
 			}
@@ -206,6 +253,9 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		}
 	}
 	proof.ObservedAt = time.Now().UTC()
+	c.mu.Lock()
+	c.observation = proof
+	c.mu.Unlock()
 	proofContext, cancel := context.WithTimeout(context.WithoutCancel(r.Context()), 5*time.Second)
 	defer cancel()
 	if journalErr := t.journal.ObserveStorageCall(proofContext, proof); journalErr != nil {

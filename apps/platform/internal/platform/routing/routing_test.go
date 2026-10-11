@@ -5,6 +5,19 @@ import (
 	"testing"
 )
 
+func TestVersionFitsPersistedOutboxContract(t *testing.T) {
+	// outbox_event.required_handlers_version is varchar(64). Both profile
+	// identities must fit before any event is recorded under that profile.
+	for _, governance := range []bool{false, true} {
+		if got := len(VersionFor(governance)); got == 0 || got > 64 {
+			t.Fatalf("governance=%t routing version has %d bytes, want 1..64", governance, got)
+		}
+	}
+	if VersionFor(false) == VersionFor(true) {
+		t.Fatal("governance profiles must have distinct routing identities")
+	}
+}
+
 // eventVocabulary is the second witness to the routing table: every event type
 // the platform can emit must appear exactly once. Adding a domain event without
 // declaring its routing obligation fails this test, and an undeclared event
@@ -112,6 +125,10 @@ var eventVocabulary = []string{
 	"LifecycleContentDispositionFinalized",
 	"LifecycleCopyPolicyBound",
 	"LifecycleCopyPrepared",
+	"LifecycleCopyRecoveryRequested",
+	"LifecycleCopyRecoveryStarted",
+	"LifecycleCopyRecoveryObserved",
+	"LifecycleCopyTargetRecovered",
 	"LifecycleCopyMaterialized",
 	"LifecycleCopyVerified",
 	"LifecycleRestoreCheckpointExported",

@@ -40,6 +40,7 @@ type window struct {
 	Enabled                        bool
 	RunID, WorkspaceID, Epoch      uuid.UUID
 	Access, Secret, TopologySHA256 string
+	RecoveryAccess, RecoverySecret string
 	StartedAt, ExpiresAt           time.Time
 }
 type object struct {
@@ -658,6 +659,10 @@ func main() {
 	mode := os.Getenv("LIFECYCLE_ARCHIVE_MODE")
 	var e error
 	switch mode {
+	case "response-loss-archive", "response-loss-restore", "copy-witness", "copy-restrict", "copy-final-readback":
+		e = recoveryFixtureStep(ctx, mode)
+	case "recovery-provision", "recovery-disable":
+		e = provisionReadOnlyRecovery(ctx, mode == "recovery-disable")
 	case "provision":
 		e = provision(ctx, false)
 	case "disable":

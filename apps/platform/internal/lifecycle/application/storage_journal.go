@@ -28,6 +28,7 @@ const (
 type PostgresStorageCallJournal struct {
 	service        *OccupancyService
 	reconciliation bool
+	copyRecovery   bool
 }
 
 var _ StorageCallJournal = (*PostgresStorageCallJournal)(nil)
@@ -40,6 +41,10 @@ func NewPostgresStorageCallJournal(s *OccupancyService) *PostgresStorageCallJour
 // in the same fenced start transaction; dispatch authority is never reused.
 func NewReconciliationStorageCallJournal(s *OccupancyService) *PostgresStorageCallJournal {
 	return &PostgresStorageCallJournal{service: s, reconciliation: true}
+}
+
+func NewCopyReconciliationMetadataJournal(s *OccupancyService) *PostgresStorageCallJournal {
+	return &PostgresStorageCallJournal{service: s, copyRecovery: true}
 }
 
 func (j *PostgresStorageCallJournal) StartStorageCall(ctx context.Context, c StorageCallStart) error {
@@ -74,6 +79,14 @@ func (j *PostgresStorageCallJournal) StartStorageCall(ctx context.Context, c Sto
 		}
 		if j.reconciliation {
 			if _, _, err := s.authorize(ctx, tx, c.Copy.WorkspaceID, CapabilityReconcileDisposition, &caller); err != nil {
+				return err
+			}
+		}
+		if j.copyRecovery {
+			if _, _, err := s.authorize(ctx, tx, c.Copy.WorkspaceID, CapabilityReconcileCopy, &caller); err != nil {
+				return err
+			}
+			if _, _, err := s.authorize(ctx, tx, c.Copy.WorkspaceID, CapabilityRestoreAdmission, &caller); err != nil {
 				return err
 			}
 		}
@@ -133,8 +146,8 @@ func (j *PostgresStorageCallJournal) ObserveStorageCall(ctx context.Context, o S
 			return ErrStorageContract
 		}
 		id := uuid.New()
-		tag, err := tx.Exec(ctx, `INSERT INTO lifecycle_storage_observation(id,workspace_id,call_id,observed_at,invoked_at,http_status,request_ref,response_sha256,failure,proof_sha256,copy_result_version)
-		 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NULLIF($11,'')) ON CONFLICT(call_id,proof_sha256) DO NOTHING`, id, w, o.CallID, o.ObservedAt, o.InvokedAt, o.HTTPStatus, o.RequestRef, o.ResponseSHA256, o.Failure, proof, o.CopyResultVersion)
+		tag, err := tx.Exec(ctx, `INSERT INTO lifecycle_storage_observation(id,workspace_id,call_id,observed_at,invoked_at,http_status,request_ref,response_sha256,failure,proof_sha256,copy_result_version,copy_operation_tag,copy_result_bytes)
+		 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NULLIF($11,''),$12,$13) ON CONFLICT(call_id,proof_sha256) DO NOTHING`, id, w, o.CallID, o.ObservedAt, o.InvokedAt, o.HTTPStatus, o.RequestRef, o.ResponseSHA256, o.Failure, proof, o.CopyResultVersion, nullableID(o.CopyOperationTag), o.CopyResultBytes)
 		if err != nil {
 			return err
 		}
@@ -152,6 +165,9 @@ func (j *PostgresStorageCallJournal) ObserveStorageCall(ctx context.Context, o S
 }
 
 func validStorageObservation(o StorageCallObservation) bool {
+	if o.CopyResultBytes != nil && *o.CopyResultBytes < 0 {
+		return false
+	}
 	if o.CopyResultVersion != "" && (!validText(o.CopyResultVersion, 1024) || o.CopyResultVersion == "null") {
 		return false
 	}

@@ -1,5 +1,6 @@
 // Bounded synthetic recovery acceptance. There is no deleter, native write,
-// object cleanup, hold release, bypass header or payload reader in this binary.
+// object cleanup, hold release or bypass. COPY recovery hashes bounded target
+// bytes internally; it never returns or publishes a data payload.
 package main
 
 import (
@@ -33,6 +34,8 @@ import (
 type config struct {
 	Mode, Scenario, PostgresDSN, RedisAddr, RecoveryConfig, Manifest, OutputDirectory, Barrier string
 	SeedEnabled                                                                                bool
+	CopyRecovery                                                                               bool
+	CopyCallID                                                                                 uuid.UUID
 	WorkspaceID, ActorID, CopyID, WorkID, AttemptID                                            uuid.UUID
 	ExpiresAt                                                                                  time.Time
 }
@@ -371,14 +374,23 @@ func run(ctx context.Context, path string, c config) error {
 		return e
 	}
 	defer lockPool.Close()
-	execution, inspector, scope, e := pilot.BuildRecoveryInspectorAt(c.RecoveryConfig, pool)
-	if e != nil {
-		return e
+	var s *lc.RecoveryService
+	if c.CopyRecovery {
+		wrap:=func(p lc.CopyRecoveryPort)lc.CopyRecoveryPort{return copyCrashPort{p,c.Scenario,c.Barrier}}
+		s, e = pilot.BuildCopyRecoveryWithPortAt(c.RecoveryConfig, pool, transaction.NewManager(lockPool), q,wrap)
+		if e != nil {
+			return e
+		}
+	} else {
+		execution, inspector, scope, err := pilot.BuildRecoveryInspectorAt(c.RecoveryConfig, pool)
+		if err != nil {
+			return err
+		}
+		if scope.WorkspaceID != c.WorkspaceID || scope.ActorID != c.ActorID {
+			return errors.New("worker scope mismatch")
+		}
+		s = lc.NewRecoveryService(execution, crashInspector{inspector, c.Scenario, c.Barrier}, transaction.NewManager(lockPool), q, []uuid.UUID{scope.WorkspaceID})
 	}
-	if scope.WorkspaceID != c.WorkspaceID || scope.ActorID != c.ActorID {
-		return errors.New("worker scope mismatch")
-	}
-	s := lc.NewRecoveryService(execution, crashInspector{inspector, c.Scenario, c.Barrier}, transaction.NewManager(lockPool), q, []uuid.UUID{scope.WorkspaceID})
 	switch c.Mode {
 	case "outbox":
 		unsupported := func(context.Context, outbox.PublishedEvent) error { return lc.ErrStorageUnsupported }
@@ -393,7 +405,11 @@ func run(ctx context.Context, path string, c config) error {
 			}
 			var state string
 			var confirmations int
-			if e = pool.QueryRow(ctx, `SELECT e.status,(SELECT count(*) FROM outbox_event_consumption c WHERE c.event_id=e.id) FROM outbox_event e WHERE aggregate_id=$1 AND event_type=$2`, c.WorkID, lc.ReconciliationRequestedEvent).Scan(&state, &confirmations); e != nil {
+			event := lc.ReconciliationRequestedEvent
+			if c.CopyRecovery {
+				event = lc.CopyReconciliationRequestedEvent
+			}
+			if e = pool.QueryRow(ctx, `SELECT e.status,(SELECT count(*) FROM outbox_event_consumption c WHERE c.event_id=e.id) FROM outbox_event e WHERE aggregate_id=$1 AND event_type=$2`, c.WorkID, event).Scan(&state, &confirmations); e != nil {
 				return e
 			}
 			if state == "PUBLISHED" || state == "FAILED" {
@@ -402,6 +418,13 @@ func run(ctx context.Context, path string, c config) error {
 		}
 		return errors.New("outbox request not reached within finite drain")
 	case "request":
+		if c.CopyRecovery {
+			r, e := s.RequestCopyRecovery(ctx, lc.RequestCopyRecoveryCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: "copy-worker-request:" + c.Scenario}, CopyCallID: c.CopyCallID, BasisRef: "controlled-copy-recovery:" + c.Scenario})
+			if e != nil {
+				return e
+			}
+			return write(filepath.Join(c.OutputDirectory, c.Scenario+".json"), r)
+		}
 		r, e := s.RequestRecovery(ctx, lc.RequestRecoveryCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: "worker-request:" + c.Scenario}, AttemptID: c.AttemptID, BasisRef: "controlled-read-only-reconciliation:" + c.Scenario})
 		if e != nil {
 			return e

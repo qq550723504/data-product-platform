@@ -68,7 +68,7 @@ func Handle(r Runner) asynq.HandlerFunc {
 }
 func OutboxHandler(q Enqueuer) outbox.Handler {
 	return func(ctx context.Context, e outbox.PublishedEvent) error {
-		if q == nil || e.ID == uuid.Nil || e.AggregateID == uuid.Nil || e.EventType != lc.ReconciliationRequestedEvent || e.EventVersion != 1 || e.AggregateType != "LIFECYCLE_RECONCILIATION_WORK" {
+		if q == nil || e.ID == uuid.Nil || e.AggregateID == uuid.Nil || (e.EventType != lc.ReconciliationRequestedEvent && e.EventType != lc.CopyReconciliationRequestedEvent) || e.EventVersion != 1 || e.AggregateType != "LIFECYCLE_RECONCILIATION_WORK" {
 			return lc.ErrStorageScope
 		}
 		var p struct {

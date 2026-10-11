@@ -30,7 +30,7 @@ const (
 // whenever an event type's required-handler set changes. Dispatch logs and
 // dead-letter diagnostics reference it, so the obligation that was in force when
 // an event was handled stays auditable.
-const Version = "c1-v26+external-core1+execution1+usage1+remediation-v1+lifecycle-recovery1"
+const Version = "c1-v26+ext1+exec1+usage1+rem1+life2"
 
 // VersionFor folds the deployment profile into the routing version so the same
 // version string always describes the same required-handler set. Enabling or
@@ -133,6 +133,10 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "LifecycleContentDispositionFinalized"},
 		{EventType: "LifecycleCopyPolicyBound"},
 		{EventType: "LifecycleCopyPrepared"},
+		{EventType: "LifecycleCopyRecoveryRequested", RequiredHandlers: []string{HandlerLifecycleRecoveryQueue}},
+		{EventType: "LifecycleCopyRecoveryStarted"},
+		{EventType: "LifecycleCopyRecoveryObserved"},
+		{EventType: "LifecycleCopyTargetRecovered"},
 		{EventType: "LifecycleCopyMaterialized"},
 		{EventType: "LifecycleCopyVerified"},
 		{EventType: "LifecycleRestoreCheckpointExported"},

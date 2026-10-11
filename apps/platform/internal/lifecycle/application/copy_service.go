@@ -263,12 +263,12 @@ func (j CopyCallJournal) StartStorageCall(ctx context.Context, c StorageCallStar
 	if c.CopyOperationID == uuid.Nil {
 		return j.Metadata.StartStorageCall(ctx, c)
 	}
-	return j.Service.startCopyCall(ctx, c)
+	return j.Service.startCopyCall(ctx, c, false)
 }
 func (j CopyCallJournal) ObserveStorageCall(ctx context.Context, c StorageCallObservation) error {
 	return j.Metadata.ObserveStorageCall(ctx, c)
 }
-func (s *CopyService) startCopyCall(ctx context.Context, c StorageCallStart) error {
+func (s *CopyService) startCopyCall(ctx context.Context, c StorageCallStart, recovery bool) error {
 	if c.ID == uuid.Nil || c.Copy.Validate() != nil || c.StartedAt.IsZero() {
 		return ErrStorageScope
 	}
@@ -295,14 +295,26 @@ func (s *CopyService) startCopyCall(ctx context.Context, c StorageCallStart) err
 		if intent != op {
 			return ErrStorageScope
 		}
-		caller, at, e := o.authorize(ctx, tx, op.WorkspaceID, CapabilityCopyCustody, nil)
+		capability := CapabilityCopyCustody
+		if recovery {
+			capability = CapabilityReconcileCopy
+		}
+		caller, at, e := o.authorize(ctx, tx, op.WorkspaceID, capability, nil)
 		if e != nil {
 			return e
 		}
-		if at.Before(op.CreatedAt) || !at.Before(op.ExpiresAt) || c.StartedAt.Before(op.CreatedAt) || c.StartedAt.After(at) {
+		if recovery {
+			if _, _, e = o.authorize(ctx, tx, op.WorkspaceID, CapabilityRestoreAdmission, &caller); e != nil {
+				return e
+			}
+		}
+		if at.Before(op.CreatedAt) || (!recovery && !at.Before(op.ExpiresAt)) || c.StartedAt.Before(op.CreatedAt) || c.StartedAt.After(at) {
 			return ErrStorageDenied
 		}
 		if c.Operation == op.Action+"_COPY" {
+			if recovery {
+				return ErrStorageUnsupported
+			}
 			if c.Copy != op.Source {
 				return ErrStorageScope
 			}
@@ -319,12 +331,21 @@ func (s *CopyService) startCopyCall(ctx context.Context, c StorageCallStart) err
 			if e != nil || cs[0] != c.Copy {
 				return ErrStorageScope
 			}
+		} else if recovery && (c.Operation == StorageRecoverCopyVersions || c.Operation == StorageRecoverCopyExact) {
+			if c.Copy != op.Source {
+				return ErrStorageScope
+			}
 		} else {
 			return ErrStorageUnsupported
 		}
 		_, e = tx.Exec(ctx, `INSERT INTO lifecycle_storage_call(id,workspace_id,copy_id,operation,started_at,actor_id,principal_ref,dependency_revision,copy_operation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`, c.ID, c.Copy.WorkspaceID, c.Copy.ID, c.Operation, c.StartedAt, caller.ActorID, caller.Subject, rev, op.ID)
 		if e != nil {
 			return e
+		}
+		if c.Operation == op.Action+"_COPY" {
+			if _, e = appendCopyRecoveryWork(ctx, tx, op, c.ID, "durable-copy-start", caller, rev, at); e != nil {
+				return e
+			}
 		}
 		return appendDispositionFacts(ctx, tx, StorageCallStartedEvent, "LIFECYCLE_STORAGE_CALL", c.ID, caller, rev, at, map[string]any{"copy_id": c.Copy.ID, "operation": c.Operation, "copy_operation_id": op.ID})
 	})
@@ -377,8 +398,11 @@ type VerifyCopyCommand struct {
 }
 
 func (s *CopyService) VerifyMaterializedCopy(ctx context.Context, c VerifyCopyCommand) (FactResult, error) {
+	return s.verifyMaterializedCopy(ctx, c, CapabilityCopyCustody)
+}
+func (s *CopyService) verifyMaterializedCopy(ctx context.Context, c VerifyCopyCommand, capability string) (FactResult, error) {
 	o := s.occupancy
-	return o.command(ctx, c.CommandHeader, "LIFECYCLE.VERIFY_COPY", CapabilityCopyCustody, c, func(ctx context.Context, tx pgx.Tx, caller principal.RequestPrincipal, _ int64) (uuid.UUID, error) {
+	return o.command(ctx, c.CommandHeader, "LIFECYCLE.VERIFY_COPY", capability, c, func(ctx context.Context, tx pgx.Tx, caller principal.RequestPrincipal, _ int64) (uuid.UUID, error) {
 		op, e := s.lock(ctx, tx, c.WorkspaceID, c.OperationID)
 		if e != nil {
 			return uuid.Nil, e
@@ -387,7 +411,7 @@ func (s *CopyService) VerifyMaterializedCopy(ctx context.Context, c VerifyCopyCo
 		if p.Copy != op.Materialized(p.Copy.ProviderVersion) || p.SHA256 != op.Source.ContentSHA256 || p.Bytes != op.Source.ByteSize {
 			return uuid.Nil, ErrStorageContract
 		}
-		_, at, e := o.authorize(ctx, tx, c.WorkspaceID, CapabilityCopyCustody, &caller)
+		_, at, e := o.authorize(ctx, tx, c.WorkspaceID, capability, &caller)
 		if e != nil {
 			return uuid.Nil, e
 		}
@@ -502,6 +526,9 @@ func (s *CopyService) EvaluateFixtureUse(ctx context.Context, tx pgx.Tx, r UseGa
 }
 
 func (s *CopyService) FinalizeCopy(ctx context.Context, c FinalizeCopyCommand) (CopyDecision, error) {
+	return s.finalizeCopy(ctx, c, false)
+}
+func (s *CopyService) finalizeCopy(ctx context.Context, c FinalizeCopyCommand, recovery bool) (CopyDecision, error) {
 	// Independent I/O happens before the short Core transaction, never under locks.
 	var cut domain.RestoreCheckpoint
 	ledgerErr := domain.ErrRestoreLedger
@@ -517,6 +544,11 @@ func (s *CopyService) FinalizeCopy(ctx context.Context, c FinalizeCopyCommand) (
 		caller, at, e := o.authorize(ctx, tx, c.WorkspaceID, CapabilityRestoreAdmission, &caller)
 		if e != nil {
 			return uuid.Nil, e
+		}
+		if recovery {
+			if _, _, e = o.authorize(ctx, tx, c.WorkspaceID, CapabilityReconcileCopy, &caller); e != nil {
+				return uuid.Nil, e
+			}
 		}
 		var verified bool
 		e = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_copy_verification WHERE operation_id=$1)`, op.ID).Scan(&verified)

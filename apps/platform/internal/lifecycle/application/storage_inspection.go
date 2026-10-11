@@ -87,8 +87,10 @@ type StorageCallObservation struct {
 	HTTPStatus        int
 	RequestRef        string
 	ResponseSHA256    string
-	Failure           string // empty, TRANSPORT, CONTRACT or JOURNAL
-	CopyResultVersion string // native COPY response header, never inferred from key
+	Failure           string    // empty, TRANSPORT, CONTRACT or JOURNAL
+	CopyResultVersion string    // native COPY response header, never inferred from key
+	CopyOperationTag  uuid.UUID // authoritative native exact-version HEAD metadata
+	CopyResultBytes   *int64
 }
 
 // StorageCallJournal must commit immutable starts before I/O, and append

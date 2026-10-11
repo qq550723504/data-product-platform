@@ -79,6 +79,9 @@ func (a authority) AuthorizeLifecycle(_ context.Context, _ pgx.Tx, w uuid.UUID, 
 // No configuration means a fail-closed task handler; it does not acknowledge a
 // recovery request or grant native I/O. Main still registers the queue obligation.
 func BuildRecovery(pool *pgxpool.Pool, locker lc.RecoveryLocker, q lc.RecoveryEnqueuer) (*lc.RecoveryService, error) {
+	if copyPath := os.Getenv("LIFECYCLE_COPY_RECOVERY_CONFIG"); copyPath != "" {
+		return BuildCopyRecoveryAt(copyPath, pool, locker, q)
+	}
 	path := os.Getenv("LIFECYCLE_RECOVERY_CONFIG")
 	if path == "" {
 		return nil, nil

@@ -36,15 +36,28 @@ type RequestRecoveryCommand struct {
 // The only external capability is StorageInspector: this service cannot delete,
 // copy, restore, release holds or resend an original provider attempt.
 type RecoveryService struct {
-	execution  *ExactExecution
-	inspector  StorageInspector
-	locker     RecoveryLocker
-	enqueuer   RecoveryEnqueuer
-	workspaces []uuid.UUID
+	execution    *ExactExecution
+	inspector    StorageInspector
+	locker       RecoveryLocker
+	enqueuer     RecoveryEnqueuer
+	workspaces   []uuid.UUID
+	copyRecovery *CopyRecoveryService
 }
 
 func NewRecoveryService(e *ExactExecution, i StorageInspector, l RecoveryLocker, q RecoveryEnqueuer, workspaces []uuid.UUID) *RecoveryService {
-	return &RecoveryService{e, i, l, q, append([]uuid.UUID(nil), workspaces...)}
+	return &RecoveryService{execution: e, inspector: i, locker: l, enqueuer: q, workspaces: append([]uuid.UUID(nil), workspaces...)}
+}
+
+// Shares the durable request scanner, outbox obligation, queue and lock owner.
+func (s *RecoveryService) WithCopyRecovery(c *CopyRecoveryService) *RecoveryService {
+	s.copyRecovery = c
+	return s
+}
+func (s *RecoveryService) RequestCopyRecovery(ctx context.Context, c RequestCopyRecoveryCommand) (FactResult, error) {
+	if !s.configured() || !s.allowed(c.WorkspaceID) || s.copyRecovery == nil {
+		return FactResult{}, ErrStorageUnsupported
+	}
+	return s.copyRecovery.RequestRecovery(ctx, c)
 }
 func (s *RecoveryService) configured() bool {
 	return s != nil && s.execution != nil && s.execution.disposition != nil && s.execution.disposition.configured() && s.inspector != nil && s.locker != nil
@@ -142,11 +155,20 @@ func (s *RecoveryService) RunRecovery(ctx context.Context, w, id uuid.UUID) erro
 		return ErrStorageUnsupported
 	}
 	o := s.execution.disposition.occupancy
-	var attempt uuid.UUID
+	var attempt, copyCall *uuid.UUID
 	if err := o.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		return tx.QueryRow(ctx, `SELECT attempt_id FROM lifecycle_reconciliation_work WHERE workspace_id=$1 AND id=$2`, w, id).Scan(&attempt)
+		return tx.QueryRow(ctx, `SELECT attempt_id,copy_call_id FROM lifecycle_reconciliation_work WHERE workspace_id=$1 AND id=$2`, w, id).Scan(&attempt, &copyCall)
 	}); err != nil {
 		return err
+	}
+	if copyCall != nil {
+		if s.copyRecovery == nil {
+			return ErrStorageUnsupported
+		}
+		return s.locker.WithAdvisoryLock(ctx, "lifecycle-copy-recovery:"+w.String()+":"+copyCall.String(), func(ctx context.Context) error { return s.copyRecovery.run(ctx, w, id, *copyCall) })
+	}
+	if attempt == nil {
+		return ErrStorageScope
 	}
 	return s.locker.WithAdvisoryLock(ctx, "lifecycle-recovery:"+w.String()+":"+attempt.String(), func(ctx context.Context) error { return s.run(ctx, w, id) })
 }
