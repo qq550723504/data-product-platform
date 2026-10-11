@@ -45,7 +45,19 @@ func NewExecutionService(tx *transaction.Manager, repo *infrastructure.PostgresR
 }
 
 func (s *ExecutionService) Create(ctx context.Context, cmd CreateExecutionCommand) (domain.Execution, error) {
-	workflowVersion, err := s.repo.GetVersion(ctx, cmd.WorkflowVersionID)
+	var result domain.Execution
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		result, err = s.CreateInTransaction(ctx, tx, cmd)
+		return err
+	})
+	return result, err
+}
+
+// CreateInTransaction preserves the existing acceptance/queue obligation while
+// allowing a business association to commit in the same PostgreSQL transaction.
+func (s *ExecutionService) CreateInTransaction(ctx context.Context, tx pgx.Tx, cmd CreateExecutionCommand) (domain.Execution, error) {
+	workflowVersion, err := s.repo.GetVersionTx(ctx, tx, cmd.WorkflowVersionID)
 	if err != nil {
 		return domain.Execution{}, err
 	}
@@ -65,7 +77,7 @@ func (s *ExecutionService) Create(ctx context.Context, cmd CreateExecutionComman
 		return domain.Execution{}, err
 	}
 	var result domain.Execution
-	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+	err = func() error {
 		inserted, err := s.repo.TryInsertIdempotency(ctx, tx, execution.WorkspaceID, createExecutionCommandType, key, execution.ID, &execution.ID, fingerprint)
 		if err != nil {
 			return err
@@ -117,7 +129,7 @@ func (s *ExecutionService) Create(ctx context.Context, cmd CreateExecutionComman
 		}
 		result = execution
 		return nil
-	})
+	}()
 	if err != nil {
 		return domain.Execution{}, err
 	}
@@ -556,12 +568,23 @@ type RetryExecutionCommand struct {
 }
 
 func (s *ExecutionService) Retry(ctx context.Context, cmd RetryExecutionCommand) (domain.Execution, error) {
+	var result domain.Execution
+	err := s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		result, err = s.RetryInTransaction(ctx, tx, cmd)
+		return err
+	})
+	return result, err
+}
+
+// RetryInTransaction uses exactly the normal explicit retry semantics and costs.
+func (s *ExecutionService) RetryInTransaction(ctx context.Context, tx pgx.Tx, cmd RetryExecutionCommand) (domain.Execution, error) {
 	key, err := domain.NormalizeIdempotencyKey(cmd.IdempotencyKey)
 	if err != nil {
 		return domain.Execution{}, err
 	}
 	var result domain.Execution
-	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+	err = func() error {
 		previous, err := s.repo.GetExecutionTx(ctx, tx, cmd.ExecutionID, true)
 		if err != nil {
 			return err
@@ -636,7 +659,7 @@ func (s *ExecutionService) Retry(ctx context.Context, cmd RetryExecutionCommand)
 		}
 		result = retry
 		return nil
-	})
+	}()
 	if err != nil {
 		return domain.Execution{}, err
 	}

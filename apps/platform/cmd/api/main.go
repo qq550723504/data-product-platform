@@ -58,6 +58,9 @@ import (
 	qualityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
 	qualitygx "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/gx"
 	qualityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/infrastructure"
+	remediationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/application"
+	remediationinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/infrastructure"
+	remediationhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/remediation/transport/http"
 	qualityhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel"
 	readmodelhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/readmodel/transport/http"
@@ -276,6 +279,17 @@ func main() {
 		)
 	}
 	qualityHandler := qualityhttp.NewHandlerWithCost(qualityService, qualityRepo, evidence.NewQueryRepository(db), cost.NewQueryRepository(db))
+	remediationRepo := remediationinfra.NewRepository(db)
+	var remediationService *remediationapp.Service
+	if ref := os.Getenv("QUALITY_REMEDIATION_PLAN_REF"); ref != "" {
+		plan, err := remediationapp.LoadPlan(cfg.IndustryPackRoot, ref)
+		if err != nil {
+			logger.Error("configure remediation plan", "error", err)
+			os.Exit(1)
+		}
+		remediationService = &remediationapp.Service{Tx: txManager, Repo: remediationRepo, Quality: qualityService, Executions: executionService, Workflows: workflowRepo, Plan: plan}
+	}
+	remediationHandler := remediationhttp.NewHandler(remediationService, remediationRepo, humanDecisionResolver)
 
 	certificationProfileRepo := certificationinfra.NewProfileRepository(db)
 	certificationRepo := certificationinfra.NewCertificationRepository(db)
@@ -361,6 +375,7 @@ func main() {
 			rightsHandler.Register,
 			contractHandler.Register,
 			qualityHandler.Register,
+			remediationHandler.Register,
 			certificationHandler.Register,
 			deliveryHandler.Register,
 			complianceHandler.Register,
