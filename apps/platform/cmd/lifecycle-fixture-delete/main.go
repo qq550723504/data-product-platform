@@ -40,6 +40,7 @@ var inventoryHash = "a68edc4456d3153316d7a585b64818b1275300e090e0258e37f51a71b91
 var providerID = "5e8a5758-96f6-4bf4-a088-1decd62809b0"
 var incarnationID = "78ebff25-faa6-4f9b-8275-6204d7b786ab"
 var archiveSource bool
+var workerDelete bool
 
 type config struct {
 	RunID, WorkspaceID, ProviderInstanceID, IncarnationID, ActorID                                      uuid.UUID
@@ -88,7 +89,8 @@ func load() (config, permission, error) {
 	if read("/run/private/config.json", &c) != nil || read("/run/private/delete-permission.json", &p) != nil {
 		return c, p, errors.New("controlled configuration unreadable")
 	}
-	if c.RunID.String() != run || p.RunID != c.RunID || c.WorkspaceID != workspace || p.WorkspaceID != workspace || p.PlanHash != planHash || c.Endpoint != "127.0.0.1:9000" || c.ProviderInstanceID.String() != providerID || c.IncarnationID.String() != incarnationID || c.ActorID == uuid.Nil || c.Token == "" || c.RootAccess == "" || c.InspectAccess == "" || p.DeleteAccess == "" || p.DeleteSecret == "" || p.BasisRef == "" || !p.Enabled || time.Now().Before(p.ConfirmedAt) || !time.Now().Before(p.ExpiresAt) || p.ExpiresAt.Sub(p.ConfirmedAt) > time.Hour || len(p.TopologySHA256) != 64 {
+	rootRequired := !workerDelete || os.Getenv("LIFECYCLE_DELETE_MODE") != "execute"
+	if c.RunID.String() != run || p.RunID != c.RunID || c.WorkspaceID != workspace || p.WorkspaceID != workspace || p.PlanHash != planHash || c.Endpoint != "127.0.0.1:9000" || c.ProviderInstanceID.String() != providerID || c.IncarnationID.String() != incarnationID || c.ActorID == uuid.Nil || c.Token == "" || (rootRequired && c.RootAccess == "") || c.InspectAccess == "" || p.DeleteAccess == "" || p.DeleteSecret == "" || p.BasisRef == "" || !p.Enabled || time.Now().Before(p.ConfirmedAt) || !time.Now().Before(p.ExpiresAt) || p.ExpiresAt.Sub(p.ConfirmedAt) > time.Hour || len(p.TopologySHA256) != 64 {
 		return c, p, errors.New("controlled authority/scope/window unavailable")
 	}
 	return c, p, nil
@@ -184,7 +186,9 @@ func (d *dependencies) EvaluateDisposalDependencies(ctx context.Context, tx pgx.
 			if !found || v.DeleteMarker || v.ByteSize != c.ByteSize {
 				complete = false
 			}
+			delete(expected, v.Key+"\x00"+v.Version)
 		}
+		complete = complete && len(expected) == 0
 		if complete && inventory.WorkspaceID == workspace && inventory.ProviderInstanceID == r.Copy.ProviderInstanceID && inventory.IncarnationID == r.Copy.IncarnationID {
 			result.InventoryComplete = domain.Satisfied
 		}
@@ -226,6 +230,9 @@ func (d *dependencies) EvaluateDisposalDependencies(ctx context.Context, tx pgx.
 }
 
 func copies(c config) ([]domain.Copy, error) {
+	if workerDelete {
+		return workerCopies(c)
+	}
 	if archiveSource {
 		return archiveCopies(c)
 	}
@@ -385,7 +392,7 @@ func execute(ctx context.Context) error {
 			return fmt.Errorf("protected inspection: %w", e)
 		}
 		protection := dep.protection[copy.ID]
-		if archiveSource {
+		if archiveSource || workerDelete {
 			if e := expectedArchiveProtection(c, protection); e != nil {
 				return e
 			}
@@ -476,7 +483,16 @@ func execute(ctx context.Context) error {
 		if e != nil {
 			return fmt.Errorf("dispatch: %w", e)
 		}
-		if e = write(filepath.Join(c.OutputDirectory, "delete-current-gate-"+copy.ID.String()+".json"), dispatch); e != nil {
+		var gateProof json.RawMessage
+		if workerDelete {
+			var b []byte
+			e = pool.QueryRow(ctx, `SELECT json_build_object('evaluation',row_to_json(g),'dependencies',row_to_json(d),'retention',(SELECT json_agg(row_to_json(r)) FROM lifecycle_disposition_retention_evaluation r WHERE r.evaluation_id=g.id)) FROM lifecycle_disposition_gate_evaluation g JOIN lifecycle_disposition_dependency_evaluation d ON d.evaluation_id=g.id WHERE g.id=$1`, dispatch.EvaluationID).Scan(&b)
+			if e != nil {
+				return e
+			}
+			gateProof = b
+		}
+		if e = write(filepath.Join(c.OutputDirectory, "delete-current-gate-"+copy.ID.String()+".json"), map[string]any{"dispatch": dispatch, "current_gate": gateProof, "human_confirmation": p.BasisRef, "approval": approval, "basis": basis}); e != nil {
 			return e
 		}
 		// A replay only performs read-only reconciliation; it never authorizes send.
@@ -493,12 +509,33 @@ func execute(ctx context.Context) error {
 			return e
 		}
 		deleteOutcome := "RECONCILIATION_ONLY"
+		if workerDelete && !dispatch.Admitted {
+			return errors.New("worker-delete scope already dispatched: recovery only, never resend")
+		}
 		if dispatch.Admitted {
+			// Refresh native metadata again before the fenced ClaimExactSend.
+			if workerDelete {
+				if e = refresh(copy); e != nil {
+					return e
+				}
+			}
 			if e = deleter.DeleteExactCopy(ctx, attempt, copy); e != nil {
 				deleteOutcome = "UNKNOWN_OR_REJECTED"
 			} else {
 				deleteOutcome = "PROVIDER_ACCEPTED_ABSENCE_UNVERIFIED"
 			}
+		}
+		if workerDelete {
+			var workID uuid.UUID
+			if e = pool.QueryRow(ctx, `SELECT id FROM lifecycle_reconciliation_work WHERE attempt_id=$1`, attempt.ID).Scan(&workID); e != nil {
+				return e
+			}
+			if e = write(filepath.Join(c.OutputDirectory, "delete-send-before-worker.json"), map[string]any{"copy": copy, "dispatch": dispatch, "attempt": attempt, "work_id": workID, "delete_outcome": deleteOutcome, "absence": "UNVERIFIED", "next": "READ_ONLY_WORKER_RECOVERY", "native_delete_retry": "FORBIDDEN", "survivors_before": before}); e != nil {
+				return e
+			}
+			// Real process loss after the native observation/cost commit, before
+			// any absence receipt/finalization. Only the read-only worker resumes.
+			os.Exit(93)
 		}
 		inventory, e := inspector.InspectNamespace(ctx, copy)
 		if e != nil {
@@ -631,6 +668,12 @@ func provision(ctx context.Context, disable bool) error {
 	if archiveSource {
 		targets = targets[:1]
 		targets[0].version = "3fe1cc44-b0f8-428c-9bb8-9f92dac5d15d"
+	}
+	if workerDelete {
+		targets = targets[:1]
+		targets[0].bucket = "dpp-lifecycle307-quarantine"
+		targets[0].key = "fixture/b.csv"
+		targets[0].version = "ce87f789-a4f4-4ce7-bf1f-a044ac53d1d2"
 	}
 	for _, target := range targets {
 		statements = append(statements, map[string]any{"Effect": "Allow", "Action": []string{"s3:DeleteObject", "s3:DeleteObjectVersion"}, "Resource": []string{"arn:aws:s3:::" + target.bucket + "/" + target.key}, "Condition": map[string]any{"StringEquals": map[string]string{"s3:versionid": target.version}}})

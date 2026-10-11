@@ -246,8 +246,20 @@ func witness(ctx context.Context, c config, pool *pgxpool.Pool) error {
 		return errors.New("witness scope mismatch")
 	}
 	var objects []map[string]any
+	var absent []domain.Copy
 	inventories := map[string]lc.NamespaceInventory{}
 	for _, copy := range copies {
+		if c.Mode == "survivors" && copy.ID == c.CopyID {
+			if copy.Namespace != "dpp-lifecycle307-quarantine" || copy.Key != "fixture/b.csv" || copy.ProviderVersion != "ce87f789-a4f4-4ce7-bf1f-a044ac53d1d2" {
+				return lc.ErrStorageScope
+			}
+			var verified bool
+			if e = pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_copy_absence_receipt WHERE workspace_id=$1 AND copy_id=$2)`, c.WorkspaceID, copy.ID).Scan(&verified); e != nil || !verified {
+				return lc.ErrStorageUnknown
+			}
+			absent = append(absent, copy)
+			continue
+		}
 		if _, e = inspector.InspectExactCopy(ctx, copy); e != nil {
 			return e
 		}
@@ -264,6 +276,32 @@ func witness(ctx context.Context, c config, pool *pgxpool.Pool) error {
 			inventories[copy.Namespace] = v
 		}
 	}
+	if c.Mode == "survivors" {
+		if len(absent) != 1 || len(objects) != 3 {
+			return lc.ErrStorageScope
+		}
+		for namespace, inv := range inventories {
+			expected := map[string]domain.Copy{}
+			for _, copy := range copies {
+				if copy.Namespace == namespace && copy.ID != c.CopyID {
+					expected[copy.Key+"\x00"+copy.ProviderVersion] = copy
+				}
+			}
+			if len(inv.Versions) != len(expected) {
+				return lc.ErrStorageContract
+			}
+			for _, v := range inv.Versions {
+				copy, ok := expected[v.Key+"\x00"+v.Version]
+				if !ok || v.DeleteMarker || v.ByteSize != copy.ByteSize {
+					return lc.ErrStorageContract
+				}
+				delete(expected, v.Key+"\x00"+v.Version)
+			}
+			if len(expected) != 0 {
+				return lc.ErrStorageContract
+			}
+		}
+	}
 	counts := map[string]int{}
 	for _, table := range []string{"lifecycle_reconciliation_work", "lifecycle_reconciliation_run", "lifecycle_reconciliation_result", "lifecycle_provider_attempt", "lifecycle_provider_send_claim", "lifecycle_provider_observation", "lifecycle_dispatch_release", "lifecycle_copy_absence_receipt", "lifecycle_plan_completion", "lifecycle_storage_call", "lifecycle_storage_observation", "cost_event", "cost_allocation", "audit_event", "evidence", "outbox_event"} {
 		var n int
@@ -272,7 +310,7 @@ func witness(ctx context.Context, c config, pool *pgxpool.Pool) error {
 		}
 		counts[table] = n
 	}
-	return write(filepath.Join(c.OutputDirectory, c.Scenario+".json"), map[string]any{"objects": objects, "inventories": inventories, "counts": counts, "native_delete_invocations": 0, "cleanup_invocations": 0})
+	return write(filepath.Join(c.OutputDirectory, c.Scenario+".json"), map[string]any{"objects": objects, "inventories": inventories, "receipt_backed_absent": absent, "counts": counts, "native_delete_invocations": 0, "cleanup_invocations": 0})
 }
 func run(ctx context.Context, path string, c config) error {
 	pool, e := pgxpool.New(ctx, c.PostgresDSN)
@@ -322,7 +360,7 @@ func run(ctx context.Context, path string, c config) error {
 		}
 		return write(filepath.Join(c.OutputDirectory, "pending-delete-plan.json"), map[string]any{"plan_id": p.ID, "scope_hash": p.ContentHash, "status": p.Status, "targets": p.Targets, "approval": "PENDING_USER_CONFIRMATION", "native_delete_invocations": 0, "storage_invocations": 0, "current_gate": "MUST_RECHECK_AFTER_CONFIRMATION"})
 	}
-	if c.Mode == "witness" {
+	if c.Mode == "witness" || c.Mode == "survivors" {
 		return witness(ctx, c, pool)
 	}
 	client := platformqueue.NewClient(platformqueue.Config{Addr: c.RedisAddr})

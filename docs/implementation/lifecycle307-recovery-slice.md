@@ -16,6 +16,13 @@ obligations remain frozen; only new `LifecycleDispositionRecoveryRequested` even
 owe `lifecycle-recovery-queue`. Old retention-only events are not reinterpreted.
 The idle C1 Draft's migration-58 conflict with main remains a separate owner's gap.
 
+2026-10-11 coordination checkpoint: D1 has already migrated and accepted the retained
+native fixture at **59–63** (including worker recovery 63). These numbers are occupied,
+not a future reservation. C1 must not assume 59 is free or renumber D1's recorded
+environment/evidence; its owner should select an unoccupied number after a fresh
+shared-writer check (64 is the next locally unoccupied candidate). No C1 files or
+environment are changed by this lifecycle writer.
+
 ## Recovery contract
 
 Dispatch commits its provider attempt, recovery request, Audit/Evidence and outbox

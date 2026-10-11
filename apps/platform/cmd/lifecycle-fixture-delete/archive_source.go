@@ -18,6 +18,9 @@ func selectProfile() error {
 	switch os.Getenv("LIFECYCLE_DELETE_PROFILE") {
 	case "":
 		return nil
+	case "worker-delete-4abcfca5":
+		selectWorkerDelete()
+		return nil
 	case "archive-source-c9f47cab":
 		archiveSource = true
 		run = "c9f47cab-23c6-4d16-8102-a4a34bac1501"

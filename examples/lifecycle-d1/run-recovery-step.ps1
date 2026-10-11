@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('seed','review','witness','outbox','request','enqueue','scan','once','worker')][string]$Mode,[Parameter(Mandatory=$true)][string]$Scenario,[string]$WorkID='00000000-0000-0000-0000-000000000000',[string]$AttemptID='00000000-0000-0000-0000-000000000000',[switch]$RedisUnavailable,[switch]$StartOnly)
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('seed','review','witness','survivors','outbox','request','enqueue','scan','once','worker')][string]$Mode,[Parameter(Mandatory=$true)][string]$Scenario,[string]$WorkID='00000000-0000-0000-0000-000000000000',[string]$AttemptID='00000000-0000-0000-0000-000000000000',[switch]$RedisUnavailable,[switch]$StartOnly)
 $ErrorActionPreference='Stop';Set-StrictMode -Version Latest
 if($Scenario -notmatch '^[a-z][a-z0-9-]{0,63}$'){throw 'Finite step label required'}
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path;$private=(Resolve-Path -LiteralPath $PrivateDirectory).Path;$worker=Join-Path $private 'worker'
@@ -8,12 +8,13 @@ $r=Get-Content -LiteralPath (Join-Path $private 'resources.json') -Raw|ConvertFr
 $run=([guid]$r.run_id).ToString();$project='dpp-lifecycle307-'+$run.Substring(0,8);$name="$project-recovery-$Scenario";$output=Join-Path $PSScriptRoot "results/$run"
 if($r.project -ne $project -or $c.Enabled -or $p.RunID -ne $run -or $p.WorkspaceID -ne $c.WorkspaceID -or $p.ProviderInstanceID -ne $c.ProviderInstanceID -or $p.IncarnationID -ne $c.IncarnationID){throw 'Owned sealed window required'}
 $m=Get-Content -LiteralPath (Join-Path $worker 'manifest.json') -Raw|ConvertFrom-Json;$a=@($m.objects|Where-Object {$_.namespace -eq 'dpp-lifecycle307-online' -and $_.key -eq 'fixture/a.csv'})[0]
-if($Mode -eq 'review'){$a=@($m.objects|Where-Object {$_.namespace -eq 'dpp-lifecycle307-quarantine' -and $_.key -eq 'fixture/b.csv'})[0]}
+if($Mode -in @('review','survivors')){$a=@($m.objects|Where-Object {$_.namespace -eq 'dpp-lifecycle307-quarantine' -and $_.key -eq 'fixture/b.csv'})[0]}
 $redis="$project-redis:6379";if($RedisUnavailable){$redis='127.0.0.1:6399'}
 $step=@{Mode=$Mode;Scenario=$Scenario;PostgresDSN=$c.PostgresDSN;RedisAddr=$redis;RecoveryConfig='/run/private/recovery.json';Manifest='/run/private/manifest.json';OutputDirectory="/run/output/$run";Barrier="/run/output/$run/barrier-$Scenario.json";SeedEnabled=($Mode -eq 'seed');WorkspaceID=$c.WorkspaceID;ActorID=$c.ActorID;CopyID=$a.copy_id;WorkID=([guid]$WorkID).ToString();AttemptID=([guid]$AttemptID).ToString();ExpiresAt=[DateTime]::UtcNow.AddMinutes(20).ToString('o')}
 $configPath=Join-Path $worker "$Scenario.json";if(Test-Path -LiteralPath $configPath){throw 'One-shot step already configured; inspect retained facts'}
 Write-Utf8 $configPath ($step|ConvertTo-Json)
 $binary='recovery';if($Mode -eq 'review'){$binary='recovery-review'}
+if($Mode -eq 'survivors'){$binary='recovery-survivors'}
 Write-Utf8 (Join-Path $worker "$Scenario.sh") ("#!/bin/sh`nset -eu`nexport LIFECYCLE_RECOVERY_ACCEPTANCE_CONFIG=/run/private/$Scenario.json`nexec /run/private/$binary`n")
 $gw=(Docker @('inspect',$r.containers.gateway)|ConvertFrom-Json)[0]
 $pg=(Docker @('inspect',$r.containers.postgres)|ConvertFrom-Json)[0]
