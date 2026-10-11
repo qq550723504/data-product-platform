@@ -1,5 +1,7 @@
 # External publication execution — #86 merge contract
 
+Usage/runtime 接入的可选 Port、关联、cursor 与恢复见 [External usage evidence — #87](external-usage-evidence.md)；本 contract 继续拥有 publication execution/receipt，usage 不替代或改写这些历史。
+
 ## Goal / authority / ownership
 
 在 merged main `21762737a76033667df4a138368070868a34fbf8` 的 #84 immutable associations / publication intent 上，完成可信 caller 的显式执行、单 owner dispatch、失败/未知恢复、verified REGISTERED/PUBLISHED projection 和可审计 physical invocation 成本。权威为本文、[External Core](external-integration-core.md)、[ADR-0009](../adr/0009-national-data-infrastructure-integration-boundary.md)、AGENTS §1A/3/7/16/17 与 #86。专门 Release/Rights/Delivery contract 继续拥有其边界。

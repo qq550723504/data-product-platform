@@ -85,5 +85,5 @@ func Build(pool *pgxpool.Pool) (*transport.Handler, error) {
 	if err != nil {
 		return nil, err
 	}
-	return transport.New(e.Core, r).WithExecutor(e), nil
+	return transport.New(e.Core, r).WithExecutor(e).WithUsage(app.NewUsageImporter(e)), nil
 }
