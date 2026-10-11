@@ -42,11 +42,15 @@ approval system. No new dependency/provider or paid service is introduced.
 
 - Server-authenticated workspace/actor; pilot assignment is explicitly to that
   operator. A descriptive catalog Owner, body actor or arbitrary UUID grants no role.
-- Detection records an exact failed Finding, frozen rule hash and source version.
+- Detection requires the same immutable assessment's finite-decimal format rule
+  PASS and nonnegative rule FAIL, then records its exact failed Finding, frozen
+  rule hash and source version. Missing/malformed/NaN readings retain Quality FAIL
+  but cannot become a negative-value case; signed zero is not a negative reading.
   Same detection key replays the same quality attempt and case.
 - Immutable case header, assignment, execution association, recheck start/outcome
   and manual-close facts. Commands lock the case parent first. No PATCH status.
-- Approved workflow identity/hash is checked server-side; case input must be one
+- Approved workflow identity/hash and the plan's exact workspace-scoped CURATED
+  destination are checked server-side; case input must be one
   exact bound input. Case attempt + existing Execution acceptance and its outbox
   obligation commit atomically. Only one active/latest successful execution; a
   failed execution is retried through the existing explicit retry command.
@@ -56,7 +60,8 @@ approval system. No new dependency/provider or paid service is introduced.
 - Recheck pins an explicit successful execution/output and stable quality attempt
   before evaluation. Response loss between assessment and association can replay
   that attempt, including after manual closure. Closure blocks new admission;
-  it must not discard recovery of already committed Quality work. New physical
+  it must not discard accepted assignment/Execution or already committed Quality
+  recovery, even after a later assignment or admission-plan change. New physical
   evaluation uses a new explicit attempt key.
 - Manual closure cannot mark Quality PASS or Certification CERTIFIED. Old RAW,
   assessments, certifications and release/evidence history are protected.
@@ -65,11 +70,12 @@ approval system. No new dependency/provider or paid service is introduced.
 - Repaired/certified output still uses CurrentDeliveryGate; source revocation must
   block fresh delivery from a stale ALLOWED browser page with zero payload.
 
-## Acceptance record
+## Original end-to-end acceptance record
 
 PASS on 2026-10-11, against code commit
 `bc62ebfa8846922916cba8bfa195cf6e495592f3` based on the main above. Subsequent
-evidence-only commits do not change the candidate API or production web code.
+evidence-only commit `635fa895` did not change that API or production web code.
+The review fixes below have their own subsequent verification record.
 API SHA256: `2633d367b912fcf58e2bda77b10c6aaa567a42948686728e18f68576b3aa3e3b`.
 Production Next build, real Edge, PostgreSQL 16, Hop 2.19.0/JDBC 42.7.14,
 existing Native processing/quality adapters, Redis 7 and the existing pinned
@@ -190,3 +196,63 @@ Follow-ups: #299/C2 source schema observation, multi-operator IAM/assignment,
 generic incident/notification UX, full downstream impact, schedules and production
 rollout. #298 human explanation remains deferred/NOT_RUN. C1 does not close #299,
 does not pass C2/human acceptance, and its PR remains Draft without automatic merge.
+
+## PR #310 review regression
+
+PASS on 2026-10-11 against code commit
+`f75cccec609c16e4f132229744d820a85c18808d`. Three original P2 findings were valid:
+caller-selected output, ambiguous negative detection, and closure blocking accepted
+assignment/Execution recovery. One adjacent browser recovery gap was also fixed.
+No migration number, shared routing, Adapter or delivery gate was changed.
+
+The versioned pilot plan now binds `dpp-source-reader-curated`, the existing B3
+asset binding. Core resolves that unique code inside the case workspace, requires
+CURATED and compares its identity before atomic queue acceptance. It also verifies
+the original accepted target for a fresh retry. The workflow's generic logical
+output code is not a caller-selected destination for this finite source pilot.
+Changed request fingerprints still conflict. Existing accepted keys recover their
+frozen facts before fresh-admission closure/assignee/plan checks; this does not
+authorize new work. The HTTP trusted workspace/actor boundary still applies.
+
+Real PostgreSQL race tests passed destination rejection before queue acceptance,
+blank/malformed/NaN/Infinity and mixed invalid+negative rejection, signed-zero and
+positive values, actual negative detection, atomic rollback, concurrency, immutable
+history, closed assignment/execution/retry recovery with zero new facts/costs, and
+committed Quality recovery after closure/current admission-plan change. Full Go
+tests/vet, web lint/typecheck and the production build/command tests passed.
+
+A fresh isolated production environment (`http://127.0.0.1:53390/batches`) used
+real Edge, PostgreSQL, Hop, storage and Native processing. Browser actions accepted
+the three RAWs, completed the existing entity review and baseline workflow,
+detected 1/14 negative readings, assigned the case and generated a new version
+in the approved CURATED asset: 14 inputs = 13 accepted + 1 quarantined; 5 aggregate
+enterprise rows. The actual independent output assessment committed PASS.
+
+For the recovery fault, a temporary test-only database trigger paused that output's
+Quality insert behind an advisory lock. The controller acquired the case parent
+lock, released Quality, observed its committed assessment, and terminated only
+the blocked case-association database backend. No business status/result rows
+were fabricated. Both locks and the temporary trigger/function were removed.
+The page showed PENDING, retained the original request key after manual closure
+and refresh, and `恢复原复检` recovered assessment
+`aee33552-4164-4066-bb66-ac7b8cda4d1d` / recheck
+`1444e874-fa5d-419b-8ce5-9af88cb18cf2`. Actual invocation/cost counts and all
+previous dataset/assessment/Execution facts were unchanged by recovery. The
+recovery added only its legitimate case outcome and Audit/Evidence/Outbox proof.
+
+The same repaired API was separately bound to the retained original C1 database
+for recovery verification. All 27 HTTP/PostgreSQL checks passed, including eight
+concurrent closed same-key retries, new-key rejection and zero additional work;
+all 17 original history sets matched, including nonempty published release and
+EvidenceSnapshot membership. This verifies candidate API recovery on real retained
+facts; it does not relabel the original browser certification/delivery run as a
+new full browser acceptance.
+
+Exact facts, hashes, costs and checks:
+[review-recovery-proof.json](issue299-c1-evidence/review-recovery-proof.json).
+PR CI and review are checked separately against the pushed HEAD. Human explanation
+remains NOT_RUN; the PR remains Draft without automatic merge.
+
+![Closed pending case retains the original recovery action](issue299-c1-evidence/review-closed-pending.png)
+
+![Closed case recovers the committed PASS assessment](issue299-c1-evidence/review-closed-recovered.png)
