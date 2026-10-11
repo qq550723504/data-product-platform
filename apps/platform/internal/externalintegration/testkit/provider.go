@@ -111,7 +111,14 @@ func (p *Provider) Adapter(provider, instance string) ports.Adapter {
 	return ports.Adapter{Descriptor: ports.Descriptor{Provider: provider, Instance: instance, Revision: "fake-v1", Capabilities: ports.Capabilities{IdentityVerification: true, IdentifierVerification: true, CatalogPublication: true, StableRequestKeys: true, AuthoritativeLookup: true}}, Identity: p, Identifier: p, Catalog: p, Delivery: p}
 }
 func (p *Provider) Server() *httptest.Server {
+	return p.ServerWithUsage(nil)
+}
+func (p *Provider) ServerWithUsage(source *UsageSource) *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/usage/read" && source != nil {
+			source.ServeHTTP(w, r)
+			return
+		}
 		if r.Method != http.MethodPost {
 			w.WriteHeader(405)
 			return
