@@ -6,6 +6,8 @@ Native binary 从当前已提交代码构建；[逐文件 SHA256 与已提交 Gi
 
 ## 实际结果
 
+Native取消case通过受控server writer barrier暂停输出，再取消真实HTTP请求；这不是自然产生的socket背压。真实HTTP完整读取同步Flush成功。组件测试另行验证deadline安装、Flush阻塞时pin保留及手动cancel；自然到达use_until/write deadline和真实socket慢客户端的独立验收尚未执行。
+
 - 三次 native GET：进程读取后退出95、一次 HTTP 完整读取、一次 HTTP 输出取消。每次都是注册 copy 的 exact key/version；先提交 durable pin，再在共享 fence 下重核当前 caller、restriction、window、reservation 与 pin generation，持久化 physical start 后才发 GET。实际27 bytes/SHA256与冻结 DatasetVersion 匹配。
 - 请求取消时，阻塞中的实际输出 owner 尚未返回，active pins 仍为2；owner返回后只追加该次 `CANCELLATION_CONFIRMED`，active pins减为1。正常读取另有一份 `COMPLETED`。崩溃进程的 pin 没有 termination，保留为未确认；lease/进程退出不是排空证明。HTTP writer设置pin/use_until deadline，并同步完成实际Flush后才返回给termination流程；Write仅写入缓冲不能释放pin。
 - 完整读取 replay 与崩溃 replay 都返回409，0新 native I/O、0内容 bytes。错 token、foreign copy、已限制B、任意URI字段、legacy download、production delivery route均拒绝。A在读取途中追加限制后，新读403且0新 I/O。
@@ -46,7 +48,8 @@ Native binary 从当前已提交代码构建；[逐文件 SHA256 与已提交 Gi
 | 全Go模块 | PASS；86包ok、45无测试；未配PG的套件不冒充真实PG验收 |
 | scoped `go vet`、diff check | PASS |
 | 独立证据、credential scan、native source hashes | PASS |
-| LC-01/02/13 | 当前fixture reader范围PASS；不是全平台读取承诺 |
+| LC-01/13、LC-02当前restriction分支 | 当前fixture reader范围PASS；不是全平台读取承诺 |
+| 自然到达use_until/write deadline、真实socket慢客户端/背压 | NOT_RUN；已验证的是deadline安装、组件Flush barrier、native受控writer barrier与手动取消 |
 | LC-11实际processing接入、LC-12生产direct delivery共事务pin | NOT_RUN |
 | LC-28全平台读取closure、完整D1、生产Rights/Delivery/灾备 | NOT_RUN |
 
