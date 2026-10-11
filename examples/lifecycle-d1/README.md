@@ -34,4 +34,12 @@ Run `a6b30840-3e76-49ad-91d3-f0c399fcf170` 保留三台运行中的服务、已�
 
 用户随后确认本环境及 online/A、quarantine/B 两份无保护 exact versions，已完成 DELETE、完整 native inventory、两份 absence receipts 与精确范围 completion：[受控删除报告](results/a6b30840-3e76-49ad-91d3-f0c399fcf170/delete-review.md)。另外两份保护对象保持原保护，只做 metadata/HEAD/inventory 与领域 prerequisite 阻断核验，native DELETE=0。执行身份已禁用，gateway 恢复 DELETE 全拒绝，原对象/volumes 不清理。
 
-`run-confirmed-delete.ps1` 是这一固定 run 的有限执行记录入口，要求 `-HumanConfirmedExactTwoVersions`，独立 permission/identity、有限窗口及 registry/native topology preflight。已存在 `delete-acceptance.json` 会拒绝再次执行；本次完成后不得重新启用。新对象或环境需要新的清单和用户确认，不能复用本次批准。完整 D1 的 archive/restore、真实业务 reader/worker 等仍待开发。
+`run-confirmed-delete.ps1` 是这一固定 run 的有限执行记录入口，要求 `-HumanConfirmedExactTwoVersions`，独立 permission/identity、有限窗口及 registry/native topology preflight。已存在 `delete-acceptance.json` 会拒绝再次执行；本次完成后不得重新启用。新对象或环境需要新的清单和用户确认，不能复用本次批准。
+
+## 归档/恢复与单源删除切片
+
+后续独立环境 `dpp-lifecycle307-c9f47cab` 按main55/57+D159–62安装，未升级原a6b30840环境。完成1 archive + 4 restore native COPY/same-byte verification、独立当前台账与隔离恢复 admission，见 [归档阶段报告](results/c9f47cab-23c6-4d16-8102-a4a34bac1501/archive-review.md)。
+
+用户随后只确认本环境 online `fixture/a.csv@3fe1cc44-b0f8-428c-9bb8-9f92dac5d15d`。fresh 删除门禁与发送前重核通过，唯一 DELETE + 完整库存 absence receipt/scoped completion已完成；其余八版本与所有环境/volumes保留，见 [当前单源删除验收](results/c9f47cab-23c6-4d16-8102-a4a34bac1501/delete-review.md)。`run-confirmed-archive-source-delete.ps1 -HumanConfirmedExactSource` 是固定范围的一次性执行记录入口，已配置窗口即拒绝重跑；native executor已禁用，gateway全部DELETE拒绝。不要重新启用任何旧窗口。
+
+归档后的源删除复用既有执行器，通过显式 `archive-source-c9f47cab` 固定 profile 限定环境/计划/hash/version；完整九副本库存仅登记、不获删除批准。测试依据校验完整冻结 registry及批准子集，不能把 fixture测试零最小保留期用于业务数据。真实业务 reader/worker recovery、完整D1与生产验收仍待完成；新删除仍需新的清单确认。

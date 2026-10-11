@@ -1,0 +1,9 @@
+{
+  "gateway_sha256": "2b66ecf58feaa7cf10766566e07a3a22b1911e94b233c05b76ea10bcf98df313",
+  "native_delete_user_disabled": true,
+  "as_of": "2026-10-11T13:06:42.0738069Z",
+  "object_cleanup": 0,
+  "fixture_authority": "DISABLED",
+  "gateway_delete": "DENY_ALL",
+  "volume_cleanup": 0
+}

@@ -1,0 +1,17 @@
+{
+  "gateway_sha256": "ea64599389af234883cfb1573f1db31aa7ede08e4f880a7c54c74ed53f76a196",
+  "run_id": "c9f47cab-23c6-4d16-8102-a4a34bac1501",
+  "source_hashes": {
+    "apps/platform/cmd/lifecycle-fixture-delete/main.go": "32f2c87fd29913b6d063d2159a68dd7c6e35a1a7f30cf298a6684be507e7fe09",
+    "apps/platform/internal/lifecycle/application/fixture_basis.go": "9efa7a20e65bf01de05cebd0a4a096712a5cfd727c458dc0045c59f9e2c9d91a",
+    "apps/platform/internal/lifecycle/application/exact_execution.go": "1e01e3014ff4363551d152e7d3448d7de6e3555cc91488bf4008292c652f8e2e",
+    "apps/platform/internal/platform/storage/lifecycle_delete.go": "f890326ccc9b30e6768fedc6c8571e5034ef953b0382b4ddaf2d95a4e61b63c9",
+    "apps/platform/cmd/lifecycle-fixture-delete/archive_source.go": "2e0d2660df1fb743b2d4a12558bc5c149f3e5dcffcb48825abd21a59667a0adc"
+  },
+  "mode": "execute",
+  "recorded_before_start": "2026-10-11T13:06:37.2020140Z",
+  "binary_sha256": "15c0eb3535d47207d3df5dff71020829f3c65c6326df6026cc3c22e086b06ce1",
+  "source_head": "702e882ded77c81c357e591e1dc40c2d855ea03d",
+  "helper_id": "2d2d876511f3e1326ce2da8a64b9d17c7abc194eca1ce2128502c15d002cf8fa",
+  "topology_sha256": "7ee68ee78c8e177655978166074a6d5362a7510d68a86224887c2342e5aaaa72"
+}
