@@ -1,0 +1,13 @@
+{
+  "name": "local",
+  "engineRunConfiguration": {
+    "Local": {
+      "rowset_size": "10000",
+      "safe_mode": true,
+      "show_feedback": false,
+      "gather_metrics": true
+    }
+  },
+  "configurationVariables": [],
+  "defaultSelection": true
+}

@@ -4,6 +4,12 @@
 > Parent：[#298](https://github.com/qq550723504/data-product-platform/issues/298)；战略基线：[V2 蓝图](../product/full-lifecycle-governance-v2.md)、[ADR-0014](../adr/0014-full-lifecycle-governance-boundary.md)。
 > 本文只完成 B0 的设计决策。B1 连接器运行验证、B2 Core 接纳、B3 用户端到端验收均未因此完成；没有部署或操作真实客户数据。
 
+2026-10-11 执行更新：B1 已在隔离本地 Docker 的真实 PostgreSQL 16.15 / Hop 2.19.0 / pgJDBC 42.7.14 组合实跑，PGI-01–04 的有限引擎试验通过。复现入口及协议发现见 [B1 runnable validation](../../examples/enterprise-activity/postgres-ingestion/README.md)，固定证据见 [B1 report](../../examples/enterprise-activity/postgres-ingestion/results/2026-10-11/report.json)。下文的 NOT_RUN 保留为 B0 当时的历史记录；本次仅验证本地 staging，实际对象存储、B2 Core 原子接纳和 B3 用户闭环仍未运行。CI 已接入新的真实 JDBC/fault smoke，远端 CI 结果需由提交后的运行独立确认。
+
+2026-10-11 后续执行更新：B2 已实现并实跑三份 RAW 的 Core 原子接纳，PGI-05–07 的 manifest、幂等、并发、权限撤销和故障恢复矩阵通过。复现与有限运行边界见 [B2 runtime](../../examples/enterprise-activity/postgres-ingestion/README.md#b2-atomic-core-acceptance)，固定证据见 [B2 report](../../examples/enterprise-activity/postgres-ingestion/results/2026-10-11/b2-report.json)。采用既有 Port/Adapter、DatasetVersion repository、事务/fence、Outbox/Audit/Evidence/Cost 和原生 IAM/STS/条件写；未新增总体蓝图或第二套基础设施。B3 浏览器/既有加工认证交付/非开发者验收及远端 CI 仍为 NOT_RUN；本地 PASS 不等同于生产接纳。
+
+2026-10-11 B3 执行更新：来源详情/批次入口、既有实体审核与 Native 加工、质量/合规、页面准备认证证据、认证/明确替代及 DIRECT_DATA 下载已通过真实 Edge + live Core 验证。质量失败保留 REJECTED；授权撤销后从旧 ALLOWED 页面下载仍被阻断；metadata 不可用显示 UNKNOWN。固定证据见 [B3 实跑记录](../../examples/enterprise-activity/postgres-ingestion/B3-RUN.md)与 [31 项独立检查](../../examples/enterprise-activity/postgres-ingestion/results/2026-10-11/b3-report.json)。PGI-08 PASS；PGI-09 metadata 失联提示 PASS，人工解释按用户要求 NOT_RUN；健康 OpenMetadata 绑定/恢复和远端 CI 未验收。此前 B0/B1/B2 的 NOT_RUN 是对应时点记录，保留历史；本次没有追加总体蓝图或生产接纳结论。
+
 ## 1. 有限目标和执行顺序
 
 使用独立 PostgreSQL 来源、现有企业/租赁/能耗合成样本，在平台内完成一个批次的来源登记、抽取、清洗、质量评估、认证与 DIRECT_DATA 交付。主写者为当前接续 #298 的执行线程；当前独立分支只写本文，不触及 #294/#295 的 annotation 工作。后续代码沿单一串行 writer 推进，每个增量开工核对最新 main/活动 PR；不伪称已与不可见线程通信。
@@ -70,6 +76,10 @@ SQL 由版本化模板固定表和列，不允许客户端传 SQL、连接串、
 
 B1 使用隔离网络、仅允许来源读取的数据库账号；该账号只获得 CONNECT、目标 schema USAGE、三表 SELECT，不授予源写入/DDL/全库权限。启动/处理/产物接纳/交付都从可信服务端 principal 解析 workspace 和允许用途；技术账号连得上不等于业务请求有权抽取。B2 必须在实际 dispatch、恢复及接纳时重新核对所需当前权限，不沿用过期预检。
 
+受控 V1 的私有服务端 profile 必须为每个 workspace/slot 明确绑定 ResourceID 与 DatasetID；操作者通过既有创建 Command 配置这些身份，再写入受控 profile。通用 CRUD 的 code/name 不是来源授权事实，不得据名称自动认领或推断目标。客户端 `targets` 仅作一致性断言，不能授权任意、交换、重复或同名替换目标。每次 Command 在持有既有资源/Dataset row locks 时重新校验 profile 的明确身份与 `source_resource_id`；绑定加入冻结配置 hash，变更即阻断旧请求。来源查询只返回当前已认证 workspace 的绑定。
+
+Core 探测 DSN 与提交给 Hop 的原生 PostgreSQL metadata 必须使用同一明确 hostname/port/database/reader；拒绝其他端点、自定义 JDBC URL 和其他连接模式。`InstanceRef` 是操作者配置的来源引用，不冒充已观察的 PostgreSQL cluster system identifier。受控本地试验使用双方可达的同一 Docker host 端点：Windows 的 host.docker.internal 在 host 侧通过现有 pgx lookup hook 明确解析到本机 loopback，Hop 侧由 Docker 解析；Linux 只绑定本隔离 Docker bridge 的 gateway 地址。不开放公共监听。此 pilot 依赖本地 staging，因此只接纳 loopback Hop control endpoint。进程缓存的 Hop endpoint/凭据、来源注入凭据、staging roots 和 Core storage client 配置发生变化时，新旧 Command 都 fail closed；完成相应 API/Hop 重启后才能使用新运行配置，不声称这些 client 已热更新。
+
 数据库密码、Hop 认证和存储凭据通过受控服务端环境/挂载或已有 secret 引用注入，仅在获准执行进程解析。禁止放入 `ManagedSubmitRequest.Parameters`、GET query、WorkflowVersion、manifest、Outbox、诊断/CI artifact 或 OpenMetadata 投影。Hop client 的 HTTP Basic 凭据与 JDBC 凭据分开。测试使用短期合成环境凭据；不读取或更改用户现有长期凭据。
 
 | 字段/事实 | 唯一作者侧 | 同步/失联行为 |
@@ -101,6 +111,8 @@ manifest 是 Adapter 的产物声明，不是认证。Core 从自己已持久化
 存储写入不与数据库伪装成同一事务：只有所有对象已经写完且重新验证后才提交 READY；DB 失败保留待对账对象，不能宣称批次成功。存储 keys 不可覆盖、权限隔离和实际 provider 能力在 B2 验证，不能仅靠路径加 UUID 声称不可变。
 
 幂等键按 workspace + operation identity；相同请求、相同完整 manifest 返回原 receipt；同键不同 source/config/内容一律冲突，不能靠换 slot 或改 key 悄悄覆盖。新实际抽取为新 attempt；同次结果的接纳重试不再次抽取，成本按真实 provider invocation 追加。
+
+调用前持久化 immutable invocation identity 与 UNKNOWN 成本意图（尚无已确认 invocation quantity，记 0，不等于已证明免费）；claim 提交后、发出调用前崩溃，不得记录 ACTUAL quantity 1。Adapter 报告已进入 provider HTTP 调用后，在追加 observation 的事务中独立追加同一 physical identity 的 ACTUAL 成本，成功、失败及响应未知均记录。调用后、observation 提交前崩溃仍保留未观察的 UNKNOWN 意图，不能猜成 ACTUAL 或丢弃该不确定性；恢复查询自身是新 physical invocation，独立记成本。历史意图/观察/成本均不覆盖。
 
 ## 7. 提交与恢复决策
 

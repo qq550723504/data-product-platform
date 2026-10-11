@@ -21,6 +21,13 @@ type CertificationHistoryItem struct {
 	Dispositions  []certificationdomain.CertificationDisposition
 }
 
+func (s *CertificationService) ListProfiles(ctx context.Context, workspaceID uuid.UUID) ([]certificationdomain.ProfileSnapshot, error) {
+	if workspaceID == uuid.Nil {
+		return nil, fmt.Errorf("workspace required")
+	}
+	return s.profileRepo.ListProfiles(ctx, workspaceID)
+}
+
 type CertificationHistoryPage struct {
 	Items          []CertificationHistoryItem
 	Profiles       []certificationdomain.ProfileSnapshot

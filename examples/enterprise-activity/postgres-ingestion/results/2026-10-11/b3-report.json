@@ -1,0 +1,246 @@
+{
+  "status": "PASS",
+  "workspaceId": "fc4f2ab3-73ab-4741-a01d-12d36f6b72bc",
+  "api": "http://127.0.0.1:61756",
+  "web": "http://127.0.0.1:61762",
+  "apiSha256": "a8ff2abb386e18735127ed90f0b4161c575c6977c5fc33a88add2f119f2b11bf",
+  "acceptance": {
+    "PGI-08": "PASS",
+    "PGI-09-metadata-unavailable": "PASS",
+    "PGI-09-human-explanation": "NOT_RUN"
+  },
+  "checks": [
+    {
+      "name": "same Core has three RAW, one STANDARDIZED and one CURATED",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "RAW remains READY with original 6/10/14 rows",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "browser batch accepted with exactly one persisted manifest receipt",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "receipt references exact three immutable RAW content hashes",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "one actual native execution succeeded",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "negative energy quarantined with original -999 value",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "real browser download equals immutable 5-row 640-byte output",
+      "status": "PASS",
+      "detail": "5c47a2c146dd09f42eec989562632856a07e585666f7b557f7fb3a7794fdba88"
+    },
+    {
+      "name": "actual quality PASS and RAW FAIL are separate immutable facts",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "failed quality never produced CERTIFIED",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "browser prepared FINALIZED snapshot of four actual engine/quality/compliance evidence items",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "explicit supersede preserves both CERTIFIED history facts",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "each actual certification evaluation and disposition has allocated cost",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "actual browser delivery issued and revoked retry blocked",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "revocation retained original issued history",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "fresh gate separates valid certification from revoked entitlement",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "preparation domain event published with explicit no-task obligation",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "preparation audit references exact frozen evidence snapshot",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "rights preparation has a real allocated cost",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "six concurrent preparation replays recover or report lock contention",
+      "status": "PASS",
+      "detail": {
+        "recovered": 1,
+        "contended": 5
+      }
+    },
+    {
+      "name": "retry after contention recovers exact snapshot",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "same preparation key with different quality fails closed",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "supersede replay returns same disposition",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "forged CERTIFIED decision is rejected",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "replays/rejections add no snapshots, costs, decisions, audits or events",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "new read endpoints reject forged actor without trusted credential",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "trusted token cannot cross workspace",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "quarantine rejects negative page offset",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "unconfirmed metadata remains UNKNOWN",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "issued direct-data same-key recovery is non-payload",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "public business/audit/event facts contain no known credential secrets",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "rendered browser pages contain no known credential secrets",
+      "status": "PASS",
+      "detail": null
+    }
+  ],
+  "facts": {
+    "batch": "fad72553-e862-4d64-9370-d30062629790",
+    "outputVersion": "2569d6c2-859d-4790-9254-092b4055728e",
+    "outputHash": "5c47a2c146dd09f42eec989562632856a07e585666f7b557f7fb3a7794fdba88",
+    "preparedSnapshot": "e1ad815b-c842-4d04-b171-9957da3e105c",
+    "currentCertification": "54888ac6-16a0-4e65-8756-17e9906c2eaf"
+  },
+  "notRun": [
+    "healthy OpenMetadata binding/reconnect",
+    "human operator explanation - explicitly deferred by user",
+    "production IAM/provider acceptance"
+  ],
+  "baseSha": "80d4c459ca903d418871c04ea73ad4128618e0d0",
+  "sourceHashEncoding": "Git index LF bytes",
+  "sourceSha256": {
+    "apps/platform/cmd/api/main.go": "f6832bad6041a7b8bc1c7151dfb901dd3cdd85cacce2958c95cfa648a8c423df",
+    "apps/platform/cmd/ingestion-browser-fixture/main.go": "c4da6375744dffe774621d9439ac2b79dd370e24a72683d2b4f63f9adc389c70",
+    "apps/platform/internal/certification/application/preparation.go": "35839736db974cb7a7382be916a8a704180029bd2355c972356b761e5d912d1d",
+    "apps/platform/internal/certification/application/preparation_test.go": "2c158288474c91f8a85e34a87b4e9f808625c27306d0daf4dce1e6fd43561b93",
+    "apps/platform/internal/certification/application/read_service.go": "f80fe4b7014d90cb6a7b4e8707a142609f005e9b75e2eabeb0b7c246d9b3a7e6",
+    "apps/platform/internal/certification/infrastructure/preparation.go": "1b40738894fb92b97baf81d4f0b0d8b0be0cdf96954f8e4eb8e2a9e2af91a515",
+    "apps/platform/internal/certification/infrastructure/profile_repository.go": "f17e1d29ac97d23d3bf4e1fec6cf0d317b1604b0f8bab5695965d868c0fa6e30",
+    "apps/platform/internal/certification/transport/http/handler.go": "53b5fb9652f64a3bdd8e10abf465ae84f9e794ce5881f3f2128747c6e427e159",
+    "apps/platform/internal/certification/transport/http/handler_test.go": "a9c704d4ce0d5ed47467a8049275f83fb61539a9d174b7161b9c4af7a90bae18",
+    "apps/platform/internal/entity/infrastructure/job_repository.go": "42afd6920b10b7027881a905b168c37371eb0b37c99e0baf84175d904f70331f",
+    "apps/platform/internal/entity/transport/http/handler.go": "0a4383359d6b97b656ea847e88cd4bbbc529fd227d839bb6f32ef7782354c2d0",
+    "apps/platform/internal/ingestion/pilot/profile.go": "66a353343f36588064c7b9b05a09b0c04b824e35dd121da08700a3277525b75b",
+    "apps/platform/internal/ingestion/transport/http/handler.go": "cb3b6fde8fc040d15844b816ac752beb48ff958ed42e4231146c52e20724b3a6",
+    "apps/platform/internal/metadata/application/observation.go": "a128311992c87ed9f5ece506743819cdf0c8d6d68d1aa83eed4e9530837a4907",
+    "apps/platform/internal/metadata/application/observation_test.go": "ee2ba8b30f30c3821d98ddf9adf8273432bb9732a4de570edd064d592e64904c",
+    "apps/platform/internal/metadata/infrastructure/postgres_repository.go": "25f9bb54c1cfa06cb7bd94e7e6d12e4f09534060eb4e451ecae738adb43b2ebc",
+    "apps/platform/internal/metadata/transport/http/handler.go": "e8fbb946fa7ef7013e7f48ce8f8181d0ab129da126d941a87966e48c08059f45",
+    "apps/platform/internal/platform/routing/routing.go": "d1d2a168dff45dbe67d5d1ea508d5c263140c39f0dd002d1a09b9de5c403050f",
+    "apps/platform/internal/platform/routing/routing_test.go": "28fa1630053fb63f5c894a31adde7669e004bf99465f7b01393098cd85a2ee31",
+    "apps/platform/internal/workflow/infrastructure/quarantine.go": "b5225708230e92244b940f53f50d67a2233afda6ae3be49ed4e07f7832f0f0c1",
+    "apps/platform/internal/workflow/transport/http/handler.go": "a1618ef354b1cd189a36d37ebf0f39cc47135e218efc975f6b7e78179b65958f",
+    "apps/platform/internal/workflow/transport/http/handler_test.go": "f0415a22d2fa748f87b79362a1fd97123e963901a648972691cd398ad422ab0c",
+    "apps/web/.eslintrc.json": "d1847183d449a873db4388d28ec2bb0867bdefab98b86945ae15c0dba397a04e",
+    "apps/web/app/batches/[id]/page.tsx": "14bda278ac2db00230eafa709f79b65a65e00964c69174574cdf66c6763095b1",
+    "apps/web/app/batches/actions.ts": "45432b0e353bb3bd624098411c37540cbe90880f89d0ceb8ae6c3de1353cf7e9",
+    "apps/web/app/batches/page.tsx": "f2d0c34d452ab539244ce58dc6929dcd391e3948a31caa1ed955f6b9f68e1d68",
+    "apps/web/app/datasets/[id]/versions/[versionId]/actions.ts": "cdacc740ba28f55cafdc1c0266fc66c844edd2b57b5a49d04996f472662b54b6",
+    "apps/web/app/datasets/[id]/versions/[versionId]/page.tsx": "b424ba05c790e903ad8b7e827fc6203a539102d4c0fa42428c83236aa1564566",
+    "apps/web/app/production/[id]/page.tsx": "d24a836d91070c610d86b22feaa72646483d9d5f6c2019d776759f3f9b23e053",
+    "apps/web/app/resources/[id]/page.tsx": "76f13156f50081ac7129a20d7c46321844bcc436a92200fae515f600aed5afd5",
+    "apps/web/components/batch-controls.tsx": "6166a398e75941d7b639c0ac71f1bbbc4aceb9c47e327134321a3bd7f9c849dd",
+    "apps/web/components/certification-form.tsx": "e61cf185492b7f4cb291caafa0e3e7765f4c1d35e8a893a56c43fb0cfde521bf",
+    "apps/web/components/resource-source.tsx": "b6edc9b1b41e1d9024c4c16d900992e3830f57d9c3e50238c8183e3af05e822f",
+    "apps/web/components/shell.tsx": "8640bf9b0ff2e18a3d3465209e8a89c56bb302758687a36fcd70fe4155300811",
+    "apps/web/lib/batches.ts": "d27fd33205317aec111bc897c191e19e61d67b31fb48f815d16eb06982184071",
+    "apps/web/next.config.mjs": "e0e059e62cbccf3235fa885249feb501e72007eeb41c80d4d18f792102d041f8",
+    "examples/enterprise-activity/postgres-ingestion/b3_recompose.py": "d2bdd54a70aafa1702e52ed977b98bda5ee76c162ebda356a40dc2cf60c30de2",
+    "examples/enterprise-activity/postgres-ingestion/b3_runtime.py": "0ad90d8abc28a536d4f67a24382c92523bdaefc34434c0b3245ba59547e20f3c",
+    "examples/enterprise-activity/postgres-ingestion/b3_verify.py": "becedb4b3a97635f21b60cdd1e4df1c972510e8d6bdd8f4c51796d2f7af069d0",
+    "examples/enterprise-activity/postgres-ingestion/b3_web_gateway.py": "a18ae13705dfa9c4ed2fea898be0db85c6cea6d1053476f578eff41b323473b1"
+  },
+  "screenshotsSha256": {
+    "certification-superseded-v5.jpg": "7828998faddd7a03476868b10000490a63c25cd7f9c86ef17edbfd34b8967b6e",
+    "metadata-unavailable-v5.jpg": "5a4039f2f4fda811129926afbaf8063a953b7f85feb23d5d0d8cc7d1bb09bbdd",
+    "quality-rejected-v5.jpg": "2f47b4e081b891dc1ada9e0d5b54494e92d35b4319d95fe0ce1f6d1164fc3ca6",
+    "quarantine-v5.jpg": "6d409dcdf8c1bdb53c3df3459cba7f812a4658087556b4021ce87a3e73ae9699",
+    "revoked-delivery-v5.jpg": "5d3f585ad30b968b912913f904b848932a1101fa41549ba26346e659048f31a1",
+    "source-batch-v5.jpg": "cac4ec4c1c86219803730fde6a98fe769b1fbcb65926fe8324c433fe07fc8812"
+  },
+  "validation": {
+    "goTest": "PASS (TEST_DSN-only suites may skip; live oracle separately exercised PostgreSQL)",
+    "goVet": "PASS",
+    "nextBuild": "PASS including 204 existing web command tests",
+    "restoredConfigTypecheck": "PASS",
+    "eslint": "PASS",
+    "pythonCompile": "PASS",
+    "remoteCI": "NOT_RUN",
+    "humanExplanation": "NOT_RUN - user deferred"
+  }
+}

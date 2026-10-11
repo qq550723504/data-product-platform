@@ -1,0 +1,27 @@
+{
+	admin off
+	auto_https off
+}
+:9000 {
+	# Official mitigation for GHSA-hv4r-mvr4-25vw. MinIO's private port
+	# must have no host publication or engine access bypassing this gateway.
+	@unsigned header X-Amz-Content-Sha256 STREAMING-UNSIGNED-PAYLOAD-TRAILER
+	respond @unsigned 403
+	@coreDelete {
+		path /raw/core/*
+		method DELETE POST
+	}
+	respond @coreDelete 403
+	@coreCopy {
+		path /raw/core/*
+		header X-Amz-Copy-Source *
+	}
+	respond @coreCopy 403
+	@coreOverwrite {
+		path /raw/core/*
+		method PUT
+		expression {http.request.header.If-None-Match} != '*'
+	}
+	respond @coreOverwrite 403
+	reverse_proxy minio:9000
+}

@@ -263,6 +263,16 @@ jobs:
           fi
 
           CHANGED="$(git diff --name-only "$BASE" "${{ github.sha }}" -- \
+            '.github/workflows/ci.yml' \
+            'examples/enterprise-activity/postgres-ingestion/**' \
+            'examples/enterprise-activity/data/**' \
+            'apps/platform/internal/platform/storage/**' \
+            'apps/platform/internal/ingestion/**' \
+            'apps/platform/cmd/ingestion-pilot/**' \
+            'apps/platform/internal/platform/routing/**' \
+            'apps/platform/go.mod' \
+            'apps/platform/go.sum' \
+            'migrations/**' \
             'examples/enterprise-activity/hop/**' \
             'examples/enterprise-activity/workflow/energy-monthly-hop-v1.yaml' \
             'apps/platform/internal/workflow/hop/**' \
@@ -321,6 +331,55 @@ jobs:
               raise SystemExit(f"Hop output mismatch\nexpected={expected!r}\nactual={actual!r}")
           print(f"validated {len(actual)} Apache Hop aggregate rows")
           PY
+
+      - name: Run real PostgreSQL to Hop B1 extraction and fault matrix
+        if: steps.changes.outputs.run_hop == 'true'
+        run: python3 examples/enterprise-activity/postgres-ingestion/smoke.py --output "$RUNNER_TEMP/postgres-ingestion-b1"
+
+      - name: Preserve non-secret PostgreSQL ingestion evidence
+        if: always() && steps.changes.outputs.run_hop == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgres-ingestion-b1-${{ github.run_attempt }}
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/postgres-ingestion-b1/report.json
+            ${{ runner.temp }}/postgres-ingestion-b1/*-manifest.json
+            ${{ runner.temp }}/postgres-ingestion-b1/requests.json
+
+      - name: Setup Go for storage provider source build
+        if: steps.changes.outputs.run_hop == 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.8'
+          cache-dependency-path: apps/platform/go.sum
+
+      - name: Run real isolated B2 object storage gate
+        if: steps.changes.outputs.run_hop == 'true'
+        run: python3 examples/enterprise-activity/postgres-ingestion/storage_smoke.py --output "$RUNNER_TEMP/postgres-ingestion-storage"
+
+      - name: Preserve non-secret storage evidence
+        if: always() && steps.changes.outputs.run_hop == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgres-ingestion-storage-${{ github.run_attempt }}
+          retention-days: 7
+          if-no-files-found: error
+          path: ${{ runner.temp }}/postgres-ingestion-storage/storage-report.json
+
+      - name: Run real three-RAW Core batch acceptance and recovery
+        if: steps.changes.outputs.run_hop == 'true'
+        run: python3 examples/enterprise-activity/postgres-ingestion/b2_smoke.py --output "$RUNNER_TEMP/postgres-ingestion-b2"
+
+      - name: Preserve non-secret Core batch receipt evidence
+        if: always() && steps.changes.outputs.run_hop == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: postgres-ingestion-b2-${{ github.run_attempt }}
+          retention-days: 7
+          if-no-files-found: error
+          path: ${{ runner.temp }}/postgres-ingestion-b2/b2-report.json
 
       - name: Skip Hop runtime smoke when unrelated
         if: steps.changes.outputs.run_hop != 'true'

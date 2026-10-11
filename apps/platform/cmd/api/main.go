@@ -37,6 +37,7 @@ import (
 	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	goldhttp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/transport/http"
+	ingestionpilot "github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/pilot"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
 	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata"
@@ -239,6 +240,8 @@ func main() {
 		os.Exit(1)
 	}
 	rightsHandler := rightshttp.NewHandler(rightsService, rightsRepo, rightsAuthorizer)
+	workflowHandler.Authorize = rightsAuthorizer.Authorize
+	entityHandler.Authorize = rightsAuthorizer.Authorize
 
 	contractRepo := contractinfra.NewPostgresRepository(db)
 	contractService := contractapp.NewService(txManager, contractRepo)
@@ -275,9 +278,11 @@ func main() {
 
 	certificationProfileRepo := certificationinfra.NewProfileRepository(db)
 	certificationRepo := certificationinfra.NewCertificationRepository(db)
-	certificationService := certificationapp.NewCertificationService(txManager, certificationProfileRepo, certificationRepo, nil)
+	certificationService := certificationapp.NewCertificationService(txManager, certificationProfileRepo, certificationRepo, certificationapp.NewReferenceEvidenceResolver())
 	certificationEligibility := certificationapp.NewEligibilityService(certificationService, datasetRepo, rightsRepo)
 	certificationHandler := certificationhttp.NewHandler(certificationService, certificationEligibility, datasetRepo)
+	certificationHandler.Authorize = rightsAuthorizer.Authorize
+	certificationHandler.Rights = rightsService
 
 	deliveryRepo := deliveryinfra.NewPostgresRepository(db)
 	deliveryGate := deliveryapp.NewCertificationDirectDataGate(certificationEligibility)
@@ -317,6 +322,16 @@ func main() {
 		)
 	}
 	metadataHandler := metadatahttp.NewHandler(metadataService, metadataRepo)
+	metadataHandler.Authorize = rightsAuthorizer.Authorize
+	registerIngestion := func(*http.ServeMux) {}
+	if path := os.Getenv("INGESTION_PROFILE"); path != "" {
+		h, err := ingestionpilot.Build(db, path)
+		if err != nil {
+			logger.Error("ingestion profile invalid")
+			os.Exit(1)
+		}
+		registerIngestion = h.Register
+	}
 
 	traceabilityHandler := traceabilityhttp.NewHandler(
 		evidence.NewQueryRepository(db),
@@ -344,6 +359,7 @@ func main() {
 			deliveryHandler.Register,
 			complianceHandler.Register,
 			metadataHandler.Register,
+			registerIngestion,
 			traceabilityHandler.Register,
 		),
 		ReadHeaderTimeout: 5 * time.Second,

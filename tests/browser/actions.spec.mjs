@@ -16,6 +16,51 @@ async function writes(request) { return (await state(request)).requests.filter((
 
 test.beforeEach(async ({ request }) => { await scenario(request, "ready", true); });
 
+test("Registered batch resumes the same operation after a pre-start crash",async({page,request})=>{
+ await scenario(request,"batch-registered",true);
+ await page.goto(`http://127.0.0.1:3102/batches/${ids.ingestion}`);
+ await page.getByRole("button",{name:"启动抽取",exact:true}).click();
+ await expect(page.getByText("RUNNING",{exact:true})).toBeVisible();
+ await page.reload();
+ await expect(page.getByRole("button",{name:"启动抽取",exact:true})).toBeDisabled();
+ const commands=await writes(request);
+ expect(commands.filter(c=>c.path===`/api/v1/ingestions/${ids.ingestion}/dispatch`)).toHaveLength(1);
+ expect(commands.some(c=>c.path==="/api/v1/ingestions")).toBe(false);
+});
+
+test("Registering batch can query its uncertain outcome without a second start",async({page,request})=>{
+ await scenario(request,"batch-registering",true);
+ await page.goto(`http://127.0.0.1:3102/batches/${ids.ingestion}`);
+ await expect(page.getByRole("button",{name:"启动抽取",exact:true})).toBeDisabled();
+ await page.getByRole("button",{name:"核对原运行",exact:true}).click();
+ await expect(page.getByRole("status")).toContainText("OUTCOME_UNKNOWN");
+ await expect(page.getByRole("button",{name:"原子接纳三份 RAW",exact:true})).toBeDisabled();
+ const commands=await writes(request);
+ expect(commands.filter(c=>c.path===`/api/v1/ingestions/${ids.ingestion}/recover`)).toHaveLength(1);
+ expect(commands.some(c=>c.path.endsWith("/dispatch")||c.path==="/api/v1/ingestions")).toBe(false);
+});
+
+test("Certification profile selection reloads that profile's evidence before prepare and evaluate", async ({ page, request }) => {
+  await scenario(request, "multiple-certification-profiles", true);
+  await page.goto(`http://127.0.0.1:3102/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=certification&profileId=${ids.goldProfile}`);
+  const form = page.locator("form").filter({has: page.getByRole("heading", {name:"执行认证", exact:true})});
+  await expect(form.getByRole("button", {name:"准备本次认证证据"})).toBeDisabled();
+  await form.getByLabel("认证规则").selectOption(ids.secondProfile);
+  await expect(page).toHaveURL(new RegExp(`profileId=${ids.secondProfile}`));
+  await expect(form.locator('input[name="evidenceSnapshotId"]')).toHaveValue("");
+  await form.getByRole("button", {name:"准备本次认证证据"}).click();
+  await expect(form.locator('input[name="evidenceSnapshotId"]')).toHaveValue(ids.secondEvidence);
+  await form.getByRole("button", {name:"核验并记录认证决定"}).click();
+  await expect.poll(async()=> (await writes(request)).find(c=>c.path.endsWith("/certifications"))?.body).toMatchObject({profileId:ids.secondProfile,evidenceSnapshotId:ids.secondEvidence});
+  await expect(form.getByRole("status").last()).toContainText("CERTIFIED");
+  const commands = await writes(request);
+  const preparation = commands.find(c=>c.path.endsWith("/certification-inputs"));
+  const evaluation = commands.find(c=>c.path.endsWith("/certifications"));
+  expect(preparation.body.profileId).toBe(ids.secondProfile);
+  expect(evaluation.body.profileId).toBe(ids.secondProfile);
+  expect(evaluation.body.evidenceSnapshotId).toBe(ids.secondEvidence);
+});
+
 test("workbench surfaces actionable review and release items", async ({ page }) => {
   await page.goto("/");
   const attention = page.getByTestId("needs-attention");
@@ -207,12 +252,14 @@ test("Quality Check preserves attempt identity across refresh and does not dupli
   const form = page.getByRole("form", { name: "运行 Quality Check" });
   const button = form.getByRole("button", { name: "运行 Quality Check", exact: true });
   await expect(button).toBeEnabled();
+  const attemptId = await form.locator('input[name="assessmentAttemptId"]').inputValue();
+  expect(attemptId).toMatch(/^[0-9a-f-]{36}$/);
   await button.click();
 
-  await expect(page).toHaveURL(/qualityAttemptId=[0-9a-f-]{36}/);
-  const attemptId = new URL(page.url()).searchParams.get("qualityAttemptId");
-  expect(attemptId).toBeTruthy();
   await expect(form.getByRole("status").last()).toContainText("Quality Check 已完成");
+  // Next's action revalidation can briefly restore the pre-submit URL. Verify
+  // the original identity after the action settles, then verify refresh recovery.
+  await expect(page).toHaveURL(new RegExp(`qualityAttemptId=${attemptId}`));
 
   let commands = await writes(request);
   let qualityCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/quality-checks`);
@@ -250,12 +297,12 @@ test("Compliance Check preserves attempt identity across refresh and does not du
   const form = page.getByRole("form", { name: "运行 Compliance Check" });
   const button = form.getByRole("button", { name: "运行 Compliance Check", exact: true });
   await expect(button).toBeEnabled();
+  const attemptId = await form.locator('input[name="assessmentAttemptId"]').inputValue();
+  expect(attemptId).toMatch(/^[0-9a-f-]{36}$/);
   await button.click();
 
-  await expect(page).toHaveURL(/complianceAttemptId=[0-9a-f-]{36}/);
-  const attemptId = new URL(page.url()).searchParams.get("complianceAttemptId");
-  expect(attemptId).toBeTruthy();
   await expect(form.getByRole("status").last()).toContainText("Compliance Check 已完成");
+  await expect(page).toHaveURL(new RegExp(`complianceAttemptId=${attemptId}`));
 
   let commands = await writes(request);
   let complianceCalls = commands.filter((call) => call.path === `/api/v1/dataset-versions/${ids.goldVersion}/compliance-checks`);
@@ -293,15 +340,15 @@ test("Compliance Check preserves a custom policy with the recoverable attempt", 
   const form = page.getByRole("form", { name: "运行 Compliance Check" });
   const customPolicy = "custom/compliance/customer-v2.yaml";
   await form.getByLabel("Compliance Policy").fill(customPolicy);
+  const attemptId = await form.locator('input[name="assessmentAttemptId"]').inputValue();
+  expect(attemptId).toMatch(/^[0-9a-f-]{36}$/);
   await form.getByRole("button", { name: "运行 Compliance Check", exact: true }).click();
 
+  await expect(form.getByRole("status").last()).toContainText("Compliance Check 已完成");
   await expect(page).toHaveURL((url) =>
-    /^[0-9a-f-]{36}$/i.test(url.searchParams.get("complianceAttemptId") ?? "")
+    url.searchParams.get("complianceAttemptId") === attemptId
     && url.searchParams.get("compliancePolicyRef") === customPolicy,
   );
-
-  const attemptId = new URL(page.url()).searchParams.get("complianceAttemptId");
-  expect(attemptId).toBeTruthy();
 
   await page.reload();
   const recoveredForm = page.getByRole("form", { name: "运行 Compliance Check" });

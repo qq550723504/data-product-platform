@@ -281,11 +281,11 @@ func (c *Client) getStatus(ctx context.Context, name, runID string, from int) (p
 	if err := c.jsonRequest(ctx, http.MethodGet, "/hop/pipelineStatus", query, nil, "", &status); err != nil {
 		return pipelineStatus{}, err
 	}
-	if strings.TrimSpace(status.ID) == "" {
-		status.ID = runID
-	}
-	if strings.TrimSpace(status.PipelineName) == "" {
-		status.PipelineName = name
+	if status.ID != strings.TrimSpace(runID) || status.PipelineName != strings.TrimSpace(name) {
+		return pipelineStatus{}, workflowapp.NewManagedEngineError(
+			workflowapp.ManagedEngineInvalidResponse, "remote status identity", false, 0,
+			fmt.Errorf("remote status did not confirm the requested execution identity"),
+		)
 	}
 	return status, nil
 }
