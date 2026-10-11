@@ -23,13 +23,14 @@ const (
 	HandlerExecutionQueue           = "execution-queue"
 	HandlerMetadataProjection       = "metadata-projection"
 	HandlerExternalPublicationQueue = "external-publication-queue"
+	HandlerLifecycleRecoveryQueue   = "lifecycle-recovery-queue"
 )
 
 // Version identifies the base layout of the routing table below. Bump it
 // whenever an event type's required-handler set changes. Dispatch logs and
 // dead-letter diagnostics reference it, so the obligation that was in force when
 // an event was handled stays auditable.
-const Version = "c1-v25+external-core1+execution1+usage1"
+const Version = "c1-v26+external-core1+execution1+usage1+lifecycle-recovery1"
 
 // VersionFor folds the deployment profile into the routing version so the same
 // version string always describes the same required-handler set. Enabling or
@@ -118,6 +119,9 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "LifecycleDispositionApproved"},
 		{EventType: "LifecycleApprovalRevoked"},
 		{EventType: "LifecycleDispositionDispatched"},
+		{EventType: "LifecycleDispositionRecoveryRequested", RequiredHandlers: []string{HandlerLifecycleRecoveryQueue}},
+		{EventType: "LifecycleDispositionRecoveryStarted"},
+		{EventType: "LifecycleDispositionRecoveryObserved"},
 		{EventType: "LifecycleDispositionBlocked"},
 		{EventType: "LifecycleProviderAttemptObserved"},
 		{EventType: "LifecycleDispositionReservationReleased"},

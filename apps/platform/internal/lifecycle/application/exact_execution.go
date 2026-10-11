@@ -171,6 +171,9 @@ func (s *ExactExecution) ObserveExactSend(ctx context.Context, proof domain.Prov
 // It proves only the exact version in the provider-accessible namespace absent.
 // UNKNOWN send history is preserved; verification performs no second deletion.
 func (s *ExactExecution) VerifyAbsentInScope(ctx context.Context, h CommandHeader, attemptID uuid.UUID, inventory NamespaceInventory) (FactResult, error) {
+	return s.verifyAbsentInScope(ctx, h, attemptID, inventory, false)
+}
+func (s *ExactExecution) verifyAbsentInScope(ctx context.Context, h CommandHeader, attemptID uuid.UUID, inventory NamespaceInventory, recovery bool) (FactResult, error) {
 	if s == nil || s.disposition == nil || !s.disposition.configured() {
 		return FactResult{}, ErrStorageScope
 	}
@@ -201,6 +204,11 @@ func (s *ExactExecution) VerifyAbsentInScope(ctx context.Context, h CommandHeade
 		if inventory.WorkspaceID != h.WorkspaceID || inventory.ProviderInstanceID != c.ProviderInstanceID || inventory.IncarnationID != c.IncarnationID || inventory.Namespace != c.Namespace || inventory.CallID == uuid.Nil || inventory.ObservedAt.Before(a.StartedAt) || inventory.ObservedAt.After(at) || at.Sub(inventory.ObservedAt) > time.Minute {
 			return uuid.Nil, ErrStorageScope
 		}
+		if recovery {
+			if _, _, err := o.authorize(ctx, tx, h.WorkspaceID, CapabilityReconcileDisposition, &caller); err != nil {
+				return uuid.Nil, err
+			}
+		}
 		seen := map[string]bool{}
 		for _, v := range inventory.Versions {
 			key := v.Key + "\x00" + v.Version
@@ -230,6 +238,9 @@ func (s *ExactExecution) VerifyAbsentInScope(ctx context.Context, h CommandHeade
 	})
 }
 func (s *ExactExecution) FinalizeContentDisposition(ctx context.Context, h CommandHeader, planID uuid.UUID) (FactResult, error) {
+	return s.finalizeContentDisposition(ctx, h, planID, false)
+}
+func (s *ExactExecution) finalizeContentDisposition(ctx context.Context, h CommandHeader, planID uuid.UUID, recovery bool) (FactResult, error) {
 	if s == nil || s.disposition == nil || !s.disposition.configured() {
 		return FactResult{}, ErrStorageScope
 	}
@@ -243,6 +254,11 @@ func (s *ExactExecution) FinalizeContentDisposition(ctx context.Context, h Comma
 		caller, at, err := o.authorize(ctx, tx, h.WorkspaceID, CapabilityVerifyAbsence, &caller)
 		if err != nil {
 			return uuid.Nil, err
+		}
+		if recovery {
+			if _, _, err := o.authorize(ctx, tx, h.WorkspaceID, CapabilityReconcileDisposition, &caller); err != nil {
+				return uuid.Nil, err
+			}
 		}
 		rev, err := deliveryfence.Advance(ctx, tx, h.WorkspaceID)
 		if err != nil {

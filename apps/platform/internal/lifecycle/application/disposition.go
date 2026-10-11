@@ -329,6 +329,9 @@ func (s *DispositionService) DispatchContentDisposition(ctx context.Context, cmd
 				return uuid.Nil, err
 			}
 			fields["dispatch_id"], fields["attempt_id"] = result.DispatchID, result.AttemptID
+			if _, err := appendRecoveryWork(ctx, tx, attempt, "DURABLE_DISPATCH_RECOVERY", caller, revision, at); err != nil {
+				return uuid.Nil, err
+			}
 		}
 		return evaluationID, appendDispositionFacts(ctx, tx, eventType, "LIFECYCLE_DISPOSITION_GATE", evaluationID, caller, revision, at, fields)
 	})

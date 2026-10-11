@@ -25,12 +25,21 @@ const (
 // ingestion API. Only the instrumented adapter supplies physical observations.
 // Start admission commits before the adapter sends I/O; each observed physical
 // invocation commits its own cost independently of inspection success.
-type PostgresStorageCallJournal struct{ service *OccupancyService }
+type PostgresStorageCallJournal struct {
+	service        *OccupancyService
+	reconciliation bool
+}
 
 var _ StorageCallJournal = (*PostgresStorageCallJournal)(nil)
 
 func NewPostgresStorageCallJournal(s *OccupancyService) *PostgresStorageCallJournal {
 	return &PostgresStorageCallJournal{service: s}
+}
+
+// Recovery native calls require both inspection and current recovery authority
+// in the same fenced start transaction; dispatch authority is never reused.
+func NewReconciliationStorageCallJournal(s *OccupancyService) *PostgresStorageCallJournal {
+	return &PostgresStorageCallJournal{service: s, reconciliation: true}
 }
 
 func (j *PostgresStorageCallJournal) StartStorageCall(ctx context.Context, c StorageCallStart) error {
@@ -62,6 +71,11 @@ func (j *PostgresStorageCallJournal) StartStorageCall(ctx context.Context, c Sto
 		}
 		if c.StartedAt.After(at) {
 			return ErrStorageContract
+		}
+		if j.reconciliation {
+			if _, _, err := s.authorize(ctx, tx, c.Copy.WorkspaceID, CapabilityReconcileDisposition, &caller); err != nil {
+				return err
+			}
 		}
 		tag, err := tx.Exec(ctx, `INSERT INTO lifecycle_storage_call(id,workspace_id,copy_id,operation,started_at,actor_id,principal_ref,dependency_revision)
 		 VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(id) DO NOTHING`, c.ID, c.Copy.WorkspaceID, c.Copy.ID, c.Operation, c.StartedAt, caller.ActorID, caller.Subject, revision)

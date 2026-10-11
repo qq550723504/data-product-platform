@@ -1,0 +1,40 @@
+{
+ admin off
+ auto_https off
+}
+:9000 {
+ route {
+  # Read-only sealed window: no admin, DELETE, write, copy or payload route.
+  @mutation method DELETE PUT POST PATCH
+  respond @mutation 403
+  @health path /minio/health/ready
+  reverse_proxy @health minio:9000
+  @head {
+   path /dpp-lifecycle307-online/fixture/a.csv /dpp-lifecycle307-online/fixture/b.csv /dpp-lifecycle307-quarantine/fixture/a.csv /dpp-lifecycle307-quarantine/fixture/b.csv
+   method HEAD
+   expression {http.request.uri.query.versionId} != ''
+  }
+  reverse_proxy @head minio:9000
+  @retention {
+   path /dpp-lifecycle307-online/fixture/a.csv /dpp-lifecycle307-online/fixture/b.csv /dpp-lifecycle307-quarantine/fixture/a.csv /dpp-lifecycle307-quarantine/fixture/b.csv
+   method GET
+   query retention=*
+   expression {http.request.uri.query.versionId} != ''
+  }
+  reverse_proxy @retention minio:9000
+  @hold {
+   path /dpp-lifecycle307-online/fixture/a.csv /dpp-lifecycle307-online/fixture/b.csv /dpp-lifecycle307-quarantine/fixture/a.csv /dpp-lifecycle307-quarantine/fixture/b.csv
+   method GET
+   query legal-hold=*
+   expression {http.request.uri.query.versionId} != ''
+  }
+  reverse_proxy @hold minio:9000
+  @inventory {
+   path /dpp-lifecycle307-online/ /dpp-lifecycle307-quarantine/
+   method GET
+   query versions=*
+  }
+  reverse_proxy @inventory minio:9000
+  respond 403
+ }
+}

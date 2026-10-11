@@ -24,6 +24,8 @@ import (
 	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	parkindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator"
+	lifecyclepilot "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
+	lifecyclequeue "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/queue"
 	metadataapp "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application"
 	metadatainfra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata"
@@ -122,6 +124,12 @@ func main() {
 	externalExecutor.WithLocker(nativeLockManager)
 	usageImporter := externalapp.NewUsageImporter(externalExecutor)
 	externalEnqueuer := externalqueue.NewClient(queueClient)
+	lifecycleEnqueuer := lifecyclequeue.NewClient(queueClient)
+	lifecycleRecovery, err := lifecyclepilot.BuildRecovery(db, nativeLockManager, lifecycleEnqueuer)
+	if err != nil {
+		logger.Error("configure lifecycle recovery", "error", err)
+		os.Exit(1)
+	}
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
 	annotationRepo := annotationinfra.NewRepository(db)
 	rightsRepo := rightsinfra.NewPostgresRepository(db)
@@ -245,6 +253,7 @@ func main() {
 
 	mux := asynq.NewServeMux()
 	mux.HandleFunc(externalqueue.TaskExecute, externalqueue.Handle(externalExecutor))
+	mux.HandleFunc(lifecyclequeue.TaskRecover, lifecyclequeue.Handle(lifecycleRecovery))
 	mux.HandleFunc(queue.TaskHealthPing, func(_ context.Context, task *asynq.Task) error {
 		logger.Info("worker health ping consumed", "task_type", task.Type())
 		return nil
@@ -350,7 +359,23 @@ func main() {
 	if metadataService != nil {
 		projector = metadataService
 	}
-	dispatcher, err := newOutboxDispatcher(db, logger, projector, executionEnqueuer, externalEnqueuer)
+	if lifecycleRecovery != nil {
+		go func() {
+			ticker := time.NewTicker(5 * time.Second)
+			defer ticker.Stop()
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-ticker.C:
+					if err := lifecycleRecovery.RunOnce(ctx); err != nil && !errors.Is(err, context.Canceled) {
+						logger.Error("reconcile lifecycle queue", "error", err)
+					}
+				}
+			}
+		}()
+	}
+	dispatcher, err := newOutboxDispatcher(db, logger, projector, executionEnqueuer, externalEnqueuer, lifecycleEnqueuer)
 	if err != nil {
 		logger.Error("create outbox dispatcher", "error", err)
 		os.Exit(1)
