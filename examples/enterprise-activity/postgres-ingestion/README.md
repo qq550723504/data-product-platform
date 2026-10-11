@@ -60,6 +60,25 @@ At the time of this storage prerequisite, the gate was PASS and Core requests/ph
 
 ## B2: atomic Core acceptance
 
+The probe DSN and native Hop metadata must name the same host/port/database/user;
+custom JDBC URL overrides and alternate connection modes are rejected. The
+local harness uses one Docker host endpoint reachable by Core and Hop (host
+endpoint on Windows, isolated bridge gateway on Linux). Windows uses the pgx
+lookup hook to resolve host.docker.internal to loopback on the host, while Hop
+uses Docker resolution. InstanceRef is an operator reference, not an observed
+cluster system identifier. This local-staging pilot requires a loopback Hop
+control endpoint. Cached engine, injected source credentials, staging and Core
+storage settings require runtime restart after changes; commands refuse stale
+clients.
+
+A claim records an UNKNOWN intent with zero confirmed invocation quantity. It
+never proves zero eventual cost or an actual call. Actual HTTP-call attempts
+append their separate ACTUAL cost with the response observation, including
+failures/unknown responses. A crash before observation leaves an explicit
+unobserved intent, rather than a phantom actual charge or a silent zero-cost
+claim. Existing attempt/CostAllocation facts are reused; no runtime or billing
+infrastructure is added.
+
 The [recorded B2 run](results/2026-10-11/b2-report.json) executes the actual ingestion HTTP Handler and application services against fresh Core PostgreSQL, the B1 PostgreSQL/Hop pair and the mandatory storage gateway. It validates PGI-05–07; it is not browser or human acceptance. Reproduce from the repository root using the same prerequisites as the storage trial:
 
 ```powershell

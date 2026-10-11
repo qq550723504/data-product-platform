@@ -1,0 +1,1420 @@
+{
+  "contract": "postgres-ingestion-v1/B2",
+  "status": "PASS",
+  "core_admission": "PASS",
+  "b3": "NOT_RUN",
+  "remote_ci": "NOT_RUN",
+  "base_sha": "795b82f5c122737ea042da0669a7c9e06848825c",
+  "scope": "synthetic fixtures; quiescent source; controlled authenticated HTTP; real local providers",
+  "storage_boundary": "official archived MinIO source + mandatory Caddy gateway; no production admission",
+  "minio_commit": "9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a",
+  "minio_release": "RELEASE.2025-10-15T17-29-55Z",
+  "runtime": {
+    "postgres": {
+      "tag": "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "digests": [
+        "postgres@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+      ]
+    },
+    "hop": {
+      "tag": "apache/hop:2.19.0@sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d",
+      "id": "sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d",
+      "digests": [
+        "apache/hop@sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d"
+      ]
+    },
+    "jdbc": {
+      "version": "42.7.14",
+      "url": "https://repo.maven.apache.org/maven2/org/postgresql/postgresql/42.7.14/postgresql-42.7.14.jar",
+      "sha256": "73914527305a40cce504b0d3d90b23caf565136912d607ae8ae7c5895512332c",
+      "engine_image_id": "sha256:8e7229fc22b0936d2777ccacd84b7f4781acf72957342652b15ddf31e6218ece"
+    },
+    "java_jdbc": [
+      "openjdk version \"21.0.12\" 2026-07-21",
+      "OpenJDK Runtime Environment (build 21.0.12+8-alpine-r0)",
+      "OpenJDK 64-Bit Server VM (build 21.0.12+8-alpine-r0, mixed mode, sharing)",
+      "73914527305a40cce504b0d3d90b23caf565136912d607ae8ae7c5895512332c  /opt/hop/lib/jdbc/postgresql-42.7.14.jar"
+    ],
+    "postgres_version": "PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit"
+  },
+  "minio_binary_sha256": "fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8",
+  "accepted_batches": 13,
+  "checks": {
+    "PGI05_manifest_and_bytes": "PASS",
+    "PGI06_commit_reply_loss": "PASS",
+    "PGI06_concurrent_admission_replay": "PASS",
+    "PGI06_failed_slot_recovery": "PASS",
+    "PGI06_put_reply_loss": "PASS",
+    "PGI06_transaction_rollback_recovery": "PASS",
+    "PGI07_admission_rechecks_authority": "PASS",
+    "PGI07_failed_attempt_recovery": "PASS",
+    "PGI07_fresh_authority_source_config": "PASS",
+    "PGI07_restart_identity_loss": "PASS",
+    "PGI07_status_identity_required": "PASS",
+    "PGI07_unknown_register": "PASS",
+    "PGI07_unknown_start_recovery": "PASS",
+    "PGI07_unknown_status": "PASS",
+    "attempt_cost_history": "PASS",
+    "core_fact_secret_isolation": "PASS",
+    "immutable_history": "PASS",
+    "native_attempt_identity_isolation": "PASS",
+    "runtime_reload_requires_restart": "PASS",
+    "server_owned_target_binding": "PASS",
+    "source_endpoint_binding": "PASS",
+    "unobserved_claim_cost_unknown": "PASS",
+    "provider_secret_mount_boundaries": "PASS",
+    "source_to_hop_to_core_original_values": "PASS",
+    "physical_call_cost_correspondence": "PASS",
+    "secret_isolation": "PASS"
+  },
+  "claimed_invocations": 49,
+  "invocations": 48,
+  "manifests": [
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "ed14ccf9-1e33-46f9-91d1-d27e62ce375f",
+      "attemptId": "8663f957-2138-4702-9baf-078539ef50f3",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-ca0c49d4-6fa9-4ba4-8a1a-a488e3825c75",
+      "batchKey": "b-27fd03be-4ee9-4aec-ad3c-41416d749d9e",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "ec76a547-4e32-4d48-993e-71daf48e40d2",
+      "observedAt": "2026-10-11T04:33:47.347565Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/ed14ccf9-1e33-46f9-91d1-d27e62ce375f/8663f957-2138-4702-9baf-078539ef50f3/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/ed14ccf9-1e33-46f9-91d1-d27e62ce375f/8663f957-2138-4702-9baf-078539ef50f3/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/ed14ccf9-1e33-46f9-91d1-d27e62ce375f/8663f957-2138-4702-9baf-078539ef50f3/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "fe4d22d0-fe37-489d-9a5c-02d6daf1a953",
+      "attemptId": "ffd68f20-8f0f-411d-b8c6-b6840e05c7c7",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-605ab8da-36ff-415d-951e-ec07e1bfb406",
+      "batchKey": "b-e2b6a67d-8732-45a1-88cf-84be3111882c",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "d56bf21a-4696-4e7c-aae0-71f850cad72c",
+      "observedAt": "2026-10-11T04:33:48.0380857Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/fe4d22d0-fe37-489d-9a5c-02d6daf1a953/ffd68f20-8f0f-411d-b8c6-b6840e05c7c7/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/fe4d22d0-fe37-489d-9a5c-02d6daf1a953/ffd68f20-8f0f-411d-b8c6-b6840e05c7c7/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/fe4d22d0-fe37-489d-9a5c-02d6daf1a953/ffd68f20-8f0f-411d-b8c6-b6840e05c7c7/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "2687a05a-c999-43dc-89a7-ec071611a1de",
+      "attemptId": "edd97286-014d-48c6-98d6-9ce6b0acc3cf",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-68c9e9e7-c645-4a87-b8fd-f5fef4c65a29",
+      "batchKey": "b-5052dba0-394d-4bab-8eee-90cc15efb933",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "9288d3ad-9479-45e5-ad63-d663b8d2c94a",
+      "observedAt": "2026-10-11T04:33:49.386889Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/2687a05a-c999-43dc-89a7-ec071611a1de/edd97286-014d-48c6-98d6-9ce6b0acc3cf/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/2687a05a-c999-43dc-89a7-ec071611a1de/edd97286-014d-48c6-98d6-9ce6b0acc3cf/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/2687a05a-c999-43dc-89a7-ec071611a1de/edd97286-014d-48c6-98d6-9ce6b0acc3cf/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "e7bbecdd-83d6-4ba7-a1a8-a6203ca38cab",
+      "attemptId": "1f3b83cb-59d2-4609-9fc8-c4389497e02e",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-c9658969-caed-41dc-a3f3-9e286af2939b",
+      "batchKey": "b-42842a91-d7b5-40f7-b9ea-1dfc31393255",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "52c8980c-48c5-4c67-8e5e-d892188f8a37",
+      "observedAt": "2026-10-11T04:33:49.946685Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e7bbecdd-83d6-4ba7-a1a8-a6203ca38cab/1f3b83cb-59d2-4609-9fc8-c4389497e02e/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e7bbecdd-83d6-4ba7-a1a8-a6203ca38cab/1f3b83cb-59d2-4609-9fc8-c4389497e02e/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e7bbecdd-83d6-4ba7-a1a8-a6203ca38cab/1f3b83cb-59d2-4609-9fc8-c4389497e02e/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "94ccac5d-780a-4262-b6eb-0c3f1bc8c0fd",
+      "attemptId": "c831bde9-6086-46b7-9c53-682b9cf1d6d0",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-e883baa1-61ff-4665-81eb-c8e4052300ee",
+      "batchKey": "b-1ca4787b-c9fe-4d93-b0fe-2f3b79cf1935",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "ecf00753-5807-4e70-8a50-2a7e34a8b9ea",
+      "observedAt": "2026-10-11T04:33:50.6037787Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/94ccac5d-780a-4262-b6eb-0c3f1bc8c0fd/c831bde9-6086-46b7-9c53-682b9cf1d6d0/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/94ccac5d-780a-4262-b6eb-0c3f1bc8c0fd/c831bde9-6086-46b7-9c53-682b9cf1d6d0/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/94ccac5d-780a-4262-b6eb-0c3f1bc8c0fd/c831bde9-6086-46b7-9c53-682b9cf1d6d0/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "6b012b30-c39b-4e9b-8f3a-f4987e2b3e09",
+      "attemptId": "9c0ae31a-f305-45f2-a538-5dfebe061089",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-90df0ccf-bd47-47b7-b000-6ff015abf2d7",
+      "batchKey": "b-299adcf6-5238-459c-a228-d02b9aa73a39",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "c48c7133-f2cf-4473-b3a8-b4c8eb3746f7",
+      "observedAt": "2026-10-11T04:33:51.3697092Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/6b012b30-c39b-4e9b-8f3a-f4987e2b3e09/9c0ae31a-f305-45f2-a538-5dfebe061089/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/6b012b30-c39b-4e9b-8f3a-f4987e2b3e09/9c0ae31a-f305-45f2-a538-5dfebe061089/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/6b012b30-c39b-4e9b-8f3a-f4987e2b3e09/9c0ae31a-f305-45f2-a538-5dfebe061089/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "951d8462-d747-4327-a72c-ddb03f14c13a",
+      "attemptId": "746e05f5-fa65-4032-8758-fac5f723d600",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-880376f6-0f37-4b14-91ae-7305f14e494d",
+      "batchKey": "b-d32d4820-8d35-42d8-a41c-0539a7663555",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "6cac28e2-a592-456b-bdca-879b7d660d21",
+      "observedAt": "2026-10-11T04:33:52.0008808Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/951d8462-d747-4327-a72c-ddb03f14c13a/746e05f5-fa65-4032-8758-fac5f723d600/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/951d8462-d747-4327-a72c-ddb03f14c13a/746e05f5-fa65-4032-8758-fac5f723d600/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/951d8462-d747-4327-a72c-ddb03f14c13a/746e05f5-fa65-4032-8758-fac5f723d600/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "4ed198f0-2ddd-4b89-9a09-bc52d0477451",
+      "attemptId": "a92c24c3-9a9c-473d-99c4-838a93a1b22c",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-a5d177c7-353a-4e55-b38f-741e55cfe9a1",
+      "batchKey": "b-ebb0645f-f919-46e5-bbdf-edce51eee33d",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "f1691b51-d463-49c2-996b-d8b7ceb8a535",
+      "observedAt": "2026-10-11T04:33:52.7315432Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/4ed198f0-2ddd-4b89-9a09-bc52d0477451/a92c24c3-9a9c-473d-99c4-838a93a1b22c/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/4ed198f0-2ddd-4b89-9a09-bc52d0477451/a92c24c3-9a9c-473d-99c4-838a93a1b22c/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/4ed198f0-2ddd-4b89-9a09-bc52d0477451/a92c24c3-9a9c-473d-99c4-838a93a1b22c/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "430ec581-798b-45b4-9c1b-2f42fd13e26f",
+      "attemptId": "edcebe08-5e6f-4a04-9444-2665c0e0666e",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-64a218cb-0114-4798-9407-36155b1e3c3d",
+      "batchKey": "b-ccd430f7-4a52-436f-899c-5cc84d6a947f",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "48eb69a3-1139-4ddd-915f-ce881aaa8513",
+      "observedAt": "2026-10-11T04:33:53.4092886Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/430ec581-798b-45b4-9c1b-2f42fd13e26f/edcebe08-5e6f-4a04-9444-2665c0e0666e/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/430ec581-798b-45b4-9c1b-2f42fd13e26f/edcebe08-5e6f-4a04-9444-2665c0e0666e/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/430ec581-798b-45b4-9c1b-2f42fd13e26f/edcebe08-5e6f-4a04-9444-2665c0e0666e/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "e0a3a3d8-a61a-40f6-bbc1-4c4caad63da8",
+      "attemptId": "994f357a-1eae-4849-9412-47ddd89d58c0",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-a03f5264-8931-40da-ab1a-4c269bb4c713",
+      "batchKey": "b-2897916e-1c58-404b-85af-b216189211e3",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "5e2c4e3b-7ca9-41ee-b6e2-c794ada19874",
+      "observedAt": "2026-10-11T04:33:54.4685532Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e0a3a3d8-a61a-40f6-bbc1-4c4caad63da8/994f357a-1eae-4849-9412-47ddd89d58c0/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e0a3a3d8-a61a-40f6-bbc1-4c4caad63da8/994f357a-1eae-4849-9412-47ddd89d58c0/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e0a3a3d8-a61a-40f6-bbc1-4c4caad63da8/994f357a-1eae-4849-9412-47ddd89d58c0/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "e47c1ff5-19b7-4cd2-8f93-806a042e0e32",
+      "attemptId": "618e84b9-c515-43ed-8cf1-56c036ec76b1",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-9c0882b3-b307-4ddc-9ad1-4ff63d47e03f",
+      "batchKey": "b-8442c8aa-a8c4-431f-ac91-667b86c4c497",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "f4b6468b-afeb-4649-af1b-e84cd546a459",
+      "observedAt": "2026-10-11T04:33:55.0893953Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e47c1ff5-19b7-4cd2-8f93-806a042e0e32/618e84b9-c515-43ed-8cf1-56c036ec76b1/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e47c1ff5-19b7-4cd2-8f93-806a042e0e32/618e84b9-c515-43ed-8cf1-56c036ec76b1/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e47c1ff5-19b7-4cd2-8f93-806a042e0e32/618e84b9-c515-43ed-8cf1-56c036ec76b1/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "565e7786-a91b-4d41-8bca-b02bc96882ef",
+      "attemptId": "c0ce65d9-346d-4ba8-8399-d0ed9df687f6",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-4e10f847-fa3f-41d4-bb29-20fa94dfb967",
+      "batchKey": "b-23058216-a533-4e3d-b961-b7592125f200",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "109b8a92-1db2-4791-9d7f-5ce51b51374f",
+      "observedAt": "2026-10-11T04:33:55.6673037Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/565e7786-a91b-4d41-8bca-b02bc96882ef/c0ce65d9-346d-4ba8-8399-d0ed9df687f6/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/565e7786-a91b-4d41-8bca-b02bc96882ef/c0ce65d9-346d-4ba8-8399-d0ed9df687f6/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/565e7786-a91b-4d41-8bca-b02bc96882ef/c0ce65d9-346d-4ba8-8399-d0ed9df687f6/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    },
+    {
+      "contract": "text-csv-batch-v1",
+      "operationId": "17de8b86-ae50-4774-bc9d-e412d24d413a",
+      "attemptId": "f7bd018c-b00d-4b90-ab75-ef2632d92bd2",
+      "workspaceId": "ac83f3df-c689-4cc3-8ee1-f531646b6e11",
+      "requestKey": "r-b32a78b0-0c3f-4851-b54b-05aa4c5e642b",
+      "batchKey": "b-4a541c2c-776b-45fc-9895-ee0f92c76951",
+      "connectionRef": "dpp-source-reader",
+      "instanceRef": "dpp-pgi-d2cd687ad3f3",
+      "configHash": "9b48411c1b7cf214eb9bb38347b69a2b07161dccb57719c9b25c8e1a9ab9b432",
+      "templateHash": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+      "schemaHash": "fd0cf15d23aa983af17f24dac557747de7b2afb17d9a6fc98788f3c67ba29e6b",
+      "engineVersion": "apache-hop/2.19.0;pgjdbc/42.7.14",
+      "remoteId": "44085de9-e696-44c4-ab0b-03d39bc41ca7",
+      "observedAt": "2026-10-11T04:33:57.9652434Z",
+      "outputs": [
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/17de8b86-ae50-4774-bc9d-e412d24d413a/f7bd018c-b00d-4b90-ab75-ef2632d92bd2/enterprise_raw.csv",
+          "bytes": 1277,
+          "rows": 6,
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+          "columns": [
+            "source_company_id",
+            "company_name",
+            "unified_social_credit_code",
+            "legal_representative",
+            "registered_address",
+            "entry_date",
+            "company_status",
+            "contact_name",
+            "mobile",
+            "email"
+          ]
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/17de8b86-ae50-4774-bc9d-e412d24d413a/f7bd018c-b00d-4b90-ab75-ef2632d92bd2/lease_raw.csv",
+          "bytes": 1323,
+          "rows": 10,
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+          "columns": [
+            "lease_id",
+            "source_company_id",
+            "company_name",
+            "contract_start",
+            "contract_end",
+            "rent_amount",
+            "payment_due_date",
+            "payment_date",
+            "lease_status"
+          ]
+        },
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "uri": "s3://raw/staging/ac83f3df-c689-4cc3-8ee1-f531646b6e11/17de8b86-ae50-4774-bc9d-e412d24d413a/f7bd018c-b00d-4b90-ab75-ef2632d92bd2/energy_raw.csv",
+          "bytes": 1318,
+          "rows": 14,
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+          "columns": [
+            "meter_id",
+            "source_company_id",
+            "company_name",
+            "reading_time",
+            "energy_kwh"
+          ]
+        }
+      ]
+    }
+  ],
+  "receipts": [
+    {
+      "id": "038d1bf8-9bd8-4790-a769-b3b68d043d57",
+      "operationId": "e7bbecdd-83d6-4ba7-a1a8-a6203ca38cab",
+      "attemptId": "1f3b83cb-59d2-4609-9fc8-c4389497e02e",
+      "manifestHash": "41f6839f2c856f43891e7b55f7b87270aaf714beacf6d64cb8045aacd29f7c77",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "a55fd37e-8be9-4852-a7ab-658a9ec67d2d",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e7bbecdd-83d6-4ba7-a1a8-a6203ca38cab/1f3b83cb-59d2-4609-9fc8-c4389497e02e/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "bc7b7965-d437-4bee-91e4-4e548099a503",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e7bbecdd-83d6-4ba7-a1a8-a6203ca38cab/1f3b83cb-59d2-4609-9fc8-c4389497e02e/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "77475855-f5f0-4e9c-bba4-e80803ca7619",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e7bbecdd-83d6-4ba7-a1a8-a6203ca38cab/1f3b83cb-59d2-4609-9fc8-c4389497e02e/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "19a36b8e-10e1-4cb8-9c6e-d28c3e6960b8",
+      "operationId": "565e7786-a91b-4d41-8bca-b02bc96882ef",
+      "attemptId": "c0ce65d9-346d-4ba8-8399-d0ed9df687f6",
+      "manifestHash": "be6e21b28f67403b05f628a9cc101d29fccf93246433c072ebefffc219f51222",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "d09c969a-792a-4195-adb8-c479a9501359",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/565e7786-a91b-4d41-8bca-b02bc96882ef/c0ce65d9-346d-4ba8-8399-d0ed9df687f6/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "756a1904-65fb-4753-bf9f-7be56f70515b",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/565e7786-a91b-4d41-8bca-b02bc96882ef/c0ce65d9-346d-4ba8-8399-d0ed9df687f6/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "ac215c7a-c97b-41f1-b3ea-b89db9ba94e2",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/565e7786-a91b-4d41-8bca-b02bc96882ef/c0ce65d9-346d-4ba8-8399-d0ed9df687f6/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "4685abba-67c1-4d9b-8c8c-5111e66c2ea5",
+      "operationId": "e0a3a3d8-a61a-40f6-bbc1-4c4caad63da8",
+      "attemptId": "994f357a-1eae-4849-9412-47ddd89d58c0",
+      "manifestHash": "05019b9f84f7bac01dea2ecc18cda68b2b245dd2044bbd444f4919fce34da1c4",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "0ffac7fd-696e-4cc0-aadc-f8343ef544fa",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e0a3a3d8-a61a-40f6-bbc1-4c4caad63da8/994f357a-1eae-4849-9412-47ddd89d58c0/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "3456aaf0-3036-4516-bc45-1f7ba09b8107",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e0a3a3d8-a61a-40f6-bbc1-4c4caad63da8/994f357a-1eae-4849-9412-47ddd89d58c0/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "8f347dc1-f4a0-4a24-8106-f625e266c1ed",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e0a3a3d8-a61a-40f6-bbc1-4c4caad63da8/994f357a-1eae-4849-9412-47ddd89d58c0/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "53c45c37-1f2e-4478-9b11-28376f03a647",
+      "operationId": "17de8b86-ae50-4774-bc9d-e412d24d413a",
+      "attemptId": "f7bd018c-b00d-4b90-ab75-ef2632d92bd2",
+      "manifestHash": "c292c53a4f8c6fa03b1892380ca571145812b5c00d8337e1d8bf6b9f1fa1b014",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "a82bb0dc-f7af-4706-b633-5aec52c9616a",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/17de8b86-ae50-4774-bc9d-e412d24d413a/f7bd018c-b00d-4b90-ab75-ef2632d92bd2/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "c63195db-809e-465c-ae3c-fed62cdd64d4",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/17de8b86-ae50-4774-bc9d-e412d24d413a/f7bd018c-b00d-4b90-ab75-ef2632d92bd2/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "3308257b-9b37-42bc-8c1d-0af0d1d21e79",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/17de8b86-ae50-4774-bc9d-e412d24d413a/f7bd018c-b00d-4b90-ab75-ef2632d92bd2/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "575da78f-f0d4-4a55-99da-31db25a6571f",
+      "operationId": "6b012b30-c39b-4e9b-8f3a-f4987e2b3e09",
+      "attemptId": "9c0ae31a-f305-45f2-a538-5dfebe061089",
+      "manifestHash": "c599e511dc0d7594b6ce903d0b3f4e8816d5815186f88590429a9555acfe9f29",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "e5d8ee5b-75fd-40f8-93d6-0a251d8be467",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/6b012b30-c39b-4e9b-8f3a-f4987e2b3e09/9c0ae31a-f305-45f2-a538-5dfebe061089/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "ee4ceb51-8c00-4728-b21c-e833ae11fd40",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/6b012b30-c39b-4e9b-8f3a-f4987e2b3e09/9c0ae31a-f305-45f2-a538-5dfebe061089/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "72b2e8ef-7c2a-4bf9-a3e8-95c10c2a51d6",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/6b012b30-c39b-4e9b-8f3a-f4987e2b3e09/9c0ae31a-f305-45f2-a538-5dfebe061089/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "6385f00a-c418-4811-b0fd-20161562c735",
+      "operationId": "430ec581-798b-45b4-9c1b-2f42fd13e26f",
+      "attemptId": "edcebe08-5e6f-4a04-9444-2665c0e0666e",
+      "manifestHash": "a61bd683d0bd248c66d00315cdb65d18d6353c85c32978b8f937ff20d720f693",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "2f49cfdc-20bf-4401-a845-2dec8e44aea3",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/430ec581-798b-45b4-9c1b-2f42fd13e26f/edcebe08-5e6f-4a04-9444-2665c0e0666e/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "7511b9aa-290a-4c12-acbb-2fb84c6f8757",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/430ec581-798b-45b4-9c1b-2f42fd13e26f/edcebe08-5e6f-4a04-9444-2665c0e0666e/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "43cdf10f-2a6e-4a43-bedb-85f44ea1d50f",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/430ec581-798b-45b4-9c1b-2f42fd13e26f/edcebe08-5e6f-4a04-9444-2665c0e0666e/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "67ab046f-978b-46d7-99e2-e48cb30fcefb",
+      "operationId": "951d8462-d747-4327-a72c-ddb03f14c13a",
+      "attemptId": "746e05f5-fa65-4032-8758-fac5f723d600",
+      "manifestHash": "e61fa26896a7ea1f945d188ff4bae10344194f1dd13e7fb53ca7ab933143b7c1",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "58ed1cad-af4c-40d3-8810-b84463e973d6",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/951d8462-d747-4327-a72c-ddb03f14c13a/746e05f5-fa65-4032-8758-fac5f723d600/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "8a2878d3-6e0d-4741-aa06-0e81d56c8c68",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/951d8462-d747-4327-a72c-ddb03f14c13a/746e05f5-fa65-4032-8758-fac5f723d600/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "cfe7d95a-98bc-48a5-a571-cdd64774c58a",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/951d8462-d747-4327-a72c-ddb03f14c13a/746e05f5-fa65-4032-8758-fac5f723d600/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "6c48c1e6-fb3a-4a00-9916-22755039f6b4",
+      "operationId": "94ccac5d-780a-4262-b6eb-0c3f1bc8c0fd",
+      "attemptId": "c831bde9-6086-46b7-9c53-682b9cf1d6d0",
+      "manifestHash": "1f1206bf5c2b996dcc10a9ad41b55ec2f6fee1c1c51ee7d9c454d5ecbd3c1977",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "4f4bf416-de03-4397-b47a-45bc210dc83e",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/94ccac5d-780a-4262-b6eb-0c3f1bc8c0fd/c831bde9-6086-46b7-9c53-682b9cf1d6d0/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "f558e72d-713c-4f5b-b80c-780d06e6a24f",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/94ccac5d-780a-4262-b6eb-0c3f1bc8c0fd/c831bde9-6086-46b7-9c53-682b9cf1d6d0/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "59227427-4d99-4bab-a2e6-7a994beb7772",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/94ccac5d-780a-4262-b6eb-0c3f1bc8c0fd/c831bde9-6086-46b7-9c53-682b9cf1d6d0/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "78dc9f85-c45a-4d2b-abad-cd4768ac9540",
+      "operationId": "ed14ccf9-1e33-46f9-91d1-d27e62ce375f",
+      "attemptId": "8663f957-2138-4702-9baf-078539ef50f3",
+      "manifestHash": "93c5efa17fd00a3b6ead01111aa3af3faacc657594ff6301895c3d91963cc54d",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "925c11e5-64fa-4d7e-ac16-4d4116e6eb25",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/ed14ccf9-1e33-46f9-91d1-d27e62ce375f/8663f957-2138-4702-9baf-078539ef50f3/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "5b5213cf-6780-482d-8779-0cc18ca001f9",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/ed14ccf9-1e33-46f9-91d1-d27e62ce375f/8663f957-2138-4702-9baf-078539ef50f3/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "89e1b443-eee8-4d91-a370-3576fa8c4783",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/ed14ccf9-1e33-46f9-91d1-d27e62ce375f/8663f957-2138-4702-9baf-078539ef50f3/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "99f1deb5-3616-470f-bcca-1cd7961ddc97",
+      "operationId": "2687a05a-c999-43dc-89a7-ec071611a1de",
+      "attemptId": "edd97286-014d-48c6-98d6-9ce6b0acc3cf",
+      "manifestHash": "99e0fdec8968d3d9b89ea5826f9e21fe0ecf79f28a491bf7f676bba95d9ce39c",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "3cef2011-0e4a-40bb-9913-e36e4f3e9cd8",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/2687a05a-c999-43dc-89a7-ec071611a1de/edd97286-014d-48c6-98d6-9ce6b0acc3cf/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "4a04ee38-b47c-4bb0-b7eb-05d1cef8b33a",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/2687a05a-c999-43dc-89a7-ec071611a1de/edd97286-014d-48c6-98d6-9ce6b0acc3cf/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "eed67c76-6fc7-4408-9286-4aa14ed1d9f4",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/2687a05a-c999-43dc-89a7-ec071611a1de/edd97286-014d-48c6-98d6-9ce6b0acc3cf/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "d6df748d-917b-405a-aac1-b4033c39e69b",
+      "operationId": "4ed198f0-2ddd-4b89-9a09-bc52d0477451",
+      "attemptId": "a92c24c3-9a9c-473d-99c4-838a93a1b22c",
+      "manifestHash": "bb1f0a266e1a96c526e9b75cfdf1404614bc90487e84774941a07e9387e391a6",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "574b110b-7ac1-4c61-9a51-0426733d0d14",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/4ed198f0-2ddd-4b89-9a09-bc52d0477451/a92c24c3-9a9c-473d-99c4-838a93a1b22c/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "73ef1b8f-303d-47cf-86d2-7c71f00d2848",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/4ed198f0-2ddd-4b89-9a09-bc52d0477451/a92c24c3-9a9c-473d-99c4-838a93a1b22c/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "adf3371d-d97e-41f8-a34a-9b2db5388964",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/4ed198f0-2ddd-4b89-9a09-bc52d0477451/a92c24c3-9a9c-473d-99c4-838a93a1b22c/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "da89ad40-d0ad-46ea-b513-06873e4bc66c",
+      "operationId": "fe4d22d0-fe37-489d-9a5c-02d6daf1a953",
+      "attemptId": "ffd68f20-8f0f-411d-b8c6-b6840e05c7c7",
+      "manifestHash": "1109c01fd7ddeb3672c576a97e328e0c6436ff573087a258923df59bf0194eb6",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "58e199c1-e31b-44ef-be31-93bfdc3e8e0b",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/fe4d22d0-fe37-489d-9a5c-02d6daf1a953/ffd68f20-8f0f-411d-b8c6-b6840e05c7c7/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "c840cf46-77e8-4dcf-9e0e-df4672ac2bae",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/fe4d22d0-fe37-489d-9a5c-02d6daf1a953/ffd68f20-8f0f-411d-b8c6-b6840e05c7c7/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "2bcebaac-d41e-49a8-ab34-06084185089d",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/fe4d22d0-fe37-489d-9a5c-02d6daf1a953/ffd68f20-8f0f-411d-b8c6-b6840e05c7c7/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    },
+    {
+      "id": "f7d12906-9fd9-4d14-b3e4-ff572fac09c9",
+      "operationId": "e47c1ff5-19b7-4cd2-8f93-806a042e0e32",
+      "attemptId": "618e84b9-c515-43ed-8cf1-56c036ec76b1",
+      "manifestHash": "72bad9393bcb1cd7041921caa1f0c793b136bae52485eb19fe4ee9969d743f0b",
+      "bindings": [
+        {
+          "code": "energy_raw",
+          "datasetId": "471a448c-1c83-419b-ac1c-3cf7d971714c",
+          "versionId": "cd87fdd9-3562-43a0-a38e-e5154113178c",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e47c1ff5-19b7-4cd2-8f93-806a042e0e32/618e84b9-c515-43ed-8cf1-56c036ec76b1/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+          "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+        },
+        {
+          "code": "enterprise_raw",
+          "datasetId": "851451d9-580b-43c0-b363-cda665a9004f",
+          "versionId": "0276d01d-2384-4cce-b09f-42afc7a46ba6",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e47c1ff5-19b7-4cd2-8f93-806a042e0e32/618e84b9-c515-43ed-8cf1-56c036ec76b1/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+          "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+        },
+        {
+          "code": "lease_raw",
+          "datasetId": "27313211-870c-4ea5-99f6-efff2eefc55c",
+          "versionId": "c19585de-2637-4e5a-b354-cc576f552922",
+          "uri": "s3://raw/core/ac83f3df-c689-4cc3-8ee1-f531646b6e11/e47c1ff5-19b7-4cd2-8f93-806a042e0e32/618e84b9-c515-43ed-8cf1-56c036ec76b1/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+          "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+        }
+      ]
+    }
+  ],
+  "unobserved_claims": 1,
+  "implementation_sha256": {
+    "apps/platform/internal/ingestion/application/service.go": "2ffa7ac96f8ec72ff13f8f299c5cf48dbae87543fbcc7e7987149c632f56e5c4",
+    "apps/platform/internal/ingestion/domain/model.go": "391346835ff5aaf57f0ba9a88e37f9c4f1e2297735d75c275f04ee7fd93e785d",
+    "apps/platform/internal/ingestion/domain/model_test.go": "55bdc83e04dc90885b75c3ff7b155228be7d942fc798010ad514025b0fa41e1f",
+    "apps/platform/internal/ingestion/hop/adapter.go": "d93d649b3c5494199cf1c6a535372615fedb3c79edcd846bd0546e97ea72d62a",
+    "apps/platform/internal/ingestion/hop/adapter_test.go": "26e502cc002d4d3f2b0dbeea10c4b6c8cff48290e775c6947d3514f132474f9b",
+    "apps/platform/internal/ingestion/infrastructure/repository.go": "00addd35426d94c9c71ff9fa58dd1e0b9765bd8bd9605be8145b8db545e3c6e8",
+    "apps/platform/internal/ingestion/pilot/commit_fault_test.go": "3c68a5a39c0573e98465f736eb9152f93dff5c59bab1de1cd19d877b51c8df55",
+    "apps/platform/internal/ingestion/pilot/live_test.go": "a3a8025cb1484121633c66eb3dd7e289901f1821a7484569991a8b9cdf46941b",
+    "apps/platform/internal/ingestion/pilot/profile.go": "e9bd923cf26763e8c81bb1ad6070348e1851facca0ddf14c5f91f05b05effd3b",
+    "apps/platform/internal/ingestion/pilot/profile_test.go": "54a395bde8257e973d6b0e76f2ec487f82141c1b1b48ecffc3a60c3dc0eb3cd1",
+    "apps/platform/internal/ingestion/transport/http/handler.go": "0210c792cc8d25f2218b357fb495412dc3a7c120afe2d9c1e79840f846cdb248",
+    "apps/platform/cmd/ingestion-pilot/main.go": "5b98d8a0c1a52dea8c758bec4c5194d400ff438e1ae29a1db7787512aabd82df",
+    "apps/platform/go.mod": "09d3b7031abb974542b0c7f29637c225b6a8f67cbd2c39adc3103e9df16954df",
+    "apps/platform/go.sum": "0ebe6caa021faedae6d8993f415dc7d66b7a2af24d69bfc9b54c6d3a5fe665ea",
+    "migrations/000051_ingestion_batch.up.sql": "c3dfee18100e689735c9d8b291157b5f418b6038d9e5eaf26fb1b449fb6d003f",
+    "migrations/000051_ingestion_batch.down.sql": "5d471e5bb453629aa55ee334f8e820869ba65462d7d0e857cb625cd5c9a1faa7",
+    "apps/platform/internal/platform/storage/minio.go": "4692ca870bef9e309b70e9bd1d6c6625439d26f8d5a098e6d8980201272cce21",
+    "apps/platform/internal/platform/routing/routing.go": "d1d2a168dff45dbe67d5d1ea508d5c263140c39f0dd002d1a09b9de5c403050f",
+    "apps/platform/internal/workflow/hop/client.go": "1435f72eaf7acac653f088f77d6e792e22a754f20e09ec9097e4a3461336956d",
+    "examples/enterprise-activity/postgres-ingestion/b2_smoke.py": "9ca3a5e9db184c33c43181e5dc92f02e05ed47ed9f2bc3e509a1fa9c73e2f56d",
+    "examples/enterprise-activity/postgres-ingestion/smoke.py": "66e2b11d8250e20ad91bb8098bde6e548a56e9629647200029d2b650048f180d",
+    "examples/enterprise-activity/postgres-ingestion/extract.hpl": "a3327b3e027990a8bac933d917986beb4d5a4cbaeb73af157346d3b8de92d0a1",
+    "examples/enterprise-activity/postgres-ingestion/storage.Caddyfile": "5ddf7d189791e49c078b4ae4c9ae8ea8f4d63376d7cea36ed2229eb67ffb2ace",
+    "examples/enterprise-activity/postgres-ingestion/source.sql": "bd245b93679fe4d58d6007578572a39ce812edbe23d64220646d5e976dadd630",
+    "examples/enterprise-activity/postgres-ingestion/start-hop.sh": "ac95609e809348d52dbfc624e7d6fee049500daec29a40e4cd60bde31c77f046",
+    ".github/workflows/ci.yml": "c7fb2c6ed8de3a645a907c338724ba52ec42681fe4d7c52a7bec743e52162498"
+  },
+  "cleanup": "PASS"
+}

@@ -12,10 +12,14 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"net/http/httptrace"
 	"os"
 	"path/filepath"
+	"runtime"
 	"slices"
+	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -71,11 +75,19 @@ func (a *Adapter) config(ctx context.Context, r d.Request) (Config, error) {
 		return c, d.ErrDenied
 	}
 	var connection struct {
+		Name  string
 		RDBMS map[string]struct {
-			Username, DatabaseName, Password string `json:",omitempty"`
+			Username, DatabaseName, Password, Hostname, Port, PluginID string
+			AccessType                                                 int
+			Attributes                                                 map[string]string
 		} `json:"rdbms"`
 	}
-	if len(c.Metadata["rdbms"]) != 1 || json.Unmarshal(c.Metadata["rdbms"][0], &connection) != nil {
+	if len(c.Metadata["rdbms"]) != 1 {
+		return c, d.ErrDenied
+	}
+	decoder := json.NewDecoder(bytes.NewReader(c.Metadata["rdbms"][0]))
+	decoder.DisallowUnknownFields()
+	if decoder.Decode(&connection) != nil || connection.Name != "dpp-source" || len(connection.RDBMS) != 1 {
 		return c, d.ErrDenied
 	}
 	pg, ok := connection.RDBMS["POSTGRESQL"]
@@ -83,7 +95,26 @@ func (a *Adapter) config(ctx context.Context, r d.Request) (Config, error) {
 		return c, d.ErrDenied
 	}
 	parsed, err := pgx.ParseConfig(c.SourceDSN)
-	if err != nil || parsed.Password == "" {
+	if err != nil || parsed.Password == "" || parsed.User != c.Reader || parsed.Database != c.Database {
+		return c, d.ErrDenied
+	}
+	port, err := strconv.Atoi(pg.Port)
+	if err != nil || port != int(parsed.Port) || !strings.EqualFold(pg.Hostname, parsed.Host) || pg.PluginID != "POSTGRESQL" || pg.AccessType != 0 {
+		return c, d.ErrDenied
+	}
+	for _, fallback := range parsed.Fallbacks {
+		if fallback.Host != parsed.Host || fallback.Port != parsed.Port {
+			return c, d.ErrDenied
+		}
+	}
+	// The fixed native JDBC contract cannot override the checked endpoint with
+	// a custom connection URL or alternate transport attributes.
+	for key := range pg.Attributes {
+		if key != "SUPPORTS_BOOLEAN_DATA_TYPE" && key != "SUPPORTS_TIMESTAMP_DATA_TYPE" {
+			return c, d.ErrDenied
+		}
+	}
+	if pg.Attributes["SUPPORTS_BOOLEAN_DATA_TYPE"] != "Y" || pg.Attributes["SUPPORTS_TIMESTAMP_DATA_TYPE"] != "Y" {
 		return c, d.ErrDenied
 	}
 	meta, _ := json.Marshal(c.Metadata)
@@ -110,7 +141,17 @@ func (a *Adapter) Check(ctx context.Context, r d.Request) error {
 	if err != nil {
 		return err
 	}
-	conn, err := pgx.Connect(ctx, c.SourceDSN)
+	probe, err := pgx.ParseConfig(c.SourceDSN)
+	if err != nil {
+		return d.ErrDenied
+	}
+	if runtime.GOOS == "windows" && strings.EqualFold(probe.Host, "host.docker.internal") {
+		// Docker Desktop's host endpoint is this machine. Host-side lookup must
+		// not route through a proxy DNS fake-IP; Hop resolves it through Docker.
+		// The exact published port, database and reader still match metadata.
+		probe.LookupFunc = func(context.Context, string) ([]string, error) { return []string{"127.0.0.1"}, nil }
+	}
+	conn, err := pgx.ConnectConfig(ctx, probe)
 	if err != nil {
 		return d.ErrDenied
 	}
@@ -161,32 +202,44 @@ func (a *Adapter) Check(ctx context.Context, r d.Request) error {
 	return tx.Commit(ctx)
 }
 func name(op d.Operation) string { return "ingestion-" + op.AttemptID.String() }
-func (a *Adapter) Register(ctx context.Context, op d.Operation) (string, error) {
+func observeRequest(ctx context.Context) (context.Context, *atomic.Bool) {
+	written := &atomic.Bool{}
+	trace := &httptrace.ClientTrace{
+		WroteHeaders: func() { written.Store(true) },
+		WroteRequest: func(info httptrace.WroteRequestInfo) {
+			if info.Err == nil {
+				written.Store(true)
+			}
+		},
+	}
+	return httptrace.WithClientTrace(ctx, trace), written
+}
+func (a *Adapter) Register(ctx context.Context, op d.Operation) (string, bool, error) {
 	c, err := a.config(ctx, op.Request)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 	local := filepath.Join(a.LocalRoot, op.AttemptID.String())
 	if err = os.MkdirAll(local, 0700); err != nil {
-		return "", d.ErrUnknown
+		return "", false, d.ErrUnknown
 	}
 	// Hop's container UID writes a private-parent, attempt-owned bind directory.
 	if err = os.Chmod(local, 0777); err != nil {
-		return "", d.ErrUnknown
+		return "", false, d.ErrUnknown
 	}
 	pipeline := string(c.Template)
 	start := strings.Index(pipeline, "<pipeline>")
 	if start < 0 {
-		return "", d.ErrManifest
+		return "", false, d.ErrManifest
 	}
 	pipeline = pipeline[start:]
 	if strings.Count(pipeline, "<name>postgres-ingestion-v1</name>") != 1 {
-		return "", d.ErrManifest
+		return "", false, d.ErrManifest
 	}
 	pipeline = strings.Replace(pipeline, "<name>postgres-ingestion-v1</name>", "<name>"+name(op)+"</name>", 1)
 	meta, err := json.Marshal(c.Metadata)
 	if err != nil {
-		return "", d.ErrManifest
+		return "", false, d.ErrManifest
 	}
 	var compressed bytes.Buffer
 	gz := gzip.NewWriter(&compressed)
@@ -195,33 +248,42 @@ func (a *Adapter) Register(ctx context.Context, op d.Operation) (string, error) 
 	var escaped bytes.Buffer
 	_ = xml.EscapeText(&escaped, []byte(strings.TrimRight(a.EngineRoot, "/")+"/"+op.AttemptID.String()))
 	definition := []byte("<pipeline_configuration>" + pipeline + "<pipeline_execution_configuration><parameters><parameter><name>OUTPUT_PREFIX</name><value>" + escaped.String() + "</value></parameter></parameters><run_configuration>local</run_configuration><log_level>Basic</log_level><clear_log>Y</clear_log><log_file>N</log_file></pipeline_execution_configuration><metastore_json>" + base64.StdEncoding.EncodeToString(compressed.Bytes()) + "</metastore_json></pipeline_configuration>")
-	run, err := a.Client.PrepareSubmission(ctx, w.ManagedSubmitRequest{Name: name(op), Definition: definition, ContentType: "application/xml"})
+	callCtx, written := observeRequest(ctx)
+	run, err := a.Client.PrepareSubmission(callCtx, w.ManagedSubmitRequest{Name: name(op), Definition: definition, ContentType: "application/xml"})
 	if err != nil {
-		return "", d.ErrUnknown
+		return "", written.Load(), d.ErrUnknown
 	}
-	return run.ID, nil
+	return run.ID, written.Load(), nil
 }
-func (a *Adapter) Start(ctx context.Context, op d.Operation) error {
-	_, err := a.Client.StartSubmission(ctx, w.ManagedSubmitRequest{Name: name(op)}, op.RemoteID)
+func (a *Adapter) Start(ctx context.Context, op d.Operation) (bool, error) {
+	if _, err := a.config(ctx, op.Request); err != nil {
+		return false, err
+	}
+	callCtx, written := observeRequest(ctx)
+	_, err := a.Client.StartSubmission(callCtx, w.ManagedSubmitRequest{Name: name(op)}, op.RemoteID)
 	if err != nil {
-		return d.ErrUnknown
+		return written.Load(), d.ErrUnknown
 	}
-	return nil
+	return written.Load(), nil
 }
-func (a *Adapter) Status(ctx context.Context, op d.Operation) (string, error) {
-	run, err := a.Client.Status(ctx, name(op), op.RemoteID)
+func (a *Adapter) Status(ctx context.Context, op d.Operation) (string, bool, error) {
+	if _, err := a.config(ctx, op.Request); err != nil {
+		return "UNKNOWN", false, err
+	}
+	callCtx, written := observeRequest(ctx)
+	run, err := a.Client.Status(callCtx, name(op), op.RemoteID)
 	if err != nil || run.ID != op.RemoteID || run.Name != name(op) {
-		return "UNKNOWN", d.ErrUnknown
+		return "UNKNOWN", written.Load(), d.ErrUnknown
 	}
 	switch run.State {
 	case w.EngineRunSucceeded:
-		return "SUCCEEDED", nil
+		return "SUCCEEDED", written.Load(), nil
 	case w.EngineRunFailed:
-		return "FAILED", nil
+		return "FAILED", written.Load(), nil
 	case w.EngineRunRunning, w.EngineRunQueued:
-		return "RUNNING", nil
+		return "RUNNING", written.Load(), nil
 	}
-	return "UNKNOWN", d.ErrUnknown
+	return "UNKNOWN", written.Load(), d.ErrUnknown
 }
 func (a *Adapter) Manifest(ctx context.Context, op d.Operation) (d.Manifest, error) {
 	r := op.Request

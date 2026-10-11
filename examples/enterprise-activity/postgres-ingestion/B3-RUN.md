@@ -153,3 +153,17 @@ reproduced the stale initial-profile URL and then verified switch → preparatio
 → evaluation with the second profile and its exact EvidenceSnapshot ID. The
 complete 41 browser contracts passed. This fixture contract is separate from
 live certification acceptance. Human explanation remains NOT_RUN.
+
+Round 3 also reproduced unbound PostgreSQL metadata, cached runtime changes and
+claim-before-dispatch ACTUAL cost. The final [26-check B2 matrix](results/2026-10-11/b2-source-runtime-cost-report.json)
+passes with 49 durable claims, 48 actual HTTP calls/costs and one unobserved
+UNKNOWN intent with no ACTUAL charge. Metadata uses the exact probed endpoint;
+runtime/credential changes require restart. HTTP write observations distinguish
+a cancelled request from a real failed provider call. Full Go/vet and the
+ingestion race tests pass. A new actual Edge/full-Core trial again operated
+registration → extraction/recovery → three-RAW acceptance, independently
+checking endpoint equality and allocated invocation costs:
+[report](results/2026-10-11/b3-source-runtime-review.json),
+[screenshot](results/2026-10-11/b3-source-runtime-review.png).
+These are ingestion regressions, not a repeat of the historical 31-check B3
+certification/delivery oracle. Human explanation remains NOT_RUN.

@@ -27,9 +27,11 @@ type Caller func(context.Context, uuid.UUID) (principal.RequestPrincipal, error)
 type Engine interface {
 	Version() string
 	Check(context.Context, d.Request) error
-	Register(context.Context, d.Operation) (string, error)
-	Start(context.Context, d.Operation) error
-	Status(context.Context, d.Operation) (string, error)
+	// The bool reports an attempted provider HTTP call, including uncertain
+	// responses. Local preflight failure returns false.
+	Register(context.Context, d.Operation) (string, bool, error)
+	Start(context.Context, d.Operation) (bool, error)
+	Status(context.Context, d.Operation) (string, bool, error)
 	Manifest(context.Context, d.Operation) (d.Manifest, error)
 }
 type Store interface {
@@ -163,20 +165,21 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 		return op, err
 	}
 	state, remote := "UNKNOWN", op.RemoteID
+	attempted := false
 	var m *d.Manifest
 	switch kind {
 	case "REGISTER":
-		remote, err = s.Engine.Register(ctx, op)
+		remote, attempted, err = s.Engine.Register(ctx, op)
 		if err == nil && remote != "" {
 			state = "REGISTERED"
 		}
 	case "START":
-		err = s.Engine.Start(ctx, op)
+		attempted, err = s.Engine.Start(ctx, op)
 		if err == nil {
 			state = "RUNNING"
 		}
 	case "STATUS":
-		state, err = s.Engine.Status(ctx, op)
+		state, attempted, err = s.Engine.Status(ctx, op)
 		if err != nil {
 			state = "UNKNOWN"
 		}
@@ -207,6 +210,11 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 		if current.AttemptID != op.AttemptID {
 			return d.ErrConflict
 		}
+		if attempted {
+			if err := s.Repo.ActualInvocationCost(ctx, tx, op, invocation, kind); err != nil {
+				return err
+			}
+		}
 		// Concurrent status calls may not regress an already durable completion.
 		if current.State == "SUCCEEDED" || current.State == "ACCEPTED" || current.State == "FAILED" {
 			_, err := tx.Exec(ctx, `INSERT INTO ingestion_observation(id,invocation_id,state,remote_id) VALUES($1,$2,$3,$4)`, uuid.New(), invocation, state, remote)
@@ -214,13 +222,13 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 			if err != nil {
 				return err
 			}
-			return s.fact(ctx, tx, op, "IngestionObserved", map[string]any{"invocationId": invocation, "attemptId": op.AttemptID, "state": state, "late": true})
+			return s.fact(ctx, tx, op, "IngestionObserved", map[string]any{"invocationId": invocation, "attemptId": op.AttemptID, "state": state, "providerDispatched": attempted, "late": true})
 		}
 		if err = s.Repo.Observe(ctx, tx, &current, invocation, state, remote, m); err != nil {
 			return err
 		}
 		op = current
-		return s.fact(ctx, tx, op, "IngestionObserved", map[string]any{"invocationId": invocation, "attemptId": op.AttemptID, "state": state})
+		return s.fact(ctx, tx, op, "IngestionObserved", map[string]any{"invocationId": invocation, "attemptId": op.AttemptID, "state": state, "providerDispatched": attempted})
 	})
 	if finishErr != nil {
 		return op, finishErr

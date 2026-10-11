@@ -237,8 +237,18 @@ class Trial:
         # Separate bridge from all existing apps; only Hop's control port is
         # loopback-published. Docker internal bridges suppress port publishing.
         self.docker("network", "create", self.network)
+        self.source_host = "source"
+        source_bind = "127.0.0.1"
+        if getattr(self, "source_port", None):
+            if os.name == "nt":
+                # Docker Desktop resolves this same endpoint from host and Hop.
+                self.source_host = "host.docker.internal"
+            else:
+                # Bind only the isolated Docker bridge, never a public interface.
+                network = json.loads(self.docker("network", "inspect", self.network).stdout)[0]
+                self.source_host = source_bind = network["IPAM"]["Config"][0]["Gateway"]
         self.docker("run", "-d", "--name", self.pg, "--network", self.network,
-                    *(["-p", f"127.0.0.1:{self.source_port}:5432"] if getattr(self, "source_port", None) else []),
+                    *(["-p", f"{source_bind}:{self.source_port}:5432"] if getattr(self, "source_port", None) else []),
                     "--network-alias", "source", "-e", "POSTGRES_DB=dpp_ingestion_source",
                     "-e", "POSTGRES_PASSWORD_FILE=/run/secrets/admin-password",
                     "--mount", f"type=bind,src={self.private / 'admin-password'},dst=/run/secrets/admin-password,readonly",

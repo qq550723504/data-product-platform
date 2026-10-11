@@ -105,7 +105,9 @@ func (r *Repository) Claim(ctx context.Context, tx pgx.Tx, op *d.Operation, kind
 		return uuid.Nil, err
 	}
 	costID := uuid.New()
-	if err := cost.Append(ctx, tx, cost.Event{ID: costID, WorkspaceID: op.Request.WorkspaceID, ActivityID: id, CostType: "INGESTION_ENGINE_INVOCATION", Quantity: 1, Unit: "invocation", PricingMode: "ACTUAL", Metadata: map[string]any{"kind": kind}}); err != nil {
+	// A durable intent is not proof of dispatch. Crash between this commit and
+	// the provider call leaves UNKNOWN cost, never a phantom actual invocation.
+	if err := cost.Append(ctx, tx, cost.Event{ID: costID, WorkspaceID: op.Request.WorkspaceID, ActivityID: id, CostType: "INGESTION_INVOCATION_INTENT", Quantity: 0, Unit: "invocation", PricingMode: "UNKNOWN", Metadata: map[string]any{"kind": kind, "dispatch": "UNOBSERVED"}}); err != nil {
 		return uuid.Nil, err
 	}
 	if _, err := tx.Exec(ctx, `INSERT INTO cost_allocation(id,cost_event_id,ingestion_invocation_id) VALUES($1,$2,$3)`, uuid.New(), costID, id); err != nil {
@@ -119,6 +121,14 @@ func (r *Repository) Claim(ctx context.Context, tx pgx.Tx, op *d.Operation, kind
 	}
 	_, err := tx.Exec(ctx, `UPDATE ingestion_operation SET state=$2 WHERE id=$1`, op.ID, op.State)
 	return id, err
+}
+func (r *Repository) ActualInvocationCost(ctx context.Context, tx pgx.Tx, op d.Operation, id uuid.UUID, kind string) error {
+	costID := uuid.New()
+	if err := cost.Append(ctx, tx, cost.Event{ID: costID, WorkspaceID: op.Request.WorkspaceID, ActivityID: id, CostType: "INGESTION_ENGINE_INVOCATION", Quantity: 1, Unit: "invocation", PricingMode: "ACTUAL", Metadata: map[string]any{"kind": kind}}); err != nil {
+		return err
+	}
+	_, err := tx.Exec(ctx, `INSERT INTO cost_allocation(id,cost_event_id,ingestion_invocation_id) VALUES($1,$2,$3)`, uuid.New(), costID, id)
+	return err
 }
 func (r *Repository) Observe(ctx context.Context, tx pgx.Tx, op *d.Operation, invocationID uuid.UUID, state, remote string, m *d.Manifest) error {
 	if remote != "" && op.RemoteID != "" && remote != op.RemoteID {

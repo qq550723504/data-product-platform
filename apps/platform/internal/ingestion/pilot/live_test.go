@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/minio/madmin-go/v3"
 	"github.com/minio/minio-go/v7"
@@ -332,6 +333,68 @@ func TestLiveCoreBatch(t *testing.T) {
 	l.server = httptest.NewServer(httpserver.NewMuxWithReadiness(pool.Ping, h.Register))
 	defer l.server.Close()
 
+	t.Run("metadata-endpoint-must-match-probe", func(t *testing.T) {
+		l.t = t
+		original := mustRead(t, p.MetadataFile)
+		defer os.WriteFile(p.MetadataFile, original, 0600)
+		var metadata map[string][]map[string]any
+		if json.Unmarshal(original, &metadata) != nil {
+			t.Fatal("metadata fixture")
+		}
+		pg := metadata["rdbms"][0]["rdbms"].(map[string]any)["POSTGRESQL"].(map[string]any)
+		pg["hostname"] = "unprobed-instance"
+		changed, _ := json.Marshal(metadata)
+		if os.WriteFile(p.MetadataFile, changed, 0600) != nil {
+			t.Fatal("metadata write")
+		}
+		targets := []transport.Target{}
+		for _, b := range p.Targets {
+			targets = append(targets, transport.Target{Code: b.Code, ResourceID: b.ResourceID, DatasetID: b.DatasetID})
+		}
+		l.call("POST", "/api/v1/ingestions", map[string]any{"workspaceId": l.ws, "requestKey": "endpoint-" + uuid.NewString(), "batchKey": "endpoint", "targets": targets}, 403)
+		l.checks["source_endpoint_binding"] = "PASS"
+	})
+	t.Run("runtime-change-requires-restart", func(t *testing.T) {
+		l.t = t
+		defer l.saveProfile(p)
+		changed := p
+		changed.HopURL = "http://127.0.0.1:1"
+		l.saveProfile(changed)
+		targets := []transport.Target{}
+		for _, b := range p.Targets {
+			targets = append(targets, transport.Target{Code: b.Code, ResourceID: b.ResourceID, DatasetID: b.DatasetID})
+		}
+		l.call("POST", "/api/v1/ingestions", map[string]any{"workspaceId": l.ws, "requestKey": "runtime-" + uuid.NewString(), "batchKey": "runtime", "targets": targets}, 403)
+		l.saveProfile(p)
+		password := mustRead(t, p.HopPasswordFile)
+		defer os.WriteFile(p.HopPasswordFile, password, 0600)
+		if os.WriteFile(p.HopPasswordFile, []byte("changed-private-hop-credential"), 0600) != nil {
+			t.Fatal("private credential write")
+		}
+		l.call("POST", "/api/v1/ingestions", map[string]any{"workspaceId": l.ws, "requestKey": "credential-" + uuid.NewString(), "batchKey": "credential", "targets": targets}, 403)
+		l.checks["runtime_reload_requires_restart"] = "PASS"
+	})
+	t.Run("claim-before-dispatch-is-not-actual-cost", func(t *testing.T) {
+		l.t = t
+		op := l.prepare()
+		if err := h.Service.Tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+			_, err := h.Service.Repo.Claim(ctx, tx, &op, "REGISTER")
+			return err
+		}); err != nil {
+			t.Fatal(err)
+		}
+		if l.count(`SELECT count(*) FROM cost_event c JOIN cost_allocation a ON a.cost_event_id=c.id JOIN ingestion_invocation i ON i.id=a.ingestion_invocation_id WHERE i.operation_id=$1 AND c.pricing_mode='ACTUAL'`, op.ID) != 0 {
+			t.Fatal("claim without provider dispatch charged ACTUAL")
+		}
+		if l.count(`SELECT count(*) FROM cost_event c JOIN cost_allocation a ON a.cost_event_id=c.id JOIN ingestion_invocation i ON i.id=a.ingestion_invocation_id WHERE i.operation_id=$1 AND c.pricing_mode='UNKNOWN' AND c.quantity=0`, op.ID) != 1 {
+			t.Fatal("unobserved claim lost its unknown-cost intent")
+		}
+		l.command(op, "dispatch", nil, 409)
+		l.command(op, "recover", nil, 503)
+		l.empty(op)
+		l.checks["unobserved_claim_cost_unknown"] = "PASS"
+	})
+
 	t.Run("server-owned-targets", func(t *testing.T) {
 		l.t = t
 		op := l.prepare()
@@ -340,6 +403,7 @@ func TestLiveCoreBatch(t *testing.T) {
 			targets = append(targets, transport.Target{Code: s.Code, DatasetID: s.DatasetID, ResourceID: s.ResourceID})
 		}
 		before := l.count(`SELECT count(*) FROM ingestion_operation WHERE workspace_id=$1`, l.ws)
+		beforeInvocations := l.count(`SELECT count(*) FROM ingestion_invocation WHERE workspace_id=$1`, l.ws)
 		for _, kind := range []string{"swapped", "repeated", "arbitrary"} {
 			bad := slices.Clone(targets)
 			switch kind {
@@ -360,7 +424,7 @@ func TestLiveCoreBatch(t *testing.T) {
 			}
 			l.call("POST", "/api/v1/ingestions", map[string]any{"workspaceId": l.ws, "requestKey": "bad-" + uuid.NewString(), "batchKey": "bad-" + kind, "targets": bad}, 403)
 		}
-		if l.count(`SELECT count(*) FROM ingestion_operation WHERE workspace_id=$1`, l.ws) != before || l.count(`SELECT count(*) FROM ingestion_invocation WHERE workspace_id=$1`, l.ws) != 0 {
+		if l.count(`SELECT count(*) FROM ingestion_operation WHERE workspace_id=$1`, l.ws) != before || l.count(`SELECT count(*) FROM ingestion_invocation WHERE workspace_id=$1`, l.ws) != beforeInvocations {
 			t.Fatal("rejected binding created operation or remote work")
 		}
 		l.empty(op)
@@ -786,8 +850,9 @@ func TestLiveCoreBatch(t *testing.T) {
 	if t.Failed() {
 		return
 	}
-	invocations := l.count(`SELECT count(*) FROM ingestion_invocation`)
-	if invocations != l.count(`SELECT count(*) FROM cost_allocation a JOIN cost_event c ON c.id=a.cost_event_id WHERE a.ingestion_invocation_id IS NOT NULL AND c.activity_id=a.ingestion_invocation_id AND c.quantity=1 AND c.unit='invocation'`) {
+	claimedInvocations := l.count(`SELECT count(*) FROM ingestion_invocation`)
+	invocations := l.count(`SELECT count(DISTINCT invocation_id) FROM ingestion_observation`)
+	if invocations != l.count(`SELECT count(*) FROM cost_allocation a JOIN cost_event c ON c.id=a.cost_event_id WHERE a.ingestion_invocation_id IS NOT NULL AND c.activity_id=a.ingestion_invocation_id AND c.quantity=1 AND c.unit='invocation' AND c.pricing_mode='ACTUAL'`) || claimedInvocations != invocations+1 {
 		t.Fatal("physical invocation cost missing/merged")
 	}
 	l.checks["attempt_cost_history"] = "PASS"
@@ -822,7 +887,7 @@ func TestLiveCoreBatch(t *testing.T) {
 	l.checks["immutable_history"] = "PASS"
 	sortReceipts := slices.Clone(l.receipts)
 	slices.SortFunc(sortReceipts, func(a, b d.Receipt) int { return strings.Compare(a.ID.String(), b.ID.String()) })
-	facts := map[string]any{"checks": l.checks, "invocations": invocations, "accepted_batches": len(l.receipts), "receipts": sortReceipts, "manifests": l.manifests}
+	facts := map[string]any{"checks": l.checks, "invocations": invocations, "claimed_invocations": claimedInvocations, "unobserved_claims": claimedInvocations - invocations, "accepted_batches": len(l.receipts), "receipts": sortReceipts, "manifests": l.manifests}
 	result, _ := json.MarshalIndent(facts, "", "  ")
 	if os.WriteFile(filepath.Join(cfg.Output, "b2-facts.json"), append(result, '\n'), 0644) != nil {
 		t.Fatal("save sanitized evidence")

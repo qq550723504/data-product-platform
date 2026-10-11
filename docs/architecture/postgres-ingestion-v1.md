@@ -78,6 +78,8 @@ B1 使用隔离网络、仅允许来源读取的数据库账号；该账号只�
 
 受控 V1 的私有服务端 profile 必须为每个 workspace/slot 明确绑定 ResourceID 与 DatasetID；操作者通过既有创建 Command 配置这些身份，再写入受控 profile。通用 CRUD 的 code/name 不是来源授权事实，不得据名称自动认领或推断目标。客户端 `targets` 仅作一致性断言，不能授权任意、交换、重复或同名替换目标。每次 Command 在持有既有资源/Dataset row locks 时重新校验 profile 的明确身份与 `source_resource_id`；绑定加入冻结配置 hash，变更即阻断旧请求。来源查询只返回当前已认证 workspace 的绑定。
 
+Core 探测 DSN 与提交给 Hop 的原生 PostgreSQL metadata 必须使用同一明确 hostname/port/database/reader；拒绝其他端点、自定义 JDBC URL 和其他连接模式。`InstanceRef` 是操作者配置的来源引用，不冒充已观察的 PostgreSQL cluster system identifier。受控本地试验使用双方可达的同一 Docker host 端点：Windows 的 host.docker.internal 在 host 侧通过现有 pgx lookup hook 明确解析到本机 loopback，Hop 侧由 Docker 解析；Linux 只绑定本隔离 Docker bridge 的 gateway 地址。不开放公共监听。此 pilot 依赖本地 staging，因此只接纳 loopback Hop control endpoint。进程缓存的 Hop endpoint/凭据、来源注入凭据、staging roots 和 Core storage client 配置发生变化时，新旧 Command 都 fail closed；完成相应 API/Hop 重启后才能使用新运行配置，不声称这些 client 已热更新。
+
 数据库密码、Hop 认证和存储凭据通过受控服务端环境/挂载或已有 secret 引用注入，仅在获准执行进程解析。禁止放入 `ManagedSubmitRequest.Parameters`、GET query、WorkflowVersion、manifest、Outbox、诊断/CI artifact 或 OpenMetadata 投影。Hop client 的 HTTP Basic 凭据与 JDBC 凭据分开。测试使用短期合成环境凭据；不读取或更改用户现有长期凭据。
 
 | 字段/事实 | 唯一作者侧 | 同步/失联行为 |
@@ -109,6 +111,8 @@ manifest 是 Adapter 的产物声明，不是认证。Core 从自己已持久化
 存储写入不与数据库伪装成同一事务：只有所有对象已经写完且重新验证后才提交 READY；DB 失败保留待对账对象，不能宣称批次成功。存储 keys 不可覆盖、权限隔离和实际 provider 能力在 B2 验证，不能仅靠路径加 UUID 声称不可变。
 
 幂等键按 workspace + operation identity；相同请求、相同完整 manifest 返回原 receipt；同键不同 source/config/内容一律冲突，不能靠换 slot 或改 key 悄悄覆盖。新实际抽取为新 attempt；同次结果的接纳重试不再次抽取，成本按真实 provider invocation 追加。
+
+调用前持久化 immutable invocation identity 与 UNKNOWN 成本意图（尚无已确认 invocation quantity，记 0，不等于已证明免费）；claim 提交后、发出调用前崩溃，不得记录 ACTUAL quantity 1。Adapter 报告已进入 provider HTTP 调用后，在追加 observation 的事务中独立追加同一 physical identity 的 ACTUAL 成本，成功、失败及响应未知均记录。调用后、observation 提交前崩溃仍保留未观察的 UNKNOWN 意图，不能猜成 ACTUAL 或丢弃该不确定性；恢复查询自身是新 physical invocation，独立记成本。历史意图/观察/成本均不覆盖。
 
 ## 7. 提交与恢复决策
 

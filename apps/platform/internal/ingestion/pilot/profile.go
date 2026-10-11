@@ -6,6 +6,7 @@ package pilot
 import (
 	"context"
 	"encoding/json"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -155,23 +156,51 @@ func validateTargets(ctx context.Context, q repo.Querier, p Profile, r d.Request
 	}
 	return nil
 }
+
+type runtimeBinding struct {
+	HopURL, HopUser, HopPassword, SourcePassword   string
+	LocalRoot, EngineRoot, Bucket, StorageEndpoint string
+	StorageTLS                                     bool
+	Core                                           Identity
+}
+
+func (p Profile) runtimeBinding() (runtimeBinding, error) {
+	b := runtimeBinding{HopURL: p.HopURL, HopUser: p.HopUser, LocalRoot: p.LocalRoot, EngineRoot: p.EngineRoot, Bucket: p.Bucket, StorageEndpoint: p.StorageEndpoint, StorageTLS: p.StorageTLS}
+	var err error
+	b.HopPassword, err = secret(p.HopPasswordFile)
+	if err != nil {
+		return b, err
+	}
+	b.SourcePassword, err = secret(p.SourcePasswordFile)
+	if err != nil || read(p.CoreCredentialFile, &b.Core) != nil {
+		return b, d.ErrDenied
+	}
+	return b, nil
+}
 func Build(pool *pgxpool.Pool, path string) (*transport.Handler, error) {
 	p, err := Load(path)
 	if err != nil {
 		return nil, err
 	}
-	password, err := secret(p.HopPasswordFile)
+	startup, err := p.runtimeBinding()
 	if err != nil {
 		return nil, err
 	}
-	client, err := hop.NewClient(p.HopURL, p.HopUser, password, &http.Client{Timeout: 10 * time.Second})
+	// This pilot reads local staging and owns a local container runtime. A
+	// remote Hop host would give loopback/Docker-host endpoints other meanings.
+	endpoint, err := url.Parse(p.HopURL)
 	if err != nil {
 		return nil, d.ErrDenied
 	}
-	var core Identity
-	if read(p.CoreCredentialFile, &core) != nil {
+	ip := net.ParseIP(endpoint.Hostname())
+	if endpoint.Hostname() != "localhost" && (ip == nil || !ip.IsLoopback()) {
 		return nil, d.ErrDenied
 	}
+	client, err := hop.NewClient(p.HopURL, p.HopUser, startup.HopPassword, &http.Client{Timeout: 10 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }})
+	if err != nil {
+		return nil, d.ErrDenied
+	}
+	core := startup.Core
 	store, err := storage.NewWithCredentials(p.StorageEndpoint, p.Bucket, p.StorageTLS, credentials.NewStaticV4(core.AccessKey, core.SecretKey, core.SessionToken))
 	if err != nil {
 		return nil, d.ErrDenied
@@ -181,6 +210,12 @@ func Build(pool *pgxpool.Pool, path string) (*transport.Handler, error) {
 		fresh, err := Load(path)
 		if err != nil {
 			return adapter.Config{}, err
+		}
+		// Client and local/storage bindings are fixed for this process. A new
+		// private profile cannot claim a new runtime while using cached clients.
+		current, err := fresh.runtimeBinding()
+		if err != nil || current != startup {
+			return adapter.Config{}, d.ErrDenied
 		}
 		return fresh.Source()
 	}
