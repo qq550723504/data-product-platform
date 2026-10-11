@@ -7,6 +7,7 @@ import (
 	"io"
 	"slices"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -28,8 +29,9 @@ type Caller func(context.Context, uuid.UUID) (principal.RequestPrincipal, error)
 type Engine interface {
 	Version() string
 	Check(context.Context, d.Request) error
-	// Notify a confirmed request write before waiting for its response. Buffered
-	// or failed writes remain unconfirmed; local preflight never notifies.
+	// Notify a confirmed request write before waiting for its response. The
+	// callback must return promptly; it cannot block the HTTP response path.
+	// Buffered or failed writes remain unconfirmed; preflight never notifies.
 	Register(context.Context, d.Operation, func()) (string, d.DispatchState, error)
 	Start(context.Context, d.Operation, func()) (d.DispatchState, error)
 	Status(context.Context, d.Operation, func()) (string, d.DispatchState, error)
@@ -180,14 +182,21 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 	// Recording a known physical dispatch must not depend on the eventual
 	// result, operation projection or request cancellation. Failed recording is
 	// retried when the adapter returns its dispatch observation below.
+	var dispatchOnce sync.Once
+	dispatchRecorded := make(chan struct{})
 	dispatched := func() {
-		noteCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)
-		defer cancel()
-		_ = s.Tx.Do(noteCtx, func(ctx context.Context, tx pgx.Tx) error {
-			if _, err := s.Repo.Load(ctx, tx, id, true); err != nil {
-				return err
-			}
-			return s.recordDispatch(ctx, tx, op, invocation, kind)
+		dispatchOnce.Do(func() {
+			go func() {
+				defer close(dispatchRecorded)
+				noteCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)
+				defer cancel()
+				_ = s.Tx.Do(noteCtx, func(ctx context.Context, tx pgx.Tx) error {
+					if _, err := s.Repo.Load(ctx, tx, id, true); err != nil {
+						return err
+					}
+					return s.recordDispatch(ctx, tx, op, invocation, kind)
+				})
+			}()
 		})
 	}
 	switch kind {
@@ -226,6 +235,13 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 	}
 	if state != "REGISTERED" && state != "RUNNING" && state != "SUCCEEDED" && state != "FAILED" {
 		state = "UNKNOWN"
+	}
+	if dispatch == d.Dispatched {
+		// Start/finish the bounded independent recording after consuming the
+		// provider reply, outside its HTTP deadline. The outcome transaction
+		// below retains the returned dispatch state as an idempotent retry.
+		dispatched()
+		<-dispatchRecorded
 	}
 	// Use a bounded detached context to retain a lost/cancelled call observation.
 	finishCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)

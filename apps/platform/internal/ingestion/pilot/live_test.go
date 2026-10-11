@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
@@ -472,6 +473,121 @@ func TestLiveCoreBatch(t *testing.T) {
 			t.Fatal("REGISTER was reissued")
 		}
 		l.checks["invocation_projection_recovery"] = "PASS"
+	})
+	t.Run("dispatch-lock-does-not-lose-register-reply", func(t *testing.T) {
+		l.t = t
+		op := l.prepare()
+		a := l.handler.Service.Engine.(*adapter.Adapter)
+		load, original := a.Load, a.Client
+		upstream, _ := url.Parse(p.HopURL)
+		proxy := httputil.NewSingleHostReverseProxy(upstream)
+		proxy.FlushInterval = -1
+		replied := make(chan string, 1)
+		proxy.ModifyResponse = func(response *http.Response) error {
+			if strings.Contains(response.Request.URL.Path, "/registerPipeline") {
+				body, err := io.ReadAll(response.Body)
+				_ = response.Body.Close()
+				if err != nil {
+					return err
+				}
+				reader, writer := io.Pipe()
+				response.Body = reader
+				go func() {
+					// Hop already replied. Deliver headers first and its real body
+					// within the HTTP deadline, as separate network packets can.
+					time.Sleep(500 * time.Millisecond)
+					_, _ = writer.Write(body)
+					_ = writer.Close()
+				}()
+				var result struct {
+					ID string `xml:"id"`
+				}
+				if xml.Unmarshal(body, &result) != nil || result.ID == "" {
+					return errors.New("controlled Hop did not return a registration identity")
+				}
+				replied <- result.ID
+			}
+			return nil
+		}
+		server := httptest.NewServer(proxy)
+		defer server.Close()
+		var err error
+		a.Client, err = workflowhop.NewClient(server.URL, p.HopUser, string(mustRead(t, p.HopPasswordFile)), adapter.NewHTTPClient(time.Second, nil))
+		if err != nil {
+			t.Fatal(err)
+		}
+		type releaseResult struct {
+			remote string
+			err    error
+		}
+		stop, released := make(chan struct{}), make(chan releaseResult, 1)
+		var locked atomic.Bool
+		var once sync.Once
+		var lockErr error
+		a.Load = func(ctx context.Context) (adapter.Config, error) {
+			cfg, err := load(ctx)
+			if err != nil {
+				return cfg, err
+			}
+			var state string
+			if err = pool.QueryRow(ctx, `SELECT state FROM ingestion_operation WHERE id=$1`, op.ID).Scan(&state); err != nil {
+				return cfg, err
+			}
+			if state == "REGISTERING" {
+				once.Do(func() {
+					tx, err := pool.Begin(ctx)
+					if err == nil {
+						_, err = tx.Exec(ctx, `SELECT id FROM ingestion_operation WHERE id=$1 FOR UPDATE`, op.ID)
+					}
+					if err != nil {
+						if tx != nil {
+							_ = tx.Rollback(context.Background())
+						}
+						lockErr = err
+						return
+					}
+					locked.Store(true)
+					go func() {
+						var remote string
+						select {
+						case remote = <-replied:
+							// Keep the real row lock beyond the client HTTP deadline,
+							// after observing Hop's actual returned remote identity.
+							select {
+							case <-time.After(2 * time.Second):
+							case <-stop:
+							}
+						case <-time.After(5 * time.Second):
+						case <-stop:
+						}
+						released <- releaseResult{remote, tx.Rollback(context.Background())}
+						close(released)
+					}()
+				})
+			}
+			return cfg, lockErr
+		}
+		defer func() {
+			close(stop)
+			if locked.Load() {
+				<-released
+			}
+			a.Load, a.Client = load, original
+		}()
+		_ = json.Unmarshal(l.command(op, "dispatch", nil, 200), &op)
+		result := <-released
+		if result.err != nil || result.remote == "" || op.RemoteID != result.remote || op.State != "RUNNING" {
+			t.Fatal("dispatch persistence lock discarded the real Hop registration reply")
+		}
+		a.Load, a.Client = load, original
+		l.accepted(l.finish(op))
+		if l.count(`SELECT count(*) FROM ingestion_invocation WHERE operation_id=$1 AND kind='REGISTER'`, op.ID) != 1 || l.count(`SELECT count(*) FROM ingestion_invocation_outcome o JOIN ingestion_invocation i ON i.id=o.invocation_id WHERE i.operation_id=$1 AND i.kind='REGISTER' AND o.state='REGISTERED' AND o.remote_id=$2`, op.ID, result.remote) != 1 {
+			t.Fatal("lock recovery replaced or lost the original registration outcome")
+		}
+		if l.count(`SELECT count(*) FROM cost_event c JOIN ingestion_invocation i ON i.id=c.activity_id WHERE i.operation_id=$1 AND i.kind='REGISTER' AND c.pricing_mode='ACTUAL' AND c.quantity=1`, op.ID) != 1 || l.count(`SELECT count(*) FROM outbox_event WHERE aggregate_id=$1 AND event_type='IngestionInvocationDispatched' AND payload->>'kind'='REGISTER'`, op.ID) != 1 {
+			t.Fatal("concurrent dispatch persistence duplicated or omitted original cost/fact")
+		}
+		l.checks["dispatch_lock_reply_preserved"] = "PASS"
 	})
 	t.Run("definite-preflight-failure-can-retry", func(t *testing.T) {
 		l.t = t
