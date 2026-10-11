@@ -77,6 +77,8 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "DataResourceCreated"},
 		{EventType: "IngestionPrepared"},
 		{EventType: "IngestionInvocationStarted"},
+		{EventType: "IngestionInvocationDispatched"},
+		{EventType: "IngestionInvocationOutcomeRecorded"},
 		{EventType: "IngestionObserved"},
 		{EventType: "IngestionAccepted"},
 		{EventType: "DatasetCreated"},

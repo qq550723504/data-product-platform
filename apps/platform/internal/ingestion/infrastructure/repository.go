@@ -122,13 +122,81 @@ func (r *Repository) Claim(ctx context.Context, tx pgx.Tx, op *d.Operation, kind
 	_, err := tx.Exec(ctx, `UPDATE ingestion_operation SET state=$2 WHERE id=$1`, op.ID, op.State)
 	return id, err
 }
-func (r *Repository) ActualInvocationCost(ctx context.Context, tx pgx.Tx, op d.Operation, id uuid.UUID, kind string) error {
+
+// The caller holds the operation lock. The existing activity/component unique
+// boundary deduplicates transport notification, result persistence and recovery.
+func (r *Repository) ActualInvocationCost(ctx context.Context, tx pgx.Tx, op d.Operation, id uuid.UUID, kind string) (bool, error) {
+	var valid bool
+	err := tx.QueryRow(ctx, `SELECT c.quantity=1 AND c.unit='invocation' AND c.pricing_mode='ACTUAL' AND c.metadata->>'kind'=$3
+	 AND EXISTS(SELECT 1 FROM cost_allocation a WHERE a.cost_event_id=c.id AND a.ingestion_invocation_id=$2)
+	 FROM cost_event c WHERE c.workspace_id=$1 AND c.activity_id=$2 AND c.cost_type='INGESTION_ENGINE_INVOCATION'`, op.Request.WorkspaceID, id, kind).Scan(&valid)
+	if err == nil {
+		if !valid {
+			return false, d.ErrConflict
+		}
+		return false, nil
+	}
+	if err != pgx.ErrNoRows {
+		return false, err
+	}
 	costID := uuid.New()
 	if err := cost.Append(ctx, tx, cost.Event{ID: costID, WorkspaceID: op.Request.WorkspaceID, ActivityID: id, CostType: "INGESTION_ENGINE_INVOCATION", Quantity: 1, Unit: "invocation", PricingMode: "ACTUAL", Metadata: map[string]any{"kind": kind}}); err != nil {
-		return err
+		return false, err
 	}
-	_, err := tx.Exec(ctx, `INSERT INTO cost_allocation(id,cost_event_id,ingestion_invocation_id) VALUES($1,$2,$3)`, uuid.New(), costID, id)
+	_, err = tx.Exec(ctx, `INSERT INTO cost_allocation(id,cost_event_id,ingestion_invocation_id) VALUES($1,$2,$3)`, uuid.New(), costID, id)
+	return true, err
+}
+
+type Outcome struct {
+	InvocationID, AttemptID uuid.UUID
+	Kind, State, RemoteID   string
+	Dispatched              bool
+	Manifest                *d.Manifest
+}
+
+// A provider result is committed independently of its Core projection. No
+// credential, provider error body or mutable engine configuration is retained.
+func (r *Repository) SaveOutcome(ctx context.Context, tx pgx.Tx, o Outcome) error {
+	var data []byte
+	var hash *string
+	if o.Manifest != nil {
+		var h string
+		var err error
+		data, h, err = o.Manifest.Canonical()
+		if err != nil {
+			return err
+		}
+		hash = &h
+	}
+	_, err := tx.Exec(ctx, `INSERT INTO ingestion_invocation_outcome(invocation_id,provider_dispatched,state,remote_id,manifest,manifest_hash) VALUES($1,$2,$3,$4,$5,$6)`, o.InvocationID, o.Dispatched, o.State, o.RemoteID, data, hash)
 	return err
+}
+
+func (r *Repository) PendingOutcomes(ctx context.Context, tx pgx.Tx, id uuid.UUID) ([]Outcome, error) {
+	rows, err := tx.Query(ctx, `SELECT i.id,i.attempt_id,i.kind,o.provider_dispatched,o.state,o.remote_id,o.manifest
+	 FROM ingestion_invocation i JOIN ingestion_invocation_outcome o ON o.invocation_id=i.id
+	 WHERE i.operation_id=$1 AND NOT EXISTS(SELECT 1 FROM ingestion_observation a WHERE a.invocation_id=i.id)
+	 ORDER BY i.started_at,i.id`, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var result []Outcome
+	for rows.Next() {
+		var o Outcome
+		var data []byte
+		if err := rows.Scan(&o.InvocationID, &o.AttemptID, &o.Kind, &o.Dispatched, &o.State, &o.RemoteID, &data); err != nil {
+			return nil, err
+		}
+		if len(data) > 0 {
+			o.Manifest = &d.Manifest{}
+			if err := json.Unmarshal(data, o.Manifest); err != nil {
+				return nil, err
+			}
+		}
+		result = append(result, o)
+	}
+	return result, rows.Err()
 }
 func (r *Repository) Observe(ctx context.Context, tx pgx.Tx, op *d.Operation, invocationID uuid.UUID, state, remote string, m *d.Manifest) error {
 	if remote != "" && op.RemoteID != "" && remote != op.RemoteID {

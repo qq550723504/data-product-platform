@@ -19,6 +19,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -202,19 +203,28 @@ func (a *Adapter) Check(ctx context.Context, r d.Request) error {
 	return tx.Commit(ctx)
 }
 func name(op d.Operation) string { return "ingestion-" + op.AttemptID.String() }
-func observeRequest(ctx context.Context) (context.Context, *atomic.Bool) {
+func observeRequest(ctx context.Context, dispatched func()) (context.Context, *atomic.Bool) {
 	written := &atomic.Bool{}
+	var once sync.Once
+	observe := func() {
+		written.Store(true)
+		once.Do(func() {
+			if dispatched != nil {
+				dispatched()
+			}
+		})
+	}
 	trace := &httptrace.ClientTrace{
-		WroteHeaders: func() { written.Store(true) },
+		WroteHeaders: observe,
 		WroteRequest: func(info httptrace.WroteRequestInfo) {
 			if info.Err == nil {
-				written.Store(true)
+				observe()
 			}
 		},
 	}
 	return httptrace.WithClientTrace(ctx, trace), written
 }
-func (a *Adapter) Register(ctx context.Context, op d.Operation) (string, bool, error) {
+func (a *Adapter) Register(ctx context.Context, op d.Operation, dispatched func()) (string, bool, error) {
 	c, err := a.config(ctx, op.Request)
 	if err != nil {
 		return "", false, err
@@ -248,29 +258,29 @@ func (a *Adapter) Register(ctx context.Context, op d.Operation) (string, bool, e
 	var escaped bytes.Buffer
 	_ = xml.EscapeText(&escaped, []byte(strings.TrimRight(a.EngineRoot, "/")+"/"+op.AttemptID.String()))
 	definition := []byte("<pipeline_configuration>" + pipeline + "<pipeline_execution_configuration><parameters><parameter><name>OUTPUT_PREFIX</name><value>" + escaped.String() + "</value></parameter></parameters><run_configuration>local</run_configuration><log_level>Basic</log_level><clear_log>Y</clear_log><log_file>N</log_file></pipeline_execution_configuration><metastore_json>" + base64.StdEncoding.EncodeToString(compressed.Bytes()) + "</metastore_json></pipeline_configuration>")
-	callCtx, written := observeRequest(ctx)
+	callCtx, written := observeRequest(ctx, dispatched)
 	run, err := a.Client.PrepareSubmission(callCtx, w.ManagedSubmitRequest{Name: name(op), Definition: definition, ContentType: "application/xml"})
 	if err != nil {
 		return "", written.Load(), d.ErrUnknown
 	}
 	return run.ID, written.Load(), nil
 }
-func (a *Adapter) Start(ctx context.Context, op d.Operation) (bool, error) {
+func (a *Adapter) Start(ctx context.Context, op d.Operation, dispatched func()) (bool, error) {
 	if _, err := a.config(ctx, op.Request); err != nil {
 		return false, err
 	}
-	callCtx, written := observeRequest(ctx)
+	callCtx, written := observeRequest(ctx, dispatched)
 	_, err := a.Client.StartSubmission(callCtx, w.ManagedSubmitRequest{Name: name(op)}, op.RemoteID)
 	if err != nil {
 		return written.Load(), d.ErrUnknown
 	}
 	return written.Load(), nil
 }
-func (a *Adapter) Status(ctx context.Context, op d.Operation) (string, bool, error) {
+func (a *Adapter) Status(ctx context.Context, op d.Operation, dispatched func()) (string, bool, error) {
 	if _, err := a.config(ctx, op.Request); err != nil {
 		return "UNKNOWN", false, err
 	}
-	callCtx, written := observeRequest(ctx)
+	callCtx, written := observeRequest(ctx, dispatched)
 	run, err := a.Client.Status(callCtx, name(op), op.RemoteID)
 	if err != nil || run.ID != op.RemoteID || run.Name != name(op) {
 		return "UNKNOWN", written.Load(), d.ErrUnknown

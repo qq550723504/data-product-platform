@@ -1,0 +1,5 @@
+RED on original production sources at 9988db71d82d51aac9d0d0f67a5267234e057f7f with the two regression tests added.
+    live_test.go:416: real REGISTER cost rolled back with Core projection
+    live_test.go:90: POST /api/v1/ingestions/5854549b-34b7-48c1-834a-18d656e32de9/dispatch status=503 want=200 response={"code":"OUTCOME_UNKNOWN"}
+    --- FAIL: TestLiveCoreBatch/registered-reply-survives-projection-failure (0.42s)
+    --- FAIL: TestLiveCoreBatch/definite-preflight-failure-can-retry (0.16s)

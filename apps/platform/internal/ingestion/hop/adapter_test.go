@@ -50,14 +50,15 @@ func TestRequestDispatchObservation(t *testing.T) {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	call, written := observeRequest(ctx)
+	recorded := atomic.Int64{}
+	call, written := observeRequest(ctx, func() { recorded.Add(1) })
 	_, _ = client.StartSubmission(call, w.ManagedSubmitRequest{Name: "unit-pipeline"}, "unit-id")
-	if written.Load() || writes.Load() != 0 {
+	if written.Load() || writes.Load() != 0 || recorded.Load() != 0 {
 		t.Fatal("cancelled pre-dispatch was charged as written")
 	}
-	call, written = observeRequest(context.Background())
+	call, written = observeRequest(context.Background(), func() { recorded.Add(1) })
 	_, _ = client.StartSubmission(call, w.ManagedSubmitRequest{Name: "unit-pipeline"}, "unit-id")
-	if !written.Load() || writes.Load() != 1 {
+	if !written.Load() || writes.Load() != 1 || recorded.Load() != 1 {
 		t.Fatal("real failed HTTP call was not observed")
 	}
 }

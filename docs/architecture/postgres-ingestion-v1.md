@@ -112,7 +112,11 @@ manifest 是 Adapter 的产物声明，不是认证。Core 从自己已持久化
 
 幂等键按 workspace + operation identity；相同请求、相同完整 manifest 返回原 receipt；同键不同 source/config/内容一律冲突，不能靠换 slot 或改 key 悄悄覆盖。新实际抽取为新 attempt；同次结果的接纳重试不再次抽取，成本按真实 provider invocation 追加。
 
-调用前持久化 immutable invocation identity 与 UNKNOWN 成本意图（尚无已确认 invocation quantity，记 0，不等于已证明免费）；claim 提交后、发出调用前崩溃，不得记录 ACTUAL quantity 1。Adapter 报告已进入 provider HTTP 调用后，在追加 observation 的事务中独立追加同一 physical identity 的 ACTUAL 成本，成功、失败及响应未知均记录。调用后、observation 提交前崩溃仍保留未观察的 UNKNOWN 意图，不能猜成 ACTUAL 或丢弃该不确定性；恢复查询自身是新 physical invocation，独立记成本。历史意图/观察/成本均不覆盖。
+调用前持久化 immutable invocation identity 与 UNKNOWN 成本意图（尚无已确认 invocation quantity，记 0，不等于已证明免费）；claim 提交后、发出调用前崩溃，不得记录 ACTUAL quantity 1。Adapter 在 HTTP 写出时同步通知 Application，使用有界 detached context，在独立事务中按原 invocation identity 追加 ACTUAL quantity 1 + typed CostAllocation + Domain Event / Audit / Evidence / Outbox，成功、失败及响应未知均记录；返回后再次确认同一成本，以现有 activity/component 幂等边界去重。成本不依赖 Core 状态更新或结果事务成功。
+
+Adapter 返回的无密钥结果独立提交为 immutable `ingestion_invocation_outcome`，再由现有恢复 Command 在 operation parent lock 下应用 Core projection；`ingestion_observation` 的 invocation 唯一约束作为原子应用标记，与状态及 Domain Event / Audit / Evidence / Outbox 同事务提交。结果已提交但状态回滚、API 重启或并发恢复时，只重放原结果与原成本，不重复 Register/Start，也不覆盖已终结或其他 attempt 的状态。已知未发出的 Register/Start 失败进入 FAILED，只有显式 `RetryFailed` 创建新 attempt；未发出的 STATUS 不能证明已有 pipeline 失败，仍保留 UNKNOWN。
+
+HTTP 与 PostgreSQL 不共享事务：写出后、任何 dispatch 事实提交前退出或数据库不可用，仍可能只有 UNKNOWN 意图，不能猜成 ACTUAL 或安全未调用；已经提交发送成本、但未留下返回结果的 Register 仍为不可重发的未知状态。恢复查询自身是新 physical invocation，独立记成本。历史事实恢复不依赖已撤销的源权限，但恢复调用者必须通过当前可信身份检查，新增 provider 工作及 RAW 接纳仍重新验证全部当前权限。上述修复复用已有 Port、PostgreSQL 事务、CostAllocation 与 outbox；属于 Core 调用事实与业务状态恢复，不新增通用 workflow/queue runtime。
 
 ## 7. 提交与恢复决策
 
