@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "canonical_sha256": "d334d3438c96f309d8da395196c8b08b8d9e0907edbdb200247faf9dca63eac7",
+      "path": "examples/lifecycle-d1/results/34696798-06e3-42de-8b31-6b237c6e9c22/reader-audit-evidence.json",
+      "original_sha256": "15960a5f1e0512bde0b85fb80248f5571d2a6ea6a3500b2005a6a9480f4ba309"
+    },
+    {
+      "canonical_sha256": "eae1241d52ed2cf4f959bb2ffe664b21193df33ecc2aadaf91e9ce896056ca67",
+      "path": "examples/lifecycle-d1/results/34696798-06e3-42de-8b31-6b237c6e9c22/reader-durable-facts.json",
+      "original_sha256": "438b92110b2fe479bc33bcaeb57767430aefcac8f2a88c30bd7f445420fc445c"
+    },
+    {
+      "canonical_sha256": "d334d3438c96f309d8da395196c8b08b8d9e0907edbdb200247faf9dca63eac7",
+      "path": "examples/lifecycle-d1/results/d6dfc1cd-8eff-4d7d-bed2-515a4b5243f2/reader-audit-evidence.json",
+      "original_sha256": "15960a5f1e0512bde0b85fb80248f5571d2a6ea6a3500b2005a6a9480f4ba309"
+    },
+    {
+      "canonical_sha256": "5b35f1b8d57d34b095e39c948b223674dd3924f746ba6992f87a9be122cb851e",
+      "path": "examples/lifecycle-d1/results/d6dfc1cd-8eff-4d7d-bed2-515a4b5243f2/reader-durable-facts.json",
+      "original_sha256": "59b26158444cd5d35e4f396a212e15e1844e7d5844078c70c3ae148a3af82265"
+    }
+  ],
+  "original_git_commit": "f6c864e09d2a71ae0b2882503a9146fc3b758a12",
+  "normalization": "Only trailing JSON whitespace removed; original serialized PostgreSQL exports remain in this Git commit. Business facts, SQL data and native receipt fields unchanged."
+}
