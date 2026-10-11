@@ -501,3 +501,22 @@ func TestOccupancyInspectionWaitsForNewHoldAndDBFactsAreImmutable(t *testing.T) 
 		}
 	}
 }
+
+func TestReaderWindowExpiringDuringGateQueryCannotCommitPin(t *testing.T) {
+	pool := planDatabase(t)
+	w, copies, s, _, gate, _, _ := occupancyFixture(t, pool)
+	now := time.Now().UTC().Truncate(time.Microsecond)
+	s.now = func() time.Time { return now }
+	gate.hook = func(_ context.Context, _ pgx.Tx, r UseGateRequest, d *domain.UseDecision) error {
+		until := r.AsOf.Add(time.Second)
+		d.WindowMode, d.UseUntil = domain.UseDeadline, &until
+		now = now.Add(time.Minute)
+		return nil
+	}
+	if _, err := s.AdmitFixtureReader(context.Background(), AdmitFixtureReaderCommand{CommandHeader: CommandHeader{w, "elapsed-window"}, CopyID: copies[0].ID, ReaderID: uuid.New()}); !errors.Is(err, domain.ErrUseBlocked) {
+		t.Fatalf("elapsed window admitted: %v", err)
+	}
+	if count(t, pool, `SELECT count(*) FROM lifecycle_reader_pin`) != 0 {
+		t.Fatal("expired query result committed a pin")
+	}
+}

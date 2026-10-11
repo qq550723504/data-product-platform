@@ -1,6 +1,6 @@
 # #307 D1 开发与验收记录
 
-> 2026-10-11；D1 OPEN。已完成本地 non-destructive plan foundation 与 restriction/hold/reader occupancy 两个增量；完整 D1 runtime **NOT_RUN**。
+> 2026-10-11；D1 OPEN。已完成三个本地增量：plan foundation、restriction/hold/reader occupancy、DB-only approval/dispatch/physical observations；完整 D1 runtime **NOT_RUN**。
 > 用户已授权创建 Issue 并开发，仅受控合成对象；实际 provider 删除（含测试/cleanup）仍须先确认环境和 exact object/version 清单。
 
 ## 权威与写入归属
@@ -9,9 +9,9 @@
 
 业务规则仍以 [Lifecycle Contract](../architecture/data-lifecycle.md)、[ADR-0015](../adr/0015-data-lifecycle-disposition-boundary.md) 和 [设计验收 §4–6](../product/data-lifecycle-design-acceptance.md) 为准。本文只记录当前增量与证据，不另建生命周期规则。
 
-当前聊天为 #307 唯一 writer。branch `codex/issue307-lifecycle-d1`，worktree `C:\Users\Henry\.codex\worktrees\issue307-lifecycle-d1\data-product-platform`，基于 refreshed `origin/main@9502bd1`。主工作区保持原 HEAD，不写 #298/#294 的 worktrees、代码或运行环境。首轮 App inventory transport 不可用；第二增量已恢复并重新核查 active threads/artifacts、Git worktrees、GitHub open PR 与 remote main。#307 为 native Git worktree，App 确认它不属于 managed worktree；不修改 App metadata。
+当前聊天为 #307 唯一 writer。branch `codex/issue307-lifecycle-d1`，worktree `C:\Users\Henry\.codex\worktrees\issue307-lifecycle-d1\data-product-platform`，起始 base `9502bd1`；第三增量结束时 main 已合入 #308，当前独立分支更新至 `origin/main@3a59b591d25e7d07fc38956a7ae729d74967215b`。主工作区保持原 HEAD，不写 #298/#294 的 worktrees、代码或运行环境。首轮 App inventory transport 不可用；后续已恢复并重新核查 active threads/artifacts、Git worktrees、GitHub PR 与 remote main。#307 为 native Git worktree，App 确认它不属于 managed worktree；不修改 App metadata。
 
-Main 已含 migrations 000051–000053，D1 使用 **000054**；该 migration 尚未发布，在当前严格 schema 内增加 occupancy facts，不添加双读/兼容 fallback。Draft #295 仍携旧 000050，原 owner 后续须在发布前解决其排序；本片不恢复该任务。唯一共享改动为新增事件 routing/vocabulary 和 migration runner 重复版本拒绝；未引入新依赖、队列或存储 engine。
+Main 已含 migrations 000051–000053，D1 使用 **000054**；该 migration 尚未发布，在当前严格 schema 内增加 facts，不添加双读/兼容 fallback。Draft #295 仍携旧 000050，原 owner 后续须在发布前解决其排序；本片不恢复该任务。共享改动限新增事件 routing/vocabulary、migration runner 重复版本拒绝、现有 CostEvent/CostAllocation 的 typed lifecycle attempt allocation；未引入新依赖、队列或存储 engine。
 
 ## 首个增量的有限 contract
 
@@ -41,9 +41,25 @@ Merge blockers：本增量的 tenant/authority bypass、冻结/幂等/原子历�
 
 Reuse Check：复用现有 transaction/deliveryfence、command_idempotency、Audit/Evidence/Outbox 与 lifecycle registry；没有新增 scheduler、queue、storage runtime 或 IAM 实现。Authority / current use gate / termination verifier 为 Application Ports；本轮使用受控 test adapters。真实 principal/current-rights、reader owner/controller、HTTP/worker/data plane 尚未接入，不能将 test verifier 视为真实 quiescence 证明。
 
+## 第三个增量的有限 contract
+
+业务结果：可信 server-side authority 可对 frozen plan 追加有限 scope approval/revocation；fresh fenced dispatch 建立 exclusive copy reservation 与 physical start；服务端 verifier 的 observation 单独追加。当前实现不调用 provider、不读取 bytes，也不启用 worker/HTTP dispatch。
+
+- Approval 绑定 workspace、plan hash、action、basis、批准人及有限有效期；dispatch 重新校验 caller 与批准人的当前权限，以及撤销/到期事实。资产 owner 或 use right 不隐含 approval role。
+- Domain deletion prerequisites 在 dispatch 下使用当前 registered copy occupancy；保全、reader、未核实 dispatch、UNKNOWN inventory/reference/policy/provider/ledger 或缺失显式依赖窗口均阻断。受控 dependency Port 仅供本轮测试，真实 policy binding/inventory/material references/native provider state 尚未接入，不能据此启用 live deletion。
+- Gate evaluation 保存强类型 retention/input/occupancy facts；输入 INSERT 与 `DRAFT → FINALIZED` 获取同一 parent lock，先持锁读取完整成员，再校验 count/hash 冻结。FINALIZED 后拒绝 late INSERT 与历史 mutation，避免只靠终态 trigger 留下竞态。
+- Reader 与 dispatch 在当前查询返回后复核 caller/声明窗口与 expiry，查询过程中到期不接纳。当前依赖 Port 必须覆盖其所有时间边界并显式给出 unbounded/deadline；zero/UNKNOWN 不冒充永久有效。
+- 仅新提交 dispatch 返回 `Admitted=true`；同键重放只返回历史 IDs、`Admitted=false`。每个 copy 同时只允许一个未核实 reservation；start-only、UNKNOWN、provider ACCEPTED 或 FAILED 均不能盲目再删，也不能当作 exact absence receipt。
+- Start 与 observation immutable；UNCERTAIN 无确定 invocation quantity。CONFIRMED（含 failed/timeout）使用 physical attempt ID 追加 quantity=1、amount=NULL 的 CostEvent 与 typed CostAllocation；同 attempt 后续 resolution 去重，独立 attempt 独立计账。测试中的 CONFIRMED 来自合成 verifier，不是实际计费证据。
+- NOT_SENT 只接受匹配的服务端权威证明；与已有 CONFIRMED 互斥。释放 reservation 另追加 fact + Event/Audit/Evidence/Outbox，随后新显式 key 仍须 fresh gate；原 observation 不覆盖。
+- hold-first 阻断未 dispatch copy；dispatch-first 的 late hold 保存 typed conflict，并返回 `PreservationUnconfirmed=true`。既有调用可能已发出，不能宣称保全成功；后续 containment/reconciliation 尚待真实 worker/provider 接入。
+- Approval、blocked/allowed evaluation、start、observation、成本和 reservation release 保持相应同事务/idempotency 边界；新增事件 retention-only，routing `c1-v22`。没有增加 scheduler、第三方审批系统、第二账本或 provider SDK。
+
+Merge blockers 仍包括当前增量的越权/跨 tenant、scope/expiry bypass、丢失成本、未知重发、frozen input 竞态、晚到 hold 无冲突证据、事务部分提交与必需测试失败。Provider absence/finalize、lookup/reconciliation 的独立 physical attempts、fixture HTTP/worker 与完整 D1 仍属 #307 待开发项。
+
 ## 已执行检查
 
-仅使用独立 PostgreSQL：container `dpp-lifecycle307-pg-20261011`，image ID `sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea`，data 使用 tmpfs、无 volume mounts。首轮 loopback `127.0.0.1:54802`；第二轮 restart 后为 `127.0.0.1:58798`。Lifecycle integration tests 各自创建/移除唯一 scratch DB；migration suite 的旧 T3/B2 case 使用本容器已初始化的基础库。测试完成后停止本容器；不挂对象存储，不读/清既有 retained volumes。
+仅使用独立 PostgreSQL：container `dpp-lifecycle307-pg-20261011`，image ID `sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea`，data 使用 tmpfs、无 volume mounts。各轮 loopback 分别为 `127.0.0.1:54802`、`:58798`、第三轮 `:64285`。Lifecycle integration tests 各自创建/移除唯一 scratch DB；migration suite 的旧 T3/B2 case 使用本容器已初始化的基础库。测试完成后停止本容器；不挂对象存储，不读/清既有 retained volumes。
 
 | 检查 | 状态 / 证明范围 |
 |---|---|
@@ -55,9 +71,13 @@ Reuse Check：复用现有 transaction/deliveryfence、command_idempotency、Aud
 | Domain reader：fresh exact context/use window 与 generation-bound termination 负例 | PASS；pure Go |
 | PG occupancy：双 hold 独立解除，restriction 覆盖两个 copies，same-key non-admitting replay、fresh authority、改 key 内容拒绝 | PASS；真实 PostgreSQL，受控 authority/gate/verifier |
 | PG pin：deadline/heartbeat 不释放，TIMEOUT/错 generation 拒绝；精确确认停止才追加 termination | PASS；Application contract；真实 reader quiescence NOT_RUN |
-| PG races：reader-first / restriction-first；hold-first / occupancy inspection；观察真实 fence lock wait | PASS；未实现 delete dispatch，不作为完整 LC-06/11 验收 |
+| PG races：reader-first / restriction-first；hold-first / occupancy inspection；观察真实 fence lock wait | PASS；fixture contracts，不作为完整 LC-06/11 验收 |
 | PG occupancy history：跨 workspace 拒绝、错误 termination binding/time 拒绝、所有五类 facts 不可 UPDATE/DELETE/TRUNCATE、缺 routing 原子 rollback | PASS |
-| `go test -race -count=1 ./internal/lifecycle/... ./internal/platform/routing`（独立 PG） | PASS；9 个 lifecycle PG top-level tests，含双顺序 subcases |
+| PG disposition：fresh approver/revocation/expiry、UNKNOWN/wrong-scope、active reader、non-admitting replay、NOT_SENT 与新显式 attempt | PASS；受控 adapters，没有实际 provider |
+| PG dispatch/hold 与 gate freeze 双顺序：真实 fence/parent lock wait、late input/forged hash 拒绝、完整 hash 保留、late hold conflict 原子证明 | PASS；DB admission，完整 native LC-06/07/11 NOT_RUN |
+| PG observation/cost：start 与 invocation 分开、unknown 保留、failed/timeout 按 physical ID 计账、resolution 去重、routing failure 整体 rollback | PASS；合成观察事实，没有真实 provider invocation/费用 |
+| PG elapsed window：reader/query 与 dispatch/query 期间到期，0 reader pin / physical attempt | PASS |
+| `go test -race -count=1 ./internal/lifecycle/... ./internal/platform/routing ./internal/cost`（独立 PG） | PASS；16 个 lifecycle PG top-level tests，含双顺序 subcases |
 | migration version collision / normal pair | PASS；up/down duplicate 明确拒绝 |
 | `go test -count=1 ./internal/platform/migration`（独立已初始化 PG） | PASS；首次在 restart 后空基础库运行的旧 T3/B2 schema precheck 失败，初始化本测试库后补跑通过 |
 | `go test ./...` / `go vet ./...` / formatting 与 diff 检查 | PASS；module tests 未配置 live provider/PG，该轮外部 integration SKIP；上述 PG tests 另有独立实跑证据 |
@@ -68,7 +88,7 @@ Reuse Check：复用现有 transaction/deliveryfence、command_idempotency、Aud
 
 ## 后续开发和删除确认
 
-下一步仍在 #307 内：接入真实 fixture authority/current gate/reader owner；当前 disposal approval + fresh fenced dispatch；typed physical attempts/observations/CostAllocation；MinIO native Adapter 与 existing worker reconciliation；受控 archive/restore ledger；封闭 fixture HTTP/worker 路径与完整 D1 LC 验收。既有 production processing/delivery 的全面纳管按 D2 与原 owner 协调。
+下一步仍在 #307 内：接入真实 fixture authority/current gate/reader owner，retention policy/inventory/material reference facts；MinIO native Adapter 与 existing worker reconciliation（每个真实 lookup/verify 也独立 attempt/cost）；scoped absence receipt/finalize；受控 archive/restore ledger；封闭 fixture HTTP/worker 路径与完整 D1 LC 验收。Native SDK 的隐式重试须受控，不能把多次实际请求吞入单次成本 identity。既有 production processing/delivery 的全面纳管按 D2 与原 owner 协调。
 
 实际 provider destructive test 前先建立独立 D1 storage 环境，生成**已实际登记**的 manifest：project/container/network、provider build/image/SDK、workspace、两个 namespace、每个 key + version/generation/hash/bytes、计划 scope hash、retention/hold、允许动作、cleanup 与 excluded scope。提交用户并收到明确确认后才调用 deletion；当前尚无 live object/version 清单，批准状态 **PENDING**，不得提前用 bare-key 列表或 SQL fixture ID 冒充它。
 

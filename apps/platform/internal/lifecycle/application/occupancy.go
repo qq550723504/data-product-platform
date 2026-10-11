@@ -34,6 +34,7 @@ const (
 	HoldReleasedEvent          = "LifecycleContentHoldReleased"
 	ReaderAdmittedEvent        = "LifecycleReaderAdmitted"
 	ReaderTerminatedEvent      = "LifecycleReaderTerminated"
+	HoldDispatchConflictEvent  = "LifecycleHoldDispatchConflict"
 )
 
 // All three ports operate against current server-owned facts in the short
@@ -87,8 +88,9 @@ type TerminateFixtureReaderCommand struct {
 	Outcome    string
 }
 type FactResult struct {
-	ID       uuid.UUID
-	Replayed bool
+	ID                      uuid.UUID
+	Replayed                bool
+	PreservationUnconfirmed bool
 }
 type ReaderAdmission struct {
 	Pin      domain.ReaderPin
@@ -227,7 +229,7 @@ func (s *OccupancyService) PlaceContentHold(ctx context.Context, cmd PlaceConten
 	if cmd.CopyID == uuid.Nil || !validText(cmd.BasisRef, 255) {
 		return FactResult{}, domain.ErrInvalidPlan
 	}
-	return s.command(ctx, cmd.CommandHeader, "LIFECYCLE.PLACE_HOLD", CapabilityPlaceHold, cmd, func(ctx context.Context, tx pgx.Tx, caller principal.RequestPrincipal, _ int64) (uuid.UUID, error) {
+	result, err := s.command(ctx, cmd.CommandHeader, "LIFECYCLE.PLACE_HOLD", CapabilityPlaceHold, cmd, func(ctx context.Context, tx pgx.Tx, caller principal.RequestPrincipal, _ int64) (uuid.UUID, error) {
 		if _, err := s.repo.LockFixtureCopies(ctx, tx, cmd.WorkspaceID, []uuid.UUID{cmd.CopyID}); err != nil {
 			return uuid.Nil, err
 		}
@@ -244,8 +246,33 @@ func (s *OccupancyService) PlaceContentHold(ctx context.Context, cmd PlaceConten
 			VALUES($1,$2,$3,$4,$5,$6,$7,$8)`, id, cmd.WorkspaceID, cmd.CopyID, cmd.BasisRef, caller.ActorID, caller.Subject, revision, at); err != nil {
 			return uuid.Nil, err
 		}
-		return id, appendOccupancyFacts(ctx, tx, HoldPlacedEvent, "LIFECYCLE_HOLD", id, caller, revision, at, map[string]any{"copy_id": cmd.CopyID})
+		conflicts, err := s.repo.RecordHoldDispatchConflicts(ctx, tx, cmd.WorkspaceID, cmd.CopyID, id)
+		if err != nil {
+			return uuid.Nil, err
+		}
+		if err := appendOccupancyFacts(ctx, tx, HoldPlacedEvent, "LIFECYCLE_HOLD", id, caller, revision, at,
+			map[string]any{"copy_id": cmd.CopyID, "preservation_unconfirmed": len(conflicts) > 0}); err != nil {
+			return uuid.Nil, err
+		}
+		if len(conflicts) > 0 {
+			if err := appendOccupancyFacts(ctx, tx, HoldDispatchConflictEvent, "LIFECYCLE_HOLD", id, caller, revision, at,
+				map[string]any{"unresolved_dispatch_ids": conflicts}); err != nil {
+				return uuid.Nil, err
+			}
+		}
+		return id, nil
 	})
+	if err != nil {
+		return FactResult{}, err
+	}
+	// The immutable hold records the request; this current flag must not promise
+	// preservation of a delete already admitted before the hold acquired fence.
+	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		result.PreservationUnconfirmed, err = s.repo.HoldPreservationUnconfirmed(ctx, tx, cmd.WorkspaceID, result.ID)
+		return err
+	})
+	return result, err
 }
 
 func (s *OccupancyService) ReleaseContentHold(ctx context.Context, cmd ReleaseContentHoldCommand) (FactResult, error) {
@@ -321,6 +348,13 @@ func (s *OccupancyService) AdmitFixtureReader(ctx context.Context, cmd AdmitFixt
 			return uuid.Nil, err
 		}
 		if err := decision.ValidateFor(cmd.WorkspaceID, cmd.CopyID, cmd.ReaderID, caller.ActorID, at); err != nil {
+			return uuid.Nil, err
+		}
+		caller, at, err = s.authorize(ctx, tx, cmd.WorkspaceID, CapabilityAdmitReader, &caller)
+		if err != nil {
+			return uuid.Nil, err
+		}
+		if err := domain.ValidateWindowAt(decision.WindowMode, decision.UseUntil, at); err != nil {
 			return uuid.Nil, err
 		}
 		generation, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID)
@@ -450,6 +484,10 @@ func (s *OccupancyService) InspectPlanOccupancy(ctx context.Context, w, planID u
 }
 
 func appendOccupancyFacts(ctx context.Context, tx pgx.Tx, eventType, subject string, id uuid.UUID, caller principal.RequestPrincipal, revision int64, at time.Time, fields map[string]any) error {
+	return appendLifecycleFacts(ctx, tx, "LIFECYCLE_OCCUPANCY", eventType, subject, id, caller, revision, at, fields)
+}
+
+func appendLifecycleFacts(ctx context.Context, tx pgx.Tx, evidenceType, eventType, subject string, id uuid.UUID, caller principal.RequestPrincipal, revision int64, at time.Time, fields map[string]any) error {
 	fields["fact_id"], fields["workspace_id"], fields["dependency_revision"] = id, caller.WorkspaceID, revision
 	event, err := outbox.NewEvent(subject, id, eventType, fields)
 	if err != nil {
@@ -462,7 +500,7 @@ func appendOccupancyFacts(ctx context.Context, tx pgx.Tx, eventType, subject str
 	if err := audit.Append(ctx, tx, audit.Event{WorkspaceID: &caller.WorkspaceID, ActorType: "USER", ActorID: &caller.ActorID, Action: eventType, ObjectType: subject, ObjectID: id, Metadata: fields, OccurredAt: at}); err != nil {
 		return err
 	}
-	_, err = evidence.Append(ctx, tx, evidence.Record{WorkspaceID: caller.WorkspaceID, EvidenceType: "LIFECYCLE_OCCUPANCY", Title: eventType,
+	_, err = evidence.Append(ctx, tx, evidence.Record{WorkspaceID: caller.WorkspaceID, EvidenceType: evidenceType, Title: eventType,
 		SourceType: subject, SourceID: &id, Metadata: fields, CreatedAt: at, CreatedBy: &caller.ActorID}, evidence.Relation{ObjectType: subject, ObjectID: id, RelationType: "CURRENT_CONTROL_FACT"})
 	return err
 }

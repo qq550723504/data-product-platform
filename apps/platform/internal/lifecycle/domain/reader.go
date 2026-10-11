@@ -40,13 +40,22 @@ func (d UseDecision) ValidateFor(workspace, copyID, readerID, actorID uuid.UUID,
 		d.Decision != Satisfied || !d.CheckedAt.Equal(at) {
 		return ErrUseBlocked
 	}
-	switch d.WindowMode {
+	return ValidateWindowAt(d.WindowMode, d.UseUntil, at)
+}
+
+// Re-check the declared window near admission after the current-facts query.
+// A held revision cannot stop wall-clock expiry during a slow DB evaluation.
+func ValidateWindowAt(mode string, until *time.Time, at time.Time) error {
+	if at.IsZero() {
+		return ErrUseBlocked
+	}
+	switch mode {
 	case UseUnbounded:
-		if d.UseUntil != nil {
+		if until != nil {
 			return ErrUseBlocked
 		}
 	case UseDeadline:
-		if d.UseUntil == nil || d.UseUntil.IsZero() || !at.Before(*d.UseUntil) {
+		if until == nil || until.IsZero() || !at.Before(*until) {
 			return ErrUseBlocked
 		}
 	default:
@@ -108,10 +117,11 @@ func (p ReaderTermination) ValidateFor(pin ReaderPin, requestedOutcome string, a
 }
 
 type Occupancy struct {
-	CopyID         uuid.UUID
-	UseRestricted  Check
-	HoldFree       Check
-	ReadersDrained Check
-	ActiveHolds    int64
-	ActiveReaders  int64
+	CopyID               uuid.UUID
+	UseRestricted        Check
+	HoldFree             Check
+	ReadersDrained       Check
+	ActiveHolds          int64
+	ActiveReaders        int64
+	UnresolvedDispatches int64
 }
