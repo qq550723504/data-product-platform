@@ -32,4 +32,22 @@ For secrets, plain shell environment variables do not automatically become Hop v
 
 The source is quiescent between explicit test mutations: the fixture owner is NOLOGIN and the only application account has CONNECT / schema USAGE / three-table SELECT. The provisioning superuser exists solely for this isolated harness. This proves the fixed text/NOT NULL contract, not arbitrary native PostgreSQL types or a cross-table snapshot under concurrent source updates.
 
-PGI-05–09, real object storage/attempt access isolation, Core durable requests/attempts, three-slot atomic admission, platform Audit/Evidence/Cost, browser operations and human acceptance remain B2/B3 work. Local staging directories are not evidence of MinIO/S3 immutability or storage permission isolation. The CI `hop-smoke` job executes this script for changes to the trial, source fixtures, Hop adapter or CI definition; the older CSV aggregate step does not stand in for this JDBC/fault matrix.
+PGI-05–09, Core durable requests/attempts, three-slot atomic admission, platform Audit/Evidence/Cost, browser operations and human acceptance remain B2/B3 work. B1 local staging directories are not evidence of MinIO/S3 immutability or storage permission isolation. The CI `hop-smoke` job executes this script for changes to the trial, source fixtures, Hop adapter, storage adapter or CI definition; the older CSV aggregate step does not stand in for this JDBC/fault matrix.
+
+## B2 storage prerequisite: real provider trial
+
+The [recorded storage run](results/2026-10-11/storage-report.json) tests actual MinIO and the repository's existing minio-go v7.0.83 SDK. It is a separate storage protocol trial, not a PostgreSQL-to-MinIO batch acceptance receipt. Run from the repository root with Git, Go 1.24.8+ (Linux amd64 cross-compilation), Python and Docker:
+
+```powershell
+python examples/enterprise-activity/postgres-ingestion/storage_smoke.py --output .data/postgres-ingestion-storage
+```
+
+The first run builds **unmodified official MinIO source**, release `RELEASE.2025-10-15T17-29-55Z`, commit `9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a`. Root Docker Hub/Quay images were unavailable in the local trial. The build is cached under ignored `.data/pgi-b2-storage-cache`; source, compiler, binary and image identities are recorded. MinIO is AGPL-3.0, minio-go is Apache-2.0. No new platform dependency, storage engine fork, catalog, queue or workflow runtime is introduced; no image is published.
+
+The upstream OSS project is archived and its final release has [GHSA-hv4r-mvr4-25vw](https://github.com/minio/minio/security/advisories/GHSA-hv4r-mvr4-25vw). This trial uses the vendor's unsigned-trailer rejection mitigation at a digest-pinned Caddy gateway. The private MinIO port is unpublished on a separate network; engine-network probes must fail through **both DNS and direct IP**. The gateway is the only permitted storage entrance. This is a condition of the result, not a security fix to MinIO or approval of the existing `minio:latest` Compose setup. Production provider maintenance/admission remains unresolved; a direct MinIO endpoint does not inherit this PASS.
+
+The existing `Store.Put` permits overwrites, so it cannot establish this ingestion invariant. Temporary STS engine credentials allow Get/Put only in one staging attempt prefix. Core credentials read that staging prefix and Get/Put their own Core prefix. The gateway requires literal `If-None-Match: *` for every Core PUT and rejects Core DELETE, multipart POST and copy. `Store.PutImmutable` uses the existing SDK's native atomic create-only operation, disables multipart for the bounded 128 MiB contract, and reports `ErrObjectExists`; an acceptance retry must independently read/hash an existing object before using it.
+
+The trial verifies byte fidelity, nine real HTTP-403 mutation/access denials plus one conditional HTTP-412 conflict, two concurrent writes with exactly one winner and one intact payload, the unsigned-trailer rejection, and absence of root credentials in Docker metadata/logs/test output. Containers/networks/private credentials are removed; only local build cache and non-secret report remain. CI archives only `storage-report.json`. Remote CI is not proven by this local receipt.
+
+This storage gate is PASS. Core requests/physical attempts, three-RAW atomic finalize, same-manifest receipt replay, permission rechecks and PGI-05–07 are **NOT_RUN**. B3 remains **NOT_RUN**. B2 must use this bounded create/read-verify path and the B1 registration protocol before any Core version can become READY.

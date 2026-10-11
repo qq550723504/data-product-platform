@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -14,6 +15,29 @@ import (
 type Store struct {
 	client *minio.Client
 	bucket string
+}
+
+// ErrObjectExists is a failed create-only write, never permission to overwrite.
+var ErrObjectExists = errors.New("object already exists")
+
+// PutImmutable uses the provider's atomic create-only primitive. A caller
+// recovering a lost response must read and verify the existing bytes itself.
+// The ingestion deployment additionally enforces this header and denies delete
+// and copy at its sole storage gateway; engine credentials cannot access Core.
+func (s *Store) PutImmutable(ctx context.Context, objectName string, reader io.Reader, size int64, contentType string) (string, error) {
+	if size <= 0 || size > 128<<20 {
+		return "", fmt.Errorf("immutable object size must be in (0, 128 MiB]")
+	}
+	opts := minio.PutObjectOptions{ContentType: contentType, DisableMultipart: true}
+	opts.SetMatchETagExcept("*")
+	_, err := s.client.PutObject(ctx, s.bucket, objectName, reader, size, opts)
+	if err != nil {
+		if response := minio.ToErrorResponse(err); response.Code == "PreconditionFailed" || response.Code == "ConditionalRequestConflict" {
+			return "", ErrObjectExists
+		}
+		return "", fmt.Errorf("create immutable object: %w", err)
+	}
+	return fmt.Sprintf("s3://%s/%s", s.bucket, objectName), nil
 }
 
 func New(endpoint, accessKey, secretKey, bucket string, useSSL bool) (*Store, error) {

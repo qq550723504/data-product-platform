@@ -1,0 +1,54 @@
+{
+  "gate": "B2-storage",
+  "status": "PASS",
+  "source_release": "RELEASE.2025-10-15T17-29-55Z",
+  "source_commit": "9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a",
+  "license": "AGPL-3.0",
+  "gateway_image": "caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+  "official_mitigation": "GHSA-hv4r-mvr4-25vw unsigned-trailer rejection",
+  "core_admission": "NOT_RUN",
+  "user_flow": "NOT_RUN",
+  "checks": [
+    {
+      "name": "real storage gateway health",
+      "status": "PASS"
+    },
+    {
+      "name": "engine network has no private storage bypass",
+      "status": "PASS"
+    },
+    {
+      "name": "scoped STS staging and Core isolation; provider conditional race; unsigned-trailer rejection",
+      "status": "PASS",
+      "denials": [
+        "engine Core write",
+        "engine Core read",
+        "engine other-attempt write",
+        "unconditional Core overwrite",
+        "unconditional Core create",
+        "non-star conditional Core overwrite",
+        "conditional Core overwrite",
+        "Core delete",
+        "Core copy overwrite",
+        "engine delete"
+      ]
+    },
+    {
+      "name": "private credentials absent from Docker metadata/logs and test output",
+      "status": "PASS"
+    }
+  ],
+  "sources": {
+    "examples/enterprise-activity/postgres-ingestion/storage_smoke.py": "57d83efbddf56deb8b2c29abfb9d1707e931d3eee6d2b67bf7935fdbc22bc7cb",
+    "examples/enterprise-activity/postgres-ingestion/storage.Caddyfile": "5ddf7d189791e49c078b4ae4c9ae8ea8f4d63376d7cea36ed2229eb67ffb2ace",
+    "apps/platform/internal/platform/storage/minio.go": "91bc9534884d2a790f217854dc8e2a913ad246de4670f7876a16d4248675352f",
+    "apps/platform/internal/platform/storage/minio_integration_test.go": "2911ade12bc3cbfeb836c55aa26366cc890bccf5a07003c5d4a2bfa326c50396",
+    "apps/platform/go.mod": "84ff94473d1f77988ceb74e8f81bbdfd554da16e854f130c7f7a92d54a9235ba",
+    ".github/workflows/ci.yml": "b6502020c8c07c8ac62d6a3b21b90cfba30681af9c9baac9a3ac5bbc33515b8d"
+  },
+  "binary_sha256": "fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8",
+  "build_go": "go version go1.26.5 windows/amd64",
+  "client_sdk": "github.com/minio/minio-go/v7@v7.0.83",
+  "image_id": "sha256:086b0874417117e29943ce6d9d81f9701c52bf95d8c510a2a895500586586d3b",
+  "cleanup": "PASS"
+}
