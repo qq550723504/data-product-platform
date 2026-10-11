@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	metadataengine "github.com/qq550723504/data-product-platform/apps/platform/internal/engine/metadata"
 	metadatadomain "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain"
 )
 
@@ -11,6 +12,7 @@ type BindingObservation struct {
 	Status     string
 	ObservedAt *time.Time
 	Version    any
+	Governance *metadataengine.GovernanceFields
 }
 
 // ObserveBinding reads the current provider revision without rewriting the
@@ -26,5 +28,5 @@ func (s *Service) ObserveBinding(ctx context.Context, b metadatadomain.ResourceB
 		return BindingObservation{Status: "STALE"}
 	}
 	now := time.Now().UTC()
-	return BindingObservation{Status: "OBSERVED", ObservedAt: &now, Version: asset.Metadata["version"]}
+	return BindingObservation{Status: "OBSERVED", ObservedAt: &now, Version: asset.Metadata["version"], Governance: asset.Governance}
 }

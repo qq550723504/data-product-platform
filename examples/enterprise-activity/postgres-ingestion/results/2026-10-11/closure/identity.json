@@ -1,0 +1,107 @@
+{
+  "base_sha": "9502bd1caea61dd86e80827142bd1d18269a2d79",
+  "main_update": {
+    "from_sha": "b69433df4aa1b88e03fdfd6166f077c11960248d",
+    "to_sha": "9502bd1caea61dd86e80827142bd1d18269a2d79",
+    "only_lifecycle_docs": true,
+    "application_trees_identical": true
+  },
+  "webMode": "production",
+  "workspaceId": "0d0dc3bf-1e91-4e87-86cc-a11c46dcb5fb",
+  "api": "http://127.0.0.1:52555",
+  "web": "http://127.0.0.1:56998",
+  "sourceInstance": "dpp-pgi-be3fb9a5c0eb",
+  "coreContainer": "dpp-pgi-b3-core-be3fb9a5c0eb",
+  "binary_sha256": {
+    "api": "32fd1a17822376f7c52b55e04a175bd0632f5f4343f7da3a2c98916f5c329f8e",
+    "worker": "7f7ee891939e197a8249007a9a0d5682ad6b64ac6be927fffc0fb572c5fedf94",
+    "fixture": "d4a0a4a1954708fdadf9da67cf7ea8cace152cf333343b67ffeefbb0a521cfcb"
+  },
+  "provider": {
+    "openmetadataVersion": "2.0.5",
+    "openmetadataRevision": "c96845e6131c934dc993d9d3e8bae020365f09a7",
+    "hop": "2.19.0",
+    "pgjdbc": "42.7.14",
+    "postgres": "16-alpine",
+    "next": "15.5.24",
+    "sameOpenMetadataServerAndVolumes": true
+  },
+  "batch": {
+    "id": "d1cdaafe-b67a-494c-b737-97767ec0804a",
+    "state": "ACCEPTED",
+    "manifestHash": "2d46042e272743de2f5796d8d6abeff774fc54ceb3c86500467468786eb808c9"
+  },
+  "raw": [
+    {
+      "hash": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686",
+      "rows": 14,
+      "dataset": "dpp-source-reader-energy_raw",
+      "version": "8997de33-4540-443f-9637-393ab098d19b"
+    },
+    {
+      "hash": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d",
+      "rows": 6,
+      "dataset": "dpp-source-reader-enterprise_raw",
+      "version": "d33985db-754b-4980-967c-b086b6017f01"
+    },
+    {
+      "hash": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a",
+      "rows": 10,
+      "dataset": "dpp-source-reader-lease_raw",
+      "version": "2ad40134-7a23-4f9c-b8dc-384906a16dfa"
+    }
+  ],
+  "implementation_source_sha256": {
+    "apps/platform/cmd/ingestion-browser-fixture/main.go": "16b9dc20f3cc686fdd6047fc4a7f14d45eb58b8d4c7cce586c1b9a736542c8ea",
+    "apps/platform/internal/engine/metadata/engine.go": "20144af6558e85d86f474275a93bc28490d0f61e2368a241d9aa38078be01570",
+    "apps/platform/internal/metadata/application/observation.go": "1c949c1b86ff9963a76af9673c9bff29a548d6e4c0565aae454963df5ba0fd44",
+    "apps/platform/internal/metadata/application/observation_test.go": "f7377414680aa24c328770d2db91a571ebf2e0525594e8a086a40454c75a48dc",
+    "apps/platform/internal/metadata/openmetadata/client.go": "74bb2bb634e8c8d3a8fbc4148ab3a7aa9025c7b9f16d55644c8b30df4ef02ff2",
+    "apps/platform/internal/metadata/openmetadata/client_test.go": "e774694b8fbf646668d1e75abde3117baa6fe096a98a8a6aae1b4a55f43d1605",
+    "apps/platform/internal/metadata/transport/http/handler.go": "4a064cd80528f8b83ce23fabc91c3a7ec0bc47a4a7307d5ded8595306d829ff8",
+    "apps/web/components/resource-source.tsx": "ad75048c0acdc781c7ef4600c0560c05f65b96a77f97873a59c604eb9fd65308",
+    "docs/architecture/postgres-ingestion-v1.md": "f14512fa5a530500104864a727f7ddc442e658420dd72d1977f29da2186db7eb",
+    "examples/enterprise-activity/postgres-ingestion/b3_runtime.py": "189d9032c2846d2eba961d9c8a4c3e69891c31786a1989a393dfd8a0ac975792",
+    "examples/enterprise-activity/postgres-ingestion/b3_verify.py": "62636da47a84e741b8f7662cb4ff81892ffc84a7996ef09db039389ca148c500",
+    "examples/enterprise-activity/postgres-ingestion/pgi09_openmetadata.py": "6bb8678b0a82712a6a51c9febbb5fb9979b8e5149943f18d7646874c6f72331b",
+    "apps/platform/cmd/ingestion-browser-fixture/release.go": "dcf9a1e60d907311687bb6680dfbd28d89347494f575e4322c89ff3d2c5dac2f",
+    "examples/enterprise-activity/postgres-ingestion/closure_verify.py": "380f665591d45fae3f094bbf6f750ef2bd13c387d13257bc843519560d005474"
+  },
+  "artifact_sha256": {
+    "b3-report.json": "ac7b7b57b0f0d16283e3ed12b914172713045ea6b0347e0274a1808309153806",
+    "certification-superseded.jpg": "bd227bfce51da56b96db582c1ac55d1087ad725a58dced08e42f6e34144211e0",
+    "certified.jpg": "e6cc0ffa6508f4185a16a0cd19d9e859549a96a313a0c26fb0302c0fe277f4b5",
+    "governance-healthy.jpg": "e3d1e497b7eded693b0c291c469fa59149d0fef70a4b832b98bf445e14708e6f",
+    "governance-outage.jpg": "512c7221f104a952979eebc88ec05a6ca4ef6f86272fd1eeb24f0012ef42fdcb",
+    "governance-recovered.jpg": "fe2a007a5d2fa57b4034467d823ab70d313abb8316b392de82a10306f73300ea",
+    "history-healthy.json": "dc4b16532739a36fcc08760c2121d76db24c7d373138cef224ae194f89de987d",
+    "history-outage.json": "1842768fbb626d005031d5f02a4a6e54238060446be53e13eba9359d12a887d7",
+    "history-post-revocation.json": "248ca9df1606df18a82a0562b020848fe79a21db3237196f58e056b6dcd73d64",
+    "history-projection-failed.json": "2d30c2ff6e5fcc24319a37ea79245ba33744a1279d37f645421e833c4e5ff8b1",
+    "history-recovered.json": "78bae4557c869dbd3db6a5987d890d1688a0adfa6bd4ca9fffd5b25b3448420a",
+    "native-contract-green.json": "2d5356567ab7d3953555a3ebfa8bf1367dcfc6eeb8b6ec194c4e6181f6acd0a1",
+    "native-contract-red.json": "a0b17903d7e87d2039c03b418af7a0614d35f2d065b9c65dbbe856c46db84418",
+    "projection-routing.json": "fb6797378f2f1a474b5b0f06064774108688ed2c4c34add90ff1d8589a3f88a3",
+    "publication-during-outage.jpg": "52e64e02b1f4ba5610db5ee5278bf2b1300d7c2d6661417f01f4bea67ced53d3",
+    "publication-recovered.jpg": "52e64e02b1f4ba5610db5ee5278bf2b1300d7c2d6661417f01f4bea67ced53d3",
+    "quality-rejected.jpg": "cbdef4a0787701ccedcb48dad48786fe5a04d44fb1af3cc1322466c051c66b2a",
+    "quarantine.jpg": "2a533eff94260e391ae870da27f69444a5741ca183f8ddcabf3f1250202ed4ea",
+    "raw-accepted.jpg": "215a08ca232df6b6d0ce5eb6c9178c087a143fa64967beded28345e46a5f33c2",
+    "revoked-again-blocked.jpg": "aca13548fb3a1c79581d66d451802f6b5755d27ea20908284f190e6893b62bc0",
+    "revoked-blocked.jpg": "aca13548fb3a1c79581d66d451802f6b5755d27ea20908284f190e6893b62bc0",
+    "rights-revocation-1.json": "ff5cdd62752d21220b6879ae278a47886f0393d617f859cbe475595f11421a5f",
+    "rights-revocation-2.json": "ccbc896dddbe847b1ea54a5161295be637815eaa04c113d487eff0aa024a3e3a",
+    "secret-isolation-red.json": "5e8f05725eda00e2e1cc8b0dc3e25999e8ca9f82ee64adcc447ae9490835f9e2",
+    "steward-unassigned.jpg": "9b5d6bc91daf0c4b389394187372c8c8a67876f9f5306f3a5583d6e664a24798"
+  },
+  "known_secret_artifact_scan": {
+    "status": "PASS",
+    "known_values": 11,
+    "files": 25
+  },
+  "human_explanation": "NOT_RUN",
+  "artifact_hash_encoding": {
+    "text": "UTF-8 with LF",
+    "images": "exact bytes"
+  }
+}

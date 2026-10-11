@@ -75,7 +75,7 @@ func main() {
 	pool, e := pgxpool.New(ctx, c.DSN)
 	must(e)
 	defer pool.Close()
-	router, e := routing.NewRouter(false)
+	router, e := routing.NewRouter(strings.HasPrefix(os.Args[1], "release-"))
 	must(e)
 	outbox.ConfigureAppendObligation(router)
 	tx := transaction.NewManager(pool)
@@ -142,6 +142,8 @@ func main() {
 		read(path, &f)
 		rights := rightsapp.NewService(tx, rightsinfra.NewPostgresRepository(pool))
 		switch os.Args[1] {
+		case "release-healthy", "release-outage":
+			prepareHistoricalRelease(ctx, pool, tx, c, f, os.Args[1])
 		case "renew-rights":
 			original, e := rightsinfra.NewPostgresRepository(pool).GetAuthorization(ctx, f.Authorization)
 			must(e)
@@ -234,7 +236,7 @@ func main() {
 			f.Contract = cv.ID
 			write(path, f)
 		default:
-			panic("bootstrap|rights|renew-rights required")
+			panic("bootstrap|rights|renew-rights|release-healthy|release-outage required")
 		}
 	}
 	fmt.Println("B3 synthetic prerequisites prepared; browser business Commands remain independent")

@@ -77,15 +77,22 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
         web_env=dict(env,PLATFORM_API_BASE_URL=f"http://127.0.0.1:{ap}",POC_WORKSPACE_ID=public["workspaceId"],POC_ENABLE_INGESTION_ACTIONS="true",POC_INGESTION_TOKEN_FILE=str(private/"token"),POC_RIGHTS_TOKEN_FILE=str(private/"token"),POC_INGEST_ACTOR_ID=public["actorId"],POC_INGESTION_WORKFLOW_ID=public["workflowVersionId"],POC_ENABLE_REVIEW_ACTIONS="true",POC_REVIEW_API_TOKEN=token,POC_REVIEW_ACTOR_ID=public["actorId"],POC_ENABLE_QUALITY_ACTIONS="true",POC_QUALITY_ACTOR_ID=public["actorId"],POC_ENABLE_COMPLIANCE_ACTIONS="true",POC_COMPLIANCE_ACTOR_ID=public["actorId"],POC_ENABLE_DELIVERY_ACTIONS="true",HUMAN_DECISION_API_TOKEN=token,DELIVERY_API_TOKEN=token,DELIVERY_API_CONSUMER_REF="LICENSED_BANK",DELIVERY_API_PRINCIPAL_REF="b3-browser-operator",DELIVERY_WEB_GATEWAY_TOKEN=secrets.token_hex(32))
         # Runtime secrets remain private and server-side; no NEXT_PUBLIC secret.
         web_env["NEXT_DIST_DIR"]=".next-"+binary_prefix
+        # Next development RSC debug information can serialize server fetch
+        # arguments (including Authorization). Real secret-isolation/browser
+        # acceptance must run the production build, just like the demo image.
+        web_env["NODE_ENV"]="production"
         (private/"environment.json").write_text(json.dumps({"api":api_env,"web":web_env}),encoding="utf-8")
         def spawn(args,cwd,env,log):
             f=(output/log).open("wb")
             p=subprocess.Popen(args,cwd=cwd,env=env,stdout=f,stderr=subprocess.STDOUT,creationflags=getattr(subprocess,"CREATE_NO_WINDOW",0));processes.append(p);return p
         for app in ("api","worker"):
             spawn([str(REPO/f".data/{binary_prefix}-{app}.exe")],REPO/"apps/platform",api_env,f"{app}.log")
-        spawn(["cmd.exe","/d","/s","/c",f"npm.cmd run dev -- --hostname 127.0.0.1 --port {wp}"],REPO/"apps/web",web_env,"web.log")
+        with (output/"web-build.log").open("wb") as build_log:
+            built=subprocess.run(["cmd.exe","/d","/s","/c","npm.cmd run build"],cwd=REPO/"apps/web",env=web_env,stdout=build_log,stderr=subprocess.STDOUT,timeout=600,creationflags=getattr(subprocess,"CREATE_NO_WINDOW",0))
+        require(built.returncode==0,"production web build failed; inspect ignored web-build.log")
+        spawn(["cmd.exe","/d","/s","/c",f"npm.cmd run start -- --hostname 127.0.0.1 --port {wp}"],REPO/"apps/web",web_env,"web.log")
         public_port=port();web_gateway=start_web_gateway(public_port,wp,"b3-browser-operator",web_env["DELIVERY_WEB_GATEWAY_TOKEN"])
-        state={"private":str(private),"coreContainer":core,"api":f"http://127.0.0.1:{ap}","web":f"http://127.0.0.1:{public_port}","workspaceId":public["workspaceId"],"actorId":public["actorId"],"containers":names,"source":trial.pg,"hop":trial.hop}
+        state={"private":str(private),"coreContainer":core,"api":f"http://127.0.0.1:{ap}","web":f"http://127.0.0.1:{public_port}","webMode":"production","apiSha256":hashlib.sha256((REPO/f".data/{binary_prefix}-api.exe").read_bytes()).hexdigest(),"workspaceId":public["workspaceId"],"actorId":public["actorId"],"containers":names,"source":trial.pg,"hop":trial.hop}
         (output/"runtime.json").write_text(json.dumps(state,indent=2),encoding="utf-8")
         print(json.dumps({"web":state["web"],"api":state["api"],"runtime":str(output/"runtime.json")}),flush=True)
         while not (output/"STOP").exists():

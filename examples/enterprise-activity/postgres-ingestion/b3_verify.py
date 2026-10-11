@@ -17,7 +17,7 @@ import urllib.request
 import uuid
 
 
-def verify(runtime, download, output):
+def verify(runtime, download, output, metadata_status="UNKNOWN"):
     state = json.loads(runtime.read_text(encoding="utf-8"))
     container, ws = state["coreContainer"], str(uuid.UUID(state["workspaceId"]))
     assert container.startswith("dpp-pgi-b3-core-")
@@ -59,6 +59,7 @@ def verify(runtime, download, output):
             assert b"source_company_id" not in content, "unexpected dataset payload during oracle"
             return response.status, json.loads(content) if content else None
 
+    check("isolated browser acceptance uses production web", state.get("webMode") == "production")
     datasets = rows("dataset", f"workspace_id='{ws}'")
     versions = rows("dataset_version", f"dataset_id IN (SELECT id FROM dataset WHERE workspace_id='{ws}')")
     by_type = {kind: [v for v in versions if v["dataset_id"] in
@@ -142,7 +143,7 @@ def verify(runtime, download, output):
     check("trusted token cannot cross workspace", all(api(p.replace(ws, other))[0] == 403 for p in paths))
     check("quarantine rejects negative page offset", api(paths[2] + "?offset=-1")[0] == 400)
     observation = api(paths[3])
-    check("unconfirmed metadata remains UNKNOWN", observation[0] == 200 and observation[1]["status"] == "UNKNOWN")
+    check("metadata observation is " + metadata_status, observation[0] == 200 and observation[1]["status"] == metadata_status)
     # Same-key direct-data recovery returns JSON; it must never resend the CSV.
     payload = dict(profileId=facts["Profile"], consumer="LICENSED_BANK", purpose="ENTERPRISE_CREDIT_RISK_SUPPORT", action="READ", scopeType="ALL_RESOURCE", scopeRef=scope)
     issued = next(d for d in deliveries if d["status"] == "ISSUED")
@@ -152,6 +153,9 @@ def verify(runtime, download, output):
     secret_values = [token, private_config["RootKey"], private_config["RootSecret"]] + [(private / name).read_text(encoding="utf-8").strip() for name in ("source-password", "hop-password", "core-password")]
     identities = [json.loads((private / name).read_text(encoding="utf-8")) for name in ("core-identity.json", "publisher-identity.json")]
     secret_values += [value for identity in identities for key, value in identity.items() if key.lower() in ("secretkey", "sessiontoken") and value]
+    environment = json.loads((private / "environment.json").read_text(encoding="utf-8"))
+    secret_values += [environment["api"].get("OPENMETADATA_TOKEN", ""), environment["web"].get("DELIVERY_WEB_GATEWAY_TOKEN", "")]
+    secret_values = [value for value in secret_values if value]
     public_wire = json.dumps(dict(operations=operations, receipts=receipts, certs=certs, snapshot=snapshot,
                      events=rows("outbox_event"), audits=rows("audit_event")), ensure_ascii=False)
     check("public business/audit/event facts contain no known credential secrets", all(value not in public_wire for value in secret_values))
@@ -161,11 +165,11 @@ def verify(runtime, download, output):
         with urllib.request.urlopen(state["web"] + path, timeout=15) as response:
             html.append(response.read().decode("utf-8"))
     check("rendered browser pages contain no known credential secrets", all(value not in page for value in secret_values for page in html))
-    report = dict(status="PASS", workspaceId=ws, api=state["api"], web=state["web"], apiSha256=state.get("apiSha256"),
-                  acceptance={"PGI-08":"PASS", "PGI-09-metadata-unavailable":"PASS", "PGI-09-human-explanation":"NOT_RUN"},
+    report = dict(status="PASS", workspaceId=ws, api=state["api"], web=state["web"], webMode=state.get("webMode"), apiSha256=state.get("apiSha256"),
+                  acceptance={"PGI-08":"PASS", "metadata-observation":metadata_status, "PGI-09-human-explanation":"NOT_RUN"},
                   checks=checks, facts=dict(batch=operations[0]["id"], outputVersion=version, outputHash=curated["checksum_value"],
                   preparedSnapshot=snapshot["id"], currentCertification=disposition["superseded_by_certification_id"]),
-                  notRun=["healthy OpenMetadata binding/reconnect", "human operator explanation - explicitly deferred by user", "production IAM/provider acceptance"])
+                  notRun=["metadata outage/reconnect not assessed by this B3 oracle", "human operator explanation - explicitly deferred by user", "production IAM/provider acceptance"])
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(dict(status="PASS", checks=len(checks), report=str(output))))
@@ -176,5 +180,6 @@ if __name__ == "__main__":
     parser.add_argument("--runtime", type=Path, required=True)
     parser.add_argument("--download", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--metadata-status", choices=("UNKNOWN", "OBSERVED", "STALE"), default="UNKNOWN")
     args = parser.parse_args()
-    verify(args.runtime, args.download, args.output)
+    verify(args.runtime, args.download, args.output, args.metadata_status)

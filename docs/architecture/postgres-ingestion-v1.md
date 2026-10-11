@@ -94,6 +94,8 @@ Core 探测 DSN 与提交给 Hop 的原生 PostgreSQL metadata 必须使用同�
 
 OpenMetadata 不可用时，未知/陈旧状态必须可见；缺少所需授权证据即拒绝新动作。已有有效 Core 权限与冻结规则是否足够，由对应 Command 明确判定，不以目录可用性代替权限，也不因投影失败改写历史发布。
 
+治理字段通过既有 provider-neutral metadata Port 只读观察。OpenMetadata Adapter 请求原生 `owners,tags,extension`：`description` 为描述，`owners` 为目录 Owner，`tags.source=Classification/Glossary` 分别为分类/术语。Steward 只读取作者侧明确配置的原生 `extension.dataStewards`（`entityReferenceList`，仅 user/team）；不依据 Owner、团队名称或 Core owner_id 推断。该 custom property 使用 OpenMetadata 原生 Type API 定义，不增加 Core 字段或人员管理。健康观察时未配置显示“未指定”；失联/身份不匹配时当前治理字段显示 UNKNOWN，缓存版本和确认时间保持独立。只投影允许字段，不转发整个 extension、provider URL、email 或任意服务端配置。
+
 ## 6. 输出与原子接纳
 
 B1 先产生隔离 staging 的三个 CSV；B2 引入最小 ingestion operation 身份及三 slot 接纳关系，复用现有 Worker/Outbox 与存储设施。它不属于现有加工 Execution 的伪造输入链，不自建 connector/checkpoint/scheduler 平台。实际表名与 migration 序号在 B2 核对 main 后分配，不能抢占 #295 的迁移。
