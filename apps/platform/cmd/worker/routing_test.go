@@ -20,6 +20,9 @@ type stubProjector struct {
 type stubEnqueuer struct{}
 
 func (stubEnqueuer) EnqueueExecution(context.Context, uuid.UUID) error { return nil }
+func (stubEnqueuer) EnqueuePublication(context.Context, uuid.UUID, uuid.UUID, uuid.UUID) error {
+	return nil
+}
 
 type failingEnqueuer struct{ err error }
 
@@ -34,27 +37,27 @@ func (s *stubProjector) HandleOutboxEvent(_ context.Context, event outbox.Publis
 // Without a governance provider the dispatcher must still build, and the
 // governance route must be a declared retention-only obligation.
 func TestNewOutboxDispatcherWithoutGovernanceProvider(t *testing.T) {
-	dispatcher, err := newOutboxDispatcher(nil, slog.New(slog.DiscardHandler), nil, stubEnqueuer{})
+	dispatcher, err := newOutboxDispatcher(nil, slog.New(slog.DiscardHandler), nil, stubEnqueuer{}, stubEnqueuer{})
 	if err != nil {
 		t.Fatalf("newOutboxDispatcher: %v", err)
 	}
 	if dispatcher.RouterVersion() != routing.Version {
 		t.Fatalf("router version = %q, want %q", dispatcher.RouterVersion(), routing.Version)
 	}
-	if names := dispatcher.HandlerNames(); len(names) != 1 || names[0] != routing.HandlerExecutionQueue {
+	if names := dispatcher.HandlerNames(); len(names) != 2 || names[0] != routing.HandlerExecutionQueue || names[1] != routing.HandlerExternalPublicationQueue {
 		t.Fatalf("handler names = %v, want [%s]", names, routing.HandlerExecutionQueue)
 	}
 }
 
 func TestNewOutboxDispatcherWithGovernanceProvider(t *testing.T) {
-	dispatcher, err := newOutboxDispatcher(nil, slog.New(slog.DiscardHandler), &stubProjector{}, stubEnqueuer{})
+	dispatcher, err := newOutboxDispatcher(nil, slog.New(slog.DiscardHandler), &stubProjector{}, stubEnqueuer{}, stubEnqueuer{})
 	if err != nil {
 		t.Fatalf("newOutboxDispatcher: %v", err)
 	}
 	if dispatcher.RouterVersion() != routing.VersionFor(true) {
 		t.Fatalf("router version = %q, want %q", dispatcher.RouterVersion(), routing.VersionFor(true))
 	}
-	if names := dispatcher.HandlerNames(); len(names) != 2 || names[0] != routing.HandlerExecutionQueue || names[1] != routing.HandlerMetadataProjection {
+	if names := dispatcher.HandlerNames(); len(names) != 3 || names[0] != routing.HandlerExecutionQueue || names[1] != routing.HandlerExternalPublicationQueue || names[2] != routing.HandlerMetadataProjection {
 		t.Fatalf("handler names = %v, want [%s %s]", names, routing.HandlerExecutionQueue, routing.HandlerMetadataProjection)
 	}
 }
@@ -102,17 +105,17 @@ func (f enqueuerFunc) EnqueueExecution(ctx context.Context, id uuid.UUID) error 
 // The registered handler names must be exactly the ones the routing table can
 // require, otherwise startup validation is vacuous.
 func TestWorkerHandlerRegistrationsMatchRoutingNames(t *testing.T) {
-	registrations := workerHandlerRegistrations(&stubProjector{}, stubEnqueuer{}, slog.New(slog.DiscardHandler))
-	if len(registrations) != 2 {
+	registrations := workerHandlerRegistrations(&stubProjector{}, stubEnqueuer{}, stubEnqueuer{}, slog.New(slog.DiscardHandler))
+	if len(registrations) != 3 {
 		t.Fatalf("registrations = %d, want 1", len(registrations))
 	}
-	if registrations[0].Name != routing.HandlerExecutionQueue || registrations[1].Name != routing.HandlerMetadataProjection {
+	if registrations[0].Name != routing.HandlerExecutionQueue || registrations[1].Name != routing.HandlerExternalPublicationQueue || registrations[2].Name != routing.HandlerMetadataProjection {
 		t.Fatalf("registration names = %q/%q, want %q/%q", registrations[0].Name, registrations[1].Name, routing.HandlerExecutionQueue, routing.HandlerMetadataProjection)
 	}
 	if registrations[0].Handle == nil {
 		t.Fatal("registration must carry a handler implementation")
 	}
-	if names := workerHandlerRegistrations(nil, stubEnqueuer{}, slog.New(slog.DiscardHandler)); len(names) != 1 || names[0].Name != routing.HandlerExecutionQueue {
+	if names := workerHandlerRegistrations(nil, stubEnqueuer{}, stubEnqueuer{}, slog.New(slog.DiscardHandler)); len(names) != 2 || names[0].Name != routing.HandlerExecutionQueue || names[1].Name != routing.HandlerExternalPublicationQueue {
 		t.Fatalf("registrations without a provider = %v, want execution queue only", names)
 	}
 }
