@@ -1,0 +1,13 @@
+{
+  "approval": "NO_NATIVE_DELETE_APPROVAL",
+  "attempt_id": "54ceece5-bf0a-4e84-828b-757bbd77680f",
+  "copy_id": "490e8615-11b7-4042-9183-181c1b8d5938",
+  "native_delete_invocations": 0,
+  "original_certainty": "UNKNOWN_NO_NATIVE_INVOCATION_ASSERTED",
+  "plan_hash": "ebabe1d4e573a5dc7ec70ea1b46c7dd43eb2aa3a77bbd52720d572c9c1c508a9",
+  "plan_id": "e5737606-06b8-459d-9544-2d040b552397",
+  "provider_send_claims": 0,
+  "schema": "SQL_FAULT_INPUT_ONLY_NOT_NATIVE_DELETE_EVIDENCE",
+  "work_id": "2fe0dfdc-6103-4b8e-95da-6d232336c0f3",
+  "workspace_id": "d9deb37f-0e58-4f00-830e-c7aad21895f8"
+}
