@@ -1,6 +1,6 @@
 # #307 D1 开发与验收记录
 
-> 2026-10-11；D1 OPEN。已完成四个本地增量：plan foundation、restriction/hold/reader occupancy、DB-only approval/dispatch/physical observations、非删除 storage inspection / 逐 HTTP 调用 Journal；完整 D1 runtime **NOT_RUN**。
+> 2026-10-11；D1 OPEN。已完成五个本地增量：plan foundation、restriction/hold/reader occupancy、DB-only approval/dispatch/physical observations、非删除 storage inspection / 逐 HTTP 调用 Journal、独立封闭 native fixture 与实际版本清单；完整 D1 runtime **NOT_RUN**，删除确认 **PENDING**。
 > 用户已授权创建 Issue 并开发，仅受控合成对象；实际 provider 删除（含测试/cleanup）仍须先确认环境和 exact object/version 清单。
 
 ## 权威与写入归属
@@ -112,8 +112,22 @@ Merge blockers：未提交 start 就发送请求、SDK/transport 隐式重发、
 
 ## 后续开发和删除确认
 
-下一步仍在 #307 内：封闭 fixture 入口与独立 native storage 环境、实际登记 copy/version 清单；接入真实 fixture authority/current gate/reader owner 与 retention policy/inventory/material reference facts；补 MinIO native delete/archive/restore Adapter 与 existing worker reconciliation（每个真实 lookup/verify 也独立 attempt/cost）；scoped absence receipt/finalize、restore ledger、封闭 fixture HTTP/worker 与完整 D1 LC 验收。非删除 metadata Inspector / Journal 已有局部 contract，但 native I/O 仍 NOT_RUN；不能据此放行 deletion 或 business read。既有 production processing/delivery 的全面纳管按 D2 与原 owner 协调。
+下一步仍在 #307 内：用户确认已建立的环境与 actual exact-version 清单；接入真实 fixture current gate/reader owner 与 retention policy/material reference facts；补 MinIO native delete/archive/restore Adapter 与 existing worker reconciliation（每个真实 lookup/verify 也独立 attempt/cost）；scoped absence receipt/finalize、restore ledger、封闭 fixture HTTP/worker 与完整 D1 LC 验收。非删除 native inspection 已实跑，不能据此放行 deletion 或 business read。既有 production processing/delivery 的全面纳管按 D2 与原 owner 协调。
 
-实际 provider destructive test 前先建立独立 D1 storage 环境，生成**已实际登记**的 manifest：project/container/network、provider build/image/SDK、workspace、两个 namespace、每个 key + version/generation/hash/bytes、计划 scope hash、retention/hold、允许动作、cleanup 与 excluded scope。提交用户并收到明确确认后才调用 deletion；当前尚无 live object/version 清单，批准状态 **PENDING**，不得提前用 bare-key 列表或 SQL fixture ID 冒充它。
+实际 provider destructive test 前的独立环境与**已实际登记** manifest 现已生成：[待确认清单](../../examples/lifecycle-d1/results/a6b30840-3e76-49ad-91d3-f0c399fcf170/review.md)。包含 project/container/network、实际 build/image/SDK、workspace、两个 namespace、四个 key + native version/hash/bytes、计划 scope hash、retention/hold、动作与 excluded scope。批准状态仍 **PENDING**；任何 DELETE（含预期拒绝负例）与 object/bucket/volume cleanup 均未执行。
 
 外部备份/recipient、敏感内嵌 Evidence/Audit、Annotation sealed payload、#298 demo/retained objects 均不在 D1 destructive allowlist。D2–D6 按原设计后续顺序，不增加第二 scheduler 或自行恢复暂停联调。
+
+## 第五增量：原生 fixture，停在删除确认前
+
+Run `a6b30840-3e76-49ad-91d3-f0c399fcf170` 只使用 27/26-byte synthetic CSV。新 internal network 的三个成员为本 run 的 PostgreSQL/MinIO/gateway；两个专属 named volumes 保留。Docker Desktop internal network 的最初 loopback publish 请求没有实际 mapping；准备 helper 因而在 gateway network namespace 内执行，未开放 provider/DB/console/业务 API。详见 [入口与隔离复用](../../examples/lifecycle-d1/README.md)、[manifest](../../examples/lifecycle-d1/results/a6b30840-3e76-49ad-91d3-f0c399fcf170/manifest.json) 与 [环境独立读回](../../examples/lifecycle-d1/results/a6b30840-3e76-49ad-91d3-f0c399fcf170/environment-readback.json)。
+
+四个 provider versions 实际创建，按 exact version 重读 bytes/hash 后注册 Core；两个 DatasetVersions 都通过现有 command 限制使用。四份 object 是 bootstrap inputs，不能冒充业务 archive/restore；READY 不代表 rights/certification/delivery。Online B legal hold=ON；quarantine A GOVERNANCE 至 2026-10-12T10:41:09Z；没有解除/bypass。检查身份复用 native IAM policy，无 Put/Delete/Bypass；gateway 阻断检查身份 payload GET。成功后禁用 fixture principal，启动 guard 拒绝 finalized manifest replay。
+
+接入修正保留真实失败证据：脚本 command-name 冲突和 image ID 变化发生在 provider 创建前；bucket URL trailing slash 被 gateway 拒绝时，显式复核空 registry/provider 后才修正创建；四个版本创建后，缺 Outbox routing 的 restriction 原子回滚，补用既有 routing 后只读注册版本继续；未设置 retention/hold 的 native 400/NoSuchObjectLockConfiguration 与空 200 contract 不同，按固定官方 source 做 exact error/resource/cardinality 校验，未知/拒绝/缺失仍 fail closed。没有覆盖或重建已有对象/registry/history。
+
+[真实 PostgreSQL 读回](../../examples/lifecycle-d1/results/a6b30840-3e76-49ad-91d3-f0c399fcf170/database-readback.json)：4 copies、2 restrictions、19 storage starts / observations / invocation cost allocations（此前5次检查 + 完整14次检查，均保留）、41 Event/Audit/Evidence，scope hash 与 DB 重算一致；approval/dispatch/delete-attempt/reader-pin 全部0。物理调用成本 quantity=1，amount=NULL，使用既有账本；fixtures infrastructure provisioning 的 JSONL 只记录输入准备，不充当生产活动成本账本。
+
+本轮 `go test -race -count=1 ./cmd/lifecycle-fixture-prepare ./internal/platform/storage ./internal/lifecycle/... ./internal/platform/routing ./internal/cost` PASS，含当前 authority 禁用、无删除/reader capability、foreign/destructive shape、隐式重发拒绝、finalized output 恢复拒绝与 native absence-of-protection 正负例。此次该命令未配置 TEST_POSTGRES_DSN，PG unit suites SKIP；实际 fixture Journal/plan/restriction 另由上述 native + PG 实跑证明，之前18项 PG concurrency/constraint tests 记录仍保留。完整 LC / delete / absence finalize / archive/restore / business reader / PR CI / main CI 仍 NOT_RUN。
+
+本次 fixture 固定 main `3a59b591...` + 当时未发布 D1 migration 000054；private SQL snapshot、binary 与 manifest hashes保留。期间 main 合入 #309/000055，#299/C1 预留000056；D1 开发 migration 需重排000057并重新与 main 集成，不能把重排后的 migration 安装到本次已保留的 fixture 历史库，也不能以兼容/重跑为名擦除它。

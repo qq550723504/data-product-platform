@@ -136,7 +136,16 @@ func (s *LifecycleInspector) InspectRetentionAndHold(ctx context.Context, c doma
 	mode, until, err := s.client.GetObjectRetention(rctx, c.Namespace, c.Key, c.ProviderVersion)
 	rcancel()
 	if err != nil {
-		return lifecycle.CopyProtection{}, inspectionError(err)
+		// Pinned MinIO GetObjectRetention checks bucket lock and exact-version
+		// existence first, then returns 400/NoSuchObjectLockConfiguration when
+		// that object's retention mode is absent (not an empty 200 envelope).
+		// The transport must have validated the exact error envelope/resource.
+		if !nativeProtectionAbsent(err, retentionCall) {
+			return lifecycle.CopyProtection{}, inspectionError(err)
+		}
+		empty := minio.RetentionMode("")
+		mode = &empty
+		until = nil
 	}
 	if mode == nil {
 		return lifecycle.CopyProtection{}, lifecycle.ErrStorageContract
@@ -159,7 +168,13 @@ func (s *LifecycleInspector) InspectRetentionAndHold(ctx context.Context, c doma
 	hold, err := s.client.GetObjectLegalHold(hctx, c.Namespace, c.Key, minio.GetObjectLegalHoldOptions{VersionID: c.ProviderVersion})
 	hcancel()
 	if err != nil {
-		return lifecycle.CopyProtection{}, inspectionError(err)
+		// The same pinned handler returns this exact error for missing hold
+		// metadata after verifying the bucket and requested object version.
+		if !nativeProtectionAbsent(err, holdCall) {
+			return lifecycle.CopyProtection{}, inspectionError(err)
+		}
+		off := minio.LegalHoldDisabled
+		hold = &off
 	}
 	if hold == nil || (*hold != minio.LegalHoldEnabled && *hold != minio.LegalHoldDisabled) {
 		return lifecycle.CopyProtection{}, lifecycle.ErrStorageContract
@@ -167,6 +182,11 @@ func (s *LifecycleInspector) InspectRetentionAndHold(ctx context.Context, c doma
 	r, h := retentionCall.result(), holdCall.result()
 	return lifecycle.CopyProtection{Copy: c, RetentionMode: retentionMode, RetainUntil: until,
 		LegalHold: *hold == minio.LegalHoldEnabled, ObservedAt: h.ObservedAt, CallIDs: []uuid.UUID{r.CallID, h.CallID}}, nil
+}
+
+func nativeProtectionAbsent(err error, call *inspectionCall) bool {
+	native, obs := minio.ToErrorResponse(err), call.result()
+	return native.StatusCode == http.StatusBadRequest && native.Code == "NoSuchObjectLockConfiguration" && obs.ResponseSHA256 != "" && obs.Failure == ""
 }
 
 func (s *LifecycleInspector) InspectNamespace(ctx context.Context, c domain.Copy) (lifecycle.NamespaceInventory, error) {
@@ -320,6 +340,18 @@ func (t *inspectionTransport) RoundTrip(req *http.Request) (*http.Response, erro
 		} else if req.Method != http.MethodHead {
 			body, bodyErr := boundedInspectionBody(resp.Body, call.operation)
 			resp.Body = io.NopCloser(bytes.NewReader(body))
+			if bodyErr == nil && (call.operation == lifecycle.StorageRetention || call.operation == lifecycle.StorageLegalHold) && resp.StatusCode == http.StatusBadRequest {
+				var envelope struct {
+					Code []string `xml:"Code"`
+				}
+				if xml.Unmarshal(body, &envelope) == nil && len(envelope.Code) > 0 && envelope.Code[0] == "NoSuchObjectLockConfiguration" {
+					bodyErr = validateAbsentObjectRetention(body, call.copy)
+					if bodyErr == nil {
+						sum := sha256.Sum256(body)
+						obs.ResponseSHA256 = hex.EncodeToString(sum[:])
+					}
+				}
+			}
 			if bodyErr != nil {
 				err = bodyErr
 				obs.Failure = "CONTRACT"
@@ -347,6 +379,25 @@ func (t *inspectionTransport) RoundTrip(req *http.Request) (*http.Response, erro
 		return nil, err
 	}
 	return resp, nil
+}
+
+func validateAbsentObjectRetention(body []byte, c domain.Copy) error {
+	if validXMLRootChildren(body, "Error", []string{"Code", "Message", "BucketName", "Key", "Resource", "RequestId", "HostId"}) != nil {
+		return lifecycle.ErrStorageContract
+	}
+	var e struct {
+		Code     []string `xml:"Code"`
+		Resource []string `xml:"Resource"`
+		Bucket   []string `xml:"BucketName"`
+		Key      []string `xml:"Key"`
+	}
+	if xml.Unmarshal(body, &e) != nil || len(e.Code) != 1 || e.Code[0] != "NoSuchObjectLockConfiguration" || len(e.Resource) != 1 || e.Resource[0] != "/"+c.Namespace+"/"+c.Key || len(e.Bucket) > 1 || len(e.Key) > 1 {
+		return lifecycle.ErrStorageContract
+	}
+	if (len(e.Bucket) == 1 && e.Bucket[0] != c.Namespace) || (len(e.Key) == 1 && e.Key[0] != c.Key) {
+		return lifecycle.ErrStorageContract
+	}
+	return nil
 }
 
 func validInspectionRequest(req *http.Request, endpoint *url.URL, c *inspectionCall) bool {

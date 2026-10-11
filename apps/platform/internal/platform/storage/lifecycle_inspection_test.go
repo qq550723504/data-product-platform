@@ -71,6 +71,51 @@ func exactStatResponse(w http.ResponseWriter, c domain.Copy) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func TestLifecycleInspectorNativeAbsentRetentionIsExactAndCosted(t *testing.T) {
+	c := inspectionFixture()
+	for _, tc := range []struct {
+		name   string
+		status int
+		body   string
+		want   error
+	}{
+		{"native-none", 400, `<Error><Code>NoSuchObjectLockConfiguration</Code><Resource>/` + c.Namespace + `/` + c.Key + `</Resource></Error>`, nil},
+		{"duplicate-code", 400, `<Error><Code>NoSuchObjectLockConfiguration</Code><Code>NoSuchObjectLockConfiguration</Code><Resource>/` + c.Namespace + `/` + c.Key + `</Resource></Error>`, lifecycle.ErrStorageContract},
+		{"foreign-resource", 400, `<Error><Code>NoSuchObjectLockConfiguration</Code><Resource>/other/key</Resource></Error>`, lifecycle.ErrStorageContract},
+		{"generic-400", 400, `<Error><Code>InvalidRequest</Code></Error>`, lifecycle.ErrStorageUnknown},
+		{"denied-403", 403, `<Error><Code>NoSuchObjectLockConfiguration</Code></Error>`, lifecycle.ErrStorageDenied},
+		{"missing-404", 404, `<Error><Code>NoSuchObjectLockConfiguration</Code></Error>`, lifecycle.ErrStorageNotFound},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			j := &inspectionTestJournal{}
+			s := inspectorForTest(t, c, j, func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Query().Has("retention") {
+					w.WriteHeader(tc.status)
+					fmt.Fprint(w, tc.body)
+				} else if tc.name == "native-none" {
+					w.WriteHeader(400)
+					fmt.Fprint(w, tc.body)
+				} else {
+					fmt.Fprint(w, `<LegalHold><Status>OFF</Status></LegalHold>`)
+				}
+			})
+			p, err := s.InspectRetentionAndHold(context.Background(), c)
+			if tc.want != nil {
+				if !errors.Is(err, tc.want) {
+					t.Fatal(err)
+				}
+				return
+			}
+			if err != nil || p.RetentionMode != "NONE" || p.RetainUntil != nil || p.LegalHold || len(p.CallIDs) != 2 {
+				t.Fatalf("native none: %+v %v", p, err)
+			}
+			if len(j.observations) != 2 || j.observations[0].HTTPStatus != 400 || j.observations[0].InvokedAt == nil || j.observations[0].ResponseSHA256 == "" || j.observations[0].Failure != "" {
+				t.Fatal("native response not separately observed/costable")
+			}
+		})
+	}
+}
+
 func TestLifecycleInspectorExactScopeAndJournal(t *testing.T) {
 	c, j := inspectionFixture(), &inspectionTestJournal{}
 	var calls atomic.Int64
