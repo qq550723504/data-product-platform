@@ -553,7 +553,7 @@ export default async function DatasetVersionDetailPage({
 
         {view === "certification" ? (
           <>
-        {batchEnabled() ? <CertificationForm datasetId={id} versionId={versionId} qualityId={latestAssessment?.id??""} profileId={selectedProfile?.id??""} profiles={profiles} canPrepare={Boolean(version.generatedByExecutionId)} references={await certificationReferences(versionId,selectedProfile?.id??"",latestAssessment?.id??"")} /> : null}
+        {batchEnabled() ? <CertificationForm key={selectedProfile?.id??"none"} datasetId={id} versionId={versionId} qualityId={latestAssessment?.id??""} profileId={selectedProfile?.id??""} profiles={profiles} canPrepare={Boolean(version.generatedByExecutionId)} references={await certificationReferences(versionId,selectedProfile?.id??"",latestAssessment?.id??"")} /> : null}
         {batchEnabled() ? <CertificationSupersedeForm datasetId={id} versionId={versionId} certifications={history.items.filter(c=>c.profile.id===selectedProfile?.id).map(c=>({id:c.id,decision:c.decision,issuedAt:c.issuedAt,current:c.decision==="CERTIFIED"&&c.dispositions.length===0}))}/> : null}
         <div className="panel-header"><h2>Certification 历史</h2><span className="eyebrow">{history.page.total} Facts</span></div>
         {history.items.length === 0 ? (

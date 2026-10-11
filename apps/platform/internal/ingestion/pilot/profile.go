@@ -29,6 +29,12 @@ import (
 )
 
 type Identity struct{ AccessKey, SecretKey, SessionToken string }
+type TargetBinding struct {
+	WorkspaceID uuid.UUID `json:"workspaceId"`
+	Code        string    `json:"code"`
+	ResourceID  uuid.UUID `json:"resourceId"`
+	DatasetID   uuid.UUID `json:"datasetId"`
+}
 type Profile struct {
 	Enabled                                                                                     bool
 	TokenFile, ActorID, Subject                                                                 string
@@ -36,6 +42,7 @@ type Profile struct {
 	ConnectionRef, InstanceRef, Database, Reader, SourceDSN, SourcePasswordFile                 string
 	TemplateFile, MetadataFile                                                                  string
 	Tables                                                                                      []adapter.Table
+	Targets                                                                                     []TargetBinding
 	HopURL, HopUser, HopPasswordFile                                                            string
 	LocalRoot, EngineRoot, Bucket, StorageEndpoint, CoreCredentialFile, PublisherCredentialFile string
 	StorageTLS                                                                                  bool
@@ -64,7 +71,8 @@ func (p Profile) Source() (adapter.Config, error) {
 	runtime, _ := json.Marshal(struct {
 		HopURL, HopUser, LocalRoot, EngineRoot, Bucket, StorageEndpoint string
 		StorageTLS                                                      bool
-	}{p.HopURL, p.HopUser, p.LocalRoot, p.EngineRoot, p.Bucket, p.StorageEndpoint, p.StorageTLS})
+		Targets                                                         []TargetBinding
+	}{p.HopURL, p.HopUser, p.LocalRoot, p.EngineRoot, p.Bucket, p.StorageEndpoint, p.StorageTLS, p.Targets})
 	c.RuntimeHash = d.Hash(runtime)
 	var err error
 	c.Template, err = os.ReadFile(p.TemplateFile)
@@ -91,36 +99,53 @@ func (p Profile) Source() (adapter.Config, error) {
 	return c, nil
 }
 
-// The controlled profile reserves one unique resource/dataset code for each
-// source slot in a workspace. Resolve those Core identities on the server;
-// request target IDs are only consistency assertions, never binding authority.
-func targetIDs(ctx context.Context, q repo.Querier, ws uuid.UUID, connection, slot string) (uuid.UUID, uuid.UUID, error) {
-	var resource, dataset uuid.UUID
-	code := connection + "-" + slot
-	err := q.QueryRow(ctx, `SELECT r.id,d.id FROM data_resource r JOIN dataset d ON d.source_resource_id=r.id AND d.workspace_id=r.workspace_id WHERE r.workspace_id=$1 AND r.code=$2 AND d.code=$2 AND r.resource_type='TABLE_LIKE' AND d.dataset_type='RAW'`, ws, code).Scan(&resource, &dataset)
-	if err != nil {
-		return uuid.Nil, uuid.Nil, d.ErrDenied
+// Only the private operator profile can bind a slot to Core identities. Generic
+// CRUD codes/names are labels and cannot establish ingestion authority.
+func configuredTargets(p Profile, ws uuid.UUID) ([]TargetBinding, error) {
+	if len(p.Tables) != 3 {
+		return nil, d.ErrDenied
 	}
-	return resource, dataset, nil
+	codes := map[string]bool{}
+	for _, table := range p.Tables {
+		if codes[table.Code] {
+			return nil, d.ErrDenied
+		}
+		codes[table.Code] = true
+	}
+	bindings := []TargetBinding{}
+	seen, resources, datasets := map[string]bool{}, map[uuid.UUID]bool{}, map[uuid.UUID]bool{}
+	for _, binding := range p.Targets {
+		if binding.WorkspaceID != ws {
+			continue
+		}
+		if !codes[binding.Code] || seen[binding.Code] || binding.ResourceID == uuid.Nil || binding.DatasetID == uuid.Nil || resources[binding.ResourceID] || datasets[binding.DatasetID] {
+			return nil, d.ErrDenied
+		}
+		seen[binding.Code], resources[binding.ResourceID], datasets[binding.DatasetID] = true, true, true
+		bindings = append(bindings, binding)
+	}
+	if len(bindings) != 3 {
+		return nil, d.ErrDenied
+	}
+	return bindings, nil
 }
 
 func validateTargets(ctx context.Context, q repo.Querier, p Profile, r d.Request) error {
 	if p.ConnectionRef != r.ConnectionRef || len(p.Tables) != 3 || len(r.Slots) != 3 {
 		return d.ErrDenied
 	}
-	seen := map[string]bool{}
-	for _, table := range p.Tables {
-		if seen[table.Code] {
+	bindings, err := configuredTargets(p, r.WorkspaceID)
+	if err != nil {
+		return err
+	}
+	for _, binding := range bindings {
+		var valid bool
+		if err := q.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM data_resource r JOIN dataset d ON d.source_resource_id=r.id AND d.workspace_id=r.workspace_id WHERE r.id=$1 AND d.id=$2 AND r.workspace_id=$3 AND r.resource_type='TABLE_LIKE' AND d.dataset_type='RAW')`, binding.ResourceID, binding.DatasetID, r.WorkspaceID).Scan(&valid); err != nil || !valid {
 			return d.ErrDenied
-		}
-		seen[table.Code] = true
-		resource, dataset, err := targetIDs(ctx, q, r.WorkspaceID, p.ConnectionRef, table.Code)
-		if err != nil {
-			return err
 		}
 		matched := false
 		for _, slot := range r.Slots {
-			if slot.Code == table.Code && slot.ResourceID == resource && slot.DatasetID == dataset {
+			if slot.Code == binding.Code && slot.ResourceID == binding.ResourceID && slot.DatasetID == binding.DatasetID {
 				matched = true
 			}
 		}
@@ -193,13 +218,17 @@ func Build(pool *pgxpool.Pool, path string) (*transport.Handler, error) {
 		return validateTargets(ctx, tx, fresh, r)
 	}
 	h := &transport.Handler{Service: service}
-	h.Source = func() (any, error) {
+	h.Source = func(ctx context.Context, ws uuid.UUID) (any, error) {
 		fresh, err := Load(path)
 		if err != nil {
 			return nil, d.ErrDenied
 		}
+		targets, err := configuredTargets(fresh, ws)
+		if err != nil {
+			return nil, err
+		}
 		// Public contract only: never serialize Profile, DSN or secret references.
-		return map[string]any{"connectionRef": fresh.ConnectionRef, "instanceRef": fresh.InstanceRef, "database": fresh.Database, "reader": fresh.Reader, "tables": fresh.Tables}, nil
+		return map[string]any{"connectionRef": fresh.ConnectionRef, "instanceRef": fresh.InstanceRef, "database": fresh.Database, "reader": fresh.Reader, "tables": fresh.Tables, "targets": targets}, nil
 	}
 	h.Resolver = func() (principal.Resolver, error) {
 		fresh, err := Load(path)

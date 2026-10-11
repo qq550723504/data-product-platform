@@ -76,7 +76,7 @@ SQL 由版本化模板固定表和列，不允许客户端传 SQL、连接串、
 
 B1 使用隔离网络、仅允许来源读取的数据库账号；该账号只获得 CONNECT、目标 schema USAGE、三表 SELECT，不授予源写入/DDL/全库权限。启动/处理/产物接纳/交付都从可信服务端 principal 解析 workspace 和允许用途；技术账号连得上不等于业务请求有权抽取。B2 必须在实际 dispatch、恢复及接纳时重新核对所需当前权限，不沿用过期预检。
 
-受控 V1 profile 为每个 slot 保留 workspace 内唯一的 `connectionRef-slotCode` 资源和 RAW Dataset code。服务端从 Core 的强类型唯一 code 与 `source_resource_id` 解析目标 ID；客户端 `targets` 仅作一致性断言，不能授权任意、交换或重复目标。每次 Command 在持有既有资源/Dataset row locks 时重新解析该绑定，绑定变化即拒绝，不把 Prepare 时的检查当作永久许可。
+受控 V1 的私有服务端 profile 必须为每个 workspace/slot 明确绑定 ResourceID 与 DatasetID；操作者通过既有创建 Command 配置这些身份，再写入受控 profile。通用 CRUD 的 code/name 不是来源授权事实，不得据名称自动认领或推断目标。客户端 `targets` 仅作一致性断言，不能授权任意、交换、重复或同名替换目标。每次 Command 在持有既有资源/Dataset row locks 时重新校验 profile 的明确身份与 `source_resource_id`；绑定加入冻结配置 hash，变更即阻断旧请求。来源查询只返回当前已认证 workspace 的绑定。
 
 数据库密码、Hop 认证和存储凭据通过受控服务端环境/挂载或已有 secret 引用注入，仅在获准执行进程解析。禁止放入 `ManagedSubmitRequest.Parameters`、GET query、WorkflowVersion、manifest、Outbox、诊断/CI artifact 或 OpenMetadata 投影。Hop client 的 HTTP Basic 凭据与 JDBC 凭据分开。测试使用短期合成环境凭据；不读取或更改用户现有长期凭据。
 

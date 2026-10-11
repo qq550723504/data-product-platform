@@ -20,7 +20,7 @@ type Handler struct {
 	Resolver func() (principal.Resolver, error)
 	// Bind constructs the frozen source/template contract from server config.
 	Bind   func(context.Context, uuid.UUID, string, string, []Target) (d.Request, error)
-	Source func() (any, error)
+	Source func(context.Context, uuid.UUID) (any, error)
 }
 type Target struct {
 	Code       string    `json:"code"`
@@ -51,7 +51,7 @@ func (h *Handler) source(w http.ResponseWriter, r *http.Request) {
 		reply(w, nil, d.ErrDenied)
 		return
 	}
-	v, err := h.Source()
+	v, err := h.Source(r.Context(), ws)
 	reply(w, v, err)
 }
 func (h *Handler) list(w http.ResponseWriter, r *http.Request) {

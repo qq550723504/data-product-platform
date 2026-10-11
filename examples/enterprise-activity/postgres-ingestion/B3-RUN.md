@@ -88,7 +88,10 @@ Pop-Location
 python examples/enterprise-activity/postgres-ingestion/b3_runtime.py --output .data/pgi-b3-fresh
 ```
 
-Open the printed URL in Edge. Register the three sources, then prepare/start/
+The trusted fixture operator provisions the three empty RAW assets through
+existing Commands and binds their exact IDs in the private profile. Browser
+registration cannot create/adopt RAW targets by code. Open the printed URL in
+Edge, inspect the configured source, then prepare/start/
 recover/accept using page controls. In another terminal, prepare synthetic
 rights/profile/published contract prerequisites through existing Commands:
 
@@ -127,3 +130,26 @@ Python compile and the live PostgreSQL/HTTP oracle. Ordinary Go runs can skip
 TEST_DSN suites; the 31 live checks are actual PostgreSQL evidence. Remote CI,
 merge, production deployment, healthy OpenMetadata and human explanation have
 not been substituted by local checks.
+
+## PR #303 review regression
+
+The slot target authority is now the private operator profile's explicit
+workspace/resource/Dataset IDs. Mutable codes cannot provision or replace this
+binding. The original code-based binding admitted a same-name replacement in a
+real PostgreSQL RED run; the corrected implementation rejects it before remote
+work. The [new B2 run](results/2026-10-11/b2-identity-binding-report.json)
+passes all 23 checks, including current binding changes after preparation.
+
+A fresh Edge trial then operated registration, extraction, recovery and atomic
+admission against the full Core API. It produced exactly three READY RAW versions
+on the configured IDs, with 6/10/14 unchanged source rows:
+[report](results/2026-10-11/b3-target-binding-review.json),
+[screenshot](results/2026-10-11/b3-target-binding-review.png).
+This is a target-binding regression, not a repeat of the 31-check B3 oracle above.
+
+Certification profile selection now navigates to server-loaded evidence for
+that profile before preparation or evaluation. A real browser/HTTP-fixture test
+reproduced the stale initial-profile URL and then verified switch → preparation
+→ evaluation with the second profile and its exact EvidenceSnapshot ID. The
+complete 41 browser contracts passed. This fixture contract is separate from
+live certification acceptance. Human explanation remains NOT_RUN.

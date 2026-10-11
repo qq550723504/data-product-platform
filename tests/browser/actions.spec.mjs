@@ -16,6 +16,27 @@ async function writes(request) { return (await state(request)).requests.filter((
 
 test.beforeEach(async ({ request }) => { await scenario(request, "ready", true); });
 
+test("Certification profile selection reloads that profile's evidence before prepare and evaluate", async ({ page, request }) => {
+  await scenario(request, "multiple-certification-profiles", true);
+  await page.goto(`http://127.0.0.1:3102/datasets/${ids.goldDataset}/versions/${ids.goldVersion}?view=certification&profileId=${ids.goldProfile}`);
+  const form = page.locator("form").filter({has: page.getByRole("heading", {name:"执行认证", exact:true})});
+  await expect(form.getByRole("button", {name:"准备本次认证证据"})).toBeDisabled();
+  await form.getByLabel("认证规则").selectOption(ids.secondProfile);
+  await expect(page).toHaveURL(new RegExp(`profileId=${ids.secondProfile}`));
+  await expect(form.locator('input[name="evidenceSnapshotId"]')).toHaveValue("");
+  await form.getByRole("button", {name:"准备本次认证证据"}).click();
+  await expect(form.locator('input[name="evidenceSnapshotId"]')).toHaveValue(ids.secondEvidence);
+  await form.getByRole("button", {name:"核验并记录认证决定"}).click();
+  await expect.poll(async()=> (await writes(request)).find(c=>c.path.endsWith("/certifications"))?.body).toMatchObject({profileId:ids.secondProfile,evidenceSnapshotId:ids.secondEvidence});
+  await expect(form.getByRole("status").last()).toContainText("CERTIFIED");
+  const commands = await writes(request);
+  const preparation = commands.find(c=>c.path.endsWith("/certification-inputs"));
+  const evaluation = commands.find(c=>c.path.endsWith("/certifications"));
+  expect(preparation.body.profileId).toBe(ids.secondProfile);
+  expect(evaluation.body.profileId).toBe(ids.secondProfile);
+  expect(evaluation.body.evidenceSnapshotId).toBe(ids.secondEvidence);
+});
+
 test("workbench surfaces actionable review and release items", async ({ page }) => {
   await page.goto("/");
   const attention = page.getByTestId("needs-attention");

@@ -118,18 +118,8 @@ func (l *live) empty(op d.Operation) {
 func (l *live) prepare() d.Operation {
 	l.t.Helper()
 	targets := []transport.Target{}
-	for _, table := range l.cfg.Profile.Tables {
-		rid, did := uuid.New(), uuid.New()
-		code := l.cfg.Profile.ConnectionRef + "-" + table.Code
-		err := l.pool.QueryRow(l.ctx, `INSERT INTO data_resource(id,workspace_id,code,name,resource_type,lifecycle_status) VALUES($1,$2,$3,$3,'TABLE_LIKE','READY') ON CONFLICT(workspace_id,code) DO UPDATE SET code=EXCLUDED.code RETURNING id`, rid, l.ws, code).Scan(&rid)
-		if err != nil {
-			l.t.Fatal(err)
-		}
-		err = l.pool.QueryRow(l.ctx, `INSERT INTO dataset(id,workspace_id,code,name,dataset_type,source_resource_id) VALUES($1,$2,$3,$3,'RAW',$4) ON CONFLICT(workspace_id,code) DO UPDATE SET code=EXCLUDED.code RETURNING id`, did, l.ws, code, rid).Scan(&did)
-		if err != nil {
-			l.t.Fatal(err)
-		}
-		targets = append(targets, transport.Target{Code: table.Code, DatasetID: did, ResourceID: rid})
+	for _, binding := range l.cfg.Profile.Targets {
+		targets = append(targets, transport.Target{Code: binding.Code, DatasetID: binding.DatasetID, ResourceID: binding.ResourceID})
 	}
 	body := map[string]any{"workspaceId": l.ws, "requestKey": "r-" + uuid.NewString(), "batchKey": "b-" + uuid.NewString(), "targets": targets}
 	var op d.Operation
@@ -319,6 +309,18 @@ func TestLiveCoreBatch(t *testing.T) {
 	}))
 	defer storageProxy.Close()
 	p.StorageEndpoint = strings.TrimPrefix(storageProxy.URL, "http://")
+	// Trusted isolated operator provisioning, before exposing the HTTP Handler.
+	for _, table := range p.Tables {
+		rid, did := uuid.New(), uuid.New()
+		code := p.ConnectionRef + "-" + table.Code
+		if _, err := pool.Exec(ctx, `INSERT INTO data_resource(id,workspace_id,code,name,resource_type,lifecycle_status) VALUES($1,$2,$3,$3,'TABLE_LIKE','READY')`, rid, l.ws, code); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := pool.Exec(ctx, `INSERT INTO dataset(id,workspace_id,code,name,dataset_type,source_resource_id) VALUES($1,$2,$3,$3,'RAW',$4)`, did, l.ws, code, rid); err != nil {
+			t.Fatal(err)
+		}
+		p.Targets = append(p.Targets, pilot.TargetBinding{WorkspaceID: l.ws, Code: table.Code, ResourceID: rid, DatasetID: did})
+	}
 	l.cfg.Profile = p
 	l.saveProfile(p)
 	l.token = string(mustRead(t, p.TokenFile))
@@ -362,15 +364,48 @@ func TestLiveCoreBatch(t *testing.T) {
 			t.Fatal("rejected binding created operation or remote work")
 		}
 		l.empty(op)
-		// Re-resolve the same binding at dispatch, not only during Prepare.
-		rid := op.Request.Slots[0].ResourceID
-		if _, err := pool.Exec(ctx, `UPDATE data_resource SET code='renamed-'||id::text WHERE id=$1`, rid); err != nil {
+		// Names may be provisioned through generic CRUD. Replacing the rows at
+		// those names must not replace the trusted profile's target identities.
+		original := targets[0]
+		code := p.ConnectionRef + "-" + original.Code
+		for _, table := range []string{"data_resource", "dataset"} {
+			id := original.ResourceID
+			if table == "dataset" {
+				id = original.DatasetID
+			}
+			if _, err := pool.Exec(ctx, `UPDATE `+table+` SET code='original-'||id::text WHERE id=$1`, id); err != nil {
+				t.Fatal(err)
+			}
+		}
+		impostorResource, impostorDataset := uuid.New(), uuid.New()
+		if _, err := pool.Exec(ctx, `INSERT INTO data_resource(id,workspace_id,code,name,resource_type,lifecycle_status) VALUES($1,$2,$3,$3,'TABLE_LIKE','READY')`, impostorResource, l.ws, code); err != nil {
 			t.Fatal(err)
 		}
+		if _, err := pool.Exec(ctx, `INSERT INTO dataset(id,workspace_id,code,name,dataset_type,source_resource_id) VALUES($1,$2,$3,$3,'RAW',$4)`, impostorDataset, l.ws, code, impostorResource); err != nil {
+			t.Fatal(err)
+		}
+		claimed := slices.Clone(targets)
+		claimed[0].ResourceID, claimed[0].DatasetID = impostorResource, impostorDataset
+		l.call("POST", "/api/v1/ingestions", map[string]any{"workspaceId": l.ws, "requestKey": "impostor-" + uuid.NewString(), "batchKey": "impostor", "targets": claimed}, 403)
+		for _, table := range []string{"data_resource", "dataset"} {
+			id, other := original.ResourceID, impostorResource
+			if table == "dataset" {
+				id, other = original.DatasetID, impostorDataset
+			}
+			if _, err := pool.Exec(ctx, `UPDATE `+table+` SET code='impostor-'||id::text WHERE id=$1`, other); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := pool.Exec(ctx, `UPDATE `+table+` SET code=$2 WHERE id=$1`, id, code); err != nil {
+				t.Fatal(err)
+			}
+		}
+		// Changing the trusted profile after Prepare blocks the old binding.
+		changed := p
+		changed.Targets = slices.Clone(p.Targets)
+		changed.Targets[0].ResourceID, changed.Targets[0].DatasetID = impostorResource, impostorDataset
+		l.saveProfile(changed)
 		l.command(op, "dispatch", nil, 403)
-		if _, err := pool.Exec(ctx, `UPDATE data_resource SET code=$2 WHERE id=$1`, rid, p.ConnectionRef+"-"+op.Request.Slots[0].Code); err != nil {
-			t.Fatal(err)
-		}
+		l.saveProfile(p)
 		if l.count(`SELECT count(*) FROM ingestion_invocation WHERE operation_id=$1`, op.ID) != 0 {
 			t.Fatal("changed binding dispatched remote work")
 		}

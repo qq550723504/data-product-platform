@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { configuredWorkspaceId, platform, PlatformError } from "./platform";
 import { findAcrossPages } from "./scoped-lookup";
 
-export type Source = { connectionRef:string; instanceRef:string; database:string; reader:string; tables:Array<{Code:string;Schema:string;Name:string;Columns:string[];Rows:number}> };
+export type Source = { connectionRef:string; instanceRef:string; database:string; reader:string; tables:Array<{Code:string;Schema:string;Name:string;Columns:string[];Rows:number}>; targets:Array<{workspaceId:string;code:string;resourceId:string;datasetId:string}> };
 export type Batch = { id:string;state:string;attemptId:string;remoteId:string;request:{workspaceId:string;batchKey:string;connectionRef:string;instanceRef:string;templateHash:string;schemaHash:string;slots:Array<{code:string;resourceId:string;datasetId:string;columns:string[];rows:number}>};manifest?:{engineVersion:string;observedAt:string;outputs:Array<{code:string;sha256:string;rows:number;bytes:number}>} };
 export type Receipt = {id:string;manifestHash:string;bindings:Array<{code:string;datasetId:string;versionId:string;sha256:string}>};
 export type Job = {id:string;workspaceId:string;inputDatasetVersionId:string;status:string;outputDatasetVersionId?:string};

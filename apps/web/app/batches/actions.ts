@@ -11,16 +11,14 @@ export async function registerBatch(_old:BatchState,form:FormData):Promise<Batch
     if(!batchEnabled())throw new Error("批次操作未启用");
     const key=String(form.get("requestKey")??"");const batchKey=String(form.get("batchKey")??"");
     if(!/^[a-zA-Z0-9_-]{1,128}$/.test(key)||!/^[a-zA-Z0-9_-]{1,128}$/.test(batchKey))throw new Error("批次名称仅支持字母、数字、下划线和连字符");
-    const s=await source();const [resources,datasets]=await Promise.all([collectAllPages(platform.resources),collectAllPages(platform.datasets)]);
+    const s=await source();const datasets=await collectAllPages(platform.datasets);
     const targets=[];
     for(const table of s.tables){
-      const code=`${s.connectionRef}-${table.Code}`;
-      let resource=resources.find(r=>r.code===code);
-      if(!resource){resource=await core<typeof resources[number]>("/data-resources","POST",{workspaceId:workspace(),code,name:`PostgreSQL · ${table.Name}`,description:`${s.database}.${table.Schema}.${table.Name} · 合成试点来源`,resourceType:"TABLE_LIKE",domainCode:"PARK_ENTERPRISE_ACTIVITY",sensitivityLevel:"INTERNAL",ownerId:process.env.POC_INGEST_ACTOR_ID});}
-      let ds=datasets.find(d=>d.code===code);
-      if(!ds){const created=await core<{id:string}>("/datasets","POST",{workspaceId:workspace(),code,name:`${table.Name} RAW`,datasetType:"RAW",sourceResourceId:resource.id,ownerId:process.env.POC_INGEST_ACTOR_ID});ds=await platform.dataset(created.id);}
-      if(ds.datasetType!=="RAW"||ds.sourceResourceId!==resource.id)throw new Error("来源绑定冲突");
-      targets.push({code:table.Code,resourceId:resource.id,datasetId:ds.id});
+      const binding=s.targets.find(t=>t.code===table.Code&&t.workspaceId===workspace());
+      if(!binding)throw new Error("来源目标尚未由操作者配置");
+      const [resource,ds]=await Promise.all([platform.resource(binding.resourceId),platform.dataset(binding.datasetId)]);
+      if(ds.workspaceId!==workspace()||resource.workspaceId!==workspace()||ds.datasetType!=="RAW"||ds.sourceResourceId!==resource.id)throw new Error("来源绑定冲突");
+      targets.push({code:table.Code,resourceId:binding.resourceId,datasetId:binding.datasetId});
     }
     for(const [suffix,type] of [["standardized","STANDARDIZED"],["curated","CURATED"]]){
       const code=`${s.connectionRef}-${suffix}`;if(!datasets.some(d=>d.code===code))await core("/datasets","POST",{workspaceId:workspace(),code,name:`PostgreSQL ${type}`,datasetType:type,ownerId:process.env.POC_INGEST_ACTOR_ID});

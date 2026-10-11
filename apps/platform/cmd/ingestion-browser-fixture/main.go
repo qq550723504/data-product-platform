@@ -15,12 +15,18 @@ import (
 	certinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/infrastructure"
 	contractapp "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/application"
 	contractinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/contract/infrastructure"
+	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
+	datasetdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/domain"
+	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/ingestion/pilot"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/migration"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
+	resourcedomain "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/domain"
+	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 	rightsapp "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/application"
 	rightsdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
 	rightsinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
@@ -112,6 +118,18 @@ func main() {
 		_, e = admin.AttachPolicy(ctx, madmin.PolicyAssociationReq{Policies: []string{pn}, User: publisher.AccessKey})
 		must(e)
 		write(p.PublisherCredentialFile, publisher)
+		// The trusted fixture operator provisions identities through existing
+		// Commands, then binds exact IDs in the private profile. The browser
+		// never adopts caller-created resources by code or mutates this mapping.
+		rr := resourceinfra.NewPostgresRepository()
+		for _, table := range p.Tables {
+			code := p.ConnectionRef + "-" + table.Code
+			resource, err := resourceapp.NewCreateService(tx, rr).Handle(ctx, resourceapp.CreateDataResourceCommand{WorkspaceID: f.Workspace, Code: code, Name: "PostgreSQL · " + table.Name, Description: p.Database + "." + table.Schema + "." + table.Name + " · 合成试点来源", ResourceType: resourcedomain.ResourceTypeTableLike, DomainCode: "PARK_ENTERPRISE_ACTIVITY", SensitivityLevel: "INTERNAL", OwnerID: &f.Actor, ActorID: &f.Actor})
+			must(err)
+			dataset, err := datasetapp.NewCreateDatasetService(tx, datasetinfra.NewPostgresRepository(pool), rr).Handle(ctx, datasetapp.CreateDatasetCommand{WorkspaceID: f.Workspace, Code: code, Name: table.Name + " RAW", DatasetType: datasetdomain.DatasetTypeRaw, SourceResourceID: &resource.ID, OwnerID: &f.Actor, ActorID: &f.Actor})
+			must(err)
+			p.Targets = append(p.Targets, pilot.TargetBinding{WorkspaceID: f.Workspace, Code: table.Code, ResourceID: resource.ID, DatasetID: dataset.ID})
+		}
 		write(filepath.Join(c.Private, "profile.json"), p)
 		definition, e := os.ReadFile(filepath.Join(c.Repo, "examples/enterprise-activity/workflow/workflow-v1.yaml"))
 		must(e)
@@ -172,7 +190,7 @@ func main() {
 			must(rows.Err())
 			rows.Close()
 			if len(grants) != 3 {
-				panic("browser must first register three RAW sources")
+				panic("trusted profile requires three RAW sources")
 			}
 			from, to := time.Now().UTC().Add(-time.Hour), time.Now().UTC().Add(24*time.Hour)
 			auth, e := rights.Create(ctx, rightsapp.CreateAuthorizationCommand{WorkspaceID: f.Workspace, Code: "PGI-B3-SYNTHETIC-AUTH", GrantorRef: "SYNTHETIC-PARK-OPERATOR", GranteeRef: "LICENSED_BANK", Purpose: purpose, ValidFrom: &from, ValidTo: &to, Resources: grants, ActorID: &f.Actor})
