@@ -332,6 +332,7 @@ export default async function DatasetVersionDetailPage({
               <div className="panel-header"><h2>下一步</h2><span className="eyebrow">Drill down</span></div>
               <div className="quick-links">
                 <Link href={viewHref("quality")}>查看 Quality 评测 →</Link>
+                {dataset.datasetType === "RAW" ? <Link href={`/datasets/${id}/versions/${versionId}/remediation`}>质量异常分派、处理与复检 →</Link> : null}
                 <Link href={viewHref("compliance")}>运行 / 恢复 Compliance Check →</Link>
                 <Link href={viewHref("certification")}>查看 Certification 历史 →</Link>
                 <Link href={viewHref("eligibility")}>检查当前可交付性 →</Link>
