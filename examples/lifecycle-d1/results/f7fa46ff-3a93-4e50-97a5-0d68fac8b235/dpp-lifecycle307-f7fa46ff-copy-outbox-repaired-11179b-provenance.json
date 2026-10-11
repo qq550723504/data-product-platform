@@ -1,0 +1,15 @@
+{
+  "gateway_sha256": "3045f714f56768b5099ff2b4f18c5a3fb5e833cbdadd694313f6ebea725961af",
+  "native_delete": 0,
+  "scenario": "copy-outbox-repaired",
+  "recorded_before_start": "2026-10-11T14:51:08.9674844Z",
+  "expected_exit": 0,
+  "role": "copy-worker",
+  "run_id": "f7fa46ff-3a93-4e50-97a5-0d68fac8b235",
+  "source_head": "6961fde137046f6eb335e9924ba00bc56a7361ff",
+  "cleanup": 0,
+  "binary_sha256": "6bc11d66bb3f64f3ae07a1c3b508350b3c577ab3437d1436e4d6ae6bee576154",
+  "helper_id": "6338a0ad11a2c9dd00c302ff96f798e592d831c01dc7a46fed5cff06df1ed5de",
+  "credentials": "READ_ONLY_NO_ROOT_NO_COPY_NO_DELETE",
+  "action": "outbox"
+}

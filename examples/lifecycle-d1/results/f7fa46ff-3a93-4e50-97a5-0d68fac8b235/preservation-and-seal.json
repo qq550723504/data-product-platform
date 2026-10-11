@@ -1,0 +1,48 @@
+{
+  "at_utc": "2026-10-11T15:06:07.9171046Z",
+  "prior_containers": 17,
+  "missing_prior_containers": [],
+  "changed_prior_containers": [],
+  "prior_owned_volumes": 11,
+  "missing_prior_owned_volumes": [],
+  "current_owned_volumes": [
+    "dpp-lifecycle307-4abcfca5-objects",
+    "dpp-lifecycle307-4abcfca5-postgres",
+    "dpp-lifecycle307-4abcfca5-redis-data",
+    "dpp-lifecycle307-a6b30840-objects",
+    "dpp-lifecycle307-a6b30840-postgres",
+    "dpp-lifecycle307-a1647373-objects",
+    "dpp-lifecycle307-a1647373-postgres",
+    "dpp-lifecycle307-bb44901c-objects",
+    "dpp-lifecycle307-bb44901c-postgres",
+    "dpp-lifecycle307-c9f47cab-objects",
+    "dpp-lifecycle307-c9f47cab-postgres",
+    "dpp-lifecycle307-f7fa46ff-objects",
+    "dpp-lifecycle307-f7fa46ff-postgres",
+    "dpp-lifecycle307-f7fa46ff-redis-data",
+    "dpp-lifecycle307-migration-d05b650f-data"
+  ],
+  "windows": [
+    {
+      "name": "copy-admin/archive-window.json",
+      "enabled": false
+    },
+    {
+      "name": "copy-producer/archive-window.json",
+      "enabled": false
+    },
+    {
+      "name": "copy-worker/recovery.json",
+      "enabled": false
+    },
+    {
+      "name": "config.json",
+      "enabled": false
+    }
+  ],
+  "sealed_gateway_sha256": "5ecc7a9cbd91386bbb92d69d409d495ca565d12273c7f5e93f54869ddd07dae6",
+  "native_delete": 0,
+  "cleanup_requests": 0,
+  "global_volume_retention": "not asserted; scope is owned fixture volumes",
+  "native_old_object_readback": "NOT_RUN this turn; no commands addressed prior native environments"
+}

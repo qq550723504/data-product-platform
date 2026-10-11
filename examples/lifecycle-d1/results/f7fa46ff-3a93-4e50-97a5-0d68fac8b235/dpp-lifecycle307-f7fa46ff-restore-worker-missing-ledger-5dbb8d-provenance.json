@@ -1,0 +1,15 @@
+{
+  "run_id": "f7fa46ff-3a93-4e50-97a5-0d68fac8b235",
+  "helper_id": "cd4c69b8cb83cab5945112cb3636d81da149aeed85aeb091256df572cb014006",
+  "binary_sha256": "6bc11d66bb3f64f3ae07a1c3b508350b3c577ab3437d1436e4d6ae6bee576154",
+  "action": "worker",
+  "cleanup": 0,
+  "role": "copy-worker",
+  "credentials": "READ_ONLY_NO_ROOT_NO_COPY_NO_DELETE",
+  "expected_exit": 0,
+  "scenario": "restore-worker-missing-ledger",
+  "native_delete": 0,
+  "recorded_before_start": "2026-10-11T14:54:59.9982789Z",
+  "source_head": "6961fde137046f6eb335e9924ba00bc56a7361ff",
+  "gateway_sha256": "3045f714f56768b5099ff2b4f18c5a3fb5e833cbdadd694313f6ebea725961af"
+}

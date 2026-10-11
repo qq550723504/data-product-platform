@@ -1,0 +1,224 @@
+{
+  "observed_at": "2026-10-11T22:57:33.448342+08:00",
+  "schema_version": 64,
+  "originals": [
+    {
+      "id": "9fdae67b-5420-438a-8e20-62688e7c5461",
+      "status": "READY",
+      "storage_uri": "s3://dpp-lifecycle307-online/fixture/b.csv",
+      "checksum_value": "aafd9ae024f2444eefea042c59ffd87c29fac3f4675c49124785b417da34b784",
+      "byte_size": 26
+    },
+    {
+      "id": "ee512ae9-74c7-4212-85c6-92ae088164b8",
+      "status": "READY",
+      "storage_uri": "s3://dpp-lifecycle307-online/fixture/a.csv",
+      "checksum_value": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+      "byte_size": 27
+    }
+  ],
+  "copies": [
+    {
+      "id": "56ec6145-f6a6-4908-a13d-4fc56587b7e5",
+      "dataset_version_id": "ee512ae9-74c7-4212-85c6-92ae088164b8",
+      "namespace": "dpp-lifecycle307-online",
+      "object_key": "fixture/a.csv",
+      "provider_version": "67c92bd9-3ed2-4a72-aa51-b73b0a518417",
+      "content_sha256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+      "byte_size": 27
+    },
+    {
+      "id": "1e92a5fb-6ad9-4d1e-b38d-bd7538410241",
+      "dataset_version_id": "9fdae67b-5420-438a-8e20-62688e7c5461",
+      "namespace": "dpp-lifecycle307-online",
+      "object_key": "fixture/b.csv",
+      "provider_version": "1403204c-2dfe-4dc2-8077-17e2f1e06760",
+      "content_sha256": "aafd9ae024f2444eefea042c59ffd87c29fac3f4675c49124785b417da34b784",
+      "byte_size": 26
+    },
+    {
+      "id": "90657173-e601-42bd-9fde-a8962e208aa7",
+      "dataset_version_id": "ee512ae9-74c7-4212-85c6-92ae088164b8",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "object_key": "archive/a.csv",
+      "provider_version": "8c0c9716-fe02-47fa-b1f6-b0dd1db43df5",
+      "content_sha256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+      "byte_size": 27
+    },
+    {
+      "id": "915c7e2e-59f2-49a9-be28-555ace91c107",
+      "dataset_version_id": "ee512ae9-74c7-4212-85c6-92ae088164b8",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "object_key": "fixture/a.csv",
+      "provider_version": "a84dceb0-5475-4359-89cc-0881f65483d3",
+      "content_sha256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+      "byte_size": 27
+    },
+    {
+      "id": "cae2ba87-c148-4da8-8dff-08b1d2ef3002",
+      "dataset_version_id": "9fdae67b-5420-438a-8e20-62688e7c5461",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "object_key": "fixture/b.csv",
+      "provider_version": "b6ba9bc5-17fa-4a81-98af-ebefee25f3d2",
+      "content_sha256": "aafd9ae024f2444eefea042c59ffd87c29fac3f4675c49124785b417da34b784",
+      "byte_size": 26
+    },
+    {
+      "id": "f2b94eff-2c6f-4e78-910e-8533a966183a",
+      "dataset_version_id": "ee512ae9-74c7-4212-85c6-92ae088164b8",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "object_key": "restore/online-a.csv",
+      "provider_version": "92f990a0-f1b5-468e-921d-c5543fbec821",
+      "content_sha256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+      "byte_size": 27
+    }
+  ],
+  "operations": [
+    {
+      "id": "7dbe1ab6-cfe4-448b-ab12-c90fefd2adfa",
+      "action": "ARCHIVE",
+      "source_copy_id": "56ec6145-f6a6-4908-a13d-4fc56587b7e5",
+      "target_copy_id": "90657173-e601-42bd-9fde-a8962e208aa7",
+      "target_key": "archive/a.csv",
+      "provider_version": "8c0c9716-fe02-47fa-b1f6-b0dd1db43df5",
+      "discovery_id": "1d655133-c411-451d-8508-b4742e793c79",
+      "verified": true,
+      "original_send_count": 1
+    },
+    {
+      "id": "6b17784b-83af-4a35-845b-03d07e765013",
+      "action": "RESTORE",
+      "source_copy_id": "90657173-e601-42bd-9fde-a8962e208aa7",
+      "target_copy_id": "f2b94eff-2c6f-4e78-910e-8533a966183a",
+      "target_key": "restore/online-a.csv",
+      "provider_version": "92f990a0-f1b5-468e-921d-c5543fbec821",
+      "discovery_id": "995a1283-8d1a-460f-979a-09e03cec15d3",
+      "verified": true,
+      "original_send_count": 1
+    }
+  ],
+  "original_calls": [
+    {
+      "id": "d899585b-ae0b-4ed9-bce8-099fc546da2a",
+      "copy_operation_id": "7dbe1ab6-cfe4-448b-ab12-c90fefd2adfa",
+      "operation": "ARCHIVE_COPY",
+      "started_at": "2026-10-11T22:49:57.946425+08:00",
+      "http_status": 0,
+      "failure": "TRANSPORT",
+      "copy_result_version": null,
+      "invoked_at": "2026-10-11T22:49:57.961268+08:00",
+      "cost_allocations": 1
+    },
+    {
+      "id": "d87faccb-72da-4bd4-aa86-8702d9c18e19",
+      "copy_operation_id": "6b17784b-83af-4a35-845b-03d07e765013",
+      "operation": "RESTORE_COPY",
+      "started_at": "2026-10-11T22:54:34.162536+08:00",
+      "http_status": 0,
+      "failure": "TRANSPORT",
+      "copy_result_version": null,
+      "invoked_at": "2026-10-11T22:54:34.226393+08:00",
+      "cost_allocations": 1
+    }
+  ],
+  "work": [
+    {
+      "id": "602fb727-c57b-4e41-a40d-f2bbcf7d9e5c",
+      "copy_call_id": "d899585b-ae0b-4ed9-bce8-099fc546da2a",
+      "basis_ref": "durable-copy-start",
+      "runs": 2,
+      "outbox_status": "PUBLISHED",
+      "confirmations": 1
+    },
+    {
+      "id": "e33ce79e-776e-4c1e-98f6-cdea6694b002",
+      "copy_call_id": "d87faccb-72da-4bd4-aa86-8702d9c18e19",
+      "basis_ref": "durable-copy-start",
+      "runs": 1,
+      "outbox_status": "PUBLISHED",
+      "confirmations": 1
+    },
+    {
+      "id": "bbb19e6b-e668-4240-a340-5617e10af8b5",
+      "copy_call_id": "d87faccb-72da-4bd4-aa86-8702d9c18e19",
+      "basis_ref": "controlled-copy-recovery:restore-fresh-cut-request",
+      "runs": 1,
+      "outbox_status": "PUBLISHED",
+      "confirmations": 1
+    }
+  ],
+  "results": [
+    {
+      "work_id": "602fb727-c57b-4e41-a40d-f2bbcf7d9e5c",
+      "run_id": "6a21171a-136c-4c4c-85a4-a425f5cc4d1c",
+      "outcome": "COPY_ARCHIVED",
+      "terminal": true,
+      "inventory_call_id": "41e3886c-2c51-4fbe-a62f-77ffcf20d128",
+      "stat_call_id": "b32d7e6c-a37f-4126-94cb-2ff68dfbd1bd",
+      "copy_discovery_id": "1d655133-c411-451d-8508-b4742e793c79",
+      "copy_decision_id": "4f5ff28e-698f-475e-8816-444806d283b6",
+      "observed_at": "2026-10-11T22:52:59.94415+08:00"
+    },
+    {
+      "work_id": "e33ce79e-776e-4c1e-98f6-cdea6694b002",
+      "run_id": "5a80ab72-ee19-44f5-904f-37f7fa437719",
+      "outcome": "UNKNOWN_COPY_LEDGER",
+      "terminal": true,
+      "inventory_call_id": "d18bc038-2b6f-40db-a15b-237b69305699",
+      "stat_call_id": "13e20fc3-1574-4dad-a36c-083aa0a1b341",
+      "copy_discovery_id": "995a1283-8d1a-460f-979a-09e03cec15d3",
+      "copy_decision_id": "444e4caf-57c9-47ef-b521-17bf30428d73",
+      "observed_at": "2026-10-11T22:55:00.921818+08:00"
+    },
+    {
+      "work_id": "bbb19e6b-e668-4240-a340-5617e10af8b5",
+      "run_id": "2dc34715-a115-41f3-a961-c1dbe5510a18",
+      "outcome": "RESTORE_ONLINE",
+      "terminal": true,
+      "inventory_call_id": null,
+      "stat_call_id": null,
+      "copy_discovery_id": "995a1283-8d1a-460f-979a-09e03cec15d3",
+      "copy_decision_id": "ed2ee908-cd20-42d3-a063-ee164da0ab9a",
+      "observed_at": "2026-10-11T22:56:49.323899+08:00"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "4f5ff28e-698f-475e-8816-444806d283b6",
+      "operation_id": "7dbe1ab6-cfe4-448b-ab12-c90fefd2adfa",
+      "decision": "ARCHIVED",
+      "reason": "VERIFIED_SOURCE_RETAINED",
+      "checkpoint_id": null,
+      "dependency_revision": 7,
+      "occurred_at": "2026-10-11T22:52:59.920132+08:00"
+    },
+    {
+      "id": "444e4caf-57c9-47ef-b521-17bf30428d73",
+      "operation_id": "6b17784b-83af-4a35-845b-03d07e765013",
+      "decision": "UNKNOWN",
+      "reason": "INDEPENDENT_LEDGER_UNAVAILABLE",
+      "checkpoint_id": null,
+      "dependency_revision": 11,
+      "occurred_at": "2026-10-11T22:55:00.894887+08:00"
+    },
+    {
+      "id": "ed2ee908-cd20-42d3-a063-ee164da0ab9a",
+      "operation_id": "6b17784b-83af-4a35-845b-03d07e765013",
+      "decision": "ONLINE",
+      "reason": "CURRENT_LEDGER_AND_POLICY_ALLOWED",
+      "checkpoint_id": "ca4cf6d5-5909-4b49-9496-c49299ee880c",
+      "dependency_revision": 12,
+      "occurred_at": "2026-10-11T22:56:49.262799+08:00"
+    }
+  ],
+  "physical_calls": 40,
+  "observations": 40,
+  "known_invocations": 40,
+  "physical_cost_allocations": 40,
+  "unknown_without_cost": 0,
+  "native_delete_attempts": 0,
+  "absence_receipts": 0,
+  "copy_discoveries": 2,
+  "native_lookup_calls": 6,
+  "verify_calls": 2
+}

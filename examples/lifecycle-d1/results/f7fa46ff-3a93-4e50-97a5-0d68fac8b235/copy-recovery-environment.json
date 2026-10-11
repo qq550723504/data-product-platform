@@ -1,0 +1,36 @@
+{
+  "source_head": "6961fde137046f6eb335e9924ba00bc56a7361ff",
+  "project": "dpp-lifecycle307-f7fa46ff",
+  "independent_witness": "private host directory outside Core/provider/Redis volumes; worker mount read-only",
+  "source_hashes": {
+    "apps/platform/cmd/lifecycle-fixture-archive/copy_recovery.go": "a22588cc064e9eb40554c128ed89e54ae55b72df4e185edeaf6d875505d9470e",
+    "apps/platform/internal/platform/storage/lifecycle_copy_recovery.go": "a53d7d21e6869a5a48823768990c5696f074868affae6ad640c572da61b2ad96",
+    "apps/platform/cmd/lifecycle-fixture-recovery/main.go": "94e968c23df320a39df6dc327d0456493589ab04101e437e26e2283ab069a0d7",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "259ceb5ab945c38d36ccf00f2b362dbd1dcf7f1dad6f64d6f3bd935b74645e0f",
+    "apps/platform/internal/platform/storage/lifecycle_copy_fixture_fault.go": "20c0f7b6ca332c464b0feff8dc5a45fee5e8460c3b4f003b76968639b426b58c",
+    "apps/platform/internal/lifecycle/application/copy_recovery.go": "50a4016348a372bbe5494501c8230d5fbf1bf68779a35fe1af14bdb497e515f7",
+    "apps/platform/internal/lifecycle/pilot/copy_recovery.go": "05fcb13031659c8f52db9ccaf9d6db3852768810f517b13573d7c3488c94d5ea",
+    "apps/platform/internal/lifecycle/application/copy_service.go": "5e19664fa1539337ec5c835bcdd920f34c5affad9ac99a5d34bff9025796be14",
+    "apps/platform/cmd/lifecycle-fixture-recovery/copy_crash.go": "cb30039fe45f39040e0e0fec30af02c1757a6c8703aee5842f0066f818b83b0a",
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "4455ee29449178f31810c25c71c20c2bdbdc0f12999a20f03333d928fcd20044"
+  },
+  "cleanup": 0,
+  "network_id": "4265eef0bf80c7dca4ee1e978ec09c5fc2ad98178f9a12a1bd76099c64bc40ff",
+  "incarnation_id": "44936d04-0559-41ea-b6f2-61ffd02123df",
+  "worker": "READ_ONLY; no root/COPY/DELETE credentials",
+  "run_id": "f7fa46ff-3a93-4e50-97a5-0d68fac8b235",
+  "native_delete": "DENY_ALL",
+  "worker_binary_sha256": "6bc11d66bb3f64f3ae07a1c3b508350b3c577ab3437d1436e4d6ae6bee576154",
+  "main_sha": "1892cd76c4ee578896ddfb3c6f4a7252bfacc51b",
+  "producer_binary_sha256": "36d3efc94a4c8b305f86a34a4b0c4f9c827720f8a39b96c688389631c73edcb9",
+  "internal": true,
+  "migrations_through": 64,
+  "host_ports": [],
+  "workspace_id": "98a94425-6526-421b-a791-83db9347e83c",
+  "retained_volumes": [
+    "dpp-lifecycle307-f7fa46ff-postgres",
+    "dpp-lifecycle307-f7fa46ff-objects",
+    "dpp-lifecycle307-f7fa46ff-redis-data"
+  ],
+  "provider_instance_id": "73f3fc19-803b-42fb-8650-c73cda6ee834"
+}

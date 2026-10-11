@@ -1,0 +1,28 @@
+{
+  "action": "disable",
+  "scenario": "copy-final-seal",
+  "source_head": "6961fde137046f6eb335e9924ba00bc56a7361ff",
+  "recorded_before_start": "2026-10-11T15:05:07.4318650Z",
+  "credentials": "IAM_PROVISIONING_ONLY",
+  "run_id": "f7fa46ff-3a93-4e50-97a5-0d68fac8b235",
+  "role": "copy-admin",
+  "expected_exit": 0,
+  "cleanup": 0,
+  "source_hashes": {
+    "apps/platform/internal/platform/storage/lifecycle_copy_fixture_fault.go": "20c0f7b6ca332c464b0feff8dc5a45fee5e8460c3b4f003b76968639b426b58c",
+    "apps/platform/internal/platform/storage/lifecycle_copy_recovery.go": "a53d7d21e6869a5a48823768990c5696f074868affae6ad640c572da61b2ad96",
+    "apps/platform/cmd/lifecycle-fixture-archive/main.go": "7fa4caeadb92dbafd375d38e63f847b32fde04e8406f834b8e5965c139d85f22",
+    "apps/platform/internal/lifecycle/application/copy_service.go": "5e19664fa1539337ec5c835bcdd920f34c5affad9ac99a5d34bff9025796be14",
+    "apps/platform/internal/lifecycle/application/copy_recovery.go": "50a4016348a372bbe5494501c8230d5fbf1bf68779a35fe1af14bdb497e515f7",
+    "apps/platform/cmd/lifecycle-fixture-recovery/copy_crash.go": "cb30039fe45f39040e0e0fec30af02c1757a6c8703aee5842f0066f818b83b0a",
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "4455ee29449178f31810c25c71c20c2bdbdc0f12999a20f03333d928fcd20044",
+    "apps/platform/cmd/lifecycle-fixture-recovery/main.go": "94e968c23df320a39df6dc327d0456493589ab04101e437e26e2283ab069a0d7",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "259ceb5ab945c38d36ccf00f2b362dbd1dcf7f1dad6f64d6f3bd935b74645e0f",
+    "apps/platform/internal/lifecycle/pilot/copy_recovery.go": "05fcb13031659c8f52db9ccaf9d6db3852768810f517b13573d7c3488c94d5ea",
+    "apps/platform/cmd/lifecycle-fixture-archive/copy_recovery.go": "326bda571afa50f4a72e928c9af5e51538544e84e39b4174d1d3a613e723aa26"
+  },
+  "native_delete": 0,
+  "gateway_sha256": "2582a33a3dd7c6912143e5308c7a4ee24bf5c09343585c354e0204367872d855",
+  "binary_sha256": "36d3efc94a4c8b305f86a34a4b0c4f9c827720f8a39b96c688389631c73edcb9",
+  "helper_id": "a6eb73e29495be84f08d49ba039b0f4a2f577ba7cdf70a8934e505310f620430"
+}

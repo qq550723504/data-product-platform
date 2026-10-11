@@ -1,0 +1,15 @@
+{
+  "action": "copy-witness",
+  "expected_exit": 0,
+  "scenario": "independent-cut-after-restore-unknown",
+  "role": "copy-producer",
+  "credentials": "COPY_ONLY_NO_ROOT_NO_DELETE",
+  "recorded_before_start": "2026-10-11T14:56:04.9853306Z",
+  "native_delete": 0,
+  "cleanup": 0,
+  "gateway_sha256": "5ecc7a9cbd91386bbb92d69d409d495ca565d12273c7f5e93f54869ddd07dae6",
+  "binary_sha256": "36d3efc94a4c8b305f86a34a4b0c4f9c827720f8a39b96c688389631c73edcb9",
+  "run_id": "f7fa46ff-3a93-4e50-97a5-0d68fac8b235",
+  "helper_id": "976a17522dcff08c553bdaf7a36a46897fffa26f8a56464e75718b7d5ca8ef9d",
+  "source_head": "6961fde137046f6eb335e9924ba00bc56a7361ff"
+}

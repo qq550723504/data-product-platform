@@ -10,21 +10,27 @@ No second scheduler, queue or durable workflow runtime is introduced. Temporal
 is a mature alternative, but this bounded read-only reconciliation does not justify
 a second runtime or its operating cost; the current Asynq/outbox capabilities suffice.
 
-Migration 63 follows main's external usage migration 58 and D1 59–62. Routing is
-`c1-v26+external-core1+execution1+usage1+lifecycle-recovery1`. Existing event
-obligations remain frozen; only new `LifecycleDispositionRecoveryRequested` events
-owe `lifecycle-recovery-queue`. Old retention-only events are not reinterpreted.
-The idle C1 Draft's migration-58 conflict with main remains a separate owner's gap.
+Unpublished D1 migrations are now **60–64**, after actual main/C1 migration 59
+(`1892cd76c4ee578896ddfb3c6f4a7252bfacc51b`, exact C1 candidate `f114e506`).
+Migration 64 owns DELETE and COPY recovery facts. Routing is
+`c1-v26+ext1+exec1+usage1+rem1+life2`, within the existing 64-character
+outbox version contract for both profiles, including `+governance`. Both new recovery-request events owe the
+existing `lifecycle-recovery-queue`; existing C1/external/execution/usage obligations
+remain intact. The corresponding main push CI `38147297060` is SUCCESS; this is
+base-main evidence, not CI or merge evidence for the unpublished D1 candidate.
 
 2026-10-11 coordination checkpoint: D1 has already migrated and accepted the retained
 native fixture at **59–63** (including worker recovery 63). Its schema, binaries and
 historical evidence stay unchanged. The runner uses the latest applied version as
 its upgrade boundary: C1/64 cannot merge first and then safely admit D1/59–63.
 The selected publication order is **C1/59 first, then unpublished D1 files 60–64**.
-D1 file renumbering and fresh isolated PostgreSQL upgrade validation follow the
-stable C1 candidate; do not apply that candidate to this retained fixture. Current
-native acceptance remains bound to its original 59–63 source. No C1 files or
-environment are changed by this lifecycle writer; D1 is not yet a merge candidate.
+D1 file renumbering is complete. New retained PostgreSQL databases prove main/58
+to C1/59 to D1/64, actual-main/59 to final D1/64, and fresh final D1/64 installs.
+The prior accepted native environments remain bound to their original 59–63
+sources; no migration was applied there. Native COPY recovery runs separately in
+new `dpp-lifecycle307-f7fa46ff` at 64. D1 is still unpublished and Issue #307 OPEN.
+D1 currently owns migration numbers 60–64 and the lifecycle additions in routing;
+later slices must preserve D1/60's CostAllocation single-subject/workspace guards.
 
 ## Recovery contract
 
@@ -58,18 +64,57 @@ The existing pending-work scan repairs a confirmed enqueue subsequently lost wit
 Redis. Asynq still owns execution. A completed/denied recovery is not re-enqueued;
 archived or exhausted UNKNOWN work remains visible in Core.
 
+## COPY / RESTORE UNKNOWN recovery
+
+An original custody call commits its single-send start, strong copy-operation
+identity, recovery request and outbox wake before I/O. The existing work table has
+an exclusive typed subject: deletion provider attempt OR original COPY call.
+The same scanner, Asynq queue, outbox obligation and session advisory-lock mechanism
+are reused; COPY workers have no CreateCopy/DELETE/hold-release method or credential.
+
+Read-only discovery requires a complete single-page target-namespace version list,
+exactly one non-marker version at the frozen target key, then an exact-version HEAD
+with matching native `lifecycle-operation` UUID and byte size. Missing, ambiguous,
+truncated, denied or mismatched observations cannot open a copy and never resend the
+original request. A separate immutable `lifecycle_copy_discovery` joins original
+call, inventory, exact HEAD, operation and recovered version. Materialization uses
+this fact; it does not fabricate a successful original COPY observation. The
+existing successful-ACK path remains available under its original proof checks.
+If a materialization explicitly names a discovery, its operation, original call,
+version and time must match even when the original call also has an ACK. The
+final guard was validated after native sealing in two further isolated databases;
+the native evidence retains its original SQL hash and is not relabelled as that
+later schema revision.
+
+Recovery refreshes source and target retention/hold, hashes bounded exact target
+bytes through the existing instrumented adapter, then re-authorizes under the
+workspace fence. ARCHIVED retains its source. RESTORE needs the latest complete
+independent ledger chain, matching Core checkpoint, epoch, state hash and current
+dependency revision. The worker's independent-ledger mount is read-only. A missing
+or stale witness produces UNKNOWN; a separate authorized witness export plus a new
+explicit recovery request can re-evaluate. Current restrictions still produce
+BLOCKED. Historical UNKNOWN/ONLINE decisions and original provider observations
+remain append-only. ONLINE is a historical fixture custody/use admission; a later
+content-use restriction still blocks current use, and this does not implement
+production certification/rights delivery.
+
 ## Composition and acceptance boundary
 
 `cmd/worker` registers the frozen queue handler and task handler. An absent recovery
 configuration fails closed. `LIFECYCLE_RECOVERY_CONFIG` may enable only a finite
 synthetic two-namespace environment with pinned workspace/provider/incarnation and
 read-only native credentials. This is not production lifecycle policy or IAM.
+`LIFECYCLE_COPY_RECOVERY_CONFIG` selects the finite COPY composition, with a
+separate read-only native principal, pinned epoch/DatasetVersion and external
+read-only witness path. The normal application default remains disabled.
 
 `cmd/lifecycle-fixture-recovery` is the bounded acceptance composition of the same
 queue/outbox/authority/journal/recovery implementation. Its one-shot SQL fault input
 is labelled `SYNTHETIC_SQL_FAULT_INPUT_NO_NATIVE_DELETE_APPROVAL`; synthetic approval,
 dependency and pending-start facts test the SQL protocol, not the real deletion gate.
-It has no Deleter or payload reader. Native metadata recovery of that input must be
+It has no Deleter; deletion recovery has no payload reader. COPY recovery reads
+only bounded frozen target versions for internal checksum verification. Native
+metadata recovery of that SQL fault input must be
 reported separately from actual crash-after-delete recovery.
 
 Objects and all owned named volumes are retained. The confirmed 4abcfca5
@@ -81,3 +126,14 @@ environment/key/version list and explicit human confirmation. The final Docker
 snapshot detected missing exited helpers and two unrelated anonymous volumes,
 with caller UNKNOWN; global/helper retention is not claimed PASS. All 11 owned
 fixture volumes, running services and current survivor objects were verified.
+
+The new COPY recovery evidence is
+`examples/lifecycle-d1/results/f7fa46ff-3a93-4e50-97a5-0d68fac8b235/copy-recovery-review.md`.
+It covers actual native COPY response loss, process exit after durable lookup,
+Asynq orphan recovery, broker failure/outbox repair, independent-ledger UNKNOWN to
+fresh ONLINE, current restriction to fresh BLOCKED, duplicate replay and revoked
+window with zero additional I/O. All 7 versions and all owned volumes are retained;
+70 physical calls have 70 distinct typed cost allocations. DELETE/cleanup are zero.
+The 17 pre-turn containers and 11 pre-turn owned volumes are unchanged in the
+current preservation snapshot. New DELETE remains NOT_RUN and requires a reviewed
+environment/exact key/version list plus explicit confirmation.

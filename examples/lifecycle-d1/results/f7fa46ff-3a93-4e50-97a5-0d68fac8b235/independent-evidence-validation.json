@@ -1,0 +1,12 @@
+{
+  "native_retained_exact_versions": 7,
+  "native_delete": 0,
+  "cleanup": 0,
+  "original_unknown_observations": "PASS",
+  "credential_scan": "PASS",
+  "checked_at": "2026-10-11T15:09:59.8522677Z",
+  "duplicate_zero_io": "PASS",
+  "physical_call_cost_bijection": "PASS",
+  "revoked_window_zero_io": "PASS",
+  "original_versions_and_protection": "PASS"
+}

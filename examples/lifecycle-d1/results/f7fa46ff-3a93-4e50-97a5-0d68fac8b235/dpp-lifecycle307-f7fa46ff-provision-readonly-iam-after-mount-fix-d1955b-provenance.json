@@ -1,0 +1,15 @@
+{
+  "scenario": "provision-readonly-iam-after-mount-fix",
+  "gateway_sha256": "2582a33a3dd7c6912143e5308c7a4ee24bf5c09343585c354e0204367872d855",
+  "role": "copy-admin",
+  "expected_exit": 0,
+  "action": "recovery-provision",
+  "helper_id": "3651b9639677989849aa876db84d368878206c42d679596cc765b13c30f0b740",
+  "cleanup": 0,
+  "native_delete": 0,
+  "credentials": "IAM_PROVISIONING_ONLY",
+  "run_id": "f7fa46ff-3a93-4e50-97a5-0d68fac8b235",
+  "recorded_before_start": "2026-10-11T14:49:34.6935702Z",
+  "source_head": "6961fde137046f6eb335e9924ba00bc56a7361ff",
+  "binary_sha256": "36d3efc94a4c8b305f86a34a4b0c4f9c827720f8a39b96c688389631c73edcb9"
+}
