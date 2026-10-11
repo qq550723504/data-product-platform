@@ -228,3 +228,29 @@ func TestRecoveryDeleteMarkerIsNotAbsence(t *testing.T) {
 		t.Fatal("marker proved absence")
 	}
 }
+
+func TestRecoveryResumesCommittedReceiptsBeforePlanCompletion(t *testing.T) {
+	pool := planDatabase(t)
+	f, s, i := recoveryFixture(t, pool)
+	ctx := context.Background()
+	i.present = false
+	a := requireDispatch(t, f, "receipt-crash-a", 0)
+	b := requireDispatch(t, f, "receipt-crash-b", 1)
+	for n, attempt := range []uuid.UUID{a.AttemptID, b.AttemptID} {
+		inv, err := i.InspectNamespace(ctx, f.copies[n])
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err = s.execution.VerifyAbsentInScope(ctx, f.header("committed-receipt-"+attempt.String()), attempt, inv); err != nil {
+			t.Fatal(err)
+		}
+	}
+	// Simulate a crash after both receipt commits but before completion/result.
+	calls := i.calls.Load()
+	if err := s.RunRecovery(ctx, f.w, recoveryWork(t, pool, b.AttemptID)); err != nil {
+		t.Fatal(err)
+	}
+	if i.calls.Load() != calls || count(t, pool, `SELECT count(*) FROM lifecycle_plan_completion`) != 1 || count(t, pool, `SELECT count(*) FROM lifecycle_reconciliation_result WHERE outcome='ABSENT_VERIFIED'`) != 1 {
+		t.Fatal("committed receipt recovery reopened I/O or lost plan completion")
+	}
+}

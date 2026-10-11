@@ -75,14 +75,21 @@ type sqlAuthority struct{ path string }
 
 func (a sqlAuthority) AuthorizeLifecycle(_ context.Context, _ pgx.Tx, w uuid.UUID, cap string, at time.Time) (principal.RequestPrincipal, error) {
 	c, e := load(a.path)
-	if e != nil || !c.SeedEnabled || c.Mode != "seed" || w != c.WorkspaceID || !at.Before(c.ExpiresAt) {
+	if e != nil || w != c.WorkspaceID || !at.Before(c.ExpiresAt) {
 		return principal.RequestPrincipal{}, principal.ErrCapabilityDenied
 	}
 	caps := map[string]struct{}{lc.CapabilityPreparePlan: {}, lc.CapabilityRestrictUse: {}, lc.CapabilityApproveDisposition: {}, lc.CapabilityDispatch: {}}
+	subject := "synthetic-sql-fault-input-only"
+	if c.Mode == "review" && !c.SeedEnabled {
+		caps = map[string]struct{}{lc.CapabilityPreparePlan: {}}
+		subject = "lifecycle-scope-review-only"
+	} else if c.Mode != "seed" || !c.SeedEnabled {
+		return principal.RequestPrincipal{}, principal.ErrCapabilityDenied
+	}
 	if _, ok := caps[cap]; !ok {
 		return principal.RequestPrincipal{}, principal.ErrCapabilityDenied
 	}
-	return principal.RequestPrincipal{WorkspaceID: w, ActorID: c.ActorID, Subject: "synthetic-sql-fault-input-only", Capabilities: caps}, nil
+	return principal.RequestPrincipal{WorkspaceID: w, ActorID: c.ActorID, Subject: subject, Capabilities: caps}, nil
 }
 func (a sqlAuthority) AuthorizePlan(ctx context.Context, tx pgx.Tx, w uuid.UUID) (principal.RequestPrincipal, error) {
 	return a.AuthorizeLifecycle(ctx, tx, w, lc.CapabilityPreparePlan, time.Now().UTC())
@@ -281,6 +288,39 @@ func run(ctx context.Context, path string, c config) error {
 	defer outbox.ConfigureAppendObligation(nil)
 	if c.Mode == "seed" {
 		return seed(ctx, path, c, pool)
+	}
+	if c.Mode == "review" {
+		if c.SeedEnabled || c.CopyID == uuid.Nil {
+			return lc.ErrStorageScope
+		}
+		var m struct {
+			WorkspaceID uuid.UUID `json:"workspace_id"`
+			Objects     []struct {
+				CopyID         uuid.UUID `json:"copy_id"`
+				Namespace, Key string
+				Version        string `json:"version_id"`
+				Retention      string `json:"retention_mode"`
+				LegalHold      bool   `json:"legal_hold"`
+			}
+		}
+		b, e := os.ReadFile(c.Manifest)
+		if e != nil || json.Unmarshal(b, &m) != nil || m.WorkspaceID != c.WorkspaceID {
+			return lc.ErrStorageScope
+		}
+		allowed := false
+		for _, v := range m.Objects {
+			if v.CopyID == c.CopyID && v.Namespace == "dpp-lifecycle307-quarantine" && v.Key == "fixture/b.csv" && v.Retention == "NONE" && !v.LegalHold {
+				allowed = true
+			}
+		}
+		if !allowed {
+			return lc.ErrStorageScope
+		}
+		p, e := lc.NewPlanService(transaction.NewManager(pool), &infrastructure.PostgresRepository{}, sqlAuthority{path}).PrepareDeletePlan(ctx, lc.PrepareDeletePlanCommand{WorkspaceID: c.WorkspaceID, CopyIDs: []uuid.UUID{c.CopyID}, IdempotencyKey: "worker-real-delete-review-plan"})
+		if e != nil {
+			return e
+		}
+		return write(filepath.Join(c.OutputDirectory, "pending-delete-plan.json"), map[string]any{"plan_id": p.ID, "scope_hash": p.ContentHash, "status": p.Status, "targets": p.Targets, "approval": "PENDING_USER_CONFIRMATION", "native_delete_invocations": 0, "storage_invocations": 0, "current_gate": "MUST_RECHECK_AFTER_CONFIRMATION"})
 	}
 	if c.Mode == "witness" {
 		return witness(ctx, c, pool)
