@@ -10,7 +10,7 @@ export async function detectAnomaly(datasetId:string,versionId:string,_old:Batch
     if(!batchEnabled())throw new Error("受控操作未开放");
     const [dataset,version]=await Promise.all([platform.dataset(datasetId),platform.datasetVersion(versionId)]);
     if(dataset.workspaceId!==workspace()||version.datasetId!==datasetId||dataset.datasetType!=="RAW")throw new Error("只检测当前 workspace 的 RAW 原值");
-    const result=await core<{caseId?:string;assessmentId:string;decision:string}>(`/workspaces/${workspace()}/quality-remediations/detect`,"POST",{versionId},`remediation-detect-${versionId}`,true);
+    const result=await core<{caseId?:string;assessmentId:string;decision:string}>(`/workspaces/${workspace()}/quality-remediations/detect`,"POST",{versionId},`remediation-detect-${versionId}`,"human-decision");
     revalidatePath(`/datasets/${datasetId}/versions/${versionId}/remediation`);
     return {message:result.caseId?"已检测并登记异常；请分派后选择固定规则处理。":`未登记可由负数隔离规则处理的异常；质量门禁为 ${result.decision}，评测事实已保留。`};
   }catch(e){return {message:e instanceof Error?e.message:"检测结果未知；核对原请求"};}
@@ -20,7 +20,7 @@ export async function remediate(datasetId:string,versionId:string,caseId:string,
  void _old;
  try{
   if(!batchEnabled()||!["assign","execute","retry","recheck","close"].includes(command))throw new Error("Command 未开放");
-  const detail=await core<{case:{version_id:string;workspace_id:string}}>(`/workspaces/${workspace()}/quality-remediations/${caseId}`,"GET",undefined,undefined,true);
+  const detail=await core<{case:{version_id:string;workspace_id:string}}>(`/workspaces/${workspace()}/quality-remediations/${caseId}`,"GET",undefined,undefined,"human-decision");
   const version=await platform.datasetVersion(versionId);
   if(detail.case.version_id!==versionId||version.datasetId!==datasetId)throw new Error("处置对象不匹配");
   const key=String(form.get("requestKey")??"");if(!/^[a-zA-Z0-9_-]{1,128}$/.test(key))throw new Error("保留有效请求标识后重试");
@@ -36,7 +36,7 @@ export async function remediate(datasetId:string,versionId:string,caseId:string,
    body={reason,workflowVersionId:workflow,outputDatasetId:output.id,targetPeriod:"2025-03",inputs:[...rec.bindings.map(b=>({name:b.code,datasetVersionId:b.versionId})),{name:"enterprise_resolution",datasetVersionId:resolutions[0].outputDatasetVersionId}]};
   }
   if(command==="recheck")body={executionLinkId:String(form.get("executionLinkId")??"")};
-  await core(`/workspaces/${workspace()}/quality-remediations/${caseId}/${command}`,"POST",body,key,true);
+  await core(`/workspaces/${workspace()}/quality-remediations/${caseId}/${command}`,"POST",body,key,"human-decision");
   revalidatePath(`/datasets/${datasetId}/versions/${versionId}/remediation`);
   return {message:"处置事实已记录；请刷新查看执行或独立评测结果。人工关闭不会更改质量或认证。"};
  }catch(e){return {message:e instanceof Error?e.message:"响应未知；保留请求标识并核对原执行"};}

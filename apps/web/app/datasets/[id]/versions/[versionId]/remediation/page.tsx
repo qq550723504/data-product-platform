@@ -10,11 +10,11 @@ type Detail={case:Case;finding:{message:string;observed:{affectedCount?:number;t
 export default async function RemediationPage({params}:{params:Promise<{id:string;versionId:string}>}){
  const {id,versionId}=await params;const back=`/datasets/${id}/versions/${versionId}`;
  try{
-  const [dataset,version,list,accepted]=await Promise.all([platform.dataset(id),platform.datasetVersion(versionId),core<{items:Case[]}>(`/workspaces/${workspace()}/quality-remediations?versionId=${versionId}`,"GET",undefined,undefined,true),batches()]);
+  const [dataset,version,list,accepted]=await Promise.all([platform.dataset(id),platform.datasetVersion(versionId),core<{items:Case[]}>(`/workspaces/${workspace()}/quality-remediations?versionId=${versionId}`,"GET",undefined,undefined,"human-decision"),batches()]);
   if(dataset.workspaceId!==workspace()||version.datasetId!==id)throw new Error("版本不属于当前 workspace");
   const choices:Array<{id:string;name:string}>=[];
   for(const b of accepted.filter(b=>b.state==="ACCEPTED")){if((await receipt(b.id)).bindings.some(v=>v.versionId===versionId))choices.push({id:b.id,name:b.request.batchKey});}
-  const details=await Promise.all(list.items.map(c=>core<Detail>(`/workspaces/${workspace()}/quality-remediations/${c.id}`,"GET",undefined,undefined,true)));
+  const details=await Promise.all(list.items.map(c=>core<Detail>(`/workspaces/${workspace()}/quality-remediations/${c.id}`,"GET",undefined,undefined,"human-decision")));
   return <><BackLink href={back}>返回原始版本</BackLink><PageHeader title="用电异常处置" description="原始值保留。固定规则隔离负数，产出新版本后独立复检；认证与当前交付授权分别检查。"/>
    <section className="detail-card"><h2>发现异常</h2><p>来源：{dataset.name}；版本 <span className="mono">{versionId}</span>。只检测已接纳 RAW 的原值，未检测不表示合格。</p><CommandButton action={detectAnomaly.bind(null,id,versionId)} label="检测并登记负数用电异常" disabled={dataset.datasetType!=="RAW"}/></section>
    {details.map(d=>{const latest=d.attempts.at(-1);const assigned=d.assignments.at(-1);const quality=d.rechecks.at(-1);const closed=Boolean(d.closure);const recovering=d.rechecks.filter(q=>q.outcome==="PENDING");return <section className="detail-card" key={d.case.id}>
