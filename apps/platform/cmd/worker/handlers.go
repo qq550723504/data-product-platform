@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	externalqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/transport/queue"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	workflowqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/transport/queue"
@@ -53,13 +54,16 @@ func executionQueueHandler(enqueuer workflowqueue.ExecutionEnqueuer) outbox.Hand
 	}
 }
 
-func workerHandlerRegistrations(service governanceProjector, enqueuer workflowqueue.ExecutionEnqueuer, logger *slog.Logger) []outbox.HandlerRegistration {
-	registrations := make([]outbox.HandlerRegistration, 0, 2)
+func workerHandlerRegistrations(service governanceProjector, enqueuer workflowqueue.ExecutionEnqueuer, external externalqueue.Enqueuer, logger *slog.Logger) []outbox.HandlerRegistration {
+	registrations := make([]outbox.HandlerRegistration, 0, 3)
 	if enqueuer != nil {
 		registrations = append(registrations, outbox.HandlerRegistration{
 			Name:   routing.HandlerExecutionQueue,
 			Handle: executionQueueHandler(enqueuer),
 		})
+	}
+	if external != nil {
+		registrations = append(registrations, outbox.HandlerRegistration{Name: routing.HandlerExternalPublicationQueue, Handle: externalqueue.OutboxHandler(external)})
 	}
 	if service != nil {
 		registrations = append(registrations, outbox.HandlerRegistration{
@@ -73,7 +77,7 @@ func workerHandlerRegistrations(service governanceProjector, enqueuer workflowqu
 // newOutboxDispatcher builds the dispatcher and validates the routing contract
 // against the registered handlers. It fails when a required handler is missing,
 // so an obligation can never be completed by an unregistered consumer.
-func newOutboxDispatcher(pool *pgxpool.Pool, logger *slog.Logger, service governanceProjector, enqueuer workflowqueue.ExecutionEnqueuer) (*outbox.Dispatcher, error) {
+func newOutboxDispatcher(pool *pgxpool.Pool, logger *slog.Logger, service governanceProjector, enqueuer workflowqueue.ExecutionEnqueuer, external externalqueue.Enqueuer) (*outbox.Dispatcher, error) {
 	router, err := routing.NewRouter(service != nil)
 	if err != nil {
 		return nil, err
@@ -82,5 +86,5 @@ func newOutboxDispatcher(pool *pgxpool.Pool, logger *slog.Logger, service govern
 		PollInterval: time.Second,
 		ConsumerName: "outbox-dispatcher",
 		Logger:       logger,
-	}, router, workerHandlerRegistrations(service, enqueuer, logger)...)
+	}, router, workerHandlerRegistrations(service, enqueuer, external, logger)...)
 }

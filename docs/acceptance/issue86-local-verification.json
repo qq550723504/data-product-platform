@@ -1,0 +1,198 @@
+{
+  "issue": 86,
+  "date": "2026-10-11T19:27:01.2662835+08:00",
+  "branch": "codex/issue86-execution",
+  "base_sha": "21762737a76033667df4a138368070868a34fbf8",
+  "source_fingerprint_scope": "Changed Go/SQL only; documentation/report changes excluded",
+  "source": [
+    {
+      "path": "apps/platform/cmd/worker/handlers.go",
+      "sha256": "e699b5918159042c49e82ac989bcf05b40987a3244a310d81e293926de9f3956"
+    },
+    {
+      "path": "apps/platform/cmd/worker/main.go",
+      "sha256": "7cad5330f3de208f4df6cc9f387874bbae819373ef6644864d0b2f25bace770b"
+    },
+    {
+      "path": "apps/platform/cmd/worker/routing_test.go",
+      "sha256": "27f19cf1edfe9f2d2b815de85a1bac8040180903274d27a7c2f886bc5a82214a"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/application/execution.go",
+      "sha256": "bb9273c9c9f8c9a6cabc8d6331f5b88c728216f1783152109404108e6092ad25"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/domain/execution_test.go",
+      "sha256": "01dfd55b16ec9c9951878bf27dc99dc36025f89b546dabdfd594c3d05ebf45bd"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/domain/execution.go",
+      "sha256": "aab9fd7fa9e443a990de664ba8ec4d93cbd74e50cc4b06aa98f6330f9f1f4dfd"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/domain/model.go",
+      "sha256": "c1a17c0805b903363029ac2abcb34e30e9eb96257621ce6cfdc60c158c596f65"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/infrastructure/execution.go",
+      "sha256": "75edab46a4a67ece32df260a4e6308b5498366df293c00611898993e52c11f4e"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/infrastructure/repository.go",
+      "sha256": "5cf39a8237c3e1290c65d050bdb0427698aa534c9a418e30d5c41040510f5948"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/integration/execution_migration_test.go",
+      "sha256": "c748894acabfee146d53345f7392188f02e185ed7e57569104bc89e6e8984795"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/integration/execution_test.go",
+      "sha256": "ee074d3f92f33706d05e03519b6e28fba0bac13bbe902ee43579e7b788be10a8"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/pilot/build_test.go",
+      "sha256": "7eae410c8f71c1a9c9f5dda54bc209d0e07d91ff7a08c98007edb250712e9504"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/pilot/build.go",
+      "sha256": "5894f5b77d814b7c0fd7b034825c5e564cb50cb6a3e42e32e46d63b1b6455693"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/ports/contracttest/contract.go",
+      "sha256": "359f87ba1afa0d5381eade36548e3beae5232ce2301d5dc786b8cf2a39e95873"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/ports/ports.go",
+      "sha256": "4b345215b907592677c71ded9569b5cd025d90864e4a5acb340f4c8c11da43ab"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/ports/registry_test.go",
+      "sha256": "35b89c6cc324d641b2e90cf389e498126767a8d7f47661bc8563ea9339e7b9bc"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/reference/client_test.go",
+      "sha256": "80b84e8d58dcf95ba273944ff184b15300e031992ef705c57224b4fa0d42f25a"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/reference/client.go",
+      "sha256": "48bcf60579bdbdae4743c5ea2680bd174d9bb6f7bc71d5c513e658df67e91b9a"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/testkit/provider.go",
+      "sha256": "193c4c8f8847fd438ace230233145b48177abcc86f6850b0f6995dec4305b723"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/transport/http/execution.go",
+      "sha256": "ff28c99627f985ab869bb4ab18bc745f1076f0edcd979805145e46ec813f8d6a"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/transport/http/handler.go",
+      "sha256": "87a37c164c123cfc9ccebd3d5da6f473f89fa1e66d5dda1aeba5ff2a59bcea43"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/transport/queue/task_test.go",
+      "sha256": "d730b6fc76be20c253a850d9feb4d832480d9fee164be579fb69bda52291a525"
+    },
+    {
+      "path": "apps/platform/internal/externalintegration/transport/queue/task.go",
+      "sha256": "fa028f4d63233032a7597d32c24361d4906e204899c793d38c7033f9f007f7c3"
+    },
+    {
+      "path": "apps/platform/internal/platform/outbox/execution_redis_fault_integration_test.go",
+      "sha256": "1533df72bdaba4f336abf261949e9a1bf6b61e62caa53985cb7477dd095b4af2"
+    },
+    {
+      "path": "apps/platform/internal/platform/routing/routing_test.go",
+      "sha256": "ed16c3ae962b0420ac326acf67ab83a493d7cf320b08e51d598ea636e38dde64"
+    },
+    {
+      "path": "apps/platform/internal/platform/routing/routing.go",
+      "sha256": "6b6bc289248575f09b5c5261afb965e23aec6fdf468ea906fddea17d89654ca1"
+    },
+    {
+      "path": "migrations/000057_external_publication_execution.down.sql",
+      "sha256": "711284cd8255c945a0633edaefe3c02bd5580e349810f27da709ef450c184466"
+    },
+    {
+      "path": "migrations/000057_external_publication_execution.up.sql",
+      "sha256": "9f1b8b8e8b23b115dccf2fa5f93d078f412ae667e7950f90bade5d5213beb278"
+    }
+  ],
+  "environment": {
+    "go": "go1.26.5 windows/amd64",
+    "postgres": "16.15",
+    "postgres_image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "postgres_database": "issue86_final_verified",
+    "race_database": "issue86_verified",
+    "redis": "7-alpine",
+    "redis_image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+    "redis_contract_db": 15,
+    "data": "Synthetic isolated fixtures only"
+  },
+  "checks": {
+    "full_go": {
+      "status": "PASS",
+      "command": "go test ./... -count=1",
+      "tested_packages": 75
+    },
+    "vet": {
+      "status": "PASS",
+      "command": "go vet ./..."
+    },
+    "build": {
+      "status": "PASS",
+      "command": "go build ./cmd/api ./cmd/worker ./cmd/migrate ./cmd/outbox-replay"
+    },
+    "race": {
+      "status": "PASS",
+      "command": "CGO_ENABLED=1 go test -race ./internal/externalintegration/... -count=1"
+    },
+    "migration_final": {
+      "status": "PASS",
+      "command": "go test -race ./internal/externalintegration/integration -run TestPublicationExecutionMigrationRoundTripAndConcurrentHistoricalDown -count=1 -v",
+      "note": "Final parent-first down locks and late child insertion tested after full suite; all other tested source unchanged"
+    },
+    "diff": {
+      "status": "PASS",
+      "command": "git diff --check"
+    },
+    "candidate_ci": "NOT_RUN",
+    "independent_review": "NOT_RUN",
+    "ready": "NOT_RUN",
+    "merge": "NOT_RUN",
+    "matching_main_ci": "NOT_RUN",
+    "real_provider": "NOT_RUN",
+    "production": "NOT_RUN",
+    "browser_acceptance": "NOT_RUN"
+  },
+  "preliminary_failures": [
+    "Full suite initially found two workflow fault fixtures missing the new required handler. Fixtures now register an explicit unavailable handler; routing invariants were not weakened.",
+    "An incremental retry selected residual old prioritized tasks in the used test database. Final full suite ran in a fresh owned database and passed."
+  ],
+  "logs": [
+    {
+      "path": "apps/platform/tmp/issue86/go-test.log",
+      "sha256": "5af4fa14d5aa987bb27ad8a6da60e07302c8a53a381a4d0cb46707cb7a8fdd88"
+    },
+    {
+      "path": "apps/platform/tmp/issue86/race.log",
+      "sha256": "c78eb78ad8ace75b4d10cb863f5a9f1f0c9e0b11fcb1f4a07fe548d648d3d3b5"
+    },
+    {
+      "path": "apps/platform/tmp/issue86/migration-final.log",
+      "sha256": "4266577951c2db651b47d7beef55b22ce45f1bb07466a29c1da873a0179c97f2"
+    },
+    {
+      "path": "apps/platform/tmp/issue86/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apps/platform/tmp/issue86/build.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "apps/platform/tmp/issue86/first-full-failed.log",
+      "sha256": "b8785b02793b0ed417469afdda2f224cef1edb20280024bd4abdee4ba10810e9"
+    }
+  ]
+}

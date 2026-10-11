@@ -2,6 +2,8 @@
 
 本文件拥有 #84 的模型、Command、并发和 HTTP contract。上层定位以 [NDI 集成架构](ndi-integration.md)、[ADR-0009](../adr/0009-national-data-infrastructure-integration-boundary.md)、Issue #84 / parent #47 为准；ProductRelease、Rights、Evidence 的专门契约继续拥有各自规则。
 
+以下状态表与验证结论记录 #84 的历史基线。当前 #86 的 adapter、execution/attempt/cost/reconciliation、verified REGISTERED/PUBLISHED 增量由 [External publication execution](external-publication-execution.md) 唯一拥有；不要把 #84 当时的不可达状态或无远端调用结论应用到 #86。
+
 ## Goal / Reuse Check
 
 平台记录已发布 Core ProductRelease 向多个外部 provider 的独立发布意图及身份/标识关联，内部 UUID 保持权威。当前 main `3a59b591` 没有这三种业务事实；metadata/resource_binding 是可变治理投影，annotation engine binding 是专属运行时协议，均不能充当通用外部发布历史。
@@ -21,7 +23,7 @@
 | SUBMITTING | Core 明确请求后续外部提交 | RequestExternalPublication，DRAFT→SUBMITTING、revision=1；尚无 remote dispatch |
 | REGISTERED | 经过验证的 provider 注册结果 | #86；本次不可达 |
 | PUBLISHED | 经过验证的 provider 发布结果 | #86；本次不可达 |
-| SUSPENDED / WITHDRAWN | Core 请求及已确认外部执行结果 | #86；本次不可达，不把本地状态更新当 remote containment |
+| SUSPENDED / WITHDRAWN | Core 请求及已确认外部执行结果 | 保留状态；未来独立 Command/containment contract，不把本地状态更新当 remote containment |
 
 SUBMITTING 是未执行的 durable intent，#84 不宣称已排队调用 provider。ExternalPublicationRequested 在本版本为显式 retention-only；#86 必须以新的 routing obligation/claim/reconciliation 接纳这些待执行意图，不依靠已经完成的 retention event 自动获得执行保证。没有 generic PATCH、人工 mark-registered/published、失败占位成功或外部重试接口。provider failure/attempt/cost 属 #86；此增量不发生可能计费的远端操作，不凭空记录 CostEvent。任何失败都不能修改 Core release。
 

@@ -18,7 +18,10 @@ import (
 type Handler struct {
 	Service  *app.Service
 	Resolver principal.Resolver
+	Executor *app.Executor
 }
+
+func (h *Handler) WithExecutor(e *app.Executor) *Handler { h.Executor = e; return h }
 
 func New(service *app.Service, resolver principal.Resolver) *Handler {
 	return &Handler{Service: service, Resolver: resolver}
@@ -39,6 +42,12 @@ func (h *Handler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET "+base+"/publications", h.wrap(h.publications))
 	mux.HandleFunc("GET "+base+"/publications/{id}", h.wrap(h.publication))
 	mux.HandleFunc("POST "+base+"/publications/{id}/request", h.wrap(h.request))
+	mux.HandleFunc("POST "+base+"/publications/{id}/execute", h.wrap(h.execute))
+	mux.HandleFunc("POST "+base+"/publications/{id}/retry", h.wrap(h.retry))
+	mux.HandleFunc("POST "+base+"/publications/{id}/reconcile", h.wrap(h.reconcile))
+	mux.HandleFunc("GET "+base+"/providers", h.wrap(h.providers))
+	mux.HandleFunc("GET "+base+"/publications/{id}/attempts", h.wrap(h.attempts))
+	mux.HandleFunc("GET "+base+"/publications/{id}/attempts/{attemptId}/calls", h.wrap(h.calls))
 }
 func (h *Handler) wrap(fn endpoint) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
