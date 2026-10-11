@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"net/http/httputil"
@@ -38,7 +39,12 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	workflowhop "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/hop"
 )
+
+type failedWriteConn struct{ net.Conn }
+
+func (c failedWriteConn) Write([]byte) (int, error) { return 0, io.ErrClosedPipe }
 
 type config struct {
 	DSN, Private, Output, Migrations, ControlURL, ControlToken, RootKey, RootSecret string
@@ -415,7 +421,7 @@ func TestLiveCoreBatch(t *testing.T) {
 		if l.count(`SELECT count(*) FROM cost_event c JOIN ingestion_invocation i ON i.id=c.activity_id WHERE i.operation_id=$1 AND c.pricing_mode='ACTUAL' AND c.quantity=1`, op.ID) != 1 {
 			t.Fatal("real REGISTER cost rolled back with Core projection")
 		}
-		if l.count(`SELECT count(*) FROM ingestion_invocation_outcome o JOIN ingestion_invocation i ON i.id=o.invocation_id WHERE i.operation_id=$1 AND o.provider_dispatched AND o.state='REGISTERED' AND o.remote_id<>''`, op.ID) != 1 {
+		if l.count(`SELECT count(*) FROM ingestion_invocation_outcome o JOIN ingestion_invocation i ON i.id=o.invocation_id WHERE i.operation_id=$1 AND o.dispatch_state='DISPATCHED' AND o.state='REGISTERED' AND o.remote_id<>''`, op.ID) != 1 {
 			t.Fatal("REGISTER result was not independently committed")
 		}
 		drop()
@@ -480,6 +486,34 @@ func TestLiveCoreBatch(t *testing.T) {
 		_ = json.Unmarshal(l.command(retried, "dispatch", nil, 200), &retried)
 		l.accepted(l.finish(retried))
 		l.checks["definite_no_dispatch_retry"] = "PASS"
+	})
+	t.Run("buffered-register-write-stays-unconfirmed", func(t *testing.T) {
+		l.t = t
+		op := l.prepare()
+		a := l.handler.Service.Engine.(*adapter.Adapter)
+		original := a.Client
+		clientSide, peer := net.Pipe()
+		defer peer.Close()
+		wire := &http.Transport{DialContext: func(context.Context, string, string) (net.Conn, error) { return failedWriteConn{clientSide}, nil }}
+		defer wire.CloseIdleConnections()
+		var err error
+		a.Client, err = workflowhop.NewClient(p.HopURL, p.HopUser, string(mustRead(t, p.HopPasswordFile)), adapter.NewHTTPClient(10*time.Second, wire))
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer func() { a.Client = original }()
+		l.command(op, "dispatch", nil, 503)
+		a.Client = original
+		var observed d.Operation
+		_ = json.Unmarshal(l.call("GET", "/api/v1/ingestions/"+op.ID.String(), nil, 200), &observed)
+		if observed.State != "UNKNOWN" || observed.RemoteID != "" || l.count(`SELECT count(*) FROM cost_event c JOIN ingestion_invocation i ON i.id=c.activity_id WHERE i.operation_id=$1 AND c.pricing_mode='ACTUAL'`, op.ID) != 0 || l.count(`SELECT count(*) FROM ingestion_invocation_outcome o JOIN ingestion_invocation i ON i.id=o.invocation_id WHERE i.operation_id=$1 AND o.dispatch_state='UNCONFIRMED'`, op.ID) != 1 {
+			t.Fatal("buffered or ambiguous write fabricated dispatch or safe retry")
+		}
+		l.command(op, "recover", nil, 503)
+		l.command(op, "dispatch", nil, 409)
+		l.command(op, "retry-failed", nil, 409)
+		l.empty(op)
+		l.checks["buffered_write_unconfirmed"] = "PASS"
 	})
 	t.Run("dispatch-cost-survives-result-loss", func(t *testing.T) {
 		l.t = t
@@ -1030,9 +1064,10 @@ func TestLiveCoreBatch(t *testing.T) {
 	}
 	claimedInvocations := l.count(`SELECT count(*) FROM ingestion_invocation`)
 	invocations := l.count(`SELECT count(*) FROM cost_event WHERE cost_type='INGESTION_ENGINE_INVOCATION' AND pricing_mode='ACTUAL'`)
-	definiteNoDispatch := l.count(`SELECT count(*) FROM ingestion_invocation_outcome WHERE NOT provider_dispatched`)
+	definiteNoDispatch := l.count(`SELECT count(*) FROM ingestion_invocation_outcome WHERE dispatch_state='NOT_DISPATCHED'`)
+	unconfirmedDispatch := l.count(`SELECT count(*) FROM ingestion_invocation_outcome WHERE dispatch_state='UNCONFIRMED'`)
 	unobservedClaims := l.count(`SELECT count(*) FROM ingestion_invocation i WHERE NOT EXISTS(SELECT 1 FROM ingestion_invocation_outcome o WHERE o.invocation_id=i.id) AND NOT EXISTS(SELECT 1 FROM cost_event c WHERE c.activity_id=i.id AND c.cost_type='INGESTION_ENGINE_INVOCATION')`)
-	if invocations != l.count(`SELECT count(*) FROM cost_allocation a JOIN cost_event c ON c.id=a.cost_event_id WHERE a.ingestion_invocation_id IS NOT NULL AND c.activity_id=a.ingestion_invocation_id AND c.quantity=1 AND c.unit='invocation' AND c.pricing_mode='ACTUAL'`) || claimedInvocations != invocations+definiteNoDispatch+unobservedClaims || definiteNoDispatch != 3 || unobservedClaims != 1 {
+	if invocations != l.count(`SELECT count(*) FROM cost_allocation a JOIN cost_event c ON c.id=a.cost_event_id WHERE a.ingestion_invocation_id IS NOT NULL AND c.activity_id=a.ingestion_invocation_id AND c.quantity=1 AND c.unit='invocation' AND c.pricing_mode='ACTUAL'`) || claimedInvocations != invocations+definiteNoDispatch+unconfirmedDispatch+unobservedClaims || definiteNoDispatch != 3 || unconfirmedDispatch != 1 || unobservedClaims != 1 {
 		t.Fatal("physical invocation cost missing/merged")
 	}
 	l.checks["attempt_cost_history"] = "PASS"
@@ -1060,7 +1095,7 @@ func TestLiveCoreBatch(t *testing.T) {
 	}
 	l.checks["core_fact_secret_isolation"] = "PASS"
 	// Strong guards reject direct mutation of historical facts.
-	for _, sql := range []string{`UPDATE ingestion_attempt SET started_at=now()`, `DELETE FROM ingestion_invocation`, `UPDATE ingestion_observation SET state='FAILED'`, `UPDATE ingestion_invocation_outcome SET provider_dispatched=false`, `DELETE FROM ingestion_invocation_outcome`, `DELETE FROM ingestion_receipt`, `UPDATE ingestion_receipt_slot SET content_hash=repeat('0',64)`, `UPDATE ingestion_request_slot SET row_count=0`, `UPDATE ingestion_operation SET batch_key='rewrite'`} {
+	for _, sql := range []string{`UPDATE ingestion_attempt SET started_at=now()`, `DELETE FROM ingestion_invocation`, `UPDATE ingestion_observation SET state='FAILED'`, `UPDATE ingestion_invocation_outcome SET dispatch_state='NOT_DISPATCHED'`, `DELETE FROM ingestion_invocation_outcome`, `DELETE FROM ingestion_receipt`, `UPDATE ingestion_receipt_slot SET content_hash=repeat('0',64)`, `UPDATE ingestion_request_slot SET row_count=0`, `UPDATE ingestion_operation SET batch_key='rewrite'`} {
 		if _, err = pool.Exec(ctx, sql); err == nil {
 			t.Fatal("historical mutation allowed")
 		}
@@ -1068,7 +1103,7 @@ func TestLiveCoreBatch(t *testing.T) {
 	l.checks["immutable_history"] = "PASS"
 	sortReceipts := slices.Clone(l.receipts)
 	slices.SortFunc(sortReceipts, func(a, b d.Receipt) int { return strings.Compare(a.ID.String(), b.ID.String()) })
-	facts := map[string]any{"checks": l.checks, "invocations": invocations, "claimed_invocations": claimedInvocations, "unobserved_claims": unobservedClaims, "definite_no_dispatch": definiteNoDispatch, "accepted_batches": len(l.receipts), "receipts": sortReceipts, "manifests": l.manifests}
+	facts := map[string]any{"checks": l.checks, "invocations": invocations, "claimed_invocations": claimedInvocations, "unobserved_claims": unobservedClaims, "definite_no_dispatch": definiteNoDispatch, "unconfirmed_dispatch": unconfirmedDispatch, "accepted_batches": len(l.receipts), "receipts": sortReceipts, "manifests": l.manifests}
 	result, _ := json.MarshalIndent(facts, "", "  ")
 	if os.WriteFile(filepath.Join(cfg.Output, "b2-facts.json"), append(result, '\n'), 0644) != nil {
 		t.Fatal("save sanitized evidence")

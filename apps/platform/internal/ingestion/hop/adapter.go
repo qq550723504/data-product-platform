@@ -203,53 +203,75 @@ func (a *Adapter) Check(ctx context.Context, r d.Request) error {
 	return tx.Commit(ctx)
 }
 func name(op d.Operation) string { return "ingestion-" + op.AttemptID.String() }
-func observeRequest(ctx context.Context, dispatched func()) (context.Context, *atomic.Bool) {
-	written := &atomic.Bool{}
-	var once sync.Once
-	observe := func() {
-		written.Store(true)
-		once.Do(func() {
-			if dispatched != nil {
-				dispatched()
-			}
-		})
+
+type requestObservation struct {
+	state         atomic.Int32
+	expectedBytes atomic.Int64
+	networkBytes  atomic.Int64
+	once          sync.Once
+	dispatched    func()
+}
+
+func (o *requestObservation) uncertain() { o.state.CompareAndSwap(0, 1) }
+func (o *requestObservation) confirm() {
+	o.state.Store(2)
+	o.once.Do(func() {
+		if o.dispatched != nil {
+			o.dispatched()
+		}
+	})
+}
+func (o *requestObservation) State() d.DispatchState {
+	switch o.state.Load() {
+	case 1:
+		return d.DispatchUnconfirmed
+	case 2:
+		return d.Dispatched
+	default:
+		return d.NotDispatched
 	}
+}
+func observeRequest(ctx context.Context, dispatched func()) (context.Context, *requestObservation) {
+	written := &requestObservation{dispatched: dispatched}
 	trace := &httptrace.ClientTrace{
-		WroteHeaders: observe,
+		// WroteHeaders may describe buffered bytes only. A failed write is
+		// ambiguous, and cannot justify either ACTUAL cost or a safe retry.
+		WroteHeaders: written.uncertain,
 		WroteRequest: func(info httptrace.WroteRequestInfo) {
-			if info.Err == nil {
-				observe()
+			if info.Err != nil {
+				written.uncertain()
 			}
 		},
 	}
+	ctx = context.WithValue(ctx, observationKey{}, written)
 	return httptrace.WithClientTrace(ctx, trace), written
 }
-func (a *Adapter) Register(ctx context.Context, op d.Operation, dispatched func()) (string, bool, error) {
+func (a *Adapter) Register(ctx context.Context, op d.Operation, dispatched func()) (string, d.DispatchState, error) {
 	c, err := a.config(ctx, op.Request)
 	if err != nil {
-		return "", false, err
+		return "", d.NotDispatched, err
 	}
 	local := filepath.Join(a.LocalRoot, op.AttemptID.String())
 	if err = os.MkdirAll(local, 0700); err != nil {
-		return "", false, d.ErrUnknown
+		return "", d.NotDispatched, d.ErrUnknown
 	}
 	// Hop's container UID writes a private-parent, attempt-owned bind directory.
 	if err = os.Chmod(local, 0777); err != nil {
-		return "", false, d.ErrUnknown
+		return "", d.NotDispatched, d.ErrUnknown
 	}
 	pipeline := string(c.Template)
 	start := strings.Index(pipeline, "<pipeline>")
 	if start < 0 {
-		return "", false, d.ErrManifest
+		return "", d.NotDispatched, d.ErrManifest
 	}
 	pipeline = pipeline[start:]
 	if strings.Count(pipeline, "<name>postgres-ingestion-v1</name>") != 1 {
-		return "", false, d.ErrManifest
+		return "", d.NotDispatched, d.ErrManifest
 	}
 	pipeline = strings.Replace(pipeline, "<name>postgres-ingestion-v1</name>", "<name>"+name(op)+"</name>", 1)
 	meta, err := json.Marshal(c.Metadata)
 	if err != nil {
-		return "", false, d.ErrManifest
+		return "", d.NotDispatched, d.ErrManifest
 	}
 	var compressed bytes.Buffer
 	gz := gzip.NewWriter(&compressed)
@@ -261,39 +283,42 @@ func (a *Adapter) Register(ctx context.Context, op d.Operation, dispatched func(
 	callCtx, written := observeRequest(ctx, dispatched)
 	run, err := a.Client.PrepareSubmission(callCtx, w.ManagedSubmitRequest{Name: name(op), Definition: definition, ContentType: "application/xml"})
 	if err != nil {
-		return "", written.Load(), d.ErrUnknown
+		return "", written.State(), d.ErrUnknown
 	}
-	return run.ID, written.Load(), nil
+	written.confirm() // An authenticated native reply also confirms the call.
+	return run.ID, written.State(), nil
 }
-func (a *Adapter) Start(ctx context.Context, op d.Operation, dispatched func()) (bool, error) {
+func (a *Adapter) Start(ctx context.Context, op d.Operation, dispatched func()) (d.DispatchState, error) {
 	if _, err := a.config(ctx, op.Request); err != nil {
-		return false, err
+		return d.NotDispatched, err
 	}
 	callCtx, written := observeRequest(ctx, dispatched)
 	_, err := a.Client.StartSubmission(callCtx, w.ManagedSubmitRequest{Name: name(op)}, op.RemoteID)
 	if err != nil {
-		return written.Load(), d.ErrUnknown
+		return written.State(), d.ErrUnknown
 	}
-	return written.Load(), nil
+	written.confirm()
+	return written.State(), nil
 }
-func (a *Adapter) Status(ctx context.Context, op d.Operation, dispatched func()) (string, bool, error) {
+func (a *Adapter) Status(ctx context.Context, op d.Operation, dispatched func()) (string, d.DispatchState, error) {
 	if _, err := a.config(ctx, op.Request); err != nil {
-		return "UNKNOWN", false, err
+		return "UNKNOWN", d.NotDispatched, err
 	}
 	callCtx, written := observeRequest(ctx, dispatched)
 	run, err := a.Client.Status(callCtx, name(op), op.RemoteID)
 	if err != nil || run.ID != op.RemoteID || run.Name != name(op) {
-		return "UNKNOWN", written.Load(), d.ErrUnknown
+		return "UNKNOWN", written.State(), d.ErrUnknown
 	}
+	written.confirm()
 	switch run.State {
 	case w.EngineRunSucceeded:
-		return "SUCCEEDED", written.Load(), nil
+		return "SUCCEEDED", written.State(), nil
 	case w.EngineRunFailed:
-		return "FAILED", written.Load(), nil
+		return "FAILED", written.State(), nil
 	case w.EngineRunRunning, w.EngineRunQueued:
-		return "RUNNING", written.Load(), nil
+		return "RUNNING", written.State(), nil
 	}
-	return "UNKNOWN", written.Load(), d.ErrUnknown
+	return "UNKNOWN", written.State(), d.ErrUnknown
 }
 func (a *Adapter) Manifest(ctx context.Context, op d.Operation) (d.Manifest, error) {
 	r := op.Request

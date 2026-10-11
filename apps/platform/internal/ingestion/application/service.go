@@ -28,12 +28,11 @@ type Caller func(context.Context, uuid.UUID) (principal.RequestPrincipal, error)
 type Engine interface {
 	Version() string
 	Check(context.Context, d.Request) error
-	// Notify dispatch while the request is being written, before waiting for a
-	// response. The bool also reports dispatch when the response is uncertain.
-	// Local preflight failure returns false and never notifies.
-	Register(context.Context, d.Operation, func()) (string, bool, error)
-	Start(context.Context, d.Operation, func()) (bool, error)
-	Status(context.Context, d.Operation, func()) (string, bool, error)
+	// Notify a confirmed request write before waiting for its response. Buffered
+	// or failed writes remain unconfirmed; local preflight never notifies.
+	Register(context.Context, d.Operation, func()) (string, d.DispatchState, error)
+	Start(context.Context, d.Operation, func()) (d.DispatchState, error)
+	Status(context.Context, d.Operation, func()) (string, d.DispatchState, error)
 	Manifest(context.Context, d.Operation) (d.Manifest, error)
 }
 type Store interface {
@@ -176,7 +175,7 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 		return op, err
 	}
 	state, remote := "UNKNOWN", op.RemoteID
-	attempted := false
+	dispatch := d.NotDispatched
 	var m *d.Manifest
 	// Recording a known physical dispatch must not depend on the eventual
 	// result, operation projection or request cancellation. Failed recording is
@@ -193,17 +192,17 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 	}
 	switch kind {
 	case "REGISTER":
-		remote, attempted, err = s.Engine.Register(ctx, op, dispatched)
+		remote, dispatch, err = s.Engine.Register(ctx, op, dispatched)
 		if err == nil && remote != "" {
 			state = "REGISTERED"
 		}
 	case "START":
-		attempted, err = s.Engine.Start(ctx, op, dispatched)
+		dispatch, err = s.Engine.Start(ctx, op, dispatched)
 		if err == nil {
 			state = "RUNNING"
 		}
 	case "STATUS":
-		state, attempted, err = s.Engine.Status(ctx, op, dispatched)
+		state, dispatch, err = s.Engine.Status(ctx, op, dispatched)
 		if err != nil {
 			state = "UNKNOWN"
 		}
@@ -222,7 +221,7 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 	}
 	// A failed read-only STATUS does not prove that the existing pipeline
 	// failed. Only a definitely unsent REGISTER/START permits a new attempt.
-	if err != nil && !attempted && kind != "STATUS" {
+	if err != nil && dispatch == d.NotDispatched && kind != "STATUS" {
 		state = "FAILED"
 	}
 	if state != "REGISTERED" && state != "RUNNING" && state != "SUCCEEDED" && state != "FAILED" {
@@ -237,15 +236,15 @@ func (s *Service) invoke(ctx context.Context, id uuid.UUID, kind string, caller 
 		if _, err := s.Repo.Load(ctx, tx, id, true); err != nil {
 			return err
 		}
-		if attempted {
+		if dispatch == d.Dispatched {
 			if err := s.recordDispatch(ctx, tx, op, invocation, kind); err != nil {
 				return err
 			}
 		}
-		if err := s.Repo.SaveOutcome(ctx, tx, infra.Outcome{InvocationID: invocation, AttemptID: op.AttemptID, Kind: kind, State: state, RemoteID: remote, Dispatched: attempted, Manifest: m}); err != nil {
+		if err := s.Repo.SaveOutcome(ctx, tx, infra.Outcome{InvocationID: invocation, AttemptID: op.AttemptID, Kind: kind, State: state, RemoteID: remote, Dispatch: dispatch, Manifest: m}); err != nil {
 			return err
 		}
-		return s.fact(ctx, tx, op, "IngestionInvocationOutcomeRecorded", map[string]any{"invocationId": invocation, "attemptId": op.AttemptID, "state": state, "providerDispatched": attempted})
+		return s.fact(ctx, tx, op, "IngestionInvocationOutcomeRecorded", map[string]any{"invocationId": invocation, "attemptId": op.AttemptID, "state": state, "providerDispatched": dispatch == d.Dispatched, "dispatchState": dispatch})
 	})
 	if finishErr != nil {
 		return op, finishErr
@@ -287,7 +286,7 @@ func (s *Service) applyOutcomes(ctx context.Context, tx pgx.Tx, op *d.Operation)
 	for _, o := range outcomes {
 		historical := *op
 		historical.AttemptID = o.AttemptID
-		if o.Dispatched {
+		if o.Dispatch == d.Dispatched {
 			if err := s.recordDispatch(ctx, tx, historical, o.InvocationID, o.Kind); err != nil {
 				return err
 			}
@@ -301,7 +300,7 @@ func (s *Service) applyOutcomes(ctx context.Context, tx pgx.Tx, op *d.Operation)
 		if err != nil {
 			return err
 		}
-		if err := s.fact(ctx, tx, historical, "IngestionObserved", map[string]any{"invocationId": o.InvocationID, "attemptId": o.AttemptID, "state": o.State, "providerDispatched": o.Dispatched, "late": late}); err != nil {
+		if err := s.fact(ctx, tx, historical, "IngestionObserved", map[string]any{"invocationId": o.InvocationID, "attemptId": o.AttemptID, "state": o.State, "providerDispatched": o.Dispatch == d.Dispatched, "dispatchState": o.Dispatch, "late": late}); err != nil {
 			return err
 		}
 	}

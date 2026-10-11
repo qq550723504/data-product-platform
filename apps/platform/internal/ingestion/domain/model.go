@@ -29,6 +29,16 @@ var (
 )
 
 const Contract = "text-csv-batch-v1"
+
+// These observations have distinct retry and cost semantics. An ambiguous
+// write does not prove that another physical dispatch would be safe.
+type DispatchState string
+
+const (
+	NotDispatched       DispatchState = "NOT_DISPATCHED"
+	DispatchUnconfirmed DispatchState = "UNCONFIRMED"
+	Dispatched          DispatchState = "DISPATCHED"
+)
 const MaxBytes int64 = 128 << 20
 
 var token = regexp.MustCompile(`^[a-zA-Z0-9_-]{1,128}$`)

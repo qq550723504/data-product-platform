@@ -7,7 +7,6 @@ import (
 	"context"
 	"encoding/json"
 	"net"
-	"net/http"
 	"net/url"
 	"os"
 	"strings"
@@ -196,7 +195,7 @@ func Build(pool *pgxpool.Pool, path string) (*transport.Handler, error) {
 	if endpoint.Hostname() != "localhost" && (ip == nil || !ip.IsLoopback()) {
 		return nil, d.ErrDenied
 	}
-	client, err := hop.NewClient(p.HopURL, p.HopUser, startup.HopPassword, &http.Client{Timeout: 10 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }})
+	client, err := hop.NewClient(p.HopURL, p.HopUser, startup.HopPassword, adapter.NewHTTPClient(10*time.Second, nil))
 	if err != nil {
 		return nil, d.ErrDenied
 	}

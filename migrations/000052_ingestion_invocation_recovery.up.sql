@@ -1,14 +1,15 @@
 -- #303 follow-up: durable engine result separate from Core projection.
 CREATE TABLE ingestion_invocation_outcome (
  invocation_id uuid PRIMARY KEY REFERENCES ingestion_invocation(id),
- provider_dispatched boolean NOT NULL,
+ dispatch_state varchar(16) NOT NULL CHECK(dispatch_state IN ('NOT_DISPATCHED','UNCONFIRMED','DISPATCHED')),
  state varchar(32) NOT NULL CHECK(state IN ('REGISTERED','RUNNING','SUCCEEDED','FAILED','UNKNOWN')),
  remote_id varchar(255) NOT NULL DEFAULT '', manifest jsonb, manifest_hash char(64),
  observed_at timestamptz NOT NULL DEFAULT now(),
  CHECK ((manifest IS NULL)=(manifest_hash IS NULL)),
  CHECK (state<>'SUCCEEDED' OR (manifest IS NOT NULL AND remote_id<>'')),
  CHECK (state<>'REGISTERED' OR remote_id<>''),
- CHECK (provider_dispatched OR state IN ('FAILED','UNKNOWN'))
+ CHECK (dispatch_state='DISPATCHED' OR state IN ('FAILED','UNKNOWN')),
+ CHECK (dispatch_state<>'UNCONFIRMED' OR state='UNKNOWN')
 );
 CREATE TRIGGER trg_ingestion_invocation_outcome_immutable BEFORE UPDATE OR DELETE ON ingestion_invocation_outcome
  FOR EACH ROW EXECUTE FUNCTION prevent_delivery_history_mutation();
@@ -45,7 +46,7 @@ BEGIN
  IF OLD.state='REGISTERING' AND NEW.state='FAILED' AND NOT EXISTS(
    SELECT 1 FROM ingestion_invocation i JOIN ingestion_invocation_outcome o ON o.invocation_id=i.id
    WHERE i.operation_id=OLD.id AND i.attempt_id=OLD.current_attempt_id AND i.kind='REGISTER'
-     AND NOT o.provider_dispatched AND o.state='FAILED'
+     AND o.dispatch_state='NOT_DISPATCHED' AND o.state='FAILED'
  ) THEN RAISE EXCEPTION 'register failure requires definite no-dispatch observation'; END IF;
  RETURN NEW;
 END; $$ LANGUAGE plpgsql;

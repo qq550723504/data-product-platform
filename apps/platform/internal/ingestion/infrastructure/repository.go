@@ -150,7 +150,7 @@ func (r *Repository) ActualInvocationCost(ctx context.Context, tx pgx.Tx, op d.O
 type Outcome struct {
 	InvocationID, AttemptID uuid.UUID
 	Kind, State, RemoteID   string
-	Dispatched              bool
+	Dispatch                d.DispatchState
 	Manifest                *d.Manifest
 }
 
@@ -168,12 +168,12 @@ func (r *Repository) SaveOutcome(ctx context.Context, tx pgx.Tx, o Outcome) erro
 		}
 		hash = &h
 	}
-	_, err := tx.Exec(ctx, `INSERT INTO ingestion_invocation_outcome(invocation_id,provider_dispatched,state,remote_id,manifest,manifest_hash) VALUES($1,$2,$3,$4,$5,$6)`, o.InvocationID, o.Dispatched, o.State, o.RemoteID, data, hash)
+	_, err := tx.Exec(ctx, `INSERT INTO ingestion_invocation_outcome(invocation_id,dispatch_state,state,remote_id,manifest,manifest_hash) VALUES($1,$2,$3,$4,$5,$6)`, o.InvocationID, o.Dispatch, o.State, o.RemoteID, data, hash)
 	return err
 }
 
 func (r *Repository) PendingOutcomes(ctx context.Context, tx pgx.Tx, id uuid.UUID) ([]Outcome, error) {
-	rows, err := tx.Query(ctx, `SELECT i.id,i.attempt_id,i.kind,o.provider_dispatched,o.state,o.remote_id,o.manifest
+	rows, err := tx.Query(ctx, `SELECT i.id,i.attempt_id,i.kind,o.dispatch_state,o.state,o.remote_id,o.manifest
 	 FROM ingestion_invocation i JOIN ingestion_invocation_outcome o ON o.invocation_id=i.id
 	 WHERE i.operation_id=$1 AND NOT EXISTS(SELECT 1 FROM ingestion_observation a WHERE a.invocation_id=i.id)
 	 ORDER BY i.started_at,i.id`, id)
@@ -185,7 +185,7 @@ func (r *Repository) PendingOutcomes(ctx context.Context, tx pgx.Tx, id uuid.UUI
 	for rows.Next() {
 		var o Outcome
 		var data []byte
-		if err := rows.Scan(&o.InvocationID, &o.AttemptID, &o.Kind, &o.Dispatched, &o.State, &o.RemoteID, &data); err != nil {
+		if err := rows.Scan(&o.InvocationID, &o.AttemptID, &o.Kind, &o.Dispatch, &o.State, &o.RemoteID, &data); err != nil {
 			return nil, err
 		}
 		if len(data) > 0 {
