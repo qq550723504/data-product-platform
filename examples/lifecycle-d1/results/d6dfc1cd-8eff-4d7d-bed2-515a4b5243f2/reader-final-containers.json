@@ -1,0 +1,263 @@
+[
+  {
+    "id": "60eae0f9f342185e9c018fac60ee2a184b55558957d1b1a4b3ea6a90c4b60d5d",
+    "exit_code": 0,
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\data-product-platform\\examples\\lifecycle-d1\\results",
+        "Destination": "/run/output",
+        "RW": true
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\private-fixtures\\dpp-lifecycle307-d6dfc1cd\\reader-admin",
+        "Destination": "/run/private",
+        "RW": false
+      }
+    ],
+    "state": "exited",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "name": "dpp-lifecycle307-d6dfc1cd-reader-seal-bfcec2",
+    "ports": {}
+  },
+  {
+    "id": "9503d19ce955fd6a6987825f5bd4cec4e48c6f8b5c1a70c1668e8f7603892f98",
+    "exit_code": 0,
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\data-product-platform\\examples\\lifecycle-d1\\results",
+        "Destination": "/run/output",
+        "RW": true
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\private-fixtures\\dpp-lifecycle307-d6dfc1cd\\reader-owner",
+        "Destination": "/run/private",
+        "RW": false
+      }
+    ],
+    "state": "exited",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "name": "dpp-lifecycle307-d6dfc1cd-reader-final-0e215e",
+    "ports": {}
+  },
+  {
+    "id": "820aef03e296c2eb04ac7205835bdb236acb13414c205ae367465686eff25f62",
+    "exit_code": 0,
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\data-product-platform\\examples\\lifecycle-d1\\results",
+        "Destination": "/run/output",
+        "RW": true
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\private-fixtures\\dpp-lifecycle307-d6dfc1cd\\reader-owner",
+        "Destination": "/run/private",
+        "RW": false
+      }
+    ],
+    "state": "exited",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "name": "dpp-lifecycle307-d6dfc1cd-reader-accept-a9af0c",
+    "ports": {}
+  },
+  {
+    "id": "a9014189691625ef0f82c054befe3fb338706a8f77cecec8223887e2e39b759b",
+    "exit_code": 95,
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\data-product-platform\\examples\\lifecycle-d1\\results",
+        "Destination": "/run/output",
+        "RW": true
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\private-fixtures\\dpp-lifecycle307-d6dfc1cd\\reader-owner",
+        "Destination": "/run/private",
+        "RW": false
+      }
+    ],
+    "state": "exited",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "name": "dpp-lifecycle307-d6dfc1cd-reader-crash-29d079",
+    "ports": {}
+  },
+  {
+    "id": "67f533f2863d615472163600cd0e465c595ab6b5ccba51e4b56d86b99435a9f3",
+    "exit_code": 0,
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\data-product-platform\\examples\\lifecycle-d1\\results",
+        "Destination": "/run/output",
+        "RW": true
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\private-fixtures\\dpp-lifecycle307-d6dfc1cd\\reader-owner",
+        "Destination": "/run/private",
+        "RW": false
+      }
+    ],
+    "state": "exited",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "name": "dpp-lifecycle307-d6dfc1cd-reader-bind-a34165",
+    "ports": {}
+  },
+  {
+    "id": "474c58ee6dab59d19da735cb56b358b1493ef217b28f4a5373de1e4ac54fbd49",
+    "exit_code": 0,
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\data-product-platform\\examples\\lifecycle-d1\\results",
+        "Destination": "/run/output",
+        "RW": true
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\private-fixtures\\dpp-lifecycle307-d6dfc1cd\\reader-admin",
+        "Destination": "/run/private",
+        "RW": false
+      }
+    ],
+    "state": "exited",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "name": "dpp-lifecycle307-d6dfc1cd-reader-provision-e39a55",
+    "ports": {}
+  },
+  {
+    "id": "310e17a615b45ed106f43a272ce46e8748407fcfc4175a63a6b1e1d3b6e6ccfc",
+    "exit_code": 0,
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\data-product-platform\\migrations",
+        "Destination": "/run/migrations",
+        "RW": false
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\data-product-platform\\examples\\lifecycle-d1\\results",
+        "Destination": "/run/output",
+        "RW": true
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\private-fixtures\\dpp-lifecycle307-d6dfc1cd",
+        "Destination": "/run/private",
+        "RW": false
+      }
+    ],
+    "state": "exited",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "name": "dpp-lifecycle307-d6dfc1cd-prepare",
+    "ports": {}
+  },
+  {
+    "id": "787284cf47fa5c357dbdd7d39758bed3ca26e4272875cd0c639d7c7f26308c32",
+    "exit_code": 0,
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "C:\\Users\\Henry\\.codex\\worktrees\\issue307-lifecycle-d1\\private-fixtures\\dpp-lifecycle307-d6dfc1cd\\Caddyfile",
+        "Destination": "/etc/caddy/Caddyfile",
+        "RW": false
+      }
+    ],
+    "state": "running",
+    "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "name": "dpp-lifecycle307-d6dfc1cd-gateway",
+    "ports": {
+      "2019/tcp": null,
+      "443/tcp": null,
+      "443/udp": null,
+      "80/tcp": null
+    }
+  },
+  {
+    "id": "7b449a6d231e2d0495ed25a0ffbb6ac786c34e8defe86d04cf42e1495c7684b0",
+    "exit_code": 0,
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-d6dfc1cd-objects",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-d6dfc1cd-objects/_data",
+        "Destination": "/data",
+        "RW": true
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/worktrees/issue307-lifecycle-d1/private-fixtures/dpp-lifecycle307-d6dfc1cd/access",
+        "Destination": "/run/credentials/access",
+        "RW": false
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/worktrees/issue307-lifecycle-d1/private-fixtures/dpp-lifecycle307-d6dfc1cd/secret",
+        "Destination": "/run/credentials/secret",
+        "RW": false
+      },
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/worktrees/issue307-lifecycle-d1/private-fixtures/dpp-lifecycle307-d6dfc1cd/start.sh",
+        "Destination": "/run/credentials/start.sh",
+        "RW": false
+      }
+    ],
+    "state": "running",
+    "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+    "name": "dpp-lifecycle307-d6dfc1cd-minio",
+    "ports": {}
+  },
+  {
+    "id": "852bf84b2b654cd4c86f511614053caf59deb5c319fc72a97719fa8d2208d09b",
+    "exit_code": 0,
+    "mounts": [
+      {
+        "Type": "bind",
+        "Name": null,
+        "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/worktrees/issue307-lifecycle-d1/private-fixtures/dpp-lifecycle307-d6dfc1cd/pgpass",
+        "Destination": "/run/credentials/pgpass",
+        "RW": false
+      },
+      {
+        "Type": "volume",
+        "Name": "dpp-lifecycle307-d6dfc1cd-postgres",
+        "Source": "/var/lib/docker/volumes/dpp-lifecycle307-d6dfc1cd-postgres/_data",
+        "Destination": "/var/lib/postgresql/data",
+        "RW": true
+      }
+    ],
+    "state": "running",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "name": "dpp-lifecycle307-d6dfc1cd-postgres",
+    "ports": {
+      "5432/tcp": null
+    }
+  }
+]

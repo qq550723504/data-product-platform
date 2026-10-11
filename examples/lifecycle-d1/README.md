@@ -51,3 +51,13 @@ Run `a6b30840-3e76-49ad-91d3-f0c399fcf170` 保留三台运行中的服务、已�
 新封闭 `dpp-lifecycle307-f7fa46ff` 完成 COPY响应丢失/worker中断/outbox broker恢复、RESTORE独立账本 UNKNOWN→fresh ONLINE、当前restriction→BLOCKED，以及重复/撤销零额外I/O。使用原有 Asynq/outbox/worker；worker只读，不能重发COPY。七版本、全部旧环境和owned volumes保留，DELETE/解除保护/bypass/清理为0。当前alpha内容use已限制；历史ONLINE不代表现在可取数。详见 [受控验收与exact version清单](results/f7fa46ff-3a93-4e50-97a5-0d68fac8b235/copy-recovery-review.md)。
 
 `prepare-copy-recovery.ps1`、`run-copy-recovery-step.ps1` 和 `readback-copy-recovery.ps1` 仅用于新schema64的有限合成环境。已封存的f7fa46ff窗口和原生producer/recovery身份均禁用，不得按旧脚本重新启用或迁移旧库。新增删除仍须新的环境/exact key/version清单与用户确认。Issue #307、完整D1和生产业务reader/delivery仍未收口。
+
+## 2026-10-12：封闭 exact-version reader
+
+新 `dpp-lifecycle307-d6dfc1cd` 只做非删除读取验收：三次真实GET分别验证进程崩溃、完整HTTP读取和输出取消；先提交durable pin，发送前重核当前caller/window/restriction，只有实际native read与输出owner均已停止才追加termination。取消不能提前排空，崩溃pin保留；same-key replay和阻断路径0新I/O/0内容bytes。四份原始版本、两份保护及全部旧环境/volumes保持原样；验收后native reader身份、窗口与gateway payload/admin已封闭。详见 [本轮验收、边界和exact保留清单](results/d6dfc1cd-8eff-4d7d-bed2-515a4b5243f2/reader-review.md)。
+
+后续核对发现HTTP Write返回可能只完成缓冲，初次候选没有覆盖实际flush。已补owned write deadline和同步Flush，另建 `dpp-lifecycle307-34696798` 完成最终native重验、真实PG/race和全Go模块检查；以 [修正后的最终报告](results/34696798-06e3-42de-8b31-6b237c6e9c22/reader-review.md) 为当前HTTP输出闭合证据。两个环境都封存、四份对象各自保留；无删除/清理，原报告追加更正而不覆盖原始事实。
+
+仅用于新环境的入口：先`prepare.ps1 -ArchiveAcceptance`，可显式传不重叠的`-InternalSubnet 10.234.x.0/24`。若需重建本地fixture image，`-MinioImage sha256:<实际digest>`仍强制检查固定MinIO binary SHA256；不得用于修改旧环境。`prepare-reader.ps1`建立有限window及独立native readonly身份；`run-reader-step.ps1`依次bind/crash/accept/final；`seal-reader.ps1`禁用身份并封闭窗口/payload/admin，`verify-reader.ps1`独立离线核对证据与敏感信息。已封存环境不能重跑，所有成功/失败helpers与volumes保留。
+
+仍只修改未发布64，不占用C2/65及共享路由。现有production processing/delivery通用读路径尚未接pin，不在本封闭runtime内；LC-11/12、全平台closure及完整D1仍NOT_RUN，#307不关闭。没有新增删除或清理授权。

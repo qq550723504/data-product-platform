@@ -1,0 +1,22 @@
+{
+  "migration64_sha256": "5e6d85cb9ae552ef3b737a28cf6f8bdb186025026e61d5aaedb075b39841ad31",
+  "retained_database": true,
+  "main_sha": "1892cd76c4ee578896ddfb3c6f4a7252bfacc51b",
+  "old_databases_modified": false,
+  "proofs": [
+    {
+      "database": "upgrade_main59_reader64",
+      "max": 64,
+      "count": 61,
+      "reader_pin_fk": true,
+      "single_native_read": true
+    },
+    {
+      "database": "fresh_reader64",
+      "max": 64,
+      "count": 61,
+      "reader_pin_fk": true,
+      "single_native_read": true
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "root_mounted": false,
+  "container": "dpp-lifecycle307-d6dfc1cd-reader-bind-a34165",
+  "cleanup": 0,
+  "run_id": "d6dfc1cd-8eff-4d7d-bed2-515a4b5243f2",
+  "binary_sha256": "5205e182928d53d1a0f4bc80e58967206bbfb6c3de0a2ee7589e1c661c23c172",
+  "id": "67f533f2863d615472163600cd0e465c595ab6b5ccba51e4b56d86b99435a9f3",
+  "expected_exit": 0,
+  "delete": 0,
+  "mode": "bind",
+  "exit_code": 0
+}
