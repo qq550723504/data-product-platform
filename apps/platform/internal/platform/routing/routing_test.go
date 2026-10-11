@@ -78,6 +78,7 @@ var eventVocabulary = []string{
 	"IngestionInvocationOutcomeRecorded",
 	"IngestionObserved",
 	"IngestionAccepted",
+	"LifecycleDispositionPlanPrepared",
 	"DatasetCreated",
 	"DatasetVersionCreated",
 	"DatasetVersionSuperseded",
