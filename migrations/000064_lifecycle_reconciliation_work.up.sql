@@ -2,11 +2,24 @@
 -- A completed recovery request never implies that an UNKNOWN delete stopped.
 -- The same obligation also recovers COPY identity through read-only discovery;
 -- it never fabricates an ACK on the original physical call or permits a resend.
+ALTER TABLE lifecycle_storage_call ADD COLUMN reader_pin_id uuid;
+ALTER TABLE lifecycle_storage_call ADD FOREIGN KEY(workspace_id,reader_pin_id) REFERENCES lifecycle_reader_pin(workspace_id,id);
 ALTER TABLE lifecycle_storage_call DROP CONSTRAINT lifecycle_storage_call_check;
 ALTER TABLE lifecycle_storage_call ADD CHECK(
- (operation IN('STAT_EXACT','INSPECT_RETENTION','INSPECT_LEGAL_HOLD','LIST_NAMESPACE_VERSIONS') AND copy_operation_id IS NULL)
- OR(operation IN('ARCHIVE_COPY','RESTORE_COPY','VERIFY_COPY_BYTES','RECOVER_COPY_VERSIONS','RECOVER_COPY_EXACT') AND copy_operation_id IS NOT NULL)
+ (operation IN('STAT_EXACT','INSPECT_RETENTION','INSPECT_LEGAL_HOLD','LIST_NAMESPACE_VERSIONS') AND copy_operation_id IS NULL AND reader_pin_id IS NULL)
+ OR(operation IN('ARCHIVE_COPY','RESTORE_COPY','VERIFY_COPY_BYTES','RECOVER_COPY_VERSIONS','RECOVER_COPY_EXACT') AND copy_operation_id IS NOT NULL AND reader_pin_id IS NULL)
+ OR(operation='READ_PINNED' AND copy_operation_id IS NULL AND reader_pin_id IS NOT NULL)
 );
+CREATE FUNCTION lifecycle_pinned_read_guard() RETURNS trigger AS $$
+DECLARE pin lifecycle_reader_pin;
+BEGIN
+ IF NEW.reader_pin_id IS NULL THEN RETURN NEW; END IF;
+ SELECT * INTO STRICT pin FROM lifecycle_reader_pin WHERE workspace_id=NEW.workspace_id AND id=NEW.reader_pin_id FOR UPDATE;
+ IF NEW.copy_id<>pin.copy_id OR NEW.actor_id<>pin.actor_id OR NEW.principal_ref<>pin.principal_ref OR NEW.started_at<pin.started_at OR (pin.use_until IS NOT NULL AND NEW.started_at>=pin.use_until) OR EXISTS(SELECT 1 FROM lifecycle_reader_termination WHERE pin_id=pin.id) THEN RAISE EXCEPTION 'pinned read owner/generation is not active'; END IF;
+ RETURN NEW;
+END $$ LANGUAGE plpgsql;
+CREATE TRIGGER lifecycle_pinned_read_scope BEFORE INSERT ON lifecycle_storage_call FOR EACH ROW EXECUTE FUNCTION lifecycle_pinned_read_guard();
+CREATE UNIQUE INDEX lifecycle_reader_single_native_read ON lifecycle_storage_call(reader_pin_id) WHERE reader_pin_id IS NOT NULL;
 ALTER TABLE lifecycle_storage_observation ADD COLUMN copy_operation_tag uuid;
 ALTER TABLE lifecycle_storage_observation ADD COLUMN copy_result_bytes bigint CHECK(copy_result_bytes>=0);
 CREATE TABLE lifecycle_copy_discovery (

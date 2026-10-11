@@ -1,5 +1,5 @@
 # Completes the owned empty environment; never retries provider writes or cleans.
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[switch]$ArchiveAcceptance)
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[switch]$ArchiveAcceptance,[string]$MinioImage='')
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
@@ -29,6 +29,7 @@ if (-not $net.Internal -or @($net.Containers.PSObject.Properties).Count -ne 3 -o
 foreach($volume in $r.volumes){$v=(Docker @('volume','inspect',$volume)|ConvertFrom-Json)[0];if($v.Labels.'lifecycle307.run' -ne $run){throw 'Volume owner mismatch'}}
 $expectedMinio = 'sha256:a9eb76492485dd496bfd69b4114e47137f2da1a1a87e4a9b273cb21476cb1a98'
 if ($ArchiveAcceptance) { $expectedMinio = 'sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741' }
+if($MinioImage -ne ''){if(-not $ArchiveAcceptance -or $MinioImage -notmatch '^sha256:[a-f0-9]{64}$'){throw 'Explicit pinned fixture image required'};$expectedMinio=$MinioImage}
 if ($mi.Image -ne $expectedMinio -or $pg.Image -ne 'sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea' -or $gw.Image -ne 'sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f'){throw 'Pinned image mismatch'}
 $binaryHash=(Docker @('exec',$r.containers.minio,'sha256sum','/usr/local/bin/minio')).Split(' ')[0]
 if($binaryHash -ne 'fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8'){throw 'Pinned binary mismatch'}

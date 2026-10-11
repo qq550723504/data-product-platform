@@ -130,6 +130,9 @@ func (s *OccupancyService) authorize(ctx context.Context, tx pgx.Tx, w uuid.UUID
 	if err != nil {
 		return p, at, err
 	}
+	if request, ok := ctx.Value(fixtureReaderCallerKey{}).(principal.RequestPrincipal); ok && (request.WorkspaceID != w || request.ActorID != p.ActorID || request.Subject != p.Subject) {
+		return p, at, principal.ErrCapabilityDenied
+	}
 	if p.WorkspaceID != w || p.ActorID == uuid.Nil || !validText(p.Subject, 255) || !p.HasCapability(capability) ||
 		(expected != nil && (p.ActorID != expected.ActorID || p.Subject != expected.Subject)) {
 		return p, at, principal.ErrCapabilityDenied
@@ -336,32 +339,8 @@ func (s *OccupancyService) AdmitFixtureReader(ctx context.Context, cmd AdmitFixt
 		if err != nil {
 			return uuid.Nil, err
 		}
-		restricted, err := s.repo.IsUseRestricted(ctx, tx, cmd.WorkspaceID, copy.DatasetVersionID)
+		decision, err := s.currentReaderDecision(ctx, tx, copy, cmd.ReaderID, caller, gateRevision, at)
 		if err != nil {
-			return uuid.Nil, err
-		}
-		if restricted {
-			return uuid.Nil, domain.ErrUseBlocked
-		}
-		occupancy, err := s.repo.CopyOccupancy(ctx, tx, copy)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		if occupancy.UnresolvedDispatches > 0 {
-			return uuid.Nil, domain.ErrUseBlocked
-		}
-		var quarantine bool
-		if err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_copy_operation o WHERE o.target_copy_id=$1 AND NOT EXISTS(SELECT 1 FROM lifecycle_copy_decision d WHERE d.operation_id=o.id AND d.decision='ONLINE'))`, copy.ID).Scan(&quarantine); err != nil {
-			return uuid.Nil, err
-		}
-		if quarantine {
-			return uuid.Nil, domain.ErrUseBlocked
-		}
-		decision, err := s.useGate.EvaluateFixtureUse(ctx, tx, UseGateRequest{Copy: copy, ReaderID: cmd.ReaderID, Caller: caller, AsOf: at, DependencyRevision: gateRevision})
-		if err != nil {
-			return uuid.Nil, err
-		}
-		if err := decision.ValidateFor(cmd.WorkspaceID, cmd.CopyID, cmd.ReaderID, caller.ActorID, at); err != nil {
 			return uuid.Nil, err
 		}
 		caller, at, err = s.authorize(ctx, tx, cmd.WorkspaceID, CapabilityAdmitReader, &caller)
@@ -396,6 +375,43 @@ func (s *OccupancyService) AdmitFixtureReader(ctx context.Context, cmd AdmitFixt
 		}
 	}
 	return ReaderAdmission{Pin: pin, Admitted: !result.Replayed, Replayed: result.Replayed}, nil
+}
+
+// Admission and physical read starts share one current-state evaluator. A pin
+// committed earlier is not permission to start new I/O after restriction.
+func (s *OccupancyService) currentReaderDecision(ctx context.Context, tx pgx.Tx, copy domain.Copy, readerID uuid.UUID, caller principal.RequestPrincipal, revision int64, at time.Time) (domain.UseDecision, error) {
+	if s.useGate == nil {
+		return domain.UseDecision{}, domain.ErrUseBlocked
+	}
+	restricted, err := s.repo.IsUseRestricted(ctx, tx, copy.WorkspaceID, copy.DatasetVersionID)
+	if err != nil || restricted {
+		if err == nil {
+			err = domain.ErrUseBlocked
+		}
+		return domain.UseDecision{}, err
+	}
+	occupancy, err := s.repo.CopyOccupancy(ctx, tx, copy)
+	if err != nil {
+		return domain.UseDecision{}, err
+	}
+	if occupancy.UnresolvedDispatches > 0 {
+		return domain.UseDecision{}, domain.ErrUseBlocked
+	}
+	var quarantine bool
+	if err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_copy_operation o WHERE o.target_copy_id=$1 AND NOT EXISTS(SELECT 1 FROM lifecycle_copy_decision d WHERE d.operation_id=o.id AND d.decision='ONLINE'))`, copy.ID).Scan(&quarantine); err != nil {
+		return domain.UseDecision{}, err
+	}
+	if quarantine {
+		return domain.UseDecision{}, domain.ErrUseBlocked
+	}
+	decision, err := s.useGate.EvaluateFixtureUse(ctx, tx, UseGateRequest{Copy: copy, ReaderID: readerID, Caller: caller, AsOf: at, DependencyRevision: revision})
+	if err != nil {
+		return domain.UseDecision{}, err
+	}
+	if err = decision.ValidateFor(copy.WorkspaceID, copy.ID, readerID, caller.ActorID, at); err != nil {
+		return domain.UseDecision{}, err
+	}
+	return decision, nil
 }
 
 func (s *OccupancyService) TerminateFixtureReader(ctx context.Context, cmd TerminateFixtureReaderCommand) (FactResult, error) {

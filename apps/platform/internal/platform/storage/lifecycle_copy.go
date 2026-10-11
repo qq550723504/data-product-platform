@@ -45,6 +45,8 @@ type custodyCall struct {
 	mu          sync.Mutex
 	sent        bool
 	observation lc.StorageCallObservation
+	readerPin   *domain.ReaderPin
+	stoppedAt   time.Time
 }
 
 func (c *custodyCall) result() lc.StorageCallObservation {
@@ -175,7 +177,7 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		if r.Method != "HEAD" || r.URL.Path != "/"+c.op.TargetNamespace+"/"+c.op.TargetKey || len(q) != 1 || len(q["versionId"]) != 1 || q.Get("versionId") != c.copy.ProviderVersion || r.Header.Get("X-Amz-Copy-Source") != "" {
 			return nil, lc.ErrStorageScope
 		}
-	} else if c.operation == lc.StorageVerifyCopy {
+	} else if c.operation == lc.StorageVerifyCopy || c.operation == lc.StorageReadPinned {
 		q := r.URL.Query()
 		if r.Method != "GET" || r.URL.Path != "/"+c.copy.Namespace+"/"+c.copy.Key || len(q) != 1 || len(q["versionId"]) != 1 || q.Get("versionId") != c.copy.ProviderVersion || r.Header.Get("X-Amz-Copy-Source") != "" {
 			return nil, lc.ErrStorageScope
@@ -194,7 +196,17 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	if c.operation == lc.StorageRecoverCopyVersions || c.operation == lc.StorageRecoverCopyExact {
 		journalCopy = c.op.Source
 	}
-	if e := t.journal.StartStorageCall(r.Context(), lc.StorageCallStart{ID: c.id, Copy: journalCopy, Operation: c.operation, StartedAt: started, CopyOperationID: c.op.ID, CopyIntent: &c.op}); e != nil {
+	start := lc.StorageCallStart{ID: c.id, Copy: journalCopy, Operation: c.operation, StartedAt: started, CopyOperationID: c.op.ID, CopyIntent: &c.op}
+	if c.operation == lc.StorageReadPinned {
+		start.CopyIntent = nil
+		start.ReaderPin = c.readerPin
+	}
+	if e := t.journal.StartStorageCall(r.Context(), start); e != nil {
+		if c.operation == lc.StorageReadPinned {
+			c.mu.Lock()
+			c.stoppedAt = time.Now().UTC()
+			c.mu.Unlock()
+		} // no native I/O started
 		return nil, e
 	}
 	var invoked *time.Time
@@ -212,16 +224,21 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		proof.HTTPStatus = resp.StatusCode
 		proof.RequestRef = resp.Header.Get("X-Amz-Request-Id")
 		limit := int64(64 << 10)
-		if c.operation == lc.StorageVerifyCopy && resp.StatusCode == http.StatusOK {
+		if (c.operation == lc.StorageVerifyCopy || c.operation == lc.StorageReadPinned) && resp.StatusCode == http.StatusOK {
 			limit = c.copy.ByteSize
 		}
 		b, readErr := io.ReadAll(io.LimitReader(resp.Body, limit+1))
-		resp.Body.Close()
+		closeErr := resp.Body.Close()
+		if c.operation == lc.StorageReadPinned && closeErr == nil {
+			c.mu.Lock()
+			c.stoppedAt = time.Now().UTC()
+			c.mu.Unlock()
+		}
 		sum := sha256.Sum256(b)
 		proof.ResponseSHA256 = hex.EncodeToString(sum[:])
 		proof.ObservedAt = time.Now().UTC()
 		resp.Body = io.NopCloser(bytes.NewReader(b))
-		if readErr != nil || int64(len(b)) > limit {
+		if readErr != nil || closeErr != nil || int64(len(b)) > limit {
 			proof.Failure = "CONTRACT"
 			e = lc.ErrStorageContract
 		}
@@ -243,10 +260,10 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 					e = lc.ErrStorageContract
 				}
 			}
-			if c.operation != lc.StorageVerifyCopy {
+			if c.operation != lc.StorageVerifyCopy && c.operation != lc.StorageReadPinned {
 				proof.CopyResultVersion = version
 			}
-			if version == "" || version == "null" || resp.Header.Get("X-Amz-Delete-Marker") == "true" || (c.operation == lc.StorageVerifyCopy && (version != c.copy.ProviderVersion || int64(len(b)) != c.copy.ByteSize || proof.ResponseSHA256 != c.copy.ContentSHA256)) {
+			if version == "" || version == "null" || resp.Header.Get("X-Amz-Delete-Marker") == "true" || ((c.operation == lc.StorageVerifyCopy || c.operation == lc.StorageReadPinned) && (version != c.copy.ProviderVersion || int64(len(b)) != c.copy.ByteSize || proof.ResponseSHA256 != c.copy.ContentSHA256)) {
 				proof.Failure = "CONTRACT"
 				e = lc.ErrStorageContract
 			}
