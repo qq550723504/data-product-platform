@@ -6,6 +6,8 @@
 
 2026-10-11 执行更新：B1 已在隔离本地 Docker 的真实 PostgreSQL 16.15 / Hop 2.19.0 / pgJDBC 42.7.14 组合实跑，PGI-01–04 的有限引擎试验通过。复现入口及协议发现见 [B1 runnable validation](../../examples/enterprise-activity/postgres-ingestion/README.md)，固定证据见 [B1 report](../../examples/enterprise-activity/postgres-ingestion/results/2026-10-11/report.json)。下文的 NOT_RUN 保留为 B0 当时的历史记录；本次仅验证本地 staging，实际对象存储、B2 Core 原子接纳和 B3 用户闭环仍未运行。CI 已接入新的真实 JDBC/fault smoke，远端 CI 结果需由提交后的运行独立确认。
 
+2026-10-11 后续执行更新：B2 已实现并实跑三份 RAW 的 Core 原子接纳，PGI-05–07 的 manifest、幂等、并发、权限撤销和故障恢复矩阵通过。复现与有限运行边界见 [B2 runtime](../../examples/enterprise-activity/postgres-ingestion/README.md#b2-atomic-core-acceptance)，固定证据见 [B2 report](../../examples/enterprise-activity/postgres-ingestion/results/2026-10-11/b2-report.json)。采用既有 Port/Adapter、DatasetVersion repository、事务/fence、Outbox/Audit/Evidence/Cost 和原生 IAM/STS/条件写；未新增总体蓝图或第二套基础设施。B3 浏览器/既有加工认证交付/非开发者验收及远端 CI 仍为 NOT_RUN；本地 PASS 不等同于生产接纳。
+
 ## 1. 有限目标和执行顺序
 
 使用独立 PostgreSQL 来源、现有企业/租赁/能耗合成样本，在平台内完成一个批次的来源登记、抽取、清洗、质量评估、认证与 DIRECT_DATA 交付。主写者为当前接续 #298 的执行线程；当前独立分支只写本文，不触及 #294/#295 的 annotation 工作。后续代码沿单一串行 writer 推进，每个增量开工核对最新 main/活动 PR；不伪称已与不可见线程通信。

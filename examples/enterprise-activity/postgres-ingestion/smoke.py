@@ -93,6 +93,8 @@ class FaultProxy(http.server.ThreadingHTTPServer):
         self.requests = []
         self.responses = []
         self.observed_ids = []  # Test oracle only; recovery never consumes these.
+        self.before_start = None  # B2 fault hook; unused in the B1 contract run.
+        self.strip_status_identity = False
 
 
 class ProxyHandler(http.server.BaseHTTPRequestHandler):
@@ -113,6 +115,9 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         if proxy.unavailable:
             self.send_error(503)
             return
+        if proxy.before_start and "/startPipeline" in self.path:
+            hook, proxy.before_start = proxy.before_start, None
+            hook()
         req = urllib.request.Request(proxy.upstream + self.path, data=body if body else None,
                                      method=self.command, headers={
                                          "Authorization": proxy.authorization,
@@ -123,6 +128,11 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         except urllib.error.HTTPError as error:
             status, content = error.code, error.read()
         proxy.responses.append(content)
+        if proxy.strip_status_identity and "/pipelineStatus" in self.path and status == 200:
+            value = json.loads(content)
+            value.pop("id", None)
+            value.pop("pipelineName", None)
+            content = canonical(value)  # Corrupt an actual reply; never invent success.
         if "/registerPipeline" in self.path and status == 200:
             try:
                 proxy.observed_ids.append(ET.fromstring(content).findtext("id"))
@@ -228,6 +238,7 @@ class Trial:
         # loopback-published. Docker internal bridges suppress port publishing.
         self.docker("network", "create", self.network)
         self.docker("run", "-d", "--name", self.pg, "--network", self.network,
+                    *(["-p", f"127.0.0.1:{self.source_port}:5432"] if getattr(self, "source_port", None) else []),
                     "--network-alias", "source", "-e", "POSTGRES_DB=dpp_ingestion_source",
                     "-e", "POSTGRES_PASSWORD_FILE=/run/secrets/admin-password",
                     "--mount", f"type=bind,src={self.private / 'admin-password'},dst=/run/secrets/admin-password,readonly",
