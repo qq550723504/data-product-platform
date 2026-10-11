@@ -29,14 +29,17 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
-const run = "a6b30840-3e76-49ad-91d3-f0c399fcf170"
-const planHash = "7c2847699997663ca453db54e0fab1565ad67fc9434c0c2c507c6adaa056a09f"
+var run = "a6b30840-3e76-49ad-91d3-f0c399fcf170"
+var planHash = "7c2847699997663ca453db54e0fab1565ad67fc9434c0c2c507c6adaa056a09f"
 
 var planID = uuid.MustParse("83d0ad2c-0df0-4245-8fbf-6d7190bb77cc")
 var inventoryPlanID = uuid.MustParse("de994857-c0aa-4f86-beb7-0012f06f7a4a")
 var workspace = uuid.MustParse("39dd70e6-691a-4d69-b971-6c75533b72d6")
 
-const inventoryHash = "a68edc4456d3153316d7a585b64818b1275300e090e0258e37f51a71b9118f04"
+var inventoryHash = "a68edc4456d3153316d7a585b64818b1275300e090e0258e37f51a71b9118f04"
+var providerID = "5e8a5758-96f6-4bf4-a088-1decd62809b0"
+var incarnationID = "78ebff25-faa6-4f9b-8275-6204d7b786ab"
+var archiveSource bool
 
 type config struct {
 	RunID, WorkspaceID, ProviderInstanceID, IncarnationID, ActorID                                      uuid.UUID
@@ -85,7 +88,7 @@ func load() (config, permission, error) {
 	if read("/run/private/config.json", &c) != nil || read("/run/private/delete-permission.json", &p) != nil {
 		return c, p, errors.New("controlled configuration unreadable")
 	}
-	if c.RunID.String() != run || p.RunID != c.RunID || c.WorkspaceID != workspace || p.WorkspaceID != workspace || p.PlanHash != planHash || c.Endpoint != "127.0.0.1:9000" || c.ProviderInstanceID.String() != "5e8a5758-96f6-4bf4-a088-1decd62809b0" || c.IncarnationID.String() != "78ebff25-faa6-4f9b-8275-6204d7b786ab" || c.ActorID == uuid.Nil || c.Token == "" || c.RootAccess == "" || c.InspectAccess == "" || p.DeleteAccess == "" || p.DeleteSecret == "" || p.BasisRef == "" || !p.Enabled || time.Now().Before(p.ConfirmedAt) || !time.Now().Before(p.ExpiresAt) || p.ExpiresAt.Sub(p.ConfirmedAt) > time.Hour || len(p.TopologySHA256) != 64 {
+	if c.RunID.String() != run || p.RunID != c.RunID || c.WorkspaceID != workspace || p.WorkspaceID != workspace || p.PlanHash != planHash || c.Endpoint != "127.0.0.1:9000" || c.ProviderInstanceID.String() != providerID || c.IncarnationID.String() != incarnationID || c.ActorID == uuid.Nil || c.Token == "" || c.RootAccess == "" || c.InspectAccess == "" || p.DeleteAccess == "" || p.DeleteSecret == "" || p.BasisRef == "" || !p.Enabled || time.Now().Before(p.ConfirmedAt) || !time.Now().Before(p.ExpiresAt) || p.ExpiresAt.Sub(p.ConfirmedAt) > time.Hour || len(p.TopologySHA256) != 64 {
 		return c, p, errors.New("controlled authority/scope/window unavailable")
 	}
 	return c, p, nil
@@ -98,13 +101,16 @@ func (authority) AuthorizeLifecycle(_ context.Context, _ pgx.Tx, w uuid.UUID, ca
 	if e != nil {
 		return principal.RequestPrincipal{}, principal.ErrUnauthenticated
 	}
-	r, e := principal.NewStaticResolver(true, c.Token, "lifecycle-fixture:"+run, c.ActorID.String(), []string{workspace.String()}, []string{lc.CapabilityApproveDisposition, lc.CapabilityDispatch, lc.CapabilityInspectStorage, lc.CapabilityInspectOccupancy, lc.CapabilityVerifyAbsence})
+	r, e := principal.NewStaticResolver(true, c.Token, "lifecycle-fixture:"+run, c.ActorID.String(), []string{workspace.String()}, []string{lc.CapabilityPreparePlan, lc.CapabilityApproveDisposition, lc.CapabilityDispatch, lc.CapabilityInspectStorage, lc.CapabilityInspectOccupancy, lc.CapabilityVerifyAbsence})
 	if e != nil {
 		return principal.RequestPrincipal{}, e
 	}
 	req, _ := http.NewRequest("POST", "http://fixture.invalid/internal", nil)
 	req.Header.Set("Authorization", "Bearer "+c.Token)
 	return r.Resolve(req, w, cap)
+}
+func (a authority) AuthorizePlan(ctx context.Context, tx pgx.Tx, w uuid.UUID) (principal.RequestPrincipal, error) {
+	return a.AuthorizeLifecycle(ctx, tx, w, lc.CapabilityPreparePlan, time.Now().UTC())
 }
 func (authority) CheckApproverAuthority(_ context.Context, _ pgx.Tx, a domain.DispositionApproval, at time.Time) (domain.Check, error) {
 	c, p, e := load()
@@ -118,9 +124,10 @@ func (authority) CheckApproverAuthority(_ context.Context, _ pgx.Tx, a domain.Di
 }
 
 type dependencies struct {
-	all        []domain.Copy
-	protection map[uuid.UUID]lc.CopyProtection
-	inventory  map[string]lc.NamespaceInventory
+	all             []domain.Copy
+	protection      map[uuid.UUID]lc.CopyProtection
+	inventory       map[string]lc.NamespaceInventory
+	archivePresence lc.ExactCopyInspection
 }
 
 func (d *dependencies) EvaluateDisposalDependencies(ctx context.Context, tx pgx.Tx, r lc.DisposalDependencyRequest) (lc.DisposalDependencies, error) {
@@ -210,10 +217,18 @@ func (d *dependencies) EvaluateDisposalDependencies(ctx context.Context, tx pgx.
 	if released && countCopies == len(d.all) {
 		result.ReferencesReleased = domain.Satisfied
 	}
+	if archiveSource {
+		if e = d.checkRetainedArchive(ctx, tx, r); e != nil {
+			result.LedgerCurrent = domain.Unknown
+		}
+	}
 	return result, nil
 }
 
 func copies(c config) ([]domain.Copy, error) {
+	if archiveSource {
+		return archiveCopies(c)
+	}
 	var m manifest
 	if e := read(filepath.Join(c.OutputDirectory, "manifest.json"), &m); e != nil {
 		return nil, e
@@ -270,6 +285,26 @@ func execute(ctx context.Context) error {
 	defer pool.Close()
 	manager := transaction.NewManager(pool)
 	repo := &infrastructure.PostgresRepository{}
+	router, e := routing.NewRouter(false)
+	if e != nil {
+		return e
+	}
+	outbox.ConfigureAppendObligation(router)
+	defer outbox.ConfigureAppendObligation(nil)
+	if archiveSource {
+		ids := []uuid.UUID{}
+		for _, copy := range all {
+			ids = append(ids, copy.ID)
+		}
+		full, err := lc.NewPlanService(manager, repo, authority{}).PrepareDeletePlan(ctx, lc.PrepareDeletePlanCommand{WorkspaceID: workspace, CopyIDs: ids, IdempotencyKey: run + ":source-delete-inventory"})
+		if err != nil {
+			return err
+		}
+		inventoryPlanID, inventoryHash = full.ID, full.ContentHash
+		if err = write(filepath.Join(c.OutputDirectory, "source-delete-inventory-plan.json"), map[string]any{"plan": full, "approval": "NOT_GRANTED_INVENTORY_ONLY"}); err != nil {
+			return err
+		}
+	}
 	// Validate the frozen plan and complete registry before any provider request.
 	var approved, full domain.Plan
 	e = manager.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
@@ -301,18 +336,16 @@ func execute(ctx context.Context) error {
 	if e != nil {
 		return errors.New("frozen registry scope mismatch")
 	}
-	router, e := routing.NewRouter(false)
-	if e != nil {
-		return e
-	}
-	outbox.ConfigureAppendObligation(router)
-	defer outbox.ConfigureAppendObligation(nil)
 	auth := authority{}
 	occupancy := lc.NewOccupancyService(manager, repo, auth, nil, nil)
 	dep := &dependencies{all: all, protection: map[uuid.UUID]lc.CopyProtection{}, inventory: map[string]lc.NamespaceInventory{}}
 	disposition := lc.NewDispositionService(occupancy, auth, dep, nil)
 	execution := lc.NewExactExecution(disposition)
-	inspector, e := storage.NewLifecycleInspector(storage.LifecycleInspectionConfig{Endpoint: c.Endpoint, AccessKey: c.InspectAccess, SecretKey: c.InspectSecret, WorkspaceID: workspace, ProviderInstanceID: c.ProviderInstanceID, IncarnationID: c.IncarnationID, Namespaces: []string{"dpp-lifecycle307-online", "dpp-lifecycle307-quarantine"}, Journal: lc.NewPostgresStorageCallJournal(occupancy)})
+	inspectAccess, inspectSecret := c.InspectAccess, c.InspectSecret
+	if archiveSource {
+		inspectAccess, inspectSecret = p.DeleteAccess, p.DeleteSecret
+	}
+	inspector, e := storage.NewLifecycleInspector(storage.LifecycleInspectionConfig{Endpoint: c.Endpoint, AccessKey: inspectAccess, SecretKey: inspectSecret, WorkspaceID: workspace, ProviderInstanceID: c.ProviderInstanceID, IncarnationID: c.IncarnationID, Namespaces: []string{"dpp-lifecycle307-online", "dpp-lifecycle307-quarantine"}, Journal: lc.NewPostgresStorageCallJournal(occupancy)})
 	if e != nil {
 		return e
 	}
@@ -340,17 +373,34 @@ func execute(ctx context.Context) error {
 		dep.inventory[copy.Namespace] = inventory
 		return nil
 	}
-	// Read-only platform prerequisite checks for the two protected members. No
-	// approval is created for their four-object inventory plan; no dispatch/send.
+	// Read-only survivor/protection checks. The complete inventory plan receives
+	// no approval, dispatch or send; only the confirmed subset can be approved.
 	var blocked []any
+	var before []any
 	for _, copy := range all {
-		if copy.ID == approved.Targets[0].ID || copy.ID == approved.Targets[1].ID {
+		if containsCopy(approved.Targets, copy.ID) {
 			continue
 		}
 		if e = refresh(copy); e != nil {
 			return fmt.Errorf("protected inspection: %w", e)
 		}
 		protection := dep.protection[copy.ID]
+		if archiveSource {
+			if e := expectedArchiveProtection(c, protection); e != nil {
+				return e
+			}
+			presence, err := inspector.InspectExactCopy(ctx, copy)
+			if err != nil {
+				return err
+			}
+			before = append(before, map[string]any{"copy": copy, "protection": protection, "presence": presence})
+			if copy.Key == "archive/a.csv" {
+				dep.archivePresence = presence
+			}
+			if !protection.LegalHold && (protection.RetainUntil == nil || !time.Now().Before(*protection.RetainUntil)) {
+				continue
+			}
+		}
 		if !protection.LegalHold && (protection.RetainUntil == nil || !time.Now().Before(*protection.RetainUntil)) {
 			return errors.New("expected protected object protection is no longer active")
 		}
@@ -359,6 +409,11 @@ func execute(ctx context.Context) error {
 	}
 	if e = write(filepath.Join(c.OutputDirectory, "protected-block-readback-"+uuid.NewString()+".json"), blocked); e != nil {
 		return e
+	}
+	if archiveSource {
+		if e = write(filepath.Join(c.OutputDirectory, "source-delete-survivors-before.json"), before); e != nil {
+			return e
+		}
 	}
 	// Only confirmed rejected sends may resolve by a newly journaled positive
 	// HEAD. Uncertain/in-flight sends retain their reservation, without resend.
@@ -401,12 +456,28 @@ func execute(ctx context.Context) error {
 	}
 	var results []any
 	for _, copy := range approved.Targets {
+		if archiveSource {
+			for _, member := range all {
+				if member.Key == "archive/a.csv" {
+					if e = refresh(member); e != nil {
+						return e
+					}
+					dep.archivePresence, e = inspector.InspectExactCopy(ctx, member)
+					if e != nil {
+						return e
+					}
+				}
+			}
+		}
 		if e = refresh(copy); e != nil {
 			return fmt.Errorf("fresh target inspection: %w", e)
 		}
 		dispatch, e := disposition.DispatchContentDisposition(ctx, lc.DispatchContentDispositionCommand{CommandHeader: header("dispatch:" + copy.ID.String() + ":" + os.Getenv("LIFECYCLE_DELETE_EVALUATION")), PlanID: planID, ApprovalID: approval.ID, CopyID: copy.ID})
 		if e != nil {
 			return fmt.Errorf("dispatch: %w", e)
+		}
+		if e = write(filepath.Join(c.OutputDirectory, "delete-current-gate-"+copy.ID.String()+".json"), dispatch); e != nil {
+			return e
 		}
 		// A replay only performs read-only reconciliation; it never authorizes send.
 		if len(dispatch.Blockers) != 0 {
@@ -446,7 +517,13 @@ func execute(ctx context.Context) error {
 				}
 			}
 		}
-		if len(inventory.Versions) != 1 || survivor != 1 {
+		expectedSurvivors := 0
+		for _, other := range all {
+			if other.Namespace == copy.Namespace && other.ID != copy.ID {
+				expectedSurvivors++
+			}
+		}
+		if len(inventory.Versions) != expectedSurvivors || survivor != expectedSurvivors {
 			return errors.New("post-send namespace exact membership unavailable; preserve UNKNOWN, no resend")
 		}
 		receipt, e := execution.VerifyAbsentInScope(ctx, header("verify:"+copy.ID.String()), attempt.ID, inventory)
@@ -462,7 +539,7 @@ func execute(ctx context.Context) error {
 	// Fresh final read-only protected state plus exact inventories after all sends.
 	var protectedFinal []any
 	for _, copy := range all {
-		if copy.ID == approved.Targets[0].ID || copy.ID == approved.Targets[1].ID {
+		if containsCopy(approved.Targets, copy.ID) {
 			continue
 		}
 		if e = refresh(copy); e != nil {
@@ -472,8 +549,13 @@ func execute(ctx context.Context) error {
 			return e
 		}
 		protection := dep.protection[copy.ID]
-		if !protection.LegalHold && (protection.RetainUntil == nil || !time.Now().Before(*protection.RetainUntil)) {
+		if !archiveSource && !protection.LegalHold && (protection.RetainUntil == nil || !time.Now().Before(*protection.RetainUntil)) {
 			return errors.New("protected final state changed")
+		}
+		if archiveSource {
+			if !sameProtection(protection, before) || !inventoryMatches(dep.inventory[copy.Namespace], all, approved.Targets) {
+				return errors.New("survivor membership/protection changed; no cleanup")
+			}
 		}
 		protectedFinal = append(protectedFinal, map[string]any{"copy": copy, "protection": protection, "inventory": dep.inventory[copy.Namespace]})
 	}
@@ -545,8 +627,24 @@ func provision(ctx context.Context, disable bool) error {
 		})
 	}
 	statements := []any{}
-	for _, target := range []struct{ bucket, key, version string }{{"dpp-lifecycle307-online", "fixture/a.csv", "cc359f61-4921-4487-852f-b6ab6d139278"}, {"dpp-lifecycle307-quarantine", "fixture/b.csv", "2ae6479b-2b96-441a-9159-80a07e3ec4e0"}} {
+	targets := []struct{ bucket, key, version string }{{"dpp-lifecycle307-online", "fixture/a.csv", "cc359f61-4921-4487-852f-b6ab6d139278"}, {"dpp-lifecycle307-quarantine", "fixture/b.csv", "2ae6479b-2b96-441a-9159-80a07e3ec4e0"}}
+	if archiveSource {
+		targets = targets[:1]
+		targets[0].version = "3fe1cc44-b0f8-428c-9bb8-9f92dac5d15d"
+	}
+	for _, target := range targets {
 		statements = append(statements, map[string]any{"Effect": "Allow", "Action": []string{"s3:DeleteObject", "s3:DeleteObjectVersion"}, "Resource": []string{"arn:aws:s3:::" + target.bucket + "/" + target.key}, "Condition": map[string]any{"StringEquals": map[string]string{"s3:versionid": target.version}}})
+	}
+	if archiveSource {
+		all, err := copies(c)
+		if err != nil {
+			return err
+		}
+		for _, copy := range all {
+			arn := "arn:aws:s3:::" + copy.Namespace + "/" + copy.Key
+			statements = append(statements, map[string]any{"Effect": "Allow", "Action": []string{"s3:GetObject", "s3:GetObjectVersion", "s3:GetObjectRetention"}, "Resource": []string{arn}, "Condition": map[string]any{"StringEquals": map[string]string{"s3:versionid": copy.ProviderVersion}}}, map[string]any{"Effect": "Allow", "Action": []string{"s3:GetObjectLegalHold"}, "Resource": []string{arn}})
+		}
+		statements = append(statements, map[string]any{"Effect": "Allow", "Action": []string{"s3:ListBucketVersions"}, "Resource": []string{"arn:aws:s3:::dpp-lifecycle307-online", "arn:aws:s3:::dpp-lifecycle307-quarantine"}})
 	}
 	policy, _ := json.Marshal(map[string]any{"Version": "2012-10-17", "Statement": statements})
 	name := "lifecycle307-exact-delete-" + run
@@ -576,6 +674,10 @@ func provision(ctx context.Context, disable bool) error {
 	return write(filepath.Join(c.OutputDirectory, "delete-executor-policy.json"), json.RawMessage(policy))
 }
 func main() {
+	if e := selectProfile(); e != nil {
+		fmt.Fprintln(os.Stderr, e)
+		os.Exit(1)
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Minute)
 	defer cancel()
 	mode := os.Getenv("LIFECYCLE_DELETE_MODE")

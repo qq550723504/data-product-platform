@@ -34,7 +34,7 @@ func (s *ExactExecution) RegisterFixtureDisposalBasis(ctx context.Context, c Fix
 		if err != nil {
 			return uuid.Nil, err
 		}
-		if inventory.VerifyFrozenScope() != nil || approved.VerifyFrozenScope() != nil || inventory.ContentHash != c.InventoryHash || approved.ContentHash != c.ApprovedHash || len(inventory.Targets) != 4 || len(approved.Targets) != 2 {
+		if inventory.VerifyFrozenScope() != nil || approved.VerifyFrozenScope() != nil || inventory.ContentHash != c.InventoryHash || approved.ContentHash != c.ApprovedHash || len(approved.Targets) > len(inventory.Targets) {
 			return uuid.Nil, ErrStorageScope
 		}
 		for _, target := range approved.Targets {
@@ -53,8 +53,29 @@ func (s *ExactExecution) RegisterFixtureDisposalBasis(ctx context.Context, c Fix
 		if err != nil {
 			return uuid.Nil, err
 		}
-		if copies != 4 || namespaces != 2 {
+		if copies != len(inventory.Targets) || namespaces != 2 {
 			return uuid.Nil, ErrStorageScope
+		}
+		// Cardinality alone cannot establish closure. Compare every registered
+		// immutable identity while holding the workspace fence and inventory parents.
+		ids := make([]uuid.UUID, 0, len(inventory.Targets))
+		for _, target := range inventory.Targets {
+			ids = append(ids, target.ID)
+		}
+		registered, err := o.repo.LoadFixtureCopies(ctx, tx, c.WorkspaceID, ids)
+		if err != nil || len(registered) != copies {
+			return uuid.Nil, ErrStorageScope
+		}
+		for _, target := range registered {
+			found := false
+			for _, member := range inventory.Targets {
+				if target == member {
+					found = true
+				}
+			}
+			if !found {
+				return uuid.Nil, ErrStorageScope
+			}
 		}
 		caller, at, err := o.authorize(ctx, tx, c.WorkspaceID, CapabilityApproveDisposition, &caller)
 		if err != nil {
