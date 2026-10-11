@@ -1,0 +1,86 @@
+{
+  "iam_executor": "DISABLED: confirmed SetUserStatus HTTP200 and successful helper",
+  "network": {
+    "members": [
+      "dpp-lifecycle307-a6b30840-gateway",
+      "dpp-lifecycle307-a6b30840-postgres",
+      "dpp-lifecycle307-a6b30840-minio"
+    ],
+    "internal": true,
+    "id": "6bec8f5e4e1164a0716740fade68c36b6fc995954186b876b20416357c2d9c63"
+  },
+  "volume_cleanup": 0,
+  "object_cleanup": 0,
+  "containers": [
+    {
+      "ports": {
+        "5432/tcp": []
+      },
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "name": "/dpp-lifecycle307-a6b30840-postgres",
+      "mounts": [
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/pgpass"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-a6b30840-postgres",
+          "Destination": "/var/lib/postgresql/data"
+        }
+      ],
+      "id": "2dac61950f7bec8b9cc03a5ca2c9acb279640daff161a428885f0eef5bfaa414",
+      "state": "running"
+    },
+    {
+      "ports": {},
+      "image": "sha256:a9eb76492485dd496bfd69b4114e47137f2da1a1a87e4a9b273cb21476cb1a98",
+      "name": "/dpp-lifecycle307-a6b30840-minio",
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-a6b30840-objects",
+          "Destination": "/data"
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/access"
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/secret"
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/start.sh"
+        }
+      ],
+      "id": "4b7287adcc0c6b221f2516f0c4af8065d281c18a90322fbcdfcb01325e52f7c2",
+      "state": "running"
+    },
+    {
+      "ports": {
+        "9000/tcp": []
+      },
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "name": "/dpp-lifecycle307-a6b30840-gateway",
+      "mounts": [
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/etc/caddy/Caddyfile"
+        }
+      ],
+      "id": "102dcc35b2d6c50f1e41207af9ba3a8dc202caeceb36620085d99f2a68ab73c9",
+      "state": "running"
+    }
+  ],
+  "gateway_delete": "DENY_ALL",
+  "as_of": "2026-10-11T11:41:56.7482873+00:00",
+  "execution_enabled": false,
+  "preparation_enabled": false
+}

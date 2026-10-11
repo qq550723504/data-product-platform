@@ -56,3 +56,8 @@ PASS：实际 version、exact bytes/hash、当前 native hold/retention、完整
 请确认以上**这一套环境及两对象候选 scope hash `7c284769...`**可用于后续 D1 受控删除验收：两份无保护对象在 scoped approval 和 current gate 允许后进行 exact-version 删除测试；另外两份保留保护，只验证门禁阻断。实际执行前仍复核同一 container/volume/incarnation、exact inventory、当前保护与冻结计划；任何 scope/version 扩张或更换都不继承本确认。
 
 **不包含**解除 hold、retention bypass、更换/扩张 namespace、bare-key 删除、额外 versions、#298 demo/retained 对象、其他项目/container/volume、外部备份/recipient、真实客户数据。对象/bucket/volume 的收尾清理仍待单独明确确认；保留数据库与 Evidence/Audit/Cost 历史，不做 down/truncate/软删除伪装修正。
+
+
+## 后续确认与执行 — 2026-10-11
+
+用户已在本聊天确认上述两份无保护 exact versions。原表是删除前历史快照；本次结果与保留状态见 [删除验收报告](delete-review.md)。兩份 protected versions 仍保留；cleanup=0。完整 D1 仍 NOT_RUN。

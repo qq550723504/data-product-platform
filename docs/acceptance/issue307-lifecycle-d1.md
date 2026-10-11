@@ -1,7 +1,7 @@
 # #307 D1 开发与验收记录
 
-> 2026-10-11；D1 OPEN。已完成五个本地增量：plan foundation、restriction/hold/reader occupancy、DB-only approval/dispatch/physical observations、非删除 storage inspection / 逐 HTTP 调用 Journal、独立封闭 native fixture 与实际版本清单；完整 D1 runtime **NOT_RUN**，删除确认 **PENDING**。
-> 用户已授权创建 Issue 并开发，仅受控合成对象；实际 provider 删除（含测试/cleanup）仍须先确认环境和 exact object/version 清单。
+> 2026-10-11；D1 OPEN。新增受控 exact-version DELETE、denied reconciliation、native absence receipt / scoped completion。用户本聊天已确认固定环境及两份无保护版本，本次范围验收 **PASS**；完整 D1 runtime **NOT_RUN**。
+> 仅受控合成对象；另外两份保护对象仅只读阻断核验，native DELETE=0，未解除/bypass。object/volume cleanup=0。其他实际删除仍需先确认其环境与 exact object/version 清单。
 
 ## 权威与写入归属
 
@@ -135,3 +135,13 @@ Run `a6b30840-3e76-49ad-91d3-f0c399fcf170` 只使用 27/26-byte synthetic CSV。
 删除确认另有**两份无保护对象**的独立非破坏计划：[deletion-candidate.json](../../examples/lifecycle-d1/results/a6b30840-3e76-49ad-91d3-f0c399fcf170/deletion-candidate.json)。通过现有 PrepareDeletePlan 创建，仅 SQL command，无 storage I/O。它不是四份全量盘点计划的审批；两份保护对象仅作门禁阻断验收。确认绑定此 exact scope hash，cleanup/解除保护/bypass 不在授权范围。
 
 候选计划 `83d0ad2c-0df0-4245-8fbf-6d7190bb77cc`，hash `7c2847699997663ca453db54e0fab1565ad67fc9434c0c2c507c6adaa056a09f`。[读回](../../examples/lifecycle-d1/results/a6b30840-3e76-49ad-91d3-f0c399fcf170/deletion-plan-readback.json) 为2 plans/hash全部一致、19 calls/cost、42 Event/Audit/Evidence、approval/dispatch/delete attempt=0。开发重排后的 main000055 + D1000057 在另一台已有专属 tmpfs PostgreSQL (`dpp-lifecycle307-pg-20261011`，loopback59045、无 storage/volume mounts) 上干净 up PASS，之后停止该 scratch container；未对保留 fixture 安装 migration 或执行 down。最终模块 `go test ./...` 和 `go vet ./...` PASS；外部 PG/MinIO integration 未在该模块命令开启，完整 runtime/CI NOT_RUN。
+
+## 第六个增量：已确认 exact-version 删除与 scoped completion
+
+用户明确确认固定 `dpp-lifecycle307-a6b30840` 和候选两版本后，完成 [受控删除报告](../../examples/lifecycle-d1/results/a6b30840-3e76-49ad-91d3-f0c399fcf170/delete-review.md)。两份批准版本分别经过 DELETE、完整版本盘点、独立 absence receipt，fenced exact-membership completion 已提交；两份保护版本仍存在、原保护有效，仅只读 prerequisite 阻断核验。Scope hash 不变；DatasetVersion 历史 URI/hash/identity/status 不改写。
+
+复用 MinIO SDK/native IAM、原事务/fence、Cost/Audit/Evidence/Outbox。新增一次性 durable send claim，append-only scoped receipts/completion；confirmed DENIED 只在新 exact positive HEAD 后追加对账释放，再经 fresh dispatch 创建新 physical attempt。UNKNOWN/start-only 不盲删、不自动释放。实际3次 DELETE 调用（1拒绝、2接受）均计独立 invocation 成本；61次 metadata calls +3次 DELETE 对应64 allocations/quantity，amount=NULL，142 Event/Audit/Evidence，旧 BLOCKED/denial 保留。任何 provider 接受结果本身不是完成证明。
+
+Migration57 仍为 D1 foundation；58 增加 send/absence/completion/test basis，59 增加 confirmed denied + fresh presence reconciliation。Fresh PostgreSQL 按 main55+D157/58/59 测试通过；原 native fixture54仅安装明确 additive58+59，不安装重复57、不伪造 schema_migration 升级、不清库。routing 为 c1-v24+external-core1；#310/C1 56 和共享写域在 PR 发布前按实际 merge 顺序重新检查。
+
+最终 execution/preparation authority disabled，native IAM executor disabled，gateway DELETE 全拒绝且不开放 payload GET/PUT/POST；原网络、服务和两 named volumes 保留。无解除保护/bypass/对象 cleanup/volume cleanup。完整 D1 的 archive/restore、真实 reader/processing/delivery、自动 worker recovery/恢复 ledger 等仍待开发/NOT_RUN；不把这次两份版本的范围完成当全域销毁或整 Issue 完成。无 push/PR/merge/CI 授权，#307 OPEN。
