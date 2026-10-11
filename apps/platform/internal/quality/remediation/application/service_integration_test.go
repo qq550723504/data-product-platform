@@ -178,14 +178,7 @@ func TestC1RealPostgresAtomicReplayConcurrencyRetryCostsAndHistory(t *testing.T)
 	creator := datasetapp.NewCreateDatasetService(tx, ds, resourceinfra.NewPostgresRepository())
 	writer := datasetapp.NewUploadVersionService(tx, ds, store)
 	ws, actor := uuid.New(), uuid.New()
-	raw, err := creator.Handle(ctx, datasetapp.CreateDatasetCommand{WorkspaceID: ws, Code: uuid.NewString(), Name: "C1 RAW", DatasetType: datasetdomain.DatasetTypeRaw})
-	if err != nil {
-		t.Fatal(err)
-	}
-	input, err := writer.Handle(ctx, datasetapp.UploadVersionCommand{DatasetID: raw.ID, Filename: "raw.csv", ContentType: "text/csv", Content: []byte("meter_id,energy_kwh\nM-001,10\nM-005,-999\n")})
-	if err != nil {
-		t.Fatal(err)
-	}
+	raw, input, approvedInputs := acceptedBatch(t, ctx, pool, tx, ds, store, creator, writer, root, ws, actor)
 	output, err := creator.Handle(ctx, datasetapp.CreateDatasetCommand{WorkspaceID: ws, Code: plan.Spec.OutputDatasetCode, Name: "C1 approved output", DatasetType: datasetdomain.DatasetTypeCurated})
 	if err != nil {
 		t.Fatal(err)
@@ -234,8 +227,40 @@ func TestC1RealPostgresAtomicReplayConcurrencyRetryCostsAndHistory(t *testing.T)
 		t.Fatal(err)
 	}
 	assignmentCommand := cmd
-	command := application.ExecuteCommand{Command: cmd, WorkflowVersionID: wf.ID, OutputDatasetID: output.ID, TargetPeriod: "2025-03", Inputs: []workflowdomain.InputBinding{{Name: plan.Spec.InputName, DatasetVersionID: input.ID}}}
+	command := application.ExecuteCommand{Command: cmd, WorkflowVersionID: wf.ID, OutputDatasetID: output.ID, TargetPeriod: "2025-03", Inputs: approvedInputs}
 	command.Key = "execute"
+	t.Run("all required inputs bind the same accepted batch and its actual resolution", func(t *testing.T) {
+		_, _, unrelatedInputs := acceptedBatch(t, ctx, pool, tx, ds, store, creator, writer, root, ws, actor)
+		for i, original := range approvedInputs {
+			t.Run(original.Name, func(t *testing.T) {
+				bad := command
+				bad.Inputs = append([]workflowdomain.InputBinding{}, approvedInputs[:i]...)
+				bad.Inputs = append(bad.Inputs, approvedInputs[i+1:]...)
+				if _, e := service.Execute(ctx, bad); !errors.Is(e, domain.ErrScope) {
+					t.Fatal("omitted input queued", e)
+				}
+				bad.Inputs = append([]workflowdomain.InputBinding{}, approvedInputs...)
+				for _, unrelated := range unrelatedInputs {
+					if unrelated.Name == original.Name {
+						bad.Inputs[i] = unrelated
+					}
+				}
+				if _, e := service.Execute(ctx, bad); !errors.Is(e, domain.ErrScope) {
+					t.Fatal("same-workspace companion substituted", e)
+				}
+			})
+		}
+		bad := command
+		bad.Inputs = append([]workflowdomain.InputBinding{}, approvedInputs...)
+		bad.Inputs[0] = bad.Inputs[1]
+		if _, e := service.Execute(ctx, bad); !errors.Is(e, domain.ErrScope) {
+			t.Fatal("duplicate input names queued", e)
+		}
+		var count int
+		if e := pool.QueryRow(ctx, `SELECT count(*) FROM execution WHERE workspace_id=$1`, ws).Scan(&count); e != nil || count != 0 {
+			t.Fatal("invalid input set created queue work", e, count)
+		}
+	})
 	t.Run("approved destination rejects unrelated curated and raw assets before queue acceptance", func(t *testing.T) {
 		unrelated, e := creator.Handle(ctx, datasetapp.CreateDatasetCommand{WorkspaceID: ws, Code: uuid.NewString(), Name: "Unrelated CURATED", DatasetType: datasetdomain.DatasetTypeCurated})
 		if e != nil {
@@ -545,6 +570,36 @@ func TestC1RealPostgresAtomicReplayConcurrencyRetryCostsAndHistory(t *testing.T)
 					t.Fatalf("negative evidence: result=%+v error=%v", got, e)
 				}
 			})
+		}
+	})
+	t.Run("non-RAW detection is rejected before attempt or cost allocation", func(t *testing.T) {
+		beforeCalls := qe.calls.Load()
+		var before int
+		if e := pool.QueryRow(ctx, `SELECT count(*) FROM quality_remediation_detection WHERE workspace_id=$1`, ws).Scan(&before); e != nil {
+			t.Fatal(e)
+		}
+		for _, kind := range []datasetdomain.DatasetType{datasetdomain.DatasetTypeCurated, datasetdomain.DatasetTypeStandardized} {
+			d, e := creator.Handle(ctx, datasetapp.CreateDatasetCommand{WorkspaceID: ws, Code: uuid.NewString(), Name: "Non RAW", DatasetType: kind})
+			if e != nil {
+				t.Fatal(e)
+			}
+			first, e := writer.Handle(ctx, datasetapp.UploadVersionCommand{DatasetID: d.ID, Filename: "data.csv", ContentType: "text/csv", Content: []byte("meter_id,energy_kwh\nM-001,-999\n")})
+			if e != nil {
+				t.Fatal(e)
+			}
+			second, e := writer.Handle(ctx, datasetapp.UploadVersionCommand{DatasetID: d.ID, Filename: "data.csv", ContentType: "text/csv", Content: []byte("meter_id,energy_kwh\nM-001,-998\n")})
+			if e != nil {
+				t.Fatal(e)
+			}
+			for _, version := range []uuid.UUID{first.ID, second.ID} {
+				if _, e = service.Detect(ctx, application.Command{WorkspaceID: ws, ActorID: actor, Key: uuid.NewString()}, version); !errors.Is(e, domain.ErrScope) {
+					t.Fatal("non-RAW detection accepted", kind, e)
+				}
+			}
+		}
+		var after int
+		if e := pool.QueryRow(ctx, `SELECT count(*) FROM quality_remediation_detection WHERE workspace_id=$1`, ws).Scan(&after); e != nil || after != before || qe.calls.Load() != beforeCalls {
+			t.Fatal("non-RAW rejection allocated detection or Quality work", e)
 		}
 	})
 	t.Logf("real PG: 8 same-key requests -> one execution; failed+retry native calls/costs=2; detection/recheck/format evidence quality physical calls=%d; old RAW unchanged", qe.calls.Load())

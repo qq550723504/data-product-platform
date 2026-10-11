@@ -59,6 +59,13 @@ func (s *Service) Detect(ctx context.Context, cmd Command, version uuid.UUID) (D
 	}
 	var detectionID uuid.UUID
 	err := s.Tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var raw bool
+		if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM dataset_version v JOIN dataset ds ON ds.id=v.dataset_id WHERE v.id=$1 AND ds.workspace_id=$2 AND ds.dataset_type='RAW')`, version, cmd.WorkspaceID).Scan(&raw); err != nil {
+			return err
+		}
+		if !raw {
+			return domain.ErrScope
+		}
 		_, err := tx.Exec(ctx, `INSERT INTO quality_remediation_detection(id,workspace_id,version_id,request_key,actor_id,plan_hash)
    VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT(workspace_id,request_key) DO NOTHING`, uuid.New(), cmd.WorkspaceID, version, cmd.Key, cmd.ActorID, s.Plan.Hash)
 		if err != nil {
@@ -239,7 +246,7 @@ func (s *Service) Execute(ctx context.Context, cmd ExecuteCommand) (workflowdoma
 		if err != nil {
 			return err
 		}
-		if c.PlanHash != s.Plan.Hash {
+		if c.PlanHash != s.Plan.Hash || c.WorkflowHash != s.Plan.WorkflowHash {
 			return domain.ErrScope
 		}
 		// The versioned server-side plan owns the destination binding. Caller
@@ -272,6 +279,9 @@ func (s *Service) Execute(ctx context.Context, cmd ExecuteCommand) (workflowdoma
 			if prior.OutputDatasetID != approvedOutput {
 				return domain.ErrScope
 			}
+			if e = s.validateInputs(ctx, tx, c, prior.Inputs); e != nil {
+				return e
+			}
 			result, err = s.Executions.RetryInTransaction(ctx, tx, workflowapp.RetryExecutionCommand{ExecutionID: previous, IdempotencyKey: executionKey(c.ID, cmd.Key), ActorID: &cmd.ActorID, TraceID: cmd.TraceID})
 		} else {
 			if previous != uuid.Nil {
@@ -284,14 +294,8 @@ func (s *Service) Execute(ctx context.Context, cmd ExecuteCommand) (workflowdoma
 			if hash != c.WorkflowHash {
 				return domain.ErrScope
 			}
-			bound := false
-			for _, input := range cmd.Inputs {
-				if input.Name == c.InputName && input.DatasetVersionID == c.VersionID {
-					bound = true
-				}
-			}
-			if !bound {
-				return domain.ErrScope
+			if err = s.validateInputs(ctx, tx, c, cmd.Inputs); err != nil {
+				return err
 			}
 			result, err = s.Executions.CreateInTransaction(ctx, tx, workflowapp.CreateExecutionCommand{WorkspaceID: cmd.WorkspaceID, WorkflowVersionID: cmd.WorkflowVersionID, OutputDatasetID: cmd.OutputDatasetID, TargetPeriod: cmd.TargetPeriod, Inputs: cmd.Inputs, IdempotencyKey: executionKey(c.ID, cmd.Key), ActorID: &cmd.ActorID, TraceID: cmd.TraceID})
 		}
@@ -306,6 +310,76 @@ func (s *Service) Execute(ctx context.Context, cmd ExecuteCommand) (workflowdoma
 		return proof(ctx, tx, cmd.Command, c.ID, "QualityRemediationExecutionAccepted", map[string]any{"executionId": result.ID, "attempt": ordinal + 1})
 	})
 	return result, err
+}
+
+// Accepted receipt membership and the resolution owner's actual output bind
+// every workflow input. The generic Execution service cannot decide C1's batch
+// semantics; missing or substituted inputs must fail before costing engine work.
+func (s *Service) validateInputs(ctx context.Context, tx pgx.Tx, c domain.Case, inputs []workflowdomain.InputBinding) error {
+	if len(inputs) != len(s.Plan.Inputs) {
+		return domain.ErrScope
+	}
+	provided := map[string]uuid.UUID{}
+	for _, input := range inputs {
+		if input.DatasetVersionID == uuid.Nil || provided[input.Name] != uuid.Nil {
+			return domain.ErrScope
+		}
+		provided[input.Name] = input.DatasetVersionID
+	}
+	var receipt uuid.UUID
+	err := tx.QueryRow(ctx, `SELECT r.id FROM ingestion_receipt_slot b JOIN ingestion_receipt r ON r.id=b.receipt_id JOIN ingestion_operation o ON o.id=r.operation_id WHERE b.version_id=$1 AND b.code=$2 AND o.workspace_id=$3 AND o.state='ACCEPTED'`, c.VersionID, c.InputName, c.WorkspaceID).Scan(&receipt)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return domain.ErrScope
+	}
+	if err != nil {
+		return err
+	}
+	rows, err := tx.Query(ctx, `SELECT b.code,b.version_id,ds.workspace_id,ds.dataset_type FROM ingestion_receipt_slot b JOIN dataset_version v ON v.id=b.version_id JOIN dataset ds ON ds.id=v.dataset_id WHERE b.receipt_id=$1`, receipt)
+	if err != nil {
+		return err
+	}
+	approved := map[string]uuid.UUID{}
+	for rows.Next() {
+		var name, kind string
+		var version, workspace uuid.UUID
+		if err = rows.Scan(&name, &version, &workspace, &kind); err != nil {
+			rows.Close()
+			return err
+		}
+		if workspace != c.WorkspaceID || kind != "RAW" {
+			rows.Close()
+			return domain.ErrScope
+		}
+		approved[name] = version
+	}
+	err = rows.Err()
+	rows.Close()
+	if err != nil {
+		return err
+	}
+	if len(approved) != 3 {
+		return domain.ErrScope
+	}
+	for _, input := range s.Plan.Inputs {
+		switch input.DatasetType {
+		case "RAW":
+			if approved[input.Name] == uuid.Nil || provided[input.Name] != approved[input.Name] {
+				return domain.ErrScope
+			}
+		case "STANDARDIZED":
+			var job uuid.UUID
+			err = tx.QueryRow(ctx, `SELECT j.id FROM entity_match_job j JOIN dataset_version v ON v.id=j.output_dataset_version_id JOIN dataset ds ON ds.id=v.dataset_id WHERE j.workspace_id=$1 AND j.input_dataset_version_id=$2 AND j.output_dataset_version_id=$3 AND j.status='SUCCEEDED' AND v.generated_by_entity_match_job_id=j.id AND ds.workspace_id=$1 AND ds.dataset_type='STANDARDIZED' FOR SHARE OF j`, c.WorkspaceID, approved[s.Plan.Spec.ResolutionSourceInputName], provided[input.Name]).Scan(&job)
+			if errors.Is(err, pgx.ErrNoRows) {
+				return domain.ErrScope
+			}
+			if err != nil {
+				return err
+			}
+		default:
+			return domain.ErrScope
+		}
+	}
+	return nil
 }
 
 func sameInputs(a, b []workflowdomain.InputBinding) bool {

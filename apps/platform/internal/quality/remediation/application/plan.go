@@ -19,20 +19,28 @@ type Plan struct {
 		Version string `yaml:"version"`
 	} `yaml:"metadata"`
 	Spec struct {
-		DetectionRuleSetRef   string `yaml:"detectionRuleSetRef"`
-		DetectionRuleID       string `yaml:"detectionRuleId"`
-		DetectionFormatRuleID string `yaml:"detectionFormatRuleId"`
-		OutputDatasetCode     string `yaml:"outputDatasetCode"`
-		WorkflowDefinitionRef string `yaml:"workflowDefinitionRef"`
-		InputName             string `yaml:"inputName"`
-		QuarantineReasonCode  string `yaml:"quarantineReasonCode"`
-		RecheckRuleSetRef     string `yaml:"recheckRuleSetRef"`
+		DetectionRuleSetRef       string `yaml:"detectionRuleSetRef"`
+		DetectionRuleID           string `yaml:"detectionRuleId"`
+		DetectionFormatRuleID     string `yaml:"detectionFormatRuleId"`
+		OutputDatasetCode         string `yaml:"outputDatasetCode"`
+		ResolutionSourceInputName string `yaml:"resolutionSourceInputName"`
+		WorkflowDefinitionRef     string `yaml:"workflowDefinitionRef"`
+		InputName                 string `yaml:"inputName"`
+		QuarantineReasonCode      string `yaml:"quarantineReasonCode"`
+		RecheckRuleSetRef         string `yaml:"recheckRuleSetRef"`
 	} `yaml:"spec"`
-	Ref           string `yaml:"-"`
-	Hash          string `yaml:"-"`
-	WorkflowHash  string `yaml:"-"`
-	RecheckHash   string `yaml:"-"`
-	DetectionHash string `yaml:"-"`
+	Ref           string      `yaml:"-"`
+	Hash          string      `yaml:"-"`
+	WorkflowHash  string      `yaml:"-"`
+	RecheckHash   string      `yaml:"-"`
+	DetectionHash string      `yaml:"-"`
+	Inputs        []PlanInput `yaml:"-"`
+}
+
+type PlanInput struct {
+	Name        string `yaml:"name"`
+	DatasetType string `yaml:"datasetType"`
+	Required    bool   `yaml:"required"`
 }
 
 func digest(content []byte) string { return fmt.Sprintf("%x", sha256.Sum256(content)) }
@@ -55,7 +63,7 @@ func LoadPlan(root, ref string) (Plan, error) {
 	if p.Kind != "RemediationPlan" || p.Metadata.Version == "" || p.Metadata.Name == "" {
 		return p, fmt.Errorf("invalid remediation plan")
 	}
-	for _, v := range []string{p.Spec.DetectionRuleID, p.Spec.DetectionFormatRuleID, p.Spec.OutputDatasetCode, p.Spec.InputName, p.Spec.QuarantineReasonCode, p.Spec.DetectionRuleSetRef, p.Spec.RecheckRuleSetRef, p.Spec.WorkflowDefinitionRef} {
+	for _, v := range []string{p.Spec.DetectionRuleID, p.Spec.DetectionFormatRuleID, p.Spec.OutputDatasetCode, p.Spec.ResolutionSourceInputName, p.Spec.InputName, p.Spec.QuarantineReasonCode, p.Spec.DetectionRuleSetRef, p.Spec.RecheckRuleSetRef, p.Spec.WorkflowDefinitionRef} {
 		if strings.TrimSpace(v) == "" {
 			return p, fmt.Errorf("incomplete remediation plan")
 		}
@@ -86,5 +94,33 @@ func LoadPlan(root, ref string) (Plan, error) {
 		return p, err
 	}
 	p.WorkflowHash = digest(b)
+	var definition struct {
+		Spec struct {
+			Inputs []PlanInput `yaml:"inputs"`
+		} `yaml:"spec"`
+	}
+	if err = yaml.Unmarshal(b, &definition); err != nil {
+		return p, err
+	}
+	names := map[string]string{}
+	raw, resolved := 0, 0
+	for _, input := range definition.Spec.Inputs {
+		if !input.Required || input.Name == "" || names[input.Name] != "" {
+			return p, fmt.Errorf("invalid approved workflow input contract")
+		}
+		names[input.Name] = input.DatasetType
+		switch input.DatasetType {
+		case "RAW":
+			raw++
+		case "STANDARDIZED":
+			resolved++
+		default:
+			return p, fmt.Errorf("unsupported approved workflow input contract")
+		}
+	}
+	if raw != 3 || resolved != 1 || names[p.Spec.InputName] != "RAW" || names[p.Spec.ResolutionSourceInputName] != "RAW" {
+		return p, fmt.Errorf("remediation requires the accepted three-RAW batch and its resolution")
+	}
+	p.Inputs = definition.Spec.Inputs
 	return p, nil
 }
