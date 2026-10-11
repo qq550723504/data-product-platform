@@ -17,11 +17,14 @@ owe `lifecycle-recovery-queue`. Old retention-only events are not reinterpreted.
 The idle C1 Draft's migration-58 conflict with main remains a separate owner's gap.
 
 2026-10-11 coordination checkpoint: D1 has already migrated and accepted the retained
-native fixture at **59–63** (including worker recovery 63). These numbers are occupied,
-not a future reservation. C1 must not assume 59 is free or renumber D1's recorded
-environment/evidence; its owner should select an unoccupied number after a fresh
-shared-writer check (64 is the next locally unoccupied candidate). No C1 files or
-environment are changed by this lifecycle writer.
+native fixture at **59–63** (including worker recovery 63). Its schema, binaries and
+historical evidence stay unchanged. The runner uses the latest applied version as
+its upgrade boundary: C1/64 cannot merge first and then safely admit D1/59–63.
+The selected publication order is **C1/59 first, then unpublished D1 files 60–64**.
+D1 file renumbering and fresh isolated PostgreSQL upgrade validation follow the
+stable C1 candidate; do not apply that candidate to this retained fixture. Current
+native acceptance remains bound to its original 59–63 source. No C1 files or
+environment are changed by this lifecycle writer; D1 is not yet a merge candidate.
 
 ## Recovery contract
 
@@ -69,6 +72,12 @@ dependency and pending-start facts test the SQL protocol, not the real deletion 
 It has no Deleter or payload reader. Native metadata recovery of that input must be
 reported separately from actual crash-after-delete recovery.
 
-Existing objects, all named volumes and failed helpers are retained. New actual
-DELETE remains NOT_RUN until the user confirms a fresh environment and exact
-key/version list. Old consumed confirmations do not authorize another invocation.
+Objects and all owned named volumes are retained. The confirmed 4abcfca5
+quarantine/B exact version was deleted once after a fresh full gate, followed by
+real producer exit and read-only worker/outbox recovery to scoped absence.
+See `examples/lifecycle-d1/results/4abcfca5-583d-41ca-8548-10a0fc3270a1/confirmed-worker-delete-review.md`.
+That confirmation is consumed; additional native DELETE requires a new reviewed
+environment/key/version list and explicit human confirmation. The final Docker
+snapshot detected missing exited helpers and two unrelated anonymous volumes,
+with caller UNKNOWN; global/helper retention is not claimed PASS. All 11 owned
+fixture volumes, running services and current survivor objects were verified.
