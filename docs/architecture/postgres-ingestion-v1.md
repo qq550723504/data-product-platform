@@ -1,5 +1,7 @@
 # PostgreSQL 接入 V1：#298 B0 选型与实施契约
 
+2026-10-11 PGI-09 后续实跑：基于最新 main `eff620bd` 的新隔离环境，真实 OpenMetadata 2.0.5 与 Edge 已验证健康绑定、已确认绑定后的 STALE/不可用提示、原容器重启及同一身份重连恢复。10 个检查点的 15 张 Core 表完整行摘要保持一致；质量 FAIL/REJECTED 历史与 BLOCKED 门禁保留。实跑发现的绑定权限、稳定归属和当前版本展示缺陷在既有 Adapter/metadata 模块内最小修复。见 [PGI-09 实跑记录](../../examples/enterprise-activity/postgres-ingestion/PGI09-RUN.md) 和 [固定证据](../../examples/enterprise-activity/postgres-ingestion/results/2026-10-11/pgi09/report.json)。人工解释按用户要求继续 deferred / NOT_RUN；下文旧 NOT_RUN 保留为各轮历史范围，不表示本次技术实跑未执行，也不表示 #298 或生产接纳已完成。
+
 > 日期：2026-10-10；源码基线：`87b80de64825f600649106449e3ec2fd60b42d1b`（#301 已合并，#297 已关闭）。
 > Parent：[#298](https://github.com/qq550723504/data-product-platform/issues/298)；战略基线：[V2 蓝图](../product/full-lifecycle-governance-v2.md)、[ADR-0014](../adr/0014-full-lifecycle-governance-boundary.md)。
 > 本文只完成 B0 的设计决策。B1 连接器运行验证、B2 Core 接纳、B3 用户端到端验收均未因此完成；没有部署或操作真实客户数据。

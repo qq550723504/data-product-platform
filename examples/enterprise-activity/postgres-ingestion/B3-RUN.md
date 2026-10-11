@@ -1,5 +1,11 @@
 # #298/B3 actual browser execution — 2026-10-11
 
+Later PGI-09 execution on main `eff620bd`: real OpenMetadata healthy binding,
+confirmed-binding outage and reconnect passed in a new isolated trial. See
+[the PGI-09 run](PGI09-RUN.md) for defects, repairs and fixed evidence. Human
+explanation remains NOT_RUN. Provider NOT_RUN statements below describe the
+original B3 run's historical scope, not the later PGI-09 result.
+
 Edge operated source detail → persisted batch/three RAW receipt → existing entity
 review → existing Native processing → quality/compliance → prepare actual
 certification evidence → certify → explicit supersede → Direct Data download.

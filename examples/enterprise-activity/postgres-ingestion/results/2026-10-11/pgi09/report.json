@@ -1,0 +1,828 @@
+{
+  "issue": 298,
+  "scope": "PGI-09 real provider/browser technical acceptance; human explanation deferred",
+  "base_sha": "eff620bd658209d3434beb7ae4029faf0202583c",
+  "provider": {
+    "version": "2.0.5",
+    "revision": "c96845e6131c934dc993d9d3e8bae020365f09a7",
+    "timestamp": 1791545997420
+  },
+  "officialCompose": {
+    "release": "2.0.5-release",
+    "sha256": "36d208a212cd62942199ad3ca4b11290b8536e5d1751a9a547e3738faedde3c2",
+    "source": "https://github.com/open-metadata/OpenMetadata/releases/download/2.0.5-release/docker-compose-postgres.yml"
+  },
+  "images": {
+    "openmetadata": {
+      "image": "docker.getcollate.io/openmetadata/server:2.0.5",
+      "repoDigests": [
+        "docker.getcollate.io/openmetadata/server@sha256:ede23602d8e7cc2447e14f67b36d8ee2e468671fb3157a39e776ecfd6d7cc11b"
+      ]
+    },
+    "metadataPostgres": {
+      "image": "docker.getcollate.io/openmetadata/postgresql:2.0.5",
+      "repoDigests": [
+        "docker.getcollate.io/openmetadata/postgresql@sha256:88542a011d89d6469111ab3317cba6905f11f556d7cab468d28e19e5aaad559a"
+      ]
+    },
+    "elasticsearch": {
+      "image": "docker.elastic.co/elasticsearch/elasticsearch:9.3.0",
+      "repoDigests": [
+        "docker.elastic.co/elasticsearch/elasticsearch@sha256:4f6bdcb742e892539c6ac49b0dd3e4e182e90218546e8c6a22db378c344acb60"
+      ]
+    },
+    "corePostgres": {
+      "image": "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "repoDigests": [
+        "postgres@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+      ]
+    },
+    "sourcePostgres": {
+      "image": "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "repoDigests": [
+        "postgres@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+      ]
+    },
+    "hop": {
+      "image": "dpp-pgi-hop-jdbc:42.7.14",
+      "repoDigests": [
+        "dpp-pgi-hop-jdbc@sha256:1f1870f9ec5a00542dbfae41cc6b5ada2ba2096506194b80f92f507a070b6ded"
+      ]
+    }
+  },
+  "runtime": {
+    "coreContainer": "dpp-pgi-b3-core-f06442a1d632",
+    "workspaceId": "6e5485e3-d9c0-4e36-aac2-847671478e43",
+    "actorId": "184f797d-02a0-4c1c-a2ec-00eb38de0a0d",
+    "api": "http://127.0.0.1:50505",
+    "web": "http://127.0.0.1:50507",
+    "apiSha256": "ae0bb60b7557f193ea284ec453ee109e062d30c60f3fcf9734c08e82515c21af"
+  },
+  "batchId": "08e7e2c7-bbb4-4a37-bba4-e4ba6ef400be",
+  "manifestHash": "9f68606893218c946aaa0ac67f561e002acbdb673d37a63fbd45ddf1bb60b7e7",
+  "engine": "apache-hop/2.19.0;pgjdbc/42.7.14",
+  "facts": {
+    "rawVersions": [
+      {
+        "id": "08a5ed60-0cef-4792-8588-ca346c4282aa",
+        "dataset_id": "87d02dda-2498-417e-98b7-bd9dc7d13da8",
+        "status": "READY",
+        "row_count": 10,
+        "checksum_algorithm": "SHA256",
+        "checksum_value": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+      },
+      {
+        "id": "255aa483-c4a6-421c-8435-9a24dd76eaf8",
+        "dataset_id": "72448426-1119-4d91-b5c8-a05d6984e3c2",
+        "status": "READY",
+        "row_count": 14,
+        "checksum_algorithm": "SHA256",
+        "checksum_value": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+      },
+      {
+        "id": "d993a88c-5e19-49d8-bbaa-c533e7c4c1b1",
+        "dataset_id": "8bd48437-4bae-48ea-8b4a-441604db6b43",
+        "status": "READY",
+        "row_count": 6,
+        "checksum_algorithm": "SHA256",
+        "checksum_value": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+      }
+    ],
+    "quality": [
+      {
+        "id": "24b97f1b-b768-4993-9670-317b67300445",
+        "dataset_version_id": "d993a88c-5e19-49d8-bbaa-c533e7c4c1b1",
+        "gate_decision": "FAIL"
+      }
+    ],
+    "certification": [
+      {
+        "id": "8fc5fe3a-e4e2-4d55-b487-304cafd24987",
+        "dataset_version_id": "d993a88c-5e19-49d8-bbaa-c533e7c4c1b1",
+        "decision": "REJECTED",
+        "quality_assessment_id": "24b97f1b-b768-4993-9670-317b67300445",
+        "blockers": [
+          {
+            "code": "QUALITY_GATE_NOT_PASSED",
+            "detail": "required QualityAssessment gate decision is not PASS"
+          },
+          {
+            "code": "QUALITY_CRITICAL_RULE_NOT_PASSED",
+            "detail": "required critical rule QA-COMPANY-ID-COMPLETE is missing or not PASS"
+          },
+          {
+            "code": "RIGHTS_TARGET_MISMATCH",
+            "detail": "rights evidence does not belong to the target workspace and DatasetVersion"
+          },
+          {
+            "code": "COMPLIANCE_EVIDENCE_MISSING",
+            "detail": "profile requires compliance evidence"
+          },
+          {
+            "code": "CONTRACT_EVIDENCE_MISSING",
+            "detail": "profile requires contract evidence"
+          },
+          {
+            "code": "TRACEABILITY_EVIDENCE_MISSING",
+            "detail": "profile requires traceability evidence"
+          },
+          {
+            "code": "EVIDENCE_SNAPSHOT_MISSING",
+            "detail": "profile requires a complete evidence snapshot"
+          }
+        ]
+      }
+    ]
+  },
+  "coreBaseline": {
+    "data_resource": {
+      "count": 3,
+      "sha256": "4b9a8f720a9c83ce2f5a6ee988e60a60dd9a9ce419f3fd3519d537b7f9777b76"
+    },
+    "dataset": {
+      "count": 5,
+      "sha256": "236e0f60926a2c22d0ef0ef619a1a458572048c3f0c4f3a860a80b48448dd83a"
+    },
+    "dataset_version": {
+      "count": 3,
+      "sha256": "7e0c5a40d5ad0e7caff323f769f176eb6b46f75ec4f7408d7eb7de5248ee2ccd"
+    },
+    "quality_result": {
+      "count": 1,
+      "sha256": "d614f88af8093cd072c579a6905882b911038638bf21d7b53d9a35cd969d3dc3"
+    },
+    "dataset_certification": {
+      "count": 1,
+      "sha256": "fcb65920fe854f72cb7cfc0eff0d6b291161c101b3a0c0efc9d8c0edf549e713"
+    },
+    "certification_disposition": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "rights_snapshot": {
+      "count": 1,
+      "sha256": "78831a3b2093d5aa7c1dda032754a3c8a611536b15576801cfef9f0201729b5d"
+    },
+    "effective_rights_snapshot": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "rights_declaration": {
+      "count": 3,
+      "sha256": "e849f5067860f5fe0f6f8a994598203bb9d501e9ecc6085056afabb17b032fd3"
+    },
+    "data_authorization": {
+      "count": 1,
+      "sha256": "eafa48a9c88d9ee4e24239a70517aa11b2d4c1b55d8fc896207c00b63abde8d1"
+    },
+    "authorization_provenance_binding": {
+      "count": 3,
+      "sha256": "2571f18ef95a5a2c69417a60ce6c0b7d403bb139e095c470771f889664659da3"
+    },
+    "evidence_snapshot": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "product_release": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "product_version": {
+      "count": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "evidence": {
+      "count": 20,
+      "sha256": "e018264a0ce04f35a25da75c06fb2dd42945e7dbd08b8dbb181b1cbffe9ae530"
+    }
+  },
+  "phases": {
+    "red-version": {
+      "observation": {
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.enterprise",
+        "lastConfirmedAt": "2026-10-11T15:23:15.992145+08:00",
+        "observedAt": "2026-10-11T07:23:24.5423839Z",
+        "provider": "OPENMETADATA",
+        "status": "OBSERVED",
+        "version": 0.1
+      },
+      "binding": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.1
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.enterprise",
+        "externalId": "fdea84f3-acbd-4aa8-a3ce-3f8117fea39b",
+        "id": "38df0153-8720-41ee-8df0-8e047ffbd1d0",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "b8783d56-21bf-44c2-95ee-7c8f60740876",
+        "updatedAt": "2026-10-11T15:23:15.992145+08:00"
+      },
+      "coreIdenticalToBaseline": true
+    },
+    "healthy-lease": {
+      "observation": {
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "lastConfirmedAt": "2026-10-11T15:30:52.433148+08:00",
+        "lastConfirmedVersion": 0.1,
+        "observedAt": "2026-10-11T07:31:11.0463985Z",
+        "provider": "OPENMETADATA",
+        "status": "OBSERVED",
+        "version": 0.1
+      },
+      "binding": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.1
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "id": "9ce38578-8f00-471f-847e-8e01f6895368",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "66ae4fa1-9d97-4e2c-a5e0-e83c401355ea",
+        "updatedAt": "2026-10-11T15:30:52.433148+08:00"
+      },
+      "coreIdenticalToBaseline": true
+    },
+    "observed-new-revision": {
+      "observation": {
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "lastConfirmedAt": "2026-10-11T15:30:52.433148+08:00",
+        "lastConfirmedVersion": 0.1,
+        "observedAt": "2026-10-11T07:31:15.4260302Z",
+        "provider": "OPENMETADATA",
+        "status": "OBSERVED",
+        "version": 0.2
+      },
+      "binding": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.1
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "id": "9ce38578-8f00-471f-847e-8e01f6895368",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "66ae4fa1-9d97-4e2c-a5e0-e83c401355ea",
+        "updatedAt": "2026-10-11T15:30:52.433148+08:00"
+      },
+      "coreIdenticalToBaseline": true
+    },
+    "outage": {
+      "observation": {
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "lastConfirmedAt": "2026-10-11T15:30:52.433148+08:00",
+        "lastConfirmedVersion": 0.1,
+        "observedAt": null,
+        "provider": "OPENMETADATA",
+        "status": "STALE",
+        "version": null
+      },
+      "binding": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.1
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "id": "9ce38578-8f00-471f-847e-8e01f6895368",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "66ae4fa1-9d97-4e2c-a5e0-e83c401355ea",
+        "updatedAt": "2026-10-11T15:30:52.433148+08:00"
+      },
+      "coreIdenticalToBaseline": true
+    },
+    "outage-after-refresh": {
+      "observation": {
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "lastConfirmedAt": "2026-10-11T15:30:52.433148+08:00",
+        "lastConfirmedVersion": 0.1,
+        "observedAt": null,
+        "provider": "OPENMETADATA",
+        "status": "STALE",
+        "version": null
+      },
+      "binding": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.1
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "id": "9ce38578-8f00-471f-847e-8e01f6895368",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "66ae4fa1-9d97-4e2c-a5e0-e83c401355ea",
+        "updatedAt": "2026-10-11T15:30:52.433148+08:00"
+      },
+      "coreIdenticalToBaseline": true
+    },
+    "outage-gate": {
+      "observation": {
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "lastConfirmedAt": "2026-10-11T15:30:52.433148+08:00",
+        "lastConfirmedVersion": 0.1,
+        "observedAt": null,
+        "provider": "OPENMETADATA",
+        "status": "STALE",
+        "version": null
+      },
+      "binding": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.1
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "id": "9ce38578-8f00-471f-847e-8e01f6895368",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "66ae4fa1-9d97-4e2c-a5e0-e83c401355ea",
+        "updatedAt": "2026-10-11T15:30:52.433148+08:00"
+      },
+      "coreIdenticalToBaseline": true
+    },
+    "reconnected-observation": {
+      "observation": {
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "lastConfirmedAt": "2026-10-11T15:30:52.433148+08:00",
+        "lastConfirmedVersion": 0.1,
+        "observedAt": "2026-10-11T07:37:11.5448085Z",
+        "provider": "OPENMETADATA",
+        "status": "OBSERVED",
+        "version": 0.2
+      },
+      "binding": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.1
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "id": "9ce38578-8f00-471f-847e-8e01f6895368",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "66ae4fa1-9d97-4e2c-a5e0-e83c401355ea",
+        "updatedAt": "2026-10-11T15:30:52.433148+08:00"
+      },
+      "coreIdenticalToBaseline": true
+    },
+    "reconnected-refreshed": {
+      "observation": {
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "lastConfirmedAt": "2026-10-11T15:37:28.16362+08:00",
+        "lastConfirmedVersion": 0.2,
+        "observedAt": "2026-10-11T07:37:51.4098264Z",
+        "provider": "OPENMETADATA",
+        "status": "OBSERVED",
+        "version": 0.2
+      },
+      "binding": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.2
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "id": "9ce38578-8f00-471f-847e-8e01f6895368",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "66ae4fa1-9d97-4e2c-a5e0-e83c401355ea",
+        "updatedAt": "2026-10-11T15:37:28.16362+08:00"
+      },
+      "coreIdenticalToBaseline": true
+    },
+    "reconnected-reload": {
+      "observation": {
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "lastConfirmedAt": "2026-10-11T15:37:28.16362+08:00",
+        "lastConfirmedVersion": 0.2,
+        "observedAt": "2026-10-11T07:38:11.1059931Z",
+        "provider": "OPENMETADATA",
+        "status": "OBSERVED",
+        "version": 0.2
+      },
+      "binding": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.2
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "id": "9ce38578-8f00-471f-847e-8e01f6895368",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "66ae4fa1-9d97-4e2c-a5e0-e83c401355ea",
+        "updatedAt": "2026-10-11T15:37:28.16362+08:00"
+      },
+      "coreIdenticalToBaseline": true
+    },
+    "final-security": {
+      "observation": {
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "lastConfirmedAt": "2026-10-11T15:37:28.16362+08:00",
+        "lastConfirmedVersion": 0.2,
+        "observedAt": "2026-10-11T07:41:26.0594352Z",
+        "provider": "OPENMETADATA",
+        "status": "OBSERVED",
+        "version": 0.2
+      },
+      "binding": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.2
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+        "externalId": "af273cb8-447f-446b-8d6d-d058f12509d7",
+        "id": "9ce38578-8f00-471f-847e-8e01f6895368",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "66ae4fa1-9d97-4e2c-a5e0-e83c401355ea",
+        "updatedAt": "2026-10-11T15:37:28.16362+08:00"
+      },
+      "coreIdenticalToBaseline": true
+    }
+  },
+  "redGreen": {
+    "red-main-unauth": {
+      "phase": "unauth-bind",
+      "status": 201,
+      "body": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.2
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.enterprise",
+        "externalId": "fdea84f3-acbd-4aa8-a3ce-3f8117fea39b",
+        "id": "38df0153-8720-41ee-8df0-8e047ffbd1d0",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "b8783d56-21bf-44c2-95ee-7c8f60740876",
+        "updatedAt": "2026-10-11T15:30:41.395648+08:00"
+      }
+    },
+    "red-main-rebind": {
+      "phase": "red-rebind",
+      "status": 201,
+      "body": {
+        "bindingMetadata": {
+          "serviceType": "Postgres",
+          "version": 0.2
+        },
+        "entityType": "TABLE",
+        "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.enterprise",
+        "externalId": "fdea84f3-acbd-4aa8-a3ce-3f8117fea39b",
+        "id": "38df0153-8720-41ee-8df0-8e047ffbd1d0",
+        "primary": true,
+        "provider": "OPENMETADATA",
+        "resourceId": "66ae4fa1-9d97-4e2c-a5e0-e83c401355ea",
+        "updatedAt": "2026-10-11T15:30:41.922849+08:00"
+      }
+    },
+    "green-unauth": {
+      "phase": "unauth-bind",
+      "status": 403,
+      "body": {
+        "code": "AUTHORITY_DENIED",
+        "message": "workspace authority denied",
+        "requestId": "0c8eed3d-4f96-4713-9fb0-36975361a4eb"
+      }
+    },
+    "green-rebind": {
+      "phase": "red-rebind",
+      "status": 409,
+      "body": {
+        "code": "METADATA_BINDING_CONFLICT",
+        "message": "metadata asset is already bound to another resource",
+        "requestId": "6da2bc14-ceb3-45e7-8be9-9bbeb9244244"
+      }
+    }
+  },
+  "security": [
+    {
+      "case": "missing-token",
+      "method": "GET",
+      "endpoint": "metadata-bindings",
+      "status": 403,
+      "code": "AUTHORITY_DENIED",
+      "result": "PASS"
+    },
+    {
+      "case": "forged-actor-without-token",
+      "method": "GET",
+      "endpoint": "metadata-bindings",
+      "status": 403,
+      "code": "AUTHORITY_DENIED",
+      "result": "PASS"
+    },
+    {
+      "case": "foreign-workspace",
+      "method": "GET",
+      "endpoint": "metadata-bindings",
+      "status": 403,
+      "code": "AUTHORITY_DENIED",
+      "result": "PASS"
+    },
+    {
+      "case": "missing-workspace",
+      "method": "GET",
+      "endpoint": "metadata-bindings",
+      "status": 400,
+      "code": "INVALID_WORKSPACE_ID",
+      "result": "PASS"
+    },
+    {
+      "case": "foreign-resource",
+      "method": "GET",
+      "endpoint": "metadata-bindings",
+      "status": 404,
+      "code": "RESOURCE_NOT_FOUND",
+      "result": "PASS"
+    },
+    {
+      "case": "missing-token",
+      "method": "GET",
+      "endpoint": "metadata-observation",
+      "status": 403,
+      "code": "AUTHORITY_DENIED",
+      "result": "PASS"
+    },
+    {
+      "case": "forged-actor-without-token",
+      "method": "GET",
+      "endpoint": "metadata-observation",
+      "status": 403,
+      "code": "AUTHORITY_DENIED",
+      "result": "PASS"
+    },
+    {
+      "case": "foreign-workspace",
+      "method": "GET",
+      "endpoint": "metadata-observation",
+      "status": 403,
+      "code": "AUTHORITY_DENIED",
+      "result": "PASS"
+    },
+    {
+      "case": "missing-workspace",
+      "method": "GET",
+      "endpoint": "metadata-observation",
+      "status": 400,
+      "code": "INVALID_WORKSPACE_ID",
+      "result": "PASS"
+    },
+    {
+      "case": "foreign-resource",
+      "method": "GET",
+      "endpoint": "metadata-observation",
+      "status": 404,
+      "code": "RESOURCE_NOT_FOUND",
+      "result": "PASS"
+    },
+    {
+      "case": "missing-token",
+      "method": "POST",
+      "endpoint": "metadata-bindings",
+      "status": 403,
+      "code": "AUTHORITY_DENIED",
+      "result": "PASS"
+    },
+    {
+      "case": "forged-actor-without-token",
+      "method": "POST",
+      "endpoint": "metadata-bindings",
+      "status": 403,
+      "code": "AUTHORITY_DENIED",
+      "result": "PASS"
+    },
+    {
+      "case": "foreign-workspace",
+      "method": "POST",
+      "endpoint": "metadata-bindings",
+      "status": 403,
+      "code": "AUTHORITY_DENIED",
+      "result": "PASS"
+    },
+    {
+      "case": "missing-workspace",
+      "method": "POST",
+      "endpoint": "metadata-bindings",
+      "status": 400,
+      "code": "INVALID_WORKSPACE_ID",
+      "result": "PASS"
+    },
+    {
+      "case": "foreign-resource",
+      "method": "POST",
+      "endpoint": "metadata-bindings",
+      "status": 404,
+      "code": "RESOURCE_NOT_FOUND",
+      "result": "PASS"
+    }
+  ],
+  "gateOutage": {
+    "allowed": false,
+    "blockers": [
+      {
+        "code": "CERTIFICATION_NOT_CURRENT",
+        "detail": "no current CERTIFIED fact matches the requested workspace, DatasetVersion, profile, and as_of"
+      },
+      {
+        "code": "CURRENT_ENTITLEMENT_NOT_EVALUATED",
+        "detail": "current entitlement is not evaluated until a current certification covers the requested context"
+      }
+    ],
+    "certification": {
+      "allowed": false,
+      "blockers": [
+        {
+          "code": "CERTIFICATION_NOT_CURRENT",
+          "detail": "no current CERTIFIED fact matches the requested workspace, DatasetVersion, profile, and as_of"
+        }
+      ],
+      "current": null
+    },
+    "datasetVersion": {
+      "allowed": true,
+      "blockers": [],
+      "status": "READY"
+    },
+    "entitlement": {
+      "allowed": false,
+      "blockers": [
+        {
+          "code": "CURRENT_ENTITLEMENT_NOT_EVALUATED",
+          "detail": "current entitlement is not evaluated until a current certification covers the requested context"
+        }
+      ],
+      "checks": []
+    }
+  },
+  "gateReconnected": {
+    "allowed": false,
+    "blockers": [
+      {
+        "code": "CERTIFICATION_NOT_CURRENT",
+        "detail": "no current CERTIFIED fact matches the requested workspace, DatasetVersion, profile, and as_of"
+      },
+      {
+        "code": "CURRENT_ENTITLEMENT_NOT_EVALUATED",
+        "detail": "current entitlement is not evaluated until a current certification covers the requested context"
+      }
+    ],
+    "certification": {
+      "allowed": false,
+      "blockers": [
+        {
+          "code": "CERTIFICATION_NOT_CURRENT",
+          "detail": "no current CERTIFIED fact matches the requested workspace, DatasetVersion, profile, and as_of"
+        }
+      ],
+      "current": null
+    },
+    "datasetVersion": {
+      "allowed": true,
+      "blockers": [],
+      "status": "READY"
+    },
+    "entitlement": {
+      "allowed": false,
+      "blockers": [
+        {
+          "code": "CURRENT_ENTITLEMENT_NOT_EVALUATED",
+          "detail": "current entitlement is not evaluated until a current certification covers the requested context"
+        }
+      ],
+      "checks": []
+    }
+  },
+  "implementation_sha256_lf": {
+    "apps/platform/internal/metadata/application/observation.go": "117504787b9480949324628afe6c0d2efc864f0bbea56140517a17c395fd1e22",
+    "apps/platform/internal/metadata/application/observation_test.go": "e4d35348305531fb1d20e4ee8ebdf1aafe8b117b2b821aa6303cdbab9c098f31",
+    "apps/platform/internal/metadata/infrastructure/binding_concurrency_integration_test.go": "24aadda66e271d5a078166b4f61b9871a7bda8dcea8eb07401faf575dadb2e85",
+    "apps/platform/internal/metadata/infrastructure/postgres_repository.go": "5eca1ac52dcf385104592c01102e2871ade56509021dbe912633c1b96f3f3f5f",
+    "apps/platform/internal/metadata/transport/http/handler.go": "d8177ae624b5a2bf4fee784e3031f1958de374bae1511cc248b4def5e01bea21",
+    "apps/platform/internal/metadata/transport/http/handler_test.go": "ba29837f2b4250346603d9c53b7f9cc016cf023ab09f1c4a6b97dce5075666d9",
+    "apps/web/app/batches/actions.ts": "4272f896a325044176cf6f807b6201adb7466083f7a1a1092e5781c4658055d8",
+    "apps/web/components/resource-source.tsx": "b27a8df3a0d1cdfe85beb3f477faa25fe3e5253001761009955e2885f4363ceb",
+    "examples/enterprise-activity/postgres-ingestion/b3_runtime.py": "da7a949c971dd4b343a0555a41ad17e1c796a622f00909b08b2901c81f4eb216",
+    "examples/enterprise-activity/postgres-ingestion/pgi09_openmetadata.py": "5a4a6fd4c786287fc27d90b494bf8eea938bf01ce910af18848a1616245270ee"
+  },
+  "checks": [
+    {
+      "name": "real OpenMetadata native health and authenticated catalog",
+      "result": "PASS"
+    },
+    {
+      "name": "Edge UNKNOWN before confirmed binding",
+      "result": "PASS"
+    },
+    {
+      "name": "Edge OBSERVED with actual current revision and cache distinguished",
+      "result": "PASS"
+    },
+    {
+      "name": "current observation does not mutate binding cache",
+      "result": "PASS"
+    },
+    {
+      "name": "real container stop yields STALE and UNKNOWN current revision",
+      "result": "PASS"
+    },
+    {
+      "name": "failed browser refresh preserves confirmed binding",
+      "result": "PASS"
+    },
+    {
+      "name": "real restart restores OBSERVED with original external identity",
+      "result": "PASS"
+    },
+    {
+      "name": "browser refresh updates cache with stable binding identity",
+      "result": "PASS"
+    },
+    {
+      "name": "reload recovers persisted cache",
+      "result": "PASS"
+    },
+    {
+      "name": "all 15 Core table counts and complete row hashes unchanged across 10 checkpoints",
+      "result": "PASS"
+    },
+    {
+      "name": "RAW receipt version identities checksums and 6/10/14 rows preserved",
+      "result": "PASS"
+    },
+    {
+      "name": "quality FAIL and one historical REJECTED certification readable after restart",
+      "result": "PASS"
+    },
+    {
+      "name": "outage and reconnect delivery eligibility exactly equal and BLOCKED",
+      "result": "PASS"
+    },
+    {
+      "name": "actual main RED and fixed GREEN unauthorized bind",
+      "result": "PASS"
+    },
+    {
+      "name": "actual main RED and fixed GREEN attempted binding reassignment",
+      "result": "PASS"
+    },
+    {
+      "name": "15 live HTTP authority denial cases",
+      "result": "PASS"
+    },
+    {
+      "name": "real PostgreSQL concurrent cross-workspace binding ownership and same-owner retry",
+      "result": "PASS"
+    },
+    {
+      "name": "existing metadata ProductReleased projection retry contract",
+      "result": "PASS"
+    },
+    {
+      "name": "full Go tests and go vet",
+      "result": "PASS"
+    },
+    {
+      "name": "Next command tests lint typecheck and production build",
+      "result": "PASS"
+    },
+    {
+      "name": "official Compose isolation helper and Python compilation",
+      "result": "PASS"
+    }
+  ],
+  "not_run": [
+    "human explanation acceptance (explicitly deferred)",
+    "production IAM/provider admission/deployment",
+    "automatic OpenMetadata PostgreSQL connector discovery",
+    "browser published ProductRelease recovery (no published release in this trial)",
+    "fresh positive certification/delivery rerun (covered by prior B3, not this PGI-09 run)"
+  ]
+}
