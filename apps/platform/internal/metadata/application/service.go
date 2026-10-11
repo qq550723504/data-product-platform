@@ -54,6 +54,9 @@ func (s *Service) BindResource(ctx context.Context, cmd BindResourceCommand) (me
 	if err != nil {
 		return metadatadomain.ResourceBinding{}, err
 	}
+	if strings.TrimSpace(asset.ID) == "" || strings.TrimSpace(asset.EntityType) == "" || strings.TrimSpace(asset.FullyQualifiedName) == "" {
+		return metadatadomain.ResourceBinding{}, metadataengine.NewExternalError(metadataengine.ErrorInvalidResponse, "get asset", 0, errors.New("provider asset identity is incomplete"))
+	}
 	binding := metadatadomain.ResourceBinding{
 		ID:              uuid.New(),
 		ResourceID:      cmd.ResourceID,

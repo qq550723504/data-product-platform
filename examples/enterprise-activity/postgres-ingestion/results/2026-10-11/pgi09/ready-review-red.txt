@@ -1,0 +1,69 @@
+=== RUN   TestObservationFailureAndIdentityMismatchPreserveConfirmedBinding
+--- PASS: TestObservationFailureAndIdentityMismatchPreserveConfirmedBinding (0.00s)
+=== RUN   TestObservationRequiresExactProviderIdentity
+--- PASS: TestObservationRequiresExactProviderIdentity (0.00s)
+=== RUN   TestObservationReadsCurrentRevisionWithoutChangingBinding
+--- PASS: TestObservationReadsCurrentRevisionWithoutChangingBinding (0.00s)
+=== RUN   TestDisabledObservationCannotClaimCurrentRevision
+--- PASS: TestDisabledObservationCannotClaimCurrentRevision (0.00s)
+=== RUN   TestBindingAndProductReleasedProjectionAreRetrySafe
+--- PASS: TestBindingAndProductReleasedProjectionAreRetrySafe (0.09s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application	2.168s
+?   	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain	[no test files]
+=== RUN   TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset
+=== RUN   TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset/same_name
+=== RUN   TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset/renamed_asset
+    binding_concurrency_integration_test.go:86: wins=2 conflicts=0; want one owner and one rejection
+--- FAIL: TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset (0.09s)
+    --- PASS: TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset/same_name (0.05s)
+    --- FAIL: TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset/renamed_asset (0.04s)
+=== RUN   TestBindingRenamePreservesOwnerAndIdentity
+    binding_concurrency_integration_test.go:147: renamed asset takeover = <nil>, want ownership conflict
+--- FAIL: TestBindingRenamePreservesOwnerAndIdentity (0.03s)
+=== RUN   TestResourceBindingAndGovernanceProjectionPersistence
+--- PASS: TestResourceBindingAndGovernanceProjectionPersistence (0.04s)
+=== RUN   TestGovernanceProjectionRejectsStaleCompletion
+--- PASS: TestGovernanceProjectionRejectsStaleCompletion (0.03s)
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure	1.220s
+=== RUN   TestClientGetTableAndUpsertDataProduct
+--- PASS: TestClientGetTableAndUpsertDataProduct (0.01s)
+=== RUN   TestClientMapsOpenMetadataErrorsToProviderNeutralContract
+--- PASS: TestClientMapsOpenMetadataErrorsToProviderNeutralContract (0.00s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata	1.628s
+=== RUN   TestWorkspaceResourceLookupFailureIsUnavailable
+=== RUN   TestWorkspaceResourceLookupFailureIsUnavailable/POST_metadata-bindings
+    handler_test.go:47: status/code = 404/RESOURCE_NOT_FOUND, want 503/METADATA_RESOURCE_LOOKUP_UNAVAILABLE
+=== RUN   TestWorkspaceResourceLookupFailureIsUnavailable/GET_metadata-bindings
+    handler_test.go:47: status/code = 404/RESOURCE_NOT_FOUND, want 503/METADATA_RESOURCE_LOOKUP_UNAVAILABLE
+=== RUN   TestWorkspaceResourceLookupFailureIsUnavailable/GET_metadata-observation
+    handler_test.go:47: status/code = 404/RESOURCE_NOT_FOUND, want 503/METADATA_RESOURCE_LOOKUP_UNAVAILABLE
+--- FAIL: TestWorkspaceResourceLookupFailureIsUnavailable (0.01s)
+    --- FAIL: TestWorkspaceResourceLookupFailureIsUnavailable/POST_metadata-bindings (0.00s)
+    --- FAIL: TestWorkspaceResourceLookupFailureIsUnavailable/GET_metadata-bindings (0.00s)
+    --- FAIL: TestWorkspaceResourceLookupFailureIsUnavailable/GET_metadata-observation (0.00s)
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_request
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/not_found
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unauthorized
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unavailable
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_response
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/rejected
+--- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_request (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/not_found (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unauthorized (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unavailable (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_response (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/rejected (0.00s)
+=== RUN   TestWriteBindingErrorMapsApplicationValidation
+--- PASS: TestWriteBindingErrorMapsApplicationValidation (0.00s)
+=== RUN   TestPublicProjectionErrorNeverExposesStoredProviderDetail
+--- PASS: TestPublicProjectionErrorNeverExposesStoredProviderDetail (0.00s)
+=== RUN   TestResourceMetadataRequiresWorkspaceAuthorityBeforeStorageOrProvider
+--- PASS: TestResourceMetadataRequiresWorkspaceAuthorityBeforeStorageOrProvider (0.00s)
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/transport/http	1.132s
+FAIL

@@ -49,7 +49,12 @@ func (h *Handler) authorizeResource(w http.ResponseWriter, r *http.Request) (uui
 		httpserver.WriteError(w, r, 400, "INVALID_RESOURCE_ID", "resource required", nil)
 		return uuid.Nil, false
 	}
-	if exists, err := h.repo.ResourceInWorkspace(r.Context(), id, ws); err != nil || !exists {
+	exists, err := h.repo.ResourceInWorkspace(r.Context(), id, ws)
+	if err != nil {
+		httpserver.WriteError(w, r, http.StatusServiceUnavailable, "METADATA_RESOURCE_LOOKUP_UNAVAILABLE", "resource lookup is unavailable", nil)
+		return uuid.Nil, false
+	}
+	if !exists {
 		httpserver.WriteError(w, r, 404, "RESOURCE_NOT_FOUND", "resource not found in workspace", nil)
 		return uuid.Nil, false
 	}
@@ -162,7 +167,7 @@ func (h *Handler) getProjection(w http.ResponseWriter, r *http.Request) {
 
 func writeBindingError(w http.ResponseWriter, r *http.Request, err error) {
 	if errors.Is(err, metadatainfra.ErrBindingConflict) {
-		httpserver.WriteError(w, r, http.StatusConflict, "METADATA_BINDING_CONFLICT", "metadata asset is already bound to another resource", nil)
+		httpserver.WriteError(w, r, http.StatusConflict, "METADATA_BINDING_CONFLICT", "metadata asset identity or name conflicts with an existing binding", nil)
 		return
 	}
 	if errors.Is(err, metadataapp.ErrInvalidBindingRequest) {

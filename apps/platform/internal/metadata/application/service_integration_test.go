@@ -17,13 +17,14 @@ import (
 )
 
 type fakeMetadataEngine struct {
+	assetID     string
 	upsertCalls int
 	failUpsert  bool
 }
 
 func (f *fakeMetadataEngine) GetAsset(_ context.Context, entityType, fullyQualifiedName string) (metadataengine.Asset, error) {
 	return metadataengine.Asset{
-		ID:                 "table-001",
+		ID:                 f.assetID,
 		EntityType:         entityType,
 		Name:               "orders",
 		FullyQualifiedName: fullyQualifiedName,
@@ -109,7 +110,8 @@ func TestBindingAndProductReleasedProjectionAreRetrySafe(t *testing.T) {
 
 	txManager := transaction.NewManager(pool)
 	metadataRepo := metadatainfra.NewPostgresRepository(pool)
-	engine := &fakeMetadataEngine{}
+	engine := &fakeMetadataEngine{assetID: uuid.NewString()}
+	assetFQN := "sample_data.ecommerce.public.orders." + uuid.NewString()
 	service := metadataapp.NewService(
 		testProvider,
 		"Park",
@@ -122,20 +124,20 @@ func TestBindingAndProductReleasedProjectionAreRetrySafe(t *testing.T) {
 	binding, err := service.BindResource(ctx, metadataapp.BindResourceCommand{
 		ResourceID:         resourceID,
 		EntityType:         "TABLE",
-		FullyQualifiedName: "sample_data.ecommerce.public.orders",
+		FullyQualifiedName: assetFQN,
 		Primary:            true,
 	})
 	if err != nil {
 		t.Fatalf("bind resource: %v", err)
 	}
-	if binding.ExternalID != "table-001" || binding.Provider != testProvider {
+	if binding.ExternalID != engine.assetID || binding.Provider != testProvider {
 		t.Fatalf("binding = %+v", binding)
 	}
 	firstBindingID := binding.ID
 	replayedBinding, err := service.BindResource(ctx, metadataapp.BindResourceCommand{
 		ResourceID:         resourceID,
 		EntityType:         "TABLE",
-		FullyQualifiedName: "sample_data.ecommerce.public.orders",
+		FullyQualifiedName: assetFQN,
 		Primary:            false,
 	})
 	if err != nil {

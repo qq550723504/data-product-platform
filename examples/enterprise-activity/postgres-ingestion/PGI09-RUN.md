@@ -126,3 +126,33 @@ gate output across the steps; the report lists the exact tables/facts. Keep
 tokens, private environment/DSN files and full container environment dumps
 outside artifacts. Production IAM/admission/deployment, arbitrary connectors
 and the deferred human explanation remain outside this technical acceptance.
+
+## Ready review repair validation
+
+Ready review of `019497690d` completed on 2026-10-11 at 08:01:05 UTC and found
+two required-path defects. Migration 000053 now requires a nonempty confirmed
+external ID and uniquely owns `(provider, entity_type, external_id)`; same-owner
+rename/replay updates the name on the original binding. Another resource cannot
+take that identity under a different name. Existing name uniqueness also rejects
+replacement identities and colliding renames with 409. Invalid pre-production
+rows fail migration; there is no identity backfill or compatibility fallback.
+Resource lookup errors now return a generic 503 before provider work; successful
+lookups outside the workspace or for absent resources still return 404.
+
+The [RED output](results/2026-10-11/pgi09/ready-review-red.txt) reproduced two
+concurrent owners under different names and incorrect 404s at all three metadata
+HTTP routes. The [GREEN output](results/2026-10-11/pgi09/ready-review-green.txt)
+uses a freshly migrated real PostgreSQL DB with `-race`, covering rename/replay,
+cross-workspace conflicts, name/identity collision, missing identity, and the
+503/404 distinction. Full Go tests and vet passed after the grouped repair.
+
+The new API binary and retained real OpenMetadata/browser health path are bound
+in [the additional report](results/2026-10-11/pgi09/ready-review.json) and
+[Edge screenshot](results/2026-10-11/pgi09/ready-review-health.png). Browser refresh
+retained the binding/provider IDs and revision 0.2; another-resource refresh
+returned 409; all 15 Core table hashes match the original trial baseline.
+The native table `name` JSON Patch returned unchanged name/FQN/ID/version in this
+2.0.5 trial, and the original lease name was verified afterward. Native catalog
+rename is therefore NOT_RUN; stable-ID rename ownership is proven by the real
+PostgreSQL tests. The original 21-check report remains historical evidence for
+the earlier binary. Human explanation is still deferred / NOT_RUN.
