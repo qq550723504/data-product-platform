@@ -1,5 +1,5 @@
--- D1 foundation only: fixture scope registration and immutable DELETE_EXACT
--- planning. No approval, dispatch, provider call or availability transition.
+-- D1 controlled fixture scope, immutable planning, use restriction, holds and
+-- reader admission/termination. No destructive dispatch or provider call.
 CREATE TABLE lifecycle_fixture_namespace (
     id uuid PRIMARY KEY CHECK (id <> '00000000-0000-0000-0000-000000000000'),
     workspace_id uuid NOT NULL CHECK (workspace_id <> '00000000-0000-0000-0000-000000000000'),
@@ -148,3 +148,117 @@ CREATE TRIGGER lifecycle_plan_no_truncate BEFORE TRUNCATE ON lifecycle_dispositi
 FOR EACH STATEMENT EXECUTE FUNCTION lifecycle_fixture_identity_immutable();
 CREATE TRIGGER lifecycle_plan_target_no_truncate BEFORE TRUNCATE ON lifecycle_disposition_plan_target
 FOR EACH STATEMENT EXECUTE FUNCTION lifecycle_fixture_identity_immutable();
+
+CREATE TABLE lifecycle_content_use_restriction (
+    id uuid PRIMARY KEY CHECK (id <> '00000000-0000-0000-0000-000000000000'),
+    workspace_id uuid NOT NULL,
+    dataset_version_id uuid NOT NULL REFERENCES dataset_version(id),
+    basis_ref varchar(255) NOT NULL CHECK (basis_ref <> '' AND basis_ref=btrim(basis_ref)),
+    actor_id uuid NOT NULL CHECK (actor_id <> '00000000-0000-0000-0000-000000000000'),
+    principal_ref varchar(255) NOT NULL CHECK (principal_ref <> ''),
+    dependency_revision bigint NOT NULL CHECK (dependency_revision>0),
+    occurred_at timestamptz NOT NULL,
+    UNIQUE (workspace_id,id)
+);
+CREATE INDEX lifecycle_restriction_subject ON lifecycle_content_use_restriction(workspace_id,dataset_version_id,occurred_at);
+CREATE FUNCTION lifecycle_restriction_scope_guard() RETURNS trigger AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM lifecycle_fixture_copy c WHERE c.workspace_id=NEW.workspace_id AND c.dataset_version_id=NEW.dataset_version_id) THEN
+        RAISE EXCEPTION 'lifecycle restriction requires registered fixture scope';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER lifecycle_restriction_scope BEFORE INSERT ON lifecycle_content_use_restriction
+FOR EACH ROW EXECUTE FUNCTION lifecycle_restriction_scope_guard();
+
+CREATE TABLE lifecycle_content_hold (
+    id uuid PRIMARY KEY CHECK (id <> '00000000-0000-0000-0000-000000000000'),
+    workspace_id uuid NOT NULL,
+    copy_id uuid NOT NULL,
+    basis_ref varchar(255) NOT NULL CHECK (basis_ref <> '' AND basis_ref=btrim(basis_ref)),
+    actor_id uuid NOT NULL CHECK (actor_id <> '00000000-0000-0000-0000-000000000000'),
+    principal_ref varchar(255) NOT NULL CHECK (principal_ref <> ''),
+    dependency_revision bigint NOT NULL CHECK (dependency_revision>0),
+    occurred_at timestamptz NOT NULL,
+    FOREIGN KEY (workspace_id,copy_id) REFERENCES lifecycle_fixture_copy(workspace_id,id),
+    UNIQUE (workspace_id,id)
+);
+CREATE TABLE lifecycle_content_hold_release (
+    id uuid PRIMARY KEY CHECK (id <> '00000000-0000-0000-0000-000000000000'),
+    workspace_id uuid NOT NULL,
+    hold_id uuid NOT NULL UNIQUE,
+    basis_ref varchar(255) NOT NULL CHECK (basis_ref <> '' AND basis_ref=btrim(basis_ref)),
+    actor_id uuid NOT NULL CHECK (actor_id <> '00000000-0000-0000-0000-000000000000'),
+    principal_ref varchar(255) NOT NULL CHECK (principal_ref <> ''),
+    dependency_revision bigint NOT NULL CHECK (dependency_revision>0),
+    occurred_at timestamptz NOT NULL,
+    FOREIGN KEY (workspace_id,hold_id) REFERENCES lifecycle_content_hold(workspace_id,id)
+);
+
+CREATE TABLE lifecycle_reader_pin (
+    id uuid PRIMARY KEY CHECK (id <> '00000000-0000-0000-0000-000000000000'),
+    workspace_id uuid NOT NULL,
+    copy_id uuid NOT NULL,
+    reader_id uuid NOT NULL CHECK (reader_id <> '00000000-0000-0000-0000-000000000000'),
+    kind varchar(32) NOT NULL CHECK (kind='FIXTURE_READER'),
+    actor_id uuid NOT NULL CHECK (actor_id <> '00000000-0000-0000-0000-000000000000'),
+    principal_ref varchar(255) NOT NULL CHECK (principal_ref <> ''),
+    generation bigint NOT NULL CHECK (generation>0),
+    gate_revision bigint NOT NULL CHECK (gate_revision>=0 AND generation>gate_revision),
+    started_at timestamptz NOT NULL,
+    window_mode varchar(32) NOT NULL CHECK (window_mode IN ('EXPLICIT_UNBOUNDED','DEADLINE')),
+    use_until timestamptz,
+    FOREIGN KEY (workspace_id,copy_id) REFERENCES lifecycle_fixture_copy(workspace_id,id),
+    UNIQUE (workspace_id,id),
+    CHECK ((window_mode='EXPLICIT_UNBOUNDED' AND use_until IS NULL) OR
+           (window_mode='DEADLINE' AND use_until IS NOT NULL AND use_until>started_at))
+);
+
+CREATE FUNCTION lifecycle_hold_release_scope_guard() RETURNS trigger AS $$
+DECLARE placed_at timestamptz;
+BEGIN
+    SELECT occurred_at INTO STRICT placed_at FROM lifecycle_content_hold WHERE workspace_id=NEW.workspace_id AND id=NEW.hold_id FOR UPDATE;
+    IF NEW.occurred_at<placed_at THEN RAISE EXCEPTION 'hold release precedes placement'; END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER lifecycle_hold_release_scope BEFORE INSERT ON lifecycle_content_hold_release
+FOR EACH ROW EXECUTE FUNCTION lifecycle_hold_release_scope_guard();
+CREATE INDEX lifecycle_reader_copy ON lifecycle_reader_pin(workspace_id,copy_id);
+CREATE TABLE lifecycle_reader_termination (
+    id uuid PRIMARY KEY CHECK (id <> '00000000-0000-0000-0000-000000000000'),
+    workspace_id uuid NOT NULL,
+    pin_id uuid NOT NULL UNIQUE,
+    reader_id uuid NOT NULL,
+    generation bigint NOT NULL,
+    outcome varchar(32) NOT NULL CHECK (outcome IN ('COMPLETED','CANCELLATION_CONFIRMED')),
+    observed_at timestamptz NOT NULL,
+    actor_id uuid NOT NULL CHECK (actor_id <> '00000000-0000-0000-0000-000000000000'),
+    principal_ref varchar(255) NOT NULL CHECK (principal_ref <> ''),
+    dependency_revision bigint NOT NULL CHECK (dependency_revision>0),
+    FOREIGN KEY (workspace_id,pin_id) REFERENCES lifecycle_reader_pin(workspace_id,id)
+);
+
+CREATE FUNCTION lifecycle_termination_scope_guard() RETURNS trigger AS $$
+DECLARE pin lifecycle_reader_pin;
+BEGIN
+    SELECT * INTO STRICT pin FROM lifecycle_reader_pin WHERE workspace_id=NEW.workspace_id AND id=NEW.pin_id FOR UPDATE;
+    IF NEW.reader_id<>pin.reader_id OR NEW.generation<>pin.generation OR NEW.observed_at<pin.started_at THEN
+        RAISE EXCEPTION 'reader termination does not match pin generation';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER lifecycle_termination_scope BEFORE INSERT ON lifecycle_reader_termination
+FOR EACH ROW EXECUTE FUNCTION lifecycle_termination_scope_guard();
+
+-- All current state is resolved from these append-only facts. No expiry-based
+-- refcount or mutable ALLOWED flag can silently release historical occupancy.
+DO $$ DECLARE name text; BEGIN
+    FOREACH name IN ARRAY ARRAY['lifecycle_content_use_restriction','lifecycle_content_hold',
+        'lifecycle_content_hold_release','lifecycle_reader_pin','lifecycle_reader_termination'] LOOP
+        EXECUTE format('CREATE TRIGGER %I BEFORE UPDATE OR DELETE ON %I FOR EACH ROW EXECUTE FUNCTION lifecycle_fixture_identity_immutable()',name||'_immutable',name);
+        EXECUTE format('CREATE TRIGGER %I BEFORE TRUNCATE ON %I FOR EACH STATEMENT EXECUTE FUNCTION lifecycle_fixture_identity_immutable()',name||'_no_truncate',name);
+    END LOOP;
+END $$;

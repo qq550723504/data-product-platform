@@ -45,10 +45,14 @@ func (r *PostgresRepository) LoadFixtureCopies(ctx context.Context, tx pgx.Tx, w
 }
 
 func (r *PostgresRepository) FindReplay(ctx context.Context, tx pgx.Tx, workspace uuid.UUID, key string) (uuid.UUID, string, bool, error) {
+	return r.FindCommandReplay(ctx, tx, workspace, "LIFECYCLE.PREPARE_DELETE_PLAN", key)
+}
+
+func (r *PostgresRepository) FindCommandReplay(ctx context.Context, tx pgx.Tx, workspace uuid.UUID, command, key string) (uuid.UUID, string, bool, error) {
 	var id uuid.UUID
 	var fingerprint string
 	err := tx.QueryRow(ctx, `SELECT object_id,request_fingerprint FROM command_idempotency
-		WHERE workspace_id=$1 AND command_type='LIFECYCLE.PREPARE_DELETE_PLAN' AND idempotency_key=$2`, workspace, key).Scan(&id, &fingerprint)
+		WHERE workspace_id=$1 AND command_type=$2 AND idempotency_key=$3`, workspace, command, key).Scan(&id, &fingerprint)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return uuid.Nil, "", false, nil
 	}
@@ -56,8 +60,12 @@ func (r *PostgresRepository) FindReplay(ctx context.Context, tx pgx.Tx, workspac
 }
 
 func (r *PostgresRepository) RecordIdempotency(ctx context.Context, tx pgx.Tx, p domain.Plan, key, fingerprint string) error {
+	return r.RecordCommandIdempotency(ctx, tx, p.WorkspaceID, "LIFECYCLE.PREPARE_DELETE_PLAN", key, fingerprint, p.ID)
+}
+
+func (r *PostgresRepository) RecordCommandIdempotency(ctx context.Context, tx pgx.Tx, workspace uuid.UUID, command, key, fingerprint string, id uuid.UUID) error {
 	_, err := tx.Exec(ctx, `INSERT INTO command_idempotency(workspace_id,command_type,idempotency_key,object_id,result_ref,request_fingerprint)
-		VALUES ($1,'LIFECYCLE.PREPARE_DELETE_PLAN',$2,$3,$3,$4)`, p.WorkspaceID, key, p.ID, fingerprint)
+		VALUES ($1,$2,$3,$4,$4,$5)`, workspace, command, key, id, fingerprint)
 	return err
 }
 
