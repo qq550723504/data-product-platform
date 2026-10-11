@@ -18,6 +18,8 @@ import (
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
 	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	entityinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/infrastructure"
+	externalpilot "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/pilot"
+	externalqueue "github.com/qq550723504/data-product-platform/apps/platform/internal/externalintegration/transport/queue"
 	goldapp "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/application"
 	goldinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/gold/infrastructure"
 	parkindicator "github.com/qq550723504/data-product-platform/apps/platform/internal/industrypack/park/indicator"
@@ -111,6 +113,13 @@ func main() {
 
 	txManager := transaction.NewManager(db)
 	nativeLockManager := transaction.NewManager(nativeLockDB)
+	externalExecutor, err := externalpilot.BuildExecutor(db)
+	if err != nil {
+		logger.Error("configure external publication executor", "error", err)
+		os.Exit(1)
+	}
+	externalExecutor.WithLocker(nativeLockManager)
+	externalEnqueuer := externalqueue.NewClient(queueClient)
 	datasetRepo := datasetinfra.NewPostgresRepository(db)
 	annotationRepo := annotationinfra.NewRepository(db)
 	rightsRepo := rightsinfra.NewPostgresRepository(db)
@@ -233,6 +242,7 @@ func main() {
 	}
 
 	mux := asynq.NewServeMux()
+	mux.HandleFunc(externalqueue.TaskExecute, externalqueue.Handle(externalExecutor))
 	mux.HandleFunc(queue.TaskHealthPing, func(_ context.Context, task *asynq.Task) error {
 		logger.Info("worker health ping consumed", "task_type", task.Type())
 		return nil
@@ -246,6 +256,20 @@ func main() {
 	})
 
 	errCh := make(chan error, 2)
+	go func() {
+		ticker := time.NewTicker(5 * time.Second)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				if err := externalExecutor.RunOnce(ctx); err != nil && !errors.Is(err, context.Canceled) {
+					logger.Error("external publication reconciliation failed", "error", err)
+				}
+			}
+		}
+	}()
 	go func() {
 		logger.Info("asynq worker started", "redis", cfg.Redis.Addr, "env", cfg.Environment)
 		if err := server.Run(mux); err != nil {
@@ -321,7 +345,7 @@ func main() {
 	if metadataService != nil {
 		projector = metadataService
 	}
-	dispatcher, err := newOutboxDispatcher(db, logger, projector, executionEnqueuer)
+	dispatcher, err := newOutboxDispatcher(db, logger, projector, executionEnqueuer, externalEnqueuer)
 	if err != nil {
 		logger.Error("create outbox dispatcher", "error", err)
 		os.Exit(1)

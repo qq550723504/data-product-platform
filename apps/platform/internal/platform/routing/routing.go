@@ -20,15 +20,16 @@ import (
 // changing it makes every historical confirmation look unconfirmed and replays
 // the handler, so rename only with a deliberate migration.
 const (
-	HandlerExecutionQueue     = "execution-queue"
-	HandlerMetadataProjection = "metadata-projection"
+	HandlerExecutionQueue           = "execution-queue"
+	HandlerMetadataProjection       = "metadata-projection"
+	HandlerExternalPublicationQueue = "external-publication-queue"
 )
 
 // Version identifies the base layout of the routing table below. Bump it
 // whenever an event type's required-handler set changes. Dispatch logs and
 // dead-letter diagnostics reference it, so the obligation that was in force when
 // an event was handled stays auditable.
-const Version = "c1-v19+external-core1+remediation-v1"
+const Version = "c1-v19+external-core1+execution1+remediation-v1"
 
 // VersionFor folds the deployment profile into the routing version so the same
 // version string always describes the same required-handler set. Enabling or
@@ -82,6 +83,13 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "ExternalPublicationCreated"},
 		// #84 records intent only; #86 owns future dispatch obligations.
 		{EventType: "ExternalPublicationRequested"},
+		{EventType: "ExternalPublicationExecutionRequested", RequiredHandlers: []string{HandlerExternalPublicationQueue}},
+		{EventType: "ExternalProviderCallStarted"},
+		{EventType: "ExternalProviderCallDispatched"},
+		{EventType: "ExternalProviderObservationRecorded"},
+		{EventType: "ExternalPublicationAttemptResolved"},
+		{EventType: "ExternalPublicationRegistered"},
+		{EventType: "ExternalPublicationPublished"},
 		{EventType: "IngestionPrepared"},
 		{EventType: "IngestionInvocationStarted"},
 		{EventType: "IngestionInvocationDispatched"},

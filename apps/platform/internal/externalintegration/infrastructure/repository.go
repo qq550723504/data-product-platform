@@ -92,7 +92,15 @@ func (r *Repository) Identifier(ctx context.Context, q Querier, ws, id uuid.UUID
 	if lock {
 		sql += ` FOR UPDATE OF i`
 	}
-	return scanIdentifier(q.QueryRow(ctx, sql, ws, id))
+	i, err := scanIdentifier(q.QueryRow(ctx, sql, ws, id))
+	if err == nil && lock {
+		var invalid bool
+		err = q.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM external_identifier_disposition WHERE identifier_id=$1)`, id).Scan(&invalid)
+		if invalid {
+			i.Status = "INVALIDATED"
+		}
+	}
+	return i, err
 }
 func (r *Repository) Identifiers(ctx context.Context, ws uuid.UUID, limit, offset int) ([]d.Identifier, error) {
 	rows, err := r.Pool.Query(ctx, identifierSelect+` WHERE i.workspace_id=$1 ORDER BY i.created_at,i.id LIMIT $2 OFFSET $3`, ws, limit, offset)
@@ -191,7 +199,7 @@ func (r *Repository) Publication(ctx context.Context, q Querier, ws, id uuid.UUI
 func (r *Repository) PublicationHistory(ctx context.Context, ws, id uuid.UUID) (d.Publication, error) {
 	// One SQL statement gives projection + history the same MVCC snapshot.
 	rows, err := r.Pool.Query(ctx, `SELECT p.id,p.workspace_id,p.provider,p.identity_binding_id,p.product_release_id,p.status,p.revision,p.principal_ref,p.created_by,p.created_at,
- t.id,t.revision,t.from_status,t.to_status,t.evidence_id,t.event_id,t.principal_ref,t.created_by,t.created_at FROM external_publication p JOIN external_publication_transition t ON t.publication_id=p.id WHERE p.workspace_id=$1 AND p.id=$2 ORDER BY t.revision`, ws, id)
+ t.id,t.revision,t.from_status,t.to_status,t.evidence_id,t.event_id,t.principal_ref,t.created_by,t.created_at,t.provider_observation_id FROM external_publication p JOIN external_publication_transition t ON t.publication_id=p.id WHERE p.workspace_id=$1 AND p.id=$2 ORDER BY t.revision`, ws, id)
 	if err != nil {
 		return d.Publication{}, err
 	}
@@ -199,7 +207,7 @@ func (r *Repository) PublicationHistory(ctx context.Context, ws, id uuid.UUID) (
 	p := d.Publication{Transitions: []d.Transition{}}
 	for rows.Next() {
 		var t d.Transition
-		err := rows.Scan(&p.ID, &p.WorkspaceID, &p.Provider, &p.IdentityBindingID, &p.ProductReleaseID, &p.Status, &p.Revision, &p.PrincipalRef, &p.CreatedBy, &p.CreatedAt, &t.ID, &t.Revision, &t.FromStatus, &t.ToStatus, &t.EvidenceID, &t.EventID, &t.PrincipalRef, &t.CreatedBy, &t.CreatedAt)
+		err := rows.Scan(&p.ID, &p.WorkspaceID, &p.Provider, &p.IdentityBindingID, &p.ProductReleaseID, &p.Status, &p.Revision, &p.PrincipalRef, &p.CreatedBy, &p.CreatedAt, &t.ID, &t.Revision, &t.FromStatus, &t.ToStatus, &t.EvidenceID, &t.EventID, &t.PrincipalRef, &t.CreatedBy, &t.CreatedAt, &t.ProviderObservationID)
 		if err != nil {
 			return p, err
 		}
@@ -238,7 +246,7 @@ func (r *Repository) Submit(ctx context.Context, tx pgx.Tx, id uuid.UUID) error 
 	return Error(err)
 }
 func (r *Repository) Transition(ctx context.Context, tx pgx.Tx, ws, id uuid.UUID, t d.Transition) error {
-	_, err := tx.Exec(ctx, `INSERT INTO external_publication_transition(id,publication_id,workspace_id,revision,from_status,to_status,evidence_id,event_id,principal_ref,created_by,created_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`, t.ID, id, ws, t.Revision, t.FromStatus, t.ToStatus, t.EvidenceID, t.EventID, t.PrincipalRef, t.CreatedBy, t.CreatedAt)
+	_, err := tx.Exec(ctx, `INSERT INTO external_publication_transition(id,publication_id,workspace_id,revision,from_status,to_status,evidence_id,event_id,principal_ref,created_by,created_at,provider_observation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, t.ID, id, ws, t.Revision, t.FromStatus, t.ToStatus, t.EvidenceID, t.EventID, t.PrincipalRef, t.CreatedBy, t.CreatedAt, t.ProviderObservationID)
 	return Error(err)
 }
 func (r *Repository) Invalidate(ctx context.Context, tx pgx.Tx, kind string, ws, id, fact, evidence uuid.UUID, reason, subject string, actor uuid.UUID, at any) error {

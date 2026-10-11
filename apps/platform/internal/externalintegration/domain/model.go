@@ -27,7 +27,7 @@ type PublicationStatus string
 const (
 	Draft      PublicationStatus = "DRAFT"
 	Submitting PublicationStatus = "SUBMITTING"
-	Registered PublicationStatus = "REGISTERED" // #86 provider fact, currently unreachable
+	Registered PublicationStatus = "REGISTERED" // Verified #86 provider observation.
 	Published  PublicationStatus = "PUBLISHED"
 	Suspended  PublicationStatus = "SUSPENDED"
 	Withdrawn  PublicationStatus = "WITHDRAWN"
@@ -151,15 +151,16 @@ type Publication struct {
 	Transitions  []Transition      `json:"transitions"`
 }
 type Transition struct {
-	ID           uuid.UUID         `json:"id"`
-	Revision     int64             `json:"revision"`
-	FromStatus   PublicationStatus `json:"fromStatus"`
-	ToStatus     PublicationStatus `json:"toStatus"`
-	EvidenceID   uuid.UUID         `json:"evidenceId"`
-	EventID      uuid.UUID         `json:"eventId"`
-	PrincipalRef string            `json:"principalRef"`
-	CreatedBy    uuid.UUID         `json:"createdBy"`
-	CreatedAt    time.Time         `json:"createdAt"`
+	ProviderObservationID *uuid.UUID        `json:"providerObservationId,omitempty"`
+	ID                    uuid.UUID         `json:"id"`
+	Revision              int64             `json:"revision"`
+	FromStatus            PublicationStatus `json:"fromStatus"`
+	ToStatus              PublicationStatus `json:"toStatus"`
+	EvidenceID            uuid.UUID         `json:"evidenceId"`
+	EventID               uuid.UUID         `json:"eventId"`
+	PrincipalRef          string            `json:"principalRef"`
+	CreatedBy             uuid.UUID         `json:"createdBy"`
+	CreatedAt             time.Time         `json:"createdAt"`
 }
 type Receipt struct {
 	ObjectID   uuid.UUID `json:"objectId"`
