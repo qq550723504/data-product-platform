@@ -1,0 +1,18 @@
+{
+  "d1_test_fix_head": "b853466ffab7a99ce64fd09b97a51059fbefa58a",
+  "parent_implementation": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+  "native_delete": 0,
+  "bypass": 0,
+  "go_test": "TestPlanFinalizeRejectsForgedHashEmptyAndDownDropsNoHistory",
+  "fix": "scratch database with exact max60; require exact60 history-refusal error; compare five entire table count/hash facts before/after",
+  "cleanup": 0,
+  "durability_negative": 10,
+  "production_go_changed": [],
+  "root_cause": "Runner.Down selects highest applied migration; the old test observed 64 unconditional refusal and later incorrectly expected empty65 to refuse",
+  "full_merged_source_rerun": "PENDING C2 exact snapshot proof",
+  "real_postgres_race": "PASS 7.927s on new independent persistent C2 validation PG; SQL-only fixture, no native provider",
+  "migrations_changed": [],
+  "durability_positive": 1,
+  "native_source_hashes_unchanged": 62,
+  "protection_release": 0
+}

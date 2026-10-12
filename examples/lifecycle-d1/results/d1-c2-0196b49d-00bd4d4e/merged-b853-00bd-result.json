@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "d1Head": "b853466ffab7a99ce64fd09b97a51059fbefa58a",
+  "c2Head": "00bd4d4e9afadd863a178b7798b6f7dee1f3192d",
+  "mergeTree": "e0ff8642833fa72b341ab5fce8ea492cee0caf85",
+  "resolvedScratchSource": {
+    "apps/platform/internal/platform/routing/routing.go": "765560e26bbb92ad1488a9c1560ebc3563e0bb78598d95e514f389f14aa2bf03",
+    "apps/platform/cmd/worker/routing_test.go": "5faa8f32aaccc1c179c34d5487c8e1d6efe5cc6196d71a808d21bfccc155a106",
+    "apps/platform/cmd/worker/main.go": "a4b73c364390fca9af7d6062e4ce2893bb452e8640cb463bb2e0bb9bdd971d72",
+    "apps/platform/cmd/worker/handlers.go": "1988beea73294a97af27e12f6a8ab3e60d400288defd1438c0c3633f85d6408e"
+  },
+  "routingVersion": "c1-v27+ext1+exec1+usage1+rem1+life2+schema1",
+  "registration": "5 with providers,3 without; both lifecycle recovery and source schema handlers",
+  "fullGoRealPostgresRace": "PASS; existing native provider opt-ins remain distinct SKIP",
+  "vet": "PASS",
+  "scope": "complete D1+C2 source in isolated archive, no change to either writer checkout; independent named-volume PG, not restoration of lost original Core"
+}

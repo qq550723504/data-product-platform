@@ -69,3 +69,9 @@ Run `a6b30840-3e76-49ad-91d3-f0c399fcf170` 保留三台运行中的服务、已�
 新环境入口为 `prepare.ps1 -ArchiveAcceptance -ProcessingDeliveryAcceptance` → `prepare-plane.ps1` → `run-plane-step.ps1 -Mode setup/accept/final` → `seal-plane.ps1`。只使用两个固定合成输入和两个固定输出槽位；helper HTTP 仅自身 loopback，无 host port。reader / producer 与 root-admin 分离；未提供删除实现或批准。所有旧窗口及本轮成功/失败环境保留，不重放已经封闭的步骤。失败的3f1e4cdb、e1ddedb7、121e25f9事实独立保留，不算最终验收通过。
 
 D1/60 up/down 同时修复迁移组合发现的 CostAllocation guard 漏掉 main external provider/usage subjects 的问题；完整新库 PostgreSQL 回归及空60 down恢复完整main59 guard通过。D1仍≤64，C2使用65并须对最终 committed snapshot 重验，原C2组合证明不自动升级。完整D1、真实业务对象、production composition、外部provider与新增删除仍不在本轮通过范围，#307保持OPEN。
+
+## D1 → C2 组合重验与保留服务持久化检查
+
+组合重验发现旧D1 down测试没有固定60的边界，加入空65后错误要求合法65 down拒绝。`b853466f`将该真实PG测试固定到独立max60 scratch，核对具体拒绝及五表完整count/hash；生产Go与60–64不改。共享routing/worker注册冲突由C2 writer在scratch source中处理，SQL组合与完整源码组合分别记录，不能互相代替。具体阶段与最终回执见 [协调报告](results/d1-c2-0196b49d-00bd4d4e/coordination-review.md)。
+
+C2曾误用其保留Core的256MiB tmpfs进行组合验证，空间不足导致进程退出及数据库内容丢失；旧试用不可用、原历史未恢复，新的验证库不叫历史恢复。D1自己的named-volume服务和封闭事实仍保留。未来D1 prepare/reader/plane入口新增只读`Assert-FixtureDurableStorage`检查，复用通用`Assert-RetainedServiceStorage`供C2四角色采用；真实owner、独立可写registered named volumes、无data/WAL tmpfs，以及明确pre-start/started状态须通过才能继续。它不修改旧挂载，不提供cleanup或解保护能力。
