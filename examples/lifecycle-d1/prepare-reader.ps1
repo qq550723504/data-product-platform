@@ -15,6 +15,8 @@ $net=(Docker @('network','inspect',$r.network)|ConvertFrom-Json)[0]
 if(-not $net.Internal -or @($net.Containers.PSObject.Properties).Count -ne 3 -or $net.Labels.'lifecycle307.run' -ne $run){throw 'Closed three-member network required'}
 foreach($name in $r.containers.PSObject.Properties.Value){$i=(Docker @('inspect',$name)|ConvertFrom-Json)[0];if($i.State.Status -ne 'running' -or $i.Config.Labels.'lifecycle307.run' -ne $run){throw 'Service owner/state mismatch'};foreach($p in @($i.NetworkSettings.Ports.PSObject.Properties)){if($null -ne $p.Value){throw 'Reader native fixture cannot publish ports'}}}
 $admin=Join-Path $private 'reader-admin';$owner=Join-Path $private 'reader-owner'
+. (Join-Path $PSScriptRoot 'durable-storage.ps1')
+Assert-FixtureDurableStorage $r ((Docker @('inspect',$r.containers.postgres)|ConvertFrom-Json)[0]) ((Docker @('inspect',$r.containers.minio)|ConvertFrom-Json)[0])|Out-Null
 foreach($dir in @($admin,$owner)){if(Test-Path -LiteralPath $dir){throw 'Reader already prepared; do not repeat provisioning'};New-Item -ItemType Directory -Path $dir|Out-Null}
 $priorOS=$env:GOOS;$priorArch=$env:GOARCH;$priorCGO=$env:CGO_ENABLED
 Push-Location (Join-Path $repo 'apps/platform')

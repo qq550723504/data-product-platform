@@ -16,6 +16,8 @@ $gw=(Docker @('inspect',$r.containers.gateway)|ConvertFrom-Json)[0]
 if($gw.Config.Labels.'lifecycle307.run' -ne $run -or $gw.State.Status -ne 'running'){throw 'Gateway owner/state mismatch'}
 $name=$project+'-reader-'+$Mode+'-'+([guid]::NewGuid().ToString('N').Substring(0,6))
 $pg=(Docker @('inspect',$r.containers.postgres)|ConvertFrom-Json)[0]
+. (Join-Path $PSScriptRoot 'durable-storage.ps1')
+Assert-FixtureDurableStorage $r $pg ((Docker @('inspect',$r.containers.minio)|ConvertFrom-Json)[0])|Out-Null
 Write-Utf8 (Join-Path $dir ($name+'.sh')) ("#!/bin/sh`nset -eu`nexec /run/private/reader -mode plane-$Mode`n")
 Docker @('create','--pull','never','--name',$name,'--label',"lifecycle307.run=$run",'--network',"container:$($r.containers.gateway)",'--read-only','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data','--mount',"type=bind,source=$dir,target=/run/private,readonly",'--mount',"type=bind,source=$(Join-Path $PSScriptRoot 'results'),target=/run/output",'--mount',"type=bind,source=$repo,target=/run/repo,readonly",'--mount',"type=bind,source=$(Join-Path $dir 'rules'),target=/run/rules,readonly",'--entrypoint','/bin/sh',$pg.Image,('/run/private/'+$name+'.sh'))|Out-Null
 Docker @('start',$name)|Out-Null

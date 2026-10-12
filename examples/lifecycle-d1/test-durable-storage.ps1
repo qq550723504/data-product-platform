@@ -1,0 +1,28 @@
+# Metadata contract checks only. No Docker mutation, object or database I/O.
+$ErrorActionPreference='Stop'
+Set-StrictMode -Version Latest
+. (Join-Path $PSScriptRoot 'durable-storage.ps1')
+$run='00000000-0000-4000-8000-000000000307'
+$resources=[pscustomobject]@{run_id=$run;volumes=@('fixture-pg','fixture-objects');containers=[pscustomobject]@{postgres='fixture-pg-service';minio='fixture-object-service'}}
+function Service([string]$Name,[string]$Path,[string]$Volume){[pscustomobject]@{Name='/'+$Name;Id=$Name+'-id';Config=[pscustomobject]@{Labels=[pscustomobject]@{'lifecycle307.run'=$run}};State=[pscustomobject]@{Status='running'};HostConfig=[pscustomobject]@{Tmpfs=$null};Mounts=@([pscustomobject]@{Type='volume';Destination=$Path;Name=$Volume;RW=$true})}}
+$pg=Service 'fixture-pg-service' '/var/lib/postgresql/data' 'fixture-pg'
+$objects=Service 'fixture-object-service' '/data' 'fixture-objects'
+Assert-FixtureDurableStorage $resources $pg $objects|Out-Null
+$rejected=0
+foreach($case in @('core-tmpfs-256m','object-tmpfs','tmpfs-parent','tmpfs-wal','anonymous-volume','unregistered-volume','swapped-service-volumes','readonly-volume','nested-data-mount','stopped-service')){
+ $p=Service 'fixture-pg-service' '/var/lib/postgresql/data' 'fixture-pg';$o=Service 'fixture-object-service' '/data' 'fixture-objects'
+ switch($case){
+  'core-tmpfs-256m' {$p.Mounts=@();$p.HostConfig.Tmpfs=[pscustomobject]@{'/var/lib/postgresql/data'='rw,size=256m'}}
+  'object-tmpfs' {$o.Mounts=@();$o.HostConfig.Tmpfs=[pscustomobject]@{'/data'='rw,size=256m'}}
+  'tmpfs-parent' {$p.HostConfig.Tmpfs=[pscustomobject]@{'/var/lib/postgresql'='rw,size=256m'}}
+  'tmpfs-wal' {$p.HostConfig.Tmpfs=[pscustomobject]@{'/var/lib/postgresql/data/pg_wal'='rw,size=256m'}}
+  'anonymous-volume' {$p.Mounts[0].Name=''}
+  'unregistered-volume' {$p.Mounts[0].Name='other-run'}
+  'swapped-service-volumes' {$p.Mounts[0].Name='fixture-objects';$o.Mounts[0].Name='fixture-pg'}
+  'readonly-volume' {$p.Mounts[0].RW=$false}
+  'nested-data-mount' {$p.Mounts+=@([pscustomobject]@{Type='bind';Destination='/var/lib/postgresql/data/pg_wal';Name='';RW=$true})}
+  'stopped-service' {$p.State.Status='exited'}
+ }
+ $failed=$false;try{Assert-FixtureDurableStorage $resources $p $o|Out-Null}catch{$failed=$true};if(-not $failed){throw ('Unsafe retained-service metadata accepted: '+$case)};$rejected++
+}
+[pscustomobject]@{status='PASS';positive=1;rejected=$rejected;docker_calls=0;storage_io=0;mutation=0}|ConvertTo-Json

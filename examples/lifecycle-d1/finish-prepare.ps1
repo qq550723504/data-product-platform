@@ -28,6 +28,8 @@ foreach ($item in @($pg,$mi,$gw)){
 $net=(Docker @('network','inspect',$r.network)|ConvertFrom-Json)[0]
 if (-not $net.Internal -or @($net.Containers.PSObject.Properties).Count -ne 3 -or $net.Labels.'lifecycle307.run' -ne $run){throw 'Closed network scope mismatch'}
 foreach($volume in $r.volumes){$v=(Docker @('volume','inspect',$volume)|ConvertFrom-Json)[0];if($v.Labels.'lifecycle307.run' -ne $run){throw 'Volume owner mismatch'}}
+. (Join-Path $PSScriptRoot 'durable-storage.ps1')
+Assert-FixtureDurableStorage $r $pg $mi|Out-Null
 $expectedMinio = 'sha256:a9eb76492485dd496bfd69b4114e47137f2da1a1a87e4a9b273cb21476cb1a98'
 if ($ArchiveAcceptance) { $expectedMinio = 'sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741' }
 if($MinioImage -ne ''){if(-not $ArchiveAcceptance -or $MinioImage -notmatch '^sha256:[a-f0-9]{64}$'){throw 'Explicit pinned fixture image required'};$expectedMinio=$MinioImage}

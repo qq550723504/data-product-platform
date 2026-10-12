@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -27,6 +28,14 @@ import (
 // SQL-only synthetic facts. No storage provider is configured or called, even
 // during cleanup. Each test owns a new database, never an existing pilot DB.
 func planDatabase(t *testing.T) *pgxpool.Pool {
+	pool, _ := planDatabaseAtVersion(t, 0)
+	return pool
+}
+
+// Down guards must run at their exact migration boundary. A later unrelated
+// empty migration can legitimately roll back without removing lifecycle facts.
+// Zero keeps ordinary application tests on the complete current schema.
+func planDatabaseAtVersion(t *testing.T, version int64) (*pgxpool.Pool, string) {
 	t.Helper()
 	dsn := os.Getenv("TEST_POSTGRES_DSN")
 	if dsn == "" {
@@ -62,8 +71,42 @@ func planDatabase(t *testing.T) *pgxpool.Pool {
 		t.Fatal("cannot locate migrations")
 	}
 	dir := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../migrations"))
+	if version > 0 {
+		entries, err := os.ReadDir(dir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		selected := t.TempDir()
+		for _, entry := range entries {
+			if entry.IsDir() || (!strings.HasSuffix(entry.Name(), ".up.sql") && !strings.HasSuffix(entry.Name(), ".down.sql")) {
+				continue
+			}
+			prefix, _, valid := strings.Cut(entry.Name(), "_")
+			v, err := strconv.ParseInt(prefix, 10, 64)
+			if !valid || err != nil {
+				t.Fatalf("invalid migration filename %s", entry.Name())
+			}
+			if v > version {
+				continue
+			}
+			body, err := os.ReadFile(filepath.Join(dir, entry.Name()))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(selected, entry.Name()), body, 0600); err != nil {
+				t.Fatal(err)
+			}
+		}
+		dir = selected
+	}
 	if err := migration.NewRunner(pool, dir).Up(ctx); err != nil {
 		t.Fatal(err)
+	}
+	if version > 0 {
+		var applied int64
+		if err := pool.QueryRow(ctx, `SELECT max(version) FROM schema_migration`).Scan(&applied); err != nil || applied != version {
+			t.Fatalf("scratch migration boundary = %d, want %d: %v", applied, version, err)
+		}
 	}
 	router, err := routing.NewRouter(false)
 	if err != nil {
@@ -71,7 +114,7 @@ func planDatabase(t *testing.T) *pgxpool.Pool {
 	}
 	outbox.ConfigureAppendObligation(router)
 	t.Cleanup(func() { outbox.ConfigureAppendObligation(nil) })
-	return pool
+	return pool, dir
 }
 
 type testAuthority struct {
@@ -385,7 +428,7 @@ func TestPlanFreezeSerializesLateMembershipBothOrders(t *testing.T) {
 }
 
 func TestPlanFinalizeRejectsForgedHashEmptyAndDownDropsNoHistory(t *testing.T) {
-	pool := planDatabase(t)
+	pool, dir := planDatabaseAtVersion(t, 60)
 	w, copies, _ := seedPlanFixture(t, pool)
 	ctx := context.Background()
 	p := insertDraft(t, pool, w, copies[0])
@@ -401,10 +444,27 @@ func TestPlanFinalizeRejectsForgedHashEmptyAndDownDropsNoHistory(t *testing.T) {
 	if _, err := pool.Exec(ctx, `UPDATE lifecycle_fixture_copy SET provider_version='replacement' WHERE id=$1`, copies[0].ID); err == nil {
 		t.Fatal("historical provider identity overwritten")
 	}
-	_, file, _, _ := runtime.Caller(0)
-	dir := filepath.Clean(filepath.Join(filepath.Dir(file), "../../../../../migrations"))
-	if err := migration.NewRunner(pool, dir).Down(ctx); err == nil {
-		t.Fatal("destructive down erased lifecycle history")
+	snapshot := func() map[string]string {
+		facts := map[string]string{}
+		for _, table := range []string{"lifecycle_fixture_namespace", "lifecycle_fixture_copy", "lifecycle_disposition_plan", "lifecycle_disposition_plan_target", "schema_migration"} {
+			var digest string
+			query := `SELECT count(*)::text || '|' || md5(coalesce(string_agg(t::text,',' ORDER BY t::text),'')) FROM ` + pgx.Identifier{table}.Sanitize() + ` t`
+			if err := pool.QueryRow(ctx, query).Scan(&digest); err != nil {
+				t.Fatal(err)
+			}
+			facts[table] = digest
+		}
+		return facts
+	}
+	before := snapshot()
+	err := migration.NewRunner(pool, dir).Down(ctx)
+	if err == nil || !strings.Contains(err.Error(), "execute migration 000060_lifecycle_fixture_plan.down.sql") || !strings.Contains(err.Error(), "cannot remove lifecycle fixture or disposition history") {
+		t.Fatalf("migration60 did not refuse destructive history removal: %v", err)
+	}
+	for table, digest := range snapshot() {
+		if digest != before[table] {
+			t.Fatalf("failed migration60 down changed %s history", table)
+		}
 	}
 	if count(t, pool, `SELECT count(*) FROM lifecycle_disposition_plan WHERE id=$1`, p.ID) != 1 {
 		t.Fatal("down lost historical plan")
