@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "browser": "real Edge / production Next / combined runtime66 API",
+  "apiSha256": "c2e860ea9b49163986bbf9a55c6147da2d9b4bc1d0e19478f02a198b1a7b868d",
+  "installedSchema": 66,
+  "batch": "416a132c-3c4c-491b-8f50-8d869debcab2",
+  "originalThreeRAWAndProcessing": "visible; same IDs / manifest / rows / SUCCEEDED",
+  "source": "OBSERVED and two prior MATCH requests, five UNAVAILABLE in preserved request history",
+  "actualNewScanClick": "SCHEMA_AUTHORITY_DENIED, no new work / cost / facts",
+  "curatedVersion": "f7c1233e-44ae-4fb9-a0a8-d31ab35caa95",
+  "delivery": "CurrentCertification ALLOWED / CurrentEntitlement BLOCKED / download disabled; no download attempted",
+  "allCoreRelations": 192,
+  "beforeAfterBusinessHashesEqual": true,
+  "beforeSha256": "14cde926a365b05a331130988c84d8a8bb2b90867e0771bc1e045c46c7c990d4",
+  "afterSha256": "14cde926a365b05a331130988c84d8a8bb2b90867e0771bc1e045c46c7c990d4",
+  "scope": "post-fix history/read/denial regression; previous actual happy-path download used earlier binary, not rerun by regranting revoked source",
+  "humanExplanation": "NOT_RUN / deferred"
+}

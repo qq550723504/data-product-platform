@@ -31,7 +31,8 @@ never changes QA, certification, release, or delivery gates. The fixed ingestion
 schema contract is not widened automatically. Unknown downstream impact stays
 UNKNOWN. Source credentials remain private to the adapter.
 
-Coordination: #307 owns unpublished migrations 60–64 and its checkout. C2 uses
+Coordination: #307 owns unpublished migrations 60–64 and its checkout. C2 owns
+65–66; order is main 59 → D1 60–64 → C2 65–66. C2 uses
 independent metadata files while migration and shared composition/routing order
 is coordinated. Existing environments and volumes are retained.
 
@@ -272,3 +273,43 @@ admission NOT_RUN。新库通过不能收回原事故 FAIL，也不能直接关�
 容器退出，两个测试容器都保留。独立 PostgreSQL/受控 Observer Port 另验证只有
 确认 containment 后才记录 INTERRUPTED 并恢复扫描；该 Port 测试不是原生发现验收。
 证据：[停止时限](evidence/issue299-c2/review-stop-deadline.json)。
+
+## 配置轮换后的原 attempt containment（2026-10-12）
+
+复评发现当前 profile 被轮换后，恢复时读取新的 stop template 可停止错容器，并错误
+地记录 INTERRUPTED。修复复用既有 attempt、PostgreSQL、Port/Adapter：调用前把
+Adapter 的无 secret 启动/停止契约与 hash 同事务冻结到 attempt；Scan 和 Stop 均使用
+该份契约，不再为旧 attempt 读取可变 profile。Core 仅持有有界 opaque engine extension，
+不依赖 Docker/OpenMetadata SDK。实际 launcher 参数只包含私有凭据文件引用，public
+HTTP history 不输出契约。migration 66 以 deferred constraint 保证新 attempt 同事务
+具有契约，禁止 UPDATE/DELETE；缺失或 hash 不符的 pending contract 保持 fail closed。
+当前保留库的七份 terminal attempts 不被回填或伪造启动事实。
+
+真实 Docker + NativeSchemaObserver.Stop 在当前 profile 指向不同、不存在的容器时，
+仍按冻结契约停止原扫描容器，5.477s 确认退出，容器保留。Adapter 单测验证 profile
+轮换、损坏、JSONB key 重排后仍用原契约，Scan 也保持原 launcher。独立 PostgreSQL
+验证契约冻结、缺失契约 commit 拒绝、空 66 down/up 与有事实 down fail closed。
+D1 `fcef3dd2` + C2 本轮全部 Go/66 的完整源码组合，再次执行全模块真实 PG `-race`、
+vet 和两类 Worker/Outbox 注册，均 PASS；源码 manifest、关键文件/SQL/日志 hash 见
+[冻结运行契约](evidence/issue299-c2/review-frozen-runtime.json)。不是仅重用旧组合 PASS。
+
+新基线关闭本轮进程后只追加 66。全部既有业务表 count/hash 不变；新表为空，七份
+原扫描历史不变。新完整 custom dumps/globals、原 owner/ACL 和备份内原凭据的独立
+真实 pgx 认证 PASS（Core 192 表/788 行，source 3 表/30 行）。补充备份含当前私有
+配置、精确组合源码与新 API/Worker；8 个原生版本 ID/size/payload SHA256、Redis/Hop
+独立恢复 PASS。新六服务再次 stop/start 后全库匹配该备份、对象不变、四个 persistent
+Redis key 的 DUMP hash 相同。前一时点的完整 OpenMetadata 原镜像恢复及有效期内 STS
+权限证明保留；原 STS 自然到期，没有放宽或重授 Core 权限。见
+[66 后备份与重启](evidence/issue299-c2/new-baseline-runtime66-backup.json)。
+
+实际 Edge 使用新组合 API binary 核对原三 RAW/manifest、加工结果、metadata OBSERVED
+与历史 MATCH/UNAVAILABLE。真实点击新扫描被 SCHEMA_AUTHORITY_DENIED 拒绝；产物
+CurrentCertification 仍 ALLOWED，CurrentEntitlement BLOCKED、下载禁用。前后全部
+192 表精确 hash 不变，零新工作/成本。此阶段是最终修复后的读取与拒绝回归；前一阶段
+真实成功扫描、认证与下载绑定其原 binary，不通过重新授权冒充本阶段 happy path。
+见 [最终代码浏览器回归](evidence/issue299-c2/new-baseline-runtime66-browser.json)。
+
+保持 Draft，不 Ready/merge/关 Issue。D1 60–64 实际先合入、C2 rebase 与共享注册整合
+仍是后续 Ready 门禁。原 Core 继续 FAIL / NOT_RESTORED，人工解释继续 NOT_RUN。
+
+![最终代码继续阻断撤权后的交付](evidence/issue299-c2/runtime66-browser-delivery-blocked.jpg)

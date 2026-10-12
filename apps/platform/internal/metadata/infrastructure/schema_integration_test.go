@@ -114,7 +114,7 @@ func TestSourceSchemaFactsConcurrencyAndCostIsolation(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer tx.Rollback(ctx)
-	if err = r.BeginSchemaAttempt(ctx, tx, request, attempt); err != nil {
+	if err = r.BeginSchemaAttempt(ctx, tx, request, attempt, []byte(`{"fixture":"repository-runtime"}`)); err != nil {
 		t.Fatal(err)
 	}
 	now := time.Now().UTC()
@@ -167,6 +167,18 @@ func TestSourceSchemaFactsConcurrencyAndCostIsolation(t *testing.T) {
 	rejected(`INSERT INTO source_schema_attempt(id,request_id,workspace_id) VALUES($1,$2,$3)`, uuid.New(), request.ID, uuid.New())
 	rejected(`INSERT INTO source_schema_observation(id,request_id,attempt_id,status,reason,columns,schema_hash) VALUES($1,$2,$3,'UNAVAILABLE','TEST','[]','')`, uuid.New(), request.ID, attempt)
 	rejected(`INSERT INTO source_schema_handling(id,observation_id,actor_id,reason,request_key) VALUES($1,$2,$3,'test','foreign')`, uuid.New(), observation, uuid.New())
+	rejected(`UPDATE source_schema_attempt_runtime SET contract='{}' WHERE attempt_id=$1`, attempt)
+	rejected(`DELETE FROM source_schema_attempt_runtime WHERE attempt_id=$1`, attempt)
+	missing, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = missing.Exec(ctx, `INSERT INTO source_schema_attempt(id,request_id,workspace_id) VALUES($1,$2,$3)`, uuid.New(), request.ID, p.WorkspaceID); err != nil {
+		t.Fatal(err)
+	}
+	if err = missing.Commit(ctx); err == nil {
+		t.Fatal("unbound attempt committed")
+	}
 	var allocationID uuid.UUID
 	if err = pool.QueryRow(ctx, `SELECT id FROM cost_allocation WHERE source_schema_attempt_id=$1`, attempt).Scan(&allocationID); err != nil {
 		t.Fatal(err)

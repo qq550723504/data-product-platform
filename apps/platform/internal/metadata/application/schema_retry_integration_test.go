@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"os"
 	"strings"
@@ -34,11 +35,14 @@ type retrySchemaObserver struct {
 }
 
 func (o *retrySchemaObserver) Plan(context.Context) (d.SchemaPlan, error) { return o.plan, o.err }
-func (o *retrySchemaObserver) Stop(context.Context, uuid.UUID) error {
+func (o *retrySchemaObserver) Prepare(context.Context, uuid.UUID, d.SchemaPlan) (json.RawMessage, error) {
+	return json.RawMessage(`{"fixture":"controlled-observer-runtime"}`), nil
+}
+func (o *retrySchemaObserver) Stop(context.Context, uuid.UUID, json.RawMessage) error {
 	o.stops++
 	return o.stopErr
 }
-func (o *retrySchemaObserver) Scan(_ context.Context, _ uuid.UUID, started func() error) (me.SourceSchema, error) {
+func (o *retrySchemaObserver) Scan(_ context.Context, _ uuid.UUID, _ json.RawMessage, started func() error) (me.SourceSchema, error) {
 	o.scans++
 	if err := started(); err != nil {
 		return me.SourceSchema{}, err

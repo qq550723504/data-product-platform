@@ -62,23 +62,39 @@ func (r *PostgresRepository) SchemaTerminal(ctx context.Context, tx pgx.Tx, id u
 	err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM source_schema_observation WHERE request_id=$1 AND status IN ('MATCH','DRIFT','DENIED'))`, id).Scan(&done)
 	return done, err
 }
-func (r *PostgresRepository) BeginSchemaAttempt(ctx context.Context, tx pgx.Tx, req d.SchemaRequest, id uuid.UUID) error {
-	_, err := tx.Exec(ctx, `INSERT INTO source_schema_attempt(id,request_id,workspace_id) VALUES($1,$2,$3)`, id, req.ID, req.Plan.WorkspaceID)
+func (r *PostgresRepository) BeginSchemaAttempt(ctx context.Context, tx pgx.Tx, req d.SchemaRequest, id uuid.UUID, runtime json.RawMessage) error {
+	hash, err := d.RuntimeHash(runtime)
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(ctx, `INSERT INTO source_schema_attempt(id,request_id,workspace_id) VALUES($1,$2,$3)`, id, req.ID, req.Plan.WorkspaceID)
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(ctx, `INSERT INTO source_schema_attempt_runtime(attempt_id,contract,contract_hash) VALUES($1,$2,$3)`, id, runtime, hash)
 	return err
 }
-func (r *PostgresRepository) PendingSchemaAttempts(ctx context.Context, resource uuid.UUID) (map[uuid.UUID]uuid.UUID, error) {
-	rows, err := r.pool.Query(ctx, `SELECT a.id,a.request_id FROM source_schema_attempt a JOIN source_schema_request r ON r.id=a.request_id WHERE r.resource_id=$1 AND NOT EXISTS(SELECT 1 FROM source_schema_observation o WHERE o.attempt_id=a.id) ORDER BY a.started_at,a.id`, resource)
+func (r *PostgresRepository) PendingSchemaAttempts(ctx context.Context, resource uuid.UUID) ([]d.SchemaAttempt, error) {
+	rows, err := r.pool.Query(ctx, `SELECT a.id,a.request_id,s.contract,s.contract_hash FROM source_schema_attempt a JOIN source_schema_request r ON r.id=a.request_id LEFT JOIN source_schema_attempt_runtime s ON s.attempt_id=a.id WHERE r.resource_id=$1 AND NOT EXISTS(SELECT 1 FROM source_schema_observation o WHERE o.attempt_id=a.id) ORDER BY a.started_at,a.id`, resource)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	out := map[uuid.UUID]uuid.UUID{}
+	out := []d.SchemaAttempt{}
 	for rows.Next() {
-		var a, r uuid.UUID
-		if err := rows.Scan(&a, &r); err != nil {
+		var a d.SchemaAttempt
+		var contract []byte
+		var hash *string
+		if err := rows.Scan(&a.ID, &a.RequestID, &contract, &hash); err != nil {
 			return nil, err
 		}
-		out[a] = r
+		actual, err := d.RuntimeHash(contract)
+		if err != nil || hash == nil || actual != *hash {
+			return nil, errors.New("schema attempt runtime contract unavailable")
+		}
+		a.Runtime = contract
+		a.RuntimeHash = *hash
+		out = append(out, a)
 	}
 	return out, rows.Err()
 }

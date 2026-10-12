@@ -40,6 +40,35 @@ func (a *NativeSchemaObserver) Plan(context.Context) (d.SchemaPlan, error) {
 	c, err := a.load()
 	return c.Plan, err
 }
+func (a *NativeSchemaObserver) Prepare(_ context.Context, _ uuid.UUID, expected d.SchemaPlan) (json.RawMessage, error) {
+	c, err := a.load()
+	if err != nil {
+		return nil, err
+	}
+	if c.Plan.Validate() != nil || d.Hash(c.Plan) != d.Hash(expected) {
+		return nil, errors.New("schema runtime contract does not match frozen plan")
+	}
+	// Launcher argv uses private credential file references, never credential
+	// values. Core treats this bounded Adapter extension as opaque immutable data.
+	b, err := json.Marshal(c)
+	if err != nil {
+		return nil, err
+	}
+	if _, err = d.RuntimeHash(b); err != nil {
+		return nil, err
+	}
+	return b, nil
+}
+func frozenSchemaConfig(runtime json.RawMessage) (schemaConfig, error) {
+	var c schemaConfig
+	if _, err := d.RuntimeHash(runtime); err != nil {
+		return c, err
+	}
+	if json.Unmarshal(runtime, &c) != nil || len(c.Command) == 0 || len(c.StopCommand) == 0 {
+		return c, errors.New("schema runtime contract unavailable")
+	}
+	return c, nil
+}
 func argsFor(args []string, id uuid.UUID) []string {
 	out := make([]string, len(args))
 	for i, v := range args {
@@ -47,12 +76,11 @@ func argsFor(args []string, id uuid.UUID) []string {
 	}
 	return out
 }
-func (a *NativeSchemaObserver) Stop(ctx context.Context, id uuid.UUID) error {
+func (a *NativeSchemaObserver) Stop(ctx context.Context, id uuid.UUID, runtime json.RawMessage) error {
 	// Only server-owned commands and a durable platform attempt identity. No
 	// request-derived executable, path, image, shell command, or credentials.
-	var c schemaConfig
-	b, err := os.ReadFile(a.Path)
-	if err != nil || json.Unmarshal(b, &c) != nil || len(c.StopCommand) == 0 {
+	c, err := frozenSchemaConfig(runtime)
+	if err != nil {
 		return errors.New("schema process containment unavailable")
 	}
 	args := argsFor(c.StopCommand, id)
@@ -64,9 +92,9 @@ func (a *NativeSchemaObserver) Stop(ctx context.Context, id uuid.UUID) error {
 	}
 	return nil
 }
-func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, onInvocation func() error) (metadataengine.SourceSchema, error) {
+func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, runtime json.RawMessage, onInvocation func() error) (metadataengine.SourceSchema, error) {
 	var result metadataengine.SourceSchema
-	c, err := a.load()
+	c, err := frozenSchemaConfig(runtime)
 	if err != nil {
 		return result, err
 	}
@@ -77,7 +105,7 @@ func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, onInvocat
 	defer cancel()
 	args := argsFor(c.Command, id)
 	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
-	defer a.Stop(context.WithoutCancel(ctx), id)
+	defer a.Stop(context.WithoutCancel(ctx), id, runtime)
 	// Never publish native driver diagnostics, command arguments, or secret paths.
 	output, err := cmd.StdoutPipe()
 	if err != nil {

@@ -52,7 +52,7 @@ func TestSourceSchemaHistorySurvivesDisabledScanner(t *testing.T) {
 		t.Fatal(err)
 	}
 	attempt, observation := uuid.New(), uuid.New()
-	if err = repo.BeginSchemaAttempt(ctx, tx, req, attempt); err != nil {
+	if err = repo.BeginSchemaAttempt(ctx, tx, req, attempt, []byte(`{"fixture":"history-runtime"}`)); err != nil {
 		t.Fatal(err)
 	}
 	now := time.Now().UTC()

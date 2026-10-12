@@ -88,3 +88,20 @@ type SchemaObservation struct {
 	CompletedAt *time.Time     `json:"completedAt"`
 	RecordedAt  time.Time      `json:"recordedAt"`
 }
+
+// Runtime is opaque, secret-free engine extension data. Core freezes its identity
+// with the attempt; only the Adapter interprets launch/containment semantics.
+type SchemaAttempt struct {
+	ID          uuid.UUID
+	RequestID   uuid.UUID
+	Runtime     json.RawMessage
+	RuntimeHash string
+}
+
+func RuntimeHash(value json.RawMessage) (string, error) {
+	var object map[string]any
+	if len(value) == 0 || len(value) > 16*1024 || json.Unmarshal(value, &object) != nil || len(object) == 0 {
+		return "", errors.New("bounded engine runtime contract required")
+	}
+	return Hash(object), nil
+}

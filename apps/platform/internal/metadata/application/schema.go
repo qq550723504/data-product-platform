@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"strings"
 	"time"
@@ -133,8 +134,9 @@ func (s *SchemaService) Process(ctx context.Context, id uuid.UUID) error {
 		if err != nil {
 			return err
 		}
-		for priorAttempt, priorRequest := range pending {
-			if err := s.Observer.Stop(ctx, priorAttempt); err != nil {
+		for _, priorAttempt := range pending {
+			priorRequest := priorAttempt.RequestID
+			if err := s.Observer.Stop(ctx, priorAttempt.ID, priorAttempt.Runtime); err != nil {
 				return err
 			}
 			prior, err := s.Service.repo.SchemaRequest(ctx, priorRequest)
@@ -142,13 +144,14 @@ func (s *SchemaService) Process(ctx context.Context, id uuid.UUID) error {
 				return err
 			}
 			if err := s.Service.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-				return s.record(ctx, tx, prior, d.SchemaObservation{ID: uuid.New(), RequestID: priorRequest, AttemptID: &priorAttempt, Status: "INTERRUPTED", Reason: "PROCESS_INTERRUPTED"})
+				return s.record(ctx, tx, prior, d.SchemaObservation{ID: uuid.New(), RequestID: priorRequest, AttemptID: &priorAttempt.ID, Status: "INTERRUPTED", Reason: "PROCESS_INTERRUPTED"})
 			}); err != nil {
 				return err
 			}
 		}
 		var done, denied bool
 		attempt := uuid.New()
+		var runtime json.RawMessage
 		err = s.Service.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 			var err error
 			done, err = s.Service.repo.SchemaTerminal(ctx, tx, id)
@@ -169,17 +172,25 @@ func (s *SchemaService) Process(ctx context.Context, id uuid.UUID) error {
 				denied = true
 				return s.record(ctx, tx, req, d.SchemaObservation{ID: uuid.New(), RequestID: id, Status: "DENIED", Reason: "SOURCE_BINDING_CHANGED"})
 			}
-			if err := s.Service.repo.BeginSchemaAttempt(ctx, tx, req, attempt); err != nil {
+			runtime, err = s.Observer.Prepare(ctx, attempt, req.Plan)
+			if err != nil {
 				return err
 			}
-			return s.fact(ctx, tx, req, "SourceSchemaScanStarted", map[string]any{"attemptId": attempt, "ruleRef": req.Plan.RuleRef})
+			if err := s.Service.repo.BeginSchemaAttempt(ctx, tx, req, attempt, runtime); err != nil {
+				return err
+			}
+			hash, err := d.RuntimeHash(runtime)
+			if err != nil {
+				return err
+			}
+			return s.fact(ctx, tx, req, "SourceSchemaScanStarted", map[string]any{"attemptId": attempt, "ruleRef": req.Plan.RuleRef, "runtimeHash": hash})
 		})
 		if err != nil || done || denied {
 			return err
 		}
 		// Start identity is durable before the native process invocation. Physical
 		// invocation cost is durable independently from a successful observation.
-		result, scanErr := s.Observer.Scan(ctx, attempt, func() error {
+		result, scanErr := s.Observer.Scan(ctx, attempt, runtime, func() error {
 			// A launched native invocation remains chargeable even if authority is
 			// revoked during imports/startup. RUN must await a fresh source gate.
 			if err := s.ChargeScan(context.WithoutCancel(ctx), attempt); err != nil {
@@ -195,7 +206,7 @@ func (s *SchemaService) Process(ctx context.Context, id uuid.UUID) error {
 		// Successful Scan proves the native process has exited. Cleanup must not
 		// discard that completed result by rereading a temporarily missing profile.
 		if scanErr != nil {
-			if err := s.Observer.Stop(context.WithoutCancel(ctx), attempt); err != nil {
+			if err := s.Observer.Stop(context.WithoutCancel(ctx), attempt, runtime); err != nil {
 				return err
 			}
 		}

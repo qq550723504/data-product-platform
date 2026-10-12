@@ -106,7 +106,7 @@ func TestSourceSchemaBindingFinalizationSerializesMutations(t *testing.T) {
 			}()
 			waitSchemaLock(t, ctx, pool, writer.Conn().PgConn().PID())
 			attempt := uuid.New()
-			if err = s.Service.repo.BeginSchemaAttempt(ctx, final, req, attempt); err != nil {
+			if err = s.Service.repo.BeginSchemaAttempt(ctx, final, req, attempt, []byte(`{"fixture":"binding-runtime"}`)); err != nil {
 				t.Fatal(err)
 			}
 			now := time.Now().UTC()
