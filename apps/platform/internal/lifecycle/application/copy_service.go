@@ -496,7 +496,7 @@ func (s *CopyService) ExportRestoreCheckpoint(ctx context.Context, cmd ExportRes
 		}
 		var n int64
 		previous := strings.Repeat("0", 64)
-		e = tx.QueryRow(ctx, `SELECT sequence,content_sha256 FROM lifecycle_restore_checkpoint WHERE workspace_id=$1 AND dataset_version_id=$2 ORDER BY sequence DESC LIMIT 1`, w, v).Scan(&n, &previous)
+		e = tx.QueryRow(ctx, `SELECT sequence,content_sha256 FROM lifecycle_restore_checkpoint WHERE workspace_id=$1 AND dataset_version_id=$2 AND epoch=$3 ORDER BY sequence DESC LIMIT 1`, w, v, s.epoch).Scan(&n, &previous)
 		if e != nil && !errors.Is(e, pgx.ErrNoRows) {
 			return uuid.Nil, e
 		}
@@ -646,7 +646,7 @@ func (s *CopyService) finalizeCopy(ctx context.Context, c FinalizeCopyCommand, r
 				var id uuid.UUID
 				var root string
 				var seq, revision int64
-				e = tx.QueryRow(ctx, `SELECT id,sequence,dependency_revision,content_sha256 FROM lifecycle_restore_checkpoint WHERE workspace_id=$1 AND dataset_version_id=$2 ORDER BY sequence DESC LIMIT 1`, c.WorkspaceID, op.Source.DatasetVersionID).Scan(&id, &seq, &revision, &root)
+				e = tx.QueryRow(ctx, `SELECT id,sequence,dependency_revision,content_sha256 FROM lifecycle_restore_checkpoint WHERE workspace_id=$1 AND dataset_version_id=$2 AND epoch=$3 ORDER BY sequence DESC LIMIT 1`, c.WorkspaceID, op.Source.DatasetVersionID, s.epoch).Scan(&id, &seq, &revision, &root)
 				if ledgerErr == nil && e == nil && cut.Validate(at) == nil && cut.Epoch == s.epoch && cut.WorkspaceID == c.WorkspaceID && cut.DatasetVersionID == op.Source.DatasetVersionID && cut.ID == id && cut.Sequence == seq && cut.DependencyRevision == revision && revision == rev && cut.ContentSHA256 == root && cut.StateSHA256 == state {
 					checkpoint = &id
 					if allowed {

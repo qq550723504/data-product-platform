@@ -47,7 +47,7 @@ CREATE TABLE lifecycle_restore_checkpoint (
  state_sha256 varchar(64) NOT NULL CHECK(state_sha256 ~ '^[0-9a-f]{64}$'),
  previous_sha256 varchar(64) NOT NULL CHECK(previous_sha256 ~ '^[0-9a-f]{64}$'),content_sha256 varchar(64) NOT NULL CHECK(content_sha256 ~ '^[0-9a-f]{64}$'),
  created_at timestamptz NOT NULL,expires_at timestamptz NOT NULL CHECK(expires_at>created_at),
- UNIQUE(workspace_id,id),UNIQUE(workspace_id,dataset_version_id,sequence)
+ UNIQUE(workspace_id,id),UNIQUE(workspace_id,dataset_version_id,epoch,sequence)
 );
 CREATE TABLE lifecycle_copy_decision (
  id uuid PRIMARY KEY,workspace_id uuid NOT NULL,operation_id uuid NOT NULL,checkpoint_id uuid,

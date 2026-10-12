@@ -104,9 +104,14 @@ Recovery refreshes source and target retention/hold, hashes bounded exact target
 bytes through the existing instrumented adapter, then re-authorizes under the
 workspace fence. ARCHIVED retains its source. RESTORE needs the latest complete
 independent ledger chain, matching Core checkpoint, epoch, state hash and current
-dependency revision. The worker's independent-ledger mount is read-only. A missing
-or stale witness produces UNKNOWN; a separate authorized witness export plus a new
-explicit recovery request can re-evaluate. Current restrictions still produce
+dependency revision. Checkpoint sequence/hash chains and their Core uniqueness and
+latest-cut lookups are scoped by workspace, DatasetVersion and the configured witness epoch. Each epoch
+starts at sequence 1 with a zero predecessor; old epoch facts/files stay unchanged
+and cannot authorize a new-epoch restore. A new epoch still requires the current
+state/revision and all existing admission checks. The worker's independent-ledger
+mount is read-only. A missing or stale witness produces UNKNOWN; a separate
+authorized witness export plus a new explicit recovery request can re-evaluate.
+Current restrictions still produce
 BLOCKED. Historical UNKNOWN/ONLINE decisions and original provider observations
 remain append-only. ONLINE is a historical fixture custody/use admission; a later
 content-use restriction still blocks current use, and this does not implement
