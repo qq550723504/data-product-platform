@@ -1,6 +1,7 @@
-param([Parameter(Mandatory=$true)][string]$PrivateRoot,[switch]$ArchiveAcceptance,[string]$InternalSubnet='',[string]$MinioImage='')
+param([Parameter(Mandatory=$true)][string]$PrivateRoot,[switch]$ArchiveAcceptance,[switch]$ProcessingDeliveryAcceptance,[string]$InternalSubnet='',[string]$MinioImage='')
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
+if($ProcessingDeliveryAcceptance -and -not $ArchiveAcceptance){throw 'Processing/delivery slice requires exact-version native fixture mode'}
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $privateBase = [IO.Path]::GetFullPath($PrivateRoot)
 if ($privateBase.StartsWith($repo + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw 'Private credentials must stay outside the checkout.' }
@@ -82,4 +83,4 @@ Docker @('create','--pull','never','--name',$names.gateway,'--label',$label,'--n
 Write-Utf8 (Join-Path $private 'resources.json') (@{run_id=$run;project=$project;network=$network;volumes=@($pgVolume,$objectVolume);containers=$names} | ConvertTo-Json -Depth 8)
 foreach ($name in $names.Values) { Docker @('start',$name) | Out-Null }
 Docker @('exec',$names.gateway,'caddy','validate','--config','/etc/caddy/Caddyfile','--adapter','caddyfile') | Out-Null
-& (Join-Path $PSScriptRoot 'finish-prepare.ps1') -PrivateDirectory $private -ArchiveAcceptance:$ArchiveAcceptance -MinioImage $MinioImage
+& (Join-Path $PSScriptRoot 'finish-prepare.ps1') -PrivateDirectory $private -ArchiveAcceptance:$ArchiveAcceptance -ProcessingDeliveryAcceptance:$ProcessingDeliveryAcceptance -MinioImage $MinioImage

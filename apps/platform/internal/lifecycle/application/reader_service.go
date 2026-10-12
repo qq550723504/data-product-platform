@@ -51,6 +51,42 @@ type FixtureReadResult struct {
 	StopConfirmed bool
 }
 
+// Pin was issued by a server-owned Delivery Command in its ISSUED transaction.
+// This method never admits or replays a second reader. The single-send journal
+// rejects reuse of the same pin, including an unknown physical attempt.
+func (s *FixtureReaderService) ReadPinnedTo(ctx context.Context, w, pinID uuid.UUID, dst io.Writer) (FixtureReadResult, error) {
+	var pin domain.ReaderPin
+	if s == nil || dst == nil {
+		return FixtureReadResult{}, ErrStorageUnsupported
+	}
+	p, ok := ctx.Value(fixtureReaderCallerKey{}).(principal.RequestPrincipal)
+	if !ok || p.WorkspaceID != w {
+		return FixtureReadResult{}, principal.ErrUnauthenticated
+	}
+	e := s.occupancy.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var e error
+		pin, e = s.occupancy.repo.GetReaderPin(ctx, tx, w, pinID)
+		if e != nil {
+			return e
+		}
+		if pin.Kind != domain.FixtureDelivery || pin.ActorID != p.ActorID || pin.PrincipalRef != p.Subject {
+			return ErrStorageDenied
+		}
+		ended, e := s.occupancy.repo.ReaderTerminated(ctx, tx, w, pin.ID)
+		if e != nil {
+			return e
+		}
+		if ended {
+			return ErrStorageDenied
+		}
+		return nil
+	})
+	if e != nil {
+		return FixtureReadResult{}, e
+	}
+	return s.readAdmitted(ctx, AdmitFixtureReaderCommand{CommandHeader: CommandHeader{w, "owned-transfer-" + pin.ID.String()}, CopyID: pin.CopyID, ReaderID: pin.ReaderID}, ReaderAdmission{Pin: pin, Admitted: true}, dst)
+}
+
 // FixtureReaderService owns native reads and the synchronous output writer.
 // It is a closed synthetic composition, not a production delivery command.
 // A crash, hung writer or unconfirmed native stop retains the durable pin.
@@ -59,6 +95,17 @@ type FixtureReaderService struct {
 	port      PinnedReaderPort
 	mu        sync.Mutex
 	stops     map[uuid.UUID]domain.ReaderTermination
+}
+
+func validatePinnedRead(copy domain.Copy, pin domain.ReaderPin, r PinnedReadResult) error {
+	if r.PinID != pin.ID || r.Copy != copy || r.StoppedAt.IsZero() || r.StoppedAt.Before(pin.StartedAt) || r.StoppedAt.After(time.Now().UTC()) {
+		return domain.ErrTerminationUnknown
+	}
+	sum := sha256.Sum256(r.Bytes)
+	if r.CallID == uuid.Nil || int64(len(r.Bytes)) != copy.ByteSize || hex.EncodeToString(sum[:]) != copy.ContentSHA256 {
+		return ErrStorageContract
+	}
+	return nil
 }
 
 // Compose once before serving. Do not replace another reader owner's verifier.
@@ -98,8 +145,13 @@ func (s *FixtureReaderService) ReadTo(ctx context.Context, cmd AdmitFixtureReade
 	if !a.Admitted {
 		return result, nil
 	} // historical replay never opens bytes
+	return s.readAdmitted(ctx, cmd, a, dst)
+}
+
+func (s *FixtureReaderService) readAdmitted(ctx context.Context, cmd AdmitFixtureReaderCommand, a ReaderAdmission, dst io.Writer) (FixtureReadResult, error) {
+	result := FixtureReadResult{Admission: a}
 	var copy domain.Copy
-	e = s.occupancy.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+	e := s.occupancy.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		cs, e := s.occupancy.repo.LoadFixtureCopies(ctx, tx, cmd.WorkspaceID, []uuid.UUID{cmd.CopyID})
 		if e != nil {
 			return e
@@ -156,6 +208,9 @@ func (s *FixtureReaderService) ReadTo(ctx context.Context, cmd AdmitFixtureReade
 		outcome = domain.ReaderCancelled
 	}
 	proof := domain.ReaderTermination{ID: uuid.New(), WorkspaceID: a.Pin.WorkspaceID, PinID: a.Pin.ID, ReaderID: a.Pin.ReaderID, Generation: a.Pin.Generation, Outcome: outcome, ObservedAt: time.Now().UTC()}
+	if a.Pin.Kind == domain.FixtureDelivery {
+		proof.BytesWritten = &result.BytesWritten
+	}
 	s.mu.Lock()
 	s.stops[a.Pin.ID] = proof
 	s.mu.Unlock()
@@ -175,6 +230,10 @@ func (s *FixtureReaderService) ReadTo(ctx context.Context, cmd AdmitFixtureReade
 type PinnedReaderCallJournal struct {
 	Service      *OccupancyService
 	Observations StorageCallJournal
+	SubjectGate  PinnedSubjectGate
+}
+type PinnedSubjectGate interface {
+	ValidatePinnedSubject(context.Context, pgx.Tx, domain.ReaderPin) error
 }
 
 func (j PinnedReaderCallJournal) ObserveStorageCall(ctx context.Context, c StorageCallObservation) error {
@@ -212,6 +271,14 @@ func (j PinnedReaderCallJournal) StartStorageCall(ctx context.Context, c Storage
 		if terminated {
 			return ErrStorageDenied
 		}
+		if e = validateCurrentReaderSubject(ctx, tx, pin); e != nil {
+			return e
+		}
+		if j.SubjectGate != nil {
+			if e = j.SubjectGate.ValidatePinnedSubject(ctx, tx, pin); e != nil {
+				return e
+			}
+		}
 		caller, at, e := s.authorize(ctx, tx, pin.WorkspaceID, CapabilityAdmitReader, nil)
 		if e != nil {
 			return e
@@ -222,6 +289,35 @@ func (j PinnedReaderCallJournal) StartStorageCall(ctx context.Context, c Storage
 		decision, e := s.currentReaderDecision(ctx, tx, c.Copy, pin.ReaderID, caller, rev, at)
 		if e != nil {
 			return e
+		}
+		if pin.ExecutionID != nil {
+			rows, e := tx.Query(ctx, `SELECT p.copy_id FROM lifecycle_reader_pin p WHERE p.execution_id=$1 ORDER BY p.copy_id`, *pin.ExecutionID)
+			if e != nil {
+				return e
+			}
+			var ids []uuid.UUID
+			for rows.Next() {
+				var id uuid.UUID
+				if e = rows.Scan(&id); e != nil {
+					rows.Close()
+					return e
+				}
+				ids = append(ids, id)
+			}
+			e = rows.Err()
+			rows.Close()
+			if e != nil {
+				return e
+			}
+			all, e := s.repo.LockFixtureCopies(ctx, tx, pin.WorkspaceID, ids)
+			if e != nil {
+				return e
+			}
+			for _, source := range all {
+				if _, e = s.currentReaderDecision(ctx, tx, source, pin.ReaderID, caller, rev, at); e != nil {
+					return e
+				}
+			}
 		}
 		_, at, e = s.authorize(ctx, tx, pin.WorkspaceID, CapabilityAdmitReader, &caller)
 		if e != nil {
@@ -241,6 +337,9 @@ func (j PinnedReaderCallJournal) StartStorageCall(ctx context.Context, c Storage
 	})
 }
 func sameReaderPin(a, b domain.ReaderPin) bool {
+	if !samePinUUID(a.ExecutionID, b.ExecutionID) || !samePinUUID(a.DeliveryOperationID, b.DeliveryOperationID) {
+		return false
+	}
 	if a.ID != b.ID || a.WorkspaceID != b.WorkspaceID || a.CopyID != b.CopyID || a.ReaderID != b.ReaderID || a.Kind != b.Kind || a.ActorID != b.ActorID || a.PrincipalRef != b.PrincipalRef || a.Generation != b.Generation || a.GateRevision != b.GateRevision || !a.StartedAt.Equal(b.StartedAt) || a.WindowMode != b.WindowMode {
 		return false
 	}
@@ -248,4 +347,11 @@ func sameReaderPin(a, b domain.ReaderPin) bool {
 		return a.UseUntil == nil && b.UseUntil == nil
 	}
 	return a.UseUntil.Equal(*b.UseUntil)
+}
+
+func samePinUUID(a, b *uuid.UUID) bool {
+	if a == nil || b == nil {
+		return a == nil && b == nil
+	}
+	return *a == *b
 }

@@ -79,6 +79,7 @@ type StorageCallStart struct {
 	CopyOperationID uuid.UUID             // nonzero only for an already frozen custody intent
 	CopyIntent      *domain.CopyOperation // full frozen target, checked before I/O
 	ReaderPin       *domain.ReaderPin     // exact committed pin for a bounded fixture read
+	OutputIntent    *ProcessingOutputIntent
 }
 
 type StorageCallObservation struct {

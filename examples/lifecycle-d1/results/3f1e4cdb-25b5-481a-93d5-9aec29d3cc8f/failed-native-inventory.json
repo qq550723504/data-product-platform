@@ -1,0 +1,31 @@
+{
+  "cleanup": 0,
+  "delete": 0,
+  "objects": [
+    {
+      "bytes": 232,
+      "key": "fixture/a.csv",
+      "namespace": "dpp-lifecycle307-online",
+      "version": "0ed82c82-4479-4ebf-bb91-089c50c3ebc3"
+    },
+    {
+      "bytes": 129328,
+      "key": "fixture/b.csv",
+      "namespace": "dpp-lifecycle307-online",
+      "version": "f3184f09-8514-4022-956a-b813db37f5d6"
+    },
+    {
+      "bytes": 232,
+      "key": "fixture/a.csv",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "version": "187d51ad-c60c-4fa1-a8c5-b2c0eb49cceb"
+    },
+    {
+      "bytes": 129328,
+      "key": "fixture/b.csv",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "version": "93536d57-f6a6-4f69-826b-b1159f7f7753"
+    }
+  ],
+  "registry": "transaction rolled back"
+}

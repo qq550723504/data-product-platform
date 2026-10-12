@@ -1,0 +1,90 @@
+{
+  "http": "ephemeral loopback only inside one-shot acceptance helper",
+  "retained_volumes": [
+    "dpp-lifecycle307-121e25f9-postgres",
+    "dpp-lifecycle307-121e25f9-objects"
+  ],
+  "production_delivery": "NOT_RUN",
+  "cleanup": 0,
+  "provider_instance_id": "8347db5a-a0fd-4930-b39b-3a3065bf7984",
+  "source_head": "2cb3c96dc6cb842cd7c57174ee35fc7107d31a30",
+  "project": "dpp-lifecycle307-121e25f9",
+  "delete": 0,
+  "incarnation_id": "4fe0ab57-3d1e-49be-b214-2f22bcde4f10",
+  "workspace_id": "a7f3c6e5-d5b4-4b84-9293-25affdcb041a",
+  "internal": true,
+  "network_id": "aebea869bf76069730c833112842cc82cbdf37e9771eb8d1344701f5b0fd7233",
+  "run_id": "121e25f9-932d-45a4-b83a-f42806b582cb",
+  "root_in_reader": false,
+  "source_hashes": {
+    "apps/platform/internal/lifecycle/application/occupancy.go": "87cc54d544edd16295f155b8e42e6bd3cad72353b153db85fa3816ccd2d1d689",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "b56d1d804a665d5e4b6e8b9584b81dc3066e4a03c07c02c45ecd360e84b272fb",
+    "apps/platform/internal/platform/storage/lifecycle_reader.go": "7e033b0eb9fe53dbece468f1411ddbb1e69c408a9dfeca38f25c0e09ac4bf58d",
+    "apps/platform/internal/lifecycle/transport/http/reader.go": "264ae9a757db94de2bbc3e3b84933479d1915bd80e5bfaa5c90340ef0578a0f3",
+    "apps/platform/internal/lifecycle/application/reader_service.go": "9d473b421ed78bf9e7f3e8c4bb82f6d7967c705d116a82025632d053a72c490c",
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go": "a10ada00599bdb46072d374fa62825377760772113771384bf8eeeea3b1bb376",
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "391e8cb5c947ce9b6e89c61611f6f5bb34f6f26fd75c9b280579c696d69d1cf2"
+  },
+  "objects": [
+    {
+      "copy_id": "2f11566b-6576-4d28-acac-3aef2adf0510",
+      "dataset_version_id": "cc63debe-442a-4224-8925-933ca862df0c",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "version_id": "3ef1b215-fece-4775-a097-d779b316e0f9",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-12T01:18:40.361048909Z",
+      "protection_observed_at": "2026-10-12T01:18:40.729418097Z"
+    },
+    {
+      "copy_id": "e92bc2e9-650c-44c4-b2aa-d66ec7b26235",
+      "dataset_version_id": "2d449133-8331-423a-b5a5-1fd976cc1f02",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "version_id": "f3ebdf55-6c0e-4727-9609-f5c808b15c34",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-12T01:18:40.417716417Z",
+      "protection_observed_at": "2026-10-12T01:18:40.809087361Z"
+    },
+    {
+      "copy_id": "832c4c84-62bf-4418-9d22-8003168f1d8f",
+      "dataset_version_id": "cc63debe-442a-4224-8925-933ca862df0c",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "version_id": "1e1836cd-5198-4e87-a447-4a48f6716a49",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-13T01:18:40Z",
+      "bytes_verified_at": "2026-10-12T01:18:40.467474941Z",
+      "protection_observed_at": "2026-10-12T01:18:40.908294821Z"
+    },
+    {
+      "copy_id": "a4a39ffd-9707-43cd-bdb1-ef258ea5bf0e",
+      "dataset_version_id": "2d449133-8331-423a-b5a5-1fd976cc1f02",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "version_id": "2ea12971-c34c-451f-85a5-e4e3a0418cbf",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-12T01:18:40.515411361Z",
+      "protection_observed_at": "2026-10-12T01:18:40.974781125Z"
+    }
+  ],
+  "copy": 0,
+  "window_expires": "2026-10-12T02:04:05.6772228Z",
+  "binary_sha256": "1775c1bd68bf2493f1aafd8fdabaa6bc16d960a8c1484c0874b09e642423e0e3",
+  "host_ports": []
+}

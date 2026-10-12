@@ -25,6 +25,16 @@ type ObjectStore interface {
 	Put(ctx context.Context, objectName string, reader io.Reader, size int64, contentType string) (string, error)
 }
 
+// A controlled producer can bind object I/O to the already allocated platform
+// version instead of parsing an engine-selected locator or filename.
+type VersionObjectStore interface {
+	PutVersion(context.Context, domain.DatasetVersion, string, io.Reader, int64, string) (string, error)
+}
+type VersionPublicationLease interface {
+	LockPublication(context.Context, pgx.Tx, uuid.UUID) error
+	FinalizePublication(context.Context, pgx.Tx, domain.DatasetVersion) error
+}
+
 type UploadVersionCommand struct {
 	DatasetID                   uuid.UUID
 	Filename                    string
@@ -39,9 +49,15 @@ type UploadVersionCommand struct {
 }
 
 type UploadVersionService struct {
-	tx    *transaction.Manager
-	repo  *infrastructure.PostgresRepository
-	store ObjectStore
+	tx               *transaction.Manager
+	repo             *infrastructure.PostgresRepository
+	store            ObjectStore
+	publicationLease VersionPublicationLease
+}
+
+func (s *UploadVersionService) WithPublicationLease(p VersionPublicationLease) *UploadVersionService {
+	s.publicationLease = p
+	return s
 }
 
 type VersionPublishFinalizer func(context.Context, pgx.Tx, domain.DatasetVersion) error
@@ -242,7 +258,12 @@ func (s *UploadVersionService) handle(
 	attemptToken := uuid.New()
 	filename := sanitizeFilename(cmd.Filename)
 	objectName := fmt.Sprintf("datasets/%s/v%06d/%s/%s", version.DatasetID.String(), version.VersionNo, attemptToken.String(), filename)
-	storageURI, err := s.store.Put(ctx, objectName, bytes.NewReader(cmd.Content), int64(len(cmd.Content)), cmd.ContentType)
+	var storageURI string
+	if producer, ok := s.store.(VersionObjectStore); ok {
+		storageURI, err = producer.PutVersion(ctx, version, objectName, bytes.NewReader(cmd.Content), int64(len(cmd.Content)), cmd.ContentType)
+	} else {
+		storageURI, err = s.store.Put(ctx, objectName, bytes.NewReader(cmd.Content), int64(len(cmd.Content)), cmd.ContentType)
+	}
 	if err != nil {
 		_ = s.markFailed(context.Background(), version.ID, cmd)
 		return domain.DatasetVersion{}, fmt.Errorf("store dataset version: %w", err)
@@ -265,6 +286,11 @@ func (s *UploadVersionService) handle(
 		// same Execution may have published this exact version (or failed it) between
 		// our allocation and this commit, so the decision to publish is taken on the
 		// committed row, never on the state this call allocated.
+		if s.publicationLease != nil {
+			if err := s.publicationLease.LockPublication(ctx, tx, version.ID); err != nil {
+				return err
+			}
+		}
 		current, err := s.repo.LockVersion(ctx, tx, version.ID)
 		if err != nil {
 			return err
@@ -322,6 +348,11 @@ func (s *UploadVersionService) handle(
 		}
 		if finalizer != nil {
 			if err := finalizer(ctx, tx, version); err != nil {
+				return err
+			}
+		}
+		if s.publicationLease != nil {
+			if err := s.publicationLease.FinalizePublication(ctx, tx, version); err != nil {
 				return err
 			}
 		}

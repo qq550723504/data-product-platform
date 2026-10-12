@@ -28,11 +28,15 @@ import (
 	lc "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/routing"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
+	resourceapp "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/application"
+	resourcedomain "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/domain"
+	resourceinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/resource/infrastructure"
 )
 
 var namespaces = []string{"dpp-lifecycle307-online", "dpp-lifecycle307-quarantine"}
@@ -41,6 +45,7 @@ type config struct {
 	RunID, WorkspaceID, ProviderInstanceID, IncarnationID, ActorID                     uuid.UUID
 	Enabled                                                                            bool
 	ArchiveAcceptance                                                                  bool
+	ProcessingDeliveryAcceptance                                                       bool
 	Endpoint, PostgresDSN, RootAccess, RootSecret, InspectAccess, InspectSecret, Token string
 	OutputDirectory                                                                    string
 	Environment                                                                        json.RawMessage
@@ -211,6 +216,7 @@ func prepare(ctx context.Context, path string) error {
 	if !c.Enabled {
 		return errors.New("fixture authority disabled")
 	}
+	if os.Getenv("LIFECYCLE_FIXTURE_INSPECT_FAILED") == "1" { return inspectFailed(ctx,c) }
 	if os.Getenv("LIFECYCLE_FIXTURE_PREPARE_UNPROTECTED_PLAN") == "1" {
 		return prepareUnprotectedPlan(ctx, path, c)
 	}
@@ -288,10 +294,14 @@ func prepare(ctx context.Context, path string) error {
 			return err
 		}
 	}
+	inspectionResources := []string{"arn:aws:s3:::" + namespaces[0] + "/fixture/a.csv", "arn:aws:s3:::" + namespaces[0] + "/fixture/b.csv", "arn:aws:s3:::" + namespaces[1] + "/fixture/a.csv", "arn:aws:s3:::" + namespaces[1] + "/fixture/b.csv"}
+	if c.ProcessingDeliveryAcceptance {
+		inspectionResources = append(inspectionResources, "arn:aws:s3:::"+namespaces[0]+"/fixture/standardized.csv", "arn:aws:s3:::"+namespaces[0]+"/fixture/processed.csv")
+	}
 	policy := map[string]any{"Version": "2012-10-17", "Statement": []any{
 		map[string]any{"Effect": "Allow", "Action": []string{"s3:ListBucketVersions"}, "Resource": []string{"arn:aws:s3:::" + namespaces[0], "arn:aws:s3:::" + namespaces[1]}},
 		map[string]any{"Effect": "Allow", "Action": []string{"s3:GetObjectVersion", "s3:GetObjectRetention", "s3:GetObjectLegalHold"},
-			"Resource": []string{"arn:aws:s3:::" + namespaces[0] + "/fixture/a.csv", "arn:aws:s3:::" + namespaces[0] + "/fixture/b.csv", "arn:aws:s3:::" + namespaces[1] + "/fixture/a.csv", "arn:aws:s3:::" + namespaces[1] + "/fixture/b.csv"}},
+			"Resource": inspectionResources},
 	}}
 	policyBytes, _ := json.MarshalIndent(policy, "", "  ")
 	policyName := "lifecycle307-inspection-" + c.RunID.String()
@@ -316,6 +326,9 @@ func prepare(ctx context.Context, path string) error {
 	for ni, ns := range namespaces {
 		for i, key := range []string{"fixture/a.csv", "fixture/b.csv"} {
 			payload := []byte([]string{"id,value\n1,synthetic-alpha\n", "id,value\n2,synthetic-beta\n"}[i])
+			if c.ProcessingDeliveryAcceptance {
+				payload = pilot.PlaneSyntheticPayloads()[i]
+			}
 			digest := sha256.Sum256(payload)
 			o := object{CopyID: uuid.New(), DatasetVersionID: versions[i], Namespace: ns, Key: key, SHA256: hex.EncodeToString(digest[:]), Bytes: int64(len(payload)), Retention: "NONE"}
 			opts := minio.PutObjectOptions{ContentType: "text/csv", DisableMultipart: true}
@@ -374,11 +387,28 @@ func prepare(ctx context.Context, path string) error {
 	}
 	// Fixture bootstrap records real content identity, not product certification,
 	// legal rights, archive/restore success, or normal business-reader acceptance.
+	var resources [2]*uuid.UUID
+	if c.ProcessingDeliveryAcceptance {
+		router, e := routing.NewRouter(false)
+		if e != nil {
+			return e
+		}
+		outbox.ConfigureAppendObligation(router)
+		defer outbox.ConfigureAppendObligation(nil)
+		svc := resourceapp.NewCreateService(transaction.NewManager(pool), resourceinfra.NewPostgresRepository())
+		for i := range resources {
+			r, e := svc.Handle(ctx, resourceapp.CreateDataResourceCommand{WorkspaceID: c.WorkspaceID, Code: fmt.Sprintf("LC307-%d", i), Name: "Controlled synthetic source", ResourceType: resourcedomain.ResourceTypeTableLike, ActorID: &c.ActorID})
+			if e != nil {
+				return e
+			}
+			resources[i] = &r.ID
+		}
+	}
 	err = transaction.NewManager(pool).Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		for i, v := range versions {
 			d := uuid.New()
 			o := objects[i]
-			if _, e := tx.Exec(ctx, `INSERT INTO dataset(id,workspace_id,code,name,dataset_type) VALUES($1,$2,$3,'Closed synthetic lifecycle fixture','RAW')`, d, c.WorkspaceID, "LC307-"+v.String()); e != nil {
+			if _, e := tx.Exec(ctx, `INSERT INTO dataset(id,workspace_id,code,name,dataset_type,source_resource_id) VALUES($1,$2,$3,'Closed synthetic lifecycle fixture','RAW',$4)`, d, c.WorkspaceID, "LC307-"+v.String(), resources[i]); e != nil {
 				return e
 			}
 			if _, e := tx.Exec(ctx, `INSERT INTO dataset_version(id,dataset_id,version_no,status,storage_type,storage_uri,checksum_algorithm,checksum_value,byte_size) VALUES($1,$2,1,'READY','OBJECT_STORAGE',$3,'SHA256',$4,$5)`, v, d, "s3://"+o.Namespace+"/"+o.Key, o.SHA256, o.Bytes); e != nil {
@@ -609,6 +639,9 @@ func finish(ctx context.Context, path string, c config, pool *pgxpool.Pool, obje
 	manager := transaction.NewManager(pool)
 	occupancy := lc.NewOccupancyService(manager, repo, a, nil, nil)
 	for _, v := range versions {
+		if c.ProcessingDeliveryAcceptance {
+			continue
+		}
 		if c.ArchiveAcceptance && v == objects[0].DatasetVersionID {
 			continue // Only this new run's A is eligible for finite synthetic use.
 		}
@@ -684,6 +717,9 @@ func finish(ctx context.Context, path string, c config, pool *pgxpool.Pool, obje
 	expectedRestrictions := 2
 	if c.ArchiveAcceptance {
 		expectedRestrictions = 1
+	}
+	if c.ProcessingDeliveryAcceptance {
+		expectedRestrictions = 0
 	}
 	if counts["lifecycle_storage_call"] != priorCalls+14 || counts["lifecycle_storage_observation"] != priorObservations+14 || counts["cost_allocation"] != priorCosts+14 || counts["lifecycle_fixture_copy"] != 4 || counts["lifecycle_content_use_restriction"] != expectedRestrictions || counts["lifecycle_disposition_approval"] != 0 || counts["lifecycle_disposition_dispatch"] != 0 || counts["lifecycle_provider_attempt"] != 0 || counts["lifecycle_reader_pin"] != 0 {
 		return errors.New("fixture final fact counts mismatch")

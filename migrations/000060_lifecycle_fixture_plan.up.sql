@@ -536,7 +536,7 @@ ALTER TABLE cost_allocation ADD CONSTRAINT ck_cost_allocation_single_subject CHE
  rights_declaration_id,rights_declaration_verification_id,rights_declaration_disposition_id,
  authorization_provenance_binding_id,authorization_provenance_binding_disposition_id,
  effective_rights_snapshot_id,dataset_certification_id,certification_disposition_id,
- annotation_review_attempt_id,annotation_engine_attempt_id,ingestion_invocation_id,lifecycle_provider_attempt_id,lifecycle_storage_call_id)=1
+ annotation_review_attempt_id,annotation_engine_attempt_id,ingestion_invocation_id,external_provider_call_id,external_usage_call_id,lifecycle_provider_attempt_id,lifecycle_storage_call_id)=1
 );
 CREATE INDEX idx_cost_allocation_lifecycle ON cost_allocation(lifecycle_provider_attempt_id) WHERE lifecycle_provider_attempt_id IS NOT NULL;
 CREATE INDEX idx_cost_allocation_lifecycle_storage ON cost_allocation(lifecycle_storage_call_id) WHERE lifecycle_storage_call_id IS NOT NULL;
@@ -565,7 +565,17 @@ CREATE OR REPLACE FUNCTION guard_cost_allocation_workspace() RETURNS trigger AS 
 DECLARE event_workspace uuid; subject_workspace uuid;
 BEGIN
  SELECT workspace_id INTO event_workspace FROM cost_event WHERE id=NEW.cost_event_id;
- IF NEW.delivery_operation_id IS NOT NULL THEN
+ IF NEW.external_usage_call_id IS NOT NULL THEN
+  SELECT workspace_id INTO subject_workspace FROM external_usage_call WHERE id=NEW.external_usage_call_id;
+  IF NOT EXISTS(SELECT 1 FROM cost_event e JOIN external_usage_dispatch d ON d.call_id=NEW.external_usage_call_id WHERE e.id=NEW.cost_event_id AND e.activity_id=NEW.external_usage_call_id AND e.cost_type='EXTERNAL_USAGE_INVOCATION' AND e.quantity=1 AND e.unit='invocation' AND e.pricing_mode='ACTUAL') THEN RAISE EXCEPTION 'usage cost requires dispatched physical call'; END IF;
+ ELSIF NEW.external_provider_call_id IS NOT NULL THEN
+  SELECT workspace_id INTO subject_workspace FROM external_provider_call WHERE id=NEW.external_provider_call_id;
+  IF NOT EXISTS(SELECT 1 FROM cost_event e JOIN external_provider_dispatch d ON d.call_id=NEW.external_provider_call_id WHERE e.id=NEW.cost_event_id AND e.activity_id=NEW.external_provider_call_id AND e.cost_type='EXTERNAL_PROVIDER_INVOCATION' AND e.quantity=1 AND e.unit='invocation' AND e.pricing_mode='ACTUAL') THEN RAISE EXCEPTION 'external cost requires dispatched physical call'; END IF;
+ ELSIF NEW.lifecycle_storage_call_id IS NOT NULL THEN
+  SELECT workspace_id INTO subject_workspace FROM lifecycle_storage_call WHERE id=NEW.lifecycle_storage_call_id;
+ ELSIF NEW.lifecycle_provider_attempt_id IS NOT NULL THEN
+  SELECT workspace_id INTO subject_workspace FROM lifecycle_provider_attempt WHERE id=NEW.lifecycle_provider_attempt_id;
+ ELSIF NEW.delivery_operation_id IS NOT NULL THEN
   SELECT workspace_id INTO subject_workspace FROM delivery_operation WHERE id=NEW.delivery_operation_id;
  ELSIF NEW.quality_assessment_id IS NOT NULL THEN
   SELECT workspace_id INTO subject_workspace FROM quality_result WHERE id=NEW.quality_assessment_id;
@@ -591,12 +601,8 @@ BEGIN
   SELECT workspace_id INTO subject_workspace FROM annotation_review_attempt WHERE id=NEW.annotation_review_attempt_id;
  ELSIF NEW.annotation_engine_attempt_id IS NOT NULL THEN
   SELECT workspace_id INTO subject_workspace FROM annotation_engine_attempt WHERE id=NEW.annotation_engine_attempt_id;
- ELSIF NEW.ingestion_invocation_id IS NOT NULL THEN
-  SELECT workspace_id INTO subject_workspace FROM ingestion_invocation WHERE id=NEW.ingestion_invocation_id;
- ELSIF NEW.lifecycle_storage_call_id IS NOT NULL THEN
-  SELECT workspace_id INTO subject_workspace FROM lifecycle_storage_call WHERE id=NEW.lifecycle_storage_call_id;
  ELSE
-  SELECT workspace_id INTO subject_workspace FROM lifecycle_provider_attempt WHERE id=NEW.lifecycle_provider_attempt_id;
+  SELECT workspace_id INTO subject_workspace FROM ingestion_invocation WHERE id=NEW.ingestion_invocation_id;
  END IF;
  IF event_workspace IS DISTINCT FROM subject_workspace THEN RAISE EXCEPTION 'cost allocation crosses workspace boundary'; END IF;
  RETURN NEW;

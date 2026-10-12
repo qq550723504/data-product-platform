@@ -522,6 +522,59 @@ func (s *CopyService) EvaluateFixtureUse(ctx context.Context, tx pgx.Tx, r UseGa
 	if e = tx.QueryRow(ctx, `SELECT use_until FROM lifecycle_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, r.Copy.WorkspaceID, r.Copy.DatasetVersionID).Scan(&until); e != nil {
 		return domain.UseDecision{}, e
 	}
+	// The output intent freezes the actual producer inputs before publication.
+	// A derived fixture copy cannot outlive a currently restricted/expired input.
+	rows, e := tx.Query(ctx, `WITH RECURSIVE deps(id,path,cycle) AS (
+ SELECT $1::uuid,ARRAY[$1::uuid],false
+ UNION ALL
+ SELECT src.id,d.path||src.id,src.id=ANY(d.path) FROM deps d
+ JOIN lifecycle_processing_output_intent i ON i.dataset_version_id=d.id
+ CROSS JOIN LATERAL (
+ SELECT x.dataset_version_id AS id FROM execution_input x WHERE x.execution_id=i.execution_id
+ UNION SELECT c.dataset_version_id FROM lifecycle_fixture_copy c WHERE c.id=i.source_copy_id AND i.entity_match_job_id IS NOT NULL
+ ) src WHERE NOT d.cycle AND cardinality(d.path)<18
+) SELECT DISTINCT id,cycle,cardinality(path)>=18 FROM deps`, r.Copy.DatasetVersionID)
+	if e != nil {
+		return domain.UseDecision{}, e
+	}
+	var sources []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		var cycle, deep bool
+		if e = rows.Scan(&id, &cycle, &deep); e != nil {
+			rows.Close()
+			return domain.UseDecision{}, e
+		}
+		if cycle || deep {
+			rows.Close()
+			return domain.UseDecision{}, domain.ErrUseBlocked
+		}
+		sources = append(sources, id)
+	}
+	e = rows.Err()
+	rows.Close()
+	if e != nil {
+		return domain.UseDecision{}, e
+	}
+	for _, id := range sources {
+		if id == r.Copy.DatasetVersionID {
+			continue
+		}
+		_, allowed, e := s.currentState(ctx, tx, r.Copy.WorkspaceID, id)
+		if e != nil {
+			return domain.UseDecision{}, e
+		}
+		if !allowed {
+			return domain.UseDecision{}, domain.ErrUseBlocked
+		}
+		var cap time.Time
+		if e = tx.QueryRow(ctx, `SELECT use_until FROM lifecycle_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, r.Copy.WorkspaceID, id).Scan(&cap); e != nil {
+			return domain.UseDecision{}, e
+		}
+		if cap.Before(until) {
+			until = cap
+		}
+	}
 	return domain.UseDecision{WorkspaceID: r.Copy.WorkspaceID, CopyID: r.Copy.ID, ReaderID: r.ReaderID, ActorID: r.Caller.ActorID, CheckedAt: r.AsOf, Decision: domain.Satisfied, WindowMode: domain.UseDeadline, UseUntil: &until}, nil
 }
 

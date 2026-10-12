@@ -61,3 +61,11 @@ Run `a6b30840-3e76-49ad-91d3-f0c399fcf170` 保留三台运行中的服务、已�
 仅用于新环境的入口：先`prepare.ps1 -ArchiveAcceptance`，可显式传不重叠的`-InternalSubnet 10.234.x.0/24`。若需重建本地fixture image，`-MinioImage sha256:<实际digest>`仍强制检查固定MinIO binary SHA256；不得用于修改旧环境。`prepare-reader.ps1`建立有限window及独立native readonly身份；`run-reader-step.ps1`依次bind/crash/accept/final；`seal-reader.ps1`禁用身份并封闭窗口/payload/admin，`verify-reader.ps1`独立离线核对证据与敏感信息。已封存环境不能重跑，所有成功/失败helpers与volumes保留。
 
 仍只修改未发布64，不占用C2/65及共享路由。现有production processing/delivery通用读路径尚未接pin，不在本封闭runtime内；LC-11/12、全平台closure及完整D1仍NOT_RUN，#307不关闭。没有新增删除或清理授权。
+
+## 2026-10-12：实际 NATIVE processing、DirectData pin 与自然到期
+
+封闭 `dpp-lifecycle307-326fedd2` 使用新的合成输入、原有 NATIVE engine / queue handler 和真实 Quality / Certification / current entitlement Command/Gate。全部 execution input typed pins 先于 I/O，输出 intent / physical call 先于固定槽位 create-only PUT；DirectData pin 与 ISSUED 同事务。真实 TCP 慢客户端不读响应，有限 UseUntil 驱动实际 WriteDeadline / Flush 超时，确认停止后追加 interrupted transfer observation，原 ISSUED 保留。same-key replay、queued reverse restriction 和自然到期后的新 delivery 均0新 native I/O。详见 [验收及六个保留 exact versions](results/326fedd2-8c22-4eb8-acca-05be57e15d77/plane-review.md)。
+
+新环境入口为 `prepare.ps1 -ArchiveAcceptance -ProcessingDeliveryAcceptance` → `prepare-plane.ps1` → `run-plane-step.ps1 -Mode setup/accept/final` → `seal-plane.ps1`。只使用两个固定合成输入和两个固定输出槽位；helper HTTP 仅自身 loopback，无 host port。reader / producer 与 root-admin 分离；未提供删除实现或批准。所有旧窗口及本轮成功/失败环境保留，不重放已经封闭的步骤。失败的3f1e4cdb、e1ddedb7、121e25f9事实独立保留，不算最终验收通过。
+
+D1/60 up/down 同时修复迁移组合发现的 CostAllocation guard 漏掉 main external provider/usage subjects 的问题；完整新库 PostgreSQL 回归及空60 down恢复完整main59 guard通过。D1仍≤64，C2使用65并须对最终 committed snapshot 重验，原C2组合证明不自动升级。完整D1、真实业务对象、production composition、外部provider与新增删除仍不在本轮通过范围，#307保持OPEN。

@@ -343,6 +343,10 @@ func (s *OccupancyService) AdmitFixtureReader(ctx context.Context, cmd AdmitFixt
 		if err != nil {
 			return uuid.Nil, err
 		}
+		if decision.UseUntil != nil {
+			until := decision.UseUntil.UTC().Truncate(time.Microsecond)
+			decision.UseUntil = &until
+		}
 		caller, at, err = s.authorize(ctx, tx, cmd.WorkspaceID, CapabilityAdmitReader, &caller)
 		if err != nil {
 			return uuid.Nil, err
@@ -458,7 +462,14 @@ func (s *OccupancyService) TerminateFixtureReader(ctx context.Context, cmd Termi
 			VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, proof.ID, proof.WorkspaceID, proof.PinID, proof.ReaderID, proof.Generation, proof.Outcome, proof.ObservedAt, caller.ActorID, caller.Subject, revision); err != nil {
 			return uuid.Nil, err
 		}
-		return proof.ID, appendOccupancyFacts(ctx, tx, ReaderTerminatedEvent, "LIFECYCLE_READER_TERMINATION", proof.ID, caller, revision, at, map[string]any{"pin_id": pin.ID, "generation": pin.Generation, "outcome": proof.Outcome})
+		fields := map[string]any{"pin_id": pin.ID, "generation": pin.Generation, "outcome": proof.Outcome, "kind": pin.Kind}
+		if pin.Kind == domain.FixtureDelivery {
+			if _, err = tx.Exec(ctx, `INSERT INTO lifecycle_transfer_observation(id,workspace_id,pin_id,delivery_operation_id,termination_id,bytes_written,completed,observed_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`, uuid.New(), pin.WorkspaceID, pin.ID, *pin.DeliveryOperationID, proof.ID, *proof.BytesWritten, proof.Outcome == domain.ReaderCompleted, proof.ObservedAt); err != nil {
+				return uuid.Nil, err
+			}
+			fields["delivery_operation_id"], fields["bytes_written"] = *pin.DeliveryOperationID, *proof.BytesWritten
+		}
+		return proof.ID, appendOccupancyFacts(ctx, tx, ReaderTerminatedEvent, "LIFECYCLE_READER_TERMINATION", proof.ID, caller, revision, at, fields)
 	})
 }
 

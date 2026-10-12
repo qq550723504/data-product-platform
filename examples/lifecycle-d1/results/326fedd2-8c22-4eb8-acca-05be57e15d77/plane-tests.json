@@ -1,0 +1,28 @@
+{
+  "compiled_guard_main59_60_down": {
+    "seconds": 4.595,
+    "old_databases_upgraded": 0,
+    "status": "PASS"
+  },
+  "prior_unmigrated_test_run": "FAIL; not counted",
+  "full_module_postgres": {
+    "database": "plane_full_41aa8f6d8a",
+    "status": "PASS",
+    "command": "go test -p 1 ./... -count=1 -timeout 20m",
+    "old_databases_upgraded": 0,
+    "schema": 64,
+    "exit_code": 0
+  },
+  "native_binary_rebuild": "PASS; byte identical",
+  "scoped_pin_output_postgres_race": {
+    "status": "PASS",
+    "seconds": 66.434
+  },
+  "storage_race": {
+    "status": "PASS",
+    "seconds": 5.444
+  },
+  "production_acceptance": "NOT_RUN",
+  "cleanup": 0,
+  "delete": 0
+}

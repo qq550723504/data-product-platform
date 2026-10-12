@@ -38,15 +38,16 @@ type LifecycleCopier struct {
 }
 type copyCallKey struct{}
 type custodyCall struct {
-	op          domain.CopyOperation
-	copy        domain.Copy
-	operation   string
-	id          uuid.UUID
-	mu          sync.Mutex
-	sent        bool
-	observation lc.StorageCallObservation
-	readerPin   *domain.ReaderPin
-	stoppedAt   time.Time
+	op           domain.CopyOperation
+	copy         domain.Copy
+	operation    string
+	id           uuid.UUID
+	mu           sync.Mutex
+	sent         bool
+	observation  lc.StorageCallObservation
+	readerPin    *domain.ReaderPin
+	outputIntent *lc.ProcessingOutputIntent
+	stoppedAt    time.Time
 }
 
 func (c *custodyCall) result() lc.StorageCallObservation {
@@ -177,6 +178,10 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		if r.Method != "HEAD" || r.URL.Path != "/"+c.op.TargetNamespace+"/"+c.op.TargetKey || len(q) != 1 || len(q["versionId"]) != 1 || q.Get("versionId") != c.copy.ProviderVersion || r.Header.Get("X-Amz-Copy-Source") != "" {
 			return nil, lc.ErrStorageScope
 		}
+	} else if c.operation == lc.StorageProcessingPut {
+		if c.outputIntent == nil || r.Method != "PUT" || r.URL.Path != "/"+c.outputIntent.Namespace+"/"+c.outputIntent.Key || r.URL.RawQuery != "" || r.Header.Get("If-None-Match") != "*" || r.Header.Get("X-Amz-Copy-Source") != "" || r.Header.Get("X-Amz-Content-Sha256") != c.outputIntent.ContentSHA256 || r.ContentLength != c.outputIntent.ByteSize {
+			return nil, lc.ErrStorageScope
+		}
 	} else if c.operation == lc.StorageVerifyCopy || c.operation == lc.StorageReadPinned {
 		q := r.URL.Query()
 		if r.Method != "GET" || r.URL.Path != "/"+c.copy.Namespace+"/"+c.copy.Key || len(q) != 1 || len(q["versionId"]) != 1 || q.Get("versionId") != c.copy.ProviderVersion || r.Header.Get("X-Amz-Copy-Source") != "" {
@@ -200,6 +205,10 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	if c.operation == lc.StorageReadPinned {
 		start.CopyIntent = nil
 		start.ReaderPin = c.readerPin
+	}
+	if c.operation == lc.StorageProcessingPut {
+		start.CopyIntent = nil
+		start.OutputIntent = c.outputIntent
 	}
 	if e := t.journal.StartStorageCall(r.Context(), start); e != nil {
 		if c.operation == lc.StorageReadPinned {

@@ -132,15 +132,15 @@ func (r *PostgresRepository) InsertReaderPin(ctx context.Context, tx pgx.Tx, p d
 		return err
 	}
 	_, err := tx.Exec(ctx, `INSERT INTO lifecycle_reader_pin(id,workspace_id,copy_id,reader_id,kind,actor_id,principal_ref,
-		generation,gate_revision,started_at,window_mode,use_until) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
-		p.ID, p.WorkspaceID, p.CopyID, p.ReaderID, p.Kind, p.ActorID, p.PrincipalRef, p.Generation, p.GateRevision, p.StartedAt, p.WindowMode, p.UseUntil)
+		generation,gate_revision,started_at,window_mode,use_until,execution_id,delivery_operation_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+		p.ID, p.WorkspaceID, p.CopyID, p.ReaderID, p.Kind, p.ActorID, p.PrincipalRef, p.Generation, p.GateRevision, p.StartedAt, p.WindowMode, p.UseUntil, p.ExecutionID, p.DeliveryOperationID)
 	return err
 }
 
 func (r *PostgresRepository) GetReaderPin(ctx context.Context, tx pgx.Tx, w, id uuid.UUID) (domain.ReaderPin, error) {
 	var p domain.ReaderPin
-	err := tx.QueryRow(ctx, `SELECT id,workspace_id,copy_id,reader_id,kind,actor_id,principal_ref,generation,gate_revision,started_at,window_mode,use_until
-		FROM lifecycle_reader_pin WHERE workspace_id=$1 AND id=$2`, w, id).Scan(&p.ID, &p.WorkspaceID, &p.CopyID, &p.ReaderID, &p.Kind, &p.ActorID, &p.PrincipalRef, &p.Generation, &p.GateRevision, &p.StartedAt, &p.WindowMode, &p.UseUntil)
+	err := tx.QueryRow(ctx, `SELECT id,workspace_id,copy_id,reader_id,kind,actor_id,principal_ref,generation,gate_revision,started_at,window_mode,use_until,execution_id,delivery_operation_id
+		FROM lifecycle_reader_pin WHERE workspace_id=$1 AND id=$2`, w, id).Scan(&p.ID, &p.WorkspaceID, &p.CopyID, &p.ReaderID, &p.Kind, &p.ActorID, &p.PrincipalRef, &p.Generation, &p.GateRevision, &p.StartedAt, &p.WindowMode, &p.UseUntil, &p.ExecutionID, &p.DeliveryOperationID)
 	if errors.Is(err, pgx.ErrNoRows) {
 		err = ErrScopeUnavailable
 	}

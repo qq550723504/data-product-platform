@@ -209,3 +209,13 @@ ARCHIVE 先 DB 登记 target copy intent，调用复制/tiering，校验目标 d
 基线的 storage Store 是 Put/Get/PutImmutable，不是 lifecycle API；`dataset/application/ObjectStore` 只有 Put。deliveryfence 有 workspace row/revision；direct-data 返回 PayloadReady 后才可读取 storage，但没有本设计的持续传输 pin。已有队列/Outbox/reconcilers、Cost/Audit/Evidence 可复用；没有证据证明完整 copy inventory、保全、生命周期 reader admission、restore watermark 或敏感 envelope 已实现。
 
 后续次序与检查归 [实施与验收](../product/data-lifecycle-design-acceptance.md)，所有 runtime scenarios 本轮为 NOT_RUN。#294/#295 的 Annotation admission 与暂停跨仓联调保持原 owner；#298 的接入代码/运行环境不改；外部 delivery/usage 仍归 #47/#84/#86/#87。真实对象、备份、正文/密钥处置、bucket 自动删除、部署、付费 provider 均需独立明确授权，不能从设计合并推导。
+
+### 10.1 D1 封闭 processing / delivery fixture 的实施边界（2026-10-12）
+
+未发布 D1/64 增加强类型 Execution / DeliveryOperation pin，以及独立 append-only transfer observation。封闭 composition 包装既有同步 NATIVE engine；在 engine 开始前，为全部 required execution input 提交 exact-copy pins，typed input Port 不接受 URI，实际 read handle 与 engine/output owner 停止后才追加 termination。未关闭 handle、原生停止未知、输出调用 UNKNOWN 或进程退出保留 pins；同 Execution 不重新打开。source restriction 与有限 use_until 在 admission、每次物理读取、输出发送和 READY publication 的共享 fence 下重新检查，派生输出沿冻结 producer inputs 重新检查当前限制与期限。
+
+派生对象复用既有 Dataset Upload Command、MinIO OSS signer 与单次调用 journal；先持久化 typed output intent / physical call，再向两个配置固定槽位执行 create-only PUT，当前 input pins 与门禁仍成立且原生 exact version 返回后才在同一 publication transaction 登记 copy / READY。Unknown 不盲目重发。此最小业务事实模型不新增通用 storage、workflow 或 queue runtime；Reuse Check 的既有 OSS / Port 结论继续适用。
+
+DirectDataService 的显式 transfer SPI 在原 ISSUED transaction 内提交 pin；封闭 HTTP owner 只在该 commit 后通过 ReadPinnedTo 读取，并在物理 GET 前重新执行真实 Certification / current entitlement gate。UseUntil 安装到实际 HTTP WriteDeadline，并同步 Flush。写入停止后追加 transfer observation / termination；ISSUED 不改写，accepted bytes 不证明客户端收到。same-key replay 0 新 payload / pin / native call。
+
+仅 fixture executable 注入上述 SPI；公共 API / 常规 worker composition 未启用，生产 processing/delivery、全部 LC-11/12 disposal 竞争和全平台 closure 仍不声明通过。实际运行证据与环境清单见 [D1 processing/delivery 报告](../../examples/lifecycle-d1/results/326fedd2-8c22-4eb8-acca-05be57e15d77/plane-review.md)。旧数据库/原生环境不升级，不引入兼容双读。D1 仍占60–64，C2 仅在该候选之后应用65。

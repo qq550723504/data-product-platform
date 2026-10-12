@@ -1,7 +1,8 @@
 # Completes the owned empty environment; never retries provider writes or cleans.
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[switch]$ArchiveAcceptance,[string]$MinioImage='')
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[switch]$ArchiveAcceptance,[switch]$ProcessingDeliveryAcceptance,[string]$MinioImage='')
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
+if($ProcessingDeliveryAcceptance -and -not $ArchiveAcceptance){throw 'Processing/delivery slice requires exact-version native fixture mode'}
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $private=(Resolve-Path -LiteralPath $PrivateDirectory).Path
 function Docker([Parameter(ValueFromRemainingArguments=$true)][string[]]$Arguments) {
@@ -62,7 +63,7 @@ $environment=@{
 $pgSecret=[IO.File]::ReadAllText((Join-Path $private 'pgpass'))
 $config=@{
  RunID=$run;WorkspaceID=[guid]::NewGuid().ToString();ProviderInstanceID=[guid]::NewGuid().ToString();IncarnationID=[guid]::NewGuid().ToString();ActorID=[guid]::NewGuid().ToString()
- Enabled=$true;ArchiveAcceptance=[bool]$ArchiveAcceptance;Endpoint='127.0.0.1:9000';PostgresDSN="postgres://fixture:${pgSecret}@$($r.containers.postgres):5432/lifecycle307?sslmode=disable"
+ Enabled=$true;ArchiveAcceptance=[bool]$ArchiveAcceptance;ProcessingDeliveryAcceptance=[bool]$ProcessingDeliveryAcceptance;Endpoint='127.0.0.1:9000';PostgresDSN="postgres://fixture:${pgSecret}@$($r.containers.postgres):5432/lifecycle307?sslmode=disable"
  RootAccess=$rootAccess;RootSecret=[IO.File]::ReadAllText((Join-Path $private 'secret'));InspectAccess='inspect'+$run.Replace('-','').Substring(0,12);InspectSecret=(New-Secret);Token=(New-Secret)
  OutputDirectory="/run/output/$run";Environment=$environment
 }

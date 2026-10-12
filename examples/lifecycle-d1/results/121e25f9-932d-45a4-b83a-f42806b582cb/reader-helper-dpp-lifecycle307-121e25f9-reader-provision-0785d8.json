@@ -1,0 +1,12 @@
+{
+  "cleanup": 0,
+  "root_mounted": true,
+  "container": "dpp-lifecycle307-121e25f9-reader-provision-0785d8",
+  "binary_sha256": "1775c1bd68bf2493f1aafd8fdabaa6bc16d960a8c1484c0874b09e642423e0e3",
+  "run_id": "121e25f9-932d-45a4-b83a-f42806b582cb",
+  "exit_code": 0,
+  "delete": 0,
+  "id": "c9e0959181d608c25f253b2337fd6020a61331cc0f4d27774c8ecd44d5f4a6d7",
+  "mode": "provision",
+  "expected_exit": 0
+}

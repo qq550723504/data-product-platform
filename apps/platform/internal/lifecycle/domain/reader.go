@@ -8,11 +8,13 @@ import (
 )
 
 const (
-	FixtureReader   = "FIXTURE_READER"
-	UseUnbounded    = "EXPLICIT_UNBOUNDED"
-	UseDeadline     = "DEADLINE"
-	ReaderCompleted = "COMPLETED"
-	ReaderCancelled = "CANCELLATION_CONFIRMED"
+	FixtureReader     = "FIXTURE_READER"
+	FixtureProcessing = "FIXTURE_PROCESSING"
+	FixtureDelivery   = "FIXTURE_DELIVERY"
+	UseUnbounded      = "EXPLICIT_UNBOUNDED"
+	UseDeadline       = "DEADLINE"
+	ReaderCompleted   = "COMPLETED"
+	ReaderCancelled   = "CANCELLATION_CONFIRMED"
 )
 
 var (
@@ -65,23 +67,25 @@ func ValidateWindowAt(mode string, until *time.Time, at time.Time) error {
 }
 
 type ReaderPin struct {
-	ID           uuid.UUID
-	WorkspaceID  uuid.UUID
-	CopyID       uuid.UUID
-	ReaderID     uuid.UUID
-	Kind         string
-	ActorID      uuid.UUID
-	PrincipalRef string
-	Generation   int64
-	GateRevision int64
-	StartedAt    time.Time
-	WindowMode   string
-	UseUntil     *time.Time
+	ID                  uuid.UUID
+	WorkspaceID         uuid.UUID
+	CopyID              uuid.UUID
+	ReaderID            uuid.UUID
+	Kind                string
+	ActorID             uuid.UUID
+	PrincipalRef        string
+	Generation          int64
+	GateRevision        int64
+	StartedAt           time.Time
+	WindowMode          string
+	UseUntil            *time.Time
+	ExecutionID         *uuid.UUID
+	DeliveryOperationID *uuid.UUID
 }
 
 func (p ReaderPin) Validate() error {
 	if p.ID == uuid.Nil || p.WorkspaceID == uuid.Nil || p.CopyID == uuid.Nil || p.ReaderID == uuid.Nil || p.ActorID == uuid.Nil ||
-		p.Kind != FixtureReader || !boundedText(p.PrincipalRef, 255) || p.Generation <= 0 || p.GateRevision < 0 ||
+		!p.validSubject() || !boundedText(p.PrincipalRef, 255) || p.Generation <= 0 || p.GateRevision < 0 ||
 		p.GateRevision >= p.Generation || p.StartedAt.IsZero() {
 		return ErrUseBlocked
 	}
@@ -94,19 +98,35 @@ func (p ReaderPin) Validate() error {
 	return ErrUseBlocked
 }
 
+func (p ReaderPin) validSubject() bool {
+	switch p.Kind {
+	case FixtureReader:
+		return p.ExecutionID == nil && p.DeliveryOperationID == nil
+	case FixtureProcessing:
+		return p.ExecutionID != nil && *p.ExecutionID != uuid.Nil && p.ReaderID == *p.ExecutionID && p.DeliveryOperationID == nil
+	case FixtureDelivery:
+		return p.DeliveryOperationID != nil && *p.DeliveryOperationID != uuid.Nil && p.ReaderID == *p.DeliveryOperationID && p.ExecutionID == nil
+	}
+	return false
+}
+
 // There is deliberately no lease expiry that can release this pin. Completion
 // requires the reader owner's authoritative observation of stopped I/O.
 type ReaderTermination struct {
-	ID          uuid.UUID
-	WorkspaceID uuid.UUID
-	PinID       uuid.UUID
-	ReaderID    uuid.UUID
-	Generation  int64
-	Outcome     string
-	ObservedAt  time.Time
+	ID           uuid.UUID
+	WorkspaceID  uuid.UUID
+	PinID        uuid.UUID
+	ReaderID     uuid.UUID
+	Generation   int64
+	Outcome      string
+	ObservedAt   time.Time
+	BytesWritten *int64
 }
 
 func (p ReaderTermination) ValidateFor(pin ReaderPin, requestedOutcome string, at time.Time) error {
+	if pin.Kind == FixtureDelivery && (p.BytesWritten == nil || *p.BytesWritten < 0) {
+		return ErrTerminationUnknown
+	}
 	if pin.Validate() != nil || at.IsZero() || p.ID == uuid.Nil || p.WorkspaceID != pin.WorkspaceID || p.PinID != pin.ID || p.ReaderID != pin.ReaderID ||
 		p.Generation != pin.Generation || p.Outcome != requestedOutcome || p.ObservedAt.IsZero() ||
 		p.ObservedAt.Before(pin.StartedAt) || p.ObservedAt.After(at) ||

@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -39,9 +40,11 @@ var namespaces = []string{"dpp-lifecycle307-online", "dpp-lifecycle307-quarantin
 type config struct {
 	RunID, WorkspaceID, ProviderInstanceID, IncarnationID, ActorID, Epoch                                       uuid.UUID
 	Enabled                                                                                                     bool
+	Plane                                                                                                       bool
 	StartedAt, ExpiresAt                                                                                        time.Time
 	Endpoint, PostgresDSN, Token, Access, Secret, InspectAccess, InspectSecret, OutputDirectory, ManifestSHA256 string
 	RootAccess, RootSecret                                                                                      string // populated only in a separate admin-only mount
+	ProducerAccess, ProducerSecret                                                                              string
 }
 type manifest struct {
 	Objects []struct {
@@ -427,6 +430,9 @@ func accept(ctx context.Context, c config, m manifest, cs []domain.Copy, pool *p
 	return write(c, "reader-acceptance.json", map[string]any{"run_id": c.RunID, "workspace_id": c.WorkspaceID, "current_restriction": restriction, "active_after_confirmed_stop": final, "native_calls": calls, "native_observations": observations, "native_cost_allocations": costs, "terminations": term, "rejections": outcomes, "native_delete": 0, "copy": 0, "cleanup": 0, "acceptance": map[string]string{"durable_pin_before_exact_GET": "PASS", "native_HTTP_bytes": "PASS", "closed_HTTP_auth_and_routes": "PASS", "cancel_is_not_quiescence": "PASS", "crashed_owner_pin_retained": "PASS", "replay_no_payload_or_IO": "PASS", "restriction_new_use_blocked": "PASS", "full_D1": "NOT_RUN", "production_delivery_LC12": "NOT_RUN", "processing_integration": "NOT_RUN"}})
 }
 func execute(ctx context.Context, mode string) error {
+	if strings.HasPrefix(mode, "plane-") {
+		return planeStep(ctx, strings.TrimPrefix(mode, "plane-"))
+	}
 	c, e := load()
 	if e != nil {
 		return e

@@ -2,14 +2,90 @@
 -- A completed recovery request never implies that an UNKNOWN delete stopped.
 -- The same obligation also recovers COPY identity through read-only discovery;
 -- it never fabricates an ACK on the original physical call or permits a resend.
+ALTER TABLE lifecycle_reader_pin DROP CONSTRAINT lifecycle_reader_pin_kind_check;
+ALTER TABLE lifecycle_reader_pin ADD COLUMN execution_id uuid REFERENCES execution(id);
+ALTER TABLE lifecycle_reader_pin ADD COLUMN delivery_operation_id uuid REFERENCES delivery_operation(id);
+ALTER TABLE lifecycle_reader_pin ADD CHECK(
+ (kind='FIXTURE_READER' AND execution_id IS NULL AND delivery_operation_id IS NULL)
+ OR(kind='FIXTURE_PROCESSING' AND execution_id IS NOT NULL AND execution_id=reader_id AND delivery_operation_id IS NULL)
+ OR(kind='FIXTURE_DELIVERY' AND delivery_operation_id IS NOT NULL AND delivery_operation_id=reader_id AND execution_id IS NULL));
+CREATE UNIQUE INDEX lifecycle_processing_one_pin ON lifecycle_reader_pin(execution_id,copy_id) WHERE execution_id IS NOT NULL;
+CREATE UNIQUE INDEX lifecycle_delivery_one_pin ON lifecycle_reader_pin(delivery_operation_id) WHERE delivery_operation_id IS NOT NULL;
+CREATE FUNCTION lifecycle_reader_subject_guard() RETURNS trigger AS $$
+DECLARE dv uuid; e execution; d delivery_operation;
+BEGIN
+ SELECT dataset_version_id INTO STRICT dv FROM lifecycle_fixture_copy WHERE workspace_id=NEW.workspace_id AND id=NEW.copy_id;
+ IF NEW.execution_id IS NOT NULL THEN
+  SELECT * INTO STRICT e FROM execution WHERE id=NEW.execution_id FOR KEY SHARE;
+  IF e.workspace_id<>NEW.workspace_id OR e.status<>'RUNNING' OR e.created_by IS DISTINCT FROM NEW.actor_id OR NOT EXISTS(SELECT 1 FROM execution_input WHERE execution_id=e.id AND dataset_version_id=dv) THEN RAISE EXCEPTION 'processing reader has no current exact execution input'; END IF;
+ ELSIF NEW.delivery_operation_id IS NOT NULL THEN
+  SELECT * INTO STRICT d FROM delivery_operation WHERE id=NEW.delivery_operation_id FOR KEY SHARE;
+  IF d.workspace_id<>NEW.workspace_id OR d.status<>'ISSUED' OR d.dataset_version_id<>dv OR d.principal_ref<>NEW.principal_ref OR d.provider_name<>'PLATFORM_DIRECT_DATA' OR d.delivery_mode<>'DIRECT_DATA' OR d.fresh_cap_expires_at IS NULL OR NEW.use_until IS NULL OR NEW.use_until>d.fresh_cap_expires_at THEN RAISE EXCEPTION 'transfer pin must belong to fenced issued direct delivery'; END IF;
+ END IF;
+ RETURN NEW;
+END $$ LANGUAGE plpgsql;
+CREATE TRIGGER lifecycle_reader_subject_scope BEFORE INSERT ON lifecycle_reader_pin FOR EACH ROW EXECUTE FUNCTION lifecycle_reader_subject_guard();
+CREATE TABLE lifecycle_transfer_observation (
+ id uuid PRIMARY KEY,workspace_id uuid NOT NULL,pin_id uuid NOT NULL UNIQUE,delivery_operation_id uuid NOT NULL REFERENCES delivery_operation(id),termination_id uuid NOT NULL UNIQUE REFERENCES lifecycle_reader_termination(id),
+ bytes_written bigint NOT NULL CHECK(bytes_written>=0),completed boolean NOT NULL,observed_at timestamptz NOT NULL,
+ FOREIGN KEY(workspace_id,pin_id) REFERENCES lifecycle_reader_pin(workspace_id,id));
+CREATE FUNCTION lifecycle_transfer_observation_guard() RETURNS trigger AS $$
+DECLARE p lifecycle_reader_pin;t lifecycle_reader_termination;size bigint;
+BEGIN
+ SELECT * INTO STRICT p FROM lifecycle_reader_pin WHERE id=NEW.pin_id FOR UPDATE;
+ SELECT * INTO STRICT t FROM lifecycle_reader_termination WHERE id=NEW.termination_id;
+ SELECT byte_size INTO STRICT size FROM lifecycle_fixture_copy WHERE id=p.copy_id;
+ IF p.kind<>'FIXTURE_DELIVERY' OR p.workspace_id<>NEW.workspace_id OR p.delivery_operation_id<>NEW.delivery_operation_id OR t.pin_id<>p.id OR NEW.observed_at<>t.observed_at OR NEW.bytes_written>size OR NEW.completed<>(t.outcome='COMPLETED') OR (NEW.completed AND NEW.bytes_written<>size) THEN RAISE EXCEPTION 'unbacked transfer stop observation'; END IF;
+ RETURN NEW;
+END $$ LANGUAGE plpgsql;
+CREATE TRIGGER lifecycle_transfer_observation_scope BEFORE INSERT ON lifecycle_transfer_observation FOR EACH ROW EXECUTE FUNCTION lifecycle_transfer_observation_guard();
+CREATE TRIGGER lifecycle_transfer_observation_immutable BEFORE UPDATE OR DELETE ON lifecycle_transfer_observation FOR EACH ROW EXECUTE FUNCTION lifecycle_fixture_identity_immutable();
+CREATE TRIGGER lifecycle_transfer_observation_no_truncate BEFORE TRUNCATE ON lifecycle_transfer_observation FOR EACH STATEMENT EXECUTE FUNCTION lifecycle_fixture_identity_immutable();
 ALTER TABLE lifecycle_storage_call ADD COLUMN reader_pin_id uuid;
+CREATE TABLE lifecycle_processing_output_intent (
+ id uuid PRIMARY KEY,workspace_id uuid NOT NULL,source_copy_id uuid NOT NULL,dataset_version_id uuid NOT NULL UNIQUE REFERENCES dataset_version(id),namespace_id uuid NOT NULL,object_key varchar(1024) NOT NULL,content_sha256 char(64) NOT NULL CHECK(content_sha256~'^[a-f0-9]{64}$'),byte_size bigint NOT NULL CHECK(byte_size>0 AND byte_size<=131072),
+ execution_id uuid REFERENCES execution(id),entity_match_job_id uuid REFERENCES entity_match_job(id),actor_id uuid NOT NULL,principal_ref varchar(255) NOT NULL,created_at timestamptz NOT NULL,
+ CHECK((execution_id IS NULL)<>(entity_match_job_id IS NULL)),UNIQUE(workspace_id,id),UNIQUE(namespace_id,object_key),
+ FOREIGN KEY(workspace_id,source_copy_id) REFERENCES lifecycle_fixture_copy(workspace_id,id),FOREIGN KEY(workspace_id,namespace_id) REFERENCES lifecycle_fixture_namespace(workspace_id,id));
+CREATE FUNCTION lifecycle_processing_output_scope_guard() RETURNS trigger AS $$
+DECLARE v dataset_version;w uuid;source lifecycle_fixture_copy;n lifecycle_fixture_namespace;sn lifecycle_fixture_namespace;
+BEGIN
+ SELECT * INTO STRICT v FROM dataset_version WHERE id=NEW.dataset_version_id FOR KEY SHARE;
+ SELECT workspace_id INTO STRICT w FROM dataset WHERE id=v.dataset_id;
+ SELECT * INTO STRICT source FROM lifecycle_fixture_copy WHERE id=NEW.source_copy_id;
+ SELECT * INTO STRICT sn FROM lifecycle_fixture_namespace WHERE id=source.namespace_id;
+ SELECT * INTO STRICT n FROM lifecycle_fixture_namespace WHERE id=NEW.namespace_id;
+ IF w<>NEW.workspace_id OR source.workspace_id<>w OR n.workspace_id<>w OR n.provider_instance_id<>sn.provider_instance_id OR n.incarnation_id<>sn.incarnation_id OR v.generated_by_execution_id IS DISTINCT FROM NEW.execution_id OR v.generated_by_entity_match_job_id IS DISTINCT FROM NEW.entity_match_job_id OR v.status NOT IN('CREATED','PROCESSING') THEN RAISE EXCEPTION 'processing output does not own allocated same-workspace target'; END IF;
+ RETURN NEW;
+END $$ LANGUAGE plpgsql;
+CREATE TRIGGER lifecycle_processing_output_scope BEFORE INSERT ON lifecycle_processing_output_intent FOR EACH ROW EXECUTE FUNCTION lifecycle_processing_output_scope_guard();
+CREATE TRIGGER lifecycle_processing_output_immutable BEFORE UPDATE OR DELETE ON lifecycle_processing_output_intent FOR EACH ROW EXECUTE FUNCTION lifecycle_fixture_identity_immutable();
+CREATE TRIGGER lifecycle_processing_output_no_truncate BEFORE TRUNCATE ON lifecycle_processing_output_intent FOR EACH STATEMENT EXECUTE FUNCTION lifecycle_fixture_identity_immutable();
+ALTER TABLE lifecycle_storage_call ADD COLUMN processing_output_intent_id uuid;
+ALTER TABLE lifecycle_storage_call ADD FOREIGN KEY(workspace_id,processing_output_intent_id) REFERENCES lifecycle_processing_output_intent(workspace_id,id);
 ALTER TABLE lifecycle_storage_call ADD FOREIGN KEY(workspace_id,reader_pin_id) REFERENCES lifecycle_reader_pin(workspace_id,id);
 ALTER TABLE lifecycle_storage_call DROP CONSTRAINT lifecycle_storage_call_check;
 ALTER TABLE lifecycle_storage_call ADD CHECK(
- (operation IN('STAT_EXACT','INSPECT_RETENTION','INSPECT_LEGAL_HOLD','LIST_NAMESPACE_VERSIONS') AND copy_operation_id IS NULL AND reader_pin_id IS NULL)
- OR(operation IN('ARCHIVE_COPY','RESTORE_COPY','VERIFY_COPY_BYTES','RECOVER_COPY_VERSIONS','RECOVER_COPY_EXACT') AND copy_operation_id IS NOT NULL AND reader_pin_id IS NULL)
- OR(operation='READ_PINNED' AND copy_operation_id IS NULL AND reader_pin_id IS NOT NULL)
+ (operation IN('STAT_EXACT','INSPECT_RETENTION','INSPECT_LEGAL_HOLD','LIST_NAMESPACE_VERSIONS') AND copy_operation_id IS NULL AND reader_pin_id IS NULL AND processing_output_intent_id IS NULL)
+ OR(operation IN('ARCHIVE_COPY','RESTORE_COPY','VERIFY_COPY_BYTES','RECOVER_COPY_VERSIONS','RECOVER_COPY_EXACT') AND copy_operation_id IS NOT NULL AND reader_pin_id IS NULL AND processing_output_intent_id IS NULL)
+ OR(operation='READ_PINNED' AND copy_operation_id IS NULL AND reader_pin_id IS NOT NULL AND processing_output_intent_id IS NULL)
+ OR(operation='PROCESSING_PUT' AND copy_operation_id IS NULL AND reader_pin_id IS NULL AND processing_output_intent_id IS NOT NULL)
 );
+CREATE UNIQUE INDEX lifecycle_processing_output_single_call ON lifecycle_storage_call(processing_output_intent_id) WHERE processing_output_intent_id IS NOT NULL;
+CREATE TABLE lifecycle_processing_output_ready (
+ intent_id uuid PRIMARY KEY REFERENCES lifecycle_processing_output_intent(id),workspace_id uuid NOT NULL,copy_id uuid NOT NULL UNIQUE,call_id uuid NOT NULL UNIQUE REFERENCES lifecycle_storage_call(id),observed_at timestamptz NOT NULL,
+ FOREIGN KEY(workspace_id,copy_id) REFERENCES lifecycle_fixture_copy(workspace_id,id));
+CREATE FUNCTION lifecycle_processing_ready_guard() RETURNS trigger AS $$
+DECLARE i lifecycle_processing_output_intent;c lifecycle_fixture_copy;
+BEGIN
+ SELECT * INTO STRICT i FROM lifecycle_processing_output_intent WHERE id=NEW.intent_id FOR UPDATE;
+ SELECT * INTO STRICT c FROM lifecycle_fixture_copy WHERE id=NEW.copy_id;
+ IF i.workspace_id<>NEW.workspace_id OR c.workspace_id<>i.workspace_id OR c.dataset_version_id<>i.dataset_version_id OR c.namespace_id<>i.namespace_id OR c.object_key<>i.object_key OR c.content_sha256<>i.content_sha256 OR c.byte_size<>i.byte_size OR NOT EXISTS(SELECT 1 FROM lifecycle_storage_call s JOIN lifecycle_storage_observation x ON x.call_id=s.id WHERE s.id=NEW.call_id AND s.processing_output_intent_id=i.id AND s.operation='PROCESSING_PUT' AND x.http_status=200 AND x.failure='' AND x.invoked_at IS NOT NULL AND x.copy_result_version=c.provider_version AND x.observed_at<=NEW.observed_at) THEN RAISE EXCEPTION 'unbacked processing output ready'; END IF;
+ RETURN NEW;
+END $$ LANGUAGE plpgsql;
+CREATE TRIGGER lifecycle_processing_ready_scope BEFORE INSERT ON lifecycle_processing_output_ready FOR EACH ROW EXECUTE FUNCTION lifecycle_processing_ready_guard();
+CREATE TRIGGER lifecycle_processing_ready_immutable BEFORE UPDATE OR DELETE ON lifecycle_processing_output_ready FOR EACH ROW EXECUTE FUNCTION lifecycle_fixture_identity_immutable();
+CREATE TRIGGER lifecycle_processing_ready_no_truncate BEFORE TRUNCATE ON lifecycle_processing_output_ready FOR EACH STATEMENT EXECUTE FUNCTION lifecycle_fixture_identity_immutable();
 CREATE FUNCTION lifecycle_pinned_read_guard() RETURNS trigger AS $$
 DECLARE pin lifecycle_reader_pin;
 BEGIN

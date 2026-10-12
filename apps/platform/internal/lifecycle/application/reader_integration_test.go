@@ -78,7 +78,7 @@ func newReaderFixture(t *testing.T) (*pgxpool.Pool, uuid.UUID, domain.Copy, *Occ
 		t.Fatal(e)
 	}
 	o.termination = nil // compose a distinct real owner, do not reuse SQL verifier
-	p := &readerTestPort{journal: PinnedReaderCallJournal{o, NewPostgresStorageCallJournal(o)}}
+	p := &readerTestPort{journal: PinnedReaderCallJournal{Service:o, Observations:NewPostgresStorageCallJournal(o)}}
 	s := NewFixtureReaderService(o, p)
 	if s == nil {
 		t.Fatal("reader owner unavailable")
