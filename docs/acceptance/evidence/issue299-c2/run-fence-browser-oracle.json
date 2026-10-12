@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "codeHead": "e96ad19a1dad7ac6f10962a209beca9bfa7ab26f",
+  "relations": 192,
+  "allCoreRowsBeforeAfterEqual": true,
+  "coreFingerprintSHA256": "7722043e5478ad93a59632739ecb6919c0696e8e8454984cc2f02d21e85d04e4",
+  "publishedHistory": {
+    "published": 2,
+    "ids": [
+      "2ee44279-bad5-4e66-8703-ef080eb1f801",
+      "70e3d32d-e80c-463a-ba06-d2677a0704d4"
+    ]
+  },
+  "newNativeWorkOrCost": 0,
+  "originalNewBaselineCoreExactlyMatchesBackup": true,
+  "sourceRelations": 3,
+  "originalSourceExactlyMatchesBackup": true,
+  "sourceFingerprintSHA256": "893a19132be10d934463bdcb6ca8622142dfd4fb68de1e9cc8758306bd151673",
+  "scope": "actual fixed API/web history, denied scan and OBSERVED1.1; no worker, native scan, source regrant, retained schema upgrade or provider lifecycle actions",
+  "oldLostCore": "FAIL/NOT_RESTORED",
+  "metadataFaultRecoveryThisPhase": "NOT_RUN; HTTP503/recovery is bound to prior b3ae73a0 read phase, governance/UI code unchanged by RUN fence fix"
+}

@@ -40,7 +40,7 @@ is coordinated. Existing environments and volumes are retained.
 2026-10-11/12，基于 main `1892cd76c4ee578896ddfb3c6f4a7252bfacc51b` 的隔离环境，技术验收 PASS。
 人工解释按用户要求 **NOT_RUN / 暂缓**。提交 Draft；不关闭 #299、不自动合并。
 
-**当前候选检查（2026-10-12）：已实际 rebase main `c1a3463e`。**
+**实际 rebase 阶段检查（2026-10-12）：已实际 rebase main `c1a3463e`。**
 源码直接取自 Git `a793f237`，真实 PostgreSQL 全模块 `-race`、vet、fresh66、
 main64→66、空 66/65 down/up、含事实 down 拒绝和共享注册均 PASS。
 Edge 使用该 API/生产 Next，核对三 RAW/manifest、原加工/质量/认证历史、撤权扫描
@@ -56,6 +56,9 @@ Edge 使用该 API/生产 Next，核对三 RAW/manifest、原加工/质量/认�
 原回执保留；当前证据来自实际 rebased Git，D1 lifecycle/60–64 与 main 精确一致。
 这不改变独立核对的 #314 精确 candidate/tree、PR CI/评审及对应 main CI，也不把
 旧阶段 native/browser 结果重标为当前代码。[更正说明](evidence/issue299-c2/source-binding-correction.md)。
+
+最新复评发现 RUN 启动交接仍有授权竞态；该阶段 CI PASS 不抵消 blocker。
+修复后的当前代码和验收见本文末尾“RUN 与撤权的串行交接”。
 
 ## 实际证据
 
@@ -389,3 +392,51 @@ hash。详见 [成本恢复证据](evidence/issue299-c2/review-cost-recovery.jso
 
 当前 HEAD CI/评审单独核对。保持 Draft，不合并；实际 D1-first 合入/rebase 仍后置，
 原 Core NOT_RESTORED、人工解释暂缓和生产/商业 admission NOT_RUN 不变。
+
+## RUN 与撤权的串行交接（2026-10-12）
+
+实际 rebase HEAD `b3ae73a0` 收到十三条中的新 P1 blocker：fresh source gate 的
+事务先提交，Adapter 随后才写 RUN，撤权或 binding demotion 可在间隙提交。
+最终 DENIED observation 无法撤回已经发生的来源读取，因此该意见有效。
+
+修复 `e96ad19a` 在既有 SourceSchemaObserver Port 中传入有界 RUN handoff。
+Application 在同一 fresh authority transaction 持有 workspace delivery fence、
+resource 和精确 binding 的 parent-first 锁，检查通过后在锁内完成 RUN 写入及
+stdin close；Adapter 在该事务外等待完整 native workflow/result。继续复用现有
+attempt/runtime、per-invocation cost 和恢复；没有新 migration、queue 或 Connector。
+
+真实 PostgreSQL RED 用新 callback 形状重现原 commit→RUN 间隙，两种 RUN-first
+mutation 均未观察到锁等待；GREEN 四个顺序场景通过 `pg_blocking_pids` 证实：
+RUN-first 的撤权/原生 binding demotion 等待交接；mutation-first 的 RUN 为零。
+已实际启动的 invocation 保留一份 typed cost，后续 final DENIED 不抹账；
+该 request 的终态 Process 重放不增工作/成本。此处的 entitlement/Observer 是受控 Port，
+不是完整 provenance 或 OpenMetadata 原生发现验收。真实子进程协议另证明 RUN
+在 gate callback 返回前收到，原 cost/marker/authority 拒绝与 frozen runtime 回归通过。
+
+完整模块首次错误复用已跑过全模块测试的独立库，固定 campaign 外部 identity 和
+certification UUID 冲突；失败日志保留，停止的仅是该次 test process tree。
+另建全空独立库、实际安装 current66 后重新执行完整真实 PG `-race`；metadata
+专项、vet 和实际 Git archive 的 API/Worker build 一并核对。没有用清空原库绕过失败。
+
+空库完整运行又触及 Go package 的默认 10m 总时限；超时处的 migration-boundary
+测试才运行 2s，前面没有断言失败。该 lifecycle 包逐用例建库/执行全迁移，本地上轮
+已用 410s。仅本地 harness 在另一新空库改用 `-timeout 15m` 完整重跑，原 10m
+FAIL/timeout 日志保留；没有更改产品扫描/containment/task 超时、锁或业务门禁。
+
+15m 整包运行也耗尽总时限，当时 Direct Issued 用例只运行 4s；没有断言失败，
+仅 lifecycle package 未结束。最终不再扩预算，而按 `go test -list` 的真实清单将
+该包全部 55 个顶层测试分为 14/14/14/13 四组，各用一个独立空 current66 库、
+默认 10m 时限实际 `-race -count=1` 执行：四组全 PASS（约 91/136/143/101s）。
+其余全部包在完整运行中已 PASS，故全模块**测试覆盖汇总 PASS**；两次 monolithic
+命令仍是 FAIL/timeout，不重标 PASS。分组无遗漏/重复，源码保持 `e96ad19a`。
+
+最终新 API 的真实 Edge 从来源→原批次→产物 Eligibility 复验：metadata OBSERVED1.1、
+原三 RAW/manifest/加工历史保留，点击新 scan 为 SCHEMA_AUTHORITY_DENIED，
+CurrentCertification ALLOWED / CurrentEntitlement BLOCKED / 下载禁用。
+192 表及两份 PUBLISHED release、原新基线 Core/source 全部精确匹配备份，零新扫描/成本。
+本阶段未重新做 HTTP503 或 native happy path，前一 rebase 阶段的断连/恢复证据仍绑定
+其原代码；相应治理/页面代码未因本次修复变化。只停止候选 API/Next/proxy，未启动 Worker。
+[RUN fence 验收与分阶段 hash](evidence/issue299-c2/review-run-fence.json)。
+
+最终 docs/evidence HEAD 的 CI/评审单独核对，原评审线程逐条解决。保持 Draft，不 Ready/
+merge/关闭 Issue；原丢失 Core NOT_RESTORED、人工解释暂缓与生产/商业 admission NOT_RUN 不变。

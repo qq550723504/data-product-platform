@@ -1,0 +1,87 @@
+{
+  "status": "PASS",
+  "reviewHead": "b3ae73a0a2f9d67033b5ffc9169aa3a12941b747",
+  "fixedCodeHead": "e96ad19a1dad7ac6f10962a209beca9bfa7ab26f",
+  "base": "c1a3463ee110e3cb7dadb0004b0942c001f19ffe",
+  "rootCause": "fresh authority transaction committed before Adapter RUN, allowing revocation/binding demotion to commit before source start",
+  "fix": "SourceSchemaRunGate receives bounded RUN handoff; Application fresh authorize and exact binding lock remain held through handoff; native discovery/result wait stay outside the transaction",
+  "reuse": "existing delivery_authorization_fence, resource/binding parent-first tuple locks, Observer Port/Adapter, immutable native attempt/runtime and typed invocation cost; no new migration/infrastructure",
+  "red": "real PG regression recreates original commit-before-handoff gap with new callback shape; both RUN-first authority/binding races fail pg_blocking_pids contention assertion",
+  "green": "all4order cases PASS; RUN-first mutations block until bounded handoff completes; mutation-first denies RUN/zero source I/O; later final fact DENIED, one startup cost, same-key replay zero new work/cost",
+  "testScope": "real PostgreSQL locks/authority status/binding mutations with controlled entitlement/Observer Ports; no claim of full provenance or native OpenMetadata acceptance",
+  "nativeAdapterContract": "real child process writes source-start receipt before gate callback returns; successful frozen protocol plus cost/authority/marker rejection tests PASS",
+  "checks": {
+    "allMetadataRealPostgresRace": "PASS",
+    "fullModuleRealPostgresRace": "PASS_ALL_TESTS_AGGREGATED; all other packages passed complete15m run; all55lifecycle tests passed four independent bounded groups. The monolithic commands retain FAIL/timeout, not PASS.",
+    "vet": "PASS",
+    "APIWorkerBuild": "PASS; actual Git archive",
+    "migration": "unchanged65/66 and main60-64; prior actual-rebase migration proof retains its original binding"
+  },
+  "logSHA256": {
+    "red": "aeb15e7735dc24a1dd4726e2fa8620fa1d9a82bf41873305f4eba7ad670acc91",
+    "green": "4885dd95d2cf7876f17d859bb49ce12f2a996e5dd7819e6473b56f2a6fca2ec8",
+    "full": "a5be1785f6ab31c859f593cd7093ec96ff8974cecb7d27b94f55bd8a80afd9a2",
+    "fullfresh": "540f08bca38c53de63988341efc3dee665a59952a5902caa5dc780d42acfafbe",
+    "fullbudget": "29875d87c94918c451ee457929f63fb10f903705a29bf8ef81da491ad4860d4d",
+    "vet": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sourceManifestSHA256": "4aa4b085a6cee9e9edac868ad7857bb77a2b6215657a04a76c081937cb443ec9",
+  "binarySHA256": {
+    "api": "b703682f3d4cf61f5a3b00c631c5fc8f3a9fca1df0805d70611fcf6b23d63973",
+    "worker": "2de3d7b49dae2afe1b20962eca08ac9611295ad3e879202d5d1ae6e443c877e3"
+  },
+  "browser": {
+    "engine": "real Edge",
+    "fixedAPI": "source OBSERVED1.1 -> click scan SCHEMA_AUTHORITY_DENIED -> same batch manifest6/10/14 -> existing curated version -> ALLOWED/ALLOWED/BLOCKED and disabled download",
+    "all192CoreRelationsEqual": true,
+    "twoPublishedReleasesProtected": true,
+    "originalNewBaselineCoreSourceMatchBackup": true,
+    "noNativeWorkOrCost": true,
+    "proxyOrMetadataHTTP503RecoveryThisCode": "NOT_RUN; prior b3ae73a0 phase remains bound, governance/UI code unchanged",
+    "workerStarted": false,
+    "ownedCandidateProcessesStopped": true
+  },
+  "priorRebaseProof": "actual-rebase-main64.json is point-in-time a793f237/b3ae73a0 proof; after b3ae review this RUN gap became a blocker and is fixed here, not hidden by prior11/11CI",
+  "secretAndRetention": "no new secret in Git/evidence; only owned candidate API/Next/proxy stopped, all retained services/volumes/backups preserved",
+  "oldOriginalCore": "FAIL/NOT_RESTORED",
+  "humanExplanation": "NOT_RUN/deferred",
+  "publication": "Draft; fixed final-HEAD CI/review checked separately after evidence commit, no Ready/merge/Issue close",
+  "evidenceSHA256": {
+    "run-fence-browser-source-blocked.jpg": "35f46c2ea72f246defe27dbe8ba0ed8df93efa04308a9c1a6baa3b2ff342c179",
+    "run-fence-browser-current-gates.jpg": "80554e841c7d945994b2f0ce4c33e854bc08fce5940d59a5f3e41cae69aea51d",
+    "run-fence-browser-oracle.json": "9db067bee567290f292c8a89b117a7dd252042bda4ee0a445cd5e31d2771f07a"
+  },
+  "initialFullModuleAttempt": {
+    "status": "FAIL/ABORTED",
+    "database": "reused independent fresh66 after earlier full run",
+    "cause": "fixed external campaign binding / certification UUID collisions; retained failure log unchanged",
+    "resolution": "new empty database dpp_c2_run_fence_20261012_fullfresh, actual current66 installed, complete real-PG race rerun",
+    "retainedTrialAffected": false
+  },
+  "fresh10MinuteFullModuleAttempt": {
+    "status": "FAIL/TEST_PROCESS_TOTAL_TIMEOUT",
+    "timeout": "10m default Go package limit",
+    "lastTestAtTimeout": "TestPlanFinalizeRejectsForgedHashEmptyAndDownDropsNoHistory; elapsed2s",
+    "priorAssertionFailures": 0,
+    "resolution": "new empty DB dpp_c2_run_fence_20261012_fullbudget; go test -race -p4 -count=1 -timeout15m ./...",
+    "productTimeoutOrGateChanges": false
+  },
+  "fresh15MinuteFullModuleAttempt": {
+    "status": "FAIL/TEST_PROCESS_TOTAL_TIMEOUT",
+    "timeout": "15m local Go package limit",
+    "lastTestAtTimeout": "TestDirectIssuedAndTransferPinCommitTogetherBeforeAnyBytes; elapsed4s",
+    "priorAssertionFailures": 0,
+    "resolution": "four exact disjoint lifecycle groups, all55test names covered once, fresh current66 DB for each group; product timeouts/gates unchanged"
+  },
+  "aggregateModuleCoverage": {
+    "status": "PASS",
+    "source": "e96ad19a1dad7ac6f10962a209beca9bfa7ab26f",
+    "nonLifecyclePackages": "all passed complete fullbudget run",
+    "lifecycleTestCount": 55,
+    "lifecycleBatches": 4,
+    "batchTimeout": "10m each",
+    "result": "run-fence-lifecycle-partitions.json",
+    "resultSHA256": "cd2cb9a55ae5e675496bd2195aaae6179ab97ade44dfb1d6312f8b7e71dc8adb",
+    "monolithic10mAnd15mStatuses": "FAIL; original logs preserved, no relabel"
+  }
+}
