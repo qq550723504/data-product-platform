@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "negativeCommand": "direct API; browser download control was disabled by fresh BLOCKED preflight, same page key used to verify server gate separately",
+  "http": 403,
+  "payloadBytes": 0,
+  "blockedOperation": "6c201b5b-4c8c-41a7-9950-b6fdfcd952ea",
+  "priorIssuedCount": 1,
+  "priorIssuedRowsUnchanged": true,
+  "downloadBytes": 640,
+  "downloadSha256": "8f84ab17d98edc4f06e51467683b5fda3b8341f0c3f3dc3fafbd700d5068abf0"
+}

@@ -126,9 +126,17 @@ python examples/enterprise-activity/postgres-ingestion/b3_verify.py --runtime .d
 ```
 
 `b3_recompose.py` starts new API/web processes against retained providers and
-owns only those new processes. Stop its processes before writing the original
-runtime's `STOP` file, which cleans only its isolated providers. Never remove
-other projects' containers/volumes or use project-wide `down -v`.
+owns only those new processes. Current `b3_runtime.py` retains its containers,
+named volumes, networks, private configuration and staging when `STOP` is set;
+it only stops services. `b3_resume.py --runtime <original runtime.json> --output
+<fresh resume directory>` checks actual mounts, starts the same containers and
+reuses configuration without bootstrap. `--services-only` starts native services
+without API/web/worker for quiescent backup. STOP in a resume directory stops only
+that composition and its registered retained containers. No automatic removal
+or `trial.cleanup()` deletion applies to retained trials. The old historical
+tmpfs trial cannot be restored by this command; never restart/reseed it. D1's
+shared durable-storage helper must be available (or explicitly passed to startup)
+before creating a new retained runtime. Never remove another trial's resources.
 
 Validation passed: `go test ./...`, `go vet ./...`, complete Next build (204 web
 command tests + lint/typecheck/bundle), separate restored-config typecheck/lint,

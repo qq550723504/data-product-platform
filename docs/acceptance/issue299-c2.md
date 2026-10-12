@@ -1,5 +1,14 @@
 # #299/C2：固定用电表的原生 schema 观察验收
 
+**2026-10-12 原试用事故：FAIL / NOT_RESTORED。** 原合成 Core
+`dpp-pgi-b3-core-bc776a791192` 使用 256MiB tmpfs。本轮错误地在同一实例建立
+review/组合测试数据库，耗尽空间（SQLSTATE 53100），PostgreSQL 恢复 checkpoint
+失败并退出，原数据库事实丢失。用户确认没有完整备份；部分 JSON/hash 无法恢复全库。
+原 Core 不重启、不重建、不重新播种；原历史在线访问不可用。本文先前的浏览器和历史
+保护 PASS 仅证明事故前对应时点，不代表目前历史仍在线保留，也不能用新库 PASS 抹去
+此次 FAIL。[事故证据](evidence/issue299-c2/review-core-incident.json) 保留退出时间与日志 hash。
+旧容器、其他数据卷、对象和备份不删除。后续独立验证库或新合成试用均不是旧历史恢复。
+
 Goal: one PostgreSQL energy-table schema baseline, real native discovery,
 drift explanation, disconnect and recovery in the existing source detail.
 Authoritative scope: #299 and the approved C2 instruction. C1 facts remain owned
@@ -192,3 +201,66 @@ DENIED / SOURCE_BINDING_CHANGED，而非 CURRENT_AUTHORITY_DENIED。真实 Postg
 PostgreSQL -race、web typecheck/production build、上述真实 Edge 检查均 PASS。
 
 ![来源与 metadata 失联但 Core 历史仍可见](evidence/issue299-c2/review-ui-source-unavailable.jpg)
+
+## 最终组合与独立持久化新基线（2026-10-12）
+
+八条有效评审意见已修复并回复、解决原线程。完整源码组合绑定 D1 `b853466f` 与
+C2 Go/UI `00bd4d4e`，在独立 named-volume PostgreSQL 上执行全模块 `-race`、vet、
+Worker/Outbox/routing 注册，均 PASS。两处共享注册冲突只在 scratch archive 解决，
+保留 lifecycle recovery 与 source schema，providers=5 / no-provider=3；版本为
+`c1-v27+ext1+exec1+usage1+rem1+life2+schema1`。D1 后续 `f1b4b962` 仅提升共享挂载
+helper/test，`fcef3dd2` 仅文档/证据，生产 Go/60–64 SQL 与前一测试快照不变。
+main 已安装 59 → D1 60–64 → C2 65 真升级 PASS（56 条既有 migration membership
+精确 hash 不变；版本号存在空缺，不能把 max(version) 当 count）。成本 guard 保留
+main external provider/usage、D1 两个 subject 和 C2 subject；空 65 down/up PASS，
+有事实 65 down 拒绝且七表 count/hash 不变。精确 Git blobs、60–65 SHA、共享源码和日志
+hash 见 [最终组合证据](evidence/issue299-c2/review-final-d1-combination.json)。
+实际 D1 → C2 合入/rebase/注册整合与当前候选 CI/评审仍需分别核对；scratch PASS 不能
+代替 Ready 或 main CI。本轮继续 Draft，不合并。
+
+用户另行批准的新合成基线 run_id=`4a6f20ee-0b8e-4820-835a-3d5b622b2410`，使用
+独立 10.233.26/27/28.0/24 网络和 loopback 入口。Core、source PG、MinIO、Redis
+均使用已登记的独立 writable named volume；Hop files/tmp/staging 与配置也保留。
+复用 D1 `Assert-RetainedServiceStorage`，真实 create→inspect→preflight→start→running
+复核，拒绝 tmpfs、nested/WAL、错 owner/角色/卷；4 正例、19 负例及实际四角色 PASS。
+Redis AOF=yes / appendfsync=always。STOP/supervisor 退出仅停止自己的进程和容器，
+不 rm、删卷、删网络或清配置；`b3_resume.py` 复用原容器/端口，不 bootstrap。
+PostgreSQL readiness 使用最终 TCP server，避免误认初始化阶段的 Unix socket。
+原先扫描命令的前五个临时容器沿用 `--rm` 已自动移除；此后 native scanner 也改为
+保留，containment 仅停止进程，两份后续失败/成功容器与日志已保留。该有限差异如实
+记录，不声称全部扫描容器均保留；没有删除新旧 retained service、数据卷或原生对象。
+
+真实 Edge 在 production Next bundle 上走完新批次三份 RAW、实体审核、既有加工、
+质量/Compliance、独立认证和实际下载。5 行/640 B 的 SHA256 与冻结版本一致，
+`-999` 原值留在 RAW/隔离历史；原始负数规则 FAIL 后认证 REJECTED，新 CURATED
+QA/Compliance PASS 后 CERTIFIED。metadata 断连时 UNKNOWN + 历史 MATCH 可见；
+同请求保留五次 UNAVAILABLE 后 MATCH，共七次真实扫描/七份 typed 成本，失败发布
+投影第六次尝试 PUBLISHED。先前 release 的 17 表精确 membership/hash 跨断连/恢复
+不变；第二个 release 与全部新增事实另由全库备份、恢复及 stop/start 保护验证覆盖。
+八个并发成功 key 重放零新事实/成本，撤权后新/旧 scan key 403；浏览器下载禁用，
+同页面 key 的独立 API negative command 再验证 server gate BLOCKED、零 dataset bytes，
+旧 ISSUED 与 CERTIFIED 不变。此处没有把 API negative command 写成浏览器实际下载。
+见 [新基线浏览器证据](evidence/issue299-c2/new-baseline-browser.json)。
+
+复用 `Documents/Codex/2026-10-11/task-2` 的现有 backup/restore tools，仅适配新 group、
+输入路径及凭据引用；使用标准 pg_dump custom/globals、原生对象 physical archive /
+all-version read、Redis RDB/AOF 和文件 archive，未造第二套备份框架。Core 191 表
+787 行、source 3 表 30 行逐表 count/hash 全恢复；8 个原生版本的 version ID、size、
+payload SHA256 完全一致。两份独立 PG 副本使用备份内凭据，通过原 role/owner/ACL
+和真实 pgx fresh connections；原 Core/publisher 对象凭据在有效期内通过恢复副本的
+允许/拒绝范围检查，有限 STS 到期保留，不能把历史认证测试称为凭据永久有效。
+OpenMetadata 三库也用原 PG15 镜像全恢复，201 表/3291 行、DB/function/extension
+owner/ACL 与真实 SCRAM（错误密码拒绝）PASS。初始 PG16 restore 的行内容 PASS
+不足以证明完整 owner/auth，初始化 race 失败也保留；最终证据只取原镜像完整复核。
+凭据、dump、完整配置、staging、精确源码/二进制和 native logs 在 ACL 保护的本地
+备份内，不提交 Git 或输出 secret。详见 [完整备份恢复](evidence/issue299-c2/new-baseline-backup-restore.json)。
+
+关闭本轮应用后，服务单独启动作 quiescent backup；再停止/启动新六个容器，Core
+191 表和 source 三表仍精确匹配全库备份，8 个对象版本不变，Redis 四个 persistent
+key 的 DUMP hash 一致（RDB 另含正常会到期的 heartbeat key）。容器、六卷、配置、
+网络及恢复副本均保留，见 [保留式重启](evidence/issue299-c2/new-baseline-retention.json)。
+新的 loopback 页面是新合成基线；当前来源授权已 REVOKED，交付阻断是预期门禁。
+原事故历史继续 FAIL / NOT_RESTORED / 不可用；人工解释 NOT_RUN，生产与商业 license
+admission NOT_RUN。新库通过不能收回原事故 FAIL，也不能直接关闭 #298/#299。
+
+![新基线断连时保留 Core 扫描历史](evidence/issue299-c2/new-baseline-metadata-outage.jpg)

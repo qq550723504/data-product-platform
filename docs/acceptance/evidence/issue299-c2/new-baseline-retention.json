@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "run_id": "4a6f20ee-0b8e-4820-835a-3d5b622b2410",
+  "containers": [
+    "dpp-pgi-b3-storage-4a6f20ee0b8e",
+    "dpp-pgi-b3-gateway-4a6f20ee0b8e",
+    "dpp-pgi-b3-core-4a6f20ee0b8e",
+    "dpp-pgi-b3-redis-4a6f20ee0b8e",
+    "dpp-pgi-4a6f20ee0b8e-source",
+    "dpp-pgi-4a6f20ee0b8e-hop"
+  ],
+  "volumes": [
+    "dpp-pgi-b3-storage-4a6f20ee0b8e-data",
+    "dpp-pgi-b3-core-4a6f20ee0b8e-data",
+    "dpp-pgi-b3-redis-4a6f20ee0b8e-data",
+    "dpp-pgi-4a6f20ee0b8e-source-data",
+    "dpp-pgi-4a6f20ee0b8e-hop-files",
+    "dpp-pgi-4a6f20ee0b8e-hop-tmp"
+  ],
+  "stoppedRetained": {
+    "dpp-pgi-b3-storage-4a6f20ee0b8e": "exited",
+    "dpp-pgi-b3-gateway-4a6f20ee0b8e": "exited",
+    "dpp-pgi-b3-core-4a6f20ee0b8e": "exited",
+    "dpp-pgi-b3-redis-4a6f20ee0b8e": "exited",
+    "dpp-pgi-4a6f20ee0b8e-source": "exited",
+    "dpp-pgi-4a6f20ee0b8e-hop": "exited"
+  },
+  "allBusinessTables": {
+    "dpp_ingestion_core": {
+      "relations": 191,
+      "sha256": "0afed3501dc6ff8e7006274e5a2fedcc275502ceaf8bf0f06b278579503a470d"
+    },
+    "dpp_ingestion_source": {
+      "relations": 3,
+      "sha256": "893a19132be10d934463bdcb6ca8622142dfd4fb68de1e9cc8758306bd151673"
+    }
+  },
+  "matchesFullBackup": true,
+  "exactNativeObjectVersions": 8,
+  "objectsVersionSizeHashMatch": true,
+  "redisPersistentKeys": 4,
+  "redisAOF": "yes / always",
+  "redisPersistentDumpHashesMatch": true,
+  "scope": "only new synthetic baseline; original lost Core NOT_RESTORED, no deletion/reseed"
+}

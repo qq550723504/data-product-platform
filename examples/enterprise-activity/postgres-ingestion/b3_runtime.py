@@ -9,17 +9,20 @@ from pathlib import Path
 from urllib.parse import urlparse
 from b2_smoke import port, prepare_binary, CADDY, Trial, PG_IMAGE, SLOTS, command, require, HERE, REPO
 from b3_web_gateway import start as start_web_gateway
+from retained_runtime import DurableStorage, private_directory
 
-def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_file=None,remediation_plan_ref=None):
+def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_file=None,remediation_plan_ref=None,durable_helper=None,migrations=None):
     require(re.fullmatch(r"pgi-b3(?:-[a-z0-9-]+)?",binary_prefix),"invalid local binary prefix")
     if metadata_url:
         endpoint=urlparse(metadata_url)
         require(endpoint.scheme=="http" and endpoint.hostname=="127.0.0.1" and not endpoint.username and not endpoint.password and not endpoint.query and not endpoint.fragment,"isolated loopback metadata endpoint required")
     require(not metadata_token_file or metadata_url,"metadata token requires explicit metadata endpoint")
     output.mkdir(parents=True,exist_ok=False)
-    trial=Trial(output);trial.source_port=port()
-    private=Path(tempfile.mkdtemp(prefix="dpp-pgi-b3-"))
-    names=[];networks=[];processes=[];report={};web_gateway=None
+    private=private_directory("dpp-pgi-b3-")
+    durable=DurableStorage(output,private,durable_helper or REPO/"examples/lifecycle-d1/durable-storage.ps1")
+    trial=Trial(output,retain=True,durable_start=durable.start);trial.source_port=port()
+    (output/"ownership.json").write_text(json.dumps({"run_id":trial.run_id,"private":str(private),"source_private":str(trial.private),"identity":trial.identity}),encoding="utf-8")
+    names=[];networks=[];volumes=[];processes=[];report={};web_gateway=None
     try:
         binary=prepare_binary(cache)
         trial.setup()
@@ -36,9 +39,11 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
             (private/name).write_text(value,encoding="utf-8")
         (storage_private/"start.sh").write_text("#!/bin/sh\nset -eu\nexport MINIO_ROOT_USER=$(cat /run/credentials/access)\nexport MINIO_ROOT_PASSWORD=$(cat /run/credentials/secret)\nexec /usr/local/bin/minio server /data --address :9000\n",encoding="utf-8",newline="\n")
         minio="dpp-pgi-b3-storage-"+suffix
-        command(["docker","run","-d","--name",minio,"--network",net,"--network-alias","minio","--mount",f"type=bind,src={storage_private},dst=/run/credentials,readonly","--tmpfs","/data:rw,size=256m","--entrypoint","sh","dpp-pgi-minio:2025-10-15","/run/credentials/start.sh"]);names.append(minio)
+        storage_volume=minio+"-data";command(["docker","volume","create",storage_volume]);volumes.append(storage_volume)
+        command(["docker","create","--name",minio,"--label","dpp.trial.run="+trial.run_id,"--network",net,"--network-alias","minio","--mount",f"type=bind,src={storage_private},dst=/run/credentials,readonly","--mount",f"type=volume,src={storage_volume},dst=/data","--entrypoint","sh","dpp-pgi-minio:2025-10-15","/run/credentials/start.sh"]);names.append(minio)
+        durable.start(minio,"/data",storage_volume,"objects",trial.run_id)
         gateway="dpp-pgi-b3-gateway-"+suffix;sp=port()
-        command(["docker","run","-d","--name",gateway,"--network",net,"-p",f"127.0.0.1:{sp}:9000","--mount",f"type=bind,src={HERE/'storage.Caddyfile'},dst=/etc/caddy/Caddyfile,readonly",CADDY]);names.append(gateway)
+        command(["docker","run","-d","--name",gateway,"--label","dpp.trial.run="+trial.run_id,"--network",net,"-p",f"127.0.0.1:{sp}:9000","--mount",f"type=bind,src={HERE/'storage.Caddyfile'},dst=/etc/caddy/Caddyfile,readonly",CADDY]);names.append(gateway)
         command(["docker","network","connect",trial.network,gateway])
         deadline=time.monotonic()+45
         while time.monotonic()<deadline:
@@ -48,9 +53,11 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
             except Exception:time.sleep(.5)
         else:raise AssertionError("storage unavailable")
         core="dpp-pgi-b3-core-"+suffix;cp=port()
-        command(["docker","run","-d","--name",core,"--network",net,"-p",f"127.0.0.1:{cp}:5432","-e","POSTGRES_DB=dpp_ingestion_core","-e","POSTGRES_PASSWORD_FILE=/run/credentials/core-password","--mount",f"type=bind,src={private/'core-password'},dst=/run/credentials/core-password,readonly","--tmpfs","/var/lib/postgresql/data:rw,size=256m",PG_IMAGE]);names.append(core)
+        core_volume=core+"-data";command(["docker","volume","create",core_volume]);volumes.append(core_volume)
+        command(["docker","create","--name",core,"--label","dpp.trial.run="+trial.run_id,"--network",net,"-p",f"127.0.0.1:{cp}:5432","-e","POSTGRES_DB=dpp_ingestion_core","-e","POSTGRES_PASSWORD_FILE=/run/credentials/core-password","--mount",f"type=bind,src={private/'core-password'},dst=/run/credentials/core-password,readonly","--mount",f"type=volume,src={core_volume},dst=/var/lib/postgresql/data",PG_IMAGE]);names.append(core)
+        durable.start(core,"/var/lib/postgresql/data",core_volume,"core",trial.run_id)
         for _ in range(60):
-            if command(["docker","exec",core,"pg_isready","-U","postgres"],check=False).returncode==0:break
+            if command(["docker","exec",core,"pg_isready","-h","127.0.0.1","-U","postgres"],check=False).returncode==0:break
             time.sleep(.5)
         else:raise AssertionError("Core PostgreSQL unavailable")
         metadata={"rdbms":[json.loads((HERE/"metadata/rdbms/dpp-source.json").read_text())],"pipeline-run-configuration":[json.loads((HERE/"metadata/pipeline-run-configuration/local.json").read_text())]}
@@ -58,7 +65,7 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
         pg_metadata["hostname"]=trial.source_host
         pg_metadata["port"]=str(trial.source_port)
         (private/"metadata.json").write_text(json.dumps(metadata),encoding="utf-8")
-        cfg={"DSN":f"postgres://postgres:{coresecret}@127.0.0.1:{cp}/dpp_ingestion_core?sslmode=disable", "Private":str(private),"Output":str(output),"Migrations":str(REPO/"migrations"),"RootKey":rootkey,"RootSecret":rootsecret,
+        cfg={"DSN":f"postgres://postgres:{coresecret}@127.0.0.1:{cp}/dpp_ingestion_core?sslmode=disable", "Private":str(private),"Output":str(output),"Migrations":str(migrations or REPO/"migrations"),"RootKey":rootkey,"RootSecret":rootsecret,
              "Profile":{"Enabled":True,"TokenFile":str(private/"token"),"Subject":"b3-controlled-operator","ConnectionRef":"dpp-source-reader","InstanceRef":trial.identity,"Database":"dpp_ingestion_source","Reader":"dpp_reader","SourceDSN":f"postgres://dpp_reader@{trial.source_host}:{trial.source_port}/dpp_ingestion_source?sslmode=disable","SourcePasswordFile":str(private/"source-password"),"TemplateFile":str(HERE/"extract.hpl"),"MetadataFile":str(private/"metadata.json"),"Tables":[{"Code":table+"_raw","Schema":"dpp_source","Name":table,"Columns":columns,"Rows":rows} for table,(columns,_,rows) in SLOTS.items()],"HopURL":trial.url,"HopUser":"b1","HopPasswordFile":str(private/"hop-password"),"LocalRoot":str(trial.staging),"EngineRoot":"/staging","Bucket":"raw","StorageEndpoint":f"127.0.0.1:{sp}","CoreCredentialFile":str(private/"core-identity.json"),"PublisherCredentialFile":str(private/"publisher-identity.json")}}
         config=private/"test.json";config.write_text(json.dumps(cfg),encoding="utf-8")
         cfg["Repo"]=str(REPO)
@@ -70,7 +77,11 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
         require(result.returncode==0,"B3 bootstrap failed; inspect private bootstrap log")
         public=json.loads((private/"public.json").read_text())
         ap,wp,rp=port(),port(),port()
-        command(["docker","run","-d","--name","dpp-pgi-b3-redis-"+suffix,"--network",net,"-p",f"127.0.0.1:{rp}:6379","redis:7-alpine","redis-server","--save","","--appendonly","no"]);names.append("dpp-pgi-b3-redis-"+suffix)
+        redis="dpp-pgi-b3-redis-"+suffix;redis_volume=redis+"-data"
+        command(["docker","volume","create",redis_volume]);volumes.append(redis_volume)
+        command(["docker","create","--name",redis,"--label","dpp.trial.run="+trial.run_id,"--network",net,"-p",f"127.0.0.1:{rp}:6379","--mount",f"type=volume,src={redis_volume},dst=/data","redis:7-alpine","redis-server","--dir","/data","--appendonly","yes","--appendfsync","always"]);names.append(redis)
+        durable.start(redis,"/data",redis_volume,"queue",trial.run_id)
+        durable.check(durable.services,trial.run_id)
         api_env=dict(env,APP_ENV="pgi-b3-local",APP_HTTP_ADDR=f"127.0.0.1:{ap}",POSTGRES_DSN=cfg["DSN"],REDIS_ADDR=f"127.0.0.1:{rp}",OBJECT_STORAGE_ENDPOINT=f"127.0.0.1:{sp}",OBJECT_STORAGE_BUCKET="raw",OBJECT_STORAGE_ACCESS_KEY=rootkey,OBJECT_STORAGE_SECRET_KEY=rootsecret,OBJECT_STORAGE_USE_SSL="false",INGESTION_PROFILE=str(private/"profile.json"),INDUSTRY_PACK_ROOT=str(REPO/"industry-packs"),RIGHTS_API_TOKEN=token,RIGHTS_API_ACTOR_ID=public["actorId"],RIGHTS_API_WORKSPACE_IDS=public["workspaceId"],DELIVERY_API_ENABLED="true",DELIVERY_API_TOKEN=token,DELIVERY_API_PRINCIPAL_REF="b3-browser-operator",DELIVERY_API_CONSUMER_REF="LICENSED_BANK",DELIVERY_API_WORKSPACE_IDS=public["workspaceId"],HUMAN_DECISION_API_ENABLED="true",HUMAN_DECISION_API_TOKEN=token,HUMAN_DECISION_API_SUBJECT="b3-browser-reviewer",HUMAN_DECISION_API_ACTOR_ID=public["actorId"],HUMAN_DECISION_API_WORKSPACE_IDS=public["workspaceId"],OPENMETADATA_ENABLED="true",OPENMETADATA_BASE_URL=f"http://127.0.0.1:{port()}/api",OPENMETADATA_DOMAIN="SyntheticPark",HOP_ENABLED="false",SPLINK_ENABLED="false",GX_ENABLED="false",LABEL_STUDIO_ENABLED="false")
         if remediation_plan_ref:
             api_env["QUALITY_REMEDIATION_PLAN_REF"]=remediation_plan_ref
@@ -97,7 +108,7 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
         require(built.returncode==0,"production web build failed; inspect ignored web-build.log")
         spawn(["cmd.exe","/d","/s","/c",f"npm.cmd run start -- --hostname 127.0.0.1 --port {wp}"],REPO/"apps/web",web_env,"web.log")
         public_port=port();web_gateway=start_web_gateway(public_port,wp,"b3-browser-operator",web_env["DELIVERY_WEB_GATEWAY_TOKEN"])
-        state={"private":str(private),"coreContainer":core,"api":f"http://127.0.0.1:{ap}","web":f"http://127.0.0.1:{public_port}","webMode":"production","apiSha256":hashlib.sha256((REPO/f".data/{binary_prefix}-api.exe").read_bytes()).hexdigest(),"workspaceId":public["workspaceId"],"actorId":public["actorId"],"containers":names,"source":trial.pg,"hop":trial.hop}
+        state={"private":str(private),"sourcePrivate":str(trial.private),"run_id":trial.run_id,"coreContainer":core,"api":f"http://127.0.0.1:{ap}","web":f"http://127.0.0.1:{public_port}","nextPort":wp,"hopUpstream":trial.upstream,"hopProxy":trial.url,"binaryPrefix":binary_prefix,"durableHelper":str(durable.helper),"webMode":"production","apiSha256":hashlib.sha256((REPO/f".data/{binary_prefix}-api.exe").read_bytes()).hexdigest(),"workspaceId":public["workspaceId"],"actorId":public["actorId"],"containers":names+[trial.pg,trial.hop],"volumes":volumes+trial.volumes,"networks":networks+[trial.network],"source":trial.pg,"hop":trial.hop}
         (output/"runtime.json").write_text(json.dumps(state,indent=2),encoding="utf-8")
         print(json.dumps({"web":state["web"],"api":state["api"],"runtime":str(output/"runtime.json")}),flush=True)
         while not (output/"STOP").exists():
@@ -109,9 +120,10 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
             if p.poll() is None:
                 if os.name=="nt":subprocess.run(["taskkill","/PID",str(p.pid),"/T","/F"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
                 else:p.terminate()
-        for name in reversed(names):command(["docker","rm","-f",name],check=False)
+        for name in reversed(names):command(["docker","stop","--time","20",name],check=False)
         trial.cleanup()
-        for net in networks:command(["docker","network","rm",net],check=False)
+        # Containers, networks, volumes, private config and staging all survive.
+        # This is retention, not backup; never put review/scratch DBs in this Core.
         # Preserve private files until explicit local trial cleanup; they are never committed.
 
 if __name__=="__main__":
@@ -119,4 +131,6 @@ if __name__=="__main__":
     parser=argparse.ArgumentParser();parser.add_argument("--output",type=Path,required=True);parser.add_argument("--cache",type=Path,default=REPO/".data/pgi-b2-storage-cache");parser.add_argument("--binary-prefix",default="pgi-b3")
     parser.add_argument("--metadata-url");parser.add_argument("--metadata-token-file",type=Path)
     parser.add_argument("--remediation-plan-ref")
-    args=parser.parse_args();run(args.output.resolve(),args.cache.resolve(),args.binary_prefix,args.metadata_url,args.metadata_token_file,args.remediation_plan_ref)
+    parser.add_argument("--durable-helper",type=Path)
+    parser.add_argument("--migrations",type=Path)
+    args=parser.parse_args();run(args.output.resolve(),args.cache.resolve(),args.binary_prefix,args.metadata_url,args.metadata_token_file,args.remediation_plan_ref,args.durable_helper,args.migrations)

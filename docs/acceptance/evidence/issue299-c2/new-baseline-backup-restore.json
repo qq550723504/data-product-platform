@@ -1,0 +1,163 @@
+{
+  "status": "PASS",
+  "scope": "new baseline only, not restoration of original lost Core",
+  "backupRoot": "C:\\Users\\Henry\\.codex\\worktrees\\issue299-c2\\data-product-platform\\.data\\c2-new-persistent\\backup-tools\\dpp-retention-backups\\20261012T030839Z",
+  "sourceToolset": "C:/Users/Henry/Documents/Codex/2026-10-11/task-2",
+  "postgres": [
+    {
+      "database": "dpp_ingestion_core",
+      "source": "dpp-pgi-b3-core-4a6f20ee0b8e",
+      "relations": 191,
+      "rows": 787.0,
+      "fingerprintMatch": true
+    },
+    {
+      "database": "postgres",
+      "source": "dpp-pgi-b3-core-4a6f20ee0b8e",
+      "relations": 0,
+      "rows": 0.0,
+      "fingerprintMatch": true
+    },
+    {
+      "database": "dpp_ingestion_source",
+      "source": "dpp-pgi-4a6f20ee0b8e-source",
+      "relations": 3,
+      "rows": 30.0,
+      "fingerprintMatch": true
+    },
+    {
+      "database": "postgres",
+      "source": "dpp-pgi-4a6f20ee0b8e-source",
+      "relations": 0,
+      "rows": 0.0,
+      "fingerprintMatch": true
+    }
+  ],
+  "objects": {
+    "exactVersions": 8,
+    "allVersionIDSizeSHA256Match": true,
+    "copiedCredentialsScopeProof": {
+      "coreAndPublisherOriginalCredentials": true,
+      "coreForeignWorkspaceDenied": true,
+      "exactVersionPayloadHashes": true,
+      "publisherCoreDenied": true,
+      "secretValuesPrinted": false,
+      "source": "copied backup credential files, independent restored native MinIO",
+      "status": "PASS"
+    }
+  },
+  "redis": [
+    {
+      "keys": 5,
+      "restored": true,
+      "formatValid": true
+    }
+  ],
+  "rolesACL": [
+    {
+      "kind": "core",
+      "factsMatch": true,
+      "fullOwnerACLRestore": true,
+      "securityMetadataMatch": true,
+      "credentialSource": "protected backup copies",
+      "freshConnections": 3
+    },
+    {
+      "kind": "source",
+      "factsMatch": true,
+      "fullOwnerACLRestore": true,
+      "securityMetadataMatch": true,
+      "credentialSource": "protected backup copies",
+      "freshConnections": 6
+    }
+  ],
+  "metadata": {
+    "status": "PASS",
+    "imageMatchesOriginal": true,
+    "records": [
+      {
+        "database": "airflow_db",
+        "factsMatch": true,
+        "exactRoleOwnerACLMetadata": true,
+        "extensionsOwnersVersionsMatch": true
+      },
+      {
+        "database": "openmetadata_db",
+        "factsMatch": true,
+        "exactRoleOwnerACLMetadata": true,
+        "extensionsOwnersVersionsMatch": true
+      },
+      {
+        "database": "postgres",
+        "factsMatch": true,
+        "exactRoleOwnerACLMetadata": true,
+        "extensionsOwnersVersionsMatch": true
+      }
+    ],
+    "originalServiceTCPAuthentication": true,
+    "wrongPasswordDenied": true,
+    "credentialsFromBackup": true,
+    "noOriginalResourceMutation": true,
+    "replicaStoppedRetained": true
+  },
+  "privateConfigFiles": 46,
+  "artifacts": [
+    {
+      "kind": "PostgreSQL",
+      "database": "dpp_ingestion_core",
+      "bytes": 1185705,
+      "sha256": "E1C77A4EB39E10038138E1F33674312BC3B0A4078CBA1CE93BC1432BCF91641F"
+    },
+    {
+      "kind": "PostgreSQL",
+      "database": "postgres",
+      "bytes": 1032,
+      "sha256": "A4E986B18629160836CC5C88AFD161B6C556C39B66D2544337ED72015F75F160"
+    },
+    {
+      "kind": "PostgreSQL",
+      "database": "dpp_ingestion_source",
+      "bytes": 5791,
+      "sha256": "87E57E66915FA7CE43E6B44107294E71DD4E0DDB412ADEB89A52C25FF18648DF"
+    },
+    {
+      "kind": "PostgreSQL",
+      "database": "postgres",
+      "bytes": 1032,
+      "sha256": "8D6F5275BB2389BC837BAB6ACFD8A508239F9C339704E62906D043BEBFE77B8D"
+    },
+    {
+      "kind": "MinIO physical data",
+      "database": null,
+      "bytes": 108032,
+      "sha256": "A369D6EC43F7822A83C4374BED3659C9020E5359CE5E028D8A9CA1450F8C8619"
+    },
+    {
+      "kind": "Redis RDB",
+      "database": null,
+      "bytes": 654,
+      "sha256": "D0C7BCCC49E75FF1F57E6C36D16005CDA370BA499DE3EDA7B2B69C535D9641F4"
+    },
+    {
+      "kind": "Hop /tmp",
+      "database": null,
+      "bytes": 37376,
+      "sha256": "8B2BD3C73BDDB7038F87A0949761A7DEE587F242D7193085E16FAF35F092DF59"
+    },
+    {
+      "kind": "Hop /files",
+      "database": null,
+      "bytes": 1536,
+      "sha256": "0FAAC305F7C6E7C9177F867AB14B6D0D421CA8869EA9F2CF17FC26583CD0DE58"
+    },
+    {
+      "kind": "Hop /staging",
+      "database": null,
+      "bytes": 8192,
+      "sha256": "71AF65DA3C18F7BD16251B718F15E16E97040F333EFFBF338CE65B290A43616A"
+    }
+  ],
+  "credentials": "private files retained, values never printed; STS authentication verified while original capability was valid, finite expiry retained",
+  "initialMetadataRestore": "PG16 row fingerprints PASS did not prove full owners/auth; final original-image PG15 restore verifies exact owners/extensions and SCRAM; earlier init-race failure retained separately",
+  "originalContainerDeletion": 0
+}

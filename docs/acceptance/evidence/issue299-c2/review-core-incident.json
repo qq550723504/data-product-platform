@@ -1,0 +1,56 @@
+{
+  "incident": "retained synthetic C2 Core lost after tmpfs exhaustion and PostgreSQL shutdown",
+  "cause": "review/scratch databases were incorrectly created in the retained Core 256MiB tmpfs; full combination run hit SQLSTATE53100; recovery checkpoint failed; container exited1",
+  "container": "dpp-pgi-b3-core-bc776a791192",
+  "database": "dpp_ingestion_core",
+  "tmpfs": "/var/lib/postgresql/data rw,size=256m",
+  "affectedFacts": "all facts in this synthetic demo Core, including source/batch, versions/executions, quality/rights/certifications/deliveries/releases/cost/evidence/audit/outbox; review databases sharing the same tmpfs also lost",
+  "lastKnownHistoricalCheck": "before this incident, real Edge retained 17 historical tables,17 schema requests,37 attempts,24 costs exactly; this does not prove current data retention",
+  "backupSearch": "no complete backup found; user explicitly confirmed none",
+  "restoration": "NOT_RESTORED; no reseeding or reconstruction of original facts; old environment not restarted/rebuilt",
+  "namedVolumes": "old Core used no data volume; no existing named volume/object/container was deleted; existing source/Hop/storage state checked read-only",
+  "services": {
+    "dpp-pgi-b3-core-bc776a791192": {
+      "status": "exited",
+      "running": false,
+      "exitCode": 1,
+      "finishedAt": "2026-10-12T01:38:54.986668321Z"
+    },
+    "dpp-pgi-b3-storage-bc776a791192": {
+      "status": "running",
+      "running": true,
+      "exitCode": 0,
+      "finishedAt": "0001-01-01T00:00:00Z"
+    },
+    "dpp-pgi-b3-gateway-bc776a791192": {
+      "status": "running",
+      "running": true,
+      "exitCode": 0,
+      "finishedAt": "0001-01-01T00:00:00Z"
+    },
+    "dpp-pgi-bc776a791192-source": {
+      "status": "running",
+      "running": true,
+      "exitCode": 0,
+      "finishedAt": "0001-01-01T00:00:00Z"
+    },
+    "dpp-pgi-bc776a791192-hop": {
+      "status": "running",
+      "running": true,
+      "exitCode": 0,
+      "finishedAt": "0001-01-01T00:00:00Z"
+    }
+  },
+  "logSha256": "09597f3becf12696a46bdeb86b9f1d5cd937f3fb651fc6eb519f80446f28a86b",
+  "newValidation": {
+    "container": "dpp-c2-review-final-9d6426fda49f",
+    "network": "dpp-c2-review-final-9d6426fda49f-net",
+    "subnet": "10.233.25.0/24",
+    "volume": "dpp-c2-review-final-9d6426fda49f-pgdata",
+    "image": "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "scope": "new independent validation PG; retained old Core not reused or reconstructed; no cleanup"
+  },
+  "scope": "no production/customer database involved; synthetic isolated C2 trial; D1 environment untouched",
+  "followup": "future B3 Core and object data use Docker named volumes; new validation container is independent. Retention is not backup. Original live acceptance/history accessibility is unavailable, not PASS.",
+  "originalAcceptance": "FAIL / unavailable; original synthetic Core history NOT_RESTORED"
+}

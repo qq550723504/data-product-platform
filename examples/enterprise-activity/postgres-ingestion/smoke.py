@@ -84,8 +84,8 @@ class FaultProxy(http.server.ThreadingHTTPServer):
     """Bounded test transport with a real upstream, recording only safe wire data."""
     daemon_threads = True
 
-    def __init__(self, upstream, authorization):
-        super().__init__(("127.0.0.1", 0), ProxyHandler)
+    def __init__(self, upstream, authorization, port=0):
+        super().__init__(("127.0.0.1", port), ProxyHandler)
         self.upstream = upstream
         self.authorization = authorization
         self.drop = None
@@ -151,15 +151,22 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
 
 
 class Trial:
-    def __init__(self, output):
+    def __init__(self, output, retain=False, durable_start=None):
         self.output = output
-        self.private = Path(tempfile.mkdtemp(prefix="dpp-pgi-private-"))
+        self.retain = retain
+        self.durable_start = durable_start
+        self.volumes = []
+        if retain:
+            from retained_runtime import private_directory
+            self.private = private_directory("dpp-pgi-private-")
+        else:self.private = Path(tempfile.mkdtemp(prefix="dpp-pgi-private-"))
         self.runtime = self.private / "runtime"
         self.runtime.mkdir()
         self.staging = self.output / "staging"
         self.staging.mkdir()
         self.staging.chmod(0o777)
-        self.identity = "dpp-pgi-" + uuid.uuid4().hex[:12]
+        self.run_id = str(uuid.uuid4())
+        self.identity = "dpp-pgi-" + uuid.UUID(self.run_id).hex[:12]
         self.pg = self.identity + "-source"
         self.hop = self.identity + "-hop"
         self.network = self.identity + "-net"
@@ -247,13 +254,21 @@ class Trial:
                 # Bind only the isolated Docker bridge, never a public interface.
                 network = json.loads(self.docker("network", "inspect", self.network).stdout)[0]
                 self.source_host = source_bind = network["IPAM"]["Config"][0]["Gateway"]
-        self.docker("run", "-d", "--name", self.pg, "--network", self.network,
+        durable_args = []
+        if self.retain:
+            volume = self.pg + "-data"
+            self.docker("volume", "create", "--label", "dpp.trial.run="+self.run_id, volume)
+            self.volumes.append(volume)
+            durable_args = ["--label", "dpp.trial.run="+self.run_id, "--mount", f"type=volume,src={volume},dst=/var/lib/postgresql/data"]
+            require(self.durable_start is not None, "retained source requires durable storage preflight")
+        self.docker("create" if self.retain else "run", *([] if self.retain else ["-d"]), "--name", self.pg, "--network", self.network,
                     *(["-p", f"{source_bind}:{self.source_port}:5432"] if getattr(self, "source_port", None) else []),
                     "--network-alias", "source", "-e", "POSTGRES_DB=dpp_ingestion_source",
                     "-e", "POSTGRES_PASSWORD_FILE=/run/secrets/admin-password",
                     "--mount", f"type=bind,src={self.private / 'admin-password'},dst=/run/secrets/admin-password,readonly",
                     "--mount", f"type=bind,src={self.runtime / 'source-password'},dst=/run/secrets/reader-password,readonly",
-                    PG_IMAGE)
+                    *durable_args, PG_IMAGE)
+        if self.retain:self.durable_start(self.pg, "/var/lib/postgresql/data", volume, "source", self.run_id)
         self.wait_pg()
         # Only temporary synthetic credentials are created. Avoid echo/logging.
         self.psql(f"CREATE ROLE dpp_reader LOGIN NOINHERIT PASSWORD '{self.passwords[1]}';\n" +
@@ -262,12 +277,21 @@ class Trial:
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))
             control_port = listener.getsockname()[1]
+        hop_args = []
+        if self.retain:
+            for path in ("files", "tmp"):
+                volume = self.hop + "-" + path
+                self.docker("volume", "create", "--label", "dpp.trial.run="+self.run_id, volume)
+                self.volumes.append(volume)
+                hop_args += ["--mount", f"type=volume,src={volume},dst=/{path}"]
+        else:hop_args = ["--tmpfs", "/tmp:rw"]
         self.docker("run", "-d", "--name", self.hop, "--network", self.network,
+                    *(["--label", "dpp.trial.run="+self.run_id] if self.retain else []),
                     "-p", f"127.0.0.1:{control_port}:8080", "--mount", f"type=bind,src={self.runtime},dst=/run/secrets,readonly",
                     "--mount", f"type=bind,src={HERE / 'metadata'},dst=/metadata,readonly",
                     "--mount", f"type=bind,src={HERE / 'start-hop.sh'},dst=/start-hop.sh,readonly",
                     "--mount", f"type=bind,src={self.staging},dst=/staging",
-                    "--tmpfs", "/tmp:rw", "--entrypoint", "/bin/sh", self.engine_image, "/start-hop.sh")
+                    *hop_args, "--entrypoint", "/bin/sh", self.engine_image, "/start-hop.sh")
         for _ in range(15):
             bindings = json.loads(self.docker("inspect", self.hop).stdout)[0]["NetworkSettings"]["Ports"].get("8080/tcp")
             if bindings:
@@ -622,6 +646,10 @@ class Trial:
         if self.proxy:
             self.proxy.shutdown()
             self.proxy.server_close()
+        if self.retain:
+            for container in (self.hop, self.pg):
+                self.docker("stop", "--time", "20", container, check=False)
+            return  # Retained trial has no automatic destructive cleanup path.
         for container in (self.hop, self.pg):
             self.docker("rm", "-f", "-v", container, check=False)
         self.docker("network", "rm", self.network, check=False)
