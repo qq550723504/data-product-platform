@@ -376,8 +376,8 @@ func run(ctx context.Context, path string, c config) error {
 	defer lockPool.Close()
 	var s *lc.RecoveryService
 	if c.CopyRecovery {
-		wrap:=func(p lc.CopyRecoveryPort)lc.CopyRecoveryPort{return copyCrashPort{p,c.Scenario,c.Barrier}}
-		s, e = pilot.BuildCopyRecoveryWithPortAt(c.RecoveryConfig, pool, transaction.NewManager(lockPool), q,wrap)
+		wrap := func(p lc.CopyRecoveryPort) lc.CopyRecoveryPort { return copyCrashPort{p, c.Scenario, c.Barrier} }
+		s, e = pilot.BuildCopyRecoveryWithPortAt(c.RecoveryConfig, pool, transaction.NewManager(lockPool), q, wrap)
 		if e != nil {
 			return e
 		}

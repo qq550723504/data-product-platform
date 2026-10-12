@@ -290,7 +290,11 @@ func planeAccept(ctx context.Context, c config, pool *pgxpool.Pool, original []d
 		}
 		owned := lc.WithFixtureReaderCaller(r.Context(), caller)
 		d, e := direct.Deliver(owned, deliveryapp.DirectDataCommand{WorkspaceID: c.WorkspaceID, DatasetVersionID: original[1].DatasetVersionID, ProfileID: state.ProfileID, PrincipalRef: caller.Subject, EffectiveConsumerRef: pilot.PlaneConsumer, Purpose: pilot.PlanePurpose, Action: "READ", ScopeType: "ALL_RESOURCE", IdempotencyKey: key})
-		if errors.Is(e,deliveryapp.ErrDirectDataReplayRequiresNewAttempt){results<-planeTransfer{Key:key,OperationID:d.Operation.ID,At:time.Now().UTC()};http.Error(w,"new delivery attempt required",409);return}
+		if errors.Is(e, deliveryapp.ErrDirectDataReplayRequiresNewAttempt) {
+			results <- planeTransfer{Key: key, OperationID: d.Operation.ID, At: time.Now().UTC()}
+			http.Error(w, "new delivery attempt required", 409)
+			return
+		}
 		if e != nil {
 			results <- planeTransfer{Error: e.Error(), Key: key}
 			http.Error(w, "delivery denied", 403)
@@ -340,7 +344,9 @@ func planeAccept(ctx context.Context, c config, pool *pgxpool.Pool, original []d
 		return e
 	}
 	if status != 200 || !bytes.Equal(b, pilot.PlaneSyntheticPayloads()[1]) {
-		failed:=<-results;_ = write(c,"plane-complete-failure.json",failed);return fmt.Errorf("complete delivery response mismatch: status %d: %s", status,failed.Error)
+		failed := <-results
+		_ = write(c, "plane-complete-failure.json", failed)
+		return fmt.Errorf("complete delivery response mismatch: status %d: %s", status, failed.Error)
 	}
 	complete := <-results
 	if !complete.Result.StopConfirmed || complete.Error != "" {

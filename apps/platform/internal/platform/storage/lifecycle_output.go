@@ -44,7 +44,9 @@ func (s *LifecycleOutputWriter) PutPrepared(ctx context.Context, i lc.Processing
 	client := http.Client{Transport: s.backend.transport, CheckRedirect: func(*http.Request, []*http.Request) error { return errors.New("output redirect denied") }}
 	response, e := client.Do(req)
 	if e != nil {
-		if call.result().CallID==uuid.Nil{return "",call.id,e}
+		if call.result().CallID == uuid.Nil {
+			return "", call.id, e
+		}
 		return "", call.id, lc.ErrStorageUnknown
 	}
 	defer response.Body.Close()

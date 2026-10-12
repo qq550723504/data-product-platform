@@ -80,10 +80,11 @@ func (noCachedProtection) CurrentCopyProtection(context.Context, pgx.Tx, domain.
 	return lc.CopyProtection{}, lc.ErrStorageUnknown
 }
 func BuildCopyRecoveryAt(path string, pool *pgxpool.Pool, locker lc.RecoveryLocker, q lc.RecoveryEnqueuer) (*lc.RecoveryService, error) {
-	return BuildCopyRecoveryWithPortAt(path,pool,locker,q,nil)
+	return BuildCopyRecoveryWithPortAt(path, pool, locker, q, nil)
 }
+
 // Acceptance may wrap the same read-only Port with a finite process-exit barrier.
-func BuildCopyRecoveryWithPortAt(path string, pool *pgxpool.Pool, locker lc.RecoveryLocker, q lc.RecoveryEnqueuer,wrap func(lc.CopyRecoveryPort)lc.CopyRecoveryPort) (*lc.RecoveryService, error) {
+func BuildCopyRecoveryWithPortAt(path string, pool *pgxpool.Pool, locker lc.RecoveryLocker, q lc.RecoveryEnqueuer, wrap func(lc.CopyRecoveryPort) lc.CopyRecoveryPort) (*lc.RecoveryService, error) {
 	c, e := loadCopyRecovery(path)
 	if e != nil {
 		return nil, e
@@ -115,7 +116,9 @@ func BuildCopyRecoveryWithPortAt(path string, pool *pgxpool.Pool, locker lc.Reco
 	if e != nil {
 		return nil, e
 	}
-	var port lc.CopyRecoveryPort=native
-	if wrap!=nil{port=wrap(port)}
+	var port lc.CopyRecoveryPort = native
+	if wrap != nil {
+		port = wrap(port)
+	}
 	return lc.NewRecoveryService(lc.NewExactExecution(lc.NewDispositionService(o, nil, nil, nil)), inspector, locker, q, []uuid.UUID{c.WorkspaceID}).WithCopyRecovery(lc.NewCopyRecoveryService(copies, port)), nil
 }

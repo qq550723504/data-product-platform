@@ -216,7 +216,9 @@ func prepare(ctx context.Context, path string) error {
 	if !c.Enabled {
 		return errors.New("fixture authority disabled")
 	}
-	if os.Getenv("LIFECYCLE_FIXTURE_INSPECT_FAILED") == "1" { return inspectFailed(ctx,c) }
+	if os.Getenv("LIFECYCLE_FIXTURE_INSPECT_FAILED") == "1" {
+		return inspectFailed(ctx, c)
+	}
 	if os.Getenv("LIFECYCLE_FIXTURE_PREPARE_UNPROTECTED_PLAN") == "1" {
 		return prepareUnprotectedPlan(ctx, path, c)
 	}
