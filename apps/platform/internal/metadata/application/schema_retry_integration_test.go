@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	me "github.com/qq550723504/data-product-platform/apps/platform/internal/engine/metadata"
 	d "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain"
 	infra "github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure"
@@ -53,7 +54,8 @@ func (c *schemaTestEntitlements) CheckCurrentEntitlementTx(_ context.Context, _ 
 
 // Real PostgreSQL transaction/replay regression, with controlled Port responses.
 // It proves no provider acceptance or real authorization; those have separate evidence.
-func TestSourceSchemaProfileFailureRetriesSameRequest(t *testing.T) {
+func schemaRetryFixture(t *testing.T) (context.Context, *pgxpool.Pool, d.SchemaRequest, *retrySchemaObserver, *schemaTestEntitlements, *SchemaService) {
+	t.Helper()
 	router, err := routing.NewRouter(true)
 	if err != nil {
 		t.Fatal(err)
@@ -65,12 +67,12 @@ func TestSourceSchemaProfileFailureRetriesSameRequest(t *testing.T) {
 		t.Skip("TEST_POSTGRES_DSN is not set")
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
+	t.Cleanup(cancel)
 	pool, err := database.Open(ctx, dsn)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer pool.Close()
+	t.Cleanup(pool.Close)
 	p := d.SchemaPlan{Enabled: true, WorkspaceID: uuid.New(), ResourceID: uuid.New(), ActorID: uuid.New(), AuthorizationID: uuid.New(), ConsumerRef: "TEST", Purpose: "TEST", ExternalFQN: "test." + uuid.NewString(), RuleRef: "test/schema", RuleVersion: "1", RuleHash: strings.Repeat("a", 64), ConnectorHash: strings.Repeat("b", 64), Columns: []d.SchemaColumn{{Name: "energy_kwh", Type: "TEXT", Constraint: "NOT_NULL"}}}
 	tx, err := pool.Begin(ctx)
 	if err != nil {
@@ -98,6 +100,13 @@ func TestSourceSchemaProfileFailureRetriesSameRequest(t *testing.T) {
 	observer := &retrySchemaObserver{plan: p, externalID: b.ExternalID}
 	gate := &schemaTestEntitlements{expected: p}
 	s := &SchemaService{Service: NewService("TEST_METADATA", "", transaction.NewManager(pool), repo, nil, nil), Observer: observer, Rights: gate}
+	return ctx, pool, req, observer, gate, s
+}
+
+func TestSourceSchemaProfileFailureRetriesSameRequest(t *testing.T) {
+	ctx, pool, req, observer, gate, s := schemaRetryFixture(t)
+	p := req.Plan
+	var err error
 	failure := errors.New("profile temporarily unreadable")
 	observer.err = failure
 	if err = s.Process(ctx, req.ID); !errors.Is(err, failure) || errors.Is(err, ErrSchemaDenied) {

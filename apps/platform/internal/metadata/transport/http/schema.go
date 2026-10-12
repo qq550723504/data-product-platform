@@ -18,17 +18,16 @@ func (h *Handler) schemaHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ws, _ := uuid.Parse(r.URL.Query().Get("workspaceId"))
-	if h.service == nil || h.service.Schema == nil {
-		writeJSON(w, 200, map[string]any{"enabled": false, "items": []any{}})
-		return
-	}
 	items, err := h.repo.SchemaHistory(r.Context(), id, ws)
 	if err != nil {
 		httpserver.WriteError(w, r, 503, "SCHEMA_HISTORY_UNAVAILABLE", "schema history unavailable", nil)
 		return
 	}
-	plan, err := h.service.Schema.Observer.Plan(r.Context())
-	enabled := err == nil && plan.Validate() == nil && plan.ResourceID == id && plan.WorkspaceID == ws
+	enabled := false
+	if h.service != nil && h.service.Schema != nil {
+		plan, err := h.service.Schema.Observer.Plan(r.Context())
+		enabled = err == nil && plan.Validate() == nil && plan.ResourceID == id && plan.WorkspaceID == ws
+	}
 	writeJSON(w, 200, map[string]any{"enabled": enabled, "items": items})
 }
 func (h *Handler) requestSchema(w http.ResponseWriter, r *http.Request) {

@@ -137,3 +137,27 @@ disabled plan 仍 DENIED。此回归使用受控 Observer/entitlement Port，不
 D1 新增独立迁移达到 65 或更高，C2 writer 将把自己的迁移排到其最终最大号之后。
 Ready 前必须按最终 D1/main 快照 rebase 并重跑组合，不能以本次旧快照替代最终门禁。
 本轮保持 Draft、不自动合并；人工解释继续 NOT_RUN。
+
+复评另两条有效意见已补：最终 exact binding 检查持 tuple FOR UPDATE 直到观察提交，
+binding repository 按 resource → binding 锁顺序更新；真实 PostgreSQL 观察先行时
+refresh/demotion 和 direct identity UPDATE 均等待，mutation 先行时追加 DENIED，旧 MATCH
+历史保留。扫描配置或 OM 被禁用后，HTTP 仍查询历史，仅 enabled=false；真实 PostgreSQL
+HTTP 回归保留 request/DRIFT/handling，并拒绝匿名及 foreign workspace。
+[review-binding-history.json](evidence/issue299-c2/review-binding-history.json) 和
+[review-binding-history-postgres.log](evidence/issue299-c2/review-binding-history-postgres.log) 保存修复文件 hash/日志。
+
+本轮 CI 的 live-core 在既有 T3/B2 down guard 争锁测试发生 SQLSTATE 40P01；该测试原先
+对共享 DSN 取多表排他锁，会与其他并行 package 互相阻塞。现复用已有 scratchDatabase(t,18)，
+保留真实 business/down 并发断言，-race 连跑 5 次 PASS，生产 down/runner 不变。
+独立真实 B2 复跑 PASS；本机默认 Docker 地址池耗尽，wrapper 仅为本次两个新临时网络
+分配经 inventory 确认不重叠的 10.233.23.0/24、10.233.24.0/24，cleanup PASS。旧 CI B2 的实际断言日志
+未上传，不能据此声称已证明环境偶发；harness 已在密钥检查通过后输出有界失败明细。
+
+**D1 `2cb3c96d` 全组合回归 FAIL：** 在新库以 TEST_POSTGRES_DSN 执行全模块测试，
+metadata/迁移及其他 packages PASS，但 externalintegration/integration 失败。D1/60 重建
+CostAllocation single-subject constraint 和 workspace guard 时漏掉 main/57、58 的
+external_provider_call_id / external_usage_call_id，导致既有调用成本不能落库。已交 #307
+writer 修正其未发布 60 up/down；C2 不在 65 中补漏以掩盖依赖缺陷。本 PR 自身的
+main + C2/65 新库全模块 PostgreSQL 回归 PASS。前文 D1 的安装、source-schema 和 empty/
+populated down PASS 只证明对应局部检查，不能代替全组合回归；Ready 仍须等待 D1 稳定
+修复快照后重跑。原 Core 撤权事实及人工解释 NOT_RUN 均保留。

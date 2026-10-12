@@ -22,8 +22,13 @@ var ErrSchemaDenied = errors.New("source schema observation authority denied")
 
 func (s *SchemaService) currentBinding(ctx context.Context, tx pgx.Tx, req d.SchemaRequest) error {
 	var current bool
-	err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM resource_binding WHERE id=$1 AND resource_id=$2 AND external_id=$3 AND external_fqn=$4 AND provider=$5 AND entity_type='TABLE' AND is_primary)`, req.BindingID, req.Plan.ResourceID, req.ExternalID, req.Plan.ExternalFQN, s.Service.provider).Scan(&current)
+	// Keep this exact binding current until the observation transaction commits.
+	// Refresh/demotion UPDATEs take the same tuple lock, including direct SQL.
+	err := tx.QueryRow(ctx, `SELECT true FROM resource_binding WHERE id=$1 AND resource_id=$2 AND external_id=$3 AND external_fqn=$4 AND provider=$5 AND entity_type='TABLE' AND is_primary FOR UPDATE`, req.BindingID, req.Plan.ResourceID, req.ExternalID, req.Plan.ExternalFQN, s.Service.provider).Scan(&current)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return ErrSchemaDenied
+		}
 		return err
 	}
 	if !current {

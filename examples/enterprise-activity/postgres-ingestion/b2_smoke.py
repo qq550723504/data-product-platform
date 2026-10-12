@@ -116,6 +116,10 @@ def run(output,cache):
             identity=json.loads(f.read_text());known += [identity[k] for k in ("AccessKey","SecretKey","SessionToken") if identity.get(k)]
         require(all(value.encode() not in output_text for value in known),"credential leaked into test output")
         (output/"b2-tests.log").write_bytes(output_text)
+        if result.returncode:
+            # Print only after the same secret check used for the retained log.
+            # CI must preserve the assertion cause instead of only a file path.
+            print(b"\n".join(output_text.splitlines()[-80:])[-16384:].decode("utf-8",errors="replace"),flush=True)
         require(result.returncode==0,"Core batch tests failed; see sanitized b2-tests.log")
         wire=json.dumps(trial.proxy.requests,ensure_ascii=False).encode()
         require(all(value.encode() not in wire for value in known),"credential leaked into Hop requests")

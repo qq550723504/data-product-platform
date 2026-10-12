@@ -2,13 +2,11 @@ package migration_test
 
 import (
 	"context"
-	"os"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/database"
 )
 
 const t3b2DownLockSQL = `
@@ -21,16 +19,10 @@ LOCK TABLE
 IN ACCESS EXCLUSIVE MODE`
 
 func TestT3B2DownGuardSerializesBusinessWrites(t *testing.T) {
-	dsn := os.Getenv("TEST_POSTGRES_DSN")
-	if dsn == "" {
-		t.Skip("TEST_POSTGRES_DSN is not set")
-	}
 	ctx := context.Background()
-	pool, err := database.Open(ctx, dsn)
-	if err != nil {
-		t.Fatalf("open postgres: %v", err)
-	}
-	defer pool.Close()
+	// Exclusive multi-table DDL locks must not interfere with unrelated packages
+	// using the shared TEST_POSTGRES_DSN. Keep the actual business-vs-down race.
+	pool := scratchDatabase(t, 18)
 
 	var dependencyTable string
 	if err := pool.QueryRow(ctx, `SELECT to_regclass('execution_dependency_binding')::text`).Scan(&dependencyTable); err != nil {

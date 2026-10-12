@@ -1,0 +1,94 @@
+=== RUN   TestBindingRejectsIncompleteProviderIdentityBeforePersistence
+--- PASS: TestBindingRejectsIncompleteProviderIdentityBeforePersistence (0.00s)
+=== RUN   TestObservationFailureAndIdentityMismatchPreserveConfirmedBinding
+--- PASS: TestObservationFailureAndIdentityMismatchPreserveConfirmedBinding (0.00s)
+=== RUN   TestObservationRequiresExactProviderIdentity
+--- PASS: TestObservationRequiresExactProviderIdentity (0.00s)
+=== RUN   TestObservationReadsCurrentRevisionWithoutChangingBinding
+--- PASS: TestObservationReadsCurrentRevisionWithoutChangingBinding (0.00s)
+=== RUN   TestDisabledObservationCannotClaimCurrentRevision
+--- PASS: TestDisabledObservationCannotClaimCurrentRevision (0.00s)
+=== RUN   TestSourceSchemaRejectsReplacedPrimaryBinding
+--- PASS: TestSourceSchemaRejectsReplacedPrimaryBinding (0.03s)
+=== RUN   TestSourceSchemaBindingFinalizationSerializesMutations
+=== RUN   TestSourceSchemaBindingFinalizationSerializesMutations/observation_first/native_refresh/demotion
+=== RUN   TestSourceSchemaBindingFinalizationSerializesMutations/observation_first/direct_identity_update
+=== RUN   TestSourceSchemaBindingFinalizationSerializesMutations/binding_mutation_first
+--- PASS: TestSourceSchemaBindingFinalizationSerializesMutations (0.26s)
+    --- PASS: TestSourceSchemaBindingFinalizationSerializesMutations/observation_first/native_refresh/demotion (0.09s)
+    --- PASS: TestSourceSchemaBindingFinalizationSerializesMutations/observation_first/direct_identity_update (0.10s)
+    --- PASS: TestSourceSchemaBindingFinalizationSerializesMutations/binding_mutation_first (0.08s)
+=== RUN   TestSourceSchemaProfileFailureRetriesSameRequest
+--- PASS: TestSourceSchemaProfileFailureRetriesSameRequest (0.13s)
+=== RUN   TestBindingAndProductReleasedProjectionAreRetrySafe
+--- PASS: TestBindingAndProductReleasedProjectionAreRetrySafe (0.07s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/application	2.427s
+=== RUN   TestSchemaComparisonPreservesOrderTypeAndConstraint
+--- PASS: TestSchemaComparisonPreservesOrderTypeAndConstraint (0.00s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/domain	1.187s
+=== RUN   TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset
+=== RUN   TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset/same_name
+=== RUN   TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset/renamed_asset
+--- PASS: TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset (0.09s)
+    --- PASS: TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset/same_name (0.05s)
+    --- PASS: TestConcurrentBindingsCannotMoveAnotherWorkspacesAsset/renamed_asset (0.04s)
+=== RUN   TestBindingRenamePreservesOwnerAndIdentity
+--- PASS: TestBindingRenamePreservesOwnerAndIdentity (0.05s)
+=== RUN   TestResourceBindingAndGovernanceProjectionPersistence
+--- PASS: TestResourceBindingAndGovernanceProjectionPersistence (0.04s)
+=== RUN   TestGovernanceProjectionRejectsStaleCompletion
+--- PASS: TestGovernanceProjectionRejectsStaleCompletion (0.03s)
+=== RUN   TestSourceSchemaFactsConcurrencyAndCostIsolation
+--- PASS: TestSourceSchemaFactsConcurrencyAndCostIsolation (0.17s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/infrastructure	2.252s
+=== RUN   TestNativeSchemaProcessHelper
+--- PASS: TestNativeSchemaProcessHelper (0.00s)
+=== RUN   TestNativeSchemaRequiresDurableInvocationAcknowledgement
+--- PASS: TestNativeSchemaRequiresDurableInvocationAcknowledgement (6.25s)
+=== RUN   TestClientGetTableAndUpsertDataProduct
+--- PASS: TestClientGetTableAndUpsertDataProduct (0.01s)
+=== RUN   TestTableGovernanceUsesExplicitCatalogFieldsAndExcludesOtherExtensions
+--- PASS: TestTableGovernanceUsesExplicitCatalogFieldsAndExcludesOtherExtensions (0.01s)
+=== RUN   TestCatalogOwnerDoesNotInventSteward
+--- PASS: TestCatalogOwnerDoesNotInventSteward (0.00s)
+=== RUN   TestClientMapsOpenMetadataErrorsToProviderNeutralContract
+--- PASS: TestClientMapsOpenMetadataErrorsToProviderNeutralContract (0.00s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata	7.903s
+=== RUN   TestSuccessfulResourceLookupStillReturnsNotFoundOutsideWorkspace
+--- PASS: TestSuccessfulResourceLookupStillReturnsNotFoundOutsideWorkspace (0.03s)
+=== RUN   TestWorkspaceResourceLookupFailureIsUnavailable
+=== RUN   TestWorkspaceResourceLookupFailureIsUnavailable/POST_metadata-bindings
+=== RUN   TestWorkspaceResourceLookupFailureIsUnavailable/GET_metadata-bindings
+=== RUN   TestWorkspaceResourceLookupFailureIsUnavailable/GET_metadata-observation
+--- PASS: TestWorkspaceResourceLookupFailureIsUnavailable (0.00s)
+    --- PASS: TestWorkspaceResourceLookupFailureIsUnavailable/POST_metadata-bindings (0.00s)
+    --- PASS: TestWorkspaceResourceLookupFailureIsUnavailable/GET_metadata-bindings (0.00s)
+    --- PASS: TestWorkspaceResourceLookupFailureIsUnavailable/GET_metadata-observation (0.00s)
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_request
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/not_found
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unauthorized
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unavailable
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_response
+=== RUN   TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/rejected
+--- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_request (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/not_found (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unauthorized (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/unavailable (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/invalid_response (0.00s)
+    --- PASS: TestWriteBindingErrorMapsProviderFailuresWithoutLeakingCause/rejected (0.00s)
+=== RUN   TestWriteBindingErrorMapsApplicationValidation
+--- PASS: TestWriteBindingErrorMapsApplicationValidation (0.00s)
+=== RUN   TestPublicProjectionErrorNeverExposesStoredProviderDetail
+--- PASS: TestPublicProjectionErrorNeverExposesStoredProviderDetail (0.00s)
+=== RUN   TestResourceMetadataRequiresWorkspaceAuthorityBeforeStorageOrProvider
+--- PASS: TestResourceMetadataRequiresWorkspaceAuthorityBeforeStorageOrProvider (0.00s)
+=== RUN   TestSourceSchemaHistorySurvivesDisabledScanner
+--- PASS: TestSourceSchemaHistorySurvivesDisabledScanner (0.07s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/transport/http	2.079s
