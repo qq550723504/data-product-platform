@@ -1,0 +1,25 @@
+{
+  "attempt_id": "d48516df-b126-4af3-826d-3f64362d8cea",
+  "delete_requests": 0,
+  "presence": {
+    "Copy": {
+      "ID": "629c9e3d-730a-4ce8-bd47-d7bbe2675535",
+      "WorkspaceID": "39dd70e6-691a-4d69-b971-6c75533b72d6",
+      "DatasetVersionID": "51a60dd5-b362-48b0-9e07-c11f726e97e2",
+      "ProviderInstanceID": "5e8a5758-96f6-4bf4-a088-1decd62809b0",
+      "IncarnationID": "78ebff25-faa6-4f9b-8275-6204d7b786ab",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/b.csv",
+      "ProviderVersion": "2ae6479b-2b96-441a-9159-80a07e3ec4e0",
+      "ContentSHA256": "aafd9ae024f2444eefea042c59ffd87c29fac3f4675c49124785b417da34b784",
+      "ByteSize": 26
+    },
+    "ObservedAt": "2026-10-11T11:39:11.009438256Z",
+    "CallID": "ee014783-0149-41b4-9185-71f7d06f0f65"
+  },
+  "resolution": {
+    "ID": "45c5ce54-5327-4d24-9806-5f495cdcbc1d",
+    "Replayed": false,
+    "PreservationUnconfirmed": false
+  }
+}

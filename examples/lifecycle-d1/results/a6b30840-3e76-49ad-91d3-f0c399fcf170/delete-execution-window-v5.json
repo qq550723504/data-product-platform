@@ -1,0 +1,12 @@
+{
+  "opened_at": "2026-10-11T11:39:10.1063432+00:00",
+  "binary_sha256": "b5ca702116e7fbf0c24c8c6c247526e8cf92882970a90374ad73d1df61c2cea9",
+  "plan_hash": "7c2847699997663ca453db54e0fab1565ad67fc9434c0c2c507c6adaa056a09f",
+  "extension59_sha256": "ba3198b31b6a1c20b19e7b97c6f744d41b1e75cd1aabe6b926ab8298bcf82bac",
+  "protected_delete": false,
+  "gateway_config_sha256": "eadef5cdc4876f95e05163f5f346c11bb3a9a586db18734aa468abd6a73129ba",
+  "object_cleanup": 0,
+  "runtime_schema": "retained54 plus additive58+59",
+  "volume_cleanup": 0,
+  "native_policy": "DeleteObject plus DeleteObjectVersion, both conditioned on same exact s3:versionid"
+}

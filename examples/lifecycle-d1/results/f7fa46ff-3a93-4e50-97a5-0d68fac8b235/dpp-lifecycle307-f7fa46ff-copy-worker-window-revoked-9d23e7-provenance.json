@@ -1,0 +1,28 @@
+{
+  "source_head": "6961fde137046f6eb335e9924ba00bc56a7361ff",
+  "run_id": "f7fa46ff-3a93-4e50-97a5-0d68fac8b235",
+  "expected_exit": 0,
+  "gateway_sha256": "3045f714f56768b5099ff2b4f18c5a3fb5e833cbdadd694313f6ebea725961af",
+  "role": "copy-worker",
+  "recorded_before_start": "2026-10-11T15:03:43.6469756Z",
+  "scenario": "copy-worker-window-revoked",
+  "action": "once",
+  "source_hashes": {
+    "apps/platform/internal/platform/storage/lifecycle_copy_fixture_fault.go": "20c0f7b6ca332c464b0feff8dc5a45fee5e8460c3b4f003b76968639b426b58c",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "259ceb5ab945c38d36ccf00f2b362dbd1dcf7f1dad6f64d6f3bd935b74645e0f",
+    "apps/platform/cmd/lifecycle-fixture-recovery/copy_crash.go": "cb30039fe45f39040e0e0fec30af02c1757a6c8703aee5842f0066f818b83b0a",
+    "apps/platform/internal/lifecycle/pilot/copy_recovery.go": "05fcb13031659c8f52db9ccaf9d6db3852768810f517b13573d7c3488c94d5ea",
+    "apps/platform/internal/lifecycle/application/copy_service.go": "5e19664fa1539337ec5c835bcdd920f34c5affad9ac99a5d34bff9025796be14",
+    "apps/platform/internal/platform/storage/lifecycle_copy_recovery.go": "a53d7d21e6869a5a48823768990c5696f074868affae6ad640c572da61b2ad96",
+    "apps/platform/cmd/lifecycle-fixture-archive/main.go": "7fa4caeadb92dbafd375d38e63f847b32fde04e8406f834b8e5965c139d85f22",
+    "apps/platform/internal/lifecycle/application/copy_recovery.go": "50a4016348a372bbe5494501c8230d5fbf1bf68779a35fe1af14bdb497e515f7",
+    "apps/platform/cmd/lifecycle-fixture-recovery/main.go": "94e968c23df320a39df6dc327d0456493589ab04101e437e26e2283ab069a0d7",
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "4455ee29449178f31810c25c71c20c2bdbdc0f12999a20f03333d928fcd20044",
+    "apps/platform/cmd/lifecycle-fixture-archive/copy_recovery.go": "326bda571afa50f4a72e928c9af5e51538544e84e39b4174d1d3a613e723aa26"
+  },
+  "native_delete": 0,
+  "helper_id": "652df25f04db4b6000eaf299b6a51eff0d3d93093e79c9890902da73b7a76c7f",
+  "credentials": "READ_ONLY_NO_ROOT_NO_COPY_NO_DELETE",
+  "binary_sha256": "6bc11d66bb3f64f3ae07a1c3b508350b3c577ab3437d1436e4d6ae6bee576154",
+  "cleanup": 0
+}

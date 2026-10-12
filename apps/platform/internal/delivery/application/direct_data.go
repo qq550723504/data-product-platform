@@ -82,14 +82,27 @@ type DirectDataResult struct {
 	Blockers       []string
 	PayloadReady   bool
 	ReplayRequired bool
+	TransferPinID  uuid.UUID
+}
+
+// Optional owned data-plane integration. Admission must commit in the same
+// transaction as ISSUED. No object bytes or output are opened under this lock.
+type DirectDataTransferPins interface {
+	AdmitDirectDataTransfer(context.Context, pgx.Tx, domain.Operation) (uuid.UUID, error)
 }
 
 type DirectDataService struct {
-	tx       *transaction.Manager
-	repo     *infrastructure.PostgresRepository
-	gate     DirectDataGate
-	datasets *datasetinfra.PostgresRepository
-	now      func() time.Time
+	tx           *transaction.Manager
+	repo         *infrastructure.PostgresRepository
+	gate         DirectDataGate
+	datasets     *datasetinfra.PostgresRepository
+	now          func() time.Time
+	transferPins DirectDataTransferPins
+}
+
+func (s *DirectDataService) WithTransferPins(p DirectDataTransferPins) *DirectDataService {
+	s.transferPins = p
+	return s
 }
 
 func NewDirectDataService(tx *transaction.Manager, repo *infrastructure.PostgresRepository, gate DirectDataGate, datasets *datasetinfra.PostgresRepository) *DirectDataService {
@@ -302,6 +315,16 @@ func (s *DirectDataService) Deliver(ctx context.Context, cmd DirectDataCommand) 
 				return err
 			}
 			result.PayloadReady = true
+			if s.transferPins != nil {
+				id, e := s.transferPins.AdmitDirectDataTransfer(ctx, tx, operation)
+				if e != nil {
+					return fmt.Errorf("admit direct data transfer pin: %w", e)
+				}
+				if id == uuid.Nil {
+					return fmt.Errorf("direct data transfer owner returned no pin")
+				}
+				result.TransferPinID = id
+			}
 		} else {
 			if err := operation.Transition(domain.StatusBlocked); err != nil {
 				return err

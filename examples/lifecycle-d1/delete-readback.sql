@@ -1,0 +1,33 @@
+-- Independent read-only readback of the retained controlled fixture.
+SELECT jsonb_build_object(
+ 'as_of',clock_timestamp(),
+ 'counts',jsonb_build_object(
+  'copies',(SELECT count(*) FROM lifecycle_fixture_copy),
+  'restrictions',(SELECT count(*) FROM lifecycle_content_use_restriction),
+  'basis',(SELECT count(*) FROM lifecycle_fixture_disposal_basis),
+  'approvals',(SELECT count(*) FROM lifecycle_disposition_approval),
+  'gates',(SELECT count(*) FROM lifecycle_disposition_gate_evaluation),
+  'blocked_gates',(SELECT count(*) FROM lifecycle_disposition_gate_evaluation WHERE NOT eligible),
+  'dispatches',(SELECT count(*) FROM lifecycle_disposition_dispatch),
+  'send_claims',(SELECT count(*) FROM lifecycle_provider_send_claim),
+  'provider_observations',(SELECT count(*) FROM lifecycle_provider_observation),
+  'releases',(SELECT count(*) FROM lifecycle_dispatch_release),
+  'absence_receipts',(SELECT count(*) FROM lifecycle_copy_absence_receipt),
+  'completions',(SELECT count(*) FROM lifecycle_plan_completion),
+  'storage_calls',(SELECT count(*) FROM lifecycle_storage_call),
+  'storage_observations',(SELECT count(*) FROM lifecycle_storage_observation),
+  'cost_allocations',(SELECT count(*) FROM cost_allocation),
+  'events',(SELECT count(*) FROM outbox_event),
+  'audit',(SELECT count(*) FROM audit_event),
+  'evidence',(SELECT count(*) FROM evidence),
+  'reader_pins',(SELECT count(*) FROM lifecycle_reader_pin)),
+ 'provider_attempts',(SELECT jsonb_agg(jsonb_build_object('attempt_id',a.id,'copy_id',a.copy_id,'namespace',n.namespace,'key',c.object_key,'version',c.provider_version,'certainty',o.certainty,'outcome',o.outcome,'invoked_at',o.invoked_at)) FROM lifecycle_provider_attempt a JOIN lifecycle_fixture_copy c ON c.id=a.copy_id JOIN lifecycle_fixture_namespace n ON n.id=c.namespace_id LEFT JOIN lifecycle_provider_observation o ON o.attempt_id=a.id),
+ 'plans',(SELECT jsonb_agg(jsonb_build_object('id',p.id,'scope_hash',p.content_hash,'db_hash_match',p.content_hash=lifecycle_plan_scope_hash(p.id))) FROM lifecycle_disposition_plan p),
+ 'absence_receipts',(SELECT jsonb_agg(to_jsonb(r)) FROM lifecycle_copy_absence_receipt r),
+ 'completion',(SELECT jsonb_agg(to_jsonb(c)) FROM lifecycle_plan_completion c),
+ 'gates',(SELECT jsonb_agg(jsonb_build_object('gate_id',g.id,'copy_id',g.copy_id,'eligible',g.eligible,'blockers',g.blockers,'references',d.references_released,'inventory',d.inventory_complete,'provider',d.provider_retention_allows,'ledger',d.ledger_current,'window',d.valid_until)) FROM lifecycle_disposition_gate_evaluation g JOIN lifecycle_disposition_dependency_evaluation d ON d.evaluation_id=g.id),
+ 'cost_quantity',(SELECT sum(quantity) FROM cost_event WHERE cost_type='LIFECYCLE_PROVIDER_INVOCATION'),
+ 'unknown_amount_count',(SELECT count(*) FROM cost_event WHERE cost_type='LIFECYCLE_PROVIDER_INVOCATION' AND amount IS NULL),
+ 'dataset_versions',(SELECT jsonb_agg(jsonb_build_object('id',id,'status',status,'storage_uri',storage_uri,'sha256',checksum_value,'bytes',byte_size)) FROM dataset_version),
+ 'schema_version',(SELECT max(version) FROM schema_migration)
+);

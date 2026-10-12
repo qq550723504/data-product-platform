@@ -1,0 +1,16 @@
+{
+  "production_go_diff_from_b853": 0,
+  "hash_vs_older_proof_checked": true,
+  "sql_diff_from_0196": 0,
+  "old_core_trial": "UNAVAILABLE",
+  "helper_contract_positive": 4,
+  "resolved_source_hashes_match": 4,
+  "native_delete": 0,
+  "c2_head": "00bd4d4e9afadd863a178b7798b6f7dee1f3192d",
+  "status": "PASS",
+  "old_core_restored": false,
+  "cleanup": 0,
+  "helper_contract_negative": 19,
+  "full_race_log_failure": 0,
+  "d1_head": "b853466ffab7a99ce64fd09b97a51059fbefa58a"
+}

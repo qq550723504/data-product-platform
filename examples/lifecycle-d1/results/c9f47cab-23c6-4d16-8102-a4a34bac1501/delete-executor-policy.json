@@ -1,0 +1,255 @@
+{
+  "Statement": [
+    {
+      "Action": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "3fe1cc44-b0f8-428c-9bb8-9f92dac5d15d"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "8228fe6b-e938-4404-8ad2-4e490e875495"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/b.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObjectLegalHold"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/b.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "87bd6a39-f420-4bfa-9619-4812a01e5835"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/fixture/a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObjectLegalHold"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/fixture/a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "3fe1cc44-b0f8-428c-9bb8-9f92dac5d15d"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObjectLegalHold"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "76b867ec-a365-47fd-b2ab-11e825c7198e"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/restore/missing-a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObjectLegalHold"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/restore/missing-a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "5d85eea5-7451-4a11-a4be-d7b80b39db1d"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/restore/old-cut-a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObjectLegalHold"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/restore/old-cut-a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "2a316e28-3efb-4e94-ab5b-c1e2637b50df"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/restore/gap-a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObjectLegalHold"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/restore/gap-a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "6e3b6ae2-2b8e-40ee-9103-419322b78718"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/fixture/b.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObjectLegalHold"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/fixture/b.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "81f1f926-ccf9-4df2-8f5b-abce76b2c131"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/restore/online-a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObjectLegalHold"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/restore/online-a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "613c3231-5077-4326-9a7c-4a073a105e47"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/archive/a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObjectLegalHold"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/archive/a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:ListBucketVersions"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online",
+        "arn:aws:s3:::dpp-lifecycle307-quarantine"
+      ]
+    }
+  ],
+  "Version": "2012-10-17"
+}

@@ -1,0 +1,14 @@
+{
+  "native_delete": "DENY_ALL",
+  "cleanup_requests": 0,
+  "source_head": "a4e95c448bef4c163a66d4ed4b419523d19e2f3e",
+  "name": "dpp-lifecycle307-4abcfca5-recovery-pending-delete-review",
+  "gateway_sha256": "81b26869b3ee1074035798a4bb6ba8c455ec71d69b57b7a7434d0da4d6011662",
+  "binary_sha256": "73a5248512024fc2a576da5ad6eccc1f07436c6e66a2a583eaabf5d5c725ff72",
+  "workspace_id": "d9deb37f-0e58-4f00-830e-c7aad21895f8",
+  "mode": "review",
+  "scenario": "pending-delete-review",
+  "attempt_id": "00000000-0000-0000-0000-000000000000",
+  "container_id": "891c407c4412e8a834793f1e8a6d61c34ebc160e63c637fa6619f4beb8b05b13",
+  "work_id": "00000000-0000-0000-0000-000000000000"
+}

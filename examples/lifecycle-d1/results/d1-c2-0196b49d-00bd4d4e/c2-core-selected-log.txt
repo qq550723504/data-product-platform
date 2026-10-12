@@ -1,0 +1,20 @@
+2026-10-12 01:38:54.817 UTC [9566] CONTEXT:  WAL redo at 0/25937DF0 for Database/DROP: dir 1663/160569
+2026-10-12 01:38:54.817 UTC [9566] WARNING:  could not open directory "base/160570": No such file or directory
+2026-10-12 01:38:54.817 UTC [9566] CONTEXT:  WAL redo at 0/259386C8 for Database/DROP: dir 1663/160570
+2026-10-12 01:38:54.817 UTC [9566] WARNING:  some useless files may be left behind in old database directory "base/160570"
+2026-10-12 01:38:54.817 UTC [9566] CONTEXT:  WAL redo at 0/259386C8 for Database/DROP: dir 1663/160570
+2026-10-12 01:38:54.818 UTC [9566] WARNING:  could not open directory "base/160571": No such file or directory
+2026-10-12 01:38:54.818 UTC [9566] CONTEXT:  WAL redo at 0/2593B570 for Database/DROP: dir 1663/160571
+2026-10-12 01:38:54.818 UTC [9566] WARNING:  some useless files may be left behind in old database directory "base/160571"
+2026-10-12 01:38:54.818 UTC [9566] CONTEXT:  WAL redo at 0/2593B570 for Database/DROP: dir 1663/160571
+2026-10-12 01:38:54.820 UTC [9566] LOG:  unexpected pageaddr 0/2298E000 in WAL segment 000000010000000000000025, LSN 0/2598E000, offset 10018816
+2026-10-12 01:38:54.821 UTC [9566] LOG:  redo done at 0/2598D3C8 system usage: CPU: user: 0.29 s, system: 0.07 s, elapsed: 0.37 s
+2026-10-12 01:38:54.829 UTC [9567] LOG:  checkpoint starting: end-of-recovery immediate wait
+2026-10-12 01:38:54.840 UTC [9567] ERROR:  could not write block 23 in file "base/158414/2609": No space left on device
+2026-10-12 01:38:54.840 UTC [9567] CONTEXT:  writing block 23 of relation base/158414/2609
+2026-10-12 01:38:54.849 UTC [9566] FATAL:  checkpoint request failed
+2026-10-12 01:38:54.849 UTC [9566] HINT:  Consult recent messages in the server log for details.
+2026-10-12 01:38:54.871 UTC [1] LOG:  startup process (PID 9566) exited with exit code 1
+2026-10-12 01:38:54.871 UTC [1] LOG:  terminating any other active server processes
+2026-10-12 01:38:54.875 UTC [1] LOG:  shutting down due to startup process failure
+2026-10-12 01:38:54.882 UTC [1] LOG:  database system is shut down

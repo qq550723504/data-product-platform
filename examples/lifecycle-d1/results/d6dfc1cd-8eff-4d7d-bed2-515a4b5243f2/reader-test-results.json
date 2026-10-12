@@ -1,0 +1,22 @@
+{
+  "reader-final-focused-tests": {
+    "fail": 0,
+    "no_test_files": 0,
+    "ok": 3
+  },
+  "reader-scoped-tests": {
+    "fail": 0,
+    "no_test_files": 1,
+    "ok": 4
+  },
+  "reader-full-module-tests": {
+    "fail": 0,
+    "no_test_files": 45,
+    "ok": 86
+  },
+  "reader-race-tests": {
+    "fail": 0,
+    "no_test_files": 0,
+    "ok": 3
+  }
+}

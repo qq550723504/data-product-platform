@@ -1,0 +1,47 @@
+{
+  "native_binary_sha256": "5205e182928d53d1a0f4bc80e58967206bbfb6c3de0a2ee7589e1c661c23c172",
+  "source_files": [
+    {
+      "path": "apps/platform/internal/platform/storage/lifecycle_copy.go",
+      "native_source_and_committed_blob": "MATCH",
+      "sha256": "1944624029e4163b759fab5b9046ecc3f36faee6a8bf36f1a8af3b0021c44f17"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/occupancy.go",
+      "native_source_and_committed_blob": "MATCH",
+      "sha256": "ae27867ccd54b941249a5258755afbf9c25eb25df4ec143555a165063ce2185f"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/transport/http/reader.go",
+      "native_source_and_committed_blob": "MATCH",
+      "sha256": "4ea7eb45ee2ab29720fabea83f453d0e6ec2a365e0dd931acfc4a87d9b6d8295"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/main.go",
+      "native_source_and_committed_blob": "MATCH",
+      "sha256": "cf7d1e5153df48b33c76ceb22ca3033556af92590732c99b30baa9db7911aa86"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/reader_service.go",
+      "native_source_and_committed_blob": "MATCH",
+      "sha256": "df26a19bfa9a6e535ed8b7c0b00fad75b7c35c68c9e868b14814e1db100e7555"
+    },
+    {
+      "path": "apps/platform/internal/platform/storage/lifecycle_reader.go",
+      "native_source_and_committed_blob": "MATCH",
+      "sha256": "7e033b0eb9fe53dbece468f1411ddbb1e69c408a9dfeca38f25c0e09ac4bf58d"
+    },
+    {
+      "path": "migrations/000064_lifecycle_reconciliation_work.up.sql",
+      "native_source_and_committed_blob": "MATCH",
+      "sha256": "5e6d85cb9ae552ef3b737a28cf6f8bdb186025026e61d5aaedb075b39841ad31"
+    }
+  ],
+  "main_CI": "NOT_RUN",
+  "push": "NOT_RUN",
+  "native_build_precommit_head": "11241ddf088cf0965a8f3b4cb69208da78777e88",
+  "exact_committed_sources": "MATCH",
+  "code_commit": "b5d05bd786e8585427a6be78883636c75aa250c4",
+  "PR_CI": "NOT_RUN",
+  "remote_main": "1892cd76c4ee578896ddfb3c6f4a7252bfacc51b"
+}

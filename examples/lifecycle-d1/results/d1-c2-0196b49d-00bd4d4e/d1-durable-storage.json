@@ -1,0 +1,26 @@
+{
+  "run_id": "326fedd2-8c22-4eb8-acca-05be57e15d77",
+  "status": "PASS",
+  "services": [
+    {
+      "container_id": "3294f8f442e6d6c6746d21add558f22f0b3385ea2e10a82f403c12c0118658f2",
+      "container": "dpp-lifecycle307-326fedd2-postgres",
+      "destination": "/var/lib/postgresql/data",
+      "role": "postgres",
+      "type": "volume",
+      "writable": true,
+      "volume": "dpp-lifecycle307-326fedd2-postgres"
+    },
+    {
+      "container_id": "b1e96a7d3ba33d8c4f725280fe3b99ce4ccbbc7dd7b4da26fdb5a3d9f85253b8",
+      "container": "dpp-lifecycle307-326fedd2-minio",
+      "destination": "/data",
+      "role": "objects",
+      "type": "volume",
+      "writable": true,
+      "volume": "dpp-lifecycle307-326fedd2-objects"
+    }
+  ],
+  "storage_io": 0,
+  "mutation": 0
+}

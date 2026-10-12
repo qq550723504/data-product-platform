@@ -1,0 +1,255 @@
+{
+  "missing_preexisting_exited_helpers": [
+    {
+      "Id": "891c407c4412e8a834793f1e8a6d61c34ebc160e63c637fa6619f4beb8b05b13",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-pending-delete-review",
+      "status": "exited"
+    },
+    {
+      "Id": "ff3c8cabbcf1ac2d77e62823b25b8d8af384006573a8bedf0e2f72a3cc3a0e84",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-after",
+      "status": "exited"
+    },
+    {
+      "Id": "6817c689cf4b9aed8ba941db81bc1d7ac4773291f5406f63033f90e26fa84e28",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-all-wakes-confirmed",
+      "status": "exited"
+    },
+    {
+      "Id": "f0f50d41e1de5da75af0a2aa4355619c6304f2fc130a11edf54a62b756554551",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-authority-denied",
+      "status": "exited"
+    },
+    {
+      "Id": "25dc871a4fba17ac003de632756b9863458df3b483441623bef36eb9b216eaef",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-request-authority-denied",
+      "status": "exited"
+    },
+    {
+      "Id": "1f30954c2dd5bfc3aa2cf0bf02c233f330be0a624613629055ec34055aba64a7",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-scanner-worker",
+      "status": "exited"
+    },
+    {
+      "Id": "3712a81515124cc3dc931b9126feea6b8f73fee624e3eacecf732a4f79dac215",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-scanner-enqueue",
+      "status": "exited"
+    },
+    {
+      "Id": "9e9741304f30d644bce91a019265240c94a2632908edb751a4daa53b90f28ba3",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-request-scanner",
+      "status": "exited"
+    },
+    {
+      "Id": "f8492a670ea50f79192c983130b7aa57e961c60dfe076dc3b1c137fa01ddb16f",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-competing-owner",
+      "status": "exited"
+    },
+    {
+      "Id": "bbbb1ef56ee7ae0f5482bd7db7f726ed1a3cfaddf59d0fb0bf67f55c6557d5cf",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-hold-owner",
+      "status": "exited"
+    },
+    {
+      "Id": "7a9ca11aea25dd0e54afa36c3e129a4cbebb3dea277cc273d56a56266ae60d13",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-request-owner-race",
+      "status": "exited"
+    },
+    {
+      "Id": "9d2dbe2cc9d83b5e10ed450ff9f7f15dcedb12a6ec520fa3c9f4a912a255b7aa",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-resume-after-lookup",
+      "status": "exited"
+    },
+    {
+      "Id": "69ab4df0f557203dc63a85ba3ce10dea778697624a1c5769658c40f07624d7f9",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-crash-after-lookup",
+      "status": "exited"
+    },
+    {
+      "Id": "5af17df733ee33586dfc5f0c8b48e7144d7f5fad1b281bf535ec018418d2f6cf",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-enqueue-after-lookup",
+      "status": "exited"
+    },
+    {
+      "Id": "2e81a621f39292a1ff8c77659716088e192e5073f0d3730013d3144f0cca5c5c",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-request-after-lookup",
+      "status": "exited"
+    },
+    {
+      "Id": "8c9f7d778b6a1b8257fb6aea03e7ab3542b7e8a8d66dedd362a17613a8779998",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-resume-before-lookup",
+      "status": "exited"
+    },
+    {
+      "Id": "d2d1117635f63f6f4ba37c9caecfe7e59e0d030e5320f7028b99f885f9864676",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-crash-before-lookup",
+      "status": "exited"
+    },
+    {
+      "Id": "c967fadb8ce15afa82684192250adf5455af835dfcbc6a917e71a7ece7671f9b",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-enqueue-before-lookup",
+      "status": "exited"
+    },
+    {
+      "Id": "0cffdc12adbd9d0378ae4af0460763245b99795df9d744a8ddadf118f06304ba",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-request-before-lookup",
+      "status": "exited"
+    },
+    {
+      "Id": "1a998f4e68a7dd7231d14706544ee75913ec1196dfa0b1e2af86473539ac2dca",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-completed-replay",
+      "status": "exited"
+    },
+    {
+      "Id": "6ac9e1ff6da6f0ad6424ce2896e7fa67fcd9ccb489b11c9c79df55a492a0f405",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-first-worker",
+      "status": "exited"
+    },
+    {
+      "Id": "b5c96300405bb27d75d5c24dacc2d5fc6617a5b1108706e22dffb041e48bd3e4",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-duplicate-enqueue",
+      "status": "exited"
+    },
+    {
+      "Id": "a8ee7f22fb0f6e2a635bdaa65f28ab4f06d4e189fba638b145bfe419ef625aa7",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-redis-recovered",
+      "status": "exited"
+    },
+    {
+      "Id": "b0c36a41661d1dba1b0aedfc4fd7f66083a0d9a101817e53cee969a317475626",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-redis-unavailable",
+      "status": "exited"
+    },
+    {
+      "Id": "a9bf6b175db5f626e5ebc190d90c961cab2dbdee987c81266145c88087c05157",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-sql-input",
+      "status": "exited"
+    },
+    {
+      "Id": "e47a4c433befb04abfaa2cfa05b9aa21b3606b8889b8b71a18882f43c8e3a2f2",
+      "Name": "/dpp-lifecycle307-4abcfca5-recovery-before",
+      "status": "exited"
+    },
+    {
+      "Id": "2c750b0238db7060026a9aa305e2f4df4f5079d30bf0ca984d68095197b19b06",
+      "Name": "/dpp-lifecycle307-4abcfca5-prepare",
+      "status": "exited"
+    },
+    {
+      "Id": "1a687c2f9b87aafa09fc3f25c850999dbd94ad5253bc22574c3a876023deabde",
+      "Name": "/dpp-lifecycle307-c9f47cab-source-delete-disable",
+      "status": "exited"
+    },
+    {
+      "Id": "2d2d876511f3e1326ce2da8a64b9d17c7abc194eca1ce2128502c15d002cf8fa",
+      "Name": "/dpp-lifecycle307-c9f47cab-source-delete-execute",
+      "status": "exited"
+    },
+    {
+      "Id": "cd3f78f4dd57e50af513b3d91e93b159bda67ef8b464df40f86e88cc9923989d",
+      "Name": "/dpp-lifecycle307-c9f47cab-source-delete-provision",
+      "status": "exited"
+    },
+    {
+      "Id": "4b5455a1a1923293f77745cc133092dac6ab1923a91e29e883beee9b80309112",
+      "Name": "/dpp-lifecycle307-c9f47cab-archive-plan-source-delete-602174",
+      "status": "exited"
+    },
+    {
+      "Id": "7c9d20ab662969f1cd086a96a995bf223db0a36bc992c4f480389397bf424b6d",
+      "Name": "/dpp-lifecycle307-c9f47cab-archive-disable-1a70b6",
+      "status": "exited"
+    },
+    {
+      "Id": "7c11a2801ab777ca9ddc36fca994fca0c3dc7a67ec1781cae8fed153e9a81740",
+      "Name": "/dpp-lifecycle307-c9f47cab-archive-readback-1fecc3",
+      "status": "exited"
+    },
+    {
+      "Id": "7c604ac1606dee4fb17b39eb1aca0e71191208e82103cd4231c3452416f65988",
+      "Name": "/dpp-lifecycle307-c9f47cab-archive-enable-f72b8f",
+      "status": "exited"
+    },
+    {
+      "Id": "1eeaf0c650e55e122f9a3eab294e23506d426c0c59b0f4cc9ce9ba8d38400b3e",
+      "Name": "/dpp-lifecycle307-c9f47cab-archive-disable",
+      "status": "exited"
+    },
+    {
+      "Id": "daaa71884ac5e69c858605bbe48e282c206dbd3899ffcb9fce924f549a28a003",
+      "Name": "/dpp-lifecycle307-c9f47cab-archive-execute",
+      "status": "exited"
+    },
+    {
+      "Id": "c55eb3d6c1ab0aa60db42817d708f610c93d2f788137d134eb7457122afd6338",
+      "Name": "/dpp-lifecycle307-c9f47cab-archive-provision",
+      "status": "exited"
+    },
+    {
+      "Id": "96b1358f701168132b984f29702a2ddf21ae16596f69a988dab13f04d8c5b654",
+      "Name": "/dpp-lifecycle307-c9f47cab-prepare",
+      "status": "exited"
+    },
+    {
+      "Id": "aab144562c77050b1cf1696ba18e46f22a417c4fb5c29e05daf044af807478a4",
+      "Name": "/dpp-lifecycle307-bb44901c-archive-disable",
+      "status": "exited"
+    },
+    {
+      "Id": "f2c6d72f36528a4de2dffdb7243398a2f11a41c78b9d6df45b0aa30859781870",
+      "Name": "/dpp-lifecycle307-bb44901c-archive-execute",
+      "status": "exited"
+    },
+    {
+      "Id": "9b6f0c626964377e0d42e412f36a3d0ce3dcfe480e6d88daa5c5faca6cf650e7",
+      "Name": "/dpp-lifecycle307-bb44901c-archive-provision",
+      "status": "exited"
+    },
+    {
+      "Id": "bef836f27716896aa0145bb4259f8b5fbd832ada43f8e4cb49042a470827e7c8",
+      "Name": "/dpp-lifecycle307-bb44901c-prepare",
+      "status": "exited"
+    },
+    {
+      "Id": "972bff814d7f5b740cf1419d546fc5b24cd0f33891413e69324db5502952a6d3",
+      "Name": "/dpp-lifecycle307-a1647373-archive-provision",
+      "status": "exited"
+    },
+    {
+      "Id": "0162b66335105005d24a2c61babc1782b4b0eac5a1fb6f1df2e3b5b00a862d9d",
+      "Name": "/dpp-lifecycle307-a1647373-prepare",
+      "status": "exited"
+    }
+  ],
+  "gateway_sha256": "81b26869b3ee1074035798a4bb6ba8c455ec71d69b57b7a7434d0da4d6011662",
+  "retained_running_service_count": 16,
+  "as_of": "2026-10-11T14:14:11.5607552Z",
+  "all_authority_windows": "DISABLED",
+  "note": "No cleanup command was issued by this run; fixture services/objects and all 11 owned named volumes are retained. Global inventory and exited-helper retention must not be reported unchanged.",
+  "missing_nonfixture_global_volumes": [
+    "ce4eea81db74d7d02b40c63a9ede5ef67f75af3527b421f49b4d75725bf4ccfc",
+    "d876cf0c4f6e54f13d675c068bfd3dece0277bb44efd5b08ca2fe7ee848d6704"
+  ],
+  "global_docker_inventory": "DRIFT_OBSERVED_CALLER_UNKNOWN",
+  "all_native_mutations": "DENY_ALL",
+  "current_global_volume_count": 2431,
+  "owned_fixture_volumes": [
+    "dpp-lifecycle307-a6b30840-postgres",
+    "dpp-lifecycle307-a6b30840-objects",
+    "dpp-lifecycle307-a1647373-postgres",
+    "dpp-lifecycle307-a1647373-objects",
+    "dpp-lifecycle307-bb44901c-postgres",
+    "dpp-lifecycle307-bb44901c-objects",
+    "dpp-lifecycle307-c9f47cab-postgres",
+    "dpp-lifecycle307-c9f47cab-objects",
+    "dpp-lifecycle307-4abcfca5-postgres",
+    "dpp-lifecycle307-4abcfca5-objects",
+    "dpp-lifecycle307-4abcfca5-redis-data"
+  ],
+  "object_cleanup_requests": 0,
+  "all_prior_global_volume_count": 2433,
+  "helper_retention": "FAIL",
+  "volume_cleanup_requests": 0,
+  "survivor_identity_and_protection": "PASS",
+  "owned_fixture_volume_retention": "PASS"
+}

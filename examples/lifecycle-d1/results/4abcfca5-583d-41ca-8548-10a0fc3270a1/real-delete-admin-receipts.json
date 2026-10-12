@@ -1,0 +1,54 @@
+[
+  {
+    "at": "2026-10-11T14:08:02.507917245Z",
+    "fact": "START",
+    "id": "2367b87b-4760-47e9-a162-d548b5a889fa",
+    "path": "/minio/admin/v3/add-canned-policy"
+  },
+  {
+    "at": "2026-10-11T14:08:02.519927991Z",
+    "fact": "OBSERVATION",
+    "http_status": 200,
+    "id": "2367b87b-4760-47e9-a162-d548b5a889fa",
+    "unknown": false
+  },
+  {
+    "at": "2026-10-11T14:08:02.579203782Z",
+    "fact": "START",
+    "id": "88272c8c-01e3-482b-944c-39cdd086e298",
+    "path": "/minio/admin/v3/add-user"
+  },
+  {
+    "at": "2026-10-11T14:08:02.629935481Z",
+    "fact": "OBSERVATION",
+    "http_status": 200,
+    "id": "88272c8c-01e3-482b-944c-39cdd086e298",
+    "unknown": false
+  },
+  {
+    "at": "2026-10-11T14:08:02.679618196Z",
+    "fact": "START",
+    "id": "e37ebd41-547b-4164-87a2-f47d54eab348",
+    "path": "/minio/admin/v3/idp/builtin/policy/attach"
+  },
+  {
+    "at": "2026-10-11T14:08:02.78303295Z",
+    "fact": "OBSERVATION",
+    "http_status": 200,
+    "id": "e37ebd41-547b-4164-87a2-f47d54eab348",
+    "unknown": false
+  },
+  {
+    "at": "2026-10-11T14:08:07.411703125Z",
+    "fact": "START",
+    "id": "e8131b0e-5895-405d-963c-9b61b41476e5",
+    "path": "/minio/admin/v3/set-user-status"
+  },
+  {
+    "at": "2026-10-11T14:08:07.430949408Z",
+    "fact": "OBSERVATION",
+    "http_status": 200,
+    "id": "e8131b0e-5895-405d-963c-9b61b41476e5",
+    "unknown": false
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "gateway": "Object DELETE/PUT/POST/payload GET denied",
+  "witness": "Retained private directory outside volumes",
+  "cleanup": 0,
+  "volumes": [
+    "dpp-lifecycle307-c9f47cab-postgres",
+    "dpp-lifecycle307-c9f47cab-objects"
+  ],
+  "run_id": "c9f47cab-23c6-4d16-8102-a4a34bac1501",
+  "principal_enabled": false,
+  "sealed_at": "2026-10-11T12:53:07.8380036Z",
+  "native_copy_user": "DISABLED",
+  "native_delete": 0
+}

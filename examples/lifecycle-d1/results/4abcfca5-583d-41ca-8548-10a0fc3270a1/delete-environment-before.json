@@ -1,0 +1,186 @@
+{
+  "as_of": "2026-10-11T14:07:57.7767643Z",
+  "cleanup": 0,
+  "containers": [
+    {
+      "id": "7d43cffc2aaf97baf8bf8ae5a4aa7c126ae73d46dff6bbd1326667bdd5f64885",
+      "networks": {
+        "dpp-lifecycle307-4abcfca5-private": {
+          "IPAMConfig": null,
+          "Links": null,
+          "Aliases": null,
+          "DriverOpts": null,
+          "GwPriority": 0,
+          "NetworkID": "2e5ddaa5edbbe88fc6f24a011d3d7095013f8e2651b06ae3e0e439f77e44e1c3",
+          "EndpointID": "3f56de2126e3e1650c2d45583637c8c51c79b3bfec3e5c473ba6852061738798",
+          "Gateway": "",
+          "IPAddress": "192.168.224.3",
+          "MacAddress": "86:c1:00:3e:bb:58",
+          "IPPrefixLen": 20,
+          "IPv6Gateway": "",
+          "GlobalIPv6Address": "",
+          "GlobalIPv6PrefixLen": 0,
+          "DNSNames": [
+            "dpp-lifecycle307-4abcfca5-postgres",
+            "7d43cffc2aaf"
+          ]
+        }
+      },
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "ports": {
+        "5432/tcp": null
+      },
+      "mounts": [
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/pgpass"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-4abcfca5-postgres",
+          "Destination": "/var/lib/postgresql/data"
+        }
+      ],
+      "role": "postgres"
+    },
+    {
+      "id": "68b96043e2b3dbc25840f86a9b05a5cb5c207913889f676e0f28280b707c889b",
+      "networks": {
+        "dpp-lifecycle307-4abcfca5-private": {
+          "IPAMConfig": null,
+          "Links": null,
+          "Aliases": [
+            "minio"
+          ],
+          "DriverOpts": null,
+          "GwPriority": 0,
+          "NetworkID": "2e5ddaa5edbbe88fc6f24a011d3d7095013f8e2651b06ae3e0e439f77e44e1c3",
+          "EndpointID": "119766f29eb7c74081d1c7857a898e3f9c4a20dffa2a4d96d28c5aea49d2ad30",
+          "Gateway": "",
+          "IPAddress": "192.168.224.2",
+          "MacAddress": "e2:e8:1d:8f:ca:2c",
+          "IPPrefixLen": 20,
+          "IPv6Gateway": "",
+          "GlobalIPv6Address": "",
+          "GlobalIPv6PrefixLen": 0,
+          "DNSNames": [
+            "dpp-lifecycle307-4abcfca5-minio",
+            "minio",
+            "68b96043e2b3"
+          ]
+        }
+      },
+      "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741",
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-4abcfca5-objects",
+          "Destination": "/data"
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/access"
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/secret"
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/start.sh"
+        }
+      ],
+      "role": "minio"
+    },
+    {
+      "id": "ba20cf07fd7d0cedbb62a9c153f52850ff3207cd23e602b5f8196d62618ed227",
+      "networks": {
+        "dpp-lifecycle307-4abcfca5-private": {
+          "IPAMConfig": null,
+          "Links": null,
+          "Aliases": null,
+          "DriverOpts": null,
+          "GwPriority": 0,
+          "NetworkID": "2e5ddaa5edbbe88fc6f24a011d3d7095013f8e2651b06ae3e0e439f77e44e1c3",
+          "EndpointID": "5fdb7f659a577a8b77b842b04acca7faf5da7065a6dfe422956665155ed8fe2d",
+          "Gateway": "",
+          "IPAddress": "192.168.224.4",
+          "MacAddress": "8e:6c:cf:e4:1b:e4",
+          "IPPrefixLen": 20,
+          "IPv6Gateway": "",
+          "GlobalIPv6Address": "",
+          "GlobalIPv6PrefixLen": 0,
+          "DNSNames": [
+            "dpp-lifecycle307-4abcfca5-gateway",
+            "ba20cf07fd7d"
+          ]
+        }
+      },
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "ports": {
+        "2019/tcp": null,
+        "443/tcp": null,
+        "443/udp": null,
+        "80/tcp": null
+      },
+      "mounts": [
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/etc/caddy/Caddyfile"
+        }
+      ],
+      "role": "gateway"
+    },
+    {
+      "id": "cd8b28ebac93735075c7997e780b68e45c9a4e10d2401546d550bc106635b938",
+      "networks": {
+        "dpp-lifecycle307-4abcfca5-private": {
+          "IPAMConfig": null,
+          "Links": null,
+          "Aliases": null,
+          "DriverOpts": null,
+          "GwPriority": 0,
+          "NetworkID": "2e5ddaa5edbbe88fc6f24a011d3d7095013f8e2651b06ae3e0e439f77e44e1c3",
+          "EndpointID": "5143f265413607f28b4b56979bf488ff42298cf99150bc418c4716e9f43a665b",
+          "Gateway": "",
+          "IPAddress": "192.168.224.5",
+          "MacAddress": "76:52:46:42:53:1f",
+          "IPPrefixLen": 20,
+          "IPv6Gateway": "",
+          "GlobalIPv6Address": "",
+          "GlobalIPv6PrefixLen": 0,
+          "DNSNames": [
+            "dpp-lifecycle307-4abcfca5-redis",
+            "cd8b28ebac93"
+          ]
+        }
+      },
+      "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "ports": {
+        "6379/tcp": null
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-4abcfca5-redis-data",
+          "Destination": "/data"
+        }
+      ],
+      "role": "redis"
+    }
+  ],
+  "internal": true,
+  "run_id": "4abcfca5-583d-41ca-8548-10a0fc3270a1",
+  "volumes": [
+    "dpp-lifecycle307-4abcfca5-postgres",
+    "dpp-lifecycle307-4abcfca5-objects",
+    "dpp-lifecycle307-4abcfca5-redis-data"
+  ],
+  "network_id": "2e5ddaa5edbbe88fc6f24a011d3d7095013f8e2651b06ae3e0e439f77e44e1c3"
+}

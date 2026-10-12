@@ -1,0 +1,20 @@
+{
+  "complete_backup": "NOT_FOUND_BY_C2",
+  "historical_restore": "NOT_RUN; no reseed treated as restoration",
+  "original_trial": "UNAVAILABLE",
+  "source": "C2 writer acknowledgement plus selected Docker state/log evidence",
+  "container": "dpp-pgi-b3-core-bc776a791192",
+  "exit_code": 1,
+  "native_object_io_by_d1": 0,
+  "impact": "C2 retained Core; other source/Hop/MinIO/OM containers not cleaned; D1 separate named-volume services still running",
+  "verified_at": "2026-10-12T01:58:51.6886045Z",
+  "error": "SQLSTATE 53100; failed checkpoint after tmpfs capacity exhausted",
+  "state": "exited",
+  "tmpfs": {
+    "/var/lib/postgresql/data": "rw,size=256m"
+  },
+  "container_id": "2e23abe177bb8ed02e3dd91cc428389a161b59e69ad888586d79f362be99df3e",
+  "cleanup_by_d1": 0,
+  "retained_database": "LOST",
+  "finished_at": "2026-10-12T01:38:54.986668321Z"
+}

@@ -1,0 +1,23 @@
+{
+  "approval": "PENDING_USER_CONFIRMATION",
+  "current_gate": "MUST_RECHECK_AFTER_CONFIRMATION",
+  "native_delete_invocations": 0,
+  "plan_id": "872ca588-6856-420f-b450-e5cd4e8008f4",
+  "scope_hash": "7184d41a0b1578c09d5f358a31dfce819946154bc6237e259ae5beb680c5c04b",
+  "status": "FINALIZED",
+  "storage_invocations": 0,
+  "targets": [
+    {
+      "ID": "171d1d1b-03dd-4fc9-a801-47044992cb89",
+      "WorkspaceID": "d9deb37f-0e58-4f00-830e-c7aad21895f8",
+      "DatasetVersionID": "002008a7-53ac-4f87-8c72-c22e86dfc20f",
+      "ProviderInstanceID": "b48e5dcf-d466-483d-ac89-f810ba976974",
+      "IncarnationID": "57c5084d-d929-4eeb-842d-180734158bb0",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/b.csv",
+      "ProviderVersion": "ce87f789-a4f4-4ce7-bf1f-a044ac53d1d2",
+      "ContentSHA256": "aafd9ae024f2444eefea042c59ffd87c29fac3f4675c49124785b417da34b784",
+      "ByteSize": 26
+    }
+  ]
+}

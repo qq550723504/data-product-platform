@@ -1,0 +1,84 @@
+{
+  "cleanup_requests": 0,
+  "containers": [
+    {
+      "status": "running",
+      "name": "dpp-lifecycle307-a6b30840-postgres",
+      "ports": {
+        "5432/tcp": []
+      },
+      "id": "2dac61950f7bec8b9cc03a5ca2c9acb279640daff161a428885f0eef5bfaa414",
+      "network_mode": "dpp-lifecycle307-a6b30840-private",
+      "networks": [
+        "dpp-lifecycle307-a6b30840-private"
+      ],
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-a6b30840-postgres",
+          "Destination": "/var/lib/postgresql/data"
+        }
+      ],
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "exit_code": 0
+    },
+    {
+      "status": "running",
+      "name": "dpp-lifecycle307-a6b30840-minio",
+      "ports": {},
+      "id": "4b7287adcc0c6b221f2516f0c4af8065d281c18a90322fbcdfcb01325e52f7c2",
+      "network_mode": "dpp-lifecycle307-a6b30840-private",
+      "networks": [
+        "dpp-lifecycle307-a6b30840-private"
+      ],
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-a6b30840-objects",
+          "Destination": "/data"
+        }
+      ],
+      "image": "sha256:a9eb76492485dd496bfd69b4114e47137f2da1a1a87e4a9b273cb21476cb1a98",
+      "exit_code": 0
+    },
+    {
+      "status": "running",
+      "name": "dpp-lifecycle307-a6b30840-gateway",
+      "ports": {
+        "9000/tcp": []
+      },
+      "id": "102dcc35b2d6c50f1e41207af9ba3a8dc202caeceb36620085d99f2a68ab73c9",
+      "network_mode": "dpp-lifecycle307-a6b30840-private",
+      "networks": [
+        "dpp-lifecycle307-a6b30840-private"
+      ],
+      "mounts": [],
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "exit_code": 0
+    },
+    {
+      "status": "exited",
+      "name": "dpp-lifecycle307-a6b30840-prepare",
+      "ports": {},
+      "id": "2f8d6427aac72166c16b25f0dcf1b1a8beafccde1bdb545369d0e72532cc6489",
+      "network_mode": "container:102dcc35b2d6c50f1e41207af9ba3a8dc202caeceb36620085d99f2a68ab73c9",
+      "networks": [
+        null
+      ],
+      "mounts": [],
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "exit_code": 0
+    }
+  ],
+  "principal_enabled": false,
+  "network_members": [
+    "102dcc35b2d6c50f1e41207af9ba3a8dc202caeceb36620085d99f2a68ab73c9",
+    "2dac61950f7bec8b9cc03a5ca2c9acb279640daff161a428885f0eef5bfaa414",
+    "4b7287adcc0c6b221f2516f0c4af8065d281c18a90322fbcdfcb01325e52f7c2"
+  ],
+  "internal": true,
+  "delete_requests": 0,
+  "approval": "PENDING_USER_CONFIRMATION",
+  "network_id": "6bec8f5e4e1164a0716740fade68c36b6fc995954186b876b20416357c2d9c63",
+  "observed_at": "2026-10-11T10:54:28.0273941Z"
+}

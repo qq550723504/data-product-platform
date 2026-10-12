@@ -1,0 +1,54 @@
+{
+ admin off
+ auto_https off
+}
+:9000 {
+ route {
+  @unsigned header X-Amz-Content-Sha256 STREAMING-UNSIGNED-PAYLOAD-TRAILER
+  respond @unsigned 403
+  @bypass header X-Amz-Bypass-Governance-Retention *
+  respond @bypass 403
+  @copy header X-Amz-Copy-Source *
+  respond @copy 403
+  @health path /minio/health/ready
+  reverse_proxy @health minio:9000
+  __ADMIN_RULE__
+  @approvedDelete {
+   method DELETE
+   expression {http.request.header.Authorization}.contains('Credential=__DELETE_ACCESS__/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/a.csv?versionId=3fe1cc44-b0f8-428c-9bb8-9f92dac5d15d'
+  }
+  __DELETE_RULE__
+  @mutate method DELETE PUT POST PATCH
+  respond @mutate 403
+  @inventory {
+   method GET
+   path /dpp-lifecycle307-online /dpp-lifecycle307-online/ /dpp-lifecycle307-quarantine /dpp-lifecycle307-quarantine/
+   query versions=*
+  }
+  reverse_proxy @inventory minio:9000
+  @unversioned {
+   path /dpp-lifecycle307-online/* /dpp-lifecycle307-quarantine/*
+   method GET HEAD
+   expression {http.request.uri.query.versionId} == ''
+  }
+  respond @unversioned 403
+  @head {
+   method HEAD
+   path /dpp-lifecycle307-online/fixture/a.csv /dpp-lifecycle307-online/fixture/b.csv /dpp-lifecycle307-quarantine/fixture/a.csv /dpp-lifecycle307-quarantine/fixture/b.csv /dpp-lifecycle307-quarantine/archive/a.csv /dpp-lifecycle307-quarantine/restore/online-a.csv /dpp-lifecycle307-quarantine/restore/old-cut-a.csv /dpp-lifecycle307-quarantine/restore/missing-a.csv /dpp-lifecycle307-quarantine/restore/gap-a.csv
+  }
+  reverse_proxy @head minio:9000
+  @retention {
+   method GET
+   path /dpp-lifecycle307-online/* /dpp-lifecycle307-quarantine/*
+   query retention=*
+  }
+  reverse_proxy @retention minio:9000
+  @hold {
+   method GET
+   path /dpp-lifecycle307-online/* /dpp-lifecycle307-quarantine/*
+   query legal-hold=*
+  }
+  reverse_proxy @hold minio:9000
+  respond 403
+ }
+}

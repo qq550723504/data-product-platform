@@ -195,6 +195,7 @@ func (r *Runner) files(suffix string) ([]File, error) {
 	}
 
 	files := make([]File, 0)
+	versions := make(map[int64]string)
 	for _, entry := range entries {
 		if entry.IsDir() || !strings.HasSuffix(entry.Name(), suffix) {
 			continue
@@ -207,6 +208,10 @@ func (r *Runner) files(suffix string) ([]File, error) {
 		if err != nil {
 			return nil, fmt.Errorf("parse migration version from %q: %w", entry.Name(), err)
 		}
+		if previous, exists := versions[version]; exists {
+			return nil, fmt.Errorf("duplicate migration version %d: %q and %q", version, previous, entry.Name())
+		}
+		versions[version] = entry.Name()
 		files = append(files, File{
 			Version: version,
 			Name:    entry.Name(),

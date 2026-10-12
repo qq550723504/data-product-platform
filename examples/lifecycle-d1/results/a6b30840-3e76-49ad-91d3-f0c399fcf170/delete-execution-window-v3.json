@@ -1,0 +1,11 @@
+{
+  "runtime_schema": "retained54 plus additive58",
+  "protected_delete": false,
+  "gateway_config_sha256": "eadef5cdc4876f95e05163f5f346c11bb3a9a586db18734aa468abd6a73129ba",
+  "opened_at": "2026-10-11T11:31:40.5654808+00:00",
+  "binary_sha256": "f81dbcdb716358d7a3c8b522b9946ead40e01ada9448b6a35f036c28b472c847",
+  "volume_cleanup": 0,
+  "plan_hash": "7c2847699997663ca453db54e0fab1565ad67fc9434c0c2c507c6adaa056a09f",
+  "native_policy": "s3:DeleteObjectVersion with exact s3:versionid",
+  "object_cleanup": 0
+}

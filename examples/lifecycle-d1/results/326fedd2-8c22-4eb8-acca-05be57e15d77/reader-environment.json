@@ -1,0 +1,90 @@
+{
+  "copy": 0,
+  "incarnation_id": "6c907e99-7a8f-464c-af6a-e08347cff85c",
+  "network_id": "bc88c6f9059cb1c3837900b0856a8ba5ed191c27e26099b159079290293ed3f1",
+  "internal": true,
+  "binary_sha256": "0a6102dc928358a0b19476e0eba887d5724fb07c981eda4edf840ab6f646ab5e",
+  "host_ports": [],
+  "source_hashes": {
+    "apps/platform/internal/platform/storage/lifecycle_reader.go": "7e033b0eb9fe53dbece468f1411ddbb1e69c408a9dfeca38f25c0e09ac4bf58d",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "b56d1d804a665d5e4b6e8b9584b81dc3066e4a03c07c02c45ecd360e84b272fb",
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "391e8cb5c947ce9b6e89c61611f6f5bb34f6f26fd75c9b280579c696d69d1cf2",
+    "apps/platform/internal/lifecycle/application/reader_service.go": "9d473b421ed78bf9e7f3e8c4bb82f6d7967c705d116a82025632d053a72c490c",
+    "apps/platform/internal/lifecycle/transport/http/reader.go": "264ae9a757db94de2bbc3e3b84933479d1915bd80e5bfaa5c90340ef0578a0f3",
+    "apps/platform/internal/lifecycle/application/occupancy.go": "87cc54d544edd16295f155b8e42e6bd3cad72353b153db85fa3816ccd2d1d689",
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go": "a10ada00599bdb46072d374fa62825377760772113771384bf8eeeea3b1bb376"
+  },
+  "root_in_reader": false,
+  "workspace_id": "8707f9b6-bccc-462a-a0e3-1ce2796d51e6",
+  "run_id": "326fedd2-8c22-4eb8-acca-05be57e15d77",
+  "cleanup": 0,
+  "provider_instance_id": "d4b6710d-0876-4de9-b33a-55825109681d",
+  "delete": 0,
+  "production_delivery": "NOT_RUN",
+  "window_expires": "2026-10-12T02:05:56.1198625Z",
+  "retained_volumes": [
+    "dpp-lifecycle307-326fedd2-postgres",
+    "dpp-lifecycle307-326fedd2-objects"
+  ],
+  "project": "dpp-lifecycle307-326fedd2",
+  "http": "ephemeral loopback only inside one-shot acceptance helper",
+  "source_head": "2cb3c96dc6cb842cd7c57174ee35fc7107d31a30",
+  "objects": [
+    {
+      "copy_id": "da919f63-1087-47ee-a3d1-395aa8c123c6",
+      "dataset_version_id": "ae05da54-e921-4db5-93c0-a62727710288",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "version_id": "ec0bff65-7d3f-4077-84ee-f57383b68c3a",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-12T01:20:35.958117518Z",
+      "protection_observed_at": "2026-10-12T01:20:36.152391486Z"
+    },
+    {
+      "copy_id": "98ce54d1-70b3-4510-ad94-1b1a7a9004ef",
+      "dataset_version_id": "f8b27c9b-259e-4bef-84ec-3fd7bcb9f964",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "version_id": "d0ba13a2-f3ab-4827-9260-62921b840463",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-12T01:20:35.989702726Z",
+      "protection_observed_at": "2026-10-12T01:20:36.188224182Z"
+    },
+    {
+      "copy_id": "ea18f283-1cd3-455e-9334-551e73ca7ad6",
+      "dataset_version_id": "ae05da54-e921-4db5-93c0-a62727710288",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "version_id": "f86ff3f4-45e4-4d8b-90c0-c991e913116a",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-13T01:20:35Z",
+      "bytes_verified_at": "2026-10-12T01:20:36.019630249Z",
+      "protection_observed_at": "2026-10-12T01:20:36.225405664Z"
+    },
+    {
+      "copy_id": "4710e867-3af8-4f1c-b572-291ab5c632f8",
+      "dataset_version_id": "f8b27c9b-259e-4bef-84ec-3fd7bcb9f964",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "version_id": "e9cc7f88-3653-4160-a8f9-920872b99963",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-12T01:20:36.059117969Z",
+      "protection_observed_at": "2026-10-12T01:20:36.262145646Z"
+    }
+  ]
+}

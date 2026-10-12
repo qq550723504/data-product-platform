@@ -1,0 +1,74 @@
+{
+  "after": [
+    {
+      "id": "171d1d1b-03dd-4fc9-a801-47044992cb89",
+      "version": "ce87f789-a4f4-4ce7-bf1f-a044ac53d1d2",
+      "bytes": 26,
+      "until": null,
+      "mode": "NONE",
+      "hold": false
+    },
+    {
+      "id": "362daf52-de1d-45f3-aa89-f3263bf1c262",
+      "version": "936c8741-87f6-4279-87b9-742936cb2dd2",
+      "bytes": 27,
+      "until": "2026-10-12T13:39:45Z",
+      "mode": "GOVERNANCE",
+      "hold": false
+    },
+    {
+      "id": "490e8615-11b7-4042-9183-181c1b8d5938",
+      "version": "4a225512-f6ac-4fc9-b0c0-bd6e016a2a01",
+      "bytes": 27,
+      "until": null,
+      "mode": "NONE",
+      "hold": false
+    },
+    {
+      "id": "9a4050ac-abfa-47cd-82ef-db6f066c2fd7",
+      "version": "7cd23e55-140c-4566-b881-e58c423c7a8a",
+      "bytes": 26,
+      "until": null,
+      "mode": "NONE",
+      "hold": true
+    }
+  ],
+  "protection_unchanged": true,
+  "exact_versions_unchanged": 4,
+  "result": "PASS",
+  "before": [
+    {
+      "id": "171d1d1b-03dd-4fc9-a801-47044992cb89",
+      "version": "ce87f789-a4f4-4ce7-bf1f-a044ac53d1d2",
+      "bytes": 26,
+      "until": null,
+      "mode": "NONE",
+      "hold": false
+    },
+    {
+      "id": "362daf52-de1d-45f3-aa89-f3263bf1c262",
+      "version": "936c8741-87f6-4279-87b9-742936cb2dd2",
+      "bytes": 27,
+      "until": "2026-10-12T13:39:45Z",
+      "mode": "GOVERNANCE",
+      "hold": false
+    },
+    {
+      "id": "490e8615-11b7-4042-9183-181c1b8d5938",
+      "version": "4a225512-f6ac-4fc9-b0c0-bd6e016a2a01",
+      "bytes": 27,
+      "until": null,
+      "mode": "NONE",
+      "hold": false
+    },
+    {
+      "id": "9a4050ac-abfa-47cd-82ef-db6f066c2fd7",
+      "version": "7cd23e55-140c-4566-b881-e58c423c7a8a",
+      "bytes": 26,
+      "until": null,
+      "mode": "NONE",
+      "hold": true
+    }
+  ],
+  "scope": "native exact version inventory and HEAD/protection metadata; no payload read"
+}

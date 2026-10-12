@@ -1,0 +1,237 @@
+{
+  "counts": {
+    "work": 6,
+    "runs": 8,
+    "results": 6,
+    "provider_attempts": 1,
+    "provider_send_claims": 0,
+    "provider_observations": 0,
+    "released_reservations": 0,
+    "unresolved_reservations": 1,
+    "absence_receipts": 0,
+    "plan_completions": 0,
+    "storage_starts": 53,
+    "storage_observations": 53,
+    "storage_cost_allocations": 53,
+    "delete_cost_allocations": 0,
+    "audit": 133,
+    "evidence": 133,
+    "outbox": 133
+  },
+  "work": [
+    {
+      "id": "2fe0dfdc-6103-4b8e-95da-6d232336c0f3",
+      "attempt_id": "54ceece5-bf0a-4e84-828b-757bbd77680f",
+      "basis_ref": "DURABLE_DISPATCH_RECOVERY",
+      "requested_at": "2026-10-11T21:40:23.165206+08:00"
+    },
+    {
+      "id": "c2cd9c77-ce73-4489-8008-a3c05452b03f",
+      "attempt_id": "54ceece5-bf0a-4e84-828b-757bbd77680f",
+      "basis_ref": "controlled-read-only-reconciliation:request-before-lookup",
+      "requested_at": "2026-10-11T21:41:25.539363+08:00"
+    },
+    {
+      "id": "353475f4-bf12-4785-aa85-4b7f631e86f5",
+      "attempt_id": "54ceece5-bf0a-4e84-828b-757bbd77680f",
+      "basis_ref": "controlled-read-only-reconciliation:request-after-lookup",
+      "requested_at": "2026-10-11T21:43:30.70962+08:00"
+    },
+    {
+      "id": "40bc18ba-781f-4571-9582-9240ea167021",
+      "attempt_id": "54ceece5-bf0a-4e84-828b-757bbd77680f",
+      "basis_ref": "controlled-read-only-reconciliation:request-owner-race",
+      "requested_at": "2026-10-11T21:44:16.676066+08:00"
+    },
+    {
+      "id": "aa7894ba-30a7-4ce4-86a0-bcd3fef57c19",
+      "attempt_id": "54ceece5-bf0a-4e84-828b-757bbd77680f",
+      "basis_ref": "controlled-read-only-reconciliation:request-scanner",
+      "requested_at": "2026-10-11T21:45:06.765586+08:00"
+    },
+    {
+      "id": "40fe1c5e-211f-4082-b3ac-860936fec46c",
+      "attempt_id": "54ceece5-bf0a-4e84-828b-757bbd77680f",
+      "basis_ref": "controlled-read-only-reconciliation:request-authority-denied",
+      "requested_at": "2026-10-11T21:46:33.994664+08:00"
+    }
+  ],
+  "runs": [
+    {
+      "id": "d5ac8e9d-60fe-4499-a37e-07d8ac2adeb7",
+      "work_id": "2fe0dfdc-6103-4b8e-95da-6d232336c0f3",
+      "started_at": "2026-10-11T21:40:52.11489+08:00"
+    },
+    {
+      "id": "7eb4b727-07b3-44e8-b11c-925adeddff1a",
+      "work_id": "c2cd9c77-ce73-4489-8008-a3c05452b03f",
+      "started_at": "2026-10-11T21:41:28.087633+08:00"
+    },
+    {
+      "id": "532556cc-063e-4dc3-9802-e940f0c045f8",
+      "work_id": "c2cd9c77-ce73-4489-8008-a3c05452b03f",
+      "started_at": "2026-10-11T21:43:14.406293+08:00"
+    },
+    {
+      "id": "356c4fce-160b-4c50-86a9-fa3a28772a55",
+      "work_id": "353475f4-bf12-4785-aa85-4b7f631e86f5",
+      "started_at": "2026-10-11T21:43:33.597078+08:00"
+    },
+    {
+      "id": "eaa392ad-9363-4698-a787-222012c77117",
+      "work_id": "40bc18ba-781f-4571-9582-9240ea167021",
+      "started_at": "2026-10-11T21:44:18.006422+08:00"
+    },
+    {
+      "id": "aeff4727-ac4e-41d6-9ed2-f166d3179dad",
+      "work_id": "aa7894ba-30a7-4ce4-86a0-bcd3fef57c19",
+      "started_at": "2026-10-11T21:45:09.267078+08:00"
+    },
+    {
+      "id": "11a28ab0-ff7a-41ee-b1d7-29e201bf9db8",
+      "work_id": "353475f4-bf12-4785-aa85-4b7f631e86f5",
+      "started_at": "2026-10-11T21:45:15.816962+08:00"
+    },
+    {
+      "id": "b5578955-d2e2-49ae-a189-62d823b9ff66",
+      "work_id": "40fe1c5e-211f-4082-b3ac-860936fec46c",
+      "started_at": "2026-10-11T21:46:35.204403+08:00"
+    }
+  ],
+  "results": [
+    {
+      "id": "c6f8b708-8d50-47da-88e8-3e7d84ac4649",
+      "work_id": "2fe0dfdc-6103-4b8e-95da-6d232336c0f3",
+      "run_id": "d5ac8e9d-60fe-4499-a37e-07d8ac2adeb7",
+      "outcome": "UNKNOWN_PRESENT",
+      "terminal": true,
+      "inventory_call_id": "99409323-869f-4b77-ae4c-2e8f5b7ab03b",
+      "stat_call_id": "3d05a581-4227-4e3e-9259-62d7c3755fdd",
+      "absence_receipt_id": null,
+      "completion_id": null
+    },
+    {
+      "id": "20a10fff-63eb-47a9-afff-98864b64ea04",
+      "work_id": "c2cd9c77-ce73-4489-8008-a3c05452b03f",
+      "run_id": "532556cc-063e-4dc3-9802-e940f0c045f8",
+      "outcome": "UNKNOWN_PRESENT",
+      "terminal": true,
+      "inventory_call_id": "47deb502-6aa3-4e98-93a5-afb261b64317",
+      "stat_call_id": "d070a0da-9f46-41a8-ba54-a31ccd34d6e0",
+      "absence_receipt_id": null,
+      "completion_id": null
+    },
+    {
+      "id": "45754181-bab1-41f1-87b8-5c3500a8fb5b",
+      "work_id": "40bc18ba-781f-4571-9582-9240ea167021",
+      "run_id": "eaa392ad-9363-4698-a787-222012c77117",
+      "outcome": "UNKNOWN_PRESENT",
+      "terminal": true,
+      "inventory_call_id": "9179acc8-9736-4ee6-9230-baa0f12962ef",
+      "stat_call_id": "1c12569a-7e8a-4a66-b376-0345051dc7d3",
+      "absence_receipt_id": null,
+      "completion_id": null
+    },
+    {
+      "id": "c144ceda-5038-4675-957f-247942d69cb8",
+      "work_id": "aa7894ba-30a7-4ce4-86a0-bcd3fef57c19",
+      "run_id": "aeff4727-ac4e-41d6-9ed2-f166d3179dad",
+      "outcome": "UNKNOWN_PRESENT",
+      "terminal": true,
+      "inventory_call_id": "89aceb2c-caef-437a-9b94-e866352aff56",
+      "stat_call_id": "9aa9aea2-faf3-451c-a7ea-ec1ec5fc2291",
+      "absence_receipt_id": null,
+      "completion_id": null
+    },
+    {
+      "id": "d9cde9cf-749c-4e28-8cce-fbb6bb94ec3f",
+      "work_id": "353475f4-bf12-4785-aa85-4b7f631e86f5",
+      "run_id": "11a28ab0-ff7a-41ee-b1d7-29e201bf9db8",
+      "outcome": "UNKNOWN_PRESENT",
+      "terminal": true,
+      "inventory_call_id": "67f722e9-0160-47bd-84a0-11e7dadcfa1f",
+      "stat_call_id": "ca27cb1b-838c-4594-81f6-8f0d2efa260a",
+      "absence_receipt_id": null,
+      "completion_id": null
+    },
+    {
+      "id": "332565cb-2c3f-4731-89f8-1d9e739cc4d8",
+      "work_id": "40fe1c5e-211f-4082-b3ac-860936fec46c",
+      "run_id": "b5578955-d2e2-49ae-a189-62d823b9ff66",
+      "outcome": "BLOCKED_AUTHORITY",
+      "terminal": true,
+      "inventory_call_id": null,
+      "stat_call_id": null,
+      "absence_receipt_id": null,
+      "completion_id": null
+    }
+  ],
+  "outbox_wakes": [
+    {
+      "id": "7c535c85-4984-472e-a837-ea15b31eb31f",
+      "work_id": "2fe0dfdc-6103-4b8e-95da-6d232336c0f3",
+      "status": "PUBLISHED",
+      "required_handlers": [
+        "lifecycle-recovery-queue"
+      ],
+      "routing_version": "c1-v26+external-core1+execution1+usage1+lifecycle-recovery1",
+      "attempts": 2,
+      "confirmations": 1
+    },
+    {
+      "id": "21753483-3aa2-4b8b-ac30-2374ce81570d",
+      "work_id": "c2cd9c77-ce73-4489-8008-a3c05452b03f",
+      "status": "PUBLISHED",
+      "required_handlers": [
+        "lifecycle-recovery-queue"
+      ],
+      "routing_version": "c1-v26+external-core1+execution1+usage1+lifecycle-recovery1",
+      "attempts": 1,
+      "confirmations": 1
+    },
+    {
+      "id": "e2c2d8d6-e1ee-4a69-8184-99ce549ae6a0",
+      "work_id": "353475f4-bf12-4785-aa85-4b7f631e86f5",
+      "status": "PUBLISHED",
+      "required_handlers": [
+        "lifecycle-recovery-queue"
+      ],
+      "routing_version": "c1-v26+external-core1+execution1+usage1+lifecycle-recovery1",
+      "attempts": 1,
+      "confirmations": 1
+    },
+    {
+      "id": "4f16cd23-f414-46b4-bae3-d2676900fb91",
+      "work_id": "40bc18ba-781f-4571-9582-9240ea167021",
+      "status": "PUBLISHED",
+      "required_handlers": [
+        "lifecycle-recovery-queue"
+      ],
+      "routing_version": "c1-v26+external-core1+execution1+usage1+lifecycle-recovery1",
+      "attempts": 1,
+      "confirmations": 1
+    },
+    {
+      "id": "aa051562-3b87-41df-9585-8431f6931eeb",
+      "work_id": "aa7894ba-30a7-4ce4-86a0-bcd3fef57c19",
+      "status": "PUBLISHED",
+      "required_handlers": [
+        "lifecycle-recovery-queue"
+      ],
+      "routing_version": "c1-v26+external-core1+execution1+usage1+lifecycle-recovery1",
+      "attempts": 1,
+      "confirmations": 1
+    },
+    {
+      "id": "f88ba06c-0bfc-471b-aa65-6a76c1fd00fb",
+      "work_id": "40fe1c5e-211f-4082-b3ac-860936fec46c",
+      "status": "PUBLISHED",
+      "required_handlers": [
+        "lifecycle-recovery-queue"
+      ],
+      "routing_version": "c1-v26+external-core1+execution1+usage1+lifecycle-recovery1",
+      "attempts": 1,
+      "confirmations": 1
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "gate": {
+    "id": "19928801-743a-41cd-af28-4838a9b27a76",
+    "workspace_id": "5fe971c0-7682-4b6b-b4c6-741883247365",
+    "plan_id": "50b71a6c-f837-42e4-a670-c924aebceb22",
+    "approval_id": "52f93f4f-ed07-4b7c-8fd6-27302af56985",
+    "copy_id": "1a0bfd6d-6092-41e8-9231-71ef2cf98713",
+    "actor_id": "83acfcf9-b697-4c62-a80a-15f47dc76593",
+    "principal_ref": "lifecycle-fixture:c9f47cab-23c6-4d16-8102-a4a34bac1501",
+    "checked_at": "2026-10-11T21:06:38.169464+08:00",
+    "dependency_revision": 31,
+    "status": "FINALIZED",
+    "retention_count": 1,
+    "content_hash": "069e5c91f244359c3ac11b7e21c4e6e995c5a2b8b953d4a3fd07a48de59f65fc",
+    "eligible": true,
+    "blockers": []
+  },
+  "dependencies": {
+    "evaluation_id": "19928801-743a-41cd-af28-4838a9b27a76",
+    "workspace_id": "5fe971c0-7682-4b6b-b4c6-741883247365",
+    "disposal_due_at": "2026-10-11T21:06:37.471188+08:00",
+    "inventory_complete": "SATISFIED",
+    "references_released": "SATISFIED",
+    "provider_retention_allows": "SATISFIED",
+    "ledger_current": "SATISFIED",
+    "use_restricted": "SATISFIED",
+    "hold_free": "SATISFIED",
+    "readers_drained": "SATISFIED",
+    "unresolved_dispatches": 0,
+    "window_mode": "DEADLINE",
+    "valid_until": "2026-10-11T21:07:38.087371+08:00"
+  },
+  "retention": [
+    {
+      "evaluation_id": "19928801-743a-41cd-af28-4838a9b27a76",
+      "workspace_id": "5fe971c0-7682-4b6b-b4c6-741883247365",
+      "ordinal": 0,
+      "policy_id": "a1464880-2346-4520-ad2e-39b39f0697ce",
+      "start_event_id": "97be5c48-847f-45ad-8731-e15298e24edd",
+      "starts_at": "2026-10-11T21:06:37.471188+08:00",
+      "retain_until": "2026-10-11T21:06:37.471188+08:00"
+    }
+  ],
+  "provider_observation": {
+    "id": "b6925eae-ce98-4b8d-96ca-ec111250aac2",
+    "workspace_id": "5fe971c0-7682-4b6b-b4c6-741883247365",
+    "attempt_id": "eb82dede-f7a1-4922-8dac-cb026a3133c5",
+    "certainty": "CONFIRMED",
+    "outcome": "ACCEPTED",
+    "proof_sha256": "5ea33e6eaedc15d047ef1403d0030b4d6c66c7a9afe8940b06b984b027ad6eca",
+    "observed_at": "2026-10-11T21:06:38.234388+08:00",
+    "invoked_at": "2026-10-11T21:06:38.232066+08:00",
+    "actor_id": "83acfcf9-b697-4c62-a80a-15f47dc76593",
+    "principal_ref": "lifecycle-fixture:c9f47cab-23c6-4d16-8102-a4a34bac1501",
+    "dependency_revision": 32
+  },
+  "typed_delete_allocation": 1,
+  "typed_storage_allocations": 154,
+  "approved_plans": 1
+}

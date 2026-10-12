@@ -1,0 +1,16 @@
+{
+  "retained_original_versions": 4,
+  "delete": 0,
+  "windows_enabled": false,
+  "cleanup": 0,
+  "gateway_admin": "DENY_ALL",
+  "lost_reader_pin": "RETAINED_UNCONFIRMED",
+  "copy": 0,
+  "retained_named_volumes": 2,
+  "gateway_config_sha256": "914622208d1dd2743d3c716734ffefd55f0d9bd4638eeea435628e4cbe31d09f",
+  "run_id": "d6dfc1cd-8eff-4d7d-bed2-515a4b5243f2",
+  "gateway_payload": "DENY_ALL",
+  "native_reader_identity": "DISABLED",
+  "gateway_copy": "DENY_ALL",
+  "gateway_delete": "DENY_ALL"
+}

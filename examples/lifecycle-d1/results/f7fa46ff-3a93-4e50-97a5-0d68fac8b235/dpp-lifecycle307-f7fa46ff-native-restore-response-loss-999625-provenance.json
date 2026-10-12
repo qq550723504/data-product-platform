@@ -1,0 +1,15 @@
+{
+  "source_head": "6961fde137046f6eb335e9924ba00bc56a7361ff",
+  "binary_sha256": "36d3efc94a4c8b305f86a34a4b0c4f9c827720f8a39b96c688389631c73edcb9",
+  "run_id": "f7fa46ff-3a93-4e50-97a5-0d68fac8b235",
+  "credentials": "COPY_ONLY_NO_ROOT_NO_DELETE",
+  "native_delete": 0,
+  "helper_id": "6b07c601cfb50522e376d07015bb28746e75ce0bf2b6c9411aab0d1aba5f8577",
+  "scenario": "native-restore-response-loss",
+  "gateway_sha256": "a286fc83615f68878bd207ed9e58c6f5eae5b0e9fedae8162162c51c8ea5de39",
+  "recorded_before_start": "2026-10-11T14:54:33.3133139Z",
+  "cleanup": 0,
+  "action": "response-loss-restore",
+  "role": "copy-producer",
+  "expected_exit": 93
+}

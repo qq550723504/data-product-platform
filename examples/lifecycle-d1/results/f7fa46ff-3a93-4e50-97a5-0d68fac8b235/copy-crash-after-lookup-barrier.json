@@ -1,0 +1,17 @@
+{
+  "exact_target": {
+    "ID": "90657173-e601-42bd-9fde-a8962e208aa7",
+    "WorkspaceID": "98a94425-6526-421b-a791-83db9347e83c",
+    "DatasetVersionID": "ee512ae9-74c7-4212-85c6-92ae088164b8",
+    "ProviderInstanceID": "73f3fc19-803b-42fb-8650-c73cda6ee834",
+    "IncarnationID": "44936d04-0559-41ea-b6f2-61ffd02123df",
+    "Namespace": "dpp-lifecycle307-quarantine",
+    "Key": "archive/a.csv",
+    "ProviderVersion": "8c0c9716-fe02-47fa-b1f6-b0dd1db43df5",
+    "ContentSHA256": "818392d0732d499a777b5b5a74f1351ddffce3cf8a3b66f8d91dbfd98dfa1523",
+    "ByteSize": 27
+  },
+  "fault": "PROCESS_EXIT_AFTER_DURABLE_COPY_LOOKUP_BEFORE_BIND",
+  "inventory_call_id": "d5e989ce-f897-442e-b59d-85b4f46b800e",
+  "stat_call_id": "1b525e1e-8f59-4008-86e0-a737e2a4f1c9"
+}

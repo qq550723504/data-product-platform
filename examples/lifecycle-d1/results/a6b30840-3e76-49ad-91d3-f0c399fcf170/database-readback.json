@@ -1,0 +1,17 @@
+{
+  "observed_at": "2026-10-11T18:54:20.959678+08:00",
+  "registered_copies": 4,
+  "restrictions": 2,
+  "native_inspection_calls": 19,
+  "native_inspection_observations": 19,
+  "cost_invocations": 19.0,
+  "cost_records": 19,
+  "approvals": 0,
+  "dispatches": 0,
+  "delete_attempts": 0,
+  "reader_pins": 0,
+  "events": 41,
+  "audits": 41,
+  "evidence": 41,
+  "scope_hash_matches_database": true
+}

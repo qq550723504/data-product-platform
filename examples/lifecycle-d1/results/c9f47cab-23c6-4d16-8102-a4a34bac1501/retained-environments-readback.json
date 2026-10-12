@@ -1,0 +1,183 @@
+{
+  "cleanup": 0,
+  "native_copy_user_last_disable_receipt": "HTTP200",
+  "old_environment_mutations": 0,
+  "old_environment_native_requests": "NONE_THIS_SLICE",
+  "fixture_principal_enabled": false,
+  "observed_at": "2026-10-11T12:53:52.4754257Z",
+  "environments": [
+    {
+      "containers": [
+        {
+          "name": "dpp-lifecycle307-a6b30840-postgres",
+          "host_ports": {
+            "5432/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": ""
+              }
+            ]
+          },
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "role": "postgres",
+          "id": "2dac61950f7bec8b9cc03a5ca2c9acb279640daff161a428885f0eef5bfaa414",
+          "state": "running"
+        },
+        {
+          "name": "dpp-lifecycle307-a6b30840-minio",
+          "host_ports": {},
+          "image": "sha256:a9eb76492485dd496bfd69b4114e47137f2da1a1a87e4a9b273cb21476cb1a98",
+          "role": "minio",
+          "id": "4b7287adcc0c6b221f2516f0c4af8065d281c18a90322fbcdfcb01325e52f7c2",
+          "state": "running"
+        },
+        {
+          "name": "dpp-lifecycle307-a6b30840-gateway",
+          "host_ports": {
+            "9000/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": ""
+              }
+            ]
+          },
+          "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+          "role": "gateway",
+          "id": "102dcc35b2d6c50f1e41207af9ba3a8dc202caeceb36620085d99f2a68ab73c9",
+          "state": "running"
+        }
+      ],
+      "project": "dpp-lifecycle307-a6b30840",
+      "volumes": [
+        {
+          "run_label": "a6b30840-3e76-49ad-91d3-f0c399fcf170",
+          "name": "dpp-lifecycle307-a6b30840-postgres"
+        },
+        {
+          "run_label": "a6b30840-3e76-49ad-91d3-f0c399fcf170",
+          "name": "dpp-lifecycle307-a6b30840-objects"
+        }
+      ]
+    },
+    {
+      "containers": [
+        {
+          "name": "dpp-lifecycle307-a1647373-postgres",
+          "host_ports": {},
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "role": "postgres",
+          "id": "463eeed21004f7bfac686d36102549417996418abeb7d33aa9cf628ee26288a0",
+          "state": "running"
+        },
+        {
+          "name": "dpp-lifecycle307-a1647373-minio",
+          "host_ports": {},
+          "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741",
+          "role": "minio",
+          "id": "7c89aaa430c020dc14ea66cad76642ca479a86848f4cb86fb4789f0fe7417c24",
+          "state": "running"
+        },
+        {
+          "name": "dpp-lifecycle307-a1647373-gateway",
+          "host_ports": {},
+          "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+          "role": "gateway",
+          "id": "b37398dd78a38ba33fdf18aa1d7c47261b9db3958d0fc7d719846e48447e2d1b",
+          "state": "running"
+        }
+      ],
+      "project": "dpp-lifecycle307-a1647373",
+      "volumes": [
+        {
+          "run_label": "a1647373-8412-47da-8bf7-993b182adbac",
+          "name": "dpp-lifecycle307-a1647373-postgres"
+        },
+        {
+          "run_label": "a1647373-8412-47da-8bf7-993b182adbac",
+          "name": "dpp-lifecycle307-a1647373-objects"
+        }
+      ]
+    },
+    {
+      "containers": [
+        {
+          "name": "dpp-lifecycle307-bb44901c-postgres",
+          "host_ports": {},
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "role": "postgres",
+          "id": "0732aea1d8943c8c677d24ce8ffa7806da2826a8255a66e30e333df00dd0f230",
+          "state": "running"
+        },
+        {
+          "name": "dpp-lifecycle307-bb44901c-minio",
+          "host_ports": {},
+          "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741",
+          "role": "minio",
+          "id": "02f59785ee7356b75f22b89cc062015129a60626854bff378ed45e96a43752f5",
+          "state": "running"
+        },
+        {
+          "name": "dpp-lifecycle307-bb44901c-gateway",
+          "host_ports": {},
+          "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+          "role": "gateway",
+          "id": "8bd0d14d645dfa7b4d9860eaa42f8efa5d41b112177a3eaec618fc262ee3e8ee",
+          "state": "running"
+        }
+      ],
+      "project": "dpp-lifecycle307-bb44901c",
+      "volumes": [
+        {
+          "run_label": "bb44901c-b469-481b-ba3f-0d89029b8f20",
+          "name": "dpp-lifecycle307-bb44901c-postgres"
+        },
+        {
+          "run_label": "bb44901c-b469-481b-ba3f-0d89029b8f20",
+          "name": "dpp-lifecycle307-bb44901c-objects"
+        }
+      ]
+    },
+    {
+      "containers": [
+        {
+          "name": "dpp-lifecycle307-c9f47cab-postgres",
+          "host_ports": {},
+          "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+          "role": "postgres",
+          "id": "08f55f18ce8520d4bd35a3314e208ce19c543737fa342db48214495d4facc786",
+          "state": "running"
+        },
+        {
+          "name": "dpp-lifecycle307-c9f47cab-minio",
+          "host_ports": {},
+          "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741",
+          "role": "minio",
+          "id": "8877f5980344b5278ba86b2dcac0ce2efb783c2f89c7bd184c6e37eb62335138",
+          "state": "running"
+        },
+        {
+          "name": "dpp-lifecycle307-c9f47cab-gateway",
+          "host_ports": {},
+          "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+          "role": "gateway",
+          "id": "78dbb57abd29a36113cc5d13624aacbe6888bcbff3694ccca24ce6fd500b61c5",
+          "state": "running"
+        }
+      ],
+      "project": "dpp-lifecycle307-c9f47cab",
+      "volumes": [
+        {
+          "run_label": "c9f47cab-23c6-4d16-8102-a4a34bac1501",
+          "name": "dpp-lifecycle307-c9f47cab-postgres"
+        },
+        {
+          "run_label": "c9f47cab-23c6-4d16-8102-a4a34bac1501",
+          "name": "dpp-lifecycle307-c9f47cab-objects"
+        }
+      ]
+    }
+  ],
+  "new_environment_delete": 0,
+  "old_object_protection_current_probe": "NOT_RUN",
+  "new_source_plan": "50b71a6c-f837-42e4-a670-c924aebceb22"
+}

@@ -1,0 +1,25 @@
+{
+  "claim": "full merged PostgreSQL race binds b853; f1b4 changes only shared PowerShell helper/tests",
+  "native_source_hashes_match": 62,
+  "tested_d1_go_sql_head": "b853466ffab7a99ce64fd09b97a51059fbefa58a",
+  "production_go_changed": [],
+  "helper_lift_head": "f1b4b962519fe1cc3f76f4be464b959717705941",
+  "changed_paths": [
+    "examples/lifecycle-d1/durable-storage.ps1",
+    "examples/lifecycle-d1/test-durable-storage.ps1"
+  ],
+  "helper_contract": {
+    "mutation": 0,
+    "negative": 19,
+    "positive": 4,
+    "default_states": [
+      "running"
+    ],
+    "storage_io": 0,
+    "explicit_prestart": [
+      "created",
+      "exited"
+    ]
+  },
+  "sql_changed": []
+}

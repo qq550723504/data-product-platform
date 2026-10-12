@@ -1,0 +1,87 @@
+{
+  "sql_c2_go_suite": "PASS with package concurrency; existing provider opt-ins SKIP separate",
+  "metadata_race": "PASS; controlled Ports; not native/browser acceptance",
+  "database": {
+    "container": "dpp-c2-review-final-9d6426fda49f",
+    "network": "dpp-c2-review-final-9d6426fda49f-net",
+    "subnet": "10.233.25.0/24",
+    "volume": "dpp-c2-review-final-9d6426fda49f-pgdata",
+    "image": "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "scope": "new independent validation PG; retained old Core not reused or reconstructed; no cleanup"
+  },
+  "subjects": {
+    "external_provider_call_id": true,
+    "external_usage_call_id": true,
+    "lifecycle_provider_attempt_id": true,
+    "lifecycle_storage_call_id": true,
+    "source_schema_attempt_id": true
+  },
+  "sql_files": {
+    "000062_lifecycle_denied_reconciliation.up.sql": {
+      "commit": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+      "gitBlob": "ebcb872211bb54822593c17ac820f179a821b9b4",
+      "sha256": "ba3198b31b6a1c20b19e7b97c6f744d41b1e75cd1aabe6b926ab8298bcf82bac"
+    },
+    "000062_lifecycle_denied_reconciliation.down.sql": {
+      "commit": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+      "gitBlob": "1d952d547f3aa6bf9160d0d0abaab755229bbee4",
+      "sha256": "5325bbf79436e5d2fc64e364ddcc4f791d2f6cab053cedd27369cc593c1c8e4b"
+    },
+    "000061_lifecycle_scoped_completion.down.sql": {
+      "commit": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+      "gitBlob": "70383e808c4ac89daca028ef54f2dd7e47f8614b",
+      "sha256": "5a62031cd19d3de73337b7a161d76a9fae76ee1171fca131bbde97d17ce0f55a"
+    },
+    "000060_lifecycle_fixture_plan.down.sql": {
+      "commit": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+      "gitBlob": "54a226b529157b516cdc91145bc2a012962a5a77",
+      "sha256": "c9093def187b10c2e546d8d2342b88a58028339dd056e66f51ac64126f889465"
+    },
+    "000063_lifecycle_archive_restore.up.sql": {
+      "commit": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+      "gitBlob": "727247646eeca34c4217527dd2c6b8a84c2660ed",
+      "sha256": "7212102ffd109f8367d7b1293bce698175e1e8f6af8286b4e257a79b66e77b04"
+    },
+    "000061_lifecycle_scoped_completion.up.sql": {
+      "commit": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+      "gitBlob": "7c393b2e808027d45a6d97a4105dcf8d664a5634",
+      "sha256": "71030f44300a690b5575df0592f66f2823675a1eca88f0f7341a80e186caec02"
+    },
+    "000060_lifecycle_fixture_plan.up.sql": {
+      "commit": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+      "gitBlob": "f19f72535b861f73ddf8ba4a84d514a965dc57a0",
+      "sha256": "0aa69112c2369128519286ed5ee0d641caa10fd29ef548bb16489e52595039bc"
+    },
+    "000065_source_schema_observation.up.sql": {
+      "commit": "00bd4d4e9afadd863a178b7798b6f7dee1f3192d",
+      "gitBlob": "e3cc3f1a81631b2263e033e756f3c3eb1a89cf0b",
+      "sha256": "79db49a92e39afa63e821268ecf2801704876eaffd36c4f8b87485abd2c58fb2"
+    },
+    "000063_lifecycle_archive_restore.down.sql": {
+      "commit": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+      "gitBlob": "f394df40a2e9ddb73c88f0750f11c03e6f784b78",
+      "sha256": "07a48c5afebeea29ccd9aaafdd01d90a48063fa9cd48917ad28ccfb168705525"
+    },
+    "000065_source_schema_observation.down.sql": {
+      "commit": "00bd4d4e9afadd863a178b7798b6f7dee1f3192d",
+      "gitBlob": "818ad9bde1afecfa54e78865be526f6f70d72386",
+      "sha256": "790f6f6dcc579214d749f64a390433ac241d2d7c9e4137bb57898438d1aaa0e4"
+    },
+    "000064_lifecycle_reconciliation_work.up.sql": {
+      "commit": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+      "gitBlob": "d00784f9b3ccd12e9288c58fb7c256e52cfe369a",
+      "sha256": "b56d1d804a665d5e4b6e8b9584b81dc3066e4a03c07c02c45ecd360e84b272fb"
+    },
+    "000064_lifecycle_reconciliation_work.down.sql": {
+      "commit": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+      "gitBlob": "c4d6d356e6e6b1c7d73f45b8aa4676e5a0300b2a",
+      "sha256": "f86ba26f716ceeda6ed81a4f6a255e1bee5f5df501462d3c18a2c4a6ead06c34"
+    }
+  },
+  "status": "PASS",
+  "scope": "fresh own databases; committed D1 SQL only with C2 code; not D1 full Go/native acceptance. Independent volume-backed PG, not restoration of original lost tmpfs Core. D1→C2 merge order/rebase and shared registration check remain Ready gate; no automatic merge.",
+  "d1_head": "0196b49d7bbf1b6a4f248b0a013ed3395ed1061f",
+  "c2_head": "00bd4d4e9afadd863a178b7798b6f7dee1f3192d",
+  "empty65": "PASS; D1/external subjects retained after C2 down; all restored after up",
+  "populated65": "FAIL_CLOSED; seven exact count/hash facts unchanged"
+}

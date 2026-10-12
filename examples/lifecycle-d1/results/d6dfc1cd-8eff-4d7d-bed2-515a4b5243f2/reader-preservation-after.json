@@ -1,0 +1,405 @@
+{
+  "previous_containers": [
+    {
+      "id": "9037f31c713e75144861f069da2f40108331e258117199f8b022aaa89d18d145",
+      "name": "dpp-lifecycle307-f7fa46ff-copy-final-seal-ec8579",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "a6eb73e29495be84f08d49ba039b0f4a2f577ba7cdf70a8934e505310f620430",
+      "name": "dpp-lifecycle307-f7fa46ff-copy-final-seal-f56b6f",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "636b345853289ca34775601651debe11d8bd25900dd99a99fc287780d1e3fa68",
+      "name": "dpp-lifecycle307-f7fa46ff-copy-original-protection-final-a9d4d6",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "652df25f04db4b6000eaf299b6a51eff0d3d93093e79c9890902da73b7a76c7f",
+      "name": "dpp-lifecycle307-f7fa46ff-copy-worker-window-revoked-9d23e7",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "c3f347aad5c49c4dcee858d750cb5236b84a610711ac09550082309a3812a9aa",
+      "name": "dpp-lifecycle307-f7fa46ff-revoked-copy-window-request-70ac5c",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "2f4892dafeb553d72c6aa241afe41acc6d3c867cd50da057c866c850f846b4ac",
+      "name": "dpp-lifecycle307-f7fa46ff-restricted-restore-fresh-cut-blocked-566897",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "a5059bd207f3d1d2c40d35fe44182280a086d2dcdd7e97aa8b7a0d9f07197873",
+      "name": "dpp-lifecycle307-f7fa46ff-restricted-fresh-cut-outbox-2d1698",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "5295989dc37b6e6192ceff6cbe01bd4a61a547666432209c077082c866d8da48",
+      "name": "dpp-lifecycle307-f7fa46ff-restricted-fresh-cut-request-e121aa",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "f7abb23a44749fdd926a71cfa0ec3e69da98e6f17822491d0072fe81867ed69b",
+      "name": "dpp-lifecycle307-f7fa46ff-independent-cut-with-current-restriction-e0d1b3",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "33ed3ac8ee6640e79f754c61e78baa78b22fd21c1d7a262cad7e30810198f751",
+      "name": "dpp-lifecycle307-f7fa46ff-restricted-restore-stale-ledger-0be6e3",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "58cc40636c6b2c4b66b4663de123d64e20da393e37af5b483ce0d509dd648f42",
+      "name": "dpp-lifecycle307-f7fa46ff-restricted-restore-outbox-06e42d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "532a751780b038b725bdc64cf043ca77bcfcba5ad99a1991d49e35e56984c7f5",
+      "name": "dpp-lifecycle307-f7fa46ff-restore-current-use-restriction-6a7491",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "0d281d0d7009080b6d60b2c1211fb493abacfa262c5834e7a26a556a3b5a211d",
+      "name": "dpp-lifecycle307-f7fa46ff-native-restore-restriction-prepared-6aedb7",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "7b1da680c16563a5c43d898bbbe36d5f712a78f0e143169381f4f1b7b1200ff6",
+      "name": "dpp-lifecycle307-f7fa46ff-native-restore-current-restriction-b1eed8",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "e5d287fb54ddddcfdf0d4f87a6b6b55c4c379a1156fdc0ce19e2a8d7649b26ab",
+      "name": "dpp-lifecycle307-f7fa46ff-copy-duplicate-terminal-replay-371549",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "94b613e35c379b0de198b9aac23f7ee4926f86b0f86022055b0985759837e9bd",
+      "name": "dpp-lifecycle307-f7fa46ff-restore-worker-fresh-cut-665738",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "7463296ff502b2196c7401d4e9f8eff378cecc549d613742838947c65e5d4607",
+      "name": "dpp-lifecycle307-f7fa46ff-restore-fresh-cut-outbox-c9f28e",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "72e5e07b377b9ab8fac36ead3dd64a93c7daad4d409797cf0803826857822c4d",
+      "name": "dpp-lifecycle307-f7fa46ff-restore-fresh-cut-request-8af0a3",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "976a17522dcff08c553bdaf7a36a46897fffa26f8a56464e75718b7d5ca8ef9d",
+      "name": "dpp-lifecycle307-f7fa46ff-independent-cut-after-restore-unknown-72fba1",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "cd4c69b8cb83cab5945112cb3636d81da149aeed85aeb091256df572cb014006",
+      "name": "dpp-lifecycle307-f7fa46ff-restore-worker-missing-ledger-5dbb8d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "44eff44e0b12ecc00fe135af1cfb0946f67893b6c96f92faee60b94622bcd06c",
+      "name": "dpp-lifecycle307-f7fa46ff-restore-outbox-published-f0f6fd",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "6b07c601cfb50522e376d07015bb28746e75ce0bf2b6c9411aab0d1aba5f8577",
+      "name": "dpp-lifecycle307-f7fa46ff-native-restore-response-loss-999625",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "d6ead4416c1d5c2c0b7b651557da5aedeff1eec9e99ba87fb8648608e3a218c3",
+      "name": "dpp-lifecycle307-f7fa46ff-copy-worker-after-crash-4cabc9",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "588f9590d704e3c1271522efd99d871fada84c7d6c0c7c4b45afdbccfad3d459",
+      "name": "dpp-lifecycle307-f7fa46ff-copy-crash-after-lookup-91608d",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "6338a0ad11a2c9dd00c302ff96f798e592d831c01dc7a46fed5cff06df1ed5de",
+      "name": "dpp-lifecycle307-f7fa46ff-copy-outbox-repaired-11179b",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "93a42f33f0a723d83ae2a0f776fbf694b45c205c426e2b4853abc7ffa465e830",
+      "name": "dpp-lifecycle307-f7fa46ff-copy-outbox-broker-unavailable-f3b14f",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "5437f5f0ecb79d95bc7b1167c81c2adf9ec15406bf2e76f29a7e5567dd2c8993",
+      "name": "dpp-lifecycle307-f7fa46ff-native-archive-response-loss-9253ef",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "3651b9639677989849aa876db84d368878206c42d679596cc765b13c30f0b740",
+      "name": "dpp-lifecycle307-f7fa46ff-provision-readonly-iam-after-mount-fix-d1955b",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "fcff3d4931aef4bc82872027fc5495c597b485c377685a06be1b58ed8821202f",
+      "name": "dpp-lifecycle307-f7fa46ff-provision-copy-iam-after-mount-fix-6f4532",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "d528312b233b117ef341b230534dac271a81b2dffc0b0d0d5f0435da9cc11ac9",
+      "name": "dpp-lifecycle307-f7fa46ff-provision-readonly-iam-22810e",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "2b245b0ef408c2e09b95a4e13ac10bdec33a56ed662ddc7bc78bb0576191667a",
+      "name": "dpp-lifecycle307-f7fa46ff-provision-copy-iam-5b0735",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited"
+    },
+    {
+      "id": "7704fcb246e327fa67d0c6bc006bd1768af4bed0c08b79a6103dae3b022a4e8d",
+      "name": "dpp-lifecycle307-f7fa46ff-redis",
+      "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "state": "running"
+    },
+    {
+      "id": "f3d8de1e2ae600907204dce5a387a301dc575fa1617ed42870a8bfc2e4b6bf6d",
+      "name": "dpp-lifecycle307-f7fa46ff-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "running"
+    },
+    {
+      "id": "1cc431a2d099ea04d2be9559bedf2ca0e15987b5ba187806ac49e98aca8b05f2",
+      "name": "dpp-lifecycle307-f7fa46ff-minio",
+      "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741",
+      "state": "running"
+    },
+    {
+      "id": "5337f6cce50db0eee815b32662618c5d34829d96fbe14c17001393f0877a5868",
+      "name": "dpp-lifecycle307-f7fa46ff-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "running"
+    },
+    {
+      "id": "35e6d0e4ac313da49e14822705e31cffd509a70712bd58adee13b3791ef6c992",
+      "name": "dpp-lifecycle307-migration-d05b650f",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "running"
+    },
+    {
+      "id": "cd8b28ebac93735075c7997e780b68e45c9a4e10d2401546d550bc106635b938",
+      "name": "dpp-lifecycle307-4abcfca5-redis",
+      "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "state": "running"
+    },
+    {
+      "id": "ba20cf07fd7d0cedbb62a9c153f52850ff3207cd23e602b5f8196d62618ed227",
+      "name": "dpp-lifecycle307-4abcfca5-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "running"
+    },
+    {
+      "id": "68b96043e2b3dbc25840f86a9b05a5cb5c207913889f676e0f28280b707c889b",
+      "name": "dpp-lifecycle307-4abcfca5-minio",
+      "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741",
+      "state": "running"
+    },
+    {
+      "id": "7d43cffc2aaf97baf8bf8ae5a4aa7c126ae73d46dff6bbd1326667bdd5f64885",
+      "name": "dpp-lifecycle307-4abcfca5-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "running"
+    },
+    {
+      "id": "78dbb57abd29a36113cc5d13624aacbe6888bcbff3694ccca24ce6fd500b61c5",
+      "name": "dpp-lifecycle307-c9f47cab-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "running"
+    },
+    {
+      "id": "8877f5980344b5278ba86b2dcac0ce2efb783c2f89c7bd184c6e37eb62335138",
+      "name": "dpp-lifecycle307-c9f47cab-minio",
+      "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741",
+      "state": "running"
+    },
+    {
+      "id": "08f55f18ce8520d4bd35a3314e208ce19c543737fa342db48214495d4facc786",
+      "name": "dpp-lifecycle307-c9f47cab-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "running"
+    },
+    {
+      "id": "8bd0d14d645dfa7b4d9860eaa42f8efa5d41b112177a3eaec618fc262ee3e8ee",
+      "name": "dpp-lifecycle307-bb44901c-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "running"
+    },
+    {
+      "id": "02f59785ee7356b75f22b89cc062015129a60626854bff378ed45e96a43752f5",
+      "name": "dpp-lifecycle307-bb44901c-minio",
+      "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741",
+      "state": "running"
+    },
+    {
+      "id": "0732aea1d8943c8c677d24ce8ffa7806da2826a8255a66e30e333df00dd0f230",
+      "name": "dpp-lifecycle307-bb44901c-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "running"
+    },
+    {
+      "id": "b37398dd78a38ba33fdf18aa1d7c47261b9db3958d0fc7d719846e48447e2d1b",
+      "name": "dpp-lifecycle307-a1647373-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "running"
+    },
+    {
+      "id": "7c89aaa430c020dc14ea66cad76642ca479a86848f4cb86fb4789f0fe7417c24",
+      "name": "dpp-lifecycle307-a1647373-minio",
+      "image": "sha256:4d2b20cfce457652e6be8c5038d90704a99fdf0160b7e775d968f9163e96a741",
+      "state": "running"
+    },
+    {
+      "id": "463eeed21004f7bfac686d36102549417996418abeb7d33aa9cf628ee26288a0",
+      "name": "dpp-lifecycle307-a1647373-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "running"
+    },
+    {
+      "id": "aece0d3af1d10c2c8262729b85b0dadbea70016e3b56a9eefd7732f1270a0aa6",
+      "name": "dpp-lifecycle307-copy-pg-91f5da9e",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "running"
+    },
+    {
+      "id": "102dcc35b2d6c50f1e41207af9ba3a8dc202caeceb36620085d99f2a68ab73c9",
+      "name": "dpp-lifecycle307-a6b30840-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "running"
+    },
+    {
+      "id": "4b7287adcc0c6b221f2516f0c4af8065d281c18a90322fbcdfcb01325e52f7c2",
+      "name": "dpp-lifecycle307-a6b30840-minio",
+      "image": "sha256:a9eb76492485dd496bfd69b4114e47137f2da1a1a87e4a9b273cb21476cb1a98",
+      "state": "running"
+    },
+    {
+      "id": "2dac61950f7bec8b9cc03a5ca2c9acb279640daff161a428885f0eef5bfaa414",
+      "name": "dpp-lifecycle307-a6b30840-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "running"
+    }
+  ],
+  "previous_volume_count": 15,
+  "verified_at": "2026-10-11T16:05:19.9634451Z",
+  "previous_volumes": [
+    {
+      "created_at": "2026-10-11T13:40:04Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-4abcfca5-redis-data"
+    },
+    {
+      "created_at": "2026-10-11T10:34:52Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-a6b30840-postgres"
+    },
+    {
+      "created_at": "2026-10-11T14:45:54Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-f7fa46ff-redis-data"
+    },
+    {
+      "created_at": "2026-10-11T12:43:32Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-c9f47cab-objects"
+    },
+    {
+      "created_at": "2026-10-11T14:39:09Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-f7fa46ff-postgres"
+    },
+    {
+      "created_at": "2026-10-11T10:34:52Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-a6b30840-objects"
+    },
+    {
+      "created_at": "2026-10-11T14:27:37Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-migration-d05b650f-data"
+    },
+    {
+      "created_at": "2026-10-11T12:41:11Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-bb44901c-objects"
+    },
+    {
+      "created_at": "2026-10-11T12:39:22Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-a1647373-objects"
+    },
+    {
+      "created_at": "2026-10-11T12:39:22Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-a1647373-postgres"
+    },
+    {
+      "created_at": "2026-10-11T13:39:33Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-4abcfca5-objects"
+    },
+    {
+      "created_at": "2026-10-11T13:39:33Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-4abcfca5-postgres"
+    },
+    {
+      "created_at": "2026-10-11T12:43:31Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-c9f47cab-postgres"
+    },
+    {
+      "created_at": "2026-10-11T12:41:11Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-bb44901c-postgres"
+    },
+    {
+      "created_at": "2026-10-11T14:39:10Z",
+      "driver": "local",
+      "name": "dpp-lifecycle307-f7fa46ff-objects"
+    }
+  ],
+  "result": "PASS",
+  "previous_container_count": 53,
+  "cleanup": 0,
+  "old_native_io": 0
+}
