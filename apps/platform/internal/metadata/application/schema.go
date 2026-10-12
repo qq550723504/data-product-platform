@@ -214,15 +214,17 @@ func (s *SchemaService) Process(ctx context.Context, id uuid.UUID) error {
 		}
 		if err := s.Service.tx.Do(context.WithoutCancel(ctx), func(ctx context.Context, tx pgx.Tx) error {
 			gateErr := s.authorize(ctx, tx, req.Plan)
+			deniedReason := "CURRENT_AUTHORITY_DENIED"
 			if gateErr == nil {
 				gateErr = s.currentBinding(ctx, tx, req)
+				deniedReason = "SOURCE_BINDING_CHANGED"
 			}
 			if err := gateErr; err != nil {
 				if !errors.Is(err, ErrSchemaDenied) {
 					return err
 				}
 				o.Status = "DENIED"
-				o.Reason = "CURRENT_AUTHORITY_DENIED"
+				o.Reason = deniedReason
 				o.Columns = nil
 				o.SchemaHash = ""
 			}

@@ -1,0 +1,83 @@
+{
+  "status": "PASS local; current-HEAD CI/review separate",
+  "baseMain": "1892cd76c4ee578896ddfb3c6f4a7252bfacc51b",
+  "fileSha256": {
+    "apps/platform/internal/metadata/application/schema.go": "f34d70cc8d77e75edbdddad1fc69f5afa49c0bba476acbbbd4e05971ef844953",
+    "apps/platform/internal/metadata/application/schema_retry_integration_test.go": "34df9c8e1c67d18c0bf8c33430f577b05d53c22497424b7ea88220666a2ea2d0",
+    "apps/web/components/resource-source.tsx": "5709b0258c7758098b3aa11fccf3ed96fd070f782358fe01595d8ab916706226"
+  },
+  "browser": {
+    "browser": "real Edge",
+    "runtime": {
+      "web": "http://127.0.0.1:50418",
+      "api": "http://127.0.0.1:50416",
+      "apiSha256": "72c0b61134467f341b738b71b2b8d493983aa6d5396b0f9f48d904f41d08c13a",
+      "coreContainer": "dpp-pgi-b3-core-bc776a791192",
+      "workspaceId": "84a6fe50-fbf2-4709-a615-c770ddeb955f",
+      "actorId": "219fead2-cc3e-4dd0-aaa5-915940cd2383",
+      "metadataEnabled": false,
+      "schemaProfileConfigured": false,
+      "scope": "retained actual Core facts; no worker or new source reads; metadata GET returns controlled503; proxy accepts GET only"
+    },
+    "faults": [
+      {
+        "path": "/api/v1/data-resources/009942f3-c90c-4d4f-87dd-3fd54226ba10/metadata-observation",
+        "status": 503
+      },
+      {
+        "path": "/api/v1/data-resources/009942f3-c90c-4d4f-87dd-3fd54226ba10/metadata-observation",
+        "status": 503
+      },
+      {
+        "path": "/api/v1/ingestions",
+        "status": 503
+      },
+      {
+        "path": "/api/v1/ingestion-source",
+        "status": 503
+      }
+    ],
+    "metadataFaultCase": {
+      "schemaHistoryPresent": true,
+      "unknownWarning": true,
+      "priorDriftAndHandling": true,
+      "requests": 17,
+      "scanButtons": 0
+    },
+    "sourceAndMetadataFaultCase": {
+      "sourceViewUnavailable": true,
+      "schemaHistoryPresent": true,
+      "priorDriftAndHandling": true,
+      "requests": 17,
+      "scanButtons": 0
+    },
+    "scope": "production Next/API against retained real Core. OM/schema composition disabled; GET-only loopback proxy injects metadata503 and source/batch503; no new discovery/B3 mutation or native provider acceptance claim",
+    "runtimeStopped": "review API/web/gateway only; original containers/API/web/worker retained; original browser tab restored"
+  },
+  "historicalProtection": {
+    "tables": 17,
+    "beforeSha256": "d226129e25c48b7c714a955cd2aa9274a9b40f4f22fde8f4cbb339ebe6297ffa",
+    "afterSha256": "d226129e25c48b7c714a955cd2aa9274a9b40f4f22fde8f4cbb339ebe6297ffa",
+    "schemaBeforeSha256": "4712f835570594e17c41fd807d9da5922c7e75ae2dc9b13b88d5827e0ec49a47",
+    "schemaAfterSha256": "4712f835570594e17c41fd807d9da5922c7e75ae2dc9b13b88d5827e0ec49a47",
+    "costsBeforeSha256": "f242729b27794ac3c7e182eeb955a16f1e28c661fab50a37ecb22b73212f3b6b",
+    "costsAfterSha256": "f242729b27794ac3c7e182eeb955a16f1e28c661fab50a37ecb22b73212f3b6b",
+    "requests": 17,
+    "attempts": 37,
+    "invocations": 24,
+    "sourceAuthorization": "REVOKED"
+  },
+  "finalBindingReason": {
+    "status": "PASS",
+    "scope": "real PostgreSQL with controlled Observer/entitlement Port; not provider acceptance",
+    "assertion": "binding demoted during scan; DENIED/SOURCE_BINDING_CHANGED in immutable observation, Audit and Evidence",
+    "regressionLog": "=== RUN   TestSourceSchemaFinalBindingChangeHasExactReason\n--- PASS: TestSourceSchemaFinalBindingChangeHasExactReason (0.26s)\n=== RUN   TestBindingAndProductReleasedProjectionAreRetrySafe\n--- PASS: TestBindingAndProductReleasedProjectionAreRetrySafe (0.23s)\n"
+  },
+  "goSuite": "PASS; DSN-free integration SKIP separate",
+  "goVet": "PASS",
+  "metadataPostgresRace": "PASS",
+  "webTypecheck": "PASS",
+  "webProductionBuild": "PASS",
+  "humanExplanation": "NOT_RUN",
+  "d1Gate": "2cb3c96d full combination FAIL; cost subjects loss assigned to D1 writer; final stable snapshot rebase/combination required before Ready"
+}

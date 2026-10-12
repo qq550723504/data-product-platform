@@ -29,6 +29,17 @@ function partyNames(parties?: PartyReference[]) {
 }
 
 export async function ResourceSource({ id }: { id: string }) {
+	let observation: MetadataObservation = { status: "UNKNOWN" };
+	try {
+		observation = await core<MetadataObservation>(
+			`/data-resources/${id}/metadata-observation?workspaceId=${workspace()}`,
+			"GET", undefined, undefined, true,
+		);
+	} catch { /* Live metadata availability cannot hide Core-owned history. */ }
+	return <><ResourceConnection id={id} m={observation}/><SourceSchema resourceId={id} providerAvailable={observation.status==="OBSERVED"}/></>;
+}
+
+async function ResourceConnection({ id, m }: { id: string; m: MetadataObservation }) {
   if (!batchEnabled()) return null;
   try {
     const [items, s] = await Promise.all([batches(), source()]);
@@ -36,10 +47,6 @@ export async function ResourceSource({ id }: { id: string }) {
     if (!linked.length) return null;
     const slot = linked[0].request.slots.find(x => x.resourceId === id)!;
     const table = s.tables.find(t => t.Code === slot.code);
-    const m = await core<MetadataObservation>(
-      `/data-resources/${id}/metadata-observation?workspaceId=${workspace()}`,
-      "GET", undefined, undefined, true,
-    );
     // A failed current observation cannot label cached annotations as current,
     // or confuse unavailable fields with an explicitly unassigned Steward.
     const g = m.status === "OBSERVED" ? m.governance : null;
@@ -71,7 +78,7 @@ export async function ResourceSource({ id }: { id: string }) {
           <Link className="text-link" href={`/batches/${b.id}`}>{b.request.batchKey} · 查看批次与加工入口</Link>{" "}
           <Badge value={b.state} />
         </p>)}
-      </section><SourceSchema resourceId={id} providerAvailable={m.status==="OBSERVED"}/></>
+      </section></>
     );
   } catch {
     return <section className="callout callout-warn"><h2>来源信息 UNKNOWN</h2><p>来源/治理信息暂不可用，请刷新；Core 历史事实仍保留。</p></section>;

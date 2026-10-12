@@ -176,3 +176,19 @@ cmd.Wait 证明）；Application 不再执行第二次 Stop，避免读取配置
 containment 失败时不接受结果，确认停止后保留 INTERRUPTED 再复扫，成本逐次保留。
 metadata -race、go test ./...、go vet ./... PASS，精确 hash/日志见
 [review-completed-scan.json](evidence/issue299-c2/review-completed-scan.json)。
+
+页面现在独立渲染 Core schema 历史，live metadata 只决定当前提供方可用性；来源/批次
+查询失败也不能跳过历史。以最新修复编译生产 Next/API，在保留的真实 Core 上禁用
+OM/schema composition，并用仅允许 GET 的 loopback proxy 注入 metadata 503，再同时
+注入 source/batch 503。真实 Edge 两种情况下均显示 17 个请求、旧 DRIFT 处置与 UNKNOWN
+提示，扫描按钮不存在；未请求新扫描、未放宽权限。17 个非空历史表、四个 source-schema
+事实表及 24 份 invocation 成本精确 count/hash 不变；原来源授权仍 REVOKED。
+[review-ui-history.json](evidence/issue299-c2/review-ui-history.json) 保存实际 binary/input hash、
+故障路径、前后 hash 和页面结果。此次仅停止自己的 review API/web/gateway，原 runtime 保留。
+
+最终 binding 检查也保留具体失败来源：扫描期间 binding demotion 时记录
+DENIED / SOURCE_BINDING_CHANGED，而非 CURRENT_AUTHORITY_DENIED。真实 PostgreSQL
+回归验证同一 reason 进入不可变 observation、Audit 与 Evidence。go suite/vet、metadata
+PostgreSQL -race、web typecheck/production build、上述真实 Edge 检查均 PASS。
+
+![来源与 metadata 失联但 Core 历史仍可见](evidence/issue299-c2/review-ui-source-unavailable.jpg)

@@ -28,6 +28,7 @@ type retrySchemaObserver struct {
 	resultHash string
 	stopErr    error
 	scanErr    error
+	onScan     func()
 	stops      int
 	scans      int
 }
@@ -44,6 +45,9 @@ func (o *retrySchemaObserver) Scan(_ context.Context, _ uuid.UUID, started func(
 	}
 	if o.scanErr != nil {
 		return me.SourceSchema{}, o.scanErr
+	}
+	if o.onScan != nil {
+		o.onScan()
 	}
 	now := time.Now().UTC()
 	return me.SourceSchema{ExternalID: o.externalID, ExternalFQN: o.plan.ExternalFQN, ConnectorHash: o.resultHash, Columns: o.plan.Columns, StartedAt: now, CompletedAt: now}, nil
@@ -252,5 +256,31 @@ func TestSourceSchemaFailedScanStillRequiresContainment(t *testing.T) {
 	}
 	if observer.stops != 2 || observer.scans != 2 || costs != 2 || strings.Join(statuses, ",") != "INTERRUPTED,MATCH" {
 		t.Fatalf("failed scan recovery changed: stops=%d scans=%d costs=%d statuses=%v", observer.stops, observer.scans, costs, statuses)
+	}
+}
+
+func TestSourceSchemaFinalBindingChangeHasExactReason(t *testing.T) {
+	ctx, pool, req, observer, _, s := schemaRetryFixture(t)
+	observer.onScan = func() {
+		if _, err := pool.Exec(ctx, `UPDATE resource_binding SET is_primary=false WHERE id=$1`, req.BindingID); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := s.Process(ctx, req.ID); err != nil {
+		t.Fatal(err)
+	}
+	var status, reason string
+	if err := pool.QueryRow(ctx, `SELECT status,reason FROM source_schema_observation WHERE request_id=$1`, req.ID).Scan(&status, &reason); err != nil || status != "DENIED" || reason != "SOURCE_BINDING_CHANGED" {
+		t.Fatalf("binding mutation misattributed: %s %s %v", status, reason, err)
+	}
+	var auditReason, evidenceReason string
+	if err := pool.QueryRow(ctx, `SELECT after_state->>'reason' FROM audit_event WHERE object_id=$1 AND action='SourceSchemaObserved'`, req.ID).Scan(&auditReason); err != nil {
+		t.Fatal(err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT metadata->'fact'->>'reason' FROM evidence WHERE source_id=$1 AND title='SourceSchemaObserved'`, req.ID).Scan(&evidenceReason); err != nil {
+		t.Fatal(err)
+	}
+	if auditReason != reason || evidenceReason != reason {
+		t.Fatalf("immutable audit/evidence reason differs: %s %s", auditReason, evidenceReason)
 	}
 }
