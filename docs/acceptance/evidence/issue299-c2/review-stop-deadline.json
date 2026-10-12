@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "red20Unconfirmed": {
+    "confirmed": false,
+    "seconds": 10.0089027,
+    "grace": 20,
+    "container": "dpp-c2-stop-review-1baea8ff-b531-45a4-8758-de51fe39118f",
+    "exit": 2,
+    "runningAtReturn": true,
+    "eventuallyExited": true,
+    "containerRetained": true
+  },
+  "green5Confirmed": {
+    "confirmed": true,
+    "seconds": 5.6314539,
+    "grace": 5,
+    "container": "dpp-c2-stop-review-7bcf141b-b2b2-4813-bdb8-03d4e912ad8e",
+    "exit": 0,
+    "runningAtReturn": false,
+    "eventuallyExited": true,
+    "containerRetained": true
+  },
+  "scope": "real Docker + real NativeSchemaObserver.Stop, SIGTERM-ignoring owned fixture; no native discovery/Core/business acceptance fabricated; no container deletion"
+}

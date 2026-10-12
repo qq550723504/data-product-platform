@@ -28,7 +28,9 @@ def prepare(runtime, metadata):
     plan={"enabled":True,"workspaceId":state["workspaceId"],"resourceId":target["resourceId"],"actorId":state["actorId"],"authorizationId":facts["Authorization"],"consumerRef":"LICENSED_BANK","purpose":"ENTERPRISE_CREDIT_RISK_SUPPORT","externalFqn":fqn,"ruleRef":rule["ruleRef"],"ruleVersion":rule["version"],"ruleHash":hashlib.sha256(json.dumps(rule,sort_keys=True,separators=(",",":")).encode()).hexdigest(),"connectorHash":connector_hash(connector),"columns":rule["columns"]}
     command=command[:2]+["--name","dpp-c2-schema-{attemptId}"]+command[2:]
     profile_path=private/"schema-profile.json"
-    profile_path.write_text(json.dumps({"plan":plan,"command":command,"stopCommand":["docker","stop","--timeout","20","dpp-c2-schema-{attemptId}"]}))
+    # NativeSchemaObserver.Stop has a 10s outer deadline; leave time for Docker
+    # to force-kill an uncooperative scanner and confirm containment.
+    profile_path.write_text(json.dumps({"plan":plan,"command":command,"stopCommand":["docker","stop","--timeout","5","dpp-c2-schema-{attemptId}"]}))
     envs=json.loads((private/"environment.json").read_text());envs["api"]["OPENMETADATA_SCHEMA_PROFILE"]=str(profile_path)
     (private/"environment.json").write_text(json.dumps(envs))
     print(json.dumps({"configuration":"private","fqn":fqn,"reader":"dpp_reader","nativeVersion":"2.0.5"}))

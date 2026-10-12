@@ -264,3 +264,11 @@ key 的 DUMP hash 一致（RDB 另含正常会到期的 heartbeat key）。容�
 admission NOT_RUN。新库通过不能收回原事故 FAIL，也不能直接关闭 #298/#299。
 
 ![新基线断连时保留 Core 扫描历史](evidence/issue299-c2/new-baseline-metadata-outage.jpg)
+
+最终复评补齐停止 deadline：原 Docker grace=20s 超过 NativeSchemaObserver.Stop 的
+10s deadline，忽略 SIGTERM 的扫描无法及时确认 containment。配置改为 5s，保留
+原 10s 外层上限和 fail-closed 规则。真实 Docker + 实际 NativeSchemaObserver.Stop
+复现 red：10.009s 返回 unconfirmed、容器仍 running；green：5.631s 确认停止且
+容器退出，两个测试容器都保留。独立 PostgreSQL/受控 Observer Port 另验证只有
+确认 containment 后才记录 INTERRUPTED 并恢复扫描；该 Port 测试不是原生发现验收。
+证据：[停止时限](evidence/issue299-c2/review-stop-deadline.json)。
