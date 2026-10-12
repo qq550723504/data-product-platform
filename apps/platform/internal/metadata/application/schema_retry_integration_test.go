@@ -25,6 +25,7 @@ type retrySchemaObserver struct {
 	plan       d.SchemaPlan
 	err        error
 	externalID string
+	resultHash string
 	scans      int
 }
 
@@ -36,7 +37,7 @@ func (o *retrySchemaObserver) Scan(_ context.Context, _ uuid.UUID, started func(
 		return me.SourceSchema{}, err
 	}
 	now := time.Now().UTC()
-	return me.SourceSchema{ExternalID: o.externalID, ExternalFQN: o.plan.ExternalFQN, ConnectorHash: o.plan.ConnectorHash, Columns: o.plan.Columns, StartedAt: now, CompletedAt: now}, nil
+	return me.SourceSchema{ExternalID: o.externalID, ExternalFQN: o.plan.ExternalFQN, ConnectorHash: o.resultHash, Columns: o.plan.Columns, StartedAt: now, CompletedAt: now}, nil
 }
 
 type schemaTestEntitlements struct {
@@ -97,7 +98,7 @@ func schemaRetryFixture(t *testing.T) (context.Context, *pgxpool.Pool, d.SchemaR
 	if err = tx.Commit(ctx); err != nil {
 		t.Fatal(err)
 	}
-	observer := &retrySchemaObserver{plan: p, externalID: b.ExternalID}
+	observer := &retrySchemaObserver{plan: p, externalID: b.ExternalID, resultHash: p.ConnectorHash}
 	gate := &schemaTestEntitlements{expected: p}
 	s := &SchemaService{Service: NewService("TEST_METADATA", "", transaction.NewManager(pool), repo, nil, nil), Observer: observer, Rights: gate}
 	return ctx, pool, req, observer, gate, s
@@ -150,5 +151,40 @@ func TestSourceSchemaProfileFailureRetriesSameRequest(t *testing.T) {
 	}
 	if err = pool.QueryRow(ctx, `SELECT status FROM source_schema_observation WHERE request_id=$1`, other.ID).Scan(&status); err != nil || status != "DENIED" || observer.scans != 1 {
 		t.Fatalf("disabled plan not denied: %s %v", status, err)
+	}
+}
+
+func TestSourceSchemaResultUsesFrozenConnectorContract(t *testing.T) {
+	for _, hash := range []string{"", strings.Repeat("c", 64)} {
+		t.Run("result hash "+hash, func(t *testing.T) {
+			ctx, pool, req, observer, gate, s := schemaRetryFixture(t)
+			// Both current-plan gates see A, but the scanner returns contract B
+			// (or no identity). Model the profile A -> B -> A rotation at the Port.
+			observer.resultHash = hash
+			if err := s.Process(ctx, req.ID); err == nil {
+				t.Fatal("foreign connector result accepted")
+			}
+			var status, schemaHash string
+			if err := pool.QueryRow(ctx, `SELECT status,schema_hash FROM source_schema_observation WHERE request_id=$1`, req.ID).Scan(&status, &schemaHash); err != nil || status != "UNAVAILABLE" || schemaHash != "" {
+				t.Fatalf("wrong contract became source evidence: %s %s %v", status, schemaHash, err)
+			}
+			observer.resultHash = req.Plan.ConnectorHash
+			if err := s.Process(ctx, req.ID); err != nil {
+				t.Fatal(err)
+			}
+			if err := s.Process(ctx, req.ID); err != nil {
+				t.Fatal(err)
+			}
+			var costs, observations int
+			if err := pool.QueryRow(ctx, `SELECT count(*) FROM cost_allocation c JOIN source_schema_attempt a ON a.id=c.source_schema_attempt_id WHERE a.request_id=$1`, req.ID).Scan(&costs); err != nil {
+				t.Fatal(err)
+			}
+			if err := pool.QueryRow(ctx, `SELECT count(*) FROM source_schema_observation WHERE request_id=$1 AND status='MATCH'`, req.ID).Scan(&observations); err != nil {
+				t.Fatal(err)
+			}
+			if observer.scans != 2 || gate.checks != 6 || costs != 2 || observations != 1 {
+				t.Fatalf("contract recovery/replay lost work/cost identity: scans=%d gates=%d costs=%d matches=%d", observer.scans, gate.checks, costs, observations)
+			}
+		})
 	}
 }

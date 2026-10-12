@@ -196,7 +196,7 @@ func (s *SchemaService) Process(ctx context.Context, id uuid.UUID) error {
 			return err
 		}
 		o := d.SchemaObservation{ID: uuid.New(), RequestID: id, AttemptID: &attempt, Status: "UNAVAILABLE", Reason: "NATIVE_SOURCE_SCAN_UNAVAILABLE"}
-		if scanErr == nil && result.ExternalID == req.ExternalID && result.ExternalFQN == req.Plan.ExternalFQN && d.ValidateColumns(result.Columns) == nil {
+		if scanErr == nil && result.ExternalID == req.ExternalID && result.ExternalFQN == req.Plan.ExternalFQN && result.ConnectorHash == req.Plan.ConnectorHash && d.ValidateColumns(result.Columns) == nil {
 			o.Columns = result.Columns
 			o.SchemaHash = d.Hash(result.Columns)
 			o.StartedAt = &result.StartedAt

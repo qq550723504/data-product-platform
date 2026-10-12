@@ -161,3 +161,10 @@ writer 修正其未发布 60 up/down；C2 不在 65 中补漏以掩盖依赖缺�
 main + C2/65 新库全模块 PostgreSQL 回归 PASS。前文 D1 的安装、source-schema 和 empty/
 populated down PASS 只证明对应局部检查，不能代替全组合回归；Ready 仍须等待 D1 稳定
 修复快照后重跑。原 Core 撤权事实及人工解释 NOT_RUN 均保留。
+
+最后一条复评补齐 frozen connector contract：Application 接收结果时还要求
+result.ConnectorHash == request.Plan.ConnectorHash，不能只相信 Adapter 自己加载的配置。
+真实 PostgreSQL + 受控 Port 模拟两次 gate 均见 A、结果却来自 B 或缺少 hash，均保留
+UNAVAILABLE/调用成本；恢复 A 后同请求 MATCH，共两次调用/两份 typed 成本，成功重放
+无新增。metadata -race、go test ./...、go vet ./... PASS。证据与实际文件 hash 见
+[review-frozen-connector.json](evidence/issue299-c2/review-frozen-connector.json)。
