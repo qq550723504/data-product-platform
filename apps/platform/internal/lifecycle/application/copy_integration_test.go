@@ -93,7 +93,7 @@ func TestArchiveRestoreCurrentWitnessAndRestrictions(t *testing.T) {
 		t.Fatal("verified ARCHIVED bytes bypassed restore admission", e)
 	}
 	restore := stagedCopy(t, s, w, archive.TargetCopyID, "restore")
-	cut, e := s.ExportRestoreCheckpoint(ctx, w, cs[0].DatasetVersionID)
+	cut, e := s.ExportRestoreCheckpoint(ctx, ExportRestoreCheckpointCommand{CommandHeader: CommandHeader{w, "cut-1"}, DatasetVersionID: cs[0].DatasetVersionID})
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -119,7 +119,7 @@ func TestArchiveRestoreCurrentWitnessAndRestrictions(t *testing.T) {
 	if e != nil || d.Decision != "UNKNOWN" {
 		t.Fatal("old witness admitted", d, e)
 	}
-	cut, e = s.ExportRestoreCheckpoint(ctx, w, cs[0].DatasetVersionID)
+	cut, e = s.ExportRestoreCheckpoint(ctx, ExportRestoreCheckpointCommand{CommandHeader: CommandHeader{w, "cut-2"}, DatasetVersionID: cs[0].DatasetVersionID})
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -248,7 +248,7 @@ func TestRestoreMissingGapAndWrongContextStayQuarantined(t *testing.T) {
 				t.Fatal(e)
 			}
 			restore := stagedCopy(t, s, w, archive.TargetCopyID, "restore")
-			cut, e := s.ExportRestoreCheckpoint(ctx, w, cs[0].DatasetVersionID)
+			cut, e := s.ExportRestoreCheckpoint(ctx, ExportRestoreCheckpointCommand{CommandHeader: CommandHeader{w, "cut-3"}, DatasetVersionID: cs[0].DatasetVersionID})
 			if e != nil {
 				t.Fatal(e)
 			}
@@ -272,7 +272,7 @@ func TestRestoreMissingGapAndWrongContextStayQuarantined(t *testing.T) {
 				if e = ledger.Append(cut); e != nil {
 					t.Fatal(e)
 				}
-				if _, e = s.ExportRestoreCheckpoint(ctx, w, cs[0].DatasetVersionID); e != nil {
+				if _, e = s.ExportRestoreCheckpoint(ctx, ExportRestoreCheckpointCommand{CommandHeader: CommandHeader{w, "cut-4"}, DatasetVersionID: cs[0].DatasetVersionID}); e != nil {
 					t.Fatal(e)
 				}
 			}
@@ -298,7 +298,7 @@ func TestRestoreFinalizeAndRestrictionSerializeBothOrders(t *testing.T) {
 				t.Fatal(e)
 			}
 			restore := stagedCopy(t, s, w, archive.TargetCopyID, "restore")
-			cut, e := s.ExportRestoreCheckpoint(ctx, w, cs[0].DatasetVersionID)
+			cut, e := s.ExportRestoreCheckpoint(ctx, ExportRestoreCheckpointCommand{CommandHeader: CommandHeader{w, "cut-5"}, DatasetVersionID: cs[0].DatasetVersionID})
 			if e != nil {
 				t.Fatal(e)
 			}

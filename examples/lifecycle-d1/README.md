@@ -75,3 +75,9 @@ D1/60 up/down 同时修复迁移组合发现的 CostAllocation guard 漏掉 main
 组合重验发现旧D1 down测试没有固定60的边界，加入空65后错误要求合法65 down拒绝。`b853466f`将该真实PG测试固定到独立max60 scratch，核对具体拒绝及五表完整count/hash；生产Go与60–64不改。共享routing/worker注册冲突由C2 writer在scratch source中处理，SQL组合与完整源码组合分别记录，不能互相代替。具体阶段与最终回执见 [协调报告](results/d1-c2-0196b49d-00bd4d4e/coordination-review.md)。
 
 C2曾误用其保留Core的256MiB tmpfs进行组合验证，空间不足导致进程退出及数据库内容丢失；旧试用不可用、原历史未恢复，新的验证库不叫历史恢复。D1自己的named-volume服务和封闭事实仍保留。未来D1 prepare/reader/plane入口新增只读`Assert-FixtureDurableStorage`检查，复用通用`Assert-RetainedServiceStorage`供C2四角色采用；真实owner、独立可写registered named volumes、无data/WAL tmpfs，以及明确pre-start/started状态须通过才能继续。它不修改旧挂载，不提供cleanup或解保护能力。
+
+## Checkpoint 发布重试契约（PR #314）
+
+Core checkpoint 与独立文件 witness 不构成跨存储原子事务。发布调用必须持有稳定 Command key，直到该 cut 的文件 append/fsync 成功；数据库提交后失败，使用同一 key 取得原 ID、sequence、hash 和 expiry，不能先分配新的 key/sequence。`copy-witness` 使用必填 `LIFECYCLE_FIXTURE_CHECKPOINT_KEY`；脚本用固定 `-Scenario` 传入。新的 cut 使用新的 scenario，失败重试保留原 scenario。每次重试仍校验当前 publisher 权限；重试不延长 checkpoint 有效期。
+
+独立 ledger 通过现有 `golang.org/x/sys` OS 文件锁串行化多进程读写；同一 cut 的完整 append 是幂等的，部分 append 只允许补齐该 cut 的精确字节前缀。不同内容、缺失前序、损坏或过期 witness 仍拒绝恢复 admission，不重建独立历史、不修改旧环境。后一个 cut 先到时拒绝跳号，前序发布成功后以原 key 重试后一个 cut。复用现有 Command 幂等表、workspace fence、Audit/Evidence/Outbox，无新增 migration、队列或通用 workflow runtime；不把 fixture witness 扩大为生产灾备系统。

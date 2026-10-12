@@ -287,8 +287,8 @@ func execute(ctx context.Context) error {
 		}
 		return nil
 	}
-	cut := func() error {
-		cp, e := service.ExportRestoreCheckpoint(ctx, c.WorkspaceID, cs[0].DatasetVersionID)
+	cut := func(key string) error {
+		cp, e := service.ExportRestoreCheckpoint(ctx, lc.ExportRestoreCheckpointCommand{CommandHeader: header("checkpoint-" + key), DatasetVersionID: cs[0].DatasetVersionID})
 		if e != nil {
 			return e
 		}
@@ -305,7 +305,7 @@ func execute(ctx context.Context) error {
 	if e != nil {
 		return e
 	}
-	if e = cut(); e != nil {
+	if e = cut("online"); e != nil {
 		return e
 	}
 	if e = finalize(service, online, "online-final", "ONLINE"); e != nil {
@@ -333,7 +333,7 @@ func execute(ctx context.Context) error {
 	if e = finalize(service, stale, "old-watermark", "UNKNOWN"); e != nil {
 		return e
 	}
-	if e = cut(); e != nil {
+	if e = cut("restriction"); e != nil {
 		return e
 	}
 	if e = finalize(service, stale, "current-prohibition", "BLOCKED"); e != nil {
@@ -349,7 +349,7 @@ func execute(ctx context.Context) error {
 		if e != nil {
 			return e
 		}
-		if e = cut(); e != nil {
+		if e = cut(keys[i]); e != nil {
 			return e
 		}
 		faultPath := "/run/witness/missing.jsonl"

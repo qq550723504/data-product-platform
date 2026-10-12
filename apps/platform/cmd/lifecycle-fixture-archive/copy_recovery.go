@@ -63,7 +63,11 @@ func recoveryFixtureStep(ctx context.Context, mode string) error {
 	ledger := &infrastructure.FileRestoreLedger{Path: "/run/witness/current.jsonl", WorkspaceID: c.WorkspaceID, DatasetVersionID: cs[0].DatasetVersionID, Epoch: p.Epoch}
 	service := lc.NewCopyService(o, slots, proofs, ledger, p.Epoch)
 	if mode == "copy-witness" {
-		cut, e := service.ExportRestoreCheckpoint(ctx, c.WorkspaceID, cs[0].DatasetVersionID)
+		checkpointKey := os.Getenv("LIFECYCLE_FIXTURE_CHECKPOINT_KEY")
+		if checkpointKey == "" || len(checkpointKey) > 200 {
+			return errors.New("stable checkpoint publication key required")
+		}
+		cut, e := service.ExportRestoreCheckpoint(ctx, lc.ExportRestoreCheckpointCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: "copy-witness:" + checkpointKey}, DatasetVersionID: cs[0].DatasetVersionID})
 		if e != nil {
 			return e
 		}

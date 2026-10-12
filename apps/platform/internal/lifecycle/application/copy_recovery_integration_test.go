@@ -224,7 +224,7 @@ func TestCopyRecoveryRestoreNeedsNewIndependentCutAndCurrentRestrictions(t *test
 				t.Fatalf("archive prerequisite: %v %+v", e, d)
 			}
 			op, call, work := unknownCopy(t, pool, s, w, archive.TargetCopyID, "restore")
-			cut, e := s.ExportRestoreCheckpoint(context.Background(), w, cs[0].DatasetVersionID)
+			cut, e := s.ExportRestoreCheckpoint(context.Background(), ExportRestoreCheckpointCommand{CommandHeader: CommandHeader{w, "cut-1"}, DatasetVersionID: cs[0].DatasetVersionID})
 			if e != nil {
 				t.Fatal(e)
 			}
@@ -243,7 +243,7 @@ func TestCopyRecoveryRestoreNeedsNewIndependentCutAndCurrentRestrictions(t *test
 					t.Fatal(e)
 				}
 			}
-			cut, e = s.ExportRestoreCheckpoint(context.Background(), w, cs[0].DatasetVersionID)
+			cut, e = s.ExportRestoreCheckpoint(context.Background(), ExportRestoreCheckpointCommand{CommandHeader: CommandHeader{w, "cut-2"}, DatasetVersionID: cs[0].DatasetVersionID})
 			if e != nil {
 				t.Fatal(e)
 			}

@@ -458,43 +458,63 @@ func (s *CopyService) currentState(ctx context.Context, tx pgx.Tx, w, v uuid.UUI
 	allowed := status == "READY" && restrictions == "" && dispositions == "" && holds == "" && now.Before(use) && now.Before(restore)
 	return hex.EncodeToString(sum[:]), allowed, nil
 }
-func (s *CopyService) ExportRestoreCheckpoint(ctx context.Context, w, v uuid.UUID) (domain.RestoreCheckpoint, error) {
+
+type ExportRestoreCheckpointCommand struct {
+	CommandHeader
+	DatasetVersionID uuid.UUID
+}
+
+// The publisher must retain this command key until its independent append has
+// succeeded. Replaying the command recovers the original immutable cut even if
+// the process stopped after the Core commit, without allocating a chain gap.
+func (s *CopyService) ExportRestoreCheckpoint(ctx context.Context, cmd ExportRestoreCheckpointCommand) (domain.RestoreCheckpoint, error) {
 	var c domain.RestoreCheckpoint
+	if s == nil || s.occupancy == nil || cmd.DatasetVersionID == uuid.Nil || s.epoch == uuid.Nil {
+		return c, domain.ErrRestoreLedger
+	}
+	w, v := cmd.WorkspaceID, cmd.DatasetVersionID
 	o := s.occupancy
-	e := o.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		rev, e := deliveryfence.Lock(ctx, tx, w)
-		if e != nil {
-			return e
-		}
+	body := struct {
+		Command ExportRestoreCheckpointCommand
+		Epoch   uuid.UUID
+	}{cmd, s.epoch}
+	r, e := o.command(ctx, cmd.CommandHeader, "LIFECYCLE.EXPORT_RESTORE_CHECKPOINT", CapabilityRestoreAdmission, body, func(ctx context.Context, tx pgx.Tx, caller principal.RequestPrincipal, rev int64) (uuid.UUID, error) {
 		ids, e := o.repo.FixtureCopyIDsForVersion(ctx, tx, w, v)
 		if e != nil {
-			return e
+			return uuid.Nil, e
 		}
 		if _, e = o.repo.LockFixtureCopies(ctx, tx, w, ids); e != nil {
-			return e
+			return uuid.Nil, e
 		}
-		caller, at, e := o.authorize(ctx, tx, w, CapabilityRestoreAdmission, nil)
+		caller, at, e := o.authorize(ctx, tx, w, CapabilityRestoreAdmission, &caller)
 		if e != nil {
-			return e
+			return uuid.Nil, e
 		}
 		state, _, e := s.currentState(ctx, tx, w, v)
 		if e != nil {
-			return e
+			return uuid.Nil, e
 		}
 		var n int64
 		previous := strings.Repeat("0", 64)
 		e = tx.QueryRow(ctx, `SELECT sequence,content_sha256 FROM lifecycle_restore_checkpoint WHERE workspace_id=$1 AND dataset_version_id=$2 ORDER BY sequence DESC LIMIT 1`, w, v).Scan(&n, &previous)
 		if e != nil && !errors.Is(e, pgx.ErrNoRows) {
-			return e
+			return uuid.Nil, e
 		}
 		c = domain.RestoreCheckpoint{ID: uuid.New(), WorkspaceID: w, DatasetVersionID: v, Epoch: s.epoch, Sequence: n + 1, DependencyRevision: rev, StateSHA256: state, PreviousSHA256: previous, CreatedAt: at.UTC().Truncate(time.Microsecond), ExpiresAt: at.Add(time.Minute).UTC().Truncate(time.Microsecond)}
 		c.ContentSHA256 = c.Hash()
 		_, e = tx.Exec(ctx, `INSERT INTO lifecycle_restore_checkpoint(id,workspace_id,dataset_version_id,epoch,sequence,dependency_revision,state_sha256,previous_sha256,content_sha256,created_at,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`, c.ID, w, v, c.Epoch, c.Sequence, rev, state, previous, c.ContentSHA256, c.CreatedAt, c.ExpiresAt)
 		if e != nil {
-			return e
+			return uuid.Nil, e
 		}
-		return appendDispositionFacts(ctx, tx, "LifecycleRestoreCheckpointExported", "LIFECYCLE_RESTORE_CHECKPOINT", c.ID, caller, rev, at, map[string]any{"sequence": c.Sequence, "dataset_version_id": v})
+		return c.ID, appendDispositionFacts(ctx, tx, "LifecycleRestoreCheckpointExported", "LIFECYCLE_RESTORE_CHECKPOINT", c.ID, caller, rev, at, map[string]any{"sequence": c.Sequence, "dataset_version_id": v})
 	})
+	if e != nil {
+		return domain.RestoreCheckpoint{}, e
+	}
+	e = o.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		return tx.QueryRow(ctx, `SELECT id,workspace_id,dataset_version_id,epoch,sequence,dependency_revision,state_sha256,previous_sha256,content_sha256,created_at,expires_at FROM lifecycle_restore_checkpoint WHERE id=$1 AND workspace_id=$2 AND dataset_version_id=$3 AND epoch=$4`, r.ID, w, v, s.epoch).Scan(&c.ID, &c.WorkspaceID, &c.DatasetVersionID, &c.Epoch, &c.Sequence, &c.DependencyRevision, &c.StateSHA256, &c.PreviousSHA256, &c.ContentSHA256, &c.CreatedAt, &c.ExpiresAt)
+	})
+	c.CreatedAt, c.ExpiresAt = c.CreatedAt.UTC(), c.ExpiresAt.UTC()
 	return c, e
 }
 

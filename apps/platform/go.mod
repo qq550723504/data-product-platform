@@ -8,6 +8,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/minio/madmin-go/v3 v3.0.94
 	github.com/minio/minio-go/v7 v7.0.83
+	golang.org/x/sys v0.28.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -51,7 +52,6 @@ require (
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
 	google.golang.org/protobuf v1.35.2 // indirect
