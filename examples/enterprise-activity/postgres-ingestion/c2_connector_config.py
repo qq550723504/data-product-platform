@@ -26,11 +26,15 @@ def prepare(runtime, metadata):
     rule=json.loads(rule_path.read_text())
     assert [c["name"] for c in rule["columns"]]==next(t["Columns"] for t in trusted["Tables"] if t["Code"]=="energy_raw")
     plan={"enabled":True,"workspaceId":state["workspaceId"],"resourceId":target["resourceId"],"actorId":state["actorId"],"authorizationId":facts["Authorization"],"consumerRef":"LICENSED_BANK","purpose":"ENTERPRISE_CREDIT_RISK_SUPPORT","externalFqn":fqn,"ruleRef":rule["ruleRef"],"ruleVersion":rule["version"],"ruleHash":hashlib.sha256(json.dumps(rule,sort_keys=True,separators=(",",":")).encode()).hexdigest(),"connectorHash":connector_hash(connector),"columns":rule["columns"]}
-    command=command[:2]+["--name","dpp-c2-schema-{attemptId}"]+command[2:]
+    container="dpp-c2-schema-{attemptId}"
+    create=["docker","create","--name",container]+command[2:]
+    launch=["docker","start","--attach","--interactive","{runtimeId}"]
     profile_path=private/"schema-profile.json"
     # NativeSchemaObserver.Stop has a 10s outer deadline; leave time for Docker
     # to force-kill an uncooperative scanner and confirm containment.
-    profile_path.write_text(json.dumps({"plan":plan,"command":command,"stopCommand":["docker","stop","--timeout","5","dpp-c2-schema-{attemptId}"]}))
+    profile_path.write_text(json.dumps({"plan":plan,"prepareCommand":create,"command":launch,
+      "invocationCommand":["docker","inspect","--format","{{json .State}}","{runtimeId}"],
+      "stopCommand":["docker","stop","--timeout","5","{runtimeId}"]}))
     envs=json.loads((private/"environment.json").read_text());envs["api"]["OPENMETADATA_SCHEMA_PROFILE"]=str(profile_path)
     (private/"environment.json").write_text(json.dumps(envs))
     print(json.dumps({"configuration":"private","fqn":fqn,"reader":"dpp_reader","nativeVersion":"2.0.5"}))

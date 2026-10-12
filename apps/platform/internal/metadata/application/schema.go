@@ -139,6 +139,15 @@ func (s *SchemaService) Process(ctx context.Context, id uuid.UUID) error {
 			if err := s.Observer.Stop(ctx, priorAttempt.ID, priorAttempt.Runtime); err != nil {
 				return err
 			}
+			started, err := s.Observer.Invocation(ctx, priorAttempt.ID, priorAttempt.Runtime)
+			if err != nil {
+				return err
+			}
+			if started {
+				if err := s.ChargeScan(context.WithoutCancel(ctx), priorAttempt.ID); err != nil {
+					return err
+				}
+			}
 			prior, err := s.Service.repo.SchemaRequest(ctx, priorRequest)
 			if err != nil {
 				return err
@@ -206,6 +215,16 @@ func (s *SchemaService) Process(ctx context.Context, id uuid.UUID) error {
 		// discard that completed result by rereading a temporarily missing profile.
 		if scanErr != nil {
 			if err := s.Observer.Stop(context.WithoutCancel(ctx), attempt, runtime); err != nil {
+				return err
+			}
+		}
+		if errors.Is(scanErr, me.ErrSourceSchemaInvocationUnknown) {
+			return scanErr
+		}
+		if errors.Is(scanErr, me.ErrSourceSchemaCostUnconfirmed) {
+			// The native start is known; retry only its charge. If DB is still
+			// unavailable, keep the attempt pending for provider-receipt recovery.
+			if err := s.ChargeScan(context.WithoutCancel(ctx), attempt); err != nil {
 				return err
 			}
 		}

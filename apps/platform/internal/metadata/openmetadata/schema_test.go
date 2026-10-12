@@ -21,6 +21,14 @@ func TestNativeSchemaProcessHelper(t *testing.T) {
 		return
 	}
 	for i, arg := range os.Args {
+		if arg == "prepare" {
+			fmt.Println(strings.Repeat("a", 64))
+			os.Exit(0)
+		}
+		if arg == "invocation" {
+			fmt.Println(`{"Status":"exited","StartedAt":"2026-10-12T00:00:00Z"}`)
+			os.Exit(0)
+		}
 		if arg == "stop" {
 			if i+1 < len(os.Args) {
 				if err := os.WriteFile(os.Args[i+1], []byte("contained"), 0600); err != nil {
@@ -54,14 +62,15 @@ func TestNativeSchemaProcessHelper(t *testing.T) {
 
 func TestNativeSchemaCostsStartupBeforeMarker(t *testing.T) {
 	t.Setenv("C2_SCHEMA_HELPER", "1")
+	t.Setenv("GORACE", "atexit_sleep_ms=0")
 	plan := d.SchemaPlan{Enabled: true, WorkspaceID: uuid.New(), ResourceID: uuid.New(), ActorID: uuid.New(), AuthorizationID: uuid.New(), ConsumerRef: "consumer", Purpose: "purpose", ExternalFQN: "source.db.schema.energy", RuleRef: "rule", RuleVersion: "1", RuleHash: strings.Repeat("a", 64), ConnectorHash: strings.Repeat("b", 64), Columns: []d.SchemaColumn{{Name: "energy_kwh", Type: "TEXT", Constraint: "NOT_NULL"}}}
-	cfg := schemaConfig{Plan: plan, Command: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "scan"}, StopCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "stop"}}
+	cfg := schemaConfig{Plan: plan, Command: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "scan"}, StopCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "stop"}, PrepareCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "prepare"}, InvocationCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "invocation"}}
 	runtime, _ := json.Marshal(cfg)
 	observer := &NativeSchemaObserver{}
 	for _, failure := range []string{"exit", "hang", "malformed"} {
 		t.Run(failure, func(t *testing.T) {
 			t.Setenv("C2_SCHEMA_PREMARKER", failure)
-			ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+			ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 			defer cancel()
 			costs, gates := 0, 0
 			_, err := observer.Scan(ctx, uuid.New(), runtime, func() error { costs++; return nil }, func() error { gates++; return nil })
@@ -84,7 +93,7 @@ func TestNativeSchemaFrozenRuntimeSurvivesProfileRotation(t *testing.T) {
 	path := filepath.Join(root, "profile.json")
 	original := filepath.Join(root, "original-runtime")
 	replacement := filepath.Join(root, "replacement-runtime")
-	cfg := schemaConfig{Plan: plan, Command: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "scan"}, StopCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "stop", original}}
+	cfg := schemaConfig{Plan: plan, Command: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "scan"}, StopCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "stop", original}, PrepareCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "prepare"}, InvocationCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "invocation"}}
 	write := func(c schemaConfig) {
 		b, _ := json.Marshal(c)
 		if err := os.WriteFile(path, b, 0600); err != nil {
@@ -151,7 +160,7 @@ func TestNativeSchemaRequiresDurableInvocationAcknowledgement(t *testing.T) {
 	body, _ := json.Marshal(result)
 	t.Setenv("C2_SCHEMA_RESULT", string(body))
 	path := filepath.Join(t.TempDir(), "private-config.json")
-	config := schemaConfig{Plan: plan, Command: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "scan"}, StopCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "stop"}}
+	config := schemaConfig{Plan: plan, Command: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "scan"}, StopCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "stop"}, PrepareCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "prepare"}, InvocationCommand: []string{os.Args[0], "-test.run=TestNativeSchemaProcessHelper", "--", "invocation"}}
 	body, _ = json.Marshal(config)
 	if err := os.WriteFile(path, body, 0600); err != nil {
 		t.Fatal(err)

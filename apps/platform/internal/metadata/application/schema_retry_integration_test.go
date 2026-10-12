@@ -23,17 +23,23 @@ import (
 )
 
 type retrySchemaObserver struct {
-	plan       d.SchemaPlan
-	err        error
-	externalID string
-	resultHash string
-	stopErr    error
-	scanErr    error
-	onScan     func()
-	onStartup  func()
-	stops      int
-	scans      int
-	sourceIO   int
+	plan          d.SchemaPlan
+	err           error
+	externalID    string
+	resultHash    string
+	stopErr       error
+	scanErr       error
+	onScan        func()
+	onStartup     func()
+	stops         int
+	scans         int
+	sourceIO      int
+	invocations   map[uuid.UUID]bool
+	invocationErr error
+}
+
+func (o *retrySchemaObserver) Invocation(_ context.Context, id uuid.UUID, _ json.RawMessage) (bool, error) {
+	return o.invocations[id], o.invocationErr
 }
 
 func (o *retrySchemaObserver) Plan(context.Context) (d.SchemaPlan, error) { return o.plan, o.err }
@@ -44,10 +50,14 @@ func (o *retrySchemaObserver) Stop(context.Context, uuid.UUID, json.RawMessage) 
 	o.stops++
 	return o.stopErr
 }
-func (o *retrySchemaObserver) Scan(_ context.Context, _ uuid.UUID, _ json.RawMessage, started, authorizeSourceIO func() error) (me.SourceSchema, error) {
+func (o *retrySchemaObserver) Scan(_ context.Context, id uuid.UUID, _ json.RawMessage, started, authorizeSourceIO func() error) (me.SourceSchema, error) {
 	o.scans++
+	if o.invocations == nil {
+		o.invocations = map[uuid.UUID]bool{}
+	}
+	o.invocations[id] = true
 	if err := started(); err != nil {
-		return me.SourceSchema{}, err
+		return me.SourceSchema{}, me.ErrSourceSchemaCostUnconfirmed
 	}
 	if o.onStartup != nil {
 		o.onStartup()

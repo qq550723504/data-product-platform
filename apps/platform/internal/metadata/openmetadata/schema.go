@@ -16,13 +16,16 @@ import (
 )
 
 // NativeSchemaObserver is a thin launcher for the unmodified ingestion package.
-// Its private server-owned config contains the command and credential mounts;
-// only Plan and bounded structural observations cross the port.
+// Private configuration uses credential file references. Frozen runtime data is
+// opaque to Core; retained native start receipts make invocation costs recoverable.
 type NativeSchemaObserver struct{ Path string }
 type schemaConfig struct {
-	Plan        d.SchemaPlan `json:"plan"`
-	Command     []string     `json:"command"`
-	StopCommand []string     `json:"stopCommand"`
+	Plan              d.SchemaPlan `json:"plan"`
+	Command           []string     `json:"command"`
+	StopCommand       []string     `json:"stopCommand"`
+	PrepareCommand    []string     `json:"prepareCommand"`
+	InvocationCommand []string     `json:"invocationCommand"`
+	RuntimeID         string       `json:"runtimeId"`
 }
 
 func (a *NativeSchemaObserver) load() (schemaConfig, error) {
@@ -31,16 +34,19 @@ func (a *NativeSchemaObserver) load() (schemaConfig, error) {
 	if err != nil {
 		return c, errors.New("schema profile unavailable")
 	}
-	if json.Unmarshal(b, &c) != nil || len(c.Command) == 0 || len(c.StopCommand) == 0 {
+	if json.Unmarshal(b, &c) != nil || !c.validCommands() {
 		return c, errors.New("invalid schema profile")
 	}
 	return c, nil
+}
+func (c schemaConfig) validCommands() bool {
+	return len(c.Command) > 0 && len(c.StopCommand) > 0 && len(c.PrepareCommand) > 0 && len(c.InvocationCommand) > 0
 }
 func (a *NativeSchemaObserver) Plan(context.Context) (d.SchemaPlan, error) {
 	c, err := a.load()
 	return c.Plan, err
 }
-func (a *NativeSchemaObserver) Prepare(_ context.Context, _ uuid.UUID, expected d.SchemaPlan) (json.RawMessage, error) {
+func (a *NativeSchemaObserver) Prepare(ctx context.Context, id uuid.UUID, expected d.SchemaPlan) (json.RawMessage, error) {
 	c, err := a.load()
 	if err != nil {
 		return nil, err
@@ -57,6 +63,31 @@ func (a *NativeSchemaObserver) Prepare(_ context.Context, _ uuid.UUID, expected 
 	if _, err = d.RuntimeHash(b); err != nil {
 		return nil, err
 	}
+	// Allocate a retained, unstarted native runtime. Creation performs no source
+	// I/O; its durable CREATED vs STARTED receipt resolves a crash before launch.
+	args := argsFor(c.PrepareCommand, id)
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+	output, err := exec.CommandContext(ctx, args[0], args[1:]...).Output()
+	if err != nil {
+		return nil, errors.New("schema runtime preparation unavailable")
+	}
+	c.RuntimeID = strings.TrimSpace(string(output))
+	if len(c.RuntimeID) != 64 || strings.IndexFunc(c.RuntimeID, func(r rune) bool { return !(r >= '0' && r <= '9' || r >= 'a' && r <= 'f') }) >= 0 {
+		return nil, errors.New("schema runtime identity unavailable")
+	}
+	for _, args := range [][]string{c.Command, c.StopCommand, c.InvocationCommand} {
+		for i, v := range args {
+			args[i] = strings.ReplaceAll(v, "{runtimeId}", c.RuntimeID)
+		}
+	}
+	b, err = json.Marshal(c)
+	if err != nil {
+		return nil, err
+	}
+	if _, err = d.RuntimeHash(b); err != nil {
+		return nil, err
+	}
 	return b, nil
 }
 func frozenSchemaConfig(runtime json.RawMessage) (schemaConfig, error) {
@@ -64,10 +95,37 @@ func frozenSchemaConfig(runtime json.RawMessage) (schemaConfig, error) {
 	if _, err := d.RuntimeHash(runtime); err != nil {
 		return c, err
 	}
-	if json.Unmarshal(runtime, &c) != nil || len(c.Command) == 0 || len(c.StopCommand) == 0 {
+	if json.Unmarshal(runtime, &c) != nil || !c.validCommands() {
 		return c, errors.New("schema runtime contract unavailable")
 	}
 	return c, nil
+}
+func (a *NativeSchemaObserver) Invocation(ctx context.Context, id uuid.UUID, runtime json.RawMessage) (bool, error) {
+	c, err := frozenSchemaConfig(runtime)
+	if err != nil {
+		return false, metadataengine.ErrSourceSchemaInvocationUnknown
+	}
+	args := argsFor(c.InvocationCommand, id)
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	output, err := exec.CommandContext(ctx, args[0], args[1:]...).Output()
+	if err != nil || len(output) > 8192 {
+		return false, metadataengine.ErrSourceSchemaInvocationUnknown
+	}
+	var state struct {
+		Status    string
+		StartedAt time.Time
+	}
+	if json.Unmarshal(output, &state) != nil || state.Status == "" {
+		return false, metadataengine.ErrSourceSchemaInvocationUnknown
+	}
+	if !state.StartedAt.IsZero() {
+		return true, nil
+	}
+	if state.Status == "created" {
+		return false, nil
+	}
+	return false, metadataengine.ErrSourceSchemaInvocationUnknown
 }
 func argsFor(args []string, id uuid.UUID) []string {
 	out := make([]string, len(args))
@@ -118,12 +176,31 @@ func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, runtime j
 	if err := cmd.Start(); err != nil {
 		return result, errors.New("NATIVE_SOURCE_SCAN_UNAVAILABLE")
 	}
-	// Startup may consume work even if the protocol marker never arrives.
-	// Record this physical invocation before parsing output; RUN remains gated.
+	// Confirm native STARTED independently from protocol output. The runtime was
+	// allocated before the attempt committed, and is retained after exit/crash.
+	for {
+		started, err := a.Invocation(ctx, id, runtime)
+		if err != nil {
+			_ = cmd.Process.Kill()
+			_ = cmd.Wait()
+			return result, metadataengine.ErrSourceSchemaInvocationUnknown
+		}
+		if started {
+			break
+		}
+		select {
+		case <-ctx.Done():
+			_ = cmd.Process.Kill()
+			_ = cmd.Wait()
+			return result, metadataengine.ErrSourceSchemaInvocationUnknown
+		case <-time.After(25 * time.Millisecond):
+		}
+	}
+	// Record native startup before parsing the marker; RUN remains gated.
 	if err := onInvocation(); err != nil {
 		_ = cmd.Process.Kill()
 		_ = cmd.Wait()
-		return result, errors.New("NATIVE_SOURCE_SCAN_COST_UNCONFIRMED")
+		return result, metadataengine.ErrSourceSchemaCostUnconfirmed
 	}
 	decoder := json.NewDecoder(io.LimitReader(output, 128*1024))
 	var marker struct {

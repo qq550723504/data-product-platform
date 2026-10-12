@@ -338,3 +338,36 @@ metadata 专项及两类共享注册，source/日志 hash 见
 8 个原生对象版本完全匹配已独立恢复的备份，零新工作/成本；没有通过重新授权伪造
 新的成功扫描或下载。当前 HEAD 的 CI/复评单独核对；Draft、人工解释暂缓及原 Core
 NOT_RESTORED 的边界不变。
+
+## 原生启动凭据与成本恢复（2026-10-12）
+
+复评的 P1 指出启动后记账事务失败/worker 崩溃仍可永久漏账。根因是旧路径只靠
+进程 callback，恢复没有 durable provider start receipt。修复复用 Docker 原生保留
+状态和现有 Core attempt/runtime、ChargeScan、Worker/Outbox：先创建**未启动**的
+runtime，在调用前将精确 container ID 与启动/停止/探测契约冻结到同一 attempt；
+启动后从该 ID 的持久 STARTED 记录确认 native invocation，在读取 marker 前记账。
+RUN 前的 fresh authority/binding gate 保留。没有新增队列、账本、文件 journal 或 migration。
+
+成本未确认时保留 pending attempt，不追加会使它退出恢复集合的 observation。恢复先
+确认 containment，再读取被冻结 ID 的 native start receipt，按同 attempt 去重补账，
+之后才记录 INTERRUPTED/继续新扫描。已知启动且当前 cost commit 失败时，只重试同
+一 ChargeScan；数据库仍失联则继续 pending。CREATED 且未启动的原生凭据明确为
+零调用，不伪造成本；凭据缺失/删除/失联则 fail closed。当前 profile 轮换不会更换
+旧 container ID、stop 或 probe。Core 将这些作为 opaque Adapter extension，不依赖 SDK。
+
+真实 Docker + 独立 PostgreSQL 跑通三个场景：创建后 launch 前中断，旧成本 0/新调用 1；
+native STARTED 后 cost commit 前中断，恢复旧成本 1/新调用 1；实际 PG 拒绝成本写入时
+零 observation、保留 pending，数据库恢复后补旧成本 1、下一真实调用 1。各场景成功
+重放不增成本/工作，六个真实容器停止并保留。受控 Port 的 PG 回归另证明未知凭据不能
+落结果或启动第二次扫描。Docker scanner 是 network-none 的受控 schema 协议，只证明
+原生启动凭据和 Core 成本恢复，不冒充 OpenMetadata/PostgreSQL discovery 或真实授权。
+
+最新 D1 fcef3dd2 + 当前 C2 完整源代码真实 PostgreSQL 全模块 -race、metadata 专项、
+vet、两类共享注册再次 PASS。最终新 API/Worker 实际重启，真实 Edge reload/点击新
+scan 仍被撤权拒绝，交付 BLOCKED、下载禁用；192 Core 表、三 source 表与 8 个对象
+版本仍匹配已独立恢复的完整 66 版备份。新源码/二进制/配置追加到私有 code supplement，
+原快照保留；例行 metadata credential refresh 未改变身份、权限、duration 或 connector
+hash。详见 [成本恢复证据](evidence/issue299-c2/review-cost-recovery.json)。
+
+当前 HEAD CI/评审单独核对。保持 Draft，不合并；实际 D1-first 合入/rebase 仍后置，
+原 Core NOT_RESTORED、人工解释暂缓和生产/商业 admission NOT_RUN 不变。
