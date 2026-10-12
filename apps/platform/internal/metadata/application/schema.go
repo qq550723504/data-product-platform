@@ -191,11 +191,10 @@ func (s *SchemaService) Process(ctx context.Context, id uuid.UUID) error {
 		// Start identity is durable before the native process invocation. Physical
 		// invocation cost is durable independently from a successful observation.
 		result, scanErr := s.Observer.Scan(ctx, attempt, runtime, func() error {
-			// A launched native invocation remains chargeable even if authority is
-			// revoked during imports/startup. RUN must await a fresh source gate.
-			if err := s.ChargeScan(context.WithoutCancel(ctx), attempt); err != nil {
-				return err
-			}
+			// Includes failed/hung startup before any marker; same attempt dedupes.
+			return s.ChargeScan(context.WithoutCancel(ctx), attempt)
+		}, func() error {
+			// RUN still awaits fresh source authority after the bound marker.
 			return s.Service.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 				if err := s.authorize(ctx, tx, req.Plan); err != nil {
 					return err

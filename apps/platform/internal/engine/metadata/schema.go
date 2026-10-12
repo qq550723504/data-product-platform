@@ -16,7 +16,9 @@ type SourceSchemaObserver interface {
 	Prepare(context.Context, uuid.UUID, domain.SchemaPlan) (json.RawMessage, error)
 	// A nil error confirms completed discovery and a terminated native process.
 	// Stop is required for failed/unknown attempts and crash recovery, not success.
-	Scan(context.Context, uuid.UUID, json.RawMessage, func() error) (SourceSchema, error)
+	// First callback records successful process start before protocol output;
+	// second reauthorizes source I/O after the bound marker, before RUN.
+	Scan(context.Context, uuid.UUID, json.RawMessage, func() error, func() error) (SourceSchema, error)
 	Stop(context.Context, uuid.UUID, json.RawMessage) error
 }
 type SourceSchema struct {

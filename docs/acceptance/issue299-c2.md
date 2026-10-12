@@ -313,3 +313,28 @@ CurrentCertification 仍 ALLOWED，CurrentEntitlement BLOCKED、下载禁用。�
 仍是后续 Ready 门禁。原 Core 继续 FAIL / NOT_RESTORED，人工解释继续 NOT_RUN。
 
 ![最终代码继续阻断撤权后的交付](evidence/issue299-c2/runtime66-browser-delivery-blocked.jpg)
+
+## 标记前启动失败的成本（2026-10-12）
+
+后续复评发现 cmd.Start 成功后、协议 marker 到达前退出/超时/输出损坏会漏记启动成本。
+该意见属于既有 per-attempt Cost invariant 的 BLOCKER。修复将 Port 的进程启动记账
+与来源 I/O 验权分开：成功 Start 后立刻持久化同 attempt 的 invocation；marker 必须
+匹配冻结目标，然后在发送 RUN 前另做 fresh authority/binding gate。Start 本身失败
+不计 invocation，已启动但不能证明 marker/成本或当前权限时不允许 RUN。
+
+实际 OS process/NativeSchemaObserver 回归的 RED 为退出、挂起、损坏 marker 三种
+成本均 0；GREEN 每种启动成本为 1、source-I/O gate 为 0。不存在的 executable Start
+失败为零成本；cost commit 失败及 startup 后授权拒绝均不能 RUN。独立 PostgreSQL
+验证失败 startup 的 typed CostAllocation、同 attempt 两次 ChargeScan 重放去重、
+下一次真实重试新增成本、成功 request replay 不增工作，以及 startup 期间 binding
+变化后仍阻断来源 I/O。此处不是原生 discovery 成功验收，不混用受控 Port 结果。
+
+最新完整 D1 fcef3dd2 + 本轮 C2 Go 源码再次通过全模块真实 PostgreSQL -race、vet、
+metadata 专项及两类共享注册，source/日志 hash 见
+[启动失败成本](evidence/issue299-c2/review-startup-cost.json)。migration 不再追加，仍 66。
+新 API/Worker 与完整源码、配置追加到已有完整 66 版备份的独立 code supplement，
+原快照保留。最终新进程真实 Edge reload、点击 scan 仍被撤权拒绝，metadata OBSERVED
+与原 MATCH/UNAVAILABLE 可见，交付 BLOCKED、下载禁用。Core 192 表、source 三表和
+8 个原生对象版本完全匹配已独立恢复的备份，零新工作/成本；没有通过重新授权伪造
+新的成功扫描或下载。当前 HEAD 的 CI/复评单独核对；Draft、人工解释暂缓及原 Core
+NOT_RESTORED 的边界不变。

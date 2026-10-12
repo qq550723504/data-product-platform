@@ -92,7 +92,7 @@ func (a *NativeSchemaObserver) Stop(ctx context.Context, id uuid.UUID, runtime j
 	}
 	return nil
 }
-func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, runtime json.RawMessage, onInvocation func() error) (metadataengine.SourceSchema, error) {
+func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, runtime json.RawMessage, onInvocation, authorizeSourceIO func() error) (metadataengine.SourceSchema, error) {
 	var result metadataengine.SourceSchema
 	c, err := frozenSchemaConfig(runtime)
 	if err != nil {
@@ -118,6 +118,13 @@ func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, runtime j
 	if err := cmd.Start(); err != nil {
 		return result, errors.New("NATIVE_SOURCE_SCAN_UNAVAILABLE")
 	}
+	// Startup may consume work even if the protocol marker never arrives.
+	// Record this physical invocation before parsing output; RUN remains gated.
+	if err := onInvocation(); err != nil {
+		_ = cmd.Process.Kill()
+		_ = cmd.Wait()
+		return result, errors.New("NATIVE_SOURCE_SCAN_COST_UNCONFIRMED")
+	}
 	decoder := json.NewDecoder(io.LimitReader(output, 128*1024))
 	var marker struct {
 		Started       bool   `json:"invocationStarted"`
@@ -129,10 +136,10 @@ func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, runtime j
 		_ = cmd.Wait()
 		return result, errors.New("NATIVE_SOURCE_SCAN_UNAVAILABLE")
 	}
-	if err := onInvocation(); err != nil {
+	if err := authorizeSourceIO(); err != nil {
 		_ = cmd.Process.Kill()
 		_ = cmd.Wait()
-		return result, errors.New("NATIVE_SOURCE_SCAN_COST_UNCONFIRMED")
+		return result, errors.New("NATIVE_SOURCE_SCAN_AUTHORITY_UNCONFIRMED")
 	}
 	if _, err := io.WriteString(input, "RUN\n"); err != nil {
 		_ = cmd.Process.Kill()

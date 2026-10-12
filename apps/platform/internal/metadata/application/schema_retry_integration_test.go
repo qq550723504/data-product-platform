@@ -30,8 +30,10 @@ type retrySchemaObserver struct {
 	stopErr    error
 	scanErr    error
 	onScan     func()
+	onStartup  func()
 	stops      int
 	scans      int
+	sourceIO   int
 }
 
 func (o *retrySchemaObserver) Plan(context.Context) (d.SchemaPlan, error) { return o.plan, o.err }
@@ -42,14 +44,21 @@ func (o *retrySchemaObserver) Stop(context.Context, uuid.UUID, json.RawMessage) 
 	o.stops++
 	return o.stopErr
 }
-func (o *retrySchemaObserver) Scan(_ context.Context, _ uuid.UUID, _ json.RawMessage, started func() error) (me.SourceSchema, error) {
+func (o *retrySchemaObserver) Scan(_ context.Context, _ uuid.UUID, _ json.RawMessage, started, authorizeSourceIO func() error) (me.SourceSchema, error) {
 	o.scans++
 	if err := started(); err != nil {
 		return me.SourceSchema{}, err
 	}
+	if o.onStartup != nil {
+		o.onStartup()
+	}
 	if o.scanErr != nil {
 		return me.SourceSchema{}, o.scanErr
 	}
+	if err := authorizeSourceIO(); err != nil {
+		return me.SourceSchema{}, err
+	}
+	o.sourceIO++
 	if o.onScan != nil {
 		o.onScan()
 	}
@@ -228,6 +237,67 @@ func TestSourceSchemaCompletedScanDoesNotRequireCleanup(t *testing.T) {
 	}
 	if observer.stops != 0 || observer.scans != 1 || attempts != 1 || costs != 1 {
 		t.Fatalf("completed scan became cleanup/retry work: stops=%d scans=%d attempts=%d costs=%d", observer.stops, observer.scans, attempts, costs)
+	}
+}
+
+func TestSourceSchemaStartupFailureCostAndSameAttemptReplay(t *testing.T) {
+	ctx, pool, req, observer, _, s := schemaRetryFixture(t)
+	observer.scanErr = errors.New("process failed before protocol marker")
+	if err := s.Process(ctx, req.ID); err == nil {
+		t.Fatal("failed startup accepted")
+	}
+	var attempt uuid.UUID
+	if err := pool.QueryRow(ctx, `SELECT id FROM source_schema_attempt WHERE request_id=$1`, req.ID).Scan(&attempt); err != nil {
+		t.Fatal(err)
+	}
+	for i := 0; i < 2; i++ {
+		if err := s.ChargeScan(ctx, attempt); err != nil {
+			t.Fatal(err)
+		}
+	}
+	count := func() int {
+		t.Helper()
+		var n int
+		if err := pool.QueryRow(ctx, `SELECT count(*) FROM cost_allocation c JOIN source_schema_attempt a ON a.id=c.source_schema_attempt_id WHERE a.request_id=$1`, req.ID).Scan(&n); err != nil {
+			t.Fatal(err)
+		}
+		return n
+	}
+	if count() != 1 || observer.sourceIO != 0 {
+		t.Fatal("failed startup lost cost, replay duplicated cost, or source I/O ran")
+	}
+	observer.scanErr = nil
+	if err := s.Process(ctx, req.ID); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Process(ctx, req.ID); err != nil {
+		t.Fatal(err)
+	}
+	if count() != 2 || observer.scans != 2 || observer.sourceIO != 1 {
+		t.Fatal("real retry cost or successful no-work replay changed")
+	}
+}
+
+func TestSourceSchemaStartupDoesNotReplaceFreshSourceIOGate(t *testing.T) {
+	ctx, pool, req, observer, _, s := schemaRetryFixture(t)
+	observer.onStartup = func() {
+		if _, err := pool.Exec(ctx, `UPDATE resource_binding SET is_primary=false WHERE id=$1`, req.BindingID); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := s.Process(ctx, req.ID); err != nil {
+		t.Fatal(err)
+	}
+	var costs int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM cost_allocation c JOIN source_schema_attempt a ON a.id=c.source_schema_attempt_id WHERE a.request_id=$1`, req.ID).Scan(&costs); err != nil {
+		t.Fatal(err)
+	}
+	var status, reason string
+	if err := pool.QueryRow(ctx, `SELECT status,reason FROM source_schema_observation WHERE request_id=$1`, req.ID).Scan(&status, &reason); err != nil {
+		t.Fatal(err)
+	}
+	if costs != 1 || observer.sourceIO != 0 || status != "DENIED" || reason != "SOURCE_BINDING_CHANGED" {
+		t.Fatalf("startup bypassed source fence: costs=%d io=%d status=%s reason=%s", costs, observer.sourceIO, status, reason)
 	}
 }
 
