@@ -1,0 +1,8 @@
+{
+  "normalization": "function SQL line endings only; both definitions otherwise exactly equal",
+  "oracleRawSHA256": "0ac139bac45061ad75b2148eaba199df30393d52015c0470462c5b23b2a2adbb",
+  "downRawSHA256": "a0aace3c18d3bef3f872b5baed269239cb2a7c2bb853976f701ef4646c00b71a",
+  "oracleCRLF": 45,
+  "downCRLF": 0,
+  "constraintExact": true
+}

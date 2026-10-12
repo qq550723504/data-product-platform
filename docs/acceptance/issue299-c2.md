@@ -31,13 +31,31 @@ never changes QA, certification, release, or delivery gates. The fixed ingestion
 schema contract is not widened automatically. Unknown downstream impact stays
 UNKNOWN. Source credentials remain private to the adapter.
 
-Coordination: #307 owns unpublished migrations 60–64 and its checkout. C2 owns
-65–66; order is main 59 → D1 60–64 → C2 65–66. C2 uses
+Coordination: #307/D1 owns migrations 60–64, now merged via #314 at
+`c1a3463ee110e3cb7dadb0004b0942c001f19ffe`. C2 owns 65–66;
+order is main 59 → D1 60–64 → C2 65–66. C2 uses
 independent metadata files while migration and shared composition/routing order
 is coordinated. Existing environments and volumes are retained.
 
 2026-10-11/12，基于 main `1892cd76c4ee578896ddfb3c6f4a7252bfacc51b` 的隔离环境，技术验收 PASS。
 人工解释按用户要求 **NOT_RUN / 暂缓**。提交 Draft；不关闭 #299、不自动合并。
+
+**当前候选检查（2026-10-12）：已实际 rebase main `c1a3463e`。**
+源码直接取自 Git `a793f237`，真实 PostgreSQL 全模块 `-race`、vet、fresh66、
+main64→66、空 66/65 down/up、含事实 down 拒绝和共享注册均 PASS。
+Edge 使用该 API/生产 Next，核对三 RAW/manifest、原加工/质量/认证历史、撤权扫描
+拒绝和交付禁用、metadata HTTP 503 的 UNKNOWN 提示及恢复 OBSERVED。
+192 Core 表前后精确 hash 相同（含两份 PUBLISHED release），零新扫描/成本。
+这是当前代码的读取/拒绝/失联回归；没有重新授权或重新执行 native happy path。
+[实际 rebase 证据](evidence/issue299-c2/actual-rebase-main64.json)。新 HEAD CI/评审另行核对，
+仍 Draft、不自动合并；原事故 NOT_RESTORED 与人工解释暂缓不变。
+
+**组合源码绑定更正：** 私有 `combo-ready-epoch66625210-source` 曾标注 D1 `66625210`
++ C2 `f8404f01`，实含旧 D1 的 early-recovery、30s task budget 和 migration64 terminal
+规则。旧日志只证明该混合快照，不证明标注的最终组合，不计当前候选 PASS。
+原回执保留；当前证据来自实际 rebased Git，D1 lifecycle/60–64 与 main 精确一致。
+这不改变独立核对的 #314 精确 candidate/tree、PR CI/评审及对应 main CI，也不把
+旧阶段 native/browser 结果重标为当前代码。[更正说明](evidence/issue299-c2/source-binding-correction.md)。
 
 ## 实际证据
 

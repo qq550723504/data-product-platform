@@ -84,10 +84,11 @@ class FaultProxy(http.server.ThreadingHTTPServer):
     """Bounded test transport with a real upstream, recording only safe wire data."""
     daemon_threads = True
 
-    def __init__(self, upstream, authorization, port=0):
+    def __init__(self, upstream, authorization, port=0, content_type="text/xml;charset=UTF-8"):
         super().__init__(("127.0.0.1", port), ProxyHandler)
         self.upstream = upstream
         self.authorization = authorization
+        self.content_type = content_type
         self.drop = None
         self.unavailable = False
         self.requests = []
@@ -121,7 +122,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         req = urllib.request.Request(proxy.upstream + self.path, data=body if body else None,
                                      method=self.command, headers={
                                          "Authorization": proxy.authorization,
-                                         "Content-Type": "text/xml;charset=UTF-8"})
+                                         "Content-Type": proxy.content_type})
         try:
             with urllib.request.urlopen(req, timeout=25) as response:
                 status, content = response.status, response.read()
