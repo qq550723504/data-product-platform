@@ -14,7 +14,11 @@ func ConfigureSourceSchema(service *app.Service, pool *pgxpool.Pool, path string
 		return nil
 	}
 	observer := &NativeSchemaObserver{Path: path}
-	if _, err := observer.Plan(context.Background()); err != nil {
+	plan, err := observer.Plan(context.Background())
+	if err != nil {
+		return err
+	}
+	if err := plan.Validate(); err != nil {
 		return err
 	}
 	service.Schema = &app.SchemaService{Service: service, Observer: observer, Rights: rights.NewPostgresRepository(pool)}

@@ -28,7 +28,7 @@ func (h *Handler) schemaHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	plan, err := h.service.Schema.Observer.Plan(r.Context())
-	enabled := err == nil && plan.ResourceID == id && plan.WorkspaceID == ws
+	enabled := err == nil && plan.Validate() == nil && plan.ResourceID == id && plan.WorkspaceID == ws
 	writeJSON(w, 200, map[string]any{"enabled": enabled, "items": items})
 }
 func (h *Handler) requestSchema(w http.ResponseWriter, r *http.Request) {

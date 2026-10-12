@@ -16,7 +16,6 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	rd "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/domain"
-	ri "github.com/qq550723504/data-product-platform/apps/platform/internal/rights/infrastructure"
 )
 
 var ErrSchemaDenied = errors.New("source schema observation authority denied")
@@ -36,19 +35,32 @@ func (s *SchemaService) currentBinding(ctx context.Context, tx pgx.Tx, req d.Sch
 type SchemaService struct {
 	Service  *Service
 	Observer me.SourceSchemaObserver
-	Rights   *ri.PostgresRepository
+	Rights   schemaEntitlementChecker
+}
+
+type schemaEntitlementChecker interface {
+	CheckCurrentEntitlementTx(context.Context, pgx.Tx, rd.EntitlementRequest) (rd.EntitlementDecision, error)
 }
 
 func (s *SchemaService) authorize(ctx context.Context, tx pgx.Tx, p d.SchemaPlan) error {
 	current, err := s.Observer.Plan(ctx)
-	if err != nil || current.Validate() != nil || d.Hash(current) != d.Hash(p) {
+	if err != nil {
+		return err
+	}
+	if current.Validate() != nil || d.Hash(current) != d.Hash(p) {
 		return ErrSchemaDenied
 	}
 	if _, err := deliveryfence.Lock(ctx, tx, p.WorkspaceID); err != nil {
 		return err
 	}
 	var allowed bool
-	if err := tx.QueryRow(ctx, `SELECT workspace_id=$2 AND lifecycle_status NOT IN ('BLOCKED','ARCHIVED') AND deleted_at IS NULL FROM data_resource WHERE id=$1 FOR UPDATE`, p.ResourceID, p.WorkspaceID).Scan(&allowed); err != nil || !allowed {
+	if err := tx.QueryRow(ctx, `SELECT workspace_id=$2 AND lifecycle_status NOT IN ('BLOCKED','ARCHIVED') AND deleted_at IS NULL FROM data_resource WHERE id=$1 FOR UPDATE`, p.ResourceID, p.WorkspaceID).Scan(&allowed); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return ErrSchemaDenied
+		}
+		return err
+	}
+	if !allowed {
 		return ErrSchemaDenied
 	}
 	decision, err := s.Rights.CheckCurrentEntitlementTx(ctx, tx, rd.EntitlementRequest{WorkspaceID: p.WorkspaceID, AuthorizationID: p.AuthorizationID, DataResourceID: p.ResourceID, ConsumerRef: p.ConsumerRef, Purpose: p.Purpose, Action: "READ", Scope: rd.NormalizedScope{Type: "ALL_RESOURCE", Ref: p.ResourceID.String()}, AsOf: time.Now().UTC(), Path: rd.EntitlementDownstream})
@@ -80,7 +92,10 @@ func (s *SchemaService) Request(ctx context.Context, resource, ws, actor uuid.UU
 		return req, ErrSchemaDenied
 	}
 	p, err := s.Observer.Plan(ctx)
-	if err != nil || p.ResourceID != resource || p.WorkspaceID != ws || p.ActorID != actor {
+	if err != nil {
+		return req, err
+	}
+	if p.ResourceID != resource || p.WorkspaceID != ws || p.ActorID != actor {
 		return req, ErrSchemaDenied
 	}
 	req = d.SchemaRequest{ID: uuid.New(), Plan: p, PlanHash: d.Hash(p), Key: key}
@@ -225,7 +240,10 @@ func (s *SchemaService) Handle(ctx context.Context, resource, ws, actor, observa
 	}
 	return s.Service.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		p, err := s.Observer.Plan(ctx)
-		if err != nil || p.ResourceID != resource || p.WorkspaceID != ws || p.ActorID != actor {
+		if err != nil {
+			return err
+		}
+		if p.ResourceID != resource || p.WorkspaceID != ws || p.ActorID != actor {
 			return ErrSchemaDenied
 		}
 		if err := s.authorize(ctx, tx, p); err != nil {

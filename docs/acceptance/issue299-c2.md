@@ -67,7 +67,8 @@ typed 成本、历史 count/hash、运行二进制 hash 与 D1 migration 文件 
 ## 复用、迁移与部署边界
 
 既有目录 GetTable 只说明目录响应，不能证明刚扫描来源，因此通过现有 Adapter 的 SourceSchemaObserver
-Port 调用原生包，要求 workflow 成功后才读精确表。成熟方案是
+Port 调用原生包，要求本轮原生迭代器恰好输出一次精确表、全部步骤无 failure，
+再核对 catalog 身份及列与本轮记录一致。成熟方案是
 [OpenMetadata 原生 PostgreSQL Connector](https://docs.open-metadata.org/v2.0.x/connectors/database/postgres/yaml)；
 未自建 Connector、第二套 Airflow/Temporal、告警或 ITSM。部署成本为已有 OM + 有时限的临时 scanner。
 安装分发版本实际 **2.0.5.0**，按 PEP 440 规范化等价校验 contract 2.0.5。
@@ -106,3 +107,33 @@ go test ./...、go vet ./...、metadata/Outbox/routing race、web typecheck/prod
 
 Non-goals: live-source freshness SLA, full lineage, generic alerting/approval,
 multi-operator IAM, production rollout, automatic schema acceptance or repair.
+
+## PR #313 评审修复复验（2026-10-12）
+
+修复两条有效意见：零目标表发现不能把旧 catalog 认作本轮 schema；配置读取故障不能
+变成 terminal DENIED。Adapter 只观察原生 CreateTableRequest 并原样传给原生 sink，
+不实现 PostgreSQL 发现逻辑。已加载但 disabled、语义无效或与冻结 plan 不符仍拒绝；
+文件/解析/基础设施读取失败返回 retryable error，不 ACK 成功或永久拒绝。
+
+[review-native-target.json](evidence/issue299-c2/review-native-target.json) 记录本次修复文件 hash：
+新建独立空合成来源，真实原生 Connector 健康扫描五列；将其表改名后，即使
+markDeletedTables=false 留下同一 catalog 实体，Adapter 退出 1 且不输出结果；
+恢复原表名后返回原实体 ID/五列。另有原生 SDK contract tests 覆盖空/错表、sink failure
+及 source/catalog 列不一致。该证据只证明 Adapter contract；未重新授权原已撤权来源，
+未把它当作新的浏览器或 Core 权利验收。
+
+[review-d1-combination.json](evidence/issue299-c2/review-d1-combination.json) 与
+[review-postgres-race.log](evidence/issue299-c2/review-postgres-race.log) 对应 D1 已提交
+`2cb3c96dc6cb842cd7c57174ee35fc7107d31a30` 的精确 Git blobs。在自己的新库真安装
+main 1–59 → D1 60–64 → C2 65，empty down/up 保留 D1 cost guard，populated down
+拒绝且七表 count/hash 不变。真实 PostgreSQL 回归证明同一请求在 profile 读取故障时
+无 terminal observation/扫描，恢复后 MATCH、一次扫描/成本，成功重放无新增；已加载
+disabled plan 仍 DENIED。此回归使用受控 Observer/entitlement Port，不代表外部 provider
+或真实权利已获验收。go test ./...、go vet ./...、上述 PostgreSQL race 与 native SDK 四项
+回归均 PASS；普通 Go suite 的 integration SKIP 仍与专门真实 PostgreSQL PASS 分开。
+
+#307 writer 已确认 D1 → C2，不占用 C2 路由/Worker 写域。本次组合证明只绑定上面的
+已提交快照；#307 正在补 processing/delivery pin，并计划更新未发布的 64。若最终
+D1 新增独立迁移达到 65 或更高，C2 writer 将把自己的迁移排到其最终最大号之后。
+Ready 前必须按最终 D1/main 快照 rebase 并重跑组合，不能以本次旧快照替代最终门禁。
+本轮保持 Draft、不自动合并；人工解释继续 NOT_RUN。

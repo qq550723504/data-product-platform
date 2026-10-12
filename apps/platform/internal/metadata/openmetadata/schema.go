@@ -34,9 +34,6 @@ func (a *NativeSchemaObserver) load() (schemaConfig, error) {
 	if json.Unmarshal(b, &c) != nil || len(c.Command) == 0 || len(c.StopCommand) == 0 {
 		return c, errors.New("invalid schema profile")
 	}
-	if err := c.Plan.Validate(); err != nil {
-		return c, err
-	}
 	return c, nil
 }
 func (a *NativeSchemaObserver) Plan(context.Context) (d.SchemaPlan, error) {
@@ -71,6 +68,9 @@ func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, onInvocat
 	var result metadataengine.SourceSchema
 	c, err := a.load()
 	if err != nil {
+		return result, err
+	}
+	if err := c.Plan.Validate(); err != nil {
 		return result, err
 	}
 	ctx, cancel := context.WithTimeout(ctx, 90*time.Second)

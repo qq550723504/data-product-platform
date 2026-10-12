@@ -17,6 +17,21 @@ def connector_hash(cfg):
         "sourceConfig":source["sourceConfig"], "tableFqn":cfg["dppTableFqn"]}
     return hashlib.sha256(json.dumps(identity,sort_keys=True,separators=(",",":")).encode()).hexdigest()
 
+def observed_tables(source, target, observations):
+    """Observe native typed records while preserving its iterator unchanged."""
+    from metadata.generated.schema.api.data.createTable import CreateTableRequest
+    from metadata.generated.schema.entity.data.table import Table
+    from metadata.utils import fqn
+    for record in source():
+        if isinstance(record, CreateTableRequest):
+            parts = fqn.split(record.databaseSchema.root)
+            name = fqn.build(None, Table, service_name=parts[0], database_name=parts[1],
+                schema_name=parts[2], table_name=record.name.root, skip_es_search=True)
+            if name == target:
+                observations.append([{"name":c.name.root,"type":c.dataType.value,
+                    "constraint":c.constraint.value if c.constraint else "UNKNOWN"} for c in record.columns])
+        yield record
+
 def run(path):
     import yaml
     from importlib.metadata import version
@@ -40,12 +55,19 @@ def run(path):
     signal.alarm(85)
     with contextlib.redirect_stdout(sys.stderr):
         workflow = MetadataWorkflow.create(cfg)
+        observations = []
+        native_source = workflow.source.run
+        workflow.source.run = lambda: observed_tables(native_source, fqn, observations)
         try:
             workflow.execute()
             workflow.raise_from_status()
             # Failed stages must not silently fall back to old catalog data.
             if workflow.result_status() != WorkflowResultStatus.SUCCESS:
                 raise RuntimeError("native workflow did not complete successfully")
+            if any(step.get_status().failures for step in workflow.workflow_steps()):
+                raise RuntimeError("native workflow contains a failed step")
+            if len(observations) != 1:
+                raise RuntimeError("native workflow did not emit the exact source table once")
         finally:
             workflow.stop()
     connection = cfg["workflowConfig"]["openMetadataServerConfig"]
@@ -54,9 +76,12 @@ def run(path):
     req = urllib.request.Request(connection["hostPort"] + "/v1/tables/name/" + quote(fqn, safe=""), headers=headers)
     with urllib.request.urlopen(req, timeout=15) as response:
         table = json.load(response)
+    columns = [{"name":c["name"],"type":c["dataType"],"constraint":c.get("constraint") or "UNKNOWN"} for c in table["columns"]]
+    if table["fullyQualifiedName"] != fqn or columns != observations[0]:
+        raise RuntimeError("catalog table differs from this native source observation")
     print(json.dumps({"externalId":table["id"],"externalFqn":table["fullyQualifiedName"],"connectorHash":contract_hash,
         "startedAt":started,"completedAt":datetime.now(timezone.utc).isoformat(),
-        "columns":[{"name":c["name"],"type":c["dataType"],"constraint":c.get("constraint") or "UNKNOWN"} for c in table["columns"]]}), flush=True)
+        "columns":observations[0]}), flush=True)
 
 if __name__ == "__main__":
     try:

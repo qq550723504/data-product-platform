@@ -72,8 +72,11 @@ func TestNativeSchemaRequiresDurableInvocationAcknowledgement(t *testing.T) {
 	config.Plan.Enabled = false
 	body, _ = json.Marshal(config)
 	_ = os.WriteFile(path, body, 0600)
-	if _, err := observer.Plan(context.Background()); err == nil {
-		t.Fatal("disabled current authority accepted")
+	if current, err := observer.Plan(context.Background()); err != nil || current.Enabled {
+		t.Fatal("disabled plan must be distinguishable from an unreadable profile")
+	}
+	if _, err := observer.Scan(context.Background(), uuid.New(), func() error { t.Fatal("disabled profile launched native work"); return nil }); err == nil {
+		t.Fatal("disabled plan launched a scan")
 	}
 	if err := observer.Stop(context.Background(), uuid.New()); err != nil {
 		t.Fatal("disabled authority blocked process containment")
