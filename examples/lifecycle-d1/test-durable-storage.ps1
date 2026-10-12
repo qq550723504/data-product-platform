@@ -25,4 +25,25 @@ foreach($case in @('core-tmpfs-256m','object-tmpfs','tmpfs-parent','tmpfs-wal','
  }
  $failed=$false;try{Assert-FixtureDurableStorage $resources $p $o|Out-Null}catch{$failed=$true};if(-not $failed){throw ('Unsafe retained-service metadata accepted: '+$case)};$rejected++
 }
-[pscustomobject]@{status='PASS';positive=1;rejected=$rejected;docker_calls=0;storage_io=0;mutation=0}|ConvertTo-Json
+$generic=@()
+foreach($role in @('core','source','minio','redis')){
+ $path='/data';if($role -in @('core','source')){$path='/var/lib/postgresql/data'}
+ $c=Service ($role+'-service') $path ($role+'-volume');$c.Config.Labels=[pscustomobject]@{'pgi.run'='synthetic-c2-retained'}
+ $generic+=@{role=$role;name=$role+'-service';path=$path;volume=$role+'-volume';container=$c}
+}
+$registered=@($generic|ForEach-Object {$_.volume})
+Assert-RetainedServiceStorage -RunID 'synthetic-c2-retained' -LabelKey 'pgi.run' -RegisteredVolumes $registered -Services $generic|Out-Null
+foreach($case in @('wrong-label-key','wrong-run','duplicate-volume','duplicate-role','duplicate-container','relative-data-path')){
+ $spec=@($generic|ConvertTo-Json -Depth 8|ConvertFrom-Json)
+ $label='pgi.run';$owner='synthetic-c2-retained'
+ switch($case){
+  'wrong-label-key' {$label='lifecycle307.run'}
+  'wrong-run' {$owner='different-run'}
+  'duplicate-volume' {$spec[1].volume=$spec[0].volume}
+  'duplicate-role' {$spec[1].role=$spec[0].role}
+  'duplicate-container' {$spec[1].name=$spec[0].name}
+  'relative-data-path' {$spec[0].path='var/lib/postgresql/data'}
+ }
+ $failed=$false;try{Assert-RetainedServiceStorage -RunID $owner -LabelKey $label -RegisteredVolumes $registered -Services $spec|Out-Null}catch{$failed=$true};if(-not $failed){throw ('Unsafe four-role metadata accepted: '+$case)};$rejected++
+}
+[pscustomobject]@{status='PASS';positive=2;rejected=$rejected;docker_calls=0;storage_io=0;mutation=0}|ConvertTo-Json
