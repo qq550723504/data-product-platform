@@ -218,11 +218,22 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		} // no native I/O started
 		return nil, e
 	}
+	var invocationMu sync.Mutex
 	var invoked *time.Time
-	trace := &httptrace.ClientTrace{WroteRequest: func(httptrace.WroteRequestInfo) { at := time.Now().UTC(); invoked = &at }}
+	trace := &httptrace.ClientTrace{WroteRequest: func(info httptrace.WroteRequestInfo) {
+		if info.Err == nil {
+			invocationMu.Lock()
+			at := time.Now().UTC()
+			invoked = &at
+			invocationMu.Unlock()
+		}
+	}}
 	r = r.Clone(httptrace.WithClientTrace(r.Context(), trace))
 	resp, e := t.base.RoundTrip(r)
-	proof := lc.StorageCallObservation{CallID: c.id, ObservedAt: time.Now().UTC(), InvokedAt: invoked}
+	invocationMu.Lock()
+	invocation := invoked
+	invocationMu.Unlock()
+	proof := lc.StorageCallObservation{CallID: c.id, ObservedAt: time.Now().UTC(), InvokedAt: invocation}
 	if e != nil {
 		proof.Failure = "TRANSPORT"
 	} else {
