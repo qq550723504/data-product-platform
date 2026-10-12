@@ -47,11 +47,13 @@ Revocation cannot erase an incurred observation/cost. A crash with only a start
 does not prove invocation, stopped I/O, no-send or absence.
 
 Complete native inventory plus positive exact HEAD yields `UNKNOWN_PRESENT`.
-The recovery request finishes, while the original deletion and exclusive reservation
-remain unresolved. Recovery never resends DELETE, releases a hold, bypasses retention
-or converts elapsed time into stopped-reader proof. A new explicit recovery request
-is needed to observe a later state. Provider errors remain retryable UNKNOWN; six
-durable runs bound automatic work. Exhaustion requires an explicit new request.
+This is a nonterminal observation: the original DELETE may not have been sent yet
+or may still complete. The original deletion and exclusive reservation remain
+unresolved. Recovery returns a retryable error for Asynq and remains in the durable
+pending scan, without resending DELETE, releasing a hold, bypassing retention or
+converting elapsed time into stopped-reader proof. Provider errors and inconclusive
+presence remain retryable UNKNOWN; six durable runs bound automatic metadata work.
+Exhaustion requires an explicit new request and never releases the reservation.
 
 Exact absence uses the existing post-dispatch scoped inventory receipt. Each receipt
 is per copy; a plan completes only with its entire frozen membership. A crash after
@@ -85,6 +87,12 @@ version and time must match even when the original call also has an ACK. The
 final guard was validated after native sealing in two further isolated databases;
 the native evidence retains its original SQL hash and is not relabelled as that
 later schema revision.
+
+`UNKNOWN_COPY_TARGET` is likewise nonterminal and retryable: an early inventory
+can run before the original COPY produces its target. Later metadata discovery
+can resolve the same work without another COPY. Each lookup keeps a distinct
+physical identity/cost and the same six-run budget; terminal resolutions stop
+the scanner and make duplicate task deliveries perform no I/O.
 
 Recovery refreshes source and target retention/hold, hashes bounded exact target
 bytes through the existing instrumented adapter, then re-authorizes under the

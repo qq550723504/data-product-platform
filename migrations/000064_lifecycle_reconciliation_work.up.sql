@@ -158,7 +158,7 @@ CREATE TABLE lifecycle_reconciliation_result (
  FOREIGN KEY(workspace_id,copy_discovery_id) REFERENCES lifecycle_copy_discovery(workspace_id,id),
  FOREIGN KEY(workspace_id,copy_decision_id) REFERENCES lifecycle_copy_decision(workspace_id,id),
  CHECK(outcome NOT IN('UNKNOWN_COPY_LEDGER','COPY_ARCHIVED','RESTORE_ONLINE','BLOCKED_COPY') OR copy_decision_id IS NOT NULL),
- CHECK(terminal=(outcome<>'UNKNOWN_PROVIDER')),
+ CHECK(terminal=(outcome NOT IN('UNKNOWN_PROVIDER','UNKNOWN_PRESENT','UNKNOWN_COPY_TARGET'))),
  CHECK(outcome<>'UNKNOWN_PRESENT' OR (inventory_call_id IS NOT NULL AND stat_call_id IS NOT NULL)),
  CHECK(outcome NOT IN('ABSENT_PARTIAL','ABSENT_VERIFIED') OR absence_receipt_id IS NOT NULL),
  CHECK(outcome<>'ABSENT_VERIFIED' OR completion_id IS NOT NULL)

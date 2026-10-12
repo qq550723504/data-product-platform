@@ -92,14 +92,14 @@ func TestRecoveryUnknownPresenceNeverResendsOrReleases(t *testing.T) {
 		t.Fatal("dispatch committed without durable wake obligation")
 	}
 	for n := 0; n < 2; n++ {
-		if err := s.RunRecovery(ctx, f.w, id); err != nil {
+		if err := s.RunRecovery(ctx, f.w, id); !errors.Is(err, ErrStorageUnknown) {
 			t.Fatal(err)
 		}
 	}
-	if i.calls.Load() != 2 || count(t, pool, `SELECT count(*) FROM lifecycle_provider_attempt`) != 1 || count(t, pool, `SELECT count(*) FROM lifecycle_provider_send_claim`) != 0 || count(t, pool, `SELECT count(*) FROM lifecycle_dispatch_release`) != 0 {
+	if i.calls.Load() != 4 || count(t, pool, `SELECT count(*) FROM lifecycle_provider_attempt`) != 1 || count(t, pool, `SELECT count(*) FROM lifecycle_provider_send_claim`) != 0 || count(t, pool, `SELECT count(*) FROM lifecycle_dispatch_release`) != 0 {
 		t.Fatal("replay sent I/O or released uncertain reservation")
 	}
-	if count(t, pool, `SELECT count(*) FROM lifecycle_reconciliation_result WHERE outcome='UNKNOWN_PRESENT'`) != 1 || count(t, pool, `SELECT count(*) FROM cost_allocation WHERE lifecycle_storage_call_id IS NOT NULL`) != 2 {
+	if count(t, pool, `SELECT count(*) FROM lifecycle_reconciliation_result WHERE outcome='UNKNOWN_PRESENT' AND NOT terminal`) != 2 || count(t, pool, `SELECT count(*) FROM cost_allocation WHERE lifecycle_storage_call_id IS NOT NULL`) != 4 {
 		t.Fatal("lookup result/cost missing")
 	}
 	for _, table := range []string{"lifecycle_reconciliation_work", "lifecycle_reconciliation_run", "lifecycle_reconciliation_result"} {
@@ -140,7 +140,7 @@ func TestRecoveryCrashPreservesLookupAndSingleOwner(t *testing.T) {
 	}
 	close(release)
 	wg.Wait()
-	if first != nil {
+	if !errors.Is(first, ErrStorageUnknown) {
 		t.Fatal(first)
 	}
 	if i.calls.Load() != 3 || count(t, pool, `SELECT count(*) FROM lifecycle_reconciliation_run`) != 2 || count(t, pool, `SELECT count(*) FROM lifecycle_reconciliation_result`) != 1 {

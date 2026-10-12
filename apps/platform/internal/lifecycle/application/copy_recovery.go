@@ -348,7 +348,7 @@ func (s *CopyRecoveryService) observe(ctx context.Context, r *copyRecoveryRun, c
 		}
 		id := uuid.New()
 		at := o.clock()
-		_, e = tx.Exec(ctx, `INSERT INTO lifecycle_reconciliation_result(id,workspace_id,work_id,run_id,outcome,terminal,inventory_call_id,stat_call_id,copy_discovery_id,copy_decision_id,observed_at,dependency_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, id, r.w, r.work, r.id, r.outcome, r.outcome != "UNKNOWN_PROVIDER", nullableID(r.inventory), nullableID(r.stat), nullableID(r.discovery), nullableID(r.decision), at, rev)
+		_, e = tx.Exec(ctx, `INSERT INTO lifecycle_reconciliation_result(id,workspace_id,work_id,run_id,outcome,terminal,inventory_call_id,stat_call_id,copy_discovery_id,copy_decision_id,observed_at,dependency_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, id, r.w, r.work, r.id, r.outcome, recoveryOutcomeTerminal(r.outcome), nullableID(r.inventory), nullableID(r.stat), nullableID(r.discovery), nullableID(r.decision), at, rev)
 		if e != nil {
 			return e
 		}
@@ -357,7 +357,13 @@ func (s *CopyRecoveryService) observe(ctx context.Context, r *copyRecoveryRun, c
 	if e != nil {
 		return e
 	}
-	if r.outcome == "UNKNOWN_PROVIDER" {
+	if !recoveryOutcomeTerminal(r.outcome) {
+		if cause == nil {
+			cause = ErrStorageUnknown
+			if r.outcome == "UNKNOWN_COPY_TARGET" {
+				cause = ErrCopyTargetUnknown
+			}
+		}
 		return fmt.Errorf("copy recovery uncertain: %w", cause)
 	}
 	return nil

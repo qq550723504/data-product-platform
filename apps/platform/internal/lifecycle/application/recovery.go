@@ -21,6 +21,15 @@ const MaxRecoveryRuns = 6
 
 var ErrRecoveryExhausted = errors.New("lifecycle recovery retry budget exhausted; explicit new request required")
 
+// An early lookup can race the original physical send. Presence or a missing
+// target cannot finish that work; Asynq retries and the durable pending scan
+// must remain able to observe its later outcome within the existing budget.
+// UNKNOWN_COPY_LEDGER finishes a specific restore admission evaluation, which
+// requires a new explicit request after publishing a fresh independent cut.
+func recoveryOutcomeTerminal(outcome string) bool {
+	return outcome != "UNKNOWN_PROVIDER" && outcome != "UNKNOWN_PRESENT" && outcome != "UNKNOWN_COPY_TARGET"
+}
+
 type RecoveryLocker interface {
 	WithAdvisoryLock(context.Context, string, func(context.Context) error) error
 }
@@ -378,7 +387,7 @@ func (s *RecoveryService) observe(ctx context.Context, r *recoveryRun, cause err
 			r.outcome = "UNKNOWN_PROVIDER"
 		}
 		id := uuid.New()
-		_, err = tx.Exec(ctx, `INSERT INTO lifecycle_reconciliation_result(id,workspace_id,work_id,run_id,outcome,terminal,inventory_call_id,stat_call_id,absence_receipt_id,completion_id,observed_at,dependency_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, id, r.workspace, r.work, r.id, r.outcome, r.outcome != "UNKNOWN_PROVIDER", nullableID(r.inventory), nullableID(r.stat), nullableID(r.receipt), nullableID(r.completion), at, rev)
+		_, err = tx.Exec(ctx, `INSERT INTO lifecycle_reconciliation_result(id,workspace_id,work_id,run_id,outcome,terminal,inventory_call_id,stat_call_id,absence_receipt_id,completion_id,observed_at,dependency_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, id, r.workspace, r.work, r.id, r.outcome, recoveryOutcomeTerminal(r.outcome), nullableID(r.inventory), nullableID(r.stat), nullableID(r.receipt), nullableID(r.completion), at, rev)
 		if err != nil {
 			return err
 		}
@@ -387,7 +396,7 @@ func (s *RecoveryService) observe(ctx context.Context, r *recoveryRun, cause err
 	if err != nil {
 		return err
 	}
-	if r.outcome == "UNKNOWN_PROVIDER" {
+	if !recoveryOutcomeTerminal(r.outcome) {
 		if cause == nil {
 			cause = ErrStorageUnknown
 		}

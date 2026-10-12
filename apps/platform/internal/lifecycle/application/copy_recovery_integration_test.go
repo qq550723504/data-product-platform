@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"errors"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain"
@@ -188,7 +189,7 @@ func TestCopyRecoveryMissingAmbiguousAndCrashNeverResend(t *testing.T) {
 				if scenario == "wrong-tag" && e == nil {
 					t.Fatal("unbacked tagged HEAD bound")
 				}
-				if scenario == "missing" && e != nil {
+				if scenario == "missing" && !errors.Is(e, ErrCopyTargetUnknown) {
 					t.Fatal(e)
 				}
 			}
