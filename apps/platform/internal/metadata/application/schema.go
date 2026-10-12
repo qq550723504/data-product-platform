@@ -192,8 +192,12 @@ func (s *SchemaService) Process(ctx context.Context, id uuid.UUID) error {
 				return s.currentBinding(ctx, tx, req)
 			})
 		})
-		if err := s.Observer.Stop(context.WithoutCancel(ctx), attempt); err != nil {
-			return err
+		// Successful Scan proves the native process has exited. Cleanup must not
+		// discard that completed result by rereading a temporarily missing profile.
+		if scanErr != nil {
+			if err := s.Observer.Stop(context.WithoutCancel(ctx), attempt); err != nil {
+				return err
+			}
 		}
 		o := d.SchemaObservation{ID: uuid.New(), RequestID: id, AttemptID: &attempt, Status: "UNAVAILABLE", Reason: "NATIVE_SOURCE_SCAN_UNAVAILABLE"}
 		if scanErr == nil && result.ExternalID == req.ExternalID && result.ExternalFQN == req.Plan.ExternalFQN && result.ConnectorHash == req.Plan.ConnectorHash && d.ValidateColumns(result.Columns) == nil {

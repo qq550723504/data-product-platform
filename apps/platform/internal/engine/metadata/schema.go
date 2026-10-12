@@ -11,6 +11,8 @@ import (
 // catalog GET or catalog revision is deliberately insufficient for this port.
 type SourceSchemaObserver interface {
 	Plan(context.Context) (domain.SchemaPlan, error)
+	// A nil error confirms completed discovery and a terminated native process.
+	// Stop is required for failed/unknown attempts and crash recovery, not success.
 	Scan(context.Context, uuid.UUID, func() error) (SourceSchema, error)
 	Stop(context.Context, uuid.UUID) error
 }

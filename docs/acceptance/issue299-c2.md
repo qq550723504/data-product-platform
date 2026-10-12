@@ -168,3 +168,11 @@ result.ConnectorHash == request.Plan.ConnectorHash，不能只相信 Adapter 自
 UNAVAILABLE/调用成本；恢复 A 后同请求 MATCH，共两次调用/两份 typed 成本，成功重放
 无新增。metadata -race、go test ./...、go vet ./... PASS。证据与实际文件 hash 见
 [review-frozen-connector.json](evidence/issue299-c2/review-frozen-connector.json)。
+
+成功 Scan 的 Port contract 明确为原生发现完成且进程已退出（现有 Adapter 已用成功
+cmd.Wait 证明）；Application 不再执行第二次 Stop，避免读取配置失败丢弃有效结果。
+失败/未知扫描及 crash recovery 仍必须确认 Stop。真实 PostgreSQL/受控 Port 回归证明
+成功时 cleanup profile 不可读仍 MATCH、一次 attempt/成本、重放无新增；未知完成且
+containment 失败时不接受结果，确认停止后保留 INTERRUPTED 再复扫，成本逐次保留。
+metadata -race、go test ./...、go vet ./... PASS，精确 hash/日志见
+[review-completed-scan.json](evidence/issue299-c2/review-completed-scan.json)。

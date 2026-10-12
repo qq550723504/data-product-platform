@@ -26,15 +26,24 @@ type retrySchemaObserver struct {
 	err        error
 	externalID string
 	resultHash string
+	stopErr    error
+	scanErr    error
+	stops      int
 	scans      int
 }
 
 func (o *retrySchemaObserver) Plan(context.Context) (d.SchemaPlan, error) { return o.plan, o.err }
-func (o *retrySchemaObserver) Stop(context.Context, uuid.UUID) error      { return nil }
+func (o *retrySchemaObserver) Stop(context.Context, uuid.UUID) error {
+	o.stops++
+	return o.stopErr
+}
 func (o *retrySchemaObserver) Scan(_ context.Context, _ uuid.UUID, started func() error) (me.SourceSchema, error) {
 	o.scans++
 	if err := started(); err != nil {
 		return me.SourceSchema{}, err
+	}
+	if o.scanErr != nil {
+		return me.SourceSchema{}, o.scanErr
 	}
 	now := time.Now().UTC()
 	return me.SourceSchema{ExternalID: o.externalID, ExternalFQN: o.plan.ExternalFQN, ConnectorHash: o.resultHash, Columns: o.plan.Columns, StartedAt: now, CompletedAt: now}, nil
@@ -186,5 +195,62 @@ func TestSourceSchemaResultUsesFrozenConnectorContract(t *testing.T) {
 				t.Fatalf("contract recovery/replay lost work/cost identity: scans=%d gates=%d costs=%d matches=%d", observer.scans, gate.checks, costs, observations)
 			}
 		})
+	}
+}
+
+func TestSourceSchemaCompletedScanDoesNotRequireCleanup(t *testing.T) {
+	ctx, pool, req, observer, _, s := schemaRetryFixture(t)
+	observer.stopErr = errors.New("profile mount temporarily unavailable for cleanup")
+	if err := s.Process(ctx, req.ID); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Process(ctx, req.ID); err != nil {
+		t.Fatal(err)
+	}
+	var status string
+	if err := pool.QueryRow(ctx, `SELECT status FROM source_schema_observation WHERE request_id=$1`, req.ID).Scan(&status); err != nil || status != "MATCH" {
+		t.Fatalf("completed scan lost: %s %v", status, err)
+	}
+	var attempts, costs int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM source_schema_attempt WHERE request_id=$1`, req.ID).Scan(&attempts); err != nil {
+		t.Fatal(err)
+	}
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM cost_allocation c JOIN source_schema_attempt a ON a.id=c.source_schema_attempt_id WHERE a.request_id=$1`, req.ID).Scan(&costs); err != nil {
+		t.Fatal(err)
+	}
+	if observer.stops != 0 || observer.scans != 1 || attempts != 1 || costs != 1 {
+		t.Fatalf("completed scan became cleanup/retry work: stops=%d scans=%d attempts=%d costs=%d", observer.stops, observer.scans, attempts, costs)
+	}
+}
+
+func TestSourceSchemaFailedScanStillRequiresContainment(t *testing.T) {
+	ctx, pool, req, observer, _, s := schemaRetryFixture(t)
+	observer.scanErr = errors.New("scan completion unknown")
+	observer.stopErr = errors.New("containment unconfirmed")
+	if err := s.Process(ctx, req.ID); !errors.Is(err, observer.stopErr) {
+		t.Fatalf("unknown scan ignored containment: %v", err)
+	}
+	var observations int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM source_schema_observation WHERE request_id=$1`, req.ID).Scan(&observations); err != nil || observations != 0 || observer.stops != 1 {
+		t.Fatalf("uncontained scan accepted: observations=%d stops=%d %v", observations, observer.stops, err)
+	}
+	observer.stopErr = nil
+	observer.scanErr = nil
+	if err := s.Process(ctx, req.ID); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Process(ctx, req.ID); err != nil {
+		t.Fatal(err)
+	}
+	var costs int
+	if err := pool.QueryRow(ctx, `SELECT count(*) FROM cost_allocation c JOIN source_schema_attempt a ON a.id=c.source_schema_attempt_id WHERE a.request_id=$1`, req.ID).Scan(&costs); err != nil {
+		t.Fatal(err)
+	}
+	var statuses []string
+	if err := pool.QueryRow(ctx, `SELECT array_agg(status ORDER BY recorded_at,id) FROM source_schema_observation WHERE request_id=$1`, req.ID).Scan(&statuses); err != nil {
+		t.Fatal(err)
+	}
+	if observer.stops != 2 || observer.scans != 2 || costs != 2 || strings.Join(statuses, ",") != "INTERRUPTED,MATCH" {
+		t.Fatalf("failed scan recovery changed: stops=%d scans=%d costs=%d statuses=%v", observer.stops, observer.scans, costs, statuses)
 	}
 }
