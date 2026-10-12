@@ -202,13 +202,16 @@ func (s *SchemaService) Process(ctx context.Context, id uuid.UUID) error {
 		result, scanErr := s.Observer.Scan(ctx, attempt, runtime, func() error {
 			// Includes failed/hung startup before any marker; same attempt dedupes.
 			return s.ChargeScan(context.WithoutCancel(ctx), attempt)
-		}, func() error {
-			// RUN still awaits fresh source authority after the bound marker.
+		}, func(handoff func() error) error {
+			// The bounded RUN handoff and authority mutations share one fence.
 			return s.Service.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 				if err := s.authorize(ctx, tx, req.Plan); err != nil {
 					return err
 				}
-				return s.currentBinding(ctx, tx, req)
+				if err := s.currentBinding(ctx, tx, req); err != nil {
+					return err
+				}
+				return handoff()
 			})
 		})
 		// Successful Scan proves the native process has exited. Cleanup must not

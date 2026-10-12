@@ -150,7 +150,7 @@ func (a *NativeSchemaObserver) Stop(ctx context.Context, id uuid.UUID, runtime j
 	}
 	return nil
 }
-func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, runtime json.RawMessage, onInvocation, authorizeSourceIO func() error) (metadataengine.SourceSchema, error) {
+func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, runtime json.RawMessage, onInvocation func() error, authorizeSourceIO metadataengine.SourceSchemaRunGate) (metadataengine.SourceSchema, error) {
 	var result metadataengine.SourceSchema
 	c, err := frozenSchemaConfig(runtime)
 	if err != nil {
@@ -213,17 +213,16 @@ func (a *NativeSchemaObserver) Scan(ctx context.Context, id uuid.UUID, runtime j
 		_ = cmd.Wait()
 		return result, errors.New("NATIVE_SOURCE_SCAN_UNAVAILABLE")
 	}
-	if err := authorizeSourceIO(); err != nil {
+	if err := authorizeSourceIO(func() error {
+		if _, err := io.WriteString(input, "RUN\n"); err != nil {
+			return errors.New("NATIVE_SOURCE_SCAN_UNAVAILABLE")
+		}
+		return input.Close()
+	}); err != nil {
 		_ = cmd.Process.Kill()
 		_ = cmd.Wait()
 		return result, errors.New("NATIVE_SOURCE_SCAN_AUTHORITY_UNCONFIRMED")
 	}
-	if _, err := io.WriteString(input, "RUN\n"); err != nil {
-		_ = cmd.Process.Kill()
-		_ = cmd.Wait()
-		return result, errors.New("NATIVE_SOURCE_SCAN_UNAVAILABLE")
-	}
-	_ = input.Close()
 	decodeErr := decoder.Decode(&result)
 	if err := cmd.Wait(); err != nil {
 		return result, errors.New("NATIVE_SOURCE_SCAN_UNAVAILABLE")

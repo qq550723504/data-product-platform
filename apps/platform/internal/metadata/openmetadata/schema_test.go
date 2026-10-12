@@ -52,6 +52,11 @@ func TestNativeSchemaProcessHelper(t *testing.T) {
 	if !scanner.Scan() || scanner.Text() != "RUN" {
 		os.Exit(1)
 	}
+	if path := os.Getenv("C2_SCHEMA_RUN_RECEIPT"); path != "" {
+		if os.WriteFile(path, []byte("source-started"), 0600) != nil {
+			os.Exit(1)
+		}
+	}
 	if os.Getenv("C2_SCHEMA_ERROR") == "1" {
 		fmt.Fprintln(os.Stderr, "private-source-password")
 		os.Exit(1)
@@ -73,7 +78,7 @@ func TestNativeSchemaCostsStartupBeforeMarker(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 			defer cancel()
 			costs, gates := 0, 0
-			_, err := observer.Scan(ctx, uuid.New(), runtime, func() error { costs++; return nil }, func() error { gates++; return nil })
+			_, err := observer.Scan(ctx, uuid.New(), runtime, func() error { costs++; return nil }, func(run func() error) error { gates++; return run() })
 			if err == nil || costs != 1 || gates != 0 {
 				t.Fatalf("startup cost/source gate wrong: %s costs=%d gates=%d err=%v", failure, costs, gates, err)
 			}
@@ -81,7 +86,7 @@ func TestNativeSchemaCostsStartupBeforeMarker(t *testing.T) {
 	}
 	cfg.Command = []string{filepath.Join(t.TempDir(), "missing-executable")}
 	runtime, _ = json.Marshal(cfg)
-	if _, err := observer.Scan(context.Background(), uuid.New(), runtime, func() error { t.Fatal("unstarted process charged"); return nil }, func() error { t.Fatal("unstarted process reached source gate"); return nil }); err == nil {
+	if _, err := observer.Scan(context.Background(), uuid.New(), runtime, func() error { t.Fatal("unstarted process charged"); return nil }, func(func() error) error { t.Fatal("unstarted process reached source gate"); return nil }); err == nil {
 		t.Fatal("unstarted process accepted")
 	}
 }
@@ -139,7 +144,7 @@ func TestNativeSchemaFrozenRuntimeSurvivesProfileRotation(t *testing.T) {
 	body, _ := json.Marshal(result)
 	t.Setenv("C2_SCHEMA_MARKER", string(marker))
 	t.Setenv("C2_SCHEMA_RESULT", string(body))
-	if _, err := a.Scan(context.Background(), id, saved, func() error { return nil }, func() error { return nil }); err != nil {
+	if _, err := a.Scan(context.Background(), id, saved, func() error { return nil }, func(run func() error) error { return run() }); err != nil {
 		t.Fatal("rotated launcher replaced frozen attempt:", err)
 	}
 	if err := os.WriteFile(path, []byte("unreadable-current-contract"), 0600); err != nil {
@@ -166,7 +171,7 @@ func TestNativeSchemaRequiresDurableInvocationAcknowledgement(t *testing.T) {
 		t.Fatal(err)
 	}
 	observer := &NativeSchemaObserver{Path: path}
-	scan := func(started, gate func() error) (me.SourceSchema, error) {
+	scan := func(started func() error, gate me.SourceSchemaRunGate) (me.SourceSchema, error) {
 		id := uuid.New()
 		runtime, err := observer.Prepare(context.Background(), id, plan)
 		if err != nil {
@@ -179,23 +184,39 @@ func TestNativeSchemaRequiresDurableInvocationAcknowledgement(t *testing.T) {
 		t.Fatal(err)
 	}
 	calls := 0
-	actual, err := scan(func() error { calls++; return nil }, func() error { return nil })
+	receipt := filepath.Join(t.TempDir(), "native-run-receipt")
+	t.Setenv("C2_SCHEMA_RUN_RECEIPT", receipt)
+	actual, err := scan(func() error { calls++; return nil }, func(run func() error) error {
+		if err := run(); err != nil {
+			return err
+		}
+		// The real child receives RUN before this gate returns. Waiting for this
+		// bounded test receipt does not move full discovery into the production gate.
+		deadline := time.Now().Add(3 * time.Second)
+		for time.Now().Before(deadline) {
+			if _, err := os.Stat(receipt); err == nil {
+				return nil
+			}
+			time.Sleep(10 * time.Millisecond)
+		}
+		return errors.New("RUN was not handed off inside the gate")
+	})
 	if err != nil || actual.ExternalID != result.ExternalID || calls != 1 {
 		t.Fatalf("native protocol failed: calls=%d err=%v", calls, err)
 	}
-	if _, err := scan(func() error { return errors.New("cost commit unavailable") }, func() error { t.Fatal("unconfirmed cost reached source gate"); return nil }); err == nil {
+	if _, err := scan(func() error { return errors.New("cost commit unavailable") }, func(func() error) error { t.Fatal("unconfirmed cost reached source gate"); return nil }); err == nil {
 		t.Fatal("unconfirmed invocation ran")
 	}
-	if _, err := scan(func() error { return nil }, func() error { return errors.New("source authority revoked during startup") }); err == nil || err.Error() != "NATIVE_SOURCE_SCAN_AUTHORITY_UNCONFIRMED" {
+	if _, err := scan(func() error { return nil }, func(func() error) error { return errors.New("source authority revoked during startup") }); err == nil || err.Error() != "NATIVE_SOURCE_SCAN_AUTHORITY_UNCONFIRMED" {
 		t.Fatal("startup cost replaced fresh source gate", err)
 	}
 	t.Setenv("C2_SCHEMA_MARKER", `{"invocationStarted":true,"connectorHash":"different-source"}`)
-	if _, err := scan(func() error { return nil }, func() error { t.Fatal("different source passed pre-IO handshake"); return nil }); err == nil {
+	if _, err := scan(func() error { return nil }, func(func() error) error { t.Fatal("different source passed pre-IO handshake"); return nil }); err == nil {
 		t.Fatal("unbound source accepted")
 	}
 	t.Setenv("C2_SCHEMA_MARKER", string(marker))
 	t.Setenv("C2_SCHEMA_ERROR", "1")
-	if _, err := scan(func() error { return nil }, func() error { return nil }); err == nil || strings.Contains(err.Error(), "private-source-password") {
+	if _, err := scan(func() error { return nil }, func(run func() error) error { return run() }); err == nil || strings.Contains(err.Error(), "private-source-password") {
 		t.Fatal("provider failure/secret boundary lost")
 	}
 	config.Plan.Enabled = false
@@ -204,7 +225,7 @@ func TestNativeSchemaRequiresDurableInvocationAcknowledgement(t *testing.T) {
 	if current, err := observer.Plan(context.Background()); err != nil || current.Enabled {
 		t.Fatal("disabled plan must be distinguishable from an unreadable profile")
 	}
-	if _, err := scan(func() error { t.Fatal("disabled profile launched native work"); return nil }, func() error { return nil }); err == nil {
+	if _, err := scan(func() error { t.Fatal("disabled profile launched native work"); return nil }, func(run func() error) error { return run() }); err == nil {
 		t.Fatal("disabled plan launched a scan")
 	}
 	if err := observer.Stop(context.Background(), uuid.New(), frozen); err != nil {

@@ -12,6 +12,10 @@ import (
 var ErrSourceSchemaCostUnconfirmed = errors.New("source schema invocation cost unconfirmed")
 var ErrSourceSchemaInvocationUnknown = errors.New("source schema invocation history unavailable")
 
+// SourceSchemaRunGate executes only the bounded source-start handoff while the
+// fresh authority fence and exact binding locks are held, not the full scan.
+type SourceSchemaRunGate func(handoff func() error) error
+
 // SourceSchemaObserver executes a native source discovery workflow. A plain
 // catalog GET or catalog revision is deliberately insufficient for this port.
 type SourceSchemaObserver interface {
@@ -24,8 +28,8 @@ type SourceSchemaObserver interface {
 	// A nil error confirms completed discovery and a terminated native process.
 	// Stop is required for failed/unknown attempts and crash recovery, not success.
 	// First callback records the durable native start receipt before protocol output;
-	// second reauthorizes source I/O after the bound marker, before RUN.
-	Scan(context.Context, uuid.UUID, json.RawMessage, func() error, func() error) (SourceSchema, error)
+	// second reauthorizes and sends RUN under the same authority/binding locks.
+	Scan(context.Context, uuid.UUID, json.RawMessage, func() error, SourceSchemaRunGate) (SourceSchema, error)
 	Stop(context.Context, uuid.UUID, json.RawMessage) error
 }
 type SourceSchema struct {

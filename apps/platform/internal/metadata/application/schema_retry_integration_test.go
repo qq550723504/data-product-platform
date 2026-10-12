@@ -31,6 +31,7 @@ type retrySchemaObserver struct {
 	scanErr       error
 	onScan        func()
 	onStartup     func()
+	onRun         func()
 	stops         int
 	scans         int
 	sourceIO      int
@@ -50,7 +51,7 @@ func (o *retrySchemaObserver) Stop(context.Context, uuid.UUID, json.RawMessage) 
 	o.stops++
 	return o.stopErr
 }
-func (o *retrySchemaObserver) Scan(_ context.Context, id uuid.UUID, _ json.RawMessage, started, authorizeSourceIO func() error) (me.SourceSchema, error) {
+func (o *retrySchemaObserver) Scan(_ context.Context, id uuid.UUID, _ json.RawMessage, started func() error, authorizeSourceIO me.SourceSchemaRunGate) (me.SourceSchema, error) {
 	o.scans++
 	if o.invocations == nil {
 		o.invocations = map[uuid.UUID]bool{}
@@ -65,10 +66,15 @@ func (o *retrySchemaObserver) Scan(_ context.Context, id uuid.UUID, _ json.RawMe
 	if o.scanErr != nil {
 		return me.SourceSchema{}, o.scanErr
 	}
-	if err := authorizeSourceIO(); err != nil {
+	if err := authorizeSourceIO(func() error {
+		if o.onRun != nil {
+			o.onRun()
+		}
+		o.sourceIO++
+		return nil
+	}); err != nil {
 		return me.SourceSchema{}, err
 	}
-	o.sourceIO++
 	if o.onScan != nil {
 		o.onScan()
 	}
