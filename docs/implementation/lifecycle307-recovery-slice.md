@@ -94,6 +94,12 @@ can resolve the same work without another COPY. Each lookup keeps a distinct
 physical identity/cost and the same six-run budget; terminal resolutions stop
 the scanner and make duplicate task deliveries perform no I/O.
 
+The Asynq task budget is five minutes, covering the maximum seven sequential
+lookups (at most 30 seconds plus up to five seconds for each durable observation)
+and admission/finalization work. Adapter deadlines, fresh authority checks and
+the six-run budget are unchanged; queue time does not extend the caller window,
+restore cut expiry, use authority or any content delivery deadline.
+
 Recovery refreshes source and target retention/hold, hashes bounded exact target
 bytes through the existing instrumented adapter, then re-authorizes under the
 workspace fence. ARCHIVED retains its source. RESTORE needs the latest complete

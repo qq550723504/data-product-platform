@@ -16,6 +16,12 @@ import (
 
 const TaskRecover = "lifecycle:disposition:reconcile"
 
+// COPY recovery performs at most seven metadata/content lookups. Each adapter
+// permits up to 30 seconds plus five seconds for uncancelled observation
+// persistence; leave 55 seconds for admission/finalization transactions.
+// This task budget never extends caller authority or any per-call deadline.
+const recoveryTaskTimeout = 5 * time.Minute
+
 type Enqueuer interface {
 	EnqueueRecovery(context.Context, uuid.UUID, uuid.UUID) error
 }
@@ -39,7 +45,7 @@ func (c *Client) EnqueueRecovery(ctx context.Context, w, id uuid.UUID) error {
 	if err != nil {
 		return err
 	}
-	_, err = c.client.EnqueueContext(ctx, asynq.NewTask(TaskRecover, b), asynq.TaskID("lifecycle/recovery/"+id.String()), asynq.MaxRetry(lc.MaxRecoveryRuns-1), asynq.Timeout(30*time.Second))
+	_, err = c.client.EnqueueContext(ctx, asynq.NewTask(TaskRecover, b), asynq.TaskID("lifecycle/recovery/"+id.String()), asynq.MaxRetry(lc.MaxRecoveryRuns-1), asynq.Timeout(recoveryTaskTimeout))
 	if errors.Is(err, asynq.ErrTaskIDConflict) {
 		return nil
 	}
