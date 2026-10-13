@@ -1,0 +1,17 @@
+{
+  "source_tree_commit": "c00ff44aa620d7550ea70757e14e20a872b2da35",
+  "base_main": "79d175d0c8ff7579b0466f44e9103672ac7588da",
+  "postgres": "Separate fresh-per-test databases; retained test volume; no live storage provider configured.",
+  "go_race": "PASS",
+  "command": "go test -race -count=1 -timeout 12m ./internal/lifecycle/domain ./internal/lifecycle/application ./internal/lifecycle/pilot ./internal/lifecycle/transport/http ./internal/platform/storage",
+  "pg_race_log_sha256": "1d0b72acac630ffe6d2f20d896d348cab83fa6bdeabc4d695af1185259707ba0",
+  "fixture_vet": "PASS",
+  "vet_command": "go vet ./cmd/lifecycle-fixture-reader ./cmd/lifecycle-fixture-archive",
+  "vet_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "durable_preflight_positive_cases": 5,
+  "durable_preflight_rejected_cases": 19,
+  "delete": 0,
+  "cleanup": 0,
+  "full_D1": "NOT_RUN",
+  "human_explanation": "NOT_RUN / deferred"
+}
