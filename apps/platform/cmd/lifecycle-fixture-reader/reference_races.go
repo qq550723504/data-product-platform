@@ -4,6 +4,8 @@ package main
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -36,6 +38,8 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"os"
+	"runtime/debug"
 	"sync"
 	"time"
 )
@@ -221,6 +225,28 @@ func planeReferenceRaces(ctx context.Context, c config, pool *pgxpool.Pool, orig
 	if !c.ReferenceDemand {
 		return lc.ErrStorageScope
 	}
+	// Consume this non-delete run before any new business/provider activity.
+	// A partial failure is retained; it never silently resumes the same phase.
+	binaryPath, e := os.Executable()
+	if e != nil {
+		return e
+	}
+	binary, e := os.ReadFile(binaryPath)
+	if e != nil {
+		return e
+	}
+	sum := sha256.Sum256(binary)
+	settings := map[string]string{}
+	if info, ok := debug.ReadBuildInfo(); ok {
+		for _, setting := range info.Settings {
+			if setting.Key == "vcs.revision" || setting.Key == "vcs.modified" || setting.Key == "GOOS" || setting.Key == "GOARCH" {
+				settings[setting.Key] = setting.Value
+			}
+		}
+	}
+	if e = write(c, "reference-races-start.json", map[string]any{"run_id": c.RunID, "binary_sha256": hex.EncodeToString(sum[:]), "build_settings": settings, "provider_delete_authorized": false, "actual_delete": "NOT_RUN", "started_at": time.Now().UTC()}); e != nil {
+		return e
+	}
 	state, e := loadPlaneState(c)
 	if e != nil {
 		return e
@@ -229,8 +255,13 @@ func planeReferenceRaces(ctx context.Context, c config, pool *pgxpool.Pool, orig
 	if e != nil {
 		return e
 	}
-	o, _, reader, pins, e := planeServices(ctx, c, pool, cs)
+	o, policy, reader, pins, e := planeServices(ctx, c, pool, cs)
 	if e != nil {
+		return e
+	}
+	// Setup binds the alpha/standardized producer; this distinct business slice
+	// also declares beta's current bounded use policy before pin admission.
+	if _, e = policy.BindFixtureCopyPolicy(ctx, lc.BindCopyPolicyCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: "reference-beta-policy"}, DatasetVersionID: original[1].DatasetVersionID, UseUntil: c.ExpiresAt, RestoreUntil: c.ExpiresAt}); e != nil {
 		return e
 	}
 	tx := transaction.NewManager(pool)

@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/contentreference"
 	workflowapp "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
 	"testing"
+	"time"
 )
 
 func referenceCheck(t *testing.T, pool *pgxpool.Pool, c domain.Copy) domain.Check {
@@ -201,4 +201,70 @@ func TestFixtureReferenceInsertionAndDecisionSerializeBothOrders(t *testing.T) {
 	}
 }
 
-var _ pgx.Tx
+func TestPendingCopyAndDispatchSerializeBothOrders(t *testing.T) {
+	for _, copyFirst := range []bool{true, false} {
+		t.Run(map[bool]string{true: "pending-copy-first", false: "dispatch-first"}[copyFirst], func(t *testing.T) {
+			pool := planDatabase(t)
+			f := newDisposalFixture(t, pool)
+			ctx := context.Background()
+			cp := f.copies[0]
+			var ns uuid.UUID
+			if e := pool.QueryRow(ctx, `SELECT namespace_id FROM lifecycle_fixture_copy WHERE id=$1`, cp.ID).Scan(&ns); e != nil {
+				t.Fatal(e)
+			}
+			policy := uuid.New()
+			if _, e := pool.Exec(ctx, `INSERT INTO lifecycle_copy_policy(id,workspace_id,dataset_version_id,basis_ref,use_until,restore_until,actor_id,principal_ref,created_at) VALUES($1,$2,$3,'CONTROLLED_SYNTHETIC_CUSTODY_AND_USE',$4,$4,$5,$6,$7)`, policy, f.w, cp.DatasetVersionID, f.now.Add(time.Hour), f.authority.caller.ActorID, f.authority.caller.Subject, f.now); e != nil {
+				t.Fatal(e)
+			}
+			conn, e := pool.Acquire(ctx)
+			if e != nil {
+				t.Fatal(e)
+			}
+			defer conn.Release()
+			tx, e := conn.Begin(ctx)
+			if e != nil {
+				t.Fatal(e)
+			}
+			defer tx.Rollback(ctx)
+			insert := func() error {
+				_, e := tx.Exec(ctx, `INSERT INTO lifecycle_copy_operation(id,workspace_id,source_copy_id,target_copy_id,target_namespace_id,target_key,action,policy_id,basis_ref,actor_id,principal_ref,dependency_revision,created_at,expires_at) VALUES($1,$2,$3,$4,$5,'closed-pending-copy','ARCHIVE',$6,'SQL-only',$7,$8,1,$9,$10)`, uuid.New(), f.w, cp.ID, uuid.New(), ns, policy, f.authority.caller.ActorID, f.authority.caller.Subject, f.now, f.now.Add(time.Minute))
+				return e
+			}
+			if copyFirst {
+				if e = insert(); e != nil {
+					t.Fatal(e)
+				}
+				result := make(chan DispatchResult, 1)
+				errch := make(chan error, 1)
+				go func() {
+					r, e := f.s.DispatchContentDisposition(ctx, f.dispatch("copy-before-dispatch", 0))
+					result <- r
+					errch <- e
+				}()
+				waitForOccupancyFence(t, pool)
+				if e = tx.Commit(ctx); e != nil {
+					t.Fatal(e)
+				}
+				if e = <-errch; e != nil {
+					t.Fatal(e)
+				}
+				if r := <-result; r.Admitted {
+					t.Fatal("pending copy crossed decision")
+				}
+			} else {
+				// Old snapshot is not an admission: dispatch commits before its insert.
+				if _, e = tx.Exec(ctx, `SELECT id FROM lifecycle_fixture_copy WHERE id=$1`, cp.ID); e != nil {
+					t.Fatal(e)
+				}
+				requireDispatch(t, f, "dispatch-before-copy", 0)
+				if e = insert(); e == nil {
+					t.Fatal("late pending copy escaped dispatch")
+				}
+				tx.Rollback(ctx)
+				if _, e = pool.Exec(ctx, `INSERT INTO lifecycle_fixture_copy(id,workspace_id,namespace_id,dataset_version_id,object_key,provider_version,content_sha256,byte_size) VALUES($1,$2,$3,$4,'late-target','not-real-provider',repeat('a',64),12)`, uuid.New(), f.w, ns, cp.DatasetVersionID); e == nil {
+					t.Fatal("late registered copy escaped dispatch")
+				}
+			}
+		})
+	}
+}
