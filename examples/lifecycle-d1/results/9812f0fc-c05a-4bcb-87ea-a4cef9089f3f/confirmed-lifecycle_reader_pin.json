@@ -1,0 +1,34 @@
+[
+  {
+    "id": "0f28d81d-8d85-4931-b3d7-e27c98487d58",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "copy_id": "c635d8d3-749c-4cf5-8c8b-7f13ce367883",
+    "reader_id": "418fefa9-65db-48ce-b651-2d13c231e556",
+    "kind": "FIXTURE_READER",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "generation": 7,
+    "gate_revision": 6,
+    "started_at": "2026-10-13T11:05:05.9635+00:00",
+    "window_mode": "DEADLINE",
+    "use_until": "2026-10-13T11:31:39.71902+00:00",
+    "execution_id": null,
+    "delivery_operation_id": null
+  },
+  {
+    "id": "53f85a1c-7855-4747-9e3c-f43e222f250e",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "copy_id": "14e62390-7700-4a46-9f79-e0f6235f2145",
+    "reader_id": "aa2ff25c-5201-4126-aa3e-f6c9b34790f4",
+    "kind": "FIXTURE_READER",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "generation": 16,
+    "gate_revision": 15,
+    "started_at": "2026-10-13T11:07:08.694535+00:00",
+    "window_mode": "DEADLINE",
+    "use_until": "2026-10-13T11:31:39.71902+00:00",
+    "execution_id": null,
+    "delivery_operation_id": null
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "physical_calls": 40,
+  "status": "PASS",
+  "run_id": "9b89333a-9620-4387-a520-7685641281e2",
+  "production_acceptance": "NOT_RUN",
+  "active_pins": 0,
+  "retained_versions": 6,
+  "delete": 0,
+  "verification": "offline independent JSON/source/identity/stop/accounting checks; no native I/O",
+  "source_files": 62,
+  "cleanup": 0
+}

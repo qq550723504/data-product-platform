@@ -1,0 +1,110 @@
+{
+  "calls": 8,
+  "separate_from_business_data_plane_costs": true,
+  "receipts": [
+    {
+      "at": "2026-10-13T10:57:41.534519519Z",
+      "fact": "START",
+      "id": "3b924d6c-54bd-4aa9-bef2-be7bec3ab0f0",
+      "path": "/minio/admin/v3/add-canned-policy"
+    },
+    {
+      "at": "2026-10-13T10:57:41.544958088Z",
+      "fact": "OBSERVATION",
+      "http_status": 200,
+      "id": "3b924d6c-54bd-4aa9-bef2-be7bec3ab0f0",
+      "unknown": false
+    },
+    {
+      "at": "2026-10-13T10:57:41.602509554Z",
+      "fact": "START",
+      "id": "05fa6b1b-6edc-4918-bd51-3d82ac29ebe6",
+      "path": "/minio/admin/v3/add-user"
+    },
+    {
+      "at": "2026-10-13T10:57:41.656199642Z",
+      "fact": "OBSERVATION",
+      "http_status": 200,
+      "id": "05fa6b1b-6edc-4918-bd51-3d82ac29ebe6",
+      "unknown": false
+    },
+    {
+      "at": "2026-10-13T10:57:41.711541467Z",
+      "fact": "START",
+      "id": "e58822b2-5f76-4549-90ee-4fab0848a9c0",
+      "path": "/minio/admin/v3/idp/builtin/policy/attach"
+    },
+    {
+      "at": "2026-10-13T10:57:41.826845354Z",
+      "fact": "OBSERVATION",
+      "http_status": 200,
+      "id": "e58822b2-5f76-4549-90ee-4fab0848a9c0",
+      "unknown": false
+    },
+    {
+      "at": "2026-10-13T10:57:41.874583591Z",
+      "fact": "START",
+      "id": "083c61e7-40d1-4303-aa33-fe749a24ec79",
+      "path": "/minio/admin/v3/add-canned-policy"
+    },
+    {
+      "at": "2026-10-13T10:57:41.884551687Z",
+      "fact": "OBSERVATION",
+      "http_status": 200,
+      "id": "083c61e7-40d1-4303-aa33-fe749a24ec79",
+      "unknown": false
+    },
+    {
+      "at": "2026-10-13T10:57:41.919907065Z",
+      "fact": "START",
+      "id": "6fee5f85-e6cb-4b47-ac86-2b9d99ee2cd3",
+      "path": "/minio/admin/v3/add-user"
+    },
+    {
+      "at": "2026-10-13T10:57:41.955844625Z",
+      "fact": "OBSERVATION",
+      "http_status": 200,
+      "id": "6fee5f85-e6cb-4b47-ac86-2b9d99ee2cd3",
+      "unknown": false
+    },
+    {
+      "at": "2026-10-13T10:57:41.991955244Z",
+      "fact": "START",
+      "id": "60c839fd-571f-4f43-941f-a01055928d69",
+      "path": "/minio/admin/v3/idp/builtin/policy/attach"
+    },
+    {
+      "at": "2026-10-13T10:57:42.124347055Z",
+      "fact": "OBSERVATION",
+      "http_status": 200,
+      "id": "60c839fd-571f-4f43-941f-a01055928d69",
+      "unknown": false
+    },
+    {
+      "at": "2026-10-13T11:15:34.369233342Z",
+      "fact": "START",
+      "id": "3b6031a2-a7d3-4217-aeea-4940b844bc30",
+      "path": "/minio/admin/v3/set-user-status"
+    },
+    {
+      "at": "2026-10-13T11:15:34.381643786Z",
+      "fact": "OBSERVATION",
+      "http_status": 200,
+      "id": "3b6031a2-a7d3-4217-aeea-4940b844bc30",
+      "unknown": false
+    },
+    {
+      "at": "2026-10-13T11:15:34.390171271Z",
+      "fact": "START",
+      "id": "b3c78177-99af-453a-9a06-81e05514ff11",
+      "path": "/minio/admin/v3/set-user-status"
+    },
+    {
+      "at": "2026-10-13T11:15:34.396434835Z",
+      "fact": "OBSERVATION",
+      "http_status": 200,
+      "id": "b3c78177-99af-453a-9a06-81e05514ff11",
+      "unknown": false
+    }
+  ]
+}

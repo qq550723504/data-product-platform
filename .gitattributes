@@ -1,2 +1,16 @@
 # C3 hash-bound receipts must match both Windows checkout and Git blob bytes.
 docs/acceptance/evidence/issue299-c3/*.json text eol=lf
+
+# Current D1 receipts retain stable hashable UTF-8 bytes in Git and checkout.
+docs/acceptance/issue307-d1.md text eol=lf
+docs/acceptance/issue307-d1-confirmed.md text eol=lf
+examples/lifecycle-d1/run-confirmed-race.py text eol=lf
+examples/lifecycle-d1/test_confirmed_race.py text eol=lf
+docs/acceptance/issue307-d1-review.md text eol=lf
+docs/acceptance/evidence/issue307-d1/*.json text eol=lf
+examples/lifecycle-d1/results/9b89333a-9620-4387-a520-7685641281e2/*.json text eol=lf
+examples/lifecycle-d1/results/9b89333a-9620-4387-a520-7685641281e2/*.jsonl text eol=lf
+examples/lifecycle-d1/results/9b89333a-9620-4387-a520-7685641281e2/*.txt text eol=lf
+examples/lifecycle-d1/results/9b89333a-9620-4387-a520-7685641281e2/reader-build-settings.txt whitespace=-blank-at-eol
+examples/lifecycle-d1/results/9812f0fc-c05a-4bcb-87ea-a4cef9089f3f/*.json text eol=lf
+examples/lifecycle-d1/results/9812f0fc-c05a-4bcb-87ea-a4cef9089f3f/*.jsonl text eol=lf

@@ -1,0 +1,33 @@
+{
+  "phase": "Concurrent ordinary read-only worker terminal replay; not an in-flight ownership crash race",
+  "before": {
+    "storage_calls": 44,
+    "attempts": 2,
+    "provider_observations": 2
+  },
+  "after": {
+    "storage_calls": 44,
+    "attempts": 2,
+    "provider_observations": 2
+  },
+  "new_native_calls": 0,
+  "new_delete_attempts": 0,
+  "processes": [
+    {
+      "name": "dpp-lifecycle307-9812f0fc-concurrent-terminal-0",
+      "id": "69926fbc01d74c4555ee586b7226086653759b1fb6f1c4c40005458a8332d3e0",
+      "started_at": "2026-10-13T11:15:32.872918445Z",
+      "finished_at": "2026-10-13T11:15:33.058437118Z",
+      "exit": 0
+    },
+    {
+      "name": "dpp-lifecycle307-9812f0fc-concurrent-terminal-1",
+      "id": "c8ff9da373ce6ab5e664c323b1b51fba3e9d30d068d0e7569aa34d7074e8e651",
+      "started_at": "2026-10-13T11:15:32.871638551Z",
+      "finished_at": "2026-10-13T11:15:33.065123006Z",
+      "exit": 0
+    }
+  ],
+  "binary_sha256": "0308d1b5c4ee3d82d9b7d1409fce31be83569144d28637975033345115ce1cfe",
+  "cleanup": 0
+}

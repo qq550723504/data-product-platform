@@ -41,10 +41,12 @@ var providerID = "5e8a5758-96f6-4bf4-a088-1decd62809b0"
 var incarnationID = "78ebff25-faa6-4f9b-8275-6204d7b786ab"
 var archiveSource bool
 var workerDelete bool
+var raceDelete bool
 
 type config struct {
 	RunID, WorkspaceID, ProviderInstanceID, IncarnationID, ActorID                                      uuid.UUID
 	Endpoint, PostgresDSN, RootAccess, RootSecret, InspectAccess, InspectSecret, Token, OutputDirectory string
+	ReaderAccess, ReaderSecret                                                                          string
 }
 type permission struct {
 	Enabled                                                        bool
@@ -89,7 +91,10 @@ func load() (config, permission, error) {
 	if read("/run/private/config.json", &c) != nil || read("/run/private/delete-permission.json", &p) != nil {
 		return c, p, errors.New("controlled configuration unreadable")
 	}
-	rootRequired := !workerDelete || os.Getenv("LIFECYCLE_DELETE_MODE") != "execute"
+	rootRequired := (!workerDelete && !raceDelete) || os.Getenv("LIFECYCLE_DELETE_MODE") != "execute"
+	if raceDelete && os.Getenv("LIFECYCLE_DELETE_MODE") == "inspect" {
+		rootRequired = false
+	}
 	if c.RunID.String() != run || p.RunID != c.RunID || c.WorkspaceID != workspace || p.WorkspaceID != workspace || p.PlanHash != planHash || c.Endpoint != "127.0.0.1:9000" || c.ProviderInstanceID.String() != providerID || c.IncarnationID.String() != incarnationID || c.ActorID == uuid.Nil || c.Token == "" || (rootRequired && c.RootAccess == "") || c.InspectAccess == "" || p.DeleteAccess == "" || p.DeleteSecret == "" || p.BasisRef == "" || !p.Enabled || time.Now().Before(p.ConfirmedAt) || !time.Now().Before(p.ExpiresAt) || p.ExpiresAt.Sub(p.ConfirmedAt) > time.Hour || len(p.TopologySHA256) != 64 {
 		return c, p, errors.New("controlled authority/scope/window unavailable")
 	}
@@ -103,7 +108,11 @@ func (authority) AuthorizeLifecycle(_ context.Context, _ pgx.Tx, w uuid.UUID, ca
 	if e != nil {
 		return principal.RequestPrincipal{}, principal.ErrUnauthenticated
 	}
-	r, e := principal.NewStaticResolver(true, c.Token, "lifecycle-fixture:"+run, c.ActorID.String(), []string{workspace.String()}, []string{lc.CapabilityPreparePlan, lc.CapabilityApproveDisposition, lc.CapabilityDispatch, lc.CapabilityInspectStorage, lc.CapabilityInspectOccupancy, lc.CapabilityVerifyAbsence})
+	caps := []string{lc.CapabilityPreparePlan, lc.CapabilityApproveDisposition, lc.CapabilityDispatch, lc.CapabilityInspectStorage, lc.CapabilityInspectOccupancy, lc.CapabilityVerifyAbsence}
+	if raceDelete {
+		caps = append(caps, lc.CapabilityAdmitReader, lc.CapabilityTerminateReader, lc.CapabilityRestrictUse, lc.CapabilityCopyCustody, lc.CapabilityRevokeApproval)
+	}
+	r, e := principal.NewStaticResolver(true, c.Token, "lifecycle-fixture:"+run, c.ActorID.String(), []string{workspace.String()}, caps)
 	if e != nil {
 		return principal.RequestPrincipal{}, e
 	}
@@ -230,6 +239,9 @@ func (d *dependencies) EvaluateDisposalDependencies(ctx context.Context, tx pgx.
 }
 
 func copies(c config) ([]domain.Copy, error) {
+	if raceDelete {
+		return raceCopies(c)
+	}
 	if workerDelete {
 		return workerCopies(c)
 	}
@@ -655,13 +667,21 @@ func provision(ctx context.Context, disable bool) error {
 		return fn(context.WithValue(ctx, adminKey{}, &adminCall{}))
 	}
 	if disable || os.Getenv("LIFECYCLE_DELETE_MODE") == "enable" {
-		return call(func(ctx context.Context) error {
+		e := call(func(ctx context.Context) error {
 			status := madmin.AccountDisabled
 			if !disable {
 				status = madmin.AccountEnabled
 			}
 			return admin.SetUserStatus(ctx, p.DeleteAccess, status)
 		})
+		if e != nil || !raceDelete {
+			return e
+		}
+		status := madmin.AccountEnabled
+		if disable {
+			status = madmin.AccountDisabled
+		}
+		return call(func(x context.Context) error { return admin.SetUserStatus(x, c.ReaderAccess, status) })
 	}
 	statements := []any{}
 	targets := []struct{ bucket, key, version string }{{"dpp-lifecycle307-online", "fixture/a.csv", "cc359f61-4921-4487-852f-b6ab6d139278"}, {"dpp-lifecycle307-quarantine", "fixture/b.csv", "2ae6479b-2b96-441a-9159-80a07e3ec4e0"}}
@@ -674,6 +694,10 @@ func provision(ctx context.Context, disable bool) error {
 		targets[0].bucket = "dpp-lifecycle307-quarantine"
 		targets[0].key = "fixture/b.csv"
 		targets[0].version = "ce87f789-a4f4-4ce7-bf1f-a044ac53d1d2"
+	}
+	if raceDelete {
+		targets[0].version = "0f6aa755-4b86-496b-9ee1-43d7c59a8bb3"
+		targets[1].version = "e1611b0a-efc0-4939-abc2-30394ec2c8d2"
 	}
 	for _, target := range targets {
 		statements = append(statements, map[string]any{"Effect": "Allow", "Action": []string{"s3:DeleteObject", "s3:DeleteObjectVersion"}, "Resource": []string{"arn:aws:s3:::" + target.bucket + "/" + target.key}, "Condition": map[string]any{"StringEquals": map[string]string{"s3:versionid": target.version}}})
@@ -713,6 +737,11 @@ func provision(ctx context.Context, disable bool) error {
 	}); e != nil {
 		return errors.New("executor policy attachment unknown; no retry")
 	}
+	if raceDelete {
+		if e = provisionRaceReader(ctx, c, admin, call); e != nil {
+			return e
+		}
+	}
 	c.OutputDirectory = filepath.Clean(c.OutputDirectory)
 	return write(filepath.Join(c.OutputDirectory, "delete-executor-policy.json"), json.RawMessage(policy))
 }
@@ -735,7 +764,17 @@ func main() {
 	case "policy":
 		e = provision(ctx, false)
 	case "execute":
-		e = execute(ctx)
+		if raceDelete {
+			e = executeRace(ctx)
+		} else {
+			e = execute(ctx)
+		}
+	case "inspect":
+		if raceDelete {
+			e = inspectRace(ctx)
+		} else {
+			e = errors.New("unsupported read-only profile")
+		}
 	default:
 		e = errors.New("explicit mode required")
 	}

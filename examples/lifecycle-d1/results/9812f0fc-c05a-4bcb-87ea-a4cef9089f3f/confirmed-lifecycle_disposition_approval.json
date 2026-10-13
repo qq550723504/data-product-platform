@@ -1,0 +1,41 @@
+[
+  {
+    "id": "2da863a4-d569-4d54-9221-d5ff371d0719",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "plan_id": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+    "plan_hash": "fa2b19e1d7fc12132b3f4e4b4acee09e4f5bc0f59eae87820b83fb2fff220c86",
+    "action": "DELETE_EXACT",
+    "basis_ref": "human-confirmed:call_0275d4f95cd44342bf0c36afa69053e3:exact-two-source-versions",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "valid_from": "2026-10-13T10:58:16.852823+00:00",
+    "expires_at": "2026-10-13T11:31:39.71902+00:00",
+    "dependency_revision": 4
+  },
+  {
+    "id": "a21380a6-f2ff-475e-84c4-1ce75a26108a",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "plan_id": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+    "plan_hash": "fa2b19e1d7fc12132b3f4e4b4acee09e4f5bc0f59eae87820b83fb2fff220c86",
+    "action": "DELETE_EXACT",
+    "basis_ref": "human-confirmed:call_0275d4f95cd44342bf0c36afa69053e3:exact-two-source-versions",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "valid_from": "2026-10-13T11:05:06.010309+00:00",
+    "expires_at": "2026-10-13T11:31:39.71902+00:00",
+    "dependency_revision": 8
+  },
+  {
+    "id": "e9d673ce-1156-40a7-a12b-4abdad3ce0fe",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "plan_id": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+    "plan_hash": "fa2b19e1d7fc12132b3f4e4b4acee09e4f5bc0f59eae87820b83fb2fff220c86",
+    "action": "DELETE_EXACT",
+    "basis_ref": "human-confirmed:call_0275d4f95cd44342bf0c36afa69053e3:exact-two-source-versions",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "valid_from": "2026-10-13T11:07:08.76609+00:00",
+    "expires_at": "2026-10-13T11:31:39.71902+00:00",
+    "dependency_revision": 17
+  }
+]

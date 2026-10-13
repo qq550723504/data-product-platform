@@ -1,0 +1,90 @@
+{
+  "run_id": "9b89333a-9620-4387-a520-7685641281e2",
+  "project": "dpp-lifecycle307-9b89333a",
+  "source_hashes": {
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go": "20d3884ab90598bb4d30ba44c877a37674d5334e8388aa6ea2e02c354c6073ee",
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "fa50777171a652bd9992d35a6d6af6a02670790b141d29cf1f07320781f0846b",
+    "apps/platform/internal/platform/storage/lifecycle_reader.go": "52ebfcfd20e350bd4c57aaa49c6686435150b7236bc6266cab86d3c2e90f14da",
+    "apps/platform/internal/lifecycle/transport/http/reader.go": "785a1303835f584408626671ad4a52a452e20506820467929041097f3310dc9b",
+    "apps/platform/internal/lifecycle/application/occupancy.go": "01266298f94b71f35177e2b238de6452acf5877973e2deabd407ea2d7b25a802",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "0ad343089e47349d94787763a46b0b6d88f0f4c06edcdfdd1cd7a2e198a70cd5",
+    "apps/platform/internal/lifecycle/application/reader_service.go": "ec6ed10a94facc6096cd262e0098e5f2ff0f2edf0ea867997d0815cad69f7ebe"
+  },
+  "window_expires": "2026-10-13T10:13:21.2386238Z",
+  "host_ports": [],
+  "network_id": "ee6590a767eab016d09b3691806df1f7e95d8e27546c1d6735c0af0a155dfc52",
+  "copy": 0,
+  "incarnation_id": "44a60ec1-19f3-4043-9605-9af68a84eda6",
+  "http": "ephemeral loopback only inside one-shot acceptance helper",
+  "cleanup": 0,
+  "provider_instance_id": "7f1b4d26-8f23-4a98-a919-20cd1729d740",
+  "root_in_reader": false,
+  "production_delivery": "NOT_RUN",
+  "workspace_id": "61992455-cf31-44f5-a1de-b14cbf457681",
+  "delete": 0,
+  "retained_volumes": [
+    "dpp-lifecycle307-9b89333a-postgres",
+    "dpp-lifecycle307-9b89333a-objects"
+  ],
+  "binary_sha256": "250e254143582c9430946828177f6b57e33aa82e320b976e3c49b839bac798d8",
+  "objects": [
+    {
+      "copy_id": "3a1d3adb-c679-4a8b-ba3e-269482f9ddc8",
+      "dataset_version_id": "dd773a91-973e-4d39-b3dd-30cba6d526a8",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "version_id": "d325f198-2fe4-4131-8bac-29076110f736",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-13T09:26:28.125662534Z",
+      "protection_observed_at": "2026-10-13T09:26:28.298766983Z"
+    },
+    {
+      "copy_id": "4549814f-10de-403e-ac1e-6344b2110b1d",
+      "dataset_version_id": "e5426346-461b-40e2-8d3a-9d6dcb46d488",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "version_id": "5181b60b-1e41-4deb-b4a5-606596fbd194",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-13T09:26:28.156809915Z",
+      "protection_observed_at": "2026-10-13T09:26:28.332375566Z"
+    },
+    {
+      "copy_id": "8af8578f-d719-4bb9-a6aa-260a47b2de4e",
+      "dataset_version_id": "dd773a91-973e-4d39-b3dd-30cba6d526a8",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "version_id": "fff8273c-dc36-4f01-87f2-038b23ed0461",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-14T09:26:28Z",
+      "bytes_verified_at": "2026-10-13T09:26:28.186266243Z",
+      "protection_observed_at": "2026-10-13T09:26:28.366686043Z"
+    },
+    {
+      "copy_id": "4e94c1dc-fba7-45bd-8e8c-352ac66371b3",
+      "dataset_version_id": "e5426346-461b-40e2-8d3a-9d6dcb46d488",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "version_id": "0aca6339-d308-464a-839e-534ec6652937",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-13T09:26:28.215279409Z",
+      "protection_observed_at": "2026-10-13T09:26:28.397238395Z"
+    }
+  ],
+  "source_head": "79d175d0c8ff7579b0466f44e9103672ac7588da",
+  "internal": true
+}

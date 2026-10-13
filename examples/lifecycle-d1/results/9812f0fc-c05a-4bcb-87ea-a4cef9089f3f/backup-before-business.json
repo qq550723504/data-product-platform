@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "run": "9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+  "coreRelations": 192,
+  "coreRows": 258,
+  "coreFingerprintSHA256": "ae0b1a4278f53c58dc8cff6a103ea4b26e2c4b21de1f0c5d3edbf4b0f188cd51",
+  "fullFactsEqualIndependentRestore": true,
+  "originalOwnerACL": true,
+  "originalRoleFreshTCPAuthentication": true,
+  "wrongPasswordDenied": true,
+  "objectVersions": 4,
+  "objectVersionSizeSHA256MatchesManifest": true,
+  "dumpSHA256": "c80ace08f3be121c4d1fd7154b28d575d05dfb2defca98d2d07cdaa7a37b85f5",
+  "objectsTarSHA256": "8bd15e7a73f6f79e913cb77afcb291c4fb17383190510e68ce413550f1fc0490",
+  "replicas": "independent internal/no host ports, stopped and retained; no business admission",
+  "backupCopies": "excluded from any future source-provider deletion receipt; no business re-entry",
+  "originalNewMinioStopStart": true,
+  "oldEnvironmentMutation": 0,
+  "delete": 0,
+  "cleanup": 0,
+  "phase": "Initial four versions before business or candidate-plan facts; does not include later outputs/plans."
+}

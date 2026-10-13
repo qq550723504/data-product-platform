@@ -1,0 +1,11 @@
+[
+  {
+    "id": "c7c49543-104a-4e51-a17d-c32d27251298",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "plan_id": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+    "plan_hash": "fa2b19e1d7fc12132b3f4e4b4acee09e4f5bc0f59eae87820b83fb2fff220c86",
+    "target_count": 2,
+    "confirmed_at": "2026-10-13T11:07:10.447576+00:00",
+    "dependency_revision": 23
+  }
+]

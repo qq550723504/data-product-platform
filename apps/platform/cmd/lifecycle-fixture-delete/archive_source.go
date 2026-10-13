@@ -21,6 +21,9 @@ func selectProfile() error {
 	case "worker-delete-4abcfca5":
 		selectWorkerDelete()
 		return nil
+	case "race-delete-9812f0fc":
+		selectRaceDelete()
+		return nil
 	case "archive-source-c9f47cab":
 		archiveSource = true
 		run = "c9f47cab-23c6-4d16-8102-a4a34bac1501"

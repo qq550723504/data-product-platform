@@ -1,0 +1,79 @@
+{
+  "copy": {
+    "ID": "c635d8d3-749c-4cf5-8c8b-7f13ce367883",
+    "WorkspaceID": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "DatasetVersionID": "07fe1a59-87cd-42c5-9b6e-24e4f7fb724f",
+    "ProviderInstanceID": "bca92ac3-a695-4a12-bfeb-08b5b0edef22",
+    "IncarnationID": "1976426c-4c82-404c-8def-261b73e490b6",
+    "Namespace": "dpp-lifecycle307-online",
+    "Key": "fixture/a.csv",
+    "ProviderVersion": "0f6aa755-4b86-496b-9ee1-43d7c59a8bb3",
+    "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+    "ByteSize": 232
+  },
+  "disposal_first_denied": true,
+  "disposal_first_result": {
+    "Admission": {
+      "Pin": {
+        "ID": "00000000-0000-0000-0000-000000000000",
+        "WorkspaceID": "00000000-0000-0000-0000-000000000000",
+        "CopyID": "00000000-0000-0000-0000-000000000000",
+        "ReaderID": "00000000-0000-0000-0000-000000000000",
+        "Kind": "",
+        "ActorID": "00000000-0000-0000-0000-000000000000",
+        "PrincipalRef": "",
+        "Generation": 0,
+        "GateRevision": 0,
+        "StartedAt": "0001-01-01T00:00:00Z",
+        "WindowMode": "",
+        "UseUntil": null,
+        "ExecutionID": null,
+        "DeliveryOperationID": null
+      },
+      "Admitted": false,
+      "Replayed": false
+    },
+    "CallID": "00000000-0000-0000-0000-000000000000",
+    "BytesWritten": 0,
+    "TerminationID": "00000000-0000-0000-0000-000000000000",
+    "StopConfirmed": false
+  },
+  "full_LC11_12": "NOT_RUN",
+  "reader_first_block": {
+    "EvaluationID": "4af2ca0f-ab74-4afc-82c0-cefc6928b964",
+    "DispatchID": "00000000-0000-0000-0000-000000000000",
+    "AttemptID": "00000000-0000-0000-0000-000000000000",
+    "Admitted": false,
+    "Replayed": false,
+    "Blockers": [
+      "READERS_ACTIVE_OR_UNKNOWN"
+    ]
+  },
+  "reader_kind": "ordinary fixture reader; not Execution/DirectData",
+  "verified_stop": {
+    "Admission": {
+      "Pin": {
+        "ID": "0f28d81d-8d85-4931-b3d7-e27c98487d58",
+        "WorkspaceID": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+        "CopyID": "c635d8d3-749c-4cf5-8c8b-7f13ce367883",
+        "ReaderID": "418fefa9-65db-48ce-b651-2d13c231e556",
+        "Kind": "FIXTURE_READER",
+        "ActorID": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+        "PrincipalRef": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+        "Generation": 7,
+        "GateRevision": 6,
+        "StartedAt": "2026-10-13T11:05:05.9635Z",
+        "WindowMode": "DEADLINE",
+        "UseUntil": "2026-10-13T11:31:39.71902Z",
+        "ExecutionID": null,
+        "DeliveryOperationID": null
+      },
+      "Admitted": true,
+      "Replayed": false
+    },
+    "CallID": "3f776a32-f2e5-4646-ac18-8e3755755b6d",
+    "BytesWritten": 232,
+    "TerminationID": "ed90cfb4-0e9c-4df6-92f9-9dedca6a9023",
+    "StopConfirmed": true
+  }
+}

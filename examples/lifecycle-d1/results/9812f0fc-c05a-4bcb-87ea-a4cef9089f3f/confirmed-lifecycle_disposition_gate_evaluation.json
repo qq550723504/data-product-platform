@@ -1,0 +1,70 @@
+[
+  {
+    "id": "4af2ca0f-ab74-4afc-82c0-cefc6928b964",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "plan_id": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+    "approval_id": "a21380a6-f2ff-475e-84c4-1ce75a26108a",
+    "copy_id": "c635d8d3-749c-4cf5-8c8b-7f13ce367883",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "checked_at": "2026-10-13T11:05:06.104182+00:00",
+    "dependency_revision": 9,
+    "status": "FINALIZED",
+    "retention_count": 1,
+    "content_hash": "d58f06cf20af10f7212a58210bdb625075bdbb2b08b5015e655bfa05c3472d88",
+    "eligible": false,
+    "blockers": [
+      "READERS_ACTIVE_OR_UNKNOWN"
+    ]
+  },
+  {
+    "id": "6d8a89c0-f670-4064-b5e8-98688951c0f7",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "plan_id": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+    "approval_id": "e9d673ce-1156-40a7-a12b-4abdad3ce0fe",
+    "copy_id": "14e62390-7700-4a46-9f79-e0f6235f2145",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "checked_at": "2026-10-13T11:07:08.868261+00:00",
+    "dependency_revision": 18,
+    "status": "FINALIZED",
+    "retention_count": 1,
+    "content_hash": "88ecf09fde9971de068a1b597bac357bb84ac3d6d6ea95c2fe66b06f2d7d9589",
+    "eligible": false,
+    "blockers": [
+      "READERS_ACTIVE_OR_UNKNOWN"
+    ]
+  },
+  {
+    "id": "8475eb47-1e74-418b-8d75-70c0c76a43ad",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "plan_id": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+    "approval_id": "a21380a6-f2ff-475e-84c4-1ce75a26108a",
+    "copy_id": "c635d8d3-749c-4cf5-8c8b-7f13ce367883",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "checked_at": "2026-10-13T11:05:06.177203+00:00",
+    "dependency_revision": 11,
+    "status": "FINALIZED",
+    "retention_count": 1,
+    "content_hash": "77653dd1e5e0758e6b496ee0c99e9fdba5393065413edaa3c6ff9811c9a5e92d",
+    "eligible": true,
+    "blockers": []
+  },
+  {
+    "id": "f6ca00cb-92a1-42a1-b0e3-12a374fd9140",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "plan_id": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+    "approval_id": "e9d673ce-1156-40a7-a12b-4abdad3ce0fe",
+    "copy_id": "14e62390-7700-4a46-9f79-e0f6235f2145",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "checked_at": "2026-10-13T11:07:08.943688+00:00",
+    "dependency_revision": 20,
+    "status": "FINALIZED",
+    "retention_count": 1,
+    "content_hash": "463b515386db5175e94fd7e95bc008325231bc429e5845ae0b18331985b6abb1",
+    "eligible": true,
+    "blockers": []
+  }
+]

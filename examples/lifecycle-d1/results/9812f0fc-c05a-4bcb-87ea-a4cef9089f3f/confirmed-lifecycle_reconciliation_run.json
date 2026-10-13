@@ -1,0 +1,20 @@
+[
+  {
+    "id": "79eaf87a-aa47-4923-a9f2-48a0f7adab82",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "work_id": "2f881f91-58fc-46dc-b582-82756acf5056",
+    "started_at": "2026-10-13T11:07:10.385923+00:00",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-recovery:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "dependency_revision": 21
+  },
+  {
+    "id": "fc64d8a7-5cc4-423f-b939-882cd7e2da56",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "work_id": "89afa9e4-5835-4b32-9187-eb45ee4640d1",
+    "started_at": "2026-10-13T11:05:48.931035+00:00",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-recovery:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "dependency_revision": 12
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "d1f8199b-8c13-4818-9b0b-b945045eafeb",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "pin_id": "53f85a1c-7855-4747-9e3c-f43e222f250e",
+    "reader_id": "aa2ff25c-5201-4126-aa3e-f6c9b34790f4",
+    "generation": 16,
+    "outcome": "COMPLETED",
+    "observed_at": "2026-10-13T11:07:08.883184+00:00",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "dependency_revision": 20
+  },
+  {
+    "id": "ed90cfb4-0e9c-4df6-92f9-9dedca6a9023",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "pin_id": "0f28d81d-8d85-4931-b3d7-e27c98487d58",
+    "reader_id": "418fefa9-65db-48ce-b651-2d13c231e556",
+    "generation": 7,
+    "outcome": "COMPLETED",
+    "observed_at": "2026-10-13T11:05:06.119282+00:00",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "dependency_revision": 11
+  }
+]

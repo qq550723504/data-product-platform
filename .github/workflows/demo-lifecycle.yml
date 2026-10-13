@@ -20,6 +20,10 @@ jobs:
           node-version: '22'
       - name: Demo command safety tests
         run: node --test deploy/demo/demo.test.mjs
+      - name: Confirmed disposal driver safety tests (no provider I/O)
+        run: |
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_confirmed_race.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_confirmed_race.py -v
       - name: Install isolated browser runner
         run: npm --prefix tests/live-browser install --no-audit --no-fund
       - name: Install Chromium

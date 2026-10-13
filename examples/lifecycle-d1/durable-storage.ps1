@@ -19,7 +19,9 @@ function Assert-RetainedServiceStorage {
   if($mounts.Count -ne 1 -or $mounts[0].Type -ne 'volume' -or -not $mounts[0].RW -or [string]::IsNullOrEmpty($mounts[0].Name) -or $mounts[0].Name -ne $service.volume){throw 'Retained service data must use its role-specific registered writable named volume'}
   # Any tmpfs or alternate mount covering the data path or a child (including
   # pg_wal) defeats retention even if a named volume exists at the parent.
-  if($null -ne $item.HostConfig.Tmpfs){foreach($entry in $item.HostConfig.Tmpfs.PSObject.Properties){$path=$entry.Name.TrimEnd('/');if($path -eq '' -or $service.path -eq $path -or $service.path.StartsWith($path+'/') -or $path.StartsWith($service.path+'/')){throw 'Tmpfs cannot cover retained service data or WAL'}}}
+  # Docker HostConfig marks empty Tmpfs omitempty; inspect may omit the field.
+  $tmpfs=$item.HostConfig.PSObject.Properties['Tmpfs']
+  if($null -ne $tmpfs -and $null -ne $tmpfs.Value){foreach($entry in $tmpfs.Value.PSObject.Properties){$path=$entry.Name.TrimEnd('/');if($path -eq '' -or $service.path -eq $path -or $service.path.StartsWith($path+'/') -or $path.StartsWith($service.path+'/')){throw 'Tmpfs cannot cover retained service data or WAL'}}}
   foreach($other in @($item.Mounts|Where-Object {$_.Destination -ne $service.path})){$path=$other.Destination.TrimEnd('/');if($path.StartsWith($service.path+'/')){throw 'Nested service data mount is outside the retained volume contract'}}
   $result+=@{role=$service.role;container=$service.name;container_id=$item.Id;destination=$service.path;volume=$mounts[0].Name;type='volume';writable=$true}
  }

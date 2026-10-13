@@ -1,0 +1,22 @@
+[
+  {
+    "id": "6536ed1b-e110-4b7b-a4e8-845fc9fdba97",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "approval_id": "a21380a6-f2ff-475e-84c4-1ce75a26108a",
+    "basis_ref": "Controlled reader-first order; old approval retained",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "occurred_at": "2026-10-13T11:07:08.632215+00:00",
+    "dependency_revision": 14
+  },
+  {
+    "id": "90a6080f-0cba-4548-8960-caa01c5783d5",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "approval_id": "2da863a4-d569-4d54-9221-d5ff371d0719",
+    "basis_ref": "Controlled reader-first order; old approval retained",
+    "actor_id": "155ea7f0-1c45-4c1a-be04-0a7d86c9b71b",
+    "principal_ref": "lifecycle-fixture:9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+    "occurred_at": "2026-10-13T11:05:05.924488+00:00",
+    "dependency_revision": 6
+  }
+]

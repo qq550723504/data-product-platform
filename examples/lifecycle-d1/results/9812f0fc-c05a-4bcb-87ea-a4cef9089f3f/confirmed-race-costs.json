@@ -1,0 +1,416 @@
+[
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "01dd09a3-49ae-45ff-b6a7-434ee0f5d956",
+    "activity_id": "01dd09a3-49ae-45ff-b6a7-434ee0f5d956",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "04521c5e-7174-485f-9227-92bd2db64ea1",
+    "activity_id": "04521c5e-7174-485f-9227-92bd2db64ea1",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "1dd061a9-a5e2-4f8d-92ab-5bc038ecebd6",
+    "activity_id": "1dd061a9-a5e2-4f8d-92ab-5bc038ecebd6",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "1f495fbb-6cef-43b6-abe8-fe9b27054734",
+    "activity_id": "1f495fbb-6cef-43b6-abe8-fe9b27054734",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": "20df2726-e16d-4d2d-b42f-bb215c00ed55",
+    "lifecycle_storage_call_id": null,
+    "activity_id": "20df2726-e16d-4d2d-b42f-bb215c00ed55",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "2127da98-0a01-43c2-8bd0-10122926f370",
+    "activity_id": "2127da98-0a01-43c2-8bd0-10122926f370",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "23319bb4-0291-4cc7-ae2e-1b506d105ebc",
+    "activity_id": "23319bb4-0291-4cc7-ae2e-1b506d105ebc",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "27eebd98-3a54-4075-b630-d623559a62f9",
+    "activity_id": "27eebd98-3a54-4075-b630-d623559a62f9",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "2ab72008-d7a1-4527-bc44-3698de5dd52c",
+    "activity_id": "2ab72008-d7a1-4527-bc44-3698de5dd52c",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "2b3af2ba-b679-4b69-a039-7b2bb7bc014d",
+    "activity_id": "2b3af2ba-b679-4b69-a039-7b2bb7bc014d",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "3ab53571-ee46-4a92-aa34-847532a111b2",
+    "activity_id": "3ab53571-ee46-4a92-aa34-847532a111b2",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "3f776a32-f2e5-4646-ac18-8e3755755b6d",
+    "activity_id": "3f776a32-f2e5-4646-ac18-8e3755755b6d",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "401d89b0-02ae-4b86-acfd-7f236df3b325",
+    "activity_id": "401d89b0-02ae-4b86-acfd-7f236df3b325",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "4d3be436-61c1-4725-bcff-112678fca3ad",
+    "activity_id": "4d3be436-61c1-4725-bcff-112678fca3ad",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "51e656cc-5d35-46b7-b91c-b60e6bb3e782",
+    "activity_id": "51e656cc-5d35-46b7-b91c-b60e6bb3e782",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "54319e14-c112-497c-8eee-ec8f6b5c7d54",
+    "activity_id": "54319e14-c112-497c-8eee-ec8f6b5c7d54",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "5bebf5d8-c762-482f-af9b-57cb0bf37885",
+    "activity_id": "5bebf5d8-c762-482f-af9b-57cb0bf37885",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "5da6650f-b97c-4bd3-a695-a85e3befe815",
+    "activity_id": "5da6650f-b97c-4bd3-a695-a85e3befe815",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "62627130-2b8a-492c-adb1-d84e1d6dc933",
+    "activity_id": "62627130-2b8a-492c-adb1-d84e1d6dc933",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "66f2f110-17d3-4fd8-9d86-5127e018c33b",
+    "activity_id": "66f2f110-17d3-4fd8-9d86-5127e018c33b",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": "681bf9c7-1c06-4e03-846f-1a2bf8dc3dd0",
+    "lifecycle_storage_call_id": null,
+    "activity_id": "681bf9c7-1c06-4e03-846f-1a2bf8dc3dd0",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "689a9736-4b69-4c6d-98b1-d2c52dfa7be5",
+    "activity_id": "689a9736-4b69-4c6d-98b1-d2c52dfa7be5",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "7474244b-2be2-4754-a747-597b4d2a49f8",
+    "activity_id": "7474244b-2be2-4754-a747-597b4d2a49f8",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "75be6edb-3605-4cfa-9c4e-b94a2c28d639",
+    "activity_id": "75be6edb-3605-4cfa-9c4e-b94a2c28d639",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "8302cd83-e2da-4c80-bafe-335c1cac19ec",
+    "activity_id": "8302cd83-e2da-4c80-bafe-335c1cac19ec",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "86337c5c-0bda-4771-9a39-ee7c7e758ad8",
+    "activity_id": "86337c5c-0bda-4771-9a39-ee7c7e758ad8",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "8d2c6fd7-1211-48cf-858e-d91079954797",
+    "activity_id": "8d2c6fd7-1211-48cf-858e-d91079954797",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "8d35580d-20de-4199-b40d-ee5fe097fd50",
+    "activity_id": "8d35580d-20de-4199-b40d-ee5fe097fd50",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "96d14121-c70f-4d02-a75e-45f4c4a39118",
+    "activity_id": "96d14121-c70f-4d02-a75e-45f4c4a39118",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "9b1d0b65-9aa3-4ff1-9e08-fb780755d11d",
+    "activity_id": "9b1d0b65-9aa3-4ff1-9e08-fb780755d11d",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "9d8fd14e-542a-457f-b8a5-6d07c47f66ba",
+    "activity_id": "9d8fd14e-542a-457f-b8a5-6d07c47f66ba",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "a104a323-fdf8-4615-b2cd-38a8b148aebc",
+    "activity_id": "a104a323-fdf8-4615-b2cd-38a8b148aebc",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "a3ccf0d5-b3f9-40c3-9fea-cb0d8651345e",
+    "activity_id": "a3ccf0d5-b3f9-40c3-9fea-cb0d8651345e",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "a78f22f4-d297-44de-b7c4-9dcc9a6d5084",
+    "activity_id": "a78f22f4-d297-44de-b7c4-9dcc9a6d5084",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "ae9c18b4-605c-49d3-8341-3ad07f7ab34f",
+    "activity_id": "ae9c18b4-605c-49d3-8341-3ad07f7ab34f",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "b1fa603a-e332-4c56-a88f-9743807d81e5",
+    "activity_id": "b1fa603a-e332-4c56-a88f-9743807d81e5",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "b2180197-2fc5-46d8-9ea2-b1e696d96e57",
+    "activity_id": "b2180197-2fc5-46d8-9ea2-b1e696d96e57",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "babffbba-7e3d-46f7-9925-3243ccc34b68",
+    "activity_id": "babffbba-7e3d-46f7-9925-3243ccc34b68",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "bb3b5fe2-b0d2-462f-a248-855ec78007a8",
+    "activity_id": "bb3b5fe2-b0d2-462f-a248-855ec78007a8",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "cc9fcd29-b2f2-4b78-9d60-0eaac47194a7",
+    "activity_id": "cc9fcd29-b2f2-4b78-9d60-0eaac47194a7",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "cd6fb8d0-aa83-4792-8b79-0792d729a2b5",
+    "activity_id": "cd6fb8d0-aa83-4792-8b79-0792d729a2b5",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "e03b3284-1f5b-4ea0-9814-5a0b9ba21ee6",
+    "activity_id": "e03b3284-1f5b-4ea0-9814-5a0b9ba21ee6",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "e1d8b222-4af4-496e-a956-83e0ad6af115",
+    "activity_id": "e1d8b222-4af4-496e-a956-83e0ad6af115",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "e72a096d-c680-47e1-982e-9f578951e364",
+    "activity_id": "e72a096d-c680-47e1-982e-9f578951e364",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "f1e109c5-041f-4f3f-8cd8-3b5f986ddb5e",
+    "activity_id": "f1e109c5-041f-4f3f-8cd8-3b5f986ddb5e",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  },
+  {
+    "lifecycle_provider_attempt_id": null,
+    "lifecycle_storage_call_id": "f8e74b57-2829-4851-b4ae-846e50f69d36",
+    "activity_id": "f8e74b57-2829-4851-b4ae-846e50f69d36",
+    "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+    "quantity": 1.0,
+    "unit": "invocation",
+    "pricing_mode": "ACTUAL"
+  }
+]
