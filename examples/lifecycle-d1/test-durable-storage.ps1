@@ -8,6 +8,8 @@ function Service([string]$Name,[string]$Path,[string]$Volume){[pscustomobject]@{
 $pg=Service 'fixture-pg-service' '/var/lib/postgresql/data' 'fixture-pg'
 $objects=Service 'fixture-object-service' '/data' 'fixture-objects'
 Assert-FixtureDurableStorage $resources $pg $objects|Out-Null
+$pg.HostConfig.PSObject.Properties.Remove('Tmpfs');$objects.HostConfig.PSObject.Properties.Remove('Tmpfs')
+Assert-FixtureDurableStorage $resources $pg $objects|Out-Null
 $rejected=0
 foreach($case in @('core-tmpfs-256m','object-tmpfs','tmpfs-parent','tmpfs-wal','anonymous-volume','unregistered-volume','swapped-service-volumes','readonly-volume','nested-data-mount','stopped-service')){
  $p=Service 'fixture-pg-service' '/var/lib/postgresql/data' 'fixture-pg';$o=Service 'fixture-object-service' '/data' 'fixture-objects'
@@ -54,4 +56,4 @@ foreach($case in @('wrong-label-key','wrong-run','duplicate-volume','duplicate-r
  }
  $failed=$false;try{Assert-RetainedServiceStorage -RunID $owner -LabelKey $label -RegisteredVolumes $registered -Services $spec -AllowedStates $states|Out-Null}catch{$failed=$true};if(-not $failed){throw ('Unsafe four-role metadata accepted: '+$case)};$rejected++
 }
-[pscustomobject]@{status='PASS';positive=4;rejected=$rejected;docker_calls=0;storage_io=0;mutation=0}|ConvertTo-Json
+[pscustomobject]@{status='PASS';positive=5;rejected=$rejected;docker_calls=0;storage_io=0;mutation=0}|ConvertTo-Json

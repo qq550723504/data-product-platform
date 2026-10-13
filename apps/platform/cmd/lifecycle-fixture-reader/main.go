@@ -453,8 +453,8 @@ func execute(ctx context.Context, mode string) error {
 	}
 	defer pool.Close()
 	var schema int
-	if pool.QueryRow(ctx, `SELECT max(version) FROM schema_migration`).Scan(&schema) != nil || schema != 64 {
-		return errors.New("new isolated schema64 required")
+	if pool.QueryRow(ctx, `SELECT max(version) FROM schema_migration`).Scan(&schema) != nil || schema != 66 {
+		return errors.New("new isolated schema66 required")
 	}
 	router, e := routing.NewRouter(false)
 	if e != nil {

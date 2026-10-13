@@ -12,7 +12,7 @@ $window=Get-Content -LiteralPath (Join-Path $private 'copy-admin/archive-window.
 $run=([guid]$r.run_id).ToString();$project='dpp-lifecycle307-'+$run.Substring(0,8)
 $output=Join-Path $PSScriptRoot "results/$run"
 $m=Get-Content -LiteralPath (Join-Path $output 'manifest.json') -Raw|ConvertFrom-Json
-if($r.project -ne $project -or (Split-Path -Leaf $private) -ne $project -or $window.RunID -ne $run -or -not $window.Enabled -or [DateTime]::UtcNow -ge [DateTime]$window.ExpiresAt -or $c.Enabled -or $m.environment.migrations_through -ne 64 -or $m.destructive_requests -ne 0){throw 'Finite fresh schema64 window required; no retained-old environment mutation'}
+if($r.project -ne $project -or (Split-Path -Leaf $private) -ne $project -or $window.RunID -ne $run -or -not $window.Enabled -or [DateTime]::UtcNow -ge [DateTime]$window.ExpiresAt -or $c.Enabled -or $m.environment.migrations_through -ne 66 -or $m.destructive_requests -ne 0){throw 'Finite fresh schema66 window required; no retained-old environment mutation'}
 $net=(Docker @('network','inspect',$r.network)|ConvertFrom-Json)[0]
 $members=@($net.Containers.PSObject.Properties).Count
 $brokerFault=$false

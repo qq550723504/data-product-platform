@@ -133,8 +133,8 @@ func planeStep(ctx context.Context, mode string) error {
 	}
 	defer pool.Close()
 	var schema int
-	if e = pool.QueryRow(ctx, `SELECT max(version) FROM schema_migration`).Scan(&schema); e != nil || schema != 64 {
-		return errors.New("fresh isolated schema64 required")
+	if e = pool.QueryRow(ctx, `SELECT max(version) FROM schema_migration`).Scan(&schema); e != nil || schema != 66 {
+		return errors.New("fresh isolated schema66 required")
 	}
 	router, e := routing.NewRouter(false)
 	if e != nil {

@@ -33,6 +33,6 @@ SELECT json_build_object(
 $body=& docker.exe exec $r.containers.postgres psql -U fixture -d lifecycle307 -At -c $sql 2>&1
 if($LASTEXITCODE -ne 0){throw 'Read-only PostgreSQL snapshot failed'}
 $facts=($body -join "`n")|ConvertFrom-Json
-if($facts.schema_version -ne 64){throw 'Current controlled schema64 required'}
+if($facts.schema_version -ne 66){throw 'Current controlled schema66 required'}
 [IO.File]::WriteAllText($output,($facts|ConvertTo-Json -Depth 20),[Text.UTF8Encoding]::new($false))
 Write-Output "Read-only evidence $Scenario saved: calls=$($facts.physical_calls), costs=$($facts.physical_cost_allocations), DELETE attempts=$($facts.native_delete_attempts)."
