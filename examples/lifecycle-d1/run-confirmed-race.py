@@ -12,7 +12,7 @@ HASH='fa2b19e1d7fc12132b3f4e4b4acee09e4f5bc0f59eae87820b83fb2fff220c86'
 PLAN='756a4139-bfae-4b5e-9368-e65d28d4c877'
 VERSIONS={'dpp-lifecycle307-online/fixture/a.csv':'0f6aa755-4b86-496b-9ee1-43d7c59a8bb3','dpp-lifecycle307-quarantine/fixture/b.csv':'e1611b0a-efc0-4939-abc2-30394ec2c8d2'}
 parser=argparse.ArgumentParser()
-parser.add_argument('phase',choices=['prepare','provision','provision-resume','a','a-resume','a-reader-first','b','worker-a','worker-b','inspect','seal'])
+parser.add_argument('phase',choices=['prepare','provision','provision-resume','a','a-resume','a-reader-first','b','worker-a','worker-b','inspect','seal','seal-gateway'])
 parser.add_argument('--private-directory',required=True)
 parser.add_argument('--confirmed-plan',required=True)
 args=parser.parse_args()
@@ -159,11 +159,14 @@ try:
     elif args.phase=='inspect':
         runtime_preflight()
         helper(control/'executor','delete',PROJECT+'-race-inspect',{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'inspect'})
-    elif args.phase=='seal':
-        gateway((control/'gateway-sealed').read_text())
-        helper(control/'admin','delete',PROJECT+'-race-disable',{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'disable'})
+    elif args.phase in ['seal','seal-gateway']:
+        if args.phase=='seal':
+            gateway((control/'gateway-sealed').read_text())
+            helper(control/'admin','delete',PROJECT+'-race-disable',{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'disable'})
+        else:
+            assert json.loads((out/(PROJECT+'-race-disable-exit.json')).read_text())['exit']==0
         # Shut the admin/payload paths after independently disabling both native users.
-        gateway('{\n admin off\n auto_https off\n}\n:9000 {\n @health path /minio/health/ready\n reverse_proxy @health minio:9000\n respond 403\n}\n')
+        gateway('{\n admin off\n auto_https off\n}\n:9000 {\n route {\n  @health path /minio/health/ready\n  reverse_proxy @health minio:9000\n  respond 403\n }\n}\n')
         for folder in ['admin','executor']:
             path=control/folder/'delete-permission.json';p=json.loads(path.read_text());p['Enabled']=False;write(path,p)
         path=control/'worker/recovery.json';p=json.loads(path.read_text());p['Enabled']=False;write(path,p)

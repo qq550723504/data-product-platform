@@ -1,0 +1,28 @@
+[
+  {
+    "id": "64de613c-3232-417c-9130-b582f3695bc9",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "plan_id": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+    "copy_id": "14e62390-7700-4a46-9f79-e0f6235f2145",
+    "dispatch_id": "2eb41503-be77-439b-a755-3ff2b89657df",
+    "inventory_call_id": "e1d8b222-4af4-496e-a956-83e0ad6af115",
+    "plan_hash": "fa2b19e1d7fc12132b3f4e4b4acee09e4f5bc0f59eae87820b83fb2fff220c86",
+    "response_sha256": "7631a4bc0c4de50bf397b7e72c4bd371b7bdee5fb971885ad657c18126239159",
+    "observed_at": "2026-10-13T11:07:10.409774+00:00",
+    "confirmed_at": "2026-10-13T11:07:10.432827+00:00",
+    "dependency_revision": 22
+  },
+  {
+    "id": "d935b836-6b72-4ed7-9c81-a950c98be042",
+    "workspace_id": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "plan_id": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+    "copy_id": "c635d8d3-749c-4cf5-8c8b-7f13ce367883",
+    "dispatch_id": "92d4bdef-348d-4819-95fe-9ac4b3b60771",
+    "inventory_call_id": "e72a096d-c680-47e1-982e-9f578951e364",
+    "plan_hash": "fa2b19e1d7fc12132b3f4e4b4acee09e4f5bc0f59eae87820b83fb2fff220c86",
+    "response_sha256": "bb7adf3a80d6a417514409b3fefb3099df57fd5ab942d2c5a37b97f43de97941",
+    "observed_at": "2026-10-13T11:05:48.957081+00:00",
+    "confirmed_at": "2026-10-13T11:05:48.985267+00:00",
+    "dependency_revision": 13
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "run": "9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+  "coreRelations": 192,
+  "coreRows": 266,
+  "coreFingerprintSHA256": "b01197897206cb3036fd087685018992e1819cc44436a963182673374e0148fb",
+  "fullFactsEqualIndependentRestore": true,
+  "originalOwnerACL": true,
+  "originalRoleFreshTCPAuthentication": true,
+  "wrongPasswordDenied": true,
+  "objectVersions": 4,
+  "objectVersionSizeSHA256MatchesManifest": true,
+  "dumpSHA256": "3f64aac61ec5e319dda75f7e6533dccec3dfbe10dcd2101e0b0ec674e049c2f2",
+  "objectsTarSHA256": "38a458aa4d973159c7cddfc0f0fddff05496d52a1dbfbcdd8f48972369b609be",
+  "replicas": "independent internal/no host ports, stopped and retained; no business admission",
+  "backupCopies": "excluded from any future source-provider deletion receipt; no business re-entry",
+  "originalNewMinioStopStart": true,
+  "oldEnvironmentMutation": 0,
+  "delete": 0,
+  "cleanup": 0
+}

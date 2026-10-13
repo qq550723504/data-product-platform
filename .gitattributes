@@ -3,6 +3,8 @@ docs/acceptance/evidence/issue299-c3/*.json text eol=lf
 
 # Current D1 receipts retain stable hashable UTF-8 bytes in Git and checkout.
 docs/acceptance/issue307-d1.md text eol=lf
+docs/acceptance/issue307-d1-confirmed.md text eol=lf
+examples/lifecycle-d1/run-confirmed-race.py text eol=lf
 docs/acceptance/evidence/issue307-d1/*.json text eol=lf
 examples/lifecycle-d1/results/9b89333a-9620-4387-a520-7685641281e2/*.json text eol=lf
 examples/lifecycle-d1/results/9b89333a-9620-4387-a520-7685641281e2/*.jsonl text eol=lf

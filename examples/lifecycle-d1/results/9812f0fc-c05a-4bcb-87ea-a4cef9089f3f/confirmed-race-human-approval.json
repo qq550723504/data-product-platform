@@ -1,0 +1,17 @@
+{
+  "run_id": "9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+  "project": "dpp-lifecycle307-9812f0fc",
+  "plan_id": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+  "scope_hash": "fa2b19e1d7fc12132b3f4e4b4acee09e4f5bc0f59eae87820b83fb2fff220c86",
+  "source": "Explicit user reply to call_0275d4f95cd44342bf0c36afa69053e3 in current Codex chat",
+  "targets": {
+    "dpp-lifecycle307-online/fixture/a.csv": "0f6aa755-4b86-496b-9ee1-43d7c59a8bb3",
+    "dpp-lifecycle307-quarantine/fixture/b.csv": "e1611b0a-efc0-4939-abc2-30394ec2c8d2"
+  },
+  "confirmed_at": "2026-10-13T10:51:39.719020+00:00",
+  "window_expires_at": "2026-10-13T11:31:39.719020+00:00",
+  "cleanup": 0,
+  "bypass": 0,
+  "hold_release": 0,
+  "backups_excluded": true
+}

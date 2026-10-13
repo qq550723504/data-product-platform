@@ -1,0 +1,48 @@
+{
+  "absence": "UNVERIFIED",
+  "approval": {
+    "ID": "a21380a6-f2ff-475e-84c4-1ce75a26108a",
+    "Replayed": false,
+    "PreservationUnconfirmed": false
+  },
+  "attempt": {
+    "ID": "20df2726-e16d-4d2d-b42f-bb215c00ed55",
+    "WorkspaceID": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "DispatchID": "92d4bdef-348d-4819-95fe-9ac4b3b60771",
+    "PlanID": "756a4139-bfae-4b5e-9368-e65d28d4c877",
+    "CopyID": "c635d8d3-749c-4cf5-8c8b-7f13ce367883",
+    "Action": "DELETE_EXACT",
+    "ProviderRequestKey": "lifecycle-delete:20df2726-e16d-4d2d-b42f-bb215c00ed55",
+    "StartedAt": "2026-10-13T11:05:06.177203Z",
+    "DependencyRevision": 12
+  },
+  "basis": {
+    "ID": "aea164ef-71b9-4420-98d5-2d0464aae2ae",
+    "Replayed": true,
+    "PreservationUnconfirmed": false
+  },
+  "copy": {
+    "ID": "c635d8d3-749c-4cf5-8c8b-7f13ce367883",
+    "WorkspaceID": "b2412364-b7a4-4df6-ab45-db6ded8e4104",
+    "DatasetVersionID": "07fe1a59-87cd-42c5-9b6e-24e4f7fb724f",
+    "ProviderInstanceID": "bca92ac3-a695-4a12-bfeb-08b5b0edef22",
+    "IncarnationID": "1976426c-4c82-404c-8def-261b73e490b6",
+    "Namespace": "dpp-lifecycle307-online",
+    "Key": "fixture/a.csv",
+    "ProviderVersion": "0f6aa755-4b86-496b-9ee1-43d7c59a8bb3",
+    "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+    "ByteSize": 232
+  },
+  "dispatch": {
+    "EvaluationID": "8475eb47-1e74-418b-8d75-70c0c76a43ad",
+    "DispatchID": "92d4bdef-348d-4819-95fe-9ac4b3b60771",
+    "AttemptID": "20df2726-e16d-4d2d-b42f-bb215c00ed55",
+    "Admitted": true,
+    "Replayed": false,
+    "Blockers": []
+  },
+  "next": "READ_ONLY_WORKER_RECOVERY",
+  "resend": "FORBIDDEN",
+  "response_unknown": true,
+  "work_id": "89afa9e4-5835-4b32-9187-eb45ee4640d1"
+}

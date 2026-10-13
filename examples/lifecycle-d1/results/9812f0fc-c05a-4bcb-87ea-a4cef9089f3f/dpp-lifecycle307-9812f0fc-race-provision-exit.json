@@ -1,0 +1,11 @@
+{
+  "run_id": "9812f0fc-c05a-4bcb-87ea-a4cef9089f3f",
+  "helper": "dpp-lifecycle307-9812f0fc-race-provision",
+  "id": "5d6851f525c7681473c18b1eb651f151dd385432e59ffb3d46467be5ce6ed205",
+  "exit": 1,
+  "expected_exit": 0,
+  "binary_sha256": "900555aa247d90ecd48827166c4fc36a1c9c0cc585c605a87fcd8bc81cf54445",
+  "driver_sha256": "f44a8ece70ad8887f5413aa0b2185317ccb5a1eb7fd6450967b4947444b1bdee",
+  "root_mounted": true,
+  "cleanup": 0
+}
