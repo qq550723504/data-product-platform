@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "baseMain": "c16720abaf986367bade0e91618133e08785e696",
+  "runtimeApiSha256": "13e65111d1642b97ff894aafd089d1dbbabf0f5794a9520192c20c9d9404886d",
+  "runtimeMode": "production Next / real Edge / PostgreSQL / Hop / native OpenMetadata 2.0.5",
+  "C1Checks": 27,
+  "sourceRequests": 7,
+  "physicalSchemaAttemptsAndTypedCosts": 13,
+  "outageRequest": "seven UNAVAILABLE physical attempts then one MATCH; same request identity retained",
+  "projectionAttempts": [
+    1,
+    7
+  ],
+  "publishedReleases": [
+    "a0cac075-ebe0-4d23-bdfe-fa4bb05a7e58",
+    "158fb972-82b8-4f7a-8e20-3febf5a8ff17"
+  ],
+  "productVersionsDistinct": true,
+  "deliveries": {
+    "ISSUED": 2,
+    "BLOCKED": 1,
+    "reason": "CURRENT_ENTITLEMENT_BLOCKED",
+    "browserUnexpectedDownloadAfterRevoke": false
+  },
+  "downloads": [
+    {
+      "version": "1e5cbbed-d9e3-4320-a010-1043feab74b2",
+      "bytes": 640,
+      "sha256": "93ca3697b25e5b9412a1a6c4b9f58d60e1236611a6204ed8a90fa48855a6142d"
+    },
+    {
+      "version": "6a4acbb2-3903-46a6-8619-39c605f42206",
+      "bytes": 640,
+      "sha256": "159de4f363ce7d325993482077ec64d7b565c45a739421dc97ae1621668d7456"
+    }
+  ],
+  "sourceAuthorization": "REVOKED",
+  "queuedScanDeniedWithoutPhysicalWork": true,
+  "newOrPriorScanKeysAndHandlingRejectedAfterRevocation": true,
+  "zeroNewFactsOrCostAfterRevokedReplays": true,
+  "secretsAbsentFromBusinessAndBrowserFacts": true,
+  "CoreFactsNeverSeededAsSuccess": true,
+  "humanExplanation": "NOT_RUN/deferred",
+  "oldOriginalCore": "FAIL/NOT_RESTORED; unchanged",
+  "fixtureChange": "new controlled ProductVersion for actual C1 rechecked output; original same-output retry guard retained",
+  "runtimeBusinessSource": "same exact main code; only synthetic publication fixture changed"
+}

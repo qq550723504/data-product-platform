@@ -142,7 +142,7 @@ func main() {
 		read(path, &f)
 		rights := rightsapp.NewService(tx, rightsinfra.NewPostgresRepository(pool))
 		switch os.Args[1] {
-		case "release-healthy", "release-outage":
+		case "release-healthy", "release-outage", "release-repaired-outage":
 			prepareHistoricalRelease(ctx, pool, tx, c, f, os.Args[1])
 		case "renew-rights":
 			original, e := rightsinfra.NewPostgresRepository(pool).GetAuthorization(ctx, f.Authorization)
@@ -236,7 +236,7 @@ func main() {
 			f.Contract = cv.ID
 			write(path, f)
 		default:
-			panic("bootstrap|rights|renew-rights|release-healthy|release-outage required")
+			panic("bootstrap|rights|renew-rights|release-healthy|release-outage|release-repaired-outage required")
 		}
 	}
 	fmt.Println("B3 synthetic prerequisites prepared; browser business Commands remain independent")

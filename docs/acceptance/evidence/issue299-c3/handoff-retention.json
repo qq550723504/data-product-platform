@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "sameContainersPortsAndVolumesResumed": true,
+  "bootstrap": false,
+  "businessMutations": 0,
+  "fullCoreAndSource": [
+    {
+      "kind": "core",
+      "matchesFullFinalBackup": true,
+      "fingerprintSHA256": "83e279a79680a31326ce4a4f8a49f3715f737897eb2af717baec1f645c1186dc"
+    },
+    {
+      "kind": "source",
+      "matchesFullFinalBackup": true,
+      "fingerprintSHA256": "893a19132be10d934463bdcb6ca8622142dfd4fb68de1e9cc8758306bd151673"
+    }
+  ],
+  "sourceAuthorization": "REVOKED",
+  "appUrl": "http://127.0.0.1:59889",
+  "oldOriginalCore": "FAIL/NOT_RESTORED"
+}
