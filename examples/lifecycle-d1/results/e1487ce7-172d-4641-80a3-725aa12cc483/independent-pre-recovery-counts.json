@@ -1,0 +1,1 @@
+{"requirements" : 23, "releases" : 23, "kinds" : { "QUALITY_RESULT" : 1, "EXECUTION_MAPPING" : 3, "EXECUTION_INPUT" : 12, "ENTITY_MATCH" : 1, "DELIVERY" : 1, "LINEAGE" : 3, "QUALITY_ATTEMPT" : 1, "CERTIFICATION" : 1 }, "dispatch_admissions" : 2, "calls" : 32, "observations" : 32, "typed_costs" : 32, "active_pins" : 0, "send_claims" : 0, "completion" : 0}

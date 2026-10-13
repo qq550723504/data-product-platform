@@ -1,0 +1,12 @@
+{
+  "binary_sha256": "bdd90a3c02fe645e1d722ecbef036b537e77a7f2ff720dd8fa4130c3a4617875",
+  "run_id": "e1487ce7-172d-4641-80a3-725aa12cc483",
+  "root_mounted": false,
+  "container": "dpp-lifecycle307-e1487ce7-reader-reference-races-45ab14",
+  "expected_exit": 0,
+  "delete": 0,
+  "id": "b6f5b26db4d8e3cf9db592d0d58e5bb5ab59025db13ac2a7e0d3a05f0ef497ff",
+  "mode": "reference-races",
+  "cleanup": 0,
+  "exit_code": 0
+}

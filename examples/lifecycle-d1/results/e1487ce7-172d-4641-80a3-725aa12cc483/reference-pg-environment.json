@@ -1,0 +1,7 @@
+{
+  "volume": "dpp-ref307-29a7843d-pgdata",
+  "container": "dpp-ref307-29a7843d",
+  "port": "54762",
+  "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "run_id": "29a7843d-74a6-47c2-bd7f-215ce0c7da40"
+}

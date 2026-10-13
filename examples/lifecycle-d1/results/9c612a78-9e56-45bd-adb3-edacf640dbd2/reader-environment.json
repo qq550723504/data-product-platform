@@ -1,0 +1,90 @@
+{
+  "binary_sha256": "2df1a935dffa184f0879217509509efceb222d21f5492651dac5e786d513e37f",
+  "host_ports": [],
+  "internal": true,
+  "incarnation_id": "dd384ed8-5dc0-4dea-9f4f-d3abc55d1df6",
+  "http": "ephemeral loopback only inside one-shot acceptance helper",
+  "cleanup": 0,
+  "network_id": "fa855762f35725f646ff601f315aa7c69ec45d4314f819a56332051300723537",
+  "delete": 0,
+  "objects": [
+    {
+      "copy_id": "f3cf7f9e-7aa3-4623-b369-13e4130fc4f9",
+      "dataset_version_id": "c865b277-d461-498a-bc56-2619e2c40fc1",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "version_id": "f55fb9f1-a1aa-4cf3-863a-5146b4b72ebc",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-13T14:09:46.664060921Z",
+      "protection_observed_at": "2026-10-13T14:09:47.08011501Z"
+    },
+    {
+      "copy_id": "01e72615-42ab-45a7-a874-775d347482b7",
+      "dataset_version_id": "94389854-6e83-4c87-ba8b-f56fd6670454",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "version_id": "3b4a510c-88a7-4cb0-ae3f-55aaaf5482ec",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-13T14:09:46.765913551Z",
+      "protection_observed_at": "2026-10-13T14:09:47.130620604Z"
+    },
+    {
+      "copy_id": "8b431e5b-f455-48a8-82fa-677393aaf79b",
+      "dataset_version_id": "c865b277-d461-498a-bc56-2619e2c40fc1",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "version_id": "e3f24a58-33e4-4a0c-b9e6-12059f1aabf4",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-14T14:09:46Z",
+      "bytes_verified_at": "2026-10-13T14:09:46.862206715Z",
+      "protection_observed_at": "2026-10-13T14:09:47.188265537Z"
+    },
+    {
+      "copy_id": "d8d26928-9c1c-451e-9a3c-bfda31bdb0a0",
+      "dataset_version_id": "94389854-6e83-4c87-ba8b-f56fd6670454",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "version_id": "e2ae079c-3282-4be8-9e1e-9a5bebe14965",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-13T14:09:46.927571406Z",
+      "protection_observed_at": "2026-10-13T14:09:47.251155374Z"
+    }
+  ],
+  "root_in_reader": false,
+  "run_id": "9c612a78-9e56-45bd-adb3-edacf640dbd2",
+  "source_hashes": {
+    "apps/platform/internal/lifecycle/transport/http/reader.go": "785a1303835f584408626671ad4a52a452e20506820467929041097f3310dc9b",
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "fa50777171a652bd9992d35a6d6af6a02670790b141d29cf1f07320781f0846b",
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go": "1b60f8aead182f9fa9ec1e1708bba553ba46dcfb35236c0736d3600b3ccc2eab",
+    "apps/platform/internal/lifecycle/application/occupancy.go": "01266298f94b71f35177e2b238de6452acf5877973e2deabd407ea2d7b25a802",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "0ad343089e47349d94787763a46b0b6d88f0f4c06edcdfdd1cd7a2e198a70cd5",
+    "apps/platform/internal/lifecycle/application/reader_service.go": "ec6ed10a94facc6096cd262e0098e5f2ff0f2edf0ea867997d0815cad69f7ebe",
+    "apps/platform/internal/platform/storage/lifecycle_reader.go": "52ebfcfd20e350bd4c57aaa49c6686435150b7236bc6266cab86d3c2e90f14da"
+  },
+  "production_delivery": "NOT_RUN",
+  "source_head": "6e6608afe3f12ee9e398ce46017ce5b1b73864fa",
+  "copy": 0,
+  "provider_instance_id": "16a17d6c-8ad3-4b3c-b761-5234d0bb741c",
+  "project": "dpp-lifecycle307-9c612a78",
+  "retained_volumes": [
+    "dpp-lifecycle307-9c612a78-postgres",
+    "dpp-lifecycle307-9c612a78-objects"
+  ],
+  "window_expires": "2026-10-13T14:56:08.4596938Z",
+  "workspace_id": "6e111a77-9756-4b30-9ecf-bfbb9e9bf19a"
+}

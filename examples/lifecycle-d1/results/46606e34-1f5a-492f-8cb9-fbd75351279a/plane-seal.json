@@ -1,0 +1,13 @@
+{
+  "run_id": "46606e34-1f5a-492f-8cb9-fbd75351279a",
+  "cleanup": 0,
+  "reader_identity": "DISABLED",
+  "retained_named_volumes": [
+    "dpp-lifecycle307-46606e34-postgres",
+    "dpp-lifecycle307-46606e34-objects"
+  ],
+  "delete": 0,
+  "gateway_all_requests": "DENY_ALL",
+  "producer_identity": "DISABLED",
+  "windows_enabled": false
+}

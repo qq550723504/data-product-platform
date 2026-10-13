@@ -1,0 +1,107 @@
+{
+  "source_hashes": {
+    "apps/platform/internal/lifecycle/application/reference_demand.go": {
+      "checkout_sha256": "45c9301b338f383613bb9c3f19c4ed7f048a96b6e3c83a6263cd4e6da2b6d9af",
+      "git_blob": "53aef5caf2d9322e400d696b775d1cf5b8b9d5e2"
+    },
+    "apps/platform/internal/platform/contentreference/reference.go": {
+      "checkout_sha256": "9bb25d03418974c6e14ab49232167a79a2787da05fd8b2ef895b9c623103d279",
+      "git_blob": "d8da2645a504393c0301de685c2359657e60374c"
+    },
+    "apps/platform/internal/lifecycle/application/exact_execution.go": {
+      "checkout_sha256": "fb12611a09852e094839f63118a636a7244b6f57a710022aaa0e2bc2ff96beb3",
+      "git_blob": "36ea6573686338237947b2487c520d3c2ab9eab3"
+    },
+    "apps/platform/internal/workflow/application/fixture_reference_owner.go": {
+      "checkout_sha256": "852502ee35443d6f9b2a5f959b280203e318e2385673e1c159b8b7f39f910e35",
+      "git_blob": "9d7395f65a6ca6bd9bf107a805723101e9ff9e99"
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go": {
+      "checkout_sha256": "1b60f8aead182f9fa9ec1e1708bba553ba46dcfb35236c0736d3600b3ccc2eab",
+      "git_blob": "8e3fabf9934e91fe10c974bbdd18dc57ee1e97af"
+    },
+    "apps/platform/internal/platform/routing/routing_test.go": {
+      "checkout_sha256": "05ca3d583de9c7f597270078f7fa7b968e76dbeeb52651781e1dc905f8e2d620",
+      "git_blob": "8dcfefb8f6d00f0871d4bf3b45f8422788c9b4be"
+    },
+    "apps/platform/internal/platform/contentreference/reference_test.go": {
+      "checkout_sha256": "aa0df8bc6f4a75eaa29d9b2438e26bc7957ba04b906afd939363a6b6207ffb26",
+      "git_blob": "5d0ac3f081d89819eff0f69443d898447eeca003"
+    },
+    "apps/platform/internal/lifecycle/application/exact_execution_integration_test.go": {
+      "checkout_sha256": "66eb2b38a7252a6ad1bf689d0066921da0db833371ffc3cd0e9983773a9ba06c",
+      "git_blob": "10f8f547756b47bd42543e66179628b3cb2944a9"
+    },
+    "examples/lifecycle-d1/prepare-plane.ps1": {
+      "checkout_sha256": "402bd3ff57ecbd9c4a4bd7f7288d5358cee502ba2f5eb3092395cb0fdbf035d6",
+      "git_blob": "55e20ee43db4ff8b0f038262b56d3e7e0f1cab29"
+    },
+    "apps/platform/internal/delivery/application/fixture_reference_owner.go": {
+      "checkout_sha256": "0377b9d0e2bff3582e7859a8fe63a4f9764cc984ef6bbe6f6a20c1d5aff31dd1",
+      "git_blob": "6eb64b1c7f1f4243b3a144324c6165c24bc4ff00"
+    },
+    "apps/platform/internal/platform/routing/routing.go": {
+      "checkout_sha256": "f691cb08438d14589d4347ddeddcd3c05e9bd951e9c06a3d3e45dec830336db9",
+      "git_blob": "56e5544ac22715bab806c5eec1827ec1a690b333"
+    },
+    "apps/platform/internal/dataset/application/fixture_reference_owner.go": {
+      "checkout_sha256": "7177cd737f5a42014a832602313a3ca5c72e15dd35e3f8fd73e31da3f1fdaa77",
+      "git_blob": "793b2d0c09dc9c94253b76cdc834c0a3d63c7aac"
+    },
+    "apps/platform/internal/quality/application/fixture_reference_owner.go": {
+      "checkout_sha256": "38d7e69d80d45d95e4c3bb355b8181e8cea47c842694a7fb5495e210e0e6af1c",
+      "git_blob": "9698a9a1b47bf185b13a28020651f03633057516"
+    },
+    "apps/platform/internal/lifecycle/application/subject_pins_integration_test.go": {
+      "checkout_sha256": "d3e310b6b6cedf677e198908bae06838a3e76711d2208066f560cc03228dfd94",
+      "git_blob": "cc2d1a3d5b404f360be4f1b75b63f2e4896e907f"
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/reference_races.go": {
+      "checkout_sha256": "c3349ce6b63c9dfde95680f0d5756fb6176ee72e2f605dcf5ec2ea456aed0ef3",
+      "git_blob": "3af54c57cd6e658dd95fc8d6f0a29501e177399a"
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/plane_runtime.go": {
+      "checkout_sha256": "24c74d19bb52eb0ac16e0735ed2af07d298371e3ab9005fc9436a951ca60163e",
+      "git_blob": "974aa0a535c90b5366a39db276ce87f1d299c999"
+    },
+    "examples/lifecycle-d1/run-plane-step.ps1": {
+      "checkout_sha256": "f17f3f6c61d81f6bc244cec9ca294daa9f359b8e020644533cdce6561741afa9",
+      "git_blob": "8349869ac5522cd326cda8ea89d51a62ab76dd3c"
+    },
+    "apps/platform/internal/lifecycle/application/fixture_references.go": {
+      "checkout_sha256": "5c20f0d20951cf4b3d308c89742126f28a72663389dc34afc116da19e6548d07",
+      "git_blob": "cc23b6dce35fd8756d5999e28609f483d867e476"
+    },
+    "apps/platform/cmd/lifecycle-fixture-reader/plane_setup.go": {
+      "checkout_sha256": "65ae411d38bac96113278f65ed3676aab94828090ad40064fc57bc65bb80faaa",
+      "git_blob": "136dfe3a832a3bbecb8fe64ed5b2061cc45611df"
+    },
+    "migrations/000067_lifecycle_fixture_reference_demand.up.sql": {
+      "checkout_sha256": "3ebb503c7911b651607049da293661e375b61843a64343be791ef687b374799b",
+      "git_blob": "84b0aaf32e70092eb0b8c4b130200a8ecd841a15"
+    },
+    "apps/platform/internal/certification/application/fixture_reference_owner.go": {
+      "checkout_sha256": "77b70f55981b660a2422c4b09379cf0afaa5608ee59755c79c2ecf8fd5d225f6",
+      "git_blob": "b2d79dc1fb97f2504cd27f34b5fdd9b2993bb87b"
+    },
+    "apps/platform/internal/entity/application/fixture_reference_owner.go": {
+      "checkout_sha256": "36e2eb2c18d0e0caa91b0a940a9c95d204d362ca998ab87580977eb3a544451a",
+      "git_blob": "d2dce7465d8e260bba9582de94feb382461a82fb"
+    },
+    "apps/platform/internal/lifecycle/application/reference_demand_integration_test.go": {
+      "checkout_sha256": "7a13e2505f7b0ec753ea380686b1dd622817b4c292c32339cf9b8ea04e6bbd78",
+      "git_blob": "b82acc85e685438b1d4eecdb6d8884e948c18fe7"
+    },
+    "migrations/000067_lifecycle_fixture_reference_demand.down.sql": {
+      "checkout_sha256": "3888315e9fc0867d99ef817f8195091688fcc29c457d06b0e91e9020720c3b49",
+      "git_blob": "904e0ee85780e5417f7910ae827b844f34eadc67"
+    }
+  },
+  "git_tree": "eb1bb8c7aefce820afd1f2345cbf88e6231e3064",
+  "source_commit": "a7116c355428ee71ff621870ceafeb6ede9e9205",
+  "schema": 67,
+  "binary_go_vcs": "unavailable; exact private binary SHA256 is in reference-races-start and reader-environment",
+  "dirty_source_files": 0,
+  "actual_delete": "NOT_RUN",
+  "worktree": "C:/Users/Henry/.codex/worktrees/9400/data-product-platform"
+}

@@ -1,0 +1,12 @@
+{
+  "binary_sha256": "bdd90a3c02fe645e1d722ecbef036b537e77a7f2ff720dd8fa4130c3a4617875",
+  "run_id": "e1487ce7-172d-4641-80a3-725aa12cc483",
+  "root_mounted": true,
+  "container": "dpp-lifecycle307-e1487ce7-reader-provision-a34c15",
+  "expected_exit": 0,
+  "delete": 0,
+  "id": "bff621505d1d8ad37d6feb5788418c3ff9086a53b5d45f2265a5ce76bba4c191",
+  "mode": "provision",
+  "cleanup": 0,
+  "exit_code": 0
+}
