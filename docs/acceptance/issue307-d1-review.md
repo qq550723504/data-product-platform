@@ -2,6 +2,10 @@
 
 2026-10-13，review 基线 `ce8b48083602110eb2c2adea147df192ca9bb4f1`。
 本补充不修改两份冻结 receipt manifest 或原阶段结果。
+两份清单合计120条：119条证据文件仍匹配当前Git blob；另一条是本轮已修复的
+driver源码，必须按冻结阶段commit `ce8b48083602110eb2c2adea147df192ca9bb4f1`
+验证，不能拿新driver去匹配旧源码哈希。补充绑定见
+[receipt source revisions](evidence/issue307-d1/receipt-source-revisions.json)。
 
 有效 P1：`run-confirmed-race.py` 用 `assert` 检查确认、备份、拓扑及旧 attempt，
 Python `-O` / `PYTHONOPTIMIZE` 可移除这些安全前置条件。全部替换为显式拒绝；
