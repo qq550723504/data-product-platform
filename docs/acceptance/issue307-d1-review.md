@@ -31,3 +31,24 @@ Python `-O` / `PYTHONOPTIMIZE` 可移除这些安全前置条件。全部替换�
 完整 D1、真实 Execution/认证 DirectData 的 LC-11/12、material-reference owner
 事实、原生 archive/restore rerun 和剩余 in-flight fault 仍由 #307 跟踪。
 人工解释暂缓；PR 保持 Draft，不自动 Ready/merge，不进入 D2。
+
+## Ready-triggered review checkpoint
+
+用户于2026-10-13追加授权条件式收口；PR 在12:04:14Z转为Ready，
+触发的评审基线为 `9020ac77da900b5d002b962a1eb2e55b9197a5e7`。
+前述Draft阶段记录保留其原语义，不作为Ready评审批准。
+
+有效P1按同一provider执行边界修复：预期exit93的发送helper返回后立即恢复
+既有禁止DELETE的网关配置，不能把响应丢失后的发送窗口留到后续seal阶段；
+异常路径仍封闭全部对象/admin I/O。worker-a/worker-b在权限校验后、启动helper
+前执行相同container/image/volume/network/schema preflight，不能拿漂移环境的
+inventory签署原incarnation的absence receipt。复用既有配置和preflight，无新Port、
+Core、SQL、队列或business gate修改。
+
+先新增回归，旧代码出现17个失败断言（包含两个worker的7类拓扑拒绝），
+确认覆盖评审根因；最小修复后9组测试在普通Python与`-O`下均通过。
+新增覆盖预期exit93后DELETE封闭、恢复启动顺序，以及两个worker的拓扑漂移拒绝；
+过期/disabled recovery权限仍在Docker操作前拒绝。
+本轮没有重新开启保留环境或执行DELETE；119份当前证据及1份历史driver source
+仍按原manifest/补充commit绑定独立核验。仅在新HEAD评审👍与CI全通过后才允许
+合并，再单独验证对应merge SHA的push/main CI；完整D1/人工解释边界不变。

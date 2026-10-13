@@ -173,9 +173,13 @@ def run_phase(phase):
             require(sql('SELECT count(*) FROM lifecycle_reader_pin')=='0')
         gateway((control/'gateway-fault-active').read_text())
         helper(control/'executor','delete',PROJECT+'-race-delete-'+phase,{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'execute','LIFECYCLE_RACE_STAGE':phase[0]},93)
+        # Expected response loss/process exit is a successful send phase, not
+        # authority to keep the native DELETE capability exposed afterwards.
+        gateway((control/'gateway-sealed').read_text())
     elif phase.startswith('worker-'):
         scope=json.loads((control/'worker/recovery.json').read_text())
         require(scope['Enabled'] and scope['RunID']==RUN and now()<dt.datetime.fromisoformat(scope['ValidUntil']),'Recovery authority unavailable')
+        runtime_preflight()
         worker(phase[-1])
     elif phase=='inspect':
         live_permission('executor')

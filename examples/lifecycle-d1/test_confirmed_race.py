@@ -48,6 +48,10 @@ class DriverBoundaryTests(unittest.TestCase):
                 'Enabled':enabled,'RunID':driver.RUN,'WorkspaceID':'fixture-workspace',
                 'PlanHash':driver.HASH,'ConfirmedAt':start.isoformat(),'ExpiresAt':end.isoformat()
             }))
+        target=self.control/'worker'
+        target.mkdir(exist_ok=True)
+        (target/'recovery.json').write_text(json.dumps({'Enabled':enabled,'RunID':driver.RUN,
+                                                       'ValidUntil':end.isoformat()}))
 
     def test_sealed_scope_all_phases_reject_before_private_reads_or_io(self):
         (self.out/'confirmed-race-sealed.json').write_text('{}')
@@ -70,7 +74,8 @@ class DriverBoundaryTests(unittest.TestCase):
             self.permission(enabled,expired)
             with patch.object(driver,'load_driver'), patch.object(driver,'docker') as docker, \
                  patch.object(driver,'gateway') as gateway:
-                for phase in ['a','b','a-resume','a-reader-first','provision','provision-resume','inspect','seal']:
+                for phase in ['a','b','a-resume','a-reader-first','provision','provision-resume',
+                              'inspect','seal','worker-a','worker-b']:
                     with self.subTest(enabled=enabled,expired=expired,phase=phase), self.assertRaises(RuntimeError):
                         driver.main(self.args(phase))
                 docker.assert_not_called()
@@ -88,6 +93,37 @@ class DriverBoundaryTests(unittest.TestCase):
         self.assertNotIn('@admin',driver.DENY_ALL_GATEWAY)
         self.assertNotIn('@payload',driver.DENY_ALL_GATEWAY)
         self.assertEqual(sum(args.args[0]=='restart' for args in docker.call_args_list),2)
+
+    def test_expected_process_loss_reseals_delete_route_before_return(self):
+        self.permission()
+        active='ACTIVE EXACT DELETE ROUTE'
+        sealed=(DRIVER.parent/'reader.Caddyfile').read_text()
+        (self.control/'gateway-fault-active').write_text(active)
+        (self.control/'gateway-sealed').write_text(sealed)
+        def helper(*args):
+            self.assertEqual(args[-1],93)
+            self.assertEqual((self.private/'Caddyfile').read_text(),active)
+        for phase in ['a','b']:
+            with self.subTest(phase=phase), patch.object(driver,'load_driver'), \
+                 patch.object(driver,'runtime_preflight'), patch.object(driver,'docker',return_value=b''), \
+                 patch.object(driver,'helper',side_effect=helper):
+                driver.main(self.args(phase))
+            result=(self.private/'Caddyfile').read_text()
+            self.assertEqual(result,sealed)
+            self.assertIn('respond @delete 403',result)
+            self.assertNotIn('@approvedDelete',result)
+
+    def test_recovery_preflights_before_launch_without_opening_routes(self):
+        self.permission()
+        for phase in ['worker-a','worker-b']:
+            events=[]
+            with self.subTest(phase=phase), patch.object(driver,'load_driver'), \
+                 patch.object(driver,'runtime_preflight',side_effect=lambda:events.append('preflight')), \
+                 patch.object(driver,'worker',side_effect=lambda stage:events.append('worker-'+stage)), \
+                 patch.object(driver,'gateway') as gateway:
+                driver.main(self.args(phase))
+                self.assertEqual(events,['preflight',phase])
+                gateway.assert_not_called()
 
     def test_runtime_topology_and_schema_rejections_cannot_open_gateway(self):
         containers={role:driver.PROJECT+'-'+role for role in ['postgres','minio','gateway']}
@@ -121,13 +157,16 @@ class DriverBoundaryTests(unittest.TestCase):
                 if args[0]=='inspect':return json.dumps(candidate).encode()
                 if args[0]=='network':return json.dumps([net]).encode()
                 return b'native-hash /usr/local/bin/minio'
-            with self.subTest(bad=bad), patch.object(driver,'load_driver'), \
-                 patch.object(driver,'docker',side_effect=docker), \
-                 patch.object(driver,'sql',return_value='65' if bad=='schema' else '66'), \
-                 patch.object(driver,'gateway') as gateway, patch.object(driver,'helper') as helper:
-                with self.assertRaises(RuntimeError):driver.main(self.args())
-                gateway.assert_not_called()
-                helper.assert_not_called()
+            for phase in ['a','worker-a','worker-b']:
+                with self.subTest(bad=bad,phase=phase), patch.object(driver,'load_driver'), \
+                     patch.object(driver,'docker',side_effect=docker), \
+                     patch.object(driver,'sql',return_value='65' if bad=='schema' else '66'), \
+                     patch.object(driver,'gateway') as gateway, patch.object(driver,'helper') as helper, \
+                     patch.object(driver,'worker') as worker:
+                    with self.assertRaises(RuntimeError):driver.main(self.args(phase))
+                    gateway.assert_not_called()
+                    helper.assert_not_called()
+                    worker.assert_not_called()
 
     def test_bad_backup_and_prior_attempt_cannot_prepare_authority(self):
         self.control.rmdir()
