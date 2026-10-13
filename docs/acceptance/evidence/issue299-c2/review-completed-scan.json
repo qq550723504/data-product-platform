@@ -1,0 +1,22 @@
+{
+  "status": "PASS local; current-HEAD CI/review separate",
+  "baseMain": "1892cd76c4ee578896ddfb3c6f4a7252bfacc51b",
+  "fileSha256": {
+    "apps/platform/internal/engine/metadata/schema.go": "717c15db9d161c0db5f2a2c951bb66fe2e82f4bb761101da631f57e1e007209c",
+    "apps/platform/internal/metadata/application/schema.go": "9b6085e2a416fe7810dd25e5690676d967025b955b8552f7c4d31ad9e181f647",
+    "apps/platform/internal/metadata/application/schema_retry_integration_test.go": "12778c42a307d7b820c14ec8b8a1b8b412c0304bfa2b7cbac7aaa9f7250e1197"
+  },
+  "scope": "Real PostgreSQL transaction/cost/replay with controlled Observer/entitlement Port; no live provider/browser acceptance",
+  "checks": [
+    "nil Scan error proves discovery/process completion; no extra profile-dependent Stop",
+    "completed scan records MATCH with cleanup configured to fail; 1 attempt/cost; replay no extra call",
+    "failed/unknown Scan still requires confirmed Stop; otherwise no accepted outcome",
+    "recovery retains prior INTERRUPTED, performs one new call, two typed invocation costs"
+  ],
+  "metadataRace": "PASS",
+  "goSuite": "PASS; integration DSN-free SKIP separate",
+  "goVet": "PASS",
+  "regressionLog": "=== RUN   TestSourceSchemaCompletedScanDoesNotRequireCleanup\n--- PASS: TestSourceSchemaCompletedScanDoesNotRequireCleanup (0.09s)\n=== RUN   TestSourceSchemaFailedScanStillRequiresContainment\n--- PASS: TestSourceSchemaFailedScanStillRequiresContainment (0.13s)\n=== RUN   TestBindingAndProductReleasedProjectionAreRetrySafe\n--- PASS: TestBindingAndProductReleasedProjectionAreRetrySafe (0.08s)\n",
+  "d1Gate": "2cb3c96d full combination FAIL; D1 writer acknowledged and is correcting unpublished60; final D1/main rebase and fresh combination still required",
+  "humanExplanation": "NOT_RUN"
+}

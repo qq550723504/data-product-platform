@@ -248,6 +248,10 @@ func main() {
 			productinfra.NewPostgresRepository(db),
 			metadataEngine,
 		)
+		if err := openmetadata.ConfigureSourceSchema(metadataService, db, os.Getenv("OPENMETADATA_SCHEMA_PROFILE")); err != nil {
+			logger.Error("configure finite source schema observer", "error", err)
+			os.Exit(1)
+		}
 		logger.Info("OpenMetadata governance projection enabled", "base_url", cfg.OpenMetadata.BaseURL, "domain", cfg.OpenMetadata.Domain)
 	}
 

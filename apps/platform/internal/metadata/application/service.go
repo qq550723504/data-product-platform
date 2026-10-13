@@ -20,6 +20,7 @@ import (
 var ErrInvalidBindingRequest = errors.New("invalid metadata binding request")
 
 type Service struct {
+	Schema    *SchemaService
 	provider  metadatadomain.Provider
 	domainFQN string
 	tx        *transaction.Manager
@@ -79,6 +80,12 @@ func (s *Service) BindResource(ctx context.Context, cmd BindResourceCommand) (me
 }
 
 func (s *Service) HandleOutboxEvent(ctx context.Context, event outbox.PublishedEvent) error {
+	if event.EventType == "SourceSchemaObservationRequested" {
+		if s.Schema == nil {
+			return errors.New("source schema observer is not configured")
+		}
+		return s.Schema.Process(ctx, event.AggregateID)
+	}
 	if event.EventType != "ProductReleased" {
 		return nil
 	}

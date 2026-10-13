@@ -3,6 +3,7 @@ import { Badge, DefinitionList, formatDate } from "./ui";
 import { CommandButton } from "./batch-controls";
 import { batchEnabled, batches, core, source, workspace } from "@/lib/batches";
 import { refreshMetadata } from "@/app/batches/actions";
+import { SourceSchema } from "./source-schema";
 
 type PartyReference = { id: string; type: string; name: string; displayName: string };
 type MetadataObservation = {
@@ -28,6 +29,17 @@ function partyNames(parties?: PartyReference[]) {
 }
 
 export async function ResourceSource({ id }: { id: string }) {
+	let observation: MetadataObservation = { status: "UNKNOWN" };
+	try {
+		observation = await core<MetadataObservation>(
+			`/data-resources/${id}/metadata-observation?workspaceId=${workspace()}`,
+			"GET", undefined, undefined, true,
+		);
+	} catch { /* Live metadata availability cannot hide Core-owned history. */ }
+	return <><ResourceConnection id={id} m={observation}/><SourceSchema resourceId={id} providerAvailable={observation.status==="OBSERVED"}/></>;
+}
+
+async function ResourceConnection({ id, m }: { id: string; m: MetadataObservation }) {
   if (!batchEnabled()) return null;
   try {
     const [items, s] = await Promise.all([batches(), source()]);
@@ -35,19 +47,15 @@ export async function ResourceSource({ id }: { id: string }) {
     if (!linked.length) return null;
     const slot = linked[0].request.slots.find(x => x.resourceId === id)!;
     const table = s.tables.find(t => t.Code === slot.code);
-    const m = await core<MetadataObservation>(
-      `/data-resources/${id}/metadata-observation?workspaceId=${workspace()}`,
-      "GET", undefined, undefined, true,
-    );
     // A failed current observation cannot label cached annotations as current,
     // or confuse unavailable fields with an explicitly unassigned Steward.
     const g = m.status === "OBSERVED" ? m.governance : null;
     const missing = m.status === "OBSERVED" && g ? "未指定" : "UNKNOWN（本次无法确认）";
     return (
-      <section className="detail-card">
+      <><section className="detail-card">
         <h2>PostgreSQL 来源与批次</h2>
         <p>{s.database}.{table?.Schema}.{table?.Name} · {s.connectionRef} · {s.instanceRef}</p>
-        <p>只读账户 {s.reader} · 原始 schema：{slot.columns.join(", ")}</p>
+        <p>只读账户 {s.reader} · 已接纳批次 schema：{slot.columns.join(", ")}</p>
         <h3>metadata 治理观察</h3>
         <Badge value={m.status} />
         <p>{m.status === "OBSERVED"
@@ -70,7 +78,7 @@ export async function ResourceSource({ id }: { id: string }) {
           <Link className="text-link" href={`/batches/${b.id}`}>{b.request.batchKey} · 查看批次与加工入口</Link>{" "}
           <Badge value={b.state} />
         </p>)}
-      </section>
+      </section></>
     );
   } catch {
     return <section className="callout callout-warn"><h2>来源信息 UNKNOWN</h2><p>来源/治理信息暂不可用，请刷新；Core 历史事实仍保留。</p></section>;

@@ -1,0 +1,100 @@
+{
+  "status": "PASS",
+  "codeHead": "e96ad19a1dad7ac6f10962a209beca9bfa7ab26f",
+  "all55TestsCoveredExactlyOnce": true,
+  "results": [
+    {
+      "batch": 1,
+      "database": "dpp_c2_run_fence_20261012_lifecycle_batch1",
+      "tests": [
+        "TestCheckpointPublicationResumesCommittedCutWithoutNewSequence",
+        "TestCopyClaimRacePendingAndNoUnverifiedAdmission",
+        "TestCopyPreparationAndReaderSerializeBothOrders",
+        "TestCopyRecoveryCurrentAuthorityStopsBeforeNativeIO",
+        "TestDispositionFreshApprovalMissingDependenciesAndNotSentRelease",
+        "TestDispositionEvaluationFreezeSerializesLateInputsBothOrders",
+        "TestFixtureReferenceClosureExcludesOwnControlButBlocksForeignConsumer",
+        "TestOccupancyIndependentHoldsRestrictionPinExpiryAndVerifiedTermination",
+        "TestReaderWindowExpiringDuringGateQueryCannotCommitPin",
+        "TestPlanFreezeSerializesLateMembershipBothOrders",
+        "TestFixtureReaderPinSurvivesRestrictionAndCancelledWriterUntilStopped",
+        "TestRecoveryUnknownPresenceNeverResendsOrReleases",
+        "TestRecoveryDeleteMarkerIsNotAbsence",
+        "TestProcessingPinOwnsActualInputHandleUntilEngineStops"
+      ],
+      "exitCode": 0,
+      "log": "run-fence-lifecycle-batch1.log",
+      "sha256": "f02a4f6c4953bc930b0e4960f2aab356cb0014054c2a53d2429880b2f7668436"
+    },
+    {
+      "batch": 2,
+      "database": "dpp_c2_run_fence_20261012_lifecycle_batch2",
+      "tests": [
+        "TestConcurrentCheckpointKeysHaveRecoverablePublicationOrder",
+        "TestCopyForgedIntentAndBytesCannotMaterialize",
+        "TestCopyRecoveryLostResponseAppendOnlyAndDuplicateNoIO",
+        "TestCopyRecoveryRestoreNeedsNewIndependentCutAndCurrentRestrictions",
+        "TestDispositionFactsCostAndEventRollbackTogether",
+        "TestEarlyDeleteRecoveryRemainsPendingThenResolvesWithoutResend",
+        "TestExactAbsenceRequiresPostDispatchJournalAndCompleteMembership",
+        "TestOccupancyRejectsForeignScopeUnknownGateAndPartialFacts",
+        "TestPlanCommandFrozenScopeReplayAuthorityAndAtomicFacts",
+        "TestPlanFinalizeRejectsForgedHashEmptyAndDownDropsNoHistory",
+        "TestFixtureReaderCompleteReplayAndCrashedOwnerNeverReleaseByLease",
+        "TestRecoveryCrashPreservesLookupAndSingleOwner",
+        "TestRecoveryResumesCommittedReceiptsBeforePlanCompletion",
+        "TestProcessingUnclosedOrUnknownOwnerKeepsPin"
+      ],
+      "exitCode": 0,
+      "log": "run-fence-lifecycle-batch2.log",
+      "sha256": "8e6f8a714f2c169297e404120a6c4bcced46ef7cbff9feb2efb60c73a552860b"
+    },
+    {
+      "batch": 3,
+      "database": "dpp_c2_run_fence_20261012_lifecycle_batch3",
+      "tests": [
+        "TestRestoreCheckpointEpochChainsRemainIndependent",
+        "TestRestoreMissingGapAndWrongContextStayQuarantined",
+        "TestCopyMaterializationACKCannotHideForeignDiscovery",
+        "TestDeniedReconciliationRequiresFreshPresenceAndNewPhysicalIdentity",
+        "TestDispositionHoldAndDispatchSerializeBothOrders",
+        "TestEarlyCopyRecoveryRemainsPendingThenFindsOriginalTarget",
+        "TestFixtureBasisCompleteNineCopiesSingleApprovedSource",
+        "TestOccupancyReaderAndRestrictionSerializeBothOrders",
+        "TestPlanCommandRejectsForeignScopeAndRollsBackProofFailure",
+        "TestProcessingOutputReservedBeforePutAndReadyUsesSameFence",
+        "TestPinnedPhysicalStartRechecksRestrictionAndRejectsForgedGeneration",
+        "TestRecoveryAbsenceIsPartialUntilEveryExactReceipt",
+        "TestStorageJournalPhysicalCallsCostsAndHistory",
+        "TestDirectIssuedAndTransferPinCommitTogetherBeforeAnyBytes"
+      ],
+      "exitCode": 0,
+      "log": "run-fence-lifecycle-batch3.log",
+      "sha256": "e8b051b49aefa4e6f11d9bf628418f31c2ed1b92e219a7de40fd20e41b8b6c73"
+    },
+    {
+      "batch": 4,
+      "database": "dpp_c2_run_fence_20261012_lifecycle_batch4",
+      "tests": [
+        "TestArchiveRestoreCurrentWitnessAndRestrictions",
+        "TestRestoreFinalizeAndRestrictionSerializeBothOrders",
+        "TestCopyRecoveryMissingAmbiguousAndCrashNeverResend",
+        "TestDispositionStartUnknownObservationCostAndReplayAreSeparateFacts",
+        "TestDispositionReaderAndElapsedWindowsBlockNewAdmission",
+        "TestExactSendClaimSerializedAndLateRevocationKeepsCost",
+        "TestMigration60DownRestoresEntireMainCostAllocationGuard",
+        "TestOccupancyInspectionWaitsForNewHoldAndDBFactsAreImmutable",
+        "TestPlanConcurrentSameKeyHasOneHistory",
+        "TestFixtureReaderWaitsForBufferedOutputFlushOwner",
+        "TestFixtureReaderBindsAuthenticatedTransportCallerToCurrentAuthority",
+        "TestRecoveryRevocationAndRetryBudgetFailClosed",
+        "TestStorageJournalAtomicStartAndObservationProof"
+      ],
+      "exitCode": 0,
+      "log": "run-fence-lifecycle-batch4.log",
+      "sha256": "77710ba17c1e8ea0c1cf084793808b6c015557d664adfb0f22dca684bb7bef90"
+    }
+  ],
+  "full15mCommand": "FAIL/TOTAL_PACKAGE_TIMEOUT; preserved, not relabelled",
+  "moduleCoverage": "all other packages passed fullbudget run; all lifecycle tests passed these4 independent bounded groups"
+}

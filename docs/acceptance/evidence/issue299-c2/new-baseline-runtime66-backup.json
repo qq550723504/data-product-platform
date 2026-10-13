@@ -1,0 +1,180 @@
+{
+  "status": "PASS",
+  "backup": "C:\\Users\\Henry\\.codex\\worktrees\\issue299-c2\\data-product-platform\\.data\\c2-new-persistent\\backup-tools\\dpp-retention-backups\\20261012T045440Z",
+  "newSchemaLatest": 66,
+  "apiSha256": "c2e860ea9b49163986bbf9a55c6147da2d9b4bc1d0e19478f02a198b1a7b868d",
+  "sourceArchiveSha256": "ddd837e38a43680f481ed751095228ee1e7f53a70cb9b0945ee035ce31c1e0f6",
+  "credentialRestoreMode": "protected backup copies only",
+  "originalBackupPreserved": true,
+  "metadataIndependentRestore": "previous exact PG15 proof remains point-in-time, this credential refresh copied",
+  "coreSTS": "original finite credential naturally expired; no regrant, prior valid-time proof preserved",
+  "scope": "post-runtime66 new-baseline supplement; prior full metadata/auth point-in-time backup preserved; not restoration of original lost Core",
+  "postgres": [
+    {
+      "database": "dpp_ingestion_core",
+      "relations": 192,
+      "rows": 788.0,
+      "fingerprintMatch": true
+    },
+    {
+      "database": "postgres",
+      "relations": 0,
+      "rows": 0.0,
+      "fingerprintMatch": true
+    },
+    {
+      "database": "dpp_ingestion_source",
+      "relations": 3,
+      "rows": 30.0,
+      "fingerprintMatch": true
+    },
+    {
+      "database": "postgres",
+      "relations": 0,
+      "rows": 0.0,
+      "fingerprintMatch": true
+    }
+  ],
+  "roleACL": [
+    {
+      "kind": "core",
+      "securityMetadataMatch": true,
+      "ownerACLRestore": true,
+      "freshConnections": 3
+    },
+    {
+      "kind": "source",
+      "securityMetadataMatch": true,
+      "ownerACLRestore": true,
+      "freshConnections": 6
+    }
+  ],
+  "objects": {
+    "exactVersions": 8,
+    "versionSizePayloadHashesEqual": true
+  },
+  "redis": [
+    {
+      "keys": 5,
+      "restored": true,
+      "formatValid": true
+    }
+  ],
+  "hop": [
+    {
+      "kind": "Hop /tmp",
+      "extracted": true
+    },
+    {
+      "kind": "Hop /files",
+      "extracted": true
+    },
+    {
+      "kind": "Hop /staging",
+      "extracted": true
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "PostgreSQL",
+      "database": "dpp_ingestion_core",
+      "sha256": "A92D54CDD6A7848B6D08B02269715D116BB82EF36C507F3867658754B569776F",
+      "bytes": 1189223
+    },
+    {
+      "kind": "PostgreSQL",
+      "database": "postgres",
+      "sha256": "05C3074BDFCBCA853EC6D76573DC5FF879574D9D303665F9A93725EBA374A7A4",
+      "bytes": 1032
+    },
+    {
+      "kind": "PostgreSQL",
+      "database": "dpp_ingestion_source",
+      "sha256": "C58EA3EB13471C42167C3F0281581749610D3E501003CE31FA832B37465155FE",
+      "bytes": 5791
+    },
+    {
+      "kind": "PostgreSQL",
+      "database": "postgres",
+      "sha256": "834A5CD6FC1A62D939643CF3262AAF86FB97371C836947598EB3D125DF101744",
+      "bytes": 1032
+    },
+    {
+      "kind": "MinIO physical data",
+      "database": null,
+      "sha256": "010D32100E97F2E0566C7F32C346AF3EDB2F61CDCDE56FFF48FBF078C44EE145",
+      "bytes": 104448
+    },
+    {
+      "kind": "Redis RDB",
+      "database": null,
+      "sha256": "1B11D04284AAFD84E37C0F83EA4C0EBE131F632E453520D35AF3B6716A652C31",
+      "bytes": 822
+    },
+    {
+      "kind": "Hop /tmp",
+      "database": null,
+      "sha256": "B317E7103370772993185866F1FD3156EFA185B70F76E320F179AABAA92FF68D",
+      "bytes": 37376
+    },
+    {
+      "kind": "Hop /files",
+      "database": null,
+      "sha256": "0FAAC305F7C6E7C9177F867AB14B6D0D421CA8869EA9F2CF17FC26583CD0DE58",
+      "bytes": 1536
+    },
+    {
+      "kind": "Hop /staging",
+      "database": null,
+      "sha256": "71AF65DA3C18F7BD16251B718F15E16E97040F333EFFBF338CE65B290A43616A",
+      "bytes": 8192
+    }
+  ],
+  "retention": {
+    "status": "PASS",
+    "run_id": "4a6f20ee-0b8e-4820-835a-3d5b622b2410",
+    "containers": [
+      "dpp-pgi-b3-storage-4a6f20ee0b8e",
+      "dpp-pgi-b3-gateway-4a6f20ee0b8e",
+      "dpp-pgi-b3-core-4a6f20ee0b8e",
+      "dpp-pgi-b3-redis-4a6f20ee0b8e",
+      "dpp-pgi-4a6f20ee0b8e-source",
+      "dpp-pgi-4a6f20ee0b8e-hop"
+    ],
+    "volumes": [
+      "dpp-pgi-b3-storage-4a6f20ee0b8e-data",
+      "dpp-pgi-b3-core-4a6f20ee0b8e-data",
+      "dpp-pgi-b3-redis-4a6f20ee0b8e-data",
+      "dpp-pgi-4a6f20ee0b8e-source-data",
+      "dpp-pgi-4a6f20ee0b8e-hop-files",
+      "dpp-pgi-4a6f20ee0b8e-hop-tmp"
+    ],
+    "stoppedRetained": {
+      "dpp-pgi-b3-storage-4a6f20ee0b8e": "exited",
+      "dpp-pgi-b3-gateway-4a6f20ee0b8e": "exited",
+      "dpp-pgi-b3-core-4a6f20ee0b8e": "exited",
+      "dpp-pgi-b3-redis-4a6f20ee0b8e": "exited",
+      "dpp-pgi-4a6f20ee0b8e-source": "exited",
+      "dpp-pgi-4a6f20ee0b8e-hop": "exited"
+    },
+    "allBusinessTables": {
+      "dpp_ingestion_core": {
+        "relations": 192,
+        "sha256": "7722043e5478ad93a59632739ecb6919c0696e8e8454984cc2f02d21e85d04e4"
+      },
+      "dpp_ingestion_source": {
+        "relations": 3,
+        "sha256": "893a19132be10d934463bdcb6ca8622142dfd4fb68de1e9cc8758306bd151673"
+      }
+    },
+    "matchesFullBackup": true,
+    "exactNativeObjectVersions": 8,
+    "objectsVersionSizeHashMatch": true,
+    "redisPersistentKeys": 4,
+    "redisAOF": "yes / always",
+    "redisPersistentDumpHashesMatch": true,
+    "scope": "only new synthetic baseline; original lost Core NOT_RESTORED, no deletion/reseed"
+  },
+  "priorFullMetadataEvidence": "new-baseline-backup-restore.json, original-image PG15 / full owners / SCRAM",
+  "noDeletion": true
+}

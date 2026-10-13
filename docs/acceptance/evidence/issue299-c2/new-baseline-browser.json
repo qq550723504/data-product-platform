@@ -1,0 +1,217 @@
+{
+  "status": "PASS",
+  "run_id": "4a6f20ee-0b8e-4820-835a-3d5b622b2410",
+  "apiSha256": "013acc4f9b3607814e6c4d003c2540d33e48a322b12845b43dfce636bca31f7c",
+  "browser": "real Edge, production Next bundle",
+  "batch": "416a132c-3c4c-491b-8f50-8d869debcab2",
+  "rawVersions": [
+    "6663de05-f30d-4eff-baeb-7da45d1e5bec",
+    "0f8b2d63-6102-42e2-906f-a1dcfb72c7f8",
+    "967424ae-71d7-45b1-be18-0aa8f47ea91f"
+  ],
+  "rawRows": [
+    6,
+    10,
+    14
+  ],
+  "nativeExecution": "b76e0864-e1b8-4ed9-ac2f-8575ffee214f",
+  "curated": "f7c1233e-44ae-4fb9-a0a8-d31ab35caa95",
+  "negativeOriginal": "-999 retained in RAW and quarantine; RAW QA FAIL / REJECTED",
+  "curatedResult": "QA and compliance PASS / CERTIFIED, actual 640-byte download matches SHA256",
+  "schema": "one request MATCH; outage request retains five UNAVAILABLE and later MATCH, seven physical calls / seven typed costs",
+  "projection": [
+    {
+      "release": "2ee44279-bad5-4e66-8703-ef080eb1f801",
+      "state": "PUBLISHED",
+      "attempts": 1
+    },
+    {
+      "release": "70e3d32d-e80c-463a-ba06-d2677a0704d4",
+      "state": "PUBLISHED",
+      "attempts": 6
+    }
+  ],
+  "historicalProtection": {
+    "tables": 17,
+    "beforeOutage": {
+      "dataset_version": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"6663de05-f30d-4eff-baeb-7da45d1e5bec\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"967424ae-71d7-45b1-be18-0aa8f47ea91f\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"0f8b2d63-6102-42e2-906f-a1dcfb72c7f8\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"6b08d842-1121-41a0-8103-3f6f2069dc6b\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"f7c1233e-44ae-4fb9-a0a8-d31ab35caa95\"}'::jsonb",
+        "count": 5,
+        "sha256": "3b4cae0a100dc165a0f41b4d035761b8f6735019250d8ad574c62b61955830cb"
+      },
+      "dataset_version_lineage": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"688e243b-a71e-40d6-b70f-ecbef6db1f78\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"50580ac9-3b11-4acc-a1b1-35dd3830d949\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"687a2133-725a-4c0b-a734-2198875eeb3c\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"afff2c3c-2569-4864-97c8-604c98174018\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"d24573ba-d07a-4984-b3e4-7d0a8f585832\"}'::jsonb",
+        "count": 5,
+        "sha256": "db03ff46c96fc8b47cd2af43e9ad6f6bea5faabe2bfddbf4b13a760113a8df34"
+      },
+      "quality_result": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"ce012246-3f17-47e6-a9ab-4cd02beefe7a\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"151f5da5-539d-41dd-82ea-1d3252258e44\"}'::jsonb",
+        "count": 2,
+        "sha256": "682d7965c31803d45bc09c00d4c34675b00dd14bd2005ad21271ec5cd3ed5cb2"
+      },
+      "quality_finding": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"6be2e7f4-098a-4aaf-aa27-d04e1883c953\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"e0263c37-27af-4b77-90b2-40839c037d75\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"e68d91dc-2dcb-41fe-903f-695e31657e10\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"4ad5de2c-b1b5-44c1-9acd-6cb293e0cb99\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"c40bcf6f-9303-4038-9fe7-1135387e5eba\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"5a761bd0-f091-4aa1-a4df-e966bfa19419\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"a4261f69-7a07-4aa6-a71e-0f55905587ac\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"57e4e39f-55a8-4c26-8fcb-1cdb0cd06b7b\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"0138e67b-357d-4f8a-991d-f7727fcb0736\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"91ccde6d-18f2-4dcb-8014-b4585c292396\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"f3bc1924-dba7-47c5-8437-bf846720720d\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"0804ce49-9e4c-4c6e-9246-f8ac30e5fedb\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"00c74c37-8cb7-4eb8-a035-7c18475c83ca\"}'::jsonb",
+        "count": 13,
+        "sha256": "0efbfd9c392a3c81ddf9a7541eaff44c9d3843d3ea66a8b74446e2384ba4b436"
+      },
+      "compliance_result": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"0fa67d8b-9420-4829-8ffe-b6cd86c59488\"}'::jsonb",
+        "count": 1,
+        "sha256": "fc250bef8bfd98ec6e016eac3f94540ea7ef2abe26526a5195fac9982edb2655"
+      },
+      "dataset_certification": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"ffe2e315-420b-43a3-b1c2-e9ab50d1eac9\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"4ef46f79-854a-48a0-8a77-cc81e4ae4133\"}'::jsonb",
+        "count": 2,
+        "sha256": "a95d1cbbd99a020669569b973ca21faa2f93d95b09c6f863e89d67a3dd2e3c29"
+      },
+      "evidence_snapshot": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"d1ede449-23b3-4bae-bd6c-b4c71d87f58c\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"9b107e7b-2598-436e-95c0-8fee773927b4\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"4dbf05d0-6988-4317-854c-5875a926bfdb\"}'::jsonb",
+        "count": 3,
+        "sha256": "1c6ac3576a63192f06e97857b96aa5e7ad20f4538fa674a24eeea711aa6634ec"
+      },
+      "evidence_snapshot_item": {
+        "predicate": "to_jsonb(t) @> '{\"snapshot_id\":\"4dbf05d0-6988-4317-854c-5875a926bfdb\",\"evidence_id\":\"6eb981da-ce49-4a7b-bd1b-e078db9ff7d2\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"9b107e7b-2598-436e-95c0-8fee773927b4\",\"evidence_id\":\"6eb981da-ce49-4a7b-bd1b-e078db9ff7d2\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"d1ede449-23b3-4bae-bd6c-b4c71d87f58c\",\"evidence_id\":\"fa6de6be-9f2a-5451-a3f3-e9314d71b49a\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"9b107e7b-2598-436e-95c0-8fee773927b4\",\"evidence_id\":\"aaa687ba-2f3d-4819-80ce-1c914ac594de\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"9b107e7b-2598-436e-95c0-8fee773927b4\",\"evidence_id\":\"1b426cd8-aa3b-472d-a3d9-4c1c19cdb3f9\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"4dbf05d0-6988-4317-854c-5875a926bfdb\",\"evidence_id\":\"2ca1b850-a7f8-4080-a5ed-65936a378ca7\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"9b107e7b-2598-436e-95c0-8fee773927b4\",\"evidence_id\":\"2ca1b850-a7f8-4080-a5ed-65936a378ca7\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"4dbf05d0-6988-4317-854c-5875a926bfdb\",\"evidence_id\":\"1b426cd8-aa3b-472d-a3d9-4c1c19cdb3f9\"}'::jsonb",
+        "count": 8,
+        "sha256": "bca9f6a0209efe9d1077b9a8e3a54bbf527e6580b000dcf1930e56f6d14d4999"
+      },
+      "rights_snapshot": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\"}'::jsonb",
+        "count": 2,
+        "sha256": "6a352a4a1ef5e4ecf97c7c88cb5535cc06cdd2d3dacb770d43908376b8b08336"
+      },
+      "rights_snapshot_authorization": {
+        "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"authorization_id\":\"c2b5da8a-3a4a-4cee-9aed-b14f3c1caed7\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"authorization_id\":\"c2b5da8a-3a4a-4cee-9aed-b14f3c1caed7\"}'::jsonb",
+        "count": 2,
+        "sha256": "9b01bb488f923c4180fd53e4d3932c3e26a84931cf23bb9206a0f55df133a05b"
+      },
+      "rights_snapshot_declaration": {
+        "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"declaration_id\":\"66d93aa9-b34c-4059-bece-e28b3091a73e\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"declaration_id\":\"66d93aa9-b34c-4059-bece-e28b3091a73e\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"declaration_id\":\"a1b147b1-3a2e-438d-8b14-fe56a5df3e47\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"declaration_id\":\"a1b147b1-3a2e-438d-8b14-fe56a5df3e47\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"declaration_id\":\"f6447908-fb0b-4d18-85b3-831a26097a7a\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"declaration_id\":\"f6447908-fb0b-4d18-85b3-831a26097a7a\"}'::jsonb",
+        "count": 6,
+        "sha256": "90f3c7c685d926ed57626f759fdd7b22262ac61bcb348b66e0e5c9db51741534"
+      },
+      "rights_snapshot_provenance_binding": {
+        "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"binding_id\":\"7185cdc0-c676-45b9-b594-bc870988ac0b\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"binding_id\":\"7185cdc0-c676-45b9-b594-bc870988ac0b\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"binding_id\":\"a4ac52a2-a271-4783-a8b7-a032cf5ad4d1\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"binding_id\":\"a4ac52a2-a271-4783-a8b7-a032cf5ad4d1\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"binding_id\":\"aa28ef09-cdc4-4f9f-b732-74fa60c36625\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"binding_id\":\"aa28ef09-cdc4-4f9f-b732-74fa60c36625\"}'::jsonb",
+        "count": 6,
+        "sha256": "f0c2f40f11f183401b685e21a9388ab55024cf5645ed2a07a193ac7888740741"
+      },
+      "effective_rights_snapshot": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"086b65b0-a2df-55cd-a2a8-6f7e892c67ac\"}'::jsonb",
+        "count": 1,
+        "sha256": "4d99dad9734f5dd10e06fa6a06257df59c6b04b0eacbdd50df94853861628392"
+      },
+      "product_version": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"adec4582-e9eb-4f26-968c-097c969f1205\"}'::jsonb",
+        "count": 1,
+        "sha256": "ca434d218f9628cf461a5b29eb591bc8cc0aa63691f5caa1fa5f662c42f921a6"
+      },
+      "product_asset": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"b05fdc80-7b49-45f9-b32e-1f30d47dffc0\"}'::jsonb",
+        "count": 1,
+        "sha256": "64e6635f643ea9619a874eb916f4e85318e0281a7a59a19f978d39c685c9d141"
+      },
+      "product_release": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"2ee44279-bad5-4e66-8703-ef080eb1f801\"}'::jsonb",
+        "count": 1,
+        "sha256": "eae8176aaabfd114c6dc61bf438cfcb6ed0b84a5c868d5e0f7b3ae2317065e01"
+      },
+      "product_release_dataset": {
+        "predicate": "to_jsonb(t) @> '{\"release_id\":\"2ee44279-bad5-4e66-8703-ef080eb1f801\",\"dataset_version_id\":\"f7c1233e-44ae-4fb9-a0a8-d31ab35caa95\"}'::jsonb",
+        "count": 1,
+        "sha256": "45d060d8444289ca4c6184ebcc6ab746ec0b86fae656bb6fd97a6228c07a1c1a"
+      }
+    },
+    "afterRecovery": {
+      "dataset_version": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"6663de05-f30d-4eff-baeb-7da45d1e5bec\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"967424ae-71d7-45b1-be18-0aa8f47ea91f\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"0f8b2d63-6102-42e2-906f-a1dcfb72c7f8\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"6b08d842-1121-41a0-8103-3f6f2069dc6b\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"f7c1233e-44ae-4fb9-a0a8-d31ab35caa95\"}'::jsonb",
+        "count": 5,
+        "sha256": "3b4cae0a100dc165a0f41b4d035761b8f6735019250d8ad574c62b61955830cb"
+      },
+      "dataset_version_lineage": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"688e243b-a71e-40d6-b70f-ecbef6db1f78\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"50580ac9-3b11-4acc-a1b1-35dd3830d949\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"687a2133-725a-4c0b-a734-2198875eeb3c\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"afff2c3c-2569-4864-97c8-604c98174018\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"d24573ba-d07a-4984-b3e4-7d0a8f585832\"}'::jsonb",
+        "count": 5,
+        "sha256": "db03ff46c96fc8b47cd2af43e9ad6f6bea5faabe2bfddbf4b13a760113a8df34"
+      },
+      "quality_result": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"ce012246-3f17-47e6-a9ab-4cd02beefe7a\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"151f5da5-539d-41dd-82ea-1d3252258e44\"}'::jsonb",
+        "count": 2,
+        "sha256": "682d7965c31803d45bc09c00d4c34675b00dd14bd2005ad21271ec5cd3ed5cb2"
+      },
+      "quality_finding": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"6be2e7f4-098a-4aaf-aa27-d04e1883c953\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"e0263c37-27af-4b77-90b2-40839c037d75\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"e68d91dc-2dcb-41fe-903f-695e31657e10\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"4ad5de2c-b1b5-44c1-9acd-6cb293e0cb99\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"c40bcf6f-9303-4038-9fe7-1135387e5eba\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"5a761bd0-f091-4aa1-a4df-e966bfa19419\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"a4261f69-7a07-4aa6-a71e-0f55905587ac\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"57e4e39f-55a8-4c26-8fcb-1cdb0cd06b7b\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"0138e67b-357d-4f8a-991d-f7727fcb0736\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"91ccde6d-18f2-4dcb-8014-b4585c292396\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"f3bc1924-dba7-47c5-8437-bf846720720d\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"0804ce49-9e4c-4c6e-9246-f8ac30e5fedb\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"00c74c37-8cb7-4eb8-a035-7c18475c83ca\"}'::jsonb",
+        "count": 13,
+        "sha256": "0efbfd9c392a3c81ddf9a7541eaff44c9d3843d3ea66a8b74446e2384ba4b436"
+      },
+      "compliance_result": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"0fa67d8b-9420-4829-8ffe-b6cd86c59488\"}'::jsonb",
+        "count": 1,
+        "sha256": "fc250bef8bfd98ec6e016eac3f94540ea7ef2abe26526a5195fac9982edb2655"
+      },
+      "dataset_certification": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"ffe2e315-420b-43a3-b1c2-e9ab50d1eac9\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"4ef46f79-854a-48a0-8a77-cc81e4ae4133\"}'::jsonb",
+        "count": 2,
+        "sha256": "a95d1cbbd99a020669569b973ca21faa2f93d95b09c6f863e89d67a3dd2e3c29"
+      },
+      "evidence_snapshot": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"d1ede449-23b3-4bae-bd6c-b4c71d87f58c\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"9b107e7b-2598-436e-95c0-8fee773927b4\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"4dbf05d0-6988-4317-854c-5875a926bfdb\"}'::jsonb",
+        "count": 3,
+        "sha256": "1c6ac3576a63192f06e97857b96aa5e7ad20f4538fa674a24eeea711aa6634ec"
+      },
+      "evidence_snapshot_item": {
+        "predicate": "to_jsonb(t) @> '{\"snapshot_id\":\"4dbf05d0-6988-4317-854c-5875a926bfdb\",\"evidence_id\":\"6eb981da-ce49-4a7b-bd1b-e078db9ff7d2\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"9b107e7b-2598-436e-95c0-8fee773927b4\",\"evidence_id\":\"6eb981da-ce49-4a7b-bd1b-e078db9ff7d2\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"d1ede449-23b3-4bae-bd6c-b4c71d87f58c\",\"evidence_id\":\"fa6de6be-9f2a-5451-a3f3-e9314d71b49a\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"9b107e7b-2598-436e-95c0-8fee773927b4\",\"evidence_id\":\"aaa687ba-2f3d-4819-80ce-1c914ac594de\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"9b107e7b-2598-436e-95c0-8fee773927b4\",\"evidence_id\":\"1b426cd8-aa3b-472d-a3d9-4c1c19cdb3f9\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"4dbf05d0-6988-4317-854c-5875a926bfdb\",\"evidence_id\":\"2ca1b850-a7f8-4080-a5ed-65936a378ca7\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"9b107e7b-2598-436e-95c0-8fee773927b4\",\"evidence_id\":\"2ca1b850-a7f8-4080-a5ed-65936a378ca7\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"4dbf05d0-6988-4317-854c-5875a926bfdb\",\"evidence_id\":\"1b426cd8-aa3b-472d-a3d9-4c1c19cdb3f9\"}'::jsonb",
+        "count": 8,
+        "sha256": "bca9f6a0209efe9d1077b9a8e3a54bbf527e6580b000dcf1930e56f6d14d4999"
+      },
+      "rights_snapshot": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\"}'::jsonb",
+        "count": 2,
+        "sha256": "6a352a4a1ef5e4ecf97c7c88cb5535cc06cdd2d3dacb770d43908376b8b08336"
+      },
+      "rights_snapshot_authorization": {
+        "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"authorization_id\":\"c2b5da8a-3a4a-4cee-9aed-b14f3c1caed7\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"authorization_id\":\"c2b5da8a-3a4a-4cee-9aed-b14f3c1caed7\"}'::jsonb",
+        "count": 2,
+        "sha256": "9b01bb488f923c4180fd53e4d3932c3e26a84931cf23bb9206a0f55df133a05b"
+      },
+      "rights_snapshot_declaration": {
+        "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"declaration_id\":\"66d93aa9-b34c-4059-bece-e28b3091a73e\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"declaration_id\":\"66d93aa9-b34c-4059-bece-e28b3091a73e\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"declaration_id\":\"a1b147b1-3a2e-438d-8b14-fe56a5df3e47\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"declaration_id\":\"a1b147b1-3a2e-438d-8b14-fe56a5df3e47\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"declaration_id\":\"f6447908-fb0b-4d18-85b3-831a26097a7a\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"declaration_id\":\"f6447908-fb0b-4d18-85b3-831a26097a7a\"}'::jsonb",
+        "count": 6,
+        "sha256": "90f3c7c685d926ed57626f759fdd7b22262ac61bcb348b66e0e5c9db51741534"
+      },
+      "rights_snapshot_provenance_binding": {
+        "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"binding_id\":\"7185cdc0-c676-45b9-b594-bc870988ac0b\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"binding_id\":\"7185cdc0-c676-45b9-b594-bc870988ac0b\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"binding_id\":\"a4ac52a2-a271-4783-a8b7-a032cf5ad4d1\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"binding_id\":\"a4ac52a2-a271-4783-a8b7-a032cf5ad4d1\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"59249ee0-e3f2-4f71-911a-44fd29c7064f\",\"binding_id\":\"aa28ef09-cdc4-4f9f-b732-74fa60c36625\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"7bab88c2-798f-4bcc-9a43-d0d94d427e98\",\"binding_id\":\"aa28ef09-cdc4-4f9f-b732-74fa60c36625\"}'::jsonb",
+        "count": 6,
+        "sha256": "f0c2f40f11f183401b685e21a9388ab55024cf5645ed2a07a193ac7888740741"
+      },
+      "effective_rights_snapshot": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"086b65b0-a2df-55cd-a2a8-6f7e892c67ac\"}'::jsonb",
+        "count": 1,
+        "sha256": "4d99dad9734f5dd10e06fa6a06257df59c6b04b0eacbdd50df94853861628392"
+      },
+      "product_version": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"adec4582-e9eb-4f26-968c-097c969f1205\"}'::jsonb",
+        "count": 1,
+        "sha256": "ca434d218f9628cf461a5b29eb591bc8cc0aa63691f5caa1fa5f662c42f921a6"
+      },
+      "product_asset": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"b05fdc80-7b49-45f9-b32e-1f30d47dffc0\"}'::jsonb",
+        "count": 1,
+        "sha256": "64e6635f643ea9619a874eb916f4e85318e0281a7a59a19f978d39c685c9d141"
+      },
+      "product_release": {
+        "predicate": "to_jsonb(t) @> '{\"id\":\"2ee44279-bad5-4e66-8703-ef080eb1f801\"}'::jsonb",
+        "count": 1,
+        "sha256": "eae8176aaabfd114c6dc61bf438cfcb6ed0b84a5c868d5e0f7b3ae2317065e01"
+      },
+      "product_release_dataset": {
+        "predicate": "to_jsonb(t) @> '{\"release_id\":\"2ee44279-bad5-4e66-8703-ef080eb1f801\",\"dataset_version_id\":\"f7c1233e-44ae-4fb9-a0a8-d31ab35caa95\"}'::jsonb",
+        "count": 1,
+        "sha256": "45d060d8444289ca4c6184ebcc6ab746ec0b86fae656bb6fd97a6228c07a1c1a"
+      }
+    },
+    "scope": "pre-existing first release and exact membership protected across outage; second release and all new facts additionally protected by full backup/restore and retention checks"
+  },
+  "authority": "REVOKED; new/old source scan keys HTTP403, zero new facts/cost; browser download disabled, separate direct API negative command BLOCKED with zero dataset bytes",
+  "nativeContainers": "initial five attempts used prior --rm command; later failed/success containers retained; no retained service/data volume/object deletion",
+  "humanExplanation": "NOT_RUN / deferred",
+  "production": "NOT_RUN",
+  "originalLostCore": "FAIL / NOT_RESTORED / unavailable"
+}

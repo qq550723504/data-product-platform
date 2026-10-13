@@ -41,6 +41,11 @@ func (r *PostgresRepository) UpsertBinding(ctx context.Context, tx pgx.Tx, bindi
 	if binding.ID == uuid.Nil {
 		binding.ID = uuid.New()
 	}
+	// Follow observation finalization's parent-first resource -> binding order.
+	var resourceID uuid.UUID
+	if err := tx.QueryRow(ctx, `SELECT id FROM data_resource WHERE id=$1 FOR UPDATE`, binding.ResourceID).Scan(&resourceID); err != nil {
+		return metadatadomain.ResourceBinding{}, fmt.Errorf("lock binding resource: %w", err)
+	}
 	var persisted metadatadomain.ResourceBinding
 	var persistedMetadata []byte
 	err = tx.QueryRow(ctx, `

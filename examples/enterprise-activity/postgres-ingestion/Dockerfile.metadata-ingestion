@@ -1,0 +1,4 @@
+FROM python:3.11-slim
+# Same release as the already-admitted isolated OpenMetadata server. No fork.
+RUN pip install --no-cache-dir 'openmetadata-ingestion[postgres]==2.0.5'
+ENTRYPOINT ["python", "/adapter/native_schema_scan.py"]

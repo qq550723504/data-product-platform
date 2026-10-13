@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "sourceContainer": "dpp-c2-review-src-0613ce5ec359",
+  "sourceImage": "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "fqn": "dpp_c2_review_2b927c5b.dpp_c2_review.dpp_source.energy",
+  "nativeImage": "dpp-c2-metadata-ingestion:2.0.5",
+  "baseline": {
+    "externalId": "59690b85-46ec-491b-9ace-deae05ae7e29",
+    "externalFqn": "dpp_c2_review_2b927c5b.dpp_c2_review.dpp_source.energy",
+    "connectorHash": "29bb73df14e646f2f843ff52183e59a3e95650ebea4022d25b028dc3cde3bcae",
+    "startedAt": "2026-10-12T00:19:43.555532+00:00",
+    "completedAt": "2026-10-12T00:19:44.990687+00:00",
+    "columns": [
+      {
+        "name": "meter_id",
+        "type": "TEXT",
+        "constraint": "NOT_NULL"
+      },
+      {
+        "name": "source_company_id",
+        "type": "TEXT",
+        "constraint": "NOT_NULL"
+      },
+      {
+        "name": "company_name",
+        "type": "TEXT",
+        "constraint": "NOT_NULL"
+      },
+      {
+        "name": "reading_time",
+        "type": "TEXT",
+        "constraint": "NOT_NULL"
+      },
+      {
+        "name": "energy_kwh",
+        "type": "TEXT",
+        "constraint": "NOT_NULL"
+      }
+    ]
+  },
+  "missing": {
+    "exitCode": 1,
+    "resultEmitted": false,
+    "oldCatalogEntityStillPresent": true
+  },
+  "restored": {
+    "externalId": "59690b85-46ec-491b-9ace-deae05ae7e29",
+    "externalFqn": "dpp_c2_review_2b927c5b.dpp_c2_review.dpp_source.energy",
+    "connectorHash": "29bb73df14e646f2f843ff52183e59a3e95650ebea4022d25b028dc3cde3bcae",
+    "startedAt": "2026-10-12T00:19:54.937729+00:00",
+    "completedAt": "2026-10-12T00:19:55.674551+00:00",
+    "columns": [
+      {
+        "name": "meter_id",
+        "type": "TEXT",
+        "constraint": "NOT_NULL"
+      },
+      {
+        "name": "source_company_id",
+        "type": "TEXT",
+        "constraint": "NOT_NULL"
+      },
+      {
+        "name": "company_name",
+        "type": "TEXT",
+        "constraint": "NOT_NULL"
+      },
+      {
+        "name": "reading_time",
+        "type": "TEXT",
+        "constraint": "NOT_NULL"
+      },
+      {
+        "name": "energy_kwh",
+        "type": "TEXT",
+        "constraint": "NOT_NULL"
+      }
+    ]
+  },
+  "checks": [
+    "native healthy/unchanged table emitted exact typed source record",
+    "renamed source with markDeletedTables=false rejects stale cached table",
+    "source restored returns original identity/columns"
+  ],
+  "scope": "new empty synthetic PG source, native Adapter contract; not Core entitlement or browser acceptance; original C2 source/Core facts untouched",
+  "adapterSha256": "241d00de8409a640fa81daf76ab40e74971a0723a5192b2c96e4853b8fa73b8d",
+  "nativeSdkUnitTests": "4 PASS; mocked workflow/http with installed real SDK models; not live provider acceptance"
+}

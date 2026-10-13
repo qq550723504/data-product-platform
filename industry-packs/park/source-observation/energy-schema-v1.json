@@ -1,0 +1,13 @@
+{
+  "ruleRef": "park/source-observation/energy-schema-v1.json",
+  "version": "1.0.0",
+  "scope": "dpp_ingestion_source.dpp_source.energy",
+  "comparison": "EXACT_ORDERED_COLUMNS",
+  "columns": [
+    {"name":"meter_id","type":"TEXT","constraint":"NOT_NULL"},
+    {"name":"source_company_id","type":"TEXT","constraint":"NOT_NULL"},
+    {"name":"company_name","type":"TEXT","constraint":"NOT_NULL"},
+    {"name":"reading_time","type":"TEXT","constraint":"NOT_NULL"},
+    {"name":"energy_kwh","type":"TEXT","constraint":"NOT_NULL"}
+  ]
+}

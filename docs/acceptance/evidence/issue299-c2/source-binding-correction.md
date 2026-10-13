@@ -1,0 +1,7 @@
+Source-binding correction discovered during the actual C2 rebase audit.
+
+The earlier private `combo-ready-epoch66625210-source` was labelled D1 `66625210` + C2 `f8404f01`, but an exact normalized source comparison against actual main/rebased Git blobs shows it still contains old D1 early-recovery logic, the 30-second task budget and the old migration64 terminal constraint. Its earlier full-module PASS is a result for that archived mixed snapshot; it does not prove the labelled final D1 combination. The Ready checkpoint/source-manifest labels in comments6121802253 and6122034680 and the corresponding PR-description combined-source claim are corrected accordingly. Original files/logs/hashes are retained, not overwritten or relabelled as current PASS.
+
+This correction does not change the verified D1 candidate tree `66625210` / merge tree `c1a3463e`, exact current-head review,11/11PR CI or matching11/11main push CI. Those independently bind the actual D1 source. It also does not erase earlier native acceptance tied to its original phase source, or restore the lost original C2 Core.
+
+The actual C2 rebase is now against main `c1a3463ee110e3cb7dadb0004b0942c001f19ffe`. Its archive is generated directly from Git; D1 lifecycle files and migrations60–64 are exactly equal to main. New fresh/main64→66/full-module PostgreSQL/race/vet and current-head CI/review will establish the real combined candidate. C2 stays Draft; no merge, retained runtime upgrade, provider work/deletion or Issue closure is implied by this correction.

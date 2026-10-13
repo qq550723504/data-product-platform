@@ -1,0 +1,100 @@
+{
+  "c2Status": "PASS local; exact-HEAD CI/review requested separately",
+  "baseMain": "1892cd76c4ee578896ddfb3c6f4a7252bfacc51b",
+  "fileSha256": {
+    "apps/platform/internal/metadata/application/schema.go": "de2068915aa3406a82dd729c5d9ba53be6a937fa1300e4b8f570d4cbacbf1851",
+    "apps/platform/internal/metadata/application/schema_binding_integration_test.go": "950455aec9f9a108d55064a8f657ccdd609a70031f331f6cba29d60f36706271",
+    "apps/platform/internal/metadata/application/schema_retry_integration_test.go": "c3b68788293c59721bc4a318b6d6fba87261fa9af3b2da391ca8f66a436cd923",
+    "apps/platform/internal/metadata/infrastructure/postgres_repository.go": "5ed87571b11c2bafe9ad45bb22c477cb98d6aa8ef1555fda2bf69cc94dcebf2a",
+    "apps/platform/internal/metadata/transport/http/schema.go": "99e083eca3f430a7cf74ecf5fd92ddf083bb5ab075e1ad2039a08b22b6cdccb0",
+    "apps/platform/internal/metadata/transport/http/schema_history_integration_test.go": "82e71b786ca834403419842539d2ac93f25657d4bfbb0662d6ac6baafb176beb",
+    "apps/platform/internal/platform/migration/t3b2_down_integration_test.go": "59a3f1320bc0a5216fff83b9c6e858f9c98d0903ef9f8bbd4acafd7a1368717f",
+    "examples/enterprise-activity/postgres-ingestion/b2_smoke.py": "669ac5aed0e2c47cebf05885a7faad211bad55f3450294c87d43400e60add169"
+  },
+  "metadataPostgresRace": "PASS; real PostgreSQL transactions/HTTP with controlled Ports/principal; not provider/browser acceptance",
+  "bindingLockCases": [
+    "observation first: native refresh/demotion waits until commit",
+    "observation first: direct identity mutation waits until commit",
+    "mutation first: immutable DENIED; no stale MATCH"
+  ],
+  "disabledHttpHistory": "request/DRIFT/handling preserved with no metadata Service or no SchemaService; anonymous/foreign workspace denied",
+  "downGuard": "PASS -race -count=5; existing scratchDatabase(18); no production DDL change",
+  "mainPlus65FullPostgresSuite": "PASS; all packages; provider opt-ins SKIP separate",
+  "goVet": "PASS",
+  "d1Combination": {
+    "head": "2cb3c96dc6cb842cd7c57174ee35fc7107d31a30",
+    "fullPostgresSuite": "FAIL",
+    "reason": "D1/60 drops external provider/usage CostAllocation subject and guard; externalintegration/integration fails before provider dispatch/cost",
+    "subjectSupport": {
+      "external_provider_call_id": false,
+      "external_usage_call_id": false,
+      "lifecycle_storage_call_id": true,
+      "source_schema_attempt_id": true
+    },
+    "owner": "#307 writer notified; C2 does not patch dependency in migration65; final stable D1 rebase/combination remains Ready gate"
+  },
+  "mainPlus65SubjectSupport": {
+    "external_provider_call_id": true,
+    "external_usage_call_id": true,
+    "lifecycle_storage_call_id": false,
+    "source_schema_attempt_id": true
+  },
+  "b2LiveReplay": {
+    "status": "PASS",
+    "coreAdmission": "PASS",
+    "b3": "NOT_RUN",
+    "baselineGitHead": "f400587df4027672df152a4b156536ecb5dd73e1",
+    "checks": {
+      "PGI05_manifest_and_bytes": "PASS",
+      "PGI06_commit_reply_loss": "PASS",
+      "PGI06_concurrent_admission_replay": "PASS",
+      "PGI06_failed_slot_recovery": "PASS",
+      "PGI06_put_reply_loss": "PASS",
+      "PGI06_transaction_rollback_recovery": "PASS",
+      "PGI07_admission_rechecks_authority": "PASS",
+      "PGI07_failed_attempt_recovery": "PASS",
+      "PGI07_fresh_authority_source_config": "PASS",
+      "PGI07_restart_identity_loss": "PASS",
+      "PGI07_status_identity_required": "PASS",
+      "PGI07_unknown_register": "PASS",
+      "PGI07_unknown_start_recovery": "PASS",
+      "PGI07_unknown_status": "PASS",
+      "attempt_cost_history": "PASS",
+      "buffered_write_unconfirmed": "PASS",
+      "core_fact_secret_isolation": "PASS",
+      "definite_no_dispatch_retry": "PASS",
+      "definite_no_start_retry": "PASS",
+      "dispatch_cost_before_result": "PASS",
+      "dispatch_lock_reply_preserved": "PASS",
+      "immutable_history": "PASS",
+      "invocation_projection_recovery": "PASS",
+      "native_attempt_identity_isolation": "PASS",
+      "runtime_reload_requires_restart": "PASS",
+      "server_owned_target_binding": "PASS",
+      "source_endpoint_binding": "PASS",
+      "unobserved_claim_cost_unknown": "PASS",
+      "unsent_status_remains_unknown": "PASS",
+      "unsupported_https_rejected": "PASS",
+      "provider_secret_mount_boundaries": "PASS",
+      "source_to_hop_to_core_original_values": "PASS",
+      "physical_call_cost_correspondence": "PASS",
+      "secret_isolation": "PASS"
+    },
+    "cleanup": "PASS",
+    "scope": "synthetic fixtures; quiescent source; controlled authenticated HTTP; real local providers",
+    "testedHarnessSha256": "669ac5aed0e2c47cebf05885a7faad211bad55f3450294c87d43400e60add169",
+    "explicitNetworks": [
+      {
+        "name": "dpp-pgi-ecd7c1443b39-net",
+        "subnet": "10.233.23.0/24"
+      },
+      {
+        "name": "dpp-pgi-b2-storage-private-ecd7c1443b39",
+        "subnet": "10.233.24.0/24"
+      }
+    ],
+    "oldCiFailure": "not reproduced locally; old CI did not preserve actual B2 assertion; bounded secret-checked failure logging added"
+  },
+  "originalC2Core": "retained; source authorization remains revoked; no regrant or frozen fact overwrite",
+  "humanExplanation": "NOT_RUN; deferred"
+}

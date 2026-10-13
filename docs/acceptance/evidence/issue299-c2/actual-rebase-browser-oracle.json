@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "codeHead": "a793f237336c21f397e9daf557ea6d1ab53ab1f1",
+  "relations": 192,
+  "allCoreRowsBeforeAfterEqual": true,
+  "coreFingerprintSHA256": "7722043e5478ad93a59632739ecb6919c0696e8e8454984cc2f02d21e85d04e4",
+  "publishedHistory": {
+    "published": 2,
+    "ids": [
+      "2ee44279-bad5-4e66-8703-ef080eb1f801",
+      "70e3d32d-e80c-463a-ba06-d2677a0704d4"
+    ]
+  },
+  "newNativeWorkOrCost": 0,
+  "originalNewBaselineCoreExactlyMatchesBackup": true,
+  "sourceRelations": 3,
+  "originalSourceExactlyMatchesBackup": true,
+  "sourceFingerprintSHA256": "893a19132be10d934463bdcb6ca8622142dfd4fb68de1e9cc8758306bd151673",
+  "scope": "actual candidate API/web read, denied scan and HTTP503/recovery; no worker, native scan, source regrant, retained schema upgrade or provider lifecycle actions",
+  "oldLostCore": "FAIL/NOT_RESTORED"
+}

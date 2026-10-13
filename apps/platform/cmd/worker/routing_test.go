@@ -58,7 +58,7 @@ func TestNewOutboxDispatcherWithGovernanceProvider(t *testing.T) {
 	if dispatcher.RouterVersion() != routing.VersionFor(true) {
 		t.Fatalf("router version = %q, want %q", dispatcher.RouterVersion(), routing.VersionFor(true))
 	}
-	if names := dispatcher.HandlerNames(); len(names) != 4 || names[0] != routing.HandlerExecutionQueue || names[1] != routing.HandlerExternalPublicationQueue || names[2] != routing.HandlerLifecycleRecoveryQueue || names[3] != routing.HandlerMetadataProjection {
+	if names := dispatcher.HandlerNames(); len(names) != 5 || names[0] != routing.HandlerExecutionQueue || names[1] != routing.HandlerExternalPublicationQueue || names[2] != routing.HandlerLifecycleRecoveryQueue || names[3] != routing.HandlerMetadataProjection || names[4] != routing.HandlerSourceSchemaObservation {
 		t.Fatalf("handler names = %v, want [%s %s]", names, routing.HandlerExecutionQueue, routing.HandlerMetadataProjection)
 	}
 }
@@ -107,10 +107,10 @@ func (f enqueuerFunc) EnqueueExecution(ctx context.Context, id uuid.UUID) error 
 // require, otherwise startup validation is vacuous.
 func TestWorkerHandlerRegistrationsMatchRoutingNames(t *testing.T) {
 	registrations := workerHandlerRegistrations(&stubProjector{}, stubEnqueuer{}, stubEnqueuer{}, stubEnqueuer{}, slog.New(slog.DiscardHandler))
-	if len(registrations) != 4 {
-		t.Fatalf("registrations = %d, want 1", len(registrations))
+	if len(registrations) != 5 {
+		t.Fatalf("registrations = %d, want 5", len(registrations))
 	}
-	if registrations[0].Name != routing.HandlerExecutionQueue || registrations[1].Name != routing.HandlerExternalPublicationQueue || registrations[2].Name != routing.HandlerLifecycleRecoveryQueue || registrations[3].Name != routing.HandlerMetadataProjection {
+	if registrations[0].Name != routing.HandlerExecutionQueue || registrations[1].Name != routing.HandlerExternalPublicationQueue || registrations[2].Name != routing.HandlerLifecycleRecoveryQueue || registrations[3].Name != routing.HandlerMetadataProjection || registrations[4].Name != routing.HandlerSourceSchemaObservation {
 		t.Fatalf("registration names = %q/%q, want %q/%q", registrations[0].Name, registrations[1].Name, routing.HandlerExecutionQueue, routing.HandlerMetadataProjection)
 	}
 	if registrations[0].Handle == nil {

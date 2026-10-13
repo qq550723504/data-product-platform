@@ -1,0 +1,23 @@
+{
+  "status": "PASS local; exact current-HEAD remote checks separate",
+  "baseMain": "1892cd76c4ee578896ddfb3c6f4a7252bfacc51b",
+  "fileSha256": {
+    "apps/platform/internal/metadata/application/schema.go": "3537bfb32265ef57579561f7cb3d0fc150d234229c01a9874110bc5b71635acd",
+    "apps/platform/internal/metadata/application/schema_retry_integration_test.go": "9690ac8a83d1bbdd18567e245a1c6e6e41ca2c53c148a92ee36d42cada0c126d"
+  },
+  "database": "fresh main+C2/65; retained original Core not used",
+  "scope": "Real PostgreSQL transaction/cost/replay with controlled Observer and entitlement Port; not live provider/browser acceptance",
+  "checks": [
+    "empty or foreign result connector hash never becomes MATCH/DRIFT",
+    "UNAVAILABLE preserves invocation cost",
+    "current Plan A gates cannot accept result from contract B",
+    "same request recovers to MATCH only with frozen A hash",
+    "two real controlled Port calls produce two typed costs; success replay duplicates neither"
+  ],
+  "metadataRace": "PASS",
+  "goSuite": "PASS; DSN-free integration SKIP separate",
+  "goVet": "PASS",
+  "regressionLog": "=== RUN   TestSourceSchemaResultUsesFrozenConnectorContract\n=== RUN   TestSourceSchemaResultUsesFrozenConnectorContract/result_hash_\n=== RUN   TestSourceSchemaResultUsesFrozenConnectorContract/result_hash_cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\n--- PASS: TestSourceSchemaResultUsesFrozenConnectorContract (0.26s)\n    --- PASS: TestSourceSchemaResultUsesFrozenConnectorContract/result_hash_ (0.13s)\n    --- PASS: TestSourceSchemaResultUsesFrozenConnectorContract/result_hash_cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc (0.13s)\n=== RUN   TestBindingAndProductReleasedProjectionAreRetrySafe\n--- PASS: TestBindingAndProductReleasedProjectionAreRetrySafe (0.09s)\n",
+  "d1Gate": "2cb3c96d full combination remains FAIL due D1/60 external cost subjects; writer notified; final D1 rebase/combination required before Ready",
+  "humanExplanation": "NOT_RUN"
+}

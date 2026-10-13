@@ -1,0 +1,117 @@
+{
+  "status": "PASS",
+  "base": "c1a3463ee110e3cb7dadb0004b0942c001f19ffe",
+  "codeHead": "a793f237336c21f397e9daf557ea6d1ab53ab1f1",
+  "sourceBinding": "Git archive, not manually composed scratch source",
+  "allD1LifecycleAndMigrations60to64EqualActualMain": true,
+  "goSQLFiles": 633,
+  "sourceManifest": {
+    "file": "actual-rebase-source-manifest.json",
+    "sha256": "2e46ce5f43dcde57d1a5e4b3aa2014ef967a7e08406170f5e3c240ee131fe680",
+    "originalPrivateManifestSHA256": "8ebb4d27e9cca1ffa165eafd64be436f6c2c95024d07abdd0e10e4001a98e1c1"
+  },
+  "routingVersion": "c1-v27+ext1+exec1+usage1+rem1+life2+schema1",
+  "registrations": {
+    "withProviders": [
+      "execution-queue",
+      "external-publication-queue",
+      "lifecycle-recovery-queue",
+      "metadata-projection",
+      "source-schema-observation"
+    ],
+    "withoutProviders": [
+      "execution-queue",
+      "external-publication-queue",
+      "lifecycle-recovery-queue"
+    ]
+  },
+  "checks": {
+    "fullModuleRealPostgresRace": "PASS; go test -race -p 4 -count=1 ./...; optional native engine opt-ins not enabled",
+    "vet": "PASS",
+    "webBuild": "PASS; npm.cmd run build including existing unit suites and production Next",
+    "fresh66": "PASS",
+    "main64to66": "PASS",
+    "empty66to65to64thenUp": "PASS",
+    "main64CostConstraintExact": "PASS",
+    "costGuardFunction": "PASS; definitions exactly equal after CRLF-only normalization, not raw-byte equal",
+    "destructive64Down": "FAIL_CLOSED; complete schema unchanged",
+    "populated66Down": "FAIL_CLOSED; 18 real attempt/runtime facts and cost/migration hashes unchanged"
+  },
+  "logSHA256": {
+    "actual-rebase-full-pg-race.log": "f051b5297afa47ca78ac53fb08f2ac54ab64628174d4ea6419c41be15b3137fc",
+    "actual-rebase-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh66-install.log": "1fc677df14370b8483cf6d440ddc1796b8fbfd4f8e832511591a55e788280496",
+    "main64-install.log": "82a313c8fb3392b0a34e837d60c87fecf60e29fb8f7156b481856b0c8b641bd9",
+    "main64-upgrade66.log": "07c998f698fda3b1b548d9a9d19ff8a487f11e23dad5272e33ef6d72ce43ebd1",
+    "migration-checks.log": "c7866f6b75eaf5e3f5bc46f19df8108bf32811127e54e33edb53b6e0bef3c317",
+    "web-build.log": "430e844fa28b2adc14dd1f63186ffe8bb78278d7509adadad85077bff52b831c"
+  },
+  "binarySHA256": {
+    "api": "4dbfef968b4706b5b6e878be8106c649993555e119a8f721b524952fe472558b",
+    "worker": "8451e364939370483d79449356bf9f694fdd751a0e61e540e1d1fb6235307526"
+  },
+  "browser": {
+    "engine": "real Edge via computer-use",
+    "database": "native current schema plus new-baseline backup data in isolated clone; all constraints validated",
+    "threeRAWAndManifest": "PASS; existing ACCEPTED batch416a132c-3c4c-491b-8f50-8d869debcab2;6/10/14 rows",
+    "scanClick": "SCHEMA_AUTHORITY_DENIED",
+    "rawQualityCertification": "FAIL/REJECTED; QUALITY_GATE_NOT_PASSED",
+    "curatedGates": "usability ALLOWED / certification ALLOWED / entitlement BLOCKED; download disabled",
+    "metadataSequence": [
+      "real upstream OBSERVED1.1",
+      "candidate transport HTTP503; STALE/UNKNOWN, historical scans explicitly non-current",
+      "real upstream OBSERVED1.1 recovered"
+    ],
+    "metadataProxy": {
+      "requests": [
+        {
+          "method": "GET",
+          "url": "/v1/tables/name/dpp_source.dpp_ingestion_source.dpp_source.energy?fields=owners,tags,extension",
+          "body": ""
+        },
+        {
+          "method": "GET",
+          "url": "/v1/tables/name/dpp_source.dpp_ingestion_source.dpp_source.energy?fields=owners,tags,extension",
+          "body": ""
+        },
+        {
+          "method": "GET",
+          "url": "/v1/tables/name/dpp_source.dpp_ingestion_source.dpp_source.energy?fields=owners,tags,extension",
+          "body": ""
+        }
+      ],
+      "responses": 2,
+      "faultScope": "only candidate governance HTTP transport; actual OpenMetadata not stopped; no native scanner"
+    },
+    "noNativeWorkOrCost": true,
+    "coreRelationsUnchanged": 192,
+    "publishedReleasesProtected": 2,
+    "sourceRelationsUnchanged": 3,
+    "candidateProcesses": "owned API/Next/gateway/proxy stopped after acceptance; no worker started",
+    "retainedTrial": "untouched, existing URL59320; no migration or restart this phase",
+    "notClaimed": [
+      "new native scanner success",
+      "full happy-path re-certification/download on this code",
+      "fresh projection retry",
+      "restoration of lost original Core"
+    ]
+  },
+  "auxiliaryChange": "Existing FaultProxy accepts explicit JSON content type for governance transport; its Hop XML default stays unchanged. No new fault service/framework.",
+  "scope": "Draft C2 rebase/local verification only; no Ready, merge, Issue close, deployment, source regrant, provider deletion or retained environment/schema/volume/backup changes",
+  "oldComboReadyApplicability": "INVALID_BINDING_FOR_CURRENT_D1; old logs retained, not relabelled",
+  "oldCore": "FAIL/NOT_RESTORED",
+  "humanExplanation": "NOT_RUN/deferred",
+  "exactHeadCIReview": "separate remote gate after publishing final docs/helper commit",
+  "publicEvidenceSHA256": {
+    "actual-rebase-migrations.json": "6c86606874adc5698b13580f6fdd20d5b4f77abb6a68c14979f16ea9ad41885f",
+    "actual-rebase-cost-guard-format.json": "b84a84a9d15a697263986091b97387988bc018e8759a6c5f885222404557fa5d",
+    "actual-rebase-browser-oracle.json": "62a80ff822173a759dc9f675a289bc3e81db1ef185656bed87f3b0d01b2e1c6a",
+    "actual-rebase-browser-schema.json": "c1f450150614f751e8a18f163a0d4af0fb075a6f3ff55022b595c77f60ca72a2",
+    "source-binding-correction.md": "0e2dff80c4eac93536fbe2bf2b1c808e4b3c463cdff5d0bf865c5deb14082b88",
+    "actual-rebase-source-blocked.jpg": "d5c95f8fc9ab1b0fdcb0db8ec4b5c75c9adba513afa5ca56bf36637c1fb39e77",
+    "actual-rebase-current-gates.jpg": "7cf28e0f8100a4c723d1a2b22ccb84cd8a04efd1805c44877cdb20207c476507",
+    "actual-rebase-raw-rejected.jpg": "7b000c5bcc6180a629fc28e98c835306740515233c491d1f52bd770dc1457428",
+    "actual-rebase-metadata-down.jpg": "44f60d112f450a87bc06470b1753b927a06d3e2ce121d87726060d6ba8dc5dff",
+    "actual-rebase-metadata-recovered.jpg": "feab8a193c081efc6d0270d3f9d646590724c55073b7e1a8ee5c856575f40153"
+  }
+}
