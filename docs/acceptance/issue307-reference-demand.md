@@ -10,6 +10,40 @@ foreign 同名表及 control 表新 FK 列的真实 PG 负例 PASS。对封存�
 证据单列于 [qualification check](evidence/issue307-d1/reference-qualification-check.json)。
 本轮 Draft，不 Ready/merge/deploy/close #307；完整 D1 未接受。
 
+## 2026-10-14 closure：首次登记与 guard qualification
+
+本轮发现并修复两个共享 admission invariant 的遗漏：
+
+- `f5476e0b4fa4ece062fc89aaf417ef8af5a943b0`：原 source guard 在未发现
+  fixture copy 时不获取 fence；未提交引用可以跨越首次登记。现在所有新
+  DatasetVersion 引用先取得其 workspace fence，再查询 copy registry。
+  首次 copy 登记使用同一 fence，原引用在 commit 后仍阻断 disposition。
+  非 fixture 引用写入也取得该短事务锁，这是首次登记串行化的必要部分。
+- `0b88e47c92d69d4b783a90f678d128a79bedccdf`：原检查只看 trigger name /
+  function / enabled，缺失参数、错列、仅 INSERT、AFTER 或 WHEN filter 会
+  被误认为有效 guard。现在验证完整 BEFORE ROW INSERT/UPDATE + exact column /
+  argument + no WHEN contract，不符合即 UNKNOWN，即使当前引用表为空。
+
+修复前：首次登记两个顺序均未到达 parent lock barrier；5 个错误 trigger
+配置均被误判 SATISFIED。失败日志独立保留。修复后：两个首次登记顺序观察
+真实 PostgreSQL lock wait，原引用仍 DENIED；6 个错误 trigger 配置均 UNKNOWN。
+owner release / insertion / pending-copy / exact absence 等 targeted PG race
+检查 PASS（91.570s，另加 wrong-update-column 10.574s）；全模块 race 的
+无外部服务模式 PASS，未配置 provider/PG 的用例为 SKIP；vet PASS。
+
+本轮只读检查封存 native Core：27 个关系 / 27 个 qualified guards，
+classification delta=0、provider I/O=0、mutation=0。native source 仍是
+a7116c35；没有将该 Core 升级为新 SQL67，也没有重跑 native binary。
+全模块真实 PG 使用冻结 f5476e0b 源码、新隔离数据库与既有专属 named-volume
+测试服务，`go test -race -count=1 -p 1 -json ./...` exit0，89 个测试包
+PASS（lifecycle application 584.130s）；未配置其他外部服务的用例为 SKIP。
+最终 metadata 检查在单独新 scratch DB 验证。具体结果及压缩完整日志
+绑定见 [closure evidence](evidence/issue307-d1/reference-closure-check.json)。
+
+上一 HEAD269fe15e 的 PR CI run38425913437 为 11/11 SUCCESS；后续 HEAD 的
+CI 必须单独核对。这是 PR CI，不是 main push CI。本轮真实 DELETE=0，
+完整 D1 仍未接受，原 108 回执 manifest 和原失败/封存环境不变。
+
 | 层次 | 结果及范围 |
 | --- | --- |
 | Domain/App | PASS；八类强类型引用，owner capability/source/workspace 校验，显式 quiescence/loss，fingerprint/replay，append-only Event/Audit/Evidence/Outbox |
