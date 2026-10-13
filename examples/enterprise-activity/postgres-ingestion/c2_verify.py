@@ -11,7 +11,7 @@ from c1_verify import Oracle, digest, history
 class C2Oracle(Oracle):
     def __init__(self,runtime):
         super().__init__(runtime)
-        self.profile=json.loads((self.private/'schema-profile.json').read_text())
+        self.profile=json.loads((self.private/'schema-profile.json').read_text(encoding='utf-8'))
         self.resource=self.profile['plan']['resourceId']
         self.base=f'/data-resources/{self.resource}/schema-observations?workspaceId={self.ws}'
     def command(self,path,method='POST',key=None,body=None,authorized=True):
@@ -28,7 +28,7 @@ class C2Oracle(Oracle):
             return response.status,json.loads(raw) if raw else None
 
 def snapshot(o,output,previous=None):
-    prior=json.loads(previous.read_text()) if previous else None
+    prior=json.loads(previous.read_text(encoding='utf-8')) if previous else None
     frozen=history(o,prior['history'] if prior else None)
     schema={t:o.rows(t) for t in ('source_schema_request','source_schema_attempt','source_schema_observation','source_schema_handling')}
     if prior:
@@ -46,7 +46,7 @@ def snapshot(o,output,previous=None):
         'checks':['17 nonempty historical tables unchanged' if prior else '17 nonempty historical tables captured',
             'prior source request/attempt/observation/handling bytes unchanged','typed cost per physical native invocation'],
         'nativeObservationStatuses':[v['status'] for v in schema['source_schema_observation']]}
-    output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,ensure_ascii=False,indent=2))
+    output.parent.mkdir(parents=True,exist_ok=True);output.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8',newline='\n')
     print(json.dumps({'status':'PASS','historyTables':len(frozen),'requests':len(schema['source_schema_request']),
         'attempts':len(attempts),'invocations':len(costs),'statuses':report['nativeObservationStatuses']}))
 
@@ -72,7 +72,7 @@ def stress(o,output):
         'successful replay causes zero new physical calls or business facts','missing credential and foreign workspace rejected',
         'caller source/consumer override rejected','eight concurrent handling replays preserve one fact',
         'changed same-key handling reason rejected']}
-    output.write_text(json.dumps(report,indent=2));print(json.dumps(report))
+    output.write_text(json.dumps(report,indent=2),encoding='utf-8',newline='\n');print(json.dumps(report))
 
 def concurrent(o,output):
     """Two upgraded dispatchers; two distinct real requests, no fake results."""
@@ -106,7 +106,7 @@ def concurrent(o,output):
             'intervals':[{'attemptId':a['id'],'start':a['started_at'],'recorded':v['recorded_at']} for a,v in ordered],
             'checks':['two upgraded dispatchers active for distinct native requests; log oracle identifies dispatch owners','same source scan intervals do not overlap',
                 'both native discoveries MATCH; each physical invocation charged once']}
-        output.write_text(json.dumps(report,indent=2));print(json.dumps(report))
+        output.write_text(json.dumps(report,indent=2),encoding='utf-8',newline='\n');print(json.dumps(report))
     finally:
         worker.terminate();worker.wait(timeout=10)
 

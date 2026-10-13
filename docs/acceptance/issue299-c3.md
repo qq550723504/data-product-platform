@@ -89,6 +89,13 @@ semantic hash 不变；原有限 Core STS 自然到期，未重新授权或声�
 [artifact SHA256](evidence/issue299-c3/artifact-hashes.json)。原 harness 的过强断言/重复
 验证容器名称冲突保留为 FAIL；针对声明的 invariants 的独立验证不重标这些命令。
 
+PR #316 首次评审发现公开回执编码/哈希验证 FAIL：Windows 默认 GBK 导出了一条
+中文处置理由，Git CRLF→LF 归一化又使 11 份 JSON 的提交字节与工作区哈希不同。
+现有 C2 oracle 改为显式 UTF-8/LF 导出，并从保留 Core 只读重新导出；全部字段、
+17 组历史和处置理由与原事实完全相同，零业务修改。该证据目录使用 LF Git 属性，
+清单按最终字节重算；12 份 JSON 严格 UTF-8 解析和 18 个 artifact 的 Git 内容校验
+通过。原始运行、事故和失败命令的结论没有更改。
+
 人工解释、商业 license admission、生产部署、实时来源新鲜度 SLA、全面血缘和通用
 调度/告警不在本轮 PASS 范围。只新增本轮有限验收与上述 fixture 命令，不追加总体蓝图。
 
