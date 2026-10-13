@@ -12,7 +12,7 @@ HASH='fa2b19e1d7fc12132b3f4e4b4acee09e4f5bc0f59eae87820b83fb2fff220c86'
 PLAN='756a4139-bfae-4b5e-9368-e65d28d4c877'
 VERSIONS={'dpp-lifecycle307-online/fixture/a.csv':'0f6aa755-4b86-496b-9ee1-43d7c59a8bb3','dpp-lifecycle307-quarantine/fixture/b.csv':'e1611b0a-efc0-4939-abc2-30394ec2c8d2'}
 parser=argparse.ArgumentParser()
-parser.add_argument('phase',choices=['prepare','provision','provision-resume','a','a-resume','a-reader-first','b','worker-a','worker-b','seal'])
+parser.add_argument('phase',choices=['prepare','provision','provision-resume','a','a-resume','a-reader-first','b','worker-a','worker-b','inspect','seal'])
 parser.add_argument('--private-directory',required=True)
 parser.add_argument('--confirmed-plan',required=True)
 args=parser.parse_args()
@@ -156,6 +156,9 @@ try:
         gateway((control/'gateway-fault-active').read_text())
         helper(control/'executor','delete',PROJECT+'-race-delete-'+args.phase,{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'execute','LIFECYCLE_RACE_STAGE':args.phase[0]},93)
     elif args.phase.startswith('worker-'):worker(args.phase[-1])
+    elif args.phase=='inspect':
+        runtime_preflight()
+        helper(control/'executor','delete',PROJECT+'-race-inspect',{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'inspect'})
     elif args.phase=='seal':
         gateway((control/'gateway-sealed').read_text())
         helper(control/'admin','delete',PROJECT+'-race-disable',{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'disable'})

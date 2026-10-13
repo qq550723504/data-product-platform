@@ -355,3 +355,95 @@ func executeRace(ctx context.Context) error {
 	os.Exit(93)
 	return nil
 }
+
+func inspectRace(ctx context.Context) error {
+	c, _, e := load()
+	if e != nil {
+		return e
+	}
+	if c.RootAccess != "" || c.RootSecret != "" {
+		return lc.ErrStorageScope
+	}
+	all, e := raceCopies(c)
+	if e != nil {
+		return e
+	}
+	pool, e := pgxpool.New(ctx, c.PostgresDSN)
+	if e != nil {
+		return e
+	}
+	defer pool.Close()
+	router, e := routing.NewRouter(false)
+	if e != nil {
+		return e
+	}
+	outbox.ConfigureAppendObligation(router)
+	defer outbox.ConfigureAppendObligation(nil)
+	o := lc.NewOccupancyService(transaction.NewManager(pool), &infrastructure.PostgresRepository{}, authority{}, nil, nil)
+	inspector, e := storage.NewLifecycleInspector(storage.LifecycleInspectionConfig{Endpoint: c.Endpoint, AccessKey: c.InspectAccess, SecretKey: c.InspectSecret, WorkspaceID: workspace, ProviderInstanceID: c.ProviderInstanceID, IncarnationID: c.IncarnationID, Namespaces: []string{"dpp-lifecycle307-online", "dpp-lifecycle307-quarantine"}, Journal: lc.NewPostgresStorageCallJournal(o)})
+	if e != nil {
+		return e
+	}
+	var original manifest
+	if e = read(filepath.Join(c.OutputDirectory, "manifest.json"), &original); e != nil {
+		return e
+	}
+	var protected []any
+	inventories := map[string]lc.NamespaceInventory{}
+	absent := []domain.Copy{}
+	for _, cp := range all {
+		var receipt bool
+		if e = pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_copy_absence_receipt WHERE copy_id=$1)`, cp.ID).Scan(&receipt); e != nil {
+			return e
+		}
+		if receipt {
+			absent = append(absent, cp)
+			continue
+		}
+		if cp.ProviderVersion != "61bed66a-9fe1-47bd-8a97-a376ad7bed89" && cp.ProviderVersion != "a0a94326-1914-44e0-aaf8-577b6d824084" {
+			return lc.ErrStorageScope
+		}
+		presence, e := inspector.InspectExactCopy(ctx, cp)
+		if e != nil {
+			return e
+		}
+		protection, e := inspector.InspectRetentionAndHold(ctx, cp)
+		if e != nil {
+			return e
+		}
+		matched := false
+		for _, before := range original.Objects {
+			if before.CopyID == cp.ID {
+				matched = before.LegalHold == protection.LegalHold && before.Retention == protection.RetentionMode && (before.RetainUntil == nil) == (protection.RetainUntil == nil)
+				if matched && before.RetainUntil != nil {
+					matched = before.RetainUntil.Equal(*protection.RetainUntil)
+				}
+			}
+		}
+		if !matched {
+			return errors.New("protected version protection changed")
+		}
+		protected = append(protected, map[string]any{"copy": cp, "presence": presence, "protection": protection})
+		inventory, e := inspector.InspectNamespace(ctx, cp)
+		if e != nil {
+			return e
+		}
+		inventories[cp.Namespace] = inventory
+	}
+	if len(absent) != 2 || len(protected) != 2 {
+		return lc.ErrStorageUnknown
+	}
+	for _, inv := range inventories {
+		if !inventoryMatches(inv, all, absent) {
+			return lc.ErrStorageContract
+		}
+	}
+	var completion, attempts, claims, pins, stops int
+	if e = pool.QueryRow(ctx, `SELECT (SELECT count(*) FROM lifecycle_plan_completion WHERE plan_id=$1),(SELECT count(*) FROM lifecycle_provider_attempt),(SELECT count(*) FROM lifecycle_provider_send_claim),(SELECT count(*) FROM lifecycle_reader_pin),(SELECT count(*) FROM lifecycle_reader_termination)`, planID).Scan(&completion, &attempts, &claims, &pins, &stops); e != nil {
+		return e
+	}
+	if completion != 1 || attempts != 2 || claims != 2 || pins != 2 || stops != 2 {
+		return lc.ErrStorageContract
+	}
+	return write(filepath.Join(c.OutputDirectory, "confirmed-race-survivors.json"), map[string]any{"run_id": run, "absent": absent, "inventories": inventories, "protected": protected, "completion": completion, "attempts": attempts, "send_claims": claims, "pins": pins, "verified_stops": stops, "backup_payloads": "retained; excluded from source deletion scope", "full_D1": "NOT_RUN", "full_LC11_12": "NOT_RUN", "cleanup": 0})
+}

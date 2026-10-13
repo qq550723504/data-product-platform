@@ -92,6 +92,9 @@ func load() (config, permission, error) {
 		return c, p, errors.New("controlled configuration unreadable")
 	}
 	rootRequired := (!workerDelete && !raceDelete) || os.Getenv("LIFECYCLE_DELETE_MODE") != "execute"
+	if raceDelete && os.Getenv("LIFECYCLE_DELETE_MODE") == "inspect" {
+		rootRequired = false
+	}
 	if c.RunID.String() != run || p.RunID != c.RunID || c.WorkspaceID != workspace || p.WorkspaceID != workspace || p.PlanHash != planHash || c.Endpoint != "127.0.0.1:9000" || c.ProviderInstanceID.String() != providerID || c.IncarnationID.String() != incarnationID || c.ActorID == uuid.Nil || c.Token == "" || (rootRequired && c.RootAccess == "") || c.InspectAccess == "" || p.DeleteAccess == "" || p.DeleteSecret == "" || p.BasisRef == "" || !p.Enabled || time.Now().Before(p.ConfirmedAt) || !time.Now().Before(p.ExpiresAt) || p.ExpiresAt.Sub(p.ConfirmedAt) > time.Hour || len(p.TopologySHA256) != 64 {
 		return c, p, errors.New("controlled authority/scope/window unavailable")
 	}
@@ -765,6 +768,12 @@ func main() {
 			e = executeRace(ctx)
 		} else {
 			e = execute(ctx)
+		}
+	case "inspect":
+		if raceDelete {
+			e = inspectRace(ctx)
+		} else {
+			e = errors.New("unsupported read-only profile")
 		}
 	default:
 		e = errors.New("explicit mode required")
