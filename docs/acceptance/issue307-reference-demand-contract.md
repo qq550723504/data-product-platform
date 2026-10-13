@@ -34,6 +34,9 @@ FK discovery checks installed admission guards and
 locks schema evolution. Unknown/new/unmanaged dependencies fail closed.
 Metadata exemptions name the exact public schema/table/column; another schema's
 same-name table or a new FK column does not inherit an exemption.
+Guard qualification checks BEFORE ROW INSERT/UPDATE, the exact FK column and
+argument, enabled function identity and absence of a WHEN filter; a same-name
+but ineffective trigger is UNKNOWN even when the relation is empty.
 Dispatch waits for real processing/transfer owner stop; disposition-first blocks
 new GET, bytes and output admission. Final business identities and ISSUED history
 remain intact; transfer observations are appended.

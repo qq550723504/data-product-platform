@@ -52,7 +52,18 @@ func InspectFixtureReferences(ctx context.Context, tx pgx.Tx, c domain.Copy) (do
 		r := &result[i]
 		// Schema evolution is fail closed even when a new table is currently empty.
 		var fenced bool
-		if err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM pg_trigger g JOIN pg_class t ON t.oid=g.tgrelid JOIN pg_namespace n ON n.oid=t.relnamespace WHERE n.nspname=$1 AND t.relname=$2 AND g.tgname=$3 AND g.tgenabled='O' AND g.tgfoid='lifecycle_reference_admission_guard()'::regprocedure)`, r.Schema, r.Table, "aa_lifecycle_ref_"+r.Column).Scan(&fenced); err != nil {
+		// The name/function alone does not prove that this FK takes the fence:
+		// a missing argument, INSERT-only trigger, or WHEN filter can skip it.
+		if err = tx.QueryRow(ctx, `SELECT EXISTS(
+			SELECT 1 FROM pg_trigger g JOIN pg_class t ON t.oid=g.tgrelid
+			JOIN pg_namespace n ON n.oid=t.relnamespace
+			JOIN pg_attribute a ON a.attrelid=t.oid AND a.attname=$4 AND NOT a.attisdropped
+			WHERE n.nspname=$1 AND t.relname=$2 AND g.tgname=$3
+			AND g.tgenabled='O' AND g.tgfoid='lifecycle_reference_admission_guard()'::regprocedure
+			AND g.tgtype=23 AND g.tgqual IS NULL AND g.tgnargs=1
+			AND g.tgargs=decode(encode(convert_to($4,'UTF8'),'hex')||'00','hex')
+			AND cardinality(g.tgattr)=1 AND g.tgattr[0]=a.attnum
+		)`, r.Schema, r.Table, "aa_lifecycle_ref_"+r.Column, r.Column).Scan(&fenced); err != nil {
 			return domain.Unknown, nil, err
 		}
 		if !fenced {

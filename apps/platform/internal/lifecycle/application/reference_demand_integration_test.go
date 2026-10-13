@@ -303,6 +303,28 @@ func TestFixtureReferenceNewColumnOnControlTableIsNotExempt(t *testing.T) {
 	}
 }
 
+func TestFixtureReferenceMisconfiguredAdmissionGuardIsUnknown(t *testing.T) {
+	for name, ddl := range map[string]string{
+		"missing-column-argument": `BEFORE INSERT OR UPDATE OF dataset_version_id ON execution_input FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard()`,
+		"wrong-column-argument":   `BEFORE INSERT OR UPDATE OF dataset_version_id ON execution_input FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('not_the_fk_column')`,
+		"insert-only":             `BEFORE INSERT ON execution_input FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')`,
+		"wrong-update-column":     `BEFORE INSERT OR UPDATE OF input_name ON execution_input FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')`,
+		"after-write":             `AFTER INSERT OR UPDATE OF dataset_version_id ON execution_input FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')`,
+		"filtered-out":            `BEFORE INSERT OR UPDATE OF dataset_version_id ON execution_input FOR EACH ROW WHEN (false) EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			pool := planDatabase(t)
+			_, cs, _, _, _, _, _ := occupancyFixture(t, pool)
+			if _, e := pool.Exec(context.Background(), `DROP TRIGGER aa_lifecycle_ref_dataset_version_id ON execution_input; CREATE TRIGGER aa_lifecycle_ref_dataset_version_id `+ddl); e != nil {
+				t.Fatal(e)
+			}
+			if check := referenceCheck(t, pool, cs[0]); check != domain.Unknown {
+				t.Fatalf("misconfigured admission guard accepted: %s", check)
+			}
+		})
+	}
+}
+
 func TestPendingCopyAndDispatchSerializeBothOrders(t *testing.T) {
 	for _, copyFirst := range []bool{true, false} {
 		t.Run(map[bool]string{true: "pending-copy-first", false: "dispatch-first"}[copyFirst], func(t *testing.T) {
