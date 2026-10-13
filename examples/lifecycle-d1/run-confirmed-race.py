@@ -12,7 +12,7 @@ HASH='fa2b19e1d7fc12132b3f4e4b4acee09e4f5bc0f59eae87820b83fb2fff220c86'
 PLAN='756a4139-bfae-4b5e-9368-e65d28d4c877'
 VERSIONS={'dpp-lifecycle307-online/fixture/a.csv':'0f6aa755-4b86-496b-9ee1-43d7c59a8bb3','dpp-lifecycle307-quarantine/fixture/b.csv':'e1611b0a-efc0-4939-abc2-30394ec2c8d2'}
 parser=argparse.ArgumentParser()
-parser.add_argument('phase',choices=['prepare','provision','provision-resume','a','a-resume','b','worker-a','worker-b','seal'])
+parser.add_argument('phase',choices=['prepare','provision','provision-resume','a','a-resume','a-reader-first','b','worker-a','worker-b','seal'])
 parser.add_argument('--private-directory',required=True)
 parser.add_argument('--confirmed-plan',required=True)
 args=parser.parse_args()
@@ -148,9 +148,9 @@ try:
             # journal on a read-only mount, hence provably zero native IAM calls.
             assert not (control/'admin/executor-admin-receipts.jsonl').exists()
         helper(control/'admin','delete',PROJECT+'-race-'+args.phase,{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'provision'})
-    elif args.phase in ['a','a-resume','b']:
+    elif args.phase in ['a','a-resume','a-reader-first','b']:
         runtime_preflight()
-        if args.phase=='a-resume':
+        if args.phase in ['a-resume','a-reader-first']:
             assert sql('SELECT count(*) FROM lifecycle_provider_attempt')=='0'
             assert sql('SELECT count(*) FROM lifecycle_reader_pin')=='0'
         gateway((control/'gateway-fault-active').read_text())

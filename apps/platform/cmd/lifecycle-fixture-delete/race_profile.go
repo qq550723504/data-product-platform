@@ -222,9 +222,30 @@ func executeRace(ctx context.Context) error {
 	if e != nil {
 		return e
 	}
-	approval, e := d.ApproveContentDisposition(ctx, lc.ApproveContentDispositionCommand{CommandHeader: h("approve"), PlanID: planID, BasisRef: p.BasisRef, ExpiresAt: p.ExpiresAt})
+	// A current disposal approval already stops new fixture use. Exit earlier
+	// test approvals by Command, establish the actual reader, then approve again.
+	rows, e := pool.Query(ctx, `SELECT a.id FROM lifecycle_disposition_approval a WHERE a.plan_id=$1 AND NOT EXISTS(SELECT 1 FROM lifecycle_approval_revocation r WHERE r.approval_id=a.id) ORDER BY a.id`, planID)
 	if e != nil {
 		return e
+	}
+	var priorApprovals []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if e = rows.Scan(&id); e != nil {
+			rows.Close()
+			return e
+		}
+		priorApprovals = append(priorApprovals, id)
+	}
+	e = rows.Err()
+	rows.Close()
+	if e != nil {
+		return e
+	}
+	for _, id := range priorApprovals {
+		if _, e = d.RevokeDispositionApproval(ctx, lc.RevokeDispositionApprovalCommand{CommandHeader: h("reader-first-revoke-" + stage + "-" + id.String()), ApprovalID: id, BasisRef: "Controlled reader-first order; old approval retained"}); e != nil {
+			return e
+		}
 	}
 	if _, e = g.policy.BindFixtureCopyPolicy(ctx, lc.BindCopyPolicyCommand{CommandHeader: h("policy-" + stage), DatasetVersionID: target.DatasetVersionID, UseUntil: p.ExpiresAt, RestoreUntil: p.ExpiresAt}); e != nil {
 		return e
@@ -263,8 +284,14 @@ func executeRace(ctx context.Context) error {
 	defer func() {
 		if !released {
 			close(writer.release)
+			stopped := <-done
+			_ = write(filepath.Join(c.OutputDirectory, "race-error-stop-"+uuid.NewString()+".json"), stopped.result)
 		}
 	}()
+	approval, e := d.ApproveContentDisposition(ctx, lc.ApproveContentDispositionCommand{CommandHeader: h("approve-after-reader-" + stage), PlanID: planID, BasisRef: p.BasisRef, ExpiresAt: p.ExpiresAt})
+	if e != nil {
+		return e
+	}
 	if _, e = o.RestrictContentUse(ctx, lc.RestrictContentUseCommand{CommandHeader: h("restrict-" + stage), DatasetVersionID: target.DatasetVersionID, BasisRef: p.BasisRef}); e != nil {
 		return e
 	}

@@ -107,7 +107,7 @@ func (authority) AuthorizeLifecycle(_ context.Context, _ pgx.Tx, w uuid.UUID, ca
 	}
 	caps := []string{lc.CapabilityPreparePlan, lc.CapabilityApproveDisposition, lc.CapabilityDispatch, lc.CapabilityInspectStorage, lc.CapabilityInspectOccupancy, lc.CapabilityVerifyAbsence}
 	if raceDelete {
-		caps = append(caps, lc.CapabilityAdmitReader, lc.CapabilityTerminateReader, lc.CapabilityRestrictUse, lc.CapabilityCopyCustody)
+		caps = append(caps, lc.CapabilityAdmitReader, lc.CapabilityTerminateReader, lc.CapabilityRestrictUse, lc.CapabilityCopyCustody, lc.CapabilityRevokeApproval)
 	}
 	r, e := principal.NewStaticResolver(true, c.Token, "lifecycle-fixture:"+run, c.ActorID.String(), []string{workspace.String()}, caps)
 	if e != nil {
