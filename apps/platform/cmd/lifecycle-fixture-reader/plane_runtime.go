@@ -133,8 +133,8 @@ func planeStep(ctx context.Context, mode string) error {
 	}
 	defer pool.Close()
 	var schema int
-	if e = pool.QueryRow(ctx, `SELECT max(version) FROM schema_migration`).Scan(&schema); e != nil || schema != 66 {
-		return errors.New("fresh isolated schema66 required")
+	if e = pool.QueryRow(ctx, `SELECT max(version) FROM schema_migration`).Scan(&schema); e != nil || schema != 67 {
+		return errors.New("fresh isolated schema67 required")
 	}
 	router, e := routing.NewRouter(false)
 	if e != nil {
@@ -148,6 +148,9 @@ func planeStep(ctx context.Context, mode string) error {
 	}
 	if mode == "accept" {
 		return planeAccept(ctx, c, pool, cs)
+	}
+	if mode == "reference-races" && c.ReferenceDemand {
+		return planeReferenceRaces(ctx, c, pool, cs)
 	}
 	if mode == "final" {
 		return planeExport(ctx, c, pool)

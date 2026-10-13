@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','seal','setup','accept','final')][string]$Mode)
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','seal','setup','accept','final','reference-races')][string]$Mode)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path

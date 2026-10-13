@@ -92,7 +92,7 @@ func planeServices(ctx context.Context, c config, pool *pgxpool.Pool, cs []domai
 	reader := lc.NewFixtureReaderService(o, p)
 	selection := map[uuid.UUID]uuid.UUID{}
 	for _, cp := range cs {
-		if cp.Namespace == namespaces[0] {
+		if (cp.Namespace == namespaces[0] && !(c.ReferenceDemand && cp.Key == "fixture/b.csv")) || (c.ReferenceDemand && cp.Namespace == namespaces[1] && cp.Key == "fixture/b.csv") {
 			selection[cp.DatasetVersionID] = cp.ID
 		}
 	}

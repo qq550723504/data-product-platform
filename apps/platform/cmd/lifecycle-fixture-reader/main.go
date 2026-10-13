@@ -41,6 +41,7 @@ type config struct {
 	RunID, WorkspaceID, ProviderInstanceID, IncarnationID, ActorID, Epoch                                       uuid.UUID
 	Enabled                                                                                                     bool
 	Plane                                                                                                       bool
+	ReferenceDemand                                                                                             bool
 	StartedAt, ExpiresAt                                                                                        time.Time
 	Endpoint, PostgresDSN, Token, Access, Secret, InspectAccess, InspectSecret, OutputDirectory, ManifestSHA256 string
 	RootAccess, RootSecret                                                                                      string // populated only in a separate admin-only mount
@@ -124,7 +125,14 @@ func (authority) Resolve(r *http.Request, w uuid.UUID, cap string) (principal.Re
 	if e != nil {
 		return principal.RequestPrincipal{}, principal.ErrUnauthenticated
 	}
-	resolver, e := principal.NewStaticResolver(true, c.Token, "lifecycle-fixture:"+c.RunID.String(), c.ActorID.String(), []string{c.WorkspaceID.String()}, []string{lc.CapabilityAdmitReader, lc.CapabilityTerminateReader, lc.CapabilityInspectOccupancy, lc.CapabilityInspectStorage, lc.CapabilityRestrictUse, lc.CapabilityCopyCustody})
+	caps := []string{lc.CapabilityAdmitReader, lc.CapabilityTerminateReader, lc.CapabilityInspectOccupancy, lc.CapabilityInspectStorage, lc.CapabilityRestrictUse, lc.CapabilityCopyCustody}
+	if c.Plane && c.ReferenceDemand {
+		caps = append(caps, lc.CapabilityPreparePlan, lc.CapabilityApproveDisposition, lc.CapabilityDispatch)
+		for _, module := range []string{"dataset", "entity", "workflow", "quality", "certification", "delivery"} {
+			caps = append(caps, lc.ReferenceOwnerCapability(module))
+		}
+	}
+	resolver, e := principal.NewStaticResolver(true, c.Token, "lifecycle-fixture:"+c.RunID.String(), c.ActorID.String(), []string{c.WorkspaceID.String()}, caps)
 	if e != nil {
 		return principal.RequestPrincipal{}, e
 	}
@@ -527,7 +535,11 @@ func execute(ctx context.Context, mode string) error {
 func main() {
 	mode := flag.String("mode", "", "bounded reader step")
 	flag.Parse()
-	ctx, cancel := context.WithTimeout(context.Background(), 90*time.Second)
+	limit := 90 * time.Second
+	if *mode == "plane-reference-races" {
+		limit = 13 * time.Minute
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), limit)
 	defer cancel()
 	if e := execute(ctx, *mode); e != nil {
 		fmt.Println("Reader step failed:", e, "; all resources retained, no cleanup or automatic retry")

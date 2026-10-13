@@ -55,6 +55,7 @@ func subjectExecution(t *testing.T, pool *pgxpool.Pool, w uuid.UUID, c domain.Co
 func TestProcessingPinOwnsActualInputHandleUntilEngineStops(t *testing.T) {
 	pool, w, c, o, reader, port, plan := newReaderFixture(t)
 	ex, _ := subjectExecution(t, pool, w, c, o)
+	next, _ := subjectExecution(t, pool, w, c, o)
 	pins := NewFixtureSubjectPins(reader, map[uuid.UUID]uuid.UUID{c.DatasetVersionID: c.ID})
 	entered, release := make(chan struct{}), make(chan struct{})
 	ctx, cancel := context.WithCancel(readerContext(o))
@@ -97,7 +98,6 @@ func TestProcessingPinOwnsActualInputHandleUntilEngineStops(t *testing.T) {
 	if e := pins.ExecuteProcessing(readerContext(o), w, ex.ID, func(context.Context) error { t.Error("same execution reopened engine"); return nil }); !errors.Is(e, domain.ErrTerminationUnknown) {
 		t.Fatal(e)
 	}
-	next, _ := subjectExecution(t, pool, w, c, o)
 	if e := pins.ExecuteProcessing(readerContext(o), w, next.ID, func(context.Context) error { t.Error("restricted input opened engine"); return nil }); e == nil {
 		t.Fatal("restriction failed")
 	}
