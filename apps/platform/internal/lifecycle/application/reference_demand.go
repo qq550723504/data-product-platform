@@ -138,7 +138,7 @@ func (s *FixtureReferenceService) ReleaseFixtureReference(ctx context.Context, c
 			return uuid.Nil, e
 		}
 		id := uuid.New()
-		_, e = tx.Exec(ctx, `INSERT INTO lifecycle_fixture_reference_release(id,workspace_id,requirement_id,loss,basis_ref,actor_id,principal_ref,dependency_revision,occurred_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`, id, c.WorkspaceID, c.RequirementID, spec.Loss, c.BasisRef, caller.ActorID, caller.Subject, rev, at)
+		_, e = tx.Exec(ctx, `INSERT INTO lifecycle_fixture_reference_release(id,workspace_id,requirement_id,loss,basis_ref,actor_id,principal_ref,dependency_revision,occurred_at,owner_verified_quiescent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, id, c.WorkspaceID, c.RequirementID, spec.Loss, c.BasisRef, caller.ActorID, caller.Subject, rev, at, c.OwnerVerifiedQuiescent)
 		if e != nil {
 			return uuid.Nil, e
 		}

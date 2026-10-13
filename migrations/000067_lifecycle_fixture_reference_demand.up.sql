@@ -39,6 +39,7 @@ CREATE TABLE lifecycle_fixture_reference_release (
  workspace_id uuid NOT NULL,
  requirement_id uuid NOT NULL UNIQUE,
  loss varchar(96) NOT NULL,
+ owner_verified_quiescent boolean NOT NULL CHECK(owner_verified_quiescent),
  basis_ref varchar(255) NOT NULL CHECK(basis_ref<>'' AND basis_ref=btrim(basis_ref)),
  actor_id uuid NOT NULL,
  principal_ref varchar(255) NOT NULL CHECK(principal_ref<>''),

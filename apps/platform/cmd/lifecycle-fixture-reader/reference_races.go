@@ -338,10 +338,9 @@ func planeReferenceRaces(ctx context.Context, c config, pool *pgxpool.Pool, orig
 	if _, e = lc.NewExactExecution(dispose).RegisterFixtureDisposalBasis(ctx, lc.FixtureDisposalBasisCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: "reference-basis"}, RunID: c.RunID, InventoryPlanID: inventory.ID, ApprovedPlanID: plan.ID, InventoryHash: inventory.ContentHash, ApprovedHash: plan.ContentHash, BasisRef: "CONTROLLED_NON_DELETE_ADMISSION_EXERCISE"}); e != nil {
 		return e
 	}
-	approval, e := dispose.ApproveContentDisposition(ctx, lc.ApproveContentDispositionCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: "reference-approval"}, PlanID: plan.ID, BasisRef: "CONTROLLED_NON_DELETE_ADMISSION_EXERCISE", ExpiresAt: c.ExpiresAt})
-	if e != nil {
-		return e
-	}
+	// Approval participates in current use admission, so admit the actual owners
+	// first for the reader-first order. It is never authority to send DELETE.
+	var approval lc.FactResult
 	dispatch := func(cp domain.Copy, key string) (lc.DispatchResult, error) {
 		return dispose.DispatchContentDisposition(ctx, lc.DispatchContentDispositionCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: key}, PlanID: plan.ID, ApprovalID: approval.ID, CopyID: cp.ID})
 	}
@@ -369,6 +368,8 @@ func planeReferenceRaces(ctx context.Context, c config, pool *pgxpool.Pool, orig
 	go func() { processDone <- run(blockedHandler, active) }()
 	select {
 	case <-barrier.entered:
+	case e := <-processDone:
+		return fmt.Errorf("native owner stopped before input barrier: %v", e)
 	case <-ctx.Done():
 		return ctx.Err()
 	}
@@ -423,6 +424,10 @@ func planeReferenceRaces(ctx context.Context, c config, pool *pgxpool.Pool, orig
 	case <-streamEntered:
 	case <-ctx.Done():
 		return ctx.Err()
+	}
+	approval, e = dispose.ApproveContentDisposition(ctx, lc.ApproveContentDispositionCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: "reference-approval"}, PlanID: plan.ID, BasisRef: "CONTROLLED_NON_DELETE_ADMISSION_EXERCISE", ExpiresAt: c.ExpiresAt})
+	if e != nil {
+		return e
 	}
 	refs := lc.NewFixtureReferenceService(o, datasetapp.FixtureReferenceOwner{}, entityapp.FixtureReferenceOwner{}, workflowapp.FixtureReferenceOwner{}, qualityapp.FixtureReferenceOwner{}, certificationapp.FixtureReferenceOwner{}, deliveryapp.FixtureReferenceOwner{})
 	var demands []referenceDemand
