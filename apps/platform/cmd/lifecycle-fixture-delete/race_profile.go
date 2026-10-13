@@ -97,6 +97,12 @@ func provisionRaceReader(ctx context.Context, c config, admin *madmin.AdminClien
 
 type raceGate struct{ policy *lc.CopyService }
 
+type raceNoCustody struct{}
+
+func (raceNoCustody) CurrentCopyProtection(context.Context, pgx.Tx, domain.Copy, time.Time) (lc.CopyProtection, error) {
+	return lc.CopyProtection{}, lc.ErrStorageUnsupported
+}
+
 func (g *raceGate) EvaluateFixtureUse(ctx context.Context, tx pgx.Tx, r lc.UseGateRequest) (domain.UseDecision, error) {
 	return g.policy.EvaluateFixtureUse(ctx, tx, r)
 }
@@ -149,7 +155,14 @@ func executeRace(ctx context.Context) error {
 	auth := authority{}
 	g := &raceGate{}
 	o := lc.NewOccupancyService(tx, repo, auth, g, nil)
-	g.policy = lc.NewCopyService(o, nil, nil, nil, c.RunID)
+	var quarantine uuid.UUID
+	if e = pool.QueryRow(ctx, `SELECT id FROM lifecycle_fixture_namespace WHERE workspace_id=$1 AND namespace='dpp-lifecycle307-quarantine'`, workspace).Scan(&quarantine); e != nil {
+		return e
+	}
+	g.policy = lc.NewCopyService(o, []lc.CopyTargetSlot{{Slot: "read-policy-only", Action: domain.ArchiveCopy, NamespaceID: quarantine, Namespace: "dpp-lifecycle307-quarantine", Key: "archive/a.csv"}}, raceNoCustody{}, nil, c.RunID)
+	if g.policy == nil {
+		return lc.ErrStorageScope
+	}
 	dep := &dependencies{all: all, protection: map[uuid.UUID]lc.CopyProtection{}, inventory: map[string]lc.NamespaceInventory{}}
 	d := lc.NewDispositionService(o, auth, dep, nil)
 	execution := lc.NewExactExecution(d)

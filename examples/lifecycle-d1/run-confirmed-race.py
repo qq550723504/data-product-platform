@@ -12,7 +12,7 @@ HASH='fa2b19e1d7fc12132b3f4e4b4acee09e4f5bc0f59eae87820b83fb2fff220c86'
 PLAN='756a4139-bfae-4b5e-9368-e65d28d4c877'
 VERSIONS={'dpp-lifecycle307-online/fixture/a.csv':'0f6aa755-4b86-496b-9ee1-43d7c59a8bb3','dpp-lifecycle307-quarantine/fixture/b.csv':'e1611b0a-efc0-4939-abc2-30394ec2c8d2'}
 parser=argparse.ArgumentParser()
-parser.add_argument('phase',choices=['prepare','provision','a','b','worker-a','worker-b','seal'])
+parser.add_argument('phase',choices=['prepare','provision','provision-resume','a','a-resume','b','worker-a','worker-b','seal'])
 parser.add_argument('--private-directory',required=True)
 parser.add_argument('--confirmed-plan',required=True)
 args=parser.parse_args()
@@ -41,17 +41,36 @@ def call(argv,expected=(0,),env=None,cwd=None):
     return proc.stdout
 def docker(*argv):return call(['docker',*argv])
 def sql(query):return docker('exec',r['containers']['postgres'],'psql','-X','-qAt','-v','ON_ERROR_STOP=1','-U','fixture','-d','lifecycle307','-c',query).decode().strip()
+def runtime_preflight():
+    for item in json.loads(docker('inspect',*r['containers'].values())):
+        expected=next(v for v in m['environment']['containers'] if v['name']==item['Name'].lstrip('/'))
+        assert item['Id']==expected['id'] and item['Image']==expected['image']
+        assert item['Config']['Labels']['lifecycle307.run']==RUN and item['State']['Running']
+        assert not any(item['NetworkSettings']['Ports'].values())
+        if item['Name'].endswith('-postgres') or item['Name'].endswith('-minio'):
+            role='postgres' if item['Name'].endswith('-postgres') else 'objects'
+            path='/var/lib/postgresql/data' if role=='postgres' else '/data'
+            mounts=[v for v in item['Mounts'] if v['Destination']==path]
+            assert len(mounts)==1 and mounts[0]['Type']=='volume' and mounts[0]['Name']==PROJECT+'-'+role and mounts[0]['RW']
+            assert not item['HostConfig'].get('Tmpfs')
+    net=json.loads(docker('network','inspect',r['network']))[0]
+    assert net['Id']==m['environment']['network']['id'] and net['Internal'] and len(net['Containers'])==4
+    assert {v['Name'] for v in net['Containers'].values()}==set(r['containers'].values())|{PROJECT+'-race-redis'}
+    assert docker('exec',r['containers']['minio'],'sha256sum','/usr/local/bin/minio').decode().split()[0]==m['environment']['minio_binary_sha256']
+    assert sql('SELECT max(version) FROM schema_migration')=='66'
 def gateway(text):
     write(private/'Caddyfile',text)
     docker('exec',r['containers']['gateway'],'caddy','validate','--config','/etc/caddy/Caddyfile','--adapter','caddyfile')
     docker('restart',r['containers']['gateway'])
     docker('exec',r['containers']['gateway'],'wget','-T','10','-q','-O','-','http://127.0.0.1:9000/minio/health/ready')
 def helper(folder,binary,name,env,expected=0):
-    docker('create','--pull','never','--name',name,'--label','lifecycle307.run='+RUN,'--network','container:'+r['containers']['gateway'],'--read-only','--tmpfs','/tmp','--mount','type=bind,source='+str(folder)+',target=/run/private,readonly','--mount','type=bind,source='+str(root/'examples/lifecycle-d1/results')+',target=/run/output',*[v for key,value in env.items() for v in ['--env',key+'='+value]],'--entrypoint','/run/private/'+binary,m['environment']['containers'][0]['image'])
+    private_mount='type=bind,source='+str(folder)+',target=/run/private'+('' if folder.name=='admin' else ',readonly')
+    docker('create','--pull','never','--name',name,'--label','lifecycle307.run='+RUN,'--network','container:'+r['containers']['gateway'],'--read-only','--tmpfs','/tmp','--mount',private_mount,'--mount','type=bind,source='+str(root/'examples/lifecycle-d1/results')+',target=/run/output',*[v for key,value in env.items() for v in ['--env',key+'='+value]],'--entrypoint','/run/private/'+binary,m['environment']['containers'][0]['image'])
     docker('start',name)
     code=int(docker('wait',name).strip())
-    write(control/(name+'.log'),docker('logs',name).decode(errors='replace'))
-    write(out/(name+'-exit.json'),{'run_id':RUN,'helper':name,'id':json.loads(docker('inspect',name))[0]['Id'],'exit':code,'expected_exit':expected,'binary_sha256':sha(folder/binary),'root_mounted':folder.name=='admin','cleanup':0})
+    log=subprocess.run(['docker','logs',name],capture_output=True,check=True)
+    write(control/(name+'.log'),(log.stdout+log.stderr).decode(errors='replace'))
+    write(out/(name+'-exit.json'),{'run_id':RUN,'helper':name,'id':json.loads(docker('inspect',name))[0]['Id'],'exit':code,'expected_exit':expected,'binary_sha256':sha(folder/binary),'driver_sha256':sha(Path(__file__)),'root_mounted':folder.name=='admin','cleanup':0})
     assert code==expected,'Helper failed; no automatic resend; private log retained'
 
 def prepare():
@@ -112,7 +131,7 @@ def prepare():
 
 def worker(stage):
     sent=json.loads((out/('race-delete-send-'+stage+'.json')).read_text())
-    base=json.loads((control/'worker/base.json').read_text());base.update(WorkID=sent['work_id'],AttemptID=sent['attempt']['ID'],CopyID=sent['copy']['id'])
+    base=json.loads((control/'worker/base.json').read_text());base.update(WorkID=sent['work_id'],AttemptID=sent['attempt']['ID'],CopyID=sent['copy']['ID'])
     for mode,scenario in [('outbox','race-'+stage+'-outbox'),('worker','race-'+stage+'-worker'),('once','race-'+stage+'-terminal-replay')]:
         value=dict(base,Mode=mode,Scenario=scenario)
         write(control/'worker/step.json',value)
@@ -121,12 +140,21 @@ def worker(stage):
 
 try:
     if args.phase=='prepare':prepare()
-    elif args.phase=='provision':
+    elif args.phase in ['provision','provision-resume']:
+        runtime_preflight()
         gateway((control/'gateway-sealed').read_text())
-        helper(control/'admin','delete',PROJECT+'-race-provision',{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'provision'})
-    elif args.phase in ['a','b']:
+        if args.phase=='provision-resume':
+            # The previous failure was before opening the required admin START
+            # journal on a read-only mount, hence provably zero native IAM calls.
+            assert not (control/'admin/executor-admin-receipts.jsonl').exists()
+        helper(control/'admin','delete',PROJECT+'-race-'+args.phase,{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'provision'})
+    elif args.phase in ['a','a-resume','b']:
+        runtime_preflight()
+        if args.phase=='a-resume':
+            assert sql('SELECT count(*) FROM lifecycle_provider_attempt')=='0'
+            assert sql('SELECT count(*) FROM lifecycle_reader_pin')=='0'
         gateway((control/'gateway-fault-active').read_text())
-        helper(control/'executor','delete',PROJECT+'-race-delete-'+args.phase,{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'execute','LIFECYCLE_RACE_STAGE':args.phase},93)
+        helper(control/'executor','delete',PROJECT+'-race-delete-'+args.phase,{'LIFECYCLE_DELETE_PROFILE':'race-delete-9812f0fc','LIFECYCLE_DELETE_MODE':'execute','LIFECYCLE_RACE_STAGE':args.phase[0]},93)
     elif args.phase.startswith('worker-'):worker(args.phase[-1])
     elif args.phase=='seal':
         gateway((control/'gateway-sealed').read_text())
