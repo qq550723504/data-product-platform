@@ -1,0 +1,125 @@
+{
+  "status": "PASS",
+  "initialBackup": "Core192 relations/218rows, source3/30, full role/ACL/authentication and native objects/Redis/Hop/metadata restore passed before browser work",
+  "finalPostgres": [
+    {
+      "database": "dpp_ingestion_core",
+      "relations": 192,
+      "rows": 1122.0,
+      "factFingerprintMatch": true,
+      "fingerprintSHA256": "83E279A79680A31326CE4A4F8A49F3715F737897EB2AF717BAEC1F645C1186DC"
+    },
+    {
+      "database": "postgres",
+      "relations": 0,
+      "rows": 0.0,
+      "factFingerprintMatch": true,
+      "fingerprintSHA256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "database": "dpp_ingestion_source",
+      "relations": 3,
+      "rows": 30.0,
+      "factFingerprintMatch": true,
+      "fingerprintSHA256": "893A19132BE10D934463BDCB6CA8622142DFD4FB68DE1E9CC8758306BD151673"
+    },
+    {
+      "database": "postgres",
+      "relations": 0,
+      "rows": 0.0,
+      "factFingerprintMatch": true,
+      "fingerprintSHA256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    }
+  ],
+  "originalRoleACLAndRealFreshConnections": true,
+  "metadataOriginalImageRoleFunctionExtensionOwnersAndSCRAM": {
+    "status": "PASS",
+    "imageMatchesOriginal": true,
+    "records": [
+      {
+        "database": "airflow_db",
+        "factsMatch": true,
+        "exactRoleOwnerACLMetadata": true,
+        "extensionsOwnersVersionsMatch": true
+      },
+      {
+        "database": "openmetadata_db",
+        "factsMatch": true,
+        "exactRoleOwnerACLMetadata": true,
+        "extensionsOwnersVersionsMatch": true
+      },
+      {
+        "database": "postgres",
+        "factsMatch": true,
+        "exactRoleOwnerACLMetadata": true,
+        "extensionsOwnersVersionsMatch": true
+      }
+    ],
+    "originalServiceTCPAuthentication": true,
+    "wrongPasswordDenied": true,
+    "credentialsFromBackup": true,
+    "noOriginalResourceMutation": true,
+    "replicaStoppedRetained": true
+  },
+  "nativeObjectVersions": [
+    {
+      "Group": "70ca779a1e21",
+      "NativeReadSucceeded": true,
+      "Buckets": 1,
+      "PayloadVersions": 9,
+      "DeleteMarkers": 0,
+      "EveryVersionIDSizeSHA256MatchesRestoredBackup": true
+    }
+  ],
+  "redisAndHopRestore": [
+    {
+      "Group": "70ca779a1e21",
+      "Kind": "MinIO",
+      "Restored": true,
+      "PhysicalFileHashesMatch": true,
+      "NativeAllVersionPayloadRead": true,
+      "Buckets": 1,
+      "Versions": 9,
+      "BinarySHA256": "FB741388B404EC67C4F3777B812D6174BA5562532ACB17FB1DDFBA9A4E6249B8"
+    },
+    {
+      "Group": "70ca779a1e21",
+      "Kind": "Redis",
+      "Restored": true,
+      "RDBCRCAndFormatValid": true,
+      "RuntimeKeyCount": 5,
+      "Note": "RDB absolute TTLs retained; expired heartbeat/lease keys may not remain live after restoration"
+    },
+    {
+      "Group": "70ca779a1e21",
+      "Kind": "Hop /tmp",
+      "ArchiveReadable": true,
+      "Extracted": true,
+      "Entries": 6,
+      "SHA256": "1ABA24BA97BA2B04B7F54D8E78A269CCE4164F9BE599B80BB2350974F6DA0BE7"
+    },
+    {
+      "Group": "70ca779a1e21",
+      "Kind": "Hop /files",
+      "ArchiveReadable": true,
+      "Extracted": true,
+      "Entries": 1,
+      "SHA256": "0FAAC305F7C6E7C9177F867AB14B6D0D421CA8869EA9F2CF17FC26583CD0DE58"
+    },
+    {
+      "Group": "70ca779a1e21",
+      "Kind": "Hop /staging",
+      "ArchiveReadable": true,
+      "Extracted": true,
+      "Entries": 5,
+      "SHA256": "3F43A3211C52DC60FB3615848447D253F9F1AB342223062471D1A77A8F0C9FA0"
+    }
+  ],
+  "allPreexistingDppVolumesRemain": true,
+  "preexistingDppVolumeCount": 50,
+  "oldTrialContainersAbsentAtPreflight": true,
+  "oldOriginalCore": "FAIL/NOT_RESTORED; not reconstructed",
+  "credentialScope": "protected backup copies; finite original Core STS naturally expired, no regrant or claim of perpetual credential validity",
+  "replicas": "stopped and retained; no resource deleted",
+  "sourceBinding": "API/Worker/Web/industry/migration source remains exact main c16720ab; repaired fixture preserved separately"
+}

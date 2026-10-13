@@ -69,7 +69,32 @@ func prepareHistoricalRelease(ctx context.Context, pool *pgxpool.Pool, tx *trans
 		var prior historicalRelease
 		read(filepath.Join(c.Private, "release-healthy.json"), &prior)
 		h.Product, h.Version = prior.Product, prior.Version
-		if prior.DatasetVersion != h.DatasetVersion {
+		if label == "release-repaired-outage" {
+			if prior.DatasetVersion == h.DatasetVersion {
+				panic("repaired publication requires a new browser-produced output")
+			}
+			var rechecked bool
+			must(pool.QueryRow(ctx, `SELECT EXISTS (
+				SELECT 1 FROM quality_remediation_recheck_outcome o
+				JOIN quality_remediation_recheck r ON r.id=o.id
+				JOIN quality_remediation_case c ON c.id=r.case_id
+				JOIN quality_remediation_execution l ON l.id=r.execution_link_id
+				JOIN execution e ON e.id=l.execution_id
+				WHERE c.workspace_id=$1 AND e.output_dataset_version_id=$2
+				AND o.outcome='ASSESSED' AND o.assessment_id=$3
+			)`, f.Workspace, h.DatasetVersion, h.Quality).Scan(&rechecked))
+			if !rechecked {
+				panic("repaired publication requires the actual C1 output recheck")
+			}
+			version, err := products.CreateVersion(ctx, productapp.CreateVersionCommand{
+				ProductID: h.Product, MajorVersion: 2, WorkflowVersionID: &f.Workflow, ContractVersionID: &f.Contract,
+				EntityPolicyRef: "park/matching/company-match-policy-v1.yaml", IndicatorSetRef: "park-enterprise-activity@1.0.0",
+				Assets:  []productdomain.AssetSpec{{AssetType: productdomain.AssetDataset, Name: "enterprise_activity_curated", DatasetID: &datasetID, DeliveryConfig: map[string]any{"mode": "DATASET", "rawExport": false}}},
+				ActorID: &f.Actor,
+			})
+			must(err)
+			h.Version = version.ID
+		} else if prior.DatasetVersion != h.DatasetVersion {
 			panic("publication retry must use the same immutable browser output")
 		}
 	}

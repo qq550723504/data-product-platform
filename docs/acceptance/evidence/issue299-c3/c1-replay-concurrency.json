@@ -1,0 +1,54 @@
+{
+  "status": "PASS",
+  "caseId": "63f1f2c0-eaca-45ae-87e9-1016eeb4ca47",
+  "commands": [
+    {
+      "command": "retry",
+      "replays": 8,
+      "status": "PASS",
+      "recovered": 8,
+      "retryableContention": 0,
+      "sameKeySerialRecovery": true
+    },
+    {
+      "command": "recheck",
+      "replays": 8,
+      "status": "PASS",
+      "recovered": 7,
+      "retryableContention": 1,
+      "sameKeySerialRecovery": true
+    },
+    {
+      "command": "close",
+      "replays": 8,
+      "status": "PASS",
+      "recovered": 8,
+      "retryableContention": 0,
+      "sameKeySerialRecovery": true
+    }
+  ],
+  "newClosedAdmissionDenied": true,
+  "changedSameKeyReasonDenied": true,
+  "missingCredentialDenied": true,
+  "newFactsAndCost": 0,
+  "sourceRawQuality": [
+    [
+      "d7163614-011f-4369-95ae-a20bfc787e0f",
+      "FAIL"
+    ]
+  ],
+  "outputCertificationsBeforeSchemaHandling": [
+    [
+      "d6627bc6-b78f-4182-98b8-69391b36c74a",
+      "CERTIFIED"
+    ],
+    [
+      "7d04188d-f938-47b2-8282-81a9fda88abe",
+      "CERTIFIED"
+    ],
+    [
+      "3ce20ff1-fa9a-4729-9485-ec23f191b65c",
+      "REJECTED"
+    ]
+  ]
+}

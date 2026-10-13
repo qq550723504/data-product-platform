@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "requestIds": [
+    "7bfc3cce-28cf-401b-a02f-1347e9062431",
+    "b1f3a5f5-4f1f-4c3e-a9cb-cc5f3df23189"
+  ],
+  "actualCrossWorkerSourceLockContention": true,
+  "secondaryContention": [
+    {
+      "time": "2026-10-13T14:35:59.7399233+08:00",
+      "level": "ERROR",
+      "msg": "governance projection failed",
+      "event_id": "11aba509-e542-4ee4-86ec-23861bf750a5",
+      "event_type": "SourceSchemaObservationRequested",
+      "aggregate_id": "b1f3a5f5-4f1f-4c3e-a9cb-cc5f3df23189",
+      "attempt": 1,
+      "error": "advisory lock is already held"
+    }
+  ],
+  "primarySuccess": [
+    {
+      "time": "2026-10-13T14:36:03.4001224+08:00",
+      "level": "INFO",
+      "msg": "outbox event dispatched to all required handlers",
+      "event_id": "f2c60191-9df4-4710-9a0a-8326a615241b",
+      "event_type": "SourceSchemaObservationRequested",
+      "aggregate_type": "SOURCE_SCHEMA_REQUEST",
+      "aggregate_id": "7bfc3cce-28cf-401b-a02f-1347e9062431",
+      "handlers": [
+        "source-schema-observation"
+      ],
+      "routing_version": "c1-v27+ext1+exec1+usage1+rem1+life2+schema1+governance"
+    }
+  ],
+  "successOwner": "both completed requests dispatched by primary; secondary actually contended during first native scan",
+  "physicalAttempts": 2,
+  "typedCosts": 2,
+  "lockContentionCreatedPhysicalWorkOrCost": false,
+  "sameSourceOverlap": false,
+  "intervals": [
+    {
+      "attempt": "6e789526-4bc4-4c7f-b4c3-a0d8fccdf069",
+      "start": "2026-10-13T06:35:58.404608+00:00",
+      "end": "2026-10-13T06:36:03.392624+00:00"
+    },
+    {
+      "attempt": "3dc3db4d-4671-478e-9fa8-8f67254c18be",
+      "start": "2026-10-13T06:36:06.398301+00:00",
+      "end": "2026-10-13T06:36:11.502167+00:00"
+    }
+  ],
+  "originalHarnessCommand": "FAIL: required distinct successful dispatch owners; did not complete that check; retained logs unchanged. Same-source serialization/retry and accounting are independently verified here without new provider work."
+}

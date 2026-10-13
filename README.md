@@ -31,7 +31,7 @@ Certified Dataset、Data Product 和 Gold Dataset 是可交付成果，不是所
 
 ## 当前阶段
 
-以下为 2026-10-13 核对的状态摘要，源码基线为 [`main@c1a3463`](https://github.com/qq550723504/data-product-platform/commit/c1a3463ee110e3cb7dadb0004b0942c001f19ffe)。历史报告只证明各自标注的代码、环境和用例，不表示本次 README 更新重新执行了运行测试；后续进度以对应 Issue / PR 的精确版本记录为准。
+以下为 2026-10-13 核对的状态摘要，已合并功能源码基线为 [`main@c16720a`](https://github.com/qq550723504/data-product-platform/commit/c16720abaf986367bade0e91618133e08785e696)。历史报告只证明各自标注的代码、环境和用例，不表示本次 README 更新重新执行了运行测试；后续进度以对应 Issue / PR 的精确版本记录为准。
 
 | 工作线 | 已交付或已记录的结果 | 尚未覆盖的边界与证据入口 |
 |---|---|---|
@@ -39,7 +39,7 @@ Certified Dataset、Data Product 和 Gold Dataset 是可交付成果，不是所
 | AI / Gold Dataset | #203 历史 Pilot 已验证真实 Label Studio → Core Review → FINALIZED Snapshot → Gold build / quality / certification / DIRECT_DATA 与 live Gold UI。 | External Explanation Test 为 deferred / non-blocking follow-up；受控 fork Submission 的 #294/#295 不继承历史 Pilot 的通过结论。见 [Gold 验收](docs/poc/gold-dataset-pilot-acceptance.md)。 |
 | 全生命周期产品基线 A | #301 已合并，#297 已关闭；蓝图、差距评估与 ADR-0014 已进入 main。 | 蓝图是长期范围，不代表所有功能已实现。 |
 | PostgreSQL 接入 B | #302 定义 B0；#303/#304/#305/#308 已推进真实 PostgreSQL/Hop、三 RAW 接纳、界面与认证交付，以及 OpenMetadata 健康/断连/恢复的有限技术验收。 | 固定静止合成场景；非开发者操作/解释仍 deferred / NOT_RUN，#298 保持 OPEN。见 [接入契约](docs/architecture/postgres-ingestion-v1.md)、[最终实跑记录](examples/enterprise-activity/postgres-ingestion/CLOSURE-RUN.md)和 [#298](https://github.com/qq550723504/data-product-platform/issues/298)。 |
-| 质量修复与持续治理 C | C1 负数用电异常的登记、分派、受控隔离、新版本与独立复检已由 #310 合并。 | 不代表 #299 全部完成；C2 来源 schema 变化工作仍在未合并的 Draft #313，不能计入 main。见 [C1 验收](docs/acceptance/issue299-c1.md)和 [#299](https://github.com/qq550723504/data-product-platform/issues/299)。 |
+| 质量修复与持续治理 C | C1 负数用电异常的登记、分派、受控隔离、新版本与独立复检已由 #310 合并；C2 原生 PostgreSQL Connector 的 schema 观察与恢复已由 #313 合并，进入上述 main 基线。C3 同源 C1+C2 的有限实跑证据已记录。 | 不代表 #299 全部完成；人工解释仍为 deferred / NOT_RUN，#299 保持 OPEN。各阶段精确源码、运行结果及限制见 [C1 验收](docs/acceptance/issue299-c1.md)、[C2 验收](docs/acceptance/issue299-c2.md)、[C3 同源联验](docs/acceptance/issue299-c3.md)和 [#299](https://github.com/qq550723504/data-product-platform/issues/299)。 |
 | 保留与生命周期处置 D | #300 设计由 #306 合并；D1 的受控合成副本处置与对账代码由 #314 合并。 | #307 的完整验收未因此关闭；不宣称全仓 reader、备份、外部副本或敏感正文处置已覆盖。额外原生删除须单独确认环境与精确对象/version 清单。见 [生命周期契约](docs/architecture/data-lifecycle.md)和 [#314 范围](https://github.com/qq550723504/data-product-platform/pull/314)。 |
 
 不要将上述工作重新标为“只有规划”，也不要因为一个实现 PR 合并就勾选整个 Epic 完成。未合并分支、暂缓的人工验收和生产准入继续单列；本次首页更新不改变各工作线的负责人、验收要求或运行环境。
