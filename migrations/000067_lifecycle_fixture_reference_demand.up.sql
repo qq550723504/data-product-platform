@@ -116,7 +116,7 @@ BEGIN
  RETURN NEW;
 END; $$ LANGUAGE plpgsql;
 DO $$ DECLARE r record; BEGIN
- FOR r IN SELECT DISTINCT ns.nspname,t.relname,a.attname FROM pg_constraint f JOIN pg_class t ON t.oid=f.conrelid JOIN pg_namespace ns ON ns.oid=t.relnamespace JOIN LATERAL unnest(f.conkey,f.confkey) AS k(local_col,foreign_col) ON true JOIN pg_attribute a ON a.attrelid=t.oid AND a.attnum=k.local_col JOIN pg_attribute b ON b.attrelid=f.confrelid AND b.attnum=k.foreign_col WHERE f.contype='f' AND f.confrelid='dataset_version'::regclass AND b.attname='id' AND t.relname NOT IN ('lifecycle_fixture_copy','lifecycle_content_use_restriction','lifecycle_copy_policy','lifecycle_restore_checkpoint','lifecycle_fixture_reference_requirement')
+ FOR r IN SELECT DISTINCT ns.nspname,t.relname,a.attname FROM pg_constraint f JOIN pg_class t ON t.oid=f.conrelid JOIN pg_namespace ns ON ns.oid=t.relnamespace JOIN LATERAL unnest(f.conkey,f.confkey) AS k(local_col,foreign_col) ON true JOIN pg_attribute a ON a.attrelid=t.oid AND a.attnum=k.local_col JOIN pg_attribute b ON b.attrelid=f.confrelid AND b.attnum=k.foreign_col WHERE f.contype='f' AND f.confrelid='dataset_version'::regclass AND b.attname='id' AND NOT (ns.nspname='public' AND a.attname='dataset_version_id' AND t.relname IN ('lifecycle_fixture_copy','lifecycle_content_use_restriction','lifecycle_copy_policy','lifecycle_restore_checkpoint','lifecycle_fixture_reference_requirement'))
  LOOP
   EXECUTE format('CREATE TRIGGER %I BEFORE INSERT OR UPDATE OF %I ON %I.%I FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard(%L)', 'aa_lifecycle_ref_'||r.attname,r.attname,r.nspname,r.relname,r.attname);
  END LOOP;

@@ -201,6 +201,32 @@ func TestFixtureReferenceInsertionAndDecisionSerializeBothOrders(t *testing.T) {
 	}
 }
 
+func TestFixtureReferenceControlNamesInForeignSchemaAreNotExempt(t *testing.T) {
+	pool := planDatabase(t)
+	_, cs, _, _, _, _, _ := occupancyFixture(t, pool)
+	ctx := context.Background()
+	if _, e := pool.Exec(ctx, `CREATE SCHEMA foreign_owner; CREATE TABLE foreign_owner.lifecycle_fixture_copy(id uuid PRIMARY KEY,dataset_version_id uuid REFERENCES dataset_version(id));`); e != nil {
+		t.Fatal(e)
+	}
+	if _, e := pool.Exec(ctx, `INSERT INTO foreign_owner.lifecycle_fixture_copy VALUES($1,$2)`, uuid.New(), cs[0].DatasetVersionID); e != nil {
+		t.Fatal(e)
+	}
+	if check := referenceCheck(t, pool, cs[0]); check != domain.Unknown {
+		t.Fatalf("foreign same-name control relation bypassed closure: %s", check)
+	}
+}
+
+func TestFixtureReferenceNewColumnOnControlTableIsNotExempt(t *testing.T) {
+	pool := planDatabase(t)
+	_, cs, _, _, _, _, _ := occupancyFixture(t, pool)
+	if _, e := pool.Exec(context.Background(), `ALTER TABLE lifecycle_fixture_copy ADD COLUMN new_material_version_id uuid REFERENCES dataset_version(id)`); e != nil {
+		t.Fatal(e)
+	}
+	if check := referenceCheck(t, pool, cs[0]); check != domain.Unknown {
+		t.Fatalf("new control-table FK column silently exempted: %s", check)
+	}
+}
+
 func TestPendingCopyAndDispatchSerializeBothOrders(t *testing.T) {
 	for _, copyFirst := range []bool{true, false} {
 		t.Run(map[bool]string{true: "pending-copy-first", false: "dispatch-first"}[copyFirst], func(t *testing.T) {

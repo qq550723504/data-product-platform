@@ -29,7 +29,7 @@ func InspectFixtureReferences(ctx context.Context, tx pgx.Tx, c domain.Copy) (do
 	if _, err := tx.Exec(ctx, `LOCK TABLE dataset_version IN SHARE UPDATE EXCLUSIVE MODE`); err != nil {
 		return domain.Unknown, nil, err
 	}
-	rows, err := tx.Query(ctx, `SELECT DISTINCT ns.nspname,t.relname,a.attname FROM pg_constraint f JOIN pg_class t ON t.oid=f.conrelid JOIN pg_namespace ns ON ns.oid=t.relnamespace JOIN LATERAL unnest(f.conkey,f.confkey) AS k(local_col,foreign_col) ON true JOIN pg_attribute a ON a.attrelid=t.oid AND a.attnum=k.local_col JOIN pg_attribute b ON b.attrelid=f.confrelid AND b.attnum=k.foreign_col WHERE f.contype='f' AND f.confrelid='dataset_version'::regclass AND b.attname='id' AND t.relname NOT IN ('lifecycle_fixture_copy','lifecycle_content_use_restriction','lifecycle_copy_policy','lifecycle_restore_checkpoint','lifecycle_fixture_reference_requirement') ORDER BY ns.nspname,t.relname,a.attname`)
+	rows, err := tx.Query(ctx, `SELECT DISTINCT ns.nspname,t.relname,a.attname FROM pg_constraint f JOIN pg_class t ON t.oid=f.conrelid JOIN pg_namespace ns ON ns.oid=t.relnamespace JOIN LATERAL unnest(f.conkey,f.confkey) AS k(local_col,foreign_col) ON true JOIN pg_attribute a ON a.attrelid=t.oid AND a.attnum=k.local_col JOIN pg_attribute b ON b.attrelid=f.confrelid AND b.attnum=k.foreign_col WHERE f.contype='f' AND f.confrelid='dataset_version'::regclass AND b.attname='id' AND NOT (ns.nspname='public' AND a.attname='dataset_version_id' AND t.relname IN ('lifecycle_fixture_copy','lifecycle_content_use_restriction','lifecycle_copy_policy','lifecycle_restore_checkpoint','lifecycle_fixture_reference_requirement')) ORDER BY ns.nspname,t.relname,a.attname`)
 	if err != nil {
 		return domain.Unknown, nil, err
 	}

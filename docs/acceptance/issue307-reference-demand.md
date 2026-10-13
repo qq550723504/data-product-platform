@@ -4,6 +4,10 @@
 base main `074a33bace7edbaf481759aac3a84708363ffd02`，migration67。
 受验源码 `a7116c355428ee71ff621870ceafeb6ede9e9205`；
 最终文档/回执 HEAD 不冒充重新执行过的 binary。
+随后 closure 修正将 metadata 豁免限于 exact public table+column；
+foreign 同名表及 control 表新 FK 列的真实 PG 负例 PASS。对封存新 Core
+做只读 catalog 对比，分类 delta=0；该修正的 native re-execution 为 NOT_RUN，
+证据单列于 [qualification check](evidence/issue307-d1/reference-qualification-check.json)。
 本轮 Draft，不 Ready/merge/deploy/close #307；完整 D1 未接受。
 
 | 层次 | 结果及范围 |

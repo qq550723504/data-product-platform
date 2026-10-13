@@ -1,0 +1,14 @@
+{
+  "negative_pg_test": "Foreign same-name control table and new FK column on a control table both UNKNOWN",
+  "comparison": "read-only Core catalog; zero provider I/O",
+  "scope_delta": "Metadata exemptions restricted to exact public table+column",
+  "native_run": "e1487ce7-172d-4641-80a3-725aa12cc483",
+  "targeted_pg_result": "ok  \tgithub.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application\t30.394s",
+  "native_reexecution": "NOT_RUN",
+  "native_source": "a7116c355428ee71ff621870ceafeb6ede9e9205",
+  "native_catalog": {
+    "old_query_relations": 27,
+    "new_query_relations": 27,
+    "classification_delta": 0
+  }
+}

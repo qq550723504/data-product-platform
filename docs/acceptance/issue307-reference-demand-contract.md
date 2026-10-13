@@ -29,6 +29,8 @@ Concurrency: shared workspace delivery fence, sorted physical copy parents,
 then reference facts; source insertion/update and pending-copy registration
 must take that same fence. FK discovery checks installed admission guards and
 locks schema evolution. Unknown/new/unmanaged dependencies fail closed.
+Metadata exemptions name the exact public schema/table/column; another schema's
+same-name table or a new FK column does not inherit an exemption.
 Dispatch waits for real processing/transfer owner stop; disposition-first blocks
 new GET, bytes and output admission. Final business identities and ISSUED history
 remain intact; transfer observations are appended.
