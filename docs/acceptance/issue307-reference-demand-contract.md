@@ -27,7 +27,10 @@ only integration; all other consumers remain out of scope.
 
 Concurrency: shared workspace delivery fence, sorted physical copy parents,
 then reference facts; source insertion/update and pending-copy registration
-must take that same fence. FK discovery checks installed admission guards and
+must take that same fence. Source writes lock before checking whether the first
+fixture copy exists, serializing with first-copy registration; an uncommitted
+pre-registration reference cannot cross registration and escape inspection.
+FK discovery checks installed admission guards and
 locks schema evolution. Unknown/new/unmanaged dependencies fail closed.
 Metadata exemptions name the exact public schema/table/column; another schema's
 same-name table or a new FK column does not inherit an exemption.

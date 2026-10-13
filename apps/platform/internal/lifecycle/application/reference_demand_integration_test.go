@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/contentreference"
@@ -196,6 +197,81 @@ func TestFixtureReferenceInsertionAndDecisionSerializeBothOrders(t *testing.T) {
 				if _, e = tx.Exec(ctx, `INSERT INTO execution_input(execution_id,input_name,dataset_version_id) VALUES($1,'late',$2)`, ex.ID, cs[0].DatasetVersionID); e == nil {
 					t.Fatal("old transaction crossed restriction")
 				}
+			}
+		})
+	}
+}
+
+func TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders(t *testing.T) {
+	for _, referenceFirst := range []bool{true, false} {
+		t.Run(map[bool]string{true: "reference-first", false: "registration-first"}[referenceFirst], func(t *testing.T) {
+			pool := planDatabase(t)
+			w, cs, o, _, _, _, _ := occupancyFixture(t, pool)
+			ex, _ := subjectExecution(t, pool, w, cs[0], o)
+			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+			defer cancel()
+			var dataset, namespace uuid.UUID
+			if e := pool.QueryRow(ctx, `SELECT v.dataset_id,c.namespace_id FROM lifecycle_fixture_copy c JOIN dataset_version v ON v.id=c.dataset_version_id WHERE c.id=$1`, cs[0].ID).Scan(&dataset, &namespace); e != nil {
+				t.Fatal(e)
+			}
+			copy := cs[0]
+			copy.ID, copy.DatasetVersionID = uuid.New(), uuid.New()
+			copy.Key, copy.ProviderVersion = "sql-only/first-registration.csv", "not-a-live-first-version"
+			if _, e := pool.Exec(ctx, `INSERT INTO dataset_version(id,dataset_id,version_no,status,storage_type,storage_uri,checksum_algorithm,checksum_value,byte_size) VALUES($1,$2,2,'READY','OBJECT_STORAGE','s3://no-provider-configured/first.csv','SHA256',repeat('a',64),12)`, copy.DatasetVersionID, dataset); e != nil {
+				t.Fatal(e)
+			}
+			conn, e := pool.Acquire(ctx)
+			if e != nil {
+				t.Fatal(e)
+			}
+			defer conn.Release()
+			first, e := pool.Begin(ctx)
+			if e != nil {
+				t.Fatal(e)
+			}
+			defer first.Rollback(context.Background())
+			second, e := conn.Begin(ctx)
+			if e != nil {
+				t.Fatal(e)
+			}
+			defer second.Rollback(context.Background())
+			register := func(tx pgx.Tx) error {
+				_, e := tx.Exec(ctx, `INSERT INTO lifecycle_fixture_copy(id,workspace_id,namespace_id,dataset_version_id,object_key,provider_version,content_sha256,byte_size) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`, copy.ID, w, namespace, copy.DatasetVersionID, copy.Key, copy.ProviderVersion, copy.ContentSHA256, copy.ByteSize)
+				return e
+			}
+			insert := func(tx pgx.Tx) error {
+				_, e := tx.Exec(ctx, `INSERT INTO execution_input(execution_id,input_name,dataset_version_id) VALUES($1,'first-registration',$2)`, ex.ID, copy.DatasetVersionID)
+				return e
+			}
+			if referenceFirst {
+				if e = insert(first); e != nil {
+					t.Fatal(e)
+				}
+			} else {
+				if e = register(first); e != nil {
+					t.Fatal(e)
+				}
+			}
+			done := make(chan error, 1)
+			go func() {
+				if referenceFirst {
+					done <- register(second)
+				} else {
+					done <- insert(second)
+				}
+			}()
+			waitForPlanLock(t, pool, int32(conn.Conn().PgConn().PID()))
+			if e = first.Commit(ctx); e != nil {
+				t.Fatal(e)
+			}
+			if e = <-done; e != nil {
+				t.Fatal(e)
+			}
+			if e = second.Commit(ctx); e != nil {
+				t.Fatal(e)
+			}
+			if check := referenceCheck(t, pool, copy); check != domain.Denied {
+				t.Fatalf("first-copy registration lost original demand: %s", check)
 			}
 		})
 	}

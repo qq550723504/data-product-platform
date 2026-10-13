@@ -107,8 +107,11 @@ BEGIN
  v:=(to_jsonb(NEW)->>TG_ARGV[0])::uuid;
  IF v IS NULL OR (TG_OP='UPDATE' AND to_jsonb(OLD)->>TG_ARGV[0]=v::text) THEN RETURN NEW; END IF;
  SELECT d.workspace_id INTO w FROM dataset_version dv JOIN dataset d ON d.id=dv.dataset_id WHERE dv.id=v;
- IF w IS NULL OR NOT EXISTS(SELECT 1 FROM lifecycle_fixture_copy WHERE dataset_version_id=v) THEN RETURN NEW; END IF;
+ IF w IS NULL THEN RETURN NEW; END IF;
+ -- First-copy registration takes this fence too. Checking registration before
+ -- locking would let an uncommitted reference cross registration and dispatch.
  PERFORM lifecycle_reference_lock(w,v);
+ IF NOT EXISTS(SELECT 1 FROM lifecycle_fixture_copy WHERE dataset_version_id=v) THEN RETURN NEW; END IF;
  IF EXISTS(SELECT 1 FROM lifecycle_content_use_restriction WHERE workspace_id=w AND dataset_version_id=v)
  OR EXISTS(SELECT 1 FROM lifecycle_disposition_dispatch d JOIN lifecycle_fixture_copy c ON c.id=d.copy_id WHERE c.dataset_version_id=v AND NOT EXISTS(SELECT 1 FROM lifecycle_dispatch_release x WHERE x.dispatch_id=d.id)) THEN
   RAISE EXCEPTION 'new fixture reference after restriction or disposition';
