@@ -21,7 +21,7 @@ import (
 	"time"
 )
 
-// Only fresh schema66 runs. Original DELETE scopes are never enabled here.
+// Only fresh schema68 runs. Original DELETE scopes are never enabled here.
 func recoveryFixtureStep(ctx context.Context, mode string) error {
 	c, p, e := load()
 	if e != nil {
@@ -37,8 +37,8 @@ func recoveryFixtureStep(ctx context.Context, mode string) error {
 	}
 	defer pool.Close()
 	var schema int
-	if e = pool.QueryRow(ctx, `SELECT max(version) FROM schema_migration`).Scan(&schema); e != nil || schema != 66 {
-		return errors.New("fresh schema66 required; do not upgrade retained environments")
+	if e = pool.QueryRow(ctx, `SELECT max(version) FROM schema_migration`).Scan(&schema); e != nil || schema != 68 {
+		return errors.New("fresh schema68 required; do not upgrade retained environments")
 	}
 	router, e := routing.NewRouter(false)
 	if e != nil {

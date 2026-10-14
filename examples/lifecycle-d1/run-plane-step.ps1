@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','seal','setup','accept','final','reference-races')][string]$Mode)
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','seal','setup','accept','final','reference-races','pre-issued','pre-issued-crash','verify-pre-issued-crash')][string]$Mode)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
@@ -22,7 +22,7 @@ Write-Utf8 (Join-Path $dir ($name+'.sh')) ("#!/bin/sh`nset -eu`nexec /run/privat
 Docker @('create','--pull','never','--name',$name,'--label',"lifecycle307.run=$run",'--network',"container:$($r.containers.gateway)",'--read-only','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data','--mount',"type=bind,source=$dir,target=/run/private,readonly",'--mount',"type=bind,source=$(Join-Path $PSScriptRoot 'results'),target=/run/output",'--mount',"type=bind,source=$repo,target=/run/repo,readonly",'--mount',"type=bind,source=$(Join-Path $dir 'rules'),target=/run/rules,readonly",'--entrypoint','/bin/sh',$pg.Image,('/run/private/'+$name+'.sh'))|Out-Null
 Docker @('start',$name)|Out-Null
 $exit=Docker @('wait',$name)
-$expected='0';if($Mode -eq 'crash'){$expected='95'}
+$expected='0';if($Mode -eq 'pre-issued-crash'){$expected='94'}
 $receipt=@{run_id=$run;mode=$Mode;container=$name;id=(Docker @('inspect',$name,'--format','{{.Id}}'));exit_code=[int]$exit;expected_exit=[int]$expected;binary_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $dir 'reader')).Hash.ToLowerInvariant();root_mounted=($Mode -in @('provision','seal'));delete=0;cleanup=0}
 Write-Utf8 (Join-Path $PSScriptRoot "results/$run/reader-helper-$name.json") ($receipt|ConvertTo-Json)
 if($exit -ne $expected){throw "Reader $Mode failed; helper and facts retained. Inspect its log; no automatic resend"}

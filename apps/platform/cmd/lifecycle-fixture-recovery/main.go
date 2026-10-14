@@ -189,7 +189,7 @@ func (i crashInspector) InspectNamespace(ctx context.Context, c domain.Copy) (lc
 			os.Exit(92)
 		}
 	}
-	if i.scenario == "hold-owner" {
+	if i.scenario == "hold-owner" || i.scenario == "revoke-after-lookup" {
 		if e = write(i.barrier, map[string]string{"fault": "OWNER_HELD_AFTER_LOOKUP", "call_id": v.CallID.String()}); e != nil {
 			return v, e
 		}
@@ -446,7 +446,11 @@ func run(ctx context.Context, path string, c config) error {
 			return e
 		}
 		return write(filepath.Join(c.OutputDirectory, c.Scenario+".json"), map[string]string{"result": "COMPLETED_READ_ONLY_RECOVERY"})
-	case "worker":
+	case "worker", "worker-result":
+		var priorResults int
+		if e = pool.QueryRow(ctx, `SELECT count(*) FROM lifecycle_reconciliation_result WHERE work_id=$1`, c.WorkID).Scan(&priorResults); e != nil {
+			return e
+		}
 		server := platformqueue.NewServer(platformqueue.Config{Addr: c.RedisAddr})
 		mux := asynq.NewServeMux()
 		mux.HandleFunc(lifecyclequeue.TaskRecover, lifecyclequeue.Handle(s))
@@ -467,6 +471,15 @@ func run(ctx context.Context, path string, c config) error {
 				}
 				if done {
 					return write(filepath.Join(c.OutputDirectory, c.Scenario+".json"), map[string]string{"result": "DURABLE_TERMINAL_RECOVERY"})
+				}
+				if c.Mode == "worker-result" {
+					var n int
+					if e = pool.QueryRow(ctx, `SELECT count(*) FROM lifecycle_reconciliation_result WHERE work_id=$1`, c.WorkID).Scan(&n); e != nil {
+						return e
+					}
+					if n > priorResults {
+						return write(filepath.Join(c.OutputDirectory, c.Scenario+".json"), map[string]any{"result": "DURABLE_RESULT_RECOVERY", "terminal": false, "new_results": n - priorResults})
+					}
 				}
 			}
 		}
