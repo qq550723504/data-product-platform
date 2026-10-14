@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','seal','setup','accept','final','reference-races','pre-issued','pre-issued-crash','verify-pre-issued-crash')][string]$Mode)
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','seal','setup','accept','final','reference-races','pre-issued','pre-issued-crash','verify-pre-issued-crash','lc13-init','lc13-crash-one','lc13-crash-two','lc13-orphan','lc13-lease-recovery','lc13-final')][string]$Mode)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
@@ -23,6 +23,7 @@ Docker @('create','--pull','never','--name',$name,'--label',"lifecycle307.run=$r
 Docker @('start',$name)|Out-Null
 $exit=Docker @('wait',$name)
 $expected='0';if($Mode -eq 'pre-issued-crash'){$expected='94'}
+if($Mode -in @('lc13-crash-one','lc13-crash-two')){$expected='95'}
 $receipt=@{run_id=$run;mode=$Mode;container=$name;id=(Docker @('inspect',$name,'--format','{{.Id}}'));exit_code=[int]$exit;expected_exit=[int]$expected;binary_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $dir 'reader')).Hash.ToLowerInvariant();root_mounted=($Mode -in @('provision','seal'));delete=0;cleanup=0}
 Write-Utf8 (Join-Path $PSScriptRoot "results/$run/reader-helper-$name.json") ($receipt|ConvertTo-Json)
 if($exit -ne $expected){throw "Reader $Mode failed; helper and facts retained. Inspect its log; no automatic resend"}

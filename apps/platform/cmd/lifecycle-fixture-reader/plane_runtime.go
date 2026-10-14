@@ -9,6 +9,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -151,6 +152,9 @@ func planeStep(ctx context.Context, mode string) error {
 	}
 	if mode == "pre-issued" || mode == "pre-issued-crash" {
 		return planePreIssued(ctx, c, pool, cs, mode == "pre-issued-crash")
+	}
+	if strings.HasPrefix(mode, "lc13-") {
+		return planeLC13(ctx, c, pool, cs, mode)
 	}
 	if mode == "verify-pre-issued-crash" {
 		return verifyPreIssuedCrash(ctx, c, pool)

@@ -46,6 +46,7 @@ type config struct {
 	Endpoint, PostgresDSN, Token, Access, Secret, InspectAccess, InspectSecret, OutputDirectory, ManifestSHA256 string
 	RootAccess, RootSecret                                                                                      string // populated only in a separate admin-only mount
 	ProducerAccess, ProducerSecret                                                                              string
+	RedisAddr                                                                                                   string // fresh LC-13 closed queue only
 }
 type manifest struct {
 	Objects []struct {
@@ -538,6 +539,9 @@ func main() {
 	limit := 90 * time.Second
 	if *mode == "plane-reference-races" {
 		limit = 13 * time.Minute
+	}
+	if *mode == "plane-lc13-orphan" {
+		limit = 3 * time.Minute
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), limit)
 	defer cancel()
