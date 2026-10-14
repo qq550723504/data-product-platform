@@ -98,9 +98,10 @@ def copy_archive_faults():
   step('copy','outbox','copy-outbox-broker-unavailable',work);failed=load(output('copy')/'copy-outbox-broker-unavailable.json');require(failed['state']=='FAILED' and failed['handler_confirmations']==0,'Unavailable broker falsely confirmed')
  finally:docker('start',redis)
  step('copy','outbox','copy-broker-repaired',work);require(load(output('copy')/'copy-broker-repaired.json')['state']=='PUBLISHED','Outbox not repaired')
+ duplicate_before=counts('copy');step('copy','enqueue','copy-duplicate-enqueue',work);require(counts('copy')==duplicate_before,'Duplicate enqueue invoked storage or changed Core work')
  before=counts('copy');step('copy','once','copy-crash-before-lookup',work);require(counts('copy')['calls']==before['calls'],'Pre-lookup crash invoked storage')
  step('copy','worker','copy-crash-after-lookup',work);step('copy','once','copy-crash-after-bytes',work)
- write(PUBLIC/'copy-archive-faults.json',{'work':work,'counts':counts('copy'),'broker_same_volume_restart':True,'real_asynq_worker_exit':92,'producer_exit':93,'run_start_exit':91,'durable_get_exit':96,'native_copy':1,'native_delete':0})
+ write(PUBLIC/'copy-archive-faults.json',{'work':work,'counts':counts('copy'),'broker_same_volume_restart':True,'explicit_double_enqueue_native_delta':0,'real_asynq_worker_exit':92,'producer_exit':93,'run_start_exit':91,'durable_get_exit':96,'native_copy':1,'native_delete':0})
 def copy_archive_resume():
  work=load(PUBLIC/'copy-archive-faults.json')['work'];step('copy','worker','copy-orphan-resumed',work)
  require(result('copy',work)[-1]['outcome']=='COPY_ARCHIVED','Orphan task did not archive');replay('copy',work,'copy-archive-replay')
