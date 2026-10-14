@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "baseline": "196ecda3282d009647afbd79021cf3691bc2fe51",
+  "lifecycle_unit_tests": 13,
+  "isolation_unit_tests": 5,
+  "native_image_checks": 5,
+  "native_scope": "scratch image-only; response-loss injection is controlled after a real build",
+  "source_lf_sha256": {
+    ".github/workflows/ci.yml": "f5caefdbaed8cfac98db8aaf5ad6c2465dafbd8ae9f1d77c0ba3f1e4765414a5",
+    "examples/enterprise-activity/postgres-ingestion/trial_images.py": "2ec957ba1d3a9ef220c99fd16418f9ab96407475ded0b4aaae646e28199a47c6",
+    "examples/enterprise-activity/postgres-ingestion/trial_images_test.py": "0cadf9e4877effaf2635f59affd9b8d6744943c44b12ebb8e4da89c21fb1daf0",
+    "examples/enterprise-activity/postgres-ingestion/trial_images_native_test.py": "13cc9751d77ca745be19489a905eb5d2d2b9f6268b4caeb26971df42261f14ff",
+    "examples/enterprise-activity/postgres-ingestion/smoke.py": "4d885c0fe5d20b77214278c0eb1e872e6c9caf1a46a1734af056a637c73aa7e0",
+    "examples/enterprise-activity/postgres-ingestion/storage_smoke.py": "4e315041d149251be19e453d656e2fa86c74417fdfd52ef1ff8e6da167b62940",
+    "examples/enterprise-activity/postgres-ingestion/b2_smoke.py": "c9a4864f8f2ea5d486612adf4ec058115790ab41d9bf4ad6413aaea5cec9c1bc",
+    "examples/enterprise-activity/postgres-ingestion/b3_runtime.py": "91534ef1abc2037ce3e6b4a5277d4e18140a5a2a5ff8fb0f89e95fd8827e8504",
+    "examples/enterprise-activity/postgres-ingestion/image_isolation_test.py": "3623017ee4945544f315ad883e44175a64af6848bdcff2522e6e027af0bdd07a",
+    "examples/enterprise-activity/postgres-ingestion/image_isolation_unit_test.py": "654f66fb2cf96fc99f5b7f9662d92efa690a57d8e4b17a20319f348ae3098a41"
+  },
+  "native_executed_sources": [
+    "trial_images.py",
+    "trial_images_native_test.py"
+  ],
+  "initial_native": "FAIL / ADDITIONAL_REFERENCES / preserved; before canonical binding fix",
+  "existing_images": 43,
+  "existing_containers": 416,
+  "existing_volumes": 2731,
+  "existing_objects_unchanged": true,
+  "existing_cleanup": 0,
+  "volume_mutations": 0,
+  "backup_mutations": 0,
+  "core_runtime": "NOT_RUN",
+  "human_explanation": "DEFERRED",
+  "ci": "record exact head independently in PR checkpoint",
+  "independent_review": "record exact head independently in PR checkpoint",
+  "pr_state": "Draft only"
+}

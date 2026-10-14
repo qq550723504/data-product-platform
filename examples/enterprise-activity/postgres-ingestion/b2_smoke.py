@@ -62,7 +62,7 @@ def run(output,cache):
             "minio_commit":SOURCE_COMMIT,"minio_release":SOURCE_RELEASE}
     try:
         print("B2: preparing pinned runtimes",flush=True)
-        binary,minio_image=prepare_binary(cache,"dpp-pgi-minio:trial-"+trial.run_id.replace("-", ""))
+        binary,minio_image=prepare_binary(cache,trial.images.tag("minio"),owner=trial.images)
         trial.setup()
         report["runtime"]=trial.report["runtime"]
         report["minio_binary_sha256"]=hashlib.sha256(binary.read_bytes()).hexdigest()
@@ -150,17 +150,28 @@ def run(output,cache):
         report["status"]="FAIL";report["failure"]=str(error);raise
     finally:
         if control:control.shutdown();control.server_close()
-        cleanup=[]
-        for name in reversed(names):cleanup.append(command(["docker","rm","-f",name],check=False).returncode==0)
+        container_cleanup=[];network_cleanup=[];trial_cleanup_error=None
+        for name in reversed(names):container_cleanup.append(command(["docker","rm","-f",name],check=False).returncode==0)
         # Disconnect/remove the gateway before Trial removes its engine network.
-        trial.cleanup()
-        cleanup += [command(["docker","inspect",name],check=False).returncode!=0 for name in (trial.pg,trial.hop)]
-        cleanup.append(command(["docker","network","inspect",trial.network],check=False).returncode!=0)
-        for net in reversed(networks):cleanup.append(command(["docker","network","rm",net],check=False).returncode==0)
-        require(private.resolve().parent==Path(tempfile.gettempdir()).resolve() and private.name.startswith("dpp-pgi-b2-core-"),"unsafe credential cleanup")
-        shutil.rmtree(private)
-        report["cleanup"]="PASS" if all(cleanup) else "FAIL"
-        (output/"b2-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+        try:trial.cleanup()
+        except Exception as error:trial_cleanup_error=type(error).__name__
+        container_cleanup += [command(["docker","inspect",name],check=False).returncode!=0 for name in (trial.pg,trial.hop)]
+        network_cleanup.append(command(["docker","network","inspect",trial.network],check=False).returncode!=0)
+        for net in reversed(networks):network_cleanup.append(command(["docker","network","rm",net],check=False).returncode==0)
+        report["cleanup_detail"]={"b2_containers":"PASS" if all(container_cleanup) else "FAIL",
+            "b2_networks":"PASS" if all(network_cleanup) else "FAIL",
+            "trial":trial.report.get("cleanup_detail",{"status":"UNKNOWN"}),"temporary_credentials":"NOT_RUN",
+            "trial_cleanup_error":trial_cleanup_error}
+        report["cleanup"]="FAIL"
+        try:
+            require(private.resolve().parent==Path(tempfile.gettempdir()).resolve() and private.name.startswith("dpp-pgi-b2-core-"),"unsafe credential cleanup")
+            shutil.rmtree(private)
+            report["cleanup_detail"]["temporary_credentials"]="PASS"
+            if all(container_cleanup+network_cleanup) and trial.report.get("cleanup")=="PASS" and trial_cleanup_error is None:
+                report["cleanup"]="PASS"
+        finally:
+            (output/"b2-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    require(report["cleanup"]=="PASS","B2 cleanup incomplete; see component receipt")
     print("B2 PASS; B3 NOT_RUN",flush=True)
 
 if __name__=="__main__":

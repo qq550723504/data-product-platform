@@ -1,0 +1,14 @@
+{
+  "run_id": "f0f833a2-5055-40c1-aa99-742cfc81524e",
+  "owner": "9a025cdffb274f729d7716244b1bec65",
+  "retain": false,
+  "images": [
+    {
+      "tag": "dpp-pgi-minio:trial-f0f833a2505540c1aa99742cfc81524e",
+      "image_id": "sha256:49b797435ef065d849f325388636d86ed0a1141c081b1929a605795b5bc52f19",
+      "owned_digests": [
+        "dpp-pgi-minio@sha256:49b797435ef065d849f325388636d86ed0a1141c081b1929a605795b5bc52f19"
+      ]
+    }
+  ]
+}

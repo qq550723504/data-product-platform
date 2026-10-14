@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "checks": [
+    "owned non-retained release and retry",
+    "retain has no image deletion",
+    "created/stopped consumer blocks; own consumer removed before release",
+    "additional ref blocks; both fresh refs retained",
+    "native completed build with controlled lost reply recovers ownership"
+  ],
+  "owned_removed": [
+    {
+      "tag": "dpp-pgi-minio:trial-abd8c7e9a2c04c4ba7b5e127f0013079",
+      "image_id": "sha256:cbcbc7a75ec2763e17b7733ab8cc091b94f11a0d1b682b720c142c4ee84c2f6c",
+      "run_id": "abd8c7e9-a2c0-4c4b-a7b5-e127f0013079"
+    },
+    {
+      "tag": "dpp-pgi-minio:trial-f0f833a2505540c1aa99742cfc81524e",
+      "image_id": "sha256:49b797435ef065d849f325388636d86ed0a1141c081b1929a605795b5bc52f19",
+      "run_id": "f0f833a2-5055-40c1-aa99-742cfc81524e",
+      "consumer": "a086a90827cefd6c10dde22c351ddafdf4cdec0c729fa6a2b2c66037b078b3e8"
+    },
+    {
+      "tag": "dpp-pgi-minio:trial-343b0f8b17c34ad7b8ca10a230ccfa88",
+      "image_id": "sha256:803f34924be4ab1b22baec70d0c5b452f435ad6eba6ce7286734b1d26cc93c59",
+      "run_id": "343b0f8b-17c3-4ad7-b8ca-10a230ccfa88"
+    }
+  ],
+  "fresh_retained": [
+    {
+      "tag": "dpp-pgi-minio:trial-18d97329d314437fb0ea1cc6b4f35d9b",
+      "image_id": "sha256:bdf89dd92f88e109867b9f102b756f103cef58b6acd342194ba346e5fdb45b3c",
+      "reason": "retain"
+    },
+    {
+      "tag": "dpp-pgi-minio:trial-a3ff06fc99584965933fb15ad28a51fc",
+      "alias": "dpp320-test-alias:trial-c17d52639173462999fca7278f7cdab4",
+      "image_id": "sha256:d9fcc98f31752fb79520072c17c46d23178bfe1fa88be7be47bc747ed7f48c3f",
+      "reason": "additional-reference"
+    }
+  ],
+  "existing_image_count": 43,
+  "existing_container_count": 416,
+  "existing_volume_count": 2731,
+  "existing_inventory_sha256": "b00142d093656344c9c5d6c5e0ca1c89b712cc515f574d798e0b90e0870052a2",
+  "existing_objects_unchanged": true,
+  "existing_cleanup_calls": 0,
+  "volume_mutations": 0,
+  "backup_calls": 0,
+  "business_runtime_acceptance": "NOT_RUN",
+  "human_explanation": "DEFERRED"
+}

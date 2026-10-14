@@ -1,0 +1,4 @@
+{"event": "BUILD_INTENT", "image_id": null, "tag": "dpp-pgi-minio:trial-343b0f8b17c34ad7b8ca10a230ccfa88"}
+{"event": "BOUND_AFTER_PARTIAL_SETUP", "image_id": "sha256:803f34924be4ab1b22baec70d0c5b452f435ad6eba6ce7286734b1d26cc93c59", "owned_digests": ["dpp-pgi-minio@sha256:803f34924be4ab1b22baec70d0c5b452f435ad6eba6ce7286734b1d26cc93c59"], "tag": "dpp-pgi-minio:trial-343b0f8b17c34ad7b8ca10a230ccfa88"}
+{"event": "DELETE_INTENT", "image_id": "sha256:803f34924be4ab1b22baec70d0c5b452f435ad6eba6ce7286734b1d26cc93c59", "tag": "dpp-pgi-minio:trial-343b0f8b17c34ad7b8ca10a230ccfa88"}
+{"event": "CLEANUP_OBSERVATION", "image_id": "sha256:803f34924be4ab1b22baec70d0c5b452f435ad6eba6ce7286734b1d26cc93c59", "image_state": "ABSENT", "reason": "OWNED_REF_REMOVED", "status": "PASS", "tag": "dpp-pgi-minio:trial-343b0f8b17c34ad7b8ca10a230ccfa88", "tag_state": "ABSENT"}

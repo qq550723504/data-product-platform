@@ -1,0 +1,5 @@
+{"event": "BUILD_INTENT", "image_id": null, "tag": "dpp-pgi-minio:trial-f0f833a2505540c1aa99742cfc81524e"}
+{"event": "BOUND", "image_id": "sha256:49b797435ef065d849f325388636d86ed0a1141c081b1929a605795b5bc52f19", "owned_digests": ["dpp-pgi-minio@sha256:49b797435ef065d849f325388636d86ed0a1141c081b1929a605795b5bc52f19"], "tag": "dpp-pgi-minio:trial-f0f833a2505540c1aa99742cfc81524e"}
+{"consumer_ids": ["a086a90827ce"], "event": "CLEANUP_OBSERVATION", "image_id": "sha256:49b797435ef065d849f325388636d86ed0a1141c081b1929a605795b5bc52f19", "reason": "CONTAINER_CONSUMER", "status": "BLOCKED", "tag": "dpp-pgi-minio:trial-f0f833a2505540c1aa99742cfc81524e"}
+{"event": "DELETE_INTENT", "image_id": "sha256:49b797435ef065d849f325388636d86ed0a1141c081b1929a605795b5bc52f19", "tag": "dpp-pgi-minio:trial-f0f833a2505540c1aa99742cfc81524e"}
+{"event": "CLEANUP_OBSERVATION", "image_id": "sha256:49b797435ef065d849f325388636d86ed0a1141c081b1929a605795b5bc52f19", "image_state": "ABSENT", "reason": "OWNED_REF_REMOVED", "status": "PASS", "tag": "dpp-pgi-minio:trial-f0f833a2505540c1aa99742cfc81524e", "tag_state": "ABSENT"}

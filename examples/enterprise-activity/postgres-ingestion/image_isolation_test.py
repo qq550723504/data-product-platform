@@ -7,6 +7,7 @@ import argparse,hashlib,ipaddress,json,subprocess,uuid
 from pathlib import Path
 import smoke,storage_smoke
 from retained_runtime import DurableStorage,private_directory
+from trial_images import TrialImages
 
 SHARED_IMAGE_ALIASES = ('dpp-pgi-hop-jdbc:42.7.14', 'dpp-pgi-minio:2025-10-15')
 
@@ -39,9 +40,10 @@ def run(output,cache,subnet):
     def image(ref):return json.loads(original(['docker','image','inspect',ref]).stdout)[0]['Id']
     before=shared_image_snapshot(original)
     native=[]
-    for _ in range(2):
-        tag='dpp-pgi-minio:trial-'+uuid.uuid4().hex
-        binary,identity=storage_smoke.prepare_binary(cache,tag)
+    for index in range(2):
+        owner=TrialImages(output,str(uuid.uuid4()),True,original,stem='minio-image-ownership-'+str(index))
+        tag=owner.tag('minio')
+        binary,identity=storage_smoke.prepare_binary(cache,tag,owner=owner)
         assert identity==image(tag)
         name='dpp-image-pin-'+uuid.uuid4().hex
         original(['docker','create','--name',name,'--label','dpp.image-isolation=true','--entrypoint','/usr/local/bin/minio',identity,'--version'])

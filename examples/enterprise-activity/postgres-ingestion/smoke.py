@@ -28,6 +28,7 @@ import urllib.parse
 import urllib.request
 import uuid
 import xml.etree.ElementTree as ET
+from trial_images import TrialImages
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
@@ -167,6 +168,8 @@ class Trial:
         self.staging.mkdir()
         self.staging.chmod(0o777)
         self.run_id = str(uuid.uuid4())
+        self.images = TrialImages(output, self.run_id, retain,
+                                  lambda args, **kw: command(args, **kw))
         self.identity = "dpp-pgi-" + uuid.UUID(self.run_id).hex[:12]
         self.pg = self.identity + "-source"
         self.hop = self.identity + "-hop"
@@ -180,7 +183,7 @@ class Trial:
                        "object_storage": "NOT_RUN", "browser_acceptance": "NOT_RUN"}
         self.report["implementation_sha256"] = {
             str(file.relative_to(REPO)).replace("\\", "/"): source_sha(file)
-            for file in [HERE / ".gitattributes", HERE / "smoke.py", HERE / "start-hop.sh", HERE / "Dockerfile.hop",
+            for file in [HERE / ".gitattributes", HERE / "smoke.py", HERE / "trial_images.py", HERE / "start-hop.sh", HERE / "Dockerfile.hop",
                          HERE / "source.sql", HERE / "extract.hpl",
                          HERE / "metadata/rdbms/dpp-source.json",
                          HERE / "metadata/pipeline-run-configuration/local.json",
@@ -227,10 +230,8 @@ class Trial:
             driver = response.read()
         require(sha(driver) == JDBC_SHA256, "driver checksum mismatch")
         (build / "postgresql-42.7.14.jar").write_bytes(driver)
-        image_tag = "dpp-pgi-hop-jdbc:trial-" + self.run_id.replace("-", "")
-        self.docker("build", "-q", "-t", image_tag, "-f", str(HERE / "Dockerfile.hop"), str(build), timeout=180)
-        self.engine_image = json.loads(self.docker("image", "inspect", image_tag).stdout)[0]["Id"]
-        require(self.engine_image.startswith("sha256:") and len(self.engine_image) == 71, "resolved Hop image ID required")
+        self.engine_image = self.images.build(self.images.tag("hop-jdbc"),
+            ["-q", "-f", str(HERE / "Dockerfile.hop"), str(build)], timeout=180)
         self.report["runtime"]["jdbc"] = {"version": "42.7.14", "url": JDBC_URL, "sha256": JDBC_SHA256,
             "engine_image_id": json.loads(self.docker("image", "inspect", self.engine_image).stdout)[0]["Id"]}
         (self.private / "admin-password").write_text(self.passwords[0])
@@ -646,19 +647,30 @@ class Trial:
         (self.output / "report.json").write_bytes(canonical(self.report))
 
     def cleanup(self):
+        self.report["cleanup"] = "FAIL"
+        self.report["cleanup_detail"] = {"containers": "NOT_RUN", "networks": "NOT_RUN",
+            "temporary_credentials": "NOT_RUN", "image_refs": {"status": "NOT_RUN"}}
         if self.proxy:
             self.proxy.shutdown()
             self.proxy.server_close()
         if self.retain:
             for container in (self.hop, self.pg):
                 self.docker("stop", "--time", "20", container, check=False)
+            self.report["cleanup_detail"] = {"containers": "RETAINED", "networks": "RETAINED",
+                "temporary_credentials": "RETAINED", "image_refs": self.images.cleanup()}
+            self.report["cleanup"] = "RETAINED"
             return  # Retained trial has no automatic destructive cleanup path.
+        containers = []
         for container in (self.hop, self.pg):
-            self.docker("rm", "-f", "-v", container, check=False)
-        self.docker("network", "rm", self.network, check=False)
+            containers.append(self.docker("rm", "-f", "-v", container, check=False).returncode == 0)
+        network = self.docker("network", "rm", self.network, check=False).returncode == 0
         require(self.private.resolve().parent == Path(tempfile.gettempdir()).resolve() and
                 self.private.name.startswith("dpp-pgi-private-"), "unexpected cleanup path")
         shutil.rmtree(self.private)
+        images = self.images.cleanup()
+        self.report["cleanup_detail"] = {"containers": "PASS" if all(containers) else "FAIL",
+            "networks": "PASS" if network else "FAIL", "temporary_credentials": "PASS", "image_refs": images}
+        self.report["cleanup"] = "PASS" if all(containers) and network and images["status"] == "PASS" else "FAIL"
 
 
 def main():
@@ -690,8 +702,11 @@ def main():
             print(str(error), flush=True)  # only locally authored safe messages
         raise SystemExit(1) from None
     finally:
-        trial.save()
-        trial.cleanup()
+        try:
+            trial.cleanup()
+        finally:
+            trial.save()
+    require(trial.report["cleanup"] == "PASS", "B1 cleanup incomplete; see component receipt")
     print(f"B1 PASS; evidence: {output / 'report.json'}", flush=True)
 
 

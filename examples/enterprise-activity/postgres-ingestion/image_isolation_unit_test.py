@@ -54,7 +54,7 @@ class ControlledDocker:
             raise RuntimeError('docker command failed (exit 1); raw output withheld')
         return subprocess.CompletedProcess(args, code, data, error)
 
-    def prepare_binary(self, cache, tag):
+    def prepare_binary(self, cache, tag, *, owner):
         self.builds += 1
         identity = image_id(self.builds)
         self.images[tag] = identity

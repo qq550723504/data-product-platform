@@ -287,7 +287,9 @@ jobs:
 
       - name: Test trial image isolation runner contracts
         if: steps.changes.outputs.run_hop == 'true'
-        run: python3 examples/enterprise-activity/postgres-ingestion/image_isolation_unit_test.py
+        run: |
+          python3 examples/enterprise-activity/postgres-ingestion/image_isolation_unit_test.py
+          python3 examples/enterprise-activity/postgres-ingestion/trial_images_test.py
 
       - name: Run pinned Apache Hop reference pipeline
         if: steps.changes.outputs.run_hop == 'true'
