@@ -1,0 +1,12 @@
+{
+  "container": "dpp-lifecycle307-04a6ff55-reader-lc13-init-db2b72",
+  "root_mounted": false,
+  "id": "4fcb1f4ed8046ac6ecc7fd8be3d8c8a16e3629b360026ad72fd2411ef6bb1584",
+  "mode": "lc13-init",
+  "cleanup": 0,
+  "exit_code": 0,
+  "expected_exit": 0,
+  "binary_sha256": "3cddefc13a732482f1afe5493dd641ab880254a9ec47536b1053516d51dc727a",
+  "run_id": "04a6ff55-f366-4a6e-8a1b-9cc79bea15e0",
+  "delete": 0
+}

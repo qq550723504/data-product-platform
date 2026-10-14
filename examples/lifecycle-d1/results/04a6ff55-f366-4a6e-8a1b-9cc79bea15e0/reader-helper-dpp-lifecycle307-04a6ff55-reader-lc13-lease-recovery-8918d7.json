@@ -1,0 +1,12 @@
+{
+  "exit_code": 0,
+  "run_id": "04a6ff55-f366-4a6e-8a1b-9cc79bea15e0",
+  "cleanup": 0,
+  "binary_sha256": "3cddefc13a732482f1afe5493dd641ab880254a9ec47536b1053516d51dc727a",
+  "mode": "lc13-lease-recovery",
+  "expected_exit": 0,
+  "id": "2c05f8e773259658107d1d732926d8a2c520835e3edca4d9e172370714171dc6",
+  "delete": 0,
+  "container": "dpp-lifecycle307-04a6ff55-reader-lc13-lease-recovery-8918d7",
+  "root_mounted": false
+}
