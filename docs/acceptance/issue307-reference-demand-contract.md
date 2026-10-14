@@ -2,7 +2,7 @@
 
 Candidate base: origin/main 074a33bace7edbaf481759aac3a84708363ffd02.
 Writer: this isolated codex/issue307-reference-demand-lc11-lc12 checkout only.
-Migration: 67 (main through 66; refreshed live before assignment).
+Migration: 67 for reference-demand (main through 66 at assignment); 68 for the explicitly authorized checkpoint preparation extension.
 
 Authority: AGENTS.md, lifecycle contract sections 4 and 6, ADR-0015,
 Issue #307 and issue307-d1-confirmed.md. This document records this PR's finite

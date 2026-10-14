@@ -61,6 +61,7 @@ def helper(phase,network,dsn=None,attestation=None,expected=0,mode=None):
     payload=folder/'payload';payload.mkdir();out=PUBLIC/phase;out.mkdir()
     cfg=preflight();fields=['RunID','WorkspaceID','ProviderInstanceID','IncarnationID','ActorID','Endpoint','PostgresDSN','InspectAccess','InspectSecret','Token']
     fixture={key:cfg[key] for key in fields};fixture.update(RootAccess='',RootSecret='',OutputDirectory='/run/output')
+    if phase=='render':fixture['OutputDirectory']='/run/payload'
     if dsn:fixture['PostgresDSN']=dsn
     reference={'Fixture':fixture,'PreparationEnabled':True,'PreparationUntil':(dt.datetime.now(dt.timezone.utc)+dt.timedelta(minutes=40)).isoformat(),'AttestationPublicKey':''}
     if attestation:
@@ -75,6 +76,9 @@ def helper(phase,network,dsn=None,attestation=None,expected=0,mode=None):
     logs=subprocess.run(['docker','logs',name],capture_output=True);(folder/'helper.private-log').write_bytes(logs.stdout+logs.stderr)
     item=inspect(name);write(out/'helper.json',{'name':name,'id':item['Id'],'exit':exit_code,'expected_exit':expected,'image':item['Image'],'binary_sha256':sha(folder/'executor'),'root_mounted':False,'network_mode':item['HostConfig']['NetworkMode'],'retained':True})
     require(exit_code==expected,'Helper failed; retained, no automatic retry')
+    if phase=='render':
+        for name in ('bounded-profile.json','delete-executor-policy.json'):
+            (out/name).write_bytes((payload/name).read_bytes())
     return folder,out
 def build():
     require(not CONTROL.exists() and not PUBLIC.exists(),'Preparation already exists; preserve and select an explicit later generation')
@@ -139,7 +143,7 @@ def core_refresh():
     for a,b in zip(sorted(before['versions'],key=lambda r:r['copy']['ID']),sorted(after['versions'],key=lambda r:r['copy']['ID'])):
         require(a['copy']==b['copy'] and (a['bytes'],a['sha256'])==(b['bytes'],b['sha256']) and all(a['protection'][key]==b['protection'][key] for key in ('LegalHold','RetentionMode','RetainUntil')),'Source native identity/protection changed')
     output=ROOT/'docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-generation02';require(not output.exists(),'Generation02 already retained');output.mkdir()
-    (output/'trial-no-send-candidate.json').write_bytes((PUBLIC/'no-send/no-send-transaction.json').read_bytes())
+    (output/'trial-no-send-applied.json').write_bytes((PUBLIC/'no-send/no-send-transaction.json').read_bytes())
     for extra in ([],['-VerifyExistingAuth'],['-VerifyExistingFacts']):
         call(['pwsh','-NoProfile','-File',str(ROOT/'examples/lifecycle-d1/checkpoint-reference-core.ps1'),'-PrivateDirectory',str(PRIVATE),'-CheckpointAttempt','04','-Generation','02',*extra])
 def seal():

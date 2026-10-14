@@ -88,13 +88,16 @@ function Verify-CheckpointFacts {
  }finally{Docker @('stop','--time','30',$replicaName)|Out-Null}
  Require ((Get-FileHash -Algorithm SHA256 -LiteralPath $PSCommandPath).Hash.ToLowerInvariant() -eq $sourceHash) 'Verification source changed during run'
  $output=Join-Path $public 'core-checkpoint-final-readback.json';Require (-not (Test-Path -LiteralPath $output)) 'Append-only verification exists'
- Write-Utf8 $output (@{status='PASS_FINAL_READ_ONLY_SOURCE_AND_REPLICA';as_of=[DateTimeOffset]::UtcNow.ToString('o');script_checkout_sha256=$sourceHash;script_unchanged_during_run=$true;dump_sha256=$receipt.core_dump_sha256;relations=$currentSource.Count;rows=($currentSource|Measure-Object rows -Sum).Sum;all_fingerprints_match_original_checkpoint=$true;replica_state='STOPPED_RETAINED_NO_BUSINESS_ADMISSION';original_dump_restore_script_hash='NOT_CAPTURED; final readback source is separately bound, not a claim of final-source re-dump/re-restore';source_core_mutation=0;source_restart=0;provider_io=0;delete=0;cleanup=0}|ConvertTo-Json -Depth 8)
+ $dumpSource='NOT_CAPTURED; final readback source is separately bound, not a claim of final-source re-dump/re-restore'
+ if($Generation -eq '02'){Require ($receipt.generation -eq '02' -and $receipt.script_checkout_sha256 -eq $sourceHash -and $receipt.script_unchanged_during_run) 'Generation02 dump/restore and final readback source must match';$dumpSource=$receipt.script_checkout_sha256}
+ Write-Utf8 $output (@{status='PASS_FINAL_READ_ONLY_SOURCE_AND_REPLICA';as_of=[DateTimeOffset]::UtcNow.ToString('o');script_checkout_sha256=$sourceHash;script_unchanged_during_run=$true;dump_sha256=$receipt.core_dump_sha256;relations=$currentSource.Count;rows=($currentSource|Measure-Object rows -Sum).Sum;all_fingerprints_match_original_checkpoint=$true;replica_state='STOPPED_RETAINED_NO_BUSINESS_ADMISSION';original_dump_restore_script_hash=$dumpSource;source_core_mutation=0;source_restart=0;provider_io=0;delete=0;cleanup=0}|ConvertTo-Json -Depth 8)
  Write-Output 'PASS final read-only source/replica fingerprints; final verification source bound separately'
 }
 Require ($private -eq 'C:\Users\Henry\.codex\fixture-private\dpp-lifecycle307-5d2274ee') 'Only the exact proposal private root is supported'
 Require (-not ($VerifyExistingAuth -and $VerifyExistingFacts)) 'One explicit verification stage only'
 if(-not $VerifyExistingAuth -and -not $VerifyExistingFacts){Require (-not (Test-Path -LiteralPath $backup)) 'Append-only checkpoint already exists; no automatic resume/overwrite'}
-Require (Test-Path -LiteralPath (Join-Path $public 'trial-no-send-candidate.json')) 'Current read-only preflight required'
+$noSendReceipt='trial-no-send-candidate.json';if($Generation -eq '02'){$noSendReceipt='trial-no-send-applied.json'}
+Require (Test-Path -LiteralPath (Join-Path $public $noSendReceipt)) 'Current scoped no-send receipt required'
 $source=(Docker @('inspect',$sourceName)|ConvertFrom-Json)[0]
 Require ($source.Id -eq 'c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0' -and $source.Image -eq $image) 'Source identity changed'
 Assert-RetainedServiceStorage -RunID $run -LabelKey 'lifecycle307.run' -RegisteredVolumes @($sourceName) -Services @(@{role='source-core';container=$source;name=$sourceName;path='/var/lib/postgresql/data';volume=$sourceName})|Out-Null
