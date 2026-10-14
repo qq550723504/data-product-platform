@@ -22,6 +22,7 @@ import urllib.request
 
 from smoke import Trial, PG_IMAGE, SLOTS, command, require, source_sha, fixture
 from storage_smoke import prepare_binary, CADDY, SOURCE_COMMIT, SOURCE_RELEASE
+from cleanup_receipts import CleanupReceipts
 
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
@@ -149,27 +150,29 @@ def run(output,cache):
     except Exception as error:
         report["status"]="FAIL";report["failure"]=str(error);raise
     finally:
-        if control:control.shutdown();control.server_close()
-        container_cleanup=[];network_cleanup=[];trial_cleanup_error=None
-        for name in reversed(names):container_cleanup.append(command(["docker","rm","-f",name],check=False).returncode==0)
-        # Disconnect/remove the gateway before Trial removes its engine network.
-        try:trial.cleanup()
-        except Exception as error:trial_cleanup_error=type(error).__name__
-        container_cleanup += [command(["docker","inspect",name],check=False).returncode!=0 for name in (trial.pg,trial.hop)]
-        network_cleanup.append(command(["docker","network","inspect",trial.network],check=False).returncode!=0)
-        for net in reversed(networks):network_cleanup.append(command(["docker","network","rm",net],check=False).returncode==0)
-        report["cleanup_detail"]={"b2_containers":"PASS" if all(container_cleanup) else "FAIL",
-            "b2_networks":"PASS" if all(network_cleanup) else "FAIL",
-            "trial":trial.report.get("cleanup_detail",{"status":"UNKNOWN"}),"temporary_credentials":"NOT_RUN",
-            "trial_cleanup_error":trial_cleanup_error}
-        report["cleanup"]="FAIL"
+        receipt=CleanupReceipts(report,("control","b2_containers","b2_networks","trial","temporary_credentials"))
         try:
-            require(private.resolve().parent==Path(tempfile.gettempdir()).resolve() and private.name.startswith("dpp-pgi-b2-core-"),"unsafe credential cleanup")
-            shutil.rmtree(private)
-            report["cleanup_detail"]["temporary_credentials"]="PASS"
-            if all(container_cleanup+network_cleanup) and trial.report.get("cleanup")=="PASS" and trial_cleanup_error is None:
-                report["cleanup"]="PASS"
+            if control:
+                receipt.attempt("control","control server",control.shutdown)
+                receipt.attempt("control","control listener",control.server_close)
+            else:receipt.attempt("control","not created",lambda:None)
+            for name in reversed(names):
+                receipt.attempt("b2_containers",name,lambda n=name:command(["docker","rm","-f",n],check=False))
+            if not names:receipt.attempt("b2_containers","not created",lambda:None)
+            # Disconnect/remove the gateway before Trial removes its network.
+            def cleanup_trial():
+                trial.cleanup()
+                return {"status":trial.report["cleanup"],"detail":trial.report["cleanup_detail"]}
+            receipt.attempt("trial","B1 resources and image refs",cleanup_trial)
+            for net in reversed(networks):
+                receipt.attempt("b2_networks",net,lambda n=net:command(["docker","network","rm",n],check=False))
+            if not networks:receipt.attempt("b2_networks","not created",lambda:None)
+            def remove_private():
+                require(private.resolve().parent==Path(tempfile.gettempdir()).resolve() and private.name.startswith("dpp-pgi-b2-core-"),"unsafe credential cleanup")
+                shutil.rmtree(private)
+            receipt.attempt("temporary_credentials","ephemeral private directory",remove_private)
         finally:
+            receipt.finish()
             (output/"b2-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     require(report["cleanup"]=="PASS","B2 cleanup incomplete; see component receipt")
     print("B2 PASS; B3 NOT_RUN",flush=True)

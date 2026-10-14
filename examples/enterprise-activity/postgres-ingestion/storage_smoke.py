@@ -22,6 +22,7 @@ import uuid
 
 from smoke import command, require, source_sha
 from trial_images import TrialImages
+from cleanup_receipts import CleanupReceipts
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
@@ -66,7 +67,7 @@ def run(output, cache):
         "official_mitigation":"GHSA-hv4r-mvr4-25vw unsigned-trailer rejection",
         "core_admission":"NOT_RUN", "user_flow":"NOT_RUN", "checks":[]}
     report["sources"] = {str(path.relative_to(REPO)).replace("\\", "/"):source_sha(path)
-        for path in [HERE/"storage_smoke.py", HERE/"trial_images.py", HERE/"storage.Caddyfile",
+        for path in [HERE/"storage_smoke.py", HERE/"trial_images.py", HERE/"cleanup_receipts.py", HERE/"storage.Caddyfile",
             REPO/"apps/platform/internal/platform/storage/minio.go",
             REPO/"apps/platform/internal/platform/storage/minio_integration_test.go",
             REPO/"apps/platform/go.mod",
@@ -154,19 +155,23 @@ def run(output, cache):
         report["failure"]=str(error)
         raise
     finally:
-        container_cleanup=[]; network_cleanup=[]
-        for name in reversed(names):
-            container_cleanup.append(command(["docker","rm","-f",name],check=False).returncode==0)
-        for net in reversed(networks):
-            network_cleanup.append(command(["docker","network","rm",net],check=False).returncode==0)
-        require(private.is_absolute() and private.parent==Path(tempfile.gettempdir()).resolve()
-                and private.name.startswith("dpp-pgi-b2-secret-"),"unsafe credential cleanup target")
-        shutil.rmtree(private)
-        images=owner.cleanup()
-        report["cleanup_detail"]={"containers":"PASS" if all(container_cleanup) else "FAIL",
-            "networks":"PASS" if all(network_cleanup) else "FAIL","temporary_credentials":"PASS","image_refs":images}
-        report["cleanup"]="PASS" if all(container_cleanup+network_cleanup) and images["status"]=="PASS" else "FAIL"
-        (output/"storage-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+        receipt=CleanupReceipts(report,("containers","networks","temporary_credentials","image_refs"))
+        try:
+            for name in reversed(names):
+                receipt.attempt("containers",name,lambda n=name:command(["docker","rm","-f",n],check=False))
+            if not names:receipt.attempt("containers","not created",lambda:None)
+            for net in reversed(networks):
+                receipt.attempt("networks",net,lambda n=net:command(["docker","network","rm",n],check=False))
+            if not networks:receipt.attempt("networks","not created",lambda:None)
+            def remove_private():
+                require(private.is_absolute() and private.parent==Path(tempfile.gettempdir()).resolve()
+                        and private.name.startswith("dpp-pgi-b2-secret-"),"unsafe credential cleanup target")
+                shutil.rmtree(private)
+            receipt.attempt("temporary_credentials","ephemeral private directory",remove_private)
+            receipt.attempt("image_refs","owned image refs",owner.cleanup)
+        finally:
+            receipt.finish()
+            (output/"storage-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     require(report["cleanup"]=="PASS","storage cleanup incomplete; see component receipt")
     print("B2 storage gate PASS; Core admission and user flow NOT_RUN")
 

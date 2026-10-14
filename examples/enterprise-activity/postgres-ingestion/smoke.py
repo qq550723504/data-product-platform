@@ -29,6 +29,7 @@ import urllib.request
 import uuid
 import xml.etree.ElementTree as ET
 from trial_images import TrialImages
+from cleanup_receipts import CleanupReceipts
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
@@ -183,7 +184,7 @@ class Trial:
                        "object_storage": "NOT_RUN", "browser_acceptance": "NOT_RUN"}
         self.report["implementation_sha256"] = {
             str(file.relative_to(REPO)).replace("\\", "/"): source_sha(file)
-            for file in [HERE / ".gitattributes", HERE / "smoke.py", HERE / "trial_images.py", HERE / "start-hop.sh", HERE / "Dockerfile.hop",
+            for file in [HERE / ".gitattributes", HERE / "smoke.py", HERE / "trial_images.py", HERE / "cleanup_receipts.py", HERE / "start-hop.sh", HERE / "Dockerfile.hop",
                          HERE / "source.sql", HERE / "extract.hpl",
                          HERE / "metadata/rdbms/dpp-source.json",
                          HERE / "metadata/pipeline-run-configuration/local.json",
@@ -647,30 +648,32 @@ class Trial:
         (self.output / "report.json").write_bytes(canonical(self.report))
 
     def cleanup(self):
-        self.report["cleanup"] = "FAIL"
-        self.report["cleanup_detail"] = {"containers": "NOT_RUN", "networks": "NOT_RUN",
-            "temporary_credentials": "NOT_RUN", "image_refs": {"status": "NOT_RUN"}}
+        receipt = CleanupReceipts(self.report, ("proxy", "containers", "networks", "temporary_credentials", "image_refs"))
         if self.proxy:
-            self.proxy.shutdown()
-            self.proxy.server_close()
+            receipt.attempt("proxy", "fault proxy", self.proxy.shutdown)
+            receipt.attempt("proxy", "fault proxy listener", self.proxy.server_close)
+        else:
+            receipt.attempt("proxy", "not created", lambda: None)
         if self.retain:
             for container in (self.hop, self.pg):
-                self.docker("stop", "--time", "20", container, check=False)
-            self.report["cleanup_detail"] = {"containers": "RETAINED", "networks": "RETAINED",
-                "temporary_credentials": "RETAINED", "image_refs": self.images.cleanup()}
-            self.report["cleanup"] = "RETAINED"
+                receipt.attempt("containers", container, lambda name=container: self.docker("stop", "--time", "20", name, check=False))
+            for component in ("networks", "temporary_credentials"):
+                receipt.retain(component)
+            receipt.attempt("image_refs", "owned image refs", self.images.cleanup)
+            receipt.finish()
+            if self.report["cleanup"] == "PASS":
+                self.report["cleanup"] = "RETAINED"
             return  # Retained trial has no automatic destructive cleanup path.
-        containers = []
         for container in (self.hop, self.pg):
-            containers.append(self.docker("rm", "-f", "-v", container, check=False).returncode == 0)
-        network = self.docker("network", "rm", self.network, check=False).returncode == 0
-        require(self.private.resolve().parent == Path(tempfile.gettempdir()).resolve() and
-                self.private.name.startswith("dpp-pgi-private-"), "unexpected cleanup path")
-        shutil.rmtree(self.private)
-        images = self.images.cleanup()
-        self.report["cleanup_detail"] = {"containers": "PASS" if all(containers) else "FAIL",
-            "networks": "PASS" if network else "FAIL", "temporary_credentials": "PASS", "image_refs": images}
-        self.report["cleanup"] = "PASS" if all(containers) and network and images["status"] == "PASS" else "FAIL"
+            receipt.attempt("containers", container, lambda name=container: self.docker("rm", "-f", "-v", name, check=False))
+        receipt.attempt("networks", self.network, lambda: self.docker("network", "rm", self.network, check=False))
+        def remove_private():
+            require(self.private.resolve().parent == Path(tempfile.gettempdir()).resolve() and
+                    self.private.name.startswith("dpp-pgi-private-"), "unexpected cleanup path")
+            shutil.rmtree(self.private)
+        receipt.attempt("temporary_credentials", "ephemeral private directory", remove_private)
+        receipt.attempt("image_refs", "owned image refs", self.images.cleanup)
+        receipt.finish()
 
 
 def main():

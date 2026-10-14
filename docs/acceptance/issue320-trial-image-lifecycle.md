@@ -79,7 +79,7 @@ No Core/migration/routing/worker changes or #307 ownership. Draft PR only;
 no automatic Ready/merge. #298/#299 remain OPEN. Original lost Core recovery
 and human explanation acceptance remain deferred.
 
-## Local verification, 2026-10-14
+## Initial candidate verification, 2026-10-14 (8bcff21)
 
 13 lifecycle contract tests and the existing five isolation-runner tests pass.
 They use controlled Docker responses and are not native provider proof. The
@@ -107,3 +107,24 @@ Raw receipts, events, controlled logs and source/artifact hashes are in
 [the evidence directory](evidence/issue320-trial-images-20261014/validation.json).
 Exact candidate head, independent Draft review and CI are recorded separately
 on the PR; local PASS alone does not imply CI, Ready or merge approval.
+
+## Independent review correction
+
+Independent Draft review of `8bcff21` found one root-cause blocker: cleanup
+command TimeoutExpired/OSError could escape storage/B2 finally before business
+and cleanup receipts were written; Trial could also leave an attempted component
+labelled NOT_RUN. The fix shares a finite receipt observer across these entry
+points: initialize FAIL/NOT_RUN, record UNKNOWN before each action, capture only
+safe exception type, continue subsequent components and always save the receipt
+from the outer finally. Image-manager errors remain fail closed; the observer
+does not authorize any new cleanup target or add a GC runtime.
+
+The same storage partial-setup/network-cleanup timeout test is RED on the original
+storage implementation and GREEN after the correction. Three cross-entrypoint
+failure tests, 14 lifecycle tests and five isolation-runner tests pass. Original
+17 artifacts and their original source bindings are retained as that stage's
+history; an exact manifest copy and new [review-fix validation](evidence/issue320-trial-images-20261014/review-fix-validation.json)
+bind the corrected candidate's 12 source files. Both actual native-executed
+sources are unchanged, so the original five native checks still bind the image
+implementation. No new native cleanup occurred during this receipt correction.
+The final exact-head independent re-review and CI belong to the PR checkpoint.

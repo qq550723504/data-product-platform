@@ -199,7 +199,7 @@ class ImageLifecycleContract(unittest.TestCase):
             trial.cleanup()
             self.assertEqual(trial.report["cleanup"], "FAIL")
             self.assertEqual(trial.report["cleanup_detail"]["image_refs"]["status"], "BLOCKED")
-            self.assertEqual(trial.report["cleanup_detail"]["temporary_credentials"], "PASS")
+            self.assertEqual(trial.report["cleanup_detail"]["temporary_credentials"]["status"], "PASS")
         self.assertEqual(self.docker.mutations(), [])
 
     def test_business_receipt_survives_cleanup_exception(self):
@@ -217,6 +217,22 @@ class ImageLifecycleContract(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "controlled cleanup failure"):
                 smoke.main()
         self.assertEqual(json.loads((output / "report.json").read_text()), {"result":"PASS", "cleanup":"FAIL"})
+
+    def test_trial_timeout_is_observed_not_not_run(self):
+        self.build()
+        with tempfile.TemporaryDirectory(prefix="dpp-pgi-private-") as private:
+            trial = Trial.__new__(Trial)
+            trial.proxy, trial.retain, trial.images, trial.report = None, False, self.owner, {}
+            trial.hop, trial.pg, trial.network, trial.private = "controlled-hop", "controlled-pg", "controlled-net", Path(private)
+            def failure(*args, **kw):
+                raise subprocess.TimeoutExpired(args, 1)
+            trial.docker = failure
+            trial.cleanup()
+            detail = trial.report["cleanup_detail"]
+            self.assertEqual(trial.report["cleanup"], "FAIL")
+            self.assertEqual(detail["networks"]["status"], "UNKNOWN")
+            self.assertEqual(detail["containers"]["attempts"][0]["failure_type"], "TimeoutExpired")
+            self.assertNotEqual(detail["image_refs"]["status"], "NOT_RUN")
 
 
 if __name__ == "__main__":
