@@ -62,7 +62,7 @@ def run(output,cache):
             "minio_commit":SOURCE_COMMIT,"minio_release":SOURCE_RELEASE}
     try:
         print("B2: preparing pinned runtimes",flush=True)
-        binary=prepare_binary(cache)
+        binary,minio_image=prepare_binary(cache,"dpp-pgi-minio:trial-"+trial.run_id.replace("-", ""))
         trial.setup()
         report["runtime"]=trial.report["runtime"]
         report["minio_binary_sha256"]=hashlib.sha256(binary.read_bytes()).hexdigest()
@@ -77,7 +77,7 @@ def run(output,cache):
             (private/name).write_text(value,encoding="utf-8")
         (storage_private/"start.sh").write_text("#!/bin/sh\nset -eu\nexport MINIO_ROOT_USER=$(cat /run/credentials/access)\nexport MINIO_ROOT_PASSWORD=$(cat /run/credentials/secret)\nexec /usr/local/bin/minio server /data --address :9000\n",encoding="utf-8",newline="\n")
         minio="dpp-pgi-b2-storage-"+suffix
-        command(["docker","run","-d","--name",minio,"--network",net,"--network-alias","minio","--mount",f"type=bind,src={storage_private},dst=/run/credentials,readonly","--tmpfs","/data:rw,size=256m","--entrypoint","sh","dpp-pgi-minio:2025-10-15","/run/credentials/start.sh"]);names.append(minio)
+        command(["docker","run","-d","--name",minio,"--network",net,"--network-alias","minio","--mount",f"type=bind,src={storage_private},dst=/run/credentials,readonly","--tmpfs","/data:rw,size=256m","--entrypoint","sh",minio_image,"/run/credentials/start.sh"]);names.append(minio)
         gateway="dpp-pgi-b2-gateway-"+suffix;sp=port()
         command(["docker","run","-d","--name",gateway,"--network",net,"-p",f"127.0.0.1:{sp}:9000","--mount",f"type=bind,src={HERE/'storage.Caddyfile'},dst=/etc/caddy/Caddyfile,readonly",CADDY]);names.append(gateway)
         command(["docker","network","connect",trial.network,gateway])

@@ -1,0 +1,871 @@
+{
+  "status": "PASS",
+  "history": {
+    "dataset_version": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"66bbef2d-52c5-4486-ade1-93f90b7cd9b0\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"7af0c9c5-95e6-4dcb-b9c3-2b3fcc44e829\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"66b1d6ce-74bf-47b2-b21d-85c03814e336\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"3b3628cc-8e99-4d6c-a059-664d1c75fc4a\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"77598be5-83c5-43a6-b91f-081b829806ca\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"89973414-be4d-44ce-a154-05777825bfab\"}'::jsonb",
+      "count": 6,
+      "sha256": "7dfd3539586e16407b512ac217db327ac759409779b1cdb330b66707e20070c5"
+    },
+    "dataset_version_lineage": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"3569132f-bf56-4964-b528-662abf5d68de\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"0883867d-af25-4005-99a5-fc593467a34b\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"150fbf64-f377-4053-a708-29e32780b92a\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"483f3de6-6da9-4d43-9a41-778d5205a64d\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"cba6270d-14d5-4ba8-a536-c8dbcd435058\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"1922324b-4370-48f1-af21-9b05e4011e19\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"54505f46-59d0-4316-80ed-c70283c58c46\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"6f0921e6-cea7-4157-aae5-cf0547686c40\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"ad458e84-d69e-4014-8a28-776ea5519424\"}'::jsonb",
+      "count": 9,
+      "sha256": "1cceee0f9aef9b0a951270f4987399df3c38f60c0908001731189e9506773ca5"
+    },
+    "quality_result": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"36d42242-7346-434c-a3f4-57640d27b4c9\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"2818a2bd-d830-4ed6-b0c4-34ee16bd52eb\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"141a2da1-535d-4e8b-83c6-58362036f107\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"3e7e3e7a-34b5-4cec-b0ef-a6d10ee3b8b8\"}'::jsonb",
+      "count": 4,
+      "sha256": "3197b9bd4b0875732eb878bf0d9284021c2404ab3378ef5acd02830924a9ed48"
+    },
+    "quality_finding": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"4d0daf26-4e57-4b34-a757-1977b463cc03\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"7a27ec9b-84bb-4714-9693-bc34e4e8a024\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"eb241993-7861-4539-8b35-6bca13160e93\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"66badc20-1122-48b4-acf1-f48da22eae16\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"a06dba2b-bd0f-4005-bb75-d32d3c6a04c5\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"3e5ed9ae-5e8a-4364-8470-9a40370db9ce\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"b674af52-7e06-45a7-a787-fa23ddd0dcbd\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"24ac7fb2-233e-41f3-bddb-d7ad2ff7465c\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"059e60e8-aad0-4aca-a903-de637adc5b99\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"aff4fc60-8bca-48b2-83ed-b49e23cef9c2\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"5dc10b83-bd82-4591-a228-18642974184f\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"97400dc2-0fd5-48e0-8e26-b666c0784d52\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"7b4bf29f-5617-4bc4-9575-093ea677c412\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"5399bc9d-7a60-47d0-92b7-a0c54428f1db\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"4e6ebd60-d9bb-4e3f-92b6-6348053b5e2c\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"36d97239-e9e5-4a76-ae7f-587899ad7c5d\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"3900e714-112c-4fe1-a69a-70349b9c8177\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"e9b8111e-6eae-409f-a0d4-a0b74f218edc\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"3ec9c83f-e614-46e1-aad6-4441ff2ac73b\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"a67a38ac-a64b-4cd9-b79b-b024603d913e\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"537b89d1-2c9e-4366-83f5-c384bc68717b\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"56dee196-3eeb-4797-a4dc-47d4d999b09c\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"2c91c064-fb8f-4247-8c81-77d65c90dfb7\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"03cbfcbd-8f50-4a0e-a090-ee68f68fc3ed\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"c64bbdac-3ebe-42f3-b66f-6ee19b7e6262\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"338147f7-d6ec-4ee2-9e0f-ed5574e949ca\"}'::jsonb",
+      "count": 26,
+      "sha256": "e07c041b08a624626d72df5cfeaa8243f5437e622a14b514442a3074a222462b"
+    },
+    "compliance_result": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"e422baa6-75fc-4c63-9bb3-36fa5518eec3\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"690c35c4-3cdb-434e-8eb7-1558b214de04\"}'::jsonb",
+      "count": 2,
+      "sha256": "50a35e8e01c82e43c2e456dd190da56fc65e6a82623317d8caac437db2efb2b0"
+    },
+    "dataset_certification": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"6cbd65b0-eede-463c-9a10-43427f35316f\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"99d1ec72-e259-4257-869f-9c2cf3f67312\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"cf408777-d0a9-4e62-8a7b-5aa819a48397\"}'::jsonb",
+      "count": 3,
+      "sha256": "c5d89ff6880aa775d64da25b36f43340961a7db96b1ff0cb1dd5863307a5e035"
+    },
+    "evidence_snapshot": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"6563012d-14a3-4766-b8af-18ec2c67c70b\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"aa6034c9-9af7-4d7e-bfd0-c893843d27dd\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"95ed4ab0-0083-4cb8-90d8-a574a6e2220a\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"33b45317-d969-4398-ad78-4c644508623d\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"002f719b-6782-4d54-bb7b-187d71e403aa\"}'::jsonb",
+      "count": 5,
+      "sha256": "6cca2346e838664e76fd0c08c23c872213deaafb7d35541134060701c930f9cf"
+    },
+    "evidence_snapshot_item": {
+      "predicate": "to_jsonb(t) @> '{\"snapshot_id\":\"95ed4ab0-0083-4cb8-90d8-a574a6e2220a\",\"evidence_id\":\"935e5205-7b98-4cc4-ab50-bdb3fa1f8840\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"002f719b-6782-4d54-bb7b-187d71e403aa\",\"evidence_id\":\"78ae1b5b-8567-482c-88b2-7be49d229df2\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"aa6034c9-9af7-4d7e-bfd0-c893843d27dd\",\"evidence_id\":\"935e5205-7b98-4cc4-ab50-bdb3fa1f8840\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"6563012d-14a3-4766-b8af-18ec2c67c70b\",\"evidence_id\":\"014846ad-b4c5-5fa8-8007-18a9727b9f34\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"33b45317-d969-4398-ad78-4c644508623d\",\"evidence_id\":\"c10819ec-2255-5dc4-8967-18cddac0d109\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"002f719b-6782-4d54-bb7b-187d71e403aa\",\"evidence_id\":\"73656b18-7057-4739-b9c0-aa1f2f85e343\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"aa6034c9-9af7-4d7e-bfd0-c893843d27dd\",\"evidence_id\":\"7fb38533-d5ac-40fb-a9f7-1766d42826b2\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"002f719b-6782-4d54-bb7b-187d71e403aa\",\"evidence_id\":\"3eb37e3c-441d-4b96-bc5c-11312a9f200f\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"aa6034c9-9af7-4d7e-bfd0-c893843d27dd\",\"evidence_id\":\"ae6ac18d-99cd-4000-b05a-d7a00d6ce22c\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"95ed4ab0-0083-4cb8-90d8-a574a6e2220a\",\"evidence_id\":\"f7d5b813-fa06-4c6a-acae-fdfeaa6df13d\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"002f719b-6782-4d54-bb7b-187d71e403aa\",\"evidence_id\":\"e19c0c4f-3f6b-43ff-946e-0048104c927b\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"aa6034c9-9af7-4d7e-bfd0-c893843d27dd\",\"evidence_id\":\"f7d5b813-fa06-4c6a-acae-fdfeaa6df13d\"}'::jsonb OR to_jsonb(t) @> '{\"snapshot_id\":\"95ed4ab0-0083-4cb8-90d8-a574a6e2220a\",\"evidence_id\":\"ae6ac18d-99cd-4000-b05a-d7a00d6ce22c\"}'::jsonb",
+      "count": 13,
+      "sha256": "16c22bcc8386c62efcabbf76cf02b518974da9793c944abcfb159c275e3139fc"
+    },
+    "rights_snapshot": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"eb04cfe8-b94c-4459-89df-858cc53d0f1d\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"976c5783-025e-4f72-b4d8-3871d6962211\"}'::jsonb",
+      "count": 2,
+      "sha256": "7d991c29c48e63933213968e7cfdbb3e242262b5a13e72a81fc4de797d9200fd"
+    },
+    "rights_snapshot_authorization": {
+      "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"976c5783-025e-4f72-b4d8-3871d6962211\",\"authorization_id\":\"533aaee8-b0a6-401b-bd9a-360d4a9eee4e\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"eb04cfe8-b94c-4459-89df-858cc53d0f1d\",\"authorization_id\":\"533aaee8-b0a6-401b-bd9a-360d4a9eee4e\"}'::jsonb",
+      "count": 2,
+      "sha256": "284fa8f3cd799d96753448cdd568c108d505aac83d25335c7259e773fcf2fa68"
+    },
+    "rights_snapshot_declaration": {
+      "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"976c5783-025e-4f72-b4d8-3871d6962211\",\"declaration_id\":\"20c02c62-6699-4f15-a38b-d124956923ef\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"eb04cfe8-b94c-4459-89df-858cc53d0f1d\",\"declaration_id\":\"20c02c62-6699-4f15-a38b-d124956923ef\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"976c5783-025e-4f72-b4d8-3871d6962211\",\"declaration_id\":\"eabb330d-2a9a-490e-a4f3-3431fc4fe120\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"eb04cfe8-b94c-4459-89df-858cc53d0f1d\",\"declaration_id\":\"eabb330d-2a9a-490e-a4f3-3431fc4fe120\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"976c5783-025e-4f72-b4d8-3871d6962211\",\"declaration_id\":\"eb98a025-e212-4650-9517-84a3a203011c\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"eb04cfe8-b94c-4459-89df-858cc53d0f1d\",\"declaration_id\":\"eb98a025-e212-4650-9517-84a3a203011c\"}'::jsonb",
+      "count": 6,
+      "sha256": "3837c9e4cc050c38cb660707193913becb4531de07852e23efebcdd8fcdf42dc"
+    },
+    "rights_snapshot_provenance_binding": {
+      "predicate": "to_jsonb(t) @> '{\"rights_snapshot_id\":\"976c5783-025e-4f72-b4d8-3871d6962211\",\"binding_id\":\"649ee56b-d00f-492a-acb7-c7ec43c11531\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"eb04cfe8-b94c-4459-89df-858cc53d0f1d\",\"binding_id\":\"649ee56b-d00f-492a-acb7-c7ec43c11531\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"976c5783-025e-4f72-b4d8-3871d6962211\",\"binding_id\":\"8702e04f-af97-4fbc-ab8d-e76b9d3db46b\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"eb04cfe8-b94c-4459-89df-858cc53d0f1d\",\"binding_id\":\"8702e04f-af97-4fbc-ab8d-e76b9d3db46b\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"976c5783-025e-4f72-b4d8-3871d6962211\",\"binding_id\":\"9c4f8544-2a85-4ed4-ac76-71dbf38a2e91\"}'::jsonb OR to_jsonb(t) @> '{\"rights_snapshot_id\":\"eb04cfe8-b94c-4459-89df-858cc53d0f1d\",\"binding_id\":\"9c4f8544-2a85-4ed4-ac76-71dbf38a2e91\"}'::jsonb",
+      "count": 6,
+      "sha256": "e43bed62bbe7e72ccda95ddddf8cf0552b31a76c6c757b367a9bf778546d5000"
+    },
+    "effective_rights_snapshot": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"5918ecf5-e09f-5b2c-a136-a05c515cc361\"}'::jsonb OR to_jsonb(t) @> '{\"id\":\"1d225da2-79ac-5b56-9a2f-dd69ed2593f2\"}'::jsonb",
+      "count": 2,
+      "sha256": "c58541fb02d750e2cd6f7cbe95a93dd35a37eedf36361cea9dbc7a83821eb142"
+    },
+    "product_version": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"98bb1a7b-315b-48de-8d4c-d008b1fda958\"}'::jsonb",
+      "count": 1,
+      "sha256": "d692b50cb97048fd089e9902c17daaa20a437e92ae6fe2bd0be1ed2c0e1da369"
+    },
+    "product_asset": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"b8617dd1-d25c-4c52-9631-f3522ae1bc77\"}'::jsonb",
+      "count": 1,
+      "sha256": "1ee54f763bbee83d6da0e6a4e79f858f24d740925739093a5d51e68295c1b883"
+    },
+    "product_release": {
+      "predicate": "to_jsonb(t) @> '{\"id\":\"109c0d4a-9a2a-40eb-88bc-b399a8bf6eb2\"}'::jsonb",
+      "count": 1,
+      "sha256": "3edeaa75676c375aeaf1d2c892ab85ca45d95bfe77e071a735308dcfedf91050"
+    },
+    "product_release_dataset": {
+      "predicate": "to_jsonb(t) @> '{\"release_id\":\"109c0d4a-9a2a-40eb-88bc-b399a8bf6eb2\",\"dataset_version_id\":\"89973414-be4d-44ce-a154-05777825bfab\"}'::jsonb",
+      "count": 1,
+      "sha256": "be4d5990b129bcd2f7fa815f822b6b137f269a8c1ca934be5f283c51b047eac7"
+    }
+  },
+  "schema": {
+    "source_schema_request": [
+      {
+        "id": "3cf5902e-93f3-482c-a5a0-83104a36ae70",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "resource_id": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+        "actor_id": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+        "authorization_id": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e",
+        "consumer_ref": "LICENSED_BANK",
+        "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+        "binding_id": "01e89b35-6787-4124-84eb-26b19b2296af",
+        "external_id": "3b74cb3c-9267-43b6-b5d1-9f69c6701e39",
+        "external_fqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+        "rule_ref": "park/source-observation/energy-schema-v1.json",
+        "rule_version": "1.0.0",
+        "rule_hash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+        "plan_hash": "d35f69c99444c8a224fdf663fc064d170df27aed550a8a2735dccac685f10ae5",
+        "plan": {
+          "actorId": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+          "columns": [
+            {
+              "name": "meter_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "source_company_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "company_name",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "reading_time",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "energy_kwh",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            }
+          ],
+          "enabled": true,
+          "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+          "ruleRef": "park/source-observation/energy-schema-v1.json",
+          "ruleHash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+          "resourceId": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+          "consumerRef": "LICENSED_BANK",
+          "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+          "ruleVersion": "1.0.0",
+          "workspaceId": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+          "connectorHash": "617597445e903822e75618576570dc370ea1855c80e5071ba6555f614b9d1aa9",
+          "authorizationId": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e"
+        },
+        "request_key": "c2-concurrent-4349655506234128b89ff1100513f145",
+        "requested_at": "2026-10-14T09:36:05.958464+00:00"
+      },
+      {
+        "id": "570fcdbf-77c3-4473-828a-466f050f7b3c",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "resource_id": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+        "actor_id": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+        "authorization_id": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e",
+        "consumer_ref": "LICENSED_BANK",
+        "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+        "binding_id": "01e89b35-6787-4124-84eb-26b19b2296af",
+        "external_id": "3b74cb3c-9267-43b6-b5d1-9f69c6701e39",
+        "external_fqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+        "rule_ref": "park/source-observation/energy-schema-v1.json",
+        "rule_version": "1.0.0",
+        "rule_hash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+        "plan_hash": "d35f69c99444c8a224fdf663fc064d170df27aed550a8a2735dccac685f10ae5",
+        "plan": {
+          "actorId": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+          "columns": [
+            {
+              "name": "meter_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "source_company_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "company_name",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "reading_time",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "energy_kwh",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            }
+          ],
+          "enabled": true,
+          "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+          "ruleRef": "park/source-observation/energy-schema-v1.json",
+          "ruleHash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+          "resourceId": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+          "consumerRef": "LICENSED_BANK",
+          "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+          "ruleVersion": "1.0.0",
+          "workspaceId": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+          "connectorHash": "617597445e903822e75618576570dc370ea1855c80e5071ba6555f614b9d1aa9",
+          "authorizationId": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e"
+        },
+        "request_key": "115cc3e0-e588-47ee-9186-bc0d0c4e2ccc",
+        "requested_at": "2026-10-14T09:33:02.043502+00:00"
+      },
+      {
+        "id": "85a02379-fb8c-47b0-9b16-c64bc4caca6d",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "resource_id": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+        "actor_id": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+        "authorization_id": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e",
+        "consumer_ref": "LICENSED_BANK",
+        "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+        "binding_id": "01e89b35-6787-4124-84eb-26b19b2296af",
+        "external_id": "3b74cb3c-9267-43b6-b5d1-9f69c6701e39",
+        "external_fqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+        "rule_ref": "park/source-observation/energy-schema-v1.json",
+        "rule_version": "1.0.0",
+        "rule_hash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+        "plan_hash": "d35f69c99444c8a224fdf663fc064d170df27aed550a8a2735dccac685f10ae5",
+        "plan": {
+          "actorId": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+          "columns": [
+            {
+              "name": "meter_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "source_company_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "company_name",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "reading_time",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "energy_kwh",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            }
+          ],
+          "enabled": true,
+          "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+          "ruleRef": "park/source-observation/energy-schema-v1.json",
+          "ruleHash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+          "resourceId": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+          "consumerRef": "LICENSED_BANK",
+          "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+          "ruleVersion": "1.0.0",
+          "workspaceId": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+          "connectorHash": "617597445e903822e75618576570dc370ea1855c80e5071ba6555f614b9d1aa9",
+          "authorizationId": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e"
+        },
+        "request_key": "c2-concurrent-30118b87098c493890030176b0bf1671",
+        "requested_at": "2026-10-14T09:36:05.505372+00:00"
+      },
+      {
+        "id": "8c4a1ab3-7041-4503-8ca8-633522854e6a",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "resource_id": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+        "actor_id": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+        "authorization_id": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e",
+        "consumer_ref": "LICENSED_BANK",
+        "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+        "binding_id": "01e89b35-6787-4124-84eb-26b19b2296af",
+        "external_id": "3b74cb3c-9267-43b6-b5d1-9f69c6701e39",
+        "external_fqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+        "rule_ref": "park/source-observation/energy-schema-v1.json",
+        "rule_version": "1.0.0",
+        "rule_hash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+        "plan_hash": "d35f69c99444c8a224fdf663fc064d170df27aed550a8a2735dccac685f10ae5",
+        "plan": {
+          "actorId": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+          "columns": [
+            {
+              "name": "meter_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "source_company_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "company_name",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "reading_time",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "energy_kwh",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            }
+          ],
+          "enabled": true,
+          "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+          "ruleRef": "park/source-observation/energy-schema-v1.json",
+          "ruleHash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+          "resourceId": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+          "consumerRef": "LICENSED_BANK",
+          "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+          "ruleVersion": "1.0.0",
+          "workspaceId": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+          "connectorHash": "617597445e903822e75618576570dc370ea1855c80e5071ba6555f614b9d1aa9",
+          "authorizationId": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e"
+        },
+        "request_key": "10fc1016-255c-45dd-ab73-e58368e32aba",
+        "requested_at": "2026-10-14T09:35:31.411406+00:00"
+      },
+      {
+        "id": "9337e1e6-2e13-4d53-9477-6e3f012b15c0",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "resource_id": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+        "actor_id": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+        "authorization_id": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e",
+        "consumer_ref": "LICENSED_BANK",
+        "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+        "binding_id": "01e89b35-6787-4124-84eb-26b19b2296af",
+        "external_id": "3b74cb3c-9267-43b6-b5d1-9f69c6701e39",
+        "external_fqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+        "rule_ref": "park/source-observation/energy-schema-v1.json",
+        "rule_version": "1.0.0",
+        "rule_hash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+        "plan_hash": "d35f69c99444c8a224fdf663fc064d170df27aed550a8a2735dccac685f10ae5",
+        "plan": {
+          "actorId": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+          "columns": [
+            {
+              "name": "meter_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "source_company_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "company_name",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "reading_time",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "energy_kwh",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            }
+          ],
+          "enabled": true,
+          "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+          "ruleRef": "park/source-observation/energy-schema-v1.json",
+          "ruleHash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+          "resourceId": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+          "consumerRef": "LICENSED_BANK",
+          "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+          "ruleVersion": "1.0.0",
+          "workspaceId": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+          "connectorHash": "617597445e903822e75618576570dc370ea1855c80e5071ba6555f614b9d1aa9",
+          "authorizationId": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e"
+        },
+        "request_key": "172052a4-6c82-401a-8d58-629787fcb373",
+        "requested_at": "2026-10-14T09:31:32.798307+00:00"
+      },
+      {
+        "id": "cf309731-3d72-4325-92c3-4684b5be84bf",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "resource_id": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+        "actor_id": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+        "authorization_id": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e",
+        "consumer_ref": "LICENSED_BANK",
+        "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+        "binding_id": "01e89b35-6787-4124-84eb-26b19b2296af",
+        "external_id": "3b74cb3c-9267-43b6-b5d1-9f69c6701e39",
+        "external_fqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+        "rule_ref": "park/source-observation/energy-schema-v1.json",
+        "rule_version": "1.0.0",
+        "rule_hash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+        "plan_hash": "d35f69c99444c8a224fdf663fc064d170df27aed550a8a2735dccac685f10ae5",
+        "plan": {
+          "actorId": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+          "columns": [
+            {
+              "name": "meter_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "source_company_id",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "company_name",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "reading_time",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            },
+            {
+              "name": "energy_kwh",
+              "type": "TEXT",
+              "constraint": "NOT_NULL"
+            }
+          ],
+          "enabled": true,
+          "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+          "ruleRef": "park/source-observation/energy-schema-v1.json",
+          "ruleHash": "65c991a40ca8ec9a306e1703432e591f5c43e291fa89c69d55e000fe0065b7e8",
+          "resourceId": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+          "consumerRef": "LICENSED_BANK",
+          "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+          "ruleVersion": "1.0.0",
+          "workspaceId": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+          "connectorHash": "617597445e903822e75618576570dc370ea1855c80e5071ba6555f614b9d1aa9",
+          "authorizationId": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e"
+        },
+        "request_key": "63fde7ee-dbe7-460d-acc2-82ad005966ae",
+        "requested_at": "2026-10-14T09:37:54.291129+00:00"
+      }
+    ],
+    "source_schema_attempt": [
+      {
+        "id": "1e203f85-2e6d-4212-b526-1f10abc4a204",
+        "request_id": "cf309731-3d72-4325-92c3-4684b5be84bf",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "started_at": "2026-10-14T09:38:09.104568+00:00"
+      },
+      {
+        "id": "50dbf30c-06a5-47ec-9f09-4edb1a6c6e50",
+        "request_id": "cf309731-3d72-4325-92c3-4684b5be84bf",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "started_at": "2026-10-14T09:37:55.095803+00:00"
+      },
+      {
+        "id": "5aefbf8f-5954-4db0-9ab6-5784bf3d631e",
+        "request_id": "9337e1e6-2e13-4d53-9477-6e3f012b15c0",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "started_at": "2026-10-14T09:31:33.189085+00:00"
+      },
+      {
+        "id": "7582e3d6-879d-417d-9d3c-d0ac07512cb5",
+        "request_id": "570fcdbf-77c3-4473-828a-466f050f7b3c",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "started_at": "2026-10-14T09:33:03.115615+00:00"
+      },
+      {
+        "id": "7b5d7c28-6cce-4ffc-abf7-8d2b83c4b0fb",
+        "request_id": "3cf5902e-93f3-482c-a5a0-83104a36ae70",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "started_at": "2026-10-14T09:36:13.705775+00:00"
+      },
+      {
+        "id": "827f2ba3-9fd3-4a34-b533-bb47369a1804",
+        "request_id": "8c4a1ab3-7041-4503-8ca8-633522854e6a",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "started_at": "2026-10-14T09:35:32.474969+00:00"
+      },
+      {
+        "id": "8ab59129-8d02-4a97-9072-de3650daaac4",
+        "request_id": "85a02379-fb8c-47b0-9b16-c64bc4caca6d",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "started_at": "2026-10-14T09:36:05.725308+00:00"
+      },
+      {
+        "id": "d39f1746-356a-4fa2-a33b-093010a25253",
+        "request_id": "cf309731-3d72-4325-92c3-4684b5be84bf",
+        "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+        "started_at": "2026-10-14T09:38:27.079222+00:00"
+      }
+    ],
+    "source_schema_observation": [
+      {
+        "id": "d16519a5-69e0-4738-8f45-faf9c4f7931f",
+        "request_id": "cf309731-3d72-4325-92c3-4684b5be84bf",
+        "attempt_id": "1e203f85-2e6d-4212-b526-1f10abc4a204",
+        "status": "UNAVAILABLE",
+        "reason": "NATIVE_SOURCE_SCAN_UNAVAILABLE",
+        "columns": [],
+        "schema_hash": "",
+        "started_at": null,
+        "completed_at": null,
+        "recorded_at": "2026-10-14T09:38:16.098305+00:00"
+      },
+      {
+        "id": "40fbbe87-16f4-43f6-a849-9f45b5ed573e",
+        "request_id": "cf309731-3d72-4325-92c3-4684b5be84bf",
+        "attempt_id": "50dbf30c-06a5-47ec-9f09-4edb1a6c6e50",
+        "status": "UNAVAILABLE",
+        "reason": "NATIVE_SOURCE_SCAN_UNAVAILABLE",
+        "columns": [],
+        "schema_hash": "",
+        "started_at": null,
+        "completed_at": null,
+        "recorded_at": "2026-10-14T09:38:02.315881+00:00"
+      },
+      {
+        "id": "c55c5435-b22e-4d6c-b081-3955fa8a0d94",
+        "request_id": "9337e1e6-2e13-4d53-9477-6e3f012b15c0",
+        "attempt_id": "5aefbf8f-5954-4db0-9ab6-5784bf3d631e",
+        "status": "MATCH",
+        "reason": "BASELINE_MATCH",
+        "columns": [
+          {
+            "name": "meter_id",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "source_company_id",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "company_name",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "reading_time",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "energy_kwh",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          }
+        ],
+        "schema_hash": "2c640b02bc17cf944e1a081f901b40c1c1e12998bb68166e217d4ba33771391c",
+        "started_at": "2026-10-14T09:31:39.551647+00:00",
+        "completed_at": "2026-10-14T09:31:41.231639+00:00",
+        "recorded_at": "2026-10-14T09:31:42.497376+00:00"
+      },
+      {
+        "id": "c73f7763-3671-47b6-ab12-5d41716bc7d2",
+        "request_id": "570fcdbf-77c3-4473-828a-466f050f7b3c",
+        "attempt_id": "7582e3d6-879d-417d-9d3c-d0ac07512cb5",
+        "status": "DRIFT",
+        "reason": "SOURCE_SCHEMA_CHANGED",
+        "columns": [
+          {
+            "name": "meter_id",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "source_company_id",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "company_name",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "reading_time",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "energy_kwh",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "schema_probe",
+            "type": "TEXT",
+            "constraint": "NULL"
+          }
+        ],
+        "schema_hash": "b10cbb8c5d81b97f3727ca2cabb9557d8e9667e3514ab6b7d170c58e32856dbe",
+        "started_at": "2026-10-14T09:33:07.657799+00:00",
+        "completed_at": "2026-10-14T09:33:08.850436+00:00",
+        "recorded_at": "2026-10-14T09:33:10.149586+00:00"
+      },
+      {
+        "id": "137afbf9-e3e2-4b4c-a216-4a0fc7b12503",
+        "request_id": "3cf5902e-93f3-482c-a5a0-83104a36ae70",
+        "attempt_id": "7b5d7c28-6cce-4ffc-abf7-8d2b83c4b0fb",
+        "status": "MATCH",
+        "reason": "BASELINE_MATCH",
+        "columns": [
+          {
+            "name": "meter_id",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "source_company_id",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "company_name",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "reading_time",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "energy_kwh",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          }
+        ],
+        "schema_hash": "2c640b02bc17cf944e1a081f901b40c1c1e12998bb68166e217d4ba33771391c",
+        "started_at": "2026-10-14T09:36:17.942785+00:00",
+        "completed_at": "2026-10-14T09:36:18.8515+00:00",
+        "recorded_at": "2026-10-14T09:36:20.135149+00:00"
+      },
+      {
+        "id": "93a6ffac-9ef5-421e-976d-56f0f884a73a",
+        "request_id": "8c4a1ab3-7041-4503-8ca8-633522854e6a",
+        "attempt_id": "827f2ba3-9fd3-4a34-b533-bb47369a1804",
+        "status": "MATCH",
+        "reason": "BASELINE_MATCH",
+        "columns": [
+          {
+            "name": "meter_id",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "source_company_id",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "company_name",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "reading_time",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "energy_kwh",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          }
+        ],
+        "schema_hash": "2c640b02bc17cf944e1a081f901b40c1c1e12998bb68166e217d4ba33771391c",
+        "started_at": "2026-10-14T09:35:37.195209+00:00",
+        "completed_at": "2026-10-14T09:35:38.481213+00:00",
+        "recorded_at": "2026-10-14T09:35:39.773113+00:00"
+      },
+      {
+        "id": "8c5c22fb-34c6-4ff9-984c-ed547d7bcf24",
+        "request_id": "85a02379-fb8c-47b0-9b16-c64bc4caca6d",
+        "attempt_id": "8ab59129-8d02-4a97-9072-de3650daaac4",
+        "status": "MATCH",
+        "reason": "BASELINE_MATCH",
+        "columns": [
+          {
+            "name": "meter_id",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "source_company_id",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "company_name",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "reading_time",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          },
+          {
+            "name": "energy_kwh",
+            "type": "TEXT",
+            "constraint": "NOT_NULL"
+          }
+        ],
+        "schema_hash": "2c640b02bc17cf944e1a081f901b40c1c1e12998bb68166e217d4ba33771391c",
+        "started_at": "2026-10-14T09:36:09.684338+00:00",
+        "completed_at": "2026-10-14T09:36:10.663515+00:00",
+        "recorded_at": "2026-10-14T09:36:12.458986+00:00"
+      },
+      {
+        "id": "1f6f7726-fdbc-4cfd-ac61-20de88366569",
+        "request_id": "cf309731-3d72-4325-92c3-4684b5be84bf",
+        "attempt_id": "d39f1746-356a-4fa2-a33b-093010a25253",
+        "status": "UNAVAILABLE",
+        "reason": "NATIVE_SOURCE_SCAN_UNAVAILABLE",
+        "columns": [],
+        "schema_hash": "",
+        "started_at": null,
+        "completed_at": null,
+        "recorded_at": "2026-10-14T09:38:34.245734+00:00"
+      }
+    ],
+    "source_schema_handling": [
+      {
+        "id": "15de4028-b58f-474e-be55-69c5ff57d837",
+        "observation_id": "c73f7763-3671-47b6-ab12-5d41716bc7d2",
+        "actor_id": "48e6eafb-81c4-4c63-9b62-22962a361f69",
+        "reason": "本轮合成来源新增全 NULL schema_probe，批准五列契约不扩展；确认无非空值后在来源侧恢复，原 RAW、质量及认证不改写。",
+        "request_key": "235b5235-ee51-4fdb-95ed-2509b7eab7ee",
+        "created_at": "2026-10-14T09:33:51.671341+00:00"
+      }
+    ]
+  },
+  "costs": [
+    {
+      "id": "d5913ebe-76fb-4d2f-ad0a-cafb5bcfdbd4",
+      "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+      "execution_id": null,
+      "cost_type": "SOURCE_SCHEMA_SCAN_INVOCATION",
+      "quantity": 1.0,
+      "unit": "invocation",
+      "amount": null,
+      "currency": null,
+      "pricing_mode": "ACTUAL",
+      "metadata": {},
+      "occurred_at": "2026-10-14T09:38:09.387102+00:00",
+      "activity_id": "1e203f85-2e6d-4212-b526-1f10abc4a204"
+    },
+    {
+      "id": "0dd5c074-4272-4b8c-a830-cd3eb69d3b4d",
+      "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+      "execution_id": null,
+      "cost_type": "SOURCE_SCHEMA_SCAN_INVOCATION",
+      "quantity": 1.0,
+      "unit": "invocation",
+      "amount": null,
+      "currency": null,
+      "pricing_mode": "ACTUAL",
+      "metadata": {},
+      "occurred_at": "2026-10-14T09:37:55.377433+00:00",
+      "activity_id": "50dbf30c-06a5-47ec-9f09-4edb1a6c6e50"
+    },
+    {
+      "id": "8c75fa24-66e0-4634-906e-4e51073b3ddc",
+      "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+      "execution_id": null,
+      "cost_type": "SOURCE_SCHEMA_SCAN_INVOCATION",
+      "quantity": 1.0,
+      "unit": "invocation",
+      "amount": null,
+      "currency": null,
+      "pricing_mode": "ACTUAL",
+      "metadata": {},
+      "occurred_at": "2026-10-14T09:31:33.476101+00:00",
+      "activity_id": "5aefbf8f-5954-4db0-9ab6-5784bf3d631e"
+    },
+    {
+      "id": "3e2b6195-a57e-49be-b0d5-1d9e0da52206",
+      "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+      "execution_id": null,
+      "cost_type": "SOURCE_SCHEMA_SCAN_INVOCATION",
+      "quantity": 1.0,
+      "unit": "invocation",
+      "amount": null,
+      "currency": null,
+      "pricing_mode": "ACTUAL",
+      "metadata": {},
+      "occurred_at": "2026-10-14T09:33:03.640964+00:00",
+      "activity_id": "7582e3d6-879d-417d-9d3c-d0ac07512cb5"
+    },
+    {
+      "id": "e443e091-266d-4f17-b219-df2a357e2ec0",
+      "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+      "execution_id": null,
+      "cost_type": "SOURCE_SCHEMA_SCAN_INVOCATION",
+      "quantity": 1.0,
+      "unit": "invocation",
+      "amount": null,
+      "currency": null,
+      "pricing_mode": "ACTUAL",
+      "metadata": {},
+      "occurred_at": "2026-10-14T09:36:14.025375+00:00",
+      "activity_id": "7b5d7c28-6cce-4ffc-abf7-8d2b83c4b0fb"
+    },
+    {
+      "id": "35b5d41e-7cda-4b59-a65b-41edc07e62a3",
+      "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+      "execution_id": null,
+      "cost_type": "SOURCE_SCHEMA_SCAN_INVOCATION",
+      "quantity": 1.0,
+      "unit": "invocation",
+      "amount": null,
+      "currency": null,
+      "pricing_mode": "ACTUAL",
+      "metadata": {},
+      "occurred_at": "2026-10-14T09:35:33.043247+00:00",
+      "activity_id": "827f2ba3-9fd3-4a34-b533-bb47369a1804"
+    },
+    {
+      "id": "3fe88a35-80d4-49de-9943-13b9d55e4217",
+      "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+      "execution_id": null,
+      "cost_type": "SOURCE_SCHEMA_SCAN_INVOCATION",
+      "quantity": 1.0,
+      "unit": "invocation",
+      "amount": null,
+      "currency": null,
+      "pricing_mode": "ACTUAL",
+      "metadata": {},
+      "occurred_at": "2026-10-14T09:36:05.998964+00:00",
+      "activity_id": "8ab59129-8d02-4a97-9072-de3650daaac4"
+    },
+    {
+      "id": "7044691c-18cc-429c-80a3-5512a146cd10",
+      "workspace_id": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+      "execution_id": null,
+      "cost_type": "SOURCE_SCHEMA_SCAN_INVOCATION",
+      "quantity": 1.0,
+      "unit": "invocation",
+      "amount": null,
+      "currency": null,
+      "pricing_mode": "ACTUAL",
+      "metadata": {},
+      "occurred_at": "2026-10-14T09:38:27.369451+00:00",
+      "activity_id": "d39f1746-356a-4fa2-a33b-093010a25253"
+    }
+  ],
+  "apiSha256": "2b37123a4358b8e54c0d753d1ece2f7fbf9f185d16cebf8f9dc5ee3d8a19e5cb",
+  "checks": [
+    "17 nonempty historical tables unchanged",
+    "prior source request/attempt/observation/handling bytes unchanged",
+    "typed cost per physical native invocation"
+  ],
+  "nativeObservationStatuses": [
+    "UNAVAILABLE",
+    "UNAVAILABLE",
+    "MATCH",
+    "DRIFT",
+    "MATCH",
+    "MATCH",
+    "MATCH",
+    "UNAVAILABLE"
+  ]
+}

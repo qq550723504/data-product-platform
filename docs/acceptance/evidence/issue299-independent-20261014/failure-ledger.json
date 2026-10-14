@@ -1,0 +1,56 @@
+[
+  {
+    "status": "FAIL",
+    "phase": "setup",
+    "reason": "npm ci requires a lockfile; this repository has no web lockfile",
+    "resolution": "npm install --no-package-lock; actual dependency graph and bundle hashes preserved"
+  },
+  {
+    "status": "FAIL",
+    "phase": "setup",
+    "reason": "bundled Python has no PyYAML",
+    "resolution": "existing host Python 3.14.6/PyYAML 6.0.3 used"
+  },
+  {
+    "status": "FAIL",
+    "phase": "metadata-start",
+    "reason": "Docker default address pools exhausted",
+    "resolution": "three checked disjoint explicit subnets; no old network cleanup"
+  },
+  {
+    "status": "FAIL",
+    "phase": "oracle-invocation",
+    "reason": "old closure oracle required three bindings and previous phase receipt; it also used the old release-outage fixture label",
+    "resolution": "real browser confirmed all bindings; finite label adapter retains every assertion; fresh healthy/outage/recovered/revoked captures"
+  },
+  {
+    "status": "FAIL",
+    "phase": "backup-new-metadata",
+    "reason": "transient Unix-socket init-server readiness; database system is shutting down",
+    "resolution": "failed copy retained; separate new volume waits for final TCP service, then restores all three databases"
+  },
+  {
+    "status": "FAIL",
+    "phase": "tool-invocations",
+    "reason": "initial preflight PowerShell HEAD tree quoting; rg Windows path glob syntax; unsupported snapshot CLI argument; nonexistent reason_code SQL column; screenshot full-page timeout; label-adapter count guard typo",
+    "resolution": "original calls remain in private trace; corrected native invocations have separate results"
+  },
+  {
+    "status": "REJECTED",
+    "phase": "tool-execution",
+    "reason": "automatic review rejected a combined start/wait/capture command with blocked by policy",
+    "resolution": "same authorized work completed with separately reviewable start and readiness commands"
+  },
+  {
+    "status": "EXPECTED_FAILED_EXECUTION_VERIFIED",
+    "phase": "C1-native-fault",
+    "reason": "only this run storage gateway stopped; actual Execution FAILED with independent invocation cost",
+    "resolution": "same gateway restored; explicit new retry succeeded"
+  },
+  {
+    "status": "FAIL / NOT_RESTORED",
+    "phase": "old-core-incident",
+    "reason": "dpp-pgi-b3-core-bc776a791192 has no complete backup per user",
+    "resolution": "not restarted, reseeded or claimed restored by this run"
+  }
+]

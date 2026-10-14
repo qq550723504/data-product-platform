@@ -1,0 +1,171 @@
+{
+  "status": "PASS",
+  "phase": "outage",
+  "workspaceId": "015dfa44-3ac8-4c80-a122-2d300642f6ba",
+  "histories": {
+    "release-healthy": {
+      "ids": {
+        "Product": "056327bc-bc11-497a-be5a-ebcf7b1293f5",
+        "Version": "98bb1a7b-315b-48de-8d4c-d008b1fda958",
+        "Release": "109c0d4a-9a2a-40eb-88bc-b399a8bf6eb2",
+        "DatasetVersion": "89973414-be4d-44ce-a154-05777825bfab",
+        "Quality": "36d42242-7346-434c-a3f4-57640d27b4c9",
+        "Compliance": "e422baa6-75fc-4c63-9bb3-36fa5518eec3",
+        "Rights": "976c5783-025e-4f72-b4d8-3871d6962211",
+        "Evidence": "95ed4ab0-0083-4cb8-90d8-a574a6e2220a"
+      },
+      "hashes": {
+        "release": "3edeaa75676c375aeaf1d2c892ab85ca45d95bfe77e071a735308dcfedf91050",
+        "releaseMembership": "be4d5990b129bcd2f7fa815f822b6b137f269a8c1ca934be5f283c51b047eac7",
+        "productVersion": "d692b50cb97048fd089e9902c17daaa20a437e92ae6fe2bd0be1ed2c0e1da369",
+        "productAssets": "1ee54f763bbee83d6da0e6a4e79f858f24d740925739093a5d51e68295c1b883",
+        "ancestryVersions": "c6eaa17097f38611933b29bed62c3a330fb389d72aa507f6ae7494b48530a56c",
+        "ancestryLineage": "6975ca784dbf7c1789c96e0d5b8576cc252fc993c173d30383e701b586771a0f",
+        "quality": "25dd45eda99706b5c87060561595dbfe74de798595ea7663bd174cd14b62d796",
+        "compliance": "5cfb5b9bdbea7ab6126f540994eac508043bfec71670c31be6c6dd656274822c",
+        "rights": "3a95a51900b9f90238865b984433685e6b94c222a69c9586d40e899cf4a8dcf9",
+        "rightsAuthorizations": "9f26b844513abee016617dd36e0eb72b3f7d636b886b17729487c681c8de2f71",
+        "rightsDeclarations": "2203a16ae13ab65d6e85721db41da8325fed606881de62549ecd20a3fa1eb8ac",
+        "rightsBindings": "3a6b41422bff33f9b3bf9d806f2325283a9cfdf97b19c45611b5d24c84b4d710",
+        "evidenceSnapshot": "41f6710b6b0f64964681564aeca46e91f4db2bd33049f05d2ab0f73cc7916938",
+        "evidenceMembership": "321d69e515ad8bc2ea988021931a3e9c85a3aba3e94188f4b405377996ffbe2d",
+        "evidence": "da015b1492e157a27d05c0eb4c2b7af2496513a3533c95c46f76019a6fdc5bd0",
+        "publishAudit": "e8774eaef98390b8edf49bc473323ca542111c9cdc51bc0e1935431bff56c950"
+      },
+      "counts": {
+        "release": 1,
+        "releaseMembership": 1,
+        "productVersion": 1,
+        "productAssets": 1,
+        "ancestryVersions": 5,
+        "ancestryLineage": 5,
+        "quality": 1,
+        "compliance": 1,
+        "rights": 1,
+        "rightsAuthorizations": 1,
+        "rightsDeclarations": 3,
+        "rightsBindings": 3,
+        "evidenceSnapshot": 1,
+        "evidenceMembership": 3,
+        "evidence": 3,
+        "publishAudit": 1
+      },
+      "rootHash": "eebe82bf940fdb70a99d8f0bfa49aebad012175735d88efebaf9c3acbe8c4428"
+    },
+    "release-repaired-outage": {
+      "ids": {
+        "Product": "056327bc-bc11-497a-be5a-ebcf7b1293f5",
+        "Version": "cc7979a8-8034-4030-91f2-c531b55c1017",
+        "Release": "57ff2ea6-627e-400e-9174-7a48b967b378",
+        "DatasetVersion": "77598be5-83c5-43a6-b91f-081b829806ca",
+        "Quality": "3e7e3e7a-34b5-4cec-b0ef-a6d10ee3b8b8",
+        "Compliance": "690c35c4-3cdb-434e-8eb7-1558b214de04",
+        "Rights": "30439908-2a06-4fd2-820d-6aa197890c72",
+        "Evidence": "d684c8ca-da62-4a57-97b4-fdc730370573"
+      },
+      "hashes": {
+        "release": "637d13b817f119d716987455ceed1a050011bcb7d363b83691188755900dace9",
+        "releaseMembership": "d86967492ddfc697d3996cd2e4dc0a04fe2c14df0f472aad189e4349cead9f2a",
+        "productVersion": "3bf6795070ff66d44a5e2f1c36cd83cc3047344fee0039c9ce3b0bfab8d98a97",
+        "productAssets": "c4d8fe183eb48bf62a24ced71cbb2f68ef11e14670cd193c2305149e085db057",
+        "ancestryVersions": "b2bc0e66f8acd1b2bbf9635652516668eed3cec14eee34a58f9851cd0aed6f6f",
+        "ancestryLineage": "2f7be2672870765acf9b5938e5668431894939c72eda6deec10a1db0cb9adb79",
+        "quality": "9eaa4e1d36832f93652183eb939210b120486f62fbdfde78a7ca6c87be1de3d7",
+        "compliance": "0d98cd29023956976f987d696e057eced617faa047cd5d19e492651ce515d55d",
+        "rights": "2eb6c6d9efca41b07f54718966cc1fe41cc958946094a6913cd4050bb2c7c2d1",
+        "rightsAuthorizations": "9b3e7ac52d1cb80a5a6619eb1f66c36fd4d28d76254aa78efb9a590ae76bd285",
+        "rightsDeclarations": "367afdb01f516f9637339212d3548cadff15a033cb54898b086f95de039cb09d",
+        "rightsBindings": "637da3de59f35c33b7c3fb975871c6ad60883d171badcf80031d658b8161fd82",
+        "evidenceSnapshot": "808fefba936ae086cfe0ecc8c5a27719126c1d34da881eccaa89a5c8d3c3c50d",
+        "evidenceMembership": "bcc1db356de70d430a56a69df859bec77a414691c10f32700959afba26bac5f5",
+        "evidence": "c3a13174ad397effc19c3be8d0dbeaf673c37708e6cbbdb0eb381bb848a15f69",
+        "publishAudit": "1c24ed5b75ab3aeffc58981af774de42a524f2ea0830802830d3c6835c2d1034"
+      },
+      "counts": {
+        "release": 1,
+        "releaseMembership": 1,
+        "productVersion": 1,
+        "productAssets": 1,
+        "ancestryVersions": 5,
+        "ancestryLineage": 5,
+        "quality": 1,
+        "compliance": 1,
+        "rights": 1,
+        "rightsAuthorizations": 1,
+        "rightsDeclarations": 3,
+        "rightsBindings": 3,
+        "evidenceSnapshot": 1,
+        "evidenceMembership": 3,
+        "evidence": 3,
+        "publishAudit": 1
+      },
+      "rootHash": "f07a568b40501b5bc22ff368e76d4b01ae95482c21640806633b6231af3740e9"
+    }
+  },
+  "projections": {
+    "release-healthy": {
+      "object_id": "109c0d4a-9a2a-40eb-88bc-b399a8bf6eb2",
+      "source_event_id": "39e0db18-4546-4210-b010-75aa6abcd97a",
+      "status": "SUCCEEDED",
+      "attempts": 1,
+      "external_id": "9ee41604-885e-47bf-b7a7-b6afa5a41cab",
+      "external_fqn": "DP-ENTERPRISE-ACTIVITY",
+      "last_error": null
+    },
+    "release-repaired-outage": {
+      "object_id": "57ff2ea6-627e-400e-9174-7a48b967b378",
+      "source_event_id": "c0a74c05-ef6a-4d30-9849-173193a83982",
+      "status": "SUCCEEDED",
+      "attempts": 7,
+      "external_id": "9ee41604-885e-47bf-b7a7-b6afa5a41cab",
+      "external_fqn": "DP-ENTERPRISE-ACTIVITY",
+      "last_error": null
+    }
+  },
+  "sourceFactsHash": "c6dfa8fc9ed2f53ce47cdc609e1531cf88f0840c67eddeb57a955b979e5c98b7",
+  "bindingHash": "0859ed4dc2050288643a2421f0bc64e94009afbb176d03dd008d662fff74bf32",
+  "observations": {
+    "68c51a08-4b91-4395-9f6c-5737fbda9589": {
+      "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.energy",
+      "externalId": "3b74cb3c-9267-43b6-b5d1-9f69c6701e39",
+      "governance": null,
+      "lastConfirmedAt": "2026-10-14T17:31:27.937866+08:00",
+      "lastConfirmedVersion": 0.1,
+      "observedAt": null,
+      "provider": "OPENMETADATA",
+      "status": "STALE",
+      "version": null
+    },
+    "f4e3a5db-074a-441a-91b8-8e6493e2641a": {
+      "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.enterprise",
+      "externalId": "ea0d48e2-ad0d-46c2-a076-e683b50b61ca",
+      "governance": null,
+      "lastConfirmedAt": "2026-10-14T17:41:20.769138+08:00",
+      "lastConfirmedVersion": 0.1,
+      "observedAt": null,
+      "provider": "OPENMETADATA",
+      "status": "STALE",
+      "version": null
+    },
+    "6d5b7bd7-f006-459f-88aa-c285710cd07d": {
+      "externalFqn": "dpp_source.dpp_ingestion_source.dpp_source.lease",
+      "externalId": "797fdae2-c911-4130-884d-5db852c7cecb",
+      "governance": null,
+      "lastConfirmedAt": "2026-10-14T17:41:32.358683+08:00",
+      "lastConfirmedVersion": 0.1,
+      "observedAt": null,
+      "provider": "OPENMETADATA",
+      "status": "STALE",
+      "version": null
+    }
+  },
+  "gateDecisions": {
+    "datasetVersion": true,
+    "certification": true,
+    "entitlement": true
+  },
+  "compared": [
+    "release-healthy",
+    "release-repaired-outage"
+  ]
+}

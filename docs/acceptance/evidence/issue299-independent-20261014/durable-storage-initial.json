@@ -1,0 +1,218 @@
+[
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "created"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "writable": true,
+        "volume": "dpp-pgi-47203cb12b93-source-data",
+        "container": "dpp-pgi-47203cb12b93-source",
+        "container_id": "972f07b77c843bd7848a11b2a4bb6d8c4682d236585d15b4f168fabd5a61666b",
+        "role": "source",
+        "type": "volume",
+        "destination": "/var/lib/postgresql/data"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "running"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "volume": "dpp-pgi-47203cb12b93-source-data",
+        "container_id": "972f07b77c843bd7848a11b2a4bb6d8c4682d236585d15b4f168fabd5a61666b",
+        "role": "source",
+        "type": "volume",
+        "destination": "/var/lib/postgresql/data",
+        "writable": true,
+        "container": "dpp-pgi-47203cb12b93-source"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "created"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "volume": "dpp-pgi-b3-storage-47203cb12b93-data",
+        "container_id": "3352809c14154faf2ed94520747cbba98e8e5e31c508f981564225d7c7e78d29",
+        "container": "dpp-pgi-b3-storage-47203cb12b93",
+        "destination": "/data",
+        "writable": true,
+        "role": "objects",
+        "type": "volume"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "running"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "writable": true,
+        "container": "dpp-pgi-b3-storage-47203cb12b93",
+        "role": "objects",
+        "container_id": "3352809c14154faf2ed94520747cbba98e8e5e31c508f981564225d7c7e78d29",
+        "type": "volume",
+        "volume": "dpp-pgi-b3-storage-47203cb12b93-data",
+        "destination": "/data"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "created"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "destination": "/var/lib/postgresql/data",
+        "type": "volume",
+        "container_id": "3b882544cac2074e822c85ed885e48b0139a46b8c7e9d42ccfc73324d8bdacea",
+        "volume": "dpp-pgi-b3-core-47203cb12b93-data",
+        "writable": true,
+        "container": "dpp-pgi-b3-core-47203cb12b93",
+        "role": "core"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "running"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "writable": true,
+        "destination": "/var/lib/postgresql/data",
+        "container_id": "3b882544cac2074e822c85ed885e48b0139a46b8c7e9d42ccfc73324d8bdacea",
+        "type": "volume",
+        "container": "dpp-pgi-b3-core-47203cb12b93",
+        "role": "core",
+        "volume": "dpp-pgi-b3-core-47203cb12b93-data"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "created"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "type": "volume",
+        "role": "queue",
+        "container_id": "c5c4d59eb0e02032205e20eb92ac693887b496b5ff882ca7a34500c4f7e44adf",
+        "volume": "dpp-pgi-b3-redis-47203cb12b93-data",
+        "container": "dpp-pgi-b3-redis-47203cb12b93",
+        "writable": true,
+        "destination": "/data"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "running"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "type": "volume",
+        "role": "queue",
+        "container": "dpp-pgi-b3-redis-47203cb12b93",
+        "volume": "dpp-pgi-b3-redis-47203cb12b93-data",
+        "destination": "/data",
+        "container_id": "c5c4d59eb0e02032205e20eb92ac693887b496b5ff882ca7a34500c4f7e44adf",
+        "writable": true
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "running"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "writable": true,
+        "container_id": "972f07b77c843bd7848a11b2a4bb6d8c4682d236585d15b4f168fabd5a61666b",
+        "destination": "/var/lib/postgresql/data",
+        "type": "volume",
+        "role": "source",
+        "volume": "dpp-pgi-47203cb12b93-source-data",
+        "container": "dpp-pgi-47203cb12b93-source"
+      },
+      {
+        "writable": true,
+        "container_id": "3352809c14154faf2ed94520747cbba98e8e5e31c508f981564225d7c7e78d29",
+        "destination": "/data",
+        "type": "volume",
+        "role": "objects",
+        "volume": "dpp-pgi-b3-storage-47203cb12b93-data",
+        "container": "dpp-pgi-b3-storage-47203cb12b93"
+      },
+      {
+        "writable": true,
+        "container_id": "3b882544cac2074e822c85ed885e48b0139a46b8c7e9d42ccfc73324d8bdacea",
+        "destination": "/var/lib/postgresql/data",
+        "type": "volume",
+        "role": "core",
+        "volume": "dpp-pgi-b3-core-47203cb12b93-data",
+        "container": "dpp-pgi-b3-core-47203cb12b93"
+      },
+      {
+        "writable": true,
+        "container_id": "c5c4d59eb0e02032205e20eb92ac693887b496b5ff882ca7a34500c4f7e44adf",
+        "destination": "/data",
+        "type": "volume",
+        "role": "queue",
+        "volume": "dpp-pgi-b3-redis-47203cb12b93-data",
+        "container": "dpp-pgi-b3-redis-47203cb12b93"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  }
+]

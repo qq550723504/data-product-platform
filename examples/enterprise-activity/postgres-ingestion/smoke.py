@@ -227,8 +227,10 @@ class Trial:
             driver = response.read()
         require(sha(driver) == JDBC_SHA256, "driver checksum mismatch")
         (build / "postgresql-42.7.14.jar").write_bytes(driver)
-        self.engine_image = "dpp-pgi-hop-jdbc:42.7.14"
-        self.docker("build", "-q", "-t", self.engine_image, "-f", str(HERE / "Dockerfile.hop"), str(build), timeout=180)
+        image_tag = "dpp-pgi-hop-jdbc:trial-" + self.run_id.replace("-", "")
+        self.docker("build", "-q", "-t", image_tag, "-f", str(HERE / "Dockerfile.hop"), str(build), timeout=180)
+        self.engine_image = json.loads(self.docker("image", "inspect", image_tag).stdout)[0]["Id"]
+        require(self.engine_image.startswith("sha256:") and len(self.engine_image) == 71, "resolved Hop image ID required")
         self.report["runtime"]["jdbc"] = {"version": "42.7.14", "url": JDBC_URL, "sha256": JDBC_SHA256,
             "engine_image_id": json.loads(self.docker("image", "inspect", self.engine_image).stdout)[0]["Id"]}
         (self.private / "admin-password").write_text(self.passwords[0])

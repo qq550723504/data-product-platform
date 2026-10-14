@@ -1,0 +1,400 @@
+{
+  "startedAt": "2026-10-14T11:26:26.311289+00:00",
+  "status": "PASS / EXACT_ORIGINAL_OCI_IDS_RESTORED",
+  "priorHelperObservation": {
+    "result": "FAIL at short tag lookup after successful native load",
+    "originalHopIdQueryable": "sha256:401553bcfe449470f33e8efb5ce4414dec4e880eec357b37738d41d0c2b6df18",
+    "cause": "OCI short ref-name was loaded as a noncanonical name; Docker CLI normalized tag lookup did not resolve it"
+  },
+  "originalBuildArchive": {
+    "path": "C:\\Users\\Henry\\AppData\\Local\\Codex\\retained-trials\\dpp-pgi-b3-4iasa9v0\\backup-old-oci-20261014\\original-build-records.dockerbuild",
+    "sha256": "ef5c941c417d6cd4f89469fb312d8a259fa55798b163e8f4d7ddb279ca35954b"
+  },
+  "sharedAliasesBefore": {
+    "dpp-pgi-hop-jdbc:42.7.14": "sha256:be42620c3acb0a4b23f56dce36824c3eea14958eef1a28a4a717fbbdb52e436b",
+    "dpp-pgi-minio:2025-10-15": "sha256:4b343185d3ce9148dbcb2ca720379faa793a140d54d6998b1cfe26f514fbb7fa"
+  },
+  "images": [
+    {
+      "role": "hop",
+      "buildRef": "jz6yudwfhfayrfa21eg88wwco",
+      "originalImageId": "sha256:401553bcfe449470f33e8efb5ce4414dec4e880eec357b37738d41d0c2b6df18",
+      "tag": "dpp-restored-oci-hop:original-401553bcfe449470",
+      "blobs": [
+        {
+          "digest": "sha256:401553bcfe449470f33e8efb5ce4414dec4e880eec357b37738d41d0c2b6df18",
+          "bytes": 856,
+          "mediaType": "application/vnd.oci.image.index.v1+json",
+          "source": "original-build-history-index"
+        },
+        {
+          "digest": "sha256:347e28663475d1744dea1790cbf44ae3ca9033a8a34f5788c0f33dff50244c27",
+          "bytes": 1815,
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:46d282710181291dd1a95e8180229e06fc8522a662ef1e96d84ab3cbbdaa6307",
+          "bytes": 837,
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:e2d93975491b4ecaa4bf184df2989d28fbbb68a671f7655cd5cbc3e892ff8f81",
+          "bytes": 10793,
+          "mediaType": "application/vnd.oci.image.config.v1+json",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:55afa1ecc21d2bb5e5045f32dafee56272ffd89860bac26f6c32123439af26a4",
+          "bytes": 3846391,
+          "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:7a18029d56cfcf24ac163de0650781075afdfab2e3dfbbd9d1b2d2197ad14592",
+          "bytes": 79105264,
+          "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:d393e322d7f91fb75bc37f1a35ddc673ccdf25c331e55b83cd0634872594f92f",
+          "bytes": 1234289044,
+          "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:c2d75a1a78d7b40d899751272c6035812b82b86cec660ad4de00504d2bf9d035",
+          "bytes": 1151,
+          "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:7cf73ed087652b6e618e8aab12d0450434ff331b515f1c93a3b521c43294863d",
+          "bytes": 4301,
+          "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1",
+          "bytes": 32,
+          "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:b1b8687f230130ed852f88234db41b317e47a0543d8d68e401c54d4f2d64f251",
+          "bytes": 210,
+          "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:b6f25bac4ce3f5d0264decb35b59f9bccbaae2ed4388aef3610762bc49f7113b",
+          "bytes": 1142493,
+          "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "bytes": 2,
+          "mediaType": "application/vnd.oci.empty.v1+json",
+          "source": "original-inline-descriptor"
+        },
+        {
+          "digest": "sha256:ff1bd72c202898fc21b77a1f9f4cc0368c7dceea3b03ab76c842c4d69cd39a1f",
+          "bytes": 1190,
+          "mediaType": "application/vnd.in-toto+json",
+          "source": "exact-digest-minimum-from-original-full-provenance"
+        }
+      ],
+      "archive": {
+        "path": "C:\\Users\\Henry\\AppData\\Local\\Codex\\retained-trials\\dpp-pgi-b3-4iasa9v0\\backup-old-oci-20261014\\verified-original-graphs\\hop-original-complete.oci.tar",
+        "bytes": 1318440960,
+        "sha256": "631dbb12372fd84a2ac33ca094d102f87b1d46accf0e89752d6692f29ba1bbfd"
+      },
+      "allOriginalDescriptorsVerified": true,
+      "nativeLoadOutput": "Loaded image ID: sha256:401553bcfe449470f33e8efb5ce4414dec4e880eec357b37738d41d0c2b6df18",
+      "restoredImageId": "sha256:401553bcfe449470f33e8efb5ce4414dec4e880eec357b37738d41d0c2b6df18",
+      "status": "PASS / EXACT_ORIGINAL_OCI_ID_RESTORED"
+    },
+    {
+      "role": "minio",
+      "buildRef": "mi4g4leqqgsnz4ze4qwk9jp9o",
+      "originalImageId": "sha256:8c712a2fe14b096ebb65f17c976a3aff15857ca1ad63a0cef250fdc22771202b",
+      "tag": "dpp-restored-oci-minio:original-8c712a2fe14b096e",
+      "blobs": [
+        {
+          "digest": "sha256:8c712a2fe14b096ebb65f17c976a3aff15857ca1ad63a0cef250fdc22771202b",
+          "bytes": 855,
+          "mediaType": "application/vnd.oci.image.index.v1+json",
+          "source": "original-build-history-index"
+        },
+        {
+          "digest": "sha256:21967b56fbd034e9a16e99dfecdff8da35f4a7d664c00a22a2c4db94f7b172b8",
+          "bytes": 864,
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:b47471d6869d8c5a3abb3e4258081357ca14b8d2e3a0ba4b870fb21eb45d9b28",
+          "bytes": 836,
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:dff20469b15d607fa2ecb9a0e44e9b324f15b2b5198c13ab04a4c82aadf249b4",
+          "bytes": 1040,
+          "mediaType": "application/vnd.oci.image.config.v1+json",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:53f8f5e03afd86ade91b7aa57a749f5a3d1419c113be5d8c10e7ee61bb5ab887",
+          "bytes": 3792075,
+          "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:3429bcbd6b1a5b13ea3510e7c6b9d84779e9b636caf79527d2ebc58e3e408cc7",
+          "bytes": 39763871,
+          "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:7f26534f20b0887c5a98fb6c8808f5eadcbc89436005279bd7e33fa002337183",
+          "bytes": 12078,
+          "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+          "source": "retained-buildkit-content"
+        },
+        {
+          "digest": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "bytes": 2,
+          "mediaType": "application/vnd.oci.empty.v1+json",
+          "source": "original-inline-descriptor"
+        },
+        {
+          "digest": "sha256:931486dc0b6c85a37a9f9621442c3b664ff7743ac5e8cbfad89ac35360ad2119",
+          "bytes": 1716,
+          "mediaType": "application/vnd.in-toto+json",
+          "source": "exact-digest-minimum-from-original-full-provenance"
+        }
+      ],
+      "archive": {
+        "path": "C:\\Users\\Henry\\AppData\\Local\\Codex\\retained-trials\\dpp-pgi-b3-4iasa9v0\\backup-old-oci-20261014\\verified-original-graphs\\minio-original-complete.oci.tar",
+        "bytes": 43601920,
+        "sha256": "add7d3c0b8108c32d83ed7010287292771b3c11b3bf1ad86fafc45a051858894"
+      },
+      "allOriginalDescriptorsVerified": true,
+      "nativeLoadOutput": "Loaded image ID: sha256:8c712a2fe14b096ebb65f17c976a3aff15857ca1ad63a0cef250fdc22771202b",
+      "restoredImageId": "sha256:8c712a2fe14b096ebb65f17c976a3aff15857ca1ad63a0cef250fdc22771202b",
+      "status": "PASS / EXACT_ORIGINAL_OCI_ID_RESTORED"
+    }
+  ],
+  "oldContainersStarted": 0,
+  "oldVolumesMounted": 0,
+  "cleanupCalls": 0,
+  "newBuilds": 0,
+  "sharedAliasesAfter": {
+    "dpp-pgi-hop-jdbc:42.7.14": "sha256:be42620c3acb0a4b23f56dce36824c3eea14958eef1a28a4a717fbbdb52e436b",
+    "dpp-pgi-minio:2025-10-15": "sha256:4b343185d3ce9148dbcb2ca720379faa793a140d54d6998b1cfe26f514fbb7fa"
+  },
+  "completedAt": "2026-10-14T11:28:15.057029+00:00",
+  "oldContainerStateBefore": {
+    "/dpp-pgi-70ca779a1e21-hop": {
+      "Id": "46fb663c643654b832d142cfb11b7876654212f8203c838ec4dbd81c5582e8f9",
+      "Image": "sha256:401553bcfe449470f33e8efb5ce4414dec4e880eec357b37738d41d0c2b6df18",
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "ExitCode": 255,
+        "StartedAt": "2026-10-13T07:23:47.265724868Z",
+        "FinishedAt": "2026-10-14T07:56:43.782788127Z"
+      },
+      "Mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-pgi-70ca779a1e21-hop-files",
+          "Destination": "/files",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Destination": "/metadata",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Destination": "/staging",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Destination": "/start-hop.sh",
+          "RW": false
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-pgi-70ca779a1e21-hop-tmp",
+          "Destination": "/tmp",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Destination": "/run/secrets",
+          "RW": false
+        }
+      ]
+    },
+    "/dpp-pgi-b3-storage-70ca779a1e21": {
+      "Id": "fad8fd8423b244e34e72069f92bf4c6b3bdee63b0148540c75e23427527f96fb",
+      "Image": "sha256:8c712a2fe14b096ebb65f17c976a3aff15857ca1ad63a0cef250fdc22771202b",
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "ExitCode": 255,
+        "StartedAt": "2026-10-13T07:23:45.980714633Z",
+        "FinishedAt": "2026-10-14T07:56:43.773737191Z"
+      },
+      "Mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-pgi-b3-storage-70ca779a1e21-data",
+          "Destination": "/data",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Destination": "/run/credentials",
+          "RW": false
+        }
+      ]
+    }
+  },
+  "oldContainerStateAfter": {
+    "/dpp-pgi-70ca779a1e21-hop": {
+      "Id": "46fb663c643654b832d142cfb11b7876654212f8203c838ec4dbd81c5582e8f9",
+      "Image": "sha256:401553bcfe449470f33e8efb5ce4414dec4e880eec357b37738d41d0c2b6df18",
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "ExitCode": 255,
+        "StartedAt": "2026-10-13T07:23:47.265724868Z",
+        "FinishedAt": "2026-10-14T07:56:43.782788127Z"
+      },
+      "Mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-pgi-70ca779a1e21-hop-files",
+          "Destination": "/files",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Destination": "/metadata",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Destination": "/staging",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Destination": "/start-hop.sh",
+          "RW": false
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-pgi-70ca779a1e21-hop-tmp",
+          "Destination": "/tmp",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Destination": "/run/secrets",
+          "RW": false
+        }
+      ]
+    },
+    "/dpp-pgi-b3-storage-70ca779a1e21": {
+      "Id": "fad8fd8423b244e34e72069f92bf4c6b3bdee63b0148540c75e23427527f96fb",
+      "Image": "sha256:8c712a2fe14b096ebb65f17c976a3aff15857ca1ad63a0cef250fdc22771202b",
+      "State": {
+        "Status": "exited",
+        "Running": false,
+        "Paused": false,
+        "ExitCode": 255,
+        "StartedAt": "2026-10-13T07:23:45.980714633Z",
+        "FinishedAt": "2026-10-14T07:56:43.773737191Z"
+      },
+      "Mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-pgi-b3-storage-70ca779a1e21-data",
+          "Destination": "/data",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Destination": "/run/credentials",
+          "RW": false
+        }
+      ]
+    }
+  },
+  "oldContainerStateAndMountsUnchanged": true,
+  "sharedAliasesUnchanged": true,
+  "nativeSaveIndependentVerification": {
+    "path": "C:\\Users\\Henry\\AppData\\Local\\Codex\\retained-trials\\dpp-pgi-b3-4iasa9v0\\backup-old-oci-20261014\\verified-original-graphs\\original-images.native.tar",
+    "sha256": "2841407b2a194ca6797333e834b07862234e10a1dc6c41131dbdab9e597e6da8",
+    "bytes": 1362001408,
+    "originalRootIndexes": [
+      "sha256:401553bcfe449470f33e8efb5ce4414dec4e880eec357b37738d41d0c2b6df18",
+      "sha256:8c712a2fe14b096ebb65f17c976a3aff15857ca1ad63a0cef250fdc22771202b"
+    ],
+    "verifiedUniqueBlobs": 22,
+    "everyOriginalDescriptorPresentAndDigestVerified": true
+  },
+  "minimumProvenanceReproduction": {
+    "status": "PASS",
+    "rows": [
+      {
+        "role": "hop",
+        "fullOriginalPredicate": "131612631b5f764bbd62c6d5880dd0c9c2a126bbdf8d626ed0f98f19cead7b0f",
+        "minimumDigest": "ff1bd72c202898fc21b77a1f9f4cc0368c7dceea3b03ab76c842c4d69cd39a1f",
+        "bytes": 1190,
+        "matchesOriginalManifest": true
+      },
+      {
+        "role": "minio",
+        "fullOriginalPredicate": "2f6c8df7b4f4983f2ea3975c94bcecbfc8edc1bc35cf9659101184f46e7bbdd5",
+        "minimumDigest": "931486dc0b6c85a37a9f9621442c3b664ff7743ac5e8cbfad89ac35360ad2119",
+        "bytes": 1716,
+        "matchesOriginalManifest": true
+      }
+    ]
+  },
+  "helpers": {
+    "recover_original_oci.py": {
+      "executedSourceSha256": "8bd56bdf069dbbcb104940eb6164a8040248b10a0da0951218e045c5046a1725",
+      "publicUTF8LFSha256": "8bd56bdf069dbbcb104940eb6164a8040248b10a0da0951218e045c5046a1725"
+    },
+    "finalize_original_oci.py": {
+      "executedSourceSha256": "a787398963b4bf072bff35ed53e3e76f48417274d88f2a5fd06417627d2080df",
+      "publicUTF8LFSha256": "a787398963b4bf072bff35ed53e3e76f48417274d88f2a5fd06417627d2080df"
+    },
+    "reproduce_original_provenance.py": {
+      "executedSourceSha256": "df8709a0e6e309c747e6c1fbdf021a82cf6de5a2cfefea5fb3d22cd1f528c7cb",
+      "publicUTF8LFSha256": "df8709a0e6e309c747e6c1fbdf021a82cf6de5a2cfefea5fb3d22cd1f528c7cb"
+    },
+    "seal_image_recovery.py": {
+      "executedSourceSha256": "b647d736a0c17c7de41c5c8e987cf0173509df7602e92759416e9abf109f7459",
+      "publicUTF8LFSha256": "b647d736a0c17c7de41c5c8e987cf0173509df7602e92759416e9abf109f7459"
+    }
+  },
+  "originalFailedReceiptPreserved": "old-image-retention-defect.json",
+  "originalLostCore": "FAIL / NOT_RESTORED",
+  "humanExplanation": "NOT_RUN / deferred",
+  "sealedAt": "2026-10-14T11:31:35.574833+00:00"
+}

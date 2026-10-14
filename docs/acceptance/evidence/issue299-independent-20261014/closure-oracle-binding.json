@@ -1,0 +1,7 @@
+{
+  "originalSha256": "380f665591d45fae3f094bbf6f750ef2bd13c387d13257bc843519560d005474",
+  "adaptedSourceSha256": "07ba5ce3bfc268405462fa4bea1b158f1e6d143534a0b9fc4aa3b5b2603251fa",
+  "onlyChange": "finite fixture label release-outage to actual release-repaired-outage",
+  "coreMutations": 0,
+  "assertionsRelaxed": 0
+}

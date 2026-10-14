@@ -1,0 +1,1 @@
+fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8  /usr/local/bin/minio

@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import secrets
 import shutil
@@ -29,7 +30,9 @@ ALPINE = "alpine:3.22@sha256:5291449c3df73caf6ed85e649dec1b9e818b39a5d8c871e97af
 CADDY = "caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
 
 
-def prepare_binary(cache):
+def prepare_binary(cache, image_tag):
+    require(re.fullmatch(r"dpp-pgi-minio:trial-[0-9a-f]{32}", image_tag),
+            "a unique trial image tag is required")
     cache.mkdir(parents=True, exist_ok=True)
     source = cache / "source"
     if not source.exists():
@@ -50,8 +53,11 @@ def prepare_binary(cache):
     (cache / ".dockerignore").write_text("*\n!minio\n!LICENSE\n!Dockerfile\n", encoding="utf-8")
     (cache / "Dockerfile").write_text(f"FROM {ALPINE}\nCOPY minio /usr/local/bin/minio\n"
         "COPY LICENSE /licenses/minio/LICENSE\n", encoding="utf-8")
-    command(["docker", "build", "-t", "dpp-pgi-minio:2025-10-15", str(cache)], timeout=300)
-    return binary
+    command(["docker", "build", "-t", image_tag, str(cache)], timeout=300)
+    image = command(["docker", "image", "inspect", image_tag, "--format", "{{.Id}}"])
+    image_id = image.stdout.decode().strip()
+    require(image_id.startswith("sha256:") and len(image_id) == 71, "resolved native image ID required")
+    return binary, image_id
 
 
 def run(output, cache):
@@ -77,14 +83,14 @@ def run(output, cache):
     secret = secrets.token_hex(32)
     access = secrets.token_hex(12)
     try:
-        binary = prepare_binary(cache)
+        binary, image_id = prepare_binary(cache, "dpp-pgi-minio:trial-" + uuid.uuid4().hex)
         report["binary_sha256"] = hashlib.sha256(binary.read_bytes()).hexdigest()
         report["build_go"] = command(["go","version"]).stdout.decode().strip()
         sdk=subprocess.run(["go","list","-m","-f","{{.Version}}","github.com/minio/minio-go/v7"],
             cwd=REPO/"apps/platform",stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=60)
         require(sdk.returncode==0,"read storage client SDK identity")
         report["client_sdk"]="github.com/minio/minio-go/v7@"+sdk.stdout.decode().strip()
-        report["image_id"] = command(["docker","image","inspect","dpp-pgi-minio:2025-10-15","--format","{{.Id}}"]).stdout.decode().strip()
+        report["image_id"] = image_id
         for net in [network, engine_network]:
             command(["docker","network","create",net]); networks.append(net)
         (private/"access").write_text(access,encoding="utf-8")
@@ -97,7 +103,7 @@ def run(output, cache):
             "exec /usr/local/bin/minio server /data --address :9000\n",encoding="utf-8",newline="\n")
         command(["docker","run","-d","--name",server,"--network",network,
             "--network-alias","minio","--mount",f"type=bind,src={private},dst=/run/credentials,readonly",
-            "--tmpfs","/data:rw,size=128m","--entrypoint","sh","dpp-pgi-minio:2025-10-15",
+            "--tmpfs","/data:rw,size=128m","--entrypoint","sh",image_id,
             "/run/credentials/start.sh"]); names.append(server)
         with socket.socket() as sock:
             sock.bind(("127.0.0.1",0)); port=sock.getsockname()[1]
