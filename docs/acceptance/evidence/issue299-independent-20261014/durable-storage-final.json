@@ -1,0 +1,134 @@
+[
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "exited"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "container_id": "972f07b77c843bd7848a11b2a4bb6d8c4682d236585d15b4f168fabd5a61666b",
+        "writable": true,
+        "type": "volume",
+        "role": "source",
+        "volume": "dpp-pgi-47203cb12b93-source-data",
+        "container": "dpp-pgi-47203cb12b93-source",
+        "destination": "/var/lib/postgresql/data"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "exited"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "container": "dpp-pgi-b3-storage-47203cb12b93",
+        "container_id": "3352809c14154faf2ed94520747cbba98e8e5e31c508f981564225d7c7e78d29",
+        "type": "volume",
+        "writable": true,
+        "role": "objects",
+        "volume": "dpp-pgi-b3-storage-47203cb12b93-data",
+        "destination": "/data"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "exited"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "destination": "/var/lib/postgresql/data",
+        "container_id": "3b882544cac2074e822c85ed885e48b0139a46b8c7e9d42ccfc73324d8bdacea",
+        "container": "dpp-pgi-b3-core-47203cb12b93",
+        "volume": "dpp-pgi-b3-core-47203cb12b93-data",
+        "role": "core",
+        "writable": true,
+        "type": "volume"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "exited"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "container": "dpp-pgi-b3-redis-47203cb12b93",
+        "destination": "/data",
+        "volume": "dpp-pgi-b3-redis-47203cb12b93-data",
+        "type": "volume",
+        "role": "queue",
+        "container_id": "c5c4d59eb0e02032205e20eb92ac693887b496b5ff882ca7a34500c4f7e44adf",
+        "writable": true
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "47203cb1-2b93-4946-8f09-72e29022ea4c",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "running"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "volume": "dpp-pgi-47203cb12b93-source-data",
+        "type": "volume",
+        "container": "dpp-pgi-47203cb12b93-source",
+        "writable": true,
+        "container_id": "972f07b77c843bd7848a11b2a4bb6d8c4682d236585d15b4f168fabd5a61666b",
+        "destination": "/var/lib/postgresql/data",
+        "role": "source"
+      },
+      {
+        "volume": "dpp-pgi-b3-storage-47203cb12b93-data",
+        "type": "volume",
+        "container": "dpp-pgi-b3-storage-47203cb12b93",
+        "writable": true,
+        "container_id": "3352809c14154faf2ed94520747cbba98e8e5e31c508f981564225d7c7e78d29",
+        "destination": "/data",
+        "role": "objects"
+      },
+      {
+        "volume": "dpp-pgi-b3-core-47203cb12b93-data",
+        "type": "volume",
+        "container": "dpp-pgi-b3-core-47203cb12b93",
+        "writable": true,
+        "container_id": "3b882544cac2074e822c85ed885e48b0139a46b8c7e9d42ccfc73324d8bdacea",
+        "destination": "/var/lib/postgresql/data",
+        "role": "core"
+      },
+      {
+        "volume": "dpp-pgi-b3-redis-47203cb12b93-data",
+        "type": "volume",
+        "container": "dpp-pgi-b3-redis-47203cb12b93",
+        "writable": true,
+        "container_id": "c5c4d59eb0e02032205e20eb92ac693887b496b5ff882ca7a34500c4f7e44adf",
+        "destination": "/data",
+        "role": "queue"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  }
+]

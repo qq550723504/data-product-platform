@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "secondaryWorkerPid": 6816,
+  "requestIds": [
+    "85a02379-fb8c-47b0-9b16-c64bc4caca6d",
+    "3cf5902e-93f3-482c-a5a0-83104a36ae70"
+  ],
+  "intervals": [
+    {
+      "attemptId": "8ab59129-8d02-4a97-9072-de3650daaac4",
+      "start": "2026-10-14T09:36:05.725308+00:00",
+      "recorded": "2026-10-14T09:36:12.458986+00:00"
+    },
+    {
+      "attemptId": "7b5d7c28-6cce-4ffc-abf7-8d2b83c4b0fb",
+      "start": "2026-10-14T09:36:13.705775+00:00",
+      "recorded": "2026-10-14T09:36:20.135149+00:00"
+    }
+  ],
+  "checks": [
+    "two upgraded dispatchers active for distinct native requests; log oracle identifies dispatch owners",
+    "same source scan intervals do not overlap",
+    "both native discoveries MATCH; each physical invocation charged once"
+  ]
+}

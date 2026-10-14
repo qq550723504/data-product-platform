@@ -1,0 +1,63 @@
+"""Real Docker regression for isolated builds; retains every trial resource.
+
+Runs only synthetic raw extraction and native image inspection. No Core,
+provider object deletion, cleanup, or existing container start is performed.
+"""
+import argparse,hashlib,ipaddress,json,subprocess,uuid
+from pathlib import Path
+import smoke,storage_smoke
+from retained_runtime import DurableStorage,private_directory
+
+def run(output,cache,subnet):
+    output.mkdir(parents=True,exist_ok=False)
+    original=smoke.command
+    proposed=ipaddress.ip_network(subnet)
+    ids=original(['docker','network','ls','-q']).stdout.decode().split()
+    for network in json.loads(original(['docker','network','inspect',*ids]).stdout):
+        for cfg in network.get('IPAM',{}).get('Config') or []:
+            if cfg.get('Subnet'):
+                allocated=ipaddress.ip_network(cfg['Subnet'])
+                assert proposed.version!=allocated.version or not proposed.overlaps(allocated)
+    def command(args,*pos,**kw):
+        if args[:3]==['docker','network','create']:args=args[:3]+['--subnet',subnet]+args[3:]
+        return original(args,*pos,**kw)
+    smoke.command=command
+    def image(ref):return json.loads(original(['docker','image','inspect',ref]).stdout)[0]['Id']
+    shared=['dpp-pgi-hop-jdbc:42.7.14','dpp-pgi-minio:2025-10-15']
+    before={ref:image(ref) for ref in shared}
+    native=[]
+    for _ in range(2):
+        tag='dpp-pgi-minio:trial-'+uuid.uuid4().hex
+        binary,identity=storage_smoke.prepare_binary(cache,tag)
+        assert identity==image(tag)
+        name='dpp-image-pin-'+uuid.uuid4().hex
+        original(['docker','create','--name',name,'--label','dpp.image-isolation=true','--entrypoint','/usr/local/bin/minio',identity,'--version'])
+        configured=json.loads(original(['docker','inspect',name]).stdout)[0]
+        assert configured['Image']==identity and configured['Config']['Image']==identity
+        version=original(['docker','start','--attach',name]).stdout.decode()
+        native.append({'tag':tag,'imageId':identity,'container':name,'binarySha256':hashlib.sha256(binary.read_bytes()).hexdigest(),'version':version.strip()})
+    assert native[0]['tag']!=native[1]['tag']
+    assert image(native[0]['imageId'])==native[0]['imageId'],'later build lost earlier image'
+    private=private_directory('dpp-image-isolation-')
+    durable=DurableStorage(output,private,smoke.REPO/'examples/lifecycle-d1/durable-storage.ps1')
+    trial=smoke.Trial(output,retain=True,durable_start=durable.start)
+    try:
+        trial.setup()
+        assert trial.engine_image==image('dpp-pgi-hop-jdbc:trial-'+trial.run_id.replace('-',''))
+        configured=json.loads(original(['docker','inspect',trial.hop]).stdout)[0]
+        assert configured['Image']==trial.engine_image and configured['Config']['Image']==trial.engine_image
+        trial.fidelity()
+        assert before=={ref:image(ref) for ref in shared},'trial rewrote shared image tags'
+        report={'status':'PASS','sharedBefore':before,'sharedAfter':{ref:image(ref) for ref in shared},'minio':native,
+            'hopImage':trial.engine_image,'hopContainer':trial.hop,'sourceContainer':trial.pg,'trialRunId':trial.run_id,
+            'sourcePrivate':str(trial.private),'nativeExtraction':trial.report.get('checks',trial.report),'cleanup':0,'providerDelete':0,
+            'checks':['two fresh MinIO tags retain the first immutable image','container Config.Image pins resolved ID','Hop uses unique run tag and immutable ID','real Hop 6/10/14 extraction matches original strings and repeated byte hashes','shared legacy aliases unchanged']}
+        (output/'image-isolation.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
+        print(json.dumps({'status':'PASS','checks':len(report['checks']),'runId':trial.run_id,'minioImages':[v['imageId'] for v in native],'hopImage':trial.engine_image}),flush=True)
+    finally:
+        if trial.proxy:trial.proxy.shutdown();trial.proxy.server_close()
+        # No cleanup: runtime namespaces, providers, volumes, credentials and files survive.
+
+if __name__=='__main__':
+    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--cache',type=Path,required=True);p.add_argument('--subnet',default='10.249.202.0/24')
+    a=p.parse_args();run(a.output.resolve(),a.cache.resolve(),a.subnet)

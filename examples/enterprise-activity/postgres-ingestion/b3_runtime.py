@@ -24,7 +24,7 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
     (output/"ownership.json").write_text(json.dumps({"run_id":trial.run_id,"private":str(private),"source_private":str(trial.private),"identity":trial.identity}),encoding="utf-8")
     names=[];networks=[];volumes=[];processes=[];report={};web_gateway=None
     try:
-        binary=prepare_binary(cache)
+        binary,minio_image=prepare_binary(cache,"dpp-pgi-minio:trial-"+trial.run_id.replace("-", ""))
         trial.setup()
         report["runtime"]=trial.report["runtime"]
         report["minio_binary_sha256"]=hashlib.sha256(binary.read_bytes()).hexdigest()
@@ -40,7 +40,7 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
         (storage_private/"start.sh").write_text("#!/bin/sh\nset -eu\nexport MINIO_ROOT_USER=$(cat /run/credentials/access)\nexport MINIO_ROOT_PASSWORD=$(cat /run/credentials/secret)\nexec /usr/local/bin/minio server /data --address :9000\n",encoding="utf-8",newline="\n")
         minio="dpp-pgi-b3-storage-"+suffix
         storage_volume=minio+"-data";command(["docker","volume","create",storage_volume]);volumes.append(storage_volume)
-        command(["docker","create","--name",minio,"--label","dpp.trial.run="+trial.run_id,"--network",net,"--network-alias","minio","--mount",f"type=bind,src={storage_private},dst=/run/credentials,readonly","--mount",f"type=volume,src={storage_volume},dst=/data","--entrypoint","sh","dpp-pgi-minio:2025-10-15","/run/credentials/start.sh"]);names.append(minio)
+        command(["docker","create","--name",minio,"--label","dpp.trial.run="+trial.run_id,"--network",net,"--network-alias","minio","--mount",f"type=bind,src={storage_private},dst=/run/credentials,readonly","--mount",f"type=volume,src={storage_volume},dst=/data","--entrypoint","sh",minio_image,"/run/credentials/start.sh"]);names.append(minio)
         durable.start(minio,"/data",storage_volume,"objects",trial.run_id)
         gateway="dpp-pgi-b3-gateway-"+suffix;sp=port()
         command(["docker","run","-d","--name",gateway,"--label","dpp.trial.run="+trial.run_id,"--network",net,"-p",f"127.0.0.1:{sp}:9000","--mount",f"type=bind,src={HERE/'storage.Caddyfile'},dst=/etc/caddy/Caddyfile,readonly",CADDY]);names.append(gateway)

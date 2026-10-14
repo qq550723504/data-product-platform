@@ -1,0 +1,23 @@
+{
+  "status": "FAIL / ORIGINAL_IMAGE_ID_NOT_RESTORED",
+  "cause": "existing harness rebuilt shared image tags; retained C3 containers still reference the original IDs, which Docker no longer resolves",
+  "oldHopImage": "sha256:401553bcfe449470f33e8efb5ce4414dec4e880eec357b37738d41d0c2b6df18",
+  "oldMinioImage": "sha256:8c712a2fe14b096ebb65f17c976a3aff15857ca1ad63a0cef250fdc22771202b",
+  "rootfsBackup": {
+    "c3-hop-rootfs.tar": {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\Codex\\retained-trials\\dpp-pgi-b3-4iasa9v0\\backup-old-container-rootfs\\c3-hop-rootfs.tar",
+      "sha256": "d38cfd0366fe7255217dadd9aacbf216485ec24c17866042291fc6260063942d",
+      "bytes": 1607490560
+    },
+    "c3-minio-rootfs.tar": {
+      "path": "C:\\Users\\Henry\\AppData\\Local\\Codex\\retained-trials\\dpp-pgi-b3-4iasa9v0\\backup-old-container-rootfs\\c3-minio-rootfs.tar",
+      "sha256": "9142d84e8f84335e7fce8ab7a7f69686a08bbfd8a4dcc2f844f37dd2ddd800dd",
+      "bytes": 120198656
+    }
+  },
+  "exportedRootfsIsNotOriginalOCIImage": true,
+  "oldContainersStarted": 0,
+  "oldVolumesMounted": 0,
+  "cleanupCalls": 0,
+  "fixRegression": "image-isolation-regression.json"
+}
