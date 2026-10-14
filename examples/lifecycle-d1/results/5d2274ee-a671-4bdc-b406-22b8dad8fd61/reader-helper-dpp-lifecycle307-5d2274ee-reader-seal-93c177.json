@@ -1,0 +1,12 @@
+{
+  "cleanup": 0,
+  "root_mounted": true,
+  "delete": 0,
+  "run_id": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+  "binary_sha256": "5e04e88bbd65880a5e65da5795dcdc116021512e04d27a200ec0d03f83e972c8",
+  "mode": "seal",
+  "container": "dpp-lifecycle307-5d2274ee-reader-seal-93c177",
+  "id": "9b20260d5efa4391b82c491544087af151e5f7aa8f14a8318c3eed79c257bf56",
+  "expected_exit": 0,
+  "exit_code": 0
+}

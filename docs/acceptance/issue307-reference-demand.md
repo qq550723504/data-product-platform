@@ -1,6 +1,73 @@
 # #307 引用需求与业务竞争：有限验收
 
-2026-10-13。实现 contract 见 [finite contract](issue307-reference-demand-contract.md)；
+最新阶段（2026-10-14）：独立只读 source review 完成，当前切片 BLOCKER=0；
+新隔离环境 `dpp-lifecycle307-5d2274ee` 从源码
+`4650c435f8ba89fdb0b2dc0591152d25ded182d7` 完成非删除 native 重验。
+下述 a7116c35 原阶段及首次 closure 的 NOT_RUN 记录保留其原始时点，
+最新结果见 [本轮回执](../../examples/lifecycle-d1/results/5d2274ee-a671-4bdc-b406-22b8dad8fd61/reference-offline-verification.json)。
+Draft、真实 DELETE=0、完整 D1 未接受的边界不变。
+
+## 2026-10-14 独立评审与当前源码 native 重验
+
+独立 reviewer 使用无继承会话的 fresh fork，只读审查 pinned HEAD4650c435
+对 main074a33ba 的实际代码/SQL/Adapter。未发现可验证的当前切片代码
+BLOCKER；reviewer 未运行 DB/native tests，未把作者自审/CI/旧 binary 当成
+invariant 证明。原报告与只读范围见
+[independent review](evidence/issue307-d1/reference-independent-review.json)。
+
+已按 review 修正措辞：`StartWithReferenceCheck` 可能先提交 RUNNING，
+再由 PinnedEngine 拒绝实际数据面 admission。证明的边界是 restriction
+后没有新 GET/bytes/output、输出不被接纳，不能声称每个 Start 状态迁移
+都被拒。reviewer 对两处文档修正复核，确认无新增 authoritative contract
+冲突；没有因此扩展到通用 Workflow lifecycle 或改动实现。
+
+新 run `5d2274ee-a671-4bdc-b406-22b8dad8fd61` 复用现有 prepare/plane/
+reference-races/final/seal 入口，独立内部网络 `10.234.151.0/24`，无 host
+port，Core/objects 各专属 named volume。当前 committed source/SQL67
+先构建再执行；reader Linux binary SHA256
+`5e04e88bbd65880a5e65da5795dcdc116021512e04d27a200ec0d03f83e972c8`。
+685 个源码/script/schema 文件的 working SHA256 与 canonical Git blob
+分别绑定，运行中不改；Go build settings 未携带 vcs.revision，故不声称
+VCS 内嵌证明。见 [source binding](../../examples/lifecycle-d1/results/5d2274ee-a671-4bdc-b406-22b8dad8fd61/reference-source-binding.json)。
+
+PASS（非删除 native）：真实 Entity STANDARDIZED/NATIVE CURATED 两个输出、
+Quality/Certification/current rights、processing 输入 GET 后暂停、实际慢 TCP
+DirectData 传输与处置两个顺序。活动时两个 dispatch 同时因 references /
+readers 被拒；verified stop 后 23 owner releases 使两个 dispatch admission
+通过。8 类强类型源关系仍保留；7 pins/7 stops，active=0。
+DirectData 129328 bytes，原 ISSUED 保留，transfer observation 追加。
+queued/replay/retry 与自然等待 10 分钟 RUNNING lease 后的 recovery、处置后
+新 DirectData 为 0 新 GET/output；没有手改 lease/time。
+
+[Native business receipt](../../examples/lifecycle-d1/results/5d2274ee-a671-4bdc-b406-22b8dad8fd61/reference-business-races.json)：
+竞争阶段 32 calls/observations/typed costs；final 独立只读 native inventory/
+protection 增加 20，总数 52/52/52。
+[独立 READ ONLY SQL](../../examples/lifecycle-d1/results/5d2274ee-a671-4bdc-b406-22b8dad8fd61/independent-final-counts.json)
+核对成本逐 call 一一匹配、四次 gate evaluation、3 FAILED/1 SUCCEEDED、
+1 ISSUED、send claims=0、completion=0，并测得 deployed admission guard
+function body（LF SHA256）与绑定 SQL67 完全相同。
+首次登记双向 barrier 与错误 trigger 的负例仍属于先前独立 PG 验证；
+本轮 native 证明当前修复在真实输出首次登记、全部引用检查和业务数据面
+组合中通过，不把 PG/schema fault 注入冒充新 native fault 注入。
+
+[最终离线核验](../../examples/lifecycle-d1/results/5d2274ee-a671-4bdc-b406-22b8dad8fd61/reference-offline-verification.json)
+对原四份 identity、六份 exact inventory、保护、calls/observations/costs、
+pin owner stops、ISSUED/transfer、源码/binary 作独立比对。
+[封存](../../examples/lifecycle-d1/results/5d2274ee-a671-4bdc-b406-22b8dad8fd61/plane-seal.json)：
+reader/producer DISABLED、window disabled、gateway DENY_ALL，六份版本和
+所有环境/volumes 保留；DELETE/cleanup/hold release/retention bypass 均 0。
+本轮开始前的 172 containers/2626 volumes 核对缺失=0。
+
+独立只读计数 query 首次误用了不存在的 completion table，失败且
+READ ONLY transaction 回滚；核对真实 schema 后改用 lifecycle_plan_completion
+成功。原 operator diagnostic 单独保留，不冒充 native 业务失败或隐藏失败。
+实际 DELETE/absence/completion、真实 Redis worker、native process crash、
+native pre-ISSUED pause、archive/restore rerun、完整 D1/D2 仍 NOT_RUN /
+未接受；这次独立评审不授予 Ready、合并或真实删除权限。
+
+## 2026-10-13 原 native 阶段及随后首次 closure
+
+实现 contract 见 [finite contract](issue307-reference-demand-contract.md)；
 base main `074a33bace7edbaf481759aac3a84708363ffd02`，migration67。
 受验源码 `a7116c355428ee71ff621870ceafeb6ede9e9205`；
 最终文档/回执 HEAD 不冒充重新执行过的 binary。
@@ -50,7 +117,7 @@ CI 必须单独核对。这是 PR CI，不是 main push CI。本轮真实 DELETE
 | 独立 named-volume PostgreSQL | PASS；引用与检查、pending copy 与 dispatch 两个顺序的 barrier；活动/未知 pin、tenant/owner/replay/immutability；冻结源码完整 lifecycle race 套件 190.833s |
 | 全模块 Go / vet | PASS；go test -race ./... 的无外部服务模式；未配置的集成用例属于 SKIP，不计真实 PG/provider |
 | NATIVE Processing | PASS 非删除 admission；真实 Entity STANDARDIZED、NATIVE CURATED baseline；在实际 input GET 后暂停；活动 pin 阻断，批准/restriction 后输出不被接纳 |
-| Queue / recovery | 实际 Asynq task Handler 与 Application Create/Start/Retry/NativeReconciler；queued/start/replay/retry 被拒，自然等待 10 分钟 RUNNING lease 后 recovery 为 0 新 GET/output |
+| Queue / recovery | 实际 Asynq task Handler 与 Application Create/Start/Retry/NativeReconciler；queued/start/replay/retry 的数据面 admission 被拒，自然等待 10 分钟 RUNNING lease 后 recovery 为 0 新 GET/output。Start 仍可能先提交 RUNNING，再由 PinnedEngine 拒绝，不把这项结果表述为所有 Start 状态迁移都被拒 |
 | DirectData | PASS 非删除；真实 Quality/Certification/current rights，ISSUED commit 后真实慢 TCP 传输；transfer pin 阻断直到 writer 明确结束；same-key non-payload，新请求在 admission 拒绝 |
 | actual provider DELETE / exact absence / completion | NOT_RUN；无 DELETE adapter/credential/send claim，completion=0 |
 | 原生进程崩溃、真实 Redis worker 投递、native ISSUED commit 前暂停 | 本轮 NOT_RUN；已有 SQL/fake owner/commit barrier 单列，不替代上述 native fault 验收 |
@@ -58,7 +125,7 @@ CI 必须单独核对。这是 PR CI，不是 main push CI。本轮真实 DELETE
 
 ## 新环境、阶段及计数
 
-唯一成功新环境 `dpp-lifecycle307-e1487ce7`，run
+此前阶段的成功新环境 `dpp-lifecycle307-e1487ce7`，run
 `e1487ce7-172d-4641-80a3-725aa12cc483`。内部网络，无 host port，
 Core/object 均为专属 named volume；原环境未重开。
 [环境](../../examples/lifecycle-d1/results/e1487ce7-172d-4641-80a3-725aa12cc483/reader-environment.json)；

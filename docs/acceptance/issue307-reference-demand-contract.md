@@ -57,8 +57,11 @@ cannot replace module-owner decisions. No new dependency or fork.
 Required verification: domain/reference validation, application rejection and
 idempotency, independent named-volume real PG barriers (both orders; pending
 copy; active/unknown owner), native Processing baseline and queued/start/retry/
-recovery refusal, real Quality/Certification/current-rights DirectData slow TCP
+recovery data-plane refusal, real Quality/Certification/current-rights DirectData slow TCP
 transfer versus disposition. SQL/fake/native evidence is reported separately.
+An Execution RUNNING claim may precede PinnedEngine admission; refusal here
+means no new GET/bytes/output or accepted output after restriction, not rejection
+of every Start status transition.
 
 Merge blockers: authority/tenant or bytes bypass, mutable historical facts,
 unfenced source/pending-copy writes, false quiescence, broken fingerprint/event
