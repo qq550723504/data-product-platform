@@ -7,6 +7,11 @@
 最新结果见 [本轮回执](../../examples/lifecycle-d1/results/5d2274ee-a671-4bdc-b406-22b8dad8fd61/reference-offline-verification.json)。
 Draft、真实 DELETE=0、完整 D1 未接受的边界不变。
 
+2026-10-14 后续：[当前 D1 删除确认方案](issue307-d1-delete-proposal.md)
+改为本次 `5d2274ee` 环境两份精确源版本；包含六份 inventory/保护、实时只读
+topology/Core、未发送 trial reservations 与新执行前条件。仅提案、未获批准、
+未创建删除权限或发出 provider I/O。下述 e1487ce7 提案保留其原始时点。
+
 ## 2026-10-14 独立评审与当前源码 native 重验
 
 独立 reviewer 使用无继承会话的 fresh fork，只读审查 pinned HEAD4650c435

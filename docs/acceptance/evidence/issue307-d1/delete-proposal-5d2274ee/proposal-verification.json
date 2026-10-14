@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "verified_at": "2026-10-14T01:54:51.7040593+00:00",
+  "mode": "Author static/offline verification of saved read-only observations; not independent code review or native re-execution",
+  "target_count": 2,
+  "survivor_count": 4,
+  "target_bytes": 129560,
+  "exact_identity_and_protection_snapshot_matches": 6,
+  "db_plan_hash_matches": true,
+  "processing_intents_each_have_ready": true,
+  "trial_reservations_preserved": 2,
+  "new_basis_approval_credentials_resources_created": 0,
+  "local_links_checked": 24,
+  "known_private_values_checked": 11,
+  "public_files_scanned": 7,
+  "known_private_matches": 0,
+  "secret_values_disclosed": 0,
+  "provider_io": 0,
+  "database_mutation": 0,
+  "runtime_mutation": 0,
+  "provider_delete": 0,
+  "remaining_execution_preconditions": "Explicit exact-list authorization, bounded new profile/verifier validation, trusted NOT_SENT releases, fresh basis/approval, independent current backup/restore, fresh pre-send gate"
+}
