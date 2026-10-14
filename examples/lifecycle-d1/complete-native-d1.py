@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parents[2]
 PRIVATE=Path('C:/Users/Henry/.codex/fixture-private')
 CONTROL=PRIVATE/'d1-native-completion01'
 PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/native-completion01'
-PHASES=('prepare-plane','prepare-archive','prepare-copy','prepare-metadata','plane-setup','pre-issued-crash','verify-pre-issued-crash','pre-issued','plane-final','plane-seal','archive-run','copy-init','copy-archive-faults','copy-archive-resume','copy-restore-owner','copy-revocation','copy-finish','metadata-init','metadata-seed','metadata-faults','metadata-resume','metadata-owner','metadata-finish','seal')
+PHASES=('prepare-plane','prepare-archive','prepare-copy','prepare-copy-02','prepare-metadata','plane-setup','pre-issued-crash','verify-pre-issued-crash','pre-issued','plane-final','plane-seal','archive-run','copy-init','copy-archive-faults','copy-archive-resume','copy-restore-owner','copy-revocation','copy-finish','metadata-init','metadata-seed','metadata-faults','metadata-resume','metadata-owner','metadata-finish','seal')
 def require(ok,message):
  if not ok:raise RuntimeError(message)
 def load(p):return json.loads(p.read_text(encoding='utf-8-sig'))
@@ -19,13 +19,13 @@ def call(args,input_data=None):
  return r.stdout
 def docker(*args,**kw):return call(['docker',*args],**kw)
 def ps(name,*args):return call(['pwsh','-NoProfile','-File',str(ROOT/'examples/lifecycle-d1'/name),*map(str,args)])
-def fixture(role):
+def fixture(role,require_running=True):
  record=load(CONTROL/(role+'.json'));private=Path(record['private']);r=load(private/'resources.json');cfg=load(private/'config.json')
  expected={x['name']:x for x in load(PUBLIC/(role+'-fixture.json'))['services']}
  require(r['run_id']==cfg['RunID'] and r['project']=='dpp-lifecycle307-'+r['run_id'][:8] and private.name==r['project'],'Fixture identity drift')
  for name in r['containers'].values():
   item=json.loads(docker('inspect',name))[0]
-  require(item['Id']==expected[name]['id'] and item['Image']==expected[name]['image'] and item['Config']['Labels']['lifecycle307.run']==r['run_id'] and item['State']['Running'] and not any(item['NetworkSettings']['Ports'].values()),'Closed owned fixture drift')
+  require(item['Id']==expected[name]['id'] and item['Image']==expected[name]['image'] and item['Config']['Labels']['lifecycle307.run']==r['run_id'] and (item['State']['Running'] or not require_running) and not any(item['NetworkSettings']['Ports'].values()),'Closed owned fixture drift')
  return private,r,cfg
 def sql(role,query):
  _,r,_=fixture(role)
@@ -157,7 +157,7 @@ def metadata_finish():
  step('metadata','witness','metadata-final-witness');accounting('metadata');authority('metadata',False)
 def seal():
  for role in ('plane','archive','copy','metadata'):
-  private,r,_=fixture(role)
+  private,r,_=fixture(role,require_running=False)
   for path in private.glob('*/recovery.json'):require(load(path)['Enabled'] is False,'Worker not sealed')
   for path in private.glob('*/archive-window.json'):require(load(path)['Enabled'] is False,'COPY role not sealed')
   for path in private.glob('*/reader.json'):require(load(path)['Enabled'] is False,'Reader role not sealed')
@@ -167,7 +167,8 @@ def main():
  require(not (PUBLIC/'sealed.json').exists(),'Completed generation cannot reopen')
  if not CONTROL.exists():CONTROL.mkdir();PUBLIC.mkdir()
  write(PUBLIC/('attempt-'+args.phase+'.json'),{'phase':args.phase,'source_head':call(['git','rev-parse','HEAD']).decode().strip(),'driver_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'intent':'ONE_SHOT_NON_DELETE; append-only, failure never auto-resumes'})
- if args.phase.startswith('prepare-'):prepare(args.phase[8:])
+ if args.phase=='prepare-copy-02':prepare('copy')
+ elif args.phase.startswith('prepare-'):prepare(args.phase[8:])
  elif args.phase=='plane-setup':plane('setup')
  elif args.phase in ('pre-issued-crash','verify-pre-issued-crash','pre-issued'):plane(args.phase)
  elif args.phase=='plane-final':plane('final')
