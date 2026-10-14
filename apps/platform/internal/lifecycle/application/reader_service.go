@@ -95,6 +95,7 @@ type FixtureReaderService struct {
 	port      PinnedReaderPort
 	mu        sync.Mutex
 	stops     map[uuid.UUID]domain.ReaderTermination
+	recovery  ReaderTerminationVerifier
 }
 
 func validatePinnedRead(copy domain.Copy, pin domain.ReaderPin, r PinnedReadResult) error {
@@ -110,18 +111,27 @@ func validatePinnedRead(copy domain.Copy, pin domain.ReaderPin, r PinnedReadResu
 
 // Compose once before serving. Do not replace another reader owner's verifier.
 func NewFixtureReaderService(o *OccupancyService, p PinnedReaderPort) *FixtureReaderService {
+	return NewFixtureReaderServiceWithRecovery(o, p, nil)
+}
+
+// Recovery trust is installed by the closed server composition, never supplied
+// by a request. Normal synchronous stop proofs keep the same verifier owner.
+func NewFixtureReaderServiceWithRecovery(o *OccupancyService, p PinnedReaderPort, recovery ReaderTerminationVerifier) *FixtureReaderService {
 	if o == nil || !o.configured() || o.useGate == nil || o.termination != nil || p == nil {
 		return nil
 	}
-	s := &FixtureReaderService{occupancy: o, port: p, stops: map[uuid.UUID]domain.ReaderTermination{}}
+	s := &FixtureReaderService{occupancy: o, port: p, stops: map[uuid.UUID]domain.ReaderTermination{}, recovery: recovery}
 	o.termination = s
 	return s
 }
 
-func (s *FixtureReaderService) VerifyTermination(_ context.Context, _ pgx.Tx, pin domain.ReaderPin, outcome string, _ time.Time) (domain.ReaderTermination, error) {
+func (s *FixtureReaderService) VerifyTermination(ctx context.Context, tx pgx.Tx, pin domain.ReaderPin, outcome string, at time.Time) (domain.ReaderTermination, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	p, ok := s.stops[pin.ID]
+	if !ok && s.recovery != nil {
+		return s.recovery.VerifyTermination(ctx, tx, pin, outcome, at)
+	}
 	if !ok || p.Generation != pin.Generation || p.ReaderID != pin.ReaderID || p.Outcome != outcome {
 		return domain.ReaderTermination{}, domain.ErrTerminationUnknown
 	}

@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','seal','setup','accept','final','reference-races','pre-issued','pre-issued-crash','verify-pre-issued-crash','lc13-init','lc13-crash-one','lc13-crash-two','lc13-orphan','lc13-lease-recovery','lc13-final')][string]$Mode)
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','seal','setup','accept','final','reference-races','pre-issued','pre-issued-crash','verify-pre-issued-crash','lc13-init','lc13-crash-one','lc13-crash-two','lc13-orphan','lc13-lease-recovery','lc13-final','resume-init','resume-crash','resume-membership','resume-stop','resume-retry','resume-provision','credential-provision','credential-issue','credential-contain','credential-confirm','credential-expiry','credential-forensic','credential-seal','credential-release','credential-subjects','credential-restrict')][string]$Mode,[ValidateSet('plane-owner','plane-admin','resume-owner','resume-admin','credential-owner','credential-admin')][string]$RoleDirectory='')
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
@@ -8,10 +8,12 @@ function Write-Utf8([string]$Path,[string]$Value){[IO.File]::WriteAllText($Path,
 $r=Get-Content -LiteralPath (Join-Path $private 'resources.json') -Raw|ConvertFrom-Json
 $dir=Join-Path $private 'plane-owner'
 if($Mode -in @('provision','seal')){$dir=Join-Path $private 'plane-admin'}
+if($RoleDirectory -ne ''){$dir=Join-Path $private $RoleDirectory}
+$adminMode=$Mode -in @('provision','seal','resume-provision','credential-provision','credential-forensic','credential-seal')
 $c=Get-Content -LiteralPath (Join-Path $dir 'reader.json') -Raw|ConvertFrom-Json
 $run=([guid]$r.run_id).ToString();$project='dpp-lifecycle307-'+$run.Substring(0,8)
 if($private.StartsWith($repo+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase) -or $r.project -ne $project -or (Split-Path -Leaf $private) -ne $project -or $c.RunID -ne $run -or -not $c.Enabled){throw 'Owned fresh reader window required'}
-if($Mode -notin @('provision','seal') -and ($c.RootAccess -ne '' -or $c.RootSecret -ne '')){throw 'Reader must not mount root credentials'}
+if(-not $adminMode -and ($c.RootAccess -ne '' -or $c.RootSecret -ne '')){throw 'Reader must not mount root credentials'}
 $gw=(Docker @('inspect',$r.containers.gateway)|ConvertFrom-Json)[0]
 if($gw.Config.Labels.'lifecycle307.run' -ne $run -or $gw.State.Status -ne 'running'){throw 'Gateway owner/state mismatch'}
 $name=$project+'-reader-'+$Mode+'-'+([guid]::NewGuid().ToString('N').Substring(0,6))
@@ -23,8 +25,8 @@ Docker @('create','--pull','never','--name',$name,'--label',"lifecycle307.run=$r
 Docker @('start',$name)|Out-Null
 $exit=Docker @('wait',$name)
 $expected='0';if($Mode -eq 'pre-issued-crash'){$expected='94'}
-if($Mode -in @('lc13-crash-one','lc13-crash-two')){$expected='95'}
-$receipt=@{run_id=$run;mode=$Mode;container=$name;id=(Docker @('inspect',$name,'--format','{{.Id}}'));exit_code=[int]$exit;expected_exit=[int]$expected;binary_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $dir 'reader')).Hash.ToLowerInvariant();root_mounted=($Mode -in @('provision','seal'));delete=0;cleanup=0}
-Write-Utf8 (Join-Path $PSScriptRoot "results/$run/reader-helper-$name.json") ($receipt|ConvertTo-Json)
+if($Mode -in @('lc13-crash-one','lc13-crash-two','resume-crash')){$expected='95'}
+$receipt=@{run_id=$run;mode=$Mode;role_directory=$RoleDirectory;container=$name;id=(Docker @('inspect',$name,'--format','{{.Id}}'));exit_code=[int]$exit;expected_exit=[int]$expected;binary_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $dir 'reader')).Hash.ToLowerInvariant();root_mounted=$adminMode;delete=0;cleanup=0}
+Write-Utf8 (Join-Path $repo ($c.OutputDirectory.Replace('/run/output/', 'examples/lifecycle-d1/results/')+"/reader-helper-$name.json")) ($receipt|ConvertTo-Json)
 if($exit -ne $expected){throw "Reader $Mode failed; helper and facts retained. Inspect its log; no automatic resend"}
 Write-Output "Reader $Mode complete ($exit); DELETE=0, cleanup=0."

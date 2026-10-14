@@ -64,7 +64,7 @@ func provisionProducer(ctx context.Context, c config, disable bool) error {
 		return call(func(x context.Context) error { return a.SetUserStatus(x, c.ProducerAccess, madmin.AccountDisabled) })
 	}
 	p, _ := json.Marshal(map[string]any{"Version": "2012-10-17", "Statement": []any{map[string]any{"Effect": "Allow", "Action": []string{"s3:PutObject"}, "Resource": []string{"arn:aws:s3:::" + namespaces[0] + "/fixture/standardized.csv", "arn:aws:s3:::" + namespaces[0] + "/fixture/processed.csv"}}}})
-	name := "lifecycle307-producer-" + c.RunID.String()
+	name := "lifecycle307-producer-" + c.ProducerAccess
 	if e = call(func(x context.Context) error { return a.AddCannedPolicy(x, name, p) }); e != nil {
 		return e
 	}
@@ -119,11 +119,46 @@ func planeStep(ctx context.Context, mode string) error {
 		return e
 	}
 	_ = m
+	if mode == "credential-seal" && c.LC13Continuation {
+		return credentialSeal(ctx, c)
+	}
+	if mode == "credential-forensic" && c.LC13Continuation {
+		pool, e := pgxpool.New(ctx, c.PostgresDSN)
+		if e != nil {
+			return e
+		}
+		defer pool.Close()
+		router, e := routing.NewRouter(false)
+		if e != nil {
+			return e
+		}
+		outbox.ConfigureAppendObligation(router)
+		defer outbox.ConfigureAppendObligation(nil)
+		return credentialForensic(ctx, c, pool, cs)
+	}
+	if mode == "credential-provision" && c.LC13Continuation {
+		return credentialProvision(ctx, c)
+	}
 	if mode == "provision" || mode == "seal" {
 		if e = provision(ctx, c, cs, mode == "seal"); e != nil {
 			return e
 		}
 		return provisionProducer(ctx, c, mode == "seal")
+	}
+	if mode == "resume-provision" && c.LC13Continuation {
+		pool, e := pgxpool.New(ctx, c.PostgresDSN)
+		if e != nil {
+			return e
+		}
+		defer pool.Close()
+		cs, e = planeCopies(ctx, c, pool)
+		if e != nil {
+			return e
+		}
+		if e = provision(ctx, c, cs, false); e != nil {
+			return e
+		}
+		return provisionProducer(ctx, c, false)
 	}
 	if c.RootAccess != "" || c.RootSecret != "" {
 		return errors.New("plane owner cannot mount root")
@@ -155,6 +190,15 @@ func planeStep(ctx context.Context, mode string) error {
 	}
 	if strings.HasPrefix(mode, "lc13-") {
 		return planeLC13(ctx, c, pool, cs, mode)
+	}
+	if strings.HasPrefix(mode, "resume-") {
+		return planeResume(ctx, c, pool, cs, mode)
+	}
+	if strings.HasPrefix(mode, "credential-") {
+		if mode == "credential-release" || mode == "credential-subjects" || mode == "credential-restrict" {
+			return credentialClosure(ctx, c, pool, cs, mode)
+		}
+		return planeCredential(ctx, c, pool, cs, mode)
 	}
 	if mode == "verify-pre-issued-crash" {
 		return verifyPreIssuedCrash(ctx, c, pool)

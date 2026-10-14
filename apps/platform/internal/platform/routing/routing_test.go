@@ -108,6 +108,7 @@ var eventVocabulary = []string{
 	"LifecycleContentHoldReleased",
 	"LifecycleReaderAdmitted",
 	"LifecycleReaderTerminated",
+	"LifecycleProcessingOwnerStopped",
 	"LifecycleHoldDispatchConflict",
 	"LifecycleDispositionApproved",
 	"LifecycleApprovalRevoked",

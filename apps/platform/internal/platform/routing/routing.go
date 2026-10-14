@@ -120,6 +120,7 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "LifecycleContentHoldReleased"},
 		{EventType: "LifecycleReaderAdmitted"},
 		{EventType: "LifecycleReaderTerminated"},
+		{EventType: "LifecycleProcessingOwnerStopped"},
 		{EventType: "LifecycleHoldDispatchConflict"},
 		{EventType: "LifecycleDispositionApproved"},
 		{EventType: "LifecycleApprovalRevoked"},

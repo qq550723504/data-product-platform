@@ -27,6 +27,7 @@ import (
 	lc "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 	transport "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
@@ -47,6 +48,12 @@ type config struct {
 	RootAccess, RootSecret                                                                                      string // populated only in a separate admin-only mount
 	ProducerAccess, ProducerSecret                                                                              string
 	RedisAddr                                                                                                   string // fresh LC-13 closed queue only
+	LC13Continuation                                                                                            bool
+	OwnerStopPublicKey                                                                                          string
+	OwnerStopIdentity                                                                                           pilot.ProcessingOwnerIdentity
+	IssuerAccess, IssuerSecret                                                                                  string
+	CredentialStopPublicKey                                                                                     string
+	CredentialStopIdentity                                                                                      pilot.CredentialOwnerIdentity
 }
 type manifest struct {
 	Objects []struct {
@@ -133,6 +140,9 @@ func (authority) Resolve(r *http.Request, w uuid.UUID, cap string) (principal.Re
 			caps = append(caps, lc.ReferenceOwnerCapability(module))
 		}
 	}
+	if c.LC13Continuation {
+		caps = append(caps, lc.ReferenceOwnerCapability("delivery"), lc.CapabilityCheckpointStorage)
+	}
 	resolver, e := principal.NewStaticResolver(true, c.Token, "lifecycle-fixture:"+c.RunID.String(), c.ActorID.String(), []string{c.WorkspaceID.String()}, caps)
 	if e != nil {
 		return principal.RequestPrincipal{}, e
@@ -178,7 +188,7 @@ type adminTransport struct {
 
 func (t adminTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	s, ok := r.Context().Value(adminKey{}).(*adminCall)
-	if !ok || r.URL.Scheme != "http" || r.URL.Host != t.c.Endpoint || r.URL.User != nil || (r.Method != "PUT" && r.Method != "POST") || len(r.URL.Path) < 16 || r.URL.Path[:16] != "/minio/admin/v3/" {
+	if !ok || r.URL.Scheme != "http" || r.URL.Host != t.c.Endpoint || r.URL.User != nil || (r.Method != "PUT" && r.Method != "POST" && !(t.c.LC13Continuation && r.Method == "GET" && r.URL.Path == "/minio/admin/v3/info-service-account")) || len(r.URL.Path) < 16 || r.URL.Path[:16] != "/minio/admin/v3/" {
 		return nil, errors.New("admin scope denied")
 	}
 	s.mu.Lock()
@@ -231,7 +241,7 @@ func provision(ctx context.Context, c config, cs []domain.Copy, disable bool) er
 		statements = append(statements, map[string]any{"Effect": "Allow", "Action": []string{"s3:GetObjectVersion"}, "Resource": []string{"arn:aws:s3:::" + cp.Namespace + "/" + cp.Key}, "Condition": map[string]any{"StringEquals": map[string]string{"s3:versionid": cp.ProviderVersion}}})
 	}
 	policy, _ := json.Marshal(map[string]any{"Version": "2012-10-17", "Statement": statements})
-	name := "lifecycle307-reader-" + c.RunID.String()
+	name := "lifecycle307-reader-" + c.Access
 	if e = call(func(ctx context.Context) error { return a.AddCannedPolicy(ctx, name, policy) }); e != nil {
 		return errors.New("reader policy unknown; no retry")
 	}
