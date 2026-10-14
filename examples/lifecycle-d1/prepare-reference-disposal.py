@@ -61,7 +61,6 @@ def helper(phase,network,dsn=None,attestation=None,expected=0,mode=None):
     payload=folder/'payload';payload.mkdir();out=PUBLIC/phase;out.mkdir()
     cfg=preflight();fields=['RunID','WorkspaceID','ProviderInstanceID','IncarnationID','ActorID','Endpoint','PostgresDSN','InspectAccess','InspectSecret','Token']
     fixture={key:cfg[key] for key in fields};fixture.update(RootAccess='',RootSecret='',OutputDirectory='/run/output')
-    if phase=='render':fixture['OutputDirectory']='/run/payload'
     if dsn:fixture['PostgresDSN']=dsn
     reference={'Fixture':fixture,'PreparationEnabled':True,'PreparationUntil':(dt.datetime.now(dt.timezone.utc)+dt.timedelta(minutes=40)).isoformat(),'AttestationPublicKey':''}
     if attestation:
@@ -71,7 +70,8 @@ def helper(phase,network,dsn=None,attestation=None,expected=0,mode=None):
     write(folder/'reference-permission.json',{'Enabled':False})
     (folder/'executor').write_bytes((CONTROL/'bin/executor').read_bytes())
     name=PROJECT+'-reference-preparation-'+phase
-    docker('create','--pull','never','--name',name,'--label','lifecycle307.run='+RUN,'--network','container:'+network,'--read-only','--tmpfs','/tmp','--mount','type=bind,source='+str(folder)+',target=/run/private,readonly','--mount','type=bind,source='+str(payload)+',target=/run/payload','--mount','type=bind,source='+str(out)+',target=/run/output','--mount','type=bind,source='+str(ROOT/'migrations')+',target=/run/migrations,readonly','--env','LIFECYCLE_REFERENCE_PROFILE=5d2274ee-614cd9ad','--env','LIFECYCLE_REFERENCE_MODE='+(mode or phase),'--entrypoint','/run/private/executor',PG_IMAGE)
+    output_mount=payload if phase=='render' else out
+    docker('create','--pull','never','--name',name,'--label','lifecycle307.run='+RUN,'--network','container:'+network,'--read-only','--tmpfs','/tmp','--mount','type=bind,source='+str(folder)+',target=/run/private,readonly','--mount','type=bind,source='+str(payload)+',target=/run/payload','--mount','type=bind,source='+str(output_mount)+',target=/run/output','--mount','type=bind,source='+str(ROOT/'migrations')+',target=/run/migrations,readonly','--env','LIFECYCLE_REFERENCE_PROFILE=5d2274ee-614cd9ad','--env','LIFECYCLE_REFERENCE_MODE='+(mode or phase),'--entrypoint','/run/private/executor',PG_IMAGE)
     docker('start',name);exit_code=int(docker('wait',name).strip())
     logs=subprocess.run(['docker','logs',name],capture_output=True);(folder/'helper.private-log').write_bytes(logs.stdout+logs.stderr)
     item=inspect(name);write(out/'helper.json',{'name':name,'id':item['Id'],'exit':exit_code,'expected_exit':expected,'image':item['Image'],'binary_sha256':sha(folder/'executor'),'root_mounted':False,'network_mode':item['HostConfig']['NetworkMode'],'retained':True})
