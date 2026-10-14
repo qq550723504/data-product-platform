@@ -1,0 +1,42 @@
+{
+  "run": "f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3",
+  "resources": {
+    "project": "dpp-lifecycle307-f3b0c9cd",
+    "containers": {
+      "gateway": "dpp-lifecycle307-f3b0c9cd-gateway",
+      "minio": "dpp-lifecycle307-f3b0c9cd-minio",
+      "postgres": "dpp-lifecycle307-f3b0c9cd-postgres"
+    },
+    "network": "dpp-lifecycle307-f3b0c9cd-private",
+    "volumes": [
+      "dpp-lifecycle307-f3b0c9cd-postgres",
+      "dpp-lifecycle307-f3b0c9cd-objects"
+    ],
+    "run_id": "f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3"
+  },
+  "services": {
+    "dpp-lifecycle307-f3b0c9cd-gateway": {
+      "id": "00a1249278d0e3138eb45e9aa34df6702499875927a868d1993dae209952f5b6",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
+    },
+    "dpp-lifecycle307-f3b0c9cd-minio": {
+      "id": "be23faf06a0d5d009f196bc38e53b8ca6da67837b76ac46f568d42617be9b1b7",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6"
+    },
+    "dpp-lifecycle307-f3b0c9cd-postgres": {
+      "id": "e01551079c89b8edcb83eee60e8befd6d26a2c0aebd9949fcfb95abf0d46f6f7",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    "dpp-lifecycle307-f3b0c9cd-redis": {
+      "id": "e842290f4b0be93f44e2aac59be89428cf535efb0cf30efaaa197b7e03a014ad",
+      "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"
+    }
+  },
+  "redis_volume": "dpp-lifecycle307-f3b0c9cd-redis-data",
+  "source_head": "44d5a5390f93a0a464f66e642fea61b5d79846e8",
+  "binary_sha256": "0bdd794e15230b4da02ddc2a183fd159e2f01817a70fae3556e112f05b57a84c",
+  "schema": 68,
+  "internal": true,
+  "host_ports": [],
+  "delete": 0
+}

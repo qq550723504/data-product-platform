@@ -1,0 +1,13 @@
+{
+  "packages": 1,
+  "tests_and_subtests": 6,
+  "fail": 0,
+  "skip": 1,
+  "commands": [
+    "./cmd/lifecycle-fixture-delete",
+    "./cmd/lifecycle-fixture-archive"
+  ],
+  "provider_io": 0,
+  "delete": 0,
+  "source_commit": "055aa1df063e560c6796e92dfff4e03c7b9061e0"
+}

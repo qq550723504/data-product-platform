@@ -1,0 +1,13 @@
+{
+  "id": "77ce84f0eca751e2a683e1d356f4135d8cdff467e44d6c7520fec4d959bb2b9f",
+  "root_mounted": true,
+  "cleanup": 0,
+  "role_directory": "resume-admin",
+  "run_id": "f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3",
+  "expected_exit": 0,
+  "mode": "seal",
+  "binary_sha256": "0bdd794e15230b4da02ddc2a183fd159e2f01817a70fae3556e112f05b57a84c",
+  "container": "dpp-lifecycle307-f3b0c9cd-reader-seal-6a3224",
+  "exit_code": 0,
+  "delete": 0
+}

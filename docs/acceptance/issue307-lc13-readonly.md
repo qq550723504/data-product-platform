@@ -63,5 +63,7 @@ schema68安装到新的保留testDB，不复用固定ID旧DB。相关 `go vet` P
 只更新当前观测和验收，不改变两项version范围或执行预算。未收到删除确认，未创建新deletion
 basis/approval，未开启delete IAM或发送路由。未来每项发送前仍须fresh授权、保护和inventory。
 本轮LC13新环境、全部恢复副本、备份、卷及其他环境均不在删除清单。
-positive same-execution resume、可信外部owner stop/自动解pin、credential containment、
-真实DELETE fault/race、完整D1/D2仍是各自的未验收范围。
+旧04a6同Execution续跑、通用外部owner stop/自动解pin仍未验收；它的六pins保持原未知状态。
+后续明确选择新Retry Execution，闭合的native owner stop与credential containment已在
+[独立新环境矩阵](issue307-lc13-continuation.md)验收，不反写这里的旧源码/二进制证明。
+真实DELETE fault/race、完整D1/D2仍未验收。

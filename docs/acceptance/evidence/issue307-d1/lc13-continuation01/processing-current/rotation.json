@@ -1,0 +1,13 @@
+{
+  "old_mount_disabled": true,
+  "old_reader_and_producer_native_disabled": true,
+  "new_mounts": [
+    "resume-owner",
+    "resume-admin",
+    "credential-owner",
+    "credential-admin"
+  ],
+  "standardized_copy_id": "c151698f-93d5-482e-9163-a1198e3ad2dc",
+  "standardized_version": "f48d0e50-861b-40bf-a34d-da2470693096",
+  "delete": 0
+}

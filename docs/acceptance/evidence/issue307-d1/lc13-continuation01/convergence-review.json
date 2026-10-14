@@ -1,0 +1,35 @@
+{
+  "at": "2026-10-14T15:24:38.973334+00:00",
+  "reviewer": "/root/pr318_independent_review",
+  "kind": "INDEPENDENT_READ_ONLY_CONVERGENCE",
+  "source_commit": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "current_non_delete_blockers": 0,
+  "checked": [
+    "source and signed closed-owner design",
+    "498 prior index files bytes/SHA256",
+    "543 native working file hashes;56 Git blob byte-exact and487 checkout line-endings-only",
+    "317 candidate runtime source hashes",
+    "six signed release/replays and accounting receipts",
+    "17 sealed role configurations and final helper inventory",
+    "three replay identities each with Audit/Evidence/Outbox",
+    "proposal-v4/source/binary/profile/template agreement",
+    "690 exact IAM bytes/hash and recursive LF checkout attributes"
+  ],
+  "closed_root_causes": [
+    "old mount reopening",
+    "stale stop proof refresh",
+    "native minimum15-minute expiry wait",
+    "unused role aliases not sealed",
+    "old D1 confirmation source/template conflict",
+    "authoritative IAM bytes vs display JSON and Windows checkout"
+  ],
+  "limitations": [
+    "Reviewer did not independently execute tests, SQL, provider or runtime",
+    "Final index-02 must be generated and individually validated by primary; not reviewed by this reviewer",
+    "General external owner/IAM/delegation, real DELETE faults/races and full D1/D2 remain unaccepted"
+  ],
+  "draft": true,
+  "merge": 0,
+  "delete": 0,
+  "deployment": 0
+}

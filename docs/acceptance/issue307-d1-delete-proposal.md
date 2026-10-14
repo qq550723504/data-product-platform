@@ -12,7 +12,24 @@ checkpoint/独立恢复/SCRAM、关闭的发送组合均已验证。native IAM p
 新短期 deletion basis/approval、真实发送和当前环境队列 recovery 仍未执行。删除确认仍未收到。
 旧方案机器清单、旧 Core1377行回执和失败资源保留为历史，不覆盖。
 
-当前机器清单：[proposal-v3.json](evidence/issue307-d1/lc13-readonly01/proposal-v3.json)。
+LC-13新增[可信停止/新Retry/credential containment非删除矩阵](issue307-lc13-continuation.md)：
+f3/7cd/812三个独立run均已封存且资源保留，全部排除在本删除范围外。
+本轮仅Docker元数据核对5d原PG/MinIO/gateway为相同ID、stopped；未重开业务或发送窗口。
+源保护最近证据仍为09:34Z，未来每项发送前须fresh复核。
+当前代码依赖更新为minio-go/v7 v7.0.88及MinIO policy v3.1.3；e1d9/4af0与v7.0.83
+仍是原准备binary的真实历史。本轮候选已绑定source055aa1df与新Linux binary/profile/IAM/gateway；
+新LC13/native PASS不授权复用旧批准或发送，不代表真实DELETE recovery验收。
+
+当前机器清单：[proposal-v4.json](evidence/issue307-d1/lc13-continuation01/proposal-v4.json)。
+当前[候选绑定](evidence/issue307-d1/lc13-continuation01/delete-candidate04/source-binding.json)和
+[关闭profile](evidence/issue307-d1/lc13-continuation01/delete-candidate04/bounded-profile.json)
+由新binary在两个network=none、root-free、read-only helper中渲染/验证关闭send gate；
+provider I/O/Core mutation/DELETE均0。两helper已退出并保留；没有native IAM provision、批准、
+delete credential、enabled permission或gateway。delete/archive命令6项非删除回归PASS。
+公开[exact IAM原始字节](evidence/issue307-d1/lc13-continuation01/delete-candidate04/delete-executor-policy.json)
+690 bytes/SHA256与绑定一致；另存展示JSON，不把格式化后的字节当作执行policy hash。
+旧[proposal-v3.json](evidence/issue307-d1/lc13-readonly01/proposal-v3.json)保留原历史来源，
+其旧binary确认模板不能作为新发送授权。源码/binary/profile变化时必须另行冻结并重新确认。
 本轮[5d只读核验](issue307-lc13-readonly.md)于 `2026-10-14T09:34Z` 更新六份原生观测：
 六version/bytes/hash/保护与原after一致；源Core194表/1879行前后指纹相等，源journal仍92。
 20个新增维护调用只写新auditCore，总112 calls/observations/typed成本；原PG/MinIO/gateway
@@ -35,9 +52,12 @@ JSON 中含完整 copy/DatasetVersion identity、SHA256、容器 ID、镜像 ID 
 | Plan SHA256-LIFECYCLE-PLAN-V1 | `d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc` |
 | 六份完整 inventory plan | `dfd47e35-b99a-4581-942f-96ab5d3941f1` |
 | Inventory hash | `2b1df1ccd9e7a138bf47050cad9f031c02bd04664b64eb12aee0337ad670c9f8` |
-| 当前 Schema / 非删除原生源码 | 68 / `4af0ee88db92dfbe7aad029b22916bb046155e27` |
+| 当前 Schema / 候选源码 | 68 / `055aa1df063e560c6796e92dfff4e03c7b9061e0`；本轮后续提交仅验收文档/证据 |
+| 历史5d非删除原生源码 | `4af0ee88db92dfbe7aad029b22916bb046155e27`，原e1d9 binary/SDK7.0.83只绑定该准备阶段 |
 | 原历史 native/source | `4650c435f8ba89fdb0b2dc0591152d25ded182d7`；原 LC-11/12 不冒充新源码重跑 |
-| 新 Linux executor binary SHA256 | `e1d9d35e48210ffe4400edb3476bdc8a51cb71cab9bd05686aedbc791a0a5b30`；发送关闭；[完整 build binding](evidence/issue307-d1/reference-disposal-preparation01/build-source02.json) |
+| 当前 Linux executor binary SHA256 | `01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3`；go1.26.5/linux-amd64/CGO=0/trimpath；发送关闭 |
+| 当前 profile SHA256 / target digest | `97d565f9c66d8cfcb66997d034e7acb2d1519864898950a9ddb2ced2cdd5c4ee` / `4cbb36e5aebbc9451603efd276aa309a2c4afdefcf252107571b0f8334360a38` |
+| 当前 IAM / active / sealed gateway SHA256 | `ab24ab862bf0e21d23ee21989f4140b3c7200cdecee22d4a708cc45621da8b54` / `7b24ad32506bfd189c9289ba85a65ab242069dfee293d61b330104a90306cd0a` / `6a08b8647cc63cb389e2a511a5ad944b82d14e1ec9721f1a5ae45cb984bed4f6` |
 | 私有配置目录 | `C:/Users/Henry/.codex/fixture-private/dpp-lifecycle307-5d2274ee`，凭据不进入方案或 Git |
 | 网络 | `dpp-lifecycle307-5d2274ee-private`，`10.234.151.0/24`，internal，无 host ports |
 | Network ID | `33f303a57406f05c4e78b3cdb1355059a8f55f552e438162edc5bff129f4c02c` |
@@ -59,7 +79,7 @@ Docker Desktop停止/恢复后，这三个相同ID服务为 **stopped/retained**
 新[非删除矩阵](issue307-d1-native-completion.md)的四个环境全部排除在本方案删除范围外；
 其worker恢复证明不等于5d环境的真实DELETE recovery验收。
 MinIO binary SHA256 `fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8`，
-`DEVELOPMENT.GOGET` 固定受控基线；MinIO SDK `minio-go/v7 v7.0.83`、
+`DEVELOPMENT.GOGET` 固定受控基线；当前候选MinIO SDK `minio-go/v7 v7.0.88`、
 admin SDK `madmin-go/v3 v3.0.94`。provider build/license 的旧核对不构成生产维护承诺。
 
 ## 拟确认的两份删除目标
@@ -202,8 +222,9 @@ Redis 使用本机已存在 image ID
 已有非删除 native LC-11/12 证据绑定 source4650c435，不能把封存环境中的新 DELETE
 冒充再次执行了活动 Processing/DirectData 双向竞争。
 native pre-ISSUED pause、worker fault combinations、archive/restore rerun 已有[前轮非删除证明](issue307-d1-native-completion.md)，
-LC-13 processing崩溃安全恢复已有[本轮证明](issue307-lc13-readonly.md)。其余实际DELETE竞争/故障、
-完整LC-13 credential组合和D1仍分别验收，#307不因此关闭；#318不Ready/merge/deploy。
+LC-13有限可信停止、新Retry与原生credential containment已有[本轮证明](issue307-lc13-continuation.md)。
+其余实际DELETE竞争/故障、通用external owner/credential与完整D1仍分别验收，
+#307不因此关闭；#318不Ready/merge/deploy。
 
 供后续明确确认的文本（**本轮尚未收到**）：
 
@@ -213,8 +234,14 @@ LC-13 processing崩溃安全恢复已有[本轮证明](issue307-lc13-readonly.md
 > hash d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc，
 > 仅 dpp-lifecycle307-online/fixture/a.csv@312365a9-f984-43de-b9d5-7e26009ccd82 与
 > dpp-lifecycle307-quarantine/fixture/b.csv@846d0c7c-289d-4667-bc7c-aa04e44357d4 两份源版本，
-> 绑定 source4af0ee88、Linux binary e1d9d35e48210ffe4400edb3476bdc8a51cb71cab9bd05686aedbc791a0a5b30
-> 及 proposal-v2/profile所列hash；在所有执行前条件通过后，每项最多一次exact DELETE，
+> 绑定 source055aa1df063e560c6796e92dfff4e03c7b9061e0，
+> Linux binary 01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3，
+> proposal-v4/candidate04 profile 97d565f9c66d8cfcb66997d034e7acb2d1519864898950a9ddb2ced2cdd5c4ee，
+> target digest 4cbb36e5aebbc9451603efd276aa309a2c4afdefcf252107571b0f8334360a38，
+> IAM ab24ab862bf0e21d23ee21989f4140b3c7200cdecee22d4a708cc45621da8b54，
+> active gateway 7b24ad32506bfd189c9289ba85a65ab242069dfee293d61b330104a90306cd0a，
+> sealed gateway 6a08b8647cc63cb389e2a511a5ad944b82d14e1ec9721f1a5ae45cb984bed4f6；
+> 在所有执行前条件通过后，每项最多一次exact DELETE，
 > ≤40分钟窗口，并执行本方案只读对账/封存。
 > 四份 survivor、全部其他环境和备份保留；cleanup=0、hold-release=0、bypass=0；#318仍Draft、不合并。
 

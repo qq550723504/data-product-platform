@@ -1,0 +1,32 @@
+{
+  "run": "8120904f-13d9-42f3-ab1f-66eb1a37b2b0",
+  "roles": {
+    "plane-owner": {
+      "enabled": false,
+      "sha256": "b0903a14e1af6913d8186f56a7e8ec1e70410306b691dcd6a4938a9e8d2f070c"
+    },
+    "plane-admin": {
+      "enabled": false,
+      "sha256": "f3db8f51edbd01c7e9d5eadcc662ac5921520965c048396ace628fe0deaa48c3"
+    },
+    "resume-owner": {
+      "enabled": false,
+      "sha256": "030da993fa411ffb9adc310e2f8858fdd838849de4475a89942d0e8575847ab2"
+    },
+    "resume-admin": {
+      "enabled": false,
+      "sha256": "8c9d126759e506f4aeb4d3ba5d852533fa4f3c6ab9009b52e4cfa3a853943034"
+    },
+    "credential-owner": {
+      "enabled": false,
+      "sha256": "27485d55d289e6a9fb7a18866466188aa245676df201b0186340fbf52dbbaba6"
+    },
+    "credential-admin": {
+      "enabled": false,
+      "sha256": "172d7d8a7bfa7cad59be6e0aec02204bc6c6694bc77ce34b64f888e02af736d6"
+    }
+  },
+  "native_calls": 0,
+  "native_delete": 0,
+  "cleanup": 0
+}

@@ -1,0 +1,13 @@
+{
+  "run_id": "8120904f-13d9-42f3-ab1f-66eb1a37b2b0",
+  "mode": "resume-stop",
+  "cleanup": 0,
+  "binary_sha256": "f36eb7a5b695152cbd34dfe52afbf74d23a72e7d77bde7c0b46ca8a09dd8e8d7",
+  "exit_code": 0,
+  "root_mounted": false,
+  "expected_exit": 0,
+  "container": "dpp-lifecycle307-8120904f-reader-resume-stop-aaf954",
+  "role_directory": "resume-owner",
+  "delete": 0,
+  "id": "38d4298484ac183ad1ff32fa074536bd9b74def9a99a0b3daa2f5647a3006949"
+}

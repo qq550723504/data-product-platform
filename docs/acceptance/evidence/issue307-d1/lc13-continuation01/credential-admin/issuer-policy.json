@@ -1,0 +1,1 @@
+{"Statement":[{"Action":["s3:GetObjectVersion"],"Condition":{"StringEquals":{"s3:versionid":"fefb645b-477a-4888-b860-aa95f56c4000"}},"Effect":"Allow","Resource":["arn:aws:s3:::dpp-lifecycle307-online/fixture/b.csv"]}],"Version":"2012-10-17"}

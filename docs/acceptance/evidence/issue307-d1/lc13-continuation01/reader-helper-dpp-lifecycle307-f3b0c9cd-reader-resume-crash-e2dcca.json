@@ -1,0 +1,13 @@
+{
+  "delete": 0,
+  "id": "c7026f5b8ba3a053858c3493fee88490272aa578f3297f7ca366e04e011c9186",
+  "container": "dpp-lifecycle307-f3b0c9cd-reader-resume-crash-e2dcca",
+  "role_directory": "",
+  "mode": "resume-crash",
+  "exit_code": 95,
+  "binary_sha256": "0bdd794e15230b4da02ddc2a183fd159e2f01817a70fae3556e112f05b57a84c",
+  "cleanup": 0,
+  "root_mounted": false,
+  "expected_exit": 95,
+  "run_id": "f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3"
+}
