@@ -6,7 +6,7 @@ class ReadonlyContract(unittest.TestCase):
  def config(self):
   return {'Fixture':{'RunID':'5d2274ee-a671-4bdc-b406-22b8dad8fd61','WorkspaceID':'89eba3fd-9763-4f66-8cec-1a779104f155','ProviderInstanceID':'1980751b-c50e-4895-93a8-cb55960cd635','IncarnationID':'be784eda-96e4-49a9-ae47-eaa3203a2dc5','RootAccess':'','RootSecret':'','Endpoint':'127.0.0.1:9000','PostgresDSN':'postgres://fixture:synthetic@dpp-lifecycle307-5d2274ee-postgres:5432/lifecycle307?sslmode=disable'}}
  def test_inspector_entrypoint_is_existing_env_and_lf(self):
-  self.assertNotIn(b'\r',m.INSPECT_SCRIPT);self.assertIn(b'LIFECYCLE_REFERENCE_MODE=inspect-source\n',m.INSPECT_SCRIPT);self.assertNotIn(b' -mode',m.INSPECT_SCRIPT)
+  self.assertNotIn(b'\r',m.INSPECT_SCRIPT);self.assertIn(b'LIFECYCLE_REFERENCE_MODE=inspect-source\n',m.INSPECT_SCRIPT);self.assertIn(b'LIFECYCLE_REFERENCE_PROFILE=5d2274ee-614cd9ad\n',m.INSPECT_SCRIPT);self.assertNotIn(b' -mode',m.INSPECT_SCRIPT)
  def test_audit_config_preserves_source_and_rejects_wrong_target(self):
   c=self.config();before=copy.deepcopy(c);project='dpp-lifecycle307-5d2274ee'
   r=m.shadow_config(c,project+'-readonly-audit-core-03',project);self.assertEqual(c,before);self.assertIn('audit-core-03:5432',r['Fixture']['PostgresDSN'])

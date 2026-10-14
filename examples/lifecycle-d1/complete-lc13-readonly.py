@@ -14,7 +14,7 @@ PGIMAGE='sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
 MIIMAGE='sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6'
 REDISIMAGE='sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499'
 PHASES=('prepare','setup','crash','orphan','recovery','final','seal','5d-readonly','5d-readonly-02','5d-readonly-03')
-INSPECT_SCRIPT=b'#!/bin/sh\nset -eu\nexport LIFECYCLE_REFERENCE_MODE=inspect-source\nexec /run/private/executor\n'
+INSPECT_SCRIPT=b'#!/bin/sh\nset -eu\nexport LIFECYCLE_REFERENCE_PROFILE=5d2274ee-614cd9ad\nexport LIFECYCLE_REFERENCE_MODE=inspect-source\nexec /run/private/executor\n'
 def require(ok,message):
  if not ok: raise RuntimeError(message)
 def load(p): return json.loads(p.read_text(encoding='utf-8-sig'))
