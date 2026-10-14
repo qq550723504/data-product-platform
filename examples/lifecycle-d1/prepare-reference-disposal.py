@@ -16,7 +16,7 @@ RUN='5d2274ee-a671-4bdc-b406-22b8dad8fd61'
 PG_IMAGE='sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea'
 MINIO_IMAGE='sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6'
 CLONE=PROJECT+'-predelete-objects'
-PHASES=('build','render','rehearse','no-send','no-send-replay','native-before','native-snapshot','native-restored','native-after','core-refresh','seal')
+PHASES=('build','build-revision','render','render02','rehearse','rehearse02','no-send','no-send-replay','native-before','native-snapshot','native-restored','native-after','core-refresh','seal')
 def require(ok,message):
     if not ok: raise RuntimeError(message)
 def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -68,40 +68,45 @@ def helper(phase,network,dsn=None,attestation=None,expected=0,mode=None):
         (folder/'closed-executor.json').write_bytes((attestation/'closed-executor.json').read_bytes())
     write(folder/'reference.json',reference)
     write(folder/'reference-permission.json',{'Enabled':False})
-    (folder/'executor').write_bytes((CONTROL/'bin/executor').read_bytes())
+    (folder/'executor').write_bytes((CONTROL/'bin02/executor').read_bytes())
     name=PROJECT+'-reference-preparation-'+phase
-    output_mount=payload if phase=='render' else out
+    output_mount=payload if phase in ('render','render02') else out
     docker('create','--pull','never','--name',name,'--label','lifecycle307.run='+RUN,'--network','container:'+network,'--read-only','--tmpfs','/tmp','--mount','type=bind,source='+str(folder)+',target=/run/private,readonly','--mount','type=bind,source='+str(payload)+',target=/run/payload','--mount','type=bind,source='+str(output_mount)+',target=/run/output','--mount','type=bind,source='+str(ROOT/'migrations')+',target=/run/migrations,readonly','--env','LIFECYCLE_REFERENCE_PROFILE=5d2274ee-614cd9ad','--env','LIFECYCLE_REFERENCE_MODE='+(mode or phase),'--entrypoint','/run/private/executor',PG_IMAGE)
     docker('start',name);exit_code=int(docker('wait',name).strip())
     logs=subprocess.run(['docker','logs',name],capture_output=True);(folder/'helper.private-log').write_bytes(logs.stdout+logs.stderr)
     item=inspect(name);write(out/'helper.json',{'name':name,'id':item['Id'],'exit':exit_code,'expected_exit':expected,'image':item['Image'],'binary_sha256':sha(folder/'executor'),'root_mounted':False,'network_mode':item['HostConfig']['NetworkMode'],'retained':True})
     require(exit_code==expected,'Helper failed; retained, no automatic retry')
-    if phase=='render':
+    if phase in ('render','render02'):
         for name in ('bounded-profile.json','delete-executor-policy.json'):
             (out/name).write_bytes((payload/name).read_bytes())
     return folder,out
-def build():
-    require(not CONTROL.exists() and not PUBLIC.exists(),'Preparation already exists; preserve and select an explicit later generation')
-    preflight();CONTROL.mkdir();PUBLIC.mkdir();(CONTROL/'bin').mkdir()
+def build(revision=False):
+    if revision:
+        require(CONTROL.exists() and (PUBLIC/'build-source.json').is_file() and not (CONTROL/'bin02').exists(),'Only explicit retained failed preparation revision is supported')
+        require(sql(PROJECT+'-postgres','SELECT count(*) FROM lifecycle_provider_observation')=='0','Revision must precede no-send commit')
+    else:
+        require(not CONTROL.exists() and not PUBLIC.exists(),'Preparation already exists; preserve and select an explicit later generation')
+        preflight();CONTROL.mkdir();PUBLIC.mkdir()
+    (CONTROL/'bin02').mkdir()
     env=dict(os.environ,GOOS='linux',GOARCH='amd64',CGO_ENABLED='0')
-    call(['go','build','-o',str(CONTROL/'bin/executor'),'./cmd/lifecycle-fixture-delete'],env=env,cwd=ROOT/'apps/platform')
+    call(['go','build','-o',str(CONTROL/'bin02/executor'),'./cmd/lifecycle-fixture-delete'],env=env,cwd=ROOT/'apps/platform')
     host=dict(os.environ,GOOS='windows',GOARCH='amd64',CGO_ENABLED='0')
-    call(['go','build','-o',str(CONTROL/'bin/host.exe'),'./cmd/lifecycle-fixture-delete'],env=host,cwd=ROOT/'apps/platform')
+    call(['go','build','-o',str(CONTROL/'bin02/host.exe'),'./cmd/lifecycle-fixture-delete'],env=host,cwd=ROOT/'apps/platform')
     paths=[p for folder in ['apps/platform/cmd/lifecycle-fixture-delete','apps/platform/internal/lifecycle','apps/platform/internal/platform/storage'] for p in (ROOT/folder).rglob('*.go')]
     paths += [ROOT/'examples/lifecycle-d1/prepare-reference-disposal.py',ROOT/'examples/lifecycle-d1/checkpoint-reference-core.ps1',ROOT/'migrations/000068_lifecycle_checkpoint_read.up.sql']
-    write(PUBLIC/'build-source.json',{'source_head':call(['git','rev-parse','HEAD']).decode().strip(),'source_files':{p.relative_to(ROOT).as_posix():sha(p) for p in paths},'linux_binary_sha256':sha(CONTROL/'bin/executor'),'host_binary_sha256':sha(CONTROL/'bin/host.exe'),'provider_io':0,'provider_delete':0})
+    write(PUBLIC/'build-source02.json',{'source_head':call(['git','rev-parse','HEAD']).decode().strip(),'source_files':{p.relative_to(ROOT).as_posix():sha(p) for p in paths},'linux_binary_sha256':sha(CONTROL/'bin02/executor'),'host_binary_sha256':sha(CONTROL/'bin02/host.exe'),'provider_io':0,'provider_delete':0})
 def no_send():
     require(sql(PROJECT+'-postgres','SELECT count(*) FROM lifecycle_provider_observation')=='0','Original attempts already observed; do not regenerate proof')
     env=dict(os.environ,LIFECYCLE_REFERENCE_MODE='attest-host',LIFECYCLE_REFERENCE_PROFILE='5d2274ee-614cd9ad')
-    before=set(PRIVATE.glob('reference-attestation-*'));call([str(CONTROL/'bin/host.exe')],env=env);created=set(PRIVATE.glob('reference-attestation-*'))-before
+    before=set(PRIVATE.glob('reference-attestation-*'));call([str(CONTROL/'bin02/host.exe')],env=env);created=set(PRIVATE.glob('reference-attestation-*'))-before
     require(len(created)==1,'Host proof directory ambiguous');attestation=created.pop()
-    write(CONTROL/'attestation-pointer.json',{'directory':str(attestation)})
-    helper('no-send',PROJECT+'-minio',attestation=attestation)
+    write(CONTROL/'attestation-pointer02.json',{'directory':str(attestation)})
+    helper('no-send02',PROJECT+'-minio',attestation=attestation,mode='no-send')
     write(PUBLIC/'no-send-closure.json',{'status':'PASS','observations':int(sql(PROJECT+'-postgres',"SELECT count(*) FROM lifecycle_provider_observation WHERE certainty='NOT_SENT' AND outcome='NOT_SENT'")),'releases':int(sql(PROJECT+'-postgres','SELECT count(*) FROM lifecycle_dispatch_release')),'send_claims':int(sql(PROJECT+'-postgres','SELECT count(*) FROM lifecycle_provider_send_claim')),'provider_delete':0,'signer_key_persisted':False})
     require(load(PUBLIC/'no-send-closure.json')['observations']==load(PUBLIC/'no-send-closure.json')['releases']==2,'No-send closure incomplete')
     migrate(PROJECT+'-postgres')
 def no_send_replay():
-    attestation=Path(load(CONTROL/'attestation-pointer.json')['directory'])
+    attestation=Path(load(CONTROL/'attestation-pointer02.json')['directory'])
     helper('no-send-replay',PROJECT+'-minio',attestation=attestation,mode='no-send')
     result=load(PUBLIC/'no-send-replay/no-send-transaction.json')
     require(result['result']['Replayed'] is True,'Durable original proof replay missing')
@@ -143,7 +148,7 @@ def core_refresh():
     for a,b in zip(sorted(before['versions'],key=lambda r:r['copy']['ID']),sorted(after['versions'],key=lambda r:r['copy']['ID'])):
         require(a['copy']==b['copy'] and (a['bytes'],a['sha256'])==(b['bytes'],b['sha256']) and all(a['protection'][key]==b['protection'][key] for key in ('LegalHold','RetentionMode','RetainUntil')),'Source native identity/protection changed')
     output=ROOT/'docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-generation02';require(not output.exists(),'Generation02 already retained');output.mkdir()
-    (output/'trial-no-send-applied.json').write_bytes((PUBLIC/'no-send/no-send-transaction.json').read_bytes())
+    (output/'trial-no-send-applied.json').write_bytes((PUBLIC/'no-send02/no-send-transaction.json').read_bytes())
     for extra in ([],['-VerifyExistingAuth'],['-VerifyExistingFacts']):
         call(['pwsh','-NoProfile','-File',str(ROOT/'examples/lifecycle-d1/checkpoint-reference-core.ps1'),'-PrivateDirectory',str(PRIVATE),'-CheckpointAttempt','04','-Generation','02',*extra])
 def seal():
@@ -155,7 +160,7 @@ def seal():
     write(PUBLIC/'sealed.json',{'status':'SEALED_RETAINED','provider_delete':0,'source_restart':0,'source_gateway_changed':0,'business_windows':'SEALED','new_send_permission_enabled':False,'cleanup':0})
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('phase',choices=PHASES);args=parser.parse_args()
-    phases={'build':build,'render':lambda:helper('render',PROJECT+'-minio',mode='render'),'rehearse':lambda:helper('rehearse',PROJECT+'-minio',mode='dry-run-send'),'no-send':no_send,'no-send-replay':no_send_replay,'native-before':native_before,'native-snapshot':native_snapshot,'native-restored':native_restored,'native-after':native_after,'core-refresh':core_refresh,'seal':seal}
+    phases={'build':build,'build-revision':lambda:build(revision=True),'render':lambda:helper('render',PROJECT+'-minio',mode='render'),'render02':lambda:helper('render02',PROJECT+'-minio',mode='render'),'rehearse':lambda:helper('rehearse',PROJECT+'-minio',mode='dry-run-send'),'rehearse02':lambda:helper('rehearse02',PROJECT+'-minio',mode='dry-run-send'),'no-send':no_send,'no-send-replay':no_send_replay,'native-before':native_before,'native-snapshot':native_snapshot,'native-restored':native_restored,'native-after':native_after,'core-refresh':core_refresh,'seal':seal}
     if args.phase!='build':preflight()
     phases[args.phase]();print(json.dumps({'phase':args.phase,'status':'PASS','provider_delete':0,'cleanup':0}))
 if __name__=='__main__':main()

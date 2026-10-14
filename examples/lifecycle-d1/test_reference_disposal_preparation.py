@@ -20,7 +20,7 @@ class PreparationSafety(unittest.TestCase):
             docker.assert_not_called()
     def test_render_keeps_strict_config_path_and_private_output_mount(self):
         with tempfile.TemporaryDirectory() as temporary:
-            root=Path(temporary);control=root/'private';public=root/'public';control.mkdir();public.mkdir();(control/'bin').mkdir();(control/'bin/executor').write_bytes(b'fixture')
+            root=Path(temporary);control=root/'private';public=root/'public';control.mkdir();public.mkdir();(control/'bin02').mkdir();(control/'bin02/executor').write_bytes(b'fixture')
             cfg={key:'fixture' for key in ('RunID','WorkspaceID','ProviderInstanceID','IncarnationID','ActorID','Endpoint','PostgresDSN','InspectAccess','InspectSecret','Token')}
             commands=[]
             def docker(*args):

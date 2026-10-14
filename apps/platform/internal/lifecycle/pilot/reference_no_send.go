@@ -23,7 +23,9 @@ type ClosedReferenceExecutor struct {
 	Environment, PlanHash, HelperID, BinarySHA256, ScriptSHA256, CandidateSHA256 string
 }
 type SignedClosedReferenceExecutor struct {
-	Body      json.RawMessage
+	// Preserve the exact signed bytes across JSON indentation/serialization.
+	// JSON encodes []byte as base64; RawMessage would be reformatted by MarshalIndent.
+	Body      []byte
 	Signature []byte
 }
 type ReferenceNoSendVerifier struct {

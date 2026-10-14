@@ -22,6 +22,17 @@ func TestClosedExecutorSignatureScopeNonceAndFreshness(t *testing.T) {
 	if _, e := sign(p).Validate(at, ref); e != nil {
 		t.Fatal(e)
 	}
+	serialized, e := json.MarshalIndent(sign(p).Proof, "", "  ")
+	if e != nil {
+		t.Fatal(e)
+	}
+	var persisted SignedClosedReferenceExecutor
+	if e = json.Unmarshal(serialized, &persisted); e != nil {
+		t.Fatal(e)
+	}
+	if _, e = (ReferenceNoSendVerifier{pub, persisted}).Validate(at, ref); e != nil {
+		t.Fatalf("signed proof lost identity across persisted JSON: %v", e)
+	}
 	mutations := []func(*ClosedReferenceExecutor){func(p *ClosedReferenceExecutor) { p.Environment = "foreign" }, func(p *ClosedReferenceExecutor) { p.HelperID = "replacement" }, func(p *ClosedReferenceExecutor) { p.PlanHash = strings.Repeat("b", 64) }, func(p *ClosedReferenceExecutor) { p.ScriptSHA256 = strings.Repeat("b", 64) }, func(p *ClosedReferenceExecutor) { p.BinarySHA256 = strings.Repeat("b", 64) }, func(p *ClosedReferenceExecutor) { p.CheckedAt = at.Add(-61 * time.Second) }, func(p *ClosedReferenceExecutor) { p.CheckedAt = at.Add(time.Second) }, func(p *ClosedReferenceExecutor) { p.Nonce = uuid.New() }, func(p *ClosedReferenceExecutor) { p.CandidateSHA256 = "bad" }}
 	for _, mutate := range mutations {
 		changed := p

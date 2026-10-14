@@ -32,6 +32,17 @@ func TestReferenceTopologyRequiresExactHashSignatureFreshSourceAndRootFreeHelper
 	if e := validateReferenceTopology(c, p, raw, sign(witness), at); e != nil {
 		t.Fatal(e)
 	}
+	serialized, e := json.MarshalIndent(sign(witness), "", "  ")
+	if e != nil {
+		t.Fatal(e)
+	}
+	var persisted pilot.SignedClosedReferenceExecutor
+	if e = json.Unmarshal(serialized, &persisted); e != nil {
+		t.Fatal(e)
+	}
+	if e = validateReferenceTopology(c, p, raw, persisted, at); e != nil {
+		t.Fatalf("signed topology lost identity across persisted JSON: %v", e)
+	}
 	changed := p
 	changed.TopologySHA256 = strings.Repeat("b", 64)
 	if validateReferenceTopology(c, changed, raw, sign(witness), at) == nil {
