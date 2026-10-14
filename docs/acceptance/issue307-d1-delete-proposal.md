@@ -6,6 +6,11 @@
 本轮只保存方案、Docker 元数据和 READ ONLY SQL，不开窗口、不发 DELETE、不解除保护。
 此方案替代“下一次执行”的旧 e1487ce7 提案；旧提案及其他环境的已消费批准保留原历史。
 
+后续当前状态见 [非删除准备阶段](issue307-d1-delete-preflight.md)：固定只读 profile /
+no-send 候选及 Core checkpoint/独立恢复已完成，候选未应用；native 对象 backup/restore、
+服务端 bridge 和真实发送 profile 仍未验收。下方机器清单的 NOT_CREATED 是原提案时点；
+新 Core replica/network/helper 的实际保留状态在后续回执中单列，删除批准仍未收到。
+
 机器清单：[proposal.json](evidence/issue307-d1/delete-proposal-5d2274ee/proposal.json)。
 实时元数据：[topology](evidence/issue307-d1/delete-proposal-5d2274ee/topology-readback.json)；
 [Core readback](evidence/issue307-d1/delete-proposal-5d2274ee/core-readback.json) /

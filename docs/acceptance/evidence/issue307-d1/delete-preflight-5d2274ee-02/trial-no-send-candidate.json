@@ -1,0 +1,57 @@
+{
+  "schema": "lifecycle307-trial-no-send-candidate-v1",
+  "status": "VERIFIED_CANDIDATE_NOT_APPLIED",
+  "as_of": "2026-10-14T02:34:00.723349+00:00",
+  "helper_id": "fb92bdcd150127c50163448de9d918f3a2d9a18e2384274b30febfaf647bdb87",
+  "helper_finished_at": "2026-10-14T01:09:52.775625295Z",
+  "native_source": "4650c435f8ba89fdb0b2dc0591152d25ded182d7",
+  "native_binary_sha256": "5e04e88bbd65880a5e65da5795dcdc116021512e04d27a200ec0d03f83e972c8",
+  "frozen_native_receipts_checked": 48,
+  "source_files_checked": 685,
+  "positive_proof": [
+    "original immutable helper exited successfully, never restarted",
+    "fixed bound plane-reference-races entry point with no deleter composition",
+    "root-free immutable executor mount and no ambient credentials",
+    "frozen native reader/producer policies do not grant DELETE",
+    "original exact plan/attempts, verified terminations and current no-send/read-only SQL snapshot"
+  ],
+  "trial_attempts": [
+    {
+      "id": "0a86461d-d5c2-4c00-99ae-0d44ac6dde2a",
+      "action": "DELETE_EXACT",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "started_at": "2026-10-14T00:59:53.349245+00:00",
+      "dispatch_id": "8b9b4d0c-df37-41b5-b3d1-0630deae8675",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dependency_revision": 83,
+      "provider_request_key": "lifecycle-delete:0a86461d-d5c2-4c00-99ae-0d44ac6dde2a"
+    },
+    {
+      "id": "d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9",
+      "action": "DELETE_EXACT",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "started_at": "2026-10-14T00:59:53.615357+00:00",
+      "dispatch_id": "aa0dc82a-06b4-4b0d-a066-33d19ccc8f45",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dependency_revision": 84,
+      "provider_request_key": "lifecycle-delete:d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9"
+    }
+  ],
+  "proof_inputs_sha256": {
+    "core_readback": "0417978372dce545681d3148cc53bebd32d49dd6fd73ff995461b3fe50946dee",
+    "helper_inspect": "48adbabb3e34c574a397e04933a86683b9f3a4540fd64e2abeda56d225d99d9b",
+    "native_source_binding": "1d849c163f1f545796948ad692ae150e234d7a37762910457391572524ee9bf1"
+  },
+  "apply_requirement": "Authorized server verifier must recheck attempt scope, no send claim/observation/release and original executor proof while holding existing fence/attempt locks; only RecordProviderObservation may append NOT_SENT/release",
+  "observation_appended": 0,
+  "reservation_released": 0,
+  "provider_io": 0,
+  "core_mutation": 0,
+  "provider_delete": 0,
+  "preflight_parent_head": "917465d88a0f6e8dfd0a4745fb4d8d767a2c75a1",
+  "preflight_script_checkout_sha256": "24e1d6d19394208016ee1d9dd0ddaa06669880d2cebae03b4c7996db0303fd1c",
+  "preflight_script_unchanged_during_run": true,
+  "trust_seed": "canonical frozen Git blobs at fc009d88 and 917465d8; supplied manifest/SQL cannot redefine proof"
+}

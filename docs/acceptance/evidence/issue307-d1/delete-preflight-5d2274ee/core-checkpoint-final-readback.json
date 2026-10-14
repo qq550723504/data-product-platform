@@ -1,0 +1,17 @@
+{
+  "provider_io": 0,
+  "delete": 0,
+  "script_checkout_sha256": "2caed0256bebf500bf6f24be3ff6c8fd2e6b752969ba1e65da7618ab78e30bf6",
+  "dump_sha256": "342fb0d32afb10847cd7b3cf1b78e00ae5fe548b8af985318895ed904b1255bb",
+  "source_restart": 0,
+  "relations": 194,
+  "cleanup": 0,
+  "all_fingerprints_match_original_checkpoint": true,
+  "replica_state": "STOPPED_RETAINED_NO_BUSINESS_ADMISSION",
+  "rows": 1377.0,
+  "script_unchanged_during_run": true,
+  "as_of": "2026-10-14T02:33:38.7229053+00:00",
+  "source_core_mutation": 0,
+  "status": "PASS_FINAL_READ_ONLY_SOURCE_AND_REPLICA",
+  "original_dump_restore_script_hash": "NOT_CAPTURED; final readback source is separately bound, not a claim of final-source re-dump/re-restore"
+}
