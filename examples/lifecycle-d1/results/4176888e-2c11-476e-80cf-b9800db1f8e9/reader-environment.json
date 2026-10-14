@@ -1,0 +1,90 @@
+{
+  "objects": [
+    {
+      "copy_id": "40eaf49f-cf47-427e-9c50-734143053998",
+      "dataset_version_id": "716187c7-44a6-4e9f-80be-962c70569c86",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "version_id": "02fa48de-06c3-4289-b15f-fe8101c6fb27",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-14T06:28:02.191402562Z",
+      "protection_observed_at": "2026-10-14T06:28:02.369492202Z"
+    },
+    {
+      "copy_id": "6fbe40ba-75ea-4ccc-bba2-4cd8a94a1c2e",
+      "dataset_version_id": "eccde63d-dd8d-45c1-ae2b-1439b371cbf6",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "version_id": "e2650a23-a79f-496e-87aa-90b944ca0032",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-14T06:28:02.220542983Z",
+      "protection_observed_at": "2026-10-14T06:28:02.399597583Z"
+    },
+    {
+      "copy_id": "9d0c2675-4de6-465e-bd12-9b703a9421b2",
+      "dataset_version_id": "716187c7-44a6-4e9f-80be-962c70569c86",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "version_id": "a2cfcac6-6121-4db2-9fc8-fac257e52a0e",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-15T06:28:02Z",
+      "bytes_verified_at": "2026-10-14T06:28:02.248346Z",
+      "protection_observed_at": "2026-10-14T06:28:02.431962489Z"
+    },
+    {
+      "copy_id": "880fc158-506b-46b7-9259-78fed9162127",
+      "dataset_version_id": "eccde63d-dd8d-45c1-ae2b-1439b371cbf6",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "version_id": "32f6a884-0668-40db-8c5d-a2ae987f55cf",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-14T06:28:02.288721513Z",
+      "protection_observed_at": "2026-10-14T06:28:02.459727361Z"
+    }
+  ],
+  "delete": 0,
+  "network_id": "24665b6a54ffde7c8707abb06033922e6fe6ba832930d439fdec127705bfe580",
+  "provider_instance_id": "4a352098-5a18-43b1-aca4-226c2c6d4ff3",
+  "source_head": "9b42c195a686f29286da0dfa1d4c03c64f559fc8",
+  "binary_sha256": "2e9ba9da301749ed0945f1da34293ad99b06b46ee8dd2671fc54332950cb7413",
+  "production_delivery": "NOT_RUN",
+  "internal": true,
+  "host_ports": [],
+  "run_id": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+  "root_in_reader": false,
+  "incarnation_id": "2a8929e2-3a21-4395-b275-9213bf0c71a6",
+  "project": "dpp-lifecycle307-4176888e",
+  "source_hashes": {
+    "apps/platform/internal/lifecycle/application/reader_service.go": "ec6ed10a94facc6096cd262e0098e5f2ff0f2edf0ea867997d0815cad69f7ebe",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "0ad343089e47349d94787763a46b0b6d88f0f4c06edcdfdd1cd7a2e198a70cd5",
+    "apps/platform/internal/lifecycle/transport/http/reader.go": "785a1303835f584408626671ad4a52a452e20506820467929041097f3310dc9b",
+    "apps/platform/internal/platform/storage/lifecycle_reader.go": "52ebfcfd20e350bd4c57aaa49c6686435150b7236bc6266cab86d3c2e90f14da",
+    "apps/platform/internal/lifecycle/application/occupancy.go": "01266298f94b71f35177e2b238de6452acf5877973e2deabd407ea2d7b25a802",
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "90fed81431e30fad9fe32e7063dbd891314444dc3d5bd1686edde84b6bddc089",
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go": "1b60f8aead182f9fa9ec1e1708bba553ba46dcfb35236c0736d3600b3ccc2eab"
+  },
+  "workspace_id": "461c59b1-e122-44d3-8bf9-d952548390b7",
+  "http": "ephemeral loopback only inside one-shot acceptance helper",
+  "cleanup": 0,
+  "copy": 0,
+  "window_expires": "2026-10-14T07:13:05.6176548Z",
+  "retained_volumes": [
+    "dpp-lifecycle307-4176888e-postgres",
+    "dpp-lifecycle307-4176888e-objects"
+  ]
+}

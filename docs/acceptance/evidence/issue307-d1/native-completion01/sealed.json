@@ -1,0 +1,65 @@
+{
+  "status": "PASS_FINITE_NON_DELETE_EXTENSION",
+  "native_delete": 0,
+  "cleanup": 0,
+  "full_D1": "NOT_ACCEPTED",
+  "resources": "ALL_RETAINED",
+  "roles": {
+    "plane": {
+      "run_id": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+      "volumes": [
+        "dpp-lifecycle307-4176888e-postgres",
+        "dpp-lifecycle307-4176888e-objects"
+      ],
+      "network": "dpp-lifecycle307-4176888e-private",
+      "containers": {
+        "postgres": "dpp-lifecycle307-4176888e-postgres",
+        "gateway": "dpp-lifecycle307-4176888e-gateway",
+        "minio": "dpp-lifecycle307-4176888e-minio"
+      },
+      "project": "dpp-lifecycle307-4176888e"
+    },
+    "archive": {
+      "project": "dpp-lifecycle307-df27ccf8",
+      "run_id": "df27ccf8-00e5-46f0-8ac2-58568fe5b574",
+      "network": "dpp-lifecycle307-df27ccf8-private",
+      "volumes": [
+        "dpp-lifecycle307-df27ccf8-postgres",
+        "dpp-lifecycle307-df27ccf8-objects"
+      ],
+      "containers": {
+        "gateway": "dpp-lifecycle307-df27ccf8-gateway",
+        "minio": "dpp-lifecycle307-df27ccf8-minio",
+        "postgres": "dpp-lifecycle307-df27ccf8-postgres"
+      }
+    },
+    "copy": {
+      "project": "dpp-lifecycle307-74b0dd66",
+      "run_id": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+      "volumes": [
+        "dpp-lifecycle307-74b0dd66-postgres",
+        "dpp-lifecycle307-74b0dd66-objects"
+      ],
+      "containers": {
+        "minio": "dpp-lifecycle307-74b0dd66-minio",
+        "gateway": "dpp-lifecycle307-74b0dd66-gateway",
+        "postgres": "dpp-lifecycle307-74b0dd66-postgres"
+      },
+      "network": "dpp-lifecycle307-74b0dd66-private"
+    },
+    "metadata": {
+      "volumes": [
+        "dpp-lifecycle307-30cc0c1e-postgres",
+        "dpp-lifecycle307-30cc0c1e-objects"
+      ],
+      "containers": {
+        "minio": "dpp-lifecycle307-30cc0c1e-minio",
+        "postgres": "dpp-lifecycle307-30cc0c1e-postgres",
+        "gateway": "dpp-lifecycle307-30cc0c1e-gateway"
+      },
+      "project": "dpp-lifecycle307-30cc0c1e",
+      "run_id": "30cc0c1e-9e57-4507-88f5-2bee66d89ec5",
+      "network": "dpp-lifecycle307-30cc0c1e-private"
+    }
+  }
+}

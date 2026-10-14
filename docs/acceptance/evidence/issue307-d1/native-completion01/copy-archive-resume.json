@@ -1,0 +1,29 @@
+{
+  "work": "11b32084-5ae6-460d-b95b-d3a174147b87",
+  "results": [
+    {
+      "id": "ad2e3593-131a-416e-8353-64969c472da6",
+      "run_id": "d6b4f7de-d4ae-4e78-bbbb-6c4ec17bbb94",
+      "outcome": "COPY_ARCHIVED",
+      "work_id": "11b32084-5ae6-460d-b95b-d3a174147b87",
+      "terminal": true,
+      "observed_at": "2026-10-14T08:00:36.473599+00:00",
+      "stat_call_id": null,
+      "workspace_id": "b2506f83-2810-419f-9f59-4c89bde12331",
+      "completion_id": null,
+      "copy_decision_id": "566ece4d-3f27-4f87-874c-f0e12b5c8665",
+      "copy_discovery_id": "4749864b-8c06-44c8-b898-23ed2cf0798c",
+      "inventory_call_id": null,
+      "absence_receipt_id": null,
+      "dependency_revision": 7
+    }
+  ],
+  "counts": {
+    "calls": 31,
+    "runs": 4,
+    "results": 1,
+    "copies": 1
+  },
+  "native_copy": 1,
+  "native_delete": 0
+}

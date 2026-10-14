@@ -1,0 +1,6 @@
+{
+  "phase": "seal",
+  "source_head": "c18ffe64797e41cdded669e80bc16feff49698bd",
+  "driver_sha256": "5c967dd45432ac742b5740d4a0ef4f5efc5efaa39d5619a44dca00e3a60622f7",
+  "intent": "ONE_SHOT_NON_DELETE; append-only, failure never auto-resumes"
+}

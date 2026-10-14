@@ -1,0 +1,17 @@
+{
+  "work": "11b32084-5ae6-460d-b95b-d3a174147b87",
+  "counts": {
+    "calls": 26,
+    "runs": 3,
+    "results": 0,
+    "copies": 1
+  },
+  "broker_same_volume_restart": true,
+  "explicit_double_enqueue_native_delta": 0,
+  "real_asynq_worker_exit": 92,
+  "producer_exit": 93,
+  "run_start_exit": 91,
+  "durable_get_exit": 96,
+  "native_copy": 1,
+  "native_delete": 0
+}

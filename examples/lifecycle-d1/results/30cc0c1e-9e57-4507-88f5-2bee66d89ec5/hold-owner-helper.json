@@ -1,0 +1,13 @@
+{
+  "helper_id": "a5eeac192ae7fc26ff7081d412335f00f999dc6c42d50b1e3d0ff845f740f2bc",
+  "scenario": "hold-owner",
+  "work": "5dabef70-cde3-4130-a68a-fe787bdde72c",
+  "mode": "once",
+  "source_head": "e173364efe7ce46a01cd4a14a9c6e31fc5e39c86",
+  "binary_sha256": "33bc8135a6aa1713a8ae1597be9ad744843044652fb0348483a1236d25e9d249",
+  "gateway_sha256": "6ae8a380aaa644adbf7b02c5ebe01cce26b5d62620a9c8b8d834fefba96d9e1d",
+  "root": false,
+  "copy_send": false,
+  "native_delete": 0,
+  "cleanup": 0
+}

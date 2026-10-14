@@ -1,0 +1,86 @@
+{
+  "run": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+  "services": [
+    {
+      "name": "dpp-lifecycle307-4176888e-postgres",
+      "id": "612706e91ae71b2d6800ce270cc8ad60e64b0e09a77f8578488f5ac9a9e64912",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/pgpass",
+          "rw": false
+        },
+        {
+          "type": "volume",
+          "name": "dpp-lifecycle307-4176888e-postgres",
+          "destination": "/var/lib/postgresql/data",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "name": "dpp-lifecycle307-4176888e-gateway",
+      "id": "c5ff1f7e62f063e6e3e1d3bdd9a412bed06f7e5f420f4cf23d0002f897b38497",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "exited",
+      "ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/etc/caddy/Caddyfile",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "dpp-lifecycle307-4176888e-minio",
+      "id": "c62244fe672646c67f081950cc2aa10955d8e069daff447090117c7c7f8fbe08",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": "exited",
+      "ports": {},
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "dpp-lifecycle307-4176888e-objects",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/access",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/secret",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/start.sh",
+          "rw": false
+        }
+      ]
+    }
+  ],
+  "gateway_sha256": "5695d4337b06d2c420194a3fec04dbcbfbe95fde94dc1705e81d2f3f78834f59",
+  "gateway_all_requests": "DENY_ALL",
+  "windows": [
+    {
+      "file": "plane-admin\\reader.json",
+      "enabled": false
+    },
+    {
+      "file": "plane-owner\\reader.json",
+      "enabled": false
+    }
+  ]
+}

@@ -45,7 +45,13 @@ JSON 中含完整 copy/DatasetVersion identity、SHA256、容器 ID、镜像 ID 
 | `dpp-lifecycle307-5d2274ee-minio` | `0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65` | `sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6` |
 | `dpp-lifecycle307-5d2274ee-gateway` | `ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4` | `sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f` |
 
-三项服务在本轮只读核对时 running，身份、镜像、专属卷和网络与原回执匹配。
+三项服务在原方案只读核对时 running，身份、镜像、专属卷和网络与原回执匹配。
+2026-10-14追加[运行时核对](evidence/issue307-d1/native-completion01/runtime-incident.json)：
+Docker Desktop停止/恢复后，这三个相同ID服务为 **stopped/retained**；本轮未重新启动它们。
+旧配置仍封存，源六版本保护状态使用原观测时间，不能声称是本轮再次实时检查。
+执行前必须重新核验其持久卷/identity/Core、native protection/inventory和current gate。
+新[非删除矩阵](issue307-d1-native-completion.md)的四个环境全部排除在本方案删除范围外；
+其worker恢复证明不等于5d环境的真实DELETE recovery验收。
 MinIO binary SHA256 `fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8`，
 `DEVELOPMENT.GOGET` 固定受控基线；MinIO SDK `minio-go/v7 v7.0.83`、
 admin SDK `madmin-go/v3 v3.0.94`。provider build/license 的旧核对不构成生产维护承诺。

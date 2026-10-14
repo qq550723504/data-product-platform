@@ -1,0 +1,86 @@
+{
+  "run": "df27ccf8-00e5-46f0-8ac2-58568fe5b574",
+  "services": [
+    {
+      "name": "dpp-lifecycle307-df27ccf8-gateway",
+      "id": "2371ba9bee99d5564a35ed83195ae391629cc62dc4f5456589f78edd36821643",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "exited",
+      "ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/etc/caddy/Caddyfile",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "dpp-lifecycle307-df27ccf8-minio",
+      "id": "dab25bf2f9b8b2293e93c2910116b95b8eee8c954162878ee21e5feb873ffeaa",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": "exited",
+      "ports": {},
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "dpp-lifecycle307-df27ccf8-objects",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/access",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/secret",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/start.sh",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "dpp-lifecycle307-df27ccf8-postgres",
+      "id": "d02a3dc4b63f8ec36d02b8aff55309c30eebb14d8c3de2fadf60b77655729c01",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "exited",
+      "ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/pgpass",
+          "rw": false
+        },
+        {
+          "type": "volume",
+          "name": "dpp-lifecycle307-df27ccf8-postgres",
+          "destination": "/var/lib/postgresql/data",
+          "rw": true
+        }
+      ]
+    }
+  ],
+  "gateway_sha256": "5695d4337b06d2c420194a3fec04dbcbfbe95fde94dc1705e81d2f3f78834f59",
+  "gateway_all_requests": "DENY_ALL",
+  "windows": [
+    {
+      "file": "archive-admin\\archive-window.json",
+      "enabled": false
+    },
+    {
+      "file": "archive-owner\\archive-window.json",
+      "enabled": false
+    }
+  ]
+}
