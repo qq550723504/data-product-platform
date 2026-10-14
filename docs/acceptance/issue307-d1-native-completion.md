@@ -56,7 +56,7 @@ Docker Desktop 在前两个环境已封存后停止，第一次 COPY preparation
 这轮补齐 LC-03/20 当前原生业务重跑和 LC-12 pre-ISSUED 非删除边界。
 真实 DELETE 竞争/response loss、in-flight DELETE late hold、三copy删除混合结果、
 当前环境post-delete absence/completion仍NOT_RUN。
-LC-13 live processing owner crash/recovery本轮未扩入；此前PG与自然expiry证据保持原边界。
+该轮未扩入 LC-13 live processing owner crash/recovery；后续已完成[独立原生补验及5d只读核验](issue307-lc13-readonly.md)，此前证据保持原边界。
 metadata/COPY worker crash不能冒充processing或真实DELETE crash。
 六版本备份/原生恢复和server no-send仍引用[前轮独立证明](issue307-d1-reference-preparation.md)，
 不把本轮的5/9/7/4版本环境当该六版本checkpoint。
