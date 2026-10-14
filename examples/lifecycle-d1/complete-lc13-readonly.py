@@ -13,7 +13,7 @@ GW='ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4'
 PGIMAGE='sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea'
 MIIMAGE='sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6'
 REDISIMAGE='sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499'
-PHASES=('prepare','setup','crash','orphan','recovery','final','seal','5d-readonly','5d-readonly-02','5d-readonly-03')
+PHASES=('prepare','setup','crash','orphan','recovery','final','seal','5d-readonly','5d-readonly-02','5d-readonly-03','5d-readonly-04')
 INSPECT_SCRIPT=b'#!/bin/sh\nset -eu\nexport LIFECYCLE_REFERENCE_PROFILE=5d2274ee-614cd9ad\nexport LIFECYCLE_REFERENCE_MODE=inspect-source\nexec /run/private/executor\n'
 def require(ok,message):
  if not ok: raise RuntimeError(message)
@@ -90,12 +90,22 @@ def six_equal(current,previous):
 def shadow_config(original,audit,project):
  ref=json.loads(json.dumps(original));f=ref['Fixture'];u=urlsplit(f['PostgresDSN'])
  require(u.scheme=='postgres' and u.hostname==project+'-postgres' and u.port==5432 and u.path=='/lifecycle307' and u.username=='fixture' and u.query=='sslmode=disable' and u.password and u.fragment=='','Unexpected source DSN contract')
- require(audit in {project+'-readonly-audit-core-'+n for n in ('01','02','03')},'Audit hostname outside finite generation')
+ require(audit in {project+'-readonly-audit-core-'+n for n in ('01','02','03','04')},'Audit hostname outside finite generation')
  for k,v in {'RunID':'5d2274ee-a671-4bdc-b406-22b8dad8fd61','WorkspaceID':'89eba3fd-9763-4f66-8cec-1a779104f155','ProviderInstanceID':'1980751b-c50e-4895-93a8-cb55960cd635','IncarnationID':'be784eda-96e4-49a9-ae47-eaa3203a2dc5','RootAccess':'','RootSecret':'','Endpoint':'127.0.0.1:9000'}.items():require(f[k]==v,'Reference reader identity/root drift')
  f['PostgresDSN']=f['PostgresDSN'].replace(project+'-postgres:5432',audit+':5432')
  require(urlsplit(f['PostgresDSN']).hostname==audit,'Audit DSN substitution failed')
  f['OutputDirectory']='/run/output';ref['PreparationEnabled']=True;ref['PreparationUntil']=(dt.datetime.now(dt.timezone.utc)+dt.timedelta(minutes=40)).isoformat();ref['AttestationPublicKey']=''
  return ref
+
+def frozen_candidate():
+ binding=load(ROOT/'docs/acceptance/evidence/issue307-d1/lc13-continuation01/delete-candidate04/source-binding.json')
+ candidate=PRIVATE/'d1-lc13-continuation01/delete-candidate04/executor'
+ require(binding['source_commit']=='055aa1df063e560c6796e92dfff4e03c7b9061e0' and binding['binary_sha256']=='01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3' and digest(candidate)==binding['binary_sha256'],'Frozen candidate identity/binary drift')
+ require(all(digest(ROOT/f)==h for f,h in binding['runtime_source_hashes'].items()),'Frozen candidate runtime source drift')
+ rendered=candidate.parent/'output'
+ for name,field in [('bounded-profile.json','bounded_profile_sha256'),('delete-executor-policy.json','iam_policy_sha256'),('gateway-active.Caddyfile','active_gateway_sha256'),('gateway-sealed.Caddyfile','sealed_gateway_sha256')]:
+  require(digest(rendered/name)==binding[field],'Frozen candidate profile/IAM/gateway drift')
+ return candidate,binding
 def restore_stopped_state(helper_id,audit_id,out):
  results={};failures=[]
  # Each exact known resource gets an independent attempt. A helper which failed
@@ -116,7 +126,8 @@ def restore_stopped_state(helper_id,audit_id,out):
  require(not failures,'State restoration failed after all independent stop attempts; diagnostics retained')
 def five_d(generation=1):
  CONTROL.mkdir(exist_ok=True);PUBLIC.mkdir(exist_ok=True);r,cfg=validate_source()
- require(generation in (1,2,3),'Unreviewed generation')
+ require(generation in (1,2,3,4),'Unreviewed generation')
+ candidate,binding=frozen_candidate() if generation==4 else (None,None)
  suffix='' if generation==1 else '-'+str(generation).zfill(2)
  stage=CONTROL/('5d-readonly'+suffix);stage.mkdir();out=PUBLIC/('5d'+suffix);out.mkdir()
  old=SOURCE/'reference-disposal-preparation01'
@@ -152,8 +163,9 @@ def five_d(generation=1):
   write(out/'audit-restored.json',{'relations':restored,'rows':1879,'roles_acl':restored_roles,'container':audit,'id':audit_id,'image':PGIMAGE,'volume':volume,'source_export_sha256':digest(stage/'core.dump')})
   # Only the root-free reference reader gets this new audit DSN. The source
   # gateway, source business configs and old restore database are untouched.
-  read=stage/'native';read.mkdir();payload=stage/'payload';payload.mkdir();shutil.copyfile(old/'bin02/executor',read/'executor')
-  require(digest(read/'executor')=='e1d9d35e48210ffe4400edb3476bdc8a51cb71cab9bd05686aedbc791a0a5b30','Fixed inspection binary drift')
+  read=stage/'native';read.mkdir();payload=stage/'payload';payload.mkdir();shutil.copyfile(candidate if candidate else old/'bin02/executor',read/'executor')
+  require(digest(read/'executor')==(binding['binary_sha256'] if binding else 'e1d9d35e48210ffe4400edb3476bdc8a51cb71cab9bd05686aedbc791a0a5b30'),'Fixed inspection binary drift')
+  if binding:write(out/'candidate-binding.json',{'candidate':binding,'operator_head':call(['git','rev-parse','HEAD']).decode().strip(),'driver_sha256':digest(Path(__file__)),'mode':'inspect-source','root_mounted':False,'delete_permission_enabled':False})
   ref=shadow_config(load(old/'native-after/reference.json'),audit,r['project'])
   write(read/'reference.json',ref);write(read/'reference-permission.json',{'Enabled':False})
   (read/'inspect.sh').write_bytes(INSPECT_SCRIPT)
@@ -170,14 +182,24 @@ def five_d(generation=1):
   require(private_seals=={p:digest(SOURCE/p) for p in private_seals},'Source sealed config changed')
   write(out/'readonly-checkpoint.json',{'status':'PASS','source_run':r['run_id'],'source_pg':PG,'source_minio':MINIO,'source_gateway':GW,'source_relations':194,'source_rows':1879,'source_business_mutations':0,'audit_core':audit,'audit_native_call_delta':20,'backups':backup_before,'approval':'NOT_RECEIVED','native_delete':0,'delete_iam':'NOT_ENABLED','old_restore_touched':False})
  finally:
-  # Restore only the exact original stopped service state; retain every resource.
-  restore_stopped_state(helper,audit_id,out)
+  try:
+   if generation==4:
+    # Permanently close only this new maintenance configuration; retain its pre-seal bytes.
+    native=stage/'native/reference.json'
+    if native.exists():
+     write(stage/'reference-before-seal.private.json',load(native));sealed_ref=load(native);sealed_ref['PreparationEnabled']=False;native.write_text(json.dumps(sealed_ref,indent=2)+'\n',encoding='utf-8',newline='\n')
+  finally:
+   # A failed seal cannot skip independent restoration of either source service.
+   restore_stopped_state(helper,audit_id,out)
 def main():
+ global CONTROL,PUBLIC
  parser=argparse.ArgumentParser();parser.add_argument('phase',choices=PHASES);a=parser.parse_args()
  if a.phase=='prepare': prepare()
  elif a.phase=='5d-readonly': five_d()
  elif a.phase=='5d-readonly-02': five_d(2)
  elif a.phase=='5d-readonly-03': five_d(3)
+ elif a.phase=='5d-readonly-04':
+  CONTROL=PRIVATE/'d1-delete-readonly-candidate04';PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04';five_d(4)
  elif a.phase=='crash': plane('lc13-crash-one');plane('lc13-crash-two')
  elif a.phase=='setup': plane('setup');plane('lc13-init')
  elif a.phase=='orphan': plane('lc13-orphan')

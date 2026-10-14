@@ -1,0 +1,13 @@
+{
+  "id": "b29f2c22a2582dd891a87e549e20c87bc091129d670b01a5af5bd2f47c7bd930",
+  "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "exit": 1,
+  "pid": 0,
+  "source_sha256": "18a27cf7f39d9454e235ee88f4a5319e63218f1516875af4e5697f4a8f0efb20",
+  "binary_sha256": "4cd1adbb8f5f5aa162366f16d5b578b36b4fbcb9b088ea7bf42a2df990569e7d",
+  "read_only": true,
+  "management_root_mounted": true,
+  "payload_root_mounted": false,
+  "source_pg_credentials_mounted": false,
+  "delete": 0
+}

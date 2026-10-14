@@ -1,6 +1,6 @@
 # #307 D1：5d2274ee 环境的 exact-version 删除确认方案
 
-2026-10-14，状态 **PENDING_USER_CONFIRMATION / 实际 DELETE NOT_RUN**。
+2026-10-15（Asia/Singapore），状态 **PENDING_USER_CONFIRMATION / 实际 DELETE NOT_RUN**。
 本方案依据 #307 的 exact-list approval gate、lifecycle 主 contract 与
 [有限引用需求 contract](issue307-reference-demand-contract.md)。#318 保持 Draft，
 本轮已完成明确授权的非删除备份/恢复和 no-send 事务；不启用发送、不发 DELETE、不解除保护。
@@ -14,13 +14,15 @@ checkpoint/独立恢复/SCRAM、关闭的发送组合均已验证。native IAM p
 
 LC-13新增[可信停止/新Retry/credential containment非删除矩阵](issue307-lc13-continuation.md)：
 f3/7cd/812三个独立run均已封存且资源保留，全部排除在本删除范围外。
-本轮仅Docker元数据核对5d原PG/MinIO/gateway为相同ID、stopped；未重开业务或发送窗口。
-源保护最近证据仍为09:34Z，未来每项发送前须fresh复核。
+本轮[新候选只读核验](issue307-d1-candidate04-readonly.md)刷新5d六份库存/bytes/hash/保护及执行前条件；
+源PG/MinIO仅为读取短暂启动后恢复stopped，gateway始终停止，未重开业务或发送窗口。
+保护最新观察为2026-10-15 00:22:28 +08:00（UTC `2026-10-14T16:22:28Z`），未来每项发送前须fresh复核。
 当前代码依赖更新为minio-go/v7 v7.0.88及MinIO policy v3.1.3；e1d9/4af0与v7.0.83
 仍是原准备binary的真实历史。本轮候选已绑定source055aa1df与新Linux binary/profile/IAM/gateway；
 新LC13/native PASS不授权复用旧批准或发送，不代表真实DELETE recovery验收。
 
-当前机器清单：[proposal-v4.json](evidence/issue307-d1/lc13-continuation01/proposal-v4.json)。
+当前机器清单：[proposal-v5.json](evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json)。
+v5只刷新只读观察/证据/条件；[proposal-v4](evidence/issue307-d1/lc13-continuation01/proposal-v4.json)保留原候选冻结时点。
 当前[候选绑定](evidence/issue307-d1/lc13-continuation01/delete-candidate04/source-binding.json)和
 [关闭profile](evidence/issue307-d1/lc13-continuation01/delete-candidate04/bounded-profile.json)
 由新binary在两个network=none、root-free、read-only helper中渲染/验证关闭send gate；
@@ -30,14 +32,14 @@ delete credential、enabled permission或gateway。delete/archive命令6项非�
 690 bytes/SHA256与绑定一致；另存展示JSON，不把格式化后的字节当作执行policy hash。
 旧[proposal-v3.json](evidence/issue307-d1/lc13-readonly01/proposal-v3.json)保留原历史来源，
 其旧binary确认模板不能作为新发送授权。源码/binary/profile变化时必须另行冻结并重新确认。
-本轮[5d只读核验](issue307-lc13-readonly.md)于 `2026-10-14T09:34Z` 更新六份原生观测：
+前轮[5d只读核验](issue307-lc13-readonly.md)于 `2026-10-14T09:34Z` 更新六份原生观测：
 六version/bytes/hash/保护与原after一致；源Core194表/1879行前后指纹相等，源journal仍92。
 20个新增维护调用只写新auditCore，总112 calls/observations/typed成本；原PG/MinIO/gateway
 最终全部stopped，业务/deletion窗口仍关闭。原tar/dump字节hash未变；另保留新只读导出恢复副本。
 旧 [proposal-v2.json](evidence/issue307-d1/reference-disposal-preparation01/proposal-v2.json) 保留为历史。
 原清单：[proposal.json](evidence/issue307-d1/delete-proposal-5d2274ee/proposal.json)，仅记录初始准备时点。
 实时元数据：[topology](evidence/issue307-d1/delete-proposal-5d2274ee/topology-readback.json)；
-[当前 Core readback](evidence/issue307-d1/lc13-readonly01/5d-03/current-core-readback.json) /
+[当前 Core readback](evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/current-core-readback.json) /
 [READ ONLY SQL](evidence/issue307-d1/delete-proposal-5d2274ee/core-readback.sql)。
 JSON 中含完整 copy/DatasetVersion identity、SHA256、容器 ID、镜像 ID 和保护观测时间。
 
@@ -52,7 +54,7 @@ JSON 中含完整 copy/DatasetVersion identity、SHA256、容器 ID、镜像 ID 
 | Plan SHA256-LIFECYCLE-PLAN-V1 | `d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc` |
 | 六份完整 inventory plan | `dfd47e35-b99a-4581-942f-96ab5d3941f1` |
 | Inventory hash | `2b1df1ccd9e7a138bf47050cad9f031c02bd04664b64eb12aee0337ad670c9f8` |
-| 当前 Schema / 候选源码 | 68 / `055aa1df063e560c6796e92dfff4e03c7b9061e0`；本轮后续提交仅验收文档/证据 |
+| 当前 Schema / 候选源码 | 68 / `055aa1df063e560c6796e92dfff4e03c7b9061e0`；候选运行源码未变，辅助只读driver/证据单列 |
 | 历史5d非删除原生源码 | `4af0ee88db92dfbe7aad029b22916bb046155e27`，原e1d9 binary/SDK7.0.83只绑定该准备阶段 |
 | 原历史 native/source | `4650c435f8ba89fdb0b2dc0591152d25ded182d7`；原 LC-11/12 不冒充新源码重跑 |
 | 当前 Linux executor binary SHA256 | `01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3`；go1.26.5/linux-amd64/CGO=0/trimpath；发送关闭 |
@@ -74,7 +76,7 @@ JSON 中含完整 copy/DatasetVersion identity、SHA256、容器 ID、镜像 ID 
 2026-10-14追加[运行时核对](evidence/issue307-d1/native-completion01/runtime-incident.json)：
 Docker Desktop停止/恢复后，这三个相同ID服务为 **stopped/retained**。
 本轮仅PG/MinIO为只读核验短暂启动，gateway一直停止；核验后均恢复stopped。
-旧业务配置仍封存，源六版本保护状态已由本轮 `09:34Z` 原生读取刷新。
+旧业务配置仍封存，源六版本保护状态已由本轮新候选 `16:22:28Z` 原生读取刷新。
 执行前必须重新核验其持久卷/identity/Core、native protection/inventory和current gate。
 新[非删除矩阵](issue307-d1-native-completion.md)的四个环境全部排除在本方案删除范围外；
 其worker恢复证明不等于5d环境的真实DELETE recovery验收。
@@ -101,9 +103,9 @@ admin SDK `madmin-go/v3 v3.0.94`。provider build/license 的旧核对不构成�
 `b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524`。
 
 这些保护状态来自本轮
-[本轮源原生复查](evidence/issue307-d1/lc13-readonly01/5d-03/native-six-version.json)，
+[本轮源原生复查](evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/native-six-version.json)，
 全部六份 identity/bytes/hash/protection 与 before 和隔离 restore 一致。具体保护观测时间逐项保存在
-proposal-v3；两目标分别观测于 `09:34:08.337939954Z` 和 `09:34:08.838374771Z`，
+proposal-v5；两目标分别观测于 `2026-10-14T16:22:28.032796776Z` 和 `2026-10-14T16:22:28.275997014Z`，
 它仍不替代未来发送时的 current protection。
 执行前及每项发送前均须重新读取 native protection/inventory；新增 hold、未到期 retention、
 UNKNOWN、身份漂移或 inventory 增减均使本提案停止，0 DELETE，不自动扩大范围。
@@ -139,6 +141,16 @@ active=0、92 calls/observations/typed storage costs；2 NOT_SENT observations/2
 send claims/absence/completion=0。新增40个源 provider只读调用；恢复副本另20个调用，不进入源ledger。
 copy operations=0；2 processing output intents 对应 2 ready outputs。
 FINALIZED 两份 plan 的 DB computed hash 与 stored hash 相同。
+
+本轮额外核对27项完整FK trigger资格、54项目标reference counts、3个fence函数正文，
+23份requirements/releases、7pins/terminations及原2NOT_SENT/linked releases仍闭合。
+regular reader/producer原生状态disabled；拟建普通executor为权威NoSuchUser。
+新audit-core-04恢复194表/1879行，并仅在该clone承接20个新的native checkpoint调用（总112），
+源journal仍92，原Core业务mutation0；8个operator IAM GET另列回执。
+源、新audit和helper已全部停止、maintenance authority封存；原tar/dump hash不变。
+这些PASS均为只读snapshot；[逐项条件](issue307-d1-candidate04-readonly.md)明确列出
+确认、新basis/approval、native IAM/active gateway/permission和fresh send topology仍未创建，
+因此真实发送继续阻断，不能把本次核对视为授权。
 
 **旧非删除 dispatch 不是可以续发的删除 attempt。** 原批准
 `34274662-4973-4621-ab4d-b89c0493f1dc` 的 basis 是
@@ -236,7 +248,7 @@ LC-13有限可信停止、新Retry与原生credential containment已有[本轮�
 > dpp-lifecycle307-quarantine/fixture/b.csv@846d0c7c-289d-4667-bc7c-aa04e44357d4 两份源版本，
 > 绑定 source055aa1df063e560c6796e92dfff4e03c7b9061e0，
 > Linux binary 01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3，
-> proposal-v4/candidate04 profile 97d565f9c66d8cfcb66997d034e7acb2d1519864898950a9ddb2ced2cdd5c4ee，
+> proposal-v5/candidate04 profile 97d565f9c66d8cfcb66997d034e7acb2d1519864898950a9ddb2ced2cdd5c4ee，
 > target digest 4cbb36e5aebbc9451603efd276aa309a2c4afdefcf252107571b0f8334360a38，
 > IAM ab24ab862bf0e21d23ee21989f4140b3c7200cdecee22d4a708cc45621da8b54，
 > active gateway 7b24ad32506bfd189c9289ba85a65ab242069dfee293d61b330104a90306cd0a，

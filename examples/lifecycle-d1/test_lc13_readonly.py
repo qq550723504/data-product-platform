@@ -11,7 +11,8 @@ class ReadonlyContract(unittest.TestCase):
  def test_audit_config_preserves_source_and_rejects_wrong_target(self):
   c=self.config();before=copy.deepcopy(c);project='dpp-lifecycle307-5d2274ee'
   r=m.shadow_config(c,project+'-readonly-audit-core-03',project);self.assertEqual(c,before);self.assertIn('audit-core-03:5432',r['Fixture']['PostgresDSN'])
-  for bad in (project+'-postgres',project+'-predelete-postgres-02','foreign'):
+  new=m.shadow_config(c,project+'-readonly-audit-core-04',project);self.assertIn('audit-core-04:5432',new['Fixture']['PostgresDSN']);self.assertEqual(c,before)
+  for bad in (project+'-postgres',project+'-predelete-postgres-02',project+'-readonly-audit-core-05','foreign'):
    with self.assertRaises(RuntimeError):m.shadow_config(c,bad,project)
  def test_source_dsn_identity_and_root_fail_closed(self):
   base=self.config();project='dpp-lifecycle307-5d2274ee';audit=project+'-readonly-audit-core-03'

@@ -1,0 +1,11 @@
+{
+  "states": {
+    "helper": "NOT_CREATED",
+    "audit_core": "NOT_CREATED",
+    "source_minio": "exited",
+    "source_pg": "exited",
+    "source_gateway": "exited"
+  },
+  "failures": [],
+  "cleanup": 0
+}
