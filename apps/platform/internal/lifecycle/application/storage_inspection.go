@@ -61,10 +61,11 @@ var (
 )
 
 const (
-	StorageStatExact    = "STAT_EXACT"
-	StorageRetention    = "INSPECT_RETENTION"
-	StorageLegalHold    = "INSPECT_LEGAL_HOLD"
-	StorageListVersions = "LIST_NAMESPACE_VERSIONS"
+	StorageStatExact      = "STAT_EXACT"
+	StorageRetention      = "INSPECT_RETENTION"
+	StorageLegalHold      = "INSPECT_LEGAL_HOLD"
+	StorageListVersions   = "LIST_NAMESPACE_VERSIONS"
+	StorageReadCheckpoint = "READ_CHECKPOINT_EXACT"
 )
 
 // One start identifies one actual HTTP attempt, rather than an SDK operation

@@ -86,6 +86,9 @@ func read(path string, v any) error {
 	return nil
 }
 func load() (config, permission, error) {
+	if referenceComposition {
+		return loadReferenceSend()
+	}
 	var c config
 	var p permission
 	if read("/run/private/config.json", &c) != nil || read("/run/private/delete-permission.json", &p) != nil {
@@ -746,6 +749,15 @@ func provision(ctx context.Context, disable bool) error {
 	return write(filepath.Join(c.OutputDirectory, "delete-executor-policy.json"), json.RawMessage(policy))
 }
 func main() {
+	if mode := os.Getenv("LIFECYCLE_REFERENCE_MODE"); mode != "" {
+		ctx, cancel := context.WithTimeout(context.Background(), 4*time.Minute)
+		defer cancel()
+		if e := runReference(ctx, mode); e != nil {
+			fmt.Fprintln(os.Stderr, "reference preparation failed; retained, no automatic retry:", e)
+			os.Exit(1)
+		}
+		return
+	}
 	if e := selectProfile(); e != nil {
 		fmt.Fprintln(os.Stderr, e)
 		os.Exit(1)

@@ -26,6 +26,8 @@ jobs:
           python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_confirmed_race.py -v
           python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_delete_preflight.py -v
           python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_delete_preflight.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_disposal_preparation.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_disposal_preparation.py -v
       - name: Install isolated browser runner
         run: npm --prefix tests/live-browser install --no-audit --no-fund
       - name: Install Chromium

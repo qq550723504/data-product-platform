@@ -70,7 +70,28 @@ Draft; no automatic Ready/merge/deploy/Issue close.
 
 Non-goals: transfer to another copy (unsupported; no inference), general D2
 integration, real deletion without fresh exact-list confirmation, archive/restore
-rerun, backup recovery, Annotation, original retained environments and old C2
+rerun, original C2 backup recovery, Annotation, other retained environments and old C2
 recovery. Full D1 remains unaccepted. Provider DELETE/cleanup is NOT_RUN; existing
 two-version approval is consumed and cannot be reused.
+
+2026-10-14 explicitly authorized preparation extension: independently restore
+the six current 5d2274ee native versions and current Core checkpoint; append
+trusted NOT_SENT/releases for the two positively closed non-delete trials;
+implement the distinct 614cd9ad bounded sender while keeping its permission off.
+The no-send pair commits atomically in the existing observation transaction
+protocol; same-proof replay cannot repeat facts/cost. Signed host executor and
+topology evidence is captured before DB transactions, with only local signature,
+scope, freshness and current DB checks under locks. A checkpoint byte read uses
+its own capability and typed physical-call operation, never a fabricated reader
+pin/copy intent, and records incurred costs through the existing journal.
+Backup validation opens no business use; replica ledger facts cannot authorize
+source deletion. All original/new resources and protected/output versions remain
+retained. Sender requires fresh exact-list human confirmation, current separate
+basis/approval, exact topology/binary/profile, two targets, <=40 minutes, at most
+one DELETE per target, fresh dispatch/send gates and receipt-backed inventory.
+Native DELETE, absence/completion and full D1 remain separately unaccepted.
+Reuse: PostgreSQL pg_dump/pg_restore, quiescent named-volume tar + native exact
+readback, MinIO OSS signer/SDK, Go standard Ed25519, existing storage journal,
+fence/observation/outbox/reconciliation and CostAllocation. No second runtime,
+crypto implementation, storage engine, dependency or fork is introduced.
 

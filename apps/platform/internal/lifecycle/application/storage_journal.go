@@ -16,9 +16,10 @@ import (
 )
 
 const (
-	CapabilityInspectStorage = "LIFECYCLE_INSPECT_STORAGE"
-	StorageCallStartedEvent  = "LifecycleStorageCallStarted"
-	StorageCallObservedEvent = "LifecycleStorageCallObserved"
+	CapabilityInspectStorage    = "LIFECYCLE_INSPECT_STORAGE"
+	CapabilityCheckpointStorage = "LIFECYCLE_CHECKPOINT_STORAGE"
+	StorageCallStartedEvent     = "LifecycleStorageCallStarted"
+	StorageCallObservedEvent    = "LifecycleStorageCallObserved"
 )
 
 // PostgresStorageCallJournal is private server wiring, never an HTTP receipt
@@ -52,7 +53,7 @@ func (j *PostgresStorageCallJournal) StartStorageCall(ctx context.Context, c Sto
 		return ErrStorageScope
 	}
 	switch c.Operation {
-	case StorageStatExact, StorageRetention, StorageLegalHold, StorageListVersions:
+	case StorageStatExact, StorageRetention, StorageLegalHold, StorageListVersions, StorageReadCheckpoint:
 	default:
 		return ErrStorageUnsupported
 	}
@@ -76,6 +77,14 @@ func (j *PostgresStorageCallJournal) StartStorageCall(ctx context.Context, c Sto
 		}
 		if c.StartedAt.After(at) {
 			return ErrStorageContract
+		}
+		if c.Operation == StorageReadCheckpoint {
+			if c.CopyOperationID != uuid.Nil || c.CopyIntent != nil || c.ReaderPin != nil || c.OutputIntent != nil {
+				return ErrStorageScope
+			}
+			if _, _, err := s.authorize(ctx, tx, c.Copy.WorkspaceID, CapabilityCheckpointStorage, &caller); err != nil {
+				return err
+			}
 		}
 		if j.reconciliation {
 			if _, _, err := s.authorize(ctx, tx, c.Copy.WorkspaceID, CapabilityReconcileDisposition, &caller); err != nil {

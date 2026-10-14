@@ -1,6 +1,6 @@
 # Retained PostgreSQL checkpoint for the fixed synthetic 5d2274ee fixture.
 # Source operations are pg_dump/SELECT only; no provider or lifecycle mutation.
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidatePattern('^[0-9]{2}$')][string]$CheckpointAttempt,[switch]$VerifyExistingAuth,[switch]$VerifyExistingFacts)
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidatePattern('^[0-9]{2}$')][string]$CheckpointAttempt,[switch]$VerifyExistingAuth,[switch]$VerifyExistingFacts,[ValidateSet('01','02')][string]$Generation='01')
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 . (Join-Path $PSScriptRoot 'durable-storage.ps1')
@@ -14,6 +14,7 @@ $networkName=$project+'-predelete-private'
 $image='sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea'
 $backup=Join-Path $private ('predelete-core-checkpoint-'+$CheckpointAttempt)
 $public=Join-Path $repoDirectory 'docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee'
+if($Generation -eq '02'){$replicaName+='-02';$networkName+='-02';$public+='-generation02'}
 function Require($Condition,[string]$Message){if(-not $Condition){throw $Message}}
 function Docker([string[]]$Arguments,[string]$InputText=''){
  $info=[Diagnostics.ProcessStartInfo]::new('docker');$info.UseShellExecute=$false;$info.CreateNoWindow=$true;$info.RedirectStandardOutput=$true;$info.RedirectStandardError=$true
@@ -53,6 +54,7 @@ function Verify-CheckpointAuth {
   $ready=$false;for($index=0;$index -lt 60;$index++){try{Docker @('exec',$replicaName,'pg_isready','-U','checkpoint_admin','-d','postgres')|Out-Null;$ready=$true;break}catch{Start-Sleep -Seconds 1}};Require $ready 'Checkpoint unavailable for remote auth'
   foreach($mode in @('positive','negative')){
    $name=$project+'-predelete-core-auth-'+$mode
+   if($Generation -eq '02'){$name+='-02'}
    Require ((Docker @('ps','-aq','--filter',"name=^/$name$")) -eq '') 'Auth helper already exists; retained replay refused'
    $command='export PGPASSWORD="$(cat /run/auth/fixture-auth-password)"; exec psql -h '+$replicaName+' -U fixture -d lifecycle307 -v ON_ERROR_STOP=1 -qAt -c ''SELECT current_user'''
    if($mode -eq 'negative'){$command='export PGPASSWORD=invalid-checkpoint-password; exec psql -h '+$replicaName+' -U fixture -d lifecycle307 -v ON_ERROR_STOP=1 -qAt -c ''SELECT current_user'''}
@@ -103,13 +105,16 @@ if($VerifyExistingFacts){Verify-CheckpointFacts;return}
 Require ((Docker @('ps','-aq','--filter',"name=^/$replicaName$")) -eq '' -and (Docker @('volume','ls','-q','--filter',"name=^$replicaName$")) -eq '') 'Checkpoint resource name already owned'
 Require ((Docker @('network','ls','-q','--filter',"name=^$networkName$")) -eq '') 'Checkpoint network already exists'
 New-Item -ItemType Directory -Path $backup|Out-Null
+$checkpointSourceHash=(Get-FileHash -Algorithm SHA256 -LiteralPath $PSCommandPath).Hash.ToLowerInvariant()
+if($Generation -eq '02'){$nativeClosure=Get-Content -LiteralPath (Join-Path $repoDirectory 'docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/native-restore-closure.json') -Raw|ConvertFrom-Json;Require ($nativeClosure.status -eq 'PASS_EXACT_SIX_NATIVE_RESTORE' -and $nativeClosure.versions -eq 6) 'Generation02 requires completed exact native restore'}
 $sourceBefore=Fingerprint $sourceName
 Write-Utf8 (Join-Path $backup 'source-before.private.json') ($sourceBefore|ConvertTo-Json -Depth 8)
 Export-Private @('exec',$sourceName,'pg_dump','-U','fixture','-d','lifecycle307','--format=custom','--create') (Join-Path $backup 'core.dump')
 Export-Private @('exec',$sourceName,'pg_dumpall','-U','fixture','--globals-only') (Join-Path $backup 'globals.sql')
 $passwordBytes=[byte[]]::new(32);[Security.Cryptography.RandomNumberGenerator]::Fill($passwordBytes)
 Write-Utf8 (Join-Path $backup 'checkpoint-password') ([Convert]::ToHexString($passwordBytes).ToLowerInvariant())
-$checkpointNetwork=Docker @('network','create','--internal','--subnet','10.234.152.0/24','--label',"lifecycle307.run=$run",'--label','lifecycle307.role=predelete-checkpoint',$networkName)
+$subnet='10.234.152.0/24';if($Generation -eq '02'){$subnet='10.234.153.0/24'}
+$checkpointNetwork=Docker @('network','create','--internal','--subnet',$subnet,'--label',"lifecycle307.run=$run",'--label','lifecycle307.role=predelete-checkpoint',$networkName)
 Docker @('volume','create','--label',"lifecycle307.run=$run",'--label','lifecycle307.role=predelete-core',$replicaName)|Out-Null
 Docker @('create','--pull','never','--name',$replicaName,'--label',"lifecycle307.run=$run",'--label','lifecycle307.role=predelete-core','--network',$networkName,'--mount',"type=volume,source=$replicaName,target=/var/lib/postgresql/data",'--mount',"type=bind,source=$backup,target=/run/backup,readonly",'--env','POSTGRES_USER=checkpoint_admin','--env','POSTGRES_DB=postgres','--env','POSTGRES_PASSWORD_FILE=/run/backup/checkpoint-password','--env','POSTGRES_HOST_AUTH_METHOD=scram-sha-256',$image)|Out-Null
 $replica=(Docker @('inspect',$replicaName)|ConvertFrom-Json)[0]
@@ -135,5 +140,6 @@ $durability=Assert-RetainedServiceStorage -RunID $run -LabelKey 'lifecycle307.ru
 Require (@($replica.HostConfig.PortBindings.PSObject.Properties).Count -eq 0) 'Checkpoint host port published'
 Docker @('stop','--time','30',$replicaName)|Out-Null
 $result=[ordered]@{status='PASS_CORE_CHECKPOINT_ONLY';as_of=[DateTimeOffset]::UtcNow.ToString('o');environment_run_id=$run;source_container_id=$source.Id;replica_container_id=$replica.Id;replica=$replicaName;named_volume=$replicaName;image_id=$image;network_id=$checkpointNetwork;network=$networkName;internal=$true;host_ports=@();relations=$sourceBefore.Count;rows=($sourceBefore|Measure-Object rows -Sum).Sum;relation_fingerprints=$sourceBefore;independent_restore_equal=$true;source_facts_unchanged=$true;fixture_role_scram_equal=$true;object_owner_acl_equal=$true;durability=$durability;replica_state='STOPPED_RETAINED_NO_BUSINESS_ADMISSION';core_dump_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $backup 'core.dump')).Hash.ToLowerInvariant();globals_dump_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $backup 'globals.sql')).Hash.ToLowerInvariant();source_core_mutation=0;source_restart=0;provider_io=0;delete=0;cleanup=0;native_six_version_backup_restore='NOT_RUN; separate required pre-delete condition';remote_scram_positive_negative='NOT_RUN; verifier equality is not a remote authentication test'}
+if($Generation -eq '02'){Require ((Get-FileHash -Algorithm SHA256 -LiteralPath $PSCommandPath).Hash.ToLowerInvariant() -eq $checkpointSourceHash) 'Checkpoint source changed during run';$result['script_checkout_sha256']=$checkpointSourceHash;$result['script_unchanged_during_run']=$true;$result['native_six_version_backup_restore']='PASS_EXACT_SIX_NATIVE_RESTORE; receipt bound separately';$result['generation']='02'}
 $output=Join-Path $public 'core-checkpoint.json';Require (-not (Test-Path -LiteralPath $output)) 'Checkpoint receipt already exists';Write-Utf8 $output ($result|ConvertTo-Json -Depth 12)
 Write-Output ([pscustomobject]@{status=$result.status;relations=$result.relations;rows=$result.rows;replica_state=$result.replica_state;source_mutation=0;provider_io=0;delete=0}|ConvertTo-Json -Compress)
