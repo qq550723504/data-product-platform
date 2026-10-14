@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "helper_id": "c670834f6e0d7f1ba550bc5dcbeb7fc2618bc4067ac46688bc226828a0ffd543",
+  "exit": 0,
+  "archive_sha256": "f72efeab2c49802be1661a431164167d7a34968fef877163f08b25878d9554cc",
+  "source_object_tree_before_sha256": "61cee056c9ce679d4ae0ad037bceb17e166112ce431fcfc07fcb263f40085534",
+  "source_object_tree_after_sha256": "61cee056c9ce679d4ae0ad037bceb17e166112ce431fcfc07fcb263f40085534",
+  "provider_delete": 0,
+  "source_restart": 0,
+  "cleanup": 0,
+  "consistency_scope": "Sealed quiescent synthetic object trees; subsequent exact native restore + source recheck required"
+}

@@ -1,0 +1,18 @@
+{
+  "status": "FAILED_NO_SEND_ROLLED_BACK",
+  "helper_receipt": "no-send/helper.json",
+  "cause": "JSON MarshalIndent reformatted json.RawMessage Body after signing. Exact signed bytes changed on persistence; verifier correctly rejected. Replaced Body with byte array/base64; both no-send and topology signatures now roundtrip intact.",
+  "read_only_verified_after_failure": {
+    "provider_observations": 0,
+    "dispatch_releases": 0,
+    "send_claims": 0,
+    "schema_version": 67
+  },
+  "provider_io": 0,
+  "provider_delete": 0,
+  "cleanup": 0,
+  "retry_policy": "Explicit source fix, fresh bin02, fresh host proof and no-send02 helper; failed original proof/helper retained",
+  "go_binary_source_head": "f87af0565c6768ad14c6b4db8815896393f51245",
+  "driver_head_at_start": "01a9739245760a10e5e63307e787fd4b7a34c704",
+  "source_binding": "First failed helper used frozen f87 Go binary; subsequent Python-only render fix did not alter the launched no-send helper/proof. Fixed native retry used independent bin02 built from4af."
+}

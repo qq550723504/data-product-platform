@@ -3,17 +3,19 @@
 2026-10-14，状态 **PENDING_USER_CONFIRMATION / 实际 DELETE NOT_RUN**。
 本方案依据 #307 的 exact-list approval gate、lifecycle 主 contract 与
 [有限引用需求 contract](issue307-reference-demand-contract.md)。#318 保持 Draft，
-本轮只保存方案、Docker 元数据和 READ ONLY SQL，不开窗口、不发 DELETE、不解除保护。
+本轮已完成明确授权的非删除备份/恢复和 no-send 事务；不启用发送、不发 DELETE、不解除保护。
 此方案替代“下一次执行”的旧 e1487ce7 提案；旧提案及其他环境的已消费批准保留原历史。
 
-后续当前状态见 [非删除准备阶段](issue307-d1-delete-preflight.md)：固定只读 profile /
-no-send 候选及 Core checkpoint/独立恢复已完成，候选未应用；native 对象 backup/restore、
-服务端 bridge 和真实发送 profile 仍未验收。下方机器清单的 NOT_CREATED 是原提案时点；
-新 Core replica/network/helper 的实际保留状态在后续回执中单列，删除批准仍未收到。
+当前状态见[原生非删除准备](issue307-d1-reference-preparation.md)：六份 exact-version
+原生备份/独立恢复、两条原 trial 的原子 NOT_SENT/release、schema68、194表/1879行的新 Core
+checkpoint/独立恢复/SCRAM、关闭的发送组合均已验证。native IAM provision/activation、
+新短期 deletion basis/approval、真实发送和当前环境队列 recovery 仍未执行。删除确认仍未收到。
+旧方案机器清单、旧 Core1377行回执和失败资源保留为历史，不覆盖。
 
-机器清单：[proposal.json](evidence/issue307-d1/delete-proposal-5d2274ee/proposal.json)。
+当前机器清单：[proposal-v2.json](evidence/issue307-d1/reference-disposal-preparation01/proposal-v2.json)。
+原清单：[proposal.json](evidence/issue307-d1/delete-proposal-5d2274ee/proposal.json)，仅记录初始准备时点。
 实时元数据：[topology](evidence/issue307-d1/delete-proposal-5d2274ee/topology-readback.json)；
-[Core readback](evidence/issue307-d1/delete-proposal-5d2274ee/core-readback.json) /
+[当前 Core readback](evidence/issue307-d1/reference-disposal-preparation01/current-core-readback.json) /
 [READ ONLY SQL](evidence/issue307-d1/delete-proposal-5d2274ee/core-readback.sql)。
 JSON 中含完整 copy/DatasetVersion identity、SHA256、容器 ID、镜像 ID 和保护观测时间。
 
@@ -28,9 +30,9 @@ JSON 中含完整 copy/DatasetVersion identity、SHA256、容器 ID、镜像 ID 
 | Plan SHA256-LIFECYCLE-PLAN-V1 | `d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc` |
 | 六份完整 inventory plan | `dfd47e35-b99a-4581-942f-96ab5d3941f1` |
 | Inventory hash | `2b1df1ccd9e7a138bf47050cad9f031c02bd04664b64eb12aee0337ad670c9f8` |
-| Schema / native code source | 67 / `4650c435f8ba89fdb0b2dc0591152d25ded182d7` |
-| 方案准备代码 HEAD | `fc009d88ce2e145d10bcf086addca80eb8686fee`；685 份实现文件与 native source 一致 |
-| Native reader binary SHA256 | `5e04e88bbd65880a5e65da5795dcdc116021512e04d27a200ec0d03f83e972c8`；不是未来 delete executor binary |
+| 当前 Schema / 非删除原生源码 | 68 / `4af0ee88db92dfbe7aad029b22916bb046155e27` |
+| 原历史 native/source | `4650c435f8ba89fdb0b2dc0591152d25ded182d7`；原 LC-11/12 不冒充新源码重跑 |
+| 新 Linux executor binary SHA256 | `e1d9d35e48210ffe4400edb3476bdc8a51cb71cab9bd05686aedbc791a0a5b30`；发送关闭；[完整 build binding](evidence/issue307-d1/reference-disposal-preparation01/build-source02.json) |
 | 私有配置目录 | `C:/Users/Henry/.codex/fixture-private/dpp-lifecycle307-5d2274ee`，凭据不进入方案或 Git |
 | 网络 | `dpp-lifecycle307-5d2274ee-private`，`10.234.151.0/24`，internal，无 host ports |
 | Network ID | `33f303a57406f05c4e78b3cdb1355059a8f55f552e438162edc5bff129f4c02c` |
@@ -66,9 +68,10 @@ admin SDK `madmin-go/v3 v3.0.94`。provider build/license 的旧核对不构成�
 `722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0`、
 `b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524`。
 
-这些保护状态来自 **2026-10-14 01:11:11 UTC** 的
-[native inspection](../../examples/lifecycle-d1/results/5d2274ee-a671-4bdc-b406-22b8dad8fd61/plane-final-native-inspection.json)。
-本轮没有重新调用 provider 或打开封存窗口，因此不将这份 snapshot 当作未来发送时的 current protection。
+这些保护状态来自本轮
+[源 after 原生复查](evidence/issue307-d1/reference-disposal-preparation01/native-after/native-six-version.json)，
+全部六份 identity/bytes/hash/protection 与 before 和隔离 restore 一致。具体保护观测时间逐项保存在
+proposal-v2；它仍不替代未来发送时的 current protection。
 执行前及每项发送前均须重新读取 native protection/inventory；新增 hold、未到期 retention、
 UNKNOWN、身份漂移或 inventory 增减均使本提案停止，0 DELETE，不自动扩大范围。
 
@@ -98,15 +101,16 @@ provider 内部 media/replicas/backups 与 external recipient copies 均排除�
 
 ## 执行前阻断与现有设施复用
 
-本轮 READ ONLY Core snapshot：6 copies、23 requirements/releases、7 pins/terminations、
-active=0、52 calls/observations/typed storage costs；send claims/provider observations/absence/completion=0。
+本轮最终 READ ONLY Core snapshot：6 copies、23 requirements/releases、7 pins/terminations、
+active=0、92 calls/observations/typed storage costs；2 NOT_SENT observations/2 dispatch releases，
+send claims/absence/completion=0。新增40个源 provider只读调用；恢复副本另20个调用，不进入源ledger。
 copy operations=0；2 processing output intents 对应 2 ready outputs。
 FINALIZED 两份 plan 的 DB computed hash 与 stored hash 相同。
 
 **旧非删除 dispatch 不是可以续发的删除 attempt。** 原批准
 `34274662-4973-4621-ab4d-b89c0493f1dc` 的 basis 是
 `CONTROLLED_NON_DELETE_ADMISSION_EXERCISE`，且已于 `2026-10-14T01:44:38.439783Z` 过期。
-以下 immutable starts/reservations 仍未追加 observation/release：
+以下 immutable starts 已由可信 server transaction 原子追加 NOT_SENT/release；原 facts 保留：
 
 | Copy | 原 dispatch | 原 attempt |
 | --- | --- | --- |
@@ -114,31 +118,33 @@ FINALIZED 两份 plan 的 DB computed hash 与 stored hash 相同。
 | quarantine/b | `aa0dc82a-06b4-4b0d-a066-33d19ccc8f45` | `d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9` |
 
 不能更新它们的 approval ID、删除 start、改旧 basis 或手工 SQL 清 reservation。
-后续须由可信 executor verifier 核验原 helper 已结束、未创建/调用 deleter、网关 DELETE deny、
-无 send claim/发送日志、原 observation 无冲突等正向证明；**没有 send claim 本身不够**。
-仅在 no-send 已被可信证明时，复用 `RecordProviderObservation` 追加 NOT_SENT，
-同事务追加 reservation release、Event/Audit/Evidence/Outbox。证明不充分即保留 UNKNOWN/占用并停止。
-NOT_SENT 不虚构 provider invocation CostEvent；实际核验的 storage call 独立计费。
+[原生事务与同proof replay](issue307-d1-reference-preparation.md)已完成：可信 host重新核验原
+helper退出、固定入口/binary/root-free mounts/native policies；服务端在 fence/plan/attempt锁下验签、
+核对原批准与无claim/冲突事实。两成员一次提交 NOT_SENT/release/Event/Audit/Evidence/Outbox；
+JSON签名字节失真导致的首次失败完整回滚并保留，新bin02和新proof成功。NOT_SENT无虚构invocation cost。
+后续仅READ ONLY核对原closure，不再生成新proof或重复追加旧trial；新删除必须用新attempt。
 
 `lifecycle_fixture_disposal_basis.run_id` 唯一且 immutable。
-新受控执行 stage 预留 `614cd9ad-3f9d-40be-b110-3f7cf95f0790`，目前只是一项方案 identity，
-**没有创建 basis/approval/credential/资源**。后续追加新的 synthetic basis 和短期批准；
+新受控执行 stage 预留 `614cd9ad-3f9d-40be-b110-3f7cf95f0790`，已用于关闭的新 composition 和 no-send 幂等身份；
+**没有创建该 stage 的 deletion basis/approval/credential/enabled gateway 或发送attempt**。后续追加新的 synthetic basis 和短期批准；
 原环境 run/labels 不变，不把旧非删除 run 重新命名成已获批删除。
 
 旧 `run-confirmed-race.py` / `run-confirmed-*-delete.ps1` / delete command profiles
 固定了其他 run/key/version/schema，部分批准已消费；不执行、不改旧 profile 来冒充本次准备完成。
-本环境的新封闭 composition profile、可信 NOT_SENT verifier 及 6-version backup precheck
-尚 **NOT_IMPLEMENTED / NOT_VALIDATED**，属于真正执行前条件。先复用现有 exact execution、
-Storage Port/MinIO、delivery fence、Owner release、Outbox/Asynq/read-only reconciliation、
-Cost/Audit/Evidence；不增加第二 runtime、不建设通用删除 API、不改 Core/SQL67 invariant。
+本环境的封闭 composition、可信 NOT_SENT verifier/原子bridge、六版本恢复和新Core检查点
+已完成非删除验证。sender要求固定 binary/profile/IAM/gateway hashes、server-owned permission、
+精确确认文本、fresh签名host topology及≤40分钟窗口；关闭状态在DB/provider之前拒绝。
+原生Caddy配置语法通过，两个实际Caddyfile私有；IAM仅渲染，native provision尚未验证。
+继续复用既有 exact execution、Storage Port/MinIO、delivery fence、Owner release、Outbox/Asynq/
+只读 reconciliation、Cost/Audit/Evidence；不增加第二 runtime、不建设通用删除API。
 
 ## 确认后拟执行的验收步骤
 
 | 顺序 | 动作 | 通过标准 / 停止条件 |
 | --- | --- | --- |
 | 1 | 绑定用户对本 project/provider/incarnation/plan hash/两份 version 的明确确认；冻结新 composition source、binary、profile、IAM/gateway hash | 无确认则没有 enabled permission；新 profile 的 fake/PG 非删除检查通过，所有范围/窗口/old-approval 拒绝路径有效；若改变 targets/environment，重新确认 |
-| 2 | 保持 business reader/producer 封存，创建独立 pre-delete checkpoint，复用 PostgreSQL pg_dump/restore 与 exact-version native 读取/备份 | 当前完整 Core、roles/owner/ACL/remote SCRAM、关系 count/hash、六份 version/bytes/hash/protection 独立恢复核对；恢复副本隔离、不开业务、保留。不接受早于新 plan/output/release 的旧 backup 或 tmpfs；失败 0 DELETE |
-| 3 | 确认两个原 helper 的 no-send，追加 NOT_SENT/release；追加新执行 stage basis 和 ≤40 分钟 current approval | 原 facts 不变；release 引用可信 proof，原 attempts 永不发送；新 principal→workspace、basis/approval 指向同一 exact plan。UNKNOWN 不释放、不继续 |
+| 2 | 保持 business reader/producer 封存，重新核对当前 generation02 Core 和六版本 checkpoint；若源facts已变化，另建独立新checkpoint | 194表/1879行、roles/owner/ACL/remote SCRAM、六份 version/bytes/hash/protection 独立恢复均已通过；发送前必须仍匹配当前源。副本隔离、不开业务、保留；失败0 DELETE |
+| 3 | READ ONLY复核原两attempt已NOT_SENT/released；另行追加新 execution stage basis 与≤40分钟 current deletion approval | 原closure不重复写入；原attempt永不发送；新principal→workspace、basis/approval指向同一exact plan，旧non-delete批准不得复用 |
 | 4 | 单独 provision 临时 delete executor 与只读 inspector/recovery 权限，建立 exact IAM + gateway 双重 allowlist | delete 权限仅两份 key+version，无 root payload mount、Put/Copy、bare key、bypass 或受保护/输出 DELETE；business windows 不重开；禁止 SDK/proxy 自动重发 |
 | 5 | 在共享 fence/固定 parent-first 下 fresh authority/approval、全 inventory、native protection、qualified FK/reference releases、pending copies、pins/owner quiescence、ledger/revision；DB-first dispatch/start，再在 ClaimExactSend 重验 | 每项都是新 dispatch/attempt/request key；每次 dispatch 与 send 都 fresh gate；任何 UNKNOWN/DENIED、过期或 late hold 都 0 DELETE，保留阻断事实；不引用旧 eligible evaluation 授权 |
 | 6 | 依次处理两份目标，每份最多一个 exact DELETE；复用 Caddy upstream-success/downstream-abort，并在原 executor observation 持久化后真实进程退出，制造 response loss/crash | 总 DELETE ≤2，非目标 DELETE=0；调用前 start/send claim，真实调用无论 outcome 都有 typed CostAllocation；CONFIRMED invocation + UNKNOWN outcome 追加保存，不能覆盖或盲重发 |
@@ -151,13 +157,16 @@ receipt，再处理 quarantine/b。初始 native inventory 必须等于六份 re
 只有本 plan 的 exact absence receipt 可以解释缺失，不能因 HEAD404 或试验批准把缺失条目
 从 expected set 中删掉。复用现有 delete dependency 的 receipt-backed inventory closure；
 不能直接沿用非删除 driver 的“永远六份 present”假设。
-新 profile 还须区分“已可信 NOT_SENT/released 的旧 trial attempt”和“仍 UNKNOWN/可能发送
-的 attempt”，既不复用旧 identity，也不绕过未解决 reservation。以上属于 profile 的必测条件。
+新 profile已区分“可信 NOT_SENT/released 的旧trial”和“UNKNOWN/可能发送”的attempt；
+任何non-trial新attempt存在时，sender停止，复用只读recovery，不盲重发。
 
-预留辅助资源（当前均未创建）：`dpp-lifecycle307-5d2274ee-predelete-postgres` 与
-`dpp-lifecycle307-5d2274ee-predelete-objects` 的独立恢复容器/专属同名卷，
-`dpp-lifecycle307-5d2274ee-predelete-private` 隔离网络；
+当前 backup资源实际已保留：`dpp-lifecycle307-5d2274ee-predelete-objects`、
+`dpp-lifecycle307-5d2274ee-predelete-postgres-02` 及专属同名卷，精确ID见
+[新阶段回执](issue307-d1-reference-preparation.md)。原generation01 replica/network/helper同样保留。
+未来发送辅助资源仍未创建：`dpp-lifecycle307-5d2274ee-reference-delete-gateway`、
+`dpp-lifecycle307-5d2274ee-reference-send-a/b`、
 `dpp-lifecycle307-5d2274ee-delete-recovery-redis` / 同名加 `-data` 的专属卷。
+
 Redis 使用本机已存在 image ID
 `sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499`，
 不凭 mutable tag 选镜像。一次性 backup/admin/executor/read-only worker helpers
@@ -166,7 +175,9 @@ Redis 使用本机已存在 image ID
 
 ## 结果口径与待确认文本
 
-本轮方案阶段：provider I/O=0、Core/runtime mutation=0、DELETE=0。
+初始 proposal-only阶段 provider I/O/Core mutation=0；本轮明确非删除阶段新增60个provider读取
+（源40/独立副本20）、2NOT_SENT+2release、schema68及维护history/cost；DELETE=0。
+新generation02 Core与六版本副本全部STOPPED_RETAINED，maintenance authority封存，原source服务未restart。
 初始 proposal-only READ ONLY query 用了不存在的 pending table，事务失败无 mutation；
 检查实际 schema 后改为 copy operation/output intent-ready 查询成功，
 [operator diagnostic](evidence/issue307-d1/delete-proposal-5d2274ee/operator-readback-diagnostic.json) 保留。
@@ -180,12 +191,15 @@ native pre-ISSUED pause、剩余 in-flight worker fault combinations、archive/r
 
 供后续明确确认的文本（**本轮尚未收到**）：
 
+> CONFIRM_DELETE_EXACT_TWO；execution 614cd9ad-3f9d-40be-b110-3f7cf95f0790。
 > 确认 project dpp-lifecycle307-5d2274ee、provider 1980751b-c50e-4895-93a8-cb55960cd635、
 > incarnation be784eda-96e4-49a9-ae47-eaa3203a2dc5，plan 8f0e9340-18f0-4a73-bdd6-622196a9011a、
 > hash d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc，
 > 仅 dpp-lifecycle307-online/fixture/a.csv@312365a9-f984-43de-b9d5-7e26009ccd82 与
 > dpp-lifecycle307-quarantine/fixture/b.csv@846d0c7c-289d-4667-bc7c-aa04e44357d4 两份源版本，
-> 在方案所有执行前条件通过后，每项最多一次 exact DELETE，并执行本方案只读对账/封存。
-> 四份 survivor、全部其他环境和备份保留，cleanup/解除保护/bypass=0；#318 仍 Draft、不合并。
+> 绑定 source4af0ee88、Linux binary e1d9d35e48210ffe4400edb3476bdc8a51cb71cab9bd05686aedbc791a0a5b30
+> 及 proposal-v2/profile所列hash；在所有执行前条件通过后，每项最多一次exact DELETE，
+> ≤40分钟窗口，并执行本方案只读对账/封存。
+> 四份 survivor、全部其他环境和备份保留；cleanup=0、hold-release=0、bypass=0；#318仍Draft、不合并。
 
 本段是待确认范围的模板，不是批准事实；“确认方案但暂不执行”也不等于允许发送 DELETE。

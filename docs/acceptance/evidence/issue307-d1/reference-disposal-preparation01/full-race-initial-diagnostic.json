@@ -1,0 +1,18 @@
+{
+  "status": "FAIL_TEST_ENVIRONMENT_NOT_MIGRATED",
+  "source_head": "a5ae2885a588a9e99bb9dfc607b3daad22217bee",
+  "command": "go test -race -count=1 -p 1 -json ./...",
+  "package_pass": 82,
+  "package_fail": 7,
+  "test_fail": 55,
+  "race_report_count": 0,
+  "diagnosis": "DSN pointed to fresh empty postgres database. Shared-schema tests need migration up first; isolated lifecycle tests migrated their own scratch databases and passed. Retained source fixture untouched.",
+  "representative_errors": [
+    "relation dataset does not exist (42P01)",
+    "relation data_resource does not exist (42P01)",
+    "function annotation_payload_matches_frozen_schema does not exist (42883)"
+  ],
+  "retry": "Explicit fresh ref307_disposal_4af0ee88 database, migration68 up before full race02. No overwrite/cleanup of original log.",
+  "raw_log_sha256": "5e4c7efc4c0c9f9548777bd1307e88bc108a343dbc3d63d03eeb63811ee8160f",
+  "provider_delete": 0
+}

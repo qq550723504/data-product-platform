@@ -1,0 +1,64 @@
+{
+  "status": "PASS_PERSISTED_ED25519_AND_DATABASE_PROOF_BINDING",
+  "public_key": "48242bf5e61dcb5a616a401af32b9227ddc9799b5a7bd5986e40eeb4a2ebac4b",
+  "nonce": "8501e97f-8e9f-40a5-85c3-5f59719ca0a8",
+  "signed_body_sha256": "b712218094dd09b0650fc042697b023c528262f1f1f7515260303ccfcf6be1c8",
+  "signed_body": {
+    "Nonce": "8501e97f-8e9f-40a5-85c3-5f59719ca0a8",
+    "CheckedAt": "2026-10-14T04:49:11.8340078Z",
+    "Environment": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+    "PlanHash": "d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc",
+    "HelperID": "fb92bdcd150127c50163448de9d918f3a2d9a18e2384274b30febfaf647bdb87",
+    "BinarySHA256": "5e04e88bbd65880a5e65da5795dcdc116021512e04d27a200ec0d03f83e972c8",
+    "ScriptSHA256": "24e1d6d19394208016ee1d9dd0ddaa06669880d2cebae03b4c7996db0303fd1c",
+    "CandidateSHA256": "7c3c327405c62ae376e855ce82ce7e9b1c3ff25bb622fcb265f9989357674207"
+  },
+  "database": {
+    "releases": [
+      {
+        "dispatch_id": "8b9b4d0c-df37-41b5-b3d1-0630deae8675",
+        "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+        "observation_id": "618a48c5-1cbb-4881-8907-02f6ef81418a",
+        "verification_call_id": null
+      },
+      {
+        "dispatch_id": "aa0dc82a-06b4-4b0d-a066-33d19ccc8f45",
+        "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+        "observation_id": "df64b6b3-523a-452e-ade6-9df94618596c",
+        "verification_call_id": null
+      }
+    ],
+    "observations": [
+      {
+        "id": "618a48c5-1cbb-4881-8907-02f6ef81418a",
+        "outcome": "NOT_SENT",
+        "actor_id": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+        "certainty": "NOT_SENT",
+        "attempt_id": "0a86461d-d5c2-4c00-99ae-0d44ac6dde2a",
+        "invoked_at": null,
+        "observed_at": "2026-10-14T04:49:13.734652+00:00",
+        "proof_sha256": "b712218094dd09b0650fc042697b023c528262f1f1f7515260303ccfcf6be1c8",
+        "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+        "principal_ref": "lifecycle-reference-preparation:614cd9ad-3f9d-40be-b110-3f7cf95f0790",
+        "dependency_revision": 85
+      },
+      {
+        "id": "df64b6b3-523a-452e-ade6-9df94618596c",
+        "outcome": "NOT_SENT",
+        "actor_id": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+        "certainty": "NOT_SENT",
+        "attempt_id": "d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9",
+        "invoked_at": null,
+        "observed_at": "2026-10-14T04:49:13.765633+00:00",
+        "proof_sha256": "b712218094dd09b0650fc042697b023c528262f1f1f7515260303ccfcf6be1c8",
+        "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+        "principal_ref": "lifecycle-reference-preparation:614cd9ad-3f9d-40be-b110-3f7cf95f0790",
+        "dependency_revision": 86
+      }
+    ],
+    "provider_costs": 0
+  },
+  "provider_delete": 0,
+  "signer_private_key_persisted": false,
+  "verification": "Python cryptography Ed25519 verify of exact persisted base64 body/signature; actual READ ONLY DB proof hash+2observations/2releases/no provider costs"
+}

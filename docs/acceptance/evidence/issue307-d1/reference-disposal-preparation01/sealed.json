@@ -1,0 +1,9 @@
+{
+  "status": "SEALED_RETAINED",
+  "provider_delete": 0,
+  "source_restart": 0,
+  "source_gateway_changed": 0,
+  "business_windows": "SEALED",
+  "new_send_permission_enabled": false,
+  "cleanup": 0
+}

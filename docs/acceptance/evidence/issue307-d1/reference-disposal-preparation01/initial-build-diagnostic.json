@@ -1,0 +1,13 @@
+{
+  "failed_source_head": "a5ae2885a588a9e99bb9dfc607b3daad22217bee",
+  "stage": "preflight before build",
+  "status": "FAILED_BEFORE_PREPARATION_CREATED",
+  "cause": "PowerShell retained-service map concatenation collapsed two tuple members; fixed by explicit parentheses in f87af056",
+  "control_directory_existed": false,
+  "public_directory_existed": false,
+  "service_mutation": 0,
+  "core_mutation": 0,
+  "provider_io": 0,
+  "provider_delete": 0,
+  "retry": "One explicit fresh build after source correction, PASS at f87af056"
+}

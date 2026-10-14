@@ -1,7 +1,9 @@
 # #307 D1：5d2274ee 非删除准备阶段
 
 2026-10-14，接续[精确删除方案](issue307-d1-delete-proposal.md)。
-本阶段 **PASS_READ_ONLY_PREPARATION / PARTIAL_PREDELETE_READINESS**。
+本文记录历史候选/Core generation01阶段 **PASS_READ_ONLY_PREPARATION / PARTIAL_PREDELETE_READINESS**。
+当前原生六版本恢复、server no-send已完成，见[新非删除阶段](issue307-d1-reference-preparation.md)；
+以下NOT_RUN/候选未应用/52calls/1377rows均保留其原时点语义。
 #318 保持 Draft，未收到新的 exact-list 删除确认，真实 DELETE / provider I/O=0。
 没有创建 enabled delete permission、没有追加 NOT_SENT 或释放原 reservation。
 
