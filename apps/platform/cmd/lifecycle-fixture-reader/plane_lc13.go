@@ -47,7 +47,11 @@ func (r lc13CrashReader) ReadVersion(ctx context.Context, id uuid.UUID) (io.Read
 	if e != nil {
 		return nil, e
 	}
-	if e = write(r.c, "lc13-crash-"+r.execution.String()+".json", map[string]any{"execution": r.execution, "input": id, "after_native_get": true, "at": time.Now().UTC(), "exit": 95, "owner_stop": false}); e != nil {
+	taskID, ok := asynq.GetTaskID(ctx)
+	if !ok || taskID == "" {
+		return nil, errors.New("crash must run in real Asynq task")
+	}
+	if e = write(r.c, "lc13-crash-"+r.execution.String()+".json", map[string]any{"execution": r.execution, "task_id": taskID, "input": id, "after_native_get": true, "at": time.Now().UTC(), "exit": 95, "owner_stop": false}); e != nil {
 		return nil, e
 	}
 	os.Exit(95)
@@ -183,8 +187,23 @@ func planeLC13(ctx context.Context, c config, pool *pgxpool.Pool, original []dom
 			if e != nil {
 				return e
 			}
+			taskID, ok := asynq.GetTaskID(x)
+			if !ok || taskID == "" {
+				return errors.New("real task identity missing")
+			}
+			beforeExecution, err := repo.GetExecution(x, id)
+			if err != nil {
+				return err
+			}
+			entry := map[string]any{"task_id": taskID, "execution": id, "status_before": beforeExecution.Status, "mode": mode, "at": time.Now().UTC()}
+			if err = write(c, "lc13-task-entry-"+uuid.NewString()+".json", entry); err != nil {
+				return err
+			}
 			e = handler.Handle(x, t)
 			if e == nil {
+				if err = write(c, "lc13-task-return-"+uuid.NewString()+".json", entry); err != nil {
+					return err
+				}
 				delivered <- id
 			}
 			return e
