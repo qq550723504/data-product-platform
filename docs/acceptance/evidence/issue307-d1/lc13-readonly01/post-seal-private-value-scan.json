@@ -1,0 +1,7 @@
+{
+  "previous_scan": "private-value-scan.json",
+  "known_json_values": 16,
+  "public_files": 90,
+  "findings": [],
+  "post_scan_new_files": "Review summary and manifest will contain only public hashes/claims"
+}

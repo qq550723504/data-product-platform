@@ -16,7 +16,7 @@
 | 历史与成本 | 原六 pins 和两条 READ_PINNED start rows 原样保留。fresh 环境34次 native calls/observations/typed costs，逐调用恰一次 allocation。另有4条 Core POC_ESTIMATE engine-invocation成本，其中2条是恢复活动；不是新增物理 GET。2组恢复 Evidence/Audit/Outbox 保留。 | [READ ONLY 账务](evidence/issue307-d1/lc13-readonly01/lc13-accounting-readonly.json)、[SQL](evidence/issue307-d1/lc13-readonly01/lc13-accounting-readonly.sql) |
 | 5d 六 exact versions | native checkpoint reader/inspector复查六份 bytes/hash/hold/retention 和全 inventory，与原 after 证明逐项一致。新增20个维护调用只写新 auditCore，payload 留私有目录，源 journal仍92。 | [six versions](evidence/issue307-d1/lc13-readonly01/5d-03/native-six-version.json)、[audit cost](evidence/issue307-d1/lc13-readonly01/5d-03/audit-costs.json) |
 | 5d 源 Core只读 / 新恢复 | 精确源 PG/MinIO身份、images、durable volumes、internal网络/0 ports、封存配置核对后启动；原gateway始终stopped。源194表/1879行before/after指纹完全相等。新 pg_dump→auditCore restore、fixture SCRAM role和owner/ACL hashes一致；未迁移/写入旧restore。 | [before](evidence/issue307-d1/lc13-readonly01/5d-03/source-before.json)、[restore](evidence/issue307-d1/lc13-readonly01/5d-03/audit-restored.json)、[after](evidence/issue307-d1/lc13-readonly01/5d-03/source-after.json) |
-| 旧备份与最终封存 | 原 native tar/core dump hashes保持不变，不覆盖历史备份。成功阶段后原PG/MinIO/gateway与新auditCore/helper全部exited；业务/deletion配置未改。后续PG-only READ ONLY current readback指纹仍相同并再次停止。 | [checkpoint](evidence/issue307-d1/lc13-readonly01/5d-03/readonly-checkpoint.json)、[最终停止](evidence/issue307-d1/lc13-readonly01/5d-03/retained-final-state.json)、[current readback](evidence/issue307-d1/lc13-readonly01/5d-03/current-core-readback.json) |
+| 旧备份与最终封存 | 原 native tar/core dump hashes保持不变，不覆盖历史备份。成功阶段后原PG/MinIO/gateway与新auditCore/helper全部exited；业务/deletion配置未改。后续PG-only READ ONLY读回业务投影/counts并再次停止。 | [checkpoint](evidence/issue307-d1/lc13-readonly01/5d-03/readonly-checkpoint.json)、[最终停止](evidence/issue307-d1/lc13-readonly01/5d-03/retained-final-state.json)、[current readback](evidence/issue307-d1/lc13-readonly01/5d-03/current-core-readback.json) |
 
 LC-13 新环境 run `04a6ff55-f366-4a6e-8a1b-9cc79bea15e0`、workspace
 `cdafbd76-a3e2-4da6-8192-f43bcb324f1e`，schema68/base074a33ba；网络
@@ -24,6 +24,11 @@ LC-13 新环境 run `04a6ff55-f366-4a6e-8a1b-9cc79bea15e0`、workspace
 原四份 fixture和一份 Entity standardized输出均保留；表内 processing PUT1/output1是setup的Entity输出，
 两份崩溃 Execution 的 PUT/output均0。当前所有业务窗口false、gateway全403，
 六个未知 stop pins有意保留。没有新的 owner终止协议或自动解 pin。
+
+三个新auditCore的只读维护配置在服务停止后由host单独封存为 PreparationEnabled=false，
+原配置副本私有保留。源/旧restore配置未动，0 provider/SQL动作；见
+[维护窗口封存](evidence/issue307-d1/lc13-readonly01/audit-maintenance-sealed.json)。
+这项最后的host封存不声称由本轮driver finally自动完成。
 
 复用现有 Ports/SPI、queue/Handler、PinnedEngine、NativeReconciler、shared fence、session lock、
 call journal、Cost/Audit/Evidence/Outbox、MinIO 与 pg_dump/pg_restore；生产 guards/recovery未改。
