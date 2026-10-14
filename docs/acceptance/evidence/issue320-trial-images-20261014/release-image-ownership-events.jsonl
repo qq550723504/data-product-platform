@@ -1,0 +1,5 @@
+{"event": "BUILD_INTENT", "image_id": null, "tag": "dpp-pgi-minio:trial-abd8c7e9a2c04c4ba7b5e127f0013079"}
+{"event": "BOUND", "image_id": "sha256:cbcbc7a75ec2763e17b7733ab8cc091b94f11a0d1b682b720c142c4ee84c2f6c", "owned_digests": ["dpp-pgi-minio@sha256:cbcbc7a75ec2763e17b7733ab8cc091b94f11a0d1b682b720c142c4ee84c2f6c"], "tag": "dpp-pgi-minio:trial-abd8c7e9a2c04c4ba7b5e127f0013079"}
+{"event": "DELETE_INTENT", "image_id": "sha256:cbcbc7a75ec2763e17b7733ab8cc091b94f11a0d1b682b720c142c4ee84c2f6c", "tag": "dpp-pgi-minio:trial-abd8c7e9a2c04c4ba7b5e127f0013079"}
+{"event": "CLEANUP_OBSERVATION", "image_id": "sha256:cbcbc7a75ec2763e17b7733ab8cc091b94f11a0d1b682b720c142c4ee84c2f6c", "image_state": "ABSENT", "reason": "OWNED_REF_REMOVED", "status": "PASS", "tag": "dpp-pgi-minio:trial-abd8c7e9a2c04c4ba7b5e127f0013079", "tag_state": "ABSENT"}
+{"event": "CLEANUP_OBSERVATION", "image_id": "sha256:cbcbc7a75ec2763e17b7733ab8cc091b94f11a0d1b682b720c142c4ee84c2f6c", "image_state": "ABSENT", "reason": "ALREADY_ABSENT", "status": "PASS", "tag": "dpp-pgi-minio:trial-abd8c7e9a2c04c4ba7b5e127f0013079", "tag_state": "ABSENT"}

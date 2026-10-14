@@ -1,0 +1,4 @@
+{"event": "BUILD_INTENT", "image_id": null, "tag": "dpp-pgi-minio:trial-9f1a095a48f345e7a322eba4ff0acbd2"}
+{"event": "BOUND", "image_id": "sha256:30e899d366b199944e1022a86a6eca52b7ce4d6d8bd2859642be62bff23337c6", "tag": "dpp-pgi-minio:trial-9f1a095a48f345e7a322eba4ff0acbd2"}
+{"event": "CLEANUP_OBSERVATION", "image_id": "sha256:30e899d366b199944e1022a86a6eca52b7ce4d6d8bd2859642be62bff23337c6", "reason": "ADDITIONAL_REFERENCES", "status": "BLOCKED", "tag": "dpp-pgi-minio:trial-9f1a095a48f345e7a322eba4ff0acbd2"}
+{"event": "CLEANUP_OBSERVATION", "image_id": "sha256:30e899d366b199944e1022a86a6eca52b7ce4d6d8bd2859642be62bff23337c6", "reason": "ADDITIONAL_REFERENCES", "status": "BLOCKED", "tag": "dpp-pgi-minio:trial-9f1a095a48f345e7a322eba4ff0acbd2"}

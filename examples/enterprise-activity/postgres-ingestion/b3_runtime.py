@@ -24,7 +24,7 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
     (output/"ownership.json").write_text(json.dumps({"run_id":trial.run_id,"private":str(private),"source_private":str(trial.private),"identity":trial.identity}),encoding="utf-8")
     names=[];networks=[];volumes=[];processes=[];report={};web_gateway=None
     try:
-        binary,minio_image=prepare_binary(cache,"dpp-pgi-minio:trial-"+trial.run_id.replace("-", ""))
+        binary,minio_image=prepare_binary(cache,trial.images.tag("minio"),owner=trial.images)
         trial.setup()
         report["runtime"]=trial.report["runtime"]
         report["minio_binary_sha256"]=hashlib.sha256(binary.read_bytes()).hexdigest()
@@ -121,7 +121,10 @@ def run(output,cache,binary_prefix="pgi-b3",metadata_url=None,metadata_token_fil
                 if os.name=="nt":subprocess.run(["taskkill","/PID",str(p.pid),"/T","/F"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
                 else:p.terminate()
         for name in reversed(names):command(["docker","stop","--time","20",name],check=False)
-        trial.cleanup()
+        try:
+            trial.cleanup()
+        finally:
+            trial.save()
         # Containers, networks, volumes, private config and staging all survive.
         # This is retention, not backup; never put review/scratch DBs in this Core.
         # Preserve private files until explicit local trial cleanup; they are never committed.

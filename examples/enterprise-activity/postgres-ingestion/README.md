@@ -6,6 +6,18 @@ Human explanation acceptance was explicitly deferred by the user. Healthy
 OpenMetadata binding/reconnect and remote CI remain NOT_RUN. The earlier B1/B2
 records below keep their original verification boundaries.
 
+Current trial image ownership and retain/non-retain cleanup follow the
+[#320 contract](../../../docs/acceptance/issue320-trial-image-lifecycle.md).
+New Hop/MinIO derivatives carry run/retention/owner labels and an actual ID
+binding in `image-ownership.json`; decisions append to the adjacent event file.
+Retained runs preserve images. Non-retained runs remove only their exclusive
+owned tag after proving matching ownership and no additional refs/consumers;
+unknown/changed/shared state blocks cleanup. Public/base images and build cache
+remain. Component receipts distinguish image refs from containers, networks and
+temporary credentials; no full cleanup PASS is emitted for blocked images.
+This single-writer namespace contract is not a global Docker compare/delete
+fence. No previous run is adopted and no existing retained environment is cleaned.
+
 This is the bounded B1 engine trial defined by [the existing contract](../../../docs/architecture/postgres-ingestion-v1.md). It runs PostgreSQL and Hop, loads the existing synthetic fixtures, and validates JDBC extraction into local staging. It creates no Core DatasetVersion, certification, delivery or production deployment.
 
 The [2026-10-11 recorded local run](results/2026-10-11/report.json) passed PGI-01–04 and the real reader privilege checks. Its implementation hashes use Git's LF source encoding; CSV hashes always cover the actual exported bytes. Its `base_sha` is the source checkout baseline, not a claim of remote CI approval.
