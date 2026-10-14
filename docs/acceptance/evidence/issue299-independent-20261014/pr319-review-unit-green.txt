@@ -1,0 +1,10 @@
+test_absent_mixed_and_present_aliases_reach_the_checks (__main__.ImageIsolationRunnerContract.test_absent_mixed_and_present_aliases_reach_the_checks) ... ok
+test_command_override_restored_after_trial_failure (__main__.ImageIsolationRunnerContract.test_command_override_restored_after_trial_failure) ... ok
+test_created_removed_or_repointed_alias_is_rejected (__main__.ImageIsolationRunnerContract.test_created_removed_or_repointed_alias_is_rejected) ... ok
+test_daemon_error_is_not_missing_image (__main__.ImageIsolationRunnerContract.test_daemon_error_is_not_missing_image) ... ok
+test_missing_error_for_another_reference_is_not_swallowed (__main__.ImageIsolationRunnerContract.test_missing_error_for_another_reference_is_not_swallowed) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.048s
+
+OK

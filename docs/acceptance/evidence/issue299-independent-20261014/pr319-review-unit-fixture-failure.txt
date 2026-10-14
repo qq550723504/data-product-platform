@@ -1,0 +1,95 @@
+{"status": "PASS", "checks": 5, "runId": "00000000-0000-0000-0000-000000000999", "minioImages": ["sha256:0000000000000000000000000000000000000000000000000000000000000001", "sha256:0000000000000000000000000000000000000000000000000000000000000002"], "hopImage": "sha256:00000000000000000000000000000000000000000000000000000000000003e7"}
+{"status": "PASS", "checks": 5, "runId": "00000000-0000-0000-0000-000000000999", "minioImages": ["sha256:0000000000000000000000000000000000000000000000000000000000000001", "sha256:0000000000000000000000000000000000000000000000000000000000000002"], "hopImage": "sha256:00000000000000000000000000000000000000000000000000000000000003e7"}
+{"status": "PASS", "checks": 5, "runId": "00000000-0000-0000-0000-000000000999", "minioImages": ["sha256:0000000000000000000000000000000000000000000000000000000000000001", "sha256:0000000000000000000000000000000000000000000000000000000000000002"], "hopImage": "sha256:00000000000000000000000000000000000000000000000000000000000003e7"}
+..FFFFF
+======================================================================
+FAIL: test_created_removed_or_repointed_alias_is_rejected (__main__.ImageIsolationRunnerContract.test_created_removed_or_repointed_alias_is_rejected) (mutation='create')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 130, in test_created_removed_or_repointed_alias_is_rejected
+    self.invoke(ControlledDocker(self.binary, aliases, mutation=mutation))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 65, in run
+    assert before==after,'trial rewrote shared image tags'
+           ^^^^^^^^^^^^^
+AssertionError: trial rewrote shared image tags
+
+======================================================================
+FAIL: test_created_removed_or_repointed_alias_is_rejected (__main__.ImageIsolationRunnerContract.test_created_removed_or_repointed_alias_is_rejected) (mutation='remove')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 130, in test_created_removed_or_repointed_alias_is_rejected
+    self.invoke(ControlledDocker(self.binary, aliases, mutation=mutation))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 65, in run
+    assert before==after,'trial rewrote shared image tags'
+           ^^^^^^^^^^^^^
+AssertionError: trial rewrote shared image tags
+
+======================================================================
+FAIL: test_created_removed_or_repointed_alias_is_rejected (__main__.ImageIsolationRunnerContract.test_created_removed_or_repointed_alias_is_rejected) (mutation='repoint')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 130, in test_created_removed_or_repointed_alias_is_rejected
+    self.invoke(ControlledDocker(self.binary, aliases, mutation=mutation))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 65, in run
+    assert before==after,'trial rewrote shared image tags'
+           ^^^^^^^^^^^^^
+AssertionError: trial rewrote shared image tags
+
+======================================================================
+FAIL: test_daemon_error_is_not_missing_image (__main__.ImageIsolationRunnerContract.test_daemon_error_is_not_missing_image)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 117, in test_daemon_error_is_not_missing_image
+    self.invoke(docker)
+    ~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 40, in run
+    before=shared_image_snapshot(original)
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 19, in shared_image_snapshot
+    smoke.require(result.returncode == 1 and result.stderr.strip() == missing,
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  'cannot inspect shared image alias: ' + ref)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\smoke.py", line 47, in require
+    raise AssertionError(message)
+AssertionError: cannot inspect shared image alias: dpp-pgi-hop-jdbc:42.7.14
+
+======================================================================
+FAIL: test_missing_error_for_another_reference_is_not_swallowed (__main__.ImageIsolationRunnerContract.test_missing_error_for_another_reference_is_not_swallowed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 123, in test_missing_error_for_another_reference_is_not_swallowed
+    self.invoke(docker)
+    ~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_unit_test.py", line 99, in invoke
+    runner.run(output, self.directory / 'cache', '10.250.210.0/24')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 40, in run
+    before=shared_image_snapshot(original)
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\image_isolation_test.py", line 19, in shared_image_snapshot
+    smoke.require(result.returncode == 1 and result.stderr.strip() == missing,
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  'cannot inspect shared image alias: ' + ref)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\issue299-independent-20261014\data-product-platform\examples\enterprise-activity\postgres-ingestion\smoke.py", line 47, in require
+    raise AssertionError(message)
+AssertionError: cannot inspect shared image alias: dpp-pgi-hop-jdbc:42.7.14
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.042s
+
+FAILED (failures=5)

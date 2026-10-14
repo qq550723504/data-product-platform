@@ -1,6 +1,6 @@
 # Issue #299：当前 main 独立技术验收
 
-2026-10-14，Asia/Singapore。本轮六项有限业务技术条件 **PASS**，均有本次实际运行证据；独立环境镜像保留发现的有效缺陷已完成最小修复、真实回归及两份原 OCI 镜像身份恢复。原查询失败回执保留，后续恢复另行追加 **PASS / EXACT_ORIGINAL_OCI_IDS_RESTORED**。修复为 Draft PR #319；其代码 head 的 11 项 CI 已通过，尚无 review submission。**总体验收尚未收口**：非开发者人工解释 **NOT_RUN / 暂缓**，#299 仍 OPEN；原合成 Core `dpp-pgi-b3-core-bc776a791192` 继续 **FAIL / NOT_RESTORED**，本次新库或镜像恢复不证明旧 Core 历史恢复。
+2026-10-14，Asia/Singapore。本轮六项有限业务技术条件 **PASS**，均有本次实际运行证据；独立环境镜像保留发现的有效缺陷已完成最小修复、真实回归及两份原 OCI 镜像身份恢复。原查询失败回执保留，后续恢复另行追加 **PASS / EXACT_ORIGINAL_OCI_IDS_RESTORED**。修复为 Draft PR #319；独立 AI 初审发现的 P2 回归前置条件问题已修复，修复验证另行记录，最终 exact-head 复审与 CI 由 PR checkpoint 绑定。**总体验收尚未收口**：非开发者人工解释 **NOT_RUN / 暂缓**，#299 仍 OPEN；原合成 Core `dpp-pgi-b3-core-bc776a791192` 继续 **FAIL / NOT_RESTORED**，本次新库或镜像恢复不证明旧 Core 历史恢复。
 
 本报告复用 AGENTS.md、#299 以及 C1/C2/C3 的有限契约。旧报告用于确定规则和边界，旧实跑、CI 和 Issue 勾选均未计入本次实跑。真实 Edge 操作由 AI 完成，不能替代非开发者人工解释验收。范围为固定合成 PostgreSQL 三表、既有 Hop/Native processing、OpenMetadata 原生 PostgreSQL Connector、Core Commands/Worker/Outbox、质量/权利/认证与 DIRECT_DATA；没有真实客户或政府数据、付费服务、生产部署、provider DELETE 或 cleanup。
 
@@ -57,7 +57,9 @@ Hop 2.19.0，Java 21.0.12；OpenMetadata 2.0.5。全部 10 个实际容器 image
 
 最小修复使用 Docker 原生能力：每轮唯一 trial 标签，build 后解析 immutable image ID，B1/B2/B3/存储试跑的容器均按 ID 创建，避免构建覆盖共享别名或后续容器读取变化的标签。所有已知调用方同步更新，没有兼容 shim、新组件、Core/门禁或 SDK 修改。修复文件与 #307 活跃写域不重叠。另一个新命名卷运行 `857d0db9-8326-4ee1-8f94-f8c06bbeaf25` 的真实 Docker 回归通过 5 项：两次 MinIO build 后前一镜像仍可查询；容器配置固定 image ID；Hop 使用独立 tag/ID；真实 6/10/14 抽取 PGI-01/02 的原值、编码与重复字节 hash 通过；共享别名前后相同。该回归没有创建 Core 业务事实或 cleanup，未冒充补跑完整 C1/C2。候选源码 hash 见 [image-isolation-regression.json](evidence/issue299-independent-20261014/image-isolation-regression.json)。修复提交 Draft，不自动 Ready 或 merge。
 
-Draft 修复代码 head `d9cecc187e2d51609a208dafcde232495cc0d6c2` 的 run `38554333469` 为 `event=pull_request`、11/11 SUCCESS，见 [draft-pr319-ci-d9cecc1.json](evidence/issue299-independent-20261014/draft-pr319-ci-d9cecc1.json)。后续恢复只追加报告和证据，五份修复源码字节不变；PR CI 不冒充 merge/main CI。尚无 review submission，不把作者核对或 CI 当作独立批准。保留应用在 Edge 刷新后仍显示 DatasetVersion/Certification ALLOWED、Current Entitlement BLOCKED、下载禁用；来源保持 REVOKED。
+Draft 修复代码 head `d9cecc187e2d51609a208dafcde232495cc0d6c2` 的 run `38554333469` 为 `event=pull_request`、11/11 SUCCESS，见 [draft-pr319-ci-d9cecc1.json](evidence/issue299-independent-20261014/draft-pr319-ci-d9cecc1.json)。截至 `39871968` 的 OCI 恢复阶段只追加报告和证据，五份修复源码字节不变；该 head 的 run `38557969029` 也为 11/11 SUCCESS。PR CI 不冒充 merge/main CI，不把作者核对、AI 评审或 CI 当成人类批准。保留应用在该阶段 Edge 刷新后显示 DatasetVersion/Certification ALLOWED、Current Entitlement BLOCKED、下载禁用；来源保持 REVOKED。
+
+[独立 AI 初审](evidence/issue299-independent-20261014/pr319-independent-review-39871968.md)对 `39871968` 的源码、公开证据和实际原生归档只读核对，发现一个 P2 blocker：新增隔离回归在缺失旧共享标签时提前失败。现在 snapshot 明确保存 absence / image ID，只接纳对应标签的原生 No such image；其他 inspect 错误仍拒绝，标签新增、删除或改指向均使回归失败。临时 command override 在 trial 的 finally 中恢复。五项受控单元测试（九个场景）已加入既有 CI；这些响应替身不作为 Native Provider 验收。另一个独立 namespace/subnet `10.249.203.0/24` 的真实 run `b84930ef-5279-4bc4-b5a1-fab055edc1b5` 通过五项镜像/抽取检查，真实 absent-ref 读取也通过；新证据与候选源码 hash 见 [pr319-review-fix-regression.json](evidence/issue299-independent-20261014/pr319-review-fix-regression.json)。旧 84 份回执、原 red、单元测试首次异常类型预期错误和最终 green 均分别保留。未重跑 Core 业务，未改变旧环境；最终修复 head 的复审结论和 CI 见 PR 的 closure checkpoint。
 
 当前环境观察另见 [metadata-session-expiry.json](evidence/issue299-independent-20261014/metadata-session-expiry.json)：本轮 metadata JWT 到期，原生治理读取返回 401，来源页面按现有规则显示 UNKNOWN；最近请求仍为 DENIED / CURRENT_AUTHORITY_DENIED。该读取没有请求 Connector 扫描，没有续期来源授权或改变历史事实；过去 11 次物理扫描与当前 availability 分开记录。
 

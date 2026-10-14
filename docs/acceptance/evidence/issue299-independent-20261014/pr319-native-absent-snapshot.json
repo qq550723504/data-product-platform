@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "method": "native Docker image inspect, two unique never-built refs, no Docker writes",
+  "before": {
+    "dpp-pr319-absent-snapshot:47e8782aad99485695365811e1a68514": null,
+    "dpp-pr319-absent-snapshot:7d0978eaccf84440a9f161462d3d0aef": null
+  },
+  "after": {
+    "dpp-pr319-absent-snapshot:47e8782aad99485695365811e1a68514": null,
+    "dpp-pr319-absent-snapshot:7d0978eaccf84440a9f161462d3d0aef": null
+  },
+  "creates": 0,
+  "tagMutations": 0,
+  "cleanupCalls": 0
+}

@@ -8,6 +8,21 @@ from pathlib import Path
 import smoke,storage_smoke
 from retained_runtime import DurableStorage,private_directory
 
+SHARED_IMAGE_ALIASES = ('dpp-pgi-hop-jdbc:42.7.14', 'dpp-pgi-minio:2025-10-15')
+
+def shared_image_snapshot(command):
+    snapshot = {}
+    for ref in SHARED_IMAGE_ALIASES:
+        result = command(['docker', 'image', 'inspect', ref], check=False)
+        if result.returncode:
+            missing = ('Error response from daemon: No such image: ' + ref).encode()
+            smoke.require(result.returncode == 1 and result.stderr.strip() == missing,
+                          'cannot inspect shared image alias: ' + ref)
+            snapshot[ref] = None
+        else:
+            snapshot[ref] = json.loads(result.stdout)[0]['Id']
+    return snapshot
+
 def run(output,cache,subnet):
     output.mkdir(parents=True,exist_ok=False)
     original=smoke.command
@@ -21,10 +36,8 @@ def run(output,cache,subnet):
     def command(args,*pos,**kw):
         if args[:3]==['docker','network','create']:args=args[:3]+['--subnet',subnet]+args[3:]
         return original(args,*pos,**kw)
-    smoke.command=command
     def image(ref):return json.loads(original(['docker','image','inspect',ref]).stdout)[0]['Id']
-    shared=['dpp-pgi-hop-jdbc:42.7.14','dpp-pgi-minio:2025-10-15']
-    before={ref:image(ref) for ref in shared}
+    before=shared_image_snapshot(original)
     native=[]
     for _ in range(2):
         tag='dpp-pgi-minio:trial-'+uuid.uuid4().hex
@@ -42,19 +55,22 @@ def run(output,cache,subnet):
     durable=DurableStorage(output,private,smoke.REPO/'examples/lifecycle-d1/durable-storage.ps1')
     trial=smoke.Trial(output,retain=True,durable_start=durable.start)
     try:
+        smoke.command=command
         trial.setup()
         assert trial.engine_image==image('dpp-pgi-hop-jdbc:trial-'+trial.run_id.replace('-',''))
         configured=json.loads(original(['docker','inspect',trial.hop]).stdout)[0]
         assert configured['Image']==trial.engine_image and configured['Config']['Image']==trial.engine_image
         trial.fidelity()
-        assert before=={ref:image(ref) for ref in shared},'trial rewrote shared image tags'
-        report={'status':'PASS','sharedBefore':before,'sharedAfter':{ref:image(ref) for ref in shared},'minio':native,
+        after=shared_image_snapshot(original)
+        assert before==after,'trial rewrote shared image tags'
+        report={'status':'PASS','sharedBefore':before,'sharedAfter':after,'minio':native,
             'hopImage':trial.engine_image,'hopContainer':trial.hop,'sourceContainer':trial.pg,'trialRunId':trial.run_id,
             'sourcePrivate':str(trial.private),'nativeExtraction':trial.report.get('checks',trial.report),'cleanup':0,'providerDelete':0,
             'checks':['two fresh MinIO tags retain the first immutable image','container Config.Image pins resolved ID','Hop uses unique run tag and immutable ID','real Hop 6/10/14 extraction matches original strings and repeated byte hashes','shared legacy aliases unchanged']}
         (output/'image-isolation.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
         print(json.dumps({'status':'PASS','checks':len(report['checks']),'runId':trial.run_id,'minioImages':[v['imageId'] for v in native],'hopImage':trial.engine_image}),flush=True)
     finally:
+        smoke.command=original
         if trial.proxy:trial.proxy.shutdown();trial.proxy.server_close()
         # No cleanup: runtime namespaces, providers, volumes, credentials and files survive.
 

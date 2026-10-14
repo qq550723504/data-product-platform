@@ -1,0 +1,99 @@
+{
+  "status": "PASS",
+  "sharedBefore": {
+    "dpp-pgi-hop-jdbc:42.7.14": "sha256:be42620c3acb0a4b23f56dce36824c3eea14958eef1a28a4a717fbbdb52e436b",
+    "dpp-pgi-minio:2025-10-15": "sha256:4b343185d3ce9148dbcb2ca720379faa793a140d54d6998b1cfe26f514fbb7fa"
+  },
+  "sharedAfter": {
+    "dpp-pgi-hop-jdbc:42.7.14": "sha256:be42620c3acb0a4b23f56dce36824c3eea14958eef1a28a4a717fbbdb52e436b",
+    "dpp-pgi-minio:2025-10-15": "sha256:4b343185d3ce9148dbcb2ca720379faa793a140d54d6998b1cfe26f514fbb7fa"
+  },
+  "minio": [
+    {
+      "tag": "dpp-pgi-minio:trial-9cd0b782e4104f639d90ee2483ec374a",
+      "imageId": "sha256:43289072c63cd9b770e6d4ed9f773b1ce19dae931a0bf3c0bd2bc39615d45faf",
+      "container": "dpp-image-pin-a0837ab7fbaf457bb25785a00ca14066",
+      "binarySha256": "fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8",
+      "version": "minio version DEVELOPMENT.GOGET (commit-id=9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a)\nRuntime: go1.26.5 linux/amd64\nLicense: GNU AGPLv3 - https://www.gnu.org/licenses/agpl-3.0.html\nCopyright: 2015-0000 MinIO, Inc."
+    },
+    {
+      "tag": "dpp-pgi-minio:trial-df1fcbf8f58b461aaff66ec902bc57bb",
+      "imageId": "sha256:e6569a6e7370669d7a2e55f537d348d4b0a03e894a2bd65b734c3fb346b87e2f",
+      "container": "dpp-image-pin-abbbb7ed2f61455a89f4d68faa7bcc24",
+      "binarySha256": "fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8",
+      "version": "minio version DEVELOPMENT.GOGET (commit-id=9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a)\nRuntime: go1.26.5 linux/amd64\nLicense: GNU AGPLv3 - https://www.gnu.org/licenses/agpl-3.0.html\nCopyright: 2015-0000 MinIO, Inc."
+    }
+  ],
+  "hopImage": "sha256:933625c15e8b6c7867b6ee01049dca016b01f7fba419fa9638c7c7279eff94aa",
+  "hopContainer": "dpp-pgi-b84930ef5279-hop",
+  "sourceContainer": "dpp-pgi-b84930ef5279-source",
+  "trialRunId": "b84930ef-5279-4bc4-b5a1-fab055edc1b5",
+  "sourcePrivate": "C:\\Users\\Henry\\AppData\\Local\\Codex\\retained-trials\\dpp-pgi-private-9lwmfk6h",
+  "nativeExtraction": {
+    "PGI-01": {
+      "status": "PASS",
+      "detail": "real JDBC 6/10/14 rows; every original field equal; repeated extraction byte hashes equal"
+    },
+    "PGI-02": {
+      "status": "PASS",
+      "detail": {
+        "preserved": [
+          "UTF-8",
+          "quotes",
+          "comma",
+          "LF within field",
+          "surrounding spaces",
+          "empty string",
+          "original dates",
+          "negative energy"
+        ],
+        "rejected_before_dispatch": [
+          "null",
+          "extra-column",
+          "missing-column",
+          "type-drift",
+          "unknown-schema"
+        ]
+      }
+    }
+  },
+  "cleanup": 0,
+  "providerDelete": 0,
+  "checks": [
+    "two fresh MinIO tags retain the first immutable image",
+    "container Config.Image pins resolved ID",
+    "Hop uses unique run tag and immutable ID",
+    "real Hop 6/10/14 extraction matches original strings and repeated byte hashes",
+    "shared legacy aliases unchanged"
+  ],
+  "candidateSources": {
+    ".github/workflows/ci.yml": {
+      "actualSourceSha256": "fc4f795e23aaac0420dc4cfe8e39c4d5d188c337a8e49bf567801f7ed7dc8b84",
+      "UTF8LFSourceSha256": "5d57f63e72ef43fe88c77af0e0b699d9ed48d356bcf5fc1df64cb728267e84f0"
+    },
+    "examples/enterprise-activity/postgres-ingestion/smoke.py": {
+      "actualSourceSha256": "052d2db4ebcd193865886de06ec25b3aa49297e38af43eb8917cdfa67d2e7b7e",
+      "UTF8LFSourceSha256": "052d2db4ebcd193865886de06ec25b3aa49297e38af43eb8917cdfa67d2e7b7e"
+    },
+    "examples/enterprise-activity/postgres-ingestion/storage_smoke.py": {
+      "actualSourceSha256": "9651bee71cced3cc60bfcfa2595e5025d9d199406e49cbe485ffefb9476a908f",
+      "UTF8LFSourceSha256": "9651bee71cced3cc60bfcfa2595e5025d9d199406e49cbe485ffefb9476a908f"
+    },
+    "examples/enterprise-activity/postgres-ingestion/b2_smoke.py": {
+      "actualSourceSha256": "4519afbc23790f61f405f79d52b9ec99fa3c3ccff2c260d205790c2a9450a28a",
+      "UTF8LFSourceSha256": "4519afbc23790f61f405f79d52b9ec99fa3c3ccff2c260d205790c2a9450a28a"
+    },
+    "examples/enterprise-activity/postgres-ingestion/b3_runtime.py": {
+      "actualSourceSha256": "828f5133210969bbc830406727e67f58d75e181a0d70d40e717358f879fc6def",
+      "UTF8LFSourceSha256": "828f5133210969bbc830406727e67f58d75e181a0d70d40e717358f879fc6def"
+    },
+    "examples/enterprise-activity/postgres-ingestion/image_isolation_test.py": {
+      "actualSourceSha256": "eae4716eef7fae8f3bf0443744bde8d20edfff4a9393b896d251ec22d050dab1",
+      "UTF8LFSourceSha256": "eae4716eef7fae8f3bf0443744bde8d20edfff4a9393b896d251ec22d050dab1"
+    },
+    "examples/enterprise-activity/postgres-ingestion/image_isolation_unit_test.py": {
+      "actualSourceSha256": "7c91e33496edabf5799a07284a1a6aecb091f5d78b8c1de22cd87f32e8ae02f4",
+      "UTF8LFSourceSha256": "7c91e33496edabf5799a07284a1a6aecb091f5d78b8c1de22cd87f32e8ae02f4"
+    }
+  }
+}
