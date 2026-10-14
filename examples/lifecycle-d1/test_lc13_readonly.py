@@ -1,4 +1,5 @@
 import copy, importlib.util, json, subprocess, sys, unittest
+from unittest.mock import patch
 from pathlib import Path
 SPEC=importlib.util.spec_from_file_location('lc13',Path(__file__).with_name('complete-lc13-readonly.py'))
 m=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(m)
@@ -32,4 +33,21 @@ class ReadonlyContract(unittest.TestCase):
  def test_cli_does_not_admit_delete_or_arbitrary_target(self):
   for args in (['delete'],['5d-readonly','--confirm'],['5d-readonly','--source','foreign']):
    p=subprocess.run([sys.executable,str(SPEC.origin),*args],capture_output=True);self.assertEqual(p.returncode,2)
+ def test_stop_failures_do_not_skip_either_source(self):
+  for failure in ('helper','audit',m.MINIO):
+   stopped=[];states={}
+   def inspect(ident):
+    if ident==failure:raise RuntimeError('injected inspect fault')
+    return {'State':{'Running':ident!=m.GW and ident not in stopped,'Status':'exited' if ident==m.GW or ident in stopped else 'running'}}
+   def docker(cmd,ident):stopped.append(ident)
+   with patch.object(m,'inspect',inspect),patch.object(m,'docker',docker),patch.object(m,'write',lambda p,v:states.update(v)):
+    with self.assertRaises(RuntimeError):m.restore_stopped_state('helper','audit',Path('.'))
+   self.assertIn(m.PG,stopped)
+   if failure!=m.MINIO:self.assertIn(m.MINIO,stopped)
+   self.assertNotIn(m.GW,stopped);self.assertTrue(states['failures'])
+ def test_failed_helper_creation_still_stops_sources(self):
+  stopped=[]
+  with patch.object(m,'inspect',lambda i:{'State':{'Running':i!=m.GW and i not in stopped,'Status':'exited' if i==m.GW or i in stopped else 'running'}}),patch.object(m,'docker',lambda c,i:stopped.append(i)),patch.object(m,'write',lambda p,v:None):
+   m.restore_stopped_state(None,None,Path('.'))
+  self.assertEqual(stopped,[m.MINIO,m.PG])
 if __name__=='__main__':unittest.main()

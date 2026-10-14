@@ -96,6 +96,24 @@ def shadow_config(original,audit,project):
  require(urlsplit(f['PostgresDSN']).hostname==audit,'Audit DSN substitution failed')
  f['OutputDirectory']='/run/output';ref['PreparationEnabled']=True;ref['PreparationUntil']=(dt.datetime.now(dt.timezone.utc)+dt.timedelta(minutes=40)).isoformat();ref['AttestationPublicKey']=''
  return ref
+def restore_stopped_state(helper_id,audit_id,out):
+ results={};failures=[]
+ # Each exact known resource gets an independent attempt. A helper which failed
+ # to create has no ID and cannot prevent restoration of either source service.
+ for role,ident in [('helper',helper_id),('audit_core',audit_id),('source_minio',MINIO),('source_pg',PG)]:
+  if not ident:results[role]='NOT_CREATED';continue
+  try:
+   i=inspect(ident)
+   if i['State']['Running']:docker('stop',ident)
+   results[role]=inspect(ident)['State']['Status']
+   require(results[role]=='exited','Resource did not return stopped')
+  except Exception:
+   results[role]='RESTORE_FAILED';failures.append(role)
+ try:
+  results['source_gateway']=inspect(GW)['State']['Status'];require(results['source_gateway']=='exited','Source gateway unexpectedly started')
+ except Exception:results['source_gateway']='VERIFY_FAILED';failures.append('source_gateway')
+ write(out/'retained-final-state.json',{'states':results,'failures':failures,'cleanup':0})
+ require(not failures,'State restoration failed after all independent stop attempts; diagnostics retained')
 def five_d(generation=1):
  CONTROL.mkdir(exist_ok=True);PUBLIC.mkdir(exist_ok=True);r,cfg=validate_source()
  require(generation in (1,2,3),'Unreviewed generation')
@@ -139,7 +157,7 @@ def five_d(generation=1):
   ref=shadow_config(load(old/'native-after/reference.json'),audit,r['project'])
   write(read/'reference.json',ref);write(read/'reference-permission.json',{'Enabled':False})
   (read/'inspect.sh').write_bytes(INSPECT_SCRIPT)
-  helper=audit+'-native-inspect';docker('create','--pull','never','--name',helper,'--label','lifecycle307.run='+r['run_id'],'--network','container:'+MINIO,'--read-only','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data','--mount',f'type=bind,source={read},target=/run/private,readonly','--mount',f'type=bind,source={payload},target=/run/payload','--mount',f'type=bind,source={out},target=/run/output','--entrypoint','/bin/sh',PGIMAGE,'/run/private/inspect.sh');docker('start',helper)
+  helper=docker('create','--pull','never','--name',audit+'-native-inspect','--label','lifecycle307.run='+r['run_id'],'--network','container:'+MINIO,'--read-only','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data','--mount',f'type=bind,source={read},target=/run/private,readonly','--mount',f'type=bind,source={payload},target=/run/payload','--mount',f'type=bind,source={out},target=/run/output','--entrypoint','/bin/sh',PGIMAGE,'/run/private/inspect.sh').decode().strip();docker('start',helper)
   code=docker('wait',helper).decode().strip();write(out/'native-helper.json',{'id':inspect(helper)['Id'],'exit':int(code),'binary_sha256':digest(read/'executor'),'root_mounted':False,'source_gateway_started':False,'journal_database':audit,'native_delete':0});require(code=='0','Native read-only helper failed; retained')
   after=fingerprint(PG);require(after==before and role_acl(PG)==roles,'Source facts changed during read-only inspection')
   current=load(out/'native-six-version.json');require(current['provider_delete']==0 and len(current['versions'])==6,'Native six-version proof invalid')
@@ -153,12 +171,7 @@ def five_d(generation=1):
   write(out/'readonly-checkpoint.json',{'status':'PASS','source_run':r['run_id'],'source_pg':PG,'source_minio':MINIO,'source_gateway':GW,'source_relations':194,'source_rows':1879,'source_business_mutations':0,'audit_core':audit,'audit_native_call_delta':20,'backups':backup_before,'approval':'NOT_RECEIVED','native_delete':0,'delete_iam':'NOT_ENABLED','old_restore_touched':False})
  finally:
   # Restore only the exact original stopped service state; retain every resource.
-  if helper and inspect(helper)['State']['Running']: docker('stop',helper)
-  if audit_id and inspect(audit_id)['State']['Running']: docker('stop',audit_id)
-  for ident in (MINIO,PG):
-   if inspect(ident)['State']['Running']: docker('stop',ident)
-  require(inspect(GW)['State']['Status']=='exited','Source gateway unexpectedly started')
-  write(out/'retained-final-state.json',{'source_pg':inspect(PG)['State']['Status'],'source_minio':inspect(MINIO)['State']['Status'],'source_gateway':inspect(GW)['State']['Status'],'audit_core':inspect(audit_id)['State']['Status'] if audit_id else 'NOT_CREATED','cleanup':0})
+  restore_stopped_state(helper,audit_id,out)
 def main():
  parser=argparse.ArgumentParser();parser.add_argument('phase',choices=PHASES);a=parser.parse_args()
  if a.phase=='prepare': prepare()
