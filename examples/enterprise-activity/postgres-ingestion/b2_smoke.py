@@ -31,6 +31,23 @@ def port():
     with socket.socket() as s:
         s.bind(("127.0.0.1",0));return s.getsockname()[1]
 
+def implementation_sources():
+    return [*list((REPO/"apps/platform/internal/ingestion").rglob("*.go")),*list((REPO/"apps/platform/cmd/ingestion-pilot").rglob("*.go")),REPO/"apps/platform/go.mod",REPO/"apps/platform/go.sum",REPO/"migrations/000051_ingestion_batch.up.sql",REPO/"migrations/000051_ingestion_batch.down.sql",REPO/"migrations/000052_ingestion_invocation_recovery.up.sql",REPO/"migrations/000052_ingestion_invocation_recovery.down.sql",REPO/"apps/platform/internal/platform/storage/minio.go",REPO/"apps/platform/internal/platform/routing/routing.go",REPO/"apps/platform/internal/workflow/hop/client.go",HERE/"b2_smoke.py",HERE/"smoke.py",HERE/"storage_smoke.py",HERE/"trial_images.py",HERE/"cleanup_receipts.py",HERE/"extract.hpl",HERE/"storage.Caddyfile",HERE/"source.sql",HERE/"start-hop.sh",REPO/".github/workflows/ci.yml"]
+
+def implementation_hashes(sources):
+    return {str(f.relative_to(REPO)).replace("\\","/"):source_sha(f) for f in sources}
+
+def verify_implementation(report,sources,expected):
+    if expected is None:
+        report["implementation_stability"]="UNKNOWN"
+    else:
+        try:
+            report["implementation_stability"]="PASS" if expected==implementation_hashes(sources) else "FAILED"
+        except Exception as error:
+            report["implementation_stability"]="UNKNOWN"
+            report["implementation_stability_failure_type"]=type(error).__name__
+    if report["implementation_stability"]!="PASS":report["status"]="FAIL"
+
 class Control(http.server.BaseHTTPRequestHandler):
     def log_message(self,*_): pass
     def do_POST(self):
@@ -55,13 +72,16 @@ def run(output,cache):
     output.mkdir(parents=True,exist_ok=False)
     trial=Trial(output);trial.source_port=port()
     private=Path(tempfile.mkdtemp(prefix="dpp-pgi-b2-core-"))
-    names=[];networks=[];control=None
+    names=[];networks=[];control=None;sources=[];hashes=None
     report={"contract":"postgres-ingestion-v1/B2","status":"NOT_RUN","core_admission":"NOT_RUN","b3":"NOT_RUN","remote_ci":"NOT_RUN",
             "base_sha":command(["git","-C",str(REPO),"rev-parse","HEAD"]).stdout.decode().strip(),
             "scope":"synthetic fixtures; quiescent source; controlled authenticated HTTP; real local providers",
             "storage_boundary":"official archived MinIO source + mandatory Caddy gateway; no production admission",
             "minio_commit":SOURCE_COMMIT,"minio_release":SOURCE_RELEASE}
     try:
+        sources=implementation_sources()
+        hashes=implementation_hashes(sources)
+        report["implementation_sha256"]=hashes
         print("B2: preparing pinned runtimes",flush=True)
         binary,minio_image=prepare_binary(cache,trial.images.tag("minio"),owner=trial.images)
         trial.setup()
@@ -107,8 +127,6 @@ def run(output,cache):
              "Profile":{"Enabled":True,"TokenFile":str(private/"token"),"Subject":"b2-controlled-operator","ConnectionRef":"dpp-source-reader","InstanceRef":trial.identity,"Database":"dpp_ingestion_source","Reader":"dpp_reader","SourceDSN":f"postgres://dpp_reader@{trial.source_host}:{trial.source_port}/dpp_ingestion_source?sslmode=disable","SourcePasswordFile":str(private/"source-password"),"TemplateFile":str(HERE/"extract.hpl"),"MetadataFile":str(private/"metadata.json"),"Tables":[{"Code":table+"_raw","Schema":"dpp_source","Name":table,"Columns":columns,"Rows":rows} for table,(columns,_,rows) in SLOTS.items()],"HopURL":trial.url,"HopUser":"b1","HopPasswordFile":str(private/"hop-password"),"LocalRoot":str(trial.staging),"EngineRoot":"/staging","Bucket":"raw","StorageEndpoint":f"127.0.0.1:{sp}","CoreCredentialFile":str(private/"core-identity.json"),"PublisherCredentialFile":str(private/"publisher-identity.json")}}
         config=private/"test.json";config.write_text(json.dumps(cfg),encoding="utf-8")
         print("B2: running authenticated Commands and independent Core assertions",flush=True)
-        sources=[*list((REPO/"apps/platform/internal/ingestion").rglob("*.go")),*list((REPO/"apps/platform/cmd/ingestion-pilot").rglob("*.go")),REPO/"apps/platform/go.mod",REPO/"apps/platform/go.sum",REPO/"migrations/000051_ingestion_batch.up.sql",REPO/"migrations/000051_ingestion_batch.down.sql",REPO/"migrations/000052_ingestion_invocation_recovery.up.sql",REPO/"migrations/000052_ingestion_invocation_recovery.down.sql",REPO/"apps/platform/internal/platform/storage/minio.go",REPO/"apps/platform/internal/platform/routing/routing.go",REPO/"apps/platform/internal/workflow/hop/client.go",HERE/"b2_smoke.py",HERE/"smoke.py",HERE/"extract.hpl",HERE/"storage.Caddyfile",HERE/"source.sql",HERE/"start-hop.sh",REPO/".github/workflows/ci.yml"]
-        hashes={str(f.relative_to(REPO)).replace("\\","/"):source_sha(f) for f in sources}
         env=dict(os.environ,TEST_INGESTION_B2_CONFIG=str(config))
         result=subprocess.run(["go","test","-count=1","-v","-timeout","12m","./internal/ingestion/..."],cwd=REPO/"apps/platform",env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=780)
         output_text=result.stdout+result.stderr
@@ -144,8 +162,6 @@ def run(output,cache):
         report["checks"]["source_to_hop_to_core_original_values"]="PASS"
         report["checks"]["physical_call_cost_correspondence"]="PASS"
         report["checks"]["secret_isolation"]="PASS"
-        require(hashes=={str(f.relative_to(REPO)).replace("\\","/"):source_sha(f) for f in sources},"implementation changed during real run")
-        report["implementation_sha256"]=hashes
         report["status"]=report["core_admission"]="PASS"
     except Exception as error:
         report["status"]="FAIL";report["failure"]=str(error);raise
@@ -173,7 +189,9 @@ def run(output,cache):
             receipt.attempt("temporary_credentials","ephemeral private directory",remove_private)
         finally:
             receipt.finish()
+            verify_implementation(report,sources,hashes)
             (output/"b2-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    require(report["implementation_stability"]=="PASS","implementation changed or unavailable during real run; see receipt")
     require(report["cleanup"]=="PASS","B2 cleanup incomplete; see component receipt")
     print("B2 PASS; B3 NOT_RUN",flush=True)
 

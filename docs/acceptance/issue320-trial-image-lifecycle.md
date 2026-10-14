@@ -128,3 +128,25 @@ bind the corrected candidate's 12 source files. Both actual native-executed
 sources are unchanged, so the original five native checks still bind the image
 implementation. No new native cleanup occurred during this receipt correction.
 The final exact-head independent re-review and CI belong to the PR checkpoint.
+
+## Ready source-binding correction
+
+The Ready-triggered automatic review of `f4e453c6` identified an omitted B2
+evidence dependency: the B2 implementation hash set did not include
+`storage_smoke.py`, `trial_images.py` or `cleanup_receipts.py`. This is an
+in-scope source-binding blocker, not a request for a global GC/security runtime.
+All three are now in the same selected source set used for both capture and
+verification. Capture is before B2 build; final comparison runs after cleanup
+and is saved even on setup failure. Source stability is reported separately
+from resource cleanup: resources can be cleaned while implementation stability
+fails. A missing or changed selected source prevents overall B2 PASS.
+
+One new controlled test mutates only temporary source fixtures during build
+and cleanup, proving initial hashes are retained and the final receipt reports
+FAILED stability instead of claiming a stable implementation. The former
+three cleanup-failure tests, 14 lifecycle tests and five isolation tests remain.
+This is an endpoint content check for the selected implementation sources,
+not a full dependency graph or tamper-proof/global filesystem fence. Existing
+stage receipts/23-artifact manifest are preserved, and the two native-executed
+sources remain unchanged. Current source/hash proof is appended in
+[Ready binding validation](evidence/issue320-trial-images-20261014/ready-binding-validation.json).
