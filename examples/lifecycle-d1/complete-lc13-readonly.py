@@ -12,7 +12,7 @@ GW='ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4'
 PGIMAGE='sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea'
 MIIMAGE='sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6'
 REDISIMAGE='sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499'
-PHASES=('prepare','setup','crash','orphan','recovery','final','seal','5d-readonly')
+PHASES=('prepare','setup','crash','orphan','recovery','final','seal','5d-readonly','5d-readonly-02')
 def require(ok,message):
  if not ok: raise RuntimeError(message)
 def load(p): return json.loads(p.read_text(encoding='utf-8-sig'))
@@ -80,15 +80,24 @@ def binary_dump(args,path):
   r=subprocess.run(['docker',*args],stdout=f,stderr=subprocess.PIPE,cwd=ROOT)
  if r.returncode:
   path.with_suffix('.private-log').write_bytes(r.stderr);raise RuntimeError('Read-only dump failed; retained')
-def five_d():
+def six_equal(current,previous):
+ def semantic(proof):
+  require(proof['provider_delete']==0 and len(proof['versions'])==6,'Invalid six-version proof')
+  return sorted([{'copy':v['copy'],'bytes':v['bytes'],'sha256':v['sha256'],'retention':v['protection']['RetentionMode'],'until':v['protection']['RetainUntil'],'hold':v['protection']['LegalHold']} for v in proof['versions']],key=lambda x:x['copy']['ID'])
+ require(semantic(current)==semantic(previous),'Native bytes/version/protection drift')
+def five_d(generation=1):
  CONTROL.mkdir(exist_ok=True);PUBLIC.mkdir(exist_ok=True);r,cfg=validate_source()
- stage=CONTROL/'5d-readonly';stage.mkdir();out=PUBLIC/'5d';out.mkdir()
+ suffix='' if generation==1 else '-02'
+ stage=CONTROL/('5d-readonly'+suffix);stage.mkdir();out=PUBLIC/('5d'+suffix);out.mkdir()
  old=SOURCE/'reference-disposal-preparation01'
  backups=[old/'native-snapshot/native-store.tar',SOURCE/'predelete-core-checkpoint-04/core.dump']
  require(all(p.is_file() for p in backups),'Retained backup missing')
  backup_before={str(p.relative_to(SOURCE)):digest(p) for p in backups}
- private_seals={str(p.relative_to(SOURCE)):digest(p) for p in [SOURCE/'config.json',SOURCE/'Caddyfile',*SOURCE.rglob('reference-permission.json')]}
- audit=r['project']+'-readonly-audit-core-01';audit_id=None;helper=None
+ require(backup_before[str(backups[0].relative_to(SOURCE))]=='f72efeab2c49802be1661a431164167d7a34968fef877163f08b25878d9554cc' and backup_before[str(backups[1].relative_to(SOURCE))]=='19dba12b9992fdd11c237d6f0df489c7a961696acd54b8a3403b941e7005c98a','Historical backup hash mismatch')
+ sealed=[SOURCE/'config.json',*SOURCE.rglob('reader.json'),*SOURCE.rglob('reference-permission.json')]
+ require(all(load(p).get('Enabled') is False for p in sealed),'Source business/deletion window open')
+ private_seals={str(p.relative_to(SOURCE)):digest(p) for p in [SOURCE/'Caddyfile',*sealed]}
+ audit=r['project']+'-readonly-audit-core-'+('01' if generation==1 else '02');audit_id=None;helper=None
  try:
   docker('start',PG);docker('start',MINIO)
   for _ in range(60):
@@ -119,11 +128,12 @@ def five_d():
   require(audit+':5432' in f['PostgresDSN'] and r['project']+'-postgres:5432' not in f['PostgresDSN'],'Inspection DSN must target new audit Core')
   f['RootAccess']='';f['RootSecret']='';f['OutputDirectory']='/run/output';ref['PreparationEnabled']=True;ref['PreparationUntil']=(dt.datetime.now(dt.timezone.utc)+dt.timedelta(minutes=40)).isoformat();ref['AttestationPublicKey']=''
   write(read/'reference.json',ref);write(read/'reference-permission.json',{'Enabled':False})
-  (read/'inspect.sh').write_text('#!/bin/sh\nset -eu\nexec /run/private/executor -mode reference-inspect-source\n',encoding='ascii')
+  (read/'inspect.sh').write_text('#!/bin/sh\nset -eu\nexec /run/private/executor -mode reference-inspect-source\n',encoding='ascii',newline='\n')
   helper=audit+'-native-inspect';docker('create','--pull','never','--name',helper,'--label','lifecycle307.run='+r['run_id'],'--network','container:'+MINIO,'--read-only','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data','--mount',f'type=bind,source={read},target=/run/private,readonly','--mount',f'type=bind,source={payload},target=/run/payload','--mount',f'type=bind,source={out},target=/run/output','--entrypoint','/bin/sh',PGIMAGE,'/run/private/inspect.sh');docker('start',helper)
   code=docker('wait',helper).decode().strip();write(out/'native-helper.json',{'id':inspect(helper)['Id'],'exit':int(code),'binary_sha256':digest(read/'executor'),'root_mounted':False,'source_gateway_started':False,'journal_database':audit,'native_delete':0});require(code=='0','Native read-only helper failed; retained')
   after=fingerprint(PG);require(after==before and role_acl(PG)==roles,'Source facts changed during read-only inspection')
   current=load(out/'native-six-version.json');require(current['provider_delete']==0 and len(current['versions'])==6,'Native six-version proof invalid')
+  six_equal(current,load(ROOT/'docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/native-after/native-six-version.json'))
   write(out/'source-after.json',{'relations':after,'rows':1879,'roles_acl':roles,'same_as_before':True,'at':dt.datetime.now(dt.timezone.utc).isoformat()})
   costs=json.loads(source_read(audit,"SELECT json_build_object('calls',(SELECT count(*) FROM lifecycle_storage_call),'observations',(SELECT count(*) FROM lifecycle_storage_observation),'costs',(SELECT count(*) FROM cost_allocation WHERE lifecycle_storage_call_id IS NOT NULL),'unaccounted',(SELECT count(*) FROM lifecycle_storage_observation o WHERE o.invoked_at IS NOT NULL AND (SELECT count(*) FROM cost_allocation a JOIN cost_event e ON e.id=a.cost_event_id WHERE a.lifecycle_storage_call_id=o.call_id AND e.activity_id=o.call_id AND e.quantity=1 AND e.unit='invocation')<>1),'send_claims',(SELECT count(*) FROM lifecycle_provider_send_claim),'absence',(SELECT count(*) FROM lifecycle_copy_absence_receipt),'completion',(SELECT count(*) FROM lifecycle_plan_completion));"))
   require(costs['calls']==costs['observations']==costs['costs']==112 and costs['unaccounted']==costs['send_claims']==costs['absence']==costs['completion']==0,'Audit-only native accounting failed')
@@ -143,6 +153,7 @@ def main():
  parser=argparse.ArgumentParser();parser.add_argument('phase',choices=PHASES);a=parser.parse_args()
  if a.phase=='prepare': prepare()
  elif a.phase=='5d-readonly': five_d()
+ elif a.phase=='5d-readonly-02': five_d(2)
  elif a.phase=='crash': plane('lc13-crash-one');plane('lc13-crash-two')
  elif a.phase=='setup': plane('setup');plane('lc13-init')
  elif a.phase=='orphan': plane('lc13-orphan')
