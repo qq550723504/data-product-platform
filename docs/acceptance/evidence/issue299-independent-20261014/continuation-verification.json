@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "sealedAt": "2026-10-14T11:33:59.787119+00:00",
+  "previousArtifactsVerifiedUnchanged": 75,
+  "previousManifest": "artifact-hashes-at-d9cecc1.json",
+  "knownCredentialValuesChecked": 18,
+  "publicCredentialLeaks": 0,
+  "candidateSourceBytesUnchanged": {
+    "examples/enterprise-activity/postgres-ingestion/smoke.py": {
+      "rawSourceSha256": "052d2db4ebcd193865886de06ec25b3aa49297e38af43eb8917cdfa67d2e7b7e",
+      "gitBlobSha256": "052d2db4ebcd193865886de06ec25b3aa49297e38af43eb8917cdfa67d2e7b7e"
+    },
+    "examples/enterprise-activity/postgres-ingestion/storage_smoke.py": {
+      "rawSourceSha256": "9651bee71cced3cc60bfcfa2595e5025d9d199406e49cbe485ffefb9476a908f",
+      "gitBlobSha256": "9651bee71cced3cc60bfcfa2595e5025d9d199406e49cbe485ffefb9476a908f"
+    },
+    "examples/enterprise-activity/postgres-ingestion/b2_smoke.py": {
+      "rawSourceSha256": "4519afbc23790f61f405f79d52b9ec99fa3c3ccff2c260d205790c2a9450a28a",
+      "gitBlobSha256": "4519afbc23790f61f405f79d52b9ec99fa3c3ccff2c260d205790c2a9450a28a"
+    },
+    "examples/enterprise-activity/postgres-ingestion/b3_runtime.py": {
+      "rawSourceSha256": "828f5133210969bbc830406727e67f58d75e181a0d70d40e717358f879fc6def",
+      "gitBlobSha256": "828f5133210969bbc830406727e67f58d75e181a0d70d40e717358f879fc6def"
+    },
+    "examples/enterprise-activity/postgres-ingestion/image_isolation_test.py": {
+      "rawSourceSha256": "f887ad3f24e32b706f0a4734e3722fe10400456ff4d9659f2b25bb2f3b52ff46",
+      "gitBlobSha256": "f887ad3f24e32b706f0a4734e3722fe10400456ff4d9659f2b25bb2f3b52ff46"
+    }
+  },
+  "continuationTrace": {
+    "path": "C:\\Users\\Henry\\AppData\\Local\\Codex\\retained-trials\\dpp-pgi-b3-4iasa9v0\\backup-old-oci-20261014\\technical-trace-at-continuation-seal.jsonl",
+    "bytes": 10554529,
+    "sha256": "6585c371c7767b28a1a1cb0ac9b6f604003b836e3ea2e6f66641e1e9927e5948"
+  },
+  "originalLostCore": "FAIL / NOT_RESTORED",
+  "humanExplanation": "NOT_RUN / deferred",
+  "ready": false,
+  "merge": false,
+  "issueClosure": false,
+  "cleanupCalls": 0
+}
