@@ -161,6 +161,11 @@ def seal():
   for path in private.glob('*/recovery.json'):require(load(path)['Enabled'] is False,'Worker not sealed')
   for path in private.glob('*/archive-window.json'):require(load(path)['Enabled'] is False,'COPY role not sealed')
   for path in private.glob('*/reader.json'):require(load(path)['Enabled'] is False,'Reader role not sealed')
+  # Only this generation's exact owned gateways. Sealed stopped fixtures stay stopped.
+  (private/'Caddyfile').write_text('{\n admin off\n auto_https off\n}\n:9000 {\n respond 403\n}\n',encoding='utf-8')
+  gateway=json.loads(docker('inspect',r['containers']['gateway']))[0]
+  if gateway['State']['Running']:
+   docker('exec',r['containers']['gateway'],'caddy','validate','--config','/etc/caddy/Caddyfile','--adapter','caddyfile');docker('restart',r['containers']['gateway'])
  write(PUBLIC/'sealed.json',{'status':'PASS_FINITE_NON_DELETE_EXTENSION','native_delete':0,'cleanup':0,'full_D1':'NOT_ACCEPTED','resources':'ALL_RETAINED','roles':{role:load(PUBLIC/(role+'-fixture.json'))['resources'] for role in ('plane','archive','copy','metadata')}})
 def main():
  parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('phase',choices=PHASES);args=parser.parse_args()
