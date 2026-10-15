@@ -21,8 +21,17 @@ f3/7cd/812三个独立run均已封存且资源保留，全部排除在本删除�
 仍是原准备binary的真实历史。本轮候选已绑定source055aa1df与新Linux binary/profile/IAM/gateway；
 新LC13/native PASS不授权复用旧批准或发送，不代表真实DELETE recovery验收。
 
-当前机器清单：[proposal-v5.json](evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json)。
-v5只刷新只读观察/证据/条件；[proposal-v4](evidence/issue307-d1/lc13-continuation01/proposal-v4.json)保留原候选冻结时点。
+当前机器清单：[proposal-v6](evidence/issue307-d1/delete-proposal-v6/proposal.json)。
+v6修正v5继承的audit-core-03/checkpoint旧字段冲突，将当前只读证据统一为audit-core-04，
+逐份绑定路径和SHA256；候选、两目标、保护观察时间均未变化。
+[v5](evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json)及其index原字节保留，
+不再作为下一次执行的当前清单；[proposal-v4](evidence/issue307-d1/lc13-continuation01/proposal-v4.json)保留原候选冻结时点。
+本次为离线一致性收口，provider I/O/Core mutation/DELETE均0；没有刷新00:22:28的原生观察。
+离线校验命令为`python examples/lifecycle-d1/check-reference-proposal.py`，
+PASS只表示公开证据与当前提案一致，不能生成批准或替代fresh gate。
+跨平台检查仅对317项运行源码按固定Git source的LF文本摘要比较；原始候选binding仍保留，
+binary/profile/IAM/gateway摘要不做换行转换。[本次收口](evidence/issue307-d1/delete-proposal-v6/closure.json)
+记录11项正常及-O测试、22个拒绝案例、40个容器继续停止及原备份hash不变。
 当前[候选绑定](evidence/issue307-d1/lc13-continuation01/delete-candidate04/source-binding.json)和
 [关闭profile](evidence/issue307-d1/lc13-continuation01/delete-candidate04/bounded-profile.json)
 由新binary在两个network=none、root-free、read-only helper中渲染/验证关闭send gate；
@@ -188,7 +197,7 @@ JSON签名字节失真导致的首次失败完整回滚并保留，新bin02和�
 | 顺序 | 动作 | 通过标准 / 停止条件 |
 | --- | --- | --- |
 | 1 | 绑定用户对本 project/provider/incarnation/plan hash/两份 version 的明确确认；冻结新 composition source、binary、profile、IAM/gateway hash | 无确认则没有 enabled permission；新 profile 的 fake/PG 非删除检查通过，所有范围/窗口/old-approval 拒绝路径有效；若改变 targets/environment，重新确认 |
-| 2 | 保持 business reader/producer 封存，重核当前源、原generation02备份、本轮auditCore03只读恢复和六版本checkpoint；若源facts变化，另建新checkpoint | 当前源194表/1879行、roles/owner/ACL恢复hash一致；原六版本native备份恢复及本轮重读分别保留。发送前须仍匹配当前源，失败0 DELETE，不重开业务或旧恢复窗口 |
+| 2 | 保持 business reader/producer 封存，重核当前源、原generation02备份、当前audit-core-04只读恢复和六版本checkpoint；若源facts变化，另建新checkpoint | 当前源194表/1879行、roles/owner/ACL恢复hash一致；原六版本native备份恢复及本轮重读分别保留。发送前须仍匹配当前源，失败0 DELETE，不重开业务或旧恢复窗口 |
 | 3 | READ ONLY复核原两attempt已NOT_SENT/released；另行追加新 execution stage basis 与≤40分钟 current deletion approval | 原closure不重复写入；原attempt永不发送；新principal→workspace、basis/approval指向同一exact plan，旧non-delete批准不得复用 |
 | 4 | 单独 provision 临时 delete executor 与只读 inspector/recovery 权限，建立 exact IAM + gateway 双重 allowlist | delete 权限仅两份 key+version，无 root payload mount、Put/Copy、bare key、bypass 或受保护/输出 DELETE；business windows 不重开；禁止 SDK/proxy 自动重发 |
 | 5 | 在共享 fence/固定 parent-first 下 fresh authority/approval、全 inventory、native protection、qualified FK/reference releases、pending copies、pins/owner quiescence、ledger/revision；DB-first dispatch/start，再在 ClaimExactSend 重验 | 每项都是新 dispatch/attempt/request key；每次 dispatch 与 send 都 fresh gate；任何 UNKNOWN/DENIED、过期或 late hold 都 0 DELETE，保留阻断事实；不引用旧 eligible evaluation 授权 |
@@ -204,6 +213,16 @@ receipt，再处理 quarantine/b。初始 native inventory 必须等于六份 re
 不能直接沿用非删除 driver 的“永远六份 present”假设。
 新 profile已区分“可信 NOT_SENT/released 的旧trial”和“UNKNOWN/可能发送”的attempt；
 任何non-trial新attempt存在时，sender停止，复用只读recovery，不盲重发。
+
+发送与恢复使用已有的两个独立入口：发送为`lifecycle-fixture-delete`的固定reference profile
+下`send-a` / `send-b`；恢复为`lifecycle-fixture-recovery`，复用
+`pilot.BuildRecoveryInspectorAt`、`RecoveryService`和现有Outbox/Asynq handler。
+后者的配置不含delete/root credential，仅允许只读inspector。不能调用其他旧delete profile，
+也不能用`inspect-source`充当发送后的恢复：它的六份payload读取只适用于删除前checkpoint。
+确认后先绑定同一冻结源码构建的恢复binary、5d workspace/provider/incarnation、只读IAM、
+新attempt/work identity和manifest hash，再按`outbox → worker → once terminal replay`验收；
+恢复配置/Redis/worker资源当前尚未激活，当前5d真实队列恢复仍NOT_RUN。
+该入口核对是本轮主线程静态闭合检查，不新增原生运行或独立评审PASS。
 
 当前 backup资源实际已保留：`dpp-lifecycle307-5d2274ee-predelete-objects`、
 `dpp-lifecycle307-5d2274ee-predelete-postgres-02` 及专属同名卷，精确ID见
@@ -223,7 +242,7 @@ Redis 使用本机已存在 image ID
 初始 proposal-only阶段 provider I/O/Core mutation=0；本轮明确非删除阶段新增60个provider读取
 （源40/独立副本20）、2NOT_SENT+2release、schema68及维护history/cost；DELETE=0。
 前轮generation02 Core与六版本副本全部STOPPED_RETAINED，maintenance authority封存。
-本轮源PG/MinIO只读启动后恢复停止，新auditCore03独立恢复194表/1879行并承接20次维护调用；
+前轮源PG/MinIO只读启动后恢复停止，新audit-core-04独立恢复194表/1879行并承接20次维护调用；
 源Core业务mutation=0，旧备份/旧restore未写入，gateway始终stopped，六version均未删除。
 初始 proposal-only READ ONLY query 用了不存在的 pending table，事务失败无 mutation；
 检查实际 schema 后改为 copy operation/output intent-ready 查询成功，
@@ -248,7 +267,7 @@ LC-13有限可信停止、新Retry与原生credential containment已有[本轮�
 > dpp-lifecycle307-quarantine/fixture/b.csv@846d0c7c-289d-4667-bc7c-aa04e44357d4 两份源版本，
 > 绑定 source055aa1df063e560c6796e92dfff4e03c7b9061e0，
 > Linux binary 01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3，
-> proposal-v5/candidate04 profile 97d565f9c66d8cfcb66997d034e7acb2d1519864898950a9ddb2ced2cdd5c4ee，
+> proposal-v6/candidate04 profile 97d565f9c66d8cfcb66997d034e7acb2d1519864898950a9ddb2ced2cdd5c4ee，
 > target digest 4cbb36e5aebbc9451603efd276aa309a2c4afdefcf252107571b0f8334360a38，
 > IAM ab24ab862bf0e21d23ee21989f4140b3c7200cdecee22d4a708cc45621da8b54，
 > active gateway 7b24ad32506bfd189c9289ba85a65ab242069dfee293d61b330104a90306cd0a，

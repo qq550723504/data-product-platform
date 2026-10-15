@@ -64,6 +64,26 @@ disabled/enabled与service-account on/off混用，真实回执已满足目标状
 和[状态诊断](evidence/issue307-d1/delete-readonly-candidate04/retry01/5d-04/operator-diagnostic.json)保留。
 最后独立目录重跑完整通过；Python30项正常及-O PASS。
 
-[当前proposal-v5](evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json)
-只刷新观察时间、证据和执行前条件；原source/binary/profile/plan/两目标不变。
+[当时proposal-v5](evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json)
+保留本次观察历史；其继承字段中仍有audit-core-03/checkpoint旧引用。
+当前[proposal-v6](evidence/issue307-d1/delete-proposal-v6/proposal.json)统一为上述audit-core-04证据，
+新增离线一致性检查；原source/binary/profile/plan/两目标和原生观察时间不变，没有重跑provider读取。
 [精确确认方案](issue307-d1-delete-proposal.md)仍待明确确认；真实删除、完整D1/D2未验收。
+
+## v6离线一致性收口
+
+本次未启动服务、未刷新原生保护snapshot。主线程核对发送/恢复分别复用既有
+`lifecycle-fixture-delete` / `lifecycle-fixture-recovery`，没有新增runtime；
+当前5d的真实Outbox/Asynq恢复仍待单独执行验收。
+
+| 检查 | 结果 |
+| --- | --- |
+| 当前机器清单 | v6仅保留一套当前只读证据，7份回执固定为audit-core-04代次及SHA256；v5/index原字节保留 |
+| 候选与范围 | source055aa1df、原binary/profile/IAM/gateway、两target/四survivor、129560 bytes均不变 |
+| 源码跨平台绑定 | 317项源码对固定Git source取LF摘要；44份原始字节相同、273份仅CRLF差异；binary/profile/IAM/gateway仍按原始字节核对 |
+| 离线拒绝回归 | 每种Python模式11项测试通过，含22种旧代次/错误identity/version/protection/超预算/伪造授权拒绝案例；重复JSON key/path escape及源码变更拒绝，LF checkout通过 |
+| 停止状态与备份 | 40个相同label容器exited/PID0、0 host ports；原tar/dump SHA不变，business/delete/maintenance配置仍封存 |
+| 本次副作用 | provider I/O/Core mutation/DELETE/merge/cleanup均0；只完成离线检查及宿主只读回读 |
+
+[收口回执](evidence/issue307-d1/delete-proposal-v6/closure.json)记录本次时间、测试与停止状态。
+这是主线程一致性审计，不新增独立评审或原生业务PASS；没有改变待确认与fresh gate条件。
