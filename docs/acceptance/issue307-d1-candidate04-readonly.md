@@ -2,8 +2,8 @@
 
 最新观察见[v12基于v11的新原生只读观察](#v12基于v11的新原生只读观察)。
 下文audit-core-04/06/07/08/09/10及v6至v11独立评审保留各自原时点；新回执另存audit-core-11，不覆盖旧证据。
-v11的[独立评审](#v11独立评审与收敛检查)作为本次刷新基线，当前v12为新原生只读及主线程离线验收，尚未新增独立评审。
-主线程当前有限切片有效blocker=0；新verification/index明确记录该边界。
+v11的[独立评审](#v11独立评审与收敛检查)作为本次刷新基线；v12采集之后的[独立评审](#v12独立评审与收敛检查)
+已完成，当前有限切片有效blocker=0。原native verification/index保留采集时的主线程验收口径，新评审另存。
 
 2026-10-15（Asia/Singapore）。新候选源码055aa1df、Linux binary
 `01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3`
@@ -539,3 +539,29 @@ retention到期未执行release，也未扩大两目标共129560 bytes的删除�
 v12离线检查20份固定indexed payload与完整提案，递归校验前驱v11及独立评审，要求新观察晚于v11；
 scope/authority改变、旧观察、source identity/active pins/running closure、index原字节或membership破坏均拒绝。
 本轮无operator或离线收口失败、Core业务mutation、IAM写入、DELETE、hold/retention release、bypass或cleanup；旧回执和全部失败历史保持原字节。
+
+## v12独立评审与收敛检查
+
+独立reviewer对HEAD `eed11a97476a0b8c8ac5af40d7a5e2bdacfb3d8a` 的v12精确方案、
+离线校验、新11代只读回执及固定11代operator扩展完成本轮实际审阅与离线执行，结论
+**PASS_INDEPENDENT_OFFLINE_REVIEW，当前切片有效blocker=0**。无需operator/runtime修复或事实文字修正。
+本节只追加独立结论；原native verification/index、12:58:54观察及所有历史/失败证据原字节不变。
+
+| 有限contract / 检查 | 独立结论与本轮收口 |
+| --- | --- |
+| exact scope / authority | candidate04/source055aa1df、两目标/四survivor、129560 bytes、每项最多一次/总计两次、unknown不重发与v11相同；retention到期不扩范围；精确确认NOT_RECEIVED |
+| 历史和原字节 | 184份indexed payload+15份index共199 raw均等于eed11a97 Git blob、长度/SHA；其中178份历史raw与c7819b7f相同；新v12 payload20份，旧verification/index不改写 |
+| operator / runtime provenance | 5项operator摘要与eed11a97/native verification一致，candidate driver和operator base c7819b7f对应、worktree_changes=true已记录；317项runtime向原frozen raw/LF-CRLF等价锚点证明，binary/profile/IAM/gateway保持冻结 |
+| Core / 时间闭合 | before=after=11 restored=v11，194表/1879行及完整relation/role/owner/ACL指纹一致；6保护+2inventory均晚于v11，处于04:58:43.197790～04:58:55.213211Z内；Core as_of04:58:33.690146Z晚于前驱，proposal04:59:33.122948Z晚于回读 |
+| references / owner / 原trial | 27完整guard、54target checks unreleased0、3函数正文/SHA匹配migration67；23 verified-quiescent requirements/releases；7pins/terminations active0、2ready outputs、copy operations0；原2NOT_SENT(invoked_at=null)/2linked releases不变，无send claim/absence/completion |
+| native IAM / 调用成本 | reader/producer disabled、inspector enabled、拟建普通executor NoSuchUser；source journal92，新11 clone112 calls/observations/typed costs、unaccounted0；本代4management GET单列，旧批准仍过期 |
+| 固定11 / 失败恢复 | 扩展限于有限白名单/前驱绑定和wrapper/checker/tests/CI；复用collector、TCP readiness、独立停止及nested-finally封存，无send开关或新runtime；12/arbitrary/delete/confirm/source/generation越界拒绝 |
+| 独立非删除回归 | 正常/-O各41项、v6/v7/v8/v9/v10/v11/v12七CLI均PASS；16项新11代内层语义反例直接经expected_proposal拒绝，未依赖外层index；固定11入口6组实际越界args均exit2 |
+| retained topology / 主线程回读 | 公共回执原57条目不变，仅增加固定11代audit/IAM/native helper三项，60项均exited/PID0/无host ports；reviewer未访问Docker。主线程宿主元数据核对同60 ID/image/state、原tar/dump SHA、15份Enabled=false、11代maintenance/permission和gateway封存一致，未启动容器或访问provider/DB |
+| 执行门禁与follow-up | 新basis/approval、native delete IAM/active gateway/permission/fresh signed topology仍未创建；真实DELETE/删除后恢复、完整D1/D2仍NOT_RUN / NOT_ACCEPTED，继续归#307后续验收；#318 Draft |
+
+[独立评审回执](evidence/issue307-d1/delete-proposal-v12-review01/independent-review.json)与
+[主线程完整性/宿主回读](evidence/issue307-d1/delete-proposal-v12-review01/primary-audit.json)存于新目录。
+按AGENTS §17冻结有限contract：exact scope/关闭authority、历史原字节、候选/operator来源、
+只读观察/账务闭合及失败恢复；Git/index为离线完整性边界。通用IAM/owner/DR、真实删除恢复及完整D1/D2继续归#307。
+本轮provider/DB I/O、Core mutation、容器启动、IAM写入、DELETE、merge、保护release、bypass和cleanup均0。
