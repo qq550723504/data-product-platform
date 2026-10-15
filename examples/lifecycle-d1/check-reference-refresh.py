@@ -39,10 +39,11 @@ def at(text):
 
 
 def refresh_paths(generation):
-    v6.require(generation in ('06', '07', '08', '09'), 'Refresh outside finite generation')
+    v6.require(generation in ('06', '07', '08', '09', '10'), 'Refresh outside finite generation')
     public, version = {'06': (PUBLIC, '7'), '07': (BASE + 'delete-readonly-v7-refresh01/', '8'),
                        '08': (BASE + 'delete-readonly-v8-refresh01/', '9'),
-                       '09': (BASE + 'delete-readonly-v9-refresh01/', '10')}[generation]
+                       '09': (BASE + 'delete-readonly-v9-refresh01/', '10'),
+                       '10': (BASE + 'delete-readonly-v10-refresh01/', '11')}[generation]
     return public, public + '5d-' + generation + '/', public + 'proposal-v' + version + '.json'
 
 
@@ -134,8 +135,8 @@ def expected_proposal(created_at, root=ROOT, generation='06'):
         value['retention_active_at_observation'] = (protection['RetentionMode'] != 'NONE'
             and protection['RetainUntil'] is not None
             and at(protection['ObservedAt']) < at(protection['RetainUntil']))
-    if generation in ('07', '08', '09'):
-        previous_generation = {'07': '06', '08': '07', '09': '08'}[generation]
+    if generation in ('07', '08', '09', '10'):
+        previous_generation = {'07': '06', '08': '07', '09': '08', '10': '09'}[generation]
         previous_path = refresh_paths(previous_generation)[2]
         previous = load(previous_path, root)
         check(previous, root, previous_generation)

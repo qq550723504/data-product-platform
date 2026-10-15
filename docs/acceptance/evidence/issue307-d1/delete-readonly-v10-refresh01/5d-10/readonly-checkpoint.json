@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "source_run": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+  "source_pg": "c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0",
+  "source_minio": "0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65",
+  "source_gateway": "ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4",
+  "source_relations": 194,
+  "source_rows": 1879,
+  "source_business_mutations": 0,
+  "audit_core": "dpp-lifecycle307-5d2274ee-readonly-audit-core-10",
+  "audit_native_call_delta": 20,
+  "backups": {
+    "reference-disposal-preparation01\\native-snapshot\\native-store.tar": "f72efeab2c49802be1661a431164167d7a34968fef877163f08b25878d9554cc",
+    "predelete-core-checkpoint-04\\core.dump": "19dba12b9992fdd11c237d6f0df489c7a961696acd54b8a3403b941e7005c98a"
+  },
+  "approval": "NOT_RECEIVED",
+  "native_delete": 0,
+  "delete_iam": "NOT_ENABLED",
+  "old_restore_touched": false
+}
