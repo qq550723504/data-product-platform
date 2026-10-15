@@ -1,0 +1,534 @@
+{
+  "recorded_at": "2026-10-15T06:24:00.094286+00:00",
+  "reviewer": "/root/v11_independent_review (independent full v13 review turn)",
+  "reviewed_head": "1df9843fc7b110021a06f2423595b6db40f41150",
+  "status": "PASS_INDEPENDENT_OFFLINE_REVIEW",
+  "current_slice_blockers": 0,
+  "operator_or_runtime_fixes_required": 0,
+  "document_corrections_required": 0,
+  "scope": "Finite v13 exact proposal, fixed12 read-only operator/checker/native receipts, historical integration01 and current bounded integration02, four wrapper New/Complete lifecycle wiring and Ubuntu/Windows offline regression under AGENTS section17",
+  "reviewed_operator_sha256": {
+    "examples/lifecycle-d1/complete-lc13-readonly.py": "33df1a8bebbb51c052fa72eb1335b553bf4c6bb02f62239c789d014dd6b2ddb7",
+    "examples/lifecycle-d1/refresh-reference-readonly.py": "29ce62c7552e7c9bae6030a10269db442f16e5f468bacf82e8b6c7f394d7f2ff",
+    "examples/lifecycle-d1/refresh-reference-v12-readonly.py": "24420cdb26230390003cda9a9d0808b43d0d77b0632918a0d3142a8bca780ee7",
+    "examples/lifecycle-d1/check-reference-refresh.py": "ad1b7dd3998134d0f646291a804ad7388830e2d21665a6f6d120d40a3275656e",
+    "examples/lifecycle-d1/check-reference-v13.py": "3dc45aab6b09a6503e86e843fb00d75bc8895121e3d39537a44385926564ef52"
+  },
+  "reviewed_wiring_git_lf_sha256": {
+    "examples/lifecycle-d1/finish-prepare.ps1": "9a8260f5ccb8b8bf891bd3017c98af084ad94b266e24fb930445de623e5dbdb0",
+    "examples/lifecycle-d1/run-reader-step.ps1": "369443b5bb153759f1861dbbf967dc965ecc6bbe4d64dc6e824c5d1cb8468479",
+    "examples/lifecycle-d1/run-plane-step.ps1": "3648c58623dbce4c7706129408f805d1160e0bb97164cc87850b6f496e5e00f0",
+    "examples/lifecycle-d1/run-copy-recovery-step.ps1": "ea1dbfd0d61a87116d0f09e59ab432cab6b3b44db50e27611feab4c7ec46b084",
+    "examples/lifecycle-d1/temporary-helper-wiring.test.ps1": "da7690415d7abf8827eb829970221529708e50c5cedaf6a63caaf6f54b8318e6",
+    ".github/workflows/ci.yml": "912d45f0289d9b00c0b2eb05bfddb57c426ffd328bc9431f356fc3b7f93c5cf8"
+  },
+  "recorded_wiring_windows_raw_sha256": {
+    "examples/lifecycle-d1/finish-prepare.ps1": "9a8260f5ccb8b8bf891bd3017c98af084ad94b266e24fb930445de623e5dbdb0",
+    "examples/lifecycle-d1/run-reader-step.ps1": "369443b5bb153759f1861dbbf967dc965ecc6bbe4d64dc6e824c5d1cb8468479",
+    "examples/lifecycle-d1/run-plane-step.ps1": "3648c58623dbce4c7706129408f805d1160e0bb97164cc87850b6f496e5e00f0",
+    "examples/lifecycle-d1/run-copy-recovery-step.ps1": "ea1dbfd0d61a87116d0f09e59ab432cab6b3b44db50e27611feab4c7ec46b084",
+    "examples/lifecycle-d1/temporary-helper-wiring.test.ps1": "da7690415d7abf8827eb829970221529708e50c5cedaf6a63caaf6f54b8318e6",
+    ".github/workflows/ci.yml": "bdd05790430be9153ce6ed3308095966282b63aea5ed8e03236538eb0c397436"
+  },
+  "wiring_text_hash_boundary": "All six current Git raw LF blobs match the receipt source_git_lf_sha256; current working text is LF/CRLF-equivalent; recorded Windows raw hash is separately LF or CRLF rendering. No binary/profile/IAM normalization.",
+  "reviewed_documents_at_head_sha256": {
+    "docs/acceptance/issue307-d1-delete-proposal.md": "2f0392004695318986fb8633833c2f2dc18a42aac0750375d057b6bb608e40b8",
+    "docs/acceptance/issue307-d1-candidate04-readonly.md": "8e71a8c0c19d7d8d391f5cc786b2b2f03e3f466203cd686fdee3a294ea0cd976",
+    "docs/acceptance/issue307-reference-demand-contract.md": "f5ce38fd3784c90f4642737c248b496894268950e6f5f4bceaec2fd024ba72aa"
+  },
+  "independently_executed": {
+    "working_directory": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform",
+    "python_environment": "PYTHONDONTWRITEBYTECODE=1 for subprocess tests/checkers; outer orchestration python -B",
+    "tests_normal": 45,
+    "tests_optimized": 45,
+    "test_files": {
+      "test_reference_proposal.py": 7,
+      "test_lc13_readonly.py": 9,
+      "test_reference_refresh.py": 5,
+      "test_reference_v8.py": 4,
+      "test_reference_v9.py": 4,
+      "test_reference_v10.py": 4,
+      "test_reference_v11.py": 4,
+      "test_reference_v12.py": 4,
+      "test_reference_v13.py": 4
+    },
+    "offline_clis": {
+      "check-reference-proposal.py": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "check-reference-refresh.py": "PASS_OFFLINE_V7_REFRESH_CONSISTENCY_ONLY",
+      "check-reference-v8.py": "PASS_OFFLINE_V8_REFRESH_CONSISTENCY_ONLY",
+      "check-reference-v9.py": "PASS_OFFLINE_V9_REFRESH_CONSISTENCY_ONLY",
+      "check-reference-v10.py": "PASS_OFFLINE_V10_REFRESH_CONSISTENCY_ONLY",
+      "check-reference-v11.py": "PASS_OFFLINE_V11_REFRESH_CONSISTENCY_ONLY",
+      "check-reference-v12.py": "PASS_OFFLINE_V12_REFRESH_CONSISTENCY_ONLY",
+      "check-reference-v13.py": "PASS_OFFLINE_V13_REFRESH_CONSISTENCY_ONLY"
+    },
+    "main_adapter_tests_normal": 9,
+    "main_adapter_tests_optimized": 9,
+    "wrapper_wiring_cases": 17,
+    "wrapper_wiring_cases_by_wrapper": {
+      "finish-prepare": 3,
+      "run-reader-step": 4,
+      "run-plane-step": 5,
+      "run-copy-recovery-step": 5
+    },
+    "required_check_node_tests": 163,
+    "powershell_parse_files": [
+      "examples/lifecycle-d1/finish-prepare.ps1",
+      "examples/lifecycle-d1/run-reader-step.ps1",
+      "examples/lifecycle-d1/run-plane-step.ps1",
+      "examples/lifecycle-d1/run-copy-recovery-step.ps1",
+      "examples/temporary-containers.ps1",
+      "examples/lifecycle-d1/temporary-helper-wiring.test.ps1"
+    ],
+    "powershell_parse_count": 6,
+    "commands": [
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/test_reference_proposal.py"
+        ],
+        "tests": 7,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/test_lc13_readonly.py"
+        ],
+        "tests": 9,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/test_reference_refresh.py"
+        ],
+        "tests": 5,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/test_reference_v8.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/test_reference_v9.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/test_reference_v10.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/test_reference_v11.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/test_reference_v12.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/test_reference_v13.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/temporary_containers_test.py"
+        ],
+        "tests": 9,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "-O",
+          "examples/lifecycle-d1/test_reference_proposal.py"
+        ],
+        "tests": 7,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "-O",
+          "examples/lifecycle-d1/test_lc13_readonly.py"
+        ],
+        "tests": 9,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "-O",
+          "examples/lifecycle-d1/test_reference_refresh.py"
+        ],
+        "tests": 5,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "-O",
+          "examples/lifecycle-d1/test_reference_v8.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "-O",
+          "examples/lifecycle-d1/test_reference_v9.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "-O",
+          "examples/lifecycle-d1/test_reference_v10.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "-O",
+          "examples/lifecycle-d1/test_reference_v11.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "-O",
+          "examples/lifecycle-d1/test_reference_v12.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "-O",
+          "examples/lifecycle-d1/test_reference_v13.py"
+        ],
+        "tests": 4,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "-O",
+          "examples/temporary_containers_test.py"
+        ],
+        "tests": 9,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/check-reference-proposal.py"
+        ],
+        "status": "PASS_OFFLINE_CONSISTENCY_ONLY",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/check-reference-refresh.py"
+        ],
+        "status": "PASS_OFFLINE_V7_REFRESH_CONSISTENCY_ONLY",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/check-reference-v8.py"
+        ],
+        "status": "PASS_OFFLINE_V8_REFRESH_CONSISTENCY_ONLY",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/check-reference-v9.py"
+        ],
+        "status": "PASS_OFFLINE_V9_REFRESH_CONSISTENCY_ONLY",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/check-reference-v10.py"
+        ],
+        "status": "PASS_OFFLINE_V10_REFRESH_CONSISTENCY_ONLY",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/check-reference-v11.py"
+        ],
+        "status": "PASS_OFFLINE_V11_REFRESH_CONSISTENCY_ONLY",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/check-reference-v12.py"
+        ],
+        "status": "PASS_OFFLINE_V12_REFRESH_CONSISTENCY_ONLY",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python",
+          "examples/lifecycle-d1/check-reference-v13.py"
+        ],
+        "status": "PASS_OFFLINE_V13_REFRESH_CONSISTENCY_ONLY",
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "pwsh",
+          "-NoProfile",
+          "-File",
+          "examples/lifecycle-d1/temporary-helper-wiring.test.ps1"
+        ],
+        "cases": 17,
+        "exit_code": 0,
+        "docker_executable_calls": 0,
+        "business_execution": 0
+      },
+      {
+        "argv": [
+          "node",
+          "--test",
+          "--test-reporter=tap",
+          ".github/scripts/required-checks.test.mjs"
+        ],
+        "tests": 163,
+        "pass": 163,
+        "fail": 0,
+        "exit_code": 0
+      },
+      {
+        "method": "System.Management.Automation.Language.Parser.ParseFile; six files; zero parse errors; no invocation",
+        "files": [
+          "examples/lifecycle-d1/finish-prepare.ps1",
+          "examples/lifecycle-d1/run-reader-step.ps1",
+          "examples/lifecycle-d1/run-plane-step.ps1",
+          "examples/lifecycle-d1/run-copy-recovery-step.ps1",
+          "examples/temporary-containers.ps1",
+          "examples/lifecycle-d1/temporary-helper-wiring.test.ps1"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "inner_semantic_rejected_count": 16,
+    "inner_cases": [
+      {
+        "case": "stale-v12-protection",
+        "rejected": true,
+        "reason": "Observation not newer than reviewed predecessor"
+      },
+      {
+        "case": "native-content-sha",
+        "rejected": true,
+        "reason": "Native content changed"
+      },
+      {
+        "case": "new-native-legal-hold",
+        "rejected": true,
+        "reason": "Protection changed; new disposition required"
+      },
+      {
+        "case": "inventory-delete-marker",
+        "rejected": true,
+        "reason": "Inventory or context drift"
+      },
+      {
+        "case": "active-pin",
+        "rejected": true,
+        "reason": "Current Core/reference closure changed"
+      },
+      {
+        "case": "source-pg-identity",
+        "rejected": true,
+        "reason": "Source/checkpoint scope changed"
+      },
+      {
+        "case": "checkpoint-approval",
+        "rejected": true,
+        "reason": "Checkpoint not closed"
+      },
+      {
+        "case": "payload-root-mounted",
+        "rejected": true,
+        "reason": "Inspection candidate/authority drift"
+      },
+      {
+        "case": "delete-permission-enabled",
+        "rejected": true,
+        "reason": "Inspection candidate/authority drift"
+      },
+      {
+        "case": "source-gateway-started",
+        "rejected": true,
+        "reason": "Native helper identity drift"
+      },
+      {
+        "case": "iam-payload-root",
+        "rejected": true,
+        "reason": "IAM helper scope/binary drift"
+      },
+      {
+        "case": "source-relation-hash",
+        "rejected": true,
+        "reason": "Source or restored facts differ"
+      },
+      {
+        "case": "source-role-hash",
+        "rejected": true,
+        "reason": "Source or restored facts differ"
+      },
+      {
+        "case": "unaccounted-native-cost",
+        "rejected": true,
+        "reason": "Audit invocation/cost accounting changed"
+      },
+      {
+        "case": "regular-reader-enabled",
+        "rejected": true,
+        "reason": "Native IAM closure changed"
+      },
+      {
+        "case": "source-not-stopped",
+        "rejected": true,
+        "reason": "Source/audit/helper not restored stopped"
+      }
+    ],
+    "inner_case_method": "Patch only the newest generation12 module load results and call expected_proposal(created_at,generation=12); semantic ValueError independent of outer index checks; no source edit",
+    "fixed12_invalid_args": [
+      [
+        "13"
+      ],
+      [
+        "arbitrary"
+      ],
+      [
+        "delete"
+      ],
+      [
+        "--confirm"
+      ],
+      [
+        "--source",
+        "foreign"
+      ],
+      [
+        "--generation",
+        "13"
+      ]
+    ],
+    "fixed12_invalid_args_exit_code": 2,
+    "indexed_payloads": 209,
+    "indexes": 19,
+    "all_raw_files": 228,
+    "all_current_raw_match_reviewed_head": true,
+    "historical_raw_matches": {
+      "ea51c7cad8b55b50b7bf6c91a73359d12200ac38": 202,
+      "4cee7982f63502be2abf1df32aa0000dc46e30d7": 223,
+      "4cb6c5065fddc3e83da5af28ac4427525bf42972": 225
+    },
+    "runtime_files_frozen_anchor": 317
+  },
+  "public_native_receipt_closure": {
+    "mode": "Read frozen public receipts only; no fresh native or host/Docker read",
+    "protection_observation_range": {
+      "from": "2026-10-15T05:32:35.1886766Z",
+      "to": "2026-10-15T05:32:35.712494743Z"
+    },
+    "source_before": "2026-10-15T05:32:23.414824+00:00",
+    "source_after": "2026-10-15T05:32:36.675783+00:00",
+    "core_as_of": "2026-10-15T05:32:12.518355+00:00",
+    "proposal_at": "2026-10-15T05:33:08.411116+00:00",
+    "source_relations": 194,
+    "source_rows": 1879,
+    "qualified_guards": 27,
+    "target_fk_checks_unreleased_zero": 54,
+    "migration67_functions": 3,
+    "requirements_and_verified_releases": 23,
+    "pins_and_terminations": 7,
+    "active_pins": 0,
+    "ready_outputs": 2,
+    "copy_operations": 0,
+    "old_not_sent_and_linked_releases": 2,
+    "source_calls_observations_typed_costs": 92,
+    "clone_calls_observations_typed_costs": 112,
+    "clone_unaccounted": 0,
+    "management_gets_this_generation": 4,
+    "retained_topology_receipts": 63,
+    "prior_topology_entries_unchanged": 60,
+    "new_generation12_helpers": 3,
+    "all_receipts_exited_pid0_no_host_ports": true
+  },
+  "conclusions": [
+    "Exact candidate04/source055aa1df, two exact targets/four survivors,129560 bytes, once each/total<=2,<=40 minutes,no unknown resend and closed authority match v12. Retention expiry never expands scope.",
+    "Original trial facts remain NOT_SENT,invoked_at null,linked releases; expired non-delete approval is not reusable; no new deletion basis/approval/permission/gateway/send topology exists.",
+    "Future execution remains fresh shared-fence caller authority/protection/inventory/qualified references/pins/pending-copy/ledger gated; inspect-source is pre-delete checkpoint only, separately bounded read-only recovery is not actual deletion acceptance.",
+    "All228 indexed raw files equal current reviewed Git blobs;old202/223/225 remain equal corresponding historical commits.317 runtime anchors and frozen candidate/binary/profile/IAM/gateway remain unchanged. Five operator hashes match source and native verification;operator base ea51c7ca/worktree changes explicitly recorded.",
+    "Six protection and two inventory observations are inside source before/after and newer than v12. Source before=after=new12 restore=predecessor source for194 relations/1879 rows and complete role/owner/ACL fingerprints;proposal follows readback.",
+    "27 guards/54unreleased-zero checks/3 migration67 function bodies and hashes/23 verified owner releases/7term pins/2ready outputs/2old NOT_SENT closure pass. Source92 andclone112 physical call/cost accounting closed;4 management GET separately receipted.",
+    "Public native topology retains original60 entries and adds only3 generation12 helpers;63 receipts exited/PID0/no host ports. Reviewer did not access Docker or verify current host state.",
+    "Integration01 broad old-wrapper preservation remains immutable historical evidence;integration02 narrowly restores main default archive/retirement for successful new synchronous helpers while retaining explicit RetainHelper,reader/copy expected faults,finite extended plane modes,and StartOnly barriers. No old-run adoption/hot-update/replay.",
+    "Real wrapper fragments/Run AST synthetic17 cases pass default retire,explicit retain,expected fault retain,unexpected exit no Complete,StartOnly no Complete,exact expected exit forwarding and persisted receipt before Complete. Underlying main adapter9 eachmode passes. Existing Ubuntu/Windows matrix wires the same regression and required-check policy163 passes.",
+    "No valid blocker or required product/runtime/operator/document fix. Optional generic IAM/owner/DR and actual DELETE/post-delete recovery/fullD1/D2 remain #307 follow-up;#318 Draft; review PASS is not execution authority."
+  ],
+  "effects": {
+    "repository_edits": 0,
+    "private_report_files_created": 1,
+    "docker_access": 0,
+    "provider_io": 0,
+    "db_io": 0,
+    "private_credentials_access": 0,
+    "native_helper_execution": 0,
+    "business_execution": 0,
+    "container_starts": 0,
+    "iam_changes": 0,
+    "provider_delete": 0,
+    "retained_resource_cleanup": 0,
+    "pull_request_merge": 0,
+    "synthetic_test_temp_directories_only": true
+  },
+  "authority": "NOT_RECEIVED;#318 Draft;actual DELETE/post-delete recovery NOT_RUN / fullD1 NOT_ACCEPTED",
+  "matrix_finalization": "Append this completed independent result in a new review directory. Preserve all original native/integration01/integration02 payload/index bytes, protection times and historical failed records. A separate finite final docs/receipt check may follow."
+}

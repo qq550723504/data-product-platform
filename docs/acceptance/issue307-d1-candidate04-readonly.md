@@ -2,8 +2,8 @@
 
 最新观察见[v13基于v12的新原生只读观察](#v13基于v12的新原生只读观察)。
 下文audit-core-04/06/07/08/09/10/11及v6至v12独立评审保留各自原时点；新回执另存audit-core-12，不覆盖旧证据。
-v12的[独立评审](#v12独立评审与收敛检查)作为本次刷新基线；新v13为主线程原生只读及离线验收，尚未新增独立评审。
-主线程当前有限切片有效blocker=0；新verification/index明确记录该边界。
+v12的[独立评审](#v12独立评审与收敛检查)作为刷新基线；v13完整切片的[独立评审](#v13独立评审与收敛检查)
+已完成，当前有限切片有效blocker=0。原native和integration01/02回执保留各自采集时口径，新评审另存。
 
 2026-10-15（Asia/Singapore）。新候选源码055aa1df、Linux binary
 `01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3`
@@ -646,4 +646,32 @@ copy StartOnly在Complete前返回，保留schema68、barrier及94/95/91/92/93/9
 用例执行真实wrapper片段/Run AST并stub外部边界，未调用Docker executable/provider/DB；同一回归已接入现有Ubuntu/Windows CI matrix。
 新wrapper回执分别记录执行时Windows原始文本摘要与Git LF文本摘要，证明CI文本的LF/CRLF等价；不转换binary/profile/IAM摘要。
 fixture首次提取scriptblock时PSScriptRoot为空的参数绑定失败已修正，并记录在新回执；不冒充native或业务失败。
-当前D1索引共228 raw（209 payload/19 index），原native保护观察与历史回执不改写；v13仍未新增独立评审，#318 Draft。
+集成02封存时D1索引共228 raw（209 payload/19 index），原native保护观察与历史回执不改写；其后完整独立评审另见下节，#318 Draft。
+
+## v13独立评审与收敛检查
+
+独立reviewer对HEAD `1df9843fc7b110021a06f2423595b6db40f41150` 的v13精确方案、离线校验、
+新12代只读回执、固定12代operator，以及默认回收/显式保留接线与17项行为回归完成实际独立评审。
+结论 **PASS_INDEPENDENT_OFFLINE_REVIEW，当前有限切片有效blocker=0**；无需operator/runtime/wrapper修复。
+只追加本节和新评审回执，不回写native或integration01/02历史，不新增保护观察或发送权限。
+
+| 有限contract / 检查 | 独立结论与本轮收口 |
+| --- | --- |
+| exact scope / authority | candidate04/source055aa1df及binary/profile/IAM/gateway不变；仅online/a@312365a9与quarantine/b@846d0c7c两目标，共129560 bytes，每项最多一次/总DELETE≤2、≤40分钟、unknown不重发；四survivor/备份/其他环境排除，精确确认NOT_RECEIVED |
+| 历史原字节 | 209份payload+19份index共228 raw与1df9843f一致；old202@ea51c7ca、223@4cee7982、225@4cb6c506分别逐字节一致；本轮两份评审payload及index追加后共231 raw（211 payload/20 index） |
+| source / operator / 接线来源 | 317runtime保留冻结锚点；5个只读operator与native verification一致，operator base ea51c7ca/worktree_changes=true保留；6项wrapper/回归/CI源码执行时Windows raw和Git LF边界一致，main四项helper实现未变 |
+| Core / 时间闭合 | source before=after=12 restored=v12，194表/1879行和完整relation/role/owner/ACL一致；6保护+2inventory晚于v12，位于05:32:23.414824～05:32:36.675783Z内；Core as_of05:32:12.518355Z及proposal05:33:08.411116Z按采集顺序闭合；原保护观察05:32:35.1886766～05:32:35.712494743Z不变 |
+| reference / owner / 原trial | 27完整guard、54target checks unreleased0、3migration67函数、23 verified-quiescent requirements/releases；7pins/terminations active0、2ready outputs/copy operations0；旧2NOT_SENT(invoked_at=null)/2linked releases不变，无send claim/absence/completion；旧trial不能续发 |
+| IAM / 账务 / 固定12 | reader/producer disabled、inspector enabled、拟建executor NoSuchUser；source92，新12 clone112 calls/observations/typed costs、unaccounted0；本代management GET4单列；固定12复用collector/TCP readiness/root-free payload helper及nested-finally，拒绝13/arbitrary/delete/confirm/source/generation，无send开关 |
+| 默认回收 / 显式保留 | 四wrapper复用main New/Complete；新同步成功helper默认归档/退役，RetainHelper、reader/copy预期非零故障及有限扩展plane模式保留；copy StartOnly在Complete前返回；准确退出码/schema68/barrier/receipt先于completion保持，不追认或热改旧5d |
+| 独立非删除回归 | 正常/-O各45项，8CLI；直接expected_proposal的16项gen12内层反例拒绝，未依赖外层index；固定12六组越界args均exit2；实际wrapper片段/Run AST的17用例、adapter正常/-O各9、Node policy163及6份PS语法解析PASS，无Docker executable/business执行 |
+| retained / 主线程宿主回读 | 已封存回执原60条目不变，仅新增3个12代helper，63项均exited/PID0/noports；reviewer未访问Docker。主线程只核对宿主元数据：同63 ID/image/state、internal网络、15关闭配置、maintenance/permission/gateway及原tar/dump摘要一致，未启动容器或访问provider/DB |
+| CI / 执行前门禁 | 被评审1df9843f的PR CI38689799436为13/13，Ubuntu/Windows均通过实际17项；本次只追加文档和评审回执，新的提交另核对exact-head完整13项CI，不借用旧CI；PR/Issue检查点记录最终结果 |
+| 剩余验收 | 新basis/approval、native delete IAM/active gateway/permission/fresh signed send topology尚未创建；每项发送前必须fresh shared-fence核验authority/protection/references/pins/pending-copy/ledger；分离只读recovery尚未激活；真实DELETE/删除后恢复及完整D1/D2仍NOT_RUN / NOT_ACCEPTED，归#307；#318 Draft |
+
+[独立评审回执](evidence/issue307-d1/delete-proposal-v13-review01/independent-review.json)与
+[主线程完整性/宿主核对](evidence/issue307-d1/delete-proposal-v13-review01/primary-audit.json)另存新目录。
+按AGENTS §17执行收敛检查：本轮有限contract为精确范围/关闭authority、历史不可改写、冻结候选和operator来源、
+只读Core/owner/账务闭合及默认回收/显式保留边界；只有有效BLOCKER重新打开本切片。
+通用IAM/owner/DR及真实删除竞争/故障仍是#307后续验收，不能扩写为本轮PASS。
+本轮provider/DB I/O、Core mutation、容器启动、IAM写入、DELETE、merge、保护release、bypass和Docker cleanup均0。

@@ -3,7 +3,7 @@
 2026-10-15（Asia/Singapore），状态 **PENDING_USER_CONFIRMATION / 实际 DELETE NOT_RUN**。
 本方案依据 #307 的 exact-list approval gate、lifecycle 主 contract 与
 [有限引用需求 contract](issue307-reference-demand-contract.md)。#318 保持 Draft，
-既有非删除备份/恢复和 no-send 事务保留；当前v13已完成新只读核验，基线v12已独立评审通过；v13尚未新增独立评审，不启用发送、不发 DELETE、不解除保护。
+既有非删除备份/恢复和 no-send 事务保留；当前v13已完成新只读核验及完整独立评审，有限切片有效blocker=0，不启用发送、不发 DELETE、不解除保护。
 此方案替代“下一次执行”的旧 e1487ce7 提案；旧提案及其他环境的已消费批准保留原历史。
 
 当前状态见[原生非删除准备](issue307-d1-reference-preparation.md)：六份 exact-version
@@ -31,7 +31,12 @@ v6至v12 proposal/index及其独立评审保持原字节；202份历史raw文件
 无需operator/runtime或事实文字修复。评审收口HEAD为`ea51c7cad8b55b50b7bf6c91a73359d12200ac38`。
 [v12评审矩阵](issue307-d1-candidate04-readonly.md#v12独立评审与收敛检查)和
 [单独回执](evidence/issue307-d1/delete-proposal-v12-review01/independent-review.json)保持该时点。
-本次v13增加固定12代只读operator，新原生/主线程离线验收通过，尚未新增独立评审；不把v12评审结论延伸为v13独立评审。
+其后独立reviewer对HEAD `1df9843fc7b110021a06f2423595b6db40f41150` 的v13方案、离线校验、
+新12代只读回执、固定12代operator、默认回收/显式保留接线及17项回归完成完整独立评审，PASS、有效blocker=0，无需源码修复。
+[v13独立矩阵](issue307-d1-candidate04-readonly.md#v13独立评审与收敛检查)与
+[单独回执](evidence/issue307-d1/delete-proposal-v13-review01/independent-review.json)追加该结论；原native及integration回执保留采集时口径。
+独立正常/-O各45项、8CLI、16项12代内层反例、6组参数拒绝、17项wrapper、adapter各9、Node163、6份PS解析均PASS。
+228份旧raw不变，新增评审两payload/index后共231raw；未新增保护观察或开启发送。
 正常/-O各45项、八个离线CLI通过，固定12入口六组越界参数均exit2；冻结runtime及317项源码、binary/profile/IAM/gateway未变。
 v6修正v5继承的audit-core-03/checkpoint旧字段冲突，统一为audit-core-04证据。
 [v5](evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json)及其index原字节保留，
@@ -251,7 +256,7 @@ receipt，再处理 quarantine/b。初始 native inventory 必须等于六份 re
 恢复配置/Redis/worker资源当前尚未激活，当前5d真实队列恢复仍NOT_RUN。
 上述入口闭合结论来自前轮主线程静态检查；v6/v7/v8独立评审覆盖各自精确方案、离线校验，
 v8还核对当时07代只读回执和operator扩展；v9独立评审覆盖当时08代只读回执及固定08扩展；
-v10独立评审覆盖当时09代只读回执及固定09扩展；v11独立评审覆盖当时10代只读回执及固定10扩展；v12独立评审覆盖当时11代只读回执及固定11扩展；本次v13新12代刷新为主线程验收，
+v10独立评审覆盖当时09代只读回执及固定09扩展；v11独立评审覆盖当时10代只读回执及固定10扩展；v12独立评审覆盖当时11代只读回执及固定11扩展；本次v13独立评审覆盖新12代回执、固定12扩展及有界helper接线，
 该非删除准备结论不延伸为5d真实发送/删除后队列恢复PASS。
 
 当前 backup资源实际已保留：`dpp-lifecycle307-5d2274ee-predelete-objects`、
