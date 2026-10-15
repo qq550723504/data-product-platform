@@ -1,6 +1,7 @@
 param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','seal','bind','crash','accept','final')][string]$Mode)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
+. (Join-Path $PSScriptRoot '../temporary-containers.ps1')
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $private=(Resolve-Path -LiteralPath $PrivateDirectory).Path
 function Docker([Parameter(ValueFromRemainingArguments=$true)][string[]]$Arguments){$v=& docker.exe @Arguments 2>&1;if($LASTEXITCODE -ne 0){throw "Docker $($Arguments[0]) failed; all resources retained"};($v -join "`n").Trim()}
@@ -19,11 +20,12 @@ $pg=(Docker @('inspect',$r.containers.postgres)|ConvertFrom-Json)[0]
 . (Join-Path $PSScriptRoot 'durable-storage.ps1')
 Assert-FixtureDurableStorage $r $pg ((Docker @('inspect',$r.containers.minio)|ConvertFrom-Json)[0])|Out-Null
 Write-Utf8 (Join-Path $dir ($name+'.sh')) ("#!/bin/sh`nset -eu`nexec /run/private/reader -mode $Mode`n")
-Docker @('create','--pull','never','--name',$name,'--label',"lifecycle307.run=$run",'--network',"container:$($r.containers.gateway)",'--read-only','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data','--mount',"type=bind,source=$dir,target=/run/private,readonly",'--mount',"type=bind,source=$(Join-Path $PSScriptRoot 'results'),target=/run/output",'--entrypoint','/bin/sh',$pg.Image,('/run/private/'+$name+'.sh'))|Out-Null
+$temporaryHelper=New-DppTemporaryContainer -RunID $run -DockerArguments @('--pull','never','--name',$name,'--label',"lifecycle307.run=$run",'--network',"container:$($r.containers.gateway)",'--read-only','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data','--mount',"type=bind,source=$dir,target=/run/private,readonly",'--mount',"type=bind,source=$(Join-Path $PSScriptRoot 'results'),target=/run/output",'--entrypoint','/bin/sh',$pg.Image,('/run/private/'+$name+'.sh'))
 Docker @('start',$name)|Out-Null
 $exit=Docker @('wait',$name)
 $expected='0';if($Mode -eq 'crash'){$expected='95'}
 $receipt=@{run_id=$run;mode=$Mode;container=$name;id=(Docker @('inspect',$name,'--format','{{.Id}}'));exit_code=[int]$exit;expected_exit=[int]$expected;binary_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $dir 'reader')).Hash.ToLowerInvariant();root_mounted=($Mode -in @('provision','seal'));delete=0;cleanup=0}
 Write-Utf8 (Join-Path $PSScriptRoot "results/$run/reader-helper-$name.json") ($receipt|ConvertTo-Json)
 if($exit -ne $expected){throw "Reader $Mode failed; helper and facts retained. Inspect its log; no automatic resend"}
-Write-Output "Reader $Mode complete ($exit); DELETE=0, cleanup=0."
+Write-Utf8 (Join-Path $PSScriptRoot "results/$run/reader-helper-$name-cleanup.json") ((Complete-DppTemporaryContainer -Handle $temporaryHelper -ExpectedExitCode ([int]$expected))|ConvertTo-Json)
+Write-Output "Reader $Mode complete ($exit); helper archived/removed, objects and volumes retained; DELETE=0."

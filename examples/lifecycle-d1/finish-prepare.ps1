@@ -1,7 +1,8 @@
-# Completes the owned empty environment; never retries provider writes or cleans.
+# Completes the owned empty environment; retains providers/data and reaps its helper.
 param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[switch]$ArchiveAcceptance,[switch]$ProcessingDeliveryAcceptance,[string]$MinioImage='')
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
+. (Join-Path $PSScriptRoot '../temporary-containers.ps1')
 if($ProcessingDeliveryAcceptance -and -not $ArchiveAcceptance){throw 'Processing/delivery slice requires exact-version native fixture mode'}
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $private=(Resolve-Path -LiteralPath $PrivateDirectory).Path
@@ -55,7 +56,7 @@ $environment=@{
  sdk='minio-go/v7 v7.0.83';admin_sdk='madmin-go/v3 v3.0.94';minio_binary_sha256=$binaryHash;minio_version_output=$nativeVersion
  source_commit='9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a';license='AGPL-3.0';gateway_delete='DENY_ALL'
  gateway_config_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $private 'Caddyfile')).Hash.ToLowerInvariant()
- preservation='Named PostgreSQL/object volumes retained; no cleanup on failure/success';preparation_helper=$helper
+ preservation='Named PostgreSQL/object volumes retained; completed one-shot helper privately archived and removed';preparation_helper=$helper
  containers=@(@{name=$r.containers.postgres;id=$pg.Id;image=$pg.Image;requested_port_bindings=$pg.HostConfig.PortBindings},@{name=$r.containers.minio;id=$mi.Id;image=$mi.Image;requested_port_bindings=$mi.HostConfig.PortBindings},@{name=$r.containers.gateway;id=$gw.Id;image=$gw.Image;requested_port_bindings=$gw.HostConfig.PortBindings})
  base_main=(& git -C $repo merge-base HEAD origin/main).Trim()
  source_head=(& git -C $repo rev-parse HEAD).Trim()
@@ -95,21 +96,22 @@ timeout 90 /run/private/migrate -direction up -dir /run/private/migrations
 export LIFECYCLE_FIXTURE_CONFIG=/run/private/config.json
 exec /run/private/prepare
 '@.Replace('__RUN__',$run)
-Docker @('create','--pull','never','--name',$helper,'--label',"lifecycle307.run=$run",'--network',"container:$($r.containers.gateway)",
+$temporaryHelper=New-DppTemporaryContainer -RunID $run -DockerArguments @('--pull','never','--name',$helper,'--label',"lifecycle307.run=$run",'--network',"container:$($r.containers.gateway)",
  '--read-only','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data',
  '--mount',"type=bind,source=$private,target=/run/private,readonly",'--mount',"type=bind,source=$results,target=/run/output",
- '--mount',"type=bind,source=$(Join-Path $repo 'migrations'),target=/run/migrations,readonly",'--entrypoint','/bin/sh',$pg.Image,'/run/private/prepare.sh')|Out-Null
+ '--mount',"type=bind,source=$(Join-Path $repo 'migrations'),target=/run/migrations,readonly",'--entrypoint','/bin/sh',$pg.Image,'/run/private/prepare.sh')
 $helperID=Docker @('inspect',$helper,'--format','{{.Id}}')
 Write-Utf8 (Join-Path $private 'helper.json') (@{name=$helper;id=$helperID;image=$pg.Image;network_mode='container:'+$gw.Id;binary_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $private 'prepare')).Hash.ToLowerInvariant()}|ConvertTo-Json)
 $environment.preparation_container_id=$helperID
 $environment.preparation_binary_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $private 'prepare')).Hash.ToLowerInvariant()
 Write-Utf8 (Join-Path $private 'config.json') ($config|ConvertTo-Json -Depth 16)
 Docker @('start',$helper)|Out-Null
-Write-Output "Preparation started inside closed run $run. Helper: $helper. No automatic cleanup."
+Write-Output "Preparation started inside closed run $run. Helper: $helper. Provider data remains retained."
 Write-Output "After successful completion, public manifest: $(Join-Path $output 'manifest.json')"
 # Wait is in the caller's resumable exec session; no provider operation is retried.
 $exit=Docker @('wait',$helper)
 if($exit -ne '0'){throw 'Preparation failed. Preserve facts/objects and inspect receipts; no automatic retry or cleanup.'}
 $config.Enabled=$false
 Write-Utf8 (Join-Path $private 'config.json') ($config|ConvertTo-Json -Depth 16)
-Write-Output 'Manifest complete; fixture principal disabled pending user confirmation. DELETE=0; cleanup=0.'
+Write-Utf8 (Join-Path $output 'preparation-helper-cleanup.json') ((Complete-DppTemporaryContainer -Handle $temporaryHelper)|ConvertTo-Json)
+Write-Output 'Manifest complete; fixture principal disabled. Helper archived/removed; provider DELETE=0; object/volume cleanup=0.'
