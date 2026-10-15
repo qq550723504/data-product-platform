@@ -56,6 +56,9 @@ jobs:
           python3 examples/lifecycle-d1/check-reference-v13.py
           python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_v13.py -v
           python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_v13.py -v
+          python3 examples/lifecycle-d1/check-reference-v14.py
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_v14.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_v14.py -v
       - name: Install isolated browser runner
         run: npm --prefix tests/live-browser install --no-audit --no-fund
       - name: Install Chromium

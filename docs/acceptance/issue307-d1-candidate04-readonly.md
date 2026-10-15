@@ -1,9 +1,9 @@
 # #307 D1：冻结候选04的5d删除前只读核验
 
-最新观察见[v13基于v12的新原生只读观察](#v13基于v12的新原生只读观察)。
-下文audit-core-04/06/07/08/09/10/11及v6至v12独立评审保留各自原时点；新回执另存audit-core-12，不覆盖旧证据。
-v12的[独立评审](#v12独立评审与收敛检查)作为刷新基线；v13完整切片的[独立评审](#v13独立评审与收敛检查)
-已完成，当前有限切片有效blocker=0。原native和integration01/02回执保留各自采集时口径，新评审另存。
+最新观察见[v14基于v13的新原生只读观察](#v14基于v13的新原生只读观察)。
+下文audit-core-04/06/07/08/09/10/11/12及v6至v13独立评审保持原时点；新回执另存audit-core-13。
+v13的[完整独立评审](#v13独立评审与收敛检查)作为刷新基线；本次v14为新原生只读及主线程离线验收，尚未新增独立评审。
+主线程当前有限切片有效blocker=0；新verification/index明确记录该边界，旧证据不改写。
 
 2026-10-15（Asia/Singapore）。新候选源码055aa1df、Linux binary
 `01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3`
@@ -675,3 +675,60 @@ fixture首次提取scriptblock时PSScriptRoot为空的参数绑定失败已修�
 只读Core/owner/账务闭合及默认回收/显式保留边界；只有有效BLOCKER重新打开本切片。
 通用IAM/owner/DR及真实删除竞争/故障仍是#307后续验收，不能扩写为本轮PASS。
 本轮provider/DB I/O、Core mutation、容器启动、IAM写入、DELETE、merge、保护release、bypass和Docker cleanup均0。
+
+## v14基于v13的新原生只读观察
+
+2026-10-15 **14:42:58.530～14:42:58.838 +08:00** 完成六版本保护和库存的新观察，
+精确UTC范围为`2026-10-15T06:42:58.530947817Z`～`2026-10-15T06:42:58.838998345Z`。
+基线为v13独立评审HEAD `1df9843f`、收口HEAD `b9314559`；candidate04/source055aa1df、
+317项运行源码、binary/profile/IAM/gateway、两目标/四survivor及预算均未变，没有重新构建binary。
+本轮仅增加固定13代入口，复用现有只读collector、TCP readiness及root-free payload helper；
+前驱v13/index/review先校验，再建立新audit-core-13，拒绝14/arbitrary/delete/confirm，未重用12或旧restore。
+新operator工作树摘要另记verification；本节不把原v13评审延伸为新v14独立评审。
+
+| 范围 | namespace / key | exact version | bytes | 本次原生保护 |
+| --- | --- | --- | ---: | --- |
+| 目标A | online / fixture/a.csv | 312365a9-f984-43de-b9d5-7e26009ccd82 | 232 | hold=false，NONE，retain-until=null；06:42:58.530947817Z |
+| 目标B | quarantine / fixture/b.csv | 846d0c7c-289d-4667-bc7c-aa04e44357d4 | 129328 | hold=false，NONE，retain-until=null；06:42:58.838998345Z |
+| 保留 | online / fixture/b.csv | 159e90c3-adb6-4ea3-b2e8-2804e578e86f | 129328 | hold=true，NONE |
+| 保留 | quarantine / fixture/a.csv | 5a7ce790-9093-4569-a8fd-0726009a5eb4 | 232 | hold=false；metadata仍GOVERNANCE，retain-until=2026-10-15T00:58:47Z，已过期但仍排除删除 |
+| 保留 | online / fixture/standardized.csv | 2139f293-87f4-4d49-a9f0-941b22275093 | 494 | hold=false，NONE；Entity输出 |
+| 保留 | online / fixture/processed.csv | 7c8ad93b-31ee-445c-9402-816dda0410ec | 232 | hold=false，NONE；processing输出 |
+
+namespace仍为`dpp-lifecycle307-online`/`dpp-lifecycle307-quarantine`。
+[六版本回执](evidence/issue307-d1/delete-readonly-v13-refresh01/5d-13/native-six-version.json)保留各自完整SHA256、bytes及纳秒时间；
+online4/quarantine2，无缺失、额外version或delete marker。内容及保护metadata与registry、原六版本恢复及v13一致；
+6次保护和2次inventory均在source before `06:42:47.832665Z`/after `06:42:59.645567Z`之间。
+retention到期未执行release，也未扩大两目标共129560 bytes的删除范围。
+
+| 执行前条件 | 本次核对结果 | 发送前仍需满足 |
+| --- | --- | --- |
+| environment/provider/incarnation/卷/internal网络 | 原63容器IDs/images/停止状态与v13相同；只新增13代audit/IAM/native helper；最终66个均exited/PID0/无host ports | 激活前重新核对精确拓扑，不重初始化源或旧restore |
+| 冻结候选与exact plan | source055aa1df、binary/profile/IAM/gateway及plan/hash不变；317运行源码匹配 | 实际发送必须绑定同一composition与预算 |
+| source/Core/新独立恢复 | schema68、194表/1879行；before=after=13 restored=v13，完整relation和role/owner/ACL指纹一致 | facts变化则另建checkpoint；snapshot不是CurrentGate授权 |
+| reference/owner closure | 27项完整FK资格、54项target checks unreleased0、3个函数正文匹配migration67；23 requirements/releases闭合 | dispatch/send在共享fence下fresh核验，UNKNOWN立即阻断 |
+| pins/outputs/旧trial | 7pins/7terminations、active0；2output intents各有ready、copy operations0；原2NOT_SENT/2linked releases不变，无send claim/absence/completion | 不重写旧basis/start、不重生成proof、不重发旧trial |
+| 原生IAM | reader/producer disabled，inspector enabled只读；拟建普通executor权威NoSuchUser；固定4个GET | 不代表全域credential销毁；未provision/启用删除用户 |
+| 调用与成本 | source journal92；13代clone112 calls/observations/typed costs，新增20读取、unaccounted0；本轮4次management GET单列 | 前驱v13/v12/v11/v10/v9/v8各4次及v7的8次各保留原回执；不冒充storage业务cost/absence |
+| 备份/业务配置/封存 | 原tar/dump SHA不变；15份source business/delete Enabled=false；13代maintenance PreparationEnabled=false；source gateway始终停止 | 新旧资源全部保留，不开启业务或旧恢复窗口 |
+| 精确确认/新批准 | NOT_RECEIVED；614cd9ad current basis/approval尚未创建 | 新批准≤40分钟，旧non-delete expired approval不可复用 |
+| 新发送组合及fresh topology | delete IAM/active gateway/permission/Redis恢复组合及签名send topology尚未创建 | 不因只读PASS启用；每项dispatch/ClaimExactSend重新执行全部门禁 |
+| 真实DELETE/删除后恢复/完整D1 | NOT_RUN / NOT_ACCEPTED | #307 OPEN，#318 Draft；不合并、不真实删除 |
+
+[proposal-v14](evidence/issue307-d1/delete-readonly-v13-refresh01/proposal-v14.json)、
+[执行前条件](evidence/issue307-d1/delete-readonly-v13-refresh01/execution-preconditions.json)、
+[验证记录](evidence/issue307-d1/delete-readonly-v13-refresh01/verification.json)、
+[最终拓扑](evidence/issue307-d1/delete-readonly-v13-refresh01/retained-topology.json)及
+[231份历史原字节/宿主预检](evidence/issue307-d1/delete-readonly-v13-refresh01/preflight-host.json)另存新目录。
+正常/-O各49项PASS（v6 7、只读9、v7 5、v8/v9/v10/v11/v12/v13/v14各4），v6/v7/v8/v9/v10/v11/v12/v13/v14九个CLI均PASS。
+v14离线检查20份固定indexed payload与完整提案，递归校验前驱v13及独立评审，要求新观察晚于v13；
+scope/authority改变、旧观察、source identity/active pins/running closure、index原字节或membership破坏均拒绝。
+本轮原生operator采集成功；离线收口lookup诊断见下。Core业务mutation、IAM写入、DELETE、hold/retention release、bypass和cleanup均0；旧回执和失败历史保持原字节。
+
+
+本次native固定13采集一次成功，退出0；首次离线收口wrapper误引用新private根下的旧5d-readonly-12路径，
+在写入任何public closure receipt前失败。只纠正收口lookup为固定13并保留verification诊断，未重跑native或修改原生回执。
+默认回收/显式保留的四wrapper、17项回归与main helper实现均保持v13已评审版本；本次固定原生audit/helper全部保留，
+不追认旧run、不热改封存operator。D1索引现共252 raw（231 payload/21 index），原231份raw保持b9314559原字节。
+新v14方案、离线校验、13代只读回执及固定13扩展尚未独立评审；v13评审不延伸为v14独立PASS。
+#318保持Draft；本次native窗口仅源PG/MinIO读取，gateway始终停止，源业务事实mutation/IAM写入/DELETE/release/bypass/cleanup均0。

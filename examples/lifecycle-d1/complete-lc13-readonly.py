@@ -90,7 +90,7 @@ def six_equal(current,previous):
 def shadow_config(original,audit,project):
  ref=json.loads(json.dumps(original));f=ref['Fixture'];u=urlsplit(f['PostgresDSN'])
  require(u.scheme=='postgres' and u.hostname==project+'-postgres' and u.port==5432 and u.path=='/lifecycle307' and u.username=='fixture' and u.query=='sslmode=disable' and u.password and u.fragment=='','Unexpected source DSN contract')
- require(audit in {project+'-readonly-audit-core-'+n for n in ('01','02','03','04','05','06','07','08','09','10','11','12')},'Audit hostname outside finite generation')
+ require(audit in {project+'-readonly-audit-core-'+n for n in ('01','02','03','04','05','06','07','08','09','10','11','12','13')},'Audit hostname outside finite generation')
  for k,v in {'RunID':'5d2274ee-a671-4bdc-b406-22b8dad8fd61','WorkspaceID':'89eba3fd-9763-4f66-8cec-1a779104f155','ProviderInstanceID':'1980751b-c50e-4895-93a8-cb55960cd635','IncarnationID':'be784eda-96e4-49a9-ae47-eaa3203a2dc5','RootAccess':'','RootSecret':'','Endpoint':'127.0.0.1:9000'}.items():require(f[k]==v,'Reference reader identity/root drift')
  f['PostgresDSN']=f['PostgresDSN'].replace(project+'-postgres:5432',audit+':5432')
  require(urlsplit(f['PostgresDSN']).hostname==audit,'Audit DSN substitution failed')
@@ -135,7 +135,7 @@ def wait_audit_core(audit):
 
 def five_d(generation=1):
  CONTROL.mkdir(exist_ok=True);PUBLIC.mkdir(exist_ok=True);r,cfg=validate_source()
- require(generation in (1,2,3,4,5,6,7,8,9,10,11,12),'Unreviewed generation')
+ require(generation in (1,2,3,4,5,6,7,8,9,10,11,12,13),'Unreviewed generation')
  candidate,binding=frozen_candidate() if generation>=4 else (None,None)
  suffix='' if generation==1 else '-'+str(generation).zfill(2)
  stage=CONTROL/('5d-readonly'+suffix);stage.mkdir();out=PUBLIC/('5d'+suffix);out.mkdir()

@@ -20,7 +20,8 @@ class ReadonlyContract(unittest.TestCase):
   newest=m.shadow_config(c,project+'-readonly-audit-core-10',project);self.assertIn('audit-core-10:5432',newest['Fixture']['PostgresDSN']);self.assertEqual(c,before)
   refreshed=m.shadow_config(c,project+'-readonly-audit-core-11',project);self.assertIn('audit-core-11:5432',refreshed['Fixture']['PostgresDSN']);self.assertEqual(c,before)
   refreshed12=m.shadow_config(c,project+'-readonly-audit-core-12',project);self.assertIn('audit-core-12:5432',refreshed12['Fixture']['PostgresDSN']);self.assertEqual(c,before)
-  for bad in (project+'-postgres',project+'-predelete-postgres-02',project+'-readonly-audit-core-13','foreign'):
+  refreshed13=m.shadow_config(c,project+'-readonly-audit-core-13',project);self.assertIn('audit-core-13:5432',refreshed13['Fixture']['PostgresDSN']);self.assertEqual(c,before)
+  for bad in (project+'-postgres',project+'-predelete-postgres-02',project+'-readonly-audit-core-14','foreign'):
    with self.assertRaises(RuntimeError):m.shadow_config(c,bad,project)
  def test_source_dsn_identity_and_root_fail_closed(self):
   base=self.config();project='dpp-lifecycle307-5d2274ee';audit=project+'-readonly-audit-core-03'
@@ -43,9 +44,9 @@ class ReadonlyContract(unittest.TestCase):
   for args in (['delete'],['5d-readonly','--confirm'],['5d-readonly','--source','foreign']):
    p=subprocess.run([sys.executable,str(SPEC.origin),*args],capture_output=True);self.assertEqual(p.returncode,2)
   for args in (['delete'],['--confirm'],['--source','foreign']):
-   for script in ('refresh-reference-readonly.py','refresh-reference-v7-readonly.py','refresh-reference-v8-readonly.py','refresh-reference-v9-readonly.py','refresh-reference-v10-readonly.py','refresh-reference-v11-readonly.py','refresh-reference-v12-readonly.py'):
+   for script in ('refresh-reference-readonly.py','refresh-reference-v7-readonly.py','refresh-reference-v8-readonly.py','refresh-reference-v9-readonly.py','refresh-reference-v10-readonly.py','refresh-reference-v11-readonly.py','refresh-reference-v12-readonly.py','refresh-reference-v13-readonly.py'):
     p=subprocess.run([sys.executable,str(Path(SPEC.origin).with_name(script)),*args],capture_output=True);self.assertEqual(p.returncode,2)
- def test_refresh_has_only_seven_fixed_generations(self):
+ def test_refresh_has_only_eight_fixed_generations(self):
   spec=importlib.util.spec_from_file_location('fixed_refresh',Path(SPEC.origin).with_name('refresh-reference-readonly.py'));refresh=importlib.util.module_from_spec(spec);spec.loader.exec_module(refresh)
   self.assertEqual(refresh.refresh_paths(6)[0].name,'delete-readonly-v6-refresh02')
   self.assertEqual(refresh.refresh_paths(7)[0].name,'delete-readonly-v7-refresh01')
@@ -54,7 +55,8 @@ class ReadonlyContract(unittest.TestCase):
   self.assertEqual(refresh.refresh_paths(10)[0].name,'delete-readonly-v10-refresh01')
   self.assertEqual(refresh.refresh_paths(11)[0].name,'delete-readonly-v11-refresh01')
   self.assertEqual(refresh.refresh_paths(12)[0].name,'delete-readonly-v12-refresh01')
-  for generation in (0,5,13,'11','foreign'):
+  self.assertEqual(refresh.refresh_paths(13)[0].name,'delete-readonly-v13-refresh01')
+  for generation in (0,5,14,'11','foreign'):
    with self.assertRaises(ValueError):refresh.refresh_paths(generation)
  def test_stop_failures_do_not_skip_either_source(self):
   for failure in ('helper','audit',m.MINIO):
