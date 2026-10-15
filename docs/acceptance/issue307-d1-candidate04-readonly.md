@@ -2,8 +2,8 @@
 
 最新观察见[v10基于v9的新原生只读观察](#v10基于v9的新原生只读观察)。
 下文audit-core-04/06/07/08与v6/v7/v8/v9独立评审保留各自原时点；新回执另存audit-core-09，不覆盖旧证据。
-v9的[独立评审](#v9独立评审与收敛检查)作为本次刷新基线；v10是新的原生只读及主线程离线验收，
-不新增独立评审结论。原native verification/index与独立评审均保留各自原字节。
+v9的[独立评审](#v9独立评审与收敛检查)作为本次刷新基线；v10采集之后的[独立评审](#v10独立评审与收敛检查)
+已完成，当前切片有效blocker=0。原native verification/index保留采集时的主线程验收记录，新评审另存。
 
 2026-10-15（Asia/Singapore）。新候选源码055aa1df、Linux binary
 `01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3`
@@ -391,3 +391,28 @@ scope/authority改变、旧观察、source identity/active pins/running closure�
 主线程离线收口首次误写前驱子目录为5d-07，在新收口文件生成前失败；纠正为前驱v9的5d-08后完成，
 私有诊断保留，未重跑原生采集或修改其回执。该本地路径错误不计为native业务失败。
 本轮无operator原生失败、Core业务mutation、IAM写入、DELETE、hold/retention release、bypass或cleanup；旧回执和全部失败历史保持原字节。
+
+## v10独立评审与收敛检查
+
+独立reviewer针对HEAD `cf65cbad0bf93601e2b8a2a24ea2ffcc09247774` 的v10精确方案、
+离线校验、新09代只读回执及固定09代operator扩展完成只读评审，结论
+**PASS_INDEPENDENT_OFFLINE_REVIEW，当前切片有效blocker=0**。没有需要修复的operator/runtime问题或事实文字错误。
+本节只追加评审结论；原native verification/index、保护观察时间及此前所有评审/失败历史保持原字节。
+
+| 有限contract / 检查 | 独立结论与本轮收口 |
+| --- | --- |
+| 精确范围与关闭authority | candidate04/source055aa1df、两目标/四survivor、129560 bytes、每项最多一次/总计两次、unknown不重发与v9相同；retention到期不扩大范围；确认NOT_RECEIVED |
+| 原字节与历史 | 140份indexed payload及11份index共151文件，工作区=cf65 Git raw blob=长度/SHA；其中130份历史文件与b68dc143原字节相同；原verification/index不改写 |
+| operator与候选绑定 | 5项operator源码摘要与cf65提交及native verification一致；candidate driver hash与operator base b68dc143对应，worktree_changes已显式记录；317项运行源码与binary/profile/IAM/gateway仍冻结 |
+| Core与时间闭合 | source before=after=09 restored=v9，194表/1879行及完整relation/role/owner/ACL指纹一致；6保护+2inventory均晚于v9，处于03:41:07.876277～03:41:16.781464Z内；proposal创建于03:41:54.669332Z |
+| owner / 原trial / 账务 | 27项FK资格、54项目标检查、3函数、23 requirements/releases、7pins/terminations闭合且active0；原2NOT_SENT/releases不变；source journal92、clone112 calls/observations/typed costs，unaccounted0；本代4个management GET单列 |
+| 固定09与失败恢复 | 复用TCP readiness、只读collector及独立停止/嵌套finally封存；10/arbitrary/delete/confirm/source/generation等越界参数拒绝；没有发送开关或新runtime |
+| 非删除回归 | reviewer独立执行正常/-O各33项、v6/v7/v8/v9/v10五个CLI均PASS；16个额外09内层语义反例全部拒绝，固定09入口6组越界参数均exit2 |
+| 拓扑 / 主线程回读 | 旧51项拓扑不变，仅新增3个09helper；54项回执均exited/PID0/无host ports。主线程只读宿主元数据复核同54个ID/image/state、原tar/dump SHA、15份Enabled=false配置及09 maintenance封存一致，没有启动容器或访问provider/DB |
+| 执行边界与follow-up | 新basis/approval、native delete IAM/active gateway/permission及fresh topology未创建；真实DELETE/删除后恢复、完整D1/D2仍NOT_RUN / NOT_ACCEPTED，继续由#307验收；#318 Draft |
+
+[独立评审回执](evidence/issue307-d1/delete-proposal-v10-review01/independent-review.json)与
+[主线程完整性/宿主回读](evidence/issue307-d1/delete-proposal-v10-review01/primary-audit.json)另存新目录。
+按AGENTS §17冻结本切片contract：精确范围/关闭authority、历史原字节、候选/operator provenance、
+只读观察/账务闭合及失败恢复；Git/index是离线完整性边界。通用IAM/owner/DR及真实删除恢复继续归#307后续验收。
+本轮provider I/O、Core mutation、容器启动、IAM写入、DELETE、merge、hold/retention release、bypass和cleanup均0。

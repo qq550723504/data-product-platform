@@ -3,7 +3,7 @@
 2026-10-15（Asia/Singapore），状态 **PENDING_USER_CONFIRMATION / 实际 DELETE NOT_RUN**。
 本方案依据 #307 的 exact-list approval gate、lifecycle 主 contract 与
 [有限引用需求 contract](issue307-reference-demand-contract.md)。#318 保持 Draft，
-既有非删除备份/恢复和 no-send 事务保留；当前v10基于已独立评审通过的v9完成新只读核验，不启用发送、不发 DELETE、不解除保护。
+既有非删除备份/恢复和 no-send 事务保留；当前v10已完成新只读核验及独立评审，不启用发送、不发 DELETE、不解除保护。
 此方案替代“下一次执行”的旧 e1487ce7 提案；旧提案及其他环境的已消费批准保留原历史。
 
 当前状态见[原生非删除准备](issue307-d1-reference-preparation.md)：六份 exact-version
@@ -31,7 +31,11 @@ v6/v7/v8/v9 proposal/index及其独立评审均保持原字节。前轮独立rev
 [v9评审矩阵](issue307-d1-candidate04-readonly.md#v9独立评审与收敛检查)及
 [单独回执](evidence/issue307-d1/delete-proposal-v9-review01/independent-review.json)保留该时点，
 收口提交为`b68dc143dc0feaf57af9e3a088b7149af09b5671`。此前v6/v7/v8评审和所有失败历史同样保留。
-本次v10是新的原生只读与主线程离线验收，不新增独立评审声明或删除权限；v9的评审不自动覆盖09代新扩展。
+随后独立reviewer对HEAD `cf65cbad0bf93601e2b8a2a24ea2ffcc09247774` 的v10精确方案、离线校验、
+新09代只读回执及固定09代operator扩展给出PASS，当前切片有效blocker=0，无需operator/runtime或事实文字修复。
+[v10评审矩阵](issue307-d1-candidate04-readonly.md#v10独立评审与收敛检查)及
+[单独回执](evidence/issue307-d1/delete-proposal-v10-review01/independent-review.json)记录该新结论；
+原v10 native verification/index仍保留采集时的主线程验收口径与11:41:15～16保护观察，不回写历史或增加删除权限。
 v6修正v5继承的audit-core-03/checkpoint旧字段冲突，统一为audit-core-04证据。
 [v5](evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json)及其index原字节保留，
 不再作为下一次执行的当前清单；[proposal-v4](evidence/issue307-d1/lc13-continuation01/proposal-v4.json)保留原候选冻结时点。
@@ -241,8 +245,8 @@ receipt，再处理 quarantine/b。初始 native inventory 必须等于六份 re
 新attempt/work identity和manifest hash，再按`outbox → worker → once terminal replay`验收；
 恢复配置/Redis/worker资源当前尚未激活，当前5d真实队列恢复仍NOT_RUN。
 上述入口闭合结论来自前轮主线程静态检查；v6/v7/v8独立评审覆盖各自精确方案、离线校验，
-v8还核对当时07代只读回执和operator扩展；v9独立评审覆盖当时08代只读回执及固定08扩展；本次v10只完成新的主线程只读验收，
-不延伸为v10独立评审或5d真实发送/删除后队列恢复PASS。
+v8还核对当时07代只读回执和operator扩展；v9独立评审覆盖当时08代只读回执及固定08扩展；
+本次v10独立评审覆盖新09代只读回执及固定09扩展，该非删除准备结论不延伸为5d真实发送/删除后队列恢复PASS。
 
 当前 backup资源实际已保留：`dpp-lifecycle307-5d2274ee-predelete-objects`、
 `dpp-lifecycle307-5d2274ee-predelete-postgres-02` 及专属同名卷，精确ID见
