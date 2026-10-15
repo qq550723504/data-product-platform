@@ -1,0 +1,120 @@
+{
+  "status": "PASS_INDEPENDENT_CANDIDATE05_PREPARATION_REVIEW",
+  "reviewer": "/root/v11_independent_review",
+  "current_slice_blockers": 0,
+  "frozen_source": "dbe3fbd666146db6a010a508fa99e6ed558b6fe9",
+  "execution": "9ea8f3e2-c805-44b4-b133-a36f50df9d15",
+  "independently_executed": {
+    "preparation_normal": 4,
+    "preparation_optimized": 4,
+    "checker_normal": 7,
+    "checker_optimized": 7,
+    "checker_cli": "PASS_CANDIDATE05_PREPARED_NOT_AUTHORIZED",
+    "go_reference_tests": 6,
+    "go_environment": "GOPROXY=off GOSUMDB=off",
+    "all_passed": true
+  },
+  "negative_cases": {
+    "count": 22,
+    "inner_validate_cases": 21,
+    "actual_artifact_plus_matching_index_case": 1,
+    "cases": [
+      "prepared permission enabled",
+      "old authorization reused",
+      "old execution substituted",
+      "disabled send-a success forged",
+      "legal hold changed",
+      "delete marker added",
+      "max per target expanded",
+      "old executor enabled",
+      "checkpoint dump hash changed",
+      "source relation row count changed",
+      "old reconciliation result removed",
+      "invocation quantity zero",
+      "backup/seal retention assertion removed",
+      "foreign project",
+      "foreign environment",
+      "foreign workspace",
+      "foreign provider",
+      "foreign incarnation",
+      "foreign plan",
+      "foreign plan hash",
+      "foreign inventory hash",
+      "actual IAM raw changed with matching new index"
+    ]
+  },
+  "resolved_findings": [
+    {
+      "finding": "DSN replacement could leave journal pointed at source",
+      "resolution": "Exact source URL validation; explicit AUDIT construction; uppercase no-op and absent/foreign port examples fail closed before native"
+    },
+    {
+      "finding": "Top-level exact proposal scope not bound",
+      "resolution": "All eight scope fields compared to fixed scope and frozen render; eight independent inner counterexamples"
+    },
+    {
+      "finding": "Actual render bytes not bound to pinned hashes",
+      "resolution": "Raw profile/IAM/active/sealed hashes matched fixed pins; tampered IAM with matching new index still rejected"
+    }
+  ],
+  "evidence": {
+    "prior_raw": 344,
+    "prior_commit": "ce7057b296adde0ef9101c4233ff7af051f455d0",
+    "prior_raw_exact": true,
+    "new_payloads": 35,
+    "new_index_sha256": "9480d619b869e93331495281d9133845c70ceb482f49fba7cb07234301bd78f2",
+    "runtime_lf_files": 317,
+    "source_tables": 194,
+    "source_rows": 2361,
+    "source_mutation": 0,
+    "prior_history": "Two NOT_SENT, one CONFIRMED/DENIED, verified release, three UNKNOWN_PRESENT, terminal ALREADY_RESOLVED, one send claim and all costs preserved",
+    "target_bytes": 129560,
+    "exact_versions": 6,
+    "survivors": 4,
+    "clone_new_call_ids": 20,
+    "call_observation_allocation_cost_identities_match": true,
+    "allocation_to_cost_event_to_activity_id_matches": true,
+    "qualified_guards": 27,
+    "target_fk_checks": 54,
+    "migration67_functions": 3,
+    "admin_get_rpc": 5,
+    "new_executor": "NOT_PROVISIONED",
+    "previous_executor": "disabled",
+    "sealed_project_containers": 94
+  },
+  "reviewed_git_lf_sha256": {
+    "docs/acceptance/issue307-d1-candidate05-confirmation.md": "6ab00544b3cb343c5d4d4171729d5db77a43a484ece0836e193839e02ab85bd8",
+    "examples/lifecycle-d1/check-reference-candidate05.py": "0dcc0021a5c7ac43a7ea2621a3c97fae88b018bfeb1d8fa5a5f0eccf74f7239d",
+    "examples/lifecycle-d1/test_reference_candidate05_check.py": "bec1621549c10a66c996cfec7a96e09c76af4ece008c0cbc45066c06a096985d"
+  },
+  "document_hash_boundary": "Confirmation doc hash precedes only final independent PASS/link wording; primary closure records final bytes",
+  "authority": {
+    "human_confirmation": "NOT_RECEIVED",
+    "new_basis": 0,
+    "new_approval": 0,
+    "new_dispatch": 0,
+    "new_claim": 0,
+    "permission": false,
+    "recovery": false,
+    "native_delete": 0,
+    "old_authorization_reuse": false,
+    "merge": 0
+  },
+  "remaining_native_acceptance": [
+    "real native IAM DELETE success",
+    "successful response-loss crash and absence recovery",
+    "two-target scope completion"
+  ],
+  "reviewer_effects": {
+    "repository_edits": 0,
+    "docker_access": 0,
+    "provider_io": 0,
+    "db_io": 0,
+    "private_credentials_access": 0,
+    "native_operator_runs": 0,
+    "container_starts": 0,
+    "delete": 0,
+    "cleanup": 0,
+    "merge": 0
+  }
+}

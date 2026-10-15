@@ -1,0 +1,15 @@
+{
+  "status": "PASS_APPEND_ONLY_INDEPENDENT_REVIEW_INDEX",
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-review01/independent-review.json",
+      "bytes": 4402,
+      "sha256": "4b212dacf26595face68116cf45a1a69cdbae70fce65804bef3f5b79b0973230"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-review01/primary-audit.json",
+      "bytes": 2036,
+      "sha256": "b876c69efb1bac0c6fcaf2c48084bf887a186e11fb8b7a0c727675c688722ad4"
+    }
+  ]
+}

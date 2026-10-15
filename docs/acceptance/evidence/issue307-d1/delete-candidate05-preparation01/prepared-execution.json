@@ -1,0 +1,20 @@
+{
+  "status": "PREPARED_NOT_AUTHORIZED",
+  "execution": "9ea8f3e2-c805-44b4-b133-a36f50df9d15",
+  "source_commit": "dbe3fbd666146db6a010a508fa99e6ed558b6fe9",
+  "checkpoint": "preflight/checkpoint.json",
+  "candidate": "source-binding.json",
+  "human_confirmation": "NOT_RECEIVED",
+  "permission_enabled": false,
+  "basis": 0,
+  "approval": 0,
+  "dispatch": 0,
+  "send_claim": 0,
+  "native_delete_iam": "NOT_PROVISIONED",
+  "active_gateway_started": false,
+  "recovery_enabled": false,
+  "delete": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0
+}

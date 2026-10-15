@@ -1,5 +1,7 @@
 # #307 D1：冻结候选04的5d删除前只读核验
 
+**当前新方案见[candidate05 / v15 精确确认](issue307-d1-candidate05-confirmation.md)。** 新execution `9ea8f3e2-c805-44b4-b133-a36f50df9d15`已冻结并通过新Core/5d只读核验，尚未收到新删除授权。以下v14/旧candidate04内容保留其原观察时点，旧614cd9ad确认不可复用。
+
 **最新状态：v14精确确认后的首次发送被拒绝并已封存；不再是“尚未确认/尚未发送”。**
 [当前执行矩阵](#v14确认后的实际执行矩阵)记录A请求一次、HTTP403/CONFIRMED/DENIED、B未启动、成功删除0；
 两份源版本及四份survivor全部保留。原candidate04 native IAM缺少必需action，当前成功删除路径仍有阻断。
@@ -804,3 +806,10 @@ native当前源码gate不变。历史9CLI／18suite实际正常、-O各40项PASS
 新增隔离测试正常、-O各5项PASS，独立有限CI复评PASS/blocker0。
 [CI隔离说明及证据](issue307-d1-confirmed-v14-execution.md#当前修复与历史候选的-ci-隔离)保存首轮失败和后续修复，
 新精确HEAD的CI结果写入同一PR执行回执。原生成功删除、absence及两份completion继续BLOCKED。
+
+## candidate05 / v15 新准备矩阵
+
+当前权威矩阵和精确确认已移至[candidate05新方案](issue307-d1-candidate05-confirmation.md#新core检查点与当前验收矩阵)。
+新source dbe3fbd6 / execution9ea8f3e2；194表2361行/125源调用历史完整恢复；20native读只记新clone，六版本和保护一致，94资源封存。
+新授权、basis/approval/dispatch/claim、IAM写入、真实DELETE均0；旧344raw不变。独立最终复评和新HEAD的PR CI分别记录，不冒充native成功或main CI。
+独立最终复评已PASS、当前切片blocker0；正常/-O各11项、Go6、CLI及22反例通过，三个有效绑定/隔离问题均已关闭。

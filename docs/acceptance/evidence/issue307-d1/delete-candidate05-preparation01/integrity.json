@@ -1,0 +1,26 @@
+{
+  "status": "PASS_FROZEN_SOURCE_AND_PRIOR344_RAW",
+  "baseline": "ce7057b296adde0ef9101c4233ff7af051f455d0",
+  "old_raw": 344,
+  "old_digest_map_sha256": "21a26c5b21cc8e2d873397504b94b80d86b6975a2e7fe4c539082d8a91306e80",
+  "source_commit": "dbe3fbd666146db6a010a508fa99e6ed558b6fe9",
+  "runtime_files": 317,
+  "preparation_sources_git_lf_sha256": {
+    "examples/lifecycle-d1/prepare-reference-candidate05.py": "ed551247c9d495137ca27df8bc2866d9b848f773cb38ba70abbaa52fc6437dc7",
+    "examples/lifecycle-d1/test_reference_candidate05.py": "d8c961c036cdec08e27cda35e641055a712601c7226b657fde0245b8b5a8a0e0",
+    "examples/lifecycle-d1/candidate05/README.md": "2c3cfa8a4dad28a902ac2c9b6b6d0c32e1be65d94b6d71a14033080045311997",
+    "examples/lifecycle-d1/candidate05/closure-readback.sql": "dd68630aa0f45d3a9c0d92c54c47c05e2fd2a04bb00324c13d7ebaa996ef49f6",
+    "examples/lifecycle-d1/candidate05/core-readonly-collector.py": "79d6f3884b903864463d24a8edeeeaf251aac2068cc51d1d5143ecca8efdb4f1",
+    "examples/lifecycle-d1/candidate05/iam-readonly.go": "c914954c179ce90f83129a82096e9c5b5340b59089ba99fdecda33d5c38c3c14"
+  },
+  "primary_tests": {
+    "four_go_packages": "PASS",
+    "reference_targeted": 6,
+    "preparation_normal": 4,
+    "preparation_optimized": 4
+  },
+  "historical_new_ci": "NOT_YET_RUN_FOR_FINAL_HEAD",
+  "provider_delete": 0,
+  "source_business_mutation": 0,
+  "cleanup": 0
+}

@@ -1,0 +1,9 @@
+{
+  "result": "t|t|f|f",
+  "old_trials_closed": true,
+  "old_denied_closed": true,
+  "new_target_attempt": false,
+  "first_absent": false,
+  "query_sha256": "29337798393bb47240d0ad1df1d655d36d24929063811ed68a3ecf31143012ec",
+  "delete": 0
+}

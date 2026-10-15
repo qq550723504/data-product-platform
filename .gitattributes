@@ -55,6 +55,9 @@ docs/acceptance/evidence/issue307-d1/delete-confirmed-v14-execution01/gateway-of
 docs/acceptance/evidence/issue307-d1/delete-confirmed-v14-execution01/operator-sources/offline-gateway-probe.go -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/delete-confirmed-v14-review01/** text eol=lf
 docs/acceptance/evidence/issue307-d1/delete-confirmed-v14-ci01/** text eol=lf
+docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/** text eol=lf
+docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/binary-modules.txt whitespace=-blank-at-eol
+docs/acceptance/evidence/issue307-d1/delete-candidate05-review01/** text eol=lf
 docs/acceptance/evidence/issue307-d1/lc13-continuation01/delete-candidate04/binary-modules.txt whitespace=-blank-at-eol
 examples/lifecycle-d1/results/f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3/** text eol=lf
 examples/lifecycle-d1/results/7cd53b0e-44d9-4f3a-9eb7-041f496ff277/** text eol=lf

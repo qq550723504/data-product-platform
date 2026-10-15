@@ -1,0 +1,27 @@
+{
+  "id": "5044372e7a1f93578bb67c06e0261e56b85ed68acc41b9aa7a0d713d6b6923fd",
+  "name": "/dpp-lifecycle307-5d2274ee-candidate05-old-profile",
+  "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "mode": "render",
+  "profile": "5d2274ee-614cd9ad",
+  "exit": 1,
+  "expected_exit": 1,
+  "pid": 0,
+  "network": "none",
+  "binary_sha256": "4614fe539f2a41a39fa3d07bf0adf10f832fcc7dff04abf6e9f538617a21b4cd",
+  "read_only": true,
+  "mounts": [
+    {
+      "destination": "/run/output",
+      "rw": true,
+      "type": "bind"
+    },
+    {
+      "destination": "/run/private",
+      "rw": false,
+      "type": "bind"
+    }
+  ],
+  "root_mounted": false,
+  "provider_delete": 0
+}

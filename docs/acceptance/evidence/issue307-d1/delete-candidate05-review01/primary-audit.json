@@ -1,0 +1,50 @@
+{
+  "status": "PASS_FINAL_CANDIDATE05_SOURCE_EVIDENCE_AND_CLOSED_HOST",
+  "at": "2026-10-15T10:26:33.523371+00:00",
+  "frozen_source": "dbe3fbd666146db6a010a508fa99e6ed558b6fe9",
+  "execution": "9ea8f3e2-c805-44b4-b133-a36f50df9d15",
+  "new_payloads": 35,
+  "new_raw_with_index": 36,
+  "all_staged_raw_match": true,
+  "old_raw": 344,
+  "new_index_sha256": "9480d619b869e93331495281d9133845c70ceb482f49fba7cb07234301bd78f2",
+  "independent_checker_hashes_match_staged": true,
+  "final_docs_git_lf_sha256": {
+    "docs/acceptance/issue307-d1-candidate05-confirmation.md": "df3d97c3a356ec6d78dd2be7789637571c01ab48a645cbfd12f6c968da5dc09c",
+    "docs/acceptance/issue307-d1-candidate04-readonly.md": "76c3a6bb0df0a2576924ca7acafec1f50f652e05694b19835fa97e7cd91ad3d8",
+    "docs/acceptance/issue307-d1-confirmed-v14-execution.md": "f0187e3c34331e94149ac9a620ccf9f05c3877ab18ea1f9b63b4a010a4ba4695",
+    "docs/acceptance/issue307-d1-delete-proposal.md": "5c77f366dd11d8a739474a3c964639bc3feeb9d3feda2184727dd4d1ad306d9f"
+  },
+  "post_review_doc_delta": "Only final independent PASS/link wording and readonly matrix result",
+  "private_binary_hashes_match": true,
+  "checkpoint_dump_hash_matches": true,
+  "old_private_seals_backups": 26,
+  "all_preserved": true,
+  "new_permission": false,
+  "new_preparation": false,
+  "human_confirmation_file": false,
+  "host_metadata": {
+    "count": 94,
+    "all_stopped_pid0_no_ports": true
+  },
+  "disclosure_scan": {
+    "staged_files": 45,
+    "credential_values_found": 0,
+    "replacement_characters": 0
+  },
+  "pr_before_push": {
+    "headRefOid": "ce7057b296adde0ef9101c4233ff7af051f455d0",
+    "isDraft": true,
+    "state": "OPEN",
+    "url": "https://github.com/qq550723504/data-product-platform/pull/318"
+  },
+  "effects": {
+    "provider_io": 0,
+    "db_io": 0,
+    "container_starts": 0,
+    "delete": 0,
+    "cleanup": 0,
+    "merge": 0
+  },
+  "remaining": "New exact confirmation and per-send gates; native success/absence/completion not accepted; final-head PR CI separately recorded"
+}

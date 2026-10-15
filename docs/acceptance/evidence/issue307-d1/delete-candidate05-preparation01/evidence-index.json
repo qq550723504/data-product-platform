@@ -1,0 +1,180 @@
+{
+  "schema": "lifecycle307-candidate05-preparation-evidence-v1",
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/binary-modules.txt",
+      "bytes": 3917,
+      "sha256": "745b98fa51a00b3e90eb4b704630dd8360575dee38078bdc2974a66137ea78ec"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/checkpoint-ledger-audit.py",
+      "bytes": 3364,
+      "sha256": "7851d76cd4da58ba06b38b82615bdccd3e17415d0be70cccd6e0b1cb320a3a28"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/confirmation-template.txt",
+      "bytes": 1669,
+      "sha256": "9ee07b7f6a232d9c41b87cdeae6d36372a606eb9a507d62c6e68240bea0ba997"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/dry-run-send/helper.json",
+      "bytes": 711,
+      "sha256": "fc5613c055c1dc2472e242cb1d52561f256e2c3b060e1c8031d8ffda6774b133"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/dry-run-send/send-disabled.json",
+      "bytes": 98,
+      "sha256": "9f8c7bdbb08a6954d37efc9cd0a9767ca99e116850e4ce24297daa890d856955"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/iam/helper.json",
+      "bytes": 761,
+      "sha256": "182be9469e3c51b8bc76d767f87980dfd3550b86436ce60a871654c9268bed98"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/iam/native-iam-readonly.json",
+      "bytes": 1262,
+      "sha256": "974e6d5d14b950350ee2f392c8a407ff304c48a5476aec7c35f77115a71d1cbc"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/initial-host.json",
+      "bytes": 5302,
+      "sha256": "afd0577b1121895de03faf76cc3168d5711107ecf3a3a14683b8d9a080f3a49b"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/integrity.json",
+      "bytes": 1397,
+      "sha256": "2094667103da7195041dc462cd62982bac9bf82bc71f0120b194bbc4bd345342"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/native/helper.json",
+      "bytes": 866,
+      "sha256": "f083c1f5e0ec3116237165e9884238d16804ea83836f38a3cfe2b4dfda3a39f7"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/native/native-six-version.json",
+      "bytes": 12743,
+      "sha256": "8d0fa7b119cfb707de9cfa1f47b6dd30d1badfa858287360afdc5fee7c9110fb"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/old-profile/helper.json",
+      "bytes": 704,
+      "sha256": "5321d08a06f55cb46dc2641a2ba5cbdc71b707871c306b31bb69c0da59b04327"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/checkpoint.json",
+      "bytes": 809,
+      "sha256": "f0fabbda44da97e7df14a3b841f5a3acab7416c6e4a0de02cbe992e2e37d39f2"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/current-core-readback.json",
+      "bytes": 16803,
+      "sha256": "08df12547a7c16abcbb51d8c723701596b3f807af36efb7de28e2a6daf6f5382"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/current-preconditions-readonly.sql",
+      "bytes": 49802,
+      "sha256": "dc5907dc9bc8e36e47e861b26efa901143e0412f28788973e284ff8fc7f1a8ea"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/native-read-ledger-sealed.json",
+      "bytes": 223,
+      "sha256": "f9896cc83679e9939ee1e37f90f550b453e1b8400708d803e858cb7bee94891a"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/native-read-ledger.json",
+      "bytes": 58215,
+      "sha256": "6fb3d08ef4f812f2352a8db2f91024281177abecadbf74fab146dc4c93d25ad6"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/native-read-ledger.sql",
+      "bytes": 3745,
+      "sha256": "cbf16836d9912062705f9293f4d2c67ebdf4c36b5d2d43b7dd99ca9e83212f40"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/owner-closure-readback.json",
+      "bytes": 37740,
+      "sha256": "a1846eb2e4398e242c4d841583c738791255565393f8909022e18835c7b193ef"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/prior-execution-closure.json",
+      "bytes": 13423,
+      "sha256": "0078418e19dab037e07d636efb16aa8ad9e94a0f119a0e7ec7f36ffb76fd21a6"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/reference-qualification-readback.json",
+      "bytes": 26464,
+      "sha256": "132a4de206a512474f8f9909963cf94a742ce32cb3cea01e09a825d44cb38bdd"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/sender-history-readonly.json",
+      "bytes": 241,
+      "sha256": "06501dacb24649cd7622e4d5a45e3ee2534b1fb005b89cd55603508ac3b671a2"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/source-after.json",
+      "bytes": 31399,
+      "sha256": "adde65488fad7bd010d94fa1a3abd29b2218df9d2850e6e8df83068f64d59f6c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/preflight/source-before.json",
+      "bytes": 31273,
+      "sha256": "56024edb452dc0129568ffcd19c0fa19736e4a76344c10b67f0a1ec3995ca7d2"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/prepared-execution.json",
+      "bytes": 554,
+      "sha256": "f51505567735aceda6a97ce1be9ffe995f6b3dd0a275feaa770ec641eef9468b"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/proposal.json",
+      "bytes": 10053,
+      "sha256": "4446650e029970aa57d76c0c64abab3c52097dfbab5c36b0882f2d68b48f4880"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/render/bounded-profile.json",
+      "bytes": 7298,
+      "sha256": "7f38680f8d75c3ae2332ad3bb70f64e9923abaecc504481d3930ca73194546ca"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/render/delete-executor-policy.json",
+      "bytes": 744,
+      "sha256": "77e082bcfec2a34745e24227758ce6a6af40ed1e55e834791fbd0313067de94a"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/render/gateway-active.Caddyfile",
+      "bytes": 1566,
+      "sha256": "cf528277a361b62d19b478069391fafa596833e7cc71722a9f1632dd9b80b4d6"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/render/gateway-sealed.Caddyfile",
+      "bytes": 1056,
+      "sha256": "6a08b8647cc63cb389e2a511a5ad944b82d14e1ec9721f1a5ae45cb984bed4f6"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/render/helper.json",
+      "bytes": 699,
+      "sha256": "906c5ebe51ae83f8b36986f938c2652b1bedaee427fed25212b14ccbf9b8bfd6"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/sealed-state.json",
+      "bytes": 23161,
+      "sha256": "0d2d7a5f98a3ca2b3bcdeaf69683c7c44db5274a669ff2dab7be974677855b39"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/send-a/helper.json",
+      "bytes": 699,
+      "sha256": "f5a6f0f466caf72fa2f608f1087463ff643c746939847caaf4f60c4e7a856990"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/send-b/helper.json",
+      "bytes": 699,
+      "sha256": "8037f96e49f6fc23634a73235ed9bd303d63f100ecdfd668ea2c8073ea0a4e0f"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-candidate05-preparation01/source-binding.json",
+      "bytes": 43438,
+      "sha256": "6d362e78959e0d1d563caa8fcf889fa4980a335f6ac9a564356fbe025b2deeec"
+    }
+  ]
+}
