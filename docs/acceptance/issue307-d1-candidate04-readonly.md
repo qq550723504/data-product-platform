@@ -797,3 +797,10 @@ scope/authority改变、旧观察、source identity/active pins/running closure�
 本次拒绝执行/封存与源码修复的[独立有限复评](evidence/issue307-d1/delete-confirmed-v14-review01/independent-review.json)
 已PASS、该切片有效问题0，独立4项TestReference通过；原生成功删除仍BLOCKED。
 复评核对新81payload/index、旧255raw及315未改runtime；新sender SQL分支仅静态核对，未重新发送。
+
+当前修复首轮PR CI的go-platform通过，demo因历史checker要求当前源码等于旧候选而失败。
+现以固定Git源码的临时public snapshot保留旧255raw/317runtime严格检查，当前实现继续走go-platform；
+native当前源码gate不变。历史9CLI／18suite实际正常、-O各40项PASS，当前readonly另各9项仍保留；
+新增隔离测试正常、-O各5项PASS，独立有限CI复评PASS/blocker0。
+[CI隔离说明及证据](issue307-d1-confirmed-v14-execution.md#当前修复与历史候选的-ci-隔离)保存首轮失败和后续修复，
+新精确HEAD的CI结果写入同一PR执行回执。原生成功删除、absence及两份completion继续BLOCKED。

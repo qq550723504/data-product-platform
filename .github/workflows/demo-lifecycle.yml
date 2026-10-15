@@ -15,6 +15,8 @@ jobs:
       CI: 'true'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -32,33 +34,10 @@ jobs:
           python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_native_d1_completion.py -v
           python3 -m unittest discover -s examples/lifecycle-d1 -p test_lc13_readonly.py -v
           python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_lc13_readonly.py -v
-          python3 examples/lifecycle-d1/check-reference-proposal.py
-          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_proposal.py -v
-          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_proposal.py -v
-          python3 examples/lifecycle-d1/check-reference-refresh.py
-          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_refresh.py -v
-          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_refresh.py -v
-          python3 examples/lifecycle-d1/check-reference-v8.py
-          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_v8.py -v
-          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_v8.py -v
-          python3 examples/lifecycle-d1/check-reference-v9.py
-          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_v9.py -v
-          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_v9.py -v
-          python3 examples/lifecycle-d1/check-reference-v10.py
-          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_v10.py -v
-          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_v10.py -v
-          python3 examples/lifecycle-d1/check-reference-v11.py
-          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_v11.py -v
-          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_v11.py -v
-          python3 examples/lifecycle-d1/check-reference-v12.py
-          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_v12.py -v
-          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_v12.py -v
-          python3 examples/lifecycle-d1/check-reference-v13.py
-          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_v13.py -v
-          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_v13.py -v
-          python3 examples/lifecycle-d1/check-reference-v14.py
-          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_v14.py -v
-          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_v14.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_history.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_history.py -v
+      - name: Check archived candidate04 with its frozen runtime (no provider I/O)
+        run: python3 examples/lifecycle-d1/check-reference-history.py
       - name: Install isolated browser runner
         run: npm --prefix tests/live-browser install --no-audit --no-fund
       - name: Install Chromium

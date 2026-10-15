@@ -96,3 +96,21 @@ delete/recovery/storage/pilot四包测试已PASS；后续修复尚未在源环�
 三UNKNOWN_PRESENT、DENIED release、ALREADY_RESOLVED、六版本保留及86容器封存逐项闭合。
 新81payload/index与旧255raw原字节均核对通过。sender新的SQL读回与结果分支只做静态复评，
 未在5d运行修复后的sender；原生成功删除和两份completion仍BLOCKED，不因本次复评通过而解除。
+
+## 当前修复与历史候选的 CI 隔离
+
+修复提交`df861b53`的[首轮PR CI](https://github.com/qq550723504/data-product-platform/actions/runs/38713230718)
+中go-platform及其余10项job通过；demo历史校验因当前`reference_gateway.go`已合法修复而失败，required随之失败。
+原校验错误地要求当前源码永久等于冻结candidate04；不能用旧源码约束阻止新实现演进，也不能放松原候选哈希。
+
+新增`check-reference-history.py`只在专属临时public snapshot中运行历史离线检查：
+从固定Git提交读取旧255raw及317项runtime，先逐字节核对当前历史回执，再核验原LF/raw绑定。
+9个CLI及18个suite仍保留严格检查，实际historical正常／-O各40项通过；当前readonly另各9项仍在原安全step。
+当前源码不被替换，完整go-platform继续测试当前实现；native operator的当前源码hash gate保持不变。
+checkout获取完整Git历史；固定对象缺失立即失败，不回退当前源码。无provider/DB访问或容器启动。
+
+新增harness自身正常／-O各5项通过；[独立CI复评](evidence/issue307-d1/delete-confirmed-v14-ci01/independent-review.json)
+实际重跑各5项并验证固定Git对象缺失反例，当前切片blocker=0。
+[首轮失败及本地验证证据](evidence/issue307-d1/delete-confirmed-v14-ci01/)另行追加，不覆盖原执行/评审回执。
+新提交的精确HEAD PR CI另在同一[执行讨论回执](https://github.com/qq550723504/data-product-platform/pull/318#issuecomment-6188927216)
+记录；这不构成main CI或原生删除成功验收。
