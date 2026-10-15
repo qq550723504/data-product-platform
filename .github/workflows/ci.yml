@@ -88,6 +88,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test completed helper ownership, archival, and safe collection
         run: python examples/temporary_containers_test.py
+      - name: Test lifecycle wrapper default retirement and explicit retention without Docker
+        shell: pwsh
+        run: ./examples/lifecycle-d1/temporary-helper-wiring.test.ps1
       - name: Test Windows archive ACL replacement on existing diagnostics
         if: runner.os == 'Windows'
         shell: pwsh

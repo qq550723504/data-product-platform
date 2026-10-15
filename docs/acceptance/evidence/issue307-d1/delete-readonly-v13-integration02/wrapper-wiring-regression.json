@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-15T05:55:39.542850+00:00",
+  "status": "PASS_OFFLINE_WRAPPER_WIRING",
+  "executed": {
+    "docker_executable_calls": 0,
+    "status": "PASS_OFFLINE_WRAPPER_WIRING",
+    "business_execution": 0,
+    "cases": 17
+  },
+  "source_sha256": {
+    "examples/lifecycle-d1/finish-prepare.ps1": "9a8260f5ccb8b8bf891bd3017c98af084ad94b266e24fb930445de623e5dbdb0",
+    "examples/lifecycle-d1/run-reader-step.ps1": "369443b5bb153759f1861dbbf967dc965ecc6bbe4d64dc6e824c5d1cb8468479",
+    "examples/lifecycle-d1/run-plane-step.ps1": "3648c58623dbce4c7706129408f805d1160e0bb97164cc87850b6f496e5e00f0",
+    "examples/lifecycle-d1/run-copy-recovery-step.ps1": "ea1dbfd0d61a87116d0f09e59ab432cab6b3b44db50e27611feab4c7ec46b084",
+    "examples/lifecycle-d1/temporary-helper-wiring.test.ps1": "da7690415d7abf8827eb829970221529708e50c5cedaf6a63caaf6f54b8318e6",
+    ".github/workflows/ci.yml": "bdd05790430be9153ce6ed3308095966282b63aea5ed8e03236538eb0c397436"
+  },
+  "method": "Execute real wrapper completion fragments/copy Run AST with synthetic files and in-memory New/Complete/Docker/git/hash/writer stubs. No business command, Docker executable, provider or DB accessed. Assert default retire,explicit retain,expected fault retain,unexpected exit no Complete,StartOnly no Complete,exact exit forwarding and receipt-before-completion.",
+  "cases_by_wrapper": {
+    "finish-prepare": 3,
+    "run-reader-step": 4,
+    "run-plane-step": 5,
+    "run-copy-recovery-step": 5
+  },
+  "ci": "Existing temporary-container-contracts ubuntu/windows matrix executes this same PowerShell regression",
+  "initial_test_fixture_diagnostic": "Extracted scriptblock PSScriptRoot was empty;first fixture run failed argument binding before reader completion. Fixture Join-Path stub now maps empty source root to its own synthetic directory. No live helper was executed.",
+  "authority": "NOT_RECEIVED;no native observation or deletion authority added",
+  "source_git_lf_sha256": {
+    "examples/lifecycle-d1/finish-prepare.ps1": "9a8260f5ccb8b8bf891bd3017c98af084ad94b266e24fb930445de623e5dbdb0",
+    "examples/lifecycle-d1/run-reader-step.ps1": "369443b5bb153759f1861dbbf967dc965ecc6bbe4d64dc6e824c5d1cb8468479",
+    "examples/lifecycle-d1/run-plane-step.ps1": "3648c58623dbce4c7706129408f805d1160e0bb97164cc87850b6f496e5e00f0",
+    "examples/lifecycle-d1/run-copy-recovery-step.ps1": "ea1dbfd0d61a87116d0f09e59ab432cab6b3b44db50e27611feab4c7ec46b084",
+    "examples/lifecycle-d1/temporary-helper-wiring.test.ps1": "da7690415d7abf8827eb829970221529708e50c5cedaf6a63caaf6f54b8318e6",
+    ".github/workflows/ci.yml": "912d45f0289d9b00c0b2eb05bfddb57c426ffd328bc9431f356fc3b7f93c5cf8"
+  },
+  "text_hash_boundary": "source_sha256 preserves actual Windows working bytes;source_git_lf_sha256 separately proves LF/CRLF-equivalent staged text. No binary/profile/IAM hash normalization."
+}

@@ -630,3 +630,20 @@ main通用回收adapter及其他变更正常同步；D1后续接线必须先完�
 Node默认reporter格式导致的首次本地计数采集失败另留诊断；测试命令本身exit0，随后固定TAP reporter重新离线收口。
 没有重跑native、没有新增保护观察；13:32:35源观察、exact scope/关闭authority均保持原值。
 当前main CI增加Linux/Windows临时容器契约两项，完整PR CI应核对当前HEAD的13项job；其结果独立记录在PR/Issue检查点。
+
+### v13显式retain与新run默认回收的有界集成
+
+前节4cb6c506同步时保留整套旧wrapper的办法会撤销main对未来新run的默认回收，边界过宽；
+现已复用main的New/Complete-DppTemporaryContainer，默认新建同步成功helper归档/退役。
+四个入口支持显式 `-RetainHelper`；reader/copy预期非零故障、plane扩展D1模式自动retain，
+copy StartOnly在Complete前返回，保留schema68、barrier及94/95/91/92/93/96等原恢复退出码语义。
+没有把旧run追认进registry，不热改已封存operator/配置或重开旧环境。
+
+[有界接线回执](evidence/issue307-d1/delete-readonly-v13-integration02/retain-boundary-verification.json)保留9项静态D1 invariant、
+317冻结runtime/5只读operator/原225份raw未变的核对，adapter正常/-O各9项、8CLI与5份PS解析PASS；
+[wrapper行为回归](evidence/issue307-d1/delete-readonly-v13-integration02/wrapper-wiring-regression.json)另记录17个实际离线用例，
+覆盖默认回收、显式/故障保留、异常不Complete、StartOnly不Complete、准确退出码和receipt先于completion。
+用例执行真实wrapper片段/Run AST并stub外部边界，未调用Docker executable/provider/DB；同一回归已接入现有Ubuntu/Windows CI matrix。
+新wrapper回执分别记录执行时Windows原始文本摘要与Git LF文本摘要，证明CI文本的LF/CRLF等价；不转换binary/profile/IAM摘要。
+fixture首次提取scriptblock时PSScriptRoot为空的参数绑定失败已修正，并记录在新回执；不冒充native或业务失败。
+当前D1索引共228 raw（209 payload/19 index），原native保护观察与历史回执不改写；v13仍未新增独立评审，#318 Draft。

@@ -41,7 +41,7 @@ collect 只读私有 registry 的 COMPLETED tickets，不枚举全机容器。CR
 
 PowerShell `-Retain` / Python `retain=True` 可显式保留某个 helper；不会进入 collect。老脚本或其他仍在执行的 checkout 不会被本变更热替换。更新到本版本或显式接入 adapter 后，新 helper 才使用该机制。
 
-#322 在 main 的原接线覆盖 fixture preparation、reader、plane、copy-recovery 同步单步 helper。#318 的 D1 切片仍依赖这些 helper 的原始 Docker 元数据与可信停止证明，四个生命周期包装脚本暂保留原字节和资源保留行为；回收 adapter 本身沿用 main，未来接线继续归 #307 后续验收。异步 `StartOnly` 和有已消费人工批准的历史 destructive driver 不改变封存契约；owner 必须确认全部依赖结束后再显式接入，不能按退出码推断证据生命周期已结束。
+fixture preparation、reader、plane、copy-recovery 四个同步入口沿用main默认的完成后归档/退役，保留provider、数据和卷。#318 的有限D1验收可显式传 `-RetainHelper` 保留仍有metadata依赖的helper；reader/copy预期非零故障、plane扩展D1模式自动retain，copy `StartOnly`在completion前返回并保留屏障。既有封存operator和run不热更新，不因为新增默认回收而重开或追溯清理；需要持续原始Docker metadata的新验收必须明确选择retain，不能把退出码当作证据生命周期结束。
 
 ## 验证与复用决策
 

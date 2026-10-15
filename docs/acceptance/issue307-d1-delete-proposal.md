@@ -41,8 +41,10 @@ v6修正v5继承的audit-core-03/checkpoint旧字段冲突，统一为audit-core
 当前离线校验为`python examples/lifecycle-d1/check-reference-v13.py`；
 原`check-reference-proposal.py`、`check-reference-refresh.py`、`check-reference-v8.py`、`check-reference-v9.py`、`check-reference-v10.py`、`check-reference-v11.py`及`check-reference-v12.py`继续核对固定历史v6/v7/v8/v9/v10/v11/v12。
 PASS只表示公开证据与当前提案一致，不能生成批准或替代fresh gate。
-本轮另处理main同步造成的CI入口冲突，保留D1四个PowerShell包装脚本及README的原有保留契约；
-317项runtime、5项只读operator与原223份indexed证据未变，未重跑native或引入D1自动回收。
+本轮另处理main同步造成的CI入口冲突。初次保留整套旧wrapper的范围已收紧：
+复用main对新建同步成功helper的默认归档/回收，以显式RetainHelper、故障/扩展D1模式和StartOnly保留真实metadata依赖；
+317项runtime、5项只读operator及原生/历史证据未变，旧run和封存operator不追认、不热改、不重跑。
+[有界集成与17项wrapper回归](issue307-d1-candidate04-readonly.md#v13显式retain与新run默认回收的有界集成)记录现行边界，回归已接入Linux/Windows现有CI。
 [分支集成说明](issue307-d1-candidate04-readonly.md#v13分支同步与ci入口修复)及
 [单独回执](evidence/issue307-d1/delete-readonly-v13-integration01/integration-verification.json)记录离线重验和边界；
 main新增两项临时容器契约后，当前HEAD完整PR CI应为13项，不能沿用旧HEAD的11项结论。

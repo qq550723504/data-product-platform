@@ -81,3 +81,8 @@ C2曾误用其保留Core的256MiB tmpfs进行组合验证，空间不足导致�
 Core checkpoint 与独立文件 witness 不构成跨存储原子事务。发布调用必须持有稳定 Command key，直到该 cut 的文件 append/fsync 成功；数据库提交后失败，使用同一 key 取得原 ID、sequence、hash 和 expiry，不能先分配新的 key/sequence。`copy-witness` 使用必填 `LIFECYCLE_FIXTURE_CHECKPOINT_KEY`；脚本用固定 `-Scenario` 传入。新的 cut 使用新的 scenario，失败重试保留原 scenario。每次重试仍校验当前 publisher 权限；重试不延长 checkpoint 有效期。
 
 独立 ledger 通过现有 `golang.org/x/sys` OS 文件锁串行化多进程读写；同一 cut 的完整 append 是幂等的，部分 append 只允许补齐该 cut 的精确字节前缀。不同内容、缺失前序、损坏或过期 witness 仍拒绝恢复 admission，不重建独立历史、不修改旧环境。后一个 cut 先到时拒绝跳号，前序发布成功后以原 key 重试后一个 cut。复用现有 Command 幂等表、workspace fence、Audit/Evidence/Outbox，无新增 migration、队列或通用 workflow runtime；不把 fixture witness 扩大为生产灾备系统。
+
+
+新run的四个同步helper入口复用 `examples/temporary-containers.ps1`，完成业务/provenance/exit落盘后默认私有归档并退役helper，保留provider、数据和卷。
+依赖原始Docker metadata的有限D1验收可显式传 `-RetainHelper`；reader/copy的预期非零故障、plane扩展D1模式自动retain，copy `StartOnly`仍在completion前返回并保留屏障helper。
+既有封存5d入口和私有配置不热更新、不重跑；需要持续metadata的新验收必须显式选择retain，不能把exit0等同证据生命周期结束。
