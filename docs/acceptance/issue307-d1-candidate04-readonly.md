@@ -2,8 +2,8 @@
 
 最新观察见[v14基于v13的新原生只读观察](#v14基于v13的新原生只读观察)。
 下文audit-core-04/06/07/08/09/10/11/12及v6至v13独立评审保持原时点；新回执另存audit-core-13。
-v13的[完整独立评审](#v13独立评审与收敛检查)作为刷新基线；本次v14为新原生只读及主线程离线验收，尚未新增独立评审。
-主线程当前有限切片有效blocker=0；新verification/index明确记录该边界，旧证据不改写。
+v13的[完整独立评审](#v13独立评审与收敛检查)作为刷新基线；随后v14的[完整独立评审](#v14独立评审与收敛检查)
+已完成，当前有限切片有效blocker=0。原native verification/index保留采集时口径，评审回执另存，旧证据不改写。
 
 2026-10-15（Asia/Singapore）。新候选源码055aa1df、Linux binary
 `01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3`
@@ -730,5 +730,32 @@ scope/authority改变、旧观察、source identity/active pins/running closure�
 在写入任何public closure receipt前失败。只纠正收口lookup为固定13并保留verification诊断，未重跑native或修改原生回执。
 默认回收/显式保留的四wrapper、17项回归与main helper实现均保持v13已评审版本；本次固定原生audit/helper全部保留，
 不追认旧run、不热改封存operator。D1索引现共252 raw（231 payload/21 index），原231份raw保持b9314559原字节。
-新v14方案、离线校验、13代只读回执及固定13扩展尚未独立评审；v13评审不延伸为v14独立PASS。
+以上是新v14采集时的主线程验收口径；其后对方案、离线校验、13代回执及固定13扩展的独立评审见下节，原verification/index保持原字节。
 #318保持Draft；本次native窗口仅源PG/MinIO读取，gateway始终停止，源业务事实mutation/IAM写入/DELETE/release/bypass/cleanup均0。
+
+## v14独立评审与收敛检查
+
+独立reviewer对HEAD `9383e434a956fac76783df3d7a4bd23d37b98a0b` 的v14精确方案、执行前条件、
+固定13代operator/checker/tests/CI扩展及13代原生回执完成完整有限切片评审，结论
+**PASS_INDEPENDENT_OFFLINE_REVIEW，当前有效blocker=0**，无需源码或事实文字修复。
+本轮仅追加评审与矩阵，不新增原生观察、不刷新v15、不激活发送权限。
+
+| 有限contract / 检查 | 独立结论与本轮收口 |
+| --- | --- |
+| exact scope / authority | source055aa1df/candidate04/binary/profile/IAM/gateway不变；仅online/a@312365a9与quarantine/b@846d0c7c两目标，共129560bytes，每项≤1/总≤2/≤40分钟/unknown不重发；四survivor/备份/其他环境排除，精确确认NOT_RECEIVED |
+| 原字节 / 来源 | 231payload+21index共252raw匹配9383e434；历史231@b931、228@1df及202/223/225切片均原字节；317runtime锚点保留，5项native operator摘要与当前HEAD/verification及base b931+worktree_changes一致，有限13扩展已单独审阅；6wiring raw/GitLF和main4helper仍为已评审版本 |
+| Core / 原生时间 | source before=after=13 restored=v13，194表/1879行及完整relation/role/owner/ACL一致；6保护+2inventory晚于v13并位于06:42:47.832665～06:42:59.645567Z；Core as_of06:42:37.33032Z，proposal06:43:37.252099Z；保护观察仍06:42:58.530947817～06:42:58.838998345Z |
+| references / owner / 旧trial | 27完整qualified guards、54target checks unreleased0、3migration67函数、23 verified owner requirements/releases；7pins/terminations active0、2ready outputs/copy ops0；旧2NOT_SENT/invoked_at=null/linked releases不变，无send claim/absence/completion，旧trial不得续发 |
+| IAM / 账务 | reader/producer disabled、inspector只读enabled、拟建普通executor NoSuchUser；source92、新13 clone112 calls/observations/typed costs、unaccounted0；management GET4单列，原批准仍过期；根凭据仅管理GET helper，payload helper root-free |
+| fixed13 / lookup诊断 | 固定13前驱review HEAD绑定1df、递归提案/index及历史operator原字节校验通过；复用collector/TCP readiness/nested-finally及独立stop，无send开关；native exit0一次成功，旧代private lookup仅离线收口纠正，未重跑native；旧失败历史不覆盖 |
+| 独立非删除执行 | 正常/-O各49、9CLI；16项gen13内层反例直接expected_proposal拒绝，不依赖外层index；固定13六组越界args均exit2；实际PS17 wrapper、adapter各9、Node163、PSparse6全部PASS；reviewer未访问Docker/provider/DB/private credentials |
+| 保留与主线程宿主核对 | 已封存native topology为原63+新13代3helpers，共66退出/PID0/noports；主线程另行只读核对同66 IDs/images/state、internal网络、15关闭配置、maintenance/gateway封存与tar/dump摘要，无启动/provider/DB访问 |
+| 默认回收 / CI | 四wrapper默认成功新helper回收、RetainHelper/预期故障/有限plane模式/StartOnly保留、准确退出码及receipt-before-Complete均维持；被评审9383的PR CI38694510912已成功，新的文档收口HEAD单独核对13项CI；不冒充main push或真实删除验收 |
+| 剩余门禁 | 新basis/approval、delete IAM/active gateway/permission/fresh signed send topology尚未创建；每项fresh shared-fence核验authority/protection/inventory/references/pins/pending-copy/ledger仍必需；分离只读recovery未激活；真实DELETE/删除后恢复及完整D1/D2仍NOT_RUN / NOT_ACCEPTED，#307 OPEN、#318 Draft |
+
+[独立评审回执](evidence/issue307-d1/delete-proposal-v14-review01/independent-review.json)与
+[主线程完整性/宿主核对](evidence/issue307-d1/delete-proposal-v14-review01/primary-audit.json)保存为新目录。
+新增两payload/index后共255raw（233payload/22index）；原252份raw与9383原字节一致，原保护观察和旧index不改写。
+按AGENTS §17冻结现有有限contract，只处理有效BLOCKER；通用IAM/owner/DR及实际删除竞争/故障仍归#307后续验收。
+本轮provider/DB I/O、容器启动、Core mutation、IAM写入、DELETE、merge、release/bypass和Docker cleanup均0。
+后续推进依赖精确授权及执行前条件；无环境/范围变化时不机械新增只读快照版本。

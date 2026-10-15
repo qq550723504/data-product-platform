@@ -3,7 +3,7 @@
 2026-10-15（Asia/Singapore），状态 **PENDING_USER_CONFIRMATION / 实际 DELETE NOT_RUN**。
 本方案依据 #307 的 exact-list approval gate、lifecycle 主 contract 与
 [有限引用需求 contract](issue307-reference-demand-contract.md)。#318 保持 Draft，
-既有非删除备份/恢复和 no-send 事务保留；当前v14已完成新只读核验，基线v13已完整独立评审通过；v14尚未新增独立评审，不启用发送、不发 DELETE、不解除保护。
+既有非删除备份/恢复和 no-send 事务保留；当前v14已完成新只读核验与完整独立评审，有限切片有效blocker=0，不启用发送、不发 DELETE、不解除保护。
 此方案替代“下一次执行”的旧 e1487ce7 提案；旧提案及其他环境的已消费批准保留原历史。
 
 当前状态见[原生非删除准备](issue307-d1-reference-preparation.md)：六份 exact-version
@@ -30,7 +30,12 @@ v13完整独立评审实现HEAD为`1df9843fc7b110021a06f2423595b6db40f41150`，�
 结论PASS、有效blocker=0，独立正常/-O各45、8CLI、16内层反例、6组越界args、17wrapper、adapter各9、Node163、6份PS解析均PASS。
 [v13独立矩阵](issue307-d1-candidate04-readonly.md#v13独立评审与收敛检查)和
 [单独回执](evidence/issue307-d1/delete-proposal-v13-review01/independent-review.json)保持原时点；其13项PR CI已通过。
-本次v14新增固定13代只读operator，主线程原生/离线验收PASS，尚未新增独立评审，不能沿用v13独立结论。
+随后独立reviewer对HEAD `9383e434a956fac76783df3d7a4bd23d37b98a0b` 的v14方案/执行前条件、固定13代operator、
+离线校验及13代原生回执完成完整评审，PASS/有效blocker=0，无需源码或事实修复。
+[v14独立矩阵](issue307-d1-candidate04-readonly.md#v14独立评审与收敛检查)与
+[单独回执](evidence/issue307-d1/delete-proposal-v14-review01/independent-review.json)另存；原native verification/index与14:42:58观察保持原字节。
+独立正常/-O各49、9CLI、16内层反例、6组参数、PS17、adapter各9、Node163及PSparse6均PASS；新增评审后共255raw，原252raw不变。
+后续依赖精确授权及执行前门禁；无环境或范围变化时不继续机械增加只读快照版本。
 正常/-O各49项、九CLI通过；固定13入口6组越界args均exit2，候选runtime/317源码、binary/profile/IAM/gateway未变。
 v6修正v5继承的audit-core-03/checkpoint旧字段冲突，统一为audit-core-04证据。
 [v5](evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json)及其index原字节保留，
@@ -252,7 +257,7 @@ receipt，再处理 quarantine/b。初始 native inventory 必须等于六份 re
 恢复配置/Redis/worker资源当前尚未激活，当前5d真实队列恢复仍NOT_RUN。
 上述入口闭合结论来自前轮主线程静态检查；v6/v7/v8独立评审覆盖各自精确方案、离线校验，
 v8还核对当时07代只读回执和operator扩展；v9独立评审覆盖当时08代只读回执及固定08扩展；
-v10独立评审覆盖当时09代只读回执及固定09扩展；v11独立评审覆盖当时10代只读回执及固定10扩展；v12独立评审覆盖当时11代只读回执及固定11扩展；v13独立评审覆盖当时12代回执、固定12扩展及有界helper接线；本次v14新13代刷新为主线程验收，
+v10独立评审覆盖当时09代只读回执及固定09扩展；v11独立评审覆盖当时10代只读回执及固定10扩展；v12独立评审覆盖当时11代只读回执及固定11扩展；v13独立评审覆盖当时12代回执、固定12扩展及有界helper接线；本次v14独立评审覆盖新13代回执与有限扩展，
 该非删除准备结论不延伸为5d真实发送/删除后队列恢复PASS。
 
 当前 backup资源实际已保留：`dpp-lifecycle307-5d2274ee-predelete-objects`、
