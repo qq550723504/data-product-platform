@@ -75,6 +75,17 @@ jobs:
           printf 'Changed files:\n%s\n' "${changed_files[*]}"
           echo "docs_only=$docs_only"
 
+  temporary-container-contracts:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
+    name: temporary-container-contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test completed helper ownership, archival, and safe collection
+        run: python3 examples/temporary_containers_test.py
+
   go-platform:
     needs: changes
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
@@ -749,7 +760,7 @@ jobs:
   required:
     name: required
     if: ${{ always() }}
-    needs: [changes, go-platform, web-console, hop-smoke, splink-smoke, gx-smoke, label-studio-smoke, browser-contracts, live-core, demo]
+    needs: [changes, temporary-container-contracts, go-platform, web-console, hop-smoke, splink-smoke, gx-smoke, label-studio-smoke, browser-contracts, live-core, demo]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

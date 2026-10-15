@@ -4,6 +4,8 @@
 
 ## 复用与隔离
 
+新调用的 preparation / reader / plane / copy-recovery 同步 helper 在业务输出与退出证明落盘后，按[临时容器回收契约](../../docs/operations/docker-temporary-containers.md)私有归档日志与元数据并回收自身。服务、数据卷、备份与 provider 对象继续保留；下面历史 run 的封存结果不改写。当前其他 checkout 不自动替换。
+
 复用已引入的 MinIO SDK / madmin 原生 API、PostgreSQL、StaticResolver、Lifecycle commands、delivery fence、既有 Evidence/Audit/Outbox routing 和 CostEvent/typed allocation。没有新存储 engine、队列、scheduler、IAM 或商业账本。Bootstrap JSONL 是本地测试输入的基础设施创建记录，不是生产 activity 成本账本；平台原生 inspection 的每次 HTTP 调用写真实 Core Journal/CostEvent。
 
 - 新 run 创建唯一 internal Docker network、两个专属 named volumes、PostgreSQL/MinIO/gateway；provider 和数据库均没有可用宿主端口。准备程序复用 gateway network namespace，不能旁路 gateway 访问 MinIO。宿主机不暴露 API、worker、console 或业务 reader。
