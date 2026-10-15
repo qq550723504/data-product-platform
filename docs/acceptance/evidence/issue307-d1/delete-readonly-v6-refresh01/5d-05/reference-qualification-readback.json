@@ -1,0 +1,711 @@
+{
+  "at": "2026-10-15T01:28:43.608613+00:00",
+  "mode": "REPEATABLE READ READ ONLY; no authorization fence/row lock/Command",
+  "guards": [
+    {
+      "table": "annotation_campaign",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_input_dataset_version_id BEFORE INSERT OR UPDATE OF input_dataset_version_id ON public.annotation_campaign FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('input_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "compliance_result",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_dataset_version_id BEFORE INSERT OR UPDATE OF dataset_version_id ON public.compliance_result FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "dataset",
+      "column": "current_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_current_version_id BEFORE INSERT OR UPDATE OF current_version_id ON public.dataset FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('current_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "dataset_certification",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_dataset_version_id BEFORE INSERT OR UPDATE OF dataset_version_id ON public.dataset_certification FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "dataset_version_lineage",
+      "column": "input_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_input_version_id BEFORE INSERT OR UPDATE OF input_version_id ON public.dataset_version_lineage FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('input_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "dataset_version_lineage",
+      "column": "output_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_output_version_id BEFORE INSERT OR UPDATE OF output_version_id ON public.dataset_version_lineage FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('output_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "delivery_operation",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_dataset_version_id BEFORE INSERT OR UPDATE OF dataset_version_id ON public.delivery_operation FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "effective_rights_input",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_input_dataset_version_id BEFORE INSERT OR UPDATE OF input_dataset_version_id ON public.effective_rights_input FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('input_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "effective_rights_snapshot",
+      "column": "target_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_target_dataset_version_id BEFORE INSERT OR UPDATE OF target_dataset_version_id ON public.effective_rights_snapshot FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('target_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "entity_match_job",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_input_dataset_version_id BEFORE INSERT OR UPDATE OF input_dataset_version_id ON public.entity_match_job FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('input_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "entity_match_job",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_output_dataset_version_id BEFORE INSERT OR UPDATE OF output_dataset_version_id ON public.entity_match_job FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('output_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "entity_resolution_output_decision",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_output_dataset_version_id BEFORE INSERT OR UPDATE OF output_dataset_version_id ON public.entity_resolution_output_decision FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('output_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "execution",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_output_dataset_version_id BEFORE INSERT OR UPDATE OF output_dataset_version_id ON public.execution FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('output_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "execution_dependency_binding",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_dataset_version_id BEFORE INSERT OR UPDATE OF dataset_version_id ON public.execution_dependency_binding FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "execution_input",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_dataset_version_id BEFORE INSERT OR UPDATE OF dataset_version_id ON public.execution_input FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "execution_mapping_usage",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_input_dataset_version_id BEFORE INSERT OR UPDATE OF input_dataset_version_id ON public.execution_mapping_usage FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('input_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "execution_mapping_usage",
+      "column": "resolution_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_resolution_dataset_version_id BEFORE INSERT OR UPDATE OF resolution_dataset_version_id ON public.execution_mapping_usage FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('resolution_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "gold_build_request",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_input_dataset_version_id BEFORE INSERT OR UPDATE OF input_dataset_version_id ON public.gold_build_request FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('input_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "gold_production_binding",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_input_dataset_version_id BEFORE INSERT OR UPDATE OF input_dataset_version_id ON public.gold_production_binding FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('input_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "gold_production_binding",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_output_dataset_version_id BEFORE INSERT OR UPDATE OF output_dataset_version_id ON public.gold_production_binding FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('output_dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "ingestion_receipt_slot",
+      "column": "version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_version_id BEFORE INSERT OR UPDATE OF version_id ON public.ingestion_receipt_slot FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('version_id')",
+      "qualified": true
+    },
+    {
+      "table": "lifecycle_processing_output_intent",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_dataset_version_id BEFORE INSERT OR UPDATE OF dataset_version_id ON public.lifecycle_processing_output_intent FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "product_release_dataset",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_dataset_version_id BEFORE INSERT OR UPDATE OF dataset_version_id ON public.product_release_dataset FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "quality_assessment_attempt",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_dataset_version_id BEFORE INSERT OR UPDATE OF dataset_version_id ON public.quality_assessment_attempt FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')",
+      "qualified": true
+    },
+    {
+      "table": "quality_remediation_case",
+      "column": "version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_version_id BEFORE INSERT OR UPDATE OF version_id ON public.quality_remediation_case FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('version_id')",
+      "qualified": true
+    },
+    {
+      "table": "quality_remediation_detection",
+      "column": "version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_version_id BEFORE INSERT OR UPDATE OF version_id ON public.quality_remediation_detection FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('version_id')",
+      "qualified": true
+    },
+    {
+      "table": "quality_result",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "trigger": "CREATE TRIGGER aa_lifecycle_ref_dataset_version_id BEFORE INSERT OR UPDATE OF dataset_version_id ON public.quality_result FOR EACH ROW EXECUTE FUNCTION lifecycle_reference_admission_guard('dataset_version_id')",
+      "qualified": true
+    }
+  ],
+  "target_fk_counts": [
+    {
+      "table": "annotation_campaign",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "annotation_campaign",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "compliance_result",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "compliance_result",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "dataset",
+      "column": "current_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "dataset",
+      "column": "current_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "dataset_certification",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": true,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "dataset_certification",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": true,
+      "count": 1,
+      "unreleased": 0
+    },
+    {
+      "table": "dataset_version_lineage",
+      "column": "input_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": true,
+      "count": 2,
+      "unreleased": 0
+    },
+    {
+      "table": "dataset_version_lineage",
+      "column": "input_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": true,
+      "count": 1,
+      "unreleased": 0
+    },
+    {
+      "table": "dataset_version_lineage",
+      "column": "output_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "dataset_version_lineage",
+      "column": "output_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "delivery_operation",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": true,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "delivery_operation",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": true,
+      "count": 1,
+      "unreleased": 0
+    },
+    {
+      "table": "effective_rights_input",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "effective_rights_input",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "effective_rights_snapshot",
+      "column": "target_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "effective_rights_snapshot",
+      "column": "target_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "entity_match_job",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": true,
+      "count": 1,
+      "unreleased": 0
+    },
+    {
+      "table": "entity_match_job",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": true,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "entity_match_job",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "entity_match_job",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "entity_resolution_output_decision",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "entity_resolution_output_decision",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "execution",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "execution",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "execution_dependency_binding",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "execution_dependency_binding",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "execution_input",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": true,
+      "count": 4,
+      "unreleased": 0
+    },
+    {
+      "table": "execution_input",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": true,
+      "count": 8,
+      "unreleased": 0
+    },
+    {
+      "table": "execution_mapping_usage",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": true,
+      "count": 1,
+      "unreleased": 0
+    },
+    {
+      "table": "execution_mapping_usage",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": true,
+      "count": 2,
+      "unreleased": 0
+    },
+    {
+      "table": "execution_mapping_usage",
+      "column": "resolution_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "execution_mapping_usage",
+      "column": "resolution_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "gold_build_request",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "gold_build_request",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "gold_production_binding",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "gold_production_binding",
+      "column": "input_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "gold_production_binding",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "gold_production_binding",
+      "column": "output_dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "ingestion_receipt_slot",
+      "column": "version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "ingestion_receipt_slot",
+      "column": "version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "lifecycle_processing_output_intent",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "lifecycle_processing_output_intent",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "product_release_dataset",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "product_release_dataset",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "quality_assessment_attempt",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": true,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "quality_assessment_attempt",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": true,
+      "count": 1,
+      "unreleased": 0
+    },
+    {
+      "table": "quality_remediation_case",
+      "column": "version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "quality_remediation_case",
+      "column": "version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "quality_remediation_detection",
+      "column": "version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "quality_remediation_detection",
+      "column": "version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": false,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "quality_result",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "managed": true,
+      "count": 0,
+      "unreleased": 0
+    },
+    {
+      "table": "quality_result",
+      "column": "dataset_version_id",
+      "schema": "public",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "managed": true,
+      "count": 1,
+      "unreleased": 0
+    }
+  ],
+  "function_definitions": [
+    {
+      "body": "\nDECLARE v uuid; w uuid;\nBEGIN\n w:=NEW.workspace_id;\n IF TG_TABLE_NAME='lifecycle_copy_operation' THEN\n  SELECT dataset_version_id INTO STRICT v FROM lifecycle_fixture_copy WHERE id=NEW.source_copy_id AND workspace_id=w;\n ELSE v:=NEW.dataset_version_id;\n END IF;\n PERFORM lifecycle_reference_lock(w,v);\n IF EXISTS(SELECT 1 FROM lifecycle_disposition_dispatch d JOIN lifecycle_fixture_copy c ON c.id=d.copy_id WHERE c.workspace_id=w AND c.dataset_version_id=v AND NOT EXISTS(SELECT 1 FROM lifecycle_dispatch_release x WHERE x.dispatch_id=d.id)) THEN\n  RAISE EXCEPTION 'pending copy after disposition dispatch';\n END IF;\n RETURN NEW;\nEND; ",
+      "name": "lifecycle_pending_copy_admission_guard",
+      "owner": "fixture",
+      "security_definer": false,
+      "body_sha256": "652edf93f96ba8e14490766542aa832d6a1a641dc8cfc9f83da8c4dd7f72140f",
+      "matches_migration_67": true
+    },
+    {
+      "body": "\nDECLARE v uuid; w uuid;\nBEGIN\n v:=(to_jsonb(NEW)->>TG_ARGV[0])::uuid;\n IF v IS NULL OR (TG_OP='UPDATE' AND to_jsonb(OLD)->>TG_ARGV[0]=v::text) THEN RETURN NEW; END IF;\n SELECT d.workspace_id INTO w FROM dataset_version dv JOIN dataset d ON d.id=dv.dataset_id WHERE dv.id=v;\n IF w IS NULL THEN RETURN NEW; END IF;\n -- First-copy registration takes this fence too. Checking registration before\n -- locking would let an uncommitted reference cross registration and dispatch.\n PERFORM lifecycle_reference_lock(w,v);\n IF NOT EXISTS(SELECT 1 FROM lifecycle_fixture_copy WHERE dataset_version_id=v) THEN RETURN NEW; END IF;\n IF EXISTS(SELECT 1 FROM lifecycle_content_use_restriction WHERE workspace_id=w AND dataset_version_id=v)\n OR EXISTS(SELECT 1 FROM lifecycle_disposition_dispatch d JOIN lifecycle_fixture_copy c ON c.id=d.copy_id WHERE c.dataset_version_id=v AND NOT EXISTS(SELECT 1 FROM lifecycle_dispatch_release x WHERE x.dispatch_id=d.id)) THEN\n  RAISE EXCEPTION 'new fixture reference after restriction or disposition';\n END IF;\n RETURN NEW;\nEND; ",
+      "name": "lifecycle_reference_admission_guard",
+      "owner": "fixture",
+      "security_definer": false,
+      "body_sha256": "fe8a2627d76b6231cfb811d35efe0353324721782b8c0e88d4816fbbca13969e",
+      "matches_migration_67": true
+    },
+    {
+      "body": "\nBEGIN\n INSERT INTO delivery_authorization_fence(workspace_id) VALUES(w) ON CONFLICT DO NOTHING;\n PERFORM 1 FROM delivery_authorization_fence WHERE workspace_id=w FOR UPDATE;\n PERFORM 1 FROM lifecycle_fixture_copy WHERE workspace_id=w AND dataset_version_id=v ORDER BY id FOR UPDATE;\nEND; ",
+      "name": "lifecycle_reference_lock",
+      "owner": "fixture",
+      "security_definer": false,
+      "body_sha256": "db61625d4793e32e5260a6803987e721ee88abe0b0570608852d0899bc38608a",
+      "matches_migration_67": true
+    }
+  ],
+  "status": "PASS",
+  "authorization": "NOT_GRANTED"
+}

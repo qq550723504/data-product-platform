@@ -90,7 +90,7 @@ def six_equal(current,previous):
 def shadow_config(original,audit,project):
  ref=json.loads(json.dumps(original));f=ref['Fixture'];u=urlsplit(f['PostgresDSN'])
  require(u.scheme=='postgres' and u.hostname==project+'-postgres' and u.port==5432 and u.path=='/lifecycle307' and u.username=='fixture' and u.query=='sslmode=disable' and u.password and u.fragment=='','Unexpected source DSN contract')
- require(audit in {project+'-readonly-audit-core-'+n for n in ('01','02','03','04')},'Audit hostname outside finite generation')
+ require(audit in {project+'-readonly-audit-core-'+n for n in ('01','02','03','04','05','06')},'Audit hostname outside finite generation')
  for k,v in {'RunID':'5d2274ee-a671-4bdc-b406-22b8dad8fd61','WorkspaceID':'89eba3fd-9763-4f66-8cec-1a779104f155','ProviderInstanceID':'1980751b-c50e-4895-93a8-cb55960cd635','IncarnationID':'be784eda-96e4-49a9-ae47-eaa3203a2dc5','RootAccess':'','RootSecret':'','Endpoint':'127.0.0.1:9000'}.items():require(f[k]==v,'Reference reader identity/root drift')
  f['PostgresDSN']=f['PostgresDSN'].replace(project+'-postgres:5432',audit+':5432')
  require(urlsplit(f['PostgresDSN']).hostname==audit,'Audit DSN substitution failed')
@@ -124,10 +124,19 @@ def restore_stopped_state(helper_id,audit_id,out):
  except Exception:results['source_gateway']='VERIFY_FAILED';failures.append('source_gateway')
  write(out/'retained-final-state.json',{'states':results,'failures':failures,'cleanup':0})
  require(not failures,'State restoration failed after all independent stop attempts; diagnostics retained')
+def wait_audit_core(audit):
+ # Temporary bootstrap listens on Unix sockets only in the pinned official image.
+ # TCP readiness waits for the final server after bootstrap shutdown.
+ for _ in range(60):
+  test=subprocess.run(['docker','exec',audit,'pg_isready','-h','127.0.0.1','-p','5432','-U','checkpoint_admin','-d','postgres'],capture_output=True)
+  if test.returncode==0:return
+  time.sleep(1)
+ raise RuntimeError('New audit Core final TCP server not ready')
+
 def five_d(generation=1):
  CONTROL.mkdir(exist_ok=True);PUBLIC.mkdir(exist_ok=True);r,cfg=validate_source()
- require(generation in (1,2,3,4),'Unreviewed generation')
- candidate,binding=frozen_candidate() if generation==4 else (None,None)
+ require(generation in (1,2,3,4,5,6),'Unreviewed generation')
+ candidate,binding=frozen_candidate() if generation>=4 else (None,None)
  suffix='' if generation==1 else '-'+str(generation).zfill(2)
  stage=CONTROL/('5d-readonly'+suffix);stage.mkdir();out=PUBLIC/('5d'+suffix);out.mkdir()
  old=SOURCE/'reference-disposal-preparation01'
@@ -152,11 +161,7 @@ def five_d(generation=1):
   (stage/'audit-password').write_text(secrets.token_hex(32),encoding='ascii')
   volume=audit+'-data';docker('volume','create','--label','lifecycle307.run='+r['run_id'],volume)
   audit_id=docker('create','--pull','never','--name',audit,'--label','lifecycle307.run='+r['run_id'],'--network',r['network'],'--mount','type=volume,source='+volume+',target=/var/lib/postgresql/data','--mount',f'type=bind,source={stage},target=/run/backup,readonly','-e','POSTGRES_USER=checkpoint_admin','-e','POSTGRES_DB=postgres','-e','POSTGRES_PASSWORD_FILE=/run/backup/audit-password','-e','POSTGRES_HOST_AUTH_METHOD=scram-sha-256',PGIMAGE).decode().strip();docker('start',audit)
-  for _ in range(60):
-   test=subprocess.run(['docker','exec',audit,'pg_isready','-U','checkpoint_admin','-d','postgres'],capture_output=True)
-   if test.returncode==0: break
-   time.sleep(1)
-  else: raise RuntimeError('New audit Core not ready')
+  wait_audit_core(audit)
   docker('exec',audit,'psql','-X','-U','checkpoint_admin','-d','postgres','-v','ON_ERROR_STOP=1','-f','/run/backup/globals.sql')
   docker('exec',audit,'pg_restore','--exit-on-error','--create','-U','checkpoint_admin','-d','postgres','/run/backup/core.dump')
   restored=fingerprint(audit);restored_roles=role_acl(audit);require(restored==before and restored_roles==roles,'New audit Core restore differs')
@@ -183,7 +188,7 @@ def five_d(generation=1):
   write(out/'readonly-checkpoint.json',{'status':'PASS','source_run':r['run_id'],'source_pg':PG,'source_minio':MINIO,'source_gateway':GW,'source_relations':194,'source_rows':1879,'source_business_mutations':0,'audit_core':audit,'audit_native_call_delta':20,'backups':backup_before,'approval':'NOT_RECEIVED','native_delete':0,'delete_iam':'NOT_ENABLED','old_restore_touched':False})
  finally:
   try:
-   if generation==4:
+   if generation>=4:
     # Permanently close only this new maintenance configuration; retain its pre-seal bytes.
     native=stage/'native/reference.json'
     if native.exists():

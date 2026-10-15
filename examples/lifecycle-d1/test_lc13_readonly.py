@@ -12,7 +12,9 @@ class ReadonlyContract(unittest.TestCase):
   c=self.config();before=copy.deepcopy(c);project='dpp-lifecycle307-5d2274ee'
   r=m.shadow_config(c,project+'-readonly-audit-core-03',project);self.assertEqual(c,before);self.assertIn('audit-core-03:5432',r['Fixture']['PostgresDSN'])
   new=m.shadow_config(c,project+'-readonly-audit-core-04',project);self.assertIn('audit-core-04:5432',new['Fixture']['PostgresDSN']);self.assertEqual(c,before)
-  for bad in (project+'-postgres',project+'-predelete-postgres-02',project+'-readonly-audit-core-05','foreign'):
+  refresh=m.shadow_config(c,project+'-readonly-audit-core-05',project);self.assertIn('audit-core-05:5432',refresh['Fixture']['PostgresDSN']);self.assertEqual(c,before)
+  final=m.shadow_config(c,project+'-readonly-audit-core-06',project);self.assertIn('audit-core-06:5432',final['Fixture']['PostgresDSN']);self.assertEqual(c,before)
+  for bad in (project+'-postgres',project+'-predelete-postgres-02',project+'-readonly-audit-core-07','foreign'):
    with self.assertRaises(RuntimeError):m.shadow_config(c,bad,project)
  def test_source_dsn_identity_and_root_fail_closed(self):
   base=self.config();project='dpp-lifecycle307-5d2274ee';audit=project+'-readonly-audit-core-03'
@@ -34,6 +36,8 @@ class ReadonlyContract(unittest.TestCase):
  def test_cli_does_not_admit_delete_or_arbitrary_target(self):
   for args in (['delete'],['5d-readonly','--confirm'],['5d-readonly','--source','foreign']):
    p=subprocess.run([sys.executable,str(SPEC.origin),*args],capture_output=True);self.assertEqual(p.returncode,2)
+  for args in (['delete'],['--confirm'],['--source','foreign']):
+   p=subprocess.run([sys.executable,str(Path(SPEC.origin).with_name('refresh-reference-readonly.py')),*args],capture_output=True);self.assertEqual(p.returncode,2)
  def test_stop_failures_do_not_skip_either_source(self):
   for failure in ('helper','audit',m.MINIO):
    stopped=[];states={}
@@ -51,4 +55,10 @@ class ReadonlyContract(unittest.TestCase):
   with patch.object(m,'inspect',lambda i:{'State':{'Running':i!=m.GW and i not in stopped,'Status':'exited' if i==m.GW or i in stopped else 'running'}}),patch.object(m,'docker',lambda c,i:stopped.append(i)),patch.object(m,'write',lambda p,v:None):
    m.restore_stopped_state(None,None,Path('.'))
   self.assertEqual(stopped,[m.MINIO,m.PG])
+ def test_audit_readiness_waits_for_final_tcp_listener(self):
+  with patch.object(m.subprocess,'run',side_effect=[subprocess.CompletedProcess([],1),subprocess.CompletedProcess([],0)]) as probe,patch.object(m.time,'sleep'):
+   m.wait_audit_core('new-audit')
+  self.assertEqual(probe.call_count,2)
+  for args in probe.call_args_list:
+   argv=args.args[0];self.assertIn('-h',argv);self.assertEqual(argv[argv.index('-h')+1],'127.0.0.1')
 if __name__=='__main__':unittest.main()

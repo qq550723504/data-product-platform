@@ -1,5 +1,8 @@
 # #307 D1：冻结候选04的5d删除前只读核验
 
+最新观察见[v7基于v6的新原生只读观察](#v7基于v6的新原生只读观察)。
+下文audit-core-04与v6独立评审保留各自原时点；新回执另存audit-core-06，不覆盖旧证据。
+
 2026-10-15（Asia/Singapore）。新候选源码055aa1df、Linux binary
 `01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3`
 及profile/IAM/gateway hashes未变；317项运行源码匹配。
@@ -112,3 +115,52 @@ disabled/enabled与service-account on/off混用，真实回执已满足目标状
 [主线程前后反例及14项两模式回归](evidence/issue307-d1/delete-proposal-v6-review01/regression.json)和
 [宿主只读回读](evidence/issue307-d1/delete-proposal-v6-review01/retained-host-readback.json)分别保存。
 40个保留容器仍exited/PID0、无host ports，原tar/dump hash不变；这些宿主核对没有刷新原生保护snapshot。
+
+## v7基于v6的新原生只读观察
+
+2026-10-15 **09:31:22 +08:00**（UTC `2026-10-15T01:31:22Z`）完成新读取。
+本轮沿用已独立复评通过的v6及candidate04 binary；仅新增固定audit代次和v7观察版提案。
+v6 checker、其测试、原proposal/index/独立复评均未改；本轮新观察与operator改动是主线程验收，
+不新增独立复评、真实DELETE或实际删除后的Outbox/Asynq recovery PASS。
+
+| 范围 | namespace / key | exact version | bytes | 本次原生保护 |
+| --- | --- | --- | ---: | --- |
+| 目标A | online / fixture/a.csv | 312365a9-f984-43de-b9d5-7e26009ccd82 | 232 | hold=false，NONE |
+| 目标B | quarantine / fixture/b.csv | 846d0c7c-289d-4667-bc7c-aa04e44357d4 | 129328 | hold=false，NONE |
+| 保留 | online / fixture/b.csv | 159e90c3-adb6-4ea3-b2e8-2804e578e86f | 129328 | hold=true，NONE |
+| 保留 | quarantine / fixture/a.csv | 5a7ce790-9093-4569-a8fd-0726009a5eb4 | 232 | hold=false；metadata为GOVERNANCE，retain-until=2026-10-15T00:58:47Z，观察时已到期，仍排除删除 |
+| 保留 | online / fixture/standardized.csv | 2139f293-87f4-4d49-a9f0-941b22275093 | 494 | hold=false，NONE；Entity输出 |
+| 保留 | online / fixture/processed.csv | 7c8ad93b-31ee-445c-9402-816dda0410ec | 232 | hold=false，NONE；processing输出 |
+
+namespace仍分别是`dpp-lifecycle307-online`、`dpp-lifecycle307-quarantine`。
+[六版本原生回执](evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/native-six-version.json)
+逐项保存精确SHA256、bytes和纳秒级观测时间；online4/quarantine2，无缺失、额外version或delete marker。
+全部内容identity/bytes/hash和原备份恢复一致。retention到期是时钟结果，没有执行release或扩范围。
+
+| 执行前条件 | 新回读结果 | 执行边界 |
+| --- | --- | --- |
+| environment/provider/incarnation/卷/网络 | 同一源IDs、internal网络、0 host ports；全部资源最终exited/PID0 | 激活前重新核对，不重初始化源/旧restore |
+| source Core/role/owner/ACL | schema68，194表/1879行；before=after，新audit-core-06恢复一致 | 原源数据/业务mutation0，旧tar/dump SHA不变 |
+| exact plan/owner/reference | 2 FINALIZED plan hash不变；27项qualified FK guards、54项target checks、3个fence函数正文与原事实一致；23 releases闭合 | snapshot不替代共享fence下fresh gate |
+| pins/pending outputs/旧trial | 7pins/7terminations、active0；2intents各有ready；原2NOT_SENT/2linked releases保留，无send claims/absence/completion | 不改旧basis/start，不重生成proof、不重发旧trial |
+| 原生IAM | reader/producer disabled，inspector enabled，拟建普通executor权威NoSuchUser；每次探针固定4 GET | 不证明所有credential类型已销毁；未provision/启用删除用户 |
+| source/audit调用账 | 源仍92；新clone112 calls/observations/typed costs，新增20读取、unaccounted0 | 8次management GET（失败05四次+成功06四次）另记operator回执 |
+| 明确确认/新批准/发送组合 | NOT_RECEIVED；614cd9ad新basis/approval、native IAM/active gateway/permission、fresh signed topology仍未创建 | BLOCKS_SEND；≤40分钟及每项fresh gate仍必需 |
+| 原生DELETE/队列恢复/完整D1 | NOT_RUN / NOT_ACCEPTED | #307 OPEN、#318 Draft，不合并、不真实删除 |
+
+首次audit-core-05的Unix就绪探针命中了官方PostgreSQL镜像的临时初始化服务器，随后socket消失，
+globals恢复命令失败；此时仅完成4次IAM GET，storage调用0，源Core mutation0。
+已核对固定镜像entrypoint的临时服务器使用`listen_addresses=''`，改用`127.0.0.1:5432`就绪检查，
+仅在最终服务器可用后恢复；增加回归验证TCP探针。失败05全部文件/部分audit及卷保留并停止，
+另建06后完整通过，没有重新初始化失败库、源库或复用旧restore。
+[失败诊断](evidence/issue307-d1/delete-readonly-v6-refresh01/operator-diagnostic.json)。
+
+当前[proposal-v7](evidence/issue307-d1/delete-readonly-v6-refresh02/proposal-v7.json)
+完整继承v6的环境/scope/budget/关闭authority，仅替换新观察与回执引用；
+`check-reference-refresh.py`先核对固定v7全部19份索引原字节，再与已审v6及新原生事实逐项比较。
+原v6整份提案检查及317源码冻结锚点继续运行；保护期限已过也不会让survivor成为target。
+正常和-O模式各20项通过（v6 7项、只读driver8项、v7 5项）。
+[验证记录](evidence/issue307-d1/delete-readonly-v6-refresh02/verification.json)、
+[执行前条件](evidence/issue307-d1/delete-readonly-v6-refresh02/execution-preconditions.json)及
+[最终资源状态](evidence/issue307-d1/delete-readonly-v6-refresh02/retained-topology.json)分别保存。
+共45个同label容器保留、全部exited/PID0、0 host ports；新maintenance权限已封存，DELETE/cleanup/hold-release/bypass均0。
