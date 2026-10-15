@@ -34,12 +34,34 @@ def reviewed_inputs(m):
     return binary
 
 
-def run():
+def refresh_paths(generation):
+    if generation == 6:
+        return PUBLIC, 'd1-delete-readonly-v6-refresh02'
+    if generation == 7:
+        return BASE / 'delete-readonly-v7-refresh01', 'd1-delete-readonly-v7-refresh01'
+    raise ValueError('Refresh outside finite generation')
+
+
+def run(generation=6):
+    public, control_name = refresh_paths(generation)
     m = module('readonly', ROOT / 'examples/lifecycle-d1/complete-lc13-readonly.py')
     binary = reviewed_inputs(m)
+    if generation == 7:
+        reviewed = module('reviewed_v7', ROOT / 'examples/lifecycle-d1/check-reference-refresh.py')
+        reviewed.check(reviewed.load(reviewed.PROPOSAL))
+        review = m.load(BASE / 'delete-proposal-v7-review01/independent-review.json')
+        m.require(review['status'] == 'PASS_INDEPENDENT_OFFLINE_REVIEW'
+                  and review['current_slice_blockers'] == 0
+                  and review['reviewed_head'] == 'e122a613322fba6009ec8175539e9eb9e3e7f05e', 'v7 review not closed')
+        for path, expected in review['reviewed_operator_sha256'].items():
+            raw = m.call(['git', 'show', review['reviewed_head'] + ':' + path])
+            m.require(m.hashlib.sha256(raw).hexdigest() == expected, 'Reviewed v7 source history changed')
+        index = m.load(BASE / 'delete-proposal-v7-review01/evidence-index.json')
+        for entry in index['files']:
+            m.require(m.digest(ROOT / entry['path']) == entry['sha256'], 'v7 review receipt changed')
     collector = module('collector', PREVIOUS / 'core-readonly-collector.py')
-    m.CONTROL = m.PRIVATE / 'd1-delete-readonly-v6-refresh02'
-    m.PUBLIC = PUBLIC
+    m.CONTROL = m.PRIVATE / control_name
+    m.PUBLIC = public
     original = m.role_acl
     collected = False
 
@@ -49,7 +71,7 @@ def run():
         if container != m.PG or collected:
             return result
         collected = True
-        out = PUBLIC / '5d-06'
+        out = public / ('5d-' + str(generation).zfill(2))
         collector.collect(m, out)
         control = m.CONTROL / 'iam-management'
         control.mkdir()
@@ -63,7 +85,7 @@ def run():
         m.write(control / 'iam.json', cfg)
         shutil.copyfile(binary, control / 'iam-readonly')
         ident = m.docker('create', '--pull', 'never', '--name',
-                         'dpp-lifecycle307-5d2274ee-readonly-iam-06', '--label',
+                         'dpp-lifecycle307-5d2274ee-readonly-iam-' + str(generation).zfill(2), '--label',
                          'lifecycle307.run=' + cfg['RunID'], '--network', 'container:' + m.MINIO,
                          '--read-only', '--tmpfs', '/tmp', '--mount',
                          'type=bind,source=' + str(control) + ',target=/run/private,readonly',
@@ -87,8 +109,8 @@ def run():
         return result
 
     m.role_acl = role_acl
-    m.five_d(6)
-    print(json.dumps({'status': 'PASS', 'generation': '06', 'source_mutation': 0,
+    m.five_d(generation)
+    print(json.dumps({'status': 'PASS', 'generation': str(generation).zfill(2), 'source_mutation': 0,
                       'native_checkpoint_calls': 20, 'native_admin_reads': 4,
                       'delete': 0, 'cleanup': 0}))
 

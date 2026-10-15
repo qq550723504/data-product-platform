@@ -24,6 +24,8 @@ docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/** text eol=lf
 docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/** text eol=lf
 
 docs/acceptance/evidence/issue307-d1/delete-proposal-v7-review01/** text eol=lf
+
+docs/acceptance/evidence/issue307-d1/delete-readonly-v7-refresh01/** text eol=lf
 docs/acceptance/evidence/issue307-d1/lc13-continuation01/delete-candidate04/binary-modules.txt whitespace=-blank-at-eol
 examples/lifecycle-d1/results/f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3/** text eol=lf
 examples/lifecycle-d1/results/7cd53b0e-44d9-4f3a-9eb7-041f496ff277/** text eol=lf

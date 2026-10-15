@@ -14,7 +14,8 @@ class ReadonlyContract(unittest.TestCase):
   new=m.shadow_config(c,project+'-readonly-audit-core-04',project);self.assertIn('audit-core-04:5432',new['Fixture']['PostgresDSN']);self.assertEqual(c,before)
   refresh=m.shadow_config(c,project+'-readonly-audit-core-05',project);self.assertIn('audit-core-05:5432',refresh['Fixture']['PostgresDSN']);self.assertEqual(c,before)
   final=m.shadow_config(c,project+'-readonly-audit-core-06',project);self.assertIn('audit-core-06:5432',final['Fixture']['PostgresDSN']);self.assertEqual(c,before)
-  for bad in (project+'-postgres',project+'-predelete-postgres-02',project+'-readonly-audit-core-07','foreign'):
+  next_read=m.shadow_config(c,project+'-readonly-audit-core-07',project);self.assertIn('audit-core-07:5432',next_read['Fixture']['PostgresDSN']);self.assertEqual(c,before)
+  for bad in (project+'-postgres',project+'-predelete-postgres-02',project+'-readonly-audit-core-08','foreign'):
    with self.assertRaises(RuntimeError):m.shadow_config(c,bad,project)
  def test_source_dsn_identity_and_root_fail_closed(self):
   base=self.config();project='dpp-lifecycle307-5d2274ee';audit=project+'-readonly-audit-core-03'
@@ -37,7 +38,14 @@ class ReadonlyContract(unittest.TestCase):
   for args in (['delete'],['5d-readonly','--confirm'],['5d-readonly','--source','foreign']):
    p=subprocess.run([sys.executable,str(SPEC.origin),*args],capture_output=True);self.assertEqual(p.returncode,2)
   for args in (['delete'],['--confirm'],['--source','foreign']):
-   p=subprocess.run([sys.executable,str(Path(SPEC.origin).with_name('refresh-reference-readonly.py')),*args],capture_output=True);self.assertEqual(p.returncode,2)
+   for script in ('refresh-reference-readonly.py','refresh-reference-v7-readonly.py'):
+    p=subprocess.run([sys.executable,str(Path(SPEC.origin).with_name(script)),*args],capture_output=True);self.assertEqual(p.returncode,2)
+ def test_refresh_has_only_two_fixed_generations(self):
+  spec=importlib.util.spec_from_file_location('fixed_refresh',Path(SPEC.origin).with_name('refresh-reference-readonly.py'));refresh=importlib.util.module_from_spec(spec);spec.loader.exec_module(refresh)
+  self.assertEqual(refresh.refresh_paths(6)[0].name,'delete-readonly-v6-refresh02')
+  self.assertEqual(refresh.refresh_paths(7)[0].name,'delete-readonly-v7-refresh01')
+  for generation in (0,5,8,'07','foreign'):
+   with self.assertRaises(ValueError):refresh.refresh_paths(generation)
  def test_stop_failures_do_not_skip_either_source(self):
   for failure in ('helper','audit',m.MINIO):
    stopped=[];states={}

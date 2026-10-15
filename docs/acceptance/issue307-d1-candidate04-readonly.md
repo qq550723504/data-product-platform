@@ -1,8 +1,8 @@
 # #307 D1：冻结候选04的5d删除前只读核验
 
-最新观察见[v7基于v6的新原生只读观察](#v7基于v6的新原生只读观察)。
-下文audit-core-04与v6独立评审保留各自原时点；新回执另存audit-core-06，不覆盖旧证据。
-v7精确方案、离线校验、新回执和operator修复的[独立评审](#v7独立评审与收敛检查)已通过；当前切片有效blocker=0。
+最新观察见[v8基于v7的新原生只读观察](#v8基于v7的新原生只读观察)。
+下文audit-core-04/06与v6/v7独立评审保留各自原时点；新回执另存audit-core-07，不覆盖旧证据。
+v7的[独立评审](#v7独立评审与收敛检查)作为本次刷新基线；v8是新的原生只读及主线程离线验收，不新增独立评审结论。
 
 2026-10-15（Asia/Singapore）。新候选源码055aa1df、Linux binary
 `01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3`
@@ -190,3 +190,51 @@ globals恢复命令失败；此时仅完成4次IAM GET，storage调用0，源Cor
 [主线程完整性及宿主回读](evidence/issue307-d1/delete-proposal-v7-review01/primary-audit.json)另存新目录；
 原v6/v7 proposal、index、verification及全部native回执原字节保留。
 本轮provider I/O、Core mutation、容器启动、IAM变更、DELETE、merge和cleanup均0；#318保持Draft。
+
+## v8基于v7的新原生只读观察
+
+2026-10-15 **10:14:11 +08:00**（UTC `2026-10-15T02:14:11Z`）完成新读取。
+基线为v7独立评审已通过的HEAD `e122a613`、文档收口HEAD `4ee5f1a6`；
+candidate04/source055aa1df、317项运行源码、binary/profile/IAM/gateway及精确范围均未变。
+本轮仅为现有只读driver增加固定07代，复用TCP readiness、Core collector及受限MinIO/madmin读取；
+不增加runtime，不复用06或旧restore，不启用发送。operator实际源码摘要和工作树状态另记新verification。
+v6 checker不变；共用refresh checker增加固定07代与v7前驱校验，原v7调用及原字节index仍通过。
+
+| 范围 | namespace / key | exact version | bytes | 本次原生保护 |
+| --- | --- | --- | ---: | --- |
+| 目标A | online / fixture/a.csv | 312365a9-f984-43de-b9d5-7e26009ccd82 | 232 | hold=false，NONE，retain-until=null |
+| 目标B | quarantine / fixture/b.csv | 846d0c7c-289d-4667-bc7c-aa04e44357d4 | 129328 | hold=false，NONE，retain-until=null |
+| 保留 | online / fixture/b.csv | 159e90c3-adb6-4ea3-b2e8-2804e578e86f | 129328 | hold=true，NONE |
+| 保留 | quarantine / fixture/a.csv | 5a7ce790-9093-4569-a8fd-0726009a5eb4 | 232 | hold=false；metadata为GOVERNANCE，retain-until=2026-10-15T00:58:47Z，已到期，仍禁止纳入删除范围 |
+| 保留 | online / fixture/standardized.csv | 2139f293-87f4-4d49-a9f0-941b22275093 | 494 | hold=false，NONE；Entity输出 |
+| 保留 | online / fixture/processed.csv | 7c8ad93b-31ee-445c-9402-816dda0410ec | 232 | hold=false，NONE；processing输出 |
+
+namespace仍分别为`dpp-lifecycle307-online`、`dpp-lifecycle307-quarantine`。
+[六版本回执](evidence/issue307-d1/delete-readonly-v7-refresh01/5d-07/native-six-version.json)保存逐项SHA256与纳秒级观测时间；
+online4/quarantine2，无缺失、额外version或delete marker。6份bytes/hash与registry、原六版本恢复及v7一致。
+6次保护和2次inventory观测均位于source before/after之间；2目标共129560 bytes，scope和预算不扩大。
+
+| 执行前条件 | 本次核对结果 | 发送前仍需满足 |
+| --- | --- | --- |
+| 环境/instance/incarnation/卷/internal网络 | 原45容器IDs/images/停止状态与v7相同；新增07 audit/IAM/native helper；最终48个均exited/PID0/无host ports | 激活前重新核对精确拓扑，不重初始化源或旧restore |
+| 候选/source/profile/IAM/gateway | 冻结hash全部相同，无binary rebuild | 实际发送必须绑定同一exact composition |
+| 源Core/新独立恢复 | schema68、194表/1879行；before=after=07 restored=v7；完整relation与role/owner/ACL指纹一致 | facts变化时另建checkpoint；snapshot不替代current gate |
+| exact plans/owner/reference | 2 FINALIZED目标与原plan/hash不变；27项完整FK资格、54项target检查unreleased0、3个函数正文匹配migration67；23 requirements/releases闭合 | dispatch/send在共享fence内重新校验 |
+| pins/pending outputs | 7pins/7terminations、active0；2output intents各有ready；copy operations0 | 不能以lease到期替代可信停止；新引用/UNKNOWN阻断 |
+| 原两trial | 原2NOT_SENT（invoked_at=null）+2linked releases保留；无send claims/absence/completion | 不重写旧basis/start、不重生成proof、不重发 |
+| native IAM | reader/producer disabled，inspector enabled只读，拟建普通executor权威NoSuchUser；固定4个GET | 仅证明该普通用户不存在，不冒充全域credential销毁；未provision/启用删除IAM |
+| 调用/账务 | 源仍92；07 clone112 calls/observations/typed costs，新增20读取、unaccounted0；4次management GET单列 | 所有真实调用逐attempt入账；旧失败05及旧8个管理GET保持各自回执 |
+| 原备份/配置/封存 | 原tar/dump SHA未变；源business/delete Enabled=false；07 maintenance PreparationEnabled=false；源gateway始终停止 | 不重开业务或旧恢复窗口；全部新旧资源保留 |
+| 精确确认/新basis/approval | NOT_RECEIVED / NOT_CREATED | 新614cd9ad current basis及≤40分钟approval仍必需 |
+| 新发送组合/fresh host topology | native delete IAM/active gateway/permission/Redis发送恢复资源及签名topology尚未创建 | 不因本轮PASS启用；每项dispatch及ClaimExactSend都须fresh全门禁 |
+| 实际DELETE/删除后队列恢复/完整D1 | NOT_RUN / NOT_ACCEPTED | #307 OPEN；#318 Draft，不合并、不真实删除 |
+
+[proposal-v8](evidence/issue307-d1/delete-readonly-v7-refresh01/proposal-v8.json)、
+[执行前条件](evidence/issue307-d1/delete-readonly-v7-refresh01/execution-preconditions.json)、
+[验证记录](evidence/issue307-d1/delete-readonly-v7-refresh01/verification.json)、
+[最终拓扑](evidence/issue307-d1/delete-readonly-v7-refresh01/retained-topology.json)和
+[82份历史原字节/宿主预检](evidence/issue307-d1/delete-readonly-v7-refresh01/preflight-host.json)均另存新目录。
+正常/-O各25项PASS（v6 7、只读9、v7 5、v8 4）；v6/v7/v8三个离线CLI均PASS。
+v8检查20份固定indexed payload原字节和完整提案，要求新观察晚于已审v7；scope/authority变化、旧观察与打开的closure均拒绝。
+原v6/v7/index/verification/独立评审及所有失败回执保持原字节。本次无新operator失败、真实DELETE、
+Core业务mutation、IAM写入、hold/retention release、bypass或cleanup；新原生只读PASS不构成删除批准或新独立评审。

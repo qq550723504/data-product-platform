@@ -3,7 +3,7 @@
 2026-10-15（Asia/Singapore），状态 **PENDING_USER_CONFIRMATION / 实际 DELETE NOT_RUN**。
 本方案依据 #307 的 exact-list approval gate、lifecycle 主 contract 与
 [有限引用需求 contract](issue307-reference-demand-contract.md)。#318 保持 Draft，
-既有非删除备份/恢复和 no-send 事务保留；当前v7只读核验及独立评审已通过，不启用发送、不发 DELETE、不解除保护。
+既有非删除备份/恢复和 no-send 事务保留；当前v8基于已独立评审通过的v7完成新只读核验，不启用发送、不发 DELETE、不解除保护。
 此方案替代“下一次执行”的旧 e1487ce7 提案；旧提案及其他环境的已消费批准保留原历史。
 
 当前状态见[原生非删除准备](issue307-d1-reference-preparation.md)：六份 exact-version
@@ -14,29 +14,29 @@ checkpoint/独立恢复/SCRAM、关闭的发送组合均已验证。native IAM p
 
 LC-13新增[可信停止/新Retry/credential containment非删除矩阵](issue307-lc13-continuation.md)：
 f3/7cd/812三个独立run均已封存且资源保留，全部排除在本删除范围外。
-本轮[v7只读核验矩阵](issue307-d1-candidate04-readonly.md#v7基于v6的新原生只读观察)刷新5d六份库存/bytes/hash/保护及执行前条件；
+本轮[v8只读核验矩阵](issue307-d1-candidate04-readonly.md#v8基于v7的新原生只读观察)刷新5d六份库存/bytes/hash/保护及执行前条件；
 源PG/MinIO仅为读取短暂启动后恢复stopped，gateway始终停止，未重开业务或发送窗口。
-保护最新观察为2026-10-15 09:31:22 +08:00（UTC `2026-10-15T01:31:22Z`），未来每项发送前须fresh复核。
+保护最新观察为2026-10-15 10:14:11 +08:00（UTC `2026-10-15T02:14:11Z`），未来每项发送前须fresh复核。
 当前代码依赖更新为minio-go/v7 v7.0.88及MinIO policy v3.1.3；e1d9/4af0与v7.0.83
 仍是原准备binary的真实历史。本轮候选已绑定source055aa1df与新Linux binary/profile/IAM/gateway；
 新LC13/native PASS不授权复用旧批准或发送，不代表真实DELETE recovery验收。
 
-当前机器清单：[proposal-v7](evidence/issue307-d1/delete-readonly-v6-refresh02/proposal-v7.json)，
-继承已独立复评通过的[v6](evidence/issue307-d1/delete-proposal-v6/proposal.json)，仅更新audit-core-06
+当前机器清单：[proposal-v8](evidence/issue307-d1/delete-readonly-v7-refresh01/proposal-v8.json)，
+继承已独立评审通过的[v7](evidence/issue307-d1/delete-readonly-v6-refresh02/proposal-v7.json)，仅更新audit-core-07
 只读回执、观察时间和由观察时间计算的retention状态；candidate04、scope、budget和关闭authority逐项保持相同。
-v6/index和其独立复评保持原字节；v7原生读取与主线程一致性检查之后，
+v6/v7/index及其独立评审保持原字节；v7原生读取与主线程一致性检查之后，
 独立reviewer已对HEAD `e122a613322fba6009ec8175539e9eb9e3e7f05e` 的精确方案、离线校验、
 新回执及operator修复给出PASS，当前切片有效blocker=0。
 [独立评审矩阵](issue307-d1-candidate04-readonly.md#v7独立评审与收敛检查)及
-[单独回执](evidence/issue307-d1/delete-proposal-v7-review01/independent-review.json)不覆盖原native verification，
-也不刷新09:31:22的保护观察或授予删除权限。
+[单独回执](evidence/issue307-d1/delete-proposal-v7-review01/independent-review.json)保留该评审时点；
+本次v8是新原生只读与主线程一致性检查，不新增独立评审结论或删除权限。
 v6修正v5继承的audit-core-03/checkpoint旧字段冲突，统一为audit-core-04证据。
 [v5](evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json)及其index原字节保留，
 不再作为下一次执行的当前清单；[proposal-v4](evidence/issue307-d1/lc13-continuation01/proposal-v4.json)保留原候选冻结时点。
-本轮20次原生对象读取仅记入新audit-core-06；8次operator IAM GET（含失败05的4次）另列回执，
+本轮20次原生对象读取仅记入新audit-core-07；4次operator IAM GET另列回执，旧8次（含失败05的4次）保持原历史，
 源Core/旧restore mutation与DELETE均0。audit-core-05初始化失败及其资源保留；没有重写或重跑旧trial。
-当前离线校验为`python examples/lifecycle-d1/check-reference-refresh.py`；
-原`python examples/lifecycle-d1/check-reference-proposal.py`继续核对固定历史v6。
+当前离线校验为`python examples/lifecycle-d1/check-reference-v8.py`；
+原`check-reference-proposal.py`及`check-reference-refresh.py`继续核对固定历史v6/v7。
 PASS只表示公开证据与当前提案一致，不能生成批准或替代fresh gate。
 跨平台检查仅对317项运行源码按固定Git source的LF文本摘要比较；原始候选binding仍保留，
 binary/profile/IAM/gateway摘要不做换行转换。[前轮主线程收口](evidence/issue307-d1/delete-proposal-v6/closure.json)
@@ -47,7 +47,7 @@ v6前轮独立评审发现并修正两类离线一致性阻断：未消费的提
 Git已评审仓库/index是此离线检查的完整性边界；该index不是签名或删除授权，
 任何修改固定提案/index的请求都须新增提案版本并重新评审，不能就地改旧证据。
 [v6复评矩阵](issue307-d1-candidate04-readonly.md#v6独立评审与修复验收)保留当时结论；
-原v6/proposal、LF清单、closure/index和candidate04均保持原字节；新观察只写v7新目录。
+原v6/v7 proposal、LF清单、closure/index和candidate04均保持原字节；新观察只写v8新目录。
 当前[候选绑定](evidence/issue307-d1/lc13-continuation01/delete-candidate04/source-binding.json)和
 [关闭profile](evidence/issue307-d1/lc13-continuation01/delete-candidate04/bounded-profile.json)
 由新binary在两个network=none、root-free、read-only helper中渲染/验证关闭send gate；
@@ -63,8 +63,8 @@ delete credential、enabled permission或gateway。delete/archive命令6项非�
 最终全部stopped，业务/deletion窗口仍关闭。原tar/dump字节hash未变；另保留新只读导出恢复副本。
 旧 [proposal-v2.json](evidence/issue307-d1/reference-disposal-preparation01/proposal-v2.json) 保留为历史。
 原清单：[proposal.json](evidence/issue307-d1/delete-proposal-5d2274ee/proposal.json)，仅记录初始准备时点。
-当前宿主只读元数据：[topology](evidence/issue307-d1/delete-readonly-v6-refresh02/retained-topology.json)；
-[当前 Core readback](evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/current-core-readback.json) /
+当前宿主只读元数据：[topology](evidence/issue307-d1/delete-readonly-v7-refresh01/retained-topology.json)；
+[当前 Core readback](evidence/issue307-d1/delete-readonly-v7-refresh01/5d-07/current-core-readback.json) /
 [READ ONLY SQL](evidence/issue307-d1/delete-proposal-5d2274ee/core-readback.sql)。
 JSON 中含完整 copy/DatasetVersion identity、SHA256、容器 ID、镜像 ID 和保护观测时间。
 
@@ -101,7 +101,7 @@ JSON 中含完整 copy/DatasetVersion identity、SHA256、容器 ID、镜像 ID 
 2026-10-14追加[运行时核对](evidence/issue307-d1/native-completion01/runtime-incident.json)：
 Docker Desktop停止/恢复后，这三个相同ID服务为 **stopped/retained**。
 本轮仅PG/MinIO为只读核验短暂启动，gateway一直停止；核验后均恢复stopped。
-旧业务配置仍封存，源六版本保护状态已由本轮新候选 `16:22:28Z` 原生读取刷新。
+旧业务配置仍封存，源六版本保护状态已由同一冻结候选于 `2026-10-15T02:14:11Z` 原生读取刷新。
 执行前必须重新核验其持久卷/identity/Core、native protection/inventory和current gate。
 新[非删除矩阵](issue307-d1-native-completion.md)的四个环境全部排除在本方案删除范围外；
 其worker恢复证明不等于5d环境的真实DELETE recovery验收。
@@ -128,9 +128,9 @@ admin SDK `madmin-go/v3 v3.0.94`。provider build/license 的旧核对不构成�
 `b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524`。
 
 这些保护状态来自本轮
-[本轮源原生复查](evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/native-six-version.json)，
+[本轮源原生复查](evidence/issue307-d1/delete-readonly-v7-refresh01/5d-07/native-six-version.json)，
 全部六份 identity/bytes/hash/protection 与 before 和隔离 restore 一致。具体保护观测时间逐项保存在
-proposal-v7；两目标分别观测于 `2026-10-15T01:31:22.410990543Z` 和 `2026-10-15T01:31:22.674758755Z`，
+proposal-v8；两目标分别观测于 `2026-10-15T02:14:11.253384421Z` 和 `2026-10-15T02:14:11.527280148Z`，
 它仍不替代未来发送时的 current protection。
 执行前及每项发送前均须重新读取 native protection/inventory；新增 hold、未到期 retention、
 UNKNOWN、身份漂移或 inventory 增减均使本提案停止，0 DELETE，不自动扩大范围。
@@ -170,7 +170,7 @@ FINALIZED 两份 plan 的 DB computed hash 与 stored hash 相同。
 本轮额外核对27项完整FK trigger资格、54项目标reference counts、3个fence函数正文，
 23份requirements/releases、7pins/terminations及原2NOT_SENT/linked releases仍闭合。
 regular reader/producer原生状态disabled；拟建普通executor为权威NoSuchUser。
-新audit-core-06恢复194表/1879行，并仅在该clone承接20个新的native checkpoint调用（总112），
+新audit-core-07恢复194表/1879行，并仅在该clone承接20个新的native checkpoint调用（总112），
 源journal仍92，原Core业务mutation0；8个operator IAM GET另列回执。
 源、新audit和helper已全部停止、maintenance authority封存；原tar/dump hash不变。
 这些PASS均为只读snapshot；[逐项条件](issue307-d1-candidate04-readonly.md)明确列出
@@ -213,7 +213,7 @@ JSON签名字节失真导致的首次失败完整回滚并保留，新bin02和�
 | 顺序 | 动作 | 通过标准 / 停止条件 |
 | --- | --- | --- |
 | 1 | 绑定用户对本 project/provider/incarnation/plan hash/两份 version 的明确确认；冻结新 composition source、binary、profile、IAM/gateway hash | 无确认则没有 enabled permission；新 profile 的 fake/PG 非删除检查通过，所有范围/窗口/old-approval 拒绝路径有效；若改变 targets/environment，重新确认 |
-| 2 | 保持 business reader/producer 封存，重核当前源、原generation02备份、当前audit-core-06只读恢复和六版本checkpoint；若源facts变化，另建新checkpoint | 当前源194表/1879行、roles/owner/ACL恢复hash一致；原六版本native备份恢复及本轮重读分别保留。发送前须仍匹配当前源，失败0 DELETE，不重开业务或旧恢复窗口 |
+| 2 | 保持 business reader/producer 封存，重核当前源、原generation02备份、当前audit-core-07只读恢复和六版本checkpoint；若源facts变化，另建新checkpoint | 当前源194表/1879行、roles/owner/ACL恢复hash一致；原六版本native备份恢复及本轮重读分别保留。发送前须仍匹配当前源，失败0 DELETE，不重开业务或旧恢复窗口 |
 | 3 | READ ONLY复核原两attempt已NOT_SENT/released；另行追加新 execution stage basis 与≤40分钟 current deletion approval | 原closure不重复写入；原attempt永不发送；新principal→workspace、basis/approval指向同一exact plan，旧non-delete批准不得复用 |
 | 4 | 单独 provision 临时 delete executor 与只读 inspector/recovery 权限，建立 exact IAM + gateway 双重 allowlist | delete 权限仅两份 key+version，无 root payload mount、Put/Copy、bare key、bypass 或受保护/输出 DELETE；business windows 不重开；禁止 SDK/proxy 自动重发 |
 | 5 | 在共享 fence/固定 parent-first 下 fresh authority/approval、全 inventory、native protection、qualified FK/reference releases、pending copies、pins/owner quiescence、ledger/revision；DB-first dispatch/start，再在 ClaimExactSend 重验 | 每项都是新 dispatch/attempt/request key；每次 dispatch 与 send 都 fresh gate；任何 UNKNOWN/DENIED、过期或 late hold 都 0 DELETE，保留阻断事实；不引用旧 eligible evaluation 授权 |
@@ -238,8 +238,8 @@ receipt，再处理 quarantine/b。初始 native inventory 必须等于六份 re
 确认后先绑定同一冻结源码构建的恢复binary、5d workspace/provider/incarnation、只读IAM、
 新attempt/work identity和manifest hash，再按`outbox → worker → once terminal replay`验收；
 恢复配置/Redis/worker资源当前尚未激活，当前5d真实队列恢复仍NOT_RUN。
-上述入口闭合结论来自前轮主线程静态检查；v6及本次v7独立评审覆盖各自精确方案、离线校验，
-v7还核对新只读回执和operator修复；不把它延伸为5d真实发送/队列恢复或新增原生业务PASS。
+上述入口闭合结论来自前轮主线程静态检查；v6/v7独立评审覆盖各自精确方案、离线校验，
+v7还核对当时只读回执和operator修复；本次v8只完成新只读验收，不把旧评审延伸为v8独立评审、5d真实发送/队列恢复PASS。
 
 当前 backup资源实际已保留：`dpp-lifecycle307-5d2274ee-predelete-objects`、
 `dpp-lifecycle307-5d2274ee-predelete-postgres-02` 及专属同名卷，精确ID见
@@ -259,7 +259,7 @@ Redis 使用本机已存在 image ID
 初始 proposal-only阶段 provider I/O/Core mutation=0；既有非删除准备阶段新增60个provider读取
 （源40/独立副本20）、2NOT_SENT+2release、schema68及维护history/cost；DELETE=0。
 前轮generation02 Core与六版本副本全部STOPPED_RETAINED，maintenance authority封存。
-本轮源PG/MinIO只读启动后恢复停止，新audit-core-06独立恢复194表/1879行并承接20次维护调用；
+本轮源PG/MinIO只读启动后恢复停止，新audit-core-07独立恢复194表/1879行并承接20次维护调用；
 源Core业务mutation=0，旧备份/旧restore未写入，gateway始终stopped，六version均未删除。
 初始 proposal-only READ ONLY query 用了不存在的 pending table，事务失败无 mutation；
 检查实际 schema 后改为 copy operation/output intent-ready 查询成功，
@@ -284,7 +284,7 @@ LC-13有限可信停止、新Retry与原生credential containment已有[本轮�
 > dpp-lifecycle307-quarantine/fixture/b.csv@846d0c7c-289d-4667-bc7c-aa04e44357d4 两份源版本，
 > 绑定 source055aa1df063e560c6796e92dfff4e03c7b9061e0，
 > Linux binary 01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3，
-> proposal-v7/candidate04 profile 97d565f9c66d8cfcb66997d034e7acb2d1519864898950a9ddb2ced2cdd5c4ee，
+> proposal-v8/candidate04 profile 97d565f9c66d8cfcb66997d034e7acb2d1519864898950a9ddb2ced2cdd5c4ee，
 > target digest 4cbb36e5aebbc9451603efd276aa309a2c4afdefcf252107571b0f8334360a38，
 > IAM ab24ab862bf0e21d23ee21989f4140b3c7200cdecee22d4a708cc45621da8b54，
 > active gateway 7b24ad32506bfd189c9289ba85a65ab242069dfee293d61b330104a90306cd0a，

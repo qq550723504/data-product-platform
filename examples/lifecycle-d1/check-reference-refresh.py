@@ -38,7 +38,14 @@ def at(text):
     return value
 
 
-def expected_proposal(created_at, root=ROOT):
+def refresh_paths(generation):
+    v6.require(generation in ('06', '07'), 'Refresh outside finite generation')
+    public = PUBLIC if generation == '06' else BASE + 'delete-readonly-v7-refresh01/'
+    return public, public + '5d-' + generation + '/', public + ('proposal-v7.json' if generation == '06' else 'proposal-v8.json')
+
+
+def expected_proposal(created_at, root=ROOT, generation='06'):
+    public, native_path, _ = refresh_paths(generation)
     baseline = load(v6.PROPOSAL, root)
     v6.check(baseline, root)
     review_path = BASE + 'delete-proposal-v6-review01/independent-re-review.json'
@@ -50,7 +57,7 @@ def expected_proposal(created_at, root=ROOT):
         raw = v6.read(root, path).replace(b'\r\n', b'\n')
         v6.require(v6.hashlib.sha256(raw).hexdigest() == review['reviewed_fix_sha256'][path],
                    'Reviewed checker changed')
-    facts = {name: load(NATIVE + name, root) for name in NAMES if name.endswith('.json')}
+    facts = {name: load(native_path + name, root) for name in NAMES if name.endswith('.json')}
     old_native = load(v6.RECEIPTS['native'], root)
     native = facts['native-six-version.json']
     v6.require(native['provider_delete'] == native['business_admission'] == 0
@@ -78,7 +85,7 @@ def expected_proposal(created_at, root=ROOT):
         v6.require({k: v for k, v in facts[name].items() if k not in ignored}
                    == {k: v for k, v in previous.items() if k not in ignored}, 'Current Core/reference closure changed')
     checkpoint = facts['readonly-checkpoint.json']
-    v6.require(checkpoint['audit_core'] == baseline['project'] + '-readonly-audit-core-06'
+    v6.require(checkpoint['audit_core'] == baseline['project'] + '-readonly-audit-core-' + generation
                and checkpoint['source_business_mutations'] == checkpoint['native_delete'] == 0
                and checkpoint['approval'] == 'NOT_RECEIVED' and checkpoint['status'] == 'PASS', 'Checkpoint not closed')
     previous_checkpoint = load(v6.RECEIPTS['checkpoint'], root)
@@ -116,8 +123,8 @@ def expected_proposal(created_at, root=ROOT):
                   audit_core=checkpoint['audit_core'], source_sql_counts=core['counts'], source_sql_as_of=core['as_of'],
                   previous_proposal=v6.reference(root, v6.PROPOSAL),
                   reviewed_baseline=v6.reference(root, review_path))
-    paths = {key: NATIVE + Path(value).name for key, value in v6.RECEIPTS.items()}
-    paths['conditions'] = PUBLIC + 'execution-preconditions.json'
+    paths = {key: native_path + Path(value).name for key, value in v6.RECEIPTS.items()}
+    paths['conditions'] = public + 'execution-preconditions.json'
     result['current_readonly'] = {key: v6.reference(root, value) for key, value in paths.items()}
     for value in result['targets'] + result['survivors']:
         protection = fresh[value['copy_id']]['protection']
@@ -125,19 +132,40 @@ def expected_proposal(created_at, root=ROOT):
         value['retention_active_at_observation'] = (protection['RetentionMode'] != 'NONE'
             and protection['RetainUntil'] is not None
             and at(protection['ObservedAt']) < at(protection['RetainUntil']))
+    if generation == '07':
+        previous = load(PROPOSAL, root)
+        check(previous, root)
+        review_path = BASE + 'delete-proposal-v7-review01/independent-review.json'
+        review = load(review_path, root)
+        v6.require(review['status'] == 'PASS_INDEPENDENT_OFFLINE_REVIEW'
+                   and review['current_slice_blockers'] == 0, 'v7 review not closed')
+        prior = {value['copy_id']: value for value in previous['targets'] + previous['survivors']}
+        for value in result['targets'] + result['survivors']:
+            v6.require(at(value['protection_observed_at']) > at(prior[value['copy_id']]['protection_observed_at']), 'Observation not newer than reviewed v7')
+        v6.require(at(core['as_of']) > at(previous['source_sql_as_of']), 'Core observation not newer than v7')
+        result.update(schema='lifecycle307-exact-delete-proposal-v8',
+                      status='PENDING_USER_CONFIRMATION; V7_NATIVE_READONLY_REFRESH_PASS; SEND_BLOCKED',
+                      previous_proposal=v6.reference(root, PROPOSAL),
+                      reviewed_baseline=v6.reference(root, review_path))
     return result
 
 
-def check(proposal, root=ROOT):
-    entries = load(PUBLIC + 'evidence-index.json', root)['files']
-    v6.require(len(entries) == len(PATHS) and {x['path'] for x in entries} == PATHS, 'Refresh index membership drift')
+def check(proposal, root=ROOT, generation='06'):
+    public, native_path, proposal_path = refresh_paths(generation)
+    paths = PATHS if generation == '06' else {native_path + name for name in NAMES} | {
+        proposal_path, public + 'execution-preconditions.json', public + 'verification.json',
+        public + 'retained-topology.json', public + 'preflight-host.json'}
+    entries = load(public + 'evidence-index.json', root)['files']
+    v6.require(len(entries) == len(paths) and {x['path'] for x in entries} == paths, 'Refresh index membership drift')
     for entry in entries:
         raw = v6.read(root, entry['path'])
         v6.require(len(raw) == entry['bytes'] and v6.hashlib.sha256(raw).hexdigest() == entry['sha256'], 'Refresh artifact bytes drift')
-    v6.require(canonical(proposal) == canonical(load(PROPOSAL, root)), 'Input differs from fixed v7')
-    v6.require(canonical(proposal) == canonical(expected_proposal(proposal['created_at'], root)), 'Refresh differs from reviewed scope/fresh receipts')
-    return {'status': 'PASS_OFFLINE_V7_REFRESH_CONSISTENCY_ONLY', 'baseline': 'INDEPENDENTLY_REVIEWED_V6',
-            'native_storage_calls': 20, 'management_gets_including_failed05': 8,
+    v6.require(canonical(proposal) == canonical(load(proposal_path, root)), 'Input differs from fixed v' + ('7' if generation == '06' else '8'))
+    v6.require(canonical(proposal) == canonical(expected_proposal(proposal['created_at'], root, generation)), 'Refresh differs from reviewed scope/fresh receipts')
+    return {'status': 'PASS_OFFLINE_V' + ('7' if generation == '06' else '8') + '_REFRESH_CONSISTENCY_ONLY',
+            'baseline': 'INDEPENDENTLY_REVIEWED_V' + ('6' if generation == '06' else '7'),
+            'native_storage_calls': 20,
+            ('management_gets_including_failed05' if generation == '06' else 'management_gets_this_refresh'): 8 if generation == '06' else 4,
             'source_core_mutation': 0, 'send_authorization': 'NOT_RECEIVED', 'delete': 0}
 
 

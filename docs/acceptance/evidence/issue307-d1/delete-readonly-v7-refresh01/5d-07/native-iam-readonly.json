@@ -1,0 +1,57 @@
+{
+  "checked_at": "2026-10-15T02:14:02.822211763Z",
+  "delete": 0,
+  "facts": [
+    {
+      "error_code": "",
+      "expected": true,
+      "role": "reader",
+      "status": "disabled"
+    },
+    {
+      "error_code": "",
+      "expected": true,
+      "role": "producer",
+      "status": "disabled"
+    },
+    {
+      "error_code": "",
+      "expected": true,
+      "role": "inspector",
+      "status": "enabled"
+    },
+    {
+      "error_code": "XMinioAdminNoSuchUser",
+      "expected": true,
+      "role": "executor",
+      "status": "NOT_PROVISIONED"
+    }
+  ],
+  "management_only": true,
+  "mutations": 0,
+  "root_payload_mount": false,
+  "rpc": [
+    {
+      "role": "reader",
+      "http_status": 200,
+      "invoked": true
+    },
+    {
+      "role": "producer",
+      "http_status": 200,
+      "invoked": true
+    },
+    {
+      "role": "inspector",
+      "http_status": 200,
+      "invoked": true
+    },
+    {
+      "role": "executor",
+      "http_status": 404,
+      "invoked": true
+    }
+  ],
+  "rpc_count": 4,
+  "status": "PASS"
+}
