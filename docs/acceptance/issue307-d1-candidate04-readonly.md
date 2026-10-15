@@ -614,3 +614,19 @@ retention到期未执行release，也未扩大两目标共129560 bytes的删除�
 v13离线检查20份固定indexed payload与完整提案，递归校验前驱v12及独立评审，要求新观察晚于v12；
 scope/authority改变、旧观察、source identity/active pins/running closure、index原字节或membership破坏均拒绝。
 本轮无operator或离线收口失败、Core业务mutation、IAM写入、DELETE、hold/retention release、bypass或cleanup；旧回执和全部失败历史保持原字节。
+
+### v13分支同步与CI入口修复
+
+原生刷新提交 `4cee7982f63502be2abf1df32aa0000dc46e30d7` 推送后，#318因main新接线与
+`run-copy-recovery-step.ps1` 冲突而显示CONFLICTING，没有产生该HEAD的PR CI；不把前驱绿色CI当作当前验收。
+在本分支同步main `d7c9ccdfe4fba066b512fe4adbcd1df281a2d0d9`，保留四个D1 PowerShell包装脚本及README
+在4cee7982的Git原字节，维持schema68、StartOnly barrier、完整crash退出码和依赖原始Docker元数据的保留契约。
+main通用回收adapter及其他变更正常同步；D1后续接线必须先完成metadata依赖闭合，仍归#307。
+本操作是分支集成，没有合并#318，也未启动任何业务/helper或执行资源回收。
+
+317项冻结runtime、5项只读operator和原223份indexed raw证据均与刷新提交相同；原native verification/index不改写。
+新[集成回执](evidence/issue307-d1/delete-readonly-v13-integration01/integration-verification.json)及index另存，
+记录正常/-O各45项、8个CLI、临时容器契约正常/-O各9项、required-check policy测试与5份PowerShell语法解析PASS。
+Node默认reporter格式导致的首次本地计数采集失败另留诊断；测试命令本身exit0，随后固定TAP reporter重新离线收口。
+没有重跑native、没有新增保护观察；13:32:35源观察、exact scope/关闭authority均保持原值。
+当前main CI增加Linux/Windows临时容器契约两项，完整PR CI应核对当前HEAD的13项job；其结果独立记录在PR/Issue检查点。

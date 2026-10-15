@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "checks": [
+    "eight concurrent same-key HTTP requests preserve identity",
+    "successful replay causes zero new physical calls or business facts",
+    "missing credential and foreign workspace rejected",
+    "caller source/consumer override rejected",
+    "eight concurrent handling replays preserve one fact",
+    "changed same-key handling reason rejected"
+  ]
+}

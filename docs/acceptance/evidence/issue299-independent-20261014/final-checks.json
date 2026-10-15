@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "revokedHttpStatuses": [
+    403,
+    403,
+    403
+  ],
+  "queuedScan": {
+    "id": "d7a221fe-c7ef-4ef8-a986-5308dd867755",
+    "request_id": "8f8580ed-a177-4252-8983-662a6e2adc83",
+    "attempt_id": null,
+    "status": "DENIED",
+    "reason": "CURRENT_AUTHORITY_DENIED",
+    "columns": [],
+    "schema_hash": "",
+    "started_at": null,
+    "completed_at": null,
+    "recorded_at": "2026-10-14T09:47:24.287168+00:00"
+  },
+  "physicalScanCount": 11,
+  "newScanInvocationsAfterRevoke": 0,
+  "newBusinessFactsAfterRevokedReplay": 0,
+  "knownCredentialValuesChecked": 15,
+  "coreFactsCredentialLeaks": 0,
+  "productionPagesCredentialLeaks": 0,
+  "sourceRestoreFingerprints": {
+    "dpp_source.energy": {
+      "rows": 14,
+      "sha256": "da1268a6973b7805b4ddfc6f55f07cfca6baaf774740847fffa24d8068ee9113"
+    },
+    "dpp_source.enterprise": {
+      "rows": 6,
+      "sha256": "bd70f8f33a6645ce709e32c5a4e59fa2070fc134c74a3238d6ea8f9b7a3ccb7d"
+    },
+    "dpp_source.lease": {
+      "rows": 10,
+      "sha256": "bca092e8586a1a3fe88ab5d522dca9fd6bba666ec7411323cc0158d33dd09b76"
+    }
+  }
+}

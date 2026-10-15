@@ -22,6 +22,7 @@ import urllib.request
 
 from smoke import Trial, PG_IMAGE, SLOTS, command, require, source_sha, fixture
 from storage_smoke import prepare_binary, CADDY, SOURCE_COMMIT, SOURCE_RELEASE
+from cleanup_receipts import CleanupReceipts
 
 HERE=Path(__file__).resolve().parent
 REPO=HERE.parents[2]
@@ -29,6 +30,23 @@ REPO=HERE.parents[2]
 def port():
     with socket.socket() as s:
         s.bind(("127.0.0.1",0));return s.getsockname()[1]
+
+def implementation_sources():
+    return [*list((REPO/"apps/platform/internal/ingestion").rglob("*.go")),*list((REPO/"apps/platform/cmd/ingestion-pilot").rglob("*.go")),REPO/"apps/platform/go.mod",REPO/"apps/platform/go.sum",REPO/"migrations/000051_ingestion_batch.up.sql",REPO/"migrations/000051_ingestion_batch.down.sql",REPO/"migrations/000052_ingestion_invocation_recovery.up.sql",REPO/"migrations/000052_ingestion_invocation_recovery.down.sql",REPO/"apps/platform/internal/platform/storage/minio.go",REPO/"apps/platform/internal/platform/routing/routing.go",REPO/"apps/platform/internal/workflow/hop/client.go",HERE/"b2_smoke.py",HERE/"smoke.py",HERE/"storage_smoke.py",HERE/"trial_images.py",HERE/"cleanup_receipts.py",HERE/"extract.hpl",HERE/"storage.Caddyfile",HERE/"source.sql",HERE/"start-hop.sh",REPO/".github/workflows/ci.yml"]
+
+def implementation_hashes(sources):
+    return {str(f.relative_to(REPO)).replace("\\","/"):source_sha(f) for f in sources}
+
+def verify_implementation(report,sources,expected):
+    if expected is None:
+        report["implementation_stability"]="UNKNOWN"
+    else:
+        try:
+            report["implementation_stability"]="PASS" if expected==implementation_hashes(sources) else "FAILED"
+        except Exception as error:
+            report["implementation_stability"]="UNKNOWN"
+            report["implementation_stability_failure_type"]=type(error).__name__
+    if report["implementation_stability"]!="PASS":report["status"]="FAIL"
 
 class Control(http.server.BaseHTTPRequestHandler):
     def log_message(self,*_): pass
@@ -54,15 +72,18 @@ def run(output,cache):
     output.mkdir(parents=True,exist_ok=False)
     trial=Trial(output);trial.source_port=port()
     private=Path(tempfile.mkdtemp(prefix="dpp-pgi-b2-core-"))
-    names=[];networks=[];control=None
+    names=[];networks=[];control=None;sources=[];hashes=None
     report={"contract":"postgres-ingestion-v1/B2","status":"NOT_RUN","core_admission":"NOT_RUN","b3":"NOT_RUN","remote_ci":"NOT_RUN",
             "base_sha":command(["git","-C",str(REPO),"rev-parse","HEAD"]).stdout.decode().strip(),
             "scope":"synthetic fixtures; quiescent source; controlled authenticated HTTP; real local providers",
             "storage_boundary":"official archived MinIO source + mandatory Caddy gateway; no production admission",
             "minio_commit":SOURCE_COMMIT,"minio_release":SOURCE_RELEASE}
     try:
+        sources=implementation_sources()
+        hashes=implementation_hashes(sources)
+        report["implementation_sha256"]=hashes
         print("B2: preparing pinned runtimes",flush=True)
-        binary=prepare_binary(cache)
+        binary,minio_image=prepare_binary(cache,trial.images.tag("minio"),owner=trial.images)
         trial.setup()
         report["runtime"]=trial.report["runtime"]
         report["minio_binary_sha256"]=hashlib.sha256(binary.read_bytes()).hexdigest()
@@ -77,7 +98,7 @@ def run(output,cache):
             (private/name).write_text(value,encoding="utf-8")
         (storage_private/"start.sh").write_text("#!/bin/sh\nset -eu\nexport MINIO_ROOT_USER=$(cat /run/credentials/access)\nexport MINIO_ROOT_PASSWORD=$(cat /run/credentials/secret)\nexec /usr/local/bin/minio server /data --address :9000\n",encoding="utf-8",newline="\n")
         minio="dpp-pgi-b2-storage-"+suffix
-        command(["docker","run","-d","--name",minio,"--network",net,"--network-alias","minio","--mount",f"type=bind,src={storage_private},dst=/run/credentials,readonly","--tmpfs","/data:rw,size=256m","--entrypoint","sh","dpp-pgi-minio:2025-10-15","/run/credentials/start.sh"]);names.append(minio)
+        command(["docker","run","-d","--name",minio,"--network",net,"--network-alias","minio","--mount",f"type=bind,src={storage_private},dst=/run/credentials,readonly","--tmpfs","/data:rw,size=256m","--entrypoint","sh",minio_image,"/run/credentials/start.sh"]);names.append(minio)
         gateway="dpp-pgi-b2-gateway-"+suffix;sp=port()
         command(["docker","run","-d","--name",gateway,"--network",net,"-p",f"127.0.0.1:{sp}:9000","--mount",f"type=bind,src={HERE/'storage.Caddyfile'},dst=/etc/caddy/Caddyfile,readonly",CADDY]);names.append(gateway)
         command(["docker","network","connect",trial.network,gateway])
@@ -106,8 +127,6 @@ def run(output,cache):
              "Profile":{"Enabled":True,"TokenFile":str(private/"token"),"Subject":"b2-controlled-operator","ConnectionRef":"dpp-source-reader","InstanceRef":trial.identity,"Database":"dpp_ingestion_source","Reader":"dpp_reader","SourceDSN":f"postgres://dpp_reader@{trial.source_host}:{trial.source_port}/dpp_ingestion_source?sslmode=disable","SourcePasswordFile":str(private/"source-password"),"TemplateFile":str(HERE/"extract.hpl"),"MetadataFile":str(private/"metadata.json"),"Tables":[{"Code":table+"_raw","Schema":"dpp_source","Name":table,"Columns":columns,"Rows":rows} for table,(columns,_,rows) in SLOTS.items()],"HopURL":trial.url,"HopUser":"b1","HopPasswordFile":str(private/"hop-password"),"LocalRoot":str(trial.staging),"EngineRoot":"/staging","Bucket":"raw","StorageEndpoint":f"127.0.0.1:{sp}","CoreCredentialFile":str(private/"core-identity.json"),"PublisherCredentialFile":str(private/"publisher-identity.json")}}
         config=private/"test.json";config.write_text(json.dumps(cfg),encoding="utf-8")
         print("B2: running authenticated Commands and independent Core assertions",flush=True)
-        sources=[*list((REPO/"apps/platform/internal/ingestion").rglob("*.go")),*list((REPO/"apps/platform/cmd/ingestion-pilot").rglob("*.go")),REPO/"apps/platform/go.mod",REPO/"apps/platform/go.sum",REPO/"migrations/000051_ingestion_batch.up.sql",REPO/"migrations/000051_ingestion_batch.down.sql",REPO/"migrations/000052_ingestion_invocation_recovery.up.sql",REPO/"migrations/000052_ingestion_invocation_recovery.down.sql",REPO/"apps/platform/internal/platform/storage/minio.go",REPO/"apps/platform/internal/platform/routing/routing.go",REPO/"apps/platform/internal/workflow/hop/client.go",HERE/"b2_smoke.py",HERE/"smoke.py",HERE/"extract.hpl",HERE/"storage.Caddyfile",HERE/"source.sql",HERE/"start-hop.sh",REPO/".github/workflows/ci.yml"]
-        hashes={str(f.relative_to(REPO)).replace("\\","/"):source_sha(f) for f in sources}
         env=dict(os.environ,TEST_INGESTION_B2_CONFIG=str(config))
         result=subprocess.run(["go","test","-count=1","-v","-timeout","12m","./internal/ingestion/..."],cwd=REPO/"apps/platform",env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=780)
         output_text=result.stdout+result.stderr
@@ -143,24 +162,37 @@ def run(output,cache):
         report["checks"]["source_to_hop_to_core_original_values"]="PASS"
         report["checks"]["physical_call_cost_correspondence"]="PASS"
         report["checks"]["secret_isolation"]="PASS"
-        require(hashes=={str(f.relative_to(REPO)).replace("\\","/"):source_sha(f) for f in sources},"implementation changed during real run")
-        report["implementation_sha256"]=hashes
         report["status"]=report["core_admission"]="PASS"
     except Exception as error:
         report["status"]="FAIL";report["failure"]=str(error);raise
     finally:
-        if control:control.shutdown();control.server_close()
-        cleanup=[]
-        for name in reversed(names):cleanup.append(command(["docker","rm","-f",name],check=False).returncode==0)
-        # Disconnect/remove the gateway before Trial removes its engine network.
-        trial.cleanup()
-        cleanup += [command(["docker","inspect",name],check=False).returncode!=0 for name in (trial.pg,trial.hop)]
-        cleanup.append(command(["docker","network","inspect",trial.network],check=False).returncode!=0)
-        for net in reversed(networks):cleanup.append(command(["docker","network","rm",net],check=False).returncode==0)
-        require(private.resolve().parent==Path(tempfile.gettempdir()).resolve() and private.name.startswith("dpp-pgi-b2-core-"),"unsafe credential cleanup")
-        shutil.rmtree(private)
-        report["cleanup"]="PASS" if all(cleanup) else "FAIL"
-        (output/"b2-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+        receipt=CleanupReceipts(report,("control","b2_containers","b2_networks","trial","temporary_credentials"))
+        try:
+            if control:
+                receipt.attempt("control","control server",control.shutdown)
+                receipt.attempt("control","control listener",control.server_close)
+            else:receipt.attempt("control","not created",lambda:None)
+            for name in reversed(names):
+                receipt.attempt("b2_containers",name,lambda n=name:command(["docker","rm","-f",n],check=False))
+            if not names:receipt.attempt("b2_containers","not created",lambda:None)
+            # Disconnect/remove the gateway before Trial removes its network.
+            def cleanup_trial():
+                trial.cleanup()
+                return {"status":trial.report["cleanup"],"detail":trial.report["cleanup_detail"]}
+            receipt.attempt("trial","B1 resources and image refs",cleanup_trial)
+            for net in reversed(networks):
+                receipt.attempt("b2_networks",net,lambda n=net:command(["docker","network","rm",n],check=False))
+            if not networks:receipt.attempt("b2_networks","not created",lambda:None)
+            def remove_private():
+                require(private.resolve().parent==Path(tempfile.gettempdir()).resolve() and private.name.startswith("dpp-pgi-b2-core-"),"unsafe credential cleanup")
+                shutil.rmtree(private)
+            receipt.attempt("temporary_credentials","ephemeral private directory",remove_private)
+        finally:
+            receipt.finish()
+            verify_implementation(report,sources,hashes)
+            (output/"b2-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    require(report["implementation_stability"]=="PASS","implementation changed or unavailable during real run; see receipt")
+    require(report["cleanup"]=="PASS","B2 cleanup incomplete; see component receipt")
     print("B2 PASS; B3 NOT_RUN",flush=True)
 
 if __name__=="__main__":

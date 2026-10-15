@@ -1,0 +1,14 @@
+{
+  "observedAt": "2026-10-14T11:37:32.336510+00:00",
+  "configuredMetadataJwtExpired": true,
+  "expiresAtUnix": 1791973012,
+  "expiresAtUtc": "2026-10-14T10:16:52+00:00",
+  "metadataReadHttpStatus": 401,
+  "currentSourceAvailability": "UNKNOWN",
+  "latestSchemaRequestId": "8f8580ed-a177-4252-8983-662a6e2adc83",
+  "latestSchemaRequestStatus": "DENIED / CURRENT_AUTHORITY_DENIED",
+  "newConnectorScans": 0,
+  "sourceAuthorization": "REVOKED",
+  "credentialRenewal": false,
+  "businessHistoryChanged": false
+}

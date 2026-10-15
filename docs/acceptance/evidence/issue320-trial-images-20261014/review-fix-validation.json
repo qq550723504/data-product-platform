@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "reviewed_prior_head": "8bcff21d4ea2da0faf0dff68d8d44612e4f669b6",
+  "root_cause": "cleanup command exception escaped before component/business receipt persistence",
+  "red": "same storage timeout fixture on original storage implementation loses storage-report.json",
+  "green_cleanup_failure_tests": 3,
+  "lifecycle_tests": 14,
+  "isolation_tests": 5,
+  "old_artifacts_unchanged": 17,
+  "original_native_sources_unchanged": true,
+  "native_rerun": "NOT_RUN / image implementation unchanged; no native cleanup in review fix",
+  "candidate_source_lf_sha256": {
+    ".github/workflows/ci.yml": "19db23aa17b2fd1947a05046d90e446e1856b057cd5ea913a8424340ac2b47d8",
+    "examples/enterprise-activity/postgres-ingestion/trial_images.py": "2ec957ba1d3a9ef220c99fd16418f9ab96407475ded0b4aaae646e28199a47c6",
+    "examples/enterprise-activity/postgres-ingestion/trial_images_native_test.py": "13cc9751d77ca745be19489a905eb5d2d2b9f6268b4caeb26971df42261f14ff",
+    "examples/enterprise-activity/postgres-ingestion/trial_images_test.py": "fd866a68fda3305460fd2c47f3a341c82a7006d564b9777410907f03b7238b54",
+    "examples/enterprise-activity/postgres-ingestion/cleanup_receipts.py": "65548590b5e42c956452e6255204695b259b69cf65fc0b7f987d0e7d9db85310",
+    "examples/enterprise-activity/postgres-ingestion/cleanup_receipts_test.py": "c46c1707cac937928d1fc3058debf0db85432b4a4aa78124ec4efee931b60914",
+    "examples/enterprise-activity/postgres-ingestion/smoke.py": "94df4ad092e376fdf2f3139f28aa9ad8e72f049a5218e04cfb0f73d4dc3c5c6a",
+    "examples/enterprise-activity/postgres-ingestion/storage_smoke.py": "80bdec2ec987e8d4871a123ad04c280b09c4bd0052bc4010e919233404c60e6d",
+    "examples/enterprise-activity/postgres-ingestion/b2_smoke.py": "ded2e0716d9a6a353f5ca95df0e3676c6ba91ad631bc7b65a122a6fde0e050cf",
+    "examples/enterprise-activity/postgres-ingestion/b3_runtime.py": "91534ef1abc2037ce3e6b4a5277d4e18140a5a2a5ff8fb0f89e95fd8827e8504",
+    "examples/enterprise-activity/postgres-ingestion/image_isolation_test.py": "3623017ee4945544f315ad883e44175a64af6848bdcff2522e6e027af0bdd07a",
+    "examples/enterprise-activity/postgres-ingestion/image_isolation_unit_test.py": "654f66fb2cf96fc99f5b7f9662d92efa690a57d8e4b17a20319f348ae3098a41"
+  },
+  "independent_review": "recheck exact new head in PR checkpoint",
+  "ci": "recheck exact new head in PR checkpoint"
+}

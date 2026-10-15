@@ -1,0 +1,56 @@
+[
+  {
+    "key": "core/015dfa44-3ac8-4c80-a122-2d300642f6ba/0d590729-babb-441d-9494-0eb580a2cca1/3b77024e-a646-47a8-a3fc-1ee01eafdb76/4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d/enterprise_raw.csv",
+    "versionId": "null",
+    "size": 1277,
+    "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+  },
+  {
+    "key": "core/015dfa44-3ac8-4c80-a122-2d300642f6ba/0d590729-babb-441d-9494-0eb580a2cca1/3b77024e-a646-47a8-a3fc-1ee01eafdb76/c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686/energy_raw.csv",
+    "versionId": "null",
+    "size": 1318,
+    "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+  },
+  {
+    "key": "core/015dfa44-3ac8-4c80-a122-2d300642f6ba/0d590729-babb-441d-9494-0eb580a2cca1/3b77024e-a646-47a8-a3fc-1ee01eafdb76/f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a/lease_raw.csv",
+    "versionId": "null",
+    "size": 1323,
+    "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+  },
+  {
+    "key": "datasets/28c66686-f499-4bff-b1e6-80ca682316d5/v000001/8d90e1ab-e318-48b8-84dc-7ac25a46b25f/enterprise-activity-2025-03.csv",
+    "versionId": "null",
+    "size": 640,
+    "sha256": "3d6feb2b0618e9e41967a5eb18e975b1f24932590113861d0f55866c5c359d7f"
+  },
+  {
+    "key": "datasets/28c66686-f499-4bff-b1e6-80ca682316d5/v000002/bd707021-ff3a-48aa-89af-ccd9c8c5a649/enterprise-activity-2025-03.csv",
+    "versionId": "null",
+    "size": 640,
+    "sha256": "06ee909ff45254a351388c9a935fa9d285e26b0d123765531a0a6417c2a3927c"
+  },
+  {
+    "key": "datasets/b60f40b2-6c6f-4d1a-8e8d-548107f32a90/v000001/60c322b2-24bf-4927-938f-1526310cde48/standardized-company-83442925-25a9-4956-8ebd-362dba2ba2db.csv",
+    "versionId": "null",
+    "size": 2036,
+    "sha256": "09cd0844e4b9722bf25968c643b9455407e2f93ffaae9e35b62dae30d160ee27"
+  },
+  {
+    "key": "staging/015dfa44-3ac8-4c80-a122-2d300642f6ba/0d590729-babb-441d-9494-0eb580a2cca1/3b77024e-a646-47a8-a3fc-1ee01eafdb76/energy_raw.csv",
+    "versionId": "null",
+    "size": 1318,
+    "sha256": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+  },
+  {
+    "key": "staging/015dfa44-3ac8-4c80-a122-2d300642f6ba/0d590729-babb-441d-9494-0eb580a2cca1/3b77024e-a646-47a8-a3fc-1ee01eafdb76/enterprise_raw.csv",
+    "versionId": "null",
+    "size": 1277,
+    "sha256": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+  },
+  {
+    "key": "staging/015dfa44-3ac8-4c80-a122-2d300642f6ba/0d590729-babb-441d-9494-0eb580a2cca1/3b77024e-a646-47a8-a3fc-1ee01eafdb76/lease_raw.csv",
+    "versionId": "null",
+    "size": 1323,
+    "sha256": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+  }
+]

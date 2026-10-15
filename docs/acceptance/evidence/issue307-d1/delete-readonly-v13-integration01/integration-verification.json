@@ -1,0 +1,186 @@
+{
+  "checked_at": "2026-10-15T05:42:30.049547+00:00",
+  "status": "PASS_MAIN_INTEGRATION_OFFLINE_ONLY",
+  "native_refresh_head": "4cee7982f63502be2abf1df32aa0000dc46e30d7",
+  "imported_main": "d7c9ccdfe4fba066b512fe4adbcd1df281a2d0d9",
+  "trigger_blocker": "GitHub mergeable CONFLICTING suppressed pull_request CI; one run-copy-recovery-step.ps1 content conflict with main #322 helper retirement wiring",
+  "resolution": "Import main;retain four lifecycle PowerShell wrappers and README at their native-refresh Git bytes because trusted-stop and acceptance still depend on retained helper metadata. Generic archive adapter remains available;D1 adoption follows separate dependency-closure acceptance. No helper business invocation performed",
+  "retained_wrapper_git_sha256": {
+    "examples/lifecycle-d1/finish-prepare.ps1": "6f055eeb910bdfce8c8ec16177e4ed91a86037f437940a09a364fd900006c4b0",
+    "examples/lifecycle-d1/run-copy-recovery-step.ps1": "88bf705a3de55eb51ea269aae1e34cce81a011713a214ffbe580fa7d657be731",
+    "examples/lifecycle-d1/run-plane-step.ps1": "68b165edb934c34f819ff3bc8b59c06e974ff73ece1f8f98f0a5ed2a275b8c20",
+    "examples/lifecycle-d1/run-reader-step.ps1": "6e616812b377138986e19742d465271227106afb7e131c2767f6f0523c531569",
+    "examples/lifecycle-d1/README.md": "f30e4ecf537590f81913e18ef950f15999309d36bdb4acff6eaed85f3d882598"
+  },
+  "runtime_source": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "frozen_runtime_files_unchanged": 317,
+  "operator_source_sha256": {
+    "examples/lifecycle-d1/complete-lc13-readonly.py": "33df1a8bebbb51c052fa72eb1335b553bf4c6bb02f62239c789d014dd6b2ddb7",
+    "examples/lifecycle-d1/refresh-reference-readonly.py": "29ce62c7552e7c9bae6030a10269db442f16e5f468bacf82e8b6c7f394d7f2ff",
+    "examples/lifecycle-d1/refresh-reference-v12-readonly.py": "24420cdb26230390003cda9a9d0808b43d0d77b0632918a0d3142a8bca780ee7",
+    "examples/lifecycle-d1/check-reference-refresh.py": "ad1b7dd3998134d0f646291a804ad7388830e2d21665a6f6d120d40a3275656e",
+    "examples/lifecycle-d1/check-reference-v13.py": "3dc45aab6b09a6503e86e843fb00d75bc8895121e3d39537a44385926564ef52"
+  },
+  "preintegration_223_raw_files_unchanged": true,
+  "tests": [
+    {
+      "file": "test_reference_proposal.py",
+      "optimized": false,
+      "tests": 7
+    },
+    {
+      "file": "test_lc13_readonly.py",
+      "optimized": false,
+      "tests": 9
+    },
+    {
+      "file": "test_reference_refresh.py",
+      "optimized": false,
+      "tests": 5
+    },
+    {
+      "file": "test_reference_v8.py",
+      "optimized": false,
+      "tests": 4
+    },
+    {
+      "file": "test_reference_v9.py",
+      "optimized": false,
+      "tests": 4
+    },
+    {
+      "file": "test_reference_v10.py",
+      "optimized": false,
+      "tests": 4
+    },
+    {
+      "file": "test_reference_v11.py",
+      "optimized": false,
+      "tests": 4
+    },
+    {
+      "file": "test_reference_v12.py",
+      "optimized": false,
+      "tests": 4
+    },
+    {
+      "file": "test_reference_v13.py",
+      "optimized": false,
+      "tests": 4
+    },
+    {
+      "file": "test_reference_proposal.py",
+      "optimized": true,
+      "tests": 7
+    },
+    {
+      "file": "test_lc13_readonly.py",
+      "optimized": true,
+      "tests": 9
+    },
+    {
+      "file": "test_reference_refresh.py",
+      "optimized": true,
+      "tests": 5
+    },
+    {
+      "file": "test_reference_v8.py",
+      "optimized": true,
+      "tests": 4
+    },
+    {
+      "file": "test_reference_v9.py",
+      "optimized": true,
+      "tests": 4
+    },
+    {
+      "file": "test_reference_v10.py",
+      "optimized": true,
+      "tests": 4
+    },
+    {
+      "file": "test_reference_v11.py",
+      "optimized": true,
+      "tests": 4
+    },
+    {
+      "file": "test_reference_v12.py",
+      "optimized": true,
+      "tests": 4
+    },
+    {
+      "file": "test_reference_v13.py",
+      "optimized": true,
+      "tests": 4
+    }
+  ],
+  "tests_per_mode": 45,
+  "offline_clis": [
+    {
+      "cli": "check-reference-proposal.py",
+      "status": "PASS_OFFLINE_CONSISTENCY_ONLY"
+    },
+    {
+      "cli": "check-reference-refresh.py",
+      "status": "PASS_OFFLINE_V7_REFRESH_CONSISTENCY_ONLY"
+    },
+    {
+      "cli": "check-reference-v8.py",
+      "status": "PASS_OFFLINE_V8_REFRESH_CONSISTENCY_ONLY"
+    },
+    {
+      "cli": "check-reference-v9.py",
+      "status": "PASS_OFFLINE_V9_REFRESH_CONSISTENCY_ONLY"
+    },
+    {
+      "cli": "check-reference-v10.py",
+      "status": "PASS_OFFLINE_V10_REFRESH_CONSISTENCY_ONLY"
+    },
+    {
+      "cli": "check-reference-v11.py",
+      "status": "PASS_OFFLINE_V11_REFRESH_CONSISTENCY_ONLY"
+    },
+    {
+      "cli": "check-reference-v12.py",
+      "status": "PASS_OFFLINE_V12_REFRESH_CONSISTENCY_ONLY"
+    },
+    {
+      "cli": "check-reference-v13.py",
+      "status": "PASS_OFFLINE_V13_REFRESH_CONSISTENCY_ONLY"
+    }
+  ],
+  "temporary_container_contract_tests": [
+    {
+      "optimized": false,
+      "tests": 9
+    },
+    {
+      "optimized": true,
+      "tests": 9
+    }
+  ],
+  "required_check_policy_tests": 163,
+  "powershell_parse": {
+    "business_execution": 0,
+    "status": "PASS_POWERSHELL_PARSE_ONLY",
+    "files": 5
+  },
+  "native_observation_range_unchanged": {
+    "from": "2026-10-15T05:32:35.1886766Z",
+    "to": "2026-10-15T05:32:35.712494743Z"
+  },
+  "effects": {
+    "provider_io": 0,
+    "db_io": 0,
+    "container_starts": 0,
+    "business_execution": 0,
+    "iam_changes": 0,
+    "delete": 0,
+    "cleanup": 0,
+    "pull_request_merge": 0
+  },
+  "authority": "NOT_RECEIVED;#318 Draft,actual DELETE/post-delete recovery NOT_RUN;no new independent v13 review",
+  "operator_diagnostics": {
+    "attempt01": "All preceding test commands returned exit0;local collection failed parsing Node default reporter test count. No public integration output allocated. Fixed by explicitly requesting TAP reporter;private diagnostic retained. No native run or resource cleanup occurred."
+  }
+}

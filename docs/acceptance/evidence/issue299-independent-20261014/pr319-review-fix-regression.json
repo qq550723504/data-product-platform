@@ -1,0 +1,85 @@
+{
+  "status": "PASS",
+  "sealedAt": "2026-10-14T13:02:43.812594+00:00",
+  "initialIndependentReviewHead": "3987196872f7713bb706686d9c3318af3b5cbe11",
+  "initialIndependentReview": "pr319-independent-review-39871968.md",
+  "initialBlockerCount": 1,
+  "fix": "explicit missing alias snapshots plus presence/ID preservation; unexpected errors fail; command override restored",
+  "controlledUnitTests": {
+    "tests": 5,
+    "scenarios": 9,
+    "physicalDockerCalls": 0,
+    "logs": {
+      "pr319-review-unit-red.txt": {
+        "outcome": "FAIL on reviewed source",
+        "originalBytesSha256": "4791cb6b4d58c3426f314c0a950295541cee9c6f17bf3a70cd32a69fb13de2d9",
+        "UTF8LFSha256": "b7c5693d9c9725fa54b0e2c88140d200274ec7483a3c4a23f3c815c65407c704"
+      },
+      "pr319-review-unit-fixture-failure.txt": {
+        "outcome": "FAIL: fixture expected RuntimeError instead of existing AssertionError",
+        "originalBytesSha256": "0223769be33cd596d02d9b74b08ca768ee6d0ba4431e299ce0654d54a457f4b9",
+        "UTF8LFSha256": "377eed81290b43e8eb79053e9670e6728061b870b436c77bf10a91f829c57bd7"
+      },
+      "pr319-review-unit-green.txt": {
+        "outcome": "PASS: 5 tests / 9 scenarios, controlled Docker responses",
+        "originalBytesSha256": "0d103aadba76d64631e437f78ae88210333119b1fe24d1c3a337672eb10927fa",
+        "UTF8LFSha256": "da8447326aabaff7b96cff5fe7c6600ee645e6c96db9dd3b6c80f02ea06e1608"
+      }
+    },
+    "ciWired": true
+  },
+  "nativeDockerTrial": {
+    "receipt": "pr319-review-fix-native.json",
+    "originalReportSHA256": "ea4afa7f5865d6d379e3298b729ce916686cf5cc4e1f499000581cf7e5aa6087",
+    "runId": "b84930ef-5279-4bc4-b5a1-fab055edc1b5",
+    "checks": 5,
+    "retainedResources": true,
+    "coreBusinessCommands": 0
+  },
+  "nativeAbsentRead": {
+    "receipt": "pr319-native-absent-snapshot.json",
+    "absentReferences": 2,
+    "dockerWrites": 0
+  },
+  "candidateSources": {
+    ".github/workflows/ci.yml": {
+      "actualSourceSha256": "fc4f795e23aaac0420dc4cfe8e39c4d5d188c337a8e49bf567801f7ed7dc8b84",
+      "UTF8LFSourceSha256": "5d57f63e72ef43fe88c77af0e0b699d9ed48d356bcf5fc1df64cb728267e84f0"
+    },
+    "examples/enterprise-activity/postgres-ingestion/smoke.py": {
+      "actualSourceSha256": "052d2db4ebcd193865886de06ec25b3aa49297e38af43eb8917cdfa67d2e7b7e",
+      "UTF8LFSourceSha256": "052d2db4ebcd193865886de06ec25b3aa49297e38af43eb8917cdfa67d2e7b7e"
+    },
+    "examples/enterprise-activity/postgres-ingestion/storage_smoke.py": {
+      "actualSourceSha256": "9651bee71cced3cc60bfcfa2595e5025d9d199406e49cbe485ffefb9476a908f",
+      "UTF8LFSourceSha256": "9651bee71cced3cc60bfcfa2595e5025d9d199406e49cbe485ffefb9476a908f"
+    },
+    "examples/enterprise-activity/postgres-ingestion/b2_smoke.py": {
+      "actualSourceSha256": "4519afbc23790f61f405f79d52b9ec99fa3c3ccff2c260d205790c2a9450a28a",
+      "UTF8LFSourceSha256": "4519afbc23790f61f405f79d52b9ec99fa3c3ccff2c260d205790c2a9450a28a"
+    },
+    "examples/enterprise-activity/postgres-ingestion/b3_runtime.py": {
+      "actualSourceSha256": "828f5133210969bbc830406727e67f58d75e181a0d70d40e717358f879fc6def",
+      "UTF8LFSourceSha256": "828f5133210969bbc830406727e67f58d75e181a0d70d40e717358f879fc6def"
+    },
+    "examples/enterprise-activity/postgres-ingestion/image_isolation_test.py": {
+      "actualSourceSha256": "eae4716eef7fae8f3bf0443744bde8d20edfff4a9393b896d251ec22d050dab1",
+      "UTF8LFSourceSha256": "eae4716eef7fae8f3bf0443744bde8d20edfff4a9393b896d251ec22d050dab1"
+    },
+    "examples/enterprise-activity/postgres-ingestion/image_isolation_unit_test.py": {
+      "actualSourceSha256": "7c91e33496edabf5799a07284a1a6aecb091f5d78b8c1de22cd87f32e8ae02f4",
+      "UTF8LFSourceSha256": "7c91e33496edabf5799a07284a1a6aecb091f5d78b8c1de22cd87f32e8ae02f4"
+    }
+  },
+  "priorArtifactsUnchanged": 84,
+  "priorManifest": "artifact-hashes-at-39871968.json",
+  "knownCredentialValuesChecked": 21,
+  "publicCredentialLeaks": 0,
+  "finalExactHeadReviewAndCI": "bound in PR closure checkpoint after commit; not substituted by initial head review",
+  "originalLostCore": "FAIL / NOT_RESTORED",
+  "humanExplanation": "NOT_RUN / deferred",
+  "ready": false,
+  "merge": false,
+  "issueClosure": false,
+  "providerCleanupCalls": 0
+}

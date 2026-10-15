@@ -1,0 +1,59 @@
+{
+  "code": "PGI-B3-SYNTHETIC-AUTH",
+  "granteeRef": "LICENSED_BANK",
+  "grantorRef": "SYNTHETIC-PARK-OPERATOR",
+  "id": "533aaee8-b0a6-401b-bd9a-360d4a9eee4e",
+  "metadata": {},
+  "purpose": "ENTERPRISE_CREDIT_RISK_SUPPORT",
+  "resources": [
+    {
+      "actions": [
+        "READ",
+        "PROCESS",
+        "AGGREGATE",
+        "DERIVE",
+        "PRODUCTIZE"
+      ],
+      "dataResourceId": "6d5b7bd7-f006-459f-88aa-c285710cd07d",
+      "id": "2a46b81c-016a-44ec-8b67-8ac98ce00f44",
+      "rawExportAllowed": false,
+      "scope": {},
+      "scopeRef": "6d5b7bd7-f006-459f-88aa-c285710cd07d",
+      "scopeType": "ALL_RESOURCE"
+    },
+    {
+      "actions": [
+        "READ",
+        "PROCESS",
+        "AGGREGATE",
+        "DERIVE",
+        "PRODUCTIZE"
+      ],
+      "dataResourceId": "f4e3a5db-074a-441a-91b8-8e6493e2641a",
+      "id": "58eed5e7-82bc-4ba1-97fb-edf591d1aff0",
+      "rawExportAllowed": false,
+      "scope": {},
+      "scopeRef": "f4e3a5db-074a-441a-91b8-8e6493e2641a",
+      "scopeType": "ALL_RESOURCE"
+    },
+    {
+      "actions": [
+        "READ",
+        "PROCESS",
+        "AGGREGATE",
+        "DERIVE",
+        "PRODUCTIZE"
+      ],
+      "dataResourceId": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+      "id": "e57f3faa-8ba1-4117-99be-a95a164bd307",
+      "rawExportAllowed": false,
+      "scope": {},
+      "scopeRef": "68c51a08-4b91-4395-9f6c-5737fbda9589",
+      "scopeType": "ALL_RESOURCE"
+    }
+  ],
+  "status": "REVOKED",
+  "validFrom": "2026-10-14T16:18:21.810568+08:00",
+  "validTo": "2026-10-15T17:18:21.810568+08:00",
+  "workspaceId": "015dfa44-3ac8-4c80-a122-2d300642f6ba"
+}

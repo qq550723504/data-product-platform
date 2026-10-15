@@ -75,6 +75,24 @@ jobs:
           printf 'Changed files:\n%s\n' "${changed_files[*]}"
           echo "docs_only=$docs_only"
 
+  temporary-container-contracts:
+    needs: changes
+    if: ${{ needs.changes.outputs.docs_only != 'true' }}
+    name: temporary-container-contracts (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test completed helper ownership, archival, and safe collection
+        run: python examples/temporary_containers_test.py
+      - name: Test Windows archive ACL replacement on existing diagnostics
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./examples/temporary-containers-acl-test.ps1
+
   go-platform:
     needs: changes
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
@@ -284,6 +302,13 @@ jobs:
           else
             echo "run_hop=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Test trial image isolation runner contracts
+        if: steps.changes.outputs.run_hop == 'true'
+        run: |
+          python3 examples/enterprise-activity/postgres-ingestion/image_isolation_unit_test.py
+          python3 examples/enterprise-activity/postgres-ingestion/trial_images_test.py
+          python3 examples/enterprise-activity/postgres-ingestion/cleanup_receipts_test.py
 
       - name: Run pinned Apache Hop reference pipeline
         if: steps.changes.outputs.run_hop == 'true'
@@ -742,7 +767,7 @@ jobs:
   required:
     name: required
     if: ${{ always() }}
-    needs: [changes, go-platform, web-console, hop-smoke, splink-smoke, gx-smoke, label-studio-smoke, browser-contracts, live-core, demo]
+    needs: [changes, temporary-container-contracts, go-platform, web-console, hop-smoke, splink-smoke, gx-smoke, label-studio-smoke, browser-contracts, live-core, demo]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
