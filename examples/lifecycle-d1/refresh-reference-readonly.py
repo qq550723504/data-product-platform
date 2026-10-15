@@ -39,6 +39,8 @@ def refresh_paths(generation):
         return PUBLIC, 'd1-delete-readonly-v6-refresh02'
     if generation == 7:
         return BASE / 'delete-readonly-v7-refresh01', 'd1-delete-readonly-v7-refresh01'
+    if generation == 8:
+        return BASE / 'delete-readonly-v8-refresh01', 'd1-delete-readonly-v8-refresh01'
     raise ValueError('Refresh outside finite generation')
 
 
@@ -46,19 +48,23 @@ def run(generation=6):
     public, control_name = refresh_paths(generation)
     m = module('readonly', ROOT / 'examples/lifecycle-d1/complete-lc13-readonly.py')
     binary = reviewed_inputs(m)
-    if generation == 7:
+    if generation in (7, 8):
         reviewed = module('reviewed_v7', ROOT / 'examples/lifecycle-d1/check-reference-refresh.py')
-        reviewed.check(reviewed.load(reviewed.PROPOSAL))
-        review = m.load(BASE / 'delete-proposal-v7-review01/independent-review.json')
+        previous_generation = str(generation - 1).zfill(2)
+        reviewed.check(reviewed.load(reviewed.refresh_paths(previous_generation)[2]), generation=previous_generation)
+        review_path = BASE / ('delete-proposal-v' + str(generation) + '-review01/independent-review.json')
+        review = m.load(review_path)
+        expected_head = {7: 'e122a613322fba6009ec8175539e9eb9e3e7f05e',
+                         8: 'a29bfe6019cd5b38415fd378394fcd537662525c'}[generation]
         m.require(review['status'] == 'PASS_INDEPENDENT_OFFLINE_REVIEW'
                   and review['current_slice_blockers'] == 0
-                  and review['reviewed_head'] == 'e122a613322fba6009ec8175539e9eb9e3e7f05e', 'v7 review not closed')
+                  and review['reviewed_head'] == expected_head, 'Predecessor review not closed')
         for path, expected in review['reviewed_operator_sha256'].items():
             raw = m.call(['git', 'show', review['reviewed_head'] + ':' + path])
-            m.require(m.hashlib.sha256(raw).hexdigest() == expected, 'Reviewed v7 source history changed')
-        index = m.load(BASE / 'delete-proposal-v7-review01/evidence-index.json')
+            m.require(m.hashlib.sha256(raw).hexdigest() == expected, 'Reviewed predecessor source history changed')
+        index = m.load(review_path.parent / 'evidence-index.json')
         for entry in index['files']:
-            m.require(m.digest(ROOT / entry['path']) == entry['sha256'], 'v7 review receipt changed')
+            m.require(m.digest(ROOT / entry['path']) == entry['sha256'], 'Predecessor review receipt changed')
     collector = module('collector', PREVIOUS / 'core-readonly-collector.py')
     m.CONTROL = m.PRIVATE / control_name
     m.PUBLIC = public

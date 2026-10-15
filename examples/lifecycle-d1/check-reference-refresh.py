@@ -39,9 +39,10 @@ def at(text):
 
 
 def refresh_paths(generation):
-    v6.require(generation in ('06', '07'), 'Refresh outside finite generation')
-    public = PUBLIC if generation == '06' else BASE + 'delete-readonly-v7-refresh01/'
-    return public, public + '5d-' + generation + '/', public + ('proposal-v7.json' if generation == '06' else 'proposal-v8.json')
+    v6.require(generation in ('06', '07', '08'), 'Refresh outside finite generation')
+    public, version = {'06': (PUBLIC, '7'), '07': (BASE + 'delete-readonly-v7-refresh01/', '8'),
+                       '08': (BASE + 'delete-readonly-v8-refresh01/', '9')}[generation]
+    return public, public + '5d-' + generation + '/', public + 'proposal-v' + version + '.json'
 
 
 def expected_proposal(created_at, root=ROOT, generation='06'):
@@ -132,20 +133,22 @@ def expected_proposal(created_at, root=ROOT, generation='06'):
         value['retention_active_at_observation'] = (protection['RetentionMode'] != 'NONE'
             and protection['RetainUntil'] is not None
             and at(protection['ObservedAt']) < at(protection['RetainUntil']))
-    if generation == '07':
-        previous = load(PROPOSAL, root)
-        check(previous, root)
-        review_path = BASE + 'delete-proposal-v7-review01/independent-review.json'
+    if generation in ('07', '08'):
+        previous_generation = {'07': '06', '08': '07'}[generation]
+        previous_path = refresh_paths(previous_generation)[2]
+        previous = load(previous_path, root)
+        check(previous, root, previous_generation)
+        review_path = BASE + 'delete-proposal-v' + str(int(generation)) + '-review01/independent-review.json'
         review = load(review_path, root)
         v6.require(review['status'] == 'PASS_INDEPENDENT_OFFLINE_REVIEW'
-                   and review['current_slice_blockers'] == 0, 'v7 review not closed')
+                   and review['current_slice_blockers'] == 0, 'Predecessor review not closed')
         prior = {value['copy_id']: value for value in previous['targets'] + previous['survivors']}
         for value in result['targets'] + result['survivors']:
-            v6.require(at(value['protection_observed_at']) > at(prior[value['copy_id']]['protection_observed_at']), 'Observation not newer than reviewed v7')
-        v6.require(at(core['as_of']) > at(previous['source_sql_as_of']), 'Core observation not newer than v7')
-        result.update(schema='lifecycle307-exact-delete-proposal-v8',
-                      status='PENDING_USER_CONFIRMATION; V7_NATIVE_READONLY_REFRESH_PASS; SEND_BLOCKED',
-                      previous_proposal=v6.reference(root, PROPOSAL),
+            v6.require(at(value['protection_observed_at']) > at(prior[value['copy_id']]['protection_observed_at']), 'Observation not newer than reviewed predecessor')
+        v6.require(at(core['as_of']) > at(previous['source_sql_as_of']), 'Core observation not newer than predecessor')
+        result.update(schema='lifecycle307-exact-delete-proposal-v' + str(int(generation) + 1),
+                      status='PENDING_USER_CONFIRMATION; V' + str(int(generation)) + '_NATIVE_READONLY_REFRESH_PASS; SEND_BLOCKED',
+                      previous_proposal=v6.reference(root, previous_path),
                       reviewed_baseline=v6.reference(root, review_path))
     return result
 
@@ -160,10 +163,10 @@ def check(proposal, root=ROOT, generation='06'):
     for entry in entries:
         raw = v6.read(root, entry['path'])
         v6.require(len(raw) == entry['bytes'] and v6.hashlib.sha256(raw).hexdigest() == entry['sha256'], 'Refresh artifact bytes drift')
-    v6.require(canonical(proposal) == canonical(load(proposal_path, root)), 'Input differs from fixed v' + ('7' if generation == '06' else '8'))
+    v6.require(canonical(proposal) == canonical(load(proposal_path, root)), 'Input differs from fixed v' + str(int(generation) + 1))
     v6.require(canonical(proposal) == canonical(expected_proposal(proposal['created_at'], root, generation)), 'Refresh differs from reviewed scope/fresh receipts')
-    return {'status': 'PASS_OFFLINE_V' + ('7' if generation == '06' else '8') + '_REFRESH_CONSISTENCY_ONLY',
-            'baseline': 'INDEPENDENTLY_REVIEWED_V' + ('6' if generation == '06' else '7'),
+    return {'status': 'PASS_OFFLINE_V' + str(int(generation) + 1) + '_REFRESH_CONSISTENCY_ONLY',
+            'baseline': 'INDEPENDENTLY_REVIEWED_V' + str(int(generation)),
             'native_storage_calls': 20,
             ('management_gets_including_failed05' if generation == '06' else 'management_gets_this_refresh'): 8 if generation == '06' else 4,
             'source_core_mutation': 0, 'send_authorization': 'NOT_RECEIVED', 'delete': 0}
