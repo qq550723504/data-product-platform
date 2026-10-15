@@ -1,0 +1,146 @@
+{
+  "as_of": "2026-10-15T03:41:16.781464+00:00",
+  "source_commit": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "snapshot_status": "PASS_READONLY",
+  "send_status": "BLOCKED_NO_CONFIRMATION_NO_ACTIVATION",
+  "conditions": [
+    {
+      "condition": "冻结候选/source/binary/profile/IAM/gateway",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "055aa1df / 01bff6e2 / exact hashes unchanged; no rebuild or permission activation"
+    },
+    {
+      "condition": "环境/instance/incarnation/6份完整库存",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "Same source IDs/volumes/internal network; online4 + quarantine2; no extra/missing/delete markers"
+    },
+    {
+      "condition": "6份bytes/hash",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "Exact native reads match registry and prior six-version proof"
+    },
+    {
+      "condition": "2目标当前保护",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "Both legal hold=false/retention NONE; observed2026-10-15T03:41:15Z; re-read before each future send"
+    },
+    {
+      "condition": "4survivors",
+      "status": "PASS_EXCLUDED",
+      "evidence": "All four excluded. online/b hold=true; quarantine/a metadata GOVERNANCE until2026-10-15T00:58:47Z is elapsed at observation; no native release occurred and scope does not expand; both outputs retained"
+    },
+    {
+      "condition": "Core/schema68/immutable plan及hash",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "194 relations/1879 rows; before/after and roles/owner/ACL match; original source journal92"
+    },
+    {
+      "condition": "FK qualification/material references",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "27 full trigger qualifications,54 target FK counts unreleased0;3 functions match migration67;23 exact-copy demands/releases retained"
+    },
+    {
+      "condition": "reader/producer/owner/pending-copy",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "7 pins/terminations active0; native regular reader+producer disabled;2 output intents each ready; no copy operations; configs/gateway sealed"
+    },
+    {
+      "condition": "2旧trial reservations",
+      "status": "PASS_NOT_SENT_RELEASED",
+      "evidence": "2 unchanged original starts/dispatches; authoritative NOT_SENT/no invoked_at;2 linked releases; never resend or regenerate proof"
+    },
+    {
+      "condition": "源/新audit账务",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "Source92; new clone112 calls/observations/typed costs including20 new reads;unaccounted0. Operator IAM GET4 this generation separately receipted; predecessor-v9 four, predecessor-v8 four and older-v7 eight retained at original observations"
+    },
+    {
+      "condition": "原tar/dump及旧恢复副本",
+      "status": "PASS_RETAINED",
+      "evidence": "Original tar/dump byte hashes unchanged; old restores not opened; new independent dump/restore retained and stopped"
+    },
+    {
+      "condition": "真实删除明确确认",
+      "status": "PENDING_BLOCKS_SEND",
+      "evidence": "NOT_RECEIVED; continue/read-only checks create no delete authority"
+    },
+    {
+      "condition": "614cd9ad新deletion basis/短期approval",
+      "status": "NOT_CREATED_BLOCKS_SEND",
+      "evidence": "Only old non-delete expired approval exists; new current context and <=40min approval required"
+    },
+    {
+      "condition": "新native executor IAM/active gateway/permission",
+      "status": "NOT_PROVISIONED_BLOCKS_SEND",
+      "evidence": "Planned regular IAM user authoritative NoSuchUser; no enabled permission/new gateway; inspector stays read-only"
+    },
+    {
+      "condition": "fresh host topology/activation窗口",
+      "status": "NOT_CREATED_BLOCKS_SEND",
+      "evidence": "Only check snapshots exist; current signed send topology cannot be minted until the exact active composition exists"
+    },
+    {
+      "condition": "每次dispatch及ClaimExactSend gate",
+      "status": "REQUIRED_BEFORE_EACH_SEND",
+      "evidence": "Full shared-fence authority/context/inventory/protection/qualified references/pins/ledger fresh gate; snapshot is not authorization"
+    },
+    {
+      "condition": "当前5d真实DELETE/unknown worker/recovery验收",
+      "status": "NOT_RUN",
+      "evidence": "At most2,once each; no hidden resend; 6->5->4 inventory only via exact absence receipts; queue send resources not created"
+    }
+  ],
+  "delete": 0,
+  "baseline": "INDEPENDENTLY_REVIEWED_V9",
+  "audit_core": "dpp-lifecycle307-5d2274ee-readonly-audit-core-09",
+  "observed_protection": [
+    {
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "at": "2026-10-15T03:41:15.91340994Z",
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "retention_active_at_observation": false
+    },
+    {
+      "copy_id": "3feb660b-21aa-4494-ada8-110cf3cf0e22",
+      "at": "2026-10-15T03:41:15.971537283Z",
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "retention_active_at_observation": false
+    },
+    {
+      "copy_id": "7d85a166-59ae-4a72-a562-138e9a1617c7",
+      "at": "2026-10-15T03:41:16.013100295Z",
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "retention_active_at_observation": false
+    },
+    {
+      "copy_id": "686f6ecc-40a2-4a8f-a10b-ceaf026c6ada",
+      "at": "2026-10-15T03:41:16.049751991Z",
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "retention_active_at_observation": false
+    },
+    {
+      "copy_id": "dbe34c34-cecb-4183-a121-5eac1035d176",
+      "at": "2026-10-15T03:41:16.082272708Z",
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-15T00:58:47Z",
+      "retention_active_at_observation": false
+    },
+    {
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "at": "2026-10-15T03:41:16.125953765Z",
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "retention_active_at_observation": false
+    }
+  ]
+}

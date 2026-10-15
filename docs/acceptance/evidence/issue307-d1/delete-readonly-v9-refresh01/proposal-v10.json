@@ -1,0 +1,382 @@
+{
+  "project": "dpp-lifecycle307-5d2274ee",
+  "environment_run_id": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+  "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+  "provider_instance_id": "1980751b-c50e-4895-93a8-cb55960cd635",
+  "incarnation_id": "be784eda-96e4-49a9-ae47-eaa3203a2dc5",
+  "network_id": "33f303a57406f05c4e78b3cdb1355059a8f55f552e438162edc5bff129f4c02c",
+  "namespaces": [
+    "dpp-lifecycle307-online",
+    "dpp-lifecycle307-quarantine"
+  ],
+  "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+  "plan_hash": "d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc",
+  "plan_status": "FINALIZED",
+  "inventory_plan_id": "dfd47e35-b99a-4581-942f-96ab5d3941f1",
+  "inventory_hash": "2b1df1ccd9e7a138bf47050cad9f031c02bd04664b64eb12aee0337ad670c9f8",
+  "total_bytes": 129560,
+  "execution_budget": {
+    "max_provider_delete_requests": 2,
+    "max_per_target": 1,
+    "protected_or_output_delete_requests": 0,
+    "unknown_delete_resend": "FORBIDDEN; read-only existing worker reconciliation only",
+    "sdk_and_proxy_send_retries": 0,
+    "hold_release": 0,
+    "retention_release": 0,
+    "retention_bypass": 0,
+    "bare_key_delete": 0,
+    "bucket_cleanup": 0
+  },
+  "serial_sequence": [
+    "online/a: fresh dispatch/send gate -> one exact DELETE -> read-only recovery -> exact absence receipt",
+    "quarantine/b: fresh gate with receipt-backed five-version present inventory -> one exact DELETE -> read-only recovery -> second receipt -> scoped completion"
+  ],
+  "inventory_closure": "Immutable registry retains six identities; present native versions must be six, then five only after first receipt, then four only after both receipts. Unexpected missing/extra versions remain UNKNOWN/BLOCKED.",
+  "cleanup": [],
+  "excluded": [
+    "Four listed survivor versions, even after retention expires",
+    "All original/other runs including e1487ce7/9812f0fc/#298/#294/Pilot/demo",
+    "All Core history/database/container/named volumes and new retained backup/restored payloads",
+    "Provider internal replicas/media/backups and external recipient copies",
+    "LC13 f3b0c9cd / 7cd53b0e / 8120904f and both network-none candidate helpers"
+  ],
+  "schema_version": 68,
+  "targets": [
+    {
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "dataset_version_id": "35b26496-f832-4496-bb91-1f50fb56e7fa",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "provider_version": "846d0c7c-289d-4667-bc7c-aa04e44357d4",
+      "content_sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "byte_size": 129328,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "protection_observed_at": "2026-10-15T03:41:16.125953765Z",
+      "requires_fresh_protection_before_send": true,
+      "retention_active_at_observation": false
+    },
+    {
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "dataset_version_id": "dd7aa6eb-50ea-4c5c-a6ff-79a244bcc152",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "provider_version": "312365a9-f984-43de-b9d5-7e26009ccd82",
+      "content_sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "byte_size": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "protection_observed_at": "2026-10-15T03:41:15.91340994Z",
+      "requires_fresh_protection_before_send": true,
+      "retention_active_at_observation": false
+    }
+  ],
+  "survivors": [
+    {
+      "copy_id": "3feb660b-21aa-4494-ada8-110cf3cf0e22",
+      "dataset_version_id": "35b26496-f832-4496-bb91-1f50fb56e7fa",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "provider_version": "159e90c3-adb6-4ea3-b2e8-2804e578e86f",
+      "content_sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "byte_size": 129328,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "protection_observed_at": "2026-10-15T03:41:15.971537283Z",
+      "requires_fresh_protection_before_send": true,
+      "retention_active_at_observation": false
+    },
+    {
+      "copy_id": "7d85a166-59ae-4a72-a562-138e9a1617c7",
+      "dataset_version_id": "47451712-ee38-45d1-a94e-786f59aa1647",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/processed.csv",
+      "provider_version": "7c8ad93b-31ee-445c-9402-816dda0410ec",
+      "content_sha256": "99cefa99326fb2e5daa5f23ae8802b057e5f467d5ed9813c73cdecd71f4368ad",
+      "byte_size": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "protection_observed_at": "2026-10-15T03:41:16.013100295Z",
+      "requires_fresh_protection_before_send": true,
+      "retention_active_at_observation": false
+    },
+    {
+      "copy_id": "686f6ecc-40a2-4a8f-a10b-ceaf026c6ada",
+      "dataset_version_id": "03437e8c-9bbd-4693-87e0-fff6e651d0a5",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/standardized.csv",
+      "provider_version": "2139f293-87f4-4d49-a9f0-941b22275093",
+      "content_sha256": "044a854f6cf61dec3d77c6a907b0b30363ec5e96d5dca12649865772d7ee9163",
+      "byte_size": 494,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "protection_observed_at": "2026-10-15T03:41:16.049751991Z",
+      "requires_fresh_protection_before_send": true,
+      "retention_active_at_observation": false
+    },
+    {
+      "copy_id": "dbe34c34-cecb-4183-a121-5eac1035d176",
+      "dataset_version_id": "dd7aa6eb-50ea-4c5c-a6ff-79a244bcc152",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "provider_version": "5a7ce790-9093-4569-a8fd-0726009a5eb4",
+      "content_sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "byte_size": 232,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-15T00:58:47Z",
+      "protection_observed_at": "2026-10-15T03:41:16.082272708Z",
+      "requires_fresh_protection_before_send": true,
+      "retention_active_at_observation": false
+    }
+  ],
+  "source_services": [
+    {
+      "role": "postgres",
+      "id": "c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0",
+      "name": "dpp-lifecycle307-5d2274ee-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "run_label": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "host_ports": [],
+      "networks": [
+        "dpp-lifecycle307-5d2274ee-private"
+      ],
+      "mounts": [
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/pgpass",
+          "RW": false
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-5d2274ee-postgres",
+          "Destination": "/var/lib/postgresql/data",
+          "RW": true
+        }
+      ],
+      "observed_at": "2026-10-14T09:40:58.275262+00:00",
+      "verified_at": "2026-10-14T16:28:20.118680+00:00"
+    },
+    {
+      "role": "minio",
+      "id": "0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65",
+      "name": "dpp-lifecycle307-5d2274ee-minio",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "status": "exited",
+      "run_label": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "host_ports": [],
+      "networks": [
+        "dpp-lifecycle307-5d2274ee-private"
+      ],
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-5d2274ee-objects",
+          "Destination": "/data",
+          "RW": true
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/access",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/secret",
+          "RW": false
+        },
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/run/credentials/start.sh",
+          "RW": false
+        }
+      ],
+      "observed_at": "2026-10-14T09:40:58.332079+00:00",
+      "verified_at": "2026-10-14T16:28:20.219137+00:00"
+    },
+    {
+      "role": "gateway",
+      "id": "ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4",
+      "name": "dpp-lifecycle307-5d2274ee-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "status": "exited",
+      "run_label": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+      "host_ports": [],
+      "networks": [
+        "dpp-lifecycle307-5d2274ee-private"
+      ],
+      "mounts": [
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/etc/caddy/Caddyfile",
+          "RW": false
+        }
+      ],
+      "observed_at": "2026-10-14T09:40:58.396713+00:00",
+      "verified_at": "2026-10-14T16:28:20.312318+00:00"
+    }
+  ],
+  "authority": {
+    "human_confirmation": "NOT_RECEIVED",
+    "provider_delete_authorized": false,
+    "permission_enabled": false,
+    "new_send_gateway_created": false,
+    "native_delete_iam_provisioned": false,
+    "business_windows": "SEALED",
+    "maintenance_permissions": "SEALED",
+    "future_execution_run_id": "614cd9ad-3f9d-40be-b110-3f7cf95f0790",
+    "future_execution_run_status": "COMPOSITION_IMPLEMENTED_DISABLED; NO DELETION_BASIS_OR_APPROVAL_OR_SEND_ATTEMPT",
+    "max_window_minutes": 40,
+    "new_basis_and_approval_required": true,
+    "old_approval_status": "EXPIRED_NON_DELETE_ONLY",
+    "old_trial_status": "TWO_NOT_SENT_AND_TWO_RELEASES_ATOMICALLY_RECORDED; SAME_PROOF_REPLAYED; NEVER_SEND_OLD_ATTEMPTS"
+  },
+  "old_trial_attempts_resolved_not_sent": [
+    {
+      "id": "0a86461d-d5c2-4c00-99ae-0d44ac6dde2a",
+      "action": "DELETE_EXACT",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "started_at": "2026-10-14T08:59:53.349245+08:00",
+      "dispatch_id": "8b9b4d0c-df37-41b5-b3d1-0630deae8675",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dependency_revision": 83,
+      "provider_request_key": "lifecycle-delete:0a86461d-d5c2-4c00-99ae-0d44ac6dde2a"
+    },
+    {
+      "id": "d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9",
+      "action": "DELETE_EXACT",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "started_at": "2026-10-14T08:59:53.615357+08:00",
+      "dispatch_id": "aa0dc82a-06b4-4b0d-a066-33d19ccc8f45",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dependency_revision": 84,
+      "provider_request_key": "lifecycle-delete:d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9"
+    }
+  ],
+  "future_resources_not_created": {
+    "redis_container": "dpp-lifecycle307-5d2274ee-delete-recovery-redis",
+    "redis_volume": "dpp-lifecycle307-5d2274ee-delete-recovery-redis-data",
+    "redis_image_id": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+    "gateway": "dpp-lifecycle307-5d2274ee-reference-delete-gateway"
+  },
+  "full_D1": "NOT_ACCEPTED",
+  "schema": "lifecycle307-exact-delete-proposal-v10",
+  "created_at": "2026-10-15T03:41:54.669332+00:00",
+  "status": "PENDING_USER_CONFIRMATION; V9_NATIVE_READONLY_REFRESH_PASS; SEND_BLOCKED",
+  "execution_run_id": "614cd9ad-3f9d-40be-b110-3f7cf95f0790",
+  "candidate": {
+    "source_commit": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+    "binary_sha256": "01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3",
+    "bounded_profile_sha256": "97d565f9c66d8cfcb66997d034e7acb2d1519864898950a9ddb2ced2cdd5c4ee",
+    "target_digest": "4cbb36e5aebbc9451603efd276aa309a2c4afdefcf252107571b0f8334360a38",
+    "iam_policy_sha256": "ab24ab862bf0e21d23ee21989f4140b3c7200cdecee22d4a708cc45621da8b54",
+    "active_gateway_sha256": "7b24ad32506bfd189c9289ba85a65ab242069dfee293d61b330104a90306cd0a",
+    "sealed_gateway_sha256": "6a08b8647cc63cb389e2a511a5ad944b82d14e1ec9721f1a5ae45cb984bed4f6"
+  },
+  "current_readonly": {
+    "checkpoint": {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v9-refresh01/5d-09/readonly-checkpoint.json",
+      "sha256": "6195f9ccf6a42696965e4f8232c14245568843c8295f18e8a4f53e5fd5e98429"
+    },
+    "native": {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v9-refresh01/5d-09/native-six-version.json",
+      "sha256": "b7db1101f0e45a78b2d4935462c7509f3a91622fec97ea3349830d449d5e73bd"
+    },
+    "core": {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v9-refresh01/5d-09/current-core-readback.json",
+      "sha256": "24fd5034aec0762291fe6def0a462f7b829ec19f743483a9ac34fa13f8066ce8"
+    },
+    "references": {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v9-refresh01/5d-09/reference-qualification-readback.json",
+      "sha256": "972242f0fbc2b08cd9345956588879392bc031c846fac05ac7d2a2fffce8312f"
+    },
+    "iam": {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v9-refresh01/5d-09/native-iam-readonly.json",
+      "sha256": "2aec0c0c766ef394249a6786765a8401cbac33000add4ce32d1acfe37944a600"
+    },
+    "costs": {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v9-refresh01/5d-09/audit-costs.json",
+      "sha256": "4f914194ef984bc25ce3467a6f1090c99846be8031b09fe9f63c07f4cf914ec5"
+    },
+    "conditions": {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v9-refresh01/execution-preconditions.json",
+      "sha256": "ea03fbee68bdb14200b6140d28724739997113502d0ee123fc1a33dd49ad13fb"
+    }
+  },
+  "audit_core": "dpp-lifecycle307-5d2274ee-readonly-audit-core-09",
+  "source_sql_counts": {
+    "pins": 7,
+    "copies": 6,
+    "completion": 0,
+    "active_pins": 0,
+    "send_claims": 0,
+    "requirements": 23,
+    "terminations": 7,
+    "storage_calls": 92,
+    "copy_operations": 0,
+    "absence_receipts": 0,
+    "reference_releases": 23,
+    "typed_storage_costs": 92,
+    "storage_observations": 92,
+    "provider_observations": 2,
+    "processing_output_ready": 2,
+    "processing_output_intents": 2
+  },
+  "source_sql_as_of": "2026-10-15T03:40:58.404836+00:00",
+  "source_rows": 1879,
+  "source_relations": 194,
+  "previous_proposal": {
+    "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v8-refresh01/proposal-v9.json",
+    "sha256": "75f645b3fef36ed9d979621b9e0829db1b182ba153956518be9ed5e7c73496d4"
+  },
+  "snapshot_is_send_authorization": false,
+  "backup_restore_evidence": {
+    "historical_checkpoint": {
+      "native_six_versions": "PASS_EXACT_SIX_NATIVE_RESTORE",
+      "object_container": "dpp-lifecycle307-5d2274ee-predelete-objects",
+      "object_container_id": "066eadc202b07816f4736578f1211ac84e9257ffc92db17b5116fdeb2d510924",
+      "object_image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "object_volume": "dpp-lifecycle307-5d2274ee-predelete-objects",
+      "core_container": "dpp-lifecycle307-5d2274ee-predelete-postgres-02",
+      "core_container_id": "1976c314879a819f548c22e621a81277e43c80fa6e3de7969eadc4f169a19332",
+      "core_image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "core_volume": "dpp-lifecycle307-5d2274ee-predelete-postgres-02",
+      "core_network": "dpp-lifecycle307-5d2274ee-predelete-private-02",
+      "core_network_id": "db584ee347fa8a7946c82a73e2adfa62ad313b6153dbe8e2de870e4817797a24",
+      "relations": 194,
+      "rows": 1879,
+      "core_dump_sha256": "19dba12b9992fdd11c237d6f0df489c7a961696acd54b8a3403b941e7005c98a",
+      "core_script_sha256": "0524d81b2a7e57ddcd79874c2e108a4850c2a693446c96f20314412a0a80e169",
+      "states": "STOPPED_RETAINED_NO_BUSINESS_ADMISSION",
+      "backup_payload_excluded_from_absence": true,
+      "source_40_read_calls": 40,
+      "restore_isolated_read_calls": 20,
+      "old_c2": "LOST/UNAVAILABLE/NOT_RESTORED"
+    },
+    "receipt": {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-generation02/core-checkpoint-final-readback.json",
+      "sha256": "6ed18c8dedadcd57ae0823ba1119963f6708d2f6f55f7759b9ce4f9be7c6eeac"
+    }
+  },
+  "runtime_text_binding": {
+    "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-v6/runtime-source-lf.json",
+    "sha256": "e811983edc6446d9faf606f98f328c9022e63e883fe73fb6b4e8448c1beb0bea"
+  },
+  "reviewed_baseline": {
+    "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-v9-review01/independent-review.json",
+    "sha256": "7e2f91cc8685c11f3f4d9afcc98fa056e7a65fc42ef992d797d2011562f44434"
+  }
+}
