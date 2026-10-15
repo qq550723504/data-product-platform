@@ -70,7 +70,7 @@ disabled/enabled与service-account on/off混用，真实回执已满足目标状
 新增离线一致性检查；原source/binary/profile/plan/两目标和原生观察时间不变，没有重跑provider读取。
 [精确确认方案](issue307-d1-delete-proposal.md)仍待明确确认；真实删除、完整D1/D2未验收。
 
-## v6离线一致性收口
+## v6前轮主线程离线一致性收口
 
 本次未启动服务、未刷新原生保护snapshot。主线程核对发送/恢复分别复用既有
 `lifecycle-fixture-delete` / `lifecycle-fixture-recovery`，没有新增runtime；
@@ -87,3 +87,28 @@ disabled/enabled与service-account on/off混用，真实回执已满足目标状
 
 [收口回执](evidence/issue307-d1/delete-proposal-v6/closure.json)记录本次时间、测试与停止状态。
 这是主线程一致性审计，不新增独立评审或原生业务PASS；没有改变待确认与fresh gate条件。
+
+## v6独立评审与修复验收
+
+独立reviewer首先评审HEAD `7792421cb9d82072ff3db9afa95ee3a4151bca6d`，
+只读取代码/公开证据并运行非删除Python测试与内存反例；未启动环境、访问provider/DB或改IAM。
+按AGENTS §17，只有下面两类当前离线一致性缺陷重开本切片，不增加通用信任/审批服务。
+
+| 条目 | 评审结论 / 修正 | 验收状态 |
+| --- | --- | --- |
+| V6-R1：完整提案一致性 | P2 BLOCKER；network/inventory plan/source ID、cleanup/重发/顺序、新批准要求、旧trial/备份等字段被改仍PASS | 已增加固定v6 index的三份artifact完整字节/精确membership核对；输入须等于已索引v6，新增/未消费字段变化同样拒绝；12种完整提案反例和index破坏拒绝回归PASS |
+| V6-R2：源码冻结锚点 | P2 BLOCKER；同时改源码、LF清单和清单ref可自称原source未变 | 当前317份源码各自与原frozen raw digest证明LF/CRLF等价；协同改动反例即使绕过外层index，内层冻结校验也拒绝；LF checkout仍PASS |
+| 分层回归 | 完整性核对与事实语义核对均需验收 | 原22种语义反例单独验证内层事实检查，避免仅靠固定提案比较掩盖语义回归；checker共7项、既有readonly7项，正常及-O各14项PASS |
+| 历史与候选 | 原v6/index、原37份readonly证据、source055aa1df/binary/profile/IAM/gateway/两目标不变 | 只新增review01回执，不覆盖旧closure或原始失败历史 |
+| 独立复评 | reviewer对修复代码/测试/精确方案及矩阵草稿按SHA256绑定复核 | PASS；正常/-O各自独立跑checker7项和CLI，重构10个原反例全部拒绝，核对49个原tracked证据文件原字节未变；本切片有效blocker=0 |
+| 5d真实验收 | 新原生观察/发送/Outbox-Asynq recovery仍未执行 | NOT_RUN；保护snapshot仍2026-10-14T16:22:28Z，每次实际发送前fresh gate必需 |
+| 执行权限 | 明确确认、新短期basis/approval、native IAM/active gateway/permission、fresh topology仍未具备 | BLOCKED；#307 OPEN、#318 Draft，不合并、不真实删除 |
+
+本轮只修离线校验和证据口径，provider I/O/Core mutation/DELETE/cleanup均0。
+完整D1/D2、其他真实删除故障/竞争与通用IAM/owner能力继续由#307分别验收。
+
+[初评](evidence/issue307-d1/delete-proposal-v6-review01/initial-review.json)、
+[独立复评](evidence/issue307-d1/delete-proposal-v6-review01/independent-re-review.json)、
+[主线程前后反例及14项两模式回归](evidence/issue307-d1/delete-proposal-v6-review01/regression.json)和
+[宿主只读回读](evidence/issue307-d1/delete-proposal-v6-review01/retained-host-readback.json)分别保存。
+40个保留容器仍exited/PID0、无host ports，原tar/dump hash不变；这些宿主核对没有刷新原生保护snapshot。

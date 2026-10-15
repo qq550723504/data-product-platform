@@ -30,8 +30,15 @@ v6修正v5继承的audit-core-03/checkpoint旧字段冲突，将当前只读证�
 离线校验命令为`python examples/lifecycle-d1/check-reference-proposal.py`，
 PASS只表示公开证据与当前提案一致，不能生成批准或替代fresh gate。
 跨平台检查仅对317项运行源码按固定Git source的LF文本摘要比较；原始候选binding仍保留，
-binary/profile/IAM/gateway摘要不做换行转换。[本次收口](evidence/issue307-d1/delete-proposal-v6/closure.json)
-记录11项正常及-O测试、22个拒绝案例、40个容器继续停止及原备份hash不变。
+binary/profile/IAM/gateway摘要不做换行转换。[前轮主线程收口](evidence/issue307-d1/delete-proposal-v6/closure.json)
+记录当时11项正常及-O测试、22个拒绝案例、40个容器继续停止及原备份hash不变。
+本轮独立评审发现并修正两类离线一致性阻断：未消费的提案字段仍可得到PASS，以及LF清单
+未向原始冻结源码摘要证明文本等价。checker现在先校验现有v6 index的三份完整artifact原字节，
+再要求输入等于固定v6；317项源码同时向原frozen raw hash证明LF/CRLF等价。
+Git已评审仓库/index是此离线检查的完整性边界；该index不是签名或删除授权，
+任何修改固定提案/index的请求都须新增提案版本并重新评审，不能就地改旧证据。
+[复评与验收矩阵](issue307-d1-candidate04-readonly.md#v6独立评审与修复验收)单独记录本轮结果；
+原v6/proposal、LF清单、closure/index和candidate04均保持原字节，没有刷新原生观察。
 当前[候选绑定](evidence/issue307-d1/lc13-continuation01/delete-candidate04/source-binding.json)和
 [关闭profile](evidence/issue307-d1/lc13-continuation01/delete-candidate04/bounded-profile.json)
 由新binary在两个network=none、root-free、read-only helper中渲染/验证关闭send gate；
@@ -114,7 +121,7 @@ admin SDK `madmin-go/v3 v3.0.94`。provider build/license 的旧核对不构成�
 这些保护状态来自本轮
 [本轮源原生复查](evidence/issue307-d1/delete-readonly-candidate04/retry02/5d-04/native-six-version.json)，
 全部六份 identity/bytes/hash/protection 与 before 和隔离 restore 一致。具体保护观测时间逐项保存在
-proposal-v5；两目标分别观测于 `2026-10-14T16:22:28.032796776Z` 和 `2026-10-14T16:22:28.275997014Z`，
+proposal-v6；两目标分别观测于 `2026-10-14T16:22:28.032796776Z` 和 `2026-10-14T16:22:28.275997014Z`，
 它仍不替代未来发送时的 current protection。
 执行前及每项发送前均须重新读取 native protection/inventory；新增 hold、未到期 retention、
 UNKNOWN、身份漂移或 inventory 增减均使本提案停止，0 DELETE，不自动扩大范围。
@@ -222,7 +229,8 @@ receipt，再处理 quarantine/b。初始 native inventory 必须等于六份 re
 确认后先绑定同一冻结源码构建的恢复binary、5d workspace/provider/incarnation、只读IAM、
 新attempt/work identity和manifest hash，再按`outbox → worker → once terminal replay`验收；
 恢复配置/Redis/worker资源当前尚未激活，当前5d真实队列恢复仍NOT_RUN。
-该入口核对是本轮主线程静态闭合检查，不新增原生运行或独立评审PASS。
+上述入口闭合结论来自前轮主线程静态检查；本轮独立评审覆盖v6精确方案与离线校验，
+不把它延伸为5d真实发送/队列恢复或新增原生业务PASS。
 
 当前 backup资源实际已保留：`dpp-lifecycle307-5d2274ee-predelete-objects`、
 `dpp-lifecycle307-5d2274ee-predelete-postgres-02` 及专属同名卷，精确ID见

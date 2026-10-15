@@ -1,0 +1,149 @@
+{
+  "checked_at": "2026-10-15T01:11:37.578579+00:00",
+  "base_head": "7792421cb9d82072ff3db9afa95ee3a4151bca6d",
+  "fixed_files": {
+    "examples/lifecycle-d1/check-reference-proposal.py": "7a4722204758d1de96bf61b9d60877cd4d70c19b641f0f473ffe8583a53bcd44",
+    "examples/lifecycle-d1/test_reference_proposal.py": "125a54368db8624ec842400c939c41ca84564037ac47ae3b781556e81f1bf8cf",
+    "docs/acceptance/issue307-d1-delete-proposal.md": "e98cb8fefab0114d3333ab6791140c742b7c97cea6a26c3e537eed18e4548cbf"
+  },
+  "regressions": [
+    {
+      "case": "network",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "inventory_plan",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "source_container",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "cleanup",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "unknown_resend",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "serial_order",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "new_approval_omitted",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "old_trial",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "backup_digest",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "backup_receipt",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "new_shadow_authority",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "boolean_number_alias",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED",
+      "reason": "Input differs from indexed fixed v6 proposal"
+    },
+    {
+      "case": "source_and_lf_manifest_coordinated_change",
+      "before": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "after": "REJECTED_INNER_FACT_CHECK_WITHOUT_OUTER_INDEX",
+      "reason": "Runtime text differs from frozen raw source: apps/platform/cmd/lifecycle-fixture-delete/reference_send.go"
+    }
+  ],
+  "tests": [
+    {
+      "test_file": "test_reference_proposal.py",
+      "optimized": false,
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "test_file": "test_lc13_readonly.py",
+      "optimized": false,
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "test_file": "test_reference_proposal.py",
+      "optimized": true,
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "test_file": "test_lc13_readonly.py",
+      "optimized": true,
+      "tests": 7,
+      "exit_code": 0
+    }
+  ],
+  "check": {
+    "status": "PASS_OFFLINE_CONSISTENCY_ONLY",
+    "candidate_runtime_changed": false,
+    "runtime_source_files": 317,
+    "targets": 2,
+    "survivors": 4,
+    "current_receipts": 7,
+    "audit_core": "dpp-lifecycle307-5d2274ee-readonly-audit-core-04",
+    "snapshot_is_send_authorization": false,
+    "provider_io": 0,
+    "core_mutation": 0,
+    "delete": 0
+  },
+  "historical_indexes_preserved": [
+    {
+      "index": "docs/acceptance/evidence/issue307-d1/delete-proposal-v6/evidence-index.json",
+      "sha256": "025c962ab750c3c2cf71e1d6a9b04a43ef7482e3aca49f21fc9ea99b2bc6cbc8",
+      "payloads_verified": 3
+    },
+    {
+      "index": "docs/acceptance/evidence/issue307-d1/delete-readonly-candidate04/evidence-index.json",
+      "sha256": "c41d560631c18ee919187ceacd98c1fd432923999673b2da26ebfce00dd952d0",
+      "payloads_verified": 37
+    }
+  ],
+  "semantic_negative_cases": 22,
+  "complete_proposal_negative_cases": 12,
+  "provider_io": 0,
+  "core_mutation": 0,
+  "delete": 0,
+  "merge": 0,
+  "cleanup": 0,
+  "native_protection": "NOT_REFRESHED; original2026-10-14T16:22:28Z snapshot retained",
+  "authority": "NOT_RECEIVED; send remains blocked"
+}

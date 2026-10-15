@@ -1,0 +1,36 @@
+{
+  "reviewer": "/root/v6_independent_review",
+  "reviewed_base_head": "7792421cb9d82072ff3db9afa95ee3a4151bca6d",
+  "reviewed_fix_sha256": {
+    "examples/lifecycle-d1/check-reference-proposal.py": "7a4722204758d1de96bf61b9d60877cd4d70c19b641f0f473ffe8583a53bcd44",
+    "examples/lifecycle-d1/test_reference_proposal.py": "125a54368db8624ec842400c939c41ca84564037ac47ae3b781556e81f1bf8cf",
+    "docs/acceptance/issue307-d1-delete-proposal.md": "e98cb8fefab0114d3333ab6791140c742b7c97cea6a26c3e537eed18e4548cbf"
+  },
+  "reviewed_matrix_draft_sha256": "a1b249d77037d4102f81de8708d98cf03285077ba85ecd184f74df61c74d187a",
+  "matrix_finalization_authorized": "Only change pending row to independent re-review PASS and link this separate receipt; original v6/index/candidate are preserved",
+  "status": "PASS_INDEPENDENT_OFFLINE_RE_REVIEW",
+  "current_slice_blockers": 0,
+  "resolved": [
+    "V6-R1",
+    "V6-R2"
+  ],
+  "independently_executed": {
+    "proposal_tests_normal": 7,
+    "proposal_tests_optimized": 7,
+    "original_adversarial_proposals_reconstructed_and_rejected": 10,
+    "cli": "PASS_OFFLINE_CONSISTENCY_ONLY",
+    "runtime_files": 317,
+    "indexed_artifact_mutation_and_membership_tests": "PASS",
+    "coordinated_source_manifest_inner_rejection": "PASS",
+    "preserved_raw_tracked_files_compared_to_base": 49
+  },
+  "review_scope": "Finite v6 exact proposal and offline checker; not new5d native acceptance or deletion authorization",
+  "provider_io": 0,
+  "core_mutation": 0,
+  "file_edits": 0,
+  "container_starts": 0,
+  "iam_changes": 0,
+  "delete": 0,
+  "merge": 0,
+  "follow_ups": "Actual5d native provision/DELETE/recovery and fullD1/D2 remain NOT_RUN/open #307; exact confirmation NOT_RECEIVED; #318 Draft"
+}

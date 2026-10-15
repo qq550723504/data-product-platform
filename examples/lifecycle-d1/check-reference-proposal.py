@@ -12,6 +12,9 @@ BASE = 'docs/acceptance/evidence/issue307-d1/'
 CANDIDATE = BASE + 'lc13-continuation01/delete-candidate04/'
 READONLY = BASE + 'delete-readonly-candidate04/'
 PROPOSAL = BASE + 'delete-proposal-v6/proposal.json'
+INDEX = BASE + 'delete-proposal-v6/evidence-index.json'
+INDEXED_PATHS = {PROPOSAL, BASE + 'delete-proposal-v6/runtime-source-lf.json',
+                 BASE + 'delete-proposal-v6/closure.json'}
 RECEIPTS = {
     'checkpoint': READONLY + 'retry02/5d-04/readonly-checkpoint.json',
     'native': READONLY + 'retry02/5d-04/native-six-version.json',
@@ -55,7 +58,31 @@ def bound(root, ref, path):
     return decode(read(root, path))
 
 
+def indexed_proposal(root):
+    # This command checks one reviewed, immutable proposal. The repository index
+    # is its integrity anchor, not an approval signature or a generic edit API.
+    entries = decode(read(root, INDEX))['files']
+    require(len(entries) == len(INDEXED_PATHS)
+            and {v['path'] for v in entries} == INDEXED_PATHS, 'Fixed v6 index membership drift')
+    payloads = {}
+    for entry in entries:
+        raw = read(root, entry['path'])
+        require(len(raw) == entry['bytes']
+                and hashlib.sha256(raw).hexdigest() == entry['sha256'],
+                'Indexed artifact bytes drift: ' + entry['path'])
+        payloads[entry['path']] = raw
+    return decode(payloads[PROPOSAL])
+
+
 def check(p, root=ROOT):
+    canonical = lambda value: json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False)
+    require(canonical(p) == canonical(indexed_proposal(root)),
+            'Input differs from indexed fixed v6 proposal')
+    return check_facts(p, root)
+
+
+def check_facts(p, root=ROOT):
+    # Semantic cross-checks remain independently testable after integrity passes.
     require(p['schema'] == 'lifecycle307-exact-delete-proposal-v6', 'Wrong proposal version')
     require(not {'this_preparation', 'readonly_preflight', 'readonly_preflight_v5',
                  'continuation_readonly', 'hashes'} & p.keys(), 'Ambiguous inherited current fields')
@@ -69,7 +96,12 @@ def check(p, root=ROOT):
     require(runtime['source_commit'] == frozen['source_commit']
             and set(runtime['files']) == set(frozen['runtime_source_hashes']), 'Runtime binding scope drift')
     for path, digest in runtime['files'].items():
-        require(hashlib.sha256(read(root, path).replace(b'\r\n', b'\n')).hexdigest() == digest,
+        text = read(root, path).replace(b'\r\n', b'\n')
+        lf_digest = hashlib.sha256(text).hexdigest()
+        crlf_digest = hashlib.sha256(text.replace(b'\n', b'\r\n')).hexdigest()
+        require(frozen['runtime_source_hashes'][path] in {lf_digest, crlf_digest},
+                'Runtime text differs from frozen raw source: ' + path)
+        require(lf_digest == digest,
                 'Runtime source drift: ' + path)
     require(hashlib.sha256(read(root, CANDIDATE + 'bounded-profile.json')).hexdigest()
             == expected['bounded_profile_sha256'], 'Profile bytes drift')

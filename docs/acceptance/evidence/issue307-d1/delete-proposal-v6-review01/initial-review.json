@@ -1,0 +1,47 @@
+{
+  "reviewer": "/root/v6_independent_review",
+  "reviewed_head": "7792421cb9d82072ff3db9afa95ee3a4151bca6d",
+  "method": "Independent read-only source/artifact review; normal/-O proposal4 tests and in-memory adversarial proposals; no edited files or provider/database/IAM operations",
+  "findings": [
+    {
+      "id": "V6-R1",
+      "priority": "P2",
+      "classification": "CURRENT_SLICE_BLOCKER",
+      "root_cause": "Partial field validation permits contradictory exact proposal scope and execution constraints while reporting offline consistency PASS",
+      "location": "examples/lifecycle-d1/check-reference-proposal.py:78-84,136-150",
+      "reproduced": [
+        "network_id",
+        "inventory_plan_id",
+        "source container id",
+        "cleanup",
+        "unknown resend",
+        "serial order",
+        "new approval requirement",
+        "old trial identity",
+        "backup digest",
+        "backup receipt binding"
+      ],
+      "actual_delete_bypass": false
+    },
+    {
+      "id": "V6-R2",
+      "priority": "P2",
+      "classification": "CURRENT_SLICE_BLOCKER",
+      "root_cause": "Runtime LF manifest can self-attest coordinated source/manifest edits to the unchanged frozen source string",
+      "location": "examples/lifecycle-d1/check-reference-proposal.py:68-73",
+      "reproduced": "Append comment to reference_send.go; change LF digest and proposal manifest ref; old checker still reports candidate_runtime_changed=false",
+      "actual_delete_bypass": false
+    }
+  ],
+  "follow_ups": [
+    "Native IAM activation, actual5d DELETE and Outbox/Asynq read-only recovery remain NOT_RUN under #307; no current scope expansion"
+  ],
+  "non_blocking": [
+    "Historical prose reference to proposal-v5 protection timestamps; v6 actually contains same observations; corrected wording"
+  ],
+  "provider_io": 0,
+  "core_mutation": 0,
+  "delete": 0,
+  "merge": 0,
+  "cleanup": 0
+}
