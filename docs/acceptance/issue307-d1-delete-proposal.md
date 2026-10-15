@@ -3,7 +3,7 @@
 2026-10-15（Asia/Singapore），状态 **PENDING_USER_CONFIRMATION / 实际 DELETE NOT_RUN**。
 本方案依据 #307 的 exact-list approval gate、lifecycle 主 contract 与
 [有限引用需求 contract](issue307-reference-demand-contract.md)。#318 保持 Draft，
-既有非删除备份/恢复和 no-send 事务保留；当前v8基于已独立评审通过的v7完成新只读核验，不启用发送、不发 DELETE、不解除保护。
+既有非删除备份/恢复和 no-send 事务保留；当前v8只读核验及后续独立评审已通过，不启用发送、不发 DELETE、不解除保护。
 此方案替代“下一次执行”的旧 e1487ce7 提案；旧提案及其他环境的已消费批准保留原历史。
 
 当前状态见[原生非删除准备](issue307-d1-reference-preparation.md)：六份 exact-version
@@ -29,7 +29,12 @@ v6/v7/index及其独立评审保持原字节；v7原生读取与主线程一致�
 新回执及operator修复给出PASS，当前切片有效blocker=0。
 [独立评审矩阵](issue307-d1-candidate04-readonly.md#v7独立评审与收敛检查)及
 [单独回执](evidence/issue307-d1/delete-proposal-v7-review01/independent-review.json)保留该评审时点；
-本次v8是新原生只读与主线程一致性检查，不新增独立评审结论或删除权限。
+v8原生只读与主线程检查之后，独立reviewer已对HEAD `a29bfe6019cd5b38415fd378394fcd537662525c`
+的精确方案、离线校验、新回执及固定07代operator扩展给出PASS，当前切片有效blocker=0。
+本轮修正一处operator管理GET文字计数（本轮4次、旧8次保留）；无operator/运行源码修复。
+[v8评审矩阵](issue307-d1-candidate04-readonly.md#v8独立评审与收敛检查)及
+[单独回执](evidence/issue307-d1/delete-proposal-v8-review01/independent-review.json)不覆盖原native verification/index，
+不刷新10:14:11的保护观察或授予删除权限。
 v6修正v5继承的audit-core-03/checkpoint旧字段冲突，统一为audit-core-04证据。
 [v5](evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json)及其index原字节保留，
 不再作为下一次执行的当前清单；[proposal-v4](evidence/issue307-d1/lc13-continuation01/proposal-v4.json)保留原候选冻结时点。
@@ -171,7 +176,7 @@ FINALIZED 两份 plan 的 DB computed hash 与 stored hash 相同。
 23份requirements/releases、7pins/terminations及原2NOT_SENT/linked releases仍闭合。
 regular reader/producer原生状态disabled；拟建普通executor为权威NoSuchUser。
 新audit-core-07恢复194表/1879行，并仅在该clone承接20个新的native checkpoint调用（总112），
-源journal仍92，原Core业务mutation0；8个operator IAM GET另列回执。
+源journal仍92，原Core业务mutation0；本轮4个operator IAM GET另列回执，旧8个保留原历史。
 源、新audit和helper已全部停止、maintenance authority封存；原tar/dump hash不变。
 这些PASS均为只读snapshot；[逐项条件](issue307-d1-candidate04-readonly.md)明确列出
 确认、新basis/approval、native IAM/active gateway/permission和fresh send topology仍未创建，
@@ -238,8 +243,8 @@ receipt，再处理 quarantine/b。初始 native inventory 必须等于六份 re
 确认后先绑定同一冻结源码构建的恢复binary、5d workspace/provider/incarnation、只读IAM、
 新attempt/work identity和manifest hash，再按`outbox → worker → once terminal replay`验收；
 恢复配置/Redis/worker资源当前尚未激活，当前5d真实队列恢复仍NOT_RUN。
-上述入口闭合结论来自前轮主线程静态检查；v6/v7独立评审覆盖各自精确方案、离线校验，
-v7还核对当时只读回执和operator修复；本次v8只完成新只读验收，不把旧评审延伸为v8独立评审、5d真实发送/队列恢复PASS。
+上述入口闭合结论来自前轮主线程静态检查；v6/v7/v8独立评审覆盖各自精确方案、离线校验，
+v8还核对07代新只读回执和operator扩展；不把这些结论延伸为5d真实发送/队列恢复PASS。
 
 当前 backup资源实际已保留：`dpp-lifecycle307-5d2274ee-predelete-objects`、
 `dpp-lifecycle307-5d2274ee-predelete-postgres-02` 及专属同名卷，精确ID见

@@ -2,7 +2,7 @@
 
 最新观察见[v8基于v7的新原生只读观察](#v8基于v7的新原生只读观察)。
 下文audit-core-04/06与v6/v7独立评审保留各自原时点；新回执另存audit-core-07，不覆盖旧证据。
-v7的[独立评审](#v7独立评审与收敛检查)作为本次刷新基线；v8是新的原生只读及主线程离线验收，不新增独立评审结论。
+v7的[独立评审](#v7独立评审与收敛检查)保留原时点；v8后续的[独立评审](#v8独立评审与收敛检查)已通过，当前切片有效blocker=0。
 
 2026-10-15（Asia/Singapore）。新候选源码055aa1df、Linux binary
 `01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3`
@@ -237,4 +237,31 @@ online4/quarantine2，无缺失、额外version或delete marker。6份bytes/hash
 正常/-O各25项PASS（v6 7、只读9、v7 5、v8 4）；v6/v7/v8三个离线CLI均PASS。
 v8检查20份固定indexed payload原字节和完整提案，要求新观察晚于已审v7；scope/authority变化、旧观察与打开的closure均拒绝。
 原v6/v7/index/verification/独立评审及所有失败回执保持原字节。本次无新operator失败、真实DELETE、
-Core业务mutation、IAM写入、hold/retention release、bypass或cleanup；新原生只读PASS不构成删除批准或新独立评审。
+Core业务mutation、IAM写入、hold/retention release、bypass或cleanup；原生只读PASS不构成删除批准。
+该刷新verification保留当时尚未新增独立评审的事实；后续评审单独记录如下。
+
+## v8独立评审与收敛检查
+
+独立reviewer对HEAD `a29bfe6019cd5b38415fd378394fcd537662525c` 完成v8精确方案、
+离线校验、新只读回执及固定07代operator扩展评审。结论 **PASS，当前切片有效blocker=0**。
+本轮只修正方案的一处文字计数，无operator或运行源码修复，也未启动服务或新增原生读取。
+原保护观察时间仍为`2026-10-15T02:14:11Z`，评审不刷新snapshot或生成删除权限。
+
+| 条目 | 独立复核 / 本轮收口 |
+| --- | --- |
+| 精确范围与预算 | 与v7相同的环境、candidate04、两目标/四survivor、129560 bytes、每目标一次/总计两次、closed authority；retention到期不扩范围 |
+| 原字节与历史 | 96份indexed payload（含新20份）工作区=HEAD=长度/SHA；旧六组payload/index共82份与4ee5f1a6原字节相同；原verification/index/失败历史保留 |
+| operator与候选绑定 | 5项源码摘要与a29提交一致；candidate driver hash及operator base-head4ee5f1a6对应；工作树改动已显式记录；317项运行源码及binary/profile/IAM/gateway仍冻结 |
+| Core与时间闭合 | source before=after=07 restored=前驱v7，194表/1879行及role/owner/ACL指纹一致；6次保护+2次inventory晚于v7且在02:14:03.010259～02:14:12.376150Z内，proposal创建于02:17:12.011406Z |
+| 账务与IAM | source journal92、clone112 calls/observations/typed costs，unaccounted0；本轮4个management GET单列，旧8个保留；NoSuchUser不代表全域credential销毁 |
+| 固定07与失败恢复 | 08/arbitrary/delete/confirm参数拒绝；复用TCP readiness；独立停止尝试及嵌套finally封存路径成立；不新增发送开关或runtime |
+| 非删除回归 | reviewer独立执行正常/-O各25项、v6/v7/v8三个CLI均PASS；14个额外内存内层反例全部拒绝，涵盖保护/库存/DELETE/source/binary/root/IAM/credentials/pins/closure/relation/ACL/cost/permission |
+| V8-DOC-1 | 非阻塞文字计数修正：精确方案原第174行把旧8个operator IAM GET写成本轮；已明确为本轮4个、旧8个保留；实际回执和账务从未改写 |
+| 当前宿主回读 | 主线程另核103份原字节、同48个容器IDs/images/states均exited/PID0/无host ports、原tar/dump SHA及15份Enabled=false配置/07 maintenance封存一致；该宿主检查不读取provider或DB |
+| 执行边界 | 精确确认仍NOT_RECEIVED；新basis/approval、native delete IAM/active gateway/permission及fresh topology未创建。实际DELETE/删除后恢复、完整D1/D2仍NOT_RUN / NOT_ACCEPTED，继续由#307验收；#318 Draft |
+
+[独立评审回执](evidence/issue307-d1/delete-proposal-v8-review01/independent-review.json)与
+[主线程完整性/宿主回读](evidence/issue307-d1/delete-proposal-v8-review01/primary-audit.json)另存新目录。
+按AGENTS §17冻结本切片contract：精确范围与关闭authority、历史原字节、候选/operator provenance、
+只读观察/账务闭合及失败恢复；Git/index提供离线完整性边界。通用IAM/owner/DR及真实删除恢复继续归#307后续验收。
+本轮provider I/O、Core mutation、容器启动、IAM写入、DELETE、merge、hold/retention release、bypass和cleanup均0。
