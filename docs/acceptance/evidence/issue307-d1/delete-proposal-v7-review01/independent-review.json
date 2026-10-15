@@ -1,0 +1,54 @@
+{
+  "recorded_at": "2026-10-15T01:59:45.039075+00:00",
+  "recorded_by": "Primary agent from the completed independent reviewer message; no native run added",
+  "reviewer": "/root/v7_independent_review",
+  "reviewed_head": "e122a613322fba6009ec8175539e9eb9e3e7f05e",
+  "status": "PASS_INDEPENDENT_OFFLINE_REVIEW",
+  "current_slice_blockers": 0,
+  "code_fixes_required_this_round": 0,
+  "reviewed_operator_sha256": {
+    "examples/lifecycle-d1/complete-lc13-readonly.py": "fc058d87681725a36747e7e2468e991c050a09ed6c55e5373f1b8fbd4f910ccf",
+    "examples/lifecycle-d1/refresh-reference-readonly.py": "1ebfe9d07531f25e32489428f2a14f5d22d9c84bfd07589e6d12ce72927acd65",
+    "examples/lifecycle-d1/check-reference-refresh.py": "5c7a76b0d0205b557ada3bb4c1b953dce44c6ec6cb430a921b7ca9bfe4e1b0e6",
+    "examples/lifecycle-d1/test_reference_refresh.py": "45d33c47c2651d01de034328e64f0c059e3e823317351e81945b12ccaa00aa0c"
+  },
+  "reviewed_documents_at_head_sha256": {
+    "docs/acceptance/issue307-d1-delete-proposal.md": "1f26035d874ff3953a2c34985bedea6480f6c51be0f80ce4fade46118e68f7c3",
+    "docs/acceptance/issue307-d1-candidate04-readonly.md": "da7345721c479ac1a9305d6f8022056a51375a457112b9f93aa930d140b1467e"
+  },
+  "scope": "Finite v7 exact proposal, offline consistency checker, refresh01/02 receipts and operator repairs under AGENTS section 17",
+  "independently_executed": {
+    "tests_normal": 20,
+    "tests_optimized": 20,
+    "test_files": {
+      "test_reference_proposal.py": 7,
+      "test_lc13_readonly.py": 8,
+      "test_reference_refresh.py": 5
+    },
+    "v7_cli_normal": "PASS_OFFLINE_V7_REFRESH_CONSISTENCY_ONLY",
+    "v7_cli_optimized": "PASS_OFFLINE_V7_REFRESH_CONSISTENCY_ONLY",
+    "indexed_new_payloads_matching_checkout_and_head_raw_bytes_lengths_hashes": 30,
+    "operator_sources_matching_receipt_hashes": 4
+  },
+  "conclusions": [
+    "v7 retains reviewed v6 environment, exact two targets, four survivors, 129560 bytes, once per target and two total DELETE budget, with authority closed",
+    "Retention expiry does not expand scope; native protection and inventory observations fall between source before and after",
+    "194 tables and 1879 rows plus role/ACL fingerprints match; failed05 source/diagnostics and original v6/candidate04/re-review are preserved",
+    "TCP readiness excludes the official PostgreSQL image temporary Unix-socket-only bootstrap server",
+    "Source PG/MinIO restoration is independent; failure to seal maintenance does not bypass restore attempts",
+    "45 public retained container receipts are exited/PID0 with no host ports; reviewer did not access Docker or current native services"
+  ],
+  "reviewer_effects": {
+    "file_edits": 0,
+    "container_starts": 0,
+    "provider_io": 0,
+    "db_io": 0,
+    "iam_changes": 0,
+    "delete": 0,
+    "merge": 0,
+    "cleanup": 0
+  },
+  "matrix_finalization": "Only record this completed review and its finite scope, link separate receipts, preserve original native observation time and indexed bytes",
+  "authority": "NOT_RECEIVED; review PASS is not execution approval",
+  "follow_ups": "Actual native IAM/provision/activation, DELETE and post-delete Outbox/Asynq recovery, full D1/D2 and generic IAM/owner/DR remain separate #307 acceptance; #318 Draft"
+}

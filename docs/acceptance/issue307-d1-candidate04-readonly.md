@@ -2,6 +2,7 @@
 
 最新观察见[v7基于v6的新原生只读观察](#v7基于v6的新原生只读观察)。
 下文audit-core-04与v6独立评审保留各自原时点；新回执另存audit-core-06，不覆盖旧证据。
+v7精确方案、离线校验、新回执和operator修复的[独立评审](#v7独立评审与收敛检查)已通过；当前切片有效blocker=0。
 
 2026-10-15（Asia/Singapore）。新候选源码055aa1df、Linux binary
 `01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3`
@@ -120,8 +121,9 @@ disabled/enabled与service-account on/off混用，真实回执已满足目标状
 
 2026-10-15 **09:31:22 +08:00**（UTC `2026-10-15T01:31:22Z`）完成新读取。
 本轮沿用已独立复评通过的v6及candidate04 binary；仅新增固定audit代次和v7观察版提案。
-v6 checker、其测试、原proposal/index/独立复评均未改；本轮新观察与operator改动是主线程验收，
-不新增独立复评、真实DELETE或实际删除后的Outbox/Asynq recovery PASS。
+v6 checker、其测试、原proposal/index/独立复评均未改；本次原生观察与operator改动先由主线程验收，
+其原始verification保留当时尚无新独立评审的事实；后续独立评审另列下节。
+这些检查不新增真实DELETE或实际删除后的Outbox/Asynq recovery PASS。
 
 | 范围 | namespace / key | exact version | bytes | 本次原生保护 |
 | --- | --- | --- | ---: | --- |
@@ -164,3 +166,27 @@ globals恢复命令失败；此时仅完成4次IAM GET，storage调用0，源Cor
 [执行前条件](evidence/issue307-d1/delete-readonly-v6-refresh02/execution-preconditions.json)及
 [最终资源状态](evidence/issue307-d1/delete-readonly-v6-refresh02/retained-topology.json)分别保存。
 共45个同label容器保留、全部exited/PID0、0 host ports；新maintenance权限已封存，DELETE/cleanup/hold-release/bypass均0。
+
+## v7独立评审与收敛检查
+
+独立reviewer对HEAD `e122a613322fba6009ec8175539e9eb9e3e7f05e` 完成只读评审，
+范围为v7精确方案、离线校验、失败05/成功06新回执及operator修复；不启动服务或访问provider/DB。
+结论 **PASS，当前切片有效blocker=0**；本轮无需追加代码修复。
+按AGENTS §17冻结此有限contract：已评审Git/index提供离线完整性边界，
+两目标/四保留版本、候选/source/hash、预算、关闭authority与原始历史须一致；snapshot不授予发送权限。
+
+| 条目 | 独立复核与验收结果 |
+| --- | --- |
+| 精确范围与保护 | v7保持v6的环境、两目标共129560 bytes、每目标一次/总计两次预算及关闭authority；survivor retention到期未扩大范围 |
+| 离线回归 | 正常及-O各20项、v7 CLI两模式均PASS；包含固定artifact原字节/membership、scope/authority变更拒绝、内层事实检查及TCP readiness |
+| 新回执与源码绑定 | refresh01/02共30份indexed payload的工作区/HEAD原字节、长度、SHA256一致；4项operator源码摘要及candidate driver/base-head绑定一致 |
+| 观察时间与恢复 | 六版本保护/inventory时间均位于source before/after之间；194表/1879行及role/ACL一致；失败05源码/诊断保留，独立06成功，无旧历史覆盖 |
+| operator根因修复 | TCP探针避开仅Unix socket的临时bootstrap；源PG/MinIO恢复各自独立，maintenance seal失败不会跳过恢复 |
+| 宿主只读回读 | 主线程另核同45个容器均exited/PID0、无host ports，原tar/dump SHA及封存配置一致；未刷新native保护观察时间 |
+| 当前切片阻断 | 0；不把未来通用IAM/owner/DR或真实删除恢复扩为本次离线评审必需项 |
+| 真实执行门禁 | 明确确认仍NOT_RECEIVED；新basis/approval、删除IAM/active gateway/permission及fresh topology未创建；原生DELETE/删除后恢复、完整D1/D2仍NOT_RUN / NOT_ACCEPTED，继续由#307验收 |
+
+[独立评审回执](evidence/issue307-d1/delete-proposal-v7-review01/independent-review.json)与
+[主线程完整性及宿主回读](evidence/issue307-d1/delete-proposal-v7-review01/primary-audit.json)另存新目录；
+原v6/v7 proposal、index、verification及全部native回执原字节保留。
+本轮provider I/O、Core mutation、容器启动、IAM变更、DELETE、merge和cleanup均0；#318保持Draft。

@@ -3,7 +3,7 @@
 2026-10-15（Asia/Singapore），状态 **PENDING_USER_CONFIRMATION / 实际 DELETE NOT_RUN**。
 本方案依据 #307 的 exact-list approval gate、lifecycle 主 contract 与
 [有限引用需求 contract](issue307-reference-demand-contract.md)。#318 保持 Draft，
-既有非删除备份/恢复和 no-send 事务保留；本轮只刷新只读核验，不启用发送、不发 DELETE、不解除保护。
+既有非删除备份/恢复和 no-send 事务保留；当前v7只读核验及独立评审已通过，不启用发送、不发 DELETE、不解除保护。
 此方案替代“下一次执行”的旧 e1487ce7 提案；旧提案及其他环境的已消费批准保留原历史。
 
 当前状态见[原生非删除准备](issue307-d1-reference-preparation.md)：六份 exact-version
@@ -24,7 +24,12 @@ f3/7cd/812三个独立run均已封存且资源保留，全部排除在本删除�
 当前机器清单：[proposal-v7](evidence/issue307-d1/delete-readonly-v6-refresh02/proposal-v7.json)，
 继承已独立复评通过的[v6](evidence/issue307-d1/delete-proposal-v6/proposal.json)，仅更新audit-core-06
 只读回执、观察时间和由观察时间计算的retention状态；candidate04、scope、budget和关闭authority逐项保持相同。
-v6/index和其独立复评保持原字节；v7是本轮原生读取与主线程一致性检查，不新增独立复评结论。
+v6/index和其独立复评保持原字节；v7原生读取与主线程一致性检查之后，
+独立reviewer已对HEAD `e122a613322fba6009ec8175539e9eb9e3e7f05e` 的精确方案、离线校验、
+新回执及operator修复给出PASS，当前切片有效blocker=0。
+[独立评审矩阵](issue307-d1-candidate04-readonly.md#v7独立评审与收敛检查)及
+[单独回执](evidence/issue307-d1/delete-proposal-v7-review01/independent-review.json)不覆盖原native verification，
+也不刷新09:31:22的保护观察或授予删除权限。
 v6修正v5继承的audit-core-03/checkpoint旧字段冲突，统一为audit-core-04证据。
 [v5](evidence/issue307-d1/delete-readonly-candidate04/proposal-v5.json)及其index原字节保留，
 不再作为下一次执行的当前清单；[proposal-v4](evidence/issue307-d1/lc13-continuation01/proposal-v4.json)保留原候选冻结时点。
@@ -233,8 +238,8 @@ receipt，再处理 quarantine/b。初始 native inventory 必须等于六份 re
 确认后先绑定同一冻结源码构建的恢复binary、5d workspace/provider/incarnation、只读IAM、
 新attempt/work identity和manifest hash，再按`outbox → worker → once terminal replay`验收；
 恢复配置/Redis/worker资源当前尚未激活，当前5d真实队列恢复仍NOT_RUN。
-上述入口闭合结论来自前轮主线程静态检查；前轮独立评审覆盖v6精确方案与离线校验，
-不把它延伸为5d真实发送/队列恢复或新增原生业务PASS。
+上述入口闭合结论来自前轮主线程静态检查；v6及本次v7独立评审覆盖各自精确方案、离线校验，
+v7还核对新只读回执和operator修复；不把它延伸为5d真实发送/队列恢复或新增原生业务PASS。
 
 当前 backup资源实际已保留：`dpp-lifecycle307-5d2274ee-predelete-objects`、
 `dpp-lifecycle307-5d2274ee-predelete-postgres-02` 及专属同名卷，精确ID见
