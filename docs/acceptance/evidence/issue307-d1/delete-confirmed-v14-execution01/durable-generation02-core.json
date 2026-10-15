@@ -1,0 +1,21 @@
+{
+  "run_id": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+  "label_key": "lifecycle307.run",
+  "allowed_states": [
+    "exited"
+  ],
+  "status": "PASS",
+  "services": [
+    {
+      "type": "volume",
+      "role": "generation02-core",
+      "volume": "dpp-lifecycle307-5d2274ee-predelete-postgres-02",
+      "container": "dpp-lifecycle307-5d2274ee-predelete-postgres-02",
+      "container_id": "1976c314879a819f548c22e621a81277e43c80fa6e3de7969eadc4f169a19332",
+      "destination": "/var/lib/postgresql/data",
+      "writable": true
+    }
+  ],
+  "storage_io": 0,
+  "mutation": 0
+}

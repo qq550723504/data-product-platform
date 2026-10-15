@@ -1,0 +1,14 @@
+{"at":"2026-10-15T08:47:59.274836434Z","fact":"START","method":"GET","path":"/minio/admin/v3/user-info"}
+{"at":"2026-10-15T08:47:59.288691061Z","fact":"OBSERVATION","http_status":200,"start":"2026-10-15T08:47:59.274836434Z","unknown":false}
+{"at":"2026-10-15T08:47:59.291577505Z","fact":"START","method":"GET","path":"/minio/admin/v3/user-info"}
+{"at":"2026-10-15T08:47:59.294376666Z","fact":"OBSERVATION","http_status":200,"start":"2026-10-15T08:47:59.291577505Z","unknown":false}
+{"at":"2026-10-15T08:47:59.296012861Z","fact":"START","method":"GET","path":"/minio/admin/v3/user-info"}
+{"at":"2026-10-15T08:47:59.297999873Z","fact":"OBSERVATION","http_status":200,"start":"2026-10-15T08:47:59.296012861Z","unknown":false}
+{"at":"2026-10-15T08:47:59.299225918Z","fact":"START","method":"GET","path":"/minio/admin/v3/user-info"}
+{"at":"2026-10-15T08:47:59.302503739Z","fact":"OBSERVATION","http_status":404,"start":"2026-10-15T08:47:59.299225918Z","unknown":false}
+{"at":"2026-10-15T08:47:59.304033875Z","fact":"START","method":"PUT","path":"/minio/admin/v3/add-canned-policy"}
+{"at":"2026-10-15T08:47:59.312699201Z","fact":"OBSERVATION","http_status":200,"start":"2026-10-15T08:47:59.304033875Z","unknown":false}
+{"at":"2026-10-15T08:47:59.390493222Z","fact":"START","method":"PUT","path":"/minio/admin/v3/add-user"}
+{"at":"2026-10-15T08:47:59.480140163Z","fact":"OBSERVATION","http_status":200,"start":"2026-10-15T08:47:59.390493222Z","unknown":false}
+{"at":"2026-10-15T08:47:59.585566435Z","fact":"START","method":"POST","path":"/minio/admin/v3/idp/builtin/policy/attach"}
+{"at":"2026-10-15T08:47:59.680770574Z","fact":"OBSERVATION","http_status":404,"start":"2026-10-15T08:47:59.585566435Z","unknown":false}

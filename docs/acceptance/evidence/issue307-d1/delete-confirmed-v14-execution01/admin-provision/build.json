@@ -1,0 +1,8 @@
+{
+  "source_sha256": "be408ade5e5f9f21689d2bfa41f3b2797e85590e71f7fe78a85f221ba2da6877",
+  "binary_sha256": "ddf5187f068f257aef40bfa2c1adf832b6d35933d872b2aa1840f293f9b701d8",
+  "root_admin_only": true,
+  "sender_root_mount": false,
+  "auto_retry": false,
+  "mode": "provision"
+}

@@ -73,7 +73,7 @@ func TestReferencePolicyAndGatewayExcludeProtectedOutputsAndBareDelete(t *testin
 		t.Fatal("expanded policy")
 	}
 	for _, s := range policy.Statement {
-		if len(s.Action) != 1 || s.Action[0] != "s3:DeleteObjectVersion" || s.Condition["StringEquals"]["s3:versionid"] == "" || len(s.Resource) != 1 {
+		if len(s.Action) != 2 || s.Action[0] != "s3:DeleteObject" || s.Action[1] != "s3:DeleteObjectVersion" || s.Condition["StringEquals"]["s3:versionid"] == "" || len(s.Resource) != 1 {
 			t.Fatal("unversioned/broad policy")
 		}
 	}

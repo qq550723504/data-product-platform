@@ -1,5 +1,10 @@
 # #307 D1：冻结候选04的5d删除前只读核验
 
+**最新状态：v14精确确认后的首次发送被拒绝并已封存；不再是“尚未确认/尚未发送”。**
+[当前执行矩阵](#v14确认后的实际执行矩阵)记录A请求一次、HTTP403/CONFIRMED/DENIED、B未启动、成功删除0；
+两份源版本及四份survivor全部保留。原candidate04 native IAM缺少必需action，当前成功删除路径仍有阻断。
+下文“blocker=0”“DELETE=0”“317源码匹配”属于确认前只读评审时点；修复后的源码尚未成为新获批候选。
+
 最新观察见[v14基于v13的新原生只读观察](#v14基于v13的新原生只读观察)。
 下文audit-core-04/06/07/08/09/10/11/12及v6至v13独立评审保持原时点；新回执另存audit-core-13。
 v13的[完整独立评审](#v13独立评审与收敛检查)作为刷新基线；随后v14的[完整独立评审](#v14独立评审与收敛检查)
@@ -759,3 +764,36 @@ scope/authority改变、旧观察、source identity/active pins/running closure�
 按AGENTS §17冻结现有有限contract，只处理有效BLOCKER；通用IAM/owner/DR及实际删除竞争/故障仍归#307后续验收。
 本轮provider/DB I/O、容器启动、Core mutation、IAM写入、DELETE、merge、release/bypass和Docker cleanup均0。
 后续推进依赖精确授权及执行前条件；无环境/范围变化时不机械新增只读快照版本。
+
+## v14确认后的实际执行矩阵
+
+2026-10-15 17:05:52 +08:00已封存；[完整执行回执](issue307-d1-confirmed-v14-execution.md)
+及[新证据](evidence/issue307-d1/delete-confirmed-v14-execution01/)记录当前事实，旧255raw不改写。
+
+| 条件/验收 | 当前结果 | 证据与边界 |
+| --- | --- | --- |
+| 精确用户确认 | RECEIVED | source055aa1df、原binary/profile/target/IAM/gateway及两份version完整绑定 |
+| 删除前当前Core/备份恢复 | PASS | 194表/1879行、roles/ACL、references/owners/pins；新专属卷Core恢复一致 |
+| 删除前六版本 | PASS | 新20次只读调用；六份identity/bytes/SHA/保护与v14一致；源业务mutation0 |
+| 原旧trial closure | PASS | 原两NOT_SENT/releases不变、不重发；新614cd9ad basis/approval另行追加 |
+| native IAM/active composition | 实际准备，暴露阻断 | 新账号disabled→关联→disabled，之后有限启用；缺少DeleteObject使旧policy无法授权实际路径 |
+| A dispatch/send | CONFIRMED/DENIED | 新attempt c163dca9、work144b5fde；共享fence/DB-first claim，唯一调用HTTP403，一份真实invocation成本 |
+| crash/response-loss成功验收 | FAIL | 旧sender将DENIED错误标记response_unknown并exit93；原始DB事实优先，不能算UNKNOWN成功后崩溃 |
+| B dispatch/send | NOT_RUN | A无absence，B never-started，无新attempt/claim，不能跳过串行前置条件 |
+| Outbox→Redis/Asynq | 实际运行 | 单独transaction锁住非目标事件，SKIP LOCKED仅发布本work，随后ROLLBACK；旧业务事件状态不变 |
+| 只读恢复/正向存在 | PASS_DENIED_PRESENT | 三次UNKNOWN_PRESENT保留；fresh exact HEAD后由已有ReconcileDeniedAttempt追加release，再ALREADY_RESOLVED |
+| terminal replay | PASS_ZERO_IO | 只读终态重放没有新增call/claim/absence/completion，不代表删除成功 |
+| absence/scope completion | NOT_ACHIEVED | receipts0/completion0；没有把403、HEAD200或exit93冒充absence |
+| 最终六版本/四survivors | PASS_RETAINED | 两份源及四survivor均在；再次20次内容/保护核验一致，hold-release/bypass0 |
+| 源账务/历史 | PASS | calls=observations=typed storage costs=125，provider invocation成本1，unaccounted0；旧业务内容/ACL/旧outbox状态不变 |
+| 最终封存 | PASS | 86个5d相关容器exited/created、PID0、无host ports；IAM disabled、sender/recovery permission false；原tar/dump hash不变，cleanup0 |
+| 离线gateway诊断 | PASS_ISOLATED_ONLY | 另两份network-none helper：精确URI走loopback responder，错误version403/0upstream；真实provider I/O0 |
+| 当前源码修复 | 非删除四包PASS | 同exact条件加入DeleteObject；使用现有OSS policy evaluator验证范围；sender按immutable outcome分类，DENIED不进入UNKNOWN crash |
+| 继续真实删除 | BLOCKED | A一次额度已消费；新执行身份、冻结修复候选/当前Core检查点/新精确确认尚未准备，旧批准不可重用 |
+
+#307保持OPEN，#318保持Draft、不合并。此前只读独立评审结论保持其有限观察时点，
+不能用于抹去本次native IAM失败；后续不机械新增只读刷新/评审版本。
+
+本次拒绝执行/封存与源码修复的[独立有限复评](evidence/issue307-d1/delete-confirmed-v14-review01/independent-review.json)
+已PASS、该切片有效问题0，独立4项TestReference通过；原生成功删除仍BLOCKED。
+复评核对新81payload/index、旧255raw及315未改runtime；新sender SQL分支仅静态核对，未重新发送。

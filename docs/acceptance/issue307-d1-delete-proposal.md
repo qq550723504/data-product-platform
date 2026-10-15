@@ -1,5 +1,15 @@
 # #307 D1：5d2274ee 环境的 exact-version 删除确认方案
 
+**当前执行结果：精确确认已收到，A于2026-10-15 16:58:59 +08:00发送一次并被HTTP403拒绝；B未启动，成功删除0。**
+原始事实是CONFIRMED/DENIED，两份源版本及四份survivor均完整保留，absence/completion均0。
+拒绝后的正向HEAD、受控reservation release及终态零I/O重放已完成；17:05:52 +08:00全部封存。
+[实际执行、根因、回执及后续授权边界](issue307-d1-confirmed-v14-execution.md)是当前状态；
+候选04缺少固定MinIO要求的DeleteObject allow，已补源码和OSS evaluator非删除回归，但未替换获批binary或再次激活。
+A的一次上限已消费，旧614cd9ad确认不能重用；后续须新执行身份、冻结候选和新精确确认。
+#318仍OPEN/Draft、不合并。原v14 proposal及255份raw仅保留为确认前历史，下面的NOT_RECEIVED/NOT_RUN不再描述当前状态。
+
+## v14 确认前历史
+
 2026-10-15（Asia/Singapore），状态 **PENDING_USER_CONFIRMATION / 实际 DELETE NOT_RUN**。
 本方案依据 #307 的 exact-list approval gate、lifecycle 主 contract 与
 [有限引用需求 contract](issue307-reference-demand-contract.md)。#318 保持 Draft，
@@ -293,7 +303,7 @@ LC-13有限可信停止、新Retry与原生credential containment已有[本轮�
 其余实际DELETE竞争/故障、通用external owner/credential与完整D1仍分别验收，
 #307不因此关闭；#318不Ready/merge/deploy。
 
-供后续明确确认的文本（**本轮尚未收到**）：
+v14确认前的精确文本（历史；现已收到，本次执行窗口已封存）：
 
 > CONFIRM_DELETE_EXACT_TWO；execution 614cd9ad-3f9d-40be-b110-3f7cf95f0790。
 > 确认 project dpp-lifecycle307-5d2274ee、provider 1980751b-c50e-4895-93a8-cb55960cd635、
@@ -312,4 +322,4 @@ LC-13有限可信停止、新Retry与原生credential containment已有[本轮�
 > ≤40分钟窗口，并执行本方案只读对账/封存。
 > 四份 survivor、全部其他环境和备份保留；cleanup=0、hold-release=0、bypass=0；#318仍Draft、不合并。
 
-本段是待确认范围的模板，不是批准事实；“确认方案但暂不执行”也不等于允许发送 DELETE。
+本段保留原确认模板；本次实际批准与已消费范围见上方独立执行回执，不能复制模板重新开启旧窗口。

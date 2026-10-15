@@ -9,7 +9,10 @@ import (
 func referenceIAMPolicy() []byte {
 	statements := []any{}
 	for _, c := range pilot.ReferenceTargets() {
-		statements = append(statements, map[string]any{"Effect": "Allow", "Action": []string{"s3:DeleteObjectVersion"}, "Resource": []string{"arn:aws:s3:::" + c.Namespace + "/" + c.Key}, "Condition": map[string]any{"StringEquals": map[string]string{"s3:versionid": c.ProviderVersion}}})
+		// The pinned MinIO DeleteObject handler requires DeleteObject even for a
+		// versioned request, then checks DeleteObjectVersion denies. Both actions
+		// remain constrained by the same exact object ARN and version condition.
+		statements = append(statements, map[string]any{"Effect": "Allow", "Action": []string{"s3:DeleteObject", "s3:DeleteObjectVersion"}, "Resource": []string{"arn:aws:s3:::" + c.Namespace + "/" + c.Key}, "Condition": map[string]any{"StringEquals": map[string]string{"s3:versionid": c.ProviderVersion}}})
 	}
 	b, _ := json.MarshalIndent(map[string]any{"Version": "2012-10-17", "Statement": statements}, "", "  ")
 	return b

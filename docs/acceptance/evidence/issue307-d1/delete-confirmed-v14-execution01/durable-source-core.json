@@ -1,0 +1,21 @@
+{
+  "run_id": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+  "label_key": "lifecycle307.run",
+  "allowed_states": [
+    "running"
+  ],
+  "status": "PASS",
+  "services": [
+    {
+      "destination": "/var/lib/postgresql/data",
+      "type": "volume",
+      "volume": "dpp-lifecycle307-5d2274ee-postgres",
+      "writable": true,
+      "container_id": "c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0",
+      "role": "source-core",
+      "container": "dpp-lifecycle307-5d2274ee-postgres"
+    }
+  ],
+  "storage_io": 0,
+  "mutation": 0
+}

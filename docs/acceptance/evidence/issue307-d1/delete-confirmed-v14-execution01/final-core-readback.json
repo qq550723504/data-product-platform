@@ -1,0 +1,416 @@
+{
+  "as_of": "2026-10-15T09:05:12.721182+00:00",
+  "basis": [
+    {
+      "id": "a08b1e22-67f6-4c38-bd82-fb86139678a2",
+      "run_id": "614cd9ad-3f9d-40be-b110-3f7cf95f0790",
+      "basis_ref": "human-confirmed:reference-disposal:5bed6aca13ee07a45eca88511267a32e097fd1435c8864c23c936b47614e247d",
+      "starts_at": "2026-10-15T08:58:57.831503+00:00",
+      "retain_until": "2026-10-15T08:58:57.831503+00:00",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "approved_hash": "d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc",
+      "dispose_due_at": "2026-10-15T08:58:57.831503+00:00",
+      "inventory_hash": "2b1df1ccd9e7a138bf47050cad9f031c02bd04664b64eb12aee0337ad670c9f8",
+      "start_event_id": "ca02ef14-9da5-4d20-a6e0-af91b517cf99",
+      "approved_plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "inventory_plan_id": "dfd47e35-b99a-4581-942f-96ab5d3941f1"
+    }
+  ],
+  "claims": [
+    {
+      "attempt_id": "c163dca9-4650-4efe-bdef-e3380bdc9da0",
+      "claimed_at": "2026-10-15T08:58:59.339416+00:00",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155"
+    }
+  ],
+  "absence": 0,
+  "results": [
+    {
+      "id": "139743bb-c46e-4eeb-a408-2ef9e9e030bc",
+      "run_id": "485fd65e-ade9-4139-bbb3-b517978c7dde",
+      "outcome": "UNKNOWN_PRESENT",
+      "work_id": "144b5fde-01f3-48a1-ba86-a41c79ebe933",
+      "terminal": false,
+      "observed_at": "2026-10-15T08:59:10.813339+00:00",
+      "stat_call_id": "f094caac-c43a-46a7-b41f-a0a7f1ef9cc8",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "completion_id": null,
+      "copy_decision_id": null,
+      "copy_discovery_id": null,
+      "inventory_call_id": "34855fcb-cca1-46d7-810d-7d7f239d2d58",
+      "absence_receipt_id": null,
+      "dependency_revision": 89
+    },
+    {
+      "id": "9ead4080-2361-4300-9728-05cc2677a45e",
+      "run_id": "222fca7f-e053-4c95-8c7a-b49456fd1d75",
+      "outcome": "UNKNOWN_PRESENT",
+      "work_id": "144b5fde-01f3-48a1-ba86-a41c79ebe933",
+      "terminal": false,
+      "observed_at": "2026-10-15T08:59:56.667496+00:00",
+      "stat_call_id": "b22ba5d0-f08c-4083-b35a-1f3a4608c1bf",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "completion_id": null,
+      "copy_decision_id": null,
+      "copy_discovery_id": null,
+      "inventory_call_id": "7646e4bd-6016-4765-a544-b077d27e7db4",
+      "absence_receipt_id": null,
+      "dependency_revision": 89
+    },
+    {
+      "id": "d8829089-46c7-41fe-902d-f0813bc62229",
+      "run_id": "9451db75-25d3-46b3-b0e4-ed6f5e6e1535",
+      "outcome": "UNKNOWN_PRESENT",
+      "work_id": "144b5fde-01f3-48a1-ba86-a41c79ebe933",
+      "terminal": false,
+      "observed_at": "2026-10-15T09:00:22.054466+00:00",
+      "stat_call_id": "d89a1160-2d78-49b0-8f18-fab3ce6c050a",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "completion_id": null,
+      "copy_decision_id": null,
+      "copy_discovery_id": null,
+      "inventory_call_id": "e4e2ac74-afdb-4870-8972-61f701a8000c",
+      "absence_receipt_id": null,
+      "dependency_revision": 89
+    },
+    {
+      "id": "f7edc40e-0b55-45b0-b384-eae83ce50653",
+      "run_id": "eea66078-552c-4688-b862-c168dd24f36c",
+      "outcome": "ALREADY_RESOLVED",
+      "work_id": "144b5fde-01f3-48a1-ba86-a41c79ebe933",
+      "terminal": true,
+      "observed_at": "2026-10-15T09:04:07.312588+00:00",
+      "stat_call_id": null,
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "completion_id": null,
+      "copy_decision_id": null,
+      "copy_discovery_id": null,
+      "inventory_call_id": null,
+      "absence_receipt_id": null,
+      "dependency_revision": 90
+    }
+  ],
+  "attempts": [
+    {
+      "id": "0a86461d-d5c2-4c00-99ae-0d44ac6dde2a",
+      "action": "DELETE_EXACT",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "started_at": "2026-10-14T00:59:53.349245+00:00",
+      "dispatch_id": "8b9b4d0c-df37-41b5-b3d1-0630deae8675",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dependency_revision": 83,
+      "provider_request_key": "lifecycle-delete:0a86461d-d5c2-4c00-99ae-0d44ac6dde2a"
+    },
+    {
+      "id": "d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9",
+      "action": "DELETE_EXACT",
+      "copy_id": "0a239dc6-9e1d-49eb-8604-e22a93e7b6a0",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "started_at": "2026-10-14T00:59:53.615357+00:00",
+      "dispatch_id": "aa0dc82a-06b4-4b0d-a066-33d19ccc8f45",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dependency_revision": 84,
+      "provider_request_key": "lifecycle-delete:d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9"
+    },
+    {
+      "id": "c163dca9-4650-4efe-bdef-e3380bdc9da0",
+      "action": "DELETE_EXACT",
+      "copy_id": "8b1ff30c-3695-4847-b4cf-cc92cd6a399c",
+      "plan_id": "8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "started_at": "2026-10-15T08:58:58.795995+00:00",
+      "dispatch_id": "33fe793a-f793-41c0-bc6e-33c0c1cdd80f",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "dependency_revision": 89,
+      "provider_request_key": "lifecycle-delete:c163dca9-4650-4efe-bdef-e3380bdc9da0"
+    }
+  ],
+  "releases": [
+    {
+      "dispatch_id": "8b9b4d0c-df37-41b5-b3d1-0630deae8675",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "observation_id": "618a48c5-1cbb-4881-8907-02f6ef81418a",
+      "verification_call_id": null
+    },
+    {
+      "dispatch_id": "aa0dc82a-06b4-4b0d-a066-33d19ccc8f45",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "observation_id": "df64b6b3-523a-452e-ade6-9df94618596c",
+      "verification_call_id": null
+    },
+    {
+      "dispatch_id": "33fe793a-f793-41c0-bc6e-33c0c1cdd80f",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "observation_id": "0275b189-390a-4cb9-b606-8079909ce3e5",
+      "verification_call_id": "cbc1284d-4a82-4843-8ea6-39f71b56c1b3"
+    }
+  ],
+  "completion": 0,
+  "observations": [
+    {
+      "id": "618a48c5-1cbb-4881-8907-02f6ef81418a",
+      "outcome": "NOT_SENT",
+      "actor_id": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+      "certainty": "NOT_SENT",
+      "attempt_id": "0a86461d-d5c2-4c00-99ae-0d44ac6dde2a",
+      "invoked_at": null,
+      "observed_at": "2026-10-14T04:49:13.734652+00:00",
+      "proof_sha256": "b712218094dd09b0650fc042697b023c528262f1f1f7515260303ccfcf6be1c8",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "principal_ref": "lifecycle-reference-preparation:614cd9ad-3f9d-40be-b110-3f7cf95f0790",
+      "dependency_revision": 85
+    },
+    {
+      "id": "df64b6b3-523a-452e-ade6-9df94618596c",
+      "outcome": "NOT_SENT",
+      "actor_id": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+      "certainty": "NOT_SENT",
+      "attempt_id": "d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9",
+      "invoked_at": null,
+      "observed_at": "2026-10-14T04:49:13.765633+00:00",
+      "proof_sha256": "b712218094dd09b0650fc042697b023c528262f1f1f7515260303ccfcf6be1c8",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "principal_ref": "lifecycle-reference-preparation:614cd9ad-3f9d-40be-b110-3f7cf95f0790",
+      "dependency_revision": 86
+    },
+    {
+      "id": "0275b189-390a-4cb9-b606-8079909ce3e5",
+      "outcome": "DENIED",
+      "actor_id": "a9b14a41-cad4-46cd-9cd3-2852c68816bf",
+      "certainty": "CONFIRMED",
+      "attempt_id": "c163dca9-4650-4efe-bdef-e3380bdc9da0",
+      "invoked_at": "2026-10-15T08:58:59.697914+00:00",
+      "observed_at": "2026-10-15T08:58:59.699799+00:00",
+      "proof_sha256": "b11cf743aa20a466e3f5b6d6955b743ab02500d65e819cf6339f80754cdc0c7f",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "principal_ref": "lifecycle-fixture:614cd9ad-3f9d-40be-b110-3f7cf95f0790",
+      "dependency_revision": 89
+    }
+  ],
+  "storage_calls": 125,
+  "storage_costs": 125,
+  "provider_costs": [
+    {
+      "cost": {
+        "id": "ca249969-9793-408a-a229-3f0589f0d844",
+        "unit": "invocation",
+        "amount": null,
+        "currency": null,
+        "metadata": {},
+        "quantity": 1.0,
+        "cost_type": "LIFECYCLE_PROVIDER_INVOCATION",
+        "activity_id": "c163dca9-4650-4efe-bdef-e3380bdc9da0",
+        "occurred_at": "2026-10-15T08:58:59.697914+00:00",
+        "execution_id": null,
+        "pricing_mode": "ACTUAL",
+        "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155"
+      },
+      "allocation": {
+        "id": "a00949eb-66be-481a-8ac8-334b759873b2",
+        "created_at": "2026-10-15T08:58:59.699932+00:00",
+        "cost_event_id": "ca249969-9793-408a-a229-3f0589f0d844",
+        "delivery_operation_id": null,
+        "quality_assessment_id": null,
+        "rights_declaration_id": null,
+        "external_usage_call_id": null,
+        "ingestion_invocation_id": null,
+        "dataset_certification_id": null,
+        "source_schema_attempt_id": null,
+        "external_provider_call_id": null,
+        "lifecycle_storage_call_id": null,
+        "annotation_engine_attempt_id": null,
+        "annotation_review_attempt_id": null,
+        "certification_disposition_id": null,
+        "effective_rights_snapshot_id": null,
+        "lifecycle_provider_attempt_id": "c163dca9-4650-4efe-bdef-e3380bdc9da0",
+        "quality_assessment_attempt_id": null,
+        "rights_declaration_disposition_id": null,
+        "rights_declaration_verification_id": null,
+        "authorization_provenance_binding_id": null,
+        "authorization_provenance_binding_disposition_id": null
+      }
+    }
+  ],
+  "old_outbox_states": [
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "CertificationProfileCreated"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "DataResourceCreated"
+    },
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "DatasetCertified"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "DatasetCreated"
+    },
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "DatasetDeliveryGateEvaluated"
+    },
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "DatasetDeliveryIssued"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "DatasetVersionCreated"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "EntityMappingDecisionRecorded"
+    },
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "EntityMatchCompleted"
+    },
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "ExecutionDependenciesPrepared"
+    },
+    {
+      "count": 3,
+      "status": "PENDING",
+      "event_type": "ExecutionFailed"
+    },
+    {
+      "count": 4,
+      "status": "PENDING",
+      "event_type": "ExecutionQueued"
+    },
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "ExecutionRecoveryStarted"
+    },
+    {
+      "count": 4,
+      "status": "PENDING",
+      "event_type": "ExecutionStarted"
+    },
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "ExecutionSucceeded"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "LifecycleContentUseRestricted"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "LifecycleCopyPolicyBound"
+    },
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "LifecycleDispositionApproved"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "LifecycleDispositionBlocked"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "LifecycleDispositionDispatched"
+    },
+    {
+      "count": 3,
+      "status": "PENDING",
+      "event_type": "LifecycleDispositionPlanPrepared"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "LifecycleDispositionRecoveryRequested"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "LifecycleDispositionReservationReleased"
+    },
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "LifecycleFixtureDisposalBasisRegistered"
+    },
+    {
+      "count": 23,
+      "status": "PENDING",
+      "event_type": "LifecycleFixtureReferenceReleased"
+    },
+    {
+      "count": 23,
+      "status": "PENDING",
+      "event_type": "LifecycleFixtureReferenceRequired"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "LifecycleProviderAttemptObserved"
+    },
+    {
+      "count": 7,
+      "status": "PENDING",
+      "event_type": "LifecycleReaderAdmitted"
+    },
+    {
+      "count": 7,
+      "status": "PENDING",
+      "event_type": "LifecycleReaderTerminated"
+    },
+    {
+      "count": 92,
+      "status": "PENDING",
+      "event_type": "LifecycleStorageCallObserved"
+    },
+    {
+      "count": 92,
+      "status": "PENDING",
+      "event_type": "LifecycleStorageCallStarted"
+    },
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "QualityPassed"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "RightsDeclarationCreated"
+    },
+    {
+      "count": 2,
+      "status": "PENDING",
+      "event_type": "RightsDeclarationVerified"
+    },
+    {
+      "count": 1,
+      "status": "PENDING",
+      "event_type": "WorkflowVersionCreated"
+    }
+  ],
+  "unaccounted_storage": 0,
+  "storage_observations": 125,
+  "physical_denial_http_status_from_immutable_proof": [
+    403
+  ]
+}

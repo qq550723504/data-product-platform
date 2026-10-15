@@ -158,10 +158,12 @@ func referenceSend(ctx context.Context, stage string) error {
 	sendErr := deleter.DeleteExactCopy(ctx, attempt, target)
 	var workID uuid.UUID
 	var observed bool
-	if e = pool.QueryRow(ctx, `SELECT id,EXISTS(SELECT 1 FROM lifecycle_provider_observation WHERE attempt_id=$1 AND certainty='CONFIRMED') FROM lifecycle_reconciliation_work WHERE attempt_id=$1`, attempt.ID).Scan(&workID, &observed); e != nil {
+	var certainty, outcome string
+	if e = pool.QueryRow(ctx, `SELECT w.id,COALESCE(o.certainty,''),COALESCE(o.outcome,'UNKNOWN') FROM lifecycle_reconciliation_work w LEFT JOIN LATERAL (SELECT certainty,outcome FROM lifecycle_provider_observation WHERE attempt_id=w.attempt_id ORDER BY observed_at DESC,id DESC LIMIT 1) o ON true WHERE w.attempt_id=$1`, attempt.ID).Scan(&workID, &certainty, &outcome); e != nil {
 		return e
 	}
-	if e = write(filepath.Join(c.OutputDirectory, stage+"-returned.json"), map[string]any{"copy": target, "attempt": attempt, "work_id": workID, "confirmed_invocation_observed": observed, "response_unknown": sendErr != nil, "recovery": "READ_ONLY_ONLY; no resend or next stage before exact absence", "completion": "NOT_CLAIMED"}); e != nil {
+	observed = certainty == domain.InvocationConfirmed
+	if e = write(filepath.Join(c.OutputDirectory, stage+"-returned.json"), map[string]any{"copy": target, "attempt": attempt, "work_id": workID, "confirmed_invocation_observed": observed, "invocation_certainty": certainty, "provider_outcome": outcome, "send_error": sendErr != nil, "response_unknown": outcome == domain.ProviderUnknown, "recovery": "READ_ONLY_ONLY; no resend or next stage before exact absence", "completion": "NOT_CLAIMED"}); e != nil {
 		return e
 	}
 	if !observed {
@@ -169,6 +171,12 @@ func referenceSend(ctx context.Context, stage string) error {
 			return sendErr
 		}
 		return lc.ErrStorageUnknown
+	}
+	if outcome != domain.ProviderUnknown {
+		if sendErr != nil {
+			return sendErr
+		}
+		return lc.ErrStorageContract
 	}
 	// Separately authorized native acceptance loses the original executor only
 	// AFTER a physical observation/cost commits, BEFORE any absence/completion.

@@ -1,0 +1,17 @@
+{
+  "schema": "lifecycle307-confirmed-denied-independent-review-v1",
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v14-review01/independent-review.json",
+      "bytes": 5593,
+      "sha256": "59dc25f13f7bc32ffb84d9f18584a4a4469edff8c67dc8b3f23a5d90c779b57a"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v14-review01/primary-audit.json",
+      "bytes": 1907,
+      "sha256": "abf92b9ce2e97510f3f9dd9d876f47db474c4b413d9f010c7bdc55664f36518d"
+    }
+  ],
+  "old_execution_index_unchanged": true,
+  "native_success_acceptance": "BLOCKED_NOT_ACCEPTED"
+}

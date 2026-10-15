@@ -1,0 +1,125 @@
+{
+  "at": "2026-10-15T09:21:20.163533+00:00",
+  "status": "PASS_OFFLINE_INTEGRITY_SOURCE_FIX_AND_STOPPED_HOST",
+  "historical_head": "2babc930d46c38a3c5241e52b15a13706f081345",
+  "old_indexed_raw_unchanged": 255,
+  "old_indexes_unchanged": 22,
+  "authorized_sender_binary_unchanged": true,
+  "authorized_candidate_source": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "current_runtime_fix_files": {
+    "apps/platform/cmd/lifecycle-fixture-delete/reference_gateway.go": "f3fa3ae3b30ce59a80ad604e7011eb1355728cab8389c79ace532d3d2c67a3d5",
+    "apps/platform/cmd/lifecycle-fixture-delete/reference_send.go": "1b179d73b12d70a0ff892f0a3a61be9a0338975bb976a04c68fda14188be7136"
+  },
+  "source_fix_activated": false,
+  "fresh_candidate_approval": "NOT_PREPARED;old614cd9ad A single-send consumed; do not reuse",
+  "local_tests": {
+    "command": "go test ./cmd/lifecycle-fixture-delete ./cmd/lifecycle-fixture-recovery ./internal/platform/storage ./internal/lifecycle/pilot",
+    "result": "PASS_ALL_FOUR_PACKAGES",
+    "oss_policy_engine": "github.com/minio/pkg/v3 v3.1.3 already required",
+    "test_source_sha256": "9087c94a113d2bff6eb6d6c81c44428362d04b97ed54ebfee66b5e61c5f4100f"
+  },
+  "minio_binary_sha256": "fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8",
+  "minio_build_binding": [
+    "path\tgithub.com/minio/minio",
+    "mod\tgithub.com/minio/minio\tv0.0.0-20251015172955-9e49d5e7a648",
+    "dep\tgithub.com/minio/pkg/v3\tv3.1.3\th1:6iBVcTPq7z29suUROciYUBpvLxfzDV3/+Ls0RFDOta8=",
+    "build\tvcs.revision=9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a",
+    "build\tvcs.time=2025-10-15T17:29:55Z",
+    "build\tvcs.modified=false"
+  ],
+  "native_admin_rpc": {
+    "admin-attach": {
+      "starts": 9,
+      "observations": 9,
+      "http_statuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ]
+    },
+    "admin-disable": {
+      "starts": 6,
+      "observations": 6,
+      "http_statuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ]
+    },
+    "admin-enable": {
+      "starts": 6,
+      "observations": 6,
+      "http_statuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ]
+    },
+    "admin-inspect": {
+      "starts": 5,
+      "observations": 5,
+      "http_statuses": [
+        200,
+        200,
+        200,
+        200,
+        200
+      ]
+    },
+    "admin-inspect02": {
+      "starts": 5,
+      "observations": 5,
+      "http_statuses": [
+        200,
+        200,
+        200,
+        200,
+        200
+      ]
+    },
+    "admin-provision": {
+      "starts": 7,
+      "observations": 7,
+      "http_statuses": [
+        200,
+        200,
+        200,
+        404,
+        200,
+        200,
+        404
+      ]
+    }
+  },
+  "native_admin_total": 38,
+  "original_failure_diagnostics": [
+    "provision disabled-user AttachPolicy HTTP404; created identity stayed disabled and empty policy",
+    "StringEquals scalar/singleton set normalization; no broader policy accepted",
+    "staging Postgres anonymous data mount rejected before start; retain old helpers/volumes and replace with tmpfs scratch",
+    "final audit expected-relation list initially omitted command_idempotency/evidence_relation; added actual command/evidence append tables, no business data change",
+    "first seal hash-map comparison used Windows backslash paths; corrected key normalization; original tar/dump hashes unchanged; all services had already stopped"
+  ],
+  "stopped_source_project_containers": 86,
+  "authority_enabled": false,
+  "auditor_provider_io": 0,
+  "auditor_db_io": 0,
+  "auditor_container_starts": 0,
+  "cleanup": 0,
+  "retained_backups_sha256": {
+    "reference-disposal-preparation01/native-snapshot/native-store.tar": "f72efeab2c49802be1661a431164167d7a34968fef877163f08b25878d9554cc",
+    "predelete-core-checkpoint-04/core.dump": "19dba12b9992fdd11c237d6f0df489c7a961696acd54b8a3403b941e7005c98a"
+  },
+  "actual_result": "ONE_CONFIRMED_DENIED_HTTP403; ZERO_SUCCESSFUL_DELETE; B_NOT_SENT; SIX_RETAINED; ABSENCE0_COMPLETION0"
+}
