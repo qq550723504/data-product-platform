@@ -1,0 +1,105 @@
+{
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/audit-costs.json",
+      "bytes": 133,
+      "sha256": "4f914194ef984bc25ce3467a6f1090c99846be8031b09fe9f63c07f4cf914ec5"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/audit-restored.json",
+      "bytes": 31634,
+      "sha256": "f1e695a1a1a1ba393494c7adc1cbae1301b518b9e59907b81ff374052eabf034"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/candidate-binding.json",
+      "bytes": 45186,
+      "sha256": "da53bbf0fd8dbbf5ee0caa9096773bf761f18d4a8e852ac6a5c31c6e0fa4eea4"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/current-core-readback.json",
+      "bytes": 14239,
+      "sha256": "0cde989a6daa21578f523d95e340f4232c7c17558e59613c4dfeb1ce845344d7"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/current-preconditions-readonly.sql",
+      "bytes": 49802,
+      "sha256": "dc5907dc9bc8e36e47e861b26efa901143e0412f28788973e284ff8fc7f1a8ea"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/native-helper.json",
+      "bytes": 335,
+      "sha256": "8d668dcde449735baf67031ef067788e733f7fa0056ea1c10889b8b2489ef77d"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/native-iam-helper.json",
+      "bytes": 510,
+      "sha256": "657170a58e22864983211946c249c55aaa7afa61b8b57aae85527d73dfa9e3c1"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/native-iam-readonly.json",
+      "bytes": 1042,
+      "sha256": "e967953704ce42d0e95af9ec3a3160e4e83e1b786f482938adf901d39e1c3e3d"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/native-six-version.json",
+      "bytes": 12742,
+      "sha256": "317a9be04a594082ec4fa5bad00296894bc0d385470b2099fe9a6e3842c2dc5d"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/owner-closure-readback.json",
+      "bytes": 36851,
+      "sha256": "70e9d5bfe3d86d3915f63b10a8dedf1167834726df26a580cda86ae5b2193d7c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/readonly-checkpoint.json",
+      "bytes": 913,
+      "sha256": "f25dad06d12bad8b4769ea3cc4c57371827a4ac1fb5dd0491fc3bc8ab548e0d1"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/reference-qualification-readback.json",
+      "bytes": 26464,
+      "sha256": "7add33d1de101f15a2c173c14e7d952b56786e9db1d3f9b4128777c0250c05ea"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/retained-final-state.json",
+      "bytes": 196,
+      "sha256": "32901781f00c832f9df07b526f1399a74af6a5ed78e517174860c03715e855d3"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/source-after.json",
+      "bytes": 31312,
+      "sha256": "382f71c55ec0ebc292dd6a400780797c55fe1e8eb6bcefd89edeb6cafe5def98"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/5d-11/source-before.json",
+      "bytes": 31286,
+      "sha256": "56038cc544bbbfacc3a490fbb949f09bac2321cca753290a083f36ade3fb089b"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/execution-preconditions.json",
+      "bytes": 6100,
+      "sha256": "d1e0f8470e738f4b70ac6d82986a97149d6e6af9ca74af082f1d06bcbbd2a7d3"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/preflight-host.json",
+      "bytes": 22811,
+      "sha256": "aa52cebbfde5f92d4c41340b6ef8f93b1fc1720b3190e52b8f0b9ee23a616e17"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/proposal-v12.json",
+      "bytes": 16675,
+      "sha256": "afbe79b5a4db663ba37556cde5adcb341aa1862f2cf3c576d10a570d83218083"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/retained-topology.json",
+      "bytes": 19396,
+      "sha256": "6bbba1cb324062e613f1926af51842c01ef846343eb171159b727a5adfbe49a3"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v11-refresh01/verification.json",
+      "bytes": 3937,
+      "sha256": "4de459b25bc6f32337be8e4a92bc12d4d65d105e90d9fa7fc75a5c14d84a5d6d"
+    }
+  ],
+  "scope": "New audit-core-11 native read-only refresh of reviewed v11; original v11/index/review bytes retained; no delete authority"
+}

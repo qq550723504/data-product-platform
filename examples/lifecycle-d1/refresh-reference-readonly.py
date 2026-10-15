@@ -45,6 +45,8 @@ def refresh_paths(generation):
         return BASE / 'delete-readonly-v9-refresh01', 'd1-delete-readonly-v9-refresh01'
     if generation == 10:
         return BASE / 'delete-readonly-v10-refresh01', 'd1-delete-readonly-v10-refresh01'
+    if generation == 11:
+        return BASE / 'delete-readonly-v11-refresh01', 'd1-delete-readonly-v11-refresh01'
     raise ValueError('Refresh outside finite generation')
 
 
@@ -52,7 +54,7 @@ def run(generation=6):
     public, control_name = refresh_paths(generation)
     m = module('readonly', ROOT / 'examples/lifecycle-d1/complete-lc13-readonly.py')
     binary = reviewed_inputs(m)
-    if generation in (7, 8, 9, 10):
+    if generation in (7, 8, 9, 10, 11):
         reviewed = module('reviewed_v7', ROOT / 'examples/lifecycle-d1/check-reference-refresh.py')
         previous_generation = str(generation - 1).zfill(2)
         reviewed.check(reviewed.load(reviewed.refresh_paths(previous_generation)[2]), generation=previous_generation)
@@ -61,7 +63,8 @@ def run(generation=6):
         expected_head = {7: 'e122a613322fba6009ec8175539e9eb9e3e7f05e',
                          8: 'a29bfe6019cd5b38415fd378394fcd537662525c',
                          9: 'd01c6cdc5918e04eb0981b4bff2a152bb72ee0a6',
-                         10: 'cf65cbad0bf93601e2b8a2a24ea2ffcc09247774'}[generation]
+                         10: 'cf65cbad0bf93601e2b8a2a24ea2ffcc09247774',
+                         11: 'fb0ff60e2fc8e6fb808e96595e0ddae418bef1cd'}[generation]
         m.require(review['status'] == 'PASS_INDEPENDENT_OFFLINE_REVIEW'
                   and review['current_slice_blockers'] == 0
                   and review['reviewed_head'] == expected_head, 'Predecessor review not closed')
