@@ -25,8 +25,8 @@ func renderReference() error {
 	if e != nil {
 		return e
 	}
-	active := []byte(referenceGateway("refdelete614cd9ad", c.Fixture.InspectAccess, true))
-	sealed := []byte(referenceGateway("refdelete614cd9ad", c.Fixture.InspectAccess, false))
+	active := []byte(referenceGateway(referenceDeleteAccess, c.Fixture.InspectAccess, true))
+	sealed := []byte(referenceGateway(referenceDeleteAccess, c.Fixture.InspectAccess, false))
 	policy := referenceIAMPolicy()
 	binary, e := os.ReadFile(os.Args[0])
 	if e != nil {
@@ -39,5 +39,5 @@ func renderReference() error {
 		}
 	}
 	h := func(data []byte) string { s := sha256.Sum256(data); return hex.EncodeToString(s[:]) }
-	return write(filepath.Join(c.Fixture.OutputDirectory, "bounded-profile.json"), map[string]any{"status": "IMPLEMENTED_DISABLED", "environment": pilot.ReferenceEnvironment, "execution": pilot.ReferenceExecution, "workspace": pilot.ReferenceWorkspace, "provider": pilot.ReferenceProvider, "incarnation": pilot.ReferenceIncarnation, "plan": pilot.ReferencePlan, "plan_hash": pilot.ReferencePlanHash, "inventory_hash": pilot.ReferenceInventoryHash, "inventory": pilot.ReferenceCopies(), "targets": pilot.ReferenceTargets(), "target_digest": referenceTargetsDigest(), "binary_sha256": hex.EncodeToString(sum[:]), "active_gateway_sha256": h(active), "sealed_gateway_sha256": h(sealed), "iam_policy_sha256": h(policy), "permission_enabled": false, "human_confirmation": "NOT_RECEIVED", "max_total": 2, "max_per_target": 1, "max_minutes": 40, "new_dispatch_only": true, "old_trials_never_sent": true, "inventory_closure": "6 then 5 then 4; only exact absence receipts remove registry members", "fresh_host_topology_required": true, "provider_delete": 0, "iam_native_provision": "NOT_RUN; only after separate exact confirmation", "policy": json.RawMessage(policy)})
+	return write(filepath.Join(c.Fixture.OutputDirectory, "bounded-profile.json"), map[string]any{"status": "IMPLEMENTED_DISABLED", "environment": pilot.ReferenceEnvironment, "execution": pilot.ReferenceExecution, "workspace": pilot.ReferenceWorkspace, "provider": pilot.ReferenceProvider, "incarnation": pilot.ReferenceIncarnation, "plan": pilot.ReferencePlan, "plan_hash": pilot.ReferencePlanHash, "inventory_hash": pilot.ReferenceInventoryHash, "inventory": pilot.ReferenceCopies(), "targets": pilot.ReferenceTargets(), "target_digest": referenceTargetsDigest(), "binary_sha256": hex.EncodeToString(sum[:]), "active_gateway_sha256": h(active), "sealed_gateway_sha256": h(sealed), "iam_policy_sha256": h(policy), "permission_enabled": false, "human_confirmation": "NOT_RECEIVED", "max_total": 2, "max_per_target": 1, "max_minutes": 40, "new_dispatch_only": true, "old_trials_never_sent": true, "prior_execution": "614cd9ad-3f9d-40be-b110-3f7cf95f0790", "prior_physical_attempt": "CONFIRMED_DENIED_RELEASED_TERMINAL_REQUIRED", "profile": referenceProfile, "delete_access": referenceDeleteAccess, "gateway_name": referenceGatewayName, "sender_prefix": referenceSenderPrefix, "inventory_closure": "6 then 5 then 4; only exact absence receipts remove registry members", "fresh_host_topology_required": true, "provider_delete": 0, "iam_native_provision": "NOT_RUN; only after separate exact confirmation", "policy": json.RawMessage(policy)})
 }

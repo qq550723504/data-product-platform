@@ -19,6 +19,32 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
+// The only prior physical attempt is admitted as history after its immutable
+// denial, verified reservation release and terminal recovery all exist. Nothing
+// here reuses its approval, dispatch, provider key or one-call budget.
+const referenceSendHistoryQuery = `SELECT
+ (SELECT count(*) FROM lifecycle_dispatch_release r JOIN lifecycle_provider_observation o ON o.id=r.observation_id
+  WHERE r.workspace_id=$3 AND r.dispatch_id IN('8b9b4d0c-df37-41b5-b3d1-0630deae8675','aa0dc82a-06b4-4b0d-a066-33d19ccc8f45') AND o.certainty='NOT_SENT' AND o.outcome='NOT_SENT')=2,
+ EXISTS(SELECT 1 FROM lifecycle_provider_attempt a
+  JOIN lifecycle_provider_observation o ON o.attempt_id=a.id
+  JOIN lifecycle_dispatch_release r ON r.dispatch_id=a.dispatch_id AND r.observation_id=o.id
+  JOIN lifecycle_reconciliation_work w ON w.attempt_id=a.id
+  JOIN lifecycle_reconciliation_result x ON x.work_id=w.id
+  WHERE a.id='c163dca9-4650-4efe-bdef-e3380bdc9da0' AND a.workspace_id=$3 AND a.plan_id=$2
+   AND a.copy_id='8b1ff30c-3695-4847-b4cf-cc92cd6a399c' AND a.dispatch_id='33fe793a-f793-41c0-bc6e-33c0c1cdd80f'
+   AND o.certainty='CONFIRMED' AND o.outcome='DENIED' AND r.verification_call_id IS NOT NULL
+   AND w.id='144b5fde-01f3-48a1-ba86-a41c79ebe933' AND x.terminal AND x.outcome='ALREADY_RESOLVED'),
+ EXISTS(SELECT 1 FROM lifecycle_provider_attempt a WHERE a.workspace_id=$3 AND a.copy_id=$1
+  AND a.id NOT IN('0a86461d-d5c2-4c00-99ae-0d44ac6dde2a','d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9','c163dca9-4650-4efe-bdef-e3380bdc9da0')),
+ EXISTS(SELECT 1 FROM lifecycle_copy_absence_receipt WHERE workspace_id=$3 AND plan_id=$2 AND copy_id='8b1ff30c-3695-4847-b4cf-cc92cd6a399c')`
+
+func validateReferenceSendHistory(stage string, oldTrials, oldDenied, newAttempt, firstAbsent bool) error {
+	if !oldTrials || !oldDenied || newAttempt || (stage != "send-a" && stage != "send-b") || (stage == "send-b" && !firstAbsent) || (stage == "send-a" && firstAbsent) {
+		return errors.New("attempt/receipt ordering forbids send; read-only recovery required")
+	}
+	return nil
+}
+
 // Preparation cannot reach this path: it first requires a separately captured
 // exact-list confirmation, pinned binary/profile/topology and <=40min authority.
 func referenceSend(ctx context.Context, stage string) error {
@@ -51,13 +77,13 @@ func referenceSend(ctx context.Context, stage string) error {
 		return lc.ErrStorageScope
 	}
 	// Old starts are historical facts. Never reuse them or unresolved reservations.
-	var oldResolved, newAttempt, firstAbsent bool
-	e = pool.QueryRow(ctx, `SELECT (SELECT count(*) FROM lifecycle_dispatch_release r JOIN lifecycle_provider_observation x ON x.id=r.observation_id WHERE r.dispatch_id IN('8b9b4d0c-df37-41b5-b3d1-0630deae8675','aa0dc82a-06b4-4b0d-a066-33d19ccc8f45') AND x.certainty='NOT_SENT' AND x.outcome='NOT_SENT')=2, EXISTS(SELECT 1 FROM lifecycle_provider_attempt a WHERE a.copy_id=$1 AND a.id NOT IN('0a86461d-d5c2-4c00-99ae-0d44ac6dde2a','d8a52b7b-9cad-4ab4-a8d5-286d37ceafb9')), EXISTS(SELECT 1 FROM lifecycle_copy_absence_receipt WHERE plan_id=$2 AND copy_id='8b1ff30c-3695-4847-b4cf-cc92cd6a399c')`, target.ID, planID).Scan(&oldResolved, &newAttempt, &firstAbsent)
+	var oldResolved, oldDenied, newAttempt, firstAbsent bool
+	e = pool.QueryRow(ctx, referenceSendHistoryQuery, target.ID, planID, workspace).Scan(&oldResolved, &oldDenied, &newAttempt, &firstAbsent)
 	if e != nil {
 		return e
 	}
-	if !oldResolved || newAttempt || (stage == "send-b" && !firstAbsent) || (stage == "send-a" && firstAbsent) {
-		return errors.New("attempt/receipt ordering forbids send; read-only recovery required")
+	if e = validateReferenceSendHistory(stage, oldResolved, oldDenied, newAttempt, firstAbsent); e != nil {
+		return e
 	}
 	var approved domain.Plan
 	e = manager.Do(ctx, func(ctx context.Context, t pgx.Tx) error {

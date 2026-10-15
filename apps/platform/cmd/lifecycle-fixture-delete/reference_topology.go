@@ -31,7 +31,7 @@ type referenceTopologyWitness struct {
 }
 
 func validReferenceTopology(t referenceTopology) bool {
-	return t.Execution == pilot.ReferenceExecution && t.CoreID == "c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0" && t.MinioID == "0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65" && t.OriginalGatewayID == "ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4" && t.GatewayName == "dpp-lifecycle307-5d2274ee-reference-delete-gateway" && len(t.GatewayID) == 64 && t.GatewayID != t.OriginalGatewayID && t.GatewayImage == "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f" && t.NetworkID == "33f303a57406f05c4e78b3cdb1355059a8f55f552e438162edc5bff129f4c02c" && len(t.GatewayConfigSHA256) == 64 && len(t.DSNSHA256) == 64 && len(t.BinarySHA256) == 64
+	return t.Execution == pilot.ReferenceExecution && t.CoreID == "c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0" && t.MinioID == "0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65" && t.OriginalGatewayID == "ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4" && t.GatewayName == referenceGatewayName && len(t.GatewayID) == 64 && t.GatewayID != t.OriginalGatewayID && t.GatewayImage == "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f" && t.NetworkID == "33f303a57406f05c4e78b3cdb1355059a8f55f552e438162edc5bff129f4c02c" && len(t.GatewayConfigSHA256) == 64 && len(t.DSNSHA256) == 64 && len(t.BinarySHA256) == 64
 }
 func validateReferenceTopology(c referenceConfig, p referencePermission, raw []byte, signed pilot.SignedClosedReferenceExecutor, at time.Time) error {
 	key, e := hex.DecodeString(c.AttestationPublicKey)
@@ -42,14 +42,14 @@ func validateReferenceTopology(c referenceConfig, p referencePermission, raw []b
 	}
 	hash := sha256.Sum256(raw)
 	dsn := sha256.Sum256([]byte(c.Fixture.PostgresDSN))
-	if hex.EncodeToString(hash[:]) != p.TopologySHA256 || witness.TopologySHA256 != p.TopologySHA256 || witness.Topology != t || t.BinarySHA256 != p.BinarySHA256 || t.DSNSHA256 != hex.EncodeToString(dsn[:]) || witness.Kind != "reference-send-topology-v1" || witness.CheckedAt.IsZero() || at.Before(witness.CheckedAt) || at.Sub(witness.CheckedAt) > time.Minute || len(witness.HelperID) != 64 || witness.NetworkMode != "container:"+t.GatewayID || (witness.HelperName != "dpp-lifecycle307-5d2274ee-reference-send-a" && witness.HelperName != "dpp-lifecycle307-5d2274ee-reference-send-b") {
+	if hex.EncodeToString(hash[:]) != p.TopologySHA256 || witness.TopologySHA256 != p.TopologySHA256 || witness.Topology != t || t.BinarySHA256 != p.BinarySHA256 || t.DSNSHA256 != hex.EncodeToString(dsn[:]) || witness.Kind != "reference-send-topology-v1" || witness.CheckedAt.IsZero() || at.Before(witness.CheckedAt) || at.Sub(witness.CheckedAt) > time.Minute || len(witness.HelperID) != 64 || witness.NetworkMode != "container:"+t.GatewayID || (witness.HelperName != referenceSenderPrefix+"a" && witness.HelperName != referenceSenderPrefix+"b") {
 		return lc.ErrStorageDenied
 	}
 	return nil
 }
 func referenceHostTopology(ctx context.Context, stage string) error {
 	// Fixed host entry point, never a client-submitted topology/signing service.
-	base := `C:\Users\Henry\.codex\fixture-private\dpp-lifecycle307-5d2274ee\reference-disposal-execution01`
+	base := `C:\Users\Henry\.codex\fixture-private\dpp-lifecycle307-5d2274ee\reference-disposal-execution02`
 	folder := filepath.Join(base, "executor-"+stage)
 	var c referenceConfig
 	var p referencePermission
@@ -130,7 +130,7 @@ func referenceHostTopology(ctx context.Context, stage string) error {
 	if hex.EncodeToString(binaryHash[:]) != p.BinarySHA256 {
 		return lc.ErrStorageScope
 	}
-	name := "dpp-lifecycle307-5d2274ee-reference-send-" + stage
+	name := referenceSenderPrefix + stage
 	helper, e := get(name)
 	if e != nil {
 		return e
@@ -165,7 +165,7 @@ func referenceHostTopology(ctx context.Context, stage string) error {
 			return lc.ErrStorageScope
 		}
 		modeOK = modeOK || entry == "LIFECYCLE_REFERENCE_MODE=send-"+stage
-		profileOK = profileOK || entry == "LIFECYCLE_REFERENCE_PROFILE=5d2274ee-614cd9ad"
+		profileOK = profileOK || entry == "LIFECYCLE_REFERENCE_PROFILE="+referenceProfile
 	}
 	if !modeOK || !profileOK {
 		return lc.ErrStorageScope

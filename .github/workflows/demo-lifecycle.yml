@@ -36,6 +36,8 @@ jobs:
           python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_lc13_readonly.py -v
           python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_history.py -v
           python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_history.py -v
+          python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05.py -v
+          python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05.py -v
       - name: Check archived candidate04 with its frozen runtime (no provider I/O)
         run: python3 examples/lifecycle-d1/check-reference-history.py
       - name: Install isolated browser runner

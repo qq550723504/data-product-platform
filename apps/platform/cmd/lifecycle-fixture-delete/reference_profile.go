@@ -33,6 +33,12 @@ import (
 
 var referenceComposition bool
 
+// One current synthetic execution. Prior credentials/permissions are not inputs.
+const referenceProfile = "5d2274ee-9ea8f3e2"
+const referenceDeleteAccess = "refdelete9ea8f3e2"
+const referenceGatewayName = "dpp-lifecycle307-5d2274ee-reference-delete-gateway-02"
+const referenceSenderPrefix = "dpp-lifecycle307-5d2274ee-reference-send-02-"
+
 type referenceConfig struct {
 	Fixture              config
 	PreparationEnabled   bool
@@ -90,7 +96,7 @@ func referenceTargetsDigest() string {
 	return hex.EncodeToString(sum[:])
 }
 func validateReferencePermission(p referencePermission, c referenceConfig, at time.Time) error {
-	if p.DeleteAccess != "refdelete614cd9ad" {
+	if p.DeleteAccess != referenceDeleteAccess {
 		return lc.ErrStorageDenied
 	}
 	if ok, _ := regexp.MatchString(`^[a-zA-Z0-9]{1,64}$`, c.Fixture.InspectAccess); !ok {
@@ -294,7 +300,7 @@ func referenceHostAttest(ctx context.Context) error {
 	return nil
 }
 func runReference(ctx context.Context, mode string) error {
-	if os.Getenv("LIFECYCLE_REFERENCE_PROFILE") != "5d2274ee-614cd9ad" {
+	if os.Getenv("LIFECYCLE_REFERENCE_PROFILE") != referenceProfile {
 		return lc.ErrStorageScope
 	}
 	configureReference()
