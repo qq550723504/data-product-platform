@@ -10,7 +10,7 @@
 
 只接受预期退出码、只读 rootfs、无持久 volume mount、无端口发布、无 restart policy 的 helper。不接管无标记的旧容器，不依据名称、镜像、TTL 或全机扫描自动删除。预期非零退出必须由测试明确传入；意外失败、OOM、running、created 和未知结果全部保留。
 
-完成后将完整 inspect 元数据、带时间戳的 stdout/stderr 与 SHA-256 清单落到工作树外的私有用户目录。Windows 使用当前用户与 SYSTEM 的 ACL；POSIX 使用 0700 目录。日志可能包含 credential，不能提交或作为公开验收 evidence。公开 cleanup receipt 只含容器 ID、移除结果和删除资源计数。
+完成后将完整 inspect 元数据、带时间戳的 stdout/stderr 与 SHA-256 清单落到工作树外的私有用户目录。Windows 复用 fixture preparation 的完整 DACL 设置方式，仅保留当前用户与 SYSTEM，复用目录的其他显式授权也必须移除；POSIX 使用 0700 目录。日志可能包含 credential，不能提交或作为公开验收 evidence。公开 cleanup receipt 只含容器 ID、移除结果和删除资源计数。
 
 核对归档、重新 inspect 确认 identity/state 不变后执行 `docker container rm <full-id>`。不传 `--force`、`--volumes`，不删除 volume、bind 文件、镜像、network 或对象数据。原始 provenance 中的 helper ID 是历史 identity；完成后不再要求该 Docker 对象常驻，私有归档与追加的 cleanup receipt 解释其退役。不要改写已封存的旧验收结果。
 
@@ -47,4 +47,4 @@ PowerShell `-Retain` / Python `retain=True` 可显式保留某个 helper；不�
 
 复用已有 Docker CLI、receipt/file evidence，以及测试入口自身的完成判定；现有 ingestion `CleanupReceipts` 仍负责它的多组件清理结果。Docker 原生 `--rm` 无法满足当前脚本先 inspect、落盘退出码与日志再移除的顺序，故仅增加薄的归档 adapter。Testcontainers/Ryuk 适用于其创建的资源，不能接管这些既有 PowerShell helper；无需第二套 runtime 或 TTL janitor。
 
-本地无 Docker 单测：`python examples/temporary_containers_test.py`。原生验证：`pwsh -File examples/temporary-containers-native-test.ps1`，仅创建新的隔离合成 helper，验证失败保留、预期非零、双日志归档与 bind 数据保留。
+本地无 Docker 单测：`python examples/temporary_containers_test.py`。Windows 权限回归：`pwsh -File examples/temporary-containers-acl-test.ps1`，验证已有目录上的额外显式授权及已有诊断文件的继承授权被移除；CI 的 Linux/Windows matrix 均执行契约单测，Windows 另执行真实 ACL 回归。原生 Docker 验证：`pwsh -File examples/temporary-containers-native-test.ps1`，仅创建新的隔离合成 helper，验证失败保留、预期非零、双日志归档与 bind 数据保留。

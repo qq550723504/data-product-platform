@@ -4,9 +4,8 @@ Docker remains the runtime and collector. There is no daemon, global prune, TTL
 guess, forced removal, or volume/image/network cleanup here.
 """
 import argparse
-import csv
+import base64
 import hashlib
-import io
 import json
 import os
 from pathlib import Path
@@ -50,12 +49,24 @@ def private_root(path=None):
         raise CleanupError("Helper diagnostics must be outside Git worktrees")
     root.mkdir(parents=True, exist_ok=True, mode=0o700)
     if os.name == "nt":
-        result = command(["whoami", "/user", "/fo", "csv", "/nh"])
-        sid = next(csv.reader(io.StringIO(result.stdout.decode())))[1]
-        if not re.fullmatch(r"S-1-[0-9-]+", sid):
-            raise CleanupError("Cannot establish private archive ownership")
-        command(["icacls", str(root), "/inheritance:r", "/grant:r",
-                 "*" + sid + ":(OI)(CI)F", "*S-1-5-18:(OI)(CI)F"])
+        # Reuse the exact-DACL approach from lifecycle-d1/prepare.ps1.
+        # icacls /grant:r only replaces the named principals' ACEs, leaving
+        # unrelated explicit grants on a reused directory (and diagnostics).
+        encoded_path = base64.b64encode(str(root).encode("utf-8")).decode("ascii")
+        script = r"""
+$ErrorActionPreference='Stop'
+$path=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('__PATH__'))
+$acl=[Security.AccessControl.DirectorySecurity]::new()
+$acl.SetAccessRuleProtection($true,$false)
+foreach($sid in @([Security.Principal.WindowsIdentity]::GetCurrent().User,
+                  [Security.Principal.SecurityIdentifier]::new('S-1-5-18'))){
+ $acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new(
+  $sid,'FullControl','ContainerInherit,ObjectInherit','None','Allow'))
+}
+[IO.Directory]::SetAccessControl($path,$acl)
+""".replace("__PATH__", encoded_path)
+        encoded_script = base64.b64encode(script.encode("utf-16-le")).decode("ascii")
+        command(["powershell.exe", "-NoProfile", "-NonInteractive", "-EncodedCommand", encoded_script])
     else:
         root.chmod(0o700)
     return root

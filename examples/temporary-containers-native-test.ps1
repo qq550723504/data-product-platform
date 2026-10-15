@@ -5,6 +5,7 @@ Set-StrictMode -Version Latest
 $run=[guid]::NewGuid().ToString()
 $output=Join-Path $env:LOCALAPPDATA "Codex/docker-maintenance/native-$run"
 New-Item -ItemType Directory -Path $output|Out-Null
+& (Join-Path $PSScriptRoot 'temporary-containers-acl-test.ps1') -OutputDirectory $output|Out-Null
 $handles=@()
 function NativeDocker([string[]]$DockerArguments){
  $value=& docker.exe @DockerArguments
@@ -31,7 +32,7 @@ try {
  # This synthetic fixture intentionally exits 7; only its owner can now attest it.
  $intentional=Complete-DppTemporaryContainer -Handle $failed -ExpectedExitCode 7
  if($intentional.status -ne 'REMOVED'){throw 'Expected nonzero fixture cleanup failed'}
- [pscustomobject]@{status='PASS';run_id=$run;helpers_removed=2;unexpected_failure_retained_until_owner_attestation=$true;host_data_preserved=$true;private_diagnostics_archived=$true;volumes_removed=0;other_containers_touched=0}|ConvertTo-Json -Compress
+ [pscustomobject]@{status='PASS';run_id=$run;helpers_removed=2;unexpected_failure_retained_until_owner_attestation=$true;host_data_preserved=$true;private_diagnostics_archived=$true;foreign_explicit_archive_access_removed=$true;volumes_removed=0;other_containers_touched=0}|ConvertTo-Json -Compress
 } finally {
  foreach($known in $handles){
   $present=NativeDocker @('container','ls','--all','--quiet','--no-trunc','--filter',"id=$($known.id)")

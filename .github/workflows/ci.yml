@@ -78,13 +78,20 @@ jobs:
   temporary-container-contracts:
     needs: changes
     if: ${{ needs.changes.outputs.docs_only != 'true' }}
-    name: temporary-container-contracts
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
+    name: temporary-container-contracts (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
       - name: Test completed helper ownership, archival, and safe collection
-        run: python3 examples/temporary_containers_test.py
+        run: python examples/temporary_containers_test.py
+      - name: Test Windows archive ACL replacement on existing diagnostics
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./examples/temporary-containers-acl-test.ps1
 
   go-platform:
     needs: changes
