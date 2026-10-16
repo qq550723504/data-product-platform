@@ -41,6 +41,7 @@
 | 独立复评与最终检查 | PASS_BOUNDED_REVIEW / SEE_FINAL_CI_CHECKPOINT | 独立只读复评重核812源码、940 raw及最终73份native回归，当前切片BLOCKER=0；67个精确owner CID再次inspect均stopped/PID0/noports/no restart。最终精确HEAD的Linux PR CI在GitHub checkpoint记录 |
 | 实际删除与完整D1 | NOT_RUN / NOT_ACCEPTED | 所有源版本仍在；七次未来发送预算目前为0。旧授权不复用；#307不关闭 |
 | 新授权/窗口前准备 | AUTHORIZED_WAITING_FIXED_WINDOW | 新按引用授权与一次性本线程续跑已登记；32权限false、58个绑定容器停止/PID0；回执归档、H1配置单字段撤销及封存故障组合离线通过。真实fresh核验、签名、IAM动作和发送均留待已授权窗口 |
+| 窗口前工具独立复评 | PASS_BOUNDED_REVIEW / BLOCKER=0 | 原B1当前包校验阻断封存、B2归档失败跳过IAM关闭均已有限修复；正常及-O各14项独立通过，旧11份准备raw不变。当前工具入口为remaining-window-review01，旧composition仅保留历史；[初评与复评](evidence/issue307-d1/remaining-window-review01/independent-final-review.json) |
 
 最新证据：[业务原生重跑](evidence/issue307-d1/remaining-executable03/business-races/regression/remaining-business-regression.json)、[六顺序PG与历史保留](evidence/issue307-d1/remaining-policy-regression03/tests.txt)、[最新冻结binary H0/H1](evidence/issue307-d1/remaining-final-regression01/result.json)、[H0/H1完整证据](evidence/issue307-d1/remaining-final-regression01/evidence-index.json)、[M1/C补跑](evidence/issue307-d1/remaining-executable04/checkpoint-completion.json)。
 
@@ -56,7 +57,7 @@ Reuse Check：复用既有Commands/PG fence/immutable facts、FixtureSubjectPins
 
 1. 当前人类已对下方唯一文本及全部绑定按引用授权；实际人类原文与逐字批准载荷分开留证，不声称用户重新键入模板。核对当前PR HEAD/Draft和源码/三个binary/备份/容器完整ID。发送前重新做三源只读Core与18版本库存、保护、IAM核验；当前baseline若漂移，停止，不沿用旧授权。新确认不得转用于其他execution或窗口。
 2. 启动绑定的三源Core/native/gateway及各自固定Redis；gateway安装绑定active配置，9000端口始终无DELETE路由，9002仅由冻结wire提供。root bootstrap与所有business/sender/recovery挂载分离。
-3. 只在固定UTC窗口内，验证本次按引用授权原文、envelope、全部冻结绑定及批准模板原字节，再将批准载荷写入对应private human文件和bounded permission（ConfirmedAt、NotBefore/ExpiresAt、max1/7、全部SHA）。不得仅从template自动伪造人类授权。root `enable-read`先验证冻结IAM manifest→每个golden policy文件SHA→OSS set equality→完整单policy关联，再启用限定reader/producer/inspector并读回。任何失败先执行独立 `disable-all`；闭锁不依赖策略校验成功。所有root helper再次运行前保留归档旧O_EXCL回执，不把旧结果冒充fresh。
+3. 只在固定UTC窗口内，验证本次按引用授权原文、envelope、全部冻结绑定及批准模板原字节，再将批准载荷写入对应private human文件和bounded permission（ConfirmedAt、NotBefore/ExpiresAt、max1/7、全部SHA）。不得仅从template自动伪造人类授权。root `enable-read`先验证冻结IAM manifest→每个golden policy文件SHA→OSS set equality→完整单policy关联，再启用限定reader/producer/inspector并读回。任何失败先执行独立 `disable-all`；闭锁不依赖策略校验成功。root helper重跑先尝试保留归档旧O_EXCL回执；启用操作遇归档失败即停，独立关闭操作仍须尝试，旧摘要一律不能冒充本次fresh确认，归档失败也不能报告整轮封存PASS。
 4. business的`renew` owner先核对六个expected previous policy IDs，追加本execution的新policy，期限≤min(now+1h,02:40Z)。随后`business` owner运行真实P1/P2/T1/T2并证明owner/pin/typed refs全部闭合。late `late` owner先完成H0/H1及H2准备；H1使用冻结close配置的独立closure binding签可信owner终止证明，再运行`close-H1`，不产生claim、absence或provider invocation成本；metadata调用成本独立保留。mixed `mixed`仅先准备A。
 5. 每个sender/wire/recovery启动前运行源码化 [host attester](../../examples/lifecycle-d1/attest-remaining-executable.py)，它从actual Docker inspect核对CID、image、network/netns、readonly mounts、config/binary SHA、无ports/socket/root-secret、no restart、gateway hash和persistent budget，才签≤1分钟topology。host私钥永不挂worker；wire使用独立key。
 6. root `enable-send`仅启用该组冻结七目标子集的exact-version删除身份并读回。每个target先fresh gate，持久O_EXCL budget再claim；P1/P2/T1/T2各一次，再经绑定`recover-*`实际Outbox/Asynq只读exact absence核对。H2只允许A一次；真实上游204后签witness、提交approval revoke与A/B late holds后丢响应；B永不dispatch，A UNKNOWN仅lookup不重发。M1先A一次→exact absence，再B一次→CONFIRMED UNKNOWN→C-only native protection+Core阻断检查点；其后才可复制精确checkpoint至`recover-M1B`并lookup，C永无发送预算。

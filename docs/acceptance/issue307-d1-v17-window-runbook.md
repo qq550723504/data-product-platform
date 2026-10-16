@@ -1,5 +1,7 @@
 # #307 D1 candidate07/v17 固定窗口运行手册
 
+当前 host 执行入口为 `remaining-window-review01/composition/window_support.py`。0ef2fb92 的 `delete-confirmed-v17-execution01` 准备包、11份raw索引及当时手册SHA均保留为历史；旧composition不再作为执行入口。独立评审发现的“当前包损坏阻断封存”和“归档失败跳过IAM关闭”只在host组合中修复，冻结candidate及其源码/binary/授权范围不变。
+
 本手册只组合已冻结的 owner、IAM bootstrap、attester 和 Command。execution 为 `effa0385-9308-42eb-bd66-d0c379b6a989`，唯一发送窗口为 **2026-10-17 02:00:00Z ≤ now < 02:40:00Z**（新加坡10:00–10:40）。七份目标逐份最多一次、总计最多七次；UNKNOWN 不重发。11份保留版本、其他环境、全部备份保留；cleanup=0、hold-release=0、bypass=0。#323 保持 Draft，#307 保持 OPEN。
 
 权威完整绑定仍为 [v17精确文本](issue307-d1-candidate07-confirmation.md)、[candidate](evidence/issue307-d1/remaining-candidate07/candidate.json)、[bindings](evidence/issue307-d1/remaining-candidate07/bindings.json)。本手册不修改这些字节，也不新增目标、窗口或发送实现。
@@ -19,8 +21,8 @@
 
 ```powershell
 python -B -X utf8 examples/lifecycle-d1/check-remaining-candidate07-freeze.py
-python -B -X utf8 docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-execution01/composition/window_support.py check
-python -B -X utf8 docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-execution01/composition/test_window_support.py
+python -B -X utf8 docs/acceptance/evidence/issue307-d1/remaining-window-review01/composition/window_support.py check
+python -B -X utf8 docs/acceptance/evidence/issue307-d1/remaining-window-review01/composition/test_window_support.py
 ```
 
 `check` 仅文件读取和 Docker inspect，不启动容器、不发 provider 请求、不写 worker human 文件、不启用 permission。原生 fresh 核验留到窗口；离线 PASS 不替代该核验。
@@ -36,7 +38,7 @@ python -B -X utf8 docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-exec
 5. **一次性root回执**：冻结 `check-disabled` 已有旧 `result.json`，重新运行前用下述归档模式保留原字节/哈希。运行固定CID必须exit0并保存新的实际时间和journal。不能忽略 O_EXCL 错误把旧回执当fresh。重复使用 `enable-read`、`disable-all` 等同样先归档；不删除journal、不重建helper。
 
 ```powershell
-python -B -X utf8 docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-execution01/composition/window_support.py archive-root --group late-hold --action check-disabled
+python -B -X utf8 docs/acceptance/evidence/issue307-d1/remaining-window-review01/composition/window_support.py archive-root --group late-hold --action check-disabled
 ```
 
 6. **materialize批准载荷**：验证新授权receipt的实际原文SHA、envelope SHA、candidate/template/bindings/source/binary/digest及窗口、max1/7、survivor11完全一致；在本次已授权窗口内，把已批准的 `approved-referenced-template.txt` 原字节写入所选固定owner的 `human-confirmation.txt`。它是机器核验的批准载荷，不能标注成人类重新键入。permission仅更新 `Enabled` 与真实 `ConfirmedAt`；保留冻结candidate/template/binary SHA、NotBefore/ExpiresAt及预算。未选择的owner继续false。无新的真实人类授权、当前消息已撤销或任一绑定不符均停止，不能自行合成新的批准。
@@ -65,14 +67,14 @@ python -B -X utf8 docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-exec
 ## 6. 失败封存（同样适用于完成后的最终关闭）
 
 ```powershell
-python -B -X utf8 docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-execution01/composition/window_support.py seal
+python -B -X utf8 docs/acceptance/evidence/issue307-d1/remaining-window-review01/composition/window_support.py seal
 ```
 
-该模式只启动固定`disable-all` root helper，绝不启动native/Core/gateway/sender/wire/enable helper。窗口前拒绝；窗口结束后仍可执行关闭操作。步骤独立收集结果，一项失败不能跳过其他组：
+该模式只启动固定`disable-all` root helper，绝不启动native/Core/gateway/sender/wire/enable helper。窗口前拒绝；窗口结束后仍可执行关闭操作。仅seal从本地Git anchor `37094e56c2a02d46ec3f02e4f6fa1e4b3457eb1f` 读取同一candidate/bindings，并强制原SHA，以确定已批准的固定关闭CID；当前candidate/template损坏不能阻止已知owner封存。此快照不授予任何发送权限，check/H1等其他模式仍严格校验当前文件。若本地批准快照自身不可用或SHA不符，不能猜测CID，须报告封存未确认。步骤独立收集结果，一项失败不能跳过其他组：
 
 1. 32份permission设false；7个case Base.Enabled和7份独立recovery Enabled同时撤销，原字节私有保留。每个失败单独记录，不先校验无关策略再决定是否关闭。
 2. 按candidate完整CID停止全部17 operator/wire/recovery、7 case和6个root-enable owners；防止并发重新启用。停止发送进程会保留已花费budget和原provider attempt/UNKNOWN，不能据此判NOT_SENT。
-3. 若本组原native仍运行且固定disable-all helper的binary/rootconfig/netns/mounts可信，归档其旧O_EXCL回执再运行；每组均尝试，30秒限时。底层Go先disable/readback再验证policy。若策略后验失败但新 `status-changes.json` 全部disabled且unconfirmed空，可报告“身份关闭已确认，policy失败”；不能报告整个步骤PASS。native已停或readback失败则明确“身份关闭未确认”。
+3. 若本组原native仍运行且固定disable-all helper的binary/rootconfig/netns/mounts可信，尝试归档其旧O_EXCL回执；归档失败单独记未完成，仍运行同一固定disable-all，每组均尝试，30秒限时。底层Go先disable/readback再验证policy。启动前已存在或不可读的status摘要一律不能当作本次fresh读回；只有本次O_EXCL新建的回执可采信。策略后验失败但fresh `status-changes.json` 全部disabled且unconfirmed空，可分别报告最后读回disabled、policy失败；若任何enable owner仍未实际关闭，稳定identity关闭也必须unconfirmed。归档失败、身份未确认或policy失败均使整轮封存未通过；native已停不能冒充fresh IAM确认。
 4. 各组停止gateway、保存原配置字节后安装冻结sealed文件；再停止native/Core、3恢复Redis、business处理Redis和全部root helpers。逐个inspect验证实际停止/PID0/no restart。即使IAM或文件封存失败，仍继续停止所有绑定资源。
 5. 私有 `seal-<uuid>.json` 保存逐步骤结果；命令失败原stdout/stderr只写私有diagnostics。对账provider start/observation、wire witness、7target预算、claim/absence/completion和所有调用成本；保留UNKNOWN。未确认不能包装为NOT_SENT或absence，不能释放旧pins、解除hold、清空预算或清理资源。
 6. 生成公开脱敏封存摘要与SHA索引，明确未确认项、实际DELETE数量和NOT_RUN；暂停同一heartbeat。若电脑/Docker不可用导致无法执行关闭，报告封存未确认；冻结sender/wire仍有硬窗口/3分钟context，不能把时间失效宣称为已实测IAM关闭。
@@ -84,8 +86,9 @@ python -B -X utf8 docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-exec
 | 新授权及全部冻结绑定 | RECEIVED_BY_REFERENCE；原文与批准载荷分开 | 最新人类消息未撤销、字节及SHA一致 |
 | 一次性续跑 | REGISTERED；2026-10-17 10:00+08 | 实际醒来时间、host/app/Docker可用，不能顺延 |
 | 权限与物理封存 | PASS_PREWINDOW_CLOSED；32 false、58个绑定容器停止/PID0 | 开窗后 fresh IAM/18版本/Core/backup/budget |
-| 回执重用及H1证明 | 归档/单字段撤销/实际证明代码与离线fault tests | 真实IAM fresh回执及NOT_SENT仍NOT_RUN |
-| 失败封存 | 离线逐步骤故障组合PASS；真实source未启动 | 实际IAM readback、deny gateway、PID0逐项留证 |
+| 回执重用及H1证明 | 独立复评PASS；原字节归档/单字段撤销/实际状态签名反例通过 | 真实IAM fresh回执及NOT_SENT仍NOT_RUN |
+| 失败封存 | 正常及-O各14项PASS，含归档失败/旧摘要/enable进程未关闭组合；真实source未启动 | 实际IAM readback、deny gateway、PID0逐项留证 |
+| 窗口前独立评审 | PASS_BOUNDED_REVIEW；B1/B2关闭，BLOCKER=0；[复评回执](evidence/issue307-d1/remaining-window-review01/independent-final-review.json) | 当前包损坏仍进入同一批准CID关闭；归档失败仍尝试IAM但拒绝旧摘要；enable未关停不确认稳定身份关闭。timer须绑定本版实际SHA及最终精确HEAD/CI |
 | 七目标删除/完整D1 | NOT_RUN / NOT_ACCEPTED | 原生结果与11份survivor、成本/事实历史全对账 |
 
 当前工具测试是离线验证，未运行真实IAM关闭、H1签名或删除演练。新的运行结果按实际事实追加，不改冻结包的准备状态。

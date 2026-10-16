@@ -103,3 +103,5 @@ docs/acceptance/evidence/issue307-d1/remaining-*/**/*modules.txt whitespace=-bla
 # v17 execution preparation retains exact receipt and composition bytes.
 docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-execution01/** -text whitespace=cr-at-eol
 docs/acceptance/issue307-d1-v17-window-runbook.md text eol=lf
+docs/acceptance/evidence/issue307-d1/remaining-window-review*/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-window-review*/*.txt whitespace=cr-at-eol,-blank-at-eol
