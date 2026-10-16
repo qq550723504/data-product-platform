@@ -96,4 +96,5 @@ docs/acceptance/evidence/issue307-d1/remaining-candidate07/** -text whitespace=c
 docs/acceptance/evidence/issue307-d1/remaining-policy-regression*/** -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-final-regression*/** -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-final-review*/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-ci*/** -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-*/**/*modules.txt whitespace=-blank-at-eol

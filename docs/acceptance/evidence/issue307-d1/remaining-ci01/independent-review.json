@@ -1,0 +1,20 @@
+{
+  "status": "PASS_INDEPENDENT_FINITE_CI_FIX_REVIEW",
+  "reviewer": "/root/remaining_runner_independent_review",
+  "blockers": [],
+  "executed_offline": [
+    "check-remaining-candidate07-freeze.py PASS: 812 source / 940 raw plus Git index blobs / current runtime drift0",
+    "test_remaining_candidate07_freeze.py normal three tests PASS",
+    "test_remaining_candidate07_freeze.py -O three tests PASS"
+  ],
+  "verified": [
+    "Only main_test.go equals fixed f3 gofmt result SHA f823e77aff612ea1b542754c68db2e6ab68aaaa28bf6c517e14754980b0b4fe5",
+    "Caddyfile index and working tree both original CRLF 241 bytes",
+    "Original checker, candidate, binary, profile and execution-source binding unchanged"
+  ],
+  "failed_run_retained": 38881289712,
+  "new_exact_head_linux_CI": "REQUIRED_AFTER_COMMIT",
+  "runtime_operations": 0,
+  "native_delete": 0,
+  "cleanup": 0
+}

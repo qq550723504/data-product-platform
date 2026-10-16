@@ -1,0 +1,14 @@
+2026-10-16T09:34:37.6914945Z Traceback (most recent call last):
+2026-10-16T09:34:37.6916757Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/check-remaining-candidate07.py", line 95, in <module>
+2026-10-16T09:34:37.6918213Z     if __name__=='__main__':print(json.dumps(check()))
+2026-10-16T09:34:37.6918830Z                                              ^^^^^^^
+2026-10-16T09:34:37.6920049Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/check-remaining-candidate07.py", line 76, in check
+2026-10-16T09:34:37.6921690Z     verify_records(root,index['files']);verify_records(root,index['references'])
+2026-10-16T09:34:37.6922481Z                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-16T09:34:37.6923820Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/check-remaining-candidate07.py", line 26, in verify_records
+2026-10-16T09:34:37.6925428Z     require(path.is_file() and hash64(expected) and sha(path.read_bytes())==expected,'raw evidence changed: '+name)
+2026-10-16T09:34:37.6927359Z   File "/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/check-remaining-candidate07.py", line 16, in require
+2026-10-16T09:34:37.6928482Z     if not value:raise ValueError(message)
+2026-10-16T09:34:37.6928951Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-16T09:34:37.6929926Z ValueError: raw evidence changed: docs/acceptance/evidence/issue307-d1/remaining-case02/gateway.Caddyfile
+2026-10-16T09:34:37.7086670Z ##[error]Process completed with exit code 1.

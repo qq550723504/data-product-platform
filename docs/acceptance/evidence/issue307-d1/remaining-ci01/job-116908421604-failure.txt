@@ -1,0 +1,56 @@
+2026-10-16T09:34:07.6879508Z ##[group]Run UNFORMATTED="$(gofmt -l .)"
+2026-10-16T09:34:07.6879891Z [36;1mUNFORMATTED="$(gofmt -l .)"[0m
+2026-10-16T09:34:07.6880200Z [36;1mif [ -n "$UNFORMATTED" ]; then[0m
+2026-10-16T09:34:07.6880488Z [36;1m  echo "$UNFORMATTED"[0m
+2026-10-16T09:34:07.6880763Z [36;1m  for file in $UNFORMATTED; do[0m
+2026-10-16T09:34:07.6881063Z [36;1m    gofmt -d "$file" || true[0m
+2026-10-16T09:34:07.6881332Z [36;1m  done[0m
+2026-10-16T09:34:07.6881538Z [36;1m  exit 1[0m
+2026-10-16T09:34:07.6881750Z [36;1mfi[0m
+2026-10-16T09:34:07.6952470Z shell: /usr/bin/bash -e {0}
+2026-10-16T09:34:07.6952747Z env:
+2026-10-16T09:34:07.6953323Z   POSTGRES_DSN: ***localhost:5432/data_product_platform?sslmode=disable
+2026-10-16T09:34:07.6953958Z   TEST_POSTGRES_DSN: ***localhost:5432/data_product_platform?sslmode=disable
+2026-10-16T09:34:07.6954354Z   REDIS_ADDR: localhost:6379
+2026-10-16T09:34:07.6954613Z   REDIS_DB: 0
+2026-10-16T09:34:07.6954824Z   REDIS_PASSWORD: 
+2026-10-16T09:34:07.6955313Z ##[endgroup]
+2026-10-16T09:34:08.2099495Z cmd/lifecycle-fixture-remaining-iam/main_test.go
+2026-10-16T09:34:08.2119782Z diff cmd/lifecycle-fixture-remaining-iam/main_test.go.orig cmd/lifecycle-fixture-remaining-iam/main_test.go
+2026-10-16T09:34:08.2120716Z --- cmd/lifecycle-fixture-remaining-iam/main_test.go.orig
+2026-10-16T09:34:08.2121559Z +++ cmd/lifecycle-fixture-remaining-iam/main_test.go
+2026-10-16T09:34:08.2122533Z @@ -5,13 +5,24 @@
+2026-10-16T09:34:08.2122887Z  	"testing"
+2026-10-16T09:34:08.2123204Z  )
+2026-10-16T09:34:08.2123462Z  
+2026-10-16T09:34:08.2123806Z -type shouldNotCall struct{t *testing.T}
+2026-10-16T09:34:08.2124759Z -func(s shouldNotCall)RoundTrip(*http.Request)(*http.Response,error){s.t.Fatal("forbidden bootstrap operation reached transport");return nil,nil}
+2026-10-16T09:34:08.2125910Z -func TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable(t *testing.T){
+2026-10-16T09:34:08.2126432Z -	for _,tc:=range []struct{method,path string}{
+2026-10-16T09:34:08.2126914Z -		{"DELETE","/dpp-lifecycle307-online/fixture/p1.csv?versionId=exact"},
+2026-10-16T09:34:08.2127474Z -		{"PUT","/minio/admin/v3/set-user-status?accessKey=foreign&status=disabled"},
+2026-10-16T09:34:08.2128024Z -		{"PUT","/minio/admin/v3/set-user-status?accessKey=delete808a6960&status=enabled"},
+2026-10-16T09:34:08.2128688Z -		{"PUT","/minio/admin/v3/add-user"},{"GET","/dpp-lifecycle307-online/fixture/p1.csv?versionId=exact"},
+2026-10-16T09:34:08.2129978Z -	}{t.Run(tc.path,func(t *testing.T){req,_:=http.NewRequest(tc.method,"http://127.0.0.1:9000"+tc.path,nil);if _,e:=(transport{shouldNotCall{t},map[string]string{"delete808a6960":"fixed"},true}).RoundTrip(req);e==nil{t.Fatal("forbidden request admitted")}})}
+2026-10-16T09:34:08.2130974Z +type shouldNotCall struct{ t *testing.T }
+2026-10-16T09:34:08.2131260Z +
+2026-10-16T09:34:08.2131588Z +func (s shouldNotCall) RoundTrip(*http.Request) (*http.Response, error) {
+2026-10-16T09:34:08.2132080Z +	s.t.Fatal("forbidden bootstrap operation reached transport")
+2026-10-16T09:34:08.2132449Z +	return nil, nil
+2026-10-16T09:34:08.2132663Z +}
+2026-10-16T09:34:08.2133071Z +func TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable(t *testing.T) {
+2026-10-16T09:34:08.2133582Z +	for _, tc := range []struct{ method, path string }{
+2026-10-16T09:34:08.2134015Z +		{"DELETE", "/dpp-lifecycle307-online/fixture/p1.csv?versionId=exact"},
+2026-10-16T09:34:08.2134539Z +		{"PUT", "/minio/admin/v3/set-user-status?accessKey=foreign&status=disabled"},
+2026-10-16T09:34:08.2135313Z +		{"PUT", "/minio/admin/v3/set-user-status?accessKey=delete808a6960&status=enabled"},
+2026-10-16T09:34:08.2135946Z +		{"PUT", "/minio/admin/v3/add-user"}, {"GET", "/dpp-lifecycle307-online/fixture/p1.csv?versionId=exact"},
+2026-10-16T09:34:08.2136402Z +	} {
+2026-10-16T09:34:08.2136628Z +		t.Run(tc.path, func(t *testing.T) {
+2026-10-16T09:34:08.2137060Z +			req, _ := http.NewRequest(tc.method, "http://127.0.0.1:9000"+tc.path, nil)
+2026-10-16T09:34:08.2137988Z +			if _, e := (transport{shouldNotCall{t}, map[string]string{"delete808a6960": "fixed"}, true}).RoundTrip(req); e == nil {
+2026-10-16T09:34:08.2138561Z +				t.Fatal("forbidden request admitted")
+2026-10-16T09:34:08.2138842Z +			}
+2026-10-16T09:34:08.2139031Z +		})
+2026-10-16T09:34:08.2139213Z +	}
+2026-10-16T09:34:08.2139400Z  }
+2026-10-16T09:34:08.2148652Z ##[error]Process completed with exit code 1.

@@ -161,3 +161,5 @@ M1 固定复用 v15 已验的 **native forward + response-loss** 路径：先完
 复用既有ports、PG Commands/fence、queue/reconciliation、call journal/Cost/Audit/Evidence/Outbox；MinIO、madmin、Asynq和cryptography承担通用能力。新增migration69只解决保留same DV所必需的fixture policy续期，保留全部旧事实，未引入新基础设施。独立复评及最终exact HEAD PR CI记入本轮最终checkpoint，不冒充main CI。
 
 本轮[最终独立只读复评](evidence/issue307-d1/remaining-final-review01/independent-review.json)结论为当前非删除切片BLOCKER=0；最终精确HEAD Linux PR CI须单独核对并在GitHub checkpoint记录。Windows额外全模块测试存在一项未改动metadata子进程500ms启动预算失败，原失败保留；独立诊断确认首次启动1404ms、隔离五次通过且UNKNOWN fail closed，不把它改报全模块PASS。67个精确保留owner CID只读复核均停止/PID0/noports/no restart。
+
+9a41首次CI的gofmt与原Caddy回执Git字节问题已按根因修复：只格式化唯一IAM测试，原CRLF重新入库；新增固定f3/9a41锚点的严格冻结快照校验，940份raw同时核工作区与Git blob，原812源码及原checker保留。当前运行源码必须逐字一致，唯一测试只容许固定gofmt结果，任何其他源码漂移或证据改写均拒绝；原候选与实际binary来源仍为f3，最终CI结果随新精确HEAD在GitHub checkpoint记录。

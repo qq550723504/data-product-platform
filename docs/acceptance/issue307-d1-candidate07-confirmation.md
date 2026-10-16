@@ -36,12 +36,14 @@
 | 新冻结前只读核验 | PASS | 三源Core fingerprint与checkpoint逐项相同；18 exact版本完整库存/bytes/SHA/hold/retention；root GET/HEAD-only journal，bootstrap是技术核验，不冒充业务CostEvent |
 | 发送与恢复接线 | PASS_NON_DELETE | 单target持久budget先于Core claim、SDK retries=1、redirect禁止；真实上游204后才签wire witness；H2随后hold/revoke并丢响应；M1先C-only阻断mixed checkpoint再B lookup；恢复经Outbox→真实Asynq选定work，无resend入口 |
 | 封存/离线反例 | PASS | 17实际operator与7实际case拒绝；source Core/native物理stopped；sender/wire由permission=false先拒绝，recovery由缺fresh signed readonly topology拒绝；Go offline validator、Python正常/-O三项及嵌套篡改反例PASS |
-| 独立复评与最终检查 | PASS_BOUNDED_REVIEW / PR_CI_PENDING | 独立只读复评重核812源码、940 raw及最终73份native回归，当前切片BLOCKER=0；67个精确owner CID再次inspect均stopped/PID0/noports/no restart。最终精确HEAD的Linux PR CI在GitHub checkpoint记录 |
+| 独立复评与最终检查 | PASS_BOUNDED_REVIEW / SEE_FINAL_CI_CHECKPOINT | 独立只读复评重核812源码、940 raw及最终73份native回归，当前切片BLOCKER=0；67个精确owner CID再次inspect均stopped/PID0/noports/no restart。最终精确HEAD的Linux PR CI在GitHub checkpoint记录 |
 | 实际删除与完整D1 | NOT_RUN / NOT_ACCEPTED | 所有源版本仍在；七次未来发送预算目前为0。旧授权不复用；#307不关闭 |
 
 最新证据：[业务原生重跑](evidence/issue307-d1/remaining-executable03/business-races/regression/remaining-business-regression.json)、[六顺序PG与历史保留](evidence/issue307-d1/remaining-policy-regression03/tests.txt)、[最新冻结binary H0/H1](evidence/issue307-d1/remaining-final-regression01/result.json)、[H0/H1完整证据](evidence/issue307-d1/remaining-final-regression01/evidence-index.json)、[M1/C补跑](evidence/issue307-d1/remaining-executable04/checkpoint-completion.json)。
 
 [最终独立复评](evidence/issue307-d1/remaining-final-review01/independent-review.json)仅覆盖本轮有限切片。额外Windows全模块测试保留FAIL：既有metadata启动测试500ms父context内未取得invocation回执；同测试binary首次子进程实测1404ms，后续23–27ms，原测试隔离五次PASS仅用于诊断。相关两份源码与origin/main无改动，超时保持UNKNOWN且source gate为0；未改源码或放宽门禁。Linux精确HEAD PR CI仍为必须检查，不用隔离重跑覆盖失败，诊断与原日志见[独立回执索引](evidence/issue307-d1/remaining-final-review01/evidence-index.json)。
+
+原HEAD `9a41e13f` 的CI暴露一份新增IAM测试漏gofmt，以及`remaining-case02/gateway.Caddyfile`本地原CRLF入Git时曾被转换为LF。修复只格式化该`*_test.go`、把原CRLF重新入库；候选、profile、binary、template及冻结f3源码对象不变。[严格冻结快照校验](../../examples/lifecycle-d1/check-remaining-candidate07-freeze.py)固定原index/candidate锚点，940 raw同时核工作区与Git blob，812源码从f3 archive核验并运行未改的原checker；当前源码只容许该测试等于固定gofmt SHA，其余逐字匹配。运行代码漂移、测试语义变化及raw/index改写反例均拒绝；不将当前PR HEAD冒充binary来源。
 
 CopyPolicy原实现每DV唯一且不可变，并限定一小时；直接写明天期限或重复Bind均被正确拒绝。migration69补充显式expected-head续期与单链current view，维持workspace fence→同DV全部copy锁→previous head锁，拒绝restriction/hold/pin/reservation/UNKNOWN/未闭合output。未来窗口内必须比对冻结六个head再Renew，不能把今天的短时policy当成明天的使用授权。
 
