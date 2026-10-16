@@ -128,6 +128,8 @@ def main():
             facts = json.loads(r.native.sql(source_ids['postgres'],"SELECT json_build_object('approvals',(SELECT count(*) FROM lifecycle_disposition_approval),'dispatches',(SELECT count(*) FROM lifecycle_disposition_dispatch),'attempts',(SELECT count(*) FROM lifecycle_provider_attempt),'send_claims',(SELECT count(*) FROM lifecycle_provider_send_claim),'restrictions',(SELECT count(*) FROM lifecycle_content_use_restriction),'unclosed_pins',(SELECT count(*) FROM lifecycle_reader_pin p WHERE NOT EXISTS(SELECT 1 FROM lifecycle_reader_termination t WHERE t.pin_id=p.id)));"))
             require(all(v == 0 for v in facts.values()),'Source execution already advanced')
             write(target/'source-facts.json',facts)
+            heads=json.loads(r.native.sql(source_ids['postgres'],"SELECT coalesce(json_object_agg(dataset_version_id::text,id::text),'{}') FROM lifecycle_current_copy_policy;"))
+            write(target/'policy-heads.json',heads)
             before=r.native.fingerprints(source_ids['postgres']);write(target/'source-core.json',before)
             (checkpoint/'password').write_text(secrets.token_hex(32))
             docker('exec',source_ids['postgres'],'pg_dump','-U','fixture','-d','lifecycle307','--format=custom','--create',output=checkpoint/'core.dump')

@@ -75,7 +75,7 @@ func recoverExact(ctx context.Context, stage string) error {
 		return e
 	}
 	var cfg pilot.RecoveryConfig
-	if read("/run/private/recovery.json", &cfg) != nil || cfg.WorkspaceID != l.Scope.Workspace || cfg.RunID != l.Scope.Run || cfg.ProviderInstanceID != l.Scope.Provider || cfg.IncarnationID != l.Scope.Incarnation || cfg.ActorID != l.G.Actor || cfg.ManifestSHA256 != l.Scope.ManifestSHA256 || cfg.Endpoint != "127.0.0.1:9000" || cfg.InspectAccess != l.F.InspectAccess || cfg.InspectSecret != l.F.InspectSecret || cfg.Token != l.F.Token || !cfg.Enabled || !cfg.SyntheticOnly || !time.Now().UTC().Before(cfg.ValidUntil) {
+	if read("/run/private/recovery.json", &cfg) != nil || cfg.WorkspaceID != l.Scope.Workspace || cfg.RunID != l.Scope.Run || cfg.ProviderInstanceID != l.Scope.Provider || cfg.IncarnationID != l.Scope.Incarnation || cfg.ActorID != l.G.Actor || cfg.ManifestSHA256 != l.Scope.ManifestSHA256 || cfg.Endpoint != "127.0.0.1:9000" || cfg.InspectAccess != l.F.InspectAccess || cfg.InspectSecret != l.F.InspectSecret || cfg.Token != l.F.Token || !cfg.Enabled || !cfg.SyntheticOnly || !time.Now().UTC().Before(cfg.ValidUntil) || cfg.ValidUntil.After(l.C.NotAfter.Add(2*time.Hour)) {
 		return errDenied
 	}
 	// Recovery config has a separate read-only inspector identity, no DELETE

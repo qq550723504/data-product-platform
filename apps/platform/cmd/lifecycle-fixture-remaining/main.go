@@ -471,7 +471,24 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
 	defer cancel()
 	var e error
-	if *stage == "check-disabled" {
+	if *stage == "check-candidate" {
+		var c candidate
+		e = read("/run/private/candidate.json", &c)
+		if e == nil {
+			e = validateCandidate(c)
+		}
+		if e == nil {
+			path, err := os.Executable()
+			if err != nil {
+				e = err
+			} else if raw, err := os.ReadFile(path); err != nil || digest(raw) != c.SenderBinarySHA256 {
+				e = errDenied
+			}
+		}
+		if e == nil {
+			fmt.Println("PASS_FROZEN_CANDIDATE_OFFLINE; database/provider I/O=0")
+		}
+	} else if *stage == "check-disabled" {
 		_, e = load("P1")
 		if e != nil {
 			fmt.Println("SEALED: authority denied before database/provider I/O; DELETE=0")
