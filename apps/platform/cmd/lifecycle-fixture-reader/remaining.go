@@ -11,6 +11,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -35,6 +36,7 @@ type remainingConfig struct {
 	Group     string
 	Batch     uuid.UUID
 	NonDelete bool
+	Rehearsal bool
 }
 
 func readRemaining(path string, dst any) error {
@@ -59,6 +61,14 @@ func loadRemaining() (remainingConfig, error) {
 		return r, err
 	}
 	c := r.Base
+	dsn, dsnErr := url.Parse(c.PostgresDSN)
+	expectedHost := "dpp-lifecycle307-" + c.RunID.String()[:8] + "-postgres:5432"
+	if r.Rehearsal {
+		expectedHost = "dpp-lifecycle307-808a6960-remaining-regression-pg:5432"
+	}
+	if dsnErr != nil || dsn.Scheme != "postgres" || dsn.Host != expectedHost || dsn.Path != "/lifecycle307" || dsn.User == nil || dsn.User.Username() != "fixture" || dsn.RawQuery != "sslmode=disable" {
+		return r, lc.ErrStorageScope
+	}
 	at := time.Now().UTC()
 	scope, err := pilot.RemainingScopeFor(r.Group)
 	if err != nil || !r.NonDelete || r.Batch == uuid.Nil || !c.Enabled || c.RunID != scope.Run || c.WorkspaceID != scope.Workspace || c.ProviderInstanceID != scope.Provider || c.IncarnationID != scope.Incarnation || c.ActorID == uuid.Nil || c.Epoch == uuid.Nil || c.Endpoint != "127.0.0.1:9000" || c.Token == "" || c.Access == "" || c.Secret == "" || c.PostgresDSN == "" || c.ManifestSHA256 != scope.ManifestSHA256 || !filepath.IsAbs(c.OutputDirectory) || at.Before(c.StartedAt) || !at.Before(c.ExpiresAt) || c.ExpiresAt.Sub(c.StartedAt) > time.Hour {

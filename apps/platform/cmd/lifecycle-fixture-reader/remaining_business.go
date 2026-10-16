@@ -30,7 +30,7 @@ type remainingDisposition struct {
 	pool      *pgxpool.Pool
 	o         *lc.OccupancyService
 	service   *lc.DispositionService
-	deps      *referenceDependencies
+	deps      *pilot.RemainingDependencies
 	inspector lc.StorageInspector
 	plans     map[string]pilot.RemainingPlan
 	approvals map[string]uuid.UUID
@@ -44,7 +44,7 @@ func newRemainingDisposition(ctx context.Context, r remainingConfig, pool *pgxpo
 	if err != nil {
 		return nil, err
 	}
-	deps := &referenceDependencies{c: c, all: cs, protection: map[uuid.UUID]lc.CopyProtection{}, inventories: map[string]lc.NamespaceInventory{}}
+	deps := &pilot.RemainingDependencies{Execution: r.Batch, All: cs, ValidUntil: c.ExpiresAt, Protection: map[uuid.UUID]lc.CopyProtection{}, Inventories: map[string]lc.NamespaceInventory{}}
 	d := &remainingDisposition{r: r, pool: pool, o: o, deps: deps, inspector: ins, plans: map[string]pilot.RemainingPlan{}, approvals: map[string]uuid.UUID{}}
 	d.service = lc.NewDispositionService(o, a, deps, nil)
 	ids := []uuid.UUID{}
@@ -58,7 +58,7 @@ func newRemainingDisposition(ctx context.Context, r remainingConfig, pool *pgxpo
 	scope, _ := pilot.RemainingScopeFor(r.Group)
 	for _, p := range scope.Plans {
 		d.plans[p.Case] = p
-		if _, err = lc.NewExactExecution(d.service).RegisterFixtureDisposalBasis(ctx, lc.FixtureDisposalBasisCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: "remaining-basis:" + p.Case}, RunID: c.RunID, InventoryPlanID: inventory.ID, ApprovedPlanID: p.ID, InventoryHash: inventory.ContentHash, ApprovedHash: p.Hash, BasisRef: "REMAINING_NON_DELETE_REHEARSAL:" + r.Batch.String()}); err != nil {
+		if _, err = lc.NewExactExecution(d.service).RegisterFixtureDisposalBasis(ctx, lc.FixtureDisposalBasisCommand{CommandHeader: lc.CommandHeader{WorkspaceID: c.WorkspaceID, IdempotencyKey: "remaining-basis:" + r.Batch.String() + ":" + p.Case}, RunID: pilot.RemainingBasisRun(r.Batch, p.ID), InventoryPlanID: inventory.ID, ApprovedPlanID: p.ID, InventoryHash: inventory.ContentHash, ApprovedHash: p.Hash, BasisRef: "REMAINING_NON_DELETE_REHEARSAL:" + r.Batch.String()}); err != nil {
 			return nil, err
 		}
 	}
@@ -86,8 +86,8 @@ func (d *remainingDisposition) dispatch(ctx context.Context, name, key string, c
 	if err != nil {
 		return lc.DispatchResult{}, err
 	}
-	d.deps.protection[cp.ID] = p
-	d.deps.inventories[cp.Namespace] = inv
+	d.deps.Protection[cp.ID] = p
+	d.deps.Inventories[cp.Namespace] = inv
 	return d.service.DispatchContentDisposition(ctx, lc.DispatchContentDispositionCommand{CommandHeader: lc.CommandHeader{WorkspaceID: d.r.Base.WorkspaceID, IdempotencyKey: "remaining-dispatch:" + key}, PlanID: d.plans[name].ID, ApprovalID: d.approvals[name], CopyID: cp.ID})
 }
 func remainingNoIO(ctx context.Context, pool *pgxpool.Pool) (int, error) {
