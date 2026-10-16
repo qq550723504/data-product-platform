@@ -1,0 +1,22 @@
+{
+ "Version": "2012-10-17",
+ "Statement": [
+  {
+   "Effect": "Allow",
+   "Action": [
+    "s3:DeleteObjectVersion",
+    "s3:DeleteObject"
+   ],
+   "Resource": [
+    "arn:aws:s3:::dpp-lifecycle307-online/fixture/h2-a.csv"
+   ],
+   "Condition": {
+    "StringEquals": {
+     "s3:versionid": [
+      "453c6f42-fbb2-4fdf-9f86-00a20a54b7bc"
+     ]
+    }
+   }
+  }
+ ]
+}

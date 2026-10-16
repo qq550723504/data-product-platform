@@ -1,0 +1,16 @@
+{
+  "status": "FAIL_RETAINED_NOT_REPLAYED",
+  "source_commit": "900fc3bc96988aa7a6f2d3713e6c5ecf4466aca9",
+  "run_id": "5f6a2497-34ba-4f01-a551-69bad5aee421",
+  "failed_step": "attach-disabled-exact-delete-policy",
+  "native_http_status": 404,
+  "root_cause": "Pinned native policy attachment cannot resolve disabled user; fixed order attaches only in deny-all isolated preparation then disables before any sender exists",
+  "new_versions_retained": 6,
+  "delete": 0,
+  "object_cleanup": 0,
+  "config_enabled": false,
+  "native_inspector_status": "ENABLED_AT_FAILURE; all containers stopped/PID0/noports; excluded from candidate, do not start",
+  "native_delete_user_status": "DISABLED_NO_POLICY_ATTACHMENT",
+  "candidate": "EXCLUDED",
+  "next_attempt": "fresh project and subnet; no retry of this environment"
+}

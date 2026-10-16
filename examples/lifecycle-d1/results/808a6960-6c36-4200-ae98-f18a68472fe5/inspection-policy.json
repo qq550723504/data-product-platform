@@ -1,0 +1,31 @@
+{
+  "Statement": [
+    {
+      "Action": [
+        "s3:ListBucketVersions"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online",
+        "arn:aws:s3:::dpp-lifecycle307-quarantine"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObjectVersion",
+        "s3:GetObjectRetention",
+        "s3:GetObjectLegalHold"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/p1.csv",
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/p2.csv",
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/t1.csv",
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/fixture/t2.csv",
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/control-hold.csv",
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/fixture/control-retention.csv"
+      ]
+    }
+  ],
+  "Version": "2012-10-17"
+}

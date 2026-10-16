@@ -1,0 +1,24 @@
+prepare: readonly-exact-bytes:dpp-lifecycle307-online:fixture/p1.csv
+prepare: readonly-retention:fixture/p1.csv
+prepare: readonly-hold:fixture/p1.csv
+prepare: readonly-exact-bytes:dpp-lifecycle307-online:fixture/p2.csv
+prepare: readonly-retention:fixture/p2.csv
+prepare: readonly-hold:fixture/p2.csv
+prepare: readonly-exact-bytes:dpp-lifecycle307-online:fixture/t1.csv
+prepare: readonly-retention:fixture/t1.csv
+prepare: readonly-hold:fixture/t1.csv
+prepare: readonly-exact-bytes:dpp-lifecycle307-quarantine:fixture/t2.csv
+prepare: readonly-retention:fixture/t2.csv
+prepare: readonly-hold:fixture/t2.csv
+prepare: readonly-exact-bytes:dpp-lifecycle307-online:fixture/control-hold.csv
+prepare: readonly-retention:fixture/control-hold.csv
+prepare: readonly-hold:fixture/control-hold.csv
+prepare: readonly-exact-bytes:dpp-lifecycle307-quarantine:fixture/control-retention.csv
+prepare: readonly-retention:fixture/control-retention.csv
+prepare: readonly-hold:fixture/control-retention.csv
+prepare: readonly-full-inventory:dpp-lifecycle307-online
+prepare: readonly-full-inventory:dpp-lifecycle307-quarantine
+prepare: readonly-disabled-user:inspect808a69606c36
+prepare: readonly-disabled-user:delete808a6960
+prepare: readonly-exact-policy
+readonly-exact-policy failed; environment preserved, no automatic retry

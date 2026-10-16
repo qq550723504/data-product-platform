@@ -113,3 +113,22 @@ M1 固定复用 v15 已验的 **native forward + response-loss** 路径：先完
 | 最终提交 CI | bca29f4d 的初始 PR run 为38857638865；本次追加提交须按新的 exact HEAD 核验 CI。最终 run/13项结果、unresolved threads 和 Draft 状态记在 #323 最新 checkpoint；不把受检 bca、合并前 #318 PR CI 或 merge/main CI 冒充新 HEAD CI |
 
 此次 reviewer 未独立重跑 PG，主线程也未重启任何 DB/container/provider；这与已有 9 组本地 PG race 的历史证明分开。无 native 新候选、真实删除、hold release/bypass、旧环境清理、Ready、merge 或部署。[新复评证据索引](evidence/issue307-d1/remaining-review01/evidence-index.json)与原索引分别保留。
+
+
+## 8. 新原生准备候选与验收矩阵（2026-10-16 追加）
+
+已创建新的 candidate06-preparation/v16，operator execution `fc9d632a-45fc-445a-9652-211db29694b3`，冻结 source `de5f7dd2683cc5b5ed3a68528364d6fe59836f10` 及768文件双hash、实际 prepare/verifier/reference binary、三套 Core checkpoint/roles/ACL/native archive、IAM与active/sealed gateway。精确环境、key/version、8 plan/hash、16 copy/DatasetVersion/bytes/protection、七 prospective target与九survivor全部见 [精确绑定与确认前方案](issue307-d1-remaining-native-confirmation.md)。旧 §3/§5–7 的未创建文字保留其历史时点；本段拥有当前准备状态。
+
+| 范围 | 当前证据 | 原生业务验收 / 权限边界 |
+| --- | --- | --- |
+| 新环境 | business `808a6960`、late-hold `754ea8f0`、mixed `dfda43b4`，独立named volumes/internal networks/noports；16版本/8 PREPARED plan | 旧5d/LC13与旧授权未复用，cleanup=0 |
+| bytes/inventory/protection/IAM | 16 exact GET +完整版本清单+native hold/retention；delete/inspection均disabled；IAM native回读+OSS set语义一致 | 初始54个typed inspection calls/observations/CostAllocation保留；restore bootstrap GET/HEAD journal不是业务CostEvent |
+| Core / native restore | 三组每库194表，表row/hash、角色、table/schema/function/default ACL一致；native tar归档/文件SHA256/restored GET/保护读回PASS | dump/globals/tar/restore volumes/helpers全部保留，未用新业务库冒充旧事实恢复 |
+| P1/P2/T1/T2 | 各有独立目标版本/plan，P1/P2复用既有合成CSV，T1有背压payload；非删除技术准备PASS | 实际Asynq/NATIVE/HTTP CurrentDeliveryGate/owner停止与reference release尚未接线，native race NOT_RUN |
+| H0/H1/H2 | 固定layout、plan成员、受限IAM与gateways已准备；H1/H2-B不在prospective allowlist | wire pause/可信witness/claim边界新operator尚缺，不能宣称late hold挽回在途字节 |
+| M1 | 同一DV/hash三个exact copies，C真实GOVERNANCE retention且预算0 | A absence/B UNKNOWN/C blocked mixed checkpoint与只读恢复仍NOT_RUN；不冒称实际DELETE403 |
+| 新工具验证 | unit race 6顶层/含子项10 PASS，0FAIL/0SKIP；vet PASS；原PG证据离线重核PASS | 未重跑PG并发/native业务竞态，没有新独立评审结论 |
+| 候选/精确确认 | 全部真实准备绑定已冻结，current budget=0，active_window=null，旧sender新profile unsupported | BLOCKED_NATIVE_CASE_RUNNER_AND_NEW_EXECUTABLE_FREEZE；不是可授权删除文本 |
+| #323 / #307 / D1 | #323 Draft，#307 OPEN；所有新容器stopped/PID0，无真实删除/hold-release/bypass | NOT_ACCEPTED，不合并，不部署 |
+
+五份原始失败均留存并完成根因修正；两个excluded失败环境的12份版本不删除，808a的continuation只对已恢复副本进行只读比对/核验，不重放provision/restore。失败5f6a的inspector未及disable；该环境全停/PID0/noports、平台authority关闭，严格排除新候选，不夸称全部原生身份disabled。精确方案列明后续五项有限前置：真实业务非删除准备、受限reader/producer与pause/witness、七目标sender非删除回归、独立评审、新可执行候选及固定UTC窗口精确确认。

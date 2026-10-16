@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "go",
+    "test",
+    "-race",
+    "-count=1",
+    "-json",
+    "./cmd/lifecycle-fixture-prepare"
+  ],
+  "exit_code": 0,
+  "started_at": "2026-10-16T06:37:26.935621+00:00",
+  "completed_at": "2026-10-16T06:37:39.718866+00:00",
+  "source_commit": "de5f7dd2683cc5b5ed3a68528364d6fe59836f10",
+  "platform": "go1.26.5/windows-amd64",
+  "native_operations": 0
+}

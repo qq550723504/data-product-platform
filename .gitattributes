@@ -78,3 +78,13 @@ examples/lifecycle-d1/results/8120904f-13d9-42f3-ab1f-66eb1a37b2b0/** text eol=l
 examples/lifecycle-d1/results/f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3/reader-build-settings.txt whitespace=-blank-at-eol
 examples/lifecycle-d1/results/7cd53b0e-44d9-4f3a-9eb7-041f496ff277/reader-build-settings.txt whitespace=-blank-at-eol
 examples/lifecycle-d1/results/8120904f-13d9-42f3-ab1f-66eb1a37b2b0/reader-build-settings.txt whitespace=-blank-at-eol
+
+# Remaining native preparation keeps exact captured receipt bytes.
+docs/acceptance/evidence/issue307-d1/remaining-native01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-native01/*-modules.txt whitespace=-blank-at-eol
+docs/acceptance/issue307-d1-remaining-native-confirmation.md text eol=lf
+examples/lifecycle-d1/results/5f6a2497-34ba-4f01-a551-69bad5aee421/** -text whitespace=cr-at-eol
+examples/lifecycle-d1/results/5aa99bb9-d3ce-4497-a83b-893c2052e2d1/** -text whitespace=cr-at-eol
+examples/lifecycle-d1/results/808a6960-6c36-4200-ae98-f18a68472fe5/** -text whitespace=cr-at-eol
+examples/lifecycle-d1/results/754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b/** -text whitespace=cr-at-eol
+examples/lifecycle-d1/results/dfda43b4-4419-433d-959b-c617556953fd/** -text whitespace=cr-at-eol

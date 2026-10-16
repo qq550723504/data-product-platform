@@ -1,0 +1,2 @@
+Preparation started inside closed run 5f6a2497-34ba-4f01-a551-69bad5aee421. Helper: dpp-lifecycle307-5f6a2497-prepare. Provider data remains retained.
+After successful completion, public manifest: C:\Users\Henry\.codex\worktrees\9400\data-product-platform\examples\lifecycle-d1\results\5f6a2497-34ba-4f01-a551-69bad5aee421\manifest.json
