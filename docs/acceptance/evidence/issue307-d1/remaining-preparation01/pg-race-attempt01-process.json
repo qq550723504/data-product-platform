@@ -1,0 +1,8 @@
+{
+  "started_at": "2026-10-16T03:22:20.2741942Z",
+  "finished_at": "2026-10-16T03:23:29.0434471Z",
+  "exit_code": 1,
+  "pattern": "^(TestRemaining.*|TestDispositionHoldAndDispatchSerializeBothOrders|TestOccupancyReaderAndRestrictionSerializeBothOrders|TestDirectIssuedAndTransferPinCommitTogetherBeforeAnyBytes|TestExactSendClaimSerializedAndLateRevocationKeepsCost|TestRecoveryUnknownPresenceNeverResendsOrReleases)$",
+  "race": true,
+  "native_provider_configured": false
+}

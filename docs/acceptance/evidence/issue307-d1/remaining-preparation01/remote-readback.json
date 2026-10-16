@@ -1,0 +1,9 @@
+{
+  "issue_number": 307,
+  "initial_readback": "OPEN",
+  "issue_mutations": 0,
+  "final_readback": "UNAVAILABLE",
+  "failures": ["gh GraphQL POST: EOF", "gh REST GET: EOF", "GitHub connector HTTP transport failed"],
+  "new_pr_ci": "NOT_RUN",
+  "remote_write": "NOT_ATTEMPTED"
+}

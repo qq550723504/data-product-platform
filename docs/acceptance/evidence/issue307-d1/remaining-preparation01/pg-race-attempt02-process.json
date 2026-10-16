@@ -1,0 +1,9 @@
+{
+  "started_at": "2026-10-16T03:24:20.2345326Z",
+  "finished_at": "2026-10-16T03:24:48.7091077Z",
+  "exit_code": 1,
+  "pattern": "^(TestRemaining.*|TestDispositionHoldAndDispatchSerializeBothOrders|TestOccupancyReaderAndRestrictionSerializeBothOrders|TestDirectIssuedAndTransferPinCommitTogetherBeforeAnyBytes|TestExactSendClaimSerializedAndLateRevocationKeepsCost|TestRecoveryUnknownPresenceNeverResendsOrReleases)$",
+  "race": true,
+  "native_provider_configured": false,
+  "test_source_sha256": "dd463e79454c92582be59c1c5192eebe0b3ec661d5bfe251ef701e8ff9330c84"
+}
