@@ -110,7 +110,7 @@ def gateway(manifest, active):
     return '\n'.join(rules).encode()
 
 
-def complete_native(group, private, resources, out, stage, manifest, owned, source_before, ident, volume, resume_existing=False):
+def complete_native(group, private, resources, out, stage, manifest, owned, source_before, ident, volume, resume_existing=False, verifier_binary=None, verify_generation="01"):
     pg,mi,gw=(resources['containers'][x] for x in ('postgres','minio','gateway'))
     audit=resources['project']+'-checkpoint'
     restorevolume=resources['project']+'-restored-objects'
@@ -145,16 +145,20 @@ def complete_native(group, private, resources, out, stage, manifest, owned, sour
         if b'API:' in logs: break
         time.sleep(1)
     else: raise RuntimeError('Restored native startup not witnessed')
-    verifier = resources['project']+'-readonly-restore'
-    cfg['OutputDirectory']='/run/output/restore-verification'
-    write(stage/'verify.json',cfg)
+    verifier = resources['project']+'-readonly-restore'+('' if verify_generation=='01' else verify_generation)
+    verifier_binary=verifier_binary or private/'prepare'
+    verify_folder='restore-verification'+('' if verify_generation=='01' else verify_generation)
+    cfg['OutputDirectory']='/run/output/'+verify_folder
+    verify_config='verify'+verify_generation+'.json'
+    write(stage/verify_config,cfg)
     verifyid=docker('create','--pull','never','--name',verifier,'--label','lifecycle307.run='+resources['run_id'],'--network','container:'+cloneid,'--read-only',
                     '--mount',f'type=bind,source={private},target=/run/private,readonly','--mount',f'type=bind,source={out},target=/run/output',
                     '--mount',f'type=bind,source={out / "manifest.json"},target=/run/manifest.json,readonly',
-                    '-e','LIFECYCLE_FIXTURE_CONFIG=/run/private/checkpoint/verify.json','-e','LIFECYCLE_REMAINING_VERIFY=1',
-                    '--entrypoint','/run/private/prepare',PGIMAGE).decode().strip()
+                    '--mount',f'type=bind,source={verifier_binary},target=/run/verifier,readonly',
+                    '-e','LIFECYCLE_FIXTURE_CONFIG=/run/private/checkpoint/'+verify_config,'-e','LIFECYCLE_REMAINING_VERIFY=1',
+                    '--entrypoint','/run/verifier',PGIMAGE).decode().strip()
     owned.append(verifyid);docker('start',verifyid);require(docker('wait',verifyid).strip()==b'0','Native restored read-only verification failed; no repeat')
-    require(load(out/'restore-verification/verification.json')['status']=='PASS_NATIVE_READONLY','Restored native verification incomplete')
+    require(load(out/verify_folder/'verification.json')['status']=='PASS_NATIVE_READONLY','Restored native verification incomplete')
     print(group+': restored native GET/inventory/protection/IAM matched',flush=True)
     active,sealed=gateway(manifest,True),gateway(manifest,False)
     (out/'gateway-active.Caddyfile').write_bytes(active)
@@ -166,7 +170,7 @@ def complete_native(group, private, resources, out, stage, manifest, owned, sour
     docker('restart',gw)
     require(fingerprints(pg)==source_before,'Source Core changed during backup/read-only verification')
     write(out/'checkpoint.json',{'status':'PASS_FULL_CORE_AND_NATIVE_RESTORE','core':{'container':audit,'id':ident,'volume':volume,'dump_sha256':sha(stage/'core.dump'),'globals_sha256':sha(stage/'globals.sql'),'tables':len(source_before['relations']),'rows':sum(x['rows'] for x in source_before['relations'])},
-                                'native':{'archive_sha256':sha(stage/'native.tar'),'archive_bytes':(stage/'native.tar').stat().st_size,'container':clone,'id':cloneid,'volume':restorevolume,'version_count':len(manifest['objects']),'physical_file_sha256_compare':'PASS','exact_GET_inventory_protection_IAM':'PASS'},
+                                'native':{'archive_sha256':sha(stage/'native.tar'),'archive_bytes':(stage/'native.tar').stat().st_size,'container':clone,'id':cloneid,'volume':restorevolume,'version_count':len(manifest['objects']),'physical_file_sha256_compare':'PASS','exact_GET_inventory_protection_IAM':'PASS','verification':verify_folder+'/verification.json','verifier_sha256':sha(verifier_binary)},
                                 'active_gateway_sha256':hashlib.sha256(active).hexdigest(),'sealed_gateway_sha256':sha(private/'Caddyfile'),'installed_gateway':'SEALED_DENY_ALL','delete':0,'hold_release':0,'bypass':0,'cleanup':0})
 
 

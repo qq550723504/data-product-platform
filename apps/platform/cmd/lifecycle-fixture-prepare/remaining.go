@@ -352,9 +352,10 @@ func verifyRemaining(ctx context.Context, c config) error {
 		if err != nil {
 			return err
 		}
-		x, _ := json.Marshal(a)
-		y, _ := json.Marshal(b)
-		if !bytes.Equal(x, y) {
+		if err := os.WriteFile(filepath.Join(c.OutputDirectory, "native-delete-policy.json"), actual, 0600); err != nil {
+			return err
+		}
+		if !a.Equals(*b) {
 			return errors.New("IAM exact policy drift")
 		}
 		return nil
