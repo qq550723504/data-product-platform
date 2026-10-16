@@ -33,7 +33,7 @@ namespace. Its bootstrap journal is physical request evidence, not business
 CostEvent or actual processing/DirectData/DELETE acceptance. Initial production
 inspection uses the existing typed journal/cost path. The source Core remains
 unchanged while full globals/dump/roles/ACL and all 194 tables are restored and
-compared. Native volume tar bytes are compared before starting the restored
+compared. Native archive SHA256 and restored file SHA256 sets are checked before starting the restored
 provider; all exact versions, payloads, inventory, protection and disabled users
 are read back. Helpers and restored copies remain retained and stopped.
 
@@ -50,3 +50,10 @@ and final exact user confirmation. A preparation hash is not a deletion permit.
 The authoritative ordering, holder/owner semantics and acceptance criteria stay
 in `docs/acceptance/issue307-d1-remaining-contract.md`. Preparation receipts must
 not relabel any remaining native race as PASS. #323 remains Draft; #307 OPEN.
+
+The fixture/operator failures and finite continuations are retained in
+`docs/acceptance/evidence/issue307-d1/remaining-native01`. pg_restore uses the
+source role explicitly, comparisons use the available BusyBox SHA256 utilities,
+startup observes both Docker log streams, and native IAM equality uses the OSS
+Policy.Equals set contract. No failed provisioning or restore write is replayed.
+The fixed 808a6960 continuation only verifies the already restored volume.
