@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -23,25 +25,22 @@ import (
 )
 
 type remainingFlushBarrier struct {
-	inner            *planeHTTPWriter
-	once             sync.Once
-	entered, release chan struct{}
+	inner   *planeHTTPWriter
+	once    sync.Once
+	entered chan struct{}
 }
 
 func (w *remainingFlushBarrier) Write(b []byte) (int, error) { return w.WriteContext(w.inner.ctx, b) }
 func (w *remainingFlushBarrier) WriteContext(ctx context.Context, b []byte) (int, error) {
-	n, err := w.inner.WriteContext(ctx, b)
-	if err == nil && n > 0 {
-		w.once.Do(func() {
-			close(w.entered)
-			select {
-			case <-w.release:
-			case <-ctx.Done():
-				err = ctx.Err()
-			}
-		})
+	// Flush a real prefix, then enter the remaining real TCP write. There is no
+	// synthetic pause: the client's deliberately small receive window blocks it.
+	n, err := w.inner.WriteContext(ctx, b[:256])
+	if err != nil {
+		return n, err
 	}
-	return n, err
+	w.once.Do(func() { close(w.entered) })
+	m, err := w.inner.WriteContext(ctx, b[256:])
+	return n + m, err
 }
 
 type remainingHTTPResult struct {
@@ -56,10 +55,8 @@ func remainingTransfers(ctx context.Context, r remainingConfig, pool *pgxpool.Po
 	c := r.Base
 	current := planeCurrentDeliveryGate(pool)
 	direct := deliveryapp.NewDirectDataService(transaction.NewManager(pool), current.repo, current.gate, datasetinfra.NewPostgresRepository(pool)).WithTransferPins(pins)
-	entered, release := make(chan struct{}), make(chan struct{})
-	var releaseOnce sync.Once
-	stop := func() { releaseOnce.Do(func() { close(release) }) }
-	defer stop()
+	entered := make(chan struct{})
+	cancelOwner := make(chan context.CancelFunc, 1)
 	result := make(chan remainingHTTPResult, 4)
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
@@ -86,7 +83,9 @@ func remainingTransfers(ctx context.Context, r remainingConfig, pool *pgxpool.Po
 			w.WriteHeader(403)
 			return
 		}
-		owned := lc.WithFixtureReaderCaller(req.Context(), caller)
+		ownerCtx, ownerCancel := context.WithCancel(req.Context())
+		defer ownerCancel()
+		owned := lc.WithFixtureReaderCaller(ownerCtx, caller)
 		cmd := deliveryapp.DirectDataCommand{WorkspaceID: c.WorkspaceID, DatasetVersionID: cp.DatasetVersionID, ProfileID: profile, PrincipalRef: caller.Subject, EffectiveConsumerRef: pilot.PlaneConsumer, Purpose: pilot.PlanePurpose, Action: "READ", ScopeType: "ALL_RESOURCE", IdempotencyKey: "remaining-http:" + name}
 		issued, e := direct.Deliver(owned, cmd)
 		rr := remainingHTTPResult{Name: name, Operation: issued.Operation.ID}
@@ -113,7 +112,8 @@ func remainingTransfers(ctx context.Context, r remainingConfig, pool *pgxpool.Po
 			result <- rr
 			return
 		}
-		output := &remainingFlushBarrier{inner: &planeHTTPWriter{ResponseWriter: w, ctx: owned}, entered: entered, release: release}
+		cancelOwner <- ownerCancel
+		output := &remainingFlushBarrier{inner: &planeHTTPWriter{ResponseWriter: w, ctx: owned}, entered: entered}
 		rr.Transfer, e = reader.ReadPinnedTo(owned, c.WorkspaceID, issued.TransferPinID, output)
 		if e != nil {
 			rr.Error = e.Error()
@@ -137,19 +137,31 @@ func remainingTransfers(ctx context.Context, r remainingConfig, pool *pgxpool.Po
 		b, e := io.ReadAll(io.LimitReader(resp.Body, 128<<10))
 		return resp.StatusCode, b, e
 	}
-	payload := make(chan error, 1)
-	go func() {
-		status, b, e := request("T1")
-		sum := sha256.Sum256(b)
-		if e == nil && (status != 200 || int64(len(b)) != cs[2].ByteSize || hex.EncodeToString(sum[:]) != cs[2].ContentSHA256) {
-			e = errors.New("T1 native TCP content mismatch")
-		}
-		payload <- e
-	}()
+	connection, err := net.DialTCP("tcp", nil, listener.Addr().(*net.TCPAddr))
+	if err != nil {
+		return nil, err
+	}
+	defer connection.Close()
+	if err = connection.SetReadBuffer(1024); err != nil {
+		return nil, err
+	}
+	if err = connection.SetDeadline(time.Now().UTC().Add(time.Minute)); err != nil {
+		return nil, err
+	}
+	if _, err = fmt.Fprintf(connection, "POST /remaining/T1 HTTP/1.1\r\nHost: fixture\r\nAuthorization: Bearer %s\r\nContent-Length: 0\r\nConnection: close\r\n\r\n", c.Token); err != nil {
+		return nil, err
+	}
 	select {
 	case <-entered:
-	case e := <-payload:
-		return nil, e
+	case <-result:
+		return nil, errors.New("T1 exited before real TCP flush")
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	}
+	select {
+	case <-result:
+		return nil, errors.New("T1 socket did not actually block")
+	case <-time.After(200 * time.Millisecond):
 	case <-ctx.Done():
 		return nil, ctx.Err()
 	}
@@ -163,15 +175,36 @@ func remainingTransfers(ctx context.Context, r remainingConfig, pool *pgxpool.Po
 	if err != nil || blocked.Admitted {
 		return nil, errors.New("T1 active writer admitted disposal")
 	}
-	if err = write(c, "remaining-T1-active-writer.json", map[string]any{"actual_native_GET_and_TCP_flush": true, "dispatch": blocked, "writer_joined": false, "at": time.Now().UTC()}); err != nil {
+	ownerCancel := <-cancelOwner
+	ownerCancel()
+	select {
+	case <-result:
+		return nil, errors.New("T1 cancel returned while socket should remain blocked")
+	case <-time.After(100 * time.Millisecond):
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	}
+	var activePins int
+	if err = pool.QueryRow(ctx, `SELECT count(*) FROM lifecycle_reader_pin p WHERE p.copy_id=$1 AND NOT EXISTS(SELECT 1 FROM lifecycle_reader_termination t WHERE t.pin_id=p.id)`, cs[2].ID).Scan(&activePins); err != nil || activePins != 1 {
+		return nil, errors.New("T1 cancellation prematurely unpinned writer")
+	}
+	if err = write(c, "remaining-T1-active-writer.json", map[string]any{"actual_native_GET_and_TCP_prefix_flush": true, "real_socket_backpressure": true, "cancelled_owner_still_blocked_and_pinned": true, "dispatch": blocked, "writer_joined": false, "at": time.Now().UTC()}); err != nil {
 		return nil, err
 	}
-	stop()
-	if err = <-payload; err != nil {
+	// Only now drain the real socket, allowing Write+Flush to return and the
+	// reader service to record its confirmed termination/transfer observation.
+	response, err := http.ReadResponse(bufio.NewReader(connection), nil)
+	if err != nil {
 		return nil, err
+	}
+	body, err := io.ReadAll(io.LimitReader(response.Body, 128<<10))
+	response.Body.Close()
+	sum := sha256.Sum256(body)
+	if err != nil || response.StatusCode != 200 || int64(len(body)) != cs[2].ByteSize || hex.EncodeToString(sum[:]) != cs[2].ContentSHA256 {
+		return nil, errors.New("T1 native TCP content mismatch")
 	}
 	first := <-result
-	if first.Error != "" || !first.Transfer.StopConfirmed || first.Transfer.BytesWritten != cs[2].ByteSize {
+	if first.Error != context.Canceled.Error() || !first.Transfer.StopConfirmed || first.Transfer.BytesWritten != cs[2].ByteSize {
 		return nil, errors.New("T1 writer stop unconfirmed")
 	}
 	before, err := remainingNoIO(ctx, pool)
