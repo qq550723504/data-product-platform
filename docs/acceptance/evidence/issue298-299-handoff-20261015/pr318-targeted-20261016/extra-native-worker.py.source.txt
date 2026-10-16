@@ -1,0 +1,19 @@
+import json,os,subprocess
+import run as d
+p,s=d.load_state()
+env=dict(os.environ,TEST_POSTGRES_DSN=s['dsn'],CGO_ENABLED='1',GOMAXPROCS='2')
+binary=p/'native-worker.test.exe';pkg='./internal/workflow/native';name='TestEnterpriseActivityNativeWorkerProducesCuratedDataset'
+b=subprocess.run(['go','test','-p','2','-c','-race','-o',str(binary),pkg],cwd=d.APP,env=env,capture_output=True)
+(p/'native-worker-build.log').write_bytes(b.stdout+b.stderr)
+if b.returncode:print(json.dumps({'stage':'native-worker-build','exit_code':b.returncode}))
+else:
+    r=subprocess.run(['go','tool','test2json','-p',pkg,'-t',str(binary),'-test.v=test2json','-test.run','^'+name+'$','-test.count=1','-test.timeout=10m'],cwd=d.APP,env=env,capture_output=True)
+    (p/'native-worker-raw.jsonl').write_bytes(r.stdout+r.stderr)
+    acts=[]
+    for line in r.stdout.splitlines():
+        try:acts.append(json.loads(line))
+        except ValueError:pass
+    pick=lambda action:[a['Test'] for a in acts if a.get('Action')==action and 'Test'in a]
+    report={'head':d.BASE,'name':name,'package':pkg,'exit_code':r.returncode,'passed':pick('pass'),'failed':pick('fail'),'skipped':pick('skip'),'binary_sha256':d.sha(binary.read_bytes()),'raw_sha256':d.sha(r.stdout+r.stderr),'reason':'targeted actual native processing/mapping usage under new FK guards; fills EXECUTION_MAPPING reference class','scope':'real PostgreSQL, actual native Go engine/queue handler; in-memory storage Port, no external Redis/Provider claim'}
+    d.save(d.OUT/'extra-native-worker.json',report)
+    print(json.dumps({k:report[k] for k in ['exit_code','passed','failed','skipped']}))

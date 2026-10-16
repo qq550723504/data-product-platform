@@ -1,0 +1,19 @@
+import json,os,subprocess
+from pathlib import Path
+import run as driver
+p,s=driver.load_state()
+env=dict(os.environ,GOMAXPROCS='2')
+binary=p/'native-storage.exe'
+build=subprocess.run(['go','build','-p','2','-o',str(binary),str(driver.APP/'.data/bc318-targeted/native.go')],cwd=driver.APP,env=env,capture_output=True)
+(p/'native-build.log').write_bytes(build.stdout+build.stderr)
+if build.returncode:
+    print(json.dumps({'stage':'native-build','exit_code':build.returncode}))
+else:
+    result=subprocess.run([str(binary),str(p/'native02-config.json')],cwd=driver.APP,env=env,capture_output=True)
+    (p/'native-storage-raw.json').write_bytes(result.stdout)
+    (p/'native-storage-stderr.log').write_bytes(result.stderr)
+    report=json.loads(result.stdout);report['binary_sha256']=driver.sha(binary.read_bytes())
+    report['source_lf_sha256']=driver.sha((driver.APP/'.data/bc318-targeted/native.go').read_text().encode())
+    report['head']=driver.BASE
+    driver.save(driver.OUT/'native02/storage-report.json',report)
+    print(json.dumps({'stage':'native-storage','exit_code':result.returncode,'status':report['status'],'checks':report['checks'],'failure_check':report['failure_check'],'http_requests':len(report['requests']),'delete_attempts':report['delete_http_attempts']}))

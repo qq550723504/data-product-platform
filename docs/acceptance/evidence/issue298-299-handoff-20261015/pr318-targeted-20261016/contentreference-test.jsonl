@@ -1,0 +1,7 @@
+{"Time":"2026-10-16T14:20:08.6576187+08:00","Action":"start","Package":"./internal/platform/contentreference"}
+{"Time":"2026-10-16T14:20:08.9959494+08:00","Action":"run","Package":"./internal/platform/contentreference","Test":"TestReferenceIdentityRequiresKnownKindAndExactInputMembership"}
+{"Time":"2026-10-16T14:20:08.9959494+08:00","Action":"output","Package":"./internal/platform/contentreference","Test":"TestReferenceIdentityRequiresKnownKindAndExactInputMembership","Output":"=== RUN   TestReferenceIdentityRequiresKnownKindAndExactInputMembership\n"}
+{"Time":"2026-10-16T14:20:08.9959494+08:00","Action":"output","Package":"./internal/platform/contentreference","Test":"TestReferenceIdentityRequiresKnownKindAndExactInputMembership","Output":"--- PASS: TestReferenceIdentityRequiresKnownKindAndExactInputMembership (0.00s)\n"}
+{"Time":"2026-10-16T14:20:08.9959494+08:00","Action":"pass","Package":"./internal/platform/contentreference","Test":"TestReferenceIdentityRequiresKnownKindAndExactInputMembership","Elapsed":0}
+{"Time":"2026-10-16T14:20:08.9959494+08:00","Action":"output","Package":"./internal/platform/contentreference","Output":"PASS\n"}
+{"Time":"2026-10-16T14:20:10.0175929+08:00","Action":"pass","Package":"./internal/platform/contentreference","Elapsed":1.3599999999999999}

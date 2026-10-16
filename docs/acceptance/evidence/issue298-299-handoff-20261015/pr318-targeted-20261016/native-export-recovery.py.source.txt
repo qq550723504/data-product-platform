@@ -1,0 +1,13 @@
+import json
+import run as d
+p,s=d.load_state()
+raw=(p/'native-storage-raw.json').read_bytes()
+report=json.loads(raw)
+report['binary_sha256']=d.sha((p/'native-storage.exe').read_bytes())
+report['source_lf_sha256']=d.sha((d.APP/'.data/bc318-targeted/native.go').read_text(encoding='utf-8').encode('utf-8'))
+report['head']=d.BASE
+report['receipt_export_recovery']='original raw provider result preserved; explicit UTF-8 source-hash export only; no provider rerun'
+path=d.OUT/'native02/storage-report.json'
+assert not path.exists()
+d.save(path,report)
+print(json.dumps({'status':report['status'],'checks':report['checks'],'failure_check':report['failure_check'],'http_requests':len(report['requests']),'delete_attempts':report['delete_http_attempts'],'provider_rerun':False}))

@@ -1,0 +1,280 @@
+{
+  "after_sha256": {
+    "dataset_certification": "10c9d7834d8888a85ac1ae258f3be15c0a3470e45bc4729b00c334777f710dee",
+    "dataset_version_lineage": "63655eae8f30e399f92474d8b600895374c4ff011f5979128964bc1d28012b85",
+    "delivery_operation": "400a4471573d82e16377585e7b8edc36eacc1994b0ba6bba1040ad9428917af6",
+    "entity_match_job": "5193d0574dc5bff023989160e158daaeb5a9b9667f883d2d40dcf3a86a67891b",
+    "execution_input": "734b4775242c06eae940896d9787fab89dd78f424b6e7b549342d45fae2bf168",
+    "execution_mapping_usage": "689898927ed617f0c6466f2127986ec03cf14c4c72f23b6c55362e782743f854",
+    "quality_assessment_attempt": "f260387d4ffcab7eb2c9dcc6fb425b08069859ba257ee0312c79032bded3d245",
+    "quality_result": "c7b51b86828cbd6f25b09cb740f3ca7be06c95b2aa85a6d6cbee80ad7789a2a8"
+  },
+  "before_sha256": {
+    "dataset_certification": "10c9d7834d8888a85ac1ae258f3be15c0a3470e45bc4729b00c334777f710dee",
+    "dataset_version_lineage": "63655eae8f30e399f92474d8b600895374c4ff011f5979128964bc1d28012b85",
+    "delivery_operation": "400a4471573d82e16377585e7b8edc36eacc1994b0ba6bba1040ad9428917af6",
+    "entity_match_job": "5193d0574dc5bff023989160e158daaeb5a9b9667f883d2d40dcf3a86a67891b",
+    "execution_input": "734b4775242c06eae940896d9787fab89dd78f424b6e7b549342d45fae2bf168",
+    "execution_mapping_usage": "689898927ed617f0c6466f2127986ec03cf14c4c72f23b6c55362e782743f854",
+    "quality_assessment_attempt": "f260387d4ffcab7eb2c9dcc6fb425b08069859ba257ee0312c79032bded3d245",
+    "quality_result": "c7b51b86828cbd6f25b09cb740f3ca7be06c95b2aa85a6d6cbee80ad7789a2a8"
+  },
+  "checks": 41,
+  "failures": 0,
+  "missing_classes": [],
+  "reference_classes": 8,
+  "reference_history_unchanged": true,
+  "results": [
+    {
+      "Kind": "LINEAGE",
+      "Module": "dataset",
+      "Case": "exact source/workspace accepted",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "LINEAGE",
+      "Module": "dataset",
+      "Case": "foreign workspace denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "LINEAGE",
+      "Module": "dataset",
+      "Case": "wrong version denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "LINEAGE",
+      "Module": "dataset",
+      "Case": "wrong source identity denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "LINEAGE",
+      "Module": "dataset",
+      "Case": "unknown reference kind denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "ENTITY_MATCH",
+      "Module": "entity",
+      "Case": "exact source/workspace accepted",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "ENTITY_MATCH",
+      "Module": "entity",
+      "Case": "foreign workspace denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "ENTITY_MATCH",
+      "Module": "entity",
+      "Case": "wrong version denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "ENTITY_MATCH",
+      "Module": "entity",
+      "Case": "wrong source identity denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "ENTITY_MATCH",
+      "Module": "entity",
+      "Case": "unknown reference kind denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "EXECUTION_INPUT",
+      "Module": "workflow",
+      "Case": "exact source/workspace accepted",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "EXECUTION_INPUT",
+      "Module": "workflow",
+      "Case": "foreign workspace denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "EXECUTION_INPUT",
+      "Module": "workflow",
+      "Case": "wrong version denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "EXECUTION_INPUT",
+      "Module": "workflow",
+      "Case": "wrong source identity denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "EXECUTION_INPUT",
+      "Module": "workflow",
+      "Case": "unknown reference kind denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "EXECUTION_INPUT",
+      "Module": "workflow",
+      "Case": "wrong input membership denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "EXECUTION_MAPPING",
+      "Module": "workflow",
+      "Case": "exact source/workspace accepted",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "EXECUTION_MAPPING",
+      "Module": "workflow",
+      "Case": "foreign workspace denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "EXECUTION_MAPPING",
+      "Module": "workflow",
+      "Case": "wrong version denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "EXECUTION_MAPPING",
+      "Module": "workflow",
+      "Case": "wrong source identity denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "EXECUTION_MAPPING",
+      "Module": "workflow",
+      "Case": "unknown reference kind denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "QUALITY_RESULT",
+      "Module": "quality",
+      "Case": "exact source/workspace accepted",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "QUALITY_RESULT",
+      "Module": "quality",
+      "Case": "foreign workspace denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "QUALITY_RESULT",
+      "Module": "quality",
+      "Case": "wrong version denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "QUALITY_RESULT",
+      "Module": "quality",
+      "Case": "wrong source identity denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "QUALITY_RESULT",
+      "Module": "quality",
+      "Case": "unknown reference kind denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "QUALITY_ATTEMPT",
+      "Module": "quality",
+      "Case": "exact source/workspace accepted",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "QUALITY_ATTEMPT",
+      "Module": "quality",
+      "Case": "foreign workspace denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "QUALITY_ATTEMPT",
+      "Module": "quality",
+      "Case": "wrong version denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "QUALITY_ATTEMPT",
+      "Module": "quality",
+      "Case": "wrong source identity denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "QUALITY_ATTEMPT",
+      "Module": "quality",
+      "Case": "unknown reference kind denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "CERTIFICATION",
+      "Module": "certification",
+      "Case": "exact source/workspace accepted",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "CERTIFICATION",
+      "Module": "certification",
+      "Case": "foreign workspace denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "CERTIFICATION",
+      "Module": "certification",
+      "Case": "wrong version denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "CERTIFICATION",
+      "Module": "certification",
+      "Case": "wrong source identity denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "CERTIFICATION",
+      "Module": "certification",
+      "Case": "unknown reference kind denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "DELIVERY",
+      "Module": "delivery",
+      "Case": "exact source/workspace accepted",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "DELIVERY",
+      "Module": "delivery",
+      "Case": "foreign workspace denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "DELIVERY",
+      "Module": "delivery",
+      "Case": "wrong version denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "DELIVERY",
+      "Module": "delivery",
+      "Case": "wrong source identity denied",
+      "Outcome": "PASS"
+    },
+    {
+      "Kind": "DELIVERY",
+      "Module": "delivery",
+      "Case": "unknown reference kind denied",
+      "Outcome": "PASS"
+    }
+  ],
+  "scope": "current module owner Check only, PostgreSQL read-only transactions over this new regression database; no Declare/Release/Provider calls",
+  "status": "PASS",
+  "head": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+  "binary_sha256": "d33074b0b54b40ce7b7d06fb0bd6fb7dc36c7f38481ec46656818d71c428639f",
+  "source_lf_sha256": "5dc563d9262487e69be2c503ec003523608de1ce7c52c336ef22ff45b339c091"
+}

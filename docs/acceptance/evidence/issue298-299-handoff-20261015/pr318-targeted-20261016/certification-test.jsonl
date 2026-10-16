@@ -1,0 +1,11 @@
+{"Time":"2026-10-16T14:20:50.3912814+08:00","Action":"start","Package":"./internal/certification/application"}
+{"Time":"2026-10-16T14:20:51.0578925+08:00","Action":"run","Package":"./internal/certification/application","Test":"TestCertificationAndDispositionAppendDecisionEvidence"}
+{"Time":"2026-10-16T14:20:51.0578925+08:00","Action":"output","Package":"./internal/certification/application","Test":"TestCertificationAndDispositionAppendDecisionEvidence","Output":"=== RUN   TestCertificationAndDispositionAppendDecisionEvidence\n"}
+{"Time":"2026-10-16T14:20:51.2001596+08:00","Action":"output","Package":"./internal/certification/application","Test":"TestCertificationAndDispositionAppendDecisionEvidence","Output":"--- PASS: TestCertificationAndDispositionAppendDecisionEvidence (0.14s)\n"}
+{"Time":"2026-10-16T14:20:51.2001596+08:00","Action":"pass","Package":"./internal/certification/application","Test":"TestCertificationAndDispositionAppendDecisionEvidence","Elapsed":0.14}
+{"Time":"2026-10-16T14:20:51.2001596+08:00","Action":"run","Package":"./internal/certification/application","Test":"TestCertificationDispositionSerializesWithDeliveryAuthorizationFence"}
+{"Time":"2026-10-16T14:20:51.2001596+08:00","Action":"output","Package":"./internal/certification/application","Test":"TestCertificationDispositionSerializesWithDeliveryAuthorizationFence","Output":"=== RUN   TestCertificationDispositionSerializesWithDeliveryAuthorizationFence\n"}
+{"Time":"2026-10-16T14:20:51.5007238+08:00","Action":"output","Package":"./internal/certification/application","Test":"TestCertificationDispositionSerializesWithDeliveryAuthorizationFence","Output":"--- PASS: TestCertificationDispositionSerializesWithDeliveryAuthorizationFence (0.30s)\n"}
+{"Time":"2026-10-16T14:20:51.5007238+08:00","Action":"pass","Package":"./internal/certification/application","Test":"TestCertificationDispositionSerializesWithDeliveryAuthorizationFence","Elapsed":0.3}
+{"Time":"2026-10-16T14:20:51.5007238+08:00","Action":"output","Package":"./internal/certification/application","Output":"PASS\n"}
+{"Time":"2026-10-16T14:20:52.529363+08:00","Action":"pass","Package":"./internal/certification/application","Elapsed":2.138}

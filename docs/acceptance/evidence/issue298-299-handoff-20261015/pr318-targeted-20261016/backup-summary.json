@@ -1,0 +1,92 @@
+{
+  "status": "BACKUP_CREATED",
+  "restore": "NOT_RUN / not required for this directed regression",
+  "scope": "only this new PostgreSQL instance including retained owned test databases",
+  "run_id": "3bffbb42-db97-42a0-a36f-ea2271b3b581",
+  "databases": [
+    {
+      "database": "bc318",
+      "bytes": 1216737,
+      "sha256": "a387383ccf926cc26831a133e738eb50c399e8007bbaac0a3ac4886f914ed83a"
+    },
+    {
+      "database": "lifecycle_plan_0e56a681cdae4af7a52dad34c7987154",
+      "bytes": 1134700,
+      "sha256": "885d531c4d133226084b010d5a4780bcf533bf27fd62ba5acd3cf96321f6cbe0"
+    },
+    {
+      "database": "lifecycle_plan_24a57acc6d5c4848b92914694bf9ba94",
+      "bytes": 1135325,
+      "sha256": "7f7774f14106a17b14845fd0b6e05cc9bdceca415fd7d56c3e6251c6024e0d30"
+    },
+    {
+      "database": "lifecycle_plan_28585505738b46988820248b222a77ea",
+      "bytes": 1134726,
+      "sha256": "118ce86c943dec0071f72d9cc2278d1125443ba4f64180c0dd4568ca601ddd26"
+    },
+    {
+      "database": "lifecycle_plan_3859ade52a16424c809a0c5eb65de14d",
+      "bytes": 1136492,
+      "sha256": "5a69a6baf1de867b16e2a2563825f7886588d7d0c974fdca100127c1bf43e4f2"
+    },
+    {
+      "database": "lifecycle_plan_387ef687478c4753b1f1b4f9574eca38",
+      "bytes": 1136421,
+      "sha256": "165f5638cbfbe5fcca63db6c0d549e878cf1c25545607f931f08d91915ab0288"
+    },
+    {
+      "database": "lifecycle_plan_47d9ff3e5a5c440c9eed01302c83f54c",
+      "bytes": 1134713,
+      "sha256": "5913b18141b891eee7420cb36da3cc067052cf05b0b1f6cd27bfc222bbbe0c20"
+    },
+    {
+      "database": "lifecycle_plan_55da15207f0e4a43a80c5ca993dc4e2a",
+      "bytes": 1140664,
+      "sha256": "03b2fc3121cccea1d45344ac19c964f32643b0bb2cac8d446e4181b7cdc831f7"
+    },
+    {
+      "database": "lifecycle_plan_84664c08e5be429ebdeb67fe2caea053",
+      "bytes": 1134731,
+      "sha256": "7ece87cfe79379a1279c87f1969890ea5de6eccc9c4e435d0284d393a01c052c"
+    },
+    {
+      "database": "lifecycle_plan_901dcc6f9e7f4e18825a3c7a291b1eb2",
+      "bytes": 1137575,
+      "sha256": "98e04d2207285861141a889d47cc4d68a1cb8634579e391ca7080f42bd3332fb"
+    },
+    {
+      "database": "lifecycle_plan_941e0b142293408f84f1e66bdce4694a",
+      "bytes": 1136423,
+      "sha256": "7fb00a68433adf321b3287f2bdfcc9152114881d8f07feb1753640c8e51c6a0f"
+    },
+    {
+      "database": "lifecycle_plan_98ce126fcd5243339a2dce5ce4f246fd",
+      "bytes": 1136240,
+      "sha256": "2509b45ef2cae309e40119ce058a45ae559d47b326d9f2ee48b7a21290b90a29"
+    },
+    {
+      "database": "lifecycle_plan_be72e34714d04713b4abd25be05009cb",
+      "bytes": 1134707,
+      "sha256": "95c700ab407581f4658b8c4a9e7b7790f9a4f2cf484dc85025c581945b669fc7"
+    },
+    {
+      "database": "lifecycle_plan_d14a063c201a446e98f735907e275d76",
+      "bytes": 1134685,
+      "sha256": "e0593f2e29916195dc54b1a7846d5ad9863d8094754f4d7462d5310117126f0e"
+    },
+    {
+      "database": "lifecycle_plan_ed51fd27bccc478aa14345989efbfaef",
+      "bytes": 1137091,
+      "sha256": "59374766f2543174e7e54d0a255a8827030640d47d86fba56e926153ba8c307f"
+    },
+    {
+      "database": "postgres",
+      "bytes": 1026,
+      "sha256": "d3d69609187c33c8325dcb9d1af92f90d087d27132500ddfc59228853dbbda3d"
+    }
+  ],
+  "globals_sha256": "c7a350542c8803c00e36d46cd045de0a1557de646f522ac66f3e0a98a4b1f129",
+  "original_core_recovery": "DEFERRED / FAIL_NOT_RESTORED",
+  "provider_delete_calls": 0,
+  "cleanup_calls": 0
+}

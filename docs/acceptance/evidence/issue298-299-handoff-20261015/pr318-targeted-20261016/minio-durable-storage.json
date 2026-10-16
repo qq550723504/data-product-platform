@@ -1,0 +1,44 @@
+[
+  {
+    "run_id": "3bffbb42-db97-42a0-a36f-ea2271b3b581",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "created"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "destination": "/data",
+        "type": "volume",
+        "writable": true,
+        "role": "objects",
+        "volume": "dpp-bc318-3bffbb42db97-objects02",
+        "container_id": "905da3248a6a164e1126cda22d2c94f1aefa9e12ca3555eb70fd7b47a1c2bc71",
+        "container": "dpp-bc318-3bffbb42db97-minio02"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "3bffbb42-db97-42a0-a36f-ea2271b3b581",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "running"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "container": "dpp-bc318-3bffbb42db97-minio02",
+        "role": "objects",
+        "volume": "dpp-bc318-3bffbb42db97-objects02",
+        "destination": "/data",
+        "writable": true,
+        "container_id": "905da3248a6a164e1126cda22d2c94f1aefa9e12ca3555eb70fd7b47a1c2bc71",
+        "type": "volume"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  }
+]

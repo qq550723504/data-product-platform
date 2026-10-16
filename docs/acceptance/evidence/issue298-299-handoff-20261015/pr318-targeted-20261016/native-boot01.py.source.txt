@@ -1,0 +1,29 @@
+import json,secrets,sys,time
+from pathlib import Path
+import run as driver
+p,s=driver.load_state()
+out=driver.OUT/'native';out.mkdir(exist_ok=False)
+name=s['prefix']+'-minio';volume=s['prefix']+'-objects';run=s['run_id']
+assert volume not in driver.call(['docker','volume','ls','-q']).stdout.decode().splitlines()
+assert name not in driver.call(['docker','ps','-a','--format','{{.Names}}']).stdout.decode().splitlines()
+image=driver.image('dpp-pgi-minio:2025-10-15')
+key='bc318'+secrets.token_hex(8);secret=secrets.token_urlsafe(32)
+(p/'minio.env').write_text('MINIO_ROOT_USER='+key+'\nMINIO_ROOT_PASSWORD='+secret+'\n',encoding='utf-8')
+registry={'run_id':run,'container':name,'volume':volume,'image':image,'role':'objects','path':'/data','retained':True,'cleanup_calls':0}
+driver.save(p/'native-registry.json',registry)
+driver.call(['docker','volume','create','--label','dpp.trial.run='+run,volume])
+driver.call(['docker','create','--name',name,'--label','dpp.trial.run='+run,'--env-file',p/'minio.env','--mount','type=volume,src='+volume+',dst=/data','-p','127.0.0.1::9000','--entrypoint','/minio',image['id'],'server','/data','--address',':9000'])
+durable=driver.DurableStorage(out,p,driver.ROOT/'examples/lifecycle-d1/durable-storage.ps1')
+durable.start(name,'/data',volume,'objects',run)
+v=json.loads(driver.call(['docker','inspect',name]).stdout)[0];port=v['NetworkSettings']['Ports']['9000/tcp'][0]['HostPort']
+import urllib.request
+for _ in range(60):
+    try:
+        with urllib.request.urlopen('http://127.0.0.1:'+port+'/minio/health/ready',timeout=1) as response:
+            if response.status==200:break
+    except Exception:time.sleep(1)
+else:raise RuntimeError('fresh MinIO not ready')
+registry['port']=int(port);registry['version']=driver.call(['docker','exec',name,'/minio','--version']).stdout.decode().strip()
+driver.save(out/'runtime.json',registry)
+driver.save(p/'native-config.json',{'Endpoint':'127.0.0.1:'+port,'AccessKey':key,'SecretKey':secret,'RunID':run})
+print(json.dumps({'status':'PASS','container':name,'image_id':image['id'],'port':port,'retained':True}))

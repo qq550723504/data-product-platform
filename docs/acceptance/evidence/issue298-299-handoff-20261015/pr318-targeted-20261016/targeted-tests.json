@@ -1,0 +1,171 @@
+{
+  "head": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+  "run_id": "3bffbb42-db97-42a0-a36f-ea2271b3b581",
+  "retention_overlay": {
+    "original_lf_sha256": "e9219ac480eb7fe4681e8107fe808b84f80f3304dad471e9b7e16fcd1b6bee23",
+    "retained_lf_sha256": "10159171f81aaba53d3c91592f62ecce9e691824042f72fa5b5f20ac4bf72cb6",
+    "removed_hook_lf_sha256": "0a3763d7cbd0848c24aaa8b24bdb1043fcaa3b2894b22662e836c0a620741548",
+    "change": "only DROP DATABASE cleanup hook replaced with retained-name observation; all assertions unchanged"
+  },
+  "tests": [
+    {
+      "group": "contentreference",
+      "package": "./internal/platform/contentreference",
+      "regex": "TestReferenceIdentityRequiresKnownKindAndExactInputMembership",
+      "exit_code": 0,
+      "passed": [
+        "TestReferenceIdentityRequiresKnownKindAndExactInputMembership"
+      ],
+      "failed": [],
+      "skipped": [],
+      "binary_sha256": "7ed07477894f1c00b3ccf9a7dd6ebac1465ef628b6dbfa9f406a44683d944dfa",
+      "raw_sha256": "379212f57b5524b84318baa4755b9ae20f8e1e5f8a614f74fdb951a29a8ad851"
+    },
+    {
+      "group": "routing",
+      "package": "./internal/platform/routing",
+      "regex": "TestVersionFitsPersistedOutboxContract|TestRoutesDeclareEveryEventTypeExactlyOnce|TestRoutesResolveGovernanceProjectionProfile|TestRoutesRequireExecutionQueueForNewDispatchEvents|TestRouterImplementsObligationSource",
+      "exit_code": 0,
+      "passed": [
+        "TestVersionFitsPersistedOutboxContract",
+        "TestRoutesDeclareEveryEventTypeExactlyOnce",
+        "TestRoutesResolveGovernanceProjectionProfile",
+        "TestRoutesRequireExecutionQueueForNewDispatchEvents",
+        "TestRouterImplementsObligationSource"
+      ],
+      "failed": [],
+      "skipped": [],
+      "binary_sha256": "f15f3d4a51d991183d53f578e547e0e5e1d25f22f71127c43cbd904c276c9981",
+      "raw_sha256": "fee587832e7fa40f2f2f73948ad33e79031b2e06cb3f8639d19ddf91e589404d"
+    },
+    {
+      "group": "workflow",
+      "package": "./internal/workflow/application",
+      "regex": "TestExecutionPersistsFrozenInputsRetryAndTraceability|TestNativeReconcilerFinalizesReadyOutputAfterCrash",
+      "exit_code": 0,
+      "passed": [
+        "TestNativeReconcilerFinalizesReadyOutputAfterCrash",
+        "TestExecutionPersistsFrozenInputsRetryAndTraceability"
+      ],
+      "failed": [],
+      "skipped": [],
+      "binary_sha256": "44324c1692f487f1ca5dd6b7fabe3ec4667a73f055a335e1e8bec6a8a62d4286",
+      "raw_sha256": "5e30ef1dc20ba2ff6cbd5e6d391da4065bf88fb63a1e9eb14893cbbac8d86940"
+    },
+    {
+      "group": "entity",
+      "package": "./internal/entity/application",
+      "regex": "TestCompanyEntityResolutionReferenceSlice",
+      "exit_code": 0,
+      "passed": [
+        "TestCompanyEntityResolutionReferenceSlice"
+      ],
+      "failed": [],
+      "skipped": [],
+      "binary_sha256": "80d84b3767a3edbbab883587d7c32218a9edcc5b554b69d29292b2c515954a7d",
+      "raw_sha256": "e6e8e2e351aff0534c31c7b00503023cf3e74baf62c3999e0dae483098ed88d0"
+    },
+    {
+      "group": "quality",
+      "package": "./internal/quality/application",
+      "regex": "TestNativeQualityAndComplianceGates|TestQualityAttemptRealRetryPreservesBothPhysicalCosts",
+      "exit_code": 0,
+      "passed": [
+        "TestQualityAttemptRealRetryPreservesBothPhysicalCosts",
+        "TestNativeQualityAndComplianceGates"
+      ],
+      "failed": [],
+      "skipped": [],
+      "binary_sha256": "ae841d67da7a9a5ce291cbdfefb57ccd430637a3bd4cf96ecbeae627aa803961",
+      "raw_sha256": "1f3830416894701587e447bbb8a12004439691c3593a9d1ad35aad51f752202f"
+    },
+    {
+      "group": "certification",
+      "package": "./internal/certification/application",
+      "regex": "TestCertificationAndDispositionAppendDecisionEvidence|TestCertificationDispositionSerializesWithDeliveryAuthorizationFence",
+      "exit_code": 0,
+      "passed": [
+        "TestCertificationAndDispositionAppendDecisionEvidence",
+        "TestCertificationDispositionSerializesWithDeliveryAuthorizationFence"
+      ],
+      "failed": [],
+      "skipped": [],
+      "binary_sha256": "f16b5c8d3521d52b82c415973f199345174a92748bef3cb9f5d613b9594fa0af",
+      "raw_sha256": "00519868ddfc54137b58ce0dfc11519ed72a87194f3cf8bd5419b6c622d67b18"
+    },
+    {
+      "group": "delivery",
+      "package": "./internal/delivery/application",
+      "regex": "TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload|TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked",
+      "exit_code": 0,
+      "passed": [
+        "TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload",
+        "TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked"
+      ],
+      "failed": [],
+      "skipped": [],
+      "binary_sha256": "0671b1b3a5a5ea8db1448b21284821c6772a59469aa61182274f4c3fa331a0b6",
+      "raw_sha256": "d3f4ec05282baad7e88acde251f03cb44a44d0d4fc77a70ba78275caa5192ca8"
+    },
+    {
+      "group": "storage",
+      "package": "./internal/platform/storage",
+      "regex": "TestCheckpointExactReadHasMaintenanceSubjectAndNeverRetries",
+      "exit_code": 0,
+      "passed": [
+        "TestCheckpointExactReadHasMaintenanceSubjectAndNeverRetries/valid",
+        "TestCheckpointExactReadHasMaintenanceSubjectAndNeverRetries/wrong-version",
+        "TestCheckpointExactReadHasMaintenanceSubjectAndNeverRetries/wrong-hash",
+        "TestCheckpointExactReadHasMaintenanceSubjectAndNeverRetries/denied",
+        "TestCheckpointExactReadHasMaintenanceSubjectAndNeverRetries/foreign",
+        "TestCheckpointExactReadHasMaintenanceSubjectAndNeverRetries"
+      ],
+      "failed": [],
+      "skipped": [],
+      "binary_sha256": "a5dc8199dff5dbaab26db5c0b86bd986673d0b0ba69c196b38a0f6192605224b",
+      "raw_sha256": "e243b539afc3f5932a39e144c0196dc258d7a8e6476b40be36552c8a3c0cc496"
+    },
+    {
+      "group": "reference-admission",
+      "package": "./internal/lifecycle/application",
+      "regex": "TestFixtureReferenceOwnerReleasePreservesHistoryAndBlocksActiveWork|TestFixtureReferenceRejectsWrongOwnerTenantLossAndNewSchema|TestFixtureReferenceInsertionAndDecisionSerializeBothOrders|TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders|TestFixtureReferenceControlNamesInForeignSchemaAreNotExempt|TestFixtureReferenceNewColumnOnControlTableIsNotExempt|TestFixtureReferenceMisconfiguredAdmissionGuardIsUnknown",
+      "exit_code": 0,
+      "passed": [
+        "TestFixtureReferenceOwnerReleasePreservesHistoryAndBlocksActiveWork",
+        "TestFixtureReferenceRejectsWrongOwnerTenantLossAndNewSchema",
+        "TestFixtureReferenceInsertionAndDecisionSerializeBothOrders/reference-first",
+        "TestFixtureReferenceInsertionAndDecisionSerializeBothOrders/decision-first",
+        "TestFixtureReferenceInsertionAndDecisionSerializeBothOrders",
+        "TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders/reference-first",
+        "TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders/registration-first",
+        "TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders",
+        "TestFixtureReferenceControlNamesInForeignSchemaAreNotExempt",
+        "TestFixtureReferenceNewColumnOnControlTableIsNotExempt",
+        "TestFixtureReferenceMisconfiguredAdmissionGuardIsUnknown/wrong-column-argument",
+        "TestFixtureReferenceMisconfiguredAdmissionGuardIsUnknown/insert-only",
+        "TestFixtureReferenceMisconfiguredAdmissionGuardIsUnknown/wrong-update-column",
+        "TestFixtureReferenceMisconfiguredAdmissionGuardIsUnknown/after-write",
+        "TestFixtureReferenceMisconfiguredAdmissionGuardIsUnknown/filtered-out",
+        "TestFixtureReferenceMisconfiguredAdmissionGuardIsUnknown/missing-column-argument",
+        "TestFixtureReferenceMisconfiguredAdmissionGuardIsUnknown"
+      ],
+      "failed": [],
+      "skipped": [],
+      "binary_sha256": "d6027a70d0fad9b813c9ce2af65e699182a33a97139cad9ebe31cd8078577d01",
+      "raw_sha256": "c6681b15d93ed71f340b113799bc803ec0947b9344f28ff7b87d800ff6a166fb"
+    }
+  ],
+  "binary_sha256": {
+    "migrate.exe": "e7af4e481a41bc1e51b8087110d4a169cc6c3a605ac1635a540687aff07a3ed6",
+    "contentreference.test.exe": "7ed07477894f1c00b3ccf9a7dd6ebac1465ef628b6dbfa9f406a44683d944dfa",
+    "routing.test.exe": "f15f3d4a51d991183d53f578e547e0e5e1d25f22f71127c43cbd904c276c9981",
+    "workflow.test.exe": "44324c1692f487f1ca5dd6b7fabe3ec4667a73f055a335e1e8bec6a8a62d4286",
+    "entity.test.exe": "80d84b3767a3edbbab883587d7c32218a9edcc5b554b69d29292b2c515954a7d",
+    "quality.test.exe": "ae841d67da7a9a5ce291cbdfefb57ccd430637a3bd4cf96ecbeae627aa803961",
+    "certification.test.exe": "f16b5c8d3521d52b82c415973f199345174a92748bef3cb9f5d613b9594fa0af",
+    "delivery.test.exe": "0671b1b3a5a5ea8db1448b21284821c6772a59469aa61182274f4c3fa331a0b6",
+    "storage.test.exe": "a5dc8199dff5dbaab26db5c0b86bd986673d0b0ba69c196b38a0f6192605224b",
+    "reference-admission.test.exe": "d6027a70d0fad9b813c9ce2af65e699182a33a97139cad9ebe31cd8078577d01"
+  },
+  "proof": "real PostgreSQL + actual domain/application engines with controlled external Ports; no real provider DELETE or prior environment"
+}

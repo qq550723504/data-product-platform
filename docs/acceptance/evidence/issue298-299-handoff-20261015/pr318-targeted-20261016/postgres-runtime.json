@@ -1,0 +1,30 @@
+{
+  "run_id": "3bffbb42-db97-42a0-a36f-ea2271b3b581",
+  "prefix": "dpp-bc318-3bffbb42db97",
+  "head": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+  "resources": [
+    {
+      "container": "dpp-bc318-3bffbb42db97-pg",
+      "volume": "dpp-bc318-3bffbb42db97-pgdata",
+      "role": "core",
+      "path": "/var/lib/postgresql/data"
+    }
+  ],
+  "pg_image": {
+    "reference": "postgres:16-alpine",
+    "id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "repo_digests": [
+      "postgres@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    ],
+    "cmd": [
+      "postgres"
+    ],
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ]
+  },
+  "pg_port": 54270,
+  "pg_version": "PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+  "cleanup_calls": 0,
+  "provider_delete_calls": 0
+}

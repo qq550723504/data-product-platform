@@ -1,0 +1,91 @@
+import hashlib,json,os,secrets,subprocess,sys,time,uuid
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[2]; APP=ROOT/'apps/platform'; OUT=Path(__file__).resolve().parent
+sys.path.insert(0,str(ROOT/'examples/enterprise-activity/postgres-ingestion'))
+from retained_runtime import private_directory,DurableStorage
+BASE='b823eb33f8f3f923b619feda06e0ecc53514dd23'
+def sha(data): return hashlib.sha256(data).hexdigest()
+def call(args,**kw):
+    r=subprocess.run([str(x) for x in args],capture_output=True,**kw)
+    if r.returncode: raise RuntimeError('command failed: '+str(args[0]))
+    return r
+def save(path,value): path.write_text(json.dumps(value,indent=2,ensure_ascii=False)+'\n',encoding='utf-8',newline='\n')
+def image(ref):
+    v=json.loads(call(['docker','image','inspect',ref]).stdout)[0]
+    return {'reference':ref,'id':v['Id'],'repo_digests':v.get('RepoDigests',[]),'cmd':v.get('Config',{}).get('Cmd'),'entrypoint':v.get('Config',{}).get('Entrypoint')}
+def initialize():
+    assert call(['git','rev-parse','HEAD'],cwd=ROOT).stdout.decode().strip()==BASE
+    assert not (OUT/'private-pointer.json').exists()
+    private=private_directory('dpp-bc318-'); run=str(uuid.uuid4()); prefix='dpp-bc318-'+run.replace('-','')[:12]
+    s={'run_id':run,'prefix':prefix,'head':BASE,'private':str(private),'resources':[],'tests':[],'binary_sha256':{},'cleanup_calls':0,'provider_delete_calls':0}
+    password=secrets.token_urlsafe(32);s.update(pg_user='bc318',pg_password=password,pg_database='bc318',pg_image=image('postgres:16-alpine'))
+    save(private/'state.json',s);save(OUT/'private-pointer.json',{'private':str(private)})
+    (private/'postgres.env').write_text('POSTGRES_USER=bc318\nPOSTGRES_PASSWORD='+password+'\nPOSTGRES_DB=bc318\n',encoding='utf-8')
+    volume=prefix+'-pgdata';name=prefix+'-pg'
+    assert volume not in call(['docker','volume','ls','-q']).stdout.decode().splitlines()
+    assert name not in call(['docker','ps','-a','--format','{{.Names}}']).stdout.decode().splitlines()
+    s['resources'].append({'container':name,'volume':volume,'role':'core','path':'/var/lib/postgresql/data'});save(private/'state.json',s)
+    call(['docker','volume','create','--label','dpp.trial.run='+run,volume])
+    call(['docker','create','--name',name,'--label','dpp.trial.run='+run,'--env-file',private/'postgres.env','--mount','type=volume,src='+volume+',dst=/var/lib/postgresql/data','-p','127.0.0.1::5432',s['pg_image']['id']])
+    durable=DurableStorage(OUT,private,ROOT/'examples/lifecycle-d1/durable-storage.ps1')
+    durable.start(name,'/var/lib/postgresql/data',volume,'core',run)
+    for _ in range(90):
+        r=subprocess.run(['docker','exec',name,'pg_isready','-U','bc318','-d','bc318'],capture_output=True)
+        if r.returncode==0: break
+        time.sleep(1)
+    else: raise RuntimeError('fresh PostgreSQL not ready')
+    v=json.loads(call(['docker','inspect',name]).stdout)[0];port=v['NetworkSettings']['Ports']['5432/tcp'][0]['HostPort']
+    s.update(dsn='postgres://bc318:'+password+'@127.0.0.1:'+port+'/bc318?sslmode=disable',pg_port=int(port),pg_container=name,pg_volume=volume)
+    s['pg_version']=call(['docker','exec',name,'psql','-U','bc318','-d','bc318','-Atc','select version()']).stdout.decode().strip()
+    save(private/'state.json',s)
+    save(OUT/'runtime.json',{k:s[k] for k in ['run_id','prefix','head','resources','pg_image','pg_port','pg_version','cleanup_calls','provider_delete_calls']})
+    print(json.dumps({'stage':'initialize','status':'PASS','run_id':run,'container':name,'port':port,'private':str(private)}),flush=True)
+def load_state():
+    p=Path(json.loads((OUT/'private-pointer.json').read_text())['private']);return p,json.loads((p/'state.json').read_text())
+def tests():
+    p,s=load_state();env=dict(os.environ,POSTGRES_DSN=s['dsn'],TEST_POSTGRES_DSN=s['dsn'],CGO_ENABLED='1',GOMAXPROCS='2')
+    for key in list(env):
+        if key.startswith('TEST_') and key!='TEST_POSTGRES_DSN':env.pop(key)
+    original=ROOT/'apps/platform/internal/lifecycle/application/prepare_plan_integration_test.go';source=original.read_text(encoding='utf-8')
+    pos=source.index('DROP DATABASE');start=source.rindex('\tt.Cleanup(',0,pos);end=source.index('\n\t})',pos)+len('\n\t})')
+    cleanup=source[start:end];assert cleanup.count('DROP DATABASE')==1 and cleanup.startswith('\tt.Cleanup(func()')
+    retained=source[:start]+'\tt.Logf("retained owned scratch database: %s", name)'+source[end:]
+    replacement=p/'retained_plan_test.go';replacement.write_text(retained,encoding='utf-8',newline='\n')
+    overlay=p/'retention-overlay.json';save(overlay,{'Replace':{str(original):str(replacement)}})
+    s['retention_overlay']={'original_lf_sha256':sha(source.encode()),'retained_lf_sha256':sha(retained.encode()),'removed_hook_lf_sha256':sha(cleanup.encode()),'change':'only DROP DATABASE cleanup hook replaced with retained-name observation; all assertions unchanged'};save(p/'state.json',s)
+    migrate=p/'migrate.exe'
+    for label,args in [('build-migrate',['go','build','-p','2','-o',migrate,'./cmd/migrate']),('migrate',[migrate,'-dir',ROOT/'migrations','-direction','up'])]:
+        r=subprocess.run([str(x) for x in args],cwd=APP,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT);(p/(label+'.log')).write_bytes(r.stdout)
+        s['binary_sha256']['migrate.exe']=sha(migrate.read_bytes()) if migrate.exists() else None;save(p/'state.json',s)
+        print(json.dumps({'stage':label,'exit_code':r.returncode}),flush=True)
+        if r.returncode:return
+    groups=[
+    ('contentreference','./internal/platform/contentreference','TestReferenceIdentityRequiresKnownKindAndExactInputMembership'),
+    ('routing','./internal/platform/routing','TestVersionFitsPersistedOutboxContract|TestRoutesDeclareEveryEventTypeExactlyOnce|TestRoutesResolveGovernanceProjectionProfile|TestRoutesRequireExecutionQueueForNewDispatchEvents|TestRouterImplementsObligationSource'),
+    ('workflow','./internal/workflow/application','TestExecutionPersistsFrozenInputsRetryAndTraceability|TestNativeReconcilerFinalizesReadyOutputAfterCrash'),
+    ('entity','./internal/entity/application','TestCompanyEntityResolutionReferenceSlice'),
+    ('quality','./internal/quality/application','TestNativeQualityAndComplianceGates|TestQualityAttemptRealRetryPreservesBothPhysicalCosts'),
+    ('certification','./internal/certification/application','TestCertificationAndDispositionAppendDecisionEvidence|TestCertificationDispositionSerializesWithDeliveryAuthorizationFence'),
+    ('delivery','./internal/delivery/application','TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload|TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked'),
+    ('storage','./internal/platform/storage','TestCheckpointExactReadHasMaintenanceSubjectAndNeverRetries'),
+    ('reference-admission','./internal/lifecycle/application','TestFixtureReferenceOwnerReleasePreservesHistoryAndBlocksActiveWork|TestFixtureReferenceRejectsWrongOwnerTenantLossAndNewSchema|TestFixtureReferenceInsertionAndDecisionSerializeBothOrders|TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders|TestFixtureReferenceControlNamesInForeignSchemaAreNotExempt|TestFixtureReferenceNewColumnOnControlTableIsNotExempt|TestFixtureReferenceMisconfiguredAdmissionGuardIsUnknown')]
+    for label,pkg,pattern in groups:
+        binary=p/(label+'.test.exe')
+        b=subprocess.run(['go','test','-p','2','-c','-race','-overlay',str(overlay),'-o',str(binary),pkg],cwd=APP,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT);(p/(label+'-build.log')).write_bytes(b.stdout)
+        if b.returncode:print(json.dumps({'stage':'build-'+label,'exit_code':b.returncode}),flush=True);return
+        s['binary_sha256'][binary.name]=sha(binary.read_bytes())
+        r=subprocess.run(['go','tool','test2json','-p',pkg,'-t',str(binary),'-test.v=test2json','-test.run','^('+pattern+')$','-test.count=1','-test.timeout=10m'],cwd=APP,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+        (p/(label+'-raw.jsonl')).write_bytes(r.stdout);actions=[]
+        for line in r.stdout.splitlines():
+            try:actions.append(json.loads(line))
+            except ValueError:pass
+        selected=lambda action:[a['Test'] for a in actions if a.get('Action')==action and 'Test'in a]
+        item={'group':label,'package':pkg,'regex':pattern,'exit_code':r.returncode,'passed':selected('pass'),'failed':selected('fail'),'skipped':selected('skip'),'binary_sha256':s['binary_sha256'][binary.name],'raw_sha256':sha(r.stdout)}
+        s['tests'].append(item);save(p/'state.json',s)
+        save(OUT/'targeted-tests.json',{'head':BASE,'run_id':s['run_id'],'retention_overlay':s['retention_overlay'],'tests':s['tests'],'binary_sha256':s['binary_sha256'],'proof':'real PostgreSQL + actual domain/application engines with controlled external Ports; no real provider DELETE or prior environment'})
+        print(json.dumps({'stage':label,'exit_code':r.returncode,'passed':len(item['passed']),'failed':item['failed'],'skipped':item['skipped']}),flush=True)
+        if r.returncode:return
+    print(json.dumps({'stage':'targeted-tests','status':'PASS','groups':len(groups)}),flush=True)
+if __name__=='__main__':
+    if sys.argv[1]=='initialize':initialize()
+    elif sys.argv[1]=='tests':tests()
