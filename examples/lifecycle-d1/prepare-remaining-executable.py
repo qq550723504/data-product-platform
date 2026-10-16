@@ -30,19 +30,22 @@ EXECUTION = 'effa0385-9308-42eb-bd66-d0c379b6a989'
 
 def main():
     global CONTROL, PUBLIC
-    continuation = sys.argv[1:] == ['--continue-policy-window-rejection']
+    continuation = sys.argv[1:] in (['--continue-policy-window-rejection'],['--continue-renewal-design-rejection'])
     require(not sys.argv[1:] or continuation,'Unsupported finite continuation')
     if continuation:
-        failure = load(PUBLIC/'business-races/freeze-policy.json')
-        require(failure['exit_code']==1 and failure['id']=='34e837d61bb5f783b6826ef659b4da7b330367a7a253de519aaa0a48f6d877fc', 'Retained failure identity differs')
+        renewal = sys.argv[1:] == ['--continue-renewal-design-rejection']
+        prior = ROOT/'docs/acceptance/evidence/issue307-d1'/('remaining-executable02' if renewal else 'remaining-executable01')
+        failure = load(prior/'business-races/freeze-policy.json')
+        require(failure['exit_code']==1 and failure['binary_sha256']==load(prior/'build.json')['reader_sha256'], 'Retained failure identity differs')
         require(inspect(failure['id'])['State']['Pid']==0,'Prior owner active')
-        CONTROL=r.PRIVATE/'remaining-executable02';PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-executable02'
+        generation='03' if renewal else '02'
+        CONTROL=r.PRIVATE/('remaining-executable'+generation);PUBLIC=ROOT/('docs/acceptance/evidence/issue307-d1/remaining-executable'+generation)
     require(not r.call(['git', 'status', '--porcelain']).strip(), 'Commit source before one-shot preparation')
     require(not CONTROL.exists() and not PUBLIC.exists(), 'Preparation already allocated; retain and diagnose failures')
     CONTROL.mkdir(); PUBLIC.mkdir()
     source = r.call(['git', 'rev-parse', 'HEAD']).decode().strip()
     env = os.environ.copy(); env.update(GOOS='linux', GOARCH='amd64', CGO_ENABLED='0')
-    for name, package in [('reader', 'lifecycle-fixture-reader'), ('operator', 'lifecycle-fixture-remaining')]:
+    for name, package in [('reader', 'lifecycle-fixture-reader'), ('operator', 'lifecycle-fixture-remaining'),('migrate','migrate')]:
         result = subprocess.run(['go', 'build', '-trimpath', '-buildvcs=false', '-o', str(CONTROL/name), './cmd/'+package], cwd=ROOT/'apps/platform', env=env, capture_output=True)
         require(result.returncode == 0, name+' build failed')
     write(PUBLIC/'build.json', {'source':source, 'reader_sha256':sha(CONTROL/'reader'), 'operator_sha256':sha(CONTROL/'operator'), 'go':r.call(['go','version']).decode().strip(), 'native_delete':0})
@@ -93,6 +96,9 @@ def main():
             r.native.wait_pg(source_ids['postgres'],'fixture');time.sleep(3)
             if continuation and group=='business-races':
                 require(r.native.fingerprints(source_ids['postgres']) == load(ROOT/'docs/acceptance/evidence/issue307-d1/remaining-runner02/candidate-core-before.json'), 'Failed policy transaction changed Core; stop for new design')
+            envfile=private/'migrate.env';envfile.write_text('POSTGRES_DSN='+base['PostgresDSN']+'\n')
+            migrator=docker('create','--pull','never','--name',prefix+'-'+CONTROL.name[-2:]+'-migrate','--label','lifecycle307.remaining='+EXECUTION,'--network',resources['network'],'--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--env-file',envfile,'--mount',f'type=bind,source={CONTROL}/migrate,target=/run/migrate,readonly','--mount',f'type=bind,source={ROOT}/migrations,target=/run/migrations,readonly','--entrypoint','/run/migrate',r.PG,'-dir','/run/migrations').decode().strip();owned.append(migrator);docker('start',migrator);require(docker('wait',migrator).strip()==b'0','Source current migration failed')
+            (target/'migration.stdout.txt').write_bytes(docker('logs',migrator));write(target/'migration.json',{'container':migrator,'binary_sha256':sha(CONTROL/'migrate'),'schema':int(r.native.sql(source_ids['postgres'],'SELECT max(version) FROM schema_migration;')),'native_delete':0})
             # Compile all future operator SQL against the actual schema without
             # executing a query, claiming work, or contacting native storage.
             sqls=[]

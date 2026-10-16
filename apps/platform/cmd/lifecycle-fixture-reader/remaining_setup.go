@@ -193,7 +193,11 @@ func remainingFreezePolicy(ctx context.Context, r remainingConfig, pool *pgxpool
 		if cp.Key == "fixture/control-hold.csv" || cp.Key == "fixture/control-retention.csv" {
 			continue
 		}
-		f, e := policy.BindFixtureCopyPolicy(ctx, lc.BindCopyPolicyCommand{CommandHeader: lc.CommandHeader{WorkspaceID: r.Base.WorkspaceID, IdempotencyKey: "candidate07-policy:" + r.Batch.String() + ":" + cp.ID.String()}, DatasetVersionID: cp.DatasetVersionID, UseUntil: policyUntil, RestoreUntil: policyUntil})
+		var previous uuid.UUID
+		if e = pool.QueryRow(ctx, `SELECT id FROM lifecycle_current_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, r.Base.WorkspaceID, cp.DatasetVersionID).Scan(&previous); e != nil {
+			return e
+		}
+		f, e := policy.RenewFixtureCopyPolicy(ctx, lc.RenewFixtureCopyPolicyCommand{PreviousPolicyID: previous, CommandHeader: lc.CommandHeader{WorkspaceID: r.Base.WorkspaceID, IdempotencyKey: "candidate07-policy:" + r.Batch.String() + ":" + cp.ID.String()}, DatasetVersionID: cp.DatasetVersionID, UseUntil: policyUntil, RestoreUntil: policyUntil})
 		if e != nil {
 			return e
 		}
