@@ -19,6 +19,7 @@
 | 2026-10-14 独立业务实跑 | main 074a33bace7edbaf481759aac3a84708363ffd02，run 47203cb1-2b93-4946-8f09-72e29022ea4c。真实 PostgreSQL/Hop/OM、AI Edge、C1/C2、成本、历史及新库恢复均保持该原始身份。 |
 | 启动器修复 #319 | reviewed head cf0889346a55184d660a89ce40a937d9fe52584e → merge 196ecda3282d009647afbd79021cf3691bc2fe51。唯一 tag/实际 image ID、OCI 原身份恢复、隔离回归修复，不是重新运行整轮 C1/C2。 |
 | #320 / #321 | reviewed head 49322c3e2e83821f52b2c6ca87dc55ddbf7147cd → merge ac8bd7ad316a3977d791bb5f093a1018b9e40fa5。ownership/retain、分项回执、B2 source-binding；#320 已 CLOSED/completed。 |
+| 运行器 / CI #322 | reviewed head 19ceaea31713cacbc8edace26542c1ff55a4ab62 → merge d7c9ccdfe4fba066b512fe4adbcd1df281a2d0d9，reviewed/merge tree 相同；[push/main CI38687368151](https://github.com/qq550723504/data-product-platform/actions/runs/38687368151) exact SHA、13/13 SUCCESS。14 项 helper ownership/归档/回收及 CI 变更单列于追加审计，本轮没有重新运行这些 helper 或清理路径。 |
 | #318 当前影响 | reviewed head 22ee8e3ed55c38f1e6b7d464081dc068a8628da0 → squash merge b823eb33f8f3f923b619feda06e0ecc53514dd23。该 merge 与 reviewed tree 相同；[push/main CI38842607982](https://github.com/qq550723504/data-product-platform/actions/runs/38842607982) exact SHA、13/13 SUCCESS。 |
 | 本次定向运行 | 源码固定为 b823eb33f8f3f923b619feda06e0ecc53514dd23，run 3bffbb42-db97-42a0-a36f-ea2271b3b581。24 个顶层 race tests / 15 个子场景，41 个只读 owner cases，7 个真实 MinIO 检查；0 FAIL / 0 SKIP（下文单列启动/导出 harness FAIL）。 |
 | 本交接候选 | 只新增本文和 evidence 索引/回执；候选 head、PR CI 及 Draft 状态在 PR checkpoint 单独绑定，不把当前 main CI 当作本交接 PR CI。 |
@@ -37,7 +38,11 @@
 | Storage/SDK | 新 checkpoint-read 路径的 custody/零重试受控测试通过；实际编译依赖 minio-go/v7 v7.0.88。另以实际 MinIO 和当前 Store adapter 验证读写、拒绝覆盖、并发唯一成功及跨 bucket 预拒绝。 |
 | 未变化的 UI/HTTP/行业规则 | 本次没有重跑浏览器、人工、完整 B1/B2/C1/C2 或 OM Connector 矩阵；原结果仍属于其原源码和环境。 |
 
-[impact.json](evidence/issue298-299-handoff-20261015/pr318-targeted-20261016/impact.json) 列出实际差异和范围。[source-history-audit.json](evidence/issue298-299-handoff-20261015/pr318-targeted-20261016/source-history-audit.json) 核对旧 759 份源码：733 UNCHANGED、26 CHANGED、0 MISSING，旧 hash 全匹配其原基线。不能再沿用“业务源码无变化”的 2026-10-15 区间结论。
+[impact.json](evidence/issue298-299-handoff-20261015/pr318-targeted-20261016/impact.json) 的 64 项 changes 仅筛选 apps/platform/ 与 migrations/，不是完整仓库差异。Ready 评审发现这一范围标注遗漏后，保留原 40 份证据与 manifest，追加 [完整区间差异审计](evidence/issue298-299-handoff-20261015/ready-impact-audit-20261016/impact-range-audit.json)：ac8bd7ad… → b823eb33… 共 1710 条路径，分为 64 项业务源码/迁移、66 项运维/测试源码、20 项文档和 1560 项既有运行回执；[完整清单](evidence/issue298-299-handoff-20261015/ready-impact-audit-20261016/range-diff.jsonl) 逐项绑定 status、前后 Git blob 与 SHA256。入清单只证明差异身份，不表示这些路径全部在本轮运行。
+
+#322 的 14 项文件在追加审计中分别绑定 merge 时与目标 b823 的源码。其四个 lifecycle wrapper（finish-prepare、run-copy-recovery-step、run-plane-step、run-reader-step）接入临时 helper 归档/回收，本轮驱动没有调用它们或 temporary-container helper。本轮实际复用 retained_runtime → smoke/retained-storage.ps1 → durable-storage.ps1；这四份输入在该区间均未变化，追加审计记录了精确 hash。#322 原 CI 与 #318 其他运维/测试/回执保持各自证明范围，本轮不重跑清理、接管环境或替 #307 追加业务验收。
+
+[source-history-audit.json](evidence/issue298-299-handoff-20261015/pr318-targeted-20261016/source-history-audit.json) 核对旧 759 份源码：733 UNCHANGED、26 CHANGED、0 MISSING，旧 hash 全匹配其原基线。不能再沿用“业务源码无变化”的 2026-10-15 区间结论。
 
 ## 本次环境、二进制与证明粒度
 
@@ -66,4 +71,4 @@
 
 #298/#299 继续 OPEN。两项的非开发者操作/解释仍 NOT_RUN / 暂缓；AI 浏览器、自动化或本次定向回归都不代替人工。原 dpp-pgi-b3-core-bc776a791192 继续 FAIL / NOT_RESTORED，恢复暂缓；本轮新库及 dump 不能证明旧历史恢复。
 
-当前定向范围无产品 blocker、无必要共享源码修复，交接仅为 Draft 文档/证据增量，不自动 Ready 或 merge。所有原保留环境、容器、共享标签、卷、对象与备份保留；旧来源未重新授权，未执行 cleanup 或 provider DELETE。#307 的真实 processing/DirectData-versus-DELETE、in-flight late hold、三 copy mixed outcomes 仍属其原 owner / open Issue；本轮未推进或代验这些范围。
+初始定向运行无产品 blocker、无必要共享源码修复，交接以 Draft 文档/证据增量提交；后续 Ready、独立评审及合并按新的用户授权在 PR checkpoint 分别记录。所有原保留环境、容器、共享标签、卷、对象与备份保留；旧来源未重新授权，未执行 cleanup 或 provider DELETE。#307 的真实 processing/DirectData-versus-DELETE、in-flight late hold、三 copy mixed outcomes 仍属其原 owner / open Issue；本轮未推进或代验这些范围。
