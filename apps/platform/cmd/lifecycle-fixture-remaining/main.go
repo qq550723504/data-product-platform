@@ -54,6 +54,7 @@ type groupBinding struct {
 	Helpers                                                                                           map[string]string
 }
 type candidate struct {
+	OwnerBinarySHA256                                                                                               string
 	WirePublicKey                                                                                                   string
 	NotBefore, NotAfter                                                                                             time.Time
 	Profile, Execution, Source, SourceFreezeSHA256, ReaderBinarySHA256, SenderBinarySHA256, TargetDigest, PublicKey string
@@ -127,6 +128,9 @@ func validateCandidate(c candidate) error {
 		return errDenied
 	}
 	if c.Profile != profile || c.Execution != execution || len(c.Source) != 40 || len(c.SourceFreezeSHA256) != 64 || len(c.ReaderBinarySHA256) != 64 || len(c.SenderBinarySHA256) != 64 || len(c.TargetDigest) != 64 || len(c.Groups) != 3 {
+		return errDenied
+	}
+	if raw, e := hex.DecodeString(c.OwnerBinarySHA256); e != nil || len(raw) != 32 {
 		return errDenied
 	}
 	key, e := hex.DecodeString(c.PublicKey)
