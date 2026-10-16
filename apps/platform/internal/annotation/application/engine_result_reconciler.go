@@ -49,6 +49,9 @@ func (r *EngineResultReconciler) ReconcileCampaign(ctx context.Context, campaign
 	if err != nil {
 		return err
 	}
+	if binding, err := r.repo.GetEngineCampaignBinding(ctx, campaignID); err == nil && binding.Protocol() == annotationdomain.ControlledSubmissionProtocol {
+		return r.reconcileControlled(ctx, campaign, binding)
+	}
 	if campaign.Status == annotationdomain.CampaignSealed || campaign.Status == annotationdomain.CampaignCancelled {
 		return nil
 	}
@@ -294,7 +297,21 @@ func (r *EngineResultReconciler) startFetchAttempt(
 ) (annotationdomain.EngineAttempt, error) {
 	var attempt annotationdomain.EngineAttempt
 	err := r.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
-		var err error
+		binding, err := r.repo.GetEngineCampaignBindingTx(ctx, tx, operation.CampaignID)
+		if err != nil {
+			return err
+		}
+		if binding.Protocol() == annotationdomain.ControlledSubmissionProtocol {
+			authorizer, ok := r.recorder.(interface {
+				ValidateSourceCollectionTx(context.Context, pgx.Tx, uuid.UUID) error
+			})
+			if !ok {
+				return ErrActivationGuardRequired
+			}
+			if err := authorizer.ValidateSourceCollectionTx(ctx, tx, operation.CampaignID); err != nil {
+				return err
+			}
+		}
 		attempt, err = r.repo.StartEngineAttempt(
 			ctx, tx, operation.WorkspaceID, operation.ID, annotationdomain.EngineAttemptFetch, time.Now().UTC(),
 		)

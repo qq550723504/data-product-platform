@@ -105,6 +105,7 @@ func (o EngineAttemptOutcome) Validate() error {
 }
 
 type EngineCampaignBinding struct {
+	SourceContract
 	ID                uuid.UUID
 	WorkspaceID       uuid.UUID
 	CampaignID        uuid.UUID
@@ -117,6 +118,9 @@ type EngineCampaignBinding struct {
 }
 
 func (b EngineCampaignBinding) Validate() error {
+	if err := b.SourceContract.Validate(); err != nil {
+		return err
+	}
 	if b.ID == uuid.Nil || b.WorkspaceID == uuid.Nil || b.CampaignID == uuid.Nil ||
 		strings.TrimSpace(b.Provider) == "" || strings.TrimSpace(b.ProviderInstance) == "" ||
 		strings.TrimSpace(b.ExternalProjectID) == "" || strings.TrimSpace(b.RequestID) == "" ||

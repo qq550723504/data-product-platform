@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	annotationdomain "github.com/qq550723504/data-product-platform/apps/platform/internal/annotation/domain"
 )
 
 var (
@@ -25,6 +26,7 @@ const (
 )
 
 type EngineCampaignRequest struct {
+	annotationdomain.SourceContract
 	WorkspaceID        uuid.UUID
 	CampaignID         uuid.UUID
 	RequestID          string
@@ -35,6 +37,7 @@ type EngineCampaignRequest struct {
 }
 
 type EngineCampaignBinding struct {
+	annotationdomain.SourceContract
 	Provider          string
 	ProviderInstance  string
 	ExternalProjectID string
@@ -87,6 +90,8 @@ type EngineResultCursor struct {
 }
 
 type EngineResultObservation struct {
+	Source                 *EngineImmutableSource
+	Quarantined            bool
 	TaskID                 uuid.UUID
 	ExternalTaskID         string
 	ExternalAnnotationID   string
@@ -169,4 +174,17 @@ func NewAnnotationEngineOutcomeError(
 		StatusCode:       statusCode,
 		Cause:            cause,
 	}
+}
+
+// Adapter-verified provider-neutral source content. Core fills and checks its
+// own frozen context and mapping identities before admission.
+type EngineImmutableSource struct {
+	AssignmentObservation annotationdomain.AssignmentObservation
+	PhysicalAttemptID     uuid.UUID
+	ExternalID            string
+	AssignmentID          string
+	Revision              int64
+	Snapshot              []byte
+	SnapshotSHA256        string
+	ExternalProjectID     string
 }

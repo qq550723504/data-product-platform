@@ -385,12 +385,14 @@ func (r *Repository) InsertEngineCampaignBinding(
 	tag, err := tx.Exec(ctx, `
         INSERT INTO annotation_engine_campaign_binding(
             id, workspace_id, campaign_id, provider, provider_instance_ref,
-            external_project_id, request_id, config_sha256, created_at
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+            external_project_id, request_id, config_sha256, created_at,
+ admission_protocol, connection_id, provider_incarnation, source_commit, engine_version, image_digest, normalizer_version
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
         ON CONFLICT (campaign_id) DO NOTHING
     `, binding.ID, binding.WorkspaceID, binding.CampaignID, binding.Provider,
 		binding.ProviderInstance, binding.ExternalProjectID, binding.RequestID,
-		binding.ConfigSHA256, binding.CreatedAt)
+		binding.ConfigSHA256, binding.CreatedAt, binding.Protocol(), nullableSourceConnection(binding.ConnectionID),
+		binding.ProviderIncarnation, binding.SourceCommit, binding.EngineVersion, binding.ImageDigest, binding.NormalizerVersion)
 	if err != nil {
 		return false, fmt.Errorf("insert annotation engine campaign binding: %w", err)
 	}
@@ -403,7 +405,8 @@ func (r *Repository) InsertEngineCampaignBinding(
 	}
 	if existing.Provider != binding.Provider || existing.ProviderInstance != binding.ProviderInstance ||
 		existing.ExternalProjectID != binding.ExternalProjectID || existing.RequestID != binding.RequestID ||
-		existing.ConfigSHA256 != binding.ConfigSHA256 || existing.WorkspaceID != binding.WorkspaceID {
+		existing.ConfigSHA256 != binding.ConfigSHA256 || existing.WorkspaceID != binding.WorkspaceID ||
+		!sourceContractsEqual(existing.SourceContract, binding.SourceContract) {
 		return false, ErrEngineBindingConflict
 	}
 	return false, nil
@@ -721,7 +724,7 @@ func (r *Repository) ListCampaignIDsNeedingEngineResults(
 		       SELECT 1
 		         FROM annotation_task t
 		        WHERE t.campaign_id=c.id
-		          AND t.status IN ('PENDING','REVIEWABLE')
+		          AND (b.admission_protocol='controlled-fork-submission-v1' OR t.status IN ('PENDING','REVIEWABLE'))
 		   )
 		 ORDER BY c.id
 		 LIMIT $3
@@ -817,16 +820,32 @@ func getEngineCampaignBinding(
 	var binding annotationdomain.EngineCampaignBinding
 	err := q.QueryRow(ctx, `
         SELECT id, workspace_id, campaign_id, provider, provider_instance_ref,
-               external_project_id, request_id, config_sha256, created_at
+               external_project_id, request_id, config_sha256, created_at,
+ admission_protocol,COALESCE(connection_id,'00000000-0000-0000-0000-000000000000'::uuid),
+ COALESCE(provider_incarnation,''),COALESCE(source_commit,''),COALESCE(engine_version,''),COALESCE(image_digest,''),normalizer_version
           FROM annotation_engine_campaign_binding
          WHERE campaign_id=$1
     `, campaignID).Scan(
 		&binding.ID, &binding.WorkspaceID, &binding.CampaignID, &binding.Provider,
 		&binding.ProviderInstance, &binding.ExternalProjectID, &binding.RequestID,
 		&binding.ConfigSHA256, &binding.CreatedAt,
+		&binding.AdmissionProtocol, &binding.ConnectionID, &binding.ProviderIncarnation,
+		&binding.SourceCommit, &binding.EngineVersion, &binding.ImageDigest, &binding.NormalizerVersion,
 	)
 	if err != nil {
 		return annotationdomain.EngineCampaignBinding{}, err
 	}
 	return binding, nil
+}
+
+func nullableSourceConnection(id uuid.UUID) any {
+	if id == uuid.Nil {
+		return nil
+	}
+	return id
+}
+func sourceContractsEqual(a, b annotationdomain.SourceContract) bool {
+	a.AdmissionProtocol = a.Protocol()
+	b.AdmissionProtocol = b.Protocol()
+	return a == b
 }

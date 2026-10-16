@@ -746,7 +746,10 @@ func (r *Repository) GetSnapshotIntegrity(ctx context.Context, snapshotID uuid.U
 	if err != nil {
 		return false, fmt.Errorf("verify annotation snapshot integrity: %w", err)
 	}
-	return valid, nil
+	if !valid {
+		return false, nil
+	}
+	return r.verifySnapshotSourceIntegrity(ctx, snapshotID)
 }
 
 func (r *Repository) GetResultByProviderObservation(
