@@ -1,0 +1,8 @@
+{
+  "status": "RELEASED_NO_MUTATION",
+  "non_target_rows_locked": 394,
+  "target_work": "7a56e035-d1a9-44d1-84f4-13d8d6fbcabe",
+  "transaction": "ROLLBACK",
+  "target_dispatch": "existing SKIP LOCKED dispatcher",
+  "direct_queue_injection": 0
+}

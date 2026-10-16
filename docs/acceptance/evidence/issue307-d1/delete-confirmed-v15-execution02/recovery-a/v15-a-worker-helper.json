@@ -1,0 +1,10 @@
+{
+  "id": "b5e2093619444307fad62a02715ddc2c2dcd9aa21d2181e8fe17db6540911591",
+  "name": "dpp-lifecycle307-5d2274ee-v15-a-worker",
+  "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "exit": 0,
+  "pid": 0,
+  "network": "container:90a123dfbb400bbaed98d4f1c194e363bf7ee48f7701e17fcd056d1d34bc859c",
+  "read_only": true,
+  "root_payload_mounted": false
+}

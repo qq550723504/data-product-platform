@@ -1,0 +1,1623 @@
+{
+  "status": "PASS_ALL_194_TABLES_OLD_ROWS_PRESERVED",
+  "rows": [
+    {
+      "relation": "annotation_campaign",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_campaign_command",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_engine_actor_binding",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_engine_attempt",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_engine_attempt_outcome",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_engine_campaign_binding",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_engine_operation",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_engine_task_binding",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_result",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_result_alias",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_review_attempt",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_review_attempt_outcome",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_review_decision",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_snapshot",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_snapshot_decision",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_snapshot_output",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_snapshot_result",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_snapshot_task",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "annotation_task",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "audit_event",
+      "before_rows": 380,
+      "after_rows": 461,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 81
+    },
+    {
+      "relation": "authorization_provenance_binding",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "authorization_provenance_binding_disposition",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "authorization_resource",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_disposition",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_profile",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_profile_action",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_profile_consumer",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_profile_critical_rule",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_profile_delivery",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_profile_purpose",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_profile_quality_dimension",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_profile_rights_action",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_profile_rights_consumer",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_profile_rights_purpose",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "certification_profile_rights_scope",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "command_idempotency",
+      "before_rows": 77,
+      "after_rows": 84,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 7
+    },
+    {
+      "relation": "compliance_finding",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "compliance_result",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "contract_version",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "cost_allocation",
+      "before_rows": 130,
+      "after_rows": 164,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 34
+    },
+    {
+      "relation": "cost_event",
+      "before_rows": 136,
+      "after_rows": 170,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 34
+    },
+    {
+      "relation": "data_authorization",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "data_contract",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "data_product",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "data_resource",
+      "before_rows": 2,
+      "after_rows": 2,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "dataset",
+      "before_rows": 4,
+      "after_rows": 4,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "dataset_certification",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "dataset_version",
+      "before_rows": 4,
+      "after_rows": 4,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "dataset_version_lineage",
+      "before_rows": 4,
+      "after_rows": 4,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "delivery_authorization_fence",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 0
+    },
+    {
+      "relation": "delivery_containment",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "delivery_containment_transition",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "delivery_credential_replay_decision",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "delivery_gate_evaluation",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "delivery_operation",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "delivery_provider_attempt",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "delivery_provider_observation",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "delivery_transition",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "effective_rights_action",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "effective_rights_action_provenance",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "effective_rights_input",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "effective_rights_snapshot",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "entity",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "entity_mapping",
+      "before_rows": 2,
+      "after_rows": 2,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "entity_mapping_decision",
+      "before_rows": 2,
+      "after_rows": 2,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "entity_match_candidate",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "entity_match_job",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "entity_resolution_output_decision",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "entity_type",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "evidence",
+      "before_rows": 355,
+      "after_rows": 436,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 81
+    },
+    {
+      "relation": "evidence_relation",
+      "before_rows": 356,
+      "after_rows": 437,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 81
+    },
+    {
+      "relation": "evidence_snapshot",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "evidence_snapshot_item",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "execution",
+      "before_rows": 4,
+      "after_rows": 4,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "execution_dependency_binding",
+      "before_rows": 3,
+      "after_rows": 3,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "execution_dependency_preparation",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "execution_input",
+      "before_rows": 16,
+      "after_rows": 16,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "execution_mapping_usage",
+      "before_rows": 3,
+      "after_rows": 3,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "execution_quarantine_record",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_identifier",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_identifier_disposition",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_identity_binding",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_identity_binding_disposition",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_provider_call",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_provider_dispatch",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_provider_observation",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_publication",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_publication_attempt",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_publication_attempt_resolution",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_publication_transition",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_usage_call",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_usage_checkpoint",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_usage_conflict",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_usage_decision",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_usage_dispatch",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_usage_event",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_usage_outcome",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_usage_pull",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_usage_resolution",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "external_usage_source",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "gold_build_request",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "gold_production_binding",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "gold_production_member",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "governance_projection",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "grantor_authority_delegation_chain",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "grantor_authority_delegation_disposition",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "grantor_authority_delegation_edge",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "ingestion_attempt",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "ingestion_invocation",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "ingestion_invocation_outcome",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "ingestion_observation",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "ingestion_operation",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "ingestion_receipt",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "ingestion_receipt_slot",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "ingestion_request_slot",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_approval_revocation",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_content_hold",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_content_hold_release",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_content_use_restriction",
+      "before_rows": 2,
+      "after_rows": 2,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_copy_absence_receipt",
+      "before_rows": 0,
+      "after_rows": 2,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "lifecycle_copy_decision",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_copy_discovery",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_copy_materialization",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_copy_operation",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_copy_policy",
+      "before_rows": 4,
+      "after_rows": 4,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_copy_verification",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_dispatch_release",
+      "before_rows": 3,
+      "after_rows": 3,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_disposition_approval",
+      "before_rows": 2,
+      "after_rows": 3,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 1
+    },
+    {
+      "relation": "lifecycle_disposition_dependency_evaluation",
+      "before_rows": 5,
+      "after_rows": 7,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "lifecycle_disposition_dispatch",
+      "before_rows": 3,
+      "after_rows": 5,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "lifecycle_disposition_gate_evaluation",
+      "before_rows": 5,
+      "after_rows": 7,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "lifecycle_disposition_plan",
+      "before_rows": 3,
+      "after_rows": 3,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_disposition_plan_target",
+      "before_rows": 12,
+      "after_rows": 12,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_disposition_retention_evaluation",
+      "before_rows": 5,
+      "after_rows": 7,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "lifecycle_fixture_copy",
+      "before_rows": 6,
+      "after_rows": 6,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_fixture_disposal_basis",
+      "before_rows": 2,
+      "after_rows": 3,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 1
+    },
+    {
+      "relation": "lifecycle_fixture_namespace",
+      "before_rows": 2,
+      "after_rows": 2,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_fixture_reference_release",
+      "before_rows": 23,
+      "after_rows": 23,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_fixture_reference_requirement",
+      "before_rows": 23,
+      "after_rows": 23,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_hold_dispatch_conflict",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_plan_completion",
+      "before_rows": 0,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 1
+    },
+    {
+      "relation": "lifecycle_processing_output_intent",
+      "before_rows": 2,
+      "after_rows": 2,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_processing_output_ready",
+      "before_rows": 2,
+      "after_rows": 2,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_provider_attempt",
+      "before_rows": 3,
+      "after_rows": 5,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "lifecycle_provider_observation",
+      "before_rows": 3,
+      "after_rows": 5,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "lifecycle_provider_send_claim",
+      "before_rows": 1,
+      "after_rows": 3,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "lifecycle_reader_pin",
+      "before_rows": 7,
+      "after_rows": 7,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_reader_termination",
+      "before_rows": 7,
+      "after_rows": 7,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_reconciliation_result",
+      "before_rows": 4,
+      "after_rows": 6,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "lifecycle_reconciliation_run",
+      "before_rows": 4,
+      "after_rows": 6,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "lifecycle_reconciliation_work",
+      "before_rows": 3,
+      "after_rows": 5,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "lifecycle_restore_checkpoint",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "lifecycle_storage_call",
+      "before_rows": 125,
+      "after_rows": 157,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 32
+    },
+    {
+      "relation": "lifecycle_storage_observation",
+      "before_rows": 125,
+      "after_rows": 157,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 32
+    },
+    {
+      "relation": "lifecycle_transfer_observation",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "outbox_event",
+      "before_rows": 377,
+      "after_rows": 458,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 81
+    },
+    {
+      "relation": "outbox_event_consumption",
+      "before_rows": 1,
+      "after_rows": 3,
+      "old_rows_preserved": true,
+      "changed": true,
+      "new_rows": 2
+    },
+    {
+      "relation": "outbox_event_replay",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "product_asset",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "product_release",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "product_release_dataset",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "product_version",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "quality_assessment_attempt",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "quality_assessment_attempt_outcome",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "quality_finding",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "quality_remediation_assignment",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "quality_remediation_case",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "quality_remediation_close",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "quality_remediation_detection",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "quality_remediation_execution",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "quality_remediation_recheck",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "quality_remediation_recheck_outcome",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "quality_result",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "resource_binding",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_declaration",
+      "before_rows": 2,
+      "after_rows": 2,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_declaration_disposition",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_declaration_evidence",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_declaration_party",
+      "before_rows": 2,
+      "after_rows": 2,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_declaration_permission",
+      "before_rows": 8,
+      "after_rows": 8,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_declaration_purpose",
+      "before_rows": 8,
+      "after_rows": 8,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_declaration_scope",
+      "before_rows": 8,
+      "after_rows": 8,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_declaration_verification",
+      "before_rows": 2,
+      "after_rows": 2,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_snapshot",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_snapshot_authorization",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_snapshot_declaration",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "rights_snapshot_provenance_binding",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "schema_migration",
+      "before_rows": 65,
+      "after_rows": 65,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "source_schema_attempt",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "source_schema_attempt_runtime",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "source_schema_handling",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "source_schema_observation",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "source_schema_request",
+      "before_rows": 0,
+      "after_rows": 0,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "workflow",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    },
+    {
+      "relation": "workflow_version",
+      "before_rows": 1,
+      "after_rows": 1,
+      "old_rows_preserved": true,
+      "changed": false,
+      "new_rows": 0
+    }
+  ],
+  "changed_relations": [
+    "audit_event",
+    "command_idempotency",
+    "cost_allocation",
+    "cost_event",
+    "delivery_authorization_fence",
+    "evidence",
+    "evidence_relation",
+    "lifecycle_copy_absence_receipt",
+    "lifecycle_disposition_approval",
+    "lifecycle_disposition_dependency_evaluation",
+    "lifecycle_disposition_dispatch",
+    "lifecycle_disposition_gate_evaluation",
+    "lifecycle_disposition_retention_evaluation",
+    "lifecycle_fixture_disposal_basis",
+    "lifecycle_plan_completion",
+    "lifecycle_provider_attempt",
+    "lifecycle_provider_observation",
+    "lifecycle_provider_send_claim",
+    "lifecycle_reconciliation_result",
+    "lifecycle_reconciliation_run",
+    "lifecycle_reconciliation_work",
+    "lifecycle_storage_call",
+    "lifecycle_storage_observation",
+    "outbox_event",
+    "outbox_event_consumption"
+  ],
+  "deltas": {
+    "audit_event": 81,
+    "command_idempotency": 7,
+    "cost_allocation": 34,
+    "cost_event": 34,
+    "delivery_authorization_fence": {
+      "before_revision": 90,
+      "after_revision": 97,
+      "delta": 7
+    },
+    "evidence": 81,
+    "evidence_relation": 81,
+    "lifecycle_copy_absence_receipt": 2,
+    "lifecycle_disposition_approval": 1,
+    "lifecycle_disposition_dependency_evaluation": 2,
+    "lifecycle_disposition_dispatch": 2,
+    "lifecycle_disposition_gate_evaluation": 2,
+    "lifecycle_disposition_retention_evaluation": 2,
+    "lifecycle_fixture_disposal_basis": 1,
+    "lifecycle_plan_completion": 1,
+    "lifecycle_provider_attempt": 2,
+    "lifecycle_provider_observation": 2,
+    "lifecycle_provider_send_claim": 2,
+    "lifecycle_reconciliation_result": 2,
+    "lifecycle_reconciliation_run": 2,
+    "lifecycle_reconciliation_work": 2,
+    "lifecycle_storage_call": 32,
+    "lifecycle_storage_observation": 32,
+    "outbox_event": 81,
+    "outbox_event_consumption": 2
+  },
+  "source_before_rows": 2361,
+  "source_after_rows": 2851,
+  "bound_original_dump_restored": true,
+  "restored_role_acl_match": true,
+  "unexpected_business_row_changes": 0,
+  "source_mutation_by_this_audit": 0,
+  "native_provider_io": 0,
+  "original_operator_failure": "Audit allowlist omitted command_idempotency, evidence_relation and actual delivery_authorization_fence table; original stopped/sealed receipt retained"
+}

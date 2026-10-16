@@ -1,0 +1,27 @@
+{
+  "status": "PASS_TWO_EXACT_ABSENCES_FOUR_SURVIVORS_AND_HISTORICAL_COST_CLOSURE",
+  "execution": "9ea8f3e2-c805-44b4-b133-a36f50df9d15",
+  "native_delete_invocations": 2,
+  "per_target_invocations": {
+    "a": 1,
+    "b": 1
+  },
+  "response_loss_crashes": 2,
+  "absence_receipts": 2,
+  "scope_completion": 1,
+  "survivors_exact_bytes_sha_protection": 4,
+  "a_absence_confirmed_at": "2026-10-16T01:34:40.893014+00:00",
+  "b_attempt_started_at": "2026-10-16T01:34:44.882004+00:00",
+  "native_storage_calls": 157,
+  "new_storage_calls": 32,
+  "new_provider_costs": 2,
+  "terminal_replay_provider_io": 0,
+  "old_194_table_rows_preserved": true,
+  "unexpected_business_mutation": 0,
+  "source_mutation_by_this_audit": 0,
+  "native_provider_io_by_this_audit": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "pr318": "DRAFT_NO_MERGE"
+}

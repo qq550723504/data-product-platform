@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "effective_blockers": 0,
+  "reviewer": "v11_independent_review",
+  "mode": "independent static review; no Docker/provider/DB/private JSON/credential access",
+  "reviewed_source_sha256": {
+    "admin.go": "0e1c6aa2e3a19e174a392aa8112547212ead1e36f536b3aaddbb84ce3ed89095",
+    "operator.py": "ac2e67d6cc884b50844acb50b5fbd2f61c892ba89bc54643c0de63f5f61d564d",
+    "survivors.go": "1db46e44196eddea5feaf164031b4bb9891d4fd924b88343cdfcf34e7951eb96"
+  },
+  "closed_findings": [
+    "survivor GET route",
+    "emergency disable unrelated-input independence",
+    "known-resource sealing despite enumeration failure",
+    "physical cost and old-history assertions before acceptance"
+  ],
+  "fixed_window_seconds": 2100,
+  "a_absence_before_b": true,
+  "frozen_binary_replaced": false,
+  "sender_started": false
+}

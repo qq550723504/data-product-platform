@@ -1,6 +1,6 @@
 # #307 D1：冻结候选04的5d删除前只读核验
 
-**当前新方案见[candidate05 / v15 精确确认](issue307-d1-candidate05-confirmation.md)。** 新execution `9ea8f3e2-c805-44b4-b133-a36f50df9d15`已冻结并通过新Core/5d只读核验，尚未收到新删除授权。以下v14/旧candidate04内容保留其原观察时点，旧614cd9ad确认不可复用。
+**当前状态见[candidate05 / v15 实际执行矩阵](issue307-d1-confirmed-v15-execution.md)。** 新execution `9ea8f3e2-c805-44b4-b133-a36f50df9d15`已获新授权并完成两目标各一次 exact DELETE、2 absence / 1 completion及四survivor保留验收，已关闭权限并封存；#318仍Draft。以下v14/旧candidate04内容保留原观察时点，旧614cd9ad确认不可复用。
 
 **最新状态：v14精确确认后的首次发送被拒绝并已封存；不再是“尚未确认/尚未发送”。**
 [当前执行矩阵](#v14确认后的实际执行矩阵)记录A请求一次、HTTP403/CONFIRMED/DENIED、B未启动、成功删除0；

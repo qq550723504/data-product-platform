@@ -1,0 +1,15 @@
+{
+  "status": "PASS_INDEPENDENT_SEAL_COMPOSITION",
+  "admin_source_sha256": "0e1c6aa2e3a19e174a392aa8112547212ead1e36f536b3aaddbb84ce3ed89095",
+  "admin_binary_sha256": "95f6b7d825ba11b4f2b34b79d478af727778180017b596595f32691f8fab0702",
+  "operator_source_sha256": "ecd972d0c20c3d474388cc67761dda1dc8b7f76e2e9ec7fa778f20f41a77c3e6",
+  "emergency_inputs": [
+    "root-access",
+    "root-secret",
+    "fixed-new-account"
+  ],
+  "unrelated_policy_and_reader_dependencies": false,
+  "enumeration_failure_still_stops_known_resources": true,
+  "frozen_sender_host_recovery_unchanged": true,
+  "delete": 0
+}

@@ -1,0 +1,23 @@
+{
+  "status": "PASS_PHYSICAL_COST_HISTORY_AND_ABSENCE_CLOSURE",
+  "new_physical_attempts": 2,
+  "new_claims": 2,
+  "new_provider_costs": 2,
+  "storage_calls": 157,
+  "new_storage_calls": 32,
+  "old_rows_preserved": {
+    "work": 3,
+    "costs": 126,
+    "claims": 1,
+    "results": 4,
+    "attempts": 3,
+    "receipts": 0,
+    "completion": 0,
+    "allocations": 126,
+    "observations": 3,
+    "storage_calls": 125,
+    "storage_observations": 125
+  },
+  "old_dispatch_releases_preserved": 3,
+  "all_old_ledger_rows_unchanged": true
+}

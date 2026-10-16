@@ -1,6 +1,6 @@
 # #307 D1：5d2274ee 环境的 exact-version 删除确认方案
 
-**当前新方案见[candidate05 / v15 精确确认](issue307-d1-candidate05-confirmation.md)。** 新execution `9ea8f3e2-c805-44b4-b133-a36f50df9d15`已冻结并通过新Core/5d只读核验，尚未收到新删除授权。以下v14/旧candidate04内容保留其原观察时点，旧614cd9ad确认不可复用。
+**当前状态见[candidate05 / v15 实际执行矩阵](issue307-d1-confirmed-v15-execution.md)。** 新execution `9ea8f3e2-c805-44b4-b133-a36f50df9d15`已获新授权并完成两目标各一次 exact DELETE、2 absence / 1 completion及四survivor保留验收，已关闭权限并封存；#318仍Draft。以下v14/旧candidate04内容保留原观察时点，旧614cd9ad确认不可复用。
 
 **当前执行结果：精确确认已收到，A于2026-10-15 16:58:59 +08:00发送一次并被HTTP403拒绝；B未启动，成功删除0。**
 原始事实是CONFIRMED/DENIED，两份源版本及四份survivor均完整保留，absence/completion均0。

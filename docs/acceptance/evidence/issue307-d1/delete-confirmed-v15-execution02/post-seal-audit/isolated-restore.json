@@ -1,0 +1,9 @@
+{
+  "id": "a03fe4c231800f1d40a0f377ab905c69daeff3012dda1b8ca2ca99893df69a0e",
+  "name": "dpp-lifecycle307-5d2274ee-delete-postexecution-audit-core-02",
+  "volume": "dpp-lifecycle307-5d2274ee-delete-postexecution-audit-core-02-data",
+  "source_dump_sha256": "4457301bc212eff3d5010b61a907948c48c330aae70d614c0530f685386f58d7",
+  "source_restore": false,
+  "source_mutation": 0,
+  "native_provider_io": 0
+}

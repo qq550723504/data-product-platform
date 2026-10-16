@@ -1,0 +1,12 @@
+{
+  "status": "PASS_EXACT_SIX_CURRENT_SOURCE_AND_IAM",
+  "source_mutation": 0,
+  "source_calls": 125,
+  "checkpoint_calls_before": 165,
+  "checkpoint_calls_after": 185,
+  "new_native_reads": 20,
+  "admin_get_rpc": 5,
+  "new_delete_account": "NOT_PROVISIONED",
+  "activation_window": "NOT_OPENED",
+  "delete": 0
+}

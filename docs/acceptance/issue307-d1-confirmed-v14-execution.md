@@ -1,6 +1,6 @@
 # #307 D1：v14 精确确认后的拒绝执行与封存
 
-**当前新方案见[candidate05 / v15 精确确认](issue307-d1-candidate05-confirmation.md)。** 新execution `9ea8f3e2-c805-44b4-b133-a36f50df9d15`已冻结并通过新Core/5d只读核验，尚未收到新删除授权。以下v14/旧candidate04内容保留其原观察时点，旧614cd9ad确认不可复用。
+**当前状态见[candidate05 / v15 实际执行矩阵](issue307-d1-confirmed-v15-execution.md)。** 新execution `9ea8f3e2-c805-44b4-b133-a36f50df9d15`已获新授权并完成两目标各一次 exact DELETE、2 absence / 1 completion及四survivor保留验收，已关闭权限并封存；#318仍Draft。以下v14/旧candidate04内容保留原观察时点，旧614cd9ad确认不可复用。
 
 2026-10-15，**STOPPED_CONFIRMED_DENIED：A 请求一次、B 未发送，成功删除 0，absence/completion 均 0**。
 #318 保持 OPEN / Draft，不合并。v14 确认已收到；不能继续将当前状态写为 NOT_RECEIVED / NOT_RUN。

@@ -1,6 +1,6 @@
 # #307 D1：candidate05 / v15 新精确确认方案
 
-**PREPARED_NOT_AUTHORIZED，等待新的精确确认。** 本轮真实DELETE=0，源Core业务变更=0，IAM写入=0；cleanup/hold-release/bypass=0，#318仍OPEN / Draft、不合并。
+**当前状态（2026-10-16）：新授权已收到并按全部绑定执行，两目标各一次 exact DELETE，2 absence / 1 completion、四 survivor 保留，最终只读审计通过且已封存。** 见[实际执行与当前验收矩阵](issue307-d1-confirmed-v15-execution.md)。本 execution 发送额度已消费完毕，禁止重发；#318仍OPEN / Draft、不合并。下文是授权前冻结方案及其观察时点，NOT_RECEIVED / NOT_RUN 等字段保留历史含义。
 旧execution `614cd9ad-3f9d-40be-b110-3f7cf95f0790` 的A一次HTTP403额度已消费；其确认、basis、approval、dispatch、provider key及窗口不能复用。
 
 [结构化方案](evidence/issue307-d1/delete-candidate05-preparation01/proposal.json)、[完整新确认模板](evidence/issue307-d1/delete-candidate05-preparation01/confirmation-template.txt)与[证据索引](evidence/issue307-d1/delete-candidate05-preparation01/evidence-index.json)保存精确绑定。模板仍是待确认文本，没有写入执行授权文件。新execution目前只有独立处置运行身份及准备manifest，数据库中的新disposal basis、approval、dispatch、attempt及claim均未创建。
