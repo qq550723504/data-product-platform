@@ -12,6 +12,7 @@ import secrets
 import subprocess
 import time
 import uuid
+import sys
 from urllib.parse import urlsplit,urlunsplit
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding,PublicFormat,PrivateFormat,NoEncryption
@@ -22,13 +23,17 @@ r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
 require,load,write,sha,docker,inspect=r.require,r.load,r.write,r.sha,r.docker,r.inspect
 
 def main():
+    only_mixed=sys.argv[1:]==['--mixed-after-retained-late-failure']
+    require(not sys.argv[1:] or only_mixed,'Unsupported case invocation')
     require(not r.call(['git','status','--porcelain']).strip(),'Commit source before native case tests')
-    control=r.PRIVATE/'remaining-case01';require(not control.exists(),'One-shot case regression already allocated');control.mkdir()
-    out=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-case01';out.mkdir();source=r.call(['git','rev-parse','HEAD']).decode().strip()
+    generation='03' if only_mixed else '01'
+    control=r.PRIVATE/('remaining-case'+generation);require(not control.exists(),'One-shot case regression already allocated');control.mkdir()
+    out=ROOT/('docs/acceptance/evidence/issue307-d1/remaining-case'+generation);out.mkdir();source=r.call(['git','rev-parse','HEAD']).decode().strip()
     env=os.environ.copy();env.update(GOOS='linux',GOARCH='amd64',CGO_ENABLED='0')
     result=subprocess.run(['go','build','-trimpath','-buildvcs=false','-o',str(control/'reader'),'./cmd/lifecycle-fixture-reader'],cwd=ROOT/'apps/platform',env=env,capture_output=True)
     require(result.returncode==0,'Case runner build failed');write(out/'build.json',{'source':source,'binary_sha256':sha(control/'reader'),'delete':0})
     for group,run,subnet in [('late-hold','754ea8f0','10.234.170.0/24'),('mixed','dfda43b4','10.234.171.0/24')]:
+        if only_mixed and group!='mixed':continue
         r.check_subnet(subnet);project='dpp-lifecycle307-'+run;prefix=project+'-remaining-regression';private=r.PRIVATE/project;original=load(private/'config.json');checkpoint=private/'checkpoint';batch=str(uuid.uuid4());owned=[]
         target=out/group;target.mkdir();business=target/'business';business.mkdir();cfgdir=control/group;cfgdir.mkdir();admin=cfgdir/'admin';owner=cfgdir/'owner';admin.mkdir();owner.mkdir()
         manifest=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-native01'/group/'manifest.json'
@@ -39,7 +44,7 @@ def main():
         base.update(Enabled=True,Epoch=str(uuid.uuid4()),PostgresDSN=clone_dsn,Token=secrets.token_hex(32),Access=base['InspectAccess'],Secret=base['InspectSecret'],ManifestSHA256=sha(manifest),OutputDirectory='/run/output',StartedAt=now.isoformat(),ExpiresAt=(now+r.dt.timedelta(minutes=55)).isoformat())
         c={'Base':base,'Group':group,'Batch':batch,'NonDelete':True,'Rehearsal':True};write(owner/'remaining.json',c)
         ac=json.loads(json.dumps(c));ac['Base'].update(RootAccess=original['RootAccess'],RootSecret=original['RootSecret']);write(admin/'remaining.json',ac)
-        gateway=cfgdir/'Caddyfile';gateway.write_text("{\n admin off\n auto_https off\n}\n:9000 {\n @metadata {\n method GET HEAD\n expression {http.request.header.Authorization}.contains('Credential="+base['InspectAccess']+"/')\n }\n reverse_proxy @metadata minio:9000\n respond 403\n}\n")
+        gateway=cfgdir/'Caddyfile';gateway.write_text("{\n admin off\n auto_https off\n}\n:9000 {\n route {\n @metadata {\n method GET HEAD\n expression {http.request.header.Authorization}.contains('Credential="+base['InspectAccess']+"/')\n }\n reverse_proxy @metadata minio:9000\n respond 403\n }\n}\n")
         network=prefix+'-private';docker('network','create','--internal','--subnet',subnet,'--label','lifecycle307.remaining='+batch,network)
         for suffix in ('core','objects'):docker('volume','create','--label','lifecycle307.remaining='+batch,prefix+'-'+suffix)
         def helper(name,mode,rooted=False,output=None,private_path=None):
