@@ -76,7 +76,7 @@ def fingerprints(container):
     # All custom and builtin role attributes/password hashes are private inputs
     # to a public hash, never emitted. The restore-only bootstrap is excluded.
     roles = sql(container, "SELECT coalesce(jsonb_agg(to_jsonb(r)-'oid' ORDER BY rolname),'[]')::text FROM pg_authid r WHERE rolname<>'checkpoint_admin';")
-    extra = sql(container, "SELECT jsonb_build_object('schemas',(SELECT jsonb_agg(jsonb_build_array(nspname,pg_get_userbyid(nspowner),nspacl) ORDER BY nspname) FROM pg_namespace WHERE nspname='public'),'functions',(SELECT jsonb_agg(jsonb_build_array(p.oid::regprocedure::text,pg_get_userbyid(p.proowner),p.proacl) ORDER BY p.oid::regprocedure::text) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public'),'defaults',(SELECT coalesce(jsonb_agg(to_jsonb(a)-'oid' ORDER BY defaclrole,defaclnamespace,defaclobjtype),'[]') FROM pg_default_acl a))::text;")
+    extra = sql(container, "SELECT jsonb_build_object('schemas',(SELECT jsonb_agg(jsonb_build_array(nspname,pg_get_userbyid(nspowner),nspacl) ORDER BY nspname) FROM pg_namespace WHERE nspname='public'),'functions',(SELECT jsonb_agg(jsonb_build_array(p.oid::regprocedure::text,pg_get_userbyid(p.proowner),p.proacl) ORDER BY p.oid::regprocedure::text) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public'),'defaults',(SELECT coalesce(jsonb_agg(jsonb_build_array(pg_get_userbyid(defaclrole),coalesce(n.nspname,''),defaclobjtype,defaclacl) ORDER BY pg_get_userbyid(defaclrole),coalesce(n.nspname,''),defaclobjtype),'[]') FROM pg_default_acl a LEFT JOIN pg_namespace n ON n.oid=a.defaclnamespace))::text;")
     return {'relations': relations, 'roles_acl': acl, 'all_roles_sha256': hashlib.sha256(roles.encode()).hexdigest(),
             'schema_function_default_acl_sha256': hashlib.sha256(extra.encode()).hexdigest()}
 
@@ -156,8 +156,10 @@ def prepare(group, subnet):
         docker('start',ident)
         wait_pg(ident,'checkpoint_admin')
         docker('exec',ident,'psql','-X','-U','checkpoint_admin','-d','postgres','-v','ON_ERROR_STOP=1','-f','/run/backup/globals.sql')
-        docker('exec',ident,'pg_restore','--exit-on-error','--create','-U','checkpoint_admin','-d','postgres','/run/backup/core.dump')
-        require(fingerprints(ident) == source_before, 'Full restored Core rows/roles/ACL differ')
+        docker('exec',ident,'pg_restore','--exit-on-error','--create','--role=fixture','-U','checkpoint_admin','-d','postgres','/run/backup/core.dump')
+        restored_facts=fingerprints(ident)
+        write(out/'restored-core.json',restored_facts)
+        require(restored_facts == source_before, 'Full restored Core rows/roles/ACL differ')
         print(group+': full Core restore matched',flush=True)
         # Freeze source storage while taking a physical named-volume archive.
         docker('stop','--time','20',mi)
