@@ -1,0 +1,292 @@
+{
+  "historical_business_head": "074a33bace7edbaf481759aac3a84708363ffd02",
+  "previous_handoff_main": "ac8bd7ad316a3977d791bb5f093a1018b9e40fa5",
+  "target_main": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+  "changes": [
+    {
+      "status": "M",
+      "path": "apps/platform/cmd/lifecycle-fixture-archive/copy_recovery.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/main.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_gateway.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_iam_test.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_profile.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_profile_test.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_render.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_retry_test.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_send.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_topology.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_topology_test.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/main.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/plane_credential.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/plane_credential_release.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/plane_credential_test.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/plane_lc13.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/plane_preissued.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/plane_resume.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/plane_runtime.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/plane_setup.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/cmd/lifecycle-fixture-reader/reference_races.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/cmd/lifecycle-fixture-recovery/copy_crash.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/cmd/lifecycle-fixture-recovery/main.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/go.mod"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/go.sum"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/certification/application/fixture_reference_owner.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/dataset/application/fixture_reference_owner.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/delivery/application/fixture_reference_owner.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/entity/application/fixture_reference_owner.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/application/checkpoint_read_integration_test.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/lifecycle/application/disposition.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/lifecycle/application/exact_execution.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/lifecycle/application/exact_execution_integration_test.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/lifecycle/application/fixture_references.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/application/observation_batch_integration_test.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/lifecycle/application/occupancy.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/application/processing_stop.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/application/processing_stop_integration_test.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/lifecycle/application/reader_service.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/application/reference_demand.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/application/reference_demand_integration_test.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/lifecycle/application/storage_inspection.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/lifecycle/application/storage_journal.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/lifecycle/application/subject_pins_integration_test.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/pilot/credential_stop.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/pilot/credential_stop_test.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/pilot/processing_stop.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/pilot/processing_stop_test.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/pilot/reference_no_send.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/pilot/reference_no_send_test.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/lifecycle/pilot/reference_scope.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/platform/contentreference/reference.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/platform/contentreference/reference_test.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/platform/routing/routing.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/platform/routing/routing_test.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/platform/storage/lifecycle_checkpoint.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/platform/storage/lifecycle_checkpoint_test.go"
+    },
+    {
+      "status": "M",
+      "path": "apps/platform/internal/platform/storage/lifecycle_copy.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/quality/application/fixture_reference_owner.go"
+    },
+    {
+      "status": "A",
+      "path": "apps/platform/internal/workflow/application/fixture_reference_owner.go"
+    },
+    {
+      "status": "A",
+      "path": "migrations/000067_lifecycle_fixture_reference_demand.down.sql"
+    },
+    {
+      "status": "A",
+      "path": "migrations/000067_lifecycle_fixture_reference_demand.up.sql"
+    },
+    {
+      "status": "A",
+      "path": "migrations/000068_lifecycle_checkpoint_read.down.sql"
+    },
+    {
+      "status": "A",
+      "path": "migrations/000068_lifecycle_checkpoint_read.up.sql"
+    }
+  ],
+  "affected": [
+    {
+      "boundary": "module fixture owners/contentreference",
+      "impact": "new closed-fixture owner checks; standard API/worker composition does not install them",
+      "checks": "41 direct read-only PostgreSQL owner cases across 6 modules/8 classes"
+    },
+    {
+      "boundary": "migrations 67/68 and shared admission fence",
+      "impact": "new FK insert/update guards and checkpoint-read enum; ordinary workflow/entity/quality/certification/delivery writes need regression",
+      "checks": "selected ordinary application/native-engine flows plus 7 reference-admission race/qualification tests"
+    },
+    {
+      "boundary": "routing",
+      "impact": "life2 to life3, three lifecycle events added; existing required handler sets preserved",
+      "checks": "5 version, event coverage/profile/queue/obligation tests"
+    },
+    {
+      "boundary": "storage/SDK",
+      "impact": "checkpoint-read path and minio-go/v7 v7.0.88 dependency floor",
+      "checks": "controlled checkpoint custody + real MinIO current adapter 7 checks/12 HTTP requests/0 DELETE"
+    },
+    {
+      "boundary": "unchanged public business APIs/UI/industry rules",
+      "impact": "no full browser/OM/B1/B2 matrix rerun is required by these changes",
+      "checks": "old exact-run results retained; this run makes no new full-browser/OM/human claim"
+    }
+  ],
+  "product_defects_found": 0,
+  "shared_owner": "#307 remaining preparation stays with its active owner; no shared business source edits"
+}

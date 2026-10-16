@@ -1,0 +1,30 @@
+import hashlib,json,subprocess
+from pathlib import Path
+import run as d
+ref=d.BASE
+def blob(rev,path):return subprocess.check_output(['git','show',rev+':'+path],cwd=d.ROOT,stderr=subprocess.PIPE)
+result={}
+for folder in ['docs/acceptance/evidence/issue299-c3','docs/acceptance/evidence/issue299-independent-20261014','docs/acceptance/evidence/issue320-trial-images-20261014']:
+ data=json.loads(blob(ref,folder+'/artifact-hashes.json'))
+ artifacts=data.get('artifacts',data)
+ if not isinstance(artifacts,dict):
+  print(json.dumps({'folder':folder,'artifact_type':type(artifacts).__name__}));continue
+ verified=[]
+ for name,value in artifacts.items():
+  expected=value if isinstance(value,str) else value.get('sha256')
+  if expected is None:raise RuntimeError('unsupported hash receipt shape')
+  actual=hashlib.sha256(blob(ref,folder+'/'+name)).hexdigest()
+  if actual!=expected:raise RuntimeError('historical artifact mismatch: '+name)
+  verified.append(name)
+ result[folder]={'count':len(verified),'status':'PASS'}
+identity=json.loads(blob(ref,'docs/acceptance/evidence/issue299-independent-20261014/identity.json'))
+old=identity['head'];comparisons=[];mismatches=[]
+for path,expected in identity['sources'].items():
+ oldbytes=blob(old,path);oldhash=hashlib.sha256(oldbytes).hexdigest()
+ if oldhash!=expected:mismatches.append(path)
+ try:current=hashlib.sha256(blob(ref,path)).hexdigest();status='UNCHANGED' if current==oldhash else 'CHANGED'
+ except subprocess.CalledProcessError:current=None;status='MISSING'
+ comparisons.append({'path':path,'historical_git_sha256':oldhash,'historical_recorded_sha256':expected,'current_git_sha256':current,'status':status})
+out={'head':ref,'historical_head':old,'artifact_sets':result,'historical_identity_sources':len(comparisons),'historical_source_mismatches':mismatches,'source_counts':{state:sum(x['status']==state for x in comparisons) for state in ['UNCHANGED','CHANGED','MISSING']},'source_comparisons':comparisons}
+d.save(d.OUT/'source-history-audit.json',out)
+print(json.dumps({k:v for k,v in out.items() if k!='source_comparisons'},indent=2))

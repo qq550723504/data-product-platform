@@ -1,0 +1,7 @@
+{"Time":"2026-10-16T14:25:51.9686123+08:00","Action":"start","Package":"./internal/workflow/native"}
+{"Time":"2026-10-16T14:25:53.3037846+08:00","Action":"run","Package":"./internal/workflow/native","Test":"TestEnterpriseActivityNativeWorkerProducesCuratedDataset"}
+{"Time":"2026-10-16T14:25:53.3037846+08:00","Action":"output","Package":"./internal/workflow/native","Test":"TestEnterpriseActivityNativeWorkerProducesCuratedDataset","Output":"=== RUN   TestEnterpriseActivityNativeWorkerProducesCuratedDataset\n"}
+{"Time":"2026-10-16T14:25:54.784297+08:00","Action":"output","Package":"./internal/workflow/native","Test":"TestEnterpriseActivityNativeWorkerProducesCuratedDataset","Output":"--- PASS: TestEnterpriseActivityNativeWorkerProducesCuratedDataset (1.48s)\n"}
+{"Time":"2026-10-16T14:25:54.784297+08:00","Action":"pass","Package":"./internal/workflow/native","Test":"TestEnterpriseActivityNativeWorkerProducesCuratedDataset","Elapsed":1.48}
+{"Time":"2026-10-16T14:25:54.784297+08:00","Action":"output","Package":"./internal/workflow/native","Output":"PASS\n"}
+{"Time":"2026-10-16T14:25:55.8059426+08:00","Action":"pass","Package":"./internal/workflow/native","Elapsed":3.8369999999999997}
