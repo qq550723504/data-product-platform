@@ -13,7 +13,7 @@ spec.loader.exec_module(m)
 
 def main():
     out=m.PUBLIC/'business-races'
-    binding=m.load(out/'native-continuation-binding.json')
+    binding=m.load(out/'native-continuation02-binding.json')
     m.require(binding['run_id']=='808a6960-6c36-4200-ae98-f18a68472fe5','Foreign continuation refused')
     state=m.load(m.PRIVATE/'remaining-native01/business-races.json')
     private=Path(state['private']);r=state['resources'];stage=private/'checkpoint'
@@ -33,8 +33,8 @@ def main():
         baseline=m.load(out/'source-before.json')
         m.require(m.fingerprints(pg)==baseline,'Source Core differs from retained checkpoint')
         core=m.inspect(r['project']+'-checkpoint')['Id']
-        m.complete_native('business-races',private,r,out,stage,m.load(out/'manifest.json'),owned,baseline,core,r['project']+'-checkpoint-data')
-        m.write(out/'preparation.json',{'group':'business-races','run_id':r['run_id'],'status':'PASS_PREPARATION_ONLY','checkpoint':'checkpoint.json','current_delete_budget':0,'original_failed_receipt':'native-restore-attempt01-failure.json','continuation':'explicit fixed read-only compare/verify; no provisioning/restore replay'})
+        m.complete_native('business-races',private,r,out,stage,m.load(out/'manifest.json'),owned,baseline,core,r['project']+'-checkpoint-data',resume_existing=True)
+        m.write(out/'preparation.json',{'group':'business-races','run_id':r['run_id'],'status':'PASS_PREPARATION_ONLY','checkpoint':'checkpoint.json','current_delete_budget':0,'original_failed_receipt':'native-restore-attempt01-failure.json','startup_log_failure':'native-continuation01-failure.json','continuation':'explicit fixed read-only compare/verify; no provisioning/restore replay'})
     finally:
         owned.extend(m.docker('ps','-aq','--filter','label=lifecycle307.run='+r['run_id']).decode().split())
         seals=[]
@@ -44,6 +44,6 @@ def main():
             current=m.inspect(current['Id'])
             m.require(not current['State']['Running'] and current['State']['Pid']==0 and not any(current['NetworkSettings']['Ports'].values()),'Continuation failed to seal owned service')
             seals.append({'name':current['Name'],'id':current['Id'],'image':current['Image'],'status':current['State']['Status'],'pid':current['State']['Pid'],'ports':current['NetworkSettings']['Ports'],'mounts':current['Mounts']})
-        m.write(out/'seal-continuation01.json',{'containers':seals,'delete':0,'cleanup':0,'retained':True})
+        m.write(out/'seal-continuation02.json',{'containers':seals,'delete':0,'cleanup':0,'retained':True})
 
 if __name__=='__main__':main()

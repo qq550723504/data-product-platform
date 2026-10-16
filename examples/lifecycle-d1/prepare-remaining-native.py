@@ -110,28 +110,38 @@ def gateway(manifest, active):
     return '\n'.join(rules).encode()
 
 
-def complete_native(group, private, resources, out, stage, manifest, owned, source_before, ident, volume):
+def complete_native(group, private, resources, out, stage, manifest, owned, source_before, ident, volume, resume_existing=False):
     pg,mi,gw=(resources['containers'][x] for x in ('postgres','minio','gateway'))
     audit=resources['project']+'-checkpoint'
     restorevolume=resources['project']+'-restored-objects'
     cfg=load(private/'config.json')
     compare=resources['project']+'-compare'
     command=r'set -o pipefail; cd /source; find . -type f -exec sha256sum {} \; | sort > /tmp/source; cd /restore; find . -type f -exec sha256sum {} \; | sort > /tmp/restore; cmp /tmp/source /tmp/restore; cat /tmp/source'
-    compareid=docker('create','--pull','never','--name',compare,'--label','lifecycle307.run='+resources['run_id'],'--network','none','--read-only','--tmpfs','/tmp',
-                     '--mount','type=volume,source='+resources['project']+'-objects,target=/source,readonly',
-                     '--mount','type=volume,source='+restorevolume+',target=/restore,readonly','--entrypoint','/bin/sh',PGIMAGE,'-ec',command).decode().strip()
-    owned.append(compareid);docker('start',compareid);require(docker('wait',compareid).strip()==b'0','Native restored file SHA256 comparison failed')
-    files=docker('logs',compareid)
-    require(len(files.splitlines())>=len(manifest['objects']), 'Native physical file manifest incomplete')
-    (out/'native-file-sha256.txt').write_bytes(files)
+    if resume_existing:
+        compareid=inspect(compare)['Id']
+        require(inspect(compareid)['State']['ExitCode']==0,'Prior comparison was not successful')
+        require((out/'native-file-sha256.txt').read_bytes()==docker('logs',compareid),'Prior comparison evidence drift')
+    else:
+        compareid=docker('create','--pull','never','--name',compare,'--label','lifecycle307.run='+resources['run_id'],'--network','none','--read-only','--tmpfs','/tmp',
+                         '--mount','type=volume,source='+resources['project']+'-objects,target=/source,readonly',
+                         '--mount','type=volume,source='+restorevolume+',target=/restore,readonly','--entrypoint','/bin/sh',PGIMAGE,'-ec',command).decode().strip()
+        owned.append(compareid);docker('start',compareid);require(docker('wait',compareid).strip()==b'0','Native restored file SHA256 comparison failed')
+        files=docker('logs',compareid)
+        require(len(files.splitlines())>=len(manifest['objects']), 'Native physical file manifest incomplete')
+        (out/'native-file-sha256.txt').write_bytes(files)
     clone = resources['project']+'-restored-minio'
-    cloneid = docker('create','--pull','never','--name',clone,'--label','lifecycle307.run='+resources['run_id'],'--network','none',
-                     '--mount','type=volume,source='+restorevolume+',target=/data',
-                     '--mount',f'type=bind,source={private},target=/run/credentials,readonly','--entrypoint','/bin/sh',MIIMAGE,'/run/credentials/start.sh').decode().strip()
+    if resume_existing:
+        cloneid=inspect(clone)['Id']
+    else:
+        cloneid = docker('create','--pull','never','--name',clone,'--label','lifecycle307.run='+resources['run_id'],'--network','none',
+                         '--mount','type=volume,source='+restorevolume+',target=/data',
+                         '--mount',f'type=bind,source={private},target=/run/credentials,readonly','--entrypoint','/bin/sh',MIIMAGE,'/run/credentials/start.sh').decode().strip()
     owned.append(cloneid);docker('start',cloneid)
     # Readiness is only a startup check, not a retry of any fixture request.
     for _ in range(60):
-        logs=docker('logs',cloneid)
+        log_result=subprocess.run(['docker','logs',cloneid],capture_output=True)
+        require(log_result.returncode==0,'Owned native log read failed')
+        logs=log_result.stdout+log_result.stderr
         if b'API:' in logs: break
         time.sleep(1)
     else: raise RuntimeError('Restored native startup not witnessed')
