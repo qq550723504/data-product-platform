@@ -43,7 +43,7 @@ jobs:
           python3 -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05_history.py -v
           python3 -O -m unittest discover -s examples/lifecycle-d1 -p test_reference_candidate05_history.py -v
           python3 examples/lifecycle-d1/check-reference-candidate05-history.py
-          python3 docs/acceptance/evidence/issue307-d1/remaining-native01/audit.py
+          python3 examples/lifecycle-d1/check-remaining-v16-history.py
       - name: Check archived candidate04 with its frozen runtime (no provider I/O)
         run: python3 examples/lifecycle-d1/check-reference-history.py
       - name: Install isolated browser runner
