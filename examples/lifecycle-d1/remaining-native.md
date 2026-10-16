@@ -17,7 +17,9 @@ profiles are not widened. Only the fixed seven prospective targets get native
 delete IAM statements, each conditioned on its actual version. Both native
 DeleteObject and DeleteObjectVersion checks are covered by the OSS evaluator;
 bare delete, another version, payload read/write, protection changes and bypass
-are denied. Native delete and inspection users end disabled. Current send budget
+are denied. Native policy attachment requires an enabled user on this pinned server. It is
+attached only inside the closed, deny-all fixture with no sender, then immediately
+disabled and authoritatively read back. Native delete and inspection users end disabled. Current send budget
 is **zero**, with no platform approval/dispatch/attempt or reader/producer roles.
 
 Run from a clean committed checkout, with cached pinned images, a pre-created

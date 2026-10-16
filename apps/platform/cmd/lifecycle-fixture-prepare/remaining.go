@@ -149,12 +149,12 @@ func finishRemaining(ctx context.Context, c config, objects []object, plans []ma
 		run  func(context.Context) error
 	}{
 		{"create-delete-identity-without-policy", func(ctx context.Context) error { return admin.AddUser(ctx, deleteAccess, c.Token) }},
-		{"disable-delete-identity", func(ctx context.Context) error { return admin.SetUserStatus(ctx, deleteAccess, madmin.AccountDisabled) }},
 		{"create-exact-delete-policy", func(ctx context.Context) error { return admin.AddCannedPolicy(ctx, policyName, policy) }},
 		{"attach-disabled-exact-delete-policy", func(ctx context.Context) error {
 			_, e := admin.AttachPolicy(ctx, madmin.PolicyAssociationReq{Policies: []string{policyName}, User: deleteAccess})
 			return e
 		}},
+		{"disable-delete-identity", func(ctx context.Context) error { return admin.SetUserStatus(ctx, deleteAccess, madmin.AccountDisabled) }},
 		{"verify-disabled-delete-identity", func(ctx context.Context) error {
 			u, e := admin.GetUserInfo(ctx, deleteAccess)
 			if e == nil && u.Status != madmin.AccountDisabled {
