@@ -170,6 +170,12 @@ func remainingFreezePolicy(ctx context.Context, r remainingConfig, pool *pgxpool
 	if e != nil || r.Group != "business-races" || !r.CandidateUseUntil.Equal(until) {
 		return lc.ErrStorageScope
 	}
+	// Preserve the Core command's one-hour policy cap. The policy command runs
+	// afresh inside the confirmed window before any business owner starts.
+	policyUntil := until
+	if r.Base.ExpiresAt.Before(policyUntil) {
+		policyUntil = r.Base.ExpiresAt
+	}
 	all, e := planeCopies(ctx, r.Base, pool)
 	if e != nil {
 		return e
@@ -187,7 +193,7 @@ func remainingFreezePolicy(ctx context.Context, r remainingConfig, pool *pgxpool
 		if cp.Key == "fixture/control-hold.csv" || cp.Key == "fixture/control-retention.csv" {
 			continue
 		}
-		f, e := policy.BindFixtureCopyPolicy(ctx, lc.BindCopyPolicyCommand{CommandHeader: lc.CommandHeader{WorkspaceID: r.Base.WorkspaceID, IdempotencyKey: "candidate07-policy:" + cp.ID.String()}, DatasetVersionID: cp.DatasetVersionID, UseUntil: until, RestoreUntil: until})
+		f, e := policy.BindFixtureCopyPolicy(ctx, lc.BindCopyPolicyCommand{CommandHeader: lc.CommandHeader{WorkspaceID: r.Base.WorkspaceID, IdempotencyKey: "candidate07-policy:" + r.Batch.String() + ":" + cp.ID.String()}, DatasetVersionID: cp.DatasetVersionID, UseUntil: policyUntil, RestoreUntil: policyUntil})
 		if e != nil {
 			return e
 		}
@@ -202,5 +208,5 @@ func remainingFreezePolicy(ctx context.Context, r remainingConfig, pool *pgxpool
 	if e = remainingRights(ctx, rightsConfig, pool, scope.Copies[:4]); e != nil {
 		return e
 	}
-	return write(r.Base, "candidate07-copy-policies.json", map[string]any{"facts": facts, "use_until": until, "restore_until": until, "native_io": 0, "delete": 0})
+	return write(r.Base, "candidate07-copy-policies.json", map[string]any{"facts": facts, "use_until": policyUntil, "restore_until": policyUntil, "candidate_window_end": until, "refresh_inside_confirmed_window_required": policyUntil.Before(until), "native_io": 0, "delete": 0})
 }

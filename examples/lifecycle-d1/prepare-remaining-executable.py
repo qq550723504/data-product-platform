@@ -13,6 +13,7 @@ from pathlib import Path
 import re
 import secrets
 import subprocess
+import sys
 import time
 import uuid
 from urllib.parse import urlsplit, urlunsplit
@@ -28,6 +29,14 @@ EXECUTION = 'effa0385-9308-42eb-bd66-d0c379b6a989'
 
 
 def main():
+    global CONTROL, PUBLIC
+    continuation = sys.argv[1:] == ['--continue-policy-window-rejection']
+    require(not sys.argv[1:] or continuation,'Unsupported finite continuation')
+    if continuation:
+        failure = load(PUBLIC/'business-races/freeze-policy.json')
+        require(failure['exit_code']==1 and failure['id']=='34e837d61bb5f783b6826ef659b4da7b330367a7a253de519aaa0a48f6d877fc', 'Retained failure identity differs')
+        require(inspect(failure['id'])['State']['Pid']==0,'Prior owner active')
+        CONTROL=r.PRIVATE/'remaining-executable02';PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-executable02'
     require(not r.call(['git', 'status', '--porcelain']).strip(), 'Commit source before one-shot preparation')
     require(not CONTROL.exists() and not PUBLIC.exists(), 'Preparation already allocated; retain and diagnose failures')
     CONTROL.mkdir(); PUBLIC.mkdir()
@@ -68,7 +77,7 @@ def main():
 
         def helper(name, mode, cfgdir, netns, output):
             output.mkdir(exist_ok=True)
-            ident = docker('create','--pull','never','--name',prefix+'-'+name,'--label','lifecycle307.remaining='+EXECUTION,'--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp','--network','container:'+netns,'--mount',f'type=bind,source={cfgdir},target=/run/private,readonly','--mount',f'type=bind,source={CONTROL}/reader,target=/run/reader,readonly','--mount',f'type=bind,source={ROOT}/industry-packs,target=/run/repo/industry-packs,readonly','--mount',f'type=bind,source={output},target=/run/output','--entrypoint','/run/reader',r.PG,'-mode',mode).decode().strip()
+            ident = docker('create','--pull','never','--name',prefix+'-'+CONTROL.name[-2:]+'-'+name,'--label','lifecycle307.remaining='+EXECUTION,'--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp','--network','container:'+netns,'--mount',f'type=bind,source={cfgdir},target=/run/private,readonly','--mount',f'type=bind,source={CONTROL}/reader,target=/run/reader,readonly','--mount',f'type=bind,source={ROOT}/industry-packs,target=/run/repo/industry-packs,readonly','--mount',f'type=bind,source={output},target=/run/output','--entrypoint','/run/reader',r.PG,'-mode',mode).decode().strip()
             owned.append(ident); docker('start',ident); code=int(docker('wait',ident))
             (target/(name+'.stdout.txt')).write_bytes(docker('logs',ident))
             write(target/(name+'.json'),{'id':ident,'mode':mode,'exit_code':code,'binary_sha256':sha(CONTROL/'reader'),'native_delete':0})
@@ -76,12 +85,14 @@ def main():
             return ident
 
         def utility(name, command, mounts):
-            ident=docker('create','--pull','never','--name',prefix+'-'+name,'--label','lifecycle307.remaining='+EXECUTION,'--network','none','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp',*mounts,'--entrypoint','/bin/sh',r.PG,'-ec',command).decode().strip()
+            ident=docker('create','--pull','never','--name',prefix+'-'+CONTROL.name[-2:]+'-'+name,'--label','lifecycle307.remaining='+EXECUTION,'--network','none','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp',*mounts,'--entrypoint','/bin/sh',r.PG,'-ec',command).decode().strip()
             owned.append(ident);docker('start',ident);require(docker('wait',ident).strip()==b'0',name+' failed');return ident
 
         try:
             for key in ('postgres','minio'): owned.append(source_ids[key]);docker('start',source_ids[key])
             r.native.wait_pg(source_ids['postgres'],'fixture');time.sleep(3)
+            if continuation and group=='business-races':
+                require(r.native.fingerprints(source_ids['postgres']) == load(ROOT/'docs/acceptance/evidence/issue307-d1/remaining-runner02/candidate-core-before.json'), 'Failed policy transaction changed Core; stop for new design')
             # Compile all future operator SQL against the actual schema without
             # executing a query, claiming work, or contacting native storage.
             sqls=[]
@@ -101,8 +112,9 @@ def main():
             for cp in copies:
                 old=protections.get(cp['ID'])
                 expected.append({'Copy':cp,'LegalHold':old['legal_hold'] if old else False,'Retention':old['retention_mode'] if old else 'NONE','RetainUntil':old['retain_until'] if old else None})
-            write(admin/'inventory.json',expected);root_conf['InventorySHA256']=sha(admin/'inventory.json');write(admin/'remaining.json',root_conf)
-            helper('source-readonly','remaining-verify-native',admin,source_ids['minio'],target/'source-readonly')
+            verifier=private/'source-verifier';verifier.mkdir();(verifier/'manifest.json').write_bytes((historical/'manifest.json').read_bytes())
+            write(verifier/'inventory.json',expected);root_conf['InventorySHA256']=sha(verifier/'inventory.json');write(verifier/'remaining.json',root_conf)
+            helper('source-readonly','remaining-verify-native',verifier,source_ids['minio'],target/'source-readonly')
             facts = json.loads(r.native.sql(source_ids['postgres'],"SELECT json_build_object('approvals',(SELECT count(*) FROM lifecycle_disposition_approval),'dispatches',(SELECT count(*) FROM lifecycle_disposition_dispatch),'attempts',(SELECT count(*) FROM lifecycle_provider_attempt),'send_claims',(SELECT count(*) FROM lifecycle_provider_send_claim),'restrictions',(SELECT count(*) FROM lifecycle_content_use_restriction),'unclosed_pins',(SELECT count(*) FROM lifecycle_reader_pin p WHERE NOT EXISTS(SELECT 1 FROM lifecycle_reader_termination t WHERE t.pin_id=p.id)));"))
             require(all(v == 0 for v in facts.values()),'Source execution already advanced')
             write(target/'source-facts.json',facts)
@@ -138,7 +150,7 @@ cat /tmp/source''',['--mount','type=volume,source='+project+'-objects,target=/so
             clone=private/'clone-owner';clone_admin=private/'clone-admin';clone.mkdir();clone_admin.mkdir()
             for p in (clone,clone_admin):(p/'manifest.json').write_bytes((historical/'manifest.json').read_bytes())
             write(clone/'remaining.json',clone_conf)
-            ca=json.loads(json.dumps(clone_conf));ca['Base'].update(RootAccess=original_cfg['RootAccess'],RootSecret=original_cfg['RootSecret']);ca['InventorySHA256']=root_conf['InventorySHA256'];write(clone_admin/'remaining.json',ca);(clone_admin/'inventory.json').write_bytes((admin/'inventory.json').read_bytes())
+            ca=json.loads(json.dumps(clone_conf));ca['Base'].update(RootAccess=original_cfg['RootAccess'],RootSecret=original_cfg['RootSecret']);ca['InventorySHA256']=root_conf['InventorySHA256'];write(clone_admin/'remaining.json',ca);(clone_admin/'inventory.json').write_bytes((verifier/'inventory.json').read_bytes())
             helper('restored-readonly','remaining-verify-native',clone_admin,mi,target/'restored-readonly')
             gateway=private/'Caddyfile'
             if group=='business-races': gateway.write_bytes(r.gateway(base,copies))
@@ -157,7 +169,7 @@ cat /tmp/source''',['--mount','type=volume,source='+project+'-objects,target=/so
                 helper('clone-inspect-disable','remaining-inspection-disable',clone_admin,mi,target/'clone-admin-seal')
             helper('final-restored-readonly','remaining-verify-native',clone_admin,mi,target/'final-restored-readonly')
             write(target/'regression-final-core.json',r.native.fingerprints(pg))
-            write(target/'checkpoint.json',{'status':'PASS_FULL_CORE_NATIVE_RESTORE_AND_NONDELETE','source':source,'source_ids':source_ids,'restored_core':pg,'restored_native':mi,'restored_gateway':gw,'network':json.loads(docker('network','inspect',network))[0]['Id'],'subnet':subnet,'core_dump_sha256':sha(checkpoint/'core.dump'),'globals_sha256':sha(checkpoint/'globals.sql'),'native_archive_sha256':sha(checkpoint/'native.tar'),'inventory_sha256':sha(admin/'inventory.json'),'copies':copies,'native_delete':0,'cleanup':0,'source_execution_started':False})
+            write(target/'checkpoint.json',{'status':'PASS_FULL_CORE_NATIVE_RESTORE_AND_NONDELETE','source':source,'source_ids':source_ids,'restored_core':pg,'restored_native':mi,'restored_gateway':gw,'network':json.loads(docker('network','inspect',network))[0]['Id'],'subnet':subnet,'core_dump_sha256':sha(checkpoint/'core.dump'),'globals_sha256':sha(checkpoint/'globals.sql'),'native_archive_sha256':sha(checkpoint/'native.tar'),'inventory_sha256':sha(verifier/'inventory.json'),'copies':copies,'native_delete':0,'cleanup':0,'source_execution_started':False})
         finally:
             seals=[]
             for ident in dict.fromkeys(reversed(owned)):
