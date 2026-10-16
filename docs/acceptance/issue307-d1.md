@@ -1,5 +1,7 @@
 # #307/D1：schema66 历史非删除验收与下一步清单
 
+当前PR收口及仍缺的完整D1用例见[#318最终评审](issue318-final-closure.md)；5d的单独v15两版本删除/恢复已完成并封存。以下NOT_RUN/待确认保留2026-10-13原阶段，不再作为当前PR总状态。
+
 本文件保留2026-10-13原阶段。2026-10-14当前补验与矩阵见
 [native completion](issue307-d1-native-completion.md)及[LC-13/5d只读核验](issue307-lc13-readonly.md)；真实删除仍待单独确认。
 

@@ -1,0 +1,155 @@
+{
+  "at": "2026-10-16T02:22:38.727926+00:00",
+  "pr": {
+    "headRefOid": "f1b03843ce26929d10cb71e744082ba77b2ebdda",
+    "isDraft": true,
+    "mergeStateStatus": "CLEAN",
+    "mergeable": "MERGEABLE",
+    "number": 318,
+    "reviewDecision": "",
+    "state": "OPEN",
+    "url": "https://github.com/qq550723504/data-product-platform/pull/318"
+  },
+  "base_main": "d7c9ccdfe4fba066b512fe4adbcd1df281a2d0d9",
+  "main_vs_head_commits": "0\t60",
+  "rules": [
+    {
+      "type": "deletion",
+      "ruleset_source_type": "Repository",
+      "ruleset_source": "qq550723504/data-product-platform",
+      "ruleset_id": 23543992
+    },
+    {
+      "type": "non_fast_forward",
+      "ruleset_source_type": "Repository",
+      "ruleset_source": "qq550723504/data-product-platform",
+      "ruleset_id": 23543992
+    },
+    {
+      "type": "required_linear_history",
+      "ruleset_source_type": "Repository",
+      "ruleset_source": "qq550723504/data-product-platform",
+      "ruleset_id": 23543992
+    },
+    {
+      "type": "pull_request",
+      "parameters": {
+        "required_approving_review_count": 0,
+        "dismiss_stale_reviews_on_push": false,
+        "required_reviewers": [],
+        "require_code_owner_review": false,
+        "require_last_push_approval": false,
+        "required_review_thread_resolution": true,
+        "require_extra_approval_for_unattributed_changes": true,
+        "allowed_merge_methods": [
+          "squash",
+          "rebase"
+        ]
+      },
+      "ruleset_source_type": "Repository",
+      "ruleset_source": "qq550723504/data-product-platform",
+      "ruleset_id": 23543992
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "strict_required_status_checks_policy": true,
+        "do_not_enforce_on_create": false,
+        "required_status_checks": [
+          {
+            "context": "required",
+            "integration_id": 15368
+          }
+        ]
+      },
+      "ruleset_source_type": "Repository",
+      "ruleset_source": "qq550723504/data-product-platform",
+      "ruleset_id": 23543992
+    }
+  ],
+  "reviews": {
+    "reviewThreads": {
+      "totalCount": 0,
+      "nodes": []
+    },
+    "reviews": {
+      "totalCount": 0,
+      "nodes": []
+    }
+  },
+  "ci": {
+    "id": 38837019057,
+    "head_sha": "f1b03843ce26929d10cb71e744082ba77b2ebdda",
+    "event": "pull_request",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 116768312708,
+        "name": "classify-changes",
+        "conclusion": "success"
+      },
+      {
+        "id": 116768360333,
+        "name": "gx-smoke",
+        "conclusion": "success"
+      },
+      {
+        "id": 116768360380,
+        "name": "web-console",
+        "conclusion": "success"
+      },
+      {
+        "id": 116768360415,
+        "name": "temporary-container-contracts (windows-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 116768360462,
+        "name": "hop-smoke",
+        "conclusion": "success"
+      },
+      {
+        "id": 116768360466,
+        "name": "temporary-container-contracts (ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 116768360502,
+        "name": "splink-smoke",
+        "conclusion": "success"
+      },
+      {
+        "id": 116768360512,
+        "name": "label-studio-smoke",
+        "conclusion": "success"
+      },
+      {
+        "id": 116768360677,
+        "name": "browser-contracts / web-browser-contracts",
+        "conclusion": "success"
+      },
+      {
+        "id": 116768360776,
+        "name": "demo / demo-lifecycle",
+        "conclusion": "success"
+      },
+      {
+        "id": 116768360808,
+        "name": "live-core / live-core-browser",
+        "conclusion": "success"
+      },
+      {
+        "id": 116768361173,
+        "name": "go-platform",
+        "conclusion": "success"
+      },
+      {
+        "id": 116770981904,
+        "name": "required",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "legacy_branch_protection_http404": "Repository ruleset main-protection23543992 supplies active protection; do not interpret legacy endpoint404 as unprotected",
+  "read_only": true
+}

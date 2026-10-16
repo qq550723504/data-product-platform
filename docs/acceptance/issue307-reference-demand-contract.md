@@ -1,5 +1,10 @@
 # #307 finite reference-demand implementation contract
 
+Current PR closeout (2026-10-16): [#318 final contract and merge gates](issue318-final-closure.md).
+Candidate05/v15's separately authorized two-version execution and recovery have passed and are sealed;
+the send budget is consumed. The stage-specific preparation / NOT_RUN wording below records its
+original dated boundary. Full Issue307 D1 remains unaccepted; #318 stays Draft, no merge or further deletion.
+
 Candidate base: origin/main 074a33bace7edbaf481759aac3a84708363ffd02.
 Writer: this isolated codex/issue307-reference-demand-lc11-lc12 checkout only.
 Migration: 67 for reference-demand (main through 66 at assignment); 68 for the explicitly authorized checkpoint preparation extension.

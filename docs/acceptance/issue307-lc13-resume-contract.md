@@ -1,5 +1,9 @@
 # #307 LC-13 Retry / trusted owner stop / credential containment contract
 
+Current PR closeout: [#318 final contract and merge gates](issue318-final-closure.md).
+This LC-13 contract and its no-delete boundary apply to the dated LC-13 runs below;
+the separate candidate05/v15 execution is recorded in the current closeout. #318 remains Draft.
+
 Baseline `44d5a5390f93a0a464f66e642fea61b5d79846e8`, 2026-10-14.
 Root sole writer; independent read-only design/implementation/evidence review.
 #318 remains Draft. No merge/Ready/deploy, object DELETE, hold/retention release,

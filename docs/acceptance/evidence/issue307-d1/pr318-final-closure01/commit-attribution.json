@@ -1,0 +1,11 @@
+{
+  "reviewed_head": "f1b03843ce26929d10cb71e744082ba77b2ebdda",
+  "commits": 60,
+  "unlinked_authors": 0,
+  "unlinked_committers": 0,
+  "github_authors": [
+    "xuweitm-crypto"
+  ],
+  "conditional_rule": "require_extra_approval_for_unattributed_changes=true; honor actual GitHub evaluation after user authorizes leaving Draft",
+  "extra_approval_bypass": false
+}

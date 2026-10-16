@@ -1,5 +1,7 @@
 # #307 LC-13：可信停止、新 Retry 与 credential containment
 
+当前PR收口见[#318最终评审及合并条件](issue318-final-closure.md)。以下为2026-10-14三份LC-13环境的非删除验收时点；5d的单独v15授权执行已完成并封存，其当前事实见收口入口，旧“待确认”不再描述整个PR状态。
+
 2026-10-14；[有限contract](issue307-lc13-resume-contract.md)。#318保持Draft。
 0 merge、0 object DELETE、0 hold/retention release/bypass、0 cleanup。
 用户明确选择新Retry Execution；原FAILED、pins、native calls、成本和观察保留。

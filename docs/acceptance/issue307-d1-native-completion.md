@@ -1,5 +1,7 @@
 # #307 D1：pre-ISSUED、worker 故障与 archive/restore 原生补验
 
+当前PR收口见[#318最终评审及剩余边界](issue318-final-closure.md)。本文记录2026-10-14本轮非删除补验；后续LC-13和单独v15删除/恢复已完成，旧“待确认/未运行”保留原时点。完整D1仍未接受。
+
 2026-10-14。#318 保持 Draft；merge、真实 DELETE、hold release、retention bypass、cleanup 均为0。
 本轮按[有限 contract](issue307-d1-completion-contract.md)完成三项非删除补验。
 完整 D1、D2 和生产 DR 未验收；#307 保持 OPEN。
