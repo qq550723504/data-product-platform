@@ -132,3 +132,10 @@ M1 固定复用 v15 已验的 **native forward + response-loss** 路径：先完
 | #323 / #307 / D1 | #323 Draft，#307 OPEN；所有新容器stopped/PID0，无真实删除/hold-release/bypass | NOT_ACCEPTED，不合并，不部署 |
 
 五份原始失败均留存并完成根因修正；两个excluded失败环境的12份版本不删除，808a的continuation只对已恢复副本进行只读比对/核验，不重放provision/restore。失败5f6a的inspector未及disable；该环境全停/PID0/noports、平台authority关闭，严格排除新候选，不夸称全部原生身份disabled。精确方案列明后续五项有限前置：真实业务非删除准备、受限reader/producer与pause/witness、七目标sender非删除回归、独立评审、新可执行候选及固定UTC窗口精确确认。
+
+
+### 8.1 当前 CI 历史核验入口修正
+
+`10d7861d` 的 PR CI `38862728693` / demo job `116848534219` 在旧 candidate05 的 current-tree hash 检查失败；原因是本轮真实 fixture 工具改变了当前 `main.go`，而旧 v15 冻结源码必须保持 dbe3fbd6。参见 [原失败及根因回执](evidence/issue307-d1/remaining-native-ci01/regression.json)。
+
+修复复用已存在的 historical snapshot 模式：新增固定 candidate05 public-only wrapper，对 b823eb33 中的35个旧payload/index逐字重核，再装入 dbe3fbd6 的317份原Git源码，运行**未修改的原checker**，继续严格核对344份更早raw历史。当前工作区源码不覆盖，不能执行任何native operator或授权。新增篡改payload/index、损坏runtime、越界archive/CLI反例，正常/`-O` 各4项PASS；完整旧checker PASS。CI同时加入当前v16离线audit，Go gate保持原样。冻结候选de5f/source768及全部16版本、Core/IAM/gateway绑定未变；此CI-only新增文件不是新发送候选。最终CI按修复后HEAD在PR checkpoint核对。
