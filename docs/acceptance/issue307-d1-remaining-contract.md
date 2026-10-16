@@ -139,3 +139,25 @@ M1 固定复用 v15 已验的 **native forward + response-loss** 路径：先完
 `10d7861d` 的 PR CI `38862728693` / demo job `116848534219` 在旧 candidate05 的 current-tree hash 检查失败；原因是本轮真实 fixture 工具改变了当前 `main.go`，而旧 v15 冻结源码必须保持 dbe3fbd6。参见 [原失败及根因回执](evidence/issue307-d1/remaining-native-ci01/regression.json)。
 
 修复复用已存在的 historical snapshot 模式：新增固定 candidate05 public-only wrapper，对 b823eb33 中的35个旧payload/index逐字重核，再装入 dbe3fbd6 的317份原Git源码，运行**未修改的原checker**，继续严格核对344份更早raw历史。当前工作区源码不覆盖，不能执行任何native operator或授权。新增篡改payload/index、损坏runtime、越界archive/CLI反例，正常/`-O` 各4项PASS；完整旧checker PASS。CI同时加入当前v16离线audit，Go gate保持原样。冻结候选de5f/source768及全部16版本、Core/IAM/gateway绑定未变；此CI-only新增文件不是新发送候选。最终CI按修复后HEAD在PR checkpoint核对。
+
+
+## 9. candidate07/v17 可执行冻结与非删除收口（2026-10-16）
+
+当前有限切片已由准备阶段推进至 `PREPARED_EXECUTABLE_NOT_AUTHORIZED`；唯一execution `effa0385-9308-42eb-bd66-d0c379b6a989`，candidate SHA256 `b9660f17cbb745e781a06d50e8ec0e81c87e654318420533b75b4ada29728949`，源码 `f3b5de45857add3f852bbac0348e8c30ea105ade`（812文件），reader `8a9800bd3a77c75d3364cfe01712e7de1dcb060111a4b43c4bb90820b7b2a4b1`、sender/wire/recovery `ef6dbfd8561ac6a070a7e1d19c45caec0042924cbc268a8a58ff0f85a5bf2f9a`、root bootstrap `68ad4a761a105e7d5ad2a678546f80347222b6fab11c0b4b64b49f15989f9d42`。新的 [精确确认方案与验收矩阵](issue307-d1-candidate07-confirmation.md) 拥有当前状态；§8及v16保持历史。
+
+交付目标是有限原生case runner、受限reader/producer、single-send/wire/readonly recovery接线与可审核冻结；authoritative semantics仍为本contract、architecture lifecycle及新精确文本。必需invariants为：exact scope/版本与新授权、共享fence、owner真实停止才解pin/ref、immutable attempts/账务、persistent单次budget、UNKNOWN不重发、source/backup保留。D2–D6、通用IAM/DR、用户未授权的真实删除、Ready/merge不在本轮。
+
+| 切片 | 当前结论 |
+| --- | --- |
+| P1/P2/T1/T2 | 最新冻结reader真实Asynq/NATIVE/DirectData非删除PASS；P2 queue/Retry/Start/NativeReconciler均0新增IO，T1取消背压期间pin保留至owner闭合；same-key409与T2当前门禁403均0payload |
+| H0/H1/H2 | schema69 clone用冻结binary重跑H0真实PG waiter与H1签名NOT_SENT PASS；H2仅ready/unclaimed，真实wire后的late hold/UNKNOWN尚NOT_RUN |
+| M1/C | 同DV三份版本保留，native GOV retention实际阻断C PASS；真实A absence/B UNKNOWN/C blocked及随后B lookup尚NOT_RUN |
+| Core/native/库存 | 三源18版本（7拟删除+11survivor），含两份真实业务输出；三份新完整dump/globals/native tar及独立恢复、最新只读指纹/保护/IAM均PASS，所有identity disabled |
+| 新必要设计修复 | CopyPolicy显式immutable续期，expected-head单链+固定锁序；真实PG双Renew一赢家、restriction/hold/pin六顺序waiter与旧pin/operation/checkpoint保留PASS；≤1h不放宽，未来窗口开始后才Renew |
+| 当前权限与工具 | 7case/17operator/15root-bootstrap实际CID冻结；17+7封存拒绝、Go offline+正常/-O篡改反例PASS；独立root IAM与host attester已源码化，当前无human/无send permit/无topology proof |
+| 源码冻结与续跑 | 原脚本stdout-only漏采Docker stderr导致最后断言失败；frozen candidate/source/profile未改，有限completion只补封存回执、offline和索引，原失败seal保留；940 raw证据逐字重核PASS |
+| 完整D1与仓库状态 | NOT_ACCEPTED；#323保持Draft，#307保持OPEN；真实DELETE/cleanup/hold-release/bypass均0；旧授权不复用 |
+
+复用既有ports、PG Commands/fence、queue/reconciliation、call journal/Cost/Audit/Evidence/Outbox；MinIO、madmin、Asynq和cryptography承担通用能力。新增migration69只解决保留same DV所必需的fixture policy续期，保留全部旧事实，未引入新基础设施。独立复评及最终exact HEAD PR CI记入本轮最终checkpoint，不冒充main CI。
+
+本轮[最终独立只读复评](evidence/issue307-d1/remaining-final-review01/independent-review.json)结论为当前非删除切片BLOCKER=0；最终精确HEAD Linux PR CI须单独核对并在GitHub checkpoint记录。Windows额外全模块测试存在一项未改动metadata子进程500ms启动预算失败，原失败保留；独立诊断确认首次启动1404ms、隔离五次通过且UNKNOWN fail closed，不把它改报全模块PASS。67个精确保留owner CID只读复核均停止/PID0/noports/no restart。
