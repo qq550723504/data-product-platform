@@ -135,7 +135,16 @@ func remainingServices(r remainingConfig, pool *pgxpool.Pool, cs []domain.Copy) 
 	c := r.Base
 	g := &gate{}
 	o := lc.NewOccupancyService(transaction.NewManager(pool), &infrastructure.PostgresRepository{}, remainingAuthority{r}, g, nil)
-	g.s = lc.NewCopyService(o, nil, noCopyProtection{}, nil, c.Epoch)
+	// Reuse the existing plane's fixed copy-policy composition. Custody is not
+	// exposed by this command and its protection Port always returns unsupported.
+	var ns uuid.UUID
+	if err := pool.QueryRow(context.Background(), `SELECT id FROM lifecycle_fixture_namespace WHERE workspace_id=$1 AND namespace=$2`, c.WorkspaceID, namespaces[1]).Scan(&ns); err != nil {
+		return nil, nil, nil, nil, err
+	}
+	g.s = lc.NewCopyService(o, []lc.CopyTargetSlot{{Slot: "archive-a", Action: domain.ArchiveCopy, NamespaceID: ns, Namespace: namespaces[1], Key: "archive/a.csv"}}, noCopyProtection{}, nil, c.Epoch)
+	if g.s == nil {
+		return nil, nil, nil, nil, lc.ErrStorageScope
+	}
 	native, err := storage.NewLifecycleReader(storage.LifecycleCopyConfig{Endpoint: c.Endpoint, AccessKey: c.Access, SecretKey: c.Secret, WorkspaceID: c.WorkspaceID, ProviderInstanceID: c.ProviderInstanceID, IncarnationID: c.IncarnationID, Namespaces: namespaces, Journal: lc.PinnedReaderCallJournal{Service: o, Observations: lc.NewPostgresStorageCallJournal(o), SubjectGate: planeCurrentDeliveryGate(pool)}}, cs)
 	if err != nil {
 		return nil, nil, nil, nil, err

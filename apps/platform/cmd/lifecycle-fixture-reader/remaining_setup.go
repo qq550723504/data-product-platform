@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"errors"
+	"os"
+	"path/filepath"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -52,10 +54,37 @@ func remainingSetup(ctx context.Context, r remainingConfig, pool *pgxpool.Pool, 
 	tx := transaction.NewManager(pool)
 	datasets := datasetinfra.NewPostgresRepository(pool)
 	create := datasetapp.NewCreateDatasetService(tx, datasets, resourceinfra.NewPostgresRepository())
+	// A finite continuation of the retained e311423a setup failure. That helper
+	// committed exactly these two empty datasets before its policy constructor
+	// rejected the composition. No prior business fact is replaced or retried.
+	resume := false
+	resumePath := filepath.Join("/run/private", "setup-resume.json")
+	if _, err := os.Stat(resumePath); err == nil {
+		var prior planeState
+		if err = readRemaining(resumePath, &prior); err != nil {
+			return err
+		}
+		if prior.StandardizedDatasetID != uuid.MustParse("667e9747-242e-418b-aa37-e1ea46d92aca") || prior.OutputDatasetID != uuid.MustParse("7b5f045a-170d-4f10-b7c2-2d5d609940d5") || prior.StandardizedVersionID != uuid.Nil || prior.WorkflowVersionID != uuid.Nil || prior.ProfileID != uuid.Nil {
+			return lc.ErrStorageScope
+		}
+		s.Plane = prior
+		resume = true
+	}
 	for i, kind := range []datasetdomain.DatasetType{datasetdomain.DatasetTypeStandardized, datasetdomain.DatasetTypeCurated} {
 		code := "REMAINING-STANDARDIZED"
 		if i == 1 {
 			code = "REMAINING-CURATED"
+		}
+		if resume {
+			id := s.Plane.StandardizedDatasetID
+			if i == 1 {
+				id = s.Plane.OutputDatasetID
+			}
+			var valid bool
+			if err := pool.QueryRow(ctx, `SELECT workspace_id=$2 AND code=$3 AND dataset_type=$4 AND created_by=$5 AND NOT EXISTS(SELECT 1 FROM dataset_version WHERE dataset_id=d.id) FROM dataset d WHERE id=$1`, id, c.WorkspaceID, code, string(kind), c.ActorID).Scan(&valid); err != nil || !valid {
+				return errors.New("partial setup identities changed")
+			}
+			continue
 		}
 		d, err := create.Handle(ctx, datasetapp.CreateDatasetCommand{WorkspaceID: c.WorkspaceID, Code: code, Name: "Remaining D1 synthetic output", DatasetType: kind, ActorID: &c.ActorID})
 		if err != nil {

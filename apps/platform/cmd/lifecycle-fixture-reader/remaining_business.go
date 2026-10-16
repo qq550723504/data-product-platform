@@ -233,6 +233,13 @@ func remainingBusiness(ctx context.Context, r remainingConfig, pool *pgxpool.Poo
 	var admitted []lc.DispatchResult
 	for i, name := range []string{"P1", "P2", "T1", "T2"} {
 		cp := original[i]
+		// T1's real HTTP command adds a DELIVERY reference after the first
+		// snapshot. Re-enumerate the entire current typed set before closure.
+		list, e := referenceDemands(ctx, c, pool, refs, cp)
+		if e != nil {
+			return e
+		}
+		demands[cp.ID] = list
 		for _, ref := range demands[cp.ID] {
 			if _, err = releaseReference(ctx, c, refs, ref); err != nil {
 				return err
