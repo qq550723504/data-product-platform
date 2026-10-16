@@ -140,6 +140,7 @@ func Routes(governanceProjection bool) []outbox.Route {
 		{EventType: "LifecycleExactCopyAbsenceVerified"},
 		{EventType: "LifecycleContentDispositionFinalized"},
 		{EventType: "LifecycleCopyPolicyBound"},
+		{EventType: "LifecycleCopyPolicyRenewed"},
 		{EventType: "LifecycleCopyPrepared"},
 		{EventType: "LifecycleCopyRecoveryRequested", RequiredHandlers: []string{HandlerLifecycleRecoveryQueue}},
 		{EventType: "LifecycleCopyRecoveryStarted"},

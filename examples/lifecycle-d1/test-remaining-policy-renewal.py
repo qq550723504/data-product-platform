@@ -5,18 +5,28 @@ from pathlib import Path
 import secrets
 import socket
 import subprocess
+import sys
 import time
 
 spec=importlib.util.spec_from_file_location('r',Path(__file__).with_name('prepare-remaining-runner.py'))
 r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
 
 def main():
+    replay=sys.argv[1:]==['--repeat-on-retained-scratch']
+    r.require(not sys.argv[1:] or replay,'Unsupported SQL regression invocation')
     private=r.PRIVATE/'remaining-policy-regression01';out=r.ROOT/'docs/acceptance/evidence/issue307-d1/remaining-policy-regression01'
+    if replay:
+        old=r.load(out/'result.json');r.require(old['exit_code']==1,'Expected retained failed SQL test')
+        pg=old['container'];state=r.inspect(pg);r.require(state['Config']['Labels'].get('lifecycle307.scope')=='policy-regression01' and state['State']['Pid']==0,'Wrong scratch owner')
+        password=(private/'password').read_text();port=int(state['HostConfig']['PortBindings']['5432/tcp'][0]['HostPort'])
+        private=r.PRIVATE/'remaining-policy-regression02';out=r.ROOT/'docs/acceptance/evidence/issue307-d1/remaining-policy-regression02'
     r.require(not private.exists() and not out.exists(),'One-shot SQL regression allocated');private.mkdir();out.mkdir()
-    password=secrets.token_hex(32);(private/'password').write_text(password)
-    with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
-    name='dpp-lifecycle307-policy-regression01';r.docker('volume','create','--label','lifecycle307.scope=policy-regression01',name+'-data')
-    pg=r.docker('create','--pull','never','--name',name,'--label','lifecycle307.scope=policy-regression01','--publish',f'127.0.0.1:{port}:5432','--mount','type=volume,source='+name+'-data,target=/var/lib/postgresql/data','--mount',f'type=bind,source={private}/password,target=/run/password,readonly','-e','POSTGRES_PASSWORD_FILE=/run/password',r.PG).decode().strip()
+    name='dpp-lifecycle307-policy-regression01'
+    if not replay:
+        password=secrets.token_hex(32);(private/'password').write_text(password)
+        with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+        r.docker('volume','create','--label','lifecycle307.scope=policy-regression01',name+'-data')
+        pg=r.docker('create','--pull','never','--name',name,'--label','lifecycle307.scope=policy-regression01','--publish',f'127.0.0.1:{port}:5432','--mount','type=volume,source='+name+'-data,target=/var/lib/postgresql/data','--mount',f'type=bind,source={private}/password,target=/run/password,readonly','-e','POSTGRES_PASSWORD_FILE=/run/password',r.PG).decode().strip()
     try:
         r.docker('start',pg)
         for _ in range(80):

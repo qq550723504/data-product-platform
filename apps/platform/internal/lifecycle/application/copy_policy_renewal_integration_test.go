@@ -93,8 +93,7 @@ func TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy(t *t
 			case "reader":
 				_, e = s.occupancy.AdmitFixtureReader(ctx, AdmitFixtureReaderCommand{CommandHeader: CommandHeader{w, "reader"}, CopyID: cs[0].ID, ReaderID: uuid.New()})
 			case "dispatch":
-				stagedCopy(t, s, w, cs[0].ID, "archive") // verified operation closes reservation; create an unresolved second one
-				_, e = s.PrepareCopy(ctx, PrepareCopyCommand{CommandHeader: CommandHeader{w, "pending"}, SourceCopyID: cs[0].ID, TargetSlot: "restore", BasisRef: "synthetic", ExpiresAt: time.Now().Add(time.Minute)})
+				_, e = s.PrepareCopy(ctx, PrepareCopyCommand{CommandHeader: CommandHeader{w, "pending"}, SourceCopyID: cs[0].ID, TargetSlot: "archive", BasisRef: "synthetic", ExpiresAt: time.Now().Add(time.Minute)})
 			}
 			if e != nil {
 				t.Fatal(e)
