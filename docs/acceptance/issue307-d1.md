@@ -1,6 +1,6 @@
 # #307/D1：schema66 历史非删除验收与下一步清单
 
-2026-10-16 当前入口：[剩余 D1 有限设计与非删除准备矩阵](issue307-d1-remaining-contract.md)。#318 已 squash 合并为 `b823eb33`，matching push/main CI `38842607982` 13/13 SUCCESS；#307 仍 OPEN。5d 的单独 v15 两版本删除/恢复已完成并封存，不复用其授权。以下原阶段和[#318合并前最终评审](issue318-final-closure.md)中的 Draft/NOT_RUN 文字保留各自历史时点。
+2026-10-16 当前入口：[剩余 D1 有限设计与非删除准备矩阵](issue307-d1-remaining-contract.md)。bca29f4d 的 GitHub 同步已恢复、独立只读复评 BLOCKER=0；新 [PR #323](https://github.com/qq550723504/data-product-platform/pull/323) 保持 Draft，最新提交 CI 见 PR checkpoint，原生组合仍 NOT_RUN。#318 已 squash 合并为 `b823eb33`，matching push/main CI `38842607982` 13/13 SUCCESS；#307 仍 OPEN。5d 的单独 v15 两版本删除/恢复已完成并封存，不复用其授权。以下原阶段和[#318合并前最终评审](issue318-final-closure.md)中的 Draft/NOT_RUN 文字保留各自历史时点。
 
 本文件保留2026-10-13原阶段。2026-10-14当前补验与矩阵见
 [native completion](issue307-d1-native-completion.md)及[LC-13/5d只读核验](issue307-lc13-readonly.md)；真实删除仍待单独确认。

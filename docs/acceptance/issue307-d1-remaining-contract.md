@@ -2,6 +2,8 @@
 
 2026-10-16。唯一 writer 为当前 #307 聊天。本轮只设计、补组合式 SQL-only 回归、运行独立 scratch PostgreSQL 验证；**真实 provider DELETE=0，hold-release=0，bypass=0，不启用旧环境或旧授权，#307 保持 OPEN。**
 
+当前更新：GitHub 同步已恢复，`bca29f4d63c423962ed5a43b71fd4f71ec2665f9` 已发布并完成独立只读评审，有限切片 **BLOCKER=0**；[新 PR #323](https://github.com/qq550723504/data-product-platform/pull/323) 保持 Draft。最新同步/复评矩阵见 §7；§6 的“未执行新独立评审”和 EOF 回执保留 bca29f4d 原时点。以下 PG/native 证明边界不变。
+
 基线为已合并 #318 的 `b823eb33f8f3f923b619feda06e0ecc53514dd23`，对应 [push/main CI 38842607982](https://github.com/qq550723504/data-product-platform/actions/runs/38842607982) 13/13 SUCCESS。原 PR HEAD `22ee8e3e` 与 merge tree 相同。[旧收口报告](issue318-final-closure.md)及 v15 回执保留各自合并前时点，不能把其中 Draft 文字解释为当前 PR 状态。
 
 ## 1. 有限 contract 与权威归属
@@ -67,6 +69,7 @@ M1 固定复用 v15 已验的 **native forward + response-loss** 路径：先完
 | M1 | PASS_PG：同内容三 copy，A absence、B timeout、C retention blocker；B 后续 present/absent 两分支均 completion0，原 UNKNOWN/每次成本保留，A replay0 I/O | 三 copy 原生 NOT_RUN；B 复用既有 response-loss 路径；C 不支持未经授权 destructive probe |
 | 旧 v15 / LC-13 / archive-restore | 继承已合并证据，旧失败历史不重标 | 不重新索取旧目标删除授权，不计入本轮 provider I/O |
 | 新 native 候选 / 精确确认 | NOT_PROVISIONED / NOT_FROZEN / NOT_AUTHORIZED；本轮预算0 | 真实 environment/key/version/plan/hash/execution/checkpoint 全部尚缺，不是可授权发送清单 |
+| 独立评审 / GitHub 同步 | PASS_FINITE_REVIEW：bca29f4d 的独立只读评审 BLOCKER=0；原26 payload Git raw bytes 重核一致；远端分支同步成功，#323 Draft | 未重跑 PG/native；最终更新提交 CI 按其 exact HEAD 在 PR checkpoint 核对，不沿用 bca 或 #318 CI |
 | 整体 D1 / #307 | NOT_ACCEPTED / OPEN | 本轮完成设计与 PG 准备不等于完整 D1 已验收；不部署、不合并新的 PR |
 
 证据见 [离线核验](evidence/issue307-d1/remaining-preparation01/preparation-audit.json)、[原始成功 Go JSON](evidence/issue307-d1/remaining-preparation01/pg-race-attempt05.jsonl)、[原始进程回执](evidence/issue307-d1/remaining-preparation01/pg-race-attempt05-process.json)、[最终宿主封存](evidence/issue307-d1/remaining-preparation01/scratch-seal-final.json)及 [索引](evidence/issue307-d1/remaining-preparation01/evidence-index.json)。9 个顶层用例、13 个叶用例，Go JSON 含父子共17个 PASS、0 FAIL、0 SKIP；`go vet ./internal/lifecycle/application` 通过。实际使用 Go1.26.5/windows-amd64 + 已固定 image SHA 的 PostgreSQL17；不是冻结 native Linux binary 的复验或新提交 CI。
@@ -88,3 +91,23 @@ M1 固定复用 v15 已验的 **native forward + response-loss** 路径：先完
 当前 writer 做有限 closure audit：权威分工、四阶段、copy hold/plan stop 范围、reference release 前置、timeout 两种后续、历史/成本/幂等边界已明确；本轮非删除准备无已知 blocker。**未执行新独立评审、未创建 native 候选或删除批准、未验收完整 D1。** 新代码仅测试；保留环境/运行时/migration/依赖不改。下一轮先准备新的 native fixture 和只读清单，再独立核对 source/binary/Core/protection/窗口；获得新的 exact-list 用户确认之前持续 DELETE=0。
 
 远端边界：本轮起始 GitHub 读回 #307=OPEN；结束刷新时 gh GraphQL/REST 返回 EOF、GitHub connector transport 失败，见 [回执](evidence/issue307-d1/remaining-preparation01/remote-readback.json)。本轮没有关闭 Issue 或其他远端写入；本地文档/回归不冒称新 PR CI 或已同步 main。
+
+## 7. GitHub 恢复与独立复评（2026-10-16 追加）
+
+本次用户授权恢复同步和独立评审；原始 `remaining-preparation01` 的 26 payload/index、失败日志、原 PASS 和 EOF 回执均保持原字节。仅追加当前报告与入口，不将旧网络失败重标为成功。
+
+主线程刷新 `origin/main=b823eb33`、本地 clean/behind0，推送并 `ls-remote` 读回 `codex/issue307-d1-remaining-preparation=bca29f4d`；GitHub REST 读回 #307=OPEN。建立独立的 Draft #323，原 #318 已合并，不修改其代码或重复使用旧删除授权。见 [同步回执](evidence/issue307-d1/remaining-review01/sync-readback.json)。
+
+独立 reviewer `/root/d1_remaining_independent_review` 对 **bca29f4d**（base **b823eb33**）完成源码/底层实现/原始 Go JSON/真实 Git blob 的只读交叉复核，结论见 [独立评审回执](evidence/issue307-d1/remaining-review01/independent-review.json)。正式 GitHub APPROVED 与该离线 agent 评审不是同一事实；此次未声称存在新的 GitHub 审批。
+
+| 分类 | 复评结论 / 当前处理 |
+| --- | --- |
+| BLOCKER | **0**。没有发现须改 Core、runtime、migration、依赖或既有 PG 测试的有效阻断；本次仅更新文档与证据，不为制造修复而改代码 |
+| 已核对设计 | dispatch/claim/wire/absence 四阶段；copy hold 与绑定 approval revocation 的有限 plan stop；已 claim 请求不能假装撤回；P2 material reference release 前置；timeout 不推导 present，M1 所有 receipt 未齐不能 completion |
+| 已核对 PG 证明 | processing/transfer typed pin 与 dispatch 组合、DirectData FK admission 精确拒绝、same-key 无 payload/旧 ISSUED 保留；既有双方竞争确实观察 PG Lock waiter；M1 原 UNKNOWN/两种恢复结果/独立成本/A replay 有对应断言 |
+| 已复算证据 | 独立运行原 offline audit；从 bca29f4d Git blobs 逐份核对26 payload的 SHA/长度、新测试 blob与 attempt05 绑定；9顶层/13叶/17父子 PASS、0 FAIL/SKIP。主线程再次复算见 [回执](evidence/issue307-d1/remaining-review01/offline-recheck.json) |
+| FOLLOW-UP，owner=#307 | 新 native fixture、P1/P2/T1/T2/H2/M1 的实际组合验收；source/binary/Core/IAM/gateway/exact-list 冻结与新授权。维持 NOT_RUN / NOT_PROVISIONED / NOT_FROZEN / NOT_AUTHORIZED，不扩大成本或处置覆盖 |
+| INVALID / OUT-OF-SCOPE | 用 SQL-only PASS 宣称 native PASS、要求在途 DELETE 必然可撤销、把通用批量 hold/IAM/DR/D2–D6/旧环境升级加入本轮，不作为本切片 blocker |
+| 最终提交 CI | bca29f4d 的初始 PR run 为38857638865；本次追加提交须按新的 exact HEAD 核验 CI。最终 run/13项结果、unresolved threads 和 Draft 状态记在 #323 最新 checkpoint；不把受检 bca、合并前 #318 PR CI 或 merge/main CI 冒充新 HEAD CI |
+
+此次 reviewer 未独立重跑 PG，主线程也未重启任何 DB/container/provider；这与已有 9 组本地 PG race 的历史证明分开。无 native 新候选、真实删除、hold release/bypass、旧环境清理、Ready、merge 或部署。[新复评证据索引](evidence/issue307-d1/remaining-review01/evidence-index.json)与原索引分别保留。

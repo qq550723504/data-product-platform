@@ -65,6 +65,7 @@ docs/acceptance/evidence/issue307-d1/pr318-final-closure01/** text eol=lf
 docs/acceptance/issue318-final-closure.md text eol=lf
 docs/acceptance/issue307-d1-remaining-contract.md text eol=lf
 docs/acceptance/evidence/issue307-d1/remaining-preparation01/** text eol=lf
+docs/acceptance/evidence/issue307-d1/remaining-review01/** text eol=lf
 # Original PowerShell receipts keep their captured CRLF bytes.
 docs/acceptance/evidence/issue307-d1/remaining-preparation01/operator-*-failure.json -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-preparation01/pg-race-*-process.json -text whitespace=cr-at-eol

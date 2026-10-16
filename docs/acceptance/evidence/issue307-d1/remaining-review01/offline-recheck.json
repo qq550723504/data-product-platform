@@ -1,0 +1,20 @@
+{
+  "checked_by": "primary after independent review",
+  "reviewed_head": "bca29f4d63c423962ed5a43b71fd4f71ec2665f9",
+  "original_index_sha256": "062405ee5a09a7b7d4927f0efb12f1431682d47fad62fab8c033dcc9608c576b",
+  "original_indexed_payloads": 26,
+  "all_git_bytes_match": true,
+  "original_index_file_unchanged": true,
+  "original_audit_exit_code": 0,
+  "original_audit_stdout": "{\"status\": \"PASS\", \"top_level_tests\": 9, \"skip\": 0, \"delete_budget\": 0, \"indexed_files\": 26}",
+  "test_sha256": "c0fb8cfbf0457751a95090d8330069dae1377b69d4b84098a5d619363630725a",
+  "test_blob_matches_attempt05": true,
+  "top_level_tests": 9,
+  "leaf_tests": 13,
+  "parent_child_pass_events": 17,
+  "failed": 0,
+  "skipped": 0,
+  "new_pg_rerun": false,
+  "native_acceptance": "NOT_RUN",
+  "delete_budget": 0
+}
