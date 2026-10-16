@@ -27,6 +27,27 @@ func remainingPolicies(cs []domain.Copy) ([]byte, []byte, error) {
 	put, _ := json.Marshal(map[string]any{"Version": "2012-10-17", "Statement": []any{map[string]any{"Effect": "Allow", "Action": []string{"s3:PutObject"}, "Resource": []string{"arn:aws:s3:::" + namespaces[0] + "/fixture/remaining-standardized.csv", "arn:aws:s3:::" + namespaces[0] + "/fixture/remaining-processed.csv"}}}})
 	return read, put, nil
 }
+func remainingInspection(ctx context.Context, r remainingConfig, enabled bool) error {
+	c := r.Base
+	if c.RootAccess == "" || c.RootSecret == "" {
+		return errors.New("separate inspection admin required")
+	}
+	a, e := madmin.New(c.Endpoint, c.RootAccess, c.RootSecret, false)
+	if e != nil {
+		return e
+	}
+	a.SetCustomTransport(adminTransport{&http.Transport{Proxy: nil, DisableKeepAlives: true, ResponseHeaderTimeout: 10 * time.Second}, c})
+	x, cancel := context.WithTimeout(context.WithValue(ctx, adminKey{}, &adminCall{}), 15*time.Second)
+	defer cancel()
+	status := madmin.AccountDisabled
+	if enabled {
+		status = madmin.AccountEnabled
+	}
+	if e = a.SetUserStatus(x, c.InspectAccess, status); e != nil {
+		return e
+	}
+	return write(c, "remaining-inspection-"+string(status)+".json", map[string]any{"identity": c.InspectAccess, "status": status, "delete_identity_unchanged": true, "native_delete": 0})
+}
 func remainingBindOutputs(ctx context.Context, r remainingConfig, original []domain.Copy) error {
 	c := r.Base
 	if r.Group != "business-races" || c.RootAccess == "" || c.RootSecret == "" {

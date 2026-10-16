@@ -77,17 +77,26 @@ func (d *remainingDisposition) approve(ctx context.Context, name string) error {
 	return err
 }
 func (d *remainingDisposition) dispatch(ctx context.Context, name, key string, cp domain.Copy) (lc.DispatchResult, error) {
+	if err := d.refresh(ctx, cp); err != nil {
+		return lc.DispatchResult{}, err
+	}
+	return d.commandDispatch(ctx, name, key, cp)
+}
+func (d *remainingDisposition) refresh(ctx context.Context, cp domain.Copy) error {
 	// All native lookups finish before the command takes Core fences/row locks.
 	p, err := d.inspector.InspectRetentionAndHold(ctx, cp)
 	if err != nil {
-		return lc.DispatchResult{}, err
+		return err
 	}
 	inv, err := d.inspector.InspectNamespace(ctx, cp)
 	if err != nil {
-		return lc.DispatchResult{}, err
+		return err
 	}
 	d.deps.Protection[cp.ID] = p
 	d.deps.Inventories[cp.Namespace] = inv
+	return nil
+}
+func (d *remainingDisposition) commandDispatch(ctx context.Context, name, key string, cp domain.Copy) (lc.DispatchResult, error) {
 	return d.service.DispatchContentDisposition(ctx, lc.DispatchContentDispositionCommand{CommandHeader: lc.CommandHeader{WorkspaceID: d.r.Base.WorkspaceID, IdempotencyKey: "remaining-dispatch:" + key}, PlanID: d.plans[name].ID, ApprovalID: d.approvals[name], CopyID: cp.ID})
 }
 func remainingNoIO(ctx context.Context, pool *pgxpool.Pool) (int, error) {

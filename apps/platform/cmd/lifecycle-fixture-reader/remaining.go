@@ -32,11 +32,13 @@ import (
 )
 
 type remainingConfig struct {
-	Base      config
-	Group     string
-	Batch     uuid.UUID
-	NonDelete bool
-	Rehearsal bool
+	Base                                     config
+	Group                                    string
+	Batch                                    uuid.UUID
+	NonDelete                                bool
+	Rehearsal                                bool
+	ClosurePublicKey, ClosureCandidateSHA256 string
+	ClosureOwners                            map[string]string
 }
 
 func readRemaining(path string, dst any) error {
@@ -64,7 +66,7 @@ func loadRemaining() (remainingConfig, error) {
 	dsn, dsnErr := url.Parse(c.PostgresDSN)
 	expectedHost := "dpp-lifecycle307-" + c.RunID.String()[:8] + "-postgres:5432"
 	if r.Rehearsal {
-		expectedHost = "dpp-lifecycle307-808a6960-remaining-regression-pg:5432"
+		expectedHost = "dpp-lifecycle307-" + c.RunID.String()[:8] + "-remaining-regression-pg:5432"
 	}
 	if dsnErr != nil || dsn.Scheme != "postgres" || dsn.Host != expectedHost || dsn.Path != "/lifecycle307" || dsn.User == nil || dsn.User.Username() != "fixture" || dsn.RawQuery != "sslmode=disable" {
 		return r, lc.ErrStorageScope
@@ -85,7 +87,7 @@ func (a remainingAuthority) Resolve(req *http.Request, w uuid.UUID, cap string) 
 		return principal.RequestPrincipal{}, principal.ErrCapabilityDenied
 	}
 	c := r.Base
-	caps := []string{lc.CapabilityAdmitReader, lc.CapabilityTerminateReader, lc.CapabilityInspectOccupancy, lc.CapabilityInspectStorage, lc.CapabilityRestrictUse, lc.CapabilityCopyCustody, lc.CapabilityPreparePlan, lc.CapabilityApproveDisposition, lc.CapabilityDispatch, lc.CapabilityRevokeApproval, lc.CapabilityObserveAttempt, lc.CapabilityReconcileDisposition, lc.CapabilityVerifyAbsence}
+	caps := []string{lc.CapabilityAdmitReader, lc.CapabilityTerminateReader, lc.CapabilityInspectOccupancy, lc.CapabilityInspectStorage, lc.CapabilityRestrictUse, lc.CapabilityPlaceHold, lc.CapabilityCopyCustody, lc.CapabilityPreparePlan, lc.CapabilityApproveDisposition, lc.CapabilityDispatch, lc.CapabilityRevokeApproval, lc.CapabilityObserveAttempt, lc.CapabilityReconcileDisposition, lc.CapabilityVerifyAbsence}
 	for _, m := range []string{"dataset", "entity", "workflow", "quality", "certification", "delivery"} {
 		caps = append(caps, lc.ReferenceOwnerCapability(m))
 	}
@@ -178,6 +180,9 @@ func remainingStep(ctx context.Context, mode string) error {
 	if mode == "remaining-provision" || mode == "remaining-seal" {
 		return remainingProvision(ctx, r, cs, mode == "remaining-seal")
 	}
+	if mode == "remaining-inspection-enable" || mode == "remaining-inspection-disable" {
+		return remainingInspection(ctx, r, mode == "remaining-inspection-enable")
+	}
 	if mode == "remaining-bind-outputs" {
 		return remainingBindOutputs(ctx, r, cs)
 	}
@@ -202,6 +207,10 @@ func remainingStep(ctx context.Context, mode string) error {
 		return remainingBaseline(ctx, r, pool, cs)
 	case "remaining-business":
 		return remainingBusiness(ctx, r, pool, cs)
+	case "remaining-late", "remaining-mixed", "remaining-mixed-b", "remaining-mixed-c":
+		return remainingCases(ctx, r, pool, cs, mode)
+	case "remaining-close-H1":
+		return remainingCloseH1(ctx, r, pool)
 	default:
 		return errors.New("unknown remaining non-delete step")
 	}

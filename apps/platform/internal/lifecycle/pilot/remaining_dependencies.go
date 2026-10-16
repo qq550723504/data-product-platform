@@ -36,6 +36,21 @@ func (d *RemainingDependencies) EvaluateDisposalDependencies(ctx context.Context
 	inv, ok := d.Inventories[r.Copy.Namespace]
 	p, pok := d.Protection[r.Copy.ID]
 	until := d.ValidUntil
+	// Protection has independent authority. A current native retention denial
+	// must survive an unknown inventory, e.g. M1-C before any lookup of UNKNOWN B.
+	if pok && p.Copy == r.Copy {
+		if !p.LegalHold && (p.RetentionMode == "NONE" || (p.RetainUntil != nil && !r.AsOf.Before(*p.RetainUntil))) {
+			v.ProviderRetentionAllows = domain.Satisfied
+		} else {
+			v.ProviderRetentionAllows = domain.Denied
+		}
+		if p.ObservedAt.After(r.AsOf) {
+			return v, lc.ErrStorageContract
+		}
+		if cap := p.ObservedAt.Add(time.Minute); cap.Before(until) {
+			until = cap
+		}
+	}
 	if ok && pok {
 		expected := map[string]domain.Copy{}
 		for _, cp := range d.All {
