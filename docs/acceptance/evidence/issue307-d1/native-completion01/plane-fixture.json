@@ -1,0 +1,97 @@
+{
+  "run": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+  "project": "dpp-lifecycle307-4176888e",
+  "resources": {
+    "run_id": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+    "volumes": [
+      "dpp-lifecycle307-4176888e-postgres",
+      "dpp-lifecycle307-4176888e-objects"
+    ],
+    "network": "dpp-lifecycle307-4176888e-private",
+    "containers": {
+      "postgres": "dpp-lifecycle307-4176888e-postgres",
+      "gateway": "dpp-lifecycle307-4176888e-gateway",
+      "minio": "dpp-lifecycle307-4176888e-minio"
+    },
+    "project": "dpp-lifecycle307-4176888e"
+  },
+  "objects": [
+    {
+      "copy_id": "40eaf49f-cf47-427e-9c50-734143053998",
+      "dataset_version_id": "716187c7-44a6-4e9f-80be-962c70569c86",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/a.csv",
+      "version_id": "02fa48de-06c3-4289-b15f-fe8101c6fb27",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-14T06:28:02.191402562Z",
+      "protection_observed_at": "2026-10-14T06:28:02.369492202Z"
+    },
+    {
+      "copy_id": "6fbe40ba-75ea-4ccc-bba2-4cd8a94a1c2e",
+      "dataset_version_id": "eccde63d-dd8d-45c1-ae2b-1439b371cbf6",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/b.csv",
+      "version_id": "e2650a23-a79f-496e-87aa-90b944ca0032",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-14T06:28:02.220542983Z",
+      "protection_observed_at": "2026-10-14T06:28:02.399597583Z"
+    },
+    {
+      "copy_id": "9d0c2675-4de6-465e-bd12-9b703a9421b2",
+      "dataset_version_id": "716187c7-44a6-4e9f-80be-962c70569c86",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/a.csv",
+      "version_id": "a2cfcac6-6121-4db2-9fc8-fac257e52a0e",
+      "sha256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "bytes": 232,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-15T06:28:02Z",
+      "bytes_verified_at": "2026-10-14T06:28:02.248346Z",
+      "protection_observed_at": "2026-10-14T06:28:02.431962489Z"
+    },
+    {
+      "copy_id": "880fc158-506b-46b7-9259-78fed9162127",
+      "dataset_version_id": "eccde63d-dd8d-45c1-ae2b-1439b371cbf6",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/b.csv",
+      "version_id": "32f6a884-0668-40db-8c5d-a2ae987f55cf",
+      "sha256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "bytes": 129328,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-14T06:28:02.288721513Z",
+      "protection_observed_at": "2026-10-14T06:28:02.459727361Z"
+    }
+  ],
+  "source_head": "9b42c195a686f29286da0dfa1d4c03c64f559fc8",
+  "schema": 68,
+  "services": [
+    {
+      "name": "dpp-lifecycle307-4176888e-postgres",
+      "id": "612706e91ae71b2d6800ce270cc8ad60e64b0e09a77f8578488f5ac9a9e64912",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    {
+      "name": "dpp-lifecycle307-4176888e-gateway",
+      "id": "c5ff1f7e62f063e6e3e1d3bdd9a412bed06f7e5f420f4cf23d0002f897b38497",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
+    },
+    {
+      "name": "dpp-lifecycle307-4176888e-minio",
+      "id": "c62244fe672646c67f081950cc2aa10955d8e069daff447090117c7c7f8fbe08",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6"
+    }
+  ],
+  "delete": 0,
+  "cleanup": 0
+}

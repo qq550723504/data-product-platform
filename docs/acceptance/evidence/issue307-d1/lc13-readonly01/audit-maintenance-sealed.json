@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-14T09:47:47.127022+00:00",
+  "configs": [
+    {
+      "generation": "5d-readonly",
+      "before_sha256": "990128405d5fa4029ace43753bb79cd4c65991cc2a1dba98633cb7da6226ec2c",
+      "sealed_sha256": "3af3594e97b62ee8cb44361b3b545288a8e3a914ca82b9cf5cae612b82e8814b",
+      "preparation_enabled": false,
+      "before_config_retained_private": true
+    },
+    {
+      "generation": "5d-readonly-02",
+      "before_sha256": "7d86c1872b86165e2d51c0123acd16fe22cd2efb2ecba47bd469175fa1b361f0",
+      "sealed_sha256": "fbd5c798f557f95b46c729fda8fa61e28979aeca5103adc66a923178b2531ebf",
+      "preparation_enabled": false,
+      "before_config_retained_private": true
+    },
+    {
+      "generation": "5d-readonly-03",
+      "before_sha256": "2585f7b49184a90eab0577f790644cbc51a1deb157db8ecda1f66d0d7d2e4eab",
+      "sealed_sha256": "1ba4fd7a0bff6292228338c316e7978f179806f4bb9afb89e22136a964c44c71",
+      "preparation_enabled": false,
+      "before_config_retained_private": true
+    }
+  ],
+  "source_config_changed": false,
+  "old_restore_changed": false,
+  "native_provider_calls": 0,
+  "core_writes": 0,
+  "all_audit_services_stopped": true,
+  "driver_automatic_sealing": "NOT_CLAIMED; explicit final host sealing after stopped-state verification"
+}

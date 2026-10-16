@@ -1,0 +1,60 @@
+{
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/5d-05/current-core-readback.json",
+      "bytes": 14238,
+      "sha256": "45c9b86b6f259b103a86e33b43ce385fb0f9d71b2916f8d070422dda7a5432e6"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/5d-05/current-preconditions-readonly.sql",
+      "bytes": 49802,
+      "sha256": "dc5907dc9bc8e36e47e861b26efa901143e0412f28788973e284ff8fc7f1a8ea"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/5d-05/native-iam-helper.json",
+      "bytes": 510,
+      "sha256": "899f0463881614bbc467811a84c0fc9fb44874e7ac44c3baf244b36f082d21e0"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/5d-05/native-iam-readonly.json",
+      "bytes": 1043,
+      "sha256": "a5094b09c31e25f8bd86d40eeffba4407fcc5b0170977c7895788c2967510574"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/5d-05/owner-closure-readback.json",
+      "bytes": 36851,
+      "sha256": "70e9d5bfe3d86d3915f63b10a8dedf1167834726df26a580cda86ae5b2193d7c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/5d-05/reference-qualification-readback.json",
+      "bytes": 26464,
+      "sha256": "9703f3e884dda8b046be7c50c21bf1b58cbfa98db8963fb990d71afd7c8120d6"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/5d-05/retained-final-state.json",
+      "bytes": 201,
+      "sha256": "1c7daba2f44a58bb1f48e01a3fc25bea47542cd4740d823e152128d556731bfb"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/5d-05/source-before.json",
+      "bytes": 31286,
+      "sha256": "3a8370f64cc5bc5320cb3502c18962a4cbab92ab44798a010915c9493ea594ec"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/failed-complete-lc13-readonly.py",
+      "bytes": 20402,
+      "sha256": "37a9f52494ed0d1c81836490a26b97de7c0ac18d0e4d5c76d86c60802b1b350b"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/failed-refresh-reference-readonly.py",
+      "bytes": 4752,
+      "sha256": "2c58ec9fd4d5904080038ac33db7901c27e046f1c5bb64b9c133989cf501cfdb"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh01/operator-diagnostic.json",
+      "bytes": 763,
+      "sha256": "a15dcd59c579d2487ec2f89cbaacdb9a66aa9b4cc9ded7d32920508d7d857f10"
+    }
+  ],
+  "scope": "Failed05 preserved; IAM GET4, storage0, source0, stopped retained"
+}

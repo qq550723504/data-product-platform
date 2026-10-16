@@ -1,0 +1,18 @@
+{
+  "status": "PASS_IDENTICAL_TO_NETWORK_NONE_NATIVE_CADDY_VALIDATION",
+  "files": {
+    "gateway-active.Caddyfile": {
+      "old": "7b24ad32506bfd189c9289ba85a65ab242069dfee293d61b330104a90306cd0a",
+      "new": "7b24ad32506bfd189c9289ba85a65ab242069dfee293d61b330104a90306cd0a"
+    },
+    "gateway-sealed.Caddyfile": {
+      "old": "6a08b8647cc63cb389e2a511a5ad944b82d14e1ec9721f1a5ae45cb984bed4f6",
+      "new": "6a08b8647cc63cb389e2a511a5ad944b82d14e1ec9721f1a5ae45cb984bed4f6"
+    }
+  },
+  "validation_receipt": "caddy-validation.json",
+  "render_receipt": "render02/bounded-profile.json",
+  "actual_caddy_files_private": true,
+  "provider_io": 0,
+  "provider_delete": 0
+}

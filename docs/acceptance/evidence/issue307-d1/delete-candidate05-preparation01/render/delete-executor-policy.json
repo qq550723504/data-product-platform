@@ -1,0 +1,35 @@
+{
+  "Statement": [
+    {
+      "Action": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "312365a9-f984-43de-b9d5-7e26009ccd82"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-online/fixture/a.csv"
+      ]
+    },
+    {
+      "Action": [
+        "s3:DeleteObject",
+        "s3:DeleteObjectVersion"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "s3:versionid": "846d0c7c-289d-4667-bc7c-aa04e44357d4"
+        }
+      },
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws:s3:::dpp-lifecycle307-quarantine/fixture/b.csv"
+      ]
+    }
+  ],
+  "Version": "2012-10-17"
+}

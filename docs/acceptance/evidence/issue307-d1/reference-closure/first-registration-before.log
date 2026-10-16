@@ -1,0 +1,11 @@
+=== RUN   TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders
+=== RUN   TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders/reference-first
+    reference_demand_integration_test.go:263: context deadline exceeded
+=== RUN   TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders/registration-first
+    reference_demand_integration_test.go:263: timeout: context already done: context deadline exceeded
+--- FAIL: TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders (15.43s)
+    --- FAIL: TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders/reference-first (7.88s)
+    --- FAIL: TestFixtureReferenceAndFirstCopyRegistrationSerializeBothOrders/registration-first (7.55s)
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	16.399s
+FAIL

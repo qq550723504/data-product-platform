@@ -86,7 +86,7 @@ func TestFixtureReferenceClosureExcludesOwnControlButBlocksForeignConsumer(t *te
 	if _, err := pool.Exec(ctx, `INSERT INTO controlled_new_consumer VALUES($1,$2)`, uuid.New(), f.copies[0].DatasetVersionID); err != nil {
 		t.Fatal(err)
 	}
-	if inspect() != domain.Denied {
+	if inspect() != domain.Unknown {
 		t.Fatal("new unknown consumer silently ignored")
 	}
 }

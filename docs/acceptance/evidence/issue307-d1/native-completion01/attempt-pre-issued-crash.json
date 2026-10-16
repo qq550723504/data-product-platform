@@ -1,0 +1,6 @@
+{
+  "phase": "pre-issued-crash",
+  "source_head": "9b42c195a686f29286da0dfa1d4c03c64f559fc8",
+  "driver_sha256": "0609591c10f1e6b4d58570c414dd7345ae134a14cdef6d623da057d5394d0b6c",
+  "intent": "ONE_SHOT_NON_DELETE; append-only, failure never auto-resumes"
+}

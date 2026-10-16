@@ -1,0 +1,57 @@
+{
+  "id": "c7026f5b8ba3a053858c3493fee88490272aa578f3297f7ca366e04e011c9186",
+  "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "entrypoint": [
+    "/bin/sh"
+  ],
+  "cmd": [
+    "/run/private/dpp-lifecycle307-f3b0c9cd-reader-resume-crash-e2dcca.sh"
+  ],
+  "mounts": [
+    {
+      "Type": "bind",
+      "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\examples\\lifecycle-d1\\results",
+      "Destination": "/run/output",
+      "Mode": "",
+      "RW": true,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-f3b0c9cd\\plane-owner",
+      "Destination": "/run/private",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform",
+      "Destination": "/run/repo",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    },
+    {
+      "Type": "bind",
+      "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-f3b0c9cd\\plane-owner\\rules",
+      "Destination": "/run/rules",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    }
+  ],
+  "host_config": {
+    "restart": {
+      "Name": "no",
+      "MaximumRetryCount": 0
+    },
+    "privileged": false,
+    "pid_mode": "",
+    "network": "container:00a1249278d0e3138eb45e9aa34df6702499875927a868d1993dae209952f5b6"
+  },
+  "old_config_sha256": "2e5be244a16887162c904dc6930d09e486db5b2ad9fb6e9a3e7fe62440fdf01c",
+  "binary_sha256": "0bdd794e15230b4da02ddc2a183fd159e2f01817a70fae3556e112f05b57a84c",
+  "manual_restart_exit": 1,
+  "storage_calls_unchanged": true
+}

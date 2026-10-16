@@ -1,0 +1,13 @@
+{
+  "id": "14d03c573e41912226a8b76d5e8421f531487c8ef39497cb215dea8bd39a5e52",
+  "exit_code": 0,
+  "root_mounted": true,
+  "role_directory": "plane-admin",
+  "mode": "seal",
+  "run_id": "8120904f-13d9-42f3-ab1f-66eb1a37b2b0",
+  "cleanup": 0,
+  "delete": 0,
+  "expected_exit": 0,
+  "container": "dpp-lifecycle307-8120904f-reader-seal-79abcf",
+  "binary_sha256": "f36eb7a5b695152cbd34dfe52afbf74d23a72e7d77bde7c0b46ca8a09dd8e8d7"
+}

@@ -1,0 +1,108 @@
+{
+  "status": "PASS_INDEPENDENT_OFFLINE_REVIEW",
+  "reviewer": "/root/v11_independent_review",
+  "reviewed_base_head": "2babc930d46c38a3c5241e52b15a13706f081345",
+  "reviewed_worktree_changes": true,
+  "current_slice_blockers": 0,
+  "scope": "v14实际DENIED执行、追加式恢复/封存证据与两处后续源码修复；不代表原生删除成功",
+  "independently_executed": {
+    "cwd": "apps/platform",
+    "command": "GOPROXY=off GOSUMDB=off go test -count=1 -run TestReference -v ./cmd/lifecycle-fixture-delete",
+    "exit_code": 0,
+    "tests_passed": 4,
+    "tests": [
+      "TestReferenceIAMAuthorizesPinnedNativeRouteAndRejectsOtherScope",
+      "TestReferenceSendPermissionIsDistinctBoundedAndDisabledByDefault",
+      "TestReferenceTopologyRequiresExactHashSignatureFreshSourceAndRootFreeHelper",
+      "TestReferencePolicyAndGatewayExcludeProtectedOutputsAndBareDelete"
+    ],
+    "sender_postamble_review": "静态检查SQL读回与certainty/outcome分支；上述4测试未执行依赖DB的referenceSend",
+    "old_offline_hash_suite_rerun": false
+  },
+  "evidence_integrity": {
+    "new_indexed_payloads": 81,
+    "new_raw_including_index": 82,
+    "new_index_sha256": "f875efde29f0ff49d5ab38a95e8415e7867fd34d3a094d6fa689ca6dcaa2fb2a",
+    "payload_lengths_and_sha256_match": true,
+    "old_raw_matching_base_git_bytes": 255,
+    "frozen_runtime_files_checked_at_git_source_055aa1df": 317,
+    "current_runtime_files_unchanged": 315,
+    "intentional_current_runtime_changes": [
+      "apps/platform/cmd/lifecycle-fixture-delete/reference_gateway.go",
+      "apps/platform/cmd/lifecycle-fixture-delete/reference_send.go"
+    ],
+    "preserved_crlf_exceptions": [
+      "gateway-offline/route-diagnostic.json",
+      "gateway-offline/retained-offline-helpers.json",
+      "operator-sources/offline-gateway-probe.go"
+    ],
+    "authorization_text_utf8_and_sha256_match": true
+  },
+  "cross_checked_execution_facts": {
+    "physical_status_recomputed_from_immutable_observation_proof": 403,
+    "new_confirmed_denied_calls": 1,
+    "attempt": "c163dca9-4650-4efe-bdef-e3380bdc9da0",
+    "new_send_claims": 1,
+    "target_b_started": false,
+    "successful_deletes": 0,
+    "absence_receipts": 0,
+    "scope_completions": 0,
+    "old_not_sent_observations_and_releases_preserved": 2,
+    "unknown_present_results_preserved": 3,
+    "denied_release_references_fresh_positive_head": true,
+    "terminal_result": "ALREADY_RESOLVED",
+    "terminal_replay_provider_io": 0,
+    "six_versions_content_identity_and_protection_retained": true,
+    "source_calls_observations_typed_storage_costs": 125,
+    "provider_invocation_costs": 1,
+    "unaccounted_storage": 0,
+    "old_outbox_states_match_before": true,
+    "sealed_container_receipts": 86,
+    "all_container_receipts_exited_or_created_pid0": true,
+    "sender_and_recovery_permissions_closed": true,
+    "executor_iam": "DISABLED_NATIVE_READBACK",
+    "sender_rebuilt_or_replaced": false,
+    "source_fix_activated": false
+  },
+  "source_review": {
+    "policy": "两项action共享各自exact ARN与s3:versionid条件；复用现有MinIO OSS evaluator，未新增依赖",
+    "sender": "仅CONFIRMED/UNKNOWN进入预期exit93；DENIED/FAILED/ACCEPTED不再冒充response-loss crash；receipt分别记录certainty/outcome/send_error",
+    "denied_resolution": "公开operator源码使用fresh InspectExactCopy和已有ReconcileDeniedAttempt；未发现直接改业务status、伪造absence或重新DELETE",
+    "historical_error_receipt": "旧response_unknown=true和exit93原样保留，文档以CONFIRMED/DENIED事实解释，没有重写历史",
+    "root_cause_reuse": "旧a6原生验收已记录固定MinIO需要DeleteObject allow；本次修复恢复该既有产品约束"
+  },
+  "source_git_lf_sha256": {
+    "apps/platform/cmd/lifecycle-fixture-delete/reference_gateway.go": "f3fa3ae3b30ce59a80ad604e7011eb1355728cab8389c79ace532d3d2c67a3d5",
+    "apps/platform/cmd/lifecycle-fixture-delete/reference_send.go": "1b179d73b12d70a0ff892f0a3a61be9a0338975bb976a04c68fda14188be7136",
+    "apps/platform/cmd/lifecycle-fixture-delete/reference_topology_test.go": "a9215b86cade189b38607e1c634a5aaa81e78e38ca98113a9a64cb282ead6135",
+    "apps/platform/cmd/lifecycle-fixture-delete/reference_iam_test.go": "9087c94a113d2bff6eb6d6c81c44428362d04b97ed54ebfee66b5e61c5f4100f"
+  },
+  "reviewed_docs_git_lf_sha256": {
+    "docs/acceptance/issue307-d1-confirmed-v14-execution.md": "46d7a93fa50cc8b90d5d394475d332f086a998dd0c7cd18e819211d799e62dc6",
+    "docs/acceptance/issue307-d1-delete-proposal.md": "8cd4a7de1f4eec31a06cd31564a0ad1e085d083ccadfe69b65838213a09f91ff",
+    "docs/acceptance/issue307-d1-candidate04-readonly.md": "88c8745d6fcdf9c5d9dcd5b80a809d597f905d9f2eea6824b6f622379382f9b2"
+  },
+  "remaining_native_acceptance": {
+    "status": "BLOCKED_NOT_ACCEPTED",
+    "reason": "已授权旧候选无法通过原生IAM成功删除；新源码修复尚未成为获批候选",
+    "response_loss_absence_recovery_pass": false,
+    "two_target_completion_pass": false,
+    "old_execution_a_budget_consumed": true,
+    "next_requirement": "新的执行身份、冻结修复候选及当前Core检查点、新精确确认；不得重试旧614cd9ad或延长旧窗口",
+    "issue307": "OPEN",
+    "pr318": "DRAFT_NO_MERGE"
+  },
+  "reviewer_effects": {
+    "repository_edits": 0,
+    "docker_access": 0,
+    "provider_io": 0,
+    "db_io": 0,
+    "private_credentials_access": 0,
+    "native_or_operator_execution": 0,
+    "container_starts": 0,
+    "business_writes": 0,
+    "delete": 0,
+    "cleanup": 0,
+    "merge": 0
+  }
+}

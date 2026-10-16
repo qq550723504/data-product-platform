@@ -1,0 +1,106 @@
+{
+  "status": "PASS_FOUR_NEW_EXECUTION_THREE_EXISTING_RECOVERY_KEYS",
+  "commands": [
+    {
+      "id": "208d6e41-3036-4b6a-99cd-137f123c95aa",
+      "object_id": "f5b914ef-f6b6-4e53-a883-45d66e45d45c",
+      "created_at": "2026-10-16T01:34:47.145468+00:00",
+      "result_ref": "f5b914ef-f6b6-4e53-a883-45d66e45d45c",
+      "command_type": "LIFECYCLE.FINALIZE_DISPOSITION",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "idempotency_key": "recovery-finalize:8f0e9340-18f0-4a73-bdd6-622196a9011a",
+      "request_fingerprint": "50a04da3e34c7111f4d9c5f87bfcc53a1f8c97d80d57c3fc1d214e7fcfff46b3"
+    },
+    {
+      "id": "2f40e947-87fd-48a7-afe3-eebcc785c5aa",
+      "object_id": "fc24bd1e-3437-49ac-9055-90dbd5881d39",
+      "created_at": "2026-10-16T01:34:37.540224+00:00",
+      "result_ref": "fc24bd1e-3437-49ac-9055-90dbd5881d39",
+      "command_type": "LIFECYCLE.REGISTER_FIXTURE_BASIS",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "idempotency_key": "9ea8f3e2-c805-44b4-b133-a36f50df9d15:basis",
+      "request_fingerprint": "cfc176416d47b55709ab53efa7f34358ca5cd53eb0073cdee3722fad5906653a"
+    },
+    {
+      "id": "5bb01aa6-aa83-4b1b-9a41-f331e94e986b",
+      "object_id": "d494c2c6-736d-4364-868e-de4cc6a5dbb6",
+      "created_at": "2026-10-16T01:34:37.759456+00:00",
+      "result_ref": "d494c2c6-736d-4364-868e-de4cc6a5dbb6",
+      "command_type": "LIFECYCLE.APPROVE_DISPOSITION",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "idempotency_key": "9ea8f3e2-c805-44b4-b133-a36f50df9d15:approval",
+      "request_fingerprint": "660512d3cd469f3cc875f62d8d5d178c17bbdbb0fa7ebfd22587dc48f5783100"
+    },
+    {
+      "id": "609f2a18-72f5-4189-9f12-f33c109181b1",
+      "object_id": "1ce3b0b7-9dd7-4f7f-906b-a7e2ee25e461",
+      "created_at": "2026-10-16T01:34:47.127521+00:00",
+      "result_ref": "1ce3b0b7-9dd7-4f7f-906b-a7e2ee25e461",
+      "command_type": "LIFECYCLE.VERIFY_ABSENCE",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "idempotency_key": "recovery-absence:6eb9f762-fe82-4b4a-93eb-be99ad2866bd",
+      "request_fingerprint": "cc1d17e33252f2857477b879ba0af7246c47724beb91f4ac9a366948a23ad688"
+    },
+    {
+      "id": "647d4c78-f6de-4207-a296-7316f1e1e757",
+      "object_id": "d3340b85-3ac6-46ff-983b-e3330d28a54d",
+      "created_at": "2026-10-16T01:34:40.886859+00:00",
+      "result_ref": "d3340b85-3ac6-46ff-983b-e3330d28a54d",
+      "command_type": "LIFECYCLE.VERIFY_ABSENCE",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "idempotency_key": "recovery-absence:bc722690-7418-44ed-888c-75f47a55fb14",
+      "request_fingerprint": "74e429f1d4ed7f3cdd473b2f2fcc04da6ec550c8410544c692f1041218eaad86"
+    },
+    {
+      "id": "a2756463-372c-415a-937a-a725e1c3c1a7",
+      "object_id": "1275e227-7634-46ff-98a3-46365e8a62da",
+      "created_at": "2026-10-16T01:34:44.532371+00:00",
+      "result_ref": "1275e227-7634-46ff-98a3-46365e8a62da",
+      "command_type": "LIFECYCLE.DISPATCH",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "idempotency_key": "9ea8f3e2-c805-44b4-b133-a36f50df9d15:send-b:dispatch",
+      "request_fingerprint": "6f6912573acf7a827075ad42c230cdbd2dcb3c7993b2b020cf076629699cc6f6"
+    },
+    {
+      "id": "ff3bcfe8-9f2f-487c-a292-695bea161f6f",
+      "object_id": "3f7904cb-8a8e-419f-8664-709cdfdedb43",
+      "created_at": "2026-10-16T01:34:38.314477+00:00",
+      "result_ref": "3f7904cb-8a8e-419f-8664-709cdfdedb43",
+      "command_type": "LIFECYCLE.DISPATCH",
+      "workspace_id": "89eba3fd-9763-4f66-8cec-1a779104f155",
+      "idempotency_key": "9ea8f3e2-c805-44b4-b133-a36f50df9d15:send-a:dispatch",
+      "request_fingerprint": "08ec3e6623a76491ba8663d2da103ba7b7def8a0b44237df809a2f192ae10de6"
+    }
+  ],
+  "expected": {
+    "9ea8f3e2-c805-44b4-b133-a36f50df9d15:basis": [
+      "LIFECYCLE.REGISTER_FIXTURE_BASIS",
+      "fc24bd1e-3437-49ac-9055-90dbd5881d39"
+    ],
+    "9ea8f3e2-c805-44b4-b133-a36f50df9d15:approval": [
+      "LIFECYCLE.APPROVE_DISPOSITION",
+      "d494c2c6-736d-4364-868e-de4cc6a5dbb6"
+    ],
+    "9ea8f3e2-c805-44b4-b133-a36f50df9d15:send-a:dispatch": [
+      "LIFECYCLE.DISPATCH",
+      "3f7904cb-8a8e-419f-8664-709cdfdedb43"
+    ],
+    "recovery-absence:bc722690-7418-44ed-888c-75f47a55fb14": [
+      "LIFECYCLE.VERIFY_ABSENCE",
+      "d3340b85-3ac6-46ff-983b-e3330d28a54d"
+    ],
+    "9ea8f3e2-c805-44b4-b133-a36f50df9d15:send-b:dispatch": [
+      "LIFECYCLE.DISPATCH",
+      "1275e227-7634-46ff-98a3-46365e8a62da"
+    ],
+    "recovery-absence:6eb9f762-fe82-4b4a-93eb-be99ad2866bd": [
+      "LIFECYCLE.VERIFY_ABSENCE",
+      "1ce3b0b7-9dd7-4f7f-906b-a7e2ee25e461"
+    ],
+    "recovery-finalize:8f0e9340-18f0-4a73-bdd6-622196a9011a": [
+      "LIFECYCLE.FINALIZE_DISPOSITION",
+      "f5b914ef-f6b6-4e53-a883-45d66e45d45c"
+    ]
+  },
+  "old_authorization_reused": false
+}

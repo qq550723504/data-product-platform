@@ -426,51 +426,55 @@ func (s *OccupancyService) TerminateFixtureReader(ctx context.Context, cmd Termi
 		return FactResult{}, domain.ErrTerminationUnknown
 	}
 	return s.command(ctx, cmd.CommandHeader, "LIFECYCLE.TERMINATE_READER", CapabilityTerminateReader, cmd, func(ctx context.Context, tx pgx.Tx, caller principal.RequestPrincipal, _ int64) (uuid.UUID, error) {
-		pin, err := s.repo.GetReaderPin(ctx, tx, cmd.WorkspaceID, cmd.PinID)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		if pin.Generation != cmd.Generation {
-			return uuid.Nil, domain.ErrTerminationUnknown
-		}
-		if _, err := s.repo.LockFixtureCopies(ctx, tx, cmd.WorkspaceID, []uuid.UUID{pin.CopyID}); err != nil {
-			return uuid.Nil, err
-		}
-		caller, at, err := s.authorize(ctx, tx, cmd.WorkspaceID, CapabilityTerminateReader, &caller)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		terminated, err := s.repo.ReaderTerminated(ctx, tx, cmd.WorkspaceID, pin.ID)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		if terminated {
-			return uuid.Nil, infrastructure.ErrAlreadyReleased
-		}
-		proof, err := s.termination.VerifyTermination(ctx, tx, pin, cmd.Outcome, at)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		if err := proof.ValidateFor(pin, cmd.Outcome, at); err != nil {
-			return uuid.Nil, err
-		}
-		revision, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		if _, err := tx.Exec(ctx, `INSERT INTO lifecycle_reader_termination(id,workspace_id,pin_id,reader_id,generation,outcome,observed_at,actor_id,principal_ref,dependency_revision)
-			VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, proof.ID, proof.WorkspaceID, proof.PinID, proof.ReaderID, proof.Generation, proof.Outcome, proof.ObservedAt, caller.ActorID, caller.Subject, revision); err != nil {
-			return uuid.Nil, err
-		}
-		fields := map[string]any{"pin_id": pin.ID, "generation": pin.Generation, "outcome": proof.Outcome, "kind": pin.Kind}
-		if pin.Kind == domain.FixtureDelivery {
-			if _, err = tx.Exec(ctx, `INSERT INTO lifecycle_transfer_observation(id,workspace_id,pin_id,delivery_operation_id,termination_id,bytes_written,completed,observed_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`, uuid.New(), pin.WorkspaceID, pin.ID, *pin.DeliveryOperationID, proof.ID, *proof.BytesWritten, proof.Outcome == domain.ReaderCompleted, proof.ObservedAt); err != nil {
-				return uuid.Nil, err
-			}
-			fields["delivery_operation_id"], fields["bytes_written"] = *pin.DeliveryOperationID, *proof.BytesWritten
-		}
-		return proof.ID, appendOccupancyFacts(ctx, tx, ReaderTerminatedEvent, "LIFECYCLE_READER_TERMINATION", proof.ID, caller, revision, at, fields)
+		return s.terminateReaderTx(ctx, tx, caller, cmd)
 	})
+}
+
+func (s *OccupancyService) terminateReaderTx(ctx context.Context, tx pgx.Tx, caller principal.RequestPrincipal, cmd TerminateFixtureReaderCommand) (uuid.UUID, error) {
+	pin, err := s.repo.GetReaderPin(ctx, tx, cmd.WorkspaceID, cmd.PinID)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if pin.Generation != cmd.Generation {
+		return uuid.Nil, domain.ErrTerminationUnknown
+	}
+	if _, err := s.repo.LockFixtureCopies(ctx, tx, cmd.WorkspaceID, []uuid.UUID{pin.CopyID}); err != nil {
+		return uuid.Nil, err
+	}
+	caller, at, err := s.authorize(ctx, tx, cmd.WorkspaceID, CapabilityTerminateReader, &caller)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	terminated, err := s.repo.ReaderTerminated(ctx, tx, cmd.WorkspaceID, pin.ID)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if terminated {
+		return uuid.Nil, infrastructure.ErrAlreadyReleased
+	}
+	proof, err := s.termination.VerifyTermination(ctx, tx, pin, cmd.Outcome, at)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if err := proof.ValidateFor(pin, cmd.Outcome, at); err != nil {
+		return uuid.Nil, err
+	}
+	revision, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if _, err := tx.Exec(ctx, `INSERT INTO lifecycle_reader_termination(id,workspace_id,pin_id,reader_id,generation,outcome,observed_at,actor_id,principal_ref,dependency_revision)
+			VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, proof.ID, proof.WorkspaceID, proof.PinID, proof.ReaderID, proof.Generation, proof.Outcome, proof.ObservedAt, caller.ActorID, caller.Subject, revision); err != nil {
+		return uuid.Nil, err
+	}
+	fields := map[string]any{"pin_id": pin.ID, "generation": pin.Generation, "outcome": proof.Outcome, "kind": pin.Kind}
+	if pin.Kind == domain.FixtureDelivery {
+		if _, err = tx.Exec(ctx, `INSERT INTO lifecycle_transfer_observation(id,workspace_id,pin_id,delivery_operation_id,termination_id,bytes_written,completed,observed_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`, uuid.New(), pin.WorkspaceID, pin.ID, *pin.DeliveryOperationID, proof.ID, *proof.BytesWritten, proof.Outcome == domain.ReaderCompleted, proof.ObservedAt); err != nil {
+			return uuid.Nil, err
+		}
+		fields["delivery_operation_id"], fields["bytes_written"] = *pin.DeliveryOperationID, *proof.BytesWritten
+	}
+	return proof.ID, appendOccupancyFacts(ctx, tx, ReaderTerminatedEvent, "LIFECYCLE_READER_TERMINATION", proof.ID, caller, revision, at, fields)
 }
 
 func (s *OccupancyService) InspectPlanOccupancy(ctx context.Context, w, planID uuid.UUID) (PlanOccupancy, error) {

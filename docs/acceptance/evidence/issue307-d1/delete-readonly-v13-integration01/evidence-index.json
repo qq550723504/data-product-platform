@@ -1,0 +1,10 @@
+{
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v13-integration01/integration-verification.json",
+      "bytes": 5923,
+      "sha256": "a5de9f17580f3936eed1f83c0dce439503ecb7b342c2df1515708d8304078ba0"
+    }
+  ],
+  "scope": "Separate non-native branch-integration receipt;original223 indexed files and source candidate retained;no execution authority"
+}

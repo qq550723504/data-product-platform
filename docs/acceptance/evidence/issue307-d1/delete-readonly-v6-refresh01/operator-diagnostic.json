@@ -1,0 +1,16 @@
+{
+  "failure": "AUDIT_POSTGRES_BOOTSTRAP_SOCKET_RACE",
+  "command": "psql globals-only restore on new audit clone",
+  "error": "Unix socket .s.PGSQL.5432 absent after prior Unix pg_isready success",
+  "operator_sources": {
+    "complete-lc13-readonly.py": "37a9f52494ed0d1c81836490a26b97de7c0ac18d0e4d5c76d86c60802b1b350b",
+    "refresh-reference-readonly.py": "2c58ec9fd4d5904080038ac33db7901c27e046f1c5bb64b9c133989cf501cfdb"
+  },
+  "source_core_mutation": 0,
+  "native_object_calls": 0,
+  "native_admin_gets": 4,
+  "native_delete": 0,
+  "cleanup": 0,
+  "restoration": "All known source/audit/gateway exited; helper not yet created",
+  "next_action": "Use final TCP listener readiness and a distinct new audit generation; retain this partial audit unchanged"
+}

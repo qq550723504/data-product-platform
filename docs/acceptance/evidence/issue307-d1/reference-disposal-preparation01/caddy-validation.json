@@ -1,0 +1,10 @@
+{
+  "retained": true,
+  "status": "PASS_ACTIVE_AND_SEALED_SYNTAX",
+  "provider_delete": 0,
+  "upstream_io": 0,
+  "exit": 0,
+  "helper_id": "5ec8887f1c93eb1a12c7d84414eead958c6fdc151c923a96bdd39838e054cf3f",
+  "network": "none",
+  "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
+}

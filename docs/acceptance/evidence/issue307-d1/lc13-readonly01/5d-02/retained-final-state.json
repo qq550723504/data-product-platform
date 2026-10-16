@@ -1,0 +1,7 @@
+{
+  "source_pg": "exited",
+  "source_minio": "exited",
+  "source_gateway": "exited",
+  "audit_core": "exited",
+  "cleanup": 0
+}

@@ -1,0 +1,40 @@
+package application
+
+import (
+	"context"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/contentreference"
+)
+
+// FixtureReferenceOwner is explicitly installed for closed synthetic fixtures.
+// Loss is an owner decision: the immutable business result remains historical,
+// while source replay/content revalidation is unavailable after approved release.
+// No terminal status or expired lease is treated as stopped-I/O proof.
+type FixtureReferenceOwner struct{}
+
+func (FixtureReferenceOwner) Module() string { return "dataset" }
+func (FixtureReferenceOwner) Check(ctx context.Context, tx pgx.Tx, workspace, version uuid.UUID, ref contentreference.Reference) (contentreference.Spec, error) {
+	if ref.Validate() != nil {
+		return contentreference.Spec{}, contentreference.ErrReference
+	}
+	spec, ok := contentreference.Lookup(ref.Kind)
+	if !ok || spec.Module != "dataset" {
+		return spec, contentreference.ErrReference
+	}
+	var valid bool
+	var err error
+	switch ref.Kind {
+	case "LINEAGE":
+		err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM dataset_version_lineage r JOIN dataset_version ov ON ov.id=r.output_version_id JOIN dataset od ON od.id=ov.dataset_id WHERE r.id=$1 AND r.input_version_id=$2 AND od.workspace_id=$3)`, ref.SubjectID, version, workspace).Scan(&valid)
+	default:
+		return spec, contentreference.ErrReference
+	}
+	if err != nil {
+		return spec, err
+	}
+	if !valid {
+		return spec, contentreference.ErrReference
+	}
+	return spec, nil
+}

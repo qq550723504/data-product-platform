@@ -1,0 +1,9 @@
+{
+  "status": "RELEASED_NO_MUTATION",
+  "non_target_rows_locked": 313,
+  "target_work": "144b5fde-01f3-48a1-ba86-a41c79ebe933",
+  "query": "BEGIN; SELECT count(*) FROM (SELECT id FROM outbox_event WHERE NOT (aggregate_id='144b5fde-01f3-48a1-ba86-a41c79ebe933' AND event_type='LifecycleDispositionRecoveryRequested') FOR UPDATE) locked; SELECT 'LOCK_READY';\n",
+  "transaction": "ROLLBACK",
+  "target_dispatch": "existing SKIP LOCKED dispatcher; actual outbox obligation; no direct queue injection",
+  "source_business_event_dispatch": 0
+}

@@ -1,0 +1,117 @@
+{
+  "recorded_at": "2026-10-15T04:41:07.417065+00:00",
+  "recorded_by": "Primary agent from completed independent reviewer message; no new native execution added",
+  "reviewer": "/root/v11_independent_review",
+  "reviewed_head": "fb0ff60e2fc8e6fb808e96595e0ddae418bef1cd",
+  "status": "PASS_INDEPENDENT_OFFLINE_REVIEW",
+  "current_slice_blockers": 0,
+  "operator_or_runtime_fixes_required": 0,
+  "document_corrections_required": 0,
+  "scope": "Finite v11 exact proposal, offline checker, audit-core-10 read-only receipts and fixed10 operator extension under AGENTS section17",
+  "reviewed_operator_sha256": {
+    "examples/lifecycle-d1/complete-lc13-readonly.py": "c4e66c4daa832fcd7eed638e16be766504f2164a2e3a06897c09dcf9beb6dbf5",
+    "examples/lifecycle-d1/refresh-reference-readonly.py": "11bcda843b037b4a6005ba51252dc44ac4dc04003a3959f7c9d9a04f7a8473cf",
+    "examples/lifecycle-d1/refresh-reference-v10-readonly.py": "584468f39a109e0eddbb665374c89e9a114c43a1c04e2e2a0bdf41f3dddacdf7",
+    "examples/lifecycle-d1/check-reference-refresh.py": "38e924ec5c933bb61a1c288e4d94e32ab66025df7a53cc3b45e406debd7b8aba",
+    "examples/lifecycle-d1/check-reference-v11.py": "56705b8b02a4986eab78a85b9563a86a4dbe85462088dc379cdd0c81b370bc97"
+  },
+  "reviewed_documents_at_head_sha256": {
+    "docs/acceptance/issue307-d1-delete-proposal.md": "4075443db0b42b57b781b67fa7e8f25f4d190b1e2211061510bb7838145138f7",
+    "docs/acceptance/issue307-d1-candidate04-readonly.md": "befca52ec8fc215015b0c0dd4ea3f0ad576f11dd12e7591cfd638a47aebd2e23",
+    "docs/acceptance/issue307-reference-demand-contract.md": "f5ce38fd3784c90f4642737c248b496894268950e6f5f4bceaec2fd024ba72aa"
+  },
+  "independently_executed": {
+    "tests_normal": 37,
+    "tests_optimized": 37,
+    "test_files": {
+      "test_reference_proposal.py": 7,
+      "test_lc13_readonly.py": 9,
+      "test_reference_refresh.py": 5,
+      "test_reference_v8.py": 4,
+      "test_reference_v9.py": 4,
+      "test_reference_v10.py": 4,
+      "test_reference_v11.py": 4
+    },
+    "offline_clis": {
+      "check-reference-proposal.py": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "check-reference-refresh.py": "PASS_OFFLINE_V7_REFRESH_CONSISTENCY_ONLY",
+      "check-reference-v8.py": "PASS_OFFLINE_V8_REFRESH_CONSISTENCY_ONLY",
+      "check-reference-v9.py": "PASS_OFFLINE_V9_REFRESH_CONSISTENCY_ONLY",
+      "check-reference-v10.py": "PASS_OFFLINE_V10_REFRESH_CONSISTENCY_ONLY",
+      "check-reference-v11.py": "PASS_OFFLINE_V11_REFRESH_CONSISTENCY_ONLY"
+    },
+    "additional_generation10_inner_semantic_adversarial_cases_rejected": 16,
+    "inner_cases": [
+      "protection observations rolled back to v10",
+      "native content SHA zero",
+      "new native legal hold",
+      "inventory delete marker",
+      "active pins1",
+      "checkpoint source PG identity zero",
+      "checkpoint approval RECEIVED",
+      "payload helper root_mounted true",
+      "delete_permission_enabled true",
+      "source_gateway_started true",
+      "IAM helper payload_root_mounted true",
+      "source-after relation SHA zero",
+      "source-after role SHA zero",
+      "clone unaccounted1",
+      "regular reader IAM enabled",
+      "source PG final running"
+    ],
+    "inner_cases_method": "Patch latest generation load and call expected_proposal directly; semantic rejection independent of outer index checks",
+    "fixed10_cli_invalid_arguments_rejected_exit2": [
+      [
+        "11"
+      ],
+      [
+        "arbitrary"
+      ],
+      [
+        "delete"
+      ],
+      [
+        "--confirm"
+      ],
+      [
+        "--source",
+        "foreign"
+      ],
+      [
+        "--generation",
+        "11"
+      ]
+    ],
+    "indexed_payloads_matching_checkout_head_raw_bytes_lengths_sha256": 162,
+    "indexes_matching_checkout_head_raw_bytes": 13,
+    "all_raw_files": 175,
+    "new_v11_indexed_payloads": 20,
+    "historical_payloads_and_indexes_matching_3a5b68c8_raw_bytes": 154,
+    "runtime_files_checked_by_frozen_v6_anchor": 317
+  },
+  "conclusions": [
+    "Exact environment, candidate04, two targets/four survivors,129560 bytes,once each/total2,no unknown resend and closed authority match reviewed v10; retention expiry never expands scope",
+    "All five operator SHA256 match reviewed fb0 and verification; candidate driver and operator base3a5b68c8 correspond with worktree changes explicitly recorded;317 runtime source LF/CRLF equivalence anchor passes",
+    "Source before=after=10 restore=predecessor v10:194 relations/1879 rows and full relation/role/owner/ACL fingerprints match",
+    "Six protection and two inventory observations are newer than v10 and inside source before04:21:02.788585Z/after04:21:11.321418Z;Core as_of04:20:54.460294Z is newer than predecessor;proposal04:21:32.599572Z follows readback",
+    "27 full guard qualifications,54 target FK checks unreleased0,3 migration67 functions,23 requirements/verified-quiescent releases,7 pins/terminations,2 ready outputs and2 old NOT_SENT/linked releases remain closed;active pins/copy operations/send claims/absence/completion0",
+    "Source journal92;clone112 calls/observations/typed costs,unaccounted0;this generation four management GETs separately receipted",
+    "Fixed10 rejects11/arbitrary/delete/confirm/source/generation,adds no send switch,reuses collector,TCP readiness and independent stop attempts with nested-finally sealing/restoration",
+    "Public topology retains original54 entries unchanged and adds only three fixed10 helpers;57 receipts are exited/PID0/no host ports;reviewer did not access Docker"
+  ],
+  "reviewer_effects": {
+    "file_edits": 0,
+    "docker_access": 0,
+    "provider_io": 0,
+    "db_io": 0,
+    "private_credentials_access": 0,
+    "container_starts": 0,
+    "iam_changes": 0,
+    "delete": 0,
+    "merge": 0,
+    "cleanup": 0
+  },
+  "matrix_finalization": "Only append completed independent review and separate receipts;preserve original native verification/index,observation range and all indexed bytes",
+  "authority": "NOT_RECEIVED;review PASS is not execution approval",
+  "follow_ups": "Actual native IAM/provision/activation,DELETE/post-delete recovery,fullD1/D2 and genericIAM/owner/DR remain separate #307 acceptance;#318 Draft"
+}

@@ -1,0 +1,17 @@
+{
+  "script_unchanged_during_run": true,
+  "script_checkout_sha256": "0524d81b2a7e57ddcd79874c2e108a4850c2a693446c96f20314412a0a80e169",
+  "rows": 1879.0,
+  "source_restart": 0,
+  "as_of": "2026-10-14T04:50:35.5874264+00:00",
+  "provider_io": 0,
+  "all_fingerprints_match_original_checkpoint": true,
+  "delete": 0,
+  "cleanup": 0,
+  "source_core_mutation": 0,
+  "replica_state": "STOPPED_RETAINED_NO_BUSINESS_ADMISSION",
+  "relations": 194,
+  "dump_sha256": "19dba12b9992fdd11c237d6f0df489c7a961696acd54b8a3403b941e7005c98a",
+  "original_dump_restore_script_hash": "0524d81b2a7e57ddcd79874c2e108a4850c2a693446c96f20314412a0a80e169",
+  "status": "PASS_FINAL_READ_ONLY_SOURCE_AND_REPLICA"
+}

@@ -1,0 +1,101 @@
+{
+  "checked_at": "2026-10-15T05:50:38.435642+00:00",
+  "status": "PASS_BOUNDED_RETAIN_AND_DEFAULT_RETIREMENT_OFFLINE_ONLY",
+  "supersedes_policy_at": "4cb6c5065fddc3e83da5af28ac4427525bf42972",
+  "reason": "Initial branch integration preserved all four wrapper old versions,which would undo main default retirement for future new runs. Keep per-helper retention explicit instead of reverting generic default behavior.",
+  "current_policy": "Four synchronous wrappers reuse main existing New/Complete API;default successful new runs archive/retire. Explicit -RetainHelper,reader/copy expected nonzero faults and finite extended plane D1 modes retain;copy StartOnly returns before Complete. Current frozen5d operator/private configuration is not executed or modified.",
+  "source_sha256": {
+    "examples/lifecycle-d1/finish-prepare.ps1": "9a8260f5ccb8b8bf891bd3017c98af084ad94b266e24fb930445de623e5dbdb0",
+    "examples/lifecycle-d1/run-reader-step.ps1": "369443b5bb153759f1861dbbf967dc965ecc6bbe4d64dc6e824c5d1cb8468479",
+    "examples/lifecycle-d1/run-plane-step.ps1": "3648c58623dbce4c7706129408f805d1160e0bb97164cc87850b6f496e5e00f0",
+    "examples/lifecycle-d1/run-copy-recovery-step.ps1": "ea1dbfd0d61a87116d0f09e59ab432cab6b3b44db50e27611feab4c7ec46b084"
+  },
+  "readonly_operator_sha256_unchanged": {
+    "examples/lifecycle-d1/complete-lc13-readonly.py": "33df1a8bebbb51c052fa72eb1335b553bf4c6bb02f62239c789d014dd6b2ddb7",
+    "examples/lifecycle-d1/refresh-reference-readonly.py": "29ce62c7552e7c9bae6030a10269db442f16e5f468bacf82e8b6c7f394d7f2ff",
+    "examples/lifecycle-d1/refresh-reference-v12-readonly.py": "24420cdb26230390003cda9a9d0808b43d0d77b0632918a0d3142a8bca780ee7",
+    "examples/lifecycle-d1/check-reference-refresh.py": "ad1b7dd3998134d0f646291a804ad7388830e2d21665a6f6d120d40a3275656e",
+    "examples/lifecycle-d1/check-reference-v13.py": "3dc45aab6b09a6503e86e843fb00d75bc8895121e3d39537a44385926564ef52"
+  },
+  "runtime_files_unchanged": 317,
+  "original225_raw_unchanged": true,
+  "static_d1_invariants": [
+    {
+      "file": "run-reader-step.ps1",
+      "line_sha256": "2a37be4bd014a641da9e589ebda6e9b78c6cd925f4c8ae0886b29c97c62b7854"
+    },
+    {
+      "file": "run-plane-step.ps1",
+      "line_sha256": "a7f57831c70af11686b6f5a4f001f863e040a1b0dd6bcf83d921cdbd06d929f6"
+    },
+    {
+      "file": "run-plane-step.ps1",
+      "line_sha256": "206272b84b5cfd61d31e0c07d827a5be88781deb72488833101e5fd1c9fcddbe"
+    },
+    {
+      "file": "run-copy-recovery-step.ps1",
+      "line_sha256": "ff654f0103479b0ef556561d93a23347fa26f1c0721d2d2969f018417a426c96"
+    },
+    {
+      "file": "run-copy-recovery-step.ps1",
+      "line_sha256": "5cc13e160866c0daeca17795a199c7030cfcb182a4feaac94ffe0ec560507a64"
+    },
+    {
+      "file": "run-copy-recovery-step.ps1",
+      "line_sha256": "83ded3cefff8bb12dd569727167fc1b74931cbe03e59c85b6d971024410fcf4f"
+    },
+    {
+      "file": "run-copy-recovery-step.ps1",
+      "line_sha256": "a1c5a71ff2dbdc602abe4e63fdc6c7a0bca41483fc0c51a0963dde03d51b6788"
+    },
+    {
+      "file": "run-copy-recovery-step.ps1",
+      "line_sha256": "9cdc585e08119acddfa525a22df1911b9de6375b17da07b499b7e673a7f55056"
+    },
+    {
+      "file": "run-copy-recovery-step.ps1",
+      "line_sha256": "6e1e0a41acfa946b8ed6b929a8452e48c2f37d0ff5c47d1fdbfcddd54581e111"
+    }
+  ],
+  "adapter_contract_tests": [
+    {
+      "optimized": false,
+      "tests": 9
+    },
+    {
+      "optimized": true,
+      "tests": 9
+    }
+  ],
+  "offline_clis": [
+    "PASS_OFFLINE_CONSISTENCY_ONLY",
+    "PASS_OFFLINE_V7_REFRESH_CONSISTENCY_ONLY",
+    "PASS_OFFLINE_V8_REFRESH_CONSISTENCY_ONLY",
+    "PASS_OFFLINE_V9_REFRESH_CONSISTENCY_ONLY",
+    "PASS_OFFLINE_V10_REFRESH_CONSISTENCY_ONLY",
+    "PASS_OFFLINE_V11_REFRESH_CONSISTENCY_ONLY",
+    "PASS_OFFLINE_V12_REFRESH_CONSISTENCY_ONLY",
+    "PASS_OFFLINE_V13_REFRESH_CONSISTENCY_ONLY"
+  ],
+  "powershell_parse": {
+    "status": "PASS_POWERSHELL_PARSE_ONLY",
+    "files": 5,
+    "business_execution": 0
+  },
+  "unchanged_safety_suite_evidence": "../delete-readonly-v13-integration01/integration-verification.json normal/-O45 and required policy163 remain original executed evidence;this step does not claim to rerun them",
+  "native_observation_range_unchanged": {
+    "from": "2026-10-15T05:32:35.1886766Z",
+    "to": "2026-10-15T05:32:35.712494743Z"
+  },
+  "effects": {
+    "helper_execution": 0,
+    "container_starts": 0,
+    "provider_io": 0,
+    "db_io": 0,
+    "delete": 0,
+    "cleanup": 0,
+    "merge_pull_request": 0
+  },
+  "independent_review": "NOT_ADDED_FOR_V13",
+  "authority": "NOT_RECEIVED;#318 Draft"
+}

@@ -1,0 +1,51 @@
+{
+  "status": "PASS_NON_DELETE_PREPARATION",
+  "source_parent_head": "917465d88a0f6e8dfd0a4745fb4d8d767a2c75a1",
+  "sources": [
+    {
+      "path": "examples/lifecycle-d1/prepare-reference-delete.py",
+      "checkout_sha256": "24e1d6d19394208016ee1d9dd0ddaa06669880d2cebae03b4c7996db0303fd1c"
+    },
+    {
+      "path": "examples/lifecycle-d1/test_reference_delete_preflight.py",
+      "checkout_sha256": "41f6eab25453c85f4acc7af4608db9329fc5fa51dce2b8ab3c38a8a150808cca"
+    },
+    {
+      "path": "examples/lifecycle-d1/checkpoint-reference-core.ps1",
+      "checkout_sha256": "2caed0256bebf500bf6f24be3ff6c8fd2e6b752969ba1e65da7618ab78e30bf6"
+    },
+    {
+      "path": ".github/workflows/demo-lifecycle.yml",
+      "checkout_sha256": "d2c17f8baa88136b71870cf455b20ed952ab5c87fb951827bfc6ebffc89c1907"
+    }
+  ],
+  "tests": {
+    "result": "PASS; pure local/fake tests, no native I/O",
+    "new_normal_methods": 6,
+    "existing_driver_methods": 9,
+    "new_optimized_methods": 6
+  },
+  "runtime": {
+    "cleanup": 0,
+    "final_source_bound_readback": "PASS",
+    "latest_read_only_preflight": "PASS",
+    "real_remote_scram_positive_negative": "PASS",
+    "trial_no_send_candidate": "VERIFIED_NOT_APPLIED",
+    "native_object_backup_restore": "NOT_RUN",
+    "core_checkpoint_relations": 194,
+    "reservations_released": 0,
+    "provider_io": 0,
+    "core_checkpoint_rows": 1377,
+    "restore_source_fingerprints": "MATCH",
+    "source_core_mutation": 0,
+    "source_restart": 0,
+    "provider_delete": 0,
+    "old_trial_observations_appended": 0
+  },
+  "links_checked": 19,
+  "original_dump_restore_script_hash": "NOT_CAPTURED; limitation retained; final verification source separately bound",
+  "new_runtime_resources": "Core replica/network/auth helpers retained; replica and helpers stopped",
+  "exact_delete_confirmation": "NOT_RECEIVED",
+  "actual_send_profile_and_transaction_bridge": "NOT_IMPLEMENTED/NOT_VALIDATED",
+  "full_D1": "NOT_ACCEPTED"
+}

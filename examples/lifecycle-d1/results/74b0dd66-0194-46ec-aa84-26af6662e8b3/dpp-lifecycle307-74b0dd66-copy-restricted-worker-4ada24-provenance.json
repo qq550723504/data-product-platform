@@ -1,0 +1,28 @@
+{
+  "recorded_before_start": "2026-10-14T08:02:27.7676411Z",
+  "credentials": "READ_ONLY_NO_ROOT_NO_COPY_NO_DELETE",
+  "binary_sha256": "33bc8135a6aa1713a8ae1597be9ad744843044652fb0348483a1236d25e9d249",
+  "expected_exit": 0,
+  "scenario": "copy-restricted-worker",
+  "gateway_sha256": "c6f0d195e3300b1a5971fe377b6d7d12c7b6b2397bf5a1e826a8929c9ae12ebc",
+  "native_delete": 0,
+  "role": "copy-worker",
+  "cleanup": 0,
+  "action": "worker",
+  "helper_id": "27df75bc34eacb3bd58edc387525b0c5ae0f3196ca053631e45389d298ffe1aa",
+  "source_head": "e173364efe7ce46a01cd4a14a9c6e31fc5e39c86",
+  "run_id": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+  "source_hashes": {
+    "apps/platform/internal/lifecycle/application/copy_service.go": "7ae665b1f21ce1fb282637c03359e2dc99c1c4f8befbba7baf9e0fdb2b4ff8fc",
+    "apps/platform/cmd/lifecycle-fixture-recovery/main.go": "38721f5cb98e7b56fac7269ed12ec436599758a2558766a82bcfcb178976657b",
+    "apps/platform/internal/platform/storage/lifecycle_copy_fixture_fault.go": "e15342c6e5067c944c114c48fba02542f922feba892dd8e481a9c72623c23049",
+    "apps/platform/internal/lifecycle/application/copy_recovery.go": "f18b8b08c4799aa6a6797cb10dd668f78a7364d99d26b82a318662815422690b",
+    "apps/platform/cmd/lifecycle-fixture-archive/copy_recovery.go": "2f0e2d1b1d5a08958127af2a685e78ce0feaec748f81c812edb9efed1748f73a",
+    "apps/platform/internal/platform/storage/lifecycle_copy_recovery.go": "aa3fc359495aca34698d9c8b6aae454ce286e50ef3dfbe8c65abab496c530ebb",
+    "apps/platform/cmd/lifecycle-fixture-archive/main.go": "beb8a46767fec298ba53b5cf0e32b37b94050bc52e02aa5a2f56b75403ffe59f",
+    "apps/platform/internal/lifecycle/pilot/copy_recovery.go": "1c7d8c997f91a73d8749064357337ff5925bfba4039886d7c4027b5fd18610d8",
+    "apps/platform/cmd/lifecycle-fixture-recovery/copy_crash.go": "24de5de8f5b1c696e71d783c547048d1f903429093c187cfceb7cf9a38216c47",
+    "apps/platform/internal/platform/storage/lifecycle_copy.go": "90fed81431e30fad9fe32e7063dbd891314444dc3d5bd1686edde84b6bddc089",
+    "migrations/000064_lifecycle_reconciliation_work.up.sql": "0ad343089e47349d94787763a46b0b6d88f0f4c06edcdfdd1cd7a2e198a70cd5"
+  }
+}

@@ -1,0 +1,20 @@
+CONFIRM_DELETE_EXACT_TWO；execution 9ea8f3e2-c805-44b4-b133-a36f50df9d15。
+确认 project dpp-lifecycle307-5d2274ee、provider 1980751b-c50e-4895-93a8-cb55960cd635、
+incarnation be784eda-96e4-49a9-ae47-eaa3203a2dc5，plan 8f0e9340-18f0-4a73-bdd6-622196a9011a、
+hash d7db735bf2ea7a8bc8eefca70ad4fc046be18e7e159e6a5231be3073e550bbfc，
+仅 dpp-lifecycle307-online/fixture/a.csv@312365a9-f984-43de-b9d5-7e26009ccd82 与
+dpp-lifecycle307-quarantine/fixture/b.csv@846d0c7c-289d-4667-bc7c-aa04e44357d4 两份源版本，
+绑定 source dbe3fbd666146db6a010a508fa99e6ed558b6fe9，
+Linux binary 4614fe539f2a41a39fa3d07bf0adf10f832fcc7dff04abf6e9f538617a21b4cd，
+proposal-v15/candidate05 profile 7f38680f8d75c3ae2332ad3bb70f64e9923abaecc504481d3930ca73194546ca，
+target digest 4cbb36e5aebbc9451603efd276aa309a2c4afdefcf252107571b0f8334360a38，
+IAM 77e082bcfec2a34745e24227758ce6a6af40ed1e55e834791fbd0313067de94a，
+active gateway cf528277a361b62d19b478069391fafa596833e7cc71722a9f1632dd9b80b4d6，
+sealed gateway 6a08b8647cc63cb389e2a511a5ad944b82d14e1ec9721f1a5ae45cb984bed4f6，
+Core checkpoint 85567273b268e66511ab58d6c03a430788b3f93ceb7346a52cf44eaa82939ab6，
+dump 4457301bc212eff3d5010b61a907948c48c330aae70d614c0530f685386f58d7，
+globals bb538f66ee5ee60fd2132cc92cdfd61b7051ccec9da1c0533c3269d17e0fd665；
+不复用旧614cd9ad授权；所有执行前条件通过后，每项最多一次exact DELETE、总计最多两次，
+≤40分钟窗口；UNKNOWN仅只读恢复、不重发，A确认absence后才允许B；
+四份survivor、其他环境及全部备份保留，执行只读对账和封存；
+cleanup=0、hold-release=0、bypass=0；#318仍Draft、不合并。

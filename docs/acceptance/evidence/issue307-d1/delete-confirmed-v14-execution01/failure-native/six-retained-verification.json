@@ -1,0 +1,9 @@
+{
+  "status": "PASS_ALL_SIX_EXACT_VERSIONS_RETAINED",
+  "targets_present": 2,
+  "survivors_present": 4,
+  "bytes_hash_protection": "MATCH_PREDELETE_PREFLIGHT",
+  "successful_delete": 0,
+  "second_target_send": 0,
+  "provider_delete_in_readback": 0
+}

@@ -1,0 +1,34 @@
+{
+  "status": "PREPARED_DISABLED",
+  "gateway": {
+    "id": "90a123dfbb400bbaed98d4f1c194e363bf7ee48f7701e17fcd056d1d34bc859c",
+    "name": "dpp-lifecycle307-5d2274ee-reference-delete-gateway-02",
+    "active_config_sha256": "cf528277a361b62d19b478069391fafa596833e7cc71722a9f1632dd9b80b4d6"
+  },
+  "redis": {
+    "id": "6ef98d74919c186143692431a746d7267d74cd4ff2123b75aace457f9a1a32af",
+    "name": "dpp-lifecycle307-5d2274ee-delete-recovery-redis-02",
+    "volume": "dpp-lifecycle307-5d2274ee-delete-recovery-redis-02-data"
+  },
+  "senders": [
+    {
+      "stage": "a",
+      "id": "1a3bd037ce9839ac2a809c91a8170b3aa525ba1513c21ccd3811b51f1cd0aa1b",
+      "name": "dpp-lifecycle307-5d2274ee-reference-send-02-a",
+      "mount_count": 2
+    },
+    {
+      "stage": "b",
+      "id": "0509a1bfc5b7933b9aa67b1859beaa176b30f1b99aeb9665213f3f5f6439afc5",
+      "name": "dpp-lifecycle307-5d2274ee-reference-send-02-b",
+      "mount_count": 2
+    }
+  ],
+  "authority_confirmed_at": "2026-10-16T01:30:22.752003+00:00",
+  "expires_at": "2026-10-16T02:05:22.752003+00:00",
+  "window_seconds": 2100,
+  "sender_rebuilt": false,
+  "root_payload_mount": false,
+  "delete": 0,
+  "cleanup": 0
+}

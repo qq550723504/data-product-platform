@@ -1,0 +1,86 @@
+{
+  "plane": {
+    "core_id": "612706e91ae71b2d6800ce270cc8ad60e64b0e09a77f8578488f5ac9a9e64912",
+    "prior_core_state": "exited",
+    "read_only_sql": true,
+    "counts": {
+      "calls": 33,
+      "observations": 33,
+      "invocations": 33,
+      "typed_costs": 33,
+      "unaccounted": 0,
+      "active_pins": 0,
+      "provider_invocations": 0,
+      "send_claims": 0,
+      "absence": 0,
+      "completion": 0,
+      "dispatch_releases": 0,
+      "schema": 68
+    },
+    "business_window": "SEALED",
+    "gateway": "DENY_ALL; previously stopped gateway stays stopped"
+  },
+  "archive": {
+    "core_id": "d02a3dc4b63f8ec36d02b8aff55309c30eebb14d8c3de2fadf60b77655729c01",
+    "prior_core_state": "exited",
+    "read_only_sql": true,
+    "counts": {
+      "calls": 69,
+      "observations": 69,
+      "invocations": 69,
+      "typed_costs": 69,
+      "unaccounted": 0,
+      "active_pins": 0,
+      "provider_invocations": 0,
+      "send_claims": 0,
+      "absence": 0,
+      "completion": 0,
+      "dispatch_releases": 0,
+      "schema": 68
+    },
+    "business_window": "SEALED",
+    "gateway": "DENY_ALL; previously stopped gateway stays stopped"
+  },
+  "copy": {
+    "core_id": "18790cf170e4ddca5bab55f1bd80e955022041cda1ec18c78975aadfbb7a2390",
+    "prior_core_state": "running",
+    "read_only_sql": true,
+    "counts": {
+      "calls": 75,
+      "observations": 75,
+      "invocations": 75,
+      "typed_costs": 75,
+      "unaccounted": 0,
+      "active_pins": 0,
+      "provider_invocations": 0,
+      "send_claims": 0,
+      "absence": 0,
+      "completion": 0,
+      "dispatch_releases": 0,
+      "schema": 68
+    },
+    "business_window": "SEALED",
+    "gateway": "DENY_ALL; previously stopped gateway stays stopped"
+  },
+  "metadata": {
+    "core_id": "78cc6d83f38edb226104ac5e0ca6007bdb10ce8b0818acd1145b0fc867545243",
+    "prior_core_state": "running",
+    "read_only_sql": true,
+    "counts": {
+      "calls": 32,
+      "observations": 32,
+      "invocations": 32,
+      "typed_costs": 32,
+      "unaccounted": 0,
+      "active_pins": 0,
+      "provider_invocations": 0,
+      "send_claims": 0,
+      "absence": 0,
+      "completion": 0,
+      "dispatch_releases": 0,
+      "schema": 68
+    },
+    "business_window": "SEALED",
+    "gateway": "DENY_ALL; previously stopped gateway stays stopped"
+  }
+}

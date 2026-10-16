@@ -1,0 +1,61 @@
+{
+  "work": "f8d2e713-ab50-4f16-ba44-9c435ee22763",
+  "after_lookup_authority_revocation_native_delta": 0,
+  "results": [
+    {
+      "id": "4f728fad-e12a-466f-8d77-a9dc33bc2700",
+      "run_id": "3cddd381-86f7-46ca-a6f5-43d5aa166f84",
+      "outcome": "BLOCKED_AUTHORITY",
+      "work_id": "f8d2e713-ab50-4f16-ba44-9c435ee22763",
+      "terminal": true,
+      "observed_at": "2026-10-14T08:02:06.19462+00:00",
+      "stat_call_id": "1ea29cbf-fe06-4927-9482-d052649ea9b9",
+      "workspace_id": "b2506f83-2810-419f-9f59-4c89bde12331",
+      "completion_id": null,
+      "copy_decision_id": null,
+      "copy_discovery_id": null,
+      "inventory_call_id": "c3560c60-e6f5-4bb1-a1ee-6f3a6578061a",
+      "absence_receipt_id": null,
+      "dependency_revision": 13
+    },
+    {
+      "id": "f95bce68-6f0c-4f15-af12-d26f4a743ec9",
+      "run_id": "c7122474-e7d2-43eb-8006-521c9e37e70b",
+      "outcome": "UNKNOWN_COPY_LEDGER",
+      "work_id": "a72678e4-a0ca-45c4-ba0b-b4669c084118",
+      "terminal": true,
+      "observed_at": "2026-10-14T08:02:17.608565+00:00",
+      "stat_call_id": "049b25cb-3404-4d1d-9766-3513dd4d7248",
+      "workspace_id": "b2506f83-2810-419f-9f59-4c89bde12331",
+      "completion_id": null,
+      "copy_decision_id": "656af024-3d1e-4c5c-8ec5-0f0ed9491bf2",
+      "copy_discovery_id": "3059edd7-abee-4993-be18-9045a4f65cb8",
+      "inventory_call_id": "7120e6ef-f89d-4717-8475-f0087529cca1",
+      "absence_receipt_id": null,
+      "dependency_revision": 17
+    },
+    {
+      "id": "06f9ffd4-976f-4947-ab53-14f209694c07",
+      "run_id": "5f4ee4b2-4f74-4644-9446-da23a6fbd1a2",
+      "outcome": "BLOCKED_COPY",
+      "work_id": "ff8c1c09-5361-49df-9eb6-0e8503abf5ca",
+      "terminal": true,
+      "observed_at": "2026-10-14T08:02:53.749232+00:00",
+      "stat_call_id": null,
+      "workspace_id": "b2506f83-2810-419f-9f59-4c89bde12331",
+      "completion_id": null,
+      "copy_decision_id": "101d3e61-3c37-420d-8bc9-d5c7e2bd057f",
+      "copy_discovery_id": "3059edd7-abee-4993-be18-9045a4f65cb8",
+      "inventory_call_id": null,
+      "absence_receipt_id": null,
+      "dependency_revision": 18
+    }
+  ],
+  "counts": {
+    "calls": 61,
+    "runs": 9,
+    "results": 6,
+    "copies": 3
+  },
+  "native_delete": 0
+}

@@ -1,0 +1,42 @@
+{
+  "run": "04a6ff55-f366-4a6e-8a1b-9cc79bea15e0",
+  "resources": {
+    "volumes": [
+      "dpp-lifecycle307-04a6ff55-postgres",
+      "dpp-lifecycle307-04a6ff55-objects"
+    ],
+    "containers": {
+      "postgres": "dpp-lifecycle307-04a6ff55-postgres",
+      "minio": "dpp-lifecycle307-04a6ff55-minio",
+      "gateway": "dpp-lifecycle307-04a6ff55-gateway"
+    },
+    "network": "dpp-lifecycle307-04a6ff55-private",
+    "run_id": "04a6ff55-f366-4a6e-8a1b-9cc79bea15e0",
+    "project": "dpp-lifecycle307-04a6ff55"
+  },
+  "services": {
+    "dpp-lifecycle307-04a6ff55-postgres": {
+      "id": "8db2b5cd7bef110653851d0d8f0c7757cf42f5f2a40d3dde029992adb01cb79a",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    "dpp-lifecycle307-04a6ff55-minio": {
+      "id": "0cf21b880d4c27e10a0f903b6659b2a83ef67d30e3cbdc4ced815cf7e6912678",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6"
+    },
+    "dpp-lifecycle307-04a6ff55-gateway": {
+      "id": "12ff9d7949309d79ddf99191a04ed2f42d8d5c5344baac438c0b7f910c9bc07e",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
+    },
+    "dpp-lifecycle307-04a6ff55-redis": {
+      "id": "1b10b60819a5647a34fbd870c93e47a3076fa20c3df4c06fbc7f879de7b30cc9",
+      "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"
+    }
+  },
+  "redis_volume": "dpp-lifecycle307-04a6ff55-redis-data",
+  "source_head": "74b3bddf5d7a9ddee9210e12472324d1f38bb146",
+  "binary_sha256": "36cf2eeae81c8db79f90c96584ea906927fcd9df55363c70724a7f1213538b6c",
+  "schema": 68,
+  "internal": true,
+  "host_ports": [],
+  "delete": 0
+}

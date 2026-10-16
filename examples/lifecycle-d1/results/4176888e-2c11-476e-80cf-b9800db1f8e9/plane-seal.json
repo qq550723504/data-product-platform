@@ -1,0 +1,13 @@
+{
+  "gateway_all_requests": "DENY_ALL",
+  "windows_enabled": false,
+  "cleanup": 0,
+  "delete": 0,
+  "run_id": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+  "producer_identity": "DISABLED",
+  "retained_named_volumes": [
+    "dpp-lifecycle307-4176888e-postgres",
+    "dpp-lifecycle307-4176888e-objects"
+  ],
+  "reader_identity": "DISABLED"
+}

@@ -1,0 +1,34 @@
+{
+  "credentials": "FAKE_OFFLINE_ONLY",
+  "network": "none; loopback-only responder",
+  "real_provider_io": 0,
+  "requests": [
+    {
+      "path": "/dpp-lifecycle307-online/fixture/a.csv?versionId=312365a9-f984-43de-b9d5-7e26009ccd82",
+      "response_lost": true,
+      "status": 0
+    },
+    {
+      "path": "/dpp-lifecycle307-quarantine/fixture/b.csv?versionId=846d0c7c-289d-4667-bc7c-aa04e44357d4",
+      "response_lost": true,
+      "status": 0
+    },
+    {
+      "path": "/dpp-lifecycle307-online/fixture/a.csv?versionId=EXCLUDED_VERSION",
+      "response_lost": false,
+      "status": 403
+    }
+  ],
+  "schema": "SYNTHETIC_GATEWAY_MATCH_ONLY_NOT_NATIVE_DELETE",
+  "upstream": [
+    "DELETE /dpp-lifecycle307-online/fixture/a.csv?versionId=312365a9-f984-43de-b9d5-7e26009ccd82",
+    "DELETE /dpp-lifecycle307-quarantine/fixture/b.csv?versionId=846d0c7c-289d-4667-bc7c-aa04e44357d4"
+  ],
+  "at": "2026-10-15T09:08:23.122579+00:00",
+  "candidate_gateway_sha256": "7b24ad32506bfd189c9289ba85a65ab242069dfee293d61b330104a90306cd0a",
+  "offline_gateway_sha256": "1d48f68024e5afb44ed61efa35734d438e0a12135e6e2d584b18b6f65edd9c0d",
+  "probe_source_sha256": "718ef845871cd4c3291be6cb711e96adae96e71e07b95d231aad9f4c4187c572",
+  "probe_binary_sha256": "5767de3c0e0a3572335ace73f73a93a361b69e134e50c62f46153db02b5588c2",
+  "only_configuration_change": "upstream hostname replaced by loopback-only synthetic responder",
+  "cleanup": 0
+}

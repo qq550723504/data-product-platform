@@ -1,0 +1,13 @@
+{
+  "container": "dpp-lifecycle307-f3b0c9cd-reader-resume-stop-8bd81a",
+  "binary_sha256": "84f7726abfe2be932e9152c8dc08971a9359211c7149b2efef555242d9b4b48d",
+  "role_directory": "resume-owner",
+  "exit_code": 0,
+  "run_id": "f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3",
+  "id": "7d2a9c6fca9828c681f357602fa552a1ebe3254a3a612b7bf02deeb466354492",
+  "expected_exit": 0,
+  "root_mounted": false,
+  "delete": 0,
+  "mode": "resume-stop",
+  "cleanup": 0
+}

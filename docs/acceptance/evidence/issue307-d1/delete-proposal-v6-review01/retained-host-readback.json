@@ -1,0 +1,294 @@
+{
+  "checked_at": "2026-10-15T01:11:54.320283+00:00",
+  "containers": [
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-04-native-inspect",
+      "id": "f3e4a876a4371857cff1ceda8acbb8d33a5e7c91f8106017ef97039477b93e05",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-04",
+      "id": "76198f610d3b80706da057603392e1a18025eefa89c031fd0bdff82678bbfd5d",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-iam-04-retry02",
+      "id": "7ad7a3fbe887aefe3692b5cf13a5b32481913ce088c9ce285d239e0f39d1d709",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-iam-04",
+      "id": "b29f2c22a2582dd891a87e549e20c87bc091129d670b01a5af5bd2f47c7bd930",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-03-native-inspect",
+      "id": "f2f3b5602abda0461df35d0dd2a28e77c7bb0564d4ca2ae616c32c747a82b802",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-03",
+      "id": "212c05ef13f0b983466d3ab7e78481bf2acf4027a62f3767a7bdcee920b435b3",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-02-native-inspect",
+      "id": "d3efbb54ead478631e3633a7208dbb3c5effd7ed017feeca19eb42cc8efb7ee0",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-02",
+      "id": "b233ab150632fdd0791804e88519a37b3b64d0d47471dcba401568da7f288964",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-01-native-inspect",
+      "id": "0776f9a254c7c8ebb97d87c4c9f6b09ff9b38c05148a804644926e810b3cf06c",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-readonly-audit-core-01",
+      "id": "1d0563416990122a9041fe78bb62c13954261b9a0eedd4c4f8df12ad3a5d2a24",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-negative-02",
+      "id": "65059bce000e03a1a1e44c98a45e833039d52ce75c54668a1444d91228d19436",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-positive-02",
+      "id": "50b7eafc2e55870470487cda73f0c8178dabc1d3f5883fd0fc78edae452d1a06",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-postgres-02",
+      "id": "1976c314879a819f548c22e621a81277e43c80fa6e3de7969eadc4f169a19332",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-native-after",
+      "id": "81c3a96acb7a8da97a0bb31e8576624404f0b063291bbda4349b6201876dd4ed",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-native-restored",
+      "id": "92a4341a9cd2407cb4fc0081cea77be3c462fa9926e546aca42e4cee13466d5d",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-migrate-restored",
+      "id": "305d95b583c8f70288d11647bb10925fda3bd06d721bf7d80bfe94ff5d248244",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-objects",
+      "id": "066eadc202b07816f4736578f1211ac84e9257ffc92db17b5116fdeb2d510924",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-native-snapshot",
+      "id": "c670834f6e0d7f1ba550bc5dcbeb7fc2618bc4067ac46688bc226828a0ffd543",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-native-before",
+      "id": "a3c610922f40ecb0c1410d6e9783fa7d58b9db5590a68fb92d45c77a387854a9",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-no-send-replay",
+      "id": "81e99a0f4a43a1c89e5cfc0edf2240b6e2c00e9b4ac0c42365d8e067b9c1c0d1",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-migrate-source",
+      "id": "a56312d2496b278acfca9c96f374e42690dfb183bb8af05f835eb668a6f27d80",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-no-send02",
+      "id": "846b96e4c7c58baff9cb1f77851488c65e47008e270be9f267a2ef92e81e993d",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-rehearse02",
+      "id": "1c48196ee6d7a189d721c6af26e4d4e90a1404d52f17021eaa82f3f4de019467",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-render02",
+      "id": "3bbee19e26165b673096ee078b3fd95c15042f531df5d9123d46460dd6ae440a",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-no-send",
+      "id": "3b690acc53d079278b37259e0072651046f0d0a5ee28caa36e79ef3d22ccb21d",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-caddy-validation",
+      "id": "5ec8887f1c93eb1a12c7d84414eead958c6fdc151c923a96bdd39838e054cf3f",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-rehearse",
+      "id": "d8f4b8fd7a582004642774484611f8c0d61e9aec0df4e85769eb93795f1a7996",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reference-preparation-render",
+      "id": "5b0aa940122cc8fa64b5947ee4129143bb29d9c0247b415d4fb98906a8fd656d",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-negative",
+      "id": "e10f24864d953c25a65232c78c9e0bb12e6a08122e905c8ebde22ec9cca1fd2c",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-core-auth-positive",
+      "id": "df2d65af81b1880790113f0e460c0c6b8773211309b85d2b9c50519a05bd66a1",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-predelete-postgres",
+      "id": "b57c6b44e63d6ccb797b2f8f82b885d8dc5601307bc0984f82306e08b79267b6",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reader-seal-93c177",
+      "id": "9b20260d5efa4391b82c491544087af151e5f7aa8f14a8318c3eed79c257bf56",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reader-final-b91470",
+      "id": "6ac9e4e493895b172bd9113456fcdfc436eaa9de0a417b244f3b10c3416dd93f",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reader-reference-races-d85398",
+      "id": "fb92bdcd150127c50163448de9d918f3a2d9a18e2384274b30febfaf647bdb87",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reader-setup-5653d3",
+      "id": "ccd16e027a6a5e643422796285214a1b0e27c6da34f01897a870d30e99c19741",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-reader-provision-4986d8",
+      "id": "032d7098b0640df9a25c510d1f93cb1f4d48b7a32333acae1e6d9817b11c83e4",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-prepare",
+      "id": "d0cb29545a79ed706f368c72ba8ad72561f563be6240e4ce12e21e72eb73695a",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-gateway",
+      "id": "ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-minio",
+      "id": "0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    },
+    {
+      "name": "dpp-lifecycle307-5d2274ee-postgres",
+      "id": "c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0",
+      "state": "exited",
+      "pid": 0,
+      "host_ports": false
+    }
+  ],
+  "backups": {
+    "reference-disposal-preparation01/native-snapshot/native-store.tar": "f72efeab2c49802be1661a431164167d7a34968fef877163f08b25878d9554cc",
+    "predelete-core-checkpoint-04/core.dump": "19dba12b9992fdd11c237d6f0df489c7a961696acd54b8a3403b941e7005c98a"
+  },
+  "container_starts": 0,
+  "provider_io": 0,
+  "core_mutation": 0,
+  "delete": 0,
+  "cleanup": 0
+}

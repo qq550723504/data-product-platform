@@ -1,0 +1,14 @@
+{
+  "cleanup_requests": 0,
+  "binary_sha256": "33bc8135a6aa1713a8ae1597be9ad744843044652fb0348483a1236d25e9d249",
+  "work_id": "00000000-0000-0000-0000-000000000000",
+  "mode": "seed",
+  "name": "dpp-lifecycle307-30cc0c1e-recovery-completion-sql-input",
+  "attempt_id": "00000000-0000-0000-0000-000000000000",
+  "native_delete": "DENY_ALL",
+  "gateway_sha256": "6ae8a380aaa644adbf7b02c5ebe01cce26b5d62620a9c8b8d834fefba96d9e1d",
+  "source_head": "e173364efe7ce46a01cd4a14a9c6e31fc5e39c86",
+  "scenario": "completion-sql-input",
+  "container_id": "e0abe410bed4adce0961afe5115701ceac861a1d4731f3674277510f4d73b570",
+  "workspace_id": "cb4937fb-cb09-4063-8f83-4ca8c8e8924d"
+}

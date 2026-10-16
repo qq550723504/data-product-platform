@@ -1,0 +1,12 @@
+{
+  "root_mounted": false,
+  "id": "c358782cae678f83b5bb365366f83265d538c06b01b20817fc436e41d431d9bd",
+  "mode": "verify-pre-issued-crash",
+  "delete": 0,
+  "run_id": "4176888e-2c11-476e-80cf-b9800db1f8e9",
+  "exit_code": 0,
+  "container": "dpp-lifecycle307-4176888e-reader-verify-pre-issued-crash-162450",
+  "binary_sha256": "2e9ba9da301749ed0945f1da34293ad99b06b46ee8dd2671fc54332950cb7413",
+  "expected_exit": 0,
+  "cleanup": 0
+}

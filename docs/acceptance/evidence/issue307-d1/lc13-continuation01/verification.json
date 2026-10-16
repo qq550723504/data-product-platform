@@ -1,0 +1,13 @@
+{
+  "go_packages": 6,
+  "go_tests_and_subtests": 235,
+  "go_fail": 0,
+  "go_skip": 1,
+  "race": 0,
+  "vet": "PASS",
+  "python_normal": 30,
+  "python_optimized": 30,
+  "native_delete": 0,
+  "merge": 0,
+  "production_acceptance": "NOT_RUN"
+}

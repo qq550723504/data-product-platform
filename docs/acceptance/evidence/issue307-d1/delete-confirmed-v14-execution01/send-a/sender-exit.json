@@ -1,0 +1,9 @@
+{
+  "id": "84b76b5f6bbee47e9f961cf6d4f48e4f2b3f035824007efe8d9f68d99c5c2d50",
+  "exit": 93,
+  "pid": 0,
+  "status": "exited",
+  "attempt_replay": "FORBIDDEN",
+  "expected_crash_exit": 93,
+  "binary_sha256": "01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3"
+}

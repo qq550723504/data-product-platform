@@ -1,0 +1,20 @@
+{
+  "status": "PASS_INDEXED_CI_REPAIR_EVIDENCE",
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v14-ci01/independent-review.json",
+      "bytes": 1847,
+      "sha256": "a785f6b7600c59902337c18a1c9de7218a5afc4fe3c9ffc581bed90abe0fdd2b"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v14-ci01/initial-ci.json",
+      "bytes": 3369,
+      "sha256": "b926d5a706d1ce8ce1ddd8ad5b476adc197672da456aa8c256a41e5534ff2046"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v14-ci01/primary-audit.json",
+      "bytes": 19208,
+      "sha256": "8f8ecde1054074e16a98a5e68862a5149811812d43a81056d6ded1ba28bc477f"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "initial": "FAIL: wrong table name lifecycle_disposition_completion; READ ONLY transaction aborted without mutation",
+  "provider_io": 0,
+  "mutation": 0,
+  "business_native_result": "unchanged PASS",
+  "corrected": "lifecycle_plan_completion; count query PASS",
+  "phase": "independent read-only SQL counts"
+}

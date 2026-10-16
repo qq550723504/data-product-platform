@@ -1,4 +1,9 @@
-# #307/D1：当前 main 的非删除验收与下一步清单
+# #307/D1：schema66 历史非删除验收与下一步清单
+
+当前PR收口及仍缺的完整D1用例见[#318最终评审](issue318-final-closure.md)；5d的单独v15两版本删除/恢复已完成并封存。以下NOT_RUN/待确认保留2026-10-13原阶段，不再作为当前PR总状态。
+
+本文件保留2026-10-13原阶段。2026-10-14当前补验与矩阵见
+[native completion](issue307-d1-native-completion.md)及[LC-13/5d只读核验](issue307-lc13-readonly.md)；真实删除仍待单独确认。
 
 2026-10-13，基线 main `79d175d0c8ff7579b0466f44e9103672ac7588da`。
 本轮只完成非删除验收、独立备份恢复和 exact 删除候选准备。
@@ -67,7 +72,7 @@ Run `9b89333a-9620-4387-a520-7685641281e2`，internal `10.234.80.0/24`，
 | LC-04/15/16 | 当前PG dispatch/observation/absence/recovery/成本回归通过；四版本原生inventory通过 | 新exact DELETE、unknown/absence和receipt未跑 |
 | LC-05–08 | 当前PG保全/dispatch双方锁序、shared/reference/unknown拒绝回归通过 | 原生late hold/partial delete等组合待批准执行 |
 | LC-11/12 | actual processing/transfer pin、慢TCP、verified停止、反向限制0 I/O | 两种顺序的实际处置竞争未跑，不计完整PASS |
-| LC-13 | 当前PG crashed owner/lease不自动释放回归、自然expiry实际停止 | live processing crash/recovery边界仍待补 |
+| LC-13 | [新原生补验](issue307-lc13-readonly.md)：实际GET后exit95、真实Asynq重投递、自然10分钟recovery安全FAILED，0新I/O且六pins保留 | positive same-execution resume、可信外部owner终止/自动解pin、credential containment仍未验收 |
 | LC-14 | 当前PG partial/unknown per-copy事实回归 | 三copy原生混合结果未跑 |
 | LC-18/19 | 独立全备份恢复隔离；PG watermark/gap/wrong-context拒绝回归 | 不是生产备份重入库或D4验收 |
 | LC-21–24 | 当前PG finalize/restriction/member/authority/idempotency双方竞争与拒绝回归通过 | 不将PG模拟端口当成原生删除证明 |

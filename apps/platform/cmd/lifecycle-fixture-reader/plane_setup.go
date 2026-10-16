@@ -77,6 +77,9 @@ func (s *planeOutput) PutVersion(ctx context.Context, v datasetdomain.DatasetVer
 }
 
 func planeServices(ctx context.Context, c config, pool *pgxpool.Pool, cs []domain.Copy) (*lc.OccupancyService, *lc.CopyService, *lc.FixtureReaderService, *lc.FixtureSubjectPins, error) {
+	return planeServicesWithRecovery(ctx, c, pool, cs, nil)
+}
+func planeServicesWithRecovery(ctx context.Context, c config, pool *pgxpool.Pool, cs []domain.Copy, recovery lc.ReaderTerminationVerifier) (*lc.OccupancyService, *lc.CopyService, *lc.FixtureReaderService, *lc.FixtureSubjectPins, error) {
 	tx := transaction.NewManager(pool)
 	g := &gate{}
 	o := lc.NewOccupancyService(tx, &infrastructure.PostgresRepository{}, authority{}, g, nil)
@@ -89,10 +92,10 @@ func planeServices(ctx context.Context, c config, pool *pgxpool.Pool, cs []domai
 	if e != nil {
 		return nil, nil, nil, nil, e
 	}
-	reader := lc.NewFixtureReaderService(o, p)
+	reader := lc.NewFixtureReaderServiceWithRecovery(o, p, recovery)
 	selection := map[uuid.UUID]uuid.UUID{}
 	for _, cp := range cs {
-		if cp.Namespace == namespaces[0] {
+		if (cp.Namespace == namespaces[0] && !(c.ReferenceDemand && cp.Key == "fixture/b.csv")) || (c.ReferenceDemand && cp.Namespace == namespaces[1] && cp.Key == "fixture/b.csv") {
 			selection[cp.DatasetVersionID] = cp.ID
 		}
 	}

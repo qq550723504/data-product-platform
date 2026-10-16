@@ -1,0 +1,64 @@
+{
+  "schema": "lifecycle307-delete-proposal-receipts-v1",
+  "status": "PROPOSAL_ONLY; pending exact-list human confirmation",
+  "code_parent_head": "fc009d88ce2e145d10bcf086addca80eb8686fee",
+  "native_source": "4650c435f8ba89fdb0b2dc0591152d25ded182d7",
+  "canonical_hash": "SHA256 of staged Git blob bytes, distinct from checkout CRLF hash",
+  "entries": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-5d2274ee/core-readback.json",
+      "git_blob": "73338eff698dc04fdf70012e5c199faeb3a0baa7",
+      "sha256": "6caff7971660d528cc7f2a0472a5164616fa0cb33f04e8281ca8c8f17bb1340c",
+      "bytes": 14239
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-5d2274ee/core-readback.sql",
+      "git_blob": "a0d2aefd26e1f384cbd3b58afb902d4895ae7d65",
+      "sha256": "47cf05784f37a01bd3908fef855a57f72b97e867a86db8c6dc30790f17c841d5",
+      "bytes": 2881
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-5d2274ee/operator-readback-diagnostic.json",
+      "git_blob": "465e35c9bfb23562d13aac04b8ba571f957e73ce",
+      "sha256": "8c94831b53b9b23411dbad4546167af41f3ba630d7ee01ccd6b5d27ccd8f2a2e",
+      "bytes": 498
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-5d2274ee/proposal-verification.json",
+      "git_blob": "a34fcc80e8d6209b2ffca591bd69248b24f85c46",
+      "sha256": "466347b3e145f3fcede0d7fc22bf4459e2006e2685c7308c8cba20c95f8d6c31",
+      "bytes": 982
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-5d2274ee/proposal.json",
+      "git_blob": "7eb3e22c22c317639a7377c91d844c6141a641ad",
+      "sha256": "e99d8e8edc1ede2b4d563fc17e462adf8f661a7f1a11d6bf6ec7733b8397203f",
+      "bytes": 10155
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-5d2274ee/topology-readback.json",
+      "git_blob": "df5e78bd3a3c1dde6b0f862874b22f21c6dee15e",
+      "sha256": "f66f0840cce8f429a84b395a8a4bf2e165bccfb85187f7dc499bd6abb3d05a75",
+      "bytes": 3655
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-delete-proposal.md",
+      "git_blob": "39684bea4a4717e2a196bbf39e706206ecc830f0",
+      "sha256": "69febcb12e3df32e5b23f59a640aa3cb4e4e0808218ff4b37f7fd4570c0065c0",
+      "bytes": 16131
+    },
+    {
+      "path": "docs/acceptance/issue307-reference-demand.md",
+      "git_blob": "54c8414312198178c7b5862e6b1fc839728f8650",
+      "sha256": "38126d45a750303c968e9a26e57c4fe3f6fc163c474892a5580fd278dda7ed52",
+      "bytes": 14229
+    }
+  ],
+  "entries_count": 8,
+  "original_native_108_manifest_unchanged": true,
+  "latest_native_48_manifest_unchanged": true,
+  "provider_io": 0,
+  "database_mutation": 0,
+  "runtime_mutation": 0,
+  "provider_delete": 0
+}

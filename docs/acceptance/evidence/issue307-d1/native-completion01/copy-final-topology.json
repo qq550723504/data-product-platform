@@ -1,0 +1,97 @@
+{
+  "run": "74b0dd66-0194-46ec-aa84-26af6662e8b3",
+  "services": [
+    {
+      "name": "dpp-lifecycle307-74b0dd66-minio",
+      "id": "9fb52f3936729083cc31e7bc023baae8b07ff154d834cd75fb73015d91ee89d5",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": "running",
+      "ports": {},
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "dpp-lifecycle307-74b0dd66-objects",
+          "destination": "/data",
+          "rw": true
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/access",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/secret",
+          "rw": false
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/start.sh",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "dpp-lifecycle307-74b0dd66-gateway",
+      "id": "354ef8421234084fec4d58fd029eb5ec4c0a512f4fbe29fee8d205cf48d7346b",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "state": "running",
+      "ports": {
+        "2019/tcp": null,
+        "443/tcp": null,
+        "443/udp": null,
+        "80/tcp": null
+      },
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/etc/caddy/Caddyfile",
+          "rw": false
+        }
+      ]
+    },
+    {
+      "name": "dpp-lifecycle307-74b0dd66-postgres",
+      "id": "18790cf170e4ddca5bab55f1bd80e955022041cda1ec18c78975aadfbb7a2390",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": "running",
+      "ports": {
+        "5432/tcp": null
+      },
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/run/credentials/pgpass",
+          "rw": false
+        },
+        {
+          "type": "volume",
+          "name": "dpp-lifecycle307-74b0dd66-postgres",
+          "destination": "/var/lib/postgresql/data",
+          "rw": true
+        }
+      ]
+    }
+  ],
+  "gateway_sha256": "5695d4337b06d2c420194a3fec04dbcbfbe95fde94dc1705e81d2f3f78834f59",
+  "gateway_all_requests": "DENY_ALL",
+  "windows": [
+    {
+      "file": "copy-worker\\recovery.json",
+      "enabled": false
+    },
+    {
+      "file": "copy-admin\\archive-window.json",
+      "enabled": false
+    },
+    {
+      "file": "copy-producer\\archive-window.json",
+      "enabled": false
+    }
+  ]
+}

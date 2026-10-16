@@ -1,0 +1,94 @@
+{
+  "as_of": "2026-10-14T16:28:26.097967+00:00",
+  "source_commit": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "snapshot_status": "PASS_READONLY",
+  "send_status": "BLOCKED_NO_CONFIRMATION_NO_ACTIVATION",
+  "conditions": [
+    {
+      "condition": "\u51bb\u7ed3\u5019\u9009/source/binary/profile/IAM/gateway",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "055aa1df / 01bff6e2 / exact hashes unchanged; no rebuild or permission activation"
+    },
+    {
+      "condition": "\u73af\u5883/instance/incarnation/6\u4efd\u5b8c\u6574\u5e93\u5b58",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "Same source IDs/volumes/internal network; online4 + quarantine2; no extra/missing/delete markers"
+    },
+    {
+      "condition": "6\u4efdbytes/hash",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "Exact native reads match registry and prior six-version proof"
+    },
+    {
+      "condition": "2\u76ee\u6807\u5f53\u524d\u4fdd\u62a4",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "Both legal hold=false/retention NONE; observed16:22:28Z; re-read before each future send"
+    },
+    {
+      "condition": "4survivors",
+      "status": "PASS_EXCLUDED",
+      "evidence": "Held online/b; GOVERNANCE quarantine/a until2026-10-15T00:58:47Z; two outputs retained even after expiry"
+    },
+    {
+      "condition": "Core/schema68/immutable plan\u53cahash",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "194 relations/1879 rows; before/after and roles/owner/ACL match; original source journal92"
+    },
+    {
+      "condition": "FK qualification/material references",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "27 full trigger qualifications,54 target FK counts unreleased0;3 functions match migration67;23 exact-copy demands/releases retained"
+    },
+    {
+      "condition": "reader/producer/owner/pending-copy",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "7 pins/terminations active0; native regular reader+producer disabled;2 output intents each ready; no copy operations; configs/gateway sealed"
+    },
+    {
+      "condition": "2\u65e7trial reservations",
+      "status": "PASS_NOT_SENT_RELEASED",
+      "evidence": "2 unchanged original starts/dispatches; authoritative NOT_SENT/no invoked_at;2 linked releases; never resend or regenerate proof"
+    },
+    {
+      "condition": "\u6e90/\u65b0audit\u8d26\u52a1",
+      "status": "PASS_SNAPSHOT",
+      "evidence": "Source92; new clone112 calls/observations/typed costs including20 new reads;unaccounted0. Operator IAM GET8 separately receipted"
+    },
+    {
+      "condition": "\u539ftar/dump\u53ca\u65e7\u6062\u590d\u526f\u672c",
+      "status": "PASS_RETAINED",
+      "evidence": "Original tar/dump byte hashes unchanged; old restores not opened; new independent dump/restore retained and stopped"
+    },
+    {
+      "condition": "\u771f\u5b9e\u5220\u9664\u660e\u786e\u786e\u8ba4",
+      "status": "PENDING_BLOCKS_SEND",
+      "evidence": "NOT_RECEIVED; continue/read-only checks create no delete authority"
+    },
+    {
+      "condition": "614cd9ad\u65b0deletion basis/\u77ed\u671fapproval",
+      "status": "NOT_CREATED_BLOCKS_SEND",
+      "evidence": "Only old non-delete expired approval exists; new current context and <=40min approval required"
+    },
+    {
+      "condition": "\u65b0native executor IAM/active gateway/permission",
+      "status": "NOT_PROVISIONED_BLOCKS_SEND",
+      "evidence": "Planned regular IAM user authoritative NoSuchUser; no enabled permission/new gateway; inspector stays read-only"
+    },
+    {
+      "condition": "fresh host topology/activation\u7a97\u53e3",
+      "status": "NOT_CREATED_BLOCKS_SEND",
+      "evidence": "Only check snapshots exist; current signed send topology cannot be minted until the exact active composition exists"
+    },
+    {
+      "condition": "\u6bcf\u6b21dispatch\u53caClaimExactSend gate",
+      "status": "REQUIRED_BEFORE_EACH_SEND",
+      "evidence": "Full shared-fence authority/context/inventory/protection/qualified references/pins/ledger fresh gate; snapshot is not authorization"
+    },
+    {
+      "condition": "\u5f53\u524d5d\u771f\u5b9eDELETE/unknown worker/recovery\u9a8c\u6536",
+      "status": "NOT_RUN",
+      "evidence": "At most2,once each; no hidden resend; 6->5->4 inventory only via exact absence receipts; queue send resources not created"
+    }
+  ],
+  "delete": 0
+}

@@ -27,6 +27,7 @@ import (
 	lc "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/infrastructure"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 	transport "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/transport/http"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/principal"
@@ -41,10 +42,18 @@ type config struct {
 	RunID, WorkspaceID, ProviderInstanceID, IncarnationID, ActorID, Epoch                                       uuid.UUID
 	Enabled                                                                                                     bool
 	Plane                                                                                                       bool
+	ReferenceDemand                                                                                             bool
 	StartedAt, ExpiresAt                                                                                        time.Time
 	Endpoint, PostgresDSN, Token, Access, Secret, InspectAccess, InspectSecret, OutputDirectory, ManifestSHA256 string
 	RootAccess, RootSecret                                                                                      string // populated only in a separate admin-only mount
 	ProducerAccess, ProducerSecret                                                                              string
+	RedisAddr                                                                                                   string // fresh LC-13 closed queue only
+	LC13Continuation                                                                                            bool
+	OwnerStopPublicKey                                                                                          string
+	OwnerStopIdentity                                                                                           pilot.ProcessingOwnerIdentity
+	IssuerAccess, IssuerSecret                                                                                  string
+	CredentialStopPublicKey                                                                                     string
+	CredentialStopIdentity                                                                                      pilot.CredentialOwnerIdentity
 }
 type manifest struct {
 	Objects []struct {
@@ -124,7 +133,17 @@ func (authority) Resolve(r *http.Request, w uuid.UUID, cap string) (principal.Re
 	if e != nil {
 		return principal.RequestPrincipal{}, principal.ErrUnauthenticated
 	}
-	resolver, e := principal.NewStaticResolver(true, c.Token, "lifecycle-fixture:"+c.RunID.String(), c.ActorID.String(), []string{c.WorkspaceID.String()}, []string{lc.CapabilityAdmitReader, lc.CapabilityTerminateReader, lc.CapabilityInspectOccupancy, lc.CapabilityInspectStorage, lc.CapabilityRestrictUse, lc.CapabilityCopyCustody})
+	caps := []string{lc.CapabilityAdmitReader, lc.CapabilityTerminateReader, lc.CapabilityInspectOccupancy, lc.CapabilityInspectStorage, lc.CapabilityRestrictUse, lc.CapabilityCopyCustody}
+	if c.Plane && c.ReferenceDemand {
+		caps = append(caps, lc.CapabilityPreparePlan, lc.CapabilityApproveDisposition, lc.CapabilityDispatch)
+		for _, module := range []string{"dataset", "entity", "workflow", "quality", "certification", "delivery"} {
+			caps = append(caps, lc.ReferenceOwnerCapability(module))
+		}
+	}
+	if c.LC13Continuation {
+		caps = append(caps, lc.ReferenceOwnerCapability("delivery"), lc.CapabilityCheckpointStorage)
+	}
+	resolver, e := principal.NewStaticResolver(true, c.Token, "lifecycle-fixture:"+c.RunID.String(), c.ActorID.String(), []string{c.WorkspaceID.String()}, caps)
 	if e != nil {
 		return principal.RequestPrincipal{}, e
 	}
@@ -169,7 +188,7 @@ type adminTransport struct {
 
 func (t adminTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	s, ok := r.Context().Value(adminKey{}).(*adminCall)
-	if !ok || r.URL.Scheme != "http" || r.URL.Host != t.c.Endpoint || r.URL.User != nil || (r.Method != "PUT" && r.Method != "POST") || len(r.URL.Path) < 16 || r.URL.Path[:16] != "/minio/admin/v3/" {
+	if !ok || r.URL.Scheme != "http" || r.URL.Host != t.c.Endpoint || r.URL.User != nil || (r.Method != "PUT" && r.Method != "POST" && !(t.c.LC13Continuation && r.Method == "GET" && r.URL.Path == "/minio/admin/v3/info-service-account")) || len(r.URL.Path) < 16 || r.URL.Path[:16] != "/minio/admin/v3/" {
 		return nil, errors.New("admin scope denied")
 	}
 	s.mu.Lock()
@@ -222,7 +241,7 @@ func provision(ctx context.Context, c config, cs []domain.Copy, disable bool) er
 		statements = append(statements, map[string]any{"Effect": "Allow", "Action": []string{"s3:GetObjectVersion"}, "Resource": []string{"arn:aws:s3:::" + cp.Namespace + "/" + cp.Key}, "Condition": map[string]any{"StringEquals": map[string]string{"s3:versionid": cp.ProviderVersion}}})
 	}
 	policy, _ := json.Marshal(map[string]any{"Version": "2012-10-17", "Statement": statements})
-	name := "lifecycle307-reader-" + c.RunID.String()
+	name := "lifecycle307-reader-" + c.Access
 	if e = call(func(ctx context.Context) error { return a.AddCannedPolicy(ctx, name, policy) }); e != nil {
 		return errors.New("reader policy unknown; no retry")
 	}
@@ -527,7 +546,14 @@ func execute(ctx context.Context, mode string) error {
 func main() {
 	mode := flag.String("mode", "", "bounded reader step")
 	flag.Parse()
-	ctx, cancel := context.WithTimeout(context.Background(), 90*time.Second)
+	limit := 90 * time.Second
+	if *mode == "plane-reference-races" {
+		limit = 13 * time.Minute
+	}
+	if *mode == "plane-lc13-orphan" {
+		limit = 3 * time.Minute
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), limit)
 	defer cancel()
 	if e := execute(ctx, *mode); e != nil {
 		fmt.Println("Reader step failed:", e, "; all resources retained, no cleanup or automatic retry")

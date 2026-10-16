@@ -1,0 +1,12 @@
+{
+  "expected_exit": 95,
+  "cleanup": 0,
+  "id": "490d5aaff1c5ec635ffeb9d5145b99cbb2a761e239dac959e2ed09ed24b864e6",
+  "binary_sha256": "3cddefc13a732482f1afe5493dd641ab880254a9ec47536b1053516d51dc727a",
+  "run_id": "04a6ff55-f366-4a6e-8a1b-9cc79bea15e0",
+  "delete": 0,
+  "root_mounted": false,
+  "container": "dpp-lifecycle307-04a6ff55-reader-lc13-crash-one-e8f4c1",
+  "mode": "lc13-crash-one",
+  "exit_code": 95
+}

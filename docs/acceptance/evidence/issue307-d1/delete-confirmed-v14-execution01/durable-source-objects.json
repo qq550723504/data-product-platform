@@ -1,0 +1,21 @@
+{
+  "run_id": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+  "label_key": "lifecycle307.run",
+  "allowed_states": [
+    "running"
+  ],
+  "status": "PASS",
+  "services": [
+    {
+      "type": "volume",
+      "role": "source-objects",
+      "volume": "dpp-lifecycle307-5d2274ee-objects",
+      "container": "dpp-lifecycle307-5d2274ee-minio",
+      "container_id": "0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65",
+      "writable": true,
+      "destination": "/data"
+    }
+  ],
+  "storage_io": 0,
+  "mutation": 0
+}

@@ -1,0 +1,13 @@
+{
+  "cleanup": 0,
+  "mode": "resume-provision",
+  "run_id": "8120904f-13d9-42f3-ab1f-66eb1a37b2b0",
+  "id": "062cf60f4ae65bace12d295ea26977965c2baecfdaa060f9b330484f23f2e931",
+  "delete": 0,
+  "binary_sha256": "f36eb7a5b695152cbd34dfe52afbf74d23a72e7d77bde7c0b46ca8a09dd8e8d7",
+  "expected_exit": 0,
+  "root_mounted": true,
+  "role_directory": "resume-admin",
+  "exit_code": 0,
+  "container": "dpp-lifecycle307-8120904f-reader-resume-provision-142c67"
+}

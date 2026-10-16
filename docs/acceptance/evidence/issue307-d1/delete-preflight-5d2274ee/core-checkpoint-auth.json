@@ -1,0 +1,36 @@
+{
+  "delete": 0,
+  "source_core_mutation": 0,
+  "network_id": "c3fdcbaf092e77b790aed53de1dec98deb2911987e21d86b812dc6f86067cc10",
+  "provider_io": 0,
+  "environment_run_id": "5d2274ee-a671-4bdc-b406-22b8dad8fd61",
+  "cleanup": 0,
+  "replica_state": "STOPPED_RETAINED_NO_BUSINESS_ADMISSION",
+  "checks": [
+    {
+      "credential_values_disclosed": 0,
+      "container": "dpp-lifecycle307-5d2274ee-predelete-core-auth-positive",
+      "host_ports": [],
+      "status": "PASS",
+      "exit": 0,
+      "mode": "positive",
+      "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "id": "df2d65af81b1880790113f0e460c0c6b8773211309b85d2b9c50519a05bd66a1"
+    },
+    {
+      "credential_values_disclosed": 0,
+      "container": "dpp-lifecycle307-5d2274ee-predelete-core-auth-negative",
+      "host_ports": [],
+      "status": "PASS",
+      "exit": 2,
+      "mode": "negative",
+      "image_id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "id": "e10f24864d953c25a65232c78c9e0bb12e6a08122e905c8ebde22ec9cca1fd2c"
+    }
+  ],
+  "replica_id": "b57c6b44e63d6ccb797b2f8f82b885d8dc5601307bc0984f82306e08b79267b6",
+  "status": "PASS_REMOTE_SCRAM_POSITIVE_AND_NEGATIVE",
+  "as_of": "2026-10-14T02:28:36.0767687+00:00",
+  "source_restart": 0,
+  "credential_values_disclosed": 0
+}

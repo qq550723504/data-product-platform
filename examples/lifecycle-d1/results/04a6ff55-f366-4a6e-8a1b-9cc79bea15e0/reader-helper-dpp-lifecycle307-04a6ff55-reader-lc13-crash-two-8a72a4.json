@@ -1,0 +1,12 @@
+{
+  "mode": "lc13-crash-two",
+  "delete": 0,
+  "exit_code": 95,
+  "id": "8447a03164ff098821f557c4855cb2fe1069d70891a65055b4c3c25073769954",
+  "cleanup": 0,
+  "run_id": "04a6ff55-f366-4a6e-8a1b-9cc79bea15e0",
+  "container": "dpp-lifecycle307-04a6ff55-reader-lc13-crash-two-8a72a4",
+  "expected_exit": 95,
+  "binary_sha256": "3cddefc13a732482f1afe5493dd641ab880254a9ec47536b1053516d51dc727a",
+  "root_mounted": false
+}

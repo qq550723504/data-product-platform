@@ -1,0 +1,804 @@
+{
+  "status": "PASS_CANONICAL_FULL_ID_SEALED_TOPOLOGY",
+  "at": "2026-10-16T01:41:29.272439+00:00",
+  "canonical_container_count": 113,
+  "all_project_containers": [
+    {
+      "id": "a03fe4c231800f1d40a0f377ab905c69daeff3012dda1b8ca2ca99893df69a0e",
+      "name": "/dpp-lifecycle307-5d2274ee-delete-postexecution-audit-core-02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "6e327b633c799fafeb07de7e870dd6c15a00bd71fd89aef04a1067770e7c2b91",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-admin-emergency-disable",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "02c355a0a120ef439a11a413ad726a99c63d255ea72b89f3395651834255b078",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-four-survivors",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "5666b405575a68611f7f44e59681f98d7f07911fa94eb8f8b7d8d72be23ee5f8",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-b-terminal-replay",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "5eca1441e0e3c6ae0f65c737d59f92bda3ec42b547c422995b1187c6672618f2",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-b-worker",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "10fc0411556e788487a71a53230c446f5342dca1cde5871fb0af539408744b8c",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-b-outbox",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "6d96a3a0bf85b53e94d905f3430ee8fdc183e29196017b4ed8eff7b860fde17a",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-a-terminal-replay",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "b5e2093619444307fad62a02715ddc2c2dcd9aa21d2181e8fe17db6540911591",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-a-worker",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "927b1b2b750f5f0d627303c95af510f1e98c8a016ba8414770f4a99cb1805347",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-a-outbox",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "5fde406c20cbe3baafa70355d91b3270ac3bc788658ea0f96057c9c86a2b13c2",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-admin-enable",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "0509a1bfc5b7933b9aa67b1859beaa176b30f1b99aeb9665213f3f5f6439afc5",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-send-02-b",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "1a3bd037ce9839ac2a809c91a8170b3aa525ba1513c21ccd3811b51f1cd0aa1b",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-send-02-a",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "6ef98d74919c186143692431a746d7267d74cd4ff2123b75aace457f9a1a32af",
+      "name": "/dpp-lifecycle307-5d2274ee-delete-recovery-redis-02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "90a123dfbb400bbaed98d4f1c194e363bf7ee48f7701e17fcd056d1d34bc859c",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-delete-gateway-02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "df28c6eb284b695d02663b10c02c0df2fcc261041d50766874fff75de5f5daf6",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-admin-provision",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "ff4156fee536068463203eda7ac16f284e8ef3ae9b2fc72488530e361cc139c4",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-authorized-preflight-iam",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "bdcc6d3e6c620cf750fffd5a2fcb684e460c0d9bdd3008ff6a3421f2629d74d1",
+      "name": "/dpp-lifecycle307-5d2274ee-v15-authorized-preflight-native",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "91f2f4f5cba0a14302712e298aed33d8294be02bc541b8a78af0e82f23999461",
+      "name": "/dpp-lifecycle307-5d2274ee-confirmation-check-20261016-iam",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "8b1784370548ab9f5cbf19fa121d6d4af1843cb9babd184bbd219d4b90985ace",
+      "name": "/dpp-lifecycle307-5d2274ee-confirmation-check-20261016-native",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "e6597ce146765fee18458d88d28c5b14e96b65676eaed832bda12b54f899f3d3",
+      "name": "/dpp-lifecycle307-5d2274ee-candidate05-iam",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "aa78621b6e705adc9e0cc2995ab244674a3db094ccf90010165fd31831ca6a76",
+      "name": "/dpp-lifecycle307-5d2274ee-candidate05-native",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "85567273b268e66511ab58d6c03a430788b3f93ceb7346a52cf44eaa82939ab6",
+      "name": "/dpp-lifecycle307-5d2274ee-delete-checkpoint-core-02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "5044372e7a1f93578bb67c06e0261e56b85ed68acc41b9aa7a0d713d6b6923fd",
+      "name": "/dpp-lifecycle307-5d2274ee-candidate05-old-profile",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "0c452e286e5e9730a2e14eb0dc55c02517ef2c8cb366334916606584bb1d4a70",
+      "name": "/dpp-lifecycle307-5d2274ee-candidate05-send-b",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "3ee751ac702e36c5d0eeff2a3bda48731259a6c1c84148c2905bc40385c941eb",
+      "name": "/dpp-lifecycle307-5d2274ee-candidate05-send-a",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "b2baf67246ce5116d400feca8a7bb22503b16aeed8150d09b3b1549938c81091",
+      "name": "/dpp-lifecycle307-5d2274ee-candidate05-dry-run-send",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "f854b0f08b27184b6507d0da7dafbf6ba0556c224fa255f8325766cb684a03b3",
+      "name": "/dpp-lifecycle307-5d2274ee-candidate05-render",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "3b94ebc716e434c00b9db31dab7010c4eb173ec79fa6c5af95cc21baf6f79062",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-denied-terminal-replay",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "20c8fb1074ee8d165251bddb4962c913bbdbd1b24871326416b45a5fd0ff9c3f",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-denied-terminal",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "259f5b1527e537e07bf5a58122964f70ae315bfad5a4ee3d48d112189927909f",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-denied-resolution",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "498931d927ecd633a86dd3a0c7970997f0fcb9efd3a79d685b5af352e3a2ad8e",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-failure-six-retained",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "ee748ff27270d370d0080c011d4394cd030166ae1f66adc6e46252653098da30",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-admin-disable",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "177dd861b9396292d1489c8f787add0dfd6fbd56e906ab9b04ccff9ee3bb9462",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-a-worker",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "57ee4197e379fd652ee4d55bd929a6c5316406ed2408100c917ae90a1a797f9a",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-a-outbox",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "53a01731b47baff218aeef2aa9c3e3eec12092c811261e7bf69cee152820b372",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-admin-enable",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "799e868213695c7e164a3c8b6ed1228445bf1db061df5e944274ada0b1fc0956",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-send-b",
+      "status": "created",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "84b76b5f6bbee47e9f961cf6d4f48e4f2b3f035824007efe8d9f68d99c5c2d50",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-send-a",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "0484679b65f1c9d6fd603e61e5b94a6e5fa4752e4771771af721615d1b2a87e5",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-send-b-staging-rejected01",
+      "status": "created",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "4935ebb52cd9d33ea07a13ddf04b35c7013f344a32954633af7adcf79142293f",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-send-a-staging-rejected01",
+      "status": "created",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "92a54204a079ad7dbe19ae647a3aefaff037a1f2c615b3c91d91c8e782276c8e",
+      "name": "/dpp-lifecycle307-5d2274ee-delete-recovery-redis",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "0ee5a053afc9e0b0b0a340fa9aa15542ee10135086dc9db55f34dd82c7b65dfa",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-delete-gateway",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "2478ee79d17860bb7a1065246c8691377b43951147e605068cdca4e706c0e5fa",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-admin-attach",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "d140986a69c4793666035d44ab0104b7db8b0a5d93d28dbe8a572404520ebf50",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-admin-inspect02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "6f40c14a3e0472d9490975f9d696306321d328f624a5b1ff182e0f3b2bcfc5e1",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-admin-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "3b32e910b9912f4597057316090fc2b073e2f3bdaa6711d1583054efd278db9f",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-admin-provision",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "7695c24a690d9cb54750fceeaaa1ee64fde9b45a2bbec5ff55ed280e1645ac19",
+      "name": "/dpp-lifecycle307-5d2274ee-delete-checkpoint-native-01",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "24eec81a207fe360d506cf0675677097c6b21c4b30949f450b3c4a522386a028",
+      "name": "/dpp-lifecycle307-5d2274ee-delete-checkpoint-core-01",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "521c50d2371f8cf6eeb1971e679f4098df02711486527ce8cadd043e0ff89f6b",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-13-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "30a7e043b01d9ddbc9a02f7afcbc05cc4db860a4c84bca6951699d67fab73733",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-13",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "eb0e7b903d75a44ae806e43b81b12516507bf4c74340a76089146afcf826960d",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-iam-13",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "4c5d220535b1c19f073deaa66ec77541dfe0214efbb9a88719b5e670e8076723",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-12-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "086954aa13509d0c849dc8153302ebf0f053b0ea4b545c9521ba72cda907a115",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-12",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "325717fb25099538ad2d9670041d48886ca787d0ac49d17f994a2aa0d844a8c6",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-iam-12",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "b299d1c0e5f69a5a3042ce58bb1d0b4d5efffbff3144819fae4bda8d3e52f548",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-11-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "41e89216fc723e66bce2e8a2f7f21397445fd3d95edceaaf0d18492e87d3e501",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-11",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "8f67e91b6337550c54f5c5c8b86c19ee3ee31ebbc816735674779d7c17ef68e3",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-iam-11",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "8e5206195d308a3d59e7094c09fc434f51fbc75890c9c99f6cad1b37f43d5cfa",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-10-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "ece2bc57a352ac0691c86d8e9652229f7ee449ec83439162013a305319c3b8ae",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-10",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "56215844d09d34b2ab1b1af6c80ca1a745d589cf61c801e854319cc7f5df47a1",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-iam-10",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "9f04dea1a18c01beeb5d7c02dedc17d031fb2f8c7867b5cbcfbcb88004c0fa69",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-09-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "6c29ca8120976575ed401f2a127b54c735f34dcb67bfc10a91c7db06ae029a74",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-09",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "dcdc84d4483fd3ccce211630386b34c801416dae41fd7eed78c62671e35315db",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-iam-09",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "8238bff5b9df8390fb9f2441a3b3ca92adb63d73fdb44a6a3f7e3f763b8b7285",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-08-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "653af2e285b0da8ed248d550bf70713d4eeb7f99fcb18b0dcc5e3b5bcc60fe95",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-08",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "4abb8886eab817d6d8a7623b367efdd4ddaae0c603c4dac46bc3f21d3bc52837",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-iam-08",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "c0c735fe9a3fde5b452aef7780b84ab28e4a01aa7cd3dd2e23b9603f3bbb3fa9",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-07-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "29b120180bd7957ede29aa710869616d43f0046dc4e824b7fe05391dcf35eb9e",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-07",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "4d09852043780fb5ad5d6a8ce44c3a803d4c9501b31323916925e43d9a6a5d6a",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-iam-07",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "563f6da4f80b29a4bb328c4f259ce5e58ea0a5d2971f2c67cb7f8ce2f82c076c",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-06-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "65f6fbef5cd57519bf35e357cd4087de59eab80f42ed7c837d8b88b85ac052d8",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-06",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "e98905d7ceae27a02c3a71a7803637d378244fc6c9878bc87540d1ce79b5da69",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-iam-06",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "1066e08167c14d2fbea941beb87e71ff5b252572871aaefe1ab9a8709d84092c",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-05",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "b4865c31044dc389cc9aeca9b4b36856f276fc95371479acf32dbac040e2c10e",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-iam-05",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "f3e4a876a4371857cff1ceda8acbb8d33a5e7c91f8106017ef97039477b93e05",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-04-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "76198f610d3b80706da057603392e1a18025eefa89c031fd0bdff82678bbfd5d",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-04",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "7ad7a3fbe887aefe3692b5cf13a5b32481913ce088c9ce285d239e0f39d1d709",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-iam-04-retry02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "b29f2c22a2582dd891a87e549e20c87bc091129d670b01a5af5bd2f47c7bd930",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-iam-04",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "f2f3b5602abda0461df35d0dd2a28e77c7bb0564d4ca2ae616c32c747a82b802",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-03-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "212c05ef13f0b983466d3ab7e78481bf2acf4027a62f3767a7bdcee920b435b3",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-03",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "d3efbb54ead478631e3633a7208dbb3c5effd7ed017feeca19eb42cc8efb7ee0",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-02-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "b233ab150632fdd0791804e88519a37b3b64d0d47471dcba401568da7f288964",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "0776f9a254c7c8ebb97d87c4c9f6b09ff9b38c05148a804644926e810b3cf06c",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-01-native-inspect",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "1d0563416990122a9041fe78bb62c13954261b9a0eedd4c4f8df12ad3a5d2a24",
+      "name": "/dpp-lifecycle307-5d2274ee-readonly-audit-core-01",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "65059bce000e03a1a1e44c98a45e833039d52ce75c54668a1444d91228d19436",
+      "name": "/dpp-lifecycle307-5d2274ee-predelete-core-auth-negative-02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "50b7eafc2e55870470487cda73f0c8178dabc1d3f5883fd0fc78edae452d1a06",
+      "name": "/dpp-lifecycle307-5d2274ee-predelete-core-auth-positive-02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "1976c314879a819f548c22e621a81277e43c80fa6e3de7969eadc4f169a19332",
+      "name": "/dpp-lifecycle307-5d2274ee-predelete-postgres-02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "81c3a96acb7a8da97a0bb31e8576624404f0b063291bbda4349b6201876dd4ed",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-native-after",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "92a4341a9cd2407cb4fc0081cea77be3c462fa9926e546aca42e4cee13466d5d",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-native-restored",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "305d95b583c8f70288d11647bb10925fda3bd06d721bf7d80bfe94ff5d248244",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-migrate-restored",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "066eadc202b07816f4736578f1211ac84e9257ffc92db17b5116fdeb2d510924",
+      "name": "/dpp-lifecycle307-5d2274ee-predelete-objects",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "c670834f6e0d7f1ba550bc5dcbeb7fc2618bc4067ac46688bc226828a0ffd543",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-native-snapshot",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "a3c610922f40ecb0c1410d6e9783fa7d58b9db5590a68fb92d45c77a387854a9",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-native-before",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "81e99a0f4a43a1c89e5cfc0edf2240b6e2c00e9b4ac0c42365d8e067b9c1c0d1",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-no-send-replay",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "a56312d2496b278acfca9c96f374e42690dfb183bb8af05f835eb668a6f27d80",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-migrate-source",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "846b96e4c7c58baff9cb1f77851488c65e47008e270be9f267a2ef92e81e993d",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-no-send02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "1c48196ee6d7a189d721c6af26e4d4e90a1404d52f17021eaa82f3f4de019467",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-rehearse02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "3bbee19e26165b673096ee078b3fd95c15042f531df5d9123d46460dd6ae440a",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-render02",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "3b690acc53d079278b37259e0072651046f0d0a5ee28caa36e79ef3d22ccb21d",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-no-send",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "5ec8887f1c93eb1a12c7d84414eead958c6fdc151c923a96bdd39838e054cf3f",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-caddy-validation",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "d8f4b8fd7a582004642774484611f8c0d61e9aec0df4e85769eb93795f1a7996",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-rehearse",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "5b0aa940122cc8fa64b5947ee4129143bb29d9c0247b415d4fb98906a8fd656d",
+      "name": "/dpp-lifecycle307-5d2274ee-reference-preparation-render",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "e10f24864d953c25a65232c78c9e0bb12e6a08122e905c8ebde22ec9cca1fd2c",
+      "name": "/dpp-lifecycle307-5d2274ee-predelete-core-auth-negative",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "df2d65af81b1880790113f0e460c0c6b8773211309b85d2b9c50519a05bd66a1",
+      "name": "/dpp-lifecycle307-5d2274ee-predelete-core-auth-positive",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "b57c6b44e63d6ccb797b2f8f82b885d8dc5601307bc0984f82306e08b79267b6",
+      "name": "/dpp-lifecycle307-5d2274ee-predelete-postgres",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "9b20260d5efa4391b82c491544087af151e5f7aa8f14a8318c3eed79c257bf56",
+      "name": "/dpp-lifecycle307-5d2274ee-reader-seal-93c177",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "6ac9e4e493895b172bd9113456fcdfc436eaa9de0a417b244f3b10c3416dd93f",
+      "name": "/dpp-lifecycle307-5d2274ee-reader-final-b91470",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "fb92bdcd150127c50163448de9d918f3a2d9a18e2384274b30febfaf647bdb87",
+      "name": "/dpp-lifecycle307-5d2274ee-reader-reference-races-d85398",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "ccd16e027a6a5e643422796285214a1b0e27c6da34f01897a870d30e99c19741",
+      "name": "/dpp-lifecycle307-5d2274ee-reader-setup-5653d3",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "032d7098b0640df9a25c510d1f93cb1f4d48b7a32333acae1e6d9817b11c83e4",
+      "name": "/dpp-lifecycle307-5d2274ee-reader-provision-4986d8",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "d0cb29545a79ed706f368c72ba8ad72561f563be6240e4ce12e21e72eb73695a",
+      "name": "/dpp-lifecycle307-5d2274ee-prepare",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "ba90451138af2c980f2ee77b58bfe2908ef67e06b1e03c96fd1a4e0836400af4",
+      "name": "/dpp-lifecycle307-5d2274ee-gateway",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "0a344aa06c7bc9c59e5b5ffe8d8d5584e22abf1daeb8b28c549a9735f5b6bf65",
+      "name": "/dpp-lifecycle307-5d2274ee-minio",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    },
+    {
+      "id": "c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0",
+      "name": "/dpp-lifecycle307-5d2274ee-postgres",
+      "status": "exited",
+      "pid": 0,
+      "host_ports": []
+    }
+  ],
+  "original_seal_records": 131,
+  "original_seal_distinct_physical_containers": 112,
+  "original_seal_alias_duplicates": 19,
+  "new_postseal_restore_container_retained": 1,
+  "old_seal_receipt_unchanged": true,
+  "cleanup": 0
+}

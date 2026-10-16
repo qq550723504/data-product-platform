@@ -1,0 +1,164 @@
+{
+  "status": "PASS_NATIVE_READONLY_REFRESH",
+  "operator_base_head": "b9314559605882c8464118baf05c7f13c76b6b04",
+  "operator_worktree_changes": true,
+  "operator_source_sha256": {
+    "examples/lifecycle-d1/complete-lc13-readonly.py": "83165c84826b5a0632d8cd54d6d403096033ef498d15f34798c074089df4d1bf",
+    "examples/lifecycle-d1/refresh-reference-readonly.py": "3635f6bec7283b9c7f2e5c4373d6c37df37783c8f382b0c9e2da94e428ada908",
+    "examples/lifecycle-d1/refresh-reference-v13-readonly.py": "674d74d17bf2473bcd92f021928791b4b8e0a7436a7c808f6d706ae02b5e23da",
+    "examples/lifecycle-d1/check-reference-refresh.py": "afee166cc4df2013c3578da2c80a1337882ce1cb824b09ff0507a9747746b965",
+    "examples/lifecycle-d1/check-reference-v14.py": "b9291930a1c78543ac5ef181a8ab5d11d638cb9b2ed8bc0ff16436a0ad2cfc8e"
+  },
+  "runtime_source": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "runtime_source_files": 317,
+  "native_observed_at": "2026-10-15T06:42:58Z",
+  "native_observation_range": {
+    "from": "2026-10-15T06:42:58.530947817Z",
+    "to": "2026-10-15T06:42:58.838998345Z"
+  },
+  "native_observations_within_source_before_after": true,
+  "full_source_matches_v13": true,
+  "storage_native_reads": 20,
+  "management_gets_this_refresh": 4,
+  "source_core_mutation": 0,
+  "clone_storage_calls_observations_costs": 112,
+  "source_storage_calls": 92,
+  "all_retained_containers": 66,
+  "source_configs_unchanged_and_sealed": true,
+  "new_maintenance_sealed": true,
+  "backups_sha256": {
+    "reference-disposal-preparation01/native-snapshot/native-store.tar": "f72efeab2c49802be1661a431164167d7a34968fef877163f08b25878d9554cc",
+    "predelete-core-checkpoint-04/core.dump": "19dba12b9992fdd11c237d6f0df489c7a961696acd54b8a3403b941e7005c98a"
+  },
+  "delete": 0,
+  "merge": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "retention_bypass": 0,
+  "independent_review": "Reviewed v13 baseline retained; this new native refresh/operator extension is primary acceptance, no new independent review claimed",
+  "offline_closure_diagnostic": "Initial closure wrapper looked for 5d-readonly-12 under the new generation13 private root and failed before any public closure receipt was written. Corrected only the closure lookup to fixed13; native exit0/receipts were not rerun or altered.",
+  "tests_status": "PASS",
+  "tests": [
+    {
+      "file": "test_reference_proposal.py",
+      "optimized": false,
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "file": "test_lc13_readonly.py",
+      "optimized": false,
+      "tests": 9,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_refresh.py",
+      "optimized": false,
+      "tests": 5,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v8.py",
+      "optimized": false,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v9.py",
+      "optimized": false,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v10.py",
+      "optimized": false,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v11.py",
+      "optimized": false,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v12.py",
+      "optimized": false,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v13.py",
+      "optimized": false,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v14.py",
+      "optimized": false,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_proposal.py",
+      "optimized": true,
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "file": "test_lc13_readonly.py",
+      "optimized": true,
+      "tests": 9,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_refresh.py",
+      "optimized": true,
+      "tests": 5,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v8.py",
+      "optimized": true,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v9.py",
+      "optimized": true,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v10.py",
+      "optimized": true,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v11.py",
+      "optimized": true,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v12.py",
+      "optimized": true,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v13.py",
+      "optimized": true,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v14.py",
+      "optimized": true,
+      "tests": 4,
+      "exit_code": 0
+    }
+  ],
+  "tests_per_mode": 49
+}

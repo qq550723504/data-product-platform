@@ -1,0 +1,73 @@
+{
+  "recorded_at": "2026-10-15T02:43:06.788033+00:00",
+  "recorded_by": "Primary agent from completed independent reviewer message; no new native execution added",
+  "reviewer": "/root/v8_independent_review",
+  "reviewed_head": "a29bfe6019cd5b38415fd378394fcd537662525c",
+  "status": "PASS_INDEPENDENT_OFFLINE_REVIEW",
+  "current_slice_blockers": 0,
+  "operator_or_runtime_fixes_required": 0,
+  "scope": "Finite v8 exact proposal, offline checker, audit-core-07 read-only receipts and fixed07 operator extension under AGENTS section17",
+  "reviewed_operator_sha256": {
+    "examples/lifecycle-d1/complete-lc13-readonly.py": "c8a97e9f5dbba1f914277420ecd42f24cf69a7cbcc5dc2fdb4836f23882a3e61",
+    "examples/lifecycle-d1/refresh-reference-readonly.py": "5b36fb2f21e9ecf7813a33955be7cc76ad695722c145840d528e6b3e436c4bbc",
+    "examples/lifecycle-d1/refresh-reference-v7-readonly.py": "7386fd6a82c2bc322aea9cef2368d9db7f435c25e92dad200b2b7d8ef7d20688",
+    "examples/lifecycle-d1/check-reference-refresh.py": "3b45fc3d5d9e10e42258a72e2643e0b9a982f44b01bb11abcebe8f86b8c8ebb9",
+    "examples/lifecycle-d1/check-reference-v8.py": "bd82ac6642c5b0b1217c7c41f310f6e1a975923d688dfe58fd09f04ce7d5f79d"
+  },
+  "reviewed_documents_at_head_sha256": {
+    "docs/acceptance/issue307-d1-delete-proposal.md": "7022441874b3e8ce686d5cf5e44635e0a8477b78510435198b3479d1d3fcf1f0",
+    "docs/acceptance/issue307-d1-candidate04-readonly.md": "0895134e0d4eeb311faa44df292049f4b33f166fbee97d2ecf09d00f80fcfd0c"
+  },
+  "independently_executed": {
+    "tests_normal": 25,
+    "tests_optimized": 25,
+    "test_files": {
+      "test_reference_proposal.py": 7,
+      "test_lc13_readonly.py": 9,
+      "test_reference_refresh.py": 5,
+      "test_reference_v8.py": 4
+    },
+    "offline_clis": {
+      "check-reference-proposal.py": "PASS_OFFLINE_CONSISTENCY_ONLY",
+      "check-reference-refresh.py": "PASS_OFFLINE_V7_REFRESH_CONSISTENCY_ONLY",
+      "check-reference-v8.py": "PASS_OFFLINE_V8_REFRESH_CONSISTENCY_ONLY"
+    },
+    "additional_generation07_inner_semantic_adversarial_cases_rejected": 14,
+    "indexed_payloads_matching_checkout_head_raw_bytes_lengths_sha256": 96,
+    "new_v8_indexed_payloads": 20,
+    "historical_payloads_and_indexes_matching_4ee5f1a6_raw_bytes": 82,
+    "runtime_files_checked_by_frozen_v6_anchor": 317
+  },
+  "conclusions": [
+    "Exact environment, candidate04, two targets/four survivors,129560 bytes,budget and closed authority match reviewed v7; retention expiry never expands scope",
+    "All five operator SHA256 match the reviewed commit; native candidate driver hash and base-head4ee5f1a6 correspond with worktree changes explicitly recorded",
+    "Source before=after=07 restore=predecessor v7:194 relations/1879 rows and role/owner/ACL fingerprints match",
+    "Six protection and two inventory observations are newer than v7 and inside source before02:14:03.010259Z/after02:14:12.376150Z; proposal02:17:12.011406Z is after readback",
+    "Source journal92; clone112 calls/observations/typed costs,unaccounted0; this generation four management GETs separately receipted",
+    "Fixed07 extension rejects08/arbitrary/delete/confirm, adds no send switch, reuses TCP readiness and independent stop attempts with nested-finally sealing/restoration",
+    "Public topology retains original45 entries unchanged and adds only the three fixed07 helpers;48 receipts are exited/PID0/no host ports"
+  ],
+  "nonblocking_document_correction": {
+    "id": "V8-DOC-1",
+    "file": "docs/acceptance/issue307-d1-delete-proposal.md",
+    "baseline_line": 174,
+    "problem": "Current07 paragraph inherited eight management GETs from previous generation",
+    "resolution": "Clarified this generation four GETs; previous eight retained at original observations; no receipt or accounting rewritten",
+    "classification": "NONBLOCKING_FACT_WORDING_CORRECTION"
+  },
+  "reviewer_effects": {
+    "file_edits": 0,
+    "docker_access": 0,
+    "provider_io": 0,
+    "db_io": 0,
+    "private_credentials_access": 0,
+    "container_starts": 0,
+    "iam_changes": 0,
+    "delete": 0,
+    "merge": 0,
+    "cleanup": 0
+  },
+  "matrix_finalization": "Only record completed review, its finite scope and factual wording correction; link separate receipts, preserve original native observation and all indexed bytes",
+  "authority": "NOT_RECEIVED; review PASS is not execution approval",
+  "follow_ups": "Actual native IAM/provision/activation,DELETE/post-delete recovery,fullD1/D2 and genericIAM/owner/DR remain separate #307 acceptance;#318 Draft"
+}

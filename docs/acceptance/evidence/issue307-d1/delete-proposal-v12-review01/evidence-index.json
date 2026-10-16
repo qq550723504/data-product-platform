@@ -1,0 +1,15 @@
+{
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-v12-review01/independent-review.json",
+      "bytes": 6449,
+      "sha256": "9fa5987cfa148cc53bfb0c8b254dfcd869b8bd3d46724489e0e793f1e45dbee0"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-v12-review01/primary-audit.json",
+      "bytes": 25054,
+      "sha256": "ccf583c8ece65809456aeb9e3de9b7ce3ce33359b97cefc2cb1bf03b561de9dc"
+    }
+  ],
+  "scope": "Separate v12 independent offline review and primary host metadata;no original indexed evidence rewritten;no delete authority"
+}

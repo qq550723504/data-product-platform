@@ -1,0 +1,407 @@
+{
+  "status": "PASS",
+  "staged_files": 79,
+  "known_private_values": 11,
+  "matches": [],
+  "values_disclosed": 0,
+  "scope": "All changed staged public source/evidence/docs since0c9 including latest manifest/review/source-validation; self-excluded result contains only counts/public blob hashes",
+  "manifest_reviewed_entries_unchanged": 77,
+  "snapshot_entries": [
+    {
+      "path": ".github/workflows/demo-lifecycle.yml",
+      "git_blob": "4f8eea8fec846aae9e4e9a45fbf1d2dc94947d2f",
+      "sha256": "f1415c9d0f1e983b8700efe0ae844444e6b6802f9ec673b68c780b5223d625a8"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/main.go",
+      "git_blob": "832d1fb540c9d5b65c7125f03f7b497f359ed13e",
+      "sha256": "7224312b3e707dc9a6bcd24ed953425c1f70601294505fef5c09858fed50b11e"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_gateway.go",
+      "git_blob": "7bc528b36b48a13aee3e8e1e282d0c8b6a860c2f",
+      "sha256": "7e69fbba2b1ab0756551a25a57f63762e329aeef2f8fd09b5712c8c942729df9"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_profile.go",
+      "git_blob": "c48008685bcfe76393d73a70629c87b6e60d57d8",
+      "sha256": "79eac6889006c8a8fc65d49ab55f082140464466109de59bdc6870226d6126a2"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_profile_test.go",
+      "git_blob": "947070ab35596a8d76aceb39c6362f1f5e008b59",
+      "sha256": "9d74e87f1ae8b33e2c657daa36f83f3da85bacb5825914259439d26188eb62b8"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_render.go",
+      "git_blob": "6bd7b2ad9518eaf712598e58a3635dfda8aba0a8",
+      "sha256": "2f68677696a631c0de0103ae19edfe382235ac8984e07cefaec60332708eb173"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_send.go",
+      "git_blob": "3be80cc1965eaabd9b815e50f007490435dab2d9",
+      "sha256": "d590ac057a250f94016c750745e9427689d2db97b3fc9946c58477b08e9c8ced"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_topology.go",
+      "git_blob": "10ef3f52ea979667f26d790309a97f81eca38d57",
+      "sha256": "e3e09d6c165e801dd7f69e572cf76bf44face96cfa1371e21fd6debf6a3aa02c"
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-delete/reference_topology_test.go",
+      "git_blob": "f05af7263c5e5a2baef7b209aac161e87fe98d2e",
+      "sha256": "2fc3c6f9ab67b35b310c0af9259b398b527542fb9e738b4039311bf954d5651b"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/checkpoint_read_integration_test.go",
+      "git_blob": "5732e89731d1fec9819f7a9f38ccb3ca010439e9",
+      "sha256": "c98309e5b1287a94ac13d9f066ebcde605bb282dd0f5ceb83126bb6ebed9c7af"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/disposition.go",
+      "git_blob": "706b6d041ad9e1019de16fd289f54a1f3ab120d2",
+      "sha256": "2417b7b4f4a31d4ed3939777dd01252fdbd2ff5baa1bb3e9e0a83e867fd14e6e"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/observation_batch_integration_test.go",
+      "git_blob": "edbdfe61da00cf57cbffafb5fe1a59f2bbbf58a2",
+      "sha256": "0458c8a613ac0f686db00d36f5429842947382da565850614c76fb0e8855333a"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/storage_inspection.go",
+      "git_blob": "ea45e33d60aa1b9c963e9aadf44acc8c529f0c61",
+      "sha256": "da00e586057409efcac79e0bbd3bc5cc586b9f41b47e72634db538a672775316"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/storage_journal.go",
+      "git_blob": "7f217f5106e0ba1186ec4afdecb6b321c56770e6",
+      "sha256": "f9b37acd7739afc1499668e91bf80d2b3c0c56b4827a47c9bd49733fd700f63b"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/reference_no_send.go",
+      "git_blob": "52bb09036523e97630edd87494a04212c3f94843",
+      "sha256": "5b088e723985807cc31fad0b482fdd9a854446e90641d9e2671605c15c78de59"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/reference_no_send_test.go",
+      "git_blob": "ad3c839ff35f974b2a07a627bf7294fc33006d91",
+      "sha256": "aac05affda79763d3a00773829180f2feb1fe9ade76d5fb22fec3cf1d6daaa8f"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/reference_scope.go",
+      "git_blob": "7839c38925483b6c09ff2ef8dbcd3fdf7bbcb40c",
+      "sha256": "38a91773bcc0da36dff6c5f6e86fdb85fdfa2d9a9bec4a33c19a29ac6cad3562"
+    },
+    {
+      "path": "apps/platform/internal/platform/storage/lifecycle_checkpoint.go",
+      "git_blob": "4f6383c244ac297896d586fbd3bcbe45903fa4db",
+      "sha256": "fc028f2d893ca46ac7a25b00f2a2c08c96f4bc30eacdf14cec029181b81d403e"
+    },
+    {
+      "path": "apps/platform/internal/platform/storage/lifecycle_checkpoint_test.go",
+      "git_blob": "cdc49cf0f4cddf34291a340a6470cf683e470424",
+      "sha256": "639f7e82bf6cab3d5d72991e475b7420b4f9244115d5eb4bc2b14c1efb495b2f"
+    },
+    {
+      "path": "apps/platform/internal/platform/storage/lifecycle_copy.go",
+      "git_blob": "3fb9df88df6de21f4860e23e70834104d040ce6e",
+      "sha256": "90fed81431e30fad9fe32e7063dbd891314444dc3d5bd1686edde84b6bddc089"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-generation02/core-checkpoint-auth.json",
+      "git_blob": "353f871631c9e0f905e47e326bffdd0a4c5ad75d",
+      "sha256": "ba2ebb8fc396d598af42b48efa17be02404feeddd6aed6bc6d4f509bac7b29be"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-generation02/core-checkpoint-final-readback.json",
+      "git_blob": "75f26d7923c32370a38e84668dd87de28c406d54",
+      "sha256": "6ed18c8dedadcd57ae0823ba1119963f6708d2f6f55f7759b9ce4f9be7c6eeac"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-generation02/core-checkpoint.json",
+      "git_blob": "33528d90881362477df86f352dc85cc6d429833a",
+      "sha256": "6dfb0a997286f1be4f7d43d487e3d8cc02ca69ad0c690fa6524709565685454c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-preflight-5d2274ee-generation02/trial-no-send-applied.json",
+      "git_blob": "9f8ccd8af9b80edcf769ae6b06fbef46c50d6ad7",
+      "sha256": "bccc0171d1b5e353eed271568346ccbe7d92cd27edfcac5d93368049923395f2"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/build-source.json",
+      "git_blob": "01eaa469dc34aa2e7d3dd8b0d1845a9c2bde153b",
+      "sha256": "3da847a64b5c37fcc2b46fbcb211af51180cfb49879064c3b33773c3fe6d0872"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/build-source02.json",
+      "git_blob": "914ba16678eb4f97093fe82fdb1a7fabef1c772c",
+      "sha256": "1564fdd80d6366ffca7f8df208c815f22232757e431a7ad181563274fb06b824"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/business-fingerprint-closure.json",
+      "git_blob": "f6aefcb353c5db931ffe62c119728d924d148825",
+      "sha256": "dd344248cee1bc6ffabb50dc3a75aba74645dd56eaf5ab9a6b5f4478a09e8e7b"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/caddy-validation.json",
+      "git_blob": "c146680efb0dc2e3067a05dad18270b4826082f9",
+      "sha256": "88630a302ed84c71cdfd14c764fdb44b712d9daba0222e0fc6d3533344a323f9"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/caddy-validation02-binding.json",
+      "git_blob": "b4edfd9995c7bf829085471c9388fb6ed9f06748",
+      "sha256": "538b8d4fb4a518dbc0866a39f7fff9488d1403051edaf4de3373b4d3602717be"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/current-core-readback.json",
+      "git_blob": "10f1154286b140b884c8856926691f4233488708",
+      "sha256": "3435c414ccd7c3883b1bf2b9cc5847adb7dfe95af3047181b57ed6efdee47a22"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/execution-source.json",
+      "git_blob": "d1152533361a9b93eb4db88c9e82aebb1652da6d",
+      "sha256": "517323a4c1c8fcd53c6ca5fde58e809bd1b5e8d70365a91e99108941aa614026"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/final-state-readback.json",
+      "git_blob": "f55d565a806ab248444c6e2d5f4f95849c00c008",
+      "sha256": "e2c9cc264d821dd65cba45e6ce154dbc32ba0f42f5575c5aa389267fa9cd49ec"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/full-race-initial-diagnostic.json",
+      "git_blob": "143a09728bfc4d32761601e0dc4668d2a61bec44",
+      "sha256": "3c2a7a3ef4475a07f36001193cac3b9adcd0b26618ebf2d56c6662657ce1bd82"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/independent-review.json",
+      "git_blob": "51ad65c0dd01cfb8878b4de9a6b6cfe17f5ecfbb",
+      "sha256": "817a16cbf61a1f27b4a3ff804df724243382784f9f166cfb14d2c296af3b542b"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/initial-build-diagnostic.json",
+      "git_blob": "899fd111c691f131c802cdb718e701ece354a274",
+      "sha256": "e371e462f98598ae9033d2a3ea01c9f9f9705e48586507860dcee8d8857272f8"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/known-private-value-scan.json",
+      "git_blob": "2eeba33a021c0425033391963fabc9828df77f95",
+      "sha256": "1e2cadb9261af0acb77482cd7e6eb1fda48f4e729c867b1d3fcfe3000dfddac7"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/migrate-restored/helper.json",
+      "git_blob": "082d7dd36a8d5da3236b237240aa74235dd543d2",
+      "sha256": "801489c2d3425d2e513d7ce2c2ca29794ea1483eb76dcb19e87cfc7afa9db0d8"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/migrate-source/helper.json",
+      "git_blob": "0b43cb73f37bece81494bd2000fd128e7f324f8e",
+      "sha256": "db942977ea07463393adb7ce2656d939044ab40ed884bdd165087e4750e56640"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/native-after/helper.json",
+      "git_blob": "82ef3f2dd8ca278990afd873e41962b5131067ac",
+      "sha256": "5d93f58d3047ccb467f2323f4e7773655e901301edac517d9bb0942b56bb95da"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/native-after/native-six-version.json",
+      "git_blob": "aed1b51df704991735ef23cfae10dcf61d2d0cf7",
+      "sha256": "ca2aeded0c390f8173242be5d4973f114bc602c37e0fb4768445569d8240de46"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/native-before/helper.json",
+      "git_blob": "7a2231913d76de870dadb98c2a1a24dee0bc5fb5",
+      "sha256": "206c2f53a026a1bb9d952cea1279610fa92321b6407de546c29385ed4e2ea0d7"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/native-before/native-six-version.json",
+      "git_blob": "efcc44264176d121cbbeecc54d86f480c101f6f7",
+      "sha256": "2c21a6a591674587dd7e9ed0b277a874f6f6f9462a1cbb958b2290442ac7daf6"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/native-restore-closure.json",
+      "git_blob": "5a3f50b29de4e629befdfded849224576b185af2",
+      "sha256": "008910d8e7d4fb07af7396c62730b124b86e0a234b7e18b524f20493a0df27fb"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/native-restored/helper.json",
+      "git_blob": "a2a46013b56a5814acac8298ee5991db4c0e5de7",
+      "sha256": "300719f84fb995dcfc1fc0b65d54074d1c0f5970e1060121ecfa8cecbeba26ba"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/native-restored/native-six-version.json",
+      "git_blob": "587c039af484aa6c753bc2f50165c9f3c684ff1e",
+      "sha256": "e69dd63b0f8b634530058e1bf650e4b332a05a7d845e512bf76f3e740d2695ef"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/native-snapshot.json",
+      "git_blob": "f943198b76afea561ac3110897e72ad305b75ab2",
+      "sha256": "93e704867a0b968914683dc8dacb5df57c453a7c887b8e55c18fbdb47e797bad"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/no-send-closure.json",
+      "git_blob": "273ecd1ef8a5d3467d3eb6780d32a848c81f1c7e",
+      "sha256": "633e08b4a222b3571d3bac32f986d53eb4e327b023f19c45f9e58c1475bb8d82"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/no-send-cryptographic-db-closure.json",
+      "git_blob": "f9dfaadf36fde7cca02ae3f54fc53affeff0dfdd",
+      "sha256": "fdb9ff079bc3ff01c1b1096560115ec1c7922d9b69ddad1106145ff482102631"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/no-send-initial-failure.json",
+      "git_blob": "31ea139272d42622a92b5974ffd54f2173d84e1c",
+      "sha256": "8b8a920d7dd6a44b2f71fd45ee04265b4508859cb9d33a2747386e0a933424c3"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/no-send-replay/helper.json",
+      "git_blob": "04314ae7ca21109a644f3f6ab09324a3a0d7643c",
+      "sha256": "6289fc64f292f8d1810692951e8e63acc0751c2aea3b2b91c54d398e6f167870"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/no-send-replay/no-send-transaction.json",
+      "git_blob": "5c709a8bef8bd6829333f188bf9358dd328336e3",
+      "sha256": "f64f7f263d6a56cf310d14b47b36be6c8c81798612ceb9034fd21593fe931e61"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/no-send/helper.json",
+      "git_blob": "f0c8bd178539a29501e853a6ba63043f9cc6585d",
+      "sha256": "ab4f34b51a738c0419c57fe0aea7ccf20b7787db2bcf4f505f92cb3a8e8a55b1"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/no-send02/helper.json",
+      "git_blob": "80c71a38e70316e87060bc2ac65843c6ba4fad6f",
+      "sha256": "ec7b06d59b4a7b09a013c675b7f696328eab157378f8d2f6e6c55023729bd808"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/no-send02/no-send-transaction.json",
+      "git_blob": "9f8ccd8af9b80edcf769ae6b06fbef46c50d6ad7",
+      "sha256": "bccc0171d1b5e353eed271568346ccbe7d92cd27edfcac5d93368049923395f2"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/preparation-manifest.json",
+      "git_blob": "ed7d2e187690a321e1838e304a45d5ef573a8221",
+      "sha256": "5793ff0f905abfdf4be786c385b67cf50924e71b6c177fd1c2b06e079b230348"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/proposal-v2.json",
+      "git_blob": "c10af3ebb93d6e25dfa6aa16d042292092b89ebe",
+      "sha256": "c1c5dd7e06d76929b2e5304893454dae2b318ee91b4903f1c6ff2ff651c672c5"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/rehearse/helper.json",
+      "git_blob": "0e8a057c189f89167c5bd9878827429e9c0799f8",
+      "sha256": "9e29295326f0d29935e867364bbb1893cd15e01ad4da539cdbf4dd768d88ecc6"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/rehearse/send-disabled.json",
+      "git_blob": "c8644574297f08444157ec7ee4c41172c20f863d",
+      "sha256": "9f8c7bdbb08a6954d37efc9cd0a9767ca99e116850e4ce24297daa890d856955"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/rehearse02/helper.json",
+      "git_blob": "864c66225dd4582d7fc3fa9c2327607d13091046",
+      "sha256": "196d8e887b56a1318bf008c629033d517242a1880c43c30b108d19056049478c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/rehearse02/send-disabled.json",
+      "git_blob": "c8644574297f08444157ec7ee4c41172c20f863d",
+      "sha256": "9f8c7bdbb08a6954d37efc9cd0a9767ca99e116850e4ce24297daa890d856955"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/render/bounded-profile.json",
+      "git_blob": "7ae619d14b2f7be62f44ffd7a137579cf7de8354",
+      "sha256": "f6ba777a19ab6d69539c804f3d82ad19adb73be744c438364adfca99b65d71f8"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/render/delete-executor-policy.json",
+      "git_blob": "71f33e197d1fb7a316460ba44141fe259305d1e5",
+      "sha256": "ab24ab862bf0e21d23ee21989f4140b3c7200cdecee22d4a708cc45621da8b54"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/render/helper.json",
+      "git_blob": "2b915599a641d496e5df4abd795ff31ee7a7089c",
+      "sha256": "a0bffb1e437260cdd46299867790a7e40b711818b582e3dd905083049e55a369"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/render02/bounded-profile.json",
+      "git_blob": "ee168c6420d445f19fbe41db5480133e1cf79ad7",
+      "sha256": "901346d687c9283ccebef700737c9c594bb94cb2a4b5e415cb51703801f05136"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/render02/delete-executor-policy.json",
+      "git_blob": "71f33e197d1fb7a316460ba44141fe259305d1e5",
+      "sha256": "ab24ab862bf0e21d23ee21989f4140b3c7200cdecee22d4a708cc45621da8b54"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/render02/helper.json",
+      "git_blob": "de6850cf5831559e41d0f3c5c291b539285f7575",
+      "sha256": "aef39cc5859d18f92d44d633d887334cd9d6884a43602759063a8a49834cbc7a"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/sealed.json",
+      "git_blob": "41d34dfb686d25e275368f55a96bc6d3c9d911ad",
+      "sha256": "6a09a42eeb4cdb965bbf3b942b2a4c4442233a9202393176845a1322e7a67371"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-preparation01/source-validation.json",
+      "git_blob": "a45cd2114591516ee4d17a96da0ec45ad89fff3c",
+      "sha256": "55f1ca18a8d77cfefb96243cbe1ce4aa48f5fb3de22b09706baf85a2aec65504"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/reference-disposal-source-validation01/preparation-diagnostics.json",
+      "git_blob": "fac798f6eb2ed8253ea29043eff1f8904eeb489f",
+      "sha256": "2be18de8a6940198452e975924528f4b5784cd15dae067ee4b21f31911258bee"
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-delete-preflight.md",
+      "git_blob": "f01b1a6bafb9a615cbdf341492175933deb282c5",
+      "sha256": "5967bbb7f39c697937b9e2582fcd9b86cda9c61298eafe1fdd7c96a2912ad71a"
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-delete-proposal.md",
+      "git_blob": "56180d6c71614777a8b2a0309a149344d34f5ae5",
+      "sha256": "913dc3c20753822a466d57689083765260170f0bc2cb3926485480af204c2d55"
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-reference-preparation.md",
+      "git_blob": "cda0d19447a4e53f4e88e0b39b9c9726a1ca314c",
+      "sha256": "6e896373a605ae817d2ab5e33e472159676585c29e98e775b30d6452d7dcf012"
+    },
+    {
+      "path": "docs/acceptance/issue307-reference-demand-contract.md",
+      "git_blob": "7deb010adf61c4361b5c9b1e7005ebf2513e0974",
+      "sha256": "f5ce38fd3784c90f4642737c248b496894268950e6f5f4bceaec2fd024ba72aa"
+    },
+    {
+      "path": "examples/lifecycle-d1/assert-reference-storage.ps1",
+      "git_blob": "1205d0517f8c2adb2858e294d9d28954782fda04",
+      "sha256": "15c02d8317c297170f33b511f0675e341028dada14e118bf639681d59c0828e6"
+    },
+    {
+      "path": "examples/lifecycle-d1/checkpoint-reference-core.ps1",
+      "git_blob": "c01d02f113d869a26b8b2fc65292bece988f4225",
+      "sha256": "0524d81b2a7e57ddcd79874c2e108a4850c2a693446c96f20314412a0a80e169"
+    },
+    {
+      "path": "examples/lifecycle-d1/prepare-reference-disposal.py",
+      "git_blob": "7680e46a6a66fb749b2ef9f964d1e37a84dfa01e",
+      "sha256": "739c21df703fdc27140c5b4db6d5f75fd8d02d1f7e08b6a07fd91b8a778da149"
+    },
+    {
+      "path": "examples/lifecycle-d1/test_reference_disposal_preparation.py",
+      "git_blob": "ac49dc542d6a897400587a2823daed47aca4f488",
+      "sha256": "b08b5c70fe4104ec79aff75d11b267da7cf18a49c9c3507cbe0f56f183668470"
+    },
+    {
+      "path": "migrations/000068_lifecycle_checkpoint_read.down.sql",
+      "git_blob": "c4f25f7ef4d931d021082c506e0d9231a73305d2",
+      "sha256": "d62869b7859a6a2be1b4252a0538ae3a42380753a392db752e5462cb448c51e5"
+    },
+    {
+      "path": "migrations/000068_lifecycle_checkpoint_read.up.sql",
+      "git_blob": "e3f5e3f1eb70a87350e93c5e2c794364e06c6c9a",
+      "sha256": "23e90a25cd53da573419063a308c6366be5312688b7286b64268325394429d16"
+    }
+  ],
+  "no_provider_io": true
+}

@@ -1,0 +1,13 @@
+{
+  "mode": "provision",
+  "role_directory": "",
+  "exit_code": 0,
+  "expected_exit": 0,
+  "run_id": "f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3",
+  "cleanup": 0,
+  "delete": 0,
+  "id": "b4c816167e4aafc83e1002003d883d6da8124312289ba6d3a41656403ff280b6",
+  "container": "dpp-lifecycle307-f3b0c9cd-reader-provision-b5e7d3",
+  "binary_sha256": "0bdd794e15230b4da02ddc2a183fd159e2f01817a70fae3556e112f05b57a84c",
+  "root_mounted": true
+}

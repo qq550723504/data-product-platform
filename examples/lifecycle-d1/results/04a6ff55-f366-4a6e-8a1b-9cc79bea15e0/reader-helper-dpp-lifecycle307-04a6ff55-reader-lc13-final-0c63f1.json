@@ -1,0 +1,12 @@
+{
+  "cleanup": 0,
+  "container": "dpp-lifecycle307-04a6ff55-reader-lc13-final-0c63f1",
+  "id": "00c11c04f7917cb6ad67fabb8e4389c08a35cced7ba3dea688f6a702c2a78e74",
+  "run_id": "04a6ff55-f366-4a6e-8a1b-9cc79bea15e0",
+  "mode": "lc13-final",
+  "exit_code": 0,
+  "expected_exit": 0,
+  "binary_sha256": "3cddefc13a732482f1afe5493dd641ab880254a9ec47536b1053516d51dc727a",
+  "root_mounted": false,
+  "delete": 0
+}

@@ -1,0 +1,20 @@
+{
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-v6/closure.json",
+      "bytes": 11715,
+      "sha256": "9c612ed50619e0e9308d239a5ea1cdd79174659c69817df3f95da51be6e6adcd"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-v6/proposal.json",
+      "bytes": 16197,
+      "sha256": "6af9a720a19c2473f9135dd8408ec02f276596ce2e75cbb32e6e49f24d8ef226"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-proposal-v6/runtime-source-lf.json",
+      "bytes": 42549,
+      "sha256": "e811983edc6446d9faf606f98f328c9022e63e883fe73fb6b4e8448c1beb0bea"
+    }
+  ],
+  "scope": "v6 proposal/offline closure only; prior37-file index retained unchanged"
+}

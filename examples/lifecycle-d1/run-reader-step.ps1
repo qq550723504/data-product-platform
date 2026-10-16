@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','seal','bind','crash','accept','final')][string]$Mode)
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','seal','bind','crash','accept','final')][string]$Mode,[switch]$RetainHelper)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 . (Join-Path $PSScriptRoot '../temporary-containers.ps1')
@@ -27,5 +27,5 @@ $expected='0';if($Mode -eq 'crash'){$expected='95'}
 $receipt=@{run_id=$run;mode=$Mode;container=$name;id=(Docker @('inspect',$name,'--format','{{.Id}}'));exit_code=[int]$exit;expected_exit=[int]$expected;binary_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $dir 'reader')).Hash.ToLowerInvariant();root_mounted=($Mode -in @('provision','seal'));delete=0;cleanup=0}
 Write-Utf8 (Join-Path $PSScriptRoot "results/$run/reader-helper-$name.json") ($receipt|ConvertTo-Json)
 if($exit -ne $expected){throw "Reader $Mode failed; helper and facts retained. Inspect its log; no automatic resend"}
-Write-Utf8 (Join-Path $PSScriptRoot "results/$run/reader-helper-$name-cleanup.json") ((Complete-DppTemporaryContainer -Handle $temporaryHelper -ExpectedExitCode ([int]$expected))|ConvertTo-Json)
-Write-Output "Reader $Mode complete ($exit); helper archived/removed, objects and volumes retained; DELETE=0."
+Write-Utf8 (Join-Path $PSScriptRoot "results/$run/reader-helper-$name-cleanup.json") ((Complete-DppTemporaryContainer -Handle $temporaryHelper -ExpectedExitCode ([int]$expected) -Retain:($RetainHelper -or $expected -ne '0'))|ConvertTo-Json)
+Write-Output "Reader $Mode complete ($exit); helper lifecycle receipt persisted, objects and volumes retained; DELETE=0."

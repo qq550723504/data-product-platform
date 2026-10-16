@@ -1,0 +1,101 @@
+{
+  "status": "FAILED_HISTORICAL_RUNTIME_COUPLED_TO_CURRENT_CHECKOUT",
+  "queried_commit": "df861b53bdc6ebc16a2729504181fc64158255d8",
+  "run_id": 38713230718,
+  "run_url": "https://github.com/qq550723504/data-product-platform/actions/runs/38713230718",
+  "failed_job_id": 116349619769,
+  "failed_step": "Confirmed disposal driver safety tests (no provider I/O)",
+  "jobs": [
+    {
+      "id": 116349547396,
+      "name": "classify-changes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116349618940,
+      "name": "hop-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116349618948,
+      "name": "splink-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116349618961,
+      "name": "label-studio-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116349618979,
+      "name": "temporary-container-contracts (windows-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116349619093,
+      "name": "gx-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116349619105,
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116349619111,
+      "name": "web-console",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116349619122,
+      "name": "go-platform",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116349619640,
+      "name": "browser-contracts / web-browser-contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116349619769,
+      "name": "demo / demo-lifecycle",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 116349619883,
+      "name": "live-core / live-core-browser",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116353100032,
+      "name": "required",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "failure_excerpt": [
+    "2026-10-15T09:29:39.9588796Z   File \"/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/check-reference-proposal.py\", line 81, in check",
+    "2026-10-15T09:29:39.9589946Z     return check_facts(p, root)",
+    "2026-10-15T09:29:39.9590418Z            ^^^^^^^^^^^^^^^^^^^^",
+    "2026-10-15T09:29:39.9591623Z   File \"/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/check-reference-proposal.py\", line 102, in check_facts",
+    "2026-10-15T09:29:39.9593276Z     require(frozen['runtime_source_hashes'][path] in {lf_digest, crlf_digest},",
+    "2026-10-15T09:29:39.9594702Z   File \"/home/runner/work/data-product-platform/data-product-platform/examples/lifecycle-d1/check-reference-proposal.py\", line 31, in require",
+    "2026-10-15T09:29:39.9595861Z     raise ValueError(message)",
+    "2026-10-15T09:29:39.9597014Z ValueError: Runtime text differs from frozen raw source: apps/platform/cmd/lifecycle-fixture-delete/reference_gateway.go",
+    "2026-10-15T09:29:39.9728178Z ##[error]Process completed with exit code 1."
+  ],
+  "current_go_platform": "SUCCESS",
+  "native_success": "BLOCKED_NOT_ACCEPTED"
+}

@@ -1,0 +1,13 @@
+{
+  "helper_id": "e79d8a484e24716eb90d6f5b548f38899a55b34e01790e8864ed6cb6ff61ea5d",
+  "scenario": "copy-competing-owner",
+  "work": "f7cb42ee-17ba-4370-ab48-6c4af691c4f3",
+  "mode": "once",
+  "source_head": "e173364efe7ce46a01cd4a14a9c6e31fc5e39c86",
+  "binary_sha256": "33bc8135a6aa1713a8ae1597be9ad744843044652fb0348483a1236d25e9d249",
+  "gateway_sha256": "c6f0d195e3300b1a5971fe377b6d7d12c7b6b2397bf5a1e826a8929c9ae12ebc",
+  "root": false,
+  "copy_send": false,
+  "native_delete": 0,
+  "cleanup": 0
+}

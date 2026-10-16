@@ -1,0 +1,103 @@
+{
+  "status": "PASS_NATIVE_READONLY_REFRESH",
+  "operator_base_head": "42d47ffa63840aaea8b1c18839caddd412c069c0",
+  "operator_worktree_changes": true,
+  "operator_source_sha256": {
+    "examples/lifecycle-d1/complete-lc13-readonly.py": "fa09ffd77a6e4b142f4fc8f0cfb0fa282896a4eaee2698f3964372d6a6d7795a",
+    "examples/lifecycle-d1/refresh-reference-readonly.py": "805380eba983ceaa36ae2fa5f6ca756504e6c19a8dc44602e89df1061d1124f3",
+    "examples/lifecycle-d1/refresh-reference-v8-readonly.py": "f0e4ff3377ca64beb3ccf57e79fc6d91b3b832235dab13eb4dafee750bad4935",
+    "examples/lifecycle-d1/check-reference-refresh.py": "41aee5c9aa0be9b47f397eeac25e5ce7495735518307f3dba783e5777a6958f6",
+    "examples/lifecycle-d1/check-reference-v9.py": "fe476424c1def99503d92a36b2771dd86b51c09be53f37bfdb62b06a1ad16a4a"
+  },
+  "runtime_source": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "runtime_source_files": 317,
+  "native_observed_at": "2026-10-15T03:01:24Z",
+  "native_observation_range": {
+    "from": "2026-10-15T03:01:24.823375493Z",
+    "to": "2026-10-15T03:01:25.064935255Z"
+  },
+  "native_observations_within_source_before_after": true,
+  "full_source_matches_v8": true,
+  "storage_native_reads": 20,
+  "management_gets_this_refresh": 4,
+  "source_core_mutation": 0,
+  "clone_storage_calls_observations_costs": 112,
+  "source_storage_calls": 92,
+  "all_retained_containers": 51,
+  "source_configs_unchanged_and_sealed": true,
+  "new_maintenance_sealed": true,
+  "backups_sha256": {
+    "reference-disposal-preparation01/native-snapshot/native-store.tar": "f72efeab2c49802be1661a431164167d7a34968fef877163f08b25878d9554cc",
+    "predelete-core-checkpoint-04/core.dump": "19dba12b9992fdd11c237d6f0df489c7a961696acd54b8a3403b941e7005c98a"
+  },
+  "delete": 0,
+  "merge": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "retention_bypass": 0,
+  "independent_review": "Reviewed v8 baseline retained; this new native refresh/operator extension is primary acceptance, no new independent review claimed",
+  "tests_status": "PASS",
+  "tests": [
+    {
+      "file": "test_reference_proposal.py",
+      "optimized": false,
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "file": "test_lc13_readonly.py",
+      "optimized": false,
+      "tests": 9,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_refresh.py",
+      "optimized": false,
+      "tests": 5,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v8.py",
+      "optimized": false,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v9.py",
+      "optimized": false,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_proposal.py",
+      "optimized": true,
+      "tests": 7,
+      "exit_code": 0
+    },
+    {
+      "file": "test_lc13_readonly.py",
+      "optimized": true,
+      "tests": 9,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_refresh.py",
+      "optimized": true,
+      "tests": 5,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v8.py",
+      "optimized": true,
+      "tests": 4,
+      "exit_code": 0
+    },
+    {
+      "file": "test_reference_v9.py",
+      "optimized": true,
+      "tests": 4,
+      "exit_code": 0
+    }
+  ],
+  "tests_per_mode": 29
+}

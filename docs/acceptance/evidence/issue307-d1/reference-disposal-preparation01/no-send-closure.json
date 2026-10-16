@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "observations": 2,
+  "releases": 2,
+  "send_claims": 0,
+  "provider_delete": 0,
+  "signer_key_persisted": false
+}

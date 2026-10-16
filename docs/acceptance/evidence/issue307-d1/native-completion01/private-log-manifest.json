@@ -1,0 +1,43 @@
+{
+  "logs": [
+    {
+      "file": "failure-20261014T075515174642.private-log",
+      "sha256": "8c661dc43540046e10ce2da576a43f32e01d6d3490a67b86a0140972cb27699b",
+      "bytes": 368,
+      "private_retained": true
+    },
+    {
+      "file": "full-race.private-json",
+      "sha256": "61fc0c52ddcac48a134b4d22f5df622e5d16eac31fc705dd7db5c07bd3d6dc99",
+      "bytes": 1410142,
+      "private_retained": true
+    },
+    {
+      "file": "migration.private-log",
+      "sha256": "3de8b4905340a3cb16e45ceaf82eb0e9a1b0ab4e0c034a28a0b4da092724f96c",
+      "bytes": 348,
+      "private_retained": true
+    },
+    {
+      "file": "migration02.private-log",
+      "sha256": "a63f3c3c71063597c67d19d71eec3d80ecf2927760a6643be17ece59724e2674",
+      "bytes": 105,
+      "private_retained": true
+    },
+    {
+      "file": "python-optimized.private-log",
+      "sha256": "3856d360848f1aeda241f2aa2730e5a30a1b451a8bd279974b2dbb8fd153f32c",
+      "bytes": 7510,
+      "private_retained": true
+    },
+    {
+      "file": "python.private-log",
+      "sha256": "63c2b009c5be3448cfca44880a76b8bf359d8212a909b0ae4ee640c95cab9a05",
+      "bytes": 7510,
+      "private_retained": true
+    }
+  ],
+  "raw_outputs_are_private": true,
+  "helper_logs": "All Docker helpers retained; IDs appear in per-helper provenance",
+  "native_delete": 0
+}

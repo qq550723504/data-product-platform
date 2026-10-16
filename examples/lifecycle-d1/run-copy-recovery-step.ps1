@@ -1,7 +1,8 @@
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','provision-recovery','produce-archive','produce-restore','witness','restrict','readback','outbox','once','scan','enqueue','request','worker','seal')][string]$Mode,[Parameter(Mandatory=$true)][string]$Scenario,[string]$WorkID,[string]$CopyCallID,[ValidateSet('restore/online-a.csv','restore/old-cut-a.csv','restore/missing-a.csv','restore/gap-a.csv')][string]$Target='restore/online-a.csv',[ValidateSet('archive','archive-v2')][string]$ProducerBinary='archive')
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[Parameter(Mandatory=$true)][ValidateSet('provision','provision-recovery','produce-archive','produce-restore','witness','restrict','readback','outbox','once','scan','enqueue','request','worker','seal')][string]$Mode,[Parameter(Mandatory=$true)][string]$Scenario,[string]$WorkID,[string]$CopyCallID,[ValidateSet('restore/online-a.csv','restore/old-cut-a.csv','restore/missing-a.csv','restore/gap-a.csv')][string]$Target='restore/online-a.csv',[ValidateSet('archive','archive-v2')][string]$ProducerBinary='archive',[switch]$StartOnly,[switch]$RetainHelper)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 . (Join-Path $PSScriptRoot '../temporary-containers.ps1')
+if($StartOnly -and ($Mode -notin @('once','worker') -or $Scenario -notin @('copy-hold-owner','copy-revoke-after-lookup'))){throw 'StartOnly is restricted to the two controlled worker barriers'}
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $private=(Resolve-Path -LiteralPath $PrivateDirectory).Path
 if($private.StartsWith($repo+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase) -or $Scenario -notmatch '^[a-z0-9-]{1,64}$'){throw 'Private directory/scenario scope invalid'}
@@ -13,7 +14,7 @@ $window=Get-Content -LiteralPath (Join-Path $private 'copy-admin/archive-window.
 $run=([guid]$r.run_id).ToString();$project='dpp-lifecycle307-'+$run.Substring(0,8)
 $output=Join-Path $PSScriptRoot "results/$run"
 $m=Get-Content -LiteralPath (Join-Path $output 'manifest.json') -Raw|ConvertFrom-Json
-if($r.project -ne $project -or (Split-Path -Leaf $private) -ne $project -or $window.RunID -ne $run -or -not $window.Enabled -or [DateTime]::UtcNow -ge [DateTime]$window.ExpiresAt -or $c.Enabled -or $m.environment.migrations_through -ne 66 -or $m.destructive_requests -ne 0){throw 'Finite fresh schema66 window required; no retained-old environment mutation'}
+if($r.project -ne $project -or (Split-Path -Leaf $private) -ne $project -or $window.RunID -ne $run -or -not $window.Enabled -or [DateTime]::UtcNow -ge [DateTime]$window.ExpiresAt -or $c.Enabled -or $m.environment.migrations_through -ne 68 -or $m.destructive_requests -ne 0){throw 'Finite fresh schema68 window required; no retained-old environment mutation'}
 $net=(Docker @('network','inspect',$r.network)|ConvertFrom-Json)[0]
 $members=@($net.Containers.PSObject.Properties).Count
 $brokerFault=$false
@@ -50,6 +51,7 @@ function Gateway([bool]$Copy,[bool]$Admin,[bool]$Payload){
  Docker @('exec',$r.containers.gateway,'caddy','validate','--config','/etc/caddy/Caddyfile','--adapter','caddyfile')|Out-Null
  Docker @('restart',$r.containers.gateway)|Out-Null
 }
+$script:heldHelperStarted=$false
 function Run([string]$Role,[string]$Action,[int]$ExpectedExit){
  $dir=Join-Path $private $Role;$binary=if($Role -eq 'copy-worker'){'recovery'}else{'archive'}
  if($Role -eq 'copy-producer'){$binary=$ProducerBinary}
@@ -68,16 +70,17 @@ function Run([string]$Role,[string]$Action,[int]$ExpectedExit){
   $arguments+=@('-e',"LIFECYCLE_RECOVERY_ACCEPTANCE_CONFIG=/run/private/$Scenario.json")
  } else {$arguments+=@('-e',"LIFECYCLE_ARCHIVE_MODE=$Action",'-e',"LIFECYCLE_FIXTURE_CHECKPOINT_KEY=$Scenario",'-e',"LIFECYCLE_ARCHIVE_TARGET=$Target")}
  $arguments+=@('--entrypoint',"/run/private/$binary",'sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea')
- $temporaryHelper=New-DppTemporaryContainer -RunID $run -DockerArguments $arguments[1..($arguments.Count-1)]
+ $temporaryHelper=New-DppTemporaryContainer -RunID $run -DockerArguments ($arguments[1..($arguments.Count-1)])
  $proof=@{run_id=$run;scenario=$Scenario;role=$Role;action=$Action;helper_id=(Docker @('inspect',$helper,'--format','{{.Id}}'));source_head=(& git -C $repo rev-parse HEAD).Trim();binary_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $dir $binary)).Hash.ToLowerInvariant();gateway_sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $private 'Caddyfile')).Hash.ToLowerInvariant();recorded_before_start=[DateTime]::UtcNow.ToString('o');expected_exit=$ExpectedExit;native_delete=0;cleanup=0;credentials=if($Role -eq 'copy-worker'){'READ_ONLY_NO_ROOT_NO_COPY_NO_DELETE'}elseif($Role -eq 'copy-producer'){'COPY_ONLY_NO_ROOT_NO_DELETE'}else{'IAM_PROVISIONING_ONLY'}}
  $proof.source_hashes=@{}
  foreach($path in @('apps/platform/cmd/lifecycle-fixture-archive/main.go','apps/platform/cmd/lifecycle-fixture-archive/copy_recovery.go','apps/platform/cmd/lifecycle-fixture-recovery/main.go','apps/platform/cmd/lifecycle-fixture-recovery/copy_crash.go','apps/platform/internal/lifecycle/application/copy_recovery.go','apps/platform/internal/lifecycle/application/copy_service.go','apps/platform/internal/platform/storage/lifecycle_copy.go','apps/platform/internal/platform/storage/lifecycle_copy_recovery.go','apps/platform/internal/platform/storage/lifecycle_copy_fixture_fault.go','apps/platform/internal/lifecycle/pilot/copy_recovery.go','migrations/000064_lifecycle_reconciliation_work.up.sql')){$proof.source_hashes[$path]=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $repo $path)).Hash.ToLowerInvariant()}
  Write-Utf8 (Join-Path $output ($helper+'-provenance.json')) ($proof|ConvertTo-Json -Depth 7)
  Docker @('start',$helper)|Out-Null
+ if($StartOnly -and $Role -eq 'copy-worker'){$script:heldHelperStarted=$true;Write-Output "Started retained $helper";return}
  $exit=[int](Docker @('wait',$helper))
  Write-Utf8 (Join-Path $output ($helper+'-exit.json')) (@{helper_id=$proof.helper_id;exit_code=$exit;expected=$ExpectedExit}|ConvertTo-Json)
  if($exit -ne $ExpectedExit){throw "Controlled step failed; retained helper $helper exit=$exit; inspect before any continuation"}
- Write-Utf8 (Join-Path $output ($helper+'-cleanup.json')) ((Complete-DppTemporaryContainer -Handle $temporaryHelper -ExpectedExitCode $ExpectedExit)|ConvertTo-Json)
+ Write-Utf8 (Join-Path $output ($helper+'-cleanup.json')) ((Complete-DppTemporaryContainer -Handle $temporaryHelper -ExpectedExitCode $ExpectedExit -Retain:($RetainHelper -or $ExpectedExit -ne 0))|ConvertTo-Json)
  Write-Output "Controlled $Scenario exit=$exit in $project; all objects/volumes retained."
 }
 try {
@@ -96,6 +99,6 @@ try {
    foreach($role in @('copy-admin','copy-producer')){$p=Join-Path $private "$role/archive-window.json";$v=Get-Content -LiteralPath $p -Raw|ConvertFrom-Json;$v.Enabled=$false;Write-Utf8 $p ($v|ConvertTo-Json)}
    $p=Join-Path $private 'copy-worker/recovery.json';$v=Get-Content -LiteralPath $p -Raw|ConvertFrom-Json;$v.Enabled=$false;Write-Utf8 $p ($v|ConvertTo-Json)
   }
-  default {Gateway $false $false $true;$expected=if($Scenario -eq 'copy-crash-after-lookup'){92}else{0};Run 'copy-worker' $Mode $expected}
+  default {Gateway $false $false $true;$expected=switch($Scenario){'copy-crash-before-lookup'{91};'copy-crash-after-lookup'{92};'copy-crash-after-bytes'{96};default{0}};Run 'copy-worker' $Mode $expected}
  }
-}finally {Gateway $false $false $false}
+}finally {if(-not $script:heldHelperStarted){Gateway $false $false $false}}

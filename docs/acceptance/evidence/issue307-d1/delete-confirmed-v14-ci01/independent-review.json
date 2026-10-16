@@ -1,0 +1,49 @@
+{
+  "status": "PASS_INDEPENDENT_OFFLINE_CI_REVIEW",
+  "reviewer": "/root/v11_independent_review",
+  "current_slice_blockers": 0,
+  "scope": [
+    "examples/lifecycle-d1/check-reference-history.py",
+    "examples/lifecycle-d1/test_reference_history.py",
+    ".github/workflows/demo-lifecycle.yml"
+  ],
+  "source_git_lf_sha256": {
+    "examples/lifecycle-d1/check-reference-history.py": "67ec0eda06a6ca1b62035f23f5d291467f7e63808481755ce8c872e25f10c3c7",
+    "examples/lifecycle-d1/test_reference_history.py": "fb41d17d7fae484a72bbbf516db5349b92259d0743d875421f257a6215b062e2",
+    ".github/workflows/demo-lifecycle.yml": "abde9ca3218c384578582ccf57c5e4e36ddab9ec66416906e3197d161b8e4a63"
+  },
+  "independently_executed": {
+    "history_unit_normal": 5,
+    "history_unit_optimized": 5,
+    "all_passed": true,
+    "missing_fixed_history_or_source": "FAIL_CLOSED_NO_CURRENT_SOURCE_FALLBACK_NO_LATER_CHECKS",
+    "full_historical_harness_rerun": false
+  },
+  "reviewed_invariants": {
+    "old255_raw_and317_runtime_hash_checks": "PRESERVED",
+    "native_gate": "UNCHANGED",
+    "fixed_source_and_history": "BOTH_CURRENT_HEAD_ANCESTORS",
+    "ci_fetch_depth": 0,
+    "commands_in_owned_temporary_public_snapshot": 27,
+    "current_worktree_source": "NOT_REPLACED_AND_STILL_TESTED_BY_GO_PLATFORM",
+    "harness_native_or_operator_entrypoints": 0
+  },
+  "count_clarification": {
+    "historical_tests_per_mode": 40,
+    "current_readonly_tests_per_mode": 9,
+    "combined_original_tests_per_mode": 49,
+    "historical_cli": 9,
+    "historical_suites": 18
+  },
+  "effects": {
+    "repository_edits": 0,
+    "docker_access": 0,
+    "provider_io": 0,
+    "db_io": 0,
+    "container_starts": 0,
+    "delete": 0,
+    "cleanup": 0,
+    "merge": 0
+  },
+  "remaining": "New exact-head PR CI must still be verified; native successful deletion remains BLOCKED"
+}

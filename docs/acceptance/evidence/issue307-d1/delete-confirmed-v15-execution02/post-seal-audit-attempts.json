@@ -1,0 +1,31 @@
+{
+  "status": "FINAL_READONLY_AUDIT03_PASS_PRIOR_FAILURES_RETAINED",
+  "attempts": [
+    {
+      "path": "post-seal-audit",
+      "outcome": "STOPPED_EXPECTATION_ERROR",
+      "reason": "Expected all7 command keys to have new-execution prefix; existing recovery commands intentionally use recovery run/plan identities",
+      "source_mutation": 0,
+      "provider_io": 0,
+      "sql_services_closed": true
+    },
+    {
+      "path": "post-seal-audit02",
+      "outcome": "STOPPED_EXPECTATION_ERROR",
+      "reason": "Expected DISPATCH command object=result to be dispatch ID; current contract returns evaluation ID linked to exact dispatch/attempt",
+      "source_mutation": 0,
+      "provider_io": 0,
+      "sql_services_closed": true
+    },
+    {
+      "path": "post-seal-audit03",
+      "outcome": "PASS",
+      "reason": "Verified existing 4 execution and3 recovery key contracts, typed subjects, original194 table rows, provider/storage ledger and causal ordering",
+      "source_mutation": 0,
+      "provider_io": 0,
+      "sql_services_closed": true
+    }
+  ],
+  "original_execute_failure_preserved": true,
+  "native_authorities_reopened_after_original_seal": false
+}

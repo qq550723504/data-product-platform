@@ -1,0 +1,18 @@
+{
+  "states": [
+    {
+      "id": "a03fe4c231800f1d40a0f377ab905c69daeff3012dda1b8ca2ca99893df69a0e",
+      "name": "/dpp-lifecycle307-5d2274ee-delete-postexecution-audit-core-02",
+      "status": "exited",
+      "pid": 0
+    },
+    {
+      "id": "c85b9ff408ed110f531ac79d27a3b99f66242d12766e1674e3de78067d140bd0",
+      "name": "/dpp-lifecycle307-5d2274ee-postgres",
+      "status": "exited",
+      "pid": 0
+    }
+  ],
+  "failures": [],
+  "cleanup": 0
+}

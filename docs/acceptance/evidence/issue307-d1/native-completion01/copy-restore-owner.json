@@ -1,0 +1,46 @@
+{
+  "original_work": "f7cb42ee-17ba-4370-ab48-6c4af691c4f3",
+  "fresh_work": "c39f331e-cada-4bcc-88b1-b8edd5da8bb9",
+  "results": [
+    {
+      "id": "540c99d3-a3b5-43e3-8349-880779ceb8ea",
+      "run_id": "189329e3-9ca9-4127-ab91-4b23ebf1591a",
+      "outcome": "UNKNOWN_COPY_LEDGER",
+      "work_id": "f7cb42ee-17ba-4370-ab48-6c4af691c4f3",
+      "terminal": true,
+      "observed_at": "2026-10-14T08:01:44.28327+00:00",
+      "stat_call_id": "2fe71c92-ac2e-47a6-a649-20864b2599c7",
+      "workspace_id": "b2506f83-2810-419f-9f59-4c89bde12331",
+      "completion_id": null,
+      "copy_decision_id": "2bfa4daa-dcaf-47a9-a2fa-b3ea704d1a96",
+      "copy_discovery_id": "c6147255-794f-4bcc-93e7-79a74e6aae77",
+      "inventory_call_id": "2334125a-d7ac-45ea-9989-9edf750411fb",
+      "absence_receipt_id": null,
+      "dependency_revision": 11
+    },
+    {
+      "id": "143371b1-cccc-4ba2-aa5d-f4e7bd4e5e99",
+      "run_id": "62dcf325-ab33-4a10-8d37-5a9bed97d0ba",
+      "outcome": "RESTORE_ONLINE",
+      "work_id": "c39f331e-cada-4bcc-88b1-b8edd5da8bb9",
+      "terminal": true,
+      "observed_at": "2026-10-14T08:01:55.574288+00:00",
+      "stat_call_id": null,
+      "workspace_id": "b2506f83-2810-419f-9f59-4c89bde12331",
+      "completion_id": null,
+      "copy_decision_id": "fc6c5d6a-25cf-4863-b8d6-5ab5c114f94a",
+      "copy_discovery_id": "c6147255-794f-4bcc-93e7-79a74e6aae77",
+      "inventory_call_id": null,
+      "absence_receipt_id": null,
+      "dependency_revision": 12
+    }
+  ],
+  "competing_native_io": 0,
+  "counts": {
+    "calls": 45,
+    "runs": 6,
+    "results": 3,
+    "copies": 2
+  },
+  "native_delete": 0
+}

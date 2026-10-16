@@ -1,0 +1,11 @@
+{
+  "status": "ACTIVE_EXACT_TWO_ONLY",
+  "at": "2026-10-16T01:34:36.096701+00:00",
+  "expires_at": "2026-10-16T02:05:22.752003+00:00",
+  "max_per_target": 1,
+  "max_total": 2,
+  "original_gateway": "RUNNING_UNCHANGED_DENY_ALL403",
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0
+}

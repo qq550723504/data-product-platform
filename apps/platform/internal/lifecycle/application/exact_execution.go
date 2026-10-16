@@ -251,6 +251,23 @@ func (s *ExactExecution) finalizeContentDisposition(ctx context.Context, h Comma
 		if err != nil {
 			return uuid.Nil, err
 		}
+		// Close coverage under the same reference/pending-copy fence as dispatch.
+		for _, copy := range p.Targets {
+			check, _, err := InspectFixtureReferences(ctx, tx, copy)
+			if err != nil {
+				return uuid.Nil, err
+			}
+			if check != domain.Satisfied {
+				return uuid.Nil, ErrStorageScope
+			}
+			var pending bool
+			if err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_copy_operation p WHERE p.workspace_id=$1 AND (p.source_copy_id=$2 OR p.target_copy_id=$2) AND NOT EXISTS(SELECT 1 FROM lifecycle_copy_verification v WHERE v.operation_id=p.id))`, h.WorkspaceID, copy.ID).Scan(&pending); err != nil {
+				return uuid.Nil, err
+			}
+			if pending {
+				return uuid.Nil, ErrStorageScope
+			}
+		}
 		caller, at, err := o.authorize(ctx, tx, h.WorkspaceID, CapabilityVerifyAbsence, &caller)
 		if err != nil {
 			return uuid.Nil, err

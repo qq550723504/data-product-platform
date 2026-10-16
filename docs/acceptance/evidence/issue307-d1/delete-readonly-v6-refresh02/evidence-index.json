@@ -1,0 +1,100 @@
+{
+  "files": [
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/audit-costs.json",
+      "bytes": 133,
+      "sha256": "4f914194ef984bc25ce3467a6f1090c99846be8031b09fe9f63c07f4cf914ec5"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/audit-restored.json",
+      "bytes": 31634,
+      "sha256": "9700df1b5becbd80bf6254590ce3d702186dd098eb5e25bd14d3c2c6aba06e72"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/candidate-binding.json",
+      "bytes": 45186,
+      "sha256": "ee7e5ad1510a8684dc791b7bd46abff016599ed8d3facde3628c8a5ca0a01f2c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/current-core-readback.json",
+      "bytes": 14239,
+      "sha256": "f8a4ad44584c4b99ce1d2ec7769abcce03954ec42bab4fefa8ee2ba25f033cdd"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/current-preconditions-readonly.sql",
+      "bytes": 49802,
+      "sha256": "dc5907dc9bc8e36e47e861b26efa901143e0412f28788973e284ff8fc7f1a8ea"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/native-helper.json",
+      "bytes": 335,
+      "sha256": "ef497a816c27a63c853b740abb1a9326c42eafb0a54989a26103eb71f01d6dd3"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/native-iam-helper.json",
+      "bytes": 510,
+      "sha256": "6b3b49e0782bbb70c69a4d906720a89534324961abea995512d02bfcc530e5e6"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/native-iam-readonly.json",
+      "bytes": 1043,
+      "sha256": "c0e46430c437f35dd6a130d92e37581fae315e69c75dfd489b000a12c877ef12"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/native-six-version.json",
+      "bytes": 12742,
+      "sha256": "4a88d1716fe571976560ba30460d01a6d6f84d2194a50c811589ee4d27d2a934"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/owner-closure-readback.json",
+      "bytes": 36851,
+      "sha256": "70e9d5bfe3d86d3915f63b10a8dedf1167834726df26a580cda86ae5b2193d7c"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/readonly-checkpoint.json",
+      "bytes": 913,
+      "sha256": "81f98ef489d11e43ba7c77d823a53546f9a0c45947afe1d9f858f71730c2f1d9"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/reference-qualification-readback.json",
+      "bytes": 26464,
+      "sha256": "b7bfa9bcb02ba9ea05061342ffb4d9dcd4310faf727a33444e53865edb09c7e0"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/retained-final-state.json",
+      "bytes": 196,
+      "sha256": "32901781f00c832f9df07b526f1399a74af6a5ed78e517174860c03715e855d3"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/source-after.json",
+      "bytes": 31312,
+      "sha256": "e4c72c7b7dead1e5f0acf47f9a7e44c8988ddb44f9624514ed1945366f50e059"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/5d-06/source-before.json",
+      "bytes": 31286,
+      "sha256": "d56987a3d3641beee426a4d284cad1c084b21833822ddab81131dee5cd8240dc"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/execution-preconditions.json",
+      "bytes": 5973,
+      "sha256": "eec0269dd90028d3bf4108f9ccc128f6fe6aa21c5f0e116d800b89f96592963a"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/proposal-v7.json",
+      "bytes": 16653,
+      "sha256": "02836af363b80b66400e5cfd8eda703686cb00feec19edc2c6fa00015fe101ed"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/retained-topology.json",
+      "bytes": 14747,
+      "sha256": "c774b9dadf49448134436f360ea630816c458b6f5ca317fbb8127cf3e24b2ef2"
+    },
+    {
+      "path": "docs/acceptance/evidence/issue307-d1/delete-readonly-v6-refresh02/verification.json",
+      "bytes": 1955,
+      "sha256": "6980c44b88ed27e3bd2e8df2595660a767c021abafb9bda7230f7fbbea797368"
+    }
+  ],
+  "scope": "Fixed v7 refresh of independently reviewed immutable v6; native audit06 plus primary metadata"
+}

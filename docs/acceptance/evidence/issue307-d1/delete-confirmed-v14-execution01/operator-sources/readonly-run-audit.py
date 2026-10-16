@@ -1,0 +1,6 @@
+import importlib.util,json,sys
+from pathlib import Path
+p=Path('C:/Users/Henry/.codex/fixture-private/d1-confirmed-v14-execution01.py');s=importlib.util.spec_from_file_location('op',p);o=importlib.util.module_from_spec(s);s.loader.exec_module(o)
+q="""SELECT jsonb_build_object('works',(SELECT jsonb_agg(to_jsonb(x)) FROM lifecycle_reconciliation_work x),'results',(SELECT jsonb_agg(to_jsonb(x)) FROM lifecycle_reconciliation_result x),'runs',(SELECT jsonb_agg(to_jsonb(x)) FROM lifecycle_reconciliation_run x),'absence',(SELECT jsonb_agg(to_jsonb(x)) FROM lifecycle_copy_absence_receipt x),'claims',(SELECT jsonb_agg(to_jsonb(x)) FROM lifecycle_provider_send_claim x),'observations',(SELECT jsonb_agg(to_jsonb(x)) FROM lifecycle_provider_observation x),'last_storage_observations',(SELECT jsonb_agg(to_jsonb(x)) FROM (SELECT * FROM lifecycle_storage_observation ORDER BY observed_at DESC LIMIT 6)x));"""
+v=json.loads(o.m.source_read(o.m.PG,q));out=o.PUBLIC/('audit-'+sys.argv[1]+'.json');o.write(out,v)
+print(json.dumps({'works':len(v['works'] or []),'results':v['results'],'absence':len(v['absence'] or []),'claims':len(v['claims'] or []),'last_storage_observations':v['last_storage_observations']},ensure_ascii=True))

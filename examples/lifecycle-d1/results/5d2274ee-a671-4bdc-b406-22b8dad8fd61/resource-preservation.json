@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "before_containers": 172,
+  "before_volumes": 2626,
+  "missing_volumes": [],
+  "provider_delete": 0,
+  "missing_containers": [],
+  "cleanup": 0,
+  "old_windows_reopened": 0,
+  "old_services_mutated_by_this_round": 0
+}

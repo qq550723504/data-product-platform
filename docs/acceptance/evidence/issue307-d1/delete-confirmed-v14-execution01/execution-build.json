@@ -1,0 +1,11 @@
+{
+  "source_commit": "055aa1df063e560c6796e92dfff4e03c7b9061e0",
+  "runtime_source_files": 317,
+  "all_source_hashes_match": true,
+  "sender_binary_sha256": "01bff6e2a242a202e73519d7b5a4f1fc109430614b25a5189eacfb0ebb2cddf3",
+  "recovery_binary_sha256": "ae6bb8726c986ce364ed29a62e67e1163d5b6e6b82ebd7b7ab81180f6b1e1890",
+  "host_topology_binary_sha256": "64cab731082bda69a8e81c33520fefb0928dd2a19e9b59bca5cbe3997cdecb7d",
+  "build": "go build -trimpath; CGO_ENABLED=0; linux/amd64 recovery and windows/amd64 host",
+  "sender_rebuilt": false,
+  "delete": 0
+}

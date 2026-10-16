@@ -1,0 +1,6 @@
+{"at":"2026-10-16T01:34:50.900550172Z","fact":"START","method":"GET","path":"/minio/admin/v3/user-info"}
+{"at":"2026-10-16T01:34:50.908799436Z","fact":"OBSERVATION","http_status":200,"start":"2026-10-16T01:34:50.900550172Z","unknown":false}
+{"at":"2026-10-16T01:34:50.910684268Z","fact":"START","method":"PUT","path":"/minio/admin/v3/set-user-status"}
+{"at":"2026-10-16T01:34:50.916756805Z","fact":"OBSERVATION","http_status":200,"start":"2026-10-16T01:34:50.910684268Z","unknown":false}
+{"at":"2026-10-16T01:34:50.918364104Z","fact":"START","method":"GET","path":"/minio/admin/v3/user-info"}
+{"at":"2026-10-16T01:34:50.921123205Z","fact":"OBSERVATION","http_status":200,"start":"2026-10-16T01:34:50.918364104Z","unknown":false}

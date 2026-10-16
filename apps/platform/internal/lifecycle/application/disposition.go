@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -88,6 +89,61 @@ type RecordProviderObservationCommand struct {
 	AttemptID      uuid.UUID
 	ObservationRef string
 }
+
+// A bounded same-plan observation group is committed atomically, including
+// reservation releases and all history. No member can become a partial success.
+type ProviderObservationInput struct {
+	AttemptID      uuid.UUID
+	ObservationRef string
+}
+type RecordProviderObservationsCommand struct {
+	CommandHeader
+	Observations []ProviderObservationInput
+}
+
+func (s *DispositionService) RecordProviderObservations(ctx context.Context, cmd RecordProviderObservationsCommand) (FactResult, error) {
+	if !s.configured() || s.observations == nil || len(cmd.Observations) != 2 {
+		return FactResult{}, domain.ErrInvalidDispositionFact
+	}
+	seen := map[uuid.UUID]bool{}
+	for _, v := range cmd.Observations {
+		if v.AttemptID == uuid.Nil || seen[v.AttemptID] || !validText(v.ObservationRef, 255) {
+			return FactResult{}, domain.ErrInvalidDispositionFact
+		}
+		seen[v.AttemptID] = true
+	}
+	cmd.Observations = append([]ProviderObservationInput(nil), cmd.Observations...)
+	sort.Slice(cmd.Observations, func(i, j int) bool {
+		return cmd.Observations[i].AttemptID.String() < cmd.Observations[j].AttemptID.String()
+	})
+	o := s.occupancy
+	return o.command(ctx, cmd.CommandHeader, "LIFECYCLE.RECORD_PROVIDER_OBSERVATIONS", CapabilityObserveAttempt, cmd, func(ctx context.Context, tx pgx.Tx, caller principal.RequestPrincipal, _ int64) (uuid.UUID, error) {
+		var plan uuid.UUID
+		for _, v := range cmd.Observations {
+			a, e := o.repo.GetAttempt(ctx, tx, cmd.WorkspaceID, v.AttemptID, false)
+			if e != nil {
+				return uuid.Nil, e
+			}
+			if plan != uuid.Nil && a.PlanID != plan {
+				return uuid.Nil, ErrStorageScope
+			}
+			plan = a.PlanID
+		}
+		if _, e := s.lockedPlan(ctx, tx, cmd.WorkspaceID, plan); e != nil {
+			return uuid.Nil, e
+		}
+		var id uuid.UUID
+		for _, v := range cmd.Observations {
+			var e error
+			id, e = s.recordProviderObservation(ctx, tx, RecordProviderObservationCommand{CommandHeader: cmd.CommandHeader, AttemptID: v.AttemptID, ObservationRef: v.ObservationRef}, caller)
+			if e != nil {
+				return uuid.Nil, e
+			}
+		}
+		return id, nil
+	})
+}
+
 type DispatchResult struct {
 	EvaluationID uuid.UUID
 	DispatchID   uuid.UUID
@@ -363,58 +419,63 @@ func (s *DispositionService) RecordProviderObservation(ctx context.Context, cmd 
 	}
 	o := s.occupancy
 	return o.command(ctx, cmd.CommandHeader, "LIFECYCLE.RECORD_PROVIDER_OBSERVATION", CapabilityObserveAttempt, cmd, func(ctx context.Context, tx pgx.Tx, caller principal.RequestPrincipal, _ int64) (uuid.UUID, error) {
-		a, err := o.repo.GetAttempt(ctx, tx, cmd.WorkspaceID, cmd.AttemptID, false)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		if _, err := s.lockedPlan(ctx, tx, cmd.WorkspaceID, a.PlanID); err != nil {
-			return uuid.Nil, err
-		}
-		if _, err := tx.Exec(ctx, `SELECT id FROM lifecycle_disposition_dispatch WHERE workspace_id=$1 AND id=$2 FOR UPDATE`, cmd.WorkspaceID, a.DispatchID); err != nil {
-			return uuid.Nil, err
-		}
-		a, err = o.repo.GetAttempt(ctx, tx, cmd.WorkspaceID, a.ID, true)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		caller, at, err := o.authorize(ctx, tx, cmd.WorkspaceID, CapabilityObserveAttempt, &caller)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		proof, err := s.observations.VerifyProviderObservation(ctx, tx, a, cmd.ObservationRef, at)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		if err := proof.ValidateFor(a, at); err != nil {
-			return uuid.Nil, err
-		}
-		revision, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID)
-		if err != nil {
-			return uuid.Nil, err
-		}
-		if _, err := tx.Exec(ctx, `INSERT INTO lifecycle_provider_observation(id,workspace_id,attempt_id,certainty,outcome,proof_sha256,observed_at,invoked_at,actor_id,principal_ref,dependency_revision)
-			VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`, proof.ID, proof.WorkspaceID, proof.AttemptID, proof.Certainty, proof.Outcome, proof.ProofSHA256, proof.ObservedAt, proof.InvokedAt, caller.ActorID, caller.Subject, revision); err != nil {
-			return uuid.Nil, err
-		}
-		if proof.Certainty == domain.InvocationConfirmed {
-			if err := cost.AppendLifecycleProviderActivity(ctx, tx, cmd.WorkspaceID, a.ID, *proof.InvokedAt); err != nil {
-				return uuid.Nil, err
-			}
-		}
-		if proof.Certainty == domain.InvocationNotSent {
-			tag, err := tx.Exec(ctx, `INSERT INTO lifecycle_dispatch_release(dispatch_id,workspace_id,observation_id) VALUES($1,$2,$3) ON CONFLICT(dispatch_id) DO NOTHING`, a.DispatchID, cmd.WorkspaceID, proof.ID)
-			if err != nil {
-				return uuid.Nil, err
-			}
-			if tag.RowsAffected() > 0 {
-				if err := appendDispositionFacts(ctx, tx, ReservationReleasedEvent, "LIFECYCLE_DISPATCH", a.DispatchID, caller, revision, at, map[string]any{"observation_id": proof.ID, "reason": "NOT_SENT"}); err != nil {
-					return uuid.Nil, err
-				}
-			}
-		}
-		return proof.ID, appendDispositionFacts(ctx, tx, ProviderObservedEvent, "LIFECYCLE_PROVIDER_OBSERVATION", proof.ID, caller, revision, at,
-			map[string]any{"attempt_id": a.ID, "dispatch_id": a.DispatchID, "certainty": proof.Certainty, "outcome": proof.Outcome})
+		return s.recordProviderObservation(ctx, tx, cmd, caller)
 	})
+}
+
+func (s *DispositionService) recordProviderObservation(ctx context.Context, tx pgx.Tx, cmd RecordProviderObservationCommand, caller principal.RequestPrincipal) (uuid.UUID, error) {
+	o := s.occupancy
+	a, err := o.repo.GetAttempt(ctx, tx, cmd.WorkspaceID, cmd.AttemptID, false)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if _, err := s.lockedPlan(ctx, tx, cmd.WorkspaceID, a.PlanID); err != nil {
+		return uuid.Nil, err
+	}
+	if _, err := tx.Exec(ctx, `SELECT id FROM lifecycle_disposition_dispatch WHERE workspace_id=$1 AND id=$2 FOR UPDATE`, cmd.WorkspaceID, a.DispatchID); err != nil {
+		return uuid.Nil, err
+	}
+	a, err = o.repo.GetAttempt(ctx, tx, cmd.WorkspaceID, a.ID, true)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	caller, at, err := o.authorize(ctx, tx, cmd.WorkspaceID, CapabilityObserveAttempt, &caller)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	proof, err := s.observations.VerifyProviderObservation(ctx, tx, a, cmd.ObservationRef, at)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if err := proof.ValidateFor(a, at); err != nil {
+		return uuid.Nil, err
+	}
+	revision, err := deliveryfence.Advance(ctx, tx, cmd.WorkspaceID)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if _, err := tx.Exec(ctx, `INSERT INTO lifecycle_provider_observation(id,workspace_id,attempt_id,certainty,outcome,proof_sha256,observed_at,invoked_at,actor_id,principal_ref,dependency_revision)
+		VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`, proof.ID, proof.WorkspaceID, proof.AttemptID, proof.Certainty, proof.Outcome, proof.ProofSHA256, proof.ObservedAt, proof.InvokedAt, caller.ActorID, caller.Subject, revision); err != nil {
+		return uuid.Nil, err
+	}
+	if proof.Certainty == domain.InvocationConfirmed {
+		if err := cost.AppendLifecycleProviderActivity(ctx, tx, cmd.WorkspaceID, a.ID, *proof.InvokedAt); err != nil {
+			return uuid.Nil, err
+		}
+	}
+	if proof.Certainty == domain.InvocationNotSent {
+		tag, err := tx.Exec(ctx, `INSERT INTO lifecycle_dispatch_release(dispatch_id,workspace_id,observation_id) VALUES($1,$2,$3) ON CONFLICT(dispatch_id) DO NOTHING`, a.DispatchID, cmd.WorkspaceID, proof.ID)
+		if err != nil {
+			return uuid.Nil, err
+		}
+		if tag.RowsAffected() > 0 {
+			if err := appendDispositionFacts(ctx, tx, ReservationReleasedEvent, "LIFECYCLE_DISPATCH", a.DispatchID, caller, revision, at, map[string]any{"observation_id": proof.ID, "reason": "NOT_SENT"}); err != nil {
+				return uuid.Nil, err
+			}
+		}
+	}
+	return proof.ID, appendDispositionFacts(ctx, tx, ProviderObservedEvent, "LIFECYCLE_PROVIDER_OBSERVATION", proof.ID, caller, revision, at,
+		map[string]any{"attempt_id": a.ID, "dispatch_id": a.DispatchID, "certainty": proof.Certainty, "outcome": proof.Outcome})
 }
 
 func appendDispositionFacts(ctx context.Context, tx pgx.Tx, eventType, subject string, id uuid.UUID, caller principal.RequestPrincipal, revision int64, at time.Time, fields map[string]any) error {

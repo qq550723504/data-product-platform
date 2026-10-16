@@ -182,7 +182,7 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		if c.outputIntent == nil || r.Method != "PUT" || r.URL.Path != "/"+c.outputIntent.Namespace+"/"+c.outputIntent.Key || r.URL.RawQuery != "" || r.Header.Get("If-None-Match") != "*" || r.Header.Get("X-Amz-Copy-Source") != "" || r.Header.Get("X-Amz-Content-Sha256") != c.outputIntent.ContentSHA256 || r.ContentLength != c.outputIntent.ByteSize {
 			return nil, lc.ErrStorageScope
 		}
-	} else if c.operation == lc.StorageVerifyCopy || c.operation == lc.StorageReadPinned {
+	} else if c.operation == lc.StorageVerifyCopy || c.operation == lc.StorageReadPinned || c.operation == lc.StorageReadCheckpoint {
 		q := r.URL.Query()
 		if r.Method != "GET" || r.URL.Path != "/"+c.copy.Namespace+"/"+c.copy.Key || len(q) != 1 || len(q["versionId"]) != 1 || q.Get("versionId") != c.copy.ProviderVersion || r.Header.Get("X-Amz-Copy-Source") != "" {
 			return nil, lc.ErrStorageScope
@@ -205,6 +205,9 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	if c.operation == lc.StorageReadPinned {
 		start.CopyIntent = nil
 		start.ReaderPin = c.readerPin
+	}
+	if c.operation == lc.StorageReadCheckpoint {
+		start.CopyIntent = nil
 	}
 	if c.operation == lc.StorageProcessingPut {
 		start.CopyIntent = nil
@@ -244,7 +247,7 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		proof.HTTPStatus = resp.StatusCode
 		proof.RequestRef = resp.Header.Get("X-Amz-Request-Id")
 		limit := int64(64 << 10)
-		if (c.operation == lc.StorageVerifyCopy || c.operation == lc.StorageReadPinned) && resp.StatusCode == http.StatusOK {
+		if (c.operation == lc.StorageVerifyCopy || c.operation == lc.StorageReadPinned || c.operation == lc.StorageReadCheckpoint) && resp.StatusCode == http.StatusOK {
 			limit = c.copy.ByteSize
 		}
 		b, readErr := io.ReadAll(io.LimitReader(resp.Body, limit+1))
@@ -280,10 +283,10 @@ func (t *copyTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 					e = lc.ErrStorageContract
 				}
 			}
-			if c.operation != lc.StorageVerifyCopy && c.operation != lc.StorageReadPinned {
+			if c.operation != lc.StorageVerifyCopy && c.operation != lc.StorageReadPinned && c.operation != lc.StorageReadCheckpoint {
 				proof.CopyResultVersion = version
 			}
-			if version == "" || version == "null" || resp.Header.Get("X-Amz-Delete-Marker") == "true" || ((c.operation == lc.StorageVerifyCopy || c.operation == lc.StorageReadPinned) && (version != c.copy.ProviderVersion || int64(len(b)) != c.copy.ByteSize || proof.ResponseSHA256 != c.copy.ContentSHA256)) {
+			if version == "" || version == "null" || resp.Header.Get("X-Amz-Delete-Marker") == "true" || ((c.operation == lc.StorageVerifyCopy || c.operation == lc.StorageReadPinned || c.operation == lc.StorageReadCheckpoint) && (version != c.copy.ProviderVersion || int64(len(b)) != c.copy.ByteSize || proof.ResponseSHA256 != c.copy.ContentSHA256)) {
 				proof.Failure = "CONTRACT"
 				e = lc.ErrStorageContract
 			}

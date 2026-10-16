@@ -1,0 +1,13 @@
+{
+  "role_directory": "resume-owner",
+  "root_mounted": false,
+  "exit_code": 0,
+  "id": "7991e69db055f2c67137af0c61a123fb25f1a1aadd18d084cd073ef4e775b8a8",
+  "container": "dpp-lifecycle307-f3b0c9cd-reader-resume-retry-ea53df",
+  "expected_exit": 0,
+  "binary_sha256": "84f7726abfe2be932e9152c8dc08971a9359211c7149b2efef555242d9b4b48d",
+  "delete": 0,
+  "run_id": "f3b0c9cd-ee53-42d5-a5e4-48c9ede5e4c3",
+  "mode": "resume-retry",
+  "cleanup": 0
+}

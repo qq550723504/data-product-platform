@@ -1,0 +1,47 @@
+{
+  "copies": 6,
+  "pins": 6,
+  "terminations": 6,
+  "active_pins": 0,
+  "calls": 19,
+  "observations": 19,
+  "storage_costs": 19,
+  "unaccounted_storage": 0,
+  "provider_attempts": 0,
+  "provider_observations": 0,
+  "provider_costs": 0,
+  "unaccounted_provider": 0,
+  "native_deliveries": [],
+  "unreleased_credential_demands": 0,
+  "replay_decisions": [],
+  "native_delete": 0,
+  "send_claims": 0,
+  "absence": 0,
+  "completion": 0,
+  "executions": [
+    {
+      "id": "278d115a-4f1d-4fc7-ba72-893e78c6f9f4",
+      "output": null,
+      "status": "FAILED",
+      "retry_of": null
+    },
+    {
+      "id": "5043802d-b5c4-4cc2-b648-22cbb7f32049",
+      "output": "c454f64e-1c13-4107-a800-b310f9ecd079",
+      "status": "SUCCEEDED",
+      "retry_of": "278d115a-4f1d-4fc7-ba72-893e78c6f9f4"
+    }
+  ],
+  "run": "8120904f-13d9-42f3-ab1f-66eb1a37b2b0",
+  "workspace": "3e43d757-29dd-46aa-bac6-6e172438a4c8",
+  "roles": {
+    "credential-admin\\reader.json": false,
+    "credential-owner\\reader.json": false,
+    "plane-admin\\reader.json": false,
+    "plane-owner\\reader.json": false,
+    "resume-admin\\reader.json": false,
+    "resume-owner\\reader.json": false
+  },
+  "cleanup": 0,
+  "all_resources_retained": true
+}

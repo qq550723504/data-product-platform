@@ -1,0 +1,177 @@
+[
+  {
+    "event_type": "CertificationProfileCreated",
+    "status": "PENDING",
+    "count": 1
+  },
+  {
+    "event_type": "DataResourceCreated",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "DatasetCertified",
+    "status": "PENDING",
+    "count": 1
+  },
+  {
+    "event_type": "DatasetCreated",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "DatasetDeliveryGateEvaluated",
+    "status": "PENDING",
+    "count": 1
+  },
+  {
+    "event_type": "DatasetDeliveryIssued",
+    "status": "PENDING",
+    "count": 1
+  },
+  {
+    "event_type": "DatasetVersionCreated",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "EntityMappingDecisionRecorded",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "EntityMatchCompleted",
+    "status": "PENDING",
+    "count": 1
+  },
+  {
+    "event_type": "ExecutionDependenciesPrepared",
+    "status": "PENDING",
+    "count": 1
+  },
+  {
+    "event_type": "ExecutionFailed",
+    "status": "PENDING",
+    "count": 3
+  },
+  {
+    "event_type": "ExecutionQueued",
+    "status": "PENDING",
+    "count": 4
+  },
+  {
+    "event_type": "ExecutionRecoveryStarted",
+    "status": "PENDING",
+    "count": 1
+  },
+  {
+    "event_type": "ExecutionStarted",
+    "status": "PENDING",
+    "count": 4
+  },
+  {
+    "event_type": "ExecutionSucceeded",
+    "status": "PENDING",
+    "count": 1
+  },
+  {
+    "event_type": "LifecycleContentUseRestricted",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "LifecycleCopyPolicyBound",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "LifecycleDispositionApproved",
+    "status": "PENDING",
+    "count": 1
+  },
+  {
+    "event_type": "LifecycleDispositionBlocked",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "LifecycleDispositionDispatched",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "LifecycleDispositionPlanPrepared",
+    "status": "PENDING",
+    "count": 3
+  },
+  {
+    "event_type": "LifecycleDispositionRecoveryRequested",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "LifecycleDispositionReservationReleased",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "LifecycleFixtureDisposalBasisRegistered",
+    "status": "PENDING",
+    "count": 1
+  },
+  {
+    "event_type": "LifecycleFixtureReferenceReleased",
+    "status": "PENDING",
+    "count": 23
+  },
+  {
+    "event_type": "LifecycleFixtureReferenceRequired",
+    "status": "PENDING",
+    "count": 23
+  },
+  {
+    "event_type": "LifecycleProviderAttemptObserved",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "LifecycleReaderAdmitted",
+    "status": "PENDING",
+    "count": 7
+  },
+  {
+    "event_type": "LifecycleReaderTerminated",
+    "status": "PENDING",
+    "count": 7
+  },
+  {
+    "event_type": "LifecycleStorageCallObserved",
+    "status": "PENDING",
+    "count": 92
+  },
+  {
+    "event_type": "LifecycleStorageCallStarted",
+    "status": "PENDING",
+    "count": 92
+  },
+  {
+    "event_type": "QualityPassed",
+    "status": "PENDING",
+    "count": 1
+  },
+  {
+    "event_type": "RightsDeclarationCreated",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "RightsDeclarationVerified",
+    "status": "PENDING",
+    "count": 2
+  },
+  {
+    "event_type": "WorkflowVersionCreated",
+    "status": "PENDING",
+    "count": 1
+  }
+]
