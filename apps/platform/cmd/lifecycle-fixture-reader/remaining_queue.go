@@ -110,6 +110,15 @@ func (q *remainingQueue) wait(ctx context.Context, id uuid.UUID) error {
 	}
 }
 func remainingEngine(ctx context.Context, r remainingConfig, pool *pgxpool.Pool, cs []domain.Copy, s remainingState, barrier bool) (*workflowqueue.Handler, *referenceInputBarrier, error) {
+	engine, b, err := remainingProcessingEngine(ctx, r, pool, cs, s, barrier)
+	if err != nil {
+		return nil, nil, err
+	}
+	tx := transaction.NewManager(pool)
+	wf := workflowinfra.NewPostgresRepository(pool)
+	return workflowqueue.NewHandler(workflowapp.NewExecutionService(tx, wf), wf, engine).WithNativeExecutionLocker(tx), b, nil
+}
+func remainingProcessingEngine(ctx context.Context, r remainingConfig, pool *pgxpool.Pool, cs []domain.Copy, s remainingState, barrier bool) (*pinnedworkflow.PinnedEngine, *referenceInputBarrier, error) {
 	o, _, _, pins, err := remainingServices(r, pool, cs)
 	if err != nil {
 		return nil, nil, err
@@ -130,8 +139,7 @@ func remainingEngine(ctx context.Context, r remainingConfig, pool *pgxpool.Pool,
 		b = &referenceInputBarrier{pins: pins, target: source.DatasetVersionID, entered: make(chan struct{}), release: make(chan struct{})}
 		engine = engine.WithInputReader(b)
 	}
-	h := workflowqueue.NewHandler(workflowapp.NewExecutionService(tx, wf), wf, &pinnedworkflow.PinnedEngine{Pins: pins, Inner: engine}).WithNativeExecutionLocker(tx)
-	return h, b, nil
+	return &pinnedworkflow.PinnedEngine{Pins: pins, Inner: engine}, b, nil
 }
 func remainingBaseline(ctx context.Context, r remainingConfig, pool *pgxpool.Pool, original []domain.Copy) error {
 	var s remainingState

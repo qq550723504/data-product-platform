@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -29,7 +30,7 @@ func remainingPolicies(cs []domain.Copy) ([]byte, []byte, error) {
 }
 func remainingInspection(ctx context.Context, r remainingConfig, enabled bool) error {
 	c := r.Base
-	if c.RootAccess == "" || c.RootSecret == "" {
+	if c.RootAccess == "" || c.RootSecret == "" || c.InspectAccess != "inspect"+strings.ReplaceAll(c.RunID.String(), "-", "")[:12] {
 		return errors.New("separate inspection admin required")
 	}
 	a, e := madmin.New(c.Endpoint, c.RootAccess, c.RootSecret, false)
@@ -47,6 +48,29 @@ func remainingInspection(ctx context.Context, r remainingConfig, enabled bool) e
 		return e
 	}
 	return write(c, "remaining-inspection-"+string(status)+".json", map[string]any{"identity": c.InspectAccess, "status": status, "delete_identity_unchanged": true, "native_delete": 0})
+}
+
+// Only the separately restored business checkpoint can enable these existing
+// non-delete identities. No add-user, DELETE identity or source enable path.
+func remainingCloneEnable(ctx context.Context, r remainingConfig) error {
+	c := r.Base
+	if r.Group != "business-races" || !r.Rehearsal || r.Checkpoint != "candidate07" || c.Access != "remainread808a6960" || c.ProducerAccess != "remainput808a6960" || c.RootAccess == "" || c.RootSecret == "" {
+		return errors.New("fixed restored business identities required")
+	}
+	a, e := madmin.New(c.Endpoint, c.RootAccess, c.RootSecret, false)
+	if e != nil {
+		return e
+	}
+	a.SetCustomTransport(adminTransport{&http.Transport{Proxy: nil, DisableKeepAlives: true, ResponseHeaderTimeout: 10 * time.Second}, c})
+	for _, user := range []string{c.Access, c.ProducerAccess, c.InspectAccess} {
+		x, cancel := context.WithTimeout(context.WithValue(ctx, adminKey{}, &adminCall{}), 15*time.Second)
+		e = a.SetUserStatus(x, user, madmin.AccountEnabled)
+		cancel()
+		if e != nil {
+			return e
+		}
+	}
+	return write(c, "remaining-clone-identities-enabled.json", map[string]any{"reader": c.Access, "producer": c.ProducerAccess, "inspector": c.InspectAccess, "delete_identity_unchanged": true, "delete": 0})
 }
 func remainingBindOutputs(ctx context.Context, r remainingConfig, original []domain.Copy) error {
 	c := r.Base
@@ -97,7 +121,21 @@ func remainingBindOutputs(ctx context.Context, r remainingConfig, original []dom
 	if err = a.AddCannedPolicy(x, "lifecycle307-remaining-business-"+c.Access, p); err != nil {
 		return err
 	}
+	ip := remainingInspectionPolicy(all)
+	x2, cancel2 := context.WithTimeout(context.WithValue(ctx, adminKey{}, &adminCall{}), 15*time.Second)
+	defer cancel2()
+	if err = a.AddCannedPolicy(x2, "lifecycle307-inspection-"+c.RunID.String(), ip); err != nil {
+		return err
+	}
 	return write(c, "remaining-reader-output-scope-"+time.Now().UTC().Format("150405.000000000")+".json", map[string]any{"policy": json.RawMessage(p), "copies": all, "new_survivors": extra, "delete": 0})
+}
+func remainingInspectionPolicy(copies []domain.Copy) []byte {
+	resources := []string{}
+	for _, cp := range copies {
+		resources = append(resources, "arn:aws:s3:::"+cp.Namespace+"/"+cp.Key)
+	}
+	b, _ := json.Marshal(map[string]any{"Version": "2012-10-17", "Statement": []any{map[string]any{"Effect": "Allow", "Action": []string{"s3:ListBucketVersions"}, "Resource": []string{"arn:aws:s3:::" + namespaces[0], "arn:aws:s3:::" + namespaces[1]}}, map[string]any{"Effect": "Allow", "Action": []string{"s3:GetObjectVersion", "s3:GetObjectRetention", "s3:GetObjectLegalHold"}, "Resource": resources}}})
+	return b
 }
 func remainingProvision(ctx context.Context, r remainingConfig, cs []domain.Copy, disable bool) error {
 	c := r.Base

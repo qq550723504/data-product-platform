@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -163,4 +164,43 @@ func remainingSetup(ctx context.Context, r remainingConfig, pool *pgxpool.Pool, 
 }
 func codeForRemainingExecution(i int) string {
 	return []string{"remaining-baseline", "remaining-P1", "remaining-P2"}[i]
+}
+func remainingFreezePolicy(ctx context.Context, r remainingConfig, pool *pgxpool.Pool) error {
+	until, e := time.Parse(time.RFC3339, pilot.RemainingNotAfter)
+	if e != nil || r.Group != "business-races" || !r.CandidateUseUntil.Equal(until) {
+		return lc.ErrStorageScope
+	}
+	all, e := planeCopies(ctx, r.Base, pool)
+	if e != nil {
+		return e
+	}
+	if e = write(r.Base, "candidate07-policy-started.json", map[string]any{"at": time.Now().UTC(), "use_until": until, "one_shot": true}); e != nil {
+		return e
+	}
+	o, policy, _, _, e := remainingServices(r, pool, all)
+	_ = o
+	if e != nil {
+		return e
+	}
+	var facts []lc.FactResult
+	for _, cp := range all {
+		if cp.Key == "fixture/control-hold.csv" || cp.Key == "fixture/control-retention.csv" {
+			continue
+		}
+		f, e := policy.BindFixtureCopyPolicy(ctx, lc.BindCopyPolicyCommand{CommandHeader: lc.CommandHeader{WorkspaceID: r.Base.WorkspaceID, IdempotencyKey: "candidate07-policy:" + cp.ID.String()}, DatasetVersionID: cp.DatasetVersionID, UseUntil: until, RestoreUntil: until})
+		if e != nil {
+			return e
+		}
+		facts = append(facts, f)
+	}
+	if len(facts) != 6 {
+		return lc.ErrStorageScope
+	}
+	scope, _ := pilot.RemainingScopeFor(r.Group)
+	rightsConfig := r.Base
+	rightsConfig.ExpiresAt = until
+	if e = remainingRights(ctx, rightsConfig, pool, scope.Copies[:4]); e != nil {
+		return e
+	}
+	return write(r.Base, "candidate07-copy-policies.json", map[string]any{"facts": facts, "use_until": until, "restore_until": until, "native_io": 0, "delete": 0})
 }

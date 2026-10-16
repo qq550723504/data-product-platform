@@ -89,3 +89,8 @@ examples/lifecycle-d1/results/808a6960-6c36-4200-ae98-f18a68472fe5/** -text whit
 examples/lifecycle-d1/results/754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b/** -text whitespace=cr-at-eol
 examples/lifecycle-d1/results/dfda43b4-4419-433d-959b-c617556953fd/** -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-native-ci01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-runner*/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-case*/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-executable*/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate07/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-*/**/*modules.txt whitespace=-blank-at-eol

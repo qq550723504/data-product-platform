@@ -39,6 +39,9 @@ type remainingConfig struct {
 	Rehearsal                                bool
 	ClosurePublicKey, ClosureCandidateSHA256 string
 	ClosureOwners                            map[string]string
+	InventorySHA256                          string
+	CandidateUseUntil                        time.Time
+	Checkpoint                               string
 }
 
 func readRemaining(path string, dst any) error {
@@ -67,6 +70,11 @@ func loadRemaining() (remainingConfig, error) {
 	expectedHost := "dpp-lifecycle307-" + c.RunID.String()[:8] + "-postgres:5432"
 	if r.Rehearsal {
 		expectedHost = "dpp-lifecycle307-" + c.RunID.String()[:8] + "-remaining-regression-pg:5432"
+		if r.Checkpoint == "candidate07" {
+			expectedHost = "dpp-lifecycle307-" + c.RunID.String()[:8] + "-candidate07-checkpoint:5432"
+		} else if r.Checkpoint != "" {
+			return r, lc.ErrStorageScope
+		}
 	}
 	if dsnErr != nil || dsn.Scheme != "postgres" || dsn.Host != expectedHost || dsn.Path != "/lifecycle307" || dsn.User == nil || dsn.User.Username() != "fixture" || dsn.RawQuery != "sslmode=disable" {
 		return r, lc.ErrStorageScope
@@ -186,6 +194,12 @@ func remainingStep(ctx context.Context, mode string) error {
 	if mode == "remaining-bind-outputs" {
 		return remainingBindOutputs(ctx, r, cs)
 	}
+	if mode == "remaining-clone-enable" {
+		return remainingCloneEnable(ctx, r)
+	}
+	if mode == "remaining-verify-native" {
+		return remainingVerifyNative(ctx, r)
+	}
 	if r.Base.RootAccess != "" || r.Base.RootSecret != "" {
 		return errors.New("business runner must be root-free")
 	}
@@ -207,10 +221,12 @@ func remainingStep(ctx context.Context, mode string) error {
 		return remainingBaseline(ctx, r, pool, cs)
 	case "remaining-business":
 		return remainingBusiness(ctx, r, pool, cs)
-	case "remaining-late", "remaining-mixed", "remaining-mixed-b", "remaining-mixed-c":
+	case "remaining-late", "remaining-mixed", "remaining-mixed-b", "remaining-mixed-c", "remaining-mixed-protected":
 		return remainingCases(ctx, r, pool, cs, mode)
 	case "remaining-close-H1":
 		return remainingCloseH1(ctx, r, pool)
+	case "remaining-freeze-policy":
+		return remainingFreezePolicy(ctx, r, pool)
 	default:
 		return errors.New("unknown remaining non-delete step")
 	}

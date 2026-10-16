@@ -129,7 +129,7 @@ type containmentAuthority struct {
 }
 
 func (a containmentAuthority) AuthorizeLifecycle(_ context.Context, _ pgx.Tx, w uuid.UUID, cap string, at time.Time) (principal.RequestPrincipal, error) {
-	key, _ := hex.DecodeString(a.l.C.PublicKey)
+	key, _ := hex.DecodeString(a.l.C.WirePublicKey)
 	var p wireWitness
 	if !ed25519.Verify(key, a.proof.Body, a.proof.Signature) || json.Unmarshal(a.proof.Body, &p) != nil || p.Execution != execution || p.CandidateSHA256 != a.l.CandidateHash || p.Group != "late-hold" || p.Helper != a.l.G.Helpers["wire"] || p.Copy.Key != "fixture/h2-a.csv" || p.Copy.WorkspaceID != w || p.Nonce == uuid.Nil || p.UpstreamStatus != 204 || p.At.Before(a.l.P.NotBefore) || !p.At.Before(a.l.P.ExpiresAt) || at.Before(p.At) || at.Sub(p.At) > time.Minute || (cap != lc.CapabilityRevokeApproval && cap != lc.CapabilityPlaceHold) {
 		return principal.RequestPrincipal{}, errDenied
@@ -177,7 +177,7 @@ func wire(ctx context.Context) error {
 		return e
 	}
 	key, e := hex.DecodeString(l.F.WirePrivateKey)
-	pub, _ := hex.DecodeString(l.C.PublicKey)
+	pub, _ := hex.DecodeString(l.C.WirePublicKey)
 	if e != nil || len(key) != ed25519.PrivateKeySize || !strings.EqualFold(hex.EncodeToString(ed25519.PrivateKey(key).Public().(ed25519.PublicKey)), hex.EncodeToString(pub)) || l.F.DeleteSecret != "" {
 		return errDenied
 	}

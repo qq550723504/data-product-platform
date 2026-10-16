@@ -189,6 +189,20 @@ func remainingCases(ctx context.Context, r remainingConfig, pool *pgxpool.Pool, 
 		return err
 	}
 	d.approvals["M1"] = approval
+	if mode == "remaining-mixed-protected" {
+		if !r.Rehearsal {
+			return lc.ErrStorageScope
+		}
+		blocked, e := d.dispatch(ctx, "M1", "M1-C-nondelete-protection", cs[2])
+		if e != nil || blocked.Admitted || blocked.AttemptID != uuid.Nil {
+			return errors.New("native retained C admitted")
+		}
+		p := d.deps.Protection[cs[2].ID]
+		if p.RetentionMode != "GOVERNANCE" || p.RetainUntil == nil || !time.Now().UTC().Before(*p.RetainUntil) {
+			return errors.New("native C retention absent")
+		}
+		return write(c, "remaining-M1-C-native-nondelete.json", map[string]any{"dispatch": blocked, "native_protection": p, "mixed_outcomes": "NOT_RUN", "native_delete": 0})
+	}
 	if mode == "remaining-mixed-b" {
 		var absent bool
 		if err = pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_copy_absence_receipt WHERE copy_id=$1)`, cs[0].ID).Scan(&absent); err != nil || !absent {

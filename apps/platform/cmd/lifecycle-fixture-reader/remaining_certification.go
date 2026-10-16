@@ -28,24 +28,8 @@ import (
 func remainingCertification(ctx context.Context, c config, pool *pgxpool.Pool, cs []domain.Copy, cache planeCache, caseName string) (uuid.UUID, error) {
 	tx := transaction.NewManager(pool)
 	datasets := datasetinfra.NewPostgresRepository(pool)
-	rights := rightsapp.NewService(tx, rightsinfra.NewPostgresRepository(pool))
-	for _, cp := range cs[:2] {
-		var resource uuid.UUID
-		if e := pool.QueryRow(ctx, `SELECT d.source_resource_id FROM dataset d JOIN dataset_version v ON v.dataset_id=d.id WHERE v.id=$1`, cp.DatasetVersionID).Scan(&resource); e != nil {
-			return uuid.Nil, e
-		}
-		from, to := c.StartedAt, c.ExpiresAt
-		permissions := []rightsdomain.RightsPermission{}
-		for _, action := range []string{"READ", "PROCESS", "AGGREGATE", "DERIVE"} {
-			permissions = append(permissions, rightsdomain.RightsPermission{Kind: rightsdomain.PermissionUse, Action: action, Purpose: pilot.PlanePurpose, Scope: rightsdomain.NormalizedScope{Type: "ALL_RESOURCE", Ref: resource.String()}})
-		}
-		d, e := rights.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{Spec: rightsdomain.RightsDeclarationSpec{WorkspaceID: c.WorkspaceID, DataResourceID: resource, ClaimantRef: pilot.PlaneConsumer, BasisType: "LICENSE", BasisRef: "CONTROLLED_SYNTHETIC_FIXTURE_ONLY", ConsumerScopeType: "EXPLICIT", ConsumerRef: pilot.PlaneConsumer, EffectiveFrom: &from, EffectiveTo: &to, Parties: []rightsdomain.RightsParty{{PartyRef: pilot.PlaneConsumer, Role: "RIGHTS_HOLDER"}}, Permissions: permissions, ActorID: &c.ActorID}})
-		if e != nil {
-			return uuid.Nil, e
-		}
-		if _, e = rights.VerifyRightsDeclaration(ctx, rightsapp.VerifyRightsDeclarationCommand{DeclarationID: d.ID, Outcome: rightsdomain.DeclarationVerified, Reason: "Operator-owned synthetic input only", ActorID: &c.ActorID}); e != nil {
-			return uuid.Nil, e
-		}
+	if err := remainingRights(ctx, c, pool, cs[:2]); err != nil {
+		return uuid.Nil, err
 	}
 	quality, e := qualityapp.NewService("/run/rules", tx, datasets, qualityinfra.NewPostgresRepository(pool), cache).Run(ctx, qualityapp.RunCommand{WorkspaceID: c.WorkspaceID, DatasetVersionID: cs[1].DatasetVersionID, RuleSetRef: "fixture/remaining-" + caseName + ".yaml", AssessmentAttemptID: uuid.New(), ActorID: &c.ActorID})
 	if e != nil {
@@ -71,4 +55,28 @@ func remainingCertification(ctx context.Context, c config, pool *pgxpool.Pool, c
 		return uuid.Nil, e
 	}
 	return profile.ID, nil
+}
+
+func remainingRights(ctx context.Context, c config, pool *pgxpool.Pool, cs []domain.Copy) error {
+	tx := transaction.NewManager(pool)
+	rights := rightsapp.NewService(tx, rightsinfra.NewPostgresRepository(pool))
+	for _, cp := range cs {
+		var resource uuid.UUID
+		if e := pool.QueryRow(ctx, `SELECT d.source_resource_id FROM dataset d JOIN dataset_version v ON v.dataset_id=d.id WHERE v.id=$1`, cp.DatasetVersionID).Scan(&resource); e != nil {
+			return e
+		}
+		from, to := c.StartedAt, c.ExpiresAt
+		permissions := []rightsdomain.RightsPermission{}
+		for _, action := range []string{"READ", "PROCESS", "AGGREGATE", "DERIVE"} {
+			permissions = append(permissions, rightsdomain.RightsPermission{Kind: rightsdomain.PermissionUse, Action: action, Purpose: pilot.PlanePurpose, Scope: rightsdomain.NormalizedScope{Type: "ALL_RESOURCE", Ref: resource.String()}})
+		}
+		d, e := rights.CreateRightsDeclaration(ctx, rightsapp.CreateRightsDeclarationCommand{Spec: rightsdomain.RightsDeclarationSpec{WorkspaceID: c.WorkspaceID, DataResourceID: resource, ClaimantRef: pilot.PlaneConsumer, BasisType: "LICENSE", BasisRef: "CONTROLLED_SYNTHETIC_FIXTURE_ONLY", ConsumerScopeType: "EXPLICIT", ConsumerRef: pilot.PlaneConsumer, EffectiveFrom: &from, EffectiveTo: &to, Parties: []rightsdomain.RightsParty{{PartyRef: pilot.PlaneConsumer, Role: "RIGHTS_HOLDER"}}, Permissions: permissions, ActorID: &c.ActorID}})
+		if e != nil {
+			return e
+		}
+		if _, e = rights.VerifyRightsDeclaration(ctx, rightsapp.VerifyRightsDeclarationCommand{DeclarationID: d.ID, Outcome: rightsdomain.DeclarationVerified, Reason: "Operator-owned synthetic input only", ActorID: &c.ActorID}); e != nil {
+			return e
+		}
+	}
+	return nil
 }

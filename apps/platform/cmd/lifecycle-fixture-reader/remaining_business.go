@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	certificationapp "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
 	datasetapp "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
+	datasetinfra "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	deliveryapp "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application"
 	entityapp "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
 	lc "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application"
@@ -219,6 +220,16 @@ func remainingBusiness(ctx context.Context, r remainingConfig, pool *pgxpool.Poo
 	}
 	if _, err = workflowapp.NewExecutionService(transaction.NewManager(pool), wf).Retry(ctx, workflowapp.RetryExecutionCommand{ExecutionID: s.P2, IdempotencyKey: "remaining-P2-retry", ActorID: &c.ActorID}); err == nil {
 		return errors.New("P2 restricted explicit retry admitted")
+	}
+	if _, err = workflowapp.NewExecutionService(transaction.NewManager(pool), wf).StartWithReferenceCheck(ctx, s.P2, "native:"+s.P2.String(), "remaining-P2-start-replay"); err == nil {
+		return errors.New("P2 terminal/restricted start admitted")
+	}
+	processing, _, err := remainingProcessingEngine(ctx, r, pool, cs, s, false)
+	if err != nil {
+		return err
+	}
+	if err = workflowapp.NewNativeReconciler(transaction.NewManager(pool), workflowapp.NewExecutionService(transaction.NewManager(pool), wf), lc13SelectedRepository{wf, s.P2}, datasetinfra.NewPostgresRepository(pool), processing).RunOnce(ctx); err != nil {
+		return err
 	}
 	after, err := remainingNoIO(ctx, pool)
 	if err != nil || before != after {

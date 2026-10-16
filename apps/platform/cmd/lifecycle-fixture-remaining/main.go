@@ -42,6 +42,7 @@ const profile = "candidate07/v17"
 var errDenied = errors.New("remaining candidate authority denied; no database/provider I/O permitted")
 
 type groupBinding struct {
+	ConfigSHA256                                                                                      map[string]string
 	Group                                                                                             string
 	Actor                                                                                             uuid.UUID
 	Core, Native, Gateway, Network                                                                    string
@@ -50,6 +51,7 @@ type groupBinding struct {
 	Helpers                                                                                           map[string]string
 }
 type candidate struct {
+	WirePublicKey                                                                                                   string
 	NotBefore, NotAfter                                                                                             time.Time
 	Profile, Execution, Source, SourceFreezeSHA256, ReaderBinarySHA256, SenderBinarySHA256, TargetDigest, PublicKey string
 	Groups                                                                                                          []groupBinding
@@ -66,6 +68,7 @@ type permission struct {
 	MaxPerTarget, MaxTotal                                                int
 }
 type topology struct {
+	ConfigSHA256                                                                                   string
 	Execution, CandidateSHA256, Group, Stage, Helper, Core, Native, Gateway, Network, BinarySHA256 string
 	At                                                                                             time.Time
 	NoPorts, NoRoot, NoSocket, ReadOnly, NoRestart, Internal                                       bool
@@ -114,6 +117,9 @@ func fixedTarget(group, stage string) (domain.Copy, error) {
 	return domain.Copy{}, errDenied
 }
 func validateCandidate(c candidate) error {
+	if c.NotBefore.Format(time.RFC3339) != pilot.RemainingNotBefore || c.NotAfter.Format(time.RFC3339) != pilot.RemainingNotAfter {
+		return errDenied
+	}
 	if c.NotBefore.IsZero() || !c.NotAfter.After(c.NotBefore) || c.NotAfter.Sub(c.NotBefore) > 40*time.Minute {
 		return errDenied
 	}
@@ -122,6 +128,10 @@ func validateCandidate(c candidate) error {
 	}
 	key, e := hex.DecodeString(c.PublicKey)
 	if e != nil || len(key) != ed25519.PublicKeySize {
+		return errDenied
+	}
+	wireKey, e := hex.DecodeString(c.WirePublicKey)
+	if e != nil || len(wireKey) != ed25519.PublicKeySize || bytes.Equal(wireKey, key) {
 		return errDenied
 	}
 	seen := map[string]bool{}
@@ -137,12 +147,15 @@ func validateCandidate(c candidate) error {
 			}
 		}
 		found := map[uuid.UUID]bool{}
+		keys := map[string]bool{}
 		extra := 0
 		for _, cp := range g.Copies {
-			if cp.Validate() != nil || found[cp.ID] || cp.WorkspaceID != s.Workspace || cp.ProviderInstanceID != s.Provider || cp.IncarnationID != s.Incarnation {
+			key := cp.Namespace + "/" + cp.Key
+			if cp.Validate() != nil || found[cp.ID] || keys[key] || cp.WorkspaceID != s.Workspace || cp.ProviderInstanceID != s.Provider || cp.IncarnationID != s.Incarnation {
 				return errDenied
 			}
 			found[cp.ID] = true
+			keys[key] = true
 			original := false
 			for _, originalCopy := range s.Copies {
 				if cp == originalCopy {
@@ -158,6 +171,28 @@ func validateCandidate(c candidate) error {
 		}
 		if len(g.Copies) != len(s.Copies)+extra || (g.Group == "business-races" && extra != 2) || (g.Group != "business-races" && extra != 0) {
 			return errDenied
+		}
+		for stage, id := range g.Helpers {
+			if raw, e := hex.DecodeString(id); e != nil || len(raw) != 32 {
+				return errDenied
+			}
+			if raw, e := hex.DecodeString(g.ConfigSHA256[stage]); e != nil || len(raw) != 32 {
+				return errDenied
+			}
+		}
+		expectedStages := []string{"wire"}
+		for _, stage := range []string{"P1", "P2", "T1", "T2", "H2", "M1A", "M1B"} {
+			if _, e := fixedTarget(g.Group, stage); e == nil {
+				expectedStages = append(expectedStages, stage, "recover-"+stage)
+			}
+		}
+		if len(g.Helpers) != len(expectedStages) || len(g.ConfigSHA256) != len(expectedStages) {
+			return errDenied
+		}
+		for _, stage := range expectedStages {
+			if g.Helpers[stage] == "" || g.ConfigSHA256[stage] == "" {
+				return errDenied
+			}
 		}
 		for _, cp := range s.Copies {
 			if !found[cp.ID] {
@@ -237,13 +272,17 @@ func load(stage string) (loaded, error) {
 	if strictConfig(l) != nil {
 		return l, errDenied
 	}
+	operator, e := os.ReadFile("/run/private/operator.json")
+	if e != nil || digest(operator) != l.G.ConfigSHA256[stage] {
+		return l, errDenied
+	}
 	var proof signed
 	if read("/run/private/topology-"+stage+".json", &proof) != nil {
 		return l, errDenied
 	}
 	key, _ := hex.DecodeString(l.C.PublicKey)
 	var t topology
-	if !ed25519.Verify(key, proof.Body, proof.Signature) || json.Unmarshal(proof.Body, &t) != nil || t.Execution != execution || t.CandidateSHA256 != l.CandidateHash || t.Group != l.F.Group || t.Stage != stage || t.Helper != l.G.Helpers[stage] || len(t.Helper) != 64 || t.Core != l.G.Core || t.Native != l.G.Native || t.Gateway != l.G.Gateway || t.Network != l.G.Network || t.BinarySHA256 != p.BinarySHA256 || !t.NoPorts || !t.NoRoot || !t.NoSocket || !t.ReadOnly || !t.NoRestart || !t.Internal || at.Before(t.At) || at.Sub(t.At) > time.Minute {
+	if !ed25519.Verify(key, proof.Body, proof.Signature) || json.Unmarshal(proof.Body, &t) != nil || t.Execution != execution || t.CandidateSHA256 != l.CandidateHash || t.Group != l.F.Group || t.Stage != stage || t.Helper != l.G.Helpers[stage] || len(t.Helper) != 64 || t.Core != l.G.Core || t.Native != l.G.Native || t.Gateway != l.G.Gateway || t.Network != l.G.Network || t.BinarySHA256 != p.BinarySHA256 || t.ConfigSHA256 != l.G.ConfigSHA256[stage] || !t.NoPorts || !t.NoRoot || !t.NoSocket || !t.ReadOnly || !t.NoRestart || !t.Internal || at.Before(t.At) || at.Sub(t.At) > time.Minute {
 		return l, errDenied
 	}
 	return l, nil
@@ -439,15 +478,25 @@ func main() {
 			return
 		}
 		e = errors.New("candidate unexpectedly armed")
-	} else if *stage == "recover-M1A" || *stage == "recover-M1B" || *stage == "recover-H2" {
+	} else if strings.HasPrefix(*stage, "recover-") && knownCase(strings.TrimPrefix(*stage, "recover-")) {
 		e = recoverExact(ctx, *stage)
 	} else if *stage == "wire" {
 		e = wire(ctx)
-	} else {
+	} else if knownCase(*stage) {
 		e = send(ctx, *stage)
+	} else {
+		e = errDenied
 	}
 	if e != nil {
 		fmt.Fprintln(os.Stderr, e)
 		os.Exit(1)
 	}
+}
+
+func knownCase(stage string) bool {
+	switch stage {
+	case "P1", "P2", "T1", "T2", "H2", "M1A", "M1B":
+		return true
+	}
+	return false
 }
