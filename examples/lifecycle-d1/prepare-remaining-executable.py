@@ -71,7 +71,7 @@ def main():
             prior = load(r.PRIVATE/'remaining-runner02/owner/remaining.json')['Base']
             for key in ('Access','Secret','ProducerAccess','ProducerSecret'): base[key] = prior[key]
             base['RedisAddr'] = project+'-remaining-redis:6379'
-        conf = {'Base':base,'Group':group,'Batch':EXECUTION,'NonDelete':True,'CandidateUseUntil':END}
+        conf = {'Base':base,'Group':group,'Batch':str(uuid.uuid4()),'NonDelete':True,'CandidateUseUntil':END}
         owner = private/'source-owner'; admin = private/'source-admin'; owner.mkdir(); admin.mkdir()
         for p in (owner, admin): (p/'manifest.json').write_bytes((historical/'manifest.json').read_bytes())
         write(owner/'remaining.json', conf)
@@ -108,7 +108,11 @@ def main():
             for i,query in enumerate(sqls): r.native.sql(source_ids['postgres'],f'PREPARE remaining_{i} AS {query}; DEALLOCATE remaining_{i};')
             write(target/'future-sql-prepared.json',{'queries':len(sqls),'transaction':'READ ONLY; PREPARE/DEALLOCATE/ROLLBACK','execution':0})
             if group == 'business-races':
-                helper('freeze-policy','remaining-freeze-policy',owner,source_ids['minio'],target/'policy')
+                heads=json.loads(r.native.sql(source_ids['postgres'],"SELECT json_object_agg(p.dataset_version_id::text,p.id::text) FROM lifecycle_current_copy_policy p JOIN lifecycle_fixture_copy c ON c.dataset_version_id=p.dataset_version_id WHERE c.object_key NOT IN('fixture/control-hold.csv','fixture/control-retention.csv');"))
+                require(len(heads)==6,'Six expected policy heads required')
+                renewal=private/'source-renewal';renewal.mkdir();renewal_conf=json.loads(json.dumps(conf));renewal_conf['ExpectedPolicyHeads']=heads
+                (renewal/'manifest.json').write_bytes((historical/'manifest.json').read_bytes());write(renewal/'remaining.json',renewal_conf)
+                helper('freeze-policy','remaining-freeze-policy',renewal,source_ids['minio'],target/'policy')
                 helper('bind-outputs','remaining-bind-outputs',admin,source_ids['minio'],target/'policy-native')
             query="SELECT json_agg(json_build_object('ID',c.id,'WorkspaceID',c.workspace_id,'ProviderInstanceID',n.provider_instance_id,'IncarnationID',n.incarnation_id,'Namespace',n.namespace,'Key',c.object_key,'ProviderVersion',c.provider_version,'DatasetVersionID',c.dataset_version_id,'ContentSHA256',c.content_sha256,'ByteSize',c.byte_size) ORDER BY c.object_key) FROM lifecycle_fixture_copy c JOIN lifecycle_fixture_namespace n ON n.id=c.namespace_id;"
             copies = json.loads(r.native.sql(source_ids['postgres'], query))

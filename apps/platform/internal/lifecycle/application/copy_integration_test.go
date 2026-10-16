@@ -27,6 +27,10 @@ func (copyTestProtection) CurrentCopyProtection(_ context.Context, _ pgx.Tx, c d
 func newCopyFixture(t *testing.T) (*pgxpool.Pool, uuid.UUID, []domain.Copy, *CopyService, *infrastructure.FileRestoreLedger, *occupancyAuthority) {
 	t.Helper()
 	pool := planDatabase(t)
+	return newCopyFixtureOnPool(t, pool)
+}
+func newCopyFixtureOnPool(t *testing.T, pool *pgxpool.Pool) (*pgxpool.Pool, uuid.UUID, []domain.Copy, *CopyService, *infrastructure.FileRestoreLedger, *occupancyAuthority) {
+	t.Helper()
 	w, cs, o, a, _, _, _ := occupancyFixture(t, pool)
 	for _, cap := range []string{CapabilityCopyCustody, CapabilityRestoreAdmission, CapabilityInspectStorage} {
 		a.caller.Capabilities[cap] = struct{}{}

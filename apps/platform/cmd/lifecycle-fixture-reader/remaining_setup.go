@@ -167,7 +167,7 @@ func codeForRemainingExecution(i int) string {
 }
 func remainingFreezePolicy(ctx context.Context, r remainingConfig, pool *pgxpool.Pool) error {
 	until, e := time.Parse(time.RFC3339, pilot.RemainingNotAfter)
-	if e != nil || r.Group != "business-races" || !r.CandidateUseUntil.Equal(until) {
+	if e != nil || r.Group != "business-races" || !r.CandidateUseUntil.Equal(until) || len(r.ExpectedPolicyHeads) != 6 {
 		return lc.ErrStorageScope
 	}
 	// Preserve the Core command's one-hour policy cap. The policy command runs
@@ -196,6 +196,9 @@ func remainingFreezePolicy(ctx context.Context, r remainingConfig, pool *pgxpool
 		var previous uuid.UUID
 		if e = pool.QueryRow(ctx, `SELECT id FROM lifecycle_current_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, r.Base.WorkspaceID, cp.DatasetVersionID).Scan(&previous); e != nil {
 			return e
+		}
+		if previous != r.ExpectedPolicyHeads[cp.DatasetVersionID.String()] {
+			return errors.New("frozen expected policy head drifted")
 		}
 		f, e := policy.RenewFixtureCopyPolicy(ctx, lc.RenewFixtureCopyPolicyCommand{PreviousPolicyID: previous, CommandHeader: lc.CommandHeader{WorkspaceID: r.Base.WorkspaceID, IdempotencyKey: "candidate07-policy:" + r.Batch.String() + ":" + cp.ID.String()}, DatasetVersionID: cp.DatasetVersionID, UseUntil: policyUntil, RestoreUntil: policyUntil})
 		if e != nil {

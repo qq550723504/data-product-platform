@@ -41,6 +41,7 @@ type remainingConfig struct {
 	ClosureOwners                            map[string]string
 	InventorySHA256                          string
 	CandidateUseUntil                        time.Time
+	ExpectedPolicyHeads                      map[string]uuid.UUID
 	Checkpoint                               string
 }
 

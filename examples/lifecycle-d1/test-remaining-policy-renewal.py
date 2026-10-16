@@ -12,14 +12,16 @@ spec=importlib.util.spec_from_file_location('r',Path(__file__).with_name('prepar
 r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
 
 def main():
-    replay=sys.argv[1:]==['--repeat-on-retained-scratch']
+    closure=sys.argv[1:]==['--closure-regression-on-retained-scratch']
+    replay=sys.argv[1:]==['--repeat-on-retained-scratch'] or closure
     r.require(not sys.argv[1:] or replay,'Unsupported SQL regression invocation')
     private=r.PRIVATE/'remaining-policy-regression01';out=r.ROOT/'docs/acceptance/evidence/issue307-d1/remaining-policy-regression01'
     if replay:
-        old=r.load(out/'result.json');r.require(old['exit_code']==1,'Expected retained failed SQL test')
+        old=r.load((r.ROOT/'docs/acceptance/evidence/issue307-d1/remaining-policy-regression02' if closure else out)/'result.json');r.require(old['exit_code']==(0 if closure else 1),'Retained SQL test status differs')
         pg=old['container'];state=r.inspect(pg);r.require(state['Config']['Labels'].get('lifecycle307.scope')=='policy-regression01' and state['State']['Pid']==0,'Wrong scratch owner')
         password=(private/'password').read_text();port=int(state['HostConfig']['PortBindings']['5432/tcp'][0]['HostPort'])
-        private=r.PRIVATE/'remaining-policy-regression02';out=r.ROOT/'docs/acceptance/evidence/issue307-d1/remaining-policy-regression02'
+        generation='03' if closure else '02'
+        private=r.PRIVATE/('remaining-policy-regression'+generation);out=r.ROOT/('docs/acceptance/evidence/issue307-d1/remaining-policy-regression'+generation)
     r.require(not private.exists() and not out.exists(),'One-shot SQL regression allocated');private.mkdir();out.mkdir()
     name='dpp-lifecycle307-policy-regression01'
     if not replay:
@@ -34,7 +36,8 @@ def main():
             time.sleep(.5)
         r.native.wait_pg(pg,'postgres')
         env=os.environ.copy();env['TEST_POSTGRES_DSN']=f'postgres://postgres:{password}@127.0.0.1:{port}/postgres?sslmode=disable'
-        result=subprocess.run(['go','test','-race','-count=1','-v','./internal/lifecycle/application','-run','Test(CopyPolicyRenewal|ArchiveRestoreCurrentWitnessAndRestrictions)'],cwd=r.ROOT/'apps/platform',env=env,capture_output=True)
+        pattern='TestCopyPolicyRenewal(FenceBothOrdersAndFrozenHistory|CrossScopeAndPendingOutputFailClosed)' if closure else 'Test(CopyPolicyRenewal|ArchiveRestoreCurrentWitnessAndRestrictions)'
+        result=subprocess.run(['go','test','-race','-count=1','-v','./internal/lifecycle/application','-run',pattern],cwd=r.ROOT/'apps/platform',env=env,capture_output=True)
         raw=result.stdout+result.stderr;(private/'result.private-log').write_bytes(raw)
         (out/'tests.txt').write_bytes(raw.replace(password.encode(),b'[REDACTED]'))
         r.write(out/'result.json',{'container':pg,'source':r.call(['git','rev-parse','HEAD']).decode().strip(),'exit_code':result.returncode,'native_provider_configured':False,'native_delete':0,'retained_volume':name+'-data'})
