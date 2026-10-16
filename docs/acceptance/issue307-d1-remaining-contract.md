@@ -1,5 +1,7 @@
 # #307 D1 剩余原生用例：有限设计、非删除准备与验收矩阵
 
+新一轮准备范围：基于已通过评审的有限设计，使用三个全新 project 创建固定 16 版本/8 plan；新增工具与有限布局见 [原生准备边界](../../examples/lifecycle-d1/remaining-native.md)。本轮实际回执、绑定和更新矩阵将在 §8 追加；以下 §1–7 保留原设计/PG-only/独立评审时点。当前授权仅允许非删除准备；新方案未获删除授权。旧 v15 operator 不能执行新 case，不能把其既有 binary 当作七目标新 sender。
+
 2026-10-16。唯一 writer 为当前 #307 聊天。本轮只设计、补组合式 SQL-only 回归、运行独立 scratch PostgreSQL 验证；**真实 provider DELETE=0，hold-release=0，bypass=0，不启用旧环境或旧授权，#307 保持 OPEN。**
 
 当前更新：GitHub 同步已恢复，`bca29f4d63c423962ed5a43b71fd4f71ec2665f9` 已发布并完成独立只读评审，有限切片 **BLOCKER=0**；[新 PR #323](https://github.com/qq550723504/data-product-platform/pull/323) 保持 Draft。最新同步/复评矩阵见 §7；§6 的“未执行新独立评审”和 EOF 回执保留 bca29f4d 原时点。以下 PG/native 证明边界不变。
