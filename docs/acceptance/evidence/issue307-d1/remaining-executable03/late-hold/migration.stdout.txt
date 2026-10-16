@@ -1,0 +1,1 @@
+{"time":"2026-10-16T08:46:54.901268197Z","level":"INFO","msg":"migration complete","direction":"up"}

@@ -1,0 +1,103 @@
+{
+  "containers": [
+    {
+      "id": "c07d99436581cd1d442c55f3a227ecdb342d652930cb634778c0b17de8421ccc",
+      "name": "/dpp-lifecycle307-754ea8f0-candidate07-03-final-restored-readonly",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "e6c8ea53ca346201ec69cd5db48ba64e45c7b2a4171355a79b3cb689b63d0caa",
+      "name": "/dpp-lifecycle307-754ea8f0-candidate07-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "e668a5289b17a898e7cf417d63d14f35a4de1819f049c9a1473547ef3f2ebfba",
+      "name": "/dpp-lifecycle307-754ea8f0-candidate07-03-restored-readonly",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "82024ecd2d4cd8afa46b33d1d28abfddffa4093d6b9dd9b24d67fc046bb6eabd",
+      "name": "/dpp-lifecycle307-754ea8f0-candidate07-minio",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "a23c481626c159530f882fc474eb98f1900d1204858b73caf0c2e28e589c80c6",
+      "name": "/dpp-lifecycle307-754ea8f0-candidate07-03-compare",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "6d06588a1f792fa26642e5cce3a447b411f49f17af39054ee9218e7513d1846f",
+      "name": "/dpp-lifecycle307-754ea8f0-candidate07-03-unpack",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "7ba6a70d54b49021ab50156a9fdf3bd7a57bdd9b93dbbb441b3837614a665639",
+      "name": "/dpp-lifecycle307-754ea8f0-candidate07-checkpoint",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "fba3c9e354e3077da8396f2cd2eb9ceb4c9a262768a419ecc8f3d794a08a31e8",
+      "name": "/dpp-lifecycle307-754ea8f0-candidate07-03-archive",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "119bc7dbc8ebdd1b865993b96d7d2ba094a47f4fa7ff280ec68c7a5f744d4e3e",
+      "name": "/dpp-lifecycle307-754ea8f0-candidate07-03-source-readonly",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "5cc48ac8acd9e3d372b7aaa35df6a929153fb8dd606c8f13b9c16b28de8eda39",
+      "name": "/dpp-lifecycle307-754ea8f0-candidate07-03-migrate",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061",
+      "name": "/dpp-lifecycle307-754ea8f0-minio",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    },
+    {
+      "id": "982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db",
+      "name": "/dpp-lifecycle307-754ea8f0-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "pid": 0,
+      "status": "exited",
+      "ports": {}
+    }
+  ],
+  "retained": true,
+  "native_delete": 0,
+  "cleanup": 0
+}

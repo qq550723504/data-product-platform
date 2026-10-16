@@ -177,6 +177,7 @@ cat /tmp/source''',['--mount','type=volume,source='+project+'-objects,target=/so
                 helper('clone-seal','remaining-seal',clone_admin,mi,target/'clone-admin-seal')
             elif group=='mixed':
                 helper('clone-inspect-enable','remaining-inspection-enable',clone_admin,mi,target/'clone-admin-enable')
+                helper('M1-ready','remaining-mixed',clone,gw,regression)
                 helper('C-protected','remaining-mixed-protected',clone,gw,regression)
                 helper('clone-inspect-disable','remaining-inspection-disable',clone_admin,mi,target/'clone-admin-seal')
             helper('final-restored-readonly','remaining-verify-native',clone_admin,mi,target/'final-restored-readonly')

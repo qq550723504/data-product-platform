@@ -42,6 +42,9 @@ const profile = "candidate07/v17"
 var errDenied = errors.New("remaining candidate authority denied; no database/provider I/O permitted")
 
 type groupBinding struct {
+	CaseHelpers, CaseConfigSHA256                                                                     map[string]string
+	PolicyHeads                                                                                       map[string]uuid.UUID
+	CheckpointCore, CheckpointNative                                                                  string
 	ConfigSHA256                                                                                      map[string]string
 	Group                                                                                             string
 	Actor                                                                                             uuid.UUID
@@ -141,6 +144,22 @@ func validateCandidate(c candidate) error {
 			return errDenied
 		}
 		seen[g.Group] = true
+		for _, id := range []string{g.CheckpointCore, g.CheckpointNative} {
+			if raw, e := hex.DecodeString(id); e != nil || len(raw) != 32 {
+				return errDenied
+			}
+		}
+		caseStages := map[string][]string{"business-races": {"renew", "business"}, "late-hold": {"late", "close-H1"}, "mixed": {"mixed", "mixed-b", "mixed-c"}}[g.Group]
+		if len(g.CaseHelpers) != len(caseStages) || len(g.CaseConfigSHA256) != len(caseStages) {
+			return errDenied
+		}
+		for _, stage := range caseStages {
+			for _, value := range []string{g.CaseHelpers[stage], g.CaseConfigSHA256[stage]} {
+				if raw, e := hex.DecodeString(value); e != nil || len(raw) != 32 {
+					return errDenied
+				}
+			}
+		}
 		for _, h := range []string{g.CoreDumpSHA256, g.GlobalsSHA256, g.NativeArchiveSHA256, g.IAMSHA256, g.GatewaySHA256, g.SealedGatewaySHA256} {
 			if raw, e := hex.DecodeString(h); e != nil || len(raw) != 32 {
 				return errDenied
@@ -170,6 +189,18 @@ func validateCandidate(c candidate) error {
 			}
 		}
 		if len(g.Copies) != len(s.Copies)+extra || (g.Group == "business-races" && extra != 2) || (g.Group != "business-races" && extra != 0) {
+			return errDenied
+		}
+		if g.Group == "business-races" {
+			if len(g.PolicyHeads) != 6 {
+				return errDenied
+			}
+			for _, cp := range g.Copies {
+				if cp.Key != "fixture/control-hold.csv" && cp.Key != "fixture/control-retention.csv" && g.PolicyHeads[cp.DatasetVersionID.String()] == uuid.Nil {
+					return errDenied
+				}
+			}
+		} else if len(g.PolicyHeads) != 0 {
 			return errDenied
 		}
 		for stage, id := range g.Helpers {
