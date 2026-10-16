@@ -50,6 +50,8 @@
 
 7 项真实 MinIO 检查：create-only PUT、UTF-8/负数原值 GET、重复 PUT 拒绝覆盖且旧 bytes 不变、并发两个 PUT 仅一成功且 winner bytes 稳定、错误 bucket URI 在发请求前拒绝、零 DELETE。只记录 method/path/status 的 loopback proxy 捕获 12 次 HTTP。该新 bucket 的 Adapter contract 不等于真实用户 CurrentDeliveryGate→Provider 完整联合路径，也未证明 gateway IAM、版本控制/WORM 或生产权限；DirectData fresh gate 的 PG 回归与真实 SDK adapter 验证分列。
 
+认证回归使用现有 staticEvidenceResolver；DirectData 回归使用现有 directIntegrationGate 和受控 Reader。该层本次 PASS 仅覆盖受控输入下的事务/fence、immutable decision evidence、状态/重放及 fresh-evaluation 协议；完整 SQL CurrentEntitlementGate 与真实 payload 联合交付本轮 NOT_RUN。其业务规则未被 #318 修改，原业务实跑与 main CI 继续按各自身份引用，不从本轮受控输入推导新的完整权利/交付 PASS。
+
 ## 回执与原失败保留
 
 - [targeted-tests.json](evidence/issue298-299-handoff-20261015/pr318-targeted-20261016/targeted-tests.json)：23 顶层 / 15 子场景；[额外 Native worker](evidence/issue298-299-handoff-20261015/pr318-targeted-20261016/extra-native-worker.json)：1 顶层。所有测试 0 FAIL、0 SKIP，完整结构化输出另附。
