@@ -32,7 +32,7 @@
 | Fixture reference owner | Dataset/Entity/Workflow/Quality/Certification/Delivery 新增 owner，8 类 typed reference。当前安装点限 lifecycle-fixture-reader / controlled tests，普通 API/Worker 未安装这些 fixture owner。41 个精确 source/workspace 正例、foreign workspace、错误版本/主体、未知 kind 及 input membership 负例全部 PASS；使用真实 PostgreSQL READ ONLY transaction，8 组引用历史前后 SHA256 相同。 |
 | 迁移 67/68 与 admission fence | 普通加工、匹配、质量、认证和交付写入在当前完整迁移下通过；7 个 reference admission 测试覆盖 owner release 保留 FK 历史/active pin、权限和跨租户拒绝、first-copy/source insertion 双向串行化、foreign-schema/control-column 和失效 guard UNKNOWN。全部为新库 SQL/受控 Adapter；没有 provider DELETE。 |
 | 加工与 immutable dependencies | Frozen input/retry/traceability、Ready output crash recovery、实体匹配及现有 Native worker 用例通过。额外 Native worker 用例是为了实际生成 EXECUTION_MAPPING，并检查映射/输出和不可变历史；没有无差别重跑整轮 POC。 |
-| 质量、认证与交付 | Native Quality/Compliance、实际 retry 成本、Certification/Disposition evidence、共享 delivery fence、DirectData ISSUED 先提交/同 key 不重发 payload、新 attempt fresh-gate BLOCKED 均通过。此层为真实 PG + 实际业务引擎/命令 + 受控 storage/provider Port。 |
+| 质量、认证与交付 | Native Quality/Compliance、实际 retry 成本、Certification/Disposition evidence、共享 delivery fence 均通过。DirectData 服务层验证 committed ISSUED 对应 PayloadReady=true、同 key 返回 ReplayRequired/PayloadReady=false，以及新 attempt 的受控 fresh-gate BLOCKED。此层为真实 PG + 实际业务引擎/命令 + 下文注明的受控输入。 |
 | Routing | life2 → life3，新 lifecycle events。5 个路由/版本/全事件覆盖/profile/queue obligation 用例通过；未运行新的 OM 断连矩阵或整个后台投影业务。 |
 | Storage/SDK | 新 checkpoint-read 路径的 custody/零重试受控测试通过；实际编译依赖 minio-go/v7 v7.0.88。另以实际 MinIO 和当前 Store adapter 验证读写、拒绝覆盖、并发唯一成功及跨 bucket 预拒绝。 |
 | 未变化的 UI/HTTP/行业规则 | 本次没有重跑浏览器、人工、完整 B1/B2/C1/C2 或 OM Connector 矩阵；原结果仍属于其原源码和环境。 |
@@ -50,7 +50,7 @@
 
 7 项真实 MinIO 检查：create-only PUT、UTF-8/负数原值 GET、重复 PUT 拒绝覆盖且旧 bytes 不变、并发两个 PUT 仅一成功且 winner bytes 稳定、错误 bucket URI 在发请求前拒绝、零 DELETE。只记录 method/path/status 的 loopback proxy 捕获 12 次 HTTP。该新 bucket 的 Adapter contract 不等于真实用户 CurrentDeliveryGate→Provider 完整联合路径，也未证明 gateway IAM、版本控制/WORM 或生产权限；DirectData fresh gate 的 PG 回归与真实 SDK adapter 验证分列。
 
-认证回归使用现有 staticEvidenceResolver；DirectData 回归使用现有 directIntegrationGate 和受控 Reader。该层本次 PASS 仅覆盖受控输入下的事务/fence、immutable decision evidence、状态/重放及 fresh-evaluation 协议；完整 SQL CurrentEntitlementGate 与真实 payload 联合交付本轮 NOT_RUN。其业务规则未被 #318 修改，原业务实跑与 main CI 继续按各自身份引用，不从本轮受控输入推导新的完整权利/交付 PASS。
+认证回归使用现有 staticEvidenceResolver；DirectData 两个选中测试仅调用 DirectDataService，使用现有 directIntegrationGate 与 PostgreSQL repositories，没有接入 Reader 或 HTTP payload 输出。该层本次 PASS 仅覆盖受控输入下的事务/fence、immutable decision evidence、committed ISSUED/PayloadReady、同 key ReplayRequired/PayloadReady=false，以及 replacement attempt 的 fresh-evaluation 协议；实际 HTTP 响应首字节行为、完整 SQL CurrentEntitlementGate 与真实 payload 联合交付本轮 NOT_RUN。其业务规则未被 #318 修改，原业务实跑与 main CI 继续按各自身份引用，不从本轮受控输入推导新的完整权利/交付 PASS。
 
 ## 回执与原失败保留
 
