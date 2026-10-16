@@ -110,6 +110,56 @@ def gateway(manifest, active):
     return '\n'.join(rules).encode()
 
 
+def complete_native(group, private, resources, out, stage, manifest, owned, source_before, ident, volume):
+    pg,mi,gw=(resources['containers'][x] for x in ('postgres','minio','gateway'))
+    audit=resources['project']+'-checkpoint'
+    restorevolume=resources['project']+'-restored-objects'
+    cfg=load(private/'config.json')
+    compare=resources['project']+'-compare'
+    command=r'set -o pipefail; cd /source; find . -type f -exec sha256sum {} \; | sort > /tmp/source; cd /restore; find . -type f -exec sha256sum {} \; | sort > /tmp/restore; cmp /tmp/source /tmp/restore; cat /tmp/source'
+    compareid=docker('create','--pull','never','--name',compare,'--label','lifecycle307.run='+resources['run_id'],'--network','none','--read-only','--tmpfs','/tmp',
+                     '--mount','type=volume,source='+resources['project']+'-objects,target=/source,readonly',
+                     '--mount','type=volume,source='+restorevolume+',target=/restore,readonly','--entrypoint','/bin/sh',PGIMAGE,'-ec',command).decode().strip()
+    owned.append(compareid);docker('start',compareid);require(docker('wait',compareid).strip()==b'0','Native restored file SHA256 comparison failed')
+    files=docker('logs',compareid)
+    require(len(files.splitlines())>=len(manifest['objects']), 'Native physical file manifest incomplete')
+    (out/'native-file-sha256.txt').write_bytes(files)
+    clone = resources['project']+'-restored-minio'
+    cloneid = docker('create','--pull','never','--name',clone,'--label','lifecycle307.run='+resources['run_id'],'--network','none',
+                     '--mount','type=volume,source='+restorevolume+',target=/data',
+                     '--mount',f'type=bind,source={private},target=/run/credentials,readonly','--entrypoint','/bin/sh',MIIMAGE,'/run/credentials/start.sh').decode().strip()
+    owned.append(cloneid);docker('start',cloneid)
+    # Readiness is only a startup check, not a retry of any fixture request.
+    for _ in range(60):
+        logs=docker('logs',cloneid)
+        if b'API:' in logs: break
+        time.sleep(1)
+    else: raise RuntimeError('Restored native startup not witnessed')
+    verifier = resources['project']+'-readonly-restore'
+    cfg['OutputDirectory']='/run/output/restore-verification'
+    write(stage/'verify.json',cfg)
+    verifyid=docker('create','--pull','never','--name',verifier,'--label','lifecycle307.run='+resources['run_id'],'--network','container:'+cloneid,'--read-only',
+                    '--mount',f'type=bind,source={private},target=/run/private,readonly','--mount',f'type=bind,source={out},target=/run/output',
+                    '--mount',f'type=bind,source={out / "manifest.json"},target=/run/manifest.json,readonly',
+                    '-e','LIFECYCLE_FIXTURE_CONFIG=/run/private/checkpoint/verify.json','-e','LIFECYCLE_REMAINING_VERIFY=1',
+                    '--entrypoint','/run/private/prepare',PGIMAGE).decode().strip()
+    owned.append(verifyid);docker('start',verifyid);require(docker('wait',verifyid).strip()==b'0','Native restored read-only verification failed; no repeat')
+    require(load(out/'restore-verification/verification.json')['status']=='PASS_NATIVE_READONLY','Restored native verification incomplete')
+    print(group+': restored native GET/inventory/protection/IAM matched',flush=True)
+    active,sealed=gateway(manifest,True),gateway(manifest,False)
+    (out/'gateway-active.Caddyfile').write_bytes(active)
+    (out/'gateway-sealed.Caddyfile').write_bytes(sealed)
+    (private/'Caddyfile').write_bytes(sealed)
+    for path in (out/'gateway-active.Caddyfile',out/'gateway-sealed.Caddyfile'):
+        docker('cp',path,gw+':/tmp/'+path.name)
+        docker('exec',gw,'caddy','validate','--config','/tmp/'+path.name,'--adapter','caddyfile')
+    docker('restart',gw)
+    require(fingerprints(pg)==source_before,'Source Core changed during backup/read-only verification')
+    write(out/'checkpoint.json',{'status':'PASS_FULL_CORE_AND_NATIVE_RESTORE','core':{'container':audit,'id':ident,'volume':volume,'dump_sha256':sha(stage/'core.dump'),'globals_sha256':sha(stage/'globals.sql'),'tables':len(source_before['relations']),'rows':sum(x['rows'] for x in source_before['relations'])},
+                                'native':{'archive_sha256':sha(stage/'native.tar'),'archive_bytes':(stage/'native.tar').stat().st_size,'container':clone,'id':cloneid,'volume':restorevolume,'version_count':len(manifest['objects']),'physical_file_sha256_compare':'PASS','exact_GET_inventory_protection_IAM':'PASS'},
+                                'active_gateway_sha256':hashlib.sha256(active).hexdigest(),'sealed_gateway_sha256':sha(private/'Caddyfile'),'installed_gateway':'SEALED_DENY_ALL','delete':0,'hold_release':0,'bypass':0,'cleanup':0})
+
+
 def prepare(group, subnet):
     control = PRIVATE / 'remaining-native01'
     out = PUBLIC / group
@@ -174,42 +224,9 @@ def prepare(group, subnet):
         unpack = resources['project']+'-unpack'
         unpackid = docker('create','--pull','never','--name',unpack,'--label','lifecycle307.run='+resources['run_id'],'--network','none','--read-only',
                           '--mount','type=volume,source='+restorevolume+',target=/restore','--mount',f'type=bind,source={stage},target=/backup,readonly',
-                          '--entrypoint','/bin/sh',PGIMAGE,'-c','tar -C /restore -xpf /backup/native.tar && exec tar -C /restore -df /backup/native.tar').decode().strip()
-        owned.append(unpackid);docker('start',unpackid);require(docker('wait',unpackid).strip()==b'0','Native restore/byte compare failed')
-        clone = resources['project']+'-restored-minio'
-        cloneid = docker('create','--pull','never','--name',clone,'--label','lifecycle307.run='+resources['run_id'],'--network','none',
-                         '--mount','type=volume,source='+restorevolume+',target=/data',
-                         '--mount',f'type=bind,source={private},target=/run/credentials,readonly','--entrypoint','/bin/sh',MIIMAGE,'/run/credentials/start.sh').decode().strip()
-        owned.append(cloneid);docker('start',cloneid)
-        # Readiness is only a startup check, not a retry of any fixture request.
-        for _ in range(60):
-            logs=docker('logs',cloneid)
-            if b'API:' in logs: break
-            time.sleep(1)
-        else: raise RuntimeError('Restored native startup not witnessed')
-        verifier = resources['project']+'-readonly-restore'
-        cfg['OutputDirectory']='/run/output/restore-verification'
-        write(stage/'verify.json',cfg)
-        verifyid=docker('create','--pull','never','--name',verifier,'--label','lifecycle307.run='+resources['run_id'],'--network','container:'+cloneid,'--read-only',
-                        '--mount',f'type=bind,source={private},target=/run/private,readonly','--mount',f'type=bind,source={out},target=/run/output',
-                        '--mount',f'type=bind,source={out / "manifest.json"},target=/run/manifest.json,readonly',
-                        '-e','LIFECYCLE_FIXTURE_CONFIG=/run/private/checkpoint/verify.json','-e','LIFECYCLE_REMAINING_VERIFY=1',
-                        '--entrypoint','/run/private/prepare',PGIMAGE).decode().strip()
-        owned.append(verifyid);docker('start',verifyid);require(docker('wait',verifyid).strip()==b'0','Native restored read-only verification failed; no repeat')
-        require(load(out/'restore-verification/verification.json')['status']=='PASS_NATIVE_READONLY','Restored native verification incomplete')
-        print(group+': restored native GET/inventory/protection/IAM matched',flush=True)
-        active,sealed=gateway(manifest,True),gateway(manifest,False)
-        (out/'gateway-active.Caddyfile').write_bytes(active)
-        (out/'gateway-sealed.Caddyfile').write_bytes(sealed)
-        (private/'Caddyfile').write_bytes(sealed)
-        for path in (out/'gateway-active.Caddyfile',out/'gateway-sealed.Caddyfile'):
-            docker('cp',path,gw+':/tmp/'+path.name)
-            docker('exec',gw,'caddy','validate','--config','/tmp/'+path.name,'--adapter','caddyfile')
-        docker('restart',gw)
-        require(fingerprints(pg)==source_before,'Source Core changed during backup/read-only verification')
-        write(out/'checkpoint.json',{'status':'PASS_FULL_CORE_AND_NATIVE_RESTORE','core':{'container':audit,'id':ident,'volume':volume,'dump_sha256':sha(stage/'core.dump'),'globals_sha256':sha(stage/'globals.sql'),'tables':len(source_before['relations']),'rows':sum(x['rows'] for x in source_before['relations'])},
-                                    'native':{'archive_sha256':sha(stage/'native.tar'),'archive_bytes':(stage/'native.tar').stat().st_size,'container':clone,'id':cloneid,'volume':restorevolume,'version_count':len(manifest['objects']),'physical_tar_compare':'PASS','exact_GET_inventory_protection_IAM':'PASS'},
-                                    'active_gateway_sha256':hashlib.sha256(active).hexdigest(),'sealed_gateway_sha256':sha(private/'Caddyfile'),'installed_gateway':'SEALED_DENY_ALL','delete':0,'hold_release':0,'bypass':0,'cleanup':0})
+                          '--entrypoint','/bin/sh',PGIMAGE,'-c','exec tar -C /restore -xpf /backup/native.tar').decode().strip()
+        owned.append(unpackid);docker('start',unpackid);require(docker('wait',unpackid).strip()==b'0','Native restore failed')
+        complete_native(group,private,resources,out,stage,manifest,owned,source_before,ident,volume)
         facts={'group':group,'run_id':resources['run_id'],'status':'PASS_PREPARATION_ONLY','checkpoint':'checkpoint.json','current_delete_budget':0}
     finally:
         # Recover allocation identity even if native provision failed. No retry,
