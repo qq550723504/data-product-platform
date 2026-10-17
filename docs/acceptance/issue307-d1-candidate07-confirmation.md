@@ -1,6 +1,8 @@
 # #307 D1 candidate07/v17 精确确认方案
 
-当前状态：`AUTHORIZED_WAITING_FIXED_WINDOW`。本线程已收到人类对完整candidate07/v17及全部绑定的新按引用授权，execution `effa0385-9308-42eb-bd66-d0c379b6a989`，只在2026-10-17新加坡10:00–10:40且所有前置通过后有效。[新授权回执](evidence/issue307-d1/delete-confirmed-v17-execution01/human-authorization.json)保存实际原文及批准模板SHA，`user_retyped_template=false`，旧授权未复用。#323保持Draft，#307保持OPEN。当前真实DELETE、发送claim、hold release、bypass、cleanup均为0；32份运行权限仍false，未签发可发送topology proof。
+当前状态：`ABORTED_BEFORE_ARMING_PHYSICALLY_SEALED`。2026-10-17 02:04:12Z，本次窗口运行在新鲜核验的宿主汇总检查失败后终止，未启用发送、未发生DELETE/claim/预算消耗。失败根因为宿主临时组合逐字比较IAM策略序列化SHA，把3份仅Action/Resource无序集合顺序变化、官方policy.Equals仍等价的策略误判为漂移；原生readonly verifier本身PASS。详见[本次结果与封存](evidence/issue307-d1/delete-confirmed-v17-window01/window-result.json)。一次性续跑已PAUSED，本窗口不重试、不重开。
+
+原人类按引用授权、candidate/source/binary/template及冻结证据保持历史原字节，execution仍为 `effa0385-9308-42eb-bd66-d0c379b6a989`；不把本次失败变成新的授权。[新授权回执](evidence/issue307-d1/delete-confirmed-v17-execution01/human-authorization.json)保留实际原文、批准模板SHA及`user_retyped_template=false`。32份运行权限false，7个case与7份recovery配置已受控撤销Enabled、原字节私有归档；59个相关容器停止/PID0，三gateway封存，全部备份/volumes保留。business的4身份fresh禁用确认；另两组native从未启动，无新IAM读回，不能称所有步骤均fresh确认。#323仍Draft，#307仍OPEN，完整D1未验收。
 
 窗口前准备与定时续跑、root回执归档、H1实际闭锁及失败封存的有限操作顺序见[固定窗口运行手册](issue307-d1-v17-window-runbook.md)。冻结包的原 `status.json`、candidate、template、bindings、source和三个binary保持原字节；历史NOT_RECEIVED是当时准备快照，不覆盖成新授权事实。
 
@@ -39,9 +41,11 @@
 | 发送与恢复接线 | PASS_NON_DELETE | 单target持久budget先于Core claim、SDK retries=1、redirect禁止；真实上游204后才签wire witness；H2随后hold/revoke并丢响应；M1先C-only阻断mixed checkpoint再B lookup；恢复经Outbox→真实Asynq选定work，无resend入口 |
 | 封存/离线反例 | PASS | 17实际operator与7实际case拒绝；source Core/native物理stopped；sender/wire由permission=false先拒绝，recovery由缺fresh signed readonly topology拒绝；Go offline validator、Python正常/-O三项及嵌套篡改反例PASS |
 | 独立复评与最终检查 | PASS_BOUNDED_REVIEW / SEE_FINAL_CI_CHECKPOINT | 独立只读复评重核812源码、940 raw及最终73份native回归，当前切片BLOCKER=0；67个精确owner CID再次inspect均stopped/PID0/noports/no restart。最终精确HEAD的Linux PR CI在GitHub checkpoint记录 |
-| 实际删除与完整D1 | NOT_RUN / NOT_ACCEPTED | 所有源版本仍在；七次未来发送预算目前为0。旧授权不复用；#307不关闭 |
-| 新授权/窗口前准备 | AUTHORIZED_WAITING_FIXED_WINDOW | 新按引用授权与一次性本线程续跑已登记；32权限false、58个绑定容器停止/PID0；回执归档、H1配置单字段撤销及封存故障组合离线通过。真实fresh核验、签名、IAM动作和发送均留待已授权窗口 |
+| 实际删除与完整D1 | NOT_RUN / NOT_ACCEPTED | 7目标未发送，预算未消耗；business 8版本fresh确认仍在，其余两组未启动。本窗口已终止，不重试、不复用为新授权；#307不关闭 |
+| 新授权/窗口前准备 | RECEIVED_BY_REFERENCE / PREWINDOW_HISTORY | 当时新授权、一次性续跑、32权限false、58容器停止及离线回归已核对；10/17实际运行在发送前失败并封存，见下方实际结果行 |
 | 窗口前工具独立复评 | PASS_BOUNDED_REVIEW / BLOCKER=0 | 原B1当前包校验阻断封存、B2归档失败跳过IAM关闭均已有限修复；正常及-O各14项独立通过，旧11份准备raw不变。当前工具入口为remaining-window-review01，旧composition仅保留历史；[初评与复评](evidence/issue307-d1/remaining-window-review01/independent-final-review.json) |
+| 10/17窗口新鲜核验 | ABORTED_BEFORE_ARMING | 静态授权/HEAD/13项CI/9备份/39owner/budget通过；business源Core开始指纹匹配，8版本库存/保护和原生readonly核验PASS，4策略官方Equals全部等价。宿主raw-policy-SHA比较误报后立即终止；另两组及Core after均NOT_RUN |
+| 10/17失败封存 | PHYSICAL_SEAL_CONFIRMED / SOME_IAM_READBACK_NOT_RUN | 32权限false、7case及7recovery已撤销、59容器停止/PID0、3sealed gateway、0budget；business四身份fresh关闭+policy PASS，late/mixed因源native从未启动没有新读回，seal all_steps_confirmed=false如实保留；heartbeat PAUSED |
 
 最新证据：[业务原生重跑](evidence/issue307-d1/remaining-executable03/business-races/regression/remaining-business-regression.json)、[六顺序PG与历史保留](evidence/issue307-d1/remaining-policy-regression03/tests.txt)、[最新冻结binary H0/H1](evidence/issue307-d1/remaining-final-regression01/result.json)、[H0/H1完整证据](evidence/issue307-d1/remaining-final-regression01/evidence-index.json)、[M1/C补跑](evidence/issue307-d1/remaining-executable04/checkpoint-completion.json)。
 
@@ -54,6 +58,8 @@ CopyPolicy原实现每DV唯一且不可变，并限定一小时；直接写明�
 Reuse Check：复用既有Commands/PG fence/immutable facts、FixtureSubjectPins、NATIVE/DirectData SPI、Outbox/Asynq、MinIO SDK与madmin官方API、Ed25519/cryptography。未新增通用IAM、scheduler、workflow runtime或自研密码协议。Core新增部分仅为平台fixture policy续期语义；provider SDK留在adapter/cmd组合。
 
 ## 3. 授权后才允许的有限顺序
+
+以下为已终止窗口的原授权顺序，当前不能作为重新启用或重跑依据；后续须先把fresh汇总入口及回执回放纳入窗口前有限评审，修正序列化哈希/策略语义混用，再准备新的execution、窗口和精确确认，不能平移本方案。
 
 1. 当前人类已对下方唯一文本及全部绑定按引用授权；实际人类原文与逐字批准载荷分开留证，不声称用户重新键入模板。核对当前PR HEAD/Draft和源码/三个binary/备份/容器完整ID。发送前重新做三源只读Core与18版本库存、保护、IAM核验；当前baseline若漂移，停止，不沿用旧授权。新确认不得转用于其他execution或窗口。
 2. 启动绑定的三源Core/native/gateway及各自固定Redis；gateway安装绑定active配置，9000端口始终无DELETE路由，9002仅由冻结wire提供。root bootstrap与所有business/sender/recovery挂载分离。

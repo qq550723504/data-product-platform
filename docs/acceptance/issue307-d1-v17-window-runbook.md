@@ -1,5 +1,7 @@
 # #307 D1 candidate07/v17 固定窗口运行手册
 
+**2026-10-17实际结果：本次窗口在02:04:12Z发送前终止，已物理封存，heartbeat PAUSED。** [窗口回执](evidence/issue307-d1/delete-confirmed-v17-window01/window-result.json)记录：business原生readonly PASS，宿主新增raw-policy-SHA汇总错误地拒绝3份仅列表顺序变化的等价策略；0真实DELETE/claim/budget，59容器停止、32权限false。business四身份fresh关闭确认，另两组未启动且无新IAM读回，不能称全部步骤fresh确认。以下原顺序保留为本次授权/操作历史，不能用来重新开启本窗口。
+
 当前 host 执行入口为 `remaining-window-review01/composition/window_support.py`。0ef2fb92 的 `delete-confirmed-v17-execution01` 准备包、11份raw索引及当时手册SHA均保留为历史；旧composition不再作为执行入口。独立评审发现的“当前包损坏阻断封存”和“归档失败跳过IAM关闭”只在host组合中修复，冻结candidate及其源码/binary/授权范围不变。
 
 本手册只组合已冻结的 owner、IAM bootstrap、attester 和 Command。execution 为 `effa0385-9308-42eb-bd66-d0c379b6a989`，唯一发送窗口为 **2026-10-17 02:00:00Z ≤ now < 02:40:00Z**（新加坡10:00–10:40）。七份目标逐份最多一次、总计最多七次；UNKNOWN 不重发。11份保留版本、其他环境、全部备份保留；cleanup=0、hold-release=0、bypass=0。#323 保持 Draft，#307 保持 OPEN。
@@ -90,5 +92,8 @@ python -B -X utf8 docs/acceptance/evidence/issue307-d1/remaining-window-review01
 | 失败封存 | 正常及-O各14项PASS，含归档失败/旧摘要/enable进程未关闭组合；真实source未启动 | 实际IAM readback、deny gateway、PID0逐项留证 |
 | 窗口前独立评审 | PASS_BOUNDED_REVIEW；B1/B2关闭，BLOCKER=0；[复评回执](evidence/issue307-d1/remaining-window-review01/independent-final-review.json) | 当前包损坏仍进入同一批准CID关闭；归档失败仍尝试IAM但拒绝旧摘要；enable未关停不确认稳定身份关闭。timer须绑定本版实际SHA及最终精确HEAD/CI |
 | 七目标删除/完整D1 | NOT_RUN / NOT_ACCEPTED | 原生结果与11份survivor、成本/事实历史全对账 |
+| 10/17实际窗口 | ABORTED_BEFORE_ARMING / PHYSICALLY_SEALED | 静态前置PASS；business 8版本与4策略官方Equals PASS；宿主raw hash误报终止；其余fresh场景NOT_RUN。0DELETE/claim/budget、59容器停止、32权限false，heartbeat PAUSED |
 
-当前工具测试是离线验证，未运行真实IAM关闭、H1签名或删除演练。新的运行结果按实际事实追加，不改冻结包的准备状态。
+窗口前工具测试是离线验证，当时未运行真实IAM关闭、H1签名或删除演练；10/17仅business组实际执行了失败后的IAM关闭，H1与删除均未运行。新结果按事实追加，不改冻结包的准备快照。
+
+窗口后诊断：官方MinIO policy.ParseConfig/Equals离线重放4/4等价，真实记录的3个raw差异均仅Action/Resource列表顺序；扩action、换resource/version及畸形policy反例拒绝。原生verifier已有正确OSS语义比较，错误来自未在窗口前回放评审的宿主fresh汇总附加raw hash判断。后续必须预先提交/评审该汇总入口与真实回执的排序/扩权反例；raw SHA继续保留审计用途，不能替代策略集合语义。没有改冻结binary、重启环境或恢复本次运行。
