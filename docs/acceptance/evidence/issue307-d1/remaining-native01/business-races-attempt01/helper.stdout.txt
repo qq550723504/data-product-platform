@@ -1,0 +1,26 @@
+{"time":"2026-10-16T06:21:08.015615844Z","level":"INFO","msg":"migration complete","direction":"up"}
+attach-disabled-exact-delete-policy failed; environment preserved, no automatic retry
+prepare: verify-empty-provider
+prepare: create-locked-namespace:dpp-lifecycle307-online
+prepare: verify-versioning:dpp-lifecycle307-online
+prepare: create-locked-namespace:dpp-lifecycle307-quarantine
+prepare: verify-versioning:dpp-lifecycle307-quarantine
+prepare: create-inspection-policy
+prepare: create-inspection-identity
+prepare: attach-inspection-policy
+prepare: create-synthetic-version:dpp-lifecycle307-online:fixture/p1.csv
+prepare: verify-exact-synthetic-bytes:dpp-lifecycle307-online:fixture/p1.csv
+prepare: create-synthetic-version:dpp-lifecycle307-online:fixture/p2.csv
+prepare: verify-exact-synthetic-bytes:dpp-lifecycle307-online:fixture/p2.csv
+prepare: create-synthetic-version:dpp-lifecycle307-online:fixture/t1.csv
+prepare: verify-exact-synthetic-bytes:dpp-lifecycle307-online:fixture/t1.csv
+prepare: create-synthetic-version:dpp-lifecycle307-online:fixture/control-hold.csv
+prepare: verify-exact-synthetic-bytes:dpp-lifecycle307-online:fixture/control-hold.csv
+prepare: create-synthetic-version:dpp-lifecycle307-quarantine:fixture/t2.csv
+prepare: verify-exact-synthetic-bytes:dpp-lifecycle307-quarantine:fixture/t2.csv
+prepare: create-synthetic-version:dpp-lifecycle307-quarantine:fixture/control-retention.csv
+prepare: verify-exact-synthetic-bytes:dpp-lifecycle307-quarantine:fixture/control-retention.csv
+prepare: create-delete-identity-without-policy
+prepare: disable-delete-identity
+prepare: create-exact-delete-policy
+prepare: attach-disabled-exact-delete-policy

@@ -1,0 +1,41 @@
+{
+  "status": "BLOCKED_INITIAL_INDEPENDENT_REVIEW",
+  "reviewer": "/root/remaining_runner_independent_review",
+  "head": "0ef2fb92421bc4549e3567f859c06da1f23c5c2e",
+  "findings": [
+    {
+      "id": "B1",
+      "classification": "BLOCKER",
+      "file": "delete-confirmed-v17-execution01/composition/window_support.py",
+      "lines": [143, 145, 436],
+      "root_cause": "Current candidate/bindings/template validation gates construction of the containment context",
+      "offline_reproduction": "Inject current candidate hash drift: Host().seal() raises ValueError and stop_calls=0",
+      "accepted_fix": "Only seal selects exact same candidate/bindings from validated local Git snapshot; normal checks remain strict"
+    },
+    {
+      "id": "B2",
+      "classification": "BLOCKER",
+      "file": "delete-confirmed-v17-execution01/composition/window_support.py",
+      "lines": [350],
+      "root_cause": "Receipt rotation must succeed before the trusted fixed IAM disabling helper is attempted",
+      "offline_reproduction": "Inject rotate PermissionError: docker_calls=[]",
+      "accepted_fix": "Record archive failure and still attempt disabling; reject any pre-existing/unreadable summary and taint incomplete containment"
+    }
+  ],
+  "related_confirmation_rule": "When enable-owner stop is unconfirmed, a point-in-time disabled readback does not prove stable identity closure; whole seal remains unconfirmed",
+  "other_bounded_checks": {
+    "strict_freeze": "PASS_812_SOURCE_940_RAW_AND_GIT_BLOBS",
+    "old_tests_normal": "PASS_10",
+    "old_tests_optimized": "PASS_10",
+    "preparation_index": "PASS_11_OF_11",
+    "read_only_inspect_calls": 61,
+    "permissions_false": 32,
+    "bound_containers_stopped": 58,
+    "authorization": "Actual message, approved template and envelope hashes match; by-reference distinction retained",
+    "scheduler": "ACTIVE; created_at=1792147144149; exact target; one 2026-10-17T10:00:00+08:00 occurrence; prompt and private update receipt match"
+  },
+  "native_delete": 0,
+  "provider_io": 0,
+  "container_starts": 0,
+  "cleanup": 0
+}

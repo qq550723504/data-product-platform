@@ -1,0 +1,65 @@
+[
+  {
+    "group": "business-races",
+    "stage": "renew",
+    "container": "57dc573cc9311eb56109a46662af0225e7f4873a5750ab8ec32c684dad6ee0a9",
+    "exit_code": 1,
+    "logs": "Remaining step failed: lifecycle storage scope mismatch ; all resources retained; DELETE=0\n",
+    "source_core_native_stopped": true,
+    "native_delete": 0
+  },
+  {
+    "group": "business-races",
+    "stage": "business",
+    "container": "e2fbca5761cef1451f388894318242ebe194dd63b2da1bd53f4db77ea796ec35",
+    "exit_code": 1,
+    "logs": "Remaining step failed: lifecycle storage scope mismatch ; all resources retained; DELETE=0\n",
+    "source_core_native_stopped": true,
+    "native_delete": 0
+  },
+  {
+    "group": "late-hold",
+    "stage": "late",
+    "container": "9b99a8f93f41848b3e5284abd8cc7e77acd63f9c54c67fa6e8f331e76cdf6866",
+    "exit_code": 1,
+    "logs": "Remaining step failed: lifecycle storage scope mismatch ; all resources retained; DELETE=0\n",
+    "source_core_native_stopped": true,
+    "native_delete": 0
+  },
+  {
+    "group": "late-hold",
+    "stage": "close-H1",
+    "container": "82d6461105a6264dbe365a661e1210f6abaad4f10b3eeb855ef619a1b1a5266f",
+    "exit_code": 1,
+    "logs": "Remaining step failed: lifecycle storage scope mismatch ; all resources retained; DELETE=0\n",
+    "source_core_native_stopped": true,
+    "native_delete": 0
+  },
+  {
+    "group": "mixed",
+    "stage": "mixed",
+    "container": "51eb451db0c305a67e7b3859a21b65777168ec361ddbba7985bcde1d76382256",
+    "exit_code": 1,
+    "logs": "Remaining step failed: lifecycle storage scope mismatch ; all resources retained; DELETE=0\n",
+    "source_core_native_stopped": true,
+    "native_delete": 0
+  },
+  {
+    "group": "mixed",
+    "stage": "mixed-b",
+    "container": "0a3814d2f7b7e7223b17497a77c1a89fd8504e876d29856a6ca3300de79d25e1",
+    "exit_code": 1,
+    "logs": "Remaining step failed: lifecycle storage scope mismatch ; all resources retained; DELETE=0\n",
+    "source_core_native_stopped": true,
+    "native_delete": 0
+  },
+  {
+    "group": "mixed",
+    "stage": "mixed-c",
+    "container": "f35f67ac99068d5fe012b35d64623d98d40b1e41a7ef088c0735524d06609a94",
+    "exit_code": 1,
+    "logs": "Remaining step failed: lifecycle storage scope mismatch ; all resources retained; DELETE=0\n",
+    "source_core_native_stopped": true,
+    "native_delete": 0
+  }
+]

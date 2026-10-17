@@ -1,0 +1,42 @@
+{
+  "goal": "Independently review and close bounded blockers in candidate07/v17 pre-window authorization, scheduler and host containment preparation",
+  "reviewed_initial_head": "0ef2fb92421bc4549e3567f859c06da1f23c5c2e",
+  "execution": "effa0385-9308-42eb-bd66-d0c379b6a989",
+  "authoritative_sources": [
+    "docs/acceptance/issue307-d1-candidate07-confirmation.md",
+    "docs/acceptance/issue307-d1-v17-window-runbook.md",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate07/candidate.json",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate07/bindings.json",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-execution01/human-authorization.json"
+  ],
+  "current_host_entry": "remaining-window-review01/composition/window_support.py",
+  "historical_preparation_entry": "delete-confirmed-v17-execution01/composition/window_support.py at 0ef2fb92; retained for original raw index, superseded as operational entry",
+  "invariants": [
+    "Before the fixed window no arming, container start or provider I/O",
+    "Only the same approved exact CIDs may be contained; a validated local Git snapshot supplies containment identities, never sending authority",
+    "Current-packet preflight failure cannot prevent known-owner containment",
+    "Archive failure cannot prevent attempting the trusted fixed disable-all helper",
+    "Pre-existing or unreadable status summary is never fresh readback",
+    "Live or unconfirmed enable owners prevent stable identity-disable confirmation",
+    "Containment failure in one step does not skip remaining groups or physical stops",
+    "No candidate/source/binary/target/window/budget expansion; UNKNOWN never resent",
+    "Original authorization message, approved template and envelope remain distinct",
+    "PR323 Draft and Issue307 OPEN; cleanup, hold-release, bypass, native delete all zero in this review"
+  ],
+  "non_goals": [
+    "Real native preflight, H1 proof, identity changes or target sends before the authorized window",
+    "New execution, candidate, runtime binary, provider implementation or general workflow infrastructure",
+    "Merge, Ready or full D1 acceptance"
+  ],
+  "blocking_categories": [
+    "Authorization/security bypass or credential disclosure",
+    "Silent loss or overwrite of historical facts/evidence",
+    "Conflicting authoritative execution contracts",
+    "Required bounded execution or containment path cannot run",
+    "Concurrency/idempotency violates the declared bounds",
+    "Required build/test failure"
+  ],
+  "reviewer": "/root/remaining_runner_independent_review",
+  "root_is_only_code_writer": true,
+  "native_delete": 0
+}

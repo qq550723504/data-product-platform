@@ -1,8 +1,9 @@
 # Completes the owned empty environment; retains providers/data and reaps its helper.
-param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[switch]$ArchiveAcceptance,[switch]$ProcessingDeliveryAcceptance,[string]$MinioImage='',[switch]$RetainHelper)
+param([Parameter(Mandatory=$true)][string]$PrivateDirectory,[switch]$ArchiveAcceptance,[switch]$ProcessingDeliveryAcceptance,[string]$MinioImage='',[ValidateSet('','business-races','late-hold','mixed')][string]$RemainingGroup='',[switch]$RetainHelper)
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version Latest
 . (Join-Path $PSScriptRoot '../temporary-containers.ps1')
+if($RemainingGroup -ne '' -and (-not $ProcessingDeliveryAcceptance -or -not $ArchiveAcceptance)){throw 'Remaining profile requires exact-version processing fixture mode'}
 if($ProcessingDeliveryAcceptance -and -not $ArchiveAcceptance){throw 'Processing/delivery slice requires exact-version native fixture mode'}
 $repo=(Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $private=(Resolve-Path -LiteralPath $PrivateDirectory).Path
@@ -39,7 +40,9 @@ $binaryHash=(Docker @('exec',$r.containers.minio,'sha256sum','/usr/local/bin/min
 if($binaryHash -ne 'fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8'){throw 'Pinned binary mismatch'}
 $nativeVersion=Docker @('exec',$r.containers.minio,'/usr/local/bin/minio','--version')
 $rootAccess=[IO.File]::ReadAllText((Join-Path $private 'access'))
-$caddy=[IO.File]::ReadAllText((Join-Path $PSScriptRoot 'storage.Caddyfile')).Replace('__BOOTSTRAP_ACCESS__',$rootAccess)
+$caddySource=Join-Path $PSScriptRoot 'storage.Caddyfile'
+if($RemainingGroup -ne ''){$caddySource=Join-Path $PSScriptRoot ('remaining-'+$RemainingGroup+'.Caddyfile')}
+$caddy=[IO.File]::ReadAllText($caddySource).Replace('__BOOTSTRAP_ACCESS__',$rootAccess)
 Write-Utf8 (Join-Path $private 'Caddyfile') $caddy
 Docker @('exec',$r.containers.gateway,'caddy','validate','--config','/etc/caddy/Caddyfile','--adapter','caddyfile')|Out-Null
 # Stop/start changes only this gateway process; volumes and native objects remain.
@@ -66,7 +69,7 @@ $environment=@{
 $pgSecret=[IO.File]::ReadAllText((Join-Path $private 'pgpass'))
 $config=@{
  RunID=$run;WorkspaceID=[guid]::NewGuid().ToString();ProviderInstanceID=[guid]::NewGuid().ToString();IncarnationID=[guid]::NewGuid().ToString();ActorID=[guid]::NewGuid().ToString()
- Enabled=$true;ArchiveAcceptance=[bool]$ArchiveAcceptance;ProcessingDeliveryAcceptance=[bool]$ProcessingDeliveryAcceptance;Endpoint='127.0.0.1:9000';PostgresDSN="postgres://fixture:${pgSecret}@$($r.containers.postgres):5432/lifecycle307?sslmode=disable"
+ Enabled=$true;RemainingGroup=$RemainingGroup;ArchiveAcceptance=[bool]$ArchiveAcceptance;ProcessingDeliveryAcceptance=[bool]$ProcessingDeliveryAcceptance;Endpoint='127.0.0.1:9000';PostgresDSN="postgres://fixture:${pgSecret}@$($r.containers.postgres):5432/lifecycle307?sslmode=disable"
  RootAccess=$rootAccess;RootSecret=[IO.File]::ReadAllText((Join-Path $private 'secret'));InspectAccess='inspect'+$run.Replace('-','').Substring(0,12);InspectSecret=(New-Secret);Token=(New-Secret)
  OutputDirectory="/run/output/$run";Environment=$environment
 }

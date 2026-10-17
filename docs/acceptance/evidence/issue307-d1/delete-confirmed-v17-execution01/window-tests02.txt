@@ -1,0 +1,15 @@
+test_composed_seal_continues_across_groups_and_local_failure (__main__.WindowSupportTests.test_composed_seal_continues_across_groups_and_local_failure) ... ok
+test_drift_refuses_before_revocation (__main__.WindowSupportTests.test_drift_refuses_before_revocation) ... ok
+test_each_fault_still_runs_every_containment_step (__main__.WindowSupportTests.test_each_fault_still_runs_every_containment_step) ... ok
+test_fresh_iam_requires_exit_pid_restart_and_time (__main__.WindowSupportTests.test_fresh_iam_requires_exit_pid_restart_and_time) ... ok
+test_h1_signing_requires_actual_closed_config_and_fresh_iam (__main__.WindowSupportTests.test_h1_signing_requires_actual_closed_config_and_fresh_iam) ... ok
+test_one_field_revocation_retains_original (__main__.WindowSupportTests.test_one_field_revocation_retains_original) ... ok
+test_path_escape (__main__.WindowSupportTests.test_path_escape) ... ok
+test_prewindow_mutation_is_zero_actions (__main__.WindowSupportTests.test_prewindow_mutation_is_zero_actions) ... ok
+test_rotate_preserves_raw_and_journals (__main__.WindowSupportTests.test_rotate_preserves_raw_and_journals) ... ok
+test_time_limits (__main__.WindowSupportTests.test_time_limits) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.207s
+
+OK

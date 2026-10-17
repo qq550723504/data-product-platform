@@ -1,0 +1,24 @@
+=== RUN   TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory
+=== RUN   TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/restriction-renew
+    copy_policy_renewal_race_integration_test.go:81: real waiters blocker=41 first=42 second=44
+=== RUN   TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/restriction-other
+    copy_policy_renewal_race_integration_test.go:81: real waiters blocker=44 first=41 second=43
+=== RUN   TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/hold-renew
+    copy_policy_renewal_race_integration_test.go:81: real waiters blocker=43 first=44 second=42
+=== RUN   TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/hold-other
+    copy_policy_renewal_race_integration_test.go:81: real waiters blocker=42 first=43 second=41
+=== RUN   TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/pin-renew
+    copy_policy_renewal_race_integration_test.go:81: real waiters blocker=41 first=42 second=44
+=== RUN   TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/pin-other
+    copy_policy_renewal_race_integration_test.go:81: real waiters blocker=44 first=41 second=43
+--- PASS: TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory (3.28s)
+    --- PASS: TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/restriction-renew (0.17s)
+    --- PASS: TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/restriction-other (0.11s)
+    --- PASS: TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/hold-renew (0.12s)
+    --- PASS: TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/hold-other (0.10s)
+    --- PASS: TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/pin-renew (0.12s)
+    --- PASS: TestCopyPolicyRenewalFenceBothOrdersAndFrozenHistory/pin-other (0.13s)
+=== RUN   TestCopyPolicyRenewalCrossScopeAndPendingOutputFailClosed
+--- PASS: TestCopyPolicyRenewalCrossScopeAndPendingOutputFailClosed (2.49s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	7.896s

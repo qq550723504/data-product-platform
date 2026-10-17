@@ -1,0 +1,51 @@
+{
+  "status": "PASS_NON_SENDING_WINDOW_PREPARATION",
+  "at": "2026-10-16T11:08:43.292973+00:00",
+  "execution": "effa0385-9308-42eb-bd66-d0c379b6a989",
+  "profile": "candidate07/v17",
+  "authorization": "RECEIVED_BY_REFERENCE_NOT_RETYPED",
+  "scheduled_resume": "2026-10-17T02:00:00Z",
+  "schedule_id": "307-d1-candidate07-v17",
+  "schedule_count": 1,
+  "window_end_exclusive": "2026-10-17T02:40:00Z",
+  "tests": {
+    "offline_cases": 10,
+    "exit": 0,
+    "log": "window-tests02.txt"
+  },
+  "frozen_checker": {
+    "exit": 0,
+    "source_files": 812,
+    "raw_receipts": 940,
+    "git_index_blobs": 940,
+    "runtime_drift": 0
+  },
+  "readonly_check": {
+    "status": "PASS_PREWINDOW_CLOSED",
+    "at": "2026-10-16T11:07:38.957526+00:00",
+    "execution": "effa0385-9308-42eb-bd66-d0c379b6a989",
+    "permissions_disabled": 32,
+    "containers_stopped": 58,
+    "native_delete": 0,
+    "provider_io": 0,
+    "container_starts": 0
+  },
+  "frozen_source": "f3b5de45857add3f852bbac0348e8c30ea105ade",
+  "source_candidate_template_bindings_binaries_changed": false,
+  "actual_fresh_native_preflight": "PENDING_AUTHORIZED_WINDOW",
+  "actual_IAM_containment_drill": "NOT_RUN",
+  "actual_H1_proof": "NOT_RUN",
+  "actual_target_sends": "NOT_RUN",
+  "full_D1": "NOT_ACCEPTED",
+  "new_provider_io": 0,
+  "native_delete": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "PR323": "DRAFT",
+  "Issue307": "OPEN",
+  "scope": "Host-only receipt rotation, one-field runtime revocation, truthful H1 proof and best-effort seal. No enable/send/delete mode. No independent-review claim for this new composition. Existing independent review only covers frozen candidate.",
+  "support_sha256": "0896a1121517adec0cbaa39561a00768de38e4f381b860c8a8508ef56e97b3f1",
+  "tests_sha256": "b9d8f91b10ea37a551e82db2910f01b040e981f51299ebdedfbd1f4fadf92937",
+  "runbook_sha256": "51644fdb8c6f40896274c627971bdfb4f5aa6c4ec8cf33aa584af12cc12184bf"
+}

@@ -1,0 +1,20 @@
+{
+  "candidate": "candidate09/v19",
+  "execution": "9780707d-55eb-4da8-873f-3a901d7aac3f",
+  "packet_anchor": "72e4ce098203f1c076bb3753c6b11931f734e911",
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review03/normal-tests.txt": "cb14c18bc41eb3a8bf3c2fa541b45e15ff9c70028fbf79b50673cafd15c7de57",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review03/optimized-tests.txt": "79bf9416541e629d4d41dd9654c7c1136a7ff896baf1de738ad1d7d2eddf495b",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review03/composition/test_window_support.py": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review03/composition/window_support.py": "e25435502c08bfc7bea4d6ebd63ed33658af8231bb1e9c05818b9ddbc43d31c8"
+  },
+  "candidate_sha256": "3a4a93c449a99f54925fa2924857b88e34929a4731b8e7bfdc3933d2eb29ef76",
+  "bindings_sha256": "985906a224f1e78899402b9d8af3daa93f37767bb73fb3e1be9edde61fec1ab8",
+  "template_sha256": "ffedae552010734f3142f11802c14557405d735a397dbcaeab3456546fd0f573",
+  "complete_CLI_index_sha256": "927ba7367506988a3c83abd1f4178744a5f2abf8d5d3a304fb242e1f27d4ae3a",
+  "human_confirmation": "NOT_RECEIVED",
+  "permission_enabled": false,
+  "schedule_created": false,
+  "old_authority_reused": false,
+  "native_delete": 0
+}

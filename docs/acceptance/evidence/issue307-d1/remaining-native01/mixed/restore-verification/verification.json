@@ -1,0 +1,70 @@
+{
+  "business_acceptance": "NOT_RUN",
+  "delete": 0,
+  "disabled_users": 2,
+  "exact_iam_policy": "PASS",
+  "group": "mixed",
+  "mutations": 0,
+  "objects": [
+    {
+      "copy_id": "5e712426-2109-4f0b-8791-df0a2be3a9f7",
+      "dataset_version_id": "44727cb2-5f3b-4b48-b891-931583488ea9",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/m1-a.csv",
+      "version_id": "e8a8418e-c515-464e-99e5-10bc4c64fa8d",
+      "sha256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+      "bytes": 40,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-16T06:33:33.109467273Z",
+      "protection_observed_at": "2026-10-16T06:33:33.318077032Z"
+    },
+    {
+      "copy_id": "ad08947a-4c4d-4b0f-8c7e-2d89f287819f",
+      "dataset_version_id": "44727cb2-5f3b-4b48-b891-931583488ea9",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/m1-b.csv",
+      "version_id": "54900849-d59d-459e-90bb-275a5975d0a6",
+      "sha256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+      "bytes": 40,
+      "legal_hold": false,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-16T06:33:33.186455884Z",
+      "protection_observed_at": "2026-10-16T06:33:33.360729237Z"
+    },
+    {
+      "copy_id": "13fd8ecf-07fd-4981-b553-5ce66b67444f",
+      "dataset_version_id": "44727cb2-5f3b-4b48-b891-931583488ea9",
+      "namespace": "dpp-lifecycle307-quarantine",
+      "key": "fixture/m1-c.csv",
+      "version_id": "81a8402e-390f-4247-9d34-552df5eadeb3",
+      "sha256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+      "bytes": 40,
+      "legal_hold": false,
+      "retention_mode": "GOVERNANCE",
+      "retain_until": "2026-10-23T06:33:33Z",
+      "bytes_verified_at": "2026-10-16T06:33:33.223331643Z",
+      "protection_observed_at": "2026-10-16T06:33:33.396634384Z"
+    },
+    {
+      "copy_id": "f3167994-3790-4a6c-918e-ea6d95248b79",
+      "dataset_version_id": "57e8c123-6c69-44bc-98ba-d5db8c2b7aac",
+      "namespace": "dpp-lifecycle307-online",
+      "key": "fixture/control-hold.csv",
+      "version_id": "a59df17d-70d7-40c5-88e8-8cfe77a915dd",
+      "sha256": "367afd5e5ed47c5f2cadab63af56e0a5e82a1a32afa88f0c3f99448aab883821",
+      "bytes": 45,
+      "legal_hold": true,
+      "retention_mode": "NONE",
+      "retain_until": null,
+      "bytes_verified_at": "2026-10-16T06:33:33.14773592Z",
+      "protection_observed_at": "2026-10-16T06:33:33.432935775Z"
+    }
+  ],
+  "root_management_probe": true,
+  "run_id": "dfda43b4-4419-433d-959b-c617556953fd",
+  "status": "PASS_NATIVE_READONLY",
+  "version_count": 4
+}

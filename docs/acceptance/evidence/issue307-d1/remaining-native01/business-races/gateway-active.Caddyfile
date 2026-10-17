@@ -1,0 +1,33 @@
+{
+ admin off
+ auto_https off
+}
+:9000 {
+ route {
+  @bypass header X-Amz-Bypass-Governance-Retention *
+  respond @bypass 403
+  @copy header X-Amz-Copy-Source *
+  respond @copy 403
+  @exact0 {
+   method DELETE
+   expression {http.request.header.Authorization}.contains('Credential=delete808a6960/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/p1.csv?versionId=fed0102b-bc8b-4f47-b9e2-fae8d5c563ce'
+  }
+  reverse_proxy @exact0 minio:9000
+  @exact1 {
+   method DELETE
+   expression {http.request.header.Authorization}.contains('Credential=delete808a6960/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/p2.csv?versionId=d8040608-c5cd-4a6f-8a2d-b3f856cf5302'
+  }
+  reverse_proxy @exact1 minio:9000
+  @exact2 {
+   method DELETE
+   expression {http.request.header.Authorization}.contains('Credential=delete808a6960/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/t1.csv?versionId=39d4ef5d-e983-413d-a6c2-9759d456b750'
+  }
+  reverse_proxy @exact2 minio:9000
+  @exact3 {
+   method DELETE
+   expression {http.request.header.Authorization}.contains('Credential=delete808a6960/') && {http.request.uri} == '/dpp-lifecycle307-quarantine/fixture/t2.csv?versionId=90bd8ded-337a-4ca1-aec3-66c4ee6a1314'
+  }
+  reverse_proxy @exact3 minio:9000
+  respond 403
+ }
+}

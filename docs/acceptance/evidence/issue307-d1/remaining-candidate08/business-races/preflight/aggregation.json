@@ -1,0 +1,45 @@
+{
+  "status": "PASS_COMPLETE_NATIVE_AGGREGATION",
+  "group": "business-races",
+  "copies": 8,
+  "policies": [
+    {
+      "policy": "lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5",
+      "baseline_file_sha256": "0a798ed589e0f065d6bba9bc133e4de15df2b5d31adacc3cb2daa85d6b84f459",
+      "fresh_file_sha256": "0bc8a2bae0d14800b435f49ee06a202e5f40b13a9117f64eb732765e6cf7c453",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-remaining-business-remainput808a6960",
+      "baseline_file_sha256": "9b4c392c18465bdc055a1b5b0309ebf9127a81138633b9a7accb1716e3e80042",
+      "fresh_file_sha256": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-remaining-business-remainread808a6960",
+      "baseline_file_sha256": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+      "fresh_file_sha256": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5",
+      "baseline_file_sha256": "6bd7de90c117050741da50fa541c8f689a405ec9a4dd65dbdc972bbc5fb146ef",
+      "fresh_file_sha256": "134940668d65e575e43ba48ad021555591b0192712cb40bff021313a3d6667bd",
+      "official_equals": true
+    }
+  ],
+  "provider_io": 0,
+  "delete": 0,
+  "provider_raw_sha256": {
+    "lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5": "8bbba443dfa043c547034b6900a0d7e41ed9f45527aacb13ddcd53dfeff3c2a3",
+    "lifecycle307-remaining-business-remainput808a6960": "9f9360695b08f2e638328119b4d976bbc446cbd410875e6914d5362f952afd97",
+    "lifecycle307-remaining-business-remainread808a6960": "15814900738437f53003c0cbd03bf0094ebb71bd5d5e0c00bba16eff020eeb33",
+    "lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5": "7d0f6a6abb941112692f8c600ab1ec581cdda87e75ed4cfed1b3e98d1b3feca0"
+  },
+  "native_receipt_file_sha256": "80b32bd8b360142f3d4e15cc6b1c7fb08095b46b1bbcdad3e1b69a641c2c2578",
+  "technical_requests": 34,
+  "at": "2026-10-17T02:53:51.475025+00:00",
+  "native_delete": 0,
+  "native_mutations": 0,
+  "source_Core_unchanged": true
+}

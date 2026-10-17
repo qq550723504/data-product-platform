@@ -1,0 +1,49 @@
+C:\Users\Henry\.codex\fixture-private\remaining-candidate07\owner: go1.26.5
+	path	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam
+	mod	github.com/qq550723504/data-product-platform/apps/platform	(devel)	
+	dep	github.com/dustin/go-humanize	v1.0.1	h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
+	dep	github.com/go-ini/ini	v1.67.0	h1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=
+	dep	github.com/goccy/go-json	v0.10.5	h1:Fq85nIqj+gXn/S5ahsiTlK3TmC85qgirsdTP/+DeaC4=
+	dep	github.com/golang-jwt/jwt/v4	v4.5.0	h1:7cYmW1XlMY7h7ii7UhUyChSgS5wUJEnm9uZVTGqOWzg=
+	dep	github.com/golang/protobuf	v1.5.4	h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
+	dep	github.com/google/uuid	v1.6.0	h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+	dep	github.com/jackc/pgpassfile	v1.0.0	h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
+	dep	github.com/jackc/pgservicefile	v0.0.0-20240606120523-5a60cdf6a761	h1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=
+	dep	github.com/jackc/pgx/v5	v5.7.2	h1:mLoDLV6sonKlvjIEsV56SkWNCnuNv531l94GaIzO+XI=
+	dep	github.com/jackc/puddle/v2	v2.2.2	h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=
+	dep	github.com/klauspost/compress	v1.17.11	h1:In6xLpyWOi1+C7tXUUWv2ot1QvBjxevKAaI6IXrJmUc=
+	dep	github.com/klauspost/cpuid/v2	v2.2.9	h1:66ze0taIn2H33fBvCkXuv9BmCwDfafmiIVpKV9kKGuY=
+	dep	github.com/matttproud/golang_protobuf_extensions	v1.0.4	h1:mmDVorXM7PCGKw94cs5zkfA9PSy5pEvNWRP0ET0TIVo=
+	dep	github.com/minio/crc64nvme	v1.0.1	h1:DHQPrYPdqK7jQG/Ls5CTBZWeex/2FMS3G5XGkycuFrY=
+	dep	github.com/minio/madmin-go/v3	v3.0.94	h1:n2S8zgm0eRJ09YC7qrDTFDQDQOEUzCTiKEPywCitO/s=
+	dep	github.com/minio/md5-simd	v1.1.2	h1:Gdi1DZK69+ZVMoNHRXJyNcxrMA4dSxoYHZSQbirFg34=
+	dep	github.com/minio/minio-go/v7	v7.0.88	h1:v8MoIJjwYxOkehp+eiLIuvXk87P2raUtoU5klrAAshs=
+	dep	github.com/minio/pkg/v3	v3.1.3	h1:6iBVcTPq7z29suUROciYUBpvLxfzDV3/+Ls0RFDOta8=
+	dep	github.com/munnerz/goautoneg	v0.0.0-20191010083416-a7dc8b61c822	h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
+	dep	github.com/philhofer/fwd	v1.1.3-0.20240916144458-20a13a1f6b7c	h1:dAMKvw0MlJT1GshSTtih8C2gDs04w8dReiOGXrGLNoY=
+	dep	github.com/prometheus/client_model	v0.6.1	h1:ZKSh/rekM+n3CeS952MLRAdFwIKqeY8b62p8ais2e9E=
+	dep	github.com/prometheus/common	v0.59.1	h1:LXb1quJHWm1P6wq/U824uxYi4Sg0oGvNeUm1z5dJoX0=
+	dep	github.com/prometheus/procfs	v0.15.1	h1:YagwOFzUgYfKKHX6Dr+sHT7km/hxC76UB0learggepc=
+	dep	github.com/prometheus/prom2json	v1.4.0	h1:2AEOsd1ebqql/p9u0IWgCpUAteAAf9Lnf/SVyieqer4=
+	dep	github.com/prometheus/prometheus	v0.54.1	h1:vKuwQNjnYN2/mDoWfHXDhAsz/68q/dQDb+YbcEqU7MQ=
+	dep	github.com/rs/xid	v1.6.0	h1:fV591PaemRlL6JfRxGDEPl69wICngIQ3shQtzfy2gxU=
+	dep	github.com/safchain/ethtool	v0.4.1	h1:S6mEleTADqgynileXoiapt/nKnatyR6bmIHoF+h2ADo=
+	dep	github.com/secure-io/sio-go	v0.3.1	h1:dNvY9awjabXTYGsTF1PiCySl9Ltofk9GA3VdWlo7rRc=
+	dep	github.com/shirou/gopsutil/v3	v3.24.5	h1:i0t8kL+kQTvpAYToeuiVk3TgDeKOFioZO3Ztz/iZ9pI=
+	dep	github.com/tinylib/msgp	v1.2.5	h1:WeQg1whrXRFiZusidTQqzETkRpGjFjcIhW6uqWH09po=
+	dep	github.com/tklauser/go-sysconf	v0.3.14	h1:g5vzr9iPFFz24v2KZXs/pvpvh8/V9Fw6vQK5ZZb78yU=
+	dep	github.com/tklauser/numcpus	v0.8.0	h1:Mx4Wwe/FjZLeQsK/6kt2EOepwwSl7SmJrK5bV/dXYgY=
+	dep	golang.org/x/crypto	v0.36.0	h1:AnAEvhDddvBdpY+uR+MyHmuZzzNqXSe/GvuDeob5L34=
+	dep	golang.org/x/net	v0.37.0	h1:1zLorHbz+LYj7MQlSf1+2tPIIgibq2eL5xkrGk6f+2c=
+	dep	golang.org/x/sync	v0.12.0	h1:MHc5BpPuC30uJk597Ri8TV3CNZcTLu6B6z4lJy+g6Jw=
+	dep	golang.org/x/sys	v0.31.0	h1:ioabZlmFYtWhL+TRYpcnNlLwhyxaM9kWTDEmfnprqik=
+	dep	golang.org/x/text	v0.23.0	h1:D71I7dUrlY+VX0gQShAThNGHFxZ13dGLBHQLVl1mJlY=
+	dep	google.golang.org/protobuf	v1.36.5	h1:tPhr+woSbjfYvY6/GPufUoYizxw1cF/yFoxJ2fmpwlM=
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	-trimpath=true
+	build	DefaultGODEBUG=containermaxprocs=0,cryptocustomrand=1,decoratemappings=0,tlssecpmlkem=0,tlssha1=1,updatemaxprocs=0,urlstrictcolons=0,x509sha256skid=0
+	build	CGO_ENABLED=0
+	build	GOARCH=amd64
+	build	GOOS=linux
+	build	GOAMD64=v1

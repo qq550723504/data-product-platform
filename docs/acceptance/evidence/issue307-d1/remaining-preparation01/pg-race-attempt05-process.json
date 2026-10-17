@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-10-16T03:32:33.0536243Z",
+  "finished_at": "2026-10-16T03:33:03.1730947Z",
+  "exit_code": 0,
+  "pattern": "^(TestRemaining.*|TestDispositionHoldAndDispatchSerializeBothOrders|TestOccupancyReaderAndRestrictionSerializeBothOrders|TestDirectIssuedAndTransferPinCommitTogetherBeforeAnyBytes|TestExactSendClaimSerializedAndLateRevocationKeepsCost|TestRecoveryUnknownPresenceNeverResendsOrReleases)$",
+  "race": true,
+  "native_provider_configured": false,
+  "test_source_sha256": "c0fb8cfbf0457751a95090d8330069dae1377b69d4b84098a5d619363630725a",
+  "reason": "Exact current DirectData FK-admission error asserted; all final semantic checks",
+  "scratch_loopback_port": 63799
+}

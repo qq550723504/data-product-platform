@@ -1,0 +1,9 @@
+Command: go test ./...
+Working directory: apps/platform
+Result: exit_code=1; Windows local execution. Exact failure excerpt from unified exec output follows (not a complete module log).
+
+--- FAIL: TestNativeSchemaCostsStartupBeforeMarker (1.43s)
+    --- FAIL: TestNativeSchemaCostsStartupBeforeMarker/exit (0.69s)
+        schema_test.go:83: startup cost/source gate wrong: exit costs=0 gates=0 err=source schema invocation history unavailable
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/internal/metadata/openmetadata	6.072s

@@ -1,0 +1,122 @@
+{
+  "scope": "remaining-D1 PG-only composition preparation",
+  "status": "PASS",
+  "base_commit": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+  "new_test_path": "apps/platform/internal/lifecycle/application/remaining_preparation_integration_test.go",
+  "new_test_sha256": "c0fb8cfbf0457751a95090d8330069dae1377b69d4b84098a5d619363630725a",
+  "top_level_tests": 9,
+  "leaf_tests": 13,
+  "parent_and_child_pass_events": 17,
+  "failed_tests": 0,
+  "skipped_tests": 0,
+  "race": true,
+  "native_acceptance": "NOT_RUN",
+  "native_candidates": "NOT_PROVISIONED",
+  "delete_authorization": "NOT_AUTHORIZED",
+  "delete_budget": 0,
+  "full_D1": "NOT_ACCEPTED",
+  "issue_307": {
+    "issue_number": 307,
+    "initial_readback": "OPEN",
+    "issue_mutations": 0,
+    "final_readback": "UNAVAILABLE",
+    "failures": [
+      "gh GraphQL POST: EOF",
+      "gh REST GET: EOF",
+      "GitHub connector HTTP transport failed"
+    ],
+    "new_pr_ci": "NOT_RUN",
+    "remote_write": "NOT_ATTEMPTED"
+  },
+  "unchanged_baseline_sources": [
+    {
+      "path": "apps/platform/internal/lifecycle/application/owned_processing.go",
+      "checkout_sha256": "cc2f55e5f77b7a192eaffd6af6134eb518066b26155146a8cb888d31e90dc8e6",
+      "base_blob_sha256": "b6c6b7e004709c2618d20c9c487c886c2c09c7ac3ecee09f86c1f580f88894c9",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/occupancy.go",
+      "checkout_sha256": "1f4ceb72d21d2f31bcfedf8b04c9d5567729e594c06abc7a8f3041cc9f502816",
+      "base_blob_sha256": "1f4ceb72d21d2f31bcfedf8b04c9d5567729e594c06abc7a8f3041cc9f502816",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/disposition.go",
+      "checkout_sha256": "2417b7b4f4a31d4ed3939777dd01252fdbd2ff5baa1bb3e9e0a83e867fd14e6e",
+      "base_blob_sha256": "2417b7b4f4a31d4ed3939777dd01252fdbd2ff5baa1bb3e9e0a83e867fd14e6e",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/exact_execution.go",
+      "checkout_sha256": "fb12611a09852e094839f63118a636a7244b6f57a710022aaa0e2bc2ff96beb3",
+      "base_blob_sha256": "fb12611a09852e094839f63118a636a7244b6f57a710022aaa0e2bc2ff96beb3",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/recovery.go",
+      "checkout_sha256": "fff95293eda3344293897d276458e3c3027ef2ebc9aabb6ad4d3c57054eb27bc",
+      "base_blob_sha256": "3d2d6a962e2908d5a94d9ce2dfc5816ff8d5dc69f6d5df20f67201e48cb10afb",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/storage_journal.go",
+      "checkout_sha256": "f9b37acd7739afc1499668e91bf80d2b3c0c56b4827a47c9bd49733fd700f63b",
+      "base_blob_sha256": "f9b37acd7739afc1499668e91bf80d2b3c0c56b4827a47c9bd49733fd700f63b",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/fixture_references.go",
+      "checkout_sha256": "5fde48d925cd6753f58eecf16ee8136abaa4c47dc7c7b3bf0347fe48d59fadc5",
+      "base_blob_sha256": "5fde48d925cd6753f58eecf16ee8136abaa4c47dc7c7b3bf0347fe48d59fadc5",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/reader_integration_test.go",
+      "checkout_sha256": "25dde5553508b34f30474e4be8f0373d306d25e217bbf8109af82ede97817591",
+      "base_blob_sha256": "14c5fa5ebbc1b35de07ceeb2642ddedc1fe56fedf141e244664a1ee7bb9066d0",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/subject_pins_integration_test.go",
+      "checkout_sha256": "d3e310b6b6cedf677e198908bae06838a3e76711d2208066f560cc03228dfd94",
+      "base_blob_sha256": "d3e310b6b6cedf677e198908bae06838a3e76711d2208066f560cc03228dfd94",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/prepare_plan_integration_test.go",
+      "checkout_sha256": "72fc65ce7683885072acc0dae0bb535e95aed5a6039beba0605786a851a2d93b",
+      "base_blob_sha256": "e9219ac480eb7fe4681e8107fe808b84f80f3304dad471e9b7e16fcd1b6bee23",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/disposition_integration_test.go",
+      "checkout_sha256": "5b49cc1d35b0d58655d44d5927ed57fe6bdf909196edfcb7f2eb97437ff049ac",
+      "base_blob_sha256": "2927c5742241f7460649f1db35221713d0b62867fcc96b8de45b178919d67b72",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/occupancy_integration_test.go",
+      "checkout_sha256": "7ee605ba5ebb9b127a2e38ad4f71a102aff4c349bfd1969b332c9ca6a4e25e32",
+      "base_blob_sha256": "a74776269e4d5e7a6034b4c5939f520d5980342dc6c21086950b919e41fc259b",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/exact_execution_integration_test.go",
+      "checkout_sha256": "66eb2b38a7252a6ad1bf689d0066921da0db833371ffc3cd0e9983773a9ba06c",
+      "base_blob_sha256": "80bbd263519b85878d4c83f4495ebf3bbc84f835613fc20a682a1d1359d1e7ed",
+      "comparison": "CRLF-to-LF only"
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/recovery_integration_test.go",
+      "checkout_sha256": "8462f04dc3b1b158c63e02400eab02159db8629a4c90e054f9e2c3dcbc050ea2",
+      "base_blob_sha256": "986089b2bce5abbf1b726525811cfd3cf12bb0cee7a72a100a0bbb7ddf2e75bd",
+      "comparison": "CRLF-to-LF only"
+    }
+  ],
+  "scope_limits": [
+    "synthetic dependencies/gate/port/observations",
+    "not actual queue/TCP/provider acceptance",
+    "not a new independent review or current-head CI"
+  ]
+}

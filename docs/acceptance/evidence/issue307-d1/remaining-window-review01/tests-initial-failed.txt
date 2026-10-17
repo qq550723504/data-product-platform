@@ -1,0 +1,80 @@
+test_approved_identity_snapshot_still_requires_exact_hash (__main__.WindowSupportTests.test_approved_identity_snapshot_still_requires_exact_hash) ... ok
+test_cli_seal_selects_containment_context (__main__.WindowSupportTests.test_cli_seal_selects_containment_context) ... ok
+test_composed_seal_continues_across_groups_and_local_failure (__main__.WindowSupportTests.test_composed_seal_continues_across_groups_and_local_failure) ... ok
+test_containment_uses_approved_identity_when_current_packet_is_damaged (__main__.WindowSupportTests.test_containment_uses_approved_identity_when_current_packet_is_damaged) ... ok
+test_disable_attempts_after_archive_failure_without_adopting_old_summary (__main__.WindowSupportTests.test_disable_attempts_after_archive_failure_without_adopting_old_summary) ... 
+  test_disable_attempts_after_archive_failure_without_adopting_old_summary (__main__.WindowSupportTests.test_disable_attempts_after_archive_failure_without_adopting_old_summary) (stale=True, enabler_live=False, policy_exit=1) ... ERROR
+  test_disable_attempts_after_archive_failure_without_adopting_old_summary (__main__.WindowSupportTests.test_disable_attempts_after_archive_failure_without_adopting_old_summary) (stale=False, enabler_live=False, policy_exit=0) ... ERROR
+  test_disable_attempts_after_archive_failure_without_adopting_old_summary (__main__.WindowSupportTests.test_disable_attempts_after_archive_failure_without_adopting_old_summary) (stale=False, enabler_live=True, policy_exit=0) ... ERROR
+  test_disable_attempts_after_archive_failure_without_adopting_old_summary (__main__.WindowSupportTests.test_disable_attempts_after_archive_failure_without_adopting_old_summary) (stale=False, enabler_live=False, policy_exit=1) ... ERROR
+test_drift_refuses_before_revocation (__main__.WindowSupportTests.test_drift_refuses_before_revocation) ... ok
+test_each_fault_still_runs_every_containment_step (__main__.WindowSupportTests.test_each_fault_still_runs_every_containment_step) ... ok
+test_fresh_iam_requires_exit_pid_restart_and_time (__main__.WindowSupportTests.test_fresh_iam_requires_exit_pid_restart_and_time) ... ok
+test_h1_signing_requires_actual_closed_config_and_fresh_iam (__main__.WindowSupportTests.test_h1_signing_requires_actual_closed_config_and_fresh_iam) ... ok
+test_one_field_revocation_retains_original (__main__.WindowSupportTests.test_one_field_revocation_retains_original) ... ok
+test_path_escape (__main__.WindowSupportTests.test_path_escape) ... ok
+test_prewindow_mutation_is_zero_actions (__main__.WindowSupportTests.test_prewindow_mutation_is_zero_actions) ... ok
+test_rotate_preserves_raw_and_journals (__main__.WindowSupportTests.test_rotate_preserves_raw_and_journals) ... ok
+test_time_limits (__main__.WindowSupportTests.test_time_limits) ... ok
+
+======================================================================
+ERROR: test_disable_attempts_after_archive_failure_without_adopting_old_summary (__main__.WindowSupportTests.test_disable_attempts_after_archive_failure_without_adopting_old_summary) (stale=True, enabler_live=False, policy_exit=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\test_window_support.py", line 71, in test_disable_attempts_after_archive_failure_without_adopting_old_summary
+    result = host.disable_all(group)
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\window_support.py", line 367, in disable_all
+    need(closed(item), 'disable helper already running')
+         ~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\window_support.py", line 80, in closed
+    return (not state['State']['Running'] and state['State']['Pid'] == 0
+                ~~~~~^^^^^^^^^
+KeyError: 'State'
+
+======================================================================
+ERROR: test_disable_attempts_after_archive_failure_without_adopting_old_summary (__main__.WindowSupportTests.test_disable_attempts_after_archive_failure_without_adopting_old_summary) (stale=False, enabler_live=False, policy_exit=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\test_window_support.py", line 71, in test_disable_attempts_after_archive_failure_without_adopting_old_summary
+    result = host.disable_all(group)
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\window_support.py", line 367, in disable_all
+    need(closed(item), 'disable helper already running')
+         ~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\window_support.py", line 80, in closed
+    return (not state['State']['Running'] and state['State']['Pid'] == 0
+                ~~~~~^^^^^^^^^
+KeyError: 'State'
+
+======================================================================
+ERROR: test_disable_attempts_after_archive_failure_without_adopting_old_summary (__main__.WindowSupportTests.test_disable_attempts_after_archive_failure_without_adopting_old_summary) (stale=False, enabler_live=True, policy_exit=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\test_window_support.py", line 71, in test_disable_attempts_after_archive_failure_without_adopting_old_summary
+    result = host.disable_all(group)
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\window_support.py", line 367, in disable_all
+    need(closed(item), 'disable helper already running')
+         ~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\window_support.py", line 80, in closed
+    return (not state['State']['Running'] and state['State']['Pid'] == 0
+                ~~~~~^^^^^^^^^
+KeyError: 'State'
+
+======================================================================
+ERROR: test_disable_attempts_after_archive_failure_without_adopting_old_summary (__main__.WindowSupportTests.test_disable_attempts_after_archive_failure_without_adopting_old_summary) (stale=False, enabler_live=False, policy_exit=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\test_window_support.py", line 71, in test_disable_attempts_after_archive_failure_without_adopting_old_summary
+    result = host.disable_all(group)
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\window_support.py", line 367, in disable_all
+    need(closed(item), 'disable helper already running')
+         ~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\docs\acceptance\evidence\issue307-d1\remaining-window-review01\composition\window_support.py", line 80, in closed
+    return (not state['State']['Running'] and state['State']['Pid'] == 0
+                ~~~~~^^^^^^^^^
+KeyError: 'State'
+
+----------------------------------------------------------------------
+Ran 14 tests in 2.102s
+
+FAILED (errors=4)
+{"status": "PASS_PREWINDOW_CLOSED", "at": "2026-10-16T11:41:07.065379+00:00", "execution": "effa0385-9308-42eb-bd66-d0c379b6a989", "permissions_disabled": 32, "containers_stopped": 58, "native_delete": 0, "provider_io": 0, "container_starts": 0}

@@ -1,0 +1,31 @@
+{
+  "containers": [
+    {
+      "id": "5ce094c5beac39c734225169cef76f1adb41b598b1993d203bd2fa71a21f83c3",
+      "name": "/dpp-lifecycle307-dfda43b4-gateway",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "2e2192530e9ff4d45bfdae8fc797089fd8ce0969d37cba97e00d63986f4e194c",
+      "name": "/dpp-lifecycle307-754ea8f0-gateway",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "1c5877bbfabdd1a812fa658e62e594ad76a8c7ae815aa41d5ee06274eb6ed39a",
+      "name": "/dpp-lifecycle307-808a6960-gateway",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "11a64af01c98268e1eb3020b1066d8daa309a0f3d147f8b9b34755fcd0be08af",
+      "name": "/dpp-lifecycle307-candidate07-offline",
+      "pid": 0,
+      "ports": {}
+    }
+  ],
+  "retained": true,
+  "native_delete": 0,
+  "cleanup": 0
+}

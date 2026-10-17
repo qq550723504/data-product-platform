@@ -127,6 +127,7 @@ var eventVocabulary = []string{
 	"LifecycleExactCopyAbsenceVerified",
 	"LifecycleContentDispositionFinalized",
 	"LifecycleCopyPolicyBound",
+	"LifecycleCopyPolicyRenewed",
 	"LifecycleCopyPrepared",
 	"LifecycleCopyRecoveryRequested",
 	"LifecycleCopyRecoveryStarted",

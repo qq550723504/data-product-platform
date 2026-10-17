@@ -1,0 +1,20 @@
+{
+  "status": "PREPARED_NOT_AUTHORIZED",
+  "candidate": "candidate09/v19",
+  "execution": "9780707d-55eb-4da8-873f-3a901d7aac3f",
+  "source_review": "PASS_BOUNDED_INDEPENDENT_REVIEW",
+  "final_review": "PASS_BOUNDED_INDEPENDENT_REVIEW",
+  "remaining_blockers": [],
+  "full_CLI": "PASS_COMPLETE_FRESH_NATIVE_PREFLIGHT",
+  "human_confirmation": "NOT_RECEIVED",
+  "permission_enabled": false,
+  "new_schedule_created": false,
+  "old_heartbeat": "PAUSED",
+  "native_delete": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "PR323": "DRAFT",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

@@ -1,0 +1,119 @@
+"""Window01 host composition. Frozen bound helpers own every business action."""
+import datetime as dt
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import time
+
+ROOT=Path(r'C:\Users\Henry\.codex\worktrees\9400\data-product-platform')
+PRIVATE=Path(r'C:\Users\Henry\.codex\fixture-private\remaining-candidate07')
+CONTROL=PRIVATE/'authorized-execution01/window01'
+PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-window01'
+PACKET=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate07'
+START=dt.datetime(2026,10,17,2,tzinfo=dt.timezone.utc)
+END=START+dt.timedelta(minutes=40)
+
+def module(name,path):
+ s=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
+w=module('window_support',ROOT/'docs/acceptance/evidence/issue307-d1/remaining-window-review01/composition/window_support.py')
+a=module('attest',ROOT/'examples/lifecycle-d1/attest-remaining-executable.py')
+f=a.f;r=a.r
+
+def need(ok,msg):
+ if not ok:raise RuntimeError(msg)
+def now():return dt.datetime.now(dt.timezone.utc)
+def window():need(START<=now()<END,'outside fixed window')
+def load(p):return json.loads(p.read_bytes())
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def save(p,v):
+ p.parent.mkdir(parents=True,exist_ok=True)
+ with p.open('x',encoding='utf-8',newline='\n') as s:json.dump(v,s,ensure_ascii=False,indent=2);s.write('\n')
+def command(args,timeout=60):
+ result=subprocess.run(list(map(str,args)),cwd=ROOT,capture_output=True,timeout=timeout)
+ if result.returncode:
+  p=CONTROL/('command-failure-'+now().strftime('%H%M%S%f')+'.private')
+  p.write_bytes(result.stdout+b'\n'+result.stderr)
+  raise RuntimeError('command failed; private diagnostics '+p.name)
+ return result.stdout
+def docker(*args,timeout=60):return command(['docker',*args],timeout)
+def inspect(ident):return json.loads(docker('inspect',ident))[0]
+def candidate():return load(PACKET/'candidate.json')
+def bindings():return load(PACKET/'bindings.json')
+def group(name):return next(g for g in candidate()['Groups'] if g['Group']==name)
+def binding(g):return next(b for b in bindings() if b['group']==g['Group'])
+def helper(ident,label,limit=180):
+ window();before=inspect(ident);need(w.closed(before),'helper active or restarting')
+ docker('start',ident)
+ code=int(docker('wait',ident,timeout=limit).strip())
+ state=inspect(ident)
+ logs=subprocess.run(['docker','logs',ident],capture_output=True)
+ (CONTROL/(label+'.private-log')).write_bytes(logs.stdout+logs.stderr)
+ save(PUBLIC/'owners'/(label+'.json'),{'id':ident,'label':label,'exit':code,'at':now().isoformat(),'stopped_pid_zero':w.closed(state),'started_at':state['State']['StartedAt'],'finished_at':state['State']['FinishedAt']})
+ need(code==0 and w.closed(state),'bound helper failed: '+label)
+ return state
+
+def static():
+ window();need(not PUBLIC.exists(),'one-shot public execution already exists');PUBLIC.mkdir(parents=True)
+ c=candidate();auth=load(ROOT/'docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-execution01/human-authorization.json')
+ for p,expected in [(PACKET/'candidate.json',w.CANDIDATE),(PACKET/'bindings.json',w.BINDINGS),(PACKET/'confirmation-template.txt',w.TEMPLATE),
+  (ROOT/'docs/acceptance/issue307-d1-v17-window-runbook.md','f7ec46d1839254cfc1b46c4c4afb1ec812afdd0d3be63cf48a4ae21a9a9e2121'),
+  (ROOT/'docs/acceptance/evidence/issue307-d1/remaining-window-review01/composition/window_support.py','02bebf8e41d7bb4de8fc9a0cdf0cea7628d18e06115f8f136b802aea41040494'),
+  (ROOT/'docs/acceptance/evidence/issue307-d1/remaining-window-review01/independent-final-review.json','f4b5d8a976c4d79941086ee256201ff1f8b06923b297dc0a7fed55e0d1a0ca79')]:need(sha(p)==expected,'frozen/independent binding drift')
+ need(sha(PRIVATE/'authorized-execution01/user-message-verbatim.txt')==auth['user_message_sha256'] and sha(PRIVATE/'authorized-execution01/authorization-envelope.txt')==auth['authorization_envelope_sha256'],'authorization receipt drift')
+ need((PRIVATE/'authorized-execution01/approved-referenced-template.txt').read_bytes()==(PACKET/'confirmation-template.txt').read_bytes(),'approved payload differs')
+ for name,key in [('reader','ReaderBinarySHA256'),('operator','SenderBinarySHA256'),('owner','OwnerBinarySHA256')]:need(sha(PRIVATE/name)==c[key],'binary drift')
+ need(command(['git','rev-parse','HEAD']).decode().strip()=='b4d0556ad424e15896577a069bcbd1b236647a07','HEAD drift')
+ pr=json.loads(command(['gh','pr','view','323','--json','headRefOid,isDraft,state']));need(pr['isDraft'] and pr['state']=='OPEN' and pr['headRefOid']=='b4d0556ad424e15896577a069bcbd1b236647a07','PR boundary drift')
+ ci=json.loads(command(['gh','run','view','38896130651','--json','headSha,event,status,conclusion,jobs']));need(ci['headSha']==pr['headRefOid'] and ci['event']=='pull_request' and ci['conclusion']=='success' and len(ci['jobs'])==13 and all(j['conclusion']=='success' for j in ci['jobs']),'CI not exact green')
+ need(json.loads(command(['gh','issue','view','307','--json','state']))['state']=='OPEN','issue boundary drift')
+ audits=[]
+ for g in c['Groups']:
+  b=binding(g);folder=PRIVATE/g['Group'];backup=PRIVATE.parent/'remaining-executable03'/g['Group']/'checkpoint'
+  for name,key in [('core.dump','CoreDumpSHA256'),('globals.sql','GlobalsSHA256'),('native.tar','NativeArchiveSHA256')]:need(sha(backup/name)==g[key],'backup drift')
+  for stage,ident in g['Helpers'].items():a.helper_contract(inspect(ident),g,stage,folder/stage,PRIVATE/'operator',b['budget_volume'])
+  for stage,ident in g['CaseHelpers'].items():
+   v=inspect(ident);h=v['HostConfig'];ms={m['Destination']:m for m in v['Mounts']}
+   need(v['Image']==r.PG and h['ReadonlyRootfs'] and not h['Privileged'] and not h.get('AutoRemove') and 'ALL' in h['CapDrop'] and any('no-new-privileges' in x for x in h['SecurityOpt']) and h['NetworkMode']=='container:'+g['Gateway'] and w.closed(v) and not h.get('PortBindings') and not any(v['NetworkSettings']['Ports'].values()),'case contract drift')
+   need(set(ms)=={'/run/private','/run/reader','/run/output','/run/repo/industry-packs'},'case mounts drift')
+   for dest,path,rw in [('/run/private',folder/('case-'+stage),False),('/run/reader',PRIVATE/'reader',False),('/run/output',folder/'outputs',True),('/run/repo/industry-packs',ROOT/'industry-packs',False)]:need(Path(ms[dest]['Source']).resolve()==path.resolve() and ms[dest]['RW'] is rw,'case mount drift')
+  for action in b['root_owners']:w.Host().root_owner(g,action)
+  for role,image in [('Core',r.PG),('Native',r.MI),('Gateway',r.GW)]:
+   v=inspect(g[role]);need(v['Id']==g[role] and v['Image']==image and w.closed(v) and not v['HostConfig'].get('PortBindings') and not any(v['NetworkSettings']['Ports'].values()) and {n['NetworkID'] for n in v['NetworkSettings']['Networks'].values()}=={g['Network']},'source contract drift')
+  network=json.loads(docker('network','inspect',g['Network']))[0];need(network['Internal'],'network not internal')
+  volume=json.loads(docker('volume','inspect',b['budget_volume']))[0];need(volume['Labels'].get('lifecycle307.remaining')==w.EXECUTION,'budget ownership drift')
+  ids=set(docker('ps','-aq','--no-trunc','--filter','volume='+b['budget_volume']).decode().split());need(ids==set(g['Helpers'].values()),'foreign budget users')
+  budget=CONTROL/g['Group']/'budget-before';budget.mkdir(parents=True)
+  docker('cp',g['Helpers']['wire']+':/run/budget/.',str(budget))
+  need(not any(budget.iterdir()),'budget already consumed; no retry')
+  audits.append({'group':g['Group'],'backup_hashes':3,'budget_empty':True,'owner_contracts':len(g['Helpers'])+len(g['CaseHelpers'])+len(b['root_owners']),'network_internal':True})
+ save(PUBLIC/'static-preflight.json',{'at':now().isoformat(),'status':'PASS_STATIC_AUTHORIZATION_BINDINGS','head':pr['headRefOid'],'CI':38896130651,'groups':audits,'native_delete':0,'permissions_enabled':False})
+ print('PASS_STATIC_AUTHORIZATION_BINDINGS',flush=True)
+
+def fresh():
+ window();need(load(PUBLIC/'static-preflight.json')['status']=='PASS_STATIC_AUTHORIZATION_BINDINGS','static gate absent')
+ for g in candidate()['Groups']:
+  window();name=g['Group'];folder=CONTROL/name/'fresh-readonly';folder.mkdir(parents=True)
+  old=PRIVATE.parent/'remaining-executable03'/name/'source-verifier';cfg=load(old/'remaining.json');cfg['Base']['StartedAt']=now().isoformat();cfg['Base']['ExpiresAt']=END.isoformat();save(folder/'remaining.json',cfg)
+  for n in ('inventory.json','manifest.json'):shutil.copyfile(old/n,folder/n)
+  output=PUBLIC/name/'readonly';output.mkdir(parents=True)
+  docker('start',g['Core']);docker('start',g['Native']);r.native.wait_pg(g['Core'],'fixture');time.sleep(3)
+  before=r.native.fingerprints(g['Core']);need(before==load(PACKET/name/'core-readonly.json'),'source Core fingerprint drift')
+  save(PUBLIC/name/'core-before.json',before)
+  ident=docker('create','--pull','never','--name',binding(g)['project']+'-v17-window01-readonly','--label','lifecycle307.remaining='+w.EXECUTION,'--network','container:'+g['Native'],'--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data:size=1m','--mount',f'type=bind,source={folder},target=/run/private,readonly','--mount',f'type=bind,source={PRIVATE}/reader,target=/run/reader,readonly','--mount',f'type=bind,source={output},target=/run/output','--entrypoint','/run/reader',r.PG,'-mode','remaining-verify-native').decode().strip()
+  save(CONTROL/name/'fresh-helper.json',{'id':ident,'technical_readonly':True})
+  helper(ident,name+'-fresh-readonly',120)
+  result=load(output/'native-verification.json');old_result=load(PACKET/name/'readonly/native-verification.json')
+  need(result['status']=='PASS_EXACT_NATIVE_READONLY' and result['copies']==old_result['copies'] and result['disabled_identities']==old_result['disabled_identities'] and result['policy_sha256']==old_result['policy_sha256'] and result['inventory_sha256']==old_result['inventory_sha256'] and result['delete']==0 and result['mutations']==0,'native inventory/protection/IAM drift')
+  after=r.native.fingerprints(g['Core']);need(after==before,'fresh readonly changed Core');save(PUBLIC/name/'core-after-readonly.json',after)
+  print('PASS_FRESH_READONLY '+name,flush=True)
+ save(PUBLIC/'fresh-preflight.json',{'at':now().isoformat(),'status':'PASS_FRESH_ALL_3_GROUPS','versions':18,'targets':7,'survivors':11,'all_IAM_disabled':True,'source_Core_unchanged':True,'native_delete':0})
+
+if __name__=='__main__':
+ action=sys.argv[1]
+ if action=='static':static()
+ elif action=='fresh':fresh()
+ else:raise ValueError('unknown host phase')

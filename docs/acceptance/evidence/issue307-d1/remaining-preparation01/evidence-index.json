@@ -1,0 +1,134 @@
+{
+  "files": [
+    {
+      "path": "audit.py",
+      "bytes": 5943,
+      "sha256": "da3094d70fdeca574bc978c3255218dfeda037c538cb2ce82baa97a76362b8fd"
+    },
+    {
+      "path": "operator-attempt01-failure.json",
+      "bytes": 278,
+      "sha256": "9e0bc3248b8a32e896e2adda0786b0a2aaa35f5ee1ad8c8656161727c5c21b45"
+    },
+    {
+      "path": "operator-attempt02-failure.json",
+      "bytes": 308,
+      "sha256": "0fd59e9886648d30296ef5503430c4c26d24a3c23ced3ac121e6bcfbb3b1102c"
+    },
+    {
+      "path": "operator-attempt03-failure.json",
+      "bytes": 395,
+      "sha256": "a6f3d3810439aad82c03c4bdbbfdb2cdab4c0d698bc947debe549f59595bae4d"
+    },
+    {
+      "path": "pg-race-attempt01-process.json",
+      "bytes": 484,
+      "sha256": "e487cafb45b42697c348cae5e67b63a32ce90fc09a45f7569ce1b8150bb40088"
+    },
+    {
+      "path": "pg-race-attempt01-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pg-race-attempt01.jsonl",
+      "bytes": 21551,
+      "sha256": "83890aad44122017d97f726a06cd096b0ffadf4753bb5c0e7865720f4315e1ef"
+    },
+    {
+      "path": "pg-race-attempt02-process.json",
+      "bytes": 577,
+      "sha256": "2044873d281690163e9efa3f6a23594d6a2e148ef9dbb52f6c78611089597e48"
+    },
+    {
+      "path": "pg-race-attempt02-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pg-race-attempt02.jsonl",
+      "bytes": 20930,
+      "sha256": "a5ce2491b44fa0ca03040b3c3660f3fb0a8db94e68363869482d6629e5e9bd7b"
+    },
+    {
+      "path": "pg-race-attempt03-process.json",
+      "bytes": 577,
+      "sha256": "68615aa0e1a0de7ee7d5ec234bc6fb5ad8a011c6a0307057a734050f11488893"
+    },
+    {
+      "path": "pg-race-attempt03-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pg-race-attempt03.jsonl",
+      "bytes": 20136,
+      "sha256": "b5a289a6930f912f337ecfc5ec86c7549358697eec4897c37398120bc357a036"
+    },
+    {
+      "path": "pg-race-attempt04-process.json",
+      "bytes": 746,
+      "sha256": "da9d1206c1a001ddaf1328eb369edf40936cd111a7aa51b86568a5d1b3b836ea"
+    },
+    {
+      "path": "pg-race-attempt04-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pg-race-attempt04.jsonl",
+      "bytes": 21218,
+      "sha256": "bd22b92af342adedd3f36dc4ec410c4d48fc13f344e3e700d9635b5decca6554"
+    },
+    {
+      "path": "pg-race-attempt05-process.json",
+      "bytes": 708,
+      "sha256": "7a265c870fb4e0140c8231ee5388cb65dc714d19701fa54f182e9a7f5723ecda"
+    },
+    {
+      "path": "pg-race-attempt05-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pg-race-attempt05.jsonl",
+      "bytes": 20128,
+      "sha256": "61d18cb25e44ae4822b57d0c5a0c718676ae6b56402d1c652b7af20778d8ca57"
+    },
+    {
+      "path": "preparation-audit.json",
+      "bytes": 5745,
+      "sha256": "790e71a1129031f26a38b5d149b3104c08d17226a1a7f65b920fa9c7e752e5f1"
+    },
+    {
+      "path": "remote-readback.json",
+      "bytes": 278,
+      "sha256": "55f9e1f2539440ec604a76f30d4d48eb38a30d2b2aedca1b16d8d95ffe70fa41"
+    },
+    {
+      "path": "scratch-seal-after-review.json",
+      "bytes": 1046,
+      "sha256": "4c344b9d798af22685425786a6adb5c5037db8596854bb0c12c95f5d08d2b8cd"
+    },
+    {
+      "path": "scratch-seal-final.json",
+      "bytes": 1046,
+      "sha256": "b63427b3e047f20d64bcb8bf4aee6c129d8aee3472402eb781c1a0960763de86"
+    },
+    {
+      "path": "scratch-seal.json",
+      "bytes": 1087,
+      "sha256": "be600af18e451aac16fe3158392b746bfd4e46d9a90c90d0ff07dbdd3b893ede"
+    },
+    {
+      "path": "scratch-start.json",
+      "bytes": 935,
+      "sha256": "61703be97494cb180fa74a042237523355565eb88986b539cba771f605d8bebc"
+    },
+    {
+      "path": "static-vet.json",
+      "bytes": 186,
+      "sha256": "f6a92ed7883f8b6f1418dab646242eca0e265284bc3fc14e5939d196b5d380c8"
+    }
+  ]
+}

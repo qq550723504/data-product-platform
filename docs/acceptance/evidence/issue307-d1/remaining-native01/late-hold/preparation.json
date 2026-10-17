@@ -1,0 +1,7 @@
+{
+  "group": "late-hold",
+  "run_id": "754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b",
+  "status": "PASS_PREPARATION_ONLY",
+  "checkpoint": "checkpoint.json",
+  "current_delete_budget": 0
+}

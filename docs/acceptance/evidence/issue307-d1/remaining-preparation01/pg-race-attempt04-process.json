@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-10-16T03:30:46.8123331Z",
+  "finished_at": "2026-10-16T03:31:15.6248760Z",
+  "exit_code": 1,
+  "pattern": "^(TestRemaining.*|TestDispositionHoldAndDispatchSerializeBothOrders|TestOccupancyReaderAndRestrictionSerializeBothOrders|TestDirectIssuedAndTransferPinCommitTogetherBeforeAnyBytes|TestExactSendClaimSerializedAndLateRevocationKeepsCost|TestRecoveryUnknownPresenceNeverResendsOrReleases)$",
+  "race": true,
+  "native_provider_configured": false,
+  "test_source_sha256": "f3d36a6ba45d9cb8e145827f0b47bcff3ec4c7e4fef42e908876bc8f00521974",
+  "reason": "Closure audit strengthened exact semantic errors; unrelated DB/authority failure must not satisfy negative assertions",
+  "scratch_loopback_port": 59298
+}

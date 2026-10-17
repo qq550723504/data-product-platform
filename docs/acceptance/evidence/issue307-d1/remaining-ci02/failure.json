@@ -1,0 +1,15 @@
+{
+  "status": "PRESERVED_CI_FAILURE",
+  "head": "30e70be9044e89682fcbbba24cbb8f879bcffb68",
+  "run_id": 38998365856,
+  "job_id": 117295855966,
+  "run_conclusion": "failure",
+  "root_cause": "CI applied unchanged v17 current-source equality to the intentionally newer frozen v19 runtime.",
+  "full_original_log_sha256": "7dfa1a4e78f4d3ef06a91c2947f434eff65bd7e00839c474ec7f1770a2a86fc8",
+  "full_original_log_location": "private remaining-candidate09/reporting01/ci-demo-failure.log",
+  "original_checker_changed": false,
+  "candidate_changed": false,
+  "binary_changed": false,
+  "authorization_received": false,
+  "delete": 0
+}

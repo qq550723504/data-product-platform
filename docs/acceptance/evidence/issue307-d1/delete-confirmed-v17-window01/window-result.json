@@ -1,0 +1,78 @@
+{
+  "status": "ABORTED_BEFORE_ARMING_PHYSICALLY_SEALED",
+  "at": "2026-10-17T02:10:21.375974+00:00",
+  "execution": "effa0385-9308-42eb-bd66-d0c379b6a989",
+  "initial_head": "b4d0556ad424e15896577a069bcbd1b236647a07",
+  "window_started_at": "2026-10-17T02:00:00Z",
+  "fixed_window_end": "2026-10-17T02:40:00Z",
+  "failure_at": "2026-10-17T02:04:12Z",
+  "failure": "Host fresh-readonly aggregation compared raw policy serialization SHA to prior snapshot; three semantically equal policies had Action/Resource list-order differences",
+  "native_verifier": "PASS_EXACT_NATIVE_READONLY_BUSINESS_8_VERSIONS",
+  "official_policy_equals": "PASS_4_OF_4_OFFLINE",
+  "raw_policy_hashes_changed": 3,
+  "native_inventory_and_protection_equal": true,
+  "other_two_groups_fresh": "NOT_RUN",
+  "post_readonly_Core_fingerprint": "NOT_RUN_AFTER_GATE_FAILURE",
+  "IAM_closure": {
+    "business-races": "FRESH_DISABLED_4_POLICY_PASS",
+    "late-hold": "NO_NEW_READBACK_NATIVE_WAS_NEVER_STARTED",
+    "mixed": "NO_NEW_READBACK_NATIVE_WAS_NEVER_STARTED"
+  },
+  "seal_all_steps_confirmed": false,
+  "seal_unconfirmed_steps": [
+    "disable-all:late-hold",
+    "disable-all:mixed"
+  ],
+  "physical_containers_stopped": 59,
+  "permissions_disabled": 32,
+  "case_configs_revoked": 7,
+  "recovery_configs_revoked": 7,
+  "groups": [
+    {
+      "group": "business-races",
+      "send_permissions_disabled": true,
+      "gateway_sealed": true,
+      "budget_files": 0
+    },
+    {
+      "group": "late-hold",
+      "send_permissions_disabled": true,
+      "gateway_sealed": true,
+      "budget_files": 0
+    },
+    {
+      "group": "mixed",
+      "send_permissions_disabled": true,
+      "gateway_sealed": true,
+      "budget_files": 0
+    }
+  ],
+  "technical_readonly_requests": {
+    "GET": 34
+  },
+  "IAM_closure_requests": {
+    "GET": 12,
+    "PUT": 4
+  },
+  "native_delete": 0,
+  "send_claims": 0,
+  "sender_starts": 0,
+  "case_starts": 0,
+  "wire_starts": 0,
+  "budget_files": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "source_containers_started": 2,
+  "technical_helpers_created": 1,
+  "all_attempt_resources_retained": true,
+  "all_backups_retained": true,
+  "automation_id": "307-d1-candidate07-v17",
+  "automation_status": "PAUSED",
+  "automation_config_sha256": "1a81f008d4018eba425eea649b1e68f8762ae3d9e3192db59f7c2dfa166b1650",
+  "current_window_run_terminated": true,
+  "automatic_retry_forbidden": true,
+  "PR323": "DRAFT",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

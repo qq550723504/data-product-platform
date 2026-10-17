@@ -1,0 +1,56 @@
+{
+  "containers": [
+    {
+      "id": "33683f87b1bc7c2f2214e3c97e99c49d13cf48a47d185ab5908fcc40885d7767",
+      "name": "/dpp-lifecycle307-808a6960-remaining-03-business",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "a0a3f5bbdf0290e710d8cc64a5ec264cc1c6f7092d61d5de7cd245aa2f065857",
+      "name": "/dpp-lifecycle307-808a6960-remaining-regression-redis",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "12270d49a42a7c99c36cf3c333db60bcefcd499b7281e0a7b52627aebeee195d",
+      "name": "/dpp-lifecycle307-808a6960-remaining-regression-gateway",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "4b5cd5a2d1ad22967d90d97c772f29f7f65b82f93bce537478ffcd1c49dbe55c",
+      "name": "/dpp-lifecycle307-808a6960-remaining-regression-minio",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "6f6b522dc1fdff758d0e129f71654efba2103eae3ceeea28f3948cd4a730ab27",
+      "name": "/dpp-lifecycle307-808a6960-remaining-03-compare",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "b38ac55c83d0c9bca4293a2bf2c1cd5c2c370ab6648efb1e452c54ad3b59b666",
+      "name": "/dpp-lifecycle307-808a6960-remaining-03-unpack",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "365f9baafede4693f2f73caa36c6f6564a83b601a95be40ec9d91b7c46048b87",
+      "name": "/dpp-lifecycle307-808a6960-remaining-regression-pg",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    }
+  ],
+  "retained": true,
+  "delete": 0,
+  "cleanup": 0
+}

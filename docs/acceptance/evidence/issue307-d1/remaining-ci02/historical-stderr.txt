@@ -1,0 +1,32 @@
+test_exact_model_and_tamper_rejection (__main__.Candidate07Guards.test_exact_model_and_tamper_rejection) ... ok
+test_host_attester_rejects_unconfirmed_shifted_and_expired_authority (__main__.Candidate07Guards.test_host_attester_rejects_unconfirmed_shifted_and_expired_authority) ... ok
+test_raw_evidence_path_and_bytes (__main__.Candidate07Guards.test_raw_evidence_path_and_bytes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.008s
+
+OK
+test_exact_model_and_tamper_rejection (__main__.Candidate07Guards.test_exact_model_and_tamper_rejection) ... ok
+test_host_attester_rejects_unconfirmed_shifted_and_expired_authority (__main__.Candidate07Guards.test_host_attester_rejects_unconfirmed_shifted_and_expired_authority) ... ok
+test_raw_evidence_path_and_bytes (__main__.Candidate07Guards.test_raw_evidence_path_and_bytes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.007s
+
+OK
+test_only_exact_reviewed_gofmt_test_may_differ (__main__.FrozenCandidate07Guards.test_only_exact_reviewed_gofmt_test_may_differ) ... ok
+test_raw_working_bytes_and_git_bytes_both_required (__main__.FrozenCandidate07Guards.test_raw_working_bytes_and_git_bytes_both_required) ... ok
+test_rewritten_index_or_candidate_anchor_rejected (__main__.FrozenCandidate07Guards.test_rewritten_index_or_candidate_anchor_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.079s
+
+OK
+test_only_exact_reviewed_gofmt_test_may_differ (__main__.FrozenCandidate07Guards.test_only_exact_reviewed_gofmt_test_may_differ) ... ok
+test_raw_working_bytes_and_git_bytes_both_required (__main__.FrozenCandidate07Guards.test_raw_working_bytes_and_git_bytes_both_required) ... ok
+test_rewritten_index_or_candidate_anchor_rejected (__main__.FrozenCandidate07Guards.test_rewritten_index_or_candidate_anchor_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.064s
+
+OK

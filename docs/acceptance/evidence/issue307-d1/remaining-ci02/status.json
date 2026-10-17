@@ -1,0 +1,14 @@
+{
+  "status": "PASS_LOCAL_AND_INDEPENDENT_CI_ATTRIBUTION_REPAIR",
+  "exact_new_HEAD_CI": "PENDING",
+  "historical_runtime": "f3b5de45857add3f852bbac0348e8c30ea105ade",
+  "current_runtime": "650a2f4be3f8f82c2382627b00538195522a1ab5",
+  "candidate": "candidate09/v19",
+  "execution": "9780707d-55eb-4da8-873f-3a901d7aac3f",
+  "candidate_and_authority_unchanged": true,
+  "new_schedule_created": false,
+  "native_delete": 0,
+  "PR323": "DRAFT",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

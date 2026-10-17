@@ -1,0 +1,60 @@
+{
+ admin off
+ auto_https off
+}
+:9000 {
+ route {
+  @delete method DELETE
+  respond @delete 403
+  @bypass header X-Amz-Bypass-Governance-Retention *
+  respond @bypass 403
+  @copy header X-Amz-Copy-Source *
+  respond @copy 403
+  @read2 {
+   method GET
+   expression {http.request.header.Authorization}.contains('Credential=remainread808a6960/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/p1.csv?versionId=fed0102b-bc8b-4f47-b9e2-fae8d5c563ce'
+  }
+  reverse_proxy @read2 minio:9000
+  @read3 {
+   method GET
+   expression {http.request.header.Authorization}.contains('Credential=remainread808a6960/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/p2.csv?versionId=d8040608-c5cd-4a6f-8a2d-b3f856cf5302'
+  }
+  reverse_proxy @read3 minio:9000
+  @read4 {
+   method GET
+   expression {http.request.header.Authorization}.contains('Credential=remainread808a6960/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/remaining-processed.csv?versionId=00d7e220-7714-4c31-a4c7-2dda08cfa306'
+  }
+  reverse_proxy @read4 minio:9000
+  @read5 {
+   method GET
+   expression {http.request.header.Authorization}.contains('Credential=remainread808a6960/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/remaining-standardized.csv?versionId=dac1dbc5-c9b5-412a-a2a6-bf082e109e22'
+  }
+  reverse_proxy @read5 minio:9000
+  @read6 {
+   method GET
+   expression {http.request.header.Authorization}.contains('Credential=remainread808a6960/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/t1.csv?versionId=39d4ef5d-e983-413d-a6c2-9759d456b750'
+  }
+  reverse_proxy @read6 minio:9000
+  @read7 {
+   method GET
+   expression {http.request.header.Authorization}.contains('Credential=remainread808a6960/') && {http.request.uri} == '/dpp-lifecycle307-quarantine/fixture/t2.csv?versionId=90bd8ded-337a-4ca1-aec3-66c4ee6a1314'
+  }
+  reverse_proxy @read7 minio:9000
+  @inspect {
+   method GET HEAD
+   expression {http.request.header.Authorization}.contains('Credential=inspect808a69606c36/')
+  }
+  reverse_proxy @inspect minio:9000
+  @put0 {
+   method PUT
+   expression {http.request.header.If-None-Match} == '*' && {http.request.header.Authorization}.contains('Credential=remainput808a6960/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/remaining-standardized.csv'
+  }
+  reverse_proxy @put0 minio:9000
+  @put1 {
+   method PUT
+   expression {http.request.header.If-None-Match} == '*' && {http.request.header.Authorization}.contains('Credential=remainput808a6960/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/remaining-processed.csv'
+  }
+  reverse_proxy @put1 minio:9000
+  respond 403
+ }
+}

@@ -44,6 +44,7 @@ var namespaces = []string{"dpp-lifecycle307-online", "dpp-lifecycle307-quarantin
 type config struct {
 	RunID, WorkspaceID, ProviderInstanceID, IncarnationID, ActorID                     uuid.UUID
 	Enabled                                                                            bool
+	RemainingGroup                                                                     string
 	ArchiveAcceptance                                                                  bool
 	ProcessingDeliveryAcceptance                                                       bool
 	Endpoint, PostgresDSN, RootAccess, RootSecret, InspectAccess, InspectSecret, Token string
@@ -213,8 +214,21 @@ func prepare(ctx context.Context, path string) error {
 	if err != nil {
 		return err
 	}
+	if os.Getenv("LIFECYCLE_REMAINING_VERIFY") == "1" {
+		return verifyRemaining(ctx, c)
+	}
 	if !c.Enabled {
 		return errors.New("fixture authority disabled")
+	}
+	if c.RemainingGroup != "" {
+		if _, e := remainingLayout(c.RemainingGroup); e != nil || !c.ArchiveAcceptance || !c.ProcessingDeliveryAcceptance {
+			return errors.New("invalid remaining profile")
+		}
+		for _, key := range []string{"LIFECYCLE_FIXTURE_INSPECT_FAILED", "LIFECYCLE_FIXTURE_PREPARE_UNPROTECTED_PLAN", "LIFECYCLE_FIXTURE_INSPECT_REGISTERED", "LIFECYCLE_FIXTURE_RESUME_EMPTY"} {
+			if os.Getenv(key) != "" {
+				return errors.New("remaining profile refuses legacy modes")
+			}
+		}
 	}
 	if os.Getenv("LIFECYCLE_FIXTURE_INSPECT_FAILED") == "1" {
 		return inspectFailed(ctx, c)
@@ -300,6 +314,13 @@ func prepare(ctx context.Context, path string) error {
 	if c.ProcessingDeliveryAcceptance {
 		inspectionResources = append(inspectionResources, "arn:aws:s3:::"+namespaces[0]+"/fixture/standardized.csv", "arn:aws:s3:::"+namespaces[0]+"/fixture/processed.csv")
 	}
+	if c.RemainingGroup != "" {
+		layout, _ := remainingLayout(c.RemainingGroup)
+		inspectionResources = nil
+		for _, s := range layout {
+			inspectionResources = append(inspectionResources, "arn:aws:s3:::"+s.Namespace+"/"+s.Key)
+		}
+	}
 	policy := map[string]any{"Version": "2012-10-17", "Statement": []any{
 		map[string]any{"Effect": "Allow", "Action": []string{"s3:ListBucketVersions"}, "Resource": []string{"arn:aws:s3:::" + namespaces[0], "arn:aws:s3:::" + namespaces[1]}},
 		map[string]any{"Effect": "Allow", "Action": []string{"s3:GetObjectVersion", "s3:GetObjectRetention", "s3:GetObjectLegalHold"},
@@ -324,22 +345,54 @@ func prepare(ctx context.Context, path string) error {
 	}
 	versions := []uuid.UUID{uuid.New(), uuid.New()}
 	var objects []object
+	var layout []remainingObject
+	var byContent map[string]uuid.UUID
+	if c.RemainingGroup != "" {
+		layout, _ = remainingLayout(c.RemainingGroup)
+		versions, byContent = remainingVersions(layout)
+	}
 	retentionUntil := time.Now().UTC().Add(24 * time.Hour).Truncate(time.Second)
+	if c.RemainingGroup != "" {
+		retentionUntil = retentionUntil.Add(6 * 24 * time.Hour)
+	}
 	for ni, ns := range namespaces {
-		for i, key := range []string{"fixture/a.csv", "fixture/b.csv"} {
-			payload := []byte([]string{"id,value\n1,synthetic-alpha\n", "id,value\n2,synthetic-beta\n"}[i])
-			if c.ProcessingDeliveryAcceptance {
+		keys := []string{"fixture/a.csv", "fixture/b.csv"}
+		if c.RemainingGroup != "" {
+			keys = nil
+			for _, s := range layout {
+				if s.Namespace == ns {
+					keys = append(keys, s.Key)
+				}
+			}
+		}
+		for i, key := range keys {
+			var spec remainingObject
+			var payload []byte
+			var version uuid.UUID
+			if c.RemainingGroup != "" {
+				for _, s := range layout {
+					if s.Namespace == ns && s.Key == key {
+						spec = s
+					}
+				}
+				payload = remainingPayload(c.RemainingGroup, spec.Content)
+				version = byContent[spec.Content]
+			} else {
+				payload = []byte([]string{"id,value\n1,synthetic-alpha\n", "id,value\n2,synthetic-beta\n"}[i])
+				version = versions[i]
+			}
+			if c.ProcessingDeliveryAcceptance && c.RemainingGroup == "" {
 				payload = pilot.PlaneSyntheticPayloads()[i]
 			}
 			digest := sha256.Sum256(payload)
-			o := object{CopyID: uuid.New(), DatasetVersionID: versions[i], Namespace: ns, Key: key, SHA256: hex.EncodeToString(digest[:]), Bytes: int64(len(payload)), Retention: "NONE"}
+			o := object{CopyID: uuid.New(), DatasetVersionID: version, Namespace: ns, Key: key, SHA256: hex.EncodeToString(digest[:]), Bytes: int64(len(payload)), Retention: "NONE"}
 			opts := minio.PutObjectOptions{ContentType: "text/csv", DisableMultipart: true}
 			opts.SetMatchETagExcept("*")
-			if ni == 0 && i == 1 {
+			if (c.RemainingGroup == "" && ni == 0 && i == 1) || spec.Hold {
 				opts.LegalHold = minio.LegalHoldEnabled
 				o.LegalHold = true
 			}
-			if ni == 1 && i == 0 {
+			if (c.RemainingGroup == "" && ni == 1 && i == 0) || spec.Retained {
 				opts.Mode = minio.Governance
 				opts.RetainUntilDate = retentionUntil
 				o.Retention = "GOVERNANCE"
@@ -389,7 +442,7 @@ func prepare(ctx context.Context, path string) error {
 	}
 	// Fixture bootstrap records real content identity, not product certification,
 	// legal rights, archive/restore success, or normal business-reader acceptance.
-	var resources [2]*uuid.UUID
+	resources := make([]*uuid.UUID, len(versions))
 	if c.ProcessingDeliveryAcceptance {
 		router, e := routing.NewRouter(false)
 		if e != nil {
@@ -409,7 +462,13 @@ func prepare(ctx context.Context, path string) error {
 	err = transaction.NewManager(pool).Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		for i, v := range versions {
 			d := uuid.New()
-			o := objects[i]
+			var o object
+			for _, candidate := range objects {
+				if candidate.DatasetVersionID == v {
+					o = candidate
+					break
+				}
+			}
 			if _, e := tx.Exec(ctx, `INSERT INTO dataset(id,workspace_id,code,name,dataset_type,source_resource_id) VALUES($1,$2,$3,'Closed synthetic lifecycle fixture','RAW',$4)`, d, c.WorkspaceID, "LC307-"+v.String(), resources[i]); e != nil {
 				return e
 			}
@@ -435,6 +494,17 @@ func prepare(ctx context.Context, path string) error {
 	})
 	if err != nil {
 		return errors.New("fixture registry transaction failed; preserve provider versions")
+	}
+	if c.RemainingGroup != "" {
+		ordered := make([]object, 0, len(layout))
+		for _, s := range layout {
+			for _, o := range objects {
+				if o.Namespace == s.Namespace && o.Key == s.Key {
+					ordered = append(ordered, o)
+				}
+			}
+		}
+		objects = ordered
 	}
 	return finish(ctx, path, c, pool, objects)
 }
@@ -633,7 +703,7 @@ func finish(ctx context.Context, path string, c config, pool *pgxpool.Pool, obje
 			seenVersions[o.DatasetVersionID] = true
 		}
 	}
-	if len(versions) != 2 {
+	if c.RemainingGroup == "" && len(versions) != 2 {
 		return errors.New("fixture content version scope mismatch")
 	}
 	a := authority{path: path, token: c.Token, run: c.RunID}
@@ -655,7 +725,7 @@ func finish(ctx context.Context, path string, c config, pool *pgxpool.Pool, obje
 	for _, o := range objects {
 		ids = append(ids, o.CopyID)
 	}
-	plan, err := lc.NewPlanService(manager, repo, a).PrepareDeletePlan(ctx, lc.PrepareDeletePlanCommand{WorkspaceID: c.WorkspaceID, CopyIDs: ids, IdempotencyKey: "fixture-plan:" + c.RunID.String()})
+	plan, remainingPlans, err := prepareProfilePlans(ctx, c, manager, repo, a, objects, ids)
 	if err != nil {
 		return errors.New("fixture plan preparation failed")
 	}
@@ -723,7 +793,7 @@ func finish(ctx context.Context, path string, c config, pool *pgxpool.Pool, obje
 	if c.ProcessingDeliveryAcceptance {
 		expectedRestrictions = 0
 	}
-	if counts["lifecycle_storage_call"] != priorCalls+14 || counts["lifecycle_storage_observation"] != priorObservations+14 || counts["cost_allocation"] != priorCosts+14 || counts["lifecycle_fixture_copy"] != 4 || counts["lifecycle_content_use_restriction"] != expectedRestrictions || counts["lifecycle_disposition_approval"] != 0 || counts["lifecycle_disposition_dispatch"] != 0 || counts["lifecycle_provider_attempt"] != 0 || counts["lifecycle_reader_pin"] != 0 {
+	if counts["lifecycle_storage_call"] != priorCalls+3*len(objects)+2 || counts["lifecycle_storage_observation"] != priorObservations+3*len(objects)+2 || counts["cost_allocation"] != priorCosts+3*len(objects)+2 || counts["lifecycle_fixture_copy"] != len(objects) || counts["lifecycle_content_use_restriction"] != expectedRestrictions || counts["lifecycle_disposition_approval"] != 0 || counts["lifecycle_disposition_dispatch"] != 0 || counts["lifecycle_provider_attempt"] != 0 || counts["lifecycle_reader_pin"] != 0 {
 		return errors.New("fixture final fact counts mismatch")
 	}
 	manifest := map[string]any{"schema": "lifecycle307-predelete-manifest-v1", "created_at": time.Now().UTC(), "run_id": c.RunID, "workspace_id": c.WorkspaceID,
@@ -732,6 +802,11 @@ func finish(ctx context.Context, path string, c config, pool *pgxpool.Pool, obje
 		"destructive_requests": 0, "object_cleanup_requests": 0, "inspection_identity_policy": "lifecycle307-inspection-" + c.RunID.String(),
 		"acceptance": map[string]string{"native_exact_bytes": "PASS", "native_version_inventory": "PASS", "native_retention_hold": "PASS", "platform_per_call_journal_cost": "PASS",
 			"delete": "NOT_RUN", "absence_finalize": "NOT_RUN", "archive_restore": "NOT_RUN", "business_reader": "NOT_RUN", "full_D1": "NOT_RUN"}}
+	if c.RemainingGroup != "" {
+		if e := finishRemaining(ctx, c, objects, remainingPlans, manifest); e != nil {
+			return e
+		}
+	}
 	b, _ := json.MarshalIndent(manifest, "", "  ")
 	if err = os.WriteFile(filepath.Join(c.OutputDirectory, "manifest.json"), append(b, '\n'), 0600); err != nil {
 		return err

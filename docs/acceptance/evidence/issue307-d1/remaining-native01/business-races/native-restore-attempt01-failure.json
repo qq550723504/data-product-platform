@@ -1,0 +1,11 @@
+{
+  "status": "FAIL_RETAINED",
+  "run_id": "808a6960-6c36-4200-ae98-f18a68472fe5",
+  "Core_restore": "PASS_ALL_194_TABLES_ROLES_FUNCTION_ACL",
+  "native_tar_extract": "PASS",
+  "native_tar_compare": "FAIL_BUSYBOX_TAR_D_UNSUPPORTED",
+  "root_cause": "Pinned PostgreSQL image uses BusyBox tar without -d; file extraction had succeeded",
+  "new_native_write_replay": 0,
+  "continuation": "fixed read-only SHA256 file compare + existing native GET/HEAD verifier; originals retained",
+  "delete": 0
+}

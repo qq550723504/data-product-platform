@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\fixture-private\remaining-candidate07\authorized-execution01\window01\host.py", line 118, in <module>
+    elif action=='fresh':fresh()
+                         ~~~~~^^
+  File "C:\Users\Henry\.codex\fixture-private\remaining-candidate07\authorized-execution01\window01\host.py", line 110, in fresh
+    need(result['status']=='PASS_EXACT_NATIVE_READONLY' and result['copies']==old_result['copies'] and result['disabled_identities']==old_result['disabled_identities'] and result['policy_sha256']==old_result['policy_sha256'] and result['inventory_sha256']==old_result['inventory_sha256'] and result['delete']==0 and result['mutations']==0,'native inventory/protection/IAM drift')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\fixture-private\remaining-candidate07\authorized-execution01\window01\host.py", line 27, in need
+    if not ok:raise RuntimeError(msg)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: native inventory/protection/IAM drift

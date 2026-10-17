@@ -1,0 +1,76 @@
+{
+  "run_id": "808a6960-6c36-4200-ae98-f18a68472fe5",
+  "resources": {
+    "project": "dpp-lifecycle307-808a6960",
+    "network": "dpp-lifecycle307-808a6960-private",
+    "volumes": [
+      "dpp-lifecycle307-808a6960-postgres",
+      "dpp-lifecycle307-808a6960-objects"
+    ],
+    "run_id": "808a6960-6c36-4200-ae98-f18a68472fe5",
+    "containers": {
+      "postgres": "dpp-lifecycle307-808a6960-postgres",
+      "minio": "dpp-lifecycle307-808a6960-minio",
+      "gateway": "dpp-lifecycle307-808a6960-gateway"
+    }
+  },
+  "private_file_sha256": {
+    "config.json": "2c4e6884d02567b090f2163eaddccbcd58719c4777f12d2a7665dc402106b44b",
+    "prepare": "ed6b6ccb27f52fc46f7576a4c5ea5428a7502ca2028ec357b4d01839689d3568",
+    "checkpoint/core.dump": "17e173195e543359870b3fb73a69fe887775390ed87f64cb9557a285648d7ef6",
+    "checkpoint/globals.sql": "a2e3163d862b1299efd06ecb0903cdfe8f08f1a5876030a03c5bc9737e31c2d6",
+    "checkpoint/native.tar": "1bfc047b61d2f2a4a3b8140d3d0cc870804cf8131b07a3359e8c58d0a4dfc9da"
+  },
+  "public_file_sha256": {
+    "manifest.json": "2fd4356702a7903af53d4f1f6f8dc6c40372bed11b7069bb32beb130a5077c35",
+    "source-before.json": "c695a8fcda04cb88ba6ed7e530ec5938c120b8b8e99f765c6b827539c6a4b4b4",
+    "restored-core.json": "c695a8fcda04cb88ba6ed7e530ec5938c120b8b8e99f765c6b827539c6a4b4b4",
+    "seal.json": "5d00ec815ab5e435795ffec0ee2fabcb5263198c266741d9c687655ab1ac6f67",
+    "native-file-sha256.txt": "8ba9f93356a5b39325e505e10b33216df95036d00bcdea3dc5b9560c8157452e",
+    "seal-continuation02.json": "afe62dce83d62384bd16f2d148f52c23192cdec6a467d2e1d137d9fee9999adf"
+  },
+  "containers": [
+    {
+      "id": "628c5cf5f6a5656d81aafd36a62a5fee768715c92481163309246ab9e5a12ced",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    {
+      "id": "e52e7e01f3f1f220d85469d37f442ec0b07c64f6c3e5755952c5c48dee67e2f1",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6"
+    },
+    {
+      "id": "fa0712013c5a461797f6bbd1b1ec9cc0e8979325771f7c13053116ca0bf756d0",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    {
+      "id": "3e3217b70f81d4ebea3a596ea02c7a934afb79ccc2fe108738b3bcea5a4ce820",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    {
+      "id": "18f59aad8b195df4095a80ab299e126166fb536cf40d4bb9c7c77fcccd7ddee7",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    {
+      "id": "562fc35651295d65d18f81c0ae85f9404cb9377cbbcc37a82b2a83358e7abfd4",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    {
+      "id": "aade8a515ef3a8655a64b3fecde63ed5279e6d85e3a7b394f304221b14e35683",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    {
+      "id": "1c5877bbfabdd1a812fa658e62e594ad76a8c7ae815aa41d5ee06274eb6ed39a",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
+    },
+    {
+      "id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6"
+    },
+    {
+      "id": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    }
+  ],
+  "delete": 0,
+  "restore_replay": false
+}

@@ -1,0 +1,7 @@
+{
+  "source": "49f8f26d470d610d1bb989d54e523defad4d8c50",
+  "reader_sha256": "8a9800bd3a77c75d3364cfe01712e7de1dcb060111a4b43c4bb90820b7b2a4b1",
+  "operator_sha256": "d43ec85586b001c1cc8adc3def3a0ba82cb95f7024fcc100ada9fa4a21f9c605",
+  "go": "go version go1.26.5 windows/amd64",
+  "native_delete": 0
+}

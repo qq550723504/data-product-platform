@@ -1,0 +1,11 @@
+{
+  "status": "PASS_HISTORICAL_RAW_AND_GIT_BLOBS",
+  "at": "2026-10-17T02:53:11.205358+00:00",
+  "v17_raw": 940,
+  "failure_raw": 119,
+  "git_blobs": 1059,
+  "f3_source_snapshot": "f3b5de45857add3f852bbac0348e8c30ea105ade",
+  "current_runtime": "intentionally new v18 contract; old current-source checker was not relaxed",
+  "old_authority_reused": false,
+  "native_delete": 0
+}

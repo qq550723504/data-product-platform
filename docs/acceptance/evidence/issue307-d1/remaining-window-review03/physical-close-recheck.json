@@ -1,0 +1,15 @@
+{
+  "status": "PASS_ALL_BOUND_07_08_09_PHYSICALLY_CLOSED",
+  "at": "2026-10-17T03:15:35.861687+00:00",
+  "containers_stopped": 157,
+  "permissions_disabled": 96,
+  "gateways_sealed": 3,
+  "old_heartbeat": "PAUSED",
+  "new_schedule_created": false,
+  "new_authority": "NOT_RECEIVED",
+  "native_delete": 0,
+  "IAM_freshness_scope": "09 native verifier and check-disabled receipts; host-only final inspect adds no IAM readback",
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0
+}

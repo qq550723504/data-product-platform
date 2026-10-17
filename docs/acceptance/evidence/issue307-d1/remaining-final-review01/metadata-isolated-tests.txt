@@ -1,0 +1,41 @@
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/exit
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/hang
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/malformed
+--- PASS: TestNativeSchemaCostsStartupBeforeMarker (0.67s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/exit (0.07s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/hang (0.52s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/malformed (0.06s)
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/exit
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/hang
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/malformed
+--- PASS: TestNativeSchemaCostsStartupBeforeMarker (0.67s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/exit (0.05s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/hang (0.53s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/malformed (0.05s)
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/exit
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/hang
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/malformed
+--- PASS: TestNativeSchemaCostsStartupBeforeMarker (0.68s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/exit (0.06s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/hang (0.53s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/malformed (0.06s)
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/exit
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/hang
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/malformed
+--- PASS: TestNativeSchemaCostsStartupBeforeMarker (0.68s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/exit (0.06s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/hang (0.52s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/malformed (0.07s)
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/exit
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/hang
+=== RUN   TestNativeSchemaCostsStartupBeforeMarker/malformed
+--- PASS: TestNativeSchemaCostsStartupBeforeMarker (0.67s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/exit (0.06s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/hang (0.52s)
+    --- PASS: TestNativeSchemaCostsStartupBeforeMarker/malformed (0.06s)
+PASS

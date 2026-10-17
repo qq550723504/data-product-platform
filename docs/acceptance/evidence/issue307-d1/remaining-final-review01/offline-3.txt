@@ -1,0 +1,8 @@
+test_exact_model_and_tamper_rejection (test_remaining_candidate07.Candidate07Guards.test_exact_model_and_tamper_rejection) ... ok
+test_host_attester_rejects_unconfirmed_shifted_and_expired_authority (test_remaining_candidate07.Candidate07Guards.test_host_attester_rejects_unconfirmed_shifted_and_expired_authority) ... ok
+test_raw_evidence_path_and_bytes (test_remaining_candidate07.Candidate07Guards.test_raw_evidence_path_and_bytes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.012s
+
+OK
