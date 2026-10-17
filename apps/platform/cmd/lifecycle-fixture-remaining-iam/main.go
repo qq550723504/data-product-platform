@@ -23,7 +23,7 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 )
 
-const execution = "effa0385-9308-42eb-bd66-d0c379b6a989"
+const execution = pilot.RemainingExecution
 
 type rootConfig struct{ Group, Endpoint, RootAccess, RootSecret string }
 type candidate struct {
@@ -76,7 +76,7 @@ func authorized() error {
 	if read("/run/private/status.json", &frozen) != nil || frozen.CandidateSHA256 != digest(b) || frozen.ConfirmationSHA256 != digest(expected) {
 		return errors.New("trusted confirmation template binding differs")
 	}
-	if e != nil || e2 != nil || len(h) == 0 || !bytes.Contains(h, []byte(execution)) || !bytes.Contains(h, []byte(digest(b))) || !bytes.Equal(h, expected) || !p.Enabled || p.Execution != execution || c.Execution != execution || c.Profile != "candidate07/v17" || digest(b) != p.CandidateSHA256 || digest(h) != p.ConfirmationSHA256 || c.NotBefore.Format(time.RFC3339) != pilot.RemainingNotBefore || c.NotAfter.Format(time.RFC3339) != pilot.RemainingNotAfter || now.Before(c.NotBefore) || !now.Before(c.NotAfter) || !p.NotBefore.Equal(c.NotBefore) || !p.ExpiresAt.Equal(c.NotAfter) || p.ConfirmedAt.IsZero() || now.Before(p.ConfirmedAt) || p.MaxPerTarget != 1 || p.MaxTotal != 7 {
+	if e != nil || e2 != nil || len(h) == 0 || !bytes.Contains(h, []byte(execution)) || !bytes.Contains(h, []byte(digest(b))) || !bytes.Equal(h, expected) || !p.Enabled || p.Execution != execution || c.Execution != execution || c.Profile != pilot.RemainingProfile || digest(b) != p.CandidateSHA256 || digest(h) != p.ConfirmationSHA256 || c.NotBefore.Format(time.RFC3339) != pilot.RemainingNotBefore || c.NotAfter.Format(time.RFC3339) != pilot.RemainingNotAfter || now.Before(c.NotBefore) || !now.Before(c.NotAfter) || !p.NotBefore.Equal(c.NotBefore) || !p.ExpiresAt.Equal(c.NotAfter) || p.ConfirmedAt.IsZero() || now.Before(p.ConfirmedAt) || p.MaxPerTarget != 1 || p.MaxTotal != 7 {
 		return errors.New("new exact IAM enable authority denied")
 	}
 	return nil
@@ -126,7 +126,7 @@ func run(ctx context.Context, action string) error {
 		return e
 	}
 	var frozen candidate
-	if !disabling && (read("/run/private/candidate.json", &frozen) != nil || frozen.Execution != execution || frozen.Profile != "candidate07/v17") {
+	if !disabling && (read("/run/private/candidate.json", &frozen) != nil || frozen.Execution != execution || frozen.Profile != pilot.RemainingProfile) {
 		return errors.New("foreign bootstrap candidate")
 	}
 	self, e := os.Executable()

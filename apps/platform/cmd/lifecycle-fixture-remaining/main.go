@@ -1,4 +1,4 @@
-// Finite candidate07 operator. The preparation/check path has no database or
+// Finite current-candidate operator. The preparation/check path has no database or
 // provider I/O. Sending requires a separate exact confirmation and fresh signed
 // physical topology; there is no enable, credential provisioning or retry mode.
 package main
@@ -36,8 +36,8 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
-const execution = "effa0385-9308-42eb-bd66-d0c379b6a989"
-const profile = "candidate07/v17"
+const execution = pilot.RemainingExecution
+const profile = pilot.RemainingProfile
 
 var errDenied = errors.New("remaining candidate authority denied; no database/provider I/O permitted")
 

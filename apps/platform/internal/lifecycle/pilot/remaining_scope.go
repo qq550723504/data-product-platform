@@ -18,8 +18,10 @@ var remainingScopes []byte
 
 // A different UTC slot requires a new frozen candidate/confirmation. It cannot
 // be opened by editing a permission file or replaying an old confirmation text.
-const RemainingNotBefore = "2026-10-17T02:00:00Z"
-const RemainingNotAfter = "2026-10-17T02:40:00Z"
+const RemainingExecution = "b16a578d-6997-4f8c-b6ad-470bafba2b1f"
+const RemainingProfile = "candidate08/v18"
+const RemainingNotBefore = "2026-10-18T02:00:00Z"
+const RemainingNotAfter = "2026-10-18T02:40:00Z"
 
 type RemainingPlan struct {
 	Case      string    `json:"case"`

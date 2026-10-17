@@ -61,7 +61,7 @@ def main():
     if args.stage=='recover-M1B':allowed.add('M1-mixed-checkpoint.json')
     require(all(p.is_file() and not p.is_symlink() and p.name in allowed for p in folder.iterdir()),'unexpected helper private file/root key')
     if args.stage.startswith('recover-'):require(not config['DeleteSecret'] and not config['WirePrivateKey'],'recovery has send credentials')
-    helper=r.inspect(group['Helpers'][args.stage]);helper_contract(helper,group,args.stage,folder,f.PRIVATE/'operator','dpp-lifecycle307-'+next(x['Run'][:8] for x in r.load(f.ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json') if x['Group']==args.group)+'-candidate07-budget')
+    helper=r.inspect(group['Helpers'][args.stage]);helper_contract(helper,group,args.stage,folder,f.PRIVATE/'operator','dpp-lifecycle307-'+next(x['Run'][:8] for x in r.load(f.ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json') if x['Group']==args.group)+'-candidate08-budget')
     images={'Core':r.PG,'Native':r.MI,'Gateway':r.GW}
     for role,image in images.items():
         state=r.inspect(group[role]);require(state['Id']==group[role] and state['Image']==image and state['State']['Running'] and state['State']['Pid']>0,'source role/image not active and bound')

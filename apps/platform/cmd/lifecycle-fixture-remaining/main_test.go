@@ -1,6 +1,10 @@
 package main
 
 import (
+	"encoding/json"
+	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -8,8 +12,29 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot"
 )
 
+func TestPreviousExecutionCannotBeReauthorizedByNewBinary(t *testing.T) {
+	_, file, _, _ := runtime.Caller(0)
+	raw, err := os.ReadFile(filepath.Join(filepath.Dir(file), "../../../../docs/acceptance/evidence/issue307-d1/remaining-candidate07/candidate.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var previous candidate
+	if json.Unmarshal(raw, &previous) != nil {
+		t.Fatal("previous candidate invalid")
+	}
+	if validateCandidate(previous) == nil {
+		t.Fatal("previous execution/window accepted by current binary")
+	}
+	if previous.Execution == execution || previous.Profile == profile {
+		t.Fatal("new generation reused previous authority identity")
+	}
+}
+
 func TestFrozenAbsoluteWindowCannotBeMovedExtendedOrReopened(t *testing.T) {
-	start := time.Date(2026, 10, 17, 2, 0, 0, 0, time.UTC)
+	start, err := time.Parse(time.RFC3339, pilot.RemainingNotBefore)
+	if err != nil {
+		t.Fatal(err)
+	}
 	c := candidate{NotBefore: start, NotAfter: start.Add(40 * time.Minute)}
 	p := permission{NotBefore: start, ExpiresAt: c.NotAfter, ConfirmedAt: start.Add(-time.Minute)}
 	if validateWindow(c, p, start) != nil {

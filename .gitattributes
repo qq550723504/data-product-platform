@@ -106,3 +106,5 @@ docs/acceptance/issue307-d1-v17-window-runbook.md text eol=lf
 docs/acceptance/evidence/issue307-d1/remaining-window-review*/** -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-window-review*/*.txt whitespace=cr-at-eol,-blank-at-eol
 docs/acceptance/evidence/issue307-d1/delete-confirmed-v17-window*/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate08/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-preflight-review*/** -text whitespace=cr-at-eol
