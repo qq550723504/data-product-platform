@@ -153,6 +153,7 @@ def collect_group(packet, group, private, public, reader, checker):
     This function is also used during candidate freezing. A one-shot output
     directory prevents old exit0/receipts from being reused as fresh evidence.
     """
+    packet, private, public, reader, checker = (p.resolve() for p in (packet, private, public, reader, checker))
     frozen = baseline(packet, group)
     need(not private.exists() and not public.exists(), 'one-shot preflight already allocated')
     private.mkdir(parents=True); public.mkdir(parents=True)
@@ -246,6 +247,10 @@ def main():
     parser.add_argument('--checker', type=Path, required=True)
     parser.add_argument('--checker-sha256', required=True)
     args = parser.parse_args()
+    # Docker --mount requires absolute host paths; apply the same contract to
+    # CLI and direct library use before any source is started.
+    for name in ('packet', 'private', 'output', 'reader', 'checker'):
+        setattr(args, name, getattr(args, name).resolve())
     need(sha(args.packet / 'candidate.json') == args.candidate_sha256, 'frozen candidate differs')
     need(sha(args.packet / 'bindings.json') == args.bindings_sha256, 'frozen bindings differ')
     c = load(args.packet / 'candidate.json')

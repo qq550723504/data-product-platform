@@ -18,8 +18,8 @@ var remainingScopes []byte
 
 // A different UTC slot requires a new frozen candidate/confirmation. It cannot
 // be opened by editing a permission file or replaying an old confirmation text.
-const RemainingExecution = "b16a578d-6997-4f8c-b6ad-470bafba2b1f"
-const RemainingProfile = "candidate08/v18"
+const RemainingExecution = "9780707d-55eb-4da8-873f-3a901d7aac3f"
+const RemainingProfile = "candidate09/v19"
 const RemainingNotBefore = "2026-10-18T02:00:00Z"
 const RemainingNotAfter = "2026-10-18T02:40:00Z"
 

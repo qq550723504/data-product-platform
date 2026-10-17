@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -113,5 +114,27 @@ class CompleteEntryTests(unittest.TestCase):
             dest=Path(temp)/'packet'; shutil.copytree(PACKET,dest)
             file=next((dest/'business-races/readonly').glob('native-policy-*.json')); file.write_bytes(b'{}')
             with self.assertRaises(ValueError): v.aggregate(dest,group,RECORDED,self.checker)
+    def test_cli_normalizes_relative_paths_before_any_source_io(self):
+        with tempfile.TemporaryDirectory(dir=v.ROOT) as temp:
+            root=Path(temp); packet=root/'packet';packet.mkdir()
+            owner=root/'owner';owner.mkdir();reader=owner/'reader';reader.write_bytes(b'isolated reader')
+            checker=owner/'checker';checker.write_bytes(b'isolated checker')
+            c={'Execution':'synthetic-new-execution','ReaderBinarySHA256':v.sha(reader),
+               'Groups':[{'Group':g} for g in ('business-races','late-hold','mixed')]}
+            (packet/'candidate.json').write_text(json.dumps(c),encoding='utf-8')
+            (packet/'bindings.json').write_text('[]',encoding='utf-8')
+            relative=lambda p:str(p.relative_to(v.ROOT))
+            argv=['verify-remaining-native.py','--packet',relative(packet),'--candidate-sha256',v.sha(packet/'candidate.json'),
+                  '--bindings-sha256',v.sha(packet/'bindings.json'),'--private',relative(root/'private'),
+                  '--output',relative(root/'output'),'--reader',relative(reader),'--checker',relative(checker),
+                  '--checker-sha256',v.sha(checker)]
+            def collect(packet,group,private,public,reader,checker):
+                self.assertTrue(all(p.is_absolute() for p in (packet,private,public,reader,checker)))
+                return {'technical_requests':0}
+            with patch.object(sys,'argv',argv),patch.object(v,'sealed_gate',return_value={'status':'synthetic-isolated-gate'}), \
+                 patch.object(v,'collect_group',side_effect=collect) as collector:
+                v.main()
+            self.assertEqual(collector.call_count,3)
+            self.assertTrue((root/'output/complete.json').is_file())
 
 if __name__ == '__main__': unittest.main(verbosity=2)
