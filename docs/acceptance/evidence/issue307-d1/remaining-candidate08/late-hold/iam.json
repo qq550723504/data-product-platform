@@ -1,0 +1,14 @@
+{
+  "disabled_identities": {
+    "delete754ea8f0": "lifecycle307-remaining-delete-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b",
+    "inspect754ea8f06ffc": "lifecycle307-inspection-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b"
+  },
+  "policy_sha256": {
+    "lifecycle307-inspection-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b": "bfbc7df85d47db88f8aad96be395afc2b8306c345be5961c668a05143cbe71c9",
+    "lifecycle307-remaining-delete-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b": "b444c15fd0ddabec889cfcdf98e5a1d5631e00df53e0a83a1b3b48b206b28770"
+  },
+  "policy_file_sha256": {
+    "lifecycle307-inspection-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b": "34d74d27d43fdcaf3fabf80790c82e67ccbee9454cb6e1a525783ac7d0b8a9f1",
+    "lifecycle307-remaining-delete-754ea8f0-6ffc-4cdc-ac28-40fe8b590a1b": "4d9965b72053c3719659b647f03424a6fceaf894c2af0c80361f35ac1a641ee0"
+  }
+}

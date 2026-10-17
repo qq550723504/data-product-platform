@@ -1,0 +1,743 @@
+[
+  {
+    "group": "business-races",
+    "project": "dpp-lifecycle307-808a6960",
+    "workspace": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+    "provider": "cc068c8c-4f00-44cd-a825-377631253d59",
+    "incarnation": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+    "manifest_sha256": "2fd4356702a7903af53d4f1f6f8dc6c40372bed11b7069bb32beb130a5077c35",
+    "plans": [
+      {
+        "case": "P1",
+        "hash_algorithm": "SHA256-LIFECYCLE-PLAN-V1",
+        "id": "621893ed-16fb-4f21-a6c6-2711d349107c",
+        "scope_hash": "a852eb63484945a92996667f6ccee9d39e6dc0dbf20c864ff62310a383e3a0b8",
+        "status": "FINALIZED",
+        "targets": 1
+      },
+      {
+        "case": "P2",
+        "hash_algorithm": "SHA256-LIFECYCLE-PLAN-V1",
+        "id": "bce1b1b1-d6e2-44fd-8b87-171142350ab9",
+        "scope_hash": "d4758d9b64003d92aca60290fee1d2f22e7a857d2fe2be513d4a1ea2755ce6a3",
+        "status": "FINALIZED",
+        "targets": 1
+      },
+      {
+        "case": "T1",
+        "hash_algorithm": "SHA256-LIFECYCLE-PLAN-V1",
+        "id": "247a2ca9-d2f3-4384-bcee-b10add497175",
+        "scope_hash": "7c4daf909a375bc21fcf8dd09b14d99960ae1f919ce138eb517ac0593faf1c1c",
+        "status": "FINALIZED",
+        "targets": 1
+      },
+      {
+        "case": "T2",
+        "hash_algorithm": "SHA256-LIFECYCLE-PLAN-V1",
+        "id": "531c7b96-173f-4028-be97-2de9ed6c72f2",
+        "scope_hash": "84fbafb913dba44e5ceb43d670203e55f0244fad62a2dc2fd9ebb10b87e0cab5",
+        "status": "FINALIZED",
+        "targets": 1
+      }
+    ],
+    "copy_protection": [
+      {
+        "Copy": {
+          "ID": "91d954ee-cce5-4ceb-840d-fd6bdab778be",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "DatasetVersionID": "70b12ac5-1d86-462c-9176-fd5a681472cd",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/control-hold.csv",
+          "ProviderVersion": "47026891-d10a-4400-a3cb-76915e3d51bf",
+          "ContentSHA256": "ad335d6334c5e1213b18c16dd8fe5bbd5bb1c1f53351ab8f13ce6e3b04120a90",
+          "ByteSize": 54
+        },
+        "LegalHold": true,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "aa8ecd43-1c17-4d0b-b462-42600a426b1b",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "DatasetVersionID": "6837388a-80b1-4512-8976-ce2a7bae4e85",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/control-retention.csv",
+          "ProviderVersion": "2606d71f-207b-42a7-b671-4b7f4ca4d194",
+          "ContentSHA256": "51c1c5e1a03e2347a4798ab8d9a312faef4853d028b7360ea84dfa8ea1616183",
+          "ByteSize": 55
+        },
+        "LegalHold": false,
+        "Retention": "GOVERNANCE",
+        "RetainUntil": "2026-10-23T06:25:44Z"
+      },
+      {
+        "Copy": {
+          "ID": "5a4c9789-3e67-4e54-ab58-128d111cbd65",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "DatasetVersionID": "76f7f44e-4a2a-46c6-a6dc-a529f9ade834",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/p1.csv",
+          "ProviderVersion": "fed0102b-bc8b-4f47-b9e2-fae8d5c563ce",
+          "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+          "ByteSize": 232
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "DatasetVersionID": "4219373a-07a0-4c66-a666-305675304b14",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/p2.csv",
+          "ProviderVersion": "d8040608-c5cd-4a6f-8a2d-b3f856cf5302",
+          "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+          "ByteSize": 232
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "639c4cee-6a7c-4a13-aa68-37035d6e1811",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "DatasetVersionID": "a26216b5-95f6-4dbb-8359-c98f5f873be1",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/remaining-processed.csv",
+          "ProviderVersion": "00d7e220-7714-4c31-a4c7-2dda08cfa306",
+          "ContentSHA256": "d036fefe3225f322a8a2ad401bcc7e3e59127b98df0c6966d1b4c31018ff3fd0",
+          "ByteSize": 232
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "da6cc6a8-c9c2-41a6-8811-2d46164a241d",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "DatasetVersionID": "8cb255aa-a842-4aa5-a4ff-871798aeed0b",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/remaining-standardized.csv",
+          "ProviderVersion": "dac1dbc5-c9b5-412a-a2a6-bf082e109e22",
+          "ContentSHA256": "f8a1a1c7f85ff910f44f011d0dc3aba1b410ace20cc7c4429e18ab6cccb1c77d",
+          "ByteSize": 494
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "f48755f1-976b-4f47-98da-70ead936a4c3",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "DatasetVersionID": "699b8292-7fdb-4c22-af04-41f2eba761d4",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/t1.csv",
+          "ProviderVersion": "39d4ef5d-e983-413d-a6c2-9759d456b750",
+          "ContentSHA256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+          "ByteSize": 129328
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "e09fd433-54cf-4e82-b8c4-098472505fa2",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "DatasetVersionID": "70d9185e-5ee7-4d79-9853-64e8e8db3630",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/t2.csv",
+          "ProviderVersion": "90bd8ded-337a-4ca1-aec3-66c4ee6a1314",
+          "ContentSHA256": "a4ddf289321e3f5ede8528cb6268bd37d4165a727688477275a6497107fdaa4c",
+          "ByteSize": 49
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      }
+    ],
+    "checkpoint": {
+      "status": "PASS_FULL_CORE_NATIVE_RESTORE_AND_NONDELETE",
+      "source": "49f8f26d470d610d1bb989d54e523defad4d8c50",
+      "source_ids": {
+        "postgres": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+        "minio": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+        "gateway": "1c5877bbfabdd1a812fa658e62e594ad76a8c7ae815aa41d5ee06274eb6ed39a"
+      },
+      "restored_core": "ee8ca5d8fd9818c3bbcf1d194c0cb37e397a85ac9163929054c16ac3ef233290",
+      "restored_native": "728e4dbdbf94713c5467edd31e4f9b5669535f6dc23878714504c6016405fe3c",
+      "restored_gateway": "f23dd23659397f157adb89db98fe55a55395122b98842783fa3e6f8e9d079257",
+      "network": "e713a1d05dec012c3eb72ebac4654da71fa258158be204b44b715e6f51f93406",
+      "subnet": "10.234.172.0/24",
+      "core_dump_sha256": "75f02109f039c6ee2735e976ee3c1c7bb9d5f2fd643cface5849e206eed11bab",
+      "globals_sha256": "d738e649fe404e45e778808ab074d93ca0ba2d90cb5c39a1c6592bb25aa5f360",
+      "native_archive_sha256": "40fdf5125d8df98b97f91eaaf2aad0eb565322e79c5c95704d580f8414973255",
+      "inventory_sha256": "6330308dafa1d377ed8dda5a4f869cd5d5df21583fa334f3493e739a112e8001",
+      "copies": [
+        {
+          "ID": "91d954ee-cce5-4ceb-840d-fd6bdab778be",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/control-hold.csv",
+          "ProviderVersion": "47026891-d10a-4400-a3cb-76915e3d51bf",
+          "DatasetVersionID": "70b12ac5-1d86-462c-9176-fd5a681472cd",
+          "ContentSHA256": "ad335d6334c5e1213b18c16dd8fe5bbd5bb1c1f53351ab8f13ce6e3b04120a90",
+          "ByteSize": 54
+        },
+        {
+          "ID": "aa8ecd43-1c17-4d0b-b462-42600a426b1b",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/control-retention.csv",
+          "ProviderVersion": "2606d71f-207b-42a7-b671-4b7f4ca4d194",
+          "DatasetVersionID": "6837388a-80b1-4512-8976-ce2a7bae4e85",
+          "ContentSHA256": "51c1c5e1a03e2347a4798ab8d9a312faef4853d028b7360ea84dfa8ea1616183",
+          "ByteSize": 55
+        },
+        {
+          "ID": "5a4c9789-3e67-4e54-ab58-128d111cbd65",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/p1.csv",
+          "ProviderVersion": "fed0102b-bc8b-4f47-b9e2-fae8d5c563ce",
+          "DatasetVersionID": "76f7f44e-4a2a-46c6-a6dc-a529f9ade834",
+          "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+          "ByteSize": 232
+        },
+        {
+          "ID": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/p2.csv",
+          "ProviderVersion": "d8040608-c5cd-4a6f-8a2d-b3f856cf5302",
+          "DatasetVersionID": "4219373a-07a0-4c66-a666-305675304b14",
+          "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+          "ByteSize": 232
+        },
+        {
+          "ID": "639c4cee-6a7c-4a13-aa68-37035d6e1811",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/remaining-processed.csv",
+          "ProviderVersion": "00d7e220-7714-4c31-a4c7-2dda08cfa306",
+          "DatasetVersionID": "a26216b5-95f6-4dbb-8359-c98f5f873be1",
+          "ContentSHA256": "d036fefe3225f322a8a2ad401bcc7e3e59127b98df0c6966d1b4c31018ff3fd0",
+          "ByteSize": 232
+        },
+        {
+          "ID": "da6cc6a8-c9c2-41a6-8811-2d46164a241d",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/remaining-standardized.csv",
+          "ProviderVersion": "dac1dbc5-c9b5-412a-a2a6-bf082e109e22",
+          "DatasetVersionID": "8cb255aa-a842-4aa5-a4ff-871798aeed0b",
+          "ContentSHA256": "f8a1a1c7f85ff910f44f011d0dc3aba1b410ace20cc7c4429e18ab6cccb1c77d",
+          "ByteSize": 494
+        },
+        {
+          "ID": "f48755f1-976b-4f47-98da-70ead936a4c3",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/t1.csv",
+          "ProviderVersion": "39d4ef5d-e983-413d-a6c2-9759d456b750",
+          "DatasetVersionID": "699b8292-7fdb-4c22-af04-41f2eba761d4",
+          "ContentSHA256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+          "ByteSize": 129328
+        },
+        {
+          "ID": "e09fd433-54cf-4e82-b8c4-098472505fa2",
+          "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+          "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+          "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/t2.csv",
+          "ProviderVersion": "90bd8ded-337a-4ca1-aec3-66c4ee6a1314",
+          "DatasetVersionID": "70d9185e-5ee7-4d79-9853-64e8e8db3630",
+          "ContentSHA256": "a4ddf289321e3f5ede8528cb6268bd37d4165a727688477275a6497107fdaa4c",
+          "ByteSize": 49
+        }
+      ],
+      "native_delete": 0,
+      "cleanup": 0,
+      "source_execution_started": false
+    },
+    "source_core_sha256": "2b94c8d837ddc606816c6c49f6f4b3c5ffe27cbb7081f1acca3fbfdada159124",
+    "native_readonly_sha256": "80b32bd8b360142f3d4e15cc6b1c7fb08095b46b1bbcdad3e1b69a641c2c2578",
+    "recovery_redis": "83f7e56bd5277557e1a6056709e35e5c3251111fdb6fb442c3ede7014d9301fa",
+    "budget_volume": "dpp-lifecycle307-808a6960-candidate08-budget",
+    "previous_policy_heads": {
+      "76f7f44e-4a2a-46c6-a6dc-a529f9ade834": "d32df045-735f-4e1c-9043-4acfb41d6de1",
+      "4219373a-07a0-4c66-a666-305675304b14": "1dce673b-2d6c-4932-82a5-3c63be658b27",
+      "a26216b5-95f6-4dbb-8359-c98f5f873be1": "7d5d599b-1965-45b2-9008-8a0cdf0d75f6",
+      "8cb255aa-a842-4aa5-a4ff-871798aeed0b": "ec9c4b58-288a-4e0d-a4a3-23bd54c73a90",
+      "699b8292-7fdb-4c22-af04-41f2eba761d4": "e369ebcd-4b7a-4490-a35d-2131fa61faf9",
+      "70d9185e-5ee7-4d79-9853-64e8e8db3630": "105fd8c9-5ab3-4940-a87a-4071f4416fb0"
+    },
+    "root_owners": {
+      "check-disabled": {
+        "container": "92d5dc966fd30c00e3b9c4631d807c1b1748a6adf3507d6401df9fd6e1cd07a0",
+        "root_config_sha256": "c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "enable-read": {
+        "container": "f838041eb2d5d75640e548edf8bb96ec0e309f40e764f8edeccaf691c2c53979",
+        "root_config_sha256": "c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "enable-send": {
+        "container": "3bfbae3745af3cffea258c02e94c23845d988fcdee4282eb4d5e80f7ac8bee5b",
+        "root_config_sha256": "c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "disable-send": {
+        "container": "76f9f4a1550493333478d4c8fa5b07072826abc74f5996e8a13ccda9ce446477",
+        "root_config_sha256": "c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "disable-all": {
+        "container": "b2d328beb95e94854a65593ce7d8704017936ccd2733c425bde27124e7a0ee59",
+        "root_config_sha256": "c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9",
+        "scope": "trusted bootstrap only; never a worker mount"
+      }
+    }
+  },
+  {
+    "group": "late-hold",
+    "project": "dpp-lifecycle307-754ea8f0",
+    "workspace": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+    "provider": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+    "incarnation": "9d5c2daf-40be-4155-811a-879f24ad0314",
+    "manifest_sha256": "fa787f45239d7b8d02367fff7827fbb0a04613f55fdaf5e965cb66d0916b2a80",
+    "plans": [
+      {
+        "case": "H0",
+        "hash_algorithm": "SHA256-LIFECYCLE-PLAN-V1",
+        "id": "b1fe2a92-0a3e-400b-a0ca-338c120ad74e",
+        "scope_hash": "67ff4eb1ac6dd477bf51a398745272ed47b68cfc6bb5aaa82fd7d3c3cad7e05a",
+        "status": "FINALIZED",
+        "targets": 1
+      },
+      {
+        "case": "H1",
+        "hash_algorithm": "SHA256-LIFECYCLE-PLAN-V1",
+        "id": "620d0676-f3fa-42d1-b3bf-f34e683de43c",
+        "scope_hash": "89adf8f6854dfe03702ddc44daff92af79b39de2d4228d640ac765a6606738e2",
+        "status": "FINALIZED",
+        "targets": 2
+      },
+      {
+        "case": "H2",
+        "hash_algorithm": "SHA256-LIFECYCLE-PLAN-V1",
+        "id": "d78a9339-0968-45c9-bab6-bda86810ec33",
+        "scope_hash": "205cff03fcbaf25ff4b5d3ad690e5261a8a45e626180aa0782f22e4e249bbffd",
+        "status": "FINALIZED",
+        "targets": 2
+      }
+    ],
+    "copy_protection": [
+      {
+        "Copy": {
+          "ID": "a01751a1-9311-4357-8fb2-c833de6b8fc4",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "DatasetVersionID": "e6b6854f-b54a-462f-875d-9f74542b1fc3",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/control-hold.csv",
+          "ProviderVersion": "ca3b808e-734b-4d5e-8f2d-c78a16056ed6",
+          "ContentSHA256": "961b213e4d82865370d8da052e57af716297ddff615298ed8c43e938f39b1b7d",
+          "ByteSize": 49
+        },
+        "LegalHold": true,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "b3c4e113-f5c5-4421-a9d6-08403b1b9d0a",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "DatasetVersionID": "8d59d129-662b-4dae-a389-894943c716df",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/h0.csv",
+          "ProviderVersion": "369808db-a39a-4327-b9ed-5eb83aef7477",
+          "ContentSHA256": "e35bd4635f1d7ab38c85a290a86a94275085b49bdae8e1a952712d5304816d8e",
+          "ByteSize": 44
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "0d8b77a8-195d-4a83-bd52-04f800d7dc68",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "DatasetVersionID": "6d7d6978-cbbf-4c78-b9d1-82fad7271f0a",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/h1-a.csv",
+          "ProviderVersion": "28d9f84a-1889-498d-b033-df26cbf209f2",
+          "ContentSHA256": "838fddef805d918cd692a88f720d23705e6763eb0748424274c22d9bcfbc7ba0",
+          "ByteSize": 44
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "e735d90a-8352-4a01-ad16-8573297bc684",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "DatasetVersionID": "6d7d6978-cbbf-4c78-b9d1-82fad7271f0a",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/h1-b.csv",
+          "ProviderVersion": "bae40a85-7539-4fe1-86b7-2cbb17df7812",
+          "ContentSHA256": "838fddef805d918cd692a88f720d23705e6763eb0748424274c22d9bcfbc7ba0",
+          "ByteSize": 44
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "c05307db-cb81-4220-b42e-be23f85821e3",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "DatasetVersionID": "18721e15-7b01-47d3-a727-8b836d73dbcb",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/h2-a.csv",
+          "ProviderVersion": "453c6f42-fbb2-4fdf-9f86-00a20a54b7bc",
+          "ContentSHA256": "b55663df28625841abe3cb9f14cf085c194e00f0a9bcefc53c1b7db83303a838",
+          "ByteSize": 44
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "a37c347d-dbff-492e-9c7a-317a1f188184",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "DatasetVersionID": "18721e15-7b01-47d3-a727-8b836d73dbcb",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/h2-b.csv",
+          "ProviderVersion": "448112b2-baf3-4569-b06f-59011492cf80",
+          "ContentSHA256": "b55663df28625841abe3cb9f14cf085c194e00f0a9bcefc53c1b7db83303a838",
+          "ByteSize": 44
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      }
+    ],
+    "checkpoint": {
+      "status": "PASS_FULL_CORE_NATIVE_RESTORE_AND_NONDELETE",
+      "source": "49f8f26d470d610d1bb989d54e523defad4d8c50",
+      "source_ids": {
+        "gateway": "2e2192530e9ff4d45bfdae8fc797089fd8ce0969d37cba97e00d63986f4e194c",
+        "postgres": "982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db",
+        "minio": "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061"
+      },
+      "restored_core": "7ba6a70d54b49021ab50156a9fdf3bd7a57bdd9b93dbbb441b3837614a665639",
+      "restored_native": "82024ecd2d4cd8afa46b33d1d28abfddffa4093d6b9dd9b24d67fc046bb6eabd",
+      "restored_gateway": "e6c8ea53ca346201ec69cd5db48ba64e45c7b2a4171355a79b3cb689b63d0caa",
+      "network": "6ee0c2750f2e7b84735aaa71ae0d9a6b5c4a41972ed1af6fd8eb7b1d3cc2d226",
+      "subnet": "10.234.173.0/24",
+      "core_dump_sha256": "63651c3f5f2b93c393e12c8ddec627338132fc5261d8193083522d6736f3a5da",
+      "globals_sha256": "06c767c194d83e91552c72b9daf5e1637480506f5a432b7d2ff342ec18874fce",
+      "native_archive_sha256": "a51518f5ec922fe2a887a346685192f219650409f76f64518facaaf7b29aa25a",
+      "inventory_sha256": "76172df616268153354c919a89701e42312957b3f9b89b26cdeaa082412c4130",
+      "copies": [
+        {
+          "ID": "a01751a1-9311-4357-8fb2-c833de6b8fc4",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/control-hold.csv",
+          "ProviderVersion": "ca3b808e-734b-4d5e-8f2d-c78a16056ed6",
+          "DatasetVersionID": "e6b6854f-b54a-462f-875d-9f74542b1fc3",
+          "ContentSHA256": "961b213e4d82865370d8da052e57af716297ddff615298ed8c43e938f39b1b7d",
+          "ByteSize": 49
+        },
+        {
+          "ID": "b3c4e113-f5c5-4421-a9d6-08403b1b9d0a",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/h0.csv",
+          "ProviderVersion": "369808db-a39a-4327-b9ed-5eb83aef7477",
+          "DatasetVersionID": "8d59d129-662b-4dae-a389-894943c716df",
+          "ContentSHA256": "e35bd4635f1d7ab38c85a290a86a94275085b49bdae8e1a952712d5304816d8e",
+          "ByteSize": 44
+        },
+        {
+          "ID": "0d8b77a8-195d-4a83-bd52-04f800d7dc68",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/h1-a.csv",
+          "ProviderVersion": "28d9f84a-1889-498d-b033-df26cbf209f2",
+          "DatasetVersionID": "6d7d6978-cbbf-4c78-b9d1-82fad7271f0a",
+          "ContentSHA256": "838fddef805d918cd692a88f720d23705e6763eb0748424274c22d9bcfbc7ba0",
+          "ByteSize": 44
+        },
+        {
+          "ID": "e735d90a-8352-4a01-ad16-8573297bc684",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/h1-b.csv",
+          "ProviderVersion": "bae40a85-7539-4fe1-86b7-2cbb17df7812",
+          "DatasetVersionID": "6d7d6978-cbbf-4c78-b9d1-82fad7271f0a",
+          "ContentSHA256": "838fddef805d918cd692a88f720d23705e6763eb0748424274c22d9bcfbc7ba0",
+          "ByteSize": 44
+        },
+        {
+          "ID": "c05307db-cb81-4220-b42e-be23f85821e3",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/h2-a.csv",
+          "ProviderVersion": "453c6f42-fbb2-4fdf-9f86-00a20a54b7bc",
+          "DatasetVersionID": "18721e15-7b01-47d3-a727-8b836d73dbcb",
+          "ContentSHA256": "b55663df28625841abe3cb9f14cf085c194e00f0a9bcefc53c1b7db83303a838",
+          "ByteSize": 44
+        },
+        {
+          "ID": "a37c347d-dbff-492e-9c7a-317a1f188184",
+          "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+          "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+          "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/h2-b.csv",
+          "ProviderVersion": "448112b2-baf3-4569-b06f-59011492cf80",
+          "DatasetVersionID": "18721e15-7b01-47d3-a727-8b836d73dbcb",
+          "ContentSHA256": "b55663df28625841abe3cb9f14cf085c194e00f0a9bcefc53c1b7db83303a838",
+          "ByteSize": 44
+        }
+      ],
+      "native_delete": 0,
+      "cleanup": 0,
+      "source_execution_started": false
+    },
+    "source_core_sha256": "7aafb25df2004970410fc80ebbe1206c49ebf2d3315d4294a95c7c903b10c01b",
+    "native_readonly_sha256": "8f79f958481f737998c4b2231162986252950b5318311d482887ddc414c49723",
+    "recovery_redis": "39c2d0c92ff5668d0ec3eefcc7d384c7fc50296c6d52631728abb94a781da7e9",
+    "budget_volume": "dpp-lifecycle307-754ea8f0-candidate08-budget",
+    "previous_policy_heads": {},
+    "root_owners": {
+      "check-disabled": {
+        "container": "d497f2d1907805452428a781a36baa2935adf034b0029102c3733ac102b9d165",
+        "root_config_sha256": "97dbb0fc94250e6e6f940aca01a5aaa1dcb9ddae448f6b485f7d93c5976f020c",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "enable-read": {
+        "container": "e1d09c3d6be34b8a13df35f8f4317055038d96ef34a8925d74250cb756711229",
+        "root_config_sha256": "97dbb0fc94250e6e6f940aca01a5aaa1dcb9ddae448f6b485f7d93c5976f020c",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "enable-send": {
+        "container": "083c270366c9f263cea49a83a131896e9ce576b8658b09172c816a31ae48a086",
+        "root_config_sha256": "97dbb0fc94250e6e6f940aca01a5aaa1dcb9ddae448f6b485f7d93c5976f020c",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "disable-send": {
+        "container": "1a00e1faf2a0db52b4877963df9a3cb9aec097ec3b4c170e3b1f38cfe4e93248",
+        "root_config_sha256": "97dbb0fc94250e6e6f940aca01a5aaa1dcb9ddae448f6b485f7d93c5976f020c",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "disable-all": {
+        "container": "7f79c8dbfc0c975374e62aa084fe2287c8e0559972907fa3dcc6100df3651908",
+        "root_config_sha256": "97dbb0fc94250e6e6f940aca01a5aaa1dcb9ddae448f6b485f7d93c5976f020c",
+        "scope": "trusted bootstrap only; never a worker mount"
+      }
+    }
+  },
+  {
+    "group": "mixed",
+    "project": "dpp-lifecycle307-dfda43b4",
+    "workspace": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+    "provider": "01845fb6-7cc2-4010-8f2a-316576391e67",
+    "incarnation": "2b760525-880f-468a-a027-a6851cd06487",
+    "manifest_sha256": "7fd71687b4ed7151a3c37a789c6fd5beebea2bd1d61c452c0051cc7a1a08e972",
+    "plans": [
+      {
+        "case": "M1",
+        "hash_algorithm": "SHA256-LIFECYCLE-PLAN-V1",
+        "id": "c2596491-a620-4cda-83d1-4697c64e27f7",
+        "scope_hash": "8e4380ab68e62e934dae7609b2b4b1711e8c66d0fa2a5a742d0ce6cf059f3a75",
+        "status": "FINALIZED",
+        "targets": 3
+      }
+    ],
+    "copy_protection": [
+      {
+        "Copy": {
+          "ID": "f3167994-3790-4a6c-918e-ea6d95248b79",
+          "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+          "DatasetVersionID": "57e8c123-6c69-44bc-98ba-d5db8c2b7aac",
+          "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+          "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/control-hold.csv",
+          "ProviderVersion": "a59df17d-70d7-40c5-88e8-8cfe77a915dd",
+          "ContentSHA256": "367afd5e5ed47c5f2cadab63af56e0a5e82a1a32afa88f0c3f99448aab883821",
+          "ByteSize": 45
+        },
+        "LegalHold": true,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "5e712426-2109-4f0b-8791-df0a2be3a9f7",
+          "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+          "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+          "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+          "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+          "Namespace": "dpp-lifecycle307-online",
+          "Key": "fixture/m1-a.csv",
+          "ProviderVersion": "e8a8418e-c515-464e-99e5-10bc4c64fa8d",
+          "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+          "ByteSize": 40
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "ad08947a-4c4d-4b0f-8c7e-2d89f287819f",
+          "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+          "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+          "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+          "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/m1-b.csv",
+          "ProviderVersion": "54900849-d59d-459e-90bb-275a5975d0a6",
+          "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+          "ByteSize": 40
+        },
+        "LegalHold": false,
+        "Retention": "NONE",
+        "RetainUntil": null
+      },
+      {
+        "Copy": {
+          "ID": "13fd8ecf-07fd-4981-b553-5ce66b67444f",
+          "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+          "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+          "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+          "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+          "Namespace": "dpp-lifecycle307-quarantine",
+          "Key": "fixture/m1-c.csv",
+          "ProviderVersion": "81a8402e-390f-4247-9d34-552df5eadeb3",
+          "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+          "ByteSize": 40
+        },
+        "LegalHold": false,
+        "Retention": "GOVERNANCE",
+        "RetainUntil": "2026-10-23T06:33:33Z"
+      }
+    ],
+    "checkpoint": {
+      "group": "mixed",
+      "original_checkpoint": "docs\\acceptance\\evidence\\issue307-d1\\remaining-executable03\\mixed",
+      "source_core_sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+      "restored_core_sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+      "core_dump_sha256": "303ef33e8184f09a3de4d91eda8abb3043578c6de30cb0acde57a5922e15e343",
+      "globals_sha256": "cc68a7d8f23cf18c9754719b404a4a86a35d83c91d87b49bb05ff92d28ddd2f4",
+      "native_archive_sha256": "e404b58c3e700716497a8ce2b4b8ab2ce6be180923e814a2e5bfa1ce9b7e4940",
+      "restored_core": "67cbb08fce688d3e3ed446065eceae350568e04a5b59a367a974a4301a77ac8f",
+      "restored_native": "082d4921b7a430f0c7f667b528fd5f8d1b049a51c24f98931315345e6bff0ed3",
+      "restored_gateway": "0d928b5997ee076a24c667fb9c2b3a1796f835688bde3756c908f6bf126c6554",
+      "restore": "PASS_FULL_CORE_AND_NATIVE",
+      "C_protection": "PASS_NATIVE_GOVERNANCE_BLOCK",
+      "mixed_outcomes": "NOT_RUN",
+      "send_claims": 0,
+      "native_delete": 0,
+      "source_mutations": 0
+    },
+    "source_core_sha256": "2c670718760a3a7306a9fdba4946e99d9fb024f7258235f4c7f6d880064afd55",
+    "native_readonly_sha256": "0023d8898887473a2d3697fa14a28529187e0f6591ab6f87b8be60029a0b812b",
+    "recovery_redis": "7cd770a4ee880df691e756fd81217cf54d5992dfa52fd65e292aac5caafa2314",
+    "budget_volume": "dpp-lifecycle307-dfda43b4-candidate08-budget",
+    "previous_policy_heads": {},
+    "root_owners": {
+      "check-disabled": {
+        "container": "088472f89fc29fff82eaaf28a42af24c6450da681553cafbdcd5a05a7a485523",
+        "root_config_sha256": "98950119a9c7e1318fbd23e34d3ea64f35f98038ab70ae5474a3d2083a22dec7",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "enable-read": {
+        "container": "b682c69ea17f1040fc6ec7635c5dc56ef0cb359bb2fcb55c98c4da921f5c4142",
+        "root_config_sha256": "98950119a9c7e1318fbd23e34d3ea64f35f98038ab70ae5474a3d2083a22dec7",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "enable-send": {
+        "container": "bb0db9c4705bc62a9b0e0d49c7ccff61b3eb2da4daaa627139046daeeac82136",
+        "root_config_sha256": "98950119a9c7e1318fbd23e34d3ea64f35f98038ab70ae5474a3d2083a22dec7",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "disable-send": {
+        "container": "8a02550d8a5454c5b7b775f6b3d758fda670ecfd44955d86945bb957634fff6c",
+        "root_config_sha256": "98950119a9c7e1318fbd23e34d3ea64f35f98038ab70ae5474a3d2083a22dec7",
+        "scope": "trusted bootstrap only; never a worker mount"
+      },
+      "disable-all": {
+        "container": "38881cd25e94e0ae5fa5c9e9f08d8280f8c748df0299b522b726f1113e7cb20e",
+        "root_config_sha256": "98950119a9c7e1318fbd23e34d3ea64f35f98038ab70ae5474a3d2083a22dec7",
+        "scope": "trusted bootstrap only; never a worker mount"
+      }
+    }
+  }
+]
