@@ -24,6 +24,7 @@ def module(name, path):
     return value
 
 runner = module('native_readonly_runner', ROOT / 'examples/lifecycle-d1/prepare-remaining-runner.py')
+window = module('native_window_contract', Path(__file__).with_name('remaining_window.py'))
 
 def need(ok, message):
     if not ok:
@@ -254,6 +255,9 @@ def main():
     need(sha(args.packet / 'candidate.json') == args.candidate_sha256, 'frozen candidate differs')
     need(sha(args.packet / 'bindings.json') == args.bindings_sha256, 'frozen bindings differ')
     c = load(args.packet / 'candidate.json')
+    # A freshly recomputed candidate SHA cannot make inconsistent profile
+    # deadlines executable. This runs before any source or owner inspection.
+    windows = window.validate_packet(args.packet, args.reader.parent)
     need(sha(args.reader) == c['ReaderBinarySHA256'] and sha(args.checker) == args.checker_sha256,
          'frozen verification binary differs')
     need(not args.private.exists() and not args.output.exists(), 'preflight run already allocated')
@@ -262,6 +266,7 @@ def main():
     sealed = sealed_gate(args.packet, args.reader.parent)
     args.output.mkdir(parents=True)
     save(args.output/'sealed-preconditions.json', sealed)
+    save(args.output/'cross-field-windows.json', windows)
     results = []
     for group in c['Groups']:
         results.append(collect_group(args.packet, group, args.private / group['Group'],

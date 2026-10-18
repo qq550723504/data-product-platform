@@ -54,6 +54,7 @@ type groupBinding struct {
 	Helpers                                                                                           map[string]string
 }
 type candidate struct {
+	ProfileWindowsSHA256                                                                                            string
 	OwnerBinarySHA256                                                                                               string
 	WirePublicKey                                                                                                   string
 	NotBefore, NotAfter                                                                                             time.Time

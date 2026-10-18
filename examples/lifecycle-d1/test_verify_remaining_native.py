@@ -132,6 +132,7 @@ class CompleteEntryTests(unittest.TestCase):
                 self.assertTrue(all(p.is_absolute() for p in (packet,private,public,reader,checker)))
                 return {'technical_requests':0}
             with patch.object(sys,'argv',argv),patch.object(v,'sealed_gate',return_value={'status':'synthetic-isolated-gate'}), \
+                 patch.object(v.window,'validate_packet',return_value={'status':'synthetic-window-gate'}), \
                  patch.object(v,'collect_group',side_effect=collect) as collector:
                 v.main()
             self.assertEqual(collector.call_count,3)
