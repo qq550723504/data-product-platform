@@ -116,3 +116,5 @@ docs/acceptance/evidence/issue307-d1/remaining-preflight-review*/** -text whites
 # v20 proposed generation retains exact captured receipt bytes.
 docs/acceptance/evidence/issue307-d1/remaining-candidate10/** -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-candidate10/*-modules.txt whitespace=-blank-at-eol
+docs/acceptance/issue307-d1-candidate10-confirmation.md text eol=lf
+docs/acceptance/issue307-d1-v20-window-runbook.md text eol=lf
