@@ -1,0 +1,195 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_REVIEW",
+  "review_kind": "CANDIDATE11_V21_FINAL_PACKET_AND_WINDOW_BINDING_REVIEW",
+  "reviewer": "/root/v20_independent_review",
+  "at": "2026-10-18T10:55:41.461853+00:00",
+  "profile": "candidate11/v21",
+  "execution": "602acafe-065a-4385-b739-5776408f5448",
+  "runtime_source": "3d62dacb36b94096a364f32525853fbe95aaa2ed",
+  "packet_git_anchor": "c00d4a8f85aaaaa71b9c19c76d042dee6aad1802",
+  "proposal_window": {
+    "start_inclusive_utc": "2026-10-18T14:00:00Z",
+    "end_exclusive_utc": "2026-10-18T14:40:00Z",
+    "Singapore": "2026-10-18 22:00-22:40",
+    "readonly_recovery_until_utc": "2026-10-18T16:40:00Z",
+    "readonly_recovery_Singapore": "2026-10-19 00:40"
+  },
+  "remaining_blockers": [],
+  "resolved_findings": [
+    {
+      "id": "RB1_RUNBOOK_ENTRY_SHA_CONFLICT",
+      "status": "CLOSED",
+      "finding": "The new v21 runbook initially retained the pre-R1 complete CLI SHA and generation 10 owner label.",
+      "resolution": "Runbook now binds actual frozen R1 entry SHA 4e2d703c6829e9b5c7188de83de2b103c2d90701dce52779a0f1946ba29781d0 and generation 11. Confirmation document binds the corrected runbook SHA. Original runbook bytes and parent repair receipt remain preserved.",
+      "independent_recheck": "Exact bytes, correction receipt before/after SHA, machine payload invariance and cross-reference checks PASS."
+    }
+  ],
+  "independent_checks": {
+    "runtime_source_files_verified_by_current_offline_checker_against_working_and_source_Git": 829,
+    "raw_evidence_working_and_exact_packet_anchor_blobs_sha_and_bytes": 1122,
+    "complete_CLI_index_exact_members_and_sha": 182,
+    "machine_template_embedded_in_confirmation_document": "EXACT_BYTES",
+    "copy_membership": {
+      "targets": 7,
+      "survivors": 11,
+      "checks": "All 18 exact provider versions, IDs, DVs, bytes, content SHA, hold/retention/retain-until; target case and finalized plan ID/hash; all environment/Core/IAM/gateway/backup/owner/config/expected-head template bindings agree."
+    },
+    "window_semantics": "Compiled Go window, candidate, seven public case projections, seven recovery projections, host support and document UTC/SGT dates agree. Source R1 review remains separately bound; full CLI verifies actual profile semantics and SHA before permission/source I/O.",
+    "complete_CLI_receipts": "Three Core before/after values equal frozen Core fingerprints; native policy official semantic equality, 18 version inventory/content/protection and physical close receipts pass.",
+    "finite_order": "Business owner/handle/pin closure precedes sending; H0/H1 zero sends; H1 revoked-owner/disabled-IAM/sealed-gateway signed close sequence retained; H2 A once then real-204 witness and late hold with B never dispatched; M1 A absence then B UNKNOWN plus C-only blocked mixed checkpoint before B lookup; UNKNOWN never resent.",
+    "failure_containment": "Frozen support differs from review04 only in generation/execution/window/packet/anchor bindings. Mock fault cases cover continuing all containment steps across group/local failures, O_EXCL archives, fresh identity/enabler closure, damaged-current-packet exact Git fallback and H1 closure evidence; no new sending entrypoint.",
+    "authorization": "PREPARED_NOT_AUTHORIZED. New v21 authorization file absent, no new schedule. Actual old v17/v20 automation TOML bytes match retained SHA and status PAUSED. Old v20 failure remains terminal and its authorization is not reused.",
+    "retention": "7 exact targets each max1/global max7 only after fresh human authority/window and all gates; 11 survivors, other environments, backups, failures, original UNKNOWN/attempts/cost/budget/pins retained; cleanup=hold-release=bypass=0."
+  },
+  "parent_actual_receipts_reviewed": {
+    "live_execution_by_reviewer": false,
+    "host_live_inspect_by_reviewer": false,
+    "retained_CIDs_stopped_PID0_noports_norestart": 248,
+    "permission_files_false": 160,
+    "actual_new_case_profile_receipts": 7,
+    "actual_recovery_receipts": 7,
+    "actual_empty_precisely_mounted_budget_volumes": 3,
+    "recovery_receipts_no_send_secret_wire_key_or_send_permission": true,
+    "technical_reads": {
+      "prepare_GET_HEAD": 76,
+      "separate_complete_CLI_GET_HEAD": 76,
+      "bootstrap_admin_GET": 16,
+      "total": 168,
+      "amount": "NOT_ASSESSED",
+      "business_provider_attempts": "NOT_RUN",
+      "PUT": 0,
+      "DELETE": 0
+    },
+    "scope": "The parent performed actual host/private profile/native reads. This independent reviewer checked public receipts and their frozen cross-bindings, not live physical state or private credentials."
+  },
+  "tests_current_slice": [
+    {
+      "name": "support normal",
+      "command": "python docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/test_window_support.py",
+      "test_methods_or_audits": 14,
+      "exit_code": 0,
+      "status": "PASS",
+      "log_file": "candidate11-support-normal-final.txt",
+      "log_sha256": "4cb5009bf5015c50973aea2c767c3bfdb884697eaef44bbd20b4a70fbcd5af5d"
+    },
+    {
+      "name": "support optimized",
+      "command": "python -O docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/test_window_support.py",
+      "test_methods_or_audits": 14,
+      "exit_code": 0,
+      "status": "PASS",
+      "log_file": "candidate11-support-optimized-final.txt",
+      "log_sha256": "4cb5009bf5015c50973aea2c767c3bfdb884697eaef44bbd20b4a70fbcd5af5d"
+    },
+    {
+      "name": "offline candidate normal",
+      "command": "python examples/lifecycle-d1/check-remaining-candidate11.py",
+      "test_methods_or_audits": 1,
+      "exit_code": 0,
+      "status": "PASS",
+      "log_file": "candidate11-correct-checker-final.txt",
+      "log_sha256": "95c0cb4e103854c486c345c6a54363b6e9e4cda1525c9bc7a9ffd4d5083e528e"
+    },
+    {
+      "name": "offline candidate optimized",
+      "command": "python -O examples/lifecycle-d1/check-remaining-candidate11.py",
+      "test_methods_or_audits": 1,
+      "exit_code": 0,
+      "status": "PASS",
+      "log_file": "candidate11-checker-optimized-final.txt",
+      "log_sha256": "95c0cb4e103854c486c345c6a54363b6e9e4cda1525c9bc7a9ffd4d5083e528e"
+    },
+    {
+      "name": "independent exact binding audit normal",
+      "command": "python audit_candidate11_bindings.py",
+      "test_methods_or_audits": 1,
+      "exit_code": 0,
+      "status": "PASS",
+      "log_file": "candidate11-exact-binding-audit-normal.txt",
+      "log_sha256": "0e46a068f2537f43f0a40842f0a2b1215d7368eef93e69563338b28510c6b670"
+    },
+    {
+      "name": "independent exact binding audit optimized",
+      "command": "python -O audit_candidate11_bindings.py",
+      "test_methods_or_audits": 1,
+      "exit_code": 0,
+      "status": "PASS",
+      "log_file": "candidate11-exact-binding-audit-optimized.txt",
+      "log_sha256": "785c1a828b0d91397d46cb83637b7a8125ce144ad99e652bf4a306f854985476"
+    }
+  ],
+  "prior_source_review": {
+    "file": "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/source-independent-review.json",
+    "sha256": "ace683a1d9839c3975d877157bd46b7e8c02b28a5f40e112d743a832150ecc25",
+    "status": "PASS_BOUNDED_INDEPENDENT_R1_SOURCE_REVIEW",
+    "scope": "Independently ran normal/-O R1 4 methods, full entry 5, shutdown 1, five Go packages and uncached nil-pool deadline guard, history driver at v17/v19/v20, plus six extra rehashed actual-profile false-projection CLI counterexamples. These were not rerun without source changes."
+  },
+  "test_invocation_note": "An initial offline-checker command used a nonexistent .github/scripts/check-remaining-candidate11.py path and exited before loading code or any I/O. Its error log is retained; corrected examples/lifecycle-d1 commands passed in normal and -O modes.",
+  "file_sha256": {
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/candidate.json": "0e55e28ea69b3894cfd8a032edbc6e4dcf811917c7cbc54d50e41aa79ba49e01",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/bindings.json": "28fc59c26c3adb3d7afffa3ec0b730d8de485172c7de016f5de15bc48ce139c8",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/confirmation-template.txt": "0967a70197972c23020a55a13d721f8de25097b78779ee8d0137b1ab5d68b5ea",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/source-freeze.json": "f658e65bb5ec705f06bfe0af89b8a8b37178a237aca53ee78dd5d118ff479863",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/profile-windows.json": "2df4bdea674e150938a2756bbfd7734cafae8ee60358857c2fd4dbe8884ce170",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/cross-field-windows.json": "47196f002578654c3b6468c0ea916d75b0c6d66361fc6a3198d70247e2af59fc",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/verification-build.json": "8afa8e21a9e316d90a6b929270d35fd601450f8278a294a51f7ea7b4695c3c50",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/evidence-index.json": "b7a7ebf6a8d413f4b6b7715bb87c6b07cd056e545bed0cc5b2edfa5ad09196b8",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/status.json": "9acbaa953bba0cb87f684750a205ce8ab9a617e58e128908c415c04a06f91c2e",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/failed-v20-closed.json": "381f9748fb3bae6810ea986658390a592bb65fd1808825fc461133fb365ab75c",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/sealed-owner-regression.json": "1683cf4a87d9ad0c3cd6041caaf80883e90b40d14b25c57092d7601d8865a16f",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/sealed-case-regression.json": "dd452995b272c96ab07e8651e83f312cd7a75e1170e065f1288b2fa7c3d70302",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-native04/complete.json": "df01742edfa7e7e9ece45fbfde91455480463a3f7c51ab9d643fc9c453a68281",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-native04/evidence-index.json": "9bb919059db5bc3e3c93ce0f84e2d42ccf3cfd9fb4cb3363690b5893f3f5c73f",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-native04/technical-read-ledger.json": "10fcddd6c007af37e6d9e74abeebb56618eab3aa9500374000143baa994f03e4",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-native04/cross-field-windows.json": "47196f002578654c3b6468c0ea916d75b0c6d66361fc6a3198d70247e2af59fc",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/window_support.py": "c3e765364aafd1ec311aec736cb951d7df2704b168cea0d566a0ee3a97aaf5f3",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/test_window_support.py": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/physical-close-recheck.json": "35107e766401c5b1fd7193808227c329f573954f90897de015469495c0ee3706",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/case-recovery-budget-recheck.json": "a1ce7381a7bd43557bf55c2633e48e27c93629f8dd6be8c4adb87d96f3a41523",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/authorization-and-schedule.json": "6373721c3bd24059c3e3b2158953738c789d349d5a09b04125d548bb5f38ad0b",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/actual-cross-field-windows.json": "47196f002578654c3b6468c0ea916d75b0c6d66361fc6a3198d70247e2af59fc",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/sealed-preconditions.json": "4156779d70778893a0efd47982a00519947486160a6c6161eb7478981f665060",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/review-fix-RB1.json": "a731eb7dbc399ce59544cb263ef263736fd5fc4a0ae956f5e4547d3a13c39fa4",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/history/runbook-before-RB1.md": "c2e1311da987924eebe1b36c136620edcec7993ff649dfd0208da9ca9b0f1d29",
+    "docs/acceptance/issue307-d1-candidate11-confirmation.md": "841cb0f424de3095fedef1e82f4d749a82f3424d711a1553a4c321c096cdc1f7",
+    "docs/acceptance/issue307-d1-v21-window-runbook.md": "dce7d5fc85eb05d1f41920bf13c85cc110d12c209b0c6edef382334d15b5b619",
+    "docs/acceptance/issue307-d1-r1-window-contract.md": "3d8a585124709725227e2aa4c27d088b8b7681aeda188459f5e4ed49784728f4",
+    "docs/acceptance/evidence/issue307-d1/remaining-r1-review01/source-independent-review.json": "ace683a1d9839c3975d877157bd46b7e8c02b28a5f40e112d743a832150ecc25",
+    "docs/acceptance/evidence/issue307-d1/remaining-renew-r1-02/acceptance.json": "1e5c46797533324775626f28c40e8f4caca4dfa68bd2e3bc72de50b53e8dc294",
+    "examples/lifecycle-d1/remaining_window.py": "a8c6152372b3266fd4fa0bff1f78a03e1240ee1743fd9d154307b483f089987f",
+    "examples/lifecycle-d1/freeze-remaining-executable.py": "b306c89ae9a8459f6e615d0992b74e297035516f5dc9a436366d5721e57da9fc",
+    "examples/lifecycle-d1/verify-remaining-native.py": "4e2d703c6829e9b5c7188de83de2b103c2d90701dce52779a0f1946ba29781d0",
+    "examples/lifecycle-d1/check-remaining-candidate11.py": "5346cb1a30879d6cb5fdb5eb11889126457a41fd4f7152c3a2901cc74ca6b90e",
+    "examples/lifecycle-d1/attest-remaining-executable.py": "65f9eb27d149b7c70374c70b7490097b9d26be463873461ff47c2094a68ccf6e",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": "eed47331abc741283eb3e4f5870d78ebd050637ff9ed9d149b771aaa83ca5736"
+  },
+  "independent_artifact_sha256": {
+    "audit_candidate11_bindings.py": "40f81767f1539e100c023ac8e89731bde92ed9a3e5703a43dffe787dd0474f82",
+    "candidate11-exact-binding-audit.json": "81675f349e9a7d9ce937c56f1dbdd49f77f38a0ff98db98c0f29520ff48f748b"
+  },
+  "matrix_reviewed_snapshot": {
+    "path": "docs/acceptance/issue307-d1-v21-preparation.md",
+    "sha256": "a004c50773a0e2987ec9f4c9b866cd60cf543bf90c2508ebde7206142b98d71a",
+    "conclusion": "Correctly separates isolated PG six-Renew acceptance, native technical reads and mock denial from still-NOT_RUN source Core Renew/business/send/recovery. Final report reference can be published after this review without changing runtime source or packet."
+  },
+  "limitations_and_required_next_gates": [
+    "This report is bounded non-deletion preparation review, not deletion authorization, full D1 acceptance, platform proof, merge approval or main CI.",
+    "Source Core six Renew, real P/H/M business, wire/sender DELETE and readonly business recovery remain NOT_RUN for this execution.",
+    "Fresh human authorization must bind the complete new proposal and additional host/report bindings; no old authorization may be reused.",
+    "Future authorized execution still requires exact current HEAD PR CI, Draft/Open state, full fresh preflight and physical topology/permissions/budget checks in the fixed window; preparation receipts do not substitute.",
+    "Reviewer performed zero Docker, provider, permission mutation, source start, signature, credential read, cleanup, enable, DELETE, Git write or GitHub write."
+  ],
+  "nonblocking_followup": "For future Windows checkout byte stability, add candidate11 -text and v21 document eol=lf attributes following prior generations; current working/Git raw equality already passes and strict drift gates remain in force.",
+  "PR323": "DRAFT",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED",
+  "new_human_authorization": "NOT_RECEIVED",
+  "new_schedule": "NOT_CREATED",
+  "reviewer_side_effects": {
+    "repo_writes": 0,
+    "Docker_io": 0,
+    "provider_io": 0,
+    "private_credential_reads": 0,
+    "native_delete": 0
+  }
+}

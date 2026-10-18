@@ -1,0 +1,33 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_ATTRIBUTES_ADDENDUM",
+  "classification": "INVALID_ALREADY_ENFORCED",
+  "remaining_blockers": [],
+  "at": "2026-10-18T10:58:42.691631+00:00",
+  "reviewer": "/root/v20_independent_review",
+  "original_report_sha256": "efbf2ab25a3f15bf09d9506ae990744deafd78465eb95e94cf69bc4e96db9d1d",
+  "original_report_unchanged": true,
+  "correction": "The original nonblocking_followup suggestion is withdrawn. I read only the root .gitattributes and overlooked the existing docs/acceptance/.gitattributes. Effective child attributes already preserve candidate11 raw bytes and both v21 document LF bytes; no attribute change is needed.",
+  "child_attributes": {
+    "path": "docs/acceptance/.gitattributes",
+    "sha256": "77b102c837c25bb40078d776c108340f2a2b2010bf26fcc0bb90d36f3628f66a"
+  },
+  "frozen_source_and_packet_attribute_rules_verified": [
+    "3d62dacb36b94096a364f32525853fbe95aaa2ed",
+    "c00d4a8f85aaaaa71b9c19c76d042dee6aad1802"
+  ],
+  "effective_check_attr": [
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/candidate.json: text: unset",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate11/candidate.json: eol: unspecified",
+    "docs/acceptance/issue307-d1-candidate11-confirmation.md: text: set",
+    "docs/acceptance/issue307-d1-candidate11-confirmation.md: eol: lf",
+    "docs/acceptance/issue307-d1-v21-window-runbook.md: text: set",
+    "docs/acceptance/issue307-d1-v21-window-runbook.md: eol: lf"
+  ],
+  "readback_log": {
+    "file": "candidate11-effective-attributes.txt",
+    "sha256": "2ca26b1debd7d6926f4027a3a723f8a2900f9c0fd61ec5a145db4da6127ba6db"
+  },
+  "main_review_conclusion_unchanged": "PASS_BOUNDED_INDEPENDENT_REVIEW; remaining_blockers=[]; RB1 closed; proposal remains unapproved and actual source Renew/business/send/recovery NOT_RUN.",
+  "additional_native_or_Go_tests": false,
+  "reviewer_Docker_provider_permission_io": 0
+}

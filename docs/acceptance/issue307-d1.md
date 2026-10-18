@@ -1,3 +1,5 @@
+> 当前（2026-10-18，R1非删除准备）：candidate11/v21已从统一END生成并核验期限；独立PG副本六Renew通过，旧v20失败保留。新execution `602acafe-065a-4385-b739-5776408f5448`，提议SGT22:00–22:40，尚未授权/未调度/DELETE=0。见[本轮矩阵](issue307-d1-v21-preparation.md)及[完整精确方案](issue307-d1-candidate11-confirmation.md)。#323 Draft，#307 OPEN。
+
 # #307/D1：schema66 历史非删除验收与下一步清单
 
 2026-10-18 当前窗口结果：[candidate10/v20 已授权固定窗口实跑矩阵](issue307-d1-v20-window01-result.md)。窗口内18版本/76次GET/HEAD及完整前置通过，但冻结Renew profile残留旧CandidateUseUntil，首个Renew owner拒绝，六Renew/业务/发送/恢复均NOT_RUN、真实DELETE=0。已失败封存并暂停同一调度：208绑定/技术容器停止、128权限false；business fresh身份关闭确认，另两组封存后的fresh IAM读回UNCONFIRMED，不报整轮PASS。R1生成器跨代时间字段阻断仍OPEN；#323保持Draft、不合并，#307保持OPEN，完整D1仍NOT_ACCEPTED。以下准备PASS和历史矩阵保留各自时点，不代替本次失败结果。
