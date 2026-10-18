@@ -9,6 +9,7 @@ evidence/issue307-d1/remaining-renew-r1-01/** -text whitespace=cr-at-eol
 evidence/issue307-d1/remaining-renew-r1-02/** -text whitespace=cr-at-eol
 evidence/issue307-d1/remaining-r1-review01/** -text whitespace=cr-at-eol
 evidence/issue307-d1/remaining-candidate11/** -text whitespace=cr-at-eol
+evidence/issue307-d1/remaining-candidate11/*-modules.txt -text whitespace=-blank-at-eol
 evidence/issue307-d1/remaining-preflight-native04/** -text whitespace=cr-at-eol
 evidence/issue307-d1/remaining-window-review05/** -text whitespace=cr-at-eol
 issue307-d1-r1-window-contract.md text eol=lf
