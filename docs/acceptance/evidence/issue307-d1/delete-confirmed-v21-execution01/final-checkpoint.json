@@ -1,0 +1,21 @@
+{
+  "status": "PASS_AUTHORIZATION_PREPARATION_CLOSED_WAITING_FIXED_WINDOW",
+  "at": "2026-10-18T11:46:16.033759+00:00",
+  "execution": "602acafe-065a-4385-b739-5776408f5448",
+  "authorization_sha256": "1bef2f6e7bb5739a6d85349cab3bdd87f0f2f5fcca8a5faf4c08fb0d4c2999f7",
+  "execution_preparation_sha256": "17e28423ae7fd9f3a49b72942da29f1bdf4ac64c265ddb3580d1148067a23218",
+  "matrix_sha256": "88f3b8d1cf33dc3852967cc0cc1a3b30b57a56a5de938d2c1965c06c3aa8992c",
+  "all_26_frozen_references_current": true,
+  "expected_head": "8eef47a2edfbd9df2dc2a83467d9361a3fa4ec96",
+  "pr_ci": 39121716342,
+  "PR323": "DRAFT_OPEN_NOT_MERGED",
+  "Issue307": "OPEN",
+  "new_schedule": "307-d1-candidate11-v21 ACTIVE single 2026-10-18 22:00 SGT",
+  "worker_authority_materialized": false,
+  "permissions_false": 32,
+  "source_starts": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "window_fresh_gate": "NOT_RUN_REQUIRED",
+  "full_D1": "NOT_ACCEPTED"
+}

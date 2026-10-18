@@ -1,0 +1,15 @@
+{
+  "head": "8eef47a2edfbd9df2dc2a83467d9361a3fa4ec96",
+  "draft": true,
+  "merged": false,
+  "PR_state": "open",
+  "Issue307": "open",
+  "review_threads": [],
+  "ci_run": 39121716342,
+  "ci_event": "pull_request",
+  "ci_exact_head": true,
+  "jobs": 13,
+  "all_jobs_success": true,
+  "main_ci": "NOT_RUN",
+  "source": "Fresh GitHub connector metadata plus actual gh run/jobs output at fixed-window start"
+}

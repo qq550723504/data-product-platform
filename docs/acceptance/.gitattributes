@@ -16,3 +16,8 @@ issue307-d1-r1-window-contract.md text eol=lf
 issue307-d1-candidate11-confirmation.md text eol=lf
 issue307-d1-v21-window-runbook.md text eol=lf
 issue307-d1-v21-preparation.md text eol=lf
+
+evidence/issue307-d1/delete-confirmed-v21-execution01/** -text whitespace=cr-at-eol
+evidence/issue307-d1/delete-confirmed-v21-window01/** -text whitespace=cr-at-eol
+issue307-d1-v21-execution01.md text eol=lf
+issue307-d1-v21-window01-result.md text eol=lf

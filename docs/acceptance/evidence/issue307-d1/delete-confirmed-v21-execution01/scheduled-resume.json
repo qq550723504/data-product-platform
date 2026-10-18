@@ -1,0 +1,34 @@
+{
+  "status": "PASS_EXACT_SAME_THREAD_SINGLE_FIXED_WINDOW_SCHEDULE",
+  "at": "2026-10-18T11:44:20.635304+00:00",
+  "automation_id": "307-d1-candidate11-v21",
+  "kind": "heartbeat",
+  "status_readback": "ACTIVE",
+  "target_thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+  "scheduled_for_local": "2026-10-18T22:00:00+08:00",
+  "scheduled_for_utc": "2026-10-18T14:00:00Z",
+  "date_guard": "2026-10-18 only; expire/seal if outside fixed window",
+  "count": 1,
+  "time_zone": "Singapore Standard Time",
+  "created_at_utc": "2026-10-18T11:43:28.283000+00:00",
+  "prompt_sha256": "80f25c61865e7dd27d6276397436d956c102f94247f071f1da6d7cf254801748",
+  "automation_toml_snapshot_sha256": "eead946fe37e7eabc72bab9efa764a3d1a28e70486c7bda576285d80a0f52563",
+  "prompt_tool_argument_saved_readback_exact": true,
+  "draft_file_has_one_extra_patch_LF_preserved": true,
+  "old_schedules": [
+    {
+      "id": "307-d1-candidate07-v17",
+      "status": "PAUSED",
+      "toml_sha256": "1a81f008d4018eba425eea649b1e68f8762ae3d9e3192db59f7c2dfa166b1650"
+    },
+    {
+      "id": "307-d1-candidate10-v20",
+      "status": "PAUSED",
+      "toml_sha256": "1999c6b0be6b04ebd55369ab1688867702791541636f0bf54ef9573308dbb297"
+    }
+  ],
+  "terminal_action": "pause this same heartbeat after completion/failure/expiry; no repeated execution or new window",
+  "computer_and_app_must_remain_running": true,
+  "native_delete": 0,
+  "permissions_enabled": false
+}
