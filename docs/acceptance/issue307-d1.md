@@ -1,3 +1,5 @@
+> 当前（2026-10-18，完整入口修复与原生非删除准备）：candidate12/v22已冻结，同一完整CLI真实PASS18版本/39owner/3空预算；831源码与1305 raw离线通过。新execution `8e41cfba-a41e-44dd-9ce8-d6365b3bb90e`，代理提议SGT10月19日14:00–14:40，尚未授权/未调度/DELETE=0。见[本轮矩阵](issue307-d1-v22-preparation.md)与[精确方案](issue307-d1-candidate12-confirmation.md)。旧v21窗口失败封存、post-seal IAM未确认等原事实见[原结果](issue307-d1-v21-window01-result.md)，不被本次新核验覆盖。#323 Draft，#307 OPEN。
+
 > 当前（2026-10-18，R1非删除准备）：candidate11/v21已从统一END生成并核验期限；独立PG副本六Renew通过，旧v20失败保留。新execution `602acafe-065a-4385-b739-5776408f5448`，提议SGT22:00–22:40，尚未授权/未调度/DELETE=0。见[本轮矩阵](issue307-d1-v21-preparation.md)及[完整精确方案](issue307-d1-candidate11-confirmation.md)。#323 Draft，#307 OPEN。
 
 # #307/D1：schema66 历史非删除验收与下一步清单
