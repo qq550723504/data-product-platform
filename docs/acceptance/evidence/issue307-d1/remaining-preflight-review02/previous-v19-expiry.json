@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-18T06:22:02.161909+00:00",
+  "status": "V19_EXPIRED_WITHOUT_NEW_AUTHORITY",
+  "previous_execution": "9780707d-55eb-4da8-873f-3a901d7aac3f",
+  "previous_candidate_sha256": "3a4a93c449a99f54925fa2924857b88e34929a4731b8e7bfdc3933d2eb29ef76",
+  "previous_window_end": "2026-10-18T02:40:00Z",
+  "old_snapshot_modified": false,
+  "previous_authorization_exists": false,
+  "new_proposal": "candidate10/v20",
+  "new_execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "new_start": "2026-10-18T10:00:00Z",
+  "new_end": "2026-10-18T10:40:00Z",
+  "user_approval_scope": "non-delete preparation and preference for today; not exact DELETE authorization",
+  "new_authorization": "NOT_RECEIVED",
+  "new_schedule_created": false,
+  "delete": 0,
+  "PR323": "DRAFT",
+  "Issue307": "OPEN"
+}

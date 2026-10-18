@@ -14,19 +14,23 @@ import (
 
 func TestPreviousExecutionCannotBeReauthorizedByNewBinary(t *testing.T) {
 	_, file, _, _ := runtime.Caller(0)
-	raw, err := os.ReadFile(filepath.Join(filepath.Dir(file), "../../../../docs/acceptance/evidence/issue307-d1/remaining-candidate07/candidate.json"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	var previous candidate
-	if json.Unmarshal(raw, &previous) != nil {
-		t.Fatal("previous candidate invalid")
-	}
-	if validateCandidate(previous) == nil {
-		t.Fatal("previous execution/window accepted by current binary")
-	}
-	if previous.Execution == execution || previous.Profile == profile {
-		t.Fatal("new generation reused previous authority identity")
+	for _, generation := range []string{"remaining-candidate07", "remaining-candidate09"} {
+		t.Run(generation, func(t *testing.T) {
+			raw, err := os.ReadFile(filepath.Join(filepath.Dir(file), "../../../../docs/acceptance/evidence/issue307-d1", generation, "candidate.json"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			var previous candidate
+			if json.Unmarshal(raw, &previous) != nil {
+				t.Fatal("previous candidate invalid")
+			}
+			if validateCandidate(previous) == nil {
+				t.Fatal("previous execution/window accepted by current binary")
+			}
+			if previous.Execution == execution || previous.Profile == profile {
+				t.Fatal("new generation reused previous authority identity")
+			}
+		})
 	}
 }
 

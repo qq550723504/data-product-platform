@@ -1,0 +1,51 @@
+test_exact_model_and_tamper_rejection (__main__.Candidate07Guards.test_exact_model_and_tamper_rejection) ... ok
+test_host_attester_rejects_unconfirmed_shifted_and_expired_authority (__main__.Candidate07Guards.test_host_attester_rejects_unconfirmed_shifted_and_expired_authority) ... ok
+test_raw_evidence_path_and_bytes (__main__.Candidate07Guards.test_raw_evidence_path_and_bytes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.016s
+
+OK
+test_exact_model_and_tamper_rejection (__main__.Candidate07Guards.test_exact_model_and_tamper_rejection) ... ok
+test_host_attester_rejects_unconfirmed_shifted_and_expired_authority (__main__.Candidate07Guards.test_host_attester_rejects_unconfirmed_shifted_and_expired_authority) ... ok
+test_raw_evidence_path_and_bytes (__main__.Candidate07Guards.test_raw_evidence_path_and_bytes) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.008s
+
+OK
+test_only_exact_reviewed_gofmt_test_may_differ (__main__.FrozenCandidate07Guards.test_only_exact_reviewed_gofmt_test_may_differ) ... ok
+test_raw_working_bytes_and_git_bytes_both_required (__main__.FrozenCandidate07Guards.test_raw_working_bytes_and_git_bytes_both_required) ... ok
+test_rewritten_index_or_candidate_anchor_rejected (__main__.FrozenCandidate07Guards.test_rewritten_index_or_candidate_anchor_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.093s
+
+OK
+test_only_exact_reviewed_gofmt_test_may_differ (__main__.FrozenCandidate07Guards.test_only_exact_reviewed_gofmt_test_may_differ) ... ok
+test_raw_working_bytes_and_git_bytes_both_required (__main__.FrozenCandidate07Guards.test_raw_working_bytes_and_git_bytes_both_required) ... ok
+test_rewritten_index_or_candidate_anchor_rejected (__main__.FrozenCandidate07Guards.test_rewritten_index_or_candidate_anchor_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.051s
+
+OK
+Traceback (most recent call last):
+  File "C:\Users\Henry\AppData\Local\Temp\dpp-v19-frozen-history-s78dt02g\examples\lifecycle-d1\check-remaining-candidate09.py", line 75, in <module>
+    if __name__ == '__main__': print(json.dumps(check()))
+                                                ~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Temp\dpp-v19-frozen-history-s78dt02g\examples\lifecycle-d1\check-remaining-candidate09.py", line 61, in check
+    need(build['entry_sha256'] == sha(ROOT/'examples/lifecycle-d1/verify-remaining-native.py'), 'complete entry changed')
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Temp\dpp-v19-frozen-history-s78dt02g\examples\lifecycle-d1\check-remaining-candidate09.py", line 18, in need
+    if not ok: raise ValueError(text)
+               ^^^^^^^^^^^^^^^^^^^^^^
+ValueError: complete entry changed
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\.github\scripts\check-lifecycle307-history.py", line 139, in <module>
+    print(json.dumps({'v17':check(),'v19':check_v19(),'current_runtime_check':'check-remaining-candidate10.py'}))
+                                          ~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\.github\scripts\check-lifecycle307-history.py", line 129, in check_v19
+    sys.stderr.buffer.write(result.stderr); raise ValueError('unchanged v19 historical audit failed')
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: unchanged v19 historical audit failed

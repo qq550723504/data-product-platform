@@ -45,7 +45,7 @@ jobs:
           python3 examples/lifecycle-d1/check-reference-candidate05-history.py
           python3 examples/lifecycle-d1/check-remaining-v16-history.py
           python3 .github/scripts/check-lifecycle307-history.py
-          python3 examples/lifecycle-d1/check-remaining-candidate09.py
+          python3 examples/lifecycle-d1/check-remaining-candidate10.py
       - name: Check archived candidate04 with its frozen runtime (no provider I/O)
         run: python3 examples/lifecycle-d1/check-reference-history.py
       - name: Install isolated browser runner

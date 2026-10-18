@@ -112,3 +112,7 @@ docs/acceptance/evidence/issue307-d1/remaining-candidate09/** -text whitespace=c
 docs/acceptance/evidence/issue307-d1/remaining-candidate09/*-modules.txt whitespace=-blank-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-preflight-native*/** -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-preflight-review*/** -text whitespace=cr-at-eol
+
+# v20 proposed generation retains exact captured receipt bytes.
+docs/acceptance/evidence/issue307-d1/remaining-candidate10/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate10/*-modules.txt whitespace=-blank-at-eol

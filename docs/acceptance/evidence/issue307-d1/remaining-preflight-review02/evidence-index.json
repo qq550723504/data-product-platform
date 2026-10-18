@@ -1,0 +1,19 @@
+{
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/close-normal-stderr.txt": "7ff486a06e202093d4cd09ac17ff9d2dbc7f1af9df7bd32994f6053476a97fa4",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/close-normal-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/close-optimized-stderr.txt": "7ff486a06e202093d4cd09ac17ff9d2dbc7f1af9df7bd32994f6053476a97fa4",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/close-optimized-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/complete-normal-stderr.txt": "b7c64d64f383f0ca7a7f6918b3a718f813b0f51fbe093cce46622baf9988cce0",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/complete-normal-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/complete-optimized-stderr.txt": "e3259b4075623f887e8614f20c0412480ff921f07b83656075a9ce12789545c6",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/complete-optimized-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/independent-go-packages.txt": "bb16a740a5b6ed9cc87df25b707b13f5c34c94b2f7e2e3917db4e0fc7f8d0eda",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/independent-history-after-fix.txt": "aad198cd82ee783e1b45a0b178dd021ed04f986085324efda0d37abc3a73760a",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/independent-history-first-failure.txt": "cca4af43fa60364d949559e621ec66cc800ad5ba1d734be87a3d35c228df8062",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/old-owners-readonly.json": "7256a351caac5e4c89464c69d32ff4c2b0e8da4d57efe2f604c9e07387ec3db7",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/previous-v19-expiry.json": "0a05effa73aa6cdef558a2a3b9df8464756db22d9d02580c189e1c716732f962",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/source-independent-review.json": "f2825fb9827355b21c215e29877b101614236d04fbb79a6b4f16e9d10b44ada2",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-review02/status.json": "2c55f8bad7cb71ecca44cd18bc2599ab571505422a2ffc2c3127d6f4f00648f7"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "status": "PASS_BOUNDED_SOURCE_REVIEW",
+  "candidate": "candidate10/v20",
+  "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "closed_blockers": [
+    "B1 recovery deadline derived from END+2h",
+    "B2 historical archive restores only exact frozen raw SHA bytes"
+  ],
+  "parent_complete_tests_normal": 5,
+  "parent_complete_tests_optimized": 5,
+  "parent_close_tests_normal": 1,
+  "parent_close_tests_optimized": 1,
+  "independent_Go_packages": 5,
+  "independent_historical_v17": {
+    "source": 812,
+    "raw": 940,
+    "tests": 12
+  },
+  "independent_historical_v19": {
+    "source": 823,
+    "raw": 1118
+  },
+  "candidate_native_final_bindings": "PENDING",
+  "new_authorization": "NOT_RECEIVED",
+  "new_schedule_created": false,
+  "native_delete": 0,
+  "PR323": "DRAFT",
+  "Issue307": "OPEN"
+}
