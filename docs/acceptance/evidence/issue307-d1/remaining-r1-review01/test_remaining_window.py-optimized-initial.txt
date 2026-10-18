@@ -1,0 +1,9 @@
+test_complete_cli_rejects_cross_fields_before_permission_or_source_io (__main__.WindowContractTests.test_complete_cli_rejects_cross_fields_before_permission_or_source_io) ... ok
+test_generated_profiles_pass_public_and_actual_file_checks (__main__.WindowContractTests.test_generated_profiles_pass_public_and_actual_file_checks) ... ok
+test_generator_overwrites_old_deadline_and_does_not_mutate_template (__main__.WindowContractTests.test_generator_overwrites_old_deadline_and_does_not_mutate_template) ... ok
+test_semantic_mutations_fail_even_after_rehash_offline (__main__.WindowContractTests.test_semantic_mutations_fail_even_after_rehash_offline) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.161s
+
+OK

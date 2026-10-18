@@ -25,6 +25,8 @@ WINDOW=window.compiled()
 EXECUTION=WINDOW['Execution'];PROFILE=WINDOW['Profile']
 START=WINDOW['NotBefore'];END=WINDOW['NotAfter'];RECOVERY_END=WINDOW['RecoveryEnd']
 GENERATION=PROFILE.split('/')[0]
+SGT=dt.timezone(dt.timedelta(hours=8))
+WINDOW_LABEL=window.instant(START).astimezone(SGT).strftime('%Y-%m-%d %H:%M')+'–'+window.instant(END).astimezone(SGT).strftime('%H:%M')
 PRIVATE=r.PRIVATE/('remaining-'+GENERATION)
 PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1'/('remaining-'+GENERATION)
 PREP=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-executable03'
@@ -204,7 +206,7 @@ def main():
             native=next(g['Native'] for g in candidate['Groups'] if g['Group']==group);r.docker('start',native);time.sleep(3)
             ident=b['root_owners']['check-disabled']['container'];r.docker('start',ident);r.require(r.docker('wait',ident).strip()==b'0','Frozen bootstrap IAM check failed');r.docker('stop','--time','20',native)
             result=private/'outputs/root-check-disabled/result.json';(PUBLIC/group/'bootstrap-iam-check.json').write_bytes(result.read_bytes())
-        lines=[f'CONFIRM_DELETE_EXACT_SEVEN；execution {EXECUTION}；{PROFILE}。',f'确认 candidate SHA256 {candidate_hash}；source {source}；source-freeze {candidate["SourceFreezeSHA256"]}；',f'Linux reader {candidate["ReaderBinarySHA256"]}；Linux sender/wire/recovery {candidate["SenderBinarySHA256"]}；target digest {target_digest}；',f'完整环境/原生保护/Core 绑定 bindings SHA256 {r.sha(PUBLIC/"bindings.json")}。',f'固定窗口 {START} 至 {END}（新加坡 2026-10-18 22:00–22:40），过期不能平移、延长、重开或重试。']
+        lines=[f'CONFIRM_DELETE_EXACT_SEVEN；execution {EXECUTION}；{PROFILE}。',f'确认 candidate SHA256 {candidate_hash}；source {source}；source-freeze {candidate["SourceFreezeSHA256"]}；',f'Linux reader {candidate["ReaderBinarySHA256"]}；Linux sender/wire/recovery {candidate["SenderBinarySHA256"]}；target digest {target_digest}；',f'完整环境/原生保护/Core 绑定 bindings SHA256 {r.sha(PUBLIC/"bindings.json")}。',f'固定窗口 {START} 至 {END}（新加坡 {WINDOW_LABEL}），过期不能平移、延长、重开或重试。']
         lines.append(f'窗口语义投影 SHA256 {candidate["ProfileWindowsSHA256"]}；CandidateUseUntil {END}；恢复截止 {RECOVERY_END}。')
         lines.append(f'完整核验入口 SHA256 {r.sha(ROOT/"examples/lifecycle-d1/verify-remaining-native.py")}；宿主离线语义 binary {r.sha(PRIVATE/"readonly-check.exe")}；verification-build SHA256 {r.sha(PUBLIC/"verification-build.json")}。')
         for g,b in zip(candidate['Groups'],bindings):
@@ -218,6 +220,8 @@ def main():
             for dv,head in g['PolicyHeads'].items():lines.append(f'未来续期 expected previous policy：DV {dv} -> {head}；漂移即拒绝。')
         for b in bindings:
             for action,owner in b['root_owners'].items():lines.append(f'bootstrap {b["group"]}/{action} owner {owner["container"]}；root-only profile SHA256 {owner["root_config_sha256"]}。')
+        for row in profile_windows['recoveries']:
+            lines.append(f'只读恢复 profile {row["group"]}/{row["stage"]} SHA256 {row["config_sha256"]}；独立截止 {row["ValidUntil"]}。')
         lines.append(f'受限 bootstrap Linux binary {candidate["OwnerBinarySHA256"]}；仅 MinIO admin 精确用户状态/策略读取，禁止S3 DELETE/COPY/hold API，root不挂worker。')
         lines += ['同意仅在全部执行前条件通过后，七项各最多一次 exact DELETE、全局最多七次；UNKNOWN 不重发。', '窗口开始后、任何业务 I/O 前，以新 execution 和冻结 expected heads 执行显式 Renew，UseUntil/RestoreUntil≤min(当前时刻+1小时,固定窗口结束)；保留旧policy及所有历史期限。', 'P1/P2/T1/T2 先走真实业务与owner闭合；H0/H1均0发送且H1只在可信owner终止、identity关闭及gateway封存的签名证明后记NOT_SENT；H2只允许A一次并制造真实204后的响应丢失，late hold不能撤销在途删除，B不得dispatch；M1先A exact absence，再B CONFIRMED UNKNOWN与C-only保护阻断mixed检查点，之后才允许B只读lookup，C永不删除。', '保留全部十一份survivor、其他环境、所有备份及失败证据；cleanup=0、hold-release=0、bypass=0；#323保持Draft、不合并；#307保持OPEN。', '旧授权全部不复用。本确认仅绑定上述候选、execution、精确版本和绝对窗口；缺少新确认或任何绑定/保护/前置漂移即停止。']
         text='\n'.join(lines)+'\n';(PUBLIC/'confirmation-template.txt').write_text(text,encoding='utf-8',newline='\n')

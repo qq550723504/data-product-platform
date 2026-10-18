@@ -11,11 +11,10 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 PACKET = ROOT / 'docs/acceptance/evidence/issue307-d1/remaining-candidate11'
-EXECUTION = '602acafe-065a-4385-b739-5776408f5448'
-START = '2026-10-18T14:00:00Z'
-END = '2026-10-18T14:40:00Z'
 spec=importlib.util.spec_from_file_location('offline_window',Path(__file__).with_name('remaining_window.py'))
 window=importlib.util.module_from_spec(spec);spec.loader.exec_module(window)
+WINDOW=window.compiled()
+EXECUTION=WINDOW['Execution'];START=WINDOW['NotBefore'];END=WINDOW['NotAfter']
 
 def need(ok, text):
     if not ok: raise ValueError(text)

@@ -1,0 +1,109 @@
+{
+  "status": "PASS_NONDELETE_REGRESSION",
+  "at_source": "d4e306d5d32ce09ffb7307b2a7ea1cbe1b696be4",
+  "tests": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_remaining_window.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "test_remaining_window-normal.txt"
+    },
+    {
+      "command": [
+        "python",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_remaining_window.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "test_remaining_window-optimized.txt"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_verify_remaining_native.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "test_verify_remaining_native-normal.txt"
+    },
+    {
+      "command": [
+        "python",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_verify_remaining_native.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "test_verify_remaining_native-optimized.txt"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_freeze_remaining_executable.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "test_freeze_remaining_executable-normal.txt"
+    },
+    {
+      "command": [
+        "python",
+        "-O",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "examples/lifecycle-d1",
+        "-p",
+        "test_freeze_remaining_executable.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "test_freeze_remaining_executable-optimized.txt"
+    },
+    {
+      "command": "go test five fixture/pilot packages",
+      "exit_code": 0
+    }
+  ],
+  "R1_methods_each_mode": 4,
+  "R1_offline_rejection_subcases_each_mode": 11,
+  "R1_complete_cli_rejection_subcases_each_mode": 15,
+  "native_delete": 0,
+  "provider_io": 0,
+  "note": "recorded-native CLI tests use Docker doubles and actual official Go policy checker; actual six Renew is a separate isolated PG receipt"
+}
