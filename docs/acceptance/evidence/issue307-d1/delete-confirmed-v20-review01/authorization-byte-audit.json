@@ -1,0 +1,17 @@
+{
+  "status": "PASS_INDEPENDENT_AUTHORIZATION_BYTES_AND_SCHEDULE_READBACK",
+  "authorization_sha256": "261378648576c27a106893a2b06af425e490966495e0dfc8fccda83d64bbaab8",
+  "user_original_separate_from_template": true,
+  "user_final_LF_retained": true,
+  "user_retyped_template": false,
+  "reference_manifest_files_checked": 14,
+  "additional_host_bindings_and_envelope_hashes_match": true,
+  "same_thread_active_count_one_schedule": true,
+  "prompt_exact_bytes": true,
+  "old_v17_paused": true,
+  "private_public_authorization_schedule_preparation_bytes_equal": true,
+  "private_GitHub_raw_to_public_summary_facts_match": true,
+  "current_execution_evidence_index_files_checked": 7,
+  "provider_io": 0,
+  "docker_calls": 0
+}

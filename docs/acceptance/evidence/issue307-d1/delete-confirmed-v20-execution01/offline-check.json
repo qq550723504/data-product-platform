@@ -1,0 +1,19 @@
+{
+  "observed_at": "2026-10-18T07:31:47.122158+00:00",
+  "actual_checker_result": {
+    "status": "PASS_CANDIDATE10_OFFLINE",
+    "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+    "source": "71b1711927247d7aafc7d6a8bd707f013f2b310c",
+    "targets": 7,
+    "survivors": 11,
+    "source_files": 824,
+    "raw_evidence": 1119,
+    "native_technical_requests": 76,
+    "checker_provider_io": 0,
+    "native_delete": 0,
+    "human_confirmation": "NOT_RECEIVED"
+  },
+  "actual_stdout": "{\"status\": \"PASS_CANDIDATE10_OFFLINE\", \"execution\": \"67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5\", \"source\": \"71b1711927247d7aafc7d6a8bd707f013f2b310c\", \"targets\": 7, \"survivors\": 11, \"source_files\": 824, \"raw_evidence\": 1119, \"native_technical_requests\": 76, \"checker_provider_io\": 0, \"native_delete\": 0, \"human_confirmation\": \"NOT_RECEIVED\"}\r\n",
+  "exit_code": 0,
+  "historical_snapshot_note": "human_confirmation=NOT_RECEIVED is the immutable frozen preparation snapshot; the separate new human-authorization.json records the later direct authorization. No historical bytes were rewritten."
+}

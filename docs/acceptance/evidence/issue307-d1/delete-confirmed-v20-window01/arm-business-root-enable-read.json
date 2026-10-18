@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-18T10:05:17.720569+00:00",
+  "before_sha256": "2243471bdf88b75b415a90ca4fbb5805e8006676e535164db776ea486b7fab72",
+  "after_sha256": "708d6e4e558771ff93103802af5e44a5e4948a211a9ed1b05d25853573363608",
+  "only_fields": [
+    "Enabled",
+    "ConfirmedAt"
+  ],
+  "template_sha256": "f1345f4909da80b6c25b2658f3d083dfdd2e737dd49dc50e644dd3aec9dc400c",
+  "native_delete": 0
+}

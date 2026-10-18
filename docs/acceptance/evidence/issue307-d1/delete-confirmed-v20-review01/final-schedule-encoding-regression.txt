@@ -1,0 +1,9 @@
+test_actual_and_simulated_corrupted_console_prefix_are_rejected (__main__.EncodingReview.test_actual_and_simulated_corrupted_console_prefix_are_rejected) ... ok
+test_actual_corrected_configuration_has_exact_original_prefix_and_name (__main__.EncodingReview.test_actual_corrected_configuration_has_exact_original_prefix_and_name) ... ok
+test_ascii_escaped_transport_is_encoding_independent (__main__.EncodingReview.test_ascii_escaped_transport_is_encoding_independent) ... ok
+test_correct_suffix_only_narrows_and_preserves_original_exact_bytes (__main__.EncodingReview.test_correct_suffix_only_narrows_and_preserves_original_exact_bytes) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.003s
+
+OK
