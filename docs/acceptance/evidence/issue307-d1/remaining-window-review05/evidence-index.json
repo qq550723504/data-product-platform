@@ -1,5 +1,6 @@
 {
   "status": "PASS_INDEPENDENT_REVIEW_PACKET",
+  "membership": "Raw published evidence; excludes interpreter __pycache__ and this index",
   "files": {
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/actual-cross-field-windows.json": "47196f002578654c3b6468c0ea916d75b0c6d66361fc6a3198d70247e2af59fc",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/approval-bindings.json": "e30974a9e72c3d039be70d7d00b447021c3ff71fa68becac46c3d26e7b36532c",
@@ -14,6 +15,7 @@
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/candidate11-exact-binding-audit-normal.txt": "0e46a068f2537f43f0a40842f0a2b1215d7368eef93e69563338b28510c6b670",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/candidate11-exact-binding-audit-optimized.txt": "785c1a828b0d91397d46cb83637b7a8125ce144ad99e652bf4a306f854985476",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/candidate11-exact-binding-audit.json": "81675f349e9a7d9ce937c56f1dbdd49f77f38a0ff98db98c0f29520ff48f748b",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/candidate11-index-addendum.json": "6207b62409dee7d861e3b0906a12648561ff71c1117d79751f172a97b4d023bd",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/candidate11-support-normal-final.txt": "4cb5009bf5015c50973aea2c767c3bfdb884697eaef44bbd20b4a70fbcd5af5d",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/candidate11-support-optimized-final.txt": "4cb5009bf5015c50973aea2c767c3bfdb884697eaef44bbd20b4a70fbcd5af5d",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/case-recovery-budget-recheck.json": "a1ce7381a7bd43557bf55c2633e48e27c93629f8dd6be8c4adb87d96f3a41523",
@@ -22,14 +24,14 @@
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/parent-exact-binding-audit02.json": "fc28b4c6d1b0714ef4d450bfe4ef412fffcf589d376d15795b2960e8e94e1b93",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/physical-close-recheck.json": "35107e766401c5b1fd7193808227c329f573954f90897de015469495c0ee3706",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/review-fix-RB1.json": "a731eb7dbc399ce59544cb263ef263736fd5fc4a0ae956f5e4547d3a13c39fa4",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/review-fix-RB2.json": "29ba27d166cfe931b90f33d6daaa7b678c9829990343bdb498f4699e0ddf190b",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/sealed-preconditions.json": "4156779d70778893a0efd47982a00519947486160a6c6161eb7478981f665060",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/support-normal.txt": "343c8c4968489f21fd958f3df57e55b5beebc84682c339ca49cdb259f8bf88f7",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/support-optimized.txt": "f31bb94bb67875b548da35e3ee39af3c3257cb74efa0c47e4594fff18c4e8299",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/support-regression.json": "104a797349ca653a3e74b6bc2cf74f45d318a775afff3c77d3d6176d58ff2629",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/test_window_support.py": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
     "docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/window_support.py": "c3e765364aafd1ec311aec736cb951d7df2704b168cea0d566a0ee3a97aaf5f3",
-    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/history/runbook-before-RB1.md": "c2e1311da987924eebe1b36c136620edcec7993ff649dfd0208da9ca9b0f1d29",
-    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/__pycache__/window_support.cpython-314.opt-1.pyc": "8d8c04416d3ebf92e6938da5d6c171817487933b490815d3ff2938356174ae4d",
-    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/composition/__pycache__/window_support.cpython-314.pyc": "8d8c04416d3ebf92e6938da5d6c171817487933b490815d3ff2938356174ae4d"
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/history/evidence-index-before-RB2.json": "6a1c62c309808d5b4f8ebb26a73b5e865a2ec1477c5b5592d6285af3eb2bae2a",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review05/history/runbook-before-RB1.md": "c2e1311da987924eebe1b36c136620edcec7993ff649dfd0208da9ca9b0f1d29"
   }
 }
