@@ -1,0 +1,44 @@
+{
+  "status": "GENERATION_BINDING_REVIEW_ONE_BLOCKER_PENDING",
+  "at": "2026-10-18T14:45:36.928209+00:00",
+  "reviewer": "/root/v20_independent_review",
+  "profile": "candidate12/v22",
+  "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "proposal_not_authorization": true,
+  "window": [
+    "2026-10-19T06:00:00Z",
+    "2026-10-19T06:40:00Z"
+  ],
+  "Singapore": "2026-10-19 14:00-14:40",
+  "recovery_until": "2026-10-19T08:40:00Z",
+  "remaining_blockers": [
+    {
+      "id": "G1_COMPLETE_RECEIPT_FINITE_MEMBERSHIP",
+      "path": "examples/lifecycle-d1/check-remaining-candidate12.py",
+      "lines": "63-75",
+      "finding": "The new complete-CLI acceptance condition permits empty or partial complete.groups via vacuous all(), does not require exact three group membership or 18 versions/76 GET-HEAD, and verifies the sealed-preconditions file SHA without checking its JSON equals the embedded host_gate. It also does not bind the actual freeze whole-main invocation exit/entry SHA.",
+      "required_fix": "Require exact three groups and complete aggregation/Core/count/no-send outcomes; equality between separate and embedded host gate; bind whole-main invocation exit0 and frozen entry SHA. Keep old11 checker and packet unchanged."
+    }
+  ],
+  "passed_checks": [
+    "UTC/SGT/execution/recovery constants agree",
+    "R1 normal and optimized each4 independently PASS",
+    "Uncached previous-authority rejection07/09/10/11 independently PASS",
+    "Freeze differs from b5e0 reviewed bytes only in first docstring; verify/attester/runner remain byte-identical",
+    "No candidate12 packet exists; no whole packet/native acceptance claimed"
+  ],
+  "file_sha256": {
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": "005c992c05f62f9bdbc5885a95b9b274346f53476cd6d51677330d1da1684f86",
+    "apps/platform/cmd/lifecycle-fixture-remaining/main_test.go": "9a8176ed06efa82fd0ccfb52e26cb395c4e1e42228236f4e31721b5735b4880e",
+    "examples/lifecycle-d1/check-remaining-candidate12.py": "16e12e156eba241835a9a36ce671595eaa2c28a9e2d127c3f39a42500de5b381",
+    "examples/lifecycle-d1/test_remaining_window.py": "62ee16aacb094f0d85ab8627673309b49c616bd30f1cdb5860b7faff81e7f4d6",
+    "examples/lifecycle-d1/freeze-remaining-executable.py": "0cbacfd5e18162566388c3e847ed56760f772e37ac78c275e509fdb0aa8bc6ca",
+    ".github/workflows/demo-lifecycle.yml": "5d5ab12d4f0b1c3b1e19a52cf8baa9ad9aec293efaf22ee12ef5961772444b53"
+  },
+  "test_log_sha256": {
+    "generation12-window-normal.txt": "791068f27d9414e6cedab986ce2590b793c0a8e2dd38dc26766a09418522bc65",
+    "generation12-window-optimized.txt": "0cbd8124b9b750b7959a524dfb2a61565371ec31b1ec496a86984ca5126532c1",
+    "generation12-old-authority-go.txt": "43cab746c0f8bf68967f9314ffbc35e0e115aa30394a39090c67663e69f1870d"
+  },
+  "reviewer_Docker_provider_permission_io": 0
+}

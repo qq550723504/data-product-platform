@@ -1,4 +1,4 @@
-"""Freeze candidate11/v21 after complete native NON-DELETE acceptance.
+"""Freeze the current candidate after complete native NON-DELETE acceptance.
 
 No arming, human-confirmation creation, DELETE, cleanup or merge mode exists.
 Fresh source verification is GET/HEAD-only plus read-only Core fingerprints.
@@ -14,6 +14,7 @@ from pathlib import Path
 import secrets
 import shutil
 import subprocess
+import sys
 import time
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -59,6 +60,53 @@ def close_known(identifiers):
     return {'containers':rows,'all_closed':all(x['stopped_pid_zero'] for x in rows),
             'retained':True,'native_delete':0,'cleanup':0}
 
+
+def terminal_owners(packet, private, terminal_path, expected_status, verifier):
+    terminal=r.load(terminal_path)
+    r.require(terminal.get('status',terminal.get('state'))==expected_status
+              and terminal['no_resume'] is True,'Prior execution is not terminal')
+    closed_ids=[]
+    for g,b in zip(r.load(packet/'candidate.json')['Groups'],r.load(packet/'bindings.json')):
+        folder=private/g['Group']
+        for stage in g['Helpers']:
+            r.require(r.load(folder/stage/'permission.json')['Enabled'] is False,'Prior operator permission enabled')
+            if stage.startswith('recover-'):r.require(r.load(folder/stage/'recovery.json')['Enabled'] is False,'Prior recovery not revoked')
+        for stage in g['CaseHelpers']:r.require(r.load(folder/('case-'+stage)/'remaining.json')['Base']['Enabled'] is False,'Prior case not revoked')
+        for action in b['root_owners']:r.require(r.load(folder/('root-'+action)/'permission.json')['Enabled'] is False,'Prior root permission enabled')
+        ids=[*g['Helpers'].values(),*g['CaseHelpers'].values(),*[x['container'] for x in b['root_owners'].values()],g['Core'],g['Native'],g['Gateway'],g['CheckpointCore'],g['CheckpointNative'],b['recovery_redis']]
+        for ident in ids:
+            r.require(verifier.closed(r.inspect(ident)),'Prior failed owner active');closed_ids.append(ident)
+    return {'status':'PASS_TERMINAL_PHYSICAL_CLOSURE','terminal_sha256':r.sha(terminal_path),
+            'containers':closed_ids,'old_authority_reused':False,'native_delete':0}
+
+
+def complete_frozen_preflight():
+    """The frozen packet must pass real main, with every host gate, before indexing."""
+    public=PUBLIC/'complete-entry'
+    command=[sys.executable,'-B',str(ROOT/'examples/lifecycle-d1/verify-remaining-native.py'),
+        '--packet',str(PUBLIC),'--candidate-sha256',r.sha(PUBLIC/'candidate.json'),
+        '--bindings-sha256',r.sha(PUBLIC/'bindings.json'),
+        '--private',str(PRIVATE/'complete-entry'),'--output',str(public),
+        '--reader',str(PRIVATE/'reader'),'--checker',str(PRIVATE/'readonly-check.exe'),
+        '--checker-sha256',r.sha(PRIVATE/'readonly-check.exe')]
+    result=subprocess.run(command,cwd=ROOT,capture_output=True)
+    (PRIVATE/'complete-entry-stdout.private').write_bytes(result.stdout)
+    (PRIVATE/'complete-entry-stderr.private').write_bytes(result.stderr)
+    r.write(PUBLIC/'complete-entry-invocation.json',{'exit_code':result.returncode,
+        'entry_sha256':r.sha(ROOT/'examples/lifecycle-d1/verify-remaining-native.py'),
+        'stdout_sha256':digest(result.stdout),'stderr_sha256':digest(result.stderr),'native_delete':0})
+    r.require(result.returncode==0,'Complete frozen entry failed; retain generation and diagnose')
+    receipt=r.load(public/'complete.json')
+    r.require(receipt['status']=='PASS_COMPLETE_FRESH_NATIVE_PREFLIGHT'
+              and receipt['candidate_sha256']==r.sha(PUBLIC/'candidate.json')
+              and receipt['execution']==EXECUTION
+              and receipt['host_gate']['status']=='PASS_COMPLETE_SEALED_HOST_GATE'
+              and receipt['host_gate']['execution']==EXECUTION
+              and receipt['host_gate']['permissions_false']==32
+              and len(receipt['host_gate']['cases'])==7 and len(receipt['host_gate']['budgets'])==3
+              and len(receipt['host_gate']['recoveries'])==7 and len(receipt['host_gate']['networks'])==3,
+              'Complete frozen entry did not prove all host gates')
+
 def main():
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
     from cryptography.hazmat.primitives.serialization import Encoding,PrivateFormat,PublicFormat,NoEncryption
@@ -80,33 +128,25 @@ def main():
     old_candidate=r.load(old_packet/'candidate.json')
     r.require(r.sha(old_packet/'candidate.json')=='b9660f17cbb745e781a06d50e8ec0e81c87e654318420533b75b4ada29728949'
               and r.sha(old_packet/'bindings.json')=='ede110b20b2e0815060a7ba1e599db073e56c4c476a3d92d358e20a6ec898562','Historical source packet drift')
-    r.write(PUBLIC/'source-sealed-preconditions.json',verifier.sealed_gate(old_packet,r.PRIVATE/'remaining-candidate07'))
+    r.write(PUBLIC/'source-sealed-preconditions.json',verifier.retained_owners_gate(old_packet,r.PRIVATE/'remaining-candidate07'))
     prior_packet=PUBLIC.parent/'remaining-candidate08'
     r.require(r.sha(prior_packet/'candidate.json')=='730b92a761ca953453fb4914b5d63e1be2d6ce76bea806db7c0e9f5ba4a61b82'
               and r.sha(prior_packet/'bindings.json')=='88b39a6f25ffb0cc959d90bdfd50de7b8479a8d5dc345598e4583ab39a1f028f','Superseded preparation snapshot drift')
-    r.write(PUBLIC/'prior-preparation-closed.json',verifier.sealed_gate(prior_packet,r.PRIVATE/'remaining-candidate08'))
+    r.write(PUBLIC/'prior-preparation-closed.json',verifier.retained_owners_gate(prior_packet,r.PRIVATE/'remaining-candidate08'))
     expired_packet=PUBLIC.parent/'remaining-candidate09'
     r.require(r.sha(expired_packet/'candidate.json')=='3a4a93c449a99f54925fa2924857b88e34929a4731b8e7bfdc3933d2eb29ef76'
               and r.sha(expired_packet/'bindings.json')=='985906a224f1e78899402b9d8af3daa93f37767bb73fb3e1be9edde61fec1ab8','Expired v19 preparation snapshot drift')
-    r.write(PUBLIC/'expired-v19-closed.json',verifier.sealed_gate(expired_packet,r.PRIVATE/'remaining-candidate09'))
+    r.write(PUBLIC/'expired-v19-closed.json',verifier.retained_owners_gate(expired_packet,r.PRIVATE/'remaining-candidate09'))
     # The failed v20 execution is terminal evidence, not a reusable execution
     # profile. Its legitimate seal revoked case/recovery Enabled fields, so do
     # not demand the old private profile hash as a current-generation contract.
     failed_packet=PUBLIC.parent/'remaining-candidate10';failed_private=r.PRIVATE/'remaining-candidate10'
-    terminal=r.load(failed_private/'authorized-execution01/terminal.json')
-    r.require(terminal['state']=='FAILED_STOPPED_SEALED' and terminal['no_resume'] is True,'Prior execution is not terminal')
-    failed=r.load(failed_packet/'candidate.json');failed_bindings=r.load(failed_packet/'bindings.json');closed_ids=[]
-    for g,b in zip(failed['Groups'],failed_bindings):
-        folder=failed_private/g['Group']
-        for stage in g['Helpers']:
-            r.require(r.load(folder/stage/'permission.json')['Enabled'] is False,'Prior operator permission enabled')
-            if stage.startswith('recover-'):r.require(r.load(folder/stage/'recovery.json')['Enabled'] is False,'Prior recovery not revoked')
-        for stage in g['CaseHelpers']:r.require(r.load(folder/('case-'+stage)/'remaining.json')['Base']['Enabled'] is False,'Prior case not revoked')
-        for action in b['root_owners']:r.require(r.load(folder/('root-'+action)/'permission.json')['Enabled'] is False,'Prior root permission enabled')
-        ids=[*g['Helpers'].values(),*g['CaseHelpers'].values(),*[x['container'] for x in b['root_owners'].values()],g['Core'],g['Native'],g['Gateway'],g['CheckpointCore'],g['CheckpointNative'],b['recovery_redis']]
-        for ident in ids:
-            r.require(verifier.closed(r.inspect(ident)),'Prior failed owner active');closed_ids.append(ident)
-    r.write(PUBLIC/'failed-v20-closed.json',{'status':'PASS_TERMINAL_PHYSICAL_CLOSURE','terminal_sha256':r.sha(failed_private/'authorized-execution01/terminal.json'),'containers':closed_ids,'old_authority_reused':False,'native_delete':0})
+    r.write(PUBLIC/'failed-v20-closed.json',terminal_owners(failed_packet,failed_private,
+        failed_private/'authorized-execution01/terminal.json','FAILED_STOPPED_SEALED',verifier))
+    failed_packet=PUBLIC.parent/'remaining-candidate11';failed_private=r.PRIVATE/'remaining-candidate11'
+    r.write(PUBLIC/'failed-v21-closed.json',terminal_owners(failed_packet,failed_private,
+        failed_private/'authorized-execution01/terminal-final.json',
+        'FAILED_STOPPED_SEALED_WITH_POST_SEAL_IAM_UNCONFIRMED',verifier))
     files={}
     for name in r.call(['git','ls-files','apps/platform','migrations','examples/lifecycle-d1']).decode().splitlines():
         path=ROOT/name
@@ -160,9 +200,9 @@ def main():
             g={'Group':group,'Actor':config['ActorID'],'Core':pg,'Native':mi,'Gateway':gw,'Network':network['Id'],'CheckpointCore':checkpoint['restored_core'],'CheckpointNative':checkpoint['restored_native'],'CoreDumpSHA256':r.sha(backup/'core.dump'),'GlobalsSHA256':r.sha(backup/'globals.sql'),'NativeArchiveSHA256':r.sha(backup/'native.tar'),'IAMSHA256':r.sha(public/'iam.json'),'GatewaySHA256':r.sha(active),'SealedGatewaySHA256':r.sha(sealed),'Copies':copies,'Helpers':{},'ConfigSHA256':{},'CaseHelpers':{},'CaseConfigSHA256':{},'PolicyHeads':selected_heads}
             source_gateways.append(gw)
             # Actual durable Redis queue for future selected reconciliation.
-            redis=project+'-candidate11-recovery-redis';r.docker('volume','create','--label','lifecycle307.remaining='+EXECUTION,redis+'-data')
+            redis=project+'-'+GENERATION+'-recovery-redis';r.docker('volume','create','--label','lifecycle307.remaining='+EXECUTION,redis+'-data')
             rid=r.docker('create','--pull','never','--name',redis,'--label','lifecycle307.remaining='+EXECUTION,'--network',network['Id'],'--mount','type=volume,source='+redis+'-data,target=/data',r.REDIS,'redis-server','--appendonly','yes').decode().strip();owned.append(rid)
-            budget=project+'-candidate11-budget';r.docker('volume','create','--label','lifecycle307.remaining='+EXECUTION,budget)
+            budget=project+'-'+GENERATION+'-budget';r.docker('volume','create','--label','lifecycle307.remaining='+EXECUTION,budget)
             outputs=private/'outputs';outputs.mkdir()
             if group=='business-races':(outputs/'remaining-state.json').write_bytes((ROOT/'docs/acceptance/evidence/issue307-d1/remaining-runner02/business/remaining-state.json').read_bytes())
             modes=window.CASE_MODES[group]
@@ -172,7 +212,7 @@ def main():
                     closure=digest(compact({'execution':EXECUTION,'source':source,'reader':candidate['ReaderBinarySHA256'],'target':target_digest,'owner':g['CaseHelpers']['late']}))
                     cfg.update(ClosurePublicKey=host_pub,ClosureCandidateSHA256=closure,ClosureOwners={g['CaseHelpers']['late']:candidate['ReaderBinarySHA256']})
                 r.write(folder/'remaining.json',cfg);(folder/'manifest.json').write_bytes((old/'manifest.json').read_bytes())
-                ident=r.docker('create','--pull','never','--name',project+'-candidate11-case-'+stage,'--label','lifecycle307.remaining='+EXECUTION,'--network','container:'+gw,'--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data:size=1m','--mount',f'type=bind,source={folder},target=/run/private,readonly','--mount',f'type=bind,source={PRIVATE}/reader,target=/run/reader,readonly','--mount',f'type=bind,source={ROOT}/industry-packs,target=/run/repo/industry-packs,readonly','--mount',f'type=bind,source={outputs},target=/run/output','--entrypoint','/run/reader',r.PG,'-mode',mode).decode().strip();owned.append(ident)
+                ident=r.docker('create','--pull','never','--name',project+'-'+GENERATION+'-case-'+stage,'--label','lifecycle307.remaining='+EXECUTION,'--network','container:'+gw,'--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data:size=1m','--mount',f'type=bind,source={folder},target=/run/private,readonly','--mount',f'type=bind,source={PRIVATE}/reader,target=/run/reader,readonly','--mount',f'type=bind,source={ROOT}/industry-packs,target=/run/repo/industry-packs,readonly','--mount',f'type=bind,source={outputs},target=/run/output','--entrypoint','/run/reader',r.PG,'-mode',mode).decode().strip();owned.append(ident)
                 g['CaseHelpers'][stage]=ident;g['CaseConfigSHA256'][stage]=r.sha(folder/'remaining.json')
                 profile_windows['cases'].append(window.project_case(cfg,group,stage,g['CaseConfigSHA256'][stage]))
             stages=['wire']+[stage for cp in s['Copies'] if cp['Key'] in KEYS for stage in (KEYS[cp['Key']],'recover-'+KEYS[cp['Key']])]
@@ -183,7 +223,7 @@ def main():
                 if stage.startswith('recover-'):
                     rc={k:config[k] for k in ('RunID','WorkspaceID','ProviderInstanceID','IncarnationID','ActorID','Endpoint','InspectAccess','InspectSecret')};rc.update(Enabled=True,SyntheticOnly=True,Token=f['Token'],ManifestSHA256=s['ManifestSHA256'],ValidUntil=RECOVERY_END);r.write(folder/'recovery.json',rc)
                     profile_windows['recoveries'].append({'group':group,'stage':stage,'config_sha256':r.sha(folder/'recovery.json'),'ValidUntil':rc['ValidUntil']})
-                ident=r.docker('create','--pull','never','--name',project+'-candidate11-'+stage,'--label','lifecycle307.remaining='+EXECUTION,'--network','container:'+gw,'--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data:size=1m','--mount',f'type=bind,source={folder},target=/run/private,readonly','--mount',f'type=bind,source={PRIVATE}/operator,target=/run/operator,readonly','--mount',f'type=bind,source={output},target=/run/output','--mount','type=volume,source='+budget+',target=/run/budget','--entrypoint','/run/operator',r.PG,'-stage',stage).decode().strip();owned.append(ident)
+                ident=r.docker('create','--pull','never','--name',project+'-'+GENERATION+'-'+stage,'--label','lifecycle307.remaining='+EXECUTION,'--network','container:'+gw,'--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data:size=1m','--mount',f'type=bind,source={folder},target=/run/private,readonly','--mount',f'type=bind,source={PRIVATE}/operator,target=/run/operator,readonly','--mount',f'type=bind,source={output},target=/run/output','--mount','type=volume,source='+budget+',target=/run/budget','--entrypoint','/run/operator',r.PG,'-stage',stage).decode().strip();owned.append(ident)
                 g['Helpers'][stage]=ident;g['ConfigSHA256'][stage]=r.sha(folder/'operator.json');all_helpers.append((group,stage,folder,ident))
             root_owners={}
             for action in ('check-disabled','enable-read','enable-send','disable-send','disable-all'):
@@ -191,7 +231,7 @@ def main():
                 (folder/'iam.json').write_bytes((public/'iam.json').read_bytes())
                 r.write(folder/'root.json',{'Group':group,'Endpoint':'127.0.0.1:9000','RootAccess':config['RootAccess'],'RootSecret':config['RootSecret']})
                 for name in native['policy_sha256']:(policies/(name+'.json')).write_bytes((verify_out/('native-policy-'+name+'.json')).read_bytes())
-                ident=r.docker('create','--pull','never','--name',project+'-candidate11-root-'+action,'--label','lifecycle307.remaining='+EXECUTION,'--network','container:'+mi,'--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data:size=1m','--mount',f'type=bind,source={folder},target=/run/private,readonly','--mount',f'type=bind,source={PRIVATE}/owner,target=/run/owner,readonly','--mount',f'type=bind,source={output},target=/run/output','--entrypoint','/run/owner',r.PG,'-action',action).decode().strip();owned.append(ident)
+                ident=r.docker('create','--pull','never','--name',project+'-'+GENERATION+'-root-'+action,'--label','lifecycle307.remaining='+EXECUTION,'--network','container:'+mi,'--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp','--tmpfs','/var/lib/postgresql/data:size=1m','--mount',f'type=bind,source={folder},target=/run/private,readonly','--mount',f'type=bind,source={PRIVATE}/owner,target=/run/owner,readonly','--mount',f'type=bind,source={output},target=/run/output','--entrypoint','/run/owner',r.PG,'-action',action).decode().strip();owned.append(ident)
                 root_owners[action]={'container':ident,'root_config_sha256':r.sha(folder/'root.json'),'scope':'trusted bootstrap only; never a worker mount'}
             candidate['Groups'].append(g)
             bindings.append({'group':group,'project':project,'workspace':s['Workspace'],'provider':s['Provider'],'incarnation':s['Incarnation'],'manifest_sha256':s['ManifestSHA256'],'plans':s['Plans'],'copy_protection':native['copies'],'checkpoint':checkpoint,'source_core_sha256':r.sha(public/'core-readonly.json'),'native_readonly_sha256':r.sha(verify_out/'native-verification.json'),'recovery_redis':rid,'budget_volume':budget,'previous_policy_heads':selected_heads,'root_owners':root_owners})
@@ -250,7 +290,7 @@ def main():
             denial.append({'group':group,'stage':stage,'container':ident,'exit_code':code,'logs':logs.decode(),'source_core_native_stopped':True,'denial_reason':'missing fresh signed readonly topology' if stage.startswith('recover-') else 'send permission false before config/DB/provider','native_delete':0})
         r.write(PUBLIC/'sealed-owner-regression.json',denial)
         offline=PRIVATE/'offline';offline.mkdir();(offline/'candidate.json').write_bytes((PUBLIC/'candidate.json').read_bytes())
-        ident=r.docker('create','--pull','never','--name','dpp-lifecycle307-candidate11-offline','--label','lifecycle307.remaining='+EXECUTION,'--network','none','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/var/lib/postgresql/data:size=1m','--mount',f'type=bind,source={offline},target=/run/private,readonly','--mount',f'type=bind,source={PRIVATE}/operator,target=/run/operator,readonly','--entrypoint','/run/operator',r.PG,'-stage','check-candidate').decode().strip();owned.append(ident);r.docker('start',ident);r.require(r.docker('wait',ident).strip()==b'0','Frozen Go candidate validator failed');(PUBLIC/'offline-validator.txt').write_bytes(docker_logs(ident))
+        ident=r.docker('create','--pull','never','--name','dpp-lifecycle307-'+GENERATION+'-offline','--label','lifecycle307.remaining='+EXECUTION,'--network','none','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/var/lib/postgresql/data:size=1m','--mount',f'type=bind,source={offline},target=/run/private,readonly','--mount',f'type=bind,source={PRIVATE}/operator,target=/run/operator,readonly','--entrypoint','/run/operator',r.PG,'-stage','check-candidate').decode().strip();owned.append(ident);r.docker('start',ident);r.require(r.docker('wait',ident).strip()==b'0','Frozen Go candidate validator failed');(PUBLIC/'offline-validator.txt').write_bytes(docker_logs(ident))
         r.write(PUBLIC/'status.json',{'candidate':PROFILE,'execution':EXECUTION,'candidate_sha256':candidate_hash,'confirmation_sha256':r.sha(PUBLIC/'confirmation-template.txt'),'source':source,'source_files':len(files),'versions':18,'prospective_targets':7,'survivors':11,'operator_owners':len(all_helpers),'case_owners':7,'human_confirmation':'NOT_RECEIVED','permission_enabled':False,'current_delete_budget':0,'native_delete':0,'hold_release':0,'bypass':0,'cleanup':0,'PR323':'DRAFT','Issue307':'OPEN','full_D1':'NOT_ACCEPTED','send_H2_UNKNOWN_M1_actual':'NOT_RUN','window_is_proposal_not_schedule':True})
         for b in bindings:
             for action in b['root_owners']:(PRIVATE/b['group']/('root-'+action)/'status.json').write_bytes((PUBLIC/'status.json').read_bytes())
@@ -262,6 +302,7 @@ def main():
         seal=close_known(owned+source_gateways)
         r.write(PUBLIC/'seal.json',seal)
         if not seal['all_closed'] and failure is None:raise RuntimeError('Preparation closure unconfirmed; all known owners attempted')
+    complete_frozen_preflight()
     payloads={str(p.relative_to(ROOT)):r.sha(p) for p in PUBLIC.rglob('*') if p.is_file()}
     references={}
     for pattern in ('remaining-runner*','remaining-case*','remaining-executable*','remaining-policy-regression*'):

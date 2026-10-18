@@ -1,6 +1,7 @@
 """Run unchanged v17/v19 checkers against their own frozen runtimes.
 
-Current runtime is separately checked by check-remaining-candidate11.py. This
+Terminated v21 is audited at its frozen source. Current entry has separate
+full CLI composition tests; a new current packet is checked after freezing. This
 adapter never permits source drift inside either generation and never touches
 Docker, provider credentials or the retained environment.
 """
@@ -84,7 +85,7 @@ def check():
     return {'status':'PASS_V17_HISTORICAL_STRICT','historical_runtime':SOURCE,
             'historical_tools_anchor':TOOLS,'source_files':812,'raw_evidence':940,
             'historical_strict_result':strict,'current_runtime_not_substituted':True,
-            'current_runtime_check':'check-remaining-candidate11.py','provider_io':0,'container_starts':0,'delete':0}
+            'current_runtime_check':'test_complete_remaining_preflight.py + new frozen current packet checker','provider_io':0,'container_starts':0,'delete':0}
 
 
 def check_v19():
@@ -142,35 +143,33 @@ def check_v19():
             'provider_io':0,'container_starts':0,'delete':0}
 
 
-def check_v20():
-    source_id = '71b1711927247d7aafc7d6a8bd707f013f2b310c'
-    packet_anchor = '5eb3aec724f55e97ee05595439f74781d0e4b989'
-    packet = Path('docs/acceptance/evidence/issue307-d1/remaining-candidate10')
+def check_prepared_history(source_id, packet_anchor, generation, version, source_count, evidence_count):
+    packet = Path('docs/acceptance/evidence/issue307-d1/remaining-candidate'+generation)
     index_path = packet/'evidence-index.json'
     index_raw = git('show', packet_anchor+':'+index_path.as_posix())
-    need((ROOT/index_path).read_bytes() == index_raw, 'v20 historical index changed')
+    need((ROOT/index_path).read_bytes() == index_raw, 'prepared historical index changed')
     index = json.loads(index_raw); records = dict(index['files'], **index['references'])
-    need(len(records) == 1119, 'v20 historical raw membership changed')
+    need(len(records) == evidence_count, 'prepared historical raw membership changed')
     source = json.loads((ROOT/packet/'source-freeze.json').read_bytes())
-    need(source['source_commit'] == source_id and len(source['files']) == 824,
-         'v20 historical source identity changed')
-    checker = Path('examples/lifecycle-d1/check-remaining-candidate10.py')
+    need(source['source_commit'] == source_id and len(source['files']) == source_count,
+         'prepared historical source identity changed')
+    checker = Path('examples/lifecycle-d1/check-remaining-candidate'+generation+'.py')
     pinned = git('show', source_id+':'+checker.as_posix())
     need((ROOT/checker).read_bytes().replace(b'\r\n',b'\n') == pinned.replace(b'\r\n',b'\n'),
-         'v20 historical checker changed')
-    with tempfile.TemporaryDirectory(prefix='dpp-v20-frozen-history-') as directory:
+         'prepared historical checker changed')
+    with tempfile.TemporaryDirectory(prefix='dpp-prepared-frozen-history-') as directory:
         target = Path(directory)
         with zipfile.ZipFile(io.BytesIO(git('archive','--format=zip',source_id))) as files:
             for name, hashes in source['files'].items():
                 raw = files.read(name)
-                need(digest(raw.replace(b'\r\n',b'\n')) == hashes['lf_sha256'], 'v20 source changed')
+                need(digest(raw.replace(b'\r\n',b'\n')) == hashes['lf_sha256'], 'prepared source changed')
                 # Git archive can apply platform checkout EOL conversion. Rebuild
                 # only bytes proven by the original frozen raw hash; the old
                 # checker must still see its exact host entry SHA, not a waiver.
                 normalized = raw.replace(b'\r\n',b'\n')
                 choices = [raw,normalized,normalized.replace(b'\n',b'\r\n')]
                 restored = next((value for value in choices if digest(value) == hashes['raw_sha256']),None)
-                need(restored is not None, 'cannot reconstruct exact v20 frozen raw source')
+                need(restored is not None, 'cannot reconstruct exact prepared frozen raw source')
                 destination = path_under(target,name); destination.parent.mkdir(parents=True,exist_ok=True)
                 destination.write_bytes(restored)
         # Both the retained checkout and its immutable Git archive must match.
@@ -178,7 +177,7 @@ def check_v20():
             for name, expected in records.items():
                 raw = path_under(ROOT,name).read_bytes()
                 need(digest(raw) == expected and digest(files.read(name)) == expected,
-                     'v20 raw working/Git bytes changed')
+                     'prepared raw working/Git bytes changed')
                 destination = path_under(target,name); destination.parent.mkdir(parents=True,exist_ok=True)
                 destination.write_bytes(raw)
         destination = target/index_path; destination.parent.mkdir(parents=True,exist_ok=True)
@@ -188,14 +187,24 @@ def check_v20():
         env['GIT_WORK_TREE'] = str(target)
         result = subprocess.run([sys.executable,'-B',str(target/checker)],cwd=target,env=env,capture_output=True)
         if result.returncode:
-            sys.stderr.buffer.write(result.stderr); raise ValueError('unchanged v20 historical audit failed')
+            sys.stderr.buffer.write(result.stderr); raise ValueError('unchanged prepared historical audit failed')
         strict = json.loads(result.stdout)
-        need(strict['status'] == 'PASS_CANDIDATE10_OFFLINE', 'v20 checker did not pass')
-    return {'status':'PASS_V20_HISTORICAL_STRICT','historical_runtime':source_id,
-            'packet_anchor':packet_anchor,'source_files':824,'raw_evidence':1119,
+        need(strict['status'] == 'PASS_CANDIDATE'+generation+'_OFFLINE', 'prepared checker did not pass')
+    return {'status':'PASS_V'+version+'_HISTORICAL_STRICT','historical_runtime':source_id,
+            'packet_anchor':packet_anchor,'source_files':source_count,'raw_evidence':evidence_count,
             'historical_strict_result':strict,'current_runtime_not_substituted':True,
             'provider_io':0,'container_starts':0,'delete':0}
 
 
+def check_v20():
+    return check_prepared_history('71b1711927247d7aafc7d6a8bd707f013f2b310c',
+        '5eb3aec724f55e97ee05595439f74781d0e4b989','10','20',824,1119)
+
+
+def check_v21():
+    return check_prepared_history('3d62dacb36b94096a364f32525853fbe95aaa2ed',
+        'c00d4a8f85aaaaa71b9c19c76d042dee6aad1802','11','21',829,1122)
+
+
 if __name__ == '__main__':
-    print(json.dumps({'v17':check(),'v19':check_v19(),'v20':check_v20(),'current_runtime_check':'check-remaining-candidate11.py'}))
+    print(json.dumps({'v17':check(),'v19':check_v19(),'v20':check_v20(),'v21':check_v21(),'current_runtime_check':'test_complete_remaining_preflight.py + new frozen current packet checker'}))

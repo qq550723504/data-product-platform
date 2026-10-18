@@ -19,7 +19,7 @@ def module(name, file):
 f=module('r1_freezer','freeze-remaining-executable.py')
 v=module('r1_complete','verify-remaining-native.py')
 w=f.window
-a=module('r1_offline','check-remaining-candidate11.py')
+a=module('r1_offline','check-remaining-candidate12.py')
 
 def save(path,value):
     path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(value),encoding='utf-8')

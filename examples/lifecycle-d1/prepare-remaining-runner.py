@@ -30,16 +30,28 @@ spec=importlib.util.spec_from_file_location('native_prepare',ROOT/'examples/life
 native=importlib.util.module_from_spec(spec);spec.loader.exec_module(native)
 require,sha,load,write=native.require,native.sha,native.load,native.write
 
+def output_bytes(value):
+    """Raw process output has one contract; text consumers explicitly decode."""
+    if not isinstance(value, bytes):
+        raise TypeError('command output must be bytes')
+    return value
+
 def call(args,data=None,output=None):
     if output:
         with output.open('xb') as stream:r=subprocess.run(list(map(str,args)),cwd=ROOT,input=data,stdout=stream,stderr=subprocess.PIPE)
     else:r=subprocess.run(list(map(str,args)),cwd=ROOT,input=data,capture_output=True)
+    stdout=output_bytes(r.stdout if r.stdout is not None else b'')
+    stderr=output_bytes(r.stderr if r.stderr is not None else b'')
     if r.returncode:
         log=PRIVATE/'remaining-runner01'/('failure-'+dt.datetime.now(dt.timezone.utc).strftime('%H%M%S%f')+'.private-log')
-        log.write_bytes((r.stdout or b'')+b'\n'+r.stderr)
+        log.write_bytes(stdout+b'\n'+stderr)
         raise RuntimeError('Command failed; diagnostics/resources retained: '+log.name)
-    return r.stdout or b''
-def docker(*args,**kwargs):return call(['docker',*args],**kwargs)
+    return stdout
+def docker(*args,**kwargs):return output_bytes(call(['docker',*args],**kwargs))
+
+def docker_text(*args,**kwargs):
+    """The only text boundary, with strict UTF-8 and no str/bytes fallback."""
+    return output_bytes(docker(*args,**kwargs)).decode('utf-8')
 def inspect(name):return json.loads(docker('inspect',name))[0]
 def utc():return dt.datetime.now(dt.timezone.utc)
 

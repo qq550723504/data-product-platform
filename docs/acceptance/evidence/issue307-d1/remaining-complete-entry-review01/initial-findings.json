@@ -1,0 +1,54 @@
+{
+  "status": "BLOCKERS_FOUND_PENDING_REPAIR",
+  "at": "2026-10-18T14:32:41.175483+00:00",
+  "reviewer": "/root/v20_independent_review",
+  "blockers": [
+    {
+      "id": "B1_PRIVATE_DIRECTORY_EXPOSURE",
+      "status": "PENDING_REPAIR",
+      "evidence": "Two full-main recording counterexamples add an unbound fake root.json to the mounted case-renew directory or fake topology-key.private to recover-P1. Main returned success instead of rejecting before source starts. Existing attester directory allow-list can be reused as a pure preflight function."
+    },
+    {
+      "id": "B2_CURRENT_CI_USES_TERMINAL_FROZEN_CANDIDATE11",
+      "status": "PENDING_REPAIR",
+      "evidence": "demo-lifecycle direct current candidate11 checker rejects changed freeze source. Move this terminal candidate to its own immutable source/packet history audit without weakening or rewriting its checker or old packet; new candidate checker waits for new proposal."
+    }
+  ],
+  "tests": [
+    {
+      "name": "complete normal",
+      "methods": 11,
+      "exit_code": 0
+    },
+    {
+      "name": "complete optimized",
+      "methods": 11,
+      "exit_code": 0
+    },
+    {
+      "name": "independent private exposure counterexamples",
+      "methods": 2,
+      "exit_code": 1,
+      "failures": 2
+    },
+    {
+      "name": "existing direct candidate11 CI command",
+      "exit_code": 1,
+      "error": "current source drift: examples/lifecycle-d1/freeze-remaining-executable.py"
+    }
+  ],
+  "file_sha256": {
+    "complete-normal-initial.txt": "ef4822f8f6d4cdc35f3cc6bb364ff51adf1fa96ef4f7c851290811f69adf7200",
+    "complete-optimized-initial.txt": "65234081bab0c5f02abc8e532d68d96d4848639309aee5af59e60945352166a0",
+    "private-exposure-initial.txt": "88598241804302716b068e777e08d07add094f724a710cc121fba8ef3046669c",
+    "current-candidate11-ci-initial.txt": "a223a2829012624c91f4c3e06078247786bad863380d4b669ee6013cc4a47731",
+    "test_independent_private_exposure.py": "f077fe45371b7a616c05b01d757f32b919e42db13a50007ff8cb8057c6e3e063"
+  },
+  "side_effects": {
+    "repo_writes": 0,
+    "Docker_io": 0,
+    "provider_io": 0,
+    "credential_reads": 0,
+    "native_delete": 0
+  }
+}

@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\examples\lifecycle-d1\check-remaining-candidate11.py", line 78, in <module>
+    if __name__ == '__main__': print(json.dumps(check()))
+                                                ~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\examples\lifecycle-d1\check-remaining-candidate11.py", line 47, in check
+    need(hashlib.sha256(raw).hexdigest() == hashes['lf_sha256'], 'current source drift: '+name)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\9400\data-product-platform\examples\lifecycle-d1\check-remaining-candidate11.py", line 20, in need
+    if not ok: raise ValueError(text)
+               ^^^^^^^^^^^^^^^^^^^^^^
+ValueError: current source drift: examples/lifecycle-d1/freeze-remaining-executable.py

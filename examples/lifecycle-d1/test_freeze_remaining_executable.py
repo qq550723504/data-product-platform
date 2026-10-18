@@ -2,12 +2,29 @@
 import importlib.util
 from pathlib import Path
 import unittest
+import json
+import subprocess
+import tempfile
 from unittest.mock import patch
 
 spec=importlib.util.spec_from_file_location('freeze',Path(__file__).with_name('freeze-remaining-executable.py'))
 f=importlib.util.module_from_spec(spec);spec.loader.exec_module(f)
 
 class PreparationClosureTests(unittest.TestCase):
+    def test_freeze_refuses_failed_complete_cli_and_preserves_diagnostics(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);public=root/'public';private=root/'private';public.mkdir();private.mkdir()
+            for name in ('candidate.json','bindings.json'):(public/name).write_bytes(b'{}')
+            for name in ('reader','readonly-check.exe'):(private/name).write_bytes(b'fake')
+            with patch.object(f,'PUBLIC',public),patch.object(f,'PRIVATE',private), \
+                 patch.object(f.subprocess,'run',return_value=subprocess.CompletedProcess([],1,stdout=b'original stdout',stderr=b'original error')) as process:
+                with self.assertRaises(RuntimeError):f.complete_frozen_preflight()
+            self.assertIn('verify-remaining-native.py',process.call_args.args[0][2])
+            self.assertIn('--candidate-sha256',process.call_args.args[0])
+            self.assertEqual((private/'complete-entry-stderr.private').read_bytes(),b'original error')
+            self.assertEqual(json.loads((public/'complete-entry-invocation.json').read_bytes())['exit_code'],1)
+            self.assertFalse((public/'evidence-index.json').exists())
+
     def test_stop_or_inspect_failure_continues_every_other_owner(self):
         stopped=[]
         def inspect(ident):

@@ -14,7 +14,7 @@ import (
 
 func TestPreviousExecutionCannotBeReauthorizedByNewBinary(t *testing.T) {
 	_, file, _, _ := runtime.Caller(0)
-	for _, generation := range []string{"remaining-candidate07", "remaining-candidate09"} {
+	for _, generation := range []string{"remaining-candidate07", "remaining-candidate09", "remaining-candidate10", "remaining-candidate11"} {
 		t.Run(generation, func(t *testing.T) {
 			raw, err := os.ReadFile(filepath.Join(filepath.Dir(file), "../../../../docs/acceptance/evidence/issue307-d1", generation, "candidate.json"))
 			if err != nil {

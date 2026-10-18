@@ -1,0 +1,7 @@
+test_extra_case_private_root_profile_refused (__main__.PrivateExposure.test_extra_case_private_root_profile_refused) ... ok
+test_extra_recovery_private_host_key_refused (__main__.PrivateExposure.test_extra_recovery_private_host_key_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 2.695s
+
+OK

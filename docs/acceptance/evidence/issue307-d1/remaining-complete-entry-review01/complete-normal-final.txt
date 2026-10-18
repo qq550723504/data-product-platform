@@ -1,0 +1,19 @@
+test_case_mount_expansion_fails (__main__.CompleteCLI.test_case_mount_expansion_fails) ... ok
+test_case_private_root_file_fails (__main__.CompleteCLI.test_case_private_root_file_fails) ... ok
+test_case_private_unbound_directory_fails (__main__.CompleteCLI.test_case_private_unbound_directory_fails) ... ok
+test_expanded_mount_membership_fails (__main__.CompleteCLI.test_expanded_mount_membership_fails) ... ok
+test_external_network_fails (__main__.CompleteCLI.test_external_network_fails) ... ok
+test_missing_mount_member_fails (__main__.CompleteCLI.test_missing_mount_member_fails) ... ok
+test_nonempty_budget_fails (__main__.CompleteCLI.test_nonempty_budget_fails) ... ok
+test_recovery_private_host_key_fails (__main__.CompleteCLI.test_recovery_private_host_key_fails) ... ok
+test_success_combines_all_host_gates_and_three_real_file_aggregations (__main__.CompleteCLI.test_success_combines_all_host_gates_and_three_real_file_aggregations) ... ok
+test_wrong_budget_execution_owner_fails (__main__.CompleteCLI.test_wrong_budget_execution_owner_fails) ... ok
+test_wrong_output_type_fails_before_any_source_start (__main__.CompleteCLI.test_wrong_output_type_fails_before_any_source_start) ... ok
+test_explicit_text_boundary_rejects_str_and_invalid_utf8 (__main__.DockerOutputContract.test_explicit_text_boundary_rejects_str_and_invalid_utf8) ... ok
+test_real_wrapper_rejects_str_including_empty_str (__main__.DockerOutputContract.test_real_wrapper_rejects_str_including_empty_str) ... ok
+test_real_wrapper_returns_bytes_and_explicit_text (__main__.DockerOutputContract.test_real_wrapper_returns_bytes_and_explicit_text) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 9.660s
+
+OK

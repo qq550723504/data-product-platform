@@ -99,11 +99,11 @@ def journals(output):
          'readonly journal has mutation or incomplete transport observation')
     return len(starts)
 
-def sealed_gate(packet, owner_root):
-    """Shared by candidate preparation and the future complete fresh entry.
+def retained_owners_gate(packet, owner_root):
+    """Closed historical owners/backups only; never a full preflight receipt.
 
-    Verify the actual mounted files of the candidate's owners, including old
-    disabled owners when making a new generation; technical reader is separate.
+    Superseded case/recovery profiles may be legitimately revoked. Current
+    executable profiles, all case contracts and budgets belong to sealed_gate.
     """
     c, bindings = load(packet/'candidate.json'), load(packet/'bindings.json')
     need(len(c['Groups']) == len(bindings) == 3, 'finite group count differs')
@@ -145,8 +145,108 @@ def sealed_gate(packet, owner_root):
         mount = next(m for m in gateway['Mounts'] if m['Destination'] == '/etc/caddy/Caddyfile')
         need(not mount['RW'] and sha(Path(mount['Source'])) == g['SealedGatewaySHA256'], 'gateway is not sealed')
     need(closed(runner.inspect('25a4e218f72527e8f93a1df2eeb7a09833e5028c03d5ee178009bd9c71ee33e6')), 'business Redis active')
-    return {'status':'PASS_ACTUAL_SEALED_OWNERS_BACKUPS','operators_and_bootstrap':count,
+    return {'status':'PASS_RETAINED_CLOSED_OWNERS_BACKUPS','operators_and_bootstrap':count,
             'case_owners':7,'backup_hashes':9,'permission_enabled':False,'native_delete':0,'provider_io':0}
+
+
+def sealed_gate(packet, owner_root, budget_output):
+    """Complete current host preconditions. No service, owner or identity starts."""
+    c, bindings = load(packet/'candidate.json'), load(packet/'bindings.json')
+    retained = retained_owners_gate(packet, owner_root)
+    attester = module('complete_private_contracts', ROOT/'examples/lifecycle-d1/attest-remaining-executable.py')
+    candidate_sha, template_sha = sha(packet/'candidate.json'), sha(packet/'confirmation-template.txt')
+    common_permission = {'Enabled': False, 'Execution': c['Execution'],
+        'CandidateSHA256': candidate_sha, 'ConfirmationSHA256': template_sha,
+        'NotBefore': c['NotBefore'], 'ExpiresAt': c['NotAfter'],
+        'ConfirmedAt': '0001-01-01T00:00:00Z', 'MaxPerTarget': 1, 'MaxTotal': 7}
+    cases, recoveries, networks, budgets = [], [], [], []
+    permission_count = 0
+    need(not budget_output.exists(), 'one-shot budget readback already allocated')
+    for g, b in zip(c['Groups'], bindings):
+        folder = owner_root/g['Group']
+        # Permission files have two explicit schemas; root has no binary field.
+        for stage in g['Helpers']:
+            attester.helper_private_contract(folder/stage, stage)
+            need(sha(folder/stage/'operator.json') == g['ConfigSHA256'][stage], 'operator config differs')
+            need((folder/stage/'candidate.json').read_bytes() == (packet/'candidate.json').read_bytes(),
+                 'actual operator candidate differs')
+            need((folder/stage/'confirmation-template.txt').read_bytes() == (packet/'confirmation-template.txt').read_bytes(),
+                 'actual operator template differs')
+            need(load(folder/stage/'permission.json') == dict(common_permission,
+                 Profile=c['Profile'], BinarySHA256=c['SenderBinarySHA256']), 'operator permission differs')
+            permission_count += 1
+            if stage.startswith('recover-'):
+                rc, op = load(folder/stage/'recovery.json'), load(folder/stage/'operator.json')
+                need(rc['Enabled'] is True and rc['SyntheticOnly'] is True
+                     and not op['DeleteSecret'] and not op['WirePrivateKey'], 'recovery is not restricted')
+                recoveries.append({'group': g['Group'], 'stage': stage, 'read_only': True})
+        for action in b['root_owners']:
+            root_folder = folder/('root-'+action)
+            need(load(root_folder/'permission.json') == common_permission, 'bootstrap permission differs')
+            item = runner.inspect(b['root_owners'][action]['container'])
+            need(item['Config']['Entrypoint'] == ['/run/owner']
+                 and item['Config']['Cmd'] == ['-action', action], 'bootstrap command differs')
+            permission_count += 1
+        for stage, ident in g['CaseHelpers'].items():
+            item = runner.inspect(ident); host = item['HostConfig']
+            mounts = {m['Destination']: m for m in item['Mounts']}
+            need(item['Id'] == ident and item['Image'] == runner.PG and closed(item)
+                 and host['ReadonlyRootfs'] and not host['Privileged'] and not host.get('AutoRemove')
+                 and 'ALL' in host['CapDrop'] and any('no-new-privileges' in x for x in host['SecurityOpt']),
+                 'case owner security differs')
+            need(host['NetworkMode'] == 'container:'+g['Gateway']
+                 and item['Config']['Entrypoint'] == ['/run/reader']
+                 and item['Config']['Cmd'] == ['-mode', window.CASE_MODES[g['Group']][stage]],
+                 'case command or network namespace differs')
+            expected = {'/run/private': (folder/('case-'+stage), False),
+                '/run/reader': (owner_root/'reader', False), '/run/output': (folder/'outputs', True),
+                '/run/repo/industry-packs': (ROOT/'industry-packs', False)}
+            need(len(item['Mounts']) == len(expected) and set(mounts) == set(expected), 'case mount set differs')
+            for target, (path, writable) in expected.items():
+                need(Path(mounts[target]['Source']).resolve() == path.resolve()
+                     and mounts[target]['RW'] is writable, 'case mount path or mode differs')
+            cfg = load(folder/('case-'+stage)/'remaining.json')
+            files={'remaining.json','manifest.json'}
+            attester.private_files(folder/('case-'+stage),
+                files|({'closed-H1.json'} if stage=='close-H1' else set()), files)
+            need(sha(folder/('case-'+stage)/'manifest.json') == b['manifest_sha256']
+                 and cfg['Base']['ManifestSHA256'] == b['manifest_sha256'], 'case manifest anchor differs')
+            need(not any(key in cfg['Base'] for key in ('RootAccess', 'RootSecret'))
+                 and not any(x.startswith(('MINIO_ROOT_', 'ROOT_ACCESS=', 'ROOT_SECRET='))
+                             for x in item['Config']['Env']), 'root credential exposed to case')
+            cases.append({'group': g['Group'], 'stage': stage, 'cid': ident, 'actual_contract': 'PASS'})
+        for field, image in [('Core', runner.PG), ('Native', runner.MI), ('Gateway', runner.GW)]:
+            item = runner.inspect(g[field])
+            need(item['Id'] == g[field] and item['Image'] == image and closed(item)
+                 and {n['NetworkID'] for n in item['NetworkSettings']['Networks'].values()} == {g['Network']},
+                 'source role image/network/closure differs')
+        need(g['CheckpointCore'] != g['Core'] and g['CheckpointNative'] != g['Native'],
+             'restore checkpoint aliases a source')
+        network = json.loads(runner.docker('network', 'inspect', g['Network']))[0]
+        need(network['Id'] == g['Network'] and network['Internal'] is True, 'network is not bound and internal')
+        networks.append({'group': g['Group'], 'id': network['Id'], 'internal': True})
+        # This is the maintained bytes->text boundary, exercised by full main.
+        volume = json.loads(runner.docker('volume', 'inspect', b['budget_volume']))[0]
+        need(volume['Name'] == b['budget_volume']
+             and volume['Labels'].get('lifecycle307.remaining') == c['Execution'], 'budget execution owner differs')
+        users = runner.docker_text('ps', '-aq', '--no-trunc', '--filter', 'volume='+b['budget_volume']).split()
+        need(len(users) == len(set(users)) and set(users) == set(g['Helpers'].values()),
+             'budget complete mount membership differs')
+        snapshot = budget_output/g['Group']
+        need(not any(snapshot.resolve().is_relative_to((folder/stage).resolve())
+                     for stage in [*g['Helpers'], *('case-'+s for s in g['CaseHelpers']),
+                                   *('root-'+a for a in b['root_owners'])]), 'budget snapshot overlaps an owner config')
+        snapshot.mkdir(parents=True)
+        runner.docker('cp', g['Helpers']['wire']+':/run/budget/.', str(snapshot))
+        need(not any(snapshot.rglob('*')), 'persistent budget is not empty')
+        budgets.append({'group': g['Group'], 'volume': b['budget_volume'],
+            'owner_execution': c['Execution'], 'mounted_cids': sorted(users), 'empty': True})
+    need(len(cases) == 7 and len(recoveries) == 7 and permission_count == 32
+         and len(networks) == len(budgets) == 3, 'complete host membership differs')
+    return {'status': 'PASS_COMPLETE_SEALED_HOST_GATE', 'at': now().isoformat(),
+        'execution': c['Execution'], 'retained': retained, 'cases': cases, 'recoveries': recoveries,
+        'networks': networks, 'budgets': budgets, 'permissions_false': permission_count,
+        'container_starts': 0, 'provider_io': 0, 'native_delete': 0}
 
 def collect_group(packet, group, private, public, reader, checker):
     """Always close the two exact sources and the newly allocated helper.
@@ -181,14 +281,14 @@ def collect_group(packet, group, private, public, reader, checker):
         need(before == load(frozen / 'core-readonly.json'), 'source Core checkpoint differs')
         save(public / 'core-before.json', before)
         output = public / 'readonly'; output.mkdir()
-        helper = runner.docker('create', '--pull', 'never', '--name', 'dpp307-readonly-' + uuid.uuid4().hex,
+        helper = runner.docker_text('create', '--pull', 'never', '--name', 'dpp307-readonly-' + uuid.uuid4().hex,
             '--label', 'lifecycle307.technical=readonly-preflight', '--network', 'container:' + group['Native'],
             '--read-only', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
             '--tmpfs', '/tmp', '--tmpfs', '/var/lib/postgresql/data:size=1m',
             '--mount', f'type=bind,source={private},target=/run/private,readonly',
             '--mount', f'type=bind,source={reader},target=/run/reader,readonly',
             '--mount', f'type=bind,source={output},target=/run/output',
-            '--entrypoint', '/run/reader', runner.PG, '-mode', 'remaining-verify-native').decode().strip()
+            '--entrypoint', '/run/reader', runner.PG, '-mode', 'remaining-verify-native').strip()
         owned.append(helper); save(private / 'helper.json', {'id': helper})
         item = runner.inspect(helper); h = item['HostConfig']; mounts = {m['Destination']: m for m in item['Mounts']}
         need(item['Image'] == runner.PG and closed(item) and h['ReadonlyRootfs'] and not h['Privileged']
@@ -263,17 +363,24 @@ def main():
     need(not args.private.exists() and not args.output.exists(), 'preflight run already allocated')
     # The same precondition is used before preparation; no bypass by calling
     # only a narrower collecting segment from the freeze composition.
-    sealed = sealed_gate(args.packet, args.reader.parent)
+    args.private.mkdir(parents=True)
     args.output.mkdir(parents=True)
-    save(args.output/'sealed-preconditions.json', sealed)
-    save(args.output/'cross-field-windows.json', windows)
-    results = []
-    for group in c['Groups']:
-        results.append(collect_group(args.packet, group, args.private / group['Group'],
-                                    args.output / group['Group'], args.reader, args.checker))
-    save(args.output / 'complete.json', {'status': 'PASS_COMPLETE_FRESH_NATIVE_PREFLIGHT',
-         'candidate_sha256': args.candidate_sha256, 'execution': c['Execution'],
-         'at': now().isoformat(), 'groups': results, 'versions': 18, 'native_delete': 0,
-         'technical_requests': sum(r['technical_requests'] for r in results), 'send_authority': 'NONE'})
+    try:
+        sealed = sealed_gate(args.packet, args.reader.parent, args.private/'budget-readback')
+        save(args.output/'sealed-preconditions.json', sealed)
+        save(args.output/'cross-field-windows.json', windows)
+        results = []
+        for group in c['Groups']:
+            results.append(collect_group(args.packet, group, args.private / group['Group'],
+                                        args.output / group['Group'], args.reader, args.checker))
+        save(args.output / 'complete.json', {'status': 'PASS_COMPLETE_FRESH_NATIVE_PREFLIGHT',
+             'candidate_sha256': args.candidate_sha256, 'execution': c['Execution'],
+             'at': now().isoformat(), 'groups': results, 'versions': 18, 'native_delete': 0,
+             'host_gate': sealed, 'host_gate_file_sha256': sha(args.output/'sealed-preconditions.json'),
+             'technical_requests': sum(r['technical_requests'] for r in results), 'send_authority': 'NONE'})
+    except Exception as error:
+        save(args.output/'failure.json', {'at': now().isoformat(), 'error_type': type(error).__name__,
+             'error': str(error), 'native_delete': 0, 'send_authority': 'NONE'})
+        raise
 
 if __name__ == '__main__': main()

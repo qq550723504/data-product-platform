@@ -21,6 +21,22 @@ def require(value,message):
 
 def instant(value):return dt.datetime.fromisoformat(value.replace('Z','+00:00'))
 
+def private_files(folder, allowed, required):
+    """Directory mounts expose every member, not just the named config file."""
+    require(not folder.is_symlink() and folder.is_dir(),'private owner folder is not regular')
+    members=list(folder.iterdir())
+    require({p.name for p in members}.issubset(allowed)
+            and required.issubset({p.name for p in members})
+            and all(p.is_file() and not p.is_symlink() for p in members),
+            'unexpected private file, missing member, directory or symlink')
+
+def helper_private_contract(folder,stage):
+    required={'operator.json','candidate.json','permission.json','confirmation-template.txt'}
+    allowed=required|{'human-confirmation.txt','topology-'+stage+'.json'}
+    if stage.startswith('recover-'):required=required|{'recovery.json'};allowed=allowed|{'recovery.json'}
+    if stage=='recover-M1B':allowed=allowed|{'M1-mixed-checkpoint.json'}
+    private_files(folder,allowed,required)
+
 def authority(candidate,permission,human,template,now,recovery):
     require(human==template and bool(template),'new exact human confirmation absent/different')
     require(permission['Execution']==candidate['Execution']==f.EXECUTION and permission['Profile']==candidate['Profile']==f.PROFILE,'foreign authorization')
@@ -56,10 +72,7 @@ def main():
     require(permission['CandidateSHA256']==r.sha(f.PUBLIC/'candidate.json') and permission['ConfirmationSHA256']==r.sha(f.PUBLIC/'confirmation-template.txt') and permission['BinarySHA256']==candidate['SenderBinarySHA256'],'confirmation candidate/binary hash differs')
     require((folder/'candidate.json').read_bytes()==(f.PUBLIC/'candidate.json').read_bytes() and r.sha(folder/'operator.json')==group['ConfigSHA256'][args.stage] and r.sha(f.PRIVATE/'operator')==candidate['SenderBinarySHA256'],'frozen helper files drifted')
     config=r.load(folder/'operator.json');require(not any(k in config for k in ('RootAccess','RootSecret')),'root credentials in helper config')
-    allowed={'operator.json','candidate.json','permission.json','confirmation-template.txt','human-confirmation.txt','topology-'+args.stage+'.json'}
-    if args.stage.startswith('recover-'):allowed.add('recovery.json')
-    if args.stage=='recover-M1B':allowed.add('M1-mixed-checkpoint.json')
-    require(all(p.is_file() and not p.is_symlink() and p.name in allowed for p in folder.iterdir()),'unexpected helper private file/root key')
+    helper_private_contract(folder,args.stage)
     if args.stage.startswith('recover-'):require(not config['DeleteSecret'] and not config['WirePrivateKey'],'recovery has send credentials')
     helper=r.inspect(group['Helpers'][args.stage]);helper_contract(helper,group,args.stage,folder,f.PRIVATE/'operator','dpp-lifecycle307-'+next(x['Run'][:8] for x in r.load(f.ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json') if x['Group']==args.group)+'-'+f.GENERATION+'-budget')
     images={'Core':r.PG,'Native':r.MI,'Gateway':r.GW}
