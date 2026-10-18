@@ -16,8 +16,8 @@ from urllib.parse import urlsplit, urlunsplit
 
 spec=importlib.util.spec_from_file_location('r1_freezer',Path(__file__).with_name('freeze-remaining-executable.py'))
 f=importlib.util.module_from_spec(spec);spec.loader.exec_module(f);r=f.r
-PRIVATE=r.PRIVATE/'remaining-renew-r1-01'
-PUBLIC=f.ROOT/'docs/acceptance/evidence/issue307-d1/remaining-renew-r1-01'
+PRIVATE=r.PRIVATE/'remaining-renew-r1-02'
+PUBLIC=f.ROOT/'docs/acceptance/evidence/issue307-d1/remaining-renew-r1-02'
 
 def main():
     r.require(not r.call(['git','status','--porcelain']).strip(),'Commit source before native rehearsal')
@@ -32,11 +32,12 @@ def main():
     env=os.environ.copy();env.update(GOOS='linux',GOARCH='amd64',CGO_ENABLED='0')
     build=subprocess.run(['go','build','-trimpath','-buildvcs=false','-o',str(PRIVATE/'reader'),'./cmd/lifecycle-fixture-reader'],cwd=f.ROOT/'apps/platform',env=env,capture_output=True)
     r.require(build.returncode==0,'R1 reader build failed')
-    prefix='dpp307-renew-r1-01';network=prefix+'-private'
-    r.docker('network','create','--internal','--label','lifecycle307.technical=renew-r1',network)
-    r.docker('volume','create','--label','lifecycle307.technical=renew-r1',prefix+'-core')
+    prefix='dpp307-renew-r1-02';network=prefix+'-private'
     (PRIVATE/'password').write_text(secrets.token_hex(32),encoding='utf-8')
     try:
+        subnet=r.check_subnet('10.234.176.0/24')
+        r.docker('network','create','--internal','--subnet',subnet,'--label','lifecycle307.technical=renew-r1',network)
+        r.docker('volume','create','--label','lifecycle307.technical=renew-r1',prefix+'-core')
         pg=r.docker('create','--pull','never','--name',prefix+'-pg','--label','lifecycle307.technical=renew-r1','--network',network,'--network-alias','dpp-lifecycle307-808a6960-candidate07-checkpoint','--mount','type=volume,source='+prefix+'-core,target=/var/lib/postgresql/data','--mount',f'type=bind,source={backup},target=/run/backup,readonly','--mount',f'type=bind,source={PRIVATE}/password,target=/run/password,readonly','-e','POSTGRES_USER=checkpoint_admin','-e','POSTGRES_DB=postgres','-e','POSTGRES_PASSWORD_FILE=/run/password',r.PG).decode().strip();owned.append(pg);r.docker('start',pg)
         for _ in range(100):
             if b'PostgreSQL init process complete; ready for start up.' in f.docker_logs(pg):break

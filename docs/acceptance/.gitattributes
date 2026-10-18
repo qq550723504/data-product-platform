@@ -6,6 +6,7 @@ evidence/issue307-d1/delete-confirmed-v20-window01/** -text whitespace=cr-at-eol
 issue307-d1-v20-execution01.md text eol=lf
 issue307-d1-v20-window01-result.md text eol=lf
 evidence/issue307-d1/remaining-renew-r1-01/** -text whitespace=cr-at-eol
+evidence/issue307-d1/remaining-renew-r1-02/** -text whitespace=cr-at-eol
 evidence/issue307-d1/remaining-r1-review01/** -text whitespace=cr-at-eol
 evidence/issue307-d1/remaining-candidate11/** -text whitespace=cr-at-eol
 evidence/issue307-d1/remaining-preflight-native04/** -text whitespace=cr-at-eol
