@@ -346,7 +346,7 @@ def process_handle(pid, terminate=False, allow_missing=False):
     kernel = ctypes.WinDLL("kernel32", use_last_error=True)
     kernel.OpenProcess.restype = w.HANDLE
     kernel.OpenProcess.argtypes = [w.DWORD, w.BOOL, w.DWORD]
-    handle = kernel.OpenProcess(0x1000 | (1 if terminate else 0), False, pid)
+    handle = kernel.OpenProcess(0x1000 | (1 if terminate else 0) | (0x100000 if allow_missing else 0), False, pid)
     if not handle and allow_missing and ctypes.get_last_error() == 87: return kernel, None
     need(handle, f"Recorded process {pid} unavailable; identity UNKNOWN")
     kernel.CloseHandle.argtypes = [w.HANDLE]
@@ -358,6 +358,15 @@ def process_identity(pid, terminate=False, expected=None, allow_missing=False):
     k, h = process_handle(pid, terminate, allow_missing)
     if not h: return None
     try:
+        if allow_missing:
+            # An exited process object may remain open while another observer
+            # holds a handle. Its image name is then unavailable; the native
+            # signaled state proves exit without trusting a reused live PID.
+            k.WaitForSingleObject.argtypes = [w.HANDLE, w.DWORD]
+            k.WaitForSingleObject.restype = w.DWORD
+            state = k.WaitForSingleObject(h, 0)
+            need(state in (0, 258), "Cannot verify process exit")
+            if state == 0: return None
         k.GetProcessTimes.argtypes = [w.HANDLE, ctypes.POINTER(w.FILETIME), ctypes.POINTER(w.FILETIME), ctypes.POINTER(w.FILETIME), ctypes.POINTER(w.FILETIME)]
         times = [w.FILETIME() for _ in range(4)]
         need(k.GetProcessTimes(h, *[ctypes.byref(t) for t in times]), "Cannot verify process creation time")
