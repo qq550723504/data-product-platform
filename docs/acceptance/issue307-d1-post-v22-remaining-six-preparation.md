@@ -58,3 +58,5 @@
 ## 最新准备检查点
 
 P1门禁已由新audit d64ad338-00d2-4569-bd62-9e132ddaf578 在2026-10-19T10:58:17Z实际闭合：absence b2d74d75-ed07-4b0a-b530-6c5d308cf1b8、completion16562b28-3896-49c0-933e-a6e73059bddc；24项新的instrumented读取及Cost、原旧行保留和完整封存另见P1验收矩阵。本轮未新DELETE。其余门禁保持，尤其旧P2/T1/T2占用未做新Core逐项查询或可信NOT_SENT闭合，17版本全量bytes/SHA/IAM三源刷新尚未做；没有新删除候选、execution、窗口或授权。
+
+后续检查点：新的只读 audit `23587686-0a95-4eaa-a010-a8c896c9735b` 已逐项核实 P2/T1/T2 各有一个未释放旧 dispatch、无 claim/observation/release/absence，三项旧批准尚未撤销。全 Core 指纹和旧控制/预算/备份保持一致，Core 已重新停止。此结果尚不是可信 NOT_SENT；后续新鲜宿主/IAM proof、Command 闭合、17 版本全量刷新及新候选均仍 NOT_RUN/NOT_FROZEN，详见旧 dispatch 闭合验收矩阵。旧检查点原文保留为当时状态。

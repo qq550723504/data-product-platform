@@ -136,3 +136,6 @@ docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/source-independent/p
 docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly03/** -text whitespace=cr-at-eol
 
 docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-dispatch-audit/** -text whitespace=cr-at-eol

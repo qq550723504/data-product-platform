@@ -1,0 +1,12 @@
+{
+  "audit_id": "23587686-0a95-4eaa-a010-a8c896c9735b",
+  "exit": 0,
+  "review_sha256": "a84cb16d31f96d2c62d0ef6bea79d2a9d4e5439d2135d1ba8be679c9deeff5fb",
+  "checked_files": {
+    "examples/lifecycle-d1/audit-old-business-dispatches.py": "7b852560253f911146351dee2180d1c395e706983cdb5471361bfa6779b572af",
+    "examples/lifecycle-d1/test_old_business_dispatch_audit.py": "9f92628c7995c22e7475cb22822c93614264cd5fb43f0734dae396fdfe877420",
+    "docs/acceptance/issue307-d1-post-v22-dispatch-closure.md": "851d20b08d1868406f66ec250d1b0907c5060d01054b31d71486fd0801360c80",
+    "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/independent/source-final-review01.json": "a84cb16d31f96d2c62d0ef6bea79d2a9d4e5439d2135d1ba8be679c9deeff5fb"
+  },
+  "native_delete": 0
+}

@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-19T11:34:53.903110+00:00",
+  "initial_engine": "UNAVAILABLE npipe dockerDesktopLinuxEngine missing at 2026-10-19T11:20:48Z",
+  "human_report": "已恢复",
+  "restored_engine_version": "29.8.2",
+  "actual_retained_precheck": {
+    "owners_stopped_PID0_noports_norestart": 77,
+    "old_controls_exact_original_anchor": 46,
+    "new_readonly_profiles_disabled": 8,
+    "backups_exact_SHA": 9,
+    "old_budget_groups_exact_original_anchor": 3
+  },
+  "Core_started": false,
+  "Native_started": false,
+  "IAM_fresh": "NOT_RUN",
+  "real_delete": 0
+}

@@ -1,0 +1,16 @@
+test_actual_retained_budget_missing_or_modified_rejects_frozen_anchor (test_old_business_dispatch_audit.OldDispatchAuditTests.test_actual_retained_budget_missing_or_modified_rejects_frozen_anchor) ... ok
+test_core_mutation_cannot_be_reported_as_pass (test_old_business_dispatch_audit.OldDispatchAuditTests.test_core_mutation_cannot_be_reported_as_pass) ... ok
+test_core_no_conflict_is_never_NOT_SENT_authority (test_old_business_dispatch_audit.OldDispatchAuditTests.test_core_no_conflict_is_never_NOT_SENT_authority) ... ok
+test_each_actual_conflict_is_retained (test_old_business_dispatch_audit.OldDispatchAuditTests.test_each_actual_conflict_is_retained) ... ok
+test_extra_attempt_dispatch_or_foreign_binding_fails_closed (test_old_business_dispatch_audit.OldDispatchAuditTests.test_extra_attempt_dispatch_or_foreign_binding_fails_closed) ... ok
+test_failed_stop_and_unreadable_readback_are_unconfirmed (test_old_business_dispatch_audit.OldDispatchAuditTests.test_failed_stop_and_unreadable_readback_are_unconfirmed) ... ok
+test_preservation_gate_failure_prevents_all_core_start (test_old_business_dispatch_audit.OldDispatchAuditTests.test_preservation_gate_failure_prevents_all_core_start) ... ok
+test_query_failure_still_stops_core_and_keeps_original_error (test_old_business_dispatch_audit.OldDispatchAuditTests.test_query_failure_still_stops_core_and_keeps_original_error) ... ok
+test_real_shared_sql_helper_wraps_in_repeatable_read_read_only (test_old_business_dispatch_audit.OldDispatchAuditTests.test_real_shared_sql_helper_wraps_in_repeatable_read_read_only) ... ok
+test_success_composition_starts_only_core_and_stops_it (test_old_business_dispatch_audit.OldDispatchAuditTests.test_success_composition_starts_only_core_and_stops_it) ... ok
+test_three_exact_historical_identities_exclude_P1 (test_old_business_dispatch_audit.OldDispatchAuditTests.test_three_exact_historical_identities_exclude_P1) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.121s
+
+OK
