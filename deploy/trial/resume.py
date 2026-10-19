@@ -49,6 +49,14 @@ def verify_origin(s):
     for key in ("binaries", "privateHashes"):
         r.need(all(s[key].get(name) == value for name, value in original[key].items()), "Original private artifact binding drift")
     r.need(set(original["secretReferences"]).issubset(s["secretReferences"]), "Original secret references must be retained")
+    if original.get("workspaceObjectProfile"):
+        r.need(bool(s.get("workspaceObjectProfile")), "Protected object profile binding removed")
+        old, current = r.read(original["workspaceObjectProfile"]), r.read(s["workspaceObjectProfile"])
+        for key in ("Endpoint", "Secure"):
+            r.need(old.get(key) == current.get(key), "Protected storage endpoint drift")
+        old_scope, current_scope = copy.deepcopy(old["Scope"]), copy.deepcopy(current["Scope"])
+        old_scope.pop("ExpiresAt", None); current_scope.pop("ExpiresAt", None)
+        r.need(old_scope == current_scope, "Protected object scope/identity drift")
 
 
 def verify_binding(s):
@@ -120,11 +128,27 @@ def refresh_identity(s, directory, receipts):
     write_once(profile_path, profile)
     for path in (output, profile_path): s["privateHashes"][str(path)] = r.digest(path.read_bytes())
     s["activeProfile"] = str(profile_path)
+    refresh_workspace_profile(s, directory, output, result["expiresAt"])
     s["resume"]["credentialExpiresAt"] = result["expiresAt"]; r.save(s)
     probe = json.loads(r.command([binary, "verify-core"], env=dict(r.environment(), DPP_TRIAL_CONFIG=str(Path(s["private"]) / "config.json"),
                                  DPP_TRIAL_RENEW_OUTPUT=str(output), DPP_TRIAL_VERIFY_RECEIPT=str(receipts / "before-facts.json"))))
     write_once(receipts / "scoped-object-probe.json", probe)
     return result
+
+
+def refresh_workspace_profile(s, directory, credential, expires_at):
+    # Only already-bound protected runtimes renew this profile. Real retained
+    # pre-330 business artifacts keep their old explicit binding until upgrade.
+    if not s.get("workspaceObjectProfile"): return
+    old = r.read(s["workspaceObjectProfile"])
+    r.need(old["Scope"]["WorkspaceID"] == s["workspaceId"] and old["Scope"]["ActorID"] == s["actorId"], "Workspace object identity drift")
+    updated = copy.deepcopy(old)
+    updated["CredentialFile"] = str(credential)
+    updated["Scope"]["ExpiresAt"] = expires_at
+    path = directory / "workspace-object-profile.json"
+    write_once(path, updated)
+    s["privateHashes"][str(path)] = r.digest(path.read_bytes())
+    s["workspaceObjectProfile"] = str(path)
 
 
 def launch_hosts(s):

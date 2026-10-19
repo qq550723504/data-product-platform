@@ -459,10 +459,16 @@ def core_environment(s):
     p, cfg = Path(s["private"]), read(Path(s["private"]) / "config.json")
     env = dict(environment(), APP_ENV="synthetic-trial", APP_HTTP_ADDR=f"127.0.0.1:{s['ports']['api']}", POSTGRES_DSN=cfg["DSN"],
                 REDIS_ADDR=f"127.0.0.1:{s['ports']['redis']}", REDIS_DB="0", OBJECT_STORAGE_ENDPOINT=cfg["Profile"]["StorageEndpoint"],
-                OBJECT_STORAGE_ACCESS_KEY=cfg["RootKey"], OBJECT_STORAGE_SECRET_KEY=cfg["RootSecret"], OBJECT_STORAGE_BUCKET="raw", OBJECT_STORAGE_USE_SSL="false",
+                OBJECT_STORAGE_BUCKET="raw", OBJECT_STORAGE_USE_SSL="false",
                 INDUSTRY_PACK_ROOT=str(ROOT / "industry-packs"), INGESTION_PROFILE=s.get("activeProfile", str(p / "profile.json")),
                 OPENMETADATA_ENABLED="false", HOP_ENABLED="false", SPLINK_ENABLED="false", GX_ENABLED="false", LABEL_STUDIO_ENABLED="false",
                 DELIVERY_API_ENABLED="false", HUMAN_DECISION_API_ENABLED="false")
+    if s.get("workspaceObjectProfile"):
+        env["OBJECT_STORAGE_WORKSPACE_PROFILE"] = s["workspaceObjectProfile"]
+    else:
+        # The real retained pre-330 business artifact still owns this binding.
+        # New binaries require an explicit protected profile and cannot fall back.
+        env.update(OBJECT_STORAGE_ACCESS_KEY=cfg["RootKey"], OBJECT_STORAGE_SECRET_KEY=cfg["RootSecret"])
     if "businessBinding" in s:
         from upgrade import verify_business
         manifest = verify_business(s)
@@ -531,7 +537,8 @@ def start():
             command(["go", "build", "-trimpath", "-o", binary, "./cmd/" + role], cwd=ROOT / "apps/platform", timeout=600)
             s["binaries"][role] = {"path": str(binary), "sha256": digest(binary.read_bytes())}; save(s)
         command([p / "bin/trial-prepare.exe", "prepare"], env=dict(environment(), DPP_TRIAL_CONFIG=str(p / "config.json")))
-        s["privateHashes"] = {str(f): digest(f.read_bytes()) for f in [p / "config.json", p / "profile.json", p / "metadata.json", *[Path(n) for n in s["secretReferences"]]]}
+        s["workspaceObjectProfile"] = str(p / "workspace-object-profile.json")
+        s["privateHashes"] = {str(f): digest(f.read_bytes()) for f in [p / "config.json", p / "profile.json", p / "metadata.json", Path(s["workspaceObjectProfile"]), *[Path(n) for n in s["secretReferences"]]]}
         save(s)
         baseline = inspect_facts(s)
         need(baseline["counts"]["dataset_version"] == baseline["counts"]["ingestion_operation"] == 0, "First start must not create business versions/batches")
@@ -577,6 +584,8 @@ def status(s):
         result["workflowVersionId"] = m["business"]["workflowVersionId"]
     if s["phase"] == "RUNNING":
         expiry = s.get("resume", {}).get("credentialExpiresAt")
+        if not expiry and s.get("workspaceObjectProfile"):
+            expiry = read(s["workspaceObjectProfile"])["Scope"]["ExpiresAt"]
         if expiry:
             need(datetime.fromisoformat(expiry) > datetime.now(timezone.utc), "Core session expired; use explicit restart for same-scope renewal")
         need(http(s["api"] + "/health/ready") and http(s["web"] + "/batches"), "Runtime health UNKNOWN")
