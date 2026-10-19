@@ -31,6 +31,10 @@ Invariants:
 - Register only two output datasets and one frozen workflow through existing
   commands. A human decision uses the configured server principal for the same
   actor/workspace and appends reason/evidence; no direct SQL business writes.
+- The fixed workflow is an admission-time input outside the original runtime
+  source manifest. New admissions record its path, normalized hash and baseline
+  controller commit separately. Both dirty changes and committed changes from
+  that baseline are refused. Existing activated manifests/origin stay intact.
 - Processing freezes the original three RAW inputs plus the reviewed STANDARDIZED
   output. Execution creation uses the existing stable batch idempotency key.
   Audit/Evidence/Cost and failed attempts remain append-only.

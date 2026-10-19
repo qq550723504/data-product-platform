@@ -13,6 +13,39 @@ import upgrade as u
 
 
 class BusinessUpgradeContracts(unittest.TestCase):
+    def fixed_workflow_target(self, working, committed, previous):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d); workflow = root / u.WORKFLOW
+            workflow.parent.mkdir(parents=True); workflow.write_bytes(working)
+            sources = {"deploy/trial/runtime.py": "unchanged"}
+            s = {"phase": "RUNNING", "controllerBinding": {"head": "a" * 40, "sources": sources}}
+            def git(args, **kwargs):
+                if args == ["git", "rev-parse", "HEAD"]: return ("b" * 40).encode()
+                if args == ["git", "show", "b" * 40 + ":" + u.WORKFLOW]: return committed
+                if args == ["git", "show", "a" * 40 + ":" + u.WORKFLOW]: return previous
+                self.fail("unexpected external operation: " + repr(args))
+            with patch.object(r, "ROOT", root), patch.object(r, "verify"), patch.object(c, "verify_origin"), patch.object(c, "committed_sources", return_value=sources), patch.object(r, "sources", return_value=sources), patch.object(r, "command", side_effect=git), patch.object(u, "api") as api:
+                result = u.target(s)
+            api.assert_not_called()
+            return result
+
+    def test_unchanged_fixed_workflow_gets_independent_source_fingerprint(self):
+        definition = b"fixed-workflow\noriginal-inputs\n"
+        binding, actual = self.fixed_workflow_target(definition.replace(b"\n", b"\r\n"), definition, definition)
+        self.assertEqual(actual, definition.replace(b"\n", b"\r\n"))
+        self.assertEqual(binding["workflowSource"], {"path": u.WORKFLOW, "normalizedSha256": r.digest(definition), "baselineHead": "a" * 40})
+        self.assertEqual(binding["deltaPaths"], [])
+
+    def test_dirty_fixed_workflow_is_refused(self):
+        with self.assertRaisesRegex(r.Refused, "Workflow source drift"):
+            self.fixed_workflow_target(b"dirty", b"original", b"original")
+
+    def test_committed_out_of_scope_workflow_is_refused(self):
+        # Runtime sources are identical and the working file matches HEAD:
+        # neither fact authorizes changing this separately consumed input.
+        with self.assertRaisesRegex(r.Refused, "outside business upgrade scope"):
+            self.fixed_workflow_target(b"committed replacement", b"committed replacement", b"original")
+
     def facts(self):
         return {"workspaceId": "original", "objects": [{"sha256": "original-raw"}],
                 "facts": {"operations": [{"id": "original-batch"}], "receipts": [{"id": "original-receipt"}],

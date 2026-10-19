@@ -39,7 +39,14 @@ def target(s):
     definition = (r.ROOT / WORKFLOW).read_bytes()
     committed = r.command(["git", "show", head + ":" + WORKFLOW])
     r.need(definition.replace(b"\r\n", b"\n") == committed.replace(b"\r\n", b"\n"), "Workflow source drift")
-    return {"head": head, "sources": current, "deltaPaths": changed}, definition
+    # This admission-time input is outside the original runtime SOURCE_PATHS.
+    # Fingerprint it separately; expanding the old manifest would invalidate
+    # the retained origin. A committed change is still outside this fixed slice.
+    previous = r.command(["git", "show", old["head"] + ":" + WORKFLOW])
+    canonical = committed.replace(b"\r\n", b"\n")
+    r.need(canonical == previous.replace(b"\r\n", b"\n"), "Fixed workflow change is outside business upgrade scope")
+    workflow_source = {"path": WORKFLOW, "normalizedSha256": r.digest(canonical), "baselineHead": old["head"]}
+    return {"head": head, "sources": current, "deltaPaths": changed, "workflowSource": workflow_source}, definition
 
 
 def sql(s, query, source=False):

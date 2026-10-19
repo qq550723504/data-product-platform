@@ -71,6 +71,11 @@ manifest 明确新制品版本。升级 journal 位于 `.data/trial/upgrades/<at
 制品位于原 private 目录下 `upgrades/<attempt>`，所有开始/完成/失败回执保留。
 新人工决策 capability 仍绑定同一 Actor/workspace/subject，仅用于本机合成试用。
 
+固定工作流不属于原 runtime source manifest；新升级准入单独记录其路径、规范化
+SHA256 与旧 controller HEAD。工作文件必须与目标 commit 一致，目标定义还必须与旧
+controller commit 一致；把越界工作流修改提交到 Git 也不能获准接纳。此指纹只追加
+到新升级 binding/manifest，不改写已有真实升级制品、旧 manifest 或 origin。
+
 切换时受控停止同一 owner，复用原容器、卷、端口和同范围有限 Core STS 后启动新制品。
 完整旧 SQL 事实、来源每一行、原批次/receipt/RAW hash 必须保持。重复 upgrade 只读状态，
 不会再次创建工作流、输出或业务运行。普通 resume/restart 只恢复明确绑定的制品；未接纳
