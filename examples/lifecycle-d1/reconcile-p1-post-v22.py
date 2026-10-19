@@ -20,8 +20,8 @@ from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[2]
 PRIVATE=Path('C:/Users/Henry/.codex/fixture-private')
-CONTROL=PRIVATE/'post-v22-p1-readonly03'
-PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly03'
+CONTROL=PRIVATE/'post-v22-p1-readonly04'
+PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04'
 PACKET=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate12'
 OLD=PRIVATE/'remaining-candidate12'
 FAILED=ROOT/'docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/window01'
@@ -142,6 +142,31 @@ def owner_contract(x,kind,source,private,output,binary):
             c=load(p) if p.suffix=='.json' else {}
             need(not any(k in c for k in ('RootAccess','RootSecret','DeleteSecret','WirePrivateKey')),'root/send credential mounted to worker')
 
+def redis_contract(x,manifest,running):
+    h=x['HostConfig'];g=manifest['source'];mounts=x['Mounts'];networks=x['NetworkSettings']['Networks']
+    # Docker has not allocated an endpoint for a never-started container.
+    # The configured immutable network mode remains the exact network ID.
+    created=not running and x['State']['Status']=='created'
+    need(x['Image']==REDIS and x['Config']['User']=='999:1000' and x['Config']['Cmd']==['redis-server','--appendonly','yes']
+         and h['ReadonlyRootfs'] and not h['Privileged'] and h['CapDrop']==['ALL'] and 'no-new-privileges' in h['SecurityOpt']
+         and h['RestartPolicy']['Name']=='no' and not h.get('PortBindings') and not any(x['NetworkSettings']['Ports'].values())
+         and x['State']['Running'] is running and (running or x['State']['Pid']==0)
+         and h['NetworkMode']==g['Network'] and len(networks)==1
+         and all(n['NetworkID']==g['Network'] or (created and n['NetworkID']=='') for n in networks.values())
+         and len(mounts)==1 and mounts[0]['Destination']=='/data' and mounts[0]['Type']=='volume'
+         and mounts[0]['Name']==manifest['redis_volume'] and mounts[0]['RW'] is True,
+         'P1 Redis identity/isolation/state differs')
+
+def wait_redis(manifest):
+    # A running process alone does not prove the fixed queue can accept work.
+    for _ in range(30):
+        redis_contract(inspect(manifest['redis']),manifest,True)
+        p=subprocess.run(['docker','exec',manifest['redis'],'redis-cli','--raw','PING'],capture_output=True)
+        if p.returncode==0 and p.stdout==b'PONG\n':
+            write(PUBLIC/'redis-ready.json',{'at':now().isoformat(),'cid':manifest['redis'],'user':'999:1000','ping':'PONG','native_delete':0});return
+        time.sleep(.2)
+    raise ValueError('P1 Redis failed bounded PING readiness')
+
 def prepare():
     need(not call(['git','diff','--name-only']).strip() and not call(['git','diff','--cached','--name-only']).strip(),'commit reviewed P1 source before preparing binary bindings')
     tracked=set(call(['git','ls-files','apps/platform','examples/lifecycle-d1/reconcile-p1-post-v22.py']).decode().splitlines())
@@ -183,7 +208,8 @@ def prepare():
     redis=cfg['RedisAddr'].split(':')[0];volume=redis+'-data'
     docker('volume','create','--label','lifecycle307.readonly='+str(audit),volume)
     redis_cid=text('create','--pull','never','--name',redis,'--label','lifecycle307.readonly='+str(audit),'--network',g['Network'],
-        '--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp','--mount','type=volume,source='+volume+',target=/data',REDIS,'redis-server','--appendonly','yes')
+        '--user','999:1000','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--tmpfs','/tmp','--mount','type=volume,source='+volume+',target=/data',REDIS,'redis-server','--appendonly','yes')
+    redis_contract(inspect(redis_cid),{'source':g,'redis_volume':volume},False)
     owners={}
     for kind in ('enable-p1-readonly','disable-all','worker'):
         private=worker if kind=='worker' else root;binary=CONTROL/('worker' if kind=='worker' else 'bootstrap')
@@ -225,7 +251,7 @@ def fresh(manifest,allow_enabled=False):
     for kind,x in manifest['owners'].items():
         owner_contract(inspect(x['cid']),kind,g['Native'],Path(x['private']),Path(x['output']),Path(x['binary']))
         need(sha(Path(x['binary']))==x['binary_sha256'],'P1 binary changed')
-    need(closed(inspect(manifest['redis'])),'new Redis not closed')
+    redis_contract(inspect(manifest['redis']),manifest,False)
     g=manifest['source']
     for field,image in [('Core',PG),('Native',MI)]:
         x=inspect(g[field]);need(x['Image']==image and {n['NetworkID'] for n in x['NetworkSettings']['Networks'].values()}=={g['Network']},'source image/network drift')
@@ -234,6 +260,7 @@ def fresh(manifest,allow_enabled=False):
 
 def active_topology(manifest,kind):
     g=manifest['source']
+    redis_contract(inspect(manifest['redis']),manifest,True)
     need(now()<dt.datetime.fromisoformat(manifest['ExpiresAt']),'new read-only audit expired')
     for n,h in manifest['source_files'].items():need(sha(ROOT/n)==h,'P1 source changed during audit')
     for field,image in [('Core',PG),('Native',MI)]:
@@ -338,6 +365,7 @@ def run(review_path,review_sha):
         write(CONTROL/'terminal.json',terminal);write(PUBLIC/'terminal.json',terminal);print(json.dumps(terminal));return
     failure=None;result=None;before=None
     try:
+        docker('start',manifest['redis']);wait_redis(manifest)
         for relative in ('worker-private/recovery.json','root-private/p1-readonly-permission.json'):
             p=CONTROL/relative;raw=p.read_bytes()
             with (CONTROL/(p.stem+'-disabled-original.json')).open('xb') as f:f.write(raw)
@@ -346,7 +374,6 @@ def run(review_path,review_sha):
         native=native_module();native.wait_pg(manifest['source']['Core'],'fixture');time.sleep(2)
         before=native.fingerprints(manifest['source']['Core']);write(PUBLIC/'Core-before.json',before)
         anchors=append_anchors(native,manifest['source']['Core'])
-        docker('start',manifest['redis'])
         execute_owner(manifest,'enable-p1-readonly')
         enabled=load(Path(manifest['owners']['enable-p1-readonly']['output'])/'result.json')
         need(enabled['changed']=={'inspect808a69606c36':'enabled'} and len(enabled['before'])==4 and all(v=='disabled' for v in enabled['before'].values()),'bootstrap enabled another identity')
@@ -366,6 +393,12 @@ def run(review_path,review_sha):
         write(PUBLIC/'failure.json',{'at':now().isoformat(),'failure':failure,'native_delete':0})
     finally:
         closure=seal(manifest);write(PUBLIC/'seal.json',closure)
+        try:
+            logs=owner_logs(manifest['redis'],'redis')
+            state=inspect(manifest['redis'])['State']
+            write(PUBLIC/'redis-owner.json',{'cid':manifest['redis'],'exit':state['ExitCode'],'closed':state['Pid']==0 and not state['Running'],'logs':logs})
+        except Exception:
+            failure=failure or 'Redis original log/state readback unconfirmed'
         retained=False
         try:retained=old_closed()==manifest['old_closed'] and backups()==manifest['backup_sha256'] and budgets()==manifest['budgets']
         except Exception as e:

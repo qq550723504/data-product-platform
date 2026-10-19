@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/url"
@@ -275,12 +276,15 @@ func runP1PostV22Routed(ctx context.Context, path string, router *outbox.Router)
 	if err = dispatcher.DispatchOnce(ctx); err != nil {
 		return err
 	}
-	var state string
-	if err = pool.QueryRow(ctx, `SELECT status FROM outbox_event WHERE id=$1`, event).Scan(&state); err != nil {
+	var state, dispatchError string
+	if err = pool.QueryRow(ctx, `SELECT status,COALESCE(last_error,'') FROM outbox_event WHERE id=$1`, event).Scan(&state, &dispatchError); err != nil {
+		return err
+	}
+	if err = write("/run/output/outbox-dispatch.json", map[string]any{"event": event, "work": request.ID, "status": state, "last_error": dispatchError}); err != nil {
 		return err
 	}
 	if state != "PUBLISHED" {
-		return errors.New("selected P1 outbox obligation not published")
+		return fmt.Errorf("selected P1 outbox obligation not published (%s): %s", state, dispatchError)
 	}
 	done := make(chan error, 1)
 	mux := asynq.NewServeMux()

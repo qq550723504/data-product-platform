@@ -1,0 +1,39 @@
+{
+  "at": "2026-10-19T10:44:37.001315+00:00",
+  "result": "FAIL_CLOSED_BEFORE_START",
+  "reason": "Initial new contract incorrectly required allocated NetworkID in Docker created state",
+  "state": {
+    "Status": "created",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "0001-01-01T00:00:00Z",
+    "FinishedAt": "0001-01-01T00:00:00Z"
+  },
+  "configured_NetworkMode": "e2ca1f0bb16bc01eb72e3f8da436c18b722ab90864ebf0b1627f32ace4bce774",
+  "actual_NetworkSettings": {
+    "dpp307-postv22-regression-74cef6fd9fb2-net": {
+      "IPAMConfig": null,
+      "Links": null,
+      "Aliases": null,
+      "DriverOpts": null,
+      "GwPriority": 0,
+      "NetworkID": "",
+      "EndpointID": "",
+      "Gateway": "",
+      "IPAddress": "",
+      "MacAddress": "",
+      "IPPrefixLen": 0,
+      "IPv6Gateway": "",
+      "GlobalIPv6Address": "",
+      "GlobalIPv6PrefixLen": 0,
+      "DNSNames": null
+    }
+  },
+  "native_delete": 0
+}

@@ -1,0 +1,11 @@
+=== RUN   TestScopedRecoveryOutboxFailureRetainsOriginalHandlerError
+2026/10/19 18:45:23 WARN outbox event dispatch failed; scheduled for retry event_id=2a2f55f9-8d24-4d2c-adc6-522d4c4146ab event_type=SelectedRecovery attempts=1 consumer=selected-failure error="outbox handler selected failed: selected queue unavailable"
+--- PASS: TestScopedRecoveryOutboxFailureRetainsOriginalHandlerError (3.03s)
+=== RUN   TestScopedRecoveryOutboxClaimNeverTouchesAnotherObligation
+2026/10/19 18:45:25 INFO outbox event dispatched to all required handlers event_id=481ad0f6-e0f7-477a-a137-1f113c220776 event_type=ExactRecovery aggregate_type=TEST aggregate_id=481ad0f6-e0f7-477a-a137-1f113c220776 handlers=[selected] routing_version=exact-recovery-test-v1
+2026/10/19 18:45:25 INFO outbox event dispatched to all required handlers event_id=1f1dd83b-a3b1-475d-ba64-ec6b9cf5c98e event_type=ExactRecovery aggregate_type=TEST aggregate_id=1f1dd83b-a3b1-475d-ba64-ec6b9cf5c98e handlers=[selected] routing_version=exact-recovery-test-v1
+--- PASS: TestScopedRecoveryOutboxClaimNeverTouchesAnotherObligation (2.34s)
+=== RUN   TestP1JournalRoutingBeforeSDKPrecheckAndOriginalFailure
+--- PASS: TestP1JournalRoutingBeforeSDKPrecheckAndOriginalFailure (2.78s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	9.726s

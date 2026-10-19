@@ -29,3 +29,17 @@
 audit02固定root helper实际26次admin请求（21 GET、5身份状态PUT，HTTP200），DELETE=0；SDK请求量NOT_ASSESSED，amount=NOT_ASSESSED。最初只读投影错读status字段的报告保留，后续02报告读取真实http_status，不改原始start/observation。
 
 B5/B6源终复评04：`c0b13b02488144eec937bcf54695032ce7606008b784dc05a13a68cd96cc51fb`。旧86 inspector覆盖原cause反例失败、当前源通过；首次overlay路径无效尝试单列INVALID，不冒充旧源测试证据。
+
+## audit03实际追加事实
+
+新audit03为bb448568-0444-48ee-a2e4-a9f69344b6d0，source a1858de91860cc794626aee4402d0935a8c46cf5，manifest 2dc299ec1d9fbe4831fa7fae3c886f160565d49bea35c9fc0d4abf89ba72eafa；实际manifest独立复评PASS（报告b62e761e）。以上audit03未prepare的表格/文字保留为此前快照。
+
+实际原生前检PASS：7份精确版本HEAD/保护、两个namespace完整LIST、P1 exact缺失；未重新读全bytes/SHA。随后选定Outbox未发布，原stderr为selected P1 outbox obligation not published；Asynq recovery/absence/plan completion均未完成。实际停止Redis原stderr为setpriv: setresuid failed: Operation not permitted，exit127；固定image内redis账户与/data新卷归属均为999:1000，默认root入口在cap-drop ALL下不能setuid。
+
+立即封存后6/6 owner关闭、2profilefalse、四身份freshdisabled，旧预算/控制/9备份原字节一致；原03终态不重跑、不覆盖。本次有Core-before而无Core-after，不能声称该失败审计证明了全部Core旧行不变；相关新RequestRecovery/选定FAILED outbox事实保留在Core，未删除、重置或重发原DELETE。Core absence仍NOT_RUN，全D1 NOT_ACCEPTED。
+
+B7/B8修后采用固定999:1000用户、原官方Redis入口和owned持久卷，无新root bootstrap；PING健康先于source/Core/native/identity启动，每个关键阶段核Redis身份/挂载/实际网络和running状态。创建态的NetworkID尚为空仅在HostConfig绑定精确ID、单网络且Status=created时接受；运行态仍要求完整实际ID。错误网、额外挂载/端口/默认root、运行态空网络均拒绝。全宿主normal/-O各10及owned scratch PG三案例通过；独立网络中的同image/UID真实Redis PONG通过，容器/数据卷已停止保留。最初created网络检查的失败原证据保留。worker追加选定event的status/last_error回执，不能把DispatchOnce返回nil冒充PUBLISHED。
+
+新audit04尚未prepare，无新删除候选、execution、窗口或授权。
+
+B7/B8源独立复评05 PASS、有效阻断0，报告SHA `3cbbf2a2a297fbd94ae80a60b8de205aff29f50bfbf97914fd0f889c12850323`；这不代替audit04实际manifest复评。

@@ -1,0 +1,9 @@
+{
+  "observed_at": "2026-10-19T10:45:44.776657+00:00",
+  "go_command": "go test -count=1 ./cmd/lifecycle-fixture-recovery",
+  "go_exit_code": 0,
+  "go_output": "ok recovery 2.181s",
+  "host_normal": 10,
+  "host_optimized": 10,
+  "scope": "Go unit and host mocks; queue-regression separately uses actual isolated Redis; PG logs separately recorded"
+}

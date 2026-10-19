@@ -2,11 +2,48 @@ package application
 
 import (
 	"context"
+	"errors"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 )
+
+func TestScopedRecoveryOutboxFailureRetainsOriginalHandlerError(t *testing.T) {
+	pool := planDatabase(t)
+	ctx := context.Background()
+	router, err := outbox.NewRouter("selected-failure-v1", []outbox.Route{{EventType: "SelectedRecovery", RequiredHandlers: []string{"selected"}}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	selected, other := uuid.New(), uuid.New()
+	for _, id := range []uuid.UUID{selected, other} {
+		if _, err = pool.Exec(ctx, `INSERT INTO outbox_event(id,aggregate_type,aggregate_id,event_type,payload,status,available_at,created_at,routing_version,required_handlers) VALUES($1,'TEST',$1,'SelectedRecovery','{}','PENDING',now(),now(),'selected-failure-v1',ARRAY['selected'])`, id); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var before, after, state, cause string
+	if err = pool.QueryRow(ctx, `SELECT to_jsonb(e)::text FROM outbox_event e WHERE id=$1`, other).Scan(&before); err != nil {
+		t.Fatal(err)
+	}
+	d, err := outbox.NewDispatcher(pool, outbox.Config{ConsumerName: "selected-failure", OnlyEventID: selected}, router, outbox.HandlerRegistration{Name: "selected", Handle: func(context.Context, outbox.PublishedEvent) error { return errors.New("selected queue unavailable") }})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = d.DispatchOnce(ctx); err != nil {
+		t.Fatal(err)
+	}
+	if err = pool.QueryRow(ctx, `SELECT status,COALESCE(last_error,'') FROM outbox_event WHERE id=$1`, selected).Scan(&state, &cause); err != nil {
+		t.Fatal(err)
+	}
+	if err = pool.QueryRow(ctx, `SELECT to_jsonb(e)::text FROM outbox_event e WHERE id=$1`, other).Scan(&after); err != nil {
+		t.Fatal(err)
+	}
+	if state != "FAILED" || !strings.Contains(cause, "selected queue unavailable") || before != after {
+		t.Fatal("selected handler failure hidden or foreign row touched", state, cause)
+	}
+}
 
 func TestScopedRecoveryOutboxClaimNeverTouchesAnotherObligation(t *testing.T) {
 	pool := planDatabase(t)

@@ -12,6 +12,38 @@ spec=importlib.util.spec_from_file_location('p1_readonly',Path(__file__).with_na
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 
 class P1ReadOnlyHostTests(unittest.TestCase):
+    def test_redis_explicit_image_user_and_owned_persistent_volume(self):
+        v={'source':{'Network':'net'},'redis_volume':'owned-volume'}
+        x={'Image':m.REDIS,'Config':{'User':'999:1000','Cmd':['redis-server','--appendonly','yes']},
+           'State':{'Running':False,'Pid':0,'Status':'exited'},'HostConfig':{'NetworkMode':'net','ReadonlyRootfs':True,'Privileged':False,'CapDrop':['ALL'],'SecurityOpt':['no-new-privileges'],'RestartPolicy':{'Name':'no'},'PortBindings':{}},
+           'NetworkSettings':{'Networks':{'net':{'NetworkID':'net'}},'Ports':{}},'Mounts':[{'Destination':'/data','Type':'volume','Name':'owned-volume','RW':True}]}
+        m.redis_contract(x,v,False)
+        created=copy.deepcopy(x);created['State']['Status']='created';created['NetworkSettings']['Networks']['net']['NetworkID']=''
+        m.redis_contract(created,v,False)
+        bad=copy.deepcopy(created);bad['State']['Status']='exited'
+        with self.assertRaises(ValueError):m.redis_contract(bad,v,False)
+        bad=copy.deepcopy(created);bad['HostConfig']['NetworkMode']='foreign'
+        with self.assertRaises(ValueError):m.redis_contract(bad,v,False)
+        created['State'].update(Running=True,Pid=1,Status='running')
+        with self.assertRaises(ValueError):m.redis_contract(created,v,True)
+        created['NetworkSettings']['Networks']['net']['NetworkID']='net'
+        m.redis_contract(created,v,True)
+        for label,change in [('default-root',lambda y:y['Config'].update(User='')),('wrong-volume',lambda y:y['Mounts'][0].update(Name='other')),('extra-network',lambda y:y['NetworkSettings']['Networks'].update(other={'NetworkID':'other'})),('port',lambda y:y['HostConfig'].update(PortBindings={'6379/tcp':[{}]}))]:
+            with self.subTest(label=label):
+                bad=copy.deepcopy(x);change(bad)
+                with self.assertRaises(ValueError):m.redis_contract(bad,v,False)
+
+    def test_redis_ping_readiness_checks_actual_running_owner_first(self):
+        with tempfile.TemporaryDirectory() as d:
+            v={'redis':'fixed-redis'}
+            with patch.object(m,'PUBLIC',Path(d)),patch.object(m,'inspect',return_value={}),patch.object(m,'redis_contract'),patch.object(m.subprocess,'run',return_value=subprocess.CompletedProcess([],0,b'PONG\n',b'')) as ping:
+                m.wait_redis(v)
+                self.assertEqual(ping.call_args.args[0],['docker','exec','fixed-redis','redis-cli','--raw','PING'])
+                self.assertEqual(m.load(Path(d)/'redis-ready.json')['ping'],'PONG')
+            with patch.object(m,'inspect',return_value={}),patch.object(m,'redis_contract',side_effect=ValueError('exited queue')),patch.object(m.subprocess,'run') as ping:
+                with self.assertRaises(ValueError):m.wait_redis(v)
+                ping.assert_not_called()
+
     def test_manifest_paths_reject_traversal_absolute_and_alias_collisions(self):
         for inputs in ({'../root.json':'x'},{'/root.json':'x'},{'C:\\root.json':'x'},
                        {'a//b':'x'},{'a/./b':'x'},{'a\\b':'x','a/b':'x'}):
@@ -40,7 +72,7 @@ class P1ReadOnlyHostTests(unittest.TestCase):
             # and the independent immutable binary are modeled here.
             real_sha=m.sha
             def checked_sha(path):return 'binary-sha' if path==control/'binary' else real_sha(path)
-            with patch.object(m,'CONTROL',control),patch.object(m,'inspect',side_effect=inspect),patch.object(m,'owner_contract'),patch.object(m,'sha',side_effect=checked_sha),patch.object(m,'docker',return_value=json.dumps([{'Internal':True,'Containers':{'core':{},'native':{},'redis':{}}}]).encode()):
+            with patch.object(m,'CONTROL',control),patch.object(m,'inspect',side_effect=inspect),patch.object(m,'owner_contract'),patch.object(m,'redis_contract'),patch.object(m,'sha',side_effect=checked_sha),patch.object(m,'docker',return_value=json.dumps([{'Internal':True,'Containers':{'core':{},'native':{},'redis':{}}}]).encode()):
                 for name in originals:
                     p=control/name;v=m.load(p);v['Enabled']=True;p.write_text(json.dumps(v))
                 m.active_topology(manifest,'enable-p1-readonly')

@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-19T10:44:37.700650+00:00",
+  "cid": "c17cfa598576404c44641497b5c2d1156a8c43325b846597ab208a3b5b5b74dd",
+  "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+  "user": "999:1000",
+  "volume": "dpp307-p1-queue-test-94f1f865f9fd-data",
+  "network": "e2ca1f0bb16bc01eb72e3f8da436c18b722ab90864ebf0b1627f32ace4bce774",
+  "stopped": true,
+  "pid": 0,
+  "noports": true,
+  "native_delete": 0,
+  "retained_source_started": false
+}
