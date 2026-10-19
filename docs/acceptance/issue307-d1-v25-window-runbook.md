@@ -1,6 +1,8 @@
 # #307 D1 candidate15/v25 窗口手册
 
-当前为准备稿：disabled bootstrap已完成本地、同镜像原生及独立评审；本代原生备份恢复和候选冻结尚未完成，不是执行指令或删除授权。人类选择的拟窗口为2026-10-20新加坡14:00–14:40，即UTC06:00≤now<06:40；只读恢复最晚UTC08:40。唯一拟execution为`9f9c67d7-8a09-45a8-897f-9e3077b60980`。候选冻结、实际完整入口和独立结果评审通过后，必须另取得本代精确授权。没有新调度，不复用任何旧授权。#332保持Draft、不合并，#307保持OPEN；#323已按另一次授权合并，不回写历史。
+当前为FROZEN_NOT_AUTHORIZED：本代三组实际原生备份恢复及独立06均PASS，候选已冻结、离线校验和冻结后完整只读入口实际PASS；最终确认独立07及文档HEAD CI另存回执。本手册不是执行指令或删除授权。人类选择的拟窗口为2026-10-20新加坡14:00–14:40，即UTC06:00≤now<06:40；只读恢复最晚UTC08:40。唯一execution为`9f9c67d7-8a09-45a8-897f-9e3077b60980`。最终逐项核对后仍必须另取得本代精确授权。没有新调度，不复用任何旧授权。#332保持Draft、不合并，#307保持OPEN；#323已按另一次授权合并，不回写历史。
+
+权威[完整精确确认文本](issue307-d1-candidate15-confirmation.md)包含102行冻结机器模板，SHA256 `492a83604d1c32589d5dbb3aa97d4f40a618e5a6bf86e9c0123c80fc67f3609a`；candidate `0ec2f2e03829905af97c9f71eafb108f7b3bf0899e7e741a0334d44520a5dc99`，bindings `d8a7075be2e8614f1af4fbaa159b45dc53430d19f06ea2920070b03c4e917da0`。运行source固定f6acb072db9881e7b1cfd72003d4ef616955947b；packet Git anchor dcf6f4f50939090144d8299ab841b3b30d8eff34只供封存，后续文档HEAD CI不能替代source绑定，source CI也不能替代最终HEAD CI。原始失败/零输出宿主修复和全部回执见[矩阵](issue307-d1-v25-preparation.md)。不得重跑已完成的prepare/materialize/initializer/run-non-delete/freeze。
 
 ## 唯一范围与入口
 

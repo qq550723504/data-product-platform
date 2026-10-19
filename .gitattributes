@@ -186,3 +186,6 @@ docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-indepe
 docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/reader-buildinfo06.stdout.txt -text whitespace=cr-at-eol,-blank-at-eol
 docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/readonly-check.exe-buildinfo06.stderr.txt -text whitespace=cr-at-eol,-blank-at-eol
 docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-independent06/readonly-check.exe-buildinfo06.stdout.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/issue307-d1-candidate15-confirmation.md text eol=lf
+docs/acceptance/issue307-d1-v25-window-runbook.md text eol=lf
+docs/acceptance/issue307-d1-v25-preparation.md text eol=lf

@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-19T20:20:37.299710+00:00",
+  "anchor": {
+    "execution": "9f9c67d7-8a09-45a8-897f-9e3077b60980",
+    "profile": "candidate15/v25",
+    "candidate_sha256": "0ec2f2e03829905af97c9f71eafb108f7b3bf0899e7e741a0334d44520a5dc99",
+    "bindings_sha256": "d8a7075be2e8614f1af4fbaa159b45dc53430d19f06ea2920070b03c4e917da0",
+    "template_sha256": "492a83604d1c32589d5dbb3aa97d4f40a618e5a6bf86e9c0123c80fc67f3609a",
+    "packet_commit": "dcf6f4f50939090144d8299ab841b3b30d8eff34"
+  },
+  "private_host_anchor_sha256": "71a685d7974928aae98a1bd53f0fc3a5bbd89e540251605d90a8e6340f0b6883",
+  "purpose": "containment-only fixed approved packet CIDs; not authorization or scheduling",
+  "native_delete": 0,
+  "source_io": 0
+}
