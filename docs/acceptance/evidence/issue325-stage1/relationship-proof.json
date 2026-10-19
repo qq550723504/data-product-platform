@@ -1,0 +1,32 @@
+[
+  {
+    "dataset_id": "d6b8957f-6d6f-44a1-b2b7-8072f71ed98b",
+    "code": "dpp-source-reader-energy_raw",
+    "source_resource_id": "c4bbe66e-1e3a-4f7c-bdc5-34e987c85a4f",
+    "current_version_id": "7b8562ac-4835-4959-88c1-0dd3720b3497",
+    "version_id": "7b8562ac-4835-4959-88c1-0dd3720b3497",
+    "version_no": 1,
+    "status": "READY",
+    "checksum_value": "c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686"
+  },
+  {
+    "dataset_id": "bb773b2e-ecc3-458e-9fbf-179c3111c3bf",
+    "code": "dpp-source-reader-enterprise_raw",
+    "source_resource_id": "35328721-8378-4b70-977c-3f5bf5160771",
+    "current_version_id": "cf64388e-f71f-4d25-9011-bf3c7d4ab2bc",
+    "version_id": "cf64388e-f71f-4d25-9011-bf3c7d4ab2bc",
+    "version_no": 1,
+    "status": "READY",
+    "checksum_value": "4f6f887c4b4743a2268f9b74dae5eb41d154bddd601b138e489c3fd6f493249d"
+  },
+  {
+    "dataset_id": "30903c91-3d94-4c2d-bba3-6af54558aeea",
+    "code": "dpp-source-reader-lease_raw",
+    "source_resource_id": "85e9af40-180f-4222-992a-97416a315764",
+    "current_version_id": "048caaa1-de33-41b2-95d1-8578e9729c2d",
+    "version_id": "048caaa1-de33-41b2-95d1-8578e9729c2d",
+    "version_no": 1,
+    "status": "READY",
+    "checksum_value": "f73bc47190f8e0b8cd18ec99e2afd0265d980cd55a5a9cbc25d3b3ccf85a9d4a"
+  }
+]

@@ -21,7 +21,7 @@ Goal：Windows 宿主 + 本机 Docker Linux，单操作人、loopback、合成 P
 
 ## 写域与保护
 
-允许：`deploy/trial/**`、新增 `apps/platform/cmd/trial-prepare/**`、本 checkpoint、试用操作/验收文档；必要的 `/batches` 阶段展示及其定向检查。既有 fixture/SQL/模板/metadata、业务 Commands 与 D1 checker 只读复用。
+允许：`deploy/trial/**`、新增 `apps/platform/cmd/trial-prepare/**`、独立 `.github/workflows/trial-contracts.yml`、本 checkpoint、试用操作/验收文档；必要的 `/batches` 阶段展示及 RAW 版本只读详情与定向检查。实跑发现版本页把 batch enabled 与认证 Profile 凭据耦合，RAW-only 模式跳过认证配置及认证表单，不扩大 operator 凭据。既有 fixture/SQL/模板/metadata、业务 Commands 与 D1 checker 只读复用。
 
 禁止并发改动：Core/internal shared modules、migrations、routing、worker main、存储实现、#307/#294 文件或其运行环境。若这些成为必需写域，先报告具体冲突。仅为本 trial 新建随机 identity、private secrets、containers/network/volumes/ports、本 worktree 的 binaries / production Next build。`stop` 只停止已核验 identity 的确切服务，保留容器、卷、对象、staging、配置、secret refs 和证据；没有 reset/DELETE/prune/down 操作。
 
