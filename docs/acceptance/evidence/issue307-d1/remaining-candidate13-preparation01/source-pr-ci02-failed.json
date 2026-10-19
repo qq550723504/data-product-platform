@@ -1,0 +1,89 @@
+{
+  "observed_at": "2026-10-19T17:38:11.565939+00:00",
+  "head": "355717c022fe36052dcf8b3cc37ceeef901286f7",
+  "event": "pull_request",
+  "status": "completed",
+  "conclusion": "failure",
+  "jobs": [
+    {
+      "name": "classify-changes",
+      "conclusion": "success",
+      "status": "completed",
+      "databaseId": 118193742673
+    },
+    {
+      "name": "web-console",
+      "conclusion": "success",
+      "status": "completed",
+      "databaseId": 118193818268
+    },
+    {
+      "name": "hop-smoke",
+      "conclusion": "success",
+      "status": "completed",
+      "databaseId": 118193818306
+    },
+    {
+      "name": "temporary-container-contracts (windows-latest)",
+      "conclusion": "success",
+      "status": "completed",
+      "databaseId": 118193818326
+    },
+    {
+      "name": "gx-smoke",
+      "conclusion": "success",
+      "status": "completed",
+      "databaseId": 118193818472
+    },
+    {
+      "name": "label-studio-smoke",
+      "conclusion": "success",
+      "status": "completed",
+      "databaseId": 118193818509
+    },
+    {
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "conclusion": "success",
+      "status": "completed",
+      "databaseId": 118193818541
+    },
+    {
+      "name": "go-platform",
+      "conclusion": "success",
+      "status": "completed",
+      "databaseId": 118193818579
+    },
+    {
+      "name": "splink-smoke",
+      "conclusion": "success",
+      "status": "completed",
+      "databaseId": 118193818588
+    },
+    {
+      "name": "browser-contracts / web-browser-contracts",
+      "conclusion": "success",
+      "status": "completed",
+      "databaseId": 118193818913
+    },
+    {
+      "name": "live-core / live-core-browser",
+      "conclusion": "success",
+      "status": "completed",
+      "databaseId": 118193818984
+    },
+    {
+      "name": "demo / demo-lifecycle",
+      "conclusion": "failure",
+      "status": "completed",
+      "databaseId": 118193819314
+    },
+    {
+      "name": "required",
+      "conclusion": "failure",
+      "status": "completed",
+      "databaseId": 118198781502
+    }
+  ],
+  "raw_sha256": "ac37e6a9ecfa0c88281d1b57d94efe1069debb5262c6e2a75a224de5e9c13193",
+  "native_delete": 0
+}

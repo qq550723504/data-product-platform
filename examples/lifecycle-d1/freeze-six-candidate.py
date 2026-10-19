@@ -40,11 +40,12 @@ def source_freeze(a):
                                     'build_recipe':'go build -trimpath -buildvcs=false; linux/amd64 CGO_ENABLED=0; Windows file-only checker',
                                     'embedded_vcs_revision':'NOT_CLAIMED','actual_build_source':a['source'],
                                     'initial_allocation_build_source':a['initial_build_source'],'source_checkpoint_sha256':a['source_checkpoint_sha256'],
+                                    'previous_source_checkpoint_sha256':a['previous_source_checkpoint_sha256'],
                                     'identical_rebuild_receipt_sha256':a['rebuild_receipt_sha256'],'active_original_binary_bytes_preserved':True})
 
 
 def main():
-    a=r.state();r.preparation_gate(a)
+    a=r.state();r.budget_completion(a);r.preparation_gate(a)
     terminal=load(r.PUBLIC/'non-delete-terminal.json')
     need(terminal['status']=='PASS_NONDELETE_SOURCE_RESTORE_PREPARATION' and terminal['groups_completed']==3 and terminal['native_delete']==0,'actual source/restore preparation incomplete')
     need(sha(r.PUBLIC/'non-delete-evidence-index.json')==terminal['evidence_index_sha256'],'original preparation index drift')
@@ -122,7 +123,7 @@ def main():
                          'recovery_redis':allocation['recovery_redis'],'budget_volume':allocation['volumes']['budget'],'budget_initializer':allocation['budget_initializer'],'budget_initializer_script_sha256':allocation['budget_initializer_script_sha256'],
                          'root_owners':owners,'allocation_sha256':sha(r.PUBLIC/'allocation.json'),'owner_descriptors_sha256':a['owner_descriptors_sha256'],
                          'map_sha256':a['map_sha256'],'preparation_terminal_sha256':sha(r.PUBLIC/'non-delete-terminal.json'),'previous_policy_heads':heads})
-        bindings[-1].update(initial_build_source=a['initial_build_source'],source_checkpoint_sha256=a['source_checkpoint_sha256'],rebuild_receipt_sha256=a['rebuild_receipt_sha256'])
+        bindings[-1].update(initial_build_source=a['initial_build_source'],source_checkpoint_sha256=a['source_checkpoint_sha256'],rebuild_receipt_sha256=a['rebuild_receipt_sha256'],previous_source_checkpoint_sha256=a['previous_source_checkpoint_sha256'])
     save(PACKET/'profile-windows.json',windows);candidate['ProfileWindowsSHA256']=sha(PACKET/'profile-windows.json')
     save(PACKET/'candidate.json',candidate);save(PACKET/'bindings.json',bindings)
     confirmation(candidate,bindings,targets)
@@ -150,7 +151,7 @@ def confirmation(c,bindings,targets):
     lines=[f'CONFIRM_DELETE_EXACT_SIX；execution {p.EXECUTION}；{p.PROFILE}。',
            f'固定窗口 {start:%Y-%m-%d %H:%M}–{end:%H:%M} 新加坡时间；UTC {c["NotBefore"]}≤now<{c["NotAfter"]}；只读恢复截止 {p.W["RecoveryEnd"]}。',
            f'candidate SHA256 {sha(PACKET/"candidate.json")}；bindings {sha(PACKET/"bindings.json")}；source {c["Source"]}；source-freeze {c["SourceFreezeSHA256"]}。',
-           f'初始allocation构建源 {bindings[0]["initial_build_source"]}；追加source checkpoint {bindings[0]["source_checkpoint_sha256"]}；新source四份完全相同字节重编译证明 {bindings[0]["rebuild_receipt_sha256"]}；原allocation/旧binary/冷态失败原字节保留。',
+           f'初始allocation构建源 {bindings[0]["initial_build_source"]}；原source checkpoint01 {bindings[0]["previous_source_checkpoint_sha256"]}；追加source checkpoint02 {bindings[0]["source_checkpoint_sha256"]}；新source四份完全相同字节重编译证明 {bindings[0]["rebuild_receipt_sha256"]}；原allocation/旧binary/冷态和预算失败原字节保留。',
            f'Linux reader {c["ReaderBinarySHA256"]}；sender/wire/recovery {c["SenderBinarySHA256"]}；root owner {c["OwnerBinarySHA256"]}；Windows file-only checker {sha(r.CONTROL/"readonly-check.exe")}。',
            f'target digest {c["TargetDigest"]}；host public key {c["PublicKey"]}；wire public key {c["WirePublicKey"]}；profile-windows {c["ProfileWindowsSHA256"]}；CandidateUseUntil={c["NotAfter"]}。',
            '18历史copy、17现存版本、6目标、11保留版本严格分开。旧P1已确认缺失，绝不纳入目标或新预算。']

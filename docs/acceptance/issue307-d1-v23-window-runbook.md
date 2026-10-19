@@ -9,7 +9,7 @@
 本代只使用以下当前入口：
 
 - `prepare-six-candidate.py allocate`：一次性分配全新停止资源，禁止复用已有同名卷/网络。
-- `six_candidate_runtime.py materialize/initialize-budgets/check/run-non-delete`：分层非删除准备。原生准备一次性运行；原失败和所有资源保留。
+- `six_candidate_runtime.py bind-source/finish-budget-initialization/check/run-non-delete`：本次预算失败后的固定续接入口。原materialize和initialize-budgets已经运行，不再重跑；保留checkpoint01、原partial预算及失败，追加checkpoint02及另两组首次初始化。business已完成initializer只能只读核验，不能重启。原生准备一次性运行；原失败和所有资源保留。
 - `freeze-six-candidate.py`：仅在三组实际非删除终态PASS后冻结，无授权或启用功能。
 - `verify-six-native.py`：冻结后及未来窗口内使用的完整只读入口，精确传入candidate/bindings/checker SHA和新的证据输出目录。case/recovery跨字段语义先于permission及Docker I/O。
 - `window_six_support.py check/archive-root/revoke-case/h1-proof/seal`：本代固定宿主维护入口。复用原review06的归档及逐步封存原语，当前范围收窄为六份、十四个已知IAM身份和真实三挂载case。

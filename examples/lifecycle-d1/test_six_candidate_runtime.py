@@ -6,10 +6,12 @@ separately exercise the actual SDK/official policy library and file aggregation.
 from contextlib import ExitStack
 import copy
 import importlib.util
+import io
 import json
 from pathlib import Path
 import subprocess
 import tempfile
+import tarfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -67,7 +69,7 @@ class SixHostTests(unittest.TestCase):
 
     def test_current_checkpoint_is_mandatory_preserves_initial_allocation_and_rejects_cross_binding(self):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
-            root=Path(tmp);control=root/'private';public=root/'public';control.mkdir();public.mkdir();rebuilt=control/'source-rebuild01';rebuilt.mkdir()
+            root=Path(tmp);control=root/'private';public=root/'public';control.mkdir();public.mkdir();rebuilt=control/r.REBUILD;rebuilt.mkdir()
             stack.enter_context(patch.object(r,'CONTROL',control));stack.enter_context(patch.object(r,'PUBLIC',public))
             binaries={}
             for name in ('reader','operator','owner','readonly-check.exe'):
@@ -75,36 +77,37 @@ class SixHostTests(unittest.TestCase):
             for name in r.REBUILD_MEMBERS-set(binaries):(rebuilt/name).write_bytes(b'original compiler channel')
             original={'source':'a'*40,'allocation_nonce':'initial-nonce','owners':['1'*64,'2'*64],'binaries':binaries}
             r.save(public/'allocation.json',original);original_bytes=(public/'allocation.json').read_bytes()
-            r.save(public/'materialize-failure01.json',{'status':'original retained cold failure'})
+            r.save(public/'budget-initialization-failure01.json',{'status':'original retained budget failure'})
+            stack.enter_context(patch.object(r,'previous_checkpoint',lambda a:None));stack.enter_context(patch.object(r,'budget_failure',lambda:None))
             receipt={'status':'PASS_IDENTICAL_REBUILD_AFTER_COLD_REPAIR','initial_build_source':original['source'],'effective_source':'b'*40,'allocation_sha256':r.sha(public/'allocation.json'),
-                     'failure_evidence_sha256':r.sha(public/'materialize-failure01.json'),'binaries':binaries,'files':r.rebuild_files(),'changed_host_paths':[],
-                     'active_binary_replaced':False,'source_provider_io':0,'native_delete':0}
-            r.save(public/'source-rebuild01.json',receipt)
+                     'failure_evidence_sha256':r.sha(public/'budget-initialization-failure01.json'),'binaries':binaries,'files':r.rebuild_files(),'changed_host_paths':[],
+                     'active_binary_replaced':False,'source_provider_io':0,'native_delete':0,'previous_checkpoint_sha256':r.PREVIOUS_CHECKPOINT_SHA256}
+            r.save(public/(r.REBUILD+'.json'),receipt)
             checkpoint=dict(execution=r.p.EXECUTION,profile=r.p.PROFILE,initial_build_source=original['source'],effective_source=receipt['effective_source'],
                             allocation_sha256=receipt['allocation_sha256'],allocation_nonce=original['allocation_nonce'],owners=sorted(original['owners']),binaries=binaries,
-                            rebuild_receipt_sha256=r.sha(public/'source-rebuild01.json'),failure_evidence_sha256=receipt['failure_evidence_sha256'])
+                            rebuild_receipt_sha256=r.sha(public/(r.REBUILD+'.json')),failure_evidence_sha256=receipt['failure_evidence_sha256'],previous_checkpoint_sha256=r.PREVIOUS_CHECKPOINT_SHA256)
             stack.enter_context(patch.object(r,'allocation_state',lambda:copy.deepcopy(original)))
             stack.enter_context(patch.object(r,'source_contract',lambda a,source:[]))
             with self.assertRaises(FileNotFoundError):r.state()
             def write(value):
-                for folder in (control,public):(folder/'source-checkpoint.json').write_text(json.dumps(value))
+                for folder in (control,public):(folder/r.CHECKPOINT).write_text(json.dumps(value))
             write(checkpoint);current=r.state()
             self.assertEqual(current['source'],'b'*40);self.assertEqual(current['initial_build_source'],'a'*40)
             self.assertEqual((public/'allocation.json').read_bytes(),original_bytes);self.assertEqual(original['source'],'a'*40)
             for key,value in [('execution','old-execution'),('effective_source','c'*40),('initial_build_source','c'*40),('allocation_nonce','foreign'),
-                              ('owners',['3'*64]),('binaries',dict(binaries,reader='f'*64)),('allocation_sha256','f'*64),('rebuild_receipt_sha256','f'*64),('failure_evidence_sha256','f'*64)]:
+                              ('owners',['3'*64]),('binaries',dict(binaries,reader='f'*64)),('allocation_sha256','f'*64),('rebuild_receipt_sha256','f'*64),('failure_evidence_sha256','f'*64),('previous_checkpoint_sha256','f'*64)]:
                 bad=copy.deepcopy(checkpoint);bad[key]=value;write(bad)
                 with self.subTest(key=key),self.assertRaises(ValueError):r.state()
             for members in ({},binaries,{**receipt['files'],'extra.log':'f'*64},{k:v for k,v in receipt['files'].items() if k!='checker-build.stderr'}):
-                bad=copy.deepcopy(receipt);bad['files']=members;(public/'source-rebuild01.json').write_text(json.dumps(bad))
-                rehashed=copy.deepcopy(checkpoint);rehashed['rebuild_receipt_sha256']=r.sha(public/'source-rebuild01.json');write(rehashed)
+                bad=copy.deepcopy(receipt);bad['files']=members;(public/(r.REBUILD+'.json')).write_text(json.dumps(bad))
+                rehashed=copy.deepcopy(checkpoint);rehashed['rebuild_receipt_sha256']=r.sha(public/(r.REBUILD+'.json'));write(rehashed)
                 with self.subTest(receipt_members=list(members)),self.assertRaises(ValueError):r.state()
             for key,value in [('active_binary_replaced',True),('source_provider_io',1),('native_delete',1),('changed_host_paths',['apps/platform/go.mod'])]:
-                bad=copy.deepcopy(receipt);bad[key]=value;(public/'source-rebuild01.json').write_text(json.dumps(bad))
-                rehashed=copy.deepcopy(checkpoint);rehashed['rebuild_receipt_sha256']=r.sha(public/'source-rebuild01.json');write(rehashed)
+                bad=copy.deepcopy(receipt);bad[key]=value;(public/(r.REBUILD+'.json')).write_text(json.dumps(bad))
+                rehashed=copy.deepcopy(checkpoint);rehashed['rebuild_receipt_sha256']=r.sha(public/(r.REBUILD+'.json'));write(rehashed)
                 with self.subTest(receipt_field=key),self.assertRaises(ValueError):r.state()
-            (public/'source-rebuild01.json').write_text(json.dumps(receipt,indent=2)+'\n')
-            checkpoint['rebuild_receipt_sha256']=r.sha(public/'source-rebuild01.json');write(checkpoint)
+            (public/(r.REBUILD+'.json')).write_text(json.dumps(receipt,indent=2)+'\n')
+            checkpoint['rebuild_receipt_sha256']=r.sha(public/(r.REBUILD+'.json'));write(checkpoint)
             extra=rebuilt/'extra.log';extra.write_bytes(b'extra')
             with self.assertRaises(ValueError):r.state()
             extra.unlink()
@@ -196,11 +199,122 @@ class SixHostTests(unittest.TestCase):
                 with patch.object(r,'cold_topology',side_effect=AssertionError('Docker reached before case semantics')):
                     with self.assertRaises(ValueError):r.preparation_gate({'groups':[{'group':'business-races','private':str(folder),'cases':{'business':'unused'}}]})
 
+    def test_previous_checkpoint_and_original_failure_are_still_required(self):
+        # Actual immutable public/private evidence is modeled in temp files; no
+        # daemon or retained private directory is contacted by this regression.
+        with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
+            control=Path(tmp)/'private';public=Path(tmp)/'public';control.mkdir();public.mkdir();(control/'source-rebuild01').mkdir()
+            for obj,name,value in [(r,'CONTROL',control),(r,'PUBLIC',public)]:stack.enter_context(patch.object(obj,name,value))
+            for name in r.REBUILD_MEMBERS:(control/'source-rebuild01'/name).write_bytes(name.encode())
+            a={'source':'a'*40,'allocation_nonce':'nonce','owners':['owner'],'binaries':{'reader':'f'*64}}
+            r.save(public/'allocation.json',a);r.save(public/'materialize-failure01.json',{'original':'cold failure'})
+            r.save(public/'source-rebuild01.json',{'files':r.rebuild_files('source-rebuild01')})
+            checkpoint=dict(initial_build_source=a['source'],allocation_sha256=r.sha(public/'allocation.json'),allocation_nonce=a['allocation_nonce'],owners=a['owners'],binaries=a['binaries'],
+                            rebuild_receipt_sha256=r.sha(public/'source-rebuild01.json'),failure_evidence_sha256=r.sha(public/'materialize-failure01.json'))
+            for folder in (control,public):r.save(folder/'source-checkpoint.json',checkpoint)
+            stack.enter_context(patch.object(r,'PREVIOUS_CHECKPOINT_SHA256',r.sha(public/'source-checkpoint.json')))
+            r.previous_checkpoint(a)
+            for path in [control/'source-checkpoint.json',public/'source-checkpoint.json',public/'materialize-failure01.json',control/'source-rebuild01/reader-build.stderr']:
+                raw=path.read_bytes();path.write_bytes(raw+b'changed')
+                with self.subTest(path=path.name),self.assertRaises(ValueError):r.previous_checkpoint(a)
+                path.write_bytes(raw)
+
+    def test_budget_complete_projection_and_real_archive_success_and_fail_closed(self):
+        a=r.load(r.PUBLIC/'allocation.json');packet=r.budget_candidate(a)
+        targets=r.p.sequence.targets(packet)
+        self.assertEqual([stage for _,stage,_ in targets],['P2','T1','T2','H2','M1A','M1B'])
+        self.assertNotIn('fixture/p1.csv',[cp['Key'] for _,_,cp in targets])
+        for group in r.p.GROUPS:
+            raw=(r.PUBLIC/'budget-before-continuation01'/(group+'.tar')).read_bytes()
+            if group=='business-races':self.assertEqual(r.p.sequence.budget_archive(raw,packet,group,initial=True)['files'],[])
+            else:r.uninitialized_budget(raw)
+        for fault in ('missing-helpers','extra-helper','missing-group'):
+            bad=copy.deepcopy(a)
+            if fault=='missing-helpers':bad['groups'][0].pop('helpers')
+            elif fault=='extra-helper':bad['groups'][0]['helpers']['P1']='unapproved'
+            else:bad['groups'].pop()
+            with self.subTest(fault=fault),self.assertRaises((ValueError,KeyError)):r.budget_candidate(bad)
+        original=(r.PUBLIC/'budget-before-continuation01/business-races.tar').read_bytes()
+        def mutate(uid=10001,filename=None,link=False):
+            stream=io.BytesIO()
+            with tarfile.open(fileobj=stream,mode='w') as archive:
+                item=tarfile.TarInfo('budget');item.type=tarfile.DIRTYPE;item.mode=0o755;item.uid=item.gid=uid;archive.addfile(item)
+                if filename:
+                    item=tarfile.TarInfo('budget/'+filename);item.uid=item.gid=uid
+                    if link:item.type=tarfile.SYMTYPE;item.linkname='/etc/passwd';archive.addfile(item)
+                    else:item.size=2;archive.addfile(item,io.BytesIO(b'{}'))
+            return stream.getvalue()
+        for raw in (original.decode('latin1'),mutate(0),mutate(filename='used.json'),mutate(filename='link',link=True)):
+            with self.subTest(kind=type(raw)),self.assertRaises(ValueError):r.p.sequence.budget_archive(raw,packet,'business-races',initial=True)
+        for raw in (original,mutate(uid=0,filename='used.json'),mutate(uid=0,filename='link',link=True),b'invalid'):
+            with self.subTest(kind=type(raw)),self.assertRaises((ValueError,tarfile.ReadError)):r.uninitialized_budget(raw)
+
+    def budget_continuation(self,fault=None):
+        evidence=r.PUBLIC;a=r.load(evidence/'allocation.json');failure=r.load(evidence/'budget-initialization-failure01.json')
+        originals={group:(evidence/'budget-before-continuation01'/(group+'.tar')).read_bytes() for group in r.p.GROUPS}
+        with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
+            control=Path(tmp)/'private';public=Path(tmp)/'public';control.mkdir();public.mkdir()
+            for obj,name,value in [(r,'CONTROL',control),(r,'PUBLIC',public)]:stack.enter_context(patch.object(obj,name,value))
+            a['source_checkpoint_sha256']='f'*64
+            for g in a['groups']:
+                folder=control/g['group'];folder.mkdir();g['private']=str(folder)
+                for stage in [*g['helpers'],*['root-'+action for action in g['root_owners']]]:
+                    (folder/stage).mkdir();r.save(folder/stage/'permission.json',{'Enabled':False})
+            original=public/'business-races/budget-initialization';original.mkdir(parents=True)
+            for name in ('owner.json','wait-stdout.txt'):(original/name).write_bytes((evidence/'business-races/budget-initialization'/name).read_bytes())
+            (control/'business-races/initial-budget.tar').write_bytes(originals['business-races'])
+            for name in ('budget-initialization.json','budget-initialization-failure01.json'):(public/name).write_bytes((evidence/name).read_bytes())
+            states={row['cid']:copy.deepcopy(row['state']) for row in failure['initializers']};started=[];closed=[];gates=[]
+            if fault=='business-restarted':states[a['groups'][0]['budget_initializer']]['StartedAt']='2026-10-19T17:30:00Z'
+            if fault=='late-already-started':states[a['groups'][1]['budget_initializer']]['Status']='exited'
+            if fault=='business-log-changed':(original/'wait-stdout.txt').write_bytes(b'0\nchanged')
+            stack.enter_context(patch.object(r,'state',lambda:a));stack.enter_context(patch.object(r,'cold_topology',lambda a:None));stack.enter_context(patch.object(r,'budget_failure',lambda:failure))
+            stack.enter_context(patch.object(r,'inspect',lambda cid:{'State':states[cid],'HostConfig':{'RestartPolicy':{'Name':'no'},'PortBindings':{}},'NetworkSettings':{'Ports':{}}}))
+            def docker(*args):
+                self.assertEqual(args[0],'cp');group=next(g['group'] for g in a['groups'] if args[1].startswith(g['helpers']['wire']))
+                if fault=='nonempty-or-wrong-owner' and group=='late-hold':return originals['business-races']
+                return originals['business-races'] if any(g['group']==group and g['budget_initializer'] in started for g in a['groups']) else originals[group]
+            stack.enter_context(patch.object(r,'docker',docker))
+            def owner(cid,destination):
+                started.append(cid)
+                if fault=='late-failed':raise OSError('recorded initializer failure')
+            stack.enter_context(patch.object(r,'run_owner',owner))
+            def close(cid):closed.append(cid);return {'cid':cid,'closed':not (fault=='closure-unconfirmed' and cid==a['groups'][1]['budget_initializer'])}
+            stack.enter_context(patch.object(r.p.p1,'close_known',close))
+            # Exercise the actual shared aggregate+TAR validator for every group
+            # at the final gate; only unrelated role/topology I/O is doubled.
+            def gate(value):
+                gates.append(True)
+                for g in value['groups']:r.p.sequence.budget_archive(docker('cp',g['helpers']['wire']+':/run/budget','-'),r.budget_candidate(value),g['group'],initial=True)
+            stack.enter_context(patch.object(r,'preparation_gate',gate))
+            if fault:
+                with self.assertRaises((ValueError,OSError)):r.finish_budget_initialization()
+            else:
+                r.finish_budget_initialization();r.budget_completion(a)
+                self.assertEqual(started,[g['budget_initializer'] for g in a['groups'][1:]])
+                self.assertEqual(gates,[True]);self.assertTrue(r.load(public/'budget-initialization02.json')['all_complete'])
+                with self.assertRaises(ValueError):r.finish_budget_initialization()
+            if fault in ('late-failed','closure-unconfirmed'):
+                self.assertEqual(closed,[g['budget_initializer'] for g in a['groups']])
+                self.assertFalse(r.load(public/'budget-initialization02.json')['all_complete'])
+                if fault=='late-failed':self.assertEqual(started,[a['groups'][1]['budget_initializer']])
+            elif fault:self.assertEqual(started,[])
+            self.assertNotIn(a['groups'][0]['budget_initializer'],started)
+            self.assertEqual((control/'business-races/initial-budget.tar').read_bytes(),originals['business-races'])
+            self.assertEqual((public/'budget-initialization.json').read_bytes(),(evidence/'budget-initialization.json').read_bytes())
+
+    def test_budget_continuation_completes_only_never_started_owners(self):self.budget_continuation()
+
+    def test_budget_continuation_rejects_unknown_restarted_used_and_failed_owners(self):
+        for fault in ('business-restarted','late-already-started','business-log-changed','nonempty-or-wrong-owner','late-failed','closure-unconfirmed'):
+            with self.subTest(fault=fault):self.budget_continuation(fault)
+
     def composition(self,fail_dump=False):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
             control,public=Path(tmp)/'private',Path(tmp)/'public';control.mkdir();public.mkdir()
             stack.enter_context(patch.object(r,'CONTROL',control));stack.enter_context(patch.object(r,'PUBLIC',public))
             state={'groups':[],'owners':[]};states={};calls=[];roles=[];baseline={'relations':[]}
+            stack.enter_context(patch.object(r,'budget_completion',lambda a:None))
             for name in r.p.GROUPS:
                 folder=control/name;folder.mkdir();(folder/'checkpoint').mkdir()
                 g={'group':name,'private':str(folder),'source':{'Core':name+'-source-core','Native':name+'-source-native'},'restore_core':name+'-restore-core','rehearsal_core':name+'-trial-core','restore_native':name+'-restore-native','maintenance':{'SOURCE':name+'-reader','RESTORE':name+'-restore-reader','PROVISION':name+'-root'},'rehearsals':{},'utilities':{stage:name+'-'+stage for stage in ('archive','unpack','compare')}}
