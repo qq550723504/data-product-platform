@@ -4,7 +4,7 @@
 
 ## 候选与实际运行
 
-基线 main `d4015cb8962ca84b91622434ff9a512d64542857`。本次实跑代码 HEAD `1687a6ef4bd5bd998696f95255a9e3885607a416`；后续交付改动仅为本报告/checkpoint 与非 secret 证据。运行源文件逐项 SHA256 与最终候选的运行代码一致。Next 自动生成的 `next-env.d.ts` 不是运行源码；运行的是实际 standalone `server.js` 和已记录的完整构建文件，不依赖可变的开发服务器。
+基线 main `d4015cb8962ca84b91622434ff9a512d64542857`。本次完整实跑代码 HEAD `1687a6ef4bd5bd998696f95255a9e3885607a416`；至 `744cfdbce195f48cc0c6abc24f061069aa2c89ef` 的交付改动仅为本报告/checkpoint 与非 secret 证据，两者运行代码指纹相同。后续独立评审修正了停止路径的健康依赖，验证范围见下节；完整浏览器实跑仍绑定上述代码，不能把新停止分支描述为已在该环境故障注入实跑。Next 自动生成的 `next-env.d.ts` 不是运行源码；运行的是实际 standalone `server.js` 和已记录的完整构建文件，不依赖可变的开发服务器。
 
 - Run：`1b7e1949e8224ad8b870d28b96a3c6c2`。
 - Workspace：`e7469d12-05bc-4427-b79a-356a49cfd13c`。
@@ -26,7 +26,7 @@
 | actual physical invocation cost | PASS：[cost-proof](evidence/issue325-stage1/cost-proof.json) 保存 invocation → 强类型 CostAllocation/CostEvent 的真实 SQL join 统计，数量合计为 3 invocation；6 个 allocation rows 包含 intent 与 actual facts，不能当作 6 次实际调用。UNKNOWN intent 保留，不翻写历史或推断零成本；不把 CLI status 的只读环境检查当成新业务 attempt |
 | secret isolation | PASS：[secret-proof](evidence/issue325-stage1/secret-proof.json) 扫描 2224 个表面、254313065 bytes：实际 binaries、生产 standalone、HTML、运行/容器日志、公开回执、Core Audit/Evidence/Outbox，已知随机密钥及 Hop Basic 编码匹配为 0。范围是本次已知凭据，不声称一般 DLP 证明 |
 | stop / 停止后 status / 数据保留 | PASS：[retention-proof](evidence/issue325-stage1/retention-proof.json) 验证同一 6 容器停止、6 named volumes 保留；用 Docker cp 从停止容器读取 PG16 数据文件及非空原生 RAW 文件，逐文件内容 hash 与停止前一致。停止后 status 读取同一 identity；不声称已完成 restart/SQL 恢复验收 |
-| 本地开发检查 | PASS：11 项 Windows ownership/lifecycle 回归；`go test ./cmd/trial-prepare ./internal/ingestion/...`、trial command vet/build；web lint/typecheck、生产 build 及其既有 command tests；diff check |
+| 本地开发检查 | PASS：实跑候选 11 项 Windows ownership/lifecycle 回归；评审停止修复后 14 项回归及真实本机 preflight PASS。`go test ./cmd/trial-prepare ./internal/ingestion/...`、trial command vet/build；web lint/typecheck、生产 build 及其既有 command tests；diff check |
 | PR CI / 独立 review | 单列于 PR #326 当前 HEAD 的 checks / review。历史 CI 或本次本机 PASS 不替代当前 HEAD CI；独立 review 尚未完成，不自动 Ready/merge |
 | OpenMetadata / PR 2 / 人工解释 | NOT_ENABLED / NOT_RUN / deferred・NOT_RUN。没有执行认证、交付、撤权负例、D1、真实 Provider DELETE、hold-release 或 cleanup |
 
@@ -39,6 +39,10 @@
 | energy_raw | 14 | 1318 | `c831d1ad67c050c367286e56dff27f2ffc84571f2abca6fe9f0bac3d360b0686` |
 
 ## 诊断、修复和保留
+
+独立评审在 `744cfdb` 复现一个停止路径 blocker：RUNNING 时 Core/对象服务不可读，或构建工具/fixture 不可用，会在确切归属检查或真正停止前退出。根因是将启动/业务健康前置条件用于 containment stop。修复把本机 Docker identity 从完整 preflight 中分离；stop 继续核验 daemon、容器 ID/image/label 和 Windows process creation identity，事实读取失败则追加独立 UNKNOWN observation、保留先前成功回执并继续精确停止。没有放宽归属校验。
+
+回归先在旧实现复现 4 个失败分支（业务读取的 Refused/OSError/ValueError 与构建前置失败），修复后全部 14 项测试 PASS，包含 daemon 漂移拒绝、UNKNOWN 不覆盖上次成功回执和不触发删除。新的 preflight 对本机实际 daemon PASS；测试不对保留环境注入故障或执行容器变更。原实跑 registry 的 source identity 不改写，当前源码变化时 status 仍按原 contract 拒绝漂移；PR 2 必须设计显式制品重绑定与同身份续用，不能把重新 seed 当作恢复。
 
 没有把开发失败涂改成成功，也没有用重新 seed 冒充续用：
 

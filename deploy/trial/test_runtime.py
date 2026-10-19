@@ -58,7 +58,7 @@ class TrialContracts(unittest.TestCase):
                 if args[0]=="ps":return b"sha-container"
                 if args[0]=="inspect":return json.dumps([item]).encode()
                 self.fail("foreign container reached stop")
-            with patch.object(r,"preflight",return_value={"daemonId":"local"}),patch.object(r,"docker",side_effect=docker):
+            with patch.object(r,"local_docker_identity",return_value={"daemonId":"local"}),patch.object(r,"docker",side_effect=docker):
                 with self.assertRaises(r.Refused):r.stop(self.state())
             self.assertFalse(any(c[0]=="stop" for c in calls))
 
@@ -82,9 +82,51 @@ class TrialContracts(unittest.TestCase):
             if args[0]=="inspect":return json.dumps([item]).encode()
             if args[0]=="stop":return b"sha-container"
             self.fail("unexpected resource mutation")
-        with patch.object(r,"preflight",return_value={"daemonId":"local"}),patch.object(r,"docker",side_effect=docker),patch.object(r,"save"):
+        with patch.object(r,"local_docker_identity",return_value={"daemonId":"local"}),patch.object(r,"docker",side_effect=docker),patch.object(r,"save"):
             result=r.stop(s)
         self.assertEqual(calls[-1],("stop","--time","30","sha-container"));self.assertTrue(result["retained"])
+
+    def test_running_stop_retains_unknown_snapshot_and_stops_exact_owner(self):
+        for failure in (r.Refused("Core/object unavailable"), OSError("unavailable"), ValueError("invalid response")):
+            with self.subTest(failure=type(failure).__name__), tempfile.TemporaryDirectory() as d:
+                calls=[];s=self.state();s["phase"]="RUNNING";item=self.container()
+                previous={"counts":{"dataset_version":3},"proof":"last-good"}
+                r.write(Path(d)/"before-stop-facts.json",previous)
+                def docker(*args,**kw):
+                    calls.append(args)
+                    if args[0]=="ps":return b"sha-container"
+                    if args[0]=="inspect":return json.dumps([item]).encode()
+                    if args[0]=="stop":return b"sha-container"
+                    self.fail("unexpected resource mutation")
+                with patch.object(r,"STATE",Path(d)),patch.object(r,"local_docker_identity",return_value={"daemonId":"local"}),patch.object(r,"docker",side_effect=docker),patch.object(r,"inspect_facts",side_effect=failure),patch.object(r,"save"):
+                    result=r.stop(s)
+                self.assertEqual(calls[-1],("stop","--time","30","sha-container"))
+                self.assertEqual(result["phase"],"STOPPED")
+                self.assertTrue(result["retained"])
+                observation=r.read(Path(d)/"before-stop-observation.json")
+                self.assertEqual(observation["status"],"UNKNOWN")
+                self.assertEqual(observation["runId"],"mine")
+                self.assertEqual(r.read(Path(d)/"before-stop-facts.json"),previous)
+                self.assertEqual(s["stopInspection"],observation)
+
+    def test_stop_does_not_require_build_tools_or_fixture_health(self):
+        s=self.state();item=self.container();calls=[]
+        def docker(*args,**kw):
+            calls.append(args)
+            if args[0]=="ps":return b"sha-container"
+            if args[0]=="inspect":return json.dumps([item]).encode()
+            if args[0]=="stop":return b"sha-container"
+            self.fail("unexpected resource mutation")
+        with patch.object(r,"preflight",side_effect=r.Refused("missing build tools/fixture")) as preflight,patch.object(r,"local_docker_identity",return_value={"daemonId":"local"}),patch.object(r,"docker",side_effect=docker),patch.object(r,"save"):
+            result=r.stop(s)
+        preflight.assert_not_called()
+        self.assertEqual(result["phase"],"STOPPED")
+        self.assertEqual(calls[-1],("stop","--time","30","sha-container"))
+
+    def test_stop_still_refuses_daemon_drift_before_any_target_mutation(self):
+        with patch.object(r,"local_docker_identity",return_value={"daemonId":"foreign"}),patch.object(r,"docker") as docker,patch.object(r,"inspect_facts") as inspect:
+            with self.assertRaisesRegex(r.Refused,"Docker daemon drift"):r.stop(self.state())
+        docker.assert_not_called();inspect.assert_not_called()
 
     def test_unknown_commands_rejected_before_docker(self):
         for action in ("reset","cleanup","down","delete","source-revoke"):

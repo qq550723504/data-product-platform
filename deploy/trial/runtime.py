@@ -119,10 +119,9 @@ def sources():
             if p != "apps/web/next-env.d.ts" and (ROOT / p).is_file()}
 
 
-def preflight():
+def local_docker_identity():
     need(os.name == "nt", "This trial supports Windows host + Docker Linux only")
-    for name in ("docker", "go", "node", "npm.cmd", "pwsh", "git"):
-        need(shutil.which(name), f"missing prerequisite: {name}")
+    need(shutil.which("docker"), "missing prerequisite: docker")
     context = command(["docker", "context", "show"]).decode().strip()
     info = json.loads(command(["docker", "context", "inspect", context]))[0]
     endpoint = os.environ.get("DOCKER_HOST") if os.environ.get("DOCKER_HOST") and not os.environ.get("DOCKER_CONTEXT") else info["Endpoints"]["docker"]["Host"]
@@ -131,9 +130,16 @@ def preflight():
     need(not os.environ.get("DOCKER_HOST") or endpoint == info["Endpoints"]["docker"]["Host"], "Docker host override differs from selected context")
     daemon = json.loads(docker("info", "--format", "{{json .}}"))
     need(daemon["OSType"] == "linux", "Docker Linux containers required")
+    return {"context": context, "endpoint": endpoint, "daemonId": daemon["ID"]}
+
+
+def preflight():
+    host = local_docker_identity()
+    for name in ("go", "node", "npm.cmd", "pwsh", "git"):
+        need(shutil.which(name), f"missing prerequisite: {name}")
     version = docker("compose", "version", "--short").decode().strip()
     need(int(version.lstrip("v").split(".")[0]) >= 2, "Compose v2 required")
-    return {"context": context, "endpoint": endpoint, "daemonId": daemon["ID"], "compose": version,
+    return {**host, "compose": version,
             "go": command(["go", "version"]).decode().strip(), "node": command(["node", "--version"]).decode().strip(),
             "tables": fixture_tables()}
 
@@ -524,7 +530,7 @@ def status(s):
 def stop(s):
     # Source edits cannot remove the ability to safely stop exact recorded owners.
     need(s["root"] == str(ROOT), "Foreign trial registry")
-    need(preflight()["daemonId"] == s["host"]["daemonId"], "Docker daemon drift")
+    need(local_docker_identity()["daemonId"] == s["host"]["daemonId"], "Docker daemon drift")
     if s["phase"] == "STOPPED": return {"runId": s["runId"], "phase": "STOPPED", "retained": True}
     owned = []
     for role, expected in s["containers"].items():
@@ -533,7 +539,18 @@ def stop(s):
         if not found: continue
         item = json.loads(docker("inspect", found))[0]; verify_container(s, role, item, configuration=False); owned.append(item["Id"])
     for expected in s["processes"].values(): process_identity(expected["pid"], expected=expected, allow_missing=True)
-    if s["phase"] == "RUNNING": write(STATE / "before-stop-facts.json", inspect_facts(s))
+    if s["phase"] == "RUNNING":
+        try:
+            facts = inspect_facts(s)
+        except (Refused, OSError, ValueError):
+            # Business health is not an ownership condition for containment.
+            # Keep prior successful receipts and never turn unreadable facts into zero.
+            observation = {"runId": s["runId"], "status": "UNKNOWN", "reason": "Business facts unavailable; retained data requires inspection"}
+        else:
+            write(STATE / "before-stop-facts.json", facts)
+            observation = {"runId": s["runId"], "status": "PASS", "receipt": str(STATE / "before-stop-facts.json")}
+        write(STATE / "before-stop-observation.json", observation)
+        s["stopInspection"] = observation
     s["phase"] = "STOPPING"; save(s)
     for expected in reversed(list(s["processes"].values())): process_identity(expected["pid"], terminate=True, expected=expected, allow_missing=True)
     if owned: docker("stop", "--time", "30", *owned, timeout=240)

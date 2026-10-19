@@ -28,6 +28,6 @@ python deploy/trial/trial.py status
 
 密钥为每次运行随机生成，保存在 `%LOCALAPPDATA%/Codex/trials/dpp-trial-<runId>`，ACL 仅当前用户和 SYSTEM；不在参数、构建源、HTML 或公共日志内。不要提交/分享私有目录、环境变量或原始 Docker inspect。控制台为正常生产 Next，禁止改成 development server。`last-command-error.log` 是已脱敏的失败诊断；运行日志也保留在私有目录。所有宿主监听均绑定 127.0.0.1；Core API 仍为本机受控试用边界，不能当作生产 IAM。
 
-中断/失败后 registry 保留 UNKNOWN，后续 start 拒绝重新初始化；先保存运行身份和日志，通过 stop 精确停止已记录服务。不存在 reset/cleanup/down/故障注入/DELETE 命令。不删除卷、对象、staging、备份、镜像标签或其他环境。STOPPED 后仍保留完整回执与资源；停止后的 restart/resume 是 PR 2 的独立验收范围，当前 start 会明确拒绝。恢复不能靠新 workspace 或重新 seed 冒充。原生 Core STS 凭据有有限有效期，超期需要后续明确续用协议，不能放宽鉴权。
+中断/失败后 registry 保留 UNKNOWN，后续 start 拒绝重新初始化；先保存运行身份和日志，通过 stop 精确停止已记录服务。stop 只依赖本机 Docker daemon 与确切归属校验，不依赖构建工具、fixture 或业务健康。RUNNING 的停止前事实读取失败时，`before-stop-observation.json` 和 registry 的 `stopInspection` 明确记录 UNKNOWN，保留已有成功回执，仍停止已核验的服务；不能把这当作业务数据已验证。不存在 reset/cleanup/down/故障注入/DELETE 命令。不删除卷、对象、staging、备份、镜像标签或其他环境。STOPPED 后仍保留完整回执与资源；停止后的 restart/resume 是 PR 2 的独立验收范围，当前 start 会明确拒绝。恢复不能靠新 workspace 或重新 seed 冒充。原生 Core STS 凭据有有限有效期，超期需要后续明确续用协议，不能放宽鉴权。
 
 OpenMetadata 为 NOT_ENABLED；完整 B/C 闭环、真实下载与撤权负例属于 PR 2。人工解释 deferred / NOT_RUN。当前候选的实际验收见 `docs/acceptance/issue325-stage1.md`；历史 B/C 报告不构成本候选 PASS。精确 merge SHA 的 main CI、生产准入均单列。
