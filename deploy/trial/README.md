@@ -44,6 +44,8 @@ python deploy/trial/trial.py restart
 
 `resume` 核对原 Git/source manifest、全部原制品/配置、确切 daemon/container/volume/network、旧进程退出和原端口可用。仅允许已提交的 `deploy/trial/**` 与 credentials-only helper 变更，并追加 controller binding；原业务源码或制品变更、端口冲突和 UNKNOWN 均拒绝，不自动选新端口或重建环境。本切片恢复原业务制品，不执行 migration、prepare、seed、抽取、审核、加工或交付。
 
+Windows 的已退出进程对象可能因观察者仍持有 handle 而暂时存在。显式允许旧进程缺席的 stop/resume 核验使用原生 process-object signaled 状态证明退出；不能要求已退出对象仍能返回可执行文件名。存活进程仍核验 PID、creation identity、完整 executable；退出探测失败或未知均拒绝，不据此停止外来进程。
+
 原状态保存在不可覆盖的 `.data/trial/resume-origin.json`，每次续用的开始/完成/失败、前后完整事实与 native STS observation 保存在 `.data/trial/resumes/<attempt>`；同一 run/workspace 下的 resume attempt 只标识本次宿主服务启动。私有旧配置和凭据保留；既有 SDK 为同一 workspace 续发相同 scope 的有限 Core STS，写新私有凭据/profile，启动旧业务制品前以新凭据实际 GET/hash 原对象。停止前与启动后 SQL/native 事实必须一致。运行期 STS 到期时 status 拒绝报告就绪，使用显式 restart 续用，不放宽鉴权。
 
 `sourceHead` 仍指原业务制品源码，`controllerHead` 单列本次续用控制器，不能把旧业务二进制冒充新构建。`PR2.restartResume` 与 `PR2.businessDelivery` 分列。已登记续用阶段的执行失败记录 UNKNOWN，保留容器/卷/数据/receipt，可显式 stop 核对过的 owner；不盲目再次 resume。首次建立 journal、尚未保存 RESUMING 时若中断，可能保留 STOPPED 与部分 journal；后续拒绝自动采纳或覆盖该 journal，需保留现场诊断。该首次建立窗口的显式恢复属于 #325 后续，不影响已绑定原环境的正常续用。具体 write set 和验收边界见 [resume checkpoint](../../docs/acceptance/issue325-stage2-resume-checkpoint.md)。

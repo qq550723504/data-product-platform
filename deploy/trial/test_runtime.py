@@ -174,5 +174,36 @@ class TrialContracts(unittest.TestCase):
         wrong=copy.deepcopy(identity);wrong["created"]+=1
         with self.assertRaises(r.Refused):r.process_identity(os.getpid(),expected=wrong)
 
+    @unittest.skipUnless(os.name=="nt","Windows retained exited-process contract")
+    def test_exited_process_with_held_handle_is_absent_for_stop_and_resume(self):
+        with subprocess.Popen([sys.executable,"-c","import time; time.sleep(60)"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL) as child:
+            expected=r.process_identity(child.pid)
+            kernel,held=r.process_handle(child.pid,allow_missing=True)
+            try:
+                child.terminate();child.wait(timeout=10)
+                self.assertIsNone(r.process_identity(child.pid,allow_missing=True))
+                self.assertIsNone(r.process_identity(child.pid,terminate=True,expected=expected,allow_missing=True))
+                with self.assertRaises(r.Refused):r.process_identity(child.pid)
+            finally:kernel.CloseHandle(held)
+
+    @unittest.skipUnless(os.name=="nt","Windows live-process ownership contract")
+    def test_live_foreign_creation_identity_is_not_stopped(self):
+        with subprocess.Popen([sys.executable,"-c","import time; time.sleep(60)"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL) as child:
+            try:
+                wrong=r.process_identity(child.pid);wrong["created"]+=1
+                with self.assertRaisesRegex(r.Refused,"identity drift"):
+                    r.process_identity(child.pid,terminate=True,expected=wrong,allow_missing=True)
+                self.assertIsNone(child.poll())
+            finally:
+                child.terminate();child.wait(timeout=10)
+
+    def test_unknown_process_wait_state_refuses_before_identity_or_termination(self):
+        kernel=Mock();kernel.WaitForSingleObject.return_value=0xffffffff
+        with patch.object(r,"process_handle",return_value=(kernel,123)):
+            with self.assertRaisesRegex(r.Refused,"process exit"):
+                r.process_identity(42,terminate=True,expected={"pid":42},allow_missing=True)
+        kernel.GetProcessTimes.assert_not_called();kernel.QueryFullProcessImageNameW.assert_not_called()
+        kernel.TerminateProcess.assert_not_called();kernel.CloseHandle.assert_called_once_with(123)
+
 
 if __name__=="__main__":unittest.main()
