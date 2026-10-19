@@ -31,6 +31,20 @@ Migration 69 belongs to #307 / #323. The migration runner cannot insert 69 after
 70 has already been applied. This candidate must remain draft until 69 lands
 and the branch is rebased and tested in that order; 70 must not be applied first
 to the retained database. No #307 migration is duplicated or renumbered here.
+The #307 owner explicitly confirmed this delivery order on 2026-10-19:
+
+1. Migration 69 is owned only by #307 / #323, with SQL originating at
+   `285a3d7a4c84abbe9320562865f6c837a93e791e`. Its LF-byte SHA256 is
+   `2197bf0d3c226ab087c1be71f9e029f3c213b449d9b7097e369497f2e1c7d635`
+   (up) and `33ff5287621a3c2c2b3b40c627a4dff7429729bd97e8c8837b62832ca75d66c5`
+   (down).
+2. After separately authorized #323 merge, verify the actual merge SHA's main
+   CI. Then rebase #331, validate 69 before 70, and repeat independent review
+   plus current-HEAD CI on that rebased candidate.
+3. #323 currently remains draft without merge authority, so #331 remains a
+   draft dependency. Do not migrate/deploy the retained environment, apply 70
+   first, copy/re-number 69, or infer merge authority from green CI.
+
 The candidate05 public frozen-snapshot checker and its tests are reused byte for
 byte from the same #307 reference commit. CI invokes this existing checker;
 the old validator, 317 source hashes and all historical evidence stay unchanged.
