@@ -1,0 +1,57 @@
+{
+  "status": "PASS_OFFLINE_WHOLE_ENTRY_MOCK_ONLY",
+  "at": "2026-10-19T12:35:44.847540+00:00",
+  "tests_per_mode": 15,
+  "records": [
+    {
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "test_old_business_dispatch_closure",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-normal01-stdout.txt",
+          "sha256": "911991f204cc5e8c9490a84ae2c5471cd6b26f5d18ba932f6f931cd8bc926170",
+          "bytes": 507
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-normal01-stderr.txt",
+          "sha256": "f3acd3b497dffb099ccdc0ceeec78f7c1b5c253703b9a1bc61f8f4323de59de7",
+          "bytes": 2586
+        }
+      }
+    },
+    {
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "-m",
+        "unittest",
+        "test_old_business_dispatch_closure",
+        "-v"
+      ],
+      "exit_code": 0,
+      "channels": {
+        "stdout": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-optimized01-stdout.txt",
+          "sha256": "9dcdfa392403d9e487c93b750ddf7f80fec82c7a19243cec0749a063e4d43d78",
+          "bytes": 507
+        },
+        "stderr": {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-optimized01-stderr.txt",
+          "sha256": "bfdc63a5b429492dc8167a86eab351795ece44a92c8b4330bf1bfc651df9dcff",
+          "bytes": 2586
+        }
+      }
+    }
+  ],
+  "source_start": 0,
+  "provider": 0,
+  "DELETE": 0
+}

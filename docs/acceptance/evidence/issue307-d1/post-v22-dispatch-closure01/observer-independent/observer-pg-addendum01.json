@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_OBSERVER_PG_EVIDENCE_ADDENDUM",
+  "reviewed_at": "2026-10-19T12:02:50.656900+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "remaining_blockers": [],
+  "source_review": {
+    "file": "observer-source-review01.json",
+    "sha256": "e79f67345d3223a43aedcc12b28696fd73399e8d5fb01afa578053121140ab9d",
+    "status": "PASS_BOUNDED_INDEPENDENT_POST_V22_OBSERVER_ADAPTER_SOURCE_REVIEW",
+    "four_source_file_hashes_unchanged": true
+  },
+  "parent_actual_test_run_reviewed_not_personally_run": {
+    "exit_code": 0,
+    "pass_events_including_package_summaries": 51,
+    "test_and_subtest_pass_events": 48,
+    "package_pass_summaries": 3,
+    "skips": 0,
+    "failures": 0,
+    "scratch_CID": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+    "scratch_stopped_PID0_per_receipt": true,
+    "retained_source_started": false,
+    "native_provider_calls": 0,
+    "DELETE": 0
+  },
+  "evidence_boundaries": {
+    "new_adapter_real_PG": "Nine TEMP-table SQL eligibility variants pass on actual PostgreSQL using the current fixed adapter: positive revoked exact scope and rejection of unrevoked approval, claim, UNKNOWN, release, absence, new attempt, new dispatch and wrong approval hash. This establishes current SQL/pgx contract only; TEMP tables deliberately omit real migration constraints/fence/business-history wiring.",
+    "existing_full_schema_Commands": {
+      "tests": [
+        "TestDispositionStartUnknownObservationCostAndReplayAreSeparateFacts",
+        "TestDispositionFreshApprovalMissingDependenciesAndNotSentRelease",
+        "TestProviderObservationBatchRollsBackBothAndReplaysStableProof"
+      ],
+      "scope": "Separate existing application fixtures use full migrations/transactional commands to prove start vs UNKNOWN/cost/replay facts, required dependencies and NOT_SENT release then explicit new admission, observation-batch rollback and stable replay. These validate reused services, not the new actual observer executable/config/host-signed proof end-to-end."
+    },
+    "unit_and_authority": "Same run also passes new signature and minimal StaticResolver/DSN/authority unit tests. Reviewer independently ran both packages without a DSN earlier; those unit results remain separate from this parent real PG run.",
+    "not_proven": "No retained P2/T1/T2 observation/release, old budget/pin physical preservation under mutation, real host-proof issuance, full observer composition or remaining-six/native acceptance follows from these PG tests."
+  },
+  "reviewed_evidence": {
+    "postgres-regression01.json": {
+      "sha256": "ffe3083b576904c79c0f52ffc4bd7a2de9ad8e2fb987e834dc19d534baeefccc",
+      "bytes": 11602
+    },
+    "postgres01-stdout.txt": {
+      "sha256": "9e5eedd6d81643cf7d673fffc50ca6845ef4fbb64216d0f13eb3163d50ab66f3",
+      "bytes": 57101
+    },
+    "postgres01-stderr.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "scope_limits": [
+    "Append-only evidence review; original source-review01 report remains unchanged, including its true pending-at-that-time PG snapshot.",
+    "Reviewer did not read private credentials, start/connect Docker/PostgreSQL, call Native/provider, enable identity, sign a real proof or execute any retained mutation.",
+    "Scratch stopped/PID0 is asserted by parent receipt; reviewer did not independently inspect Docker. Parent direct message reports image/label/volume/two-network ownership checks, but no additional independently read live inspection is claimed.",
+    "Full host manifest/proof producer/observer execution/containment remain separately required before actual run. Same-source checksum is necessary; this addendum is not a run gate or deletion authority."
+  ],
+  "actual_NOT_SENT_closure": "NOT_RUN",
+  "host_proof_entry": "PENDING_SEPARATE_REVIEW",
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

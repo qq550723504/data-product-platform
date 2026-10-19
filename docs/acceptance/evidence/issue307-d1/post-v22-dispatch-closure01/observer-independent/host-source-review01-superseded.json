@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "status": "SUPERSEDED_PENDING_PRESTART_SOURCE_TOPOLOGY_FIX",
+  "at": "2026-10-19T12:38:57.364714+00:00",
+  "prior_report": {
+    "file": "host-source-final-review01.json",
+    "sha256": "40a8568ecc08c6038aa51933741e0173f92bb70b0a02d5a403194fcb039be9d0",
+    "scope": "Old host source SHA8958b73498f8aca2fd925e78f0635f4150aed9471ba681236e3adf4d7999c2e2 snapshot only; must not be used for prepare/run."
+  },
+  "new_current_blocker": {
+    "id": "HOST3",
+    "classification": "BLOCKER",
+    "identified_by": "parent final composition check; independent reviewer agrees",
+    "root": "Retained CID closure does not establish immutable Docker networking. Old host starts Native/Core before checking their exact image/internal network membership, so a moved/expanded network could make Native observable before the later active-state gate.",
+    "required_fix": "Before any Native/Core start, require exact frozen source CID/image, stopped/PID0/noports/norestart, exact bound internal network and no unexpected endpoints; complete-entry counterexamples must prove no source start for expanded/noninternal networking."
+  },
+  "remaining_blockers": [
+    "HOST3"
+  ],
+  "reviewer_activity": "No runtime or source modification. Parent is sole fixer; wait for final source/test hashes and append review02 after regression.",
+  "actual_manifest": "NOT_PREPARED",
+  "actual_closure": "NOT_RUN",
+  "DELETE": 0
+}

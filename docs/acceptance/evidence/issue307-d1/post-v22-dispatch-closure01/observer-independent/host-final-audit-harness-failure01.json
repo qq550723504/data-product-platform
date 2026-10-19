@@ -1,0 +1,9 @@
+{
+  "status": "REVIEW_AUDIT_HARNESS_FAILED_NO_RUNTIME_IO",
+  "at": "2026-10-19T12:37:35.071418+00:00",
+  "attempt": "first raw-binding readback",
+  "error": "KeyError: 'channels'",
+  "cause": "Reviewer applied new regression02-04 receipt schema to historical regression01. No source evidence changed; regression01 is checked using its existing independent addendum evidence hashes.",
+  "Docker": 0,
+  "provider": 0
+}

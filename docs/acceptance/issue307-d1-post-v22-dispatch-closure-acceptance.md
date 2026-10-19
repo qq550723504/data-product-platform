@@ -18,3 +18,25 @@
 实际审计原始行和 before/after/终态均保存在 `evidence/issue307-d1/post-v22-dispatch-audit/23587686-0a95-4eaa-a010-a8c896c9735b/`；旧 v22、P1 audit01–04、预算及 pins 均不覆盖。新审计无 provider 调用、无成本伪录、无业务事实写入。
 
 当前代码与证据先隔离保存，供 #323 同步最新 main 的独立复评使用。不得把本切片尚未完成的工作混入已有 R1/R2/P1 的评审结论或冒充完整 D1 验收。
+
+## 2026-10-19 宿主入口准备追加
+
+前文保留为初次 audit 时点快照。#323 后续已依据协调聊天中的直接人类授权合并；实际 SHA `f22587d780bacc9c865b269fa20b1cb135034f5a`，push/main CI `39250314443` 13/13 SUCCESS，#307 仍 OPEN。下列新代码隔离在 `codex/issue307-post-v22-dispatch-closure`，未混入 #323。
+
+| 项目 | 最新实际结果 | 证据/限制 |
+| --- | --- | --- |
+| 固定 NOT_SENT adapter/observer | 独立源码 PASS，blockers=[] | observer-source-review01.json；专属签名/时效/身份/DSN/capability 回归；真实PG eligibility反例另存 |
+| 宿主完整入口回归 | normal/-O 各15项 PASS | host-composition01.json；包含成功、前置拒绝、部分提交、IAM失败、Native inspect失败、disable失败、逐项stop错误、原通道保留、挂载别名/子目录、gateway/budget漂移；全部为 mock |
+| 实际 PostgreSQL 三组闭合事务组合 | PASS，0 skip | postgres-regression04.json；同 key replay；新增3/3/3和6/9/9/9/9；原pin/attempt/approval/dispatch/claim/Cost hash不变；synthetic历史reader termination在测试baseline前完成，原源未动 |
+| PG harness/fixture 原失败 | 保留 | 02误读动态端口；03合成reader未先终止而被正确阻断；原回执/通道不覆盖，04分别纠正真实原因 |
+| 39旧 helper 配置/CID/binary | 实际只读匹配、全部停止 | 原case必须保持关闭；仅内存反向既有 Enabled 撤销以匹配原SHA；未恢复旧profile，source start=0 |
+| 新宿主源码终复评 | PENDING | host-draft-review01 的 HOST1/HOST2 已修，等待最终字节复评 |
+| 新 stopped owner/manifest | NOT_PREPARED | 源码终复评并提交后才 prepare，manifest 另需独立评审 |
+| 原源 revoke→NOT_SENT→release | NOT_RUN | 无签名、无原 Core 业务写入；旧预算和 pins 保留 |
+| 17版本全量只读及六份新候选 | NOT_RUN / NOT_FROZEN | 不复用旧授权；没有新删除 execution、窗口或可执行许可 |
+
+固定宿主合同见 `issue307-d1-post-v22-dispatch-closure-host.md`。源码/manifest/runtime 分层验收，完整 D1 仍 NOT_ACCEPTED。
+
+最后一次源码补齐：启动前 source topology 已收进固定入口，normal/-O 各17项 PASS，见 `host-composition02.json`。旧 `host-source-final-review01.json` 只绑定前一版字节，其 superseded 回执明确不可用于当前 prepare/run；最终02复评仍待完成，原三项 dispatch 仍 NOT_RUN。
+
+最终源码复评已完成：`observer-independent/host-source-final-review02.json` SHA256 `a0a2c6291a58ce499af7d81630b0c5276d48b35e8afbaaf34a5b023878181730`，status=PASS_BOUNDED_INDEPENDENT_OLD_DISPATCH_CLOSURE_HOST_SOURCE_REVIEW、remaining_blockers=[]。HOST1/2/3闭合；独立 normal/-O 各17项 PASS。接下来仅准备 stopped owners，再评实际 manifest；source PASS 不代替 manifest/run gate，原源三项闭合仍 NOT_RUN。
