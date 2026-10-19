@@ -8,6 +8,7 @@ export type Batch = { id:string;state:string;attemptId:string;remoteId:string;re
 export type Receipt = {id:string;manifestHash:string;bindings:Array<{code:string;datasetId:string;versionId:string;sha256:string}>};
 export type Job = {id:string;workspaceId:string;inputDatasetVersionId:string;status:string;outputDatasetVersionId?:string};
 export function batchEnabled(){return process.env.POC_ENABLE_INGESTION_ACTIONS==="true";}
+export function trialRawOnly(){return process.env.POC_TRIAL_RAW_ONLY==="true";}
 export function workspace(){const ws=configuredWorkspaceId();if(!ws)throw new Error("Workspace 未配置");return ws;}
 export async function core<T>(path:string,method="GET",body?:unknown,key?:string,credential:boolean|"human-decision"=false):Promise<T>{
   let token:string;
