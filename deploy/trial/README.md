@@ -46,9 +46,9 @@ python deploy/trial/trial.py restart
 
 原状态保存在不可覆盖的 `.data/trial/resume-origin.json`，每次续用的开始/完成/失败、前后完整事实与 native STS observation 保存在 `.data/trial/resumes/<attempt>`；同一 run/workspace 下的 resume attempt 只标识本次宿主服务启动。私有旧配置和凭据保留；既有 SDK 为同一 workspace 续发相同 scope 的有限 Core STS，写新私有凭据/profile，启动旧业务制品前以新凭据实际 GET/hash 原对象。停止前与启动后 SQL/native 事实必须一致。运行期 STS 到期时 status 拒绝报告就绪，使用显式 restart 续用，不放宽鉴权。
 
-`sourceHead` 仍指原业务制品源码，`controllerHead` 单列本次续用控制器，不能把旧业务二进制冒充新构建。`PR2.restartResume` 与 `PR2.businessDelivery` 分列。任何失败保留 UNKNOWN、容器/卷/数据/receipt，可显式 stop 核对过的 owner；不盲目再次 resume。具体 write set 和验收边界见 [resume checkpoint](../../docs/acceptance/issue325-stage2-resume-checkpoint.md)。
+`sourceHead` 仍指原业务制品源码，`controllerHead` 单列本次续用控制器，不能把旧业务二进制冒充新构建。`PR2.restartResume` 与 `PR2.businessDelivery` 分列。已登记续用阶段的执行失败记录 UNKNOWN，保留容器/卷/数据/receipt，可显式 stop 核对过的 owner；不盲目再次 resume。首次建立 journal、尚未保存 RESUMING 时若中断，可能保留 STOPPED 与部分 journal；后续拒绝自动采纳或覆盖该 journal，需保留现场诊断。该首次建立窗口的显式恢复属于 #325 后续，不影响已绑定原环境的正常续用。具体 write set 和验收边界见 [resume checkpoint](../../docs/acceptance/issue325-stage2-resume-checkpoint.md)。
 
-密钥为每次运行随机生成，保存在 `%LOCALAPPDATA%/Codex/trials/dpp-trial-<runId>`，ACL 仅当前用户和 SYSTEM；不在参数、构建源、HTML 或公共日志内。不要提交/分享私有目录、环境变量或原始 Docker inspect。控制台为正常生产 Next，禁止改成 development server。`last-command-error.log` 是已脱敏的失败诊断；运行日志也保留在私有目录。所有宿主监听均绑定 127.0.0.1；Core API 仍为本机受控试用边界，不能当作生产 IAM。
+密钥为每次运行随机生成，保存在 `%LOCALAPPDATA%/Codex/trials/dpp-trial-<runId>`，ACL 仅当前用户和 SYSTEM；不在参数、构建源、HTML 或公共日志内。不要提交/分享私有目录、环境变量或原始 Docker inspect。控制台为正常生产 Next，禁止改成 development server。每次命令失败独立创建已脱敏的私有 `command-error-<id>.log`，错误提示只引用该文件；已有 `last-command-error.log` 和此前诊断均保留，不覆盖。运行日志也保留在私有目录。所有宿主监听均绑定 127.0.0.1；Core API 仍为本机受控试用边界，不能当作生产 IAM。
 
 中断/失败后 registry 保留 UNKNOWN，后续 start 拒绝重新初始化；先保存运行身份和日志，通过 stop 精确停止已记录服务。stop 只依赖本机 Docker daemon 与确切归属校验，不依赖构建工具、fixture 或业务健康。RUNNING 的停止前事实读取失败时，`before-stop-observation.json` 和 registry 的 `stopInspection` 明确记录 UNKNOWN，保留已有成功回执，仍停止已核验的服务；不能把这当作业务数据已验证。不存在 reset/cleanup/down/故障注入/DELETE 命令。不删除卷、对象、staging、备份、镜像标签或其他环境。STOPPED 后仍保留完整回执与资源，start 明确拒绝重建，使用上述显式续用协议。
 

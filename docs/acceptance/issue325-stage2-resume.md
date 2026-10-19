@@ -38,3 +38,13 @@ Cost 数量未增加只说明本切片未新增 Core 业务活动；原 UNKNOWN/
 原运行文件仍在同一 worktree 的 `.data/trial`；原状态在 `resume-origin.json`，续用前基线在 `resume-baseline.json`，两次不可覆盖的 before-state/start/STS/scoped-read/完成记录在 `resumes/<attempt>/`。私有文件仍受原用户/SYSTEM ACL 保护。不要删除、改写或提交私有配置、凭据、环境转储；不要以另一个 workspace、重新 seed 或旧 B/C Core 替代续用。
 
 后续 B/C 若需要更换业务制品，必须新增显式升级绑定和对应验收；本切片不会放宽这项边界。OpenMetadata 为 NOT_ENABLED，人工解释 deferred / NOT_RUN；#296/#298/#299/#307 未关闭，其运行环境和 owner 不变。未进行 Provider DELETE、hold-release、cleanup、down/prune、外部发布或生产部署。
+
+## 独立评审收敛（2026-10-19）
+
+独立 reviewer 在 `b0a82a8b...` 发现：新续用路径的命令非零退出会经既有错误处理覆盖固定 `last-command-error.log`；原私有目录确实已有该文件，属于须保留的历史。现改为每次 exclusive-create 独立的私有 `command-error-<id>.log`，保持脱敏，仅返回文件引用，旧固定日志和此前诊断不再覆盖。
+
+新增回归覆盖旧日志与两次新失败诊断分别保留、每份诊断脱敏，以及文件名碰撞拒绝覆盖。修复后的 30 项 Python 测试与 Go helper 单元测试通过；最终 reviewed SHA、当前 HEAD CI 和剩余 blockers 单列于 PR #327，不移用修复前 CI。
+
+本轮只读现场复核：registry SHA256 仍为 `af3f7d401f5d96574074030dbd0b89bb992c33027ec8347b39d4e6b1dcec424b`，run/workspace/Actor、进程 creation identities、容器、制品与全部 private hashes 保持，完整 SQL/native facts 与最后 resume receipt 相同；旧诊断 hash 为 `7c926b87e40b26ec6ffb4c78f403571ac977ece539b51f52b4a58a6943d143ea`。本轮没有启停环境、续发 STS、重新 seed 或执行业务命令。现场运行绑定仍是 `23d54259...`；本次错误分支修复通过隔离临时目录验证，不声称已在原环境触发命令失败或部署新控制器。后续须使用显式 stop→resume 接纳已提交的新控制器，不能修改原 registry 绕过 source guard。
+
+首次 journal 建立中断的保留/拒绝边界见 checkpoint，显式恢复列为 #325 非阻塞 follow-up；完整 B/C 与交付验收仍为 NOT_RUN。

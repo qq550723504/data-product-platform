@@ -82,6 +82,7 @@ def command(args, *, data=None, cwd=ROOT, env=None, timeout=180):
     if r.returncode:
         # Only sanitized diagnostics are persisted, including on startup failure.
         raw = r.stdout + r.stderr
+        diagnostic = "no trial registry; diagnostic not persisted"
         if (STATE / "state.json").exists():
             s = read(STATE / "state.json")
             for name in s.get("secretReferences", []):
@@ -93,8 +94,11 @@ def command(args, *, data=None, cwd=ROOT, env=None, timeout=180):
                 except (ValueError, AttributeError): pass
                 for value in values:
                     if len(value) >= 8: raw = raw.replace(value, b"[REDACTED]")
-            (Path(s["private"]) / "last-command-error.log").write_bytes(raw)
-        raise Refused(f"{Path(str(args[0])).name} failed; sanitized private last-command-error.log, retain this run")
+            error_path = Path(s["private"]) / ("command-error-" + uuid.uuid4().hex + ".log")
+            with error_path.open("xb") as log:
+                log.write(raw)
+            diagnostic = "sanitized private " + error_path.name
+        raise Refused(f"{Path(str(args[0])).name} failed; {diagnostic}, retain this run")
     return r.stdout
 
 

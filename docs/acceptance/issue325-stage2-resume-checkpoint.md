@@ -12,7 +12,9 @@
 
 ## 顺序与失败边界
 
-`resume` 仅接纳已知 STOPPED；先验证 commit/source、全部制品、配置、daemon/容器/卷/network 归属、旧进程已退出和原端口可用，然后持久化 resume attempt，启动确切原容器。原 Core/对象存储恢复后，在启动 API/Worker 前比较完整旧 SQL/native 对象事实；不一致或未知即拒绝成功。完成同范围凭据续用后，启动原宿主制品并再次核对事实及 HTTP 页面。失败保留 UNKNOWN 和已记录 owner，允许显式 exact-owner stop，禁止自动重建/重 seed。
+`resume` 仅接纳已知 STOPPED；先验证 commit/source、全部制品、配置、daemon/容器/卷/network 归属、旧进程已退出和原端口可用，然后持久化 resume attempt，启动确切原容器。原 Core/对象存储恢复后，在启动 API/Worker 前比较完整旧 SQL/native 对象事实；不一致或未知即拒绝成功。完成同范围凭据续用后，启动原宿主制品并再次核对事实及 HTTP 页面。已登记续用阶段的执行失败记录 UNKNOWN 并保留已记录 owner，允许显式 exact-owner stop，禁止自动重建/重 seed。
+
+首次 journal 建立后、RESUMING 保存前中断，可能保留原 STOPPED registry 与部分 journal；当前拒绝自动采纳/覆盖，且尚未执行容器启动、凭据续发或宿主启动。此首次建立窗口的显式恢复列为 #325 非阻塞 follow-up，不声称所有写盘中断都会自动得到 UNKNOWN。本次已绑定原环境的正常 stop→resume 不依赖新增恢复协议。
 
 RUNNING 的重复 `resume` / `start` 只校验和读取，不新增 attempt、凭据或业务事实。`restart` 是已知 RUNNING 的显式 stop→resume；未知状态不盲目重试。
 
