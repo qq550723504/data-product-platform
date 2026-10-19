@@ -15,7 +15,7 @@ import { DatasetVersionInvalidateForm } from "@/components/dataset-version-inval
 import { QualityCheckForm } from "@/components/quality-check-form";
 import { ComplianceCheckForm } from "@/components/compliance-check-form";
 import { CertificationForm, CertificationSupersedeForm } from "@/components/certification-form";
-import { batchEnabled,certificationReferences,core,workspace } from "@/lib/batches";
+import { batchEnabled,certificationReferences,core,trialRawOnly,workspace } from "@/lib/batches";
 import { DirectDataDeliveryForm } from "@/components/direct-data-delivery-form";
 import { configuredWorkspaceId, platform, PlatformError, type CertificationBlocker, type DatasetCertification, type CertificationProfile } from "@/lib/platform";
 import { isQualityAttemptId } from "@/lib/quality-command";
@@ -153,7 +153,7 @@ export default async function DatasetVersionDetailPage({
       throw new Error("DatasetVersion 不属于当前 Dataset");
     }
 
-    const availableProfiles = batchEnabled() ? (await core<{items:CertificationProfile[]}>(`/workspaces/${workspace()}/certification-profiles`,"GET",undefined,undefined,true)).items : [];
+    const availableProfiles = batchEnabled() && !trialRawOnly() ? (await core<{items:CertificationProfile[]}>(`/workspaces/${workspace()}/certification-profiles`,"GET",undefined,undefined,true)).items : [];
     const profileMap = new Map([...availableProfiles,...history.profiles].map((profile) => [profile.id, profile]));
     const profiles = [...profileMap.values()];
     const selectedProfile = profileMap.get(query.profileId ?? "") ?? profiles[0];
@@ -554,8 +554,8 @@ export default async function DatasetVersionDetailPage({
 
         {view === "certification" ? (
           <>
-        {batchEnabled() ? <CertificationForm key={selectedProfile?.id??"none"} datasetId={id} versionId={versionId} qualityId={latestAssessment?.id??""} profileId={selectedProfile?.id??""} profiles={profiles} canPrepare={Boolean(version.generatedByExecutionId)} references={await certificationReferences(versionId,selectedProfile?.id??"",latestAssessment?.id??"")} /> : null}
-        {batchEnabled() ? <CertificationSupersedeForm datasetId={id} versionId={versionId} certifications={history.items.filter(c=>c.profile.id===selectedProfile?.id).map(c=>({id:c.id,decision:c.decision,issuedAt:c.issuedAt,current:c.decision==="CERTIFIED"&&c.dispositions.length===0}))}/> : null}
+        {batchEnabled() && !trialRawOnly() ? <CertificationForm key={selectedProfile?.id??"none"} datasetId={id} versionId={versionId} qualityId={latestAssessment?.id??""} profileId={selectedProfile?.id??""} profiles={profiles} canPrepare={Boolean(version.generatedByExecutionId)} references={await certificationReferences(versionId,selectedProfile?.id??"",latestAssessment?.id??"")} /> : null}
+        {batchEnabled() && !trialRawOnly() ? <CertificationSupersedeForm datasetId={id} versionId={versionId} certifications={history.items.filter(c=>c.profile.id===selectedProfile?.id).map(c=>({id:c.id,decision:c.decision,issuedAt:c.issuedAt,current:c.decision==="CERTIFIED"&&c.dispositions.length===0}))}/> : null}
         <div className="panel-header"><h2>Certification 历史</h2><span className="eyebrow">{history.page.total} Facts</span></div>
         {history.items.length === 0 ? (
           <EmptyState title="NOT_CERTIFIED" description="该 DatasetVersion 尚无 DatasetCertification 历史事实。" />

@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { batch, batchEnabled, core, jobs, outputDataset, receipt, source, workspace } from "@/lib/batches";
+import { batch, batchEnabled, core, jobs, outputDataset, receipt, source, trialRawOnly, workspace } from "@/lib/batches";
 import { platform } from "@/lib/platform";
 import { collectAllPages } from "@/lib/pagination";
 export type BatchState={message:string};
@@ -20,7 +20,7 @@ export async function registerBatch(_old:BatchState,form:FormData):Promise<Batch
       if(ds.workspaceId!==workspace()||resource.workspaceId!==workspace()||ds.datasetType!=="RAW"||ds.sourceResourceId!==resource.id)throw new Error("来源绑定冲突");
       targets.push({code:table.Code,resourceId:binding.resourceId,datasetId:binding.datasetId});
     }
-    for(const [suffix,type] of [["standardized","STANDARDIZED"],["curated","CURATED"]]){
+    for(const [suffix,type] of (trialRawOnly()?[]:[["standardized","STANDARDIZED"],["curated","CURATED"]])){
       const code=`${s.connectionRef}-${suffix}`;if(!datasets.some(d=>d.code===code))await core("/datasets","POST",{workspaceId:workspace(),code,name:`PostgreSQL ${type}`,datasetType:type,ownerId:process.env.POC_INGEST_ACTOR_ID});
     }
     const result=await core<{id:string}>("/ingestions","POST",{workspaceId:workspace(),requestKey:key,batchKey,targets});destination=`/batches/${result.id}`;
@@ -35,7 +35,7 @@ export async function batchCommand(id:string,command:string,_old:BatchState):Pro
 export async function startResolution(id:string,_old:BatchState):Promise<BatchState>{
   void _old;
   try{
-    if(!batchEnabled())throw new Error("操作未开放");const op=await batch(id);const rec=await receipt(id);const input=rec.bindings.find(x=>x.code==="enterprise_raw");if(!input)throw new Error("完整 RAW receipt 缺失");
+    if(!batchEnabled()||trialRawOnly())throw new Error("本阶段仅开放三份 RAW 接纳");const op=await batch(id);const rec=await receipt(id);const input=rec.bindings.find(x=>x.code==="enterprise_raw");if(!input)throw new Error("完整 RAW receipt 缺失");
     const prior=await jobs(input.versionId);if(prior.length)return {message:"该 RAW 已有解析任务；请查看审核和输出。"};
     const output=await outputDataset(`${op.request.connectionRef}-standardized`,"STANDARDIZED");
     await core("/entity-match-jobs","POST",{workspaceId:workspace(),inputDatasetVersionId:input.versionId,outputDatasetId:output.id,sourceType:"CSV",sourceRef:"enterprise_raw.csv",sourceRole:"ANCHOR",policyRef:"park/matching/company-match-policy-v1.yaml"});revalidatePath(`/batches/${id}`);return {message:"实体解析已启动；需要人工确认的记录请进入既有实体审核。"};
@@ -44,7 +44,7 @@ export async function startResolution(id:string,_old:BatchState):Promise<BatchSt
 export async function startProduction(id:string,_old:BatchState):Promise<BatchState>{
   void _old;
   try{
-    if(!batchEnabled())throw new Error("操作未开放");const op=await batch(id);const rec=await receipt(id);const input=rec.bindings.find(x=>x.code==="enterprise_raw");if(!input)throw new Error("RAW receipt 缺失");
+    if(!batchEnabled()||trialRawOnly())throw new Error("本阶段仅开放三份 RAW 接纳");const op=await batch(id);const rec=await receipt(id);const input=rec.bindings.find(x=>x.code==="enterprise_raw");if(!input)throw new Error("RAW receipt 缺失");
     const js=(await jobs(input.versionId)).filter(j=>j.status==="SUCCEEDED"&&j.outputDatasetVersionId);if(js.length!==1)throw new Error("先完成唯一的实体解析与审核");
     const output=await outputDataset(`${op.request.connectionRef}-curated`,"CURATED");const workflow=process.env.POC_INGESTION_WORKFLOW_ID;if(!workflow)throw new Error("审核后的加工模板尚未配置");
     const run=await core<{id:string;status:string}>("/executions","POST",{workspaceId:workspace(),workflowVersionId:workflow,outputDatasetId:output.id,targetPeriod:"2025-03",inputs:[...rec.bindings.map(b=>({name:b.code,datasetVersionId:b.versionId})),{name:"enterprise_resolution",datasetVersionId:js[0].outputDatasetVersionId}]},`batch-production-${id}`);
