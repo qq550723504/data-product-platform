@@ -20,8 +20,8 @@ from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[2]
 PRIVATE=Path('C:/Users/Henry/.codex/fixture-private')
-CONTROL=PRIVATE/'post-v22-p1-readonly01'
-PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly01'
+CONTROL=PRIVATE/'post-v22-p1-readonly02'
+PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02'
 PACKET=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate12'
 OLD=PRIVATE/'remaining-candidate12'
 FAILED=ROOT/'docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/window01'
@@ -36,6 +36,19 @@ def need(ok,message):
 def now():return dt.datetime.now(dt.timezone.utc)
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def load(path):return json.loads(path.read_bytes())
+
+def input_entries(manifest):
+    # JSON paths have one portable representation at both serialization and
+    # consumption. Retain legacy raw bytes; never widen a profile's SHA exception.
+    entries={}
+    for raw,digest in manifest['inputs'].items():
+        need(isinstance(raw,str) and ':' not in raw,'invalid manifest input path')
+        parts=raw.replace('\\','/').split('/')
+        need(all(p not in ('','.','..') for p in parts),'invalid manifest input path')
+        name='/'.join(parts)
+        need(name not in entries,'colliding manifest input paths')
+        entries[name]=digest
+    return entries.items()
 def write(path,value):
     path.parent.mkdir(parents=True,exist_ok=True)
     with path.open('x',encoding='utf-8',newline='\n') as f:json.dump(value,f,indent=2);f.write('\n')
@@ -190,7 +203,7 @@ def prepare():
               'source_head':call(['git','rev-parse','HEAD']).decode().strip(),'source_delta':call(['git','diff','--name-only']).decode().splitlines(),
               'source':g,'owners':owners,'redis':redis_cid,'redis_name':redis,'redis_volume':volume,'old_closed':before,'backup_sha256':backup,'budgets':budget,
               'core_connection_binding':connection,'source_profile_sha256':sha(PRIVATE/'remaining-executable03/business-races/source-verifier/remaining.json'),
-              'inputs':{str(p.relative_to(CONTROL)):sha(p) for p in CONTROL.rglob('*') if p.is_file() and p.suffix!='.private'},
+              'inputs':{p.relative_to(CONTROL).as_posix():sha(p) for p in CONTROL.rglob('*') if p.is_file() and p.suffix!='.private'},
               'source_files':{n:sha(ROOT/n) for n in SOURCE_FILES},'native_delete':0,'send_authority':'NONE'}
     write(CONTROL/'manifest.json',manifest);write(PUBLIC/'preparation.json',manifest)
     print(json.dumps({'status':manifest['status'],'audit_id':str(audit),'manifest_sha256':sha(CONTROL/'manifest.json'),'source_started':False}))
@@ -204,7 +217,7 @@ def fresh(manifest,allow_enabled=False):
     need(now()<dt.datetime.fromisoformat(manifest['ExpiresAt']) and now()>=dt.datetime.fromisoformat(manifest['NotBefore']),'P1 new read-only window unavailable')
     need(old_closed()==manifest['old_closed'] and backups()==manifest['backup_sha256'] and budgets()==manifest['budgets'],'retained facts drift')
     for name,h in manifest['source_files'].items():need(sha(ROOT/name)==h,'P1 read-only source changed')
-    for name,h in manifest['inputs'].items():
+    for name,h in input_entries(manifest):
         if allow_enabled and name in ('worker-private/recovery.json','root-private/p1-readonly-permission.json'):continue
         need(sha(CONTROL/name)==h,'P1 read-only input changed')
     g=manifest['source']
@@ -224,7 +237,7 @@ def active_topology(manifest,kind):
     for n,h in manifest['source_files'].items():need(sha(ROOT/n)==h,'P1 source changed during audit')
     for field,image in [('Core',PG),('Native',MI)]:
         x=inspect(g[field]);need(x['State']['Running'] and x['Image']==image and {n['NetworkID'] for n in x['NetworkSettings']['Networks'].values()}=={g['Network']},'active P1 source topology differs')
-    for name,h in manifest['inputs'].items():
+    for name,h in input_entries(manifest):
         p=CONTROL/name
         if name in ('worker-private/recovery.json','root-private/p1-readonly-permission.json'):
             original=CONTROL/(p.stem+'-disabled-original.json')

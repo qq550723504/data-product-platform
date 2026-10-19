@@ -1,0 +1,334 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_P1_SOURCE_REVIEW",
+  "remaining_blockers": [],
+  "reviewed_at": "2026-10-19T09:51:22.426138+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "base_head": "f59bf8b09aa1bbcf9cae3847d7ebc3389596f577",
+  "worktree_source_review": true,
+  "scope": "Finite new P1 read-only reconciliation source only: exact original attempt, fresh <=40 minute read-only authority, fixed Core/Native, inspector-only bootstrap, instrumented read-only storage, selected Outbox/Asynq work and exhaustive failure closure. No new workflow/queue/policy infrastructure.",
+  "reviewed_files": {
+    "apps/platform/cmd/lifecycle-fixture-recovery/main.go": {
+      "sha256": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+      "lf_sha256": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+      "bytes": 22126
+    },
+    "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22.go": {
+      "sha256": "f792d763b0477ee5c34c1ecb16ed81ba29fd1dfba57f560ad33ac767fc558359",
+      "lf_sha256": "f792d763b0477ee5c34c1ecb16ed81ba29fd1dfba57f560ad33ac767fc558359",
+      "bytes": 12944
+    },
+    "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22_test.go": {
+      "sha256": "f331071862d4d63390218d37123fd9708007cb08d3808f69d60773c0fb539a18",
+      "lf_sha256": "f331071862d4d63390218d37123fd9708007cb08d3808f69d60773c0fb539a18",
+      "bytes": 6949
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go": {
+      "sha256": "2105d0b4e48140464da2d0afa50f0e0db3423191adc42985e3c40119830c787b",
+      "lf_sha256": "2105d0b4e48140464da2d0afa50f0e0db3423191adc42985e3c40119830c787b",
+      "bytes": 10380
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go": {
+      "sha256": "79de5e0afee70f104b8cc596920a70f3749cc298a7b23aa937a4169435e5f8e8",
+      "lf_sha256": "79de5e0afee70f104b8cc596920a70f3749cc298a7b23aa937a4169435e5f8e8",
+      "bytes": 1034
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly.go": {
+      "sha256": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+      "lf_sha256": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+      "bytes": 2517
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly_test.go": {
+      "sha256": "b7549dc196ee01ed34afba1e73f627e41b8f5dea1d06d1f02cc1754aed12e540",
+      "lf_sha256": "b7549dc196ee01ed34afba1e73f627e41b8f5dea1d06d1f02cc1754aed12e540",
+      "bytes": 3030
+    },
+    "apps/platform/internal/platform/outbox/publisher.go": {
+      "sha256": "1cf8c17258465f2f4b39598d36b48b9c4fabae70ee3237fb3fdde774818d3910",
+      "lf_sha256": "1cf8c17258465f2f4b39598d36b48b9c4fabae70ee3237fb3fdde774818d3910",
+      "bytes": 12559
+    },
+    "apps/platform/internal/lifecycle/application/p1_recovery_integration_test.go": {
+      "sha256": "ea80793d8af661795a46203b3bbe87be56ec2857e0cae9e1dea300646d859b84",
+      "lf_sha256": "ea80793d8af661795a46203b3bbe87be56ec2857e0cae9e1dea300646d859b84",
+      "bytes": 2747
+    },
+    "examples/lifecycle-d1/reconcile-p1-post-v22.py": {
+      "sha256": "f772b405056a412d3b0cf5b8fa603659ee526cc5d739c7fb4d1e8c604e69e5df",
+      "lf_sha256": "f772b405056a412d3b0cf5b8fa603659ee526cc5d739c7fb4d1e8c604e69e5df",
+      "bytes": 28091
+    },
+    "examples/lifecycle-d1/test_p1_post_v22_readonly.py": {
+      "sha256": "85e5ddb6308a5789140fb146c6d5092e5d398be102b6e6f681f25e8561b5570c",
+      "lf_sha256": "85e5ddb6308a5789140fb146c6d5092e5d398be102b6e6f681f25e8561b5570c",
+      "bytes": 8384
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "sha256": "261af9b77a2981fe12a8240033887f743ffc3f071d225577a6b912f15a2bbc51",
+      "lf_sha256": "261af9b77a2981fe12a8240033887f743ffc3f071d225577a6b912f15a2bbc51",
+      "bytes": 4924
+    },
+    "docs/acceptance/issue307-d1-post-v22-p1-readonly.md": {
+      "sha256": "10d12b2fb820f3fe562818da6d1b58cfe66ad2e4e243eb9dfd7a5ff9f16d1fb0",
+      "lf_sha256": "10d12b2fb820f3fe562818da6d1b58cfe66ad2e4e243eb9dfd7a5ff9f16d1fb0",
+      "bytes": 3392
+    }
+  },
+  "closed_findings": [
+    {
+      "id": "B1",
+      "classification": "BLOCKER_CLOSED",
+      "root_cause": "A failed inspect suppressed the stop attempt for an already known CID.",
+      "fix": "close_known treats unreadable state as potentially running, attempts the fixed CID stop, separately checks final physical state, records initial inspect/stop failures, remains UNCONFIRMED when state cannot be established and continues all six owners.",
+      "independent_counterexample": "Original containment-initial01.txt failed; exact same test passes in containment-final03.txt."
+    },
+    {
+      "id": "B2",
+      "classification": "BLOCKER_CLOSED",
+      "root_cause": "Core metadata was not sufficient to bind the actual DSN; a wrong/copy Core or shadow DNS could yield a misplaced receipt.",
+      "fix": "Worker URL and pgx parsing jointly require exact postgres URI host dpp-lifecycle307-808a6960-postgres, 5432, lifecycle307, fixture, nonempty password and only sslmode=disable, with no TLS/fallback. Host preparation verifies actual fixed Core name plus Docker Aliases/DNSNames, expected workspace/provider/incarnation/actor; active topology rejects another running owner with the fixed Core DNS name. Manifest includes a sanitized Core binding and the actual source-profile SHA, without emitting credentials.",
+      "independent_counterexample": "Foreign-owner DNS shadow was admitted by preserved initial source (core-shadow-initial01.txt FAIL) and rejected by current source (core-shadow-final02.txt PASS). Parent host/Go DSN expansion tests independently rerun as part of final suites."
+    },
+    {
+      "id": "B3",
+      "classification": "BLOCKER_CLOSED",
+      "root_cause": "Generic stdout-only call dropped the original stderr from a failed non-TTY helper when docker logs CLI itself succeeded.",
+      "fix": "Dedicated owner_logs writes stdout/stderr separately with O_EXCL, sizes and raw SHA. Generic call/docker keep the original stdout bytes return contract; owner terminal gate checks both container and logs CLI exit codes.",
+      "independent_counterexample": "Original owner-stderr-initial01.txt FAIL; unchanged counterexample passes owner-stderr-final02.txt with original stderr retained."
+    }
+  ],
+  "other_required_path_review": [
+    "Fresh audit ID and purpose are separate from the old execution; config rejects extra root/send fields and narrows source/workspace/provider/incarnation/actor/time/queue. New recovery profile carries only inspect credentials; root bootstrap has separate mounts and can enable only the exact inspector after all four users are disabled and frozen official MinIO policy semantics/no groups/single policy match.",
+    "Worker verifies the original exact P1 CONFIRMED ACCEPTED observation and no previous absence, validates frozen bindings, checks seven retained versions by exact HEAD/protection and both complete namespace lists with P1 absent. Current native receipt keeps actual inspections and inventories; it explicitly does not claim a new bytes/SHA content read.",
+    "New RequestRecovery work uses existing Core service and transactional Outbox. OnlyEventID filters before claim/lease mutation. Selected enqueuer, Asynq task ID and selected runner additionally require the exact new work/workspace. Separate Redis prevents consuming the old queue.",
+    "Existing recovery service and per-call authority journal perform reads and append Core absence/finalization/cost facts. No DELETE/dispatch/Renew/hold mutation is reachable in the new mode. Original native attempt/observation/budgets/pins and old failure state are not rewritten.",
+    "Before/after Core relation fingerprints restrict changed relations; whole-row hash multisets prove old appendable facts/obligations/cost rows remain present. Identity disable uses fresh readback independently from physical stopped/PID0 proof; failures never become a sealed PASS without all required evidence."
+  ],
+  "independent_actual_tests": [
+    {
+      "command": "go test -count=1 ./cmd/lifecycle-fixture-recovery ./cmd/lifecycle-fixture-remaining-iam",
+      "cwd": "apps/platform",
+      "result": "PASS_2_PACKAGES",
+      "log": "go-unit-final02.txt",
+      "scope": "Unit/config/loopback models only; no real source/provider"
+    },
+    {
+      "command": "python -B examples/lifecycle-d1/test_p1_post_v22_readonly.py",
+      "result": "PASS_6",
+      "log": "host-normal-final03.txt",
+      "scope": "Docker/IAM/subprocess mocks"
+    },
+    {
+      "command": "python -O -B examples/lifecycle-d1/test_p1_post_v22_readonly.py",
+      "result": "PASS_6",
+      "log": "host-optimized-final03.txt",
+      "scope": "Docker/IAM/subprocess mocks"
+    },
+    {
+      "command": "python -B test_independent_containment01.py",
+      "result": "PASS_1_AFTER_INITIAL_FAIL",
+      "log": "containment-final03.txt",
+      "scope": "Original independent failure-closure mock"
+    },
+    {
+      "command": "python -B test_independent_owner_stderr01.py",
+      "result": "PASS_1_AFTER_INITIAL_FAIL",
+      "log": "owner-stderr-final02.txt",
+      "scope": "Original independent stdout/stderr mock"
+    },
+    {
+      "command": "python -B test_independent_core_shadow01.py <preserved initial source/current source>",
+      "result": "EXPECTED_OLD_FAIL_CURRENT_PASS",
+      "initial_log": "core-shadow-initial01.txt",
+      "log": "core-shadow-final02.txt",
+      "scope": "Pure model dynamic DNS shadow counterexample; no Docker inspect/provider calls"
+    }
+  ],
+  "parent_actual_pg_tests_reviewed_not_personally_executed": {
+    "status": "PASS_4_REAL_SCRATCH_PG_TESTS",
+    "receipt": "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly01/postgres-regression.json",
+    "actual_sql_scope": "Selected Outbox event row/lease/consumption only; unselected entire event row unchanged; default global dispatch still drains. Three existing sequential/claim/absence SQL regressions also pass.",
+    "provider": "SIMULATED_FACTS_ONLY",
+    "cid": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+    "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "stopped": true,
+    "pid": 0,
+    "volume_retained": "dpp307-postv22-regression-74cef6fd9fb2-data",
+    "native_sources_started": false,
+    "native_delete": 0,
+    "files": {
+      "postgres-closed.json": {
+        "sha256": "b7a5bc8ac3f7644ed6521b030aa08f6de8f8e2c46214a18d4d329706be8a7063",
+        "lf_sha256": "b7a5bc8ac3f7644ed6521b030aa08f6de8f8e2c46214a18d4d329706be8a7063",
+        "bytes": 258
+      },
+      "postgres-regression.json": {
+        "sha256": "017702cf05a118c7270bd098a7b7661c76864bdcf2a2676960a454d3f890b4c1",
+        "lf_sha256": "017702cf05a118c7270bd098a7b7661c76864bdcf2a2676960a454d3f890b4c1",
+        "bytes": 733
+      },
+      "postgres-tests.txt": {
+        "sha256": "7b13f09b3dea08d2aa9654a30d71d12bbdf87cb102a38838f4f18e95fec1a07c",
+        "lf_sha256": "7b13f09b3dea08d2aa9654a30d71d12bbdf87cb102a38838f4f18e95fec1a07c",
+        "bytes": 1270
+      }
+    }
+  },
+  "reviewer_artifacts": {
+    "additional-findings02.json": {
+      "sha256": "543276d758bbd126b30a50d357db003b57f46f57321158dd5ee185171c50caed",
+      "lf_sha256": "543276d758bbd126b30a50d357db003b57f46f57321158dd5ee185171c50caed",
+      "bytes": 1405
+    },
+    "containment-final02.txt": {
+      "sha256": "87b5dc9d0bebe8396b022bcae611b85b7684bdec4140b71d79647164c25ffd45",
+      "lf_sha256": "4a4cd837d71e743908fe4e1c92e855a0881d6fde99cf0d5cae67e2519a4f7548",
+      "bytes": 251
+    },
+    "containment-final03.txt": {
+      "sha256": "cb15b7fd5f500bcfb3fabd956beb98e27bb2454ec8388973c984f7a780b9e0c6",
+      "lf_sha256": "a3886468b05ff696282100fea1275b8d80a0785894b80b5c7e5b2861b09c4c22",
+      "bytes": 251
+    },
+    "containment-initial01.txt": {
+      "sha256": "d767b50d51ce5fa07ff2a09c3eda3b266165c6e2807dff5f3e886f336ef44aec",
+      "lf_sha256": "2e9f01ab33bf976addb72b8fc082310713f6cca27535d509aee3a03d4d0d97e2",
+      "bytes": 1200
+    },
+    "core-shadow-final02.txt": {
+      "sha256": "806515b10e9ce1d2740b71203008b18036e467bc4d18993516832eee6d67e101",
+      "lf_sha256": "60e50ef6e673275f8d157a7e9d73c4eefde8a0a76b6a51b34bbe7ba2e33a2501",
+      "bytes": 245
+    },
+    "core-shadow-initial01.txt": {
+      "sha256": "227c305ef16d775e63e033989080ebe3b877b7b3b01ca95e0c12c42fec6a237d",
+      "lf_sha256": "02eb377bae85b06813d05c09f9ff40b9916403d1dfa57fe7a991408f21ec36b1",
+      "bytes": 1102
+    },
+    "go-unit-final02.txt": {
+      "sha256": "c93cd3739a5898e4cb32b32ffce1e57e9f404e50d36c85a08d2baf12cf96b924",
+      "lf_sha256": "2a00423f2418e9d95f2bd3001e8ca8eefb86364a6cf3e6ea54ae88b58a20fbb8",
+      "bytes": 211
+    },
+    "go-unit01.txt": {
+      "sha256": "5cabea3a52d4d6f455292820a4f414e272126f858a339c5b0e68bf88de6fe2d7",
+      "lf_sha256": "7f392c751ccd765e7bb4c66a8558aa8eded4fc013fef3ebc4ca1ee6452031432",
+      "bytes": 211
+    },
+    "host-normal-final03.txt": {
+      "sha256": "58e0a0c81b5ae0579e9d89650ac9dfd583537d331e94ea2fde881ce0e77288e0",
+      "lf_sha256": "d2f6b6028654e0054d53595190bac06b3469f10fbc5312809a7f6176b9d859a1",
+      "bytes": 1538
+    },
+    "host-normal01.txt": {
+      "sha256": "e208a32429384491bf88138083dfb59196450ce55c24c266447857e167ba7166",
+      "lf_sha256": "8dc7a645ce6019cc1dbfdecc0357be0a84baa969a1ceee14e71cc0ebf923722c",
+      "bytes": 936
+    },
+    "host-normal02.txt": {
+      "sha256": "5354103a9fe663591a5eaa3e3ea1359c762ea50e9a4d950c007614414b5a42db",
+      "lf_sha256": "b28542fd32c3e91bac6b3de3de8cef3768d7598bb3d254f42675286929051c80",
+      "bytes": 1123
+    },
+    "host-optimized-final03.txt": {
+      "sha256": "aab5bb2f97f7888aa2439355948662f616aa9e2990169296c23aa8009b9e4e6b",
+      "lf_sha256": "0c043728317e4a787dc92e2d2a76a9a5b543d354fe1aaa36681d21d896a2bdee",
+      "bytes": 1538
+    },
+    "host-optimized01.txt": {
+      "sha256": "2a9f6e79aed4b9b615b21700434f8a56c4ccb0a7a96fdcfdbffdbcafd9daa50c",
+      "lf_sha256": "95663c33dac64edcb9061b265af593026ee36c0d64f02981bf965f6a6997e342",
+      "bytes": 936
+    },
+    "host-optimized02.txt": {
+      "sha256": "da4cc2727be3c382c09169096d2c9d50ecf506660a6c393a7c3f1cf09c8b5b42",
+      "lf_sha256": "363f567bd2357d176115e92c078a842a2e2875d6440ba9041e32dde2228ea7c6",
+      "bytes": 1123
+    },
+    "host-source-initial01.py": {
+      "sha256": "defbc31b9cd5d69d194976c67eca5998d27faf56a9e236100e8c98436d3f45a0",
+      "lf_sha256": "defbc31b9cd5d69d194976c67eca5998d27faf56a9e236100e8c98436d3f45a0",
+      "bytes": 25413
+    },
+    "initial-findings01.json": {
+      "sha256": "0653f358f4efdd07236e935d64f8b7cd6c890267c9191245a82872ae72284823",
+      "lf_sha256": "0653f358f4efdd07236e935d64f8b7cd6c890267c9191245a82872ae72284823",
+      "bytes": 1153
+    },
+    "owner-stderr-final02.txt": {
+      "sha256": "951b5dc58fc08d7ac929242943954adbe9132b7f9bf973d7ecaa28a3f8d0183a",
+      "lf_sha256": "1055c200e9bb8b0921a4b032e282518816336a4fb80fc2e77eaf35de9e76c145",
+      "bytes": 294
+    },
+    "owner-stderr-initial01.txt": {
+      "sha256": "97ab7a3097f5b7ca880b638ddc9c8a803fc421ad8f2474a8a9d23f1e544fa36b",
+      "lf_sha256": "dfc1afbe7e6162d98837cfb30b9e49dc265c61364de4e54b9b9a09da6c4a756d",
+      "bytes": 1135
+    },
+    "source-review01.json": {
+      "sha256": "0d43cf319e320699a59a360b9d33350d974905da2743e21f6180022395ab53fb",
+      "lf_sha256": "0d43cf319e320699a59a360b9d33350d974905da2743e21f6180022395ab53fb",
+      "bytes": 6175
+    },
+    "test_independent_containment01.py": {
+      "sha256": "8f0c080baadf1480b98479036bdf50c5664c60a2aba3a68494d47fa3f53e1ffa",
+      "lf_sha256": "8f0c080baadf1480b98479036bdf50c5664c60a2aba3a68494d47fa3f53e1ffa",
+      "bytes": 1532
+    },
+    "test_independent_core_shadow01.py": {
+      "sha256": "61240290664ac4872cf2dc720b304aa1352ddbd01f094693b618846cc6c40061",
+      "lf_sha256": "61240290664ac4872cf2dc720b304aa1352ddbd01f094693b618846cc6c40061",
+      "bytes": 1285
+    },
+    "test_independent_owner_stderr01.py": {
+      "sha256": "d1aa97484bd48688a58f24b1e5e27b7101e05c65a92ad8307c0800a1ccf34287",
+      "lf_sha256": "d1aa97484bd48688a58f24b1e5e27b7101e05c65a92ad8307c0800a1ccf34287",
+      "bytes": 1537
+    }
+  },
+  "prior_R1_R2_review": {
+    "sha256": "e74d25041dd523968831f72a10ab48f50ca59751e0ab0e2279a175fc1a5312c6",
+    "unchanged": true
+  },
+  "old_v22_terminal": {
+    "file": "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/window01/execution-terminal.json",
+    "sha256": "86d30fab565f69fef4546a9dfdc81891b17c1113c0f4e46ef9f22d3c23e9050b",
+    "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+    "P1_original_attempt": "009f4317-8855-4f99-80ec-cafc225f654e",
+    "native_delete_invocations": 1,
+    "P1_original_outcome": "CONFIRMED ACCEPTED; upstream204; original snapshot absence NOT_RUN",
+    "budget_slots_consumed": 2,
+    "no_resume_under_old_execution_or_authorization": true
+  },
+  "follow_up": [
+    {
+      "classification": "REQUIRED_NEXT_PHASE",
+      "item": "Commit exact reviewed source; prepare fresh disabled CID/binary/profile manifest; separately independently bind actual images/owners/networks/mounts/DSN/TTL/budgets/backups and produce the manifest final review. This SOURCE status intentionally cannot satisfy the run gate."
+    },
+    {
+      "classification": "NOT_RUN",
+      "item": "Actual native seven-version HEAD/protection/two-list precheck, selected Outbox/real Asynq P1 Core absence and final physical/IAM seal have not run. Record their actual outcomes after the manifest-bound final gate."
+    },
+    {
+      "classification": "NOT_AUTHORIZED",
+      "item": "No new deletion execution/window/candidate authority. Remaining-six deletion preparation and later confirmation are separate; no old seven-target or old authorization reuse."
+    }
+  ],
+  "reviewer_operations": {
+    "docker": 0,
+    "provider": 0,
+    "source_starts": 0,
+    "identity_enables": 0,
+    "proof_signing": 0,
+    "credential_reads": 0,
+    "native_delete": 0,
+    "shared_repo_edits": 0,
+    "GitHub_writes": 0
+  },
+  "manifest_sha256": null,
+  "runnable_manifest_review": false,
+  "native_acceptance": "NOT_RUN",
+  "full_D1": "NOT_ACCEPTED",
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN"
+}

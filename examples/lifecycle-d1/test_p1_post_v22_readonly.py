@@ -12,6 +12,47 @@ spec=importlib.util.spec_from_file_location('p1_readonly',Path(__file__).with_na
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 
 class P1ReadOnlyHostTests(unittest.TestCase):
+    def test_manifest_paths_reject_traversal_absolute_and_alias_collisions(self):
+        for inputs in ({'../root.json':'x'},{'/root.json':'x'},{'C:\\root.json':'x'},
+                       {'a//b':'x'},{'a/./b':'x'},{'a\\b':'x','a/b':'x'}):
+            with self.subTest(inputs=inputs),self.assertRaises(ValueError):
+                list(m.input_entries({'inputs':inputs}))
+
+    def test_actual_windows_manifest_survives_only_controlled_enabled_transition(self):
+        with tempfile.TemporaryDirectory() as d:
+            control=Path(d); originals={}
+            for name in ('worker-private/recovery.json','root-private/p1-readonly-permission.json'):
+                p=control/name;p.parent.mkdir(exist_ok=True)
+                m.write(p,{'Enabled':False,'ExpiresAt':'fixed-end','Binding':'exact'})
+                originals[name]=m.sha(p)
+                (control/(p.stem+'-disabled-original.json')).write_bytes(p.read_bytes())
+            host='dpp-lifecycle307-808a6960-postgres'
+            g={'Core':'core','Native':'native','Network':'net'}
+            manifest={'ExpiresAt':'2999-01-01T00:00:00+00:00','source_files':{},
+                      'source':g,'redis':'redis','owners':{'worker':{'cid':'worker','private':str(control),'output':str(control),'binary':str(control/'binary'),'binary_sha256':'binary-sha'}},
+                      'old_closed':{'owners':[],'old_control_sha256':{}},
+                      'core_connection_binding':{'host':host},
+                      'inputs':{name.replace('/','\\'):h for name,h in originals.items()}}
+            def inspect(cid):
+                return {'Name':'/'+(host if cid=='core' else cid),'Image':m.PG if cid=='core' else m.MI,
+                        'State':{'Running':True},'NetworkSettings':{'Networks':{'net':{'NetworkID':'net','Aliases':None,'DNSNames':[host if cid=='core' else cid]}}}}
+            # Actual profile bytes and hashes are checked; only Docker topology
+            # and the independent immutable binary are modeled here.
+            real_sha=m.sha
+            def checked_sha(path):return 'binary-sha' if path==control/'binary' else real_sha(path)
+            with patch.object(m,'CONTROL',control),patch.object(m,'inspect',side_effect=inspect),patch.object(m,'owner_contract'),patch.object(m,'sha',side_effect=checked_sha),patch.object(m,'docker',return_value=json.dumps([{'Internal':True,'Containers':{'core':{},'native':{},'redis':{}}}]).encode()):
+                for name in originals:
+                    p=control/name;v=m.load(p);v['Enabled']=True;p.write_text(json.dumps(v))
+                m.active_topology(manifest,'enable-p1-readonly')
+                m.active_topology(manifest,'worker')
+                p=control/'worker-private/recovery.json';v=m.load(p);v['ExpiresAt']='expanded-end';p.write_text(json.dumps(v))
+                with self.assertRaises(ValueError):m.active_topology(manifest,'worker')
+                v['ExpiresAt']='fixed-end';v['Enabled']=False;p.write_text(json.dumps(v))
+                with self.assertRaises(ValueError):m.active_topology(manifest,'worker')
+                for name in originals:
+                    p=control/name;v=m.load(p);v['Enabled']=False;p.write_text(json.dumps(v))
+                m.active_topology(manifest,'disable-all')
+
     def test_core_connection_binds_host_database_user_without_exposing_password(self):
         host='dpp-lifecycle307-808a6960-postgres'
         group={'Core':'fixed-Core','Copies':[{'WorkspaceID':'workspace','ProviderInstanceID':'provider','IncarnationID':'incarnation'}],'Actor':'actor'}

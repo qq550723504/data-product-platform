@@ -1,0 +1,16 @@
+{"at": "2026-10-19T09:45:30.826751+00:00", "phase": "disable-all"}
+test_failed_container_original_stderr_is_retained (__main__.Logs.test_failed_container_original_stderr_is_retained) ... FAIL
+
+======================================================================
+FAIL: test_failed_container_original_stderr_is_retained (__main__.Logs.test_failed_container_original_stderr_is_retained)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\fixture-private\remaining-post-v22-p1-review01\test_independent_owner_stderr01.py", line 23, in test_failed_container_original_stderr_is_retained
+    self.assertIn(diagnostic,retained,'Docker logs exited 0 but its container stderr was discarded')
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: b'ORIGINAL_IDENTITY_READBACK_FAILURE\n' not found in b'' : Docker logs exited 0 but its container stderr was discarded
+
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+
+FAILED (failures=1)

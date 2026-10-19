@@ -127,3 +127,8 @@ docs/acceptance/evidence/issue307-d1/remaining-candidate12/** -text whitespace=c
 docs/acceptance/issue307-d1-v22-execution01.md text eol=lf whitespace=-blank-at-eof
 
 docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly01/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/source-independent/bootstrap-build-info01.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/source-independent/worker-build-info01.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/source-independent/profile-paths-initial01.txt -text whitespace=cr-at-eol,-blank-at-eol

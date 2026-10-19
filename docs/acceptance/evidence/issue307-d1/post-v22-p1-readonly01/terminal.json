@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-19T10:11:18.411580+00:00",
+  "status": "BLOCKED_PRESTART_NO_SOURCE_IO",
+  "audit_id": "dc7246b9-f4e5-43fa-b80d-6ed31c135ef9",
+  "manifest_sha256": "3aa4401d1904e887a696538ecb1cd52d066d8996deecc37e1f6db274dc14dbde",
+  "reason": "B4: Windows manifest input separators prevent controlled Enabled transition; source independent review did not cover actual backslash keys",
+  "source_started": false,
+  "identity_enabled": false,
+  "native_delete": 0,
+  "old_execution_resumed": false,
+  "all_new_owners_closed": true,
+  "new_profiles_disabled": true,
+  "retained_old_facts_unchanged": true,
+  "full_D1": "NOT_ACCEPTED"
+}
