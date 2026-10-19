@@ -1,0 +1,335 @@
+{
+  "schema_version": 1,
+  "revision": 3,
+  "status": "PASS_BOUNDED_INDEPENDENT_OLD_DISPATCH_CLOSURE_HOST_SOURCE_REVIEW",
+  "reviewed_at": "2026-10-19T12:47:21.186693+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "remaining_blockers": [],
+  "scope": "AGENTS section17 convergence addendum only for actual prepare01 Config.Cmd contract failure, explicit argv repair and preservation of its three closed failed owners. This does not reopen previously reviewed invariants or add future platform scope.",
+  "checkout": {
+    "path": "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform",
+    "HEAD_at_readback": "df4553f268aa9a3c93f6f1fa9894b835e957a196",
+    "new_attempt": "post-v22-business-closure02",
+    "new_source_state": "Reviewed dirty source, not yet prepared. Future source commit and actual manifest must match these bytes."
+  },
+  "prior_reports_preserved": {
+    "source02": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-source-final-review02.json",
+      "sha256": "a0a2c6291a58ce499af7d81630b0c5276d48b35e8afbaaf34a5b023878181730",
+      "bytes": 19032
+    },
+    "note": "Previous report applies only to its old aa68/d7a2 bytes. It is historical source evidence, not authority for current source or either attempt."
+  },
+  "authoritative_contracts": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "aa6f2bae5d755a582d124d02fe1d4f0776cf93f4bf693a6194d06d7d9bbd4f4f",
+      "bytes": 37394
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-post-v22-dispatch-closure.md",
+      "sha256": "851d20b08d1868406f66ec250d1b0907c5060d01054b31d71486fd0801360c80",
+      "bytes": 4519
+    },
+    {
+      "path": "docs/acceptance/issue307-d1-post-v22-dispatch-closure-host.md",
+      "sha256": "8b2bc551a078c4cc5e337095c62dbfbd46cd66bb8018c5f533b19d25f6dd8fdb",
+      "bytes": 5080
+    }
+  ],
+  "actual_failed_prepare01_evidence": {
+    "manifest": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-business-closure01/preparation.json",
+      "sha256": "0db3f1a118f660ac4d2f8b515334288e1ef880d915abdc733c90b730469636c4",
+      "bytes": 131818
+    },
+    "terminal": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-business-closure01/terminal.json",
+      "sha256": "ea420fe2215894d65b1f10e040b8c4cae5b324d37ca18278c50741b2621ad084",
+      "bytes": 1453
+    },
+    "append_only_diagnosis_correction": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-business-closure01/diagnosis-correction01.json",
+      "sha256": "1dc819f15ddc526fec212bcb38d57d6b1ff824b5d6f7b6c7bed878ffff3a66e0",
+      "bytes": 577
+    },
+    "finding": "The actual observer Config.Cmd was null while the manifest expected []. The original terminal cause incorrectly claimed inherited [postgres]; correction preserves the terminal and explicitly retracts that explanation. Reviewer reads the public actual-Cmd/null record and correction; no live Docker/private input inspection is claimed.",
+    "state_per_public_terminal": {
+      "three_new_CIDs_stopped_PID0": true,
+      "profile_enabled": false,
+      "proof_present": false,
+      "original_source_started": 0,
+      "provider_calls": 0,
+      "business_mutations": 0,
+      "DELETE": 0
+    },
+    "future": "The failed attempt is terminal and cannot resume; original public bytes and all three CIDs are retained."
+  },
+  "reviewed_source": [
+    {
+      "path": "examples/lifecycle-d1/close-old-business-dispatches.py",
+      "sha256": "46c3a4709760e58cbe8c90fe97303794bf0588bc8d849120058c0651c107d4e5",
+      "bytes": 36446
+    },
+    {
+      "path": "examples/lifecycle-d1/test_old_business_dispatch_closure.py",
+      "sha256": "ef88029a9a6b8e6151582cea2a384735686624367f72c2709ea632d97bb9144c",
+      "bytes": 20805
+    }
+  ],
+  "current_fixes": [
+    {
+      "id": "HOST4_COMMAND",
+      "classification": "CLOSED",
+      "root": "An empty trailing Docker command serialized Config.Cmd as null, violating the exact [] contract and blocking required prepare success.",
+      "verified_fix": "allocate validates kind plus exact nonempty fixed argv before output.mkdir or any Docker create. Observer receives [post-v22-close], check-disabled/disable-all receive their exact [-action,kind] values. own_contract keeps strict actual Cmd equality; no null/empty compatibility fallback or inherited-command acceptance is introduced. Fixed Go observer binary behavior/capabilities are unchanged.",
+      "regressions": [
+        "test_allocate_rejects_inherited_image_command_before_Docker (test name does not change the corrected actual null-vs-empty cause)",
+        "test_allocate_passes_explicit_observer_command_to_Docker"
+      ]
+    },
+    {
+      "id": "HOST4_RETENTION",
+      "classification": "CLOSED",
+      "root": "A new audit must include the three new failed prepare01 helpers in preservation checks rather than only the older77 owner anchor.",
+      "verified_fix": "prior_preparation_closed pins exact old manifest and terminal hashes, checks every immutable input hash, disabled closure profile and absent proof, and fresh closed/PID0/noports/norestart/image checks for the three manifest CIDs. The returned digest/CID facts are frozen into the new manifest and compared in prepare, pre-start run, proof capture and final retained check. No old source, failed helper, profile or proof is resumed or modified."
+    }
+  ],
+  "independently_executed_offline_tests": {
+    "receipt": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-tests04.json",
+      "sha256": "e2091291e4f70d8ab86564bfed66e91dc5944b0b15a35df856cd776b6569ba61",
+      "bytes": 3904
+    },
+    "whole_entry": {
+      "normal": {
+        "methods": 20,
+        "exit": 0
+      },
+      "optimized": {
+        "methods": 20,
+        "exit": 0
+      },
+      "source": "successful whole-entry records preserved in host-final-tests03.json; product source unchanged on subsequent prior-gate harness correction"
+    },
+    "additional_actual_prior_gate": {
+      "script": {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/test_prior_preparation_gate02.py",
+        "sha256": "8e5c0358a1b294f03f2d22c0eb1b793f684731c4b56eb989a462360fa62d4143",
+        "bytes": 2537
+      },
+      "normal": {
+        "methods": 2,
+        "exit": 0
+      },
+      "optimized": {
+        "methods": 2,
+        "exit": 0
+      },
+      "scope": "Directly invokes the actual prior_preparation_closed function using a synthetic projection of the public failed manifest rather than replacing the function. Positive exact three-CID case and five history/input/Enabled/proof/running drift combinations pass. All Docker/sha/private load inputs are mocked; no secret or original runtime is read."
+    },
+    "whole_entry_start_barrier": "Prior-history drift complete run() counterexample records zero source start.",
+    "original_channels": [
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-whole-normal03-stderr.txt",
+        "sha256": "181f90cf982a630cea9829f79a3a0bafad4ccb2a79e1f067a1cfc8e07ba28832",
+        "bytes": 3470
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-whole-normal03-stdout.txt",
+        "sha256": "5a5c26c69bc89471d8f2383a8fcf91841d520749ee6d753ad161c3c0d86ffa6c",
+        "bytes": 507
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-whole-optimized03-stderr.txt",
+        "sha256": "675e801a5fef0534bc82ebd85345e31df31d472ee78b9df419cd0a0939cd1249",
+        "bytes": 3470
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-whole-optimized03-stdout.txt",
+        "sha256": "c4939a6b2e1ff8ad0abe5cbbf90faddc0e98ac8e1e84749aed0159e8c5d8d35b",
+        "bytes": 507
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-prior-gate-normal04-stderr.txt",
+        "sha256": "c7da96b3c7605f76526ebd7fa774200223324602d984b6e528744e7b880db2d4",
+        "bytes": 385
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-prior-gate-normal04-stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-prior-gate-optimized04-stderr.txt",
+        "sha256": "a992f3e83adbf368c2461af74cd21a7d8863bd4657554bf174d036d75ac8a00a",
+        "bytes": 385
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-prior-gate-optimized04-stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    ],
+    "reviewer_harness_failure_preserved": {
+      "original_script": {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/test_prior_preparation_gate01.py",
+        "sha256": "366c66f1da12bcad83a8641077a559663ba4f64dfe12416fc525845e504fdc6c",
+        "bytes": 2537
+      },
+      "original_receipt": {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-tests03.json",
+        "sha256": "5ff370021ca5c3bdba2974d013c76520151188afc0711b0076986310b62dca95",
+        "bytes": 3500
+      },
+      "failure": "Reviewer initial new test used parents[7] instead of parents[6] and failed before host import. Old script and failure channels remain. New02 changes only its checkout root derivation; product source did not change.",
+      "original_failed_logs": [
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-prior-gate-normal03-stderr.txt",
+          "sha256": "7a0282e6df17271306de6b128474516e1967c93d83445ea17d4a277528c1d14d",
+          "bytes": 772
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-prior-gate-normal03-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-prior-gate-optimized03-stderr.txt",
+          "sha256": "7a0282e6df17271306de6b128474516e1967c93d83445ea17d4a277528c1d14d",
+          "bytes": 772
+        },
+        {
+          "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/host-final-prior-gate-optimized03-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      ]
+    },
+    "boundary": "Offline models prove the finite control flow and gates only. Synthetic ephemeral test signatures are not actual host proofs."
+  },
+  "parent_offline_evidence": {
+    "receipt": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/host-composition04.json",
+      "sha256": "a5f17a412127a93aca061940223ad41c57514ea3d22fca9e694a8a47bc25c398",
+      "bytes": 786
+    },
+    "raw_logs": [
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/host-composition04-normal-stdout.txt",
+        "sha256": "31e745b7a744921e329bf5f29f4db939c8056384b71c4c8da915b1e83cfa8531",
+        "bytes": 507
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/host-composition04-normal-stderr.txt",
+        "sha256": "3e688f1faed82991fceb2ba4b048648071e5650602083732e651257d1c87fd55",
+        "bytes": 102
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/host-composition04-optimized-stdout.txt",
+        "sha256": "8351ead2b2868aa6f63e566515ec28b141966bd6a2f757faf710ebe96c094e94",
+        "bytes": 507
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/host-composition04-optimized-stderr.txt",
+        "sha256": "7d54b2f0c73f6d6956a9c0cb5db4fc1ff8d1c3449b81bde8b662fa669028dc93",
+        "bytes": 102
+      }
+    ],
+    "raw_hashes_match": true,
+    "methods_per_mode": 20
+  },
+  "previous_review_still_applicable_to_unchanged_files": [
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-old-dispatch/main.go",
+      "sha256": "1b8dd67e47394716fce28a5a111a4fc2ae00fac10f1cfe7f9eb536b0b99e0692",
+      "bytes": 8136
+    },
+    {
+      "path": "apps/platform/cmd/lifecycle-fixture-old-dispatch/main_test.go",
+      "sha256": "88b985ee3866a4090df279b4ed5914cbacc9856ac54b85d5ae7bcdf245fde98e",
+      "bytes": 3536
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/application/old_dispatch_closure_integration_test.go",
+      "sha256": "fa03b5a2a5410b1b194f390d5815b6319cfd6363721ed852f88ab58cf3400ed8",
+      "bytes": 3513
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/post_v22_no_send.go",
+      "sha256": "9d5a746839ce755ac025fce875e3ee37e4645d58ea4a1619be1ca5bc6d553826",
+      "bytes": 6936
+    },
+    {
+      "path": "apps/platform/internal/lifecycle/pilot/post_v22_no_send_test.go",
+      "sha256": "0476f117d8cf7f0a39069b39db0cc9bbd2cb4df71b53f4048279f0a5d77e6bac",
+      "bytes": 9672
+    },
+    {
+      "path": "examples/lifecycle-d1/audit-old-business-dispatches.py",
+      "sha256": "7b852560253f911146351dee2180d1c395e706983cdb5471361bfa6779b572af",
+      "bytes": 10888
+    },
+    {
+      "path": "examples/lifecycle-d1/complete-lc13-readonly.py",
+      "sha256": "83165c84826b5a0632d8cd54d6d403096033ef498d15f34798c074089df4d1bf",
+      "bytes": 20703
+    },
+    {
+      "path": "examples/lifecycle-d1/prepare-remaining-native.py",
+      "sha256": "992c2e47239236da70bed97f8dfcda3175232afb7e266dad5d3edd9e046b662f",
+      "bytes": 19545
+    },
+    {
+      "path": "examples/lifecycle-d1/reconcile-p1-post-v22.py",
+      "sha256": "dca8bb50055a1fada43c2a23800230bc00c097483dcf3c9ff966e2e633cc3bd0",
+      "bytes": 31241
+    }
+  ],
+  "real_PG_boundary": {
+    "receipt": {
+      "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/postgres-regression04.json",
+      "sha256": "09b42a4add24eef6e704d5b8f33b04881bfdf43fe30875a3bf5d009307bdfa6a",
+      "bytes": 796
+    },
+    "channels": [
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/postgres04-stdout.txt",
+        "sha256": "4588dc930c0a9d6c12e865ad79223d65cc4b880a36afb5165781e11a6f216f0d",
+        "bytes": 1928
+      },
+      {
+        "path": "docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/postgres04-stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    ],
+    "unchanged": true,
+    "reviewer_did_not_run_PG": true,
+    "scope": "Existing full-migrated synthetic Command composition for three revocations/NOT_SENT/releases, stable replay, expected deltas and old fact preservation remains as explicitly bounded in source02; not actual retained observer or host proof acceptance. No Go runtime changes justify repeating PG."
+  },
+  "classifications": {
+    "BLOCKER": [],
+    "FOLLOWUP_REQUIRED_SEPARATE_GATES": [
+      "Commit reviewed source bytes then prepare only new stopped owners for closure02.",
+      "Independently review actual closure02 manifest, nonempty actual Docker Cmd and all bindings including failed closure01 before run.",
+      "Actual original Core revoke/NOT_SENT/release and final seal remain separate runtime acceptance.",
+      "17-version native read-only refresh and remaining-six candidate/execution/window/new deletion authorization remain later gates."
+    ],
+    "OUT_OF_SCOPE": [
+      "Future generic CLI modes, platform-wide hardening, or full six-target/D1 acceptance in this bounded repair.",
+      "Resuming failed closure01, changing original terminal/correction, weakening command equality or reusing old authorization."
+    ]
+  },
+  "explicit_limits": [
+    "No private credential/key read, live Docker/PG/provider, identity action, actual proof signing, original source start, original Core mutation or DELETE performed by reviewer.",
+    "New actual Docker null/nonempty serialization is verified only by forthcoming stopped-owner manifest evidence, not inferred from mocks.",
+    "All prior source/PG/failed preparation records remain unchanged; source03 is not a manifest/run gate or deletion authority."
+  ],
+  "new_manifest": "NOT_PREPARED",
+  "actual_host_proof": "NOT_RUN",
+  "actual_old_Core_closure": "NOT_RUN",
+  "DELETE": 0,
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

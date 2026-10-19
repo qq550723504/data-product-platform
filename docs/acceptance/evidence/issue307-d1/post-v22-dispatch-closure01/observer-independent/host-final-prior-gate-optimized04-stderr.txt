@@ -1,0 +1,7 @@
+test_fixed_three_failed_owners_preserved (__main__.ActualPriorGateTests.test_fixed_three_failed_owners_preserved) ... ok
+test_history_input_enabled_proof_and_running_drift_rejected (__main__.ActualPriorGateTests.test_history_input_enabled_proof_and_running_drift_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.011s
+
+OK

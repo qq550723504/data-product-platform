@@ -40,3 +40,7 @@
 最后一次源码补齐：启动前 source topology 已收进固定入口，normal/-O 各17项 PASS，见 `host-composition02.json`。旧 `host-source-final-review01.json` 只绑定前一版字节，其 superseded 回执明确不可用于当前 prepare/run；最终02复评仍待完成，原三项 dispatch 仍 NOT_RUN。
 
 最终源码复评已完成：`observer-independent/host-source-final-review02.json` SHA256 `a0a2c6291a58ce499af7d81630b0c5276d48b35e8afbaaf34a5b023878181730`，status=PASS_BOUNDED_INDEPENDENT_OLD_DISPATCH_CLOSURE_HOST_SOURCE_REVIEW、remaining_blockers=[]。HOST1/2/3闭合；独立 normal/-O 各17项 PASS。接下来仅准备 stopped owners，再评实际 manifest；source PASS 不代替 manifest/run gate，原源三项闭合仍 NOT_RUN。
+
+第一次实际 prepare 保留于 `post-v22-business-closure01`：observer 的实际 Docker Config.Cmd=null，清单期待 []，最终配置检查正确拒绝。原源启动/签proof/业务写入/DELETE均0；三份新CID均stopped/PID0，profilefalse，proof不存在。最初终态诊断误称“继承postgres”，`diagnosis-correction01.json` 明确更正为 null/空数组表示差异，原字节不覆盖。当前入口改为显式固定非空 observer 参数，空参数在任何Docker前拒绝；下一次非删除审计使用独立 closure02，并在所有门禁核对失败01的清单/终态/输入哈希及三份CID关闭状态。normal/-O各20项PASS见 `host-composition04.json`；最新源码与旧02不同，等待有限03复评，不能用旧报告运行。
+
+本轮已触发 AGENTS §17 收敛检查点：有限合同冻结为旧三项 dispatch 的可信 NOT_SENT 闭合、原事实/预算/pins 保全、明确 partial/UNKNOWN、完整 finally 封存。仅当前真实 command 契约缺陷及失败资源保全属于此次复评 BLOCKER；未来扩展和通用 hardening 不扩大本切片。17版本刷新及六份候选仍后续门禁，原源三项仍 NOT_RUN。

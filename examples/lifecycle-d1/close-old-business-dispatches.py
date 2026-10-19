@@ -14,8 +14,8 @@ import time
 import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
-CONTROL = Path('C:/Users/Henry/.codex/fixture-private/post-v22-business-closure01')
-PUBLIC = ROOT / 'docs/acceptance/evidence/issue307-d1/post-v22-business-closure01'
+CONTROL = Path('C:/Users/Henry/.codex/fixture-private/post-v22-business-closure02')
+PUBLIC = ROOT / 'docs/acceptance/evidence/issue307-d1/post-v22-business-closure02'
 AUDIT = '23587686-0a95-4eaa-a010-a8c896c9735b'
 ALLOWED = {'lifecycle_approval_revocation', 'lifecycle_provider_observation', 'lifecycle_dispatch_release',
            'command_idempotency', 'delivery_authorization_fence', 'audit_event', 'evidence', 'evidence_relation', 'outbox_event'}
@@ -70,6 +70,22 @@ def packet():
     need(sha(p1.PACKET / 'candidate.json') == 'f624a5f50ccb4fa4aa8b465f5a60a090f6325e78f60544b4c18f9ba2604ef243'
          and sha(p1.PACKET / 'bindings.json') == '8e54b47e4a1f83c7ce66555ed6ce2f3ec66c962a394a8fa1feb84eeaccd82fc5', 'old packet drift')
     return load(p1.PACKET / 'candidate.json'), load(p1.PACKET / 'bindings.json')
+
+
+def prior_preparation_closed():
+    base = p1.PRIVATE / 'post-v22-business-closure01'
+    need(sha(base / 'manifest.json') == '0db3f1a118f660ac4d2f8b515334288e1ef880d915abdc733c90b730469636c4'
+         and sha(base / 'terminal.json') == 'ea420fe2215894d65b1f10e040b8c4cae5b324d37ca18278c50741b2621ad084', 'failed preparation history drift')
+    manifest = load(base / 'manifest.json')
+    need(sha(base / 'worker-private/closure.json') == manifest['inputs']['worker-private/closure.json']
+         and load(base / 'worker-private/closure.json')['Enabled'] is False and not (base / 'worker-private/proof.json').exists(), 'failed preparation worker configuration drift')
+    for name, digest in manifest['inputs'].items():
+        need(sha(base / name) == digest, 'failed preparation input drift')
+    for owner in manifest['owners'].values():
+        x = inspect(owner['cid'])
+        need(x['Id'] == owner['cid'] and x['Image'] == p1.PG and closed(x), 'failed preparation owner not physically closed')
+    return {'manifest_sha256': sha(base / 'manifest.json'), 'terminal_sha256': sha(base / 'terminal.json'),
+            'closed_cids': sorted(o['cid'] for o in manifest['owners'].values()), 'inputs_unchanged': True, 'Enabled': False, 'proof_present': False}
 
 
 def execution_owners(candidate, bindings):
@@ -128,6 +144,8 @@ def own_contract(owner, manifest):
 
 
 def allocate(kind, binary, private, output, source, arguments, label):
+    expected = ['post-v22-close'] if kind == 'observer' else ['-action', kind]
+    need(kind in ('observer', 'check-disabled', 'disable-all') and arguments == expected, 'explicit fixed owner command required')
     output.mkdir()
     cid = p1.text('create', '--name', 'dpp307-old-closure-' + label + '-' + kind, '--label', 'lifecycle307.closure=' + label,
                   '--network', 'container:' + source, '--user', '10001:10001', '--read-only', '--cap-drop', 'ALL',
@@ -145,6 +163,7 @@ def prepare():
     CONTROL.mkdir()
     PUBLIC.mkdir(exist_ok=False)
     before = audit.retained(p1)
+    prior = prior_preparation_closed()
     candidate, bindings = packet()
     group, binding = candidate['Groups'][0], bindings[0]
     owners = execution_owners(candidate, bindings)
@@ -182,11 +201,11 @@ def prepare():
     write(CONTROL / 'closure-disabled-original.json', profile)
     root_binary = p1.OLD / 'owner'
     need(sha(root_binary) == candidate['OwnerBinarySHA256'], 'fixed read-only bootstrap binary drift')
-    allocated = {'observer': allocate('observer', CONTROL / 'observer', worker, CONTROL / 'output-observer', group['Core'], [], audit_id[:8])}
+    allocated = {'observer': allocate('observer', CONTROL / 'observer', worker, CONTROL / 'output-observer', group['Core'], ['post-v22-close'], audit_id[:8])}
     for action in ('check-disabled', 'disable-all'):
         allocated[action] = allocate(action, root_binary, root, CONTROL / ('output-' + action), group['Native'], ['-action', action], audit_id[:8])
     manifest = {'status': 'PREPARED_DISABLED_NON_DELETE_ONLY', 'audit_id': audit_id, 'source_head': p1.call(['git', 'rev-parse', 'HEAD']).decode().strip(),
-                'source_files': sources(), 'source': group, 'old_retained': before, 'old_execution_owners': owners, 'targets': original_targets(),
+                'source_files': sources(), 'source': group, 'old_retained': before, 'prior_failed_preparation': prior, 'old_execution_owners': owners, 'targets': original_targets(),
                 'owners': allocated, 'public_key': public_key, 'activation_fields': ['Enabled', 'NotBefore', 'ExpiresAt', 'EvidenceSHA256'],
                 'inputs': {p.relative_to(CONTROL).as_posix(): sha(p) for p in CONTROL.rglob('*') if p.is_file() and p.suffix != '.private'},
                 'root_read_actions': ['check-disabled', 'disable-all'], 'enable': 0, 'native_delete': 0, 'pins_released': 0, 'budgets_refunded': 0}
@@ -224,6 +243,7 @@ def frozen(manifest):
 
 def active_old_state(manifest):
     group = manifest['source']
+    need(prior_preparation_closed() == manifest['prior_failed_preparation'], 'failed preparation owner/config drift during proof capture')
     for cid in manifest['old_retained']['owner_ids']:
         if cid != group['Core']:
             need(closed(inspect(cid)), 'old owner/source is running during proof capture')
@@ -415,6 +435,7 @@ def run(review_path, review_sha):
     need(not (PUBLIC / 'terminal.json').exists(), 'one-shot closure already terminal')
     frozen(manifest)
     need(audit.retained(p1) == manifest['old_retained'], 'retained pre-activation state drift')
+    need(prior_preparation_closed() == manifest['prior_failed_preparation'], 'prior failed preparation pre-activation drift')
     profile(manifest, False)
     source_contract(manifest)
     for owner in manifest['owners'].values():
@@ -497,7 +518,7 @@ def run(review_path, review_sha):
         closure = contain(manifest, started, final_core)
         result['closure'] = closure
         try:
-            result['retained_unchanged'] = audit.retained(p1) == manifest['old_retained']
+            result['retained_unchanged'] = audit.retained(p1) == manifest['old_retained'] and prior_preparation_closed() == manifest['prior_failed_preparation']
         except Exception:
             result['retained_unchanged'] = False
         result['failure'] = failure

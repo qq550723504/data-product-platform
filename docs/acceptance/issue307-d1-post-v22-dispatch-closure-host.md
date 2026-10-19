@@ -4,6 +4,8 @@
 
 唯一入口是 `examples/lifecycle-d1/close-old-business-dispatches.py`。`prepare` 只构建新 observer、生成宿主独占签名私钥及关闭的零删除 profile，并创建三个 stopped owner：observer、固定 check-disabled、固定 disable-all。root helper 沿用原冻结 binary，只挂它必需的 root/candidate/IAM/policy 文件；不挂旧授权。observer 只挂 closure.json 和签名 proof.json，不挂 root 文件、宿主私钥、存储凭据或 budget。新 owner 使用 UID10001、只读 rootfs、cap-drop ALL、no-new-privileges、no restart、无发布端口，精确私有/二进制/输出三个 mount。必须先独立评审实际 manifest，再允许 `run`。
 
+Docker owner 使用显式固定非空参数：observer 为 `post-v22-close`，root 为 `-action check-disabled/disable-all`；不依赖 Docker 将空 Cmd 表示成 null 或 []。失败准备01的 manifest、终态和更正诊断及三份stopped owner均保留；新的准备02在运行各阶段重新核对旧失败输入、关闭的profile、无proof和三个PID0，不能修改失败01使其冒充成功。
+
 新非删除 profile 的 40 分钟期限仅在实际检查完成后开始，不是删除窗口，不构成删除授权。激活只允许 Enabled、NotBefore、ExpiresAt、EvidenceSHA256 四字段变化；其余字段和 source/input/binary/CID 必须匹配新 manifest。原 v22 窗口和只读期限均不延长、不复用。
 
 执行前保存 77 个旧 owner、46 旧控制文件、8 只读 profile、九备份和三组旧预算与最终 P1 anchor 的精确一致性。39 个旧执行 helper 的 binary、operator/root 配置、case 配置和实际 CID 均核对。原冻结 case 的 Base.Enabled=true；终态封存合法地改为 false。只在内存中反向这一个已记录撤销字段，按原生成器序列化匹配 frozen case SHA；实际文件必须 false，并继续匹配终态保全 anchor，绝不恢复文件或启动旧 helper。旧 helper 的实际历史 UID 记录原值，不能宣称原 owner 都是 nonroot。

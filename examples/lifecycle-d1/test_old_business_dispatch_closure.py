@@ -41,7 +41,7 @@ class ClosureTests(unittest.TestCase):
             targets = m.original_targets()
             old = {'owner_ids': ['old', 'Core']}
             owners = {name: {'cid': name, 'output': str(private / ('output-' + name))} for name in ('observer', 'check-disabled', 'disable-all')}
-            manifest = {'audit_id': 'new-audit', 'source': {'Core': 'Core', 'Native': 'Native', 'Network': 'net'}, 'old_retained': old,
+            manifest = {'audit_id': 'new-audit', 'source': {'Core': 'Core', 'Native': 'Native', 'Network': 'net'}, 'old_retained': old,'prior_failed_preparation':{},
                         'owners': owners, 'targets': targets, 'activation_fields': ['Enabled', 'NotBefore', 'ExpiresAt', 'EvidenceSHA256']}
             save(private / 'manifest.json', manifest)
             cfg = {'Enabled': False, 'MaxProviderDeletes': 0, 'NotBefore': '0001-01-01T00:00:00Z', 'ExpiresAt': '0001-01-01T00:00:00Z', 'EvidenceSHA256': '0' * 64, 'Owners': {'old': 'd' * 64}}
@@ -91,13 +91,14 @@ class ClosureTests(unittest.TestCase):
                                      fingerprints=lambda *a: copy.deepcopy(after if observed[0] else before),
                                      sql=lambda *a: '\n'.join(json.dumps(x) for x in (final if observed[0] else initial)))
             bindings = [(m, 'frozen', lambda *a: m.need(fault != 'pre-gate', 'modeled freeze drift')),
+                        (m,'prior_preparation_closed',lambda: m.need(fault != 'prior-drift','modeled prior drift') or {}),
                         (m.audit, 'retained', lambda *a: old), (m, 'own_contract', lambda *a: inspect(a[0]['cid'])),
                         (m, 'closed', lambda x: not x['State']['Running']), (m, 'inspect', inspect), (m, 'docker', docker),
                         (m.p1, 'native_module', lambda: native), (m.p1, 'append_anchors', lambda *a: {'old': Counter({'hash': 1})}),
                         (m, 'run_owner', stage), (m, 'iam_receipt', iam), (m, 'active_old_state', lambda *a: {'MODELED_ONLY': True}),
                         (m, 'wire_receipt', lambda: {'MODELED_ONLY': True})]
             for target, name, value in bindings: stack.enter_context(patch.object(target, name, value))
-            if fault in ('pre-gate', 'source-network'):
+            if fault in ('pre-gate', 'source-network','prior-drift'):
                 with self.assertRaises(ValueError): m.run(review, m.sha(review))
                 self.assertFalse(any(x[0] == 'start' for x in commands)); return
             passed = m.run(review, m.sha(review))
@@ -135,6 +136,7 @@ class ClosureTests(unittest.TestCase):
     def test_whole_entry_success(self): self.composition()
     def test_whole_entry_pre_gate_has_no_I_O(self): self.composition('pre-gate')
     def test_whole_entry_source_network_expansion_precedes_start(self): self.composition('source-network')
+    def test_whole_entry_prior_failed_preparation_drift_precedes_start(self): self.composition('prior-drift')
     def test_whole_entry_partial_observer_preserves_committed_rows(self): self.composition('partial-observer')
     def test_whole_entry_IAM_failure_disables_then_stops_all(self): self.composition('IAM-error')
     def test_whole_entry_disable_failure_still_stops_all(self): self.composition('disable-all-error')
@@ -161,6 +163,17 @@ class ClosureTests(unittest.TestCase):
     def test_packet_checks_actual_bytes_before_any_Docker(self):
         with patch.object(m, 'sha', return_value='foreign'), patch.object(m, 'docker', side_effect=AssertionError('no I/O')):
             with self.assertRaises(ValueError): m.packet()
+
+    def test_allocate_rejects_inherited_image_command_before_Docker(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(m.p1,'text',side_effect=AssertionError('no Docker before fixed command')):
+            with self.assertRaises(ValueError): m.allocate('observer', Path(tmp)/'binary', Path(tmp)/'private', Path(tmp)/'output', 'Core', [], 'label')
+
+    def test_allocate_passes_explicit_observer_command_to_Docker(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(m.p1,'text',return_value='fixed') as docker:
+            root=Path(tmp);binary=root/'binary';binary.write_bytes(b'approved')
+            owner=m.allocate('observer',binary,root/'private',root/'output','Core',['post-v22-close'],'label')
+            self.assertEqual(docker.call_args.args[-2:],(m.p1.PG,'post-v22-close'))
+            self.assertEqual(owner['arguments'],['post-v22-close'])
 
     def test_source_wrong_image_network_and_active_endpoint_refused(self):
         state = {'Id':'Core', 'Image':m.p1.PG,'NetworkSettings':{'Networks':{'bound':{'NetworkID':'net'}}}}
@@ -200,12 +213,13 @@ class ClosureTests(unittest.TestCase):
     def test_active_proof_requires_sealed_gateway_budget_and_closed_owners(self):
         candidate = {'Groups': [{'Gateway': 'gateway', 'SealedGatewaySHA256': 'approved'}]}
         old = {'owner_ids': ['Core', 'old'], 'old': {'old_control_sha256': {}}, 'readonly_profile_sha256': {}, 'backup_sha256': 'backup', 'old_budgets': 'budget'}
-        manifest = {'source': {'Core': 'Core', 'Network': 'net'}, 'old_retained': old, 'old_execution_owners': {}}
+        manifest = {'source': {'Core': 'Core', 'Network': 'net'}, 'old_retained': old, 'old_execution_owners': {},'prior_failed_preparation':{}}
         def inspect(cid):
             if cid == 'Core': return {'State': {'Running': True}, 'Image': m.p1.PG, 'HostConfig': {'RestartPolicy': {'Name': 'no'}, 'PortBindings': {}}}
             return {'State': {'Running': False}, 'Mounts': [{'Destination': '/etc/caddy/Caddyfile', 'Source': 'sealed', 'Type': 'bind', 'RW': False}]}
         with ExitStack() as stack:
             for target,name,value in [(m,'packet',lambda:(candidate,[])),(m,'inspect',inspect),(m,'closed',lambda x:not x['State']['Running']),
+                    (m,'prior_preparation_closed',lambda:{}),
                     (m,'sha',lambda p:'approved'),(m.p1,'backups',lambda:'backup'),(m.p1,'budgets',lambda:'budget'),
                     (m,'execution_owners',lambda *a:{}),(m,'docker',lambda *a:json.dumps([{'Internal':True,'Containers':{'Core':{}}}]).encode())]:
                 stack.enter_context(patch.object(target,name,value))
