@@ -23,3 +23,5 @@
 保留的非删除失败包括：scratch网络默认地址池耗尽、internal网络无host端口导致测试启动拒绝、测试最初漏两份精确产出、PG反例误将“额外无关版本”当作Core exact absence禁项，以及独立评审发现的成功读回吞错反例。均保留原日志；修复未放宽Core、IAM或历史校验。
 
 P1独立只读切片须在claim前选择精确Outbox event，不能用handler拒绝其他事件来冒充未触及它们。复用现有Outbox/Asynq、RecoveryService和StorageInspector；新只读owner/期限、仅inspector临时启用、root与worker分离、读取与Core追加absence、失败关闭均须独立核验。此后续设计不是新的删除授权，也未在本轮修复验收中冒充完成。
+
+后续独立P1只读切片已于2026-10-19T10:58:17Z通过并封存：实际Outbox→Asynq→Core absence/plan completion均完成，本轮无DELETE。上表P1 NOT_RUN保留为本修复切片原快照；最新事实与边界见 `issue307-d1-post-v22-p1-readonly-acceptance.md`。剩六仍为未冻结范围草案。

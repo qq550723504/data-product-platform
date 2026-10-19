@@ -1,0 +1,16 @@
+{
+  "cid": "dc18e50151c2a3bce3333ee2f11e776d9a8cac2dbd66b2bb2498c2b9fb703cf9",
+  "exit": 0,
+  "closed": true,
+  "logs": {
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 1067,
+      "sha256": "8f3c5419ca88af065ff991f90eb69f810d38288202f05f16ebae97f49e8353dc"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

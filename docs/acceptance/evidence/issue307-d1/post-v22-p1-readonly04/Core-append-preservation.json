@@ -1,0 +1,37 @@
+{
+  "old_rows_preserved": true,
+  "original_counts": {
+    "audit_event": 311,
+    "command_idempotency": 99,
+    "cost_allocation": 89,
+    "cost_event": 93,
+    "evidence": 274,
+    "evidence_relation": 266,
+    "lifecycle_copy_absence_receipt": 0,
+    "lifecycle_plan_completion": 0,
+    "lifecycle_reconciliation_result": 0,
+    "lifecycle_reconciliation_run": 0,
+    "lifecycle_reconciliation_work": 5,
+    "lifecycle_storage_call": 73,
+    "lifecycle_storage_observation": 73,
+    "outbox_event": 308,
+    "outbox_event_consumption": 0
+  },
+  "after_counts": {
+    "audit_event": 364,
+    "command_idempotency": 102,
+    "cost_allocation": 113,
+    "cost_event": 117,
+    "evidence": 327,
+    "evidence_relation": 319,
+    "lifecycle_copy_absence_receipt": 1,
+    "lifecycle_plan_completion": 1,
+    "lifecycle_reconciliation_result": 1,
+    "lifecycle_reconciliation_run": 1,
+    "lifecycle_reconciliation_work": 6,
+    "lifecycle_storage_call": 97,
+    "lifecycle_storage_observation": 97,
+    "outbox_event": 361,
+    "outbox_event_consumption": 1
+  }
+}

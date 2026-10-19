@@ -43,3 +43,23 @@ B7/B8修后采用固定999:1000用户、原官方Redis入口和owned持久卷，
 新audit04尚未prepare，无新删除候选、execution、窗口或授权。
 
 B7/B8源独立复评05 PASS、有效阻断0，报告SHA `3cbbf2a2a297fbd94ae80a60b8de205aff29f50bfbf97914fd0f889c12850323`；这不代替audit04实际manifest复评。
+
+## 最新结果：audit04只读对账已通过并封存
+
+2026-10-19T10:58:17Z，audit `d64ad338-00d2-4569-bd62-9e132ddaf578` 实际终态为 **PASS_P1_READONLY_RECONCILIATION_SEALED**。运行source为 `491a42564edec862048fdb532a9964bad536b300`；manifest `08575df192136760be928c199ab06df921bb3ef1bd13c81115d25886ba3eea4c`，独立实际绑定复评 `cc9ee86aa4f950156849848a4d400b425c1b50cb7e535fe1ab637b11bf0f41e6`。前文04未prepare与P1未完成均为保留的此前快照，以下为最新事实。
+
+| audit04验收项 | 实际结果 |
+| --- | --- |
+| 受限Redis | 999:1000、owned持久卷、实际网络/挂载/无端口/无root；PONG先于源与身份启动 |
+| 新鲜原生前检 | PASS；7精确HEAD/保护、2全LIST，P1 exact缺失；23独立call ID。未重读全部bytes/SHA |
+| 既有事务Outbox→Asynq | PASS；work ab6904c1-38ff-4778-86ed-6990c37cc57b；选定event 528b553b-4db0-4d26-b818-bf2330032f46 PUBLISHED；真实Asynq worker处理 |
+| Core absence | b2d74d75-ed07-4b0a-b530-6c5d308cf1b8，原attempt009f4317-8855-4f99-80ec-cafc225f654e、copy5a4c9789-3e67-4e54-ab58-128d111cbd65 |
+| plan completion | 16562b28-3896-49c0-933e-a6e73059bddc |
+| Core历史/权限 | 实际before/after roles/ACL一致；变化关系仅批准追加集合；全部旧行hash多重集保留，原provider attempt/observation、成本、旧pins不改写 |
+| 封存 | 6/6本次owner停止/PID0；新2profilefalse；固定disable-all四身份fresh disabled；旧61owner/46控制、9备份、3预算原字节一致；前三审计12新增owner与6profile另有禁用回执 |
+| 删除与旧授权 | 本次DELETE=0；不重开v22、不重用任何旧audit权限、cleanup=hold-release=bypass=0 |
+| 剩余六份/完整D1 | 仅六目标+11保留范围草案，未冻结候选/删除execution/窗口/授权；完整D1 NOT_ACCEPTED |
+
+实际行数与调用回执见audit04/activity-accounting.json。23项前检之外，既有RecoveryService还完成独立instrumented LIST，全部新增storage call/observation/Cost数量按实际Core前后行数列出，amount未知为NOT_ASSESSED。admin身份GET/PUT另列为技术请求，不冒充业务CostEvent；原v22、audit01/02/03失败、UNKNOWN、旧预算/pins/备份及pending旧obligation全部保留。
+
+下一门禁是核对并可信闭合P2/T1/T2旧未发送dispatch占用，再以17份当前保留版本完成全量新鲜核验和六份新执行组合；不把本次business七版本HEAD/保护证明当全环境完整新候选。#323保持Draft、不合并；#307 OPEN。

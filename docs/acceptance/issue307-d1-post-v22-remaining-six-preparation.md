@@ -54,3 +54,7 @@
 6. 上述门禁和独立评审闭合后才生成新的execution、冻结绑定和完整确认文本，再选择未来固定窗口并重新取得人类精确授权；不提前制造将过期的窗口。当前所有发送权限关闭，不执行真实DELETE。
 
 完整D1仍NOT_ACCEPTED；P1对账、R1/R2修复及后续六份验收分别留证。
+
+## 最新准备检查点
+
+P1门禁已由新audit d64ad338-00d2-4569-bd62-9e132ddaf578 在2026-10-19T10:58:17Z实际闭合：absence b2d74d75-ed07-4b0a-b530-6c5d308cf1b8、completion16562b28-3896-49c0-933e-a6e73059bddc；24项新的instrumented读取及Cost、原旧行保留和完整封存另见P1验收矩阵。本轮未新DELETE。其余门禁保持，尤其旧P2/T1/T2占用未做新Core逐项查询或可信NOT_SENT闭合，17版本全量bytes/SHA/IAM三源刷新尚未做；没有新删除候选、execution、窗口或授权。

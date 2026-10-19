@@ -1,0 +1,85 @@
+{
+  "at": "2026-10-19T11:03:23.525951+00:00",
+  "head": "491a42564edec862048fdb532a9964bad536b300",
+  "kind": "PR_CI_NOT_MAIN",
+  "check_runs": [
+    {
+      "name": "required",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118023326040"
+    },
+    {
+      "name": "browser-contracts / web-browser-contracts",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019484750"
+    },
+    {
+      "name": "demo / demo-lifecycle",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019484631"
+    },
+    {
+      "name": "live-core / live-core-browser",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019484606"
+    },
+    {
+      "name": "label-studio-smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019483852"
+    },
+    {
+      "name": "temporary-container-contracts (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019483641"
+    },
+    {
+      "name": "hop-smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019483570"
+    },
+    {
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019483561"
+    },
+    {
+      "name": "splink-smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019483551"
+    },
+    {
+      "name": "web-console",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019483536"
+    },
+    {
+      "name": "go-platform",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019483513"
+    },
+    {
+      "name": "gx-smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019483494"
+    },
+    {
+      "name": "classify-changes",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39240360852/job/118019418943"
+    }
+  ]
+}
