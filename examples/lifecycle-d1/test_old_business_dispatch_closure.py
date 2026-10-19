@@ -173,6 +173,8 @@ class ClosureTests(unittest.TestCase):
             root=Path(tmp);binary=root/'binary';binary.write_bytes(b'approved')
             owner=m.allocate('observer',binary,root/'private',root/'output','Core',['post-v22-close'],'label')
             self.assertEqual(docker.call_args.args[-2:],(m.p1.PG,'post-v22-close'))
+            self.assertIn('/var/lib/postgresql/data:size=1m',docker.call_args.args)
+            self.assertEqual(docker.call_args.args.count('--tmpfs'),2)
             self.assertEqual(owner['arguments'],['post-v22-close'])
 
     def test_source_wrong_image_network_and_active_endpoint_refused(self):
@@ -200,10 +202,16 @@ class ClosureTests(unittest.TestCase):
             (private / 'closure.json').write_bytes(b'{}')
             owner = {'cid': 'fixed', 'kind': 'observer', 'binary': str(binary), 'binary_sha256': m.sha(binary), 'private': str(private), 'output': str(output), 'network_source': 'Core', 'arguments': []}
             state = {'Image': m.p1.PG, 'Config': {'User': '10001:10001', 'Entrypoint': ['/run/executor'], 'Cmd': []},
-                     'HostConfig': {'ReadonlyRootfs': True, 'Privileged': False, 'CapDrop': ['ALL'], 'SecurityOpt': ['no-new-privileges'], 'RestartPolicy': {'Name': 'no'}, 'PortBindings': {}, 'NetworkMode': 'container:Core'},
+                     'HostConfig': {'ReadonlyRootfs': True, 'Privileged': False, 'CapDrop': ['ALL'], 'SecurityOpt': ['no-new-privileges'], 'RestartPolicy': {'Name': 'no'}, 'PortBindings': {}, 'NetworkMode': 'container:Core','Tmpfs':{'/tmp':'','/var/lib/postgresql/data':'size=1m'}},
                      'NetworkSettings': {'Ports': {}}, 'Mounts': [{'Destination': n, 'Source': str(p), 'RW': rw, 'Type': 'bind'} for n,p,rw in [('/run/private', private, False),('/run/executor',binary,False),('/run/output',output,True)]]}
             stack.enter_context(patch.object(m, 'inspect', return_value=state))
             self.assertEqual(m.own_contract(owner, {}), state)
+            state['HostConfig']['Tmpfs']={}
+            with self.assertRaises(ValueError):m.own_contract(owner,{})
+            state['HostConfig']['Tmpfs']={'/tmp':'','/var/lib/postgresql/data':'size=1m'}
+            state['Mounts'].append({'Destination':'/var/lib/postgresql/data','Source':'anonymous','RW':True,'Type':'volume'})
+            with self.assertRaises(ValueError):m.own_contract(owner,{})
+            state['Mounts'].pop()
             (private / 'proof.json').mkdir()
             with self.assertRaises(ValueError): m.own_contract(owner, {})
             (private / 'proof.json').rmdir()

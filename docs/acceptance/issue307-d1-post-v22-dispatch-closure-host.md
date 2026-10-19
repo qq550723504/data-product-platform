@@ -4,7 +4,7 @@
 
 唯一入口是 `examples/lifecycle-d1/close-old-business-dispatches.py`。`prepare` 只构建新 observer、生成宿主独占签名私钥及关闭的零删除 profile，并创建三个 stopped owner：observer、固定 check-disabled、固定 disable-all。root helper 沿用原冻结 binary，只挂它必需的 root/candidate/IAM/policy 文件；不挂旧授权。observer 只挂 closure.json 和签名 proof.json，不挂 root 文件、宿主私钥、存储凭据或 budget。新 owner 使用 UID10001、只读 rootfs、cap-drop ALL、no-new-privileges、no restart、无发布端口，精确私有/二进制/输出三个 mount。必须先独立评审实际 manifest，再允许 `run`。
 
-Docker owner 使用显式固定非空参数：observer 为 `post-v22-close`，root 为 `-action check-disabled/disable-all`；不依赖 Docker 将空 Cmd 表示成 null 或 []。失败准备01的 manifest、终态和更正诊断及三份stopped owner均保留；新的准备02在运行各阶段重新核对旧失败输入、关闭的profile、无proof和三个PID0，不能修改失败01使其冒充成功。
+Docker owner 使用显式固定非空参数：observer 为 `post-v22-close`，root 为 `-action check-disabled/disable-all`；不依赖 Docker 将空 Cmd 表示成 null 或 []。完整复用已验收 P1 helper 分配模板，以 `/tmp` 和 `/var/lib/postgresql/data:size=1m` 两个 tmpfs 覆盖镜像 VOLUME，禁止自动数据卷。两次失败准备01/02的 manifest、终态、更正诊断、六份stopped owner及六匿名卷均保留；新的准备03在运行各阶段重新核对这些输入、关闭的profile、无proof、六个PID0和卷ID。另一个从未启动的实际Docker分配回归owner及其关闭profile也纳入保全；不能修改旧失败使其冒充成功。
 
 新非删除 profile 的 40 分钟期限仅在实际检查完成后开始，不是删除窗口，不构成删除授权。激活只允许 Enabled、NotBefore、ExpiresAt、EvidenceSHA256 四字段变化；其余字段和 source/input/binary/CID 必须匹配新 manifest。原 v22 窗口和只读期限均不延长、不复用。
 

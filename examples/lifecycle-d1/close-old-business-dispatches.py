@@ -14,8 +14,8 @@ import time
 import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
-CONTROL = Path('C:/Users/Henry/.codex/fixture-private/post-v22-business-closure02')
-PUBLIC = ROOT / 'docs/acceptance/evidence/issue307-d1/post-v22-business-closure02'
+CONTROL = Path('C:/Users/Henry/.codex/fixture-private/post-v22-business-closure03')
+PUBLIC = ROOT / 'docs/acceptance/evidence/issue307-d1/post-v22-business-closure03'
 AUDIT = '23587686-0a95-4eaa-a010-a8c896c9735b'
 ALLOWED = {'lifecycle_approval_revocation', 'lifecycle_provider_observation', 'lifecycle_dispatch_release',
            'command_idempotency', 'delivery_authorization_fence', 'audit_event', 'evidence', 'evidence_relation', 'outbox_event'}
@@ -73,19 +73,33 @@ def packet():
 
 
 def prior_preparation_closed():
-    base = p1.PRIVATE / 'post-v22-business-closure01'
-    need(sha(base / 'manifest.json') == '0db3f1a118f660ac4d2f8b515334288e1ef880d915abdc733c90b730469636c4'
-         and sha(base / 'terminal.json') == 'ea420fe2215894d65b1f10e040b8c4cae5b324d37ca18278c50741b2621ad084', 'failed preparation history drift')
-    manifest = load(base / 'manifest.json')
-    need(sha(base / 'worker-private/closure.json') == manifest['inputs']['worker-private/closure.json']
-         and load(base / 'worker-private/closure.json')['Enabled'] is False and not (base / 'worker-private/proof.json').exists(), 'failed preparation worker configuration drift')
-    for name, digest in manifest['inputs'].items():
-        need(sha(base / name) == digest, 'failed preparation input drift')
-    for owner in manifest['owners'].values():
-        x = inspect(owner['cid'])
-        need(x['Id'] == owner['cid'] and x['Image'] == p1.PG and closed(x), 'failed preparation owner not physically closed')
-    return {'manifest_sha256': sha(base / 'manifest.json'), 'terminal_sha256': sha(base / 'terminal.json'),
-            'closed_cids': sorted(o['cid'] for o in manifest['owners'].values()), 'inputs_unchanged': True, 'Enabled': False, 'proof_present': False}
+    result = {}
+    for sequence, manifest_sha, terminal_sha in (
+        ('01', '0db3f1a118f660ac4d2f8b515334288e1ef880d915abdc733c90b730469636c4', 'ea420fe2215894d65b1f10e040b8c4cae5b324d37ca18278c50741b2621ad084'),
+        ('02', 'a5adf3b5216382c013b2f5325dee04963ff744c975d28b84b81c119f8bf0fede', 'ce9c6d859169974b05922bd75d096937d4ebf78f7a25dc84c263de46c40d8970')):
+        base = p1.PRIVATE / ('post-v22-business-closure' + sequence)
+        need(sha(base / 'manifest.json') == manifest_sha and sha(base / 'terminal.json') == terminal_sha, 'failed preparation history drift')
+        manifest = load(base / 'manifest.json')
+        need(sha(base / 'worker-private/closure.json') == manifest['inputs']['worker-private/closure.json']
+             and load(base / 'worker-private/closure.json')['Enabled'] is False and not (base / 'worker-private/proof.json').exists(), 'failed preparation worker configuration drift')
+        for name, digest in manifest['inputs'].items():
+            need(sha(base / name) == digest, 'failed preparation input drift')
+        volumes = []
+        for owner in manifest['owners'].values():
+            x = inspect(owner['cid'])
+            need(x['Id'] == owner['cid'] and x['Image'] == p1.PG and closed(x), 'failed preparation owner not physically closed')
+            volumes += [m['Name'] for m in x['Mounts'] if m['Type'] == 'volume']
+        result[sequence] = {'manifest_sha256': manifest_sha, 'terminal_sha256': terminal_sha,
+                            'closed_cids': sorted(o['cid'] for o in manifest['owners'].values()), 'retained_volumes': sorted(volumes),
+                            'inputs_unchanged': True, 'Enabled': False, 'proof_present': False}
+    check = p1.PRIVATE / 'post-v22-allocation-contract01/receipt.json'
+    need(sha(check) == 'c9f97b18d64058bacf818de4a8852a1a60844593a1b638928f9c3dafad428817', 'allocation regression history drift')
+    receipt = load(check)
+    owner = receipt['owner']
+    need(closed(own_contract(owner, {})) and sha(Path(owner['private']) / 'closure.json') == receipt['profile_sha256']
+         and load(Path(owner['private']) / 'closure.json')['Enabled'] is False and not (Path(owner['private']) / 'proof.json').exists(), 'allocation regression owner/profile drift')
+    result['allocation_contract'] = {'receipt_sha256': sha(check), 'closed_cid': owner['cid'], 'profile_disabled_unchanged': True}
+    return result
 
 
 def execution_owners(candidate, bindings):
@@ -129,6 +143,7 @@ def own_contract(owner, manifest):
     h, mounts = x['HostConfig'], {m['Destination']: m for m in x['Mounts']}
     need(x['Image'] == p1.PG and x['Config']['User'] == '10001:10001' and h['ReadonlyRootfs'] and not h['Privileged']
          and h['CapDrop'] == ['ALL'] and 'no-new-privileges' in h['SecurityOpt'] and h['RestartPolicy']['Name'] == 'no'
+         and h.get('Tmpfs') == {'/tmp': '', '/var/lib/postgresql/data': 'size=1m'}
          and not h.get('PortBindings') and not any(x['NetworkSettings']['Ports'].values()), 'new closure owner containment differs')
     need(h['NetworkMode'] == 'container:' + owner['network_source'] and x['Config']['Entrypoint'] == ['/run/executor']
          and x['Config']['Cmd'] == owner['arguments'] and set(mounts) == {'/run/private', '/run/executor', '/run/output'}, 'new closure owner command/mount set differs')
@@ -147,9 +162,10 @@ def allocate(kind, binary, private, output, source, arguments, label):
     expected = ['post-v22-close'] if kind == 'observer' else ['-action', kind]
     need(kind in ('observer', 'check-disabled', 'disable-all') and arguments == expected, 'explicit fixed owner command required')
     output.mkdir()
-    cid = p1.text('create', '--name', 'dpp307-old-closure-' + label + '-' + kind, '--label', 'lifecycle307.closure=' + label,
+    cid = p1.text('create', '--pull', 'never', '--name', 'dpp307-old-closure-' + label + '-' + kind, '--label', 'lifecycle307.closure=' + label,
                   '--network', 'container:' + source, '--user', '10001:10001', '--read-only', '--cap-drop', 'ALL',
                   '--security-opt', 'no-new-privileges', '--restart', 'no', '--pids-limit', '64', '--memory', '256m', '--cpus', '1',
+                  '--tmpfs', '/tmp', '--tmpfs', '/var/lib/postgresql/data:size=1m',
                   '--mount', 'type=bind,source=' + str(private) + ',target=/run/private,readonly',
                   '--mount', 'type=bind,source=' + str(binary) + ',target=/run/executor,readonly',
                   '--mount', 'type=bind,source=' + str(output) + ',target=/run/output', '--entrypoint', '/run/executor', p1.PG, *arguments)

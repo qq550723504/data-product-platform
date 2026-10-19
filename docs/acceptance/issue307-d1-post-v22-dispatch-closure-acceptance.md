@@ -44,3 +44,5 @@
 第一次实际 prepare 保留于 `post-v22-business-closure01`：observer 的实际 Docker Config.Cmd=null，清单期待 []，最终配置检查正确拒绝。原源启动/签proof/业务写入/DELETE均0；三份新CID均stopped/PID0，profilefalse，proof不存在。最初终态诊断误称“继承postgres”，`diagnosis-correction01.json` 明确更正为 null/空数组表示差异，原字节不覆盖。当前入口改为显式固定非空 observer 参数，空参数在任何Docker前拒绝；下一次非删除审计使用独立 closure02，并在所有门禁核对失败01的清单/终态/输入哈希及三份CID关闭状态。normal/-O各20项PASS见 `host-composition04.json`；最新源码与旧02不同，等待有限03复评，不能用旧报告运行。
 
 本轮已触发 AGENTS §17 收敛检查点：有限合同冻结为旧三项 dispatch 的可信 NOT_SENT 闭合、原事实/预算/pins 保全、明确 partial/UNKNOWN、完整 finally 封存。仅当前真实 command 契约缺陷及失败资源保全属于此次复评 BLOCKER；未来扩展和通用 hardening 不扩大本切片。17版本刷新及六份候选仍后续门禁，原源三项仍 NOT_RUN。
+
+prepare02仍被同一完整 command/mount 检查拒绝，原源启动/签名/业务写入仍0：argv已正确，但PG镜像 VOLUME自动创建第四个挂载。根因是新allocator没有完整复用已验收P1的两个tmpfs，现已整体采用原模板，并精确核对Tmpfs及仅3bind；没有允许额外卷绕过检查。02清单/终态、六旧新CID及六匿名卷均保留，01诊断追加更正02说明组合条件的两个失败分量。实际 Docker stopped allocation 回归 `docker-allocation-contract01.json` 已PASS：固定argv、两tmpfs、三bind、0匿名卷、从未启动，helper CID `39cf3079786230c50f25c51062fdb12fbec9860f6957bd690466cc03ce3cd578`。下次03在门禁中同时保全两失败和此回归owner。normal/-O各20项仍PASS（新增tmpfs缺失/volume扩张子案例），`host-composition05.json`；等待有限04源码复评，03实际准备及原Core闭合均NOT_RUN。
