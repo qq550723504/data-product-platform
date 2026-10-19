@@ -17,12 +17,18 @@ import (
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/infrastructure"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/audit"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/csvinput"
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/deliveryfence"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/outbox"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/platform/transaction"
 )
 
 type ObjectStore interface {
 	Put(ctx context.Context, objectName string, reader io.Reader, size int64, contentType string) (string, error)
+}
+
+// The runtime composition owns this scope; a request cannot select it.
+type WorkspaceObjectStore interface {
+	CheckWorkspace(context.Context, uuid.UUID) error
 }
 
 // A controlled producer can bind object I/O to the already allocated platform
@@ -129,10 +135,24 @@ func (s *UploadVersionService) handle(
 	}
 
 	var version domain.DatasetVersion
+	var workspaceID uuid.UUID
 	// alreadyPublished short-circuits a replay of a version this Execution already
 	// published: there is nothing left to write, and no new fact to record.
 	alreadyPublished := false
 	err = s.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		workspaceID, err = s.repo.WorkspaceForDatasetTx(ctx, tx, cmd.DatasetID)
+		if err != nil {
+			return err
+		}
+		if scoped, ok := s.store.(WorkspaceObjectStore); ok {
+			if err := scoped.CheckWorkspace(ctx, workspaceID); err != nil {
+				return err
+			}
+		}
+		if _, err := deliveryfence.Lock(ctx, tx, workspaceID); err != nil {
+			return err
+		}
 		reused := false
 		if key != "" {
 			workspaceID, err := s.repo.WorkspaceForDatasetTx(ctx, tx, cmd.DatasetID)
@@ -257,7 +277,7 @@ func (s *UploadVersionService) handle(
 	// are ever referenced, and a loser merely leaves an unreferenced staged object.
 	attemptToken := uuid.New()
 	filename := sanitizeFilename(cmd.Filename)
-	objectName := fmt.Sprintf("datasets/%s/v%06d/%s/%s", version.DatasetID.String(), version.VersionNo, attemptToken.String(), filename)
+	objectName := fmt.Sprintf("core/%s/datasets/%s/v%06d/%s/%s", workspaceID, version.DatasetID, version.VersionNo, attemptToken, filename)
 	var storageURI string
 	if producer, ok := s.store.(VersionObjectStore); ok {
 		storageURI, err = producer.PutVersion(ctx, version, objectName, bytes.NewReader(cmd.Content), int64(len(cmd.Content)), cmd.ContentType)

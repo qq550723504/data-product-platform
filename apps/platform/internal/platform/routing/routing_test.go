@@ -120,6 +120,8 @@ var eventVocabulary = []string{
 	"LifecycleProviderAttemptObserved",
 	"LifecycleStorageCallStarted",
 	"LifecycleStorageCallObserved",
+	"ProtectedObjectIntentCreated",
+	"ProtectedObjectVerified",
 	"LifecycleFixtureDisposalBasisRegistered",
 	"LifecycleFixtureReferenceRequired",
 	"LifecycleFixtureReferenceReleased",
