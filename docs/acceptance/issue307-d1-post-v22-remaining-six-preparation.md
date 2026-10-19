@@ -60,3 +60,5 @@
 P1门禁已由新audit d64ad338-00d2-4569-bd62-9e132ddaf578 在2026-10-19T10:58:17Z实际闭合：absence b2d74d75-ed07-4b0a-b530-6c5d308cf1b8、completion16562b28-3896-49c0-933e-a6e73059bddc；24项新的instrumented读取及Cost、原旧行保留和完整封存另见P1验收矩阵。本轮未新DELETE。其余门禁保持，尤其旧P2/T1/T2占用未做新Core逐项查询或可信NOT_SENT闭合，17版本全量bytes/SHA/IAM三源刷新尚未做；没有新删除候选、execution、窗口或授权。
 
 后续检查点：新的只读 audit `23587686-0a95-4eaa-a010-a8c896c9735b` 已逐项核实 P2/T1/T2 各有一个未释放旧 dispatch、无 claim/observation/release/absence，三项旧批准尚未撤销。全 Core 指纹和旧控制/预算/备份保持一致，Core 已重新停止。此结果尚不是可信 NOT_SENT；后续新鲜宿主/IAM proof、Command 闭合、17 版本全量刷新及新候选均仍 NOT_RUN/NOT_FROZEN，详见旧 dispatch 闭合验收矩阵。旧检查点原文保留为当时状态。
+
+最新实际结果：非删除audit `94f28318-cfd4-4c62-ba1a-bec9f35836c8` 已对原P2/T1/T2各追加旧批准撤销、可信NOT_SENT及dispatch release，三项unresolved=0；旧attempt/approval/pins/预算/成本保留，87唯一CID已停止，真实DELETE=0。执行终态 SHA `3ce05b24b298718b63dcd2c553c993b6f40a387c3a0eb26e13fda695ed5692cc`，独立实际结果终评 SHA `33bcf7eb3fd742d932996f5378cfa9870cca2e9009245f5b815152d485b7c80b`，均PASS且剩余阻断为空。8次真实技术IAM GET/观测单独保留，amount NOT_ASSESSED，不冒充零外部调用。详见旧dispatch闭合验收矩阵的最新追加。#323已按另一次直接人类授权合并，实际f22587d及其push/main CI39250314443全绿；当前后续代码在Draft #332，#307 OPEN。17版本全量刷新及新的六份候选仍NOT_RUN/NOT_FROZEN，没有新删除execution、窗口或授权。
