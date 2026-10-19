@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_SIX_TARGET_DESIGN_REVIEW",
+  "reviewed_at": "2026-10-19T14:26:26.378867+00:00",
+  "reviewer": "same independent reviewer /root/v20_independent_review",
+  "checkout_head_at_review": "9708a54d44346906e8cff89bfbd77ec8e6ed28d1",
+  "scope": "Lightweight contract and existing source interface review only; no implementation review or runtime acceptance.",
+  "remaining_blockers": [],
+  "authoritative_contract": {
+    "path": "docs/acceptance/issue307-d1-post-v22-six-contract.md",
+    "sha256": "030fcb8d7f65f4c95e36209685b903ab632d672ad74e35db7250f84db59f6fe6",
+    "bytes": 5722
+  },
+  "read_source_bindings": {
+    "apps/platform/internal/lifecycle/pilot/remaining_dependencies.go": "89eda8a80489b139612c6ab1a4516aa13bf5b4d37aaafcc1f31bc886f2514152",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": "005c992c05f62f9bdbc5885a95b9b274346f53476cd6d51677330d1da1684f86",
+    "apps/platform/cmd/lifecycle-fixture-remaining/main.go": "ff3f45bd37566efedda5947a019cd2e40e79e516b612b83a1887567567184fc0",
+    "apps/platform/cmd/lifecycle-fixture-remaining/sequence.go": "27e2427f611d35666ad15d2a21b3715b919df0d1c2eb32e5a57fb89f10603682",
+    "apps/platform/cmd/lifecycle-fixture-reader/post_v22_verify.go": "87cf28a4ec2afaee54339ec89d4b3867e82f92243e5351d01599696683f0652d",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_verify.go": "4684070dc0b7358c92c1254ff33f04b291bd0bf37af3f952172750dde1889b85",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22.go": "b361a689149974f65de580c1b84553e1d4d6b7dcad338de88190a2b1b409f1e4",
+    "examples/lifecycle-d1/verify-post-v22-seventeen.py": "c13d73337a78f1fc08e8e1c03ac363e81b262f8ae0501795cb7f69c10917b87c"
+  },
+  "accepted_existing_slices_unchanged": {
+    "trusted_old_dispatch_closure_audit": "94f28318-cfd4-4c62-ba1a-bec9f35836c8",
+    "seventeen_actual_readonly_audit": "f4330324-98de-4fc4-ae3d-e1feab7adaae",
+    "seventeen_result_review_sha256": "c6508108d16f6095889b7dce66bb26d4940073faf1934a8b9b1fed9ec69ab616",
+    "no_reopening_or_repetition_required_by_design_review": true
+  },
+  "window": {
+    "human_selected_preference": "2026-10-20 14:00-14:40 Asia/Singapore",
+    "UTC": "2026-10-20 06:00-06:40Z",
+    "start_inclusive_end_exclusive": true,
+    "delete_authorization": "NOT_RECEIVED",
+    "old_v22_authority_reuse": "FORBIDDEN",
+    "new_final_execution_and_candidate": "NOT_FROZEN",
+    "automatic_scheduling": "NONE"
+  },
+  "dependency_model_verified": {
+    "historical_registered_global": 18,
+    "per_group_registered": {
+      "business-races": 8,
+      "late-hold": 6,
+      "mixed": 4
+    },
+    "present_global": 17,
+    "per_group_present": {
+      "business-races": 7,
+      "late-hold": 6,
+      "mixed": 4
+    },
+    "target_global": 6,
+    "per_group_target": {
+      "business-races": 3,
+      "late-hold": 1,
+      "mixed": 2
+    },
+    "survivors_global": 11,
+    "per_group_survivor": {
+      "business-races": 4,
+      "late-hold": 5,
+      "mixed": 2
+    },
+    "P1": "Historical exact copy and confirmed absence retained; never sender/wire/new budget/target digest.",
+    "actual_existing_All_semantics": [
+      "All supplies exact per-namespace expected copy membership, excluding copies with committed exact Core absence receipts.",
+      "All length also gates ReferencesReleased against current workspace lifecycle_fixture_copy count.",
+      "The new implementation must preserve each workspace/group All size 8/6/4; neither shrink to physical 7/6/4 nor pass global18 into each group."
+    ]
+  },
+  "reuse_check": {
+    "existing_components": [
+      "Disposition/Occupancy/ExactExecution Commands and shared Core fence",
+      "fixture disposal basis and expected-head policy renewal",
+      "MinIO SDK collector/deleter/inspector and official policy ParseConfig/Equals",
+      "existing durable target/wire O_EXCL budget",
+      "existing trusted topology/closure proof",
+      "existing Outbox -> Asynq recovery",
+      "existing backup/restore adapters"
+    ],
+    "new_parallel_queue_or_workflow_or_policy_engine": "NONE",
+    "Core_new_entities": "NONE"
+  },
+  "required_implementation_acceptance_boundaries": [
+    {
+      "id": "S1",
+      "requirement": "Maintain explicit historical18/present17/target6/survivor11 sets with per-workspace counts; P1 exact old committed absence remains predecessor evidence only.",
+      "classification": "IN_SCOPE_IMPLEMENTATION_GATE",
+      "reason": "Prevent ReferencesReleased permanent UNKNOWN and accidental P1 resending."
+    },
+    {
+      "id": "S2",
+      "requirement": "Enforce total P2 -> T1 -> T2 -> H2A -> M1A -> M1B composition; before each next durable slot or native inspection require prior committed exact Core absence and prior sender closed.",
+      "classification": "IN_SCOPE_IMPLEMENTATION_GATE",
+      "reason": "Current sequence.go predecessor map is group-local; cross-group ordering must be proven by fixed host composition without cross-tenant receipt matching or weaker Core fences."
+    },
+    {
+      "id": "S3",
+      "requirement": "New strict six-target sender/wire/identity/budget authority must reject all old execution/candidate/permission/key paths; independently disabled new identities/policies are not copies of old grants.",
+      "classification": "IN_SCOPE_IMPLEMENTATION_GATE",
+      "reason": "Existing operator, InspectAccess/DeleteAccess naming and execution guards are intentionally bound to old v22 and cannot be enabled as the new candidate."
+    },
+    {
+      "id": "S4",
+      "requirement": "Restore audit binds new actual restore CID/volume/network/binary plus exact17 inventory/new identity policy context; reuse shared collector through a separate strict manifest contract. Preserve old post-v22 checker/source ZIP/native evidence.",
+      "classification": "IN_SCOPE_IMPLEMENTATION_GATE",
+      "reason": "Existing post_v22_verify.go is deliberately hardcoded to original three source CIDs and historical18 policy resources. It must not be weakened to accept arbitrary restore or new17-policy identities."
+    },
+    {
+      "id": "S5",
+      "requirement": "Business production/DirectData outputs and old pins/budgets/history remain; only new basis/approval/admission via current Commands and expected-head Renew. Admit fresh attempt only after old revoked NOT_SENT release.",
+      "classification": "IN_SCOPE_IMPLEMENTATION_GATE",
+      "reason": "No reseed, replay production, budget refund, historical approval reactivation, or new version may substitute for current eligibility."
+    },
+    {
+      "id": "S6",
+      "requirement": "Keep H0/H1 zero send, H2 upstream204-witness-late hold-revoke-response loss, and M1 A absence then B UNKNOWN+C protected checkpoint before B lookup. Unknown never resend; failed send return preserves actual observations and errors.",
+      "classification": "IN_SCOPE_IMPLEMENTATION_GATE",
+      "reason": "These combinations remain part of the current finite case semantics, not optional future hardening."
+    },
+    {
+      "id": "S7",
+      "requirement": "Report real PG, SDK loopback/model, source readonly, actual restore and native runtime separately; bind source/binary/Core/IAM/gateway/owners/budgets/candidate before any precise human approval.",
+      "classification": "IN_SCOPE_IMPLEMENTATION_GATE",
+      "reason": "Successful nondelete preparation and selected window confer no destructive authority."
+    }
+  ],
+  "classification": {
+    "BLOCKER": [],
+    "FOLLOWUP": [
+      "Implement and independently review the declared finite six-target nondelete composition, tests and frozen candidate. These are pending delivery, not claims passed by this design-only report."
+    ],
+    "INVALID_OR_OUT_OF_SCOPE": [
+      "Reopening accepted seventeen-version readonly result to demand six-delete acceptance.",
+      "Adding new Core entities, queue/runtime or generic IAM/policy infrastructure.",
+      "Treating future window preference as authorization or scheduling consent."
+    ]
+  },
+  "tests_executed": "NONE_DESIGN_READ_ONLY",
+  "Docker_operations": 0,
+  "provider_calls": 0,
+  "source_start": 0,
+  "credential_reads": 0,
+  "proof_signing": 0,
+  "DELETE": 0,
+  "implementation_changed_by_reviewer": false,
+  "limitations": "Existing code was read to assess compatibility and necessary boundary conditions. The new six-target implementation, PG/loopback combinations, actual backups/restores and executable candidate do not yet have a PASS from this design review.",
+  "stage6_nondelete_composition": "NOT_RUN",
+  "six_candidate": "NOT_FROZEN",
+  "new_deletion_authorization": "NONE",
+  "D1": "NOT_ACCEPTED",
+  "PR332": "Draft; not changed",
+  "Issue307": "OPEN"
+}

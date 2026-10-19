@@ -145,3 +145,7 @@ docs/acceptance/evidence/issue307-d1/post-v22-business-closure03/** -text whites
 docs/acceptance/evidence/issue307-d1/post-v22-dispatch-closure01/observer-independent/manifest03-go-version-m-stdout.txt -text whitespace=cr-at-eol,-blank-at-eol
 apps/platform/cmd/lifecycle-fixture-reader/testdata/post-v22/*.json -text
 docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/** -text whitespace=cr-at-eol
+
+docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/manifest-checker-buildinfo01.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-seventeen01/source-independent/manifest-reader-buildinfo01.txt -text whitespace=cr-at-eol,-blank-at-eol

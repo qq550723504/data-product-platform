@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-19T14:07:33.606699+00:00",
+  "owners": [
+    {
+      "cid": "5be9993bf7fdc6a2b1a0557b6d0d448b959ed7a1be5684f199a1b961f0ea84ef",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    }
+  ],
+  "all_closed": true,
+  "profiles_restored": true,
+  "resources_retained": true,
+  "cleanup": 0
+}

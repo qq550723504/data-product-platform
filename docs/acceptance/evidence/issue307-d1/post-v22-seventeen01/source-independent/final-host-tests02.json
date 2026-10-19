@@ -1,0 +1,55 @@
+{
+  "status": "PASS_OFFLINE_FINAL_HOST_FROZEN_HEAD",
+  "at": "2026-10-19T13:44:59.672160+00:00",
+  "source_head": "9708a54d44346906e8cff89bfbd77ec8e6ed28d1",
+  "records": [
+    {
+      "scope": "normal",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-seventeen01\\source-independent\\run_final_host_guarded01.py"
+      ],
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "file": "final-host-normal02-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "file": "final-host-normal02-stderr.txt",
+          "sha256": "8cf777b24252e1ebe34c15b1c9e72fc83be4ad9b87476a58ae91a195741f2fa9",
+          "bytes": 653
+        }
+      }
+    },
+    {
+      "scope": "optimized",
+      "command": [
+        "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-O",
+        "-B",
+        "C:\\Users\\Henry\\.codex\\worktrees\\d1-six\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-seventeen01\\source-independent\\run_final_host_guarded01.py"
+      ],
+      "exit": 0,
+      "channels": {
+        "stdout": {
+          "file": "final-host-optimized02-stdout.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "stderr": {
+          "file": "final-host-optimized02-stderr.txt",
+          "sha256": "55c99c11744d5521746aa7ea648da1908ca63a82303e49a81a2871735f37583f",
+          "bytes": 653
+        }
+      }
+    }
+  ],
+  "methods_per_mode": 4,
+  "failure_combinations": 10,
+  "budget_drift_combinations": 5,
+  "global_unmodeled_run_Popen_denied": true,
+  "Docker_provider_original_source": 0
+}

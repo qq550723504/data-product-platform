@@ -71,3 +71,6 @@ P1门禁已由新audit d64ad338-00d2-4569-bd62-9e132ddaf578 在2026-10-19T10:58:
 新Go读取器/文件聚合器及全部既有两包回归共114个PASS test事件、0 FAIL（source-local01原日志）；host完整成功组合、10种失败组合、budget归属/挂载5反例及未知inspect关闭，normal/-O各4方法通过，统一audit55分钟截止的补充回执见source-local02。source-local01的host输出是统一截止接线前快照，不伪称最终字节；原始评审harness/失败日志保留，当前source终复评仍待同一冻结HEAD。
 
 17份原生读取仍NOT_RUN，六份新候选仍NOT_FROZEN；不创建新删除窗口/授权，不复用旧v22批准，不将mock视为native/IAM/Core事实。#332继续Draft，#307保持OPEN。
+
+
+最新17版本结果（原检查点不覆盖）：audit f4330324-98de-4fc4-ae3d-e1feab7adaae 已实际PASS_COMPLETE_POST_V22_SEVENTEEN_READONLY，74次技术GET/HEAD、17份全部bytes/SHA/保护/P1精确缺失、三源Core不变及最终封存通过；独立结果终评SHA c6508108d16f6095889b7dce66bb26d4940073faf1934a8b9b1fed9ec69ab616，remaining_blockers=[]。详见issue307-d1-post-v22-seventeen-acceptance.md。人类另选新方案窗口2026-10-20新加坡14:00–14:40，仅用于准备，不构成新删除授权；六份contract见issue307-d1-post-v22-six-contract.md。六候选尚NOT_FROZEN；原预算/pins/失败/所有备份保留。

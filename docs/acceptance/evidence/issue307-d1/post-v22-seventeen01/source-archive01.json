@@ -1,0 +1,10 @@
+{
+  "source_head": "9708a54d44346906e8cff89bfbd77ec8e6ed28d1",
+  "source_files": 1914,
+  "archive_sha256": "708917b381b24047ca28444d70fb5c2f0e22da6c2722eb02d6f3d4b5533dc76b",
+  "archive_bytes": 2949615,
+  "archive": "PRIVATE_ONLY: approved-runtime-source.zip",
+  "purpose": "preserve exact reviewed build bytes before the next generation changes current sources",
+  "secrets": "NO_PRIVATE_PROFILES_OR_CREDENTIALS_INCLUDED",
+  "delete": 0
+}
