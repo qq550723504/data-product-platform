@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\docs\acceptance\evidence\issue307-d1\post-v22-policy-fix01\independent05\run-python-guarded05-02.py", line 9, in <module>
+    suite=unittest.defaultTestLoader.loadTestsFromNames(modules)
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 207, in loadTestsFromNames
+    suites = [self.loadTestsFromName(name, module) for name in names]
+              ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 17, in <module>
+    from unittest.mock import patch
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\unittest\mock.py", line 27, in <module>
+    import asyncio
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\__init__.py", line 45, in <module>
+    from .windows_events import *
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\windows_events.py", line 26, in <module>
+    from . import windows_utils
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\windows_utils.py", line 133, in <module>
+    class Popen(subprocess.Popen):
+    ...<47 lines>...
+                    os.close(stderr_wfd)
+TypeError: function() argument 'code' must be code, not str

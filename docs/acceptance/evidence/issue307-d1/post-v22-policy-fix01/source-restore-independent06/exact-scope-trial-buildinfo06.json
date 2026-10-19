@@ -1,0 +1,339 @@
+{
+  "status": "PASS_EXACT_SIX_TARGET_ELEVEN_SURVIVOR_AND_TRIAL_CHANNELS",
+  "historical_copies": 18,
+  "present": 17,
+  "targets": [
+    {
+      "group": "business-races",
+      "ID": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "DatasetVersionID": "4219373a-07a0-4c66-a666-305675304b14",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/p2.csv",
+      "ProviderVersion": "d8040608-c5cd-4a6f-8a2d-b3f856cf5302",
+      "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+      "ByteSize": 232
+    },
+    {
+      "group": "business-races",
+      "ID": "f48755f1-976b-4f47-98da-70ead936a4c3",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "DatasetVersionID": "699b8292-7fdb-4c22-af04-41f2eba761d4",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/t1.csv",
+      "ProviderVersion": "39d4ef5d-e983-413d-a6c2-9759d456b750",
+      "ContentSHA256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+      "ByteSize": 129328
+    },
+    {
+      "group": "business-races",
+      "ID": "e09fd433-54cf-4e82-b8c4-098472505fa2",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "DatasetVersionID": "70d9185e-5ee7-4d79-9853-64e8e8db3630",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/t2.csv",
+      "ProviderVersion": "90bd8ded-337a-4ca1-aec3-66c4ee6a1314",
+      "ContentSHA256": "a4ddf289321e3f5ede8528cb6268bd37d4165a727688477275a6497107fdaa4c",
+      "ByteSize": 49
+    },
+    {
+      "group": "late-hold",
+      "ID": "c05307db-cb81-4220-b42e-be23f85821e3",
+      "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+      "DatasetVersionID": "18721e15-7b01-47d3-a727-8b836d73dbcb",
+      "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+      "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/h2-a.csv",
+      "ProviderVersion": "453c6f42-fbb2-4fdf-9f86-00a20a54b7bc",
+      "ContentSHA256": "b55663df28625841abe3cb9f14cf085c194e00f0a9bcefc53c1b7db83303a838",
+      "ByteSize": 44
+    },
+    {
+      "group": "mixed",
+      "ID": "5e712426-2109-4f0b-8791-df0a2be3a9f7",
+      "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+      "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+      "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+      "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/m1-a.csv",
+      "ProviderVersion": "e8a8418e-c515-464e-99e5-10bc4c64fa8d",
+      "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+      "ByteSize": 40
+    },
+    {
+      "group": "mixed",
+      "ID": "ad08947a-4c4d-4b0f-8c7e-2d89f287819f",
+      "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+      "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+      "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+      "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/m1-b.csv",
+      "ProviderVersion": "54900849-d59d-459e-90bb-275a5975d0a6",
+      "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+      "ByteSize": 40
+    }
+  ],
+  "survivors": [
+    {
+      "group": "business-races",
+      "ID": "91d954ee-cce5-4ceb-840d-fd6bdab778be",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "DatasetVersionID": "70b12ac5-1d86-462c-9176-fd5a681472cd",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/control-hold.csv",
+      "ProviderVersion": "47026891-d10a-4400-a3cb-76915e3d51bf",
+      "ContentSHA256": "ad335d6334c5e1213b18c16dd8fe5bbd5bb1c1f53351ab8f13ce6e3b04120a90",
+      "ByteSize": 54
+    },
+    {
+      "group": "business-races",
+      "ID": "aa8ecd43-1c17-4d0b-b462-42600a426b1b",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "DatasetVersionID": "6837388a-80b1-4512-8976-ce2a7bae4e85",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/control-retention.csv",
+      "ProviderVersion": "2606d71f-207b-42a7-b671-4b7f4ca4d194",
+      "ContentSHA256": "51c1c5e1a03e2347a4798ab8d9a312faef4853d028b7360ea84dfa8ea1616183",
+      "ByteSize": 55
+    },
+    {
+      "group": "business-races",
+      "ID": "639c4cee-6a7c-4a13-aa68-37035d6e1811",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "DatasetVersionID": "a26216b5-95f6-4dbb-8359-c98f5f873be1",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/remaining-processed.csv",
+      "ProviderVersion": "00d7e220-7714-4c31-a4c7-2dda08cfa306",
+      "ContentSHA256": "d036fefe3225f322a8a2ad401bcc7e3e59127b98df0c6966d1b4c31018ff3fd0",
+      "ByteSize": 232
+    },
+    {
+      "group": "business-races",
+      "ID": "da6cc6a8-c9c2-41a6-8811-2d46164a241d",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "DatasetVersionID": "8cb255aa-a842-4aa5-a4ff-871798aeed0b",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/remaining-standardized.csv",
+      "ProviderVersion": "dac1dbc5-c9b5-412a-a2a6-bf082e109e22",
+      "ContentSHA256": "f8a1a1c7f85ff910f44f011d0dc3aba1b410ace20cc7c4429e18ab6cccb1c77d",
+      "ByteSize": 494
+    },
+    {
+      "group": "late-hold",
+      "ID": "a01751a1-9311-4357-8fb2-c833de6b8fc4",
+      "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+      "DatasetVersionID": "e6b6854f-b54a-462f-875d-9f74542b1fc3",
+      "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+      "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/control-hold.csv",
+      "ProviderVersion": "ca3b808e-734b-4d5e-8f2d-c78a16056ed6",
+      "ContentSHA256": "961b213e4d82865370d8da052e57af716297ddff615298ed8c43e938f39b1b7d",
+      "ByteSize": 49
+    },
+    {
+      "group": "late-hold",
+      "ID": "b3c4e113-f5c5-4421-a9d6-08403b1b9d0a",
+      "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+      "DatasetVersionID": "8d59d129-662b-4dae-a389-894943c716df",
+      "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+      "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/h0.csv",
+      "ProviderVersion": "369808db-a39a-4327-b9ed-5eb83aef7477",
+      "ContentSHA256": "e35bd4635f1d7ab38c85a290a86a94275085b49bdae8e1a952712d5304816d8e",
+      "ByteSize": 44
+    },
+    {
+      "group": "late-hold",
+      "ID": "0d8b77a8-195d-4a83-bd52-04f800d7dc68",
+      "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+      "DatasetVersionID": "6d7d6978-cbbf-4c78-b9d1-82fad7271f0a",
+      "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+      "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/h1-a.csv",
+      "ProviderVersion": "28d9f84a-1889-498d-b033-df26cbf209f2",
+      "ContentSHA256": "838fddef805d918cd692a88f720d23705e6763eb0748424274c22d9bcfbc7ba0",
+      "ByteSize": 44
+    },
+    {
+      "group": "late-hold",
+      "ID": "e735d90a-8352-4a01-ad16-8573297bc684",
+      "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+      "DatasetVersionID": "6d7d6978-cbbf-4c78-b9d1-82fad7271f0a",
+      "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+      "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/h1-b.csv",
+      "ProviderVersion": "bae40a85-7539-4fe1-86b7-2cbb17df7812",
+      "ContentSHA256": "838fddef805d918cd692a88f720d23705e6763eb0748424274c22d9bcfbc7ba0",
+      "ByteSize": 44
+    },
+    {
+      "group": "late-hold",
+      "ID": "a37c347d-dbff-492e-9c7a-317a1f188184",
+      "WorkspaceID": "64f71fd8-def6-46a9-a314-f4645b1595b1",
+      "DatasetVersionID": "18721e15-7b01-47d3-a727-8b836d73dbcb",
+      "ProviderInstanceID": "ab8ba084-1768-401a-9f27-fd4dc0c27dad",
+      "IncarnationID": "9d5c2daf-40be-4155-811a-879f24ad0314",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/h2-b.csv",
+      "ProviderVersion": "448112b2-baf3-4569-b06f-59011492cf80",
+      "ContentSHA256": "b55663df28625841abe3cb9f14cf085c194e00f0a9bcefc53c1b7db83303a838",
+      "ByteSize": 44
+    },
+    {
+      "group": "mixed",
+      "ID": "f3167994-3790-4a6c-918e-ea6d95248b79",
+      "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+      "DatasetVersionID": "57e8c123-6c69-44bc-98ba-d5db8c2b7aac",
+      "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+      "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+      "Namespace": "dpp-lifecycle307-online",
+      "Key": "fixture/control-hold.csv",
+      "ProviderVersion": "a59df17d-70d7-40c5-88e8-8cfe77a915dd",
+      "ContentSHA256": "367afd5e5ed47c5f2cadab63af56e0a5e82a1a32afa88f0c3f99448aab883821",
+      "ByteSize": 45
+    },
+    {
+      "group": "mixed",
+      "ID": "13fd8ecf-07fd-4981-b553-5ce66b67444f",
+      "WorkspaceID": "91f84817-9f5a-4654-a793-92e51f1fb7a6",
+      "DatasetVersionID": "44727cb2-5f3b-4b48-b891-931583488ea9",
+      "ProviderInstanceID": "01845fb6-7cc2-4010-8f2a-316576391e67",
+      "IncarnationID": "2b760525-880f-468a-a027-a6851cd06487",
+      "Namespace": "dpp-lifecycle307-quarantine",
+      "Key": "fixture/m1-c.csv",
+      "ProviderVersion": "81a8402e-390f-4247-9d34-552df5eadeb3",
+      "ContentSHA256": "e0f5abfc590c27d093d9250148f03bf4b169d262cc61d23af05f3e285c1de725",
+      "ByteSize": 40
+    }
+  ],
+  "P1": "Exact absent, excluded from target and survivors",
+  "successful_trial_owners": [
+    {
+      "group": "business-races",
+      "stage": "business",
+      "cid": "37b23f6f9f3836dda865f846c2f78c78089170e848cfdb759347f6a0395bb89a",
+      "exit": 0,
+      "channels": {
+        "owner.json": "d87396f1715ab750316d8b5ed1286668e622bbf6f333aa48c7ee86c91034c5b3",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "356f0d915646bb28b37733abdf099ef68630a2fbc0b54066a94aad43fde4536e",
+        "wait-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "wait-stdout.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "output_files": {
+        "business-races/rehearsal/business/files/six-business-admission.json": "5255c5f9bd9b23935947d9358b22fae07116d833e0ba6112d3cab32910ef9539"
+      }
+    },
+    {
+      "group": "late-hold",
+      "stage": "late",
+      "cid": "9bbdd6171d26885835d26cb6be6eddad11539a2bd886a969cae80b2c9d7e1802",
+      "exit": 0,
+      "channels": {
+        "owner.json": "f1720eacfe97912171a7e7276ac7dc3114a7c87fb8adf94ab64753b42e2b6864",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "356f0d915646bb28b37733abdf099ef68630a2fbc0b54066a94aad43fde4536e",
+        "wait-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "wait-stdout.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "output_files": {
+        "late-hold/rehearsal/late/files/remaining-H0.json": "d75402cd21ebd505f01742a264f23f16d281e5dc00d155cc5e5e16881fd3cc2e",
+        "late-hold/rehearsal/late/files/remaining-H1.json": "b9936e73556cc044508fa1095eedbae642062c2d907bea48f272433ac2da128c",
+        "late-hold/rehearsal/late/files/remaining-H2-ready.json": "89cb57eade43c7227108c95b7ebc950f1f1e07194c0e0ad9bda16a57e4f81d4d"
+      }
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed",
+      "cid": "2a93cb01a88fbec1eb9e255de8ac2ef1eb23b706b4cb227f907bbf7684299534",
+      "exit": 0,
+      "channels": {
+        "owner.json": "3bb9ae28f3ddc63f8c8b26e6cb1853eb445f8c67eeab0a8d809fd7a96b19a85c",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "356f0d915646bb28b37733abdf099ef68630a2fbc0b54066a94aad43fde4536e",
+        "wait-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "wait-stdout.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "output_files": {
+        "mixed/rehearsal/mixed/files/remaining-M1-A-ready.json": "28e4d0b7f446dc8d191acb38e2c0b9d1f9ac040bad95b0937edf52c501f9108f"
+      }
+    },
+    {
+      "group": "mixed",
+      "stage": "protected",
+      "cid": "2e529238f89d7795f37d9d355e2deb0837180cc7e6571bb40f609a431e56d1e3",
+      "exit": 0,
+      "channels": {
+        "owner.json": "fc8b03f6bc8c76b29a34b3a05890ac36b0ca460c352203b00debc7ff36d3332b",
+        "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout.txt": "356f0d915646bb28b37733abdf099ef68630a2fbc0b54066a94aad43fde4536e",
+        "wait-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "wait-stdout.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "output_files": {
+        "mixed/rehearsal/protected/files/remaining-M1-C-native-nondelete.json": "4c4673633d4d3c442b8f95e7fc9ef401d71be496717ce57b4590156c8fa6695b"
+      }
+    }
+  ],
+  "active_binary_buildinfo": [
+    {
+      "name": "reader",
+      "sha256": "610ebda75f8e5e4b75fa66100ea53b836bf2223682c572c11212ea91be5224e2",
+      "GOOS": "linux",
+      "GOARCH": "amd64",
+      "CGO_ENABLED": 0,
+      "embedded_vcs_revision": "NOT_CLAIMED",
+      "stdout_sha256": "7b366481ee76a0e3686e866f160167f1900c8d52a824181402d6eb6f77bc4350"
+    },
+    {
+      "name": "operator",
+      "sha256": "cbdaf78ab885aaefd47309a92eaf26ff4fc39c3f22ae8e0f104216e4830b21b4",
+      "GOOS": "linux",
+      "GOARCH": "amd64",
+      "CGO_ENABLED": 0,
+      "embedded_vcs_revision": "NOT_CLAIMED",
+      "stdout_sha256": "358a4549640011ea82d86dbbfa1ba81647091567ce4fd43eeaaa24d134bef787"
+    },
+    {
+      "name": "owner",
+      "sha256": "7d3706a8ad456ed17fed2ddffc8d7add52b41ab22dd756699dde8d23fe968019",
+      "GOOS": "linux",
+      "GOARCH": "amd64",
+      "CGO_ENABLED": 0,
+      "embedded_vcs_revision": "NOT_CLAIMED",
+      "stdout_sha256": "7135c3b262ab8dbd70d6bc19ef3fa76b52952f3cdfba85ce59e63761bf796907"
+    },
+    {
+      "name": "readonly-check.exe",
+      "sha256": "871fd13c6a5f16c614dff199f5b00c744a30a1b40fd894035bbd172b5cd46057",
+      "GOOS": "windows",
+      "GOARCH": "amd64",
+      "CGO_ENABLED": 1,
+      "embedded_vcs_revision": "NOT_CLAIMED",
+      "stdout_sha256": "90c6a4349d843d93e4150a2cac1c6fb0fd97618846c4eafead62999fa88b4b57"
+    }
+  ],
+  "buildinfo_note": "Linux3 binaries CGO=0. Windows checker CGO=1 matches actual host-native build; no Windows CGO=0 contract was imposed. Initial reviewer assertion incorrectly applied Linux condition to Windows and was corrected without runtime changes.",
+  "no_current_frozen_candidate": true
+}
