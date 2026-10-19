@@ -1,0 +1,341 @@
+{
+  "status": "PASS_FOR_IMPACT_INVENTORY_CORRECTION",
+  "previous_handoff_main": "ac8bd7ad316a3977d791bb5f093a1018b9e40fa5",
+  "target_main": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+  "range_commits": [
+    {
+      "sha": "d7c9ccdfe4fba066b512fe4adbcd1df281a2d0d9",
+      "pr": 322,
+      "scope": "temporary helper ownership/archive/reaping and CI contracts",
+      "changed_paths": 14
+    },
+    {
+      "sha": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+      "pr": 318,
+      "scope": "lifecycle reference/recovery plus operations/docs/evidence additions"
+    }
+  ],
+  "original_impact": {
+    "path": "../pr318-targeted-20261016/impact.json",
+    "sha256": "a61e06d851479ac3ecf8092679ebdafa4973290a9f0f47795ac1e8ca5b8a2d08",
+    "declared_changes_count": 64,
+    "actual_filter": [
+      "apps/platform/",
+      "migrations/"
+    ],
+    "original_payload_and_manifest_preserved": true,
+    "correction": "The original array is a business-source/migration filter, not a complete repository diff. This appended receipt supplies the omitted range and scopes."
+  },
+  "complete_inventory": {
+    "path": "range-diff.jsonl",
+    "git_command": [
+      "git",
+      "diff",
+      "--no-renames",
+      "--name-status",
+      "-z",
+      "ac8bd7ad316a3977d791bb5f093a1018b9e40fa5",
+      "b823eb33f8f3f923b619feda06e0ecc53514dd23"
+    ],
+    "path_count": 1710,
+    "category_counts": {
+      "operations_and_test_sources": 66,
+      "business_source_filter": 64,
+      "recorded_evidence": 1560,
+      "documentation": 20
+    },
+    "record_scope": "All changed paths with status and previous/target Git blob identity and SHA256. Inventory presence is not runtime acceptance."
+  },
+  "pr322": {
+    "merge_sha": "d7c9ccdfe4fba066b512fe4adbcd1df281a2d0d9",
+    "reviewed_head": "19ceaea31713cacbc8edace26542c1ff55a4ab62",
+    "reviewed_merge_tree_equal": true,
+    "source_ci": "pr322-main-ci.json",
+    "file_bindings": [
+      {
+        "status_at_322": "M",
+        "path": ".github/scripts/required-checks.mjs",
+        "before_322": {
+          "git_blob_oid": "d6a34bb5fcb55f2d57f1d1e9ca5294c8add9bbde",
+          "git_sha256": "8633e8bc6e33053e4d7d7505f0bc240a5e93e3912bd43709d668075135b61e11"
+        },
+        "merge_322": {
+          "git_blob_oid": "8a1d3a353cd00536252afb2421bfd6d89db6396d",
+          "git_sha256": "b072ead691a835c4656c78e31e378875947657ec2a7f920fb710fcdcf4b51c8a"
+        },
+        "target_b823": {
+          "git_blob_oid": "8a1d3a353cd00536252afb2421bfd6d89db6396d",
+          "git_sha256": "b072ead691a835c4656c78e31e378875947657ec2a7f920fb710fcdcf4b51c8a"
+        },
+        "target_worktree_sha256": "3e289e1793eed78057f9cd1577206e9f8c25e97c95779a7ed6058fece41ae6d4",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "M",
+        "path": ".github/scripts/required-checks.test.mjs",
+        "before_322": {
+          "git_blob_oid": "a61d6faba8896d0d5740b50e229329388a7ee4bb",
+          "git_sha256": "948d5ce6bda672f70df594100205dc6a9ba30a776a485f165ad9a32dc9cbd702"
+        },
+        "merge_322": {
+          "git_blob_oid": "eaab635661977f12657c3918039d9c9c113d53ab",
+          "git_sha256": "804b8295e1b97bc3140e072e6f21991f54226bf19449ed53e34b1315a745d91e"
+        },
+        "target_b823": {
+          "git_blob_oid": "eaab635661977f12657c3918039d9c9c113d53ab",
+          "git_sha256": "804b8295e1b97bc3140e072e6f21991f54226bf19449ed53e34b1315a745d91e"
+        },
+        "target_worktree_sha256": "cce1cf5074ddc16246ed568fa554886c027125fd63269f4333f2f7644b95ee43",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "M",
+        "path": ".github/workflows/ci.yml",
+        "before_322": {
+          "git_blob_oid": "462b5202b99e0054dd1fbed780409df1aa37a61a",
+          "git_sha256": "19db23aa17b2fd1947a05046d90e446e1856b057cd5ea913a8424340ac2b47d8"
+        },
+        "merge_322": {
+          "git_blob_oid": "b9d0b64fe106458879769e5eedcdec6eee3c45b5",
+          "git_sha256": "cf1f39bd243d2b5a06c704c1bfba236d00a8b0e679ef964734b2fe71dc0b8396"
+        },
+        "target_b823": {
+          "git_blob_oid": "94bd4cc4f242779b7607a408174d3f7eb0f81d78",
+          "git_sha256": "912d45f0289d9b00c0b2eb05bfddb57c426ffd328bc9431f356fc3b7f93c5cf8"
+        },
+        "target_worktree_sha256": "bdd05790430be9153ce6ed3308095966282b63aea5ed8e03236538eb0c397436",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "A",
+        "path": "docs/operations/docker-temporary-containers.md",
+        "before_322": null,
+        "merge_322": {
+          "git_blob_oid": "7250da674287d1d335402157d792cad9ef8e4b1c",
+          "git_sha256": "6d91b371bcbdce95f3b36458019cfb6eb5ef25ca0f08c78a3b6a9dfd5a274f15"
+        },
+        "target_b823": {
+          "git_blob_oid": "d7d76f78767bf40882522963eac2cebeff63298c",
+          "git_sha256": "386bf0f08723768739b537eebe1fdb3c934517f0522d1572c8d1f7e430d02e71"
+        },
+        "target_worktree_sha256": "3f21b242c934e9f80a1eee5c053a19a5da49ed81b2d8be15010bccb1ec5ac416",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "M",
+        "path": "examples/lifecycle-d1/README.md",
+        "before_322": {
+          "git_blob_oid": "5b0d509296ad254bd59a700793644e2f46765c36",
+          "git_sha256": "f30e4ecf537590f81913e18ef950f15999309d36bdb4acff6eaed85f3d882598"
+        },
+        "merge_322": {
+          "git_blob_oid": "f80e715f70f89f4238a3175c7108d0d68058dd2b",
+          "git_sha256": "83001c8d13c01afd888d118e34155c9e0c242a6f6c08162e8b28e4db9a5fd868"
+        },
+        "target_b823": {
+          "git_blob_oid": "3f1e630a0a1d59b3d36abc9f1e8c4ed44629d654",
+          "git_sha256": "70d1f9fbdce4487f0221482d40652f20efaa831e88304d5345d66faf20ac7460"
+        },
+        "target_worktree_sha256": "4e294c1ee4361659a82aa290f6302b7e4ba1ae65aed01fe0cce4aacd959439c3",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "M",
+        "path": "examples/lifecycle-d1/finish-prepare.ps1",
+        "before_322": {
+          "git_blob_oid": "e70063c73e4899b1eb6b34fef3730ba4028897fd",
+          "git_sha256": "6f055eeb910bdfce8c8ec16177e4ed91a86037f437940a09a364fd900006c4b0"
+        },
+        "merge_322": {
+          "git_blob_oid": "4001be012458dc9a28fb3c84bc3506895b51089e",
+          "git_sha256": "16bcf133485a90c8f954a58c3fa9bad26945fe0e7ab414d034d5128052748fa2"
+        },
+        "target_b823": {
+          "git_blob_oid": "945e5ca447966671a4673794eae496af2042c61f",
+          "git_sha256": "9a8260f5ccb8b8bf891bd3017c98af084ad94b266e24fb930445de623e5dbdb0"
+        },
+        "target_worktree_sha256": "bc42550773a881e5cab12a687fb192eab905182db31c69caf23d3f3bb3356ee6",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "M",
+        "path": "examples/lifecycle-d1/run-copy-recovery-step.ps1",
+        "before_322": {
+          "git_blob_oid": "cab666bb9b6464448fd6fe584006607324d1d4a1",
+          "git_sha256": "4e26041406d98b607d1205e9939d263a152211e0d83cde3c3afbe47a57f6f91c"
+        },
+        "merge_322": {
+          "git_blob_oid": "3aac882e6e8de5f3d431e9baed593109192d0b78",
+          "git_sha256": "87cbe5e00741c23b37ecca9be497cfabcce4a9657c5908a68fed0ecec35a8a07"
+        },
+        "target_b823": {
+          "git_blob_oid": "9885a3a36847001b98ad5f5c7960f0657e1027f3",
+          "git_sha256": "ea1dbfd0d61a87116d0f09e59ab432cab6b3b44db50e27611feab4c7ec46b084"
+        },
+        "target_worktree_sha256": "3a6bebf017af0248e890fddc36b62fbc626c680df59fa06f1ba2b831c1f852b0",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "M",
+        "path": "examples/lifecycle-d1/run-plane-step.ps1",
+        "before_322": {
+          "git_blob_oid": "2c4872bf067162efa4650a93ae9eda32e53b09d5",
+          "git_sha256": "aa995cbca94ef63539b2a8c84530eeee26a17b5a0ae1c40695b10282fd390fd6"
+        },
+        "merge_322": {
+          "git_blob_oid": "5168daf373e9c417b5d78d10b2f1af8af0041d0e",
+          "git_sha256": "6d6ae3a40aec8bd512846e87ad425574493c2f811151914c1ec31a49bf36baf4"
+        },
+        "target_b823": {
+          "git_blob_oid": "4438acee7845b6622e08259ae54d27ec5dcccbdb",
+          "git_sha256": "3648c58623dbce4c7706129408f805d1160e0bb97164cc87850b6f496e5e00f0"
+        },
+        "target_worktree_sha256": "9c3a1b8e220b4c09411438736446ac6b9b5da2fac75ce49fef36a07cc9d5fcae",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "M",
+        "path": "examples/lifecycle-d1/run-reader-step.ps1",
+        "before_322": {
+          "git_blob_oid": "154ead6dafd586bb02e4addbd73fa6930bb84267",
+          "git_sha256": "6e616812b377138986e19742d465271227106afb7e131c2767f6f0523c531569"
+        },
+        "merge_322": {
+          "git_blob_oid": "70a83ae71463851cd7b5804d961fe9b615d2f0dc",
+          "git_sha256": "5e21f80a3e2a29a0c6814e10e1f0a645b2ded731f191b6918ef7a1422fc16159"
+        },
+        "target_b823": {
+          "git_blob_oid": "9c300678e7fbb4a7ed56ee92074738ff1c485113",
+          "git_sha256": "369443b5bb153759f1861dbbf967dc965ecc6bbe4d64dc6e824c5d1cb8468479"
+        },
+        "target_worktree_sha256": "c07924ecc70e765e21f0853d6eed9eb64239cfb913e0c2c3db61e3bf6a3bc160",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "A",
+        "path": "examples/temporary-containers-acl-test.ps1",
+        "before_322": null,
+        "merge_322": {
+          "git_blob_oid": "f6e3782d587d257ba1afc76b56f21a8df96cac56",
+          "git_sha256": "dfa7a11b35fb32e0fcbc081fede114fd22e473875e952c417b3f4297bdc164b0"
+        },
+        "target_b823": {
+          "git_blob_oid": "f6e3782d587d257ba1afc76b56f21a8df96cac56",
+          "git_sha256": "dfa7a11b35fb32e0fcbc081fede114fd22e473875e952c417b3f4297bdc164b0"
+        },
+        "target_worktree_sha256": "9eb0f3bff06b58d1c6335cad38be9fd8a11a39429b7559e4467622947fd97a57",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "A",
+        "path": "examples/temporary-containers-native-test.ps1",
+        "before_322": null,
+        "merge_322": {
+          "git_blob_oid": "61f40fa44761cd2a0199c84b2fa885310325cb1c",
+          "git_sha256": "8c0c796fceea30d3d7e4affc0a72489e0ff26ad9ffbdae97c61cd727c141aef9"
+        },
+        "target_b823": {
+          "git_blob_oid": "61f40fa44761cd2a0199c84b2fa885310325cb1c",
+          "git_sha256": "8c0c796fceea30d3d7e4affc0a72489e0ff26ad9ffbdae97c61cd727c141aef9"
+        },
+        "target_worktree_sha256": "22ebe2c40037ce1b92d185ce4c3be59c19cae9ed5c786f64cfc7172f6a9dd72d",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "A",
+        "path": "examples/temporary-containers.ps1",
+        "before_322": null,
+        "merge_322": {
+          "git_blob_oid": "4ef50dbb037daf2236cc6d880e34d102baa17210",
+          "git_sha256": "a167933e3ab73f71bcc709acfaa7c12b86d90b3ac423ecd59f787e27e034e1a1"
+        },
+        "target_b823": {
+          "git_blob_oid": "4ef50dbb037daf2236cc6d880e34d102baa17210",
+          "git_sha256": "a167933e3ab73f71bcc709acfaa7c12b86d90b3ac423ecd59f787e27e034e1a1"
+        },
+        "target_worktree_sha256": "529ab5d953f49a1b1db85487ef74658ba04affea7682e43262eb44c8ff0a7a3d",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "A",
+        "path": "examples/temporary_containers.py",
+        "before_322": null,
+        "merge_322": {
+          "git_blob_oid": "22f83de4d88d62f831ada7d68f0d72e03db6fa68",
+          "git_sha256": "51deb55a4fceaa8c7e1220eebb863173132d6490a22240c807b6269d5f9bd8b7"
+        },
+        "target_b823": {
+          "git_blob_oid": "22f83de4d88d62f831ada7d68f0d72e03db6fa68",
+          "git_sha256": "51deb55a4fceaa8c7e1220eebb863173132d6490a22240c807b6269d5f9bd8b7"
+        },
+        "target_worktree_sha256": "f4a75dd748d3df7e557fb8af13b95766446293ecc199fd2bb565617fd1174a42",
+        "target_worktree_normalized_matches_git": true
+      },
+      {
+        "status_at_322": "A",
+        "path": "examples/temporary_containers_test.py",
+        "before_322": null,
+        "merge_322": {
+          "git_blob_oid": "92631234d6838ebd84912b3dffe54c624f2bc3fb",
+          "git_sha256": "04dee4563786ab6b52418dd56b2003ca92c6b1a90cfd83b3ed8b3c77f81c3c4a"
+        },
+        "target_b823": {
+          "git_blob_oid": "92631234d6838ebd84912b3dffe54c624f2bc3fb",
+          "git_sha256": "04dee4563786ab6b52418dd56b2003ca92c6b1a90cfd83b3ed8b3c77f81c3c4a"
+        },
+        "target_worktree_sha256": "d3e52486b76eead8da31310c715e52d95ca00261236663bb40d9ff352ad15633",
+        "target_worktree_normalized_matches_git": true
+      }
+    ],
+    "directed_runtime_scope": "The retained #299 driver uses Docker directly plus retained_runtime.DurableStorage. It does not invoke finish-prepare/run-copy-recovery-step/run-plane-step/run-reader-step or temporary-container helpers. No new helper archival/reaping/native cleanup acceptance was run.",
+    "historical_ci_scope": "Only the exact #322 merge/main CI is referenced; its own synthetic-runtime validation does not authorize current cleanup or establish current #299 business acceptance."
+  },
+  "reused_call_chain": {
+    "chain": "test orchestrator -> retained_runtime (smoke.command/HERE) -> postgres-ingestion/retained-storage.ps1 -> lifecycle-d1/durable-storage.ps1",
+    "bindings": [
+      {
+        "path": "examples/enterprise-activity/postgres-ingestion/retained_runtime.py",
+        "previous_blob_oid": "ad614660064f06f97b0df3978daec59029be47eb",
+        "target_blob_oid": "ad614660064f06f97b0df3978daec59029be47eb",
+        "git_sha256": "ca74ccfa2fbf4b2dc7f12114f4df6235f3ed66207d1601057c6841cc8b921aa6",
+        "actual_worktree_sha256": "ca74ccfa2fbf4b2dc7f12114f4df6235f3ed66207d1601057c6841cc8b921aa6",
+        "status": "UNCHANGED"
+      },
+      {
+        "path": "examples/enterprise-activity/postgres-ingestion/smoke.py",
+        "previous_blob_oid": "c64a531ada737228aad622d86077928d9eda7acc",
+        "target_blob_oid": "c64a531ada737228aad622d86077928d9eda7acc",
+        "git_sha256": "94df4ad092e376fdf2f3139f28aa9ad8e72f049a5218e04cfb0f73d4dc3c5c6a",
+        "actual_worktree_sha256": "94df4ad092e376fdf2f3139f28aa9ad8e72f049a5218e04cfb0f73d4dc3c5c6a",
+        "status": "UNCHANGED"
+      },
+      {
+        "path": "examples/enterprise-activity/postgres-ingestion/retained-storage.ps1",
+        "previous_blob_oid": "5303feab508fb04af71112c6c81e1da7dfc4cf73",
+        "target_blob_oid": "5303feab508fb04af71112c6c81e1da7dfc4cf73",
+        "git_sha256": "529f3de31abe46df468f564c56f03da84b9797f4a0689cd9e1af3787d1811feb",
+        "actual_worktree_sha256": "529f3de31abe46df468f564c56f03da84b9797f4a0689cd9e1af3787d1811feb",
+        "status": "UNCHANGED"
+      },
+      {
+        "path": "examples/lifecycle-d1/durable-storage.ps1",
+        "previous_blob_oid": "cc092c8680a0d368e7c4aacdfa3d550ef6ad1a27",
+        "target_blob_oid": "cc092c8680a0d368e7c4aacdfa3d550ef6ad1a27",
+        "git_sha256": "a6d53ab292a70c4651f81aefb25a9c92c20c75281a6bcfdb4f02ede66733713e",
+        "actual_worktree_sha256": "09f75efe1ee28351f463976e9214b750331330838ab295a4ddfc7301defd7fb7",
+        "status": "UNCHANGED"
+      }
+    ],
+    "scope": "All four committed inputs unchanged across this interval and current normalized worktree bytes match. No wrapper/helper cleanup invocation inferred."
+  },
+  "remaining_range_scope": "Other #318 operations/test scripts, documentation and recorded evidence are inventoried for ownership and delta visibility; this correction does not re-run them or adopt #307 acceptance.",
+  "this_ready_fix": {
+    "production_source_changes": 0,
+    "provider_calls": 0,
+    "cleanup_calls": 0,
+    "runtime_reruns": 0,
+    "human_explanation": "NOT_RUN/DEFERRED",
+    "original_core": "FAIL/NOT_RESTORED/DEFERRED",
+    "issues_298_299": "OPEN"
+  }
+}

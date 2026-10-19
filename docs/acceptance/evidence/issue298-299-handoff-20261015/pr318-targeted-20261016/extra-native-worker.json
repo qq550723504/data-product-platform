@@ -1,0 +1,15 @@
+{
+  "head": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+  "name": "TestEnterpriseActivityNativeWorkerProducesCuratedDataset",
+  "package": "./internal/workflow/native",
+  "exit_code": 0,
+  "passed": [
+    "TestEnterpriseActivityNativeWorkerProducesCuratedDataset"
+  ],
+  "failed": [],
+  "skipped": [],
+  "binary_sha256": "a2c0ceadd2128e1c48aaf9aadcebd653e8d9559d4de8ab78f06bb77ed5d0a047",
+  "raw_sha256": "9c4148f225428811ce8f6965f54329fb152ef74b4634826ef205add1ac0bb3f1",
+  "reason": "targeted actual native processing/mapping usage under new FK guards; fills EXECUTION_MAPPING reference class",
+  "scope": "real PostgreSQL, actual native Go engine/queue handler; in-memory storage Port, no external Redis/Provider claim"
+}

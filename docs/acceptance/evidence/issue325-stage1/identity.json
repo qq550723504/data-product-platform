@@ -1,0 +1,190 @@
+{
+  "contract": "issue325/stage1",
+  "runId": "1b7e1949e8224ad8b870d28b96a3c6c2",
+  "phase": "STOPPED",
+  "head": "1687a6ef4bd5bd998696f95255a9e3885607a416",
+  "workspaceId": "e7469d12-05bc-4427-b79a-356a49cfd13c",
+  "actorId": "0fb05174-99f2-429e-863e-1a841d82330e",
+  "ports": {
+    "source": 60081,
+    "core": 60082,
+    "storage": 60083,
+    "redis": 60084,
+    "hop": 60085,
+    "api": 60086,
+    "web": 60087
+  },
+  "host": {
+    "context": "desktop-linux",
+    "endpoint": "npipe:////./pipe/dockerDesktopLinuxEngine",
+    "daemonId": "d8e3cb9f-adc6-4df6-b5de-eb23d57bb00f",
+    "compose": "5.6.0",
+    "go": "go version go1.26.5 windows/amd64",
+    "node": "v24.18.1",
+    "tables": [
+      {
+        "Code": "enterprise_raw",
+        "Schema": "dpp_source",
+        "Name": "enterprise",
+        "Columns": [
+          "source_company_id",
+          "company_name",
+          "unified_social_credit_code",
+          "legal_representative",
+          "registered_address",
+          "entry_date",
+          "company_status",
+          "contact_name",
+          "mobile",
+          "email"
+        ],
+        "Rows": 6
+      },
+      {
+        "Code": "lease_raw",
+        "Schema": "dpp_source",
+        "Name": "lease",
+        "Columns": [
+          "lease_id",
+          "source_company_id",
+          "company_name",
+          "contract_start",
+          "contract_end",
+          "rent_amount",
+          "payment_due_date",
+          "payment_date",
+          "lease_status"
+        ],
+        "Rows": 10
+      },
+      {
+        "Code": "energy_raw",
+        "Schema": "dpp_source",
+        "Name": "energy",
+        "Columns": [
+          "meter_id",
+          "source_company_id",
+          "company_name",
+          "reading_time",
+          "energy_kwh"
+        ],
+        "Rows": 14
+      }
+    ]
+  },
+  "images": {
+    "source": {
+      "ref": "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    "core": {
+      "ref": "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "id": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+    },
+    "hop": {
+      "ref": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2:hop",
+      "id": "sha256:23bd26a5cecc7a16eef36735d14ddd80799de2adc2cf52754383329a90543349"
+    },
+    "redis": {
+      "ref": "redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "id": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"
+    },
+    "objects": {
+      "ref": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2:minio",
+      "id": "sha256:6ac2a369d3449fc7c3a6e1fa6b689c8ea11c528fff9aec79b26ff01b38d49375"
+    },
+    "gateway": {
+      "ref": "caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "id": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f"
+    }
+  },
+  "minio": {
+    "source": "9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a",
+    "release": "RELEASE.2025-10-15T17-29-55Z",
+    "binarySha256": "fb741388b404ec67c4f3777b812d6174ba5562532acb17fb1ddfba9a4e6249b8",
+    "license": "AGPL-3.0"
+  },
+  "containers": {
+    "source": {
+      "name": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-source",
+      "id": "aa867b1b4afa5c20e20ea4ee2a9d59b5c0a6d4d88f33f3b68997a8cc629a8bf7",
+      "configHash": "026e452f94d6a7e176e70bc6d7397a316a8857f664e6631456ae849596a1eee3"
+    },
+    "core": {
+      "name": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-core",
+      "id": "94742d3c22f9d5da461f134e2b2a735d075564d974c48237b258f075ce3a6a87",
+      "configHash": "b34aba094c0be06e6b6908c8bc40ca19d191cacf2d2e2ae1b3d9118ab081dd32"
+    },
+    "objects": {
+      "name": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-objects",
+      "id": "611f3c66cf9f54f99f8963812c1265f2090e9a867857aa87e4ba739ae98b3e0b",
+      "configHash": "613c26a7cc7d79a3405bec5c6290836007e9b2b120162e3425b5bcb03b23c771"
+    },
+    "redis": {
+      "name": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-redis",
+      "id": "56225ee67d3968a3ead9f35a5254b1be8509f5d400c90d08e25423a772ed3065",
+      "configHash": "afdc043f0b4c2b05cb1e82dce7cdef1759cc3d0ccff34b462b25eb66fb390a7d"
+    },
+    "hop": {
+      "name": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-hop",
+      "id": "5d3e51c9db9c385916c28b9de861dda5d0e0da97ffd2a2504651374743f9d8b9",
+      "configHash": "1be3d7efb234af119d1cf592447bce5d71a6ac241038f19eac5b8fb2122f2db7"
+    },
+    "gateway": {
+      "name": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-gateway",
+      "id": "67178d9c61d65bae8db3c09779a0a60af5936b6c082ecad785a335efbdfe787e",
+      "configHash": "7479b67228e1b6ee7b6b546832adbb831b641cbf7aabd84c80907d8d3dbf8219"
+    }
+  },
+  "volumes": {
+    "source": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-source",
+    "core": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-core",
+    "objects": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-objects",
+    "redis": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-redis",
+    "hop": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-hop",
+    "hop-tmp": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-hop-tmp"
+  },
+  "networks": {
+    "engine": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-engine",
+    "storage": "dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2-storage"
+  },
+  "secretReferences": [
+    "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\source-password",
+    "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\core-password",
+    "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\reader-password",
+    "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\hop-password",
+    "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\token",
+    "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\storage\\access",
+    "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\storage\\secret",
+    "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\core-identity.json",
+    "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\publisher-identity.json"
+  ],
+  "binaries": {
+    "api": {
+      "sha256": "a1c62342c32e4f4a7879465a6a53513187404d6d697f586fa52c169a291e028b",
+      "name": "api.exe"
+    },
+    "worker": {
+      "sha256": "117153c4903517fcca56d3f34e589eb1174f2d140ea597a78e3d37012a5e22f4",
+      "name": "worker.exe"
+    },
+    "trial-prepare": {
+      "sha256": "17faa9e630cbca9e059726dac785c6955405d7888250ca85dd632859fdf2c29d",
+      "name": "trial-prepare.exe"
+    },
+    "node": {
+      "sha256": "ac51903c4c111815d52280b1fdcc8da067cbb37e2fe1a765097b85c3292c8582",
+      "name": "node.EXE"
+    }
+  },
+  "webBuildId": "GGXpFzF6wZyjJOCghyjw7",
+  "webArtifactManifestSha256": "9de198565cb3e3d86e5d6785dec4c6b875e60d2aba5f9716e35f7955fec65c06",
+  "runtimeSourceManifestSha256": "af231c17a5cab72ad6e65e37c511b2c6c3634f7b9bdc049c569fcb51fbdcacc6",
+  "runtimeSourceFileCount": 895,
+  "currentRuntimeSourcesMatch": true,
+  "goBuildInfo": {
+    "api": "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\bin\\api.exe: go1.26.5\n\tpath\tgithub.com/qq550723504/data-product-platform/apps/platform/cmd/api\n\tmod\tgithub.com/qq550723504/data-product-platform/apps/platform\t(devel)\t\n\tdep\tgithub.com/cespare/xxhash/v2\tv2.3.0\th1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=\n\tdep\tgithub.com/dgryski/go-rendezvous\tv0.0.0-20200823014737-9f7001d12a5f\th1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=\n\tdep\tgithub.com/dustin/go-humanize\tv1.0.1\th1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=\n\tdep\tgithub.com/go-ini/ini\tv1.67.0\th1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=\n\tdep\tgithub.com/goccy/go-json\tv0.10.5\th1:Fq85nIqj+gXn/S5ahsiTlK3TmC85qgirsdTP/+DeaC4=\n\tdep\tgithub.com/google/uuid\tv1.6.0\th1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=\n\tdep\tgithub.com/hibiken/asynq\tv0.25.1\th1:phj028N0nm15n8O2ims+IvJ2gz4k2auvermngh9JhTw=\n\tdep\tgithub.com/jackc/pgpassfile\tv1.0.0\th1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=\n\tdep\tgithub.com/jackc/pgservicefile\tv0.0.0-20240606120523-5a60cdf6a761\th1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=\n\tdep\tgithub.com/jackc/pgx/v5\tv5.7.2\th1:mLoDLV6sonKlvjIEsV56SkWNCnuNv531l94GaIzO+XI=\n\tdep\tgithub.com/jackc/puddle/v2\tv2.2.2\th1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=\n\tdep\tgithub.com/klauspost/compress\tv1.17.11\th1:In6xLpyWOi1+C7tXUUWv2ot1QvBjxevKAaI6IXrJmUc=\n\tdep\tgithub.com/klauspost/cpuid/v2\tv2.2.9\th1:66ze0taIn2H33fBvCkXuv9BmCwDfafmiIVpKV9kKGuY=\n\tdep\tgithub.com/minio/crc64nvme\tv1.0.1\th1:DHQPrYPdqK7jQG/Ls5CTBZWeex/2FMS3G5XGkycuFrY=\n\tdep\tgithub.com/minio/md5-simd\tv1.1.2\th1:Gdi1DZK69+ZVMoNHRXJyNcxrMA4dSxoYHZSQbirFg34=\n\tdep\tgithub.com/minio/minio-go/v7\tv7.0.88\th1:v8MoIJjwYxOkehp+eiLIuvXk87P2raUtoU5klrAAshs=\n\tdep\tgithub.com/redis/go-redis/v9\tv9.7.0\th1:HhLSs+B6O021gwzl+locl0zEDnyNkxMtf/Z3NNBMa9E=\n\tdep\tgithub.com/robfig/cron/v3\tv3.0.1\th1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=\n\tdep\tgithub.com/rs/xid\tv1.6.0\th1:fV591PaemRlL6JfRxGDEPl69wICngIQ3shQtzfy2gxU=\n\tdep\tgithub.com/spf13/cast\tv1.7.0\th1:ntdiHjuueXFgm5nzDRdOS4yfT43P5Fnud6DH50rz/7w=\n\tdep\tgolang.org/x/crypto\tv0.36.0\th1:AnAEvhDddvBdpY+uR+MyHmuZzzNqXSe/GvuDeob5L34=\n\tdep\tgolang.org/x/net\tv0.37.0\th1:1zLorHbz+LYj7MQlSf1+2tPIIgibq2eL5xkrGk6f+2c=\n\tdep\tgolang.org/x/sync\tv0.12.0\th1:MHc5BpPuC30uJk597Ri8TV3CNZcTLu6B6z4lJy+g6Jw=\n\tdep\tgolang.org/x/sys\tv0.31.0\th1:ioabZlmFYtWhL+TRYpcnNlLwhyxaM9kWTDEmfnprqik=\n\tdep\tgolang.org/x/text\tv0.23.0\th1:D71I7dUrlY+VX0gQShAThNGHFxZ13dGLBHQLVl1mJlY=\n\tdep\tgolang.org/x/time\tv0.8.0\th1:9i3RxcPv3PZnitoVGMPDKZSq1xW1gK1Xy3ArNOGZfEg=\n\tdep\tgoogle.golang.org/protobuf\tv1.36.5\th1:tPhr+woSbjfYvY6/GPufUoYizxw1cF/yFoxJ2fmpwlM=\n\tdep\tgopkg.in/yaml.v3\tv3.0.1\th1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\t-trimpath=true\n\tbuild\tDefaultGODEBUG=containermaxprocs=0,cryptocustomrand=1,decoratemappings=0,tlssecpmlkem=0,tlssha1=1,updatemaxprocs=0,urlstrictcolons=0,x509sha256skid=0\n\tbuild\tCGO_ENABLED=1\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=windows\n\tbuild\tGOAMD64=v1\n",
+    "worker": "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\bin\\worker.exe: go1.26.5\n\tpath\tgithub.com/qq550723504/data-product-platform/apps/platform/cmd/worker\n\tmod\tgithub.com/qq550723504/data-product-platform/apps/platform\t(devel)\t\n\tdep\tgithub.com/cespare/xxhash/v2\tv2.3.0\th1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=\n\tdep\tgithub.com/dgryski/go-rendezvous\tv0.0.0-20200823014737-9f7001d12a5f\th1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=\n\tdep\tgithub.com/dustin/go-humanize\tv1.0.1\th1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=\n\tdep\tgithub.com/go-ini/ini\tv1.67.0\th1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=\n\tdep\tgithub.com/goccy/go-json\tv0.10.5\th1:Fq85nIqj+gXn/S5ahsiTlK3TmC85qgirsdTP/+DeaC4=\n\tdep\tgithub.com/google/uuid\tv1.6.0\th1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=\n\tdep\tgithub.com/hibiken/asynq\tv0.25.1\th1:phj028N0nm15n8O2ims+IvJ2gz4k2auvermngh9JhTw=\n\tdep\tgithub.com/jackc/pgpassfile\tv1.0.0\th1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=\n\tdep\tgithub.com/jackc/pgservicefile\tv0.0.0-20240606120523-5a60cdf6a761\th1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=\n\tdep\tgithub.com/jackc/pgx/v5\tv5.7.2\th1:mLoDLV6sonKlvjIEsV56SkWNCnuNv531l94GaIzO+XI=\n\tdep\tgithub.com/jackc/puddle/v2\tv2.2.2\th1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=\n\tdep\tgithub.com/klauspost/compress\tv1.17.11\th1:In6xLpyWOi1+C7tXUUWv2ot1QvBjxevKAaI6IXrJmUc=\n\tdep\tgithub.com/klauspost/cpuid/v2\tv2.2.9\th1:66ze0taIn2H33fBvCkXuv9BmCwDfafmiIVpKV9kKGuY=\n\tdep\tgithub.com/minio/crc64nvme\tv1.0.1\th1:DHQPrYPdqK7jQG/Ls5CTBZWeex/2FMS3G5XGkycuFrY=\n\tdep\tgithub.com/minio/md5-simd\tv1.1.2\th1:Gdi1DZK69+ZVMoNHRXJyNcxrMA4dSxoYHZSQbirFg34=\n\tdep\tgithub.com/minio/minio-go/v7\tv7.0.88\th1:v8MoIJjwYxOkehp+eiLIuvXk87P2raUtoU5klrAAshs=\n\tdep\tgithub.com/redis/go-redis/v9\tv9.7.0\th1:HhLSs+B6O021gwzl+locl0zEDnyNkxMtf/Z3NNBMa9E=\n\tdep\tgithub.com/robfig/cron/v3\tv3.0.1\th1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=\n\tdep\tgithub.com/rs/xid\tv1.6.0\th1:fV591PaemRlL6JfRxGDEPl69wICngIQ3shQtzfy2gxU=\n\tdep\tgithub.com/spf13/cast\tv1.7.0\th1:ntdiHjuueXFgm5nzDRdOS4yfT43P5Fnud6DH50rz/7w=\n\tdep\tgolang.org/x/crypto\tv0.36.0\th1:AnAEvhDddvBdpY+uR+MyHmuZzzNqXSe/GvuDeob5L34=\n\tdep\tgolang.org/x/net\tv0.37.0\th1:1zLorHbz+LYj7MQlSf1+2tPIIgibq2eL5xkrGk6f+2c=\n\tdep\tgolang.org/x/sync\tv0.12.0\th1:MHc5BpPuC30uJk597Ri8TV3CNZcTLu6B6z4lJy+g6Jw=\n\tdep\tgolang.org/x/sys\tv0.31.0\th1:ioabZlmFYtWhL+TRYpcnNlLwhyxaM9kWTDEmfnprqik=\n\tdep\tgolang.org/x/text\tv0.23.0\th1:D71I7dUrlY+VX0gQShAThNGHFxZ13dGLBHQLVl1mJlY=\n\tdep\tgolang.org/x/time\tv0.8.0\th1:9i3RxcPv3PZnitoVGMPDKZSq1xW1gK1Xy3ArNOGZfEg=\n\tdep\tgoogle.golang.org/protobuf\tv1.36.5\th1:tPhr+woSbjfYvY6/GPufUoYizxw1cF/yFoxJ2fmpwlM=\n\tdep\tgopkg.in/yaml.v3\tv3.0.1\th1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\t-trimpath=true\n\tbuild\tDefaultGODEBUG=containermaxprocs=0,cryptocustomrand=1,decoratemappings=0,tlssecpmlkem=0,tlssha1=1,updatemaxprocs=0,urlstrictcolons=0,x509sha256skid=0\n\tbuild\tCGO_ENABLED=1\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=windows\n\tbuild\tGOAMD64=v1\n",
+    "trial-prepare": "C:\\Users\\Henry\\AppData\\Local\\Codex\\trials\\dpp-trial-1b7e1949e8224ad8b870d28b96a3c6c2\\bin\\trial-prepare.exe: go1.26.5\n\tpath\tgithub.com/qq550723504/data-product-platform/apps/platform/cmd/trial-prepare\n\tmod\tgithub.com/qq550723504/data-product-platform/apps/platform\t(devel)\t\n\tdep\tgithub.com/dustin/go-humanize\tv1.0.1\th1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=\n\tdep\tgithub.com/go-ini/ini\tv1.67.0\th1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=\n\tdep\tgithub.com/go-ole/go-ole\tv1.3.0\th1:Dt6ye7+vXGIKZ7Xtk4s6/xVdGDQynvom7xCFEdWr6uE=\n\tdep\tgithub.com/goccy/go-json\tv0.10.5\th1:Fq85nIqj+gXn/S5ahsiTlK3TmC85qgirsdTP/+DeaC4=\n\tdep\tgithub.com/golang-jwt/jwt/v4\tv4.5.0\th1:7cYmW1XlMY7h7ii7UhUyChSgS5wUJEnm9uZVTGqOWzg=\n\tdep\tgithub.com/golang/protobuf\tv1.5.4\th1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=\n\tdep\tgithub.com/google/uuid\tv1.6.0\th1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=\n\tdep\tgithub.com/jackc/pgpassfile\tv1.0.0\th1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=\n\tdep\tgithub.com/jackc/pgservicefile\tv0.0.0-20240606120523-5a60cdf6a761\th1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=\n\tdep\tgithub.com/jackc/pgx/v5\tv5.7.2\th1:mLoDLV6sonKlvjIEsV56SkWNCnuNv531l94GaIzO+XI=\n\tdep\tgithub.com/jackc/puddle/v2\tv2.2.2\th1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=\n\tdep\tgithub.com/klauspost/compress\tv1.17.11\th1:In6xLpyWOi1+C7tXUUWv2ot1QvBjxevKAaI6IXrJmUc=\n\tdep\tgithub.com/klauspost/cpuid/v2\tv2.2.9\th1:66ze0taIn2H33fBvCkXuv9BmCwDfafmiIVpKV9kKGuY=\n\tdep\tgithub.com/matttproud/golang_protobuf_extensions\tv1.0.4\th1:mmDVorXM7PCGKw94cs5zkfA9PSy5pEvNWRP0ET0TIVo=\n\tdep\tgithub.com/minio/crc64nvme\tv1.0.1\th1:DHQPrYPdqK7jQG/Ls5CTBZWeex/2FMS3G5XGkycuFrY=\n\tdep\tgithub.com/minio/madmin-go/v3\tv3.0.94\th1:n2S8zgm0eRJ09YC7qrDTFDQDQOEUzCTiKEPywCitO/s=\n\tdep\tgithub.com/minio/md5-simd\tv1.1.2\th1:Gdi1DZK69+ZVMoNHRXJyNcxrMA4dSxoYHZSQbirFg34=\n\tdep\tgithub.com/minio/minio-go/v7\tv7.0.88\th1:v8MoIJjwYxOkehp+eiLIuvXk87P2raUtoU5klrAAshs=\n\tdep\tgithub.com/munnerz/goautoneg\tv0.0.0-20191010083416-a7dc8b61c822\th1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=\n\tdep\tgithub.com/philhofer/fwd\tv1.1.3-0.20240916144458-20a13a1f6b7c\th1:dAMKvw0MlJT1GshSTtih8C2gDs04w8dReiOGXrGLNoY=\n\tdep\tgithub.com/prometheus/client_model\tv0.6.1\th1:ZKSh/rekM+n3CeS952MLRAdFwIKqeY8b62p8ais2e9E=\n\tdep\tgithub.com/prometheus/common\tv0.59.1\th1:LXb1quJHWm1P6wq/U824uxYi4Sg0oGvNeUm1z5dJoX0=\n\tdep\tgithub.com/prometheus/procfs\tv0.15.1\th1:YagwOFzUgYfKKHX6Dr+sHT7km/hxC76UB0learggepc=\n\tdep\tgithub.com/prometheus/prom2json\tv1.4.0\th1:2AEOsd1ebqql/p9u0IWgCpUAteAAf9Lnf/SVyieqer4=\n\tdep\tgithub.com/prometheus/prometheus\tv0.54.1\th1:vKuwQNjnYN2/mDoWfHXDhAsz/68q/dQDb+YbcEqU7MQ=\n\tdep\tgithub.com/rs/xid\tv1.6.0\th1:fV591PaemRlL6JfRxGDEPl69wICngIQ3shQtzfy2gxU=\n\tdep\tgithub.com/secure-io/sio-go\tv0.3.1\th1:dNvY9awjabXTYGsTF1PiCySl9Ltofk9GA3VdWlo7rRc=\n\tdep\tgithub.com/shirou/gopsutil/v3\tv3.24.5\th1:i0t8kL+kQTvpAYToeuiVk3TgDeKOFioZO3Ztz/iZ9pI=\n\tdep\tgithub.com/tinylib/msgp\tv1.2.5\th1:WeQg1whrXRFiZusidTQqzETkRpGjFjcIhW6uqWH09po=\n\tdep\tgithub.com/yusufpapurcu/wmi\tv1.2.4\th1:zFUKzehAFReQwLys1b/iSMl+JQGSCSjtVqQn9bBrPo0=\n\tdep\tgolang.org/x/crypto\tv0.36.0\th1:AnAEvhDddvBdpY+uR+MyHmuZzzNqXSe/GvuDeob5L34=\n\tdep\tgolang.org/x/net\tv0.37.0\th1:1zLorHbz+LYj7MQlSf1+2tPIIgibq2eL5xkrGk6f+2c=\n\tdep\tgolang.org/x/sync\tv0.12.0\th1:MHc5BpPuC30uJk597Ri8TV3CNZcTLu6B6z4lJy+g6Jw=\n\tdep\tgolang.org/x/sys\tv0.31.0\th1:ioabZlmFYtWhL+TRYpcnNlLwhyxaM9kWTDEmfnprqik=\n\tdep\tgolang.org/x/text\tv0.23.0\th1:D71I7dUrlY+VX0gQShAThNGHFxZ13dGLBHQLVl1mJlY=\n\tdep\tgoogle.golang.org/protobuf\tv1.36.5\th1:tPhr+woSbjfYvY6/GPufUoYizxw1cF/yFoxJ2fmpwlM=\n\tdep\tgopkg.in/yaml.v3\tv3.0.1\th1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\t-trimpath=true\n\tbuild\tDefaultGODEBUG=containermaxprocs=0,cryptocustomrand=1,decoratemappings=0,tlssecpmlkem=0,tlssha1=1,updatemaxprocs=0,urlstrictcolons=0,x509sha256skid=0\n\tbuild\tCGO_ENABLED=1\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=windows\n\tbuild\tGOAMD64=v1\n"
+  }
+}

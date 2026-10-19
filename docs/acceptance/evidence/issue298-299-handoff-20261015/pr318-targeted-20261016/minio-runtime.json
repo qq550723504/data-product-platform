@@ -1,0 +1,22 @@
+{
+  "run_id": "3bffbb42-db97-42a0-a36f-ea2271b3b581",
+  "container": "dpp-bc318-3bffbb42db97-minio02",
+  "volume": "dpp-bc318-3bffbb42db97-objects02",
+  "image": {
+    "reference": "dpp-pgi-minio:2025-10-15",
+    "id": "sha256:4b343185d3ce9148dbcb2ca720379faa793a140d54d6998b1cfe26f514fbb7fa",
+    "repo_digests": [
+      "dpp-pgi-minio@sha256:4b343185d3ce9148dbcb2ca720379faa793a140d54d6998b1cfe26f514fbb7fa"
+    ],
+    "cmd": [
+      "/bin/sh"
+    ],
+    "entrypoint": null
+  },
+  "role": "objects",
+  "path": "/data",
+  "retained": true,
+  "cleanup_calls": 0,
+  "port": 57792,
+  "version": "minio version DEVELOPMENT.GOGET (commit-id=9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a)\nRuntime: go1.26.5 linux/amd64\nLicense: GNU AGPLv3 - https://www.gnu.org/licenses/agpl-3.0.html\nCopyright: 2015-0000 MinIO, Inc."
+}

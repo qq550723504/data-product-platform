@@ -1,0 +1,22 @@
+{
+  "failures": [
+    {
+      "stage": "native-start01",
+      "status": "FAIL",
+      "reason": "orchestrator used /minio instead of repository runner /usr/local/bin/minio",
+      "container": "dpp-bc318-3bffbb42db97-minio",
+      "volume": "dpp-bc318-3bffbb42db97-objects",
+      "preserved": true,
+      "product_defect": false
+    },
+    {
+      "stage": "native-receipt-export01",
+      "status": "FAIL",
+      "reason": "default GBK decoding of UTF-8 helper source after real native test completed",
+      "raw_result_preserved": true,
+      "explicit_utf8_export_recovery": "PASS",
+      "provider_rerun": false,
+      "product_defect": false
+    }
+  ]
+}

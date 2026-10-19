@@ -1,0 +1,44 @@
+[
+  {
+    "run_id": "3bffbb42-db97-42a0-a36f-ea2271b3b581",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "created"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "volume": "dpp-bc318-3bffbb42db97-pgdata",
+        "container": "dpp-bc318-3bffbb42db97-pg",
+        "container_id": "77a9bbab4a1997f4d18817f7b297634d5f332b0a956b5a4e0e3f6f3c6255e563",
+        "role": "core",
+        "destination": "/var/lib/postgresql/data",
+        "type": "volume",
+        "writable": true
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  },
+  {
+    "run_id": "3bffbb42-db97-42a0-a36f-ea2271b3b581",
+    "label_key": "dpp.trial.run",
+    "allowed_states": [
+      "running"
+    ],
+    "status": "PASS",
+    "services": [
+      {
+        "destination": "/var/lib/postgresql/data",
+        "type": "volume",
+        "volume": "dpp-bc318-3bffbb42db97-pgdata",
+        "writable": true,
+        "role": "core",
+        "container_id": "77a9bbab4a1997f4d18817f7b297634d5f332b0a956b5a4e0e3f6f3c6255e563",
+        "container": "dpp-bc318-3bffbb42db97-pg"
+      }
+    ],
+    "storage_io": 0,
+    "mutation": 0
+  }
+]

@@ -1,0 +1,11 @@
+{"Time":"2026-10-16T14:20:42.2231173+08:00","Action":"start","Package":"./internal/quality/application"}
+{"Time":"2026-10-16T14:20:42.8589546+08:00","Action":"run","Package":"./internal/quality/application","Test":"TestQualityAttemptRealRetryPreservesBothPhysicalCosts"}
+{"Time":"2026-10-16T14:20:42.8589546+08:00","Action":"output","Package":"./internal/quality/application","Test":"TestQualityAttemptRealRetryPreservesBothPhysicalCosts","Output":"=== RUN   TestQualityAttemptRealRetryPreservesBothPhysicalCosts\n"}
+{"Time":"2026-10-16T14:20:42.9901043+08:00","Action":"output","Package":"./internal/quality/application","Test":"TestQualityAttemptRealRetryPreservesBothPhysicalCosts","Output":"--- PASS: TestQualityAttemptRealRetryPreservesBothPhysicalCosts (0.13s)\n"}
+{"Time":"2026-10-16T14:20:42.9901043+08:00","Action":"pass","Package":"./internal/quality/application","Test":"TestQualityAttemptRealRetryPreservesBothPhysicalCosts","Elapsed":0.13}
+{"Time":"2026-10-16T14:20:42.9901043+08:00","Action":"run","Package":"./internal/quality/application","Test":"TestNativeQualityAndComplianceGates"}
+{"Time":"2026-10-16T14:20:42.9901043+08:00","Action":"output","Package":"./internal/quality/application","Test":"TestNativeQualityAndComplianceGates","Output":"=== RUN   TestNativeQualityAndComplianceGates\n"}
+{"Time":"2026-10-16T14:20:43.3407199+08:00","Action":"output","Package":"./internal/quality/application","Test":"TestNativeQualityAndComplianceGates","Output":"--- PASS: TestNativeQualityAndComplianceGates (0.35s)\n"}
+{"Time":"2026-10-16T14:20:43.3407199+08:00","Action":"pass","Package":"./internal/quality/application","Test":"TestNativeQualityAndComplianceGates","Elapsed":0.35}
+{"Time":"2026-10-16T14:20:43.3407199+08:00","Action":"output","Package":"./internal/quality/application","Output":"PASS\n"}
+{"Time":"2026-10-16T14:20:44.359017+08:00","Action":"pass","Package":"./internal/quality/application","Elapsed":2.136}

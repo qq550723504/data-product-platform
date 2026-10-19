@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "runId": "1b7e1949e8224ad8b870d28b96a3c6c2",
+  "sameContainersAndVolumes": true,
+  "stoppedContainers": 6,
+  "retainedNamedVolumes": 6,
+  "physicalRAWFilesUnchanged": true,
+  "postgresDataFilesPresent": {
+    "source": "16",
+    "core": "16"
+  },
+  "restart": "NOT_RUN / PR 2"
+}

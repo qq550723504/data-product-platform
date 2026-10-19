@@ -1,0 +1,18 @@
+name: trial-contracts
+on:
+  pull_request:
+    paths: ['deploy/trial/**', 'apps/platform/cmd/trial-prepare/**', 'apps/platform/cmd/trial-resume/**', '.github/workflows/trial-contracts.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ownership:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test retained trial lifecycle and ownership (no Docker)
+        run: python -m unittest discover -s deploy/trial -p 'test_*.py'
