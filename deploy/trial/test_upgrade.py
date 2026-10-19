@@ -1,5 +1,7 @@
 """Upgrade boundaries; no retained runtime or provider mutation."""
 import copy
+import ctypes
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -63,6 +65,27 @@ class BusinessUpgradeContracts(unittest.TestCase):
             self.assertEqual(c.check_sources(s, {"apps/web/app/batches/actions.ts": "approved"}), [])
             with self.assertRaisesRegex(r.Refused, "Business source drift"):
                 c.check_sources(s, {"apps/web/app/batches/actions.ts": "unapproved"})
+
+    @unittest.skipUnless(os.name == "nt", "native Windows short-path alias")
+    def test_native_short_private_path_accepts_only_contained_long_artifacts(self):
+        with tempfile.TemporaryDirectory(prefix="trial upgrade long directory ") as d:
+            private = Path(d).resolve(); folder = private / "upgrades" / "long artifact directory"; folder.mkdir(parents=True)
+            web = folder / "web"; web.mkdir(); path = folder / "manifest.json"
+            api = folder / "api.exe"; api.write_bytes(b"original binary")
+            s = {"private": str(private), "runId": "old", "workspaceId": "old", "actorId": "old", "root": "old"}
+            manifest = {k: s[k] for k in ("runId", "workspaceId", "actorId", "root")}
+            manifest.update(head="a" * 40, sources={}, artifacts={"binaries": {"api": {"path": str(api), "sha256": r.digest(api.read_bytes())}}, "web": {"root": str(web), "files": {}}})
+            c.write_once(path, manifest)
+            buffer = ctypes.create_unicode_buffer(32768)
+            kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+            kernel.GetShortPathNameW.argtypes = [ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint32]
+            kernel.GetShortPathNameW.restype = ctypes.c_uint32
+            self.assertTrue(kernel.GetShortPathNameW(str(path), buffer, len(buffer)))
+            s["businessBinding"] = {"path": buffer.value, "sha256": r.digest(path.read_bytes())}
+            with patch.object(c, "committed_sources", return_value={}):
+                u.verify_business(s)
+                api.write_bytes(b"changed binary")
+                with self.assertRaisesRegex(r.Refused, "binary drift"): u.verify_business(s)
 
     def test_duplicate_upgrade_is_read_only(self):
         s = {"businessBinding": {}}

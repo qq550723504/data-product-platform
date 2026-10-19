@@ -135,7 +135,9 @@ def build(s, directory, attempt):
 
 def verify_business(s):
     binding = s["businessBinding"]
-    path = Path(binding["path"])
+    # Windows TEMP/private paths may contain an 8.3 alias. Compare canonical
+    # paths on both sides; a long child is not lexically below its short parent.
+    path = Path(binding["path"]).resolve()
     private = Path(s["private"]).resolve()
     r.need(path.resolve().is_relative_to(private / "upgrades"), "Upgrade manifest escapes retained private directory")
     r.need(r.digest(path.read_bytes()) == binding["sha256"], "Business upgrade manifest drift")
@@ -146,7 +148,7 @@ def verify_business(s):
         p = Path(item["path"])
         r.need(p.resolve().is_relative_to(path.parent) and r.digest(p.read_bytes()) == item["sha256"], "Upgraded binary drift")
     web = manifest["artifacts"]["web"]
-    root = Path(web["root"])
+    root = Path(web["root"]).resolve()
     r.need(root.resolve().is_relative_to(path.parent), "Upgraded Web escapes manifest directory")
     for name, expected in web["files"].items():
         file = root / name
