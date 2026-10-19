@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"github.com/google/uuid"
+	"net/url"
 	"os"
 	"path/filepath"
 
@@ -61,7 +63,7 @@ func exportSixExpected(baseline, output, group, inventory, frozenPath string) er
 	if err = policyFiles(baseline, old.Policies); err != nil {
 		return err
 	}
-	users, policies, err := pilot.RemainingPolicies(group, cp)
+	users, policies, err := pilot.RemainingAuditPolicies(group, cp)
 	if err != nil {
 		return err
 	}
@@ -74,7 +76,7 @@ func exportSixExpected(baseline, output, group, inventory, frozenPath string) er
 		files["native-policy-"+name+".json"] = b
 	}
 	for user, name := range users {
-		if old.Users[user] != "" {
+		if _, exists := old.Users[user]; exists {
 			return errors.New("new user already in historical receipt")
 		}
 		old.Users[user] = name
@@ -147,6 +149,70 @@ func checkSix(baseline, fresh, group, expectation, inventory, mapping string) (r
 			return result{}, errors.New("six expected historical identity/protection differs")
 		}
 	}
+	extra := 2
+	dormant, unassigned := pilot.RemainingDormantIdentity(group)
+	if dormant != "" {
+		value, present := expected.Users[dormant]
+		if !present || value != "" || expected.Policies[unassigned] == "" {
+			return result{}, errors.New("retained partial identity or unassigned policy differs")
+		}
+		extra++
+	}
+	if err = checkSixUncreated(fresh, group, want.Audit); err != nil {
+		return result{}, err
+	}
 	return checkNativeAudit(baseline, fresh, group, inventory, want.postV22Expectation,
-		nativeAuditContract{true, "SIX_TARGET_PREPARATION_NATIVE_READONLY", "six-readonly.json", "six-native-verification.json", digest(raw), "PASS_COMPLETE_SIX_NATIVE_AGGREGATION", 2})
+		nativeAuditContract{true, "SIX_TARGET_PREPARATION_NATIVE_READONLY", "six-readonly.json", "six-native-verification.json", digest(raw), "PASS_COMPLETE_SIX_NATIVE_AGGREGATION", extra, dormant})
+}
+
+func checkSixUncreated(fresh, group, audit string) error {
+	var proof struct {
+		Audit string `json:"audit_id"`
+		Users map[string]struct {
+			Attempt string `json:"attempt_id"`
+			Status  int    `json:"status"`
+			Code    string `json:"code"`
+		} `json:"users"`
+	}
+	if _, err := strictPostFile(filepath.Join(fresh, "six-uncreated-users.json"), &proof, 2); err != nil {
+		return err
+	}
+	users := pilot.RemainingUncreatedIdentities(group)
+	if proof.Audit != audit || len(proof.Users) != len(users) {
+		return errors.New("uncreated identity proof scope differs")
+	}
+	seen := map[string]bool{}
+	for _, user := range users {
+		row, ok := proof.Users[user]
+		id, err := uuid.Parse(row.Attempt)
+		if !ok || err != nil || id == uuid.Nil || row.Attempt != id.String() || seen[row.Attempt] || row.Status != 404 || row.Code != "XMinioAdminNoSuchUser" {
+			return errors.New("uncreated identity absence is not exact")
+		}
+		seen[row.Attempt] = true
+		var start struct {
+			ID, Method, Path, Query string
+			Audit                   string `json:"audit_id"`
+			At                      any
+		}
+		var observation struct {
+			ID      string
+			Status  int
+			Error   bool   `json:"transport_error"`
+			Audit   string `json:"audit_id"`
+			At      any
+			Code    string `json:"provider_error_code"`
+			Request string `json:"provider_request_id"`
+		}
+		if _, err = strictPostFile(filepath.Join(fresh, "readonly-start-"+row.Attempt+".json"), &start, 6); err != nil {
+			return err
+		}
+		if _, err = strictPostFile(filepath.Join(fresh, "readonly-observation-"+row.Attempt+".json"), &observation, 7); err != nil {
+			return err
+		}
+		q, err := url.ParseQuery(start.Query)
+		if err != nil || len(q) != 1 || len(q["accessKey"]) != 1 || q.Get("accessKey") != user || start.ID != row.Attempt || start.Audit != audit || start.Method != "GET" || start.Path != "/minio/admin/v3/user-info" || observation.ID != row.Attempt || observation.Audit != audit || observation.Status != 404 || observation.Error {
+			return errors.New("uncreated identity journal differs")
+		}
+	}
+	return nil
 }

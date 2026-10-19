@@ -7,6 +7,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
@@ -20,6 +21,11 @@ import (
 
 const sixProvisionPurpose = "SIX_PREPARATION_PROVISION_DISABLED_ONLY"
 
+// This is a one-shot fixture executable. The SDK exposes retry configuration as
+// a package setting, so configure it once before any request or goroutine.
+// Transport mutation guards still reject replay independently of this setting.
+func init() { madmin.MaxRetry = 1 }
+
 type sixProvisionTransport struct {
 	base             http.RoundTripper
 	c                config
@@ -30,15 +36,34 @@ type sixProvisionTransport struct {
 	restoreStatus    madmin.AccountStatus
 }
 
+func sixQuery(q url.Values, expected map[string]string) bool {
+	if len(q) != len(expected) {
+		return false
+	}
+	for key, value := range expected {
+		if len(q[key]) != 1 || q[key][0] != value {
+			return false
+		}
+	}
+	return true
+}
+
 func (t *sixProvisionTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	user, name := req.URL.Query().Get("accessKey"), req.URL.Query().Get("name")
-	read := req.Method == "GET" && ((req.URL.Path == "/minio/admin/v3/user-info" && t.users[user] != "") || (req.URL.Path == "/minio/admin/v3/info-canned-policy" && name != ""))
-	add := req.Method == "PUT" && ((req.URL.Path == "/minio/admin/v3/add-user" && t.users[user] != "") || (req.URL.Path == "/minio/admin/v3/add-canned-policy" && name != ""))
-	attach := req.Method == "POST" && req.URL.Path == "/minio/admin/v3/idp/builtin/policy/attach"
-	statusOnly := t.restoreInspector != "" && req.Method == "PUT" && req.URL.Path == "/minio/admin/v3/set-user-status" && user == t.restoreInspector && req.URL.Query().Get("status") == string(t.restoreStatus)
+	q, queryErr := url.ParseQuery(req.URL.RawQuery)
+	if queryErr != nil {
+		return nil, errors.New("bootstrap query is malformed")
+	}
+	user, name := q.Get("accessKey"), q.Get("name")
+	userQuery := user != "" && sixQuery(q, map[string]string{"accessKey": user})
+	policyQuery := name != "" && sixQuery(q, map[string]string{"name": name})
+	read := req.Method == "GET" && ((req.URL.Path == "/minio/admin/v3/user-info" && userQuery && t.users[user] != "") || (req.URL.Path == "/minio/admin/v3/info-canned-policy" && policyQuery))
+	add := req.Method == "PUT" && ((req.URL.Path == "/minio/admin/v3/add-user" && userQuery && t.users[user] != "") || (req.URL.Path == "/minio/admin/v3/add-canned-policy" && policyQuery))
+	importMapping := req.Method == "PUT" && req.URL.Path == "/minio/admin/v3/import-iam-v2" && req.URL.RawQuery == ""
+	importUser, importPolicy := "", ""
+	statusOnly := t.restoreInspector != "" && req.Method == "PUT" && req.URL.Path == "/minio/admin/v3/set-user-status" && user == t.restoreInspector && sixQuery(q, map[string]string{"accessKey": user, "status": string(t.restoreStatus)})
 	if t.restoreInspector != "" {
 		add = false
-		attach = false
+		importMapping = false
 	}
 	if name != "" {
 		known := false
@@ -48,7 +73,7 @@ func (t *sixProvisionTransport) RoundTrip(req *http.Request) (*http.Response, er
 		read = read && known
 		add = add && known
 	}
-	if req.URL.Scheme != "http" || req.URL.Host != "127.0.0.1:9000" || (!read && !add && !attach && !statusOnly) {
+	if req.URL.Scheme != "http" || req.URL.Host != "127.0.0.1:9000" || (!read && !add && !importMapping && !statusOnly) {
 		return nil, errors.New("disabled-only bootstrap API outside finite scope")
 	}
 	if !read {
@@ -61,8 +86,14 @@ func (t *sixProvisionTransport) RoundTrip(req *http.Request) (*http.Response, er
 			return nil, errors.New("bounded bootstrap request required")
 		}
 		req.Body = io.NopCloser(bytes.NewReader(raw))
-		key := req.Method + " " + req.URL.RequestURI()
-		if statusOnly {
+		key := req.Method + " " + req.URL.Path + " " + user + " " + name
+		if importMapping {
+			importUser, importPolicy, err = sixMappingScope(raw, t.users)
+			if err != nil {
+				return nil, err
+			}
+			key += " " + importUser + " " + importPolicy
+		} else if statusOnly {
 			// Only the restored fixture's sole read-only inspector can change.
 		} else if req.URL.Path == "/minio/admin/v3/add-canned-policy" {
 			a, e := policy.ParseConfig(bytes.NewReader(raw))
@@ -75,17 +106,9 @@ func (t *sixProvisionTransport) RoundTrip(req *http.Request) (*http.Response, er
 			if err != nil {
 				return nil, err
 			}
-			if attach {
-				var association madmin.PolicyAssociationReq
-				if strictPostV22(plain, &association) != nil || t.users[association.User] == "" || association.Group != "" || len(association.Policies) != 1 || association.Policies[0] != t.users[association.User] {
-					return nil, errors.New("bootstrap association expands scope")
-				}
-				key += " " + association.User
-			} else {
-				var creation madmin.AddOrUpdateUserReq
-				if strictPostV22(plain, &creation) != nil || creation.Status != madmin.AccountDisabled || creation.Policy != "" || len(creation.SecretKey) < 32 {
-					return nil, errors.New("bootstrap may create only disabled independent users")
-				}
+			var creation madmin.AddOrUpdateUserReq
+			if sixUniqueJSON(plain) != nil || strictPostV22(plain, &creation) != nil || creation.Status != madmin.AccountDisabled || creation.Policy != "" || len(creation.SecretKey) < 32 {
+				return nil, errors.New("bootstrap may create only disabled independent users")
 			}
 		}
 		// No SDK mutation replay. A failed/unknown preparation is retained.
@@ -95,7 +118,15 @@ func (t *sixProvisionTransport) RoundTrip(req *http.Request) (*http.Response, er
 		t.mutations[key] = true
 	}
 	id := uuid.New()
-	if err := write(t.c, "prepare-start-"+id.String()+".json", map[string]any{"id": id, "method": req.Method, "path": req.URL.Path, "query": req.URL.RawQuery, "at": time.Now().UTC()}); err != nil {
+	start := map[string]any{"id": id, "method": req.Method, "path": req.URL.Path, "query": req.URL.RawQuery, "at": time.Now().UTC()}
+	if importMapping {
+		payload, err := sixMappingZIP(importUser, importPolicy)
+		if err != nil || sixRaw(t.c, "prepare-request-"+id.String()+".zip", payload) != nil {
+			return nil, errors.New("exact IAM mapping request evidence unavailable")
+		}
+		start["user"], start["policy"], start["body_sha256"] = importUser, importPolicy, postV22Hash(payload)
+	}
+	if err := write(t.c, "prepare-start-"+id.String()+".json", start); err != nil {
 		return nil, err
 	}
 	response, err := t.base.RoundTrip(req)
@@ -108,6 +139,21 @@ func (t *sixProvisionTransport) RoundTrip(req *http.Request) (*http.Response, er
 			response.Body.Close()
 		}
 		return nil, record
+	}
+	if importMapping && response != nil {
+		raw, readErr := io.ReadAll(io.LimitReader(response.Body, 65537))
+		response.Body.Close()
+		if readErr != nil || len(raw) > 65536 {
+			return nil, errors.New("IAM mapping response unavailable or oversized; do not resend")
+		}
+		if record := sixRaw(t.c, "prepare-response-"+id.String()+".json", raw); record != nil {
+			return nil, record
+		}
+		response.Body = io.NopCloser(bytes.NewReader(raw))
+		if status == http.StatusOK && sixImportOutcome(raw, importUser, importPolicy) != nil {
+			response.Body.Close()
+			return nil, errors.New("IAM mapping result unconfirmed; do not resend")
+		}
 	}
 	return response, err
 }
@@ -171,39 +217,62 @@ func sixProvisionDisabled(ctx context.Context) error {
 	}
 	for _, kind := range []string{"inspect", "delete"} {
 		user, name := pilot.RemainingIdentity(p.Group, kind), pilot.RemainingPolicyName(p.Group, kind)
-		_, err = admin.GetUserInfo(ctx, user)
-		var provider madmin.ErrorResponse
-		if !errors.As(err, &provider) || provider.Code != "XMinioAdminNoSuchUser" {
-			return errors.New("new username already exists or absence unconfirmed")
-		}
-		_, err = admin.InfoCannedPolicy(ctx, name)
-		if !errors.As(err, &provider) || provider.Code != "XMinioAdminNoSuchPolicy" {
-			return errors.New("new policy already exists or absence unconfirmed")
-		}
-		if _, err = policy.ParseConfig(bytes.NewReader(policies[name])); err != nil {
+		if err = sixCreateDisabled(ctx, admin, user, name, secrets[user], policies[name]); err != nil {
 			return err
 		}
-		if err = admin.AddCannedPolicy(ctx, name, policies[name]); err != nil {
-			return err
-		}
-		// AddUser enables by default. Use the existing SDK's explicit disabled
-		// creation API so no enabled DELETE identity exists during preparation.
-		if err = admin.SetUser(ctx, user, secrets[user], madmin.AccountDisabled); err != nil {
-			return err
-		}
-		info, err := admin.GetUserInfo(ctx, user)
-		if err != nil || info.Status != madmin.AccountDisabled {
-			return errors.New("disabled creation readback failed")
-		}
-		if _, err = admin.AttachPolicy(ctx, madmin.PolicyAssociationReq{Policies: []string{name}, User: user}); err != nil {
-			return err
-		}
-		info, err = admin.GetUserInfo(ctx, user)
-		if err != nil || info.Status != madmin.AccountDisabled || !remainingExactUserPolicy(info, name) {
-			return errors.New("exact disabled association readback failed")
-		}
+
 	}
 	return write(c, "disabled-provision.json", map[string]any{"execution": full.Execution, "group": p.Group, "identities": users, "status": "PASS_CREATED_DISABLED_NO_TRANSIENT_ENABLE", "native_delete": 0, "enabled_identities": 0})
+}
+
+// Shared by the fixed source preparation and the isolated same-image contract.
+// Every readback and mutation passes the same finite production transport.
+func sixCreateDisabled(ctx context.Context, admin *madmin.AdminClient, user, name, secret string, expectedPolicy []byte) error {
+	_, err := admin.GetUserInfo(ctx, user)
+	var provider madmin.ErrorResponse
+	if !errors.As(err, &provider) || provider.Code != "XMinioAdminNoSuchUser" {
+		return errors.New("new username already exists or absence unconfirmed")
+	}
+	_, err = admin.InfoCannedPolicy(ctx, name)
+	if !errors.As(err, &provider) || provider.Code != "XMinioAdminNoSuchPolicy" {
+		return errors.New("new policy already exists or absence unconfirmed")
+	}
+	if _, err = policy.ParseConfig(bytes.NewReader(expectedPolicy)); err != nil {
+		return err
+	}
+	if err = admin.AddCannedPolicy(ctx, name, expectedPolicy); err != nil {
+		return err
+	}
+	// AddUser enables by default. Use the existing SDK's explicit disabled
+	// creation API so no enabled DELETE identity exists during preparation.
+	if err = admin.SetUser(ctx, user, secret, madmin.AccountDisabled); err != nil {
+		return err
+	}
+	info, err := admin.GetUserInfo(ctx, user)
+	if err != nil || info.Status != madmin.AccountDisabled || info.PolicyName != "" || len(info.MemberOf) != 0 {
+		return errors.New("disabled creation readback failed")
+	}
+	mapping, err := sixMappingZIP(user, name)
+	if err != nil {
+		return err
+	}
+	if _, err = admin.ImportIAMV2(ctx, io.NopCloser(bytes.NewReader(mapping))); err != nil {
+		return err
+	}
+	info, err = admin.GetUserInfo(ctx, user)
+	if err != nil || info.Status != madmin.AccountDisabled || !remainingExactUserPolicy(info, name) {
+		return errors.New("exact disabled association readback failed")
+	}
+	actual, err := admin.InfoCannedPolicy(ctx, name)
+	if err != nil {
+		return err
+	}
+	a, e := policy.ParseConfig(bytes.NewReader(actual))
+	b, e2 := policy.ParseConfig(bytes.NewReader(expectedPolicy))
+	if e != nil || e2 != nil || !a.Equals(*b) {
+		return errors.New("disabled association policy semantic readback differs")
+	}
+	return nil
 }
 
 func postV22InventoriesFromFiles(p postV22ReadProfile) ([]remainingExpected, []remainingExpected, *domain.Copy, error) {

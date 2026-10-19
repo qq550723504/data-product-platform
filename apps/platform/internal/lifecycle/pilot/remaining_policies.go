@@ -53,3 +53,41 @@ func RemainingPolicies(group string, present []domain.Copy) (map[string]string, 
 	}
 	return users, policies, nil
 }
+
+// This one real partial identity was created by the failed, sealed c13
+// preparation. It must remain disabled without policy/groups and is never
+// selected by current enable or worker paths. This is not a legacy fallback.
+func RemainingDormantIdentity(group string) (string, string) {
+	if group == "business-races" {
+		return "i4e524c04808a6960", "lifecycle307-six-i4e524c04808a6960"
+	}
+	return "", ""
+}
+
+// The failed c13 preparation stopped before these five identities were created.
+// Current full preflight proves absence again; it never invents disabled users.
+func RemainingUncreatedIdentities(group string) []string {
+	s, err := RemainingScopeFor(group)
+	if err != nil {
+		return nil
+	}
+	suffix := "4e524c04" + s.Run.String()[:8]
+	if group == "business-races" {
+		return []string{"d" + suffix}
+	}
+	return []string{"i" + suffix, "d" + suffix}
+}
+
+// The unassigned c13 canned policy is still inspected, while its user must
+// have no association. Current six identities keep the strict sole-policy rule.
+func RemainingAuditPolicies(group string, present []domain.Copy) (map[string]string, map[string][]byte, error) {
+	users, policies, err := RemainingPolicies(group, present)
+	if err != nil {
+		return nil, nil, err
+	}
+	if user, name := RemainingDormantIdentity(group); user != "" {
+		users[user] = ""
+		policies[name] = append([]byte(nil), policies[RemainingPolicyName(group, "inspect")]...)
+	}
+	return users, policies, nil
+}

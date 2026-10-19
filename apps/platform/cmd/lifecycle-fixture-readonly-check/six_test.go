@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/google/uuid"
 	"os"
 	"path/filepath"
 	"strings"
@@ -43,7 +44,7 @@ func sixMock(t *testing.T, group, role string) (string, string, string, string, 
 	for _, row := range rows {
 		cp = append(cp, row.Copy)
 	}
-	users, policies, err := pilot.RemainingPolicies(group, cp)
+	users, policies, err := pilot.RemainingAuditPolicies(group, cp)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -98,6 +99,15 @@ func sixMock(t *testing.T, group, role string) (string, string, string, string, 
 	r.Core, r.Native, r.Network = want.Core, want.Native, want.Network
 	r.Verification.Source = "six-readonly.json"
 	putPostJSON(t, filepath.Join(fresh, "six-native-verification.json"), r)
+	absent := map[string]any{}
+	for _, user := range pilot.RemainingUncreatedIdentities(group) {
+		id := uuid.NewString()
+		absent[user] = map[string]any{"attempt_id": id, "status": 404, "code": "XMinioAdminNoSuchUser"}
+		putPostJSON(t, filepath.Join(fresh, "readonly-start-"+id+".json"), map[string]any{"id": id, "audit_id": r.Audit, "method": "GET", "path": "/minio/admin/v3/user-info", "query": "accessKey=" + user, "at": r.Started})
+		putPostJSON(t, filepath.Join(fresh, "readonly-observation-"+id+".json"), map[string]any{"id": id, "audit_id": r.Audit, "status": 404, "transport_error": false, "provider_error_code": "", "provider_request_id": "mock-request", "at": r.Started})
+	}
+	putPostJSON(t, filepath.Join(fresh, "six-uncreated-users.json"), map[string]any{"audit_id": r.Audit, "users": absent})
+
 	return baseline, fresh, expectation, inventory, mapping
 }
 
@@ -155,7 +165,7 @@ func TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory(t *test
 		if e != nil {
 			t.Fatal(e)
 		}
-		if len(expected.Users) != map[string]int{"business-races": 6, "late-hold": 4, "mixed": 4}[group] {
+		if len(expected.Users) != map[string]int{"business-races": 7, "late-hold": 4, "mixed": 4}[group] {
 			t.Fatal("new IAM expectation incomplete")
 		}
 		after, _ := os.ReadFile(filepath.Join(baseline, "native-verification.json"))
@@ -172,5 +182,33 @@ func TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory(t *test
 		if e = exportSixExpected(baseline, filepath.Join(t.TempDir(), "rejected"), group, inventory, bad); e == nil {
 			t.Fatal("unknown historical inventory accepted")
 		}
+	}
+}
+
+func TestSixUncreatedIdentityAndDormantEvidenceFailClosed(t *testing.T) {
+	for _, fault := range []string{"missing-file", "unknown-user", "wrong-status", "dormant-policy"} {
+		t.Run(fault, func(t *testing.T) {
+			base, fresh, want, inventory, mapping := sixMock(t, "business-races", "SOURCE")
+			proof := filepath.Join(fresh, "six-uncreated-users.json")
+			switch fault {
+			case "missing-file":
+				if err := os.Remove(proof); err != nil {
+					t.Fatal(err)
+				}
+			case "unknown-user":
+				mutateJSON(t, proof, func(d map[string]any) { d["users"].(map[string]any)["other"] = map[string]any{} })
+			case "wrong-status":
+				mutateJSON(t, proof, func(d map[string]any) {
+					for _, r := range d["users"].(map[string]any) {
+						r.(map[string]any)["status"] = 200
+					}
+				})
+			case "dormant-policy":
+				mutateJSON(t, filepath.Join(base, "expected-contract.json"), func(d map[string]any) { d["disabled_identities"].(map[string]any)["i4e524c04808a6960"] = "admin" })
+			}
+			if _, err := checkSix(base, fresh, "business-races", want, inventory, mapping); err == nil {
+				t.Fatal("absence/dormant expansion admitted")
+			}
+		})
 	}
 }

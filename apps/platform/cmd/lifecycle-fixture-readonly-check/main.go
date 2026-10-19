@@ -117,6 +117,9 @@ func check(baseline, fresh, group string) (result, error) {
 }
 
 func compareNativeReceipts(baseline, fresh, group string, a, b receipt, identities int) (result, error) {
+	return compareNativeReceiptsWithDormant(baseline, fresh, group, a, b, identities, "")
+}
+func compareNativeReceiptsWithDormant(baseline, fresh, group string, a, b receipt, identities int, dormant string) (result, error) {
 	out := result{Group: group}
 	if a.Group != group || b.Group != group || len(a.Copies) != len(b.Copies) || !reflect.DeepEqual(a.Users, b.Users) || len(a.Users) != identities || len(a.Policies) != identities || len(b.Policies) != identities {
 		return out, errors.New("inventory or disabled identity binding differs")
@@ -139,6 +142,9 @@ func compareNativeReceipts(baseline, fresh, group string, a, b receipt, identiti
 	for user, n := range a.Users {
 		if user == "" {
 			return out, errors.New("empty disabled identity")
+		}
+		if user == dormant && dormant != "" && n == "" {
+			continue
 		}
 		if _, ok := a.Policies[n]; !ok {
 			return out, errors.New("user policy missing")

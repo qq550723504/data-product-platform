@@ -1,0 +1,13 @@
+{
+  "audit": "7dcec9ca-3a97-435d-ba0e-fa5b233f084a",
+  "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+  "worker_image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "native_name": "dpp307-disabled-bootstrap-7dcec9ca-native",
+  "worker_name": "dpp307-disabled-bootstrap-7dcec9ca-probe",
+  "new_volume": "dpp307-disabled-bootstrap-7dcec9ca-objects",
+  "binary_sha256": "33870fb4f8d7e73f839844947e72edb65c8a0ffa99287b369e85782595a8ca22",
+  "source_sha256": "d22fb7ed44a78c315607333f48a353b390b91292acb45cb69a7a1bb17dac2a7d",
+  "scope": "New isolated same-image admin SDK contract only; never source/objects/delete",
+  "source_calls": 0,
+  "native_delete": 0
+}

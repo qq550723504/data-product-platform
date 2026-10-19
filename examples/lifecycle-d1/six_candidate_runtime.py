@@ -1,4 +1,4 @@
-"""Fixed non-delete preparation primitives for candidate13.
+"""Fixed non-delete preparation primitives for candidate14.
 
 No send permission writer, authorization loader or S3 DELETE exists here.
 Allocation, budget initialization, native preparation and freeze are separate
@@ -81,103 +81,25 @@ def allocation_state():
     return a
 
 
-REPAIR_FILES={
-    'examples/lifecycle-d1/prepare-six-candidate.py',
-    'examples/lifecycle-d1/six_candidate_runtime.py',
-    'examples/lifecycle-d1/freeze-six-candidate.py',
-    'examples/lifecycle-d1/test_six_candidate_runtime.py',
-    'examples/lifecycle-d1/test_freeze_six_candidate.py',
-}
-REBUILD_MEMBERS={'reader','operator','owner','readonly-check.exe'}|{name+'-build.'+channel for name in ('reader','operator','owner','checker') for channel in ('stdout','stderr')}
-CHECKPOINT='source-checkpoint02.json'
-REBUILD='source-rebuild02'
-PREVIOUS_CHECKPOINT_SHA256='03596768d01cec5793319fcbc94e2fbf93dcc6ab390c3331c6c9755719e0e649'
-BUDGET_FAILURE_SHA256='163d41af4b95addb52bb0507527ecd20d131ebc426faa886a35a27583fe15378'
+BUILD_MEMBERS={'reader','operator','owner','readonly-check.exe'}|{name+'-build.'+channel for name in ('reader','operator','owner','checker') for channel in ('stdout','stderr')}
 
 
-def rebuild_files(directory=REBUILD):
-    folder=CONTROL/directory;members=list(folder.iterdir())
-    need(not folder.is_symlink() and not folder.is_junction() and {path.name for path in members}==REBUILD_MEMBERS
-         and all(path.is_file() and not path.is_symlink() and not path.is_junction() and path.stat().st_nlink==1 for path in members),'rebuild directory is not the complete twelve independent regular members')
-    return {path.name:sha(path) for path in sorted(members)}
-
-
-def previous_checkpoint(a):
-    public=PUBLIC/'source-checkpoint.json';private=CONTROL/'source-checkpoint.json'
-    need(sha(public)==sha(private)==PREVIOUS_CHECKPOINT_SHA256,'original source checkpoint was replaced')
-    old=load(public)
-    need(old['initial_build_source']==a['source'] and old['allocation_sha256']==sha(PUBLIC/'allocation.json') and old['allocation_nonce']==a['allocation_nonce']
-         and old['owners']==sorted(a['owners']) and old['binaries']==a['binaries'],'original checkpoint resource scope differs')
-    receipt=load(PUBLIC/'source-rebuild01.json')
-    need(sha(PUBLIC/'source-rebuild01.json')==old['rebuild_receipt_sha256'] and receipt['files']==rebuild_files('source-rebuild01')
-         and sha(PUBLIC/'materialize-failure01.json')==old['failure_evidence_sha256'],'original first rebuild or cold failure evidence changed')
-    return old
-
-
-def budget_failure():
-    need(sha(PUBLIC/'budget-initialization-failure01.json')==BUDGET_FAILURE_SHA256,'original budget failure was replaced')
-    failure=load(PUBLIC/'budget-initialization-failure01.json')
-    need(failure['status']=='FAILED_BUDGET_VALIDATOR_AFTER_FIRST_INITIALIZER' and failure['execution']==p.EXECUTION and failure['native_delete']==0
-         and failure['source_checkpoint01_sha256']==PREVIOUS_CHECKPOINT_SHA256
-         and sha(PUBLIC/'budget-init-host01.stderr.txt')==failure['raw_failure_stderr_sha256']
-         and sha(PUBLIC/'budget-initialization.json')==failure['original_initialization_receipt_sha256']
-         and sha(PUBLIC/'business-races/budget-initialization/owner.json')==failure['completed_business_owner_receipt_sha256'],'original budget failure evidence differs')
-    return failure
-
-
-def source_contract(a,source):
-    need(len(source)==40 and all(c in '0123456789abcdef' for c in source),'effective source is not one commit')
-    changed=subprocess.check_output(['git','diff','--name-only',a['source'],source,'--','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).decode('utf-8','strict').splitlines()
-    need(set(changed)<=REPAIR_FILES,'cold repair changed compiled Go/migration or an unreviewed host path')
-    need(subprocess.run(['git','diff','--quiet',source,'--','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).returncode==0,'runtime tracked source drift from exact effective commit')
+def build_contract(a):
+    need(len(a['source'])==40 and all(c in '0123456789abcdef' for c in a['source']),'build source is not a commit')
+    need(subprocess.check_output(['git','cat-file','-t',a['source']],cwd=ROOT).strip()==b'commit','initial build source is not an existing commit')
+    need(subprocess.run(['git','diff','--quiet',a['source'],'--','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).returncode==0,'runtime tracked source drift')
     need(not subprocess.check_output(['git','ls-files','--others','--exclude-standard','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).strip(),'runtime untracked source drift')
-    return changed
+    need(set(a['build_files'])==BUILD_MEMBERS,'initial build membership differs')
+    for name,digest in a['build_files'].items():
+        path=CONTROL/name
+        need(path.is_file() and not path.is_symlink() and not path.is_junction() and path.stat().st_nlink==1 and sha(path)==digest,'initial build member bytes/type/link differs')
+    need(all(a['build_files'][name]==digest for name,digest in a['binaries'].items()),'active binary differs from initial build')
+    return {'source':a['source'],'files':a['build_files']}
 
 
 def state():
-    a=allocation_state();previous_checkpoint(a);budget_failure();checkpoint=load(CONTROL/CHECKPOINT)
-    need(checkpoint==load(PUBLIC/CHECKPOINT),'current source checkpoint differs')
-    need(set(checkpoint)=={'execution','profile','initial_build_source','effective_source','allocation_sha256','allocation_nonce','owners','binaries','rebuild_receipt_sha256','failure_evidence_sha256','previous_checkpoint_sha256'}
-         and checkpoint['execution']==p.EXECUTION and checkpoint['profile']==p.PROFILE
-         and checkpoint['previous_checkpoint_sha256']==PREVIOUS_CHECKPOINT_SHA256
-         and checkpoint['initial_build_source']==a['source'] and checkpoint['allocation_sha256']==sha(PUBLIC/'allocation.json')
-         and checkpoint['allocation_nonce']==a['allocation_nonce'] and checkpoint['owners']==sorted(a['owners']) and checkpoint['binaries']==a['binaries'],'current source checkpoint scope differs')
-    changed=source_contract(a,checkpoint['effective_source'])
-    receipt=load(PUBLIC/(REBUILD+'.json'))
-    need(set(receipt)=={'status','initial_build_source','effective_source','changed_host_paths','allocation_sha256','failure_evidence_sha256','binaries','files','active_binary_replaced','source_provider_io','native_delete','previous_checkpoint_sha256'}
-         and sha(PUBLIC/(REBUILD+'.json'))==checkpoint['rebuild_receipt_sha256'] and receipt['status']=='PASS_IDENTICAL_REBUILD_AFTER_COLD_REPAIR'
-         and receipt['previous_checkpoint_sha256']==PREVIOUS_CHECKPOINT_SHA256
-         and receipt['initial_build_source']==a['source'] and receipt['effective_source']==checkpoint['effective_source'] and receipt['binaries']==a['binaries']
-         and receipt['changed_host_paths']==changed and receipt['active_binary_replaced'] is False and receipt['source_provider_io']==0 and receipt['native_delete']==0
-         and receipt['allocation_sha256']==checkpoint['allocation_sha256'] and receipt['failure_evidence_sha256']==checkpoint['failure_evidence_sha256']
-         and sha(PUBLIC/'budget-initialization-failure01.json')==checkpoint['failure_evidence_sha256'],'identical rebuild evidence differs')
-    rebuilt=CONTROL/REBUILD
-    need(receipt['files']==rebuild_files(),'original rebuild member set or bytes differ')
-    for name,digest in a['binaries'].items():need(sha(rebuilt/name)==digest,'new commit rebuild is not identical to retained active binary')
-    # The original allocation/build fact is never rewritten. Only this explicit
-    # current projection uses the reviewed, identically rebuilt source commit.
-    return dict(a,initial_build_source=a['source'],source=checkpoint['effective_source'],source_checkpoint_sha256=sha(PUBLIC/CHECKPOINT),rebuild_receipt_sha256=sha(PUBLIC/(REBUILD+'.json')),previous_source_checkpoint_sha256=PREVIOUS_CHECKPOINT_SHA256)
-
-
-def bind_source():
-    a=allocation_state();old=previous_checkpoint(a);failure=budget_failure()
-    need(not (CONTROL/CHECKPOINT).exists() and not (PUBLIC/CHECKPOINT).exists(),'source checkpoint already exists')
-    source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip();changed=source_contract(a,source)
-    cold_topology(a)
-    need(failure['source']==old['effective_source'],'budget failure source differs from prior checkpoint')
-    rebuilt=CONTROL/REBUILD;rebuilt.mkdir()
-    need(p.build(rebuilt)==source,'rebuild commit changed during build')
-    need(all(sha(rebuilt/name)==digest for name,digest in a['binaries'].items()),'new commit build differs; cannot continue retained allocation')
-    cold_topology(a)
-    receipt={'status':'PASS_IDENTICAL_REBUILD_AFTER_COLD_REPAIR','initial_build_source':a['source'],'effective_source':source,'changed_host_paths':changed,
-             'allocation_sha256':sha(PUBLIC/'allocation.json'),'failure_evidence_sha256':sha(PUBLIC/'budget-initialization-failure01.json'),'binaries':a['binaries'],
-             'previous_checkpoint_sha256':PREVIOUS_CHECKPOINT_SHA256,
-             'files':rebuild_files(),'active_binary_replaced':False,'source_provider_io':0,'native_delete':0}
-    save(PUBLIC/(REBUILD+'.json'),receipt)
-    checkpoint=dict(execution=p.EXECUTION,profile=p.PROFILE,initial_build_source=a['source'],effective_source=source,allocation_sha256=receipt['allocation_sha256'],
-                    allocation_nonce=a['allocation_nonce'],owners=sorted(a['owners']),binaries=a['binaries'],rebuild_receipt_sha256=sha(PUBLIC/(REBUILD+'.json')),failure_evidence_sha256=receipt['failure_evidence_sha256'],previous_checkpoint_sha256=PREVIOUS_CHECKPOINT_SHA256)
-    save(PUBLIC/CHECKPOINT,checkpoint);save(CONTROL/CHECKPOINT,checkpoint)
-    print(json.dumps({'status':receipt['status'],'initial_build_source':a['source'],'effective_source':source,'native_delete':0}))
+    a=allocation_state();build_contract(a)
+    return a
 
 
 def direct_network(item,network,network_name):
@@ -385,84 +307,41 @@ def uninitialized_budget(raw):
 
 def initialize_budgets():
     a=state();cold_topology(a)
-    need(not (PUBLIC/'budget-initialization.json').exists(),'budget initialization already attempted')
-    results=[]
+    need(not (PUBLIC/'budget-initialization.json').exists() and not (PUBLIC/'budget-initialization-start.json').exists(),'budget initialization already attempted')
+    save(PUBLIC/'budget-initialization-start.json',{'execution':p.EXECUTION,'source':a['source'],'allocation_sha256':sha(PUBLIC/'allocation.json'),'initializers':[g['budget_initializer'] for g in a['groups']]})
+    # All three must be genuinely new, empty and never-started before any start.
+    for g in a['groups']:
+        item=inspect(g['budget_initializer'])
+        need(closed(item) and item['State']['Status']=='created' and item['State']['StartedAt']==item['State']['FinishedAt']==ZERO,'initializer already started or unknown')
+        uninitialized_budget(docker('cp',g['helpers']['wire']+':/run/budget','-'))
+    results=[];failure=None
     try:
         for g in a['groups']:
             run_owner(g['budget_initializer'],PUBLIC/g['group']/'budget-initialization')
-            # Docker CP of a stopped owner is a byte archive, not an exec/start.
-            packet=budget_candidate(a)
-            raw=docker('cp',next(iter(g['helpers'].values()))+':/run/budget','-')
+            raw=docker('cp',g['helpers']['wire']+':/run/budget','-')
             write_raw(CONTROL/g['group']/'initial-budget.tar',raw)
-            results.append(p.sequence.budget_archive(raw,packet,g['group'],initial=True))
-    finally:
-        save(PUBLIC/'budget-initialization.json',{'groups':results,'all_complete':len(results)==3,'native_delete':0,'old_budget_changed':False})
-    need(len(results)==3,'new budget initialization incomplete')
-
-
-def finish_budget_initialization():
-    """Continue only the two never-started initializers; never replay business."""
-    a=state();cold_topology(a);failure=budget_failure();packet=budget_candidate(a)
-    need(not any((PUBLIC/name).exists() for name in ('budget-initialization02.json','budget-continuation-start02.json')),'budget continuation already attempted')
-    need(load(PUBLIC/'budget-initialization.json')=={'groups':[],'all_complete':False,'native_delete':0,'old_budget_changed':False},'original partial initialization differs')
-    business=a['groups'][0];original=PUBLIC/'business-races/budget-initialization'
-    proof=load(original/'owner.json')
-    need(proof['cid']==business['budget_initializer'] and proof['failure'] is None and proof['closure']['closed']
-         and (original/'wait-stdout.txt').read_bytes().strip()==b'0'
-         and sha(original/'wait-stdout.txt')==failure['completed_business_wait_sha256']
-         and sha(CONTROL/'business-races/initial-budget.tar')==failure['original_business_tar_sha256'],'completed business initializer evidence differs')
-    p.sequence.budget_archive((CONTROL/'business-races/initial-budget.tar').read_bytes(),packet,'business-races',initial=True)
-    before={};states={}
-    for g in a['groups']:
-        folder=Path(g['private'])
-        for stage in g['helpers']:need(load(folder/stage/'permission.json')=={'Enabled':False},'sending permission enabled before budget continuation')
-        for action in g['root_owners']:need(load(folder/('root-'+action)/'permission.json')=={'Enabled':False},'root permission enabled before budget continuation')
-        x=inspect(g['budget_initializer']);states[g['group']]=x['State']
-        if g['group']=='business-races':
-            observed=next(row for row in failure['initializers'] if row['group']==g['group'])
-            need({key:x['State'][key] for key in observed['state']}==observed['state'] and x['State']['Status']=='exited' and x['State']['ExitCode']==0,'completed business initializer was restarted or is unknown')
-        else:
-            need(x['State']['Status']=='created' and x['State']['StartedAt']==x['State']['FinishedAt']==ZERO and closed(x),'remaining initializer already started or unknown')
-        raw=docker('cp',g['helpers']['wire']+':/run/budget','-');before[g['group']]=raw
-        if g['group']=='business-races':p.sequence.budget_archive(raw,packet,g['group'],initial=True)
-        else:uninitialized_budget(raw)
-    # Only after all groups passed may any of the two remaining owners start.
-    save(PUBLIC/'budget-continuation-start02.json',{'execution':p.EXECUTION,'source_checkpoint_sha256':a['source_checkpoint_sha256'],
-         'previous_failure_sha256':sha(PUBLIC/'budget-initialization-failure01.json'),'before_states':states,'start_only':[g['budget_initializer'] for g in a['groups'][1:]],'native_delete':0})
-    results=[];error=None
-    try:
-        for g in a['groups']:
-            folder=Path(g['private']);write_raw(folder/'budget-before-continuation02.tar',before[g['group']])
-            if g['group']!='business-races':run_owner(g['budget_initializer'],PUBLIC/g['group']/'budget-initialization02')
-            raw=docker('cp',g['helpers']['wire']+':/run/budget','-');write_raw(folder/'budget-after-continuation02.tar',raw)
-            result=p.sequence.budget_archive(raw,packet,g['group'],initial=True)
-            result.update(initializer=g['budget_initializer'],action='READ_COMPLETED_NOT_RESTARTED' if g['group']=='business-races' else 'INITIALIZED_ONCE',
-                          before_sha256=hashlib.sha256(before[g['group']]).hexdigest(),after_sha256=hashlib.sha256(raw).hexdigest())
+            result=p.sequence.budget_archive(raw,budget_candidate(a),g['group'],initial=True)
+            result.update(initializer=g['budget_initializer'],archive_sha256=sha(CONTROL/g['group']/'initial-budget.tar'),owner_receipt_sha256=sha(PUBLIC/g['group']/'budget-initialization/owner.json'))
             results.append(result)
-        preparation_gate(a)
-    except BaseException as caught:
-        error={'type':type(caught).__name__,'message':str(caught)};raise
+    except BaseException as error:
+        failure={'type':type(error).__name__,'message':str(error)};raise
     finally:
         closure=[p.p1.close_known(g['budget_initializer']) for g in a['groups']]
-        save(PUBLIC/'budget-initialization02.json',{'status':'PASS_BUDGET_CONTINUATION' if error is None and len(results)==3 and all(row['closed'] for row in closure) else 'FAILED_OR_UNCONFIRMED_RETAINED',
-             'groups':results,'all_complete':error is None and len(results)==3 and all(row['closed'] for row in closure),'failure':error,'closure':closure,
-             'source_checkpoint_sha256':a['source_checkpoint_sha256'],'original_failure_sha256':sha(PUBLIC/'budget-initialization-failure01.json'),'native_delete':0,'old_budget_changed':False,'business_initializer_restarted':False})
-    need(load(PUBLIC/'budget-initialization02.json')['all_complete'],'budget continuation physical closure unconfirmed')
+        complete=failure is None and len(results)==3 and all(x['closed'] for x in closure)
+        save(PUBLIC/'budget-initialization.json',{'status':'PASS_NEW_BUDGET_INITIALIZATION' if complete else 'FAILED_OR_UNCONFIRMED_RETAINED','execution':p.EXECUTION,'source':a['source'],'allocation_sha256':sha(PUBLIC/'allocation.json'),'groups':results,'all_complete':complete,'failure':failure,'closure':closure,'native_delete':0,'old_budget_changed':False})
+    need(complete,'new budget initialization closure unconfirmed')
 
 
 def budget_completion(a):
-    receipt=load(PUBLIC/'budget-initialization02.json')
-    need(receipt['status']=='PASS_BUDGET_CONTINUATION' and receipt['all_complete'] is True and receipt['failure'] is None
-         and receipt['source_checkpoint_sha256']==a['source_checkpoint_sha256'] and receipt['original_failure_sha256']==BUDGET_FAILURE_SHA256
-         and receipt['native_delete']==0 and receipt['old_budget_changed'] is False and receipt['business_initializer_restarted'] is False,'budget continuation incomplete or cross-bound')
-    need([row['group'] for row in receipt['groups']]==list(p.GROUPS) and len(receipt['closure'])==3
-         and {row['cid'] for row in receipt['closure']}=={g['budget_initializer'] for g in a['groups']}
-         and all(row['closed'] is True for row in receipt['closure']),'budget completion membership or closure differs')
+    receipt=load(PUBLIC/'budget-initialization.json')
+    need(receipt['status']=='PASS_NEW_BUDGET_INITIALIZATION' and receipt['all_complete'] is True and receipt['failure'] is None and receipt['execution']==p.EXECUTION and receipt['source']==a['source'] and receipt['allocation_sha256']==sha(PUBLIC/'allocation.json') and receipt['native_delete']==0 and receipt['old_budget_changed'] is False,'new budget initialization incomplete or cross-bound')
+    need([row['group'] for row in receipt['groups']]==list(p.GROUPS) and len(receipt['closure'])==3 and {row['cid'] for row in receipt['closure']}=={g['budget_initializer'] for g in a['groups']} and all(row['closed'] is True for row in receipt['closure']),'new budget completion membership/closure differs')
     for g,row in zip(a['groups'],receipt['groups']):
-        folder=Path(g['private']);group=g['group']
-        need(row['initializer']==g['budget_initializer'] and row['action']==('READ_COMPLETED_NOT_RESTARTED' if group=='business-races' else 'INITIALIZED_ONCE')
-             and row['before_sha256']==sha(folder/'budget-before-continuation02.tar') and row['after_sha256']==sha(folder/'budget-after-continuation02.tar'),'original budget continuation archive differs')
-        p.sequence.budget_archive((folder/'budget-after-continuation02.tar').read_bytes(),budget_candidate(a),group,initial=True)
+        path=Path(g['private'])/'initial-budget.tar'
+        need(row['initializer']==g['budget_initializer'] and row['archive_sha256']==sha(path),'initial budget bytes/owner differ')
+        p.sequence.budget_archive(path.read_bytes(),budget_candidate(a),g['group'],initial=True)
+        owner_folder=PUBLIC/g['group']/'budget-initialization';owner=load(owner_folder/'owner.json')
+        need(row['owner_receipt_sha256']==sha(owner_folder/'owner.json') and owner['cid']==g['budget_initializer'] and owner['failure'] is None and owner['closure']['closed'] is True and (owner_folder/'wait-stdout.txt').read_bytes().strip()==b'0','initial budget owner receipt/exit differs')
     return receipt
 
 
@@ -677,11 +556,9 @@ def run_non_delete():
 
 def main():
     import argparse
-    parser=argparse.ArgumentParser();parser.add_argument('action',choices=('bind-source','materialize','initialize-budgets','finish-budget-initialization','check','run-non-delete'));args=parser.parse_args()
-    if args.action=='bind-source':bind_source()
-    elif args.action=='materialize':materialize()
+    parser=argparse.ArgumentParser();parser.add_argument('action',choices=('materialize','initialize-budgets','check','run-non-delete'));args=parser.parse_args()
+    if args.action=='materialize':materialize()
     elif args.action=='initialize-budgets':initialize_budgets()
-    elif args.action=='finish-budget-initialization':finish_budget_initialization()
     elif args.action=='run-non-delete':run_non_delete()
     else:print(json.dumps(preparation_gate(state())))
 

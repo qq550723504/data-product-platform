@@ -50,7 +50,7 @@ class SixSupportTests(unittest.TestCase):
             revocation=control/'revocations/late-hold/late';revocation.mkdir(parents=True);(revocation/'original.private').write_bytes(raw)
             w.r.save(revocation/'revocation.json',{'before_sha256':w.base.digest(raw),'disabled_sha256':w.sha(late/'remaining.json')})
             gateway=folder/'gateway.Caddyfile';gateway.write_bytes(b':9000 { respond 403 }')
-            users={'delete754ea8f0':'old-delete','inspect754ea8f06ffc':'old-inspect','i4e524c04754ea8f0':'new-inspect','d4e524c04754ea8f0':'new-delete'}
+            users={'delete754ea8f0':'old-delete','inspect754ea8f06ffc':'old-inspect','iafc0e66c754ea8f0':'new-inspect','dafc0e66c754ea8f0':'new-delete'}
             iam=folder/'root-disable-all';iam.mkdir();w.r.save(iam/'iam.json',{'disabled_identities':users})
             group={'Group':'late-hold','Gateway':gateway_cid,'IAMSHA256':w.sha(iam/'iam.json'),'SealedGatewaySHA256':w.sha(gateway),'CaseHelpers':{'late':late_cid},'CaseConfigSHA256':{'late':w.base.digest(raw),'close-H1':w.sha(close/'remaining.json')},'Helpers':{'wire':'w'*64,'H2':'h'*64,'recover-H2':'q'*64}}
             roots={action:{'container':str(i)*64} for i,action in enumerate(('check-disabled','enable-read','enable-send','disable-send','disable-all'),1)}
@@ -65,7 +65,7 @@ class SixSupportTests(unittest.TestCase):
             output=folder/'outputs/root-check-disabled';output.mkdir(parents=True)
             result={'action':'check-disabled','group':'late-hold','exact_policy_set_verified':True,'before':{name:'disabled' for name in users}}
             if fault=='old-users-only':result['before']={name:'disabled' for name in list(users)[:2]}
-            if fault=='new-sender-enabled':result['before']['d4e524c04754ea8f0']='enabled'
+            if fault=='new-sender-enabled':result['before']['dafc0e66c754ea8f0']='enabled'
             w.r.save(output/'result.json',result)
             if fault=='owner-live':states[late_cid]['State']['Pid']=5
             if fault=='enabler-live':states[roots['enable-send']['container']]['State']['Running']=True

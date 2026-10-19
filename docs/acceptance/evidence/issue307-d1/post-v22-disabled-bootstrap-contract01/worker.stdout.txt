@@ -1,0 +1,1 @@
+isolated contract probe PASS; source_calls=0; DELETE=0

@@ -1,0 +1,75 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_BUDGET_CONTINUATION_RESULT_REVIEW",
+  "remaining_blockers": [],
+  "observed_at_utc": "2026-10-19T17:46:23.999146+00:00",
+  "source": "c72930430d1aeaf89f6af9be49881391405d9efa",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "checkpoint02_review_sha256": "e1af2862659887e4289160fd91a3a64f4a7cd8b028a72f7f4c584e65dee4beaf",
+  "receipt_sha256": "a6eea4b0c792563b40a1b1b85cb73a220b3881c817668306b735f95f906dcf9f",
+  "intent_sha256": "a7e1409d53bc6405ddec0868035d6ed7e651b08406d1c0328b42cfcf5927f514",
+  "actual_budget_completion_gate": "PASS",
+  "groups": [
+    {
+      "group": "business-races",
+      "cid": "3564e947a1e76aa2335d63eb6476e8638f89c099ce4f474e96b9d500bae84d62",
+      "action": "READ_COMPLETED_NOT_RESTARTED",
+      "before_sha256": "6394dd7e1a436cccf09a106c054ed6a0ae40f9f8a0712e131c54762fbc2b0cc8",
+      "after_sha256": "6394dd7e1a436cccf09a106c054ed6a0ae40f9f8a0712e131c54762fbc2b0cc8",
+      "owner_receipt_sha256": "a569a5ced7696eb6483a5ad52a965431fd340dd2a9a1f88c9a512fd234572ebe"
+    },
+    {
+      "group": "late-hold",
+      "cid": "0496f48ba1cff8a998fc4f407fa319be050e9ff06645d37fd39a25b0fc2ccddc",
+      "action": "INITIALIZED_ONCE",
+      "before_sha256": "d1e1cb4cd7ef901796b94dbc6c16911ed4cec74a9f3f80a45c68b26f529532dc",
+      "after_sha256": "89677a479e65d4c6e26f4bd7149621aa97caddb3e2ec24f62a5c79ceeead4d9c",
+      "owner_receipt_sha256": "8fc2dc5106b34387ef0f827a4c29d77c16d4a158a3501a101a9430b1b8bb68d2"
+    },
+    {
+      "group": "mixed",
+      "cid": "f2c44a5d65f730b7245fda236dbb4ab141eace90511773f10af15a595a7fbdd9",
+      "action": "INITIALIZED_ONCE",
+      "before_sha256": "c55f7fd8287aa9c64de4982b74022a27a6df2118fab0c4794dacd380b1e8446e",
+      "after_sha256": "6f9b880e9982b0260813f29f8417ab68bde7615cf2fdbbd699ff76b9d864de73",
+      "owner_receipt_sha256": "6d32bcef5edf8a208e0b0cef50c4cd7fd67af9dcb2f9d1377988b3fd8898b4e1"
+    }
+  ],
+  "actual_checks": {
+    "fresh_three_budget_tars_equal_saved_after_bytes": true,
+    "all_three_budgets": "UID=GID=10001; empty; actual targets/budget_archive initial validator PASS",
+    "business": "Initial/before/after/fresh TAR equal; exact StartedAt/FinishedAt and exit state equal original failure snapshot; not restarted",
+    "late_mixed": "Bound intent records created/zero times; saved before TAR is root-owned empty; actual exit0/PID0, RestartCount0, network none",
+    "original_failure_receipt_and_business_tar_preserved": true,
+    "fresh_allocated_owners_closed_and_equal_original_descriptors": 86,
+    "fresh_old_source_core_native_closed": 6,
+    "actual_budget_volume_ownership_and_complete_mount_graphs": 3,
+    "exact_false_sending_root_permissions": 30
+  },
+  "raw_channels": {
+    "member_map_count": 15,
+    "member_map_sha256": "03fd0440141e1ce5636602fd82480e0b7c9af3c86ecf602e72ba359817274f64",
+    "map_encoding": "SHA256 of compact sorted-key JSON group/filename -> raw SHA256, five members each: owner.json, stdout.txt, stderr.txt, wait-stdout.txt, wait-stderr.txt",
+    "each_initializer_stdout_sha256": "1762b14a2605a95dba386423447ae68600b09a16348b1764cbe190c60043fc02",
+    "each_initializer_wait_stdout_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "each_initializer_stderr_and_wait_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "outer_continuation_stdout_and_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "boundaries": {
+    "readonly_docker_calls": {
+      "batch_inspect": 1,
+      "volume_inspect": 3,
+      "ps": 3,
+      "cp": 3
+    },
+    "reviewer_start_exec_sdk_provider_calls": 0,
+    "reviewer_file_writes": 0,
+    "no_secret_or_dsn_values_output": true,
+    "full_fifteen_volume_and_historical_topology_gate": "NOT_REPEATED; root must still execute existing fresh full preparation_gate before Source/IAM",
+    "exact_c729_ci": "NOT_REVIEWED",
+    "source_iam_backup_restore_native": "NOT_RUN_BY_REVIEWER",
+    "candidate": "NOT_FROZEN",
+    "precise_delete_authorization": "NOT_RECEIVED",
+    "scheduling": "NONE",
+    "d1": "NOT_ACCEPTED"
+  }
+}

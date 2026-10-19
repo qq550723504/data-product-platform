@@ -1,0 +1,28 @@
+{
+  "status": "PASS_ISOLATED_API_PROBE",
+  "at": "2026-10-19T18:07:49.410013+00:00",
+  "failure": null,
+  "closed": [
+    {
+      "cid": "1eea0f84d6086a77588a72a0ef8218e795d9b047cda0535f6fc7cc3ac6a4c3f4",
+      "running": false,
+      "pid": 0,
+      "network": "container:9c89c845485b7ef5e2cd4a9dfb9884112a008d3221aa6cb88512af2ba71d7775",
+      "noports": true,
+      "restart": "no"
+    },
+    {
+      "cid": "9c89c845485b7ef5e2cd4a9dfb9884112a008d3221aa6cb88512af2ba71d7775",
+      "running": false,
+      "pid": 0,
+      "network": "none",
+      "noports": true,
+      "restart": "no"
+    }
+  ],
+  "source_calls": 0,
+  "native_object_put": 0,
+  "native_delete": 0,
+  "resources_retained": true,
+  "scope": "API feasibility probe; production guard/regression/independent native result review still pending"
+}

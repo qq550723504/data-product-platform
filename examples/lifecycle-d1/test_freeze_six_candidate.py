@@ -19,7 +19,7 @@ class FreezeSixTests(unittest.TestCase):
             control.mkdir();public.mkdir();fixtures.mkdir();(control/'offline').mkdir()
             for obj,name,value in [(f.r,'CONTROL',control),(f.r,'PUBLIC',public),(f,'PACKET',packet),(f.p.p1,'PRIVATE',fixtures)]:stack.enter_context(patch.object(obj,name,value))
             old=f.load(f.p.p1.PACKET/'candidate.json');scopes=f.load(f.r.ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json')
-            allocation={'source':'f'*40,'initial_build_source':'e'*40,'source_checkpoint_sha256':'b'*64,'previous_source_checkpoint_sha256':'9'*64,'rebuild_receipt_sha256':'c'*64,'owner_descriptors_sha256':'d'*64,'map_sha256':'a'*64,'binaries':{'reader':'1'*64,'operator':'2'*64,'owner':'3'*64},'groups':[],'offline_validator':'v'*64}
+            allocation={'source':'f'*40,'build_files':{},'retained':{'mode':'RECORDED_TEST_ONLY'},'owner_descriptors_sha256':'d'*64,'map_sha256':'a'*64,'binaries':{'reader':'1'*64,'operator':'2'*64,'owner':'3'*64},'groups':[],'offline_validator':'v'*64}
             for name in ('reader','operator','owner','readonly-check.exe'):(control/name).write_bytes(b'non-authoritative-test-binary')
             for old_group,scope in zip(old['Groups'],scopes):
                 group=scope['Group'];project='dpp-lifecycle307-'+scope['Run'][:8];folder=control/group;folder.mkdir();out=public/group;out.mkdir()

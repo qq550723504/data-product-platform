@@ -1,0 +1,51 @@
+{
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "source_checkpoint_sha256": "4572d3f02c3294864390eda43d6407ede603f10be1820fa5bbdade5f6b939218",
+  "previous_failure_sha256": "163d41af4b95addb52bb0507527ecd20d131ebc426faa886a35a27583fe15378",
+  "before_states": {
+    "business-races": {
+      "Status": "exited",
+      "Running": false,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 0,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "2026-10-19T17:21:26.165224087Z",
+      "FinishedAt": "2026-10-19T17:21:26.246558794Z"
+    },
+    "late-hold": {
+      "Status": "created",
+      "Running": false,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 0,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "0001-01-01T00:00:00Z",
+      "FinishedAt": "0001-01-01T00:00:00Z"
+    },
+    "mixed": {
+      "Status": "created",
+      "Running": false,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 0,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "0001-01-01T00:00:00Z",
+      "FinishedAt": "0001-01-01T00:00:00Z"
+    }
+  },
+  "start_only": [
+    "0496f48ba1cff8a998fc4f407fa319be050e9ff06645d37fd39a25b0fc2ccddc",
+    "f2c44a5d65f730b7245fda236dbb4ab141eace90511773f10af15a595a7fbdd9"
+  ],
+  "native_delete": 0
+}

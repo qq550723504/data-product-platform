@@ -120,3 +120,22 @@ P1门禁已由新audit d64ad338-00d2-4569-bd62-9e132ddaf578 在2026-10-19T10:58:
 355717精确HEAD的PR CI39291709408失败，demo镜像构建npm ETARGET，原raw log和失败CI读回保留。确定缺口是Web无锁文件、构建时重新解析浮动传递依赖；版本发布传播差异仅为推断，不作为已证实原因。采用标准package-lock v3/npm ci，manifest及测试不变，实际隔离Web镜像构建成功、8套204项测试通过，独立文件评审PASS；新精确HEAD的PR CI仍需重新通过。这些是Web/CI事实，不是D1 Native或main CI结果。
 
 计划追加checkpoint02绑定原01、预算失败、原86CID/nonce和新的相同字节重编译证明；只读确认已完成business，再首次初始化late/mixed，随后才做三组原生非删除准备。新execution/拟窗口仅为准备，授权NOT_RECEIVED、调度NOT_CREATED、candidate仍NOT_FROZEN，完整D1 NOT_ACCEPTED。
+
+### checkpoint02及三预算实际结果（原记录不覆盖）
+
+预算修复源码独立终评SHA`695c077f1bb774774e99822731e891877606ef35d31391152298c40ed984b87f`，0阻断；已提交为`c72930430d1aeaf89f6af9be49881391405d9efa`。同一源码实际追加checkpoint02 SHA`4572d3f02c3294864390eda43d6407ede603f10be1820fa5bbdade5f6b939218`、rebuild02 SHA`08bc31ad669addc3f34b25da3e27b4167fb4f01bdaffed638693d4446d847f0b`，四新构建字节等于原活跃binary，原01/冷态失败/预算失败均仍强制校验。独立实际文件复评SHA`e1af2862659887e4289160fd91a3a64f4a7cd8b028a72f7f4c584e65dee4beaf`已PASS；其省略历史live Docker门禁，不能声称该复评独立完成新物理核验。
+
+固定finish-budget-initialization实际exit0，追加receipt SHA`a6eea4b0c792563b40a1b1b85cb73a220b3881c817668306b735f95f906dcf9f`。business只读核验、原开始/结束时间及tar未变；late/mixed各首次运行固定无网络initializer。三个新预算均实际UID/GID10001、files=[]，三个initializer关闭/PID0。原partial receipt、失败和原业务tar保留；旧预算和pins未改。原生Source/IAM/backup/restore仍NOT_RUN，下一步等待实际预算独立核验及精确新HEAD CI通过，再运行一次固定非删除入口。
+
+
+### c13 原生准备失败与当前 c14 有限修复（追加事实）
+
+c729304 精确 HEAD 的 PR CI39296105088 已13项成功，Draft/Open、未解决线程0、Issue307 OPEN。实际预算独立核验报告 `budget-actual-independent-review07.json` SHA`c62b6639060d9f4a6e49eb560761af80064069495266606f46a1358b9eb7ed66`通过；随后固定非删除入口首次运行失败，不能冻结 c13。business 新 inspector 的 disabled 创建与读回成功，AttachPolicy 返回 NoSuchUser；仅六次真实 IAM 技术请求，3GET/2PUT/1POST、3×200/3×404，amount=NOT_ASSESSED。Source reader/17版本、九新备份、restore/trial 均未运行，Core-after NOT_RUN；不能声称本次 Source Core 全程不变。全部92新及source CID已关闭/PID0/noports/norestart；DELETE/object PUT=0、旧预算/pins/全部失败证据保留。
+
+原终态 SHA`7db97768426c0616e0e28b36b03e3cccd602545f2e4491d0ac0f26b194f886e4`及独立失败束 `remaining-candidate13-preparation-failure01/failure.json` SHA`0ece4d5e2e5ced1acd0f60b3ca6f6ff8359bbf2c113c0bb10b1d364edc2537f9`不可覆盖。原 preparation index 早于外层 CLI traceback 最后追加，不能视为最终 stderr 全字节索引；失败束另绑最终原 stderr。后续外层 CLI 通道放 active preparation 目录之外。
+
+固定 MinIO 的 disabled 用户在 AttachPolicy/旧 SetPolicy 路径被有效身份过滤；不是用户不存在。复用官方 ImportIAMV2 的单 user mapping，标准 archive/zip + 官方 policy parser/Equals，不启用 Source 身份。隔离 API可行性独立评审 SHA`c159c910926067cabdfe4e65162a97f3d240f6df487e98b3d76c5374b5711c41`通过。生产 adapter 的 native02 先完成一个用户8次真实请求，故意重放被 transport 阻止但 SDK 仍本地退避，测试超时；原失败 SHA`070a1b356ed6fbe4108a159b89a95b2e7b7bff82053e61fa9d972adee4bfafc1`与两停止 scratch 保留。单次工具改用 SDK MaxRetry=1，guard仍独立拒绝重放。新的隔离 native03 实际16次请求、两个用户全流程 PASS、均disabled/sole-policy/no-groups，重放0新增HTTP，终态 SHA`1e5343bb904ff4760c34dd28ac087cc5201a16503f2406ed9982b908a83e16c0`；两个新 scratch PID0，无 Source/object PUT/DELETE。这仍不是 Source 实际验收。
+
+当前提案 candidate14/v24，execution `afc0e66c-535b-426e-a937-964d0c9ca0d6`，沿用人类所选2026-10-20新加坡14:00–14:40（UTC06:00–06:40），只读上限08:40Z。完整设计见 [v24 finite bootstrap contract](issue307-d1-v24-bootstrap-contract.md)。原c13 partial inspector 保持disabled/no-policy/no-groups，其unassigned canned policy单独核；五个未创建c13用户需fresh NoSuchUser。新六身份均使用独立secret；共15已知身份，只有本代精确用户可enable。旧c13全链从current运行入口移除，仅作为不可变失败历史；新代只接受本代完整12成员构建、精确源码和新allocation，不设兼容fallback。
+
+本地 Go 回归已通过；新的完整入口/原生结果独立评审、精确新HEAD CI、86新CID/15卷分配、三新空预算、Source17版本/15身份/5absent及九备份restore/trial、冻结与完整只读终复评仍需完成。删除授权 NOT_RECEIVED、调度 NOT_CREATED、候选 NOT_FROZEN，完整D1 NOT_ACCEPTED。#332保持Draft、不合并，#307保持OPEN；#323已按历史独立授权合并，不重新声称Draft。

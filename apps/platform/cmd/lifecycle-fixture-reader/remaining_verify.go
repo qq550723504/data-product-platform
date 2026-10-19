@@ -233,7 +233,8 @@ func collectNativeWithPolicies(ctx context.Context, c config, group string, expe
 		if e != nil {
 			return nil, e
 		}
-		if user.Status != madmin.AccountDisabled || !remainingExactUserPolicy(user, want) {
+		association := remainingAuditAssociation(group, name, want, user)
+		if user.Status != madmin.AccountDisabled || !association {
 			return nil, errors.New("native IAM identity is not disabled with its sole exact policy")
 		}
 	}
@@ -258,6 +259,14 @@ func collectNativeWithPolicies(ctx context.Context, c config, group string, expe
 		hashes[name] = hex.EncodeToString(s[:])
 	}
 	return map[string]any{"group": group, "status": "PASS_EXACT_NATIVE_READONLY", "copies": verified, "disabled_identities": users, "policy_sha256": hashes, "delete": 0, "mutations": 0}, nil
+}
+
+func remainingAuditAssociation(group, name, want string, user madmin.UserInfo) bool {
+	dormant, _ := pilot.RemainingDormantIdentity(group)
+	if name == dormant && dormant != "" {
+		return want == "" && user.Status == madmin.AccountDisabled && user.PolicyName == "" && len(user.MemberOf) == 0
+	}
+	return remainingExactUserPolicy(user, want)
 }
 
 func remainingExactUserPolicy(user madmin.UserInfo, want string) bool {

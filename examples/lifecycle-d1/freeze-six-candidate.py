@@ -1,4 +1,4 @@
-"""Freeze candidate13 only after actual bounded non-delete preparation.
+"""Freeze candidate14 only after actual bounded non-delete preparation.
 
 No IAM enable, deletion, authorization or scheduling function exists here.
 The only container run is the already allocated network-none file validator.
@@ -39,9 +39,8 @@ def source_freeze(a):
     save(PACKET/'source-freeze.json',{'source':a['source'],'files':files,'archive_sha256':sha(archive),'archive_bytes':archive.stat().st_size,
                                     'build_recipe':'go build -trimpath -buildvcs=false; linux/amd64 CGO_ENABLED=0; Windows file-only checker',
                                     'embedded_vcs_revision':'NOT_CLAIMED','actual_build_source':a['source'],
-                                    'initial_allocation_build_source':a['initial_build_source'],'source_checkpoint_sha256':a['source_checkpoint_sha256'],
-                                    'previous_source_checkpoint_sha256':a['previous_source_checkpoint_sha256'],
-                                    'identical_rebuild_receipt_sha256':a['rebuild_receipt_sha256'],'active_original_binary_bytes_preserved':True})
+                                    'initial_allocation_build_source':a['source'],'initial_build_files':a['build_files'],
+                                    'retained_failed_generation':'candidate13/v23; separate immutable historical failure; never execution authority'})
 
 
 def main():
@@ -123,7 +122,7 @@ def main():
                          'recovery_redis':allocation['recovery_redis'],'budget_volume':allocation['volumes']['budget'],'budget_initializer':allocation['budget_initializer'],'budget_initializer_script_sha256':allocation['budget_initializer_script_sha256'],
                          'root_owners':owners,'allocation_sha256':sha(r.PUBLIC/'allocation.json'),'owner_descriptors_sha256':a['owner_descriptors_sha256'],
                          'map_sha256':a['map_sha256'],'preparation_terminal_sha256':sha(r.PUBLIC/'non-delete-terminal.json'),'previous_policy_heads':heads})
-        bindings[-1].update(initial_build_source=a['initial_build_source'],source_checkpoint_sha256=a['source_checkpoint_sha256'],rebuild_receipt_sha256=a['rebuild_receipt_sha256'],previous_source_checkpoint_sha256=a['previous_source_checkpoint_sha256'])
+        bindings[-1].update(initial_build_source=a['source'],initial_build_files=a['build_files'],retained_history=a['retained'])
     save(PACKET/'profile-windows.json',windows);candidate['ProfileWindowsSHA256']=sha(PACKET/'profile-windows.json')
     save(PACKET/'candidate.json',candidate);save(PACKET/'bindings.json',bindings)
     confirmation(candidate,bindings,targets)
@@ -151,7 +150,7 @@ def confirmation(c,bindings,targets):
     lines=[f'CONFIRM_DELETE_EXACT_SIX；execution {p.EXECUTION}；{p.PROFILE}。',
            f'固定窗口 {start:%Y-%m-%d %H:%M}–{end:%H:%M} 新加坡时间；UTC {c["NotBefore"]}≤now<{c["NotAfter"]}；只读恢复截止 {p.W["RecoveryEnd"]}。',
            f'candidate SHA256 {sha(PACKET/"candidate.json")}；bindings {sha(PACKET/"bindings.json")}；source {c["Source"]}；source-freeze {c["SourceFreezeSHA256"]}。',
-           f'初始allocation构建源 {bindings[0]["initial_build_source"]}；原source checkpoint01 {bindings[0]["previous_source_checkpoint_sha256"]}；追加source checkpoint02 {bindings[0]["source_checkpoint_sha256"]}；新source四份完全相同字节重编译证明 {bindings[0]["rebuild_receipt_sha256"]}；原allocation/旧binary/冷态和预算失败原字节保留。',
+           f'本代allocation与构建源 {bindings[0]["initial_build_source"]}；完整12成员原构建归档见source-freeze及bindings；旧candidate13/冷态/预算/IAM失败链独立原样保留，不复用旧execution或授权。',
            f'Linux reader {c["ReaderBinarySHA256"]}；sender/wire/recovery {c["SenderBinarySHA256"]}；root owner {c["OwnerBinarySHA256"]}；Windows file-only checker {sha(r.CONTROL/"readonly-check.exe")}。',
            f'target digest {c["TargetDigest"]}；host public key {c["PublicKey"]}；wire public key {c["WirePublicKey"]}；profile-windows {c["ProfileWindowsSHA256"]}；CandidateUseUntil={c["NotAfter"]}。',
            '18历史copy、17现存版本、6目标、11保留版本严格分开。旧P1已确认缺失，绝不纳入目标或新预算。']
@@ -165,7 +164,12 @@ def confirmation(c,bindings,targets):
         for stage,cid in g['CaseHelpers'].items():lines.append(f'case {g["Group"]}/{stage} CID {cid}；config {g["CaseConfigSHA256"][stage]}。')
         for action,owner in b['root_owners'].items():lines.append(f'root {g["Group"]}/{action} CID {owner["container"]}；config {owner["root_config_sha256"]}。')
         iam=load(PACKET/g['Group']/'iam.json')
-        for user,name in iam['disabled_identities'].items():lines.append(f'IAM identity {user}=disabled；sole policy {name}；无groups；policy file SHA256 {iam["policy_file_sha256"][name]}。')
+        for user,name in iam['disabled_identities'].items():
+            if name:lines.append(f'IAM identity {user}=disabled；sole policy {name}；无groups；policy file SHA256 {iam["policy_file_sha256"][name]}。')
+            else:
+                need(user=='i4e524c04808a6960' and g['Group']=='business-races','unknown empty-policy identity')
+                unassigned='lifecycle307-six-'+user
+                lines.append(f'IAM retained partial {user}=disabled；policy=NONE；无groups；永不enable/复用secret；unassigned policy {unassigned} SHA256 {iam["policy_file_sha256"][unassigned]}。')
         for cp in g['Copies']:
             if cp['Key']=='fixture/p1.csv':continue
             target=any(cp['ID']==t['ID'] for t in targets)

@@ -1,0 +1,48 @@
+{
+  "status": "PASS_BOUNDED_NONDELETE_REGRESSION",
+  "at": "2026-10-19T18:30:04.575642+00:00",
+  "runs": [
+    {
+      "name": "go-affected",
+      "exit": 0,
+      "result": {
+        "pass": 266,
+        "fail": 0,
+        "skip": 2
+      }
+    },
+    {
+      "name": "python-six-normal",
+      "exit": 0,
+      "result": {
+        "raw_result": "....................\r\n----------------------------------------------------------------------\r\nRan 20 tests in 1.590s\r\n\r\nOK"
+      }
+    },
+    {
+      "name": "python-six-optimized",
+      "exit": 0,
+      "result": {
+        "raw_result": "....................\r\n----------------------------------------------------------------------\r\nRan 20 tests in 1.379s\r\n\r\nOK"
+      }
+    },
+    {
+      "name": "python-sequence",
+      "exit": 0,
+      "result": {
+        "raw_result": "......\r\n----------------------------------------------------------------------\r\nRan 6 tests in 0.004s\r\n\r\nOK"
+      }
+    }
+  ],
+  "files": {
+    "go-affected.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go-affected.stdout.txt": "e945942d98f8eed073fe5512da588894d9d8f2bec47471bf2b38f708befc8405",
+    "python-sequence.stderr.txt": "ba9882e9ac323861c4e47fd88f712e12a56b4bd76a6d541faec02026dfe5f209",
+    "python-sequence.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "python-six-normal.stderr.txt": "fddc6f73e1fcb8d7bc7bff54c96cfe11deee0c69f0c7a2711c5c1528a1a2e945",
+    "python-six-normal.stdout.txt": "25c4592207a1d34c49d4bbf38f7d0b139789c733abe3a1e92455f6f4b00e901e",
+    "python-six-optimized.stderr.txt": "e07cf1e088eb7a508eba469ddd5b393fea592ae00e212505a04dfc72d377b4e3",
+    "python-six-optimized.stdout.txt": "0f1406c8e2bbc16643dfb26cac33ddabfa43150abf12b0c94f298c6687b6d3ed"
+  },
+  "native_delete": 0,
+  "source_calls": 0
+}

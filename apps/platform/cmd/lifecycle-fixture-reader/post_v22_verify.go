@@ -109,6 +109,8 @@ type postV22VerifyTransport struct {
 	p1Attempts []uuid.UUID
 	p1Results  map[uuid.UUID]postV22ProviderResult
 	auditID    uuid.UUID
+	lastID     uuid.UUID
+	lastStatus int
 }
 type postV22ProviderResult struct {
 	Code, RequestID string
@@ -123,6 +125,7 @@ func (t *postV22VerifyTransport) RoundTrip(req *http.Request) (*http.Response, e
 	if e := write(t.c, "readonly-start-"+id.String()+".json", map[string]any{"id": id, "audit_id": t.auditID, "method": req.Method, "path": req.URL.Path, "query": req.URL.RawQuery, "at": time.Now().UTC()}); e != nil {
 		return nil, e
 	}
+	t.lastID, t.lastStatus = id, 0
 	if t.p1 != nil && req.Method == "HEAD" && req.URL.Path == "/"+t.p1.Namespace+"/"+t.p1.Key && req.URL.Query().Get("versionId") == t.p1.ProviderVersion && len(req.URL.Query()) == 1 {
 		t.p1Attempts = append(t.p1Attempts, id)
 	}
@@ -134,6 +137,7 @@ func (t *postV22VerifyTransport) RoundTrip(req *http.Request) (*http.Response, e
 		providerCode = response.Header.Get("X-Minio-Error-Code")
 		requestID = response.Header.Get("X-Amz-Request-Id")
 	}
+	t.lastStatus = status
 	if len(t.p1Attempts) > 0 && t.p1Attempts[len(t.p1Attempts)-1] == id {
 		if t.p1Results == nil {
 			t.p1Results = map[uuid.UUID]postV22ProviderResult{}
@@ -224,7 +228,7 @@ func verifyNativeAudit(ctx context.Context, p postV22ReadProfile, raw []byte, st
 		for _, item := range actual {
 			copies = append(copies, item.Copy)
 		}
-		newUsers, newPolicies, err := pilot.RemainingPolicies(p.Group, copies)
+		newUsers, newPolicies, err := pilot.RemainingAuditPolicies(p.Group, copies)
 		if err != nil {
 			return err
 		}
@@ -238,6 +242,11 @@ func verifyNativeAudit(ctx context.Context, p postV22ReadProfile, raw []byte, st
 	verification, e := collectNativeWithPolicies(ctx, c, p.Group, actual, users, policies, transport)
 	if e != nil {
 		return e
+	}
+	if six {
+		if e = sixUncreatedUsers(ctx, c, p.Group, transport); e != nil {
+			return e
+		}
 	}
 	verification["inventory_sha256"] = p.PresentInventorySHA256
 	verification["source_config"] = profileFile

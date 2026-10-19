@@ -44,11 +44,16 @@ func TestSixDisabledProvisionUsesRealSDKAndRejectsEnableExpansionReplay(t *testi
 				t.Fatal("real SDK enabled an identity")
 			}
 		}
-		status := http.StatusOK
-		if req.Method == "POST" {
-			status = http.StatusNoContent
+		var body []byte
+		if req.URL.Path == "/minio/admin/v3/import-iam-v2" {
+			raw, _ := io.ReadAll(req.Body)
+			user, name, e := sixMappingScope(raw, users)
+			if e != nil {
+				t.Fatal(e)
+			}
+			body = []byte(`{"skipped":{},"removed":{},"added":{"userPolicies":[{"` + user + `":["` + name + `"]}]},"failed":{}}`)
 		}
-		return &http.Response{StatusCode: status, Header: make(http.Header), Body: io.NopCloser(bytes.NewReader(nil))}, nil
+		return &http.Response{StatusCode: http.StatusOK, Header: make(http.Header), Body: io.NopCloser(bytes.NewReader(body))}, nil
 	})
 	admin, err := madmin.NewWithOptions("127.0.0.1:9000", &madmin.Options{Creds: credentials.NewStaticV4("test-root", secret, ""), Transport: transport})
 	if err != nil {
@@ -64,7 +69,8 @@ func TestSixDisabledProvisionUsesRealSDKAndRejectsEnableExpansionReplay(t *testi
 		if err = admin.AddCannedPolicy(ctx, name, policies[name]); err != nil {
 			t.Fatal(err)
 		}
-		if _, err = admin.AttachPolicy(ctx, madmin.PolicyAssociationReq{Policies: []string{name}, User: user}); err != nil {
+		mapping, _ := sixMappingZIP(user, name)
+		if _, err = admin.ImportIAMV2(ctx, io.NopCloser(bytes.NewReader(mapping))); err != nil {
 			t.Fatal(err)
 		}
 	}

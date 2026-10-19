@@ -1,0 +1,41 @@
+panic: test timed out after 1m0s
+	running tests:
+		TestSixNativeDisabledBootstrapContract (1m0s)
+
+goroutine 119 [running]:
+testing.(*M).startAlarm.func1()
+	testing/testing.go:2802 +0x354
+created by time.goFunc
+	time/sleep.go:215 +0x2d
+
+goroutine 1 [chan receive]:
+testing.(*T).Run(0x2e762df86c8, {0xf17e04?, 0x0?}, 0xfcb018)
+	testing/testing.go:2109 +0x4e5
+testing.runTests.func1(0x2e762df86c8)
+	testing/testing.go:2585 +0x3e
+testing.tRunner(0x2e762df86c8, 0x2e76301fc58)
+	testing/testing.go:2036 +0xea
+testing.runTests({0xf284c7, 0x3a}, {0xf307cb, 0x57}, 0x2e762d14198, {0x17ba080, 0x11, 0x11}, {0xc2adb5d86ece48a8, 0xdfab2326f, ...})
+	testing/testing.go:2583 +0x505
+testing.(*M).Run(0x2e762fb5c20)
+	testing/testing.go:2443 +0x6ac
+main.main()
+	_testmain.go:78 +0x9b
+
+goroutine 3 [chan receive]:
+github.com/minio/madmin-go/v3.AdminClient.executeMethod({0x2e762fc2900, 0x2e7630d8af0, {{0x0, 0x0}, {0x0, 0x0}}, 0x0, 0x2e7631010e0, 0x2e763101110, 0x0, ...}, ...)
+	github.com/minio/madmin-go/v3@v3.0.94/api.go:393 +0x1c5
+github.com/minio/madmin-go/v3.(*AdminClient).ImportIAMV2(_, {_, _}, {_, _})
+	github.com/minio/madmin-go/v3@v3.0.94/iam-migrate.go:160 +0x1ff
+github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader.TestSixNativeDisabledBootstrapContract(0x2e762df8908)
+	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader/six_mapping_test.go:190 +0xc45
+testing.tRunner(0x2e762df8908, 0xfcb018)
+	testing/testing.go:2036 +0xea
+created by testing.(*T).Run in goroutine 1
+	testing/testing.go:2101 +0x4c5
+
+goroutine 118 [select]:
+github.com/minio/madmin-go/v3.AdminClient.newRetryTimer.func2()
+	github.com/minio/madmin-go/v3@v3.0.94/retry.go:107 +0x1a9
+created by github.com/minio/madmin-go/v3.AdminClient.newRetryTimer in goroutine 3
+	github.com/minio/madmin-go/v3@v3.0.94/retry.go:96 +0x1ad

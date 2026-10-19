@@ -1,0 +1,65 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_SOURCE_CHECKPOINT02_REVIEW",
+  "remaining_blockers": [],
+  "observed_at_utc": "2026-10-19T17:42:50.855157+00:00",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "profile": "candidate13/v23",
+  "initial_build_source": "a0f938943a7b396ecfed354ee4294506bd3d632e",
+  "effective_source": "c72930430d1aeaf89f6af9be49881391405d9efa",
+  "source_review_sha256": "695c077f1bb774774e99822731e891877606ef35d31391152298c40ed984b87f",
+  "checkpoint02_sha256": "4572d3f02c3294864390eda43d6407ede603f10be1820fa5bbdade5f6b939218",
+  "rebuild02_receipt_sha256": "08bc31ad669addc3f34b25da3e27b4167fb4f01bdaffed638693d4446d847f0b",
+  "checkpoint01_sha256": "03596768d01cec5793319fcbc94e2fbf93dcc6ab390c3331c6c9755719e0e649",
+  "original_cold_failure_sha256": "a43bb7af8beb988e1390ad45da4a4320301e03051cba1225111b0ce13ebd1443",
+  "original_budget_failure_sha256": "163d41af4b95addb52bb0507527ecd20d131ebc426faa886a35a27583fe15378",
+  "original_allocation_sha256": "91198e014b72d289ddf9d071e5ba888c904f7638fbb70c9a01dfc6e111da80a7",
+  "original_owner_count": 86,
+  "original_nonce": "d54522c4-20db-4be6-9bb7-f2f8ed9b3aa3",
+  "checks": {
+    "public_private_checkpoint02_and_allocation_raw_bytes_equal": true,
+    "exact_original_owner_nonce_allocation_and_active_binary_bindings_preserved": true,
+    "actual_complete_independent_regular_rebuild_members": 12,
+    "compiler_channels": 8,
+    "compiler_channel_total_bytes": 0,
+    "rebuild_member_map_sha256": "1bfc67bc5ef3b97babe6636cb8836d495b5c08e05140e2e48c6e1e23742295af",
+    "four_rebuilt_binaries_equal_original_active_bytes": true,
+    "parent_checkpoint01_rebuild_members_cold_failure_and_budget_failure_pass": true,
+    "git_effective_source_equals_current_head": true,
+    "git_runtime_diff_from_initial_source_exactly_five_reviewed_python_paths": true,
+    "no_compiled_source_module_embed_or_migration_change": true
+  },
+  "source_files_sha256": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": "5a2697501928d09e92213ef17ec214416059fb01c937664a82b84218f9c00c6a",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "985f35004ec4137324f5e9b9c4bddc71565577ccc81b94960d3d9474dc19cdee",
+    "examples/lifecycle-d1/freeze-six-candidate.py": "e7018c6f2e8de7683c74e0827310a8e6db8979fc719bea14908f348b693074e7",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "c5935bddc258da2e3f43c2b37f9729351eafa6f8e830216c497a982b8a8fb943",
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": "d52a2e4ac28f95c0452e3e0b0f15b33c0b740e03abea7a30f180a0c07449fa21"
+  },
+  "profiles": {
+    "receipt_sha256": "dbd05a4973cd19ff68c57e6ce8ee2de3a80a2a275b4ce17b8d9fd6159e7bc102",
+    "reviewed_file_count": 72,
+    "raw_hash_map_sha256": "a5ba0fa1f026343bc81297cf798f6fe06c61f402fcca339508d6151142c130da",
+    "unchanged_from_independent_profile_review": true,
+    "all_thirty_sending_root_placeholders_exactly_false": true,
+    "no_secret_or_dsn_values_output": true
+  },
+  "bind_source_channels_sha256": {
+    "stdout": "36f9db6ebe0d595a4bfc341009a453d3c0a85e362ed9b84507679d7d16b6a031",
+    "stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "boundaries": {
+    "method": "Production state file/Git gates executed with allocation_state replaced by the independently raw-checked immutable allocation; only historical live-Docker checks were omitted.",
+    "fresh_physical_retained_gate": "NOT_PERFORMED",
+    "independent_rebuild": "NOT_PERFORMED",
+    "new_tests": "NOT_REPEATED; prior exact reviewed source tests retained",
+    "reviewer_docker_sdk_provider_calls": 0,
+    "reviewer_file_writes": 0,
+    "budget_continuation_receipt_at_observation": "ABSENT; NOT_RUN",
+    "source_iam_backup_restore_native": "NOT_RUN_BY_REVIEWER",
+    "frozen_candidate": "NOT_FROZEN",
+    "exact_new_head_ci": "NOT_REVIEWED",
+    "precise_delete_authorization": "NOT_RECEIVED",
+    "scheduling": "NONE",
+    "d1": "NOT_ACCEPTED"
+  }
+}

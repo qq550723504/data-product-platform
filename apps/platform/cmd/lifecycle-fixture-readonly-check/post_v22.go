@@ -89,6 +89,7 @@ type nativeAuditContract struct {
 	expectedBaseline                                   bool
 	schema, sourceFile, receiptFile, candidate, status string
 	extraIdentities                                    int
+	dormant                                            string
 }
 
 func checkPostV22(baseline, fresh, group, expectation, inventory string) (result, error) {
@@ -96,7 +97,7 @@ func checkPostV22(baseline, fresh, group, expectation, inventory string) (result
 	if _, err := strictPostFile(expectation, &want, 11); err != nil {
 		return result{Group: group}, err
 	}
-	return checkNativeAudit(baseline, fresh, group, inventory, want, nativeAuditContract{false, postV22Schema, "post-v22-readonly.json", "post-v22-native-verification.json", postV22Candidate, "PASS_COMPLETE_POST_V22_NATIVE_AGGREGATION", 0})
+	return checkNativeAudit(baseline, fresh, group, inventory, want, nativeAuditContract{false, postV22Schema, "post-v22-readonly.json", "post-v22-native-verification.json", postV22Candidate, "PASS_COMPLETE_POST_V22_NATIVE_AGGREGATION", 0, ""})
 }
 
 func checkNativeAudit(baseline, fresh, group, inventory string, want postV22Expectation, contract nativeAuditContract) (result, error) {
@@ -189,7 +190,7 @@ func checkNativeAudit(baseline, fresh, group, inventory string, want postV22Expe
 	// This compares actual present receipts; it never fabricates a present P1.
 	// Original IAM policy membership remains independent of present membership.
 	a.Copies = retained
-	out, e = compareNativeReceipts(baseline, fresh, group, a, b, count[1])
+	out, e = compareNativeReceiptsWithDormant(baseline, fresh, group, a, b, count[1], contract.dormant)
 	if e != nil {
 		return out, e
 	}

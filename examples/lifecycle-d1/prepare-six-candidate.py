@@ -1,4 +1,4 @@
-"""Finite candidate13 preparation. Allocate stopped owners; never send/enable DELETE.
+"""Finite candidate14 preparation. Allocate stopped owners; never send/enable DELETE.
 
 Allocation, source/restore non-delete verification and final freeze are distinct
 checkpoints. A stopped allocation is not a native PASS or deletion permission.
@@ -86,7 +86,44 @@ def historical_gate():
         prior.owner_contract(owner)
         ids.add(owner['cid'])
     need(len(ids)==90 and all(closed(inspect(cid)) for cid in ids),'accepted ninety owners not closed')
-    return {'status':'PASS_RETAINED_NINETY_CLOSED','closed_cids':sorted(ids),'prior':base,'native_delete':0}
+    old_public=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate13-preparation01'
+    old_private=p1.PRIVATE/'remaining-candidate13'
+    failures={'non-delete-terminal.json':'7db97768426c0616e0e28b36b03e3cccd602545f2e4491d0ac0f26b194f886e4',
+              'allocation.json':'91198e014b72d289ddf9d071e5ba888c904f7638fbb70c9a01dfc6e111da80a7'}
+    for name,digest in failures.items():need(sha(old_public/name)==digest,'retained c13 failure/allocation differs')
+    bundle=old_public.parent/'remaining-candidate13-preparation-failure01/failure.json'
+    need(sha(bundle)=='0ece4d5e2e5ced1acd0f60b3ca6f6ff8359bbf2c113c0bb10b1d364edc2537f9','retained partial-IAM failure differs')
+    old=load(old_public/'allocation.json');descriptors=load(old_public/'owner-descriptors.json')
+    need(len(old['owners'])==86 and len(set(old['owners']))==86,'retained c13 owner count differs')
+    for cid in old['owners']:
+        item=inspect(cid);need(closed(item) and project_owner(item)==descriptors[cid],'retained c13 owner topology/closure differs');ids.add(cid)
+    for name,digest in old['binaries'].items():need(sha(old_private/name)==digest,'retained c13 binary changed')
+    budgets={}
+    old_packet=load(p1.PACKET/'candidate.json')
+    packet={'Execution':old['execution'],'Groups':[{'Group':g['group'],'Helpers':g['helpers'],'Copies':next(x['Copies'] for x in old_packet['Groups'] if x['Group']==g['group'])} for g in old['groups']]}
+    for g in old['groups']:
+        folder=old_private/g['group']
+        for stage in list(g['helpers'])+['root-'+x for x in g['root_owners']]:need(load(folder/stage/'permission.json')=={'Enabled':False},'retained c13 permission differs')
+        volume=json.loads(docker('volume','inspect',g['volumes']['budget']))[0]
+        need(volume['Labels'].get('lifecycle307.remaining')==old['execution'] and volume['Labels'].get('lifecycle307.allocation')==old['allocation_nonce'],'retained budget ownership differs')
+        mounts=docker('ps','-aq','--no-trunc','--filter','volume='+g['volumes']['budget']).decode('utf8','strict').split()
+        need(sorted(mounts)==g['budget_expected_mounted_cids'],'retained budget mounted CID set expanded')
+        raw=docker('cp',g['helpers']['wire']+':/run/budget','-')
+        sequence.budget_archive(raw,packet,g['group'],initial=True)
+        budgets[g['group']]={'volume':g['volumes']['budget'],'uid':10001,'files':[],'mounted_cids':sorted(mounts)}
+    scratch={}
+    scratch_pins={'post-v22-disabled-bootstrap-contract01': '421e9b0d5ebaca6fd7a4cc11af372b5be29f5d74595a1ec1606149f26f2ad0eb', 'post-v22-disabled-bootstrap-native02': '070a1b356ed6fbe4108a159b89a95b2e7b7bff82053e61fa9d972adee4bfafc1', 'post-v22-disabled-bootstrap-native03': '1e5343bb904ff4760c34dd28ac087cc5201a16503f2406ed9982b908a83e16c0', 'post-v22-disabled-bootstrap-native04': '8f8db644f2b23213d7d0b0e90ef93a7462c232f8eb036f7939a51146790ba108'}
+    for name,digest in scratch_pins.items():
+        folder=old_public.parent/name;need(sha(folder/'terminal.json')==digest,'retained scratch terminal changed');terminal=load(folder/'terminal.json')
+        need(terminal['native_delete']==terminal['source_calls']==0,'scratch contract exceeded source/delete boundary')
+        if name=='post-v22-disabled-bootstrap-native02':need(terminal['status']=='FAILED_OR_UNCONFIRMED_RETAINED' and sha(folder/'terminal.json')=='070a1b356ed6fbe4108a159b89a95b2e7b7bff82053e61fa9d972adee4bfafc1','original SDK-backoff failure differs')
+        else:need(terminal['failure'] is None,'scratch API/adapter contract not successful')
+        rows=terminal.get('closure',terminal.get('closed'))
+        need(len(rows)==2,'scratch closure scope differs')
+        for row in rows:need(closed(inspect(row['cid'])),'retained scratch caller not closed');ids.add(row['cid'])
+        scratch[name]=sha(folder/'terminal.json')
+    need(len(ids)==184,'retained closed owner count differs')
+    return {'status':'PASS_RETAINED_184_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
 
 
 class Allocation:
@@ -158,7 +195,7 @@ def build(destination=CONTROL):
 
 
 def allocate():
-    need(PROFILE=='candidate13/v23' and EXECUTION=='4e524c04-2376-4bc9-9e85-452909d3dba4','only the new proposed execution is supported')
+    need(PROFILE=='candidate14/v24' and EXECUTION=='afc0e66c-535b-426e-a937-964d0c9ca0d6','only the new proposed execution is supported')
     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
     # Verify retained history before allocating any owner or volume.
     retained=historical_gate()
@@ -168,7 +205,7 @@ def allocate():
         source=build()
         old=load(p1.PACKET/'candidate.json');scopes=load(ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json')
         state={'status':'STOPPED_ALLOCATION_NOT_NATIVE_ACCEPTANCE','source':source,'profile':PROFILE,'execution':EXECUTION,'allocation_nonce':a.nonce,
-               'window':W,'retained':retained,'binaries':{n:sha(CONTROL/n) for n in ('reader','operator','owner','readonly-check.exe')},'groups':[],'native_delete':0,'authorization':'NOT_RECEIVED','schedule':'NOT_CREATED'}
+               'window':W,'retained':retained,'binaries':{n:sha(CONTROL/n) for n in ('reader','operator','owner','readonly-check.exe')},'build_files':{name:sha(CONTROL/name) for name in ('reader','operator','owner','readonly-check.exe',*[binary+'-build.'+channel for binary in ('reader','operator','owner','checker') for channel in ('stdout','stderr')])},'groups':[],'native_delete':0,'authorization':'NOT_RECEIVED','schedule':'NOT_CREATED'}
         mapping={'Execution':EXECUTION,'Profile':PROFILE,'Groups':[]}
         for n,scope in enumerate(scopes):
             group=scope['Group'];g=next(x for x in old['Groups'] if x['Group']==group)
@@ -177,7 +214,7 @@ def allocate():
             config=load(p1.PRIVATE/project/'config.json')
             need(all(closed(inspect(g[role])) for role in ('Core','Native','Gateway')),'source not closed')
             pg_env=backup/'postgres.env';pg_env.write_text('POSTGRES_USER=checkpoint_admin\nPOSTGRES_DB=postgres\nPOSTGRES_PASSWORD='+secrets.token_hex(32)+'\n',encoding='utf-8')
-            subnet='10.246.'+str(190+n)+'.0/28'
+            subnet='10.246.'+str(193+n)+'.0/28'
             # Reuse the existing subnet overlap check; never attach to another run.
             runner=prior.module('six_allocation_runner','prepare-remaining-runner.py');runner.check_subnet(subnet)
             network=a.network(prefix+'-restore',subnet)
