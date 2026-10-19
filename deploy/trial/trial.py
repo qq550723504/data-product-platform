@@ -5,11 +5,12 @@ import json
 import sys
 from runtime import STATE, Refused, exclusive, preflight, read, start, status, stop
 from resume import resume, restart
+from upgrade import upgrade
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("preflight", "start", "status", "stop", "resume", "restart"))
+    parser.add_argument("command", choices=("preflight", "start", "status", "stop", "resume", "restart", "upgrade"))
     args = parser.parse_args()  # Reject reset/cleanup/fault actions before any IO.
     try:
         with exclusive():
@@ -18,7 +19,7 @@ def main():
             else:
                 if not (STATE / "state.json").exists(): raise Refused("No trial registry in this worktree; run preflight/start")
                 s = read(STATE / "state.json")
-                result = {"status": status, "stop": stop, "resume": resume, "restart": restart}[args.command](s)
+                result = {"status": status, "stop": stop, "resume": resume, "restart": restart, "upgrade": upgrade}[args.command](s)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     except (Refused, OSError, ValueError, KeyError) as e:
         # No raw subprocess output, DSN, HTTP headers or credential values.

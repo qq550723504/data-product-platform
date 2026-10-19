@@ -435,6 +435,9 @@ def verify(s, *, source=True, running=True):
         need(digest(Path(name).read_bytes()) == expected, "Private profile/credential drift; retain this run")
     for role, value in s["binaries"].items():
         need(digest(Path(value["path"]).read_bytes()) == value["sha256"], role + " binary drift")
+    if "businessBinding" in s:
+        from upgrade import verify_business
+        verify_business(s)
     for role, expected in s["containers"].items():
         item = json.loads(docker("inspect", expected["name"]))[0]
         verify_container(s, role, item)
@@ -454,19 +457,34 @@ def verify(s, *, source=True, running=True):
 
 def core_environment(s):
     p, cfg = Path(s["private"]), read(Path(s["private"]) / "config.json")
-    return dict(environment(), APP_ENV="synthetic-trial", APP_HTTP_ADDR=f"127.0.0.1:{s['ports']['api']}", POSTGRES_DSN=cfg["DSN"],
+    env = dict(environment(), APP_ENV="synthetic-trial", APP_HTTP_ADDR=f"127.0.0.1:{s['ports']['api']}", POSTGRES_DSN=cfg["DSN"],
                 REDIS_ADDR=f"127.0.0.1:{s['ports']['redis']}", REDIS_DB="0", OBJECT_STORAGE_ENDPOINT=cfg["Profile"]["StorageEndpoint"],
                 OBJECT_STORAGE_ACCESS_KEY=cfg["RootKey"], OBJECT_STORAGE_SECRET_KEY=cfg["RootSecret"], OBJECT_STORAGE_BUCKET="raw", OBJECT_STORAGE_USE_SSL="false",
                 INDUSTRY_PACK_ROOT=str(ROOT / "industry-packs"), INGESTION_PROFILE=s.get("activeProfile", str(p / "profile.json")),
                 OPENMETADATA_ENABLED="false", HOP_ENABLED="false", SPLINK_ENABLED="false", GX_ENABLED="false", LABEL_STUDIO_ENABLED="false",
                 DELIVERY_API_ENABLED="false", HUMAN_DECISION_API_ENABLED="false")
+    if "businessBinding" in s:
+        from upgrade import verify_business
+        manifest = verify_business(s)
+        env.update(HUMAN_DECISION_API_ENABLED="true", HUMAN_DECISION_API_TOKEN=Path(manifest["humanTokenFile"]).read_text().strip(),
+                   HUMAN_DECISION_API_SUBJECT="trial-operator-" + s["runId"], HUMAN_DECISION_API_ACTOR_ID=s["actorId"],
+                   HUMAN_DECISION_API_WORKSPACE_IDS=s["workspaceId"], RIGHTS_API_TOKEN=(p / "token").read_text().strip(),
+                   RIGHTS_API_ACTOR_ID=s["actorId"], RIGHTS_API_WORKSPACE_IDS=s["workspaceId"])
+    return env
 
 
 def web_environment(s):
     p = Path(s["private"])
-    return dict(environment(), NODE_ENV="production", PLATFORM_API_BASE_URL=s["api"], POC_WORKSPACE_ID=s["workspaceId"],
+    env = dict(environment(), NODE_ENV="production", PLATFORM_API_BASE_URL=s["api"], POC_WORKSPACE_ID=s["workspaceId"],
                 POC_ENABLE_INGESTION_ACTIONS="true", POC_INGESTION_TOKEN_FILE=str(p / "token"), POC_INGEST_ACTOR_ID=s["actorId"],
                 POC_TRIAL_RAW_ONLY="true")
+    if "businessBinding" in s:
+        from upgrade import verify_business
+        manifest = verify_business(s)
+        env.update(POC_TRIAL_RAW_ONLY="false", POC_ENABLE_REVIEW_ACTIONS="true", POC_RIGHTS_TOKEN_FILE=str(p / "token"),
+                   HUMAN_DECISION_API_TOKEN=Path(manifest["humanTokenFile"]).read_text().strip(),
+                   POC_INGESTION_WORKFLOW_ID=manifest["business"]["workflowVersionId"])
+    return env
 
 
 def start():
@@ -551,6 +569,12 @@ def status(s):
               "controllerHead": s.get("controllerBinding", {}).get("head", s["head"]),
               "web": s.get("web"), "registry": str(STATE / "state.json"), "OpenMetadata": "NOT_ENABLED",
               "PR2": {"restartResume": s.get("resume", {}).get("status", "NOT_RUN"), "businessDelivery": "NOT_RUN"}, "humanExplanation": "deferred / NOT_RUN"}
+    if "businessBinding" in s:
+        from upgrade import verify_business
+        m = verify_business(s)
+        result["businessHead"] = m["head"]
+        result["PR2"]["businessUpgrade"] = s.get("upgrade", {}).get("status", "UNKNOWN")
+        result["workflowVersionId"] = m["business"]["workflowVersionId"]
     if s["phase"] == "RUNNING":
         expiry = s.get("resume", {}).get("credentialExpiresAt")
         if expiry:

@@ -6,6 +6,7 @@
 .ingest-tests/
 .next-b3*/
 .next-pgi-b3*/
+.next-trial-*
 .compliance-tests/
 .dataset-version-tests/
 .execution-tests/
