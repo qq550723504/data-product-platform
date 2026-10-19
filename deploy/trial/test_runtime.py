@@ -138,6 +138,32 @@ class TrialContracts(unittest.TestCase):
             env=r.environment()
         self.assertFalse(any(k in env for k in ("RIGHTS_API_TOKEN","NEXT_PUBLIC_TOKEN","COMPOSE_FILE","DOCKER_HOST","INGESTION_PROFILE")))
 
+    def test_failed_commands_preserve_existing_diagnostics_and_redact_each_new_log(self):
+        with tempfile.TemporaryDirectory() as d, patch.object(r,"STATE",Path(d)/"state"):
+            r.STATE.mkdir();private=Path(d)/"private";private.mkdir()
+            old=private/"last-command-error.log";old.write_bytes(b"original diagnostic evidence")
+            secret=private/"identity.json";secret.write_text(json.dumps({"SecretKey":"synthetic-secret-value"}),encoding="utf-8")
+            r.write(r.STATE/"state.json",{"private":str(private),"secretReferences":[str(secret)]})
+            observations=[]
+            for failure in (b"first synthetic-secret-value failure",b"second synthetic-secret-value failure"):
+                with patch.object(r.subprocess,"run",return_value=Mock(returncode=1,stdout=b"",stderr=failure)):
+                    with self.assertRaises(r.Refused) as refused:r.command(["synthetic-command"])
+                observations.append(str(refused.exception))
+            logs=sorted(private.glob("command-error-*.log"))
+            self.assertEqual(old.read_bytes(),b"original diagnostic evidence")
+            self.assertEqual(len(logs),2)
+            self.assertEqual({log.read_bytes() for log in logs},{b"first [REDACTED] failure",b"second [REDACTED] failure"})
+            for log in logs:self.assertTrue(any(log.name in value for value in observations))
+            self.assertTrue(all("synthetic-secret-value" not in value for value in observations))
+
+    def test_diagnostic_name_collision_cannot_overwrite_prior_log(self):
+        with tempfile.TemporaryDirectory() as d, patch.object(r,"STATE",Path(d)):
+            old=Path(d)/"command-error-collision.log";old.write_bytes(b"prior failure evidence")
+            r.write(Path(d)/"state.json",{"private":d,"secretReferences":[]})
+            with patch.object(r.uuid,"uuid4",return_value=Mock(hex="collision")),patch.object(r.subprocess,"run",return_value=Mock(returncode=1,stdout=b"",stderr=b"new failure")):
+                with self.assertRaises(FileExistsError):r.command(["synthetic-command"])
+            self.assertEqual(old.read_bytes(),b"prior failure evidence")
+
     @unittest.skipUnless(os.name=="nt","Windows identity/lock contract")
     def test_operator_lock_and_pid_creation_identity(self):
         with tempfile.TemporaryDirectory() as d:

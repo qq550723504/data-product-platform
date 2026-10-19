@@ -2,6 +2,7 @@
 import base64
 import csv
 import ctypes
+from datetime import datetime, timezone
 import hashlib
 import io
 import ipaddress
@@ -23,6 +24,9 @@ from contextlib import contextmanager
 ROOT = Path(__file__).resolve().parents[2]
 FIXED = ROOT / "examples/enterprise-activity/postgres-ingestion"
 STATE = ROOT / ".data/trial"
+SOURCE_PATHS = ("apps/platform", "apps/web", "migrations", "industry-packs", "deploy/trial",
+                "examples/enterprise-activity/data", "examples/enterprise-activity/postgres-ingestion",
+                "examples/lifecycle-d1/durable-storage.ps1")
 LABEL = "dpp.trial.run"
 PG = "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
 HOP = "apache/hop:2.19.0@sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d"
@@ -78,6 +82,7 @@ def command(args, *, data=None, cwd=ROOT, env=None, timeout=180):
     if r.returncode:
         # Only sanitized diagnostics are persisted, including on startup failure.
         raw = r.stdout + r.stderr
+        diagnostic = "no trial registry; diagnostic not persisted"
         if (STATE / "state.json").exists():
             s = read(STATE / "state.json")
             for name in s.get("secretReferences", []):
@@ -89,8 +94,11 @@ def command(args, *, data=None, cwd=ROOT, env=None, timeout=180):
                 except (ValueError, AttributeError): pass
                 for value in values:
                     if len(value) >= 8: raw = raw.replace(value, b"[REDACTED]")
-            (Path(s["private"]) / "last-command-error.log").write_bytes(raw)
-        raise Refused(f"{Path(str(args[0])).name} failed; sanitized private last-command-error.log, retain this run")
+            error_path = Path(s["private"]) / ("command-error-" + uuid.uuid4().hex + ".log")
+            with error_path.open("xb") as log:
+                log.write(raw)
+            diagnostic = "sanitized private " + error_path.name
+        raise Refused(f"{Path(str(args[0])).name} failed; {diagnostic}, retain this run")
     return r.stdout
 
 
@@ -110,10 +118,7 @@ def fixture_tables():
 
 
 def sources():
-    paths = command(["git", "ls-files", "-co", "--exclude-standard", "--",
-                     "apps/platform", "apps/web", "migrations", "industry-packs", "deploy/trial",
-                     "examples/enterprise-activity/data", "examples/enterprise-activity/postgres-ingestion",
-                     "examples/lifecycle-d1/durable-storage.ps1"])
+    paths = command(["git", "ls-files", "-co", "--exclude-standard", "--", *SOURCE_PATHS])
     return {p: digest((ROOT / p).read_bytes().replace(b"\r\n", b"\n"))
             for p in sorted(set(paths.decode().splitlines()))
             if p != "apps/web/next-env.d.ts" and (ROOT / p).is_file()}
@@ -369,12 +374,14 @@ def process_identity(pid, terminate=False, expected=None, allow_missing=False):
         k.CloseHandle(h)
 
 
-def spawn(s, role, args, env):
-    with (Path(s["private"]) / (role + ".log")).open("wb") as log:
+def spawn(s, role, args, env, *, log_directory=None):
+    log_path = Path(log_directory or s["private"]) / (role + ".log")
+    with log_path.open("xb") as log:
         p = subprocess.Popen([str(a) for a in args], cwd=ROOT / "apps" / ("web" if role == "web" else "platform"),
                              env=env, stdin=subprocess.DEVNULL, stdout=log, stderr=log,
                              creationflags=subprocess.CREATE_NO_WINDOW | subprocess.DETACHED_PROCESS)
     s["processes"][role] = process_identity(p.pid)
+    s.setdefault("processLogs", {})[role] = str(log_path)
     save(s)
 
 
@@ -408,7 +415,12 @@ def container_hash(item):
 def verify(s, *, source=True, running=True):
     need(s["root"] == str(ROOT) and s["contract"] == "issue325/stage1", "Foreign trial registry")
     need(preflight()["daemonId"] == s["host"]["daemonId"], "Docker daemon drift")
-    if source: need(sources() == s["sources"], "Source drift; retain original run identity and diagnose")
+    if source:
+        if "controllerBinding" in s:
+            from resume import verify_binding
+            verify_binding(s)
+        else:
+            need(sources() == s["sources"], "Source drift; retain original run identity and diagnose")
     need(digest((Path(s["private"]) / "compose.json").read_bytes()) == s["composeSha256"], "Compose configuration drift")
     for name, expected in s.get("privateHashes", {}).items():
         need(digest(Path(name).read_bytes()) == expected, "Private profile/credential drift; retain this run")
@@ -431,10 +443,27 @@ def verify(s, *, source=True, running=True):
     storage_check(s, ["running"] if running else ["exited", "running", "created"])
 
 
+def core_environment(s):
+    p, cfg = Path(s["private"]), read(Path(s["private"]) / "config.json")
+    return dict(environment(), APP_ENV="synthetic-trial", APP_HTTP_ADDR=f"127.0.0.1:{s['ports']['api']}", POSTGRES_DSN=cfg["DSN"],
+                REDIS_ADDR=f"127.0.0.1:{s['ports']['redis']}", REDIS_DB="0", OBJECT_STORAGE_ENDPOINT=cfg["Profile"]["StorageEndpoint"],
+                OBJECT_STORAGE_ACCESS_KEY=cfg["RootKey"], OBJECT_STORAGE_SECRET_KEY=cfg["RootSecret"], OBJECT_STORAGE_BUCKET="raw", OBJECT_STORAGE_USE_SSL="false",
+                INDUSTRY_PACK_ROOT=str(ROOT / "industry-packs"), INGESTION_PROFILE=s.get("activeProfile", str(p / "profile.json")),
+                OPENMETADATA_ENABLED="false", HOP_ENABLED="false", SPLINK_ENABLED="false", GX_ENABLED="false", LABEL_STUDIO_ENABLED="false",
+                DELIVERY_API_ENABLED="false", HUMAN_DECISION_API_ENABLED="false")
+
+
+def web_environment(s):
+    p = Path(s["private"])
+    return dict(environment(), NODE_ENV="production", PLATFORM_API_BASE_URL=s["api"], POC_WORKSPACE_ID=s["workspaceId"],
+                POC_ENABLE_INGESTION_ACTIONS="true", POC_INGESTION_TOKEN_FILE=str(p / "token"), POC_INGEST_ACTOR_ID=s["actorId"],
+                POC_TRIAL_RAW_ONLY="true")
+
+
 def start():
     if (STATE / "state.json").exists():
         s = read(STATE / "state.json")
-        need(s["phase"] == "RUNNING", f"Existing run {s['runId']} is {s['phase']}; no reseed/replacement. Resume is PR 2")
+        need(s["phase"] == "RUNNING", f"Existing run {s['runId']} is {s['phase']}; no reseed/replacement. Use explicit resume after stop")
         return status(s)
     host = preflight(); run_id = uuid.uuid4().hex
     p = private_directory(run_id); project = "dpp-trial-" + run_id
@@ -480,19 +509,11 @@ def start():
         baseline = inspect_facts(s)
         need(baseline["counts"]["dataset_version"] == baseline["counts"]["ingestion_operation"] == 0, "First start must not create business versions/batches")
         write(STATE / "initial-facts.json", baseline)
-        cfg = read(p / "config.json")
-        core_env = dict(environment(), APP_ENV="synthetic-trial", APP_HTTP_ADDR=f"127.0.0.1:{s['ports']['api']}", POSTGRES_DSN=cfg["DSN"],
-                        REDIS_ADDR=f"127.0.0.1:{s['ports']['redis']}", REDIS_DB="0", OBJECT_STORAGE_ENDPOINT=cfg["Profile"]["StorageEndpoint"],
-                        OBJECT_STORAGE_ACCESS_KEY=cfg["RootKey"], OBJECT_STORAGE_SECRET_KEY=cfg["RootSecret"], OBJECT_STORAGE_BUCKET="raw", OBJECT_STORAGE_USE_SSL="false",
-                        INDUSTRY_PACK_ROOT=str(ROOT / "industry-packs"), INGESTION_PROFILE=str(p / "profile.json"),
-                        OPENMETADATA_ENABLED="false", HOP_ENABLED="false", SPLINK_ENABLED="false", GX_ENABLED="false", LABEL_STUDIO_ENABLED="false",
-                        DELIVERY_API_ENABLED="false", HUMAN_DECISION_API_ENABLED="false")
+        core_env = core_environment(s)
         for role in ("api", "worker"): spawn(s, role, [p / "bin" / (role + ".exe")], core_env)
         s["api"] = f"http://127.0.0.1:{s['ports']['api']}"
         wait_for(lambda: http(s["api"] + "/health/ready"), "API")
-        web_env = dict(environment(), NODE_ENV="production", PLATFORM_API_BASE_URL=s["api"], POC_WORKSPACE_ID=s["workspaceId"],
-                       POC_ENABLE_INGESTION_ACTIONS="true", POC_INGESTION_TOKEN_FILE=str(p / "token"), POC_INGEST_ACTOR_ID=s["actorId"],
-                       POC_TRIAL_RAW_ONLY="true")
+        web_env = web_environment(s)
         print(json.dumps({"phase": "BUILDING_PRODUCTION_WEB", "runId": run_id}), flush=True)
         command(["cmd.exe", "/d", "/c", "npm.cmd install --no-audit --no-fund --package-lock=false"], cwd=ROOT / "apps/web", timeout=600)
         command(["cmd.exe", "/d", "/c", "npm.cmd run build"], cwd=ROOT / "apps/web", env=web_env, timeout=900)
@@ -518,8 +539,13 @@ def status(s):
     need(s["phase"] in ("RUNNING", "STOPPED"), f"Run {s['runId']} is {s['phase']}; no reseed/replacement, inspect retained registry")
     verify(s, running=s["phase"] == "RUNNING")
     result = {"runId": s["runId"], "phase": s["phase"], "workspaceId": s["workspaceId"], "sourceHead": s["head"],
-              "web": s.get("web"), "registry": str(STATE / "state.json"), "OpenMetadata": "NOT_ENABLED", "PR2": "NOT_RUN", "humanExplanation": "deferred / NOT_RUN"}
+              "controllerHead": s.get("controllerBinding", {}).get("head", s["head"]),
+              "web": s.get("web"), "registry": str(STATE / "state.json"), "OpenMetadata": "NOT_ENABLED",
+              "PR2": {"restartResume": s.get("resume", {}).get("status", "NOT_RUN"), "businessDelivery": "NOT_RUN"}, "humanExplanation": "deferred / NOT_RUN"}
     if s["phase"] == "RUNNING":
+        expiry = s.get("resume", {}).get("credentialExpiresAt")
+        if expiry:
+            need(datetime.fromisoformat(expiry) > datetime.now(timezone.utc), "Core session expired; use explicit restart for same-scope renewal")
         need(http(s["api"] + "/health/ready") and http(s["web"] + "/batches"), "Runtime health UNKNOWN")
         facts = inspect_facts(s); write(STATE / "latest-facts.json", facts)
         result["facts"] = facts
