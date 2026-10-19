@@ -377,11 +377,14 @@ def inspect_facts(s):
                               env=dict(environment(), DPP_TRIAL_CONFIG=str(Path(s["private"]) / "config.json"))))
 
 
-def verify_container(s, role, item):
+def verify_container(s, role, item, *, configuration=True):
     expected = s["containers"][role]
     need(item["Name"].lstrip("/") == expected["name"] and item["Config"]["Labels"].get(LABEL) == s["runId"]
          and item["Image"] == s["images"][role]["id"] and (not expected.get("id") or item["Id"] == expected["id"]),
          f"{role} identity drift; no mutation allowed")
+    # Exact owned containers can always be stopped for containment. Do not
+    # require their configuration to remain healthy in order to stop them.
+    if not configuration: return
     for bindings in (item["HostConfig"].get("PortBindings") or {}).values():
         need(all(b["HostIp"] == "127.0.0.1" for b in bindings), "Non-loopback publication refused")
     if expected.get("configHash"):
@@ -389,8 +392,11 @@ def verify_container(s, role, item):
 
 
 def container_hash(item):
-    return digest(json.dumps({"Config": item["Config"], "HostConfig": item["HostConfig"],
-                              "Mounts": item["Mounts"], "Networks": sorted(item["NetworkSettings"]["Networks"])}, sort_keys=True).encode())
+    config = {k:item["Config"].get(k) for k in ("Image","Entrypoint","Cmd","Env","User","WorkingDir","Labels")}
+    host = {k:item["HostConfig"].get(k) for k in ("PortBindings","Privileged","ReadonlyRootfs","CapAdd","CapDrop","SecurityOpt","ExtraHosts","PidMode")}
+    mounts = [{k:m.get(k) for k in ("Type","Destination","Name","RW","Source")} for m in item["Mounts"]]
+    return digest(json.dumps({"Config":config,"HostConfig":host,"Mounts":sorted(mounts,key=lambda m:m["Destination"]),
+                              "Networks": sorted(item["NetworkSettings"]["Networks"])}, sort_keys=True).encode())
 
 
 def verify(s, *, source=True, running=True):
@@ -525,7 +531,7 @@ def stop(s):
         # If Compose never created a resource, it cannot be a stop target.
         found = docker("ps", "-aq", "--filter", "name=^/" + expected["name"] + "$").decode().strip()
         if not found: continue
-        item = json.loads(docker("inspect", found))[0]; verify_container(s, role, item); owned.append(item["Id"])
+        item = json.loads(docker("inspect", found))[0]; verify_container(s, role, item, configuration=False); owned.append(item["Id"])
     for expected in s["processes"].values(): process_identity(expected["pid"], expected=expected, allow_missing=True)
     if s["phase"] == "RUNNING": write(STATE / "before-stop-facts.json", inspect_facts(s))
     s["phase"] = "STOPPING"; save(s)

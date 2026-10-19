@@ -67,6 +67,13 @@ class TrialContracts(unittest.TestCase):
             item=self.container();mutation(item)
             with self.assertRaises(r.Refused):r.verify_container(self.state(),"core",item)
 
+    def test_daemon_runtime_defaults_do_not_change_authored_contract(self):
+        item=self.container();before=r.container_hash(item)
+        item["HostConfig"].update({"Runtime":"runc","MemorySwappiness":-1,"ConsoleSize":[0,0]})
+        self.assertEqual(before,r.container_hash(item))
+        item["Mounts"].append({"Type":"bind","Source":"foreign","Destination":"/data","RW":True})
+        self.assertNotEqual(before,r.container_hash(item))
+
     def test_stop_uses_exact_container_id_and_retains_all_resources(self):
         calls=[];s=self.state();item=self.container()
         def docker(*args,**kw):
