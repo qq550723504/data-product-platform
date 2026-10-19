@@ -54,4 +54,33 @@ Windows 的已退出进程对象可能因观察者仍持有 handle 而暂时存�
 
 中断/失败后 registry 保留 UNKNOWN，后续 start 拒绝重新初始化；先保存运行身份和日志，通过 stop 精确停止已记录服务。stop 只依赖本机 Docker daemon 与确切归属校验，不依赖构建工具、fixture 或业务健康。RUNNING 的停止前事实读取失败时，`before-stop-observation.json` 和 registry 的 `stopInspection` 明确记录 UNKNOWN，保留已有成功回执，仍停止已核验的服务；不能把这当作业务数据已验证。不存在 reset/cleanup/down/故障注入/DELETE 命令。不删除卷、对象、staging、备份、镜像标签或其他环境。STOPPED 后仍保留完整回执与资源，start 明确拒绝重建，使用上述显式续用协议。
 
-OpenMetadata 为 NOT_ENABLED；完整 B/C 闭环、真实下载与撤权负例属于 PR 2。人工解释 deferred / NOT_RUN。当前候选的实际验收见 `docs/acceptance/issue325-stage1.md`；历史 B/C 报告不构成本候选 PASS。精确 merge SHA 的 main CI、生产准入均单列。
+## 显式业务制品升级与原 RAW 加工
+
+用户授权业务升级后，在同一 worktree 提交升级源码，再执行：
+
+```powershell
+python deploy/trial/trial.py upgrade
+python deploy/trial/trial.py status
+```
+
+`upgrade` 要求原环境已知 RUNNING。先构建独立路径的 API/worker/生产 Web，
+不覆盖旧 binary 或运行中的 `.next`；再使用既有 CreateDataset / CreateWorkflowVersion
+命令登记两个输出 Dataset 和冻结工作流，不 seed、不 migration、不重建或重抽 RAW。
+原 source HEAD、原制品字段与 `resume-origin.json` 保留；`businessHead` 和独立 hash
+manifest 明确新制品版本。升级 journal 位于 `.data/trial/upgrades/<attempt>`，私有
+制品位于原 private 目录下 `upgrades/<attempt>`，所有开始/完成/失败回执保留。
+新人工决策 capability 仍绑定同一 Actor/workspace/subject，仅用于本机合成试用。
+
+切换时受控停止同一 owner，复用原容器、卷、端口和同范围有限 Core STS 后启动新制品。
+完整旧 SQL 事实、来源每一行、原批次/receipt/RAW hash 必须保持。重复 upgrade 只读状态，
+不会再次创建工作流、输出或业务运行。普通 resume/restart 只恢复明确绑定的制品；未接纳
+的业务源码变化继续拒绝。UNKNOWN 保留现场，禁止盲目重新升级或修改旧回执。
+
+回到原 `/batches/<operation>`：点“开始实体解析”，进入 `/reviews` 核对来源、策略、
+冻结候选后填写理由确认或拒绝；任务 SUCCEEDED 后回原批次点“运行既有加工模板”。
+该操作使用冻结 WorkflowVersion、原三份 RAW 和审核后 STANDARDIZED 版本，稳定的
+batch idempotency key 防止顺序重放重复加工。执行详情展示冻结依赖、产物、隔离和成本。
+不要创建替代批次；审核不由 launcher 自动作出，certification/delivery 也不由加工代替。
+具体边界见 [business checkpoint](../../docs/acceptance/issue325-stage2-business-checkpoint.md)。
+
+OpenMetadata 为 NOT_ENABLED；完整 B/C 闭环、真实下载与撤权负例属于 PR 2。人工解释 deferred / NOT_RUN。第一阶段实际验收见 `docs/acceptance/issue325-stage1.md`；历史 B/C 报告不构成本候选 PASS。精确 merge SHA 的 main CI、生产准入均单列。

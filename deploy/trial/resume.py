@@ -29,7 +29,11 @@ def controller_only(path):
 
 
 def check_sources(s, current):
-    changed = sorted(p for p in set(current) | set(s["sources"]) if current.get(p) != s["sources"].get(p))
+    baseline = s["sources"]
+    if "businessBinding" in s:
+        from upgrade import verify_business
+        baseline = verify_business(s)["sources"]
+    changed = sorted(p for p in set(current) | set(baseline) if current.get(p) != baseline.get(p))
     r.need(all(controller_only(p) for p in changed), "Business source drift; this resume only reuses original business artifacts")
     return changed
 
@@ -125,10 +129,15 @@ def refresh_identity(s, directory, receipts):
 
 def launch_hosts(s):
     logs = Path(s["private"]) / "resume" / s["resume"]["attemptId"]
+    artifacts = None
+    if "businessBinding" in s:
+        from upgrade import verify_business
+        artifacts = verify_business(s)["artifacts"]
     for role in ("api", "worker"):
-        r.spawn(s, role, [s["binaries"][role]["path"]], r.core_environment(s), log_directory=logs)
+        binary = (artifacts["binaries"] if artifacts else s["binaries"])[role]["path"]
+        r.spawn(s, role, [binary], r.core_environment(s), log_directory=logs)
     r.wait_for(lambda: r.http(s["api"] + "/health/ready"), "API")
-    server = r.ROOT / "apps/web/.next/standalone/server.js"
+    server = Path(artifacts["web"]["root"]) / "server.js" if artifacts else r.ROOT / "apps/web/.next/standalone/server.js"
     r.spawn(s, "web", [s["binaries"]["node"]["path"], server], dict(r.web_environment(s), HOSTNAME="127.0.0.1", PORT=str(s["ports"]["web"])), log_directory=logs)
     r.wait_for(lambda: r.http(s["web"] + "/batches"), "Web", seconds=120)
 
