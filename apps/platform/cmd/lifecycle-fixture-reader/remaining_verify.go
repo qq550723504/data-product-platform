@@ -69,7 +69,21 @@ func remainingVerifyNative(ctx context.Context, r remainingConfig) error {
 	if json.Unmarshal(b, &expected) != nil {
 		return errors.New("bad native inventory")
 	}
-	scope, _ := pilot.RemainingScopeFor(r.Group)
+	if e := validateRemainingInventory(r.Group, expected); e != nil {
+		return e
+	}
+	transport := remainingVerifyTransport{c, &http.Transport{Proxy: nil, DisableKeepAlives: true, ResponseHeaderTimeout: 10 * time.Second}}
+	result, e := collectRemainingNative(ctx, c, r.Group, expected, expected, transport)
+	if e != nil {
+		return e
+	}
+	result["inventory_sha256"] = r.InventorySHA256
+	result["source_config"] = filepath.Base("remaining.json")
+	return write(c, "native-verification.json", result)
+}
+
+func validateRemainingInventory(group string, expected []remainingExpected) error {
+	scope, _ := pilot.RemainingScopeFor(group)
 	found := map[uuid.UUID]bool{}
 	keys := map[string]bool{}
 	extra := 0
@@ -85,13 +99,13 @@ func remainingVerifyNative(ctx context.Context, r remainingConfig) error {
 			original = original || cp == source
 		}
 		if !original {
-			if r.Group != "business-races" || cp.Namespace != namespaces[0] || (cp.Key != "fixture/remaining-standardized.csv" && cp.Key != "fixture/remaining-processed.csv") {
+			if group != "business-races" || cp.Namespace != namespaces[0] || (cp.Key != "fixture/remaining-standardized.csv" && cp.Key != "fixture/remaining-processed.csv") {
 				return errors.New("unexpected native output")
 			}
 			extra++
 		}
 	}
-	if len(expected) != len(scope.Copies)+extra || (r.Group == "business-races" && extra != 2) {
+	if len(expected) != len(scope.Copies)+extra || (group == "business-races" && extra != 2) {
 		return errors.New("incomplete native inventory")
 	}
 	for _, cp := range scope.Copies {
@@ -99,32 +113,43 @@ func remainingVerifyNative(ctx context.Context, r remainingConfig) error {
 			return errors.New("original native copy missing")
 		}
 	}
-	transport := remainingVerifyTransport{c, &http.Transport{Proxy: nil, DisableKeepAlives: true, ResponseHeaderTimeout: 10 * time.Second}}
+	return nil
+}
+
+// Present versions and policy resources are separate inputs. Legacy verification
+// passes the same complete inventory twice; post-v22 keeps the old policy scope.
+func collectRemainingNative(ctx context.Context, c config, group string, expected, policyExpected []remainingExpected, transport http.RoundTripper) (map[string]any, error) {
+	scope, e := pilot.RemainingScopeFor(group)
+	if e != nil {
+		return nil, e
+	}
 	client, e := minio.New(c.Endpoint, &minio.Options{Creds: credentials.NewStaticV4(c.RootAccess, c.RootSecret, ""), Region: "us-east-1", BucketLookup: minio.BucketLookupPath, MaxRetries: 1, Transport: transport})
 	if e != nil {
-		return e
+		return nil, e
 	}
 	var verified []remainingExpected
 	all := []domain.Copy{}
+	for _, o := range policyExpected {
+		all = append(all, o.Copy)
+	}
 	for _, o := range expected {
 		cp := o.Copy
-		all = append(all, cp)
 		object, e := client.GetObject(ctx, cp.Namespace, cp.Key, minio.GetObjectOptions{VersionID: cp.ProviderVersion})
 		if e != nil {
-			return e
+			return nil, e
 		}
 		content, e := io.ReadAll(io.LimitReader(object, cp.ByteSize+1))
 		info, statErr := object.Stat()
 		closeErr := object.Close()
 		hash := sha256.Sum256(content)
 		if e != nil || statErr != nil || closeErr != nil || int64(len(content)) != cp.ByteSize || hex.EncodeToString(hash[:]) != cp.ContentSHA256 || info.VersionID != cp.ProviderVersion {
-			return errors.New("native exact bytes differ")
+			return nil, errors.New("native exact bytes differ")
 		}
 		mode, until, e := client.GetObjectRetention(ctx, cp.Namespace, cp.Key, cp.ProviderVersion)
 		if e != nil {
 			native := minio.ToErrorResponse(e)
 			if !(o.Retention == "NONE" && native.StatusCode == 400 && native.Code == "NoSuchObjectLockConfiguration") {
-				return e
+				return nil, e
 			}
 		} else {
 			actual := "NONE"
@@ -132,17 +157,17 @@ func remainingVerifyNative(ctx context.Context, r remainingConfig) error {
 				actual = string(*mode)
 			}
 			if actual != o.Retention || (until == nil) != (o.RetainUntil == nil) || (until != nil && !until.Equal(*o.RetainUntil)) {
-				return errors.New("native retention differs")
+				return nil, errors.New("native retention differs")
 			}
 		}
 		hold, e := client.GetObjectLegalHold(ctx, cp.Namespace, cp.Key, minio.GetObjectLegalHoldOptions{VersionID: cp.ProviderVersion})
 		if e != nil {
 			native := minio.ToErrorResponse(e)
 			if !(!o.LegalHold && native.StatusCode == 400 && native.Code == "NoSuchObjectLockConfiguration") {
-				return e
+				return nil, e
 			}
 		} else if (hold != nil && *hold == minio.LegalHoldEnabled) != o.LegalHold {
-			return errors.New("native legal hold differs")
+			return nil, errors.New("native legal hold differs")
 		}
 		verified = append(verified, o)
 	}
@@ -157,20 +182,20 @@ func remainingVerifyNative(ctx context.Context, r remainingConfig) error {
 			key := object.Key + "\x00" + object.VersionID
 			size, ok := want[key]
 			if object.Err != nil || !ok || object.IsDeleteMarker || object.Size != size {
-				return errors.New("native namespace inventory differs")
+				return nil, errors.New("native namespace inventory differs")
 			}
 			delete(want, key)
 		}
 		if len(want) != 0 {
-			return errors.New("native inventory incomplete")
+			return nil, errors.New("native inventory incomplete")
 		}
 	}
 	admin, e := madmin.NewWithOptions(c.Endpoint, &madmin.Options{Creds: credentials.NewStaticV4(c.RootAccess, c.RootSecret, ""), Secure: false, Transport: transport})
 	if e != nil {
-		return e
+		return nil, e
 	}
 	users := map[string]string{c.InspectAccess: "lifecycle307-inspection-" + c.RunID.String(), "delete" + c.RunID.String()[:8]: "lifecycle307-remaining-delete-" + c.RunID.String()}
-	if r.Group == "business-races" {
+	if group == "business-races" {
 		for _, name := range []string{"remainread808a6960", "remainput808a6960"} {
 			users[name] = "lifecycle307-remaining-business-" + name
 		}
@@ -178,10 +203,10 @@ func remainingVerifyNative(ctx context.Context, r remainingConfig) error {
 	for name, want := range users {
 		user, e := admin.GetUserInfo(ctx, name)
 		if e != nil {
-			return e
+			return nil, e
 		}
 		if user.Status != madmin.AccountDisabled || !remainingExactUserPolicy(user, want) {
-			return errors.New("native IAM identity is not disabled with its sole exact policy")
+			return nil, errors.New("native IAM identity is not disabled with its sole exact policy")
 		}
 	}
 	statements := []any{}
@@ -196,7 +221,7 @@ func remainingVerifyNative(ctx context.Context, r remainingConfig) error {
 	}
 	deletion, _ := json.Marshal(map[string]any{"Version": "2012-10-17", "Statement": statements})
 	policies := map[string][]byte{"lifecycle307-remaining-delete-" + c.RunID.String(): deletion, "lifecycle307-inspection-" + c.RunID.String(): remainingInspectionPolicy(all)}
-	if r.Group == "business-races" {
+	if group == "business-races" {
 		read, put, _ := remainingPolicies(all)
 		policies["lifecycle307-remaining-business-remainread808a6960"] = read
 		policies["lifecycle307-remaining-business-remainput808a6960"] = put
@@ -205,23 +230,23 @@ func remainingVerifyNative(ctx context.Context, r remainingConfig) error {
 	for name, want := range policies {
 		raw, e := admin.InfoCannedPolicy(ctx, name)
 		if e != nil {
-			return e
+			return nil, e
 		}
 		actual, e := policy.ParseConfig(bytes.NewReader(raw))
 		if e != nil {
-			return e
+			return nil, e
 		}
 		expected, e := policy.ParseConfig(bytes.NewReader(want))
 		if e != nil || !actual.Equals(*expected) {
-			return errors.New("native exact policy differs")
+			return nil, errors.New("native exact policy differs")
 		}
 		if e = write(c, "native-policy-"+name+".json", json.RawMessage(raw)); e != nil {
-			return e
+			return nil, e
 		}
 		s := sha256.Sum256(raw)
 		hashes[name] = hex.EncodeToString(s[:])
 	}
-	return write(c, "native-verification.json", map[string]any{"group": r.Group, "status": "PASS_EXACT_NATIVE_READONLY", "inventory_sha256": r.InventorySHA256, "copies": verified, "disabled_identities": users, "policy_sha256": hashes, "delete": 0, "mutations": 0, "source_config": filepath.Base("remaining.json")})
+	return map[string]any{"group": group, "status": "PASS_EXACT_NATIVE_READONLY", "copies": verified, "disabled_identities": users, "policy_sha256": hashes, "delete": 0, "mutations": 0}, nil
 }
 
 func remainingExactUserPolicy(user madmin.UserInfo, want string) bool {

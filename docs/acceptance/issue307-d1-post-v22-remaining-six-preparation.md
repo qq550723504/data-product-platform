@@ -62,3 +62,12 @@ P1门禁已由新audit d64ad338-00d2-4569-bd62-9e132ddaf578 在2026-10-19T10:58:
 后续检查点：新的只读 audit `23587686-0a95-4eaa-a010-a8c896c9735b` 已逐项核实 P2/T1/T2 各有一个未释放旧 dispatch、无 claim/observation/release/absence，三项旧批准尚未撤销。全 Core 指纹和旧控制/预算/备份保持一致，Core 已重新停止。此结果尚不是可信 NOT_SENT；后续新鲜宿主/IAM proof、Command 闭合、17 版本全量刷新及新候选均仍 NOT_RUN/NOT_FROZEN，详见旧 dispatch 闭合验收矩阵。旧检查点原文保留为当时状态。
 
 最新实际结果：非删除audit `94f28318-cfd4-4c62-ba1a-bec9f35836c8` 已对原P2/T1/T2各追加旧批准撤销、可信NOT_SENT及dispatch release，三项unresolved=0；旧attempt/approval/pins/预算/成本保留，87唯一CID已停止，真实DELETE=0。执行终态 SHA `3ce05b24b298718b63dcd2c553c993b6f40a387c3a0eb26e13fda695ed5692cc`，独立实际结果终评 SHA `33bcf7eb3fd742d932996f5378cfa9870cca2e9009245f5b815152d485b7c80b`，均PASS且剩余阻断为空。8次真实技术IAM GET/观测单独保留，amount NOT_ASSESSED，不冒充零外部调用。详见旧dispatch闭合验收矩阵的最新追加。#323已按另一次直接人类授权合并，实际f22587d及其push/main CI39250314443全绿；当前后续代码在Draft #332，#307 OPEN。17版本全量刷新及新的六份候选仍NOT_RUN/NOT_FROZEN，没有新删除execution、窗口或授权。
+
+
+### 17版本入口实现检查点（2026-10-19，尚未运行原生17核验）
+
+旧P2/T1/T2已按可信终止、identity/gateway闭锁证明追加NOT_SENT及dispatch release，原预算/pins/失败事实保留。新只读合同见 `issue307-d1-post-v22-seventeen-contract.md`；当前实现分离原18-policy、唯一P1真实provider错误码HEAD absence及显式present17。维护profile不含业务Token/DB/删除权限/预算，Root凭据仍有provider root权限，只读由冻结GET/HEAD helper强制。
+
+新Go读取器/文件聚合器及全部既有两包回归共114个PASS test事件、0 FAIL（source-local01原日志）；host完整成功组合、10种失败组合、budget归属/挂载5反例及未知inspect关闭，normal/-O各4方法通过，统一audit55分钟截止的补充回执见source-local02。source-local01的host输出是统一截止接线前快照，不伪称最终字节；原始评审harness/失败日志保留，当前source终复评仍待同一冻结HEAD。
+
+17份原生读取仍NOT_RUN，六份新候选仍NOT_FROZEN；不创建新删除窗口/授权，不复用旧v22批准，不将mock视为native/IAM/Core事实。#332继续Draft，#307保持OPEN。

@@ -55,6 +55,10 @@ jobs:
           python3 -O -B examples/lifecycle-d1/test_complete_remaining_preflight.py
           python3 -B examples/lifecycle-d1/test_p1_post_v22_readonly.py
           python3 -O -B examples/lifecycle-d1/test_p1_post_v22_readonly.py
+          python3 -B examples/lifecycle-d1/test_old_business_dispatch_closure.py
+          python3 -O -B examples/lifecycle-d1/test_old_business_dispatch_closure.py
+          python3 -B examples/lifecycle-d1/test_post_v22_seventeen.py
+          python3 -O -B examples/lifecycle-d1/test_post_v22_seventeen.py
       - name: Check archived candidate04 with its frozen runtime (no provider I/O)
         run: python3 examples/lifecycle-d1/check-reference-history.py
       - name: Install isolated browser runner

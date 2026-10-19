@@ -107,7 +107,15 @@ func check(baseline, fresh, group string) (result, error) {
 	if e != nil {
 		return out, e
 	}
-	if a.Group != group || b.Group != group || len(a.Copies) != count[0] || len(b.Copies) != count[0] || a.Inventory != b.Inventory || !reflect.DeepEqual(a.Users, b.Users) || len(a.Users) != count[1] || len(a.Policies) != count[1] || len(b.Policies) != count[1] {
+	if len(a.Copies) != count[0] || len(b.Copies) != count[0] || a.Inventory != b.Inventory {
+		return out, errors.New("inventory membership differs")
+	}
+	return compareNativeReceipts(baseline, fresh, group, a, b, count[1])
+}
+
+func compareNativeReceipts(baseline, fresh, group string, a, b receipt, identities int) (result, error) {
+	out := result{Group: group}
+	if a.Group != group || b.Group != group || len(a.Copies) != len(b.Copies) || !reflect.DeepEqual(a.Users, b.Users) || len(a.Users) != identities || len(a.Policies) != identities || len(b.Policies) != identities {
 		return out, errors.New("inventory or disabled identity binding differs")
 	}
 	for i := range a.Copies {
@@ -119,10 +127,10 @@ func check(baseline, fresh, group string) (result, error) {
 			return out, errors.New("exact version/content/protection differs")
 		}
 	}
-	if e = policyFiles(baseline, a.Policies); e != nil {
+	if e := policyFiles(baseline, a.Policies); e != nil {
 		return out, e
 	}
-	if e = policyFiles(fresh, b.Policies); e != nil {
+	if e := policyFiles(fresh, b.Policies); e != nil {
 		return out, e
 	}
 	for user, n := range a.Users {
@@ -164,19 +172,30 @@ func check(baseline, fresh, group string) (result, error) {
 		out.Policies = append(out.Policies, comparison{n, digest(x), digest(y), true})
 	}
 	out.Status = "PASS_COMPLETE_NATIVE_AGGREGATION"
-	out.Copies = count[0]
+	out.Copies = len(b.Copies)
 	return out, nil
 }
 func main() {
 	baseline := flag.String("baseline", "", "frozen readonly receipt directory")
 	fresh := flag.String("fresh", "", "new readonly receipt directory")
 	group := flag.String("group", "", "finite group")
+	postV22 := flag.Bool("post-v22", false, "explicit post-v22 17-version contract")
+	expectation := flag.String("expectation", "", "post-v22 public execution bindings")
+	inventory := flag.String("inventory", "", "actual present inventory bytes")
 	flag.Parse()
 	if *baseline == "" || *fresh == "" || *group == "" || flag.NArg() != 0 {
 		fmt.Fprintln(os.Stderr, "exact baseline/fresh/group required")
 		os.Exit(1)
 	}
-	out, e := check(*baseline, *fresh, *group)
+	var out result
+	var e error
+	if *postV22 {
+		out, e = checkPostV22(*baseline, *fresh, *group, *expectation, *inventory)
+	} else if *expectation != "" || *inventory != "" {
+		e = errors.New("post-v22 arguments require explicit mode")
+	} else {
+		out, e = check(*baseline, *fresh, *group)
+	}
 	if e != nil {
 		fmt.Fprintln(os.Stderr, "readonly aggregation denied:", e)
 		os.Exit(1)

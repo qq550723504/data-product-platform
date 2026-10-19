@@ -546,6 +546,16 @@ func execute(ctx context.Context, mode string) error {
 func main() {
 	mode := flag.String("mode", "", "bounded reader step")
 	flag.Parse()
+	if *mode == "post-v22-verify-native" {
+		ctx, cancel := context.WithTimeout(context.Background(), 13*time.Minute)
+		defer cancel()
+		if err := postV22Verify(ctx); err != nil {
+			fmt.Println("Post-v22 readonly verification failed:", err, "; DELETE=0; resources retained")
+			os.Exit(1)
+		}
+		fmt.Println("Post-v22 readonly verification complete; DELETE=0")
+		return
+	}
 	if strings.HasPrefix(*mode, "remaining-") {
 		ctx, cancel := context.WithTimeout(context.Background(), 13*time.Minute)
 		defer cancel()

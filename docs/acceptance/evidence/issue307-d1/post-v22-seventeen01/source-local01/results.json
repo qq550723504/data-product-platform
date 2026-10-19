@@ -1,0 +1,69 @@
+{
+  "at": "2026-10-19T13:38:58.498808+00:00",
+  "status": "PASS_OFFLINE_NON_DELETE_ONLY",
+  "results": [
+    {
+      "name": "go",
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "./cmd/lifecycle-fixture-reader",
+        "./cmd/lifecycle-fixture-readonly-check"
+      ],
+      "returncode": 0,
+      "stdout_sha256": "10957ff20526e75932b9c1ecfb37142d6117d0f3c491ff41a60d124d0e57ebad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed_test_events": 114,
+      "failed_test_events": 0
+    },
+    {
+      "name": "host-normal",
+      "command": [
+        "python",
+        "-B",
+        "examples/lifecycle-d1/test_post_v22_seventeen.py"
+      ],
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "cc212596f834f9db2ed3ea7f8b594dfc75f45cf3496a6e199063e562f2336a8f"
+    },
+    {
+      "name": "host-opt",
+      "command": [
+        "python",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_post_v22_seventeen.py"
+      ],
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "3d8a1c8fddceda1b7a197f350e8a0d1870e0e9fd22556504de6e2059592cf2d2"
+    },
+    {
+      "name": "closure-normal",
+      "command": [
+        "python",
+        "-B",
+        "examples/lifecycle-d1/test_old_business_dispatch_closure.py"
+      ],
+      "returncode": 0,
+      "stdout_sha256": "9e0deab366b2b9a06bb83123447911ad76a4178caa5cd4b92fa565af8eb52849",
+      "stderr_sha256": "c12f397dca3f21bda254903258fccdf6b1c5b1c95d4ce044fd7006705eca3732"
+    },
+    {
+      "name": "closure-opt",
+      "command": [
+        "python",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_old_business_dispatch_closure.py"
+      ],
+      "returncode": 0,
+      "stdout_sha256": "a20735e8fac84446bb10746d24f409ffb0adbf2aba4bcdee484d0bab7ea55d29",
+      "stderr_sha256": "deb03cfc7513d13056cfb37550888508e17305cd235d84c4847bf359ec086732"
+    }
+  ],
+  "native17": "NOT_RUN"
+}
