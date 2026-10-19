@@ -24,13 +24,18 @@ bucket remains an operator responsibility. The Core STS policy is unchanged.
 On 2026-10-19 the owner of #307 (chat `实现 #307 引用需求与业务处置竞争`)
 confirmed that #330 has one implementation writer in
 `codex/issue330-workspace-storage`. #307 retains its remaining executor, P1
-recovery, IAM bootstrap and Outbox event filtering. Its pushed reference is
-`f59bf8b09aa1bbcf9cae3847d7ebc3389596f577`; #330 starts from main
-`d00344c748c4ea313f06ebc51dd5c73210527ee8`, and reserves migration 70.
+recovery, IAM bootstrap and Outbox event filtering. Its initial reference was
+`f59bf8b09aa1bbcf9cae3847d7ebc3389596f577`; #330 initially started from main
+`d00344c748c4ea313f06ebc51dd5c73210527ee8`, and owns migration 70.
 Migration 69 belongs to #307 / #323. The migration runner cannot insert 69 after
-70 has already been applied. This candidate must remain draft until 69 lands
-and the branch is rebased and tested in that order; 70 must not be applied first
-to the retained database. No #307 migration is duplicated or renumbered here.
+70 has already been applied. #323 landed as
+`f22587d780bacc9c865b269fa20b1cb135034f5a`; its exact push/main
+[CI 39250314443](https://github.com/qq550723504/data-product-platform/actions/runs/39250314443)
+completed with all 13 jobs successful before this branch was rebased. Migration
+69 is inherited unchanged from main; only 70 is introduced by this candidate.
+The canonical migration runner passed 69, then 70, then an unchanged replay on
+an isolated regression database. No #307 migration is duplicated or renumbered,
+and neither migration has been applied to the retained trial by this task.
 The #307 owner explicitly confirmed this delivery order on 2026-10-19:
 
 1. Migration 69 is owned only by #307 / #323, with SQL originating at
@@ -41,9 +46,10 @@ The #307 owner explicitly confirmed this delivery order on 2026-10-19:
 2. After separately authorized #323 merge, verify the actual merge SHA's main
    CI. Then rebase #331, validate 69 before 70, and repeat independent review
    plus current-HEAD CI on that rebased candidate.
-3. #323 currently remains draft without merge authority, so #331 remains a
-   draft dependency. Do not migrate/deploy the retained environment, apply 70
-   first, copy/re-number 69, or infer merge authority from green CI.
+3. The current instruction keeps #331 Draft after rebase, ordered validation,
+   independent re-review and new-HEAD CI. Do not merge #331, migrate/deploy the
+   retained environment, apply 70 first, copy/re-number 69, or infer further
+   execution authority from green CI.
 
 The candidate05 public frozen-snapshot checker and its tests are reused byte for
 byte from the same #307 reference commit. CI invokes this existing checker;
