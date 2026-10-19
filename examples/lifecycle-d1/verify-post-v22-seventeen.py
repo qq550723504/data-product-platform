@@ -293,19 +293,22 @@ def run(review_path, review_sha, manifest_sha):
     review=load(review_path)
     need(review['status']=='PASS_BOUNDED_INDEPENDENT_REVIEW' and review['remaining_blockers']==[]
          and review['manifest_sha256']==manifest_sha and review['source_head']==manifest['source_head'],'readonly review not closed for this exact preparation')
-    results=[];failure=None;terminal=None
+    results=[];attempted=[];failure=None;terminal=None
     try:
         not_before=now();expires_at=not_before+dt.timedelta(minutes=55)
         save(PUBLIC/'shared-readonly-window.json',{'audit_id':manifest['audit_id'],'not_before':not_before.isoformat(),'expires_at':expires_at.isoformat(),'max_provider_deletes':0,'send_authority':'NONE'})
         fresh(manifest)
-        for group in GROUPS: results.append(collect(manifest,group,not_before,expires_at))
+        for group in GROUPS:
+            attempted.append(group)
+            results.append(collect(manifest,group,not_before,expires_at))
         need(retained()==manifest['preservation'],'post-read retained facts drift')
         terminal={'status':'PASS_COMPLETE_POST_V22_SEVENTEEN_READONLY','audit_id':manifest['audit_id'],'versions':17,'remaining_targets':6,'survivors':11,'groups':results,
             'technical_requests':sum(r['technical_requests'] for r in results),'amount':'NOT_ASSESSED','native_delete':0,'business_mutations':0,'old_authorization_reused':False,'D1':'NOT_ACCEPTED','six_candidate':'NOT_FROZEN'}
     except Exception as error:
         failure=type(error).__name__+': '+str(error)
         terminal={'status':'FAILED_READONLY_RETAINED','audit_id':manifest['audit_id'],'error':failure,'completed_groups':[r['group'] for r in results],
-            'not_run_groups':[g for g in GROUPS if g not in [r['group'] for r in results]],'native_delete':0,'business_mutations':0,'D1':'NOT_ACCEPTED','six_candidate':'NOT_FROZEN'}
+            'failed_groups':[g for g in attempted if g not in [r['group'] for r in results]],
+            'not_run_groups':[g for g in GROUPS if g not in attempted],'native_delete':0,'business_mutations':0,'D1':'NOT_ACCEPTED','six_candidate':'NOT_FROZEN'}
     finally:
         profiles=[]
         for group,owner in manifest['owners'].items():
@@ -327,7 +330,7 @@ def run(review_path, review_sha, manifest_sha):
             observations=sorted(p.name for p in directory.glob('readonly-observation-*.json'))
             journals[group]={'start_facts':len(starts),'observation_facts':len(observations),'amount':'NOT_ASSESSED',
                              'unobserved_attempt_ids':sorted(set(p[len('readonly-start-'):-5] for p in starts)-set(p[len('readonly-observation-'):-5] for p in observations))}
-        terminal.update(at=now().isoformat(),physical_close=physical,disabled_profiles=profiles,request_journals=journals,resources_retained=True,manifest_sha256=manifest_sha,independent_review_sha256=review_sha)
+        terminal.update(at=now().isoformat(),attempted_groups=attempted,physical_close=physical,disabled_profiles=profiles,request_journals=journals,resources_retained=True,manifest_sha256=manifest_sha,independent_review_sha256=review_sha)
         save(PUBLIC/'terminal.json',terminal);save(CONTROL/'terminal.json',terminal)
         index={p.relative_to(PUBLIC).as_posix():sha(p) for p in PUBLIC.rglob('*') if p.is_file()}
         save(PUBLIC/'execution-evidence-index01.json',index)

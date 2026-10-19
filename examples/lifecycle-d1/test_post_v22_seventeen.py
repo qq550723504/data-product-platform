@@ -105,6 +105,12 @@ class SeventeenTests(unittest.TestCase):
                 self.assertEqual((public/'business-races/checker-stdout.txt').read_bytes(),b'checker-partial')
             if fault=='logs-timeout':self.assertEqual((public/'business-races/stdout.txt').read_bytes(),b'log-partial')
             if fault=='wait-timeout':self.assertEqual((public/'business-races/wait-stdout.txt').read_bytes(),b'wait-partial')
+            if fault and fault!='precondition':
+                self.assertNotIn('business-races',terminal['not_run_groups'],'attempted group was mislabeled NOT_RUN')
+            if fault=='checker-reject':
+                self.assertEqual(terminal['failed_groups'],['business-races'])
+                self.assertEqual(terminal['not_run_groups'],['late-hold','mixed'])
+                self.assertEqual(terminal['request_journals']['business-races']['start_facts'],1)
             if not fault:
                 windows={(m.load(public/g/'expectation.json')['not_before'],m.load(public/g/'expectation.json')['expires_at']) for g in m.GROUPS}
                 self.assertEqual(len(windows),1,'group collection shifted the shared audit deadline')
