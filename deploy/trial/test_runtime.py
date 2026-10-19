@@ -12,6 +12,16 @@ import runtime as r
 
 
 class TrialContracts(unittest.TestCase):
+    def test_generated_next_types_are_not_executable_source_identity(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);(root/"apps/web").mkdir(parents=True)
+            (root/"apps/web/next-env.d.ts").write_text("generated")
+            (root/"apps/web/page.tsx").write_text("runtime source")
+            with patch.object(r,"ROOT",root),patch.object(r,"command",return_value=b"apps/web/next-env.d.ts\napps/web/page.tsx\n"):
+                before=r.sources();(root/"apps/web/next-env.d.ts").write_text("regenerated")
+                self.assertEqual(before,r.sources())
+                (root/"apps/web/page.tsx").write_text("changed runtime")
+                self.assertNotEqual(before,r.sources())
     def test_repeat_start_reads_existing_run_and_cannot_seed(self):
         with tempfile.TemporaryDirectory() as d, patch.object(r, "STATE", Path(d)):
             r.write(Path(d) / "state.json", {"runId":"original", "phase":"RUNNING"})

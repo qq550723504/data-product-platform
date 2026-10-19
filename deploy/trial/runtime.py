@@ -115,7 +115,8 @@ def sources():
                      "examples/enterprise-activity/data", "examples/enterprise-activity/postgres-ingestion",
                      "examples/lifecycle-d1/durable-storage.ps1"])
     return {p: digest((ROOT / p).read_bytes().replace(b"\r\n", b"\n"))
-            for p in sorted(set(paths.decode().splitlines())) if (ROOT / p).is_file()}
+            for p in sorted(set(paths.decode().splitlines()))
+            if p != "apps/web/next-env.d.ts" and (ROOT / p).is_file()}
 
 
 def preflight():
@@ -484,9 +485,14 @@ def start():
         command(["cmd.exe", "/d", "/c", "npm.cmd install --no-audit --no-fund --package-lock=false"], cwd=ROOT / "apps/web", timeout=600)
         command(["cmd.exe", "/d", "/c", "npm.cmd run build"], cwd=ROOT / "apps/web", env=web_env, timeout=900)
         manifest = ROOT / "apps/web/.next/BUILD_ID"
+        standalone = manifest.parent / "standalone"
+        shutil.copytree(manifest.parent / "static", standalone / ".next/static")
+        shutil.copytree(ROOT / "apps/web/public", standalone / "public")
         s["webBuild"] = {"buildId": manifest.read_text().strip(), "files": {str(f.relative_to(manifest.parent)): digest(f.read_bytes()) for f in manifest.parent.rglob("*") if f.is_file() and "cache" not in f.relative_to(manifest.parent).parts}}
+        node = Path(shutil.which("node"))
+        s["binaries"]["node"] = {"path": str(node), "sha256": digest(node.read_bytes())}
         s["web"] = f"http://127.0.0.1:{s['ports']['web']}"
-        spawn(s, "web", [shutil.which("node"), ROOT / "apps/web/node_modules/next/dist/bin/next", "start", "--hostname", "127.0.0.1", "--port", str(s["ports"]["web"])], web_env)
+        spawn(s, "web", [node, standalone / "server.js"], dict(web_env, HOSTNAME="127.0.0.1", PORT=str(s["ports"]["web"])))
         wait_for(lambda: http(s["web"] + "/batches"), "Web", seconds=120)
         s["phase"] = "RUNNING"; save(s)
         return status(s)
