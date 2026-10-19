@@ -1,0 +1,18 @@
+{
+  "status": "PASS_FILE_ONLY_ORDERING_CONTRADICTION_COUNTEREXAMPLE",
+  "at": "2026-10-19T06:20:11.645051+00:00",
+  "scope": "Frozen-code counterexample only. No PostgreSQL/provider I/O; not an actual post-seal namespace inventory or a fresh Core rejection readback.",
+  "namespace": "dpp-lifecycle307-online",
+  "frozen_registered_versions": 6,
+  "modeled_versions_after_P1_native_delete": 5,
+  "absence_receipts_before_four_sends_finish": [],
+  "expected_inventory_before_P1_absence_receipt": 6,
+  "inventory_complete_without_receipt": false,
+  "expected_inventory_if_P1_absence_committed": 5,
+  "inventory_complete_with_exact_prior_receipt": true,
+  "actual_P1_native204_witness": "P1-wire-witness.json",
+  "actual_P2_consumed_target_budget": "budget-snapshots/business-races/6fabf3b5-76b8-4245-8f5d-01e64f610146.json",
+  "actual_P2_wire_budget_absent": true,
+  "native_delete_during_counterexample": 0,
+  "candidate_modified": false
+}

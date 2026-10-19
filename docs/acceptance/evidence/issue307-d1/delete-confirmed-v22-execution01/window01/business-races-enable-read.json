@@ -1,0 +1,18 @@
+{
+  "action": "enable-read",
+  "before": {
+    "delete808a6960": "disabled",
+    "inspect808a69606c36": "disabled",
+    "remainput808a6960": "disabled",
+    "remainread808a6960": "disabled"
+  },
+  "changed": {
+    "inspect808a69606c36": "enabled",
+    "remainput808a6960": "enabled",
+    "remainread808a6960": "enabled"
+  },
+  "exact_policy_set_verified": true,
+  "group": "business-races",
+  "native_delete": 0,
+  "root_scope": "bootstrap only; no worker mount"
+}

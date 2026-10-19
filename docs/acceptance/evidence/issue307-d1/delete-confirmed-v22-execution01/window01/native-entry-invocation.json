@@ -1,0 +1,31 @@
+{
+  "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "started_at": "2026-10-19T06:03:13.697541+00:00",
+  "finished_at": "2026-10-19T06:03:43.366078+00:00",
+  "argv": [
+    "python",
+    "-B",
+    "examples/lifecycle-d1/verify-remaining-native.py",
+    "--packet",
+    "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12",
+    "--candidate-sha256",
+    "f624a5f50ccb4fa4aa8b465f5a60a090f6325e78f60544b4c18f9ba2604ef243",
+    "--bindings-sha256",
+    "8e54b47e4a1f83c7ce66555ed6ce2f3ec66c962a394a8fa1feb84eeaccd82fc5",
+    "--private",
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate12\\authorized-execution01\\window01\\native-preflight",
+    "--output",
+    "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\delete-confirmed-v22-execution01\\window01\\native-preflight",
+    "--reader",
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate12\\reader",
+    "--checker",
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate12\\readonly-check.exe",
+    "--checker-sha256",
+    "fa073066e0559f2c35edc1993a79120c26df76a50da4bbf5fd95104cc0769d4e"
+  ],
+  "exit_code": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "native_delete": 0,
+  "sender_started": false
+}

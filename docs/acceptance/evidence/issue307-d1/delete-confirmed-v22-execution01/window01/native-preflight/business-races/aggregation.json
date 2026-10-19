@@ -1,0 +1,45 @@
+{
+  "status": "PASS_COMPLETE_NATIVE_AGGREGATION",
+  "group": "business-races",
+  "copies": 8,
+  "policies": [
+    {
+      "policy": "lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5",
+      "baseline_file_sha256": "bb3a5a7eaf900e2f1a304ff25deac51ac1422666eb2187c07832bab62ca89b51",
+      "fresh_file_sha256": "2b9230ee6143ee63ff21d18a54d6229f22954e8fe77aeda35caae47361b9d436",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-remaining-business-remainput808a6960",
+      "baseline_file_sha256": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+      "fresh_file_sha256": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-remaining-business-remainread808a6960",
+      "baseline_file_sha256": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+      "fresh_file_sha256": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+      "official_equals": true
+    },
+    {
+      "policy": "lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5",
+      "baseline_file_sha256": "75f15fb9771ae100307cef311ef8b2700b8df585690c6a990e6456fc7ae81ccf",
+      "fresh_file_sha256": "75f15fb9771ae100307cef311ef8b2700b8df585690c6a990e6456fc7ae81ccf",
+      "official_equals": true
+    }
+  ],
+  "provider_io": 0,
+  "delete": 0,
+  "provider_raw_sha256": {
+    "lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5": "c7abb88418a59ea11ff906966a4657027d5af3be008f05c411a7894da80d4497",
+    "lifecycle307-remaining-business-remainput808a6960": "9f9360695b08f2e638328119b4d976bbc446cbd410875e6914d5362f952afd97",
+    "lifecycle307-remaining-business-remainread808a6960": "15814900738437f53003c0cbd03bf0094ebb71bd5d5e0c00bba16eff020eeb33",
+    "lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5": "d6f6d1e2eb749f38e6b1206e396bac1be3744d339d1ea129c2886bddf17aa9fe"
+  },
+  "native_receipt_file_sha256": "9832684bc488131353badbe940e1c5b898ebfb7611127bbf74f53715a801b080",
+  "technical_requests": 34,
+  "at": "2026-10-19T06:03:27.674290+00:00",
+  "native_delete": 0,
+  "native_mutations": 0,
+  "source_Core_unchanged": true
+}

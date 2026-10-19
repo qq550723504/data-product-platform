@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "status": "FAILED_PRE_SEND_GATE_AFTER_ONE_ACCEPTED_DELETE_SEALED",
+  "recorded_at": "2026-10-19T06:18:09.011145+00:00",
+  "failure_at": "2026-10-19T06:08:36.294447944Z",
+  "failure_stage": "P2",
+  "fixed_window_start": "2026-10-19T06:00:00Z",
+  "fixed_window_end_exclusive": "2026-10-19T06:40:00Z",
+  "authorization_sha256": "4235dc7205b9479d7fe0c36b88484ba9e780c2d166b094a7700bed31a3311dc4",
+  "native_delete_invocations": 1,
+  "native_204_witnesses": 1,
+  "accepted_targets": [
+    "P1"
+  ],
+  "verified_absent_targets": [],
+  "absence_reconciliation": "NOT_RUN",
+  "P1": {
+    "provider_attempt": "009f4317-8855-4f99-80ec-cafc225f654e",
+    "certainty": "CONFIRMED",
+    "outcome": "ACCEPTED",
+    "wire_upstream_http_status": 204,
+    "absence_receipt": "NOT_RUN"
+  },
+  "P2": {
+    "sender_exit": 1,
+    "current_stderr": "no rows in result set",
+    "persistent_target_budget_consumed": true,
+    "persistent_wire_slot": false,
+    "native_delete_invocation": false,
+    "formal_core_NOT_SENT_fact": "NOT_ASSERTED",
+    "resend": false
+  },
+  "not_sent_targets": [
+    "P2",
+    "T1",
+    "T2",
+    "H2",
+    "M1A",
+    "M1B"
+  ],
+  "not_run": [
+    "four_readonly_recoveries",
+    "H0",
+    "H1",
+    "H2",
+    "M1A",
+    "M1B",
+    "mixed_checkpoint",
+    "M1B_readonly_lookup",
+    "post_send_survivor_native_reread"
+  ],
+  "all_retention_hold_cleanup_bypass_mutations": 0,
+  "backups_and_historical_pins_retained": true,
+  "native_survivor_count_before_send": 11,
+  "post_send_survivor_reread": "NOT_RUN",
+  "seal_all_110_steps_confirmed": true,
+  "physical_owners_stopped": 61,
+  "permissions_disabled": 32,
+  "cases_revoked": 7,
+  "readonly_recoveries_revoked": 7,
+  "all_three_IAM_disable_readbacks_confirmed": true,
+  "budget_slots_consumed": 2,
+  "budget_recreated_or_removed": false,
+  "schedule": {
+    "id": "307-d1-candidate12-v22",
+    "status": "PAUSED",
+    "next_run_at": null,
+    "last_run_at": 1792389629796,
+    "target_thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a"
+  },
+  "full_D1": "NOT_ACCEPTED",
+  "no_resume_under_this_execution_or_authorization": true,
+  "head": "7f3566cbfee6b22aded52403d5045681165a69d5",
+  "PR323": "DRAFT_OPEN",
+  "Issue307": "OPEN",
+  "amount": "NOT_ASSESSED",
+  "cost_facts_location": "Original Core named volumes retain application storage call/provider attempt/observation/CostEvent facts; no Core restart performed after seal for extraction."
+}

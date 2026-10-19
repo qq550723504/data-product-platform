@@ -1,0 +1,12 @@
+{
+  "action": "check-disabled",
+  "before": {
+    "deletedfda43b4": "disabled",
+    "inspectdfda43b44419": "disabled"
+  },
+  "changed": {},
+  "exact_policy_set_verified": true,
+  "group": "mixed",
+  "native_delete": 0,
+  "root_scope": "bootstrap only; no worker mount"
+}
