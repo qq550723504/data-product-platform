@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/google/uuid"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain"
 	"os"
 	"path/filepath"
@@ -24,6 +25,7 @@ func TestCurrentSixCandidatePositiveAndNoP1OrRestoreSourceSubstitution(t *testin
 		t.Fatal("historical metadata")
 	}
 	c.Execution, c.Profile = execution, profile
+	c.PolicyCheckpointSHA256 = pilot.RemainingPolicyCheckpointSHA256
 	c.NotBefore, _ = time.Parse(time.RFC3339, pilot.RemainingNotBefore)
 	c.NotAfter, _ = time.Parse(time.RFC3339, pilot.RemainingNotAfter)
 	var targets []domain.Copy
@@ -38,6 +40,7 @@ func TestCurrentSixCandidatePositiveAndNoP1OrRestoreSourceSubstitution(t *testin
 			delete(g.CaseConfigSHA256, "renew")
 			p1, _ := historicalCopy(g.Group, "P1")
 			delete(g.PolicyHeads, p1.DatasetVersionID.String())
+			g.PolicyHeads = pilot.RemainingPolicyHeads(g.Group)
 		}
 		for _, stage := range []string{"P2", "T1", "T2", "H2", "M1A", "M1B"} {
 			if cp, e := fixedTarget(g.Group, stage); e == nil {
@@ -49,6 +52,29 @@ func TestCurrentSixCandidatePositiveAndNoP1OrRestoreSourceSubstitution(t *testin
 	c.TargetDigest = digest(raw)
 	if len(targets) != 6 || validateCandidate(c) != nil {
 		t.Fatal("valid six metadata rejected")
+	}
+	for _, fault := range []string{"predecessor", "foreign", "missing", "extra", "checkpoint"} {
+		encoded, _ := json.Marshal(c)
+		var changed candidate
+		_ = json.Unmarshal(encoded, &changed)
+		for version := range changed.Groups[0].PolicyHeads {
+			switch fault {
+			case "predecessor":
+				changed.Groups[0].PolicyHeads[version] = uuid.MustParse("1dce673b-2d6c-4932-82a5-3c63be658b27")
+			case "foreign":
+				changed.Groups[0].PolicyHeads[version] = uuid.New()
+			case "missing":
+				delete(changed.Groups[0].PolicyHeads, version)
+			case "extra":
+				changed.Groups[0].PolicyHeads[uuid.NewString()] = uuid.New()
+			case "checkpoint":
+				changed.PolicyCheckpointSHA256 = strings.Repeat("f", 64)
+			}
+			break
+		}
+		if validateCandidate(changed) == nil {
+			t.Fatal("offline candidate accepted rehashed", fault, "policy checkpoint")
+		}
 	}
 	if _, err = fixedTarget("business-races", "P1"); err == nil {
 		t.Fatal("P1 revived as a current target")

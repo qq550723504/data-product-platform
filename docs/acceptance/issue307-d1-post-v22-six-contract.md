@@ -1,3 +1,7 @@
+> 当前续接为candidate15/v25，见[v25矩阵](issue307-d1-v25-preparation.md)及[窗口手册](issue307-d1-v25-window-runbook.md)。以下c13/c14设计与准备文字保留为各自历史，不授予执行，也不否认后续新增的失败事实。当前五个policy head以实际post-v22只读checkpoint aab0e615...13df8为唯一来源，旧candidate12头不可作为当前期望。
+
+> 状态转移（2026-10-20）：以下为失败 candidate13/v23 的历史准备合同，未冻结、未授权，不能作为当前执行入口。当前单一合同由 [v24 bootstrap修复](issue307-d1-v24-bootstrap-contract.md)、[v24手册](issue307-d1-v24-window-runbook.md)及[最新矩阵](issue307-d1-v24-preparation.md)持有；当前 execution 为 afc0e66c-535b-426e-a937-964d0c9ca0d6。旧CP/失败及旧手册原字节保留，不能以旧规则解释本代Source或授权。
+
 # #307 D1 剩余六份候选的有限准备合同
 
 状态：设计与非删除准备，不是删除授权。新窗口按人类选择为2026-10-20新加坡14:00–14:40（UTC06:00–06:40），不得使用旧v22批准。已分配 proposal execution `4e524c04-2376-4bc9-9e85-452909d3dba4`（candidate13/v23），可执行候选尚未冻结。#332 Draft、不合并；#307 OPEN。#323已按随后单独授权合并，历史Draft要求和证据不回写。

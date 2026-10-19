@@ -33,7 +33,7 @@ class FreezeSixTests(unittest.TestCase):
                 (folder/'gateway.Caddyfile').write_bytes(b':9000 { respond 403 }\n')
                 cases={stage:('case-'+group+'-'+stage).ljust(64,'0') for stage in f.p.window.CASE_MODES[group]}
                 helpers={k:v for k,v in old_group['Helpers'].items() if k not in ('P1','recover-P1')}
-                heads={cp['DatasetVersionID']:old_group['PolicyHeads'][cp['DatasetVersionID']] for cp in old_group['Copies'] if group=='business-races' and cp['Key'] not in ('fixture/p1.csv','fixture/control-hold.csv','fixture/control-retention.csv')}
+                heads=f.p.window.policy_heads(group)
                 for stage in cases:
                     owner=folder/('case-'+stage);owner.mkdir()
                     cfg=f.p.window.case_profile({'Group':group,'Base':{'Enabled':True},'NonDelete':True},heads,'test-token','test-epoch')

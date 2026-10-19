@@ -18,11 +18,13 @@ func TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable(t *testing.T) {
 		{"DELETE", "/dpp-lifecycle307-online/fixture/p1.csv?versionId=exact"},
 		{"PUT", "/minio/admin/v3/set-user-status?accessKey=foreign&status=disabled"},
 		{"PUT", "/minio/admin/v3/set-user-status?accessKey=delete808a6960&status=enabled"},
+		{"PUT", "/minio/admin/v3/set-user-status?accessKey=iafc0e66c808a6960&status=enabled"},
+		{"PUT", "/minio/admin/v3/set-user-status?accessKey=dafc0e66c808a6960&status=enabled"},
 		{"PUT", "/minio/admin/v3/add-user"}, {"GET", "/dpp-lifecycle307-online/fixture/p1.csv?versionId=exact"},
 	} {
 		t.Run(tc.path, func(t *testing.T) {
 			req, _ := http.NewRequest(tc.method, "http://127.0.0.1:9000"+tc.path, nil)
-			if _, e := (transport{base: shouldNotCall{t}, users: map[string]string{"delete808a6960": "fixed"}, enable: true, group: "business-races"}).RoundTrip(req); e == nil {
+			if _, e := (transport{base: shouldNotCall{t}, users: map[string]string{"delete808a6960": "fixed", "iafc0e66c808a6960": "retained-inspect", "dafc0e66c808a6960": "retained-delete"}, enable: true, group: "business-races"}).RoundTrip(req); e == nil {
 				t.Fatal("forbidden request admitted")
 			}
 		})

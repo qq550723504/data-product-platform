@@ -1,4 +1,4 @@
-"""The candidate14 complete read-only entry: cold gate, then actual SDK/PG.
+"""The candidate15 complete read-only entry: cold gate, then actual SDK/PG.
 
 No IAM enable, send permission, DELETE, migration or retry mode exists. A new
 bounded read owner is allocated per group and closed on every outcome. Frozen

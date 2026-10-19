@@ -186,6 +186,9 @@ func run(ctx context.Context, action string) error {
 			users[user] = "lifecycle307-remaining-business-" + user
 		}
 	}
+	for user, name := range pilot.RemainingRetainedIdentities(c.Group) {
+		users[user] = name
+	}
 	dormant, unassigned := pilot.RemainingDormantIdentity(c.Group)
 	if dormant != "" {
 		users[dormant] = ""

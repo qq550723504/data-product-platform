@@ -168,3 +168,10 @@ docs/acceptance/evidence/issue307-d1/remaining-candidate14-preparation01/** -tex
 docs/acceptance/evidence/issue307-d1/remaining-candidate14/** -text whitespace=cr-at-eol
 
 docs/acceptance/evidence/issue307-d1/post-v22-disabled-bootstrap-native04/** -text whitespace=cr-at-eol
+apps/platform/internal/lifecycle/pilot/remaining_policy_heads.json -text
+docs/acceptance/evidence/issue307-d1/post-v22-policy-heads01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate15-preparation01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate15/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate14-preparation-failure01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/post-v22-six-preparation02/cold-budget-independent03/*-buildinfo03.stdout.txt -text whitespace=cr-at-eol,-blank-at-eol

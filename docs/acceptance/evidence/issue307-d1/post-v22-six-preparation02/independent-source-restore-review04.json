@@ -1,0 +1,233 @@
+{
+  "status": "BLOCKED_NONDELETE_PREPARATION_CONFIRMED_SEALED",
+  "review_status": "PASS_BOUNDED_INDEPENDENT_FAILURE_EVIDENCE_AUDIT",
+  "reviewed_at": "2026-10-19T19:29:29.059812+00:00",
+  "source_head": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+  "execution": "afc0e66c-535b-426e-a937-964d0c9ca0d6",
+  "candidate": "candidate14/v24 NOT_FROZEN",
+  "scope": "Audit original failed non-delete preparation, actual partial results, failure root cause and final preservation. No repair approval, execution permission or deletion authority.",
+  "authoritative_source_docs_sha256": {
+    "docs/acceptance/issue307-d1-v24-bootstrap-contract.md": "e22865348f94f897c02a35c428955beae6126ccad9f956b6a489952ee5edb807",
+    "docs/acceptance/issue307-d1-post-v22-six-contract.md": "e22321811622f16a4e18fdd90f3e391a188db5fc5de839f079a0036cdbaf6bc7"
+  },
+  "publication_docs_note": "v24-window-runbook was not in runtime source d9bf; this result audit does not pretend that later publication document was frozen runtime source.",
+  "source_files_sha256": {
+    "examples/lifecycle-d1/six_candidate_runtime.py": "40050b546ac99e6d57981d2a4dce729700fdfa955b8b645d718eeebf10d7d999",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go": "b440745dfb9e5554f94259d821521dd6d448caa2a0fcaef1aee2bbfba972b911",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining.go": "cc0dcf28782761ac263483a0a8c57b4df2972dd35c322d3a3ca585a7a70d0c74",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": "5337e599d76ab14c9a200e88219121752c87164df7c1b9e24d585f05459f8c58"
+  },
+  "active_build_files_sha256": {
+    "reader": "62308664bd72e79bde61225e0e3f122db1e7a8feefc55254108de221983f384d",
+    "operator": "fef94d893a4a0aee85269343d7824e2bd7a3b8f9e1c196fc376f666f39aa412b",
+    "owner": "23f15d918ce0942dcab2fae8da13785c8a386bb4811a533cc04d70f25a1409f2",
+    "readonly-check.exe": "0460e6a812b519840e20e674eb1ef82da08fe7eca188e41de42bf88aaf9ac15a",
+    "reader-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reader-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "operator-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "owner-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checker-build.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checker-build.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "allocation_sha256": "ba37a45ccc83dc21584bbfb929fc560f5da89e6bc397f96ad8cb00daba4a76b2",
+  "terminal_sha256": "680dbaeeca4f6e8bfa7097860994d5fee7c7b96ac71617cc6a4542aab94194f7",
+  "original_index_sha256": "67168682a71e820a31949104571003b9385dfb03eea0b65943038b41de8c3a49",
+  "original_index_members": 450,
+  "original_index_exact_raw_membership": true,
+  "failure": {
+    "root_cause": "Generator materialize selected five pre-Renew PolicyHeads from candidate12. Actual Source and restored Core contain five directly superseding v22 Renew heads; the mandatory historical-head guard correctly rejected the stale expected values before fresh admissions.",
+    "message": "Remaining step failed: frozen historical policy head drifted ; all resources retained; DELETE=0",
+    "error_channel": "business-races/rehearsal/business/operation/stdout.txt",
+    "stderr_bytes": 0,
+    "trial_wait_exit": 1,
+    "groups_completed": 0,
+    "five_expected_actual_comparisons": [
+      {
+        "dataset_version": "4219373a-07a0-4c66-a666-305675304b14",
+        "expected": "1dce673b-2d6c-4932-82a5-3c63be658b27",
+        "actual": "4a9220c3-0a45-4af4-a7fc-9fd2a9abec1f",
+        "supersedes": "1dce673b-2d6c-4932-82a5-3c63be658b27",
+        "direct_successor": true
+      },
+      {
+        "dataset_version": "699b8292-7fdb-4c22-af04-41f2eba761d4",
+        "expected": "e369ebcd-4b7a-4490-a35d-2131fa61faf9",
+        "actual": "546332ee-6e70-45d8-98b0-66d5531333fe",
+        "supersedes": "e369ebcd-4b7a-4490-a35d-2131fa61faf9",
+        "direct_successor": true
+      },
+      {
+        "dataset_version": "70d9185e-5ee7-4d79-9853-64e8e8db3630",
+        "expected": "105fd8c9-5ab3-4940-a87a-4071f4416fb0",
+        "actual": "49161aa4-9799-428f-acda-01b3fdd2cc52",
+        "supersedes": "105fd8c9-5ab3-4940-a87a-4071f4416fb0",
+        "direct_successor": true
+      },
+      {
+        "dataset_version": "8cb255aa-a842-4aa5-a4ff-871798aeed0b",
+        "expected": "ec9c4b58-288a-4e0d-a4a3-23bd54c73a90",
+        "actual": "3322f6bb-c5db-42de-b94d-ba8018a1e96c",
+        "supersedes": "ec9c4b58-288a-4e0d-a4a3-23bd54c73a90",
+        "direct_successor": true
+      },
+      {
+        "dataset_version": "a26216b5-95f6-4dbb-8359-c98f5f873be1",
+        "expected": "7d5d599b-1965-45b2-9008-8a0cdf0d75f6",
+        "actual": "1d4804a8-3726-49ee-8822-ede4bf10443e",
+        "supersedes": "7d5d599b-1965-45b2-9008-8a0cdf0d75f6",
+        "direct_successor": true
+      }
+    ],
+    "current_policy_checkpoint_sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+    "six_actual_renew_receipt_sha256": "867aa6032eddb5a9b1cb1ed489d1e4801b9ab2330f073002bb429722e08b68f3",
+    "evidence_sha256": "5999238a4e5085092652e1d8bb7e2570a42a05171cc6d0fee63d25e5a5e9a253",
+    "fix_boundary": "One immutable actual typed five-head Core checkpoint must bind generation, full preflight, native read and offline validation. Preserve drift guard; no Renew, old packet mutation or failed-attempt resume."
+  },
+  "partial_actual_results": {
+    "business_source_present_versions": 7,
+    "business_disabled_known_identities": 7,
+    "business_sole_policy": 6,
+    "business_exact_c13_dormant_NONE": 1,
+    "business_uncreated_identity_absence": 1,
+    "business_new_users_created_disabled": 2,
+    "other_four_new_users": "NOT_CREATED; late/mixed NOT_RUN",
+    "business_P1_absence": "Exact HEAD version404 NoSuchVersion plus actual MinIO error header/request ID and full namespace absence",
+    "original_source_Core": "Before/after equals accepted closure fingerprint including roles/ACL; original rows/pins/provider facts preserved",
+    "business_new_backup_files": [
+      {
+        "group": "business-races",
+        "filename": "core.dump",
+        "bytes": 1359118,
+        "sha256": "88350f7c4d24ce8e8ce148dbe851fe6d8008701e20df7ac9458ac1c2622af66e"
+      },
+      {
+        "group": "business-races",
+        "filename": "globals.sql",
+        "bytes": 669,
+        "sha256": "d8ca96a7ffe9f4c54f082eff286c89083470a496fbe370b4a464038b1fad2719"
+      },
+      {
+        "group": "business-races",
+        "filename": "native.tar",
+        "bytes": 257536,
+        "sha256": "712cc1a5ead3a84b39c3f1c103e43d853f32d09e3da2def676229fc873beac01"
+      }
+    ],
+    "clean_pg_restore": "PASS_EQUAL_FULL_CORE_FINGERPRINT",
+    "trial_pg_restore_before_business": "PASS_EQUAL_FULL_CORE_FINGERPRINT",
+    "native_archive_full_file_comparison": "PASS_OWNER_EXIT0",
+    "restore_inspector": "Restricted restore identity enabled then FRESH_CONFIRMED_DISABLED; source identity not enabled",
+    "rehearsal_business": "FAILED_HEAD_GUARD_BEFORE_FRESH_ADMISSIONS_BY_FROZEN_SOURCE_ORDER; not a rehearsal success",
+    "post_trial_immutable_after": "NOT_CAPTURED; no independent full post-trial multiset recomputation claim",
+    "complete_RESTORE_SDK_aggregation": "NOT_RUN",
+    "late_and_mixed": "NOT_RUN; new-owner StartedAt equal cold snapshot",
+    "complete_three_group_17_versions_15_known_5_absent": "NOT_RUN",
+    "candidate_freeze": "NOT_RUN"
+  },
+  "actual_technical_activity": {
+    "requests": 61,
+    "observations": 61,
+    "stage_counts": {
+      "maintenance-provision": 16,
+      "maintenance-source": 39,
+      "restore-inspect-enable": 4,
+      "restore-inspect-disable": 2
+    },
+    "methods": {
+      "PUT": 8,
+      "GET": 52,
+      "HEAD": 1
+    },
+    "statuses": {
+      "200": 43,
+      "404": 6,
+      "400": 12
+    },
+    "all_uuid_pairs_start_before_observation": true,
+    "strict_mapping_zip_raw_response_pairs": 2,
+    "object_PUT": 0,
+    "DELETE": 0,
+    "amount": "NOT_ASSESSED",
+    "file_checker_provider_io_zero": "Only describes file-only checker; whole run had 61 actual technical provider calls.",
+    "Core_CostEvent_claim": "No added Core CostEvent asserted for root/technical fixture requests."
+  },
+  "post_failure_separate_policy_checkpoint": {
+    "status": "PASS_READONLY_CURRENT_POLICY_HEAD_CHECKPOINT",
+    "performed_by": "Parent; reviewer audited saved evidence without reexecuting",
+    "scope": "Only business Core started after 92 sealed; REPEATABLE READ READ ONLY ROLLBACK then Core stopped. No Native/IAM/provider call.",
+    "before_after_equal_accepted_core": true,
+    "five_actual_ids_in_old_six_renew_facts": true,
+    "five_directly_supersede_old_expected": true,
+    "files_sha256": {
+      "Core-after.json": "74e45ae37d0dd4e998e461624dcddfffa80116a08cf3234a7e00dd0ad1fce6f8",
+      "Core-before.json": "74e45ae37d0dd4e998e461624dcddfffa80116a08cf3234a7e00dd0ad1fce6f8",
+      "current-policies.raw.json": "6839576cc96e0e72728124c9ef2e10b68360cfb6adc422ca05ed59a5b1515319",
+      "policy-heads.json": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+      "start.json": "21a066179de3e81fd95c293d0b0c8bc95b6667ec3c8ecbc0d7c351be91957e6b",
+      "terminal.json": "4303fd42923cbd4cd7e9a44ec61311e0d2a85a28ed8341b3ed6dfaaace759eda",
+      "composition/collect.py": "ae9621712b6e1341d7cd3bb08bb959ab0054cabb203657af41d1a648b7944a1d"
+    }
+  },
+  "independent_current_preservation": {
+    "this_generation_and_original_sources_closed": 92,
+    "new_exact_descriptor_matches": 86,
+    "old_retained_owners_closed": 184,
+    "maintenance_rehearsal_profiles_false": 19,
+    "permissions_false": 30,
+    "frozen_source_case_Base_Enabled_true": 6,
+    "source_case_note": "Frozen case profile fields remain true; no sender permission follows from them.",
+    "new_budgets_uid_gid10001_empty": 3,
+    "new_budget_tar_bytes_equal_original": true,
+    "retained_c13_budgets_empty": 3,
+    "retained_v22_budget_exact_files_sha_preserved": true,
+    "old_backup_sha_equal": 9,
+    "resources_backups_pins_retained": true,
+    "physical_sha256": "0e96584904c3550c81701752192477a4074930826a593beca4faf53712ef1bdd",
+    "profiles_budgets_backups_sha256": "dbf676f9d403a2d46fcadcbe4aa655a7397d4fdb7a533e975bc9f00106f9f84d",
+    "old_retained_sha256": "4127437186afe57e06e5ec23503cbfa9ee3da449872977d85f7c7469b3ddaf3b"
+  },
+  "remaining_blockers": [
+    {
+      "id": "C14_HEAD_BINDING",
+      "classification": "BLOCKER",
+      "scope": "Failed candidate14 required preparation path",
+      "status": "CONFIRMED; new repair WIP not assessed",
+      "required": "New preparation/execution using the same current five-head contract; preserve original failure and authority boundaries."
+    }
+  ],
+  "other_current_blockers": [],
+  "followups": [],
+  "independent_actions": {
+    "file_Git_read": true,
+    "Docker_inspect_cp_only": true,
+    "source_HTTP": 0,
+    "provider_HTTP": 0,
+    "container_start_stop_exec": 0,
+    "signing": 0,
+    "identity_case_permission_mutation": 0,
+    "runtime_or_active_package_writes": 0,
+    "native_work_rerun": 0,
+    "tests_rerun": 0,
+    "reviewer_owned_evidence": "O_EXCL only",
+    "harness_corrections": "Original tool failures preserved: stdout vs assumed stderr, transport_error false vs empty string, tar /run/budget vs /. basename, historical v22 root-owned budget vs new UID rule. No source worker invoked or retained data changed."
+  },
+  "excluded_scope": [
+    "Current candidate15/v25 WIP and later repair validation",
+    "Any new authorization, scheduling, candidate freeze or remaining-six acceptance",
+    "Live PR CI/main CI/merge verification"
+  ],
+  "evidence_index": {
+    "path": "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation02/source-restore-independent04/independent-evidence-index04.json",
+    "sha256": "3c9a2132f77b62a2b201e844b110de993d4b97e972408df0ccb6e2a19473e1b8",
+    "members": 23
+  },
+  "acceptance": {
+    "D1": "NOT_ACCEPTED",
+    "six_candidate": "NOT_FROZEN",
+    "new_delete_authorization": "NOT_RECEIVED",
+    "old_authorization_reused": false,
+    "report_is_not_permission_to_run": true
+  }
+}

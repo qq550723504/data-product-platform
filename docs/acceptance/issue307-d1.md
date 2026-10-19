@@ -1,3 +1,7 @@
+> 最新追加（2026-10-20 SGT）：c14非删除准备在business副本被旧policy head门禁拦下，92相关owner已关闭，DELETE=0；旧P1唯一真实DELETE及其absence保留。根因是生成器读取v22执行前snapshot，而非已提交Renew的实际current head。新的只读Core快照前后等于已独立验收基线。当前准备candidate15/v25、execution9f9c67d7-8a09-45a8-897f-9e3077b60980，统一五实际head的生成/预检/离线绑定，未冻结、未授权、未调度。见[v25矩阵](issue307-d1-v25-preparation.md)及[v24失败矩阵](issue307-d1-v24-preparation.md)。#332仍Draft、不合并，#307 OPEN；#323历史已合并事实不回写。以下旧“当前”均按对应日期解释。
+
+> 最新（2026-10-20，新加坡）：旧P2/T1/T2可信NOT_SENT/release和17版本实际核验已独立通过。c13非删除准备在disabled IAM接线失败后封存，未冻结；当前candidate14/v24仅准备，production adapter的同镜像16请求和独立评审通过，Source/restore及冻结仍NOT_RUN。见[当前矩阵](issue307-d1-v24-preparation.md)、[有限修复](issue307-d1-v24-bootstrap-contract.md)与[手册准备稿](issue307-d1-v24-window-runbook.md)。拟窗口SGT10月20日14:00–14:40，execution afc0e66c-535b-426e-a937-964d0c9ca0d6，未获新删除授权/未调度。本轮DELETE=0；旧v22 P1实际DELETE=1的历史保留，不再进入目标。#332 Draft、#307 OPEN；#323已按历史独立授权合并。以下“当前”段落均为各自历史时点，不覆盖后续事实。
+
 > 当前（2026-10-18，完整入口修复与原生非删除准备）：candidate12/v22已冻结，同一完整CLI真实PASS18版本/39owner/3空预算；831源码与1305 raw离线通过。新execution `8e41cfba-a41e-44dd-9ce8-d6365b3bb90e`，代理提议SGT10月19日14:00–14:40，尚未授权/未调度/DELETE=0。见[本轮矩阵](issue307-d1-v22-preparation.md)与[精确方案](issue307-d1-candidate12-confirmation.md)。旧v21窗口失败封存、post-seal IAM未确认等原事实见[原结果](issue307-d1-v21-window01-result.md)，不被本次新核验覆盖。#323 Draft，#307 OPEN。
 
 > 当前（2026-10-18，R1非删除准备）：candidate11/v21已从统一END生成并核验期限；独立PG副本六Renew通过，旧v20失败保留。新execution `602acafe-065a-4385-b739-5776408f5448`，提议SGT22:00–22:40，尚未授权/未调度/DELETE=0。见[本轮矩阵](issue307-d1-v21-preparation.md)及[完整精确方案](issue307-d1-candidate11-confirmation.md)。#323 Draft，#307 OPEN。

@@ -209,9 +209,12 @@ class SixHostTests(unittest.TestCase):
     def test_case_cross_field_failure_precedes_permission_and_docker(self):
         with tempfile.TemporaryDirectory() as tmp:
             folder=Path(tmp);case=folder/'case-business';case.mkdir()
-            profile={'Group':'business-races','NonDelete':True,'Rehearsal':False,'Batch':r.p.EXECUTION,'CandidateUseUntil':r.p.W['NotAfter'],'ExpectedPolicyHeads':{str(i):str(i) for i in range(5)},'Base':{'StartedAt':r.p.W['NotBefore'],'ExpiresAt':r.p.W['NotAfter']}}
-            for field in ('Batch','CandidateUseUntil'):
-                value=dict(profile);value[field]='old'
+            profile={'Group':'business-races','NonDelete':True,'Rehearsal':False,'Batch':r.p.EXECUTION,'CandidateUseUntil':r.p.W['NotAfter'],'ExpectedPolicyHeads':r.p.window.policy_heads('business-races'),'Base':{'StartedAt':r.p.W['NotBefore'],'ExpiresAt':r.p.W['NotAfter']}}
+            for field in ('Batch','CandidateUseUntil','ExpectedPolicyHeads'):
+                value=copy.deepcopy(profile)
+                if field=='ExpectedPolicyHeads':
+                    version=next(iter(value[field]));value[field][version]='11111111-1111-4111-8111-111111111111'
+                else:value[field]='old'
                 (case/'remaining.json').write_text(json.dumps(value))
                 with patch.object(r,'cold_topology',side_effect=AssertionError('Docker reached before case semantics')):
                     with self.assertRaises(ValueError):r.preparation_gate({'groups':[{'group':'business-races','private':str(folder),'cases':{'business':'unused'}}]})
@@ -250,11 +253,13 @@ class SixHostTests(unittest.TestCase):
 
 
 
-    def composition(self,fail_dump=False):
+    def composition(self,fail_dump=False,stale_checkpoint=False):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
             control,public=Path(tmp)/'private',Path(tmp)/'public';control.mkdir();public.mkdir()
             stack.enter_context(patch.object(r,'CONTROL',control));stack.enter_context(patch.object(r,'PUBLIC',public))
             state={'groups':[],'owners':[]};states={};calls=[];roles=[];baseline={'relations':[]}
+            r.save(public/'recorded-Core.json',baseline)
+            stack.enter_context(patch.object(r.p.window,'policy_checkpoint',lambda:{'CoreSHA256':'f'*64 if stale_checkpoint else r.sha(public/'recorded-Core.json')}))
             stack.enter_context(patch.object(r,'budget_completion',lambda a:None))
             for name in r.p.GROUPS:
                 folder=control/name;folder.mkdir();(folder/'checkpoint').mkdir()
@@ -295,14 +300,17 @@ class SixHostTests(unittest.TestCase):
             stack.enter_context(patch.object(r,'docker',docker))
             def maintenance(g,role):roles.append((g['group'],role));return {'role':role,'status':'RECORDED_LINUX_AND_CHECKER_DOUBLE'}
             stack.enter_context(patch.object(r,'maintenance',maintenance));stack.enter_context(patch.object(r,'trial',lambda g:None))
-            if fail_dump:
+            if stale_checkpoint:
+                with self.assertRaises(ValueError):r.run_non_delete()
+            elif fail_dump:
                 with self.assertRaises(OSError):r.run_non_delete()
             else:r.run_non_delete()
             self.assertFalse(any(states.values()))
             terminal=r.load(public/'non-delete-terminal.json')
-            if fail_dump:
+            if fail_dump or stale_checkpoint:
                 self.assertEqual(terminal['status'],'FAILED_OR_UNCONFIRMED_RETAINED')
                 self.assertFalse(any(row==('start','late-hold-source-core') for row in calls))
+                if stale_checkpoint:self.assertEqual(roles,[])
             else:
                 self.assertEqual(terminal['status'],'PASS_NONDELETE_SOURCE_RESTORE_PREPARATION')
                 self.assertEqual(terminal['groups_completed'],3)
@@ -312,6 +320,7 @@ class SixHostTests(unittest.TestCase):
 
     def test_full_three_group_source_backup_restore_sequence(self):self.composition()
     def test_dump_failure_stops_new_groups_and_closes_every_known_owner(self):self.composition(True)
+    def test_current_Core_checkpoint_mismatch_stops_before_IAM(self):self.composition(stale_checkpoint=True)
 
 
 if __name__=='__main__':unittest.main()

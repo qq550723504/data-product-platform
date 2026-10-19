@@ -1,4 +1,4 @@
-"""Freeze candidate14 only after actual bounded non-delete preparation.
+"""Freeze candidate15 only after actual bounded non-delete preparation.
 
 No IAM enable, deletion, authorization or scheduling function exists here.
 The only container run is the already allocated network-none file validator.
@@ -40,7 +40,7 @@ def source_freeze(a):
                                     'build_recipe':'go build -trimpath -buildvcs=false; linux/amd64 CGO_ENABLED=0; Windows file-only checker',
                                     'embedded_vcs_revision':'NOT_CLAIMED','actual_build_source':a['source'],
                                     'initial_allocation_build_source':a['source'],'initial_build_files':a['build_files'],
-                                    'retained_failed_generation':'candidate13/v23; separate immutable historical failure; never execution authority'})
+                                    'retained_failed_generation':'candidate13/v23 and candidate14/v24; separate immutable historical failure; never execution authority'})
 
 
 def main():
@@ -63,7 +63,7 @@ def main():
     old=load(p.p1.PACKET/'candidate.json');targets=[]
     for name,stage,key in p.sequence.ORDER:
         g=next(x for x in old['Groups'] if x['Group']==name);targets.append(cp_order(next(x for x in g['Copies'] if x['Key']==key)))
-    candidate={'Profile':p.PROFILE,'Execution':p.EXECUTION,'Source':a['source'],'SourceFreezeSHA256':sha(PACKET/'source-freeze.json'),
+    candidate={'Profile':p.PROFILE,'Execution':p.EXECUTION,'PolicyCheckpointSHA256':p.window.POLICY_CHECKPOINT_SHA256,'Source':a['source'],'SourceFreezeSHA256':sha(PACKET/'source-freeze.json'),
                'ReaderBinarySHA256':a['binaries']['reader'],'SenderBinarySHA256':a['binaries']['operator'],'OwnerBinarySHA256':a['binaries']['owner'],
                'TargetDigest':digest(compact(targets)),'PublicKey':host_public,'WirePublicKey':wire_public.hex(),'NotBefore':p.W['NotBefore'],'NotAfter':p.W['NotAfter'],'Groups':[]}
     bindings=[];windows={'cases':[],'recoveries':[]}
@@ -150,9 +150,9 @@ def confirmation(c,bindings,targets):
     lines=[f'CONFIRM_DELETE_EXACT_SIX；execution {p.EXECUTION}；{p.PROFILE}。',
            f'固定窗口 {start:%Y-%m-%d %H:%M}–{end:%H:%M} 新加坡时间；UTC {c["NotBefore"]}≤now<{c["NotAfter"]}；只读恢复截止 {p.W["RecoveryEnd"]}。',
            f'candidate SHA256 {sha(PACKET/"candidate.json")}；bindings {sha(PACKET/"bindings.json")}；source {c["Source"]}；source-freeze {c["SourceFreezeSHA256"]}。',
-           f'本代allocation与构建源 {bindings[0]["initial_build_source"]}；完整12成员原构建归档见source-freeze及bindings；旧candidate13/冷态/预算/IAM失败链独立原样保留，不复用旧execution或授权。',
+           f'本代allocation与构建源 {bindings[0]["initial_build_source"]}；完整12成员原构建归档见source-freeze及bindings；旧candidate13/14冷态/预算/IAM/业务副本失败链独立原样保留，不复用旧execution或授权。',
            f'Linux reader {c["ReaderBinarySHA256"]}；sender/wire/recovery {c["SenderBinarySHA256"]}；root owner {c["OwnerBinarySHA256"]}；Windows file-only checker {sha(r.CONTROL/"readonly-check.exe")}。',
-           f'target digest {c["TargetDigest"]}；host public key {c["PublicKey"]}；wire public key {c["WirePublicKey"]}；profile-windows {c["ProfileWindowsSHA256"]}；CandidateUseUntil={c["NotAfter"]}。',
+           f'current policy checkpoint {c["PolicyCheckpointSHA256"]}；target digest {c["TargetDigest"]}；host public key {c["PublicKey"]}；wire public key {c["WirePublicKey"]}；profile-windows {c["ProfileWindowsSHA256"]}；CandidateUseUntil={c["NotAfter"]}。',
            '18历史copy、17现存版本、6目标、11保留版本严格分开。旧P1已确认缺失，绝不纳入目标或新预算。']
     for g,b in zip(c['Groups'],bindings):
         lines.extend([f'环境 {b["project"]}；workspace {b["workspace"]}；provider {b["provider"]}；incarnation {b["incarnation"]}；manifest {b["manifest_sha256"]}。',
@@ -160,6 +160,7 @@ def confirmation(c,bindings,targets):
                       f'Core dump {g["CoreDumpSHA256"]}；globals {g["GlobalsSHA256"]}；native archive {g["NativeArchiveSHA256"]}；source Core {b["source_core_sha256"]}；native receipt {b["native_readonly_sha256"]}。',
                       f'IAM {g["IAMSHA256"]}；active gateway {g["GatewaySHA256"]}；sealed gateway {g["SealedGatewaySHA256"]}；allocation {b["allocation_sha256"]}；owner descriptors {b["owner_descriptors_sha256"]}；environment map {b["map_sha256"]}。',
                       f'新预算 {b["budget_volume"]}；initializer CID {b["budget_initializer"]}；initializer script {b["budget_initializer_script_sha256"]}；Redis {b["recovery_redis"]}；preparation terminal {b["preparation_terminal_sha256"]}。'])
+        for version,head in g['PolicyHeads'].items():lines.append(f'current policy head DV {version} → {head}；只读历史事实，不授予新的use/restore。')
         for stage,cid in g['Helpers'].items():lines.append(f'operator {g["Group"]}/{stage} CID {cid}；config {g["ConfigSHA256"][stage]}。')
         for stage,cid in g['CaseHelpers'].items():lines.append(f'case {g["Group"]}/{stage} CID {cid}；config {g["CaseConfigSHA256"][stage]}。')
         for action,owner in b['root_owners'].items():lines.append(f'root {g["Group"]}/{action} CID {owner["container"]}；config {owner["root_config_sha256"]}。')

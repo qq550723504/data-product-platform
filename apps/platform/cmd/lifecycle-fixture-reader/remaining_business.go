@@ -110,12 +110,12 @@ func remainingResumeBusiness(ctx context.Context, r remainingConfig, pool *pgxpo
 	if r.Group != "business-races" || r.Batch.String() != pilot.RemainingExecution {
 		return lc.ErrStorageScope
 	}
+	if pilot.ValidateRemainingPolicyHeads(r.Group, r.ExpectedPolicyHeads) != nil {
+		return lc.ErrStorageScope
+	}
 	cs, err := planeCopies(ctx, r.Base, pool)
 	if err != nil {
 		return err
-	}
-	if len(r.ExpectedPolicyHeads) != 5 {
-		return lc.ErrStorageScope
 	}
 	for _, cp := range cs {
 		if cp.Key == "fixture/p1.csv" || cp.Key == "fixture/control-hold.csv" || cp.Key == "fixture/control-retention.csv" {
@@ -123,7 +123,7 @@ func remainingResumeBusiness(ctx context.Context, r remainingConfig, pool *pgxpo
 		}
 		var head uuid.UUID
 		if err = pool.QueryRow(ctx, `SELECT id FROM lifecycle_current_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, cp.WorkspaceID, cp.DatasetVersionID).Scan(&head); err != nil || head != r.ExpectedPolicyHeads[cp.DatasetVersionID.String()] {
-			return errors.New("frozen historical policy head drifted")
+			return fmt.Errorf("frozen current policy head differs for %s: actual=%s expected=%s query_error=%v", cp.DatasetVersionID, head, r.ExpectedPolicyHeads[cp.DatasetVersionID.String()], err)
 		}
 	}
 	var p1Absent bool

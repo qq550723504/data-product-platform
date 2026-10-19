@@ -1,0 +1,29 @@
+{
+  "status": "PASS_ROLE_IMAGE_PARTITION_AND_CI_RECEIPT",
+  "role_counts": {
+    "helpers": 15,
+    "cases": 6,
+    "root_owners": 15,
+    "maintenance": 15,
+    "rehearsals": 4,
+    "utilities": 9,
+    "budget_initializer": 3,
+    "restore_core": 3,
+    "rehearsal_core": 3,
+    "restore_native": 3,
+    "gateway": 3,
+    "restore_gateway": 3,
+    "recovery_redis": 3,
+    "offline_validator": 1
+  },
+  "total_roles": 86,
+  "uid10001_workers": 56,
+  "ci": {
+    "run_id": 39303939210,
+    "event": "pull_request",
+    "head": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+    "jobs": 13,
+    "conclusion": "success",
+    "evidence_kind": "FILE_RECEIPT_READBACK_NOT_LIVE_GITHUB_FETCH"
+  }
+}

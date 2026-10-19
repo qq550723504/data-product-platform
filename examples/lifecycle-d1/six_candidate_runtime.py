@@ -1,4 +1,4 @@
-"""Fixed non-delete preparation primitives for candidate14.
+"""Fixed non-delete preparation primitives for candidate15.
 
 No send permission writer, authorization loader or S3 DELETE exists here.
 Allocation, budget initialization, native preparation and freeze are separate
@@ -75,6 +75,7 @@ def mounts_exact(item,expected):
 def allocation_state():
     a=load(CONTROL/'allocation.json')
     need(a['execution']==p.EXECUTION and a['profile']==p.PROFILE and a==load(PUBLIC/'allocation.json'),'allocation differs')
+    need(a['policy_checkpoint_sha256']==p.window.POLICY_CHECKPOINT_SHA256,'allocation current policy checkpoint differs')
     for name,digest in a['binaries'].items():need(sha(CONTROL/name)==digest,'runtime binary drift')
     need(sha(CONTROL/'six-map.json')==sha(PUBLIC/'six-map.json')==a['map_sha256'],'source/restore map drift')
     need(p.historical_gate()==a['retained'],'retained history drift')
@@ -227,7 +228,7 @@ def materialize():
             if role=='PROVISION':write_raw(target/'new-secrets.json',(folder/'new-secrets.private.json').read_bytes())
             rows.append({'group':group,'role':role,'filename':filename,'sha256':sha(target/filename),'enabled':False})
         old_group=next(x for x in old['Groups'] if x['Group']==group)
-        heads={cp['DatasetVersionID']:old_group['PolicyHeads'][cp['DatasetVersionID']] for cp in old_group['Copies'] if group=='business-races' and cp['Key'] not in ('fixture/p1.csv','fixture/control-hold.csv','fixture/control-retention.csv')}
+        heads=p.window.policy_heads(group)
         template=load(p.p1.PRIVATE/'remaining-executable03'/group/'source-owner/remaining.json')
         base=p.window.case_profile(template,heads,secrets.token_hex(32),template['Base']['Epoch'])
         base['Rehearsal']=False;base['Checkpoint']=''
@@ -496,6 +497,7 @@ def run_non_delete():
             p.native.wait_pg(g['source']['Core'],'fixture');time.sleep(3)
             before=p.native.fingerprints(g['source']['Core']);save(target/'source-Core-before.json',before)
             need(before==baseline_core(group),'source Core drifted from independently accepted checkpoint')
+            if group=='business-races':need(sha(target/'source-Core-before.json')==p.window.policy_checkpoint()['CoreSHA256'],'source differs from actual current policy checkpoint')
             maintenance(g,'PROVISION')
             source_result=maintenance(g,'SOURCE')
             backup=folder/'checkpoint'

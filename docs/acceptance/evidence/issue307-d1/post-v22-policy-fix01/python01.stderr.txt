@@ -1,0 +1,41 @@
+..........E..E..............
+======================================================================
+ERROR: test_dump_failure_stops_new_groups_and_closes_every_known_owner (test_six_candidate_runtime.SixHostTests.test_dump_failure_stops_new_groups_and_closes_every_known_owner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 317, in test_dump_failure_stops_new_groups_and_closes_every_known_owner
+    def test_dump_failure_stops_new_groups_and_closes_every_known_owner(self):self.composition(True)
+                                                                              ~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 302, in composition
+    with self.assertRaises(OSError):r.run_non_delete()
+                                    ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 499, in run_non_delete
+    if group=='business-races':need(sha(target/'source-Core-before.json')==p.window.policy_checkpoint()['CoreSHA256'],'source differs from actual current policy checkpoint')
+                               ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: source differs from actual current policy checkpoint
+
+======================================================================
+ERROR: test_full_three_group_source_backup_restore_sequence (test_six_candidate_runtime.SixHostTests.test_full_three_group_source_backup_restore_sequence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 316, in test_full_three_group_source_backup_restore_sequence
+    def test_full_three_group_source_backup_restore_sequence(self):self.composition()
+                                                                   ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\test_six_candidate_runtime.py", line 303, in composition
+    else:r.run_non_delete()
+         ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 499, in run_non_delete
+    if group=='business-races':need(sha(target/'source-Core-before.json')==p.window.policy_checkpoint()['CoreSHA256'],'source differs from actual current policy checkpoint')
+                               ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-six\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 35, in need
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: source differs from actual current policy checkpoint
+
+----------------------------------------------------------------------
+Ran 28 tests in 2.109s
+
+FAILED (errors=2)

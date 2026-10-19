@@ -1,0 +1,51 @@
+{
+  "late_mixed": {
+    "late-hold": {
+      "new_owners": 26,
+      "started_at_unchanged_from_cold_snapshot": true
+    },
+    "mixed": {
+      "new_owners": 30,
+      "started_at_unchanged_from_cold_snapshot": true
+    }
+  },
+  "source_case_fields_unchanged": [
+    {
+      "relative": "business-races\\case-business\\remaining.json",
+      "sha256": "706d51b5493d17d63408947ecd406f9369b36163b938f8db4718b7e88cb26737",
+      "Base_Enabled": true,
+      "intentionally_frozen_source_case": true
+    },
+    {
+      "relative": "late-hold\\case-close-H1\\remaining.json",
+      "sha256": "82ee473e265fa212d9c0844511a045447953c76e0808ad526f19471b6f504799",
+      "Base_Enabled": true,
+      "intentionally_frozen_source_case": true
+    },
+    {
+      "relative": "late-hold\\case-late\\remaining.json",
+      "sha256": "82ee473e265fa212d9c0844511a045447953c76e0808ad526f19471b6f504799",
+      "Base_Enabled": true,
+      "intentionally_frozen_source_case": true
+    },
+    {
+      "relative": "mixed\\case-mixed\\remaining.json",
+      "sha256": "c2dd6fc38ee33f5b834a06df0f3ee100f37f63bb3e798dd5e46fa0f8cb38ce85",
+      "Base_Enabled": true,
+      "intentionally_frozen_source_case": true
+    },
+    {
+      "relative": "mixed\\case-mixed-b\\remaining.json",
+      "sha256": "c2dd6fc38ee33f5b834a06df0f3ee100f37f63bb3e798dd5e46fa0f8cb38ce85",
+      "Base_Enabled": true,
+      "intentionally_frozen_source_case": true
+    },
+    {
+      "relative": "mixed\\case-mixed-c\\remaining.json",
+      "sha256": "c2dd6fc38ee33f5b834a06df0f3ee100f37f63bb3e798dd5e46fa0f8cb38ce85",
+      "Base_Enabled": true,
+      "intentionally_frozen_source_case": true
+    }
+  ],
+  "not_a_live_runtime_permission": true
+}

@@ -1,0 +1,7 @@
+{
+  "url": "https://github.com/qq550723504/data-product-platform/pull/332#issuecomment-6274729069",
+  "id": 6274729069,
+  "body": "当前收敛检查点：HEAD `d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7`。本 PR 只完成旧 P2/T1/T2 dispatch 的可信闭合，以及剩余六份新候选的非删除准备；复用现有 Commands、SDK、Outbox→Asynq，不引入新的 IAM/工作流基础设施。当前有限合同见 [v24 bootstrap](https://github.com/qq550723504/data-product-platform/blob/d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7/docs/acceptance/issue307-d1-v24-bootstrap-contract.md)。\n\n精确该 HEAD 的 PR CI `39303939210` 为 pull_request，13/13 SUCCESS；不是 main CI。Go 生产 guard、同镜像当前字节的 16 次技术请求及宿主源码/模型独立复评均无有效源码阻断。旧 c13 失败、SDK 退避测试失败、全部原证据/预算/pins保留。\n\n剩余阻断是本代实际冷态/三新空预算、Source 17版本/15已知disabled身份/5未创建身份、九新备份及分离恢复/业务试跑、冻结和最终完整只读入口及独立结果评审。这些尚未完成，不提前验收完整 D1。新 execution `afc0e66c-535b-426e-a937-964d0c9ca0d6`，SGT 10月20日14:00–14:40仅为窗口偏好；删除授权 NOT_RECEIVED、调度 NOT_CREATED。#332保持Draft、不合并；#307保持OPEN；本代真实DELETE=0。\n",
+  "utf8_readback": "EXACT",
+  "head": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7"
+}

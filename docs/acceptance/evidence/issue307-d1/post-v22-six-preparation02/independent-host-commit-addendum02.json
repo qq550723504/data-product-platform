@@ -1,0 +1,91 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_HOST_COMMIT_BINDING_READBACK",
+  "remaining_blockers": [],
+  "at": "2026-10-19T18:40:23.982608+00:00",
+  "addendum_to": "independent-host-review01.json",
+  "prior_report_sha256": "84b1545ad8ec2333537c6487e730e7889fa87840e70ff31d3e61c62ada7e7b24",
+  "source_base_head": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+  "git_blob_matches": 13,
+  "files": {
+    "examples/lifecycle-d1/prepare-six-candidate.py": {
+      "reviewed_raw_sha256": "7bdea9e030c1d44c84d4faceb6a29635aece6247bdce25657d78d8ee07de538b",
+      "git_blob_raw_sha256": "7bdea9e030c1d44c84d4faceb6a29635aece6247bdce25657d78d8ee07de538b",
+      "working_raw_sha256": "7bdea9e030c1d44c84d4faceb6a29635aece6247bdce25657d78d8ee07de538b"
+    },
+    "examples/lifecycle-d1/six_candidate_runtime.py": {
+      "reviewed_raw_sha256": "40050b546ac99e6d57981d2a4dce729700fdfa955b8b645d718eeebf10d7d999",
+      "git_blob_raw_sha256": "40050b546ac99e6d57981d2a4dce729700fdfa955b8b645d718eeebf10d7d999",
+      "working_raw_sha256": "40050b546ac99e6d57981d2a4dce729700fdfa955b8b645d718eeebf10d7d999"
+    },
+    "examples/lifecycle-d1/freeze-six-candidate.py": {
+      "reviewed_raw_sha256": "b3b221aaf873d943932e423f12d9d20a09a2fbf3fe412bdc7e579ce108f0e61a",
+      "git_blob_raw_sha256": "b3b221aaf873d943932e423f12d9d20a09a2fbf3fe412bdc7e579ce108f0e61a",
+      "working_raw_sha256": "b3b221aaf873d943932e423f12d9d20a09a2fbf3fe412bdc7e579ce108f0e61a"
+    },
+    "examples/lifecycle-d1/verify-six-native.py": {
+      "reviewed_raw_sha256": "2b67ea1dd4e68b0e685ca58e86b2242dc88b0a49c784ce38b2d817562097d04e",
+      "git_blob_raw_sha256": "2b67ea1dd4e68b0e685ca58e86b2242dc88b0a49c784ce38b2d817562097d04e",
+      "working_raw_sha256": "2b67ea1dd4e68b0e685ca58e86b2242dc88b0a49c784ce38b2d817562097d04e"
+    },
+    "examples/lifecycle-d1/window_six_support.py": {
+      "reviewed_raw_sha256": "8cb5beece5c91ebb460f742f0a62143cb3b6eb08bf8e8ad272ae528e483ceedd",
+      "git_blob_raw_sha256": "8cb5beece5c91ebb460f742f0a62143cb3b6eb08bf8e8ad272ae528e483ceedd",
+      "working_raw_sha256": "8cb5beece5c91ebb460f742f0a62143cb3b6eb08bf8e8ad272ae528e483ceedd"
+    },
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": {
+      "reviewed_raw_sha256": "01ada23ee6caf95c364b6944af79dc237f0b0f4713e36132ea31316007e29c3d",
+      "git_blob_raw_sha256": "01ada23ee6caf95c364b6944af79dc237f0b0f4713e36132ea31316007e29c3d",
+      "working_raw_sha256": "01ada23ee6caf95c364b6944af79dc237f0b0f4713e36132ea31316007e29c3d"
+    },
+    "examples/lifecycle-d1/test_freeze_six_candidate.py": {
+      "reviewed_raw_sha256": "c7f25c406f78c4823306d1bdb3a51e628ea9f6de240313633e81f82c73d2f057",
+      "git_blob_raw_sha256": "c7f25c406f78c4823306d1bdb3a51e628ea9f6de240313633e81f82c73d2f057",
+      "working_raw_sha256": "c7f25c406f78c4823306d1bdb3a51e628ea9f6de240313633e81f82c73d2f057"
+    },
+    "examples/lifecycle-d1/test_verify_six_native.py": {
+      "reviewed_raw_sha256": "5368ee7411fb2137886866292a644f95127618203c00d11b0afa1c0c0fd0857f",
+      "git_blob_raw_sha256": "5368ee7411fb2137886866292a644f95127618203c00d11b0afa1c0c0fd0857f",
+      "working_raw_sha256": "5368ee7411fb2137886866292a644f95127618203c00d11b0afa1c0c0fd0857f"
+    },
+    "examples/lifecycle-d1/test_window_six_support.py": {
+      "reviewed_raw_sha256": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+      "git_blob_raw_sha256": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9",
+      "working_raw_sha256": "99559005072cc08282770b506f5248cb8852e689d31f3da3df9e2d57757929e9"
+    },
+    "examples/lifecycle-d1/remaining_six_window.py": {
+      "reviewed_raw_sha256": "cc0dcc8a89abaf1ec64589eb7389ed1f74bcdd72dd68b2a2bb2f7fe7c547d5ef",
+      "git_blob_raw_sha256": "cc0dcc8a89abaf1ec64589eb7389ed1f74bcdd72dd68b2a2bb2f7fe7c547d5ef",
+      "working_raw_sha256": "cc0dcc8a89abaf1ec64589eb7389ed1f74bcdd72dd68b2a2bb2f7fe7c547d5ef"
+    },
+    "examples/lifecycle-d1/test_remaining_six_window.py": {
+      "reviewed_raw_sha256": "aa9db82c728aebbd0b742b80f3d30183062ecb711d40bd152a8cf7cc6f63c95d",
+      "git_blob_raw_sha256": "aa9db82c728aebbd0b742b80f3d30183062ecb711d40bd152a8cf7cc6f63c95d",
+      "working_raw_sha256": "aa9db82c728aebbd0b742b80f3d30183062ecb711d40bd152a8cf7cc6f63c95d"
+    },
+    "examples/lifecycle-d1/remaining_sequence.py": {
+      "reviewed_raw_sha256": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+      "git_blob_raw_sha256": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+      "working_raw_sha256": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569"
+    },
+    "examples/lifecycle-d1/test_remaining_sequence.py": {
+      "reviewed_raw_sha256": "61132079e2473cfd58a0a9f681f1d88c1675c99a4ee0f0fd9620e35b9a02fce5",
+      "git_blob_raw_sha256": "61132079e2473cfd58a0a9f681f1d88c1675c99a4ee0f0fd9620e35b9a02fce5",
+      "working_raw_sha256": "61132079e2473cfd58a0a9f681f1d88c1675c99a4ee0f0fd9620e35b9a02fce5"
+    }
+  },
+  "runtime_diff_exit": 0,
+  "corrected_snapshot_kind": "EXACT_COMMITTED_RUNTIME_RAW_SHA_AT_d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+  "correction": "The original review was drafted while runtime edits were WIP. Parent committed identical reviewed bytes before the report captured source_base_head. The obsolete source_snapshot_kind WIP label is report metadata history, not a source mismatch; this append-only readback corrects that label and preserves original01 bytes. Original review conclusions, actual test results and remaining_blockers=[] are unchanged.",
+  "limits": [
+    "No additional test or CI result claimed.",
+    "No Docker, HTTP, Source, identity, allocation, budget or proof operation performed.",
+    "Current candidate14 full native preparation/freeze/delete authorization remains separately gated."
+  ],
+  "reviewer_actions": {
+    "git_readonly": true,
+    "source_edits": 0,
+    "docker_calls": 0,
+    "http_calls": 0,
+    "report_writes": 1
+  }
+}

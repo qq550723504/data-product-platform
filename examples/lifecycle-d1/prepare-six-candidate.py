@@ -1,4 +1,4 @@
-"""Finite candidate14 preparation. Allocate stopped owners; never send/enable DELETE.
+"""Finite candidate15 preparation. Allocate stopped owners; never send/enable DELETE.
 
 Allocation, source/restore non-delete verification and final freeze are distinct
 checkpoints. A stopped allocation is not a native PASS or deletion permission.
@@ -122,8 +122,50 @@ def historical_gate():
         need(len(rows)==2,'scratch closure scope differs')
         for row in rows:need(closed(inspect(row['cid'])),'retained scratch caller not closed');ids.add(row['cid'])
         scratch[name]=sha(folder/'terminal.json')
-    need(len(ids)==184,'retained closed owner count differs')
-    return {'status':'PASS_RETAINED_184_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
+    need(len(ids)==184,'retained first failure-chain owner count differs')
+    c14=retained_c14(ids)
+    need(len(ids)==270,'retained closed owner count differs')
+    return {'c14':c14,'status':'PASS_RETAINED_270_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
+
+
+def retained_c14(ids):
+    public=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate14-preparation01'
+    private=p1.PRIVATE/'remaining-candidate14'
+    pins={'allocation.json':'ba37a45ccc83dc21584bbfb929fc560f5da89e6bc397f96ad8cb00daba4a76b2',
+          'non-delete-terminal.json':'680dbaeeca4f6e8bfa7097860994d5fee7c7b96ac71617cc6a4542aab94194f7',
+          'budget-initialization.json':'c4061f5c1e2212ef96eed3e6b4fa9726e0ada68749b3bddeaf77b37eb1159f1b'}
+    for name,digest in pins.items():need(sha(public/name)==digest,'retained c14 failure/budget bytes changed')
+    bundle=public.parent/'remaining-candidate14-preparation-failure01/failure.json'
+    need(sha(bundle)=='2e2ebeb0946df534297bb306761cc14b992e50b559871098f2822e4312c3e704','retained c14 final failure bundle changed')
+    for name,digest in load(bundle)['private_retained_files_sha256'].items():
+        path=(private/name).resolve();need(path.is_relative_to(private.resolve()) and sha(path)==digest,'retained c14 build/backup/case/trial bytes changed')
+    a=load(public/'allocation.json');terminal=load(public/'non-delete-terminal.json');descriptors=load(public/'owner-descriptors.json')
+    need(terminal['groups_completed']==terminal['native_delete']==0 and all(x['closed'] for x in terminal['closure']),'retained c14 failed closure incomplete')
+    need(sha(public/'non-delete-evidence-index.json')==terminal['evidence_index_sha256'],'retained c14 index changed')
+    for name,digest in load(public/'non-delete-evidence-index.json')['files'].items():
+        path=(public/name).resolve();need(path.is_relative_to(public.resolve()) and sha(path)==digest,'retained c14 raw member changed')
+    need(len(set(a['owners']))==86,'retained c14 scope differs')
+    for cid in a['owners']:
+        value=inspect(cid);need(closed(value) and project_owner(value)==descriptors[cid],'retained c14 caller/topology changed');ids.add(cid)
+    for name,digest in a['binaries'].items():need(sha(private/name)==digest,'retained c14 binary changed')
+    original=load(p1.PACKET/'candidate.json')
+    packet={'Execution':a['execution'],'Groups':[{'Group':g['group'],'Helpers':g['helpers'],'Copies':next(x['Copies'] for x in original['Groups'] if x['Group']==g['group'])} for g in a['groups']]}
+    budgets={}
+    for g in a['groups']:
+        folder=private/g['group']
+        for stage in list(g['helpers'])+['root-'+x for x in g['root_owners']]:need(load(folder/stage/'permission.json')=={'Enabled':False},'retained c14 permission changed')
+        for role in g['maintenance']:
+            stage='maintenance-'+role.lower() if role in ('PROVISION','SOURCE','RESTORE') else role
+            filename='six-provision.json' if role=='PROVISION' else ('restore-inspector.json' if role.startswith('restore-inspect-') else 'six-readonly.json')
+            need(load(folder/stage/filename)['Enabled'] is False,'retained c14 maintenance enabled')
+        for stage in g['rehearsals']:need(load(folder/('rehearsal-'+stage)/'remaining.json')['Base']['Enabled'] is False,'retained c14 trial enabled')
+        volume=json.loads(docker('volume','inspect',g['volumes']['budget']))[0]
+        need(volume['Labels'].get('lifecycle307.remaining')==a['execution'] and volume['Labels'].get('lifecycle307.allocation')==a['allocation_nonce'],'retained c14 budget owner changed')
+        mounted=docker('ps','-aq','--no-trunc','--filter','volume='+volume['Name']).decode('utf8','strict').split()
+        need(sorted(mounted)==g['budget_expected_mounted_cids'],'retained c14 budget mount graph expanded')
+        sequence.budget_archive(docker('cp',g['helpers']['wire']+':/run/budget','-'),packet,g['group'],initial=True)
+        budgets[g['group']]={'volume':volume['Name'],'uid':10001,'files':[],'mounted_cids':sorted(mounted)}
+    return {'pins':pins,'failure_bundle_sha256':sha(bundle),'budgets':budgets,'failed_execution':a['execution'],'never_replayed':True}
 
 
 class Allocation:
@@ -195,7 +237,8 @@ def build(destination=CONTROL):
 
 
 def allocate():
-    need(PROFILE=='candidate14/v24' and EXECUTION=='afc0e66c-535b-426e-a937-964d0c9ca0d6','only the new proposed execution is supported')
+    window.policy_checkpoint()
+    need(PROFILE=='candidate15/v25' and EXECUTION=='9f9c67d7-8a09-45a8-897f-9e3077b60980','only the new proposed execution is supported')
     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
     # Verify retained history before allocating any owner or volume.
     retained=historical_gate()
@@ -205,7 +248,7 @@ def allocate():
         source=build()
         old=load(p1.PACKET/'candidate.json');scopes=load(ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json')
         state={'status':'STOPPED_ALLOCATION_NOT_NATIVE_ACCEPTANCE','source':source,'profile':PROFILE,'execution':EXECUTION,'allocation_nonce':a.nonce,
-               'window':W,'retained':retained,'binaries':{n:sha(CONTROL/n) for n in ('reader','operator','owner','readonly-check.exe')},'build_files':{name:sha(CONTROL/name) for name in ('reader','operator','owner','readonly-check.exe',*[binary+'-build.'+channel for binary in ('reader','operator','owner','checker') for channel in ('stdout','stderr')])},'groups':[],'native_delete':0,'authorization':'NOT_RECEIVED','schedule':'NOT_CREATED'}
+               'window':W,'policy_checkpoint_sha256':window.POLICY_CHECKPOINT_SHA256,'retained':retained,'binaries':{n:sha(CONTROL/n) for n in ('reader','operator','owner','readonly-check.exe')},'build_files':{name:sha(CONTROL/name) for name in ('reader','operator','owner','readonly-check.exe',*[binary+'-build.'+channel for binary in ('reader','operator','owner','checker') for channel in ('stdout','stderr')])},'groups':[],'native_delete':0,'authorization':'NOT_RECEIVED','schedule':'NOT_CREATED'}
         mapping={'Execution':EXECUTION,'Profile':PROFILE,'Groups':[]}
         for n,scope in enumerate(scopes):
             group=scope['Group'];g=next(x for x in old['Groups'] if x['Group']==group)
@@ -214,7 +257,7 @@ def allocate():
             config=load(p1.PRIVATE/project/'config.json')
             need(all(closed(inspect(g[role])) for role in ('Core','Native','Gateway')),'source not closed')
             pg_env=backup/'postgres.env';pg_env.write_text('POSTGRES_USER=checkpoint_admin\nPOSTGRES_DB=postgres\nPOSTGRES_PASSWORD='+secrets.token_hex(32)+'\n',encoding='utf-8')
-            subnet='10.246.'+str(193+n)+'.0/28'
+            subnet='10.246.'+str(196+n)+'.0/28'
             # Reuse the existing subnet overlap check; never attach to another run.
             runner=prior.module('six_allocation_runner','prepare-remaining-runner.py');runner.check_subnet(subnet)
             network=a.network(prefix+'-restore',subnet)

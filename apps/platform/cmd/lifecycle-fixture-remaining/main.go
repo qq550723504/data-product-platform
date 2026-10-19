@@ -54,6 +54,7 @@ type groupBinding struct {
 	Helpers                                                                                           map[string]string
 }
 type candidate struct {
+	PolicyCheckpointSHA256                                                                                          string
 	ProfileWindowsSHA256                                                                                            string
 	OwnerBinarySHA256                                                                                               string
 	WirePublicKey                                                                                                   string
@@ -128,6 +129,9 @@ func fixedTarget(group, stage string) (domain.Copy, error) {
 	return historicalCopy(group, stage)
 }
 func validateCandidate(c candidate) error {
+	if c.PolicyCheckpointSHA256 != pilot.RemainingPolicyCheckpointSHA256 {
+		return errDenied
+	}
 	if c.NotBefore.Format(time.RFC3339) != pilot.RemainingNotBefore || c.NotAfter.Format(time.RFC3339) != pilot.RemainingNotAfter {
 		return errDenied
 	}
@@ -204,6 +208,9 @@ func validateCandidate(c candidate) error {
 			}
 		}
 		if len(g.Copies) != len(s.Copies)+extra || (g.Group == "business-races" && extra != 2) || (g.Group != "business-races" && extra != 0) {
+			return errDenied
+		}
+		if pilot.ValidateRemainingPolicyHeads(g.Group, g.PolicyHeads) != nil {
 			return errDenied
 		}
 		if g.Group == "business-races" {

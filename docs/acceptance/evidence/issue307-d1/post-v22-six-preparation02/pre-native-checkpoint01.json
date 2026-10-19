@@ -1,0 +1,13 @@
+{
+  "status": "PASS_PRE_NATIVE_CURRENT_HEAD",
+  "at": "2026-10-19T19:10:51.338523+00:00",
+  "source": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+  "pr_ci": 39303939210,
+  "ci_event": "pull_request",
+  "jobs": 13,
+  "pr_draft": true,
+  "issue307": "OPEN",
+  "unresolved_threads": 0,
+  "cold_budget_review_sha256": "ef82097545abea827f67edefd3ba830a9fbb26a73cc103b55e2a8ea6713c86d0",
+  "native_delete": 0
+}

@@ -149,7 +149,7 @@ func checkSix(baseline, fresh, group, expectation, inventory, mapping string) (r
 			return result{}, errors.New("six expected historical identity/protection differs")
 		}
 	}
-	extra := 2
+	extra := 2 + len(pilot.RemainingRetainedIdentities(group))
 	dormant, unassigned := pilot.RemainingDormantIdentity(group)
 	if dormant != "" {
 		value, present := expected.Users[dormant]

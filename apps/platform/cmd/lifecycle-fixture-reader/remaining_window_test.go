@@ -28,3 +28,15 @@ func TestRemainingRenewRejectsWrongCandidateDeadlineBeforeDB(t *testing.T) {
 		}
 	}
 }
+
+func TestResumeRejectsStaleCurrentPolicyCheckpointBeforeDatabase(t *testing.T) {
+	heads := pilot.RemainingPolicyHeads("business-races")
+	for version := range heads {
+		heads[version] = uuid.New()
+		break
+	}
+	r := remainingConfig{Group: "business-races", Batch: uuid.MustParse(pilot.RemainingExecution), ExpectedPolicyHeads: heads}
+	if got := remainingResumeBusiness(context.Background(), r, nil); got != lc.ErrStorageScope {
+		t.Fatalf("stale expected head reached Core or admission: %v", got)
+	}
+}

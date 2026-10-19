@@ -1,0 +1,18 @@
+{
+  "role": "rehearsal-core",
+  "group": "late-hold",
+  "cid": "53e0e85da3afe4958ed82fb2ebeea14fbe37c4a33d9d5e0587e7a472f5c94115",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate14-rehearsal",
+    "--network",
+    "8d3e6c11c04b9dbbfacf6ba56fa3b66451316f779f3fbbca3f1a84d190fec846",
+    "--env-file",
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate14\\late-hold\\checkpoint\\postgres.env",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-754ea8f0-candidate14-rehearsal-core,target=/var/lib/postgresql/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate14\\late-hold\\checkpoint,target=/run/backup,readonly",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+  ]
+}

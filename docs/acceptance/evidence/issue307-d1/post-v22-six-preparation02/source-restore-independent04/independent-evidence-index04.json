@@ -1,0 +1,30 @@
+{
+  "scope": "Independent candidate14 failed non-delete preparation audit; safe projections and original channels only",
+  "files": {
+    "business-races-current-budget.tar": "adcbdd3891a8487730d8d6fe27e366de025766bb2f4a38132d2ddbb29f8ad89e",
+    "c13-business-races-retained-budget.tar": "6394dd7e1a436cccf09a106c054ed6a0ae40f9f8a0712e131c54762fbc2b0cc8",
+    "c13-late-hold-retained-budget.tar": "89677a479e65d4c6e26f4bd7149621aa97caddb3e2ec24f62a5c79ceeead4d9c",
+    "c13-mixed-retained-budget.tar": "6f9b880e9982b0260813f29f8417ab68bde7615cf2fdbbd699ff76b9d864de73",
+    "file-evidence-recheck04.json": "f06fbee062dfae1dff0018afc95422711910ef9aaa0ed433b6b901310b7f06d7",
+    "late-hold-current-budget.tar": "ef4b14d79b67cac460b22998e49577d9ece43ca84c9e6fe12b7a748d6c9b2f2e",
+    "mixed-current-budget.tar": "728866fc3b4383f0e9a866e5f9f85a6e12715cd9ed6c71d8acd99d5bae3b4884",
+    "not-run-and-source-case04.json": "9e16bdfef1752ed12650da8523d183ae143a00d307681f2794168f03c5812968",
+    "old-retained-readback04.json": "4127437186afe57e06e5ec23503cbfa9ee3da449872977d85f7c7469b3ddaf3b",
+    "original-non-delete-evidence-index.json": "67168682a71e820a31949104571003b9385dfb03eea0b65943038b41de8c3a49",
+    "original-non-delete-terminal.json": "680dbaeeca4f6e8bfa7097860994d5fee7c7b96ac71617cc6a4542aab94194f7",
+    "physical-seal-readback04.json": "0e96584904c3550c81701752192477a4074930826a593beca4faf53712ef1bdd",
+    "profiles-budgets-backups04.json": "dbf676f9d403a2d46fcadcbe4aa655a7397d4fdb7a533e975bc9f00106f9f84d",
+    "root-cause04.json": "5999238a4e5085092652e1d8bb7e2570a42a05171cc6d0fee63d25e5a5e9a253",
+    "technical-ledger04.json": "1e7d7a79385031a16b1b33f7695385c4bf0b55bf7b0d8f24804395acad73e5cd",
+    "trial-original-owner.json": "d0bab955fb4ba1d1c6ac018c0c462945b6e6442c3ca7aee3c1cee3f50b6c08ed",
+    "trial-original-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trial-original-stdout.txt": "70ad53891375886b9c9498e2713714a49cc3271602da848e7fd32ff452c9f8d8",
+    "trial-original-wait-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trial-original-wait-stdout.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "v22-business-races-retained-budget.tar": "79ae61357d8f2e0a86595c3693c79f8bf85706d39f2d40438fec46081c77619a",
+    "v22-late-hold-retained-budget.tar": "3c99e617678a22bc4cca2f6875f1d5faeef7ea1827bdecee6ed174e3f45dddf4",
+    "v22-mixed-retained-budget.tar": "373d81736b5222743a8138c25c75a63066e0a585111c49bb0ce3a407c6e52058"
+  },
+  "native_delete_by_reviewer": 0,
+  "source_calls_by_reviewer": 0
+}

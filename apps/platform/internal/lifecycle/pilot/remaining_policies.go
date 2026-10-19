@@ -75,7 +75,21 @@ func RemainingUncreatedIdentities(group string) []string {
 	if group == "business-races" {
 		return []string{"d" + suffix}
 	}
-	return []string{"i" + suffix, "d" + suffix}
+	return []string{"i" + suffix, "d" + suffix, "iafc0e66c" + s.Run.String()[:8], "dafc0e66c" + s.Run.String()[:8]}
+}
+
+// Two business users were fully created disabled during the sealed c14
+// preparation. They remain sole-policy/no-groups and can never be enabled by
+// the new generation. The four untouched late/mixed users must remain absent.
+func RemainingRetainedIdentities(group string) map[string]string {
+	result := map[string]string{}
+	if group == "business-races" {
+		for _, prefix := range []string{"i", "d"} {
+			user := prefix + "afc0e66c808a6960"
+			result[user] = "lifecycle307-six-" + user
+		}
+	}
+	return result
 }
 
 // The unassigned c13 canned policy is still inspected, while its user must
@@ -84,6 +98,14 @@ func RemainingAuditPolicies(group string, present []domain.Copy) (map[string]str
 	users, policies, err := RemainingPolicies(group, present)
 	if err != nil {
 		return nil, nil, err
+	}
+	for user, name := range RemainingRetainedIdentities(group) {
+		users[user] = name
+		kind := "delete"
+		if user[0] == 'i' {
+			kind = "inspect"
+		}
+		policies[name] = append([]byte(nil), policies[RemainingPolicyName(group, kind)]...)
 	}
 	if user, name := RemainingDormantIdentity(group); user != "" {
 		users[user] = ""

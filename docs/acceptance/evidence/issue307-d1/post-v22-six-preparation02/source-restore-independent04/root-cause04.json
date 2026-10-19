@@ -1,0 +1,68 @@
+{
+  "status": "CONFIRMED_STALE_GENERATOR_HEAD_BINDING",
+  "source_head": "d9bf01248a8d9a0e3c15ff7548fb62d141f74bf7",
+  "source_files_sha256": {
+    "examples/lifecycle-d1/six_candidate_runtime.py": "40050b546ac99e6d57981d2a4dce729700fdfa955b8b645d718eeebf10d7d999",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go": "b440745dfb9e5554f94259d821521dd6d448caa2a0fcaef1aee2bbfba972b911",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining.go": "cc0dcf28782761ac263483a0a8c57b4df2972dd35c322d3a3ca585a7a70d0c74",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": "5337e599d76ab14c9a200e88219121752c87164df7c1b9e24d585f05459f8c58"
+  },
+  "comparisons": [
+    {
+      "dataset_version": "4219373a-07a0-4c66-a666-305675304b14",
+      "expected": "1dce673b-2d6c-4932-82a5-3c63be658b27",
+      "actual": "4a9220c3-0a45-4af4-a7fc-9fd2a9abec1f",
+      "supersedes": "1dce673b-2d6c-4932-82a5-3c63be658b27",
+      "direct_successor": true
+    },
+    {
+      "dataset_version": "699b8292-7fdb-4c22-af04-41f2eba761d4",
+      "expected": "e369ebcd-4b7a-4490-a35d-2131fa61faf9",
+      "actual": "546332ee-6e70-45d8-98b0-66d5531333fe",
+      "supersedes": "e369ebcd-4b7a-4490-a35d-2131fa61faf9",
+      "direct_successor": true
+    },
+    {
+      "dataset_version": "70d9185e-5ee7-4d79-9853-64e8e8db3630",
+      "expected": "105fd8c9-5ab3-4940-a87a-4071f4416fb0",
+      "actual": "49161aa4-9799-428f-acda-01b3fdd2cc52",
+      "supersedes": "105fd8c9-5ab3-4940-a87a-4071f4416fb0",
+      "direct_successor": true
+    },
+    {
+      "dataset_version": "8cb255aa-a842-4aa5-a4ff-871798aeed0b",
+      "expected": "ec9c4b58-288a-4e0d-a4a3-23bd54c73a90",
+      "actual": "3322f6bb-c5db-42de-b94d-ba8018a1e96c",
+      "supersedes": "ec9c4b58-288a-4e0d-a4a3-23bd54c73a90",
+      "direct_successor": true
+    },
+    {
+      "dataset_version": "a26216b5-95f6-4dbb-8359-c98f5f873be1",
+      "expected": "7d5d599b-1965-45b2-9008-8a0cdf0d75f6",
+      "actual": "1d4804a8-3726-49ee-8822-ede4bf10443e",
+      "supersedes": "7d5d599b-1965-45b2-9008-8a0cdf0d75f6",
+      "direct_successor": true
+    }
+  ],
+  "generated_expected_heads": {
+    "a26216b5-95f6-4dbb-8359-c98f5f873be1": "7d5d599b-1965-45b2-9008-8a0cdf0d75f6",
+    "70d9185e-5ee7-4d79-9853-64e8e8db3630": "105fd8c9-5ab3-4940-a87a-4071f4416fb0",
+    "8cb255aa-a842-4aa5-a4ff-871798aeed0b": "ec9c4b58-288a-4e0d-a4a3-23bd54c73a90",
+    "699b8292-7fdb-4c22-af04-41f2eba761d4": "e369ebcd-4b7a-4490-a35d-2131fa61faf9",
+    "4219373a-07a0-4c66-a666-305675304b14": "1dce673b-2d6c-4932-82a5-3c63be658b27"
+  },
+  "actual_current_heads": {
+    "4219373a-07a0-4c66-a666-305675304b14": "4a9220c3-0a45-4af4-a7fc-9fd2a9abec1f",
+    "699b8292-7fdb-4c22-af04-41f2eba761d4": "546332ee-6e70-45d8-98b0-66d5531333fe",
+    "70d9185e-5ee7-4d79-9853-64e8e8db3630": "49161aa4-9799-428f-acda-01b3fdd2cc52",
+    "8cb255aa-a842-4aa5-a4ff-871798aeed0b": "3322f6bb-c5db-42de-b94d-ba8018a1e96c",
+    "a26216b5-95f6-4dbb-8359-c98f5f873be1": "1d4804a8-3726-49ee-8822-ede4bf10443e"
+  },
+  "policy_checkpoint_sha256": "aab0e61530bee63429a15ce635880a6d1db286cb744767f7d9fdb50082313df8",
+  "renewal_receipt_sha256": "867aa6032eddb5a9b1cb1ed489d1e4801b9ab2330f073002bb429722e08b68f3",
+  "source_core_unchanged": true,
+  "source_core_sha256": "74e45ae37d0dd4e998e461624dcddfffa80116a08cf3234a7e00dd0ad1fce6f8",
+  "actual_error_channel": "stdout.txt",
+  "stderr_bytes": 0,
+  "fix_boundary": "Bind current-five typed Core checkpoint across generation/complete preflight/offline verification; retain head guard, no new Renew or old snapshot edits. New WIP code explicitly excluded; no repair PASS claimed."
+}
