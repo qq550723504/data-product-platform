@@ -1,0 +1,30 @@
+{
+  "schema": "remaining-ci-fix-evidence-v1",
+  "files": [
+    {
+      "path": "independent-review.json",
+      "sha256": "a089d9c588d3ee60801f6fb60bef9d0bded3f59c0c32f1face1378df92536362",
+      "bytes": 891
+    },
+    {
+      "path": "job-116908421604-failure.txt",
+      "sha256": "8ef3fa257c8f0832010c228321817ea719bc138e9608ed80539139ee1aacaba2",
+      "bytes": 4490
+    },
+    {
+      "path": "job-116908422325-failure.txt",
+      "sha256": "2b28be4bec924137d48122b9682b1f80cb39709fbe0e1d4a7b1aeeb2dc423ac1",
+      "bytes": 1664
+    },
+    {
+      "path": "local-validation.json",
+      "sha256": "b6f747518cc4f61489d266234ae826e9e0eb99a8a4b80054cdd1e90069ba5bd4",
+      "bytes": 1097
+    },
+    {
+      "path": "root-cause.json",
+      "sha256": "f2b4cdcaa03ae9016038de8bcdf243197c9bb30d5be9dc0df8199997672998d7",
+      "bytes": 1168
+    }
+  ]
+}

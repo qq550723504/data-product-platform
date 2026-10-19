@@ -1,0 +1,7 @@
+{
+  "source_commit": "e311423a81dd9fd6848aad90acbb41e270537511",
+  "binary_sha256": "edfd2d3aa96df8391d525c4b37963d723278b5f2e15398344b44454352e7f1a5",
+  "batch": "f010e5af-fcab-47e0-bfba-7ff15ab0e0a0",
+  "go": "go version go1.26.5 windows/amd64",
+  "delete": 0
+}

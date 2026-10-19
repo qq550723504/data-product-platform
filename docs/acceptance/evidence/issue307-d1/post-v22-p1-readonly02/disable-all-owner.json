@@ -1,0 +1,18 @@
+{
+  "cid": "5579531c052c1885ac4b82de9aed30c5bf20dc52b4d7f0733c1f7272bcb1e402",
+  "exit": 0,
+  "started_at": "2026-10-19T10:19:53.57947228Z",
+  "finished_at": "2026-10-19T10:19:53.999292904Z",
+  "closed": true,
+  "logs": {
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

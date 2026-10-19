@@ -1,0 +1,14 @@
+{
+  "core": "365f9baafede4693f2f73caa36c6f6564a83b601a95be40ec9d91b7c46048b87",
+  "minio": "4b5cd5a2d1ad22967d90d97c772f29f7f65b82f93bce537478ffcd1c49dbe55c",
+  "gateway": "12270d49a42a7c99c36cf3c333db60bcefcd499b7281e0a7b52627aebeee195d",
+  "redis": "a0a3f5bbdf0290e710d8cc64a5ec264cc1c6f7092d61d5de7cd245aa2f065857",
+  "network": "52d35fd42ec843b356d076909439b564f72cf18648c35f871c1ef7c08a78aa24",
+  "subnet": "10.234.169.0/24",
+  "source_core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+  "source_minio": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+  "core_full_restore": "PASS",
+  "native_file_restore": "PASS",
+  "gateway_sha256": "4e45788c38a55e285f7485e2be76d173f84b9dfc71442690f5b821911c0d202f",
+  "delete_route": "DENY_ALL"
+}

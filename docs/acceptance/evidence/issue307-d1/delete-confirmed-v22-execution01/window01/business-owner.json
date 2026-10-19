@@ -1,0 +1,10 @@
+{
+  "stage": "business",
+  "container": "3166956c6449116e0a2716201ad9274d95265461a6f6b86064fdf55961b6655f",
+  "started_at": "2026-10-19T06:06:44.308657741Z",
+  "finished_at": "2026-10-19T06:07:00.412719813Z",
+  "exit_code": 0,
+  "stopped_pid_zero": true,
+  "profile_sha256": "87e7fcb2c8c49e35d1f973566a5c5a7668f630c19c3286ba963fe64051b63c5f",
+  "native_delete": 0
+}

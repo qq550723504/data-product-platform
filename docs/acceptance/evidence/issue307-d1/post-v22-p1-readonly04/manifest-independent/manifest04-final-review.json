@@ -1,0 +1,327 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_P1_READONLY_REVIEW",
+  "reviewed_at": "2026-10-19T10:53:43.611624+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "remaining_blockers": [],
+  "manifest_sha256": "08575df192136760be928c199ab06df921bb3ef1bd13c81115d25886ba3eea4c",
+  "audit_id": "d64ad338-00d2-4569-bd62-9e132ddaf578",
+  "source_head": "491a42564edec862048fdb532a9964bad536b300",
+  "NotBefore": "2026-10-19T10:50:40.266016+00:00",
+  "ExpiresAt": "2026-10-19T11:30:40.266016+00:00",
+  "window_minutes": 40,
+  "scope": "Exact disabled preparation binding for new post-v22 P1 read-only audit04, after SOURCE05. No old audit resume, deletion authority, remaining-six candidate readiness or D1 acceptance.",
+  "source_review": {
+    "report": "source-final-review05.json",
+    "sha256": "3cbbf2a2a297fbd94ae80a60b8de205aff29f50bfbf97914fd0f889c12850323",
+    "status": "PASS_BOUNDED_INDEPENDENT_P1_SOURCE_REVIEW",
+    "remaining_blockers": [],
+    "all_19_reviewed_raw_files_unchanged": true,
+    "runtime_source_hashes": {
+      "examples/lifecycle-d1/reconcile-p1-post-v22.py": "dca8bb50055a1fada43c2a23800230bc00c097483dcf3c9ff966e2e633cc3bd0",
+      "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22.go": "293beed7bd5b087e12664a7aa163073adc0aea43e4c1ad983344d25e25a026af",
+      "apps/platform/cmd/lifecycle-fixture-recovery/main.go": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+      "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go": "2105d0b4e48140464da2d0afa50f0e0db3423191adc42985e3c40119830c787b",
+      "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly.go": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+      "apps/platform/internal/platform/outbox/publisher.go": "1cf8c17258465f2f4b39598d36b48b9c4fabae70ee3237fb3fdde774818d3910",
+      "apps/platform/internal/platform/storage/lifecycle_inspection.go": "f62a08e2531adc4ccb40592d55bf4542e4770abc60ca5a77e0a8ec795d3cd80b",
+      "apps/platform/internal/lifecycle/pilot/recovery_bootstrap.go": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2"
+    },
+    "runtime_Git_LF_bytes_match_HEAD": true,
+    "tests": "Reused SOURCE05 independent normal/-O 10+10, uncached recovery package, actual created-state positive and parent actual scratch PG3/3/Redis PONG. No unchanged source tests rerun for this binding-only review."
+  },
+  "actual_bindings": {
+    "source": {
+      "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "Native": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "Network": "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+      "Actor": "033a56ad-99c2-43e3-89e0-a749979a8644"
+    },
+    "owners": {
+      "enable-p1-readonly": {
+        "cid": "9257fb882ba4deeae0727eb03a3c9cead64bfbdcc9436a19b4752de55db8d826",
+        "private": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly04\\root-private",
+        "output": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-p1-readonly04\\output-enable-p1-readonly",
+        "binary": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly04\\bootstrap",
+        "binary_sha256": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec"
+      },
+      "disable-all": {
+        "cid": "8e37a8ff1830099130a7c0894d405581ab5e2b5990ed6494ac342fe46d3333d2",
+        "private": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly04\\root-private",
+        "output": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-p1-readonly04\\output-disable-all",
+        "binary": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly04\\bootstrap",
+        "binary_sha256": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec"
+      },
+      "worker": {
+        "cid": "e74be270b9f8bad63adebf5db1b5d10ba59cc471b4589c57cd94ccd954ac98f2",
+        "private": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly04\\worker-private",
+        "output": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-p1-readonly04\\output-worker",
+        "binary": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly04\\worker",
+        "binary_sha256": "db9d645acc3529073278f0446a3472f7f9dddd2449e3a3101ca8807b97e5b25e"
+      }
+    },
+    "actual_binary_hashes": {
+      "enable-p1-readonly": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec",
+      "disable-all": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec",
+      "worker": "db9d645acc3529073278f0446a3472f7f9dddd2449e3a3101ca8807b97e5b25e"
+    },
+    "Redis": {
+      "cid": "dc18e50151c2a3bce3333ee2f11e776d9a8cac2dbd66b2bb2498c2b9fb703cf9",
+      "name": "dpp307-p1-readonly-d64ad338-redis",
+      "volume": "dpp307-p1-readonly-d64ad338-redis-data",
+      "user": "999:1000",
+      "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "cmd": [
+        "redis-server",
+        "--appendonly",
+        "yes"
+      ],
+      "state": "created/stopped/PID0",
+      "configured_network": "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+      "created_endpoint": "EMPTY_ALLOWED_ONLY_UNDER_EXACT_CREATED_STATE_AND_CONFIGURED_ID",
+      "data_directory": [
+        {
+          "name": "data",
+          "uid": 999,
+          "gid": 1000,
+          "directory": true,
+          "bytes": 0
+        }
+      ],
+      "contract": "Exact one owned /data RW persistent volume, nonroot999:1000, read-only rootfs, cap-drop ALL, no-new-privileges, no ports, no restart; reviewed current redis_contract passes the sanitized actual created inspect. Actual runtime PONG still required before source/identity start."
+    },
+    "three_helpers": "Fixed image/entrypoint/command, native netns, nonroot10001:10001, exactly executorRO/privateRO/outputRW mounts, read-only rootfs, cap-dropALL, no-new-privileges, noports/norestart, stopped/PID0 and audit labels verified against sanitized parent actual inspect.",
+    "root_worker_isolation": {
+      "root_private_files": {
+        "candidate.json": "f624a5f50ccb4fa4aa8b465f5a60a090f6325e78f60544b4c18f9ba2604ef243",
+        "iam.json": "51876faa99cd322649fa541ef295d8ec7a43f4a1b88e9fe7f255cd372507687e",
+        "p1-readonly-permission.json": "ac4f8d7ad84996868d6dd25d2a97f15f0c55ebb113c00904f0140fec1065e645",
+        "root.json": "c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9",
+        "policies/lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5.json": "bb3a5a7eaf900e2f1a304ff25deac51ac1422666eb2187c07832bab62ca89b51",
+        "policies/lifecycle307-remaining-business-remainput808a6960.json": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+        "policies/lifecycle307-remaining-business-remainread808a6960.json": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+        "policies/lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5.json": "75f15fb9771ae100307cef311ef8b2700b8df585690c6a990e6456fc7ae81ccf"
+      },
+      "worker_private_files": {
+        "audit.json": "ffc4dfb6ac5a995e9fc937df18ede43291b7b0aa5c4be526085e2f7492e17dad",
+        "bindings.json": "8e54b47e4a1f83c7ce66555ed6ce2f3ec66c962a394a8fa1feb84eeaccd82fc5",
+        "recovery.json": "817ac214f0514d592404442e269e191a6aa4839cbc55e2423d892b8e4abb55d1"
+      },
+      "worker_root_or_send_credentials": false,
+      "root_helper_enable_scope": "Only fixed inspector inspect808a69606c36; worker/delete/reader/producer identities cannot be enabled by this read-only action"
+    },
+    "root_permission": {
+      "Enabled": false,
+      "AuditID": "d64ad338-00d2-4569-bd62-9e132ddaf578",
+      "Group": "business-races",
+      "Purpose": "POST_V22_P1_READONLY_RECONCILIATION",
+      "SourceCandidateSHA256": "f624a5f50ccb4fa4aa8b465f5a60a090f6325e78f60544b4c18f9ba2604ef243",
+      "BinarySHA256": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec",
+      "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "Native": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "CopyID": "5a4c9789-3e67-4e54-ab58-128d111cbd65",
+      "AttemptID": "009f4317-8855-4f99-80ec-cafc225f654e",
+      "NotBefore": "2026-10-19T10:50:40.266016+00:00",
+      "ExpiresAt": "2026-10-19T11:30:40.266016+00:00",
+      "MaxProviderDeletes": 0
+    },
+    "worker_audit_redacted": {
+      "AuditID": "d64ad338-00d2-4569-bd62-9e132ddaf578",
+      "Purpose": "POST_V22_P1_READONLY_RECONCILIATION",
+      "RedisAddr": "dpp307-p1-readonly-d64ad338-redis:6379",
+      "RecoveryConfig": "/run/private/recovery.json",
+      "BinarySHA256": "db9d645acc3529073278f0446a3472f7f9dddd2449e3a3101ca8807b97e5b25e",
+      "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "Native": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "NotBefore": "2026-10-19T10:50:40.266016+00:00",
+      "ExpiresAt": "2026-10-19T11:30:40.266016+00:00",
+      "MaxProviderDeletes": 0
+    },
+    "worker_recovery_redacted": {
+      "Enabled": false,
+      "SyntheticOnly": true,
+      "RunID": "d64ad338-00d2-4569-bd62-9e132ddaf578",
+      "ValidUntil": "2026-10-19T11:30:40.266016+00:00",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "ActorID": "033a56ad-99c2-43e3-89e0-a749979a8644",
+      "Endpoint": "127.0.0.1:9000",
+      "InspectAccess": "inspect808a69606c36",
+      "ManifestSHA256": "2fd4356702a7903af53d4f1f6f8dc6c40372bed11b7069bb32beb130a5077c35"
+    },
+    "actual_DSN_parsed_redacted": {
+      "scheme": "postgres",
+      "host": "dpp-lifecycle307-808a6960-postgres",
+      "port": 5432,
+      "user": "fixture",
+      "database": "lifecycle307",
+      "query": "sslmode=disable",
+      "secret": "PRESENT_PRIVATE_NOT_EMITTED"
+    },
+    "core_connection_binding": {
+      "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "host": "dpp-lifecycle307-808a6960-postgres",
+      "port": 5432,
+      "database": "lifecycle307",
+      "user": "fixture",
+      "transport": "sslmode=disable; isolated internal network",
+      "credential": "PRIVATE_NOT_EMITTED"
+    },
+    "source_profile_sha256": "64ee505a37a6cfa16dd85e48055626acc154113babeab9ebd2eac3c49f68dd92",
+    "canonical_POSIX_input_names": true
+  },
+  "retained_boundaries": {
+    "original_owner_count": 61,
+    "original_controls": {
+      "permissions_false": 32,
+      "cases_revoked": 7,
+      "recoveries_revoked": 7
+    },
+    "prior_readonly_audits": [
+      {
+        "name": "post-v22-p1-readonly01",
+        "manifest_sha256": "3aa4401d1904e887a696538ecb1cd52d066d8996deecc37e1f6db274dc14dbde",
+        "terminal_sha256": "db6b254cfa57b5d9d16e9a1024daae9a0032c0cf4f279c330c2b639ded525fd7",
+        "new_owners_stopped_PID0": 4,
+        "profiles_false_original_SHA_unchanged": 2,
+        "may_resume": false
+      },
+      {
+        "name": "post-v22-p1-readonly02",
+        "manifest_sha256": "cd7cd06bfb46ab0703252af9f2668ed6453a4da4b84e860a736d80fa979ddb14",
+        "terminal_sha256": "e6c4ca076c5576b71e871cbed68843d97367818cad0be5e1f2928ae3f839e04f",
+        "new_owners_stopped_PID0": 4,
+        "profiles_false_original_SHA_unchanged": 2,
+        "may_resume": false
+      },
+      {
+        "name": "post-v22-p1-readonly03",
+        "manifest_sha256": "2dc299ec1d9fbe4831fa7fae3c886f160565d49bea35c9fc0d4abf89ba72eafa",
+        "terminal_sha256": "1cb6bb1d04ffb5fe9916aa2e92db0692541f42333808bf7a3aaa1206a5f958a0",
+        "new_owners_stopped_PID0": 4,
+        "profiles_false_original_SHA_unchanged": 2,
+        "may_resume": false
+      }
+    ],
+    "backup_sha256": {
+      "business-races/core.dump": "75f02109f039c6ee2735e976ee3c1c7bb9d5f2fd643cface5849e206eed11bab",
+      "business-races/globals.sql": "d738e649fe404e45e778808ab074d93ca0ba2d90cb5c39a1c6592bb25aa5f360",
+      "business-races/native.tar": "40fdf5125d8df98b97f91eaaf2aad0eb565322e79c5c95704d580f8414973255",
+      "late-hold/core.dump": "63651c3f5f2b93c393e12c8ddec627338132fc5261d8193083522d6736f3a5da",
+      "late-hold/globals.sql": "06c767c194d83e91552c72b9daf5e1637480506f5a432b7d2ff342ec18874fce",
+      "late-hold/native.tar": "a51518f5ec922fe2a887a346685192f219650409f76f64518facaaf7b29aa25a",
+      "mixed/core.dump": "303ef33e8184f09a3de4d91eda8abb3043578c6de30cb0acde57a5922e15e343",
+      "mixed/globals.sql": "cc68a7d8f23cf18c9754719b404a4a86a35d83c91d87b49bb05ff92d28ddd2f4",
+      "mixed/native.tar": "e404b58c3e700716497a8ce2b4b8ab2ce6be180923e814a2e5bfa1ce9b7e4940"
+    },
+    "budgets": {
+      "business-races": {
+        "./5a4c9789-3e67-4e54-ab58-128d111cbd65.json": {
+          "bytes": 1010,
+          "sha256": "dcd9ea81e45fc05afc31a91b37b60e9c6390e3f064c416ef8ddbfca89e8dbcc9"
+        },
+        "./6fabf3b5-76b8-4245-8f5d-01e64f610146.json": {
+          "bytes": 1010,
+          "sha256": "29dc38591157a1d40f3283e6c508452353ad13fbb650399479d06c6d027881db"
+        },
+        "./wire-5a4c9789-3e67-4e54-ab58-128d111cbd65.json": {
+          "bytes": 973,
+          "sha256": "9287e64246160e3b531b3ec8b73416c801be3ef6bc87db353cebda7bccfe7320"
+        }
+      },
+      "late-hold": {},
+      "mixed": {}
+    },
+    "old_budget_pin_cleanup_reclaim": false,
+    "original_v22_DELETE_authorization_reused": false
+  },
+  "evidence_files": {
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/preparation.json": {
+      "sha256": "08575df192136760be928c199ab06df921bb3ef1bd13c81115d25886ba3eea4c",
+      "bytes": 25269
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/actual-disabled-bindings04.json": {
+      "sha256": "1d87d875b88526a5a26833c553cd22c2c3aeb7a275ba9b0bd51e6140df540861",
+      "bytes": 21731
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/postgres-regression.json": {
+      "sha256": "a7a9c4b4dc71bbdd54219a3fb5f4b681355ec4992a469c0f9f3390d4086f5f54",
+      "bytes": 772
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/postgres-tests.txt": {
+      "sha256": "8cde2d32f2e654593900cf19bb9b061833eaa5dcaa6e69213426e2f71d3bc487",
+      "bytes": 1340
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/scratch-closed.json": {
+      "sha256": "6008d34eef4bf78140c305886bd5dabe72e7be99815ac1700aee5dd45e816265",
+      "bytes": 223
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/queue-regression/initial-created-network-rejection.json": {
+      "sha256": "f89862d5843e8486a4a5773e8036b6f7a94d87e46236264e5e64ce3f202a5856",
+      "bytes": 1054
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/queue-regression/redis-ready.json": {
+      "sha256": "b80d9e66105d722169c60524fe6302921490c0b887576402ef84b4b6624c5750",
+      "bytes": 186
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly04/queue-regression/owned-closed.json": {
+      "sha256": "f5cb0e2a98d7305c41edf3c07a6df22ef5a59f6ee47ce704b0df8f375587c9de",
+      "bytes": 475
+    }
+  },
+  "independent_binding_audit": {
+    "file": "manifest04-binding-audit.json",
+    "sha256": "632018c83c563b53fc3ef19fa6bedbdb35435056cc99b33a84dd56d31acc7f0d",
+    "result": "PASS_BINDING_AUDIT",
+    "invalid_first_historical_lookup": {
+      "file": "manifest04-binding-audit-failure01.json",
+      "sha256": "b7443494f2716b4ad107ea0ddfc55bcb2e261e0db811274b810430d65b2ed6bc",
+      "classification": "INVALID_REVIEWER_HISTORICAL_PATH_LOOKUP_NOT_COUNTED",
+      "reason": "Historical audit01 used immutable Windows backslash keys. Reviewer-only lookup was corrected by comparing existing canonicalized keys; current04 all inputs were already POSIX. No runtime/source/manifest changed."
+    }
+  },
+  "preparation_state": {
+    "parent_actual_readback_at": "2026-10-19T10:51:14.794757+00:00",
+    "current_all_six_owners_stopped_PID0": true,
+    "prior12_new_CIDs_stopped": true,
+    "prior6_profiles_false": true,
+    "source_started": false,
+    "identity_enabled": false,
+    "native_delete": 0
+  },
+  "required_runtime_gates_remain": [
+    "Rerun fresh before use, preserve exact committed source/binary/input/manifest SHA, stopped known owners, old controls/budgets/backups and fixed expiry; never extend or reuse a terminal audit.",
+    "Start only this fixed nonroot Redis first and require actual strict running contract plus PONG before enabling profiles or starting original Core/Native/identity. Recheck running actual network and queue identity at each critical phase; never apply the created-empty-endpoint exception to running Redis.",
+    "Bootstrap may enable only inspector after fresh verification of four disabled identities, frozen official policy semantics, one policy and no group widening. No delete/reader/producer enable.",
+    "The routing helper must enclose the first journaled native request. Actual worker must retain original exact ACCEPTED proof/no prior Core absence, fresh seven HEAD/protections and full namespace inventories before selected recovery work; expected SHA fields are not an actual content reread.",
+    "Only new selected event/work through existing Outbox and Asynq can append exact P1 absence/completion. Require selected PUBLISHED status and durable diagnostics; DispatchOnce nil is not publish. Persist actual per-call starts/observations/cost; missing rows and UNKNOWN never prove no call or zero cost.",
+    "On failure stop new work, preserve original errors, durable status and independent owner stdout/stderr. Close every fixed owner despite earlier inspect/stop failures, revoke both profiles and confirm four identities freshly disabled. Unknown closure cannot become PASS; retain old pins/budgets/backups."
+  ],
+  "scope_limits": [
+    "Manifest-bound disabled preparation review only. Actual audit04 native/Asynq/Core absence and terminal closure have NOT_RUN at review time.",
+    "Reviewer used current source/Git, actual binary file hashes and parent sanitized live readbacks. No Docker/provider/source/identity/proof or secret profile values were accessed; no shared repository or GitHub writes.",
+    "Actual audit03 native precheck proved seven exact HEAD/protection and two LISTs/P1 absent, but no content reread, Core absence, Core-after or real Asynq completion. Its FAILED/SEALED terminal and original stderr remain unchanged; no old audit is resumable.",
+    "Owned Redis startup/PONG and PG/SDK loopback are bounded component evidence, not actual retained native/business/D1 acceptance.",
+    "This report is not a deletion authorization, Ready/merge permission, main CI confirmation, or executable approval of six remaining targets. Remaining-six scope stays an unfrozen draft."
+  ],
+  "reviewer_operations": {
+    "Docker": 0,
+    "provider": 0,
+    "source_start": 0,
+    "identity_enable": 0,
+    "secret_values_read": 0,
+    "proof_signing": 0,
+    "real_DELETE": 0,
+    "shared_repo_write": 0,
+    "GitHub_write": 0
+  },
+  "native_P1_audit04": "NOT_RUN_AT_REVIEW",
+  "remaining_six": "UNFROZEN_DRAFT_ONLY",
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

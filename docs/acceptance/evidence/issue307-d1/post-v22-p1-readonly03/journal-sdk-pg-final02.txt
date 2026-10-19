@@ -1,0 +1,4 @@
+=== RUN   TestP1JournalRoutingBeforeSDKPrecheckAndOriginalFailure
+--- PASS: TestP1JournalRoutingBeforeSDKPrecheckAndOriginalFailure (12.87s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	15.011s

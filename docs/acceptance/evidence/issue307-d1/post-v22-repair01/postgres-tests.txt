@@ -1,0 +1,10 @@
+=== RUN   TestSequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim
+    exact_execution_integration_test.go:103: incomplete/expanded inventory became an absence receipt
+--- FAIL: TestSequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim (4.70s)
+=== RUN   TestExactSendClaimSerializedAndLateRevocationKeepsCost
+--- PASS: TestExactSendClaimSerializedAndLateRevocationKeepsCost (3.94s)
+=== RUN   TestExactAbsenceRequiresPostDispatchJournalAndCompleteMembership
+--- PASS: TestExactAbsenceRequiresPostDispatchJournalAndCompleteMembership (3.80s)
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	14.153s
+FAIL

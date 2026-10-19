@@ -142,7 +142,7 @@ func (s *CopyService) PrepareCopy(ctx context.Context, c PrepareCopyCommand) (do
 		}
 		var policy uuid.UUID
 		var deadline time.Time
-		e = tx.QueryRow(ctx, `SELECT id,restore_until FROM lifecycle_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, c.WorkspaceID, src.DatasetVersionID).Scan(&policy, &deadline)
+		e = tx.QueryRow(ctx, `SELECT id,restore_until FROM lifecycle_current_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, c.WorkspaceID, src.DatasetVersionID).Scan(&policy, &deadline)
 		if e != nil {
 			return uuid.Nil, e
 		}
@@ -448,7 +448,7 @@ func (s *CopyService) currentState(ctx context.Context, tx pgx.Tx, w, v uuid.UUI
  COALESCE((SELECT string_agg(r.id::text,',' ORDER BY r.id) FROM lifecycle_content_use_restriction r WHERE r.workspace_id=$1 AND r.dataset_version_id=v.id),''),
  COALESCE((SELECT string_agg(a.id::text,',' ORDER BY a.id) FROM lifecycle_disposition_approval a JOIN lifecycle_disposition_plan_target t ON t.plan_id=a.plan_id JOIN lifecycle_fixture_copy c ON c.id=t.copy_id WHERE c.dataset_version_id=v.id AND NOT EXISTS(SELECT 1 FROM lifecycle_approval_revocation r WHERE r.approval_id=a.id)),''),
  COALESCE((SELECT string_agg(h.id::text,',' ORDER BY h.id) FROM lifecycle_content_hold h JOIN lifecycle_fixture_copy c ON c.id=h.copy_id WHERE c.dataset_version_id=v.id AND NOT EXISTS(SELECT 1 FROM lifecycle_content_hold_release r WHERE r.hold_id=h.id)),'')
- FROM dataset_version v JOIN dataset d ON d.id=v.dataset_id JOIN lifecycle_copy_policy p ON p.dataset_version_id=v.id AND p.workspace_id=d.workspace_id WHERE d.workspace_id=$1 AND v.id=$2`, w, v).Scan(&status, &hash, &size, &use, &restore, &restrictions, &dispositions, &holds)
+ FROM dataset_version v JOIN dataset d ON d.id=v.dataset_id JOIN lifecycle_current_copy_policy p ON p.dataset_version_id=v.id AND p.workspace_id=d.workspace_id WHERE d.workspace_id=$1 AND v.id=$2`, w, v).Scan(&status, &hash, &size, &use, &restore, &restrictions, &dispositions, &holds)
 	if e != nil {
 		return "", false, e
 	}
@@ -539,7 +539,7 @@ func (s *CopyService) EvaluateFixtureUse(ctx context.Context, tx pgx.Tx, r UseGa
 		return domain.UseDecision{}, domain.ErrUseBlocked
 	}
 	var until time.Time
-	if e = tx.QueryRow(ctx, `SELECT use_until FROM lifecycle_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, r.Copy.WorkspaceID, r.Copy.DatasetVersionID).Scan(&until); e != nil {
+	if e = tx.QueryRow(ctx, `SELECT use_until FROM lifecycle_current_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, r.Copy.WorkspaceID, r.Copy.DatasetVersionID).Scan(&until); e != nil {
 		return domain.UseDecision{}, e
 	}
 	// The output intent freezes the actual producer inputs before publication.
@@ -588,7 +588,7 @@ func (s *CopyService) EvaluateFixtureUse(ctx context.Context, tx pgx.Tx, r UseGa
 			return domain.UseDecision{}, domain.ErrUseBlocked
 		}
 		var cap time.Time
-		if e = tx.QueryRow(ctx, `SELECT use_until FROM lifecycle_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, r.Copy.WorkspaceID, id).Scan(&cap); e != nil {
+		if e = tx.QueryRow(ctx, `SELECT use_until FROM lifecycle_current_copy_policy WHERE workspace_id=$1 AND dataset_version_id=$2`, r.Copy.WorkspaceID, id).Scan(&cap); e != nil {
 			return domain.UseDecision{}, e
 		}
 		if cap.Before(until) {

@@ -1,0 +1,12 @@
+{
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/remaining-ci02/current09-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs/acceptance/evidence/issue307-d1/remaining-ci02/current09-stdout.json": "d5edaab01e9b9a169ca6c46aff745bfb0de9cfb0316c883bba2dce09b3c8bc27",
+    "docs/acceptance/evidence/issue307-d1/remaining-ci02/failed-head-excerpt.txt": "2c7e800ff259b6c925f64f2577b02c496a8bb9173b21e7be57867def41ec867b",
+    "docs/acceptance/evidence/issue307-d1/remaining-ci02/failure.json": "d707a623aa4386b2c7fc7b9b5a3729448e79c07c507101543ecc40966ecf6a14",
+    "docs/acceptance/evidence/issue307-d1/remaining-ci02/historical-stderr.txt": "e7e92b49f258a9662a80fd7f0155c1db9ca9b8b0b1d7f06959e596f810ac25b3",
+    "docs/acceptance/evidence/issue307-d1/remaining-ci02/historical-stdout.json": "adb7b877a48dcd73a738c92aaa8fec1529b55b6f5f7e0b05ba76a961247d4d5d",
+    "docs/acceptance/evidence/issue307-d1/remaining-ci02/independent-review.json": "2cf0dc1df91bf006c329ed271bbfd409d484502fba6e534955dbf3d52139b2b6",
+    "docs/acceptance/evidence/issue307-d1/remaining-ci02/status.json": "ad7a322f8028c621351e13876c5d1aafa74fdb7dc67c0ef88187ce4a911b0e13"
+  }
+}

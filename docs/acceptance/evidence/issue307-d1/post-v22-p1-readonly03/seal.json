@@ -1,0 +1,55 @@
+{
+  "at": "2026-10-19T10:38:33.108017+00:00",
+  "closed": [
+    {
+      "cid": "52d934ca9ffadf94cf80c82e27ed7daa525b1fd4b5e2c331e3e31c52e9362edd",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "b040c0113071e8cee2df2789575609f2589850b43a7bcf80fd888f65906c4248",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "65d9ad83e86805e98961bf85256db4bef05fcf762af4829938e0813704ba8ebf",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "fdb7b92e9aa45082628a707f63c44338bd66f991a14a90e010dc1125ba385661",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    },
+    {
+      "cid": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "closed": true,
+      "initial_inspect_failed": false,
+      "stop_failed": false
+    }
+  ],
+  "profiles": [
+    {
+      "profile": "worker-private/recovery.json",
+      "disabled": true
+    },
+    {
+      "profile": "root-private/p1-readonly-permission.json",
+      "disabled": true
+    }
+  ],
+  "all_closed": true,
+  "fresh_disabled_readback": true,
+  "cleanup": 0,
+  "native_delete": 0
+}

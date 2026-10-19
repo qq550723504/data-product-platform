@@ -1,0 +1,91 @@
+{
+  "recorded_at": "2026-10-18T07:40:43.657Z",
+  "expected_head": "2ead583ee8d7f84e06272bb34f3b7865cfb0ddb1",
+  "actual_head": "2ead583ee8d7f84e06272bb34f3b7865cfb0ddb1",
+  "PR323": {
+    "draft": true,
+    "state": "open"
+  },
+  "Issue307": "open",
+  "ci_kind": "EXACT_HEAD_PR_CI_NOT_MAIN_CI",
+  "ci_workflow_runs": [
+    {
+      "id": 39104508835,
+      "name": "ci",
+      "status": "completed",
+      "conclusion": "success",
+      "run_number": 2178,
+      "jobs_url": "https://api.github.com/repos/qq550723504/data-product-platform/actions/runs/39104508835/jobs",
+      "logs_url": "https://api.github.com/repos/qq550723504/data-product-platform/actions/runs/39104508835/logs",
+      "workflow_id": 359594848
+    }
+  ],
+  "jobs": [
+    {
+      "name": "classify-changes",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "web-console",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "gx-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "hop-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "go-platform",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "splink-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "temporary-container-contracts (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "label-studio-smoke",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "temporary-container-contracts (windows-latest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "live-core / live-core-browser",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "demo / demo-lifecycle",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "browser-contracts / web-browser-contracts",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "required",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "review_threads": []
+}

@@ -1,0 +1,5 @@
+--- FAIL: TestBusinessSendRecoveryCompositionCannotBatchPastUnreconciledDeletion (0.00s)
+    sequence_test.go:129: business survivor fixture changed
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	2.344s
+FAIL

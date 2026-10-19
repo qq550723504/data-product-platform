@@ -1,0 +1,15 @@
+{
+  "status": "PASS_EXACT_BINDINGS_AND_RAW_GIT",
+  "packet_anchor": "c00d4a8f85aaaaa71b9c19c76d042dee6aad1802",
+  "packet_raw_files_working_and_git": 1122,
+  "machine_template_exact_bytes": true,
+  "targets": 7,
+  "survivors": 11,
+  "candidate_sha256": "0e55e28ea69b3894cfd8a032edbc6e4dcf811917c7cbc54d50e41aa79ba49e01",
+  "confirmation_document_sha256": "841cb0f424de3095fedef1e82f4d749a82f3424d711a1553a4c321c096cdc1f7",
+  "runbook_sha256": "dce7d5fc85eb05d1f41920bf13c85cc110d12c209b0c6edef382334d15b5b619",
+  "native_delete": 0,
+  "provider_io": 0,
+  "independent_final_review_sha256": "efbf2ab25a3f15bf09d9506ae990744deafd78465eb95e94cf69bc4e96db9d1d",
+  "resolved_blocker": "RB1_CLOSED"
+}

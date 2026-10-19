@@ -1,0 +1,22 @@
+{
+  "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "status": "FROZEN_REVIEW_ONLY_EVIDENCE",
+  "excludes": [
+    "later schedule prompt and readback",
+    "current matrix",
+    "final checkpoint"
+  ],
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-review01/authorization-byte-audit.json": "951005875f30c7706ae24218f7cd435e30495f71e1a693da68592240664a495c",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-review01/authorization-counterexamples.txt": "709aeae616820712f8fcc96eb09d2da882d831ef3d72d5fb11521ef6696ef8b3",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-review01/candidate10-offline.txt": "afaffd2d9a9cbc6c547952c405d06c7d166d303ccbcc3f217195be1c8b793214",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-review01/github-checkpoint.json": "5295a26d0e6c623222def1a5817ef1666cee15e2255c06cfdf3ea51777678c4b",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-review01/github-run-exact-head.json": "3b9681f2974a42e268bdb1a8eba388e444c216a77b165e728899794fc7e3a2fe",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-review01/independent-authorization-window-review.json": "88589338c265179182b561f108b4e7e7859bd8a9fecaa13db1da0afd719e3c6c",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-review01/initial-execution-preparation-index.json": "4b99acf9605d4d846d84d4f5d0ed33d4eece677f71e5c31b4197a6cda716c1e0",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-review01/parent-readonly-prewindow-check.json": "1eed28277c9260d6cdc2c55d340a2fee56d9e284b5d9eaff4161808a985e4720",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-review01/support-normal.txt": "cbf80ca0ff7bf830b785b121047be90cf9afb3c9657902ee49a3a330853807ea",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-review01/support-optimized.txt": "e6572d5c3bfa8b556525afb26fd20bba13fb8e2e802dc10399f6de2bcb9b055b",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-review01/test_authorization_window_review.py": "10158402e1d44e2a0e91c24726876ae2fdf5dfef6dbbb73b46b00f5d7994a231"
+  }
+}

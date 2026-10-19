@@ -1,0 +1,33 @@
+{
+  "07": {
+    "status": "PASS_ACTUAL_SEALED_OWNERS_BACKUPS",
+    "operators_and_bootstrap": 32,
+    "case_owners": 7,
+    "backup_hashes": 9,
+    "permission_enabled": false,
+    "native_delete": 0,
+    "provider_io": 0
+  },
+  "08": {
+    "status": "PASS_ACTUAL_SEALED_OWNERS_BACKUPS",
+    "operators_and_bootstrap": 32,
+    "case_owners": 7,
+    "backup_hashes": 9,
+    "permission_enabled": false,
+    "native_delete": 0,
+    "provider_io": 0
+  },
+  "09": {
+    "status": "PASS_ACTUAL_SEALED_OWNERS_BACKUPS",
+    "operators_and_bootstrap": 32,
+    "case_owners": 7,
+    "backup_hashes": 9,
+    "permission_enabled": false,
+    "native_delete": 0,
+    "provider_io": 0
+  },
+  "at": "2026-10-18T06:19:47.340316+00:00",
+  "native_delete": 0,
+  "container_starts": 0,
+  "provider_io": 0
+}

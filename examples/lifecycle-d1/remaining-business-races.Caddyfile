@@ -1,0 +1,66 @@
+{
+ admin off
+ auto_https off
+}
+:9000 {
+ route {
+  # Sole published storage endpoint. No negative DELETE probes are required.
+  @delete method DELETE
+  respond @delete 403
+  @unsigned header X-Amz-Content-Sha256 STREAMING-UNSIGNED-PAYLOAD-TRAILER
+  respond @unsigned 403
+  @copy header X-Amz-Copy-Source *
+  respond @copy 403
+  @overwrite {
+   path /dpp-lifecycle307-online/fixture/* /dpp-lifecycle307-quarantine/fixture/*
+   method PUT
+   expression {http.request.header.If-None-Match} != '*'
+  }
+  respond @overwrite 403
+  @unversioned {
+   path /dpp-lifecycle307-online/fixture/* /dpp-lifecycle307-quarantine/fixture/*
+   method GET HEAD
+   expression {http.request.uri.query.versionId} == ''
+  }
+  respond @unversioned 403
+  # HEAD/version metadata uses the inspection identity. Only the one-shot
+  # bootstrap identity can GET fixture payload bytes; never a business reader.
+  @retention {
+   path /dpp-lifecycle307-online/fixture/* /dpp-lifecycle307-quarantine/fixture/*
+   method GET
+   query retention=*
+  }
+  reverse_proxy @retention minio:9000
+  @legalHold {
+   path /dpp-lifecycle307-online/fixture/* /dpp-lifecycle307-quarantine/fixture/*
+   method GET
+   query legal-hold=*
+  }
+  reverse_proxy @legalHold minio:9000
+  @payloadWithoutBootstrap {
+   path /dpp-lifecycle307-online/fixture/* /dpp-lifecycle307-quarantine/fixture/*
+   method GET
+   expression !{http.request.header.Authorization}.contains('Credential=__BOOTSTRAP_ACCESS__/')
+  }
+  respond @payloadWithoutBootstrap 403
+  @health path /minio/health/ready
+  reverse_proxy @health minio:9000
+  # Bootstrap admin calls still require MinIO root authentication.
+  @admin {
+   path /minio/admin/v3/*
+   method GET PUT POST
+  }
+  reverse_proxy @admin minio:9000
+  @root {
+   path /
+   method GET
+  }
+  reverse_proxy @root minio:9000
+  @fixture {
+   path /dpp-lifecycle307-online /dpp-lifecycle307-online/ /dpp-lifecycle307-quarantine /dpp-lifecycle307-quarantine/ /dpp-lifecycle307-online/fixture/p1.csv /dpp-lifecycle307-online/fixture/p2.csv /dpp-lifecycle307-online/fixture/t1.csv /dpp-lifecycle307-quarantine/fixture/t2.csv /dpp-lifecycle307-online/fixture/control-hold.csv /dpp-lifecycle307-quarantine/fixture/control-retention.csv
+   method GET HEAD PUT
+  }
+  reverse_proxy @fixture minio:9000
+  respond 403
+ }
+}

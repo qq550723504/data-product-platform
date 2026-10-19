@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "status": "BLOCKED_BOUNDED_P1_AUDIT02_BOOTSTRAP_ROOTCAUSE_REVIEW",
+  "reviewed_at": "2026-10-19T10:24:01.535089+00:00",
+  "frozen_source": "86cec9c804f2d54ffc74e13aa210547a1ecdca7a",
+  "manifest_sha256": "cd7cd06bfb46ab0703252af9f2668ed6453a4da4b84e860a736d80fa979ddb14",
+  "audit_id": "669e16cb-c671-4f36-92ad-ab3a3b051b81",
+  "remaining_blockers": [
+    "B5_ROUTING_BOOTSTRAP_AFTER_FIRST_JOURNALED_READ",
+    "B6_ORIGINAL_JOURNAL_CAUSE_ERASED_AT_MULTIPLE_LAYERS"
+  ],
+  "findings": [
+    {
+      "id": "B5",
+      "classification": "BLOCKER_CONFIRMED_STATIC_NECESSARY_PATH",
+      "evidence": "New P1 main branch invokes runP1PostV22 directly, bypassing the old run function router initialization. P1 native precheck precedes routing.NewRouter/ConfigureAppendObligation in runP1PostV22. Recovery inspector uses real reconciliation PostgresStorageCallJournal. StartStorageCall inserts a start fact then appendDispositionFacts -> appendLifecycleFacts -> outbox.Append; missing process routing source returns an explicit error and rolls back the start transaction. The adapter returns before base.RoundTrip on a Start error. No process init supplies routing earlier.",
+      "limited_fix": "Initialize the existing platform routing/append obligation in the P1 composition before any potentially journaled storage call; preserve all existing authority, audit/evidence/outbox and claim filtering gates."
+    },
+    {
+      "id": "B6",
+      "classification": "BLOCKER_CONFIRMED_STATIC_CAUSE_ERASURE",
+      "evidence": "inspectionTransport replaces StartStorageCall and ObserveStorageCall errors with plain ErrStorageUnknown. inspectionError then returns the matched typed sentinel rather than the input error, stripping a joined cause a second time.",
+      "limited_fix": "Keep ErrStorageUnknown classification while wrapping/joining the exact Start/Observe error through transport, SDK and public inspector error mapping. Verify errors.Is for both sentinel and original error with real SDK loopback. Actual invocation observations must remain independent of outcome persistence."
+    }
+  ],
+  "actual_evidence": {
+    "worker_exit": 1,
+    "original_stderr_parent_report_hash_verified": {
+      "bytes": 83,
+      "sha256": "19db26dcaac8a3888f68461c141cf11dd47425ebb83cb527a22048f3dee125d0",
+      "content": "P1 post-v22 read-only reconciliation failed: lifecycle storage observation unknown\n"
+    },
+    "actual_scope": "Core/Native and new Redis/helper were started; inspector alone was temporarily enabled, then fixed disable-all confirmed all four identities disabled. DELETE=0, old execution not resumed.",
+    "sealed_owners": 6,
+    "profiles_disabled": 2,
+    "fresh_identity_readbacks": 4,
+    "old_budget_backup_controls_preserved": true,
+    "Core_full_after_fingerprint": "NOT_PRODUCED_DUE_TO_EARLY_FAILURE",
+    "native_precheck_output": "NOT_PRODUCED",
+    "exact_P1_absence": "NOT_RUN"
+  },
+  "evidence_files": {
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/terminal.json": "e6c4ca076c5576b71e871cbed68843d97367818cad0be5e1f2928ae3f839e04f",
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/seal.json": "a7b3733836074b0af4c5ff152853092ee00b49f3d3bac2ded5278b8fe95c4570",
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/worker-owner.json": "2938ab05913a49e9eae2683b7d389545010894277723d753a2e8f0798a6aae5f",
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/failure.json": "822b01a324c578acd3d7f240872e6b678c8aa926c1727f4f36e23ae2e384b38a",
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/enable-p1-readonly-owner.json": "60a3db27ed2c19e22b345c4e52ac1151ecf4a7b7e2a6c280b1c371f51b7bf6aa",
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/disable-all-owner.json": "8ee092f51e87f537c20dc7862cec1b2275ef93b709325ffe49fd5e73354577a1",
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/output-enable-p1-readonly/result.json": "9697e3fb0adba786db7de72a6e0d4ccc3b1145dee09abe01e1fdfd7ed003d235",
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/output-disable-all/status-changes.json": "21fd97cd75f5ae8f19347b7ba77b828ab7d30a07ec8165f9d721eebdcd8f9439"
+  },
+  "frozen_code_sha256": {
+    "apps/platform/cmd/lifecycle-fixture-recovery/main.go": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+    "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22.go": "f792d763b0477ee5c34c1ecb16ed81ba29fd1dfba57f560ad33ac767fc558359",
+    "apps/platform/internal/lifecycle/pilot/recovery.go": "7844601fc2209766f72a9465d812b37538e4bc622393ecd276cf882aa5eabd3f",
+    "apps/platform/internal/lifecycle/application/storage_journal.go": "f9b37acd7739afc1499668e91bf80d2b3c0c56b4827a47c9bd49733fd700f63b",
+    "apps/platform/internal/lifecycle/application/disposition.go": "2417b7b4f4a31d4ed3939777dd01252fdbd2ff5baa1bb3e9e0a83e867fd14e6e",
+    "apps/platform/internal/lifecycle/application/occupancy.go": "1f4ceb72d21d2f31bcfedf8b04c9d5567729e594c06abc7a8f3041cc9f502816",
+    "apps/platform/internal/platform/outbox/store.go": "8171d0387d909947545a61a7cbd08a6121b26dc6950e98ec8a3304980aae8319",
+    "apps/platform/internal/platform/storage/lifecycle_inspection.go": "9b1c9174b5f57764ceb3276c8a9f5d0ada49f4c5273447e4775c1b7319e9a75f",
+    "apps/platform/internal/platform/routing/routing.go": "404e0d6b441d927933600469b1daa25c9f59b7643571d5b40ae04fac4c40f70d"
+  },
+  "proof_limits": [
+    "The generic actual stderr confirms only the observed UNKNOWN classification; it does not recover the unique actual underlying error that was erased. Static missing routing is a deterministic necessary-path defect, not a recovered original transaction traceback.",
+    "Start failure before base transport means that modeled Start-failure branch does not invoke the adapter wire; current audit02 lack of storage/cost rows by itself is not a proof of zero real reads/cost. Admin identity/policy API calls definitely occurred; their counts/amount must not be inferred as zero.",
+    "A scratch real-PG journal + real MinIO SDK loopback counterexample is still required to demonstrate exact append failure, zero counted loopback wire on rejected Start, and distinct already-invoked Observe failure without retry. No provider test personally run in this review.",
+    "retained_old_facts_unchanged in the host terminal verifies retained budgets/backups/control-file closure; it is not an after-Core whole-row fingerprint proof, since that success path was never reached."
+  ],
+  "next_phase": "Preserve audit02 manifest/terminal/UNKNOWN stderr/budgets/binaries and reports. Repair and review non-delete bootstrap/diagnostics first; only then prepare a fresh audit03 and bind its own manifest. Do not rerun audit02.",
+  "reviewer_operations": {
+    "Docker": 0,
+    "provider": 0,
+    "source_start": 0,
+    "credential_reads": 0,
+    "repository_writes": 0
+  },
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

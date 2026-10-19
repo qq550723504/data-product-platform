@@ -1,0 +1,356 @@
+{
+  "P1_exact_absent_in_full_namespace": true,
+  "bytes_hash_reverification": "NOT_PERFORMED_HEAD_AND_PROTECTION_ONLY",
+  "fresh_native": {
+    "Present": [
+      {
+        "Head": {
+          "Copy": {
+            "ID": "91d954ee-cce5-4ceb-840d-fd6bdab778be",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "70b12ac5-1d86-462c-9176-fd5a681472cd",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-online",
+            "Key": "fixture/control-hold.csv",
+            "ProviderVersion": "47026891-d10a-4400-a3cb-76915e3d51bf",
+            "ContentSHA256": "ad335d6334c5e1213b18c16dd8fe5bbd5bb1c1f53351ab8f13ce6e3b04120a90",
+            "ByteSize": 54
+          },
+          "ObservedAt": "2026-10-19T10:58:07.881144799Z",
+          "CallID": "b93d4e72-75a9-4709-bd82-37836a105722"
+        },
+        "Protection": {
+          "Copy": {
+            "ID": "91d954ee-cce5-4ceb-840d-fd6bdab778be",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "70b12ac5-1d86-462c-9176-fd5a681472cd",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-online",
+            "Key": "fixture/control-hold.csv",
+            "ProviderVersion": "47026891-d10a-4400-a3cb-76915e3d51bf",
+            "ContentSHA256": "ad335d6334c5e1213b18c16dd8fe5bbd5bb1c1f53351ab8f13ce6e3b04120a90",
+            "ByteSize": 54
+          },
+          "RetentionMode": "NONE",
+          "RetainUntil": null,
+          "LegalHold": true,
+          "ObservedAt": "2026-10-19T10:58:07.928865991Z",
+          "CallIDs": [
+            "9b714e81-6d8e-4e29-820a-0df66ffbd582",
+            "01cdb2a4-92c0-4ac9-ab5b-c0c4c8e76101"
+          ]
+        }
+      },
+      {
+        "Head": {
+          "Copy": {
+            "ID": "aa8ecd43-1c17-4d0b-b462-42600a426b1b",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "6837388a-80b1-4512-8976-ce2a7bae4e85",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-quarantine",
+            "Key": "fixture/control-retention.csv",
+            "ProviderVersion": "2606d71f-207b-42a7-b671-4b7f4ca4d194",
+            "ContentSHA256": "51c1c5e1a03e2347a4798ab8d9a312faef4853d028b7360ea84dfa8ea1616183",
+            "ByteSize": 55
+          },
+          "ObservedAt": "2026-10-19T10:58:07.942908691Z",
+          "CallID": "14f4ca38-2279-414f-b689-70eed28b95ff"
+        },
+        "Protection": {
+          "Copy": {
+            "ID": "aa8ecd43-1c17-4d0b-b462-42600a426b1b",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "6837388a-80b1-4512-8976-ce2a7bae4e85",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-quarantine",
+            "Key": "fixture/control-retention.csv",
+            "ProviderVersion": "2606d71f-207b-42a7-b671-4b7f4ca4d194",
+            "ContentSHA256": "51c1c5e1a03e2347a4798ab8d9a312faef4853d028b7360ea84dfa8ea1616183",
+            "ByteSize": 55
+          },
+          "RetentionMode": "GOVERNANCE",
+          "RetainUntil": "2026-10-23T06:25:44Z",
+          "LegalHold": false,
+          "ObservedAt": "2026-10-19T10:58:07.967684433Z",
+          "CallIDs": [
+            "5d54be1d-26cb-421b-a95e-1c5563aae0b1",
+            "4a4add4d-add1-4fbe-a4be-5077aafb97f9"
+          ]
+        }
+      },
+      {
+        "Head": {
+          "Copy": {
+            "ID": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "4219373a-07a0-4c66-a666-305675304b14",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-online",
+            "Key": "fixture/p2.csv",
+            "ProviderVersion": "d8040608-c5cd-4a6f-8a2d-b3f856cf5302",
+            "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+            "ByteSize": 232
+          },
+          "ObservedAt": "2026-10-19T10:58:07.979748562Z",
+          "CallID": "c2762359-7bb3-4566-a173-659e7e6fb956"
+        },
+        "Protection": {
+          "Copy": {
+            "ID": "6fabf3b5-76b8-4245-8f5d-01e64f610146",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "4219373a-07a0-4c66-a666-305675304b14",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-online",
+            "Key": "fixture/p2.csv",
+            "ProviderVersion": "d8040608-c5cd-4a6f-8a2d-b3f856cf5302",
+            "ContentSHA256": "722b7c8834f35892e3a3404b43ff8118b326b5c0c992207290dcc674f6b7ade0",
+            "ByteSize": 232
+          },
+          "RetentionMode": "NONE",
+          "RetainUntil": null,
+          "LegalHold": false,
+          "ObservedAt": "2026-10-19T10:58:08.001838205Z",
+          "CallIDs": [
+            "d99af9da-2955-4173-8838-5e210315b2eb",
+            "c458cd88-d235-49da-80b5-153620088302"
+          ]
+        }
+      },
+      {
+        "Head": {
+          "Copy": {
+            "ID": "639c4cee-6a7c-4a13-aa68-37035d6e1811",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "a26216b5-95f6-4dbb-8359-c98f5f873be1",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-online",
+            "Key": "fixture/remaining-processed.csv",
+            "ProviderVersion": "00d7e220-7714-4c31-a4c7-2dda08cfa306",
+            "ContentSHA256": "d036fefe3225f322a8a2ad401bcc7e3e59127b98df0c6966d1b4c31018ff3fd0",
+            "ByteSize": 232
+          },
+          "ObservedAt": "2026-10-19T10:58:08.014177361Z",
+          "CallID": "fc194359-cdd9-4a6b-9fee-9f3889f57c2c"
+        },
+        "Protection": {
+          "Copy": {
+            "ID": "639c4cee-6a7c-4a13-aa68-37035d6e1811",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "a26216b5-95f6-4dbb-8359-c98f5f873be1",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-online",
+            "Key": "fixture/remaining-processed.csv",
+            "ProviderVersion": "00d7e220-7714-4c31-a4c7-2dda08cfa306",
+            "ContentSHA256": "d036fefe3225f322a8a2ad401bcc7e3e59127b98df0c6966d1b4c31018ff3fd0",
+            "ByteSize": 232
+          },
+          "RetentionMode": "NONE",
+          "RetainUntil": null,
+          "LegalHold": false,
+          "ObservedAt": "2026-10-19T10:58:08.043805713Z",
+          "CallIDs": [
+            "0fb951b5-0b3d-4475-9435-eba28493c734",
+            "d65baaa0-76ec-4279-8964-e0b47a57f5a4"
+          ]
+        }
+      },
+      {
+        "Head": {
+          "Copy": {
+            "ID": "da6cc6a8-c9c2-41a6-8811-2d46164a241d",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "8cb255aa-a842-4aa5-a4ff-871798aeed0b",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-online",
+            "Key": "fixture/remaining-standardized.csv",
+            "ProviderVersion": "dac1dbc5-c9b5-412a-a2a6-bf082e109e22",
+            "ContentSHA256": "f8a1a1c7f85ff910f44f011d0dc3aba1b410ace20cc7c4429e18ab6cccb1c77d",
+            "ByteSize": 494
+          },
+          "ObservedAt": "2026-10-19T10:58:08.062697221Z",
+          "CallID": "5a04e380-d146-4da6-9ba3-19062ea93e42"
+        },
+        "Protection": {
+          "Copy": {
+            "ID": "da6cc6a8-c9c2-41a6-8811-2d46164a241d",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "8cb255aa-a842-4aa5-a4ff-871798aeed0b",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-online",
+            "Key": "fixture/remaining-standardized.csv",
+            "ProviderVersion": "dac1dbc5-c9b5-412a-a2a6-bf082e109e22",
+            "ContentSHA256": "f8a1a1c7f85ff910f44f011d0dc3aba1b410ace20cc7c4429e18ab6cccb1c77d",
+            "ByteSize": 494
+          },
+          "RetentionMode": "NONE",
+          "RetainUntil": null,
+          "LegalHold": false,
+          "ObservedAt": "2026-10-19T10:58:08.101016441Z",
+          "CallIDs": [
+            "8c0a3624-d083-4671-ac6e-248dfab8a1f5",
+            "9a62b73f-9fb3-441c-b156-3251547b5d21"
+          ]
+        }
+      },
+      {
+        "Head": {
+          "Copy": {
+            "ID": "f48755f1-976b-4f47-98da-70ead936a4c3",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "699b8292-7fdb-4c22-af04-41f2eba761d4",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-online",
+            "Key": "fixture/t1.csv",
+            "ProviderVersion": "39d4ef5d-e983-413d-a6c2-9759d456b750",
+            "ContentSHA256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+            "ByteSize": 129328
+          },
+          "ObservedAt": "2026-10-19T10:58:08.12010031Z",
+          "CallID": "f31e3a73-40af-4b8a-bcb4-936a6e221ff6"
+        },
+        "Protection": {
+          "Copy": {
+            "ID": "f48755f1-976b-4f47-98da-70ead936a4c3",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "699b8292-7fdb-4c22-af04-41f2eba761d4",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-online",
+            "Key": "fixture/t1.csv",
+            "ProviderVersion": "39d4ef5d-e983-413d-a6c2-9759d456b750",
+            "ContentSHA256": "b5b9321c647c6dc75e27c25beb46ecf7f4cf10f9bdd0d288887e41c343ef3524",
+            "ByteSize": 129328
+          },
+          "RetentionMode": "NONE",
+          "RetainUntil": null,
+          "LegalHold": false,
+          "ObservedAt": "2026-10-19T10:58:08.153783475Z",
+          "CallIDs": [
+            "239648bb-b792-42a0-b942-964159b923d9",
+            "0d79c10e-cfb1-4e91-824a-9fb9e0959f73"
+          ]
+        }
+      },
+      {
+        "Head": {
+          "Copy": {
+            "ID": "e09fd433-54cf-4e82-b8c4-098472505fa2",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "70d9185e-5ee7-4d79-9853-64e8e8db3630",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-quarantine",
+            "Key": "fixture/t2.csv",
+            "ProviderVersion": "90bd8ded-337a-4ca1-aec3-66c4ee6a1314",
+            "ContentSHA256": "a4ddf289321e3f5ede8528cb6268bd37d4165a727688477275a6497107fdaa4c",
+            "ByteSize": 49
+          },
+          "ObservedAt": "2026-10-19T10:58:08.174309628Z",
+          "CallID": "715910df-0683-4e50-a28f-51f1d65775e5"
+        },
+        "Protection": {
+          "Copy": {
+            "ID": "e09fd433-54cf-4e82-b8c4-098472505fa2",
+            "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+            "DatasetVersionID": "70d9185e-5ee7-4d79-9853-64e8e8db3630",
+            "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+            "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+            "Namespace": "dpp-lifecycle307-quarantine",
+            "Key": "fixture/t2.csv",
+            "ProviderVersion": "90bd8ded-337a-4ca1-aec3-66c4ee6a1314",
+            "ContentSHA256": "a4ddf289321e3f5ede8528cb6268bd37d4165a727688477275a6497107fdaa4c",
+            "ByteSize": 49
+          },
+          "RetentionMode": "NONE",
+          "RetainUntil": null,
+          "LegalHold": false,
+          "ObservedAt": "2026-10-19T10:58:08.200836435Z",
+          "CallIDs": [
+            "2183edb7-45ce-49e1-b85e-0f06146ce10a",
+            "e396360a-4cff-4f20-a9d6-b8680b5e0c97"
+          ]
+        }
+      }
+    ],
+    "Inventories": [
+      {
+        "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+        "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+        "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+        "Namespace": "dpp-lifecycle307-online",
+        "Versions": [
+          {
+            "Key": "fixture/control-hold.csv",
+            "Version": "47026891-d10a-4400-a3cb-76915e3d51bf",
+            "ByteSize": 54,
+            "DeleteMarker": false
+          },
+          {
+            "Key": "fixture/p2.csv",
+            "Version": "d8040608-c5cd-4a6f-8a2d-b3f856cf5302",
+            "ByteSize": 232,
+            "DeleteMarker": false
+          },
+          {
+            "Key": "fixture/remaining-processed.csv",
+            "Version": "00d7e220-7714-4c31-a4c7-2dda08cfa306",
+            "ByteSize": 232,
+            "DeleteMarker": false
+          },
+          {
+            "Key": "fixture/remaining-standardized.csv",
+            "Version": "dac1dbc5-c9b5-412a-a2a6-bf082e109e22",
+            "ByteSize": 494,
+            "DeleteMarker": false
+          },
+          {
+            "Key": "fixture/t1.csv",
+            "Version": "39d4ef5d-e983-413d-a6c2-9759d456b750",
+            "ByteSize": 129328,
+            "DeleteMarker": false
+          }
+        ],
+        "ObservedAt": "2026-10-19T10:58:08.216939464Z",
+        "CallID": "f0f7f57f-09b8-4259-a135-9e116b434759",
+        "ResponseSHA256": "cc7631241bfcdc636daf0e2ddd487553a216599dce8e3ef8f0d199e8c44e24e4"
+      },
+      {
+        "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+        "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+        "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+        "Namespace": "dpp-lifecycle307-quarantine",
+        "Versions": [
+          {
+            "Key": "fixture/control-retention.csv",
+            "Version": "2606d71f-207b-42a7-b671-4b7f4ca4d194",
+            "ByteSize": 55,
+            "DeleteMarker": false
+          },
+          {
+            "Key": "fixture/t2.csv",
+            "Version": "90bd8ded-337a-4ca1-aec3-66c4ee6a1314",
+            "ByteSize": 49,
+            "DeleteMarker": false
+          }
+        ],
+        "ObservedAt": "2026-10-19T10:58:08.230777375Z",
+        "CallID": "8b90c016-f96f-428d-a134-eae4fd2f6d88",
+        "ResponseSHA256": "ec2052a07b63bbf0761076f30d9bcf2b041b13201883121c98844348fad7aa83"
+      }
+    ]
+  },
+  "native_delete": 0,
+  "present_versions": 7
+}

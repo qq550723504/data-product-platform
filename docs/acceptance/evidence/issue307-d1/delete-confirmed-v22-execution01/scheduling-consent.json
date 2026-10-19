@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-19T02:52:59.415768+00:00",
+  "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+  "turn_id": "01a1520d-04a5-79b2-abde-04c3e3812f38",
+  "human_message_id": "01a1520d-05d3-7af3-9bc7-d55c8794ef29",
+  "answer": "安排固定窗口续跑（推荐）",
+  "question_item_id": "[\"request_user_input_async\",\"call_3e0c759f01fc40e1a35e8ef54d6b3df3\",0]",
+  "actual_scheduling_reply_private": "remaining-candidate12/authorized-execution01/scheduling-consent-verbatim.txt",
+  "scheduling_reply_sha256": "eaa734f37ade4475efacbb74ea60aec7cc36a26948c7d1f36293b74d2a2436ef",
+  "deletion_authorization_sha256": "4235dc7205b9479d7fe0c36b88484ba9e780c2d166b094a7700bed31a3311dc4",
+  "window_start_utc": "2026-10-19T06:00:00Z",
+  "window_end_exclusive_utc": "2026-10-19T06:40:00Z",
+  "authorizes_scheduling_only_no_scope_expansion": true,
+  "user_retyped_deletion_template": false
+}

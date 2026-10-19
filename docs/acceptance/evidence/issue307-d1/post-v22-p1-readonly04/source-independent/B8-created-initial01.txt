@@ -1,0 +1,6 @@
+test_intended_nonroot_fix_accepts_real_created_network_snapshot (__main__.CreatedRedis.test_intended_nonroot_fix_accepts_real_created_network_snapshot) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK

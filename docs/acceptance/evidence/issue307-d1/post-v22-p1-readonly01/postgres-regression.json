@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-19T09:26:21.585811+00:00",
+  "cmd": [
+    "go",
+    "test",
+    "-count=1",
+    "./internal/lifecycle/application",
+    "-run",
+    "Test(ScopedRecoveryOutboxClaimNeverTouchesAnotherObligation|SequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim|ExactSendClaimSerializedAndLateRevocationKeepsCost|ExactAbsenceRequiresPostDispatchJournalAndCompleteMembership)$",
+    "-v"
+  ],
+  "exit_code": 0,
+  "cid": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+  "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "log_sha256": "7b13f09b3dea08d2aa9654a30d71d12bbdf87cb102a38838f4f18e95fec1a07c",
+  "native_sources_started": false,
+  "native_delete": 0
+}

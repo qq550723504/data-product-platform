@@ -1,0 +1,63 @@
+{
+  "status": "FAILED_RENEW_PROFILE_SEALED_NO_DELETE",
+  "at": "2026-10-18T10:08:31.806975+00:00",
+  "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "HEAD_used": "2ead583ee8d7f84e06272bb34f3b7865cfb0ddb1",
+  "fresh_exact_HEAD_PR_CI": 39104508835,
+  "PR_CI_jobs_success": 13,
+  "fresh_complete_native_preflight": "PASS_18_VERSIONS_76_GET_HEAD",
+  "fresh_Core_fingerprints_unchanged": true,
+  "frozen_inventory_protection_IAM_backups_owner_budget_gates": "PASS_BEFORE_ROOT_ENABLE",
+  "root_enable_read": "business-races LIMITED_READ_PRODUCER_INSPECTOR_ONLY",
+  "root_enable_send": "NOT_RUN",
+  "renew": "FAILED_BEFORE_FIRST_RENEW_COMMAND",
+  "six_renew_commands": "NOT_RUN",
+  "real_P_H_M_business": "NOT_RUN",
+  "sender_wire_recovery_starts_in_window": [],
+  "durable_budget_volumes_empty": 3,
+  "native_delete": 0,
+  "source_versions_survivors_and_backups": "NO_S3_MUTATION_NO_DELETE_ALL_RETAINED",
+  "technical_native_GET_HEAD": 76,
+  "technical_admin_calls": 38,
+  "technical_admin_methods": {
+    "GET": 31,
+    "PUT": 7
+  },
+  "real_provider_delete_attempts": 0,
+  "physical_closed_bound_containers": 208,
+  "original_205_bound_and_3_new_technical_helpers_stopped": true,
+  "all_permissions_false": 128,
+  "current_cases_revoked": 7,
+  "current_recovery_profiles_revoked": 7,
+  "gateways": [
+    {
+      "id": "1c5877bbfabdd1a812fa658e62e594ad76a8c7ae815aa41d5ee06274eb6ed39a",
+      "sealed_sha256": "6cbf354b0f6e12adf155dd50110443fdffc8e9d1a76b521a51f9eaa2dcc5b1ad"
+    },
+    {
+      "id": "2e2192530e9ff4d45bfdae8fc797089fd8ce0969d37cba97e00d63986f4e194c",
+      "sealed_sha256": "6cbf354b0f6e12adf155dd50110443fdffc8e9d1a76b521a51f9eaa2dcc5b1ad"
+    },
+    {
+      "id": "5ce094c5beac39c734225169cef76f1adb41b598b1993d203bd2fa71a21f83c3",
+      "sealed_sha256": "6cbf354b0f6e12adf155dd50110443fdffc8e9d1a76b521a51f9eaa2dcc5b1ad"
+    }
+  ],
+  "business_IAM_disable_fresh_confirmed": true,
+  "late_hold_and_mixed_IAM_disable_after_seal": "UNCONFIRMED_NATIVE_ALREADY_STOPPED_NO_RESTART_FOR_SEAL",
+  "late_hold_and_mixed_prior_fresh_preflight_IAM": "ALL_DISABLED_BEFORE_ANY_POSSIBLE_ENABLE; NO_GROUP_OWNER_OR_ENABLE_STARTED",
+  "seal_all_steps_confirmed": false,
+  "no_global_fresh_identity_seal_PASS_claim": true,
+  "automation_id": "307-d1-candidate10-v20",
+  "automation_status": "PAUSED",
+  "no_retry_no_resume_no_window_extension": true,
+  "frozen_candidate_binary_template_and_history_unchanged": true,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "PR323": "DRAFT",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED",
+  "root_cause_sha256": "6622bedf6367c3ec47623e77f59abb9ca902c79d28e8e18b6dcf8307bcbbcc25",
+  "private_terminal_sha256": "7d812bcd3d6b70f7ad469895fb4623d909627c649cf2ea0953f9792a09572230"
+}

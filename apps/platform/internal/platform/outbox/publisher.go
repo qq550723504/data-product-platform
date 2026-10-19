@@ -60,7 +60,11 @@ type Config struct {
 	// Dispatch confirmations are per consumer: one consumer finishing does not
 	// imply any other consumer finished.
 	ConsumerName string
-	Logger       *slog.Logger
+	// OnlyEventID limits an operator-owned finite drain before claim/lease
+	// mutation. Zero keeps the normal global publisher. It never alters the
+	// selected event's frozen routing obligation or handler confirmations.
+	OnlyEventID uuid.UUID
+	Logger      *slog.Logger
 }
 
 func (c Config) withDefaults() Config {
@@ -239,6 +243,7 @@ func (p *Publisher) claimOneRouted(ctx context.Context) (*claim, error) {
 			SELECT id FROM outbox_event
 			WHERE status IN ($1, $5, $6)
 			  AND available_at <= now()
+			  AND ($7::uuid = '00000000-0000-0000-0000-000000000000'::uuid OR id = $7)
 			ORDER BY created_at, id
 			FOR UPDATE SKIP LOCKED
 			LIMIT 1
@@ -246,7 +251,7 @@ func (p *Publisher) claimOneRouted(ctx context.Context) (*claim, error) {
 		RETURNING id, aggregate_type, aggregate_id, event_type, event_version, payload, attempts,
 		          routing_version, required_handlers, attempt_base
 	`, statusProcessing, now.Add(p.cfg.ClaimTTL), token, p.cfg.ConsumerName,
-		statusPending, statusFailed).Scan(
+		statusPending, statusFailed, p.cfg.OnlyEventID).Scan(
 		&event.ID,
 		&event.AggregateType,
 		&event.AggregateID,

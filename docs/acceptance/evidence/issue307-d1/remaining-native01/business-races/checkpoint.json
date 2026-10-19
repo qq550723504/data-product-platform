@@ -1,0 +1,31 @@
+{
+  "status": "PASS_FULL_CORE_AND_NATIVE_RESTORE",
+  "core": {
+    "container": "dpp-lifecycle307-808a6960-checkpoint",
+    "id": "562fc35651295d65d18f81c0ae85f9404cb9377cbbcc37a82b2a83358e7abfd4",
+    "volume": "dpp-lifecycle307-808a6960-checkpoint-data",
+    "dump_sha256": "17e173195e543359870b3fb73a69fe887775390ed87f64cb9557a285648d7ef6",
+    "globals_sha256": "a2e3163d862b1299efd06ecb0903cdfe8f08f1a5876030a03c5bc9737e31c2d6",
+    "tables": 194,
+    "rows": 372
+  },
+  "native": {
+    "archive_sha256": "1bfc047b61d2f2a4a3b8140d3d0cc870804cf8131b07a3359e8c58d0a4dfc9da",
+    "archive_bytes": 202240,
+    "container": "dpp-lifecycle307-808a6960-restored-minio",
+    "id": "e52e7e01f3f1f220d85469d37f442ec0b07c64f6c3e5755952c5c48dee67e2f1",
+    "volume": "dpp-lifecycle307-808a6960-restored-objects",
+    "version_count": 6,
+    "physical_file_sha256_compare": "PASS",
+    "exact_GET_inventory_protection_IAM": "PASS",
+    "verification": "restore-verification02/verification.json",
+    "verifier_sha256": "687bbe2172368cbc9cf1690cbaab0f08dfc20ab69d9dc3de2aba6f8653eef166"
+  },
+  "active_gateway_sha256": "b0d31b81143a611b60496e0fd8b98b40b877f1dd31db48b0cd5e687eb109f47e",
+  "sealed_gateway_sha256": "6cbf354b0f6e12adf155dd50110443fdffc8e9d1a76b521a51f9eaa2dcc5b1ad",
+  "installed_gateway": "SEALED_DENY_ALL",
+  "delete": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "cleanup": 0
+}

@@ -1,0 +1,3515 @@
+{
+  "status": "OBSERVED_READONLY_TECHNICAL_CALLS",
+  "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+  "physical_attempts": 152,
+  "unique_ids": 152,
+  "http_status_counts": {
+    "400": 62,
+    "200": 90
+  },
+  "method_counts": {
+    "GET": 152
+  },
+  "amount": "NOT_ASSESSED",
+  "business_delete_attempts": 0,
+  "mutation_requests": 0,
+  "note": "Raw baseline/preflight copies deduplicated by immutable attempt ID; real additional complete CLI and root check-disabled calls are separate attempts. HTTP400 expected NoSuchObjectLockConfiguration is validated by official checker, not counted as absence. Technical reads are not zero provider traffic or zero assessed cost.",
+  "attempts": [
+    {
+      "attempt_id": "01737dc5-3f3a-4680-b39d-a57a981b4941",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/t1.csv",
+      "started_at": "2026-10-18T14:51:06.443614197Z",
+      "observed_at": "2026-10-18T14:51:06.447999074Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-01737dc5-3f3a-4680-b39d-a57a981b4941.json",
+          "sha256": "30c07975f0c001388bdcee22b14611a15f44bb0dfd3b55b324e9f0c0bbfb199e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-01737dc5-3f3a-4680-b39d-a57a981b4941.json",
+          "sha256": "30c07975f0c001388bdcee22b14611a15f44bb0dfd3b55b324e9f0c0bbfb199e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-01737dc5-3f3a-4680-b39d-a57a981b4941.json",
+          "sha256": "293e397eeb519f72742a697f96cfbca6802b6a11e8b0d56add10f26812f52312"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-01737dc5-3f3a-4680-b39d-a57a981b4941.json",
+          "sha256": "293e397eeb519f72742a697f96cfbca6802b6a11e8b0d56add10f26812f52312"
+        }
+      ]
+    },
+    {
+      "attempt_id": "06992b3b-cbf1-4694-96ea-b8dc9471bccb",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h2-a.csv",
+      "started_at": "2026-10-18T14:52:14.645326146Z",
+      "observed_at": "2026-10-18T14:52:14.648853861Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-06992b3b-cbf1-4694-96ea-b8dc9471bccb.json",
+          "sha256": "cf8e65ba44b212b03027c3f5697419bc3efc4f8ac82eae2959a123e59d37a04b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-06992b3b-cbf1-4694-96ea-b8dc9471bccb.json",
+          "sha256": "1013f2bef1818c9c0d338fd06d3eda68b59c942c8c4aaf5ca4dce6929a8a4909"
+        }
+      ]
+    },
+    {
+      "attempt_id": "0b13d9c8-b84e-4a2a-82ae-0ab9faadeacb",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:51:06.533978681Z",
+      "observed_at": "2026-10-18T14:51:06.537438462Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-0b13d9c8-b84e-4a2a-82ae-0ab9faadeacb.json",
+          "sha256": "e2e651968ae228fdea5c19c47e8efc9b8a399597c1045cbc7be76a0c8f65d0e0"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-0b13d9c8-b84e-4a2a-82ae-0ab9faadeacb.json",
+          "sha256": "e2e651968ae228fdea5c19c47e8efc9b8a399597c1045cbc7be76a0c8f65d0e0"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-0b13d9c8-b84e-4a2a-82ae-0ab9faadeacb.json",
+          "sha256": "6f955afae58cbce4053495764ae0cfe7e0ce1fa46cfd124dceddb705f567c90e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-0b13d9c8-b84e-4a2a-82ae-0ab9faadeacb.json",
+          "sha256": "6f955afae58cbce4053495764ae0cfe7e0ce1fa46cfd124dceddb705f567c90e"
+        }
+      ]
+    },
+    {
+      "attempt_id": "0f4223fb-8e38-49f3-a1e6-039a8a67c496",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-c.csv",
+      "started_at": "2026-10-18T14:51:26.714593637Z",
+      "observed_at": "2026-10-18T14:51:26.718454829Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-0f4223fb-8e38-49f3-a1e6-039a8a67c496.json",
+          "sha256": "ce4fdf06c7ef6ce14a007f294f74d67b7996dd028c1c59ddd2f957daa980d9cd"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-0f4223fb-8e38-49f3-a1e6-039a8a67c496.json",
+          "sha256": "ce4fdf06c7ef6ce14a007f294f74d67b7996dd028c1c59ddd2f957daa980d9cd"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-0f4223fb-8e38-49f3-a1e6-039a8a67c496.json",
+          "sha256": "ef1c3737a14227047a678ea67d3410499ae9aad3f28bda023973890696b7356b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-0f4223fb-8e38-49f3-a1e6-039a8a67c496.json",
+          "sha256": "ef1c3737a14227047a678ea67d3410499ae9aad3f28bda023973890696b7356b"
+        }
+      ]
+    },
+    {
+      "attempt_id": "104cc489-0e52-4d19-aa52-a0e1e83ad823",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/",
+      "started_at": "2026-10-18T14:51:06.482322585Z",
+      "observed_at": "2026-10-18T14:51:06.486251924Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-104cc489-0e52-4d19-aa52-a0e1e83ad823.json",
+          "sha256": "f257af30ffce03eef4f4fa7e696f0074a4ec04a9b85211d28d31c86d1aad3106"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-104cc489-0e52-4d19-aa52-a0e1e83ad823.json",
+          "sha256": "f257af30ffce03eef4f4fa7e696f0074a4ec04a9b85211d28d31c86d1aad3106"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-104cc489-0e52-4d19-aa52-a0e1e83ad823.json",
+          "sha256": "08376ae71e668608e2b6d68806baae5dd461fd145f33556a987f712aa156cc94"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-104cc489-0e52-4d19-aa52-a0e1e83ad823.json",
+          "sha256": "08376ae71e668608e2b6d68806baae5dd461fd145f33556a987f712aa156cc94"
+        }
+      ]
+    },
+    {
+      "attempt_id": "10fed02b-2a38-461a-87a5-f8569871101c",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-processed.csv",
+      "started_at": "2026-10-18T14:51:06.398084917Z",
+      "observed_at": "2026-10-18T14:51:06.401168628Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-10fed02b-2a38-461a-87a5-f8569871101c.json",
+          "sha256": "c95b2c856bccb4e23b1f84d3cb5b5d56852356f632c98d634c265a47aa0b7fcc"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-10fed02b-2a38-461a-87a5-f8569871101c.json",
+          "sha256": "c95b2c856bccb4e23b1f84d3cb5b5d56852356f632c98d634c265a47aa0b7fcc"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-10fed02b-2a38-461a-87a5-f8569871101c.json",
+          "sha256": "3d00ed6c99cf09ccc77807be7b158d19d8042843025e843a925f95ed9daf9846"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-10fed02b-2a38-461a-87a5-f8569871101c.json",
+          "sha256": "3d00ed6c99cf09ccc77807be7b158d19d8042843025e843a925f95ed9daf9846"
+        }
+      ]
+    },
+    {
+      "attempt_id": "12c73064-ea00-4b48-9ac0-8c8e0271e7ad",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:52:08.22296986Z",
+      "observed_at": "2026-10-18T14:52:08.226216459Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-12c73064-ea00-4b48-9ac0-8c8e0271e7ad.json",
+          "sha256": "eadf710141110987100c34906131547ecb3850fe9522045a93201ea464c95e5d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-12c73064-ea00-4b48-9ac0-8c8e0271e7ad.json",
+          "sha256": "448c7af636803a8666c2a7729419f67a40e4bf595c95ba3771411e7ac0131ae0"
+        }
+      ]
+    },
+    {
+      "attempt_id": "13713f68-ad28-4ed5-855b-1e8e679fcdd7",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-c.csv",
+      "started_at": "2026-10-18T14:52:21.008774512Z",
+      "observed_at": "2026-10-18T14:52:21.01634551Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-13713f68-ad28-4ed5-855b-1e8e679fcdd7.json",
+          "sha256": "1ef73da24d7eedba65e6751451a4af49ba1bc7b4fd92f58e74a96d166bccef91"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-13713f68-ad28-4ed5-855b-1e8e679fcdd7.json",
+          "sha256": "4c1b9acda6dd1bc2d1975f607c28d2da6a13778946c88346adb15d865599805c"
+        }
+      ]
+    },
+    {
+      "attempt_id": "16e9c834-6dfd-4aad-8830-97eaa54c2c2f",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p2.csv",
+      "started_at": "2026-10-18T14:51:06.372062721Z",
+      "observed_at": "2026-10-18T14:51:06.37602722Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-16e9c834-6dfd-4aad-8830-97eaa54c2c2f.json",
+          "sha256": "9567d2ff975e2f72784a6050110702133812c145c4f79cb0e0e6b2d24ff52210"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-16e9c834-6dfd-4aad-8830-97eaa54c2c2f.json",
+          "sha256": "9567d2ff975e2f72784a6050110702133812c145c4f79cb0e0e6b2d24ff52210"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-16e9c834-6dfd-4aad-8830-97eaa54c2c2f.json",
+          "sha256": "b55974312d736caf22ce10f41f38c5de7d0fc757295c6ccccd8dce90d9447a8f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-16e9c834-6dfd-4aad-8830-97eaa54c2c2f.json",
+          "sha256": "b55974312d736caf22ce10f41f38c5de7d0fc757295c6ccccd8dce90d9447a8f"
+        }
+      ]
+    },
+    {
+      "attempt_id": "1b8f8654-aaae-442c-b53c-b999e2a4bb18",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h2-a.csv",
+      "started_at": "2026-10-18T14:51:17.280096577Z",
+      "observed_at": "2026-10-18T14:51:17.283903693Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-1b8f8654-aaae-442c-b53c-b999e2a4bb18.json",
+          "sha256": "0546c08b8da5969f00526365ca461b60c802e6ce55c69b6bf55bc758f1b03ef7"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-1b8f8654-aaae-442c-b53c-b999e2a4bb18.json",
+          "sha256": "0546c08b8da5969f00526365ca461b60c802e6ce55c69b6bf55bc758f1b03ef7"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-1b8f8654-aaae-442c-b53c-b999e2a4bb18.json",
+          "sha256": "47f121fd605a239661dad478f9e0f164f147d1dce370da16a85c0bb44ca4effb"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-1b8f8654-aaae-442c-b53c-b999e2a4bb18.json",
+          "sha256": "47f121fd605a239661dad478f9e0f164f147d1dce370da16a85c0bb44ca4effb"
+        }
+      ]
+    },
+    {
+      "attempt_id": "1d562940-fac5-4537-a288-d77c8c7b4740",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/t2.csv",
+      "started_at": "2026-10-18T14:52:08.178771646Z",
+      "observed_at": "2026-10-18T14:52:08.182336813Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-1d562940-fac5-4537-a288-d77c8c7b4740.json",
+          "sha256": "2be117267bd98d80ef5e55d61cd7884ea5ec5e34b65f4f96d0f08a8348d99563"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-1d562940-fac5-4537-a288-d77c8c7b4740.json",
+          "sha256": "def793b7df1082550c57711fb4eb6b5cb92b783818f84440b760d6fd07e079b0"
+        }
+      ]
+    },
+    {
+      "attempt_id": "24442a7f-2555-481c-a3b9-4e9565300249",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p1.csv",
+      "started_at": "2026-10-18T14:52:08.073295494Z",
+      "observed_at": "2026-10-18T14:52:08.077130266Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-24442a7f-2555-481c-a3b9-4e9565300249.json",
+          "sha256": "9429cc219a14b11f3d2fdf75d2f07d2dc302ce1c154b3d374ef5aed1e7b5b712"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-24442a7f-2555-481c-a3b9-4e9565300249.json",
+          "sha256": "6182d6a31cebb8ca001e7d68c3d06eb341866e434e52427e45480360695bf417"
+        }
+      ]
+    },
+    {
+      "attempt_id": "249ecd0c-38df-4d4e-98f6-801d1af95339",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h1-a.csv",
+      "started_at": "2026-10-18T14:52:14.604174777Z",
+      "observed_at": "2026-10-18T14:52:14.608270466Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-249ecd0c-38df-4d4e-98f6-801d1af95339.json",
+          "sha256": "254e726b9f12228ca731495b8aaf48686aa3ff84f353bb76531208c3d1e18202"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-249ecd0c-38df-4d4e-98f6-801d1af95339.json",
+          "sha256": "4a087fb07a0cd4ebd160b1d9110ab3c662c9f64d41b060945b5d22f920157b6e"
+        }
+      ]
+    },
+    {
+      "attempt_id": "28ab12db-bd46-424c-bffb-cb521cbf5e1d",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h2-b.csv",
+      "started_at": "2026-10-18T14:51:17.299818107Z",
+      "observed_at": "2026-10-18T14:51:17.303220956Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-28ab12db-bd46-424c-bffb-cb521cbf5e1d.json",
+          "sha256": "05e0342151265deb42810216768afe711ea8a307b612144efbc911b06373fdad"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-28ab12db-bd46-424c-bffb-cb521cbf5e1d.json",
+          "sha256": "05e0342151265deb42810216768afe711ea8a307b612144efbc911b06373fdad"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-28ab12db-bd46-424c-bffb-cb521cbf5e1d.json",
+          "sha256": "8d3ba3b8022c6587f9e6d3b8796e65ccd0e7389d5baa80b3a7e9396dc248df41"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-28ab12db-bd46-424c-bffb-cb521cbf5e1d.json",
+          "sha256": "8d3ba3b8022c6587f9e6d3b8796e65ccd0e7389d5baa80b3a7e9396dc248df41"
+        }
+      ]
+    },
+    {
+      "attempt_id": "28fb7513-0578-4f9e-9321-70665c1d509c",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/t2.csv",
+      "started_at": "2026-10-18T14:52:08.172157827Z",
+      "observed_at": "2026-10-18T14:52:08.176111638Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-28fb7513-0578-4f9e-9321-70665c1d509c.json",
+          "sha256": "001ed02e7886d625a5adb7b3a6d6ea3afe3998887b8f4d1a2df925b2f82df6f0"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-28fb7513-0578-4f9e-9321-70665c1d509c.json",
+          "sha256": "8b30d77d123d073a64a6247ef40ee3b52d484ea98dd244669492e12a87f6dfce"
+        }
+      ]
+    },
+    {
+      "attempt_id": "291dc973-a486-410c-8c66-85e989a6c488",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:52:08.233355261Z",
+      "observed_at": "2026-10-18T14:52:08.236331287Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-291dc973-a486-410c-8c66-85e989a6c488.json",
+          "sha256": "5f622de34df2dd685cb4fe7bb50a3e7dbbf695adf404b37e376ca3fa11d49e91"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-291dc973-a486-410c-8c66-85e989a6c488.json",
+          "sha256": "e23b7120c8850160ad77c8d4a029ba8029d95d099ff7ce1c7367840c9cf825e7"
+        }
+      ]
+    },
+    {
+      "attempt_id": "2c389e96-7718-4ad3-9ea7-b9af97513a38",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p2.csv",
+      "started_at": "2026-10-18T14:51:06.378973504Z",
+      "observed_at": "2026-10-18T14:51:06.382577251Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-2c389e96-7718-4ad3-9ea7-b9af97513a38.json",
+          "sha256": "6ba2e1f673e21c88e38ceb5c246a4d902921bedee4df6bd26ce0116f8b77752d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-2c389e96-7718-4ad3-9ea7-b9af97513a38.json",
+          "sha256": "6ba2e1f673e21c88e38ceb5c246a4d902921bedee4df6bd26ce0116f8b77752d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-2c389e96-7718-4ad3-9ea7-b9af97513a38.json",
+          "sha256": "9415485b103466dfac68df35e2843fd7eaa4b35799586c63d1e1895d86d660b0"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-2c389e96-7718-4ad3-9ea7-b9af97513a38.json",
+          "sha256": "9415485b103466dfac68df35e2843fd7eaa4b35799586c63d1e1895d86d660b0"
+        }
+      ]
+    },
+    {
+      "attempt_id": "2e8ef2f7-79dd-4c71-9cb5-0c92790b22a5",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-standardized.csv",
+      "started_at": "2026-10-18T14:51:06.422040808Z",
+      "observed_at": "2026-10-18T14:51:06.425323008Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-2e8ef2f7-79dd-4c71-9cb5-0c92790b22a5.json",
+          "sha256": "cc5524a18a49dfe7267c85b3031b6bb585199579e2814e1d26c4fcf217bed0e3"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-2e8ef2f7-79dd-4c71-9cb5-0c92790b22a5.json",
+          "sha256": "cc5524a18a49dfe7267c85b3031b6bb585199579e2814e1d26c4fcf217bed0e3"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-2e8ef2f7-79dd-4c71-9cb5-0c92790b22a5.json",
+          "sha256": "96758d2044b27beafa1bde69e0ecc74d7448103d60f376fec294cef16542b2ab"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-2e8ef2f7-79dd-4c71-9cb5-0c92790b22a5.json",
+          "sha256": "96758d2044b27beafa1bde69e0ecc74d7448103d60f376fec294cef16542b2ab"
+        }
+      ]
+    },
+    {
+      "attempt_id": "318f808f-96fc-49c4-92e5-6be647e265d9",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:52:20.95034852Z",
+      "observed_at": "2026-10-18T14:52:20.953877129Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-318f808f-96fc-49c4-92e5-6be647e265d9.json",
+          "sha256": "d6a18fcab6474de1d310a58aa216801622e89dd421f2bd88576bbb71c4564d31"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-318f808f-96fc-49c4-92e5-6be647e265d9.json",
+          "sha256": "abc5bf7c64f6574bf8053f555be62dac12521cd2b6299f785e8b8bf7afedd5bf"
+        }
+      ]
+    },
+    {
+      "attempt_id": "31bb3ca9-769e-4ecd-acaa-6fa5d57f17fe",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-c.csv",
+      "started_at": "2026-10-18T14:52:21.019266132Z",
+      "observed_at": "2026-10-18T14:52:21.023084928Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-31bb3ca9-769e-4ecd-acaa-6fa5d57f17fe.json",
+          "sha256": "ceb0697bc363f754013ec04f96fb799ae2db6a725d560bcf8825489765647193"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-31bb3ca9-769e-4ecd-acaa-6fa5d57f17fe.json",
+          "sha256": "27764a366b0c19fa587e98b5e6d0cb4c9678090e383d41f53366b4d96a246151"
+        }
+      ]
+    },
+    {
+      "attempt_id": "31e228fe-5e30-4cec-909a-40b81f21a67c",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:52:08.250548249Z",
+      "observed_at": "2026-10-18T14:52:08.253782872Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-31e228fe-5e30-4cec-909a-40b81f21a67c.json",
+          "sha256": "73c81fe1b2ef6fd50d1d66f56d67c4432d2dfc4b045c9e958e8fcb63474e214d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-31e228fe-5e30-4cec-909a-40b81f21a67c.json",
+          "sha256": "6d201b0d80d385bf7c76e43eb2b8a475102ec3af0404fafe2317d3a922c8fcf8"
+        }
+      ]
+    },
+    {
+      "attempt_id": "3331ebb6-13d2-4f99-9997-2472cc842912",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:52:08.037650792Z",
+      "observed_at": "2026-10-18T14:52:08.041735191Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-3331ebb6-13d2-4f99-9997-2472cc842912.json",
+          "sha256": "446bc898adc60e5b1d75fc445ea383f7dfd85b2b510b1574fa2c1a3060575dad"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-3331ebb6-13d2-4f99-9997-2472cc842912.json",
+          "sha256": "3bc00cab5e2dd9e3383274cef30a25459dd67ccf9cfe31c9a5ebb7219ee753ad"
+        }
+      ]
+    },
+    {
+      "attempt_id": "334d330f-3503-48f5-823f-3bd66e9bcd8b",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:51:17.197467246Z",
+      "observed_at": "2026-10-18T14:51:17.200699429Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-334d330f-3503-48f5-823f-3bd66e9bcd8b.json",
+          "sha256": "3133143f98b953f722d30a4523a906407d094cb48811cbb9382d9400b7241b61"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-334d330f-3503-48f5-823f-3bd66e9bcd8b.json",
+          "sha256": "3133143f98b953f722d30a4523a906407d094cb48811cbb9382d9400b7241b61"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-334d330f-3503-48f5-823f-3bd66e9bcd8b.json",
+          "sha256": "d3c07de0f3e1a33dfc854748aea9454f2bea60545d6e4240facad3b62ea68831"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-334d330f-3503-48f5-823f-3bd66e9bcd8b.json",
+          "sha256": "d3c07de0f3e1a33dfc854748aea9454f2bea60545d6e4240facad3b62ea68831"
+        }
+      ]
+    },
+    {
+      "attempt_id": "343657cb-d8b6-47c5-b551-2525e496bf35",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:51:06.507260513Z",
+      "observed_at": "2026-10-18T14:51:06.510684708Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-343657cb-d8b6-47c5-b551-2525e496bf35.json",
+          "sha256": "a9a040746b5930bd562adf9e957262acefcbb6e9c5b50d6a67995564e7e3776a"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-343657cb-d8b6-47c5-b551-2525e496bf35.json",
+          "sha256": "a9a040746b5930bd562adf9e957262acefcbb6e9c5b50d6a67995564e7e3776a"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-343657cb-d8b6-47c5-b551-2525e496bf35.json",
+          "sha256": "6ea1469b8863bd535a6927d55e4850e73713cf3ecc61dea27de0958bca08c38d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-343657cb-d8b6-47c5-b551-2525e496bf35.json",
+          "sha256": "6ea1469b8863bd535a6927d55e4850e73713cf3ecc61dea27de0958bca08c38d"
+        }
+      ]
+    },
+    {
+      "attempt_id": "37bf8b7f-cf8c-4bf8-bdf9-8e840f97d3d9",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h2-b.csv",
+      "started_at": "2026-10-18T14:52:14.665510781Z",
+      "observed_at": "2026-10-18T14:52:14.669071157Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-37bf8b7f-cf8c-4bf8-bdf9-8e840f97d3d9.json",
+          "sha256": "7103666aa2f3ffd65489a5195c45d7829203fab3ad8a7335e6ac16696c7e90ec"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-37bf8b7f-cf8c-4bf8-bdf9-8e840f97d3d9.json",
+          "sha256": "90a2538a4ec7706eda7646b70dfea61b01935d9f8aaf7cc60df8ecbb1dac5a95"
+        }
+      ]
+    },
+    {
+      "attempt_id": "3a84a4b6-f887-45fb-a315-29e28a2da224",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/control-retention.csv",
+      "started_at": "2026-10-18T14:51:06.337653545Z",
+      "observed_at": "2026-10-18T14:51:06.341925555Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-3a84a4b6-f887-45fb-a315-29e28a2da224.json",
+          "sha256": "73ea673aeba1079ea5dd3bd94b16bc7a955d42aed4b384082ac7e8aeab5e47b8"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-3a84a4b6-f887-45fb-a315-29e28a2da224.json",
+          "sha256": "73ea673aeba1079ea5dd3bd94b16bc7a955d42aed4b384082ac7e8aeab5e47b8"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-3a84a4b6-f887-45fb-a315-29e28a2da224.json",
+          "sha256": "22c13f39dc039be99d9e502819664182337be1107b5dc4afe6ed82c71d286b8e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-3a84a4b6-f887-45fb-a315-29e28a2da224.json",
+          "sha256": "22c13f39dc039be99d9e502819664182337be1107b5dc4afe6ed82c71d286b8e"
+        }
+      ]
+    },
+    {
+      "attempt_id": "3bfa02a3-f9db-4260-af70-2f7974ffcd14",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:51:17.180661785Z",
+      "observed_at": "2026-10-18T14:51:17.187980568Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-3bfa02a3-f9db-4260-af70-2f7974ffcd14.json",
+          "sha256": "ec00ba88d17de1a99b11de5efa604cd4c54a0bc33d79962e98d230bd4321aa22"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-3bfa02a3-f9db-4260-af70-2f7974ffcd14.json",
+          "sha256": "ec00ba88d17de1a99b11de5efa604cd4c54a0bc33d79962e98d230bd4321aa22"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-3bfa02a3-f9db-4260-af70-2f7974ffcd14.json",
+          "sha256": "c1c78b589b78096e7c1f7d5ec41bfd56cc9437a1e0d74cb9aec9b3e2f04f0312"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-3bfa02a3-f9db-4260-af70-2f7974ffcd14.json",
+          "sha256": "c1c78b589b78096e7c1f7d5ec41bfd56cc9437a1e0d74cb9aec9b3e2f04f0312"
+        }
+      ]
+    },
+    {
+      "attempt_id": "3d164e2d-787f-4f2d-834b-19f951a74e1a",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h0.csv",
+      "started_at": "2026-10-18T14:51:17.20410643Z",
+      "observed_at": "2026-10-18T14:51:17.208461612Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-3d164e2d-787f-4f2d-834b-19f951a74e1a.json",
+          "sha256": "6ca751e54bafcf18ba0f3e13ab66d5f4b5676311e89f19066e1fdfdbd3341c01"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-3d164e2d-787f-4f2d-834b-19f951a74e1a.json",
+          "sha256": "6ca751e54bafcf18ba0f3e13ab66d5f4b5676311e89f19066e1fdfdbd3341c01"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-3d164e2d-787f-4f2d-834b-19f951a74e1a.json",
+          "sha256": "a97a9422b2c1c6c91b77c8833f9f1df5efe35c64d75bceeb948ae03b42bd63a9"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-3d164e2d-787f-4f2d-834b-19f951a74e1a.json",
+          "sha256": "a97a9422b2c1c6c91b77c8833f9f1df5efe35c64d75bceeb948ae03b42bd63a9"
+        }
+      ]
+    },
+    {
+      "attempt_id": "3e4fb4ca-7c6a-4ec3-9327-1f39414deb55",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-c.csv",
+      "started_at": "2026-10-18T14:51:26.721449087Z",
+      "observed_at": "2026-10-18T14:51:26.725615327Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-3e4fb4ca-7c6a-4ec3-9327-1f39414deb55.json",
+          "sha256": "62d5515e173403416ad2a4610a800caa61af50b0f1982b5e1f20a8cd75ebb853"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-3e4fb4ca-7c6a-4ec3-9327-1f39414deb55.json",
+          "sha256": "62d5515e173403416ad2a4610a800caa61af50b0f1982b5e1f20a8cd75ebb853"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-3e4fb4ca-7c6a-4ec3-9327-1f39414deb55.json",
+          "sha256": "5d485dbcb698e03764b78f52fdffbfd5fb805d28b9b0dd3550b650360978555c"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-3e4fb4ca-7c6a-4ec3-9327-1f39414deb55.json",
+          "sha256": "5d485dbcb698e03764b78f52fdffbfd5fb805d28b9b0dd3550b650360978555c"
+        }
+      ]
+    },
+    {
+      "attempt_id": "412636ca-7df3-40c9-bef6-8bcd7949ca3a",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:52:08.199706883Z",
+      "observed_at": "2026-10-18T14:52:08.202790509Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-412636ca-7df3-40c9-bef6-8bcd7949ca3a.json",
+          "sha256": "5a32a5ef69ad2e920a3a2c11613846b83fcd1849cf5953b58f000837d3ff6988"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-412636ca-7df3-40c9-bef6-8bcd7949ca3a.json",
+          "sha256": "2e50f768f47db033b48a2d814c5093f06986cd3aa10fa4cc4acfc09b08e4a5f5"
+        }
+      ]
+    },
+    {
+      "attempt_id": "4609ffb7-54e6-4be1-81af-7deae7b1c471",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h0.csv",
+      "started_at": "2026-10-18T14:52:14.578947746Z",
+      "observed_at": "2026-10-18T14:52:14.582474676Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-4609ffb7-54e6-4be1-81af-7deae7b1c471.json",
+          "sha256": "a65d92357e9cad17d53c3b886351271067980a12dbdf2927640537625ba09591"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-4609ffb7-54e6-4be1-81af-7deae7b1c471.json",
+          "sha256": "993b7e54a12bc58e60c600938ac8d5010a020bdb004ec255c6757f99883eae83"
+        }
+      ]
+    },
+    {
+      "attempt_id": "46c5a1a4-c231-45f9-86bd-d165a3a0e737",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-b.csv",
+      "started_at": "2026-10-18T14:52:20.984389672Z",
+      "observed_at": "2026-10-18T14:52:20.988203602Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-46c5a1a4-c231-45f9-86bd-d165a3a0e737.json",
+          "sha256": "aadfe73a947f4547d8281b1fc32bfbb7b725d87ae827571ba4019717207f6ff3"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-46c5a1a4-c231-45f9-86bd-d165a3a0e737.json",
+          "sha256": "a282270da99bbb226f2e64eab126243aa29d1c8fca42953f6491f56e61d56263"
+        }
+      ]
+    },
+    {
+      "attempt_id": "4bbc0ae9-2606-4d8f-873d-3f9c3a5ef6ab",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:51:06.501075319Z",
+      "observed_at": "2026-10-18T14:51:06.504210943Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-4bbc0ae9-2606-4d8f-873d-3f9c3a5ef6ab.json",
+          "sha256": "b812ed1cbe2ccdc33ef10feae90e1b1c44d85a3739e7e8ea9728e2e52a5265f9"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-4bbc0ae9-2606-4d8f-873d-3f9c3a5ef6ab.json",
+          "sha256": "b812ed1cbe2ccdc33ef10feae90e1b1c44d85a3739e7e8ea9728e2e52a5265f9"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-4bbc0ae9-2606-4d8f-873d-3f9c3a5ef6ab.json",
+          "sha256": "98f30015172bebfe9c2c71f9a86668f6bd19faa7c1151655c6d4f41228473988"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-4bbc0ae9-2606-4d8f-873d-3f9c3a5ef6ab.json",
+          "sha256": "98f30015172bebfe9c2c71f9a86668f6bd19faa7c1151655c6d4f41228473988"
+        }
+      ]
+    },
+    {
+      "attempt_id": "4e1d59aa-a951-47ea-990a-aebabfd54897",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:52:21.04468929Z",
+      "observed_at": "2026-10-18T14:52:21.048239203Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-4e1d59aa-a951-47ea-990a-aebabfd54897.json",
+          "sha256": "cc6155c158c294fb3340ad5775cc6de28db23af12f2977005bd20bcbf0b25c32"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-4e1d59aa-a951-47ea-990a-aebabfd54897.json",
+          "sha256": "3bb2be692fba1bb1c912263e43c586e0430cb94375e9f189c5d0e92c1887bf18"
+        }
+      ]
+    },
+    {
+      "attempt_id": "4f44ae76-288c-43fb-ad41-0295f6ab3a8f",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:52:21.051549471Z",
+      "observed_at": "2026-10-18T14:52:21.05463645Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-4f44ae76-288c-43fb-ad41-0295f6ab3a8f.json",
+          "sha256": "ec2358ec2f49659789abcb832aecd5f3071048c905243012ccefb5be4869db50"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-4f44ae76-288c-43fb-ad41-0295f6ab3a8f.json",
+          "sha256": "195b4986b09b4381907b7b252c6fcd9019e18044b91a0ff1a90efa164ff53283"
+        }
+      ]
+    },
+    {
+      "attempt_id": "54c5712a-6dda-4865-8521-f103004bb309",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/t2.csv",
+      "started_at": "2026-10-18T14:51:06.457946415Z",
+      "observed_at": "2026-10-18T14:51:06.461598076Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-54c5712a-6dda-4865-8521-f103004bb309.json",
+          "sha256": "651d2843333048e214a846b9ef5a030d006b5be58c9d66e85ca2a911e66d4568"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-54c5712a-6dda-4865-8521-f103004bb309.json",
+          "sha256": "651d2843333048e214a846b9ef5a030d006b5be58c9d66e85ca2a911e66d4568"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-54c5712a-6dda-4865-8521-f103004bb309.json",
+          "sha256": "14bf3c7007c402847f424d3c107963a5fc4e70ec2ff90867d6f46f24a1ad2a4e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-54c5712a-6dda-4865-8521-f103004bb309.json",
+          "sha256": "14bf3c7007c402847f424d3c107963a5fc4e70ec2ff90867d6f46f24a1ad2a4e"
+        }
+      ]
+    },
+    {
+      "attempt_id": "568f3de2-cd2b-4626-b050-dbcb80bde254",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p2.csv",
+      "started_at": "2026-10-18T14:52:08.086864824Z",
+      "observed_at": "2026-10-18T14:52:08.090253069Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-568f3de2-cd2b-4626-b050-dbcb80bde254.json",
+          "sha256": "0c3a129679717b533ace895fd235dbee197a70518bff03f2b740e12a72bdf7c6"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-568f3de2-cd2b-4626-b050-dbcb80bde254.json",
+          "sha256": "cf03d4b9cf7f088a03622ee8a732740d5f22e6d041a969890931cea6384831d6"
+        }
+      ]
+    },
+    {
+      "attempt_id": "5976f729-5316-4ff9-87eb-4645594dd8c8",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h1-a.csv",
+      "started_at": "2026-10-18T14:51:17.238405562Z",
+      "observed_at": "2026-10-18T14:51:17.245297196Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-5976f729-5316-4ff9-87eb-4645594dd8c8.json",
+          "sha256": "cf7a1e430cf71c49148e26867ee0750561c39c36d785a840659d980ff6784eb6"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-5976f729-5316-4ff9-87eb-4645594dd8c8.json",
+          "sha256": "cf7a1e430cf71c49148e26867ee0750561c39c36d785a840659d980ff6784eb6"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-5976f729-5316-4ff9-87eb-4645594dd8c8.json",
+          "sha256": "833678e258190514b2e538d53ae26768b300cef0bdb1440f86396b27ce60470b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-5976f729-5316-4ff9-87eb-4645594dd8c8.json",
+          "sha256": "833678e258190514b2e538d53ae26768b300cef0bdb1440f86396b27ce60470b"
+        }
+      ]
+    },
+    {
+      "attempt_id": "5eccf533-95d6-4d84-962a-783456edd2c8",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:51:26.754603197Z",
+      "observed_at": "2026-10-18T14:51:26.758064246Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-5eccf533-95d6-4d84-962a-783456edd2c8.json",
+          "sha256": "41e64878ff15429cd757f5240540503f14e6bdde39e8fcd441ed5e7b2468beeb"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-5eccf533-95d6-4d84-962a-783456edd2c8.json",
+          "sha256": "41e64878ff15429cd757f5240540503f14e6bdde39e8fcd441ed5e7b2468beeb"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-5eccf533-95d6-4d84-962a-783456edd2c8.json",
+          "sha256": "4d1d84231f8dfde49cc5e2fdf4553f38079beea73595bdb31ad28e6bea3fd671"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-5eccf533-95d6-4d84-962a-783456edd2c8.json",
+          "sha256": "4d1d84231f8dfde49cc5e2fdf4553f38079beea73595bdb31ad28e6bea3fd671"
+        }
+      ]
+    },
+    {
+      "attempt_id": "6646208d-1289-4a95-85aa-8424b7178fed",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/m1-a.csv",
+      "started_at": "2026-10-18T14:52:20.96986739Z",
+      "observed_at": "2026-10-18T14:52:20.97424674Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-6646208d-1289-4a95-85aa-8424b7178fed.json",
+          "sha256": "3b08b09bb1629b52b21a1acb8f8fb0cffc60f02e62e5ed0d0f039c000ab6ed23"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-6646208d-1289-4a95-85aa-8424b7178fed.json",
+          "sha256": "43551bc8aa6d2b2a352575f3ad9a792060a735c95e37285e2835d0409970997f"
+        }
+      ]
+    },
+    {
+      "attempt_id": "6a56be2b-5dfe-403e-b999-61d26813966a",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-b.csv",
+      "started_at": "2026-10-18T14:52:20.977455551Z",
+      "observed_at": "2026-10-18T14:52:20.981376775Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-6a56be2b-5dfe-403e-b999-61d26813966a.json",
+          "sha256": "60130b2d3b27935774f3790ce9d7ef563c5462548040364d808bef33fe03da23"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-6a56be2b-5dfe-403e-b999-61d26813966a.json",
+          "sha256": "f3610d1151d8f5ecbbff288c97ba720bcb03ac2f9988132ffbdb021527209ec2"
+        }
+      ]
+    },
+    {
+      "attempt_id": "6d9515a4-18eb-4754-a31f-bad7267b827a",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:51:06.299747813Z",
+      "observed_at": "2026-10-18T14:51:06.314238597Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-6d9515a4-18eb-4754-a31f-bad7267b827a.json",
+          "sha256": "4f92e2a46d38a80b0cc25fdd5be5d35492ca0e6550a44dc8f99113b12e134048"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-6d9515a4-18eb-4754-a31f-bad7267b827a.json",
+          "sha256": "4f92e2a46d38a80b0cc25fdd5be5d35492ca0e6550a44dc8f99113b12e134048"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-6d9515a4-18eb-4754-a31f-bad7267b827a.json",
+          "sha256": "65169cd15640de23c1871ba690728d784ab159c21ee7e26fa92dd0af5808817c"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-6d9515a4-18eb-4754-a31f-bad7267b827a.json",
+          "sha256": "65169cd15640de23c1871ba690728d784ab159c21ee7e26fa92dd0af5808817c"
+        }
+      ]
+    },
+    {
+      "attempt_id": "6f2b0e89-eb53-4c74-9b8a-bd166e194c84",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/control-retention.csv",
+      "started_at": "2026-10-18T14:51:06.344754862Z",
+      "observed_at": "2026-10-18T14:51:06.348014433Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-6f2b0e89-eb53-4c74-9b8a-bd166e194c84.json",
+          "sha256": "5e3e9b6b953e09c919cb1ff564fe55fa0a153f3fe2dcf9dde0436cc3acad343e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-6f2b0e89-eb53-4c74-9b8a-bd166e194c84.json",
+          "sha256": "5e3e9b6b953e09c919cb1ff564fe55fa0a153f3fe2dcf9dde0436cc3acad343e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-6f2b0e89-eb53-4c74-9b8a-bd166e194c84.json",
+          "sha256": "16b7ce8272cc7129bae56c12286a0754982599be28852feecd38e35e7b6a9ccd"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-6f2b0e89-eb53-4c74-9b8a-bd166e194c84.json",
+          "sha256": "16b7ce8272cc7129bae56c12286a0754982599be28852feecd38e35e7b6a9ccd"
+        }
+      ]
+    },
+    {
+      "attempt_id": "6ff555cd-59ca-4f40-96ee-f518a167b2bc",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/m1-a.csv",
+      "started_at": "2026-10-18T14:51:26.682116345Z",
+      "observed_at": "2026-10-18T14:51:26.685762341Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-6ff555cd-59ca-4f40-96ee-f518a167b2bc.json",
+          "sha256": "c275b31234b5695e7f76caf4da745ba0facb72bdf1eb37dec101b268f06a1bde"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-6ff555cd-59ca-4f40-96ee-f518a167b2bc.json",
+          "sha256": "c275b31234b5695e7f76caf4da745ba0facb72bdf1eb37dec101b268f06a1bde"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-6ff555cd-59ca-4f40-96ee-f518a167b2bc.json",
+          "sha256": "bec06b8029a795379341da4f378b51869f999b192853417c2d91d210ca07cc7f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-6ff555cd-59ca-4f40-96ee-f518a167b2bc.json",
+          "sha256": "bec06b8029a795379341da4f378b51869f999b192853417c2d91d210ca07cc7f"
+        }
+      ]
+    },
+    {
+      "attempt_id": "7228dcd5-2bb2-4e4f-9f75-57468de9ed6c",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h1-b.csv",
+      "started_at": "2026-10-18T14:52:14.617957344Z",
+      "observed_at": "2026-10-18T14:52:14.621819239Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-7228dcd5-2bb2-4e4f-9f75-57468de9ed6c.json",
+          "sha256": "2110d48c645e57d6188cce58405c5b730592458b528a8641627ffcf1f0362d7f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-7228dcd5-2bb2-4e4f-9f75-57468de9ed6c.json",
+          "sha256": "c09244228c2b136bd381653b20084163dc5e6079afe79aca86c321b6c2181e7d"
+        }
+      ]
+    },
+    {
+      "attempt_id": "736d148b-62cc-4099-b76d-be282677165d",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/m1-a.csv",
+      "started_at": "2026-10-18T14:52:20.963630382Z",
+      "observed_at": "2026-10-18T14:52:20.966924947Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-736d148b-62cc-4099-b76d-be282677165d.json",
+          "sha256": "b07bcf58baa985c5b75a809f14f944625b5fb1187d50be0aa4d2685903da00e2"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-736d148b-62cc-4099-b76d-be282677165d.json",
+          "sha256": "d258f004bea8415c3b00e41679c43386b85087592ec4539a05343cb72408d168"
+        }
+      ]
+    },
+    {
+      "attempt_id": "73a7969f-b861-47b5-8906-7cfaac6e29d7",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:52:14.547381232Z",
+      "observed_at": "2026-10-18T14:52:14.555558193Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-73a7969f-b861-47b5-8906-7cfaac6e29d7.json",
+          "sha256": "f2feecd848d1404db75ad7044d18dff9209c206e7dcfa57c1ffe4f7c53b55753"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-73a7969f-b861-47b5-8906-7cfaac6e29d7.json",
+          "sha256": "ceb5da28ca849252583f3ecabb582da84df303b9eb358a31818bb1a439b1acb9"
+        }
+      ]
+    },
+    {
+      "attempt_id": "75d0cad5-9482-4edd-833a-a14ed92c9ab1",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:52:14.707434165Z",
+      "observed_at": "2026-10-18T14:52:14.711273393Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-75d0cad5-9482-4edd-833a-a14ed92c9ab1.json",
+          "sha256": "3a197abb6083795c7292d509269d10e9421c1642a31629fa6dd3ccfc9e41308e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-75d0cad5-9482-4edd-833a-a14ed92c9ab1.json",
+          "sha256": "04d39ab2a13cb50937067af3c6090b664bdea1997e82ed3c0588b5fbcf52b13e"
+        }
+      ]
+    },
+    {
+      "attempt_id": "7afd64b1-9d72-4024-99da-7d43eef3cae9",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/",
+      "started_at": "2026-10-18T14:52:14.679324805Z",
+      "observed_at": "2026-10-18T14:52:14.683913277Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-7afd64b1-9d72-4024-99da-7d43eef3cae9.json",
+          "sha256": "58a63e863db12dd844ee0f5615200aca8ff337f4bf2c1500ea95477353c0dc0b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-7afd64b1-9d72-4024-99da-7d43eef3cae9.json",
+          "sha256": "2412ddf66833422810e97b2e5caa64ac1586f429df75de30328574edceb9a4fa"
+        }
+      ]
+    },
+    {
+      "attempt_id": "7f8bf2bf-33a2-4f25-93b8-946cb65bd6b6",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/m1-a.csv",
+      "started_at": "2026-10-18T14:51:26.674583611Z",
+      "observed_at": "2026-10-18T14:51:26.678516865Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-7f8bf2bf-33a2-4f25-93b8-946cb65bd6b6.json",
+          "sha256": "7d0b7c56e1c8458e298166a730e5770689403af4055a8beef08156d2c558b46a"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-7f8bf2bf-33a2-4f25-93b8-946cb65bd6b6.json",
+          "sha256": "7d0b7c56e1c8458e298166a730e5770689403af4055a8beef08156d2c558b46a"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-7f8bf2bf-33a2-4f25-93b8-946cb65bd6b6.json",
+          "sha256": "f2684a443d2c2fefeb3999be95122a7b7fb153ff10d180b7958b3249a1071d6c"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-7f8bf2bf-33a2-4f25-93b8-946cb65bd6b6.json",
+          "sha256": "f2684a443d2c2fefeb3999be95122a7b7fb153ff10d180b7958b3249a1071d6c"
+        }
+      ]
+    },
+    {
+      "attempt_id": "7fbf1622-2bd5-42e0-9322-05cb34795932",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h1-a.csv",
+      "started_at": "2026-10-18T14:52:14.598085469Z",
+      "observed_at": "2026-10-18T14:52:14.601588964Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-7fbf1622-2bd5-42e0-9322-05cb34795932.json",
+          "sha256": "87dabd040b684d0a51554ff695297c8ca2a780c86d64f439add502c26f2d7fca"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-7fbf1622-2bd5-42e0-9322-05cb34795932.json",
+          "sha256": "2f8e241e5142df07b78a681131287e7c57e690b4a1afdd718cf481d046496ad6"
+        }
+      ]
+    },
+    {
+      "attempt_id": "7fc90870-29e4-4b42-8016-2f83392f5578",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/",
+      "started_at": "2026-10-18T14:51:26.737277766Z",
+      "observed_at": "2026-10-18T14:51:26.742566013Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-7fc90870-29e4-4b42-8016-2f83392f5578.json",
+          "sha256": "24cccbe3b941c373ad4756af4897df2074deb50b45a814e623730780846fe8b0"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-7fc90870-29e4-4b42-8016-2f83392f5578.json",
+          "sha256": "24cccbe3b941c373ad4756af4897df2074deb50b45a814e623730780846fe8b0"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-7fc90870-29e4-4b42-8016-2f83392f5578.json",
+          "sha256": "353df0fb7eee540eb2fcc1d534b3040372898c0ada98ccf86ec3b58d914b7fd3"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-7fc90870-29e4-4b42-8016-2f83392f5578.json",
+          "sha256": "353df0fb7eee540eb2fcc1d534b3040372898c0ada98ccf86ec3b58d914b7fd3"
+        }
+      ]
+    },
+    {
+      "attempt_id": "83cd2036-beda-4266-81be-355e45ff1369",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:51:06.495569717Z",
+      "observed_at": "2026-10-18T14:51:06.498546127Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-83cd2036-beda-4266-81be-355e45ff1369.json",
+          "sha256": "5d46a0e4b7324339248d57535dd6ea4b883366f7666641c783fb8440b8624ec9"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-83cd2036-beda-4266-81be-355e45ff1369.json",
+          "sha256": "5d46a0e4b7324339248d57535dd6ea4b883366f7666641c783fb8440b8624ec9"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-83cd2036-beda-4266-81be-355e45ff1369.json",
+          "sha256": "82083dc6dee728436da8820d5460b81f29da9243fcefe1ecf4d0e61c93880e20"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-83cd2036-beda-4266-81be-355e45ff1369.json",
+          "sha256": "82083dc6dee728436da8820d5460b81f29da9243fcefe1ecf4d0e61c93880e20"
+        }
+      ]
+    },
+    {
+      "attempt_id": "85ae897f-cfdd-4b79-828b-e44bbb727af3",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p1.csv",
+      "started_at": "2026-10-18T14:51:06.357239315Z",
+      "observed_at": "2026-10-18T14:51:06.360656764Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-85ae897f-cfdd-4b79-828b-e44bbb727af3.json",
+          "sha256": "36b9b6e9831c0c18bee31ce8d16997c321ce3d8cc05dee05712c2d4b09c87854"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-85ae897f-cfdd-4b79-828b-e44bbb727af3.json",
+          "sha256": "36b9b6e9831c0c18bee31ce8d16997c321ce3d8cc05dee05712c2d4b09c87854"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-85ae897f-cfdd-4b79-828b-e44bbb727af3.json",
+          "sha256": "4a5a969dadcf4766e384984b1ebef066f8e43b2c4c8b236dae094baf2f9431d6"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-85ae897f-cfdd-4b79-828b-e44bbb727af3.json",
+          "sha256": "4a5a969dadcf4766e384984b1ebef066f8e43b2c4c8b236dae094baf2f9431d6"
+        }
+      ]
+    },
+    {
+      "attempt_id": "85f89aea-dfd4-4039-96bd-50c778f7a6d2",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/",
+      "started_at": "2026-10-18T14:52:08.193107035Z",
+      "observed_at": "2026-10-18T14:52:08.196732818Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-85f89aea-dfd4-4039-96bd-50c778f7a6d2.json",
+          "sha256": "9a990ea8523e34784662c597e406ef93297357334458cd04b6662b15925413f6"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-85f89aea-dfd4-4039-96bd-50c778f7a6d2.json",
+          "sha256": "86468214a1a00700ad54cba27d96a40ee2b266c5e7175a34241c1220810e78bd"
+        }
+      ]
+    },
+    {
+      "attempt_id": "8650b2b7-73e9-4a94-be91-8221ceeacf20",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:51:26.76092756Z",
+      "observed_at": "2026-10-18T14:51:26.763915558Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-8650b2b7-73e9-4a94-be91-8221ceeacf20.json",
+          "sha256": "e91ccc0a974ed1220f4193baf0900e39d4dffce5847e144602894df5b31c91b2"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-8650b2b7-73e9-4a94-be91-8221ceeacf20.json",
+          "sha256": "e91ccc0a974ed1220f4193baf0900e39d4dffce5847e144602894df5b31c91b2"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-8650b2b7-73e9-4a94-be91-8221ceeacf20.json",
+          "sha256": "0abdf734e2c3ff8f4a4ffeed34a1ffae2a9dbd46401465d47122f57ebb975a97"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-8650b2b7-73e9-4a94-be91-8221ceeacf20.json",
+          "sha256": "0abdf734e2c3ff8f4a4ffeed34a1ffae2a9dbd46401465d47122f57ebb975a97"
+        }
+      ]
+    },
+    {
+      "attempt_id": "880eda83-5082-4651-84f2-a95fd5844c61",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:51:06.324533297Z",
+      "observed_at": "2026-10-18T14:51:06.328273122Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-880eda83-5082-4651-84f2-a95fd5844c61.json",
+          "sha256": "90f276a32cbc3c0b30b0bb2a593bea37c28ee038b13808651f096dba91e77d82"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-880eda83-5082-4651-84f2-a95fd5844c61.json",
+          "sha256": "90f276a32cbc3c0b30b0bb2a593bea37c28ee038b13808651f096dba91e77d82"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-880eda83-5082-4651-84f2-a95fd5844c61.json",
+          "sha256": "d92853f9e6f85539bb483fefa55710b4f2b4a9ce1daca19bfaf67a8fc4c08d31"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-880eda83-5082-4651-84f2-a95fd5844c61.json",
+          "sha256": "d92853f9e6f85539bb483fefa55710b4f2b4a9ce1daca19bfaf67a8fc4c08d31"
+        }
+      ]
+    },
+    {
+      "attempt_id": "887d9829-7c12-46b8-9de2-0e53592f6257",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h2-a.csv",
+      "started_at": "2026-10-18T14:51:17.274150249Z",
+      "observed_at": "2026-10-18T14:51:17.277353722Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-887d9829-7c12-46b8-9de2-0e53592f6257.json",
+          "sha256": "e98aa89b19ced8a91f827784ea8c0a0f09be8b7172479157fb9b3d746546286f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-887d9829-7c12-46b8-9de2-0e53592f6257.json",
+          "sha256": "e98aa89b19ced8a91f827784ea8c0a0f09be8b7172479157fb9b3d746546286f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-887d9829-7c12-46b8-9de2-0e53592f6257.json",
+          "sha256": "92c34f600b2cf209179d8cd0bd9fd9d782796ac8d37ed1b55bf3872a20b423c5"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-887d9829-7c12-46b8-9de2-0e53592f6257.json",
+          "sha256": "92c34f600b2cf209179d8cd0bd9fd9d782796ac8d37ed1b55bf3872a20b423c5"
+        }
+      ]
+    },
+    {
+      "attempt_id": "89b0d6ae-e832-4e1b-85da-648659136092",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:52:08.211753446Z",
+      "observed_at": "2026-10-18T14:52:08.214549862Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-89b0d6ae-e832-4e1b-85da-648659136092.json",
+          "sha256": "c8a17d895ee01453d2f2a6c60c7ac37162c32ea8fb1826e66970de8acadf26d5"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-89b0d6ae-e832-4e1b-85da-648659136092.json",
+          "sha256": "1cd364efbb33c35d8da25a1e443cb96e62f50049dde5949d34f80e533a76bccd"
+        }
+      ]
+    },
+    {
+      "attempt_id": "8b5140f5-27b2-409f-b7ec-cd3f73abe540",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/t1.csv",
+      "started_at": "2026-10-18T14:52:08.147372598Z",
+      "observed_at": "2026-10-18T14:52:08.150811465Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-8b5140f5-27b2-409f-b7ec-cd3f73abe540.json",
+          "sha256": "ff5fce3022ea4fea57adaf3369ab7064f056fe05e803884803abb68fd5560d7f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-8b5140f5-27b2-409f-b7ec-cd3f73abe540.json",
+          "sha256": "27ba8fbe82a835cba8dd152a1019f4171130f7d6e33b2c036fe686651fcc51c6"
+        }
+      ]
+    },
+    {
+      "attempt_id": "8c17d5be-d6e0-4979-8c4f-ad1fe5688e0e",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/control-retention.csv",
+      "started_at": "2026-10-18T14:52:08.058190554Z",
+      "observed_at": "2026-10-18T14:52:08.06222718Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-8c17d5be-d6e0-4979-8c4f-ad1fe5688e0e.json",
+          "sha256": "e5964d64140b3d6263c5b9b7c86296755025ef3f6bfe7d074aabf6ee330d0871"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-8c17d5be-d6e0-4979-8c4f-ad1fe5688e0e.json",
+          "sha256": "47ba485a579ab79931447a7b007b5768f8ef117fcb3b80406324f442d383e624"
+        }
+      ]
+    },
+    {
+      "attempt_id": "8c6d1d5e-e90d-494b-a660-88f578783943",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-b.csv",
+      "started_at": "2026-10-18T14:51:26.68873887Z",
+      "observed_at": "2026-10-18T14:51:26.693468054Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-8c6d1d5e-e90d-494b-a660-88f578783943.json",
+          "sha256": "3b9f59ebb4afb458a261d6b6dd2616ef02e02443d74cf6b54b18fc11752198f5"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-8c6d1d5e-e90d-494b-a660-88f578783943.json",
+          "sha256": "3b9f59ebb4afb458a261d6b6dd2616ef02e02443d74cf6b54b18fc11752198f5"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-8c6d1d5e-e90d-494b-a660-88f578783943.json",
+          "sha256": "aae72aa5efbc82ef58129d903fefe33efe478a54d83224b2b6de851790c389f7"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-8c6d1d5e-e90d-494b-a660-88f578783943.json",
+          "sha256": "aae72aa5efbc82ef58129d903fefe33efe478a54d83224b2b6de851790c389f7"
+        }
+      ]
+    },
+    {
+      "attempt_id": "8e2a233d-e8c3-4fad-9572-6a5e52fc3180",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-standardized.csv",
+      "started_at": "2026-10-18T14:52:08.134395285Z",
+      "observed_at": "2026-10-18T14:52:08.137985381Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-8e2a233d-e8c3-4fad-9572-6a5e52fc3180.json",
+          "sha256": "cc9503555bdbc6361adf4bab42a5c4a4b8893089529f82c5e6211f0f862355c3"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-8e2a233d-e8c3-4fad-9572-6a5e52fc3180.json",
+          "sha256": "b5be241c26094a1cf1d24a02c36bcd21de62c651b71cc5fa1bae4f900a6a7151"
+        }
+      ]
+    },
+    {
+      "attempt_id": "8eefa8fc-cdda-4b58-aca1-a108c009960a",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-standardized.csv",
+      "started_at": "2026-10-18T14:52:08.141045348Z",
+      "observed_at": "2026-10-18T14:52:08.144462691Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-8eefa8fc-cdda-4b58-aca1-a108c009960a.json",
+          "sha256": "28f2a7155bc5bb70895259ccdffc0f3a210935a1b2497e9c68cb0bf595826157"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-8eefa8fc-cdda-4b58-aca1-a108c009960a.json",
+          "sha256": "32cb9155a6a146b13bd08ee9226cd0aee864894c96263c4fd99e80206ab6d410"
+        }
+      ]
+    },
+    {
+      "attempt_id": "8f5564f2-a731-45bf-a71b-7a830a261a2c",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h2-a.csv",
+      "started_at": "2026-10-18T14:51:17.267192421Z",
+      "observed_at": "2026-10-18T14:51:17.271075741Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-8f5564f2-a731-45bf-a71b-7a830a261a2c.json",
+          "sha256": "645d4927d478a9f8e449c2c3fbeb5e138d6d57099d401955a5536d35513123ca"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-8f5564f2-a731-45bf-a71b-7a830a261a2c.json",
+          "sha256": "645d4927d478a9f8e449c2c3fbeb5e138d6d57099d401955a5536d35513123ca"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-8f5564f2-a731-45bf-a71b-7a830a261a2c.json",
+          "sha256": "2c5f0ce97f985b4bb4149340b60d4fa01da65877d908483cc7948c26ad146fbd"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-8f5564f2-a731-45bf-a71b-7a830a261a2c.json",
+          "sha256": "2c5f0ce97f985b4bb4149340b60d4fa01da65877d908483cc7948c26ad146fbd"
+        }
+      ]
+    },
+    {
+      "attempt_id": "8f92bb89-838f-4a09-9e32-16dbb8e961c0",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-processed.csv",
+      "started_at": "2026-10-18T14:51:06.391469426Z",
+      "observed_at": "2026-10-18T14:51:06.395217683Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-8f92bb89-838f-4a09-9e32-16dbb8e961c0.json",
+          "sha256": "9e5a8d3a84ba6a7a98a4429a94ed41391325b2e67f3dd15c22bd100c7bd3b4a3"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-8f92bb89-838f-4a09-9e32-16dbb8e961c0.json",
+          "sha256": "9e5a8d3a84ba6a7a98a4429a94ed41391325b2e67f3dd15c22bd100c7bd3b4a3"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-8f92bb89-838f-4a09-9e32-16dbb8e961c0.json",
+          "sha256": "5b6df6cbb1b43c000a541ba6d0247a4245f9af4bc9e79dfbccd061e9b8d4f420"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-8f92bb89-838f-4a09-9e32-16dbb8e961c0.json",
+          "sha256": "5b6df6cbb1b43c000a541ba6d0247a4245f9af4bc9e79dfbccd061e9b8d4f420"
+        }
+      ]
+    },
+    {
+      "attempt_id": "90f6b983-16e2-4013-b5a7-224b3fc08e80",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p1.csv",
+      "started_at": "2026-10-18T14:52:08.066822914Z",
+      "observed_at": "2026-10-18T14:52:08.070472481Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-90f6b983-16e2-4013-b5a7-224b3fc08e80.json",
+          "sha256": "f501b2dbc62d7787c1ac9effe87d46cc17ab7064b2054872a363736bdfde44f0"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-90f6b983-16e2-4013-b5a7-224b3fc08e80.json",
+          "sha256": "8982615e402e6c9476db3054275c972ff092d01e0b4002402c5609bf154150b9"
+        }
+      ]
+    },
+    {
+      "attempt_id": "9130eb19-8f35-4304-8c4f-58f461adf898",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/control-retention.csv",
+      "started_at": "2026-10-18T14:52:08.051344768Z",
+      "observed_at": "2026-10-18T14:52:08.055039838Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-9130eb19-8f35-4304-8c4f-58f461adf898.json",
+          "sha256": "b8e86828800490898d8269df6bc757f90d37ee80282aea8cac9e4bfe242f531a"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-9130eb19-8f35-4304-8c4f-58f461adf898.json",
+          "sha256": "660556680f12a0979f9840a847cb04ff34b0fa51e78f0b66f3e0d9dafc936c72"
+        }
+      ]
+    },
+    {
+      "attempt_id": "94668cae-ae96-4516-b906-b498c7dcdd78",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h0.csv",
+      "started_at": "2026-10-18T14:51:17.211299865Z",
+      "observed_at": "2026-10-18T14:51:17.214591363Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-94668cae-ae96-4516-b906-b498c7dcdd78.json",
+          "sha256": "7b31534878e8bc7bca1b1bbc5ecf3da02533489d87126ae93d3aa90e1e41c4d8"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-94668cae-ae96-4516-b906-b498c7dcdd78.json",
+          "sha256": "7b31534878e8bc7bca1b1bbc5ecf3da02533489d87126ae93d3aa90e1e41c4d8"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-94668cae-ae96-4516-b906-b498c7dcdd78.json",
+          "sha256": "e0f63fa7924d4098d972e8c1ee08b7c2e50120674d406da8681b1c8742f6c304"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-94668cae-ae96-4516-b906-b498c7dcdd78.json",
+          "sha256": "e0f63fa7924d4098d972e8c1ee08b7c2e50120674d406da8681b1c8742f6c304"
+        }
+      ]
+    },
+    {
+      "attempt_id": "95646c98-bbfb-4d94-b9e4-223755e3ea3d",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:52:14.694108947Z",
+      "observed_at": "2026-10-18T14:52:14.697622968Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-95646c98-bbfb-4d94-b9e4-223755e3ea3d.json",
+          "sha256": "164faaae947f15b667679b97194964be82e166d7cf21b1cc144c5b913a1b2073"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-95646c98-bbfb-4d94-b9e4-223755e3ea3d.json",
+          "sha256": "92357a06b831e456754fc9a49d46bf06bb3cc13f688c2010839c47da95f8f82b"
+        }
+      ]
+    },
+    {
+      "attempt_id": "96d88a71-98ca-4233-bfb3-c34fe112e266",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p2.csv",
+      "started_at": "2026-10-18T14:52:08.098944208Z",
+      "observed_at": "2026-10-18T14:52:08.102453479Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-96d88a71-98ca-4233-bfb3-c34fe112e266.json",
+          "sha256": "59456f4ebfce225c2b088dc2738b98c56522ddcd39f53c83dd4fff48c51e08df"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-96d88a71-98ca-4233-bfb3-c34fe112e266.json",
+          "sha256": "7bfd2fe67e21ea77598772914732f5471cf186f7bad000ae3266fb96c0dff141"
+        }
+      ]
+    },
+    {
+      "attempt_id": "973dfd63-c743-42f3-8b8b-33287feac9a9",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h2-b.csv",
+      "started_at": "2026-10-18T14:51:17.293391905Z",
+      "observed_at": "2026-10-18T14:51:17.297046939Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-973dfd63-c743-42f3-8b8b-33287feac9a9.json",
+          "sha256": "a21590b131967ed6f7a1e75614fb2ce2073c4455459e3b7606c116bdb2f907f2"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-973dfd63-c743-42f3-8b8b-33287feac9a9.json",
+          "sha256": "a21590b131967ed6f7a1e75614fb2ce2073c4455459e3b7606c116bdb2f907f2"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-973dfd63-c743-42f3-8b8b-33287feac9a9.json",
+          "sha256": "f9e90c011e784dfbdff7d403e6f77815013c2228d94832242d6a839fea2d52a2"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-973dfd63-c743-42f3-8b8b-33287feac9a9.json",
+          "sha256": "f9e90c011e784dfbdff7d403e6f77815013c2228d94832242d6a839fea2d52a2"
+        }
+      ]
+    },
+    {
+      "attempt_id": "97ff5cd4-0695-4a0e-a44b-1b613a7df8dd",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:52:08.205418272Z",
+      "observed_at": "2026-10-18T14:52:08.209140624Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-97ff5cd4-0695-4a0e-a44b-1b613a7df8dd.json",
+          "sha256": "ffe5be68f71916896dfd75bbe1205489066cd0de8aa246c75962273220895d2a"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-97ff5cd4-0695-4a0e-a44b-1b613a7df8dd.json",
+          "sha256": "cb169ed99ea7ba8ac2ed3a4526aa06b929dfdec52c56011ba6c62dd1f6d302f0"
+        }
+      ]
+    },
+    {
+      "attempt_id": "983ff78e-9907-48ef-a204-fdfcfb28d6a3",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:52:08.03052336Z",
+      "observed_at": "2026-10-18T14:52:08.034129758Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-983ff78e-9907-48ef-a204-fdfcfb28d6a3.json",
+          "sha256": "e345efd4ef6946f14ae773f0d30c81fa587dc404560948170422994bb5c30710"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-983ff78e-9907-48ef-a204-fdfcfb28d6a3.json",
+          "sha256": "4601057976fe7fc46f7697b7130af671fe65f98f77300dcc916e975dfa115c45"
+        }
+      ]
+    },
+    {
+      "attempt_id": "993608cb-1dff-4bdb-bb92-c7e06ba6c8eb",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/t2.csv",
+      "started_at": "2026-10-18T14:51:06.451058003Z",
+      "observed_at": "2026-10-18T14:51:06.454776493Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-993608cb-1dff-4bdb-bb92-c7e06ba6c8eb.json",
+          "sha256": "f2fe845f5411faf0027a9b81ab38a6dba2376a6796f20e77b264fccafb7465c6"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-993608cb-1dff-4bdb-bb92-c7e06ba6c8eb.json",
+          "sha256": "f2fe845f5411faf0027a9b81ab38a6dba2376a6796f20e77b264fccafb7465c6"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-993608cb-1dff-4bdb-bb92-c7e06ba6c8eb.json",
+          "sha256": "71614decf8f74e63ca7a031f0da4f6f876e8bb7bf8f96e1d9b5256a26282f09d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-993608cb-1dff-4bdb-bb92-c7e06ba6c8eb.json",
+          "sha256": "71614decf8f74e63ca7a031f0da4f6f876e8bb7bf8f96e1d9b5256a26282f09d"
+        }
+      ]
+    },
+    {
+      "attempt_id": "993ccc4c-d0be-4684-9e3e-67eb8e42e1e8",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:51:17.350521708Z",
+      "observed_at": "2026-10-18T14:51:17.353832567Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-993ccc4c-d0be-4684-9e3e-67eb8e42e1e8.json",
+          "sha256": "acc749429806301b403b9d9f5f8914d13e65c32bdcf172f0c14a8d5f20b73a55"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-993ccc4c-d0be-4684-9e3e-67eb8e42e1e8.json",
+          "sha256": "acc749429806301b403b9d9f5f8914d13e65c32bdcf172f0c14a8d5f20b73a55"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-993ccc4c-d0be-4684-9e3e-67eb8e42e1e8.json",
+          "sha256": "ab76dc31a87f25ac4cbae2457d7b60ed96cfedd3534e3c482603e751b4d5754e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-993ccc4c-d0be-4684-9e3e-67eb8e42e1e8.json",
+          "sha256": "ab76dc31a87f25ac4cbae2457d7b60ed96cfedd3534e3c482603e751b4d5754e"
+        }
+      ]
+    },
+    {
+      "attempt_id": "99db6956-4d97-46ad-bcd5-7592038b7afe",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h2-b.csv",
+      "started_at": "2026-10-18T14:51:17.286447615Z",
+      "observed_at": "2026-10-18T14:51:17.290590426Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-99db6956-4d97-46ad-bcd5-7592038b7afe.json",
+          "sha256": "23b14bff6f0e6ec4e31a52892e0e15cdc8bf118b22922f8bc1b1f7c28a9e312e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-99db6956-4d97-46ad-bcd5-7592038b7afe.json",
+          "sha256": "23b14bff6f0e6ec4e31a52892e0e15cdc8bf118b22922f8bc1b1f7c28a9e312e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-99db6956-4d97-46ad-bcd5-7592038b7afe.json",
+          "sha256": "891f0d9b7ef1470bf2155acb6d0bc7edbed1aecb79b2a09d08e69ea367317eb1"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-99db6956-4d97-46ad-bcd5-7592038b7afe.json",
+          "sha256": "891f0d9b7ef1470bf2155acb6d0bc7edbed1aecb79b2a09d08e69ea367317eb1"
+        }
+      ]
+    },
+    {
+      "attempt_id": "9ac5e6e2-72f8-4f6b-a14b-c9e799c659d8",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:51:17.335685808Z",
+      "observed_at": "2026-10-18T14:51:17.339823981Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-9ac5e6e2-72f8-4f6b-a14b-c9e799c659d8.json",
+          "sha256": "085cd9022dc1ac1777e6382a3bc56ab7c7e0934dd862e48e24d1acf4405da956"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-9ac5e6e2-72f8-4f6b-a14b-c9e799c659d8.json",
+          "sha256": "085cd9022dc1ac1777e6382a3bc56ab7c7e0934dd862e48e24d1acf4405da956"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-9ac5e6e2-72f8-4f6b-a14b-c9e799c659d8.json",
+          "sha256": "0b7ea03d6bf0d2053e0086ca48614f1d02707df7d4d52ba6db16db8fcc59079b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-9ac5e6e2-72f8-4f6b-a14b-c9e799c659d8.json",
+          "sha256": "0b7ea03d6bf0d2053e0086ca48614f1d02707df7d4d52ba6db16db8fcc59079b"
+        }
+      ]
+    },
+    {
+      "attempt_id": "9db8baca-4b6d-4aa5-be1a-2491fb10fbd6",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:52:14.700463096Z",
+      "observed_at": "2026-10-18T14:52:14.703871234Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-9db8baca-4b6d-4aa5-be1a-2491fb10fbd6.json",
+          "sha256": "dbdf5d5ab72de85d2a06137a72d89fcc34fe1ca3c50090e4f2382b5b55231bf4"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-9db8baca-4b6d-4aa5-be1a-2491fb10fbd6.json",
+          "sha256": "8bda5b4c98af0d01f0c7f4667ed4659b08907f1d9c0333f54ea2db1a85b2894a"
+        }
+      ]
+    },
+    {
+      "attempt_id": "9fd286bb-efc1-409a-9fc3-dade32ac7f18",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:52:08.242150618Z",
+      "observed_at": "2026-10-18T14:52:08.245718422Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-9fd286bb-efc1-409a-9fc3-dade32ac7f18.json",
+          "sha256": "49b2f3cac15d0658cb90f63481c4678ed858402f3f8975af8430c27b60561506"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-9fd286bb-efc1-409a-9fc3-dade32ac7f18.json",
+          "sha256": "3d24dc0c9e575008edc780e30dbf556c8cf4ab171169f76538462b378708656a"
+        }
+      ]
+    },
+    {
+      "attempt_id": "a0c21c8b-b4eb-4c26-ad90-5c70e1b6f179",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:51:26.659265219Z",
+      "observed_at": "2026-10-18T14:51:26.663963666Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-a0c21c8b-b4eb-4c26-ad90-5c70e1b6f179.json",
+          "sha256": "4880e544eb1c2819d1b55a6a1df69853e3fb5cda272cf39f8aac455311b0e6df"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-a0c21c8b-b4eb-4c26-ad90-5c70e1b6f179.json",
+          "sha256": "4880e544eb1c2819d1b55a6a1df69853e3fb5cda272cf39f8aac455311b0e6df"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-a0c21c8b-b4eb-4c26-ad90-5c70e1b6f179.json",
+          "sha256": "1447fc5e4ee6cd0a4f8fcb7f9b0d6b6ae10d1b87cf464679afdd1df077603999"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-a0c21c8b-b4eb-4c26-ad90-5c70e1b6f179.json",
+          "sha256": "1447fc5e4ee6cd0a4f8fcb7f9b0d6b6ae10d1b87cf464679afdd1df077603999"
+        }
+      ]
+    },
+    {
+      "attempt_id": "a35f73fa-2d41-47fc-8ccc-8faea04cec45",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h1-b.csv",
+      "started_at": "2026-10-18T14:52:14.611252635Z",
+      "observed_at": "2026-10-18T14:52:14.615300625Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-a35f73fa-2d41-47fc-8ccc-8faea04cec45.json",
+          "sha256": "94ed938d203aa52a3fb36e75769d528d76f2526b48186979199ca52ae2c54e9f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-a35f73fa-2d41-47fc-8ccc-8faea04cec45.json",
+          "sha256": "131fd57804eff272526ff83c19d505adfd567493e1e634ea050204cb3156c463"
+        }
+      ]
+    },
+    {
+      "attempt_id": "a4856e24-b13c-462f-941d-903a7f3c6f22",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/",
+      "started_at": "2026-10-18T14:52:21.027297702Z",
+      "observed_at": "2026-10-18T14:52:21.032232117Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-a4856e24-b13c-462f-941d-903a7f3c6f22.json",
+          "sha256": "c661a33b88c1921284d073ef07e0c6017655724029f50303c839c725c60dcf3a"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-a4856e24-b13c-462f-941d-903a7f3c6f22.json",
+          "sha256": "5b2e6c0a9a2e54748c65e0e95e84510e0f2023d715b12bb134def983d0a06cb0"
+        }
+      ]
+    },
+    {
+      "attempt_id": "a5542988-b79a-415b-ab4d-61baecbbea64",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p1.csv",
+      "started_at": "2026-10-18T14:51:06.350841327Z",
+      "observed_at": "2026-10-18T14:51:06.354634869Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-a5542988-b79a-415b-ab4d-61baecbbea64.json",
+          "sha256": "ce44f698cc33101e54036d53358f9caac8b31ee6010d0974fb060490ca388cf0"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-a5542988-b79a-415b-ab4d-61baecbbea64.json",
+          "sha256": "ce44f698cc33101e54036d53358f9caac8b31ee6010d0974fb060490ca388cf0"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-a5542988-b79a-415b-ab4d-61baecbbea64.json",
+          "sha256": "7787a5a24b4c44849d4729ac376a7d48a9dfa7fabeee6128b4fa79d5a9640538"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-a5542988-b79a-415b-ab4d-61baecbbea64.json",
+          "sha256": "7787a5a24b4c44849d4729ac376a7d48a9dfa7fabeee6128b4fa79d5a9640538"
+        }
+      ]
+    },
+    {
+      "attempt_id": "a6e89a35-2161-4cd4-9ad1-f895d3915e90",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/",
+      "started_at": "2026-10-18T14:52:08.185345707Z",
+      "observed_at": "2026-10-18T14:52:08.189853122Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-a6e89a35-2161-4cd4-9ad1-f895d3915e90.json",
+          "sha256": "bde360d9794ee259ec9b41b9a3923e0f7f7be7e5f95ef78a4508db9a3a6b1042"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-a6e89a35-2161-4cd4-9ad1-f895d3915e90.json",
+          "sha256": "eec9974d37206daa003bfe8cde8e7778078c1a596dcf17447039de480c2a93e4"
+        }
+      ]
+    },
+    {
+      "attempt_id": "a8e4e9e8-e765-46d7-8f9b-f22e87059d07",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h1-b.csv",
+      "started_at": "2026-10-18T14:51:17.248050078Z",
+      "observed_at": "2026-10-18T14:51:17.251827919Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-a8e4e9e8-e765-46d7-8f9b-f22e87059d07.json",
+          "sha256": "739e5764d4983af4551f45321a007dcd07b53e836b985551085916bb7c29437f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-a8e4e9e8-e765-46d7-8f9b-f22e87059d07.json",
+          "sha256": "739e5764d4983af4551f45321a007dcd07b53e836b985551085916bb7c29437f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-a8e4e9e8-e765-46d7-8f9b-f22e87059d07.json",
+          "sha256": "9d68bf00180da539f3906024fbf7a756738ef5fe8bfac9adf3569bdfce9b248f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-a8e4e9e8-e765-46d7-8f9b-f22e87059d07.json",
+          "sha256": "9d68bf00180da539f3906024fbf7a756738ef5fe8bfac9adf3569bdfce9b248f"
+        }
+      ]
+    },
+    {
+      "attempt_id": "a9de3972-fe40-44d1-83b9-752e46009e32",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:51:17.190953588Z",
+      "observed_at": "2026-10-18T14:51:17.194598476Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-a9de3972-fe40-44d1-83b9-752e46009e32.json",
+          "sha256": "a9a52e5c0e99e153135368682cb8b26a94891702a83e457845e37f02c761807d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-a9de3972-fe40-44d1-83b9-752e46009e32.json",
+          "sha256": "a9a52e5c0e99e153135368682cb8b26a94891702a83e457845e37f02c761807d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-a9de3972-fe40-44d1-83b9-752e46009e32.json",
+          "sha256": "a337957a6c1b1d556a09ea4c22de03d4110a8b95258c2a23d51beeb9923d5677"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-a9de3972-fe40-44d1-83b9-752e46009e32.json",
+          "sha256": "a337957a6c1b1d556a09ea4c22de03d4110a8b95258c2a23d51beeb9923d5677"
+        }
+      ]
+    },
+    {
+      "attempt_id": "a9f338b5-e63c-42c0-b342-cdd6a2d8779e",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:52:08.017121232Z",
+      "observed_at": "2026-10-18T14:52:08.027481838Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-a9f338b5-e63c-42c0-b342-cdd6a2d8779e.json",
+          "sha256": "578eb22017ed7d743c9b06116252d089a03acab92caf601417a87ba7f3eece40"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-a9f338b5-e63c-42c0-b342-cdd6a2d8779e.json",
+          "sha256": "42be028eb81a7145a5a473bb15aaea9a44f71b749bc14d6ba51d2af4737c3adc"
+        }
+      ]
+    },
+    {
+      "attempt_id": "ab1c1617-43aa-4625-adf1-6f2b60be762b",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h2-a.csv",
+      "started_at": "2026-10-18T14:52:14.651872397Z",
+      "observed_at": "2026-10-18T14:52:14.655972712Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-ab1c1617-43aa-4625-adf1-6f2b60be762b.json",
+          "sha256": "3c3bcd70fd01e270a3ff4b15befd240de90b71a8ecde56ab051821e5e8612f03"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-ab1c1617-43aa-4625-adf1-6f2b60be762b.json",
+          "sha256": "f721a08daa7b316c8284863bcfa9b066a7011ad7c1c558b056f20a0c686310f4"
+        }
+      ]
+    },
+    {
+      "attempt_id": "ac466cb4-4dbe-43ab-b5fd-22fdfa0e6a86",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:51:06.543532651Z",
+      "observed_at": "2026-10-18T14:51:06.546512665Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-ac466cb4-4dbe-43ab-b5fd-22fdfa0e6a86.json",
+          "sha256": "ac98e7431b9e118ceba9ea34566bd739b1b0644ba12a94bf291b95e6d56bba68"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-ac466cb4-4dbe-43ab-b5fd-22fdfa0e6a86.json",
+          "sha256": "ac98e7431b9e118ceba9ea34566bd739b1b0644ba12a94bf291b95e6d56bba68"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-ac466cb4-4dbe-43ab-b5fd-22fdfa0e6a86.json",
+          "sha256": "bb976e5784c0b815a817c564a322a62e2fdd735892f4e339df5af95860db5dca"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-ac466cb4-4dbe-43ab-b5fd-22fdfa0e6a86.json",
+          "sha256": "bb976e5784c0b815a817c564a322a62e2fdd735892f4e339df5af95860db5dca"
+        }
+      ]
+    },
+    {
+      "attempt_id": "ac4a1c5e-6714-4e6d-935e-319f59225a3f",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-b.csv",
+      "started_at": "2026-10-18T14:51:26.706584411Z",
+      "observed_at": "2026-10-18T14:51:26.710957145Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-ac4a1c5e-6714-4e6d-935e-319f59225a3f.json",
+          "sha256": "bc2356ed65184f3162135ff9dbfdd8a4515c71a2b8691b6a992b63fccea55e66"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-ac4a1c5e-6714-4e6d-935e-319f59225a3f.json",
+          "sha256": "bc2356ed65184f3162135ff9dbfdd8a4515c71a2b8691b6a992b63fccea55e66"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-ac4a1c5e-6714-4e6d-935e-319f59225a3f.json",
+          "sha256": "f465e89a81880d662621253c28af32dff95a4d7d3e14f3469cadd5445ec2ee77"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-ac4a1c5e-6714-4e6d-935e-319f59225a3f.json",
+          "sha256": "f465e89a81880d662621253c28af32dff95a4d7d3e14f3469cadd5445ec2ee77"
+        }
+      ]
+    },
+    {
+      "attempt_id": "acd10f79-1f0f-473c-ba4e-be0e3ee5bce5",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:51:06.31723191Z",
+      "observed_at": "2026-10-18T14:51:06.320820756Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-acd10f79-1f0f-473c-ba4e-be0e3ee5bce5.json",
+          "sha256": "65210627dce5f6a9674ae3c313a0557059cd1f4d810fa7fecffbb1ae3e20dd3e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-acd10f79-1f0f-473c-ba4e-be0e3ee5bce5.json",
+          "sha256": "65210627dce5f6a9674ae3c313a0557059cd1f4d810fa7fecffbb1ae3e20dd3e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-acd10f79-1f0f-473c-ba4e-be0e3ee5bce5.json",
+          "sha256": "d05c392b9b97f9746f5efd7582fa54af3404b7fc4072616f4bb2cb70bd36dd84"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-acd10f79-1f0f-473c-ba4e-be0e3ee5bce5.json",
+          "sha256": "d05c392b9b97f9746f5efd7582fa54af3404b7fc4072616f4bb2cb70bd36dd84"
+        }
+      ]
+    },
+    {
+      "attempt_id": "ad916356-ea2c-411c-872b-4b6c72412a5b",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h0.csv",
+      "started_at": "2026-10-18T14:52:14.585086811Z",
+      "observed_at": "2026-10-18T14:52:14.588493449Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-ad916356-ea2c-411c-872b-4b6c72412a5b.json",
+          "sha256": "957e111850f0446045ddd873c84979bd6bdf6acc6f79b80055ba25be4a1a821c"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-ad916356-ea2c-411c-872b-4b6c72412a5b.json",
+          "sha256": "0d936add4217feecb214ec735da6079c891b869deb54e245ed7c985e5aba25ce"
+        }
+      ]
+    },
+    {
+      "attempt_id": "af9836cd-1002-4d0b-b6b6-b9429224ed51",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h1-b.csv",
+      "started_at": "2026-10-18T14:51:17.261077135Z",
+      "observed_at": "2026-10-18T14:51:17.264355964Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-af9836cd-1002-4d0b-b6b6-b9429224ed51.json",
+          "sha256": "36964a26556f13b4eaa5181aba7a0d26c418de83b0aa88443d4c729b95d69cc8"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-af9836cd-1002-4d0b-b6b6-b9429224ed51.json",
+          "sha256": "36964a26556f13b4eaa5181aba7a0d26c418de83b0aa88443d4c729b95d69cc8"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-af9836cd-1002-4d0b-b6b6-b9429224ed51.json",
+          "sha256": "eb560537cc84b5e6efce764ce2d563d7f58b82a76c8191d23e1442f67eb8e592"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-af9836cd-1002-4d0b-b6b6-b9429224ed51.json",
+          "sha256": "eb560537cc84b5e6efce764ce2d563d7f58b82a76c8191d23e1442f67eb8e592"
+        }
+      ]
+    },
+    {
+      "attempt_id": "afea6e05-3d9c-452d-bc64-e031f8009295",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:51:06.48960983Z",
+      "observed_at": "2026-10-18T14:51:06.492796004Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-afea6e05-3d9c-452d-bc64-e031f8009295.json",
+          "sha256": "18a3a2d97e25850781df19f918162fc6a33574894e72edcc432f4b630c4c2011"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-afea6e05-3d9c-452d-bc64-e031f8009295.json",
+          "sha256": "18a3a2d97e25850781df19f918162fc6a33574894e72edcc432f4b630c4c2011"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-afea6e05-3d9c-452d-bc64-e031f8009295.json",
+          "sha256": "d3e1dfc76888b49d392f9da74199a225e2692d1a9b8aaed651e007d4d9545b7d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-afea6e05-3d9c-452d-bc64-e031f8009295.json",
+          "sha256": "d3e1dfc76888b49d392f9da74199a225e2692d1a9b8aaed651e007d4d9545b7d"
+        }
+      ]
+    },
+    {
+      "attempt_id": "b14c6086-996b-45bd-89dc-55aa89da2ef2",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/",
+      "started_at": "2026-10-18T14:51:17.315265054Z",
+      "observed_at": "2026-10-18T14:51:17.31929766Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-b14c6086-996b-45bd-89dc-55aa89da2ef2.json",
+          "sha256": "453e8df89c43beacd113083a355fe8f2b8725f73b50017c33aec01f51a06f059"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-b14c6086-996b-45bd-89dc-55aa89da2ef2.json",
+          "sha256": "453e8df89c43beacd113083a355fe8f2b8725f73b50017c33aec01f51a06f059"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-b14c6086-996b-45bd-89dc-55aa89da2ef2.json",
+          "sha256": "72f708423ff96d6991b8bdbf3884435f0effdaf5cc88ef6795f6888d513b06f1"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-b14c6086-996b-45bd-89dc-55aa89da2ef2.json",
+          "sha256": "72f708423ff96d6991b8bdbf3884435f0effdaf5cc88ef6795f6888d513b06f1"
+        }
+      ]
+    },
+    {
+      "attempt_id": "b1aeadd9-fe34-4c28-81d4-a5ee6730e04b",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p2.csv",
+      "started_at": "2026-10-18T14:51:06.385232367Z",
+      "observed_at": "2026-10-18T14:51:06.388744264Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-b1aeadd9-fe34-4c28-81d4-a5ee6730e04b.json",
+          "sha256": "be933c0e2aa255a304db7fe4ee132158a5552dee3170aae49dca91bcfa984d8c"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-b1aeadd9-fe34-4c28-81d4-a5ee6730e04b.json",
+          "sha256": "be933c0e2aa255a304db7fe4ee132158a5552dee3170aae49dca91bcfa984d8c"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-b1aeadd9-fe34-4c28-81d4-a5ee6730e04b.json",
+          "sha256": "28136ad26c350fa84932f50a6e5bfebd8f6facaed403adcd73b9121af80c531e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-b1aeadd9-fe34-4c28-81d4-a5ee6730e04b.json",
+          "sha256": "28136ad26c350fa84932f50a6e5bfebd8f6facaed403adcd73b9121af80c531e"
+        }
+      ]
+    },
+    {
+      "attempt_id": "b3164c3b-d999-4070-974c-3a2981d19152",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-standardized.csv",
+      "started_at": "2026-10-18T14:52:08.128343794Z",
+      "observed_at": "2026-10-18T14:52:08.131794837Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-b3164c3b-d999-4070-974c-3a2981d19152.json",
+          "sha256": "cf20351d6a22d63b6a29b7db964e4fea9bce276a218c65931f2f3bd7c0f487d9"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-b3164c3b-d999-4070-974c-3a2981d19152.json",
+          "sha256": "6729535176689123aeaf45382adb46ac52e0b14dd015d037c929a71ecb74328f"
+        }
+      ]
+    },
+    {
+      "attempt_id": "b352ddc0-acc7-40bc-b0e5-b1f4bf3b0b0c",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:51:26.777382489Z",
+      "observed_at": "2026-10-18T14:51:26.780675603Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-b352ddc0-acc7-40bc-b0e5-b1f4bf3b0b0c.json",
+          "sha256": "6c30e77a956e8cb3ec3fa57942d57b381ed6c9ca50a2b78e08c0eba0cc12aa5c"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-b352ddc0-acc7-40bc-b0e5-b1f4bf3b0b0c.json",
+          "sha256": "6c30e77a956e8cb3ec3fa57942d57b381ed6c9ca50a2b78e08c0eba0cc12aa5c"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-b352ddc0-acc7-40bc-b0e5-b1f4bf3b0b0c.json",
+          "sha256": "ed0477f8fa36f7f365f4c9e3b677d3928d8f3cb3db70b3846c59677d3b763c4b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-b352ddc0-acc7-40bc-b0e5-b1f4bf3b0b0c.json",
+          "sha256": "ed0477f8fa36f7f365f4c9e3b677d3928d8f3cb3db70b3846c59677d3b763c4b"
+        }
+      ]
+    },
+    {
+      "attempt_id": "b45f9401-efc9-4004-9e4b-d26d0429aef4",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/t1.csv",
+      "started_at": "2026-10-18T14:52:08.159965374Z",
+      "observed_at": "2026-10-18T14:52:08.163406755Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-b45f9401-efc9-4004-9e4b-d26d0429aef4.json",
+          "sha256": "d12e9fb8a0794f9fbf375b8faad8537c95c31bcf063c859ef9f4cb7dbfd04f27"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-b45f9401-efc9-4004-9e4b-d26d0429aef4.json",
+          "sha256": "23443b97975afa1ec0b0bc837977065b7ee3166b2ca1b6a67f77f378cf25bfdd"
+        }
+      ]
+    },
+    {
+      "attempt_id": "b5c8f7b1-e6b7-4e45-811c-b391b339aed6",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-c.csv",
+      "started_at": "2026-10-18T14:51:26.728747469Z",
+      "observed_at": "2026-10-18T14:51:26.733519604Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-b5c8f7b1-e6b7-4e45-811c-b391b339aed6.json",
+          "sha256": "ef648a868177fc6cdc9d8af540c17f40cff99072d27a112a319291837853227f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-b5c8f7b1-e6b7-4e45-811c-b391b339aed6.json",
+          "sha256": "ef648a868177fc6cdc9d8af540c17f40cff99072d27a112a319291837853227f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-b5c8f7b1-e6b7-4e45-811c-b391b339aed6.json",
+          "sha256": "0697b95dc2d983bfbf4d3b66b23df8551f403ee10e06f7f86da0186e3384de9b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-b5c8f7b1-e6b7-4e45-811c-b391b339aed6.json",
+          "sha256": "0697b95dc2d983bfbf4d3b66b23df8551f403ee10e06f7f86da0186e3384de9b"
+        }
+      ]
+    },
+    {
+      "attempt_id": "ba05b89c-69d4-4f8c-829a-881313374e2b",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:52:14.720664485Z",
+      "observed_at": "2026-10-18T14:52:14.724038697Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-ba05b89c-69d4-4f8c-829a-881313374e2b.json",
+          "sha256": "3520ba2b396e3b5685389ed42ebfadcd73c559458e01f788a923af94715d4999"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-ba05b89c-69d4-4f8c-829a-881313374e2b.json",
+          "sha256": "053652ceff5dba1d009295fe97c2d7525ada230607130ae2892877a2a61b1802"
+        }
+      ]
+    },
+    {
+      "attempt_id": "bb8126e9-9dee-4e36-976d-49d4f54d708b",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h1-a.csv",
+      "started_at": "2026-10-18T14:51:17.224606247Z",
+      "observed_at": "2026-10-18T14:51:17.228628025Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-bb8126e9-9dee-4e36-976d-49d4f54d708b.json",
+          "sha256": "f141412a5a159b64b4740a36a367262add8601034f62780f6bd19455513f63a0"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-bb8126e9-9dee-4e36-976d-49d4f54d708b.json",
+          "sha256": "f141412a5a159b64b4740a36a367262add8601034f62780f6bd19455513f63a0"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-bb8126e9-9dee-4e36-976d-49d4f54d708b.json",
+          "sha256": "759c0b24ced91b41d6af0582475226971fa700a2cb69a8cae24c87513b1469fa"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-bb8126e9-9dee-4e36-976d-49d4f54d708b.json",
+          "sha256": "759c0b24ced91b41d6af0582475226971fa700a2cb69a8cae24c87513b1469fa"
+        }
+      ]
+    },
+    {
+      "attempt_id": "bc8a3ed3-b9bc-43cd-9688-1e37276c2611",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:51:06.513810955Z",
+      "observed_at": "2026-10-18T14:51:06.517021534Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-bc8a3ed3-b9bc-43cd-9688-1e37276c2611.json",
+          "sha256": "ff008ed3fdd4cba50e8add42069414ad70faa1919cc403b19771ab70219e6185"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-bc8a3ed3-b9bc-43cd-9688-1e37276c2611.json",
+          "sha256": "ff008ed3fdd4cba50e8add42069414ad70faa1919cc403b19771ab70219e6185"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-bc8a3ed3-b9bc-43cd-9688-1e37276c2611.json",
+          "sha256": "1686538fc72b3fcea655434748a913e65aecb2c1de71304b5c0c24a0e426b158"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-bc8a3ed3-b9bc-43cd-9688-1e37276c2611.json",
+          "sha256": "1686538fc72b3fcea655434748a913e65aecb2c1de71304b5c0c24a0e426b158"
+        }
+      ]
+    },
+    {
+      "attempt_id": "bca1fb93-5e70-4b62-a5dd-2c19d735ee82",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p2.csv",
+      "started_at": "2026-10-18T14:52:08.092864232Z",
+      "observed_at": "2026-10-18T14:52:08.096409658Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-bca1fb93-5e70-4b62-a5dd-2c19d735ee82.json",
+          "sha256": "c25a6c3161e788c750ae1e914064f940a6f9bd8ee5dc3849b020905d11cdd519"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-bca1fb93-5e70-4b62-a5dd-2c19d735ee82.json",
+          "sha256": "2cbb702dbc39d84436bb6f9da6e952dfcad3f05eb5e3c0afd902c7c19998e426"
+        }
+      ]
+    },
+    {
+      "attempt_id": "bcff2c32-ab4e-4925-8d58-b980793b1847",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:52:21.05803022Z",
+      "observed_at": "2026-10-18T14:52:21.063101043Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-bcff2c32-ab4e-4925-8d58-b980793b1847.json",
+          "sha256": "7b36bcdf36da53ece2e6cd5d39ad92746d446fdf1ef373c0f2117c88a737af41"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-bcff2c32-ab4e-4925-8d58-b980793b1847.json",
+          "sha256": "504681ceb646e115f9d53ea5847cc18ca9dd606ff75648e7134e95ff3b9db372"
+        }
+      ]
+    },
+    {
+      "attempt_id": "bd1a6210-d32d-4bc7-8735-0fdb8ba9fcda",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/control-retention.csv",
+      "started_at": "2026-10-18T14:52:08.044790397Z",
+      "observed_at": "2026-10-18T14:52:08.048572604Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-bd1a6210-d32d-4bc7-8735-0fdb8ba9fcda.json",
+          "sha256": "ed0e46c2cb1adbbc17b58afb6402e048ed2cbea8ab039bf7987fba53a6989047"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-bd1a6210-d32d-4bc7-8735-0fdb8ba9fcda.json",
+          "sha256": "b6cb30a6c9a6aed1b90911c2a978efbb6a534b16443bbd0ca211a6990c45ed84"
+        }
+      ]
+    },
+    {
+      "attempt_id": "bd5905bb-099f-4971-b567-6397041f9aef",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/t2.csv",
+      "started_at": "2026-10-18T14:52:08.166179875Z",
+      "observed_at": "2026-10-18T14:52:08.16931532Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-bd5905bb-099f-4971-b567-6397041f9aef.json",
+          "sha256": "9617843a98789635fa2de821356d8cada6482678c1f1bd68a7827a78c4ba1ccd"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-bd5905bb-099f-4971-b567-6397041f9aef.json",
+          "sha256": "cac73be61a76e0109fc9224dfd91af05bb5c7f38ec53e2c42c4a0cb099b2ef29"
+        }
+      ]
+    },
+    {
+      "attempt_id": "c083242c-a36b-4e0e-9a7c-cb41b7a7114b",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:52:20.930988685Z",
+      "observed_at": "2026-10-18T14:52:20.938628742Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-c083242c-a36b-4e0e-9a7c-cb41b7a7114b.json",
+          "sha256": "00fe98f0b1388d73eabb6239c539aa52dd61c60edaccabc499da54b5293902aa"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-c083242c-a36b-4e0e-9a7c-cb41b7a7114b.json",
+          "sha256": "3bdd32e66a28ec93f0f8aed71e37bdcb0766a6ea2c2ca23858180ac492561f52"
+        }
+      ]
+    },
+    {
+      "attempt_id": "c31cc56c-0c98-4f63-8bc7-41970caea526",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/",
+      "started_at": "2026-10-18T14:52:21.035791762Z",
+      "observed_at": "2026-10-18T14:52:21.04028669Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-c31cc56c-0c98-4f63-8bc7-41970caea526.json",
+          "sha256": "90d2fa7eba79d0cd36981cdbb8ad1effa4881207126c2b4392b39f71fecc4bce"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-c31cc56c-0c98-4f63-8bc7-41970caea526.json",
+          "sha256": "ab77cf8c213fb2933ca2154ec4bc69933b1df23e6ffbfe665e62451a2461c33a"
+        }
+      ]
+    },
+    {
+      "attempt_id": "c4869131-71e0-4df2-8463-4b416a382575",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-processed.csv",
+      "started_at": "2026-10-18T14:51:06.403595884Z",
+      "observed_at": "2026-10-18T14:51:06.407730636Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-c4869131-71e0-4df2-8463-4b416a382575.json",
+          "sha256": "f0e5bcace81e2f02591dc5349003b0a9da7acb573f52c9f4d485bc72c513412e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-c4869131-71e0-4df2-8463-4b416a382575.json",
+          "sha256": "f0e5bcace81e2f02591dc5349003b0a9da7acb573f52c9f4d485bc72c513412e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-c4869131-71e0-4df2-8463-4b416a382575.json",
+          "sha256": "be5f00c9ea0039b42f95412e779baded40fcf6ebcad802175bf68969bbe98c49"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-c4869131-71e0-4df2-8463-4b416a382575.json",
+          "sha256": "be5f00c9ea0039b42f95412e779baded40fcf6ebcad802175bf68969bbe98c49"
+        }
+      ]
+    },
+    {
+      "attempt_id": "c5ebd311-99af-4894-bf88-b29b0f808a2c",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h2-a.csv",
+      "started_at": "2026-10-18T14:52:14.638183587Z",
+      "observed_at": "2026-10-18T14:52:14.642535327Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-c5ebd311-99af-4894-bf88-b29b0f808a2c.json",
+          "sha256": "338ee1f1ba10ca7dec17d596e700d4297b49ae6b0e3253a81eb4f7586ae66b4d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-c5ebd311-99af-4894-bf88-b29b0f808a2c.json",
+          "sha256": "a302bb69df86c285dd5bba3231aabb444e49e9240306ffe6afafb5f32b653b50"
+        }
+      ]
+    },
+    {
+      "attempt_id": "c81ebd7d-0619-4928-a065-f02a0725aa1b",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p1.csv",
+      "started_at": "2026-10-18T14:52:08.080047493Z",
+      "observed_at": "2026-10-18T14:52:08.083945432Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-c81ebd7d-0619-4928-a065-f02a0725aa1b.json",
+          "sha256": "113c0c8913daa3e5c5b3387bbc95ac224077cf5c2789e290ed637735183d5a8f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-c81ebd7d-0619-4928-a065-f02a0725aa1b.json",
+          "sha256": "0aecd64f8f86bf1162734f6c3d9997c0c59d2ad6681ac0fd6e224f513efadf00"
+        }
+      ]
+    },
+    {
+      "attempt_id": "c887676a-ac35-490c-9f67-6ebe9c397e30",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-standardized.csv",
+      "started_at": "2026-10-18T14:51:06.410405846Z",
+      "observed_at": "2026-10-18T14:51:06.413955666Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-c887676a-ac35-490c-9f67-6ebe9c397e30.json",
+          "sha256": "694a2ea474e98108f2dbf7b115ad1fdc7d1d292746eb09ae6b2bf7e6d9e6e52d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-c887676a-ac35-490c-9f67-6ebe9c397e30.json",
+          "sha256": "694a2ea474e98108f2dbf7b115ad1fdc7d1d292746eb09ae6b2bf7e6d9e6e52d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-c887676a-ac35-490c-9f67-6ebe9c397e30.json",
+          "sha256": "e69501d62d0f54d4036152365b2bac7dd07875fe25ff98efaa652091639eeae1"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-c887676a-ac35-490c-9f67-6ebe9c397e30.json",
+          "sha256": "e69501d62d0f54d4036152365b2bac7dd07875fe25ff98efaa652091639eeae1"
+        }
+      ]
+    },
+    {
+      "attempt_id": "c9ae8593-bcbd-441e-853f-c7474076d8e1",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:52:20.941910722Z",
+      "observed_at": "2026-10-18T14:52:20.94670105Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-c9ae8593-bcbd-441e-853f-c7474076d8e1.json",
+          "sha256": "2c09a7ae2a01b570cb6f474d9b7b85f51433d76cd0d3156016d01a2e03768fac"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-c9ae8593-bcbd-441e-853f-c7474076d8e1.json",
+          "sha256": "4e22e0c6f77ca9a23e24c721eb0bc016e7b3d46f04423fa439100f7131978073"
+        }
+      ]
+    },
+    {
+      "attempt_id": "cb384b81-8638-4d87-95f6-35d179558392",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:52:08.216928811Z",
+      "observed_at": "2026-10-18T14:52:08.219897746Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-cb384b81-8638-4d87-95f6-35d179558392.json",
+          "sha256": "a36b62b40e8ecb6bb456709637dfa04e6b15823756b0fc766f1c55827dd8d8f9"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-cb384b81-8638-4d87-95f6-35d179558392.json",
+          "sha256": "ff861b0147649d86636ce77872907d8a69418723b6dbde675c2ff3a2726261ae"
+        }
+      ]
+    },
+    {
+      "attempt_id": "cbd88845-28d6-4a38-8faa-4fac89061bec",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:52:14.564998983Z",
+      "observed_at": "2026-10-18T14:52:14.568528618Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-cbd88845-28d6-4a38-8faa-4fac89061bec.json",
+          "sha256": "0a920fa23941354f2478f29cf1514b16c89a6afb06b5c4ac1e9f3116145cbf65"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-cbd88845-28d6-4a38-8faa-4fac89061bec.json",
+          "sha256": "3a7284863a301e7cc5b2a3f44bd6b2cc0392340fb60364f6072afa3b6f210505"
+        }
+      ]
+    },
+    {
+      "attempt_id": "cddb2d61-8b2c-4fd4-acd4-f7bd34cd3fce",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/m1-a.csv",
+      "started_at": "2026-10-18T14:51:26.667817222Z",
+      "observed_at": "2026-10-18T14:51:26.671685534Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-cddb2d61-8b2c-4fd4-acd4-f7bd34cd3fce.json",
+          "sha256": "6cb0ef57a48af5eae441b968e591aab1605a0cc939905c90663083394bbb21a6"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-cddb2d61-8b2c-4fd4-acd4-f7bd34cd3fce.json",
+          "sha256": "6cb0ef57a48af5eae441b968e591aab1605a0cc939905c90663083394bbb21a6"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-cddb2d61-8b2c-4fd4-acd4-f7bd34cd3fce.json",
+          "sha256": "a439a5b76b0fcec8733d2849d7044864e01d626d556f5b3e830a9930e84c510b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-cddb2d61-8b2c-4fd4-acd4-f7bd34cd3fce.json",
+          "sha256": "a439a5b76b0fcec8733d2849d7044864e01d626d556f5b3e830a9930e84c510b"
+        }
+      ]
+    },
+    {
+      "attempt_id": "cef11e20-eb62-46fa-867f-c506f986a75b",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:52:14.558291526Z",
+      "observed_at": "2026-10-18T14:52:14.561522229Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-cef11e20-eb62-46fa-867f-c506f986a75b.json",
+          "sha256": "5c469dff8b69de8f76d9a53ac6b806bc4310881578da40154b22ea37730c8924"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-cef11e20-eb62-46fa-867f-c506f986a75b.json",
+          "sha256": "55f1f301db671dfeeff11aac44a87c1d1c6506e76577bd86c554b6df82c4c5a4"
+        }
+      ]
+    },
+    {
+      "attempt_id": "cf2dda71-90aa-414d-becc-1dd5c183cdcb",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:52:21.070159242Z",
+      "observed_at": "2026-10-18T14:52:21.073592651Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-cf2dda71-90aa-414d-becc-1dd5c183cdcb.json",
+          "sha256": "2410b84a5b97c98d3ebd41c7388e379c929d948b4c19cd65543dc20cc6be061e"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-cf2dda71-90aa-414d-becc-1dd5c183cdcb.json",
+          "sha256": "6be5480f751724f76fad0e53eb17d40b1dc2dc6ad5ffce0137f2562050c8035d"
+        }
+      ]
+    },
+    {
+      "attempt_id": "cf679ba7-5580-4805-bc5c-0e87ba0efc9a",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/m1-a.csv",
+      "started_at": "2026-10-18T14:52:20.957168755Z",
+      "observed_at": "2026-10-18T14:52:20.961030955Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-cf679ba7-5580-4805-bc5c-0e87ba0efc9a.json",
+          "sha256": "6f90449db1645bba934fb48c50ed50fc171ed5ac9d05b62772a4f3c9956918e7"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-cf679ba7-5580-4805-bc5c-0e87ba0efc9a.json",
+          "sha256": "1ade9198597a82622e156f7e6bfdb4dd3c8befcb3ec8eb99008bf6e304321511"
+        }
+      ]
+    },
+    {
+      "attempt_id": "d0453d6a-83b4-4220-aac4-6b229f00a3e5",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/t2.csv",
+      "started_at": "2026-10-18T14:51:06.464911563Z",
+      "observed_at": "2026-10-18T14:51:06.468797854Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-d0453d6a-83b4-4220-aac4-6b229f00a3e5.json",
+          "sha256": "0c9bd8ece9a8fa9dba01a13d159a8fd55e115399b6af4a19689c2ef02c65fe93"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-d0453d6a-83b4-4220-aac4-6b229f00a3e5.json",
+          "sha256": "0c9bd8ece9a8fa9dba01a13d159a8fd55e115399b6af4a19689c2ef02c65fe93"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-d0453d6a-83b4-4220-aac4-6b229f00a3e5.json",
+          "sha256": "905c9fe360cd3449b2580bf154c6ee037ed300c86d7f39803bc52d50e53b4e82"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-d0453d6a-83b4-4220-aac4-6b229f00a3e5.json",
+          "sha256": "905c9fe360cd3449b2580bf154c6ee037ed300c86d7f39803bc52d50e53b4e82"
+        }
+      ]
+    },
+    {
+      "attempt_id": "d1dd9804-7d6e-4a8b-9404-eedf6621d178",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h1-b.csv",
+      "started_at": "2026-10-18T14:52:14.632042932Z",
+      "observed_at": "2026-10-18T14:52:14.635467503Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-d1dd9804-7d6e-4a8b-9404-eedf6621d178.json",
+          "sha256": "0c208df65f1b47f377231df6cb1a1ca073556bffe076f2b3e0b9f531505dde40"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-d1dd9804-7d6e-4a8b-9404-eedf6621d178.json",
+          "sha256": "838c7cfc2c6d7cf9ac7a73e3b7aa89af96d50e70289705687c7c736937de7644"
+        }
+      ]
+    },
+    {
+      "attempt_id": "d3131871-df38-4bad-b9a3-2ad78f522bca",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-processed.csv",
+      "started_at": "2026-10-18T14:52:08.121769949Z",
+      "observed_at": "2026-10-18T14:52:08.125367832Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-d3131871-df38-4bad-b9a3-2ad78f522bca.json",
+          "sha256": "767645e2b554074bce420ba198aa8078e58f1c216ad19bf654bed719088408a5"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-d3131871-df38-4bad-b9a3-2ad78f522bca.json",
+          "sha256": "825c220f223ab87601c974f7ff06e8df182029cf46d98202750064115868ddf5"
+        }
+      ]
+    },
+    {
+      "attempt_id": "d35bc422-eca2-4169-beef-57cfedd71e4f",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/",
+      "started_at": "2026-10-18T14:52:14.687233649Z",
+      "observed_at": "2026-10-18T14:52:14.691029374Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-d35bc422-eca2-4169-beef-57cfedd71e4f.json",
+          "sha256": "85dcf230a3bf1e6527a7d9fdb92205b67cd98cc4a73ec149f6819a4f6486f1ca"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-d35bc422-eca2-4169-beef-57cfedd71e4f.json",
+          "sha256": "29ec1abd0bc610a7c1d8f35957a6494965c726a656590a22cd61a42c6137ebce"
+        }
+      ]
+    },
+    {
+      "attempt_id": "d5d2742b-195b-475d-927a-77e7cb678dcb",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/t1.csv",
+      "started_at": "2026-10-18T14:52:08.15380711Z",
+      "observed_at": "2026-10-18T14:52:08.157321553Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-d5d2742b-195b-475d-927a-77e7cb678dcb.json",
+          "sha256": "edfa3888452d3be7fad7e50576fd3efa913d4281c2a05175e207ac722eea4e59"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-d5d2742b-195b-475d-927a-77e7cb678dcb.json",
+          "sha256": "4809ab6a8aea4933e604ae29734790fb9a5622fe5ccbb731811fe6829a14f6f9"
+        }
+      ]
+    },
+    {
+      "attempt_id": "d65981c7-8602-4581-9d63-82be52eb305a",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h1-a.csv",
+      "started_at": "2026-10-18T14:52:14.591640438Z",
+      "observed_at": "2026-10-18T14:52:14.595434491Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-d65981c7-8602-4581-9d63-82be52eb305a.json",
+          "sha256": "468085c1d1628c05ee1791d735ada1b565c9af1d725921a8cda09a78e137af49"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-d65981c7-8602-4581-9d63-82be52eb305a.json",
+          "sha256": "2c9a5077057d832be21246f5461d8e9304a9cf7c9123e39fc0376b462a35c67d"
+        }
+      ]
+    },
+    {
+      "attempt_id": "d6701cd4-470e-41b1-8309-285e4c2b3204",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h0.csv",
+      "started_at": "2026-10-18T14:52:14.571827553Z",
+      "observed_at": "2026-10-18T14:52:14.576480924Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-d6701cd4-470e-41b1-8309-285e4c2b3204.json",
+          "sha256": "549a9d6ba9bd52363b25085dcadf1fb52263bb37780cd99aa4b17d2fe7f9205b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-d6701cd4-470e-41b1-8309-285e4c2b3204.json",
+          "sha256": "7a00a6808122b10059c806a72872dc952832c27447d2bea82f476efe42a38ff5"
+        }
+      ]
+    },
+    {
+      "attempt_id": "d6cf2001-a6f8-4c44-8b50-c3e3612454f6",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-standardized.csv",
+      "started_at": "2026-10-18T14:51:06.416166253Z",
+      "observed_at": "2026-10-18T14:51:06.4191906Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-d6cf2001-a6f8-4c44-8b50-c3e3612454f6.json",
+          "sha256": "67dc24ad70fe54ff9a581d9fd64c29b9e05d99ca63eb75ad37c095b4e567e7ea"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-d6cf2001-a6f8-4c44-8b50-c3e3612454f6.json",
+          "sha256": "67dc24ad70fe54ff9a581d9fd64c29b9e05d99ca63eb75ad37c095b4e567e7ea"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-d6cf2001-a6f8-4c44-8b50-c3e3612454f6.json",
+          "sha256": "bd841faaddd7c47a296e39e562641571f7d93fdb2e2ef4266137c259cd384f22"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-d6cf2001-a6f8-4c44-8b50-c3e3612454f6.json",
+          "sha256": "bd841faaddd7c47a296e39e562641571f7d93fdb2e2ef4266137c259cd384f22"
+        }
+      ]
+    },
+    {
+      "attempt_id": "d730de9d-388a-4741-bb78-7eb5044d478c",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h2-b.csv",
+      "started_at": "2026-10-18T14:52:14.659097291Z",
+      "observed_at": "2026-10-18T14:52:14.662793868Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-d730de9d-388a-4741-bb78-7eb5044d478c.json",
+          "sha256": "a1c4eebba5e1c06a071f32700784918ed42bc4858c6bd019409b83a5a638da5b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-d730de9d-388a-4741-bb78-7eb5044d478c.json",
+          "sha256": "e1e49199b1eb2f365aea4477e97ada38e6b7809c027b4bac71e1a34a9d0154e9"
+        }
+      ]
+    },
+    {
+      "attempt_id": "d92c4345-283f-4a48-b9dd-5047a1453f2f",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-processed.csv",
+      "started_at": "2026-10-18T14:52:08.112035322Z",
+      "observed_at": "2026-10-18T14:52:08.119384624Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-d92c4345-283f-4a48-b9dd-5047a1453f2f.json",
+          "sha256": "e4bfba653cf89247440a0eca9dc2febbc36e3622c0e71c3d463b838f69376ec5"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-d92c4345-283f-4a48-b9dd-5047a1453f2f.json",
+          "sha256": "93320cab32d9807ff5ff9638b56ac12d4deb303c17d8850a40072a6a7c633054"
+        }
+      ]
+    },
+    {
+      "attempt_id": "d96a211e-39bd-4d21-8c9a-e422cc801e52",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/",
+      "started_at": "2026-10-18T14:51:17.307128276Z",
+      "observed_at": "2026-10-18T14:51:17.311788635Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-d96a211e-39bd-4d21-8c9a-e422cc801e52.json",
+          "sha256": "43e12d071511ff7332dc967eeae3a7f4f80a698335f547d7047ec704c548a425"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-d96a211e-39bd-4d21-8c9a-e422cc801e52.json",
+          "sha256": "43e12d071511ff7332dc967eeae3a7f4f80a698335f547d7047ec704c548a425"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-d96a211e-39bd-4d21-8c9a-e422cc801e52.json",
+          "sha256": "2ec49e092a70e667ac0b027c6f529171996e2beebef2ebf9c4f5ec9e88ec6fb6"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-d96a211e-39bd-4d21-8c9a-e422cc801e52.json",
+          "sha256": "2ec49e092a70e667ac0b027c6f529171996e2beebef2ebf9c4f5ec9e88ec6fb6"
+        }
+      ]
+    },
+    {
+      "attempt_id": "da00e8b9-93ad-4d23-b5ca-bd9592de82d5",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/remaining-processed.csv",
+      "started_at": "2026-10-18T14:52:08.104971156Z",
+      "observed_at": "2026-10-18T14:52:08.109100699Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-start-da00e8b9-93ad-4d23-b5ca-bd9592de82d5.json",
+          "sha256": "40ab7e7185fbd01a40fe51bc8f836d1d2109ae1ce7744a4aa26c057e9d4d00d8"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\business-races\\readonly\\readonly-observation-da00e8b9-93ad-4d23-b5ca-bd9592de82d5.json",
+          "sha256": "3a08a3cda0e045fe6bff70278df27f08be15de32a33839329d1a752deead6397"
+        }
+      ]
+    },
+    {
+      "attempt_id": "daf49cf2-e376-4bb0-8158-e0383fdde287",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/control-retention.csv",
+      "started_at": "2026-10-18T14:51:06.331312516Z",
+      "observed_at": "2026-10-18T14:51:06.335115775Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-daf49cf2-e376-4bb0-8158-e0383fdde287.json",
+          "sha256": "5de46550c14595576dcb0aae0df0a459930f63a566b7da0553c703171a65b79b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-daf49cf2-e376-4bb0-8158-e0383fdde287.json",
+          "sha256": "5de46550c14595576dcb0aae0df0a459930f63a566b7da0553c703171a65b79b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-daf49cf2-e376-4bb0-8158-e0383fdde287.json",
+          "sha256": "70ef7a899d9e6242937715e6826801331e87f0d259ae929e6b5a8a46b35dc4cf"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-daf49cf2-e376-4bb0-8158-e0383fdde287.json",
+          "sha256": "70ef7a899d9e6242937715e6826801331e87f0d259ae929e6b5a8a46b35dc4cf"
+        }
+      ]
+    },
+    {
+      "attempt_id": "e2366071-b82d-4cbb-9cb0-1c05a6bd4944",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:51:26.766876309Z",
+      "observed_at": "2026-10-18T14:51:26.770250591Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-e2366071-b82d-4cbb-9cb0-1c05a6bd4944.json",
+          "sha256": "6dc0ceb51f832f7710a1860672064e75fed38b52435656a2342e89bb7a208833"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-e2366071-b82d-4cbb-9cb0-1c05a6bd4944.json",
+          "sha256": "6dc0ceb51f832f7710a1860672064e75fed38b52435656a2342e89bb7a208833"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-e2366071-b82d-4cbb-9cb0-1c05a6bd4944.json",
+          "sha256": "c173772cc5fd60b11d72eab35da5decebeef2aa69b88558e4fccdf11afa68ee4"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-e2366071-b82d-4cbb-9cb0-1c05a6bd4944.json",
+          "sha256": "c173772cc5fd60b11d72eab35da5decebeef2aa69b88558e4fccdf11afa68ee4"
+        }
+      ]
+    },
+    {
+      "attempt_id": "e519f669-64b2-4c3a-bad7-46dbf33a9108",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/",
+      "started_at": "2026-10-18T14:51:06.472635459Z",
+      "observed_at": "2026-10-18T14:51:06.478966115Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-e519f669-64b2-4c3a-bad7-46dbf33a9108.json",
+          "sha256": "ad76a13da450648b58e9768b12a166d6b1093aa314b1b22824388c260db81582"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-e519f669-64b2-4c3a-bad7-46dbf33a9108.json",
+          "sha256": "ad76a13da450648b58e9768b12a166d6b1093aa314b1b22824388c260db81582"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-e519f669-64b2-4c3a-bad7-46dbf33a9108.json",
+          "sha256": "62abe5493ead76f8aac82e40972974526e66af913336658a3752b341c88b5db4"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-e519f669-64b2-4c3a-bad7-46dbf33a9108.json",
+          "sha256": "62abe5493ead76f8aac82e40972974526e66af913336658a3752b341c88b5db4"
+        }
+      ]
+    },
+    {
+      "attempt_id": "e65ca695-2676-4481-8911-ce3c78624c18",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-c.csv",
+      "started_at": "2026-10-18T14:52:21.000880419Z",
+      "observed_at": "2026-10-18T14:52:21.005250346Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-e65ca695-2676-4481-8911-ce3c78624c18.json",
+          "sha256": "9391eb834fe50c5b1dd6d9cf8d9add99e0b28a4839ebb33069d04f3b16191252"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-e65ca695-2676-4481-8911-ce3c78624c18.json",
+          "sha256": "7aecb0136575af27cd292d823f7d47ea6260c8946cd550986e81b326e681d10d"
+        }
+      ]
+    },
+    {
+      "attempt_id": "e676ceca-95f0-4267-b9dc-50e507fab1e4",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:51:17.322564422Z",
+      "observed_at": "2026-10-18T14:51:17.326006908Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-e676ceca-95f0-4267-b9dc-50e507fab1e4.json",
+          "sha256": "8b80b1f72832239e2ed4b6c4ab4a75c1a67c47a7d21a9d6b991ca66ba08af040"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-e676ceca-95f0-4267-b9dc-50e507fab1e4.json",
+          "sha256": "8b80b1f72832239e2ed4b6c4ab4a75c1a67c47a7d21a9d6b991ca66ba08af040"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-e676ceca-95f0-4267-b9dc-50e507fab1e4.json",
+          "sha256": "6b25ad9749d6828d461bafc65875937ae7f484e72301009282c8c80bf929270a"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-e676ceca-95f0-4267-b9dc-50e507fab1e4.json",
+          "sha256": "6b25ad9749d6828d461bafc65875937ae7f484e72301009282c8c80bf929270a"
+        }
+      ]
+    },
+    {
+      "attempt_id": "e6dfa213-f5a9-44e4-a607-ae6c649f670f",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h0.csv",
+      "started_at": "2026-10-18T14:51:17.217275884Z",
+      "observed_at": "2026-10-18T14:51:17.2211637Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-e6dfa213-f5a9-44e4-a607-ae6c649f670f.json",
+          "sha256": "813e0bf8e1a31e083fb8a8c1cfcc8c937071dc3c23e6d974fce57b09bfec33d4"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-e6dfa213-f5a9-44e4-a607-ae6c649f670f.json",
+          "sha256": "813e0bf8e1a31e083fb8a8c1cfcc8c937071dc3c23e6d974fce57b09bfec33d4"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-e6dfa213-f5a9-44e4-a607-ae6c649f670f.json",
+          "sha256": "323806a892874c349cbf6e921469b03bc086c76ef584ca258dd56aa888cab688"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-e6dfa213-f5a9-44e4-a607-ae6c649f670f.json",
+          "sha256": "323806a892874c349cbf6e921469b03bc086c76ef584ca258dd56aa888cab688"
+        }
+      ]
+    },
+    {
+      "attempt_id": "ea231d27-8a85-4c41-ac1c-5e011716aec6",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "started_at": "2026-10-18T14:51:17.328817886Z",
+      "observed_at": "2026-10-18T14:51:17.332143363Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-ea231d27-8a85-4c41-ac1c-5e011716aec6.json",
+          "sha256": "10626e7c57b8974cc91057784df7f355498aed8c89613d77c7b1bcc8d24105c9"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-ea231d27-8a85-4c41-ac1c-5e011716aec6.json",
+          "sha256": "10626e7c57b8974cc91057784df7f355498aed8c89613d77c7b1bcc8d24105c9"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-ea231d27-8a85-4c41-ac1c-5e011716aec6.json",
+          "sha256": "d3ef875d7ebbe4933bedf2b89b02ff7af6329b7559ec4a5a2334e27ea3c29b2d"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-ea231d27-8a85-4c41-ac1c-5e011716aec6.json",
+          "sha256": "d3ef875d7ebbe4933bedf2b89b02ff7af6329b7559ec4a5a2334e27ea3c29b2d"
+        }
+      ]
+    },
+    {
+      "attempt_id": "edfa6641-ec7b-4e5d-824b-4fa2f7874346",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/p1.csv",
+      "started_at": "2026-10-18T14:51:06.365984359Z",
+      "observed_at": "2026-10-18T14:51:06.369380446Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-edfa6641-ec7b-4e5d-824b-4fa2f7874346.json",
+          "sha256": "8d5a2ae335738d62eaa94783fb77303d2539cc038c9dadbf2ad5a7ac756292a2"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-edfa6641-ec7b-4e5d-824b-4fa2f7874346.json",
+          "sha256": "8d5a2ae335738d62eaa94783fb77303d2539cc038c9dadbf2ad5a7ac756292a2"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-edfa6641-ec7b-4e5d-824b-4fa2f7874346.json",
+          "sha256": "ea079bc9702ec6fafbd61093d49c8f437e8637f7fc639b9d166748a8989bb5a5"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-edfa6641-ec7b-4e5d-824b-4fa2f7874346.json",
+          "sha256": "ea079bc9702ec6fafbd61093d49c8f437e8637f7fc639b9d166748a8989bb5a5"
+        }
+      ]
+    },
+    {
+      "attempt_id": "f1dcad64-d62b-4af4-9264-f8324012a0d3",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/t1.csv",
+      "started_at": "2026-10-18T14:51:06.435623012Z",
+      "observed_at": "2026-10-18T14:51:06.440136372Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-f1dcad64-d62b-4af4-9264-f8324012a0d3.json",
+          "sha256": "0a449b2fbfde1414b8de20c22190e084218d4f7d03546d55a80b48065e102504"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-f1dcad64-d62b-4af4-9264-f8324012a0d3.json",
+          "sha256": "0a449b2fbfde1414b8de20c22190e084218d4f7d03546d55a80b48065e102504"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-f1dcad64-d62b-4af4-9264-f8324012a0d3.json",
+          "sha256": "9c9575c9d8864ddfaf7355950c3883a617ee40b4006d8dc3c56d467685a1f03a"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-f1dcad64-d62b-4af4-9264-f8324012a0d3.json",
+          "sha256": "9c9575c9d8864ddfaf7355950c3883a617ee40b4006d8dc3c56d467685a1f03a"
+        }
+      ]
+    },
+    {
+      "attempt_id": "f272cf41-6435-4a23-b415-db2ea6a10d1b",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h2-b.csv",
+      "started_at": "2026-10-18T14:52:14.67232353Z",
+      "observed_at": "2026-10-18T14:52:14.676200835Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-start-f272cf41-6435-4a23-b415-db2ea6a10d1b.json",
+          "sha256": "8b67472cb5bdf5a7ba1694bed1594c93e19d99b668113ed760e2228c4dbe2d05"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\late-hold\\readonly\\readonly-observation-f272cf41-6435-4a23-b415-db2ea6a10d1b.json",
+          "sha256": "961015720544ff4274d7cb8a549f55f6127ee0a5d73b72e66eb880713c8d8f3e"
+        }
+      ]
+    },
+    {
+      "attempt_id": "f5ecc63c-a7a5-437b-85b6-0308d439d8ae",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/h1-b.csv",
+      "started_at": "2026-10-18T14:51:17.254520315Z",
+      "observed_at": "2026-10-18T14:51:17.258313188Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-f5ecc63c-a7a5-437b-85b6-0308d439d8ae.json",
+          "sha256": "abd5c9fb0e0d997f9c80efbf08e6c43c7bea212d2031ed1d2abd9747bb71c334"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-f5ecc63c-a7a5-437b-85b6-0308d439d8ae.json",
+          "sha256": "abd5c9fb0e0d997f9c80efbf08e6c43c7bea212d2031ed1d2abd9747bb71c334"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-f5ecc63c-a7a5-437b-85b6-0308d439d8ae.json",
+          "sha256": "1a265c18878d5e02e157b2831473062393a7c99eedb2f857971435077376d969"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-f5ecc63c-a7a5-437b-85b6-0308d439d8ae.json",
+          "sha256": "1a265c18878d5e02e157b2831473062393a7c99eedb2f857971435077376d969"
+        }
+      ]
+    },
+    {
+      "attempt_id": "f642ebfa-42e4-4763-8fab-7eb641a7b2ab",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:51:26.629788512Z",
+      "observed_at": "2026-10-18T14:51:26.640422419Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-f642ebfa-42e4-4763-8fab-7eb641a7b2ab.json",
+          "sha256": "06fc3d397d673ab252c0dbdbabf4abb3502adb6f13a151564be4f3e8c7931eca"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-f642ebfa-42e4-4763-8fab-7eb641a7b2ab.json",
+          "sha256": "06fc3d397d673ab252c0dbdbabf4abb3502adb6f13a151564be4f3e8c7931eca"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-f642ebfa-42e4-4763-8fab-7eb641a7b2ab.json",
+          "sha256": "d128ff1e36e6f5f81a156dd456b5a139f58ba88d74ba9d6e9a14e0959c58e35b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-f642ebfa-42e4-4763-8fab-7eb641a7b2ab.json",
+          "sha256": "d128ff1e36e6f5f81a156dd456b5a139f58ba88d74ba9d6e9a14e0959c58e35b"
+        }
+      ]
+    },
+    {
+      "attempt_id": "f64d37da-10db-44e7-b346-9fc8c4fe4005",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/h1-a.csv",
+      "started_at": "2026-10-18T14:51:17.231064326Z",
+      "observed_at": "2026-10-18T14:51:17.234837713Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-start-f64d37da-10db-44e7-b346-9fc8c4fe4005.json",
+          "sha256": "cae18f5abe1eb93f1cf73366a4b3c5584b840c22a0d1478ada40c331e4fcecad"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-start-f64d37da-10db-44e7-b346-9fc8c4fe4005.json",
+          "sha256": "cae18f5abe1eb93f1cf73366a4b3c5584b840c22a0d1478ada40c331e4fcecad"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\readonly\\readonly-observation-f64d37da-10db-44e7-b346-9fc8c4fe4005.json",
+          "sha256": "9d2043ab93bee4d86b1d88d3c759053b5222a5034a9e208b3f873a80d47e586b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\late-hold\\preflight\\readonly\\readonly-observation-f64d37da-10db-44e7-b346-9fc8c4fe4005.json",
+          "sha256": "9d2043ab93bee4d86b1d88d3c759053b5222a5034a9e208b3f873a80d47e586b"
+        }
+      ]
+    },
+    {
+      "attempt_id": "f7891ddf-d206-464d-94b9-97b05073a0c7",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/control-hold.csv",
+      "started_at": "2026-10-18T14:51:26.64388719Z",
+      "observed_at": "2026-10-18T14:51:26.65449731Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-f7891ddf-d206-464d-94b9-97b05073a0c7.json",
+          "sha256": "26f3f0dec021ee1ecc076bee02a49adb5d2d5f6497a21a157e1693635525c006"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-f7891ddf-d206-464d-94b9-97b05073a0c7.json",
+          "sha256": "26f3f0dec021ee1ecc076bee02a49adb5d2d5f6497a21a157e1693635525c006"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-f7891ddf-d206-464d-94b9-97b05073a0c7.json",
+          "sha256": "45adec359c4f5cc39c8d18390c32cf3fadbd17993c966097fddf6824973436c8"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-f7891ddf-d206-464d-94b9-97b05073a0c7.json",
+          "sha256": "45adec359c4f5cc39c8d18390c32cf3fadbd17993c966097fddf6824973436c8"
+        }
+      ]
+    },
+    {
+      "attempt_id": "f85f3454-aac3-46eb-a5a5-0358acac45b9",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-b.csv",
+      "started_at": "2026-10-18T14:51:26.696470784Z",
+      "observed_at": "2026-10-18T14:51:26.703292278Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-f85f3454-aac3-46eb-a5a5-0358acac45b9.json",
+          "sha256": "80bf7a6a12f551bf3d25752ebbafba41db0da43d49ab98d5aa520e4595b407a1"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-f85f3454-aac3-46eb-a5a5-0358acac45b9.json",
+          "sha256": "80bf7a6a12f551bf3d25752ebbafba41db0da43d49ab98d5aa520e4595b407a1"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-f85f3454-aac3-46eb-a5a5-0358acac45b9.json",
+          "sha256": "25a83cc2aec540c6f3f3aa9a90de5b520df387f446fcf682a3141a6e5f5127b2"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-f85f3454-aac3-46eb-a5a5-0358acac45b9.json",
+          "sha256": "25a83cc2aec540c6f3f3aa9a90de5b520df387f446fcf682a3141a6e5f5127b2"
+        }
+      ]
+    },
+    {
+      "attempt_id": "fa9743c3-9410-427c-8ec3-ad7e37c53017",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/",
+      "started_at": "2026-10-18T14:51:26.747039103Z",
+      "observed_at": "2026-10-18T14:51:26.751134746Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-start-fa9743c3-9410-427c-8ec3-ad7e37c53017.json",
+          "sha256": "c0a4575bd40699aa6645d821b7b68b2e09b5e9bd30c577ae20f7eaec85f036b2"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-start-fa9743c3-9410-427c-8ec3-ad7e37c53017.json",
+          "sha256": "c0a4575bd40699aa6645d821b7b68b2e09b5e9bd30c577ae20f7eaec85f036b2"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\readonly\\readonly-observation-fa9743c3-9410-427c-8ec3-ad7e37c53017.json",
+          "sha256": "e2c311321b1898e62966420ef91b061a679f53b4d3b610ea760015606426875f"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\mixed\\preflight\\readonly\\readonly-observation-fa9743c3-9410-427c-8ec3-ad7e37c53017.json",
+          "sha256": "e2c311321b1898e62966420ef91b061a679f53b4d3b610ea760015606426875f"
+        }
+      ]
+    },
+    {
+      "attempt_id": "fc7de952-594e-4f7f-9799-d671ee634626",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-online/fixture/t1.csv",
+      "started_at": "2026-10-18T14:51:06.428330641Z",
+      "observed_at": "2026-10-18T14:51:06.432248612Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-fc7de952-594e-4f7f-9799-d671ee634626.json",
+          "sha256": "6749165edb9b1507aa241646988a584d00d5bdd1a4c0b6bd4df3da3777f07bf1"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-fc7de952-594e-4f7f-9799-d671ee634626.json",
+          "sha256": "6749165edb9b1507aa241646988a584d00d5bdd1a4c0b6bd4df3da3777f07bf1"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-fc7de952-594e-4f7f-9799-d671ee634626.json",
+          "sha256": "96bb66128683a27451e38b12efc9a50ce1bc0d44bde4b95c566347209f4f93fb"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-fc7de952-594e-4f7f-9799-d671ee634626.json",
+          "sha256": "96bb66128683a27451e38b12efc9a50ce1bc0d44bde4b95c566347209f4f93fb"
+        }
+      ]
+    },
+    {
+      "attempt_id": "fd1279cd-156e-4b31-b70d-695ad4206abd",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "started_at": "2026-10-18T14:51:06.526384402Z",
+      "observed_at": "2026-10-18T14:51:06.529191674Z",
+      "http_status": 200,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-start-fd1279cd-156e-4b31-b70d-695ad4206abd.json",
+          "sha256": "49e1a2fe30ff861110ba0812ecf533a61e9faa89ebfae437237606aa88d7300b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-start-fd1279cd-156e-4b31-b70d-695ad4206abd.json",
+          "sha256": "49e1a2fe30ff861110ba0812ecf533a61e9faa89ebfae437237606aa88d7300b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\readonly\\readonly-observation-fd1279cd-156e-4b31-b70d-695ad4206abd.json",
+          "sha256": "0042e8c8f216167db47cd5212f7a91c6ca6fc568d0dda66e2424392e3f32d7af"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\business-races\\preflight\\readonly\\readonly-observation-fd1279cd-156e-4b31-b70d-695ad4206abd.json",
+          "sha256": "0042e8c8f216167db47cd5212f7a91c6ca6fc568d0dda66e2424392e3f32d7af"
+        }
+      ]
+    },
+    {
+      "attempt_id": "fe5efc97-a708-42b6-94e6-9f8a8a4a6655",
+      "method": "GET",
+      "path": "/dpp-lifecycle307-quarantine/fixture/m1-b.csv",
+      "started_at": "2026-10-18T14:52:20.991384298Z",
+      "observed_at": "2026-10-18T14:52:20.995498734Z",
+      "http_status": 400,
+      "transport_error": false,
+      "raw_members": [
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-start-fe5efc97-a708-42b6-94e6-9f8a8a4a6655.json",
+          "sha256": "c5d4dfad8d14a53e798f225c1cf1f0277d5ae3bb17108fa98bb59a6ec208871b"
+        },
+        {
+          "path": "docs\\acceptance\\evidence\\issue307-d1\\remaining-candidate12\\complete-entry\\mixed\\readonly\\readonly-observation-fe5efc97-a708-42b6-94e6-9f8a8a4a6655.json",
+          "sha256": "9cbcd859ad1d8d943527f9feb2f265562bc8dab61551a96c0c00f000afa450fd"
+        }
+      ]
+    }
+  ]
+}

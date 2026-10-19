@@ -1,0 +1,7 @@
+{
+  "command": "go vet ./internal/lifecycle/application",
+  "exit_code": 0,
+  "stdout": "",
+  "wall_time_seconds": 0.7476455,
+  "scope": "static analysis only; no provider operations"
+}

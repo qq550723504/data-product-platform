@@ -1,0 +1,13 @@
+{
+  "status": "FAILED_HOST_AUDIT_SCRIPT_ROOT_SCHEMA",
+  "at": "2026-10-18T11:42:20.867690+00:00",
+  "execution": "602acafe-065a-4385-b739-5776408f5448",
+  "exception": "KeyError: 'BinarySHA256'",
+  "cause": "Additional audit treated root permission as operator permission. Frozen root schema deliberately has no BinarySHA256; root binary is bound separately by candidate and mounted owner verification. No frozen bytes changed.",
+  "source_starts": 0,
+  "permission_mutations": 0,
+  "provider_io": 0,
+  "native_delete": 0,
+  "budget_readback_started": false,
+  "disposition": "Preserve failure02; read actual root schema and validate separate exact schemas. No gate relaxed."
+}

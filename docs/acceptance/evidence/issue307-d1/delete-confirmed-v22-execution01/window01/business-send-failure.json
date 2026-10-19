@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-19T06:08:36.455550+00:00",
+  "error": "fixed sender P2 failed; never retry",
+  "completed": [
+    {
+      "stage": "P1",
+      "attempt": "009f4317-8855-4f99-80ec-cafc225f654e",
+      "certainty": "CONFIRMED",
+      "outcome": "ACCEPTED"
+    }
+  ],
+  "new_sends_stopped": true,
+  "UNKNOWN_resend": false
+}

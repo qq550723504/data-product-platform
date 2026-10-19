@@ -1,0 +1,21 @@
+{
+  "changed_relations": [
+    "audit_event",
+    "command_idempotency",
+    "cost_allocation",
+    "cost_event",
+    "delivery_authorization_fence",
+    "evidence",
+    "evidence_relation",
+    "lifecycle_copy_absence_receipt",
+    "lifecycle_plan_completion",
+    "lifecycle_reconciliation_result",
+    "lifecycle_reconciliation_run",
+    "lifecycle_reconciliation_work",
+    "lifecycle_storage_call",
+    "lifecycle_storage_observation",
+    "outbox_event",
+    "outbox_event_consumption"
+  ],
+  "immutable_provider_attempt_observation_budget_and_pin_facts_unchanged": true
+}

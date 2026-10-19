@@ -1,0 +1,25 @@
+{
+  "status": "ROOT_CAUSES_FIXED_AWAIT_NEW_EXACT_HEAD_CI",
+  "failed_head": "9a41e13f1ebe01ae90b36f53c491392c3c4a72ad",
+  "failed_run": 38881289712,
+  "failed_jobs": [
+    116908421604,
+    116908422325
+  ],
+  "root_causes": [
+    "One new IAM *_test.go omitted gofmt; no runtime code change",
+    "Original remaining-case02/gateway.Caddyfile CRLF bytes matched frozen evidence but old Git LF blob was not renormalized after -text; exact original CRLF re-added"
+  ],
+  "fixes": [
+    "Only reviewed test is formatted, exact canonical SHA pinned",
+    "Strict fixed f3 source/9a41 candidate-index archive wrapper; 940 raw working and Git index bytes, 812 frozen source files and unchanged original checker",
+    "Current runtime-source drift rejected; only fixed canonical test formatting accepted",
+    "Runtime/test semantic/raw/index/candidate mutation negatives run normally and with -O"
+  ],
+  "candidate_sha256": "b9660f17cbb745e781a06d50e8ec0e81c87e654318420533b75b4ada29728949",
+  "frozen_source": "f3b5de45857add3f852bbac0348e8c30ea105ade",
+  "candidate_changed": false,
+  "native_delete": 0,
+  "container_starts": 0,
+  "cleanup": 0
+}

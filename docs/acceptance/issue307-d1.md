@@ -1,6 +1,14 @@
+> 当前（2026-10-18，完整入口修复与原生非删除准备）：candidate12/v22已冻结，同一完整CLI真实PASS18版本/39owner/3空预算；831源码与1305 raw离线通过。新execution `8e41cfba-a41e-44dd-9ce8-d6365b3bb90e`，代理提议SGT10月19日14:00–14:40，尚未授权/未调度/DELETE=0。见[本轮矩阵](issue307-d1-v22-preparation.md)与[精确方案](issue307-d1-candidate12-confirmation.md)。旧v21窗口失败封存、post-seal IAM未确认等原事实见[原结果](issue307-d1-v21-window01-result.md)，不被本次新核验覆盖。#323 Draft，#307 OPEN。
+
+> 当前（2026-10-18，R1非删除准备）：candidate11/v21已从统一END生成并核验期限；独立PG副本六Renew通过，旧v20失败保留。新execution `602acafe-065a-4385-b739-5776408f5448`，提议SGT22:00–22:40，尚未授权/未调度/DELETE=0。见[本轮矩阵](issue307-d1-v21-preparation.md)及[完整精确方案](issue307-d1-candidate11-confirmation.md)。#323 Draft，#307 OPEN。
+
 # #307/D1：schema66 历史非删除验收与下一步清单
 
-当前PR收口及仍缺的完整D1用例见[#318最终评审](issue318-final-closure.md)；5d的单独v15两版本删除/恢复已完成并封存。以下NOT_RUN/待确认保留2026-10-13原阶段，不再作为当前PR总状态。
+2026-10-18 当前窗口结果：[candidate10/v20 已授权固定窗口实跑矩阵](issue307-d1-v20-window01-result.md)。窗口内18版本/76次GET/HEAD及完整前置通过，但冻结Renew profile残留旧CandidateUseUntil，首个Renew owner拒绝，六Renew/业务/发送/恢复均NOT_RUN、真实DELETE=0。已失败封存并暂停同一调度：208绑定/技术容器停止、128权限false；business fresh身份关闭确认，另两组封存后的fresh IAM读回UNCONFIRMED，不报整轮PASS。R1生成器跨代时间字段阻断仍OPEN；#323保持Draft、不合并，#307保持OPEN，完整D1仍NOT_ACCEPTED。以下准备PASS和历史矩阵保留各自时点，不代替本次失败结果。
+
+2026-10-16 新进展：[三组新原生 fixture、candidate06-preparation/v16 精确绑定及确认前条件](issue307-d1-remaining-native-confirmation.md)已准备；16版本/8计划/三套Core与native恢复非删除核验PASS，发送预算0。新case runner/独立复评及可执行候选仍缺，不能授权真实删除。#323 Draft，#307 OPEN。
+
+2026-10-16 前一检查点：[剩余 D1 有限设计与非删除准备矩阵](issue307-d1-remaining-contract.md)。bca29f4d 的 GitHub 同步已恢复、独立只读复评 BLOCKER=0；新 [PR #323](https://github.com/qq550723504/data-product-platform/pull/323) 保持 Draft，最新提交 CI 见 PR checkpoint，原生组合仍 NOT_RUN。#318 已 squash 合并为 `b823eb33`，matching push/main CI `38842607982` 13/13 SUCCESS；#307 仍 OPEN。5d 的单独 v15 两版本删除/恢复已完成并封存，不复用其授权。以下原阶段和[#318合并前最终评审](issue318-final-closure.md)中的 Draft/NOT_RUN 文字保留各自历史时点。
 
 本文件保留2026-10-13原阶段。2026-10-14当前补验与矩阵见
 [native completion](issue307-d1-native-completion.md)及[LC-13/5d只读核验](issue307-lc13-readonly.md)；真实删除仍待单独确认。

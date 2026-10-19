@@ -1,0 +1,109 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_SOURCE_REVIEW",
+  "reviewer": "/root/v20_independent_review",
+  "at": "2026-10-18T06:22:55.466434+00:00",
+  "head_at_review": "63f0ae9fe41e143daf1569e286f02af8b929d69b",
+  "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "profile": "candidate10/v20",
+  "send_window": [
+    "2026-10-18T10:00:00Z",
+    "2026-10-18T10:40:00Z"
+  ],
+  "readonly_recovery_end": "2026-10-18T12:40:00Z",
+  "files": {
+    ".gitattributes": {
+      "raw_sha256": "4aad995d67dad655d5fd91808f84b8551b1f7aed0d433ec5ba9aeacf8fef79db",
+      "lf_sha256": "4aad995d67dad655d5fd91808f84b8551b1f7aed0d433ec5ba9aeacf8fef79db"
+    },
+    ".github/scripts/check-lifecycle307-history.py": {
+      "raw_sha256": "c64999de55efef45ebd0697e097f88866bd7bc031bd444cc13817de264a7b038",
+      "lf_sha256": "c64999de55efef45ebd0697e097f88866bd7bc031bd444cc13817de264a7b038"
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "raw_sha256": "08a122c7ea6b0a37ec19ed50235c128ef3a818b0f8aee29bf42c54158bc2af89",
+      "lf_sha256": "08a122c7ea6b0a37ec19ed50235c128ef3a818b0f8aee29bf42c54158bc2af89"
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/main_test.go": {
+      "raw_sha256": "516ae3c6c6cb5ca0667c80dd4c0431f8388f25c2f677d73be18924e37fb85163",
+      "lf_sha256": "516ae3c6c6cb5ca0667c80dd4c0431f8388f25c2f677d73be18924e37fb85163"
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": {
+      "raw_sha256": "22d1c48d858ef907984d0a827011b37842e4834ac3504980e3de1812d8c1c2eb",
+      "lf_sha256": "22d1c48d858ef907984d0a827011b37842e4834ac3504980e3de1812d8c1c2eb"
+    },
+    "examples/lifecycle-d1/attest-remaining-executable.py": {
+      "raw_sha256": "222b85b2ea2d91008215908b5e09c1858c5d670fa4526610f027327ac94cf272",
+      "lf_sha256": "222b85b2ea2d91008215908b5e09c1858c5d670fa4526610f027327ac94cf272"
+    },
+    "examples/lifecycle-d1/freeze-remaining-executable.py": {
+      "raw_sha256": "cead0204befded4bf64a1d6d6954fc10cbacfdbb3c0fb30f528c3e87850d9cdf",
+      "lf_sha256": "cead0204befded4bf64a1d6d6954fc10cbacfdbb3c0fb30f528c3e87850d9cdf"
+    },
+    "examples/lifecycle-d1/check-remaining-candidate10.py": {
+      "raw_sha256": "0ffc85be79aac0aaa93e49365cc4d073d96b7af39be690571fd97a4142d4c813",
+      "lf_sha256": "0ffc85be79aac0aaa93e49365cc4d073d96b7af39be690571fd97a4142d4c813"
+    },
+    "docs/acceptance/issue307-d1-v20-preflight-contract.md": {
+      "raw_sha256": "59fe651a82f87625690b2b87085896798e1fdf944639e304ba5d3227e6a3b218",
+      "lf_sha256": "59fe651a82f87625690b2b87085896798e1fdf944639e304ba5d3227e6a3b218"
+    }
+  },
+  "tests": {
+    "go_packages": {
+      "passed": 5,
+      "exit_code": 0,
+      "note": "pilot cached; 4 command packages ran independently"
+    },
+    "history_v17": {
+      "status": "PASS_V17_HISTORICAL_STRICT",
+      "source_files": 812,
+      "raw_evidence": 940,
+      "original_unit_suites": 4,
+      "tests_each_suite": 3
+    },
+    "history_v19": {
+      "status": "PASS_V19_HISTORICAL_STRICT",
+      "source_files": 823,
+      "raw_evidence": 1118,
+      "original_checker_status": "PASS_CANDIDATE09_OFFLINE"
+    },
+    "history_final_exit_code": 0,
+    "declared_recovery_cap": "PASS_END_PLUS_TWO_HOURS",
+    "git_diff_check": 0
+  },
+  "logs_sha256": {
+    "go-packages-initial.txt": "bb16a740a5b6ed9cc87df25b707b13f5c34c94b2f7e2e3917db4e0fc7f8d0eda",
+    "history-initial.txt": "cca4af43fa60364d949559e621ec66cc800ad5ba1d734be87a3d35c228df8062",
+    "history-after-rawfix.txt": "aad198cd82ee783e1b45a0b178dd021ed04f986085324efda0d37abc3a73760a"
+  },
+  "findings": [
+    {
+      "id": "B1",
+      "status": "CLOSED_BEFORE_FREEZE",
+      "finding": "old hardcoded recovery ValidUntil preceded new window",
+      "resolution": "RECOVERY_END computed only from END+2h; actual computed 12:40Z; 7 materialized profiles pending final binding review"
+    },
+    {
+      "id": "B2",
+      "status": "CLOSED_BEFORE_FREEZE",
+      "finding": "Windows git archive converted v19 exact host entry LF bytes to CRLF; unchanged v19 checker failed",
+      "resolution": "reconstruct only original raw_sha256 matching archive/LF/CRLF candidates; original LF checks and original checker and packet unchanged; full history rerun passed"
+    }
+  ],
+  "remaining_blockers": [],
+  "authority": {
+    "delete_authorized": false,
+    "new_schedule_created_by_reviewer": false,
+    "provider_io": 0,
+    "docker_calls": 0,
+    "container_starts": 0,
+    "credential_files_read": 0,
+    "repository_edits": 0,
+    "github_writes": 0
+  },
+  "limits": [
+    "Source delta review only; candidate10 packet, actual native CLI receipts, final host support and full confirmation bindings await later independent review.",
+    "This PASS does not authorize enable, DELETE, Ready, merge or close #307.",
+    "Parent Python complete-entry and close tests were not independently rerun in this agent."
+  ]
+}

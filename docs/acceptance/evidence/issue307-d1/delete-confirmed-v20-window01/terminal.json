@@ -1,0 +1,7 @@
+{
+  "state": "FAILED_STOPPED_SEALED",
+  "stage": "business-prepare",
+  "at": "2026-10-18T10:05:25.765701+00:00",
+  "native_delete": 0,
+  "no_resume": true
+}

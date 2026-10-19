@@ -1,0 +1,8 @@
+{
+  "stage": "P2",
+  "container": "57c7833cbf519f451003ac9a073f3c4c2a853e76d15927142a3eccd1b7f4c141",
+  "exit": 1,
+  "started_at": "2026-10-19T06:08:35.252880213Z",
+  "finished_at": "2026-10-19T06:08:36.294447944Z",
+  "stopped_pid_zero": true
+}

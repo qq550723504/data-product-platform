@@ -1,0 +1,12 @@
+=== RUN   TestSequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim
+--- PASS: TestSequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim (2.92s)
+=== RUN   TestExactSendClaimSerializedAndLateRevocationKeepsCost
+--- PASS: TestExactSendClaimSerializedAndLateRevocationKeepsCost (2.88s)
+=== RUN   TestExactAbsenceRequiresPostDispatchJournalAndCompleteMembership
+--- PASS: TestExactAbsenceRequiresPostDispatchJournalAndCompleteMembership (2.61s)
+=== RUN   TestScopedRecoveryOutboxClaimNeverTouchesAnotherObligation
+2026/10/19 17:26:21 INFO outbox event dispatched to all required handlers event_id=439e8e04-4715-4d06-8434-edf7e65f5c26 event_type=ExactRecovery aggregate_type=TEST aggregate_id=439e8e04-4715-4d06-8434-edf7e65f5c26 handlers=[selected] routing_version=exact-recovery-test-v1
+2026/10/19 17:26:21 INFO outbox event dispatched to all required handlers event_id=26026558-e025-4d2c-8c8d-cb33172b6a9b event_type=ExactRecovery aggregate_type=TEST aggregate_id=26026558-e025-4d2c-8c8d-cb33172b6a9b handlers=[selected] routing_version=exact-recovery-test-v1
+--- PASS: TestScopedRecoveryOutboxClaimNeverTouchesAnotherObligation (2.50s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	12.059s

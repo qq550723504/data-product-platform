@@ -1,0 +1,12 @@
+{
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/remaining-renew-r1-02/acceptance.json": "1e5c46797533324775626f28c40e8f4caca4dfa68bd2e3bc72de50b53e8dc294",
+    "docs/acceptance/evidence/issue307-d1/remaining-renew-r1-02/old-policies.json": "95e38a943ef67e3b8b5c27394f5989b628048318f8bf7eb8426cf5445861bbda",
+    "docs/acceptance/evidence/issue307-d1/remaining-renew-r1-02/physical-close.json": "460b05acacfab038743b718912fed5425aaad60deebb04d17ec8c4c6f2c47f81",
+    "docs/acceptance/evidence/issue307-d1/remaining-renew-r1-02/policies-after.json": "50d615bcf81f28bb7199f3428717e92216cc62d9bf206238d03af59a2b0cc70a",
+    "docs/acceptance/evidence/issue307-d1/remaining-renew-r1-02/renew.stdout.txt": "356f0d915646bb28b37733abdf099ef68630a2fbc0b54066a94aad43fde4536e",
+    "docs/acceptance/evidence/issue307-d1/remaining-renew-r1-02/restored-core-before.json": "2b94c8d837ddc606816c6c49f6f4b3c5ffe27cbb7081f1acca3fbfdada159124",
+    "docs/acceptance/evidence/issue307-d1/remaining-renew-r1-02/renew/candidate07-copy-policies.json": "d6620426ed623dec43a83f6e4b83992498007c1fcb0d49d938c435c5f4e6e1d7",
+    "docs/acceptance/evidence/issue307-d1/remaining-renew-r1-02/renew/candidate07-policy-started.json": "fff8b17a47dcbbf93ba130da5ed6dc1fdbfd9ed07cf3fb9cc981b6fd598b6126"
+  }
+}

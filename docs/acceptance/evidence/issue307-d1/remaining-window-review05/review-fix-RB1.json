@@ -1,0 +1,9 @@
+{
+  "blocker": "RB1_RUNBOOK_ENTRY_SHA_CONFLICT",
+  "status": "FIXED_PENDING_INDEPENDENT_RECHECK",
+  "before_runbook_sha256": "c2e1311da987924eebe1b36c136620edcec7993ff649dfd0208da9ca9b0f1d29",
+  "after_runbook_sha256": "dce7d5fc85eb05d1f41920bf13c85cc110d12c209b0c6edef382334d15b5b619",
+  "entry_sha256": "4e2d703c6829e9b5c7188de83de2b103c2d90701dce52779a0f1946ba29781d0",
+  "candidate_and_machine_payload_unchanged": true,
+  "native_delete": 0
+}

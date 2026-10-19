@@ -1,0 +1,21 @@
+{
+  "report_generated_at_utc": "2026-10-19 02:38:11 UTC",
+  "expected_head": "7f3566cbfee6b22aded52403d5045681165a69d5",
+  "PR323": {
+    "state": "open",
+    "draft": true,
+    "merged": false
+  },
+  "Issue307": {
+    "state": "open"
+  },
+  "CI": {
+    "id": 39138927794,
+    "event": "pull_request",
+    "head_sha": "7f3566cbfee6b22aded52403d5045681165a69d5",
+    "jobs": 13,
+    "conclusion": "success",
+    "is_main_ci": false
+  },
+  "review_threads": 0
+}

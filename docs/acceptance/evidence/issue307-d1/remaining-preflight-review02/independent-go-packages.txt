@@ -1,0 +1,5 @@
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot	(cached)
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining	2.076s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	1.227s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check	1.909s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader	1.524s

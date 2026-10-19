@@ -1,0 +1,80 @@
+{
+  "at": "2026-10-19T10:58:17.381250+00:00",
+  "audit_id": "d64ad338-00d2-4569-bd62-9e132ddaf578",
+  "status": "PASS_P1_READONLY_RECONCILIATION_SEALED",
+  "failure": null,
+  "reconciliation": {
+    "absence_receipt": "b2d74d75-ed07-4b0a-b530-6c5d308cf1b8",
+    "actual_asynq_worker": true,
+    "audit_id": "d64ad338-00d2-4569-bd62-9e132ddaf578",
+    "copy": "5a4c9789-3e67-4e54-ab58-128d111cbd65",
+    "event": "528b553b-4db0-4d26-b818-bf2330032f46",
+    "native_delete": 0,
+    "original_attempt": "009f4317-8855-4f99-80ec-cafc225f654e",
+    "original_outcome": "CONFIRMED ACCEPTED_UNCHANGED",
+    "outbox": "PUBLISHED",
+    "plan_completion": "16562b28-3896-49c0-933e-a6e73059bddc",
+    "work": "ab6904c1-38ff-4778-86ed-6990c37cc57b"
+  },
+  "closure": {
+    "at": "2026-10-19T10:58:13.272624+00:00",
+    "closed": [
+      {
+        "cid": "e74be270b9f8bad63adebf5db1b5d10ba59cc471b4589c57cd94ccd954ac98f2",
+        "closed": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      },
+      {
+        "cid": "9257fb882ba4deeae0727eb03a3c9cead64bfbdcc9436a19b4752de55db8d826",
+        "closed": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      },
+      {
+        "cid": "8e37a8ff1830099130a7c0894d405581ab5e2b5990ed6494ac342fe46d3333d2",
+        "closed": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      },
+      {
+        "cid": "dc18e50151c2a3bce3333ee2f11e776d9a8cac2dbd66b2bb2498c2b9fb703cf9",
+        "closed": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      },
+      {
+        "cid": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+        "closed": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      },
+      {
+        "cid": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+        "closed": true,
+        "initial_inspect_failed": false,
+        "stop_failed": false
+      }
+    ],
+    "profiles": [
+      {
+        "profile": "worker-private/recovery.json",
+        "disabled": true
+      },
+      {
+        "profile": "root-private/p1-readonly-permission.json",
+        "disabled": true
+      }
+    ],
+    "all_closed": true,
+    "fresh_disabled_readback": true,
+    "cleanup": 0,
+    "native_delete": 0
+  },
+  "retained_old_facts_unchanged": true,
+  "native_delete": 0,
+  "old_execution_resumed": false,
+  "PR323": "DRAFT",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

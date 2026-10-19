@@ -1,0 +1,40 @@
+{
+  "status": "PASS_BOUNDED_NONDELETE_INDEPENDENT_REVIEW",
+  "reviewer": "/root/remaining_runner_independent_review",
+  "review_mode": "Read-only independent subagent; offline commands only, no Docker/SQL/provider mutation",
+  "reviewed_source": "f3b5de45857add3f852bbac0348e8c30ea105ade",
+  "execution": "effa0385-9308-42eb-bd66-d0c379b6a989",
+  "candidate_sha256": "b9660f17cbb745e781a06d50e8ec0e81c87e654318420533b75b4ada29728949",
+  "confirmation_template_sha256": "f8153a89ee2c12a631be9e665e0c85e5951a2ad2cd8f99961fa24721336857b0",
+  "blockers": [],
+  "checks": [
+    "812 frozen source files and 940 indexed raw evidence checked",
+    "Normal and optimized Python tamper tests passed",
+    "73 final native regression evidence files independently rehashed",
+    "H0 actual PostgreSQL waiter, H1 signed NOT_SENT and zero claims verified",
+    "Six native versions and disabled IAM final readback plus seal matched",
+    "Confirmation page exact fenced text equals frozen template bytes",
+    "Acceptance matrix distinguishes prepared PASS from real DELETE / UNKNOWN / mixed NOT_RUN"
+  ],
+  "diagnostic_review": {
+    "classification": "FOLLOW_UP_UNCHANGED_WINDOWS_TEST_STARTUP_BUDGET",
+    "windows_full_module_result": "FAIL",
+    "isolated_five_passes_do_not_override_failure": true,
+    "files_unchanged_against_origin_main": true,
+    "fail_closed": true
+  },
+  "required_repository_check": "Final exact HEAD Linux PR CI pending push; record actual run and result in GitHub closure checkpoint",
+  "not_run": [
+    "seven real native DELETE invocations",
+    "H2 actual native response-loss UNKNOWN",
+    "M1 actual native mixed outcomes"
+  ],
+  "full_D1": "NOT_ACCEPTED",
+  "human_authorization": "NOT_RECEIVED",
+  "native_delete": 0,
+  "cleanup": 0,
+  "hold_release": 0,
+  "bypass": 0,
+  "PR323": "DRAFT",
+  "Issue307": "OPEN"
+}

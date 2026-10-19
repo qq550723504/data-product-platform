@@ -1,0 +1,2 @@
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-recovery	2.156s
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam	0.697s

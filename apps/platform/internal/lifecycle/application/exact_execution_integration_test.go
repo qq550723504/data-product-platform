@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -12,6 +13,112 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain"
 )
+
+// SQL-only provider facts model a namespace losing one exact version. The real
+// Core claim/observation/absence/finalize transactions run against PostgreSQL;
+// no native provider or DELETE endpoint is configured by this test.
+func TestSequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim(t *testing.T) {
+	pool := planDatabase(t)
+	f := newDisposalFixture(t, pool)
+	ctx := context.Background()
+	f.authority.caller.Capabilities[CapabilityInspectStorage] = struct{}{}
+	f.authority.caller.Capabilities[CapabilityVerifyAbsence] = struct{}{}
+	missing := map[uuid.UUID]bool{}
+	f.deps.hook = func(ctx context.Context, tx pgx.Tx, _ DisposalDependencyRequest, deps *DisposalDependencies) error {
+		for _, cp := range f.copies {
+			if !missing[cp.ID] {
+				continue
+			}
+			var absent bool
+			if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_copy_absence_receipt WHERE workspace_id=$1 AND copy_id=$2)`, f.w, cp.ID).Scan(&absent); err != nil {
+				return err
+			}
+			if !absent {
+				deps.InventoryComplete = domain.Unknown
+			}
+		}
+		return nil
+	}
+	exact := NewExactExecution(f.s)
+	var attempts []domain.ProviderAttempt
+	for i := range f.copies {
+		dispatch := requireDispatch(t, f, "sequence-dispatch-"+f.copies[i].ID.String(), i)
+		var a domain.ProviderAttempt
+		if err := f.o.tx.Do(ctx, func(ctx context.Context, tx pgx.Tx) error {
+			var err error
+			a, err = f.o.repo.GetAttempt(ctx, tx, f.w, dispatch.AttemptID, false)
+			return err
+		}); err != nil {
+			t.Fatal(err)
+		}
+		attempts = append(attempts, a)
+	}
+	journal := NewPostgresStorageCallJournal(f.o)
+	for i, a := range attempts {
+		cp := f.copies[i]
+		if err := exact.ClaimExactSend(ctx, a, cp); err != nil {
+			t.Fatal("previous verified absence did not permit next claim", err)
+		}
+		f.now = f.now.Add(time.Second)
+		invoked := f.now
+		outcome := domain.ProviderAccepted
+		if i == 1 {
+			outcome = domain.ProviderUnknown
+		}
+		proof := domain.ProviderObservation{ID: uuid.New(), WorkspaceID: f.w, AttemptID: a.ID, DispatchID: a.DispatchID,
+			CopyID: cp.ID, Certainty: domain.InvocationConfirmed, Outcome: outcome, ObservedAt: f.now,
+			InvokedAt: &invoked, ProofSHA256: strings.Repeat("a", 64)}
+		if err := exact.ObserveExactSend(ctx, proof); err != nil {
+			t.Fatal(err)
+		}
+		missing[cp.ID] = true
+		if i == 0 {
+			if err := exact.ClaimExactSend(ctx, attempts[1], f.copies[1]); !errors.Is(err, ErrStorageDenied) {
+				t.Fatal("provider ACCEPTED without absence admitted next namespace send", err)
+			}
+			if count(t, pool, `SELECT count(*) FROM lifecycle_provider_send_claim WHERE attempt_id=$1`, attempts[1].ID) != 0 ||
+				count(t, pool, `SELECT count(*) FROM lifecycle_provider_observation WHERE attempt_id=$1`, attempts[1].ID) != 0 ||
+				count(t, pool, `SELECT count(*) FROM cost_event WHERE activity_id=$1`, attempts[1].ID) != 0 {
+				t.Fatal("rejected next claim invented a physical invocation or cost")
+			}
+		}
+		f.now = f.now.Add(time.Second)
+		inventory := NamespaceInventory{WorkspaceID: f.w, ProviderInstanceID: cp.ProviderInstanceID, IncarnationID: cp.IncarnationID,
+			Namespace: cp.Namespace, CallID: uuid.New(), ObservedAt: f.now, ResponseSHA256: strings.Repeat("b", 64)}
+		for _, survivor := range f.copies {
+			if !missing[survivor.ID] {
+				inventory.Versions = append(inventory.Versions, ListedVersion{Key: survivor.Key, Version: survivor.ProviderVersion, ByteSize: survivor.ByteSize})
+			}
+		}
+		if err := journal.StartStorageCall(ctx, StorageCallStart{ID: inventory.CallID, Copy: cp, Operation: StorageListVersions, StartedAt: f.now}); err != nil {
+			t.Fatal(err)
+		}
+		lookupInvoked := f.now
+		if err := journal.ObserveStorageCall(ctx, StorageCallObservation{CallID: inventory.CallID, ObservedAt: f.now, InvokedAt: &lookupInvoked, HTTPStatus: 200, ResponseSHA256: inventory.ResponseSHA256}); err != nil {
+			t.Fatal(err)
+		}
+		bad := inventory
+		bad.Versions = append(append([]ListedVersion{}, inventory.Versions...), ListedVersion{Key: cp.Key, Version: cp.ProviderVersion, ByteSize: cp.ByteSize})
+		if _, err := exact.VerifyAbsentInScope(ctx, f.header("sequence-bad-"+cp.ID.String()), a.ID, bad); err == nil {
+			t.Fatal("exact target still present became an absence receipt")
+		}
+		if _, err := exact.VerifyAbsentInScope(ctx, f.header("sequence-verify-"+cp.ID.String()), a.ID, inventory); err != nil {
+			t.Fatal(err)
+		}
+		if err := exact.ClaimExactSend(ctx, a, cp); !errors.Is(err, ErrIdempotencyConflict) {
+			t.Fatal("verified first send was replayable", err)
+		}
+	}
+	if _, err := exact.FinalizeContentDisposition(ctx, f.header("sequence-complete"), f.plan.ID); err != nil {
+		t.Fatal(err)
+	}
+	if count(t, pool, `SELECT count(*) FROM lifecycle_copy_absence_receipt`) != 2 ||
+		count(t, pool, `SELECT count(*) FROM lifecycle_plan_completion`) != 1 ||
+		count(t, pool, `SELECT count(*) FROM lifecycle_provider_observation WHERE outcome='UNKNOWN' AND certainty='CONFIRMED'`) != 1 ||
+		count(t, pool, `SELECT count(*) FROM cost_event WHERE activity_id=ANY($1::uuid[])`, []uuid.UUID{attempts[0].ID, attempts[1].ID}) != 2 {
+		t.Fatal("sequential recovery lost immutable outcomes or double-counted physical costs")
+	}
+}
 
 func TestExactSendClaimSerializedAndLateRevocationKeepsCost(t *testing.T) {
 	pool := planDatabase(t)

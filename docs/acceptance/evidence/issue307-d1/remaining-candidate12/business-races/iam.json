@@ -1,0 +1,20 @@
+{
+  "disabled_identities": {
+    "delete808a6960": "lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5",
+    "inspect808a69606c36": "lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5",
+    "remainput808a6960": "lifecycle307-remaining-business-remainput808a6960",
+    "remainread808a6960": "lifecycle307-remaining-business-remainread808a6960"
+  },
+  "policy_sha256": {
+    "lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5": "9a47af1b44939f47b857d9ac0fc301e66daf747d6cfbb2be57bdfdf7dcb25c79",
+    "lifecycle307-remaining-business-remainput808a6960": "9f9360695b08f2e638328119b4d976bbc446cbd410875e6914d5362f952afd97",
+    "lifecycle307-remaining-business-remainread808a6960": "15814900738437f53003c0cbd03bf0094ebb71bd5d5e0c00bba16eff020eeb33",
+    "lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5": "d6f6d1e2eb749f38e6b1206e396bac1be3744d339d1ea129c2886bddf17aa9fe"
+  },
+  "policy_file_sha256": {
+    "lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5": "bb3a5a7eaf900e2f1a304ff25deac51ac1422666eb2187c07832bab62ca89b51",
+    "lifecycle307-remaining-business-remainput808a6960": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+    "lifecycle307-remaining-business-remainread808a6960": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+    "lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5": "75f15fb9771ae100307cef311ef8b2700b8df585690c6a990e6456fc7ae81ccf"
+  }
+}

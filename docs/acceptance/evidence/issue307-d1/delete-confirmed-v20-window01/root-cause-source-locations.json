@@ -1,0 +1,13 @@
+{
+  "kind": "APPEND_ONLY_SOURCE_LOCATION_DETAIL",
+  "root_cause_fact": "renew-root-cause.json",
+  "reader_guard": "apps/platform/cmd/lifecycle-fixture-reader/remaining_setup.go:170",
+  "copied_profile": "examples/lifecycle-d1/freeze-remaining-executable.py:131",
+  "refreshed_batch_and_heads_only": "examples/lifecycle-d1/freeze-remaining-executable.py:132",
+  "refreshed_Base_only": "examples/lifecycle-d1/freeze-remaining-executable.py:133",
+  "original_root_cause_path_125": "Nearby context only; exact omission sites are 131-133. Original root-cause receipt retained.",
+  "runtime_source_changed": false,
+  "candidate_profile_changed_to_resume": false,
+  "R1_status": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

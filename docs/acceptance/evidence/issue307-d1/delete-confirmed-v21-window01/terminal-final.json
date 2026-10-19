@@ -1,0 +1,16 @@
+{
+  "status": "FAILED_STOPPED_SEALED_WITH_POST_SEAL_IAM_UNCONFIRMED",
+  "at": "2026-10-18T14:10:01.115506+00:00",
+  "execution": "602acafe-065a-4385-b739-5776408f5448",
+  "no_resume": true,
+  "native_DELETE": 0,
+  "same_heartbeat": "PAUSED",
+  "physical_closed_containers": 251,
+  "post_seal_fresh_IAM": {
+    "business-races": "UNCONFIRMED_NATIVE_ALREADY_STOPPED_NO_RESTART",
+    "late-hold": "UNCONFIRMED_NATIVE_ALREADY_STOPPED_NO_RESTART",
+    "mixed": "UNCONFIRMED_NATIVE_ALREADY_STOPPED_NO_RESTART"
+  },
+  "window_result_sha256": "e25f35271241709a97da46da25afe600192baeee6030d3c6bed5b53e56d304df",
+  "prior_stop_fact": "terminal.json retained unchanged; this is an appended final observation"
+}

@@ -1,0 +1,15 @@
+{
+  "composition/test_window_support.py": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
+  "composition/window_support.py": "02bebf8e41d7bb4de8fc9a0cdf0cea7628d18e06115f8f136b802aea41040494",
+  "freeze-check.json": "ca8ec688ffb672eb984328efb175aad28babb47f7b6148c644b4f6a7df8830de",
+  "independent-final-review.json": "f4b5d8a976c4d79941086ee256201ff1f8b06923b297dc0a7fed55e0d1a0ca79",
+  "independent-initial-review.json": "f7a35d325437592757c96a2c582dc50d479dbb6f2ac70a150d43c5c5aca88fc8",
+  "prewindow-check-final.json": "cce588b79fdf37fbfe018e51eadf0dada218f0a57fedbd2d8b2f90a8f2e07127",
+  "prewindow-check.json": "ecc0631263fd2e3988e9fd8be3037b2138b734f6d5d4d072479f0e5723d70432",
+  "review-contract.json": "71177355dbc91f834dd9c9c4620d8c9b5f5b76172bfe79e004b987a0915c5056",
+  "tests-initial-failed.txt": "7dc74b099ba85f5b28856b5063d032feab14c3b92ac7f9dd494867c59ef07d91",
+  "tests-normal-final.txt": "d7522b5d7c30502cb101917807f1fe92152ad083284e8e25c3d34dea62bdf8e4",
+  "tests-normal.txt": "d5bcc0b8583ca384c0517aecb6af8f264db54f43723a3af5a7883da3a0265f13",
+  "tests-optimized-final.txt": "42f2f112b8c05df0cfc32d2163c5984a341ae662d73985648fb84e9f8d6e9577",
+  "tests-optimized.txt": "0c4e96b13efb0880d40003bc6bb678f58c924b6c27031661604a9353602156ee"
+}

@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "phase": "network-before-db",
+  "cause": "Docker predefined address pools fully subnetted",
+  "repair": "Explicit non-overlapping 10.234.162.0/24, verified Docker and host routes; no cleanup",
+  "native_io": 0,
+  "old_environment_mutations": 0,
+  "history_preserved": true
+}

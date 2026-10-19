@@ -1,0 +1,14 @@
+{
+  "status": "FAILED_BEFORE_NATIVE_HELPER_CREATION_PHYSICALLY_CLOSED",
+  "candidate": "candidate08/v18",
+  "execution": "b16a578d-6997-4f8c-b6ad-470bafba2b1f",
+  "reason": "relative output path rejected by Docker bind mount",
+  "container_starts": 2,
+  "native_provider_requests": 0,
+  "native_delete": 0,
+  "human_confirmation": "NOT_RECEIVED",
+  "send_permission_enabled": false,
+  "sources_all_closed": true,
+  "superseded_by": "candidate09/v19",
+  "original_bytes_retained": true
+}

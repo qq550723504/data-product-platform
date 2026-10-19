@@ -1,0 +1,17 @@
+{
+  "status": "PASS_NONDELETE_SUPPORT_REGRESSION",
+  "tests": [
+    {
+      "mode": "normal",
+      "tests": 14,
+      "exit_code": 0
+    },
+    {
+      "mode": "optimized",
+      "tests": 14,
+      "exit_code": 0
+    }
+  ],
+  "provider_io": 0,
+  "native_delete": 0
+}

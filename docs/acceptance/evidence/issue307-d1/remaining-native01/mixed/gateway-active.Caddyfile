@@ -1,0 +1,28 @@
+{
+ admin off
+ auto_https off
+}
+:9000 {
+ route {
+  @bypass header X-Amz-Bypass-Governance-Retention *
+  respond @bypass 403
+  @copy header X-Amz-Copy-Source *
+  respond @copy 403
+  @exact0 {
+   method DELETE
+   expression {http.request.header.Authorization}.contains('Credential=deletedfda43b4/') && {http.request.uri} == '/dpp-lifecycle307-online/fixture/m1-a.csv?versionId=e8a8418e-c515-464e-99e5-10bc4c64fa8d'
+  }
+  reverse_proxy @exact0 minio:9000
+  @exact1 {
+   method DELETE
+   expression {http.request.header.Authorization}.contains('Credential=deletedfda43b4/') && {http.request.uri} == '/dpp-lifecycle307-quarantine/fixture/m1-b.csv?versionId=54900849-d59d-459e-90bb-275a5975d0a6'
+  }
+  reverse_proxy @exact1 minio:9000 {
+   @accepted status 204
+   handle_response @accepted {
+    abort
+   }
+  }
+  respond 403
+ }
+}

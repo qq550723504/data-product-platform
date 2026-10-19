@@ -1,0 +1,13 @@
+{
+  "status": "PASS_CANDIDATE11_OFFLINE",
+  "recorded_at": "2026-10-18T11:46:15.935634+00:00",
+  "source": "Actual examples/lifecycle-d1/check-remaining-candidate11.py exit0 in this authorization turn",
+  "execution": "602acafe-065a-4385-b739-5776408f5448",
+  "source_files": 829,
+  "raw_evidence": 1122,
+  "targets": 7,
+  "survivors": 11,
+  "checker_provider_io": 0,
+  "native_delete": 0,
+  "snapshot_human_confirmation": "NOT_RECEIVED is the immutable preparation snapshot; separate new human authorization is RECEIVED"
+}

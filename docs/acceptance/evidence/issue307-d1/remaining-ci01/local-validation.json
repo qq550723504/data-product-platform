@@ -1,0 +1,36 @@
+{
+  "status": "PASS_FINITE_CI_FIX_LOCAL",
+  "commands": [
+    {
+      "command": "python -X utf8 examples/lifecycle-d1/check-remaining-candidate07-freeze.py",
+      "exit_code": 0,
+      "result": {
+        "source_files": 812,
+        "raw_evidence": 940,
+        "git_raw_blobs_checked": 940,
+        "current_runtime_source_drift": 0
+      }
+    },
+    {
+      "command": "python -X utf8 -m unittest discover -s examples/lifecycle-d1 -p test_remaining_candidate07_freeze.py -v",
+      "exit_code": 0,
+      "tests": 3
+    },
+    {
+      "command": "python -X utf8 -O -m unittest discover -s examples/lifecycle-d1 -p test_remaining_candidate07_freeze.py -v",
+      "exit_code": 0,
+      "tests": 3
+    },
+    {
+      "command": "go test -race -count=1 ./cmd/lifecycle-fixture-remaining-iam",
+      "exit_code": 0
+    },
+    {
+      "command": "changed Go files gofmt LF comparison",
+      "exit_code": 0,
+      "unformatted": []
+    }
+  ],
+  "provenance": "Observed unified exec output; command summaries, not reconstructed full logs",
+  "native_delete": 0
+}

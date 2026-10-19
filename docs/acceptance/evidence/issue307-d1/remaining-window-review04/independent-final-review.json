@@ -1,0 +1,121 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_REVIEW",
+  "reviewer": "/root/v20_independent_review",
+  "at": "2026-10-18T06:33:25.496755+00:00",
+  "source": "71b1711927247d7aafc7d6a8bd707f013f2b310c",
+  "packet_anchor": "5eb3aec724f55e97ee05595439f74781d0e4b989",
+  "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "profile": "candidate10/v20",
+  "send_window": [
+    "2026-10-18T10:00:00Z",
+    "2026-10-18T10:40:00Z"
+  ],
+  "readonly_recovery_end": "2026-10-18T12:40:00Z",
+  "hashes": {
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate10/candidate.json": "c6ba9f9d7cfad7909be20c9df2858e30dea613181ff3c659f0e4c4bb444940ab",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate10/bindings.json": "f074576acafe56eef67385c36f8057b052c6e4fb456279e0e45b5c61add4f23b",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate10/confirmation-template.txt": "f1345f4909da80b6c25b2658f3d083dfdd2e737dd49dc50e644dd3aec9dc400c",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate10/source-freeze.json": "37d3081e50e0527c903c5d0618e867410df7f262e29c7778ea2108084504a3df",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate10/evidence-index.json": "e5ab87a3cc53a1a9f16cdccf3d085a241fd40bbc1f47f9a4dcf5a9af9d1052a5",
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate10/verification-build.json": "2f1557e9a2bb1fd62de7168e90b0976027fc4aaf41eef17231e44c0a5ae7b6a2",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-native03/complete.json": "50b9178b8428f71b14bfcaacc737575ff7782717d9ea6daccd0c77bae2c56458",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-native03/evidence-index.json": "4bdd42a1e3a2e017e0a06fa02db272dddb7d8e5f02ba3c32b7db2803a61a2bfa",
+    "docs/acceptance/evidence/issue307-d1/remaining-preflight-native03/technical-read-ledger.json": "f8c74aa190c57d50805dfa1455a95b2dfcd6801c5c1fc59fb3473c2447c78da4",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/composition/window_support.py": "58494ed65aa033fe739bdd3a4d042ef132f0ffa18a6c827709ae59b4b2b4951d",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/composition/test_window_support.py": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/physical-close-recheck.json": "883bf61ddeb4aa2eddf6b5c713c317ce66442407048810b3075d445b48213731",
+    "docs/acceptance/evidence/issue307-d1/remaining-window-review04/recovery-and-budget-recheck.json": "313c2d6781a7bdd9490515f721c769252cbd07371b3324d35d5f7713946f7b7d",
+    "docs/acceptance/issue307-d1-candidate10-confirmation.md": "120fb7f1a2248ed6c6c5b1cb624ea2f17d5821371075483adc087c834427d7c6",
+    "docs/acceptance/issue307-d1-v20-window-runbook.md": "584be2a727fdaa9e32ba7d61e79cae6024365a59a9bff0af0597d1a0ecbda158",
+    ".gitattributes": "b0bf202c91fc7aa5dd762cefa70d8e70002e0e89773c68da8f9cee4b0ec11219",
+    "examples/lifecycle-d1/check-remaining-candidate10.py": "0ffc85be79aac0aaa93e49365cc4d073d96b7af39be690571fd97a4142d4c813",
+    "examples/lifecycle-d1/verify-remaining-native.py": "0e0a2fd22376135cefb1b22505497f2b6e7576af43daf1562c921e2a488521f7"
+  },
+  "support_sha256": "58494ed65aa033fe739bdd3a4d042ef132f0ffa18a6c827709ae59b4b2b4951d",
+  "tests_sha256": "5028fb2060051bb8da3081713b468cf562ff6df3a897cca4541732da3e75c8d4",
+  "independent_tests": {
+    "support_normal": {
+      "tests": 14,
+      "exit_code": 0
+    },
+    "support_optimized": {
+      "tests": 14,
+      "exit_code": 0
+    },
+    "current_candidate_offline": {
+      "status": "PASS_CANDIDATE10_OFFLINE",
+      "exit_code": 0,
+      "source_files": 824,
+      "raw_evidence": 1119,
+      "targets": 7,
+      "survivors": 11
+    },
+    "exact_packet_working_and_git_raw": 1119,
+    "complete_CLI_indexed_files": 181,
+    "embedded_machine_template": "EXACT_BYTES",
+    "template_checked_fields": {
+      "targets": 7,
+      "survivors": 11,
+      "case_owners": 7,
+      "operator_owners": 17,
+      "root_owners": 15,
+      "expected_policy_heads": 6
+    },
+    "old_packet_preservation": {
+      "07": 940,
+      "08": 1117,
+      "09": 1118
+    },
+    "old_v17_failure_index_raw": 119,
+    "old_v18_failure_files_unchanged": 6,
+    "complete_CLI_Core_before_after_all_three": "UNCHANGED",
+    "technical_reads_from_indexed_evidence": 168
+  },
+  "reviewed_ordering": [
+    "complete native CLI closes all resources before closed-only maintenance check; only afterward may approved in-window source start occur",
+    "H1 case exit/PID0 then one-field revoke, all late permissions disabled, enablers stopped, disable-all, fresh <=45s disabled readback, gateway stopped/sealed, one closure proof and <=1min close-H1",
+    "M1 A absence before B send; B CONFIRMED UNKNOWN and C-only protection checkpoint before B lookup; exact checkpoint bytes passed to B recovery and mixed-c; C never deleted",
+    "UNKNOWN no resend; per-target max1/globalmax7; >=10:40Z no sends or identity enable; <=12:40Z read-only recovery does not reopen identity or extend sending"
+  ],
+  "documentation_eol_binding": "Two exact final v20 Markdown paths receive eol=lf attributes; no runtime/source-freeze or old evidence bytes changed.",
+  "parent_live_receipts_reviewed": {
+    "live_inspect_performed_by_reviewer": false,
+    "physical_close": {
+      "containers_stopped": 205,
+      "permissions_disabled": 128,
+      "gateways_sealed": 3,
+      "report_at": "2026-10-18T06:28:21.019118+00:00"
+    },
+    "seven_readonly_recovery_profiles_and_three_empty_budget_volumes": "parent actual host receipt reviewed; not independently read from private configuration",
+    "future_window_freshness_required": true
+  },
+  "authorization": {
+    "human_confirmation": "NOT_RECEIVED",
+    "public_authorization_file": "ABSENT",
+    "new_schedule": "NOT_CREATED per preparation records",
+    "old_heartbeat": "PAUSED per preparation records",
+    "real_business_cases": "NOT_RUN",
+    "Renew": "NOT_RUN",
+    "enable": "NOT_RUN",
+    "DELETE": "NOT_RUN",
+    "PR323": "DRAFT constraint",
+    "Issue307": "OPEN constraint",
+    "full_D1": "NOT_ACCEPTED"
+  },
+  "logs_sha256": {
+    "support-normal.txt": "9431e4f203c204c998ed834a801182eded2da8393185da0d7b00d98c8d3d32f0",
+    "support-optimized.txt": "17be12cc3f18605153f4c270735a97765a02fdd9ff7e0fd5ecdf03c42d5b489b",
+    "candidate10-offline.txt": "afaffd2d9a9cbc6c547952c405d06c7d166d303ccbcc3f217195be1c8b793214",
+    "public-bindings-audit.json": "eb3fb7cdfb393ef06ea002708f578aa3f77379457c1edaf8c9b8adfda0d74d2f"
+  },
+  "remaining_blockers": [],
+  "reviewer_side_effects": {
+    "docker_calls": 0,
+    "provider_io": 0,
+    "live_inspect": 0,
+    "private_credential_reads": 0,
+    "repository_edits": 0,
+    "github_writes": 0
+  },
+  "scope_limit": "Bounded non-delete preparation and exact bindings only. This report does not authorize sending, Ready, merge or issue closure; actual future execution must obtain new precise human authorization and fresh gates."
+}

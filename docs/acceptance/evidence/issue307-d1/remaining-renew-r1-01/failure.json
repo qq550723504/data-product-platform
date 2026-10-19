@@ -1,0 +1,9 @@
+{
+  "status": "FAILED_NETWORK_ALLOCATION_NO_RESOURCES_STARTED",
+  "source": "8bcd1b92",
+  "error": "all predefined address pools have been fully subnetted",
+  "original_diagnostic_sha256": "98299a207efea4a9026bcb1de42df345fc61fd1279693c3cc988e05db6fa32b1",
+  "provider_io": 0,
+  "native_delete": 0,
+  "resumed": false
+}

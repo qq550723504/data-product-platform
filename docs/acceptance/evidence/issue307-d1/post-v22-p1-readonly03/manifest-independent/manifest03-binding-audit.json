@@ -1,0 +1,27 @@
+{
+  "status": "PASS_MANIFEST03_OFFLINE_BINDING_AUDIT",
+  "at": "2026-10-19T10:34:16.542276+00:00",
+  "manifest_sha256": "2dc299ec1d9fbe4831fa7fae3c886f160565d49bea35c9fc0d4abf89ba72eafa",
+  "source_head": "a1858de91860cc794626aee4402d0935a8c46cf5",
+  "source_files": 19,
+  "runtime_pins": 8,
+  "inputs": "CANONICAL_POSIX",
+  "independently_hashed_binaries": {
+    "enable-p1-readonly": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec",
+    "disable-all": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec",
+    "worker": "1eb91cad6294b8bceb98788cb8f44edf810fe641ca14410e5d196de07e6453f4"
+  },
+  "sanitized_actual_owners": 6,
+  "prior_readonly_additional_owners_closed": 8,
+  "prior_readonly_profiles_false": 4,
+  "old_original_owners": 61,
+  "old_original_controls": {
+    "permissions": 32,
+    "cases": 7,
+    "recoveries": 7
+  },
+  "backup_metadata_hashes": 9,
+  "old_budget_members_match_failure_snapshots": 3,
+  "tests_repeated": 0,
+  "reviewer_Docker_provider_IO": 0
+}

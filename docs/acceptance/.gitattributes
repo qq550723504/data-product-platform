@@ -1,0 +1,32 @@
+# New v20 execution facts retain captured bytes; frozen root attributes stay unchanged.
+.gitattributes text eol=lf
+evidence/issue307-d1/delete-confirmed-v20-execution01/** -text whitespace=cr-at-eol
+evidence/issue307-d1/delete-confirmed-v20-review01/** -text whitespace=cr-at-eol
+evidence/issue307-d1/delete-confirmed-v20-window01/** -text whitespace=cr-at-eol
+issue307-d1-v20-execution01.md text eol=lf
+issue307-d1-v20-window01-result.md text eol=lf
+evidence/issue307-d1/remaining-renew-r1-01/** -text whitespace=cr-at-eol
+evidence/issue307-d1/remaining-renew-r1-02/** -text whitespace=cr-at-eol
+evidence/issue307-d1/remaining-r1-review01/** -text whitespace=cr-at-eol
+evidence/issue307-d1/remaining-candidate11/** -text whitespace=cr-at-eol
+evidence/issue307-d1/remaining-candidate11/*-modules.txt -text whitespace=-blank-at-eol
+evidence/issue307-d1/remaining-preflight-native04/** -text whitespace=cr-at-eol
+evidence/issue307-d1/remaining-window-review05/** -text whitespace=cr-at-eol
+issue307-d1-r1-window-contract.md text eol=lf
+issue307-d1-candidate11-confirmation.md text eol=lf
+issue307-d1-v21-window-runbook.md text eol=lf
+issue307-d1-v21-preparation.md text eol=lf
+
+evidence/issue307-d1/delete-confirmed-v21-execution01/** -text whitespace=cr-at-eol
+evidence/issue307-d1/delete-confirmed-v21-window01/** -text whitespace=cr-at-eol
+issue307-d1-v21-execution01.md text eol=lf
+issue307-d1-v21-window01-result.md text eol=lf
+
+evidence/issue307-d1/remaining-complete-entry-review01/** -text whitespace=cr-at-eol
+evidence/issue307-d1/remaining-candidate12/** -text whitespace=cr-at-eol
+evidence/issue307-d1/remaining-candidate12/*-modules.txt -text whitespace=-blank-at-eol
+evidence/issue307-d1/remaining-window-review06/** -text whitespace=cr-at-eol
+issue307-d1-complete-preflight-contract.md text eol=lf
+issue307-d1-candidate12-confirmation.md text eol=lf
+issue307-d1-v22-window-runbook.md text eol=lf
+issue307-d1-v22-preparation.md text eol=lf

@@ -1,0 +1,10 @@
+{
+  "id": "5844c11a723a2bf5ee5fda1d26f14cbe2e291e2bbeadf7961d7013cd0480caf8",
+  "exit": 0,
+  "started_at": "2026-10-18T10:43:04.322338885Z",
+  "finished_at": "2026-10-18T10:43:04.771148286Z",
+  "stopped_pid_zero": true,
+  "reader_sha256": "c2fc247d9469ccb2589af1bcf00a4ef4bdf136610dc53260f3d16041dc2cd485",
+  "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+  "Native": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce"
+}

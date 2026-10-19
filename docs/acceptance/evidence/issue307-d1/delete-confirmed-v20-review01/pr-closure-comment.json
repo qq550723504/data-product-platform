@@ -1,0 +1,16 @@
+{
+  "status": "PASS_PR_CLOSURE_COMMENT_EXACT_UTF8_READBACK",
+  "checked_at": "2026-10-18T08:02:06.696Z",
+  "comment_id": 6247405453,
+  "url": "https://github.com/qq550723504/data-product-platform/pull/323#issuecomment-6247405453",
+  "body": "#307 D1 candidate10/v20 授权后准备独立评审收口\n\n本轮范围是新授权记录、窗口前准备、18:00 同聊天定时续跑及失败封存。授权 execution `67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5`；原 source/binary/candidate/template/Core/IAM/gateway/owner/预算绑定不变，新授权按引用留证，`user_retyped_template=false`，未复用旧授权。\n\n- 独立评审与最终读回均 PASS，剩余有效阻断=0。最终报告 SHA256：`607d4a5941c61da10c70639664d73876042ea55cc0460b2f89e8d1c7a09d23df`。\n- 关闭 B1：一次非ASCII命令行JSON传输使待更新调度前缀/name乱码，字节门禁在任何启动/启用/发送前拒绝。已从保留的UTF-8原文恢复，改用ASCII JSON escapes读取及结构化Unicode写入；实际坏配置、失败input/verifier和原调度快照保留。独立编码回归4项 PASS。\n- 独立非删除验证：support normal/-O 各14项、授权4方法（15拒绝子案例+1正例）、离线824源文件/1119原始证据均 PASS。mock不冒充真实IAM关闭或业务验收。\n- HEAD仍为 `2ead583ee8d7f84e06272bb34f3b7865cfb0ddb1`；对应PR CI [39104508835](https://github.com/qq550723504/data-product-platform/actions/runs/39104508835) 13/13成功，未解决评审线程0；这是PR CI，不是main CI。\n- 07:50Z实际宿主读回：205个绑定容器 stopped/PID0/noports/no-restart、128份权限false；源启动/provider调用/DELETE均0。今天新加坡18:00的同一heartbeat继续ACTIVE，仅追加本轮报告及11文件独立索引的收窄门禁；旧v17 heartbeat保持PAUSED，固定窗口18:00≤时间<18:40不变。\n- 当前矩阵 `docs/acceptance/issue307-d1-v20-execution01.md` SHA256：`0d28373721b96143cc3e034cace5f1f8c67a17eb37c9b30320d2c6ded448e797`。新增执行/评审回执及矩阵保存在当前本地任务，尚未提交新HEAD；原冻结确认/手册/证据及失败事实未改写。\n\n完整D1仍NOT_ACCEPTED，窗口内fresh native/Core/IAM/protection/topology/budget检查、真实业务、有限发送、恢复及最终封存仍NOT_RUN。只能在已授权固定窗口全部前置通过后执行所列7目标，各最多一次、全局最多7次，UNKNOWN不重发；11保留版本/其他环境/全部备份保留，cleanup=0、hold-release=0、bypass=0。失败或过窗停止新增发送并固定封存，不延长、不补发。#323保持Draft、不Ready、不合并，#307保持OPEN。",
+  "exact_expected_body_equal": true,
+  "HEAD": "2ead583ee8d7f84e06272bb34f3b7865cfb0ddb1",
+  "PR323": {
+    "draft": true,
+    "state": "open"
+  },
+  "Issue307": "open",
+  "source_changes": 0,
+  "ready_or_merge": false
+}

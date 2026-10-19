@@ -1,0 +1,74 @@
+{
+  "status": "PASS_EVIDENCE_MATRIX_AUDIT",
+  "at": "2026-10-19T11:02:36.001216+00:00",
+  "indexed_files": 100,
+  "index_raw_sha256": "32a18245e97348c56ef86c93f81eb7d2082fe5edc54514912a3ab3178cad110d",
+  "raw_mismatches": [],
+  "not_indexed": [],
+  "missing": [],
+  "Core_relation_count": 194,
+  "Core_changed_relations": [
+    "audit_event",
+    "command_idempotency",
+    "cost_allocation",
+    "cost_event",
+    "delivery_authorization_fence",
+    "evidence",
+    "evidence_relation",
+    "lifecycle_copy_absence_receipt",
+    "lifecycle_plan_completion",
+    "lifecycle_reconciliation_result",
+    "lifecycle_reconciliation_run",
+    "lifecycle_reconciliation_work",
+    "lifecycle_storage_call",
+    "lifecycle_storage_observation",
+    "outbox_event",
+    "outbox_event_consumption"
+  ],
+  "Core_rows_added": {
+    "audit_event": 53,
+    "command_idempotency": 3,
+    "cost_allocation": 24,
+    "cost_event": 24,
+    "evidence": 53,
+    "evidence_relation": 53,
+    "lifecycle_copy_absence_receipt": 1,
+    "lifecycle_plan_completion": 1,
+    "lifecycle_reconciliation_result": 1,
+    "lifecycle_reconciliation_run": 1,
+    "lifecycle_reconciliation_work": 1,
+    "lifecycle_storage_call": 24,
+    "lifecycle_storage_observation": 24,
+    "outbox_event": 53,
+    "outbox_event_consumption": 1
+  },
+  "protected_Core_relation_fingerprints_unchanged": [
+    "lifecycle_provider_attempt",
+    "lifecycle_provider_observation",
+    "lifecycle_provider_send_claim",
+    "external_provider_dispatch",
+    "external_provider_call",
+    "external_provider_observation",
+    "lifecycle_reader_pin"
+  ],
+  "root_actual_requests": {
+    "GET": 21,
+    "PUT": 5,
+    "HTTP200": 26
+  },
+  "current_terminal_in_bound_window": true,
+  "retained_unique_owner_union": 77,
+  "documents": {
+    "docs/acceptance/issue307-d1-post-v22-p1-readonly-acceptance.md": {
+      "sha256": "c2e27c36681a62f15d39b4090891d42f6ae98431e6dc1375c1a9dff2f1f2b255",
+      "bytes": 9176
+    },
+    "docs/acceptance/issue307-d1-post-v22-remaining-six-preparation.md": {
+      "sha256": "9743d726b7151c39879298cda30a8f062db72b2997c741e7eff1d327c6a3e1ef",
+      "bytes": 9853
+    }
+  },
+  "remaining_blockers": [],
+  "reviewer_tests_rerun": 0,
+  "reviewer_Docker_provider_calls": 0
+}

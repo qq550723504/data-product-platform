@@ -1,0 +1,11 @@
+{
+  "status": "PASS_SAME_HEARTBEAT_PAUSED_AFTER_FAILURE",
+  "at": "2026-10-18T14:04:40.617214+00:00",
+  "id": "307-d1-candidate11-v21",
+  "kind": "heartbeat",
+  "target_thread_id": "01a13579-573d-7a32-b1e1-3297fe78380a",
+  "prompt_sha256": "80f25c61865e7dd27d6276397436d956c102f94247f071f1da6d7cf254801748",
+  "toml_sha256": "3e1fb7086374957ae885ed79c7d72236118dc14de9c69d26b1fef8405561cf27",
+  "duplicate_schedule_created": false,
+  "window_reopened": false
+}

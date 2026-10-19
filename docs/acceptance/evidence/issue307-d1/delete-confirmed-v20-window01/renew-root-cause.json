@@ -1,0 +1,20 @@
+{
+  "status": "CONFIRMED_FROZEN_RENEW_PROFILE_SEMANTIC_MISMATCH",
+  "case": "renew",
+  "frozen_profile_sha256": "cb3a9e11172c7135d50ce39fd9cd6be043829fa0d75da431154526b2afcafeee",
+  "frozen_profile_candidate_use_until": "2026-10-17T02:40:00Z",
+  "compiled_v20_required_candidate_use_until": "2026-10-18T10:40:00Z",
+  "Base_StartedAt": "2026-10-18T10:00:00Z",
+  "Base_ExpiresAt": "2026-10-18T10:40:00Z",
+  "Batch": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "failed_guard": "remainingFreezePolicy requires r.CandidateUseUntil == pilot.RemainingNotAfter before policy-start marker or any Renew command",
+  "code_path": "apps/platform/cmd/lifecycle-fixture-reader/remaining_setup.go:168",
+  "freeze_root_cause": "case_base is copied from the original source-owner profile; freeze updates Batch, ExpectedPolicyHeads and Base window but does not reset CandidateUseUntil to the new END",
+  "code_generation_path": "examples/lifecycle-d1/freeze-remaining-executable.py:125",
+  "policy_started_marker_exists": false,
+  "renew_result_exists": false,
+  "real_business_result_exists": false,
+  "six_renew_commands": "NOT_RUN_GUARD_REJECTED_BEFORE_FIRST_COMMAND",
+  "old_or_failed_facts_rewritten": false,
+  "requires_new_candidate_execution_window_and_exact_authorization_after_offline_fix": true
+}

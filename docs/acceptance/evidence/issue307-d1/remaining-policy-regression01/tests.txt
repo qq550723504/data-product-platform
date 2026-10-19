@@ -1,0 +1,23 @@
+=== RUN   TestArchiveRestoreCurrentWitnessAndRestrictions
+--- PASS: TestArchiveRestoreCurrentWitnessAndRestrictions (3.73s)
+=== RUN   TestCopyPolicyRenewalRetainsOldFactAndSerializesExpectedHead
+    copy_policy_renewal_integration_test.go:45: [append outbox event: event type "LifecycleCopyPolicyRenewed" is not declared in the routing table append outbox event: event type "LifecycleCopyPolicyRenewed" is not declared in the routing table]
+--- FAIL: TestCopyPolicyRenewalRetainsOldFactAndSerializesExpectedHead (2.62s)
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/authority
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/wide
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/restriction
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/hold
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/reader
+=== RUN   TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/dispatch
+    copy_policy_renewal_integration_test.go:100: lifecycle storage denied
+--- FAIL: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy (15.20s)
+    --- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/authority (2.50s)
+    --- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/wide (2.38s)
+    --- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/restriction (2.40s)
+    --- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/hold (2.49s)
+    --- PASS: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/reader (2.80s)
+    --- FAIL: TestCopyPolicyRenewalRefusesExpiredAuthorityWideWindowAndLiveOccupancy/dispatch (2.63s)
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	22.759s
+FAIL

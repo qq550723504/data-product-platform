@@ -1,0 +1,209 @@
+{
+  "status": "PASS_SEVEN_CASES_RECOVERIES_AND_THREE_EMPTY_BUDGETS",
+  "cases": [
+    {
+      "group": "business-races",
+      "stage": "renew",
+      "container": "4aa8e091776f8b768fb6e90475312d78d02e595140833dfb9827af6259635eef",
+      "profile_sha256": "8d93a2452826e12505eab530516210cdcd2d313196db2b8f4f34d3d01ccade37",
+      "Batch": "602acafe-065a-4385-b739-5776408f5448",
+      "CandidateUseUntil": "2026-10-18T14:40:00Z",
+      "BaseStartedAt": "2026-10-18T14:00:00Z",
+      "BaseExpiresAt": "2026-10-18T14:40:00Z",
+      "actual_contract": "PASS",
+      "stopped_pid_zero": true
+    },
+    {
+      "group": "business-races",
+      "stage": "business",
+      "container": "ae61dc122e56dcc33ad32f7230fb5369953e542bc36ef5439a4a5c3e5c72ca43",
+      "profile_sha256": "8d93a2452826e12505eab530516210cdcd2d313196db2b8f4f34d3d01ccade37",
+      "Batch": "602acafe-065a-4385-b739-5776408f5448",
+      "CandidateUseUntil": "2026-10-18T14:40:00Z",
+      "BaseStartedAt": "2026-10-18T14:00:00Z",
+      "BaseExpiresAt": "2026-10-18T14:40:00Z",
+      "actual_contract": "PASS",
+      "stopped_pid_zero": true
+    },
+    {
+      "group": "late-hold",
+      "stage": "late",
+      "container": "766ca21ed720f7c62a67e1b19b7d642f8cd00e83adf8b305b54544a4c8126ea4",
+      "profile_sha256": "231a18977b2b5843fc79103ffff4cbdf7c11d5ce3a2a91fb6c83f1b585462a6a",
+      "Batch": "602acafe-065a-4385-b739-5776408f5448",
+      "CandidateUseUntil": "2026-10-18T14:40:00Z",
+      "BaseStartedAt": "2026-10-18T14:00:00Z",
+      "BaseExpiresAt": "2026-10-18T14:40:00Z",
+      "actual_contract": "PASS",
+      "stopped_pid_zero": true
+    },
+    {
+      "group": "late-hold",
+      "stage": "close-H1",
+      "container": "61631846bbcd7c28af4f790c8a984727de5e6e93dc1dd4a339446890568d259b",
+      "profile_sha256": "8cddf91a20257c900cfe4f3686542428d4c65e96e189f0a42e4de05a1e375b36",
+      "Batch": "602acafe-065a-4385-b739-5776408f5448",
+      "CandidateUseUntil": "2026-10-18T14:40:00Z",
+      "BaseStartedAt": "2026-10-18T14:00:00Z",
+      "BaseExpiresAt": "2026-10-18T14:40:00Z",
+      "actual_contract": "PASS",
+      "stopped_pid_zero": true
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed",
+      "container": "7ceaff317b1af36683e7b3db6dec16811d58ace170d90d1b22ad93d74a5c22cb",
+      "profile_sha256": "7e33cdca5ac0db7c1308a3560f105678188cdb4ce090df10d817617ea0ae69dd",
+      "Batch": "602acafe-065a-4385-b739-5776408f5448",
+      "CandidateUseUntil": "2026-10-18T14:40:00Z",
+      "BaseStartedAt": "2026-10-18T14:00:00Z",
+      "BaseExpiresAt": "2026-10-18T14:40:00Z",
+      "actual_contract": "PASS",
+      "stopped_pid_zero": true
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed-b",
+      "container": "89d1b180a33c06e944b408b327e46d77b41ac1d325d1b3c6349ddd5f326487a1",
+      "profile_sha256": "7e33cdca5ac0db7c1308a3560f105678188cdb4ce090df10d817617ea0ae69dd",
+      "Batch": "602acafe-065a-4385-b739-5776408f5448",
+      "CandidateUseUntil": "2026-10-18T14:40:00Z",
+      "BaseStartedAt": "2026-10-18T14:00:00Z",
+      "BaseExpiresAt": "2026-10-18T14:40:00Z",
+      "actual_contract": "PASS",
+      "stopped_pid_zero": true
+    },
+    {
+      "group": "mixed",
+      "stage": "mixed-c",
+      "container": "09c52c3cf472eb69e0c9e63ba8a42adc59e93a2a6e4dfa5c14aacc390d0498a2",
+      "profile_sha256": "7e33cdca5ac0db7c1308a3560f105678188cdb4ce090df10d817617ea0ae69dd",
+      "Batch": "602acafe-065a-4385-b739-5776408f5448",
+      "CandidateUseUntil": "2026-10-18T14:40:00Z",
+      "BaseStartedAt": "2026-10-18T14:00:00Z",
+      "BaseExpiresAt": "2026-10-18T14:40:00Z",
+      "actual_contract": "PASS",
+      "stopped_pid_zero": true
+    }
+  ],
+  "profiles": [
+    {
+      "group": "business-races",
+      "stage": "recover-P1",
+      "profile_sha256": "87394605ce0efa9891dfe8ebffecfebf09a1307ea3ea28d53488ac9275642be7",
+      "ValidUntil": "2026-10-18T16:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-P2",
+      "profile_sha256": "87394605ce0efa9891dfe8ebffecfebf09a1307ea3ea28d53488ac9275642be7",
+      "ValidUntil": "2026-10-18T16:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T1",
+      "profile_sha256": "87394605ce0efa9891dfe8ebffecfebf09a1307ea3ea28d53488ac9275642be7",
+      "ValidUntil": "2026-10-18T16:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "business-races",
+      "stage": "recover-T2",
+      "profile_sha256": "87394605ce0efa9891dfe8ebffecfebf09a1307ea3ea28d53488ac9275642be7",
+      "ValidUntil": "2026-10-18T16:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "late-hold",
+      "stage": "recover-H2",
+      "profile_sha256": "5aa929e64e40768c5c26919b831d9b692688a930f5e74c3cd1ecdba574517ee7",
+      "ValidUntil": "2026-10-18T16:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1A",
+      "profile_sha256": "8a9e5fe2becf74a2662b9f2ee4522f1b2727c9a79db16033a547f9af98656ebc",
+      "ValidUntil": "2026-10-18T16:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    },
+    {
+      "group": "mixed",
+      "stage": "recover-M1B",
+      "profile_sha256": "8a9e5fe2becf74a2662b9f2ee4522f1b2727c9a79db16033a547f9af98656ebc",
+      "ValidUntil": "2026-10-18T16:40:00Z",
+      "read_only_profile": true,
+      "send_secret_present": false,
+      "wire_key_present": false,
+      "send_permission": false
+    }
+  ],
+  "budgets": [
+    {
+      "group": "business-races",
+      "volume": "dpp-lifecycle307-808a6960-candidate11-budget",
+      "owner_execution": "602acafe-065a-4385-b739-5776408f5448",
+      "mounted_cids": [
+        "0f2d35bd4b912448268aa13ed43ecc403a489349086508004e4515c80fe5edfc",
+        "10b32fa80d2d271e2c1506031954caefdb0d41f9fd55880c1faae1d33224e02a",
+        "1a1ad0d07f75effa38768bfebcac93b57943b70e00204fee0edb4cb58acd1c0c",
+        "3a0b555b9f72e3a199e434931a774e3f01e3640fba6a0d223fb6d2865ee07aa8",
+        "6861d38acbb3ccb1f35a130709e086075b733dc0b089e7cdfd2a69bf1983cdba",
+        "6fbb3021dbf3cc2b9ce47b3db017e8e18d61d40f159b5618c2e2f8fa0350d2cd",
+        "83c46a608d04df855f8f8ce6923069272ff9f5a85b7c0030f67c8ea9c8d2ad7d",
+        "a2d692838b818a32ea149aec41816221efb0b1a1301c6aeadaf72967c6fa3337",
+        "e59fbdb8501cf49c7c88b5e958de9fb294e2bec806a600337c7e5180c9397047"
+      ],
+      "empty": true,
+      "provider_io": 0
+    },
+    {
+      "group": "late-hold",
+      "volume": "dpp-lifecycle307-754ea8f0-candidate11-budget",
+      "owner_execution": "602acafe-065a-4385-b739-5776408f5448",
+      "mounted_cids": [
+        "3e011853a3a52543c1925d4701050e2e2a030f2a1a71a55079d9d1b5a8e469b4",
+        "b180fc6a50cd2286ce04971239ee346e9d8d0ff1c5e216b31ff5722c40caae72",
+        "f4c2d3ef698912fe1161cb4ab1c392db12a45904002d684f565d1ce0f5498a1b"
+      ],
+      "empty": true,
+      "provider_io": 0
+    },
+    {
+      "group": "mixed",
+      "volume": "dpp-lifecycle307-dfda43b4-candidate11-budget",
+      "owner_execution": "602acafe-065a-4385-b739-5776408f5448",
+      "mounted_cids": [
+        "839953b2b11cd2dbff5aa5ab29d4426016722366af7167a69631b5ccfcb9cdfe",
+        "8a95b51caeab75f3b6b6dcb4c909e32c85ac894d7f89916d79ccd9985b6c0c29",
+        "e7d4a9525f14074208ab04a790b36faf81a6ddf48836762d05eda1f0f62ad3d0",
+        "ec37d4cfa3cc017e4344d5ada881624fd99757ddfdc93746354ddaf724ffe810",
+        "fff08ccb56c6259deec8be30371ba4c952b9ac243a21bc39dc50380ad8a90d91"
+      ],
+      "empty": true,
+      "provider_io": 0
+    }
+  ],
+  "provider_io": 0,
+  "native_delete": 0
+}

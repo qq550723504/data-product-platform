@@ -1,0 +1,624 @@
+{
+  "at": "2026-10-19T10:32:13.900656+00:00",
+  "manifest_sha256": "2dc299ec1d9fbe4831fa7fae3c886f160565d49bea35c9fc0d4abf89ba72eafa",
+  "fresh_disabled_gate": "PASS",
+  "owners": [
+    {
+      "id": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "name": "/dpp-lifecycle307-808a6960-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": {
+        "Running": false,
+        "Pid": 0,
+        "Status": "exited"
+      },
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "cmd": [
+        "postgres"
+      ],
+      "user": "",
+      "labels": {
+        "lifecycle307.run": "808a6960-6c36-4200-ae98-f18a68472fe5"
+      },
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/pgpass",
+          "Destination": "/run/credentials/pgpass",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-postgres",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-postgres/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "host": {
+        "NetworkMode": "dpp-lifecycle307-808a6960-private",
+        "ReadonlyRootfs": false,
+        "Privileged": false,
+        "CapDrop": null,
+        "SecurityOpt": null,
+        "RestartPolicy": {
+          "Name": "no",
+          "MaximumRetryCount": 0
+        },
+        "PortBindings": {},
+        "Tmpfs": null
+      },
+      "network": {
+        "Networks": {
+          "dpp-lifecycle307-808a6960-private": {
+            "IPAMConfig": null,
+            "Links": null,
+            "Aliases": null,
+            "DriverOpts": null,
+            "GwPriority": 0,
+            "NetworkID": "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+            "EndpointID": "",
+            "Gateway": "",
+            "IPAddress": "",
+            "MacAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "DNSNames": [
+              "dpp-lifecycle307-808a6960-postgres",
+              "9bc6e9ec894f"
+            ]
+          }
+        },
+        "Ports": {}
+      }
+    },
+    {
+      "id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "name": "/dpp-lifecycle307-808a6960-minio",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "state": {
+        "Running": false,
+        "Pid": 0,
+        "Status": "exited"
+      },
+      "entrypoint": [
+        "/bin/sh"
+      ],
+      "cmd": [
+        "/run/credentials/start.sh"
+      ],
+      "user": "",
+      "labels": {
+        "lifecycle307.run": "808a6960-6c36-4200-ae98-f18a68472fe5"
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-808a6960-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-808a6960-objects/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/access",
+          "Destination": "/run/credentials/access",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/secret",
+          "Destination": "/run/credentials/secret",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-808a6960/start.sh",
+          "Destination": "/run/credentials/start.sh",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "host": {
+        "NetworkMode": "dpp-lifecycle307-808a6960-private",
+        "ReadonlyRootfs": false,
+        "Privileged": false,
+        "CapDrop": null,
+        "SecurityOpt": null,
+        "RestartPolicy": {
+          "Name": "no",
+          "MaximumRetryCount": 0
+        },
+        "PortBindings": {},
+        "Tmpfs": null
+      },
+      "network": {
+        "Networks": {
+          "dpp-lifecycle307-808a6960-private": {
+            "IPAMConfig": null,
+            "Links": null,
+            "Aliases": [
+              "minio"
+            ],
+            "DriverOpts": null,
+            "GwPriority": 0,
+            "NetworkID": "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+            "EndpointID": "",
+            "Gateway": "",
+            "IPAddress": "",
+            "MacAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "DNSNames": [
+              "dpp-lifecycle307-808a6960-minio",
+              "minio",
+              "f16efe4cfa33"
+            ]
+          }
+        },
+        "Ports": {}
+      }
+    },
+    {
+      "id": "fdb7b92e9aa45082628a707f63c44338bd66f991a14a90e010dc1125ba385661",
+      "name": "/dpp307-p1-readonly-bb448568-redis",
+      "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "state": {
+        "Running": false,
+        "Pid": 0,
+        "Status": "created"
+      },
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "cmd": [
+        "redis-server",
+        "--appendonly",
+        "yes"
+      ],
+      "user": "",
+      "labels": {
+        "lifecycle307.readonly": "bb448568-0444-48ee-a2e4-a9f69344b6d0"
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp307-p1-readonly-bb448568-redis-data",
+          "Source": "/var/lib/docker/volumes/dpp307-p1-readonly-bb448568-redis-data/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "host": {
+        "NetworkMode": "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+        "ReadonlyRootfs": true,
+        "Privileged": false,
+        "CapDrop": [
+          "ALL"
+        ],
+        "SecurityOpt": [
+          "no-new-privileges"
+        ],
+        "RestartPolicy": {
+          "Name": "no",
+          "MaximumRetryCount": 0
+        },
+        "PortBindings": {},
+        "Tmpfs": {
+          "/tmp": ""
+        }
+      },
+      "network": {
+        "Networks": {
+          "dpp-lifecycle307-808a6960-private": {
+            "IPAMConfig": null,
+            "Links": null,
+            "Aliases": null,
+            "DriverOpts": null,
+            "GwPriority": 0,
+            "NetworkID": "",
+            "EndpointID": "",
+            "Gateway": "",
+            "IPAddress": "",
+            "MacAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "DNSNames": null
+          }
+        },
+        "Ports": {}
+      }
+    },
+    {
+      "id": "b040c0113071e8cee2df2789575609f2589850b43a7bcf80fd888f65906c4248",
+      "name": "/dpp307-p1-bb448568-enable-p1-readonly",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": {
+        "Running": false,
+        "Pid": 0,
+        "Status": "created"
+      },
+      "entrypoint": [
+        "/run/executor"
+      ],
+      "cmd": [
+        "-action",
+        "enable-p1-readonly"
+      ],
+      "user": "10001:10001",
+      "labels": {
+        "lifecycle307.readonly": "bb448568-0444-48ee-a2e4-a9f69344b6d0"
+      },
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\bootstrap",
+          "Destination": "/run/executor",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-p1-readonly03\\output-enable-p1-readonly",
+          "Destination": "/run/output",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\root-private",
+          "Destination": "/run/private",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "host": {
+        "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+        "ReadonlyRootfs": true,
+        "Privileged": false,
+        "CapDrop": [
+          "ALL"
+        ],
+        "SecurityOpt": [
+          "no-new-privileges"
+        ],
+        "RestartPolicy": {
+          "Name": "no",
+          "MaximumRetryCount": 0
+        },
+        "PortBindings": {},
+        "Tmpfs": {
+          "/tmp": "",
+          "/var/lib/postgresql/data": "size=1m"
+        }
+      },
+      "network": {
+        "Networks": {},
+        "Ports": {}
+      }
+    },
+    {
+      "id": "65d9ad83e86805e98961bf85256db4bef05fcf762af4829938e0813704ba8ebf",
+      "name": "/dpp307-p1-bb448568-disable-all",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": {
+        "Running": false,
+        "Pid": 0,
+        "Status": "created"
+      },
+      "entrypoint": [
+        "/run/executor"
+      ],
+      "cmd": [
+        "-action",
+        "disable-all"
+      ],
+      "user": "10001:10001",
+      "labels": {
+        "lifecycle307.readonly": "bb448568-0444-48ee-a2e4-a9f69344b6d0"
+      },
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\bootstrap",
+          "Destination": "/run/executor",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-p1-readonly03\\output-disable-all",
+          "Destination": "/run/output",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\root-private",
+          "Destination": "/run/private",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "host": {
+        "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+        "ReadonlyRootfs": true,
+        "Privileged": false,
+        "CapDrop": [
+          "ALL"
+        ],
+        "SecurityOpt": [
+          "no-new-privileges"
+        ],
+        "RestartPolicy": {
+          "Name": "no",
+          "MaximumRetryCount": 0
+        },
+        "PortBindings": {},
+        "Tmpfs": {
+          "/tmp": "",
+          "/var/lib/postgresql/data": "size=1m"
+        }
+      },
+      "network": {
+        "Networks": {},
+        "Ports": {}
+      }
+    },
+    {
+      "id": "52d934ca9ffadf94cf80c82e27ed7daa525b1fd4b5e2c331e3e31c52e9362edd",
+      "name": "/dpp307-p1-bb448568-worker",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "state": {
+        "Running": false,
+        "Pid": 0,
+        "Status": "created"
+      },
+      "entrypoint": [
+        "/run/executor"
+      ],
+      "cmd": [
+        "p1-post-v22-readonly"
+      ],
+      "user": "10001:10001",
+      "labels": {
+        "lifecycle307.readonly": "bb448568-0444-48ee-a2e4-a9f69344b6d0"
+      },
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\worker",
+          "Destination": "/run/executor",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-p1-readonly03\\output-worker",
+          "Destination": "/run/output",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\worker-private",
+          "Destination": "/run/private",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ],
+      "host": {
+        "NetworkMode": "container:f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+        "ReadonlyRootfs": true,
+        "Privileged": false,
+        "CapDrop": [
+          "ALL"
+        ],
+        "SecurityOpt": [
+          "no-new-privileges"
+        ],
+        "RestartPolicy": {
+          "Name": "no",
+          "MaximumRetryCount": 0
+        },
+        "PortBindings": {},
+        "Tmpfs": {
+          "/tmp": "",
+          "/var/lib/postgresql/data": "size=1m"
+        }
+      },
+      "network": {
+        "Networks": {},
+        "Ports": {}
+      }
+    }
+  ],
+  "root_private_files": {
+    "candidate.json": "f624a5f50ccb4fa4aa8b465f5a60a090f6325e78f60544b4c18f9ba2604ef243",
+    "iam.json": "51876faa99cd322649fa541ef295d8ec7a43f4a1b88e9fe7f255cd372507687e",
+    "p1-readonly-permission.json": "e4a8cd4d534e71e0b37c90d5c311cd10ef5329a037fa4c4427679d30ae073e6f",
+    "root.json": "c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9",
+    "policies/lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5.json": "bb3a5a7eaf900e2f1a304ff25deac51ac1422666eb2187c07832bab62ca89b51",
+    "policies/lifecycle307-remaining-business-remainput808a6960.json": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+    "policies/lifecycle307-remaining-business-remainread808a6960.json": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+    "policies/lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5.json": "75f15fb9771ae100307cef311ef8b2700b8df585690c6a990e6456fc7ae81ccf"
+  },
+  "worker_private_files": {
+    "audit.json": "c197e5d99984f268fef702b7d61020c136b0a9de6690d4e44148cf91ce82f23a",
+    "bindings.json": "8e54b47e4a1f83c7ce66555ed6ce2f3ec66c962a394a8fa1feb84eeaccd82fc5",
+    "recovery.json": "8cf03e5aadb117e8354df058fe0dd474cde4ea10c56281b1b948fa42c7e74374"
+  },
+  "new_root_permission": {
+    "Enabled": false,
+    "AuditID": "bb448568-0444-48ee-a2e4-a9f69344b6d0",
+    "Group": "business-races",
+    "Purpose": "POST_V22_P1_READONLY_RECONCILIATION",
+    "SourceCandidateSHA256": "f624a5f50ccb4fa4aa8b465f5a60a090f6325e78f60544b4c18f9ba2604ef243",
+    "BinarySHA256": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec",
+    "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+    "Native": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+    "CopyID": "5a4c9789-3e67-4e54-ab58-128d111cbd65",
+    "AttemptID": "009f4317-8855-4f99-80ec-cafc225f654e",
+    "NotBefore": "2026-10-19T10:31:40.310358+00:00",
+    "ExpiresAt": "2026-10-19T11:11:40.310358+00:00",
+    "MaxProviderDeletes": 0
+  },
+  "worker_audit_redacted": {
+    "AuditID": "bb448568-0444-48ee-a2e4-a9f69344b6d0",
+    "Purpose": "POST_V22_P1_READONLY_RECONCILIATION",
+    "RedisAddr": "dpp307-p1-readonly-bb448568-redis:6379",
+    "RecoveryConfig": "/run/private/recovery.json",
+    "BinarySHA256": "1eb91cad6294b8bceb98788cb8f44edf810fe641ca14410e5d196de07e6453f4",
+    "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+    "Native": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+    "NotBefore": "2026-10-19T10:31:40.310358+00:00",
+    "ExpiresAt": "2026-10-19T11:11:40.310358+00:00",
+    "MaxProviderDeletes": 0
+  },
+  "worker_recovery_redacted": {
+    "Enabled": false,
+    "SyntheticOnly": true,
+    "RunID": "bb448568-0444-48ee-a2e4-a9f69344b6d0",
+    "ValidUntil": "2026-10-19T11:11:40.310358+00:00",
+    "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+    "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+    "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+    "ActorID": "033a56ad-99c2-43e3-89e0-a749979a8644",
+    "Endpoint": "127.0.0.1:9000",
+    "InspectAccess": "inspect808a69606c36",
+    "ManifestSHA256": "2fd4356702a7903af53d4f1f6f8dc6c40372bed11b7069bb32beb130a5077c35"
+  },
+  "actual_DSN_parsed": {
+    "scheme": "postgres",
+    "host": "dpp-lifecycle307-808a6960-postgres",
+    "port": 5432,
+    "user": "fixture",
+    "database": "lifecycle307",
+    "query": "sslmode=disable",
+    "secret": "PRESENT_PRIVATE_NOT_EMITTED"
+  },
+  "prior_readonly_audits": [
+    {
+      "name": "post-v22-p1-readonly01",
+      "manifest_sha256": "3aa4401d1904e887a696538ecb1cd52d066d8996deecc37e1f6db274dc14dbde",
+      "terminal_sha256": "db6b254cfa57b5d9d16e9a1024daae9a0032c0cf4f279c330c2b639ded525fd7",
+      "owners": [
+        {
+          "cid": "74d2fb9aed18285a1a5183d0c3359d5ddf4b7e8a268df79f96c8bda7bfd549fe",
+          "running": false,
+          "pid": 0,
+          "restart": "no"
+        },
+        {
+          "cid": "6c52adb21e33b73c911c874104eafefa10948abf8f9ba8fcf7ad12768bda7599",
+          "running": false,
+          "pid": 0,
+          "restart": "no"
+        },
+        {
+          "cid": "99eff7a3dd85b4a2648362d684b055d8255803a933dc08a710cdc49351538159",
+          "running": false,
+          "pid": 0,
+          "restart": "no"
+        },
+        {
+          "cid": "768f0aaf409eae6ccaf24e12591f2d43c278325158785fe58f9e1a4493444a62",
+          "running": false,
+          "pid": 0,
+          "restart": "no"
+        }
+      ],
+      "profiles": [
+        {
+          "name": "worker-private/recovery.json",
+          "sha256": "1d012e2c198cbbc875963103604727ca33ca013bd6ddc4fdf8616f4288ba0656",
+          "enabled": false
+        },
+        {
+          "name": "root-private/p1-readonly-permission.json",
+          "sha256": "40047a13d086258d59ec8913e9b2a037d36cd31e819bcca818f5fde7704229ad",
+          "enabled": false
+        }
+      ]
+    },
+    {
+      "name": "post-v22-p1-readonly02",
+      "manifest_sha256": "cd7cd06bfb46ab0703252af9f2668ed6453a4da4b84e860a736d80fa979ddb14",
+      "terminal_sha256": "e6c4ca076c5576b71e871cbed68843d97367818cad0be5e1f2928ae3f839e04f",
+      "owners": [
+        {
+          "cid": "b47315340dfa42ab1366e3e9d1ed095c7be3e0be69dbb9a600e809513f2c95ab",
+          "running": false,
+          "pid": 0,
+          "restart": "no"
+        },
+        {
+          "cid": "5e6b348c86a03f1eb48da27c1ccb8f18b82162f50358fcbd9f1e269d843be9c6",
+          "running": false,
+          "pid": 0,
+          "restart": "no"
+        },
+        {
+          "cid": "5579531c052c1885ac4b82de9aed30c5bf20dc52b4d7f0733c1f7272bcb1e402",
+          "running": false,
+          "pid": 0,
+          "restart": "no"
+        },
+        {
+          "cid": "98c88a2a87f317cf413fe56d816a4c6d0a4511b13a511c225b20ff54ffe44957",
+          "running": false,
+          "pid": 0,
+          "restart": "no"
+        }
+      ],
+      "profiles": [
+        {
+          "name": "worker-private/recovery.json",
+          "sha256": "778645d5521e833f69a5a24f1a505198004fb3b2649407bd1f9bb7d3a60d2c3d",
+          "enabled": false
+        },
+        {
+          "name": "root-private/p1-readonly-permission.json",
+          "sha256": "f74256aa614f20c76f11169f23da9118c5600a14f3868bc8c6c66ffa1ab0d65c",
+          "enabled": false
+        }
+      ]
+    }
+  ],
+  "source_started": false,
+  "identity_enabled": false,
+  "native_delete": 0
+}

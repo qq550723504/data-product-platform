@@ -1,0 +1,15 @@
+{"at": "2026-10-19T10:26:47.781833+00:00", "phase": "worker"}
+{"at": "2026-10-19T10:26:47.791027+00:00", "audit_id": "fixed-test-audit", "status": "BLOCKED_PRESTART_NO_SOURCE_IO", "failure": "ValueError: synthetic drift", "source_started": false, "identity_enabled": false, "native_delete": 0, "old_execution_resumed": false, "full_D1": "NOT_ACCEPTED"}
+test_actual_windows_manifest_survives_only_controlled_enabled_transition (__main__.P1ReadOnlyHostTests.test_actual_windows_manifest_survives_only_controlled_enabled_transition) ... ok
+test_complete_owner_contract_rejects_root_mount_port_and_command_expansion (__main__.P1ReadOnlyHostTests.test_complete_owner_contract_rejects_root_mount_port_and_command_expansion) ... ok
+test_core_connection_binds_host_database_user_without_exposing_password (__main__.P1ReadOnlyHostTests.test_core_connection_binds_host_database_user_without_exposing_password) ... ok
+test_manifest_paths_reject_traversal_absolute_and_alias_collisions (__main__.P1ReadOnlyHostTests.test_manifest_paths_reject_traversal_absolute_and_alias_collisions) ... ok
+test_owner_failure_retains_original_stdout_and_stderr_separately (__main__.P1ReadOnlyHostTests.test_owner_failure_retains_original_stdout_and_stderr_separately) ... ok
+test_prestart_failure_is_terminal_and_starts_no_source_or_identity (__main__.P1ReadOnlyHostTests.test_prestart_failure_is_terminal_and_starts_no_source_or_identity) ... ok
+test_seal_attempts_every_bound_stop_even_when_every_inspect_is_unreadable (__main__.P1ReadOnlyHostTests.test_seal_attempts_every_bound_stop_even_when_every_inspect_is_unreadable) ... ok
+test_seal_continues_all_stops_when_profiles_and_disable_readback_fail (__main__.P1ReadOnlyHostTests.test_seal_continues_all_stops_when_profiles_and_disable_readback_fail) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.052s
+
+OK

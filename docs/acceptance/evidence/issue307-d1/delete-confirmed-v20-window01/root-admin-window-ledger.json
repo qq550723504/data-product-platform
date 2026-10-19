@@ -1,0 +1,695 @@
+{
+  "requests": [
+    {
+      "group": "business-races",
+      "action": "root-check-disabled",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:15.099350054Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:15.102397494Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "98b786f417eb72fd855a9be4216c900a2f4e7e230505453d8ec03974cab76a4e",
+      "observation_sha256": "1bec9b5d282c426e6f9e09c0a869e0715df9baef66addb97d86479f91dfc4dfa"
+    },
+    {
+      "group": "business-races",
+      "action": "root-check-disabled",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:15.066034669Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:15.069495031Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "bc5ba78f1d10c0070f7724f23f6aa0aa5613f40199cafcf5abf96da4c6fa404e",
+      "observation_sha256": "5eb53dfc4c95a4203cb783471d6b074155513686f72041a086f63594218d585c"
+    },
+    {
+      "group": "business-races",
+      "action": "root-check-disabled",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:15.085330001Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:15.088692195Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "fe261d7648aa201f1213dff1761b6e5fa00112a8b98d2f3dabe9834c0f280b85",
+      "observation_sha256": "c7ff4025acdd8e348cdc5174b53c97f2944e23926f57ec5414419d9320a0dcd3"
+    },
+    {
+      "group": "business-races",
+      "action": "root-check-disabled",
+      "request": {
+        "access": "remainput808a6960",
+        "at": "2026-10-18T10:05:15.09319692Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:15.096513149Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "5bfb7b1c61c1bc2cc1444c5c2fb8cc677f9219cb60943cb9c59f14239527ae43",
+      "observation_sha256": "3a6c76e276d061e600682031c3cff6aad4515c9e1986037e29a054b1d5f16707"
+    },
+    {
+      "group": "business-races",
+      "action": "root-check-disabled",
+      "request": {
+        "access": "inspect808a69606c36",
+        "at": "2026-10-18T10:05:15.03791694Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:15.047012994Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "81d9e3e2750d2ac3c97db79527330670d335ef8925202f8c617e5ac9f1be289a",
+      "observation_sha256": "be80d599ebbd8993d5f80555d16010897834de20558806fb7f0a60f94c0858ba"
+    },
+    {
+      "group": "business-races",
+      "action": "root-check-disabled",
+      "request": {
+        "access": "remainread808a6960",
+        "at": "2026-10-18T10:05:15.074369912Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:15.078897345Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "badc2fbda053053e288cd7b5b607bea518ab487545e1df737d5c5c6668d4e7cf",
+      "observation_sha256": "5182a82d7c401643a8ae0485ed68abd9eb3959a6a408321a0b190e205d169f2c"
+    },
+    {
+      "group": "business-races",
+      "action": "root-check-disabled",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:15.050460203Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:15.054844084Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "19cb282c69fd2acdbdd42685a39437036af0c82f853bf4675dbe883e66d89ae1",
+      "observation_sha256": "cd761e746f8d9e4cbc964e91622dd9db2f5641aec9c7e8b1d10970dcc9882051"
+    },
+    {
+      "group": "business-races",
+      "action": "root-check-disabled",
+      "request": {
+        "access": "delete808a6960",
+        "at": "2026-10-18T10:05:15.059988119Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:15.063208913Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "8eda26119aef8fbcb04426b07ceb8e175fce88bcb4d8318dd98ebbf76e5783f3",
+      "observation_sha256": "56fde0c08d36b29c4573757e0dabee8ea1c8e864452f763406af8fca45b4bc78"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "remainread808a6960",
+        "at": "2026-10-18T10:05:21.779122079Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.781876302Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "1a77d1aecae789b409efcbc0651a507be87e3647a4171ff6dc62072a71d2ec34",
+      "observation_sha256": "ce1cfd1b62cf99bcfebd260190c8e706687bc702f2336ce2791d47734dee8c31"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "remainread808a6960",
+        "at": "2026-10-18T10:05:21.719465626Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.722308488Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "df2dddddbd63b4f877326e414bb07d5c9f182f72c3508b0b982ba8074589ba54",
+      "observation_sha256": "f6eeb4312a8faed3e96e5ec4c992b34cc907dac7e32fd5712068e160a7b525e3"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "inspect808a69606c36",
+        "at": "2026-10-18T10:05:21.674459469Z",
+        "method": "PUT",
+        "path": "/minio/admin/v3/set-user-status",
+        "status": "disabled"
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.684357715Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "eeb74c1a5be6e0c0a04850391f1aeb2db658c155f7ac67a3583050bead621dd7",
+      "observation_sha256": "3ad7859c08c99253021f58e3224cb4323f71703be490bb38c56b2cd78b2462a9"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:21.757543679Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.760896818Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "b8eac0432bce2acd307e9fc844e89be6ff51585503c0918492bf9272739ba330",
+      "observation_sha256": "f851036b50d1cd51f06d9970ee7896bad0a2fd60eb7b60defac727f10181cdd1"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "inspect808a69606c36",
+        "at": "2026-10-18T10:05:21.687093541Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.690247965Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "8cc466b4cec16fa7e4ca0fde03dea7b2162a15ebbdd1c2f459d147190abd40fd",
+      "observation_sha256": "619b9314bbd2b7ce60041e778d6e55e34bca2d2b45690da9ad3f9a625d665da6"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:21.799662731Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.803772778Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "ba30e56b431a4772ad14684c1a4b8a0a148cb2c3cd71a7cc8a3c2e44faab9637",
+      "observation_sha256": "c05fd9ce997c825489490144bbe36f7d7337359d3528ef57d30cf7fb7f2b2f99"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "delete808a6960",
+        "at": "2026-10-18T10:05:21.692567788Z",
+        "method": "PUT",
+        "path": "/minio/admin/v3/set-user-status",
+        "status": "disabled"
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.700024046Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "518f82215f1cc040c0b5ca495c38d04808bf445397d716eb5e6ca002661609f8",
+      "observation_sha256": "1bfea8a75e2fcd0bc49250b1fa3b334dc3952691b23189b1d1516fadf84fdfd2"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "remainput808a6960",
+        "at": "2026-10-18T10:05:21.726057935Z",
+        "method": "PUT",
+        "path": "/minio/admin/v3/set-user-status",
+        "status": "disabled"
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.733065889Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "403a74771f1dd0a839ff5db4c55a019f3efd5f171c299fded2fd243c8fef17ee",
+      "observation_sha256": "4944a84334141466f0f94e61e480deb698ba35e716183c037c7b7913733420d8"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "delete808a6960",
+        "at": "2026-10-18T10:05:21.765741009Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.768889207Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "ef66baf7fb6f840ae03aa22584c5e97bf69917ecd0bc0d771c98668d14f7ff85",
+      "observation_sha256": "8a6cd63a37b98d56c0945ef051c609823414efa32fb333cedce670bda1c9ed70"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "inspect808a69606c36",
+        "at": "2026-10-18T10:05:21.75225593Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.755040642Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "bb62cbbe6901781c19dd41e74a0d40849dbde82db38a9a1fe359bff35c6fc805",
+      "observation_sha256": "2aa033538fb053e0b5ff3fde3225714f578446c449be1dcd8ca87365577fa45d"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "remainput808a6960",
+        "at": "2026-10-18T10:05:21.735583385Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.738575337Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "2bcee54202813d1c7ff0a36c229bf25bbd17857fe17f5a81a2f5576c21e2c12d",
+      "observation_sha256": "bc6ff146c852d2f5eb2706981ec9a783591e3b551803d5a8ffb30762dbc520c2"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "delete808a6960",
+        "at": "2026-10-18T10:05:21.702500816Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.705951275Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "02b8d024ed3bd3730be4f60ee0ad2ac361672b22d7cc114075a02438529092c0",
+      "observation_sha256": "72b5e49465236877777a0030c2e71b4880eefd1826a3304081d313c968f9eae2"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "remainput808a6960",
+        "at": "2026-10-18T10:05:21.792807602Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.796884939Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "4f87bcb4621cce06a52762eb6fe1222f48c2ce0e7aa138f2a9b48e4235928c3b",
+      "observation_sha256": "cab9cc156d80f4025a5c3f881f1f310b9d7d15923c332565d555392e9ae4be66"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:21.771370966Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.774397431Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "2949b0a4eb6b70e9e824de2f8845e49fb901e1a11b0d9e5cd747a3cc8bebb3a0",
+      "observation_sha256": "b521fb7e1331e5605cc74e12d1aac9dcb143ef22b69a0304594cb1df528c4aa2"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:21.784074754Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.787309995Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "13eb040b07b2b2dcf863cd68d7fefbf32e8abf6d223297b5c3c49b2cfb924b71",
+      "observation_sha256": "f289feaad0e84ab8736454686ae0eda90dddd5b641c5f056e762f0ebd65ab3a1"
+    },
+    {
+      "group": "business-races",
+      "action": "root-disable-all",
+      "request": {
+        "access": "remainread808a6960",
+        "at": "2026-10-18T10:05:21.708645552Z",
+        "method": "PUT",
+        "path": "/minio/admin/v3/set-user-status",
+        "status": "disabled"
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:21.717110362Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "02e01cfab66db5d223b674ce08676d53e4605d7effc8a0b5f834db5536286cbf",
+      "observation_sha256": "0d936b87d462bcf37f19784bc028e2fd9f930c6fd006df76f237b5b793b2d1ce"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "remainread808a6960",
+        "at": "2026-10-18T10:05:18.104987527Z",
+        "method": "PUT",
+        "path": "/minio/admin/v3/set-user-status",
+        "status": "enabled"
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.111247746Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "0e6636777c2ed31d83e4ebf958d693c2b87753fc128852d984e18f0c8c7c289c",
+      "observation_sha256": "080819f7902eef5fd11ec30dbf1e06ec4ceddd1cea01e33e613250ab205be0af"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:18.010318788Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.013405447Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "5189a9dafe1043b54f95cfb0195b0591a87b7bcece2214598769471d13ffa1a9",
+      "observation_sha256": "d3a363637b3e48a3d9ae6deab6e40ed9da5d868baccce49a42dc65266dbaac98"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "inspect808a69606c36",
+        "at": "2026-10-18T10:05:18.085290794Z",
+        "method": "PUT",
+        "path": "/minio/admin/v3/set-user-status",
+        "status": "enabled"
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.09207941Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "a8059e1ee2c2073d8cccb24036f9be210053e9282d82fac393d8fbc1292822c0",
+      "observation_sha256": "f001c9ab7ad1f5b785feab34d7042e1e8083126e8ce833be6427e38d6354d353"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:18.028950798Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.032599485Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "29a69b5ee6dece8933e3ea6523bdd4dbf7e5df1e8edac8dfac77dc4807896ad9",
+      "observation_sha256": "e05962d921f28d19ec3cbffd6d5ca494c28faaf15948521e147582314828b211"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "delete808a6960",
+        "at": "2026-10-18T10:05:18.023741976Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.02660286Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "62c1475305044078b04db31deaf27e2a26f9f79f5b02955500d7226e70ef6042",
+      "observation_sha256": "851c79d4ab21d34e1f21b7a3bc5a517ef114695cebe81d1e66e54cfbc9a747d1"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "remainread808a6960",
+        "at": "2026-10-18T10:05:18.042569848Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.045483866Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "71d715f620ef4928c828c8e0c4f2a00af7d830bf808768b98f42a43a35f2d076",
+      "observation_sha256": "6559d56d72238dc972703484840939bd7c608533a1d6c7e7ac4486283641722d"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "inspect808a69606c36",
+        "at": "2026-10-18T10:05:18.094431376Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.097215791Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "ab2cd0b60eb9029babca06fde454acae487f9684ea09335280cd59735fa1332c",
+      "observation_sha256": "053dd16efc866bb8b15742d1512619906d2302c700eba40cf81a1cf4c174654d"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "remainput808a6960",
+        "at": "2026-10-18T10:05:18.12471546Z",
+        "method": "PUT",
+        "path": "/minio/admin/v3/set-user-status",
+        "status": "enabled"
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.1308817Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "7b748ea922ed4bbcf2f46e1a9bff0d58a7b8de8c28ff9657ebff436c92a7079b",
+      "observation_sha256": "fa11736b7614d3d8be23d170c5d9766c97a42266a81c4d9cf270cff48dc69b11"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "remainput808a6960",
+        "at": "2026-10-18T10:05:18.060309084Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.063019705Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "3d2b7eafd7af2c09ed01701772477bc33fee68f063cbca187348c78081f8c844",
+      "observation_sha256": "1a28ce5f41d509bb3f4d1614f572fc83869f428911e957508e41068fa07c5792"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:18.065423373Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.068894315Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "39ed3b919eafdf000e444d3b149eef16c7c089b4d4d5cde2c562b5321eaf58c2",
+      "observation_sha256": "de401605306d11953844c524a73fe5a50477f84312a5ba8ffcffb97a9fec0789"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "inspect808a69606c36",
+        "at": "2026-10-18T10:05:18.000958083Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.007280426Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "6e0d7a058fe386f5f1599e413a0aafcdd2e021af98bbb80113448dc4916bd874",
+      "observation_sha256": "b98aedfd6c81ad566f8a8eddfbdca1a831f62e871193fddc0594b53391d46bea"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "remainput808a6960",
+        "at": "2026-10-18T10:05:18.133255537Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.135988426Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "587a73787841d7008652798d2068d5650e8f1319bab217ebf87743fd5a019680",
+      "observation_sha256": "334711845d10ed9b3a50256cac22b2679ec9e21b50dddbac0d9eee1eca9c9ad1"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "",
+        "at": "2026-10-18T10:05:18.047850358Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/info-canned-policy",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.051309002Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "b64db6143102179aa03932140b4a30dc89946ec3c13842bad1da11c1b23af46c",
+      "observation_sha256": "d7cfe5bbdd99e00ba13e5916b48df92dc4a4260a860cd71e59e0b71083b24f4a"
+    },
+    {
+      "group": "business-races",
+      "action": "root-enable-read",
+      "request": {
+        "access": "remainread808a6960",
+        "at": "2026-10-18T10:05:18.113573243Z",
+        "method": "GET",
+        "path": "/minio/admin/v3/user-info",
+        "status": ""
+      },
+      "observation": {
+        "at": "2026-10-18T10:05:18.117161717Z",
+        "http_status": 200,
+        "transport_error": false
+      },
+      "request_sha256": "116db52704db57ca6de2b573ab9cfa6a380d1c0e8aa2f2c6205341889aa9a50a",
+      "observation_sha256": "83de4a7cd63228c4ce0c0e30ff01129741034f528fdead3c5bdf422fd0d0ad9b"
+    }
+  ],
+  "methods": {
+    "GET": 31,
+    "PUT": 7
+  },
+  "technical_admin_not_business_provider_attempts": true,
+  "price_or_amount": "NOT_ASSESSED_NOT_ZERO_COST_CLAIM",
+  "native_delete": 0
+}

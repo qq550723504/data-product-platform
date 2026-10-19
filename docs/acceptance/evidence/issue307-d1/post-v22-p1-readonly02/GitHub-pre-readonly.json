@@ -1,0 +1,11 @@
+{
+  "isDraft": true,
+  "state": "OPEN",
+  "headRefOid": "86cec9c804f2d54ffc74e13aa210547a1ecdca7a",
+  "reviewThreads": {
+    "nodes": []
+  },
+  "unresolved_thread_count": 0,
+  "issue307": "OPEN",
+  "observed_at": "2026-10-19T10:15:50.066432+00:00"
+}

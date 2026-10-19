@@ -1,0 +1,26 @@
+{
+  "scope": "New authorization/prewindow snapshot, excluding this index and later execution evidence",
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/authorization-context.json": "575c83fce940a79d1d2174c1b7389fb7f9271e00bb035ed09a33f1010c894c30",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/github-prewindow-check.json": "8511da2f0ce79f90976478871cb69d046def598210e509e495d2d4f3b925840d",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/human-authorization.json": "4235dc7205b9479d7fe0c36b88484ba9e780c2d166b094a7700bed31a3311dc4",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/prewindow-host-check.json": "6ebbad1b137b8792079fbf880974ea6044acf3b6c1ad7f380c6b7d7a63460777",
+    "docs/acceptance/issue307-d1-v22-execution01.md": "40bf08244531d89ef1af30187a131a279e0f62543bd2a8aa051cefbfa0d90c14"
+  },
+  "private_files": {
+    "approved-chat-confirmation.md": "974fa85bf3e1437fcdf89cbb462f5632cdeb9992a0b4839dcae99fc6da4bcf0a",
+    "approved-full-confirmation.md": "2cfc4cbedf3610ab94c52e4fd754fce62d04ba5e66fd3c267732fe1caf02b4a0",
+    "approved-host-bindings.txt": "56b06eb38d761287acec29d643c8b66add04285122670891fee66013a2e392c3",
+    "approved-reference-manifest.json": "9418637871ca161a833f93ef0858e95a801aac12e571a90d572c9bb177aeb612",
+    "approved-referenced-template.txt": "bd46b276a422f75aa7e78b0568ab73b8412e265ad40897ce9fea2badc3645341",
+    "approved-verification-summary.md": "08163ce96d8bd6cddfe4a7e545fc81472379400e26f64667cc02e929773ad0c4",
+    "approved-window-runbook.md": "6077aaa5e3d115b2bbd721ea8a2f8a0faf4a8dd46853c4c8b206a60f060f028e",
+    "authorization-envelope.txt": "6e87a7735005a27deb1cdc506d6173644ecdf5d5809306499a979065531298de",
+    "human-authorization.json": "4235dc7205b9479d7fe0c36b88484ba9e780c2d166b094a7700bed31a3311dc4",
+    "human-message-origin.json": "575c83fce940a79d1d2174c1b7389fb7f9271e00bb035ed09a33f1010c894c30",
+    "user-message-verbatim.txt": "fce3771b1b29f5b8c466a7b4e76e01f1ab8436b481c706af4563f5819cc1e017"
+  },
+  "source_starts": 0,
+  "permission_changes": 0,
+  "native_delete": 0
+}

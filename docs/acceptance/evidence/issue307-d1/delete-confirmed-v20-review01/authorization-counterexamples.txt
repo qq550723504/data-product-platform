@@ -1,0 +1,9 @@
+test_exact_by_reference_original_with_final_LF_is_accepted (__main__.AuthorizationChecks.test_exact_by_reference_original_with_final_LF_is_accepted) ... ok
+test_foreign_scope_window_budget_and_resend_fail_before_inspection (__main__.AuthorizationChecks.test_foreign_scope_window_budget_and_resend_fail_before_inspection) ... ok
+test_premature_enabled_permission_is_rejected (__main__.AuthorizationChecks.test_premature_enabled_permission_is_rejected) ... ok
+test_raw_user_final_LF_envelope_and_machine_payload_tamper_fail_before_inspection (__main__.AuthorizationChecks.test_raw_user_final_LF_envelope_and_machine_payload_tamper_fail_before_inspection) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.943s
+
+OK

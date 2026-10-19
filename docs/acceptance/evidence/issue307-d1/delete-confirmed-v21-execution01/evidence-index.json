@@ -1,0 +1,49 @@
+{
+  "status": "INDEX_OF_APPEND_ONLY_AUTHORIZATION_PREPARATION_RECEIPTS",
+  "execution": "602acafe-065a-4385-b739-5776408f5448",
+  "created_at": "2026-10-18T11:46:16.045842+00:00",
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v21-execution01/execution-preparation.json": "17e28423ae7fd9f3a49b72942da29f1bdf4ac64c265ddb3580d1148067a23218",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v21-execution01/final-checkpoint.json": "82624526849fc465642d5d8119bb396cc027d02d25ab314c2dfac6cff192e4c6",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v21-execution01/github-ci-checkpoint.json": "941fc52590774964cc288369501a2f5f2f400ce029a52b6b9192e064786931f2",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v21-execution01/human-authorization.json": "1bef2f6e7bb5739a6d85349cab3bdd87f0f2f5fcca8a5faf4c08fb0d4c2999f7",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v21-execution01/offline-checkpoint.json": "ba89895148c5f2a1fab9c2bc042e6ec18cf29d1d12511122d921a28b40745017",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v21-execution01/prewindow-closed-only03.json": "b69cba8e40746c56a07dc2eb0d004d69116fe05fa4dd67e28cc966e9d8ad6e17",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v21-execution01/prewindow-extra-audit-failure01.json": "28e58b4dc2be4a0b7414a709e5492dfb4796b20cef56f101b7e30c9e365deb60",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v21-execution01/prewindow-extra-audit-failure02.json": "057b19a800a13ccdda3a25aa4b09f2621f66faa950ca9e12c653fea229128a7d",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v21-execution01/prewindow-host-check.json": "29675aba30b8c2c25387416fa4b470eac3ed3cc381a1a44a806897d47b0c1a16",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v21-execution01/scheduled-resume.json": "a157016985dfe64744ee2a25aa96c21ce041f616292d738f87f581789de27ff5"
+  },
+  "matrix": {
+    "path": "docs/acceptance/issue307-d1-v21-execution01.md",
+    "sha256": "88f3b8d1cf33dc3852967cc0cc1a3b30b57a56a5de938d2c1965c06c3aa8992c"
+  },
+  "private_control_receipts": {
+    "approved-chat-confirmation.md": "629237f83ce3044dc659771574eba9fee03e83325511570f6bc7e0123d65bde3",
+    "approved-full-confirmation.md": "841cb0f424de3095fedef1e82f4d749a82f3424d711a1553a4c321c096cdc1f7",
+    "approved-host-bindings.txt": "56751b8ac87a9c865c925baf6f5fee5d9010fb9035e29f2799910910fc5709ff",
+    "approved-reference-manifest.json": "60ccd8672baac485817f92c82d2eebd99295b85f7a53397944147d9c48975e4f",
+    "approved-referenced-template.txt": "0967a70197972c23020a55a13d721f8de25097b78779ee8d0137b1ab5d68b5ea",
+    "approved-window-runbook.md": "dce7d5fc85eb05d1f41920bf13c85cc110d12c209b0c6edef382334d15b5b619",
+    "authorization-envelope.txt": "9d956cda0212240fbe93c2e0c2357bdf4b885fd48981695d85ce7618557e2ba9",
+    "automation-created-snapshot.toml": "eead946fe37e7eabc72bab9efa764a3d1a28e70486c7bda576285d80a0f52563",
+    "execution-preparation.json": "17e28423ae7fd9f3a49b72942da29f1bdf4ac64c265ddb3580d1148067a23218",
+    "final-checkpoint.json": "82624526849fc465642d5d8119bb396cc027d02d25ab314c2dfac6cff192e4c6",
+    "github-ci-checkpoint.json": "941fc52590774964cc288369501a2f5f2f400ce029a52b6b9192e064786931f2",
+    "github-state-current.json": "d0d4bb56d28846ec8b42bc3684e29a3e88a5cd1f580a233e51586d74fc51f501",
+    "github-state-fresh02.json": "3562302ad9bddaeca9b7e97d92b63b05305f6c6359e0731a655f00e75f9cc267",
+    "human-authorization.json": "1bef2f6e7bb5739a6d85349cab3bdd87f0f2f5fcca8a5faf4c08fb0d4c2999f7",
+    "offline-checkpoint.json": "ba89895148c5f2a1fab9c2bc042e6ec18cf29d1d12511122d921a28b40745017",
+    "prewindow-closed-only03.json": "b69cba8e40746c56a07dc2eb0d004d69116fe05fa4dd67e28cc966e9d8ad6e17",
+    "prewindow-extra-audit-failure01.json": "28e58b4dc2be4a0b7414a709e5492dfb4796b20cef56f101b7e30c9e365deb60",
+    "prewindow-extra-audit-failure02.json": "057b19a800a13ccdda3a25aa4b09f2621f66faa950ca9e12c653fea229128a7d",
+    "prewindow-host-check.json": "29675aba30b8c2c25387416fa4b470eac3ed3cc381a1a44a806897d47b0c1a16",
+    "scheduled-prompt-tool-exact.txt": "80f25c61865e7dd27d6276397436d956c102f94247f071f1da6d7cf254801748",
+    "scheduled-prompt.txt": "e15a50083202f1e8819611093b5897a913bd1dd2974a4aef880bb14a5ee1a9f0",
+    "scheduled-resume.json": "a157016985dfe64744ee2a25aa96c21ce041f616292d738f87f581789de27ff5",
+    "user-message-verbatim.txt": "0b475938c11c7fb22d37117c6222495833c6e69720413601316f651d8be9b15b"
+  },
+  "index_self_excluded": true,
+  "preserved_script_failures": 2,
+  "native_delete": 0
+}

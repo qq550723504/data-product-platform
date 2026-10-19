@@ -1,0 +1,1 @@
+{"candidate": "candidate07/v17", "execution": "effa0385-9308-42eb-bd66-d0c379b6a989", "targets": 7, "survivors": 11, "source_files": 812, "raw_evidence": 940, "native_delete": 0, "status": "PASS_OFFLINE"}

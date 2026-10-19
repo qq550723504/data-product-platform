@@ -1,0 +1,6 @@
+test_running_foreign_owner_cannot_shadow_bound_core_dns (__main__.CoreBinding.test_running_foreign_owner_cannot_shadow_bound_core_dns) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK

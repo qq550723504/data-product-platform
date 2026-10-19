@@ -1,0 +1,6 @@
+test_unavailable_inspection_does_not_skip_known_owner_stop (__main__.Containment.test_unavailable_inspection_does_not_skip_known_owner_stop) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK

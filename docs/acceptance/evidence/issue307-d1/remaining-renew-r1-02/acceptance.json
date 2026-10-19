@@ -1,0 +1,19 @@
+{
+  "status": "PASS_SIX_RENEW_ISOLATED_PG",
+  "source": "d4e306d5d32ce09ffb7307b2a7ea1cbe1b696be4",
+  "binary_sha256": "c2fc247d9469ccb2589af1bcf00a4ef4bdf136610dc53260f3d16041dc2cd485",
+  "clone_core": "eb94d693d41152356be6aabb982d121e151e75691306a85494664665aa18af1a",
+  "owner": "31e13285db8aaf2e82aabe2ecbd55aaf0f0bff7d0e571c00ac5a776da0e970f8",
+  "execution_is_rehearsal_only": "654ca228-aff1-4a13-8c97-720c31b48e63",
+  "candidate_execution": "602acafe-065a-4385-b739-5776408f5448",
+  "CandidateUseUntil": "2026-10-18T14:40:00Z",
+  "window_end": "2026-10-18T14:40:00Z",
+  "technical_base_end": "2026-10-18T11:33:59.390325+00:00",
+  "policy_use_until": "2026-10-18T11:33:59.390325Z",
+  "six_appends": 6,
+  "old_facts_retained": true,
+  "native_storage_started": false,
+  "provider_io": 0,
+  "native_delete": 0,
+  "send_authority": "NONE"
+}

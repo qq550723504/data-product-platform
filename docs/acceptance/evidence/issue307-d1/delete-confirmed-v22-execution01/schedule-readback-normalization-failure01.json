@@ -1,0 +1,14 @@
+{
+  "recorded_at": "2026-10-19T02:52:59.415768+00:00",
+  "status": "PRESERVED_OPERATOR_EXACT_BYTE_CHECK_FAILURE",
+  "cause": "Scheduler serialized the prompt without the final LF. The first equality check compared it with the submitted prompt including LF.",
+  "proposed_prompt_sha256": "a2d4949f221cec8d66b925ff0bed71297da8b1b5d4517537440c1eed432f1a09",
+  "actual_prompt_sha256": "7198df6871a1eea3555c82f80f8f72359e2ed7354b5dd582ce4ef19d2aacaa11",
+  "proposed_bytes": 12312,
+  "actual_bytes": 12311,
+  "difference_exactly_one_terminal_LF": true,
+  "authorization_raw_7_bytes_changed": false,
+  "scheduler_mutated_to_bypass": false,
+  "candidate_or_gate_changed": false,
+  "resolution": "Preserve proposed and actual prompt as separate byte artifacts; exact actual DB prompt equals actual TOML prompt. No authorization byte normalization."
+}

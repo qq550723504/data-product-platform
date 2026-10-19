@@ -1,0 +1,172 @@
+[
+  {
+    "group": "business-races",
+    "stage": "wire",
+    "container": "6dda13383e5e63ca5787c84d09b2506924945eaa1e2b1f9ecf5d55be083876ca",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "send permission false before config/DB/provider",
+    "native_delete": 0
+  },
+  {
+    "group": "business-races",
+    "stage": "P1",
+    "container": "c6014a2b091ead478b13e64d8d638e2cf88216fa58b4adc77e6ca0388320d52b",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "send permission false before config/DB/provider",
+    "native_delete": 0
+  },
+  {
+    "group": "business-races",
+    "stage": "recover-P1",
+    "container": "544f95ac17f4330a16f5c33dfb021ad1a7d348c974ec8db4fc2b97d3d1544cbb",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "missing fresh signed readonly topology",
+    "native_delete": 0
+  },
+  {
+    "group": "business-races",
+    "stage": "P2",
+    "container": "91aa053757158ced0416df67b13bbdbda1dd7c682bb2b6d82f766d6ba46db4c6",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "send permission false before config/DB/provider",
+    "native_delete": 0
+  },
+  {
+    "group": "business-races",
+    "stage": "recover-P2",
+    "container": "e32297422f4a460e1c7a70226f74dd050edd35df8c13aaa86754bfbd1add2ee0",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "missing fresh signed readonly topology",
+    "native_delete": 0
+  },
+  {
+    "group": "business-races",
+    "stage": "T1",
+    "container": "92cbaa7b0e532365590e041d8ed11ed2a97af11f524d3c0d6db021b71794c6b2",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "send permission false before config/DB/provider",
+    "native_delete": 0
+  },
+  {
+    "group": "business-races",
+    "stage": "recover-T1",
+    "container": "a9c9d0d4aeb2f89473d5f30302c3103d5861f866c8ccfe9238b690c2022c4f14",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "missing fresh signed readonly topology",
+    "native_delete": 0
+  },
+  {
+    "group": "business-races",
+    "stage": "T2",
+    "container": "730c3be4a4196a1f5d3f6f4371c1f4fee99f96ced3bcefb558e07de783210763",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "send permission false before config/DB/provider",
+    "native_delete": 0
+  },
+  {
+    "group": "business-races",
+    "stage": "recover-T2",
+    "container": "44c8bbc16d08b1564a26cc3a1458b449b10bb027d9ae9ba29661652659a4525d",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "missing fresh signed readonly topology",
+    "native_delete": 0
+  },
+  {
+    "group": "late-hold",
+    "stage": "wire",
+    "container": "dce1ed5cf61e0d8d851b875bd777cec366b0b58a7e07bac27bbdc2e420acf640",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "send permission false before config/DB/provider",
+    "native_delete": 0
+  },
+  {
+    "group": "late-hold",
+    "stage": "H2",
+    "container": "8209eb41f6872fffcef75c9fbe4b76fd107491c9c61acb8ab8eb193130c69a80",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "send permission false before config/DB/provider",
+    "native_delete": 0
+  },
+  {
+    "group": "late-hold",
+    "stage": "recover-H2",
+    "container": "597978941b7b3ada9b2a99af6857c93db4d6e717414d97cc901d06ddc9d4fd2c",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "missing fresh signed readonly topology",
+    "native_delete": 0
+  },
+  {
+    "group": "mixed",
+    "stage": "wire",
+    "container": "538b4a10f6f0013de5e5a2df27b69b0386e0595fb258111cc339afecfbe07da9",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "send permission false before config/DB/provider",
+    "native_delete": 0
+  },
+  {
+    "group": "mixed",
+    "stage": "M1A",
+    "container": "9d8bb290f63c0f5b98dbc7c4ba339061fbf9a6b09fea63deb4c9a41b4b35328d",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "send permission false before config/DB/provider",
+    "native_delete": 0
+  },
+  {
+    "group": "mixed",
+    "stage": "recover-M1A",
+    "container": "01771bda39dd9087de3b1cc4063521c50b11db31f3c6d972f045c747c1f04953",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "missing fresh signed readonly topology",
+    "native_delete": 0
+  },
+  {
+    "group": "mixed",
+    "stage": "M1B",
+    "container": "d1ce93bcde526e3db7d633e09216f599b853ae568e221e2d6e19a8356b76c51b",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "send permission false before config/DB/provider",
+    "native_delete": 0
+  },
+  {
+    "group": "mixed",
+    "stage": "recover-M1B",
+    "container": "60650bcd314b2db63223161c8648e4254b7b63140550af776e668d32c457adf7",
+    "exit_code": 1,
+    "logs": "remaining candidate authority denied; no database/provider I/O permitted\n",
+    "source_core_native_stopped": true,
+    "denial_reason": "missing fresh signed readonly topology",
+    "native_delete": 0
+  }
+]

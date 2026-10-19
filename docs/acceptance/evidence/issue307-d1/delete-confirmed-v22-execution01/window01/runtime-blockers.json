@@ -1,0 +1,43 @@
+{
+  "status": "OPEN_RUNTIME_BLOCKERS_AFTER_FROZEN_REVIEW",
+  "at": "2026-10-19T06:20:11.645051+00:00",
+  "original_independent_PASS_preserved": true,
+  "current_frozen_candidate_reusable": false,
+  "blockers": [
+    {
+      "id": "R1",
+      "title": "Four sends before reconciliation conflicts with exact namespace inventory gate",
+      "evidence": [
+        "P1 signed upstream204, CONFIRMED ACCEPTED",
+        "P2 target budget consumed; no wire budget or witness",
+        "Source rule requires every registered version without an absence receipt to remain in complete inventory",
+        "Frozen runbook explicitly allows four sends then four recoveries"
+      ],
+      "code": "apps/platform/internal/lifecycle/pilot/remaining_dependencies.go:54",
+      "runbook": "docs/acceptance/issue307-d1-v22-window-runbook.md:38",
+      "confidence": "Deterministic frozen-code ordering contradiction. Actual post-P1 inventory/rejected transaction was not extracted from sealed Core; preserve that limit.",
+      "finite_repair_direction": "Require bounded read-only reconciliation and committed exact absence before the next same-namespace send; or prove another reviewed invariant. Do not relax inventory checks or assume 204 proves absence."
+    },
+    {
+      "id": "R2",
+      "title": "Sender masks pre-send claim failure with missing observation query",
+      "code": "apps/platform/cmd/lifecycle-fixture-remaining/main.go:482",
+      "actual_current_invocation_stderr": "no rows in result set",
+      "evidence": "P2 current-invocation timestamped log; no returned.json; target budget exists but wire slot absent",
+      "finite_repair_direction": "Preserve original DeleteExactCopy/ClaimExactSend error and distinguish no invocation from response UNKNOWN. A rejected claim must not require a provider observation or produce false invocation/cost/NOT_SENT facts."
+    }
+  ],
+  "not_done": [
+    "No source/binary/candidate/gate changes",
+    "No new execution or window prepared",
+    "No resend or recovery after failure",
+    "No independent post-fix review claimed"
+  ],
+  "operator_navigation_failures_preserved_in_chat": [
+    "Read-only rg initially referenced a nonexistent owner directory",
+    "Read-only rg wildcard paths were passed literally by PowerShell",
+    "Read-only source-search command had a shell quoting error"
+  ],
+  "operator_navigation_failures_are_not_native_preconditions": true,
+  "full_D1": "NOT_ACCEPTED"
+}

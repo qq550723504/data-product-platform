@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-19T09:00:44.005220+00:00",
+  "cid": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+  "stopped": true,
+  "pid": 0,
+  "volume_retained": "dpp307-postv22-regression-74cef6fd9fb2-data",
+  "network_retained": "e2ca1f0bb16bc01eb72e3f8da436c18b722ab90864ebf0b1627f32ace4bce774",
+  "no_retained_source_modified": true
+}

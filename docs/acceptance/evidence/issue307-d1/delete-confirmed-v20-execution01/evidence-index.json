@@ -1,0 +1,12 @@
+{
+  "execution": "67de3acd-3a9d-4ece-bebb-cd53d0ab3ac5",
+  "files": {
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-execution01/execution-preparation.json": "cb85b36707a3ea6bafcbfa3a3d06cb39c7d676455f54d9cc83d27b85e0a7788f",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-execution01/github-checkpoint.json": "3d2b9d617205a6efac270733cd7fa815934dc209c551db9e7a4507bb748b6350",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-execution01/human-authorization.json": "261378648576c27a106893a2b06af425e490966495e0dfc8fccda83d64bbaab8",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-execution01/offline-check.json": "d04135c49548646d6285d2f512881f8319de4bcdd0e869b2a03ff27dd7f9a92d",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-execution01/prewindow-check.json": "5c29569066bea0b345e81412a0b65f6847162255d52963f70f8a4db07adb1647",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-execution01/prewindow-host-readback.json": "b76299fc98e82140766939e4ab0bbc997a81526a21063350e0bccf990ce5f4ae",
+    "docs/acceptance/evidence/issue307-d1/delete-confirmed-v20-execution01/scheduled-resume.json": "02b5daf48c8472e9020426058e3d1c59e9511fd7fe2e7ae73753bcfa55a0ba9c"
+  }
+}

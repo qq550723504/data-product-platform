@@ -1,0 +1,11 @@
+{
+  "status": "INVALID_REVIEWER_OVERLAY_PATH_NOT_APPLIED",
+  "cause": "First overlay resolved repo-relative apps/platform prefix from apps/platform cwd, producing duplicate module path. Old01 passed because no source override was applied; it is not a valid old-source test result.",
+  "preserved": [
+    "B6-old-inspection-overlay.json",
+    "B6-cause-old01.txt",
+    "B6-cause-new02.txt"
+  ],
+  "corrected_overlay": "B6-old-inspection-overlay02.json",
+  "shared_source_edited": false
+}

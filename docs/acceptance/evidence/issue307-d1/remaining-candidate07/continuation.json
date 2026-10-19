@@ -1,0 +1,7 @@
+{
+  "reason": "Docker logs stderr was not included by original stdout-only wrapper",
+  "frozen_source": "f3b5de45857add3f852bbac0348e8c30ea105ade",
+  "candidate_sha256": "b9660f17cbb745e781a06d50e8ec0e81c87e654318420533b75b4ada29728949",
+  "candidate_bindings_replaced": false,
+  "native_delete": 0
+}

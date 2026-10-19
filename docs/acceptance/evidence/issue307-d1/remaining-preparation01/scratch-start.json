@@ -1,0 +1,24 @@
+{
+  "phase": "new-scratch-pg-only",
+  "base_commit": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+  "run": "c20631a616a9",
+  "container_id": "3678f03885cb21bcbaa1bfd6051f8d350262d7f6fcba899d2495cbbcce78d714",
+  "container": "dpp307-remaining-pg-c20631a616a9",
+  "image": "sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24",
+  "networks": [
+    "dpp307-remaining-pg-c20631a616a9-hostnet",
+    "dpp307-remaining-pg-c20631a616a9-net"
+  ],
+  "volume": "dpp307-remaining-pg-c20631a616a9-data",
+  "writable_named_volume": true,
+  "host_binding": "127.0.0.1",
+  "port": 61589,
+  "native_provider_configured": false,
+  "old_environment_start": 0,
+  "provider_io": 0,
+  "delete": 0,
+  "cleanup": 0,
+  "recorded_at": "2026-10-16T03:22:20.2074114Z",
+  "test_source_sha256": "c966b9339cab5dc4b58838823b6a4fef67773113539d2d9287472b01403b3b2f",
+  "test_go_version": "go version go1.26.5 windows/amd64"
+}

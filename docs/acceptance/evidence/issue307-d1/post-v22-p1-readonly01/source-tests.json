@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-19T09:50:23.714096+00:00",
+  "results": [
+    {
+      "cmd": [
+        "go",
+        "test",
+        "-count=1",
+        "./cmd/lifecycle-fixture-recovery",
+        "./cmd/lifecycle-fixture-remaining-iam",
+        "./internal/platform/outbox"
+      ],
+      "exit_code": 0,
+      "log": "source-tests-0.txt",
+      "sha256": "ebbe4c33f5233fd09a63e44f58925ad0b56f53a107a2b8b42fcc65d395f9cec1"
+    },
+    {
+      "cmd": [
+        "python",
+        "-B",
+        "examples/lifecycle-d1/test_p1_post_v22_readonly.py"
+      ],
+      "exit_code": 0,
+      "log": "source-tests-1.txt",
+      "sha256": "2cc3fff20ec5b94191bfc3485b7b80fbae9937f8ea1de6286d863bc11f739e03"
+    },
+    {
+      "cmd": [
+        "python",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_p1_post_v22_readonly.py"
+      ],
+      "exit_code": 0,
+      "log": "source-tests-2.txt",
+      "sha256": "507f7341ae4b69ced93b846f168e74dabd42ff7fb11cda0d94a3f8457744652d"
+    }
+  ],
+  "native_sources_started": false,
+  "native_delete": 0
+}

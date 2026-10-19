@@ -317,8 +317,13 @@ func TestLifecycleInspectorJournalAndLostResponse(t *testing.T) {
 		}
 		var calls atomic.Int64
 		s := inspectorForTest(t, c, j, func(w http.ResponseWriter, r *http.Request) { calls.Add(1); exactStatResponse(w, c) })
-		if _, err := s.InspectExactCopy(context.Background(), c); !errors.Is(err, lifecycle.ErrStorageUnknown) {
-			t.Fatal(err)
+		_, err := s.InspectExactCopy(context.Background(), c)
+		original := j.observationErr
+		if failStart {
+			original = j.startErr
+		}
+		if !errors.Is(err, lifecycle.ErrStorageUnknown) || !errors.Is(err, original) || !strings.Contains(err.Error(), original.Error()) {
+			t.Fatal("journal cause or fail-closed category lost", err)
 		}
 		want := int64(1)
 		if failStart {

@@ -1,0 +1,351 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_P1_SOURCE_REVIEW",
+  "reviewed_at": "2026-10-19T10:49:55.375564+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "remaining_blockers": [],
+  "scope": "B7 fixed Redis nonroot startup/readiness/log preservation and B8 lifecycle-correct network identity; selected Outbox durable status/last_error diagnostics. Source review only, no audit04 manifest reviewed.",
+  "base_git_head": "a1858de91860cc794626aee4402d0935a8c46cf5",
+  "reviewed_files": {
+    "apps/platform/cmd/lifecycle-fixture-recovery/main.go": {
+      "sha256": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+      "lf_sha256": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+      "bytes": 22126
+    },
+    "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22.go": {
+      "sha256": "293beed7bd5b087e12664a7aa163073adc0aea43e4c1ad983344d25e25a026af",
+      "lf_sha256": "293beed7bd5b087e12664a7aa163073adc0aea43e4c1ad983344d25e25a026af",
+      "bytes": 13269
+    },
+    "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22_test.go": {
+      "sha256": "f331071862d4d63390218d37123fd9708007cb08d3808f69d60773c0fb539a18",
+      "lf_sha256": "f331071862d4d63390218d37123fd9708007cb08d3808f69d60773c0fb539a18",
+      "bytes": 6949
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go": {
+      "sha256": "2105d0b4e48140464da2d0afa50f0e0db3423191adc42985e3c40119830c787b",
+      "lf_sha256": "2105d0b4e48140464da2d0afa50f0e0db3423191adc42985e3c40119830c787b",
+      "bytes": 10380
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go": {
+      "sha256": "79de5e0afee70f104b8cc596920a70f3749cc298a7b23aa937a4169435e5f8e8",
+      "lf_sha256": "79de5e0afee70f104b8cc596920a70f3749cc298a7b23aa937a4169435e5f8e8",
+      "bytes": 1034
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly.go": {
+      "sha256": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+      "lf_sha256": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+      "bytes": 2517
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly_test.go": {
+      "sha256": "b7549dc196ee01ed34afba1e73f627e41b8f5dea1d06d1f02cc1754aed12e540",
+      "lf_sha256": "b7549dc196ee01ed34afba1e73f627e41b8f5dea1d06d1f02cc1754aed12e540",
+      "bytes": 3030
+    },
+    "apps/platform/internal/platform/outbox/publisher.go": {
+      "sha256": "1cf8c17258465f2f4b39598d36b48b9c4fabae70ee3237fb3fdde774818d3910",
+      "lf_sha256": "1cf8c17258465f2f4b39598d36b48b9c4fabae70ee3237fb3fdde774818d3910",
+      "bytes": 12559
+    },
+    "apps/platform/internal/lifecycle/application/p1_recovery_integration_test.go": {
+      "sha256": "6e152455e9ccc2b13392988cfd309c8e25e2e6aa69557cc3baa184bb9fb4dfa3",
+      "lf_sha256": "6e152455e9ccc2b13392988cfd309c8e25e2e6aa69557cc3baa184bb9fb4dfa3",
+      "bytes": 4545
+    },
+    "examples/lifecycle-d1/reconcile-p1-post-v22.py": {
+      "sha256": "dca8bb50055a1fada43c2a23800230bc00c097483dcf3c9ff966e2e633cc3bd0",
+      "lf_sha256": "dca8bb50055a1fada43c2a23800230bc00c097483dcf3c9ff966e2e633cc3bd0",
+      "bytes": 31241
+    },
+    "examples/lifecycle-d1/test_p1_post_v22_readonly.py": {
+      "sha256": "b4d334667deabdcf68c2e03d9de92238786a218d125e097e40f7ad80aa31b487",
+      "lf_sha256": "b4d334667deabdcf68c2e03d9de92238786a218d125e097e40f7ad80aa31b487",
+      "bytes": 14493
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "sha256": "261af9b77a2981fe12a8240033887f743ffc3f071d225577a6b912f15a2bbc51",
+      "lf_sha256": "261af9b77a2981fe12a8240033887f743ffc3f071d225577a6b912f15a2bbc51",
+      "bytes": 4924
+    },
+    "docs/acceptance/issue307-d1-post-v22-p1-readonly.md": {
+      "sha256": "10d12b2fb820f3fe562818da6d1b58cfe66ad2e4e243eb9dfd7a5ff9f16d1fb0",
+      "lf_sha256": "10d12b2fb820f3fe562818da6d1b58cfe66ad2e4e243eb9dfd7a5ff9f16d1fb0",
+      "bytes": 3392
+    },
+    "apps/platform/internal/lifecycle/pilot/recovery_bootstrap.go": {
+      "sha256": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2",
+      "lf_sha256": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2",
+      "bytes": 678
+    },
+    "apps/platform/internal/platform/storage/lifecycle_inspection.go": {
+      "sha256": "f62a08e2531adc4ccb40592d55bf4542e4770abc60ca5a77e0a8ec795d3cd80b",
+      "lf_sha256": "f62a08e2531adc4ccb40592d55bf4542e4770abc60ca5a77e0a8ec795d3cd80b",
+      "bytes": 20599
+    },
+    "apps/platform/internal/platform/storage/lifecycle_inspection_test.go": {
+      "sha256": "c1137d1ca0a902bf4440f904ded2fc6069dd7375ba189bf2dd4199a394f555de",
+      "lf_sha256": "c1137d1ca0a902bf4440f904ded2fc6069dd7375ba189bf2dd4199a394f555de",
+      "bytes": 18617
+    },
+    "apps/platform/internal/lifecycle/application/p1_journal_export_test.go": {
+      "sha256": "80dc688d16e6786f5b3f3c42653b0fd146456acaf7bf4adcdf69d825509a271c",
+      "lf_sha256": "80dc688d16e6786f5b3f3c42653b0fd146456acaf7bf4adcdf69d825509a271c",
+      "bytes": 711
+    },
+    "apps/platform/internal/lifecycle/application/p1_journal_sdk_integration_test.go": {
+      "sha256": "ac93b27650ec0bc220678f19bd92ee48cdee0f1e59c0f969ad3986cc6d2ecae9",
+      "lf_sha256": "ac93b27650ec0bc220678f19bd92ee48cdee0f1e59c0f969ad3986cc6d2ecae9",
+      "bytes": 3449
+    },
+    ".gitattributes": {
+      "sha256": "d035c59cf99d1d405fcb0b26762ac570baa41fd4a3ee85541f38639b5a5e47c3",
+      "lf_sha256": "d035c59cf99d1d405fcb0b26762ac570baa41fd4a3ee85541f38639b5a5e47c3",
+      "bytes": 10339
+    }
+  },
+  "changed_since_source04": [
+    ".gitattributes",
+    "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22.go",
+    "apps/platform/internal/lifecycle/application/p1_recovery_integration_test.go",
+    "examples/lifecycle-d1/reconcile-p1-post-v22.py",
+    "examples/lifecycle-d1/test_p1_post_v22_readonly.py"
+  ],
+  "closed_findings": [
+    {
+      "id": "B7",
+      "classification": "BLOCKER_CLOSED",
+      "evidence": "Redis create fixes the image account to 999:1000 with the existing official entrypoint and exact owned persistent volume. Strict redis_contract is applied during preparation/fresh, actual PING readiness precedes original Core/Native and identity/profile enable, and critical active phases recheck actual running image/user/command/mount/network/ports/caps/restart. Finally preserves independent original Redis stdout/stderr and state after closure. No new root bootstrap or parallel queue runtime.",
+      "diagnostics": "Worker reads exact selected event status and durable last_error, writes an O_EXCL outbox-dispatch receipt and refuses non-PUBLISHED state. PG failure regression proves DispatchOnce nil does not imply publish and preserves the original handler error without touching the unrelated row."
+    },
+    {
+      "id": "B8",
+      "classification": "BLOCKER_CLOSED",
+      "evidence": "Only never-started Status=created with Running=false/PID0 accepts an unallocated empty endpoint ID; immutable HostConfig.NetworkMode must still equal exact approved network ID and there must be exactly one network. Exited/running empty endpoint and foreign configured ID reject; running requires actual endpoint ID. Parent actual initial rejection retained, then real fixed UID Redis PONG and stop proved the reviewed contract on the owned isolated scratch network.",
+      "independent_counterexample_boundary": "The private file named host-B7-before-B8.py was captured after the parent concurrently fixed B8 and already contains the final lifecycle gate. B8-created-initial01.txt is a PASS post-fix positive using the original audit03 created-network projection; it is not claimed as a pre-fix failure."
+    }
+  ],
+  "independent_actual_tests": [
+    {
+      "command": "python -B examples/lifecycle-d1/test_p1_post_v22_readonly.py",
+      "result": "PASS_10_TESTS",
+      "log": "B7B8-host-normal01.txt",
+      "scope": "Mocks/temp files only; no Docker/provider access"
+    },
+    {
+      "command": "python -B -O examples/lifecycle-d1/test_p1_post_v22_readonly.py",
+      "result": "PASS_10_TESTS",
+      "log": "B7B8-host-optimized01.txt",
+      "scope": "Mocks/temp files only; runtime checks remain active under -O"
+    },
+    {
+      "command": "go test -count=1 ./cmd/lifecycle-fixture-recovery",
+      "result": "PASS_UNCACHED_PACKAGE",
+      "log": "B7B8-recovery-unit01.txt",
+      "scope": "Unit/SDK loopback where used, no retained native source"
+    },
+    {
+      "command": "python -B test_independent_redis_created01.py host-B7-before-B8.py",
+      "result": "PASS_1_POST_FIX_ACTUAL_CREATED_PROJECTION",
+      "log": "B8-created-initial01.txt",
+      "scope": "Original public audit03 sanitized inspect projection, no live inspect"
+    }
+  ],
+  "independent_artifacts": {
+    "B7B8-host-normal01.txt": {
+      "sha256": "6659c85d6a76440f621a1919379517a88986fa5af018d89f857db022840f185d",
+      "lf_sha256": "c54665ad75a31f344c690fe503cb0a496e8afc49db845e897effbd7cc1abc7be",
+      "bytes": 2213
+    },
+    "B7B8-host-optimized01.txt": {
+      "sha256": "037f5532fc5c5cfb8d0d80a48eb8be868691908536db7d0fab5abee1c38854dd",
+      "lf_sha256": "fb4d26fd4e68d1b719e0cd541a259924d70c984a471682d821dd7680fc61fa99",
+      "bytes": 2213
+    },
+    "B7B8-recovery-unit01.txt": {
+      "sha256": "9ebefc8506f803c9a0ee72a9e2141b2cc31a3f924f9e890b6c2baace16d53b58",
+      "lf_sha256": "f0057adef3a0f96380b1d5e6bf1148c81be22a25bb0633c52ed2b38ece1fa58d",
+      "bytes": 103
+    },
+    "B8-created-initial01.txt": {
+      "sha256": "58d05084f0da5ce7abec1f31a7cc254773618dee0dc952bbb356abe7a296c2f0",
+      "lf_sha256": "7117bd773f41c38ad2491214de37cfe094d59bf9450c22dd4018d1294ccd4757",
+      "bytes": 262
+    },
+    "test_independent_redis_created01.py": {
+      "sha256": "b4790682c8c916b318594e825285c7057304837a923ee16edf060e40e04ce2b2",
+      "lf_sha256": "b4790682c8c916b318594e825285c7057304837a923ee16edf060e40e04ce2b2",
+      "bytes": 1331
+    },
+    "host-B7-before-B8.py": {
+      "sha256": "dca8bb50055a1fada43c2a23800230bc00c097483dcf3c9ff966e2e633cc3bd0",
+      "lf_sha256": "dca8bb50055a1fada43c2a23800230bc00c097483dcf3c9ff966e2e633cc3bd0",
+      "bytes": 31241
+    }
+  },
+  "parent_actual_evidence_reviewed_not_personally_run": {
+    "postgres": {
+      "passed": 3,
+      "receipt": "postgres-regression.json",
+      "real_scratch_CID": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+      "scratch_stopped": true,
+      "scratch_pid": 0,
+      "volume_retained": "dpp307-postv22-regression-74cef6fd9fb2-data",
+      "real_storage_provider": "SDK_LOOPBACK_HTTP_ONLY",
+      "retained_source_started": false,
+      "native_delete": 0,
+      "proof": "Selected queue failure last_error retained / selected success and default global still work / actual P1 routing bootstrap plus Start/Observe SDK failure combinations. Exact unrelated Outbox row before/after identical."
+    },
+    "redis": {
+      "receipt": "queue-regression/redis-ready.json",
+      "real_scratch_CID": "c17cfa598576404c44641497b5c2d1156a8c43325b846597ab208a3b5b5b74dd",
+      "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "user": "999:1000",
+      "ping": "PONG",
+      "stopped": true,
+      "pid": 0,
+      "owned_volume_retained": "dpp307-p1-queue-test-94f1f865f9fd-data",
+      "internal_network": "e2ca1f0bb16bc01eb72e3f8da436c18b722ab90864ebf0b1627f32ace4bce774",
+      "retained_source_started": false,
+      "native_delete": 0,
+      "scope": "Actual fixed image/user/official entrypoint/cap-drop ALL persistent-volume local PING smoke. Does not prove real Asynq recovery or native Core absence."
+    },
+    "files": {
+      "postgres-regression.json": {
+        "sha256": "a7a9c4b4dc71bbdd54219a3fb5f4b681355ec4992a469c0f9f3390d4086f5f54",
+        "lf_sha256": "a7a9c4b4dc71bbdd54219a3fb5f4b681355ec4992a469c0f9f3390d4086f5f54",
+        "bytes": 772
+      },
+      "postgres-tests.txt": {
+        "sha256": "8cde2d32f2e654593900cf19bb9b061833eaa5dcaa6e69213426e2f71d3bc487",
+        "lf_sha256": "8cde2d32f2e654593900cf19bb9b061833eaa5dcaa6e69213426e2f71d3bc487",
+        "bytes": 1340
+      },
+      "scratch-closed.json": {
+        "sha256": "6008d34eef4bf78140c305886bd5dabe72e7be99815ac1700aee5dd45e816265",
+        "lf_sha256": "6008d34eef4bf78140c305886bd5dabe72e7be99815ac1700aee5dd45e816265",
+        "bytes": 223
+      },
+      "source-tests.json": {
+        "sha256": "800674ba6ab8aeac0ac0422f87970aa91159ede3c134d7e6ce312659a7404ac7",
+        "lf_sha256": "800674ba6ab8aeac0ac0422f87970aa91159ede3c134d7e6ce312659a7404ac7",
+        "bytes": 350
+      },
+      "host-normal.txt": {
+        "sha256": "482d2f4e6b2242bae38ea451c4436f3eb03edc20c6ba23915624c1f5f98aa459",
+        "lf_sha256": "0f119592fd734781a5384b25dcabefbe62ba898d16a9b455eeba5d27ea184efa",
+        "bytes": 2213
+      },
+      "host-optimized.txt": {
+        "sha256": "6e8316a150680e31e7ad5caf3629844e648f6ddb7d303eb9e72761fc5e2c456f",
+        "lf_sha256": "4199af54f31fecbad00eb43f6456f53008294683741c3d3e6ce28638bebd3dc7",
+        "bytes": 2213
+      },
+      "queue-regression/initial-created-network-rejection.json": {
+        "sha256": "f89862d5843e8486a4a5773e8036b6f7a94d87e46236264e5e64ce3f202a5856",
+        "lf_sha256": "f89862d5843e8486a4a5773e8036b6f7a94d87e46236264e5e64ce3f202a5856",
+        "bytes": 1054
+      },
+      "queue-regression/redis-ready.json": {
+        "sha256": "b80d9e66105d722169c60524fe6302921490c0b887576402ef84b4b6624c5750",
+        "lf_sha256": "b80d9e66105d722169c60524fe6302921490c0b887576402ef84b4b6624c5750",
+        "bytes": 186
+      },
+      "queue-regression/owned-closed.json": {
+        "sha256": "f5cb0e2a98d7305c41edf3c07a6df22ef5a59f6ee47ce704b0df8f375587c9de",
+        "lf_sha256": "f5cb0e2a98d7305c41edf3c07a6df22ef5a59f6ee47ce704b0df8f375587c9de",
+        "bytes": 475
+      },
+      "queue-regression/redis-stdout.txt": {
+        "sha256": "8e13afb38087a5cff3427d7bbf4a1dbe07c2f1b1a144b2672877943df3d5d73a",
+        "lf_sha256": "8e13afb38087a5cff3427d7bbf4a1dbe07c2f1b1a144b2672877943df3d5d73a",
+        "bytes": 1067
+      },
+      "queue-regression/redis-stderr.txt": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "lf_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  },
+  "old_audit03": {
+    "audit_id": "bb448568-0444-48ee-a2e4-a9f69344b6d0",
+    "manifest_sha256": "2dc299ec1d9fbe4831fa7fae3c886f160565d49bea35c9fc0d4abf89ba72eafa",
+    "terminal_status": "FAILED_OR_UNCONFIRMED_SEALED",
+    "native_precheck": "ACTUAL_PASS_7_EXACT_HEAD_PROTECTION_TWO_FULL_LISTS_P1_ABSENT",
+    "bytes_SHA_reread": "NOT_PERFORMED",
+    "redis_exit": 127,
+    "redis_stderr_sha256": "c7cc0db781f153f2d68094140660ae9a7a6a5a6abbb94bec8f51a8e8a5e5ef5c",
+    "Core_absence": "NOT_RUN",
+    "Core_after": "NOT_CAPTURED",
+    "real_Asynq_success": "NOT_PROVEN",
+    "SDK_quantity_and_cost": "NOT_ASSESSED_IN_THIS_REVIEW",
+    "closed_owners": 6,
+    "profiles_false": 2,
+    "fresh_disabled_identities": 4,
+    "old_budget_backup_controls_unchanged_per_terminal": true,
+    "native_delete": 0,
+    "may_resume": false,
+    "files": {
+      "terminal.json": {
+        "sha256": "1cb6bb1d04ffb5fe9916aa2e92db0692541f42333808bf7a3aaa1206a5f958a0",
+        "lf_sha256": "1cb6bb1d04ffb5fe9916aa2e92db0692541f42333808bf7a3aaa1206a5f958a0",
+        "bytes": 1968
+      },
+      "seal.json": {
+        "sha256": "a61045b036b29da5d573bdf5a0218f9293be73bb0781032545d7ab06ac30a845",
+        "lf_sha256": "a61045b036b29da5d573bdf5a0218f9293be73bb0781032545d7ab06ac30a845",
+        "bytes": 1454
+      },
+      "redis-failure-rootcause.json": {
+        "sha256": "d6bd014efb67fec06813ae8baf8ee2d02ea26e60dbf92c710a8dd0d3e8767553",
+        "lf_sha256": "d6bd014efb67fec06813ae8baf8ee2d02ea26e60dbf92c710a8dd0d3e8767553",
+        "bytes": 600
+      },
+      "redis-original-stderr.txt": {
+        "sha256": "c7cc0db781f153f2d68094140660ae9a7a6a5a6abbb94bec8f51a8e8a5e5ef5c",
+        "lf_sha256": "c7cc0db781f153f2d68094140660ae9a7a6a5a6abbb94bec8f51a8e8a5e5ef5c",
+        "bytes": 51
+      },
+      "output-worker/native-precheck.json": {
+        "sha256": "feb810011ef42969a1212312fff85862b1308bd323f7196fe0b20da7e5364d2d",
+        "lf_sha256": "feb810011ef42969a1212312fff85862b1308bd323f7196fe0b20da7e5364d2d",
+        "bytes": 15426
+      },
+      "worker-owner.json": {
+        "sha256": "a0f09dafa8635f2bb63fadf07e0308723f97051f10a71945f5024147d2af23a8",
+        "lf_sha256": "a0f09dafa8635f2bb63fadf07e0308723f97051f10a71945f5024147d2af23a8",
+        "bytes": 497
+      },
+      "worker-original-stderr.txt": {
+        "sha256": "849dbf48f607c94f2f35cfd266683341bb9cb8a90f53f57e29ea5cfa419900b3",
+        "lf_sha256": "849dbf48f607c94f2f35cfd266683341bb9cb8a90f53f57e29ea5cfa419900b3",
+        "bytes": 89
+      }
+    }
+  },
+  "prior_reports_preserved": {
+    "source-final-review02.json": "be0241dd4ccbc8ad82b7d5e73b69121478dcbde05edea18db28cf73f9b3d914b",
+    "source-final-review03.json": "aa8e3d0312da62cc5beada3aa96dbab1724c11e37127deb2e402791701e6eb0d",
+    "source-final-review04.json": "c0b13b02488144eec937bcf54695032ce7606008b784dc05a13a68cd96cc51fb",
+    "manifest01-blocked-review.json": "bbb66dd3f41c1a81d8b5f3880a718c307fb4550bba56192f4eb0338bcd6a0d9f",
+    "manifest02-final-review.json": "c690ebd0250425d122acd08c8c9a459f26fcd2603b50b1ae83cecbd42b71237a",
+    "audit02-failure-rootcause-review.json": "bb13fc99132e7e74abba73fdd69d682fee8199db227beb75c7e65581df28b73a",
+    "manifest03-final-review.json": "b62e761efc4b60f168c5f149665adec302c7416e4dea0fb8c7a96d9f3ca59f7e"
+  },
+  "scope_limits": [
+    "This SOURCE05 approval does not approve a runnable manifest, binary, actual new CID, identity enable, source start or a new time window. Audit04 remains unprepared and needs a separate exact manifest review.",
+    "Reviewer ran no Docker/provider/native operation, accessed no credential values, enabled no identity, signed no proof, sent no DELETE, and wrote no shared repository file.",
+    "Real scratch PG/Redis evidence was produced by the parent and independently read/hash-checked here; reviewer host tests use mocks and actual created-state projection only.",
+    "Actual audit03 native precheck cannot stand in for Core absence, Core-after, real Asynq completion or full D1 acceptance. Missing rows or failure do not prove no call/cost.",
+    "B1-B6 fixes and prior reports remain as immutable historical evidence; no old audit or old deletion authorization is resumed or reused.",
+    "Current acceptance matrix diff correctly records audit03 failed/sealed with missing Core-after, and separates actual native precheck, isolated smoke/PG and future04 NOT_RUN. Its future append-only updates do not alter frozen source or old evidence.",
+    "Remaining six scope is a draft only, not a ready executable deletion candidate."
+  ],
+  "manifest_sha256": null,
+  "runnable_manifest_review": false,
+  "audit04": "NOT_PREPARED_NOT_RUN",
+  "remaining_six": "UNFROZEN_SCOPE_DRAFT_ONLY",
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

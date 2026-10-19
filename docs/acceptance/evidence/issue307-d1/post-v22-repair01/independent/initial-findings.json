@@ -1,0 +1,40 @@
+{
+  "status": "BLOCKER_FOUND_PENDING_REPAIR",
+  "at": "2026-10-19T08:59:22.523751+00:00",
+  "reviewer": "/root/v20_independent_review",
+  "blockers": [
+    {
+      "id": "R2_OBSERVATION_COMMIT_ERROR_WITH_SUCCESSFUL_READBACK",
+      "classification": "BLOCKER",
+      "file": "apps/platform/cmd/lifecycle-fixture-remaining/send_return.go",
+      "finding": "The successful observation lookup path discards original j.observationError and transportObservation. A transaction may report a commit/result error after storing the observation; next SELECT then succeeds. Original storage error is replaced by normalized ErrStorageUnknown and the raw transport fact is absent from returned.json; expected UNKNOWN stages may return nil despite the observation persistence error.",
+      "independent_proof": "Loopback fake provider204; exact journal returns original storeErr while retaining proof; subsequent lookup returns CONFIRMED ACCEPTED. Private Go overlay fails both errors.Is(original) and raw transport retention assertions. No real provider or Docker.",
+      "recommendation": "Retain original observation error and transport fact regardless of lookup success, and do not treat expected UNKNOWN as successful while persistence error remains unresolved. Preserve primary and readback errors, budget, original facts and no resend."
+    }
+  ],
+  "source_file_SHA256": {
+    "apps/platform/cmd/lifecycle-fixture-remaining/main.go": "ff3f45bd37566efedda5947a019cd2e40e79e516b612b83a1887567567184fc0",
+    "apps/platform/cmd/lifecycle-fixture-remaining/sequence.go": "27e2427f611d35666ad15d2a21b3715b919df0d1c2eb32e5a57fb89f10603682",
+    "apps/platform/cmd/lifecycle-fixture-remaining/send_return.go": "48c2aba351651f8a99df359e3ca6f12ec1b863eaa6c55bbfbbb34ee0c309621b",
+    "apps/platform/cmd/lifecycle-fixture-remaining/send_return_test.go": "6988e9f483bdf79b74d811a140b5e5b8d1d0ecb220f5b023cfb5d1ab45c2f67f",
+    "apps/platform/cmd/lifecycle-fixture-remaining/sequence_test.go": "ebbb6acbb964789a06e03c3aace3e09c58f274e4af1e23d7fa07c160173f002c",
+    "apps/platform/internal/lifecycle/application/exact_execution_integration_test.go": "d274b7e67784c344d98ff5adc368c3b553a42c9fbec93e826b0f40221f101e8e",
+    "docs/acceptance/issue307-d1-post-v22-repair.md": "8841917d8815817714e893949452a4a7301a731f2a085bf1a612d70560ac81d0"
+  },
+  "retained_source_snapshot": "initial-reviewed-source",
+  "evidence_SHA256": {
+    "remaining-unit-initial.txt": "a49deb7196c24c1ea4022254ca63cc8afe013f44d695b4f1b3db0e302327fd75",
+    "observation-readback-initial.txt": "4bd9b8716e530693b6c94e26de9d02d099b26b842032825d15cbf2c3d2fac45d",
+    "send_return_independent_overlay_test.go": "8fdf7dbafb3564963a5c81b8c3e7e88b4c3df6ce5526d93687b96d08f3cf3193",
+    "observation-readback-overlay.json": "f5b1a74d07bce8b0d3cd45442b182a848d069ff3082af7144f783ea0e7b99046"
+  },
+  "other_checks": "Initial un-cached cmd/lifecycle-fixture-remaining package PASS. R1 SQL is workspace plus immutable exact copy IDs; early check precedes native inspection/budget and Core fence/inventory code unchanged. Actual scratch PG acceptance pending parent evidence.",
+  "side_effects": {
+    "repo_writes": 0,
+    "Docker_io": 0,
+    "real_provider_io": 0,
+    "private_credential_reads": 0,
+    "old_source_starts": 0,
+    "native_DELETE": 0
+  }
+}

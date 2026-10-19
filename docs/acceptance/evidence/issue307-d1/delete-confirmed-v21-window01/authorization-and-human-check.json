@@ -1,0 +1,33 @@
+{
+  "status": "PASS_EXPLICIT_AUTHORIZATION_AND_FROZEN_REFERENCE_BYTES",
+  "at": "2026-10-18T14:01:23.059685+00:00",
+  "execution": "602acafe-065a-4385-b739-5776408f5448",
+  "human_message_id": "msg_01a14ecd-d08b-78e1-85f0-3ba0aeb00b5f",
+  "user_retyped_template": false,
+  "approved_artifacts": 26,
+  "HEAD": "8eef47a2edfbd9df2dc2a83467d9361a3fa4ec96",
+  "native_delete": 0,
+  "resource_starts": 0,
+  "latest_human_messages": [
+    {
+      "at": "2026-10-18T11:25:51.214Z",
+      "id": "msg_01a14ec2-caed-72f2-8470-46a083ee9721",
+      "text": "你来逐项核对 candidate11/v21 的完整确认文本与冻结证据，确认 execution、全部绑定、7份目标和11份保留版本一致，并检查10月18日新加坡22:00–22:40窗口及执行前条件。#323保持Draft、不合并，#307保持OPEN，暂不执行真实删除。\n"
+    },
+    {
+      "at": "2026-10-18T11:34:25.657Z",
+      "id": "msg_01a14eca-a479-71f1-83f7-8002552e7289",
+      "text": "接下来呢\n"
+    },
+    {
+      "at": "2026-10-18T11:37:53.547Z",
+      "id": "msg_01a14ecd-d08b-78e1-85f0-3ba0aeb00b5f",
+      "text": "授权按已逐项核对的 candidate11/v21 完整精确方案及全部冻结绑定执行，execution 602acafe-065a-4385-b739-5776408f5448。\n\n仅在2026年10月18日新加坡22:00–22:40、全部新鲜前置通过后删除方案所列7份目标，每份最多一次、全局最多7次，UNKNOWN不重发。\n\n11份保留版本、其他环境、全部备份、旧pins和失败证据保留；cleanup=0、hold-release=0、bypass=0。失败或过窗立即封存，不延长、平移或重开窗口。\n\n旧授权不复用。#323保持Draft、不合并，#307保持OPEN。\n"
+    },
+    {
+      "at": "2026-10-18T11:47:11.771Z",
+      "id": "msg_01a14ed6-551b-7eb3-a2fb-6b2ecd89c332",
+      "text": "现在做的是什么工作内容\n"
+    }
+  ]
+}

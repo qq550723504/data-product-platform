@@ -1,0 +1,38 @@
+C:\Users\Henry\.codex\fixture-private\remaining-candidate11\operator: go1.26.5
+	path	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining
+	mod	github.com/qq550723504/data-product-platform/apps/platform	(devel)	
+	dep	github.com/cespare/xxhash/v2	v2.3.0	h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
+	dep	github.com/dgryski/go-rendezvous	v0.0.0-20200823014737-9f7001d12a5f	h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
+	dep	github.com/dustin/go-humanize	v1.0.1	h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
+	dep	github.com/go-ini/ini	v1.67.0	h1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=
+	dep	github.com/goccy/go-json	v0.10.5	h1:Fq85nIqj+gXn/S5ahsiTlK3TmC85qgirsdTP/+DeaC4=
+	dep	github.com/google/uuid	v1.6.0	h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+	dep	github.com/hibiken/asynq	v0.25.1	h1:phj028N0nm15n8O2ims+IvJ2gz4k2auvermngh9JhTw=
+	dep	github.com/jackc/pgpassfile	v1.0.0	h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
+	dep	github.com/jackc/pgservicefile	v0.0.0-20240606120523-5a60cdf6a761	h1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=
+	dep	github.com/jackc/pgx/v5	v5.7.2	h1:mLoDLV6sonKlvjIEsV56SkWNCnuNv531l94GaIzO+XI=
+	dep	github.com/jackc/puddle/v2	v2.2.2	h1:PR8nw+E/1w0GLuRFSmiioY6UooMp6KJv0/61nB7icHo=
+	dep	github.com/klauspost/compress	v1.17.11	h1:In6xLpyWOi1+C7tXUUWv2ot1QvBjxevKAaI6IXrJmUc=
+	dep	github.com/klauspost/cpuid/v2	v2.2.9	h1:66ze0taIn2H33fBvCkXuv9BmCwDfafmiIVpKV9kKGuY=
+	dep	github.com/minio/crc64nvme	v1.0.1	h1:DHQPrYPdqK7jQG/Ls5CTBZWeex/2FMS3G5XGkycuFrY=
+	dep	github.com/minio/md5-simd	v1.1.2	h1:Gdi1DZK69+ZVMoNHRXJyNcxrMA4dSxoYHZSQbirFg34=
+	dep	github.com/minio/minio-go/v7	v7.0.88	h1:v8MoIJjwYxOkehp+eiLIuvXk87P2raUtoU5klrAAshs=
+	dep	github.com/redis/go-redis/v9	v9.7.0	h1:HhLSs+B6O021gwzl+locl0zEDnyNkxMtf/Z3NNBMa9E=
+	dep	github.com/robfig/cron/v3	v3.0.1	h1:WdRxkvbJztn8LMz/QEvLN5sBU+xKpSqwwUO1Pjr4qDs=
+	dep	github.com/rs/xid	v1.6.0	h1:fV591PaemRlL6JfRxGDEPl69wICngIQ3shQtzfy2gxU=
+	dep	github.com/spf13/cast	v1.7.0	h1:ntdiHjuueXFgm5nzDRdOS4yfT43P5Fnud6DH50rz/7w=
+	dep	golang.org/x/crypto	v0.36.0	h1:AnAEvhDddvBdpY+uR+MyHmuZzzNqXSe/GvuDeob5L34=
+	dep	golang.org/x/net	v0.37.0	h1:1zLorHbz+LYj7MQlSf1+2tPIIgibq2eL5xkrGk6f+2c=
+	dep	golang.org/x/sync	v0.12.0	h1:MHc5BpPuC30uJk597Ri8TV3CNZcTLu6B6z4lJy+g6Jw=
+	dep	golang.org/x/sys	v0.31.0	h1:ioabZlmFYtWhL+TRYpcnNlLwhyxaM9kWTDEmfnprqik=
+	dep	golang.org/x/text	v0.23.0	h1:D71I7dUrlY+VX0gQShAThNGHFxZ13dGLBHQLVl1mJlY=
+	dep	golang.org/x/time	v0.8.0	h1:9i3RxcPv3PZnitoVGMPDKZSq1xW1gK1Xy3ArNOGZfEg=
+	dep	google.golang.org/protobuf	v1.36.5	h1:tPhr+woSbjfYvY6/GPufUoYizxw1cF/yFoxJ2fmpwlM=
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	-trimpath=true
+	build	DefaultGODEBUG=containermaxprocs=0,cryptocustomrand=1,decoratemappings=0,tlssecpmlkem=0,tlssha1=1,updatemaxprocs=0,urlstrictcolons=0,x509sha256skid=0
+	build	CGO_ENABLED=0
+	build	GOARCH=amd64
+	build	GOOS=linux
+	build	GOAMD64=v1

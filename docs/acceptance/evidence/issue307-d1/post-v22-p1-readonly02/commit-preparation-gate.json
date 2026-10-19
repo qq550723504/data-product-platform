@@ -1,0 +1,9 @@
+{
+  "initial_commit": "REJECTED_BY_DIFF_CHECK_FOR_LITERAL_TABS_IN_RAW_GO_BUILD_INFO_AND_ORIGINAL_TEST_OUTPUT",
+  "raw_evidence_rewritten": false,
+  "resolution": "Narrow whitespace attributes for three original evidence files",
+  "prepare_attempt": "REJECTED_BEFORE_CONTROL_ALLOCATION_BECAUSE_SOURCE_NOT_COMMITTED",
+  "source_started": false,
+  "identity_enabled": false,
+  "native_delete": 0
+}

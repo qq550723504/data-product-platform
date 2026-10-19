@@ -1,0 +1,13 @@
+{
+ admin off
+ auto_https off
+}
+:9000 {
+ route {
+  @bypass header X-Amz-Bypass-Governance-Retention *
+  respond @bypass 403
+  @copy header X-Amz-Copy-Source *
+  respond @copy 403
+  respond 403
+ }
+}

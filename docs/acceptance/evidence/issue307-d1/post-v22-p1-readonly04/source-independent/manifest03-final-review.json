@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_P1_READONLY_REVIEW",
+  "remaining_blockers": [],
+  "reviewed_at": "2026-10-19T10:34:16.542276+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "manifest_sha256": "2dc299ec1d9fbe4831fa7fae3c886f160565d49bea35c9fc0d4abf89ba72eafa",
+  "audit_id": "bb448568-0444-48ee-a2e4-a9f69344b6d0",
+  "source_head": "a1858de91860cc794626aee4402d0935a8c46cf5",
+  "readonly_window": {
+    "NotBefore": "2026-10-19T10:31:40.310358+00:00",
+    "ExpiresAt": "2026-10-19T11:11:40.310358+00:00",
+    "duration_minutes": 40,
+    "extension_permitted": false
+  },
+  "scope": {
+    "purpose": "POST_V22_P1_READONLY_RECONCILIATION",
+    "copy": "5a4c9789-3e67-4e54-ab58-128d111cbd65",
+    "original_attempt": "009f4317-8855-4f99-80ec-cafc225f654e",
+    "workspace": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+    "namespace": "dpp-lifecycle307-online",
+    "key": "fixture/p1.csv",
+    "version": "fed0102b-bc8b-4f47-b9e2-fae8d5c563ce",
+    "maximum_provider_deletes": 0,
+    "send_authority": "NONE",
+    "old_execution_resume": false
+  },
+  "source_review": {
+    "file": "source-final-review04.json",
+    "sha256": "c0b13b02488144eec937bcf54695032ce7606008b784dc05a13a68cd96cc51fb",
+    "status": "PASS_BOUNDED_INDEPENDENT_P1_SOURCE_REVIEW",
+    "B1_B2_B3_B4_B5_B6": "CLOSED_IN_CURRENT_SOURCE",
+    "current_working_and_committed_Git_LF_files_verified": true,
+    "tracked_worktree_clean": true,
+    "files": {
+      "apps/platform/cmd/lifecycle-fixture-recovery/main.go": {
+        "sha256": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+        "lf_sha256": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+        "bytes": 22126
+      },
+      "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22.go": {
+        "sha256": "c232599a2ea29db0df1f57a5d0e502f26accb3b67ea3b724e7edefb122180e46",
+        "lf_sha256": "c232599a2ea29db0df1f57a5d0e502f26accb3b67ea3b724e7edefb122180e46",
+        "bytes": 12996
+      },
+      "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22_test.go": {
+        "sha256": "f331071862d4d63390218d37123fd9708007cb08d3808f69d60773c0fb539a18",
+        "lf_sha256": "f331071862d4d63390218d37123fd9708007cb08d3808f69d60773c0fb539a18",
+        "bytes": 6949
+      },
+      "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go": {
+        "sha256": "2105d0b4e48140464da2d0afa50f0e0db3423191adc42985e3c40119830c787b",
+        "lf_sha256": "2105d0b4e48140464da2d0afa50f0e0db3423191adc42985e3c40119830c787b",
+        "bytes": 10380
+      },
+      "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go": {
+        "sha256": "79de5e0afee70f104b8cc596920a70f3749cc298a7b23aa937a4169435e5f8e8",
+        "lf_sha256": "79de5e0afee70f104b8cc596920a70f3749cc298a7b23aa937a4169435e5f8e8",
+        "bytes": 1034
+      },
+      "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly.go": {
+        "sha256": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+        "lf_sha256": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+        "bytes": 2517
+      },
+      "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly_test.go": {
+        "sha256": "b7549dc196ee01ed34afba1e73f627e41b8f5dea1d06d1f02cc1754aed12e540",
+        "lf_sha256": "b7549dc196ee01ed34afba1e73f627e41b8f5dea1d06d1f02cc1754aed12e540",
+        "bytes": 3030
+      },
+      "apps/platform/internal/platform/outbox/publisher.go": {
+        "sha256": "1cf8c17258465f2f4b39598d36b48b9c4fabae70ee3237fb3fdde774818d3910",
+        "lf_sha256": "1cf8c17258465f2f4b39598d36b48b9c4fabae70ee3237fb3fdde774818d3910",
+        "bytes": 12559
+      },
+      "apps/platform/internal/lifecycle/application/p1_recovery_integration_test.go": {
+        "sha256": "ea80793d8af661795a46203b3bbe87be56ec2857e0cae9e1dea300646d859b84",
+        "lf_sha256": "ea80793d8af661795a46203b3bbe87be56ec2857e0cae9e1dea300646d859b84",
+        "bytes": 2747
+      },
+      "examples/lifecycle-d1/reconcile-p1-post-v22.py": {
+        "sha256": "3debc84e8f5092b69f7218a20ace9384fb7d3eafcbd6f9a1b827e3d036562f01",
+        "lf_sha256": "3debc84e8f5092b69f7218a20ace9384fb7d3eafcbd6f9a1b827e3d036562f01",
+        "bytes": 28858
+      },
+      "examples/lifecycle-d1/test_p1_post_v22_readonly.py": {
+        "sha256": "2fc5bb4384d9814cdeaaab5032940feec55873fe65536e6ec54402eb1d8d8728",
+        "lf_sha256": "2fc5bb4384d9814cdeaaab5032940feec55873fe65536e6ec54402eb1d8d8728",
+        "bytes": 11654
+      },
+      ".github/workflows/demo-lifecycle.yml": {
+        "sha256": "261af9b77a2981fe12a8240033887f743ffc3f071d225577a6b912f15a2bbc51",
+        "lf_sha256": "261af9b77a2981fe12a8240033887f743ffc3f071d225577a6b912f15a2bbc51",
+        "bytes": 4924
+      },
+      "docs/acceptance/issue307-d1-post-v22-p1-readonly.md": {
+        "sha256": "10d12b2fb820f3fe562818da6d1b58cfe66ad2e4e243eb9dfd7a5ff9f16d1fb0",
+        "lf_sha256": "10d12b2fb820f3fe562818da6d1b58cfe66ad2e4e243eb9dfd7a5ff9f16d1fb0",
+        "bytes": 3392
+      },
+      "apps/platform/internal/lifecycle/pilot/recovery_bootstrap.go": {
+        "sha256": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2",
+        "lf_sha256": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2",
+        "bytes": 678
+      },
+      "apps/platform/internal/platform/storage/lifecycle_inspection.go": {
+        "sha256": "f62a08e2531adc4ccb40592d55bf4542e4770abc60ca5a77e0a8ec795d3cd80b",
+        "lf_sha256": "f62a08e2531adc4ccb40592d55bf4542e4770abc60ca5a77e0a8ec795d3cd80b",
+        "bytes": 20599
+      },
+      "apps/platform/internal/platform/storage/lifecycle_inspection_test.go": {
+        "sha256": "c1137d1ca0a902bf4440f904ded2fc6069dd7375ba189bf2dd4199a394f555de",
+        "lf_sha256": "c1137d1ca0a902bf4440f904ded2fc6069dd7375ba189bf2dd4199a394f555de",
+        "bytes": 18617
+      },
+      "apps/platform/internal/lifecycle/application/p1_journal_export_test.go": {
+        "sha256": "80dc688d16e6786f5b3f3c42653b0fd146456acaf7bf4adcdf69d825509a271c",
+        "lf_sha256": "80dc688d16e6786f5b3f3c42653b0fd146456acaf7bf4adcdf69d825509a271c",
+        "bytes": 711
+      },
+      "apps/platform/internal/lifecycle/application/p1_journal_sdk_integration_test.go": {
+        "sha256": "ac93b27650ec0bc220678f19bd92ee48cdee0f1e59c0f969ad3986cc6d2ecae9",
+        "lf_sha256": "ac93b27650ec0bc220678f19bd92ee48cdee0f1e59c0f969ad3986cc6d2ecae9",
+        "bytes": 3449
+      },
+      ".gitattributes": {
+        "sha256": "5735d99158e152617853eba9bfd75b89db2aac373a85831ab7df7e5c6edcf2f9",
+        "lf_sha256": "5735d99158e152617853eba9bfd75b89db2aac373a85831ab7df7e5c6edcf2f9",
+        "bytes": 10248
+      }
+    },
+    "runtime_source_hashes": {
+      "examples/lifecycle-d1/reconcile-p1-post-v22.py": "3debc84e8f5092b69f7218a20ace9384fb7d3eafcbd6f9a1b827e3d036562f01",
+      "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22.go": "c232599a2ea29db0df1f57a5d0e502f26accb3b67ea3b724e7edefb122180e46",
+      "apps/platform/cmd/lifecycle-fixture-recovery/main.go": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+      "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go": "2105d0b4e48140464da2d0afa50f0e0db3423191adc42985e3c40119830c787b",
+      "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly.go": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+      "apps/platform/internal/platform/outbox/publisher.go": "1cf8c17258465f2f4b39598d36b48b9c4fabae70ee3237fb3fdde774818d3910",
+      "apps/platform/internal/platform/storage/lifecycle_inspection.go": "f62a08e2531adc4ccb40592d55bf4542e4770abc60ca5a77e0a8ec795d3cd80b",
+      "apps/platform/internal/lifecycle/pilot/recovery_bootstrap.go": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2"
+    },
+    "tests": "Reused prior independent three-Go-package and old/new SDK cause counterexample plus actual-helper PG/SDK loopback receipts; no source test rerun in this binding-only review."
+  },
+  "actual_bindings": {
+    "source": {
+      "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "Native": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "Network": "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942",
+      "Actor": "033a56ad-99c2-43e3-89e0-a749979a8644"
+    },
+    "owners": {
+      "enable-p1-readonly": {
+        "cid": "b040c0113071e8cee2df2789575609f2589850b43a7bcf80fd888f65906c4248",
+        "private": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\root-private",
+        "output": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-p1-readonly03\\output-enable-p1-readonly",
+        "binary": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\bootstrap",
+        "binary_sha256": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec"
+      },
+      "disable-all": {
+        "cid": "65d9ad83e86805e98961bf85256db4bef05fcf762af4829938e0813704ba8ebf",
+        "private": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\root-private",
+        "output": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-p1-readonly03\\output-disable-all",
+        "binary": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\bootstrap",
+        "binary_sha256": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec"
+      },
+      "worker": {
+        "cid": "52d934ca9ffadf94cf80c82e27ed7daa525b1fd4b5e2c331e3e31c52e9362edd",
+        "private": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\worker-private",
+        "output": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\docs\\acceptance\\evidence\\issue307-d1\\post-v22-p1-readonly03\\output-worker",
+        "binary": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-p1-readonly03\\worker",
+        "binary_sha256": "1eb91cad6294b8bceb98788cb8f44edf810fe641ca14410e5d196de07e6453f4"
+      }
+    },
+    "redis": {
+      "cid": "fdb7b92e9aa45082628a707f63c44338bd66f991a14a90e010dc1125ba385661",
+      "name": "dpp307-p1-readonly-bb448568-redis",
+      "volume": "dpp307-p1-readonly-bb448568-redis-data"
+    },
+    "binary_hashes_independently_read_from_actual_files": {
+      "enable-p1-readonly": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec",
+      "disable-all": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec",
+      "worker": "1eb91cad6294b8bceb98788cb8f44edf810fe641ca14410e5d196de07e6453f4"
+    },
+    "three_helpers": "Fixed image, entrypoint, command, netns, exact three mounts, nonroot10001:10001, read-only rootfs, cap-drop ALL, no-new-privileges, noports/norestart and stopped/PID0 verified against sanitized actual inspect. Existing Core/Native remain original preserved sources.",
+    "root_worker_isolation": {
+      "root_private_files": {
+        "candidate.json": "f624a5f50ccb4fa4aa8b465f5a60a090f6325e78f60544b4c18f9ba2604ef243",
+        "iam.json": "51876faa99cd322649fa541ef295d8ec7a43f4a1b88e9fe7f255cd372507687e",
+        "p1-readonly-permission.json": "e4a8cd4d534e71e0b37c90d5c311cd10ef5329a037fa4c4427679d30ae073e6f",
+        "root.json": "c2c6e725cae1e486893a7a6e1dc4a8f007a0bdb2c25dee49a89684ae013e2fe9",
+        "policies/lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5.json": "bb3a5a7eaf900e2f1a304ff25deac51ac1422666eb2187c07832bab62ca89b51",
+        "policies/lifecycle307-remaining-business-remainput808a6960.json": "f43a0aff9fa311132fad0167f61ad81b6a0bfea3d8b042bfa73c1fc9dee1ff2b",
+        "policies/lifecycle307-remaining-business-remainread808a6960.json": "c9d5b8ec2ec5f7f634d1752e964381111d8f2af407b09c107ccdfeafcf458b0a",
+        "policies/lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5.json": "75f15fb9771ae100307cef311ef8b2700b8df585690c6a990e6456fc7ae81ccf"
+      },
+      "worker_private_files": {
+        "audit.json": "c197e5d99984f268fef702b7d61020c136b0a9de6690d4e44148cf91ce82f23a",
+        "bindings.json": "8e54b47e4a1f83c7ce66555ed6ce2f3ec66c962a394a8fa1feb84eeaccd82fc5",
+        "recovery.json": "8cf03e5aadb117e8354df058fe0dd474cde4ea10c56281b1b948fa42c7e74374"
+      },
+      "worker_has_root_or_delete_credentials": false,
+      "root_helper_can_enable": "inspect808a69606c36 only, guarded again at runtime"
+    },
+    "root_permission_disabled": true,
+    "worker_recovery": {
+      "Enabled": false,
+      "SyntheticOnly": true,
+      "RunID": "bb448568-0444-48ee-a2e4-a9f69344b6d0",
+      "ValidUntil": "2026-10-19T11:11:40.310358+00:00",
+      "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+      "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+      "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+      "ActorID": "033a56ad-99c2-43e3-89e0-a749979a8644",
+      "Endpoint": "127.0.0.1:9000",
+      "InspectAccess": "inspect808a69606c36",
+      "ManifestSHA256": "2fd4356702a7903af53d4f1f6f8dc6c40372bed11b7069bb32beb130a5077c35"
+    },
+    "Core_connection": {
+      "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "host": "dpp-lifecycle307-808a6960-postgres",
+      "port": 5432,
+      "database": "lifecycle307",
+      "user": "fixture",
+      "transport": "sslmode=disable; isolated internal network",
+      "credential": "PRIVATE_NOT_EMITTED"
+    },
+    "actual_DSN_parsed": {
+      "scheme": "postgres",
+      "host": "dpp-lifecycle307-808a6960-postgres",
+      "port": 5432,
+      "user": "fixture",
+      "database": "lifecycle307",
+      "query": "sslmode=disable"
+    },
+    "canonical_POSIX_inputs": true
+  },
+  "retained_boundaries": {
+    "old_original_owner_count": 61,
+    "old_original_controls": {
+      "permissions_false": 32,
+      "cases_revoked": 7,
+      "recoveries_revoked": 7
+    },
+    "prior_readonly_audits": [
+      {
+        "name": "post-v22-p1-readonly01",
+        "manifest_sha256": "3aa4401d1904e887a696538ecb1cd52d066d8996deecc37e1f6db274dc14dbde",
+        "terminal_sha256": "db6b254cfa57b5d9d16e9a1024daae9a0032c0cf4f279c330c2b639ded525fd7",
+        "terminal_status": "BLOCKED_PRESTART_NO_SOURCE_IO",
+        "new_owners_closed": 4,
+        "profiles_false_original_SHA_unchanged": 2,
+        "resume_permitted": false
+      },
+      {
+        "name": "post-v22-p1-readonly02",
+        "manifest_sha256": "cd7cd06bfb46ab0703252af9f2668ed6453a4da4b84e860a736d80fa979ddb14",
+        "terminal_sha256": "e6c4ca076c5576b71e871cbed68843d97367818cad0be5e1f2928ae3f839e04f",
+        "terminal_status": "FAILED_OR_UNCONFIRMED_SEALED",
+        "new_owners_closed": 4,
+        "profiles_false_original_SHA_unchanged": 2,
+        "resume_permitted": false
+      }
+    ],
+    "backup_SHA256": {
+      "business-races/core.dump": "75f02109f039c6ee2735e976ee3c1c7bb9d5f2fd643cface5849e206eed11bab",
+      "business-races/globals.sql": "d738e649fe404e45e778808ab074d93ca0ba2d90cb5c39a1c6592bb25aa5f360",
+      "business-races/native.tar": "40fdf5125d8df98b97f91eaaf2aad0eb565322e79c5c95704d580f8414973255",
+      "late-hold/core.dump": "63651c3f5f2b93c393e12c8ddec627338132fc5261d8193083522d6736f3a5da",
+      "late-hold/globals.sql": "06c767c194d83e91552c72b9daf5e1637480506f5a432b7d2ff342ec18874fce",
+      "late-hold/native.tar": "a51518f5ec922fe2a887a346685192f219650409f76f64518facaaf7b29aa25a",
+      "mixed/core.dump": "303ef33e8184f09a3de4d91eda8abb3043578c6de30cb0acde57a5922e15e343",
+      "mixed/globals.sql": "cc68a7d8f23cf18c9754719b404a4a86a35d83c91d87b49bb05ff92d28ddd2f4",
+      "mixed/native.tar": "e404b58c3e700716497a8ce2b4b8ab2ce6be180923e814a2e5bfa1ce9b7e4940"
+    },
+    "budgets": {
+      "business-races": {
+        "./5a4c9789-3e67-4e54-ab58-128d111cbd65.json": {
+          "bytes": 1010,
+          "sha256": "dcd9ea81e45fc05afc31a91b37b60e9c6390e3f064c416ef8ddbfca89e8dbcc9"
+        },
+        "./6fabf3b5-76b8-4245-8f5d-01e64f610146.json": {
+          "bytes": 1010,
+          "sha256": "29dc38591157a1d40f3283e6c508452353ad13fbb650399479d06c6d027881db"
+        },
+        "./wire-5a4c9789-3e67-4e54-ab58-128d111cbd65.json": {
+          "bytes": 973,
+          "sha256": "9287e64246160e3b531b3ec8b73416c801be3ef6bc87db353cebda7bccfe7320"
+        }
+      },
+      "late-hold": {},
+      "mixed": {}
+    },
+    "old_budget_raw_failure_snapshot_hashes_match": true,
+    "old_budget_reclaim_pin_release_cleanup": false
+  },
+  "evidence_files": {
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly03/preparation.json": {
+      "sha256": "2dc299ec1d9fbe4831fa7fae3c886f160565d49bea35c9fc0d4abf89ba72eafa",
+      "lf_sha256": "2dc299ec1d9fbe4831fa7fae3c886f160565d49bea35c9fc0d4abf89ba72eafa",
+      "bytes": 25269
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly03/actual-disabled-bindings03.json": {
+      "sha256": "409355e13140569ff79191b2145b813b18d465bfb989619b4b55a886798a2d2c",
+      "lf_sha256": "409355e13140569ff79191b2145b813b18d465bfb989619b4b55a886798a2d2c",
+      "bytes": 20177
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly03/journal-sdk-pg-final02.json": {
+      "sha256": "afc5967dc2f4d7ee3398be009eacafe32cca1ede8efd26ed725892708d1e0460",
+      "lf_sha256": "afc5967dc2f4d7ee3398be009eacafe32cca1ede8efd26ed725892708d1e0460",
+      "bytes": 698
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly03/journal-sdk-pg-final02.txt": {
+      "sha256": "432a8eb20959711e39fc045eef0f15f07c0e5547d6160f83fbed14930581ad0f",
+      "lf_sha256": "432a8eb20959711e39fc045eef0f15f07c0e5547d6160f83fbed14930581ad0f",
+      "bytes": 249
+    },
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly03/scratch-closed-final02.json": {
+      "sha256": "07a5727b62688cf57c14303c01936b601429f071a15d08e3577e520d1bc21858",
+      "lf_sha256": "07a5727b62688cf57c14303c01936b601429f071a15d08e3577e520d1bc21858",
+      "bytes": 223
+    }
+  },
+  "independent_binding_audit": {
+    "file": "manifest03-binding-audit.json",
+    "sha256": "40d6ad141ffc9361039300449ac23d3866705fcd4af3f97a73287450d35120f3"
+  },
+  "preparation_state": {
+    "source_started": false,
+    "identity_enabled": false,
+    "native_delete": 0,
+    "all_six_current_owners_stopped_PID0": true,
+    "parent_actual_readback_at": "2026-10-19T10:32:13.900656+00:00"
+  },
+  "required_runtime_gates_remain": [
+    "Run fresh again before starting the audit, preserving exact committed source, binary/manifest/input SHA, fixed current owners, old controls/budgets/backups and absolute expiry.",
+    "Bootstrap only inspector after confirming all four original identities disabled and frozen official IAM policy semantics/no groups/single policy; never enable delete/reader/producer.",
+    "The actual P1 outer routing helper must enclose the first instrumented native call. Worker must verify original exact ACCEPTED proof/no prior absence, seven retained HEAD/protection and complete namespace lists before new recovery work. This review does not claim actual bytes/SHA reread.",
+    "Only new selected Outbox event/work and Asynq task may append P1 absence/completion and actual per-call observations/cost. UNKNOWN is not a successful observation; absence of cost rows must not imply no invocation or zero cost.",
+    "Any failure stops new work; preserve original cause/attempt evidence. Seal all known worker/enabler/current source/Redis owners, revoke profiles and confirm four disabled identities freshly; unknown closure or incomplete evidence cannot be promoted to success."
+  ],
+  "scope_limits": [
+    "Manifest-bound preparation review only; actual audit03 native calls, real Asynq/Core absence and final closure have not run at this review time.",
+    "Reviewer used current source/Git, actual binary file hashes and parent sanitized live readbacks; did not personally inspect Docker/provider state or open secret profile values.",
+    "Audit01 remains blocked prestart; audit02 remains failed/sealed with original UNKNOWN and no produced Core-after/native-precheck. Their previous PASS preparation reports are immutable historical facts, not permission to resume.",
+    "PG plus SDK loopback is not actual native/business/D1 acceptance; second observe-fault test cost is not proven persisted and cannot be treated as zero.",
+    "This is not deletion authorization, candidate approval for six remaining targets, merge permission or main CI confirmation. Remaining-six scope remains an unfrozen draft."
+  ],
+  "reviewer_operations": {
+    "Docker": 0,
+    "provider": 0,
+    "source_start": 0,
+    "identity_enable": 0,
+    "secret_values_read": 0,
+    "proof_signing": 0,
+    "real_DELETE": 0,
+    "shared_repo_write": 0,
+    "GitHub_write": 0
+  },
+  "native_P1_audit03": "NOT_RUN_AT_REVIEW",
+  "remaining_six": "UNFROZEN_DRAFT_ONLY",
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

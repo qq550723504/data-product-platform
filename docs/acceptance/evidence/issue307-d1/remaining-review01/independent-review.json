@@ -1,0 +1,39 @@
+{
+  "reviewer_task": "/root/d1_remaining_independent_review",
+  "recorded_by": "primary, transcribed from independent read-only agent final report",
+  "reviewed_head": "bca29f4d63c423962ed5a43b71fd4f71ec2665f9",
+  "reviewed_base": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+  "reviewed_contract_sha256": "28b95a190fc5944cec455c3c2f46bd2f9e3e0b61a15b4fad8c654a4edccaa102",
+  "reviewed_test_sha256": "c0fb8cfbf0457751a95090d8330069dae1377b69d4b84098a5d619363630725a",
+  "decision": "PASS_FINITE_SCOPE",
+  "blockers": [],
+  "checked": [
+    "authoritative contracts and four phases",
+    "copy-scoped hold versus revocation of the dispatch-bound approval; no alternate approval/global-stop claim",
+    "processing/DirectData typed pins and exact admission/replay assertions",
+    "observed PostgreSQL fence Lock wait in existing both-order tests",
+    "three-copy partial/UNKNOWN/cost/terminal-replay assertions",
+    "26 indexed payload Git blob hashes/lengths and test-to-attempt05 binding",
+    "9 top-level / 13 leaf / 17 parent-and-child PASS; no FAIL/SKIP",
+    "failed operator/test receipts remain original bytes"
+  ],
+  "follow_up_owner": "#307",
+  "follow_ups": [
+    "new native fixtures and exact-list/source/binary/Core/IAM/gateway freezing",
+    "native P1/P2/T1/T2/H2/M1 acceptance remains NOT_RUN",
+    "new deletion authority remains NOT_AUTHORIZED",
+    "final append commit requires its own exact-head PR CI"
+  ],
+  "invalid_or_out_of_scope": [
+    "SQL-only PASS presented as native PASS",
+    "guaranteed cancellation/rollback of in-flight DELETE",
+    "general batch hold/IAM/DR/D2-D6 or retained environment upgrade"
+  ],
+  "limits": {
+    "independent_pg_rerun": false,
+    "db_container_provider_operations": 0,
+    "file_edits": 0,
+    "remote_writes": 0,
+    "formal_github_approval_claimed": false
+  }
+}

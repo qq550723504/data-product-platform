@@ -1,0 +1,15 @@
+{
+  "status": "TECHNICAL_HTTP_STATUS_INTERPRETATION_CLARIFICATION",
+  "at": "2026-10-18T14:10:01.115506+00:00",
+  "ledger_sha256": "c809c00f3d8bb32e05a978708394c86309178a6b12db7bda4377f612d0a94558",
+  "GET": 76,
+  "admin_GET": 16,
+  "object_content_inventory_protection_GET": 60,
+  "HTTP200": 45,
+  "HTTP400": 31,
+  "transport_errors": 0,
+  "interpretation": "31 HTTP400 are the frozen native verifier accepted NoSuchObjectLockConfiguration responses when expected retention=NONE or legal-hold=false. These are absence of an object-lock configuration, not absence of a provider version. The complete verifier separately confirmed the content/SHA/version/inventory of all 18 versions. The original ledger phrase expected absence responses refers only to that configuration absence.",
+  "authoritative_code": "apps/platform/cmd/lifecycle-fixture-reader/remaining_verify.go:124-142",
+  "no_new_gate_or_runtime_recheck": true,
+  "amount": "NOT_ASSESSED"
+}

@@ -1,0 +1,63 @@
+{
+  "containers": [
+    {
+      "id": "8ab490cad9f50e8feabfa3f56e43b306a82334a279abdc2d968704ae594935ae",
+      "name": "/dpp-lifecycle307-808a6960-remaining-04-source-seal",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "name": "/dpp-lifecycle307-808a6960-minio",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "86ca74ffac12b2622b3f3454c7a4c9d13c519269b43207dda66badb2342771ea",
+      "name": "/dpp-lifecycle307-808a6960-remaining-04-clone-seal",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "3ca0edff687d9de3df4161cc31903f6d8f0ab5c42cf3309b0cb9823e29bef218",
+      "name": "/dpp-lifecycle307-808a6960-remaining-04-business",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "a0a3f5bbdf0290e710d8cc64a5ec264cc1c6f7092d61d5de7cd245aa2f065857",
+      "name": "/dpp-lifecycle307-808a6960-remaining-regression-redis",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "12270d49a42a7c99c36cf3c333db60bcefcd499b7281e0a7b52627aebeee195d",
+      "name": "/dpp-lifecycle307-808a6960-remaining-regression-gateway",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "4b5cd5a2d1ad22967d90d97c772f29f7f65b82f93bce537478ffcd1c49dbe55c",
+      "name": "/dpp-lifecycle307-808a6960-remaining-regression-minio",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "365f9baafede4693f2f73caa36c6f6564a83b601a95be40ec9d91b7c46048b87",
+      "name": "/dpp-lifecycle307-808a6960-remaining-regression-pg",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    }
+  ],
+  "retained": true,
+  "delete": 0,
+  "cleanup": 0
+}

@@ -1,0 +1,221 @@
+{
+  "containers": [
+    {
+      "name": "/dpp-lifecycle307-5f6a2497-minio",
+      "id": "5465026d23d2994a6804f778f9efea4942d31653a1122c1990e60d22426b2d63",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-5f6a2497-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-5f6a2497-objects/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-5f6a2497/access",
+          "Destination": "/run/credentials/access",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-5f6a2497/secret",
+          "Destination": "/run/credentials/secret",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-5f6a2497/start.sh",
+          "Destination": "/run/credentials/start.sh",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-5f6a2497-postgres",
+      "id": "e160cb04e8053c447dd74f2deb3187149dcc8f48913df492e3521e6d20ca8d6b",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-5f6a2497/pgpass",
+          "Destination": "/run/credentials/pgpass",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-5f6a2497-postgres",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-5f6a2497-postgres/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-5f6a2497-gateway",
+      "id": "75d8907143ba87781e2450a7b72e948af9cd907cef47c4011fa11da24110c96c",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-5f6a2497\\Caddyfile",
+          "Destination": "/etc/caddy/Caddyfile",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-5f6a2497-prepare",
+      "id": "5e4d2549de128b2da03def4f507733c5e944326ac3e9c347127fbbd257a5ef60",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\migrations",
+          "Destination": "/run/migrations",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\worktrees\\9400\\data-product-platform\\examples\\lifecycle-d1\\results",
+          "Destination": "/run/output",
+          "Mode": "",
+          "RW": true,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-5f6a2497",
+          "Destination": "/run/private",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-5f6a2497-gateway",
+      "id": "75d8907143ba87781e2450a7b72e948af9cd907cef47c4011fa11da24110c96c",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "C:\\Users\\Henry\\.codex\\fixture-private\\dpp-lifecycle307-5f6a2497\\Caddyfile",
+          "Destination": "/etc/caddy/Caddyfile",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-5f6a2497-minio",
+      "id": "5465026d23d2994a6804f778f9efea4942d31653a1122c1990e60d22426b2d63",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-5f6a2497-objects",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-5f6a2497-objects/_data",
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-5f6a2497/access",
+          "Destination": "/run/credentials/access",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-5f6a2497/secret",
+          "Destination": "/run/credentials/secret",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-5f6a2497/start.sh",
+          "Destination": "/run/credentials/start.sh",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        }
+      ]
+    },
+    {
+      "name": "/dpp-lifecycle307-5f6a2497-postgres",
+      "id": "e160cb04e8053c447dd74f2deb3187149dcc8f48913df492e3521e6d20ca8d6b",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "bind",
+          "Source": "/run/desktop/mnt/host/c/Users/Henry/.codex/fixture-private/dpp-lifecycle307-5f6a2497/pgpass",
+          "Destination": "/run/credentials/pgpass",
+          "Mode": "",
+          "RW": false,
+          "Propagation": "rprivate"
+        },
+        {
+          "Type": "volume",
+          "Name": "dpp-lifecycle307-5f6a2497-postgres",
+          "Source": "/var/lib/docker/volumes/dpp-lifecycle307-5f6a2497-postgres/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "z",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    }
+  ],
+  "cleanup": 0,
+  "delete": 0,
+  "retained": true
+}

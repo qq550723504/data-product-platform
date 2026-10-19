@@ -1,0 +1,11 @@
+{
+  "group": "business-races",
+  "run_id": "808a6960-6c36-4200-ae98-f18a68472fe5",
+  "status": "PASS_PREPARATION_ONLY",
+  "checkpoint": "checkpoint.json",
+  "current_delete_budget": 0,
+  "original_failed_receipt": "native-restore-attempt01-failure.json",
+  "startup_log_failure": "native-continuation01-failure.json",
+  "policy_compare_failure": "native-continuation02-failure.json",
+  "continuation": "explicit fixed read-only compare/verify; no provisioning/restore replay"
+}

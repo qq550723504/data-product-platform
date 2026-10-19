@@ -1,0 +1,8 @@
+=== RUN   TestSequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim
+--- PASS: TestSequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim (2.98s)
+=== RUN   TestExactSendClaimSerializedAndLateRevocationKeepsCost
+--- PASS: TestExactSendClaimSerializedAndLateRevocationKeepsCost (2.63s)
+=== RUN   TestExactAbsenceRequiresPostDispatchJournalAndCompleteMembership
+--- PASS: TestExactAbsenceRequiresPostDispatchJournalAndCompleteMembership (2.56s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/application	9.276s

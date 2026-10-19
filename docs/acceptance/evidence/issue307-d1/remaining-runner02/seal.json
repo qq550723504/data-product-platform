@@ -1,0 +1,87 @@
+{
+  "containers": [
+    {
+      "id": "25a4e218f72527e8f93a1df2eeb7a09833e5028c03d5ee178009bd9c71ee33e6",
+      "name": "/dpp-lifecycle307-808a6960-remaining-redis",
+      "image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "b2fe9b2dafe09d675d0fa5cc94a40130cda19912d337b9d585da0d71c19ee15f",
+      "name": "/dpp-lifecycle307-808a6960-remaining-02-setup",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "b5bdf1175c6851d687dbbfdde448a11c8ba999271138ebe25cf7bc14f8f31646",
+      "name": "/dpp-lifecycle307-808a6960-remaining-02-bind-outputs",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "5f4dd35cec74a5a483e9e7694e0cad2a6e401eb26e1710ea6d354f95aedf5f33",
+      "name": "/dpp-lifecycle307-808a6960-remaining-02-baseline",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "f6336c62897ba0f8b420191638c56734aa68928043bf47e0897f6703290ed475",
+      "name": "/dpp-lifecycle307-808a6960-remaining-02-final-bind-outputs",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "ac606f09d03da163ad4a040aa93651ddbbf29bcba97afcba8424581287c25d49",
+      "name": "/dpp-lifecycle307-808a6960-remaining-archive",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "365f9baafede4693f2f73caa36c6f6564a83b601a95be40ec9d91b7c46048b87",
+      "name": "/dpp-lifecycle307-808a6960-remaining-regression-pg",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "name": "/dpp-lifecycle307-808a6960-postgres",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce",
+      "name": "/dpp-lifecycle307-808a6960-minio",
+      "image": "sha256:72476ee7f52a538e561627f7d8746e20c15d50c13e8bcdc58b22fa65cff94df6",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    },
+    {
+      "id": "1c5877bbfabdd1a812fa658e62e594ad76a8c7ae815aa41d5ee06274eb6ed39a",
+      "name": "/dpp-lifecycle307-808a6960-gateway",
+      "image": "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+      "status": "exited",
+      "pid": 0,
+      "ports": {}
+    }
+  ],
+  "delete": 0,
+  "cleanup": 0,
+  "retained": true
+}

@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "status": "BLOCKED_BOUNDED_INDEPENDENT_P1_MANIFEST_REVIEW",
+  "reviewed_at": "2026-10-19T10:13:19.058412+00:00",
+  "manifest_sha256": "3aa4401d1904e887a696538ecb1cd52d066d8996deecc37e1f6db274dc14dbde",
+  "audit_id": "dc7246b9-f4e5-43fa-b80d-6ed31c135ef9",
+  "source_head": "7e9276e96d29f96bb3301d14c88b3188ea4d9a42",
+  "readonly_window": {
+    "NotBefore": "2026-10-19T10:08:58.707797+00:00",
+    "ExpiresAt": "2026-10-19T10:48:58.707797+00:00"
+  },
+  "remaining_blockers": [
+    {
+      "id": "B4",
+      "classification": "BLOCKER",
+      "path": "examples/lifecycle-d1/reconcile-p1-post-v22.py",
+      "root_cause": "Actual Windows manifest records backslash inputs but controlled Enabled exceptions matched only forward-slash strings. After run changes both new profiles to Enabled=true, active_topology applies disabled raw hash to them and deterministically rejects before inspector enable. Fresh disabled PASS does not validate this success transition.",
+      "actual_backslash_keys": [
+        "root-private\\candidate.json",
+        "root-private\\iam.json",
+        "root-private\\p1-readonly-permission.json",
+        "root-private\\root.json",
+        "worker-private\\audit.json",
+        "worker-private\\bindings.json",
+        "worker-private\\recovery.json",
+        "root-private\\policies\\lifecycle307-inspection-808a6960-6c36-4200-ae98-f18a68472fe5.json",
+        "root-private\\policies\\lifecycle307-remaining-business-remainput808a6960.json",
+        "root-private\\policies\\lifecycle307-remaining-business-remainread808a6960.json",
+        "root-private\\policies\\lifecycle307-remaining-delete-808a6960-6c36-4200-ae98-f18a68472fe5.json"
+      ],
+      "independent_counterexample": {
+        "script": "test_independent_profile_paths01.py",
+        "script_sha256": "e260b1a5caf85c5f3673d84cd09721f76031dd3b60606d2ba276bb6158ae4fb2",
+        "prepared_source_snapshot_sha256": "f772b405056a412d3b0cf5b8fa603659ee526cc5d739c7fb4d1e8c604e69e5df",
+        "initial_log_sha256": "21715ce52ea612846b5575676831e024def7d6cd6bd6814d5d37d52c48b91d7f",
+        "result": "FAIL_ONLY_BACKSLASH_SUBTEST_FORWARD_SLASH_PASSES",
+        "provider_io": 0,
+        "docker_io": 0
+      }
+    }
+  ],
+  "bindings_reviewed": {
+    "source_report_sha256": "be0241dd4ccbc8ad82b7d5e73b69121478dcbde05edea18db28cf73f9b3d914b",
+    "committed_sources_match_reviewed_LF_bytes": true,
+    "manifest_public_bytes_exact_match": true,
+    "binary_hashes": {
+      "enable-p1-readonly": "166204b42cb8427b16d2909289a9d13ab9bc8f996882857ccc2c07afa80823f8",
+      "disable-all": "166204b42cb8427b16d2909289a9d13ab9bc8f996882857ccc2c07afa80823f8",
+      "worker": "0a03bf2b3ba00480d332e62f1d822de1faf6387140d08dd80af6b1fdb778d48e"
+    },
+    "new_owners": {
+      "enable-p1-readonly": "6c52adb21e33b73c911c874104eafefa10948abf8f9ba8fcf7ad12768bda7599",
+      "disable-all": "99eff7a3dd85b4a2648362d684b055d8255803a933dc08a710cdc49351538159",
+      "worker": "768f0aaf409eae6ccaf24e12591f2d43c278325158785fe58f9e1a4493444a62"
+    },
+    "new_redis": "74d2fb9aed18285a1a5183d0c3359d5ddf4b7e8a268df79f96c8bda7bfd549fe",
+    "images_commands_mounts_netns_and_nonroot_helpers": "Reviewed exact sanitized actual-disabled-bindings01 fields; all three new fixed helper CIDs stopped/PID0, nonroot, cap-drop ALL, readonly rootfs, no ports/restart, only executor/private/output binds; root and worker private directories separate. Existing Core/Native are preserved source owners, not new helpers.",
+    "core_connection_binding": {
+      "Core": "9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0",
+      "host": "dpp-lifecycle307-808a6960-postgres",
+      "port": 5432,
+      "database": "lifecycle307",
+      "user": "fixture",
+      "transport": "sslmode=disable; isolated internal network",
+      "credential": "PRIVATE_NOT_EMITTED"
+    },
+    "root_permission": {
+      "Enabled": false,
+      "MaxProviderDeletes": 0,
+      "CopyID": "5a4c9789-3e67-4e54-ab58-128d111cbd65",
+      "AttemptID": "009f4317-8855-4f99-80ec-cafc225f654e"
+    },
+    "old_owner_membership": 61,
+    "old_control_membership": {
+      "permission": 32,
+      "case": 7,
+      "recovery": 7
+    },
+    "backup_metadata_bindings": 9,
+    "old_budget_members_raw_hashes_match_failure_snapshot": 3,
+    "source_started": false,
+    "identity_enabled": false,
+    "native_delete": 0
+  },
+  "evidence_files": {
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly01/preparation.json": "3aa4401d1904e887a696538ecb1cd52d066d8996deecc37e1f6db274dc14dbde",
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly01/actual-disabled-bindings01.json": "0924cb2b55fc45220cb8ed3e83fbfb398a132c8bef938404e38d7d1dfe10e843",
+    "docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly01/terminal.json": "db6b254cfa57b5d9d16e9a1024daae9a0032c0cf4f279c330c2b639ded525fd7"
+  },
+  "binary_metadata_files": {
+    "worker-build-info01.txt": "65ecd1d929a4a079c6dd7510a99de755de90255bc3fcc0b6f96e4bae32401157",
+    "bootstrap-build-info01.txt": "52a5bcee3c58a3f2500c8e8f912480388ff15f062741eb990cd59030e0ee4d19"
+  },
+  "post_review_parent_terminal": {
+    "at": "2026-10-19T10:11:18.411580+00:00",
+    "status": "BLOCKED_PRESTART_NO_SOURCE_IO",
+    "audit_id": "dc7246b9-f4e5-43fa-b80d-6ed31c135ef9",
+    "manifest_sha256": "3aa4401d1904e887a696538ecb1cd52d066d8996deecc37e1f6db274dc14dbde",
+    "reason": "B4: Windows manifest input separators prevent controlled Enabled transition; source independent review did not cover actual backslash keys",
+    "source_started": false,
+    "identity_enabled": false,
+    "native_delete": 0,
+    "old_execution_resumed": false,
+    "all_new_owners_closed": true,
+    "new_profiles_disabled": true,
+    "retained_old_facts_unchanged": true,
+    "full_D1": "NOT_ACCEPTED"
+  },
+  "disposition": "Keep audit01 manifest/preparation/source/binaries/CIDs and reports as blocked prestart history. Do not rewrite its hashes or activate it after the new repair. A new audit/control02 and new manifest final review are required.",
+  "scope_limits": [
+    "No real Docker inspect/cp/start/exec/provider calls by reviewer; host state is parent actual sanitized readback plus reviewed fresh-gate behavior",
+    "No credential values read",
+    "No old authority reused and no real DELETE",
+    "Old R1/R2, SOURCE02, v22 failure and previous reviewer reports remain unchanged"
+  ],
+  "native_P1_reconciliation": "NOT_RUN",
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

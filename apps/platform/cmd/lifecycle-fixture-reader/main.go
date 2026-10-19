@@ -546,6 +546,16 @@ func execute(ctx context.Context, mode string) error {
 func main() {
 	mode := flag.String("mode", "", "bounded reader step")
 	flag.Parse()
+	if strings.HasPrefix(*mode, "remaining-") {
+		ctx, cancel := context.WithTimeout(context.Background(), 13*time.Minute)
+		defer cancel()
+		if err := remainingStep(ctx, *mode); err != nil {
+			fmt.Println("Remaining step failed:", err, "; all resources retained; DELETE=0")
+			os.Exit(1)
+		}
+		fmt.Println("Remaining step complete; DELETE=0, cleanup=0")
+		return
+	}
 	limit := 90 * time.Second
 	if *mode == "plane-reference-races" {
 		limit = 13 * time.Minute

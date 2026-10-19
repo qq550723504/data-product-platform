@@ -1,0 +1,17 @@
+{
+  "status": "MODEL_REGRESSION_FAILURE_PENDING_CORRECTION",
+  "classification": "BLOCKER",
+  "at": "2026-10-19T09:02:37.209018+00:00",
+  "scope": "Non-destructive loopback/recording test only; not native acceptance.",
+  "finding": "Latest full cmd package run failed business survivor fixture changed because static scope.Copies has2 retained source controls while the new test assumed4 survivors including two separately registered business outputs.",
+  "file": "apps/platform/cmd/lifecycle-fixture-remaining/sequence_test.go",
+  "line_at_failure": 129,
+  "evidence": {
+    "log": "remaining-unit-final.txt",
+    "log_sha256": "4e1d919866ae772b80076c9f30e50771cfdde76c34c513087e649e3473e97a21",
+    "source_snapshot": "sequence-survivor-failure-source.go",
+    "source_snapshot_sha256": "cf822d0fe31d8a99ccdc4a414ef264dea9db271afe6cdde6c781fbe109dc9452"
+  },
+  "recommendation": "Seed actual complete frozen business copy set for4 targets plus4 retained versions, or explicitly limit modeled data scope; do not claim4 survivor coverage from the6-copy static scope.",
+  "reviewer_real_provider_Docker_io": 0
+}

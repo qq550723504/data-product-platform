@@ -1,0 +1,452 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_POST_V22_REPAIR_REVIEW",
+  "reviewed_at": "2026-10-19T09:12:19.287144+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "working_base_head": "38b14ee0623ee692de5ab32cc0bf01d2d42d21f8",
+  "reviewed_worktree_delta": true,
+  "remaining_blockers": [],
+  "scope": {
+    "contract": "R1 sequential exact absence admission; R2 original send/claim/observation error and invocation evidence preservation; generated sequence wording; terminated-v22 strict historical CI routing.",
+    "excluded": [
+      "No provider or Docker operations by reviewer",
+      "No credential reads, identity enable, source start, proof signing or real DELETE",
+      "No repository edit, Git commit or GitHub write by reviewer",
+      "No new execution/window/confirmation or deletion authority",
+      "No claim of full D1/native business acceptance",
+      "P1 post-v22 read-only reconciliation and remaining-six execution design remain separate follow-up"
+    ]
+  },
+  "reviewed_files": {
+    "apps/platform/cmd/lifecycle-fixture-remaining/main.go": {
+      "sha256": "ff3f45bd37566efedda5947a019cd2e40e79e516b612b83a1887567567184fc0",
+      "lf_sha256": "ff3f45bd37566efedda5947a019cd2e40e79e516b612b83a1887567567184fc0",
+      "bytes": 22410
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/sequence.go": {
+      "sha256": "27e2427f611d35666ad15d2a21b3715b919df0d1c2eb32e5a57fb89f10603682",
+      "lf_sha256": "27e2427f611d35666ad15d2a21b3715b919df0d1c2eb32e5a57fb89f10603682",
+      "bytes": 1776
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/send_return.go": {
+      "sha256": "48c2aba351651f8a99df359e3ca6f12ec1b863eaa6c55bbfbbb34ee0c309621b",
+      "lf_sha256": "48c2aba351651f8a99df359e3ca6f12ec1b863eaa6c55bbfbbb34ee0c309621b",
+      "bytes": 4172
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/send_return_test.go": {
+      "sha256": "da8a7e98db18a4ad1d7a83b942ac4d6e1df6711db87283b0e123473433fd518c",
+      "lf_sha256": "da8a7e98db18a4ad1d7a83b942ac4d6e1df6711db87283b0e123473433fd518c",
+      "bytes": 9739
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/sequence_test.go": {
+      "sha256": "f928735f76e79b182de80fe7166516558be425417def8b645d6c0143f22a9ffe",
+      "lf_sha256": "f928735f76e79b182de80fe7166516558be425417def8b645d6c0143f22a9ffe",
+      "bytes": 10046
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining/testdata/business-produced-copies.json": {
+      "sha256": "c16afb83032bf6834e31237fe28612d372ad375a10329faa895db1c0d4c75348",
+      "lf_sha256": "c16afb83032bf6834e31237fe28612d372ad375a10329faa895db1c0d4c75348",
+      "bytes": 1148
+    },
+    "apps/platform/internal/lifecycle/application/exact_execution_integration_test.go": {
+      "sha256": "3463a367be431dec8a4351d90df0f92a5b1f4832512a851c3b024f6e309d6bde",
+      "lf_sha256": "3463a367be431dec8a4351d90df0f92a5b1f4832512a851c3b024f6e309d6bde",
+      "bytes": 10429
+    },
+    "examples/lifecycle-d1/freeze-remaining-executable.py": {
+      "sha256": "e4c7dd07c1af6c0b43c0c25ced3216215c769553bea1bfef399965d926f03a42",
+      "lf_sha256": "e4c7dd07c1af6c0b43c0c25ced3216215c769553bea1bfef399965d926f03a42",
+      "bytes": 34914
+    },
+    ".github/scripts/check-lifecycle307-history.py": {
+      "sha256": "45f3e54f13e798c7cc734e603641960a2554ab924e1b0d801873cc8ce56fded2",
+      "lf_sha256": "45f3e54f13e798c7cc734e603641960a2554ab924e1b0d801873cc8ce56fded2",
+      "bytes": 13800
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "sha256": "f22eab0711966ec81e718ec0d721976c39dbb9c50128b9122413da577954deae",
+      "lf_sha256": "f22eab0711966ec81e718ec0d721976c39dbb9c50128b9122413da577954deae",
+      "bytes": 4777
+    },
+    "docs/acceptance/issue307-d1-post-v22-repair.md": {
+      "sha256": "8841917d8815817714e893949452a4a7301a731f2a085bf1a612d70560ac81d0",
+      "lf_sha256": "8841917d8815817714e893949452a4a7301a731f2a085bf1a612d70560ac81d0",
+      "bytes": 2449
+    }
+  },
+  "unchanged_historical_and_core_files": {
+    "examples/lifecycle-d1/check-remaining-candidate12.py": {
+      "sha256": "69119b8de21c1b888db46414b4cc63de554c8fee6456d9073bdc7697aad9445e",
+      "lf_sha256": "69119b8de21c1b888db46414b4cc63de554c8fee6456d9073bdc7697aad9445e",
+      "bytes": 7784
+    },
+    "apps/platform/internal/lifecycle/application/exact_execution.go": {
+      "sha256": "fb12611a09852e094839f63118a636a7244b6f57a710022aaa0e2bc2ff96beb3",
+      "lf_sha256": "fb12611a09852e094839f63118a636a7244b6f57a710022aaa0e2bc2ff96beb3",
+      "bytes": 16157
+    },
+    "apps/platform/internal/lifecycle/pilot/remaining_dependencies.go": {
+      "sha256": "89eda8a80489b139612c6ab1a4516aa13bf5b4d37aaafcc1f31bc886f2514152",
+      "lf_sha256": "89eda8a80489b139612c6ab1a4516aa13bf5b4d37aaafcc1f31bc886f2514152",
+      "bytes": 4759
+    },
+    "apps/platform/internal/platform/storage/lifecycle_delete.go": {
+      "sha256": "f890326ccc9b30e6768fedc6c8571e5034ef953b0382b4ddaf2d95a4e61b63c9",
+      "lf_sha256": "1c41dd03a40fa5cb626e33fc347faa139956ac0c700682e91de0ba66f0e0d8c6",
+      "bytes": 7145
+    },
+    "docs/acceptance/issue307-d1-v22-window-runbook.md": {
+      "sha256": "6077aaa5e3d115b2bbd721ea8a2f8a0faf4a8dd46853c4c8b206a60f060f028e",
+      "lf_sha256": "6077aaa5e3d115b2bbd721ea8a2f8a0faf4a8dd46853c4c8b206a60f060f028e",
+      "bytes": 11259
+    },
+    "docs/acceptance/evidence/issue307-d1/remaining-candidate12/confirmation-template.txt": {
+      "sha256": "bd46b276a422f75aa7e78b0568ab73b8412e265ad40897ce9fea2badc3645341",
+      "lf_sha256": "bd46b276a422f75aa7e78b0568ab73b8412e265ad40897ce9fea2badc3645341",
+      "bytes": 22244
+    }
+  },
+  "conclusions": [
+    {
+      "id": "R1",
+      "classification": "CLOSED",
+      "evidence": "All fixed predecessors are derived from exact copy identities; immutable receipt count is scoped by workspace. requirePriorAbsences runs before native inspection and target budget. Existing Core shared fence, complete namespace dependency gate and exact claim idempotency remain unchanged. Generated future confirmation mandates per-copy send, disable, existing Outbox/Asynq recovery and Core exact absence before next send. A provider 204/UNKNOWN cannot satisfy this gate."
+    },
+    {
+      "id": "R2",
+      "classification": "CLOSED",
+      "evidence": "journal retains authority/budget/Core claim errors, budget consumption and transport proof. Claim rejection skips observation lookup and records only local NOT_ATTEMPTED, without creating Core NOT_SENT/provider/cost facts. Actual invocation with failed persistence preserves transport observation and the original persistence error even if later SELECT succeeds; H2/M1B cannot advance through that failure. O_EXCL collisions preserve original error and existing bytes. UNKNOWN is not retried and durable slots are not reclaimed."
+    },
+    {
+      "id": "IR1",
+      "classification": "BLOCKER_CLOSED",
+      "title": "Successful observation readback erased original uncertain-write error and transport proof",
+      "discovery": "Reviewer loopback counterexample failed against initial repair; original initial log and initial-findings.json retained. Parent added explicit persistence-failure branch and three-stage P1/H2/M1B plus O_EXCL collision regressions. Independent original counterexample now passes."
+    },
+    {
+      "id": "IR2",
+      "classification": "BLOCKER_CLOSED_TEST_FIXTURE",
+      "title": "Business survivor model omitted two produced copies",
+      "discovery": "Whole command package initially failed the new four-survivor assertion. Parent supplemented six original scope copies with the exact two immutable candidate12 produced copies. Independent comparison matched complete frozen copy objects; final package regression passes. This is test fixture completeness, not a native execution result."
+    },
+    {
+      "id": "IR3",
+      "classification": "BLOCKER_CLOSED_CI_ROUTING",
+      "title": "Terminated candidate12 was still checked against mutable current runtime",
+      "discovery": "CI no longer directly runs the terminated checker as current. Existing historical adapter now restores source 5c7e964dac83ebda0cf44743d49a546123735119 and packet 30e954027bc1d5a74d683f0dcd8bd141aa7a678b; independent strict result PASS 831/1305. Old checker/packet are unchanged. Current full-entry composition tests remain in CI; a future new packet needs its own strict current check."
+    },
+    {
+      "id": "PG1",
+      "classification": "INVALID_TEST_EXPECTATION_CORRECTED",
+      "title": "Exact absence does not reject an unrelated extra version by itself",
+      "evidence": "Original real scratch PG failure log is retained. The limited VerifyAbsentInScope contract checks exact target absence after the scoped post-dispatch lookup. Full inventory remains enforced by the next shared-fence claim dependency gate. Counterexample now keeps the exact target present and is rejected; production Core gate was not weakened."
+    }
+  ],
+  "independent_actual_tests": [
+    {
+      "command": "go test -count=1 ./cmd/lifecycle-fixture-remaining",
+      "result": "PASS",
+      "log": "remaining-unit-final02.txt",
+      "scope": "Uncached unit/adapter loopback models only; no real source/provider deletion"
+    },
+    {
+      "command": "go test -overlay observation-readback-overlay.json -count=1 -run TestIndependentObservationReadbackDoesNotEraseOriginalCommitError ./cmd/lifecycle-fixture-remaining",
+      "result": "PASS_AFTER_INITIAL_FAIL",
+      "log": "observation-readback-final.txt",
+      "counterexample_log": "observation-readback-initial.txt",
+      "scope": "Real MinIO SDK against httptest loopback; modeled observation persistence failure and successful readback"
+    },
+    {
+      "command": "python -B examples/lifecycle-d1/test_remaining_window.py -v",
+      "result": "PASS_4",
+      "log": "generator-window-normal.txt"
+    },
+    {
+      "command": "python -O -B examples/lifecycle-d1/test_remaining_window.py -v",
+      "result": "PASS_4",
+      "log": "generator-window-optimized.txt"
+    },
+    {
+      "command": "python -B examples/lifecycle-d1/test_freeze_remaining_executable.py -v",
+      "result": "PASS_2",
+      "log": "generator-close-normal.txt"
+    },
+    {
+      "command": "python -O -B examples/lifecycle-d1/test_freeze_remaining_executable.py -v",
+      "result": "PASS_2",
+      "log": "generator-close-optimized.txt"
+    },
+    {
+      "command": "Import .github/scripts/check-lifecycle307-history.py and call check_v22()",
+      "result": "PASS_V22_HISTORICAL_STRICT",
+      "source_files": 831,
+      "raw_evidence": 1305,
+      "log": "v22-historical-final.txt",
+      "provider_io": 0,
+      "container_starts": 0,
+      "delete": 0
+    }
+  ],
+  "independent_logs": {
+    "remaining-unit-initial.txt": {
+      "sha256": "a49deb7196c24c1ea4022254ca63cc8afe013f44d695b4f1b3db0e302327fd75",
+      "lf_sha256": "199c10a9d9bbb74e5ccfa3bcb7d3f714eb0237f56ccc9b8bd0c5dca1d3d6d883",
+      "bytes": 104
+    },
+    "observation-readback-initial.txt": {
+      "sha256": "4bd9b8716e530693b6c94e26de9d02d099b26b842032825d15cbf2c3d2fac45d",
+      "lf_sha256": "bd253d10b72e6fa39f37da8119457f7a165401ca5efc28fc3b345faa13eb92d1",
+      "bytes": 1567
+    },
+    "observation-readback-final.txt": {
+      "sha256": "ce0b4e6f8592e69fece118b1825a76f549f6eac5699ebc46cd9068ad442331ee",
+      "lf_sha256": "f81e74f292d1b06ab767820988aac5d4342bc7dec4b80b7b4ebd79a4d66550c2",
+      "bytes": 104
+    },
+    "remaining-unit-final.txt": {
+      "sha256": "4e1d919866ae772b80076c9f30e50771cfdde76c34c513087e649e3473e97a21",
+      "lf_sha256": "78bf46cf8030ce3d9e26419daa136ce6b5c738e1a4316417110338248676e79e",
+      "bytes": 267
+    },
+    "remaining-unit-final02.txt": {
+      "sha256": "e6e7b29b8a54606f9213f670b184ba101c717e1bf5f7366d1bb024c16134c5b5",
+      "lf_sha256": "8fd23750f280684f251f60c55b0fdba787fa424e48f0b8b0358505a6355f0571",
+      "bytes": 104
+    },
+    "generator-window-normal.txt": {
+      "sha256": "1d7d81856a35d8b1f077a42045374e7d8548c917e87385ddeb2e6033b2ff826a",
+      "lf_sha256": "5f043ff76b24ed674903d47916dad64da6a08bcbab60ecc756c0595aa1b5ab07",
+      "bytes": 763
+    },
+    "generator-window-optimized.txt": {
+      "sha256": "291443ee28ccfc57f9a92e73b5f34d3d9079f0ab8d688cfc7b906b8e9782b8ca",
+      "lf_sha256": "3cba6f6221a2ddbf5433c9ed5e499972f6470e9c7284602dbf8860c9c1c791a3",
+      "bytes": 763
+    },
+    "generator-close-normal.txt": {
+      "sha256": "1301aefb401120030a51406f22936d4e8e6b0669822e79eced845817dea5b2a7",
+      "lf_sha256": "3624c8a2da8cbe5a8487ac80201bf72345d2324281c0429c0c486b9a8f1cd5e0",
+      "bytes": 435
+    },
+    "generator-close-optimized.txt": {
+      "sha256": "6c4b0c50b99dc145ffdf3bbebc0ef3bacc86e7ac4693bafa11be840f23a5113e",
+      "lf_sha256": "42a2439b85d922f8f78e5609e704e024c1657db17b046ddc37362b4ad2471f5c",
+      "bytes": 435
+    },
+    "v22-historical-final.txt": {
+      "sha256": "13ba90476a5e76429713555f78152610c7b88a34c2c6ce6209df77da94313b39",
+      "lf_sha256": "89fe771b01b58dc093b6d314574a2d0f906fd061d17172c1381a455ea876f709",
+      "bytes": 673
+    }
+  },
+  "reviewer_counterexample_artifacts": {
+    "initial-findings.json": {
+      "sha256": "7b30f61d00c866aa4d442919a03e3da26d7b1a9027a2842d450ecb1e825ea8c4",
+      "lf_sha256": "1f77e3496158d5d25e88a3c7b88274f4ea685e4e5cf4892ba46e28c9412a76d1",
+      "bytes": 3345
+    },
+    "sequence-survivor-findings.json": {
+      "sha256": "0d347b5104dc482f5dc8507761cd753a911c75c233baa9aa3b8f4407e0570f8f",
+      "lf_sha256": "aa99d7e06e86b0e3f5a0f3971e11d0dfe7c23559b603bc6f6ab9f18467b4ca30",
+      "bytes": 1128
+    },
+    "send_return_independent_overlay_test.go": {
+      "sha256": "8fdf7dbafb3564963a5c81b8c3e7e88b4c3df6ce5526d93687b96d08f3cf3193",
+      "lf_sha256": "106760c55313d6e8e3a959488c8cbc2957487792101166e891547a3bdeef2f3f",
+      "bytes": 9086
+    },
+    "observation-readback-overlay.json": {
+      "sha256": "f5b1a74d07bce8b0d3cd45442b182a848d069ff3082af7144f783ea0e7b99046",
+      "lf_sha256": "57b3c79883443a3230682cfaab89599b018ccdb1bf8fa2015c7ecbd9e2ef206e",
+      "bytes": 285
+    },
+    "sequence-survivor-failure-source.go": {
+      "sha256": "cf822d0fe31d8a99ccdc4a414ef264dea9db271afe6cdde6c781fbe109dc9452",
+      "lf_sha256": "cf822d0fe31d8a99ccdc4a414ef264dea9db271afe6cdde6c781fbe109dc9452",
+      "bytes": 10033
+    }
+  },
+  "snapshot_caveat": "sequence-survivor-failure-source.go was captured after the failing test while the parent was concurrently repairing the fixture. It is post-failure workspace readback, not an exact snapshot of the failed compilation. remaining-unit-final.txt preserves the actual failure.",
+  "parent_executed_evidence_reviewed_not_personally_run": {
+    "five_go_packages": {
+      "receipt": "unit-adapter-tests.json",
+      "exit_code": 0,
+      "packages": 5,
+      "provider": "LOOPBACK_SIMULATION_ONLY",
+      "native_delete": 0
+    },
+    "scratch_postgresql": {
+      "receipt": "postgres-regression02.json",
+      "exit_code": 0,
+      "tests": 3,
+      "database": "Real isolated scratch PostgreSQL",
+      "provider": "SIMULATED_FACTS_ONLY",
+      "native_delete": 0,
+      "cid": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+      "image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "closure": "postgres-closed03.json",
+      "stopped": true,
+      "pid": 0,
+      "volume_retained": "dpp307-postv22-regression-74cef6fd9fb2-data",
+      "native_sources_started": false
+    },
+    "postgres_scope": "Real Core SQL claim/observation/scoped storage journal/absence/finalization and cost/idempotency; provider facts and namespace disappearance are modeled. This is not actual MinIO DELETE, real business rerun or post-P1 absence.",
+    "preserved_failures": [
+      "postgres-tests.txt and postgres-regression.json preserve the invalid extra-version expectation failure",
+      "scratch-initial-failure.json preserves address-pool exhaustion",
+      "scratch-host-access-correction.json preserves isolated scratch access correction"
+    ],
+    "files": {
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/offline-tests-0.txt": {
+        "sha256": "8513a8394d4bdb2ed7d6f8b410c3debc18dd114fad9019329ab5069459fa3eac",
+        "lf_sha256": "5160a6440407cfdb8f6cfc979d5fddb3bd244c78763ebe9dc005f21921ea33a9",
+        "bytes": 5892
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/offline-tests-1.txt": {
+        "sha256": "b9e4d810f5da85a6621c95233bcac6b7c37dad7a28be94c9c265b09786079f4d",
+        "lf_sha256": "c38d8a935cf0addb61515c9b5acde4daf4c5b4ff7516231d7cfa88521f0cc8ab",
+        "bytes": 1911
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/offline-tests-2.txt": {
+        "sha256": "b77784661264ffd66d918db44252c894ee3c4e2ad2e4ac01a3facc0c0d0098fd",
+        "lf_sha256": "dfce60beec598adfa74d7938eaa4fbd33c9f39da3b6987563b0d49d8ad0071a9",
+        "bytes": 1911
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/offline-tests-3.txt": {
+        "sha256": "fd6ff9c385eb8d589289dde37c8f8514fe3948711f0cf94a6a3d18a041d3c760",
+        "lf_sha256": "9718071a9e38b5b13705c5a23a3c3963a0ab920f26ff15417d019b03e43acc93",
+        "bytes": 773
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/offline-tests-4.txt": {
+        "sha256": "ae174f28a37337f6277cde588be93222bd3337a883851788aa207d145721ae44",
+        "lf_sha256": "8b2fc262c94368664bdaa90977c8e5d69f3756eec13e75cd15e5551f59a1ca9a",
+        "bytes": 773
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/offline-tests-5.txt": {
+        "sha256": "5989d163c7e2c4cfcdd2f99d89c7c213657e4c5b2426a9eda8816b4a7c4300ee",
+        "lf_sha256": "15bc057d6c80564c32a7c5ead1b4b7c692768691c0bc069a7788ad0ce6ce7be1",
+        "bytes": 435
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/offline-tests-6.txt": {
+        "sha256": "329be0d9a61df1f377df38111fac4adf1f29484226beb4881bb9e5f89895322f",
+        "lf_sha256": "4817fa39f391c631215db996ac7e2749a2a2cac6309e5391dfd1e949d8f4eb37",
+        "bytes": 435
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/offline-tests.json": {
+        "sha256": "5a5f3ef2b3ce62a3cea4ecf19abef7ae69c8cb2ff5db8a5c6f9201e49ed4d48b",
+        "lf_sha256": "1f71662c7ea89f42de73bd37384d53f8b403c5582f2b23cbd3a08b1fc020f326",
+        "bytes": 2158
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/postgres-closed.json": {
+        "sha256": "c4cd025532e8bf797ed1d2743447144c29814e20af6f871a955a82e50f1078c7",
+        "lf_sha256": "c4cd025532e8bf797ed1d2743447144c29814e20af6f871a955a82e50f1078c7",
+        "bytes": 352
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/postgres-closed02.json": {
+        "sha256": "ca1d8aa6dd7244458815ae8756826c0200b1067f6ff46d2851e7a8523f9a1092",
+        "lf_sha256": "ca1d8aa6dd7244458815ae8756826c0200b1067f6ff46d2851e7a8523f9a1092",
+        "bytes": 434
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/postgres-closed03.json": {
+        "sha256": "ba942995156c00aa4a69885aabf9c461801059566b8f93e55c85e2d08f11c602",
+        "lf_sha256": "4694549773a1949d58f899e948442cf9bd9111a49e248e1ea06bc49ca2cb1592",
+        "bytes": 219
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/postgres-regression.json": {
+        "sha256": "9d4f1ed1c79bbaa169703f6b02ddee28eeb857a26c11a86e177235ad7452c77a",
+        "lf_sha256": "9d4f1ed1c79bbaa169703f6b02ddee28eeb857a26c11a86e177235ad7452c77a",
+        "bytes": 1103
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/postgres-regression02.json": {
+        "sha256": "ca7453322059f3dee3f729ee72a731460b215b37627040534f49c8414a53613b",
+        "lf_sha256": "0d0049497e42312271ee24b2511846f9f56bb90370abe742424d057a4c613349",
+        "bytes": 697
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/postgres-tests.txt": {
+        "sha256": "780364e685b5d96618ae40efd6754ca52c30c6a864c820bcbaca4c4f8ee2b33e",
+        "lf_sha256": "780364e685b5d96618ae40efd6754ca52c30c6a864c820bcbaca4c4f8ee2b33e",
+        "bytes": 682
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/postgres-tests02.txt": {
+        "sha256": "8d5102e1affeb504f75c9aceb96897bf50cd4ad6a0ba97fb3ccca4212c81c0c1",
+        "lf_sha256": "8d5102e1affeb504f75c9aceb96897bf50cd4ad6a0ba97fb3ccca4212c81c0c1",
+        "bytes": 575
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/scratch-host-access-correction.json": {
+        "sha256": "7010b4f3f291af052a2d0018a8b73d78b93941d943379f9b93bad998df1e51af",
+        "lf_sha256": "7010b4f3f291af052a2d0018a8b73d78b93941d943379f9b93bad998df1e51af",
+        "bytes": 474
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/scratch-initial-failure.json": {
+        "sha256": "f4548dc0b7db98616e7eecf2b6a2a817833fa3561b080b9141241350f3eba3f6",
+        "lf_sha256": "f4548dc0b7db98616e7eecf2b6a2a817833fa3561b080b9141241350f3eba3f6",
+        "bytes": 343
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/scratch-network-precheck.json": {
+        "sha256": "870a6b3ff99cf2315bda1494be54c5a78b6ab6ea6d82fd55aeaf62f4214c2dd7",
+        "lf_sha256": "870a6b3ff99cf2315bda1494be54c5a78b6ab6ea6d82fd55aeaf62f4214c2dd7",
+        "bytes": 124
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/unit-adapter-tests.json": {
+        "sha256": "29274df26820e6feb048495b1cab7f075d0e90a3e2b621e20032a5129068928a",
+        "lf_sha256": "77fbba140a7f6a225e481e8695f437cee61c0eb7f4691371611847f776c8aaa5",
+        "bytes": 486
+      },
+      "docs/acceptance/evidence/issue307-d1/post-v22-repair01/unit-adapter-tests.txt": {
+        "sha256": "a139a36166e967841b52a829510fda4e607a2b873384bfff8de4a2683bee0174",
+        "lf_sha256": "a139a36166e967841b52a829510fda4e607a2b873384bfff8de4a2683bee0174",
+        "bytes": 503
+      }
+    }
+  },
+  "old_execution_preserved": {
+    "execution": "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e",
+    "terminal_status": "FAILED_PRE_SEND_GATE_AFTER_ONE_ACCEPTED_DELETE_SEALED",
+    "actual_native_delete_invocations": 1,
+    "P1": "CONFIRMED ACCEPTED, upstream204; no exact absence yet",
+    "P1_attempt": "009f4317-8855-4f99-80ec-cafc225f654e",
+    "absence_reconciliation": "NOT_RUN",
+    "P2": "Target budget consumed, no wire forward, no actual invocation; formal Core NOT_SENT NOT_ASSERTED",
+    "budget_slots_consumed": 2,
+    "slots_recycled": false,
+    "seal_steps_confirmed": 110,
+    "stopped_owners": 61,
+    "permissions_false": 32,
+    "heartbeat": "PAUSED",
+    "old_execution_or_authorization_resume": false,
+    "full_D1": "NOT_ACCEPTED",
+    "evidence": {
+      "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/window01/execution-terminal.json": {
+        "sha256": "86d30fab565f69fef4546a9dfdc81891b17c1113c0f4e46ef9f22d3c23e9050b",
+        "lf_sha256": "86d30fab565f69fef4546a9dfdc81891b17c1113c0f4e46ef9f22d3c23e9050b",
+        "bytes": 2490
+      },
+      "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/window01/runtime-blockers.json": {
+        "sha256": "20a6f2ac2b7946241951acd1464092d85457ba33c440c5b67d8ea428ccd5c0b5",
+        "lf_sha256": "20a6f2ac2b7946241951acd1464092d85457ba33c440c5b67d8ea428ccd5c0b5",
+        "bytes": 2443
+      },
+      "docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/window01/ordering-counterexample.json": {
+        "sha256": "248b400af582bb9c609a7d30e2b9dfaf304ef189e81c149fd2c5d4ca07733c63",
+        "lf_sha256": "248b400af582bb9c609a7d30e2b9dfaf304ef189e81c149fd2c5d4ca07733c63",
+        "bytes": 939
+      }
+    }
+  },
+  "follow_up": [
+    {
+      "classification": "FOLLOWUP",
+      "item": "P1 needs a separately bound fresh restricted read-only inventory/Core absence run; upstream204 is insufficient. Expired recovery credentials or the old sender/case/authorization must not be reopened."
+    },
+    {
+      "classification": "FOLLOWUP",
+      "item": "Prepare remaining six only after fresh read-only reconciliation; preserve consumed old budgets, pins, UNKNOWN/attempt/cost facts and all failed evidence; issue new execution/candidate/confirmation/authorization separately."
+    },
+    {
+      "classification": "FOLLOWUP",
+      "item": "Publication exact HEAD CI, PR Draft and Issue OPEN are separate parent checks. This report does not assert GitHub CI, merge readiness or provider/native business acceptance."
+    }
+  ],
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN"
+}

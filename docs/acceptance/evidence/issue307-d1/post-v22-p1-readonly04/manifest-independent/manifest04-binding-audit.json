@@ -1,0 +1,25 @@
+{
+  "status": "PASS_BINDING_AUDIT",
+  "at": "2026-10-19T10:52:59.298548+00:00",
+  "manifest_sha256": "08575df192136760be928c199ab06df921bb3ef1bd13c81115d25886ba3eea4c",
+  "readback_sha256": "1d87d875b88526a5a26833c553cd22c2c3aeb7a275ba9b0bd51e6140df540861",
+  "source_head": "491a42564edec862048fdb532a9964bad536b300",
+  "current_all_six_stopped_PID0": true,
+  "prior_new_CIDs_stopped": 12,
+  "prior_profiles_false_original_SHA": 6,
+  "runtime_source_sha_verified": 8,
+  "source05_files_exactly_unchanged": 19,
+  "current_binary_sha_verified": {
+    "enable-p1-readonly": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec",
+    "disable-all": "cd16a8e63f68dab9fd0f5ba49bc1c72be6bf40ba3f70fff2e6b344e187dc7dec",
+    "worker": "db9d645acc3529073278f0446a3472f7f9dddd2449e3a3101ca8807b97e5b25e"
+  },
+  "source_started": false,
+  "identity_enabled": false,
+  "native_delete": 0,
+  "private_secret_value_access": false,
+  "Docker_calls": 0,
+  "actual_expiry": "2026-10-19T11:30:40.266016+00:00",
+  "invalid_first_lookup_preserved": "manifest04-binding-audit-failure01.json",
+  "first_lookup_scope": "All current manifest/source/binary/owner/read-only/window/DSN/budget/backup checks completed before historical audit01 key lookup failed; historical key comparison above then passed using separator normalization only."
+}

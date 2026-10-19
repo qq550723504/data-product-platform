@@ -1,0 +1,253 @@
+{
+  "at": "2026-10-19T10:27:33.731025+00:00",
+  "actual_admin_requests": 26,
+  "methods": {
+    "GET": 21,
+    "PUT": 5
+  },
+  "http_statuses": {
+    "200": 26
+  },
+  "requests": [
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.953918964Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-05c5b72b-250e-4d7a-b815-aae18b1b6b7d.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.919909083Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-14677be1-0aa5-4e21-bb68-6440a0277b51.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.899031732Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-2aef9c6a-9877-4907-9962-1feff19bbaa7.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.938622705Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-2bc03dc5-1282-45d2-92ca-3b679587a245.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.947301814Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-48053f3c-c0bb-44fb-b21c-f3d9fe5891d9.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.875621216Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-501ec256-26b3-4109-b3c1-461cef24b8c1.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.882960736Z",
+      "method": "PUT",
+      "path": "/minio/admin/v3/set-user-status",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-5127b068-a720-47e8-84dc-480bb2baa8aa.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.932037522Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-679b7fb1-8802-444d-84fa-4de3c6c896d7.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.977462969Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-76084556-37c3-4b3a-a950-699d6d9f6084.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.854194413Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-81972ff8-f3a1-497c-9d44-95bf3cbd4f09.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.836863958Z",
+      "method": "PUT",
+      "path": "/minio/admin/v3/set-user-status",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-86d419cc-0926-426b-b44b-25f08c43ffcf.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.86262396Z",
+      "method": "PUT",
+      "path": "/minio/admin/v3/set-user-status",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-9a2bc820-ddce-4455-9c39-fe7dbfc2c1e1.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.968771618Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-b2bd9a78-879a-425d-ad9e-5a77bfe761ab.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.962992655Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-cf39b694-8760-4f62-8f31-175e215e61b1.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.906355975Z",
+      "method": "PUT",
+      "path": "/minio/admin/v3/set-user-status",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-fab8038e-51aa-4ebf-84b9-1221acfa52e8.json"
+    },
+    {
+      "owner": "output-disable-all",
+      "at": "2026-10-19T10:19:53.98324405Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-fcf167ce-f4c1-457b-b449-37741451e8a4.json"
+    },
+    {
+      "owner": "output-enable-p1-readonly",
+      "at": "2026-10-19T10:19:47.83062147Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-0e3219d7-b0fe-422a-8557-806857fe66ca.json"
+    },
+    {
+      "owner": "output-enable-p1-readonly",
+      "at": "2026-10-19T10:19:47.820058664Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-10cf45ec-647a-4f77-837c-37f4dccbbb92.json"
+    },
+    {
+      "owner": "output-enable-p1-readonly",
+      "at": "2026-10-19T10:19:47.875420405Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-1959e70f-72e8-4753-8779-6ae41062f4c0.json"
+    },
+    {
+      "owner": "output-enable-p1-readonly",
+      "at": "2026-10-19T10:19:47.843781335Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-2a669da7-2d38-4b54-8923-67ffd863b033.json"
+    },
+    {
+      "owner": "output-enable-p1-readonly",
+      "at": "2026-10-19T10:19:47.856447364Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-39163df2-402c-4156-94e4-26a9ef8ce41f.json"
+    },
+    {
+      "owner": "output-enable-p1-readonly",
+      "at": "2026-10-19T10:19:47.791598119Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-6c8c8669-ac7c-4086-8725-7e15313773fb.json"
+    },
+    {
+      "owner": "output-enable-p1-readonly",
+      "at": "2026-10-19T10:19:47.807872577Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/info-canned-policy",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-aa7efea2-8d07-4098-9a0e-0240641668d9.json"
+    },
+    {
+      "owner": "output-enable-p1-readonly",
+      "at": "2026-10-19T10:19:47.867859006Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-b16220ab-905a-4644-a970-e41a9f845970.json"
+    },
+    {
+      "owner": "output-enable-p1-readonly",
+      "at": "2026-10-19T10:19:47.983810989Z",
+      "method": "GET",
+      "path": "/minio/admin/v3/user-info",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-b332ed28-7fee-430d-b13f-69db8f5b8cff.json"
+    },
+    {
+      "owner": "output-enable-p1-readonly",
+      "at": "2026-10-19T10:19:47.971436533Z",
+      "method": "PUT",
+      "path": "/minio/admin/v3/set-user-status",
+      "http_status": 200,
+      "transport_error": false,
+      "observation": "observation-d9df42e0-6ab5-4cd2-8a09-515b495bab80.json"
+    }
+  ],
+  "native_DELETE": 0,
+  "storage_SDK_request_count": "NOT_ASSESSED_FROM_PRESERVED_STDERR",
+  "Core_after": "NOT_CAPTURED_IN_FAILED_AUDIT",
+  "cost_amount": "NOT_ASSESSED",
+  "initial_projection_receipt_sha256": "72188facfff3550bd3f7328ee6be2227024a25057d4ae215c35a2d57511f0dbd",
+  "correction": "Original report used absent status instead of actual observation http_status; original untouched. Only raw observed schema field used here."
+}
