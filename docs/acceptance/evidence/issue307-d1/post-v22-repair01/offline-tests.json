@@ -1,0 +1,80 @@
+{
+  "at": "2026-10-19T09:10:55.153704+00:00",
+  "results": [
+    {
+      "cmd": [
+        "python",
+        "-B",
+        ".github/scripts/check-lifecycle307-history.py"
+      ],
+      "exit_code": 0,
+      "log": "offline-tests-0.txt",
+      "sha256": "8513a8394d4bdb2ed7d6f8b410c3debc18dd114fad9019329ab5069459fa3eac"
+    },
+    {
+      "cmd": [
+        "python",
+        "-B",
+        "examples/lifecycle-d1/test_complete_remaining_preflight.py"
+      ],
+      "exit_code": 0,
+      "log": "offline-tests-1.txt",
+      "sha256": "b9e4d810f5da85a6621c95233bcac6b7c37dad7a28be94c9c265b09786079f4d"
+    },
+    {
+      "cmd": [
+        "python",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_complete_remaining_preflight.py"
+      ],
+      "exit_code": 0,
+      "log": "offline-tests-2.txt",
+      "sha256": "b77784661264ffd66d918db44252c894ee3c4e2ad2e4ac01a3facc0c0d0098fd"
+    },
+    {
+      "cmd": [
+        "python",
+        "-B",
+        "examples/lifecycle-d1/test_verify_remaining_native.py"
+      ],
+      "exit_code": 0,
+      "log": "offline-tests-3.txt",
+      "sha256": "fd6ff9c385eb8d589289dde37c8f8514fe3948711f0cf94a6a3d18a041d3c760"
+    },
+    {
+      "cmd": [
+        "python",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_verify_remaining_native.py"
+      ],
+      "exit_code": 0,
+      "log": "offline-tests-4.txt",
+      "sha256": "ae174f28a37337f6277cde588be93222bd3337a883851788aa207d145721ae44"
+    },
+    {
+      "cmd": [
+        "python",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_remaining_executable.py"
+      ],
+      "exit_code": 0,
+      "log": "offline-tests-5.txt",
+      "sha256": "5989d163c7e2c4cfcdd2f99d89c7c213657e4c5b2426a9eda8816b4a7c4300ee"
+    },
+    {
+      "cmd": [
+        "python",
+        "-O",
+        "-B",
+        "examples/lifecycle-d1/test_freeze_remaining_executable.py"
+      ],
+      "exit_code": 0,
+      "log": "offline-tests-6.txt",
+      "sha256": "329be0d9a61df1f377df38111fac4adf1f29484226beb4881bb9e5f89895322f"
+    }
+  ],
+  "provider_io": 0,
+  "native_delete": 0
+}

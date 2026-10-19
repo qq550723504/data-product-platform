@@ -1,0 +1,17 @@
+{
+  "completed_at": "2026-10-19T09:03:19.437101+00:00",
+  "cmd": [
+    "go",
+    "test",
+    "-count=1",
+    "./cmd/lifecycle-fixture-remaining",
+    "./cmd/lifecycle-fixture-reader",
+    "./cmd/lifecycle-fixture-remaining-iam",
+    "./internal/lifecycle/pilot",
+    "./internal/platform/storage"
+  ],
+  "exit_code": 0,
+  "log_sha256": "a139a36166e967841b52a829510fda4e607a2b873384bfff8de4a2683bee0174",
+  "provider": "LOOPBACK_SIMULATION_ONLY",
+  "native_delete": 0
+}

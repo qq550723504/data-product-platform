@@ -369,23 +369,36 @@ func (a authority) CheckApproverAuthority(ctx context.Context, tx pgx.Tx, v doma
 }
 
 type journal struct {
-	exact     *lc.ExactExecution
-	authority authority
+	exact                lc.ExactDeletionJournal
+	authorize            func() error
+	budget               string
+	budgetConsumed       bool
+	claimConfirmed       bool
+	claimError           error
+	observationError     error
+	transportObservation *domain.ProviderObservation
 }
 
-func (j journal) ClaimExactSend(ctx context.Context, a domain.ProviderAttempt, c domain.Copy) error {
-	if _, e := load(j.authority.stage); e != nil {
-		return e
+func (j *journal) ClaimExactSend(ctx context.Context, a domain.ProviderAttempt, c domain.Copy) error {
+	if err := j.authorize(); err != nil {
+		j.claimError = err
+		return err
 	}
 	// Burn a durable per-target slot before the DB claim. A failed/unknown claim
 	// loses this slot conservatively; a fresh helper cannot retry another attempt.
-	if e := save(filepath.Join("/run/budget", c.ID.String()+".json"), map[string]any{"execution": execution, "attempt": a, "copy": c, "at": time.Now().UTC()}); e != nil {
-		return e
+	if err := save(filepath.Join(j.budget, c.ID.String()+".json"), map[string]any{"execution": execution, "attempt": a, "copy": c, "at": time.Now().UTC()}); err != nil {
+		j.claimError = err
+		return err
 	}
-	return j.exact.ClaimExactSend(ctx, a, c)
+	j.budgetConsumed = true
+	j.claimError = j.exact.ClaimExactSend(ctx, a, c)
+	j.claimConfirmed = j.claimError == nil
+	return j.claimError
 }
-func (j journal) ObserveExactSend(ctx context.Context, p domain.ProviderObservation) error {
-	return j.exact.ObserveExactSend(ctx, p)
+func (j *journal) ObserveExactSend(ctx context.Context, p domain.ProviderObservation) error {
+	j.transportObservation = &p
+	j.observationError = j.exact.ObserveExactSend(ctx, p)
+	return j.observationError
 }
 
 func send(ctx context.Context, stage string) error {
@@ -458,12 +471,12 @@ func send(ctx context.Context, stage string) error {
 	if !matched {
 		return errors.New("attempt is not in the frozen case plan")
 	}
-	if stage == "M1B" {
-		first, _ := fixedTarget(l.F.Group, "M1A")
-		var absent bool
-		if e = pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM lifecycle_copy_absence_receipt WHERE workspace_id=$1 AND copy_id=$2)`, l.Scope.Workspace, first.ID).Scan(&absent); e != nil || !absent {
-			return errors.New("M1A absence must commit before M1B")
-		}
+	// The complete namespace gate still runs under the Core fence. This early
+	// ordering check prevents consuming the next target's budget while a prior
+	// version is deleted but has not yet acquired an immutable absence receipt.
+	if e = requirePriorAbsences(ctx, pool, l.Scope, stage); e != nil {
+		return writePreSendRejection("/run/output/"+stage+"-returned.json", stage,
+			attempt, target, "PRIOR_ABSENCE_PENDING", e)
 	}
 	protection, e := inspector.InspectRetentionAndHold(ctx, target)
 	if e != nil {
@@ -475,31 +488,26 @@ func send(ctx context.Context, stage string) error {
 	}
 	deps.Protection[target.ID] = protection
 	deps.Inventories[target.Namespace] = inventory
-	deleter, e := storage.NewLifecycleDeleter(storage.LifecycleDeleteConfig{Endpoint: "127.0.0.1:9002", AccessKey: l.F.DeleteAccess, SecretKey: l.F.DeleteSecret, Targets: []domain.Copy{target}, Journal: journal{exact, auth}})
+	sendJournal := &journal{exact: exact, budget: "/run/budget", authorize: func() error {
+		_, err := load(stage)
+		return err
+	}}
+	deleter, e := storage.NewLifecycleDeleter(storage.LifecycleDeleteConfig{Endpoint: "127.0.0.1:9002", AccessKey: l.F.DeleteAccess, SecretKey: l.F.DeleteSecret, Targets: []domain.Copy{target}, Journal: sendJournal})
 	if e != nil {
 		return e
 	}
 	sendErr := deleter.DeleteExactCopy(ctx, attempt, target)
-	var certainty, outcome string
-	if e = pool.QueryRow(ctx, `SELECT certainty,outcome FROM lifecycle_provider_observation WHERE attempt_id=$1 ORDER BY observed_at DESC,id DESC LIMIT 1`, attempt.ID).Scan(&certainty, &outcome); e != nil {
+	if e = finishSendReturn("/run/output/"+stage+"-returned.json", stage, attempt, target, sendJournal, sendErr, func() (string, string, error) {
+		var certainty, outcome string
+		err := pool.QueryRow(ctx, `SELECT certainty,outcome FROM lifecycle_provider_observation WHERE attempt_id=$1 ORDER BY observed_at DESC,id DESC LIMIT 1`, attempt.ID).Scan(&certainty, &outcome)
+		return certainty, outcome, err
+	}); e != nil {
 		return e
 	}
-	if e = save("/run/output/"+stage+"-returned.json", map[string]any{"execution": execution, "target": target, "attempt": attempt, "certainty": certainty, "outcome": outcome, "send_error": sendErr != nil, "automatic_resend": false, "automatic_recovery": false}); e != nil {
-		return e
+	if stage == "M1B" {
+		return mixedCheckpoint(ctx, pool, l, attempt, disposition, inspector, deps)
 	}
-	if certainty != domain.InvocationConfirmed {
-		return lc.ErrStorageUnknown
-	}
-	if stage == "H2" || stage == "M1B" {
-		if outcome != domain.ProviderUnknown {
-			return lc.ErrStorageContract
-		}
-		if stage == "M1B" {
-			return mixedCheckpoint(ctx, pool, l, attempt, disposition, inspector, deps)
-		}
-		return nil
-	}
-	return sendErr
+	return nil
 }
 func main() {
 	stage := flag.String("stage", "", "fixed case or wire")

@@ -1,6 +1,6 @@
 """Run unchanged v17/v19 checkers against their own frozen runtimes.
 
-Terminated v21 is audited at its frozen source. Current entry has separate
+Terminated v21/v22 are audited at their frozen sources. Current entry has separate
 full CLI composition tests; a new current packet is checked after freezing. This
 adapter never permits source drift inside either generation and never touches
 Docker, provider credentials or the retained environment.
@@ -206,5 +206,10 @@ def check_v21():
         'c00d4a8f85aaaaa71b9c19c76d042dee6aad1802','11','21',829,1122)
 
 
+def check_v22():
+    return check_prepared_history('5c7e964dac83ebda0cf44743d49a546123735119',
+        '30e954027bc1d5a74d683f0dcd8bd141aa7a678b','12','22',831,1305)
+
+
 if __name__ == '__main__':
-    print(json.dumps({'v17':check(),'v19':check_v19(),'v20':check_v20(),'v21':check_v21(),'current_runtime_check':'test_complete_remaining_preflight.py + new frozen current packet checker'}))
+    print(json.dumps({'v17':check(),'v19':check_v19(),'v20':check_v20(),'v21':check_v21(),'v22':check_v22(),'current_runtime_check':'test_complete_remaining_preflight.py + new frozen current packet checker'}))

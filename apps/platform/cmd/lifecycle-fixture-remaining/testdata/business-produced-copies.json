@@ -1,0 +1,26 @@
+[
+  {
+    "ID": "639c4cee-6a7c-4a13-aa68-37035d6e1811",
+    "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+    "DatasetVersionID": "a26216b5-95f6-4dbb-8359-c98f5f873be1",
+    "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+    "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+    "Namespace": "dpp-lifecycle307-online",
+    "Key": "fixture/remaining-processed.csv",
+    "ProviderVersion": "00d7e220-7714-4c31-a4c7-2dda08cfa306",
+    "ContentSHA256": "d036fefe3225f322a8a2ad401bcc7e3e59127b98df0c6966d1b4c31018ff3fd0",
+    "ByteSize": 232
+  },
+  {
+    "ID": "da6cc6a8-c9c2-41a6-8811-2d46164a241d",
+    "WorkspaceID": "a4aa2689-6e8f-4180-a567-dfb875407eac",
+    "DatasetVersionID": "8cb255aa-a842-4aa5-a4ff-871798aeed0b",
+    "ProviderInstanceID": "cc068c8c-4f00-44cd-a825-377631253d59",
+    "IncarnationID": "d5f220ca-6133-42a0-a31c-1cf717d05274",
+    "Namespace": "dpp-lifecycle307-online",
+    "Key": "fixture/remaining-standardized.csv",
+    "ProviderVersion": "dac1dbc5-c9b5-412a-a2a6-bf082e109e22",
+    "ContentSHA256": "f8a1a1c7f85ff910f44f011d0dc3aba1b410ace20cc7c4429e18ab6cccb1c77d",
+    "ByteSize": 494
+  }
+]
