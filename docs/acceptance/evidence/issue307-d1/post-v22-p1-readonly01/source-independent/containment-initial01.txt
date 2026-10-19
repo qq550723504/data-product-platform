@@ -1,0 +1,15 @@
+test_unavailable_inspection_does_not_skip_known_owner_stop (__main__.Containment.test_unavailable_inspection_does_not_skip_known_owner_stop) ... FAIL
+
+======================================================================
+FAIL: test_unavailable_inspection_does_not_skip_known_owner_stop (__main__.Containment.test_unavailable_inspection_does_not_skip_known_owner_stop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\fixture-private\remaining-post-v22-p1-review01\test_independent_containment01.py", line 20, in test_unavailable_inspection_does_not_skip_known_owner_stop
+    self.assertIn('worker',stopped,'Known bound worker was not sent a physical stop when inspect was unavailable')
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'worker' not found in ['enable-p1-readonly', 'disable-all', 'Redis', 'Native', 'Core'] : Known bound worker was not sent a physical stop when inspect was unavailable
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

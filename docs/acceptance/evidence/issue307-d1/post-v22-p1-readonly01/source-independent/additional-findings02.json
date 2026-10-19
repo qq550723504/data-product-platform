@@ -1,0 +1,22 @@
+{
+  "status": "BLOCKED_PENDING_BOUND_CORE_AND_STDERR_REPAIR",
+  "at": "2026-10-19T09:45:48.033911+00:00",
+  "findings": [
+    {
+      "id": "B2",
+      "classification": "BLOCKER_PENDING_EXISTING_COVERAGE",
+      "problem": "Core metadata CID is not itself a binding of the actual PostgreSQL DSN. prepare loads an unverified legacy Base; worker validates only nonempty DSN. A foreign DB carrying copied original facts could yield a receipt while host fingerprints the bound original Core with no changes.",
+      "bounded_fix": "Prove original Base frozen bytes and Core DNS/alias closure, or reject every DSN except the exact reviewed Core host/port/database/user/no fallback and bind a sanitized target proof."
+    },
+    {
+      "id": "B3",
+      "classification": "BLOCKER",
+      "problem": "Docker logs CLI returns status0 while original container stderr is in subprocess.stderr; generic call drops it and execute_owner saves only stdout, losing actual helper failure.",
+      "bounded_fix": "Keep separate O_EXCL stdout/stderr raw logs and hashes through a dedicated owner log path; preserve generic docker stdout bytes contract.",
+      "counterexample_script_sha256": "d1aa97484bd48688a58f24b1e5e27b7101e05c65a92ad8307c0800a1ccf34287",
+      "counterexample_failure_log_sha256": "97ab7a3097f5b7ca880b638ddc9c8a803fc421ad8f2474a8a9d23f1e544fa36b"
+    }
+  ],
+  "provider_io": 0,
+  "docker_io": 0
+}

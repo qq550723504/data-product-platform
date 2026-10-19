@@ -83,9 +83,10 @@ func authorized() error {
 }
 
 type transport struct {
-	base   http.RoundTripper
-	users  map[string]string
-	enable bool
+	base        http.RoundTripper
+	users       map[string]string
+	enable      bool
+	inspectOnly bool
 }
 
 func (t transport) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -93,7 +94,12 @@ func (t transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if req.Method == "PUT" && req.URL.Path == "/minio/admin/v3/set-user-status" {
 		_, known := t.users[req.URL.Query().Get("accessKey")]
 		status := req.URL.Query().Get("status")
-		allowed = known && (status == "disabled" || (t.enable && status == "enabled" && authorized() == nil))
+		grant := authorized
+		if t.inspectOnly {
+			grant = authorizedReadOnly
+		}
+		selected := !t.inspectOnly || req.URL.Query().Get("accessKey") == "inspect808a69606c36"
+		allowed = known && (status == "disabled" || (selected && t.enable && status == "enabled" && grant() == nil))
 	}
 	if req.URL.Scheme != "http" || req.URL.Host != "127.0.0.1:9000" || !allowed {
 		return nil, errors.New("bootstrap permits only exact user status and policy reads")
@@ -117,6 +123,7 @@ func (t transport) RoundTrip(req *http.Request) (*http.Response, error) {
 }
 func run(ctx context.Context, action string) error {
 	disabling := action == "disable-send" || action == "disable-all"
+	inspectOnly := action == "enable-p1-readonly"
 	var c rootConfig
 	if read("/run/private/root.json", &c) != nil || c.Endpoint != "127.0.0.1:9000" || c.RootAccess == "" || c.RootSecret == "" {
 		return errors.New("separate fixed bootstrap config required")
@@ -124,6 +131,9 @@ func run(ctx context.Context, action string) error {
 	s, e := pilot.RemainingScopeFor(c.Group)
 	if e != nil {
 		return e
+	}
+	if inspectOnly && c.Group != "business-races" {
+		return errors.New("P1 read-only bootstrap is business-only")
 	}
 	var frozen candidate
 	if !disabling && (read("/run/private/candidate.json", &frozen) != nil || frozen.Execution != execution || frozen.Profile != pilot.RemainingProfile) {
@@ -134,12 +144,16 @@ func run(ctx context.Context, action string) error {
 		return e
 	}
 	binary, e := os.ReadFile(self)
-	if !disabling && (e != nil || digest(binary) != frozen.OwnerBinarySHA256) {
+	if !disabling && !inspectOnly && (e != nil || digest(binary) != frozen.OwnerBinarySHA256) {
 		return errors.New("bootstrap binary drift")
 	}
-	enable := action == "enable-read" || action == "enable-send"
+	enable := action == "enable-read" || action == "enable-send" || inspectOnly
 	if enable {
-		if e = authorized(); e != nil {
+		grant := authorized
+		if inspectOnly {
+			grant = authorizedReadOnly
+		}
+		if e = grant(); e != nil {
 			return e
 		}
 	} else if action != "check-disabled" && action != "disable-send" && action != "disable-all" {
@@ -154,7 +168,7 @@ func run(ctx context.Context, action string) error {
 			users[user] = "lifecycle307-remaining-business-" + user
 		}
 	}
-	admin, e := madmin.NewWithOptions(c.Endpoint, &madmin.Options{Creds: credentials.NewStaticV4(c.RootAccess, c.RootSecret, ""), Transport: transport{&http.Transport{Proxy: nil, DisableKeepAlives: true, ResponseHeaderTimeout: 8 * time.Second}, users, enable}})
+	admin, e := madmin.NewWithOptions(c.Endpoint, &madmin.Options{Creds: credentials.NewStaticV4(c.RootAccess, c.RootSecret, ""), Transport: transport{&http.Transport{Proxy: nil, DisableKeepAlives: true, ResponseHeaderTimeout: 8 * time.Second}, users, enable, inspectOnly}})
 	if e != nil {
 		return e
 	}
@@ -229,14 +243,14 @@ func run(ctx context.Context, action string) error {
 		if e != nil || !a.Equals(*b) {
 			return errors.New("frozen IAM policy content drift")
 		}
-		if action == "check-disabled" && info.Status != madmin.AccountDisabled {
+		if (action == "check-disabled" || inspectOnly) && info.Status != madmin.AccountDisabled {
 			return errors.New("IAM identity not disabled")
 		}
 		before[user] = string(info.Status)
 	}
 	if enable {
 		for user := range users {
-			selected := action == "disable-all" || (action == "enable-read" && user != deletion) || ((action == "enable-send" || action == "disable-send") && user == deletion)
+			selected := (inspectOnly && user == inspection) || action == "disable-all" || (action == "enable-read" && user != deletion) || ((action == "enable-send" || action == "disable-send") && user == deletion)
 			if !selected {
 				continue
 			}

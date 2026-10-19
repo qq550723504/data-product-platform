@@ -1,0 +1,7 @@
+{"at": "2026-10-19T09:49:19.157655+00:00", "phase": "disable-all"}
+test_failed_container_original_stderr_is_retained (__main__.Logs.test_failed_container_original_stderr_is_retained) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.012s
+
+OK

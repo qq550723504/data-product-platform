@@ -487,6 +487,20 @@ func run(ctx context.Context, path string, c config) error {
 	return errors.New("unsupported finite acceptance mode")
 }
 func main() {
+	if path := os.Getenv("LIFECYCLE_P1_POST_V22_CONFIG"); path != "" {
+		if len(os.Args) != 2 || os.Args[1] != "p1-post-v22-readonly" {
+			fmt.Fprintln(os.Stderr, "fixed P1 read-only command required")
+			os.Exit(1)
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+		defer cancel()
+		if e := runP1PostV22(ctx, path); e != nil {
+			fmt.Fprintln(os.Stderr, "P1 post-v22 read-only reconciliation failed:", e)
+			os.Exit(1)
+		}
+		fmt.Println("P1 post-v22 read-only reconciliation completed; DELETE=0")
+		return
+	}
 	path := os.Getenv("LIFECYCLE_RECOVERY_ACCEPTANCE_CONFIG")
 	c, e := load(path)
 	if e == nil {

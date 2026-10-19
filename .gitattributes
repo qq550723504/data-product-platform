@@ -125,3 +125,5 @@ docs/acceptance/evidence/issue307-d1/post-v22-repair01/** -text whitespace=cr-at
 docs/acceptance/evidence/issue307-d1/remaining-candidate11/** -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/remaining-candidate12/** -text whitespace=cr-at-eol
 docs/acceptance/issue307-d1-v22-execution01.md text eol=lf whitespace=-blank-at-eof
+
+docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly01/** -text whitespace=cr-at-eol

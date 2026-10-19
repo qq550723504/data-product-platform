@@ -20,7 +20,7 @@ func TestBootstrapNeverExposesObjectDeletionOrUnconfirmedEnable(t *testing.T) {
 	} {
 		t.Run(tc.path, func(t *testing.T) {
 			req, _ := http.NewRequest(tc.method, "http://127.0.0.1:9000"+tc.path, nil)
-			if _, e := (transport{shouldNotCall{t}, map[string]string{"delete808a6960": "fixed"}, true}).RoundTrip(req); e == nil {
+			if _, e := (transport{shouldNotCall{t}, map[string]string{"delete808a6960": "fixed"}, true, false}).RoundTrip(req); e == nil {
 				t.Fatal("forbidden request admitted")
 			}
 		})
