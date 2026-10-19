@@ -41,7 +41,7 @@ def authority(candidate,permission,human,template,now,recovery):
     require(human==template and bool(template),'new exact human confirmation absent/different')
     require(permission['Execution']==candidate['Execution']==f.EXECUTION and permission['Profile']==candidate['Profile']==f.PROFILE,'foreign authorization')
     require(permission['NotBefore']==candidate['NotBefore']==f.START and permission['ExpiresAt']==candidate['NotAfter']==f.END,'window moved')
-    require(permission['MaxPerTarget']==1 and permission['MaxTotal']==7,'budget differs')
+    require(permission['MaxPerTarget']==1 and permission['MaxTotal']==6,'budget differs')
     require(instant(permission['ConfirmedAt'])<=now,'confirmation is future-dated')
     require(now>=instant(f.START) and now<instant(f.END)+(dt.timedelta(hours=2) if recovery else dt.timedelta()),'outside absolute authority window')
     if not recovery:require(permission['Enabled'] is True,'send permission is sealed')
@@ -75,6 +75,7 @@ def main():
     helper_private_contract(folder,args.stage)
     if args.stage.startswith('recover-'):require(not config['DeleteSecret'] and not config['WirePrivateKey'],'recovery has send credentials')
     helper=r.inspect(group['Helpers'][args.stage]);helper_contract(helper,group,args.stage,folder,f.PRIVATE/'operator','dpp-lifecycle307-'+next(x['Run'][:8] for x in r.load(f.ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json') if x['Group']==args.group)+'-'+f.GENERATION+'-budget')
+    require(helper['Config']['User']=='10001:10001' and helper['HostConfig'].get('Tmpfs')=={'/tmp':'','/var/lib/postgresql/data':'size=1m'},'current helper is not the exact unprivileged owner')
     images={'Core':r.PG,'Native':r.MI,'Gateway':r.GW}
     for role,image in images.items():
         state=r.inspect(group[role]);require(state['Id']==group[role] and state['Image']==image and state['State']['Running'] and state['State']['Pid']>0,'source role/image not active and bound')
@@ -85,12 +86,31 @@ def main():
     network=json.loads(r.docker('network','inspect',group['Network']))[0];require(network['Id']==group['Network'] and network['Internal'],'network is not private/internal')
     volume=next(m['Name'] for m in helper['Mounts'] if m['Destination']=='/run/budget');budget=r.inspect(volume)
     require(budget['Labels'].get('lifecycle307.remaining')==f.EXECUTION,'budget volume ownership differs')
+    # Cross-group order is derived from fresh immutable Core receipts, not a
+    # host progress file. It is checked before signing the next slot.
+    import remaining_sequence
+    sequence = remaining_sequence.observe(candidate, f.PRIVATE, args.group, args.stage, r.inspect, r.native.sql, r.load)
+    binding=next(b for b in r.load(f.PUBLIC/'bindings.json') if b['group']==args.group)
+    mounted=r.docker_text('ps','-aq','--no-trunc','--filter','volume='+volume).split()
+    expected={*group['Helpers'].values(),binding['budget_initializer']}
+    require(len(mounted)==len(set(mounted)) and set(mounted)==expected,'budget complete mount graph expanded or lost owner')
+    initializer=r.inspect(binding['budget_initializer'])
+    require(initializer['Id']==binding['budget_initializer'] and not initializer['State']['Running'] and initializer['State']['Pid']==0
+            and initializer['Config']['User']=='0:0' and initializer['Config']['Entrypoint']==['/bin/sh']
+            and initializer['Config']['Cmd']==['-e','/run/budget-init.sh'] and initializer['HostConfig']['NetworkMode']=='none'
+            and initializer['HostConfig']['RestartPolicy']['Name']=='no' and not initializer['HostConfig'].get('PortBindings')
+            and not any(initializer['NetworkSettings']['Ports'].values()),'budget initializer changed or still active')
+    initial_mounts={m['Destination']:m for m in initializer['Mounts']}
+    require(set(initial_mounts)=={'/run/budget','/run/budget-init.sh'} and initial_mounts['/run/budget']['Name']==volume
+            and not initial_mounts['/run/budget-init.sh']['RW']
+            and r.sha(Path(initial_mounts['/run/budget-init.sh']['Source']))==binding['budget_initializer_script_sha256'],'budget initialization scope/code differs')
+    remaining_sequence.budget_archive(r.docker('cp',helper['Id']+':/run/budget','-'),candidate,args.group,initial=False)
     # Late import: signature implementation uses the maintained cryptography OSS.
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
     from cryptography.hazmat.primitives.serialization import Encoding,PublicFormat
     key=Ed25519PrivateKey.from_private_bytes((f.PRIVATE/'topology-key.private').read_bytes())
     require(key.public_key().public_bytes(Encoding.Raw,PublicFormat.Raw).hex()==candidate['PublicKey'],'host key differs')
-    body={'Execution':f.EXECUTION,'CandidateSHA256':r.sha(f.PUBLIC/'candidate.json'),'Group':args.group,'Stage':args.stage,'Helper':helper['Id'],'Core':group['Core'],'Native':group['Native'],'Gateway':group['Gateway'],'Network':group['Network'],'BinarySHA256':candidate['SenderBinarySHA256'],'ConfigSHA256':group['ConfigSHA256'][args.stage],'At':r.utc().isoformat(),'NoPorts':True,'NoRoot':True,'NoSocket':True,'ReadOnly':True,'NoRestart':True,'Internal':True}
+    body={'Execution':f.EXECUTION,'CandidateSHA256':r.sha(f.PUBLIC/'candidate.json'),'Group':args.group,'Stage':args.stage,'Helper':helper['Id'],'Core':group['Core'],'Native':group['Native'],'Gateway':group['Gateway'],'Network':group['Network'],'BinarySHA256':candidate['SenderBinarySHA256'],'ConfigSHA256':group['ConfigSHA256'][args.stage],'At':r.utc().isoformat(),'NoPorts':True,'NoRoot':True,'NoSocket':True,'ReadOnly':True,'NoRestart':True,'Internal':True,'Sequence':sequence}
     encoded=f.compact(body);proof={'Body':base64.b64encode(encoded).decode(),'Signature':base64.b64encode(key.sign(encoded)).decode()}
     # Fresh attestations may replace only this ephemeral proof, never permission,
     # confirmation, candidate, budget or immutable case/checkpoint evidence.

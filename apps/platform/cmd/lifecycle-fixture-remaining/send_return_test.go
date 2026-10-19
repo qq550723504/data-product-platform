@@ -72,7 +72,7 @@ func readReturn(t *testing.T, p string) sendReturn {
 func TestClaimRejectionKeepsOriginalErrorWithoutProviderObservationOrCost(t *testing.T) {
 	for _, at := range []string{"authority", "budget", "Core"} {
 		t.Run(at, func(t *testing.T) {
-			cp, a := returnAttempt(t, "business-races", "P1")
+			cp, a := returnAttempt(t, "business-races", "P2")
 			original := errors.New("specific " + at + " rejection")
 			exact := &returnTestJournal{}
 			budget := t.TempDir()
@@ -98,7 +98,7 @@ func TestClaimRejectionKeepsOriginalErrorWithoutProviderObservationOrCost(t *tes
 			}
 			path := filepath.Join(t.TempDir(), "returned.json")
 			lookupCalled := false
-			err := finishSendReturn(path, "P1", a, cp, j, sendErr, func() (string, string, error) {
+			err := finishSendReturn(path, "P2", a, cp, j, sendErr, func() (string, string, error) {
 				lookupCalled = true
 				return "", "", pgx.ErrNoRows
 			})
@@ -120,7 +120,7 @@ func TestClaimRejectionKeepsOriginalErrorWithoutProviderObservationOrCost(t *tes
 }
 
 func TestAcceptedProviderThenLostObservationKeepsTransportAndBothErrors(t *testing.T) {
-	cp, a := returnAttempt(t, "business-races", "P1")
+	cp, a := returnAttempt(t, "business-races", "P2")
 	storeErr := errors.New("original observation persistence failure")
 	exact := &returnTestJournal{observationErr: storeErr}
 	j := &journal{exact: exact, authorize: func() error { return nil }, budget: t.TempDir()}
@@ -129,7 +129,7 @@ func TestAcceptedProviderThenLostObservationKeepsTransportAndBothErrors(t *testi
 	defer provider.Close()
 	sendErr := testDeleter(t, provider.URL, cp, j).DeleteExactCopy(context.Background(), a, cp)
 	path := filepath.Join(t.TempDir(), "returned.json")
-	err := finishSendReturn(path, "P1", a, cp, j, sendErr, func() (string, string, error) { return "", "", pgx.ErrNoRows })
+	err := finishSendReturn(path, "P2", a, cp, j, sendErr, func() (string, string, error) { return "", "", pgx.ErrNoRows })
 	if !errors.Is(err, storeErr) || !errors.Is(err, pgx.ErrNoRows) || calls.Load() != 1 || exact.observations != 1 {
 		t.Fatal("lost physical observation or original persistence error", err)
 	}
@@ -170,7 +170,7 @@ func TestExpectedResponseLossPreservesConfirmedUnknownAndCannotResend(t *testing
 }
 
 func TestObservationWriteErrorSurvivesSuccessfulReadbackForEverySendOutcome(t *testing.T) {
-	for _, tc := range []struct{ group, stage string }{{"business-races", "P1"}, {"late-hold", "H2"}, {"mixed", "M1B"}} {
+	for _, tc := range []struct{ group, stage string }{{"business-races", "P2"}, {"late-hold", "H2"}, {"mixed", "M1B"}} {
 		t.Run(tc.stage, func(t *testing.T) {
 			cp, a := returnAttempt(t, tc.group, tc.stage)
 			original := errors.New("observation commit result uncertain")
@@ -179,7 +179,7 @@ func TestObservationWriteErrorSurvivesSuccessfulReadbackForEverySendOutcome(t *t
 			var calls atomic.Int32
 			provider := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				calls.Add(1)
-				if tc.stage == "P1" {
+				if tc.stage == "P2" {
 					w.WriteHeader(204)
 					return
 				}

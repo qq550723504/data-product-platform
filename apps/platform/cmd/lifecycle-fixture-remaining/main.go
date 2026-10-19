@@ -108,7 +108,7 @@ func save(path string, v any) error {
 	}
 	return f.Sync()
 }
-func fixedTarget(group, stage string) (domain.Copy, error) {
+func historicalCopy(group, stage string) (domain.Copy, error) {
 	s, e := pilot.RemainingScopeFor(group)
 	if e != nil {
 		return domain.Copy{}, e
@@ -120,6 +120,12 @@ func fixedTarget(group, stage string) (domain.Copy, error) {
 		}
 	}
 	return domain.Copy{}, errDenied
+}
+func fixedTarget(group, stage string) (domain.Copy, error) {
+	if !knownCase(stage) {
+		return domain.Copy{}, errDenied
+	}
+	return historicalCopy(group, stage)
 }
 func validateCandidate(c candidate) error {
 	if c.NotBefore.Format(time.RFC3339) != pilot.RemainingNotBefore || c.NotAfter.Format(time.RFC3339) != pilot.RemainingNotAfter {
@@ -149,12 +155,16 @@ func validateCandidate(c candidate) error {
 			return errDenied
 		}
 		seen[g.Group] = true
+		source := pilot.RemainingEnvironmentSources()[g.Group]
+		if g.Core != source[0] || g.Native != source[1] || g.Network != source[2] {
+			return errDenied
+		}
 		for _, id := range []string{g.CheckpointCore, g.CheckpointNative} {
 			if raw, e := hex.DecodeString(id); e != nil || len(raw) != 32 {
 				return errDenied
 			}
 		}
-		caseStages := map[string][]string{"business-races": {"renew", "business"}, "late-hold": {"late", "close-H1"}, "mixed": {"mixed", "mixed-b", "mixed-c"}}[g.Group]
+		caseStages := map[string][]string{"business-races": {"business"}, "late-hold": {"late", "close-H1"}, "mixed": {"mixed", "mixed-b", "mixed-c"}}[g.Group]
 		if len(g.CaseHelpers) != len(caseStages) || len(g.CaseConfigSHA256) != len(caseStages) {
 			return errDenied
 		}
@@ -197,11 +207,11 @@ func validateCandidate(c candidate) error {
 			return errDenied
 		}
 		if g.Group == "business-races" {
-			if len(g.PolicyHeads) != 6 {
+			if len(g.PolicyHeads) != 5 {
 				return errDenied
 			}
 			for _, cp := range g.Copies {
-				if cp.Key != "fixture/control-hold.csv" && cp.Key != "fixture/control-retention.csv" && g.PolicyHeads[cp.DatasetVersionID.String()] == uuid.Nil {
+				if cp.Key != "fixture/p1.csv" && cp.Key != "fixture/control-hold.csv" && cp.Key != "fixture/control-retention.csv" && g.PolicyHeads[cp.DatasetVersionID.String()] == uuid.Nil {
 					return errDenied
 				}
 			}
@@ -217,7 +227,7 @@ func validateCandidate(c candidate) error {
 			}
 		}
 		expectedStages := []string{"wire"}
-		for _, stage := range []string{"P1", "P2", "T1", "T2", "H2", "M1A", "M1B"} {
+		for _, stage := range []string{"P2", "T1", "T2", "H2", "M1A", "M1B"} {
 			if _, e := fixedTarget(g.Group, stage); e == nil {
 				expectedStages = append(expectedStages, stage, "recover-"+stage)
 			}
@@ -238,7 +248,7 @@ func validateCandidate(c candidate) error {
 	}
 	var targets []domain.Copy
 	for _, group := range []string{"business-races", "late-hold", "mixed"} {
-		for _, stage := range []string{"P1", "P2", "T1", "T2", "H2", "M1A", "M1B"} {
+		for _, stage := range []string{"P2", "T1", "T2", "H2", "M1A", "M1B"} {
 			if cp, e := fixedTarget(group, stage); e == nil {
 				targets = append(targets, cp)
 			}
@@ -280,7 +290,7 @@ func load(stage string) (loaded, error) {
 	if validateWindow(l.C, p, at) != nil {
 		return l, errDenied
 	}
-	if p.Profile != profile || p.Execution != execution || p.CandidateSHA256 != l.CandidateHash || p.BinarySHA256 != l.C.SenderBinarySHA256 || p.MaxPerTarget != 1 || p.MaxTotal != 7 || p.ConfirmedAt.IsZero() || at.Before(p.ConfirmedAt) || !p.NotBefore.Equal(l.C.NotBefore) || !p.ExpiresAt.Equal(l.C.NotAfter) || at.Before(p.NotBefore) || !at.Before(p.ExpiresAt) {
+	if p.Profile != profile || p.Execution != execution || p.CandidateSHA256 != l.CandidateHash || p.BinarySHA256 != l.C.SenderBinarySHA256 || p.MaxPerTarget != 1 || p.MaxTotal != 6 || p.ConfirmedAt.IsZero() || at.Before(p.ConfirmedAt) || !p.NotBefore.Equal(l.C.NotBefore) || !p.ExpiresAt.Equal(l.C.NotAfter) || at.Before(p.NotBefore) || !at.Before(p.ExpiresAt) {
 		return l, errDenied
 	}
 	confirmation, e := os.ReadFile("/run/private/human-confirmation.txt")
@@ -326,7 +336,7 @@ func load(stage string) (loaded, error) {
 
 func strictConfig(l loaded) error {
 	dsn, e := url.Parse(l.F.PostgresDSN)
-	if e != nil || dsn.Scheme != "postgres" || dsn.Host != "dpp-lifecycle307-"+l.Scope.Run.String()[:8]+"-postgres:5432" || dsn.Path != "/lifecycle307" || dsn.User == nil || dsn.User.Username() != "fixture" || dsn.RawQuery != "sslmode=disable" || l.F.Token == "" || l.F.InspectAccess != "inspect"+strings.ReplaceAll(l.Scope.Run.String(), "-", "")[:12] || l.F.InspectSecret == "" || l.F.DeleteAccess != "delete"+l.Scope.Run.String()[:8] {
+	if e != nil || dsn.Scheme != "postgres" || dsn.Host != "dpp-lifecycle307-"+l.Scope.Run.String()[:8]+"-postgres:5432" || dsn.Path != "/lifecycle307" || dsn.User == nil || dsn.User.Username() != "fixture" || dsn.RawQuery != "sslmode=disable" || l.F.Token == "" || l.F.InspectAccess != pilot.RemainingIdentity(l.Scope.Group, "inspect") || l.F.InspectSecret == "" || l.F.DeleteAccess != pilot.RemainingIdentity(l.Scope.Group, "delete") {
 		return errDenied
 	}
 	if password, ok := dsn.User.Password(); !ok || password == "" {
@@ -533,7 +543,7 @@ func main() {
 			fmt.Println("PASS_FROZEN_CANDIDATE_OFFLINE; database/provider I/O=0")
 		}
 	} else if *stage == "check-disabled" {
-		_, e = load("P1")
+		_, e = load("P2")
 		if e != nil {
 			fmt.Println("SEALED: authority denied before database/provider I/O; DELETE=0")
 			return
@@ -556,7 +566,7 @@ func main() {
 
 func knownCase(stage string) bool {
 	switch stage {
-	case "P1", "P2", "T1", "T2", "H2", "M1A", "M1B":
+	case "P2", "T1", "T2", "H2", "M1A", "M1B":
 		return true
 	}
 	return false

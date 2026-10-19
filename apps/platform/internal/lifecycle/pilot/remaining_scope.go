@@ -18,10 +18,29 @@ var remainingScopes []byte
 
 // A different UTC slot requires a new frozen candidate/confirmation. It cannot
 // be opened by editing a permission file or replaying an old confirmation text.
-const RemainingExecution = "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e"
-const RemainingProfile = "candidate12/v22"
-const RemainingNotBefore = "2026-10-19T06:00:00Z"
-const RemainingNotAfter = "2026-10-19T06:40:00Z"
+const RemainingExecution = "4e524c04-2376-4bc9-9e85-452909d3dba4"
+const RemainingProfile = "candidate13/v23"
+const RemainingNotBefore = "2026-10-20T06:00:00Z"
+const RemainingNotAfter = "2026-10-20T06:40:00Z"
+
+// New execution-owned identities never reuse the retained v22 users. Policy
+// construction and the root status owner share this one naming contract.
+func RemainingIdentity(group, kind string) string {
+	s, err := RemainingScopeFor(group)
+	if err != nil || (kind != "inspect" && kind != "delete") {
+		return ""
+	}
+	prefix := map[string]string{"inspect": "i", "delete": "d"}[kind]
+	return prefix + RemainingExecution[:8] + s.Run.String()[:8]
+}
+
+func RemainingPolicyName(group, kind string) string {
+	id := RemainingIdentity(group, kind)
+	if id == "" {
+		return ""
+	}
+	return "lifecycle307-six-" + id
+}
 
 type RemainingPlan struct {
 	Case      string    `json:"case"`

@@ -76,7 +76,7 @@ func authorized() error {
 	if read("/run/private/status.json", &frozen) != nil || frozen.CandidateSHA256 != digest(b) || frozen.ConfirmationSHA256 != digest(expected) {
 		return errors.New("trusted confirmation template binding differs")
 	}
-	if e != nil || e2 != nil || len(h) == 0 || !bytes.Contains(h, []byte(execution)) || !bytes.Contains(h, []byte(digest(b))) || !bytes.Equal(h, expected) || !p.Enabled || p.Execution != execution || c.Execution != execution || c.Profile != pilot.RemainingProfile || digest(b) != p.CandidateSHA256 || digest(h) != p.ConfirmationSHA256 || c.NotBefore.Format(time.RFC3339) != pilot.RemainingNotBefore || c.NotAfter.Format(time.RFC3339) != pilot.RemainingNotAfter || now.Before(c.NotBefore) || !now.Before(c.NotAfter) || !p.NotBefore.Equal(c.NotBefore) || !p.ExpiresAt.Equal(c.NotAfter) || p.ConfirmedAt.IsZero() || now.Before(p.ConfirmedAt) || p.MaxPerTarget != 1 || p.MaxTotal != 7 {
+	if e != nil || e2 != nil || len(h) == 0 || !bytes.Contains(h, []byte(execution)) || !bytes.Contains(h, []byte(digest(b))) || !bytes.Equal(h, expected) || !p.Enabled || p.Execution != execution || c.Execution != execution || c.Profile != pilot.RemainingProfile || digest(b) != p.CandidateSHA256 || digest(h) != p.ConfirmationSHA256 || c.NotBefore.Format(time.RFC3339) != pilot.RemainingNotBefore || c.NotAfter.Format(time.RFC3339) != pilot.RemainingNotAfter || now.Before(c.NotBefore) || !now.Before(c.NotAfter) || !p.NotBefore.Equal(c.NotBefore) || !p.ExpiresAt.Equal(c.NotAfter) || p.ConfirmedAt.IsZero() || now.Before(p.ConfirmedAt) || p.MaxPerTarget != 1 || p.MaxTotal != 6 {
 		return errors.New("new exact IAM enable authority denied")
 	}
 	return nil
@@ -98,7 +98,7 @@ func (t transport) RoundTrip(req *http.Request) (*http.Response, error) {
 		if t.inspectOnly {
 			grant = authorizedReadOnly
 		}
-		selected := !t.inspectOnly || req.URL.Query().Get("accessKey") == "inspect808a69606c36"
+		selected := !t.inspectOnly || strings.HasPrefix(req.URL.Query().Get("accessKey"), "i"+execution[:8])
 		allowed = known && (status == "disabled" || (selected && t.enable && status == "enabled" && grant() == nil))
 	}
 	if req.URL.Scheme != "http" || req.URL.Host != "127.0.0.1:9000" || !allowed {
@@ -160,9 +160,10 @@ func run(ctx context.Context, action string) error {
 		return errors.New("unknown bounded IAM action")
 	}
 	run := s.Run.String()
-	inspection := "inspect" + strings.ReplaceAll(run, "-", "")[:12]
-	deletion := "delete" + run[:8]
-	users := map[string]string{inspection: "lifecycle307-inspection-" + run, deletion: "lifecycle307-remaining-delete-" + run}
+	inspection := pilot.RemainingIdentity(c.Group, "inspect")
+	deletion := pilot.RemainingIdentity(c.Group, "delete")
+	oldInspection := "inspect" + strings.ReplaceAll(run, "-", "")[:12]
+	users := map[string]string{inspection: pilot.RemainingPolicyName(c.Group, "inspect"), deletion: pilot.RemainingPolicyName(c.Group, "delete"), oldInspection: "lifecycle307-inspection-" + run, "delete" + run[:8]: "lifecycle307-remaining-delete-" + run}
 	if c.Group == "business-races" {
 		for _, user := range []string{"remainread808a6960", "remainput808a6960"} {
 			users[user] = "lifecycle307-remaining-business-" + user
@@ -250,7 +251,7 @@ func run(ctx context.Context, action string) error {
 	}
 	if enable {
 		for user := range users {
-			selected := (inspectOnly && user == inspection) || action == "disable-all" || (action == "enable-read" && user != deletion) || ((action == "enable-send" || action == "disable-send") && user == deletion)
+			selected := (inspectOnly && user == inspection) || action == "disable-all" || (action == "enable-read" && user == inspection) || ((action == "enable-send" || action == "disable-send") && user == deletion)
 			if !selected {
 				continue
 			}

@@ -1,0 +1,18 @@
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/business-races/SOURCE
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/business-races/RESTORE
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/late-hold/SOURCE
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/late-hold/RESTORE
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/mixed/SOURCE
+=== RUN   TestSixWholeFileSourceRestoreAndNewPolicyRejection/mixed/RESTORE
+--- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection (0.76s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/business-races/SOURCE (0.17s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/business-races/RESTORE (0.15s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/late-hold/SOURCE (0.12s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/late-hold/RESTORE (0.10s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/mixed/SOURCE (0.11s)
+    --- PASS: TestSixWholeFileSourceRestoreAndNewPolicyRejection/mixed/RESTORE (0.10s)
+=== RUN   TestSixWholeFileRejectsAliasedRestoreAndForeignExecution
+--- PASS: TestSixWholeFileRejectsAliasedRestoreAndForeignExecution (0.13s)
+PASS
+ok  	github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check	1.646s

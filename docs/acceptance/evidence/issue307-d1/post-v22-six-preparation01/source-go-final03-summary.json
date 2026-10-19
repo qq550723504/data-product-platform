@@ -1,0 +1,10 @@
+{
+  "exit_code": 0,
+  "test_events": {
+    "run": 219,
+    "output": 439,
+    "pass": 218,
+    "skip": 1
+  },
+  "scope": "actual local Go; SDK/loopback doubles; no retained-native operation; PG DSN tests may skip"
+}

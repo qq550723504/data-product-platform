@@ -1,6 +1,6 @@
 # #307 D1 剩余六份方案的准备边界
 
-状态：范围草案，**未冻结、无新删除execution、无窗口、未授权**。不是candidate12/v22的续跑，也不是精确确认文本。#323保持Draft、不合并；#307 OPEN。
+当前状态：旧dispatch闭合及17版本实际只读验收已完成；candidate13/v23仍**未冻结、未获新删除授权**。proposal execution为`4e524c04-2376-4bc9-9e85-452909d3dba4`，人类选择的方案窗口为2026-10-20新加坡14:00–14:40（UTC06:00–06:40），只用于准备；未安排调度。不是旧candidate12/v22的续跑。#332保持Draft、不合并；#307 OPEN。#323已按另外直接人类授权合并，旧Draft检查点原文保留。
 
 原v22已经一次DELETE P1，原204/CONFIRMED ACCEPTED不可改写。P1仅通过独立新的只读切片追加absence及plan completion；原失败终态、旧预算、旧pins、旧授权及所有备份保留。P1无论后续对账结果如何均不能放回删除目标。
 
@@ -74,3 +74,19 @@ P1门禁已由新audit d64ad338-00d2-4569-bd62-9e132ddaf578 在2026-10-19T10:58:
 
 
 最新17版本结果（原检查点不覆盖）：audit f4330324-98de-4fc4-ae3d-e1feab7adaae 已实际PASS_COMPLETE_POST_V22_SEVENTEEN_READONLY，74次技术GET/HEAD、17份全部bytes/SHA/保护/P1精确缺失、三源Core不变及最终封存通过；独立结果终评SHA c6508108d16f6095889b7dce66bb26d4940073faf1934a8b9b1fed9ec69ab616，remaining_blockers=[]。详见issue307-d1-post-v22-seventeen-acceptance.md。人类另选新方案窗口2026-10-20新加坡14:00–14:40，仅用于准备，不构成新删除授权；六份contract见issue307-d1-post-v22-six-contract.md。六候选尚NOT_FROZEN；原预算/pins/失败/所有备份保留。
+
+### 六份候选源码准备检查点（尚未分配或运行新原生环境）
+
+| 有限工作 | 当前结果 | 证据边界 |
+| --- | --- | --- |
+| 旧P2/T1/T2可信NOT_SENT/release | PASS | 真实原源与独立结果复评，旧行/预算/pins保留 |
+| 17版本及P1精确缺失 | PASS | 真实74次GET/HEAD；与新一代IAM/备份验收区分 |
+| 新批准/旧dispatch阻断 | PASS | 真实隔离PG三方法；无真实provider删除 |
+| 六份SDK→wire→关发送→恢复组合 | PASS_LOCAL | loopback/double，无保留Native DELETE |
+| 当前Go源码回归 | 218 PASS、1 SKIP | 缺DSN的旧adapter测试明确skip，不冒充PG结果 |
+| 准备入口 H1–H4 独立评审 | PASS_BOUNDED_SOURCE | report `host-source-final-review02.json` SHA37e575297ce74367fba2734ced5e05998a5fc3dba73261e403db3500303ced07；排除最终新三入口/native |
+| 新冻结/完整只读/H1封存入口 | PASS_BOUNDED_SOURCE | `new-entry-source-final-review02.json` SHA1d0d9f0bbff1fce4c82e05adaa54e52e1b9b135bc10a3544058b60180dfa918c；原E1/E2失败模型保留；完整collect、H1真实本地签名和103步seal模型正常/-O通过，不冒充actual |
+| 新IAM、九新备份、分离恢复及业务重跑 | NOT_RUN | 新allocation尚0；Source发送权限未开启 |
+| candidate13冻结及完整精确文本 | NOT_FROZEN | proposal execution/窗口不是授权，完整D1仍NOT_ACCEPTED |
+
+当前实现/权威入口和非目标见`issue307-d1-post-v22-six-contract.md`。所有早期NOT_RUN/无窗口等段落是当时检查点，不覆盖上方最新状态，不据此否认后续单独留证的真实结果。

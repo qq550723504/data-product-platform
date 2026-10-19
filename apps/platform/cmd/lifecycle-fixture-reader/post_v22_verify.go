@@ -38,11 +38,7 @@ type postV22ReadProfile struct {
 
 // Exact retained sources and original inventory bytes; no profile can select
 // another environment, omit an arbitrary object, or redefine the old policy.
-var postV22Sources = map[string][4]string{
-	"business-races": {"9bc6e9ec894f9fecb1566940d9b4680e0a9ddee52f31f9aec1f45afdb35c7ab0", "f16efe4cfa33694dc57b6cc2afe0a372379abce29846ba523ddd1dce455f43ce", "6354fa508f7adb9ac66fc895e539786a5575e0b3754d9fdb2677d0557ab7c942", "6330308dafa1d377ed8dda5a4f869cd5d5df21583fa334f3493e739a112e8001"},
-	"late-hold":      {"982c4e8d2e13331ee94f62148f1bfa6846418a743599cce2270748f8205ed0db", "f26f011ae3d6e83d012fd914462ee00c153a077266d38e37a57856b2e5148061", "e27a29ee55732447bff932d15bcb83339784089c00f03b9139232417fe1a8847", "76172df616268153354c919a89701e42312957b3f9b89b26cdeaa082412c4130"},
-	"mixed":          {"cb50e06b7cd575e7da04b5ff64498ec61a430607f270d4bf3102c1372dca2a82", "66c17878149ff1959339bc60e319f3b0494786e62da33b77017bfc8aab13613d", "77f72e9ef0781527a7e8e5ce4a6cd8d36018e527a9ea853ae72d5f8fff9ea0eb", "37fdff1b2663585acd91909f679835771f3225c342d04cc97991ba2848048d8b"},
-}
+var postV22Sources = pilot.RemainingEnvironmentSources()
 
 func strictPostV22(raw []byte, out any) error {
 	d := json.NewDecoder(bytes.NewReader(raw))
@@ -65,7 +61,7 @@ func parsePostV22Profile(raw []byte, now time.Time) (postV22ReadProfile, error) 
 	var fields map[string]json.RawMessage
 	_ = json.Unmarshal(raw, &fields)
 	source, ok := postV22Sources[p.Group]
-	if len(fields) != 17 || string(fields["MaxProviderDeletes"]) != "0" || !ok || !p.Enabled || p.AuditID == uuid.Nil || p.AuditID.String() == pilot.RemainingExecution ||
+	if len(fields) != 17 || string(fields["MaxProviderDeletes"]) != "0" || !ok || !p.Enabled || p.AuditID == uuid.Nil || p.AuditID.String() == "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e" ||
 		p.Purpose != postV22Purpose || p.CandidateSHA256 != postV22Candidate ||
 		p.Core != source[0] || p.Native != source[1] || p.Network != source[2] || p.FrozenInventorySHA256 != source[3] ||
 		p.Endpoint != "127.0.0.1:9000" || p.RootAccess == "" || p.RootSecret == "" ||
@@ -183,6 +179,10 @@ func postV22Verify(ctx context.Context) error {
 	if e != nil {
 		return e
 	}
+	return verifyNativeAudit(ctx, p, raw, started, "post-v22-readonly.json", "post-v22-native-verification.json", false)
+}
+
+func verifyNativeAudit(ctx context.Context, p postV22ReadProfile, raw []byte, started time.Time, profileFile, receiptFile string, six bool) error {
 	executable, e := os.Executable()
 	if e != nil {
 		return e
@@ -215,15 +215,35 @@ func postV22Verify(ctx context.Context) error {
 	if e != nil {
 		return e
 	}
-	verification, e := collectRemainingNative(ctx, c, p.Group, actual, full, transport)
+	users, policies, e := legacyNativePolicies(c, p.Group, full)
+	if e != nil {
+		return e
+	}
+	if six {
+		copies := []domain.Copy{}
+		for _, item := range actual {
+			copies = append(copies, item.Copy)
+		}
+		newUsers, newPolicies, err := pilot.RemainingPolicies(p.Group, copies)
+		if err != nil {
+			return err
+		}
+		for k, v := range newUsers {
+			users[k] = v
+		}
+		for k, v := range newPolicies {
+			policies[k] = v
+		}
+	}
+	verification, e := collectNativeWithPolicies(ctx, c, p.Group, actual, users, policies, transport)
 	if e != nil {
 		return e
 	}
 	verification["inventory_sha256"] = p.PresentInventorySHA256
-	verification["source_config"] = "post-v22-readonly.json"
+	verification["source_config"] = profileFile
 	finished := time.Now().UTC()
 	if !finished.Before(p.ExpiresAt) {
 		return errors.New("post-v22 read deadline exceeded")
 	}
-	return write(c, "post-v22-native-verification.json", map[string]any{"schema": postV22Purpose, "audit_id": p.AuditID, "profile_sha256": postV22Hash(raw), "binary_sha256": p.BinarySHA256, "candidate_sha256": p.CandidateSHA256, "frozen_inventory_sha256": p.FrozenInventorySHA256, "core": p.Core, "native": p.Native, "network": p.Network, "not_before": p.NotBefore, "expires_at": p.ExpiresAt, "started_at": started, "finished_at": finished, "p1_absence": absence, "verification": verification})
+	return write(c, receiptFile, map[string]any{"schema": p.Purpose, "audit_id": p.AuditID, "profile_sha256": postV22Hash(raw), "binary_sha256": p.BinarySHA256, "candidate_sha256": p.CandidateSHA256, "frozen_inventory_sha256": p.FrozenInventorySHA256, "core": p.Core, "native": p.Native, "network": p.Network, "not_before": p.NotBefore, "expires_at": p.ExpiresAt, "started_at": started, "finished_at": finished, "p1_absence": absence, "verification": verification})
 }

@@ -73,3 +73,60 @@ func TestOldDispatchClosureThreeCommandCompositionPreservesFacts(t *testing.T) {
 		}
 	}
 }
+
+// A new execution is a new approval/dispatch/attempt. Closing the old attempt
+// neither reactivates its revoked approval nor rewrites its immutable rows.
+func TestOldDispatchClosureAllowsOnlyFreshApprovalAndAttempt(t *testing.T) {
+	pool := planDatabase(t)
+	ctx := context.Background()
+	f := newDisposalFixture(t, pool)
+	old := requireDispatch(t, f, "old-execution-dispatch", 0)
+	oldApproval := f.approval
+	stable := map[string]string{}
+	for _, table := range []string{"lifecycle_provider_attempt", "lifecycle_disposition_dispatch", "lifecycle_disposition_approval"} {
+		var row string
+		if err := pool.QueryRow(ctx, "SELECT to_jsonb(t)::text FROM "+table+" t LIMIT 1").Scan(&row); err != nil {
+			t.Fatal(err)
+		}
+		stable[table] = row
+	}
+	freshApproval, err := f.s.ApproveContentDisposition(ctx, ApproveContentDispositionCommand{CommandHeader: f.header("new-execution-approve"), PlanID: f.plan.ID, BasisRef: "new-independent-execution", ExpiresAt: f.now.Add(time.Hour)})
+	if err != nil || freshApproval.ID == oldApproval.ID {
+		t.Fatal("new approval", freshApproval, err)
+	}
+	f.approval = freshApproval
+	blocked, err := f.s.DispatchContentDisposition(ctx, f.dispatch("new-while-old-pending", 0))
+	if err != nil || blocked.Admitted || !hasBlocker(blocked, "DISPOSITION_ALREADY_DISPATCHED_OR_UNKNOWN") {
+		t.Fatal("new approval bypassed pending old attempt", blocked, err)
+	}
+	f.now = f.now.Add(time.Minute)
+	if _, err = f.s.RevokeDispositionApproval(ctx, RevokeDispositionApprovalCommand{CommandHeader: f.header("old-execution-revoke"), ApprovalID: oldApproval.ID, BasisRef: "trusted-closure"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = f.s.RecordProviderObservation(ctx, RecordProviderObservationCommand{CommandHeader: f.header("old-execution-NOT_SENT"), AttemptID: old.AttemptID, ObservationRef: "not-sent"}); err != nil {
+		t.Fatal(err)
+	}
+	f.approval = oldApproval
+	blocked, err = f.s.DispatchContentDisposition(ctx, f.dispatch("old-approval-after-closure", 0))
+	if err != nil || blocked.Admitted || !hasBlocker(blocked, "APPROVAL_NOT_CURRENT_FOR_SCOPE") {
+		t.Fatal("NOT_SENT reactivated revoked approval", blocked, err)
+	}
+	f.approval = freshApproval
+	fresh := requireDispatch(t, f, "new-after-trusted-closure", 0)
+	if fresh.AttemptID == old.AttemptID || fresh.DispatchID == old.DispatchID {
+		t.Fatal("new execution reused an old fact")
+	}
+	for table, row := range stable {
+		if count(t, pool, "SELECT count(*) FROM "+table+" t WHERE to_jsonb(t)::text=$1", row) != 1 {
+			t.Fatalf("old %s row changed", table)
+		}
+	}
+	for _, table := range []string{"lifecycle_provider_send_claim", "cost_event", "cost_allocation"} {
+		if count(t, pool, "SELECT count(*) FROM "+table) != 0 {
+			t.Fatalf("non-delete admission unexpectedly invoked provider: %s", table)
+		}
+	}
+	if count(t, pool, "SELECT count(*) FROM lifecycle_dispatch_release WHERE dispatch_id=$1", old.DispatchID) != 1 || count(t, pool, "SELECT count(*) FROM lifecycle_provider_observation WHERE attempt_id=$1 AND certainty='NOT_SENT'", old.AttemptID) != 1 {
+		t.Fatal("trusted closure facts missing")
+	}
+}

@@ -18,7 +18,7 @@ import (
 )
 
 func TestWireRequiresActualUpstreamResponseBeforeContainmentAndNeverResends(t *testing.T) {
-	for _, caseName := range []string{"H2", "M1B", "P1"} {
+	for _, caseName := range []string{"H2", "M1B", "P2"} {
 		t.Run(caseName, func(t *testing.T) {
 			group := "business-races"
 			if caseName == "H2" {
@@ -76,7 +76,7 @@ func TestWireRequiresActualUpstreamResponseBeforeContainmentAndNeverResends(t *t
 				t.Fatal("foreign version forwarded")
 			}
 			status, e := request("DELETE", "?versionId="+cp.ProviderVersion)
-			if caseName == "P1" {
+			if caseName == "P2" {
 				if e != nil || status != 204 {
 					t.Fatal(status, e)
 				}
@@ -104,7 +104,7 @@ func TestCompiledRemainingTargetsExcludeSurvivorsAndOldProfiles(t *testing.T) {
 			}
 		}
 	}
-	if _, e := fixedTarget("5d2274ee", "P1"); e == nil {
+	if _, e := fixedTarget("5d2274ee", "P2"); e == nil {
 		t.Fatal("old environment accepted")
 	}
 }

@@ -51,8 +51,11 @@ var name = regexp.MustCompile(`^lifecycle307-[a-z0-9-]+$`)
 
 func digest(raw []byte) string { h := sha256.Sum256(raw); return hex.EncodeToString(h[:]) }
 func readReceipt(dir string) (receipt, error) {
+	return readNativeContract(dir, "native-verification.json", "PASS_EXACT_NATIVE_READONLY", "remaining.json")
+}
+func readNativeContract(dir, file, status, source string) (receipt, error) {
 	var r receipt
-	raw, e := os.ReadFile(filepath.Join(dir, "native-verification.json"))
+	raw, e := os.ReadFile(filepath.Join(dir, file))
 	if e != nil {
 		return r, e
 	}
@@ -68,7 +71,7 @@ func readReceipt(dir string) (receipt, error) {
 	// Missing zero-valued safety fields must not masquerade as explicit zero.
 	var fields map[string]json.RawMessage
 	_ = json.Unmarshal(raw, &fields)
-	if len(fields) != 9 || string(fields["delete"]) != "0" || string(fields["mutations"]) != "0" || r.Status != "PASS_EXACT_NATIVE_READONLY" || !hash.MatchString(r.Inventory) || r.Source != "remaining.json" {
+	if len(fields) != 9 || string(fields["delete"]) != "0" || string(fields["mutations"]) != "0" || r.Status != status || !hash.MatchString(r.Inventory) || r.Source != source {
 		return r, errors.New("native receipt incomplete or unsafe")
 	}
 	return r, nil
@@ -180,6 +183,10 @@ func main() {
 	fresh := flag.String("fresh", "", "new readonly receipt directory")
 	group := flag.String("group", "", "finite group")
 	postV22 := flag.Bool("post-v22", false, "explicit post-v22 17-version contract")
+	six := flag.Bool("six", false, "explicit six-target current source/restore contract")
+	exportSix := flag.Bool("six-expectation", false, "file-only new expectation, never native observation")
+	frozen := flag.String("frozen", "", "original exact inventory bytes")
+	mapping := flag.String("mapping", "", "frozen source/restore environment map")
 	expectation := flag.String("expectation", "", "post-v22 public execution bindings")
 	inventory := flag.String("inventory", "", "actual present inventory bytes")
 	flag.Parse()
@@ -189,7 +196,17 @@ func main() {
 	}
 	var out result
 	var e error
-	if *postV22 {
+	if *exportSix && !*six && !*postV22 && *mapping == "" && *expectation == "" && *frozen != "" {
+		e = exportSixExpected(*baseline, *fresh, *group, *inventory, *frozen)
+		out.Status = "SIX_EXPECTATION_EXPORTED_NOT_OBSERVATION"
+		out.Group = *group
+	} else if *exportSix || *frozen != "" {
+		e = errors.New("exact expectation generation arguments required")
+	} else if *six && !*postV22 {
+		out, e = checkSix(*baseline, *fresh, *group, *expectation, *inventory, *mapping)
+	} else if *six || *mapping != "" {
+		e = errors.New("exactly one native audit contract required")
+	} else if *postV22 {
 		out, e = checkPostV22(*baseline, *fresh, *group, *expectation, *inventory)
 	} else if *expectation != "" || *inventory != "" {
 		e = errors.New("post-v22 arguments require explicit mode")

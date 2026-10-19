@@ -1,0 +1,55 @@
+package pilot
+
+import (
+	"encoding/json"
+	"errors"
+
+	"github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/domain"
+)
+
+// Policy construction is fixture composition; provider enforcement and semantic
+// comparison remain the existing MinIO policy SDK. No policy engine lives here.
+func RemainingPolicies(group string, present []domain.Copy) (map[string]string, map[string][]byte, error) {
+	scope, err := RemainingScopeFor(group)
+	counts := map[string]int{"business-races": 7, "late-hold": 6, "mixed": 4}
+	if err != nil || len(present) != counts[group] {
+		return nil, nil, errors.New("six policy present membership differs")
+	}
+	seen := map[string]bool{}
+	var inspectStatements, deleteStatements []any
+	inspectStatements = append(inspectStatements, map[string]any{"Effect": "Allow", "Action": []string{"s3:ListBucketVersions"}, "Resource": []string{"arn:aws:s3:::dpp-lifecycle307-online", "arn:aws:s3:::dpp-lifecycle307-quarantine"}})
+	for _, cp := range present {
+		if cp.Validate() != nil || cp.WorkspaceID != scope.Workspace || cp.ProviderInstanceID != scope.Provider || cp.IncarnationID != scope.Incarnation || cp.Key == "fixture/p1.csv" || seen[cp.ID.String()] {
+			return nil, nil, errors.New("six policy copy differs")
+		}
+		seen[cp.ID.String()] = true
+		statement := func(actions []string) map[string]any {
+			return map[string]any{"Effect": "Allow", "Action": actions, "Resource": []string{"arn:aws:s3:::" + cp.Namespace + "/" + cp.Key}, "Condition": map[string]any{"StringEquals": map[string]string{"s3:versionid": cp.ProviderVersion}}}
+		}
+		inspectStatements = append(inspectStatements, statement([]string{"s3:GetObjectVersion"}))
+		// MinIO's official action contract does not support s3:versionid on
+		// protection metadata. The frozen adapter/gateway additionally enforce
+		// exact selectors; IAM alone constrains these two actions to the key.
+		inspectStatements = append(inspectStatements, map[string]any{"Effect": "Allow", "Action": []string{"s3:GetObjectRetention", "s3:GetObjectLegalHold"}, "Resource": []string{"arn:aws:s3:::" + cp.Namespace + "/" + cp.Key}})
+		send := false
+		for _, key := range []string{"fixture/p2.csv", "fixture/t1.csv", "fixture/t2.csv", "fixture/h2-a.csv", "fixture/m1-a.csv", "fixture/m1-b.csv"} {
+			send = send || cp.Key == key
+		}
+		if send {
+			deleteStatements = append(deleteStatements, statement([]string{"s3:DeleteObjectVersion"}))
+		}
+	}
+	if len(deleteStatements) != map[string]int{"business-races": 3, "late-hold": 1, "mixed": 2}[group] {
+		return nil, nil, errors.New("six policy delete membership differs")
+	}
+	users, policies := map[string]string{}, map[string][]byte{}
+	for kind, statements := range map[string][]any{"inspect": inspectStatements, "delete": deleteStatements} {
+		name := RemainingPolicyName(group, kind)
+		users[RemainingIdentity(group, kind)] = name
+		policies[name], err = json.Marshal(map[string]any{"Version": "2012-10-17", "Statement": statements})
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+	return users, policies, nil
+}

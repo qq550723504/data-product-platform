@@ -1,0 +1,23 @@
+{
+  "counterexample": "CURRENT_FUNCTION_ACCEPTED_PREEXISTING_NONOWNED_VOLUME_RESPONSE",
+  "returned": "existing-non-owned-volume",
+  "resources": [
+    {
+      "volume": "existing-non-owned-volume"
+    }
+  ],
+  "calls": [
+    [
+      "volume",
+      "create",
+      "--label",
+      "lifecycle307.remaining=4e524c04-2376-4bc9-9e85-452909d3dba4",
+      "existing-non-owned-volume"
+    ]
+  ],
+  "source_sha256": "5c536adddaccb627ab2c8f6debd77cdc7aa8c2049da1b78330a8b961004e5538",
+  "extracted_function_sha256": "deee19d6cbc6e15728b8cad11595765f9acc5d277e4e8417f5aa49fa9035ddf3",
+  "Docker": 0,
+  "provider": 0,
+  "notes": "Pure execution of the exact production AST function against the existing-name response; no runtime import or daemon. No volume ownership/readback/freshness call was made."
+}

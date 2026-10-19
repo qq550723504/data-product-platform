@@ -85,29 +85,46 @@ func semanticEqual(a, b []byte) bool {
 	return dx.Decode(&x) == nil && dy.Decode(&y) == nil && reflect.DeepEqual(x, y)
 }
 
+type nativeAuditContract struct {
+	expectedBaseline                                   bool
+	schema, sourceFile, receiptFile, candidate, status string
+	extraIdentities                                    int
+}
+
 func checkPostV22(baseline, fresh, group, expectation, inventory string) (result, error) {
+	var want postV22Expectation
+	if _, err := strictPostFile(expectation, &want, 11); err != nil {
+		return result{Group: group}, err
+	}
+	return checkNativeAudit(baseline, fresh, group, inventory, want, nativeAuditContract{false, postV22Schema, "post-v22-readonly.json", "post-v22-native-verification.json", postV22Candidate, "PASS_COMPLETE_POST_V22_NATIVE_AGGREGATION", 0})
+}
+
+func checkNativeAudit(baseline, fresh, group, inventory string, want postV22Expectation, contract nativeAuditContract) (result, error) {
 	out := result{Group: group}
 	count, ok := map[string][2]int{"business-races": {7, 4}, "late-hold": {6, 2}, "mixed": {4, 2}}[group]
 	if !ok {
-		return out, errors.New("unsupported post-v22 group")
+		return out, errors.New("unsupported native audit group")
 	}
-	a, e := readReceipt(baseline)
+	count[1] += contract.extraIdentities
+	var a receipt
+	var e error
+	if contract.expectedBaseline {
+		a, e = readNativeContract(baseline, "expected-contract.json", "FROZEN_SIX_EXPECTATION_NOT_OBSERVATION", "six-map.json")
+	} else {
+		a, e = readReceipt(baseline)
+	}
 	if e != nil {
 		return out, e
 	}
-	var want postV22Expectation
-	if _, e = strictPostFile(expectation, &want, 11); e != nil {
-		return out, e
-	}
 	audit, e := uuid.Parse(want.Audit)
-	if e != nil || audit == uuid.Nil || want.Audit == "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e" || want.Candidate != postV22Candidate ||
+	if e != nil || audit == uuid.Nil || want.Audit == "8e41cfba-a41e-44dd-9ce8-d6365b3bb90e" || want.Candidate != contract.candidate ||
 		!hash.MatchString(want.Profile) || !hash.MatchString(want.Binary) || !hash.MatchString(want.Frozen) || !hash.MatchString(want.Present) ||
 		!hash.MatchString(want.Core) || !hash.MatchString(want.Native) || !hash.MatchString(want.Network) ||
 		want.NotBefore.IsZero() || want.ExpiresAt.Sub(want.NotBefore) <= 0 || want.ExpiresAt.Sub(want.NotBefore) > 55*time.Minute {
 		return out, errors.New("post-v22 expectation scope or lifetime differs")
 	}
 	var r postV22Receipt
-	raw, e := strictPostFile(filepath.Join(fresh, "post-v22-native-verification.json"), &r, 15)
+	raw, e := strictPostFile(filepath.Join(fresh, contract.receiptFile), &r, 15)
 	if e != nil {
 		return out, e
 	}
@@ -118,7 +135,7 @@ func checkPostV22(baseline, fresh, group, expectation, inventory string) (result
 	_ = json.Unmarshal(root["verification"], &fields)
 	b := r.Verification
 	if len(fields) != 9 || string(fields["delete"]) != "0" || string(fields["mutations"]) != "0" ||
-		b.Source != "post-v22-readonly.json" || b.Status != "PASS_EXACT_NATIVE_READONLY" || r.Schema != postV22Schema ||
+		b.Source != contract.sourceFile || b.Status != "PASS_EXACT_NATIVE_READONLY" || r.Schema != contract.schema ||
 		r.Audit != want.Audit || r.Profile != want.Profile || r.Binary != want.Binary || r.Candidate != want.Candidate || r.Frozen != want.Frozen ||
 		r.Core != want.Core || r.Native != want.Native || r.Network != want.Network || !r.NotBefore.Equal(want.NotBefore) || !r.ExpiresAt.Equal(want.ExpiresAt) ||
 		r.Started.Before(want.NotBefore) || r.Finished.Before(r.Started) || !r.Finished.Before(want.ExpiresAt) ||
@@ -176,7 +193,7 @@ func checkPostV22(baseline, fresh, group, expectation, inventory string) (result
 	if e != nil {
 		return out, e
 	}
-	out.Status = "PASS_COMPLETE_POST_V22_NATIVE_AGGREGATION"
+	out.Status = contract.status
 	return out, nil
 }
 func boolInt(v bool) int {

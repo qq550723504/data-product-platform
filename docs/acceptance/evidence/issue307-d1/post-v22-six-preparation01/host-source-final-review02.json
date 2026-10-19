@@ -1,0 +1,252 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_SIX_PREPARATION_SOURCE_REVIEW",
+  "at": "2026-10-19T16:20:56.137270+00:00",
+  "reviewer": "Same sole independent reviewer; no implementation/runtime edits",
+  "source_head_base": "f00d64328cc9489256143e87060a30e249cc406b",
+  "source_state": "WIP bound by source_files; base HEAD is not frozen source",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "profile": "candidate13/v23",
+  "remaining_blockers": [],
+  "scope": "Finite non-delete source stage only: cold resource allocation, disabled-only provisioning, shared SOURCE/RESTORE collector and official policy checking, distinct backup/restore and restored business-admission rehearsal composition. No final candidate or native acceptance.",
+  "resolved_findings": [
+    {
+      "id": "H1",
+      "classification": "CLOSED_BLOCKER",
+      "root_fix": "Unique Docker bytes wrapper accepts **kwargs/output=; streaming pg_dump preserves O_EXCL raw output and exact bytes; imported helper call aliases use same contract."
+    },
+    {
+      "id": "H2",
+      "classification": "CLOSED_BLOCKER",
+      "root_fix": "immutable_rows uses lifecycle_fixture_reference_release. All 20 fixed names independently match accepted full Core schema."
+    },
+    {
+      "id": "H3",
+      "classification": "CLOSED_BLOCKER",
+      "root_fix": "Wait/log errors retain available partial raw channels. close_known is attempted before log evidence writes. Success, wait timeout, log timeout/error and evidence-write failure all close exact known owner in independent composition."
+    },
+    {
+      "id": "H4",
+      "classification": "CLOSED_BLOCKER",
+      "root_fix": "Reject existing volumes/networks before create; new per-allocation nonce+execution labels, local driver/scope, empty mount/endpoints and intent/receipt. Cold checks all 15 volumes against complete mount graph. New Caddy gateways overlay image /data,/config VOLUME with tmpfs; unknown/anonymous volumes rejected, only three exact old Native volumes permitted at /source read-only."
+    }
+  ],
+  "actual_tests": {
+    "final_host_normal": {
+      "exit": 0,
+      "methods": 6
+    },
+    "final_host_optimized": {
+      "exit": 0,
+      "methods": 6
+    },
+    "final_three_source_files_stable": true,
+    "unmodeled_subprocess_globally_refused": true,
+    "H4_network_AST": {
+      "positive": 1,
+      "rejected": 2,
+      "existing_only_ls_no_create_or_start": true,
+      "receipt": "independent-host-final04.json"
+    },
+    "H4_current_cold_volume_AST": {
+      "volumes": 15,
+      "positive": 1,
+      "rejected_wrong_nonce_or_foreign_mount": 30,
+      "rejected_anonymous_or_old_source_write_or_wrong_path": 3,
+      "receipt": "independent-host-final05.json"
+    },
+    "schema_fixed_relations": 20,
+    "five_Go_packages": {
+      "exit": 0,
+      "pass_tests_subtests": 217,
+      "skipped": [
+        "TestPostV22NoSendPostgresEligibility"
+      ],
+      "production_source_unchanged": true,
+      "only_test_file_changed": {
+        "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": {
+          "prior_test": "a3036514fec98eaa466547dd640a237187e306c8f0ac27b9b2baf68dbb1fe4d5",
+          "actual": "f279696453c906d5694128178fc9406fbc1ee65fae9b7aa8d2ea79c7e6e478b4"
+        }
+      },
+      "scope": "SDK RoundTripper/official policy library/file-only aggregation/unit/loopback; real PG DSN explicitly blank"
+    },
+    "affected_checker_rerun": {
+      "exit": 0,
+      "pass_tests_subtests": 79,
+      "skipped": [],
+      "source_stable": true
+    },
+    "parent_real_scratch_PG_readback": {
+      "independently_executed_by_reviewer": false,
+      "public_raw_hash_bound": true,
+      "pass_tests": [
+        "TestSequentialExactSendsRequireCommittedAbsenceBeforeNextNamespaceClaim",
+        "TestOldDispatchClosureThreeCommandCompositionPreservesFacts",
+        "TestOldDispatchClosureAllowsOnlyFreshApprovalAndAttempt"
+      ],
+      "fail_events": 0,
+      "scope": "Full-schema fresh-approval/closure/sequential-absence command composition; not original Native or new preparation runtime"
+    }
+  },
+  "necessary_path_review": [
+    "18 historical registrations, present17, six targets and eleven survivors remain distinct; P1 cannot return to target/wire/budget.",
+    "Official SetUser(AccountDisabled) and transport mutation constraints create only new disabled identities; no default-enable AddUser. SOURCE/RESTORE inventory and 14-user complete official-policy checking use separate explicit expectation contract, never rewrite old actual receipts.",
+    "Restore inspector validates RESTORE role/purpose/actual binary/map and new sole read policy. SetUserStatus plus fresh readback matches pinned SDK. Host attempts fixed fresh restore-only disable even partial enable; root not mounted to business/sender/recovery.",
+    "Business only new disposal basis/approval/admission and old five policy-head drift checks. No Renew, new rights declaration, processing, producer or transfer replay is required by current dependency path.",
+    "Original Core full fingerprint before/after remains exact; original Native stopped before archive; separate clean and rehearsal Core restored with roles/ACL and full fingerprint comparison. Separate restore IDs/volumes and full Native archive file comparison remain mandatory.",
+    "Restored rehearsal uses existing commands with inspector-only Native reads and Core old-row multiset preservation. Trial result does not claim actual mixed delete outcomes."
+  ],
+  "preserved_review_failures": [
+    {
+      "evidence": "independent-host-python02.json",
+      "classification": "REVIEW_HARNESS_ONLY",
+      "cause": "Replacing Popen with function broke Windows asyncio subclass definition before target import. Fixed with refusing subclass, original failed outputs retained; no external request occurred."
+    },
+    {
+      "classification": "STALE_SNAPSHOT_REFUSED",
+      "cause": "Report writer refused pre-network final04 source hashes after parent added gateway anonymous-volume guard; no report emitted and no source/runtime action. Final05 is stable current sample."
+    }
+  ],
+  "scope_limits": {
+    "new_allocation": "NOT_RUN",
+    "source_IAM_provisioning": "NOT_RUN",
+    "actual_backup_restore": "NOT_RUN",
+    "actual_rehearsal": "NOT_RUN",
+    "manifest": "NOT_CREATED_OR_REVIEWED",
+    "candidate": "NOT_FROZEN",
+    "final_complete_preflight": "NOT_RUN",
+    "delete_authorization": "NOT_RECEIVED",
+    "schedule": "NOT_CREATED",
+    "DELETE": 0,
+    "full_D1": "NOT_ACCEPTED",
+    "actual_provider_amount": "NOT_ASSESSED",
+    "full_host_flow_tests": "Recorded Linux/checker and PG/native trial doubles; three source/backup and six restore call sequences prove orchestration model only.",
+    "excluded_new_entries": [
+      "examples/lifecycle-d1/verify-six-native.py",
+      "examples/lifecycle-d1/freeze-six-candidate.py",
+      "examples/lifecycle-d1/window_six_support.py"
+    ],
+    "required_later": "Final stable entries, frozen source/binary/inputs/manifest/owners/topology/empty budgets and actual non-delete source/restore results need separate independent review. This source report is not runtime/delete authority."
+  },
+  "source_files": {
+    "apps/platform/cmd/lifecycle-fixture-reader/main.go": "d1cbb337db9f38513431877557c6e2b6985fffa6cbe161ac3e9a201ee139b25c",
+    "apps/platform/cmd/lifecycle-fixture-reader/plane_certification.go": "8ae12cccf9fd4e854237cb6171aba1d2ef6abac6d4f5845f848ed20c536e0082",
+    "apps/platform/cmd/lifecycle-fixture-reader/plane_credential.go": "64a3f2cfc200494c44300d50ff5493affc2efca1fbeb7d07f5dccfcb1c3452e2",
+    "apps/platform/cmd/lifecycle-fixture-reader/plane_credential_release.go": "74835ee58b9952cee185198708715f3ef0ee951bcb1c36f1b63fe107c8a909e7",
+    "apps/platform/cmd/lifecycle-fixture-reader/plane_credential_test.go": "2c89cc948053a027efcc4550eaf05cf0c5d1ecfdb7bb829ebd7fa72916281fd2",
+    "apps/platform/cmd/lifecycle-fixture-reader/plane_lc13.go": "5dbb6d5a14506e558871c6d449f3ef0073cea5fb29ffb0f211c6c664db08a955",
+    "apps/platform/cmd/lifecycle-fixture-reader/plane_preissued.go": "b1476193ab16e654c8e4f580ef188fc61c53eaa283bf37cde6aa95f945faf380",
+    "apps/platform/cmd/lifecycle-fixture-reader/plane_resume.go": "08c3c61e5a95c4e5fe8ca0980b3a06226927fc7132c88ada6ee20e67b6257e25",
+    "apps/platform/cmd/lifecycle-fixture-reader/plane_runtime.go": "1eca5075df3ea6396b1d4310769c3a8d23944010b9e3d78e255fde0f71f50709",
+    "apps/platform/cmd/lifecycle-fixture-reader/plane_setup.go": "c82bf6b34ef2a416eb454f4886231f010591dd95478defb12f35c3f7c3eae43d",
+    "apps/platform/cmd/lifecycle-fixture-reader/post_v22_verify.go": "d4e0a16986449c9d08765bd36d5900db62f02271a8c3f58a0d9b84b24e8ef6c4",
+    "apps/platform/cmd/lifecycle-fixture-reader/post_v22_verify_test.go": "e56a67e88effab0c3bbba148e4aa8e13f17ba4884d9b9d8586a5e12df096a092",
+    "apps/platform/cmd/lifecycle-fixture-reader/reference_races.go": "c3349ce6b63c9dfde95680f0d5756fb6176ee72e2f605dcf5ec2ea456aed0ef3",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining.go": "cc0dcf28782761ac263483a0a8c57b4df2972dd35c322d3a3ca585a7a70d0c74",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_business.go": "b440745dfb9e5554f94259d821521dd6d448caa2a0fcaef1aee2bbfba972b911",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_cases.go": "f97a2d7c5ff3a0a064044bedfc475909e693050c77e6e7ea3333ef565c17eb71",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_certification.go": "5af56116f82fd22cd3e9a05241681fd75cd578e1fe19710bd49e31cba8eb6908",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_close.go": "248c991d148b1eff90b214a75f3ef5ae6d95827b67f4116310f4c2b15f1569ec",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_iam.go": "d5cc4c48f3a3fe2015b3b5535f3c6d528480060a04f431f60949b754358cb791",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_queue.go": "95c1a378fabee003958ac57181a68264c21e882daafe60bff665352462303495",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_setup.go": "6f1b432d95d87710ed96c7d67afa7863f04a86618d0a4c6a1da28900109192ca",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_test.go": "986003213cc126a97da581d9714a7b657a429c7d64785a7c99aac46d548f75d4",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_transfer.go": "4ae68f77f156d1ddaf093fd4f96245317fb74497656ee02ea9b6e11c62fa22e8",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_verify.go": "52d59cd94897e95362a89d43252745e2849f2665e4905dfd3b019da8c4a43c13",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_verify_test.go": "f3f1f6b7ebee805e0883b04f33abcef233de6f68b859038e61417665c7f6f311",
+    "apps/platform/cmd/lifecycle-fixture-reader/remaining_window_test.go": "176f32b77f22e38942177e7592412548dc9aa2dce18093557c2eb6df51ecaec8",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_provision.go": "a887756c94c35f2e063f3828e47c193718e5532b23105e49b9b1e3723c6d2ad9",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_provision_test.go": "7af3e514da78d8eb835dc56f6a7fd039457b752f32265c03257a8280731929d7",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_restore_inspector.go": "453b1ba71ed80c761dd77f5afa301d67954bb7b9b1271c4448a6419ac5322f50",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_restore_inspector_test.go": "4e0cf7ad52a229431f74b9a2eecdc8d038ece8efba10d02a1d70f673a2b1fc84",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_verify.go": "738c14991e403d5a4f22dcc19aff66be27424a407ac27348ed7c04860fcb1787",
+    "apps/platform/cmd/lifecycle-fixture-reader/six_verify_test.go": "b2a1995431a057affbe7a5ca8498c6e43245173aa0bb107c52e5888fff03f9a0",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/main.go": "7dc5d743913495b0e0505e5f2140a555701f922964b1a7559d7de04ee52e9cd1",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/main_test.go": "ba7924c1632dec4b60c6ea5c3de46c8d68ccab7f1e83501fc7af0bc502e3d58a",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22.go": "f7bffbfa0b68d48285a1794d624dd8c100183d17c50af1094b1cf6d37d9c2adf",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/post_v22_test.go": "250c9157f724883e462b7c7f11e3b7e7796282dba83e15f27a7f05c820a4bdc5",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six.go": "3a22c9a756800463385ea116dfacbf696e19ece33f198a2ca1039fd7a61e84d1",
+    "apps/platform/cmd/lifecycle-fixture-readonly-check/six_test.go": "f279696453c906d5694128178fc9406fbc1ee65fae9b7aa8d2ea79c7e6e478b4",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go": "768cafea6a6f2b2125d700d0cfdf94f15fa2b35a63fac70a3f462e1d1873fc06",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go": "79de5e0afee70f104b8cc596920a70f3749cc298a7b23aa937a4169435e5f8e8",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly.go": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly_test.go": "b7549dc196ee01ed34afba1e73f627e41b8f5dea1d06d1f02cc1754aed12e540",
+    "apps/platform/cmd/lifecycle-fixture-remaining/main.go": "786c37f89b5a39860983f4c332b290a3d17d7d1ed976dbcaeaefa4087c52a26e",
+    "apps/platform/cmd/lifecycle-fixture-remaining/main_test.go": "24d41506f796ce8f545c1e17a2c4289f366c060743d590ee5bba298558efddeb",
+    "apps/platform/cmd/lifecycle-fixture-remaining/queue.go": "9b249439929f37ea6deabb97ddd84df796411494a56ecc855523c937e1ac06bc",
+    "apps/platform/cmd/lifecycle-fixture-remaining/recovery.go": "ae2cb898475e4c540768c432294a55d102da7d484288d70e503ed9f6eb84b9d8",
+    "apps/platform/cmd/lifecycle-fixture-remaining/send_return.go": "48c2aba351651f8a99df359e3ca6f12ec1b863eaa6c55bbfbbb34ee0c309621b",
+    "apps/platform/cmd/lifecycle-fixture-remaining/send_return_test.go": "fca712c6ff58a3c45461d8522eb6562de6107cfb272a7a72a6a26ea51e5322e5",
+    "apps/platform/cmd/lifecycle-fixture-remaining/sequence.go": "64df0d34ad3c55ab3c977595ecdec60d40942b35c19601ad0bb7d6d5f6353314",
+    "apps/platform/cmd/lifecycle-fixture-remaining/sequence_test.go": "7a1d9c8bcf50242912bc3d831bce8f235cb7c378e0312eea84a14ef1fe923535",
+    "apps/platform/cmd/lifecycle-fixture-remaining/wire.go": "a45cfabb50c95a48d89b200a5a6b9a201eadde77308adc8468fe4e881b44f75e",
+    "apps/platform/cmd/lifecycle-fixture-remaining/wire_test.go": "995e94c244d51890651a2818c52e74e84c2779f00296d9a44bdd0e0ef7a68926",
+    "apps/platform/internal/lifecycle/pilot/copy_recovery.go": "72aeee1a4c71a85930d9ca5fdc81e9723be1431df001d6a1578f8c042a8a3a32",
+    "apps/platform/internal/lifecycle/pilot/credential_stop.go": "893f97166b1d6afcfe91d3a50725b95c048d79dd97f55f56d9abd99d611b60c5",
+    "apps/platform/internal/lifecycle/pilot/credential_stop_test.go": "0f271ea3ec9df44deb958799ef4c1671e4320a63ed86aa96e941e9e25cb79eaf",
+    "apps/platform/internal/lifecycle/pilot/plane_payload.go": "c8864801564e55a5f671107d37eea62264eded2458556bad0554adb538e794ab",
+    "apps/platform/internal/lifecycle/pilot/post_v22_no_send.go": "9d5a746839ce755ac025fce875e3ee37e4645d58ea4a1619be1ca5bc6d553826",
+    "apps/platform/internal/lifecycle/pilot/post_v22_no_send_test.go": "0476f117d8cf7f0a39069b39db0cc9bbd2cb4df71b53f4048279f0a5d77e6bac",
+    "apps/platform/internal/lifecycle/pilot/processing_stop.go": "218458b7d8c5c6c49a7546d3ddd776845a28ae4baf2d6ba6bdec9e1a065ad551",
+    "apps/platform/internal/lifecycle/pilot/processing_stop_test.go": "b0c8e9a471157abab02fd12b812f5943ef7e90dd9c0be835e436b7174dab232c",
+    "apps/platform/internal/lifecycle/pilot/recovery.go": "7844601fc2209766f72a9465d812b37538e4bc622393ecd276cf882aa5eabd3f",
+    "apps/platform/internal/lifecycle/pilot/recovery_bootstrap.go": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2",
+    "apps/platform/internal/lifecycle/pilot/recovery_test.go": "861ade52b59370265cff15147c6f2be4d162e0622393394826582f5c7558d842",
+    "apps/platform/internal/lifecycle/pilot/reference_no_send.go": "5b088e723985807cc31fad0b482fdd9a854446e90641d9e2671605c15c78de59",
+    "apps/platform/internal/lifecycle/pilot/reference_no_send_test.go": "aac05affda79763d3a00773829180f2feb1fe9ade76d5fb22fec3cf1d6daaa8f",
+    "apps/platform/internal/lifecycle/pilot/reference_scope.go": "04d674c0bd291a4b4cb35f47a4bcdf9af40342f3a0587046b0e1b109893ca7f0",
+    "apps/platform/internal/lifecycle/pilot/remaining_dependencies.go": "89eda8a80489b139612c6ab1a4516aa13bf5b4d37aaafcc1f31bc886f2514152",
+    "apps/platform/internal/lifecycle/pilot/remaining_environment.go": "7911fd69f984f0b962f96d70df960de43af86cd8e87290a450a02e7c68c3b4e0",
+    "apps/platform/internal/lifecycle/pilot/remaining_no_send.go": "fad417d86c80db214d4b55bdd440d3e81f103ba8c3329700cf6ee4118babe1cf",
+    "apps/platform/internal/lifecycle/pilot/remaining_policies.go": "8111cacc969b09e310b2f187726539b622b6edf53e8fc92d2db8f26f316c7617",
+    "apps/platform/internal/lifecycle/pilot/remaining_scope.go": "fa4e2a3a344c2c487e2d2a97e132a53dba1b4d3d1b78a0aa2bc520713660b631",
+    "docs/acceptance/evidence/issue307-d1/post-v22-six-preparation01/convergence-checkpoint01.json": "99079bef6fec751cb0891d649313e87b8ff91c0e585978a7fc7f0b0d85d09398",
+    "docs/acceptance/issue307-d1-post-v22-six-contract.md": "c1a2d5265efb5feb5c21b7c92bc683d52b8ec8b8a76c7d4aabf068130924583f",
+    "examples/lifecycle-d1/attest-remaining-executable.py": "9472bf1be278fca84a70a0211ef0ecabea713b84ac202a389b7dcd3d45c92259",
+    "examples/lifecycle-d1/prepare-six-candidate.py": "94580ec262bfb8b2669da4b54a274d47a70d169bb4c849f946a0b1c7bfaf3ecb",
+    "examples/lifecycle-d1/remaining_sequence.py": "6812c88836086c31dc5ddfe88c0e746b7990ea09dabb6c1ac14ad9eea6080569",
+    "examples/lifecycle-d1/remaining_six_window.py": "cc0dcc8a89abaf1ec64589eb7389ed1f74bcdd72dd68b2a2bb2f7fe7c547d5ef",
+    "examples/lifecycle-d1/six_candidate_runtime.py": "ca19651ee0e0a4aa864295d876beefca5c5d83c00ac6ff59a4a7463bb4de1fae",
+    "examples/lifecycle-d1/test_six_candidate_runtime.py": "392702deca945cc0f034b1549957f18659344fbabc558799c8417ff55af62a11"
+  },
+  "evidence_files": {
+    "independent-host-final05.json": "0a612a5ae612019c051d11774fb0b5360ea4d5f1b787a0d4796f4456dcef59f9",
+    "independent-host-final04.json": "1f2d7e3c40eaea6c1dde801dff593bc8681e65111483422372a89a685db09b7b",
+    "independent-host-python03.json": "0be5e030896c422e349e1dba7155faa364114725dbee348159c482e6e5d4efc0",
+    "independent-host-python02.json": "5a3346988ea8dd4af8408232071b7b6004852bbab24e10f309ae545d40b5896b",
+    "independent-host-go02.json": "a2e1936cbcd1c6292d22e954c4ba881d0536119bbea13484a77c34b55a1bc272",
+    "independent-checker-go03.json": "ac827a45c1f87c2da5250351e4dc92d8ee7b0c376a4dbb5d4e723d0324250dce",
+    "independent-schema-volume-audit03.json": "f222473de817763b9aa34be103e3dd79e645398848d99ed86c79ae228f5d7b8e",
+    "allocation-volume-H4-counterexample01.json": "ec9eeca77e974d978fd60cb399ae8a03a581c5815fba02fa2cc7a285816127c7",
+    "allocation-volume-before-H4.py": "deee19d6cbc6e15728b8cad11595765f9acc5d277e4e8417f5aa49fa9035ddf3",
+    "cold-volume-prefix-independent03.py": "74522a938282d17b48128ee082e27e7404ea59d814ffb86f5434c12ee61d5b7e",
+    "cold-volume-prefix-independent05.py": "9bdf16a2ced0b86acc05822943e123d9d3d7e2f8433901c92de38f4ea2f0fa53",
+    "allocation-current-independent04.py": "4fbf318ab042ad9cf82fa72d66c81d2181cfaf21d3d5095eeef78f8ee484b6f7",
+    "run-host-guarded02.py": "8cbde7c49ead1942a204d1658252e7e06edfbcad83040c717338b80873b73c9f",
+    "run-host-guarded03.py": "64e0132ae79308656e7a285a94ff112247247e42933a8ffff905b89f10df3296",
+    "interim-six-source-review01.json": "dc12678d41f960d8faf51518af3217ba546fdcfa2559c5f225782566bff2a6ca",
+    "core-fresh-approval-regression01.json": "f43cb39fd1ee6fa7b8a6a1de3c30cfa9615095b8de33cfd345558143a02d5cc7",
+    "core-fresh-approval-regression01.jsonl": "0168d6275a42843c631cc6152ccd9c96f5cbe6d6feb2d7c375333712053d96fb",
+    "scratch-closed01.json": "512a0cf69075406dcf6270894eb9f4800109caa9d12cb47cecd27dbd4230a448",
+    "independent-host-normal02-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-host-normal02-stderr.txt": "29d93d40168dee7748ac8e01e3fa7f918c5c65f5641818d565f44ab6e0cd6f8e",
+    "independent-host-normal03-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-host-normal03-stderr.txt": "7578947079809d7ed4f89fb1b309ddfa7c4ebce170f95dbd2a51a2cea1b3634d",
+    "independent-host-normal04-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-host-normal04-stderr.txt": "588dc43cc73c3da5b0349e09d486ec80671bd93c82fba8cf7bfa9f98658a0f2e",
+    "independent-host-normal05-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-host-normal05-stderr.txt": "d2aae416b4be8aaaf82a555e1d7a92d63bee3eb46bfa41345dd0695e1ea442b0",
+    "independent-host-optimized02-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-host-optimized02-stderr.txt": "29d93d40168dee7748ac8e01e3fa7f918c5c65f5641818d565f44ab6e0cd6f8e",
+    "independent-host-optimized03-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-host-optimized03-stderr.txt": "72fbf6cda10619d1713fcbc41547789d2de3b6342c427d636b06e80f6610448e",
+    "independent-host-optimized04-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-host-optimized04-stderr.txt": "3c15c66fd401f745b5dee462a150c974d70851926ac9d90750b04a9904dd5d7e",
+    "independent-host-optimized05-stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-host-optimized05-stderr.txt": "04c861027ea59e3d472d342610195f7eaa553f7a68ee2fcefb849f8c56a556f9",
+    "independent-host-go02-stdout.txt": "ea6fd96655b27379666ef796fd8a133d356083ae3c48022050a9a9294236b0f8",
+    "independent-host-go02-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-checker-go03-stdout.txt": "eea61a0728aebd290f07b0c7c986d81a1b83a3ff8fefe32098e3d01c03abefcb",
+    "independent-checker-go03-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

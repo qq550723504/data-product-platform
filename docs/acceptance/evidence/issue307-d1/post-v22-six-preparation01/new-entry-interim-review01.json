@@ -1,0 +1,51 @@
+{
+  "status": "BLOCKED_BOUNDED_INDEPENDENT_SIX_ENTRY_SOURCE_REVIEW",
+  "at": "2026-10-19T16:25:26.688024+00:00",
+  "scope": "Interim as-tested new freeze/complete-preflight/window-maintenance sources; no Docker/provider/source run; H1-H4 stage report preserved",
+  "remaining_blockers": [
+    {
+      "id": "E1",
+      "classification": "BLOCKER",
+      "file": "examples/lifecycle-d1/window_six_support.py",
+      "path": "Host inherits base.Host.stop used by all seal stop steps",
+      "observed": "First inspect exception exits before issuing fixed known-CID stop; all_steps continues but this owner receives no physical stop attempt. Counterexample commands=[] under inspect-unavailable.",
+      "required_fix": "Override/reuse current close_known semantics so a failed initial inspect does not skip fixed-CID stop; final fresh inspect determines confirmation. Preserve failure and continue all groups."
+    },
+    {
+      "id": "E2",
+      "classification": "BLOCKER",
+      "file": "examples/lifecycle-d1/verify-six-native.py",
+      "path": "collect finally, unknown create exact-name fallback",
+      "observed": "create outcome UNKNOWN plus exact-name inspect unavailable is silently dropped. closure all_closed=true even though only known Core/Native closed and temporary attempted name unresolved.",
+      "required_fix": "Persist create intent/exact name and explicit unresolved/UNKNOWN containment result; resolve and close only execution-labelled owned CID when available. all_closed cannot be true for unresolved attempted owner."
+    }
+  ],
+  "source_as_tested": {
+    "window_six_support.py": "700c789e70b65101150397528c42b84eb443b218b87113cd333722020aad07ae",
+    "verify-six-native.py": "70f7e04e07af498b5641c8ec88c26493b964b3fcdf47b24f10446843296b6da4"
+  },
+  "source_current_readback": {
+    "verify-six-native.py": "70f7e04e07af498b5641c8ec88c26493b964b3fcdf47b24f10446843296b6da4",
+    "freeze-six-candidate.py": "6de4396d3dafbdb095f91930a5ecb77f68930c6b200511511dcb85abd174c2b1",
+    "window_six_support.py": "700c789e70b65101150397528c42b84eb443b218b87113cd333722020aad07ae",
+    "test_freeze_six_candidate.py": "3f5c6bd1d8e6922cd0652169f866f652e7f058bf0bc0fc5d18cf1d07629d5c18",
+    "test_window_six_support.py": "c65453745a95b5ab1b3f5da4b31dcf0bc1918801ef5ad8bb19b226e5049287c5"
+  },
+  "tests": {
+    "existing_model_freeze_normal_optimized": "1 method each PASS",
+    "existing_model_window_normal_optimized": "1 method each PASS (8 H1 positive/fault subcases, real local Ed25519 signing, no original proof)",
+    "model_limits": "source freeze/Go offline validator and original Native/PG not actually executed",
+    "new_failure_counterexamples": "E1/E2 independently reproduced under global external subprocess refusal"
+  },
+  "evidence": {
+    "independent-new-entries-tests01.json": "7fba7daf60120e6f1ede8850608f6690b1a31c9c39300891c90d0391ebf2c098",
+    "independent-new-entry-containment01.py": "4d8e5896494e899f5c81051fecff6512da569eaa16b52a569bad3a72654d7b82",
+    "independent-new-entry-containment01.json": "638d8c6947c21523a5348b6d7eb05a9adb8181d73cd6c8a998f8fbfd5ac77525",
+    "run-new-entries-guarded01.py": "6cd4c50a1fa346f63ad7ecb1cf478199f56c3861d8a39d9c9625a85ea3e181cb"
+  },
+  "actual_native": "NOT_RUN",
+  "actual_Docker": 0,
+  "candidate": "NOT_FROZEN",
+  "delete_authorization": "NOT_RECEIVED",
+  "full_D1": "NOT_ACCEPTED"
+}

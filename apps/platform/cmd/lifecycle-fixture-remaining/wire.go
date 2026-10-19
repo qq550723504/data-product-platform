@@ -193,7 +193,7 @@ func wire(ctx context.Context) error {
 	outbox.ConfigureAppendObligation(router)
 	defer outbox.ConfigureAppendObligation(nil)
 	var targets []domain.Copy
-	for _, stage := range []string{"P1", "P2", "T1", "T2", "H2", "M1A", "M1B"} {
+	for _, stage := range []string{"P2", "T1", "T2", "H2", "M1A", "M1B"} {
 		if cp, e := fixedTarget(l.F.Group, stage); e == nil {
 			targets = append(targets, cp)
 		}

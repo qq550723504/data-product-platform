@@ -119,19 +119,53 @@ func validateRemainingInventory(group string, expected []remainingExpected) erro
 // Present versions and policy resources are separate inputs. Legacy verification
 // passes the same complete inventory twice; post-v22 keeps the old policy scope.
 func collectRemainingNative(ctx context.Context, c config, group string, expected, policyExpected []remainingExpected, transport http.RoundTripper) (map[string]any, error) {
+	users, policies, err := legacyNativePolicies(c, group, policyExpected)
+	if err != nil {
+		return nil, err
+	}
+	return collectNativeWithPolicies(ctx, c, group, expected, users, policies, transport)
+}
+func legacyNativePolicies(c config, group string, policyExpected []remainingExpected) (map[string]string, map[string][]byte, error) {
 	scope, e := pilot.RemainingScopeFor(group)
 	if e != nil {
-		return nil, e
+		return nil, nil, e
 	}
+	all := []domain.Copy{}
+	for _, o := range policyExpected {
+		all = append(all, o.Copy)
+	}
+	users := map[string]string{c.InspectAccess: "lifecycle307-inspection-" + c.RunID.String(), "delete" + c.RunID.String()[:8]: "lifecycle307-remaining-delete-" + c.RunID.String()}
+	if group == "business-races" {
+		for _, name := range []string{"remainread808a6960", "remainput808a6960"} {
+			users[name] = "lifecycle307-remaining-business-" + name
+		}
+	}
+	statements := []any{}
+	for _, cp := range scope.Copies {
+		send := false
+		for _, key := range []string{"fixture/p1.csv", "fixture/p2.csv", "fixture/t1.csv", "fixture/t2.csv", "fixture/h2-a.csv", "fixture/m1-a.csv", "fixture/m1-b.csv"} {
+			send = send || cp.Key == key
+		}
+		if send {
+			statements = append(statements, map[string]any{"Effect": "Allow", "Action": []string{"s3:DeleteObject", "s3:DeleteObjectVersion"}, "Resource": []string{"arn:aws:s3:::" + cp.Namespace + "/" + cp.Key}, "Condition": map[string]any{"StringEquals": map[string]string{"s3:versionid": cp.ProviderVersion}}})
+		}
+	}
+	deletion, _ := json.Marshal(map[string]any{"Version": "2012-10-17", "Statement": statements})
+	policies := map[string][]byte{"lifecycle307-remaining-delete-" + c.RunID.String(): deletion, "lifecycle307-inspection-" + c.RunID.String(): remainingInspectionPolicy(all)}
+	if group == "business-races" {
+		read, put, _ := remainingPolicies(all)
+		policies["lifecycle307-remaining-business-remainread808a6960"] = read
+		policies["lifecycle307-remaining-business-remainput808a6960"] = put
+	}
+	return users, policies, nil
+}
+
+func collectNativeWithPolicies(ctx context.Context, c config, group string, expected []remainingExpected, users map[string]string, policies map[string][]byte, transport http.RoundTripper) (map[string]any, error) {
 	client, e := minio.New(c.Endpoint, &minio.Options{Creds: credentials.NewStaticV4(c.RootAccess, c.RootSecret, ""), Region: "us-east-1", BucketLookup: minio.BucketLookupPath, MaxRetries: 1, Transport: transport})
 	if e != nil {
 		return nil, e
 	}
 	var verified []remainingExpected
-	all := []domain.Copy{}
-	for _, o := range policyExpected {
-		all = append(all, o.Copy)
-	}
 	for _, o := range expected {
 		cp := o.Copy
 		object, e := client.GetObject(ctx, cp.Namespace, cp.Key, minio.GetObjectOptions{VersionID: cp.ProviderVersion})
@@ -194,12 +228,6 @@ func collectRemainingNative(ctx context.Context, c config, group string, expecte
 	if e != nil {
 		return nil, e
 	}
-	users := map[string]string{c.InspectAccess: "lifecycle307-inspection-" + c.RunID.String(), "delete" + c.RunID.String()[:8]: "lifecycle307-remaining-delete-" + c.RunID.String()}
-	if group == "business-races" {
-		for _, name := range []string{"remainread808a6960", "remainput808a6960"} {
-			users[name] = "lifecycle307-remaining-business-" + name
-		}
-	}
 	for name, want := range users {
 		user, e := admin.GetUserInfo(ctx, name)
 		if e != nil {
@@ -208,23 +236,6 @@ func collectRemainingNative(ctx context.Context, c config, group string, expecte
 		if user.Status != madmin.AccountDisabled || !remainingExactUserPolicy(user, want) {
 			return nil, errors.New("native IAM identity is not disabled with its sole exact policy")
 		}
-	}
-	statements := []any{}
-	for _, cp := range scope.Copies {
-		send := false
-		for _, key := range []string{"fixture/p1.csv", "fixture/p2.csv", "fixture/t1.csv", "fixture/t2.csv", "fixture/h2-a.csv", "fixture/m1-a.csv", "fixture/m1-b.csv"} {
-			send = send || cp.Key == key
-		}
-		if send {
-			statements = append(statements, map[string]any{"Effect": "Allow", "Action": []string{"s3:DeleteObject", "s3:DeleteObjectVersion"}, "Resource": []string{"arn:aws:s3:::" + cp.Namespace + "/" + cp.Key}, "Condition": map[string]any{"StringEquals": map[string]string{"s3:versionid": cp.ProviderVersion}}})
-		}
-	}
-	deletion, _ := json.Marshal(map[string]any{"Version": "2012-10-17", "Statement": statements})
-	policies := map[string][]byte{"lifecycle307-remaining-delete-" + c.RunID.String(): deletion, "lifecycle307-inspection-" + c.RunID.String(): remainingInspectionPolicy(all)}
-	if group == "business-races" {
-		read, put, _ := remainingPolicies(all)
-		policies["lifecycle307-remaining-business-remainread808a6960"] = read
-		policies["lifecycle307-remaining-business-remainput808a6960"] = put
 	}
 	hashes := map[string]string{}
 	for name, want := range policies {

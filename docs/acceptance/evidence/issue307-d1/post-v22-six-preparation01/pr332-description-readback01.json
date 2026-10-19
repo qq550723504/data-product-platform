@@ -1,0 +1,8 @@
+{
+  "status": "PASS_EXACT_UTF8_READBACK",
+  "head": "f00d64328cc9489256143e87060a30e249cc406b",
+  "isDraft": true,
+  "body_sha256": "34e93cc16e45d53e747157a85db455864ce51957583739fd08bb6294682fe21b",
+  "description_file_private": "C:\\Users\\Henry\\.codex\\fixture-private\\post-v22-six-preparation01\\pr332-body01.md",
+  "native_delete": 0
+}
