@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "status": "PASS_BOUNDED_INDEPENDENT_P1_SOURCE_REVIEW",
+  "reviewed_at": "2026-10-19T10:30:23.642703+00:00",
+  "reviewer": "sole independent reviewer /root/v20_independent_review",
+  "remaining_blockers": [],
+  "scope": "B5 journal routing bootstrap before the first inspection and B6 preservation of original Start/Observe failures through transport/SDK/inspection mapping; new audit03 control root and explicit source hash entries. No old audit resume or new deletion capability.",
+  "reviewed_files": {
+    "apps/platform/cmd/lifecycle-fixture-recovery/main.go": {
+      "sha256": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+      "lf_sha256": "7be509d28af7a523d7628cfde0f137f19f21600f55eacd2508d0b447290dcb6f",
+      "bytes": 22126
+    },
+    "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22.go": {
+      "sha256": "c232599a2ea29db0df1f57a5d0e502f26accb3b67ea3b724e7edefb122180e46",
+      "lf_sha256": "c232599a2ea29db0df1f57a5d0e502f26accb3b67ea3b724e7edefb122180e46",
+      "bytes": 12996
+    },
+    "apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22_test.go": {
+      "sha256": "f331071862d4d63390218d37123fd9708007cb08d3808f69d60773c0fb539a18",
+      "lf_sha256": "f331071862d4d63390218d37123fd9708007cb08d3808f69d60773c0fb539a18",
+      "bytes": 6949
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go": {
+      "sha256": "2105d0b4e48140464da2d0afa50f0e0db3423191adc42985e3c40119830c787b",
+      "lf_sha256": "2105d0b4e48140464da2d0afa50f0e0db3423191adc42985e3c40119830c787b",
+      "bytes": 10380
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/main_test.go": {
+      "sha256": "79de5e0afee70f104b8cc596920a70f3749cc298a7b23aa937a4169435e5f8e8",
+      "lf_sha256": "79de5e0afee70f104b8cc596920a70f3749cc298a7b23aa937a4169435e5f8e8",
+      "bytes": 1034
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly.go": {
+      "sha256": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+      "lf_sha256": "e5fd218fb8209e280864a98b59c6d9c4f15434c9d0c9108bbbc7ef054c60bb50",
+      "bytes": 2517
+    },
+    "apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly_test.go": {
+      "sha256": "b7549dc196ee01ed34afba1e73f627e41b8f5dea1d06d1f02cc1754aed12e540",
+      "lf_sha256": "b7549dc196ee01ed34afba1e73f627e41b8f5dea1d06d1f02cc1754aed12e540",
+      "bytes": 3030
+    },
+    "apps/platform/internal/platform/outbox/publisher.go": {
+      "sha256": "1cf8c17258465f2f4b39598d36b48b9c4fabae70ee3237fb3fdde774818d3910",
+      "lf_sha256": "1cf8c17258465f2f4b39598d36b48b9c4fabae70ee3237fb3fdde774818d3910",
+      "bytes": 12559
+    },
+    "apps/platform/internal/lifecycle/application/p1_recovery_integration_test.go": {
+      "sha256": "ea80793d8af661795a46203b3bbe87be56ec2857e0cae9e1dea300646d859b84",
+      "lf_sha256": "ea80793d8af661795a46203b3bbe87be56ec2857e0cae9e1dea300646d859b84",
+      "bytes": 2747
+    },
+    "examples/lifecycle-d1/reconcile-p1-post-v22.py": {
+      "sha256": "3debc84e8f5092b69f7218a20ace9384fb7d3eafcbd6f9a1b827e3d036562f01",
+      "lf_sha256": "3debc84e8f5092b69f7218a20ace9384fb7d3eafcbd6f9a1b827e3d036562f01",
+      "bytes": 28858
+    },
+    "examples/lifecycle-d1/test_p1_post_v22_readonly.py": {
+      "sha256": "2fc5bb4384d9814cdeaaab5032940feec55873fe65536e6ec54402eb1d8d8728",
+      "lf_sha256": "2fc5bb4384d9814cdeaaab5032940feec55873fe65536e6ec54402eb1d8d8728",
+      "bytes": 11654
+    },
+    ".github/workflows/demo-lifecycle.yml": {
+      "sha256": "261af9b77a2981fe12a8240033887f743ffc3f071d225577a6b912f15a2bbc51",
+      "lf_sha256": "261af9b77a2981fe12a8240033887f743ffc3f071d225577a6b912f15a2bbc51",
+      "bytes": 4924
+    },
+    "docs/acceptance/issue307-d1-post-v22-p1-readonly.md": {
+      "sha256": "10d12b2fb820f3fe562818da6d1b58cfe66ad2e4e243eb9dfd7a5ff9f16d1fb0",
+      "lf_sha256": "10d12b2fb820f3fe562818da6d1b58cfe66ad2e4e243eb9dfd7a5ff9f16d1fb0",
+      "bytes": 3392
+    },
+    "apps/platform/internal/lifecycle/pilot/recovery_bootstrap.go": {
+      "sha256": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2",
+      "lf_sha256": "f6595e47646c1f298a5ef96f7ae80e430d0183db873bcbe602967cf4b53fcab2",
+      "bytes": 678
+    },
+    "apps/platform/internal/platform/storage/lifecycle_inspection.go": {
+      "sha256": "f62a08e2531adc4ccb40592d55bf4542e4770abc60ca5a77e0a8ec795d3cd80b",
+      "lf_sha256": "f62a08e2531adc4ccb40592d55bf4542e4770abc60ca5a77e0a8ec795d3cd80b",
+      "bytes": 20599
+    },
+    "apps/platform/internal/platform/storage/lifecycle_inspection_test.go": {
+      "sha256": "c1137d1ca0a902bf4440f904ded2fc6069dd7375ba189bf2dd4199a394f555de",
+      "lf_sha256": "c1137d1ca0a902bf4440f904ded2fc6069dd7375ba189bf2dd4199a394f555de",
+      "bytes": 18617
+    },
+    "apps/platform/internal/lifecycle/application/p1_journal_export_test.go": {
+      "sha256": "80dc688d16e6786f5b3f3c42653b0fd146456acaf7bf4adcdf69d825509a271c",
+      "lf_sha256": "80dc688d16e6786f5b3f3c42653b0fd146456acaf7bf4adcdf69d825509a271c",
+      "bytes": 711
+    },
+    "apps/platform/internal/lifecycle/application/p1_journal_sdk_integration_test.go": {
+      "sha256": "ac93b27650ec0bc220678f19bd92ee48cdee0f1e59c0f969ad3986cc6d2ecae9",
+      "lf_sha256": "ac93b27650ec0bc220678f19bd92ee48cdee0f1e59c0f969ad3986cc6d2ecae9",
+      "bytes": 3449
+    },
+    ".gitattributes": {
+      "sha256": "5735d99158e152617853eba9bfd75b89db2aac373a85831ab7df7e5c6edcf2f9",
+      "lf_sha256": "5735d99158e152617853eba9bfd75b89db2aac373a85831ab7df7e5c6edcf2f9",
+      "bytes": 10248
+    }
+  },
+  "closed_findings": [
+    {
+      "id": "B5",
+      "classification": "BLOCKER_CLOSED",
+      "evidence": "runP1PostV22 is now only the outer pilot.WithRecoveryRouting callback. The entire config/DB/inspector/precheck/recovery/dispatcher body is inside runP1PostV22Routed, so canonical routing is installed before any journaled read, using the same router for the later dispatcher. The helper grants no storage authority and clears only process test/fixture routing when it returns.",
+      "real_PG_proof": "External application_test uses the existing test-only planDatabase/occupancyFixture bridge, explicitly clears global routing, then observes original routing failure, zero loopback wire and start/cost transaction rollback. It next invokes the actual pilot.WithRecoveryRouting helper used by P1 and verifies one successful real SDK read plus persisted start/observation/cost."
+    },
+    {
+      "id": "B6",
+      "classification": "BLOCKER_CLOSED",
+      "evidence": "Start/Observe errors are multi-wrapped with ErrStorageUnknown and the exact original cause. inspectionError returns the matched wrapped input, preserving the error chain through the real MinIO SDK. Both errors.Is(category) and errors.Is(original) plus original message are asserted by the enhanced SDK unit test.",
+      "independent_old_new_counterexample": "Correctly mapped old86 storage source overlay fails original-cause assertion; unchanged current test with current storage source passes."
+    }
+  ],
+  "independent_actual_tests": [
+    {
+      "command": "go test -count=1 ./cmd/lifecycle-fixture-recovery ./internal/lifecycle/pilot ./internal/platform/storage",
+      "result": "PASS_3_UNCACHED_PACKAGES",
+      "log": "B5B6-go-unit01.txt",
+      "scope": "Unit/real SDK loopback only; no retained native/source/provider"
+    },
+    {
+      "command": "go test -overlay B6-old-inspection-overlay02.json -count=1 -run TestLifecycleInspectorJournalAndLostResponse$ ./internal/platform/storage",
+      "result": "EXPECTED_OLD_SOURCE_FAIL",
+      "log": "B6-cause-old02.txt",
+      "scope": "Private old source overlay; shared repository never edited"
+    },
+    {
+      "command": "go test -count=1 -run TestLifecycleInspectorJournalAndLostResponse$ ./internal/platform/storage",
+      "result": "PASS_CURRENT_SOURCE",
+      "log": "B6-cause-new03.txt",
+      "scope": "Start/Observe original error identity and classification verified through SDK"
+    }
+  ],
+  "independent_artifacts": {
+    "B5B6-go-unit01.txt": {
+      "sha256": "d6f3983a03e9e9f08ac329c2f849b8ff9ae70d88fedd2784c0f26e45994f68d8",
+      "lf_sha256": "0a479e8af6deef840a37f3210fb40b7d699376625b9fb74fc752389babba2e4a",
+      "bytes": 298
+    },
+    "inspection-before-B5B6.go": {
+      "sha256": "9b1c9174b5f57764ceb3276c8a9f5d0ada49f4c5273447e4775c1b7319e9a75f",
+      "lf_sha256": "9b1c9174b5f57764ceb3276c8a9f5d0ada49f4c5273447e4775c1b7319e9a75f",
+      "bytes": 20481
+    },
+    "B6-old-inspection-overlay.json": {
+      "sha256": "f6f34ae4b8aeb8fd189c7b2121837aa9417804e485079174d56af1a912944119",
+      "lf_sha256": "f6f34ae4b8aeb8fd189c7b2121837aa9417804e485079174d56af1a912944119",
+      "bytes": 272
+    },
+    "B6-old-inspection-overlay02.json": {
+      "sha256": "197ea18a365bb967f6110b96cd674c7f6dc86cd0e74e81e1413d5f100557c2dd",
+      "lf_sha256": "197ea18a365bb967f6110b96cd674c7f6dc86cd0e74e81e1413d5f100557c2dd",
+      "bytes": 256
+    },
+    "B6-cause-old01.txt": {
+      "sha256": "4564355a07c7bce103a54c6fda83411d9bf78642911af57c020510658c29418c",
+      "lf_sha256": "33224ae8893515ba8981fbca059d52015c1e984df045e45ddb4730cd7a245ac2",
+      "bytes": 98
+    },
+    "B6-cause-new02.txt": {
+      "sha256": "b0ea0ad9a649a7112b12375ec0af2938e713f97e2c7430fd605adfb420829ad4",
+      "lf_sha256": "6f8e264369e9caa3dc2d8626c099974666b35c4223e79eccc3d7ddc744cf8d38",
+      "bytes": 98
+    },
+    "B6-cause-old02.txt": {
+      "sha256": "55ae49b8d9998816c6cde157c77c7daeca78618cb1fce1429a94c6c27c706a08",
+      "lf_sha256": "1a2447569b756dd1cb35b3648aad601ad99e3e57576fca410c6aadb6efdfd45a",
+      "bytes": 294
+    },
+    "B6-cause-new03.txt": {
+      "sha256": "3f3b961fc71ef8f671c8379ca4e8825e608302bf4e0c5841d05917a8221fd156",
+      "lf_sha256": "a0e32191aad3f22dd20f8b811a13b7fefb86317a979b33554754496c1877e14a",
+      "bytes": 98
+    },
+    "B6-overlay-navigation-failure01.json": {
+      "sha256": "53a6d7eea6fdef8be162ba5d8823db3f538a7ceaca6e5f8a4c76be14667a2d87",
+      "lf_sha256": "53a6d7eea6fdef8be162ba5d8823db3f538a7ceaca6e5f8a4c76be14667a2d87",
+      "bytes": 487
+    }
+  },
+  "invalid_review_attempt": {
+    "classification": "INVALID_NOT_COUNTED_AS_OLD_SOURCE_TEST",
+    "description": "First overlay target duplicated apps/platform because repo-relative name was resolved from module cwd; no override was applied and old01 incorrectly ran current source. Raw results are preserved, explicitly excluded; corrected overlay02 yielded the expected old-source failure.",
+    "record": "B6-overlay-navigation-failure01.json"
+  },
+  "parent_real_PG_and_loopback_evidence_reviewed_not_personally_run": {
+    "receipt": "journal-sdk-pg-final02.json",
+    "status": "PASS",
+    "actual_P1_bootstrap_helper": true,
+    "database": "Real isolated scratch PostgreSQL",
+    "SDK": "Real MinIO SDK against local httptest HTTP server",
+    "provider": "REAL_SDK_LOOPBACK_HTTP_ONLY",
+    "wire_progression": [
+      0,
+      1,
+      2
+    ],
+    "start_progression": "0 on rejected unconfigured start, then two committed starts",
+    "persistent_observations_after_fault": 1,
+    "cost_scope": "First positive call has one persisted cost. Observation fault after second wire rolls back observation/cost transaction; second cost is not proven persisted and must not be described as zero invocation/zero cost or fully accounted. UNKNOWN/start identity remain.",
+    "scratch_CID": "c746bfe4a490ac65fdf9532666b5893bb3cfc1c3af9e24bc0496cb16f6f6c7bb",
+    "scratch_image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "scratch_stopped": true,
+    "scratch_pid": 0,
+    "retained_volume": "dpp307-postv22-regression-74cef6fd9fb2-data",
+    "native_source_started": false,
+    "native_delete": 0,
+    "initial_manual_router_PG_receipts_preserved": [
+      "journal-sdk-pg.json",
+      "journal-sdk-pg.txt",
+      "scratch-closed.json"
+    ],
+    "files": {
+      "host-normal.txt": {
+        "sha256": "fe1b98757aca23953a0bfbe89bafda19d9d6fcb52aed4ffd9c5eed536765d657",
+        "lf_sha256": "f59fbf79ad34f9175944ab54663a9059c212016057c48eb3a29a3d884a06c3bc",
+        "bytes": 1896
+      },
+      "host-optimized.txt": {
+        "sha256": "7490edcc8a0d3d90d2fe01e6120aef137e2ed2edae39274ad59e9da1532b83a0",
+        "lf_sha256": "2458021cd725b23e7e66d16c73f882754e2aa7e3b947aca487a97f78d5132c9a",
+        "bytes": 1896
+      },
+      "journal-sdk-pg-final02.json": {
+        "sha256": "afc5967dc2f4d7ee3398be009eacafe32cca1ede8efd26ed725892708d1e0460",
+        "lf_sha256": "afc5967dc2f4d7ee3398be009eacafe32cca1ede8efd26ed725892708d1e0460",
+        "bytes": 698
+      },
+      "journal-sdk-pg-final02.txt": {
+        "sha256": "432a8eb20959711e39fc045eef0f15f07c0e5547d6160f83fbed14930581ad0f",
+        "lf_sha256": "432a8eb20959711e39fc045eef0f15f07c0e5547d6160f83fbed14930581ad0f",
+        "bytes": 249
+      },
+      "journal-sdk-pg.json": {
+        "sha256": "14f604e214139cf35cdef95be523af1cdeb322ef5122478b810b0b37f7d2c8d8",
+        "lf_sha256": "14f604e214139cf35cdef95be523af1cdeb322ef5122478b810b0b37f7d2c8d8",
+        "bytes": 660
+      },
+      "journal-sdk-pg.txt": {
+        "sha256": "3913d2de026fd88ca064b4c448992efb7784c99823b5164fcfed7bb85f6c54fc",
+        "lf_sha256": "3913d2de026fd88ca064b4c448992efb7784c99823b5164fcfed7bb85f6c54fc",
+        "bytes": 247
+      },
+      "scratch-closed-final02.json": {
+        "sha256": "07a5727b62688cf57c14303c01936b601429f071a15d08e3577e520d1bc21858",
+        "lf_sha256": "07a5727b62688cf57c14303c01936b601429f071a15d08e3577e520d1bc21858",
+        "bytes": 223
+      },
+      "scratch-closed.json": {
+        "sha256": "9be8b1291e88b05dc2dc12a4b421c394e71cce89433dbcf337d751d3fda6774b",
+        "lf_sha256": "9be8b1291e88b05dc2dc12a4b421c394e71cce89433dbcf337d751d3fda6774b",
+        "bytes": 223
+      },
+      "source-tests.json": {
+        "sha256": "aa860ca86df80a8924fee27f39b72492af0a8e048ecb107044d7b6d8bb0d4d8e",
+        "lf_sha256": "aa860ca86df80a8924fee27f39b72492af0a8e048ecb107044d7b6d8bb0d4d8e",
+        "bytes": 839
+      }
+    }
+  },
+  "prior_reports_preserved": {
+    "source-final-review02.json": "be0241dd4ccbc8ad82b7d5e73b69121478dcbde05edea18db28cf73f9b3d914b",
+    "source-final-review03.json": "aa8e3d0312da62cc5beada3aa96dbab1724c11e37127deb2e402791701e6eb0d",
+    "manifest01-blocked-review.json": "bbb66dd3f41c1a81d8b5f3880a718c307fb4550bba56192f4eb0338bcd6a0d9f",
+    "manifest02-final-review.json": "c690ebd0250425d122acd08c8c9a459f26fcd2603b50b1ae83cecbd42b71237a",
+    "audit02-failure-rootcause-review.json": "bb13fc99132e7e74abba73fdd69d682fee8199db227beb75c7e65581df28b73a"
+  },
+  "old_audit02": {
+    "audit_id": "669e16cb-c671-4f36-92ad-ab3a3b051b81",
+    "manifest_sha256": "cd7cd06bfb46ab0703252af9f2668ed6453a4da4b84e860a736d80fa979ddb14",
+    "terminal_status": "FAILED_OR_UNCONFIRMED_SEALED",
+    "actual_stderr_sha256": "19db26dcaac8a3888f68461c141cf11dd47425ebb83cb527a22048f3dee125d0",
+    "old_original_cause": "Not retroactively reconstructed from actual erased generic stderr; static/reproduced necessary-path defect is distinct.",
+    "actual_metadata_call_quantity": "NOT_ASSESSED",
+    "native_delete": 0,
+    "closed_owners": 6,
+    "profiles_disabled": 2,
+    "fresh_identity_disabled": 4,
+    "Core_after_and_native_precheck_receipts": "NOT_PRODUCED",
+    "resume_under_old_audit_permitted": false
+  },
+  "scope_limits": [
+    "Source review only. New audit03 has not been prepared; no manifest or binary/CID/time binding is approved by this status.",
+    "Parent host normal/-O eight-test logs are inspected, not independently rerun because host semantics changed only control root and runtime hash membership; prior independent B4 host tests remain valid.",
+    "Loopback/PG counterexamples do not establish actual native P1 inventory, exact absence, real Asynq/Core completion or application/business/D1 acceptance.",
+    "Generic actual audit02 UNKNOWN and missing storage/cost rows do not by themselves prove no invocation or cost; retain old attempt/outcome/budgets/pins and failure bytes.",
+    "No Docker/source/provider/credential access, identity enable, proof signing, real DELETE or shared repository writes by reviewer.",
+    "Current acceptance matrix must preserve actual02 FAILED/SEALED with missing Core-after/native-precheck and list03 not prepared; future remaining-six scope is only a draft, not executable readiness or authority."
+  ],
+  "manifest_sha256": null,
+  "runnable_manifest_review": false,
+  "native_P1_reconciliation": "NOT_RUN_SUCCESSFULLY",
+  "remaining_six": "UNFROZEN_SCOPE_DRAFT_ONLY",
+  "PR323": "DRAFT_NOT_MERGED",
+  "Issue307": "OPEN",
+  "full_D1": "NOT_ACCEPTED"
+}

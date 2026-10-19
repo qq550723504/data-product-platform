@@ -132,3 +132,5 @@ docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/** -text whitespace=
 docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/source-independent/bootstrap-build-info01.txt -text whitespace=cr-at-eol,-blank-at-eol
 docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/source-independent/worker-build-info01.txt -text whitespace=cr-at-eol,-blank-at-eol
 docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02/source-independent/profile-paths-initial01.txt -text whitespace=cr-at-eol,-blank-at-eol
+
+docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly03/** -text whitespace=cr-at-eol

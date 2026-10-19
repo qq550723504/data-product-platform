@@ -156,6 +156,12 @@ func p1NativePrecheck(ctx context.Context, inspector lc.StorageInspector, copies
 }
 
 func runP1PostV22(ctx context.Context, path string) error {
+	return pilot.WithRecoveryRouting(func(router *outbox.Router) error {
+		return runP1PostV22Routed(ctx, path, router)
+	})
+}
+
+func runP1PostV22Routed(ctx context.Context, path string, router *outbox.Router) error {
 	raw, err := os.ReadFile(path)
 	if err != nil || len(raw) > 16<<10 {
 		return lc.ErrStorageScope
@@ -247,12 +253,6 @@ func runP1PostV22(ctx context.Context, path string) error {
 	if err = write("/run/output/native-precheck.json", map[string]any{"P1_exact_absent_in_full_namespace": true, "present_versions": 7, "fresh_native": nativeReceipt, "bytes_hash_reverification": "NOT_PERFORMED_HEAD_AND_PROTECTION_ONLY", "native_delete": 0}); err != nil {
 		return err
 	}
-	router, err := routing.NewRouter(false)
-	if err != nil {
-		return err
-	}
-	outbox.ConfigureAppendObligation(router)
-	defer outbox.ConfigureAppendObligation(nil)
 	client := platformqueue.NewClient(platformqueue.Config{Addr: c.RedisAddr})
 	defer client.Close()
 	queue := lifecyclequeue.NewClient(client)

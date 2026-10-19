@@ -20,8 +20,8 @@ from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[2]
 PRIVATE=Path('C:/Users/Henry/.codex/fixture-private')
-CONTROL=PRIVATE/'post-v22-p1-readonly02'
-PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly02'
+CONTROL=PRIVATE/'post-v22-p1-readonly03'
+PUBLIC=ROOT/'docs/acceptance/evidence/issue307-d1/post-v22-p1-readonly03'
 PACKET=ROOT/'docs/acceptance/evidence/issue307-d1/remaining-candidate12'
 OLD=PRIVATE/'remaining-candidate12'
 FAILED=ROOT/'docs/acceptance/evidence/issue307-d1/delete-confirmed-v22-execution01/window01'
@@ -210,7 +210,8 @@ def prepare():
 
 SOURCE_FILES=['examples/lifecycle-d1/reconcile-p1-post-v22.py','apps/platform/cmd/lifecycle-fixture-recovery/p1_post_v22.go',
               'apps/platform/cmd/lifecycle-fixture-recovery/main.go','apps/platform/cmd/lifecycle-fixture-remaining-iam/main.go',
-              'apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly.go','apps/platform/internal/platform/outbox/publisher.go']
+              'apps/platform/cmd/lifecycle-fixture-remaining-iam/p1_readonly.go','apps/platform/internal/platform/outbox/publisher.go',
+              'apps/platform/internal/platform/storage/lifecycle_inspection.go','apps/platform/internal/lifecycle/pilot/recovery_bootstrap.go']
 
 def fresh(manifest,allow_enabled=False):
     need(call(['git','rev-parse','HEAD']).decode().strip()==manifest['source_head'] and not call(['git','diff','--name-only']).strip() and not call(['git','diff','--cached','--name-only']).strip(),'P1 source commit/tracked worktree drift')

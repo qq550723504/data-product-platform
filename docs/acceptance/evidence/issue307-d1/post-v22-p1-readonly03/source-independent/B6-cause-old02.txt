@@ -1,0 +1,5 @@
+--- FAIL: TestLifecycleInspectorJournalAndLostResponse (0.14s)
+    lifecycle_inspection_test.go:326: journal cause or fail-closed category lost lifecycle storage observation unknown
+FAIL
+FAIL	github.com/qq550723504/data-product-platform/apps/platform/internal/platform/storage	1.280s
+FAIL

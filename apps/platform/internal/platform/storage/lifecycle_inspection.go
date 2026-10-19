@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -236,7 +237,7 @@ func inspectionError(err error) error {
 	for _, typed := range []error{lifecycle.ErrStorageScope, lifecycle.ErrStorageDenied, lifecycle.ErrStorageNotFound,
 		lifecycle.ErrStorageContract, lifecycle.ErrStorageUnsupported, lifecycle.ErrStorageUnknown} {
 		if errors.Is(err, typed) {
-			return typed
+			return err
 		}
 	}
 	r := minio.ToErrorResponse(err)
@@ -273,7 +274,7 @@ func (t *inspectionTransport) RoundTrip(req *http.Request) (*http.Response, erro
 	call.mu.Unlock()
 	start := lifecycle.StorageCallStart{ID: uuid.New(), Copy: call.copy, Operation: call.operation, StartedAt: t.now()}
 	if err := t.journal.StartStorageCall(req.Context(), start); err != nil {
-		return nil, lifecycle.ErrStorageUnknown
+		return nil, fmt.Errorf("%w: storage journal start: %w", lifecycle.ErrStorageUnknown, err)
 	}
 	var mu sync.Mutex
 	var invokedAt *time.Time
@@ -370,7 +371,7 @@ func (t *inspectionTransport) RoundTrip(req *http.Request) (*http.Response, erro
 		if resp != nil {
 			_ = resp.Body.Close()
 		}
-		return nil, lifecycle.ErrStorageUnknown
+		return nil, fmt.Errorf("%w: storage journal observation: %w", lifecycle.ErrStorageUnknown, journalErr)
 	}
 	if err != nil {
 		if resp != nil {
