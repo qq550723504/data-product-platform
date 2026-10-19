@@ -4,6 +4,7 @@ No Docker daemon, live Core, IAM or object store is contacted. Go contract tests
 separately exercise the actual SDK/official policy library and file aggregation.
 """
 from contextlib import ExitStack
+import copy
 import importlib.util
 import json
 from pathlib import Path
@@ -18,6 +19,104 @@ r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
 
 
 class SixHostTests(unittest.TestCase):
+    def test_actual_created_network_prebinding_and_attached_identity_counterexamples(self):
+        rows=[json.loads(line) for line in (r.PUBLIC/'materialize-cold-network-observation01.jsonl').read_text().splitlines()]
+        self.assertEqual(len(rows),12)
+        for row in rows:
+            network=row['approved_network'];name=next(iter(row['networks']))
+            original={'State':row['state'],'HostConfig':{'NetworkMode':row['network_mode']},'NetworkSettings':{'Networks':row['networks']}}
+            r.direct_network(original,network,name)
+            attached=copy.deepcopy(original);attached['State'].update(Status='exited',StartedAt='2026-10-19T00:00:00Z',FinishedAt='2026-10-19T00:01:00Z')
+            attached['NetworkSettings']['Networks'][name]['NetworkID']=network
+            r.direct_network(attached,network,name)
+            mutations=[('HostConfig','NetworkMode','foreign'),('State','Status','exited'),('State','StartedAt','2026-10-19T00:00:00Z'),
+                       ('State','FinishedAt','2026-10-19T00:00:00Z'),('State','Running',True),('State','Pid',1)]
+            for section,key,value in mutations:
+                bad=copy.deepcopy(original);bad[section][key]=value
+                with self.subTest(role=row['role'],field=key),self.assertRaises(ValueError):r.direct_network(bad,network,name)
+            for key,value in [('NetworkID','f'*64),('EndpointID','unexpected'),('IPAddress','10.0.0.7'),('Gateway','10.0.0.1'),('MacAddress','02:42:00:00:00:01'),('IPPrefixLen',24)]:
+                bad=copy.deepcopy(original);bad['NetworkSettings']['Networks'][name][key]=value
+                with self.subTest(role=row['role'],field=key),self.assertRaises(ValueError):r.direct_network(bad,network,name)
+            for membership in ({'foreign':next(iter(row['networks'].values()))},dict(row['networks'],foreign={})):
+                bad=copy.deepcopy(original);bad['NetworkSettings']['Networks']=membership
+                with self.subTest(role=row['role'],field='membership'),self.assertRaises(ValueError):r.direct_network(bad,network,name)
+
+    def test_actual_initializer_canonical_capability_and_expansion_counterexamples(self):
+        allocation=r.load(r.PUBLIC/'allocation.json');descriptors=r.load(r.PUBLIC/'owner-descriptors.json')
+        for group in allocation['groups']:
+            d=descriptors[group['budget_initializer']]
+            original={'Image':d['image'],'Config':{'User':d['user'],'Entrypoint':d['entrypoint'],'Cmd':d['command']},'HostConfig':d['host']}
+            self.assertEqual(original['HostConfig']['CapAdd'],['CAP_CHOWN']);r.initializer_security(original)
+            for section,key,value in [('Config','User','10001:10001'),('Config','Cmd',['-c','arbitrary']),('HostConfig','NetworkMode','bridge'),
+                                      ('HostConfig','CapAdd',['CHOWN']),('HostConfig','CapAdd',['CAP_CHOWN','CAP_SYS_ADMIN']),('HostConfig','CapAdd',['CAP_CHOWN','CAP_CHOWN']),
+                                      ('HostConfig','CapDrop',[]),('HostConfig','ReadonlyRootfs',False),('HostConfig','Privileged',True),
+                                      ('HostConfig','RestartPolicy',{'Name':'always'}),('HostConfig','PortBindings',{'80/tcp':[{'HostPort':'8080'}]})]:
+                bad=copy.deepcopy(original);bad[section][key]=value
+                with self.subTest(group=group['group'],field=key),self.assertRaises(ValueError):r.initializer_security(bad)
+
+    def test_source_contract_allows_only_reviewed_host_repair_not_compiled_or_other_host_drift(self):
+        initial={'source':'a'*40}
+        def check(changed,untracked=b'',dirty=0):
+            def output(args,**kwargs):return untracked if args[1]=='ls-files' else ('\n'.join(changed)).encode()
+            with patch.object(r.subprocess,'check_output',output),patch.object(r.subprocess,'run',lambda *args,**kwargs:SimpleNamespace(returncode=dirty)):
+                return r.source_contract(initial,'b'*40)
+        self.assertEqual(check(sorted(r.REPAIR_FILES)),sorted(r.REPAIR_FILES))
+        for changed,untracked,dirty in [(['apps/platform/go.mod'],b'',0),(['apps/platform/internal/lifecycle/pilot/remaining_scope.json'],b'',0),
+                                       (['migrations/000001.sql'],b'',0),(['examples/lifecycle-d1/remaining_sequence.py'],b'',0),([],b'untracked.py',0),([],b'',1)]:
+            with self.subTest(changed=changed,untracked=untracked,dirty=dirty),self.assertRaises(ValueError):check(changed,untracked,dirty)
+
+    def test_current_checkpoint_is_mandatory_preserves_initial_allocation_and_rejects_cross_binding(self):
+        with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
+            root=Path(tmp);control=root/'private';public=root/'public';control.mkdir();public.mkdir();rebuilt=control/'source-rebuild01';rebuilt.mkdir()
+            stack.enter_context(patch.object(r,'CONTROL',control));stack.enter_context(patch.object(r,'PUBLIC',public))
+            binaries={}
+            for name in ('reader','operator','owner','readonly-check.exe'):
+                (control/name).write_bytes(name.encode());(rebuilt/name).write_bytes(name.encode());binaries[name]=r.sha(control/name)
+            for name in r.REBUILD_MEMBERS-set(binaries):(rebuilt/name).write_bytes(b'original compiler channel')
+            original={'source':'a'*40,'allocation_nonce':'initial-nonce','owners':['1'*64,'2'*64],'binaries':binaries}
+            r.save(public/'allocation.json',original);original_bytes=(public/'allocation.json').read_bytes()
+            r.save(public/'materialize-failure01.json',{'status':'original retained cold failure'})
+            receipt={'status':'PASS_IDENTICAL_REBUILD_AFTER_COLD_REPAIR','initial_build_source':original['source'],'effective_source':'b'*40,'allocation_sha256':r.sha(public/'allocation.json'),
+                     'failure_evidence_sha256':r.sha(public/'materialize-failure01.json'),'binaries':binaries,'files':r.rebuild_files(),'changed_host_paths':[],
+                     'active_binary_replaced':False,'source_provider_io':0,'native_delete':0}
+            r.save(public/'source-rebuild01.json',receipt)
+            checkpoint=dict(execution=r.p.EXECUTION,profile=r.p.PROFILE,initial_build_source=original['source'],effective_source=receipt['effective_source'],
+                            allocation_sha256=receipt['allocation_sha256'],allocation_nonce=original['allocation_nonce'],owners=sorted(original['owners']),binaries=binaries,
+                            rebuild_receipt_sha256=r.sha(public/'source-rebuild01.json'),failure_evidence_sha256=receipt['failure_evidence_sha256'])
+            stack.enter_context(patch.object(r,'allocation_state',lambda:copy.deepcopy(original)))
+            stack.enter_context(patch.object(r,'source_contract',lambda a,source:[]))
+            with self.assertRaises(FileNotFoundError):r.state()
+            def write(value):
+                for folder in (control,public):(folder/'source-checkpoint.json').write_text(json.dumps(value))
+            write(checkpoint);current=r.state()
+            self.assertEqual(current['source'],'b'*40);self.assertEqual(current['initial_build_source'],'a'*40)
+            self.assertEqual((public/'allocation.json').read_bytes(),original_bytes);self.assertEqual(original['source'],'a'*40)
+            for key,value in [('execution','old-execution'),('effective_source','c'*40),('initial_build_source','c'*40),('allocation_nonce','foreign'),
+                              ('owners',['3'*64]),('binaries',dict(binaries,reader='f'*64)),('allocation_sha256','f'*64),('rebuild_receipt_sha256','f'*64),('failure_evidence_sha256','f'*64)]:
+                bad=copy.deepcopy(checkpoint);bad[key]=value;write(bad)
+                with self.subTest(key=key),self.assertRaises(ValueError):r.state()
+            for members in ({},binaries,{**receipt['files'],'extra.log':'f'*64},{k:v for k,v in receipt['files'].items() if k!='checker-build.stderr'}):
+                bad=copy.deepcopy(receipt);bad['files']=members;(public/'source-rebuild01.json').write_text(json.dumps(bad))
+                rehashed=copy.deepcopy(checkpoint);rehashed['rebuild_receipt_sha256']=r.sha(public/'source-rebuild01.json');write(rehashed)
+                with self.subTest(receipt_members=list(members)),self.assertRaises(ValueError):r.state()
+            for key,value in [('active_binary_replaced',True),('source_provider_io',1),('native_delete',1),('changed_host_paths',['apps/platform/go.mod'])]:
+                bad=copy.deepcopy(receipt);bad[key]=value;(public/'source-rebuild01.json').write_text(json.dumps(bad))
+                rehashed=copy.deepcopy(checkpoint);rehashed['rebuild_receipt_sha256']=r.sha(public/'source-rebuild01.json');write(rehashed)
+                with self.subTest(receipt_field=key),self.assertRaises(ValueError):r.state()
+            (public/'source-rebuild01.json').write_text(json.dumps(receipt,indent=2)+'\n')
+            checkpoint['rebuild_receipt_sha256']=r.sha(public/'source-rebuild01.json');write(checkpoint)
+            extra=rebuilt/'extra.log';extra.write_bytes(b'extra')
+            with self.assertRaises(ValueError):r.state()
+            extra.unlink()
+            real_symlink=Path.is_symlink
+            with patch.object(Path,'is_symlink',lambda path:path.name=='reader-build.stderr' or real_symlink(path)):
+                with self.assertRaises(ValueError):r.state()
+            linked=root/'linked-channel';linked.hardlink_to(rebuilt/'reader-build.stderr')
+            with self.assertRaises(ValueError):r.state()
+            linked.unlink()
+            write(checkpoint);(rebuilt/'reader').write_bytes(b'different build')
+            with self.assertRaises(ValueError):r.state()
+
     def test_existing_or_wrong_owner_volume_never_starts_or_is_adopted(self):
         with tempfile.TemporaryDirectory() as tmp,patch.object(r.p,'PUBLIC',Path(tmp)):
             for fault in ('existing','wrong-label',None):

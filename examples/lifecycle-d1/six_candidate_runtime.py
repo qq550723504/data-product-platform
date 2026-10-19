@@ -70,15 +70,100 @@ def mounts_exact(item,expected):
         else:need(p.p1.hostpath(m['Source'])==Path(path).resolve(),'mount source differs')
 
 
-def state():
+def allocation_state():
     a=load(CONTROL/'allocation.json')
     need(a['execution']==p.EXECUTION and a['profile']==p.PROFILE and a==load(PUBLIC/'allocation.json'),'allocation differs')
-    need(subprocess.run(['git','diff','--quiet',a['source'],'--','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).returncode==0,'runtime tracked source drift from exact build commit')
-    need(not subprocess.check_output(['git','ls-files','--others','--exclude-standard','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).strip(),'runtime untracked source drift')
     for name,digest in a['binaries'].items():need(sha(CONTROL/name)==digest,'runtime binary drift')
     need(sha(CONTROL/'six-map.json')==sha(PUBLIC/'six-map.json')==a['map_sha256'],'source/restore map drift')
     need(p.historical_gate()==a['retained'],'retained history drift')
     return a
+
+
+REPAIR_FILES={
+    'examples/lifecycle-d1/prepare-six-candidate.py',
+    'examples/lifecycle-d1/six_candidate_runtime.py',
+    'examples/lifecycle-d1/freeze-six-candidate.py',
+    'examples/lifecycle-d1/test_six_candidate_runtime.py',
+    'examples/lifecycle-d1/test_freeze_six_candidate.py',
+}
+REBUILD_MEMBERS={'reader','operator','owner','readonly-check.exe'}|{name+'-build.'+channel for name in ('reader','operator','owner','checker') for channel in ('stdout','stderr')}
+
+
+def rebuild_files():
+    folder=CONTROL/'source-rebuild01';members=list(folder.iterdir())
+    need(not folder.is_symlink() and not folder.is_junction() and {path.name for path in members}==REBUILD_MEMBERS
+         and all(path.is_file() and not path.is_symlink() and not path.is_junction() and path.stat().st_nlink==1 for path in members),'rebuild directory is not the complete twelve independent regular members')
+    return {path.name:sha(path) for path in sorted(members)}
+
+
+def source_contract(a,source):
+    need(len(source)==40 and all(c in '0123456789abcdef' for c in source),'effective source is not one commit')
+    changed=subprocess.check_output(['git','diff','--name-only',a['source'],source,'--','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).decode('utf-8','strict').splitlines()
+    need(set(changed)<=REPAIR_FILES,'cold repair changed compiled Go/migration or an unreviewed host path')
+    need(subprocess.run(['git','diff','--quiet',source,'--','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).returncode==0,'runtime tracked source drift from exact effective commit')
+    need(not subprocess.check_output(['git','ls-files','--others','--exclude-standard','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).strip(),'runtime untracked source drift')
+    return changed
+
+
+def state():
+    a=allocation_state();checkpoint=load(CONTROL/'source-checkpoint.json')
+    need(checkpoint==load(PUBLIC/'source-checkpoint.json'),'current source checkpoint differs')
+    need(set(checkpoint)=={'execution','profile','initial_build_source','effective_source','allocation_sha256','allocation_nonce','owners','binaries','rebuild_receipt_sha256','failure_evidence_sha256'}
+         and checkpoint['execution']==p.EXECUTION and checkpoint['profile']==p.PROFILE
+         and checkpoint['initial_build_source']==a['source'] and checkpoint['allocation_sha256']==sha(PUBLIC/'allocation.json')
+         and checkpoint['allocation_nonce']==a['allocation_nonce'] and checkpoint['owners']==sorted(a['owners']) and checkpoint['binaries']==a['binaries'],'current source checkpoint scope differs')
+    changed=source_contract(a,checkpoint['effective_source'])
+    receipt=load(PUBLIC/'source-rebuild01.json')
+    need(set(receipt)=={'status','initial_build_source','effective_source','changed_host_paths','allocation_sha256','failure_evidence_sha256','binaries','files','active_binary_replaced','source_provider_io','native_delete'}
+         and sha(PUBLIC/'source-rebuild01.json')==checkpoint['rebuild_receipt_sha256'] and receipt['status']=='PASS_IDENTICAL_REBUILD_AFTER_COLD_REPAIR'
+         and receipt['initial_build_source']==a['source'] and receipt['effective_source']==checkpoint['effective_source'] and receipt['binaries']==a['binaries']
+         and receipt['changed_host_paths']==changed and receipt['active_binary_replaced'] is False and receipt['source_provider_io']==0 and receipt['native_delete']==0
+         and receipt['allocation_sha256']==checkpoint['allocation_sha256'] and receipt['failure_evidence_sha256']==checkpoint['failure_evidence_sha256']
+         and sha(PUBLIC/'materialize-failure01.json')==checkpoint['failure_evidence_sha256'],'identical rebuild evidence differs')
+    rebuilt=CONTROL/'source-rebuild01'
+    need(receipt['files']==rebuild_files(),'original rebuild member set or bytes differ')
+    for name,digest in a['binaries'].items():need(sha(rebuilt/name)==digest,'new commit rebuild is not identical to retained active binary')
+    # The original allocation/build fact is never rewritten. Only this explicit
+    # current projection uses the reviewed, identically rebuilt source commit.
+    return dict(a,initial_build_source=a['source'],source=checkpoint['effective_source'],source_checkpoint_sha256=sha(PUBLIC/'source-checkpoint.json'),rebuild_receipt_sha256=sha(PUBLIC/'source-rebuild01.json'))
+
+
+def bind_source():
+    a=allocation_state()
+    need(not (CONTROL/'source-checkpoint.json').exists() and not (PUBLIC/'source-checkpoint.json').exists(),'source checkpoint already exists')
+    source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip();changed=source_contract(a,source)
+    cold_topology(a)
+    failure=load(PUBLIC/'materialize-failure01.json')
+    need(failure['status']=='FAILED_COLD_GATE_BEFORE_PROFILE_MATERIALIZATION' and failure['source']==a['source'] and failure['execution']==p.EXECUTION and failure['native_delete']==0,'original cold failure differs')
+    rebuilt=CONTROL/'source-rebuild01';rebuilt.mkdir()
+    need(p.build(rebuilt)==source,'rebuild commit changed during build')
+    need(all(sha(rebuilt/name)==digest for name,digest in a['binaries'].items()),'new commit build differs; cannot continue retained allocation')
+    cold_topology(a)
+    receipt={'status':'PASS_IDENTICAL_REBUILD_AFTER_COLD_REPAIR','initial_build_source':a['source'],'effective_source':source,'changed_host_paths':changed,
+             'allocation_sha256':sha(PUBLIC/'allocation.json'),'failure_evidence_sha256':sha(PUBLIC/'materialize-failure01.json'),'binaries':a['binaries'],
+             'files':rebuild_files(),'active_binary_replaced':False,'source_provider_io':0,'native_delete':0}
+    save(PUBLIC/'source-rebuild01.json',receipt)
+    checkpoint=dict(execution=p.EXECUTION,profile=p.PROFILE,initial_build_source=a['source'],effective_source=source,allocation_sha256=receipt['allocation_sha256'],
+                    allocation_nonce=a['allocation_nonce'],owners=sorted(a['owners']),binaries=a['binaries'],rebuild_receipt_sha256=sha(PUBLIC/'source-rebuild01.json'),failure_evidence_sha256=receipt['failure_evidence_sha256'])
+    save(PUBLIC/'source-checkpoint.json',checkpoint);save(CONTROL/'source-checkpoint.json',checkpoint)
+    print(json.dumps({'status':receipt['status'],'initial_build_source':a['source'],'effective_source':source,'native_delete':0}))
+
+
+def direct_network(item,network,network_name):
+    need(item['HostConfig']['NetworkMode']==network and set(item['NetworkSettings']['Networks'])=={network_name},'direct network configured identity differs')
+    endpoint=item['NetworkSettings']['Networks'][network_name]
+    if endpoint['NetworkID']==network:return
+    state=item['State']
+    need(endpoint['NetworkID']=='' and state['Status']=='created' and state['Running'] is False and state['Pid']==0
+         and state['StartedAt']==ZERO and state['FinishedAt']==ZERO
+         and all(endpoint.get(key)=='' for key in ('EndpointID','Gateway','IPAddress','MacAddress','IPv6Gateway','GlobalIPv6Address'))
+         and endpoint.get('IPPrefixLen')==0 and endpoint.get('GlobalIPv6PrefixLen')==0,'missing runtime network identity is not a never-started empty endpoint')
+
+
+def initializer_security(x):
+    h=x['HostConfig']
+    need(x['Image']==p.p1.PG and x['Config']['User']=='0:0' and x['Config']['Entrypoint']==['/bin/sh'] and x['Config']['Cmd']==['-e','/run/budget-init.sh'] and h['NetworkMode']=='none'
+         and h['ReadonlyRootfs'] and h['CapDrop']==['ALL'] and h['CapAdd']==['CAP_CHOWN'] and not h['Privileged'] and h['RestartPolicy']['Name']=='no' and not h.get('PortBindings'),'budget initializer expanded')
 
 
 def cold_topology(a):
@@ -114,10 +199,13 @@ def cold_topology(a):
         source=next(x for x in old['Groups'] if x['Group']==group)
         need(g['source']=={k:source[k] for k in ('Core','Native','Network')},'original source identity changed')
         p.prior.closure.source_contract({'source':source})
+        restore_name=None
         for network_id in (source['Network'],g['restore_network']):
             n=json.loads(docker('network','inspect',network_id))[0]
             need(n['Id']==network_id and n['Internal'] and not n.get('Containers'),'network active, external or changed')
-            if network_id==g['restore_network']:need(n['Labels'].get('lifecycle307.remaining')==p.EXECUTION and n['Labels'].get('lifecycle307.allocation')==a['allocation_nonce'] and n['Driver']=='bridge' and n['Scope']=='local','restore network ownership differs')
+            if network_id==g['restore_network']:
+                need(n['Labels'].get('lifecycle307.remaining')==p.EXECUTION and n['Labels'].get('lifecycle307.allocation')==a['allocation_nonce'] and n['Driver']=='bridge' and n['Scope']=='local','restore network ownership differs')
+                restore_name=n['Name']
         for stage,cid in g['helpers'].items():
             x=inspect(cid);unprivileged(x,'/run/operator',['-stage',stage],g['gateway'])
             mounts_exact(x,{'/run/private':('bind',folder/stage,False),'/run/operator':('bind',CONTROL/'operator',False),'/run/output':('bind',folder/'outputs'/stage,True),'/run/budget':('volume',g['volumes']['budget'],True)})
@@ -139,13 +227,12 @@ def cold_topology(a):
             mounts_exact(x,{'/run/private':('bind',folder/('rehearsal-'+stage),False),'/run/reader':('bind',CONTROL/'reader',False),'/run/output':('bind',folder/'outputs'/('rehearsal-'+stage),True)})
         for cid in (g['restore_core'],g['rehearsal_core'],g['restore_native']):
             x=inspect(cid)
-            need(cid not in (source['Core'],source['Native']) and {v['NetworkID'] for v in x['NetworkSettings']['Networks'].values()}=={g['restore_network']} and x['HostConfig']['RestartPolicy']['Name']=='no' and not x['HostConfig'].get('PortBindings') and not any(x['NetworkSettings']['Ports'].values()),'restore source alias or exposed')
+            direct_network(x,g['restore_network'],restore_name)
+            need(cid not in (source['Core'],source['Native']) and x['HostConfig']['RestartPolicy']['Name']=='no' and not x['HostConfig'].get('PortBindings') and not any(x['NetworkSettings']['Ports'].values()),'restore source alias or exposed')
         volume=json.loads(docker('volume','inspect',g['volumes']['budget']))[0]
         mounted=docker('ps','-aq','--no-trunc','--filter','volume='+volume['Name']).decode('utf-8','strict').split()
         need(volume['Labels'].get('lifecycle307.remaining')==p.EXECUTION and len(mounted)==len(set(mounted)) and set(mounted)==set(g['budget_expected_mounted_cids']),'new budget ownership/mount graph expanded')
-        x=inspect(g['budget_initializer']);h=x['HostConfig']
-        need(x['Image']==p.p1.PG and x['Config']['User']=='0:0' and x['Config']['Entrypoint']==['/bin/sh'] and x['Config']['Cmd']==['-e','/run/budget-init.sh'] and h['NetworkMode']=='none'
-             and h['ReadonlyRootfs'] and h['CapDrop']==['ALL'] and h['CapAdd']==['CHOWN'] and not h['Privileged'] and h['RestartPolicy']['Name']=='no' and not h.get('PortBindings'),'budget initializer expanded')
+        x=inspect(g['budget_initializer']);initializer_security(x)
         mounts_exact(x,{'/run/budget':('volume',g['volumes']['budget'],True),'/run/budget-init.sh':('bind',folder/'budget-init.sh',False)})
         need(sha(folder/'budget-init.sh')==g['budget_initializer_script_sha256'],'budget initializer code changed')
     return {'status':'PASS_COLD_SIX_TOPOLOGY','owners':len(a['owners']),'source_provider_io':0,'native_delete':0}
@@ -470,8 +557,9 @@ def run_non_delete():
 
 def main():
     import argparse
-    parser=argparse.ArgumentParser();parser.add_argument('action',choices=('materialize','initialize-budgets','check','run-non-delete'));args=parser.parse_args()
-    if args.action=='materialize':materialize()
+    parser=argparse.ArgumentParser();parser.add_argument('action',choices=('bind-source','materialize','initialize-budgets','check','run-non-delete'));args=parser.parse_args()
+    if args.action=='bind-source':bind_source()
+    elif args.action=='materialize':materialize()
     elif args.action=='initialize-budgets':initialize_budgets()
     elif args.action=='run-non-delete':run_non_delete()
     else:print(json.dumps(preparation_gate(state())))

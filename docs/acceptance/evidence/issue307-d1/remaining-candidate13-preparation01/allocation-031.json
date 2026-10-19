@@ -1,0 +1,18 @@
+{
+  "role": "checkpoint-core",
+  "group": "late-hold",
+  "cid": "73f113612869e3c0a820b91094db6e3d7c78ad2b187fa1ce0957d178e8376455",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-754ea8f0-candidate13-checkpoint",
+    "--network",
+    "9a17c06ffb3757e8db25b620a7a61d8ec52dfa80cf164bcc6e36fddedc9e09ba",
+    "--env-file",
+    "C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\late-hold\\checkpoint\\postgres.env",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-754ea8f0-candidate13-checkpoint-core,target=/var/lib/postgresql/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\late-hold\\checkpoint,target=/run/backup,readonly",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
+  ]
+}

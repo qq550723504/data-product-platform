@@ -143,16 +143,16 @@ class Allocation:
         return self.create(mode,group,args)
 
 
-def build():
+def build(destination=CONTROL):
     need(subprocess.run(['git','diff','--quiet','HEAD','--','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).returncode==0 and not subprocess.check_output(['git','ls-files','--others','--exclude-standard','apps/platform','examples/lifecycle-d1','migrations'],cwd=ROOT).strip(),'commit reviewed runtime before allocation')
     source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip()
     env=os.environ.copy();env.update(GOOS='linux',GOARCH='amd64',CGO_ENABLED='0')
     for name,pkg in [('reader','lifecycle-fixture-reader'),('operator','lifecycle-fixture-remaining'),('owner','lifecycle-fixture-remaining-iam')]:
-        result=subprocess.run(['go','build','-trimpath','-buildvcs=false','-o',str(CONTROL/name),'./cmd/'+pkg],cwd=ROOT/'apps/platform',env=env,capture_output=True)
-        (CONTROL/(name+'-build.stdout')).write_bytes(result.stdout);(CONTROL/(name+'-build.stderr')).write_bytes(result.stderr)
+        result=subprocess.run(['go','build','-trimpath','-buildvcs=false','-o',str(destination/name),'./cmd/'+pkg],cwd=ROOT/'apps/platform',env=env,capture_output=True)
+        (destination/(name+'-build.stdout')).write_bytes(result.stdout);(destination/(name+'-build.stderr')).write_bytes(result.stderr)
         need(result.returncode==0,'exact runtime build failed')
-    result=subprocess.run(['go','build','-trimpath','-buildvcs=false','-o',str(CONTROL/'readonly-check.exe'),'./cmd/lifecycle-fixture-readonly-check'],cwd=ROOT/'apps/platform',capture_output=True)
-    (CONTROL/'checker-build.stdout').write_bytes(result.stdout);(CONTROL/'checker-build.stderr').write_bytes(result.stderr)
+    result=subprocess.run(['go','build','-trimpath','-buildvcs=false','-o',str(destination/'readonly-check.exe'),'./cmd/lifecycle-fixture-readonly-check'],cwd=ROOT/'apps/platform',capture_output=True)
+    (destination/'checker-build.stdout').write_bytes(result.stdout);(destination/'checker-build.stderr').write_bytes(result.stderr)
     need(result.returncode==0,'file-only checker build failed')
     return source
 

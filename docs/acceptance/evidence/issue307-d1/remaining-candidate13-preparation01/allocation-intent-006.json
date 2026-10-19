@@ -1,0 +1,23 @@
+{
+  "role": "restore-gateway",
+  "group": "business-races",
+  "name": "dpp-lifecycle307-808a6960-candidate13-restore-gateway",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate13-restore-gateway",
+    "--network",
+    "049d8c3bc34b6e733fe21577202131934e16921774a5efae959f1ec12ffb1f98",
+    "--tmpfs",
+    "/config",
+    "--tmpfs",
+    "/data",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\business-races\\restore-gateway.Caddyfile,target=/etc/caddy/Caddyfile,readonly",
+    "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+    "caddy",
+    "run",
+    "--config",
+    "/etc/caddy/Caddyfile"
+  ]
+}

@@ -90,3 +90,23 @@ P1门禁已由新audit d64ad338-00d2-4569-bd62-9e132ddaf578 在2026-10-19T10:58:
 | candidate13冻结及完整精确文本 | NOT_FROZEN | proposal execution/窗口不是授权，完整D1仍NOT_ACCEPTED |
 
 当前实现/权威入口和非目标见`issue307-d1-post-v22-six-contract.md`。所有早期NOT_RUN/无窗口等段落是当时检查点，不覆盖上方最新状态，不据此否认后续单独留证的真实结果。
+
+### 冷态分配前检查点
+
+本代运行源码已提交为`a0f938943a7b396ecfed354ee4294506bd3d632e`；精确该HEAD的PR CI39286329231及required汇总均SUCCESS。原始API读回单独保留于`post-v22-six-preparation01/source-pr-ci01*`：13项中12项摘要SUCCESS，web-console全部步骤（含Complete job）SUCCESS而其单项摘要暂未更新，故不将该次读回写成13/13摘要通过，更不称为main CI。
+
+窗口准备手册的独立一致性评审已PASS，报告SHA`53987dc760b2059f1524e74fac201b278936a23c8fea3bfefecb2407e8cf74d0`，手册SHA`e2507fcf21459c6f9bfa1b2a666f6bdd6630d64a3283fd2f064f9bfaeaead6a2`；仅关闭角色前置措辞问题，86项已评审源码无漂移。该结果不是actual allocation、Native、候选冻结或授权证明。
+
+现在只启动一次性冷态分配：编译精确源码并创建停止资源，原源/身份未启动或开启。实际CID/卷/挂载及预算初始化结果须另存并独立核对，三组非删除原生验收仍NOT_RUN；候选尚未冻结、授权NOT_RECEIVED、调度NOT_CREATED、完整D1 NOT_ACCEPTED。
+
+### 实际冷态分配与前置失败（后续追加，不覆盖原记录）
+
+新allocation已实际创建86个停止owner、15个新卷及三个独立internal恢复网络。原始allocation SHA`91198e014b72d289ddf9d071e5ba888c904f7638fbb70c9a01dfc6e111da80a7`；nonce `d54522c4-20db-4be6-9bb7-f2f8ed9b3aa3`。原初四份构建来自a0f938，完整CID/descriptor/map/关闭回执均保留于`remaining-candidate13-preparation01`。
+
+首次materialize在任何profile写入或owner启动之前被冷态门禁拒绝：从未启动的恢复容器只有创建配置中的精确network ID，runtime endpoint的NetworkID为空。独立实际冷态评审另外发现initializer的Docker实际cap值为CAP_CHOWN，与原字符串CHOWN检查不符。原失败`materialize-failure01.json`及原BLOCKED独立报告SHA`09613e8bf682a8b4bb51fc36564c547383e2728a0439b8afc437e7f28b549e3a`保持不变。86个新owner均created/PID0，六个原source Core/Native保持关闭；56个受限worker、15卷完整挂载图、三网络及六处旧卷只读挂载实际核对通过。预算尚未初始化、Source/IAM/restore仍NOT_RUN，真实DELETE=0。
+
+修复严格区分created/PID0/零StartedAt且完全空endpoint的网络预绑定与已启动endpoint；两者都要求固定HostConfig网络ID及唯一批准网络名，foreign/extra/未知/曾启动后空endpoint拒绝。initializer只接受实际canonical CAP_CHOWN，不扩大cap集合。当前新增实际Docker投影正例、网络/状态/额外endpoint、cap扩张及source跨绑定反例；四组相关Python入口正常/-O均通过。这是本地回归，尚不是实际冷态终复评或Native验收。
+
+原设计把allocation时的构建源与后续宿主driver变更绑成同一个可变快照，不能为修复而回写旧allocation。当前改为单一mandatory追加source checkpoint：明确保留initial_build_source，绑定effective reviewed commit、原allocation SHA/86CID/nonce、原四binary、原失败SHA和独立目录四份重编译证明。apps/platform及migrations必须逐字节不变，只有已评审五个host Python/测试路径允许变更；四份重编译SHA必须完全等于原活跃binary，原文件不替换。缺checkpoint无旧source fallback，任何差异拒绝继续。checkpoint及重编译尚未实际执行，独立终评后才绑定；不是新授权或候选冻结。
+
+后续独立终复评`cold-source-independent-final-review03.json` SHA`107837f89bac730d7d9e81f7093badab00fe8e129213cb16850d4ee9cf286da2`已PASS、remaining_blockers=[]：COLD1/COLD2均闭合，实际冷态入口于16:57:28Z对86原CID通过。追加SOURCE1反例（重算receipt/checkpoint后省略编译通道）已修复为四binary+八原编译通道固定12成员、实际目录全集/regular/无链接、完整SHA map及跨字段校验；原BLOCKED报告SHA`70fe77016c02d9903b187751a8e94bd7102fa7a1d14caaa0b2c643aa63c0ad45`不覆盖。最新受影响runtime正常/-O各10方法独立通过，其他三套已通过且源码未变。下一步提交精确已评审修复、追加实际相同字节重编译/source checkpoint及cold profiles验收；这些实际步骤仍NOT_RUN，不将源码/冷态PASS当成Native或授权。

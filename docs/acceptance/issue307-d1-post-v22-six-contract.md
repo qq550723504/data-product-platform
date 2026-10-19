@@ -52,4 +52,8 @@
 
 新分配恢复卷和internal network必须先只读证明同名不存在，创建后核execution+独立allocation nonce、local driver/options及全部CID挂载集合；任何同名已有/归属错误立即拒绝，不能启动其数据。新Caddy用tmpfs覆盖镜像默认卷，避免产生未绑定匿名卷；唯一旧卷挂载例外为固定Source native volume在archive/compare的`/source`只读挂载。新空预算由独立无网络、仅CHOWN能力的initializer初始化，旧预算从未初始化或退款。
 
+本代实际冷态分配后发现Docker创建配置与运行endpoint不是同一事实：created/PID0、零StartedAt/FinishedAt且完全空endpoint时，须以精确HostConfig.NetworkMode、唯一批准network name及独立network inspect证明预绑定；已启动后缺NetworkID不得适用此分支。Docker inspect中的initializer能力只允许canonical CAP_CHOWN。原失败和allocation不覆盖，完整冷态复评通过前不得初始化预算或启动源。
+
+初始allocation构建源与修复后的effective source以单一mandatory `source-checkpoint.json`明确区分。`six_candidate_runtime.py bind-source`仅在源码提交、冷态复评和Go/migration内容完全不变后，于新目录重编译四binary；只有四SHA与旧活跃文件全部相同，才O_EXCL追加checkpoint，绑定原allocation/CID/nonce/失败/完整重编译成员。原binary和allocation字节保持，缺checkpoint没有旧source fallback。最终source-freeze/archive/candidate绑定新的effective commit并同时保留initial build与重编译证明；该续接不授予启动、IAM enable或发送权限。
+
 `window_six_support.py` 复用已独立评审的归档/逐步封存原语，收窄为本代真实三挂载case、完整十四身份和六份上限；不提供enable/send/schedule。H1签名仅在实际owner成功exit/PID0、原profile一字段撤销、所有late enablers及operators关闭、四个late身份fresh disabled及实际gateway封闭后签一次。准备阶段只在独立restore native上临时开启受限inspector，Source的旧/新发送身份始终关闭；restore enable失败也继续固定disable与物理关闭，未新鲜读回则UNCONFIRMED。

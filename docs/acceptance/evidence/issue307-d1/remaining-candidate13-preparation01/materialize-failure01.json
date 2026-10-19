@@ -1,0 +1,16 @@
+{
+  "status": "FAILED_COLD_GATE_BEFORE_PROFILE_MATERIALIZATION",
+  "execution": "4e524c04-2376-4bc9-9e85-452909d3dba4",
+  "source": "a0f938943a7b396ecfed354ee4294506bd3d632e",
+  "command": "python -B examples/lifecycle-d1/six_candidate_runtime.py materialize",
+  "tool_session": 71370,
+  "exit_code": 1,
+  "first_failure": "ValueError: restore source alias or exposed",
+  "frame": "six_candidate_runtime.py:142 cold_topology",
+  "observed_condition": "All twelve newly created direct restore services have exact approved HostConfig.NetworkMode and network name, Status=created, PID0, zero StartedAt/FinishedAt, but an empty runtime endpoint NetworkID. The original gate required an attached runtime NetworkID before any first start.",
+  "profiles_written": false,
+  "source_started": false,
+  "identity_enabled": false,
+  "native_delete": 0,
+  "evidence_limit": "This is a transcription of the retained tool-returned combined traceback and a separate actual read-only inspection. The original process stdout/stderr were not redirected separately; no separate raw-channel provenance is claimed. Allocation/build/closure original files remain unchanged."
+}
