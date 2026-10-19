@@ -1,0 +1,11 @@
+{"Time":"2026-10-16T14:20:59.5841559+08:00","Action":"start","Package":"./internal/delivery/application"}
+{"Time":"2026-10-16T14:21:00.4836764+08:00","Action":"run","Package":"./internal/delivery/application","Test":"TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload"}
+{"Time":"2026-10-16T14:21:00.4836764+08:00","Action":"output","Package":"./internal/delivery/application","Test":"TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload","Output":"=== RUN   TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload\n"}
+{"Time":"2026-10-16T14:21:00.7500903+08:00","Action":"output","Package":"./internal/delivery/application","Test":"TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload","Output":"--- PASS: TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload (0.27s)\n"}
+{"Time":"2026-10-16T14:21:00.7500903+08:00","Action":"pass","Package":"./internal/delivery/application","Test":"TestDirectDataDeliveryLinearizesIssuedAndNeverReplaysPayload","Elapsed":0.27}
+{"Time":"2026-10-16T14:21:00.7500903+08:00","Action":"run","Package":"./internal/delivery/application","Test":"TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked"}
+{"Time":"2026-10-16T14:21:00.7500903+08:00","Action":"output","Package":"./internal/delivery/application","Test":"TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked","Output":"=== RUN   TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked\n"}
+{"Time":"2026-10-16T14:21:00.9357342+08:00","Action":"output","Package":"./internal/delivery/application","Test":"TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked","Output":"--- PASS: TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked (0.19s)\n"}
+{"Time":"2026-10-16T14:21:00.9362667+08:00","Action":"pass","Package":"./internal/delivery/application","Test":"TestDirectDataReplacementAttemptReevaluatesFreshGateAndPersistsBlocked","Elapsed":0.19}
+{"Time":"2026-10-16T14:21:00.9362667+08:00","Action":"output","Package":"./internal/delivery/application","Output":"PASS\n"}
+{"Time":"2026-10-16T14:21:02.0004297+08:00","Action":"pass","Package":"./internal/delivery/application","Elapsed":2.416}

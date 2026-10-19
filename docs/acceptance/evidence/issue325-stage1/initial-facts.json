@@ -1,0 +1,24 @@
+{
+  "counts": {
+    "audit_event": 6,
+    "cost_event": 0,
+    "data_resource": 3,
+    "dataset": 3,
+    "dataset_certification": 0,
+    "dataset_version": 0,
+    "delivery_operation": 0,
+    "evidence": 0,
+    "execution": 0,
+    "ingestion_operation": 0,
+    "quality_result": 0,
+    "workflow_version": 0
+  },
+  "facts": {
+    "operations": [],
+    "receipts": [],
+    "versions": [],
+    "bindings": []
+  },
+  "objects": [],
+  "workspaceId": "e7469d12-05bc-4427-b79a-356a49cfd13c"
+}

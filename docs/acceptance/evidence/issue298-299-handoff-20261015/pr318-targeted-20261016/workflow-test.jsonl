@@ -1,0 +1,11 @@
+{"Time":"2026-10-16T14:20:25.1872245+08:00","Action":"start","Package":"./internal/workflow/application"}
+{"Time":"2026-10-16T14:20:26.135925+08:00","Action":"run","Package":"./internal/workflow/application","Test":"TestNativeReconcilerFinalizesReadyOutputAfterCrash"}
+{"Time":"2026-10-16T14:20:26.135925+08:00","Action":"output","Package":"./internal/workflow/application","Test":"TestNativeReconcilerFinalizesReadyOutputAfterCrash","Output":"=== RUN   TestNativeReconcilerFinalizesReadyOutputAfterCrash\n"}
+{"Time":"2026-10-16T14:20:26.326324+08:00","Action":"output","Package":"./internal/workflow/application","Test":"TestNativeReconcilerFinalizesReadyOutputAfterCrash","Output":"--- PASS: TestNativeReconcilerFinalizesReadyOutputAfterCrash (0.19s)\n"}
+{"Time":"2026-10-16T14:20:26.326324+08:00","Action":"pass","Package":"./internal/workflow/application","Test":"TestNativeReconcilerFinalizesReadyOutputAfterCrash","Elapsed":0.19}
+{"Time":"2026-10-16T14:20:26.326324+08:00","Action":"run","Package":"./internal/workflow/application","Test":"TestExecutionPersistsFrozenInputsRetryAndTraceability"}
+{"Time":"2026-10-16T14:20:26.326324+08:00","Action":"output","Package":"./internal/workflow/application","Test":"TestExecutionPersistsFrozenInputsRetryAndTraceability","Output":"=== RUN   TestExecutionPersistsFrozenInputsRetryAndTraceability\n"}
+{"Time":"2026-10-16T14:20:27.022738+08:00","Action":"output","Package":"./internal/workflow/application","Test":"TestExecutionPersistsFrozenInputsRetryAndTraceability","Output":"--- PASS: TestExecutionPersistsFrozenInputsRetryAndTraceability (0.70s)\n"}
+{"Time":"2026-10-16T14:20:27.022738+08:00","Action":"pass","Package":"./internal/workflow/application","Test":"TestExecutionPersistsFrozenInputsRetryAndTraceability","Elapsed":0.7}
+{"Time":"2026-10-16T14:20:27.022738+08:00","Action":"output","Package":"./internal/workflow/application","Output":"PASS\n"}
+{"Time":"2026-10-16T14:20:28.0516854+08:00","Action":"pass","Package":"./internal/workflow/application","Elapsed":2.864}

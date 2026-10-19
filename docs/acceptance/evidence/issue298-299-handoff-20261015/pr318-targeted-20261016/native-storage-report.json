@@ -1,0 +1,84 @@
+{
+  "bucket": "bc318-3bffbb42",
+  "checks": [
+    "native adapter create-only PUT",
+    "native GET exact UTF-8 payload/negative-value hash",
+    "native repeated immutable PUT rejects overwrite",
+    "original bytes preserved after rejected PUT",
+    "concurrent create-only PUT has one winner and stable bytes",
+    "cross-bucket URI rejected before provider HTTP",
+    "zero DELETE HTTP attempts"
+  ],
+  "delete_http_attempts": 0,
+  "failure_check": "",
+  "payload_sha256": "bc0b4b96873c199f2c9ecc021ca6837cea99725eca9acb9114dc491112e1df36",
+  "requests": [
+    {
+      "Method": "GET",
+      "Path": "/bc318-3bffbb42/",
+      "Status": 404
+    },
+    {
+      "Method": "PUT",
+      "Path": "/bc318-3bffbb42/",
+      "Status": 200
+    },
+    {
+      "Method": "PUT",
+      "Path": "/bc318-3bffbb42/owned/3bffbb42-db97-42a0-a36f-ea2271b3b581/output.csv",
+      "Status": 200
+    },
+    {
+      "Method": "HEAD",
+      "Path": "/bc318-3bffbb42/owned/3bffbb42-db97-42a0-a36f-ea2271b3b581/output.csv",
+      "Status": 200
+    },
+    {
+      "Method": "GET",
+      "Path": "/bc318-3bffbb42/owned/3bffbb42-db97-42a0-a36f-ea2271b3b581/output.csv",
+      "Status": 200
+    },
+    {
+      "Method": "PUT",
+      "Path": "/bc318-3bffbb42/owned/3bffbb42-db97-42a0-a36f-ea2271b3b581/output.csv",
+      "Status": 412
+    },
+    {
+      "Method": "HEAD",
+      "Path": "/bc318-3bffbb42/owned/3bffbb42-db97-42a0-a36f-ea2271b3b581/output.csv",
+      "Status": 200
+    },
+    {
+      "Method": "GET",
+      "Path": "/bc318-3bffbb42/owned/3bffbb42-db97-42a0-a36f-ea2271b3b581/output.csv",
+      "Status": 200
+    },
+    {
+      "Method": "PUT",
+      "Path": "/bc318-3bffbb42/owned/3bffbb42-db97-42a0-a36f-ea2271b3b581/race",
+      "Status": 200
+    },
+    {
+      "Method": "PUT",
+      "Path": "/bc318-3bffbb42/owned/3bffbb42-db97-42a0-a36f-ea2271b3b581/race",
+      "Status": 412
+    },
+    {
+      "Method": "HEAD",
+      "Path": "/bc318-3bffbb42/owned/3bffbb42-db97-42a0-a36f-ea2271b3b581/race",
+      "Status": 200
+    },
+    {
+      "Method": "GET",
+      "Path": "/bc318-3bffbb42/owned/3bffbb42-db97-42a0-a36f-ea2271b3b581/race",
+      "Status": 200
+    }
+  ],
+  "run_id": "3bffbb42-db97-42a0-a36f-ea2271b3b581",
+  "scope": "real MinIO and current storage adapter via method/status-only local proxy; fresh bucket/prefix; no old source, CurrentDeliveryGate or full provider-admission claim",
+  "status": "PASS",
+  "binary_sha256": "5e44a74c1b661a51b1446318732d0c7f53dddf406e57f4f4918b046d120d4182",
+  "source_lf_sha256": "ac7ea698145cbd87bdb89a323dec07fb451f93e8594cb32ad88c58076bcb53de",
+  "head": "b823eb33f8f3f923b619feda06e0ecc53514dd23",
+  "receipt_export_recovery": "original raw provider result preserved; explicit UTF-8 source-hash export only; no provider rerun"
+}

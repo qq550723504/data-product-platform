@@ -1,0 +1,12 @@
+import json,os,subprocess
+import run as d
+p,s=d.load_state();binary=p/'owners.exe'
+b=subprocess.run(['go','build','-p','2','-o',str(binary),str(d.APP/'.data/bc318-targeted/owners.go')],cwd=d.APP,env=dict(os.environ,GOMAXPROCS='2'),capture_output=True)
+(p/'owners-build.log').write_bytes(b.stdout+b.stderr)
+if b.returncode:print(json.dumps({'stage':'owners-build','exit_code':b.returncode}))
+else:
+ r=subprocess.run([str(binary),str(p/'state.json')],cwd=d.APP,capture_output=True)
+ (p/'owners-raw.json').write_bytes(r.stdout);(p/'owners-stderr.log').write_bytes(r.stderr)
+ report=json.loads(r.stdout);report['head']=d.BASE;report['binary_sha256']=d.sha(binary.read_bytes());report['source_lf_sha256']=d.sha((d.APP/'.data/bc318-targeted/owners.go').read_text(encoding='utf-8').encode())
+ d.save(d.OUT/'module-owner-checks.json',report)
+ print(json.dumps({'exit_code':r.returncode,'status':report['status'],'classes':report['reference_classes'],'checks':report['checks'],'failures':report['failures'],'missing':report['missing_classes'],'history_unchanged':report['reference_history_unchanged']}))

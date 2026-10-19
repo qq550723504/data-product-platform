@@ -1,0 +1,7 @@
+{"Time":"2026-10-16T14:20:33.7955301+08:00","Action":"start","Package":"./internal/entity/application"}
+{"Time":"2026-10-16T14:20:34.4506101+08:00","Action":"run","Package":"./internal/entity/application","Test":"TestCompanyEntityResolutionReferenceSlice"}
+{"Time":"2026-10-16T14:20:34.4506101+08:00","Action":"output","Package":"./internal/entity/application","Test":"TestCompanyEntityResolutionReferenceSlice","Output":"=== RUN   TestCompanyEntityResolutionReferenceSlice\n"}
+{"Time":"2026-10-16T14:20:34.7197768+08:00","Action":"output","Package":"./internal/entity/application","Test":"TestCompanyEntityResolutionReferenceSlice","Output":"--- PASS: TestCompanyEntityResolutionReferenceSlice (0.27s)\n"}
+{"Time":"2026-10-16T14:20:34.7197768+08:00","Action":"pass","Package":"./internal/entity/application","Test":"TestCompanyEntityResolutionReferenceSlice","Elapsed":0.27}
+{"Time":"2026-10-16T14:20:34.7197768+08:00","Action":"output","Package":"./internal/entity/application","Output":"PASS\n"}
+{"Time":"2026-10-16T14:20:35.7563742+08:00","Action":"pass","Package":"./internal/entity/application","Elapsed":1.9609999999999999}

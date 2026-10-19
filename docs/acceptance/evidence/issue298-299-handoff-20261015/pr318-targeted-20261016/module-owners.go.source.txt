@@ -1,0 +1,56 @@
+package main
+import(
+ "context";"crypto/sha256";"encoding/hex";"encoding/json";"errors";"fmt";"os";"sort"
+ "github.com/google/uuid";"github.com/jackc/pgx/v5";"github.com/jackc/pgx/v5/pgxpool"
+ cref "github.com/qq550723504/data-product-platform/apps/platform/internal/platform/contentreference"
+ dataset "github.com/qq550723504/data-product-platform/apps/platform/internal/dataset/application"
+ entity "github.com/qq550723504/data-product-platform/apps/platform/internal/entity/application"
+ workflow "github.com/qq550723504/data-product-platform/apps/platform/internal/workflow/application"
+ quality "github.com/qq550723504/data-product-platform/apps/platform/internal/quality/application"
+ certification "github.com/qq550723504/data-product-platform/apps/platform/internal/certification/application"
+ delivery "github.com/qq550723504/data-product-platform/apps/platform/internal/delivery/application"
+)
+type config struct{DSN string}
+type sample struct{Kind,SQL string;Owner cref.Owner}
+type result struct{Kind,Module,Case,Outcome string}
+func main(){
+ var c config;b,e:=os.ReadFile(os.Args[1]);if e!=nil||json.Unmarshal(b,&c)!=nil{panic("private config")}
+ ctx:=context.Background();pool,e:=pgxpool.New(ctx,c.DSN);if e!=nil{panic("new database")};defer pool.Close()
+ samples:=[]sample{
+ {"LINEAGE","SELECT r.id,r.input_version_id,d.workspace_id,'' FROM dataset_version_lineage r JOIN dataset_version v ON v.id=r.output_version_id JOIN dataset d ON d.id=v.dataset_id LIMIT 1",dataset.FixtureReferenceOwner{}},
+ {"ENTITY_MATCH","SELECT id,input_dataset_version_id,workspace_id,'' FROM entity_match_job LIMIT 1",entity.FixtureReferenceOwner{}},
+ {"EXECUTION_INPUT","SELECT r.execution_id,r.dataset_version_id,e.workspace_id,r.input_name FROM execution_input r JOIN execution e ON e.id=r.execution_id LIMIT 1",workflow.FixtureReferenceOwner{}},
+ {"EXECUTION_MAPPING","SELECT id,input_dataset_version_id,workspace_id,'' FROM execution_mapping_usage LIMIT 1",workflow.FixtureReferenceOwner{}},
+ {"QUALITY_RESULT","SELECT id,dataset_version_id,workspace_id,'' FROM quality_result LIMIT 1",quality.FixtureReferenceOwner{}},
+ {"QUALITY_ATTEMPT","SELECT id,dataset_version_id,workspace_id,'' FROM quality_assessment_attempt LIMIT 1",quality.FixtureReferenceOwner{}},
+ {"CERTIFICATION","SELECT id,dataset_version_id,workspace_id,'' FROM dataset_certification LIMIT 1",certification.FixtureReferenceOwner{}},
+ {"DELIVERY","SELECT id,dataset_version_id,workspace_id,'' FROM delivery_operation LIMIT 1",delivery.FixtureReferenceOwner{}},
+ }
+ snapshot:=func()map[string]string{
+  out:=map[string]string{};tables:=[]string{"dataset_version_lineage","entity_match_job","execution_input","execution_mapping_usage","quality_result","quality_assessment_attempt","dataset_certification","delivery_operation"}
+  sort.Strings(tables);for _,table:=range tables{var raw string;e:=pool.QueryRow(ctx,"SELECT COALESCE(jsonb_agg(v ORDER BY v::text),'[]'::jsonb)::text FROM (SELECT to_jsonb(t) v FROM "+pgx.Identifier{"public",table}.Sanitize()+" t) q").Scan(&raw);if e!=nil{panic("history snapshot")};s:=sha256.Sum256([]byte(raw));out[table]=hex.EncodeToString(s[:])};return out
+ }
+ before:=snapshot();results:=[]result{};missing:=[]string{}
+ for _,s:=range samples{
+  var id,version,workspace uuid.UUID;var input string
+  if e:=pool.QueryRow(ctx,s.SQL).Scan(&id,&version,&workspace,&input);e!=nil{missing=append(missing,s.Kind);continue}
+  ref:=cref.Reference{Kind:s.Kind,SubjectID:id,InputName:input};tx,e:=pool.BeginTx(ctx,pgx.TxOptions{AccessMode:pgx.ReadOnly});if e!=nil{panic("read only transaction")}
+  run:=func(label string,w,v uuid.UUID,r cref.Reference,allow bool){
+   spec,err:=s.Owner.Check(ctx,tx,w,v,r);ok:=errors.Is(err,cref.ErrReference)
+   if allow{ok=err==nil&&spec.Kind==s.Kind&&spec.Module==s.Owner.Module()}
+   outcome:="FAIL";if ok{outcome="PASS"};results=append(results,result{s.Kind,s.Owner.Module(),label,outcome})
+  }
+  run("exact source/workspace accepted",workspace,version,ref,true)
+  run("foreign workspace denied",uuid.New(),version,ref,false)
+  run("wrong version denied",workspace,uuid.New(),ref,false)
+  changed:=ref;changed.SubjectID=uuid.New();run("wrong source identity denied",workspace,version,changed,false)
+  changed=ref;changed.Kind="UNKNOWN";run("unknown reference kind denied",workspace,version,changed,false)
+  if s.Kind=="EXECUTION_INPUT"{changed=ref;changed.InputName="not-the-owned-input";run("wrong input membership denied",workspace,version,changed,false)}
+  tx.Rollback(ctx)
+ }
+ after:=snapshot();beforeJSON,_:=json.Marshal(before);afterJSON,_:=json.Marshal(after);unchanged:=string(beforeJSON)==string(afterJSON)
+ failed:=0;for _,r:=range results{if r.Outcome!="PASS"{failed++}}
+ status:="PASS";if failed>0||len(missing)>0||!unchanged{status="FAIL"}
+ report:=map[string]any{"status":status,"results":results,"missing_classes":missing,"reference_classes":len(samples),"checks":len(results),"failures":failed,"reference_history_unchanged":unchanged,"before_sha256":before,"after_sha256":after,"scope":"current module owner Check only, PostgreSQL read-only transactions over this new regression database; no Declare/Release/Provider calls"}
+ output,_:=json.MarshalIndent(report,"","  ");fmt.Println(string(output));if status!="PASS"{os.Exit(1)}
+}

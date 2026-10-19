@@ -1,0 +1,22 @@
+{
+  "rawJoinAggregate": {
+    "invocations": 6,
+    "typed_cost_allocations": 6,
+    "missing_cost_facts": 0,
+    "quantity": 3.0,
+    "units": [
+      "invocation"
+    ],
+    "pricing_modes": [
+      "ACTUAL",
+      "UNKNOWN"
+    ]
+  },
+  "querySemantics": "count(*) after joining invocation to allocation; invocations=6 is joined rows, not a distinct physical invocation count",
+  "observedQuantity": {
+    "quantity": 3.0,
+    "unit": "invocation"
+  },
+  "unknownIntentFacts": "preserved; UNKNOWN does not mean no provider cost",
+  "missingJoinedCostFacts": 0
+}
