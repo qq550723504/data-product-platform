@@ -31,6 +31,9 @@ Migration 69 belongs to #307 / #323. The migration runner cannot insert 69 after
 70 has already been applied. This candidate must remain draft until 69 lands
 and the branch is rebased and tested in that order; 70 must not be applied first
 to the retained database. No #307 migration is duplicated or renumbered here.
+The candidate05 public frozen-snapshot checker and its tests are reused byte for
+byte from the same #307 reference commit. CI invokes this existing checker;
+the old validator, 317 source hashes and all historical evidence stay unchanged.
 
 This document owns the protected non-versioned storage contract. DatasetVersion
 publication continues to follow `native-execution-recovery-and-output-idempotency.md`.
