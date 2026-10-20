@@ -121,15 +121,21 @@ func (s *ProtectedObjects) gate(ctx context.Context, tx pgx.Tx, version uuid.UUI
 	if err := s.CheckWorkspace(ctx, s.scope.WorkspaceID); err != nil {
 		return dd.DatasetVersion{}, err
 	}
-	v, err := s.repo.GetVersionTx(ctx, tx, version)
+	return validateRetainedVersion(ctx, tx, s.repo, s.scope.WorkspaceID, version, pending)
+}
+
+// Shared admission semantics for protected creation and operator acquisition;
+// callers take the workspace fence and validate their own finite authority.
+func validateRetainedVersion(ctx context.Context, tx pgx.Tx, repo *di.PostgresRepository, workspace, version uuid.UUID, pending bool) (dd.DatasetVersion, error) {
+	v, err := repo.GetVersionTx(ctx, tx, version)
 	if err != nil {
 		return v, err
 	}
-	w, err := s.repo.WorkspaceForDatasetTx(ctx, tx, v.DatasetID)
+	w, err := repo.WorkspaceForDatasetTx(ctx, tx, v.DatasetID)
 	if err != nil {
 		return v, err
 	}
-	if w != s.scope.WorkspaceID {
+	if w != workspace {
 		return v, ErrStorageScope
 	}
 	allowed := v.Status == dd.VersionReady || v.Status == dd.VersionSuperseded
@@ -153,9 +159,12 @@ func (s *ProtectedObjects) gate(ctx context.Context, tx pgx.Tx, version uuid.UUI
 }
 
 func (s *ProtectedObjects) sources(ctx context.Context, tx pgx.Tx, v dd.DatasetVersion) error {
+	return validateRetainedSources(ctx, tx, s.repo, s.scope.WorkspaceID, s.scope.ExpiresAt, v)
+}
+func validateRetainedSources(ctx context.Context, tx pgx.Tx, repo *di.PostgresRepository, workspace uuid.UUID, expires time.Time, v dd.DatasetVersion) error {
 	var ids []uuid.UUID
 	if v.GeneratedByExecutionID != nil {
-		rows, err := tx.Query(ctx, `SELECT i.dataset_version_id FROM execution_input i JOIN execution e ON e.id=i.execution_id WHERE i.execution_id=$1 AND e.workspace_id=$2`, *v.GeneratedByExecutionID, s.scope.WorkspaceID)
+		rows, err := tx.Query(ctx, `SELECT i.dataset_version_id FROM execution_input i JOIN execution e ON e.id=i.execution_id WHERE i.execution_id=$1 AND e.workspace_id=$2`, *v.GeneratedByExecutionID, workspace)
 		if err != nil {
 			return err
 		}
@@ -178,13 +187,16 @@ func (s *ProtectedObjects) sources(ctx context.Context, tx pgx.Tx, v dd.DatasetV
 	}
 	if v.GeneratedByEntityMatchJobID != nil {
 		var id uuid.UUID
-		if err := tx.QueryRow(ctx, `SELECT input_dataset_version_id FROM entity_match_job WHERE id=$1 AND workspace_id=$2 AND output_dataset_id=$3`, *v.GeneratedByEntityMatchJobID, s.scope.WorkspaceID, v.DatasetID).Scan(&id); err != nil {
+		if err := tx.QueryRow(ctx, `SELECT input_dataset_version_id FROM entity_match_job WHERE id=$1 AND workspace_id=$2 AND output_dataset_id=$3`, *v.GeneratedByEntityMatchJobID, workspace, v.DatasetID).Scan(&id); err != nil {
 			return err
 		}
 		ids = append(ids, id)
 	}
 	for _, id := range ids {
-		if _, err := s.gate(ctx, tx, id, false); err != nil {
+		if !time.Now().UTC().Before(expires) {
+			return ErrStorageDenied
+		}
+		if _, err := validateRetainedVersion(ctx, tx, repo, workspace, id, false); err != nil {
 			return err
 		}
 	}
