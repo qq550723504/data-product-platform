@@ -189,3 +189,13 @@ docs/acceptance/evidence/issue307-d1/post-v22-policy-fix01/source-restore-indepe
 docs/acceptance/issue307-d1-candidate15-confirmation.md text eol=lf
 docs/acceptance/issue307-d1-v25-window-runbook.md text eol=lf
 docs/acceptance/issue307-d1-v25-preparation.md text eol=lf
+docs/acceptance/evidence/issue307-d1/candidate16-planning01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate16-preparation01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate16/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate16-readonly01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate16-freeze-failure01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/candidate16-review01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/** -text whitespace=cr-at-eol
+docs/acceptance/issue307-d1-candidate16-confirmation.md text eol=lf
+docs/acceptance/issue307-d1-v26-window-runbook.md text eol=lf
+docs/acceptance/issue307-d1-v26-preparation.md text eol=lf
