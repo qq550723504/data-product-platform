@@ -78,14 +78,19 @@ func RemainingUncreatedIdentities(group string) []string {
 	return []string{"i" + suffix, "d" + suffix, "iafc0e66c" + s.Run.String()[:8], "dafc0e66c" + s.Run.String()[:8]}
 }
 
-// Two business users were fully created disabled during the sealed c14
-// preparation. They remain sole-policy/no-groups and can never be enabled by
-// the new generation. The four untouched late/mixed users must remain absent.
+// These actual c14/c15 users remain disabled with a sole policy and no groups.
+// Current workers and enable paths select only the new execution's identities.
 func RemainingRetainedIdentities(group string) map[string]string {
 	result := map[string]string{}
 	if group == "business-races" {
 		for _, prefix := range []string{"i", "d"} {
 			user := prefix + "afc0e66c808a6960"
+			result[user] = "lifecycle307-six-" + user
+		}
+	}
+	if scope, err := RemainingScopeFor(group); err == nil {
+		for _, prefix := range []string{"i", "d"} {
+			user := prefix + "9f9c67d7" + scope.Run.String()[:8]
 			result[user] = "lifecycle307-six-" + user
 		}
 	}

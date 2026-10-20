@@ -1,4 +1,4 @@
-"""Finite candidate15 preparation. Allocate stopped owners; never send/enable DELETE.
+"""Finite candidate16 preparation. Allocate stopped owners; never send/enable DELETE.
 
 Allocation, source/restore non-delete verification and final freeze are distinct
 checkpoints. A stopped allocation is not a native PASS or deletion permission.
@@ -124,8 +124,10 @@ def historical_gate():
         scratch[name]=sha(folder/'terminal.json')
     need(len(ids)==184,'retained first failure-chain owner count differs')
     c14=retained_c14(ids)
-    need(len(ids)==270,'retained closed owner count differs')
-    return {'c14':c14,'status':'PASS_RETAINED_270_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
+    need(len(ids)==270,'retained c14 closed owner count differs')
+    c15=retained_c15(ids)
+    need(len(ids)==359,'retained closed owner count differs')
+    return {'c15':c15,'c14':c14,'status':'PASS_RETAINED_359_CLOSED','closed_cids':sorted(ids),'prior':base,'c13_failure':failures,'c13_bundle_sha256':sha(bundle),'c13_budgets':budgets,'scratch':scratch,'native_delete':0}
 
 
 def retained_c14(ids):
@@ -166,6 +168,71 @@ def retained_c14(ids):
         sequence.budget_archive(docker('cp',g['helpers']['wire']+':/run/budget','-'),packet,g['group'],initial=True)
         budgets[g['group']]={'volume':volume['Name'],'uid':10001,'files':[],'mounted_cids':sorted(mounted)}
     return {'pins':pins,'failure_bundle_sha256':sha(bundle),'budgets':budgets,'failed_execution':a['execution'],'never_replayed':True}
+
+
+def retained_c15(ids):
+    # The actual approved checkout is retained separately from this generation.
+    # Its source/reference hashes must not be checked against edited new code.
+    old_root=Path('C:/Users/Henry/.codex/worktrees/d1-six/data-product-platform')
+    evidence=old_root/'docs/acceptance/evidence/issue307-d1'
+    public=evidence/'remaining-candidate15-preparation01'
+    private=p1.PRIVATE/'remaining-candidate15'
+    pins={'allocation.json':'80cf4a96e73759116a8a62952888361a7db06547c4318404a6ce50e46f4f1682',
+          'non-delete-terminal.json':'921d7ed8b98974841c03de58efb7a53ef58198701236ead19765ea63d30087c4',
+          'budget-initialization.json':'3a91e3df11bbf4fa7151bd91e73a6bb2447738a4d9f0018ed942fd5ccb96c017'}
+    for name,digest in pins.items():need(sha(public/name)==digest,'retained c15 preparation/budget changed')
+    need(sha(public/'non-delete-evidence-index.json')==load(public/'non-delete-terminal.json')['evidence_index_sha256'],'retained c15 non-delete index changed')
+    for name,digest in load(public/'non-delete-evidence-index.json')['files'].items():
+        path=(public/name).resolve();need(path.is_relative_to(public.resolve()) and sha(path)==digest,'retained c15 preparation raw bytes changed')
+    packet=evidence/'remaining-candidate15'
+    need(sha(packet/'candidate.json')=='0ec2f2e03829905af97c9f71eafb108f7b3bf0899e7e741a0334d44520a5dc99'
+         and sha(packet/'bindings.json')=='d8a7075be2e8614f1af4fbaa159b45dc53430d19f06ea2920070b03c4e917da0','retained c15 frozen packet changed')
+    auth_path=evidence/'delete-confirmed-v25-execution01/human-authorization.json'
+    terminal_path=evidence/'delete-confirmed-v25-execution01/review-blocked-terminal.json'
+    need(sha(auth_path)=='55f0be454529612e1d81c47c68f10542929f96d661be675d50aea32fe4029b9e'
+         and sha(terminal_path)=='938c36cc10beba27c608bc588ab3a24139d047d76b35a2d9390b92c4496e034f','retained c15 authorization/blocked terminal changed')
+    auth=load(auth_path);terminal=load(terminal_path)
+    need(terminal['status']=='BLOCKED_PREWINDOW_REVIEW' and terminal['window_lifecycle_started'] is False and terminal['actual_DELETE_this_review']==0
+         and sha(private/'authorized-execution01/terminal.json')==sha(terminal_path),'retained c15 prewindow terminal differs')
+    for item in auth['approved_reference_artifacts']:
+        path=(old_root/item['path']).resolve()
+        need(path.is_relative_to(old_root.resolve()) and sha(path)==item['sha256'],'retained c15 original approved reference changed')
+    need(sha(private/'authorized-execution01/user-message-verbatim.txt')==auth['user_message_sha256']
+         and sha(private/'authorized-execution01/authorization-envelope.txt')==auth['authorization_envelope_sha256'],'retained c15 actual human authorization changed')
+    review=evidence/'delete-confirmed-v25-review01'
+    need(sha(review/'independent-authorization-window-review01.json')=='b0a4ef12e4b8604c2b18228ef1ce242b53c618df3dff56d4771b305d02c74331'
+         and sha(review/'independent-isolated-cli-repair-addendum02.json')=='966dd18c814bf6890ced56a3b81b4d7c807436089d15ae026f8c3853dd27acad','retained c15 failure/repair reviews changed')
+    for name,digest in [('independent-evidence-index01.json','7cd7803fbaba8308d32422be155cde267b3e46f92a94a719e1bc3c5ae07c0baf'),('independent-repair-evidence-index02.json','eb949351ea6e1e90d85954159bcab8c882defa1d13443a7060e16449a97c7bb6')]:
+        need(sha(review/name)==digest,'retained c15 review index changed')
+        for member,entry in load(review/name)['members'].items():
+            path=(review/member).resolve();need(path.is_relative_to(review.resolve()) and sha(path)==entry['sha256'],'retained c15 review raw bytes changed')
+    a=load(public/'allocation.json');candidate=load(packet/'candidate.json');bindings=load(packet/'bindings.json')
+    descriptors=load(public/'owner-descriptors.json')
+    need(len(a['owners'])==86 and a['execution']=='9f9c67d7-8a09-45a8-897f-9e3077b60980','retained c15 allocation differs')
+    for cid in a['owners']:
+        value=inspect(cid);need(closed(value) and project_owner(value)==descriptors[cid],'retained c15 owner topology/closure changed');ids.add(cid)
+    for name,digest in a['build_files'].items():need(sha(private/name)==digest,'retained c15 initial build member changed')
+    budgets={};backups={}
+    for g,b,c in zip(a['groups'],bindings,candidate['Groups']):
+        folder=private/g['group'];need(g['group']==b['group']==c['Group'],'retained c15 group order changed')
+        for stage in list(g['helpers'])+['root-'+x for x in g['root_owners']]:
+            owner=folder/stage
+            need(load(owner/'permission.json')['Enabled'] is False and not (owner/'human-confirmation.txt').exists(),'retained c15 permission or materialized authority changed')
+        for stage,digest in c['CaseConfigSHA256'].items():need(sha(folder/('case-'+stage)/'remaining.json')==digest,'retained c15 frozen case changed')
+        for name,key in [('core.dump','CoreDumpSHA256'),('globals.sql','GlobalsSHA256'),('native.tar','NativeArchiveSHA256')]:
+            need(sha(folder/'checkpoint'/name)==c[key],'retained c15 backup changed');backups[g['group']+'/'+name]=c[key]
+        volume=json.loads(docker('volume','inspect',g['volumes']['budget']))[0]
+        need(volume['Labels'].get('lifecycle307.remaining')==a['execution'] and volume['Labels'].get('lifecycle307.allocation')==a['allocation_nonce'],'retained c15 budget ownership changed')
+        mounted=docker('ps','-aq','--no-trunc','--filter','volume='+volume['Name']).decode('utf8','strict').split()
+        need(sorted(mounted)==g['budget_expected_mounted_cids'],'retained c15 budget mount graph expanded')
+        sequence.budget_archive(docker('cp',g['helpers']['wire']+':/run/budget','-'),candidate,g['group'],initial=True)
+        budgets[g['group']]={'volume':volume['Name'],'uid':10001,'files':[],'mounted_cids':sorted(mounted)}
+        complete=evidence/'remaining-candidate15-readonly01'/g['group']
+        owner=load(complete/'allocated-owner.json')['cid']
+        closure=load(complete/'closure.json')
+        need(closure['all_closed'] is True and closure['failure'] is None and closed(inspect(owner)),'retained c15 complete-read owner not closed');ids.add(owner)
+    return {'pins':pins,'blocked_terminal_sha256':sha(terminal_path),'blocked_execution':a['execution'],'budgets':budgets,'backups':backups,
+            'original_approved_root':str(old_root),'approved_references':len(auth['approved_reference_artifacts']),'never_replayed':True}
 
 
 class Allocation:
@@ -238,7 +305,7 @@ def build(destination=CONTROL):
 
 def allocate():
     window.policy_checkpoint()
-    need(PROFILE=='candidate15/v25' and EXECUTION=='9f9c67d7-8a09-45a8-897f-9e3077b60980','only the new proposed execution is supported')
+    need(PROFILE=='candidate16/v26' and EXECUTION=='aa2605a5-1fcf-4e9d-b6f2-8f5b13321b8a','only the new proposed execution is supported')
     need(not CONTROL.exists() and not PUBLIC.exists(),'one-shot preparation already allocated; retain and review')
     # Verify retained history before allocating any owner or volume.
     retained=historical_gate()
@@ -257,7 +324,7 @@ def allocate():
             config=load(p1.PRIVATE/project/'config.json')
             need(all(closed(inspect(g[role])) for role in ('Core','Native','Gateway')),'source not closed')
             pg_env=backup/'postgres.env';pg_env.write_text('POSTGRES_USER=checkpoint_admin\nPOSTGRES_DB=postgres\nPOSTGRES_PASSWORD='+secrets.token_hex(32)+'\n',encoding='utf-8')
-            subnet='10.246.'+str(196+n)+'.0/28'
+            subnet='10.246.'+str(199+n)+'.0/28'
             # Reuse the existing subnet overlap check; never attach to another run.
             runner=prior.module('six_allocation_runner','prepare-remaining-runner.py');runner.check_subnet(subnet)
             network=a.network(prefix+'-restore',subnet)

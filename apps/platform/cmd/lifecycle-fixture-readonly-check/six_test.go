@@ -165,7 +165,7 @@ func TestSixExpectationExportKeepsHistoricalReceiptAndUsesKnownInventory(t *test
 		if e != nil {
 			t.Fatal(e)
 		}
-		if len(expected.Users) != map[string]int{"business-races": 9, "late-hold": 4, "mixed": 4}[group] {
+		if len(expected.Users) != map[string]int{"business-races": 11, "late-hold": 6, "mixed": 6}[group] {
 			t.Fatal("new IAM expectation incomplete")
 		}
 		after, _ := os.ReadFile(filepath.Join(baseline, "native-verification.json"))

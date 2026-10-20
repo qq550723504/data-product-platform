@@ -1,4 +1,4 @@
-"""Freeze candidate15 only after actual bounded non-delete preparation.
+"""Freeze candidate16 only after actual bounded non-delete preparation.
 
 No IAM enable, deletion, authorization or scheduling function exists here.
 The only container run is the already allocated network-none file validator.
@@ -40,7 +40,7 @@ def source_freeze(a):
                                     'build_recipe':'go build -trimpath -buildvcs=false; linux/amd64 CGO_ENABLED=0; Windows file-only checker',
                                     'embedded_vcs_revision':'NOT_CLAIMED','actual_build_source':a['source'],
                                     'initial_allocation_build_source':a['source'],'initial_build_files':a['build_files'],
-                                    'retained_failed_generation':'candidate13/v23 and candidate14/v24; separate immutable historical failure; never execution authority'})
+                                    'retained_failed_generation':'candidate13/v23, candidate14/v24 and candidate15/v25; immutable historical failures and prewindow terminal; never execution authority'})
 
 
 def main():
@@ -150,7 +150,7 @@ def confirmation(c,bindings,targets):
     lines=[f'CONFIRM_DELETE_EXACT_SIX；execution {p.EXECUTION}；{p.PROFILE}。',
            f'固定窗口 {start:%Y-%m-%d %H:%M}–{end:%H:%M} 新加坡时间；UTC {c["NotBefore"]}≤now<{c["NotAfter"]}；只读恢复截止 {p.W["RecoveryEnd"]}。',
            f'candidate SHA256 {sha(PACKET/"candidate.json")}；bindings {sha(PACKET/"bindings.json")}；source {c["Source"]}；source-freeze {c["SourceFreezeSHA256"]}。',
-           f'本代allocation与构建源 {bindings[0]["initial_build_source"]}；完整12成员原构建归档见source-freeze及bindings；旧candidate13/14冷态/预算/IAM/业务副本失败链独立原样保留，不复用旧execution或授权。',
+           f'本代allocation与构建源 {bindings[0]["initial_build_source"]}；完整12成员原构建归档见source-freeze及bindings；旧candidate13/14/15冷态/预算/IAM/失败证据独立原样保留，不复用旧execution或授权。',
            f'Linux reader {c["ReaderBinarySHA256"]}；sender/wire/recovery {c["SenderBinarySHA256"]}；root owner {c["OwnerBinarySHA256"]}；Windows file-only checker {sha(r.CONTROL/"readonly-check.exe")}。',
            f'current policy checkpoint {c["PolicyCheckpointSHA256"]}；target digest {c["TargetDigest"]}；host public key {c["PublicKey"]}；wire public key {c["WirePublicKey"]}；profile-windows {c["ProfileWindowsSHA256"]}；CandidateUseUntil={c["NotAfter"]}。',
            '18历史copy、17现存版本、6目标、11保留版本严格分开。旧P1已确认缺失，绝不纳入目标或新预算。']

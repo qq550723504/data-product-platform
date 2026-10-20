@@ -47,7 +47,7 @@ class SixWindow(unittest.TestCase):
             self.assertEqual(w.CASE_MODES['business-races'],{'business':'remaining-resume-business'})
 
     def test_cross_fields_rehash_does_not_allow_stale_or_extended_window(self):
-        for field,value in (('Batch','old-execution'),('CandidateUseUntil','2026-10-20T06:41:00Z'),('Base','2026-10-20T06:39:00Z')):
+        for field,value in (('Batch','old-execution'),('CandidateUseUntil','2026-10-20T10:41:00Z'),('Base','2026-10-20T10:39:00Z')):
             with self.subTest(field=field),tempfile.TemporaryDirectory() as folder:
                 packet,owner,c,rows=self.fixture(Path(folder));row=rows['cases'][0]
                 file=owner/row['group']/('case-'+row['stage'])/'remaining.json';cfg=json.loads(file.read_bytes())
