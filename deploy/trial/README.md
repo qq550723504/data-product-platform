@@ -93,24 +93,38 @@ OpenMetadata 为 NOT_ENABLED；完整 B/C 闭环、真实下载与撤权负例�
 ## 已有五份版本的显式激活入口
 
 设计和有限合同见 [explicit activation](../../docs/acceptance/issue325-explicit-activation.md)。
-该入口只适用于原环境已完成业务升级、原三份 RAW 和两份加工版本均 READY、
-所有原 owner 已停止、Core migration head 为 68 的有限检查点。
-本次实现没有在原环境执行部署、迁移、续发、复制或激活。
+该入口适用于已保留三份 RAW、两份加工版本均 READY 的同一试用环境。
+先单独完成账务 bootstrap（原库68→69→70→71），再取得 Core 接纳的 custody，
+最后生成新 activation-plan。本次源代码实现未在原环境部署、迁移、取证、续发、复制或激活。
 
-将两份明确取得 custody 的本地文件登记为一个 JSON 数组：
-`[{"versionId":"原 STANDARDIZED 版本 UUID","file":"绝对路径"},{"versionId":"原 CURATED 版本 UUID","file":"绝对路径"}]`。
-不得以 root/旧 prefix runtime fallback 代替 custody。只读计划使用已保留的五版本成功事实回执；
-它核验 custody 的每一字节、同一 run/workspace/Actor、固定 #331 业务源码、原资源和端口。
+准备 admission JSON：`{"head":"包含本控制器的实际合并SHA","ciRunId":该SHA的push/main运行ID}`。
+只读计划会通过公开 GitHub API 核实实际 SHA、main ancestry 和已完成的 required CI。
+源码以 #335 为严格基线，只接纳已提交控制器变化；API 不可用则拒绝，不操作原服务。
 
 ```powershell
-python deploy/trial/trial.py activation-plan --facts <原五版本事实回执绝对路径> --custody <custody清单绝对路径> --output <新的plan路径>
-# 以下是单独授权后的执行入口；plan 输出和 CI 均不授予执行权。
-python deploy/trial/trial.py activate --plan <plan路径> --plan-sha256 <planSha256>
+python -B deploy/trial/trial.py bootstrap-plan --facts <原五版本回执> --admission <admission路径> --output <新bootstrap计划>
+# 单独授权原环境账务 bootstrap 后：只启用原 Core，保留备份与逻辑事实，迁移到71，再停止 Core。
+python -B deploy/trial/trial.py bootstrap --plan <bootstrap计划> --plan-sha256 <计划digest>
+
+# 取得 bootstrap PASS 后，按 operator-custody contract 准备新的私有 profile 和空输出目录。
+python -B deploy/trial/trial.py custody-plan --profile <私有operator-profile> --admission <admission路径> --output <新custody计划>
+# 单独授权两份原对象的有限读取后：不续发 STS，不调用通用健康检查。
+python -B deploy/trial/trial.py custody --plan <custody计划> --plan-sha256 <计划digest>
+
+python -B deploy/trial/trial.py activation-plan --facts <原五版本回执> --custody <已接纳custody.json> --output <新activation计划>
+# 另行授权同策略 STS、受保护复制与激活后：此阶段要求71，不再迁库。
+python -B deploy/trial/trial.py activate --plan <activation计划> --plan-sha256 <计划digest>
 ```
 
-显式执行先保留 before-state/备份并构建，再复核提交和源码，应用原 69→70，
-以未扩大的同范围 STS 对两个原版本建立同 bytes 受保护副本，验证全部五版本，
-最后选择独立 activation binding 启动同一角色/端口。旧业务 binding、origin、凭据、
-制品、数据和所有回执继续保留。普通 resume 随后只恢复已接纳的制品和同一保护范围。
-同一完成计划的 activate replay 仅读核验；失败、UNKNOWN、孤立 journal 拒绝自动重试，
-普通 resume 也不能越过未完成激活。精确 owner 的 stop 仍可用于止损；显式恢复另行设计。
+operator profile 的格式见 [operator custody](../../docs/architecture/operator-custody.md)。
+其中 planSha256 使用已接纳 bootstrap 的计划 digest，providerWitness 使用 bootstrap-plan
+输出的同名字段；credentialFile 引用原 config.json，hash 来自原文件，不能改写原配置。
+两条 version/URI/hash/size 必须精确匹配原 STANDARDIZED/CURATED；不创建新版本。
+输出目录须已存在、为空且保持原私有 ACL。profile 的有效期须在一小时内。
+
+每阶段均保留旧业务 binding、origin、凭据、制品、数据和所有回执。
+activation-plan 要求 Core 的 ACCEPTED custody 观察，执行激活时会在签发或复制前重新查询。
+bootstrap 后，普通 resume 必须等到显式 activation binding 才能启动宿主。
+失败、UNKNOWN、孤立 journal 均拒绝重试；69/70 中断不能冒充新的68检查点。
+完成阶段的 replay 仅读核验。精确 owner stop 可用于止损，不清除未完成 journal。
+plan 输出、源码合并与 CI 都不授予原环境执行权。

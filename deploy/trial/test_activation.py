@@ -12,6 +12,7 @@ import activation as a
 import runtime as r
 import resume as c
 import upgrade as u
+import bootstrap as b
 
 
 class ActivationContracts(unittest.TestCase):
@@ -38,6 +39,9 @@ class ActivationContracts(unittest.TestCase):
         stack.enter_context(patch.object(u, "verify_business", return_value=old))
         stack.enter_context(patch.object(a, "target", return_value={"head": "b" * 40, "sources": {}, "deltaPaths": []}))
         stack.enter_context(patch.object(a, "stopped", return_value={"core": "exited"}))
+        ledger = {"facts": a.fingerprint(r.STATE / "facts.json"), "manifest": a.fingerprint(r.STATE.parent / "custody.json"),
+                  "bootstrap": {}, "custody": {}, "proof": {"schema": 71, "schemaVersions": [], "versions": [], "custodyId": str(uuid.uuid4()), "custodyPlan": {}, "manifestSha256": "a" * 64}}
+        stack.enter_context(patch.object(a, "readiness", return_value=ledger))
 
     def test_plan_is_stable_and_never_writes_or_invokes_mutations(self):
         with tempfile.TemporaryDirectory() as d, patch.object(r, "STATE", Path(d) / "state"), ExitStack() as stack:
@@ -134,7 +138,7 @@ class ActivationContracts(unittest.TestCase):
             stack.enter_context(patch.object(u, "retained", return_value={}))
             stack.enter_context(patch.object(u, "sql", return_value=68))
             stack.enter_context(patch.object(a, "build", side_effect=r.Refused("build failed")))
-            migrate = stack.enter_context(patch.object(a, "migrate")); refresh = stack.enter_context(patch.object(c, "refresh_identity")); launch = stack.enter_context(patch.object(c, "launch_hosts"))
+            migrate = stack.enter_context(patch.object(b, "migrate")); refresh = stack.enter_context(patch.object(c, "refresh_identity")); launch = stack.enter_context(patch.object(c, "launch_hosts"))
             with self.assertRaisesRegex(r.Refused, "build failed"): a.execute(s, expected)
             self.assertEqual(s["phase"], "UNKNOWN"); self.assertEqual(s["businessBinding"], expected["previousBusinessBinding"])
             receipts = Path(s["activation"]["receipts"])
@@ -161,11 +165,12 @@ class ActivationContracts(unittest.TestCase):
             stack.enter_context(patch.object(c, "wait_containers"))
             stack.enter_context(patch.object(r, "inspect_facts", return_value=r.read(facts)))
             retained = {"core": {}, "source": {"enterprise": ["same"]}}
-            stack.enter_context(patch.object(u, "retained", return_value=retained)); stack.enter_context(patch.object(u, "sql", return_value=68))
+            stack.enter_context(patch.object(u, "retained", return_value=retained)); stack.enter_context(patch.object(u, "sql", return_value=71))
+            stack.enter_context(patch.object(b, "owned", side_effect=lambda s, role, op: order.append(op + "-" + role)))
             stack.enter_context(patch.object(a, "build", side_effect=lambda *args: order.append("build") or {"new": "artifacts"}))
             inventory = {"tables": {"old": {"columns": ["id"], "rows": ['{"id":1}']}}}
-            stack.enter_context(patch.object(a, "tool", side_effect=lambda s, folder, name, mode, **kw: order.append(mode) or a.encoded(inventory if mode == "snapshot" else {"status": "PASS"})))
-            stack.enter_context(patch.object(a, "migrate", side_effect=lambda *args: order.append("migration")))
+            stack.enter_context(patch.object(a, "tool", side_effect=lambda s, folder, name, mode, **kw: order.append(mode) or a.encoded(inventory if mode == "snapshot" else expected["ledger"]["proof"] if mode == "admit" else {"status": "PASS"})))
+            migrate = stack.enter_context(patch.object(b, "migrate"))
             def renew(s, directory, receipts):
                 self.assertEqual(directory.parent, Path(s["private"]) / "resume")
                 self.assertTrue((receipts / "before-facts.json").exists())
@@ -177,7 +182,8 @@ class ActivationContracts(unittest.TestCase):
             stack.enter_context(patch.object(c, "launch_hosts", side_effect=lambda *args: order.append("hosts")))
             stack.enter_context(patch.object(r, "status", return_value={"phase": "RUNNING"}))
             a.execute(s, expected)
-            self.assertEqual(order, ["start", "exec", "build", "snapshot", "migration", "snapshot", "renew", "copy", "copy", "verify", "snapshot", "hosts"])
+            self.assertEqual(order, ["build", "start-core", "exec", "admit", "exec", "snapshot", "renew", "copy", "copy", "verify", "snapshot", "hosts"])
+            migrate.assert_not_called()
             self.assertEqual(s["businessBinding"], expected["previousBusinessBinding"]); self.assertEqual(s["phase"], "RUNNING")
             self.assertEqual(s["activation"]["status"], "PASS"); refresh.assert_called_once(); self.assertEqual(copy_command.call_count, 2)
             for call in copy_command.call_args_list:
@@ -189,10 +195,10 @@ class ActivationContracts(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d, patch.object(r, "ROOT", Path(d)):
             root = Path(d); migrations = root / "migrations"; migrations.mkdir()
             private = root / "private"; private.mkdir(); directory = root / "attempt"; directory.mkdir()
-            for number in (68, 69, 70, 71): (migrations / f"{number:06d}_test.up.sql").write_text(str(number))
+            for number in range(1, 72): (migrations / f"{number:06d}_test.up.sql").write_text(str(number))
             c.write_once(private / "config.json", {"DSN": "private-dsn", "RootKey": "never", "RootSecret": "never"})
-            with patch.object(r, "command") as command, patch.object(u, "sql", return_value=70): a.migrate({"private": str(private)}, directory)
-            self.assertEqual(sorted(p.name for p in (directory / "migrations").iterdir()), [f"{n:06d}_test.up.sql" for n in (68, 69, 70)])
+            with patch.object(r, "command") as command: b.migrate({"private": str(private)}, directory, b.migrations())
+            self.assertEqual(sorted(p.name for p in (directory / "migrations").iterdir()), [f"{n:06d}_test.up.sql" for n in range(1, 72)])
             self.assertEqual(command.call_args.kwargs["env"], dict(r.environment(), POSTGRES_DSN="private-dsn"))
             self.assertNotIn("down", command.call_args.args[0])
 

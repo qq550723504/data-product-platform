@@ -21,6 +21,7 @@ import resume as c
 import runtime as r
 import trial as t
 import upgrade as u
+import bootstrap as b
 
 REAL_RUN = subprocess.run
 PWSH = shutil.which("pwsh")
@@ -66,7 +67,7 @@ class NativeReadonlyStorage(unittest.TestCase):
             s["resourceIds"]["volume:" + volume] = "created-" + role
         outputs = {"standardized": "dataset-3", "curated": "dataset-4"}
         versions = [{"id": str(uuid.uuid4()), "dataset_id": "dataset-" + str(i), "status": "READY",
-                     "checksum_algorithm": "SHA256", "checksum_value": r.digest(bytes([i])), "byte_size": 1} for i in range(5)]
+                     "checksum_algorithm": "SHA256", "checksum_value": r.digest(bytes([i])), "byte_size": 1, "storage_uri": "s3://raw/datasets/" + str(i)} for i in range(5)]
         facts = {"workspaceId": s["workspaceId"], "facts": {"versions": versions, "bindings": [{"version_id": v["id"]} for v in versions[:3]]}}
         facts_path = state / "facts.json"; c.write_once(facts_path, facts)
         custody = []
@@ -116,8 +117,25 @@ class NativeReadonlyStorage(unittest.TestCase):
     def admission(self, old):
         # Source/origin admission has separate tamper tests. All runtime
         # verification and storage validation remain real in this test graph.
-        with patch.object(c, "verify_origin"), patch.object(u, "verify_business", return_value=old), patch.object(a, "target", return_value={"head": "a" * 40, "sources": {}, "deltaPaths": []}):
+        def accepted(s):
+            root = Path(s["private"]).parent
+            return {"facts": a.fingerprint(root / "state/facts.json"), "manifest": a.fingerprint(root / "custody.json")}
+        with patch.object(c, "verify_origin"), patch.object(u, "verify_business", return_value=old), patch.object(a, "readiness", side_effect=accepted), patch.object(a, "target", return_value={"head": "a" * 40, "sources": {}, "deltaPaths": []}):
             yield
+
+    def test_bootstrap_cli_plan_real_verify_and_storage_check_are_readonly_even_with_live_hosts(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d); s, containers, facts, _, old = self.fixture(root)
+            admission = root / "admission.json"; c.write_once(admission, {"head": "a" * 40, "ciRunId": 1})
+            owner = {"pid": 123, "created": 9, "exe": "original.exe"}; s["processes"] = {"api": owner}
+            s["ports"] = r.free_ports()
+            b.put(root / "private/config.json", {"DSN": f"postgres://postgres:synthetic@127.0.0.1:{s['ports']['core']}/dpp_trial_core", "Private": s["private"], "Repo": s["root"], "Workspace": s["workspaceId"], "Actor": s["actorId"], "Profile": {"Subject": "trial-operator-" + s["runId"], "Bucket": "raw", "StorageEndpoint": "127.0.0.1:" + str(s["ports"]["storage"])}})
+            r.write(root / "state/state.json", s); before = self.snapshot(root)
+            with patch.object(r, "STATE", root / "state"), patch.object(t, "STATE", root / "state"), self.admission(old), self.external_replies(s, containers) as calls, patch.object(b, "target", return_value={"head": "a" * 40}), patch.object(r, "process_identity", return_value=owner), patch.object(t.sys, "argv", ["trial.py", "bootstrap-plan", "--facts", str(facts), "--admission", str(admission)]), redirect_stdout(io.StringIO()):
+                self.assertEqual(t.main(), 0)
+                self.assertEqual(t.main(), 0)
+            self.assertEqual(self.snapshot(root), before)
+            self.assertEqual(len([x for x in calls if x[0][0] == "pwsh"]), 2)
 
     def test_real_plan_and_native_storage_check_preserve_existing_files(self):
         for existing_snapshot in (True, False):

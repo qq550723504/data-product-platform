@@ -15,8 +15,7 @@ import runtime as r
 import resume as c
 import upgrade as u
 
-BASELINE = "cf11592d688303cf4ae1126c431aab87736b75e2"
-CONTRACT = "issue325/protected-activation-v1"
+CONTRACT = "issue325/protected-activation-v2"
 LIMIT = 128 << 20
 
 
@@ -34,18 +33,24 @@ def fingerprint(path, *, below=None):
 
 
 def target(s):
-    current = r.sources()
-    head = r.command(["git", "rev-parse", "HEAD"]).decode().strip()
-    r.need(c.committed_sources(head) == current, "Activation sources must be committed")
-    base = c.committed_sources(BASELINE)
-    delta = sorted(p for p in set(base) | set(current) if base.get(p) != current.get(p))
-    r.need(all(c.controller_only(p) for p in delta), "Activation changes non-controller #331 baseline")
-    # This fixed input is outside SOURCE_PATHS; compare all three independently.
-    workflow = (r.ROOT / u.WORKFLOW).read_bytes().replace(b"\r\n", b"\n")
-    for commit in (head, u.verify_business(s)["head"], BASELINE):
-        r.need(r.command(["git", "show", commit + ":" + u.WORKFLOW]).replace(b"\r\n", b"\n") == workflow,
-               "Fixed workflow source drift")
-    return {"head": head, "sources": current, "deltaPaths": delta, "workflowSha256": r.digest(workflow)}
+    import bootstrap as b
+    accepted = b.binding(s, "bootstrap")
+    return b.target(s, accepted["target"]["admission"])
+
+
+def readiness(s):
+    import bootstrap as b
+    b.guard(s)
+    bootstrap, custody = b.binding(s, "bootstrap"), b.binding(s, "custody")
+    r.need(bootstrap["coreAdmission"]["schema"] == custody["coreAdmission"]["schema"] == 71
+           and custody["plan"]["bootstrap"] == s["bootstrapBinding"]
+           and custody["coreAdmission"].get("custodyId") and custody["coreAdmission"].get("manifestSha256"),
+           "Schema-71 bootstrap and Core accepted custody required")
+    profile = r.read(custody["plan"]["profile"]["path"])
+    manifest = fingerprint(Path(profile["plan"]["outputDirectory"]) / "custody.json")
+    r.need(manifest["sha256"] == custody["coreAdmission"]["manifestSha256"], "Accepted custody manifest drift")
+    return {"bootstrap": copy.deepcopy(s["bootstrapBinding"]), "custody": copy.deepcopy(s["custodyBinding"]),
+            "facts": bootstrap["plan"]["facts"], "manifest": manifest, "proof": custody["coreAdmission"]}
 
 
 def pending(s):
@@ -119,16 +124,18 @@ def inspect_plan(s, facts_path, custody_path):
     r.need(r.read(registry["path"]) == s, "Registry changed before plan")
     r.verify(s, source=False, running=False); c.verify_origin(s)
     binding = target(s)
+    accepted = readiness(s)
     native = stopped(s)
     facts = fingerprint(facts_path, below=r.STATE)
     custody = fingerprint(custody_path)
+    r.need(facts == accepted["facts"] and custody == accepted["manifest"], "Activation must use Core accepted custody and original facts")
     expected, files = versions(s, r.read(facts["path"]), r.read(custody["path"]))
     r.need(fingerprint(registry["path"]) == registry, "Registry changed during plan")
     # No timestamps: re-derivation of unchanged admission facts has the same digest.
     return {"contract": CONTRACT, **{k: s[k] for k in ("runId", "workspaceId", "actorId", "root")},
             "target": binding, "registry": registry, "origin": copy.deepcopy(s["originSnapshot"]),
             "previousBusinessBinding": copy.deepcopy(s["businessBinding"]), "recordedPhase": s["phase"],
-            "native": native, "facts": facts, "custody": custody, "files": files, "versions": expected}
+            "native": native, "facts": facts, "custody": custody, "files": files, "versions": expected, "ledger": accepted}
 
 
 def preserve(before, after):
@@ -145,6 +152,10 @@ def verify_binding(s):
     manifest = r.read(f["path"])
     r.need(manifest["contract"] == CONTRACT and all(manifest[k] == s[k] for k in ("runId", "workspaceId", "actorId", "root"))
            and manifest["previousBusinessBinding"] == s["businessBinding"], "Activation identity/previous binding drift")
+    r.need(manifest["ledger"]["bootstrap"] == s["bootstrapBinding"] and manifest["ledger"]["custody"] == s["custodyBinding"],
+           "Activation ledger binding drift")
+    import bootstrap as b
+    b.binding(s, "bootstrap"); b.binding(s, "custody")
     old = u.verify_business(s)
     r.need(manifest["business"] == old["business"] and manifest["humanTokenFile"] == old["humanTokenFile"], "Frozen business identity drift")
     r.need(c.committed_sources(manifest["head"]) == manifest["sources"], "Activation source manifest drift")
@@ -199,19 +210,8 @@ def build(s, directory, attempt):
     return artifacts
 
 
-def migrate(s, directory):
-    # Canonical runner reads a private, finite <=70 directory. No down/seed.
-    stage = directory / "migrations"; stage.mkdir()
-    for source in sorted((r.ROOT / "migrations").glob("*.sql")):
-        if int(source.name.split("_", 1)[0]) <= 70:
-            with (stage / source.name).open("xb") as f: f.write(source.read_bytes())
-    cfg = r.read(Path(s["private"]) / "config.json")
-    r.command([directory / "migrate.exe", "-direction", "up", "-dir", stage],
-              env=dict(r.environment(), POSTGRES_DSN=cfg["DSN"]), timeout=300)
-    r.need(u.sql(s, "SELECT max(version) FROM schema_migration") == 70, "Migration 70 not reached")
-
-
 def execute(s, expected):
+    import bootstrap as b
     attempt = uuid.uuid4().hex
     directory = Path(s["private"]) / "activations" / attempt
     receipts = r.STATE / "storage-activations" / attempt
@@ -221,22 +221,29 @@ def execute(s, expected):
     s["activation"] = {"attemptId": attempt, "status": "ACTIVATING", "receipts": str(receipts), "planSha256": r.digest(encoded(expected))}
     s["phase"] = "ACTIVATING"; r.save(s)
     try:
-        action(receipts, "containers", lambda: r.docker("start", *[v["id"] for v in s["containers"].values()], timeout=180))
+        artifacts = action(receipts, "build", lambda: build(s, directory, attempt))
+        r.need(target(s) == expected["target"] and readiness(s) == expected["ledger"], "Source/ledger changed during activation build")
+        action(receipts, "core", lambda: b.owned(s, "core", "start"))
+        r.wait_for(lambda: r.docker("exec", s["containers"]["core"]["id"], "pg_isready", "-U", "postgres"), "Core")
+        proof = expected["ledger"]["proof"]
+        live = json.loads(tool(s, directory, "trial-activate", "admit", schema=71, schemaVersions=proof["schemaVersions"], versions=proof["versions"],
+                          custodyId=proof["custodyId"], custodyPlan=proof["custodyPlan"], manifestSha256=proof["manifestSha256"]))
+        r.need(live == proof, "Core accepted custody/schema changed; no credential or copy released")
+        c.write_once(receipts / "ledger-admission.json", live)
+        for role in s["containers"]:
+            if role != "core": action(receipts, "start-" + role, lambda role=role: b.owned(s, role, "start"))
         c.wait_containers(s)
         before = r.inspect_facts(s); u.raw_equal(r.read(expected["facts"]["path"]), before)
         r.need(len(before["facts"]["versions"]) == 5, "Unexpected version appeared since plan")
         c.write_once(receipts / "before-facts.json", before)
         retained = u.retained(s); c.write_once(directory / "retained.json", retained)
-        r.need(u.sql(s, "SELECT max(version) FROM schema_migration") == 68, "Original migration head must be 68")
+        r.need(u.sql(s, "SELECT max(version) FROM schema_migration") == 71, "Accepted bootstrap migration head must be 71")
         backup = action(receipts, "backup", lambda: r.docker("exec", s["containers"]["core"]["id"], "pg_dump", "-U", "postgres", "-d", "dpp_trial_core", timeout=180))
         with (directory / "before.sql").open("xb") as f: f.write(backup)
         c.write_once(receipts / "backup.json", {"sha256": r.digest(backup), "bytes": len(backup)})
-        artifacts = action(receipts, "build", lambda: build(s, directory, attempt))
-        r.need(target(s) == expected["target"], "Sources changed during activation build")
         inventory = json.loads(tool(s, directory, "trial-activate", "snapshot"))
         baseline = directory / "before-inventory.json"; c.write_once(baseline, inventory)
-        action(receipts, "migration", lambda: migrate(s, directory))
-        preserve(inventory, json.loads(tool(s, directory, "trial-activate", "snapshot", baseline=str(baseline))))
+        # Bootstrap alone owns migrations. Activation only consumes schema 71.
         # Do not widen the existing STS helper's output path or policy.
         renewal = Path(s["private"]) / "resume" / attempt; renewal.mkdir(parents=True, exist_ok=False)
         s["resume"] = {"attemptId": attempt, "status": "RESUMING", "receipts": str(receipts)}; r.save(s)
@@ -261,7 +268,8 @@ def execute(s, expected):
         old = u.verify_business(s)
         manifest = {"contract": CONTRACT, **{k: s[k] for k in ("runId", "workspaceId", "actorId", "root")}, **expected["target"],
                     "previousBusinessBinding": copy.deepcopy(s["businessBinding"]), "planSha256": s["activation"]["planSha256"],
-                    "artifacts": artifacts, "business": old["business"], "humanTokenFile": old["humanTokenFile"], "protectedIdentity": profile_identity(profile)}
+                    "artifacts": artifacts, "business": old["business"], "humanTokenFile": old["humanTokenFile"], "protectedIdentity": profile_identity(profile),
+                    "ledger": expected["ledger"]}
         path = directory / "manifest.json"; c.write_once(path, manifest)
         s["activationBinding"] = {"path": str(path), "sha256": r.digest(path.read_bytes())}
         s["controllerBinding"] = expected["target"]; s["processes"] = {}; r.save(s)
