@@ -39,6 +39,14 @@ Custody is explicit local bytes, not a runtime root/legacy-prefix read fallback.
 The digest contains stable admission material only, without generated timestamps.
 The plan is an inspection result, not an execution authorization.
 
+Read-only verification transports Docker metadata to the existing PowerShell
+retained-storage validator over UTF-8 stdin. It never writes or replaces the
+private `storage-inspect.json`, state, error logs or temporary inspection files;
+the generic runtime persistence helper also refuses writes in this context.
+Only an explicitly requested CLI `--output` is written after plan inspection.
+Normal execution retains its existing private diagnostic snapshot and sanitized
+error-log behavior. No second validator or storage/IAM capability is introduced.
+
 ## Explicit execution (separately authorized)
 
 `activate --plan <file> --plan-sha256 <digest>` re-derives the plan under the
@@ -73,7 +81,11 @@ workflow preparation/execution, certification, delivery or destructive commands.
 Normal resume subsequently restores the explicitly accepted activation artifacts;
 it still cannot admit arbitrary business-source changes. Renewal may change only
 credential reference/expiry, never protected scope or old profile bytes. A same
-completed activation replay is read-only; it does not migrate, copy or reissue.
+completed activation replay does not change business state or diagnostics and
+does not migrate, copy or reissue. The `activate` CLI still acquires the existing
+exclusive operator lock and may create/update `state/operator.lock`; this lock
+is not part of the read-only business/diagnostic guarantee. `activation-plan`
+does not acquire that lock or create/update it.
 
 ## Failure and recovery
 
@@ -94,6 +106,15 @@ ordered stage/journal and UNKNOWN failures; active binding/restart profile
 scope preservation; completed replay with no external effects; read-only helper
 against isolated PostgreSQL; normal and optimized Python tests; current-HEAD CI
 and independent review.
+
+The readonly regression must exercise the actual `plan/replay -> verify ->
+storage_check -> storage-check.ps1 -> Assert-RetainedServiceStorage` path with
+synthetic Docker responses and native PowerShell. Do not mock the whole verifier
+or storage checker. Success, rejected storage metadata and external-command
+failure preserve existing registry/private files and their modification times;
+normal execution still retains diagnostics. Run normal and optimized Python
+tests in the Windows ownership CI job. These isolated tests do not query or
+modify the original run or resolve its live-host/custody admission blockers.
 
 Original-run deployment, database migration, STS renewal, copy and activation are
 NOT_RUN in this implementation task. No human business acceptance is inferred
