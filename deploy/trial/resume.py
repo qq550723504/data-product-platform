@@ -25,14 +25,13 @@ def committed_sources(head):
 
 
 def controller_only(path):
-    return path.startswith(("deploy/trial/", "apps/platform/cmd/trial-resume/"))
+    return path.startswith(("deploy/trial/", "apps/platform/cmd/trial-resume/", "apps/platform/cmd/trial-activate/"))
 
 
 def check_sources(s, current):
     baseline = s["sources"]
     if "businessBinding" in s:
-        from upgrade import verify_business
-        baseline = verify_business(s)["sources"]
+        baseline = r.active_business(s)["sources"]
     changed = sorted(p for p in set(current) | set(baseline) if current.get(p) != baseline.get(p))
     r.need(all(controller_only(p) for p in changed), "Business source drift; this resume only reuses original business artifacts")
     return changed
@@ -155,8 +154,7 @@ def launch_hosts(s):
     logs = Path(s["private"]) / "resume" / s["resume"]["attemptId"]
     artifacts = None
     if "businessBinding" in s:
-        from upgrade import verify_business
-        artifacts = verify_business(s)["artifacts"]
+        artifacts = r.active_business(s)["artifacts"]
     for role in ("api", "worker"):
         binary = (artifacts["binaries"] if artifacts else s["binaries"])[role]["path"]
         r.spawn(s, role, [binary], r.core_environment(s), log_directory=logs)
@@ -167,6 +165,7 @@ def launch_hosts(s):
 
 
 def resume(s):
+    r.need(not s.get("activation") or s["activation"]["status"] == "PASS", "Unfinished activation requires explicit recovery; ordinary resume cannot retry it")
     if s["phase"] == "RUNNING": return r.status(s)
     binding, baseline = precheck(s)
     attempt = uuid.uuid4().hex
