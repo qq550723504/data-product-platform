@@ -27,7 +27,10 @@ r, p = v.r, v.p
 
 class SixNativeEntryTests(unittest.TestCase):
     def composition(self, fault=None, audit_only=False):
-        groups = copy.deepcopy(v.load(v.PACKET / 'candidate.json')['Groups'])
+        # A recorded fixture must exist before the new generation is allocated.
+        # This is a double, never a production candidate fallback.
+        fixture = r.ROOT / 'docs/acceptance/evidence/issue307-d1/remaining-candidate16/candidate.json'
+        groups = copy.deepcopy(v.load(fixture)['Groups'])
         with tempfile.TemporaryDirectory() as tmp, ExitStack() as stack:
             root = Path(tmp)
             packet, control = root / 'packet', root / 'control'

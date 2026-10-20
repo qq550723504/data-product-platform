@@ -1,4 +1,4 @@
-"""Freeze candidate16 only after actual bounded non-delete preparation.
+"""Freeze candidate17 only after actual bounded non-delete preparation.
 
 No IAM enable, deletion, authorization or scheduling function exists here.
 The only container run is the already allocated network-none file validator.
@@ -22,6 +22,42 @@ COPY_FIELDS=('ID','WorkspaceID','DatasetVersionID','ProviderInstanceID','Incarna
 def digest(raw):return hashlib.sha256(raw).hexdigest()
 def compact(value):return json.dumps(value,ensure_ascii=False,separators=(',',':')).encode()
 def cp_order(cp):return {key:cp[key] for key in COPY_FIELDS}
+
+
+def audit_preparation_index():
+    index=r.PUBLIC/'non-delete-evidence-index.json'
+    return r.evidence_indexes.audit_index(r.ROOT,{
+        'id':'new-nondelete-preparation','index':index.relative_to(r.ROOT).as_posix(),
+        'sha256':sha(index),'format':r.evidence_indexes.FILES_MAP,
+        'member_root':r.PUBLIC.relative_to(r.ROOT).as_posix(),
+        'expected_count':load(index)['count'],'expected_status':'SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX'})
+
+
+def preparation_audit_plan(candidate):
+    # Source review and preparation exist now. Later human authorization and
+    # schedule indexes do not: they are never invented or rewritten here.
+    review=r.ROOT/'docs/acceptance/evidence/issue307-d1/candidate17-source-review01'
+    report=load(review/'independent-final-review01.json')
+    need(report['status']=='PASS_BOUNDED_C17_SOURCE_PREPARATION_REVIEW' and report['remaining_blockers']==[]
+         and report['source_head']==candidate['Source'],'independent current-source review incomplete')
+    index=review/'evidence-index.json';document=load(index)
+    audit_preparation_index()
+    specs=[]
+    for identity,path,member_root,status,count in [
+        ('source-review',index,review,document['status'],document['count']),
+        ('nondelete-preparation',r.PUBLIC/'non-delete-evidence-index.json',r.PUBLIC,'SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX',load(r.PUBLIC/'non-delete-evidence-index.json')['count'])]:
+        spec={'id':identity,'index':path.relative_to(r.ROOT).as_posix(),'sha256':sha(path),'format':r.evidence_indexes.FILES_MAP,
+              'member_root':member_root.relative_to(r.ROOT).as_posix(),'expected_count':count,'expected_status':status}
+        r.evidence_indexes.audit_index(r.ROOT,spec);specs.append(spec)
+    members=[review/'independent-final-review01.json',index]
+    binding=PACKET/'source-review-binding-index.json'
+    save(binding,{'status':'SIX_SOURCE_REVIEW_BINDING_INDEX','count':len(members),
+                  'files':{x.relative_to(r.ROOT).as_posix():{'sha256':sha(x),'bytes':x.stat().st_size} for x in members}})
+    specs.append({'id':'source-review-report-binding','index':binding.relative_to(r.ROOT).as_posix(),'sha256':sha(binding),
+                  'format':r.evidence_indexes.FILES_MAP,'member_root':'.','expected_count':2,'expected_status':'SIX_SOURCE_REVIEW_BINDING_INDEX'})
+    path=PACKET/'preparation-evidence-audit-plan.json'
+    save(path,{'version':1,'execution':p.EXECUTION,'candidate_sha256':sha(PACKET/'candidate.json'),'indexes':specs})
+    return r.evidence_indexes.audit_plan(r.ROOT,path,sha(path),PACKET/'candidate.json')
 
 
 def source_freeze(a):
@@ -48,8 +84,7 @@ def main():
     terminal=load(r.PUBLIC/'non-delete-terminal.json')
     need(terminal['status']=='PASS_NONDELETE_SOURCE_RESTORE_PREPARATION' and terminal['groups_completed']==3 and terminal['native_delete']==0,'actual source/restore preparation incomplete')
     need(sha(r.PUBLIC/'non-delete-evidence-index.json')==terminal['evidence_index_sha256'],'original preparation index drift')
-    for name,expected_sha in load(r.PUBLIC/'non-delete-evidence-index.json')['files'].items():
-        path=(r.PUBLIC/name).resolve();need(path.is_relative_to(r.PUBLIC.resolve()) and sha(path)==expected_sha,'original raw preparation member drift')
+    audit_preparation_index()
     need(not PACKET.exists(),'one-shot frozen packet exists; never overwrite')
     PACKET.mkdir()
     source_freeze(a)
@@ -125,6 +160,7 @@ def main():
         bindings[-1].update(initial_build_source=a['source'],initial_build_files=a['build_files'],retained_history=a['retained'])
     save(PACKET/'profile-windows.json',windows);candidate['ProfileWindowsSHA256']=sha(PACKET/'profile-windows.json')
     save(PACKET/'candidate.json',candidate);save(PACKET/'bindings.json',bindings)
+    preparation_audit_plan(candidate)
     confirmation(candidate,bindings,targets)
     candidate_sha=sha(PACKET/'candidate.json');template_sha=sha(PACKET/'confirmation-template.txt')
     common=dict(Enabled=False,Execution=p.EXECUTION,CandidateSHA256=candidate_sha,ConfirmationSHA256=template_sha,NotBefore=p.W['NotBefore'],ExpiresAt=p.W['NotAfter'],ConfirmedAt=r.ZERO,MaxPerTarget=1,MaxTotal=6)
@@ -150,7 +186,8 @@ def confirmation(c,bindings,targets):
     lines=[f'CONFIRM_DELETE_EXACT_SIX；execution {p.EXECUTION}；{p.PROFILE}。',
            f'固定窗口 {start:%Y-%m-%d %H:%M}–{end:%H:%M} 新加坡时间；UTC {c["NotBefore"]}≤now<{c["NotAfter"]}；只读恢复截止 {p.W["RecoveryEnd"]}。',
            f'candidate SHA256 {sha(PACKET/"candidate.json")}；bindings {sha(PACKET/"bindings.json")}；source {c["Source"]}；source-freeze {c["SourceFreezeSHA256"]}。',
-           f'本代allocation与构建源 {bindings[0]["initial_build_source"]}；完整12成员原构建归档见source-freeze及bindings；旧candidate13/14/15冷态/预算/IAM/失败证据独立原样保留，不复用旧execution或授权。',
+           f'本代allocation与构建源 {bindings[0]["initial_build_source"]}；完整12成员原构建归档见source-freeze及bindings；旧candidate13/14/15/16冷态/预算/IAM/失败证据独立原样保留，不复用旧execution或授权。',
+           f'准备阶段完整入口audit plan {sha(PACKET/"preparation-evidence-audit-plan.json")}；显式files-map-v1；未来实际授权/调度后须另按批准manifest绑定对应phase audit plan，不能覆盖准备快照。',
            f'Linux reader {c["ReaderBinarySHA256"]}；sender/wire/recovery {c["SenderBinarySHA256"]}；root owner {c["OwnerBinarySHA256"]}；Windows file-only checker {sha(r.CONTROL/"readonly-check.exe")}。',
            f'current policy checkpoint {c["PolicyCheckpointSHA256"]}；target digest {c["TargetDigest"]}；host public key {c["PublicKey"]}；wire public key {c["WirePublicKey"]}；profile-windows {c["ProfileWindowsSHA256"]}；CandidateUseUntil={c["NotAfter"]}。',
            '18历史copy、17现存版本、6目标、11保留版本严格分开。旧P1已确认缺失，绝不纳入目标或新预算。']

@@ -17,8 +17,8 @@ class FreezeSixTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp,ExitStack() as stack:
             root=Path(tmp);control=root/'private';public=root/'preparation';packet=root/'packet';fixtures=root/'fixtures'
             control.mkdir();public.mkdir();fixtures.mkdir();(control/'offline').mkdir()
-            for obj,name,value in [(f.r,'CONTROL',control),(f.r,'PUBLIC',public),(f,'PACKET',packet),(f.p.p1,'PRIVATE',fixtures)]:stack.enter_context(patch.object(obj,name,value))
-            old=f.load(f.p.p1.PACKET/'candidate.json');scopes=f.load(f.r.ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json')
+            for obj,name,value in [(f.r,'CONTROL',control),(f.r,'PUBLIC',public),(f.r,'ROOT',root),(f,'PACKET',packet),(f.p.p1,'PRIVATE',fixtures)]:stack.enter_context(patch.object(obj,name,value))
+            old=f.load(f.p.p1.PACKET/'candidate.json');scopes=f.load(f.p.ROOT/'apps/platform/internal/lifecycle/pilot/remaining_scope.json')
             allocation={'source':'f'*40,'build_files':{},'retained':{'mode':'RECORDED_TEST_ONLY'},'owner_descriptors_sha256':'d'*64,'map_sha256':'a'*64,'binaries':{'reader':'1'*64,'operator':'2'*64,'owner':'3'*64},'groups':[],'offline_validator':'v'*64}
             for name in ('reader','operator','owner','readonly-check.exe'):(control/name).write_bytes(b'non-authoritative-test-binary')
             for old_group,scope in zip(old['Groups'],scopes):
@@ -53,18 +53,20 @@ class FreezeSixTests(unittest.TestCase):
                 f.save(out/'source-Core-after.json',{'recorded_only':True})
                 (out/'expectation').mkdir();f.save(out/'expectation/expected-contract.json',{'not_actual_native':True})
             f.save(public/'allocation.json',allocation)
-            f.save(public/'non-delete-evidence-index.json',{'files':{},'mode':'RECORDED_TEST_ONLY'})
+            (public/'test-evidence.txt').write_bytes(b'recorded')
+            f.save(public/'non-delete-evidence-index.json',{'status':'SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX','count':1,'files':{'test-evidence.txt':{'sha256':f.sha(public/'test-evidence.txt'),'bytes':8}}})
             f.save(public/'non-delete-terminal.json',{'status':'PASS_NONDELETE_SOURCE_RESTORE_PREPARATION','groups_completed':3,'native_delete':0,'mode':'RECORDED_TEST_ONLY','evidence_index_sha256':f.sha(public/'non-delete-evidence-index.json')})
             def source(a):f.save(packet/'source-freeze.json',{'source':a['source'],'recorded_only':True})
             calls=[]
             stack.enter_context(patch.object(f.r,'state',lambda:allocation));stack.enter_context(patch.object(f.r,'budget_completion',lambda a:None));stack.enter_context(patch.object(f.r,'preparation_gate',lambda a:None));stack.enter_context(patch.object(f,'source_freeze',source))
+            stack.enter_context(patch.object(f,'preparation_audit_plan',lambda c:f.save(packet/'preparation-evidence-audit-plan.json',{'mode':'RECORDED_TEST_ONLY'})))
             stack.enter_context(patch.object(f.r,'run_owner',lambda cid,destination:calls.append(cid)))
             f.main()
             c=f.load(packet/'candidate.json');text=(packet/'confirmation-template.txt').read_text(encoding='utf-8')
             self.assertEqual(c['Execution'],f.p.EXECUTION)
             self.assertEqual(text.count('删除目标 '),6);self.assertEqual(text.count('保留版本 '),11)
             self.assertNotIn('删除目标 dpp-lifecycle307-808a6960 dpp-lifecycle307-online/fixture/p1.csv',text)
-            self.assertIn('全局至多六次',text);self.assertIn('2026-10-20 18:00–18:40',text)
+            self.assertIn('全局至多六次',text);self.assertIn('2026-10-21 14:00–14:40',text)
             self.assertEqual(calls,[allocation['offline_validator']])
             self.assertEqual(f.load(packet/'status.json')['human_confirmation'],'NOT_RECEIVED')
             self.assertEqual(f.p.window.validate_packet(packet,control)['cases'],6)

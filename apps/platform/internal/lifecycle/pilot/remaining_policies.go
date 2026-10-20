@@ -78,7 +78,7 @@ func RemainingUncreatedIdentities(group string) []string {
 	return []string{"i" + suffix, "d" + suffix, "iafc0e66c" + s.Run.String()[:8], "dafc0e66c" + s.Run.String()[:8]}
 }
 
-// These actual c14/c15 users remain disabled with a sole policy and no groups.
+// These actual c14/c15/c16 users remain disabled with a sole policy and no groups.
 // Current workers and enable paths select only the new execution's identities.
 func RemainingRetainedIdentities(group string) map[string]string {
 	result := map[string]string{}
@@ -89,9 +89,11 @@ func RemainingRetainedIdentities(group string) map[string]string {
 		}
 	}
 	if scope, err := RemainingScopeFor(group); err == nil {
-		for _, prefix := range []string{"i", "d"} {
-			user := prefix + "9f9c67d7" + scope.Run.String()[:8]
-			result[user] = "lifecycle307-six-" + user
+		for _, execution := range []string{"9f9c67d7", "aa2605a5"} {
+			for _, prefix := range []string{"i", "d"} {
+				user := prefix + execution + scope.Run.String()[:8]
+				result[user] = "lifecycle307-six-" + user
+			}
 		}
 	}
 	return result

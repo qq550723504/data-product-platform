@@ -1,4 +1,4 @@
-"""Fixed non-delete preparation primitives for candidate15.
+"""Fixed non-delete preparation primitives for candidate17.
 
 No send permission writer, authorization loader or S3 DELETE exists here.
 Allocation, budget initialization, native preparation and freeze are separate
@@ -22,6 +22,7 @@ from urllib.parse import urlsplit,urlunsplit
 spec=importlib.util.spec_from_file_location('six_constructor',Path(__file__).with_name('prepare-six-candidate.py'))
 p=importlib.util.module_from_spec(spec);spec.loader.exec_module(p)
 ROOT,CONTROL,PUBLIC=p.ROOT,p.CONTROL,p.PUBLIC
+import evidence_indexes
 need,load,sha,save=p.need,p.load,p.sha,p.save
 docker,inspect,closed=p.docker,p.inspect,p.closed
 ZERO=p.ZERO
@@ -549,8 +550,8 @@ def run_non_delete():
         terminal={'status':'PASS_NONDELETE_SOURCE_RESTORE_PREPARATION' if failure is None and len(results)==3 and all(x['closed'] for x in closure) and all(x['disabled'] for x in revocations) else 'FAILED_OR_UNCONFIRMED_RETAINED',
                   'execution':p.EXECUTION,'groups_completed':len(results),'failure':failure,'closure':closure,'native_delete':0,'old_authorization_reused':False,'all_resources_retained':True,'amount':'NOT_ASSESSED'}
         terminal['profile_revocations']=revocations
-        index={path.relative_to(PUBLIC).as_posix():sha(path) for path in sorted(PUBLIC.rglob('*')) if path.is_file() and path.name not in ('non-delete-terminal.json','non-delete-evidence-index.json')}
-        save(PUBLIC/'non-delete-evidence-index.json',{'files':index,'native_delete':0,'scope':'original public preparation raw channels and observations; not a signature'})
+        index={path.relative_to(PUBLIC).as_posix():{'sha256':sha(path),'bytes':path.stat().st_size} for path in sorted(PUBLIC.rglob('*')) if path.is_file() and path.name not in ('non-delete-terminal.json','non-delete-evidence-index.json')}
+        save(PUBLIC/'non-delete-evidence-index.json',{'status':'SIX_NONDELETE_PREPARATION_EVIDENCE_INDEX','count':len(index),'files':index,'native_delete':0,'scope':'original public preparation raw channels and observations; not a signature'})
         terminal['evidence_index_sha256']=sha(PUBLIC/'non-delete-evidence-index.json')
         save(PUBLIC/'non-delete-terminal.json',terminal);save(CONTROL/'non-delete-terminal.json',terminal)
     need(terminal['status']=='PASS_NONDELETE_SOURCE_RESTORE_PREPARATION','non-delete preparation unconfirmed')

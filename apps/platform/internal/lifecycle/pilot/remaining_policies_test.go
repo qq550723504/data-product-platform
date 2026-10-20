@@ -5,11 +5,11 @@ import (
 	"testing"
 )
 
-func TestRemainingRetainedIdentitiesKeepActualC14AndBlockedC15Users(t *testing.T) {
+func TestRemainingRetainedIdentitiesKeepActualC14C15AndTerminalC16Users(t *testing.T) {
 	want := map[string][]string{
-		"business-races": {"iafc0e66c808a6960", "dafc0e66c808a6960", "i9f9c67d7808a6960", "d9f9c67d7808a6960"},
-		"late-hold":      {"i9f9c67d7754ea8f0", "d9f9c67d7754ea8f0"},
-		"mixed":          {"i9f9c67d7dfda43b4", "d9f9c67d7dfda43b4"},
+		"business-races": {"iafc0e66c808a6960", "dafc0e66c808a6960", "i9f9c67d7808a6960", "d9f9c67d7808a6960", "iaa2605a5808a6960", "daa2605a5808a6960"},
+		"late-hold":      {"i9f9c67d7754ea8f0", "d9f9c67d7754ea8f0", "iaa2605a5754ea8f0", "daa2605a5754ea8f0"},
+		"mixed":          {"i9f9c67d7dfda43b4", "d9f9c67d7dfda43b4", "iaa2605a5dfda43b4", "daa2605a5dfda43b4"},
 	}
 	for group, names := range want {
 		t.Run(group, func(t *testing.T) {

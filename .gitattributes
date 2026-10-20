@@ -208,3 +208,11 @@ docs/acceptance/evidence/issue307-d1/index-audit-repair01/** -text whitespace=cr
 docs/acceptance/issue307-d1-v26-execution01.md -text
 docs/acceptance/issue307-d1-v26-schedule01.md -text
 docs/acceptance/issue307-d1-v26-window01-outcome.md -text
+
+# Frozen candidate17 and independent non-delete preparation evidence.
+docs/acceptance/evidence/issue307-d1/remaining-candidate17-preparation01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate17/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/remaining-candidate17-readonly01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/candidate17-source-review01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/candidate17-review01/** -text whitespace=cr-at-eol
+docs/acceptance/evidence/issue307-d1/candidate17-planning01/** -text whitespace=cr-at-eol
