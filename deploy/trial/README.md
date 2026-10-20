@@ -89,3 +89,28 @@ batch idempotency key 防止顺序重放重复加工。执行详情展示冻结�
 具体边界见 [business checkpoint](../../docs/acceptance/issue325-stage2-business-checkpoint.md)。
 
 OpenMetadata 为 NOT_ENABLED；完整 B/C 闭环、真实下载与撤权负例属于 PR 2。人工解释 deferred / NOT_RUN。第一阶段实际验收见 `docs/acceptance/issue325-stage1.md`；历史 B/C 报告不构成本候选 PASS。精确 merge SHA 的 main CI、生产准入均单列。
+
+## 已有五份版本的显式激活入口
+
+设计和有限合同见 [explicit activation](../../docs/acceptance/issue325-explicit-activation.md)。
+该入口只适用于原环境已完成业务升级、原三份 RAW 和两份加工版本均 READY、
+所有原 owner 已停止、Core migration head 为 68 的有限检查点。
+本次实现没有在原环境执行部署、迁移、续发、复制或激活。
+
+将两份明确取得 custody 的本地文件登记为一个 JSON 数组：
+`[{"versionId":"原 STANDARDIZED 版本 UUID","file":"绝对路径"},{"versionId":"原 CURATED 版本 UUID","file":"绝对路径"}]`。
+不得以 root/旧 prefix runtime fallback 代替 custody。只读计划使用已保留的五版本成功事实回执；
+它核验 custody 的每一字节、同一 run/workspace/Actor、固定 #331 业务源码、原资源和端口。
+
+```powershell
+python deploy/trial/trial.py activation-plan --facts <原五版本事实回执绝对路径> --custody <custody清单绝对路径> --output <新的plan路径>
+# 以下是单独授权后的执行入口；plan 输出和 CI 均不授予执行权。
+python deploy/trial/trial.py activate --plan <plan路径> --plan-sha256 <planSha256>
+```
+
+显式执行先保留 before-state/备份并构建，再复核提交和源码，应用原 69→70，
+以未扩大的同范围 STS 对两个原版本建立同 bytes 受保护副本，验证全部五版本，
+最后选择独立 activation binding 启动同一角色/端口。旧业务 binding、origin、凭据、
+制品、数据和所有回执继续保留。普通 resume 随后只恢复已接纳的制品和同一保护范围。
+同一完成计划的 activate replay 仅读核验；失败、UNKNOWN、孤立 journal 拒绝自动重试，
+普通 resume 也不能越过未完成激活。精确 owner 的 stop 仍可用于止损；显式恢复另行设计。

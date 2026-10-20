@@ -2,6 +2,7 @@
 import base64
 import csv
 import ctypes
+from contextvars import ContextVar
 from datetime import datetime, timezone
 import hashlib
 import io
@@ -28,6 +29,7 @@ SOURCE_PATHS = ("apps/platform", "apps/web", "migrations", "industry-packs", "de
                 "examples/enterprise-activity/data", "examples/enterprise-activity/postgres-ingestion",
                 "examples/lifecycle-d1/durable-storage.ps1")
 LABEL = "dpp.trial.run"
+READ_ONLY_OBSERVATION = ContextVar("trial_read_only_observation", default=False)
 PG = "postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea"
 HOP = "apache/hop:2.19.0@sha256:5f285c86523439ab3859f1b75e1fab1b4d7d958daa0349e609ef45be403a854d"
 REDIS = "redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499"
@@ -72,6 +74,13 @@ def environment():
     return {k: v for k, v in os.environ.items() if k.upper() in keys}
 
 
+@contextmanager
+def read_only_observation():
+    token = READ_ONLY_OBSERVATION.set(True)
+    try: yield
+    finally: READ_ONLY_OBSERVATION.reset(token)
+
+
 def command(args, *, data=None, cwd=ROOT, env=None, timeout=180):
     try:
         r = subprocess.run([str(a) for a in args], input=data, cwd=cwd, env=env or environment(),
@@ -82,8 +91,8 @@ def command(args, *, data=None, cwd=ROOT, env=None, timeout=180):
     if r.returncode:
         # Only sanitized diagnostics are persisted, including on startup failure.
         raw = r.stdout + r.stderr
-        diagnostic = "no trial registry; diagnostic not persisted"
-        if (STATE / "state.json").exists():
+        diagnostic = "diagnostic not persisted"
+        if not READ_ONLY_OBSERVATION.get() and (STATE / "state.json").exists():
             s = read(STATE / "state.json")
             for name in s.get("secretReferences", []):
                 f = Path(name)
@@ -438,6 +447,9 @@ def verify(s, *, source=True, running=True):
     if "businessBinding" in s:
         from upgrade import verify_business
         verify_business(s)
+    if "activationBinding" in s:
+        from activation import verify_binding
+        verify_binding(s)
     for role, expected in s["containers"].items():
         item = json.loads(docker("inspect", expected["name"]))[0]
         verify_container(s, role, item)
@@ -455,6 +467,14 @@ def verify(s, *, source=True, running=True):
     storage_check(s, ["running"] if running else ["exited", "running", "created"])
 
 
+def active_business(s):
+    if "activationBinding" in s:
+        from activation import verify_binding
+        return verify_binding(s)
+    from upgrade import verify_business
+    return verify_business(s)
+
+
 def core_environment(s):
     p, cfg = Path(s["private"]), read(Path(s["private"]) / "config.json")
     env = dict(environment(), APP_ENV="synthetic-trial", APP_HTTP_ADDR=f"127.0.0.1:{s['ports']['api']}", POSTGRES_DSN=cfg["DSN"],
@@ -470,8 +490,7 @@ def core_environment(s):
         # New binaries require an explicit protected profile and cannot fall back.
         env.update(OBJECT_STORAGE_ACCESS_KEY=cfg["RootKey"], OBJECT_STORAGE_SECRET_KEY=cfg["RootSecret"])
     if "businessBinding" in s:
-        from upgrade import verify_business
-        manifest = verify_business(s)
+        manifest = active_business(s)
         env.update(HUMAN_DECISION_API_ENABLED="true", HUMAN_DECISION_API_TOKEN=Path(manifest["humanTokenFile"]).read_text().strip(),
                    HUMAN_DECISION_API_SUBJECT="trial-operator-" + s["runId"], HUMAN_DECISION_API_ACTOR_ID=s["actorId"],
                    HUMAN_DECISION_API_WORKSPACE_IDS=s["workspaceId"], RIGHTS_API_TOKEN=(p / "token").read_text().strip(),
@@ -485,8 +504,7 @@ def web_environment(s):
                 POC_ENABLE_INGESTION_ACTIONS="true", POC_INGESTION_TOKEN_FILE=str(p / "token"), POC_INGEST_ACTOR_ID=s["actorId"],
                 POC_TRIAL_RAW_ONLY="true")
     if "businessBinding" in s:
-        from upgrade import verify_business
-        manifest = verify_business(s)
+        manifest = active_business(s)
         env.update(POC_TRIAL_RAW_ONLY="false", POC_ENABLE_REVIEW_ACTIONS="true", POC_RIGHTS_TOKEN_FILE=str(p / "token"),
                    HUMAN_DECISION_API_TOKEN=Path(manifest["humanTokenFile"]).read_text().strip(),
                    POC_INGESTION_WORKFLOW_ID=manifest["business"]["workflowVersionId"])
@@ -577,11 +595,12 @@ def status(s):
               "web": s.get("web"), "registry": str(STATE / "state.json"), "OpenMetadata": "NOT_ENABLED",
               "PR2": {"restartResume": s.get("resume", {}).get("status", "NOT_RUN"), "businessDelivery": "NOT_RUN"}, "humanExplanation": "deferred / NOT_RUN"}
     if "businessBinding" in s:
-        from upgrade import verify_business
-        m = verify_business(s)
+        m = active_business(s)
         result["businessHead"] = m["head"]
         result["PR2"]["businessUpgrade"] = s.get("upgrade", {}).get("status", "UNKNOWN")
         result["workflowVersionId"] = m["business"]["workflowVersionId"]
+    if "activation" in s:
+        result["PR2"]["protectedActivation"] = s["activation"]["status"]
     if s["phase"] == "RUNNING":
         expiry = s.get("resume", {}).get("credentialExpiresAt")
         if not expiry and s.get("workspaceObjectProfile"):

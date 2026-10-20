@@ -3,23 +3,47 @@
 import argparse
 import json
 import sys
+from contextlib import nullcontext
 from runtime import STATE, Refused, exclusive, preflight, read, start, status, stop
 from resume import resume, restart
 from upgrade import upgrade
+from activation import plan, activate, encoded
+from resume import write_once
+from runtime import digest
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("preflight", "start", "status", "stop", "resume", "restart", "upgrade"))
+    parser.add_argument("command", choices=("preflight", "start", "status", "stop", "resume", "restart", "upgrade", "activation-plan", "activate"))
+    parser.add_argument("--facts")
+    parser.add_argument("--custody")
+    parser.add_argument("--output")
+    parser.add_argument("--plan")
+    parser.add_argument("--plan-sha256")
     args = parser.parse_args()  # Reject reset/cleanup/fault actions before any IO.
+    if args.command == "activation-plan":
+        if not args.facts or not args.custody or args.plan or args.plan_sha256:
+            parser.error("activation-plan requires --facts and --custody; optional --output")
+    elif args.command == "activate":
+        if not args.plan or not args.plan_sha256 or args.facts or args.custody or args.output:
+            parser.error("activate requires only --plan and --plan-sha256")
+    elif any((args.facts, args.custody, args.output, args.plan, args.plan_sha256)):
+        parser.error("activation options require an explicit activation command")
     try:
-        with exclusive():
+        # Advisory plan has no registry/lock writes. Execution re-derives it
+        # inside the existing exclusive operator lock.
+        with (nullcontext() if args.command == "activation-plan" else exclusive()):
             if args.command == "preflight": result = preflight()
             elif args.command == "start": result = start()
             else:
                 if not (STATE / "state.json").exists(): raise Refused("No trial registry in this worktree; run preflight/start")
                 s = read(STATE / "state.json")
-                result = {"status": status, "stop": stop, "resume": resume, "restart": restart, "upgrade": upgrade}[args.command](s)
+                if args.command == "activation-plan":
+                    result = plan(s, args.facts, args.custody)
+                    if args.output: write_once(args.output, result)
+                    result = {"plan": result, "planSha256": digest(encoded(result))}
+                elif args.command == "activate": result = activate(s, args.plan, args.plan_sha256)
+                else: result = {"status": status, "stop": stop, "resume": resume, "restart": restart, "upgrade": upgrade}[args.command](s)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     except (Refused, OSError, ValueError, KeyError) as e:
         # No raw subprocess output, DSN, HTTP headers or credential values.
