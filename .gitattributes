@@ -203,3 +203,8 @@ docs/acceptance/issue307-d1-v26-preparation.md text eol=lf
 # Retain exact failed v26 and index-audit repair receipts.
 docs/acceptance/evidence/issue307-d1/delete-confirmed-v26-execution01/** -text whitespace=cr-at-eol
 docs/acceptance/evidence/issue307-d1/index-audit-repair01/** -text whitespace=cr-at-eol
+
+# Historical authorization indexes bind these original Markdown bytes too.
+docs/acceptance/issue307-d1-v26-execution01.md -text
+docs/acceptance/issue307-d1-v26-schedule01.md -text
+docs/acceptance/issue307-d1-v26-window01-outcome.md -text
