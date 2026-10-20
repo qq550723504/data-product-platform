@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-20T10:02:35.643654+00:00",
+  "finished_at": "2026-10-20T10:02:43.130818+00:00",
+  "command": [
+    "C:\\Users\\Henry\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-X",
+    "utf8",
+    "examples/lifecycle-d1/window_six_support.py",
+    "seal"
+  ],
+  "exit_code": 0,
+  "source_enable_sender_wire_DELETE_requested": false
+}

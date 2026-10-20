@@ -1,0 +1,8 @@
+{
+  "status": "RETAINED_LOCAL_COMPOSITION_DIAGNOSTIC",
+  "error": "TextEncoder is not defined in functions.exec isolate",
+  "scope": "Local prompt byte-length display only; occurred after in-memory prompt storage and before any file write or automation creation.",
+  "resolution": "Python measured exact UTF-8 prompt bytes; stored prompt submitted unchanged.",
+  "source_or_gate_change": false,
+  "source_enable_provider_DELETE": 0
+}

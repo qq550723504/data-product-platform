@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\docs\acceptance\evidence\issue307-d1\delete-confirmed-v26-execution01\composition\check_authorization.py", line 37, in <module>
+    result = host.Host().check()
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\window_six_support.py", line 77, in check
+    gate=v.sealed_gate(PACKET)
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\verify-six-native.py", line 35, in sealed_gate
+    a=r.state();r.cold_topology(a)
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 102, in state
+    a=allocation_state();build_contract(a)
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\six_candidate_runtime.py", line 81, in allocation_state
+    need(p.historical_gate()==a['retained'],'retained history drift')
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\prepare-six-candidate.py", line 100, in historical_gate
+    for name,digest in old['binaries'].items():need(sha(old_private/name)==digest,'retained c13 binary changed')
+                                                    ~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\.codex\worktrees\d1-cli-fix\data-product-platform\examples\lifecycle-d1\reconcile-p1-post-v22.py", line 37, in sha
+    def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+                                        ~~~~~~~~~~~~~~~^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 777, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Henry\AppData\Local\Python\pythoncore-3.14-64\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate13\\readonly-check.exe'

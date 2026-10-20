@@ -1,0 +1,166 @@
+{
+  "observed_at": "2026-10-20T02:49:46.406Z",
+  "representation": "selected authoritative GitHub API fields; original connector responses retained in thread",
+  "run": {
+    "id": 39359998615,
+    "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "head_branch": "codex/issue307-post-v22-dispatch-closure",
+    "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615",
+    "created_at": "2026-10-20T02:38:22Z",
+    "updated_at": "2026-10-20T02:47:24Z",
+    "run_started_at": "2026-10-20T02:38:22Z"
+  },
+  "jobs": {
+    "total_count": 13,
+    "jobs": [
+      {
+        "id": 118423709538,
+        "name": "classify-changes",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:26Z",
+        "completed_at": "2026-10-20T02:38:32Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423709538"
+      },
+      {
+        "id": 118423753208,
+        "name": "temporary-container-contracts (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:36Z",
+        "completed_at": "2026-10-20T02:38:58Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423753208"
+      },
+      {
+        "id": 118423753214,
+        "name": "temporary-container-contracts (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:35Z",
+        "completed_at": "2026-10-20T02:38:42Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423753214"
+      },
+      {
+        "id": 118423753215,
+        "name": "hop-smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:36Z",
+        "completed_at": "2026-10-20T02:41:37Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423753215"
+      },
+      {
+        "id": 118423753219,
+        "name": "go-platform",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:35Z",
+        "completed_at": "2026-10-20T02:44:23Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423753219"
+      },
+      {
+        "id": 118423753282,
+        "name": "label-studio-smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:35Z",
+        "completed_at": "2026-10-20T02:38:41Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423753282"
+      },
+      {
+        "id": 118423753297,
+        "name": "splink-smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:35Z",
+        "completed_at": "2026-10-20T02:38:43Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423753297"
+      },
+      {
+        "id": 118423753346,
+        "name": "web-console",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:36Z",
+        "completed_at": "2026-10-20T02:39:51Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423753346"
+      },
+      {
+        "id": 118423753403,
+        "name": "gx-smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:35Z",
+        "completed_at": "2026-10-20T02:39:31Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423753403"
+      },
+      {
+        "id": 118423753739,
+        "name": "live-core / live-core-browser",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:36Z",
+        "completed_at": "2026-10-20T02:47:04Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423753739"
+      },
+      {
+        "id": 118423753744,
+        "name": "browser-contracts / web-browser-contracts",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:35Z",
+        "completed_at": "2026-10-20T02:40:29Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423753744"
+      },
+      {
+        "id": 118423753875,
+        "name": "demo / demo-lifecycle",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:38:36Z",
+        "completed_at": "2026-10-20T02:44:08Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118423753875"
+      },
+      {
+        "id": 118426208484,
+        "name": "required",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+        "started_at": "2026-10-20T02:47:07Z",
+        "completed_at": "2026-10-20T02:47:23Z",
+        "html_url": "https://github.com/qq550723504/data-product-platform/actions/runs/39359998615/job/118426208484"
+      }
+    ]
+  },
+  "pr": {
+    "number": 332,
+    "url": "https://github.com/qq550723504/data-product-platform/pull/332",
+    "state": "open",
+    "draft": true,
+    "head": "74aa674db18dd68966d070e9f04173bb37ad1a7c",
+    "base": "main",
+    "base_sha": "cf11592d688303cf4ae1126c431aab87736b75e2",
+    "merged": false,
+    "merged_at": null,
+    "title": "#307: close old dispatches and freeze candidate16/v26",
+    "body_exact_readback": true,
+    "body_replacement_characters": 0
+  },
+  "transport_note": "One specialized jobs MCP call failed in transport. Final jobs were read successfully through the GitHub API fetch connector; no CLI or old-head CI result substituted."
+}
