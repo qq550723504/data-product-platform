@@ -61,6 +61,7 @@ def read(path):
 
 
 def write(path, value):
+    need(not READ_ONLY_OBSERVATION.get(), "Read-only observation cannot persist state or diagnostics")
     path = Path(path)
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -318,10 +319,17 @@ def storage_check(s, allowed):
         name = s["containers"][role]["name"]
         item = json.loads(docker("inspect", name))[0]
         items.append({"role": role, "name": name, "path": target, "volume": s["volumes"][role], "container": item})
-    path = Path(s["private"]) / "storage-inspect.json"
-    write(path, {"run_id": s["runId"], "volumes": [s["volumes"][role] for role in ROLES], "services": items})
-    return json.loads(command(["pwsh", "-NoProfile", "-File", ROOT / "deploy/trial/storage-check.ps1",
-                              "-InputPath", path, "-AllowedStates", ",".join(allowed)]).decode("utf-8-sig"))
+    payload = {"run_id": s["runId"], "volumes": [s["volumes"][role] for role in ROLES], "services": items}
+    args = ["pwsh", "-NoProfile", "-File", ROOT / "deploy/trial/storage-check.ps1", "-AllowedStates", ",".join(allowed)]
+    if READ_ONLY_OBSERVATION.get():
+        # Docker metadata can contain secrets. Keep it off argv and disk,
+        # including temporary files; reuse the same retained-storage validator.
+        result = command([*args, "-InputFromStdin"], data=json.dumps(payload, ensure_ascii=False).encode("utf-8"))
+    else:
+        path = Path(s["private"]) / "storage-inspect.json"
+        write(path, payload)
+        result = command([*args, "-InputPath", path])
+    return json.loads(result.decode("utf-8-sig"))
 
 
 def wait_for(probe, label, seconds=90):
