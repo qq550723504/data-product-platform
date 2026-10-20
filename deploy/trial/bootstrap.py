@@ -290,6 +290,8 @@ def execute(s, expected):
     try:
         names = ("trial-activate", "migrate") if stage == "bootstrap" else ("trial-activate", "operator-custody")
         tools = action(receipts, "build", lambda: build(directory, names))
+        private = action(receipts, "private-admission", lambda: json.loads(tool(s, directory, "trial-activate", "private")))
+        r.need(private == {"status": "PASS", "privateACL": True}, "Operator-private stage required before native/SQL actions")
         r.need(target(s, expected["target"]["admission"]) == expected["target"], "Source admission changed during build")
         r.verify(s, source=False, running=False); c.verify_origin(s)
         r.need(native(s, hosts=stage == "bootstrap") == expected["native"], "Native identity changed during build")

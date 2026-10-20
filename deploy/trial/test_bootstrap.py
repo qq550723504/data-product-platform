@@ -81,7 +81,7 @@ class LedgerStages(unittest.TestCase):
                 stack.enter_context(patch.object(r, "docker", side_effect=lambda *args, **kw: order.append("backup" if "pg_dump" in args else "ready") or b"backup"))
                 stack.enter_context(patch.object(b, "inspect", side_effect=lambda *args, **kw: order.append("admit-" + str(kw.get("schema", 71))) or {"schema": kw.get("schema", 71)}))
                 inventory = {"tables": {"old": {"columns": ["id"], "rows": ['{"id":1}']}}}
-                stack.enter_context(patch.object(a, "tool", side_effect=lambda *args, **kw: order.append("inventory") or a.encoded(inventory)))
+                stack.enter_context(patch.object(a, "tool", side_effect=lambda s, directory, name, mode, **kw: order.append("private" if mode == "private" else "inventory") or a.encoded({"status": "PASS", "privateACL": True} if mode == "private" else inventory)))
                 def migration(*args):
                     order.append("migration")
                     if interrupted: raise r.Refused("loss after migration 69")
@@ -99,7 +99,7 @@ class LedgerStages(unittest.TestCase):
                     self.assertEqual(r.read(receipts / "before-state.json"), original)
                 else:
                     b.execute(s, expected)
-                    self.assertEqual(order, ["build", "start-core", "ready", "admit-68", "backup", "inventory", "migration", "inventory", "admit-71", "stop-core"])
+                    self.assertEqual(order, ["build", "private", "start-core", "ready", "admit-68", "backup", "inventory", "migration", "inventory", "admit-71", "stop-core"])
                     self.assertEqual(s["phase"], "STOPPED")
                     self.assertEqual(s["businessBinding"], original["businessBinding"])
                     manifest = b.binding(s, "bootstrap")
@@ -163,6 +163,7 @@ class LedgerStages(unittest.TestCase):
                 expected = {**baseline, "stage": "custody", "profile": b.file(profile)}
                 order = []
                 stack.enter_context(patch.object(b, "build", side_effect=lambda *args: order.append("build") or {}))
+                stack.enter_context(patch.object(a, "tool", side_effect=lambda *args, **kw: order.append("private") or a.encoded({"status": "PASS", "privateACL": True})))
                 stack.enter_context(patch.object(b, "owned", side_effect=lambda s, role, op: order.append(op + "-" + role)))
                 stack.enter_context(patch.object(r, "docker", side_effect=lambda *args, **kw: order.append("core-ready") or b"ready"))
                 def sdk(args, **kwargs):
@@ -187,8 +188,19 @@ class LedgerStages(unittest.TestCase):
                 else:
                     b.execute(s, expected)
                     self.assertEqual(s["phase"], "STOPPED")
-                    self.assertEqual(order, ["build", "start-core", "core-ready", "admit-71", "start-objects", "start-gateway", "sdk", "admit-custody", "stop-gateway", "stop-objects", "stop-core"])
+                    self.assertEqual(order, ["build", "private", "start-core", "core-ready", "admit-71", "start-objects", "start-gateway", "sdk", "admit-custody", "stop-gateway", "stop-objects", "stop-core"])
                 command.assert_called_once()
+
+    def test_private_acl_rejection_precedes_host_stop_containers_and_sql(self):
+        with tempfile.TemporaryDirectory() as d, patch.object(r, "STATE", Path(d) / "state"), ExitStack() as stack:
+            s, facts, admission, old = self.fixture(Path(d)); self.mocks(stack, old)
+            expected = b.plan(s, "bootstrap", facts=facts, admission=admission)
+            stack.enter_context(patch.object(b, "build", return_value={}))
+            stack.enter_context(patch.object(a, "tool", side_effect=r.Refused("private ACL refused")))
+            for obj, name in ((b, "owned"), (b, "inspect"), (b, "migrate"), (r, "process_identity")):
+                stack.enter_context(patch.object(obj, name, side_effect=AssertionError("private rejection released an effect")))
+            with self.assertRaisesRegex(r.Refused, "private ACL"): b.execute(s, expected)
+            self.assertEqual(s["bootstrap"]["status"], "UNKNOWN")
 
     def test_journal_is_exclusive_and_cannot_write_in_readonly_context(self):
         with tempfile.TemporaryDirectory() as d:

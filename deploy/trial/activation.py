@@ -205,7 +205,7 @@ def tool(s, directory, name, mode=None, **inputs):
 
 def build(s, directory, attempt):
     artifacts = u.build(s, directory, attempt)
-    for name in ("migrate", "workspace-object-copy", "trial-resume", "trial-activate"):
+    for name in ("workspace-object-copy", "trial-resume", "trial-activate"):
         r.command(["go", "build", "-trimpath", "-o", directory / (name + ".exe"), "./cmd/" + name], cwd=r.ROOT / "apps/platform", timeout=600)
     return artifacts
 
@@ -222,6 +222,8 @@ def execute(s, expected):
     s["phase"] = "ACTIVATING"; r.save(s)
     try:
         artifacts = action(receipts, "build", lambda: build(s, directory, attempt))
+        private = json.loads(tool(s, directory, "trial-activate", "private"))
+        r.need(private == {"status": "PASS", "privateACL": True}, "Operator-private activation required before native/SQL actions")
         r.need(target(s) == expected["target"] and readiness(s) == expected["ledger"], "Source/ledger changed during activation build")
         action(receipts, "core", lambda: b.owned(s, "core", "start"))
         r.wait_for(lambda: r.docker("exec", s["containers"]["core"]["id"], "pg_isready", "-U", "postgres"), "Core")

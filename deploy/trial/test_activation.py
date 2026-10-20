@@ -169,7 +169,7 @@ class ActivationContracts(unittest.TestCase):
             stack.enter_context(patch.object(b, "owned", side_effect=lambda s, role, op: order.append(op + "-" + role)))
             stack.enter_context(patch.object(a, "build", side_effect=lambda *args: order.append("build") or {"new": "artifacts"}))
             inventory = {"tables": {"old": {"columns": ["id"], "rows": ['{"id":1}']}}}
-            stack.enter_context(patch.object(a, "tool", side_effect=lambda s, folder, name, mode, **kw: order.append(mode) or a.encoded(inventory if mode == "snapshot" else expected["ledger"]["proof"] if mode == "admit" else {"status": "PASS"})))
+            stack.enter_context(patch.object(a, "tool", side_effect=lambda s, folder, name, mode, **kw: order.append(mode) or a.encoded(inventory if mode == "snapshot" else expected["ledger"]["proof"] if mode == "admit" else {"status": "PASS", "privateACL": True} if mode == "private" else {"status": "PASS"})))
             migrate = stack.enter_context(patch.object(b, "migrate"))
             def renew(s, directory, receipts):
                 self.assertEqual(directory.parent, Path(s["private"]) / "resume")
@@ -182,7 +182,7 @@ class ActivationContracts(unittest.TestCase):
             stack.enter_context(patch.object(c, "launch_hosts", side_effect=lambda *args: order.append("hosts")))
             stack.enter_context(patch.object(r, "status", return_value={"phase": "RUNNING"}))
             a.execute(s, expected)
-            self.assertEqual(order, ["build", "start-core", "exec", "admit", "exec", "snapshot", "renew", "copy", "copy", "verify", "snapshot", "hosts"])
+            self.assertEqual(order, ["build", "private", "start-core", "exec", "admit", "exec", "snapshot", "renew", "copy", "copy", "verify", "snapshot", "hosts"])
             migrate.assert_not_called()
             self.assertEqual(s["businessBinding"], expected["previousBusinessBinding"]); self.assertEqual(s["phase"], "RUNNING")
             self.assertEqual(s["activation"]["status"], "PASS"); refresh.assert_called_once(); self.assertEqual(copy_command.call_count, 2)

@@ -147,6 +147,41 @@ func assertLedgerPreserved(t *testing.T, before, after inventory) {
 	}
 }
 
+func TestPrivateStageAdmissionUsesExistingACLAndNeverConnectsSQL(t *testing.T) {
+	private := ledgerPrivate(t)
+	attempt := filepath.Join(private, "bootstrap-attempts", "owned")
+	if err := os.MkdirAll(attempt, 0700); err != nil {
+		t.Fatal(err)
+	}
+	configFile := filepath.Join(private, "config.json")
+	value, _ := json.Marshal(map[string]any{"Private": private, "DSN": "deliberately-not-a-database", "RootSecret": "never-output"})
+	if err := os.WriteFile(configFile, value, 0600); err != nil {
+		t.Fatal(err)
+	}
+	inputFile := filepath.Join(attempt, "input.json")
+	value, _ = json.Marshal(input{ConfigFile: configFile})
+	if err := os.WriteFile(inputFile, value, 0600); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("DPP_TRIAL_ACTIVATION_INPUT", inputFile)
+	previous := os.Args
+	os.Args = []string{"trial-activate", "private"}
+	defer func() { os.Args = previous }()
+	if err := run(); err != nil {
+		t.Fatal("private metadata-only admission rejected valid ACL", err)
+	}
+	if runtime.GOOS == "windows" {
+		if exec.Command("icacls", private, "/grant", "*S-1-1-0:(OI)(CI)R").Run() != nil {
+			t.Fatal("test-owned ACL change failed")
+		}
+	} else if err := os.Chmod(private, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := run(); err == nil {
+		t.Fatal("public stage directory admitted")
+	}
+}
+
 func TestLedgerBootstrap68To71PreservesFiveVersionsAndRealCLICustodyAdmission(t *testing.T) {
 	pool, dsn := ledgerDatabase(t)
 	ctx := context.Background()

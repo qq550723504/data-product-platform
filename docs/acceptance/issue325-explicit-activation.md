@@ -42,7 +42,9 @@ volume/network identities, process creation tuples, original five-version facts
 and input hashes. A reused live PID or occupied retained port refuses replacement.
 Bootstrap can observe live original hosts while containers are stopped, without
 stopping them. Custody/activation require exited hosts. New tool hashes are
-recorded after building and before any native effect. Cached facts are advisory
+recorded after building and before any native effect. The helper reuses existing
+custody private-path/ACL checks before native operations or SQL/backup; metadata
+hashes do not attest current directory permissions. Cached facts are advisory
 until live SQL admission repeats them.
 
 ## Separate explicit stages

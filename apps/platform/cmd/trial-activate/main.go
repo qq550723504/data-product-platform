@@ -190,8 +190,8 @@ func verify(ctx context.Context, pool *pgxpool.Pool, c config, in input) (any, e
 }
 
 func run() error {
-	if len(os.Args) != 2 || (os.Args[1] != "snapshot" && os.Args[1] != "verify" && os.Args[1] != "admit") {
-		return fmt.Errorf("snapshot|verify|admit required")
+	if len(os.Args) != 2 || (os.Args[1] != "snapshot" && os.Args[1] != "verify" && os.Args[1] != "admit" && os.Args[1] != "private") {
+		return fmt.Errorf("snapshot|verify|admit|private required")
 	}
 	var in input
 	var c config
@@ -208,6 +208,15 @@ func run() error {
 	if len(parts) < 3 || (parts[0] != "activations" && parts[0] != "bootstrap-attempts" && parts[0] != "custody-attempts") ||
 		(os.Args[1] == "verify" && parts[0] != "activations") {
 		return fmt.Errorf("explicit retained stage path required")
+	}
+	// Reuse the operator custody private-path/ACL primitive before any SQL or
+	// backup. Native metadata and old content hashes do not attest current ACLs.
+	if pilot.CheckCustodyPrivatePath(c.Private, true) != nil || pilot.CheckCustodyPrivatePath(filepath.Dir(inputPath), true) != nil ||
+		pilot.CheckCustodyPrivatePath(inputPath, false) != nil || pilot.CheckCustodyPrivatePath(configPath, false) != nil {
+		return fmt.Errorf("same operator-private stage paths required")
+	}
+	if os.Args[1] == "private" {
+		return json.NewEncoder(os.Stdout).Encode(map[string]any{"status": "PASS", "privateACL": true})
 	}
 	u, err := url.Parse(c.DSN)
 	if err != nil || u.Scheme != "postgres" || u.Hostname() != "127.0.0.1" || u.Path != "/dpp_trial_core" || c.Workspace == uuid.Nil || c.Actor == uuid.Nil ||
