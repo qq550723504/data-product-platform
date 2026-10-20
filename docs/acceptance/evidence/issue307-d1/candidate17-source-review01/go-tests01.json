@@ -1,0 +1,59 @@
+{
+  "command": [
+    "go",
+    "test",
+    "-count=1",
+    "-json",
+    "./internal/lifecycle/pilot",
+    "./cmd/lifecycle-fixture-reader",
+    "./cmd/lifecycle-fixture-readonly-check",
+    "./cmd/lifecycle-fixture-remaining",
+    "./cmd/lifecycle-fixture-remaining-iam"
+  ],
+  "exit_code": 0,
+  "tests": {
+    "pass": 274,
+    "fail": 0,
+    "skip": 2
+  },
+  "packages": [
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "Action": "pass"
+    },
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining-iam",
+      "Action": "pass"
+    },
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader",
+      "Action": "pass"
+    },
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-remaining",
+      "Action": "pass"
+    },
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-readonly-check",
+      "Action": "pass"
+    }
+  ],
+  "skips": [
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/internal/lifecycle/pilot",
+      "Test": "TestPostV22NoSendPostgresEligibility"
+    },
+    {
+      "Package": "github.com/qq550723504/data-product-platform/apps/platform/cmd/lifecycle-fixture-reader",
+      "Test": "TestSixNativeDisabledBootstrapContract"
+    }
+  ],
+  "real_Postgres_and_native_optin_environment_explicitly_unset": [
+    "TEST_POSTGRES_DSN",
+    "DPP307_SIX_NATIVE_CONTRACT"
+  ],
+  "stdout_sha256": "9d78c914ed41965acff1b444586ba80cde3c47cf8b23266b8efe6cdec7aaec9c",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_Docker_native_provider_DELETE": 0,
+  "scope": "Go unit/mock/httptest only; no real PG or native fixture acceptance"
+}

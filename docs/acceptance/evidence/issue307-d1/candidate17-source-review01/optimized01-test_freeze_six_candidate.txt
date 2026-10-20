@@ -1,0 +1,7 @@
+test_complete_six_packet_and_confirmation_with_eleven_survivors (test_freeze_six_candidate.FreezeSixTests.test_complete_six_packet_and_confirmation_with_eleven_survivors) ... {"status": "SIX_PACKET_FROZEN_NOT_AUTHORIZED", "candidate_sha256": "2f988debb6cc7d605ff8023ef0cb8dacd2f70bf889506e9792a0bed34990fd6b", "execution": "6f40bca9-cfe2-4362-ad2b-4e38bbbd8453"}
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.576s
+
+OK

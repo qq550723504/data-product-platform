@@ -1,0 +1,29 @@
+{
+  "role": "checkpoint-compare",
+  "group": "business-races",
+  "cid": "0b386b64942d973a83826439a7251e6fbe03266e2c80b2bafe37b8b92015fa68",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate17-compare",
+    "--network",
+    "none",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-808a6960-objects,target=/source,readonly",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-808a6960-candidate17-objects,target=/restore,readonly",
+    "--entrypoint",
+    "/bin/sh",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-ec",
+    "cd /source; find . -type f -exec sha256sum {} \\; | sort > /tmp/source; cd /restore; find . -type f -exec sha256sum {} \\; | sort > /tmp/restore; cmp /tmp/source /tmp/restore; cat /tmp/source"
+  ]
+}

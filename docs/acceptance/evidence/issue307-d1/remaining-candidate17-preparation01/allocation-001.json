@@ -1,0 +1,33 @@
+{
+  "role": "new-empty-budget-initializer",
+  "group": "business-races",
+  "cid": "9d2b7c2e589d6bb34ca48156aff01f425a6eb8f287255c2f7c46c30971722b63",
+  "argv": [
+    "--name",
+    "dpp-lifecycle307-808a6960-candidate17-budget-init",
+    "--user",
+    "0:0",
+    "--network",
+    "none",
+    "--read-only",
+    "--cap-drop",
+    "ALL",
+    "--cap-add",
+    "CHOWN",
+    "--security-opt",
+    "no-new-privileges",
+    "--tmpfs",
+    "/tmp",
+    "--tmpfs",
+    "/var/lib/postgresql/data:size=1m",
+    "--mount",
+    "type=volume,source=dpp-lifecycle307-808a6960-candidate17-budget,target=/run/budget",
+    "--mount",
+    "type=bind,source=C:\\Users\\Henry\\.codex\\fixture-private\\remaining-candidate17\\business-races\\budget-init.sh,target=/run/budget-init.sh,readonly",
+    "--entrypoint",
+    "/bin/sh",
+    "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+    "-e",
+    "/run/budget-init.sh"
+  ]
+}

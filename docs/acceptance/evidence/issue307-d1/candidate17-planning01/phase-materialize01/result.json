@@ -1,0 +1,9 @@
+{
+  "phase": "materialize",
+  "exit": 0,
+  "stdout_bytes": 0,
+  "stderr_bytes": 0,
+  "source": "8cca345525af828a8c9461e75f2dc5bf5f1fb428",
+  "at": "2026-10-20T11:32:24.729651+00:00",
+  "delete_authority": false
+}

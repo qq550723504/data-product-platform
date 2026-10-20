@@ -1,0 +1,8 @@
+{
+  "status": "PASS_ISOLATED_NONDELETE_COMMANDS",
+  "old_fact_multisets_preserved": true,
+  "native_delete": 0,
+  "native_object_put": 0,
+  "source_business_mutations": 0,
+  "full_mixed_outcomes": "NOT_RUN"
+}
